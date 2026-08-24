@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>마무리 점검 | G-FIELD</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --g-blue:#16417C;--g-blue3:#1e3a6b;--g-gold:#EAC996;
+  --ink:#0f172a;--muted:#64748b;--bg:#eef3f8;--line:#dbe4ee;
+  --ok:#16a34a;--no:#dc2626;
+  --r:12px;--r-lg:16px;--pill:999px;--sh:0 2px 12px rgba(22,65,124,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 70px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.brand{font-size:18px;font-weight:900;letter-spacing:-.6px;color:var(--g-blue)}
+.brand span{color:var(--g-gold);background:var(--g-blue);padding:2px 8px;border-radius:6px;margin-right:6px}
+.btn{height:40px;padding:0 16px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff;
+  color:var(--ink);font:800 13.5px Pretendard,sans-serif;cursor:pointer}
+.btn:hover{border-color:var(--g-blue);color:var(--g-blue)}
+.btn.primary{background:linear-gradient(135deg,var(--g-blue),var(--g-blue3));border-color:transparent;color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+
+.card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh);padding:18px 20px;margin-bottom:14px}
+.card h1{font-size:21px;font-weight:900;letter-spacing:-.7px}
+.card .sub{margin-top:6px;color:var(--muted);font-size:13px;font-weight:600;line-height:1.65;word-break:keep-all}
+.note{margin-top:10px;padding:9px 12px;border-radius:var(--r);background:#f2f7fd;border:1px solid #d5e4f5;
+  color:#2b4f78;font-size:12.5px;font-weight:700;line-height:1.6;word-break:keep-all}
+
+.sec{margin:22px 0 10px;font-size:15px;font-weight:900;letter-spacing:-.4px}
+.sec small{margin-left:8px;color:var(--muted);font-size:12px;font-weight:700}
+
+/* 채점 격자 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.q{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:10px 12px;cursor:pointer;
+  transition:border-color .12s,background .12s}
+.q .no{font-size:12px;font-weight:900;color:var(--g-blue)}
+.q .tp{margin-top:3px;font-size:11.5px;font-weight:700;color:#475569;line-height:1.4;word-break:keep-all;min-height:32px}
+.q .mk{margin-top:6px;font-size:16px;font-weight:900;color:#cbd5e1;text-align:right}
+.q.ok{border-color:var(--ok);background:#f2fbf4}
+.q.ok .mk{color:var(--ok)}
+.q.no{border-color:var(--no);background:#fef4f4}
+.q.no .mk{color:var(--no)}
+
+.bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px -16px 0}
+.bar .stat{font-size:13.5px;font-weight:800}
+.bar .stat b.o{color:var(--ok)}.bar .stat b.x{color:var(--no)}
+
+/* 결과 */
+.score{display:flex;align-items:baseline;gap:10px}
+.score .n{font-size:44px;font-weight:900;letter-spacing:-2px;color:var(--g-blue)}
+.score .d{color:var(--muted);font-size:13px;font-weight:700}
+.verdict{margin-top:10px;padding:12px 14px;border-radius:var(--r);background:#f8fafc;border:1px solid var(--line)}
+.verdict .lv{font-size:16px;font-weight:900;color:var(--g-blue)}
+.verdict .tx{margin-top:6px;color:#334155;font-size:12.5px;font-weight:600;line-height:1.75;word-break:keep-all}
+
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{background:#f6f9fc;color:#334155;font-weight:800;font-size:11.5px;padding:9px 8px;text-align:left;
+  border-bottom:2px solid var(--line);white-space:nowrap}
+.tbl td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top;line-height:1.55;word-break:keep-all}
+.tbl tr:last-child td{border-bottom:0}
+/* span이라 display를 주지 않으면 height·min-width가 먹지 않아 막대가 안 보인다. */
+.mini{display:block;height:8px;border-radius:var(--pill);background:#eef2f7;overflow:hidden;min-width:70px}
+.mini>i{display:block;height:100%;background:var(--g-blue);border-radius:var(--pill)}
+.o{color:var(--ok);font-weight:900}.x{color:var(--no);font-weight:900}
+.wrongrow{background:#fffafa}
+.solcell{color:#334155;min-width:280px}
+
+.hidden{display:none}
+.exam-watermark{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}.exam-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:30px;font-weight:900;color:rgba(22,65,124,.075);white-space:nowrap}.exam-watermark span:nth-child(1){top:25%}.exam-watermark span:nth-child(2){top:50%}.exam-watermark span:nth-child(3){top:75%}.wrap{position:relative;z-index:1}
+
+@media print{
+  @page{size:A4 portrait;margin:12mm 10mm}
+  html,body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .btn,.bar,#gradeView{display:none}
+  .card{box-shadow:none;border:1px solid var(--line);break-inside:avoid}
+  .tbl{font-size:10px}
+  .tbl th,.tbl td{padding:5px 5px}
+  thead{display:table-header-group}
+  tr{break-inside:avoid}
+  .mini>i{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .exam-watermark span{color:rgba(22,65,124,.12)}
+}
+</style>
+</head>
+<body>
+<div class="exam-watermark" id="examWatermark" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span>G</span>FIELD · FIELDS THE CLASSIC</div>
+    <div>
+      <button class="btn" id="resetBtn" type="button">다시 채점</button>
+      <button class="btn primary" id="printBtn" type="button">인쇄</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1 id="title">마무리 점검</h1>
+    <p class="sub" id="subtitle"></p>
+    <p class="note">이 시험지에는 해설 강의가 없습니다. 대신 <b>문항마다 글로 쓴 해설</b>이 결과표에 함께 나옵니다.</p>
+  </div>
+
+  <div id="gradeView">
+    <div class="sec">사고력 <small id="thinkMeta"></small></div>
+    <div class="grid" id="qGrid"></div>
+
+    <div class="sec">연산 <small id="calcMeta"></small></div>
+    <div class="grid" id="cGrid"></div>
+
+    <div class="bar">
+      <div class="stat" id="stat">맞은 문항을 눌러 표시하세요</div>
+      <button class="btn primary" id="doneBtn" type="button" disabled>채점 결과 보기 →</button>
+    </div>
+  </div>
+
+  <div id="resultView" class="hidden"></div>
+</div>
+
+<script src="./verdicts.js?v=20260819a"></script>
+<script src="./final-data.js?v=20260819a"></script>
+<script>
+(function(){
+  var D = window.FIELDS_FINAL_CHECK;
+  var $ = function(id){ return document.getElementById(id); };
+  if (!D) { $('subtitle').textContent = '문항 데이터를 불러오지 못했습니다.'; return; }
+  var student = (new URLSearchParams(location.search).get('student') || sessionStorage.getItem('gf_n') || '학생').trim().slice(0, 30) || '학생';
+  for (var wm = 0; wm < 3; wm += 1) { var stamp = document.createElement('span'); stamp.textContent = student + ' 학생 · GFIELD'; $('examWatermark').appendChild(stamp); }
+
+  var QS = D.questions;
+  var CALC = D.addition.map(function(c,i){ return Object.assign({}, c, { no: '덧셈 ' + (i+1) }); })
+    .concat(D.subtraction.map(function(c,i){ return Object.assign({}, c, { no: '뺄셈 ' + (i+1) }); }));
+
+  // 채점 상태 — 진단 모의고사의 OX 모드와 같다. 맞으면 true, 틀리면 false, 아직이면 undefined.
+  var qMark = {}, cMark = {};
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function pctOf(ok, tot){ return tot === 0 ? 0 : Math.round(ok / tot * 100); }
+
+  function draw(){
+    $('subtitle').textContent = D.source + ' · 사고력 ' + QS.length + '문항 + 연산 ' + CALC.length + '문항';
+    $('thinkMeta').textContent = QS.length + '문항 · 100점 만점 (문항당 4점)';
+    $('calcMeta').textContent = CALC.length + '문항 · 사고력 점수와 따로 봅니다';
+
+    $('qGrid').innerHTML = QS.map(function(q, i){
+      return '<div class="q" id="q' + i + '" data-q="' + i + '">' +
+        '<div class="no">' + q.id + '</div>' +
+        '<div class="tp">' + esc(q.tp) + '</div>' +
+        '<div class="mk" id="qm' + i + '">·</div></div>';
+    }).join('');
+
+    $('cGrid').innerHTML = CALC.map(function(c, i){
+      return '<div class="q" id="c' + i + '" data-c="' + i + '">' +
+        '<div class="no">' + esc(c.no) + '</div>' +
+        '<div class="tp" style="min-height:0;font-size:14px;font-weight:900;color:#0f172a">' + esc(c.e) + '</div>' +
+        '<div class="mk" id="cm' + i + '">·</div></div>';
+    }).join('');
+  }
+
+  // 안 누름 → 맞음 → 틀림 → 안 누름. 세 번째 상태를 둬야 잘못 누른 것을 되돌릴 수 있다.
+  function cycle(store, key){
+    var v = store[key];
+    store[key] = (v === undefined) ? true : (v === true ? false : undefined);
+  }
+  function paint(prefix, i, v){
+    var el = $(prefix + i), mk = $(prefix === 'q' ? 'qm' + i : 'cm' + i);
+    el.className = 'q' + (v === true ? ' ok' : v === false ? ' no' : '');
+    mk.textContent = v === true ? '○' : v === false ? '✗' : '·';
+  }
+  function refresh(){
+    var done = QS.filter(function(_, i){ return qMark[i] !== undefined; }).length;
+    var cdone = CALC.filter(function(_, i){ return cMark[i] !== undefined; }).length;
+    var ok = QS.filter(function(_, i){ return qMark[i] === true; }).length;
+    var no = QS.filter(function(_, i){ return qMark[i] === false; }).length;
+    $('stat').innerHTML = '사고력 <b class="o">○ ' + ok + '</b> · <b class="x">✗ ' + no + '</b> · 남은 문항 ' +
+      (QS.length - done) + '개　|　연산 ' + cdone + '/' + CALC.length;
+    $('doneBtn').disabled = !(done === QS.length && cdone === CALC.length);
+  }
+
+  document.addEventListener('click', function(e){
+    var q = e.target.closest('[data-q]'), c = e.target.closest('[data-c]');
+    if (q) { var i = +q.dataset.q; cycle(qMark, i); paint('q', i, qMark[i]); refresh(); }
+    else if (c) { var j = +c.dataset.c; cycle(cMark, j); paint('c', j, cMark[j]); refresh(); }
+  });
+
+  function groupRows(keyOf, order, label){
+    var map = {};
+    QS.forEach(function(q, i){
+      var k = keyOf(q);
+      if (!map[k]) map[k] = { tot: 0, ok: 0 };
+      map[k].tot += 1;
+      if (qMark[i] === true) map[k].ok += 1;
+    });
+    var keys = (order || Object.keys(map)).filter(function(k){ return map[k]; });
+    return keys.map(function(k){
+      var g = map[k], p = pctOf(g.ok, g.tot);
+      return '<tr><td style="font-weight:800">' + esc(label ? label(k) : k) + '</td>' +
+        '<td>' + g.tot + '문항</td><td>' + g.ok + '개</td>' +
+        '<td><span class="mini"><i style="width:' + p + '%"></i></span></td>' +
+        '<td style="font-weight:800">' + p + '%</td></tr>';
+    }).join('');
+  }
+
+  function showResult(){
+    var ok = QS.filter(function(_, i){ return qMark[i] === true; }).length;
+    var score = ok * 4;
+    var lv = (typeof getLv === 'function') ? getLv(score) : null;
+
+    var addWrong = D.addition.map(function(_, i){ return cMark[i] === false; });
+    var subWrong = D.subtraction.map(function(_, i){ return cMark[D.addition.length + i] === false; });
+    var calcWrong = addWrong.concat(subWrong).filter(Boolean).length;
+    var cd = (typeof calcDiag === 'function') ? calcDiag(addWrong, subWrong, calcWrong) : null;
+
+    var wrong = QS.filter(function(_, i){ return qMark[i] === false; });
+
+    var html = '<div class="card"><div class="score"><span class="n">' + score + '</span>' +
+      '<span class="d">/ 100점 · ' + QS.length + '문항 × 4점 (맞은 문항 ' + ok + '개)</span></div>';
+    if (lv) {
+      html += '<div class="verdict"><div class="lv">' + esc(lv.lv) + '</div>' +
+        '<div class="tx">' + esc(lv.tx) + '</div></div>';
+    }
+    html += '</div>';
+
+    html += '<div class="card"><div class="sec" style="margin-top:0">분류별 정답률</div>' +
+      '<table class="tbl"><thead><tr><th>분류</th><th>출제</th><th>정답</th><th></th><th>정답률</th></tr></thead>' +
+      '<tbody>' + groupRows(function(q){ return q.t; }, ['식의계산','수','논리추리','도형','규칙']) + '</tbody></table></div>';
+
+    html += '<div class="card"><div class="sec" style="margin-top:0">행동영역별 정답률</div>' +
+      '<table class="tbl"><thead><tr><th>행동영역</th><th>출제</th><th>정답</th><th></th><th>정답률</th></tr></thead>' +
+      '<tbody>' + groupRows(function(q){ return q.ba; },
+        (typeof BA_ORDER !== 'undefined' ? BA_ORDER : null),
+        function(k){ return (typeof BA_LBL !== 'undefined' && BA_LBL[k]) ? BA_LBL[k] : k; }) +
+      '</tbody></table></div>';
+
+    html += '<div class="card"><div class="sec" style="margin-top:0">교재 수준별 정답률</div>' +
+      '<table class="tbl"><thead><tr><th>수준</th><th>출제</th><th>정답</th><th></th><th>정답률</th></tr></thead>' +
+      '<tbody>' + groupRows(function(q){ return q.lv; },
+        (typeof LV_ORDER !== 'undefined' ? LV_ORDER : null)) + '</tbody></table></div>';
+
+    if (cd) {
+      html += '<div class="card"><div class="sec" style="margin-top:0">연산 진단</div>' +
+        '<div style="font-weight:900;font-size:15px;color:var(--g-blue)">' + esc(cd.grade) + ' · ' + esc(cd.lvText) +
+        ' <span style="color:var(--muted);font-size:12px;font-weight:700">(' + (CALC.length - calcWrong) + '/' + CALC.length + ')</span></div>' +
+        (cd.patterns && cd.patterns.length
+          ? '<div style="margin-top:6px;color:#b45309;font-size:12.5px;font-weight:800">눈에 띄는 실수: ' + cd.patterns.map(esc).join(' · ') + '</div>'
+          : '') +
+        '<div class="tx" style="margin-top:8px;color:#334155;font-size:12.5px;font-weight:600;line-height:1.75">' + esc(cd.comment) + '</div></div>';
+    }
+
+    // 강의가 없으므로 해설 영상 열 대신 글 해설을 싣는다. 틀린 문항을 먼저 보여 준다.
+    if (wrong.length) {
+      html += '<div class="card"><div class="sec" style="margin-top:0">틀린 문항 해설 <small>' + wrong.length + '개</small></div>' +
+        '<table class="tbl"><thead><tr><th>번호</th><th>유형</th><th>정답</th><th>해설</th></tr></thead><tbody>' +
+        wrong.map(function(q){
+          return '<tr class="wrongrow"><td style="font-weight:900;color:var(--no)">' + q.id + '</td>' +
+            '<td>' + esc(q.tp) + '<div style="color:#94a3b8;font-size:11px;margin-top:2px">' + esc(q.lv) + '</div></td>' +
+            '<td style="font-weight:900">' + esc(q.a) + '</td>' +
+            '<td class="solcell">' + esc(q.sol) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+
+    html += '<div class="card"><div class="sec" style="margin-top:0">전체 문항 정답과 해설</div>' +
+      '<table class="tbl"><thead><tr><th>번호</th><th>O X</th><th>분류</th><th>유형</th><th>정답</th><th>해설</th></tr></thead><tbody>' +
+      QS.map(function(q, i){
+        var good = qMark[i] === true;
+        return '<tr' + (good ? '' : ' class="wrongrow"') + '><td style="font-weight:900">' + q.id + '</td>' +
+          '<td class="' + (good ? 'o' : 'x') + '">' + (good ? '○' : '✗') + '</td>' +
+          '<td>' + esc(q.t) + '</td><td>' + esc(q.tp) + '</td>' +
+          '<td style="font-weight:900">' + esc(q.a) + '</td>' +
+          '<td class="solcell">' + esc(q.sol) + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    html += '<div class="card"><div class="sec" style="margin-top:0">연산 정답</div>' +
+      '<table class="tbl"><thead><tr><th>구분</th><th>식</th><th>정답</th><th>유형</th><th>O X</th></tr></thead><tbody>' +
+      CALC.map(function(c, i){
+        var good = cMark[i] === true;
+        return '<tr' + (good ? '' : ' class="wrongrow"') + '><td>' + esc(c.no) + '</td>' +
+          '<td style="font-weight:900">' + esc(c.e) + '</td><td style="font-weight:900">' + esc(c.a) + '</td>' +
+          '<td>' + esc(c.tp) + '</td><td class="' + (good ? 'o' : 'x') + '">' + (good ? '○' : '✗') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    $('resultView').innerHTML = html;
+    $('resultView').classList.remove('hidden');
+    $('gradeView').classList.add('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  $('doneBtn').addEventListener('click', showResult);
+  $('printBtn').addEventListener('click', function(){ window.print(); });
+  $('resetBtn').addEventListener('click', function(){
+    qMark = {}; cMark = {};
+    $('resultView').classList.add('hidden');
+    $('gradeView').classList.remove('hidden');
+    draw(); refresh(); window.scrollTo(0, 0);
+  });
+
+  draw();
+  refresh();
+})();
+</script>
+</body>
+</html>

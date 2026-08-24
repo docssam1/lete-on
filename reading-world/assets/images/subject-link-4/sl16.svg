@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Art from a Urinal">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<rect x="120" y="110" width="560" height="300" rx="10" fill="none" stroke="#66bb6a" stroke-width="6"/>
+<rect x="330" y="300" width="140" height="120" rx="8" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M348 300q-14-120 52-120t52 120z" fill="#f5efe2" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="400" cy="250" rx="34" ry="20" fill="#66bb6a" stroke="#2d3748" stroke-width="7"/>
+<path d="M120 440h560" stroke="#2d3748" stroke-width="9"/>
+<rect x="540" y="150" width="120" height="80" rx="6" fill="none" stroke="#1b5e20" stroke-width="7"/>
+<rect x="150" y="170" width="110" height="140" rx="6" fill="none" stroke="#1b5e20" stroke-width="7"/>
+<path d="M556 268h88M556 292h60" stroke="#66bb6a" stroke-width="7"/>
+</g>
+</svg>

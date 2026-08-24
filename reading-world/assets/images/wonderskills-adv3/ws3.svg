@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Power of Laughter">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<circle cx="300" cy="270" r="140" fill="#f3d34e" stroke="#2d3748" stroke-width="10"/>
+<path d="M246 232q18-26 38 0M316 232q18-26 38 0" fill="none" stroke="#2d3748" stroke-width="11"/>
+<path d="M222 296q78 92 156 0z" fill="#2d3748"/>
+<path d="M470 200q40 70 0 140M534 168q66 102 0 204M598 136q92 134 0 268" fill="none" stroke="#0052cc" stroke-width="10" opacity=".8"/>
+</g>
+</svg>

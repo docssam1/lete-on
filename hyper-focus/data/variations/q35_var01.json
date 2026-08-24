@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q35",
+  "variationId": "q35_var01",
+  "subType": "line_order",
+  "status": "draft",
+  "source": {"problemImage": "./assets/svg/variations/q35_var01.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q35.json", "hfDataTypeId": 35},
+  "problem": {"prompt": "윤아, 도윤, 서준, 하린, 민재가 달리기를 하고 있습니다. 조건을 보고 4등으로 달리고 있는 사람의 이름을 쓰세요."},
+  "machineReadable": {
+    "payloadType": "line_order",
+    "participants": ["윤아", "도윤", "서준", "하린", "민재"],
+    "conditions": [
+      "하린은 윤아보다 뒤, 민재보다 앞에서 달리고 있습니다.",
+      "민재보다 앞에 있는 사람 수와 뒤에 있는 사람 수는 같습니다.",
+      "서준 바로 뒤에는 도윤이 달리고 있습니다."
+    ],
+    "relations": [
+      {"type": "between_in_front_order", "person": "하린", "beforePerson": "윤아", "afterPerson": "민재"},
+      {"type": "equal_ahead_behind", "person": "민재"},
+      {"type": "immediately_behind", "person": "도윤", "aheadPerson": "서준"}
+    ],
+    "queryRank": 4,
+    "solvingModel": {"uniqueOrder": ["윤아", "하린", "민재", "서준", "도윤"], "validOrderCount": 1, "expectedAnswer": "서준"}
+  },
+  "answerValidation": {"answerType": "name", "expectedAnswer": "서준"},
+  "solutionHint": "앞뒤 사람 수가 같은 민재를 가운데인 3등에 놓습니다. 그러면 윤아, 하린은 1등과 2등이고, 바로 붙어 달리는 서준, 도윤은 4등과 5등입니다. 4등은 서준입니다."
+}

@@ -1,10 +1,21 @@
-name: Deploy Reading World to GitHub Pages
+name: Deploy Lete-on apps to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
+      - 'fields-classic/**'
+      - 'hselementary/**'
+      - 'geometry/**'
+      - 'hyper-focus/**'
+      - 'number_magic/**'
+      - 'personality/**'
+      - 'premier/**'
       - 'reading-world/**'
+      - 'roadmap/**'
+      - 'vocab-quiz/**'
+      - 'world-explorer/**'
+      - 'yubin-yujun-store/**'
       - '.github/pages-index.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
@@ -26,10 +37,34 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Stage site (app under /reading-world, landing menu at root)
+      - name: Stage sites and landing menu
         run: |
+          mkdir -p _site/fields-classic
+          mkdir -p _site/hselementary
+          mkdir -p _site/geometry
+          mkdir -p _site/hyper-focus
+          mkdir -p _site/number_magic
+          mkdir -p _site/personality
+          mkdir -p _site/premier
           mkdir -p _site/reading-world
+          mkdir -p _site/roadmap
+          mkdir -p _site/vocab-quiz
+          mkdir -p _site/world-explorer
+          mkdir -p _site/yubin-yujun-store
+          cp -R fields-classic/. _site/fields-classic/
+          cp -R hselementary/. _site/hselementary/
+          cp -R geometry/. _site/geometry/
+          cp -R hyper-focus/. _site/hyper-focus/
+          cp -R number_magic/. _site/number_magic/
+          cp -R personality/. _site/personality/
+          cp -R premier/. _site/premier/
+          rm -rf _site/premier/qa
+          test ! -e _site/premier/qa
           cp -R reading-world/. _site/reading-world/
+          cp -R roadmap/. _site/roadmap/
+          cp -R vocab-quiz/. _site/vocab-quiz/
+          cp -R world-explorer/. _site/world-explorer/
+          cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp .github/pages-index.html _site/index.html
           cp reading-world/robots.txt _site/robots.txt
       - name: Configure Pages

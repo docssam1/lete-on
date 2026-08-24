@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws6'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws6'] = {
   chapter: null, page: null,
   title: "The Science of Sleep",
   theme: "Sleep is an active process during which the brain consolidates memories and the body restores itself, making quality sleep essential for learning and health.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws6.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -50,7 +51,7 @@ window.LESSONS['ws6'] = {
     title: "The Night Before the Test",
     passage: [
       "At eleven o'clock the night before his science test, Daniel sat at his desk with notes spread in every direction. He had been studying for three hours, but he still had thirty pages left. When his older sister Maya knocked on the door, he barely looked up. \"You should sleep,\" she said simply. Daniel shook his head. \"I haven't finished.\" Maya stepped inside and pulled up a chair. She knew this argument. She had made the same mistake before — staying up past midnight and arriving at tests with a heavy head and a cloudy memory.",
-      "\"Your brain consolidates what you learn during REM sleep,\" Maya told him. \"If you cut your sleep short, those memories stay fragile — easy to forget the moment the pressure hits.\" Daniel looked at his remaining notes. \"So thirty pages now, or eight hours of brain processing?\" Maya pulled out her own test scores from the year before — two columns, one from nights she had stayed up late, one from nights she had slept well. The difference was clear. \"One good night of sleep is worth more than two extra hours of studying at midnight,\" she said. Daniel stared at the two columns for a long moment, then closed his notebook.",
+      "\"Sleep is not one thing,\" Maya told him. \"It runs in a cycle of about ninety minutes, and every cycle moves through several stages. In the deepest stage your body repairs itself and releases the hormone that helps it restore. At the end comes REM, rapid eye movement, the stage where most dreaming happens and where your brain consolidates what you learned that day. Sleep deprivation does not announce itself either. You feel alert for an hour, and then you crash. Cut the night short and REM is the part you lose first, so those memories stay fragile — easy to forget the moment the pressure hits.\" Daniel looked at his remaining notes. \"So thirty pages now, or eight hours of brain processing?\" Maya pulled out her own test scores from the year before — two columns, one from nights she had stayed up late, one from nights she had slept well. The difference was clear. \"One good night of sleep is worth more than two extra hours of studying at midnight,\" she said. \"And it is not only the duration that counts. Keep the same pattern every night and your body learns to expect it.\" Daniel stared at the two columns for a long moment, then closed his notebook.",
       "He set his alarm thirty minutes early and turned off the light. Sleep washed through Daniel's mind like a slow tide, carrying the day's lessons to somewhere safe and permanent. When his alarm rang, he reviewed his notes quickly — and was surprised by how much he already knew. During the test, answers came with a clarity he had not expected. That afternoon, he sent Maya a single message: 'You were right.' She replied with a sleeping emoji. Daniel smiled. He had studied hard. But that night, his brain had quietly done the rest of the work for him."
     ],
     questions: [

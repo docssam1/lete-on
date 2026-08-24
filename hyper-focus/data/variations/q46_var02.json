@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q46",
+  "variationId": "q46_var02",
+  "subType": "reverse_story",
+  "status": "verified",
+  "presentation": { "mode": "text-only", "answerUnit": "개" },
+  "source": { "problemImage": "" },
+  "contentBinding": { "canonicalSource": "./canonical/q46.json", "hfDataTypeId": 46 },
+  "machineReadable": {
+    "payloadType": "reverse_story",
+    "initialAction": "give_half",
+    "secondAction": "eat_half_of_remaining",
+    "finalCount": 5,
+    "reverseStates": [5, 10, 20],
+    "expectedAnswer": 20
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 20 },
+  "problem": {
+    "prompt": "민호는 구슬 몇 개를 가지고 있었습니다. 그중에서 반은 친구에게 주고, 남은 구슬의 반을 상자에 넣었더니 손에 5개가 남았습니다. 처음에 민호가 가지고 있던 구슬은 모두 몇 개입니까?"
+  },
+  "solutionHint": "마지막 5개에서 거꾸로 생각합니다. 상자에 넣기 전에는 5×2=10개, 친구에게 주기 전에는 10×2=20개였습니다."
+}

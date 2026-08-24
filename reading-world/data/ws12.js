@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws12'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws12'] = {
   page: null,
   title: 'The Art of Illusion',
   theme: 'How optical illusions reveal the way the brain interprets what we see',
-  image: '',
+  image: 'assets/images/wonderskills-adv3/ws12.svg',
   rewardPoints: { lessonComplete: 40 },
   words: [
     ['illusion', 'something that appears to be real or true but is not', '착각, 환상', '错觉'],

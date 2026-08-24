@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">크고 작은 삼각형 세기 1</title>
+  <desc id="desc">꼭짓점에서 내려오는 선 4개와 가로줄 2줄로 이루어진 삼각형</desc>
+  <rect width="720" height="420" fill="#fff"/>
+  <g fill="none" stroke="#1f2e42" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M360 54 L112 346 L608 346 Z"/>
+    <path d="M360 54 L277.33 346"/>
+    <path d="M360 54 L442.67 346"/>
+    <path d="M236 200 H484"/>
+  </g>
+  <rect x="584" y="252" width="82" height="58" rx="8" fill="#fff" stroke="#b7c5d5" stroke-width="3"/>
+  <text x="674" y="290" fill="#1f2e42" font-family="Arial, sans-serif" font-size="26" font-weight="700">개</text>
+</svg>

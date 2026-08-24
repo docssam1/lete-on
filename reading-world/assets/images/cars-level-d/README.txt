@@ -1,0 +1,1 @@
+Generated CARS D illustration assets. Passage text remains live HTML; special-question box text comes from private OCR/source metadata.

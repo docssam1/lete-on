@@ -20,6 +20,10 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .top-language{margin:0!important;min-width:206px;align-self:center}
 .top-language button{white-space:nowrap}
 .action-grid{align-items:stretch}
+.action-grid.vocabulary-only{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1120px){.action-grid.vocabulary-only{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.action-grid.vocabulary-only{grid-template-columns:1fr}}
+@media(max-width:680px){.panel-head{align-items:stretch;flex-direction:column}.panel-head .segmented{width:100%}}
 .action{min-height:214px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;overflow:hidden}
 .action .emoji{line-height:1;margin-bottom:14px}
 .action h3{margin:0 0 8px;line-height:1.25;white-space:nowrap}
@@ -320,6 +324,8 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 
 /* v30: Reading Town hub + lesson path */
 .town{min-height:100vh;padding:22px clamp(14px,4vw,44px) 48px;background:var(--bg)}
+/* Give the map page slimmer side gutters so the town itself gets the width. */
+.game-town{padding-left:clamp(10px,2vw,24px);padding-right:clamp(10px,2vw,24px)}
 .town-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
 .town-brand{font-weight:900;letter-spacing:.02em;font-size:20px;color:#235f43;display:flex;align-items:center;gap:9px;min-width:0}
 .town-brand small{display:block;font-size:12px;color:#6a7a6f;font-weight:700;letter-spacing:.05em}
@@ -452,9 +458,11 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .av-prev{width:auto;height:auto;background:transparent}
 
 /* v37: Phaser town (Gfield Reading Town game view) */
-.game-town{max-width:none}
-.town-stage-wrap{position:relative;margin:12px auto 0;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14);width:min(100%,calc((100vh - 245px)*1.6))}
-#town-stage{width:100%;aspect-ratio:960/600;display:block;touch-action:none}
+.game-town{max-width:none;min-height:100dvh;padding-bottom:18px}
+/* The map keeps the Phaser world's 1207x837 ratio. JavaScript narrows this
+   wrapper when a short viewport would otherwise hide the bottom of the town. */
+.town-stage-wrap{position:relative;margin:12px auto 0;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14);width:min(100%,1500px);max-width:100%}
+#town-stage{width:100%;aspect-ratio:1207/837;display:block;touch-action:none}
 #town-stage canvas{display:block;width:100%!important;height:100%!important;border-radius:18px}
 /* Map zoom (+/-) — top-right corner, clear of every building hotspot. */
 .town-zoom{position:absolute;top:10px;right:10px;z-index:5;display:flex;flex-direction:column;gap:6px}
@@ -966,3 +974,11 @@ textarea.nb-in{resize:vertical}
 .voice-help .vh-x{flex:0 0 auto;background:none;border:none;color:#cbd5cd;font-size:14px;cursor:pointer;padding:2px 4px}
 @media(max-width:560px){.voice-help{flex-wrap:wrap}.voice-help .vh-msg{flex:1 1 100%}}
 @media print{.lib-town{display:none!important}}
+
+/* Breadcrumb: the book segment navigates back to that book's lesson list, so it
+   has to read and behave like a link rather than the plain text it used to be. */
+.crumb{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.crumb-link{border:none;background:none;padding:0;font-size:14px;color:#6a7a6f;cursor:pointer;border-bottom:1px solid transparent;transition:.16s}
+.crumb-link:hover{color:#235f43;border-bottom-color:#b9ddc7}
+.crumb-link:focus-visible{outline:2px solid #2f8a5c;outline-offset:2px;border-radius:3px}
+.crumb-sep{color:#a9b5ad}

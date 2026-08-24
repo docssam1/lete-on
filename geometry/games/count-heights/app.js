@@ -17,7 +17,11 @@ const elements = {
   modelMode: $("#modelMode"),
   topMode: $("#topMode"),
   modelPrompt: $("#modelPrompt"),
+  topBoardFrame: $("#topBoardFrame"),
   topBoard: $("#topBoard"),
+  topHintRight: $("#topHintRight"),
+  topHintBottom: $("#topHintBottom"),
+  edgeHints: $("#edgeHints"),
   additionLine: $("#additionLine"),
   totalDisplay: $("#totalDisplay"),
   totalValue: $("#totalValue"),
@@ -67,6 +71,13 @@ const state = {
 
 const tutorialStorageKey = "gfield-count-heights-tutorial-v1";
 const tutorialKeys = ["tutorialCount1", "tutorialCount2", "tutorialCount3"];
+
+// Textbook-style "수 쓰기" edge hints: the max height per column/row (read
+// off the 앞/오른쪽 옆 views) shown along the bottom/right of the top board.
+// Off by default so kids solve from the model first; the child's choice
+// persists across problems/sessions.
+const edgeHintsStorageKey = "gfield-count-heights-edge-hints";
+state.edgeHintsVisible = localStorage.getItem(edgeHintsStorageKey) === "true";
 
 const currentProblem = () => levels[state.levelIndex].problems[state.problemIndex];
 const cellKey = (x, z) => `${x},${z}`;
@@ -231,6 +242,7 @@ function loadProblem() {
   state.wrongAttempts = 0;
   state.solved = false;
   initializeExample();
+  applyEdgeHints();
   updateProgress();
   renderTopBoard();
   renderAnswers();
@@ -242,6 +254,15 @@ function loadProblem() {
   if (shouldShowConceptTutorial()) openConceptTutorial();
 }
 
+// The edge-hint toggle only makes sense in "top" mode (writing on the flat
+// board) — hide it in "model" mode instead of leaving a dead button around.
+function applyEdgeHints() {
+  elements.topBoardFrame.classList.toggle("show-edge-hints", state.edgeHintsVisible);
+  elements.edgeHints.classList.toggle("active", state.edgeHintsVisible);
+  elements.edgeHints.setAttribute("aria-pressed", String(state.edgeHintsVisible));
+  elements.edgeHints.hidden = state.mode !== "top";
+}
+
 function setMode(mode) {
   state.mode = mode;
   elements.modelMode.classList.toggle("active", mode === "model");
@@ -251,11 +272,15 @@ function setMode(mode) {
   elements.modelPrompt.hidden = mode !== "model";
   elements.topBoard.hidden = false;
   elements.topBoard.classList.toggle("read-only", mode === "model");
+  applyEdgeHints();
   renderTopBoard();
   renderModel();
   renderAnswers();
   renderNumberPad();
   updatePrompt();
+  // Switching into the top-board view can change its box (model-prompt no
+  // longer overlaps it), so re-measure once that layout settles.
+  requestAnimationFrame(fitTopBoard);
   controls.enabled = true;
   $$(".camera-tools button").forEach((button) => {
     button.disabled = false;
@@ -289,13 +314,19 @@ function selectTotal() {
 
 function renderTopBoard() {
   const [width, depth] = currentProblem().board;
+  const heights = currentProblem().heights;
   elements.topBoard.style.setProperty("--cols", width);
-  elements.topBoard.style.setProperty("--cell-size", width >= 4 ? "20px" : width === 3 ? "26px" : "34px");
+  elements.topBoard.dataset.cols = String(width);
+  elements.topBoard.dataset.rows = String(depth);
+  // Hint strips are siblings of the board (not descendants), so the column
+  // and row counts they read via CSS var inheritance live on the frame.
+  elements.topBoardFrame.style.setProperty("--cols", width);
+  elements.topBoardFrame.style.setProperty("--rows", depth);
   elements.topBoard.replaceChildren();
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
       const key = cellKey(x, z);
-      const height = currentProblem().heights[z][x];
+      const height = heights[z][x];
       const button = document.createElement("button");
       button.type = "button";
       button.className = "top-cell";
@@ -319,6 +350,72 @@ function renderTopBoard() {
       elements.topBoard.append(button);
     }
   }
+  renderEdgeHintCells(width, depth, heights);
+  // Cells are built at their natural size first; measure once layout settles
+  // so fitTopBoard reads real box dimensions instead of a pre-paint 0x0.
+  requestAnimationFrame(fitTopBoard);
+}
+
+// 교재식 "수 쓰기" hint strips: the bottom strip mirrors what the 앞에서 본
+// 모양 (front view) tells you — the tallest column in each x — and the right
+// strip mirrors the 오른쪽 옆에서 본 모양 (right-side view) — the tallest
+// column in each z. Always rendered; visibility is purely a CSS toggle so
+// there's nothing to recompute when the child flips the hint switch.
+function renderEdgeHintCells(width, depth, heights) {
+  elements.topHintBottom.replaceChildren();
+  for (let x = 0; x < width; x += 1) {
+    let max = 0;
+    for (let z = 0; z < depth; z += 1) max = Math.max(max, heights[z][x]);
+    const cell = document.createElement("span");
+    cell.className = "hint-cell";
+    cell.textContent = String(max);
+    elements.topHintBottom.append(cell);
+  }
+  elements.topHintRight.replaceChildren();
+  for (let z = 0; z < depth; z += 1) {
+    const max = Math.max(0, ...heights[z]);
+    const cell = document.createElement("span");
+    cell.className = "hint-cell";
+    cell.textContent = String(max);
+    elements.topHintRight.append(cell);
+  }
+}
+
+// Picks the largest square cell that fits the measured top-board box, so
+// kids get finger-sized targets instead of the old fixed 20-34px cells.
+// When the edge hints are showing, the frame becomes a real (display:grid)
+// box that wraps the board plus the two hint strips, so the fit must solve
+// for (cols+1) x (rows+1) tracks against the FRAME's box, not the board's.
+function fitTopBoard() {
+  const board = elements.topBoard;
+  const frame = elements.topBoardFrame;
+  const hintsVisible = frame.classList.contains("show-edge-hints");
+  // Which element carries the STABLE available box:
+  //  - hints hidden: the frame is display:contents, so the board itself
+  //    (width/height:100% of its layout slot) is the right thing to read.
+  //  - hints visible: the frame is a shrink-to-fit grid, so its own client
+  //    box is a FUNCTION of the current --cell-size — measuring it would be
+  //    circular and ratchet the cells down on every call. Read its parent
+  //    (the layout slot), whose size never depends on --cell-size.
+  const box = hintsVisible ? frame.parentElement : board;
+  if (board.hidden || !box || !box.clientWidth || !box.clientHeight) return;
+  const cols = Number(board.dataset.cols) || 1;
+  const rows = Number(board.dataset.rows) || 1;
+  const totalCols = hintsVisible ? cols + 1 : cols;
+  const totalRows = hintsVisible ? rows + 1 : rows;
+  const computed = getComputedStyle(board);
+  const padX = parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight);
+  const padY = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
+  const gap = parseFloat(computed.gap || computed.columnGap) || 0;
+  // The hint strips sit 5px clear of the board (.top-hint-* margins).
+  const strip = hintsVisible ? 5 : 0;
+  const cellFromWidth = (box.clientWidth - padX - strip - (totalCols - 1) * gap) / totalCols;
+  const cellFromHeight = (box.clientHeight - padY - strip - (totalRows - 1) * gap) / totalRows;
+  let cell = Math.floor(Math.min(cellFromWidth, cellFromHeight));
+  cell = Math.max(24, Math.min(108, cell));
+  // Set on the frame (an ancestor of the board either way) so both the board
+  // and the hint strips inherit the same --cell-size.
+  frame.style.setProperty("--cell-size", `${cell}px`);
 }
 
 function renderAnswers() {
@@ -894,6 +991,12 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 });
 
 new ResizeObserver(resizeScene).observe(elements.scene);
+// Separate observer for the top-board: orientation changes and on-screen
+// keyboard/toolbar shifts resize it independently of the 3D scene. Also
+// watch the frame itself, since with the edge hints showing IT is the box
+// fitTopBoard measures, and its size can change independently of the board.
+new ResizeObserver(fitTopBoard).observe(elements.topBoard);
+new ResizeObserver(fitTopBoard).observe(elements.topBoardFrame);
 function animate() {
   // Gently drifting sun, matching copy-build's living "sunlight".
   const time = performance.now() * 0.001;
@@ -907,6 +1010,12 @@ animate();
 
 elements.modelMode.addEventListener("click", () => setMode("model"));
 elements.topMode.addEventListener("click", () => setMode("top"));
+elements.edgeHints.addEventListener("click", () => {
+  state.edgeHintsVisible = !state.edgeHintsVisible;
+  localStorage.setItem(edgeHintsStorageKey, String(state.edgeHintsVisible));
+  applyEdgeHints();
+  requestAnimationFrame(fitTopBoard);
+});
 elements.conceptNext.addEventListener("click", advanceConceptTutorial);
 elements.totalDisplay.addEventListener("click", selectTotal);
 elements.hint.addEventListener("click", giveHint);

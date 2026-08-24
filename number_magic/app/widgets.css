@@ -363,6 +363,280 @@
 .nm-w-fallback .nm-numpad{max-width:260px;width:100%;}
 
 /* ══════════════════════════════════════
+   MATCHLINE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-ml-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:8px 4px;
+}
+.nm-ml-arena{
+  position:relative;
+  display:flex;gap:40px;justify-content:center;align-items:flex-start;
+  padding:8px 12px;
+}
+.nm-ml-lines{
+  position:absolute;inset:0;
+  pointer-events:none;overflow:visible;
+}
+.nm-ml-col{display:flex;flex-direction:column;gap:10px;}
+.nm-ml-card{
+  width:64px;height:64px;
+  border-radius:18px;
+  border:2.5px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  display:grid;place-items:center;
+  box-shadow:0 4px 0 #e0dbd2;
+  transition:transform .15s,border-color .15s,background .15s,box-shadow .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-ml-num{font-size:32px;font-weight:900;color:var(--blue-deep);}
+.nm-ml-dot{color:var(--blue-deep);}
+.nm-ml-dots{width:42px;height:42px;}
+.nm-ml-tally{width:44px;height:44px;}
+.nm-ml-tally line{stroke:var(--blue-deep);stroke-width:3;stroke-linecap:round;}
+.nm-ml-card.sel{
+  border-color:var(--gold-deep);
+  background:linear-gradient(145deg,#fff6e6,#fbeccd);
+  transform:translateY(-4px);
+  box-shadow:0 8px 0 #e2c893;
+}
+.nm-ml-card.matched{
+  border-color:var(--ok);background:#eafaf1;
+  pointer-events:none;color:var(--ok);
+  animation:tc-pop .3s ease;
+}
+.nm-ml-line{
+  fill:none;
+  stroke:#8A5CD0;stroke-width:4.5;stroke-linecap:round;
+  stroke-dasharray:2 10;
+  opacity:0;transform-origin:center;
+  animation:ml-appear .32s ease forwards;
+}
+@keyframes ml-appear{from{opacity:0}to{opacity:.9}}
+
+/* ══════════════════════════════════════
+   GRIDPAINT WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-gp-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:8px 4px;
+}
+.nm-gp-goal{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:800;color:var(--gold-deep);}
+.nm-gp-goal-n{font-size:24px;font-weight:900;color:var(--blue-deep);}
+.nm-gp-rowline{display:flex;align-items:center;gap:10px;max-width:100%;}
+/* 서수(왼쪽에서 몇째) 줄은 절대 줄바꿈 금지 — 넘치면 칸을 줄이고, 그래도 넘치면 가로 스크롤 */
+.nm-gp-row.oneline{
+  flex-wrap:nowrap;max-width:100%;width:100%;gap:4px;justify-content:center;padding:2px;
+}
+/* 칸이 적으면 크게(최대 52px), 9칸까지 늘어나면 자동으로 줄어들어 항상 한 화면에 */
+.nm-gp-row.oneline .nm-gp-cell{
+  flex:1 1 0;min-width:0;max-width:52px;height:auto;aspect-ratio:1/1;
+}
+.nm-gp-arrow{font-size:26px;animation:gp-point 1s ease-in-out infinite;}
+.nm-gp-arrow.flip{transform:scaleX(-1);}
+@keyframes gp-point{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.nm-gp-arrow.flip{animation:gp-point-flip 1s ease-in-out infinite;}
+@keyframes gp-point-flip{0%,100%{transform:scaleX(-1) translateX(0)}50%{transform:scaleX(-1) translateX(4px)}}
+.nm-gp-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:320px;}
+.nm-gp-cell{
+  width:52px;height:52px;border-radius:12px;
+  border:2.5px solid var(--line);background:#fff;
+  cursor:pointer;transition:transform .15s,background .15s,border-color .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-gp-cell.on{
+  background:linear-gradient(145deg,var(--gold-bright),var(--gold-deep));
+  border-color:var(--gold-deep);transform:scale(1.08);
+  animation:tc-pop .3s ease;
+}
+.nm-gp-counter{font-size:15px;font-weight:800;color:var(--sub);}
+.nm-gp-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#fff9e0;color:var(--gold-deep);font-size:20px;font-weight:900;padding:0 8px;}
+.nm-gp-done{
+  width:56px;height:56px;border-radius:18px;border:none;
+  background:var(--blue);color:#fff;font-size:24px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 var(--blue-deep);
+  touch-action:manipulation;
+}
+.nm-gp-done:active{transform:translateY(3px);box-shadow:none;}
+
+/* ══════════════════════════════════════
+   STORYCARD WIDGET  (유아 · 수의 나라 · 생활 서수 문장제)
+══════════════════════════════════════ */
+.nm-sc-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:8px;padding:4px;width:100%;max-width:360px;margin:0 auto;
+}
+.nm-sc-replay{
+  align-self:flex-end;
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid var(--gold-deep);background:#fffbeb;
+  font-size:20px;cursor:pointer;
+  box-shadow:0 3px 0 var(--gold-deep);transition:.12s;
+  touch-action:manipulation;
+}
+.nm-sc-replay:active{transform:translateY(2px);box-shadow:none;}
+.nm-sc-scene{display:flex;justify-content:center;}
+.nm-sc-row{
+  flex-wrap:nowrap;gap:4px;max-width:100%;width:100%;justify-content:center;padding:2px;
+}
+.nm-sc-row .nm-sc-char{
+  flex:1 1 0;min-width:0;max-width:58px;height:auto;aspect-ratio:1/1;
+  font-size:clamp(18px,5.2vw,32px);
+}
+.nm-sc-char{
+  width:58px;height:58px;border-radius:16px;
+  border:2.5px solid var(--line);background:#fff;
+  font-size:32px;cursor:pointer;
+  display:grid;place-items:center;
+  box-shadow:0 4px 0 #e0dbd2;transition:transform .15s,border-color .15s,background .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-sc-char.on{
+  border-color:var(--ok);background:#eafaf1;transform:scale(1.1);
+  animation:tc-pop .3s ease;
+}
+.nm-sc-char:disabled{cursor:default;}
+.nm-sc-stairs{align-items:flex-end;gap:4px;max-width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px;}
+.nm-sc-stairs::-webkit-scrollbar{display:none}
+.nm-sc-stairs .nm-sc-stairq{flex:0 0 auto}
+.nm-sc-stairq{display:flex;flex-direction:column;align-items:center;gap:0;}
+.nm-sc-stairq-em{font-size:19px;line-height:1.15;}
+.nm-sc-stairq-bar{
+  width:22px;border-radius:5px 5px 0 0;
+  background:#f0eade;border:2px solid #e2d6c0;border-bottom:none;
+}
+.nm-sc-stairq-bar.has{background:linear-gradient(145deg,#fff6e6,#fbeccd);border-color:var(--gold-deep);}
+.nm-sc-screen{min-height:22px!important;font-size:22px!important;margin:0!important;}
+.nm-sc-pad.nm-numpad{gap:5px!important;max-width:250px!important;}
+.nm-sc-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+
+/* ══════════════════════════════════════
+   BALANCESCALE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-bs-wrap{display:flex;justify-content:center;padding:8px 4px;}
+.nm-bs-scale{position:relative;width:280px;height:118px;margin:0 auto;}
+.nm-bs-post{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:14px solid transparent;border-right:14px solid transparent;
+  border-bottom:46px solid var(--blue-deep);
+}
+.nm-bs-beam{
+  position:absolute;left:50%;top:30px;margin-left:-130px;
+  width:260px;transform-origin:center center;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:transform .4s ease;
+}
+.nm-bs-pan{
+  width:112px;min-height:60px;border-radius:14px;
+  background:#fff;border:2.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;padding:4px;box-shadow:0 4px 0 #e0dbd2;
+  touch-action:manipulation;transition:border-color .15s,background .15s,transform .15s;
+}
+.nm-bs-pan.on{border-color:var(--ok);background:#eafaf1;transform:scale(1.06);animation:tc-pop .3s ease;}
+.nm-bs-items{
+  font-size:16px;line-height:1.25;text-align:center;
+  display:flex;flex-wrap:wrap;justify-content:center;align-content:center;
+  gap:0;max-width:100px;max-height:46px;overflow:hidden;
+}
+
+/* ══════════════════════════════════════
+   NUMBERMACHINE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-nm-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px;max-width:360px;margin:0 auto;}
+.nm-nm-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+.nm-nm-io{
+  min-width:44px;height:44px;padding:0 8px;border-radius:12px;
+  background:#fff;border:2px solid var(--line);
+  display:grid;place-items:center;font-size:20px;font-weight:900;color:var(--blue-deep);
+}
+.nm-nm-io.out.ask{background:#fffaf0;border-color:var(--gold-deep);border-style:dashed;color:var(--gold-deep);}
+.nm-nm-arrow{font-size:16px;color:#9aa2b1;}
+.nm-nm-machine{
+  min-width:48px;height:44px;padding:0 8px;border-radius:12px;
+  background:linear-gradient(145deg,#eef3fb,#dbe6f5);border:2px solid #cdddf3;
+  display:grid;place-items:center;font-size:22px;
+}
+.nm-nm-rule{font-size:17px;font-weight:900;color:var(--blue);}
+.nm-nm-row.ask .nm-nm-io.in{border-color:var(--blue);}
+.nm-nm-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
+.nm-nm-pad.nm-numpad{gap:5px!important;max-width:250px!important;}
+.nm-nm-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+
+/* ══════════════════════════════════════
+   CROSSSUM WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-cs-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 4px;}
+.nm-cs-cross{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.nm-cs-mid{display:flex;align-items:center;gap:6px;}
+.nm-cs-cell{
+  width:56px;height:56px;border-radius:14px;
+  background:#fff;border:2.5px solid var(--line);
+  display:grid;place-items:center;font-size:24px;font-weight:900;color:var(--blue-deep);
+}
+.nm-cs-cell.ask{background:#fffaf0;border-color:var(--gold-deep);border-style:dashed;color:var(--gold-deep);}
+.nm-cs-cell.found{background:#eafaf1;border-color:var(--ok);color:var(--ok);border-style:solid;animation:tc-pop .3s ease;}
+.nm-cs-plus{font-size:22px;color:#9aa2b1;width:24px;text-align:center;}
+.nm-cs-choices{display:flex;gap:14px;justify-content:center;}
+
+/* ══════════════════════════════════════
+   SORTBASKET WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-sb-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:6px 4px;max-width:340px;margin:0 auto;}
+.nm-sb-scatter{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:50px;}
+.nm-sb-chip{
+  width:50px;height:50px;border-radius:14px;
+  background:#fff;border:2.5px solid var(--line);
+  font-size:26px;cursor:pointer;display:grid;place-items:center;
+  box-shadow:0 3px 0 #e0dbd2;transition:transform .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-sb-chip:active{transform:scale(.9);}
+.nm-sb-baskets{display:flex;gap:16px;}
+.nm-sb-basket{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:70px;padding:10px 12px;border-radius:16px;
+  background:#fdfbf5;border:2px dashed var(--line);
+}
+.nm-sb-basket-em{font-size:28px;}
+.nm-sb-basket-cnt{font-size:17px;font-weight:900;color:var(--blue-deep);}
+.nm-sb-basket.tappable{cursor:pointer;border-style:solid;touch-action:manipulation;transition:transform .15s,border-color .15s,background .15s;}
+.nm-sb-basket.tappable:active{transform:scale(.95);}
+.nm-sb-basket.on{border-color:var(--ok);background:#eafaf1;animation:tc-pop .3s ease;}
+.nm-sb-choices{display:flex;gap:14px;justify-content:center;}
+
+/* ══════════════════════════════════════
+   TALLYBUILD WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-tb-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:6px 4px;}
+.nm-tb-goal{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:800;color:var(--gold-deep);}
+.nm-tb-goal-n{font-size:24px;font-weight:900;color:var(--blue-deep);}
+.nm-tb-board{
+  width:220px;height:100px;border-radius:16px;
+  background:#fdfbf5;border:2px dashed var(--line);
+  cursor:pointer;touch-action:manipulation;padding:0;
+}
+.nm-tb-svg{width:100%;height:100%;}
+.nm-tb-svg line{stroke:var(--blue-deep);stroke-width:4;stroke-linecap:round;}
+.nm-tb-controls{display:flex;gap:14px;}
+.nm-tb-undo{
+  width:52px;height:52px;border-radius:16px;border:2px solid var(--line);
+  background:#fff;font-size:22px;color:var(--sub);cursor:pointer;
+  box-shadow:0 4px 0 #e0dbd2;touch-action:manipulation;
+}
+.nm-tb-done{
+  width:52px;height:52px;border-radius:16px;border:none;
+  background:var(--blue);color:#fff;font-size:22px;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 0 var(--blue-deep);touch-action:manipulation;
+}
+.nm-tb-undo:active,.nm-tb-done:active{transform:translateY(2px);box-shadow:none;}
+.nm-tb-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
+.nm-tb-pad.nm-numpad{gap:5px!important;max-width:250px!important;margin-top:8px;}
+.nm-tb-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){

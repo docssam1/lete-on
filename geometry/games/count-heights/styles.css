@@ -61,7 +61,7 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
 
 .languages { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .languages button, .camera-tools button, .view-switch button, .action-bar button,
-.progress-box button, .speech-bubble button, .dialog button {
+.progress-box button, .speech-bubble button, .dialog button, .edge-hints-toggle {
   border: 1px solid var(--line);
   background: rgba(255,255,255,.9);
   border-radius: 7px;
@@ -102,6 +102,14 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
 }
 .view-switch button { border: 0; border-radius: 5px; background: transparent; min-width: 150px; padding: 10px 16px; font-weight: 800; cursor: pointer; }
 .view-switch button.active { color: white; background: var(--mint-strong); }
+
+/* Wraps .view-switch plus the edge-hints toggle so the toggle can sit beside
+   the tabs without joining their 2-column grid (which is sized for exactly
+   the model/top buttons). */
+.view-switch-row { display: flex; align-items: center; gap: 8px; }
+.edge-hints-toggle { white-space: nowrap; }
+.edge-hints-toggle.active { color: white; background: var(--mint-strong); border-color: var(--mint-strong); }
+.edge-hints-toggle[hidden] { display: none; }
 
 .play-grid {
   display: grid;
@@ -184,7 +192,10 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
 .top-board {
   --cols: 3;
   display: grid;
-  grid-template-columns: repeat(var(--cols), minmax(48px, 72px));
+  /* --cell-size is computed by fitTopBoard() in app.js, which measures the
+     real box so cells stay >=40px on phones instead of a fixed tiny size. */
+  grid-template-columns: repeat(var(--cols), var(--cell-size, 48px));
+  grid-auto-rows: var(--cell-size, 48px);
   justify-content: center;
   gap: 5px;
   min-height: 184px;
@@ -192,12 +203,58 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
   padding: 16px;
 }
 .top-board[hidden], .model-prompt[hidden] { display: none; }
+
+/* Wraps the top-board plus its two edge-hint strips. Default state is
+   display:contents so, with hints off (the common case), the board renders
+   exactly as if it were still a direct child of .input-canvas — none of the
+   many per-breakpoint .top-board rules elsewhere in this file need to change.
+   Only when hints are toggled on does the frame become a real 2x2 grid box:
+   [board][right strip] / [bottom strip][—]. */
+.top-board-frame { display: contents; }
+.top-board-frame.show-edge-hints {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  justify-content: center;
+  align-content: center;
+}
+.top-hint-strip { display: none; gap: 5px; }
+.top-board-frame.show-edge-hints .top-hint-strip { display: grid; }
+.top-hint-right {
+  grid-column: 2;
+  grid-row: 1;
+  grid-template-rows: repeat(var(--rows, 3), var(--cell-size, 48px));
+  align-content: center;
+  margin-left: 5px;
+}
+.top-hint-bottom {
+  grid-column: 1;
+  grid-row: 2;
+  grid-template-columns: repeat(var(--cols, 3), var(--cell-size, 48px));
+  justify-content: center;
+  margin-top: 5px;
+}
+/* Pale-blue "helper number" look, matching the textbook's light-blue hint
+   digits — visually distinct from the white/mint answer cells and clearly
+   not tappable (no pointer cursor, no hover/selected states). */
+.hint-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid #a9c9d6;
+  border-radius: 5px;
+  background: #dceef5;
+  color: #5c7f93;
+  font-weight: 700;
+  font-size: calc(var(--cell-size, 48px) * 0.5);
+}
+
 .top-cell {
   aspect-ratio: 1;
   border: 2px solid #93b7bd;
   border-radius: 5px;
   background: #eef9f8;
-  font-size: 26px;
+  font-size: calc(var(--cell-size, 48px) * 0.5);
   font-weight: 900;
   cursor: pointer;
   transition: transform .16s ease, border-color .16s ease, background .16s ease;
@@ -645,15 +702,18 @@ body {
     align-content: center;
     overflow: hidden;
   }
-  .top-cell { font-size: 15px; border-width: 1px; }
+  .top-cell { border-width: 1px; }
   .top-cell.example::after { display: none; }
 
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: minmax(78px, .74fr) minmax(72px, .72fr) 25px minmax(70px, 1fr);
+    /* Top-board row is the largest flexible track so measured cells stay
+       finger-sized; the number pad gets a smaller (still usable) share. */
+    grid-template-rows: minmax(96px, 1.6fr) minmax(58px, .55fr) 25px minmax(64px, .75fr);
   }
   .answer-panel:has(#topBoard:not([hidden])) .top-board {
-    height: auto;
-    min-height: 78px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
   }
 
   .sum-work { grid-row: 2; min-height: 0; padding: 5px 7px; }
@@ -719,9 +779,13 @@ body {
   .top-board { height: 25px; }
   .camera-tools button { font-size: 9px; }
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: minmax(67px, .7fr) minmax(60px, .65fr) 21px minmax(62px, 1fr);
+    grid-template-rows: minmax(80px, 1.6fr) minmax(48px, .5fr) 21px minmax(56px, .7fr);
   }
-  .answer-panel:has(#topBoard:not([hidden])) .top-board { min-height: 67px; }
+  .answer-panel:has(#topBoard:not([hidden])) .top-board {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
 }
 
 /* Compact activity layout shared with the Copy Build game. */
@@ -770,8 +834,13 @@ body {
   }
   .answer-panel > header h2 { display: none; }
 
+  /* The header row is only 30px tall here, so the hint toggle must shrink to
+     match the tabs instead of keeping its 38px desktop min-height —
+     otherwise it overflows the row and paints over the tab labels. */
+  .answer-panel .view-switch-row { width: 100%; gap: 4px; }
   .answer-panel .view-switch {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     height: 30px;
     padding: 2px;
     border-width: 1px;
@@ -782,6 +851,15 @@ body {
     padding: 2px 4px;
     font-size: 9px;
     line-height: 1.05;
+  }
+  .answer-panel .edge-hints-toggle {
+    flex: 0 0 auto;
+    height: 30px;
+    min-height: 0;
+    padding: 2px 7px;
+    font-size: 9px;
+    line-height: 1.05;
+    border-radius: 5px;
   }
 
   .model-prompt,
@@ -815,17 +893,17 @@ body {
   .number-pad button { height: auto; min-height: 36px; border-radius: 5px; font-size: 16px; }
 
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: 34px minmax(92px, 1fr) 52px 22px minmax(90px, .95fr);
+    grid-template-rows: 34px minmax(92px, 1.6fr) 52px 22px minmax(78px, .8fr);
   }
   .answer-panel:has(#topBoard:not([hidden])) .top-board {
     grid-row: 2;
-    height: auto;
-    min-height: 92px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     align-content: center;
     overflow: visible;
     padding: 4px;
   }
-  .top-cell { font-size: 14px; }
 
   .docssam {
     left: calc(57% - 46px);
@@ -858,10 +936,15 @@ body {
   .answer-panel { grid-template-rows: 31px 27px minmax(48px, .52fr) 19px minmax(84px, 1fr); }
   .answer-panel > header { height: 31px; }
   .answer-panel .view-switch { height: 27px; }
+  .answer-panel .edge-hints-toggle { height: 27px; }
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: 31px minmax(88px, 1fr) 48px 19px minmax(82px, .9fr);
+    grid-template-rows: 31px minmax(96px, 1.6fr) 44px 19px minmax(70px, .75fr);
   }
-  .answer-panel:has(#topBoard:not([hidden])) .top-board { min-height: 88px; }
+  .answer-panel:has(#topBoard:not([hidden])) .top-board {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
 }
 
 /* Shared writing surface: cube-top and top-view inputs always mirror one another. */
@@ -904,11 +987,23 @@ body {
 .input-canvas .model-prompt strong { font-size: 12px; }
 
 .input-canvas .top-board {
-  width: min(290px, 82%);
+  /* Was capped to min(290px, 82%), which silently ceilinged fitTopBoard()'s
+     measurement (and therefore --cell-size) on desktop no matter how much
+     room the answer panel actually had. Filling the input-canvas instead lets
+     fitTopBoard() read the real available box, then justify/align-content
+     (below) center the actual cell grid inside it. */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   min-height: 0;
   padding: 12px;
   gap: 5px;
-  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  /* This selector's specificity beats the plain .top-board rule (it always
+     wins since #topBoard is nested in .input-canvas), so it must repeat the
+     --cell-size column sizing instead of leaving the old even-fr split,
+     otherwise fitTopBoard()'s computed size never actually reaches the grid. */
+  grid-template-columns: repeat(var(--cols), var(--cell-size, 48px));
+  grid-auto-rows: var(--cell-size, 48px);
   align-content: center;
 }
 
@@ -940,16 +1035,17 @@ body {
      list containing it, which used to leave desktop-sized rows on short
      landscape screens and clipped the number pad off-screen. */
   .answer-panel {
-    grid-template-rows: 31px minmax(98px, 1fr) 40px 18px minmax(82px, .78fr);
+    grid-template-rows: 31px minmax(104px, 1.6fr) 38px 18px minmax(66px, .7fr);
     padding: 0 0 3px;
   }
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: 31px minmax(98px, 1fr) 40px 18px minmax(82px, .78fr);
+    grid-template-rows: 31px minmax(104px, 1.6fr) 38px 18px minmax(66px, .7fr);
     padding: 0 0 3px;
   }
 
   .answer-panel > header { height: 31px; }
   .answer-panel .view-switch { height: 27px; }
+  .answer-panel .edge-hints-toggle { height: 27px; }
   .answer-panel .view-switch button { font-size: 9px; }
 
   .input-canvas {
@@ -970,24 +1066,24 @@ body {
 
   .input-canvas .top-board {
     grid-row: auto;
-    width: min(29vh, 152px);
-    height: auto;
-    min-height: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     padding: 4px;
     gap: 2px;
     overflow: visible;
   }
   .answer-panel:has(#topBoard:not([hidden])) .top-board {
     grid-row: auto;
-    width: min(29vh, 152px);
-    height: auto;
-    min-height: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     padding: 4px;
     gap: 2px;
     overflow: visible;
   }
   .input-canvas:has(.model-prompt:not([hidden])) .top-board { padding-top: 4px; }
-  .top-cell { min-width: 0; border-width: 1px; border-radius: 3px; font-size: 14px; }
+  .top-cell { min-width: 0; border-width: 1px; border-radius: 3px; }
 
   .sum-work {
     grid-row: 3;
@@ -1030,16 +1126,17 @@ body {
 
 @media (orientation: landscape) and (max-height: 390px) {
   .answer-panel {
-    grid-template-rows: 29px minmax(92px, 1fr) 36px 17px minmax(76px, .75fr);
+    grid-template-rows: 29px minmax(100px, 1.6fr) 34px 17px minmax(62px, .65fr);
   }
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: 29px minmax(92px, 1fr) 36px 17px minmax(76px, .75fr);
+    grid-template-rows: 29px minmax(100px, 1.6fr) 34px 17px minmax(62px, .65fr);
   }
   .answer-panel > header { height: 29px; }
   .answer-panel .view-switch { height: 25px; }
+  .answer-panel .edge-hints-toggle { height: 25px; font-size: 8px; padding-inline: 5px; }
   .input-canvas { min-height: 92px; }
-  .input-canvas .top-board { width: min(28vh, 142px); }
-  .answer-panel:has(#topBoard:not([hidden])) .top-board { width: min(28vh, 142px); }
+  /* No vh-based width cap here anymore — the fill rules above (width/height:
+     100%) let fitTopBoard() measure the real box instead of a strangled one. */
   .total-display { height: 31px; min-height: 31px; }
 }
 
@@ -1145,12 +1242,15 @@ body {
   .play-grid { grid-template-columns: minmax(280px, 54fr) minmax(260px, 46fr); gap: 6px; }
   .viewer-panel { grid-template-rows: 32px minmax(0, 1fr); }
   .viewer-panel > header { height: 32px; }
-  /* Plain rule + :has() twin kept separate — see the :has() note above. */
+  /* Plain rule + :has() twin kept separate — see the :has() note above.
+     This pair is the one that actually wins the cascade for compact
+     landscape (it's the last-declared equal-specificity match), so the
+     top-board row weight here is what determines the real cell size. */
   .answer-panel {
-    grid-template-rows: 31px minmax(98px, 1fr) 40px minmax(82px, .78fr);
+    grid-template-rows: 31px minmax(100px, 1.6fr) 38px minmax(66px, .7fr);
   }
   .answer-panel:has(#topBoard:not([hidden])) {
-    grid-template-rows: 31px minmax(98px, 1fr) 40px minmax(82px, .78fr);
+    grid-template-rows: 31px minmax(100px, 1.6fr) 38px minmax(66px, .7fr);
   }
   /* This grid has 4 rows (the number-prompt row is gone — the prompt itself
      is display:none in the focused shell), so the pad belongs in row 4.

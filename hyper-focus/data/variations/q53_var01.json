@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q53",
+  "variationId": "q53_var01",
+  "subType": "balance_unit_count",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q53_var01.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q53.json",
+    "hfDataTypeId": 53
+  },
+  "machineReadable": {
+    "payloadType": "balance_unit_count",
+    "comparisonRule": {
+      "left": {
+        "erasers": 3,
+        "clips": 8
+      },
+      "right": {
+        "erasers": 5,
+        "clips": 2
+      },
+      "sameLength": true
+    },
+    "targetLength": {
+      "erasers": 7,
+      "clips": 6,
+      "answerUnit": "eraser"
+    },
+    "solvingModel": {
+      "clipsPerEraser": 3,
+      "targetClips": 27,
+      "expectedAnswer": 9
+    },
+    "expectedAnswer": 9
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 9
+  },
+  "problem": {
+    "prompt": "민주는 길이가 각각 같은 지우개와 클립을 여러 개 준비했습니다. 지우개 3개와 클립 8개를 합한 길이는 지우개 5개와 클립 2개를 합한 길이와 같았습니다. 책상 가로의 길이가 지우개 7개와 클립 6개를 합한 길이와 같을 때, 이 책상 가로의 길이는 지우개 몇 개의 길이와 같습니까?"
+  },
+  "solutionHint": "양쪽에서 지우개 3개와 클립 2개만큼을 똑같이 빼면, 클립 6개의 길이가 지우개 2개의 길이와 같습니다. 그러므로 지우개 1개는 클립 3개의 길이입니다. 클립 6개는 지우개 2개이므로 책상 가로는 지우개 9개의 길이입니다."
+}

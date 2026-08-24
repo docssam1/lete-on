@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q16",
+  "variationId": "q16_var02",
+  "subType": "count_squares_grid",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q16_var02.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q16.json",
+    "hfDataTypeId": 16
+  },
+  "problem": {
+    "prompt": "다음 그림에서 선을 따라 그릴 수 있는 크고 작은 정사각형은 모두 몇 개인지 구하세요."
+  },
+  "machineReadable": {
+    "payloadType": "count_squares_grid",
+    "coordinateSystem": {
+      "origin": "top_left",
+      "xAxis": "left_to_right",
+      "yAxis": "top_to_bottom",
+      "unit": "grid_edge"
+    },
+    "grid": {
+      "rows": 4,
+      "cols": 4
+    },
+    "segments": {
+      "horizontal": [
+        { "x": 0, "y": 0 },
+        { "x": 1, "y": 0 },
+        { "x": 2, "y": 0 },
+        { "x": 0, "y": 1 },
+        { "x": 1, "y": 1 },
+        { "x": 2, "y": 1 },
+        { "x": 3, "y": 1 },
+        { "x": 0, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": 2, "y": 2 },
+        { "x": 3, "y": 2 },
+        { "x": 0, "y": 3 },
+        { "x": 1, "y": 3 },
+        { "x": 2, "y": 3 },
+        { "x": 3, "y": 3 },
+        { "x": 1, "y": 4 },
+        { "x": 2, "y": 4 },
+        { "x": 3, "y": 4 }
+      ],
+      "vertical": [
+        { "x": 0, "y": 0 },
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": 2 },
+        { "x": 1, "y": 0 },
+        { "x": 1, "y": 2 },
+        { "x": 1, "y": 3 },
+        { "x": 2, "y": 1 },
+        { "x": 2, "y": 2 },
+        { "x": 3, "y": 0 },
+        { "x": 3, "y": 1 },
+        { "x": 3, "y": 2 },
+        { "x": 3, "y": 3 },
+        { "x": 4, "y": 1 },
+        { "x": 4, "y": 2 },
+        { "x": 4, "y": 3 }
+      ]
+    },
+    "countingRule": {
+      "axisAlignedOnly": true,
+      "completeEdgesOnly": true,
+      "countBySize": true
+    },
+    "exhaustiveCount": {
+      "method": "enumerate_all_axis_aligned_squares",
+      "bySideLength": {
+        "1": 8,
+        "2": 3,
+        "3": 1,
+        "4": 0
+      },
+      "total": 12
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 12
+  },
+  "solutionHint": "한 칸짜리 정사각형은 8개입니다. 두 칸짜리는 3개, 세 칸짜리는 1개입니다. 빠진 선이 있는 모양은 세지 않습니다. 8 + 3 + 1 = 12이므로 모두 12개입니다."
+}

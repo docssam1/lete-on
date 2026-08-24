@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q06",
+  "variationId": "q06_var01",
+  "subType": "solid_view_impossible",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q06_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q06.json", "hfDataTypeId": 6 },
+  "problem": { "prompt": "색 블록을 여러 방향에서 관찰했을 때 나타날 수 없는 모습을 모두 고르세요." },
+  "machineReadable": {
+    "payloadType": "solid_view_impossible",
+    "baseSolid": {
+      "layerCount": 1,
+      "fixedSingleLayer": true,
+      "blocks": [
+        {"blockId":"R1","grid":{"x":0,"y":0,"z":0},"color":"red"},
+        {"blockId":"R2","grid":{"x":0,"y":1,"z":0},"color":"red"},
+        {"blockId":"Y1","grid":{"x":1,"y":0,"z":0},"color":"yellow"},
+        {"blockId":"B1","grid":{"x":1,"y":1,"z":0},"color":"blue"},
+        {"blockId":"P1","grid":{"x":2,"y":1,"z":0},"color":"purple"}
+      ]
+    },
+    "colorSubstitutionFromCanonical": {"blue":"red","green":"yellow","purple":"blue","orange":"purple"},
+    "choices": [
+      {"choiceId":1,"canonicalChoiceId":1,"visibleColorSequence":["yellow","blue","purple"],"isValid":true},
+      {"choiceId":2,"canonicalChoiceId":2,"visibleColorSequence":["purple","red"],"isValid":true},
+      {"choiceId":3,"canonicalChoiceId":3,"visibleColorSequence":["red","yellow","yellow","blue","purple"],"isValid":true},
+      {"choiceId":4,"canonicalChoiceId":4,"visibleColorSequence":["red","purple","yellow","blue"],"isValid":false,"invalidReason":"회전해도 색의 좌우 순서가 맞지 않는다."},
+      {"choiceId":5,"canonicalChoiceId":5,"visibleColorSequence":["red","yellow"],"isValid":true}
+    ],
+    "expectedInvalidChoices": [4]
+  },
+  "answerValidation": { "answerType": "option_set", "expectedAnswer": [4] },
+  "solutionHint": "블록을 돌려 보되 거울처럼 뒤집지는 않습니다. 원본과 같은 위치 관계를 색만 바꾸어 확인하면 4번만 만들 수 없습니다."
+}

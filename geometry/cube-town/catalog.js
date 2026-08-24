@@ -27,7 +27,7 @@ export const games = [
     description: { ko: "직육면체 상자를 가득 채우려면 몇 개가 더 필요한지 구해요.", zh: "计算填满长方体盒子还需要多少方块。", ja: "直方体の箱を満たすのにあと何個必要か考えます。", en: "Work out how many more cubes are needed to fill the box." }
   },
   {
-    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=1", thumb: "tunnel", levels: "Lv. 2–5",
+    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=2", thumb: "tunnel", levels: "Lv. 2–6",
     name: { ko: "큐브 터널", zh: "方块隧道", ja: "キューブトンネル", en: "Cube Tunnels" },
     description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },
@@ -37,7 +37,7 @@ export const games = [
     description: { ko: "여러 조각을 회전하고 이어 붙여 목표 모양을 만들어요.", zh: "旋转并组合多个部件，完成目标形状。", ja: "ピースを回してつなぎ、目標の形を作ります。", en: "Rotate and join pieces to create the target solid." }
   },
   {
-    id: "memory", group: "transform", number: "07", ready: true, href: "../games/cube-memory/?v=1", thumb: "memory", levels: "Lv. 1–4",
+    id: "memory", group: "transform", number: "07", ready: true, href: "../games/cube-memory/?v=2", thumb: "memory", levels: "Lv. 1–5",
     name: { ko: "큐브 메모리", zh: "方块记忆", ja: "キューブメモリー", en: "Cube Memory" },
     description: { ko: "10초 동안 본 모양과 색을 기억해 똑같이 재현해요.", zh: "记住十秒内看到的形状和颜色并重现。", ja: "10秒間見た形と色を覚えて再現します。", en: "Remember the shape and colors for ten seconds, then rebuild it." }
   },
@@ -52,17 +52,17 @@ export const games = [
     description: { ko: "투명 케이스의 세 방향 카드를 만족하는 모양을 만들어요.", zh: "搭出满足透明盒三方向卡片的形状。", ja: "透明ケースの三方向カードに合う形を作ります。", en: "Build a solid that matches all three cards in a clear case." }
   },
   {
-    id: "blueprint", group: "reasoning", number: "10", ready: false, thumb: "blueprint", levels: "Lv. 2–5",
+    id: "blueprint", group: "reasoning", number: "10", ready: true, href: "../games/cube-blueprint/?v=1", thumb: "blueprint", levels: "Lv. 2–5",
     name: { ko: "큐브 설계도", zh: "方块蓝图", ja: "キューブ設計図", en: "Cube Blueprints" },
-    description: { ko: "위·앞·옆의 바탕그림만 보고 가능한 입체를 완성해요.", zh: "只看上、前、侧视图完成可能的立体。", ja: "上・前・横の図だけから立体を完成させます。", en: "Use only top, front, and side drawings to complete a solid." }
+    description: { ko: "위·앞·오른쪽 설계도를 보고 하나뿐인 입체를 완성해요.", zh: "看上、前、右三张设计图完成唯一的立体。", ja: "上・前・右の設計図から一つだけの立体を完成させます。", en: "Use top, front, and right blueprints to complete the one matching solid." }
   },
   {
-    id: "find-shape", group: "reasoning", number: "11", ready: false, thumb: "find", levels: "Lv. 3–5",
+    id: "find-shape", group: "reasoning", number: "11", ready: true, href: "../games/find-shape/?v=1", thumb: "find", levels: "Lv. 3–5",
     name: { ko: "단서로 모양 찾기", zh: "根据线索找形状", ja: "手がかりから形を探す", en: "Find the Shape" },
     description: { ko: "층별 개수와 방향별 모양에 맞는 쌓기나무를 골라요.", zh: "根据各层数量和方向视图选择正确形状。", ja: "層の数と方向別の形に合うものを選びます。", en: "Choose the solid that matches the layer counts and view clues." }
   },
   {
-    id: "minmax", group: "reasoning", number: "12", ready: false, thumb: "minmax", levels: "Lv. 4–5",
+    id: "minmax", group: "reasoning", number: "12", ready: true, href: "../games/minmax/?v=1", thumb: "minmax", levels: "Lv. 4–5",
     name: { ko: "최대·최소 큐브 챌린지", zh: "最多最少方块挑战", ja: "最大・最小キューブチャレンジ", en: "Cube Min–Max Challenge" },
     description: { ko: "같은 세 방향 그림을 만드는 가장 많고 적은 개수를 찾아요.", zh: "找出符合三方向图的最多和最少方块数。", ja: "同じ三方向図になる最大・最小の数を探します。", en: "Find the greatest and least cube counts for the same three views." }
   }

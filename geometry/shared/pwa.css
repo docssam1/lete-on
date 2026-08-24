@@ -1,0 +1,137 @@
+/* GFIELD Geometry World — PWA install banner + fullscreen button.
+ *
+ * Styling only. Matches the site's wood/amber theme. Both widgets sit above the
+ * game UI (z-index high) and respect iOS safe-area insets so they never hide
+ * under the home indicator or notch.
+ */
+
+/* --- install banner: fixed card that slides up from the bottom ------------ */
+.gf-install-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 140%);
+  z-index: 9000;
+  width: min(440px, calc(100vw - 24px));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(150deg, #3a2415 0%, #2b1a0e 100%);
+  border: 1px solid rgba(226, 178, 108, 0.45);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.42);
+  color: #f6e7d2;
+  font-family: inherit;
+  opacity: 0;
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.34s ease;
+  pointer-events: none;
+}
+.gf-install-banner.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gf-ib-icon {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: radial-gradient(circle at 35% 30%, #ffd98a, #e0a94a 70%);
+  color: #6b3f14;
+  font-size: 20px;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.45);
+}
+
+.gf-ib-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gf-ib-text strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffe9c4;
+  line-height: 1.25;
+}
+.gf-ib-text span {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #d9c3a6;
+}
+
+.gf-ib-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+.gf-ib-install,
+.gf-ib-later {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.gf-ib-install {
+  background: linear-gradient(180deg, #6bd06f, #3fae53);
+  color: #10310f;
+  box-shadow: 0 4px 12px rgba(63, 174, 83, 0.4);
+}
+.gf-ib-install:hover { filter: brightness(1.06); }
+.gf-ib-install:active { transform: translateY(1px); }
+.gf-ib-later {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cdb595;
+}
+.gf-ib-later:hover { background: rgba(255, 255, 255, 0.15); }
+.gf-ib-later:active { transform: translateY(1px); }
+
+/* small phones: stack actions horizontally under the text */
+@media (max-width: 380px) {
+  .gf-install-banner {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .gf-ib-actions {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* --- fullscreen toggle ------------------------------------------------
+   No longer a floating button: pwa.js only inserts this into .map-toolbar
+   (right after the language menu), and only world-map has that toolbar —
+   cube-town and every other page that loads this stylesheet get nothing.
+   That's also why this used to need viewport-based positioning to dodge
+   cube-town's topbar and doesn't anymore. Box sizing/border/background
+   come from world-map/styles.css's ".map-toolbar > button" rule, which is
+   more specific than the single class here, so this only needs to size the
+   glyph and restyle the "in fullscreen" (.on) state. */
+.gf-fullscreen-btn {
+  font-size: 18px;
+  line-height: 1;
+}
+.gf-fullscreen-btn.on {
+  background: rgba(63, 174, 83, 0.82);
+  color: #eafff0;
+  border-color: rgba(63, 174, 83, 0.9);
+}
+
+@media print {
+  .gf-install-banner,
+  .gf-fullscreen-btn { display: none !important; }
+}

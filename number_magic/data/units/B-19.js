@@ -12,7 +12,7 @@ window.NM_UNITS['B-19'] = {
 
   practice:{
     generator:'ml5_tensMul', level:'practice', count:5,
-    params:{ mode:'t1' },
+    params:{ mode:'h1' },
     intro:{
       ko:'몇백 곱하기 한 자리를 연습할 거야. 200×3처럼 구구단에 00을 붙이면 돼! 준비됐지?',
       en:"Let's practise hundreds times a 1-digit number. Just use your times tables and add two zeros — like 200×3! Ready?",

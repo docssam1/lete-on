@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q34",
+  "variationId": "q34_var01",
+  "subType": "digit_card_subtraction",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q34.json", "hfDataTypeId": 34},
+  "problem": {"prompt": "숫자 카드 2, 3, 4, 5를 한 번씩만 사용하여 두 자리 수끼리의 뺄셈을 만드세요. 계산 결과가 가장 클 때와 가장 작을 때의 값을 각각 구하세요."},
+  "machineReadable": {
+    "payloadType": "digit_card_subtraction",
+    "cards": [2, 3, 4, 5],
+    "useEachExactlyOnce": true,
+    "solvingModel": {"validArrangements": 12, "maxEquation": "54-23=31", "minEquation": "42-35=7", "expectedAnswer": {"max": 31, "min": 7}},
+    "expectedAnswer": {"max": 31, "min": 7}
+  },
+  "answerValidation": {"answerType": "min_max_values", "expectedAnswer": {"max": 31, "min": 7}},
+  "solutionHint": "가장 큰 값은 큰 숫자를 앞 수의 십의 자리에 놓아 54-23=31로 만듭니다. 가장 작은 양의 값은 두 수를 가깝게 만든 42-35=7입니다."
+}

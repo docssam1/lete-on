@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, hiddenCubes, validateLevels } from "./levels.js?v=hidden-2";
-import { text } from "./i18n.js?v=hidden-2";
+import { levels, hiddenCubes, validateLevels } from "./levels.js?v=hidden-5";
+import { text } from "./i18n.js?v=hidden-4";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -16,6 +16,7 @@ const elements = {
   progress: $("#progress"),
   numberPrompt: $("#numberPrompt"),
   numberPad: $("#numberPad"),
+  workArea: $("#workArea"),
   hiddenDisplay: $("#hiddenDisplay"),
   hiddenValue: $("#hiddenValue"),
   hint: $("#hint"),
@@ -40,11 +41,23 @@ const countProgress = readGameProgress("hiddenCount");
 const savedLevel = Number.isInteger(Number(countProgress.levelIndex))
   ? Number(countProgress.levelIndex)
   : Number(localStorage.getItem("hidden-count-level")) || 0;
+// Remembered across sessions so a child who prefers one solving strategy
+// doesn't have to re-pick it every time they open the game.
+const modeStorageKey = "gfield-hidden-count-mode";
+
+const modes = ["subtract", "layers", "direct"];
+const savedMode = localStorage.getItem(modeStorageKey);
+
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
   levelIndex: Math.max(0, Math.min(levels.length - 1, savedLevel)),
   problemIndex: Math.max(0, Number(countProgress.problemIndex) || 0),
+  mode: modes.includes(savedMode) ? savedMode : "subtract",
   answer: "",
+  activeField: "answer",
+  work: null,
+  workDone: null,
+  wrongFlashField: null,
   xray: false,
   hintsUsed: 0,
   wrongAttempts: 0,
@@ -55,9 +68,101 @@ const state = {
 };
 
 const tutorialStorageKey = "gfield-hidden-count-tutorial-v1";
-const tutorialKeys = ["tutorialHidden1", "tutorialHidden2", "tutorialHidden3"];
+const tutorialKeys = ["tutorialHidden1", "tutorialHidden2", "tutorialHidden3", "tutorialHidden4", "tutorialHidden5"];
 
 const currentProblem = () => levels[state.levelIndex].problems[state.problemIndex];
+
+// ---------------------------------------------------------------------------
+// Solving-mode scratch work. "subtract" and "layers" each keep an independent
+// set of row values/done-flags for the current problem, so switching modes
+// mid-problem never loses progress; "direct" has no rows at all.
+// ---------------------------------------------------------------------------
+function layerTotals(heights) {
+  const maxHeight = Math.max(...heights.flat());
+  return Array.from({ length: maxHeight }, (_, y) =>
+    heights.reduce((sum, row) => sum + row.filter((h) => h > y).length, 0)
+  );
+}
+
+function layerHidden(heights) {
+  const maxHeight = Math.max(...heights.flat());
+  const counts = new Array(maxHeight).fill(0);
+  hiddenCubes(heights, levels[state.levelIndex].wall === true).forEach((cube) => { counts[cube.y] += 1; });
+  return counts;
+}
+
+function initWorkState() {
+  const maxHeight = currentProblem().maxHeight;
+  state.work = {
+    subtract: { layers: new Array(maxHeight).fill(""), total: "", visible: "" },
+    layers: { layers: new Array(maxHeight).fill("") }
+  };
+  state.workDone = {
+    subtract: { layers: new Array(maxHeight).fill(false), total: false, visible: false },
+    layers: { layers: new Array(maxHeight).fill(false) }
+  };
+  state.wrongFlashField = null;
+}
+
+// Field addressing: "answer" is the single final-answer box shared by every
+// mode; work fields are { kind: "layer"|"total"|"visible", index? } and are
+// scoped to state.mode, since subtract/layers keep independent scratch values.
+function fieldKey(field) {
+  return field === "answer" ? "answer" : `${field.kind}:${field.index ?? ""}`;
+}
+
+function sameField(a, b) {
+  return fieldKey(a) === fieldKey(b);
+}
+
+function workFieldOrder() {
+  const maxHeight = currentProblem().maxHeight;
+  const layerFields = Array.from({ length: maxHeight }, (_, index) => ({ kind: "layer", index }));
+  if (state.mode === "subtract") return [...layerFields, { kind: "total" }, { kind: "visible" }];
+  if (state.mode === "layers") return layerFields;
+  return [];
+}
+
+function getFieldValue(field) {
+  if (field === "answer") return state.answer;
+  const store = state.work[state.mode];
+  return field.kind === "layer" ? (store.layers[field.index] ?? "") : (store[field.kind] ?? "");
+}
+
+function setFieldValue(field, value) {
+  if (field === "answer") { state.answer = value; return; }
+  const store = state.work[state.mode];
+  if (field.kind === "layer") store.layers[field.index] = value; else store[field.kind] = value;
+}
+
+function isFieldDone(field) {
+  if (field === "answer") return false;
+  const store = state.workDone[state.mode];
+  return field.kind === "layer" ? !!store.layers[field.index] : !!store[field.kind];
+}
+
+function setFieldDone(field, done) {
+  const store = state.workDone[state.mode];
+  if (field.kind === "layer") store.layers[field.index] = done; else store[field.kind] = done;
+}
+
+function correctValueForField(field) {
+  const problem = currentProblem();
+  if (field === "answer") return problem.answer.hidden;
+  if (field.kind === "layer") {
+    return state.mode === "layers" ? layerHidden(problem.heights)[field.index] : layerTotals(problem.heights)[field.index];
+  }
+  if (field.kind === "total") return problem.answer.total;
+  return problem.answer.total - problem.answer.hidden; // visible
+}
+
+function firstUnfilledField() {
+  const next = workFieldOrder().find((field) => !isFieldDone(field));
+  return next || "answer";
+}
+
+initWorkState();
+state.activeField = firstUnfilledField();
 
 function format(key, values = {}) {
   return Object.entries(values).reduce(
@@ -76,6 +181,8 @@ function applyLanguage() {
   renderLevelList();
   renderNumberPad();
   updatePrompt();
+  renderModeTabs();
+  renderWorkArea();
   if (state.tutorialStep >= 0) renderConceptTutorial();
 }
 
@@ -207,12 +314,16 @@ function loadProblem() {
   state.hintsUsed = 0;
   state.wrongAttempts = 0;
   state.solved = false;
+  initWorkState();
+  state.activeField = firstUnfilledField();
   updateProgress();
   updateXrayButtons();
   renderNumberPad();
   updatePrompt();
+  renderModeTabs();
   renderModel();
   renderHiddenValue();
+  renderWorkArea();
   setGuide(levels[state.levelIndex].wall ? "guideWall" : "guideStart", false);
   setCameraView("free");
   if (shouldShowConceptTutorial()) openConceptTutorial();
@@ -220,7 +331,117 @@ function loadProblem() {
 
 function renderHiddenValue() {
   elements.hiddenValue.textContent = state.answer === "" ? "?" : state.answer;
-  elements.hiddenDisplay.classList.toggle("active", state.answer !== "" && !state.solved);
+  elements.hiddenDisplay.classList.toggle("active", state.activeField === "answer" && !state.solved);
+}
+
+function renderModeTabs() {
+  $$(".mode-switch button").forEach((button) => button.classList.toggle("active", button.dataset.mode === state.mode));
+}
+
+function createWorkRow(field, labelText) {
+  const row = document.createElement("div");
+  row.className = "work-row";
+  const label = document.createElement("span");
+  label.className = "work-row-label";
+  label.textContent = labelText;
+  const value = getFieldValue(field);
+  const cell = document.createElement("button");
+  cell.type = "button";
+  cell.className = "work-cell";
+  cell.textContent = value === "" ? "?" : value;
+  cell.disabled = state.solved;
+  cell.classList.toggle("done", isFieldDone(field));
+  cell.classList.toggle("active", sameField(state.activeField, field));
+  cell.classList.toggle("wrong", state.wrongFlashField === fieldKey(field));
+  cell.addEventListener("click", () => activateField(field));
+  row.append(label, cell);
+  return row;
+}
+
+// Draws the current mode's scratch-work rows. Row counts and correct values
+// are always derived from the current problem's heights, never hardcoded.
+function renderWorkArea() {
+  if (!elements.workArea) return;
+  elements.workArea.replaceChildren();
+  if (state.mode === "direct") return;
+  const problem = currentProblem();
+  if (state.mode === "subtract") {
+    layerTotals(problem.heights).forEach((_, index) => {
+      elements.workArea.append(createWorkRow({ kind: "layer", index }, format("layerLabel", { n: index + 1 })));
+    });
+    elements.workArea.append(createWorkRow({ kind: "total" }, text(state.lang, "totalQuestion")));
+    elements.workArea.append(createWorkRow({ kind: "visible" }, text(state.lang, "visibleQuestion")));
+    const hint = document.createElement("p");
+    hint.className = "work-hint";
+    hint.textContent = text(state.lang, "equationHint");
+    elements.workArea.append(hint);
+  } else if (state.mode === "layers") {
+    // Rows with a correct value of 0 are still rendered — the child needs to
+    // discover that some layers hide nothing, not have that fact skipped.
+    layerHidden(problem.heights).forEach((_, index) => {
+      elements.workArea.append(createWorkRow({ kind: "layer", index }, format("layerHiddenLabel", { n: index + 1 })));
+    });
+  }
+}
+
+// A field is validated when the child taps away to a different field, when
+// digit entry fills it to 2 digits, or immediately if it already matches.
+function commitField(field) {
+  const correct = correctValueForField(field);
+  if (Number(getFieldValue(field)) === correct) {
+    setFieldDone(field, true);
+    state.wrongFlashField = null;
+    state.activeField = firstUnfilledField();
+    renderWorkArea();
+    renderHiddenValue();
+    return true;
+  }
+  state.wrongAttempts += 1;
+  state.wrongFlashField = fieldKey(field);
+  setFieldValue(field, "");    // back to "?" so the child just types again
+  showToast(text(state.lang, "wrongWork"));
+  setGuide("wrongWork", false);
+  renderWorkArea();
+  return false;
+}
+
+function maybeCommitField(field) {
+  const value = getFieldValue(field);
+  if (value === "") return;
+  if (Number(value) === correctValueForField(field) || value.length >= 2) commitField(field);
+}
+
+function activateField(field) {
+  if (state.solved) return;
+  // A cell that's already correct is locked, so focusing it would leave the
+  // number pad typing into nothing — send the child to the next open cell.
+  if (field !== "answer" && isFieldDone(field)) field = firstUnfilledField();
+  const previous = state.activeField;
+  const needsCommit = previous !== "answer" && !sameField(previous, field) && !isFieldDone(previous) && getFieldValue(previous) !== "";
+  if (needsCommit) {
+    // A wrong commit keeps the previous field active (with its shake) so the
+    // child fixes it before moving on; a correct commit already advances
+    // state.activeField itself, so there's nothing left to do here either way.
+    commitField(previous);
+    return;
+  }
+  state.activeField = field;
+  state.wrongFlashField = null;
+  renderWorkArea();
+  renderHiddenValue();
+}
+
+function setMode(mode) {
+  if (state.mode === mode) return;
+  state.mode = mode;
+  localStorage.setItem(modeStorageKey, mode);
+  state.wrongFlashField = null;
+  state.activeField = firstUnfilledField();
+  renderModeTabs();
+  renderWorkArea();
+  renderHiddenValue();
+  const guideKey = { subtract: "guideModeSubtract", layers: "guideModeLayers", direct: "guideModeDirect" }[mode];
+  setGuide(guideKey);
 }
 
 function renderNumberPad() {
@@ -242,32 +463,65 @@ function renderNumberPad() {
   elements.numberPad.append(clear);
 }
 
+// Every value in this game fits in two digits (the largest possible total is
+// 64). Once a field holds two digits the next tap starts a FRESH number rather
+// than being swallowed by a slice() — without that, a wrong two-digit entry
+// could never be corrected on a touch device, because this shell hides the
+// number pad's Clear key in the compact landscape layout.
+function appendDigit(current, value) {
+  if (current.length >= 2) return String(value);
+  return `${current}${value}`.replace(/^0+(?=\d)/, "").slice(0, 2);
+}
+
 function enterNumber(value) {
   if (state.solved) return;
-  const next = `${state.answer}${value}`.replace(/^0+(?=\d)/, "").slice(0, 2);
-  if (Number(next) <= 64) state.answer = next;
-  elements.hiddenDisplay.classList.remove("wrong");
-  renderHiddenValue();
-  checkAnswer();
+  if (state.activeField === "answer") {
+    state.answer = appendDigit(state.answer, value);
+    elements.hiddenDisplay.classList.remove("wrong");
+    renderHiddenValue();
+    maybeCheckAnswer();
+    return;
+  }
+  const field = state.activeField;
+  if (isFieldDone(field)) return; // locked once correct — digits no longer edit it
+  state.wrongFlashField = null;
+  setFieldValue(field, appendDigit(getFieldValue(field), value));
+  renderWorkArea();
+  maybeCommitField(field);
 }
 
 function clearInput() {
   if (state.solved) return;
-  state.answer = state.answer.slice(0, -1);
-  elements.hiddenDisplay.classList.remove("wrong");
-  renderHiddenValue();
-}
-
-function checkAnswer() {
-  if (state.solved || state.answer === "") return;
-  if (Number(state.answer) !== currentProblem().answer.hidden) {
-    state.wrongAttempts += 1;
-    elements.hiddenDisplay.classList.add("wrong");
-    showToast(text(state.lang, "hiddenWrong"));
-    setGuide("hiddenWrong", false);
+  if (state.activeField === "answer") {
+    state.answer = state.answer.slice(0, -1);
+    elements.hiddenDisplay.classList.remove("wrong");
+    renderHiddenValue();
     return;
   }
-  completeProblem();
+  const field = state.activeField;
+  if (isFieldDone(field)) return;
+  state.wrongFlashField = null;
+  setFieldValue(field, getFieldValue(field).slice(0, -1));
+  renderWorkArea();
+}
+
+// Same commit policy as the scratch-work cells: judge the answer only once it
+// can't still grow into the right number — i.e. when it already matches, or
+// when two digits have been typed. Judging every keystroke used to flag the
+// "1" of a correct "12" as a mistake.
+function maybeCheckAnswer() {
+  if (state.solved || state.answer === "") return;
+  if (Number(state.answer) === currentProblem().answer.hidden) {
+    completeProblem();
+    return;
+  }
+  if (state.answer.length < 2) return;
+  state.wrongAttempts += 1;
+  elements.hiddenDisplay.classList.add("wrong");
+  showToast(text(state.lang, "hiddenWrong"));
+  setGuide("hiddenWrong", false);
+  state.answer = "";           // reset so the child simply types again
+  renderHiddenValue();
 }
 
 function completeProblem() {
@@ -288,6 +542,7 @@ function completeProblem() {
   setGuide("guideSuccess", false);
   renderNumberPad();
   renderHiddenValue();
+  renderWorkArea();
   // Longer dwell: the success burst plays (~1.2s), then the child keeps seeing
   // the outer cubes faded to a watermark with the hidden cubes glowing red
   // before the next problem loads.
@@ -613,7 +868,7 @@ function renderModel() {
   leftWall.receiveShadow = true;
   modelGroup.add(leftWall);
 
-  const hiddenKeys = new Set(hiddenCubes(heights).map((c) => `${c.x},${c.y},${c.z}`));
+  const hiddenKeys = new Set(hiddenCubes(heights, levels[state.levelIndex].wall === true).map((c) => `${c.x},${c.y},${c.z}`));
   occupiedColumns().forEach((cell) => {
     const wx = cell.x - centerX;
     const wz = cell.z - centerZ;
@@ -683,7 +938,7 @@ function animate() {
 animate();
 
 elements.conceptNext.addEventListener("click", advanceConceptTutorial);
-elements.hiddenDisplay.addEventListener("click", () => elements.hiddenDisplay.classList.add("active"));
+elements.hiddenDisplay.addEventListener("click", () => activateField("answer"));
 elements.hint.addEventListener("click", giveHint);
 elements.reset.addEventListener("click", resetProblem);
 elements.next.addEventListener("click", nextProblem);
@@ -703,6 +958,7 @@ elements.levelDialog.addEventListener("click", (event) => {
   if (event.target === elements.levelDialog) elements.levelDialog.hidden = true;
 });
 elements.xrayButtons.forEach((button) => button.addEventListener("click", toggleXray));
+$$(".mode-switch button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
 $$('[data-view]').forEach((button) => button.addEventListener("click", () => setCameraView(button.dataset.view)));
 $$('[data-lang]').forEach((button) => button.addEventListener("click", () => {
   state.lang = button.dataset.lang;

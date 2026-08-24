@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>시험 응시 · 선발·누적 진단</title><link rel="stylesheet" href="./shared/app.css"></head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header screen-only"><nav class="shell nav"><a class="brand" href="./library.html"><span class="brand-mark">SL</span><span id="exam-title">시험 응시<small id="exam-meta">PRIVATE EXAM</small></span></a><div class="nav-links"><button class="ghost" id="to-answers">답안 입력</button><button class="soft" id="print-paper">인쇄</button><a class="button accent" href="./library.html">서재</a></div></nav></header>
+  <main id="main" class="viewer-shell"><section class="viewer-pages" id="viewer-pages" aria-label="세로 스크롤 시험지"></section><aside class="panel answer-panel" id="answer-panel" hidden><p class="eyebrow">Answer Sheet</p><h2 style="margin:0 0 4px">답안 입력</h2><p class="answer-guide">시험지는 원본 지면 그대로 세로로 이어집니다. 답안은 입력할 때마다 자동 저장됩니다.</p><p class="status" id="save-state">답안은 이 브라우저에 자동 저장됩니다.</p><div class="answer-grid" id="answer-grid"></div><div class="stack" style="margin-top:16px"><button class="accent" id="submit">제출 및 채점</button><a class="button ghost" href="./report.html">분석지 보기</a></div><p class="status" id="submit-state" aria-live="polite"></p></aside></main>
+  <script src="./shared/runtime.js"></script><script src="./data/catalog.js"></script><script src="./data/questions.js"></script><script src="./shared/auth.js"></script><script src="./shared/response-contract.js"></script><script src="./shared/exam-security.js"></script><script src="./shared/exam-page.js"></script>
+</body>
+</html>

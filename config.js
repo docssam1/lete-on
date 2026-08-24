@@ -9,7 +9,7 @@
  * ========================================================= */
 window.GFIELD_CONFIG = {
   "meta": {
-    "updatedAt": "2026-07-02",
+    "updatedAt": "2026-08-16",
     "salt": "gfield-on-2026-v1"
   },
   "brands": [
@@ -33,7 +33,8 @@ window.GFIELD_CONFIG = {
           "desc": "프리미어 선발 정밀 대비",
           "lock": "closed",
           "programs": [
-            { "key": "hyperfocus", "name": "하이퍼포커스 진단", "type": "진단", "desc": "현재 레벨 L0~L4 정밀 진단", "lock": "open", "url": "/hyper-focus/" },
+            { "key": "hyperfocus", "name": "하이퍼포커스 진단", "type": "진단", "desc": "현재 레벨 L0~L4 정밀 진단 · 난이도별 유사문제 2문항 포함", "lock": "open", "url": "/hyper-focus/" },
+            { "key": "hyperfocus-extra", "name": "하이퍼포커스 추가 문제", "type": "유료 문제", "desc": "선택 난이도에서 유형당 3번째 이후 문제 생성", "lock": "closed", "url": "/hyper-focus/mock/" },
             { "key": "mock", "name": "온라인 모의고사", "type": "모의고사+강의", "desc": "회차별 실전 + 해설 강의", "lock": "closed", "count": 8, "url": "" }
           ]
         }
@@ -61,7 +62,9 @@ window.GFIELD_CONFIG = {
       "badge": "HWANGSO",
       "desc": "생각하는 황소 입학시험 대비",
       "courses": [
-        { "key": "elem", "name": "초등 대비", "desc": "황소 초등 입학시험 대비", "lock": "soon", "programs": [] },
+        { "key": "elem", "name": "초등 대비", "desc": "황소 초등 교재 유형별 유사문제", "lock": "open", "programs": [
+          { "key": "elementary-bank", "name": "초등 유사문제 문제은행", "type": "문제은행", "desc": "4·5·6학년 학기·단원·레벨별 맞춤 문제", "lock": "open", "url": "/hselementary/question-bank/" }
+        ] },
         { "key": "mid", "name": "중등 대비", "desc": "황소 중등 입학시험 대비", "lock": "soon", "programs": [] }
       ]
     }

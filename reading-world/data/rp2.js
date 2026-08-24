@@ -7,7 +7,7 @@ window.LESSONS['rp2'] = {
   chapter: null, page: null,
   title: "Healthy Banana Vinegar",
   theme: "Bananas: healthy snacks, farms, and homemade drinks",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp2.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["vinegar", "a sour liquid that is used to flavor food", "식초", "醋"], ["popular", "liked by many people", "인기 있는", "受欢迎的"], ["lower", "to reduce the level or amount of something", "낮추다", "降低"], ["ingredient", "one of the things used to make a certain food", "재료", "食材"], ["store", "to keep something to use it later", "저장하다", "储存"], ["remove", "to move something from a place", "제거하다", "移除"], ["infect", "to cause someone or something to get sick", "감염시키다", "感染"], ["spread", "to move into other parts of something", "퍼지다", "蔓延"], ["soil", "the layer of earth that plants grow in", "흙, 토양", "土壤"], ["strike", "to attack something or someone suddenly", "갑자기 덮치다", "突然袭击"], ["risk", "a person or thing that may cause danger", "위험 요소", "风险"], ["source", "something that provides an important thing", "공급원, 원천", "来源"]],

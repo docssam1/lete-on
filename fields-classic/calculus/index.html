@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미분·적분 시각화 학습실</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>미분·적분 시각화 학습실</h1>
+    <p>극값과 그래프 개형, 부정적분, 적분식에 주어진 조건으로 함수값을 구하는 과정을 직접 조작하며 배우고 유사문제로 확인합니다.</p>
+    <nav class="main-tabs" aria-label="학습 메뉴">
+      <button class="main-tab active" data-panel="extremaPanel">극값·그래프</button>
+      <button class="main-tab" data-panel="integralPanel">부정적분</button>
+      <button class="main-tab" data-panel="testPanel">유사문제 테스트</button>
+      <button class="main-tab" data-panel="conditionPanel">적분조건 함수값</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="extremaPanel" class="panel active">
+      <div class="grid">
+        <section class="card full">
+          <h2>함수식 입력</h2>
+          <div class="input-panel">
+            <input id="formula" class="formula-input" value="f(x)=x^3-3x-2" aria-label="함수식 입력">
+            <button class="primary" id="analyzeBtn">변화 과정 보기</button>
+          </div>
+          <div class="example-row">
+            <button class="example-btn extrema-example" data-f="f(x)=x^3-3x-2">x³−3x−2</button>
+            <button class="example-btn extrema-example" data-f="f(x)=x^4-4x^2">x⁴−4x²</button>
+            <button class="example-btn extrema-example" data-f="f(x)=2x^3-6x^2+1">2x³−6x²+1</button>
+            <button class="example-btn extrema-example" data-f="f(x)=-x^3+3x">−x³+3x</button>
+          </div>
+          <div id="error" class="error"></div>
+        </section>
+
+        <section class="card">
+          <h2>① 함수식이 도함수로 변하는 과정</h2>
+          <div id="originalFormula" class="formula-box"></div>
+          <div class="arrow">↓ 각 항을 미분</div>
+          <div id="termProcess" class="term-row"></div>
+          <div class="arrow">↓ 정리</div>
+          <div id="derivativeFormula" class="formula-box"></div>
+          <div class="reason-grid">
+            <div class="reason"><b>상수 → 0</b>x가 변해도 높이가 그대로이므로 기울기는 0입니다.</div>
+            <div class="reason"><b>xⁿ → nxⁿ⁻¹</b>지수는 앞으로 내려오고 지수는 1 작아집니다.</div>
+            <div class="reason"><b>도함수</b>원래 함수의 각 위치에서 순간 기울기를 알려주는 함수입니다.</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>② 증가·감소와 극값</h2>
+          <div class="small"><b>f′(x)&gt;0</b>이면 증가, <b>f′(x)&lt;0</b>이면 감소합니다.
+            f′(x)=0 앞뒤에서 부호가 바뀌는지 확인합니다.</div>
+          <div id="criticalFormula" class="formula-box" style="margin-top:11px"></div>
+          <div id="signTable" class="sign-wrap"></div>
+          <div id="statusPills" class="status"></div>
+          <div id="extrema" class="extrema"></div>
+        </section>
+
+        <section class="card full">
+          <h2>③ 그래프 개형과 접선 기울기</h2>
+          <div class="toolbar">
+            <button class="secondary" id="zoomInBtn">＋ 확대</button>
+            <button class="secondary" id="zoomOutBtn">－ 축소</button>
+            <button class="ghost" id="fitBtn">자동 맞춤</button>
+            <label>좌표 범위
+              <select id="viewPreset">
+                <option value="auto">자동</option><option value="2">−2 ~ 2</option>
+                <option value="5">−5 ~ 5</option><option value="10">−10 ~ 10</option>
+                <option value="20">−20 ~ 20</option><option value="50">−50 ~ 50</option>
+                <option value="custom">직접 조절</option>
+              </select>
+            </label>
+            <span id="rangeLabel" class="range-label"></span>
+          </div>
+          <div class="small" style="margin-bottom:8px">마우스 휠로 확대·축소하고 그래프를 드래그하면 이동합니다.</div>
+          <canvas id="graph" width="1100" height="455"></canvas>
+          <div class="graph-controls">
+            <button class="secondary" id="playBtn">▶ 개형 그리기</button>
+            <input type="range" id="xSlider" min="0" max="1000" value="500" aria-label="접선 위치">
+            <button class="ghost" id="resetBtn">초기화</button>
+          </div>
+          <div id="readout" class="readout"></div>
+          <div class="legend">
+            <span><i class="dot" style="background:#6d42d8"></i>함수</span>
+            <span><i class="dot" style="background:#cb405a"></i>극대</span>
+            <span><i class="dot" style="background:#3474d4"></i>극소</span>
+            <span><i class="dot" style="background:#13825f"></i>접선</span>
+          </div>
+        </section>
+
+        <section class="card full">
+          <h2>극값 문제를 읽는 순서</h2>
+          <div class="guide">
+            <div><span>1</span><b>미분</b><br><small>높이 식을 기울기 식으로 바꿉니다.</small></div>
+            <div><span>2</span><b>f′(x)=0</b><br><small>방향이 바뀔 후보를 찾습니다.</small></div>
+            <div><span>3</span><b>부호 확인</b><br><small>＋→−는 극대, −→＋는 극소입니다.</small></div>
+            <div><span>4</span><b>그래프 연결</b><br><small>극값과 절편을 증가·감소에 맞춰 잇습니다.</small></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="integralPanel" class="panel">
+      <section class="card" style="margin-top:17px">
+        <h2>부정적분 식 만들기</h2>
+        <div class="small">먼저 <b>∫</b>를 눌러 적분 블록을 만들고, 가운데 칸에는 피적분함수만 입력하세요.
+          변수 선택에 따라 오른쪽이 자동으로 <b>dx 또는 dy</b>가 됩니다.</div>
+
+        <div class="integral-head">
+          <div class="symbol-tools" aria-label="수식 입력 도구">
+            <button class="symbol-btn" id="addIntegralBtn" title="적분 추가">∫</button>
+            <button class="symbol-btn" id="fractionBtn" title="분수 만들기">a⁄b</button>
+            <button class="symbol-btn" id="power2Btn" title="제곱 입력">□²</button>
+            <button class="symbol-btn" id="powerBtn" title="거듭제곱 입력">□ⁿ</button>
+            <button class="symbol-btn" id="parenBtn" title="괄호 입력">( )</button>
+            <button class="symbol-btn" id="plusIntegralBtn" title="적분 하나 더">＋∫</button>
+          </div>
+          <button class="primary" id="solveIntegralBtn">풀이 과정 보기</button>
+        </div>
+
+        <div id="integralEditor" class="integral-editor"></div>
+        <div id="integralPreview" class="editor-preview">∫ 버튼을 눌러 식을 시작하세요.</div>
+
+        <div class="example-row">
+          <button class="example-btn integral-example" data-example="1">(1) ∫ x(x−1)(x−2) dx</button>
+          <button class="example-btn integral-example" data-example="2">(2) ∫ (x⁴+x²+1)/(x²−x+1) dx</button>
+          <button class="example-btn integral-example" data-example="3">(3) ∫ y³/(y+1) dy + ∫ 1/(y+1) dy</button>
+        </div>
+        <div class="solve-actions">
+          <button class="ghost" id="clearIntegralBtn">모두 지우기</button>
+          <button class="secondary" id="loadFirstBtn">예시 1 다시 불러오기</button>
+        </div>
+        <div id="integralError" class="error"></div>
+      </section>
+
+      <div id="integrationResult" class="integration-layout hidden">
+        <section class="card">
+          <h2>식이 변하는 과정</h2>
+          <div id="integrationSteps" class="solution-steps"></div>
+          <h3 style="margin-top:15px">최종 답</h3>
+          <div id="integrationAnswer" class="final-answer"></div>
+          <div id="integrationVerify" class="verify" style="margin-top:11px"></div>
+        </section>
+
+        <section class="card integration-graph">
+          <h2>피적분함수와 원시함수 보기</h2>
+          <div class="toolbar">
+            <button class="secondary" id="iZoomIn">＋ 확대</button>
+            <button class="secondary" id="iZoomOut">－ 축소</button>
+            <button class="ghost" id="iFit">자동 맞춤</button>
+            <label><input id="showIntegrand" type="checkbox" checked> 피적분함수</label>
+            <label><input id="showAntiderivative" type="checkbox" checked> 원시함수(C=0)</label>
+            <span id="iRangeLabel" class="range-label"></span>
+          </div>
+          <canvas id="integralGraph" width="650" height="405"></canvas>
+          <div class="small" style="margin-top:8px">휠로 확대·축소하고 드래그해 이동할 수 있습니다. 분모가 0인 곳에서는 그래프가 끊어집니다.</div>
+          <div class="legend">
+            <span><i class="dot" style="background:#6d42d8"></i>피적분함수</span>
+            <span><i class="dot" style="background:#13825f"></i>원시함수</span>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" style="margin-top:16px">
+        <h2>부정적분 문제를 읽는 순서</h2>
+        <div class="guide">
+          <div><span>1</span><b>먼저 식 정리</b><br><small>곱은 전개하고 분수는 나눗셈·약분을 확인합니다.</small></div>
+          <div><span>2</span><b>항별 적분</b><br><small>xⁿ은 xⁿ⁺¹/(n+1)로 바뀝니다.</small></div>
+          <div><span>3</span><b>같은 항 정리</b><br><small>로그 항처럼 서로 없어지는 항도 확인합니다.</small></div>
+          <div><span>4</span><b>＋C와 검산</b><br><small>답을 미분해 처음 식이 되는지 확인합니다.</small></div>
+        </div>
+      </section>
+    </section>
+
+    <section id="testPanel" class="panel">
+      <section class="card" style="margin-top:17px">
+        <h2>유사문제 테스트</h2>
+        <div class="test-tabs">
+          <button class="test-tab active" data-test="extrema">극값·그래프 문제</button>
+          <button class="test-tab" data-test="integral">부정적분 문제</button>
+        </div>
+        <div class="score-row">
+          <span class="score-chip">푼 문제 <b id="attemptCount">0</b></span>
+          <span class="score-chip">정답 <b id="correctCount">0</b></span>
+          <span class="score-chip">정답률 <b id="accuracy">0%</b></span>
+        </div>
+        <div class="test-box">
+          <div id="testInstruction" class="small" style="margin-bottom:9px"></div>
+          <div id="testQuestion" class="test-question"></div>
+          <div id="testOptions" class="options"></div>
+          <div class="test-actions">
+            <button class="primary" id="gradeBtn">채점하기</button>
+            <button class="secondary" id="newProblemBtn">새 유사문제</button>
+            <button class="ghost" id="showExplanationBtn">풀이 보기</button>
+          </div>
+          <div id="testFeedback" class="feedback"></div>
+          <div id="testExplanation" class="solution-step hidden" style="margin-top:10px"></div>
+        </div>
+      </section>
+    </section>
+
+    <section id="conditionPanel" class="panel">
+      <div class="condition-grid">
+        <section class="card condition-full" style="margin-top:17px">
+          <h2>적분 조건으로 함수값 구하기</h2>
+          <div class="condition-problem">
+            ∫(f(x)+3x)dx = x³+ax²+bx+C<br>
+            f(2)=2, &nbsp; f′(−1)=−2일 때 f(−2)를 구하여라.
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>① 가장 먼저 해야 하는 일</h2>
+          <div class="condition-key">
+            <b>C는 적분상수입니다.</b>
+            양변을 미분하면 C′=0이므로 C의 값은 구하지 않습니다. 이 문제는 적분을 새로 계산하는 것이 아니라
+            <b>양변을 미분하여 f(x)를 꺼내는 문제</b>입니다.
+          </div>
+          <div class="arrow">↓ 양변을 미분</div>
+          <div class="formula-box">f(x)+3x = 3x²+2ax+b</div>
+          <div class="arrow">↓ 3x를 오른쪽으로 이동</div>
+          <div class="formula-box">f(x)=3x²+(2a−3)x+b</div>
+        </section>
+
+        <section class="card">
+          <h2>② 원문제 단계별 풀이</h2>
+          <div class="condition-flow">
+            <div class="condition-step"><span class="step-no">1</span><div><b>다시 미분</b><div class="small math-result">f′(x)=6x+2a−3</div></div></div>
+            <div class="condition-step"><span class="step-no">2</span><div><b>f′(−1)=−2 사용</b><div class="small math-result">−6+2a−3=−2 → a=7/2</div></div></div>
+            <div class="condition-step"><span class="step-no">3</span><div><b>f(2)=2 사용</b><div class="small math-result">12+8+b=2 → b=−18</div></div></div>
+            <div class="condition-step"><span class="step-no">4</span><div><b>함수 완성</b><div class="small math-result">f(x)=3x²+4x−18</div></div></div>
+            <div class="condition-step"><span class="step-no">5</span><div><b>x=−2 대입</b><div class="small math-result">f(−2)=12−8−18=−14</div></div></div>
+          </div>
+          <div class="condition-answer" style="margin-top:11px">f(−2)=−14</div>
+        </section>
+
+        <section class="card condition-full">
+          <div class="condition-toolbar">
+            <div>
+              <h2>유사문제 연습</h2>
+              <div class="small">답만 빠르게 고르거나, 각 계산 과정을 직접 빈칸에 입력할 수 있습니다.</div>
+            </div>
+            <button class="secondary" id="conditionNextBtn">새 유사문제</button>
+          </div>
+
+          <div class="condition-toolbar">
+            <div class="condition-mode-row">
+              <b>풀이 방식</b>
+              <button class="condition-mode active" data-condition-mode="choice">답만 선택</button>
+              <button class="condition-mode" data-condition-mode="process">과정 풀기</button>
+            </div>
+            <div class="condition-level-row">
+              <b>난이도</b>
+              <button class="condition-level active" data-condition-level="basic">기초</button>
+              <button class="condition-level" data-condition-level="standard">표준</button>
+              <button class="condition-level" data-condition-level="challenge">도전</button>
+              <button class="condition-level" data-condition-level="all">전체</button>
+            </div>
+          </div>
+
+          <div class="condition-score">
+            <span class="condition-chip">푼 문제 <b id="conditionAttempts">0</b></span>
+            <span class="condition-chip">정답 <b id="conditionCorrect">0</b></span>
+            <span class="condition-chip">정답률 <b id="conditionAccuracy">0%</b></span>
+            <span class="condition-chip">현재 단계 <b id="conditionStepCount">0/0</b></span>
+          </div>
+
+          <div id="conditionPracticeProblem" class="condition-problem" style="margin-top:12px"></div>
+          <div id="conditionChoiceArea">
+            <div id="conditionOptions" class="condition-options"></div>
+            <div class="solve-actions">
+              <button class="primary" id="conditionGradeBtn">답 채점</button>
+              <button class="ghost" id="conditionChoiceExplainBtn">풀이 보기</button>
+            </div>
+          </div>
+
+          <div id="conditionProcessArea" class="hidden">
+            <div class="condition-progress"><div id="conditionProgressBar"></div></div>
+            <div id="conditionProcessSteps" class="condition-process"></div>
+          </div>
+
+          <div id="conditionFeedback" class="condition-feedback"></div>
+          <div id="conditionExplanation" class="solution-step hidden" style="margin-top:11px"></div>
+        </section>
+
+        <section class="card condition-full">
+          <h2>오개념 진단</h2>
+          <div class="small">과정 풀이에서 틀린 단계가 누적되어 어느 부분을 다시 설명해야 하는지 보여줍니다.</div>
+          <div id="conditionDiagnosis" class="condition-diagnosis"></div>
+        </section>
+
+        <section class="card condition-full">
+          <h2>추천 유사문제 구성</h2>
+          <div class="condition-recommend">
+            <div><div class="level-title">기초</div><b>정수 계수 중심</b><div class="small">양변 미분, C′=0, 조건 대입의 기본 흐름을 연습합니다.</div></div>
+            <div><div class="level-title">표준</div><b>음수·이항 포함</b><div class="small">f(x)−x처럼 부호가 바뀌는 식과 음수 대입을 연습합니다.</div></div>
+            <div><div class="level-title">도전</div><b>a가 분수인 문제</b><div class="small">a가 음의 분수로 나오더라도 f(x)의 계수를 정확히 정리하도록 구성했습니다.</div></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+  </main>
+  <footer>극값·그래프, 부정적분, 적분조건 함수값 및 유사문제 진단 학습용</footer>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/extrema.js"></script>
+<script src="js/integral.js"></script>
+<script src="js/test.js"></script>
+<script src="js/condition.js"></script>
+<script src="js/start.js"></script>
+</body>
+</html>

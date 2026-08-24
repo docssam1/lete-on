@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws3'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws3'] = {
   page: null,
   title: 'The Power of Laughter',
   theme: 'The science behind laughter and its benefits for health, mood, and social connection',
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws3.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -122,8 +123,8 @@ window.LESSONS['ws3'] = {
     title: 'The Laughter Club',
     passage: [
       'Mia thought laughter yoga sounded ridiculous. Standing in a circle with other students and laughing for no particular reason seemed like the most pointless activity imaginable. But when Ms. Wells announced that attendance was required for the wellness unit, Mia had no choice. She arrived with her arms folded, her expression perfectly blank, and a very firm plan not to laugh.',
-      'Within five minutes, that plan collapsed. When the boy next to her let out an unexpectedly high-pitched giggle during the "ha-ha" exercise, Mia felt the tension in her shoulders dissolve without warning. She tried not to smile. She failed. Laughter spread through the circle like wildfire — each person\'s sound catching the next, faster and faster — until no one could stop and the whole room was shaking. Mia felt something loosen in her chest that had been tight all week.',
-      'Two months later, Mia was the one who arrived first. She had noticed that on the days she attended laughter club, she slept better, felt less anxious before exams, and laughed more easily for the rest of the day. "I thought it was the most pointless thing I\'d ever done," she told Ms. Wells. "Now I think it might be the most useful."',
+      'Within five minutes, that plan collapsed. When the boy next to her let out an unexpectedly high-pitched giggle during the "ha-ha" exercise, Mia felt the tension in her shoulders dissolve without warning. She tried not to smile. She failed. Laughter is contagious, and it spread through the circle like wildfire — each person\'s sound catching the next, faster and faster — until no one could stop and the whole room was shaking. Mia felt something loosen in her chest that had been tight all week. Ms. Wells explained afterwards that a real laugh works nearly every muscle in the face and chest, and that the body answers by beginning to release endorphin, the chemical that dulls pain and lifts mood. That release was what Mia had felt.',
+      'Two months later, Mia was the one who arrived first. She had noticed that on the days she attended laughter club, she slept better, felt less anxious before exams, and laughed more easily for the rest of the day. Ms. Wells told her that psychology researchers had studied this for decades. Laughter, they found, is a social act far more than a private one: people are many times more likely to laugh with others than alone. A genuine laugh is almost impossible to fake, which is what makes it useful as a signal, helping a group bond, and it can trigger the same response in everyone who hears it. It is universal, too. Every culture on earth laughs, and children laugh long before they can speak. Some hospitals now use laughter therapy for exactly that reason. "I thought it was the most pointless thing I\'d ever done," she told Ms. Wells. "Now I think it might be the most useful."',
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [

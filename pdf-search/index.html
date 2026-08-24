@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GFIELD PDF 검색봇</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --panel:#16161a; --gold:#c9a24b; --gold-soft:#e8d5a3;
+    --text:#e8e6e1; --sub:#9a968e; --line:#2a2a30;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Pretendard','Noto Sans KR',sans-serif;min-height:100vh;}
+  .wrap{max-width:720px;margin:0 auto;padding:28px 16px 60px;}
+  header{text-align:center;margin-bottom:24px;}
+  header h1{font-size:1.4rem;letter-spacing:.12em;color:var(--gold);font-weight:700;}
+  header p{font-size:.8rem;color:var(--sub);margin-top:6px;}
+
+  .toggle{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .toggle button{
+    flex:1;max-width:160px;padding:10px 0;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--sub);font-size:.95rem;cursor:pointer;transition:.2s;
+  }
+  .toggle button.active{border-color:var(--gold);color:var(--gold-soft);background:#1e1b12;font-weight:600;}
+
+  .searchbar{display:flex;gap:8px;margin-bottom:20px;}
+  .searchbar input{
+    flex:1;padding:13px 16px;border-radius:12px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:1rem;outline:none;
+  }
+  .searchbar input:focus{border-color:var(--gold);}
+  .searchbar button{
+    padding:0 22px;border-radius:12px;border:none;background:var(--gold);
+    color:#111;font-weight:700;font-size:.95rem;cursor:pointer;
+  }
+  .hint{font-size:.75rem;color:var(--sub);text-align:center;margin-bottom:18px;}
+
+  .status{text-align:center;color:var(--sub);font-size:.9rem;padding:30px 0;}
+  .spinner{
+    width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--gold);
+    border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:16px;margin-bottom:12px;
+  }
+  .card .domain{font-size:.72rem;color:var(--gold);letter-spacing:.04em;margin-bottom:6px;}
+  .card h3{font-size:1rem;line-height:1.4;margin-bottom:8px;font-weight:600;}
+  .card .snippet{font-size:.83rem;color:var(--sub);line-height:1.55;margin-bottom:12px;}
+  .card a.dl{
+    display:inline-block;padding:8px 18px;border-radius:9px;background:transparent;
+    border:1px solid var(--gold);color:var(--gold-soft);font-size:.85rem;
+    text-decoration:none;font-weight:600;
+  }
+  .card a.dl:active{background:var(--gold);color:#111;}
+
+  .pager{display:flex;gap:10px;justify-content:center;margin-top:20px;}
+  .pager button{
+    padding:9px 20px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:.85rem;cursor:pointer;
+  }
+  .pager button:disabled{opacity:.35;cursor:default;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>GFIELD PDF SEARCH</h1>
+    <p>공개 학습자료 PDF 검색 · 수학 / 영어</p>
+  </header>
+
+  <div class="toggle">
+    <button id="btnMath" class="active" onclick="setSubject('math')">수학</button>
+    <button id="btnEng" onclick="setSubject('eng')">영어</button>
+  </div>
+
+  <div class="searchbar">
+    <input id="q" type="search" placeholder="예: 분수, 도형, phonics, grammar..."
+           onkeydown="if(event.key==='Enter')doSearch(1)">
+    <button onclick="doSearch(1)">검색</button>
+  </div>
+  <div class="hint">결과는 공개 웹의 PDF 직링크입니다. [PDF 열기]로 바로 확인/저장하세요.</div>
+
+  <div id="results"></div>
+  <div class="pager" id="pager" style="display:none">
+    <button id="prev" onclick="doSearch(page-1)">이전</button>
+    <button id="next" onclick="doSearch(page+1)">다음</button>
+  </div>
+</div>
+
+<script>
+// ★ 배포 후 Cloud Run 프록시 URL로 교체
+const PROXY_URL = "https://algebra2-gemini-proxy-v2-XXXXXXXX.a.run.app/pdf-search";
+
+let subject = "math";
+let page = 1;
+let lastQuery = "";
+
+function setSubject(s){
+  subject = s;
+  document.getElementById("btnMath").classList.toggle("active", s==="math");
+  document.getElementById("btnEng").classList.toggle("active", s==="eng");
+}
+
+function buildQuery(raw){
+  // 과목별 보조 키워드 자동 조합
+  if(subject === "math"){
+    return raw + " (수학 OR math OR worksheet OR 문제)";
+  }
+  return raw + " (영어 OR english OR grammar OR worksheet)";
+}
+
+async function doSearch(p){
+  const raw = document.getElementById("q").value.trim();
+  if(!raw) return;
+  page = Math.max(1, p);
+  lastQuery = raw;
+
+  const box = document.getElementById("results");
+  box.innerHTML = '<div class="status"><div class="spinner"></div>검색 중...</div>';
+  document.getElementById("pager").style.display = "none";
+
+  try{
+    const res = await fetch(PROXY_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ query: buildQuery(raw), start: (page-1)*10+1 })
+    });
+    if(!res.ok) throw new Error("proxy " + res.status);
+    const data = await res.json();
+    render(data);
+  }catch(err){
+    box.innerHTML = '<div class="status">오류가 발생했습니다.<br>'+err.message+'</div>';
+  }
+}
+
+function render(data){
+  const box = document.getElementById("results");
+  const items = data.items || [];
+  if(items.length === 0){
+    box.innerHTML = '<div class="status">결과가 없습니다. 다른 키워드로 검색해보세요.</div>';
+    return;
+  }
+  box.innerHTML = items.map(it => {
+    let domain = "";
+    try{ domain = new URL(it.link).hostname; }catch(e){}
+    return `
+    <div class="card">
+      <div class="domain">${domain}</div>
+      <h3>${escapeHtml(it.title || "제목 없음")}</h3>
+      <div class="snippet">${escapeHtml(it.snippet || "")}</div>
+      <a class="dl" href="${it.link}" target="_blank" rel="noopener">PDF 열기 ↗</a>
+    </div>`;
+  }).join("");
+
+  const total = data.totalResults ? parseInt(data.totalResults) : 0;
+  const pager = document.getElementById("pager");
+  pager.style.display = "flex";
+  document.getElementById("prev").disabled = page <= 1;
+  document.getElementById("next").disabled = page*10 >= Math.min(total, 100); // API 최대 100개
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>

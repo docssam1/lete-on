@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="How We See Color">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M100 250h190" stroke="#2d3748" stroke-width="12"/>
+<path d="M400 140l130 224H270z" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M400 250h300" stroke="#d24b3f" stroke-width="13" transform="translate(0 -55) rotate(-7.5 400 250)"/><path d="M400 250h300" stroke="#e08b2c" stroke-width="13" transform="translate(0 -33) rotate(-4.5 400 250)"/><path d="M400 250h300" stroke="#e8c53a" stroke-width="13" transform="translate(0 -11) rotate(-1.5 400 250)"/><path d="M400 250h300" stroke="#4f9e4a" stroke-width="13" transform="translate(0 11) rotate(1.5 400 250)"/><path d="M400 250h300" stroke="#3f7fbf" stroke-width="13" transform="translate(0 33) rotate(4.5 400 250)"/><path d="M400 250h300" stroke="#5a4b9e" stroke-width="13" transform="translate(0 55) rotate(7.5 400 250)"/>
+</g>
+</svg>

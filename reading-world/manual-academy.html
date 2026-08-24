@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>학원 운영 매뉴얼 · 진단 테스트 &amp; CARS B·C·D</title>
+<style>
+:root{
+  --ink:#1c2530; --muted:#69757f; --line:#dfe1dc; --paper:#fff; --bg:#f3f1ea;
+  --brand:#1b2a6b; --brand2:#c98a1e; --ok:#1c7a4b; --no:#b5342a;
+  --sans:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;
+  --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.7}
+
+.bar{position:sticky;top:0;z-index:30;background:#fffdf8;border-bottom:1px solid var(--line);
+  padding:11px clamp(14px,3vw,26px);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bar b{font-size:16px}.bar small{color:var(--muted);font-size:12px}
+.bar .sp{margin-left:auto;display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 13px;
+  font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--ink);text-decoration:none}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+
+.shell{max-width:1180px;margin:auto;padding:26px clamp(14px,3vw,26px) 80px;display:grid;
+  grid-template-columns:224px 1fr;gap:34px;align-items:start}
+nav{position:sticky;top:calc(var(--barh,70px) + 10px);font-size:13.5px;
+  max-height:calc(100vh - var(--barh,70px) - 28px);overflow:auto}
+nav a{display:block;padding:6px 10px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+nav a:hover{color:var(--brand);background:#fff}
+nav a.h{font-weight:800;color:var(--ink);margin-top:12px}
+/* Single column: the TOC stacks above the article, so pinning it would leave it
+   floating over the text it links to. It becomes a plain card that scrolls away. */
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;gap:18px}
+  nav{position:static;max-height:none;overflow:visible;background:var(--paper);
+    border:1px solid var(--line);border-radius:14px;padding:10px 8px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
+  nav a{border-left:0;border-radius:8px}
+  nav a.h{margin-top:0}
+}
+
+main{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,3.4vw,46px)}
+h1{font-family:var(--serif);font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 6px;letter-spacing:-.5px}
+.lede{color:var(--muted);font-size:15.5px;margin:0 0 8px}
+h2{font-family:var(--serif);font-size:clamp(21px,2.6vw,27px);margin:46px 0 10px;padding-top:18px;border-top:2px solid var(--brand)}
+h2:first-of-type{border-top:0;padding-top:0}
+/* The header bar is sticky, so an anchor jump would otherwise park the heading
+   underneath it. --barh is measured at runtime because the bar wraps to two rows
+   on a narrow screen and its height nearly doubles. */
+h2[id]{scroll-margin-top:calc(var(--barh,70px) + 14px)}
+h3{font-size:16.5px;margin:26px 0 6px}
+h4{font-size:14.5px;margin:18px 0 4px;color:var(--brand)}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin-bottom:5px}
+code{background:#f1f0ea;border-radius:4px;padding:1px 5px;font-size:.9em}
+.note{border-left:3px solid var(--brand);background:#f5f4ee;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+.warn{border-left:3px solid var(--no);background:#fdf3f2;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+.good{border-left:3px solid var(--ok);background:#f2f8f4;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f5f4ee;font-size:13px}
+td.c{text-align:center}
+.tag{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:999px;
+  background:#eef1f8;color:var(--brand);letter-spacing:.02em}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps>li{counter-increment:s;position:relative;padding-left:40px;margin-bottom:14px}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;
+  background:var(--brand);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:720px){.ba{grid-template-columns:1fr}}
+.ba>div{border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px}
+.ba .x{border-color:#e6c4c0;background:#fdf6f5}
+.ba .o{border-color:#bfdccb;background:#f4faf6}
+.ba h5{margin:0 0 7px;font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+.ba .x h5{color:var(--no)}.ba .o h5{color:var(--ok)}
+.ba ul{padding-left:18px;margin:0}
+.q{font-family:var(--serif);font-size:15px;background:#faf9f5;border:1px solid var(--line);
+  border-radius:8px;padding:12px 15px;margin:10px 0}
+.q b{display:block;margin-bottom:5px}
+.q ol{margin:0;padding-left:20px}
+.foot{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+
+@media print{
+  @page{size:A4;margin:16mm 15mm}
+  body{background:#fff;font-size:10.4pt;line-height:1.55}
+  .bar,nav{display:none}
+  .shell{display:block;max-width:none;padding:0}
+  main{border:0;border-radius:0;padding:0}
+  h2{break-after:avoid;font-size:16pt;margin-top:24px}
+  h3,h4{break-after:avoid}
+  table,.q,.ba,.note,.warn,.good{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+}
+figure{margin:18px 0;padding:0}
+figure img{width:100%;max-width:760px;display:block;border:1px solid var(--line);border-radius:10px}
+figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div><b>학원 운영 매뉴얼</b><br><small>진단 테스트 · CARS Level B · C · Plus D</small></div>
+  <div class="sp">
+    <a class="btn" href="print.html">티처 콘솔 열기</a>
+    <button class="btn p" onclick="window.print()">매뉴얼 인쇄</button>
+  </div>
+</div>
+
+<div class="shell">
+<nav>
+  <a class="h" href="#edge">1. 이 프로그램이 다른 점</a>
+  <a class="h" href="#about">2. 프로그램 구성</a>
+  <a href="#start">3. 빠른 시작 · 두 화면</a>
+  <a class="h" href="#test">4. 레벨 테스트 운영</a>
+  <a href="#report">5. 분석지 · 단원 평가</a>
+  <a class="h" href="#book">6. 교재 구조</a>
+  <a href="#strategy">7. 12가지 읽기 전략</a>
+  <a class="h" href="#print">8. 티처 콘솔 사용법</a>
+  <a href="#run">9. 수업 운영 예시</a>
+  <a href="#faq">10. 자주 묻는 질문</a>
+</nav>
+
+<main>
+
+<h1>학원 운영 매뉴얼</h1>
+<p class="lede">진단 테스트 · CARS Level B · C · Plus D — 레벨 배치부터 수업 운영, 문항 설계 기준까지</p>
+
+<h2 id="edge">1. 이 프로그램이 다른 점</h2>
+<p class="lede" style="margin-top:0">읽기 교재는 많습니다. 이 프로그램이 파는 것은 지문이 아니라 <b>학생이 무엇을 못 읽는지 알아내고, 그것을 부모에게 설명하고, 다음 레벨까지 데려가는 절차</b>입니다.</p>
+
+<table>
+<thead><tr><th style="width:24%">항목</th><th>보통의 레벨 테스트</th><th>이 프로그램</th></tr></thead>
+<tbody>
+<tr><td><b>채점 결과</b></td><td>점수와 합·불</td>
+<td>12개 읽기 전략별 정답률, 게이지·원그래프·막대그래프로 한 장에</td></tr>
+<tr><td><b>분석 작업</b></td><td>교사가 손으로 표를 만들고 그래프를 그림</td>
+<td>답만 입력하면 끝. 교사용 평가 1·2·3(전략 집계 → 그래프 → 강약점 분석)이 자동으로 나옴</td></tr>
+<tr><td><b>두 레벨 응시</b></td><td>따로 채점하고 따로 해석</td>
+<td>B·C를 함께 본 학생은 한 번에 입력해 <b>하나의 프로파일</b>로 분석. 두 레벨에 걸쳐 반복되는 약점이 드러남</td></tr>
+<tr><td><b>다음 단계</b></td><td>“조금 더 하세요”</td>
+<td>다음 레벨까지 <b>몇 문항이 부족한지</b>, <b>어느 전략이 막고 있는지</b>를 숫자로</td></tr>
+<tr><td><b>학습 계획</b></td><td>상담 때 구두로</td>
+<td>주 1회·주 2회 2시간 기준 <b>총 기간과 회차</b>를 표로</td></tr>
+<tr><td><b>가정 연계</b></td><td>“책 많이 읽히세요”</td>
+<td>약점 전략별로 집에서 10~15분에 할 수 있는 활동을 지정</td></tr>
+<tr><td><b>학부모 전달</b></td><td>영문 리포트 또는 구두 설명</td>
+<td>같은 분석지를 <b>영문·한글</b> 중 선택해 출력. 학원 로고·색 자동 반영</td></tr>
+</tbody>
+</table>
+
+<h3>교재부터 설득할 필요가 없다</h3>
+<p>CARS는 이 시장에서 <b>알파 프렙</b>을 비롯한 상위 프렙 학원들이 쓰면서 이름이 알려진 교재입니다. 학부모가 <em>“그 책이 뭐예요?”</em>라고 묻는 단계를 건너뛸 수 있다는 뜻입니다.</p>
+<p>그래서 이 프로그램이 더하는 것은 교재가 아니라 <b>그 교재 위에 얹는 진단·분석·계획</b>입니다. 같은 책을 쓰더라도, 채점하고 끝내는 곳과 전략별 그래프·레벨업까지 남은 거리·가정 과제까지 한 장으로 내는 곳은 상담 자리에서 전혀 다르게 보입니다.</p>
+
+<h3>왜 지금 이 기록이 필요한가</h3>
+<p>주요 기관의 선발이 일회성 시험에서 <b>관찰과 상담</b>으로 옮겨가고 있습니다. 담임 관찰·추천, 여러 차례의 성장 상담을 거쳐 결정되는 구조에서는, 학원이 내밀 수 있는 것이 <b>한 장짜리 점수</b>가 아니라 <b>시간에 걸친 기록</b>이어야 합니다.</p>
+<p>이 프로그램은 응시할 때마다 날짜·레벨·전략별 성취가 남는 분석지를 만듭니다. 같은 학생의 분석지를 나란히 놓으면 어느 전략이 언제 올라왔는지가 그대로 보입니다. 상담 자리에서 “열심히 합니다” 대신 <b>“3월에 추론이 2/12였는데 7월에 8/12입니다”</b>라고 말할 수 있게 하는 것이 이 문서의 목적입니다.</p>
+
+<h3>운영에서 실제로 줄어드는 일</h3>
+<ul>
+<li><b>채점 후 분석 시간</b> — 전략별 집계와 그래프 작성이 사라집니다.</li>
+<li><b>상담 준비</b> — 분석지가 곧 상담 자료입니다. 따로 만들 것이 없습니다.</li>
+<li><b>교재 편성</b> — 여러 단원을 골라 한 권으로 묶고, 추가 학습·유사 지문을 단원 뒤에 붙일지 책 뒤에 모을지 선택합니다.</li>
+<li><b>연령 대응</b> — 지문과 문항의 글자 크기를 따로 조절해 저연령 반에도 같은 교재를 씁니다.</li>
+</ul>
+
+<h2 id="about">2. 프로그램 구성</h2>
+<p>이 프로그램은 <b>읽기 전략(Reading Strategies)</b> 중심의 독해 교육 과정입니다. 학생이 무엇을 못 읽는지를 12가지 전략으로 분해해 진단하고, 그 약점을 겨냥해 훈련합니다.</p>
+
+<table>
+  <tr><th style="width:26%">구성</th><th>내용</th></tr>
+  <tr><td><b>진단 테스트</b></td><td>P · AA · A · B · C · D · E · F · G · H — 10개 레벨 (유치~중3 수준). 지문 1편 + 문항 6~12개</td></tr>
+  <tr><td><b>CARS Level B</b></td><td>초등 2학년(G2) 수준 · 10개 단원</td></tr>
+  <tr><td><b>CARS Level C</b></td><td>초등 3학년(G3) 수준 · 10개 단원</td></tr>
+  <tr><td><b>CARS Plus Level D</b></td><td>초등 4학년(G4) 수준 · 15개 단원</td></tr>
+  <tr><td><b>티처 콘솔</b></td><td>학습지·답안지·통권 교재·분석지를 학원 브랜드로 출력하는 도구</td></tr>
+</table>
+
+<div class="note"><b>단원 하나의 구성</b><br>
+① 핵심 낱말 12개 &nbsp;·&nbsp; ② 추가 학습 지문 + 12문항 &nbsp;·&nbsp; ③ 유사 지문 + 12문항<br>
+②와 ③은 교재 원문과 같은 주제·형식·난이도로 <b>자체 제작</b>한 지문입니다. 원문을 이미 푼 학생에게 같은 전략을 다시 훈련시키기 위한 것입니다.</div>
+
+<h2 id="start">3. 빠른 시작</h2>
+<ol class="steps">
+  <li><b>브랜드 설정</b> — 티처 콘솔에서 학원 이름·부제·색상·로고를 한 번 입력합니다. 브라우저에 저장되어 이후 모든 출력물과 <b>학생 접속 화면에도</b> 자동으로 들어갑니다.</li>
+  <li><b>레벨 테스트 인쇄</b> — 진단 레벨을 골라 문제지를 뽑습니다. 어느 레벨부터 시작할지 모르면 학년에 맞는 레벨로 시작하세요.</li>
+  <li><b>시행 &amp; 채점</b> — 학생 답안을 티처 콘솔에 입력하면 배치 결과와 분석지가 만들어집니다.</li>
+  <li><b>교재 출력</b> — 배치된 레벨의 교재를 단원별 또는 통권으로 인쇄합니다.</li>
+  <li><b>약점 보완</b> — 분석지에 나온 약한 전략만 뽑아 연습지를 만듭니다.</li>
+</ol>
+
+<h3>화면은 두 개입니다</h3>
+<table>
+  <tr><th style="width:20%">화면</th><th style="width:18%">누가</th><th>무엇을</th></tr>
+  <tr><td><b><a href="uep.html">uep.html</a></b><br>대문</td><td>학생</td>
+      <td>학원 인트로 → 레벨 진단 → 교재 3권 서가. 학생에게는 이 주소만 알려주세요.</td></tr>
+  <tr><td><b><a href="print.html">print.html</a></b><br>티처 콘솔</td><td>선생님</td>
+      <td>학습지·답안지·통권 교재 인쇄, 채점과 분석지 작성, 브랜드 설정</td></tr>
+</table>
+
+<h3>학생 접속 화면 (대문)</h3>
+<p>학생이 접속하면 학원 로고와 이름이 있는 인트로가 먼저 뜨고, 이어서 두 가지만 보입니다.</p>
+<ul>
+  <li><b>레벨 진단</b> — 온라인으로 바로 응시하거나, 선생님이 인쇄한 시험지로 봅니다.</li>
+  <li><b>교재 서가</b> — CARS Level B · C · Plus D <b>세 권만</b> 책 모양으로 놓여 있습니다. 표지를 누르면 그 교재로 바로 학습이 시작됩니다.</li>
+</ul>
+<div class="note">서가에는 공급된 3권만 나옵니다. 다른 교재나 부가 기능은 이 화면에 노출되지 않습니다.</div>
+
+<h2 id="test">4. 레벨 테스트 운영</h2>
+
+<h3>시행 방법</h3>
+<ul>
+  <li><b>시간</b> — 6문항 15분 / 8문항 20분 / 12문항 30분 권장. 시간 압박보다 <b>끝까지 풀게 하는 것</b>이 중요합니다. 못 푼 문항은 진단 정보가 되지 않습니다.</li>
+  <li><b>사전 안내</b> — "점수를 매기는 시험이 아니라 맞는 책을 찾는 과정"이라고 알려주세요. 찍기를 줄여야 진단이 정확해집니다.</li>
+  <li><b>사전을 주지 마세요</b> — 문맥 추론 능력(전략 7)이 측정 대상입니다.</li>
+</ul>
+
+<h3>어느 레벨부터 시작할까</h3>
+<table>
+  <tr><th style="width:22%">학년</th><th>시작 권장 레벨</th></tr>
+  <tr><td>유치 · 초1</td><td>P 또는 AA</td></tr>
+  <tr><td>초2</td><td>A 또는 B</td></tr>
+  <tr><td>초3</td><td>B 또는 C</td></tr>
+  <tr><td>초4~5</td><td>C 또는 D</td></tr>
+  <tr><td>초6 이상</td><td>D 이상</td></tr>
+</table>
+<p>애매하면 <b>낮은 쪽</b>에서 시작하세요. 상향 판정이 나오면 한 단계 위로 재응시하면 되지만, 너무 어려운 레벨은 "다 모른다"는 결과만 남고 어떤 전략이 약한지 알려주지 않습니다.</p>
+
+<h3>배치 기준</h3>
+<table>
+  <tr><th>문항 수</th><th>상향 (다음 레벨)</th><th>적합 (현 레벨)</th><th>하향 (이전 레벨)</th></tr>
+  <tr><td class="c">12문항</td><td class="c">11개 이상</td><td class="c">6~10개</td><td class="c">6개 미만</td></tr>
+  <tr><td class="c">8문항</td><td class="c">7개 이상</td><td class="c">4~6개</td><td class="c">4개 미만</td></tr>
+  <tr><td class="c">6문항</td><td class="c">6개 (만점)</td><td class="c">3~5개</td><td class="c">3개 미만</td></tr>
+</table>
+<div class="note">이 기준은 앱의 진단 판정과 <b>완전히 동일</b>합니다. 인쇄 분석지와 앱 결과가 어긋나지 않습니다.</div>
+
+<h2 id="report">5. 분석지 읽는 법</h2>
+<p>답안을 입력하면 아래 한 장이 만들어집니다. 상담 자리에 그대로 들고 가는 문서입니다.</p>
+
+<figure>
+  <img src="assets/images/manual/report-top.png" alt="분석지 상단 — 총점 게이지, 판정, 전략 구성 원그래프, 레벨별 막대, 전략별 정답률 막대">
+  <figcaption>상단 — 총점, 판정과 추천 교재, 전략 구성, 레벨별 성취, 전략별 정답률</figcaption>
+</figure>
+
+<ul>
+<li><b>게이지</b> — 전체 정답률. 여러 레벨을 함께 봤으면 합산입니다.</li>
+<li><b>전략 구성</b> — 12개 전략이 숙달(80%+) · 보통(50–79%) · 약점(50% 미만)으로 몇 개씩인지. 점수 하나보다 이 비율이 학생의 상태를 더 정확히 말합니다.</li>
+<li><b>레벨별 성취</b> — B·C를 함께 응시했을 때만 나옵니다. 어느 레벨에서 무너졌는지 바로 보입니다.</li>
+<li><b>전략별 정답률</b> — <b>약한 것부터</b> 정렬됩니다. 위에서 세 줄이 곧 수업 계획입니다.</li>
+</ul>
+
+<figure>
+  <img src="assets/images/manual/report-plan.png" alt="분석지 하단 — 전략별 코칭, 코칭 우선순위, 레벨업 조건, 학습 계획표, 가정 과제">
+  <figcaption>하단 — 전략별 코칭, 우선순위, 다음 레벨 조건, 기간 계획, 가정 과제</figcaption>
+</figure>
+
+<ul>
+<li><b>무엇을 어떻게 도울까</b> — 약점 전략마다 <b>몇 문항을 놓쳤는지</b>와 <b>어느 레벨에서 무너졌는지</b>를 적고, 그 전략을 훈련하는 방법을 붙입니다.</li>
+<li><b>코칭 우선순위</b> — 정답률이 낮은 순, 같으면 더 기초가 되는 전략이 앞섭니다.</li>
+<li><b>다음 레벨로 올라가려면</b> — 목표 레벨, 필요한 점수, <b>지금 몇 문항 부족한지</b>, 막고 있는 전략.</li>
+<li><b>계획표</b> — 주 1회·주 2회 2시간 기준 총 기간과 회차.</li>
+<li><b>가정에서 도와주실 것</b> — 우선순위 전략마다 10~15분짜리 활동.</li>
+</ul>
+
+<p class="tip">분석지 언어는 학습지와 <b>따로</b> 고릅니다. 영어로 시험을 인쇄하고 학부모에게는 한글 분석지를 줄 수 있습니다. 학원 로고와 색은 브랜드 설정에서 자동으로 들어갑니다.</p>
+
+<h2 id="book">6. 교재 구조</h2>
+<p>모든 단원이 같은 뼈대를 가집니다. 학생은 같은 형식을 반복하며 전략 자체에 익숙해집니다.</p>
+<table>
+  <tr><th style="width:20%">구성</th><th>용도</th><th style="width:16%">분량</th></tr>
+  <tr><td><b>낱말</b></td><td>지문의 핵심 어휘. 빈칸 시험지 또는 뜻이 인쇄된 학습지로 출력 가능</td><td>12개</td></tr>
+  <tr><td><b>추가 학습 지문</b></td><td>교재 원문과 같은 주제·형식을 이어가는 지문. 원문 학습 직후 같은 전략을 다시 적용</td><td>지문 + 12문항</td></tr>
+  <tr><td><b>유사 지문</b></td><td>같은 핵심 어휘를 쓰는 새 이야기. 전이(transfer) 확인용</td><td>지문 + 12문항</td></tr>
+</table>
+<p>세 구성은 <b>독립적으로 출력</b>할 수 있습니다. 숙제는 낱말만, 수업은 추가 학습 지문만, 시험은 유사 지문만 — 이런 식으로 운영하십시오.</p>
+
+<h2 id="strategy">7. 12가지 읽기 전략</h2>
+<p>모든 12문항 세트에서 <b>문항 번호 = 전략 번호</b>입니다. 3번은 언제나 순서, 8번은 언제나 추론입니다. 그래서 여러 단원의 결과를 겹쳐 보면 약점이 드러납니다.</p>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">전략</th><th>측정하는 능력</th></tr>
+  <tr><td class="c">1</td><td>주제 찾기</td><td>글 전체를 관통하는 중심 생각. 부분 사실과 구별하기</td></tr>
+  <tr><td class="c">2</td><td>세부 내용</td><td>글에 직접 쓰인 정보를 정확히 찾기</td></tr>
+  <tr><td class="c">3</td><td>일의 순서</td><td>글에 서술된 순서가 아니라 <b>실제 사건이 일어난 순서</b></td></tr>
+  <tr><td class="c">4</td><td>원인과 결과</td><td>두 사건의 인과를 단순 선후와 구별하기</td></tr>
+  <tr><td class="c">5</td><td>비교와 대조</td><td>두 대상의 공통점·차이점을 근거와 함께 파악</td></tr>
+  <tr><td class="c">6</td><td>예측하기</td><td>글의 흐름을 근거로 이후를 추론 (쓰인 내용 반복이 아님)</td></tr>
+  <tr><td class="c">7</td><td>문맥 속 어휘</td><td>주변 문장을 단서로 모르는 낱말의 뜻 추론</td></tr>
+  <tr><td class="c">8</td><td>추론하기</td><td>직접 쓰이지 않았지만 근거로 도출되는 결론</td></tr>
+  <tr><td class="c">9</td><td>사실과 의견</td><td>검증 가능한 진술과 판단·느낌 구별</td></tr>
+  <tr><td class="c">10</td><td>글쓴이의 목적</td><td>정보 전달 / 설득 / 재미 / 설명 중 무엇인가</td></tr>
+  <tr><td class="c">11</td><td>비유 표현</td><td>글자 그대로가 아닌 의미 읽기</td></tr>
+  <tr><td class="c">12</td><td>요약 · 사실과 상상</td><td>B·C는 현실/상상 구별, D는 요약 (레벨별 상이)</td></tr>
+</table>
+
+<h2 id="print">8. 티처 콘솔 사용법</h2>
+<p><a href="print.html">print.html</a> 을 브라우저로 엽니다. 설치할 것은 없습니다.</p>
+
+<h3>브랜드</h3>
+<p>학원 이름·부제·색상·로고를 설정합니다. <b>브라우저에 저장</b>되므로 한 번만 하면 됩니다. 로고는 파일 업로드하거나 <code>assets/images/brand/logo.png</code> 에 두면 자동으로 인식합니다. 이미 등록된 학원은 <b>등록된 학원</b> 칩을 누르면 이름·부제·색·로고가 한 번에 들어갑니다. 사진으로 찍은 로고의 <b>흰 배경은 자동 제거</b>됩니다.</p>
+
+<h3>출력 단위</h3>
+<table>
+  <tr><th style="width:22%">통권</th><td>앞표지 + 단원 속표지 + 전체 학습지 + 답안지를 한 권으로</td></tr>
+  <tr><th>단원별</th><td>고른 단원 하나만. 표지 없이 학습지만</td></tr>
+</table>
+
+<h3>표지</h3>
+<p>문장형 · 세로 밴드 · 클래식 · 모던 · 아치 — 5종. 학원 색상이 자동 반영됩니다.</p>
+<div class="good"><b>프린터로 바로 뽑아도 표지 색이 나옵니다.</b><br>
+브라우저는 "배경 그래픽" 옵션이 기본 꺼짐이라 보통은 색 배경이 백지로 인쇄됩니다. 이 표지는 배경색이 아니라 <b>도형으로 그려서</b> 그 설정과 무관하게 인쇄됩니다. 여백만 <b>없음</b>으로 두세요.</div>
+
+<h3>약점 유형 연습</h3>
+<p>12전략 중 골라 체크하면 <b>지문은 그대로, 해당 유형 문항만</b> 인쇄됩니다. 문항 번호는 원래 번호(6·8·12…)를 유지하므로 어떤 전략인지 바로 알 수 있습니다. 전부 해제하면 12문항 전체가 나갑니다.</p>
+
+<h3>답안지</h3>
+<p>문제지와 분리해서 인쇄합니다. 정답표와 해설이 들어가며 <b>이름·날짜란이 없고</b> 교사용 표기가 붙습니다.</p>
+
+<h3>채점과 분석지</h3>
+<ol>
+  <li>채점 패널에서 <b>진단 레벨</b> 또는 <b>교재 단원</b>을 고릅니다.</li>
+  <li>학생 이름과 응시일을 입력합니다.</li>
+  <li>문항별로 학생이 고른 답을 A/B/C/D 버튼으로 누릅니다. 한 번 더 누르면 취소됩니다.</li>
+  <li>위 <b>분석지</b> 탭에서 결과를 확인하고 <b>분석지 PDF</b>로 인쇄합니다.</li>
+</ol>
+<p>레벨을 고르면 배치 판정이, 단원을 고르면 숙달도 판정이 나옵니다(4장 참고).</p>
+
+<h3>지문과 문항 분리</h3>
+<p>기본으로 <b>지문 한 장, 문항 한 장</b>으로 나뉘어 인쇄됩니다. 교재와 같은 조판이라 통권으로 묶기 좋습니다. 한 장에 몰아서 뽑고 싶으면 옵션을 끄세요.</p>
+<div class="note"><b>삽화는 지문 장에만 들어갑니다.</b> 문항 옆에 그림이 있으면 답이 새기 때문입니다.</div>
+
+<h3>글자 크기</h3>
+<p><b>지문</b>과 <b>문항</b>의 크기를 따로 고릅니다. 각각 작게 · 기본 · 크게 · 아주 크게 4단계입니다.</p>
+<table>
+  <tr><th style="width:22%">지문</th><td>작게 10.4pt · <b>기본 11.6pt</b> · 크게 12.8pt · 아주 크게 14pt</td></tr>
+  <tr><th>문항</th><td>작게 10pt · <b>기본 11.2pt</b> · 크게 12.4pt · 아주 크게 13.6pt</td></tr>
+</table>
+<p>저학년이라 지문만 키우고 싶을 때가 대부분이라 둘을 나눠 두었습니다. 지문을 키우면 한 장에 안 들어가는 만큼 다음 장으로 넘어갑니다 — 잘리지 않습니다.</p>
+
+<h3>여러 단원을 함께 뽑을 때 — 지문 배치</h3>
+<p>단원을 여러 개 고르면 <b>추가 학습 지문</b>과 <b>유사 지문</b>을 어디에 놓을지 고를 수 있습니다.</p>
+<table>
+  <tr><th style="width:22%">각 단원 뒤<br><span style="font-weight:400">(기본)</span></th>
+      <td>1과 학습지 → 1과 추가·유사 지문 → 2과 학습지 → 2과 추가·유사 지문 …<br>
+          한 단원을 끝까지 끝내고 넘어가는 수업에 맞습니다.</td></tr>
+  <tr><th>책 뒤에 모으기</th>
+      <td>1과 → 2과 → … → 전 단원의 추가·유사 지문<br>
+          본 교재를 먼저 한 바퀴 돌리고 추가 지문은 나중에 몰아서 쓰는 수업에 맞습니다.</td></tr>
+</table>
+<p>「추가 학습 · 유사 지문을 책 뒤에 모으기」 체크박스로 바꿉니다. 단원이 하나면 차이가 없습니다.</p>
+
+<h3>학습지 언어</h3>
+<p>영어가 기본입니다. 필요하면 한국어로 바꿀 수 있고, 낱말지의 우리말 칸도 켜고 끌 수 있습니다.</p>
+
+<h3>분석지 언어</h3>
+<p><b>학습지와 따로 고릅니다.</b> 학습지는 영어로 뽑으면서 분석지만 한국어로 뽑는 경우가 대부분이라 나눠 두었습니다. 채점 패널의 <b>분석지 언어 · 한국어 / English</b> 버튼으로 바꿉니다. 판정문·전략 이름·코칭 문구·계획표가 통째로 바뀝니다.</p>
+<div class="note">학부모께 나가는 문서는 <b>한국어</b>, 원어민 강사와 공유하는 문서는 <b>English</b> 로 두면 됩니다.</div>
+
+<h3>선생님 코멘트</h3>
+<p>채점 패널 아래 <b>선생님 코멘트</b> 칸에 쓴 글이 분석지에 그대로 인쇄됩니다. 위치는 전략 구성 원그래프 바로 아래 — 학부모가 숫자를 보고 나서 읽게 되는 자리입니다. 줄바꿈은 유지되고, 비워 두면 그 칸 자체가 나오지 않습니다.</p>
+<p>자동으로 만들어지는 문구는 점수에서 나온 것이라 학생의 태도·출결·수업 중 모습은 담기지 않습니다. 그 자리를 채우는 칸입니다.</p>
+
+<h3>분석지에 표시하기 (형광펜 · ★ · 밑줄)</h3>
+<p>분석지 미리보기에서 <b>글을 드래그하면</b> 작은 막대가 뜹니다. <b>형광펜 · ★ 별표 · 밑줄</b> 중에 고르면 그 자리에 표시가 붙고, <b>인쇄물에 그대로 나갑니다.</b></p>
+<ul>
+  <li>표시를 <b>클릭하면 지워집니다.</b> 여러 개를 한 번에 지우려면 그 범위를 드래그하고 <b>지우기</b>를 누르세요.</li>
+  <li>표시해 둔 뒤에 <b>코멘트를 고치거나 답안을 바꿔도</b> 표시는 그 문장에 그대로 남습니다.</li>
+  <li>다만 채점을 바꿔서 <b>문장 자체가 다시 쓰이면</b>(정답률이 바뀌면 코칭 문구가 새로 만들어집니다) 그 표시는 사라집니다. <b>채점을 끝낸 뒤에 표시하세요.</b></li>
+  <li>컬러 프린터는 노란 형광펜 그대로, 흑백 프린터는 회색 띠로 나옵니다. 어느 쪽이든 보입니다.</li>
+</ul>
+
+<h2 id="run">9. 수업 운영 예시</h2>
+<p>주 2회 · 회당 60분 기준의 한 단원 운영안입니다.</p>
+<table>
+  <tr><th style="width:14%">차시</th><th>수업</th><th>숙제</th></tr>
+  <tr><td><b>1차시</b></td><td>낱말 12개 학습 → 추가 학습 지문 읽기 → 12문항 풀이 → <b>오답 함께 분석</b></td><td>낱말 빈칸 시험지</td></tr>
+  <tr><td><b>2차시</b></td><td>낱말 확인 → 유사 지문 읽기 → 12문항 풀이 → <b>단원 평가 분석지 작성</b></td><td>보완 유형 연습지</td></tr>
+</table>
+<p>2차시의 유사 지문 결과를 그대로 채점 패널에 입력하면 단원 평가 분석지가 됩니다. 별도 시험을 볼 필요가 없습니다.</p>
+<div class="note"><b>오답 분석이 수업의 핵심입니다.</b><br>
+"정답은 C예요"로 끝내지 마세요. <b>"왜 B를 골랐어?"</b>를 물어야 합니다. 이 교재의 오답은 각각 특정한 오독을 대표하도록 설계되어 있어서, 학생이 고른 오답이 곧 <b>어디서 어긋났는지</b>를 알려줍니다.</div>
+<p>같은 전략을 2~3개 단원에서 반복해 틀리면 실제 약점입니다. 그때 약점 유형 연습지를 투입하세요.</p>
+
+<h2 id="faq">10. 자주 묻는 질문</h2>
+
+<h4>교재 원문 지문도 인쇄되나요?</h4>
+<p>아닙니다. 티처 콘솔는 <b>자체 제작 콘텐츠</b>(낱말·추가 학습 지문·유사 지문)만 출력합니다. 원문은 학생이 보유한 교재로 학습합니다.</p>
+
+<h4>진단에서 D를 추천받았는데 D 교재가 없다고 나옵니다.</h4>
+<p>구버전의 오류입니다. 현재는 B·C·D 모두 연결되어 있습니다.</p>
+
+<h4>레벨 E 이상은 언제 나오나요?</h4>
+<p>E~H는 <b>진단만</b> 제공됩니다. 해당 레벨의 학습 교재는 아직 없습니다. 진단 결과 E 이상이 나온 학생은 D를 심화로 운영하시거나 별도 교재를 병행하십시오.</p>
+
+<h4>문항을 저희가 추가해도 되나요?</h4>
+<p>가능합니다. 다만 <b>7~10장의 설계 원칙</b>을 지켜 주세요. 특히 정답 분포 3/3/3/3, 전략 순서 고정, 그리고 오답 다섯 유형입니다. 이 규칙이 깨지면 약점 유형 연습과 분석지가 부정확해집니다.</p>
+
+<h4>분석지를 학부모에게 그대로 드려도 되나요?</h4>
+<p>됩니다. 다만 상담에서 <b>“한 번의 진단은 가설”</b>이라는 점을 함께 설명해 주세요(4장 참고).</p>
+
+<h4>인터넷 없이 쓸 수 있나요?</h4>
+<p>티처 콘솔는 브라우저에서 로컬로 동작합니다. 다만 파일을 웹 서버로 열어야 로고 자동 인식이 됩니다. 파일을 직접 열면 로고는 업로드로 넣으세요.</p>
+
+<h4>학생에게 어느 주소를 알려주나요?</h4>
+<p><b>uep.html</b> 하나만 알려주세요. 티처 콘솔(print.html)와 이 매뉴얼은 대문에서 "선생님용"으로만 연결되어 있고, 학생이 볼 이유가 없습니다.</p>
+
+<h4>브랜드를 한 번 설정하면 대문에도 적용되나요?</h4>
+<p>네. 티처 콘솔와 대문이 같은 저장소를 씁니다. 학원 이름·색상·로고를 티처 콘솔에서 한 번 넣으면 학생 화면에도 그대로 반영됩니다. 다만 <b>브라우저마다</b> 저장되므로, 학원 PC와 학생 PC가 다르면 각각 설정하거나 로고 파일을 <code>assets/images/brand/logo.png</code> 에 두세요.</p>
+
+<h4>단원 평가는 어떤 문항으로 보나요?</h4>
+<p>별도 시험지가 아니라 <b>교재의 유사 지문 12문항</b>을 그대로 씁니다. 2차시에 푼 결과를 채점 패널에 입력하면 됩니다.</p>
+
+<h4>레벨 테스트와 단원 평가 중 무엇을 더 자주 하나요?</h4>
+<p>단원 평가입니다. 레벨 테스트는 학기 초·상담 때만, 단원 평가는 단원마다 합니다. 레벨은 자주 바꾸는 것이 아닙니다.</p>
+
+<div class="foot">
+  본 매뉴얼은 학원 운영자·강사용입니다. 교재 원문은 저작권 보호 대상이며 이 프로그램에 포함되지 않습니다.<br>
+  문항 설계 원칙(7~10장)은 실제 문항 검수에 적용된 기준입니다. &nbsp;·&nbsp; 학생 화면: <a href="uep.html">uep.html</a> &nbsp;·&nbsp; 선생님 화면: <a href="print.html">print.html</a>
+</div>
+
+</main>
+</div>
+
+<script>
+// The sticky bar wraps to a second row on narrow screens, so its height is
+// measured rather than assumed — the TOC offset and the anchor scroll margin
+// both hang off it.
+(function(){
+  var bar=document.querySelector('.bar');
+  function sync(){
+    document.documentElement.style.setProperty('--barh',bar.offsetHeight+'px');
+  }
+  sync();
+  addEventListener('resize',sync);
+  if(window.ResizeObserver) new ResizeObserver(sync).observe(bar);
+})();
+</script>
+</body>
+</html>

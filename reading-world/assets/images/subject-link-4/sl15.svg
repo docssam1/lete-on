@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Journey of Wastewater">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M80 180h120v60H80z" fill="#66bb6a" stroke="#2d3748" stroke-width="8"/>
+<path d="M200 210h80" stroke="#1b5e20" stroke-width="16"/>
+<circle cx="350" cy="240" r="70" fill="#c9b98c" stroke="#2d3748" stroke-width="9"/>
+<circle cx="350" cy="240" r="34" fill="#dcedd9"/>
+<path d="M420 260h60" stroke="#1b5e20" stroke-width="16"/>
+<circle cx="550" cy="290" r="70" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<circle cx="550" cy="290" r="34" fill="#f5efe2"/>
+<path d="M620 320h60" stroke="#1b5e20" stroke-width="16"/>
+<path d="M60 430q80-30 160 0t160 0 160 0 160 0" fill="none" stroke="#2e7d32" stroke-width="10"/>
+<path d="M60 460q80-30 160 0t160 0 160 0 160 0" fill="none" stroke="#66bb6a" stroke-width="10"/>
+</g>
+</svg>

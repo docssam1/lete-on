@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD | 생각하는 황소 중등 · 입장</title>
+<meta name="description" content="생각하는 황소 중등 성취도 진단 + 클리닉 입장">
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --navy:#173a6b; --navy-d:#0f2747; --gold:#b58b1f;
+  --bg:#eef3f9; --card:#fff;
+  --line:#dde5f0; --text:#15253c; --muted:#63768e;
+  --coral:#c53d4a; --green:#0f7a4d;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:Pretendard,system-ui,sans-serif;color:var(--text);
+  background:
+    radial-gradient(780px 440px at 50% -10%,#dbe7f6,transparent 62%),
+    radial-gradient(520px 320px at 94% 110%,#f4e8cc,transparent 60%),
+    var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+
+.box{
+  width:100%;max-width:400px;background:var(--card);
+  border:1px solid var(--line);border-radius:20px;padding:38px 32px 28px;
+  box-shadow:0 24px 60px rgba(19,37,60,.10);text-align:center;
+}
+.mark{
+  width:52px;height:52px;margin:0 auto;border-radius:15px;
+  background:linear-gradient(160deg,var(--navy),var(--navy-d));
+  color:#fff;display:grid;place-items:center;font-size:22px;font-weight:950;
+  box-shadow:0 10px 22px rgba(23,58,107,.26);
+}
+.eyebrow{margin:16px 0 0;font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--gold)}
+h1{margin:9px 0 0;font-size:21px;font-weight:950;letter-spacing:-.045em;line-height:1.35;text-wrap:balance}
+.sub{margin:10px 0 0;color:var(--muted);font-size:13.5px;line-height:1.7;font-weight:600}
+
+form{margin-top:24px;display:grid;gap:7px;text-align:left}
+label{font-size:11.5px;font-weight:850;color:var(--muted);padding-left:2px}
+label+input{margin-bottom:9px}
+input{
+  width:100%;height:48px;padding:0 14px;border:1px solid var(--line);
+  border-radius:11px;background:#fbfcfe;font-size:14.5px;font-weight:700;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+input::placeholder{color:#a7b4c4;font-weight:600}
+input:focus{outline:none;border-color:var(--navy);background:#fff;box-shadow:0 0 0 3px rgba(23,58,107,.12)}
+.enter{
+  margin-top:4px;width:100%;height:50px;border:0;border-radius:12px;
+  background:var(--navy);color:#fff;font-size:15px;font-weight:900;cursor:pointer;
+  transition:background .15s,transform .08s;
+}
+.enter:hover{background:var(--navy-d)}
+.enter:active{transform:translateY(1px)}
+
+.status{margin:12px 0 0;min-height:19px;font-size:12.5px;font-weight:800;line-height:1.6}
+.status.error{color:var(--coral)}
+.status.ok{color:var(--green)}
+
+.hint{
+  margin:18px 0 0;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:12px;line-height:1.75;font-weight:600;
+}
+.foot{margin:14px 0 0;display:flex;gap:16px;justify-content:center;font-size:12px;font-weight:800}
+.foot a{color:var(--navy);border-bottom:1px solid transparent;padding-bottom:1px}
+.foot a:hover{border-color:var(--navy)}
+
+@media (max-width:420px){
+  .box{padding:32px 22px 24px;border-radius:18px}
+  h1{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="box">
+  <div class="mark">G</div>
+  <p class="eyebrow">GFIELD GIFTED EDUCATION</p>
+  <h1>생각하는 황소 중등<br>성취도 진단 + 클리닉</h1>
+  <p class="sub">전달받은 이름과 승인번호로 입장하세요.</p>
+
+  <form id="loginForm" autocomplete="off">
+    <label for="name">학생 이름</label>
+    <input id="name" type="text" placeholder="이름" autocomplete="off">
+    <label for="code">승인번호</label>
+    <input id="code" type="text" placeholder="승인번호" autocomplete="off">
+    <button class="enter" type="submit">입장하기</button>
+  </form>
+
+  <p class="status" id="status"></p>
+
+  <p class="hint">승인번호는 구매 후 카카오톡으로 전달됩니다.<br>이름은 시험지 인쇄 워터마크에만 사용됩니다.</p>
+
+  <div class="foot">
+    <a href="./index.html">과정 안내</a>
+    <a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+  </div>
+</main>
+
+<script src="./data.js"></script>
+<script src="./shared-auth.js"></script>
+<script src="./hsm-cloud.js"></script>
+<script>
+const form = document.getElementById("loginForm");
+const nameInput = document.getElementById("name");
+const codeInput = document.getElementById("code");
+const statusEl = document.getElementById("status");
+
+function setStatus(message, type){
+  statusEl.textContent = message;
+  statusEl.className = "status" + (type ? " " + type : "");
+}
+
+/* 로그인 후 돌아갈 곳 — ?next=review 처럼 지정된 경우 그곳으로 보낸다 */
+const NEXT_PAGES = { review: "./review.html", admin: "./admin.html", library: "./library.html", archive: "./archive.html" };
+const nextParam = new URLSearchParams(location.search).get("next");
+function destination(name){
+  const wanted = NEXT_PAGES[nextParam];
+  if (wanted) {
+    const adminOnly = nextParam === "review" || nextParam === "admin";
+    if (!adminOnly || HSMIDDLE_AUTH.isAdmin(name)) return wanted;
+  }
+  return HSMIDDLE_AUTH.isAdmin(name) ? "./admin.html" : "./library.html";
+}
+
+const session = HSMIDDLE_AUTH.readSession();
+if (session.valid && session.access.length) {
+  location.replace(destination(session.name));
+}
+if (session.name) nameInput.value = session.name;
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  const name = nameInput.value.trim();
+  const code = codeInput.value.trim();
+  const access = (HSMIDDLE_DATA.access && HSMIDDLE_DATA.access[name]) || [];
+  if (!HSMIDDLE_AUTH.isValidStudent(name, code) || !access.length) {
+    setStatus("이름 또는 승인번호를 확인해 주세요.", "error");
+    codeInput.focus();
+    codeInput.select();
+    return;
+  }
+  HSMIDDLE_AUTH.writeSession(name, code);
+  const admin = HSMIDDLE_AUTH.isAdmin(name);
+  if (!admin) {
+    HSMIDDLE_AUTH.markStart(name);
+    try {
+      if (window.HSMIDDLE_CLOUD) await HSMIDDLE_CLOUD.markStart(name);
+    } catch (e) {}
+  }
+  const go = destination(name);
+  setStatus(admin ? "관리자로 확인되었습니다. 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
+  location.href = go;
+});
+
+nameInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); codeInput.focus(); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CARS 분석지"
+  short_description: "CARS 채점·상담 분석지를 구현하고 검증합니다"
+  default_prompt: "Use $cars-analysis-report to improve the CARS grading and counselling report, then verify desktop, mobile, and PDF output."

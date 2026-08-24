@@ -1,0 +1,330 @@
+/* =========================================================================
+   최대·최소 큐브 챌린지 (Cube Min–Max Challenge)
+
+   The Cube Town shell (layout, panels, wood theme, Cubi, success burst,
+   dialogs, concept card, portrait guard, responsive rules) is imported from
+   쌓기나무 개수 세기 rather than copied, so there is one source of truth for
+   the shell and this file only carries what is genuinely new here. That is
+   also the pattern 세 방향 관찰소 uses (it imports fill-box's shell).
+
+   Importing count-heights specifically — instead of any other game — is
+   deliberate: this game reuses its 수 쓰기 표 machinery verbatim
+   (.top-board / .top-board-frame / .top-hint-strip / .hint-cell /
+   .number-pad / .input-canvas), so the helper cells and the number pad look
+   and behave exactly like the ones the child already learned there.
+
+   One naming note: the board here is #numberBoard, NOT #topBoard. The
+   imported sheet has several `.answer-panel:has(#topBoard...)` rules that
+   reshape the panel's grid rows for count-heights' own four-row layout; this
+   panel is a flex column with an extra views section, so it must not match
+   them. Same classes, different id.
+   ========================================================================= */
+@import url("../count-heights/styles.css?v=count-hint-20260813a");
+
+/* -------------------------------------------------------------------------
+   Answer panel: header · stage (views + table) · answer slots · prompt · pad.
+   A flex column rather than the imported grid, because the number of rows
+   changes with the level (levels 4–5 show two answer slots, 1–3 only one).
+   ------------------------------------------------------------------------- */
+.minmax-shell .minmax-answer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0 8px;
+}
+.minmax-shell .minmax-answer > header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 0;
+  height: 48px;
+  padding: 4px 8px;
+}
+.minmax-shell .minmax-answer > header h2 { display: none; }
+.minmax-shell .minmax-answer .view-switch-row { width: 100%; gap: 6px; }
+.minmax-shell .minmax-answer .view-switch { flex: 1; min-width: 0; height: 38px; }
+.minmax-shell .minmax-answer .view-switch button { min-width: 0; min-height: 30px; padding: 4px 8px; }
+.minmax-shell .minmax-answer .edge-hints-toggle { flex: 0 0 auto; height: 38px; min-height: 0; }
+
+.minmax-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px 0;
+}
+
+/* On wide screens the tabs are hidden and BOTH sections are on screen at
+   once — the views on top, the number table below, exactly like the printed
+   page the child works from. */
+.minmax-shell .minmax-tabs { display: none; }
+/* A FIXED share of the stage, never content-sized. fitViewCells() measures
+   .views-row to pick a cell size, so if the row's height came from its own
+   contents the measurement would depend on the previous cell size and the
+   grids would stay stuck at whatever they were first painted at. */
+.views-block { flex: 0 0 38%; min-height: 0; }
+.views-row { height: 100%; align-items: center; }
+.table-block { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+
+/* -------------------------------------------------------------------------
+   The three silhouettes. Read-only: this game never asks the child to paint
+   them, so the cells are plain divs with no hover/press affordance.
+   ------------------------------------------------------------------------- */
+.views-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+.view-block { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.view-label { color: #4f5c65; font-size: clamp(10px, 1.2vw, 13px); font-weight: 850; text-align: center; }
+
+.view-grid {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--mm-view-cell, 22px));
+  grid-auto-rows: var(--mm-view-cell, 22px);
+  gap: 3px;
+  padding: 5px;
+  border: 1px solid #e0d3b8;
+  border-radius: 8px;
+  background: #fffdf7;
+  box-shadow: inset 0 2px 6px rgba(120, 84, 40, .08);
+}
+.view-cell {
+  border: 1px solid #cfc0a0;
+  border-radius: 4px;
+  background: #fbf6ea;
+}
+.view-cell.filled {
+  border-color: #2f477a;
+  background: linear-gradient(#5b78a8, #3c5788);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, .22);
+}
+
+/* -------------------------------------------------------------------------
+   수 쓰기 표. The board/hint-strip/hint-cell rules all come from the imported
+   sheet; only the surrounding box and the live 합계 line live here.
+   ------------------------------------------------------------------------- */
+.table-block .input-canvas {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  /* When a phone is too short for 44px cells the fitter keeps the cells
+     finger-sized and lets the box scroll, instead of shrinking the targets
+     below what a child can reliably hit. */
+  overflow: auto;
+  border: 1px solid #d7b98f;
+  border-radius: 8px;
+}
+.table-block .input-canvas .top-board { padding: 8px; }
+
+/* Slim helper strips. The 도움 수 are read-only, so their cells do not need
+   the 44px finger target the writable cells do — but they MUST stay aligned
+   with the row/column they describe. So only the CROSS axis shrinks: the right
+   strip keeps full-height rows and gets a narrow column, the bottom strip keeps
+   full-width columns and gets a short row. That buys back roughly a third of a
+   track of vertical space on a phone, which is the difference between the table
+   fitting and scrolling. */
+.minmax-shell .top-board-frame { --hint-size: calc(var(--cell-size, 48px) * 0.62); }
+.minmax-shell .top-hint-right {
+  grid-template-rows: repeat(var(--rows, 3), var(--cell-size, 48px));
+  grid-template-columns: var(--hint-size);
+}
+.minmax-shell .top-hint-bottom {
+  grid-template-columns: repeat(var(--cols, 3), var(--cell-size, 48px));
+  grid-template-rows: var(--hint-size);
+}
+.minmax-shell .hint-cell {
+  aspect-ratio: auto;
+  width: 100%;
+  height: 100%;
+  font-size: calc(var(--hint-size, 30px) * 0.66);
+}
+
+.sum-strip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid #d7b98f;
+  border-radius: 8px;
+  background: #fffaf0;
+}
+.sum-strip > span { color: var(--muted); font-size: 12px; font-weight: 800; }
+.sum-strip > strong { color: #34759a; font-size: clamp(18px, 2vw, 24px); min-width: 34px; }
+.table-status { flex: 1; min-width: 0; overflow: hidden; color: #2c7a52; font-size: 11px; font-style: normal; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.table-status.clash { color: #a2603a; }
+
+/* -------------------------------------------------------------------------
+   Answer slots. One box on levels 1–3 (개수), two on 4–5 (최대 · 최소); the
+   look matches count-heights' .total-display so the "tap the box, then use
+   the pad" gesture carries straight over.
+   ------------------------------------------------------------------------- */
+.answer-slots {
+  flex: 0 0 auto;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
+  padding: 6px 10px;
+}
+.answer-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 48px;
+  padding: 6px 12px;
+  border: 2px solid #bd8f5e;
+  border-radius: 7px;
+  background: #fffaf0;
+  cursor: pointer;
+  text-align: left;
+}
+.answer-slot span { color: #6b5741; font-size: 12px; font-weight: 800; line-height: 1.15; }
+.answer-slot strong { min-width: 44px; color: var(--coral); font-size: 26px; text-align: right; }
+.answer-slot.active { border-color: var(--coral); background: #fff8f4; }
+.answer-slot.wrong { animation: wrong-shake .34s ease; border-color: #d9473f; }
+.answer-slot.right { border-color: #2c9a50; background: #f2fbf4; }
+.answer-slot.right strong { color: #2c9a50; }
+.answer-slot:disabled { cursor: default; }
+
+/* -------------------------------------------------------------------------
+   Viewer overlay: the hidden-case caption, then the 최대 / 최소 switch.
+   ------------------------------------------------------------------------- */
+.viewer-panel { position: relative; }
+.reveal-bar {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 20px);
+  padding: 5px 12px;
+  border: 1px solid rgba(166, 113, 63, .5);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, .93);
+  box-shadow: 0 4px 12px rgba(91, 49, 22, .16);
+  transform: translateX(-50%);
+}
+.reveal-caption { color: #6b4423; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.reveal-switch { display: flex; gap: 5px; }
+.reveal-switch[hidden] { display: none; }
+.reveal-switch button {
+  min-height: 30px;
+  padding: 4px 12px;
+  border: 1px solid #bd8f5e;
+  border-radius: 999px;
+  background: linear-gradient(#fffaf0, #efd0a4);
+  color: #6b4423;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.reveal-switch button.active { border-color: #1f587b; background: linear-gradient(#408dba, #22648e); color: #fff; }
+
+/* Hint feedback. The first 힌트 press points at the 힌트 수 switch; the next
+   ones light up one strip of helper numbers at a time. Both borrow the
+   imported sheet's hint-pulse keyframes so the flash reads the same as the
+   one the child already knows from 쌓기나무 개수 세기. */
+.minmax-shell .edge-hints-toggle.pulse { animation: hint-pulse .8s ease 2; }
+.hint-cell.hint { animation: hint-pulse .8s ease 2; }
+
+/* Roomier level picker: five levels in one row on wide screens. */
+.minmax-shell .level-list { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 720px) { .minmax-shell .level-list { grid-template-columns: repeat(3, 1fr); } }
+
+/* -------------------------------------------------------------------------
+   Compact landscape (phones). Three silhouettes AND a 5-track number table
+   cannot both be finger-sized in ~380px of panel height, so the two sections
+   go behind the tabs and each gets the whole stage in turn — the same answer
+   세 방향 관찰소 reached for the same reason.
+   ------------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 560px) {
+  .minmax-shell .minmax-answer { padding: 0 0 4px; }
+  .minmax-shell .minmax-answer > header { height: 28px; padding: 2px 5px; }
+  .minmax-shell .minmax-answer .view-switch { height: 24px; padding: 2px; border-width: 1px; }
+  .minmax-shell .minmax-answer .view-switch button { min-height: 22px; padding: 2px 4px; font-size: 9px; line-height: 1.05; }
+  .minmax-shell .minmax-answer .edge-hints-toggle { height: 24px; padding: 2px 7px; font-size: 9px; line-height: 1.05; border-radius: 5px; }
+
+  .minmax-shell .minmax-tabs { display: grid; }
+  .minmax-stage { gap: 4px; padding: 4px 6px 0; }
+
+  /* Only the selected section stays in the layout. The other keeps its DOM
+     (the table's written numbers must survive a tab flip) but is display:none
+     so it is neither measured nor painted. */
+  .minmax-stage[data-stage="table"] .views-block,
+  .minmax-stage[data-stage="views"] .table-block { display: none; }
+  .minmax-stage[data-stage="views"] .views-block { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .minmax-stage[data-stage="table"] .table-block { flex: 1; min-height: 0; }
+
+  .view-label { font-size: 9px; }
+  .view-grid { gap: 2px; padding: 3px; border-radius: 6px; }
+  .views-row { gap: 6px; }
+
+  .table-block { position: relative; }
+  .table-block .input-canvas { border-radius: 6px; }
+  .table-block .input-canvas .top-board { padding: 3px; gap: 2px; }
+  /* The 합계 stops being a row of its own and becomes a chip floating in the
+     table's corner: on a phone that row costs ~30px, which the table needs
+     more than the layout does. The "table matches the views" line drops out
+     here — the toast and Cubi still deliver it, so nothing is actually lost. */
+  .sum-strip {
+    position: absolute;
+    z-index: 3;
+    left: 4px;
+    top: 4px;
+    gap: 4px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(255, 250, 240, .92);
+  }
+  .sum-strip > span { font-size: 9px; }
+  .sum-strip > strong { font-size: 14px; min-width: 18px; }
+  .table-status { display: none; }
+
+  .answer-slots { gap: 5px; padding: 3px 6px; }
+  .answer-slot { min-height: 32px; padding: 2px 8px; border-width: 1px; border-radius: 5px; }
+  .answer-slot span { font-size: 8px; }
+  .answer-slot strong { min-width: 26px; font-size: 18px; }
+
+  .minmax-shell .number-pad { gap: 3px; padding: 0 5px; }
+  .minmax-shell .number-pad button { min-height: 28px; border-radius: 5px; font-size: 15px; }
+  .minmax-shell .number-pad .clear-key { font-size: 11px; }
+
+  .reveal-bar { bottom: 5px; gap: 5px; padding: 3px 8px; }
+  .reveal-caption { font-size: 9px; }
+  .reveal-switch button { min-height: 22px; padding: 2px 8px; font-size: 9px; }
+}
+
+@media (orientation: landscape) and (max-height: 390px) {
+  .minmax-shell .minmax-answer > header { height: 26px; }
+  .minmax-shell .minmax-answer .view-switch,
+  .minmax-shell .minmax-answer .edge-hints-toggle { height: 22px; }
+  .answer-slot { min-height: 30px; }
+  .answer-slot strong { font-size: 16px; }
+}
+
+/* The number prompt is a desktop-only nicety; the focused shell hides it and
+   the pad takes the space.
+
+   Six columns, not count-heights' five: 0-9 plus a two-wide 지우기 then lands in
+   exactly TWO rows instead of three. That third row is ~40px of panel height,
+   and on a phone this table needs every one of them to keep its cells at 44px. */
+.minmax-shell .number-pad {
+  flex: 0 0 auto;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-content: stretch;
+  padding: 0 10px;
+}
+.minmax-shell .number-pad button { height: auto; min-height: 38px; }
+.minmax-shell .number-pad .clear-key { display: block; grid-column: span 2; }

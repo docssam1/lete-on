@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-1";
-import { text } from "./i18n.js?v=crystal-1";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-10";
+import { text } from "./i18n.js?v=crystal-10";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -19,6 +19,7 @@ const elements = {
   sideCard: $("#sideCard"),
   topCard: $("#topCard"),
   buildGrid: $("#buildGrid"),
+  buildCount: $("#buildCount"),
   checkBtn: $("#checkBtn"),
   clearBtn: $("#clearBtn"),
   hint: $("#hint"),
@@ -32,6 +33,7 @@ const elements = {
   audio: $("#audio"),
   toast: $("#toast"),
   success: $("#success"),
+  successNote: $("#successNote"),
   conceptTutorial: $("#conceptTutorial"),
   conceptMessage: $("#conceptMessage"),
   conceptSteps: $("#conceptSteps"),
@@ -56,7 +58,12 @@ const state = {
   wrongAttempts: 0,
   audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   advanceTimer: null,
-  tutorialStep: -1
+  tutorialStep: -1,
+  // Which levelIndex the "여러/한 가지 정답" notice has already been shown for
+  // this page load — lets loadProblem() show it once per level entry (not on
+  // every problem inside that level) without any extra persisted storage.
+  noticeLevel: -1,
+  showLevelNotice: false
 };
 
 const tutorialStorageKey = "gfield-crystal-cubes-tutorial-v1";
@@ -81,6 +88,7 @@ function applyLanguage() {
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   if (state.tutorialStep >= 0) renderConceptTutorial();
 }
 
@@ -94,7 +102,7 @@ function updateAudioButton() {
 
 function updateProgress() {
   elements.progress.textContent = format("progress", {
-    level: state.levelIndex + 1,
+    level: levels[state.levelIndex].level,
     current: state.problemIndex + 1,
     total: levels[state.levelIndex].problems.length
   });
@@ -140,8 +148,72 @@ function setGuide(key, shouldSpeak = true) {
   if (shouldSpeak) speak(message);
 }
 
+// Which "여러/한 가지 정답" line to prefix the prompt with, chosen from the
+// measured `solutions` data (see levels.js), never from the level number.
+// Levels 2/3/4/5 all mix single- and multi-answer problems, so this has to be
+// re-decided per session rather than hard-coded per level.
+function levelNoticeKey() {
+  // Level 5's problems carry a `goal` (levels.js): matching the cards is no
+  // longer the whole task there, so the "여러 가지 정답 / 정답은 하나" notice
+  // would be actively wrong — the answer is now pinned to one cube TOTAL.
+  // That level gets its own line explaining the new rule instead. Checked
+  // per problem, not per level number, so the level ordering can change
+  // without this silently going stale.
+  if (currentProblem().goal) return "goalLevelNotice";
+  if (currentProblem().requiredTotal) return "singleAnswerCountNotice";
+  if (levels[state.levelIndex].multiAnswer) return "multiAnswerNotice";
+  const activeCount = currentProblem().activeViews.length;
+  return activeCount === 1 ? "singleAnswerNotice1" : activeCount === 2 ? "singleAnswerNotice2" : "singleAnswerNotice3";
+}
+
+// The standing instruction under the cards. On a goal problem it is phrased as
+// an ACTION ("가장 많이 쌓기") rather than a question about a number — this game
+// is the hands-on build; the separate 최대·최소 큐브 챌린지 game owns the
+// numeric version, so nothing here ever asks the child to type a count.
+function promptKey() {
+  const problem = currentProblem();
+  if (!problem.goal) return "buildPrompt";
+  return problem.goal === "max" ? "goalPromptMax" : "goalPromptMin";
+}
+
 function updatePrompt() {
-  elements.numberPrompt.textContent = text(state.lang, "buildPrompt");
+  const base = text(state.lang, promptKey());
+  // Shown once, only on the level's first problem this visit (state.showLevelNotice
+  // is set in loadProblem()) — never repeated on every problem, and never spoken
+  // by Cubi, since the house rule reserves the character's voice for the
+  // tutorial, an asked-for hint, and level completion.
+  elements.numberPrompt.textContent = state.showLevelNotice
+    ? `${text(state.lang, levelNoticeKey())} ${base}`
+    : base;
+}
+
+const totalCubes = (build) => build.reduce((sum, row) => sum + row.reduce((a, h) => a + h, 0), 0);
+
+// Live running total of what the child has placed. Only goal problems need it
+// (that is the quantity being judged there), so on levels 2-4 the row stays
+// hidden and those levels look exactly as they did before.
+function updateBuildCount() {
+  const problem = currentProblem();
+  if (!problem.goal && !problem.requiredTotal) {
+    elements.buildCount.hidden = true;
+    elements.buildCount.textContent = "";
+    return;
+  }
+  elements.buildCount.hidden = false;
+  if (problem.requiredTotal) {
+    elements.buildCount.textContent = format("requiredCount", {
+      required: problem.requiredTotal,
+      count: totalCubes(state.build)
+    });
+    return;
+  }
+  // The goal must be stated HERE, not only in #numberPrompt: the shared shell
+  // renders #numberPrompt as display:none for this game at every viewport, so
+  // a child would otherwise never see whether to build the most or the fewest.
+  // This row sits right under the build grid and is visible on phone and
+  // desktop alike.
+  const key = problem.goal === "min" ? "goalCountMin" : "goalCountMax";
+  elements.buildCount.textContent = format(key, { count: totalCubes(state.build) });
 }
 
 function shouldShowConceptTutorial() {
@@ -194,6 +266,10 @@ const blankBuild = (grid) => {
   return Array.from({ length: depth }, () => Array.from({ length: width }, () => 0));
 };
 
+// Bumped on every loadProblem() call; used below to let only the LAST call in
+// a same-tick burst decide the one-shot level notice (see loadProblem()).
+let loadGeneration = 0;
+
 function loadProblem() {
   state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
   saveGameProgress("crystalCubes", {
@@ -203,27 +279,58 @@ function loadProblem() {
   });
   clearTimeout(state.advanceTimer);
   elements.success.classList.remove("show");
+  elements.successNote.classList.remove("show");
   state.build = blankBuild(currentProblem().grid);
   state.solved = false;
   state.hintsUsed = 0;
   state.wrongAttempts = 0;
+  // shared/game-flow.js resolves "?level=N" by SIMULATING a click on the
+  // matching level button right after this module's own default-level
+  // loadProblem() already ran — both happen synchronously, before the first
+  // paint. Deciding the one-shot notice here (rather than deferring it)
+  // would let that transient first call consume it, leaving the level the
+  // child actually lands on silent. Instead: render the plain prompt now,
+  // and only apply the notice on the next animation frame — by then any
+  // same-tick follow-up loadProblem() call has already bumped
+  // `loadGeneration` again, so a stale, superseded call's callback no-ops.
+  state.showLevelNotice = false;
   updateProgress();
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   renderModel();
   setCameraView("free");
   setGuide("guideStart", false);
   if (shouldShowConceptTutorial()) openConceptTutorial();
+
+  const wantsNotice = state.problemIndex === 0 && state.noticeLevel !== state.levelIndex;
+  if (wantsNotice) {
+    const generation = ++loadGeneration;
+    const targetLevelIndex = state.levelIndex;
+    requestAnimationFrame(() => {
+      if (generation !== loadGeneration) return; // superseded by a later loadProblem()
+      if (state.levelIndex !== targetLevelIndex || state.problemIndex !== 0) return;
+      state.showLevelNotice = true;
+      state.noticeLevel = state.levelIndex;
+      updatePrompt();
+    });
+  } else {
+    loadGeneration += 1;
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Read-only view cards (the goal) + interactive height-build grid
 // ---------------------------------------------------------------------------
 function renderCards() {
-  const target = currentProblem().target;
+  const problem = currentProblem();
+  const target = problem.target;
   ["front", "side", "top"].forEach((name) => {
     const el = cardEl[name];
+    const active = problem.activeViews.includes(name);
+    el.closest(".card-block").hidden = !active;
+    if (!active) return;
     const view = target[name];
     el.classList.remove("mismatch", "matched");
     el.style.setProperty("--cols", String(view[0].length));
@@ -275,6 +382,7 @@ function bumpHeight(x, z) {
   cell.textContent = String(h);
   cell.classList.remove("right");
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -283,6 +391,7 @@ function clearAll() {
   state.build = blankBuild(currentProblem().grid);
   renderBuildGrid();
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -296,10 +405,47 @@ function checkAnswer() {
     return;
   }
   const mine = viewsOfHeightGrid(state.build, problem.grid, problem.maxH);
-  if (viewsMatch(mine, problem.target)) { completeProblem(); return; }
+  if (viewsMatch(mine, problem.target, problem.activeViews)) {
+    if (problem.requiredTotal) {
+      const total = totalCubes(state.build);
+      if (total !== problem.requiredTotal) {
+        state.wrongAttempts += 1;
+        problem.activeViews.forEach((name) => {
+          cardEl[name].classList.remove("mismatch");
+          cardEl[name].classList.add("matched");
+        });
+        const key = total < problem.requiredTotal ? "requiredMoreNeeded" : "requiredFewerNeeded";
+        showToast(text(state.lang, key));
+        setGuide(key, false);
+        return;
+      }
+    }
+    // Standard levels also require the visible cube total when one is given.
+    if (!problem.goal) { completeProblem(); return; }
+    // Level 5 also has to hit the extreme total. Because all three cards are
+    // active here, any card-matching build already sits between minTotal and
+    // maxTotal — so a single comparison with targetTotal both grades the
+    // problem and says which way the child has to go.
+    const total = totalCubes(state.build);
+    if (total === problem.targetTotal) { completeProblem(); return; }
+    state.wrongAttempts += 1;
+    // The cards genuinely ARE satisfied, so mark them all green: this must not
+    // read as the "a card is still wrong" failure (crystalWrong, below), which
+    // outlines the offending card in red. Only the count needs changing.
+    ["front", "side", "top"].forEach((name) => {
+      if (!problem.activeViews.includes(name)) return;
+      cardEl[name].classList.remove("mismatch");
+      cardEl[name].classList.add("matched");
+    });
+    const key = total < problem.targetTotal ? "goalMoreNeeded" : "goalFewerNeeded";
+    showToast(text(state.lang, key));
+    setGuide(key, false);
+    return;
+  }
   // Show which of the three cards is not yet satisfied.
   state.wrongAttempts += 1;
   ["front", "side", "top"].forEach((name) => {
+    if (!problem.activeViews.includes(name)) return;
     const ok = JSON.stringify(mine[name]) === JSON.stringify(problem.target[name]);
     cardEl[name].classList.toggle("matched", ok);
     cardEl[name].classList.toggle("mismatch", !ok);
@@ -326,10 +472,24 @@ function completeProblem() {
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
+  // Quiet visual note only — never spoken, so it doesn't compete with Cubi's
+  // one line of praise (setGuide("guideSuccess") just below).
+  elements.successNote.classList.remove("show");
+  // Never on a goal problem: "다른 모양도 정답일 수 있어" is about the card set
+  // alone. On a 가장 많이 problem the maximal build is the only answer, so the
+  // note would be flatly false; on a 가장 적게 one it would invite the child to
+  // look for shapes that are no longer graded as correct unless they also hit
+  // the minimum. `solutions` still describes the card set, so it stays stored.
+  if (!currentProblem().goal && !currentProblem().requiredTotal && currentProblem().solutions > 1) {
+    elements.successNote.textContent = text(state.lang, "solutionsNote");
+    void elements.successNote.offsetWidth;
+    elements.successNote.classList.add("show");
+  }
   playSuccessBurstSound();
   setGuide("guideSuccess", false);
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
+    elements.successNote.classList.remove("show");
     nextProblem();
   }, 2900);
 }
@@ -500,11 +660,21 @@ boardWoodTexture.repeat.set(2.5, 2.5);
 const insetWoodTexture = createWoodTexture();
 insetWoodTexture.repeat.set(2, 2);
 const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 5, 0.075);
+// Placed cubes are translucent (not fully opaque wood) so the view cards now
+// stuck to the case walls/floor stay readable through a built stack.
+// opacity 0.62 read muddy once four cubes overlapped in a deep (maxH=4)
+// stack, so we use 0.7 — still see-through but each cube still reads apart.
+// depthWrite:false keeps the alpha blending between overlapping cubes correct;
+// renderOrder (set per-mesh in renderModel) makes sure cubes composite AFTER
+// the case shell and the card planes so those stay visible underneath.
 const cubeMaterial = new THREE.MeshStandardMaterial({
-  color: 0xfff5df, map: cubeWoodTexture, roughness: 0.56, metalness: 0.012, bumpMap: cubeWoodTexture, bumpScale: 0.012
+  color: 0xfff5df, map: cubeWoodTexture, roughness: 0.56, metalness: 0.012, bumpMap: cubeWoodTexture, bumpScale: 0.012,
+  transparent: true, opacity: 0.7, depthWrite: false
 });
 const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
-const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.2 });
+// Edge lines stay fully opaque (no alpha) so a cube's boundary stays crisp
+// for counting even though its faces are now translucent.
+const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x6b4a24 });
 // The crystal case: a faint blue translucent box with crisp edges.
 const caseMaterial = new THREE.MeshStandardMaterial({
   color: 0xbfe4ff, transparent: true, opacity: 0.12, roughness: 0.15, metalness: 0.0,
@@ -543,6 +713,60 @@ function makeBoardLabelPlane(label) {
   });
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, 0.42), material);
   mesh.renderOrder = 902;
+  mesh.userData.generatedTexture = true;
+  return mesh;
+}
+
+// ---------------------------------------------------------------------------
+// View cards rendered onto the case walls/floor themselves (in addition to the
+// 2D reference cards in the side panel). `view` is a 2D 0/1 grid (a row of the
+// problem's target.front/side/top); `cornerLabel` uses the active locale and
+// is baked into the corner so the card still identifies itself no
+// matter how the camera is orbited.
+function makeCardCanvas(view, cornerLabel) {
+  const rows = view.length;
+  const cols = view[0].length;
+  const cellPx = 160; // well above the 128px/cell floor so text/edges stay crisp
+  const canvas = document.createElement("canvas");
+  canvas.width = cols * cellPx;
+  canvas.height = rows * cellPx;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#f7fbff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const strokeWidth = Math.max(4, cellPx * 0.045);
+  ctx.lineWidth = strokeWidth;
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      const x = c * cellPx;
+      const y = r * cellPx;
+      if (view[r][c]) {
+        ctx.fillStyle = "#5b78a8";
+        ctx.fillRect(x, y, cellPx, cellPx);
+      }
+      ctx.strokeStyle = "#33507f";
+      ctx.strokeRect(x + strokeWidth / 2, y + strokeWidth / 2, cellPx - strokeWidth, cellPx - strokeWidth);
+    }
+  }
+  const labelSize = Math.round(cellPx * 0.46);
+  ctx.fillStyle = "rgba(51, 80, 127, 0.9)";
+  ctx.font = `900 ${labelSize}px 'Noto Sans KR', sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(cornerLabel, labelSize * 0.22, labelSize * 0.14);
+  return canvas;
+}
+
+function makeCardPlane(view, cornerLabel, planeWidth, planeHeight) {
+  const texture = new THREE.CanvasTexture(makeCardCanvas(view, cornerLabel));
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const material = new THREE.MeshBasicMaterial({
+    map: texture, transparent: true, opacity: 0.95, side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), material);
+  // Card planes draw after the case shell but before the (translucent) cubes,
+  // so a built cube's alpha blends over an already-visible card, not under it.
+  mesh.renderOrder = 4;
   mesh.userData.generatedTexture = true;
   return mesh;
 }
@@ -607,6 +831,49 @@ function renderModel() {
   caseEdges.position.set(0, maxH / 2, 0);
   modelGroup.add(caseEdges);
 
+  // The three view cards, stuck onto the actual faces of the case so the
+  // child reads the goal directly off the model (the 2D cards in the side
+  // panel remain as the plain reference). Determined empirically from the
+  // default camera (7.2, 6.6, 8.4) looking at target (0, ~1.25, 0): the
+  // camera sits on the +x/+z side, so the walls it looks AT (the far walls,
+  // not the ones between the camera and the cubes) are -z (back) and -x
+  // (left) — see setCameraView("front"/"side") which also puts those
+  // cameras on the +z/+x side respectively.
+  const caseHalfX = (width + 0.06) / 2;
+  const caseHalfZ = (depth + 0.06) / 2;
+  const wallNudge = 0.005; // nudge off the exact wall/floor plane to avoid z-fighting
+
+  // 앞 (front view) → far -z wall (the back wall as seen by the default camera),
+  // reading as the backdrop behind the stack. No rotation needed: a
+  // PlaneGeometry's default normal already faces +z, i.e. toward the interior.
+  if (problem.activeViews.includes("front")) {
+    const frontCard = makeCardPlane(problem.target.front, text(state.lang, "front"), width, maxH);
+    frontCard.position.set(0, maxH / 2, -caseHalfZ + wallNudge);
+    modelGroup.add(frontCard);
+  }
+
+  // 옆 (side view) → far -x wall (the left wall). Rotating +90° about Y turns
+  // the plane's default +z normal into +x, facing the interior/camera.
+  if (problem.activeViews.includes("side")) {
+    const sideCard = makeCardPlane(problem.target.side, text(state.lang, "side"), depth, maxH);
+    sideCard.rotation.y = Math.PI / 2;
+    sideCard.position.set(-caseHalfX + wallNudge, maxH / 2, 0);
+    modelGroup.add(sideCard);
+  }
+
+  // 위 (top view) → the case floor, face up. Rotating -90° about X (same
+  // rotation as the wood `floor` mesh above) turns the default +z normal
+  // into +y. It sits just above the opaque floor/grid meshes (y=0.014/0.025)
+  // — placing it at the spec's literal y≈0.005 would hide it completely
+  // beneath those existing opaque meshes, so it goes just above them instead,
+  // still functionally "on the floor" and still beneath the build cubes.
+  if (problem.activeViews.includes("top")) {
+    const topCard = makeCardPlane(problem.target.top, text(state.lang, "top"), width, depth);
+    topCard.rotation.x = -Math.PI / 2;
+    topCard.position.set(0, 0.03, 0);
+    modelGroup.add(topCard);
+  }
+
   // The child's current build.
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -616,6 +883,10 @@ function renderModel() {
         cube.position.set(x - centerX, y + 0.5, z - centerZ);
         cube.castShadow = true;
         cube.receiveShadow = true;
+        // Cubes draw after the case shell and the card planes (renderOrder 3
+        // and 4) so their translucent faces blend on top of an already
+        // fully-drawn card, keeping the card readable through the cube.
+        cube.renderOrder = 5;
         cube.add(new THREE.LineSegments(edgeGeometry, edgeMaterial));
         modelGroup.add(cube);
       }
@@ -687,6 +958,16 @@ elements.audio.addEventListener("click", () => {
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();
 });
+// This handler only fires the dialog open on an explicit tap of 레벨 선택.
+// "Open the picker on entry unless ?level=N is valid" (with the saved level
+// pre-highlighted, and never blocking the first-visit tutorial) is handled
+// for crystal-cubes already by the shared ../../shared/game-flow.js — loaded
+// by index.html — which waits for #levelList to render, then either clicks
+// the button matching ?level=N or (once any tutorial closes) clicks
+// #openLevels itself. Verified in a headless run: plain entry opens the
+// dialog (after the first-visit tutorial finishes), ?level=3 skips straight
+// to that level with the dialog left closed, and renderLevelList() below
+// already highlights state.levelIndex (the saved/resumed level) as `.active`.
 elements.openLevels.addEventListener("click", () => {
   renderLevelList();
   elements.levelDialog.hidden = false;

@@ -9,8 +9,8 @@
     <script type="importmap">
       {
         "imports": {
-          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+          "three": "../../vendor/three/three.module.js",
+          "three/addons/": "../../vendor/three/addons/"
         }
       }
     </script>
@@ -153,6 +153,7 @@
     </main>
 
     <script type="module" src="../../app.js?v=evolve-20260719a"></script>
+    <script src="../../shared/level-complete.js?v=1" defer></script>
     <script type="module">
       // Character growth: watch the solved-problem count and celebrate level-ups
       // and Cubi evolutions in-game. Kept as a standalone module so the copy-build

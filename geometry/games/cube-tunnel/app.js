@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, removedCells, validateLevels } from "./levels.js?v=tunnel-1";
+import { levels, removedCells, validateLevels } from "./levels.js?v=tunnel-2";
 import { text } from "./i18n.js?v=tunnel-1";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";

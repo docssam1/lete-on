@@ -248,7 +248,7 @@ a{color:var(--green-deep)}
   <div class="flowchips">
     <span data-i18n="s3_fc1"><i>STEP 1</i>단어 배우기</span>
     <span data-i18n="s3_fc2"><i>STEP 2</i>교재 읽기</span>
-    <span data-i18n="s3_fc3"><i>STEP 3</i>교재 문항 12개</span>
+    <span data-i18n="s3_fc3"><i>STEP 3</i>교재 문항</span>
     <span data-i18n="s3_fc4"><i>STEP 4</i>추가 학습 지문</span>
     <span data-i18n="s3_fc5"><i>STEP 5</i>추가 문항</span>
     <span data-i18n="s3_fc6"><i>STEP 6</i>새 지문 연습</span>
@@ -279,7 +279,7 @@ a{color:var(--green-deep)}
       <div class="step-img"><img src="assets/images/manual2/s3-03-lesson-words.jpg" alt="STEP1 단어 배우기 카드 화면" data-i18n-alt="s3_3_alt" loading="lazy"></div>
       <div class="step-body">
         <div class="step-title" data-i18n="s3_3_title"><span class="step-num">③</span>STEP 1 — 단어 먼저 배우기</div>
-        <p data-i18n="s3_3_p">레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를
+        <p data-i18n="s3_3_p">레슨의 핵심 단어를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를
         나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.</p>
       </div>
     </div>
@@ -287,7 +287,7 @@ a{color:var(--green-deep)}
 
   <div class="note green" data-i18n="s3_note">
     <b>💡 알아두면 좋아요</b><br>
-    STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 12문항을 풀면
+    STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 교재 문항을 풀면
     틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서
     같은 전략의 비슷한 문제로 바로 다시 연습시켜줘요. STEP 4·5는 짧은 추가 지문으로 더 깊게 학습하고,
     STEP 6·7은 같은 단어가 들어간 새 지문으로 실력을 확인해요. 각 단계를 완료할 때마다 코인(★P)이 쌓여서
@@ -747,7 +747,7 @@ const TXT = {
   },
   s3_fc1: { ko:`<i>STEP 1</i>단어 배우기`, en:`<i>STEP 1</i>Learn words`, zh:`<i>STEP 1</i>学单词` },
   s3_fc2: { ko:`<i>STEP 2</i>교재 읽기`, en:`<i>STEP 2</i>Read the text`, zh:`<i>STEP 2</i>阅读教材` },
-  s3_fc3: { ko:`<i>STEP 3</i>교재 문항 12개`, en:`<i>STEP 3</i>12 textbook questions`, zh:`<i>STEP 3</i>12 道教材题` },
+  s3_fc3: { ko:`<i>STEP 3</i>교재 문항`, en:`<i>STEP 3</i>Textbook questions`, zh:`<i>STEP 3</i>教材题` },
   s3_fc4: { ko:`<i>STEP 4</i>추가 학습 지문`, en:`<i>STEP 4</i>Extra passage`, zh:`<i>STEP 4</i>补充短文` },
   s3_fc5: { ko:`<i>STEP 5</i>추가 문항`, en:`<i>STEP 5</i>Extra questions`, zh:`<i>STEP 5</i>补充题目` },
   s3_fc6: { ko:`<i>STEP 6</i>새 지문 연습`, en:`<i>STEP 6</i>New passage practice`, zh:`<i>STEP 6</i>新短文练习` },
@@ -794,14 +794,14 @@ const TXT = {
     zh: `<span class="step-num">③</span>STEP 1 — 先学单词`
   },
   s3_3_p: {
-    ko: `레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를 나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.`,
-    en: `Learn the lesson's 12 key words with cards. Tap 🔊 to hear the pronunciation, and star ☆ tricky words to save them to your own word list. There are also flashcard and word-game tabs, so repeating is easy.`,
-    zh: `用卡片学习本课的 12 个核心单词。点 🔊 听发音，用 ☆ 把难记的单词收藏到自己的生词本。还有记忆卡和单词游戏标签，方便反复练习。`
+    ko: `레슨의 핵심 단어를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를 나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.`,
+    en: `Learn the lesson's key words with cards. Tap 🔊 to hear the pronunciation, and star ☆ tricky words to save them to your own word list. There are also flashcard and word-game tabs, so repeating is easy.`,
+    zh: `用卡片学习本课的核心单词。点 🔊 听发音，用 ☆ 把难记的单词收藏到自己的生词本。还有记忆卡和单词游戏标签，方便反复练习。`
   },
   s3_note: {
-    ko: `<b>💡 알아두면 좋아요</b><br> STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 12문항을 풀면 틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서 같은 전략의 비슷한 문제로 바로 다시 연습시켜줘요. STEP 4·5는 짧은 추가 지문으로 더 깊게 학습하고, STEP 6·7은 같은 단어가 들어간 새 지문으로 실력을 확인해요. 각 단계를 완료할 때마다 코인(★P)이 쌓여서 꾸미기에 쓸 수 있어요.`,
-    en: `<b>💡 Good to know</b><br> In STEP 2 (reading), the 🔊 listen button plays a native-speaker voice. When you answer the 12 questions in STEP 3, the <b>Skill Coach</b> automatically catches the strategies you missed (like understanding sequence, or cause and effect) and has you practice similar questions of the same strategy right away. STEP 4–5 go deeper with short extra passages, and STEP 6–7 check your skills with a new passage using the same words. Each step you finish adds coins (★P) you can spend on decorating.`,
-    zh: `<b>💡 小贴士</b><br> 在 STEP 2（阅读教材）中，可以用 🔊 收听按钮听母语者的发音。做完 STEP 3 的 12 道题后，<b>技能教练</b>会自动找出做错的策略（例如理清事件顺序、因果关系等），并马上用同一策略的相似题目让你再练习。STEP 4·5 用简短的补充短文更深入地学习，STEP 6·7 用含相同单词的新短文检验实力。每完成一个步骤都会攒到金币（★P），可以用来装扮。`
+    ko: `<b>💡 알아두면 좋아요</b><br> STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 교재 문항을 풀면 틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서 같은 전략의 비슷한 문제로 바로 다시 연습시켜줘요. STEP 4·5는 짧은 추가 지문으로 더 깊게 학습하고, STEP 6·7은 같은 단어가 들어간 새 지문으로 실력을 확인해요. 각 단계를 완료할 때마다 코인(★P)이 쌓여서 꾸미기에 쓸 수 있어요.`,
+    en: `<b>💡 Good to know</b><br> In STEP 2 (reading), the 🔊 listen button plays a native-speaker voice. When you answer the textbook questions in STEP 3, the <b>Skill Coach</b> automatically catches the strategies you missed (like understanding sequence, or cause and effect) and has you practice similar questions of the same strategy right away. STEP 4–5 go deeper with short extra passages, and STEP 6–7 check your skills with a new passage using the same words. Each step you finish adds coins (★P) you can spend on decorating.`,
+    zh: `<b>💡 小贴士</b><br> 在 STEP 2（阅读教材）中，可以用 🔊 收听按钮听母语者的发音。做完 STEP 3 的教材题后，<b>技能教练</b>会自动找出做错的策略（例如理清事件顺序、因果关系等），并马上用同一策略的相似题目让你再练习。STEP 4·5 用简短的补充短文更深入地学习，STEP 6·7 用含相同单词的新短文检验实力。每完成一个步骤都会攒到金币（★P），可以用来装扮。`
   },
 
   /* ---- Section 4 ---- */

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f2f5f7">
+  <title>LETE-ON | 중등 유사문제 문제은행</title>
+  <link rel="stylesheet" href="./styles.css?v=20260816a">
+</head>
+<body>
+  <section class="access-gate" id="accessGate" hidden>
+    <div>
+      <span>LETE-ON MIDDLE</span>
+      <h1>승인 확인이 필요합니다.</h1>
+      <p>중등 성취도 진단 상품이 열린 계정으로 로그인해 주세요.</p>
+      <a href="../login.html">로그인으로 이동</a>
+    </div>
+  </section>
+
+  <div class="app" id="app" hidden>
+    <header class="topbar">
+      <a class="back-link" href="../library.html" aria-label="서재로 돌아가기">← 서재</a>
+      <div class="brand"><strong>중등 유사문제 문제은행</strong><span>LETE-ON · 진단 모의고사 연계</span></div>
+      <div class="student" id="studentName"></div>
+    </header>
+
+    <main class="bank-shell" id="builderView">
+      <section class="filter-panel" aria-label="문제 범위 필터">
+        <div class="panel-title"><span>STEP 1</span><strong>범위 선택</strong></div>
+        <label class="search-field"><span>유형 검색</span><input id="searchInput" type="search" placeholder="단원 또는 유형명"></label>
+
+        <fieldset>
+          <legend>학기</legend>
+          <div class="segment-grid" id="semesterFilters"></div>
+        </fieldset>
+
+        <label class="select-field"><span>단원</span><select id="unitFilter"><option value="">전체 단원</option></select></label>
+
+        <fieldset>
+          <legend>영역</legend>
+          <div class="segment-grid two" id="areaFilters"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>난이도</legend>
+          <div class="segment-grid" id="difficultyFilters"></div>
+        </fieldset>
+
+        <button class="reset-button" id="resetFilters" type="button">필터 초기화</button>
+      </section>
+
+      <section class="catalog-panel">
+        <div class="catalog-head">
+          <div><span>STEP 2</span><h1>유사문제 유형 선택</h1><p id="catalogMeta"></p></div>
+          <button id="toggleVisible" type="button">보이는 유형 전체 선택</button>
+        </div>
+        <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+        <div class="type-list" id="typeList"></div>
+        <div class="empty-state" id="emptyState" hidden>조건에 맞는 유형이 없습니다.</div>
+      </section>
+
+      <aside class="selection-panel">
+        <div class="panel-title"><span>STEP 3</span><strong>선택 결과</strong></div>
+        <div class="selection-summary"><b id="selectedTypeCount">0개 세트</b><strong id="selectedQuestionCount">0문제</strong><span>선택한 유형마다 검수된 10문제가 포함됩니다.</span></div>
+        <div class="selected-list" id="selectedList"></div>
+        <label class="switch-row"><span>이름 워터마크</span><input id="watermarkToggle" type="checkbox" checked></label>
+        <button class="build-button" id="buildButton" type="button" disabled>문제 구성 확인</button>
+      </aside>
+    </main>
+
+    <main class="worksheet" id="worksheetView" hidden>
+      <div class="worksheet-toolbar">
+        <button id="backToBuilder" type="button">← 범위 다시 선택</button>
+        <div class="view-tabs" role="tablist" aria-label="문제와 풀이 보기">
+          <button class="active" data-view="problem" type="button">문제</button>
+          <button data-view="solution" type="button">정답·풀이</button>
+        </div>
+        <button class="print-button" id="printButton" type="button">인쇄</button>
+      </div>
+      <header class="worksheet-title">
+        <div><span>LETE-ON MIDDLE QUESTION BANK</span><h1 id="worksheetHeading">맞춤 유사문제</h1><p id="worksheetMeta"></p></div>
+        <dl><div><dt>이름</dt><dd id="worksheetStudent"></dd></div><div><dt>점수</dt><dd></dd></div></dl>
+      </header>
+      <section class="page-stream" id="pageStream"></section>
+    </main>
+  </div>
+
+  <script src="../data.js"></script>
+  <script src="../shared-auth.js"></script>
+  <script src="./catalog.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

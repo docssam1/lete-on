@@ -14,11 +14,16 @@ function renderKaTeX(tex){
   return '<span>'+esc(tex)+'</span>';
 }
 
-function buildNumpad(container, cb){
+function buildNumpad(container, cb, opts){
+  opts=opts||{};
   container.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k=>{
+  const keys=opts.decimal
+    ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  if(opts.decimal)container.classList.add('dec');else container.classList.remove('dec');
+  keys.forEach(k=>{
     const b=document.createElement('button');
-    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':'');
+    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
     b.textContent=k==='del'?'←':k==='ok'?'✓':k;
     b.addEventListener('pointerup',e=>{e.stopPropagation();cb(k);});
     container.appendChild(b);
@@ -38,6 +43,7 @@ function numpadState(screenEl, maxLen){
   return {
     handle(val){
       if(val==='del'){ inp=inp.slice(0,-1); }
+      else if(val==='.'&&inp.includes('.')){ /* 소수점 중복 방지 */ }
       else if(inp.length<(maxLen||4)){ inp+=val; }
       if(screenEl) screenEl.textContent=inp||' ';
       return inp;
@@ -59,8 +65,23 @@ function render(problem, container, onAnswer){
     case 'tenframe': return renderTenframe(problem,container,onAnswer);
     case 'steps':    return renderSteps(problem,container,onAnswer);
     case 'vertical': return renderVertical(problem,container,onAnswer);
-    case 'missing':  return renderMissing(problem,container,onAnswer);
-    default:         return renderFallback(problem,container,onAnswer);
+    case 'missing':      return renderMissing(problem,container,onAnswer);
+    case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
+    case 'tapCount':     return renderTapCount(problem,container,onAnswer);
+    case 'tapMake':      return renderTapMake(problem,container,onAnswer);
+    case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
+    case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
+    case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
+    case 'pyramid':      return renderPyramid(problem,container,onAnswer);
+    case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
+    case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
+    case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
+    case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
+    case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
+    case 'crossSum':     return renderCrossSum(problem,container,onAnswer);
+    case 'sortBasket':   return renderSortBasket(problem,container,onAnswer);
+    case 'tallyBuild':   return renderTallyBuild(problem,container,onAnswer);
+    default:             return renderFallback(problem,container,onAnswer);
   }
 }
 
@@ -384,7 +405,8 @@ function renderSteps(problem, container, onAnswer){
 
     const screen=root.querySelector('#wsScreen');
     const feedback=root.querySelector('#wsFeedback');
-    const ns=numpadState(screen,3);
+    const decStep=!Number.isInteger(s.blank);
+    const ns=numpadState(screen,decStep?6:4);
 
     function showHintBtn(){
       feedback.innerHTML=`<button class="nm-w-hint-btn">💡 ${t('힌트 보기','Show Hint','查看提示')}</button>`;
@@ -398,7 +420,7 @@ function renderSteps(problem, container, onAnswer){
       if(val==='ok'){
         const inp=ns.get();
         if(!inp)return;
-        if(parseInt(inp,10)===s.blank){
+        if(parseFloat(inp)===s.blank){
           // correct
           if(!answered){
             stepIdx++;
@@ -435,7 +457,7 @@ function renderSteps(problem, container, onAnswer){
         return;
       }
       ns.handle(val);
-    });
+    },{decimal:decStep});
   }
 
   show();
@@ -484,12 +506,12 @@ function renderVertical(problem, container, onAnswer){
       if(!inp)return;
       submitted=true;
       root.querySelector('#wvAns').textContent=inp;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
     root.querySelector('#wvAns').textContent=ns.get()||'?';
-  });
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
 }
 
 /* ─────────────────────────────────────────
@@ -519,7 +541,121 @@ function renderMissing(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
+      return;
+    }
+    ns.handle(val);
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+}
+
+/* ─────────────────────────────────────────
+   SELECT-PAIRS  widget:'selectPairs'
+   problem.nums   = [2,3,8,7,4]
+   problem.target = 10
+   problem.pairCount = 1|2
+   problem.answer = total sum (numpad phase)
+
+   Phase 1: Tap two chips that sum to target → both float up green.
+            Wrong pair → red shake 600ms then reset.
+            Repeat until all pairCount pairs are found.
+   Phase 2: Numpad to enter total sum.
+───────────────────────────────────────── */
+function renderSelectPairs(problem, container, onAnswer){
+  const nums=problem.nums||[];
+  const target=problem.target||10;
+  const pairCount=problem.pairCount||1;
+
+  const chips=nums.map((v,i)=>({id:i,val:v,state:'idle'}));
+  let selId=null;
+  let foundPairs=0;
+  let shaking=false;
+  let submitted=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sp-wrap';
+  const promptText=problem.prompt&&problem.prompt.ko
+    ?problem.prompt.ko
+    :'합이 '+target+'이 되는 짝을 찾아요!';
+  root.innerHTML=`
+    <div class="nm-sp-prompt">${esc(promptText)}</div>
+    <div class="nm-sp-chips"></div>
+    <div class="nm-sp-sum-phase" style="display:none">
+      <div class="nm-sp-done-hint">🎉 짝을 모두 찾았어요! 전체 합을 써요.</div>
+      <div class="nm-sp-sum-eq"></div>
+      <div class="nm-numpad-screen" id="spScreen">&nbsp;</div>
+      <div class="nm-numpad" id="spPad"></div>
+    </div>
+  `;
+  container.appendChild(root);
+
+  const chipsEl=root.querySelector('.nm-sp-chips');
+  const sumPhase=root.querySelector('.nm-sp-sum-phase');
+
+  function paint(){
+    chipsEl.innerHTML='';
+    chips.forEach(c=>{
+      const el=document.createElement('div');
+      el.className='nm-sp-chip'+(c.state==='sel'?' sel':c.state==='paired'?' paired':c.state==='wrong'?' wrong':'');
+      el.textContent=c.val;
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(submitted||shaking)return;
+        tap(c.id);
+      });
+      chipsEl.appendChild(el);
+    });
+  }
+
+  function tap(id){
+    const chip=chips[id];
+    if(!chip||chip.state==='paired')return;
+    if(selId===null){
+      chips[id].state='sel';
+      selId=id;
+      paint();
+    } else if(selId===id){
+      chips[id].state='idle';
+      selId=null;
+      paint();
+    } else {
+      const a=chips[selId],b=chips[id];
+      if(a.val+b.val===target){
+        a.state='paired';
+        b.state='paired';
+        selId=null;
+        foundPairs++;
+        paint();
+        if(foundPairs>=pairCount){
+          setTimeout(()=>{sumPhase.style.display='';},350);
+        }
+      } else {
+        a.state='wrong';
+        b.state='wrong';
+        paint();
+        shaking=true;
+        setTimeout(()=>{
+          a.state='idle';
+          b.state='idle';
+          selId=null;
+          shaking=false;
+          paint();
+        },600);
+      }
+    }
+  }
+
+  paint();
+
+  root.querySelector('.nm-sp-sum-eq').innerHTML=renderKaTeX(problem.tex||'\\square');
+  const screen=root.querySelector('#spScreen');
+  const ns=numpadState(screen,4);
+  buildNumpad(root.querySelector('#spPad'),val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      submitted=true;
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
@@ -527,9 +663,961 @@ function renderMissing(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   TAPCOUNT  widget:'tapCount'  (유아 · 수의 나라)
+   problem.items = [{e:'🍎',t:true}, ...] 섞인 장면
+   대상을 탭하면 순서 배지(1,2,3…)가 찍히며 세어짐 →
+   아래 큰 숫자 보기 중 정답 선택. onAnswer(선택값).
+───────────────────────────────────────── */
+function renderTapCount(problem, container, onAnswer){
+  const items=(problem.items||[]).map((it,i)=>({...it,id:i}));
+  const answer=problem.answer;
+  const step=problem.step||1;   /* 뛰어세기 배지: 10이면 10,20,30… (동전) */
+  const marked=[];          /* 탭한 순서대로 id 저장 */
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tc-wrap';
+  root.innerHTML=`
+    <div class="nm-tc-scene"></div>
+    <div class="nm-tc-counter"><span class="nm-tc-cnt">0</span></div>
+    <div class="nm-tc-choices"></div>`;
+  container.appendChild(root);
+
+  const scene=root.querySelector('.nm-tc-scene');
+  const cnt=root.querySelector('.nm-tc-cnt');
+
+  function paint(){
+    scene.innerHTML='';
+    items.forEach(it=>{
+      const el=document.createElement('button');
+      const ord=marked.indexOf(it.id);
+      el.className='nm-tc-item'+(ord>=0?' on':'');
+      el.innerHTML=`<span class="nm-tc-emoji">${it.e}</span>`+
+        (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        const at=marked.indexOf(it.id);
+        if(at>=0)marked.splice(at,1); else marked.push(it.id);
+        cnt.textContent=marked.length*step;
+        paint();
+      });
+      scene.appendChild(el);
+    });
+  }
+  paint();
+
+  /* 큰 숫자 보기 3개 (정답 포함, step~9·step 범위) */
+  const cand=[answer-2*step,answer-step,answer+step,answer+2*step].filter(n=>n>=step&&n<=9*step&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+  const ch=root.querySelector('.nm-tc-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n!==answer)shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   TAPMAKE  widget:'tapMake'  (유아 · 수의 나라)
+   problem.target 만큼 판을 탭해 이모지를 만든 뒤
+   "다 됐어요!" 버튼으로 제출. 스탬프 탭 = 지우기.
+   onAnswer(현재 개수).
+───────────────────────────────────────── */
+function renderTapMake(problem, container, onAnswer){
+  const em=problem.emoji||'⭐';
+  const target=problem.target||3;
+  let stamps=0, lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tm-wrap';
+  root.innerHTML=`
+    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${em}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
+    <div class="nm-tm-board"></div>
+    <div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div>
+    <button class="nm-tm-done">✔</button>`;
+  container.appendChild(root);
+
+  const board=root.querySelector('.nm-tm-board');
+  const cnt=root.querySelector('.nm-tm-cnt');
+
+  board.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(e.target.classList.contains('nm-tm-stamp')){   /* 스탬프 탭 = 지우기 */
+      e.target.remove();stamps--;cnt.textContent=stamps;return;
+    }
+    if(stamps>=12)return;                              /* 판이 꽉 참 */
+    const s=document.createElement('span');
+    s.className='nm-tm-stamp';s.textContent=em;
+    board.appendChild(s);stamps++;cnt.textContent=stamps;
+  });
+
+  root.querySelector('.nm-tm-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||stamps===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(stamps!==target)shake(board);
+    onAnswer(stamps);
+  });
+}
+
+/* ─────────────────────────────────────────
+   NUMBERBOND  widget:'numberBond'  (유아 · 수의 나라)
+   모으기·가르기 트리 — 위 원(전체) + 아래 원 2개(부분).
+   dir:'join'  아래 두 원 제시 → 위 원을 톡톡 채움
+   dir:'split' 위 원+왼쪽 원 제시 → 오른쪽 원을 톡톡 채움
+   빈 원 탭 = 이모지 추가, 채운 이모지 탭 = 지우기, ✔ = 제출.
+   onAnswer(채운 개수). 0도 정답이 될 수 있음(0 개념).
+───────────────────────────────────────── */
+function renderNumberBond(problem, container, onAnswer){
+  const em=problem.emoji||'🍬';
+  const dir=problem.dir||'split';
+  let fill=0, lock=false;
+
+  /* 알려진 원 내용: 이모지 나열 + 숫자 (0이면 숫자만) */
+  const known=n=>`<div class="nm-nb-dots">${em.repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
+  const askHtml=`<div class="nm-nb-dots" id="nbAskDots"></div><div class="nm-nb-num ask" id="nbAskNum">?</div>`;
+
+  const top   = dir==='join' ? askHtml : known(problem.whole);
+  const left  = dir==='join' ? known(problem.a) : known(problem.a);
+  const right = dir==='join' ? known(problem.b) : askHtml;
+  const topAsk=dir==='join';
+
+  const root=document.createElement('div');
+  root.className='nm-nb-wrap';
+  root.innerHTML=`
+    <div class="nm-nb-tree">
+      <div class="nm-nb-node top ${topAsk?'ask':''}" data-ask="${topAsk?'1':''}">${top}</div>
+      <svg class="nm-nb-links" viewBox="0 0 120 26" aria-hidden="true">
+        <line x1="60" y1="2" x2="28" y2="24"/><line x1="60" y1="2" x2="92" y2="24"/>
+      </svg>
+      <div class="nm-nb-row">
+        <div class="nm-nb-node">${left}</div>
+        <div class="nm-nb-node ${topAsk?'':'ask'}" data-ask="${topAsk?'':'1'}">${right}</div>
+      </div>
+    </div>
+    <button class="nm-nb-done">✔</button>`;
+  container.appendChild(root);
+
+  const askNode=root.querySelector('[data-ask="1"]');
+  const askDots=root.querySelector('#nbAskDots');
+  const askNum=root.querySelector('#nbAskNum');
+
+  askNode.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(e.target.classList.contains('nm-nb-fill')){   /* 채운 이모지 탭 = 지우기 */
+      e.target.remove();fill--;askNum.textContent=fill;return;
+    }
+    if(fill>=9)return;
+    const s=document.createElement('span');
+    s.className='nm-nb-fill';s.textContent=em;
+    askDots.appendChild(s);fill++;askNum.textContent=fill;
+  });
+
+  root.querySelector('.nm-nb-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(fill!==problem.answer)shake(askNode);
+    onAnswer(fill);
+  });
+}
+
+/* ─────────────────────────────────────────
+   SEQFILL  widget:'seqFill'  (유아 · 수의 나라)
+   problem.seq = [3,4,5,6,7], problem.blank = 빈 칸 index
+   수열 칩 한 줄 + 빈 칩, 아래 큰 숫자 보기 3개.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderSeqFill(problem, container, onAnswer){
+  const seq=problem.seq||[];
+  const blank=problem.blank||1;
+  const answer=problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sf-wrap';
+  root.innerHTML=`<div class="nm-sf-row"></div><div class="nm-sf-choices"></div>`;
+  container.appendChild(root);
+
+  const row=root.querySelector('.nm-sf-row');
+  seq.forEach((v,i)=>{
+    const c=document.createElement('div');
+    if(i===blank){c.className='nm-sf-chip blank';c.id='sfBlank';c.textContent='?';}
+    else{c.className='nm-sf-chip';c.textContent=v;}
+    row.appendChild(c);
+    if(i<seq.length-1){
+      const a=document.createElement('span');a.className='nm-sf-arr';a.textContent='→';
+      row.appendChild(a);
+    }
+  });
+
+  /* 보기 3개: 정답 + 이웃 수 함정 */
+  const step=seq.length>1?seq[1]-seq[0]:1;
+  const cand=[answer-step,answer+step,answer-1,answer+1].filter(n=>n>=0&&n<=20&&n!==answer);
+  const uniq=[...new Set(cand)];
+  const picks=[answer];
+  while(picks.length<3&&uniq.length){picks.push(uniq.splice(Math.floor(Math.random()*uniq.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-sf-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const bl=root.querySelector('#sfBlank');if(bl){bl.textContent=n;bl.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   DOTTODOT  widget:'dotToDot'  (유아 · 수의 나라)
+   problem.pts = [[x,y]...] (0~100), problem.close = 마지막→첫 점 닫기
+   1부터 차례로 점을 탭 — 맞으면 선이 그어지고, 틀리면 흔들림.
+   전부 이으면 자동 제출 onAnswer(problem.answer).
+───────────────────────────────────────── */
+function renderDotToDot(problem, container, onAnswer){
+  const pts=problem.pts||[];
+  const close=!!problem.close;
+  let next=0, done=false;
+  const NS='http://www.w3.org/2000/svg';
+
+  const root=document.createElement('div');
+  root.className='nm-dd-wrap';
+  root.innerHTML=`<svg class="nm-dd-svg" viewBox="0 0 100 100"><g id="ddLines"></g><g id="ddDots"></g></svg>
+    <div class="nm-dd-hint">1️⃣ 부터 차례대로!</div>`;
+  container.appendChild(root);
+
+  const lines=root.querySelector('#ddLines');
+  const dots=root.querySelector('#ddDots');
+
+  function drawLine(a,b){
+    const l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);
+    l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);
+    lines.appendChild(l);
+  }
+
+  pts.forEach((p,i)=>{
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('class','nm-dd-dot');
+    const hit=document.createElementNS(NS,'circle');   /* 큰 투명 히트존 */
+    hit.setAttribute('cx',p[0]);hit.setAttribute('cy',p[1]);hit.setAttribute('r',11);
+    hit.setAttribute('class','nm-dd-hit');
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',6.5);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);
+    t.textContent=i+1;
+    g.appendChild(hit);g.appendChild(c);g.appendChild(t);
+    g.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(done)return;
+      if(i===next){
+        g.classList.add('on');
+        if(next>0)drawLine(pts[next-1],pts[next]);
+        next++;
+        if(next>=pts.length){
+          done=true;
+          if(close)drawLine(pts[pts.length-1],pts[0]);
+          root.querySelector('.nm-dd-hint').textContent='🎉 완성!';
+          setTimeout(()=>onAnswer(problem.answer!=null?problem.answer:pts.length),600);
+        }
+      }else{
+        g.classList.add('no');
+        setTimeout(()=>g.classList.remove('no'),450);
+      }
+    });
+    dots.appendChild(g);
+  });
+}
+
+/* ─────────────────────────────────────────
+   PYRAMID  widget:'pyramid'  (유아 · 수의 나라)
+   problem.rows = [[top],[m1,m2],[a,b,c]] — 빈 칸은 null
+   이웃 두 돌의 합 = 위 돌. 아래 큰 숫자 보기 3개로 답 선택.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderPyramid(problem, container, onAnswer){
+  const rows=problem.rows||[[null],[1,1],[1,1,1]];
+  const answer=problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-py-wrap';
+  root.innerHTML=`<div class="nm-py-tower"></div><div class="nm-py-choices"></div>`;
+  container.appendChild(root);
+
+  const tower=root.querySelector('.nm-py-tower');
+  rows.forEach(row=>{
+    const r=document.createElement('div');r.className='nm-py-row';
+    row.forEach(v=>{
+      const c=document.createElement('div');
+      if(v===null){c.className='nm-py-cell ask';c.id='pyAsk';c.textContent='?';}
+      else{c.className='nm-py-cell';c.textContent=v;}
+      r.appendChild(c);
+    });
+    tower.appendChild(r);
+  });
+
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-py-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const a=root.querySelector('#pyAsk');if(a){a.textContent=n;a.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   MATCHLINE  widget:'matchLine'  (유아 · 수의 나라)
+   problem.left  = 숫자 배열(셔플), problem.right = 점 그림 수 배열(셔플)
+   왼쪽 숫자 카드 탭 → 선택(금색), 오른쪽 점 그림 카드 탭 → 짝 맞추기.
+   맞으면 초록 선 + matched, 틀리면 shake. 전부 맞으면 onAnswer(N).
+───────────────────────────────────────── */
+function renderMatchLine(problem, container, onAnswer){
+  const left  = problem.left  || [];
+  const right = problem.right || [];
+  const N     = left.length;
+  let selL    = -1;
+  const matchedL = new Set();
+  const matchedR = new Set();
+  let remaining  = N;
+
+  /* 1~9 점 배치 (viewBox 0~60) */
+  const DOT_POS = {
+    1:[[30,30]],
+    2:[[18,30],[42,30]],
+    3:[[18,20],[42,20],[30,44]],
+    4:[[18,18],[42,18],[18,42],[42,42]],
+    5:[[18,18],[42,18],[30,30],[18,42],[42,42]],
+    6:[[18,14],[42,14],[18,30],[42,30],[18,46],[42,46]],
+    7:[[18,12],[42,12],[18,26],[42,26],[18,40],[42,40],[30,52]],
+    8:[[14,12],[30,12],[46,12],[14,28],[46,28],[14,44],[30,44],[46,44]],
+    9:[[14,12],[30,12],[46,12],[14,28],[30,28],[46,28],[14,44],[30,44],[46,44]]
+  };
+  function dotSvg(n){
+    const pts = DOT_POS[n] || DOT_POS[1];
+    const circles = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="currentColor"/>`).join('');
+    return `<svg viewBox="0 0 60 60" class="nm-ml-dots" aria-hidden="true">${circles}</svg>`;
+  }
+
+  /* 탤리(산가지) 그림: 4개 세로줄 + 5번째는 대각선으로 묶음 */
+  function tallySvg(n){
+    const groups = Math.floor(n/5), rem = n%5, spacing = 6.2;
+    let slot = 0;
+    const lines = [];
+    for(let g=0; g<groups; g++){
+      const startSlot = slot;
+      for(let i=0;i<4;i++){ const x=5+slot*spacing; lines.push(`<line x1="${x}" y1="10" x2="${x}" y2="50"/>`); slot++; }
+      const x1=5+startSlot*spacing, x2=5+(slot-1)*spacing;
+      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="10"/>`);
+    }
+    for(let i=0;i<rem;i++){ const x=5+slot*spacing; lines.push(`<line x1="${x}" y1="10" x2="${x}" y2="50"/>`); slot++; }
+    return `<svg viewBox="0 0 60 60" class="nm-ml-tally" aria-hidden="true">${lines.join('')}</svg>`;
+  }
+  const rightSvg = problem.rightType === 'tally' ? tallySvg : dotSvg;
+
+  const root = document.createElement('div');
+  root.className = 'nm-ml-wrap';
+  const arena = document.createElement('div');
+  arena.className = 'nm-ml-arena';
+  root.appendChild(arena);
+  container.appendChild(root);
+
+  /* SVG 오버레이 — 연결선 그리기 */
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class', 'nm-ml-lines');
+  arena.appendChild(svg);
+
+  /* 왼쪽: 숫자 카드 */
+  const colL = document.createElement('div');
+  colL.className = 'nm-ml-col';
+  left.forEach((num, i)=>{
+    const card = document.createElement('button');
+    card.className = 'nm-ml-card nm-ml-num';
+    card.textContent = num;
+    card.addEventListener('pointerup', e=>{
+      e.stopPropagation();
+      if(matchedL.has(i)) return;
+      if(selL === i){ selL=-1; card.classList.remove('sel'); return; }
+      colL.querySelectorAll('.nm-ml-card').forEach(c=>c.classList.remove('sel'));
+      selL = i;
+      card.classList.add('sel');
+    });
+    colL.appendChild(card);
+  });
+  arena.appendChild(colL);
+
+  /* 오른쪽: 점 그림 카드 */
+  const colR = document.createElement('div');
+  colR.className = 'nm-ml-col';
+  right.forEach((num, j)=>{
+    const card = document.createElement('button');
+    card.className = 'nm-ml-card nm-ml-dot';
+    card.innerHTML = rightSvg(num);
+    card.addEventListener('pointerup', e=>{
+      e.stopPropagation();
+      if(matchedR.has(j)) return;
+      if(selL === -1) return;
+      if(left[selL] === num){
+        const lCard = colL.children[selL];
+        lCard.classList.remove('sel');
+        lCard.classList.add('matched');
+        card.classList.add('matched');
+        matchedL.add(selL);
+        matchedR.add(j);
+        drawLine(selL, j);
+        selL = -1;
+        remaining--;
+        if(remaining === 0) setTimeout(()=>onAnswer(N), 600);
+      } else {
+        shake(colL.children[selL]);
+        shake(card);
+      }
+    });
+    colR.appendChild(card);
+  });
+  arena.appendChild(colR);
+
+  function drawLine(li, ri){
+    const ar = arena.getBoundingClientRect();
+    const lR = colL.children[li].getBoundingClientRect();
+    const rR = colR.children[ri].getBoundingClientRect();
+    const aw = ar.width, ah = ar.height;
+    svg.setAttribute('viewBox',`0 0 ${aw} ${ah}`);
+    svg.setAttribute('width', aw);
+    svg.setAttribute('height', ah);
+    const x1 = lR.right  - ar.left;
+    const y1 = lR.top    + lR.height/2 - ar.top;
+    const x2 = rR.left   - ar.left;
+    const y2 = rR.top    + rR.height/2 - ar.top;
+    /* 유아 리딩앱 레퍼런스처럼 굵은 곡선 점선으로 연결(직선 대신 아래로 살짝 활 모양) */
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${x1} ${y1} Q ${mx} ${my + 18} ${x2} ${y2}`);
+    path.setAttribute('class','nm-ml-line');
+    svg.appendChild(path);
+  }
+}
+
+/* ─────────────────────────────────────────
+   GRIDPAINT  widget:'gridPaint'  (유아 · 수의 나라)
+   problem.gridMode:
+     'single' — 서수 위치 콕 짚기. 한 칸 탭 = 즉시 판정(onAnswer(index)).
+                dir:'left'|'right' 방향 화살표 표시.
+     'count'  — 정확히 target개만 칠하기. 탭=토글, ✔ 로 제출(onAnswer(칠한 개수)).
+───────────────────────────────────────── */
+function renderGridPaint(problem, container, onAnswer){
+  const total = problem.total || 6;
+  const mode  = problem.gridMode || 'count';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-gp-wrap';
+  if(mode==='count'){
+    const goal=document.createElement('div');
+    goal.className='nm-gp-goal';
+    goal.innerHTML=`🎯 <span class="nm-gp-goal-n">${problem.target}</span>`;
+    root.appendChild(goal);
+  }
+  const line=document.createElement('div');
+  line.className='nm-gp-rowline';
+  if(mode==='single' && problem.dir==='left'){
+    const a=document.createElement('span');a.className='nm-gp-arrow';a.textContent='👉';line.appendChild(a);
+  }
+  const row=document.createElement('div');
+  // 서수(single) 모드는 "왼쪽에서 몇째"가 의미를 가지므로 절대 줄바꿈되면 안 됨 → 한 줄 고정
+  row.className='nm-gp-row'+(mode==='single'?' oneline':'');
+  line.appendChild(row);
+  if(mode==='single' && problem.dir==='right'){
+    const a=document.createElement('span');a.className='nm-gp-arrow flip';a.textContent='👈';line.appendChild(a);
+  }
+  root.appendChild(line);
+  container.appendChild(root);
+
+  const cells=[];
+  for(let i=0;i<total;i++){
+    const c=document.createElement('button');
+    c.className='nm-gp-cell';
+    row.appendChild(c);
+    cells.push(c);
+  }
+
+  if(mode==='single'){
+    cells.forEach((c,i)=>{
+      c.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(i===problem.targetIndex) c.classList.add('on');
+        else shake(c);
+        onAnswer(i);
+      });
+    });
+    return;
+  }
+
+  /* count mode */
+  let painted=0;
+  const foot=document.createElement('div');
+  foot.className='nm-gp-counter';
+  foot.innerHTML='<span class="nm-gp-cnt">0</span>';
+  root.appendChild(foot);
+  const done=document.createElement('button');
+  done.className='nm-gp-done';done.textContent='✔';
+  root.appendChild(done);
+
+  const cnt=foot.querySelector('.nm-gp-cnt');
+  cells.forEach(c=>{
+    c.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(c.classList.contains('on')){ c.classList.remove('on'); painted--; }
+      else{ c.classList.add('on'); painted++; }
+      cnt.textContent=painted;
+    });
+  });
+
+  done.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||painted===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(painted!==problem.target) shake(row);
+    onAnswer(painted);
+  });
+}
+
+/* ─────────────────────────────────────────
+   STORYCARD  widget:'storyCard'  (유아 · 수의 나라 · 생활 서수 문장제)
+   problem.interaction:
+     'tap'    — problem.layout:'row'. problem.chars(이모지 배열) 한 줄 표시.
+                한 칸 탭 = 즉시 판정(onAnswer(index)), targetIndex 정답.
+     'numpad' — problem.layout:'stairs'. 계단(세로) 중 problem.mark번째(0-base,
+                아래부터)에 problem.emoji 캐릭터. 숫자패드로 답 입력(onAnswer(number)).
+   🔊 다시 듣기 버튼 — window.NM_SAY/NM_L(main.js에서 노출)로 problem.prompt 재낭독.
+   유아는 글을 못 읽으므로 문장을 몇 번이고 다시 들을 수 있어야 함.
+───────────────────────────────────────── */
+function renderStoryCard(problem, container, onAnswer){
+  const total       = problem.total || 6;
+  const interaction = problem.interaction || 'tap';
+  const layout      = problem.layout || 'row';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sc-wrap';
+
+  const replay=document.createElement('button');
+  replay.className='nm-sc-replay';
+  replay.textContent='🔊';
+  replay.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(window.NM_SAY&&window.NM_L) window.NM_SAY(window.NM_L(problem.prompt));
+  });
+  root.appendChild(replay);
+
+  const scene=document.createElement('div');
+  scene.className='nm-sc-scene '+(layout==='stairs'?'nm-sc-stairs':'nm-sc-row');
+  root.appendChild(scene);
+
+  if(layout==='stairs'){
+    /* 왼쪽(낮음)→오른쪽(높음)으로 오르는 계단 옆모습. i=0이 아래(왼쪽) 첫 계단.
+       세로로 쌓지 않고 가로로 배치해 화면 높이를 적게 차지함(스크롤 없는 고정 화면 요건). */
+    for(let i=0;i<total;i++){
+      const col=document.createElement('div');
+      col.className='nm-sc-stairq';
+      if(i===problem.mark){
+        const em=document.createElement('div');
+        em.className='nm-sc-stairq-em';
+        em.textContent=problem.emoji||'🐿️';
+        col.appendChild(em);
+      }
+      const bar=document.createElement('div');
+      bar.className='nm-sc-stairq-bar'+(i===problem.mark?' has':'');
+      bar.style.height=(10+i*6)+'px';
+      col.appendChild(bar);
+      scene.appendChild(col);
+    }
+  }else{
+    const chars=problem.chars||[];
+    chars.forEach((em,i)=>{
+      const c=document.createElement('button');
+      c.className='nm-sc-char';
+      c.textContent=em;
+      if(interaction==='tap'){
+        c.addEventListener('pointerup',e=>{
+          e.stopPropagation();
+          if(lock)return;
+          lock=true;setTimeout(()=>{lock=false;},700);
+          if(i===problem.targetIndex) c.classList.add('on');
+          else shake(c);
+          onAnswer(i);
+        });
+      }else{
+        c.disabled=true;
+      }
+      scene.appendChild(c);
+    });
+  }
+  container.appendChild(root);
+
+  if(interaction==='numpad'){
+    const screen=document.createElement('div');
+    screen.className='nm-numpad-screen nm-sc-screen';screen.innerHTML='&nbsp;';
+    root.appendChild(screen);
+    const pad=document.createElement('div');
+    pad.className='nm-numpad nm-sc-pad';
+    root.appendChild(pad);
+    const ns=numpadState(screen,2);
+    buildNumpad(pad,val=>{
+      if(lock)return;
+      if(val==='ok'){
+        const inp=ns.get();
+        if(!inp)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        onAnswer(parseInt(inp,10));
+        ns.clear();
+        return;
+      }
+      ns.handle(val);
+    });
+  }
+}
+
+/* ─────────────────────────────────────────
+   BALANCESCALE  widget:'balanceScale'  (유아 · 수의 나라)
+   problem.left/right = 접시별 개수(서로 다름), problem.emoji = 접시 위 아이템.
+   접시(왼쪽=0/오른쪽=1) 탭 = 즉시 판정(onAnswer(index)). 빔이 무거운 쪽으로 기움.
+───────────────────────────────────────── */
+function renderBalanceScale(problem, container, onAnswer){
+  const left  = problem.left  || 3;
+  const right = problem.right || 5;
+  const em    = problem.emoji || '🍎';
+  let lock=false;
+
+  /* 무거운(개수 많은) 쪽이 아래로 내려가도록 기울기 계산. 최대 ±12deg */
+  const diff  = right - left;
+  const angle = Math.max(-12, Math.min(12, diff * 2));
+
+  const root=document.createElement('div');
+  root.className='nm-bs-wrap';
+  root.innerHTML=`
+    <div class="nm-bs-scale">
+      <div class="nm-bs-post"></div>
+      <div class="nm-bs-beam" style="transform:rotate(${angle}deg)">
+        <button class="nm-bs-pan" data-side="0"><span class="nm-bs-items"></span></button>
+        <button class="nm-bs-pan" data-side="1"><span class="nm-bs-items"></span></button>
+      </div>
+    </div>`;
+  container.appendChild(root);
+
+  const pans=root.querySelectorAll('.nm-bs-pan');
+  const counts=[left,right];
+  pans.forEach((pan,i)=>{
+    pan.querySelector('.nm-bs-items').textContent=em.repeat(counts[i]);
+    pan.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(i===problem.answer) pan.classList.add('on');
+      else shake(pan);
+      onAnswer(i);
+    });
+  });
+}
+
+/* ─────────────────────────────────────────
+   NUMBERMACHINE  widget:'numberMachine'  (유아 · 수의 나라)
+   problem.mmode:
+     'apply' — problem.rule('+n'/'-n' 표시) + problem.input. 규칙이 보임,
+               나오는 수를 numpad로 답.
+     'guess' — problem.examples([in,out] 2쌍, 규칙 숨김) + problem.target.
+               예시로 규칙을 추리해 target 입력 시 나오는 수를 numpad로 답.
+───────────────────────────────────────── */
+function renderNumberMachine(problem, container, onAnswer){
+  const mmode = problem.mmode || 'apply';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-nm-wrap';
+
+  function makeRow(inp, out, opts){
+    opts=opts||{};
+    const r=document.createElement('div');
+    r.className='nm-nm-row'+(opts.ask?' ask':'');
+    r.innerHTML=
+      `<div class="nm-nm-io in">${inp}</div>`+
+      `<div class="nm-nm-arrow">→</div>`+
+      `<div class="nm-nm-machine">${opts.rule?`<span class="nm-nm-rule">${opts.rule}</span>`:'⚙️'}</div>`+
+      `<div class="nm-nm-arrow">→</div>`+
+      `<div class="nm-nm-io out${opts.ask?' ask':''}">${opts.ask?'?':out}</div>`;
+    return r;
+  }
+
+  if(mmode==='guess'){
+    (problem.examples||[]).forEach(pair=>root.appendChild(makeRow(pair[0],pair[1],{})));
+    root.appendChild(makeRow(problem.target,null,{ask:true}));
+  }else{
+    root.appendChild(makeRow(problem.input,null,{ask:true,rule:problem.rule}));
+  }
+  container.appendChild(root);
+
+  const screen=document.createElement('div');
+  screen.className='nm-numpad-screen nm-nm-screen';screen.innerHTML='&nbsp;';
+  root.appendChild(screen);
+  const pad=document.createElement('div');
+  pad.className='nm-numpad nm-nm-pad';
+  root.appendChild(pad);
+  const ns=numpadState(screen,2);
+  buildNumpad(pad,val=>{
+    if(lock)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      onAnswer(parseInt(inp,10));
+      ns.clear();
+      return;
+    }
+    ns.handle(val);
+  });
+}
+
+/* ─────────────────────────────────────────
+   CROSSSUM  widget:'crossSum'  (유아 · 수의 나라)
+   problem.cells = {top,bottom,left,right}(한 칸은 null), problem.askKey = 빈 칸 키.
+   위+아래 = 왼쪽+오른쪽 규칙. 아래 큰 숫자 보기 3개 중 정답 선택.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderCrossSum(problem, container, onAnswer){
+  const cells  = problem.cells || {};
+  const answer = problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-cs-wrap';
+  const cell=(key)=>{
+    const v=cells[key];
+    return `<div class="nm-cs-cell ${key}${v===null?' ask':''}">${v===null?'?':v}</div>`;
+  };
+  root.innerHTML=`
+    <div class="nm-cs-cross">
+      ${cell('top')}
+      <div class="nm-cs-mid">${cell('left')}<div class="nm-cs-plus">+</div>${cell('right')}</div>
+      ${cell('bottom')}
+    </div>
+    <div class="nm-cs-choices"></div>`;
+  container.appendChild(root);
+
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-cs-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const a=root.querySelector('.nm-cs-cell.ask');if(a){a.textContent=n;a.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   SORTBASKET  widget:'sortBasket'  (유아 · 수의 나라)
+   problem.items = [{e,type:'A'|'B'}...](셔플), problem.basketA/basketB = {emoji}.
+   섞인 칩을 탭하면 자기 종류의 바구니로 들어감(카운트 증가). 다 나뉘면
+   3지선다 보기 등장(askType 바구니 개수 정답). onAnswer(선택값).
+───────────────────────────────────────── */
+function renderSortBasket(problem, container, onAnswer){
+  const items    = problem.items || [];
+  const askMode  = problem.askMode || 'count';
+  let lock=false, remaining=items.length, sortedA=0, sortedB=0;
+
+  const root=document.createElement('div');
+  root.className='nm-sb-wrap';
+  root.innerHTML=`
+    <div class="nm-sb-scatter"></div>
+    <div class="nm-sb-baskets">
+      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+    </div>
+    <div class="nm-sb-choices"></div>`;
+  container.appendChild(root);
+
+  const scatter = root.querySelector('.nm-sb-scatter');
+  const basketEls = root.querySelectorAll('.nm-sb-basket');
+  const cntA = basketEls[0].querySelector('.nm-sb-basket-cnt');
+  const cntB = basketEls[1].querySelector('.nm-sb-basket-cnt');
+  const choicesBox = root.querySelector('.nm-sb-choices');
+
+  items.forEach(it=>{
+    const chip=document.createElement('button');
+    chip.className='nm-sb-chip';
+    chip.textContent=it.e;
+    chip.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      chip.remove();
+      if(it.type==='A'){ sortedA++; cntA.textContent=sortedA; }
+      else{ sortedB++; cntB.textContent=sortedB; }
+      remaining--;
+      if(remaining===0) askMode==='compare' ? enableBasketTap() : showChoices();
+    });
+    scatter.appendChild(chip);
+  });
+
+  function enableBasketTap(){
+    basketEls.forEach((el,i)=>{
+      el.classList.add('tappable');
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(i===problem.answer) el.classList.add('on');
+        else shake(el);
+        onAnswer(i);
+      });
+    });
+  }
+
+  function showChoices(){
+    const answer=problem.answer;
+    const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+    const picks=[answer];
+    while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+    picks.sort(()=>Math.random()-.5);
+    picks.forEach(n=>{
+      const b=document.createElement('button');
+      b.className='nm-tc-choice';b.textContent=n;
+      b.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(n!==answer)shake(b);
+        onAnswer(n);
+      });
+      choicesBox.appendChild(b);
+    });
+  }
+}
+
+/* ─────────────────────────────────────────
+   TALLYBUILD  widget:'tallyBuild'  (유아 · 수의 나라)
+   problem.target 만큼 판을 탭해 탤리(산가지) 막대를 그림(4개+대각선 묶음).
+   ↩ 되돌리기(마지막 막대 지우기), ✔ 제출. onAnswer(현재 막대 수).
+───────────────────────────────────────── */
+function renderTallyBuild(problem, container, onAnswer){
+  const target = problem.target || 3;
+  const interaction = problem.interaction || 'build';
+  const isRead = interaction === 'read';
+  let count = isRead ? target : 0, lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tb-wrap';
+  root.innerHTML = isRead
+    ? `<button class="nm-tb-board" disabled><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>`
+    : `<div class="nm-tb-goal">🎯 <span class="nm-tb-goal-n">${target}</span></div>
+       <button class="nm-tb-board"><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>
+       <div class="nm-tb-controls">
+         <button class="nm-tb-undo">↩</button>
+         <button class="nm-tb-done">✔</button>
+       </div>`;
+  container.appendChild(root);
+
+  const svg=root.querySelector('.nm-tb-svg');
+  const board=root.querySelector('.nm-tb-board');
+
+  function draw(){
+    const groups=Math.floor(count/5), rem=count%5, spacing=11;
+    let slot=0; const lines=[];
+    for(let g=0; g<groups; g++){
+      const startSlot=slot;
+      for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+      const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
+      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
+      slot++;
+    }
+    for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+    svg.innerHTML=lines.join('');
+  }
+  draw();
+
+  if(isRead){
+    const screen=document.createElement('div');
+    screen.className='nm-numpad-screen nm-tb-screen';screen.innerHTML='&nbsp;';
+    root.appendChild(screen);
+    const pad=document.createElement('div');
+    pad.className='nm-numpad nm-tb-pad';
+    root.appendChild(pad);
+    const ns=numpadState(screen,2);
+    buildNumpad(pad,val=>{
+      if(lock)return;
+      if(val==='ok'){
+        const inp=ns.get();
+        if(!inp)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        onAnswer(parseInt(inp,10));
+        ns.clear();
+        return;
+      }
+      ns.handle(val);
+    });
+    return;
+  }
+
+  board.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(count>=9)return;
+    count++; draw();
+  });
+  root.querySelector('.nm-tb-undo').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(count>0){ count--; draw(); }
+  });
+  root.querySelector('.nm-tb-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||count===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(count!==target) shake(board);
+    onAnswer(count);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
-   Used for 'numpad', 'selectPairs' placeholders,
-   or any unknown widget type.
+   Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
 function renderFallback(problem, container, onAnswer){
   const rawTex=problem.tex||'\\square';
@@ -559,11 +1647,11 @@ function renderFallback(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
-  });
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
 }
 
 /* ─────────────────────────────────────────
@@ -577,6 +1665,21 @@ window.NM_WIDGETS={
   renderSteps,
   renderVertical,
   renderMissing,
+  renderSelectPairs,
+  renderTapCount,
+  renderTapMake,
+  renderNumberBond,
+  renderSeqFill,
+  renderDotToDot,
+  renderPyramid,
+  renderMatchLine,
+  renderGridPaint,
+  renderStoryCard,
+  renderBalanceScale,
+  renderNumberMachine,
+  renderCrossSum,
+  renderSortBasket,
+  renderTallyBuild,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

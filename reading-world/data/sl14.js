@@ -7,7 +7,7 @@ window.LESSONS['sl14'] = {
   page: null,
   title: 'A Toilet Museum',
   theme: 'Haewoojae — the toilet-shaped house in Suwon built by Mr. Toilet to promote global sanitation',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl14.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -122,9 +122,9 @@ window.LESSONS['sl14'] = {
   newPassage: {
     title: 'The Strangest Field Trip',
     passage: [
-      'Ms. Cho\'s class arrived at the National Sanitation Museum on an unusually warm Friday morning and immediately stopped walking. The building in front of them was shaped exactly like a giant toilet bowl. Some students burst out laughing; others simply stared. Ms. Cho smiled and explained that the building\'s unique architecture was no accident — it was designed to make visitors stop, notice, and think about something they normally never thought about at all.',
-      'Inside, the museum\'s exhibits displayed sanitation systems from ancient civilizations alongside maps showing parts of the world where clean toilets were still unavailable today. A guide told the class that one child dies every two minutes from diseases caused by poor sanitation. "Before today," admitted Jimin, "I thought toilets were boring." Now, standing before a glowing world map where red patches marked areas without safe sanitation, the students understood that flushing a toilet was not merely convenient — for millions of people, it was a matter of survival. Like a mirror held up to the world, the museum reflected something uncomfortable but impossible to ignore.',
-      'For their assignment after the trip, students wrote letters to pen pals in countries still working to improve their sanitation systems. Jimin\'s letter described what he had seen: that the daily act of flushing a toilet was, for hundreds of millions of people, simply not yet possible. He signed his letter: "From a student who finally understands how lucky he is."',
+      'Ms. Cho\'s class arrived at the National Sanitation Museum on an unusually warm Friday morning and immediately stopped walking. The building in front of them was shaped exactly like a giant toilet bowl. Some students burst out laughing; others simply stared. Ms. Cho smiled and explained that the building\'s unique, creative architecture was no accident. A former mayor had built the house for himself, then donated it so that a foundation could run it as a museum, all so that visitors would stop, notice, and think about something they normally never thought about at all.',
+      'Inside, the museum\'s exhibits displayed sanitation systems from ancient civilizations alongside maps showing parts of the world where clean toilets were still unavailable today. A guide told the class that one child dies every two minutes from diseases caused by poor sanitation. In one room stood a transparent glass cubicle that clouded over at the touch of a switch, a joke about how much privacy we now expect and how recent that expectation is. "Before today," admitted Jimin, "I thought toilets were boring." Now, standing before a glowing world map where red patches marked areas without safe sanitation, the students understood that flushing a toilet was not merely convenient — for millions of people, it was a matter of survival. Like a mirror held up to the world, the museum reflected something uncomfortable but impossible to ignore.',
+      'For their assignment after the trip, students wrote letters to pen pals in countries still working to improve their sanitation systems. Jimin\'s letter described what he had seen: that the daily act of flushing a toilet was, for hundreds of millions of people, simply not yet possible. The strange building, he wrote, had become a symbol for a subject most people would rather not raise. He signed his letter: "From a student who finally understands how lucky he is."',
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [

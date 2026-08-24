@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD Mirror Manor</title>
+  <link rel="stylesheet" href="./styles.css?v=mirror-manor-2" />
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#2f4f74" />
+  <link rel="apple-touch-icon" href="/geometry/assets/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+</head>
+<body>
+  <!--
+    Shell copied from games/paper-fold so the header controls land in exactly the
+    same places as the other mobile-optimised games: exit at the far left, brand,
+    LEVEL n + k / 5 progress, mute, level picker. The play area and the dock below
+    are the only parts that differ, because this game is a mirrored room and not a
+    folded sheet of paper.
+  -->
+  <main class="manor-shell">
+    <header class="topbar">
+      <a class="icon-button exit" href="../../world-map/" aria-label="Back to the Geometry World map">&larr;</a>
+      <div class="brand"><strong>GFIELD</strong><small>Mirror Manor</small></div>
+      <div class="progress"><strong id="levelLabel">LEVEL 1</strong><span id="problemLabel">1 / 5</span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="Toggle sound">🔊</button>
+      <button id="levelButton" class="level-button" type="button">Levels</button>
+    </header>
+
+    <section class="mission" aria-live="polite">
+      <div><span id="stars" aria-hidden="true">*----</span><h1 id="missionTitle">Mirror Manor</h1></div>
+      <p id="prompt"></p>
+    </section>
+
+    <section class="play-area">
+      <article class="room-panel">
+        <div class="room-stage">
+          <div id="board" class="board" role="application" aria-label="Mirror Manor room">
+            <div id="cells" class="board-cells"></div>
+            <div id="pieceLayer" class="piece-layer"></div>
+            <div id="guideLayer" class="guide-layer" aria-hidden="true"></div>
+            <div id="mirrorLine" class="mirror-line" aria-hidden="true"></div>
+          </div>
+        </div>
+      </article>
+      <aside id="toolPanel" class="tool-panel" aria-label="게임 도구">
+        <button id="hintButton" type="button">Hint</button>
+        <button id="retryButton" type="button">Restart</button>
+      </aside>
+    </section>
+
+    <section class="answer-dock">
+      <p id="answerPrompt"></p>
+      <div id="tray" class="shape-tray" aria-label="Object shelf"></div>
+      <button id="nextButton" class="next-button" type="button" hidden>Next</button>
+    </section>
+
+    <aside id="cubiGuide" class="cubi-guide" aria-live="polite">
+      <div id="guideBubble" class="guide-bubble"></div>
+      <span class="cubi-sprite" aria-hidden="true"></span>
+    </aside>
+
+    <div id="tutorial" class="dialog" hidden>
+      <section class="tutorial-card" role="dialog" aria-modal="true">
+        <span class="cubi-sprite" aria-hidden="true"></span>
+        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
+      </section>
+    </div>
+
+    <div id="levelDialog" class="dialog" hidden>
+      <section role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <header><h2 id="dialogTitle">Choose a level</h2><button id="closeLevels" type="button" aria-label="Close">X</button></header>
+        <div id="levelList" class="level-list"></div>
+      </section>
+    </div>
+
+    <div id="completeDialog" class="dialog" hidden>
+      <section class="complete-card" role="dialog" aria-modal="true">
+        <span class="cubi-sprite" aria-hidden="true"></span>
+        <h2 id="completeTitle">Level complete!</h2><p id="completeText"></p>
+        <div class="complete-actions"><button id="nextLevelButton" type="button">Next level</button><button id="practiceButton" type="button">Practice again</button><a id="mapLink" href="../../world-map/">Back to the map</a></div>
+      </section>
+    </div>
+
+    <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js?v=mirror-manor-2"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

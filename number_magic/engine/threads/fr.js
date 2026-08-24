@@ -414,23 +414,15 @@ NM_TGEN['fr7_frDiv'] = function(params, rng){
    FR8 — 분수 ↔ 소수 변환
    ============================================================ */
 NM_TGEN['fr8_frDec'] = function(params, rng){
-  var commonFractions = [
-    {n:1, d:2,  dec:50,  decStr:'0.50'},
-    {n:1, d:4,  dec:25,  decStr:'0.25'},
-    {n:3, d:4,  dec:75,  decStr:'0.75'},
-    {n:1, d:5,  dec:20,  decStr:'0.20'},
-    {n:2, d:5,  dec:40,  decStr:'0.40'},
-    {n:3, d:5,  dec:60,  decStr:'0.60'},
-    {n:4, d:5,  dec:80,  decStr:'0.80'},
-    {n:1, d:10, dec:10,  decStr:'0.10'},
-    {n:3, d:10, dec:30,  decStr:'0.30'},
-    {n:7, d:10, dec:70,  decStr:'0.70'},
-    {n:1, d:20, dec:5,   decStr:'0.05'},
-    {n:1, d:25, dec:4,   decStr:'0.04'},
-    {n:1, d:50, dec:2,   decStr:'0.02'}
-  ];
-
-  var fr  = pick(rng, commonFractions);
+  /* 분모가 100의 약수(2,4,5,10,20,25,50,100)이면 n/d는 항상 소수 둘째 자리
+     안에서 정확히 끝난다. 고정된 13쌍 목록 대신 분모·분자를 직접 뽑아
+     대응 쌍을 크게 늘린다. */
+  var DENOMS = [2,4,5,10,20,25,50,100];
+  var d   = pick(rng, DENOMS);
+  var n   = R(rng, 1, d - 1);
+  var dec = Math.round(n / d * 100);
+  var decStr = '0.' + String(dec).padStart(2, '0');
+  var fr  = { n: n, d: d, dec: dec, decStr: decStr };
   var dir = pick(rng, [0, 1]); // 0=분수→소수, 1=소수→분수
 
   if(dir === 0){
@@ -463,6 +455,58 @@ NM_TGEN['fr8_frDec'] = function(params, rng){
       widget: 'numpad'
     };
   }
+};
+
+/* ============================================================
+   FR0 — 분수 알기 (부분과 전체) · 개념 도입
+   분모 = 전체를 똑같이 나눈 조각 수, 분자 = 부분.
+   mode: 'part'(먹은 부분) | 'rest'(남은 부분, steps)
+   ============================================================ */
+NM_TGEN['fr0_partWhole'] = function(params, rng){
+  var lv = params.level || 'main';
+  var dMax = lv === 'practice' ? 6 : 10;
+  var d = R(rng, lv === 'practice' ? 3 : 4, dMax);
+  var n = R(rng, 1, d - 1);
+  var FOOD = [
+    {ko:'피자', en:'pizza', zh:'比萨'},
+    {ko:'초콜릿', en:'chocolate bar', zh:'巧克力'},
+    {ko:'수박', en:'watermelon', zh:'西瓜'},
+    {ko:'케이크', en:'cake', zh:'蛋糕'}
+  ];
+  var f = pick(rng, FOOD);
+  var mode = pick(rng, ['part','rest']);
+
+  if(mode === 'part'){
+    return {
+      prompt:{
+        ko: f.ko+'를 똑같이 '+d+'조각으로 나눠 '+n+'조각을 먹었어요. 먹은 부분은 전체의 몇 분의 몇? 분자를 써요!',
+        en: 'A '+f.en+' is cut into '+d+' equal pieces and you ate '+n+'. What fraction did you eat? Enter the numerator!',
+        zh: '把'+f.zh+'平均分成'+d+'块，吃了'+n+'块。吃掉的是全部的几分之几？填分子！'
+      },
+      tex: '\\text{먹은 부분} = \\dfrac{\\square}{'+d+'}',
+      answer: n,
+      answerType: 'number',
+      widget: 'numpad'
+    };
+  }
+
+  /* rest: 남은 조각 = d-n */
+  var rest = d - n;
+  return {
+    prompt:{
+      ko: f.ko+'를 똑같이 '+d+'조각으로 나눠 '+n+'조각을 먹었어요. 남은 부분은 전체의 몇 분의 몇일까요?',
+      en: 'A '+f.en+' is cut into '+d+' equal pieces and '+n+' were eaten. What fraction is left?',
+      zh: '把'+f.zh+'平均分成'+d+'块，吃了'+n+'块。剩下的是全部的几分之几？'
+    },
+    tex: '\\text{남은 부분} = \\dfrac{\\square}{'+d+'}',
+    answer: rest,
+    answerType: 'steps',
+    widget: 'steps',
+    steps: [
+      { tex: d+' - '+n+' = \\square \\;\\text{(남은 조각)}', blank: rest },
+      { tex: '\\text{남은 부분} = \\dfrac{\\square}{'+d+'}', blank: rest }
+    ]
+  };
 };
 
 })();

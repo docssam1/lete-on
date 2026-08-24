@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="A Toilet Museum">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M250 200h300v60H250z" fill="#1b5e20" stroke="#2d3748" stroke-width="9"/>
+<path d="M210 270h380v170a30 30 0 0 1-30 30H240a30 30 0 0 1-30-30z" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="400" cy="330" rx="118" ry="46" fill="#f5efe2" stroke="#2d3748" stroke-width="9"/>
+<rect x="266" y="386" width="70" height="60" rx="8" fill="#2e7d32" stroke="#2d3748" stroke-width="8"/>
+<rect x="466" y="386" width="70" height="60" rx="8" fill="#2e7d32" stroke="#2d3748" stroke-width="8"/>
+<path d="M180 470h440" stroke="#2d3748" stroke-width="9"/>
+<path d="M620 300h100M620 340h100M620 380h70" stroke="#66bb6a" stroke-width="9"/>
+</g>
+</svg>

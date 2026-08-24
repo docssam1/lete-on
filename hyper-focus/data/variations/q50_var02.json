@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q50",
+  "variationId": "q50_var02",
+  "subType": "length_units_picture",
+  "status": "verified",
+  "presentation": { "mode": "image", "answerUnit": "cm" },
+  "source": { "problemImage": "./assets/svg/variations/q50_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q50.json", "hfDataTypeId": 50 },
+  "machineReadable": {
+    "payloadType": "length_units_picture",
+    "givenUnit": { "item": "지우개", "lengthCm": 4 },
+    "equalRows": [
+      { "크레파스": 4 },
+      { "연필": 5 },
+      { "연필": 4, "지우개": 2 },
+      { "크레파스": 2, "클립": 5 }
+    ],
+    "expectedAnswer": { "크레파스": 10, "연필": 8, "클립": 4 }
+  },
+  "answerValidation": { "answerType": "item_length_map", "expectedAnswer": { "크레파스": 10, "연필": 8, "클립": 4 } },
+  "problem": {
+    "prompt": "그림의 네 줄은 양 끝 길이가 모두 같습니다. 지우개 1개의 길이가 4cm일 때 크레파스, 연필, 클립 1개의 길이는 각각 몇 cm입니까?"
+  },
+  "solutionHint": "연필 1개는 지우개 2개와 같아 8cm입니다. 전체는 연필 5개의 40cm이므로 크레파스는 10cm입니다. 40cm에서 크레파스 2개의 20cm를 빼고 클립 5개로 나누면 클립은 4cm입니다."
+}

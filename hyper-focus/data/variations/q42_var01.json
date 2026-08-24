@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q42",
+  "variationId": "q42_var01",
+  "subType": "grid_fill_cases",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q42_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q42.json", "hfDataTypeId": 42 },
+  "machineReadable": {
+    "payloadType": "grid_fill_cases",
+    "cells": [[0, 0], [0, 1], [1, 1], [0, 2], [1, 2]],
+    "fillCount": 2,
+    "adjacencyType": "shared_edge",
+    "expectedAnswer": 5
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 5 },
+  "problem": {
+    "prompt": "그림의 5칸 중 2칸을 색칠하려고 합니다. 색칠한 두 칸이 한 변으로 이웃하지 않게 색칠하는 방법은 몇 가지입니까?"
+  },
+  "solutionHint": "5칸에서 2칸을 고르는 모든 경우를 만들고, 한 변이 붙어 있는 두 칸을 제외하면 5가지입니다."
+}

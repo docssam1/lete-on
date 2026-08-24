@@ -7,7 +7,7 @@ window.LESSONS['rp7'] = {
   chapter: null, page: null,
   title: "Color-Blindness",
   theme: "See the world through different eyes!",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp7.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["match", "v. to have the same color or appearance", "어울리다, 일치하다", "相配"], ["realize", "v. to understand or come to know something", "깨닫다", "意识到"], ["vision", "n. the ability to use the sense of sight", "시력", "视力"], ["task", "n. an activity or job that must be done", "과제, 일", "任务"], ["impossible", "adj. unable to be done or to happen", "불가능한", "不可能的"], ["founder", "n. a person who establishes a business or school", "설립자", "创始人"], ["passion", "n. feelings of strong emotion and enthusiasm", "열정", "热情"], ["increase", "v. to make something greater in amount or size", "늘리다, 증가시키다", "增加"], ["achieve", "v. to gain something by working hard", "이루다, 성취하다", "实现"], ["intelligence", "n. the ability to learn and understand", "지능", "智力"], ["creative", "adj. able to make new things or think of new ideas", "창의적인", "有创造力的"], ["artistic", "adj. having the skill of an artist", "예술적인", "有艺术天赋的"]],

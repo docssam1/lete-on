@@ -1,0 +1,4227 @@
+{
+  "version": 1,
+  "name": "Fields Classic question bank",
+  "root": "..",
+  "updated": "2026-08-23",
+  "sources": [
+    {
+      "id": "handover",
+      "title": "Question bank handover",
+      "path": "fields-classic/question-bank/HANDOVER.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "3efb20c6e2901eaeeb21b9e97c8c353da4b0e866d09d1488be124c7ee20aa384",
+      "size": 104241,
+      "mtime_ns": 1786838348978241700
+    },
+    {
+      "id": "final-audit",
+      "title": "Final exam source audit",
+      "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "d568ecb7c9634cb2111bf45df0a27d100845dded699d213229e23a2a707b28b4",
+      "size": 34871,
+      "mtime_ns": 1786836494273656000
+    },
+    {
+      "id": "generators",
+      "title": "Question generators",
+      "path": "fields-classic/question-bank/generators.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "f63dcbaf419fb357d8dd8afe66349b5a665ffd68b491083fdc8671a8f2ac76dc",
+      "size": 187023,
+      "mtime_ns": 1786836931300376100
+    },
+    {
+      "id": "source-data",
+      "title": "Question source catalog",
+      "path": "fields-classic/question-bank/source-data.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "76bddc479227bfc6e83cd9b3127688cc3f80090679a8a09844dd8a15c9182ce1",
+      "size": 44190,
+      "mtime_ns": 1786836960846283000
+    },
+    {
+      "id": "g1-2022-03-problem",
+      "title": "더 클래식 초1 1차 선발시험 문제지",
+      "path": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "dea8014fd4a2679683d2176fd58799cafff369b5e30c07a8e12e47fcef064545",
+      "size": 355346,
+      "mtime_ns": 1770800100000000000
+    },
+    {
+      "id": "g1-2022-03-answer",
+      "title": "더 클래식 초1 1차 선발시험 답안",
+      "path": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307)_답안.pptx",
+      "kind": "pptx",
+      "sensitivity": "private",
+      "sha256": "718d20e8ca1c25e6ac80efbd3ba5e5dd9953a9d06edbc0cf05bf2f8b025302cb",
+      "size": 94284,
+      "mtime_ns": 1770800164000000000
+    },
+    {
+      "id": "hf-visibility-decisions",
+      "title": "Hyper Focus 단일정답·가시성 결정",
+      "path": "hyper-focus/qa/HF_VISIBILITY_DECISIONS.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "41c0f6ff538e3bdff330f08b5e28703b3a97f1270f8d915a5b1e8d8587400bd9",
+      "size": 4934,
+      "mtime_ns": 1787488038823953000
+    },
+    {
+      "id": "hf-q06-q09-generator-audit",
+      "title": "Hyper Focus q06~q09 생성기 검수",
+      "path": "hyper-focus/qa/HF_Q06_Q09_GENERATOR_AUDIT.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "fbcdf411afafb1d38881e2e40cdf7cc8c075e550f697bd7eaed729b81ad6af4e",
+      "size": 2738,
+      "mtime_ns": 1787232090986480700
+    },
+    {
+      "id": "gfield-drive-memory-notes",
+      "title": "지필드 지오메트리 설계 결정 메모",
+      "path": "private-sources/geometry/gfield-geometry-memory-notes.md",
+      "kind": "markdown",
+      "sensitivity": "private",
+      "sha256": "bad39d87111f422f33a9978ea8b2d7cfb77fac25c8fc8fc6b18bf37f5a87389d",
+      "size": 2333,
+      "mtime_ns": 1787193654415852800
+    },
+    {
+      "id": "ray-b1-2",
+      "title": "RAY B1-2",
+      "path": "private-sources/RAY/Ray B1-2.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "67b0323b0686ff5d9ea2488f51a5454e9b24ea584420de342ceab92355677f87",
+      "size": 3988496,
+      "mtime_ns": 1582602082000000000
+    },
+    {
+      "id": "geometry-geoboard-levels",
+      "title": "Geoboard Studio level data",
+      "path": "geometry/games/geoboard/levels.js",
+      "kind": "javascript",
+      "sensitivity": "internal",
+      "sha256": "161ab966a9ae59f40db7433e44e99fe6cc86ea0dee8f31fa6487abb788265f79",
+      "size": 22827,
+      "mtime_ns": 1787138066480953100
+    },
+    {
+      "id": "geometry-geoboard-selftest",
+      "title": "Geoboard Studio deterministic self-test",
+      "path": "geometry/games/geoboard/geoboard.selftest.mjs",
+      "kind": "javascript",
+      "sensitivity": "internal",
+      "sha256": "8d120421ff818e1f1c93b502b2278823360a3d0d681c1e8b7d095570db929665",
+      "size": 3144,
+      "mtime_ns": 1787234861605039000
+    },
+    {
+      "id": "cmath-nc1-2-shape-start",
+      "title": "시매쓰 NC 1단계 2 도형의 시작",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 2/NC 1단계 2.도형의 시작.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "7460bf162962c0b186a4d5a32d9768699455ff6a56aee7a252dba7d1681e92b6",
+      "size": 26361877,
+      "mtime_ns": 1685767106000000000
+    },
+    {
+      "id": "cmath-nc1-6-solid-shapes",
+      "title": "시매쓰 NC 1단계 6 올록볼록 입체도형",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 6/NC 1단계 6.올록볼록 입체도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "685d2684393ef2f8bfae6b4e8baeb6ca3df016f401cc81fbc1dbc2d0d9063fb1",
+      "size": 28072802,
+      "mtime_ns": 1683183338000000000
+    },
+    {
+      "id": "cmath-nc2-4-blocks-pentomino",
+      "title": "시매쓰 NC 2단계 4 탐구블록과 펜토미노",
+      "path": "private-sources/Cmath/NC/NC 2단계/NC 2단계 - 4/NC 2단계 4.탐구블록과 펜토미노.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "3c9a6d886932ff872c31551be7a4d252cbba93c437c1cea964af23492c1149a3",
+      "size": 26922669,
+      "mtime_ns": 1686296834000000000
+    },
+    {
+      "id": "cmath-nc3-2-tangram-cubes",
+      "title": "시매쓰 NC 3단계 2 칠교놀이와 쌓기나무",
+      "path": "private-sources/Cmath/NC/NC 3단계/NC 3단계 - 2/NC 3단계 2.칠교놀이와 쌓기나무.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "b5e084104ec827139a79b1564897f0c17a2ca706c03d1579a27f27230125f985",
+      "size": 29464683,
+      "mtime_ns": 1686301334000000000
+    },
+    {
+      "id": "cmath-nc4-2-geometry-inquiry",
+      "title": "시매쓰 NC 4단계 2 도형 탐구 문제 해결력",
+      "path": "private-sources/Cmath/NC/NC 4단계/NC 4단계 - 2/NC 4단계 2.도형_탐구 문제 해결력.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "1a5500b8d1be0ce82a07add05f5618e86ff476c80e4b8b1cf3d458a2772bcbdb",
+      "size": 13064359,
+      "mtime_ns": 1689999386000000000
+    },
+    {
+      "id": "cmath-nc5-2-segments-shapes",
+      "title": "시매쓰 NC 5단계 2 선분에서 도형까지",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 2/NC 5단계 2.선분에서 도형까지.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "09c4f59bc21c345df2874ba82e672796a9ca45cf141094a784a258183944b084",
+      "size": 23455840,
+      "mtime_ns": 1686637222000000000
+    },
+    {
+      "id": "cmath-nc5-4-measurement",
+      "title": "시매쓰 NC 5단계 4 측정의 세계",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 4/NC 5단계 4.측정의 세계.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "c2134fd7cb6aa71398a6e76ed5db5b95729ac5ebf1f217419edad6efd122b7b2",
+      "size": 28258865,
+      "mtime_ns": 1686644640000000000
+    },
+    {
+      "id": "cmath-nc6-1-fun-geometry",
+      "title": "시매쓰 NC 6단계 1 재미있는 도형",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 1/NC 6단계 1.재미있는 도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "570c1f36de7a4f10f04e38e5cc1ab6ccec71616ade56710c64940079ebae5a8e",
+      "size": 27364887,
+      "mtime_ns": 1686028944000000000
+    },
+    {
+      "id": "cmath-nc6-5-land-fences",
+      "title": "시매쓰 NC 6단계 5 땅과 울타리",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 5/NC 6단계 5.땅과 울타리.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "4884fa86be4439d39507ef4f299c58981c0d056b982b7ab9dcb04c755ad85990",
+      "size": 26864432,
+      "mtime_ns": 1686900846000000000
+    }
+  ],
+  "records": [
+    {
+      "id": "fields.question-bank.scope",
+      "title": "Question bank scope and locked exclusions",
+      "aliases": [
+        "문제은행 제외 범위"
+      ],
+      "tags": [
+        "scope",
+        "locked"
+      ],
+      "summary": "Diagnostic prescription, arithmetic, Golden Bell, duplicate finals, and unverified types remain excluded or locked.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "decision",
+          "locator": "의도적으로 제외하거나 잠가 둔 범위 표",
+          "note": "Do not reopen these items without a new user decision"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f04",
+      "title": "Final 2 question 6 wrong operation correction",
+      "aliases": [
+        "파이널 2회 6번",
+        "잘못된 연산 고치기"
+      ],
+      "tags": [
+        "F04",
+        "final-2"
+      ],
+      "summary": "F04 uses the original unknown-number inverse calculation and separates easier and harder reasoning structures.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 6번과 대본 검증 6번",
+          "note": "Original structure and answer 57 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function wrongOperationCorrection and GENERATORS export",
+          "note": "Three difficulty structures with deterministic answer metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES wrong-operation-correction and FINAL_EXAM_TYPES question 6",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.question-bank.next",
+      "title": "Next verification low-diversity generator audit",
+      "aliases": [],
+      "tags": [
+        "next"
+      ],
+      "summary": "Review each remaining regression warning against its original question, then vary problem structures or answers so a single selected type can produce 20 non-duplicate cards without changing the source skill.",
+      "status": "draft",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Next order item 2 after full regression",
+          "note": "Fix remaining low-diversity and fixed-answer types before Final 1 replacement"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "Regression warnings for selectable generators",
+          "note": "Target score, shape growth, transform, order, relation, and scale variants"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f05",
+      "title": "Final 2 question 9 shape matrix rule",
+      "aliases": [
+        "파이널 2회 9번",
+        "도형 행렬 규칙"
+      ],
+      "tags": [
+        "F05",
+        "final-2"
+      ],
+      "summary": "F05 reproduces the original 3x3 nested-shape matrix with independently cycling outer shape, inner shape, and fill.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 9번과 대본 검증 9번",
+          "note": "Original 3x3 outer, inner, and fill cycles verified against rendered page 6"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeMatrixRule and GENERATORS export",
+          "note": "Three difficulty structures with row and column uniqueness metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-matrix-rule and FINAL_EXAM_TYPES question 9",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f06",
+      "title": "Final 2 question 10 delayed date promise",
+      "aliases": [
+        "파이널 2회 10번",
+        "두 번 이동하는 날짜 계산"
+      ],
+      "tags": [
+        "F06",
+        "final-2"
+      ],
+      "summary": "F06 preserves the original past-then-future date movement and adds structurally easier and harder variants.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 10번과 대본 검증 10번",
+          "note": "Original two-step movement and answer June 3 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function delayedDatePromise and GENERATORS export",
+          "note": "One-step, two-step, and three-step difficulty structures with day-number metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES delayed-date-promise and FINAL_EXAM_TYPES question 10",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f07",
+      "title": "Final 2 question 12 torn calendar weekday",
+      "aliases": [
+        "파이널 2회 12번",
+        "찢어진 달력 요일"
+      ],
+      "tags": [
+        "F07",
+        "final-2"
+      ],
+      "summary": "F07 renders the original partial torn-calendar structure and calculates weekdays from verified seven-day cycles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 12번과 대본 검증 12번",
+          "note": "Original three-column fragment and Sunday answer verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function tornCalendarWeekday and GENERATORS export",
+          "note": "Three difficulty structures with cell-level weekday metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES calendar-date-weekday and FINAL_EXAM_TYPES question 12",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f08",
+      "title": "Final 2 question 13 two-type unit totals",
+      "aliases": [
+        "파이널 2회 13번",
+        "두발 세발 자전거"
+      ],
+      "tags": [
+        "F08",
+        "final-2"
+      ],
+      "summary": "F08 preserves the original bicycle wheel-total structure and shares its verified calculation model with the harder chicken-and-rabbit variant.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 13번과 대본 검증 13번",
+          "note": "Original total 7, wheels 17, answer 3 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoTypeUnitTotal and GENERATORS export",
+          "note": "Bicycle and animal variants with independent total-unit metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-type-unit-total and FINAL_EXAM_TYPES question 13",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f09",
+      "title": "Final 3 question 1 row and column star placement",
+      "aliases": [
+        "파이널 3회 1번",
+        "가로 세로 별 개수 조건"
+      ],
+      "tags": [
+        "F09",
+        "final-3"
+      ],
+      "summary": "F09 preserves the original 4x4 row-column count placement and verifies every generated grid by independent solution enumeration.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 1번과 다음 검증 순서 4번",
+          "note": "Original 4x4 row and column conditions and five valid layouts verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function rowColumnCountPlacement and GENERATORS export",
+          "note": "Three grid sizes with row-column metadata and bounded solution counts"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES row-column-count-placement and FINAL_EXAM_TYPES final-3 question 1",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f10",
+      "title": "Final 3 question 2 truth-lie ranking",
+      "aliases": [
+        "파이널 3회 2번",
+        "참말 거짓말 순위"
+      ],
+      "tags": [
+        "F10",
+        "final-3"
+      ],
+      "summary": "F10 uses exhaustive permutation checks to preserve the original truth-lie ranking structure and rejects the conflicting transcript answer.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 대본 검증 2번과 다음 검증 순서 4번",
+          "note": "Original statements yield two orders and E rank 3"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function truthLieRanking and GENERATORS export",
+          "note": "Three difficulty structures with exhaustive permutation metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES truth-lie-ranking and FINAL_EXAM_TYPES final-3 question 2",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f11",
+      "title": "Final 3 question 9 target score combinations",
+      "aliases": [
+        "파이널 3회 9번",
+        "과녁 점수 조합"
+      ],
+      "tags": [
+        "F11",
+        "final-3"
+      ],
+      "summary": "F11 preserves the original concentric target, two-hit rule, and repeated-score allowance while enumerating every distinct sum independently.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 9번과 대본 검증 9번",
+          "note": "Original 1 to 5 target and answer 9 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function targetScoreCombinations and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive two-hit sums"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES target-score-combinations and FINAL_EXAM_TYPES final-3 question 9",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f12",
+      "title": "Final 3 question 10 matchstick shape sequence",
+      "aliases": [
+        "파이널 3회 10번",
+        "성냥개비 도형 수열"
+      ],
+      "tags": [
+        "F12",
+        "final-3"
+      ],
+      "summary": "F12 preserves the original square sequence 4, 7, 10 and the answer 31, aligns with the course square and pentagon activities, and allows triangle through hexagon variants with one shared edge.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 10번과 다음 검증 순서 4번",
+          "note": "Original square sequence and course-backed classification verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function matchstickShapeSequence and GENERATORS export",
+          "note": "Three structural difficulty levels with repeated-addition metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES matchstick-square-growth and FINAL_EXAM_TYPES final-3 question 10",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f13",
+      "title": "Final 3 question 11 connected line degree sum",
+      "aliases": [
+        "파이널 3회 11번",
+        "각 점에 연결된 선의 개수 합"
+      ],
+      "tags": [
+        "F13",
+        "final-3"
+      ],
+      "summary": "F13 verifies the original nine circles, seventeen lines, degree list, and total 34, then generates connected planar graphs without duplicate edges, self-loops, or unmarked crossings.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 11번과 다음 검증 순서 4번",
+          "note": "Original graph has 17 edges and degree sum 34"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function connectedLineDegreeSum and GENERATORS export",
+          "note": "Three difficulty levels with independently checkable graph metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES connected-line-degree-sum and FINAL_EXAM_TYPES final-3 question 11",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f14",
+      "title": "Final 3 question 12 letter block transform",
+      "aliases": [
+        "파이널 3회 12번",
+        "글자 블록 움직이기"
+      ],
+      "tags": [
+        "F14",
+        "final-3"
+      ],
+      "summary": "F14 verifies the original Soma example as a 90-degree counterclockwise rotation followed by a left-right flip, then renders source-matched Hangul transformations as SVG.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 12번과 다음 검증 순서 4번",
+          "note": "Original Soma example and exact operation order verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function letterBlockTransform and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit operation metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES letter-block-transform and FINAL_EXAM_TYPES final-3 question 12",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f15",
+      "title": "Final 3 question 17 mixed sequences",
+      "aliases": [
+        "파이널 3회 17번",
+        "세 가지 규칙의 복합 수열"
+      ],
+      "tags": [
+        "F15",
+        "final-3"
+      ],
+      "summary": "F15 verifies the original increasing-difference, sum-of-previous-two, and interleaved sequences with answers 16, 58, and 1, then generates all three rules together.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 17번과 다음 검증 순서 4번",
+          "note": "Original three rule structures and answers 16, 58, 1 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function mixedSequences and GENERATORS export",
+          "note": "Three difficulty levels with independently checkable sequence metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES mixed-sequences and FINAL_EXAM_TYPES final-3 question 17",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f16",
+      "title": "Final 3 question 20 neither-set count",
+      "aliases": [
+        "파이널 3회 20번",
+        "두 조건에 모두 해당하지 않는 수"
+      ],
+      "tags": [
+        "F16",
+        "final-3"
+      ],
+      "summary": "F16 preserves the original totals 40, 18, 8, and overlap 3 with answer 17, then varies whether regions, set totals, or a hidden overlap must be derived.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 20번, 대본 검증 20번, 다음 검증 순서 4번",
+          "note": "Original set totals, overlap, and answer 17 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function neitherSetCount and GENERATORS export",
+          "note": "Three structural difficulty levels with independently checkable four-region metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES neither-set-count and FINAL_EXAM_TYPES final-3 question 20",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f17",
+      "title": "Practice 4 question 7 hidden ranking digits",
+      "aliases": [
+        "실전 4회 7번",
+        "순위표의 가려진 서로 다른 숫자"
+      ],
+      "tags": [
+        "F17",
+        "practice-4"
+      ],
+      "summary": "F17 preserves the original ranking table 221 > 2●3 > ★93 > 19◆ and verifies the unique completed scores 203, 193, and 192 by exhaustive digit assignment.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 7번, 중복·해설 검증 7번, 다음 검증 순서 4번",
+          "note": "Practice 4 source structure and completed scores verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function hiddenScoreRanking and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive unique-solution metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES hidden-score-ranking and PRACTICE_EXAM_TYPES mock-4 question 7",
+          "note": "Only the verified practice question is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f18",
+      "title": "Practice 4 question 8 two-digit even count",
+      "aliases": [
+        "실전 4회 8번",
+        "수 카드로 만든 두 자리 짝수"
+      ],
+      "tags": [
+        "F18",
+        "practice-4"
+      ],
+      "summary": "F18 preserves the original cards 5, 2, 3, 4 and answer 6, and enumerates every ordered pair of different cards while excluding zero from the tens place.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 8번, 중복·해설 검증 8번, 다음 검증 순서 4번",
+          "note": "Practice 4 source cards and answer 6 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitEvenCount and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive ordered-pair metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-even-count and PRACTICE_EXAM_TYPES mock-4 question 8",
+          "note": "Only verified practice questions are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f19",
+      "title": "Practice 4 question 12 reverse initial count",
+      "aliases": [
+        "실전 4회 12번",
+        "여러 번 오고 간 뒤 처음 수"
+      ],
+      "tags": [
+        "F19",
+        "practice-4"
+      ],
+      "summary": "F19 preserves the original +4, -6, +5, -3 sequence with final and initial count 9, and verifies every generated problem in both forward and reverse directions.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 12번, 중복·해설 검증 12번, 다음 검증 순서 4번",
+          "note": "Practice 4 source operations and initial answer 9 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function reverseInitialCount and GENERATORS export",
+          "note": "Three operation-count levels with forward and reverse metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES reverse-initial-count and PRACTICE_EXAM_TYPES mock-4 question 12",
+          "note": "Only verified practice questions are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f20",
+      "title": "Practice 3 question 18 erase expression target",
+      "aliases": [
+        "실전 3회 18번",
+        "식의 일부를 X로 지우기"
+      ],
+      "tags": [
+        "F20",
+        "practice-3"
+      ],
+      "summary": "F20 preserves the original expression 27-5+8+10=30 and removal +10, and verifies that exactly one signed term can be erased in every generated problem.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 최종 표 18번, 중복·해설 검증 18번, 다음 검증 순서 4번",
+          "note": "Practice 3 source expression order and removed term verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function eraseExpressionTarget and GENERATORS export",
+          "note": "Three term-count levels with exhaustive one-term deletion metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES erase-expression-target and PRACTICE_EXAM_TYPES mock-3 question 18",
+          "note": "Only the verified practice question is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f21",
+      "title": "Practice 3 question 19 collection repeat gap",
+      "aliases": [],
+      "tags": [
+        "F21",
+        "practice-3"
+      ],
+      "summary": "F21 preserves the alternating adjacent sums 8 and 9 and counts the eight circles between the first and second 2.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 3 table question 19 and original page 9",
+          "note": "Original alternating sums, circle sequence, and answer 8 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function collectionRepeatGap and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit sequence metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES collection-repeat-gap and PRACTICE_EXAM_TYPES mock-3 question 19",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f22",
+      "title": "Practice 4 question 3 mixed-operation card equation",
+      "aliases": [],
+      "tags": [
+        "F22",
+        "practice-4"
+      ],
+      "summary": "F22 preserves the connected 2 plus, 2 times, and subtraction layout; cards 5, 7, 9, 11, 14 have the unique solution 2+9=11, 2x7=14, 11-5=6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 4 table question 3 and original page 3",
+          "note": "Original cards, connected layout, and unique solution verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function mixedOperationCardEquation and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive-card metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-card-mixed-operations and PRACTICE_EXAM_TYPES mock-4 question 3",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f23",
+      "title": "Practice 3 question 17 conditional two-digit card enumeration",
+      "aliases": [],
+      "tags": [
+        "F23",
+        "practice-3"
+      ],
+      "summary": "F23 preserves cards 4,0,2,7,1 and the complete eight-number list below 30, forbidding repeated use of one card in a number.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 3 table question 17 and original page 8",
+          "note": "Original cards, condition, and complete answer list verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitCardEnumeration and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive ordered-pair metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-card-enumeration and PRACTICE_EXAM_TYPES mock-3 question 17",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q1",
+      "title": "Selection test 2 question 1 edge-sum placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "The original cards 2,3,4,5 with edge sums top9 right6 bottom5 left8 have the unique full placement TL5 TR4 BR2 BL3 and reuse edgeSumCycle.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 1 paragraph",
+          "note": "Original full placement and generator reuse verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle and GENERATORS export",
+          "note": "All four positions are returned as the answer"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1",
+          "note": "Only source question 1 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q2",
+      "title": "Selection test 2 question 2 equalize transfer",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q2",
+        "equalize-transfer"
+      ],
+      "summary": "The original bead counts 13 and 5 require transferring 4; equalizeTransfer matches the structure and its name-particle wording was corrected.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 2 paragraph",
+          "note": "Original counts, answer, and wording correction verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalizeTransfer and GENERATORS export",
+          "note": "Transfer, equalized totals, and visual counts are generated together"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1 and 2",
+          "note": "Only source questions 1 and 2 are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q3",
+      "title": "Selection test 2 question 3 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q3",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 1 through 5 fill three bottom and two middle cells; both mirror layouts give center-bottom 3 and top 9. A separate generator was required.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 3 paragraph",
+          "note": "Original layout, answer, and structural difficulty levels verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fiveCardSumPyramid and solveFiveCardPyramid",
+          "note": "All valid layouts are enumerated and the asked center is unique"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES five-card-sum-pyramid and EXAMS k7-2022-04 verified 1 through 3",
+          "note": "Source question 3 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q4",
+      "title": "Selection test 2 question 4 stair-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q4",
+        "grid-number-placement"
+      ],
+      "summary": "The source is a four-cell stair, not a 2x2 square. Clues place 2 left of 4 and 4 below 3, leaving marked top-right as 1.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 4 paragraph",
+          "note": "Original stair geometry, clues, and answer 1 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function stairGridPlacement and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit position metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES grid-number-placement and EXAMS k7-2022-04 verified 1 through 4",
+          "note": "Source question 4 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q5",
+      "title": "Selection test 2 question 5 order from back",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q5",
+        "order-position-from-back"
+      ],
+      "summary": "Five runners; one runner is second from the back and one person is between the two named runners, forcing the asked runner to be second.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 5 paragraph",
+          "note": "Original five-runner structure, answer 2, Korean particle fix, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionFromBack and koreanParticle",
+          "note": "Three structural difficulty levels and correct name particles"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-from-back and EXAMS k7-2022-04 verified 1 through 5",
+          "note": "Source question 5 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q6",
+      "title": "Selection test 2 question 6 additive table grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q6",
+        "addition-table-grid"
+      ],
+      "summary": "The source is a 4 by 4 table starting at 2, increasing by 2 across and 3 down; the marked bottom-right value is 17.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 6 paragraph",
+          "note": "Original grid, directional increments, answer 17, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGrid",
+          "note": "Three structural difficulty levels with independent rule uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES addition-table-grid and EXAMS k7-2022-04 verified 1 through 6",
+          "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q7",
+      "title": "Selection test 2 question 7 shape sum bottom target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q7",
+        "shape-sum-table-bottom-target"
+      ],
+      "summary": "The exact source layout has diamond plus circle and diamond plus square as row sums, two diamonds as the known bottom column sum, and circle plus square as the target; answer 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 7 paragraph",
+          "note": "Exact orientation, source answer 6, distinct subtype decision, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumBottomTarget",
+          "note": "Exact target orientation and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-bottom-target and EXAMS k7-2022-04 verified 1 through 7",
+          "note": "Source question 7 is enabled without changing the older shape-sum subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q8",
+      "title": "Selection test 2 question 8 three-shape cycle",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q8",
+        "repeat-three-shapes"
+      ],
+      "summary": "The source repeats triangle, circle, diamond and asks for the eleventh shape, which is circle; the new generator always uses three distinct shapes.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 8 paragraph",
+          "note": "Original three-shape cycle, answer circle, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function threeShapeCycle",
+          "note": "Sixty distinct ordered cycles and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-three-shapes and EXAMS k7-2022-04 verified 1 through 8",
+          "note": "Source question 8 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q9",
+      "title": "Selection test 2 question 9 seven-step arrow path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q9",
+        "arrow-number-path-seven"
+      ],
+      "summary": "The source applies left -1, right +1, up -10, down +10 along seven arrows from 46 to the marked answer 16; the dedicated generator preserves that path structure.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 9 paragraph",
+          "note": "Original path, answer 16, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Five, seven, and nine-step path variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES arrow-number-path-seven and EXAMS k7-2022-04 verified 1 through 9",
+          "note": "Source question 9 is enabled without changing the older arrow grid type"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q10",
+      "title": "Selection test 2 question 10 bus stops",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q10",
+        "bus-change"
+      ],
+      "summary": "The source starts with 27 passengers, 12 get off at the first stop, and 9 get on at the second stop, so 24 remain; sourceBusStops matches this event order and layout.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 10 paragraph",
+          "note": "Original numbers, answer 24, reuse decision, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function sourceBusStops",
+          "note": "Source-matched off-then-on bus generator"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES bus-change and EXAMS k7-2022-04 verified 1 through 10",
+          "note": "Source question 10 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q11",
+      "title": "Selection test 2 question 11 folded number paper cut sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q11",
+        "fold-number-cut-sum"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper across the anti-diagonal; three shaded off-axis cells cut their reflected partners and one diagonal cell cuts once, giving 4+5+8+7+6+2+7=39.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 11 paragraph",
+          "note": "Original fold geometry, answer 39, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSum",
+          "note": "Mirrored cut-cell calculation and three structural levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum and EXAMS k7-2022-04 verified 1 through 11",
+          "note": "Source question 11 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q12",
+      "title": "Selection test 2 question 12 equal line sum with eight cards",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q12",
+        "equal-line-sum-eight-cards"
+      ],
+      "summary": "The source places 1 through 8 around a 3 by 3 perimeter with every side summing to 15; clues 7, 6, and 8 force the marked top-right corner to 3.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 12 paragraph",
+          "note": "Original clues, answer 3, enumeration, and mobile overflow fix"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalLineSumEightCards",
+          "note": "Forty-eight valid layouts and unique-target clue generation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES equal-line-sum-eight-cards and EXAMS k7-2022-04 verified 1 through 12",
+          "note": "Source question 12 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q13",
+      "title": "Selection test 2 question 13 square-top symbol sum matrix",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q13",
+        "symbol-sum-grid-square-top"
+      ],
+      "summary": "The source matrix begins with three squares, then square-diamond-triangle, then diamond-circle-circle; values 4,2,8,6 produce the marked third-column sum 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 13 paragraph",
+          "note": "Original arrangement, answer 18, generator split, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolSumGridSquareTop",
+          "note": "Source-specific four-symbol equations and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-sum-grid-square-top and EXAMS k7-2022-04 verified 1 through 13",
+          "note": "Source question 13 is enabled without changing the older symbol matrix"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q14",
+      "title": "Selection test 2 question 14 chained shape equations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q14",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source shows example equations 4+5=9 and 7-4=3, then square+28=63 and 53-square=heart; square is 35 and the heart answer is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 14 paragraph",
+          "note": "Original equations, answer 18, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "Two-stage source structure plus easier and harder scaffolds"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-equation-add-subtract and EXAMS k7-2022-04 verified 1 through 14",
+          "note": "Source question 14 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q15",
+      "title": "Selection test 2 question 15 even two-digit range and gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q15",
+        "two-digit-parity-gap"
+      ],
+      "summary": "The source asks for an even number greater than 60 and less than 90 whose tens digit is 5 larger than its ones digit; exhaustive checking leaves only 72.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 15 paragraph",
+          "note": "Original conditions, answer 72, difficulty structure, and language fixes"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitParityGap",
+          "note": "Enumerates every two-digit number and requires a unique solution"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-parity-gap and EXAMS k7-2022-04 verified 1 through 15",
+          "note": "Source question 15 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q16",
+      "title": "Selection test 2 question 16 triangular tile growth",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q16",
+        "triangle-tile-growth"
+      ],
+      "summary": "The source shows triangular arrangements containing 1, 4, 9, and 16 small triangles; the eighth arrangement contains 64 small triangles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 16 paragraph",
+          "note": "Original triangular growth, answer 64, SVG structure, and age-appropriate explanation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function triangleTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES triangle-tile-growth and EXAMS k7-2022-04 verified 1 through 16",
+          "note": "Source question 16 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q17",
+      "title": "Selection test 2 question 17 three-object balance scales",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q17",
+        "balance-scale-three-objects"
+      ],
+      "summary": "The source balances are circle = square + star, circle + square = diamond + star, and star = two squares + diamond; therefore one circle equals five squares, correcting a stale answer of four.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 17 paragraph",
+          "note": "Original three relations, official answer 5, stale-answer correction, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleThreeObjects",
+          "note": "Three structural difficulty levels with independently checked balance equations"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-three-objects and EXAMS k7-2022-04 verified 1 through 17",
+          "note": "Source question 17 is enabled without changing the older balance-scale generator"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q18",
+      "title": "Selection test 2 question 18 two-star to three-circle relation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q18",
+        "symbol-relation-2to3"
+      ],
+      "summary": "Two stars equal three circles, one star plus one circle equals two triangles, and one circle plus one triangle equals the target square; the unique distinct one-digit values are 6, 4, and 5, giving source answer 9.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 18 paragraph",
+          "note": "Original equations, unique one-digit solution, answer 9, difficulty structure, and corrected explanation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationTwoToThree",
+          "note": "The first two source equations stay fixed while the final target expression changes structurally"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-relation-2to3 and EXAMS k7-2022-04 verified 1 through 18",
+          "note": "Source question 18 is enabled without changing the older symbol-relation generator"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q19",
+      "title": "Selection test 2 question 19 six-point overlapping distances",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source orders A through F and gives AC 27, AD 47, BD 30, CE 54, and BF 84; solving the overlapping segments gives EF 20.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 19 paragraph",
+          "note": "Original point order, five distances, answer 20, difficulty structure, mobile sizing, and particle fixes"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Five base gaps independently determine every displayed distance and target"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-line-six-points and EXAMS k7-2022-04 verified 1 through 19",
+          "note": "Source question 19 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q20",
+      "title": "Selection test 2 question 20 inverse black-white stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q20",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "Odd rows are black and even rows are white in the growing triangular arrangement; a black-over-white difference of 17 first occurs at the 33rd arrangement.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 20 paragraph",
+          "note": "Original five stages, row colors, inverse difference, answer 33, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Brute-force validation finds the first matching black or white difference"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES go-stone-difference-inverse and all 20 EXAMS k7-2022-04 questions verified",
+          "note": "Selection test 2 is fully enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q1",
+      "title": "Selection test 3 question 1 edge-sum placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "Cards 1,2,4,8 with edge sums top5 right9 bottom10 left6 have the unique full placement TL4 TR1 BR8 BL2; edgeSumCycle now uses structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 1 paragraph",
+          "note": "Original page and answer, unique placement, structural difficulty, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Easy gives one corner, actual uses four cards, hard adds one unused card"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verifiedQuestionNumbers 1",
+          "note": "Only source question 1 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q2",
+      "title": "Selection test 3 question 2 four-shape cycle",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q2",
+        "repeat-four-shapes"
+      ],
+      "summary": "Circle, triangle, square, diamond repeat in a four-item cycle, so the source 14th shape is triangle; fourShapeCycle randomizes four distinct shapes and their order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 2 paragraph",
+          "note": "Original cycle, source answer, difficulty structure, mobile fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fourShapeCycle",
+          "note": "Four distinct shapes with 840 possible ordered cycles"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-four-shapes and EXAMS k7-2022-06 verified 1 and 2",
+          "note": "Source question 2 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q3",
+      "title": "Selection test 3 question 3 L-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q3",
+        "l-grid-placement"
+      ],
+      "summary": "The source is an L-shaped four-cell grid, not the existing stair grid: 2 is left of 3 and 1 is immediately below 4, forcing the marked middle-right cell to 4.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 3 paragraph",
+          "note": "Exact grid geometry, clues, answer, generator split, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function lGridPlacement",
+          "note": "Fixed L-grid with three structural difficulty levels and unique placement"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES l-grid-placement and EXAMS k7-2022-06 verified 1 through 3",
+          "note": "Source question 3 is enabled separately from stair-grid-placement"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q4",
+      "title": "Selection test 3 question 4 front-position runners",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q4",
+        "order-position-from-front"
+      ],
+      "summary": "With five runners, Jiwoo is 2nd from the front and one runner is between Jiwoo and Minho, so Minho is uniquely 4th.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 4 paragraph",
+          "note": "Original clues, answer 4th, front/back type split, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionFromFront",
+          "note": "Three structurally distinct settings with unique-position enumeration"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-from-front and EXAMS k7-2022-06 verified 1 through 4",
+          "note": "Source question 4 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q5",
+      "title": "Selection test 3 question 5 total and difference sharing",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q5",
+        "total-difference"
+      ],
+      "summary": "Twenty cubes are shared so Yunseo has four more than Dabin; removing the difference and halving the remainder gives Yunseo 12. The source Q5/Q6 mapping was corrected.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 5 paragraph",
+          "note": "Original page and answer, mapping correction, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceShare",
+          "note": "Visual cube count and three structural difficulty levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES total-difference and EXAMS k7-2022-06 verified 1 through 5",
+          "note": "Source question 5 is enabled and question 6 mapping corrected"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q6",
+      "title": "Selection test 3 question 6 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q6",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 2 through 6 fill three bottom and two middle cells; the two mirror layouts both give bottom-center 2 and top 11.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 6 paragraph",
+          "note": "Original page and answer, source mapping, particle fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions fiveCardSumPyramid and solveFiveCardPyramid",
+          "note": "All valid layouts are enumerated and the asked center is unique"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 6",
+          "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q7",
+      "title": "Selection test 3 question 7 additive table grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q7",
+        "addition-table-grid"
+      ],
+      "summary": "The source is a 4 by 4 table starting at 3, increasing by 3 across and 4 down; the marked bottom-right value is 24.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 7 paragraph",
+          "note": "Exact source grid, corrected vertical increment, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGrid",
+          "note": "Three structural difficulty levels with independent rule uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 7",
+          "note": "Source question 7 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q8",
+      "title": "Selection test 3 question 8 shape-sum column target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q8",
+        "shape-sum-table-column-target"
+      ],
+      "summary": "The source layout is diamond-circle over square-square with row sums 13 and 18, second-column sum 16, and asked first-column sum 15; it is not the prior shape-sum-table layout.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 8 paragraph",
+          "note": "Exact source shape placement, answer, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumColumnTarget",
+          "note": "All three shape values are independently recovered from the shown sums"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-column-target and EXAMS k7-2022-06 verified 1 through 8",
+          "note": "Source question 8 is enabled separately from shape-sum-table"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q9",
+      "title": "Selection test 3 question 9 seven-step arrow-number path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q9",
+        "arrow-number-path-seven"
+      ],
+      "summary": "The source legend is left -1, right +1, up -10, down +10. Starting at 66 and moving up, up, right, down, right, right, up gives the official answer 49. The generator now uses nonrepeating randomized paths and structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 9 paragraph",
+          "note": "Exact source route, answer, prior mapping error, solution correction, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Nonrepeating randomized 5, 7, and 9-step routes with independent value metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES arrow-number-path-seven and EXAMS k7-2022-06 verified 1 through 9",
+          "note": "Source question 9 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q10",
+      "title": "Selection test 3 question 10 bus boards then leaves",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q10",
+        "bus-board-then-leave"
+      ],
+      "summary": "The source starts with 24 passengers, eight board at the first stop, fourteen leave at the second stop, and the official answer is 18. It is a separate order from the prior leave-then-board type.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 10 paragraph",
+          "note": "Exact source order, answer, type split, structural difficulty, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Board-then-leave generator with two or three events and intermediate metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES bus-board-then-leave and EXAMS k7-2022-06 verified 1 through 10",
+          "note": "Source question 10 is enabled separately from leave-then-board"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q11",
+      "title": "Selection test 3 question 11 shape-sum top row",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q11",
+        "shape-sum-grid-top-target"
+      ],
+      "summary": "The source grid is triangle-square-circle, diamond-square-circle, circle-triangle-circle. Its shown row sums are target, 18, 15; column sums are 14, 17, 18; the official target is 16. Questions 11 and 12 were remapped to source order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 11 paragraph",
+          "note": "Exact layout, answer, prior generator mismatch, question-order correction, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTopTarget",
+          "note": "Fixed source layout with three structural difficulty modes and algebraic metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-grid-top-target and EXAMS k7-2022-06 verified 1 through 11",
+          "note": "Question 11 is enabled and question 12 maps to equal-line-sum-eight-cards"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q12",
+      "title": "Selection test 3 question 12 eight-card perimeter sum 12",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q12",
+        "equal-line-sum-eight-cards-twelve"
+      ],
+      "summary": "Cards 1 through 8 are placed once around four sides that each sum to 12. The source shows top-left 3, top-right 2, bottom-left 1, asks bottom-right, and the official answer is 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 12 paragraph",
+          "note": "Exact source placement, answer, separate sum-12 type, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions buildEqualLineSumEightCards and equalLineSumEightCardsTwelve",
+          "note": "Shared renderer logic with source-specific sum and rotating target corner"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES equal-line-sum-eight-cards-twelve and EXAMS k7-2022-06 verified 1 through 12",
+          "note": "Source question 12 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q13",
+      "title": "Selection test 3 question 13 shape add-subtract equations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q13",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source uses square plus 26 equals 54, then 42 minus square equals heart. Square is 28 and the official heart answer is 14; the existing two-step carrying generator matches.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 13 paragraph",
+          "note": "Exact equations, answer, generator reuse decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "One-, two-, and three-stage structural difficulty with carrying checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 13",
+          "note": "Source question 13 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q14",
+      "title": "Selection test 3 question 14 odd two-digit range and gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q14",
+        "two-digit-odd-gap"
+      ],
+      "summary": "The source asks for an odd two-digit number below 30 whose tens digit is 5 less than its ones digit; exhaustive checking leaves only 27.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 14 paragraph",
+          "note": "Original conditions, answer 27, separate odd-number type, duplicate prevention, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitOddGap",
+          "note": "Enumerates every two-digit odd number and verifies the candidate count"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-odd-gap and EXAMS k7-2022-06 verified 1 through 14",
+          "note": "Source question 14 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q15",
+      "title": "Selection test 3 question 15 square-array number pattern",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q15",
+        "square-tile-growth"
+      ],
+      "summary": "The source shows square arrays containing 1, 4, 9, and 16 small squares and asks for the seventh array; seven rows of seven squares contain 49.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 15 paragraph",
+          "note": "Original square arrays, answer 49, sequence classification, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function squareTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES square-tile-growth and EXAMS k7-2022-06 verified 1 through 15",
+          "note": "Source question 15 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q16",
+      "title": "Selection test 3 question 16 folded L-cut number sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q16",
+        "fold-number-cut-sum-l-shape"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the rising diagonal and cuts an L-shaped area consisting of two full cells and one diagonal half-cell. Unfolding removes values 6, 4, 1, 2, and 5, whose sum is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 16 paragraph",
+          "note": "Exact fold line, L mask, answer 18, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSumLShape",
+          "note": "Reflects shaded cells across the rising diagonal and sums unique removed cells"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum-l-shape and EXAMS k7-2022-06 verified 1 through 16",
+          "note": "Source question 16 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q17",
+      "title": "Selection test 3 question 17 four-object balance chain",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q17",
+        "balance-scale-four-objects"
+      ],
+      "summary": "The source uses three balanced scales: circle equals two squares plus one diamond, two stars equal three diamonds, and one square equals one star plus one diamond. Therefore one circle equals six diamonds.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 17 paragraph",
+          "note": "Exact three balance relations, answer 6, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleFourObjects",
+          "note": "Generates integer-weight substitutions and verifies each balance"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-four-objects and EXAMS k7-2022-06 verified 1 through 17",
+          "note": "Source question 17 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q18",
+      "title": "Selection test 3 question 18 three-to-four symbol relation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q18",
+        "symbol-relation-3to4"
+      ],
+      "summary": "The source equations are three stars equal four circles, star plus circle equals two inverted triangles, and circle plus triangle equals the target square. Exhaustive one-digit search gives the unique values 8, 6, 7 and source answer 13.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 18 paragraph",
+          "note": "Original equations, unique one-digit solution, answer 13, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationThreeToFour",
+          "note": "Source-specific three-to-four relations and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-relation-3to4 and EXAMS k7-2022-06 verified 1 through 18",
+          "note": "Source question 18 enabled after exact verification"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q19",
+      "title": "Selection test 3 question 19 six-point overlapping distance",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source diagram gives AD 45, CE 53, AC 26, BD 29, and BF 80 and asks for EF. Reconstructing the five adjacent gaps gives 16, 10, 19, 34, 17, so the official answer is 17.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 19 paragraph",
+          "note": "Original five arcs, target EF, answer 17, generator reuse, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Source-aligned overlapping-distance generator with three levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 19",
+          "note": "Source question 19 enabled after exact page comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q20",
+      "title": "Selection test 3 question 20 inverse triangular stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q20",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "Rows alternate black on odd row numbers and white on even row numbers. Black exceeds white by k at stage 2k-1, so a difference of 19 occurs at the official answer 37th stage.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 20 paragraph",
+          "note": "Original triangular rows, answer 37, generator reuse, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Odd black and even white inverse-difference generator"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified questions 1 through 20",
+          "note": "Selection test 3 completed"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q1",
+      "title": "Selection test 4 question 1 edge-sum card placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "Cards 5, 6, 7, 8 have edge sums top 12, right 15, bottom 14, and left 11. Exhaustive permutation gives the unique full placement TL 5, TR 7, BR 8, BL 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 1 paragraph",
+          "note": "Original cards, sums, full placement, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Full-placement generator with exhaustive uniqueness and structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified question 1",
+          "note": "Source question 1 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q2",
+      "title": "Selection test 4 question 2 vertical stair-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q2",
+        "vertical-stair-grid-placement"
+      ],
+      "summary": "Cards 1, 2, 3, 4 fill a vertical four-cell stair. With 2 left of 3 and 1 directly below 3, exhaustive placement leaves the marked top-left cell as 4; this requires a separate renderer from the horizontal stair source.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 2 paragraph",
+          "note": "Original geometry, relations, answer, split decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function verticalStairGridPlacement and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES vertical-stair-grid-placement and EXAMS k7-2022-08 verified questions 1 through 2",
+          "note": "Source question 2 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q3",
+      "title": "Selection test 4 question 3 four-item cycle with one duplicate",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q3",
+        "repeat-four-items-with-duplicate"
+      ],
+      "summary": "The source cycle is circle, triangle, triangle, diamond. Position 15 is triangle. The generator uses exactly three shapes in a four-item cycle with one shape repeated twice, separate from distinct-shape cycles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 3 paragraph",
+          "note": "Original cycle, answer, generator split, diversity, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fourItemCycleWithDuplicate and GENERATORS export",
+          "note": "Three structural difficulty levels with a duplicate-count invariant"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-four-items-with-duplicate and EXAMS k7-2022-08 verified questions 1 through 3",
+          "note": "Source question 3 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q4",
+      "title": "Selection test 4 question 4 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q4",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 2, 3, 4, 5, 7 form a two-step sum pyramid with top 12. The two mirror layouts both place 3 in the marked bottom-middle cell, matching the official answer.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 4 paragraph",
+          "note": "Original cards, top target, two layouts, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fiveCardSumPyramid",
+          "note": "Exhaustive layout generator reused with structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 4",
+          "note": "Source question 4 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q5",
+      "title": "Selection test 4 question 5 front-position runners",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q5",
+        "order-position-from-front"
+      ],
+      "summary": "Among five runners, Jiwoo is fourth from the front and one runner is between Jiwoo and Minho, so Minho is uniquely second. The generator now produces both leftward and rightward versions at each difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 5 paragraph",
+          "note": "Original clues, answer, two-direction improvement, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionFromFront",
+          "note": "Three structural levels with two unique directions"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 5",
+          "note": "Source question 5 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q6",
+      "title": "Selection test 4 question 6 offset-given additive table",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q6",
+        "addition-table-grid-offset"
+      ],
+      "summary": "The 4 by 4 source starts 4, increases by 4 across and 3 down, and marks the bottom-right value 25. Its clue coordinates differ from earlier additive tables, so a source-specific generator shares the user-facing type name.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 6 paragraph",
+          "note": "Original grid, step directions, clue coordinates, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGridOffset",
+          "note": "Three structural levels with independently recoverable rules"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES addition-table-grid-offset and EXAMS k7-2022-08 verified questions 1 through 6",
+          "note": "Source question 6 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q7",
+      "title": "Selection test 4 question 7 seven-move arrow number path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q7",
+        "arrow-number-path-seven"
+      ],
+      "summary": "Starting 34, the source moves down, down, right, up, right, right, down to produce 34,44,54,55,45,46,47,57. It uses the seven-move path generator, not the fixed eight-move grid.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 7 paragraph",
+          "note": "Original path, all intermediate values, answer, range fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Three path lengths with bounded values and point-level metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 7",
+          "note": "Source question 7 enabled with corrected subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q8",
+      "title": "Selection test 4 question 8 repeated-shape column sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q8",
+        "shape-sum-table-repeated-column-target"
+      ],
+      "summary": "The source has diamond plus circle 16, square plus circle 17, circle plus circle 22, and asks for diamond plus square. The unique values are 5, 11, 6 and the answer is 11.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 8 paragraph",
+          "note": "Original layout, answer, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumRepeatedColumnTarget",
+          "note": "Three structural difficulty levels with exact row and column metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 8",
+          "note": "Source question 8 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q9",
+      "title": "Selection test 4 question 9 equal border sum with top-left target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q9",
+        "equal-line-sum-eight-cards-fifteen-top-left"
+      ],
+      "summary": "The source uses cards 1 through 8, target sum 15, top-left target, and visible corner cards 7, 3, and 8. Exhaustive enumeration gives the unique target 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 9 paragraph",
+          "note": "Original orientation, official answer, 40320-layout verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalLineSumEightCardsFifteenTopLeft",
+          "note": "Dedicated source orientation using shared exhaustive layout builder"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 9",
+          "note": "Source question 9 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q10",
+      "title": "Selection test 4 question 10 total and difference share",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q10",
+        "total-difference"
+      ],
+      "summary": "The source splits 18 cubes between two children so one has 6 more. Removing the difference and sharing the remainder equally gives the official answer 12.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 10 paragraph",
+          "note": "Original wording, official answer, corrected subtype, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceShare",
+          "note": "Three structural difficulty levels with total, shares, difference, and transfer metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 10",
+          "note": "Question 10 corrected from equalize-transfer to total-difference"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q11",
+      "title": "Selection test 4 question 11 even number with larger ones digit",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q11",
+        "two-digit-even-ones-greater-gap"
+      ],
+      "summary": "The source asks for an even number greater than 20 and less than 50 whose ones digit is 5 greater than its tens digit. Exhaustive substitution gives the unique official answer 38.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 11 paragraph",
+          "note": "Exact conditions, answer, dedicated subtype, 9000-run verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitEvenOnesGreaterGap",
+          "note": "Dedicated opposite-direction digit-condition generator with exhaustive metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 11",
+          "note": "Question 11 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q12",
+      "title": "Selection test 4 question 12 triangle-column shape-sum grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q12",
+        "shape-sum-grid-triangle-column-target"
+      ],
+      "summary": "The source grid is triangle-circle-diamond, triangle-square-square, triangle-diamond-square. The shown sums uniquely give triangle 7, square 5, diamond 8, circle 4, and top-row target 19.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 12 paragraph",
+          "note": "Exact layout, official answer, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTriangleColumnTarget",
+          "note": "Dedicated source layout with three structural difficulty levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 12",
+          "note": "Question 12 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q13",
+      "title": "Selection test 4 question 13 board-then-leave bus arithmetic",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q13",
+        "bus-board-then-leave"
+      ],
+      "summary": "The source starts with 26 passengers, boards 9 at the first stop, then leaves 17 at the second stop. The event order gives the official answer 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 13 paragraph",
+          "note": "Exact event order, official answer, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Previously verified generator with board-before-leave ordering"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 13",
+          "note": "Question 13 remapped from reverse order and enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q14",
+      "title": "Selection test 4 question 14 add-subtract shape equation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q14",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source gives square plus 38 equals 63 and 51 minus square equals heart. Square is 25 and the official heart answer is 26.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 14 paragraph",
+          "note": "Exact equations, official answer, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "Previously verified two-step source-compatible generator"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 14",
+          "note": "Question 14 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q15",
+      "title": "Selection test 4 question 15 main-diagonal folded number-paper cut sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q15",
+        "fold-number-cut-sum-main-diagonal"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the diagonal from top-left to bottom-right; the cut reaches values 3, 8, 6, 7, 5, 1, and 5, whose sum is 35.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 15 paragraph",
+          "note": "Exact source grid, fold direction, cut cells, answer 35, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSumMainDiagonal",
+          "note": "Main-diagonal reflection and cut-cell sum generation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum-main-diagonal and EXAMS k7-2022-08 verified 1 through 15",
+          "note": "Question 15 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q16",
+      "title": "Selection test 4 question 16 square-array number pattern",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q16",
+        "square-tile-growth"
+      ],
+      "summary": "The source shows square arrays containing 1, 4, 9, and 16 small squares and asks for the eighth array; eight rows of eight squares contain 64.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 16 paragraph",
+          "note": "Exact square-array stages, answer 64, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function squareTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES square-tile-growth and EXAMS k7-2022-08 verified 1 through 16",
+          "note": "Question 16 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q17",
+      "title": "Selection test 4 question 17 two-balance star-count target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q17",
+        "balance-scale-star-target"
+      ],
+      "summary": "The source balances four stars plus one circle with three diamonds, and three circles plus one diamond with four stars; one circle plus two diamonds equals four stars.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 17 paragraph",
+          "note": "Exact three scale layouts, official answer 4, separate-type decision, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleStarTarget",
+          "note": "Enumerated balance templates with independently checkable weights and target count"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-star-target and EXAMS k7-2022-08 verified 1 through 17",
+          "note": "Question 17 enabled after exact source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q18",
+      "title": "Selection test 4 question 18 three-to-four symbol relation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q18",
+        "symbol-relation-3to4"
+      ],
+      "summary": "The source equations are three stars equals four circles, star plus circle equals two triangles, and circle plus triangle equals square; the unique distinct one-digit values are 8, 6, and 7, so the square is 13.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 18 paragraph",
+          "note": "Exact source equations, exhaustive unique solution, official answer 13, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationThreeToFour",
+          "note": "Three structural difficulty modes with calculated final expression"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-relation-3to4 and EXAMS k7-2022-08 verified 1 through 18",
+          "note": "Question 18 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q19",
+      "title": "Selection test 4 question 19 six-point overlapping distances",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source gives AD 43, CE 52, AC 25, BD 29, and BF 79; successive subtraction gives CD 18, BC 11, DE 34, and EF 16.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 19 paragraph",
+          "note": "Exact five distance arcs, official answer 16, difficulty structure, range fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Five overlapping distances with independently checked segment reconstruction"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-line-six-points and EXAMS k7-2022-08 verified 1 through 19",
+          "note": "Question 19 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q20",
+      "title": "Selection test 4 question 20 white-stone difference inverse",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q20",
+        "go-stone-difference-inverse-white"
+      ],
+      "summary": "The source alternates black odd rows and white even rows and asks when white exceeds black by 18; the even-stage difference grows 1 at a time, so the official answer is the 36th arrangement.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 20 paragraph",
+          "note": "Exact row colors, official answer 36, dedicated white-stone generator, independent count validation, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverseWhite",
+          "note": "Three structural difficulty levels with row-count-verified answers"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES go-stone-difference-inverse-white and EXAMS k7-2022-08 all verified",
+          "note": "Question 20 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q1",
+      "title": "Selection test 6 question 1 edge-sum card placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "The source uses cards 5, 6, 7, and 8 with edge sums top 15, right 14, bottom 11, and left 12; exhaustive placement gives the unique official layout TL 7, TR 8, BR 6, BL 5.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 1 paragraph",
+          "note": "Exact cards, four sums, official full placement, exhaustive verification, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Existing source-aligned full-placement generator with three difficulty structures"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified question 1",
+          "note": "Question 1 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q2",
+      "title": "Selection test 6 question 2 five-cell positional placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q2",
+        "grid-number-placement-five"
+      ],
+      "summary": "The exact source clue is 4 to the left of 3, not to the right; with 1 directly below 3 and 5 above 4, the five-cell diagram uniquely leaves 2 in the marked cell.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 2 paragraph",
+          "note": "Exact diagram, corrected left direction, official answer 2, exhaustive verification, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function gridNumberPlacementFive",
+          "note": "Dedicated five-cell generator with three structural difficulty levels and Korean number particles"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES grid-number-placement-five and EXAMS k7-2022-12 verified questions 1 through 2",
+          "note": "Question 2 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q3",
+      "title": "Selection test 6 question 3 two-step number pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q3",
+        "number-pyramid"
+      ],
+      "summary": "The source uses cards 2, 3, and 4 once in the first row and asks for the marked middle card when two adjacent-sum steps give 11; card sum 9 leaves the unique official answer 2.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 3 paragraph",
+          "note": "Exact cards, two-step diagram, official answer 2, mapping-order fix, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberPyramid",
+          "note": "Hint, source-like, and four-card selection difficulty structures with exhaustive middle-value checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 questions 3 and 4 mapping order and verified questions 1 through 3",
+          "note": "Question 3 enabled after correcting swapped type order"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q4",
+      "title": "Selection test 6 question 4 bottom-left addition table",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q4",
+        "addition-table-grid-bottom-left"
+      ],
+      "summary": "The original 4 by 4 table starts at 6, increases by 6 across and 4 down, marks the bottom-left cell, and has official answer 18. A dedicated structurally tiered generator is verified.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7세 6차 4번 검증 기록",
+          "note": "원본 표의 단서 좌표와 공식 답 18을 문제지·답안지로 대조"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "additionTableGridBottomLeft",
+          "note": "쉬움 3x3, 같게 4x4, 어렵게 5x5의 왼쪽 아래 목표 생성기"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "k7-2022-12 question 4",
+          "note": "검증된 전용 유형 연결"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q5",
+      "title": "Selection test 6 question 5 horizontal-tens arrow path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q5",
+        "arrow-number-horizontal-tens"
+      ],
+      "summary": "The original arrow legend changes by 10 horizontally and 1 vertically. Starting at 57 along the eight-arrow path gives 86; a separate path generator is verified.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7세 6차 5번 검증 기록",
+          "note": "원본 보기, 여덟 화살표, 공식 답 86을 문제지·답안지로 대조"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "arrowNumberHorizontalTens",
+          "note": "난이도별 5·8·10회 이동과 각 단계 경로 3종"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "k7-2022-12 question 5",
+          "note": "검증된 전용 유형 연결"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q6",
+      "title": "Selection test 6 question 6 seven-person line position",
+      "aliases": [],
+      "tags": [
+        "q6",
+        "order-position-seven-people"
+      ],
+      "summary": "Verified against the original test and official answer: seven people, sixth from the back, three people between the named students, answer sixth from the front. Uses a dedicated line-position generator and renderer with structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 6 paragraph",
+          "note": "Original conditions, official answer, structural difficulty, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionSevenPeople",
+          "note": "Five, seven, and eight-person variants with both orientations"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-seven-people and EXAMS k7-2022-12 verified 1 through 6",
+          "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q7",
+      "title": "Selection test 6 question 7 eight-card equal line sum",
+      "aliases": [],
+      "tags": [
+        "q7",
+        "equal-line-sum-eight-cards-twelve"
+      ],
+      "summary": "Verified against source and official answer: cards 1 through 8, each side sums to 12, clues 6, 2, and 3, and the top-left target is uniquely 1. Corrected the exam mapping from the sum-15 generator to the source-matched sum-12-at-same-level generator.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 7 paragraph",
+          "note": "Original layout, official answer, mapping correction, difficulty behavior, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalLineSumEightCardsTwelve",
+          "note": "Shared source-matched generator with unique target validation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 7",
+          "note": "Question 7 now uses the correct subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q8",
+      "title": "Selection test 6 question 8 repeated-shape row target",
+      "aliases": [],
+      "tags": [
+        "q8",
+        "shape-sum-table-row-target"
+      ],
+      "summary": "Verified against source and official answer: top row diamond plus square is 30, left column has two diamonds and totals 36, right column square plus circle is 29, and the lower row target is 35. A dedicated transposed layout generator preserves this reasoning order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 8 paragraph",
+          "note": "Original symbols, sums, official answer, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumRowTarget",
+          "note": "Dedicated repeated-column layout and independent inverse calculation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-row-target and EXAMS k7-2022-12 verified 1 through 8",
+          "note": "Source question 8 is enabled without altering older variants"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q9",
+      "title": "Selection test 6 question 9 board then leave bus story",
+      "aliases": [],
+      "tags": [
+        "q9",
+        "bus-board-then-leave"
+      ],
+      "summary": "Verified against source and official answer: 27 passengers, 6 board, then 17 leave, giving 16. Corrected the exam mapping from leave-then-board to the source-matched board-then-leave generator.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 9 paragraph",
+          "note": "Original values, event order, official answer, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Two-event source structure and three-event hard variant"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 9",
+          "note": "Question 9 now uses the correct event order"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q10",
+      "title": "Selection test 6 question 10 shape addition and subtraction",
+      "aliases": [],
+      "tags": [
+        "q10",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "Verified against source and official answer: square plus 47 equals 64, and 72 minus the same square equals heart, so square is 17 and heart is 55. The existing source-matched two-step generator is reused.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 10 paragraph",
+          "note": "Original equations, official answer, regrouping, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "One-digit, two-digit regrouping, and three-step variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 10",
+          "note": "Source question 10 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q11",
+      "title": "Selection test 6 question 11 dual shape and color pattern",
+      "aliases": [],
+      "tags": [
+        "q11",
+        "repeat-shape-color-dual"
+      ],
+      "summary": "Verified against source and official answer: circle-triangle-square repeats every three positions while black-white repeats every two; position 20 is a white triangle. Added a dedicated dual-cycle generator with structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 11 paragraph",
+          "note": "Original shape cycle, color cycle, official answer, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function repeatShapeColorDual",
+          "note": "Independent shape and fill cycles with randomized symbols"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-shape-color-dual and EXAMS k7-2022-12 verified 1 through 11",
+          "note": "Source question 11 is enabled without changing the old single-cycle type"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q12",
+      "title": "Selection test 6 question 12 total and difference candy share",
+      "aliases": [],
+      "tags": [
+        "q12",
+        "total-difference-candy"
+      ],
+      "summary": "Verified against source and official answer: 24 candies split so one child has 6 more, making the larger share 15. Replaced the unrelated equalize-transfer mapping with a candy-specific total-and-difference generator whose picture count matches the prompt.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 12 paragraph",
+          "note": "Original total, difference, official answer, candy rendering, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceCandyShare",
+          "note": "Candy-specific direct and reverse variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES total-difference-candy and EXAMS k7-2022-12 verified 1 through 12",
+          "note": "Source question 12 is enabled without changing the cube variant"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q13",
+      "title": "Selection test 6 question 13 bounded odd digit gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q13",
+        "two-digit-odd-bounded-gap"
+      ],
+      "summary": "The source asks for an odd number between 20 and 50 whose ones digit is 4 greater than its tens digit; the unique official answer is 37.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 13 paragraph",
+          "note": "Exact conditions, official answer, split decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitOddBoundedGap",
+          "note": "Bounded odd-number generator with structural difficulty and independent candidate metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-odd-bounded-gap and EXAMS k7-2022-12 verified 1 through 13",
+          "note": "Wrong even-number mapping replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q14",
+      "title": "Selection test 6 question 14 triangle-top shape sum grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q14",
+        "shape-sum-grid-triangle-top"
+      ],
+      "summary": "The source grid is triangle-triangle-triangle, square-square-triangle, circle-diamond-heart with row totals 12 and 22 and column totals 18, 20, 14; the missing third-row total is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 14 paragraph",
+          "note": "Exact symbol coordinates, official answer, generator split, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTriangleTop",
+          "note": "Source-specific five-symbol row and column model with structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-grid-triangle-top and EXAMS k7-2022-12 verified 1 through 14",
+          "note": "Wrong provisional matrix mapping replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q15",
+      "title": "Selection test 6 question 15 growing triangle tiles",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q15",
+        "triangle-tile-growth"
+      ],
+      "summary": "The source shows 1, 4, 9, and 16 small equilateral triangles in stages 1 through 4 and asks for stage 8; adding 8 eight times gives the official answer 64 tiles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 15 paragraph",
+          "note": "Exact four-stage drawing, official answer, reuse decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function triangleTileGrowth",
+          "note": "Forward and reverse structural difficulty without exponent notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 15",
+          "note": "Existing source-matched triangle growth type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q16",
+      "title": "Selection test 6 question 16 circle-target balance scales",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q16",
+        "balance-scale-circle-target"
+      ],
+      "summary": "The source balances four circles plus one diamond against three stars, then three diamonds plus one star against four circles, and asks how many circles equal one diamond plus two stars; the official answer is 4.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 16 paragraph",
+          "note": "Exact three balances, official answer, generator split, exhaustive template construction, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function buildBalanceCircleTargetTemplates and balanceScaleCircleTarget",
+          "note": "Only small integer-weight relations that satisfy both source-form balances are generated"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-circle-target and EXAMS k7-2022-12 verified 1 through 16",
+          "note": "Wrong provisional balance relation replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q17",
+      "title": "Selection test 6 question 17 anti-diagonal numbered paper cut",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q17",
+        "fold-number-cut-sum"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the bottom-left to top-right diagonal and cuts an L-shaped region; reflected cells contain 4, 5, 8, 7, 6, 2, and 7 for the official sum 39.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 17 paragraph",
+          "note": "Exact grid, fold direction, cut mask, reflected cells, official answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSum",
+          "note": "Anti-diagonal coordinate reflection and deduplicated cut-cell sum"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 17",
+          "note": "Existing exact source-matched fold type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q18",
+      "title": "Selection test 6 question 18 unique one-digit symbol relations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q18",
+        "symbol-relation-3to4"
+      ],
+      "summary": "The source uses three stars equal four circles, star plus circle equal two inverse triangles, and circle plus inverse triangle equal square. The unique one-digit values are 8, 6, and 7, so the official square answer is 13.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 18 paragraph",
+          "note": "Exact three equations, official answer, one-digit uniqueness, answer-diversity repair, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationThreeToFour",
+          "note": "Uses only coefficient pairs with one unique distinct one-digit solution and varies final expressions"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 18",
+          "note": "Existing relation is enabled under a generalized human-facing type name"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q19",
+      "title": "Selection test 6 question 19 inverse black stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q19",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "The source shows triangular rows alternating black on odd rows and white on even rows and asks when black exceeds white by 21; the official answer is stage 41. The same-level generator range was extended from 20 to 21 so the exact source case is representable.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 19 paragraph",
+          "note": "Exact drawing, official answer, range fix, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Alternating-row inverse generator with source case 21 to 41"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 19",
+          "note": "Question 19 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q20",
+      "title": "Selection test 6 question 20 six-point overlapping distance",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q20",
+        "number-line-six-points"
+      ],
+      "summary": "The source gives AC 18, AD 36, BD 22, CE 45, and BF 72 and asks for EF. Reconstructing adjacent gaps gives 14, 4, 18, 27, and 23, so the official answer is 23. The same-level range and SVG point positions were corrected to represent the source.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 20 paragraph",
+          "note": "Exact five arcs, official answer, range and proportional layout fixes, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Source-aligned overlapping-distance generator with three structural levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified all 20 questions",
+          "note": "Question 20 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.selectable.2026-08-16",
+      "title": "Selectable question-bank full generator regression",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "question-bank"
+      ],
+      "summary": "All 93 selectable source-matched types generated 83,700 items across three difficulties with no exceptions, empty prompts, empty answers, empty solutions, or broken source links. The audit found fixed diversity in balance-scale and symbol-relation; both were expanded and browser-verified with 20 unique cards.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Full public type regression paragraph and next-order item 2",
+          "note": "Regression totals, fixed types, and remaining diversity work"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions sourceBalanceRelations and symbolRelationThreeToFour",
+          "note": "Expanded balance templates and exhaustive unique one-digit relation templates"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale and symbol-relation",
+          "note": "Verified source types now use diverse generators"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.target-matchstick",
+      "title": "Target score and matchstick generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "final-3",
+        "diversity"
+      ],
+      "summary": "Final 3 source questions 9 and 10 were recomputed as nine possible two-arrow sums for scores 1 through 5 and 31 sticks for ten joined squares. Generators now vary target bands and shot count, and use only triangle through hexagon with at least 20 problem signatures per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Target score and matchstick diversity paragraph",
+          "note": "Original answers, structural variation, limits, and browser verification"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions targetScoreCombinations and matchstickShapeSequence",
+          "note": "Exhaustive repeated-score sums and triangle-through-hexagon sequences"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES target-score-combinations and matchstick-square-growth",
+          "note": "Human-facing target label and verified generators"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.order-lines",
+      "title": "Order and connected-line generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "order-position",
+        "connected-line-degree-sum"
+      ],
+      "summary": "Source-matched order generators now vary the asked child and uniquely solvable position settings, use correct Korean particles, and the connected-line source level now includes the original 17-edge answer 34 while producing at least 20 signatures per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Order and connected-line diversity paragraph",
+          "note": "Source structures, diversity changes, Korean particles, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions raceOrder, orderPositionFromBack, and connectedLineDegreeSum",
+          "note": "Unique-position enumeration and graph degree metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position, order-position-from-back, and connected-line-degree-sum",
+          "note": "Source-matched selectable types"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.letter-balance-symbol",
+      "title": "Letter, balance, and symbol generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "letter-block-transform",
+        "balance-scale",
+        "symbol-relation"
+      ],
+      "summary": "Drawing-answer letter transforms now have 24 to 30 target words per level; three-object and four-object balance scales vary valid relation counts; and two-to-three symbol relations enumerate coefficient sets with exactly one distinct one-digit solution.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Letter, balance, and symbol diversity paragraph",
+          "note": "Source-preserving variation and validation counts"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions letterBlockTransform, balanceScaleThreeObjects, balanceScaleFourObjects, and symbolRelationTwoToThree",
+          "note": "Expanded pools with deterministic relation checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "Corresponding source-matched TYPES entries",
+          "note": "Selectable source types remain unchanged"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.growth-arrays",
+      "title": "Growing array generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "growing-shape-count",
+        "triangle-tile-growth",
+        "square-tile-growth"
+      ],
+      "summary": "Bead-square, triangle-tile, and square-tile growth keep the source 1, 4, 9, 16 rule and age-appropriate target range while combining five target stages with four print-safe teaching-aid colors for 20 distinct rendered problems per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Growing array diversity paragraph",
+          "note": "Source rule, bounded range, diversity method, and full regression"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions sourceGrowingDotSquare, triangleTileGrowth, and squareTileGrowth",
+          "note": "Twenty target-theme combinations per difficulty and matching answers"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES growing-shape-count, triangle-tile-growth, and square-tile-growth",
+          "note": "Source-matched type identities remain unchanged"
+        }
+      ]
+    },
+    {
+      "id": "final-1-replacement-verified",
+      "title": "파이널 1회 고정 시드 교체본 검증",
+      "aliases": [],
+      "tags": [
+        "question-bank",
+        "final-1",
+        "fixed-seed"
+      ],
+      "summary": "7세 1차와 같은 20유형을 고정 시드 final-1-replacement-v1-q01~q20으로 생성했다. 원본과 수치·보기·그림 배치가 겹치지 않으며 83,700회 전체 회귀, 브라우저 20문항, A4 5쪽 인쇄 렌더를 통과했다. Q8·Q17·Q18·Q19 인쇄 잘림을 수정했다. 프로그램 서재 연결은 영상 뷰어와 문제은행 이동 방식 결정 전까지 보류한다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "파이널 1회 고정 시드 교체본",
+          "note": "원본 비중복, 답·풀이, 화면 및 A4 인쇄 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "g1-2022-03-source-audit",
+      "title": "더 클래식 초1 1차 선발시험 2022.03.07",
+      "aliases": [
+        "초1 1차"
+      ],
+      "tags": [
+        "fields-classic",
+        "selection-test",
+        "g1",
+        "verified"
+      ],
+      "summary": "문제지 3~7쪽과 답안 PPTX를 문항별 대조했다. 20문항을 18개 신규 생성기와 2개 기존 검증 생성기에 연결했으며 생성기별 3난이도 1,000회, 전체 111유형 99,900회, 브라우저·답안·A4 인쇄 검수를 통과했다. 진단 유사문제와 처방전은 제외했다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "g1-2022-03-problem",
+          "role": "audit",
+          "locator": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307).pdf",
+          "note": "문제지 원본"
+        },
+        {
+          "source_id": "g1-2022-03-answer",
+          "role": "audit",
+          "locator": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307)_답안.pptx",
+          "note": "답안 원본"
+        },
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "fields-classic/question-bank/SOURCE-AUDIT.md#20220307-초1-1차-선발시험-20문항-검증-완료",
+          "note": "문항별 대조표"
+        }
+      ]
+    },
+    {
+      "id": "hf.visibility-single-answer",
+      "title": "Hyper Focus 시험 구성·q02~q05 단일정답 기준",
+      "aliases": [
+        "GFIELD 단일정답·가시성 검수"
+      ],
+      "tags": [
+        "hyper-focus",
+        "single-answer",
+        "visibility",
+        "exam-blueprint"
+      ],
+      "summary": "시험 문항 수는 구성표가 결정하고 약점 문제 수는 직접 입력한다. q02는 높은 열린 상자 시점, q03 어렵게는 높은 색 쌓기 시점과 수 높이표를 사용한다. q04는 안쪽 구멍만 사용하고 교차 수로 난도를 분리한다. q05는 높이표·벽·관찰 방향과 벽 유무별로 겹치지 않는 숨은 수 구간을 검사한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "hf-visibility-decisions",
+          "role": "decision",
+          "locator": "시험 구성과 문제은행; q02 상자 채우기; q03 흑백 교차 쌓기나무; q04 구멍 뚫기; q05 보이지 않는 쌓기나무",
+          "note": "2026-08-20 검수 결정과 코드·테스트 위치"
+        }
+      ]
+    },
+    {
+      "id": "geometry.design.levels-1-to-5",
+      "title": "쌓기나무 레벨 구조(1~5) 설계 근거",
+      "aliases": [
+        "쌓기나무 레벨",
+        "cube-stack level"
+      ],
+      "tags": [
+        "geometry",
+        "cube-stack",
+        "roadmap",
+        "design"
+      ],
+      "summary": "레벨 1~3은 원목/색 위치 기반 출제 구조를 확장하고, 레벨 4는 직육면체 전용, 레벨 5는 정육면체·직육면체·삼각기둥·뿔/원추 조각 기반 자유 창작/검증형으로 설계. 일부 유형은 5문제씩 묶어 구성하고 레벨 전환·포인트몰 연동은 추후 구현 대기.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "챌린지/크리에이티브형으로 단계 분리",
+          "locator": "레벨 1~3 색깔 위치 검증 강화, 레벨 4 직육면체만, 레벨 5 다면체 혼합",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.paper-fold.curriculum-1-3",
+      "title": "색종이접기 레벨 커리큘럼(1~3) 정리",
+      "aliases": [
+        "색종이 접기",
+        "paper fold"
+      ],
+      "tags": [
+        "geometry",
+        "paper-fold",
+        "curriculum"
+      ],
+      "summary": "레벨1은 좌우 대칭/한 번 접기, 레벨2는 대각선 한 번 접기로 난이도 단계화. 레벨별로 정답 선택형 인터랙션(그림 클릭) 중심으로 유지하고, 정답 후 2단계(부분 합/개수 계산)로 전이하는 구성 권장.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "선택형 오답/정답 피드백 위주로 UX 통일",
+          "locator": "색종이 접기 레벨 1 대칭 연습, 레벨2 대각선 접기",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.worksheet.lab-portal-single-entry",
+      "title": "지오메트리 랩(문항은행) 통합 엔트리 설계",
+      "aliases": [
+        "지오메트리 랩",
+        "문항은행 입구 통합"
+      ],
+      "tags": [
+        "geometry",
+        "worksheet",
+        "lab",
+        "ux"
+      ],
+      "summary": "학습지 진입은 랩 단일화. 게임별 전용 문제 뱅크 버튼은 제거하고 유형 카드(똑같이쌓기 원목/컬러, 개수 세기, 여러 방향)로 4개 게임을 운영. 단계/난이도/유형을 함께 고를 수 있으며 유형 선택을 강제로 복구하지 않는다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "PC는 미리보기 우측 고정, 모바일은 스크롤형 구성",
+          "locator": "랩 단일화 및 유형 혼합 출제",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.validation.single-answer-visibility",
+      "title": "GFIELD 단일정답·가시성 검수 스킬",
+      "aliases": [
+        "단일정답 검수",
+        "가시성 검수",
+        "쌓기나무 모호성 방지",
+        "색종이 접기 모호성 방지"
+      ],
+      "tags": [
+        "geometry",
+        "validation",
+        "single-answer",
+        "visibility",
+        "worksheet",
+        "game"
+      ],
+      "summary": "쌓기나무·색종이·입체도형 문제는 보이는 정보만으로 정답이 하나여야 한다. 뒤에 가려진 부분, 숨은 색, 구멍 위치, 접힌 뒤 펼친 모양, 직육면체·삼각기둥 방향 등은 조건으로 유일하게 결정되어야 하며, 여러 답이 가능한 보기나 애매한 시점은 출제하지 않는다. 단계는 킨더·키즈·Pre·입문·초급·중급으로 구분하고, 난이도 하/중/상은 각 단계 안에서 별도로 관리한다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "gfield-drive-memory-notes",
+          "role": "decision",
+          "locator": "Codex skill: gfield-single-answer-visibility",
+          "note": "사용자 결정: 유형별 문제 생성·검수 시 답이 여러 개 나오거나 보이지 않는 부분이 애매한 문제를 방지하는 GFIELD 전용 스킬로 저장"
+        }
+      ]
+    },
+    {
+      "id": "hf.q06-q09-single-answer",
+      "title": "Hyper Focus q06~q09 단일정답 생성 규칙",
+      "aliases": [
+        "q06 q07 q08 q09 유사문제 생성기"
+      ],
+      "tags": [
+        "hyper-focus",
+        "q06-q09",
+        "single-answer",
+        "geometry"
+      ],
+      "summary": "q06은 회전 좌표, q07은 접힌 면의 반대쌍, q08은 24개 주사위 방향, q09는 세 방향 높이맵 전수탐색으로 정답 후보 하나를 검사한다. q08은 이동·꺾임 수, q09는 바닥 칸 수로 난도 구간을 분리하고 fallback 문제를 거부한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "hf-q06-q09-generator-audit",
+          "role": "audit",
+          "locator": "q06~q09 각 유형 및 검증 위치",
+          "note": "2026-08-20 원본 교차검증과 생성기 전수검사 결정"
+        }
+      ]
+    },
+    {
+      "id": "geometry.geoboard.ray-b1-2-foundation",
+      "title": "점판 공작소 RAY B1-2 근거와 구현 경계",
+      "aliases": [
+        "점판 공작소 교재 근거",
+        "RAY B1-2 점판"
+      ],
+      "tags": [
+        "geometry",
+        "geoboard",
+        "ray",
+        "single-answer"
+      ],
+      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 이를 위한 열린 선 조작 연습, 2단계는 제시된 삼각형·사각형 재현으로 연결한다. 현재 공개 범위는 20문제이며 위치·방향까지 같은 하나의 답만 인정한다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "ray-b1-2",
+          "role": "source",
+          "locator": "PDF p. 36, 활동: 지오보드로 도형 만들기",
+          "note": "삼각형·사각형·오각형을 점판에 만드는 활동을 원본 페이지에서 시각 확인"
+        },
+        {
+          "source_id": "ray-b1-2",
+          "role": "source",
+          "locator": "PDF p. 38 and p. 46, 도형의 개수",
+          "note": "점과 선으로 된 그림에서 삼각형·사각형의 개수를 세는 후속 활동을 시각 확인"
+        },
+        {
+          "source_id": "geometry-geoboard-levels",
+          "role": "code",
+          "locator": "LEVELS, LEVEL_PROBLEMS, acceptsAnswer, validateLevels",
+          "note": "1단계 조작 연습과 2단계 닫힌 도형 재현을 분리하고 위치·방향까지 같은 edge set 하나만 허용"
+        },
+        {
+          "source_id": "geometry-geoboard-selftest",
+          "role": "test",
+          "locator": "full deterministic test suite",
+          "note": "20개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+        }
+      ]
+    },
+    {
+      "id": "geometry.curriculum.cmath-nc-inventory",
+      "title": "시매쓰 NC 기하 자료 색인",
+      "aliases": [
+        "시매쓰 NC",
+        "Cmath NC"
+      ],
+      "tags": [
+        "geometry",
+        "cmath",
+        "nc",
+        "curriculum",
+        "source-inventory"
+      ],
+      "summary": "시매쓰 NC 자료는 1~6단계, 전체 348개 파일로 확인되었다. 파일명 기준 기하 관련 본교재 후보 9권을 등록했으며 페이지별 내용과 GFIELD 단계·난이도 대응은 아직 검증 전이다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-21",
+      "pointers": [
+        {
+          "source_id": "cmath-nc1-2-shape-start",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc1-6-solid-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc2-4-blocks-pentomino",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc3-2-tangram-cubes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc4-2-geometry-inquiry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-2-segments-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-4-measurement",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-1-fun-geometry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-5-land-fences",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        }
+      ]
+    },
+    {
+      "id": "hf-premier-source-visibility-rules",
+      "title": "프리미어 원본 단일정답·가시성 검수 규칙",
+      "aliases": [
+        "프리미어 모의고사 원본 검수"
+      ],
+      "tags": [
+        "hyper-focus",
+        "premier",
+        "single-answer",
+        "visibility"
+      ],
+      "summary": "대본과 불일치 풀이를 답 근거에서 제외하고 문장·그림 충돌, 회전·반사, 다답 그리기 문항을 공개 전에 잠그는 규칙이다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "hf-visibility-decisions",
+          "role": "decision",
+          "locator": "section 프리미어 원본 모의고사",
+          "note": "원본 대조와 공개 잠금 기준"
+        }
+      ]
+    }
+  ]
+}

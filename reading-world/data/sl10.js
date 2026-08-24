@@ -6,7 +6,7 @@ window.LESSONS['sl10'] = {
   chapter: null, page: null,
   title: "Silent No More",
   theme: "Human activity fills the ocean with invisible noise that disrupts the ability of marine animals to communicate, navigate, and survive.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl10.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -51,7 +51,7 @@ window.LESSONS['sl10'] = {
     title: "The Quiet Ocean Project",
     passage: [
       "When Ms. Ryu assigned the Quiet Ocean Project, most students in the class assumed they would be researching garbage and plastic waste. They were surprised to discover that their topic was something entirely invisible: underwater noise pollution. Over two weeks, each group researched a different source — shipping vessels, sonar, oil drilling, and water sports. What the students learned changed the way they thought about ocean health. The ocean was not just a place that could be made dirty with visible trash; it could also be disrupted by sounds that left no trace anyone could see.",
-      "The group researching sonar was the most surprised. A single sonar pulse spreads through the ocean like a stone dropped in a still pond — its rings travel outward in every direction until they reach every living thing in the water. They found that marine species sensitive to these pulses could be disrupted during migration, cut off from the ability to communicate with their own kind, or forced to abandon breeding grounds they had used for generations. Unlike chemical spills, the noise did not linger: the moment the sonar device went quiet, the sound was gone. But while it lasted, it could reach every creature in its path.",
+      "The group researching sonar was the most surprised. A single sonar pulse spreads through the ocean like a stone dropped in a still pond — its rings travel outward in every direction until they reach every living thing in the water. They found that marine species able to detect these pulses could be disrupted during migration, cut off from the ability to communicate with their own kind, or forced to abandon breeding grounds they had used for generations. Unlike chemical spills, the noise did not linger: the moment the sonar device went quiet, the sound was gone. But while it lasted, it could reach every creature in its path.",
       "For their final presentation, the students decided to address what they called 'the invisible problem.' They argued that because humans could not see underwater noise, it was easy to ignore even though it caused real harm. They collected data showing which species were most sensitive to ship and sonar noise, and they proposed that vessels passing through protected marine habitats should be required to reduce speed — a simple step that would lower engine noise significantly. As one student put it during the presentation: 'You cannot see the damage, but the animals living there can hear it. That is reason enough to act.'"
     ],
     questions: [

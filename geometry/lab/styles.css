@@ -1,0 +1,627 @@
+/* GFIELD 지오메트리 랩 — 문제은행 랜딩.
+ *
+ * WHY this looks nothing like the games: 지오메트리 월드의 게임들은 원목 동화
+ * 톤(크림 배경 · 두꺼운 테두리 · 마스코트)으로 아이를 부르는 화면이지만, 이
+ * 페이지를 실제로 쓰는 사람은 "무엇을 몇 장 뽑을지" 고르는 어른이다. 그래서
+ * 흰 배경 + 딥블루 한 가지 포인트 컬러 + 카드/표 중심으로, 일일수학 같은
+ * 문제은행 사이트의 톤을 따른다. 같은 세계관이라는 표시는 작은 녹색 GFIELD
+ * 칩 하나로 충분하다.
+ */
+
+:root {
+  --ink: #1c2833;
+  --muted: #64727d;
+  --line: #d9e0e6;
+  --brand: #17457f;      /* 하나뿐인 포인트 컬러 (딥 블루) */
+  --brand-soft: #eef3fa;
+  --gfield: #1f8a55;     /* GFIELD 칩 전용 녹색 — 다른 곳에는 쓰지 않는다 */
+  --paper: #ffffff;
+  --tint: #f6f8fa;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  /* 가로 스크롤 금지 — 이 페이지는 세로로만 흐른다. 어떤 자식이 삐져나와도
+     문서 전체가 옆으로 밀리지는 않게 막아 둔다. */
+  overflow-x: hidden;
+}
+
+/* 데스크톱 1440에서도 한 줄이 지나치게 길어지지 않도록 본문 폭을 묶는다. */
+.lab-wrap {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------------------------------------------------------------------
+   헤더
+   --------------------------------------------------------------------- */
+.lab-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.lab-header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 22px;
+  padding-bottom: 20px;
+}
+.lab-title { min-width: 0; }
+.lab-title h1 {
+  margin: 8px 0 4px;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--brand);
+}
+.lab-sub {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+}
+
+.gfield-chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: var(--gfield);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+}
+
+.lab-back {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--brand);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lab-back:hover { background: var(--brand-soft); border-color: #bdcde3; }
+
+/* ---------------------------------------------------------------------
+   섹션 공통
+   --------------------------------------------------------------------- */
+.lab-section { padding: 30px 0 6px; }
+.lab-section h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--ink);
+}
+.lab-section h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+.section-note {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.field-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.field-note.is-warn { color: #a4562f; }
+
+/* 카드형 섹션 — 조작 영역만 옅은 테두리로 묶어 읽는 영역과 구분한다. */
+.lab-card {
+  margin-top: 6px;
+  padding: 22px 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--tint);
+}
+.field + .field { margin-top: 18px; }
+
+/* ---------------------------------------------------------------------
+   단계 배지 — 학습지 만들기 안에 한 자리만 있다(예전에는 페이지 맨 위에도
+   같은 아홉 단계 줄이 따로 있었지만, 내용이 완전히 같아 위아래로 두 번
+   고르는 것처럼 보였으므로 지웠다).
+   --------------------------------------------------------------------- */
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 예전 상단 섹션의 안내 문구가 옮겨 온 자리 — 배지 줄 위, 다른 field-note와
+   달리 늘 보인다(hidden 대상이 아니다). */
+.stage-static-note { margin-bottom: 10px; }
+
+.stage-badge {
+  flex: 1 1 96px;
+  min-width: 0;
+  /* 아홉 칸이 한 줄에 다 들어가지 않고 접히는 폭에서, 마지막 줄에 홀로 남은
+     배지가 줄 전체로 늘어나 "특별한 단계"처럼 보이는 것을 막는다. */
+  max-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.stage-badge b { font-size: 14px; font-weight: 900; }
+.stage-badge small { font-size: 11px; color: var(--muted); }
+.stage-badge:hover { border-color: var(--brand); background: var(--brand-soft); }
+.stage-badge.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(23, 69, 127, 0.22);
+}
+.stage-badge.is-active small { color: #d6e3f4; }
+/* 준비 중 단계: 목록에서 지우지 않고 흐리게만 둔다 — 커리큘럼 전체 길이를
+   보여 주면서 "아직"이라는 사실도 같이 전한다. */
+.stage-badge.is-soon {
+  opacity: 0.42;
+  cursor: not-allowed;
+  background: var(--tint);
+}
+.stage-badge.is-soon:hover { border-color: var(--line); background: var(--tint); }
+
+/* 난이도 하 ●○○ / 중 ●●○ / 상 ●●● — 글자(하/중/상)가 주, 점은
+   .intensity-mark로 옅게 덧붙는 보조 표시다. */
+.intensity-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.intensity-btn {
+  /* 0 1 — 세 버튼이 남는 폭을 나눠 가지지 않게 한다. 1440에서 폭을 채우면
+     버튼 한가운데 글자가 200px 넘는 버튼 안에 떠서 조작 대상으로 안 읽힌다. */
+  flex: 0 1 150px;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+.intensity-btn .intensity-mark {
+  margin-left: 4px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  opacity: 0.65;
+}
+.intensity-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.intensity-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+.intensity-btn.is-active .intensity-mark { opacity: 0.9; }
+
+/* 영역 탭 — 쌓기나무 / 색종이 접기. 유형 카드보다 한 단계 위의 선택이므로
+   카드가 아니라 탭 모양으로 두어, 아래 격자가 무엇의 목록인지 읽히게 한다. */
+.domain-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.domain-btn {
+  flex: 0 1 180px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.domain-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.domain-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+/* 유형 카드 — auto-fill 이라 1440에서는 넉넉히, 좁은 화면에서는 저절로 줄어
+   가로 스크롤이 생기지 않는다. */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+.type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.type-card:hover { border-color: var(--brand); background: var(--brand-soft); }
+.type-card .type-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+.type-card .type-code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--brand);
+}
+.type-card .type-label {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.type-card .type-levels { font-size: 11px; color: var(--muted); }
+.type-card.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+.type-card.is-active .type-code,
+.type-card.is-active .type-levels { color: #cfdff2; }
+.type-card.is-unavailable {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: var(--tint);
+}
+.type-card.is-unavailable:hover { border-color: var(--line); background: var(--tint); }
+
+.count-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.count-btn {
+  flex: 0 1 92px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.count-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.count-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+/* ---------------------------------------------------------------------
+   만들기 바
+   --------------------------------------------------------------------- */
+.build-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.build-summary {
+  margin: 0;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 700;
+  color: var(--muted);
+}
+.build-summary b { color: var(--brand); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-primary { border-color: var(--brand); background: var(--brand); color: #fff; }
+.btn-primary:hover { background: #10365f; }
+.btn-primary.is-disabled,
+.btn-primary[aria-disabled="true"] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: auto;
+  box-shadow: none;
+}
+.btn-outline { border-color: var(--brand); color: var(--brand); background: var(--paper); }
+.btn-outline:hover { background: var(--brand-soft); }
+
+.btn-sm { min-height: 34px; padding: 0 14px; font-size: 12.5px; }
+
+/* 난이도가 해당되지 않는 학습지를 고르면 강도 줄이 흐려진다 — 감추지 않는
+   이유는 app.js renderIntensityState의 설명 참조(되돌리면 고르던 난이도가
+   그대로 돌아온다). */
+.field.is-muted { opacity: 0.45; }
+.field.is-muted .intensity-btn { cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   미리보기 — 학습지에 실릴 문제 카드 그대로를 한 장 보여 준다.
+   마크업은 worksheet/card.js가 만들므로(.ws-*), 여기서는 학습지 쪽 CSS를
+   통째로 불러오는 대신 카드 한 장에 필요한 규칙만 랩 톤으로 다시 적는다.
+   worksheet/styles.css를 그대로 링크하면 .type-grid 같은 이름이 이 페이지의
+   카탈로그와 부딪히고, A4 폭(210mm) 페이지 규칙이 랩 레이아웃까지 밀어낸다.
+   --------------------------------------------------------------------- */
+.preview-field { min-width: 0; }
+.preview-field h3 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.preview-type {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--brand);
+  text-transform: none;
+}
+.preview-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.preview-tabs:empty { display: none; }
+.preview-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+.preview-chip:hover { border-color: var(--brand); background: var(--brand-soft); }
+.preview-chip.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+.preview-body {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.preview-sheet { min-width: 0; }
+.preview-empty { margin: 0; padding: 12px 2px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.preview-field.is-static .preview-actions { display: none; }
+.preview-answer { margin-top: 10px; font-size: 12.5px; }
+.preview-answer b { color: var(--brand); margin-right: 6px; }
+.preview-answer-list { list-style: none; margin: 6px 0 0; padding: 0; }
+.preview-answer-list .ws-answer-item { border-bottom: 0; padding: 0; }
+
+/* ---- card.js가 내는 문제 카드 부품 (학습지의 .ws-* 와 같은 이름) ---- */
+.preview-body .ws-card {
+  border: 1px solid #ccd5dd;
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  background: var(--paper);
+}
+.preview-body .ws-card-head { display: flex; align-items: center; margin-bottom: 4px; }
+.preview-body .ws-num {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.preview-body .ws-prob-level {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  border: 1px solid #c3d3e6;
+  color: var(--brand);
+  font-size: 9.5px;
+  font-weight: 800;
+}
+/* 미리보기에는 빼기 체크박스가 나올 일이 없지만(카드 하나뿐), 학습지에서
+   같은 마크업을 쓰므로 혹시 들어오더라도 자리를 잡지 않게 막아 둔다. */
+.preview-body .ws-omit { display: none; }
+.preview-body .ws-prompt { margin: 2px 0 8px; font-size: 13px; line-height: 1.6; word-break: keep-all; }
+.preview-body .ws-method { margin: 2px 0 0; font-size: 11px; color: var(--muted); }
+.preview-body .ws-figures,
+.preview-body .ws-fig-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 14px;
+}
+.preview-body .ws-fig-row { width: 100%; }
+.preview-body .ws-fig-row + .ws-fig-row { margin-top: 10px; }
+.preview-body .ws-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.preview-body .ws-figure figcaption { font-size: 10.5px; font-weight: 800; color: #4a5560; text-align: center; }
+.preview-body .ws-figure svg { max-width: 100%; }
+.preview-body .ws-figure svg.ws-grid { display: block; max-height: 140px; max-width: 180px; }
+.preview-body .ws-figure svg.ws-grid-solve { max-height: 200px; max-width: 220px; }
+.preview-body .ws-figure svg.ws-iso { display: block; height: 130px; width: auto; }
+.preview-body .ws-figure.ws-figure-lg svg.ws-iso { height: 165px; }
+.preview-body .ws-figure.ws-figure-sm svg.ws-iso { height: 76px; }
+.preview-body .ws-seq-dots { font-size: 21px; font-weight: 900; color: #9aa7b2; padding-bottom: 12px; }
+.preview-body .ws-answer-line {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+.preview-body .ws-solve-area { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--line); }
+.preview-body .ws-hole-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px 12px;
+}
+.preview-body .ws-hole-layer { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.preview-body .ws-hole-layer small { font-size: 9px; font-weight: 700; color: #4a5560; white-space: nowrap; }
+.preview-body .ws-hole-layer svg.ws-hole-grid { display: block; width: auto; max-width: 60px; max-height: 60px; }
+.preview-body .ws-hole-total { align-self: center; font-size: 11px; font-weight: 800; color: var(--brand); }
+.preview-answer .ws-answer-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+.preview-answer .ws-answer-item b { color: var(--brand); }
+.preview-answer .ws-ans-thumbs { display: inline-flex; gap: 10px; align-items: flex-start; }
+.preview-answer .ws-ans-thumb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.preview-answer .ws-ans-thumb small { font-size: 9px; color: var(--muted); }
+.preview-answer .ws-ans-thumb svg { display: block; width: 52px; height: auto; }
+.preview-answer .ws-ans-thumb svg.ws-grid-solve { width: 90px; }
+.preview-answer .ws-ans-solve { display: block; width: 100%; }
+.preview-answer .ws-ans-note { font-size: 10.5px; color: var(--muted); }
+
+/* ---------------------------------------------------------------------
+   코드로 열기
+   --------------------------------------------------------------------- */
+.code-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.code-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+}
+.code-input:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+
+/* ---------------------------------------------------------------------
+   푸터
+   --------------------------------------------------------------------- */
+.lab-footer {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  background: var(--tint);
+}
+.lab-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding-top: 22px;
+  padding-bottom: 26px;
+}
+.lab-footer strong {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: var(--brand);
+}
+.lab-footer-note { font-size: 12px; color: var(--muted); }
+
+/* ---------------------------------------------------------------------
+   데스크톱 2열 배치 — 미리보기가 유형 카드 아래에 있으면 문제 그림을 보려고
+   늘 아래로 스크롤해야 한다. 1100px 이상에서는 학습지 만들기를 왼쪽(단계·
+   난이도·영역·유형·문항 수·만들기 버튼) / 오른쪽(미리보기) 두 열로 나누고,
+   오른쪽 열은 position: sticky로 고정해 난이도·영역을 바꾸는 동안에도 계속
+   보이게 한다.
+   1100px 미만에서는 .builder-grid에 grid를 걸지 않으므로 DOM 순서 그대로
+   세로 한 줄로 흐르고, 미리보기는 지금처럼 유형 카드 바로 아래에 남는다.
+   --------------------------------------------------------------------- */
+@media (min-width: 1100px) {
+  .builder-grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(360px, 45%);
+    align-items: start;
+    column-gap: 28px;
+  }
+  /* 왼쪽 열 여섯 필드에 행 번호를 하나씩 못박아 준다. 오른쪽 열(미리보기)만
+     그 여섯 행 전체(1 / 7)에 걸치도록 span을 주면, 그리드의 auto-placement가
+     "미리보기가 옆 칸을 통째로 차지하니 나머지는 어디에 넣지?"를 스스로
+     판단하게 되어(브라우저마다 다르게) 영역·문항 수 같은 필드가 뒤죽박죽
+     오른쪽 열로 밀려나는 문제가 생겼다 — 그래서 왼쪽 여섯 칸을 전부 명시
+     지정해 순서를 고정한다. */
+  .builder-grid #levelField { grid-column: 1; grid-row: 1; }
+  .builder-grid #intensityField { grid-column: 1; grid-row: 2; }
+  .builder-grid #domainField { grid-column: 1; grid-row: 3; }
+  .builder-grid #typesField { grid-column: 1; grid-row: 4; }
+  .builder-grid #countField { grid-column: 1; grid-row: 5; }
+  .builder-grid .build-bar { grid-column: 1; grid-row: 6; }
+  .builder-grid .preview-field {
+    grid-column: 2;
+    grid-row: 1 / 7;
+    position: sticky;
+    top: 16px;
+    align-self: start;
+  }
+  /* 유형 카드 — 왼쪽 열 폭이 전체 폭의 절반 남짓으로 줄어드니, auto-fill
+     대신 2열로 못박아 카드 한 장이 너무 좁아지지 않게 한다. */
+  .builder-grid .type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* 2열이 되며 카드 폭이 좁아진 만큼 단계 표기(type-levels)가 줄바꿈으로
+     지저분해지지 않도록 글자를 줄이고 줄간격을 좁힌다. */
+  .builder-grid .type-card {
+    padding: 8px 10px;
+    gap: 3px;
+  }
+  .builder-grid .type-card .type-label { font-size: 12.5px; line-height: 1.35; }
+  .builder-grid .type-card .type-levels { font-size: 9.5px; line-height: 1.3; }
+}
+
+/* ---------------------------------------------------------------------
+   좁은 화면 (가로로 눕힌 휴대폰 844x390 · 740x360 포함).
+   가로 스크롤이 생기지 않게 배지 한 칸의 최소 폭만 줄여 준다 — 나머지는
+   위의 flex-wrap / auto-fill 격자가 알아서 접힌다.
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .lab-wrap { padding: 0 14px; }
+  .lab-title h1 { font-size: 25px; }
+  .lab-section { padding: 24px 0 4px; }
+  .lab-card { padding: 18px 14px 20px; }
+  .stage-badge { flex: 1 1 76px; padding: 8px 4px; }
+  .stage-badge b { font-size: 13px; }
+  .stage-badge small { font-size: 10px; }
+  .type-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .build-bar .btn-primary { flex: 1 1 100%; }
+}
+
+@media (max-width: 560px) {
+  .lab-header-inner { flex-direction: column; align-items: stretch; }
+  .lab-back { align-self: flex-start; }
+  .stage-badge { flex: 1 1 64px; }
+  .type-grid { grid-template-columns: 1fr 1fr; }
+}

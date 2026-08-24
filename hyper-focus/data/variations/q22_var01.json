@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q22",
+  "variationId": "q22_var01",
+  "subType": "swap_digits_equation",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q22.json", "hfDataTypeId": 22},
+  "problem": {"prompt": "다음 식은 올바르지 않습니다. 식에 있는 숫자 2개의 위치를 서로 바꾸어 식을 바르게 만드세요.  30-21=18"},
+  "machineReadable": {
+    "payloadType": "swap_digits_equation",
+    "originalEquation": "30-21=18",
+    "digitPositions": ["left_tens", "left_ones", "right_tens", "right_ones", "result_tens", "result_ones"],
+    "swapCount": 1,
+    "operatorsFixed": true,
+    "solvingModel": {"validSwapCount": 1, "swappedPositions": ["right_tens", "right_ones"], "expectedAnswer": "30-12=18"},
+    "expectedAnswer": "30-12=18"
+  },
+  "answerValidation": {"answerType": "equation", "expectedAnswer": "30-12=18"},
+  "solutionHint": "21의 2와 1의 자리를 서로 바꾸면 30-12=18이 되어 계산이 맞습니다. 다른 두 숫자를 바꾸어서는 맞는 식이 되지 않습니다."
+}

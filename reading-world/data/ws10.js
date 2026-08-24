@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws10'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws10'] = {
   page: null,
   title: 'Animal Architects',
   theme: 'How animals engineer remarkable structures using instinct',
-  image: '',
+  image: 'assets/images/wonderskills-adv3/ws10.svg',
   rewardPoints: { lessonComplete: 40 },
   words: [
     ['construct', 'to build or put something together using parts or materials', '건설하다', '建造'],
@@ -47,7 +48,7 @@ window.LESSONS['ws10'] = {
   newPassage: {
     title: 'Scout Builds Her First Dam',
     passage: [
-      "Scout was the youngest beaver in her colony, but instinct told her exactly what to do. On her first building day, she chose her material carefully: sturdy branches, smooth river stones, and thick mud. \"If you design it right the first time,\" her mother advised, \"you won't have to rebuild it.\" Scout nodded and carried her first branch to the edge of the rushing stream.",
+      "Scout was the youngest beaver in her colony, but instinct told her exactly what to do. On the first day she was old enough to construct anything, she chose her material carefully: sturdy branches, smooth river stones, and thick mud. \"If you design it right the first time,\" her mother advised, \"you won't have to rebuild it.\" Scout nodded and carried her first branch to the edge of the rushing stream.",
       "Working alongside her colony, Scout helped tunnel through the soft riverbank, forming a long chamber where the family could shelter through winter. She learned to weave thin branches into a tight lattice, then packed mud between the gaps to make the wall sturdy. Every piece had to be placed with care to defend the lodge from floods and predators.",
       "By late autumn, her dam rose like a wall of shields across the stream, holding back the current with surprising strength. A calm, glittering pond spread behind it, and Scout's lodge sat safely at its center. Scout had engineered her very first home—and every choice, from material to final design, had come straight from a million years of instinct.",
     ],

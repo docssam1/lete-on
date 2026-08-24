@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Field Trip to Wieliczka Salt Mine">
+<rect width="800" height="520" rx="38" fill="#faf4ec"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#8c3a1f" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M300 196h200l-24 190H324z" fill="#faf4ec" stroke="#4a2415" stroke-width="8"/>
+      <path d="M300 196q100-40 200 0" fill="#c1502e" stroke="#4a2415" stroke-width="8"/>
+      <path d="M352 250h96M348 300h104" stroke="#4a2415" stroke-width="6"/>
+</g>
+<text x="60" y="92" font-family="Georgia,serif" font-size="30" fill="#8c3a1f" opacity="0.85">Unit 10</text>
+<text x="60" y="470" font-family="Georgia,serif" font-size="27" fill="#4a2415">Field Trip to Wieliczka Salt Mine</text>
+<text x="740" y="92" text-anchor="end" font-family="Georgia,serif" font-size="19" fill="#c1502e" opacity="0.8">Story</text>
+</svg>

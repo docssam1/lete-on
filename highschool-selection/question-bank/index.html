@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>유형 반복연습 · 선발·누적 진단</title><link rel="stylesheet" href="../shared/app.css"></head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header"><nav class="shell nav"><a class="brand" href="../library.html"><span class="brand-mark">SL</span><span>유형 연습<small>QUESTION BANK</small></span></a><div class="nav-links"><a class="button accent" href="../library.html">시험지 서재</a></div></nav></header>
+  <main id="main" class="shell app-main"><div class="page-title"><div><p class="eyebrow">Practice Question Bank</p><h1>한 번 풀고 끝나지 않습니다</h1><p>본시험에서 확인한 약점을 같은 유형의 쌍둥이·유사문제로 다시 연습하고, 다음 회차에서 해결 여부까지 이어서 확인합니다.</p></div><a class="button ghost" href="#practice-loop">반복 연습 구조</a></div>
+    <section class="panel curriculum-panel"><div><p class="eyebrow" id="scope-code">Academy Blueprint Search</p><h2 id="scope-title">출제 모드와 목표 과정을 고릅니다</h2><p id="scope-description">학원 모드는 성적표의 진단 축과 유형 우선순위를 고르고, 추천 모의고사는 별도 회차로 연결합니다.</p><div class="field-row"><label class="field-inline">학원 모드<select id="academy-mode"></select></label><label class="field-inline">목표 과정<select id="academy-target"></select></label><label class="field-inline">추천 모의고사<select id="scope-exam"></select></label></div></div><div class="middle-track" id="middle"></div></section>
+    <section class="analysis-grid" style="margin-top:18px"><article class="panel"><p class="eyebrow">Scorecard Blueprint</p><h2 id="report-model-title">성적표 구조</h2><p id="report-model-note">승인된 회차만 원본 배점과 컷을 사용합니다.</p><div class="weak-list" id="report-axes"></div></article><article class="panel"><p class="eyebrow">Type Blueprint</p><h2>우선 유형</h2><p>문제은행은 이 우선순위를 바탕으로 쌍둥이·유사문제를 배정합니다.</p><div class="weak-list" id="type-emphasis"></div></article></section>
+    <section class="practice-state panel" id="practice-state" aria-live="polite"></section>
+    <section style="margin-top:32px"><div class="section-head"><div><p class="eyebrow">Shared Candidate Pools</p><h2 style="font-size:38px">공유 후보 문항군</h2></div><p>여러 트랙이 유형을 공유할 수 있지만, 선택 시험의 범위·난도·배점·컷은 공유하지 않습니다.</p></div><div class="analysis-grid"><article class="panel"><p class="eyebrow">Common Math 1</p><h2>공통수학1</h2><div class="weak-list" id="common1"></div></article><article class="panel"><p class="eyebrow">Common Math 2</p><h2>공통수학2</h2><div class="weak-list" id="common2"></div></article></div></section>
+    <section id="practice-loop" style="margin-top:42px"><div class="section-head"><div><p class="eyebrow">Repeat Practice Loop</p><h2 style="font-size:38px">본시험에서 유지 확인까지</h2></div><p>단순 수치 변경이 아니라 핵심 조건·풀이 구조·오답 이력을 기준으로 다음 문항을 고릅니다.</p></div><div class="practice-loop" id="practice-stages"></div></section>
+    <section class="practice-layout" style="margin-top:18px"><article class="panel"><p class="eyebrow">Difficulty Ladder</p><h2>난이도 3단계</h2><div class="difficulty-ladder" id="difficulty-bands"></div></article><article class="panel"><p class="eyebrow">Release Gate</p><h2>반복 배정 조건</h2><ul class="gate-list" id="practice-rules"></ul></article></section>
+    <section style="margin-top:18px"><div class="section-head"><h2 style="font-size:38px">출제 모드</h2><p>모드는 문항을 복사하지 않고 범위·난도·표기·배치 규칙을 선택합니다.</p></div><div class="grid-3" id="modes"></div></section>
+    <section class="panel" style="margin-top:18px"><p class="eyebrow">Generator Gate</p><h2>유사문제 통과 조건</h2><ol id="safeguards" style="line-height:2"></ol></section>
+  </main>
+  <footer class="footer"><div class="shell"><span>문항 원문·답안 비공개</span><span>사용자 검수 전 공개 금지</span></div></footer>
+  <script src="../shared/runtime.js"></script><script src="../shared/auth.js"></script><script src="../data/catalog.js"></script><script src="../data/selection-tracks.js"></script><script src="../data/question-bank-schema.js"></script><script>
+    (function(){
+    const session=HIGHSELECT_AUTH.requireSession('../login.html');if(!session)return;
+    const bank=HIGHSELECT_QUESTION_BANK;
+    const catalog=HIGHSELECT_CATALOG,tracks=SELECTION_TRACK_CATALOG,visibleExams=catalog.exams.filter(exam=>exam.visible);
+    const academyNames={SH:'황소',DP:'돌파',WM:'원수학',ED:'이든',DG:'깊생',SM:'생수'};
+    const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const modeSelect=document.getElementById('academy-mode');
+    const targetSelect=document.getElementById('academy-target');
+    const select=document.getElementById('scope-exam');
+    const requested=new URLSearchParams(location.search).get('exam');
+    const profiles=bank.academyProfiles;
+    const requestedExam=visibleExams.find(exam=>exam.id===requested);
+    modeSelect.innerHTML=profiles.map(profile=>`<option value="${esc(profile.id)}">${esc(academyNames[profile.id]||profile.id)} · ${esc(profile.id)} 모드</option>`).join('');
+    modeSelect.value=requestedExam?requestedExam.programId:'SH';
+    function scopeItems(binding){
+      const sets={
+        'middle-cumulative':bank.curriculum.middle,
+        'middle1-1-to-linear-function':[
+          {label:'중1 전 과정',state:'누적 범위'},
+          {label:'중2-1 식의 계산·부등식',state:'누적 범위'},
+          {label:'연립일차방정식',state:'누적 범위'},
+          {label:'일차함수',state:'종료 단원'}
+        ],
+        'middle1-1-to-middle2-2':[
+          {label:'중1-1',state:'누적 범위'},
+          {label:'중1-2',state:'누적 범위'},
+          {label:'중2-1',state:'누적 범위'},
+          {label:'중2-2',state:'누적 범위'}
+        ],
+        'elementary-cumulative':[{label:'초5 누적',state:'구조 관찰·검수 대기'},{label:'초6 누적',state:'구조 관찰·검수 대기'}],
+        'middle-algebra-geometry':[{label:'중등 대수',state:'원본 구조 감사'},{label:'중등 기하',state:'규격 충돌 확인 필요'}],
+        'middle-semester-cumulative':[{label:'중2-1',state:'분류 검수 중'},{label:'중3-1',state:'분류 검수 중'},{label:'중2-2·3-2',state:'분류 검수 중'}],
+        'middle-common-math-mixed':[{label:'중3 심화',state:'범위 확인'},{label:'공통수학1',state:'범위 확인'},{label:'공통수학2 일부',state:'범위 확인'}],
+        'common-math-1':[{label:'공통수학1',state:'회차·원본 일치 확인 필요'}],
+        'common-math-sample':[{label:'공통수학 샘플',state:'실시험 연결 확인 필요'}]
+      };
+      return sets[binding&&binding.scopeKey]||[{label:'범위 확인 필요',state:'사용자 검수 대기'}];
+    }
+    function activeProfile(){return profiles.find(profile=>profile.id===modeSelect.value)||profiles[0];}
+    function renderTargets(preferredTargetId){
+      const profile=activeProfile();
+      targetSelect.innerHTML=profile.targets.map(target=>`<option value="${esc(target.id)}">${esc(target.label)}</option>`).join('');
+      if(profile.targets.some(target=>target.id===preferredTargetId))targetSelect.value=preferredTargetId;
+    }
+    function activeTarget(){const profile=activeProfile();return profile.targets.find(target=>target.id===targetSelect.value)||profile.targets[0];}
+    function renderExamOptions(preferredExamId){
+      const profile=activeProfile();
+      const candidates=visibleExams.filter(exam=>exam.programId===profile.id);
+      select.innerHTML=`<option value="">추천 회차 없음 · 문항 DB 조립형</option>`+candidates.map(exam=>`<option value="${esc(exam.id)}">${esc(exam.title)}</option>`).join('');
+      if(candidates.some(exam=>exam.id===preferredExamId))select.value=preferredExamId;
+    }
+    function selectExamForTarget(){
+      const profile=activeProfile(),target=activeTarget();
+      if(target.usage==='question-bank-only'){
+        select.value='';
+        select.disabled=true;
+        return;
+      }
+      select.disabled=false;
+      if(target.recommendedExamId&&visibleExams.some(exam=>exam.id===target.recommendedExamId)){
+        select.value=target.recommendedExamId;
+        return;
+      }
+      const match=visibleExams.find(exam=>{
+        const resolved=tracks.resolveExamTrack(exam.id);
+        return exam.programId===profile.id&&resolved&&resolved.binding&&resolved.binding.scopeKey===target.scopeKey;
+      });
+      if(match)select.value=match.id;
+    }
+    function renderScope(){
+      const profile=activeProfile(),target=activeTarget();
+      const bankOnly=target.usage==='question-bank-only';
+      const exam=bankOnly?null:(visibleExams.find(item=>item.id===select.value)||visibleExams.find(item=>item.programId===profile.id));
+      const resolved=exam&&tracks.resolveExamTrack(exam.id),track=resolved&&resolved.track,binding=resolved&&resolved.binding;
+      const exactRound=Boolean(binding&&binding.scopeKey===target.scopeKey);
+      const practiceOpen=Boolean(exactRound&&exam.releaseStatus==='released'&&exam.classificationStatus==='verified'&&exam.answerStatus==='verified');
+      document.getElementById('scope-code').textContent=`${academyNames[profile.id]||profile.id} · ${target.label} · ${profile.id}`;
+      document.getElementById('scope-title').textContent=`${target.label} · ${bankOnly?'문항 DB 전용':binding&&exactRound?binding.scopeLabel:'추천 회차 대조 필요'}`;
+      document.getElementById('scope-description').textContent=bankOnly?'중간 편입 진도에 맞춰 종료 단원까지의 승인 문항을 조립합니다. 특정 원본 회차나 커트라인을 연결하지 않습니다.':`${exactRound?exam.scopeLabel:'선택한 목표 과정과 추천 회차의 범위를 대조 중입니다.'} 세부유형과 반복 문항은 해당 회차가 승인된 경우에만 열립니다.`;
+      document.getElementById('middle').innerHTML=scopeItems(exactRound?binding:{scopeKey:target.scopeKey}).map(item=>`<div><strong>${esc(item.label)}</strong><span>${esc(item.state)}</span></div>`).join('');
+      document.getElementById('report-model-title').textContent=`${target.label} 성적표 구조`;
+      document.getElementById('report-model-note').textContent=`${profile.scorePolicy} · 난도 운영: ${target.difficultyPlan||'확인 필요'}`;
+      document.getElementById('report-axes').innerHTML=profile.reportAxes.map(axis=>`<span>${esc(axis)}</span>`).join('');
+      document.getElementById('type-emphasis').innerHTML=profile.typeEmphasis.map(type=>`<span>${esc(type)}</span>`).join('');
+      document.getElementById('practice-state').innerHTML=`<div><p class="eyebrow">Current Service State</p><h2>${practiceOpen?'반복연습 이용 가능':bankOnly?'문항 DB 조립 검수 중':'선택 과정 검수 전 잠금'}</h2><p>${practiceOpen?'승인된 오답 유형을 기준으로 연습 세트를 준비합니다.':bankOnly?'종료 단원까지 분류·검산된 문항만 조립하며, 원본 시험이나 합격 컷은 사용하지 않습니다.':exactRound?'정답·유형과 쌍둥이·유사문제가 모두 승인되기 전에는 이 시험의 연습 세트를 열지 않습니다.':'이 목표 과정의 원본 회차·답안·유형 대조가 끝난 뒤에만 추천 회차를 연결합니다.'}</p></div><span class="badge ${practiceOpen?'open':'review'}">${practiceOpen?'이용 가능':'승인 대기'}</span>`;
+    }
+    modeSelect.addEventListener('change',()=>{renderTargets();renderExamOptions();selectExamForTarget();renderScope();});
+    targetSelect.addEventListener('change',()=>{selectExamForTarget();renderScope();});
+    select.addEventListener('change',renderScope);
+    renderTargets(requestedExam&&requestedExam.id==='dp-middle2-2-transfer'?'middle2-2-transfer':null);
+    renderExamOptions(requestedExam&&requestedExam.id);
+    if(requestedExam){
+      const resolved=tracks.resolveExamTrack(requestedExam.id);
+      const target=activeProfile().targets.find(item=>resolved&&resolved.binding&&item.scopeKey===resolved.binding.scopeKey);
+      if(target)targetSelect.value=target.id;
+    }
+    renderScope();
+    document.getElementById('common1').innerHTML=bank.curriculum.common1.map(x=>`<span>${x}</span>`).join('');
+    document.getElementById('common2').innerHTML=bank.curriculum.common2.map(x=>`<span>${x}</span>`).join('');
+    document.getElementById('practice-stages').innerHTML=bank.practice.stages.map((x,i)=>`<article><span>${String(i+1).padStart(2,'0')}</span><div><h3>${x.label}</h3><p>${x.description}</p></div></article>`).join('');
+    document.getElementById('difficulty-bands').innerHTML=bank.practice.bands.map(x=>`<div data-band="${x.id}"><strong>${x.label}</strong><span>${x.rule}</span></div>`).join('');
+    document.getElementById('practice-rules').innerHTML=bank.practice.releaseRules.map(x=>`<li>${x}</li>`).join('');
+    document.getElementById('modes').innerHTML=bank.modes.map((m,i)=>`<article class="feature"><span class="num">${String(i+1).padStart(2,'0')}</span><h3>${m.label}</h3><p>${m.rule}</p></article>`).join('');
+    document.getElementById('safeguards').innerHTML=bank.safeguards.map(x=>`<li>${x}</li>`).join('');
+    })();
+  </script>
+</body>
+</html>

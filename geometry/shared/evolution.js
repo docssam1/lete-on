@@ -26,7 +26,24 @@ const REWARD_KEY = "gfield-rewarded-games";
 const COPY_LEVELS = 3, COPY_PER_LEVEL = 10;
 const COUNT_LEVELS = 5, COUNT_PER_LEVEL = 5;
 const SHAPE_LEVELS = [4, 5], SHAPE_PER_LEVEL = 5;
-export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS + SHAPE_LEVELS.length; // 10 clearable levels → up to Lv.11
+
+// Newer games all use reward ids shaped "<prefix>:<stem>-l<n>-<nn>". A level is
+// cleared once every one of its problems is solved. Keep `per` in sync with each
+// game's levels.js — when a difficulty level is added there, update it here too,
+// otherwise clearing that level won't advance the character level.
+const NEWER_GAMES = [
+  { prefix: "hidden-cubes",   stem: "hidden", levels: [1, 2, 3, 4, 5, 6], per: 5 },
+  { prefix: "cube-tunnel",    stem: "tunnel", levels: [2, 3, 4, 5, 6],    per: 5 },
+  { prefix: "cube-piece-lab", stem: "piece",  levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "three-views",    stem: "view",   levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "fill-box",       stem: "fill",   levels: [1, 2, 3, 4],       per: 5 },
+  { prefix: "cube-memory",    stem: "mem",    levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "crystal-cubes",  stem: "crystal", levels: [2, 3, 4, 5],      per: 4 },
+  { prefix: "paper-fold",     stem: "paper",   levels: [1, 2, 3, 4, 5],    per: 5 }
+];
+const NEWER_LEVELS = NEWER_GAMES.reduce((sum, g) => sum + g.levels.length, 0);
+
+export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS + SHAPE_LEVELS.length + NEWER_LEVELS; // total clearable levels across every game
 
 // One evolution step per cleared level. Each grants an accessory (dropped into an
 // empty slot) and a display colour + aura tier so Cubi visibly changes.
@@ -111,6 +128,20 @@ export function computeClearedLevels() {
     if (count >= SHAPE_PER_LEVEL) cleared += 1;
   }
 
+  // Newer games (hidden-count, cube-tunnel, cube-piece-lab, three-views,
+  // fill-box, cube-memory, crystal-cubes). A level clears when all its problems
+  // are solved, which advances the character level and fires the celebration.
+  for (const game of NEWER_GAMES) {
+    for (const n of game.levels) {
+      const mark = `${game.prefix}:${game.stem}-l${n}-`;
+      let count = 0;
+      for (const id of solved) {
+        if (id.startsWith(mark)) count += 1;
+      }
+      if (count >= game.per) cleared += 1;
+    }
+  }
+
   return cleared;
 }
 
@@ -134,7 +165,7 @@ export function syncEvolution() {
   profile.equipped = (profile.equipped && typeof profile.equipped === "object") ? profile.equipped : {};
   const gifts = (prev.gifts && typeof prev.gifts === "object") ? { ...prev.gifts } : {};
   let autoColor = typeof prev.autoColor === "string" ? prev.autoColor : null;
-  const colorLocked = Boolean(prev.colorLocked); // child chose their own colour → never override
+  const colorLocked = Boolean(prev.colorLocked); // child chose their own colour — never override
 
   const earnedGifts = [];
   for (let s = 1; s <= stage; s += 1) {
@@ -184,14 +215,14 @@ export function getEvolution() {
   };
 }
 
-// Child equipped/removed a cosmetic themselves → stop auto-managing that slot.
+// Child equipped/removed a cosmetic themselves — stop auto-managing that slot.
 export function releaseGiftSlot(profile, category) {
   if (profile && profile.evolution && profile.evolution.gifts) {
     delete profile.evolution.gifts[category];
   }
 }
 
-// Child picked their own colour → lock it so evolution never recolours again.
+// Child picked their own colour — lock it so evolution never recolours again.
 export function releaseColorLock(profile) {
   if (profile && profile.evolution && typeof profile.evolution === "object") {
     profile.evolution.colorLocked = true;

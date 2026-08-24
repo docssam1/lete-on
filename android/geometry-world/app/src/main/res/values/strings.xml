@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">지필드 지오메트리 월드</string>
+    <string name="connection_error">인터넷 연결을 확인한 뒤 다시 실행해 주세요.</string>
+    <string name="no_app_for_link">이 링크를 열 수 있는 앱이 없습니다.</string>
+    <string name="no_file_picker">파일 선택 앱을 찾지 못했습니다.</string>
+    <string name="download_description">지필드 지오메트리 월드에서 파일을 내려받는 중입니다.</string>
+    <string name="download_started">다운로드를 시작했습니다.</string>
+    <string name="download_failed">다운로드에 실패했습니다.</string>
+    <string name="download_permission_denied">저장 권한이 없어 다운로드하지 못했습니다.</string>
+</resources>

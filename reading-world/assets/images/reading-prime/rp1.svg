@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Rubber Duck Project">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M60 400h680" stroke="#7b1fa2" stroke-width="6" opacity=".5"/>
+<path d="M90 430q60-26 120 0t120 0 120 0 120 0 120 0" fill="none" stroke="#ce93d8" stroke-width="7"/>
+<ellipse cx="400" cy="386" rx="176" ry="62" fill="#efc23a" stroke="#2d3748" stroke-width="9"/>
+<circle cx="332" cy="252" r="104" fill="#efc23a" stroke="#2d3748" stroke-width="9"/>
+<circle cx="300" cy="228" r="15" fill="#2d3748"/>
+<path d="M232 262h-72l40 34 32-6z" fill="#e08a2c" stroke="#2d3748" stroke-width="9"/>
+<path d="M470 350q56-40 84 8" fill="none" stroke="#2d3748" stroke-width="9"/>
+</g>
+</svg>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>프리미어 모의고사 시험지 | G-FIELD</title>
+  <meta name="description" content="프리미어 모의고사 문제지 뷰어와 인쇄">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="viewer-bar">
+    <div class="viewer-brand"><b>G-FIELD PREMIER VIEWER</b><span id="barMeta">시험지를 불러오는 중입니다.</span></div>
+    <nav class="viewer-actions">
+      <a href="./">서재</a>
+      <button id="prevExam" type="button">이전 회차</button>
+      <button id="nextExam" type="button">다음 회차</button>
+      <button class="print" type="button" onclick="window.print()">인쇄</button>
+    </nav>
+  </header>
+  <main class="viewer-shell"><div class="exam-pages" id="examPages"><div class="viewer-error">시험지를 구성하는 중입니다.</div></div></main>
+  <script src="./exams.js"></script>
+  <script src="./renderers.js"></script>
+  <script src="./renderers-utilization-1.js"></script>
+  <script src="./renderers-utilization-2.js"></script>
+  <script src="./renderers-utilization-3-q01-q07.js"></script>
+  <script src="./renderers-utilization-3-q08-q14.js"></script>
+  <script src="./renderers-utilization-3-q15-q20.js"></script>
+  <script src="./renderers-utilization-4-q01-q07.js"></script>
+  <script src="./renderers-utilization-4-q08-q14.js"></script>
+  <script src="./renderers-utilization-4-q15-q20.js"></script>
+  <script src="./renderers-utilization-5-q01-q07.js"></script>
+  <script src="./renderers-utilization-5-q08-q14.js"></script>
+  <script src="./renderers-utilization-5-q15-q20.js"></script>
+  <script src="./renderers-utilization-6.js"></script>
+  <script src="./renderers-utilization-7.js"></script>
+  <script src="./renderers-utilization-8.js"></script>
+  <script src="./renderers-final-1.js"></script>
+  <script>
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const exams = window.PREMIER_EXAMS || {};
+    const ids = Object.keys(exams);
+    const examId = exams[params.get('exam')] ? params.get('exam') : ids[0];
+    const exam = exams[examId];
+    const student = String(params.get('student') || '').trim().slice(0, 24);
+    const mount = document.getElementById('examPages');
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    if (!exam) { mount.innerHTML = '<div class="viewer-error">등록된 시험지가 없습니다.</div>'; return; }
+
+    document.title = `${exam.title} | G-FIELD`;
+    document.getElementById('barMeta').textContent = `${exam.title} · 20문항 · ${exam.durationMinutes}분`;
+    const byNumber = new Map(exam.questions.map((q) => [q.number, q]));
+    function questionHtml(q) {
+      const figure = window.PremierFigures.render(q.figure, q);
+      return `<article class="question" data-question="${q.number}" data-area="${esc(q.area)}" data-type="${esc(q.type)}">
+        <h2 class="question-number">${q.number}.</h2>
+        <p class="question-prompt">${q.promptHtml || esc(q.prompt)}</p>
+        <div class="question-figure">${figure}</div>
+        <div class="answer-space" style="--answer-space:${Number(q.answerSpaceMm || 8)}mm"></div>
+      </article>`;
+    }
+    function columnHtml(numbers, before) {
+      if (!numbers.length) return '<div class="paper-column empty" aria-hidden="true"></div>';
+      return `<div class="paper-column">${before || ''}${numbers.map((n) => questionHtml(byNumber.get(n))).join('')}</div>`;
+    }
+    function headerHtml() {
+      return `<header class="paper-head">
+        <div class="brand-strip">
+          <div class="brand-lockup"><img src="../reading-world/assets/images/gfield-logo.svg" alt="지필드 영재교육"></div>
+          <div class="brand-copy">성공하는 공부습관을 만드는<br>대치 지필드 영재교육</div>
+        </div>
+        <div class="exam-title">${esc(exam.title)}</div>
+      </header>`;
+    }
+    function adminHtml() {
+      return `<section class="exam-admin">
+        <h2>● 유의사항 ●</h2>
+        <ol><li>중요한 조건에 밑줄을 긋고 구하고자 하는 것에 표시합니다.</li><li>쉬운 문제부터 풀고, 어려운 문제는 표시한 뒤 다시 봅니다.</li><li>풀이 과정을 간단히 적고 검산합니다.</li></ol>
+        <div class="student-fields"><span>이름 <i>${esc(student)}</i></span><span>응시일 <i></i></span></div>
+      </section>`;
+    }
+    const timeHtml = `<div class="time">제한시간 : ${exam.durationMinutes}분</div>`;
+    mount.innerHTML = exam.pages.map((page, index) => `<section class="exam-page">
+      <div class="paper-watermark">${esc(student || 'GFIELD')} · PREMIER</div>
+      ${index === 0 ? headerHtml() : ''}
+      <div class="paper-grid">${columnHtml(page.left, index === 0 ? adminHtml() : '')}${columnHtml(page.right, index === 0 ? timeHtml : '')}</div>
+      <footer class="page-foot">- ${index + 1} -</footer>
+    </section>`).join('');
+
+    const pos = ids.indexOf(examId);
+    const go = (next) => { if (!next) return; const p = new URLSearchParams(params); p.set('exam', next); location.search = p; };
+    const prev = document.getElementById('prevExam');
+    const next = document.getElementById('nextExam');
+    prev.disabled = pos <= 0; next.disabled = pos < 0 || pos >= ids.length - 1;
+    prev.onclick = () => go(ids[pos - 1]); next.onclick = () => go(ids[pos + 1]);
+    history.replaceState(null, '', `${location.pathname}?exam=${encodeURIComponent(examId)}${student ? `&student=${encodeURIComponent(student)}` : ''}`);
+  })();
+  </script>
+</body>
+</html>

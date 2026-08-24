@@ -43,16 +43,21 @@
     const odd = params && params.odd;
 
     if (!odd) {
-      /* 짝수 ÷ 2 */
-      const half   = R(rng, 2, 24);
+      /* 짝수 ÷ 2 — 대상 수 범위를 두 자리 후반까지 확대(array 위젯이 n칸을
+         그리므로 시각적으로 과하지 않게 60까지만) */
+      const half   = R(rng, 2, 60);
       const n      = half * 2;
+      const tex = pick(rng, [
+        `${n} \\div 2 = \\square`,
+        `\\dfrac{${n}}{2} = \\square`
+      ]);
       return {
         prompt: {
           ko: `${n}의 절반은?`,
           en: `What is half of ${n}?`,
           zh: `${n}的一半是多少？`
         },
-        tex:        `${n} \\div 2 = \\square`,
+        tex,
         answer:     half,
         answerType: 'number',
         widget:     'array',
@@ -60,9 +65,9 @@
       };
     }
 
-    /* 홀수 ÷ 2 (나머지 1, 몫만 답) */
-    const k   = R(rng, 1, 19);
-    const n   = k * 2 + 1;                 // 홀수 3~39
+    /* 홀수 ÷ 2 (나머지 1, 몫만 답) — 대상 수 범위 확대 */
+    const k   = R(rng, 1, 74);
+    const n   = k * 2 + 1;                 // 홀수 3~149
     const ans = Math.floor(n / 2);
     return {
       prompt: {
@@ -80,8 +85,9 @@
 
   /* ── DV2 — 두 자리÷한 자리(나머지×) ─────────────────────── */
   NM_TGEN['dv2_div2d1d'] = function (params, rng) {
-    const b        = R(rng, 2, 9);
-    const q        = R(rng, 2, 10);
+    const lv       = (params && params.level) || 'main';
+    const b        = R(rng, 2, lv === 'practice' ? 5 : 9);
+    const q        = R(rng, 2, lv === 'practice' ? 9 : 10);
     const dividend = b * q;
 
     return {
@@ -100,8 +106,9 @@
 
   /* ── DV3 — 나머지 있는 나눗셈 ────────────────────────────── */
   NM_TGEN['dv3_divRem'] = function (params, rng) {
-    const b        = R(rng, 2, 9);
-    const q        = R(rng, 2, 10);
+    const lv       = (params && params.level) || 'main';
+    const b        = R(rng, lv === 'practice' ? 3 : 2, lv === 'practice' ? 5 : 9);
+    const q        = R(rng, 2, lv === 'practice' ? 9 : 10);
     const r        = R(rng, 1, b - 1);     // 1 ≤ r ≤ b-1 (나머지 조건)
     const dividend = b * q + r;
 
@@ -213,6 +220,26 @@
 
   /* ── DV6 — 배수판별법 ────────────────────────────────────── */
   NM_TGEN['dv6_divisibility'] = function (params, rng) {
+    const mode = (params && params.mode) || 'missing';
+
+    /* ---- 자릿수 합 (3·9 배수 판정) ---- */
+    if (mode === 'digitSum') {
+      const n    = R(rng, 100, 999);
+      const digs = String(n).split('').map(Number);
+      const dsum = digs.reduce((a, b) => a + b, 0);
+      return {
+        prompt: {
+          ko: `${n}의 각 자리 숫자를 더해요 — 3의 배수인지 확인해 봐요!`,
+          en: `Add the digits of ${n} — check if it's a multiple of 3!`,
+          zh: `把${n}各位数字相加——判断是不是3的倍数！`
+        },
+        tex:        `${digs.join('+')} = \\square`,
+        answer:     dsum,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
     const rules = (params && params.rules) || [2, 5, 10];
     const r     = pick(rng, rules);
 
@@ -252,7 +279,8 @@
 
     /* ---- 약수 찾기 ---- */
     if (mode === 'factors') {
-      const n  = R(rng, 12, 60);
+      const lv = (params && params.level) || 'main';
+      const n  = R(rng, 10, lv === 'practice' ? 40 : 120);
       const fs = allFactors(n);
       return {
         prompt: {
@@ -267,29 +295,37 @@
       };
     }
 
-    /* ---- 최대공약수(GCD) — 유클리드 호제법 스텝 ---- */
+    /* ---- 최대공약수(GCD) — 유클리드 호제법 스텝 ----
+       고정 목록 대신 a,b를 직접 뽑아 유클리드 호제법을 돌려 본다.
+       g<2(재미없는 서로소)나 단계가 너무 많은(3단계 초과) 조합은 다시 뽑아,
+       "2~3단계로 끝나는 쌍"이라는 원래 설계 의도는 유지하면서 조합 수를 크게 늘린다. */
     if (mode === 'gcd') {
-      /*
-       * 유클리드 단계가 2회로 끝나는 쌍을 큐레이션.
-       * 모두 a > b 이므로 첫 단계에서 a = b×1 + r 형태가 나온다.
-       */
-      const GCD_PAIRS = [
-        [18,12],[20,15],[24,16],[24,18],[30,20],[36,24],
-        [25,15],[20,12],[32,24],[30,18],[21,14],[28,21],
-        [16,12],[20,16],[24,12],[24,20],[30,24],[27,18],
-        [30,15],[30,12]
-      ];
-      const [a, b] = pick(rng, GCD_PAIRS);
-      const g      = gcdCalc(a, b);
+      let a, b, g = 0, steps = null;
+      let tries = 0;
+      do {
+        a = R(rng, 12, 90);
+        b = R(rng, 6, 72);
+        if (a === b) { tries++; continue; }
+        if (a < b) { const t = a; a = b; b = t; }
+        steps = [];
+        let x = a, y = b;
+        while (y > 0) {
+          const quo = Math.floor(x / y);
+          const rem = x % y;
+          steps.push({ tex: `${x} = ${y} \\times ${quo} + \\square`, blank: rem });
+          x = y; y = rem;
+        }
+        g = x;
+        tries++;
+      } while ((!steps || g < 2 || steps.length > 3) && tries < 100);
 
-      /* 유클리드 단계 생성 */
-      const steps = [];
-      let x = a, y = b;
-      while (y > 0) {
-        const quo = Math.floor(x / y);
-        const rem = x % y;
-        steps.push({ tex: `${x} = ${y} \\times ${quo} + \\square`, blank: rem });
-        x = y; y = rem;
+      if (!steps || g < 2 || steps.length > 3) {
+        /* 극히 드문 폴백 */
+        a = 18; b = 12; g = 6;
+        steps = [
+          { tex: `18 = 12 \\times 1 + \\square`, blank: 6 },
+          { tex: `12 = 6 \\times 2 + \\square`,  blank: 0 }
+        ];
       }
       steps.push({ tex: `\\gcd(${a},\\,${b}) = \\square`, blank: g });
 
@@ -365,13 +401,14 @@
       };
     }
 
-    /* ---- 소인수분해: 나눗셈 체인 단계 ---- */
+    /* ---- 소인수분해: 나눗셈 체인 단계 ----
+       고정 목록 대신 대상 수 범위를 넓혀 직접 뽑는다. 소인수가 1개뿐인
+       소수는 "분해"가 의미 없으므로 제외(소인수 개수 ≥ 2, 중복 포함). */
     if (mode === 'factorize') {
-      const POOL = [
-        12,18,20,24,28,30,36,40,42,45,48,50,
-        56,60,63,70,72,75,80,84,90,96,100,108,120
-      ];
-      const n  = pick(rng, POOL);
+      const lv = (params && params.level) || 'main';
+      const hi = lv === 'practice' ? 60 : 200;
+      let n;
+      do { n = R(rng, 10, hi); } while (primeFactorArr(n).length < 2);
       const pf = primeFactorArr(n);          // e.g. 60 → [2,2,3,5]
 
       /* 나눗셈 체인 스텝: n÷p0=□, □÷p1=□, ..., 마지막 소수 확인 */
@@ -403,26 +440,21 @@
     /* ---- 약수의 개수: 소인수분해 → (지수+1) 곱 공식 ---- */
     /* mode === 'count' */
     /*
-     * n = p^a × q^b 형태의 수만 사용해 공식 (a+1)(b+1)을 명확히 연습.
-     * 데이터: { n, p, a, q, b }
+     * 고정 목록 대신 n = p^a × q^b 형태를 직접 조합해 (a+1)(b+1) 공식을
+     * 연습한다. n이 너무 커지지 않도록(≤1000) 지수를 제한한다.
      */
-    const COUNT_POOL = [
-      { n:  12, p: 2, a: 2, q: 3, b: 1 },   // (3)(2)=6
-      { n:  18, p: 2, a: 1, q: 3, b: 2 },   // (2)(3)=6
-      { n:  20, p: 2, a: 2, q: 5, b: 1 },   // (3)(2)=6
-      { n:  24, p: 2, a: 3, q: 3, b: 1 },   // (4)(2)=8
-      { n:  28, p: 2, a: 2, q: 7, b: 1 },   // (3)(2)=6
-      { n:  36, p: 2, a: 2, q: 3, b: 2 },   // (3)(3)=9
-      { n:  40, p: 2, a: 3, q: 5, b: 1 },   // (4)(2)=8
-      { n:  48, p: 2, a: 4, q: 3, b: 1 },   // (5)(2)=10
-      { n:  50, p: 2, a: 1, q: 5, b: 2 },   // (2)(3)=6
-      { n:  72, p: 2, a: 3, q: 3, b: 2 },   // (4)(3)=12
-      { n:  75, p: 3, a: 1, q: 5, b: 2 },   // (2)(3)=6
-      { n:  98, p: 2, a: 1, q: 7, b: 2 },   // (2)(3)=6
-      { n: 100, p: 2, a: 2, q: 5, b: 2 }    // (3)(3)=9
-    ];
-    const entry = pick(rng, COUNT_POOL);
-    const { n, p, a, q, b } = entry;
+    const PRIMES = [2, 3, 5, 7, 11];
+    let n, p, a, q, b;
+    let tries = 0;
+    do {
+      const two = shuffle(rng, PRIMES).slice(0, 2);
+      p = two[0]; q = two[1];
+      a = R(rng, 1, 5);
+      b = R(rng, 1, 4);
+      n = Math.pow(p, a) * Math.pow(q, b);
+      tries++;
+    } while (n > 1000 && tries < 60);
+    if (n > 1000) { n = 12; p = 2; a = 2; q = 3; b = 1; }
     const count = (a + 1) * (b + 1);
 
     return {

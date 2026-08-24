@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Strange World of Murphy’s Law">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<rect x="120" y="120" width="150" height="150" rx="16" fill="#f3e5f5" stroke="#2d3748" stroke-width="9" transform="rotate(-14 195 195)"/>
+<rect x="150" y="150" width="92" height="92" rx="10" fill="#e8b830" stroke="#2d3748" stroke-width="8" transform="rotate(-14 196 196)"/>
+<path d="M300 210q100 60 150 170" fill="none" stroke="#7b1fa2" stroke-width="8" stroke-dasharray="16 16"/>
+<rect x="430" y="330" width="160" height="160" rx="16" fill="#e8b830" stroke="#2d3748" stroke-width="9" transform="rotate(16 510 410)"/>
+<path d="M120 470h620" stroke="#2d3748" stroke-width="9"/>
+<circle cx="628" cy="180" r="52" fill="none" stroke="#4a148c" stroke-width="9"/>
+<path d="M628 148v34l24 16" fill="none" stroke="#4a148c" stroke-width="9"/>
+</g>
+</svg>

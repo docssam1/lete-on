@@ -13,6 +13,36 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="World Explorer" />
+  <style>
+    .intro-sound-button{
+      position:absolute;
+      top:max(14px,calc(env(safe-area-inset-top) + 10px));
+      right:max(14px,calc(env(safe-area-inset-right) + 10px));
+      z-index:4;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:44px;
+      padding:10px 15px;
+      border:1px solid rgba(255,255,255,.78);
+      border-radius:999px;
+      background:rgba(14,30,38,.68);
+      color:#fff;
+      font:800 clamp(.86rem,1.6vw,1rem)/1 system-ui,-apple-system,"Segoe UI",sans-serif;
+      box-shadow:0 8px 24px rgba(0,0,0,.32);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      cursor:pointer;
+      touch-action:manipulation;
+    }
+    .intro-sound-button:hover{background:rgba(22,53,65,.84)}
+    .intro-sound-button:focus-visible{outline:3px solid #fff3a6;outline-offset:3px}
+    .intro-sound-button[aria-pressed="true"]{background:rgba(31,112,75,.82)}
+    .intro-sound-icon{font-size:1.1em;line-height:1}
+    @media (max-width:700px){
+      .intro-sound-button{min-height:42px;padding:9px 12px;font-size:.84rem}
+    }
+  </style>
 </head>
 <body>
   <div id="orientationGate" class="orientation-gate" role="status" aria-live="polite">
@@ -26,6 +56,9 @@
       <source src="./assets/intro/gfield-world-explorer-intro.mp4?v=9" type="video/mp4" />
     </video>
     <div class="intro-vignette" aria-hidden="true"></div>
+    <button id="introSoundButton" class="intro-sound-button" type="button" aria-pressed="false" aria-label="인트로 소리 켜기">
+      <span class="intro-sound-icon" aria-hidden="true">🔇</span><span class="intro-sound-label">소리 켜기</span>
+    </button>
     <h1 class="game-logo" aria-label="GFIELD World Explorer">
       <span class="lg-word"><span class="lg" style="--i:0">G</span><span class="lg" style="--i:1">F</span><span class="lg" style="--i:2">I</span><span class="lg" style="--i:3">E</span><span class="lg" style="--i:4">L</span><span class="lg" style="--i:5">D</span></span>
       <span class="lg-word"><span class="lg" style="--i:6">W</span><span class="lg" style="--i:7">o</span><span class="lg" style="--i:8">r</span><span class="lg" style="--i:9">l</span><span class="lg" style="--i:10">d</span></span>
@@ -193,6 +226,54 @@
     </article>
   </dialog>
 
+  <script>
+    (() => {
+      const video = document.getElementById('introVideo');
+      const button = document.getElementById('introSoundButton');
+      if (!video || !button) return;
+
+      const icon = button.querySelector('.intro-sound-icon');
+      const label = button.querySelector('.intro-sound-label');
+      const updateButton = () => {
+        const audible = !video.muted && video.volume > 0;
+        button.setAttribute('aria-pressed', String(audible));
+        button.setAttribute('aria-label', audible ? '인트로 소리 끄기' : '인트로 소리 켜기');
+        icon.textContent = audible ? '🔊' : '🔇';
+        label.textContent = audible ? '소리 끄기' : '소리 켜기';
+      };
+
+      button.addEventListener('click', async () => {
+        video.volume = 1;
+        video.muted = !video.muted;
+        if (!video.muted) {
+          try {
+            await video.play();
+          } catch {
+            video.muted = true;
+          }
+        }
+        updateButton();
+      });
+      video.addEventListener('volumechange', updateButton);
+
+      const mobileLike = matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (mobileLike) {
+        video.muted = true;
+        video.play().catch(() => {});
+      } else {
+        video.muted = false;
+        const attempt = video.play();
+        if (attempt && typeof attempt.catch === 'function') {
+          attempt.catch(() => {
+            video.muted = true;
+            video.play().catch(() => {});
+            updateButton();
+          });
+        }
+      }
+      updateButton();
+    })();
+  </script>
   <script type="module" src="./app.js?v=10"></script>
 </body>
 </html>

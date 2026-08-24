@@ -307,124 +307,13 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
 }
 
 /* 인쇄 차단 */
-@media print{
-  @page{ size:A4 landscape; margin:8mm; }
-  body{ background:#fff!important; padding:0!important; }
-  /* 화면 전용 요소 숨김 */
-  #diagnosticGate, #approvalGate, #loadingLayer, .print-btn, .print-btn-wrap, .mobile-rotate-hint,
-  .pg-character-wrap, #drawer, .overlay, #details{ display:none!important; }
-  /* 표지 */
-  #printCover{ display:flex!important; }
-  /* 표준표 컨테이너(#map 들어있는 것)는 인쇄에 포함 - 단 2레벨만 */
-  /* studentResult 컨테이너도 포함 */
-  .container{ box-shadow:none!important; border:0!important; max-width:100%!important; margin:0!important; padding:5mm 0!important; }
-  #studentResult.container{ padding-top:0!important; }
-  /* 페이지 나눔: 표준표(map) → 새 페이지 */
-  #mapContainer{ page-break-before:always; }
-  .progress-graph-wrap{ page-break-before:always; padding-top:5mm!important; }
-  .study-guide-box, .comment{ page-break-inside:avoid; }
-  /* 비교박스+코멘트를 한 페이지에 압축 */
-  #studentResult{ page-break-inside:avoid; margin-top:0!important; padding-top:0!important; }
-  #studentResult .student-card{ padding:14px!important; box-shadow:none!important; margin-top:0!important; }
-  #studentResult .student-card h2{ font-size:18px!important; }
-  #studentResult .student-card .sub{ margin:5px 0 10px!important; font-size:11px!important; }
-  #studentResult .comment{ padding:11px!important; font-size:11px!important; line-height:1.5!important; margin-top:10px!important; }
-  #studentResult .delta-box{ padding:11px!important; }
-  #studentResult .study-guide-box{ padding:11px 13px!important; margin-top:10px!important; }
-  #studentResult .study-guide-box *{ font-size:10.5px!important; line-height:1.45!important; }
-  #studentResult .level-delta, #studentResult .delta-legend{ font-size:10px!important; }
-  /* 인쇄 때 숨길 레벨/행 */
-  .print-hide-level{ display:none!important; }
-  /* 개인 블록의 중복 월/나이 헤더: 글자만 숨기고 칸 정렬은 유지 */
-  #map tr.cur-head th{ font-size:0!important; line-height:0!important; height:0!important; padding:0!important; border-top:0!important; border-bottom:0!important; color:transparent!important; background:transparent!important; }
-  /* '현재 진도 기준 위치' 구분줄은 얇게 유지 */
-  #map tr.cur-divider td{ font-size:8px!important; padding:2px!important; }
-  /* 표를 가로 한 페이지에 우겨넣기 (가로 압축 / 세로 확대 / 가운데 정렬) */
-  #mapContainer{ text-align:center!important; }
-  #map{ font-size:6.5px!important; width:90%!important; min-width:0!important; margin:0 auto!important; table-layout:fixed!important; }
-  #map col.mcol{ width:auto!important; }
-  #map td, #map th{ padding:2.2px 0.5px!important; line-height:1.18!important; word-break:keep-all!important; overflow:hidden!important; }
-  #map .sub{ font-size:5px!important; }
-  #map .level-desc{ font-size:5px!important; }
-  #map thead .age-head{ font-size:8px!important; }
-  #map thead .month-head{ font-size:6px!important; min-width:0!important; }
-  #map tbody td.category, #map tbody td.level{ padding:2.2px 1px!important; }
-  /* 표 위 헤더 영역 압축 (표를 위로 올려 한 페이지 확보) */
-  #mapContainer{ padding-top:0!important; }
-  #mapContainer .header{ margin:0!important; padding:0!important; }
-  #mapContainer .header h1{ font-size:15px!important; margin:0!important; padding:0!important; line-height:1.2!important; }
-  #mapContainer .main-subtitle{ display:none!important; }
-  #mapContainer .table-note{ display:none!important; }
-  #mapContainer .purple-top-guide{ font-size:7px!important; margin:1px 0!important; padding:1px!important; }
-  #printTableTitle{ font-size:11px!important; padding:2px 0!important; margin:0!important; }
-  /* 표 전체를 한 페이지에 유지 (중간 잘림 방지) */
-  #mapContainer .table-wrapper, #map{ page-break-inside:avoid!important; }
-  #map tbody tr{ page-break-inside:avoid!important; }
-  .standard-scroll{ overflow:visible!important; }
-  /* 인쇄 시 빨간 사고력 기준선 선명하게 (border 기반이라 배경그래픽 옵션 무관) */
-  .guide-overlay{ opacity:.85!important; border-left-width:1.5px!important; z-index:50!important; }
-  .guide-overlay .g-label{ font-size:7px!important; padding:1px 4px!important; -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
-  /* 그래프 SVG 한 페이지 맞춤 */
-  #progressGraph svg{ max-width:100%!important; height:auto!important; }
-  .pg-bubble{ display:none!important; }
-  /* 표 위 안내 타이틀 (인쇄 전용) */
-  #printTableTitle{ display:block!important; }
-}
-
-/* 표지 (평소 숨김, 인쇄 때만) */
-#printCover{ display:none; }
-#printTableTitle{ display:none; }
-@media print{
-  #printCover{
-    page-break-after:always; min-height:180mm; flex-direction:column;
-    align-items:center; justify-content:center; text-align:center;
-    border:2px solid #1a2740; margin:0;
-  }
-  #printCover .pc-brand{ font-size:13px; letter-spacing:.3em; color:#a8895c; font-weight:700; margin-bottom:30px; }
-  #printCover .pc-title{ font-size:34px; font-weight:900; color:#1a2740; letter-spacing:-.02em; line-height:1.4; }
-  #printCover .pc-sub{ font-size:15px; color:#5a6478; margin-top:18px; }
-  #printCover .pc-date{ font-size:12px; color:#9aa1b4; margin-top:40px; }
-  #printCover .pc-line{ width:60px; height:2px; background:#a8895c; margin:24px 0; }
-  #printTableTitle{ font-size:15px; font-weight:800; color:#1a2740; padding:0 0 6px; }
-}
+@media print{ html,body{display:none!important} }
 /* 텍스트 선택/드래그 방지 (입력칸 제외) */
 body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
-/* ===== 컨설팅 모드 ===== */
-.consultant-badge{display:inline-block;background:#1e3a8a;color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-bottom:12px}
-.consultant-name-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px}
-.consultant-name-row label{font-size:13px;font-weight:700;color:#92400e}
-.consultant-name-input{border:1px solid #d97706;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:800;color:#1e3a8a;width:140px}
-.consultant-name-btn{background:#1e3a8a;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer}
-.editor-toolbar{display:flex;gap:4px;margin-bottom:8px;padding:8px 10px;background:#f1f5f9;border-radius:8px;flex-wrap:wrap;align-items:center;border:1px solid #e2e8f0}
-.editor-toolbar button,.toolbar-file-btn{border:1px solid #cbd5e1;background:#fff;border-radius:5px;padding:4px 9px;font-size:12px;font-weight:700;cursor:pointer;height:28px;min-width:28px;display:inline-flex;align-items:center;justify-content:center;gap:3px;color:#334155}
-.editor-toolbar button:hover,.toolbar-file-btn:hover{background:#e2e8f0;border-color:#94a3b8}
-.editor-toolbar .sep{width:1px;height:20px;background:#cbd5e1;margin:0 3px}
-.toolbar-file-btn input[type=file]{display:none}
-.hl-btn{border-width:2px!important;font-weight:900!important}
-.save-indicator{font-size:11px;color:#059669;font-weight:700;margin-left:4px;opacity:0;transition:opacity .3s}
-.save-indicator.show{opacity:1}
-.consultant-editor{min-height:240px;border:2px solid #7c3aed;border-radius:8px;padding:16px;font-size:13px;line-height:1.85;color:#334155;background:#fff;outline:none;cursor:text;-webkit-user-select:text;user-select:text}
-.consultant-editor:focus{border-color:#5b21b6;box-shadow:0 0 0 3px rgba(124,58,237,.15)}
-.consultant-editor img{max-width:100%;border-radius:8px;margin:8px 0;display:block}
-.consultant-editor p{margin:0 0 8px}
-.consultant-hint{margin-top:7px;font-size:11px;color:#7c3aed;font-weight:600}
-@media print{
-  .editor-toolbar,.consultant-name-row,.consultant-badge,.consultant-hint{display:none!important}
-  .consultant-editor{border:none!important;box-shadow:none!important;padding:0!important;min-height:auto!important}
-}
 </style>
 </head>
 <body>
-
-<!-- PDF 인쇄용 표지 (화면에선 숨김) -->
-<div id="printCover">
-  <div class="pc-brand">G·FIELD 영재교육</div>
-  <div class="pc-title" id="coverTitle">○○○ 학생의<br>로드맵 분석</div>
-  <div class="pc-line"></div>
-  <div class="pc-sub" id="coverSub">사고력 진단 로드맵 리포트</div>
-  <div class="pc-date" id="coverDate"></div>
-</div>
 
 
 <div id="approvalGate">
@@ -494,12 +383,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="table-wrapper student-roadmap-wrapper"><table class="student-table" id="studentTable"></table></div>
   <div class="level-delta" id="levelDelta"></div><div class="delta-legend">각 수치는 사고력·교과·연산 현재 위치를 해당 레벨의 같은 시점 표준 진도와 비교한 평균입니다. <b>＋</b>는 앞선 흐름, <b>－</b>는 보완이 필요한 흐름입니다.</div>
   <div class="comment" id="studentComment"></div>
-  <div class="print-btn-wrap" style="text-align:center;margin:18px 0 4px">
-    <button class="print-btn" onclick="printRoadmap()" style="display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border:0;border-radius:9px;background:#1a2740;color:#fff;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.01em">
-      <span style="font-size:17px">🖨</span> 로드맵 분석 PDF로 저장 / 인쇄
-    </button>
-    <div style="font-size:11px;color:#94a3b8;margin-top:8px">가로 방향으로 인쇄됩니다. 인쇄 창에서 '대상'을 <b>PDF로 저장</b>으로 선택하세요.</div>
-  </div>
   <div class="progress-graph-wrap" id="progressGraphWrap" style="display:none">
     <div class="pg-brand">docssam의 로드맵 컨설팅</div>
     <div class="pg-title">프리미어·필즈 진단 예측 그래프</div>
@@ -692,7 +575,7 @@ function rowHTML(label, blocks, line, opts={}){
 /* ===== 저장 서버 연결 (Apps Script) =====
    Apps Script 웹앱 배포 후 나오는 URL을 STORE_URL에 넣으세요.
    비어 있으면 저장/불러오기를 건너뛰고 기존처럼 동작합니다. */
-const STORE_URL = 'https://script.google.com/macros/s/AKfycbwg35Q9Sd3orf5P3tJTRRXhjDYZVjbHyg_5MJVR7I30AGnoeN2ITQgiihj16fL0dXfq/exec';
+const STORE_URL = 'https://script.google.com/macros/s/AKfycbxRXHH9eeU9Z970AknGXK2IAfODIcWbElwc_CnUMqUV2Kfs5eCNOrsqTrqKZCRA_G1p2g/exec';
 let CURRENT_CODE = '';      // 입장 시 승인번호 보관
 let SAVED_RECORD = null;    // 서버에서 불러온 기존 기록
 
@@ -803,18 +686,15 @@ function drawGuideOverlay(cur){
   if(!c || !diagData) return;
   // 현재월의 표시 칸 위치 (사고력1 현재과정 중앙이 여기 옴)
   const nowIdx = toIdx(studentNowMonth(diagData.age)); // 칸 인덱스
+  const cellX = nowIdx + 0.5; // 칸 중앙
   const table=document.getElementById('map');
   const monthThs=table.querySelectorAll('#thead .month-head');
   if(!monthThs.length) return;
-  // 칸 폭이 들쭉날쭉(table-layout:auto)해도 정확하도록, 균일폭 추정 대신
-  // 실제 해당 월 th의 화면 위치를 직접 측정한다.
-  const idx=Math.max(0, Math.min(monthThs.length-1, nowIdx));
-  const target=monthThs[idx];
-  if(!target) return;
-  const tr=target.getBoundingClientRect();
+  const first=monthThs[0].getBoundingClientRect();
+  const cw=first.width;
   const tableRect=table.getBoundingClientRect();
-  const xPx=(tr.left+tr.right)/2 - tableRect.left; // 해당 월 칸의 실제 중앙
-  if(xPx<=0) return; // 레이아웃 미완성 시 스킵
+  const xPx=(first.left - tableRect.left) + cellX*cw;
+  if(xPx<=0 || cw<=0) return; // 레이아웃 미완성 시 스킵
   const ov=document.createElement('div');
   ov.className='guide-overlay';
   ov.style.left=xPx+'px';
@@ -1100,6 +980,7 @@ function drawProgressGraph(d){
         if(p.x<=N-1+0.01){
           out.push({x:Math.min(p.x,N-1),lv:Math.max(0,Math.min(5,p.lv))});
         } else {
+          // 표 밖 점 → 직전 in-range 점과 보간하여 N-1 경계에 끝점 추가
           const prev=pts[i-1];
           if(prev && prev.x<N-1){
             const t=(N-1-prev.x)/(p.x-prev.x);
@@ -1133,8 +1014,8 @@ function drawProgressGraph(d){
     // ===== 말풍선 데이터: 증속선이 상위 레벨을 따라잡는 시점 =====
     // 상위 레벨 = best보다 한 단계 위 (L2→L1→L0)
     const bestId = (window.__bestLevel && window.__bestLevel.id) || 'L1';
-    const upperId = {L2:'L1', L1:'L0', L0:'L0'}[bestId];
-    const lvIdx = {L0:0, L1:1, L2:2}[upperId];
+    const upperId = {L4:'L3', L3:'L2', L2:'L1', L1:'L0', L0:'L0'}[bestId] || 'L1';
+    const lvIdx = {L0:0, L1:1, L2:2, L3:3, L4:4}[upperId];
     const upperShift = LEVELS[lvIdx].shift;
     // 상위 레벨 표준선 좌표
     const upperStd = stdPoints(upperShift); // 이미 정의된 함수
@@ -1152,7 +1033,7 @@ function drawProgressGraph(d){
       const uLv = lvAt(upperStd, p.x);
       if(p.lv >= uLv-0.05){ catchIdx=p.x; break; }
     }
-    const lvFullName = {L0:'선행이 빠른 프리미어 합격생', L1:'표준 프리미어 합격생', L2:'챌린지 선발 후 합격생'};
+    const lvFullName = {L0:'선행이 빠른 프리미어 합격생', L1:'표준 프리미어 합격생', L2:'챌린지 선발 후 합격생', L3:'필즈 주2회 E2 수준', L4:'안정적 상위권 · 소마 A반'};
     const idxToLabel = xi=>{ const m=Math.round(xi)+4; return `${5+Math.floor(m/12)}세 ${m%12+1}월`; };
     window.__bubbleData = {
       name: d.name,
@@ -1326,25 +1207,11 @@ function tab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove
 build();
 
 /* ---------- 승인 ---------- */
-let isConsultant = false;
-
 async function startStandardDiagnosis(){
   const code=document.getElementById('approvalCode').value.trim();
   const name=document.getElementById('approvalName').value.trim();
   const phone=document.getElementById('approvalPhone').value.trim();
   const error=document.getElementById('approvalError');
-
-  // ===== docssam 컨설팅 모드 =====
-  if(name.toLowerCase()==='docssam'){
-    isConsultant=true;
-    document.getElementById('approvalGate').style.display='none';
-    document.getElementById('studentName').value='학생';
-    const diagGate=document.getElementById('diagnosticGate');
-    if(diagGate) diagGate.style.display='block';
-    return;
-  }
-  isConsultant=false;
-
   if(!code||!name||!phone){error.textContent='승인번호, 학생 이름, 연락처를 모두 입력해 주세요.';return;}
   CURRENT_CODE = code;
   document.getElementById('studentName').value=name;
@@ -1538,47 +1405,6 @@ function fillLevelDelta(d){
   return best;
 }
 function fillComment(d){
-  // ===== 컨설팅 모드: 리치 에디터 =====
-  if(isConsultant){
-    const host=document.getElementById('studentComment');
-    const initName=d.name||'학생';
-    host.innerHTML=
-      `<div class="consultant-badge">📋 docssam 컨설팅 모드</div>`+
-      `<div class="consultant-name-row">`+
-        `<label>학생 이름&nbsp;<input id="consultantNameInput" class="consultant-name-input" value="${initName}" placeholder="이름 입력" oninput="autoSaveConsultant()"></label>`+
-        `<button class="consultant-name-btn" onclick="applyConsultantName()">적용</button>`+
-        `<button class="consultant-name-btn" style="background:#059669" onclick="loadConsultant()">📂 불러오기</button>`+
-        `<span class="save-indicator" id="saveIndicator">✓ 저장됨</span>`+
-      `</div>`+
-      `<div class="editor-toolbar">`+
-        `<button onclick="edCmd('bold')" title="굵게"><b>B</b></button>`+
-        `<button onclick="edCmd('italic')" title="기울임"><i>I</i></button>`+
-        `<button onclick="edCmd('underline')" title="밑줄"><u>U</u></button>`+
-        `<div class="sep"></div>`+
-        `<button class="hl-btn" onclick="edHL('#fef08a')" title="노란 형광펜" style="background:#fef08a;border-color:#ca8a04">노</button>`+
-        `<button class="hl-btn" onclick="edHL('#fca5a5')" title="빨간 형광펜" style="background:#fca5a5;border-color:#dc2626">빨</button>`+
-        `<button class="hl-btn" onclick="edHL('#86efac')" title="초록 형광펜" style="background:#86efac;border-color:#16a34a">초</button>`+
-        `<button class="hl-btn" onclick="edHL('#bfdbfe')" title="파란 형광펜" style="background:#bfdbfe;border-color:#2563eb">파</button>`+
-        `<button onclick="edHL('transparent')" title="형광펜 제거" style="font-size:10px">✕형</button>`+
-        `<div class="sep"></div>`+
-        `<button onclick="edFG('#dc2626')" title="빨간 글씨" style="color:#dc2626;font-weight:900">A</button>`+
-        `<button onclick="edFG('#1d4ed8')" title="파란 글씨" style="color:#1d4ed8;font-weight:900">A</button>`+
-        `<button onclick="edFG('#15803d')" title="초록 글씨" style="color:#15803d;font-weight:900">A</button>`+
-        `<button onclick="edFG('#000')" title="검정(기본)">A</button>`+
-        `<div class="sep"></div>`+
-        `<label class="toolbar-file-btn" title="사진 삽입">📷 사진<input type="file" accept="image/*" onchange="insertConsultImg(this)"></label>`+
-        `<div class="sep"></div>`+
-        `<button onclick="saveConsultant()" style="background:#eff6ff;border-color:#3b82f6;color:#1d4ed8">💾 저장</button>`+
-      `</div>`+
-      `<div id="consultantEditor" class="consultant-editor" contenteditable="true" `+
-         `onkeydown="handleEditorKey(event)" oninput="autoSaveConsultant()">`+
-        `<p>여기에 코멘트를 작성해 주세요.</p>`+
-      `</div>`+
-      `<div class="consultant-hint">💾 저장하면 브라우저에 보관됩니다 · 학생 이름별로 저장 · 인쇄 시 툴바는 숨겨집니다</div>`;
-    setTimeout(()=>tryAutoLoad(initName), 100);
-    return;
-  }
-
   const best=fillLevelDelta(d);
   const cur=currentPositions(d);
   const shS=personalShift('school',d.age,cur.school);
@@ -1618,7 +1444,7 @@ function fillComment(d){
   const onTrack  = !isBehind && !isAhead; // 표준에 잘 맞음
 
   // 다음(상위) 레벨 목표: L2→L1→L0 순으로 한 단계 위
-  const upper={L2:'L1', L1:'L0', L0:'L0'}[best.id]||'L1';
+  const upper={L4:'L3', L3:'L2', L2:'L1', L1:'L0', L0:'L0'}[best.id]||'L1';
 
   // === 학습량 환산 (뒤처진 축 기준) ===
   const books=Math.max(1,Math.round(gap/2));
@@ -1734,126 +1560,9 @@ function fillComment(d){
     if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return false; }
   });
   // 인쇄 시도 차단 (Ctrl+P 우회 포함)
-  // 인쇄는 printRoadmap()에서 처리
+  window.addEventListener('beforeprint',function(){ document.body.style.display='none'; });
+  window.addEventListener('afterprint',function(){ document.body.style.display=''; });
   // (개발자도구 감지 기능은 모바일 오작동으로 제거함)
-
-function markPrintLevels(keepLevel){
-    var tbody=document.getElementById('tbody');
-    if(!tbody) return;
-    var rows=tbody.querySelectorAll('tr');
-    var curLevel=null, inPersonal=false;
-    rows.forEach(function(tr){
-      tr.classList.remove('print-hide-level');
-      if(tr.classList.contains('cur-divider')) inPersonal=true;
-      if(inPersonal) return;
-      var lvCell=tr.querySelector('td.level');
-      if(lvCell){
-        if(lvCell.classList.contains('l0')) curLevel='L0';
-        else if(lvCell.classList.contains('l1')) curLevel='L1';
-        else if(lvCell.classList.contains('l2')) curLevel='L2';
-      }
-      if(curLevel && curLevel!==keepLevel){
-        tr.classList.add('print-hide-level');
-      }
-    });
-    window.addEventListener('afterprint',function once(){
-      rows.forEach(function(tr){ tr.classList.remove('print-hide-level'); });
-      window.removeEventListener('afterprint',once);
-    });
-  }
-window.printRoadmap=function(){
-    var name=(typeof diagData!=='undefined' && diagData && diagData.name)?diagData.name:'학생';
-    var ct=document.getElementById('coverTitle');
-    var cd=document.getElementById('coverDate');
-    if(ct) ct.innerHTML=(name==='학생'?'학생':name+' 학생')+'의<br>로드맵 분석';
-    if(cd){
-      var d=new Date();
-      cd.textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 기준';
-    }
-    var bestId=(window.__bestLevel && window.__bestLevel.id) || 'L1';
-    markPrintLevels(bestId);
-    var _redrawPrint=function(){ try{ drawGuideOverlay(undefined); }catch(e){} };
-    window.addEventListener('beforeprint', _redrawPrint);
-    window.addEventListener('afterprint', function once2(){
-      window.removeEventListener('beforeprint', _redrawPrint);
-      window.removeEventListener('afterprint', once2);
-      setTimeout(function(){ try{ drawGuideOverlay(undefined); }catch(e){} }, 50);
-    });
-    window.print();
-  }
-
-  // ===== 컨설팅 모드 헬퍼 =====
-  function applyConsultantName(){
-    const n=document.getElementById('consultantNameInput').value.trim()||'학생';
-    if(typeof diagData!=='undefined'&&diagData) diagData.name=n;
-    document.getElementById('studentTitle').textContent=`${n} 학생의 현재 로드맵`;
-    const sub=document.getElementById('studentSubtitle');
-    if(sub) sub.textContent=`현재 사고력 ${diagData?.thinkingText||'-'}, 교과 ${diagData?.school||'-'} 기준으로 확인했습니다.`;
-    const ct=document.getElementById('coverTitle');
-    if(ct) ct.innerHTML=n+' 학생의<br>로드맵 분석';
-  }
-  function edCmd(cmd){ document.getElementById('consultantEditor')?.focus(); document.execCommand(cmd,false,null); }
-  function edHL(color){ document.getElementById('consultantEditor')?.focus(); document.execCommand('hiliteColor',false,color); }
-  function edFG(color){ document.getElementById('consultantEditor')?.focus(); document.execCommand('foreColor',false,color); }
-  function handleEditorKey(e){
-    if(e.key==='Enter'&&!e.shiftKey){
-      e.preventDefault();
-      document.execCommand('insertParagraph',false,null);
-    }
-  }
-  function insertConsultImg(input){
-    const file=input.files[0]; if(!file) return;
-    const reader=new FileReader();
-    reader.onload=function(ev){
-      document.getElementById('consultantEditor').focus();
-      document.execCommand('insertHTML',false,
-        `<img src="${ev.target.result}" style="max-width:100%;border-radius:8px;margin:8px 0;display:block">`);
-    };
-    reader.readAsDataURL(file);
-    input.value='';
-  }
-  let _autoSaveTimer=null;
-  function autoSaveConsultant(){
-    clearTimeout(_autoSaveTimer);
-    _autoSaveTimer=setTimeout(()=>{
-      const name=document.getElementById('consultantNameInput')?.value.trim()||'학생';
-      const html=document.getElementById('consultantEditor')?.innerHTML||'';
-      try{
-        localStorage.setItem(`gfield_c_${name}`,JSON.stringify({html,name,ts:new Date().toLocaleString('ko-KR')}));
-        const si=document.getElementById('saveIndicator');
-        if(si){si.classList.add('show');setTimeout(()=>si.classList.remove('show'),1800);}
-      }catch(e){}
-    },1500);
-  }
-  function saveConsultant(){
-    const name=document.getElementById('consultantNameInput')?.value.trim()||'학생';
-    const html=document.getElementById('consultantEditor')?.innerHTML||'';
-    try{
-      localStorage.setItem(`gfield_c_${name}`,JSON.stringify({html,name,ts:new Date().toLocaleString('ko-KR')}));
-      const si=document.getElementById('saveIndicator');
-      if(si){si.textContent='✓ 저장됨';si.classList.add('show');setTimeout(()=>si.classList.remove('show'),2000);}
-    }catch(e){ alert('저장 실패: '+e.message); }
-  }
-  function loadConsultant(){
-    const name=document.getElementById('consultantNameInput')?.value.trim();
-    if(!name){alert('학생 이름을 먼저 입력하세요.');return;}
-    const raw=localStorage.getItem(`gfield_c_${name}`);
-    if(!raw){alert(`"${name}" 학생의 저장된 코멘트가 없습니다.`);return;}
-    const data=JSON.parse(raw);
-    const ed=document.getElementById('consultantEditor');
-    if(ed) ed.innerHTML=data.html||'';
-    alert(`📂 "${name}" 불러왔습니다.\n저장 시각: ${data.ts}`);
-  }
-  function tryAutoLoad(name){
-    if(!name||name==='학생') return;
-    const raw=localStorage.getItem(`gfield_c_${name}`);
-    if(!raw) return;
-    try{
-      const data=JSON.parse(raw);
-      const ed=document.getElementById('consultantEditor');
-      if(ed&&data.html) ed.innerHTML=data.html;
-    }catch(e){}
-  }
 })();
 </script>
 </body></html>

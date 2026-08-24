@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GFIELD 색종이 접기 학습지</title>
+<link rel="stylesheet" href="./fold.css?v=pf-split-1">
+</head>
+<body>
+<!-- 지오메트리 랩으로 돌아가는 줄. 이 페이지는 랩의 "색종이 접기" 카드에서
+     딥링크로 열리므로, 랩으로 되돌아갈 길이 없으면 고른 것을 바꾸려는 사람이
+     브라우저 뒤로 가기에 기대야 한다. 헤더 톤(딥블루 · 흰 배경 · 얇은 테두리)
+     만 랩과 맞추고 아래 학습지 엔진은 그대로 둔다. -->
+<header class="lab-bar"><a class="lab-back" href="../../lab/index.html">← 지오메트리 랩</a><span class="lab-bar-title"><span class="gfield-chip">GFIELD</span>색종이 접기 학습지</span></header>
+<nav class="subject-switch" aria-label="학습지 영역"><a class="subject-tab" href="../">쌓기나무 학습지</a><a class="subject-tab active" href="./">색종이 접기 학습지</a><a class="subject-tab" href="../../origami-studio/">색종이 게임</a></nav>
+<div class="fold-app"><aside class="controls"><h1>GFIELD<br><span>색종이 접기 학습지</span></h1>
+<section class="control-group"><h2>유형</h2><div class="mode-grid" id="modeButtons" aria-label="색종이 접기 유형"></div><select class="mode-select" id="mode" aria-hidden="true">
+  <option value="hole2">구멍 개수 — 반으로 1~2번 접기</option>
+  <option value="hole3d">구멍 개수 — 대각선 접기</option>
+  <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
+  <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
+  <option value="foldtop">여러 번 접기 — 가장 위의 수 찾기</option>
+  <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
+  <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
+  <option value="punch">반원·원 펀치 — 모양별 개수</option>
+  <option value="numinv">수가 쓰인 색종이 — 목표 합이 되게 색칠하기 (역방향)</option>
+  <option value="unfoldshape">접어 자르고 펼친 모양 그리기 (4지선다)</option>
+  <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
+  <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
+  <option value="game-l1">게임 연계 1단계 — 한 번 접어 펼친 모양</option>
+  <option value="game-l2">게임 연계 2단계 — 대각선 대칭</option>
+  <option value="game-l3">게임 연계 3단계 — 자르거나 뚫을 위치</option>
+  <option value="game-l4">게임 연계 4단계 — 대칭 도형 완성</option>
+  <option value="game-l5">게임 연계 5단계 — 잘린 수의 합</option>
+  <option value="turn-l1">게임 연계 2코스 1단계 — 접힌 종이 뒤집기</option>
+  <option value="turn-l2">게임 연계 2코스 2단계 — 자른 선 되짚기</option>
+  <option value="turn-l3">게임 연계 2코스 3단계 — 모양 돌리기</option>
+  <option value="turn-l4">게임 연계 2코스 4단계 — 모양 뒤집기</option>
+  <option value="turn-l5">게임 연계 2코스 5단계 — 순서대로 추적하기</option>
+</select>
+</section>
+<section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
+<section class="control-group"><h2>문항 수</h2><select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="40">40문항</option><option value="50">50문항</option></select></section>
+<section class="control-group"><label><input type="checkbox" id="answers" checked> 정답지 포함</label></section>
+<section class="actions"><button onclick="generateSheet()">새로 만들기</button><button class="print" onclick="window.print()">인쇄</button></section></aside>
+<main class="preview-panel"><section class="type-preview"><div class="preview-head"><div><h2>유형 미리보기</h2><p>선택한 난이도의 실제 출제 예시입니다.</p></div><button class="secondary" onclick="previewProblem()">다른 문제</button></div><p id="info"></p><small class="src" id="src"></small><canvas id="cv" width="1300" height="520"></canvas></section><div id="sheetRoot"></div></main></div>
+<script src="./fold-1.js?v=pf-split-1"></script>
+<script src="./fold-2.js?v=pf-split-1"></script>
+<script src="./fold-3.js?v=pf-split-1"></script>
+<script src="./fold-4.js?v=pf-split-1"></script>
+</body>
+</html>

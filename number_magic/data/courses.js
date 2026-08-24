@@ -503,8 +503,137 @@ H9:{
       pool:[{t:'DV8',lv:2,n:4},{t:'DV8',lv:3,n:4},{t:'MX5',lv:1,n:6},{t:'MX3',lv:2,n:4},{t:'MX2',lv:2,n:4}],
       passRate:0.8 }
   ]
-}
+},
 
+/* ── 창의 전략 8단계 과정 (2026-08-23 재설계) ─────────── */
+
+A1:{
+  tier:'advance', order:11,
+  title:{ ko:'1단계 · 곱셈의 문', en:'Stage 1 · Gateway to Multiplication', zh:'第1阶 · 乘法之门' },
+  sessions:[
+    { magic:'A1',
+      drills:[{t:'ML23',lv:1,n:6},{t:'ML11',lv:1,n:4},{t:'ML21',lv:1,n:4}] },
+    { magic:'A1:deepen',
+      drills:[{t:'ML23',lv:2,n:6},{t:'ML11',lv:2,n:4},{t:'ML8',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'ML23',lv:2,n:6},{t:'ML21',lv:2,n:4},{t:'ML11',lv:1,n:4}] },
+    { test:true,
+      pool:[{t:'ML23',lv:1,n:5},{t:'ML23',lv:2,n:5},{t:'ML11',lv:1,n:4},{t:'ML21',lv:2,n:4}],
+      passRate:0.8 }
+  ]
+},
+
+A2:{
+  tier:'advance', order:12,
+  title:{ ko:'2단계 · 쪼개기', en:'Stage 2 · Splitting', zh:'第2阶 · 拆分' },
+  sessions:[
+    { magic:'A2',
+      drills:[{t:'ML22',lv:1,n:6},{t:'ML14',lv:1,n:4},{t:'ML13',lv:1,n:4}] },
+    { magic:'A2:deepen',
+      drills:[{t:'ML14',lv:2,n:6},{t:'ML13',lv:2,n:4},{t:'ML24',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'ML24',lv:2,n:6},{t:'ML14',lv:2,n:4},{t:'ML13',lv:2,n:4}] },
+    { test:true,
+      pool:[{t:'ML13',lv:2,n:5},{t:'ML14',lv:2,n:5},{t:'ML24',lv:1,n:4},{t:'ML24',lv:2,n:4}],
+      passRate:0.8 }
+  ]
+},
+
+A3:{
+  tier:'advance', order:13,
+  title:{ ko:'3단계 · 짝 만들기', en:'Stage 3 · Making Pairs', zh:'第3阶 · 配对' },
+  sessions:[
+    { magic:'A3',
+      drills:[{t:'ML12',lv:1,n:6},{t:'ML4',lv:2,n:4},{t:'ML23',lv:2,n:4}] },
+    { magic:'A3:deepen',
+      drills:[{t:'ML12',lv:2,n:6},{t:'ML12',lv:1,n:4},{t:'ML11',lv:2,n:4}] },
+    { magic:null,
+      drills:[{t:'ML12',lv:2,n:6},{t:'ML14',lv:2,n:4},{t:'ML12',lv:1,n:4}] },
+    { test:true,
+      pool:[{t:'ML12',lv:1,n:6},{t:'ML12',lv:2,n:6},{t:'ML11',lv:2,n:3},{t:'ML23',lv:2,n:3}],
+      passRate:0.8 }
+  ]
+},
+
+A4:{
+  tier:'advance', order:14,
+  title:{ ko:'4단계 · 반과 배', en:'Stage 4 · Halves and Doubles', zh:'第4阶 · 折半与翻倍' },
+  sessions:[
+    { magic:'A4',
+      drills:[{t:'ML16',lv:1,n:6},{t:'ML17',lv:1,n:4},{t:'ML12',lv:2,n:4}] },
+    { magic:'A4:deepen',
+      drills:[{t:'ML16',lv:2,n:6},{t:'ML17',lv:2,n:4},{t:'ML16',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'ML17',lv:2,n:6},{t:'ML16',lv:2,n:4},{t:'ML17',lv:1,n:4}] },
+    { test:true,
+      pool:[{t:'ML16',lv:1,n:5},{t:'ML16',lv:2,n:5},{t:'ML17',lv:1,n:5},{t:'ML17',lv:2,n:5}],
+      passRate:0.8 }
+  ]
+},
+
+A5:{
+  tier:'advance', order:15,
+  title:{ ko:'5단계 · 나눗셈 세 가지 길', en:'Stage 5 · Three Roads of Division', zh:'第5阶 · 除法三法' },
+  sessions:[
+    { magic:'A5',
+      drills:[{t:'DV9',lv:1,n:6},{t:'DV4',lv:1,n:4},{t:'ML16',lv:2,n:4}] },
+    { magic:'A5:deepen',
+      drills:[{t:'DV10',lv:1,n:6},{t:'DV9',lv:2,n:4},{t:'DV4',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'DV11',lv:1,n:6},{t:'DV10',lv:2,n:4},{t:'DV9',lv:2,n:4}] },
+    { test:true,
+      pool:[{t:'DV9',lv:2,n:5},{t:'DV10',lv:2,n:5},{t:'DV11',lv:1,n:5},{t:'DV11',lv:2,n:5}],
+      passRate:0.8 }
+  ]
+},
+
+A6:{
+  tier:'advance', order:16,
+  title:{ ko:'6단계 · 곱셈 알고리즘 여행', en:'Stage 6 · A Tour of Multiplication', zh:'第6阶 · 乘法算法之旅' },
+  sessions:[
+    { magic:'A6',
+      drills:[{t:'ML18',lv:1,n:6},{t:'ML15',lv:1,n:4},{t:'ML8',lv:2,n:4}] },
+    { magic:'A6:deepen',
+      drills:[{t:'ML15',lv:2,n:6},{t:'ML18',lv:2,n:4},{t:'ML9',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'ML9',lv:1,n:6},{t:'ML18',lv:2,n:4},{t:'ML15',lv:2,n:4}] },
+    { test:true,
+      pool:[{t:'ML15',lv:2,n:5},{t:'ML18',lv:2,n:5},{t:'ML9',lv:1,n:5},{t:'ML8',lv:2,n:5}],
+      passRate:0.8 }
+  ]
+},
+
+A7:{
+  tier:'advance', order:17,
+  title:{ ko:'7단계 · 수의 관계', en:'Stage 7 · Relationships Between Numbers', zh:'第7阶 · 数的关系' },
+  sessions:[
+    { magic:'A7',
+      drills:[{t:'ML19',lv:1,n:6},{t:'ML20',lv:1,n:4},{t:'ML11',lv:2,n:4}] },
+    { magic:'A7:deepen',
+      drills:[{t:'ML20',lv:2,n:6},{t:'ML19',lv:2,n:4},{t:'MX6',lv:1,n:4}] },
+    { magic:null,
+      drills:[{t:'MX6',lv:2,n:6},{t:'ML20',lv:2,n:4},{t:'ML19',lv:2,n:4}] },
+    { test:true,
+      pool:[{t:'ML19',lv:2,n:5},{t:'ML20',lv:2,n:5},{t:'MX6',lv:1,n:5},{t:'MX6',lv:2,n:5}],
+      passRate:0.8 }
+  ]
+},
+
+A8:{
+  tier:'advance', order:18,
+  title:{ ko:'8단계 · 분수와 소수', en:'Stage 8 · Fractions and Decimals', zh:'第8阶 · 分数与小数' },
+  sessions:[
+    { magic:'A8',
+      drills:[{t:'FR9',lv:1,n:6},{t:'FR9',lv:2,n:4},{t:'FR10',lv:1,n:4}] },
+    { magic:'A8:deepen',
+      drills:[{t:'FR10',lv:2,n:6},{t:'FR11',lv:1,n:4},{t:'FR11',lv:2,n:4}] },
+    { magic:null,
+      drills:[{t:'FR12',lv:1,n:6},{t:'DC4',lv:1,n:4},{t:'DC5',lv:1,n:4}] },
+    { test:true,
+      pool:[{t:'FR10',lv:2,n:5},{t:'FR11',lv:2,n:5},{t:'DC4',lv:2,n:5},{t:'DC5',lv:2,n:5}],
+      passRate:0.8 }
+  ]
+}
 }; // end NM_COURSES
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_COURSES;

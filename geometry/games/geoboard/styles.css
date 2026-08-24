@@ -1,0 +1,249 @@
+/* =========================================================================
+   점판 공작소 (Geoboard Studio)
+
+   Layout rules this file has to satisfy:
+   - The shell is the SAME four-row grid as games/mirror-manor and games/paper-fold
+     (topbar / mission / play area / dock) with the same row heights and the same
+     topbar column template, so exit, brand, LEVEL n + k / 5, mute and the level
+     button land exactly where a child already expects them.
+   - Nothing may scroll. `body{overflow:hidden}` plus `minmax(0,1fr)` on the play
+     row means the board is the only flexible thing, and its WIDTH is derived from a
+     viewport-height budget (--board-h) so its height can never exceed the row it
+     lives in. 844x390 and 740x360 landscape and 1440x900 desktop are the sizes the
+     breakpoints are tuned for.
+   - Finger targets: the peg circle drawn on screen is small, but an invisible
+     .peg-hit circle of radius 9.5 viewBox units sits over it. The compact landscape
+     rows leave the board about 240-270px wide on a phone, keeping each hit target
+     comfortably above 44px without letting neighbouring targets overlap.
+   - Visual identity is a sunlit workshop yard: pale birch board, brass pegs and a
+     bright rubber band. Deliberately unlike the manor's night-blue walls.
+   ========================================================================= */
+
+:root {
+  --navy: #1d3557;
+  --board-wood: #f6efdf;
+  --brass: #d8a13c;
+  --band: #e2574c;
+  --band-dark: #a8352c;
+  --ink: #22303f;
+  --board-h: 60vh;
+  --app-dvh: 100vh;
+  font-family: Arial, "Noto Sans KR", sans-serif;
+}
+@supports (height: 100dvh) { :root { --app-dvh: 100dvh } }
+
+* { box-sizing: border-box }
+body { margin: 0; background: #e7ecf3; color: var(--ink); overflow: hidden }
+button, a { font: inherit }
+button { cursor: pointer }
+
+.yard-shell {
+  height: var(--app-dvh);
+  display: grid;
+  grid-template-rows: 56px 72px minmax(0, 1fr) 104px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f2f6ee, #dfe7d6);
+}
+
+/* ------------------------------------------------------------------- topbar */
+.topbar {
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto 40px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 12px;
+  color: #fff;
+  background: #2f4f74;
+  box-shadow: 0 3px 12px #1c2f4544;
+}
+.icon-button, .level-button { min-height: 40px; border: 1px solid #ffffff88; border-radius: 6px; background: #ffffff14; color: #fff; font-weight: 800 }
+.icon-button.muted { opacity: .62 }
+.exit { display: grid; place-items: center; text-decoration: none; font-size: 24px }
+.brand { display: flex; gap: 7px; align-items: baseline; min-width: 0 }
+.brand strong { font-size: 18px }
+.brand small { opacity: .76; font-weight: 700 }
+.progress { display: flex; gap: 8px; padding: 7px 10px; border-radius: 6px; background: #0002; font-size: 12px }
+.progress strong { color: #ffe38c }
+
+/* ------------------------------------------------------------------ mission */
+.mission { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 9px 18px; border-bottom: 1px solid #ccd6c6; background: #fbfaf6cc }
+.mission > div { display: flex; align-items: center; gap: 11px }
+.mission h1, .mission p { margin: 0 }
+.mission h1 { font-size: 21px; color: var(--navy) }
+.mission span { color: var(--brass); font-weight: 900; letter-spacing: 2px }
+.mission p { max-width: 58%; font-size: 14px; font-weight: 700; text-align: right }
+
+/* ---------------------------------------------------------------- play area */
+.play-area { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 10px; min-height: 0; padding: 10px 12px }
+.board-panel { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #c8d0c2; border-radius: 8px; background: #fdfcf8aa; box-shadow: 0 8px 24px #2b3d551c, inset 0 1px #fff }
+.board-stage { display: grid; place-items: center; width: 100%; height: 100%; padding: 6px }
+
+/* The board's WIDTH is computed from a height budget, so the derived height can
+   never overflow the play row. Defining width (not height) keeps aspect-ratio
+   authoritative in every browser. The board is square, so cols == rows. */
+.board {
+  width: min(100%, var(--board-h), 560px);
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  filter: drop-shadow(0 10px 20px #33403824);
+  /* Without this a drag across the pegs scrolls the page on a phone instead of
+     tapping, and the shell would appear to move even though nothing overflows. */
+  touch-action: none;
+}
+.board-face { fill: var(--board-wood); stroke: #c9b48a; stroke-width: 1.2 }
+
+/* --------------------------------------------------------------- pegs, band */
+.peg { fill: #8a6a3a; stroke: #f7f1e2; stroke-width: .9 }
+.peg.model { fill: #a08a64; stroke: #fffdf6; stroke-width: .7 }
+/* Transparent fill (not `fill:none`) is what makes an SVG circle hit-testable
+   while staying invisible — this is the 30px+ finger target. */
+.peg-hit { fill: transparent; cursor: pointer; outline: none }
+.peg-hit:focus-visible { fill: #ffd77455; stroke: var(--navy); stroke-width: 1.4 }
+
+.band { stroke: var(--band); stroke-width: 2.6; stroke-linecap: round; fill: none }
+.band.solved { stroke: #2f8f5b }
+.band.ghost { stroke-dasharray: 4 3 }
+.band.bad { stroke: #c8261a; stroke-width: 3.4; animation: flash .3s steps(2, end) 2 }
+.band-fill { fill: #e2574c26; stroke: none }
+.band-fill.solved { fill: #2f8f5b26 }
+.band-fill.bad { fill: #c8261a2e }
+.band-node { fill: var(--band-dark); stroke: #fff; stroke-width: 1 }
+.band-node.start { fill: #f0a92f; stroke: #7a4d05; stroke-width: 1.2 }
+.band-node.solved { fill: #2f8f5b }
+.peg-flag { fill: none; stroke: #c8261a; stroke-width: 1.8; animation: flash .3s steps(2, end) 2 }
+@keyframes flash { 50% { opacity: .15 } }
+
+/* ---------------------------------------------------------------- tool rail */
+.tool-panel { display: grid; align-content: start; gap: 8px; min-width: 0 }
+.model-card { margin: 0; display: grid; gap: 4px; padding: 6px; border: 1px solid #b6c0a9; border-radius: 8px; background: #fffdf5; box-shadow: 0 3px #c8cbb6 }
+.model-card figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px; font-size: 10px; font-weight: 800; color: #5d6a54 }
+.model-card figcaption b { color: var(--navy) }
+.model-board { width: 100%; aspect-ratio: 1 / 1; display: block }
+.model-face { fill: #fbf6e8; stroke: #d9cba9; stroke-width: 1 }
+.model-band .band { stroke: #2a6fa8; stroke-width: 3 }
+.model-band .band-fill { fill: #2a6fa826 }
+.model-band .band-node { fill: #1b4c78; stroke: #fff; stroke-width: 1 }
+.model-band .band-node.start { fill: #f0a92f; stroke: #7a4d05 }
+.tool-panel button { min-height: 46px; display: grid; place-items: center; padding: 6px; border: 1px solid #a9b6a0; border-radius: 7px; background: #f4f2e5; color: #3b4a3e; font-size: 12px; font-weight: 900; box-shadow: 0 3px #a7b39c }
+
+/* --------------------------------------------------------------------- dock */
+.answer-dock { z-index: 8; display: grid; grid-template-columns: minmax(160px, 1.4fr) minmax(0, 1fr) 130px; gap: 10px; align-items: center; padding: 9px 118px 9px 14px; border-top: 1px solid #c6cebe; background: #fbfaf6ee; box-shadow: 0 -5px 18px #2b3d551d }
+.answer-dock p { margin: 0; font-size: 14px; font-weight: 800 }
+.shape-stats { display: flex; gap: 8px; min-width: 0; overflow: hidden }
+.shape-stats b { padding: 6px 11px; border: 1px solid #b9c4ae; border-radius: 99px; background: #fffdf5; color: var(--navy); font-size: 13px; white-space: nowrap }
+.next-button { min-height: 52px; padding: 8px 14px; border: 0; border-radius: 7px; background: #2a7f8f; color: #fff; font-weight: 900; box-shadow: 0 3px #17606d }
+
+/* ------------------------------------------------------------------- Cubi */
+.cubi-sprite { display: block; width: 92px; height: 92px; background: url("../../world-map/assets/geometry-characters.png") 0 0 / 300% 300% no-repeat }
+.cubi-guide { position: absolute; z-index: 9; right: 8px; bottom: 4px; width: 110px; pointer-events: none }
+.cubi-guide .cubi-sprite { margin-left: auto; filter: drop-shadow(0 6px 5px #1d355744) }
+.guide-bubble { position: absolute; right: 84px; bottom: 56px; width: 216px; padding: 9px 11px; border: 1px solid #a9b6a0; border-radius: 7px; background: #fffdf7; box-shadow: 0 5px 14px #33403824; font-size: 12px; font-weight: 800; opacity: 0; transform: translateY(5px); transition: .2s }
+.cubi-guide.show .guide-bubble { opacity: 1; transform: none }
+
+/* ----------------------------------------------------------------- dialogs */
+.dialog { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 14px; background: #16273aaa; backdrop-filter: blur(5px) }
+.dialog[hidden] { display: none }
+.dialog > section { width: min(760px, 94vw); max-height: 90vh; overflow: auto; border-radius: 10px; background: #fdfcf8; box-shadow: 0 20px 60px #0005 }
+.dialog header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #d6dbe3; background: #fdfcf8 }
+.dialog h2 { margin: 0; color: var(--navy) }
+.dialog header button { width: 36px; height: 36px; border: 1px solid #c3ccd9; border-radius: 6px; background: #fff }
+.tutorial-card { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 12px; padding: 18px }
+.tutorial-card .cubi-sprite { width: 140px; height: 140px }
+.tutorial-card p { font-size: 19px; font-weight: 800; line-height: 1.45 }
+.tutorial-card button, .complete-actions > * { min-height: 46px; border: 0; border-radius: 7px; background: #2f4f74; color: #fff; font-weight: 900; text-decoration: none }
+.tutorial-dots { display: flex; gap: 6px; margin: 12px 0 }
+.tutorial-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d5d8dd }
+.tutorial-dots i.active { background: var(--brass) }
+.level-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; padding: 12px }
+.level-card { min-width: 0; min-height: 155px; display: grid; align-content: start; gap: 7px; padding: 11px; border: 1px solid #d0d6df; border-radius: 7px; background: #fff; text-align: left }
+.level-card span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brass); color: #4a3200; font-weight: 900 }
+.level-card strong { color: var(--navy) }
+.level-card small { color: #66717f; line-height: 1.35 }
+.level-card[disabled] { opacity: .5; cursor: default }
+.level-card em { color: #a3541f; font-size: 11px; font-style: normal; font-weight: 900 }
+.complete-card { width: min(450px, 94vw) !important; padding: 20px; text-align: center }
+.complete-card .cubi-sprite { width: 118px; height: 118px; margin: 0 auto }
+.complete-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.complete-actions > * { display: grid; place-items: center; padding: 8px }
+.complete-actions a { grid-column: 1 / -1; background: #fff; color: var(--navy); border: 2px solid var(--navy) }
+
+/* --------------------------------------------------------- success / toast */
+.success { position: fixed; z-index: 80; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0 }
+.success.show { animation: success 1.15s ease }
+.success span { position: absolute; width: min(70vw, 700px); aspect-ratio: 1; border-radius: 50%; background: repeating-conic-gradient(#ffe0a8 0 7deg, transparent 7deg 15deg); opacity: .5 }
+.success strong { z-index: 1; color: #fff2a8; font-size: clamp(42px, 10vw, 105px); text-shadow: 0 6px #2f4f74, 0 13px #16283f, 0 18px 22px #0005; transform: rotate(-4deg) }
+@keyframes success { 0% { opacity: 0; transform: scale(.2) } 15%, 76% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(1.15) } }
+/* pointer-events:none matters: the toast is a wide banner that can sit over the top
+   of the board, and a status message must never swallow a child's tap. */
+.toast { position: fixed; z-index: 120; top: 78px; left: 50%; max-width: 82vw; padding: 9px 14px; border-radius: 99px; background: var(--navy); color: #fff; font-size: 13px; font-weight: 800; text-align: center; opacity: 0; transform: translate(-50%, -10px); transition: .2s; pointer-events: none }
+.toast.show { opacity: 1; transform: translate(-50%, 0) }
+
+/* ------------------------------------------------------------- breakpoints */
+@media (max-width: 800px) {
+  .brand small { display: none }
+  .mission { padding: 7px 11px }
+  .mission h1 { font-size: 17px }
+  .mission p { font-size: 12px }
+  .play-area { grid-template-columns: minmax(0, 1fr) 104px; padding: 7px }
+  .tool-panel { gap: 5px }
+  .tool-panel button { min-height: 42px; font-size: 11px }
+  .answer-dock { grid-template-columns: 1.3fr 1fr 106px; padding-right: 90px }
+  .answer-dock p { font-size: 12px }
+  .cubi-guide { width: 84px }
+  .cubi-guide .cubi-sprite { width: 74px; height: 74px }
+  .guide-bubble { right: 64px; width: 184px }
+  .level-list { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+}
+
+/* Mobile landscape (the 844x390 and 740x360 targets). Everything on one screen. */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --board-h: calc(var(--app-dvh) - 120px) }
+  .yard-shell { grid-template-rows: 40px 32px minmax(0, 1fr) 48px }
+  .topbar { padding: 3px 8px }
+  .topbar > * { min-height: 34px }
+  .brand strong { font-size: 15px }
+  .mission { padding: 2px 10px }
+  .mission h1 { font-size: 14px }
+  .mission p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px }
+  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 7px; padding: 0 7px }
+  .board-stage { padding: 0 }
+  .model-card { padding: 4px }
+  .model-card figcaption { font-size: 9px }
+  .tool-panel { gap: 4px }
+  .tool-panel button { min-height: 36px; font-size: 11px }
+  .answer-dock { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 92px; padding: 2px 70px 2px 8px }
+  .answer-dock p { font-size: 11px; line-height: 1.2 }
+  .shape-stats b { padding: 4px 8px; font-size: 11px }
+  .next-button { min-height: 42px; font-size: 12px }
+  .cubi-guide .cubi-sprite { width: 56px; height: 56px }
+  .guide-bubble { display: none }
+  /* Keep the feedback banner inside the mission bar so it never covers the board. */
+  .toast { top: 46px; font-size: 11px; padding: 5px 11px }
+  .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }
+  .level-card { min-height: 96px }
+  .tutorial-card { grid-template-columns: 110px 1fr }
+  .tutorial-card .cubi-sprite { width: 100px; height: 100px }
+  .tutorial-card p { font-size: 15px }
+}
+
+@media (orientation: portrait) and (max-width: 600px) {
+  :root { --board-h: 44vh }
+  .yard-shell { grid-template-rows: 52px 72px minmax(0, 1fr) auto }
+  .topbar { grid-template-columns: 36px 1fr auto 36px }
+  .level-button { display: none }
+  .mission { display: block }
+  .mission p { max-width: none; margin-top: 3px; text-align: left }
+  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 6px; padding: 6px }
+  .board-stage { place-items: start center }
+  .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
+  .cubi-guide { position: fixed }
+  .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .tutorial-card { grid-template-columns: 96px 1fr }
+  .tutorial-card .cubi-sprite { width: 90px; height: 90px }
+  .tutorial-card p { font-size: 15px }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important }
+}

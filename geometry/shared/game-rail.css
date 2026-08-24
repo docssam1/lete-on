@@ -1,0 +1,114 @@
+/* =========================================================================
+   Shared right-hand rail for the eight Cube Town template games.
+
+   Loaded AFTER each game's own styles.css, so it wins on equal specificity.
+
+   The stock rail was a 46-52px sliver of eight stacked buttons. On a phone in
+   landscape (812x375) that made every Korean label wrap mid-word — "다음 문 제" —
+   and the level control was hidden outright, so a child could never see or
+   change the level once inside a game.
+
+   Here the rail becomes a two-column pad: wide enough for the labels to read
+   on one line, short enough that all of it fits above the fold on a 375px-tall
+   screen. Layout mirrors 똑같이 쌓기's control strip so every game feels the same.
+
+       [ 🔊 ] [ 힌트 ]
+       [   레벨 선택   ]
+       [ 앞  ] [ 오른쪽 ]
+       [ 위  ] [ 속보기 ]
+       [   다음 문제   ]
+       [처음부터][나가기]
+   ========================================================================= */
+
+.action-bar {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: none;
+  grid-auto-rows: minmax(34px, auto);
+  align-content: start;
+  gap: 6px;
+  width: 106px;
+  padding: 7px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Korean must never break mid-word: keep-all wraps between words only, which
+   is what turned "다음 문제" into "다음 문 / 제" in the old narrow rail. */
+.action-bar button,
+.action-bar .exit-action {
+  min-height: 38px;
+  padding: 5px 4px;
+  font-size: 12px;
+  line-height: 1.15;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+/* Reading order top to bottom. Everything spans one column unless it is a
+   primary action, which gets the full width. */
+.action-bar > * { order: 20; grid-column: span 1; }
+.action-bar .icon-action { order: 1; min-height: 32px; font-size: 18px; }
+.action-bar #hint { order: 2; }
+.action-bar .rail-level { order: 3; grid-column: span 2; }
+.action-bar [data-view="front"] { order: 4; }
+.action-bar [data-view="right"],
+.action-bar [data-view="side"] { order: 5; }
+.action-bar [data-view="top"] { order: 6; }
+.action-bar .xray-mobile { order: 7; }
+.action-bar #next { order: 8; grid-column: span 2; min-height: 46px; font-size: 14px; }
+.action-bar #reset { order: 9; }
+.action-bar .exit-action { order: 10; }
+
+.action-bar .mobile-view-action { display: grid; place-items: center; gap: 2px; }
+.action-bar .mobile-view-action b { font-size: 15px; line-height: 1; }
+.action-bar .mobile-view-action span { font-size: 11px; line-height: 1.1; }
+/* The x-ray labels are the longest in the set ("빈 자리 보기"), so they get a
+   size of their own and are allowed to run to two lines. */
+.action-bar .xray-mobile { min-height: 42px; }
+.action-bar .xray-mobile span { font-size: 9px; }
+.action-bar .exit-action small { font-size: 9px; }
+
+/* The level control the games hide inside the panel header, brought out where
+   a child on a phone can actually reach it. */
+.action-bar .rail-level {
+  border: 1px solid #b07d3f;
+  border-radius: 7px;
+  background: linear-gradient(#ffe6ac, #f0c274);
+  color: #4a2916;
+  font-weight: 800;
+}
+
+/* The rail is fixed-position, so the shell and the mascot have to step aside
+   by exactly the extra width it just gained (52 -> 106). */
+.game-shell { padding-right: 118px; }
+.docssam {
+  right: calc(116px + env(safe-area-inset-right));
+  pointer-events: none;
+}
+
+/* Cubi is decorative during play. Let taps pass through the sprite and keep
+   every answer control visibly above it, even on short landscape phones. */
+.docssam .cubi-sprite { pointer-events: none; }
+.answer-panel button {
+  position: relative;
+  z-index: 25;
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .action-bar {
+    top: 5px;
+    right: max(4px, env(safe-area-inset-right));
+    bottom: 5px;
+    gap: 5px;
+    width: 100px;
+    padding: 6px;
+  }
+  .action-bar button,
+  .action-bar .exit-action { min-height: 36px; font-size: 11px; }
+  .action-bar #next { min-height: 42px; font-size: 13px; }
+  .game-shell { padding: 5px calc(106px + env(safe-area-inset-right)) 5px max(5px, env(safe-area-inset-left)); }
+  .docssam { right: calc(110px + env(safe-area-inset-right)); bottom: 4px; }
+  /* Leave room for the wider rail so the level card list is never underneath it. */
+  .dialog { padding: 6px 112px 6px 6px; }
+}

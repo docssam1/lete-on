@@ -22,11 +22,11 @@ window.NM_CURRICULUM = {
         en:'Know, count, share, and compare numbers — your first steps getting friendly with them',
         zh:'认识、数数、分配、比较——第一次和数字做朋友的地方'},
       levels:[
-        { id:'NL-1', title:{ko:'수 세기와 개수',en:'Counting & Quantity',zh:'数数与数量'}, units:['NL-1-1'], available:false },
-        { id:'NL-2', title:{ko:'순서와 뛰어세기',en:'Order & Skip-Counting',zh:'顺序与跳数'}, units:['NL-2-1'], available:false },
-        { id:'NL-3', title:{ko:'순서수와 크기 비교',en:'Ordinals & Comparing Size',zh:'序数与大小比较'}, units:['NL-3-1'], available:false },
-        { id:'NL-4', title:{ko:'짝수·홀수와 논리',en:'Odd, Even & Logic',zh:'奇偶数与逻辑'}, units:['NL-4-1'], available:false },
-        { id:'NL-5', title:{ko:'양의 수·순서수 활용',en:'Using Cardinals & Ordinals',zh:'基数与序数的运用'}, units:['NL-5-1'], available:false }
+        { id:'NL-1', title:{ko:'수 세기와 개수',en:'Counting & Quantity',zh:'数数与数量'}, units:['N-01','N-06','N-07'], available:true },
+        { id:'NL-2', title:{ko:'순서와 뛰어세기',en:'Order & Skip-Counting',zh:'顺序与跳数'}, units:['N-02','N-09','N-11'], available:true },
+        { id:'NL-3', title:{ko:'순서수와 크기 비교',en:'Ordinals & Comparing Size',zh:'序数与大小比较'}, units:['N-03','N-05','N-12'], available:true },
+        { id:'NL-4', title:{ko:'짝수·홀수와 논리',en:'Odd, Even & Logic',zh:'奇偶数与逻辑'}, units:['N-08','N-13','N-15'], available:true },
+        { id:'NL-5', title:{ko:'양의 수·순서수 활용',en:'Using Cardinals & Ordinals',zh:'基数与序数的运用'}, units:['N-04','N-10','N-14'], available:true }
       ]
     },
 
@@ -88,56 +88,66 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== ADVANCE · 중급 ===== */
+    /* ===== ADVANCE · 중급 (구구 기초 + 창의 전략 8단계) ===== */
     {
       id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
-      title:'ADVANCE', subtitle:{ko:'중급 · 분배법칙·곱셈',en:'Intermediate · Distributive Law & Multiplication',zh:'中级 · 分配律与乘法'},
+      title:'ADVANCE', subtitle:{ko:'중급 · 구구 기초 + 창의 전략 8단계',en:'Intermediate · Times Tables + Creative Math A–F',zh:'中级 · 口诀基础 + 创意数学A~F'},
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
-      desc:{ko:'수를 나누어 곱하는 힘 — 분배법칙과 곱셈 공식으로',
-        en:'The power of splitting numbers to multiply — through the distributive law and multiplication formulas',
-        zh:'拆分数字来做乘法的力量——通过分配律与乘法公式'},
+      desc:{ko:'곱셈의 기초 구구부터 창의 전략까지 — 분해·조합·패턴으로 수를 정복해요',
+        en:'From times-table foundations to creative strategies — conquer numbers through decomposition, combination, and patterns',
+        zh:'从口诀基础到创意策略——通过分解、组合和规律征服数字'},
       levels:[
-        {
-          id:'A', available:true,
-          title:{ko:'A단계 · 배와 반',en:'Level A · Doubling & Halving',zh:'A阶段 · 翻倍与减半'},
-          units:['B-01','B-02','B-03']
-        },
-        {
-          id:'B', available:true,
-          title:{ko:'B단계 · 2단·5단',en:'Level B · 2s & 5s Times Tables',zh:'B阶段 · 2和5的口诀'},
-          units:['B-04','B-05','B-06']
-        },
-        {
-          id:'C', available:true,
-          title:{ko:'C단계 · 3단·6단',en:'Level C · 3s & 6s Times Tables',zh:'C阶段 · 3和6的口诀'},
-          units:['B-07','B-08','B-09']
-        },
-        {
-          id:'D', available:true,
-          title:{ko:'D단계 · 4단·8단',en:'Level D · 4s & 8s Times Tables',zh:'D阶段 · 4和8的口诀'},
-          units:['B-10','B-11','B-12']
-        },
-        {
-          id:'E', available:true,
-          title:{ko:'E단계 · 7단·9단',en:'Level E · 7s & 9s Times Tables',zh:'E阶段 · 7和9的口诀'},
-          units:['B-13','B-14','B-15']
-        },
-        {
-          id:'F', available:true,
-          title:{ko:'F단계 · 구구 총정리',en:'Level F · Full Tables Review',zh:'F阶段 · 口诀大总结'},
-          units:['B-16','B-17']
-        },
-        {
-          id:'G', available:true,
-          title:{ko:'G단계 · 몇십·몇백 곱',en:'Level G · Tens & Hundreds ×',zh:'G阶段 · 整十整百乘法'},
-          units:['B-18','B-19','B-20']
-        },
-        {
-          id:'H', available:true,
-          title:{ko:'H단계 · 두 자리×한 자리',en:'Level H · 2-Digit × 1-Digit',zh:'H阶段 · 两位乘一位'},
-          units:['B-21','B-22','B-23']
-        }
+        /* ── 구구 기초 (B-01~B-23) — 중급 진입 전 구구단 탄탄하게 ── */
+        { id:'구구A', available:true,
+          title:{ko:'구구 A · 배와 반',en:'Times A · Doubling & Halving',zh:'口诀A · 翻倍与减半'},
+          units:['B-01','B-02','B-03'] },
+        { id:'구구B', available:true,
+          title:{ko:'구구 B · 2단·5단',en:'Times B · 2s & 5s',zh:'口诀B · 2和5的口诀'},
+          units:['B-04','B-05','B-06'] },
+        { id:'구구C', available:true,
+          title:{ko:'구구 C · 3단·6단',en:'Times C · 3s & 6s',zh:'口诀C · 3和6的口诀'},
+          units:['B-07','B-08','B-09'] },
+        { id:'구구D', available:true,
+          title:{ko:'구구 D · 4단·8단',en:'Times D · 4s & 8s',zh:'口诀D · 4和8的口诀'},
+          units:['B-10','B-11','B-12'] },
+        { id:'구구E', available:true,
+          title:{ko:'구구 E · 7단·9단',en:'Times E · 7s & 9s',zh:'口诀E · 7和9的口诀'},
+          units:['B-13','B-14','B-15'] },
+        { id:'구구F', available:true,
+          title:{ko:'구구 F · 구구 총정리',en:'Times F · Full Tables Review',zh:'口诀F · 口诀大总结'},
+          units:['B-16','B-17'] },
+        { id:'구구G', available:true,
+          title:{ko:'구구 G · 몇십·몇백 곱',en:'Times G · Tens & Hundreds ×',zh:'口诀G · 整十整百乘法'},
+          units:['B-18','B-19','B-20'] },
+        { id:'구구H', available:true,
+          title:{ko:'구구 H · 두 자리×한 자리',en:'Times H · 2-Digit × 1-Digit',zh:'口诀H · 两位乘一位'},
+          units:['B-21','B-22','B-23'] },
+        /* ── 창의 전략 8단계 (난이도순 재설계 · 2026-08-23) ── */
+        { id:'1', available:true,
+          title:{ko:'1단계 · 곱셈의 문',en:'Stage 1 · Gateway to Multiplication',zh:'第1阶 · 乘法之门'},
+          units:['C-01','C-26','C-09'] },
+        { id:'2', available:true,
+          title:{ko:'2단계 · 쪼개기',en:'Stage 2 · Splitting',zh:'第2阶 · 拆分'},
+          units:['C-07','C-08','C-06','C-27'] },
+        { id:'3', available:true,
+          title:{ko:'3단계 · 짝 만들기',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
+          units:['C-02','C-04','C-03'] },
+        { id:'4', available:true,
+          title:{ko:'4단계 · 반과 배',en:'Stage 4 · Halves and Doubles',zh:'第4阶 · 折半与翻倍'},
+          units:['C-16','C-17','C-28','C-29'] },
+        { id:'5', available:true,
+          title:{ko:'5단계 · 나눗셈 세 가지 길',en:'Stage 5 · Three Roads of Division',zh:'第5阶 · 除法三法'},
+          units:['C-18','C-19','C-20'] },
+        { id:'6', available:true,
+          title:{ko:'6단계 · 곱셈 알고리즘 여행',en:'Stage 6 · A Tour of Multiplication',zh:'第6阶 · 乘法算法之旅'},
+          units:['C-15','C-13','C-10','C-11','C-14','C-30'] },
+        { id:'7', available:true,
+          title:{ko:'7단계 · 수의 관계',en:'Stage 7 · Relationships Between Numbers',zh:'第7阶 · 数的关系'},
+          units:['C-23','C-24','C-12','C-05'] },
+        { id:'8', available:true,
+          title:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
+          units:['C-21','C-22','C-31','C-32','C-25','C-33'] },
       ]
     },
 

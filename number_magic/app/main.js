@@ -11,6 +11,19 @@
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
 
+/* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
+function genProblem(cfg, level){
+  const key=cfg.generator;
+  const g=(GEN||{})[key];
+  if(g) return g({level});
+  const tg=(window.NM_TGEN||{})[key];
+  if(tg){
+    const rng=NM_RNG.mulberry32((Math.random()*2147483647)|0);
+    return tg(Object.assign({level},cfg.params||{}),rng);
+  }
+  return {prompt:{ko:'생성기 없음',en:'No generator',zh:'无生成器'},tex:'?',answer:0,answerType:'number'};
+}
+
 /* ---------- i18n ---------- */
 const I18N={
   ko:{ appName:'수의 마법', start:'시작하기', back:'← 뒤로', next:'다음 →',
@@ -135,6 +148,8 @@ function say(text){
   _sayWeb(text,lang);
 }
 function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
+window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
+window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
@@ -205,6 +220,7 @@ function charChipHTML(){
 }
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
+  if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
     screenWelcome();
@@ -220,6 +236,9 @@ function render(){
   $('#langBtn').onclick=cycleLang;
   $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
+  else if(S.view==='roadmap')screenRoadmap();
+  else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
+  else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -427,6 +446,15 @@ function screenTown(){
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-road-banner" id="roadBanner">
+      <button class="nm-road-banner-btn" id="roadEnter">
+        🗺️ ${S.lang==='ko'?'학습 여행':S.lang==='en'?'Learning Journey':'学习之旅'}
+        <span class="nm-road-next">${roadmapNextLabel()}</span>
+      </button>
+      <button class="nm-road-banner-btn" id="gradeEnter" style="margin-top:6px;background:#e8f0f8;color:#2a4a7a;font-size:13px;padding:7px 16px">
+        🏫 ${S.lang==='ko'?'학년별 교실':S.lang==='en'?'Grade Rooms':'按年级'}
+      </button>
+    </div>
     <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
@@ -441,6 +469,419 @@ function screenTown(){
       </div>
     </div>`;
   townCleanup=initTownWorld(scr);
+  const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
+  const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
+}
+
+/* ─── roadmap 헬퍼 ─── */
+function roadmapNextLabel(){
+  if(!window.NM_ROADMAP)return '';
+  const chapters=NM_ROADMAP.chapters;
+  for(const ch of chapters){
+    for(const uid of (ch.units||[])){   /* 게임 챕터(G0·G1)는 units 없음 */
+      if(!stepDone(uid,'stamp')) return S.lang==='ko'?`이어서: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='en'?`Continue: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='zh'?`继续: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:'';
+    }
+  }
+  return S.lang==='ko'?'🏆 전체 완료!':S.lang==='en'?'🏆 All done!':'🏆 全部完成！';
+}
+
+/* ─── screenRoadmap: 징검다리 길 ─── */
+function screenRoadmap(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  if(!window.NM_ROADMAP){scr.innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
+  const road=NM_ROADMAP;
+  const nextId=findNextRoadUnit();
+  let html=`<div class="nm-road-wrap">
+    <div class="nm-road-header">
+      <button class="nm-back" id="roadBack">← ${t('back')}</button>
+      <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
+      <div class="nm-road-sub">${L(road.subtitle)}</div>
+    </div>
+    <div class="nm-road-path">`;
+
+  road.chapters.forEach((ch,ci)=>{
+    /* 미니게임 챕터 */
+    if(ch.game){
+      const played=S.gamesPlayed&&S.gamesPlayed[ch.game];
+      html+=`<div class="nm-road-gamestone ${played?'played':''}" data-game="${ch.game}">
+        <div class="nm-road-gamestone-icon">${ch.icon}</div>
+        <div class="nm-road-gamestone-title">${L(ch.theme)}</div>
+        ${ch.tip?`<div class="nm-road-gamestone-tip">💡 ${L(ch.tip)}</div>`:''}
+      </div>`;
+      if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+      return;
+    }
+    const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
+    html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
+      <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
+        ${ch.edu?`<span class="nm-edu-badge">${L(ch.edu)}</span>`:''}
+      </div>`;
+    (ch.units||[]).forEach((uid,ui)=>{
+      const u=UNITS[uid];
+      if(!u)return;
+      const done=stepDone(uid,'stamp');
+      const isNext=uid===nextId;
+      const cls='nm-road-stone'+(done?' done':isNext?' next':'');
+      html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
+        ${done?'⭐':''}
+        <div class="nm-road-stone-title">${L(u.title)}</div>
+        ${isNext?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
+      </div>`;
+    });
+    if(ch.tip){
+      html+=`<div class="nm-road-tip">💡 ${L(ch.tip)}</div>`;
+    }
+    html+=`</div>`;
+    if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+  });
+
+  html+=`</div></div>`;
+  scr.innerHTML=html;
+
+  $('#roadBack').onclick=()=>{S.view='town';save();render();};
+
+  scr.querySelectorAll('.nm-road-stone[data-uid]').forEach(el=>{
+    el.onclick=()=>{
+      const uid=el.dataset.uid;
+      const done=stepDone(uid,'stamp');
+      const isNext=uid===findNextRoadUnit();
+      if(done||isNext){enterRoadUnit(uid);return;}
+      /* 건너뛰기 확인 */
+      const u=UNITS[uid];
+      const msg=S.lang==='ko'?`먼저 앞 걸음을 추천해요.\n그래도 "${L(u.title)}"를 할래요?`:
+        S.lang==='en'?`We recommend the earlier steps first.\nStill want to do "${L(u.title)}"?`:
+        `建议先完成前面的步骤。\n还是要做"${L(u.title)}"吗？`;
+      if(confirm(msg))enterRoadUnit(uid);
+    };
+  });
+  /* 미니게임 스톤 클릭 */
+  scr.querySelectorAll('.nm-road-gamestone[data-game]').forEach(el=>{
+    el.onclick=()=>{
+      S.miniGameId=el.dataset.game;S.miniGame=null;
+      S._fromRoadmap=true;S.view='minigame';save();render();
+    };
+  });
+}
+
+function findNextRoadUnit(){
+  if(!window.NM_ROADMAP)return null;
+  for(const ch of NM_ROADMAP.chapters){
+    if(!ch.units)continue;
+    for(const uid of ch.units){
+      if(!stepDone(uid,'stamp'))return uid;
+    }
+  }
+  return null;
+}
+
+function enterRoadUnit(uid){
+  S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
+  S._fromRoadmap=true;
+  save();render();
+}
+
+/* ─── Make-10 미니게임 ─── */
+let mgTimer=null;
+
+function _mgInit(id){
+  if(id==='make10'){
+    const vals=[1,9,2,8,3,7,4,6];
+    for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]];}
+    return{id:'make10',tiles:vals.map((v,i)=>({id:i,val:v,state:'idle'})),selected:null,pairs:0,timer:60,startTs:Date.now(),done:false};
+  }
+  if(id==='make10_3'){
+    /* 합이 10인 서로 다른 세 수 조합 4세트: 1+2+7, 1+3+6, 1+4+5, 2+3+5 */
+    const vals=[1,2,7,1,3,6,1,4,5,2,3,5];
+    for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]];}
+    return{id:'make10_3',tiles:vals.map((v,i)=>({id:i,val:v,state:'idle'})),selected:[],triples:0,total:4,timer:90,startTs:Date.now(),done:false,wrongFlash:false};
+  }
+  return{id,tiles:[],done:false};
+}
+
+function screenMiniGame(gameId){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  if(!S.miniGame||S.miniGame.id!==gameId||S.miniGame.fresh){S.miniGame=_mgInit(gameId);}
+  _renderMiniGame();
+}
+
+function _renderMiniGame(){
+  const scr=$('#screen');
+  const mg=S.miniGame;
+  if(!mg){return;}
+  const lang=S.lang;
+  const lk=(ko,en,zh)=>lang==='ko'?ko:lang==='en'?en:zh;
+
+  if(mg.id==='make10'){
+    const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
+    if(remaining===0&&!mg.done){mg.done=true;save();}
+
+    const tilesHtml=mg.tiles.map(tl=>{
+      if(tl.state==='matched')return`<div class="nm-mg-tile matched">✓</div>`;
+      const sel=tl.state==='selected';
+      return`<div class="nm-mg-tile${sel?' sel':''}" data-tid="${tl.id}">${tl.val}</div>`;
+    }).join('');
+
+    scr.innerHTML=`<div class="nm-mg-wrap">
+      <div class="nm-mg-header">
+        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <div class="nm-mg-title">🎮 Make 10 — ${lk('짝 찾기','Pair Up','配对游戏')}</div>
+        <div class="nm-mg-meta">
+          ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
+          <span class="nm-mg-score">⭐ ${mg.pairs}/4 ${lk('쌍','pairs','对')}</span>
+        </div>
+      </div>
+      ${mg.done?`<div class="nm-mg-done">
+        <div class="nm-mg-done-icon">${mg.pairs===4?'🏆':'🌟'}</div>
+        <div class="nm-mg-done-msg">${mg.pairs===4?lk('완벽! 4쌍 모두 맞췄어요!','Perfect! All 4 pairs!','完美！全部配对！'):lk(`${mg.pairs}쌍 맞췄어요! 다시 도전해볼까요?`,`Got ${mg.pairs} pairs! Try again?`,`配对了${mg.pairs}对！再试一次？`)}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.pairs*3}</div>
+        <div class="nm-mg-done-btns">
+          <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
+          <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
+        </div>
+      </div>`:`<div class="nm-mg-board" id="mgBoard">
+        <div class="nm-mg-hint">${lk('합이 10이 되는 두 수를 눌러요!','Tap two numbers that add up to 10!','点击两个加起来等于10的数！')}</div>
+        <div class="nm-mg-tiles">${tilesHtml}</div>
+      </div>`}
+    </div>`;
+
+    $('#mgBack').onclick=()=>{
+      clearInterval(mgTimer);mgTimer=null;
+      const back=S._fromRoadmap?'roadmap':'town';
+      S.view=back;S._fromRoadmap=false;save();render();
+    };
+
+    if(mg.done){
+      const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10');save();_renderMiniGame();};
+      const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
+        clearInterval(mgTimer);mgTimer=null;
+        S.coins+=(mg.pairs*3);
+        S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10']=true;
+        const back=S._fromRoadmap?'roadmap':'town';
+        S.view=back;S._fromRoadmap=false;save();render();
+      };
+    } else {
+      const board=$('#mgBoard');
+      if(board)board.querySelectorAll('.nm-mg-tile[data-tid]').forEach(el=>{
+        el.onclick=()=>{
+          const tid=+el.dataset.tid;
+          const tl=mg.tiles.find(x=>x.id===tid);
+          if(!tl||tl.state==='matched')return;
+          if(mg.selected===null){
+            if(tl.state==='selected'){tl.state='idle';mg.selected=null;}
+            else{tl.state='selected';mg.selected=tid;}
+          } else {
+            const prev=mg.tiles.find(x=>x.id===mg.selected);
+            if(!prev){tl.state='selected';mg.selected=tid;}
+            else if(prev.id===tl.id){tl.state='idle';mg.selected=null;}
+            else if(prev.val+tl.val===10){
+              prev.state='matched';tl.state='matched';mg.selected=null;mg.pairs++;
+              if(mg.pairs===4){mg.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+            } else {
+              prev.state='idle';tl.state='selected';mg.selected=tid;
+            }
+          }
+          _renderMiniGame();
+        };
+      });
+      if(!mgTimer&&!mg.done){
+        mgTimer=setInterval(()=>{
+          if(!S.miniGame||S.miniGame.done){clearInterval(mgTimer);mgTimer=null;return;}
+          const rem=Math.max(0,S.miniGame.timer-Math.floor((Date.now()-S.miniGame.startTs)/1000));
+          if(rem===0){S.miniGame.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+          _renderMiniGame();
+        },1000);
+      }
+    }
+  }
+
+  /* ─── 3수 합이 10 게임 ─── */
+  else if(mg.id==='make10_3'){
+    const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
+    if(remaining===0&&!mg.done){mg.done=true;save();}
+
+    const selSet=new Set(mg.selected);
+    const tilesHtml=mg.tiles.map(tl=>{
+      if(tl.state==='matched')return`<div class="nm-mg-tile matched">✓</div>`;
+      const sel=selSet.has(tl.id);
+      return`<div class="nm-mg-tile${sel?' sel':''}${sel&&mg.wrongFlash?' wrong':''}" data-tid="${tl.id}">${tl.val}</div>`;
+    }).join('');
+    const selSum=mg.selected.reduce((s,tid)=>{const tl=mg.tiles.find(x=>x.id===tid);return s+(tl?tl.val:0);},0);
+
+    scr.innerHTML=`<div class="nm-mg-wrap">
+      <div class="nm-mg-header">
+        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <div class="nm-mg-title">🎯 3수 Make 10 — ${lk('세 수로 10 만들기','3 Numbers → 10','三数凑10')}</div>
+        <div class="nm-mg-meta">
+          ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
+          <span class="nm-mg-score">⭐ ${mg.triples}/4 ${lk('세트','sets','组')}</span>
+          ${mg.selected.length>0?`<span style="font-size:12px;font-weight:800;padding:3px 10px;border-radius:10px;background:#e8f0fa;color:#2a5a9a">합 ${selSum}</span>`:''}
+        </div>
+      </div>
+      ${mg.done?`<div class="nm-mg-done">
+        <div class="nm-mg-done-icon">${mg.triples===4?'🏆':'🌟'}</div>
+        <div class="nm-mg-done-msg">${mg.triples===4?lk('완벽! 4세트 모두 찾았어요!','Perfect! All 4 sets!','完美！全部找到！'):lk(`${mg.triples}세트 찾았어요! 다시 도전?`,`Got ${mg.triples} sets! Try again?`,`找到${mg.triples}组！再试？`)}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.triples*5}</div>
+        <div class="nm-mg-done-btns">
+          <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
+          <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
+        </div>
+      </div>`:`<div class="nm-mg-board" id="mgBoard">
+        <div class="nm-mg-hint">${lk('합이 10인 세 수를 골라요!','Pick 3 numbers that sum to 10!','选三个加起来等于10的数！')} &nbsp;<small style="color:#9aa">1+2+7 / 1+3+6 / 1+4+5 / 2+3+5</small></div>
+        <div class="nm-mg-tiles" style="grid-template-columns:repeat(4,1fr)">${tilesHtml}</div>
+      </div>`}
+    </div>`;
+
+    $('#mgBack').onclick=()=>{clearInterval(mgTimer);mgTimer=null;const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();};
+
+    if(mg.done){
+      const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10_3');save();_renderMiniGame();};
+      const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
+        clearInterval(mgTimer);mgTimer=null;S.coins+=(mg.triples*5);
+        S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10_3']=true;
+        const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();
+      };
+    } else {
+      const board=$('#mgBoard');
+      if(board)board.querySelectorAll('.nm-mg-tile[data-tid]').forEach(el=>{
+        el.onclick=()=>{
+          if(mg.wrongFlash)return;
+          const tid=+el.dataset.tid;
+          const tl=mg.tiles.find(x=>x.id===tid);
+          if(!tl||tl.state==='matched')return;
+
+          if(tl.state==='selected'){
+            tl.state='idle';mg.selected=mg.selected.filter(id=>id!==tid);
+          } else if(mg.selected.length<3){
+            tl.state='selected';mg.selected.push(tid);
+          }
+
+          if(mg.selected.length===3){
+            const sum=mg.selected.reduce((s,id)=>{const x=mg.tiles.find(t=>t.id===id);return s+(x?x.val:0);},0);
+            if(sum===10){
+              mg.selected.forEach(id=>{const x=mg.tiles.find(t=>t.id===id);if(x)x.state='matched';});
+              mg.selected=[];mg.triples++;
+              if(mg.triples===4){mg.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+            } else {
+              mg.wrongFlash=true;
+              _renderMiniGame();
+              setTimeout(()=>{
+                mg.selected.forEach(id=>{const x=mg.tiles.find(t=>t.id===id);if(x&&x.state==='selected')x.state='idle';});
+                mg.selected=[];mg.wrongFlash=false;_renderMiniGame();
+              },600);
+              return;
+            }
+          }
+          _renderMiniGame();
+        };
+      });
+      if(!mgTimer&&!mg.done){
+        mgTimer=setInterval(()=>{
+          if(!S.miniGame||S.miniGame.done){clearInterval(mgTimer);mgTimer=null;return;}
+          const rem=Math.max(0,S.miniGame.timer-Math.floor((Date.now()-S.miniGame.startTs)/1000));
+          if(rem===0){S.miniGame.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+          _renderMiniGame();
+        },1000);
+      }
+    }
+  }
+}
+
+/* ─── 학년별 교실 ─── */
+function screenGradeCourse(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  if(!window.NM_ROADMAP){$('#screen').innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
+
+  const GRADES=[
+    {key:'유아',label:{ko:'유아',en:'Ages 5–7',zh:'幼儿'}},
+    {key:'초1',label:{ko:'초1',en:'Grade 1',zh:'一年级'}},
+    {key:'초2',label:{ko:'초2',en:'Grade 2',zh:'二年级'}},
+    {key:'초3',label:{ko:'초3',en:'Grade 3',zh:'三年级'}},
+    {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
+    {key:'초5',label:{ko:'초5',en:'Grade 5',zh:'五年级'}},
+    {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
+  ];
+  S._gcGrade=S._gcGrade||'초1';
+
+  function chaptersForGrade(g){
+    return NM_ROADMAP.chapters.filter(ch=>ch.grade===g);
+  }
+  function unitProgress(chs){
+    let done=0,total=0;
+    chs.forEach(ch=>{(ch.units||[]).forEach(uid=>{total++;if(stepDone(uid,'stamp'))done++;});});
+    return{done,total};
+  }
+
+  const lang=S.lang;
+  const lk=(ko,en,zh)=>lang==='ko'?ko:lang==='en'?en:zh;
+  const scr=$('#screen');
+
+  function draw(){
+    const curGrade=S._gcGrade;
+    const chs=chaptersForGrade(curGrade);
+    const nextId=findNextRoadUnit();
+
+    const tabsHtml=GRADES.map(g=>{
+      const cg=chaptersForGrade(g.key);
+      const prog=unitProgress(cg);
+      return`<button class="nm-gc-tab${g.key===curGrade?' active':''}" data-g="${g.key}">${L(g.label)}${prog.total>0?` <small>${prog.done}/${prog.total}</small>`:''}</button>`;
+    }).join('');
+
+    let bodyHtml='';
+    chs.forEach(ch=>{
+      if(ch.game){
+        const played=S.gamesPlayed&&S.gamesPlayed[ch.game];
+        bodyHtml+=`<div class="nm-gc-game-row" data-game="${ch.game}">
+          <span style="font-size:20px">${ch.icon}</span>
+          <span style="font-size:12px;font-weight:800;flex:1">${L(ch.theme)}</span>
+          ${played?`<span class="nm-gc-badge">✓ ${lk('완료','Done','完成')}</span>`:`<span class="nm-gc-badge">🎮 ${lk('게임','Game','游戏')}</span>`}
+        </div>`;
+        return;
+      }
+      const units=ch.units||[];
+      const chapDone=units.every(uid=>stepDone(uid,'stamp'));
+      const prog=units.filter(uid=>stepDone(uid,'stamp')).length;
+      bodyHtml+=`<div class="nm-gc-chapter">
+        <div class="nm-gc-chapter-head">${ch.icon} ${L(ch.theme)}
+          ${ch.edu?`<span class="nm-gc-badge">${L(ch.edu)}</span>`:''}
+        </div>`;
+      units.forEach(uid=>{
+        const u=UNITS[uid];if(!u)return;
+        const done=stepDone(uid,'stamp');
+        const isNext=uid===nextId;
+        bodyHtml+=`<div class="nm-gc-unit-row" data-uid="${uid}">
+          <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
+          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
+          ${done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
+        </div>`;
+      });
+      if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
+      bodyHtml+=`</div>`;
+    });
+    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('이 학년 유닛이 없어요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
+
+    scr.innerHTML=`<div class="nm-gc-wrap">
+      <div class="nm-gc-header">
+        <button class="nm-back" id="gcBack">← ${t('back')}</button>
+        <div class="nm-gc-title">🏫 ${lk('학년별 교실','Grade Classroom','按年级学习')}</div>
+      </div>
+      <div class="nm-gc-tabs">${tabsHtml}</div>
+      <div class="nm-gc-body">${bodyHtml}</div>
+    </div>`;
+
+    $('#gcBack').onclick=()=>{S.view='town';S._gcGrade=null;save();render();};
+    scr.querySelectorAll('.nm-gc-tab[data-g]').forEach(el=>{
+      el.onclick=()=>{S._gcGrade=el.dataset.g;draw();};
+    });
+    scr.querySelectorAll('.nm-gc-unit-row[data-uid]').forEach(el=>{
+      el.onclick=()=>{enterRoadUnit(el.dataset.uid);};
+    });
+    scr.querySelectorAll('.nm-gc-game-row[data-game]').forEach(el=>{
+      el.onclick=()=>{S.miniGameId=el.dataset.game;S.miniGame=null;S._fromRoadmap=false;S.view='minigame';save();render();};
+    });
+  }
+  draw();
 }
 
 function showTownModal(title,desc,onGo){
@@ -709,7 +1150,10 @@ function enterUnit(uid){
   save();render();
 }
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
-function exitUnit(){S.view=S.tierId?'tier':'town';S.unit=null;S.step=null;S.sub={};save();render();}
+function exitUnit(){
+  const back=S._fromRoadmap?'roadmap':S.tierId?'tier':'town';
+  S.view=back;S._fromRoadmap=false;S.unit=null;S.step=null;S.sub={};save();render();
+}
 function finishUnitIntro(u){
   S.progress[S.unit]=S.progress[S.unit]||{steps:{}};
   S.progress[S.unit].introSeen=true;
@@ -717,9 +1161,17 @@ function finishUnitIntro(u){
   save();screenUnit();
 }
 
+/* 수의 나라(tier:'basic') 유아 유닛은 경량 플로우 — check(서술형)·arena(타이머) 생략 */
+const BASIC_FLOW_KEYS=['practice','discover','lab','stamp'];
+function unitFlowOf(u){
+  if(u&&u.tier==='basic')return CUR.unitFlow.filter(f=>BASIC_FLOW_KEYS.includes(f.key));
+  return CUR.unitFlow;
+}
+function afterLabKey(u){return (u&&u.tier==='basic')?'stamp':'arena';}
+
 function flowBar(){
   const u=S.unit;
-  return `<div class="nm-flow">`+CUR.unitFlow.map((f,i)=>{
+  return `<div class="nm-flow">`+unitFlowOf(UNITS[u]).map((f,i)=>{
     const active=S.step===f.key, done=stepDone(u,f.key);
     return `${i?'<span class="nm-flow-arrow">→</span>':''}<button class="nm-flow-step ${active?'active':''} ${done?'done':''}" data-step="${f.key}">
       <span class="nm-flow-ic">${f.icon}</span><small>${L({ko:f.ko,en:f.en,zh:f.zh})}${done?' ✓':''}</small></button>`;
@@ -762,7 +1214,7 @@ function stepUnitIntro(body,u){
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
-function nextStepKey(){const ks=CUR.unitFlow.map(f=>f.key);const i=ks.indexOf(S.step);return ks[Math.min(i+1,ks.length-1)];}
+function nextStepKey(){const ks=unitFlowOf(UNITS[S.unit]).map(f=>f.key);const i=ks.indexOf(S.step);return ks[Math.min(i+1,ks.length-1)];}
 
 /* ---------- STEP1 프랙티스 (진단스킵 + 숫자패드 대화형) ---------- */
 function stepPractice(body,u){
@@ -783,9 +1235,11 @@ function stepPractice(body,u){
 }
 function runPractice(body,u){
   const cfg=u.practice;const need=cfg.count||5;
-  S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'practice'});
+  S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||genProblem(cfg,'practice');
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
+  /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
+  if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
@@ -798,24 +1252,47 @@ function runPractice(body,u){
   </div>`;
   S.sub.started=true;
   renderMath(body);
-  buildNumpad($('#pad'),val=>handlePractice(val,body,u));
+  const isDecAns=cur&&!Number.isInteger(cur.answer);
+  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns});
   say(first?L(cfg.intro):L(cur.prompt));
+}
+function runPracticeWidget(body,u,cur,first,need){
+  const cfg=u.practice;
+  body.innerHTML=`<div class="nm-dialog">
+    <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
+    <div id="pracWidget" class="nm-lab-widget"></div>
+  </div>`;
+  S.sub.started=true;
+  say(first?L(cfg.intro):L(cur.prompt));
+  NM_WIDGETS.render(cur,$('#pracWidget'),val=>{
+    if(+val===cur.answer){
+      toast(t('correct'),true);numiHappy();
+      S.sub.pIdx++;S.sub.cur=null;
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      S.sub.cur=genProblem(cfg,'practice');save();
+      setTimeout(()=>runPractice(body,u),650);
+    }else{
+      toast(t('tryAgain'),false);
+    }
+  });
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
   if(val==='ok'){
     const inp=S.sub.inp||'';if(inp==='')return;
-    if(+inp===cur.answer){
+    if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
-      S.sub.cur=GEN[u.practice.generator]({level:'practice'});save();
+      S.sub.cur=genProblem(u.practice,'practice');save();
       setTimeout(()=>runPractice(body,u),650);
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
-  else if((S.sub.inp||'').length<3){S.sub.inp=(S.sub.inp||'')+val;}
+  else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 
@@ -879,7 +1356,10 @@ function stepDiscover(body,u){
   // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
   const two = S.range==='twoDigit';
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
-  body.innerHTML=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+  const kid = u.tier==='basic';
+  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
+    ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
+    <div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
@@ -890,19 +1370,22 @@ function stepDiscover(body,u){
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
     if(s.terms)conceptExpr(wrap, s.terms);
-    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps);
+    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps, kid);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
-  $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep('check');};
+  $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
-function mathStepsExpr(container, steps){
-  const box=document.createElement('div');box.className='nm-mstep-box';
+function mathStepsExpr(container, steps, kid){
+  const box=document.createElement('div');box.className='nm-mstep-box'+(kid?' kid':'');
   steps.forEach((tex,i)=>{
     if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
-    const line=document.createElement('div');line.className='nm-mstep-line';line.setAttribute('data-tex',tex);box.appendChild(line);
+    const line=document.createElement('div');line.className='nm-mstep-line'+(kid?' kid':'');
+    // 유아 노트: 한글 문장을 KaTeX 수식 폰트로 그리면 어색 → 앱 폰트 텍스트 칩으로 표시
+    if(kid)line.textContent=tex; else line.setAttribute('data-tex',tex);
+    box.appendChild(line);
   });
   container.appendChild(box);
 }
@@ -921,7 +1404,7 @@ function stepCheck(body,u){
   renderMath(body);
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===fill.answer){
+      if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
         if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
@@ -929,9 +1412,10 @@ function stepCheck(body,u){
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:!Number.isInteger(fill.answer)});
 }
 function openQuestion(body,u){
   const c=u.check;
@@ -950,7 +1434,7 @@ function openQuestion(body,u){
    나머지 생성기(move10/add10sub/stairAdd, answerType:'number')는 숫자패드 UI. */
 function stepLab(body,u){
   const cfg=u.lab;
-  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
+  S.sub.cur=S.sub.cur||genProblem(cfg,'main');
   if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
   else if(S.sub.cur.widget&&S.sub.cur.widget!=='numpad'&&window.NM_WIDGETS)stepLabWidget(body,u);
   else stepLabNumpad(body,u);
@@ -962,7 +1446,8 @@ function stepLabWidget(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
   const origTex=cur.tex?`${esc(cur.tex.split('=')[0].trim())} = \\square`:'';
-  body.innerHTML=`<div class="nm-dialog">
+  /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
+  body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     ${origTex?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span><span data-tex="${origTex}"></span></div>`:''}
@@ -977,8 +1462,8 @@ function stepLabWidget(body,u){
     if(+val===cur.answer){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
-      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
       toast(pickVoice(u.voice.wrong),false);
@@ -1023,22 +1508,23 @@ function stepLabNumpad(body,u){
   S.sub.labStarted=true;
   renderMath(body);
   say(first?L(cfg.intro):L(cur.prompt));
-  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u),{decimal:!Number.isInteger(cur.answer)});
 }
 function handleLabNumpad(val,body,u){
   const cur=S.sub.cur;const need=u.lab.count||4;
   if(val==='ok'){
     const inp=S.sub.inp||'';if(inp==='')return;
-    if(+inp===cur.answer){
+    if(parseFloat(inp)===cur.answer){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
-      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
-  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+  else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
@@ -1053,7 +1539,7 @@ function pickTile(el,i,n,body,u){
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.li++;S.sub.cur=null;
       const need=u.lab.count||4;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),800);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
     }else{toast(pickVoice(u.voice.wrong),false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
@@ -1072,7 +1558,7 @@ function stepArena(body,u){
   },1000);
 }
 function nextArena(body,u,need){
-  const cur=GEN[u.arena.generator]({level:'main'});S.sub.cur=cur;S.sub.inp='';
+  const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
     <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
@@ -1082,13 +1568,14 @@ function nextArena(body,u,need){
   renderMath(body);
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
+      if(parseFloat(inp)===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:!Number.isInteger(cur.answer)});
 }
 function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
@@ -1107,7 +1594,7 @@ function stepStamp(body,u){
   /* 도장은 이전 단계(기본연산~아레나)를 실제로 다 마쳐야 받을 수 있음.
      플로우바 탭으로 건너뛰어 곧장 여기로 오면 안 되므로, 안 끝난 단계가
      있으면 그 단계로 돌려보내고 코인은 절대 지급하지 않는다. */
-  const requiredKeys=CUR.unitFlow.map(f=>f.key).filter(k=>k!=='stamp');
+  const requiredKeys=unitFlowOf(u).map(f=>f.key).filter(k=>k!=='stamp');
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
@@ -1124,10 +1611,15 @@ function stepStamp(body,u){
 }
 
 /* ---------- 공통 UI 조각 ---------- */
-function buildNumpad(pad,cb){
+function buildNumpad(pad,cb,opts){
+  opts=opts||{};
   pad.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k=>{
-    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':'');
+  const keys=opts.decimal
+    ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  if(opts.decimal) pad.classList.add('dec'); else pad.classList.remove('dec');
+  keys.forEach(k=>{
+    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
     b.textContent=k==='del'?'←':k==='ok'?'✓':k;b.onclick=()=>cb(k);pad.appendChild(b);
   });
 }

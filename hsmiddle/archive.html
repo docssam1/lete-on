@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD | 자료실</title>
+<meta name="description" content="생각하는 황소 중등 성취도 진단 + 클리닉 자료실">
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --navy:#173a6b; --navy-d:#0f2747; --gold:#b58b1f;
+  --bg:#eef3f9; --card:#fff;
+  --line:#dde5f0; --line-2:#e8eef6;
+  --text:#15253c; --muted:#63768e;
+  --green:#0f7a4d; --green-bg:#e8f6ef;
+  --coral:#c53d4a; --coral-bg:#fdecef;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:Pretendard,system-ui,sans-serif;color:var(--text);min-height:100vh;
+  background:radial-gradient(900px 460px at 50% -12%,#dfeaf7,transparent 60%),var(--bg);
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+
+/* 상단바 */
+.top{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:14px 22px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.mark{
+  width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(160deg,var(--navy),var(--navy-d));color:#fff;font-weight:950;font-size:16px;
+}
+.brand b{display:block;font-size:15.5px;font-weight:950;letter-spacing:-.03em;line-height:1.25}
+.brand span{display:block;margin-top:2px;color:var(--muted);font-size:11.5px;font-weight:700}
+.links{display:flex;gap:7px;flex-wrap:wrap}
+.links a,.links button{
+  height:36px;display:inline-flex;align-items:center;padding:0 13px;border-radius:9px;
+  border:1px solid var(--line);background:#fff;color:var(--navy);font-size:12.5px;font-weight:850;cursor:pointer;
+  transition:border-color .15s,background .15s;
+}
+.links a:hover,.links button:hover{border-color:#b9c9dd;background:#f7fafd}
+.links a.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.links a.primary:hover{background:var(--navy-d)}
+.links button.out{color:var(--coral);border-color:#f0cdd2}
+
+.shell{width:min(1120px,calc(100% - 32px));margin:0 auto}
+
+/* 인사 영역 */
+.head{padding:34px 0 6px}
+.head h1{margin:0;font-size:clamp(22px,3.2vw,29px);font-weight:950;letter-spacing:-.045em;text-wrap:balance}
+.head p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.75;font-weight:600}
+.head .who{margin-top:10px;color:var(--navy);font-size:12.5px;font-weight:850}
+
+/* 카드 */
+.sections{display:flex;flex-direction:column;gap:16px;margin:22px 0 30px}
+.card{
+  position:relative;display:flex;flex-direction:column;background:var(--card);
+  border:1px solid var(--line);border-radius:14px;padding:22px;
+  box-shadow:0 8px 22px rgba(19,37,60,.05);transition:border-color .18s,box-shadow .18s;
+}
+.card.locked{background:#fafbfd}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.tile{
+  width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;
+  font-size:14px;font-weight:950;letter-spacing:-.03em;color:#fff;background:var(--accent,#4a7fb5);
+}
+.card.locked .tile{background:#c3ccd8}
+.state{
+  height:24px;display:inline-flex;align-items:center;padding:0 10px;border-radius:99px;
+  font-size:11px;font-weight:900;letter-spacing:.02em;
+}
+.state.on{background:var(--green-bg);color:var(--green)}
+.state.off{background:var(--coral-bg);color:var(--coral)}
+.card h2{margin:14px 0 0;font-size:17px;font-weight:950;letter-spacing:-.035em}
+.card p.desc{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.7;font-weight:600}
+.acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
+.acts a,.acts button{
+  height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 13px;
+  border-radius:9px;border:1px solid var(--navy);background:var(--navy);color:#fff;
+  font-size:12.5px;font-weight:900;cursor:pointer;transition:background .15s;
+}
+.acts a:hover{background:var(--navy-d)}
+.acts a.ghost{background:#fff;color:var(--navy);border-color:var(--line)}
+.acts a.ghost:hover{background:#f5f9fd}
+.acts button.off{background:#eef2f7;border-color:#dde5f0;color:#95a4b7;cursor:not-allowed}
+.acts a.ask{background:#fff;color:var(--gold);border-color:#ecdcb2}
+
+/* 영상 */
+.videowrap{
+  position:relative;width:100%;max-width:640px;aspect-ratio:16/9;background:var(--navy-d);
+  border-radius:10px;overflow:hidden;cursor:pointer;margin-top:14px;
+}
+.videowrap iframe{width:100%;height:100%;border:0;display:block}
+.playbtn{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:900;text-align:center;padding:0 20px;
+  background:linear-gradient(rgba(15,39,71,.35),rgba(15,39,71,.6));
+}
+
+/* 문항 그리드 */
+.qlabel{margin:16px 0 8px;font-size:12.5px;font-weight:850;color:var(--text)}
+.qgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+@media (max-width:900px){.qgrid{grid-template-columns:repeat(8,1fr)}}
+@media (max-width:640px){.qgrid{grid-template-columns:repeat(5,1fr)}}
+.qcell{display:flex;flex-direction:column;align-items:center;gap:4px}
+.qcell button,.qcell a.qjump{
+  width:100%;height:34px;border:1px solid var(--line);border-radius:8px;background:#f5f8fc;
+  color:var(--navy);font-weight:900;font-size:12.5px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s;
+}
+.qcell button:hover,.qcell a.qjump:hover{border-color:var(--gold);background:#fffdf6}
+.qcell a.qvideo{font-size:10px;color:var(--muted);font-weight:700}
+
+/* 하단 */
+.foot{
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:18px 0 40px;color:var(--muted);font-size:12px;line-height:1.7;font-weight:650;
+  border-top:1px solid var(--line);
+}
+.foot a{color:var(--navy);font-weight:850}
+.watermark{margin-top:6px;text-align:right;color:#9aabbf;font-size:11.5px;font-weight:800}
+
+@media (max-width:640px){
+  .top{padding:12px 16px}
+  .links a:not(.primary):not(.keep),.links button:not(.out){display:none}
+  .head{padding:26px 0 4px}
+  .card{padding:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">G</div>
+    <div>
+      <b>GFIELD 자료실</b>
+      <span>생각하는 황소 중등 진단 + 클리닉</span>
+    </div>
+  </div>
+  <div class="links" id="links">
+    <a href="./library.html" class="keep">서재</a>
+    <a href="./index.html">과정 안내</a>
+    <a class="primary keep" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">문의</a>
+    <button class="out" type="button" onclick="logout()">나가기</button>
+  </div>
+</header>
+
+<div class="shell">
+  <section class="head">
+    <h1>자료실</h1>
+    <p>승인된 회차의 풀이 영상과 시험지, 유사문제를 모아 두었습니다.</p>
+    <div class="who" id="who"></div>
+  </section>
+
+  <main class="sections" id="sections"></main>
+
+  <div class="foot">
+    <span>승인번호는 구매 후 카카오톡으로 전달됩니다. 이름은 인쇄 워터마크에만 사용됩니다.</span>
+    <span><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a> · <a href="./index.html">과정 안내</a></span>
+  </div>
+  <div class="watermark" id="watermark"></div>
+</div>
+
+<script src="./data.js"></script>
+<script src="./shared-auth.js"></script>
+<script src="./hsm-cloud.js"></script>
+<script src="./hsm-player.js"></script>
+<script src="./exam-meta.js"></script>
+<script>
+const session = HSMIDDLE_AUTH.readSession();
+if (!session.valid || !session.access.length) {
+  location.replace("./login.html");
+}
+
+const D = window.HSMIDDLE_DATA;
+const access = new Set(session.access);
+const isOpen = key => access.has(key);
+const name = session.name;
+
+function logout(){ HSMIDDLE_AUTH.clearSession(); location.replace("./login.html"); }
+
+/* 풀이 영상 링크 클릭 → 모달 재생 (href는 유지, HSMIDDLE_PLAYER 없으면 기존 새 탭 동작으로 폴백) */
+function hsmPlayClick(e,videoId,start,title,subtitle){
+  if(!window.HSMIDDLE_PLAYER)return;
+  e.preventDefault();
+  HSMIDDLE_PLAYER.open({videoId,start,title,subtitle});
+}
+function hsmAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+
+/* 이용 기간(6개월) 만료 시 본문을 안내로 교체하고 진행을 중단한다.
+   서버가 없으므로 기기·브라우저 단위로만 관리된다. */
+function showExpired(){
+  document.querySelector(".shell").innerHTML = `
+    <section class="head">
+      <h1>이용 기간이 종료되었습니다</h1>
+      <p>첫 로그인일로부터 6개월간 이용하실 수 있습니다. 연장이 필요하시면 카카오톡으로 문의해 주세요.</p>
+    </section>
+    <main class="sections">
+      <article class="card">
+        <div class="acts">
+          <a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+          <button type="button" onclick="logout()">나가기</button>
+        </div>
+      </article>
+    </main>`;
+}
+
+if (HSMIDDLE_AUTH.isAdmin(name)) {
+  const a = document.createElement("a");
+  a.href = "./admin.html"; a.textContent = "승인 관리"; a.className = "primary keep";
+  document.getElementById("links").prepend(a);
+}
+
+if (HSMIDDLE_AUTH.isExpired(name)) {
+  showExpired();
+  throw new Error("이용 기간 만료로 진행을 중단합니다.");
+}
+
+document.getElementById("who").textContent = `${name} 학생`;
+document.getElementById("watermark").textContent = `${name} 학생 · GFIELD`;
+
+function loadVideo(el){
+  const src = el.dataset.src;
+  const iframe = document.createElement("iframe");
+  iframe.src = src;
+  iframe.allow = "autoplay; encrypted-media; fullscreen";
+  iframe.allowFullscreen = true;
+  el.innerHTML = "";
+  el.appendChild(iframe);
+  el.onclick = null;
+  el.style.cursor = "default";
+}
+
+function openSimilar(n){
+  window.open(`./viewer.html?doc=similar&qs=${n}&student=${encodeURIComponent(name)}`, "_blank", "noopener");
+}
+
+const videoStarts = [60,138,208,315,384,465,507,574,679,750,809,856,931,1107,1198,1252,1297,1359,1420,1531,1578,1649,1711,1780,1930,1983,2105,2187,2305,2400,2595,2705,2821,3067,3152,3260,3336,3454,3548,3654];
+
+function diagnosticCard(){
+  const open = isOpen("diagnostic");
+  const title = (D.exams && D.exams.diagnostic) || "중등 성취도 진단";
+
+  const qGrid = Array.from({length:40}, (_, i) => {
+    const n = i + 1;
+    const q = D.questions && D.questions[i];
+    const start = videoStarts[i];
+    const subtitle = q ? q[5] : "";
+    return `<div class="qcell">
+      <button type="button" title="${q ? q[5] : ""}" onclick="openSimilar(${n})">${n}</button>
+      <a class="qvideo" href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'3NzakkPc9zg',${start},'${hsmAttr(n+"번 풀이 영상")}','${hsmAttr(subtitle)}')">영상</a>
+    </div>`;
+  }).join("");
+
+  return `
+    <article class="card ${open ? "open" : "locked"}">
+      <div class="card-top">
+        <div class="tile" style="--accent:#1d679f">진단</div>
+        <span class="state ${open ? "on" : "off"}">${open ? "열림" : "잠김"}</span>
+      </div>
+      <h2>${title}</h2>
+      <p class="desc">40문항을 풀고 채점하면 학기·영역·난이도·단원 분석과 처방이 바로 나옵니다.</p>
+      ${open ? `
+        <div class="videowrap" data-src="https://www.youtube.com/embed/3NzakkPc9zg" onclick="loadVideo(this)">
+          <div class="playbtn">▶ 풀이 강의 전체 영상 재생</div>
+        </div>
+        <div class="acts">
+          <a href="./diagnostic.html">진단 채점</a>
+          <a class="ghost" href="./report.html">분석지</a>
+          <a class="ghost" href="./viewer.html?doc=diagnostic&student=${encodeURIComponent(name)}">시험지 보기</a>
+        </div>
+        <div class="qlabel">문항별 유사문제 40 — 번호에 마우스를 올리면 유형이 보입니다.</div>
+        <div class="qgrid">${qGrid}</div>
+      ` : `
+        <div class="acts">
+          <button class="off" type="button" disabled>잠김</button>
+          <a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>
+        </div>
+      `}
+    </article>`;
+}
+
+const MOCKS = [
+  { key:"mock-1", tile:"1회", accent:"#3f6ea8" },
+  { key:"mock-2", tile:"2회", accent:"#3f6ea8" },
+  { key:"mock-3", tile:"3회", accent:"#3f6ea8" },
+  { key:"final", tile:"최종", accent:"#b58b1f" }
+];
+
+function mockCard(m){
+  const open = isOpen(m.key);
+  const title = (D.exams && D.exams[m.key]) || m.key;
+  const videoUrl = D.videos && D.videos[m.key];
+  const vid = videoUrl
+    ? ((videoUrl.match(/[?&]v=([\w-]{6,})/) || videoUrl.match(/youtu\.be\/([\w-]{6,})/) || [])[1])
+    : "";
+
+  let qGridHtml = "";
+  if (open) {
+    const META = window.HSMIDDLE_EXAM_META && window.HSMIDDLE_EXAM_META[m.key];
+    if (META && vid) {
+      const grid = Array.from({length:40}, (_, i) => {
+        const n = i + 1;
+        const meta = META[n];
+        if (!meta) return `<div class="qcell"><a class="qjump" href="javascript:void(0)">${n}</a></div>`;
+        return `<div class="qcell">
+          <a class="qjump" title="${meta.unit || ""}" href="https://youtu.be/${vid}?t=${meta.t}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'${vid}',${meta.t},'${hsmAttr(n+"번 풀이 영상")}','${hsmAttr(meta.unit||"")}')">${n}</a>
+        </div>`;
+      }).join("");
+      qGridHtml = `<div class="qlabel">문항별 풀이 영상 40 — 번호를 누르면 해당 문항 설명 시점부터 재생됩니다.</div><div class="qgrid">${grid}</div>`;
+    }
+  }
+
+  return `
+    <article class="card ${open ? "open" : "locked"}">
+      <div class="card-top">
+        <div class="tile" style="--accent:${m.accent}">${m.tile}</div>
+        <span class="state ${open ? "on" : "off"}">${open ? "열림" : "잠김"}</span>
+      </div>
+      <h2>${title}</h2>
+      ${open ? `
+        <p class="desc">${videoUrl ? `<a href="${videoUrl}" target="_blank" rel="noopener"${vid ? ` onclick="hsmPlayClick(event,'${vid}',0,'${hsmAttr(title)}','${hsmAttr("전체 수업 영상")}')"` : ""}>전체 수업 영상 보기 →</a>` : "전체 수업 영상이 아직 준비되지 않았습니다."}</p>
+        <div class="acts">
+          <a href="./exam.html?exam=${m.key}">응시 · 채점</a>
+          <a class="ghost" href="./report.html?exam=${m.key}">분석지</a>
+        </div>
+        ${qGridHtml}
+      ` : `
+        <p class="desc">승인된 회차만 열립니다.</p>
+        <div class="acts">
+          <button class="off" type="button" disabled>잠김</button>
+          <a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>
+        </div>
+      `}
+    </article>`;
+}
+
+document.getElementById("sections").innerHTML =
+  diagnosticCard() + MOCKS.map(mockCard).join("");
+</script>
+</body>
+</html>

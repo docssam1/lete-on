@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, palette, validateLevels } from "./levels.js?v=memory-1";
-import { text } from "./i18n.js?v=memory-1";
+import { levels, palette, validateLevels } from "./levels.js?v=memory-2";
+import { text } from "./i18n.js?v=memory-2";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
+import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve5-20260726a";
 
 validateLevels();
 
@@ -236,7 +236,7 @@ function loadProblem() {
   renderPalette();
   renderRebuildGrid();
   updatePrompt();
-  setCameraView("free");
+  setCameraView("start");
   if (shouldShowConceptTutorial()) { renderModel(true); renderStatus(); openConceptTutorial(); return; }
   startMemorize();
 }
@@ -522,7 +522,10 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf7e8cf);
 scene.fog = new THREE.Fog(0xf7e8cf, 13, 24);
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-camera.position.set(7.2, 6.3, 8.2);
+// Default to a gentle, mostly-front view (small side offset keeps depth readable)
+// and zoomed in, so young children see the arrangement big and upright without
+// having to rotate. The 앞/위/자유 buttons still switch views.
+camera.position.set(1.2, 3.8, 7.2);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -722,6 +725,7 @@ function renderModel(showCubes) {
 }
 
 function setCameraView(view) {
+  if (view === "start") camera.position.set(1.2, 3.8, 7.2); // gentle, mostly-front, zoomed default
   if (view === "front") camera.position.set(0.2, 4.4, 8.6);
   if (view === "right") camera.position.set(8.6, 4.4, 0.2);
   if (view === "top") camera.position.set(0.01, 10.5, 0.01);

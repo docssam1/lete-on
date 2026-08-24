@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q09",
+  "variationId": "q09_var01",
+  "subType": "stacking_three_views_minimum",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q09_var01.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q09.json",
+    "hfDataTypeId": 9
+  },
+  "problem": {
+    "prompt": "쌓기나무를 위, 앞, 오른쪽 옆에서 본 모양입니다. 세 모양에 맞게 쌓을 때 필요한 쌓기나무의 가장 적은 개수를 구하세요."
+  },
+  "machineReadable": {
+    "payloadType": "stacking_three_views_minimum",
+    "coordinateSystem": {
+      "xAxis": "left_to_right",
+      "yAxis": "front_to_back",
+      "zAxis": "bottom_to_top",
+      "unit": "cube"
+    },
+    "views": {
+      "topView": {
+        "rowOrder": "front_to_back",
+        "occupiedCells": [
+          { "x": 0, "y": 0 },
+          { "x": 1, "y": 0 },
+          { "x": 0, "y": 1 },
+          { "x": 1, "y": 1 },
+          { "x": 1, "y": 2 }
+        ]
+      },
+      "frontView": {
+        "displayOrder": "left_to_right",
+        "columnHeights": [2, 1]
+      },
+      "rightView": {
+        "displayOrder": "back_to_front",
+        "columnHeights": [1, 1, 2]
+      }
+    },
+    "finalBlockStructure": {
+      "minimumHeightMap": {
+        "rowOrder": "front_to_back",
+        "rows": [
+          { "y": 0, "heights": [2, 1] },
+          { "y": 1, "heights": [1, 1] },
+          { "y": 2, "heights": [0, 1] }
+        ]
+      },
+      "totalBlockCount": 6
+    },
+    "uniquenessModel": {
+      "enumerationMode": "all_positive_heights_within_view_limits",
+      "validMinimumHeightMapCount": 1,
+      "minimumBlockCount": 6
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 6
+  },
+  "solutionHint": "위에서 본 모양의 5칸에는 쌓기나무가 적어도 1개씩 있어야 합니다. 앞과 오른쪽 옆의 높이를 함께 맞추면 한 칸만 2층이고 나머지 네 칸은 1층입니다. 2 + 1 + 1 + 1 + 1 = 6이므로 가장 적게는 6개입니다."
+}

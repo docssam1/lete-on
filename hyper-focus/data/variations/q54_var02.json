@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q54",
+  "variationId": "q54_var02",
+  "subType": "parity_sequence",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only", "answerUnit": "개"},
+  "contentBinding": {"canonicalSource": "./canonical/q54.json", "hfDataTypeId": 54},
+  "problem": {"prompt": "1, 1에서 시작하여 앞의 두 수를 더한 수를 다음에 쓰는 규칙으로 수를 50개 씁니다. 이 가운데 홀수는 몇 개입니까?"},
+  "machineReadable": {
+    "payloadType": "parity_sequence",
+    "startTerms": [1, 1],
+    "nextTermRule": "sum_of_previous_two",
+    "parityPattern": ["odd", "odd", "even"],
+    "sequenceLength": 50,
+    "solvingModel": {"fullPatternGroups": 16, "remainder": 2, "expectedAnswer": 34},
+    "expectedAnswer": 34
+  },
+  "answerValidation": {"answerType": "count", "expectedAnswer": 34},
+  "solutionHint": "50개에는 세 칸 묶음이 16번 있고 두 칸이 남습니다. 묶음에서 홀수 32개, 남은 두 칸에서 홀수 2개이므로 모두 34개입니다."
+}

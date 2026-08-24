@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws4'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws4'] = {
   chapter: null, page: null,
   title: 'The Memory Palace',
   theme: 'How the ancient method of loci turns any familiar route into a powerful tool for memorization',
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws4.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -120,8 +121,8 @@ window.LESSONS['ws4'] = {
   newPassage: {
     title: 'The Palace in Nate\'s Head',
     passage: [
-      'Nate stared at his history notes — thirty names, thirty dates — with three days until the exam. His sister Jamie, who had just won the school memory competition, sat down beside him. "Build a palace," she said. Nate had heard her say it before but had always assumed memory palaces were something only gifted people could build. Jamie told him to choose a route he already knew perfectly. "Your walk to school," she said. "Every crack in the pavement, every street sign."',
-      'That evening, Nate paced mentally through the route. At each familiar landmark, he planted a vivid, impossible image and associated it with the fact he needed to recall. Julius Caesar tripped over the cracked pavement. A Roman army marched out of the red pillar box. Vercingetorix tangled himself in the branches of the bent oak. The images were ridiculous — and that was exactly the point. He walked the route eleven times in his head before he went to sleep, each image growing sharper and stranger on every pass.',
+      'Nate stared at his history notes — thirty names, thirty dates — with three days until the exam. His sister Jamie, who had just been crowned champion at the school memory competition, sat down beside him. Nate had never wanted to compete with her; he only wanted to pass. "Build a palace," she said. "It is an ancient method. Roman speakers used it to hold a whole speech in their heads before anyone wrote things down." Nate had heard her say it before but had always assumed memory palaces were something only gifted people could build. Jamie told him to choose a route he already knew perfectly. "Your walk to school," she said. "Every crack in the pavement, every street sign."',
+      'That evening, Nate made the journey in his head, pacing the route step by step. At each familiar landmark, he planted a vivid, impossible image and associated it with the fact he needed to recall. Julius Caesar tripped over the cracked pavement. A Roman army marched out of the red pillar box. Vercingetorix tangled himself in the branches of the bent oak. The images were ridiculous — and that was exactly the point. He walked the route eleven times in his head before he went to sleep, each image growing sharper and stranger on every pass.',
       'During the exam, Nate closed his eyes and began to walk. The cracked pavement brought Julius Caesar flooding back — along with the year, the battle, the campaign. Every landmark delivered exactly what he had stored there, instantly and completely. He told Jamie afterward that recalling the answers had felt like having a personal museum in his own head, with every exhibit exactly where he had left it. "That\'s what the technique does," Jamie said. "It gives your memory an address."',
     ],
     questions: [
@@ -133,11 +134,11 @@ window.LESSONS['ws4'] = {
       ], 'C', 'The passage follows Nate\'s journey from doubt to success using the memory palace technique. Option C captures this central transformation accurately.'],
 
       ['Recalling Facts and Details', 'What route did Jamie suggest Nate use for his memory palace?', [
-        'The corridor of his school, which he walked through every day before and after lessons',
         'His walk to school, including every crack in the pavement and every street sign along the way',
+        'The corridor of his school, which he walked through every day before and after lessons',
         'The interior of his bedroom, which he knew better than any other space in the world',
         'An imaginary palace that Jamie described to him in detail so he could build it in his mind',
-      ], 'B', 'The passage states that Jamie told him to use "Your walk to school. Every crack in the pavement, every street sign." Option B matches this directly.'],
+      ], 'A', 'The passage states that Jamie told him to use "Your walk to school. Every crack in the pavement, every street sign." Option B matches this directly.'],
 
       ['Understanding Sequence', 'Which event happened FIRST in the passage?', [
         'Nate placed vivid images at each landmark along his familiar route to school',
@@ -182,11 +183,11 @@ window.LESSONS['ws4'] = {
       ], 'C', 'Nate\'s assumption that the technique was only for "gifted people" reflects a common belief that extraordinary memory is innate. His success shows it is a learnable method, which is the key conclusion.'],
 
       ['Distinguishing Between Fact and Opinion', 'Which of the following is an OPINION?', [
-        'Nate had thirty historical names and dates to memorize for an upcoming history exam',
-        'Jamie had recently won the school memory competition before sitting down with Nate',
         'The memory palace is the most effective study technique that any student could possibly use for any exam',
+        'Jamie had recently won the school memory competition before sitting down with Nate',
+        'Nate had thirty historical names and dates to memorize for an upcoming history exam',
         'Nate walked his mental route eleven times in his head before going to sleep',
-      ], 'C', '"Most effective study technique that any student could possibly use" is a value judgment — an opinion. Options A, B, and D state specific, verifiable events from the passage.'],
+      ], 'A', '"Most effective study technique that any student could possibly use" is a value judgment — an opinion. Options A, B, and D state specific, verifiable events from the passage.'],
 
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
         'To argue that schools should eliminate traditional exams and replace them with memory competitions',

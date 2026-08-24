@@ -1,3 +1,5 @@
+import { sessionProblems } from "../../shared/problem-pool.js";
+
 // 세 방향 관찰소 (Three-View Station)
 //
 // A stacking-cube arrangement is shown in 3D. The child colors the shape as seen
@@ -97,63 +99,145 @@ const makeProblem = (id, level, grid, stacks) => {
   return { id, level, grid, stacks, map, height, views, cubeCount };
 };
 
-export const levels = [
+const pools = [
   {
     level: 1,
     stars: 1,
     problems: [
-      // 2×2 footprint, low stacks — a gentle first look at the three views.
       makeProblem("view-l1-01", 1, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 1, h: 1 }]),
       makeProblem("view-l1-02", 1, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 1, h: 1 }]),
       makeProblem("view-l1-03", 1, [3, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 1, h: 1 }]),
-      makeProblem("view-l1-04", 1, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }])
+      makeProblem("view-l1-04", 1, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("view-l1-05", 1, [3, 2], [{ x: 2, z: 1, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l1-06", 1, [3, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("view-l1-07", 1, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("view-l1-08", 1, [3, 2], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("view-l1-09", 1, [2, 2], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("view-l1-10", 1, [3, 2], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("view-l1-11", 1, [3, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }]),
+      makeProblem("view-l1-12", 1, [3, 2], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("view-l1-13", 1, [3, 2], [{ x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("view-l1-14", 1, [2, 2], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("view-l1-15", 1, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("view-l1-16", 1, [3, 2], [{ x: 2, z: 1, h: 1 }, { x: 0, z: 1, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("view-l1-17", 1, [3, 2], [{ x: 2, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("view-l1-18", 1, [3, 2], [{ x: 2, z: 1, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("view-l1-19", 1, [2, 2], [{ x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 0, h: 1 }]),
+      makeProblem("view-l1-20", 1, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 1, z: 1, h: 2 }])
     ]
   },
   {
     level: 2,
     stars: 2,
     problems: [
-      // 3×2, heights to 2.
       makeProblem("view-l2-01", 2, [3, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }]),
       makeProblem("view-l2-02", 2, [3, 2], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 0, z: 0, h: 1 }]),
       makeProblem("view-l2-03", 2, [3, 3], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 2 }]),
-      makeProblem("view-l2-04", 2, [3, 2], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 1, h: 1 }])
+      makeProblem("view-l2-04", 2, [3, 2], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("view-l2-05", 2, [3, 2], [{ x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("view-l2-06", 2, [3, 3], [{ x: 2, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("view-l2-07", 2, [3, 3], [{ x: 2, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 2, h: 1 }]),
+      makeProblem("view-l2-08", 2, [3, 3], [{ x: 0, z: 2, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 2, h: 2 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("view-l2-09", 2, [3, 2], [{ x: 1, z: 0, h: 2 }, { x: 2, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("view-l2-10", 2, [3, 3], [{ x: 1, z: 1, h: 1 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("view-l2-11", 2, [3, 3], [{ x: 2, z: 0, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("view-l2-12", 2, [3, 3], [{ x: 2, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 2 }]),
+      makeProblem("view-l2-13", 2, [3, 2], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l2-14", 2, [3, 2], [{ x: 1, z: 0, h: 2 }, { x: 0, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("view-l2-15", 2, [3, 3], [{ x: 2, z: 1, h: 1 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l2-16", 2, [3, 2], [{ x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 1, h: 2 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("view-l2-17", 2, [3, 3], [{ x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l2-18", 2, [3, 3], [{ x: 2, z: 0, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 2, h: 2 }]),
+      makeProblem("view-l2-19", 2, [3, 2], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l2-20", 2, [3, 2], [{ x: 0, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 2, z: 0, h: 2 }])
     ]
   },
   {
     level: 3,
     stars: 3,
     problems: [
-      // 3×3, heights to 3.
       makeProblem("view-l3-01", 3, [3, 3], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }]),
       makeProblem("view-l3-02", 3, [3, 3], [{ x: 1, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 2, h: 1 }]),
       makeProblem("view-l3-03", 3, [3, 3], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 1 }]),
-      makeProblem("view-l3-04", 3, [3, 3], [{ x: 2, z: 0, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 3 }])
+      makeProblem("view-l3-04", 3, [3, 3], [{ x: 2, z: 0, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 3 }]),
+      makeProblem("view-l3-05", 3, [3, 3], [{ x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 2, z: 2, h: 3 }]),
+      makeProblem("view-l3-06", 3, [3, 3], [{ x: 1, z: 0, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("view-l3-07", 3, [3, 3], [{ x: 2, z: 1, h: 3 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("view-l3-08", 3, [3, 3], [{ x: 2, z: 0, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 2, h: 2 }]),
+      makeProblem("view-l3-09", 3, [3, 3], [{ x: 2, z: 0, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 1, h: 3 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("view-l3-10", 3, [3, 3], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 1, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l3-11", 3, [3, 3], [{ x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 2, h: 3 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("view-l3-12", 3, [3, 3], [{ x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }]),
+      makeProblem("view-l3-13", 3, [3, 3], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("view-l3-14", 3, [3, 3], [{ x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 0, h: 3 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("view-l3-15", 3, [3, 3], [{ x: 1, z: 2, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("view-l3-16", 3, [3, 3], [{ x: 0, z: 2, h: 2 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 3 }]),
+      makeProblem("view-l3-17", 3, [3, 3], [{ x: 0, z: 2, h: 3 }, { x: 0, z: 0, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 1, h: 3 }]),
+      makeProblem("view-l3-18", 3, [3, 3], [{ x: 0, z: 1, h: 2 }, { x: 0, z: 0, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("view-l3-19", 3, [3, 3], [{ x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 1, z: 2, h: 3 }]),
+      makeProblem("view-l3-20", 3, [3, 3], [{ x: 2, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 1, z: 2, h: 3 }, { x: 2, z: 0, h: 2 }])
     ]
   },
   {
     level: 4,
     stars: 4,
     problems: [
-      // 4×3, heights to 3.
       makeProblem("view-l4-01", 4, [4, 3], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 3, z: 0, h: 2 }]),
       makeProblem("view-l4-02", 4, [4, 3], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 0, h: 1 }]),
       makeProblem("view-l4-03", 4, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 3, z: 0, h: 3 }, { x: 0, z: 3, h: 1 }]),
-      makeProblem("view-l4-04", 4, [4, 3], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }])
+      makeProblem("view-l4-04", 4, [4, 3], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }]),
+      makeProblem("view-l4-05", 4, [4, 3], [{ x: 1, z: 2, h: 1 }, { x: 3, z: 2, h: 3 }, { x: 0, z: 2, h: 1 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }]),
+      makeProblem("view-l4-06", 4, [4, 3], [{ x: 3, z: 2, h: 1 }, { x: 3, z: 0, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 2, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("view-l4-07", 4, [4, 4], [{ x: 3, z: 0, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("view-l4-08", 4, [4, 3], [{ x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 3 }, { x: 1, z: 1, h: 1 }, { x: 3, z: 1, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("view-l4-09", 4, [4, 3], [{ x: 0, z: 0, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 1, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 1, z: 1, h: 3 }, { x: 0, z: 2, h: 1 }]),
+      makeProblem("view-l4-10", 4, [4, 4], [{ x: 3, z: 1, h: 1 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 3, h: 2 }, { x: 0, z: 0, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 0, z: 1, h: 3 }]),
+      makeProblem("view-l4-11", 4, [4, 4], [{ x: 2, z: 2, h: 1 }, { x: 3, z: 2, h: 3 }, { x: 0, z: 1, h: 3 }, { x: 3, z: 0, h: 1 }, { x: 1, z: 2, h: 3 }, { x: 1, z: 1, h: 1 }]),
+      makeProblem("view-l4-12", 4, [4, 3], [{ x: 3, z: 2, h: 2 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 0, z: 0, h: 3 }]),
+      makeProblem("view-l4-13", 4, [4, 4], [{ x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 1, z: 3, h: 1 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 2, h: 2 }]),
+      makeProblem("view-l4-14", 4, [4, 4], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 3, z: 3, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("view-l4-15", 4, [4, 3], [{ x: 0, z: 1, h: 2 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 2, h: 2 }, { x: 3, z: 1, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("view-l4-16", 4, [4, 4], [{ x: 0, z: 3, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 3, z: 0, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 3, z: 3, h: 1 }]),
+      makeProblem("view-l4-17", 4, [4, 4], [{ x: 2, z: 3, h: 3 }, { x: 1, z: 3, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("view-l4-18", 4, [4, 4], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 3, z: 3, h: 1 }, { x: 0, z: 0, h: 3 }, { x: 3, z: 0, h: 1 }, { x: 3, z: 2, h: 2 }]),
+      makeProblem("view-l4-19", 4, [4, 3], [{ x: 0, z: 0, h: 3 }, { x: 3, z: 1, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 3, z: 0, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("view-l4-20", 4, [4, 3], [{ x: 2, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 2, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 3, z: 2, h: 1 }, { x: 1, z: 0, h: 2 }])
     ]
   },
   {
     level: 5,
     stars: 5,
     problems: [
-      // 4×4, heights to 4 — the full three-view challenge.
       makeProblem("view-l5-01", 5, [4, 4], [{ x: 0, z: 0, h: 4 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 0, z: 3, h: 1 }, { x: 1, z: 3, h: 2 }]),
       makeProblem("view-l5-02", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 2 }]),
       makeProblem("view-l5-03", 5, [4, 4], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 4 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 0, h: 1 }]),
-      makeProblem("view-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }])
+      makeProblem("view-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("view-l5-05", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 3, h: 3 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 1, h: 1 }, { x: 3, z: 3, h: 4 }]),
+      makeProblem("view-l5-06", 5, [4, 4], [{ x: 2, z: 0, h: 1 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 0, h: 3 }, { x: 1, z: 3, h: 3 }, { x: 0, z: 3, h: 1 }, { x: 2, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("view-l5-07", 5, [4, 4], [{ x: 2, z: 0, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 2, z: 1, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 3, z: 0, h: 3 }, { x: 0, z: 2, h: 3 }, { x: 1, z: 1, h: 4 }]),
+      makeProblem("view-l5-08", 5, [4, 4], [{ x: 2, z: 2, h: 4 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 3, z: 3, h: 3 }, { x: 3, z: 1, h: 3 }, { x: 2, z: 3, h: 1 }, { x: 1, z: 2, h: 2 }]),
+      makeProblem("view-l5-09", 5, [4, 4], [{ x: 3, z: 1, h: 2 }, { x: 1, z: 0, h: 4 }, { x: 1, z: 3, h: 3 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("view-l5-10", 5, [4, 4], [{ x: 2, z: 3, h: 1 }, { x: 1, z: 3, h: 2 }, { x: 3, z: 2, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 2, h: 4 }]),
+      makeProblem("view-l5-11", 5, [4, 4], [{ x: 3, z: 3, h: 1 }, { x: 3, z: 1, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 2, z: 0, h: 4 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 2, h: 2 }, { x: 0, z: 1, h: 4 }]),
+      makeProblem("view-l5-12", 5, [4, 4], [{ x: 3, z: 1, h: 2 }, { x: 3, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 3, h: 4 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("view-l5-13", 5, [4, 4], [{ x: 1, z: 0, h: 1 }, { x: 1, z: 3, h: 2 }, { x: 2, z: 2, h: 4 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 3, z: 2, h: 2 }, { x: 3, z: 1, h: 4 }]),
+      makeProblem("view-l5-14", 5, [4, 4], [{ x: 1, z: 3, h: 4 }, { x: 3, z: 2, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 2, z: 3, h: 1 }, { x: 3, z: 1, h: 4 }, { x: 2, z: 1, h: 2 }, { x: 1, z: 0, h: 3 }]),
+      makeProblem("view-l5-15", 5, [4, 4], [{ x: 3, z: 1, h: 3 }, { x: 2, z: 3, h: 2 }, { x: 1, z: 3, h: 3 }, { x: 2, z: 1, h: 4 }, { x: 0, z: 3, h: 2 }, { x: 1, z: 2, h: 2 }, { x: 3, z: 3, h: 1 }]),
+      makeProblem("view-l5-16", 5, [4, 4], [{ x: 0, z: 3, h: 4 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 2, h: 4 }, { x: 1, z: 0, h: 4 }, { x: 3, z: 2, h: 1 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("view-l5-17", 5, [4, 4], [{ x: 0, z: 3, h: 2 }, { x: 2, z: 2, h: 4 }, { x: 2, z: 0, h: 3 }, { x: 1, z: 1, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 3, h: 1 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("view-l5-18", 5, [4, 4], [{ x: 3, z: 0, h: 1 }, { x: 0, z: 0, h: 3 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 3, h: 3 }, { x: 2, z: 0, h: 4 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 3, h: 2 }]),
+      makeProblem("view-l5-19", 5, [4, 4], [{ x: 0, z: 2, h: 4 }, { x: 3, z: 0, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 3, z: 2, h: 4 }]),
+      makeProblem("view-l5-20", 5, [4, 4], [{ x: 1, z: 0, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 0, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 3, z: 3, h: 2 }])
     ]
   }
 ];
+
+export const levels = pools.map((entry) => ({
+  level: entry.level,
+  stars: entry.stars,
+  pool: entry.problems,
+  problems: sessionProblems("three-views", entry.level, entry.problems, 5)
+}));
 
 export function validateLevels() {
   if (levels.length !== 5) throw new Error("three-views requires five levels");
