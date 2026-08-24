@@ -21,6 +21,7 @@ const practiceCore = require("../data/practice-bank-core.js");
 const practicePlanner = require("../shared/practice-set-planner.js");
 const practiceRegistryModule = require("./practice-registry.js");
 const practiceStoreModule = require("./practice-store.js");
+const practiceAssetsModule = require("./practice-assets.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -182,6 +183,40 @@ function evidenceExtension(mimeType) {
   return ({ "image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp" })[mimeType] || "";
 }
 
+function practiceSignatureInput(record, item, asset, subject, expires) {
+  return {
+    subject,
+    examId: `practice:${record.practiceSetId}:${record.approval.decisionVersion}:${asset.assetKey}:${asset.assetRevision}`,
+    pageNumber: item.position,
+    expires
+  };
+}
+
+function validImageMagic(buffer, mimeType) {
+  if (mimeType === "image/png") return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+  if (mimeType === "image/jpeg") return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+  if (mimeType === "image/webp") return buffer.length >= 12 && buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+  return false;
+}
+
+async function readVerifiedPracticeAsset(asset) {
+  if (!asset) return null;
+  let handle;
+  try {
+    handle = await fs.promises.open(asset.assetPath, "r");
+    const stat = await handle.stat();
+    if (!stat.isFile() || stat.size < 3 || stat.size > 25 * 1024 * 1024) return null;
+    const buffer = await handle.readFile();
+    if (!validImageMagic(buffer, asset.mimeType)) return null;
+    const digest = Buffer.from(await crypto.webcrypto.subtle.digest("SHA-256", buffer)).toString("hex");
+    return asset.assetRevision === `sha256:${digest}` ? buffer : null;
+  } catch (_) {
+    return null;
+  } finally {
+    if (handle) { try { await handle.close(); } catch (_) {} }
+  }
+}
+
 function reviewSignatureInput(review, item, panel, subject, expires) {
   return {
     subject,
@@ -253,6 +288,10 @@ function createApp(options) {
   const practiceStore = opts.practiceStore || practiceStoreModule.createStore({
     data: opts.privatePracticeStore,
     filePath: opts.privatePracticeStorePath
+  });
+  const loadPracticeAsset = opts.loadPracticeAsset || practiceAssetsModule.createLoader({
+    data: opts.privatePracticeAssets,
+    filePath: opts.privatePracticeAssetsPath
   });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
@@ -339,6 +378,33 @@ function createApp(options) {
       }
     }
     throw new HttpError(409, "반복연습 계획이 동시에 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+  }
+
+  function requireCurrentPracticePlan(record) {
+    const registry = loadPracticeMode(record.plan.mode);
+    if (!registry) throw new HttpError(423, "이 과정의 검수된 반복연습 문항이 더 이상 준비되어 있지 않습니다.");
+    let rebuilt;
+    try {
+      rebuilt = practicePlanner.buildPracticeSetPlan({
+        mode: record.plan.mode,
+        learnerId: record.plan.learnerId,
+        policy: registry.policy,
+        candidates: registry.candidates,
+        history: [],
+        asOf: record.plan.plannedAt
+      });
+    } catch (_) {
+      throw new HttpError(503, "검수된 반복연습 문항 구성을 확인해 주세요.");
+    }
+    const storedBase = JSON.parse(JSON.stringify(record.plan));
+    if (storedBase.releaseStatus === "released") {
+      storedBase.releaseStatus = "approval_required";
+      delete storedBase.approval;
+    }
+    if (JSON.stringify(rebuilt) !== JSON.stringify(storedBase)) {
+      throw new HttpError(409, "반복연습 문항 구성이 계획 이후 변경되어 다시 계획해야 합니다.");
+    }
+    return rebuilt;
   }
 
   async function api(request, response, pathname, url) {
@@ -465,22 +531,7 @@ function createApp(options) {
         sendJson(response, 200, current.plan);
         return true;
       }
-      const registry = loadPracticeMode(current.plan.mode);
-      if (!registry) throw new HttpError(423, "이 과정의 검수된 반복연습 문항이 더 이상 준비되어 있지 않습니다.");
-      let rebuilt;
-      try {
-        rebuilt = practicePlanner.buildPracticeSetPlan({
-          mode: current.plan.mode,
-          learnerId: current.plan.learnerId,
-          policy: registry.policy,
-          candidates: registry.candidates,
-          history: [],
-          asOf: current.plan.plannedAt
-        });
-      } catch (_) {
-        throw new HttpError(503, "검수된 반복연습 문항 구성을 확인해 주세요.");
-      }
-      if (JSON.stringify(rebuilt) !== JSON.stringify(current.plan)) throw new HttpError(409, "반복연습 문항 구성이 계획 이후 변경되어 다시 계획해야 합니다.");
+      requireCurrentPracticePlan(current);
       const approvalId = questionBankCore.createNeutralId("approval", current.plan.mode, `practice:${practiceSetId}:${decisionVersion}`);
       let released;
       try {
@@ -524,8 +575,34 @@ function createApp(options) {
       if (record.plan.learnerId !== practiceLearnerId(record.studentId, record.plan.mode)) throw new HttpError(409, "반복연습 계획의 학생 결속 정보를 확인할 수 없습니다.");
       requireStudentPracticeMode(context, record.plan.mode);
       if (record.plan.releaseStatus !== "released" || !record.approval) throw new HttpError(423, "관리자 승인이 끝난 반복연습 계획만 열 수 있습니다.");
+      requireCurrentPracticePlan(record);
       if (action === "pages" && request.method === "GET") {
-        throw new HttpError(423, "검수된 반복연습 페이지 자산이 아직 연결되지 않았습니다.");
+        if (!loadPracticeAsset) throw new HttpError(423, "검수된 반복연습 페이지 자산이 아직 연결되지 않았습니다.");
+        const expires = Math.floor(now() / 1000) + assetTtlSeconds;
+        const subject = security.opaqueSubject(context.user.studentId, assetSecret);
+        const origin = publicOrigin(request, configuredOrigin);
+        const pages = [];
+        for (const item of record.plan.items) {
+          const asset = loadPracticeAsset(item.questionId);
+          if (!await readVerifiedPracticeAsset(asset)) {
+            throw new HttpError(423, "검수된 반복연습 페이지 자산이 완전하지 않습니다.");
+          }
+          const extension = evidenceExtension(asset.mimeType);
+          if (!extension) throw new HttpError(423, "검수된 반복연습 페이지 형식이 올바르지 않습니다.");
+          const signature = security.signPageAsset(practiceSignatureInput(record, item, asset, subject, expires), assetSecret);
+          pages.push({
+            number: item.position,
+            url: `${origin}/practice-assets/${encodeURIComponent(record.practiceSetId)}/item-${String(item.position).padStart(3, "0")}${extension}?sub=${subject}&exp=${expires}&dv=${record.approval.decisionVersion}&sig=${encodeURIComponent(signature)}`,
+            mimeType: asset.mimeType
+          });
+        }
+        sendJson(response, 200, {
+          practiceSetId: record.practiceSetId,
+          learnerId: record.plan.learnerId,
+          expiresAt: new Date(expires * 1000).toISOString(),
+          pages
+        });
+        return true;
       }
       if (action === "attempts" && request.method === "POST") {
         throw new HttpError(423, "검수된 반복연습 채점 구성이 아직 연결되지 않았습니다.");
@@ -824,6 +901,46 @@ function createApp(options) {
       response.setHeader("Content-Disposition", `inline; filename="exam-page-${String(pageNumber).padStart(2, "0")}.png"`);
       if (request.method === "HEAD") response.end();
       else fs.createReadStream(asset).pipe(response);
+      return true;
+    }
+    match = pathname.match(/^\/practice-assets\/([^/]+)\/item-(\d{3})(\.png|\.jpg|\.webp)$/);
+    if (match) {
+      if (request.method !== "GET" && request.method !== "HEAD") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      if (!loadPracticeAsset) throw new HttpError(404, "반복연습 페이지를 찾을 수 없습니다.");
+      const practiceSetId = decodeURIComponent(match[1]);
+      const position = Number(match[2]);
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const record = readPracticeSet(practiceSetId).record;
+      if (context.user.role !== "student" || record.studentId !== context.user.studentId) throw new HttpError(404, "반복연습 페이지를 찾을 수 없습니다.");
+      if (record.plan.learnerId !== practiceLearnerId(record.studentId, record.plan.mode)) throw new HttpError(409, "반복연습 계획의 학생 결속 정보를 확인할 수 없습니다.");
+      requireStudentPracticeMode(context, record.plan.mode);
+      if (record.plan.releaseStatus !== "released" || !record.approval) throw new HttpError(423, "관리자 승인이 끝난 반복연습 계획만 열 수 있습니다.");
+      requireCurrentPracticePlan(record);
+      const item = record.plan.items.find(function (candidate) { return candidate.position === position; });
+      const asset = item && loadPracticeAsset(item.questionId);
+      const expires = Number(url.searchParams.get("exp"));
+      const subject = String(url.searchParams.get("sub") || "");
+      const decisionVersion = Number(url.searchParams.get("dv"));
+      const signature = String(url.searchParams.get("sig") || "");
+      const currentSeconds = Math.floor(now() / 1000);
+      if (!item || !asset || evidenceExtension(asset.mimeType) !== match[3]) throw new HttpError(404, "반복연습 페이지를 찾을 수 없습니다.");
+      if (!Number.isInteger(expires) || expires <= currentSeconds || expires > currentSeconds + assetTtlSeconds + 5
+          || decisionVersion !== record.approval.decisionVersion) {
+        throw new HttpError(403, "반복연습 페이지 링크가 만료되었습니다.");
+      }
+      const expectedSubject = security.opaqueSubject(context.user.studentId, assetSecret);
+      if (subject !== expectedSubject || !security.verifyPageAsset(practiceSignatureInput(record, item, asset, subject, expires), signature, assetSecret)) {
+        throw new HttpError(403, "반복연습 페이지 서명이 올바르지 않습니다.");
+      }
+      const assetBytes = await readVerifiedPracticeAsset(asset);
+      if (!assetBytes) throw new HttpError(404, "반복연습 페이지를 찾을 수 없습니다.");
+      setSecurityHeaders(response);
+      response.statusCode = 200;
+      response.setHeader("Content-Type", asset.mimeType);
+      response.setHeader("Cache-Control", "private, no-store");
+      response.setHeader("Content-Disposition", `inline; filename="practice-item-${String(position).padStart(3, "0")}${match[3]}"`);
+      if (request.method === "HEAD") response.end();
+      else response.end(assetBytes);
       return true;
     }
     match = pathname.match(/^\/review-assets\/([^/]+)\/(\d+)\/(problem|source-key|independent-audit)(\.png|\.jpg|\.webp)$/);

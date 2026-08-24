@@ -39,6 +39,7 @@
 | `HIGHSELECT_PRIVATE_REVIEW_PATH` | 공개 저장소 밖의 문항 검수 상태·보호 근거 이미지 연결 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH` | 공개 저장소 밖의 반복연습 정책·검수 완료 후보 메타데이터 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_PRACTICE_PATH` | 반복연습 계획·관리자 승인 상태 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_PRACTICE_ASSETS_PATH` | 중립 문항 ID를 검수된 단일 이미지 자산에 연결하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
 
@@ -107,9 +108,9 @@ detailType, difficulty(lowered|standard|raised), evidence[]
 
 ## 비공개 반복연습 설정
 
-`HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH`는 `highselect-private-practice-registry/v1` JSON이며 프로그램 코드별 검수 정책과 문제 원문·정답·경로를 제외한 후보 메타데이터만 둡니다. `HIGHSELECT_PRIVATE_PRACTICE_PATH`는 `highselect-private-practice/v1` JSON이며 학생의 비공개 소유 ID, 중립 계획, 관리자 승인만 저장합니다. 두 파일은 공개 Git에 넣지 않습니다.
+`HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH`는 `highselect-private-practice-registry/v1` JSON이며 프로그램 코드별 검수 정책과 문제 원문·정답·경로를 제외한 후보 메타데이터만 둡니다. `HIGHSELECT_PRIVATE_PRACTICE_PATH`는 `highselect-private-practice/v1` JSON이며 학생의 비공개 소유 ID, 중립 계획, 관리자 승인만 저장합니다. `HIGHSELECT_PRIVATE_PRACTICE_ASSETS_PATH`는 `highselect-private-practice-assets/v1` JSON이며 중립 문항 ID별 내부 자산 키, 절대 이미지 경로, MIME 형식, 자산 revision을 둡니다. 세 파일은 공개 Git에 넣지 않습니다.
 
-학생은 공개 완료된 시험에 대한 현재 개별 승인이 있는 프로그램만 계획할 수 있습니다. 관리자는 승인 직전에 학생 권한, HMAC 기반 학습자 결속, 현재 레지스트리로 재생성한 계획을 모두 대조합니다. 계획 파일의 학생 ID나 문항 구성이 바뀌면 공개하지 않고 `409`로 닫습니다. 저장은 같은 디렉터리 잠금, revision 비교, 임시 파일 flush, 원자 교체를 사용합니다. 승인 렌더 자산과 비공개 채점기가 별도로 검수·연결되기 전에는 페이지와 시도 제출 경로가 `423`으로 잠겨 있습니다.
+학생은 공개 완료된 시험에 대한 현재 개별 승인이 있는 프로그램만 계획할 수 있습니다. 관리자는 승인 직전에 학생 권한, HMAC 기반 학습자 결속, 현재 레지스트리로 재생성한 계획을 모두 대조합니다. 계획 파일의 학생 ID나 문항 구성이 바뀌면 공개하지 않고 `409`로 닫습니다. 저장은 같은 디렉터리 잠금, revision 비교, 임시 파일 flush, 원자 교체를 사용합니다. 모든 선택 문항의 이미지가 존재할 때만 학생·세트·승인 버전·문항 위치·내부 자산 revision·만료시각에 묶인 단기 서명 URL을 만들며, 내부 자산 키·revision·경로는 URL과 JSON에 노출하지 않습니다. 승인 렌더 자산 또는 비공개 채점기가 연결되기 전에는 해당 페이지나 시도 제출 경로가 `423`으로 잠겨 있습니다.
 
 ## 점수와 판정
 

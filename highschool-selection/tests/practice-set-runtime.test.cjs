@@ -1,6 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
+const fs = require("node:fs");
 const http = require("node:http");
+const os = require("node:os");
 const path = require("node:path");
 
 const { createApp } = require("../server/app.js");
@@ -127,6 +130,7 @@ async function start(options = {}) {
     privatePracticeRegistry: registry(),
     privatePracticeStore: { schemaVersion: "highselect-private-practice/v1", sets: {} },
     practiceStore: options.practiceStore,
+    privatePracticeAssets: options.assets,
     cookieSecure: false,
     now: () => FIXED_NOW,
     staticRoot: path.join(__dirname, "..")
@@ -298,4 +302,85 @@ test("administrator approval rejects a store record rebound to another student",
     body: JSON.stringify({ decisionVersion: 1 })
   });
   assert.equal(response.status, 409);
+});
+
+test("released practice pages use owner-bound short-lived image URLs", async t => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "highselect-practice-assets-"));
+  const assetPath = path.join(root, "approved-item.png");
+  const assetBytes = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  fs.writeFileSync(assetPath, assetBytes);
+  const originalId = core.createNeutralId("question", MODE, "runtime:practice:family:01");
+  const assets = {
+    schemaVersion: "highselect-private-practice-assets/v1",
+    assets: {
+      [originalId]: {
+        assetKey: "practice.asset.runtime.01",
+        assetPath,
+        mimeType: "image/png",
+        assetRevision: `sha256:${crypto.createHash("sha256").update(assetBytes).digest("hex")}`
+      }
+    }
+  };
+  const store = practiceStoreModule.createStore({ data: { schemaVersion: "highselect-private-practice/v1", sets: {} } });
+  const env = await start({ assets, practiceStore: store });
+  t.after(() => {
+    env.server.close();
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+  const student = await login(env.base, "연습학생", "PRACTICE-001");
+  const planResponse = await fetch(`${env.base}/practice-sets/plan`, {
+    method: "POST",
+    headers: { Cookie: student.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: MODE })
+  });
+  const plan = await planResponse.json();
+  const admin = await login(env.base, "운영관리자", "ADMIN-001");
+  const approvalResponse = await fetch(`${env.base}/practice-sets/${encodeURIComponent(plan.id)}/approve`, {
+    method: "POST",
+    headers: adminHeaders(admin.cookie, env.base),
+    body: JSON.stringify({ decisionVersion: 1 })
+  });
+  assert.equal(approvalResponse.status, 200);
+
+  const manifestResponse = await fetch(`${env.base}/practice-sets/${encodeURIComponent(plan.id)}/pages`, {
+    headers: { Cookie: student.cookie }
+  });
+  assert.equal(manifestResponse.status, 200);
+  assert.equal(manifestResponse.headers.get("cache-control"), "no-store");
+  const manifest = await manifestResponse.json();
+  assert.equal(manifest.practiceSetId, plan.id);
+  assert.equal(manifest.pages.length, 1);
+  assert.equal(manifest.pages[0].mimeType, "image/png");
+  const signed = new URL(manifest.pages[0].url);
+  assert.equal(signed.protocol, "https:");
+  assert.doesNotMatch(signed.pathname + signed.search, /approved-item|practice\.asset|highselect-practice-assets|^[A-Za-z]:/i);
+
+  const delivered = await fetch(`${env.base}${signed.pathname}${signed.search}`, { headers: { Cookie: student.cookie } });
+  assert.equal(delivered.status, 200);
+  assert.equal(delivered.headers.get("cache-control"), "private, no-store");
+  assert.equal(delivered.headers.get("content-type"), "image/png");
+
+  signed.searchParams.set("sig", "tampered");
+  const tampered = await fetch(`${env.base}${signed.pathname}${signed.search}`, { headers: { Cookie: student.cookie } });
+  assert.equal(tampered.status, 403);
+
+  const originalSigned = new URL(manifest.pages[0].url);
+  fs.writeFileSync(assetPath, Buffer.from([0, 1, 2, 3]));
+  const changedAsset = await fetch(`${env.base}${originalSigned.pathname}${originalSigned.search}`, { headers: { Cookie: student.cookie } });
+  assert.equal(changedAsset.status, 404);
+
+  const other = await login(env.base, "다른학생", "PRACTICE-003");
+  const stolen = await fetch(`${env.base}/practice-sets/${encodeURIComponent(plan.id)}/pages`, { headers: { Cookie: other.cookie } });
+  assert.equal(stolen.status, 404);
+
+  const state = store.read(plan.id);
+  const twinId = core.createNeutralId("question", MODE, "runtime:practice:twin:lowered:01");
+  store.update(plan.id, state.revision, value => {
+    value.plan.items[0].questionId = twinId;
+    return value;
+  });
+  const reboundQuestion = await fetch(`${env.base}/practice-sets/${encodeURIComponent(plan.id)}/pages`, {
+    headers: { Cookie: student.cookie }
+  });
+  assert.equal(reboundQuestion.status, 409);
 });
