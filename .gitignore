@@ -10,3 +10,5 @@ reading-world/private/
 /.source-memory/gfield-geometry-memory-notes.md
 /.source-memory/premier-private-local.json
 /tmp/
+__pycache__/
+*.pyc
