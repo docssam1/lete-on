@@ -1123,7 +1123,7 @@ function setupInstallBanner(){
 }
 function registerServiceWorker(){
   if(!('serviceWorker'in navigator))return;
-  navigator.serviceWorker.register('/world-explorer/sw.js',{scope:'/world-explorer/'}).catch(()=>{});
+  navigator.serviceWorker.register('/world-explorer/sw.js',{scope:'/world-explorer/',updateViaCache:'none'}).catch(()=>{});
 }
 
 // ---------- boot ----------
@@ -1136,5 +1136,9 @@ function boot(){
   }
   try{buildWorld();}catch(error){console.error('3D village failed',error);$('#villageLoading').innerHTML='<strong>3D 마을을 시작하지 못했어요. WebGL과 인터넷 연결을 확인해 주세요.</strong>';}
   $('#voiceButton').textContent=state.audio?'🔊':'🔈';$('#voiceButton').setAttribute('aria-pressed',String(state.audio));
-  setupFullscreen();setupInstallBanner();registerServiceWorker();
+  setupFullscreen();setupInstallBanner();
 }
+
+// Cache the intro/login shell on the first visit instead of waiting until the
+// explorer has completed login and entered the 3D village.
+registerServiceWorker();

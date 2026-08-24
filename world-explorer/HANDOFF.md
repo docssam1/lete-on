@@ -30,7 +30,7 @@
 - 앱 아이콘 및 인트로 자산
 
 서비스 워커 범위는 반드시 `/world-explorer/`로 유지한다. 현재 캐시는
-`world-explorer-shell-v10`, 게임 상태 기본 키는 `gfield-world-max-v1`이다.
+`world-explorer-shell-v11`, 게임 상태 기본 키는 `gfield-world-max-v1`이다.
 
 ---
 
@@ -142,7 +142,7 @@
 
 - manifest: `manifest.webmanifest`
 - 서비스 워커: `sw.js`
-- 현재 캐시: `world-explorer-shell-v10`
+- 현재 캐시: `world-explorer-shell-v11`
 - 서비스 워커 등록 경로/범위: `/world-explorer/sw.js`, `/world-explorer/`
 - 앱 셸, 195개 국기, 로컬 지도 데이터, Three.js/D3 vendor를 저장소 안에서 제공
 - 인트로 MP4와 아이콘도 `/world-explorer/assets/` 아래에 존재
@@ -208,6 +208,14 @@ Geometry/Numbers World 캐시를 precache하거나 삭제하지 않는다.
 - `main` 병합 커밋 `0e1d287f825465ba2a96f561f9d8a8ffd68a6504`
 - GitHub Actions Pages 배포 `32703178264` 성공
 - 운영 주소 HTTP 200 및 `app.js?v=10`, `styles.css?v=10`, `introSoundButton` 응답 확인
+
+2026-08-24 캐시 복구 작업에서는 다음을 반영했다.
+
+- 캐시를 `world-explorer-shell-v11`로 올리고 `app.js?v=11`, `styles.css?v=11`과 버전을 일치시킴
+- 활성화 시 `world-explorer-shell-` 접두사의 구 캐시만 제거해 다른 GFIELD 앱 캐시를 보존
+- 오프라인 폴백을 현재 World Explorer 캐시로 한정하고 탐색 요청에는 앱 셸 폴백 추가
+- 최초 설치 캐시에 실제 HTML이 요청하는 버전 쿼리 자산을 포함
+- 서비스 워커 등록을 첫 앱 로드로 앞당겨 로그인 전 이탈 시에도 오프라인 셸 설치
 
 ---
 

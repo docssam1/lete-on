@@ -4,6 +4,7 @@ root=Path(__file__).resolve().parent
 html=(root/'index.html').read_text(encoding='utf-8')
 app=(root/'app.js').read_text(encoding='utf-8')
 css=(root/'styles.css').read_text(encoding='utf-8')
+sw=(root/'sw.js').read_text(encoding='utf-8')
 ids=set(re.findall(r'id="([^"]+)"',html))
 refs=set(x for x in re.findall(r"\$\('#([^']+)'\)",app) if re.fullmatch(r'[A-Za-z][A-Za-z0-9_-]*',x))
 missing=sorted(refs-ids)
@@ -11,6 +12,17 @@ print('HTML IDs',len(ids),'JS refs',len(refs),'missing',missing)
 print('CSS braces',css.count('{'),css.count('}'))
 assert not missing, missing
 assert css.count('{')==css.count('}')
+# Service worker and HTML asset versions must move together. Cache cleanup must
+# remain scoped to World Explorer so sibling GFIELD apps keep their caches.
+style_version=re.search(r'styles\.css\?v=(\d+)',html).group(1)
+app_version=re.search(r'app\.js\?v=(\d+)',html).group(1)
+sw_asset_version=re.search(r"const ASSET_VERSION = '(\d+)'",sw).group(1)
+sw_cache_version=re.search(r"const CACHE_VERSION = 'v(\d+)'",sw).group(1)
+assert len({style_version,app_version,sw_asset_version,sw_cache_version})==1
+assert "key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME" in sw
+assert "keys.filter(key => key !== CACHE_NAME)" not in sw
+assert "caches.match(event.request)" not in sw
+print('cache version',sw_cache_version,'isolated cleanup OK')
 # Parse JS module payloads without executing imports.
 text=(root/'data/countries-195.js').read_text(encoding='utf-8')
 prefix='export const countries195 = '
