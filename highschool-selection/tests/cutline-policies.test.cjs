@@ -39,3 +39,15 @@ test("unknown academy cutoffs remain absent instead of inferred from failed scor
   assert.equal(programIds.has("DG"), false);
   assert.equal(programIds.has("SM"), false);
 });
+
+test("WM middle-school reference cutoffs preserve course and round changes", () => {
+  const wm = data.referenceCutlines.filter(policy => policy.programId === "WM" && /^WM-M/.test(policy.courseId));
+  assert.deepEqual(wm.map(policy => [policy.courseId, policy.roundId, policy.rule.denominator, policy.rule.minimum]), [
+    ["WM-M21-BASIC-ENTRY", "2026-07", 40, 28],
+    ["WM-M22-BASIC-TRANSFER", "2026-05", 45, 32],
+    ["WM-M22-BASIC-TRANSFER", "2026-09", 50, 35],
+    ["WM-M31-BASIC-TRANSFER", "2026-07", 50, 35],
+    ["WM-M32-BASIC-TRANSFER", "2026-06-SUPERSEDED", 50, 35]
+  ]);
+  assert.equal(wm.every(policy => policy.usage === "reference-only"), true);
+});

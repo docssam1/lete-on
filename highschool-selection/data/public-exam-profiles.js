@@ -65,6 +65,55 @@
       publishedAt: "2026-05",
       checkedAt: "2026-08-24"
     },
+    "WM-MIDDLE-LAUNCH-2025": {
+      title: "원수학 중등수학관 과정 구성 공지 미러",
+      url: "https://www.gangmom.kr/news/6838ff501d3324234d1928fb",
+      grade: "B",
+      publishedAt: "2025-05",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M22-MAY-2026": {
+      title: "원수학 2026년 5월 중2-2 기본반 편입테스트 공지 미러",
+      url: "https://www.gangmom.kr/news/69f44076d692cfc9fdcc7a89",
+      grade: "B",
+      publishedAt: "2026-05",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M22-SEP-2026": {
+      title: "원수학 2026년 9월 중2-2 기본반 편입테스트 수정 공지 미러",
+      url: "https://www.gangmom.kr/news/6a753c571042abe5f053b14c",
+      grade: "B",
+      publishedAt: "2026-08",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M31-JULY-2026": {
+      title: "원수학 2026년 7월 중3-1 기본반 편입테스트 공지 미러",
+      url: "https://www.gangmom.kr/news/6a223d6f68333f66b83edc56",
+      grade: "B",
+      publishedAt: "2026-06",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M32-JUNE-2026": {
+      title: "원수학 2026년 6월 중3-2 기본반 편입테스트 공지 미러",
+      url: "https://www.gangmom.kr/news/69f440a415f0dadc06b9df6c",
+      grade: "B",
+      publishedAt: "2026-05",
+      checkedAt: "2026-08-24"
+    },
+    "WM-MIDDLE-QA-2026-08": {
+      title: "원수학 중등과정 자주 묻는 질문 공지 미러",
+      url: "https://www.gangmom.kr/news/6a753cb21042abe5f053b2c6",
+      grade: "B",
+      publishedAt: "2026-08",
+      checkedAt: "2026-08-24"
+    },
+    "WM-HIGH-DUAL-JULY-2026": {
+      title: "원수학 2026년 7월 실력공수1,2 듀얼반 편입 공지 미러",
+      url: "https://www.gangmom.kr/news/6a223d0d68333f66b83ed99a",
+      grade: "B",
+      publishedAt: "2026-06",
+      checkedAt: "2026-08-24"
+    },
     "DG-SCOPE-MIRROR": {
       title: "깊은생각 예비고1 입학테스트 범위 공지 미러",
       url: "https://www.gangmom.kr/news/6902cf1da52af7ec2ec7f57b",
@@ -134,24 +183,32 @@
       eyebrow: "대수·기하 분리 평가",
       summary: "중2-1 기본반 신입과 공통수학1 기본반 입학의 서로 다른 대수·기하 평가 구조를 분리해 반영합니다.",
       facts: [
-        { label: "중2-1 기본반 현행 구조", value: "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-CHANGE-2025"] },
+        { label: "중등과정", value: "중2·중3 각 기본 2+2개월 뒤 심화듀얼 2.5개월", state: "verified", sourceIds: ["WM-MIDDLE-LAUNCH-2025", "WM-MIDDLE-QA-2026-08"] },
+        { label: "기본반 목적", value: "해당 학기를 처음 배우거나 개념을 처음부터 재정비", state: "verified", sourceIds: ["WM-M31-JULY-2026"] },
+        { label: "중2-1 기본반 현행 구조", value: "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
         { label: "중2-1 최신 전형 창", value: "2026년 7월 공지 기준 120분", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
         { label: "중2-1 공지 변경 이력", value: "최초 25+25 공지 후 같은 전형을 20+20으로 정정", state: "verified", sourceIds: ["WM-M21-INITIAL-2025", "WM-M21-CHANGE-2025"] },
-        { label: "공개 구성 사례", value: "중등대수 25 + 중등기하 25", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] },
-        { label: "공개 시간 사례", value: "대수 90분 + 휴식 20분 + 기하 90분", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] },
-        { label: "공개 판정 사례", value: "35문항 이상, 영역별 과락 별도", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] }
+        { label: "중2-2 편입 개편", value: "2026년 5월 45문항에서 9월 50문항으로 변경", state: "verified", sourceIds: ["WM-M22-MAY-2026", "WM-M22-SEP-2026"] },
+        { label: "고등 듀얼 분리", value: "실력공수1,2 듀얼은 공수1·2 기본 이수 뒤의 별도 고등과정", state: "verified", sourceIds: ["WM-HIGH-DUAL-JULY-2026"] }
       ],
       cutline: {
         state: "verified",
-        display: "35 / 50문항 · 대수 17미만/기하 15미만 과락 · 32이상 풀이 검토",
-        context: "2025년 9월 공통수학1 기본반 공개 공지",
+        display: "28 / 40문항 · 대수 13미만/기하 12미만 과락 · 25이상 풀이 검토",
+        context: "대치 · 2026년 7월 중2-1 기본반 신입",
         branch: "대치",
-        course: "공통수학1 기본반 입학",
-        round: "2025-09",
-        sourceIds: ["WM-ENTRY-2025-MIRROR"]
+        course: "중2-1 기본반 신입",
+        round: "2026-07",
+        sourceIds: ["WM-M21-JULY-2026"]
       },
+      roundProfiles: [
+        { id: "WM-M21-BASIC-ENTRY-2026-07", course: "중2-1 기본 신입", round: "2026-07", questionCount: 40, sectionCounts: [20, 20], sectionMinutes: [50, 50], minimum: 28, sectionMinimums: [13, 12], reviewFrom: 25, state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
+        { id: "WM-M22-BASIC-TRANSFER-2026-05", course: "중2-2 기본 편입", round: "2026-05", questionCount: 45, sectionCounts: [25, 20], sectionMinutes: [70, 50], minimum: 32, sectionMinimums: [15, 13], reviewFrom: 28, state: "superseded", sourceIds: ["WM-M22-MAY-2026"] },
+        { id: "WM-M22-BASIC-TRANSFER-2026-09", course: "중2-2 기본 편입", round: "2026-09", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M22-SEP-2026"] },
+        { id: "WM-M31-BASIC-TRANSFER-2026-07", course: "중3-1 기본 편입", round: "2026-07", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M31-JULY-2026"] },
+        { id: "WM-M32-BASIC-TRANSFER-2026-06", course: "중3-2 기본 편입", round: "2026-06", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "superseded", sourceIds: ["WM-M32-JUNE-2026", "WM-M31-JULY-2026"] }
+      ],
       style: "대수와 기하를 따로 진단하고 전체 점수뿐 아니라 영역별 누적 공백과 시간 안배를 설명합니다.",
-      caveat: "중2-1의 과거 35/50 컷과 공통수학1의 25+25 구조를 현재 중2-1 40문항에 적용하지 않습니다. 중2-1 최신 합격선과 실물 성적표는 확인 필요입니다."
+      caveat: "모든 수치는 과정·회차별 참고 기준이며 자동 합격 판정에는 쓰지 않습니다. 중등 심화듀얼과 고등 실력공수 듀얼을 섞지 않고, 2026년 6월 중3-2 편입 사례는 7월의 편입 중단 정책으로 대체된 이력으로 표시합니다."
     },
     {
       code: "ED",

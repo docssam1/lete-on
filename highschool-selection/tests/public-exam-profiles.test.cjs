@@ -54,13 +54,22 @@ test("cutoffs are scoped records and never a global academy number", () => {
   });
 });
 
-test("WM advertising separates middle2-1 corrected structure from common-math cutline", () => {
+test("WM advertising uses the current middle2-1 cutoff and preserves round changes", () => {
   const wm = data.profiles.find(profile => profile.code === "WM");
   const middleFact = wm.facts.find(fact => fact.label === "중2-1 기본반 현행 구조");
   assert.equal(middleFact.value, "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외");
-  assert.deepEqual(middleFact.sourceIds, ["WM-M21-CHANGE-2025"]);
-  assert.equal(wm.cutline.course, "공통수학1 기본반 입학");
-  assert.equal(wm.caveat.includes("현재 중2-1 40문항에 적용하지 않습니다"), true);
+  assert.deepEqual(middleFact.sourceIds, ["WM-M21-JULY-2026"]);
+  assert.equal(wm.cutline.course, "중2-1 기본반 신입");
+  assert.equal(wm.cutline.display.startsWith("28 / 40문항"), true);
+  assert.deepEqual(wm.roundProfiles.map(round => [round.id, round.questionCount, round.minimum]), [
+    ["WM-M21-BASIC-ENTRY-2026-07", 40, 28],
+    ["WM-M22-BASIC-TRANSFER-2026-05", 45, 32],
+    ["WM-M22-BASIC-TRANSFER-2026-09", 50, 35],
+    ["WM-M31-BASIC-TRANSFER-2026-07", 50, 35],
+    ["WM-M32-BASIC-TRANSFER-2026-06", 50, 35]
+  ]);
+  assert.equal(wm.roundProfiles.at(-1).state, "superseded");
+  assert.equal(wm.caveat.includes("중등 심화듀얼과 고등 실력공수 듀얼을 섞지 않고"), true);
 });
 
 test("public sources are dated HTTPS pages and do not expose private assets", () => {

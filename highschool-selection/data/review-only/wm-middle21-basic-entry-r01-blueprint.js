@@ -59,11 +59,29 @@
     ]),
     excludedUnits: Object.freeze(["중1 통계"]),
     scheduledWindowMinutes: 120,
-    currentCutline: null,
-    cutlineStatus: "confirmation-required",
+    currentCutline: Object.freeze({
+      policyId: "CL-WM-DC-2026-07-M21B",
+      minimum: 28,
+      denominator: 40,
+      sectionMinimums: Object.freeze([Object.freeze({ sectionId: "ALG", minimum: 13 }), Object.freeze({ sectionId: "GEO", minimum: 12 })]),
+      reviewFrom: 25,
+      usage: "reference-only"
+    }),
+    cutlineStatus: "reference-only",
     scorecardStatus: "confirmation-required",
     releaseStatus: "blocked",
-    evidenceNote: "최초 25+25 공지는 시행 전 20+20으로 정정되었습니다. 실제 성적표·시험지 확보 전에는 문항과 합격선을 확정하지 않습니다."
+    evidenceNote: "최초 25+25 공지는 시행 전 20+20으로 정정되었습니다. 2026년 7월 공개 컷은 참고용으로만 보관하며, 사용자 승인 전에는 우리 모의고사 합격 판정에 적용하지 않습니다."
+  });
+
+  const courseModel = Object.freeze({
+    target: "중2-1 기본반 신입",
+    sequence: Object.freeze([
+      Object.freeze({ id: "M21_BASIC", label: "중2-1 기본", months: 2, purpose: "초견·개념 재정비" }),
+      Object.freeze({ id: "M22_BASIC", label: "중2-2 기본", months: 2, purpose: "초견·개념 재정비" }),
+      Object.freeze({ id: "M2_DUAL", label: "중2-1,2 심화듀얼", months: 2.5, purpose: "두 학기 심화 통합" })
+    ]),
+    entryPolicy: "중2-1 기본반만 정기 신입 모집, 이후 과정은 공지된 회차의 편입 정책을 적용",
+    namingWarning: "중등 심화듀얼과 고등 실력공수1,2 듀얼은 서로 다른 과정"
   });
 
   const auditRules = Object.freeze([
@@ -74,5 +92,5 @@
     "독립 계산 또는 전수 열거로 정답 유일성을 검산한 뒤에만 answerStatus를 전환"
   ]);
 
-  return Object.freeze({ updatedAt: "2026-08-24", blueprint, sourcePools, groups, items, auditRules });
+  return Object.freeze({ updatedAt: "2026-08-24", blueprint, courseModel, sourcePools, groups, items, auditRules });
 });
