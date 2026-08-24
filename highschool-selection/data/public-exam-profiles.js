@@ -44,6 +44,13 @@
       publishedAt: "2025-07",
       checkedAt: "2026-08-22"
     },
+    "WM-ENTRY-2025-REVIEW": {
+      title: "원수학 레테에 합격하다 후기",
+      url: "https://blog.naver.com/rubizzi/224102025195",
+      grade: "C",
+      publishedAt: "2025",
+      checkedAt: "2026-08-24"
+    },
     "WM-M21-INITIAL-2025": {
       title: "원수학 2026년 1월 중2-1 기본반 최초 입학전형 공지 미러",
       url: "https://www.gangmom.kr/news/6916927bf713b0cfec739b32",
@@ -127,6 +134,13 @@
       grade: "C",
       publishedAt: "2025-03-15",
       checkedAt: "2026-08-22"
+    },
+    "ED-HIGH-REVIEW-YT": {
+      title: "이든수학 고등과정과 황소 고등과정 비교 후기 영상",
+      url: "https://www.youtube.com/watch?v=g1b5jDkWTtw",
+      grade: "C",
+      publishedAt: null,
+      checkedAt: "2026-08-24"
     }
   };
 
@@ -140,7 +154,9 @@
         { label: "현재 과정", value: "기본정석 Light · 기본정석 Plus · 실력정석", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL", "SH-REFORM-OFFICIAL"] },
         { label: "현행 과목", value: "공통수학1·2 병렬 운영", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL"] },
         { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 110분", state: "confirmed", sourceIds: [] },
-        { label: "공개 시간 사례", value: "고등과정 입학시험 110분", state: "verified", sourceIds: ["SH-SONGPA-2025-08-MIRROR"] }
+        { label: "공개 시간 사례", value: "고등과정 입학시험 110분", state: "verified", sourceIds: ["SH-SONGPA-2025-08-MIRROR"] },
+        { label: "개편 전 교재 후기", value: "상·하 본교재 + 홀짝 숙제교재 6권 · 첨삭 미션·보충 프린트", state: "observed", sourceIds: [] },
+        { label: "개편 전 퀵테스트 후기", value: "서술형 2문항 · 10점 · 부분점수", state: "observed", sourceIds: [] }
       ],
       cutline: {
         state: "verified",
@@ -152,7 +168,7 @@
         sourceIds: ["SH-WIRYE-2026-06-MIRROR"]
       },
       style: "중등 수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률을 한 회차에 누적 배치합니다.",
-      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 110분은 우리 판매용 모의고사 운영 설정이고, 외부 공개 사례와 지점·회차별 커트라인은 별도 참고 근거로 관리합니다."
+      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 110분은 우리 판매용 모의고사 운영 설정이고, 외부 공개 사례와 지점·회차별 커트라인은 별도 참고 근거로 관리합니다. 과거 기본정석 교재 6권과 퀵테스트 후기는 2026년 교재 개편 전 자료이므로 현행 교재 안내에 쓰지 않습니다."
     },
     {
       code: "DP",
@@ -161,6 +177,7 @@
       summary: "지원 과정에 맞춰 중1 입학 선수 과정과 공통수학1 입학·편입을 분리해 준비합니다.",
       facts: [
         { label: "중1 입학 관찰 사례", value: "초5-1~초6-2 누적 · 30문항 · 2/3/4점", state: "observed", sourceIds: [] },
+        { label: "예비중1 성적표 사례", value: "공통수학1 기본 · 30문항 · 60점 컷", state: "observed", sourceIds: [] },
         { label: "공개 범위 사례", value: "공통수학1 기본 전범위", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
         { label: "공개 규격 사례", value: "30문항 · 150분 · 20문항 기준", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
         { label: "실출제 경향", value: "후반 변별형·조건 분기·그래프/조합 결합", state: "observed", sourceIds: [] }
@@ -186,8 +203,10 @@
         { label: "중등과정", value: "중2·중3 각 기본 2+2개월 뒤 심화듀얼 2.5개월", state: "verified", sourceIds: ["WM-MIDDLE-LAUNCH-2025", "WM-MIDDLE-QA-2026-08"] },
         { label: "기본반 목적", value: "해당 학기를 처음 배우거나 개념을 처음부터 재정비", state: "verified", sourceIds: ["WM-M31-JULY-2026"] },
         { label: "중2-1 기본반 현행 구조", value: "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
+        { label: "공수1 결과분석 사례", value: "중등대수 30 + 중등 기하·종합 30 · 문항별 유형표", state: "observed", sourceIds: [] },
         { label: "중2-1 최신 전형 창", value: "2026년 7월 공지 기준 120분", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
         { label: "중2-1 공지 변경 이력", value: "최초 25+25 공지 후 같은 전형을 20+20으로 정정", state: "verified", sourceIds: ["WM-M21-INITIAL-2025", "WM-M21-CHANGE-2025"] },
+        { label: "2025 공수1 난이도 후기", value: "대수·기하 25+25 · 극심화보다 심화 문제의 정확도 중심", state: "observed", sourceIds: ["WM-ENTRY-2025-REVIEW"] },
         { label: "중2-2 편입 개편", value: "2026년 5월 45문항에서 9월 50문항으로 변경", state: "verified", sourceIds: ["WM-M22-MAY-2026", "WM-M22-SEP-2026"] },
         { label: "고등 듀얼 분리", value: "실력공수1,2 듀얼은 공수1·2 기본 이수 뒤의 별도 고등과정", state: "verified", sourceIds: ["WM-HIGH-DUAL-JULY-2026"] }
       ],
@@ -201,6 +220,7 @@
         sourceIds: ["WM-M21-JULY-2026"]
       },
       roundProfiles: [
+        { id: "WM-CM1-BASIC-ENTRY-2025-09", course: "공통수학1 기본 입학", round: "2025-09", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [90, 90], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR", "WM-ENTRY-2025-REVIEW"] },
         { id: "WM-M21-BASIC-ENTRY-2026-07", course: "중2-1 기본 신입", round: "2026-07", questionCount: 40, sectionCounts: [20, 20], sectionMinutes: [50, 50], minimum: 28, sectionMinimums: [13, 12], reviewFrom: 25, state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
         { id: "WM-M22-BASIC-TRANSFER-2026-05", course: "중2-2 기본 편입", round: "2026-05", questionCount: 45, sectionCounts: [25, 20], sectionMinutes: [70, 50], minimum: 32, sectionMinimums: [15, 13], reviewFrom: 28, state: "superseded", sourceIds: ["WM-M22-MAY-2026"] },
         { id: "WM-M22-BASIC-TRANSFER-2026-09", course: "중2-2 기본 편입", round: "2026-09", questionCount: 50, sectionCounts: [25, 25], sectionMinutes: [70, 70], minimum: 35, sectionMinimums: [17, 15], reviewFrom: 32, state: "verified", sourceIds: ["WM-M22-SEP-2026"] },
@@ -219,6 +239,10 @@
         { label: "중1 시작 관찰 사례", value: "초5 12 + 초6 18, 총 30문항", state: "observed", sourceIds: [] },
         { label: "고등선행 관찰 사례", value: "2-1·3-1·2-2·3-2, 총 30문항", state: "observed", sourceIds: [] },
         { label: "공개 과거 운영 사례", value: "서술형 30문항 · 100분", state: "observed", sourceIds: ["ED-2025-INDEPENDENT"] },
+        { label: "고등 수업 후기 사례", value: "주2회 4시간 + 토요일 의무 클리닉 2시간", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
+        { label: "누적·총괄평가 후기", value: "매시간 누적 20문항 · 실력과정 총괄 3회(각 20점)", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
+        { label: "재원 총괄평가 후기 기준", value: "총 42점 이상 + 최소 2회 14점 이상", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
+        { label: "고등 교재 후기 사례", value: "학원 개념노트·정석 워크북·쎈·기본 수학의 정석", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
         { label: "합격 기준", value: "최신 공식 기준 확인 필요", state: "needs-review", sourceIds: [] }
       ],
       cutline: {
@@ -231,7 +255,7 @@
         sourceIds: []
       },
       style: "문항 수가 다른 학기끼리는 정답 개수가 아니라 분모를 포함한 수행률로 비교합니다.",
-      caveat: "익명 결과 문자는 시험 분포 근거일 뿐 일반 커트라인 근거가 아닙니다."
+      caveat: "익명 결과 문자는 시험 분포 근거일 뿐 일반 커트라인 근거가 아닙니다. 42점·14점 기준은 개인 후기에서 설명한 재원 중 실력과정 총괄평가 기준이며 입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다."
     },
     {
       code: "DG",
