@@ -53,11 +53,11 @@ GET    /admin/exam-reviews/:examId/items/:number/evidence
 
 ## SH-R01 문항별 검수
 
-`GET /admin/exam-reviews/sh-selection-r01`은 `examId`, `roundCode`, `reviewVersion`과 1~40번 상태만 반환합니다. 문항 상태에는 중립 `itemId`, 번호, 답 검산 상태, 분류 검증 상태, 시각 감사 상태, 원본·교정 산출물 지문 일치 여부, 에이전트 처리 상태만 둡니다. 지문값 자체와 비공개 파일 주소는 반환하지 않습니다.
+`GET /admin/exam-reviews/sh-selection-r01`은 `examId`, `roundCode`, `reviewVersion`과 1~40번 상태만 반환합니다. 문항 상태에는 중립 `itemId`, 번호, 답 검산 상태, 분류 검증 상태, 시각 감사 상태, 원본·교정 산출물 지문 일치 여부, 에이전트 처리 상태만 둡니다. 회차 최종 확인이 이미 저장된 경우에는 같은 검수 버전과 문항 수 집계만 `finalConfirmation`으로 함께 반환합니다. 확인자 ID·시각, 지문값 자체와 비공개 파일 주소는 반환하지 않습니다.
 
 `POST /admin/exam-reviews/sh-selection-r01/items/:number/resolution`은 현재 `reviewVersion`과 중립 문항 ID를 다시 대조합니다. `agent_verify`와 `replacement_verified`는 답 검산·분류·시각·원본 지문·교정 산출물 지문 중 하나라도 미완료이면 거부합니다. `scoring_excluded`는 문제 페이지 시각 감사와 원본 지문이 통과하고 채점 제외 정책에 포함된 경우에만 허용합니다. 정적 화면과 브라우저 저장소는 처리 근거로 사용하지 않습니다.
 
-`POST /admin/exam-reviews/sh-selection-r01/final-confirmation`은 40문항이 모두 `agent_verified|replacement_verified|scoring_excluded` 중 하나이고, 7개 교정 결정과 12개 분류검수 큐가 모두 해소되며 답안 입력 구성·채점 정책·인쇄 감사·학생별 서명 자산이 통과한 동일 `reviewVersion`에서만 허용합니다. 사용자는 문항마다 승인하지 않고 완성된 시험 1회 전체만 한 번 확인합니다. 요청에는 `itemCount`, `activeItemCount`, `excludedItemCount`만 포함하고 정답·풀이를 넣지 않습니다.
+`POST /admin/exam-reviews/sh-selection-r01/final-confirmation`은 40문항이 모두 `agent_verified|replacement_verified|scoring_excluded` 중 하나이고, 교정 결정과 분류검수 큐가 모두 해소되며 답안 입력 구성·채점 정책·인쇄 감사·학생별 서명 자산이 통과한 동일 `reviewVersion`에서만 허용합니다. 사용자는 문항마다 승인하지 않고 완성된 시험 1회 전체만 한 번 확인합니다. 요청에는 `itemCount`, `activeItemCount`, `excludedItemCount`만 포함하고 정답·풀이를 넣지 않습니다. 이 API는 확인 상태만 저장하며 시험을 `released`로 자동 승격하지 않습니다.
 
 Q3 동형·동난도 대체문항은 비공개 검산 산출물로 완료되어 있습니다. 운영 서버는 비공개 교정 레지스트리의 지문과 일치할 때만 Q3을 `replacement_verified`로 반환하며 공개 응답에는 지문값을 노출하지 않습니다. Q4·Q8·Q10·Q11·Q34·Q39는 확정된 교정 종류를 실행한 보호 산출물의 지문이 일치할 때까지 처리 대기입니다.
 
