@@ -10,6 +10,10 @@
 - `POST /exams/:examId/attempts`
 - `GET /attempts/:attemptId/report`
 - `GET /page-assets/:examId/page-NN.png?sub=...&exp=...&sig=...`
+- `GET /admin/access-grants`
+- `POST /admin/access-grants`
+- `PUT /admin/access-grants/:grantId`
+- `DELETE /admin/access-grants/:grantId`
 
 학생 화면과 API를 같은 HTTPS 출처에서 실행하는 구성이 기본입니다. `shared/runtime.js`가 현재 HTTPS 출처를 API 주소와 허용 이미지 호스트로 사용합니다. 별도 출처를 사용할 때는 화면보다 먼저 `window.HIGHSELECT_RUNTIME`을 주입해야 합니다.
 
@@ -38,7 +42,8 @@
       "studentId": "중립_학생_ID",
       "name": "학생 이름",
       "approvalCodeHash": "scrypt-v1$...$...",
-      "grants": ["sh-selection-r01"]
+      "grants": ["sh-selection-r01"],
+      "expiresAt": "2026-12-31"
     }
   ],
   "exams": {
@@ -58,6 +63,8 @@
   }
 }
 ```
+
+`expiresAt`은 선택값이며 한국시간 기준 해당 날짜의 마지막 시각까지 유효합니다. 관리자 화면에서 저장한 승인번호는 즉시 scrypt 해시로 변환되며 원문은 파일이나 API 응답에 남지 않습니다. 승인 저장은 설정 스키마 검증, 같은 디렉터리 잠금, 임시 파일 flush, 버전 확인을 통과한 뒤 원본 설정 파일과 원자적으로 교체합니다. 비정상 종료 뒤 5분 이상 지난 잠금은 기록된 PID가 실행 중이 아닐 때만 격리·회수하며, 최근 잠금이나 살아 있는 PID의 잠금은 `409`로 닫힙니다. 갑작스런 전원 장애의 디스크 영속성이나 Windows ACL 설정까지 이 동작만으로 보장하는 것은 아닙니다. 관리자 세션, 현재 운영 출처와 일치하는 `Origin`, 전용 변경 헤더가 없으면 승인 저장·수정·취소 API를 사용할 수 없습니다.
 
 페이지 폴더에는 `page-01.png`부터 `page-08.png`까지만 둡니다. PDF/HWP는 서버 정적 경로에 두지 않습니다. `signedAssetsStatus=verified`는 비공개 manifest가 있다는 이유만으로 설정하지 않으며, 실제 운영 호스트에서 학생·시험·페이지·만료시각 서명과 위변조 거부 검사가 통과한 뒤 설정합니다.
 

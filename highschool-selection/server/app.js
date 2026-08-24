@@ -77,7 +77,59 @@ function currentUser(request, loadConfig, secret, cookieName, now) {
   const config = loadConfig();
   const user = config.students.find(function (item) { return item.studentId === token.studentId; });
   if (!user) throw new HttpError(401, "승인 정보가 변경되었습니다. 다시 로그인해 주세요.");
+  if (token.authVersion !== security.approvalVersion(user.approvalCodeHash, secret)) throw new HttpError(401, "승인 정보가 변경되었습니다. 다시 로그인해 주세요.");
+  if (privateConfig.isStudentExpired(user, now())) throw new HttpError(401, "승인 기간이 만료되었습니다.");
   return { config, user };
+}
+
+function requireAdmin(context) {
+  if (!context || !context.user || context.user.role !== "admin") throw new HttpError(403, "관리자 권한이 필요합니다.");
+  return context;
+}
+
+function requestOrigin(request) {
+  const host = String(request.headers["x-forwarded-host"] || request.headers.host || "").trim();
+  if (!host || /[\s/\\]/.test(host)) throw new HttpError(403, "관리자 변경 요청의 출처를 확인할 수 없습니다.");
+  const forwardedProtocol = String(request.headers["x-forwarded-proto"] || "").split(",")[0].trim().toLowerCase();
+  const protocol = forwardedProtocol || (request.socket && request.socket.encrypted ? "https" : "http");
+  if (protocol !== "http" && protocol !== "https") throw new HttpError(403, "관리자 변경 요청의 출처를 확인할 수 없습니다.");
+  return `${protocol}://${host}`;
+}
+
+function requireAdminMutation(request, expectsJson, configuredOrigin) {
+  const suppliedOrigin = String(request.headers.origin || "").trim();
+  const expectedOrigin = configuredOrigin || requestOrigin(request);
+  if (!suppliedOrigin || suppliedOrigin !== expectedOrigin) throw new HttpError(403, "관리자 변경 요청의 출처를 확인할 수 없습니다.");
+  if (request.headers["x-highselect-admin"] !== "1") throw new HttpError(403, "관리자 변경 요청을 확인할 수 없습니다.");
+  if (expectsJson && !/^application\/json(?:;|$)/i.test(String(request.headers["content-type"] || ""))) {
+    throw new HttpError(415, "JSON 요청만 허용됩니다.");
+  }
+}
+
+function publicGrant(student) {
+  return {
+    id: student.studentId,
+    studentName: student.name,
+    examIds: student.grants.slice(),
+    expiresAt: student.expiresAt || null
+  };
+}
+
+function writableConfig(config, students) {
+  return {
+    schemaVersion: config.schemaVersion,
+    students: students.map(function (student) {
+      return {
+        studentId: student.studentId,
+        name: student.name,
+        approvalCodeHash: student.approvalCodeHash,
+        role: student.role,
+        grants: student.grants.slice(),
+        expiresAt: student.expiresAt || null
+      };
+    }),
+    exams: Object.fromEntries(Object.entries(config.exams).map(function (entry) { return [entry[0], Object.assign({}, entry[1])]; }))
+  };
 }
 
 function requireExamAccess(context, examId) {
@@ -114,11 +166,28 @@ function createApp(options) {
   const cookieSecure = opts.cookieSecure === undefined ? process.env.HIGHSELECT_COOKIE_SECURE !== "false" : opts.cookieSecure !== false;
   const now = typeof opts.now === "function" ? opts.now : Date.now;
   const loadConfig = opts.loadConfig || privateConfig.createLoader({ config: opts.privateConfig, configPath: opts.privateConfigPath });
+  const saveConfig = opts.saveConfig || privateConfig.createWriter({ configPath: opts.privateConfigPath });
   const scorer = opts.scorer || privateScorer.createAdapter({ data: opts.privateScorer, scorerPath: opts.privateScorerPath });
   const store = opts.store || createStore({ filePath: opts.attemptStorePath });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
   const dummyApprovalHash = security.hashApprovalCode("INVALID-APPROVAL-CODE", Buffer.alloc(16, 0).toString("base64url"));
+
+  function persistMutation(mutate) {
+    if (!saveConfig) throw new HttpError(503, "비공개 승인 설정의 안전한 저장 경로가 연결되지 않았습니다.");
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const latest = loadConfig();
+      const mutation = mutate(latest);
+      try {
+        const saved = saveConfig(writableConfig(latest, mutation.students), privateConfig.revision(latest));
+        return { saved, value: mutation.value };
+      } catch (error) {
+        if (error && (error.code === "CONFIG_BUSY" || error.code === "CONFIG_CONFLICT")) continue;
+        throw error;
+      }
+    }
+    throw new HttpError(409, "승인 정보가 동시에 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+  }
 
   async function api(request, response, pathname, url) {
     if (request.method === "POST" && pathname === "/session") {
@@ -126,11 +195,18 @@ function createApp(options) {
       const name = security.clean(body.name);
       const code = security.cleanApprovalCode(body.approvalCode);
       const config = loadConfig();
-      const user = config.students.find(function (item) { return item.name === name; });
-      const approvalMatches = security.verifyApprovalCode(code, user ? user.approvalCodeHash : dummyApprovalHash);
-      if (!user || !approvalMatches) throw new HttpError(401, "이름 또는 승인번호를 확인해 주세요.");
+      const namedUsers = config.students.filter(function (item) { return item.name === name; });
+      if (!namedUsers.length) security.verifyApprovalCode(code, dummyApprovalHash);
+      const matchedUsers = namedUsers.filter(function (item) { return security.verifyApprovalCode(code, item.approvalCodeHash); });
+      const user = matchedUsers.length === 1 ? matchedUsers[0] : null;
+      if (!user || privateConfig.isStudentExpired(user, now())) throw new HttpError(401, "이름 또는 승인번호를 확인해 주세요.");
       const issuedAtMs = now();
-      const token = security.signSession({ studentId: user.studentId, iat: issuedAtMs, exp: issuedAtMs + sessionSeconds * 1000 }, sessionSecret);
+      const token = security.signSession({
+        studentId: user.studentId,
+        authVersion: security.approvalVersion(user.approvalCodeHash, sessionSecret),
+        iat: issuedAtMs,
+        exp: issuedAtMs + sessionSeconds * 1000
+      }, sessionSecret);
       sendJson(response, 200, {
         name: user.name,
         studentId: user.role === "admin" ? "" : user.studentId,
@@ -139,6 +215,94 @@ function createApp(options) {
         issuedAt: new Date(issuedAtMs).toISOString()
       }, { "Set-Cookie": security.sessionCookie(token, { name: cookieName, secure: cookieSecure, maxAgeSeconds: sessionSeconds }) });
       return true;
+    }
+
+    if (pathname === "/admin/access-grants" || pathname.startsWith("/admin/access-grants/")) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method === "GET" && pathname === "/admin/access-grants") {
+        sendJson(response, 200, context.config.students.filter(function (student) { return student.role !== "admin"; }).map(publicGrant));
+        return true;
+      }
+      if (request.method === "POST" && pathname === "/admin/access-grants") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 64 * 1024);
+        const studentName = security.clean(body.studentName);
+        const approvalCode = security.cleanApprovalCode(body.approvalCode);
+        const examIds = Array.isArray(body.examIds) ? Array.from(new Set(body.examIds.map(security.clean).filter(Boolean))) : [];
+        const expiresAt = body.expiresAt == null || body.expiresAt === "" ? null : security.clean(body.expiresAt);
+        if (!studentName || studentName.length > 80 || approvalCode.length < 6 || approvalCode.length > 80 || !examIds.length) {
+          throw new HttpError(400, "이름, 승인번호, 허용 시험을 확인해 주세요.");
+        }
+        if (expiresAt && !privateConfig.isValidExpiryDate(expiresAt)) {
+          throw new HttpError(400, "만료일 형식이 올바르지 않습니다.");
+        }
+        const studentId = `student_${crypto.randomUUID().replace(/-/g, "")}`;
+        const approvalCodeHash = security.hashApprovalCode(approvalCode);
+        const student = {
+          studentId,
+          name: studentName,
+          approvalCodeHash,
+          role: "student",
+          grants: examIds,
+          expiresAt
+        };
+        const result = persistMutation(function (latest) {
+          examIds.forEach(function (examId) {
+            if (!contracts.getExamContract(examId) || !latest.exams[examId]) throw new HttpError(400, "등록되지 않은 시험은 승인할 수 없습니다.");
+          });
+          if (latest.students.some(function (item) { return item.name === studentName && security.verifyApprovalCode(approvalCode, item.approvalCodeHash); })) {
+            throw new HttpError(409, "같은 이름과 승인번호가 이미 사용 중입니다.");
+          }
+          return { students: latest.students.concat(student), value: studentId };
+        });
+        const stored = result.saved.students.find(function (item) { return item.studentId === result.value; });
+        sendJson(response, 201, publicGrant(stored));
+        return true;
+      }
+      const grantMatch = pathname.match(/^\/admin\/access-grants\/([^/]+)$/);
+      if (request.method === "PUT" && grantMatch) {
+        requireAdminMutation(request, true, configuredOrigin);
+        const grantId = decodeURIComponent(grantMatch[1]);
+        const body = await readJson(request, 64 * 1024);
+        const studentName = security.clean(body.studentName);
+        const approvalCode = security.cleanApprovalCode(body.approvalCode);
+        const examIds = Array.isArray(body.examIds) ? Array.from(new Set(body.examIds.map(security.clean).filter(Boolean))) : [];
+        const expiresAt = body.expiresAt == null || body.expiresAt === "" ? null : security.clean(body.expiresAt);
+        if (!studentName || studentName.length > 80 || approvalCode.length < 6 || approvalCode.length > 80 || !examIds.length) {
+          throw new HttpError(400, "이름, 승인번호, 허용 시험을 확인해 주세요.");
+        }
+        if (expiresAt && !privateConfig.isValidExpiryDate(expiresAt)) throw new HttpError(400, "만료일 형식이 올바르지 않습니다.");
+        const approvalCodeHash = security.hashApprovalCode(approvalCode);
+        const result = persistMutation(function (latest) {
+          const targetIndex = latest.students.findIndex(function (student) { return student.studentId === grantId; });
+          if (targetIndex < 0 || latest.students[targetIndex].role === "admin") throw new HttpError(404, "승인을 찾을 수 없습니다.");
+          examIds.forEach(function (examId) {
+            if (!contracts.getExamContract(examId) || !latest.exams[examId]) throw new HttpError(400, "등록되지 않은 시험은 승인할 수 없습니다.");
+          });
+          if (latest.students.some(function (item) { return item.studentId !== grantId && item.name === studentName && security.verifyApprovalCode(approvalCode, item.approvalCodeHash); })) {
+            throw new HttpError(409, "같은 이름과 승인번호가 이미 사용 중입니다.");
+          }
+          const students = latest.students.slice();
+          students[targetIndex] = { studentId: grantId, name: studentName, approvalCodeHash, role: "student", grants: examIds, expiresAt };
+          return { students, value: grantId };
+        });
+        const stored = result.saved.students.find(function (item) { return item.studentId === result.value; });
+        sendJson(response, 200, publicGrant(stored));
+        return true;
+      }
+      if (request.method === "DELETE" && grantMatch) {
+        requireAdminMutation(request, false, configuredOrigin);
+        const grantId = decodeURIComponent(grantMatch[1]);
+        const result = persistMutation(function (latest) {
+          const target = latest.students.find(function (student) { return student.studentId === grantId; });
+          if (!target || target.role === "admin") throw new HttpError(404, "승인을 찾을 수 없습니다.");
+          return { students: latest.students.filter(function (student) { return student.studentId !== grantId; }), value: grantId };
+        });
+        if (result.saved.students.some(function (student) { return student.studentId === grantId; })) throw new HttpError(500, "승인 취소를 저장하지 못했습니다.");
+        sendJson(response, 200, { ok: true });
+        return true;
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
     }
 
     let match = pathname.match(/^\/exams\/([^/]+)\/(pages|response-schema|attempts)$/);

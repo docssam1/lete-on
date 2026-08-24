@@ -16,6 +16,7 @@ GET    /practice-sets/:practiceSetId/pages
 POST   /practice-sets/:practiceSetId/attempts
 GET    /admin/access-grants
 POST   /admin/access-grants
+PUT    /admin/access-grants/:grantId
 DELETE /admin/access-grants/:grantId
 GET    /admin/exam-reviews/:examId
 POST   /admin/exam-reviews/:examId/items/:number/resolution
@@ -37,6 +38,14 @@ GET    /admin/exam-reviews/:examId/items/:number/evidence
 - `agent_verified|replacement_verified`는 정답 검산·교육과정 분류·시각 감사·원본 지문·보호 교정 산출물 지문이 모두 확인된 항목만 허용
 - 불확실한 문항은 검증된 채점 제외 정책과 함께 `scoring_excluded`로 처리하고 정답을 추측하지 않음
 - 검수 API는 `Cache-Control: no-store`를 반환하고 관리자 세션을 매 요청마다 다시 검사
+
+## 학생별 시험 승인
+
+`GET /admin/access-grants`는 관리자 세션에서만 학생 이름, 중립 승인 ID, 허용 시험 ID, 선택 만료일을 반환합니다. 승인번호와 승인번호 해시는 반환하지 않습니다.
+
+`POST /admin/access-grants`는 신규 승인을 만들고, `PUT /admin/access-grants/:grantId`는 중립 승인 ID로 기존 승인을 수정합니다. 두 경로 모두 `studentName`, `approvalCode`, `examIds[]`, 선택 `expiresAt(YYYY-MM-DD)`을 받습니다. 동명이인은 서로 다른 승인 ID와 승인번호로 분리하며 이름만으로 기존 계정을 덮어쓰지 않습니다. 승인번호는 서버에서 즉시 scrypt 해시로 바꾸고, 존재하는 운영 시험만 허용하며, 한국시간 기준 만료일이 지난 학생은 로그인과 기존 세션을 모두 차단합니다. 수정으로 승인번호가 바뀌면 이전 승인번호로 발급된 세션도 즉시 무효화합니다.
+
+`DELETE /admin/access-grants/:grantId`는 해당 학생 승인 레코드를 취소합니다. 관리자 계정은 이 경로로 변경하거나 삭제할 수 없습니다. 변경 요청은 현재 운영 출처와 정확히 같은 `Origin`, `X-Highselect-Admin: 1` 헤더를 요구하며 POST/PUT은 JSON만 받습니다. 설정 파일 잠금과 버전 검사를 통과하지 못한 동시 변경은 덮어쓰지 않고 `409`로 실패합니다. 모든 응답은 `Cache-Control: no-store`이며 비공개 설정 파일 밖에 승인 상태를 복제하지 않습니다.
 
 ## 선발 트랙 응답
 

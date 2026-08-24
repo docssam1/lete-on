@@ -310,6 +310,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .gate-list li { counter-increment: gate; position: relative; padding: 11px 8px 11px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 .gate-list li::before { content: counter(gate, decimal-leading-zero); position: absolute; left: 4px; color: var(--accent); font-family: ui-monospace, monospace; font-size: 10px; }
 .admin-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
+.admin-grid > * { min-width: 0; }
 .check-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; }
 .check { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 10px; }
 .check input { margin-top: 4px; }
