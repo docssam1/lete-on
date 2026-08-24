@@ -15,6 +15,7 @@ const reviewStoreModule = require("./review-store.js");
 const reviewSecurity = require("../shared/review-security.js");
 const releaseGate = require("../shared/sh-r01-release-gate.js");
 const reviewInventory = require("../data/review-only/sh-r01-inventory.js").inventory;
+const selectionTracks = require("../data/selection-tracks.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -283,6 +284,37 @@ function createApp(options) {
   }
 
   async function api(request, response, pathname, url) {
+    if (request.method === "GET" && pathname === "/selection-tracks") {
+      sendJson(response, 200, selectionTracks.trackDefinitions.map(function (track) {
+        return {
+          trackId: track.id,
+          label: track.label,
+          targetStage: track.targetStage,
+          admissionKind: track.admissionKind
+        };
+      }));
+      return true;
+    }
+
+    const programTracksMatch = pathname.match(/^\/programs\/([^/]+)\/selection-tracks$/);
+    if (request.method === "GET" && programTracksMatch) {
+      const programCode = decodeURIComponent(programTracksMatch[1]).trim().toUpperCase();
+      const bindings = selectionTracks.getProgramTracks(programCode);
+      if (!bindings.length) throw new HttpError(404, "선발 과정 정보를 찾을 수 없습니다.");
+      sendJson(response, 200, {
+        programCode,
+        tracks: bindings.map(function (binding) {
+          return {
+            trackId: binding.trackId,
+            scopeKey: binding.scopeKey,
+            scopeLabel: binding.scopeLabel,
+            evidenceStatus: binding.evidenceStatus
+          };
+        })
+      });
+      return true;
+    }
+
     if (request.method === "POST" && pathname === "/session") {
       const body = await readJson(request, 32 * 1024);
       const name = security.clean(body.name);

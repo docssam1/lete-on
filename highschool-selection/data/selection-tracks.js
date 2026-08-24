@@ -173,7 +173,7 @@
     };
   }
 
-  root.SELECTION_TRACK_CATALOG = {
+  const api = {
     schemaVersion: 1,
     updatedAt: "2026-08-22",
     evidenceStatuses: ["verified", "observed", "needs-review"],
@@ -184,4 +184,6 @@
     getProgramTracks,
     resolveExamTrack
   };
+  root.SELECTION_TRACK_CATALOG = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

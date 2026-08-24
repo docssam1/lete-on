@@ -5,6 +5,8 @@
 ## 제공 동선
 
 - `POST /session`
+- `GET /selection-tracks`
+- `GET /programs/:programCode/selection-tracks`
 - `GET /exams/:examId/pages`
 - `GET /exams/:examId/response-schema`
 - `POST /exams/:examId/attempts`
