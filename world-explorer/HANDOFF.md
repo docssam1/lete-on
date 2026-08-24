@@ -12,8 +12,13 @@
 - 저장소: `docssam1/lete-on`
 - 앱 경로: `/world-explorer/`
 - 운영 주소: `https://lete-on.gfieldacademy.net/world-explorer/`
-- 작업 브랜치: `agent/world-explorer-cache-recovery`
-- 이 문서 작성 직전 구현 커밋: `8757232 feat(world-explorer): enrich the 3d village environment`
+- 기준 브랜치: `main`
+- 작업 브랜치: `agent/world-explorer-cache-recovery` (PR #113 병합 완료)
+- 3D 마을 구현 커밋: `8757232 feat(world-explorer): enrich the 3d village environment`
+- 최초 인수인계서 커밋: `839df54 docs(world-explorer): add project handoff guide`
+- `main` 병합 커밋: `0e1d287f825465ba2a96f561f9d8a8ffd68a6504`
+- 병합 PR: `https://github.com/docssam1/lete-on/pull/113`
+- 배포 상태: GitHub Pages 배포 성공, 운영 주소에서 HTTP 200 확인
 - 진입점: `/world-explorer/index.html`
 
 다음 항목을 Geometry World와 공유하거나 합치면 안 된다.
@@ -193,20 +198,30 @@ Geometry/Numbers World 캐시를 precache하거나 삭제하지 않는다.
 당시 셸에서 `node` 명령이 PATH에 없어 CLI `node --check`는 실행하지 못했지만 실제 ES module 로드와
 브라우저 실행은 성공했다.
 
+2026-08-24에는 다음 배포 검증까지 완료했다.
+
+- 최신 `main`을 작업 브랜치에 병합하면서 인트로 사운드 토글 기능을 보존
+- `index.html`의 `styles.css?v=10`, `app.js?v=10` 유지
+- `sw.js`의 `world-explorer-shell-v10` 유지
+- 병합 충돌 표식 없음 및 `validate_build.py` 재통과
+- PR #113을 `main`에 병합
+- `main` 병합 커밋 `0e1d287f825465ba2a96f561f9d8a8ffd68a6504`
+- GitHub Actions Pages 배포 `32703178264` 성공
+- 운영 주소 HTTP 200 및 `app.js?v=10`, `styles.css?v=10`, `introSoundButton` 응답 확인
+
 ---
 
 ## 10. 다음 작업 우선순위
 
-1. `8757232`가 들어 있는 작업 브랜치를 최신 원격에 푸시하고 PR/병합 상태 확인
-2. 유준·유빈을 각각 선택해 3D 외형과 새로고침 복원 캡처
-3. 왕관·사파리·마법사 모자의 구매→장착→해제→재접속 복원 회귀 검사
-4. 국기·단서·지도 게임을 각 1세션씩 실제 플레이하여 문제/정답/포인트/복귀 흐름 확인
-5. 195개국 정보의 사실 검증, 출처·기준 연도 기록, 4개 언어 콘텐츠 감수
-6. 지도에서 해결 국가의 국기·발견 표시와 대륙 진행률 시각화 강화
-7. 포인트로 해금되는 마을 건물/국가 전시 구역을 자산 레지스트리 방식으로 구현
-8. 저사양 안드로이드에서 FPS·GPU 메모리·로딩 시간 측정 후 품질 등급 추가
-9. Three.js 폐기 예정 API를 안전한 새 API로 교체
-10. 설치형 PWA에서 업데이트 후 구 캐시가 제거되고 오프라인 앱 셸이 열리는지 실기기 재검증
+1. 유준·유빈을 각각 선택해 3D 외형과 새로고침 복원 캡처
+2. 왕관·사파리·마법사 모자의 구매→장착→해제→재접속 복원 회귀 검사
+3. 국기·단서·지도 게임을 각 1세션씩 실제 플레이하여 문제/정답/포인트/복귀 흐름 확인
+4. 195개국 정보의 사실 검증, 출처·기준 연도 기록, 4개 언어 콘텐츠 감수
+5. 지도에서 해결 국가의 국기·발견 표시와 대륙 진행률 시각화 강화
+6. 포인트로 해금되는 마을 건물/국가 전시 구역을 자산 레지스트리 방식으로 구현
+7. 저사양 안드로이드에서 FPS·GPU 메모리·로딩 시간 측정 후 품질 등급 추가
+8. Three.js 폐기 예정 API를 안전한 새 API로 교체
+9. 설치형 PWA에서 업데이트 후 구 캐시가 제거되고 오프라인 앱 셸이 열리는지 실기기 재검증
 
 ---
 
@@ -234,4 +249,3 @@ python world-explorer\validate_build.py
 
 그다음 로컬 HTTP 서버를 저장소 루트에서 실행하고 `/world-explorer/`로 접속한다.
 인트로·로그인·로딩·마을·세 게임 존을 확인한 뒤에만 커밋/푸시한다.
-
