@@ -18,7 +18,7 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [20, 0, false], [15, 5, true], [13, 7, true], [20, 0, false]]],
+  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [20, 0, false], [15, 5, true], [20, 0, false], [20, 0, false]]],
   ["final", "premier-final", 3, [[8, 12, true], [13, 7, true], [16, 4, true]]],
   ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
 ];
@@ -70,9 +70,10 @@ assert.match(premierCss, /@page\s*\{\s*size:\s*A4 portrait;/i, "프리미어 인
 assert.match(premierCss, /\.exam-pages\s*\{[^}]*zoom:\s*\.7070707071;/s, "A3 원본 캔버스를 A4로 정확히 축소해야 합니다.");
 assert(!/@page\s*\{\s*size:\s*A3/i.test(premierCss), "A3 인쇄 설정이 다시 들어갔습니다.");
 assert.match(premierViewer, /renderers-utilization-8\.js\?v=20260824-2/, "활용 8회 교체 그림은 브라우저 캐시를 갱신해야 합니다.");
+assert.match(premierViewer, /renderers-utilization-7\.js\?v=20260824-2/, "활용 7회 교체 그림은 브라우저 캐시를 갱신해야 합니다.");
 const publicContext = { window: {} };
 vm.createContext(publicContext);
-for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "renderers-utilization-5-q15-q20.js", "renderers-utilization-8.js", "exams.js"]) {
+for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "renderers-utilization-5-q15-q20.js", "renderers-utilization-7.js", "renderers-utilization-8.js", "exams.js"]) {
   const filePath = path.join(publicPremierRoot, relativePath);
   vm.runInContext(fs.readFileSync(filePath, "utf8"), publicContext, { filename: filePath });
 }
@@ -109,6 +110,131 @@ for (const shape of ["one", "two"]) {
   }));
 }
 assert.strictEqual(new Set(["zero-hidden-blocks"]).size, 1, "활용 5회 교체 17번의 숨은 블록 후보는 0 하나여야 합니다.");
+
+const utilizationSeven = publicContext.window.PREMIER_EXAMS["utilization-7"];
+const utilizationSevenQ4Svg = publicContext.window.PremierFigures.render("u7-q4", utilizationSeven.questions.find((question) => question.number === 4));
+assert.strictEqual((utilizationSevenQ4Svg.match(/data-region-choice=/g) || []).length, 4, "활용 7회 교체 4번은 네 나눔을 표시해야 합니다.");
+const treeCells = new Set(["0,0", "0,1", "1,2", "3,3", "4,4"]);
+function partitionAudit(mode) {
+  const blocked = (a, b) => {
+    const [x, y] = a, [nextX, nextY] = b;
+    if (mode === "rows") return y !== nextY;
+    if (mode === "columns") return x !== nextX;
+    if (mode === "bands") {
+      if (y !== nextY && Math.max(y, nextY) === 2) return true;
+      if (x !== nextX) {
+        const boundary = Math.max(x, nextX);
+        if (boundary === 3 && y <= 1) return true;
+        if (boundary === 2 && y >= 2) return true;
+      }
+    }
+    if (mode === "blocks") {
+      if (x !== nextX) {
+        const boundary = Math.max(x, nextX);
+        if (boundary === 2 && y <= 2) return true;
+        if (boundary === 3 && y >= 2) return true;
+      }
+      if (y !== nextY) {
+        const boundary = Math.max(y, nextY);
+        if (boundary === 3 && x <= 1) return true;
+        if (boundary === 2 && x >= 3) return true;
+        if (boundary === 4 && x <= 2) return true;
+      }
+    }
+    return false;
+  };
+  const seen = new Set(), regions = [];
+  for (let y = 0; y < 5; y += 1) for (let x = 0; x < 5; x += 1) {
+    const key = `${x},${y}`;
+    if (seen.has(key)) continue;
+    const queue = [[x, y]], region = [];
+    seen.add(key);
+    while (queue.length) {
+      const cell = queue.pop();
+      region.push(cell);
+      for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+        const next = [cell[0] + dx, cell[1] + dy], nextKey = `${next[0]},${next[1]}`;
+        if (next[0] < 0 || next[0] >= 5 || next[1] < 0 || next[1] >= 5 || seen.has(nextKey) || blocked(cell, next)) continue;
+        seen.add(nextKey);
+        queue.push(next);
+      }
+    }
+    regions.push(region);
+  }
+  return regions.every((region) => region.length === 5 && region.filter(([x, y]) => treeCells.has(`${x},${y}`)).length === 1);
+}
+assert.deepStrictEqual(["rows", "columns", "bands", "blocks"].map(partitionAudit), [true, false, false, false], "활용 7회 교체 4번의 정답 후보는 하나여야 합니다.");
+
+const cards = [2, 5, 4, 8];
+const q6Candidates = [];
+for (const a of cards) for (const b of cards) for (const c of cards) for (const d of cards) {
+  if (new Set([a, b, c, d]).size === 4 && 10 * a + b - c + d === 39) q6Candidates.push([a, b, c, d]);
+}
+assert.strictEqual(q6Candidates.length, 2, "활용 7회 원본 6번의 두 식 후보를 모두 찾아야 합니다.");
+const smallestLeading = Math.min(...q6Candidates.map(([a, b]) => 10 * a + b));
+assert.strictEqual(q6Candidates.filter(([a, b]) => 10 * a + b === smallestLeading).length, 1, "활용 7회 교체 6번의 작은 앞 수 조건은 답을 하나로 만들어야 합니다.");
+
+const q8Candidates = [];
+for (let a = 0; a <= 8; a += 1) for (let b = 0; b <= 8; b += 1) for (let c = 0; c <= 8; c += 1) for (let d = 0; d <= 8; d += 1) for (let e = 0; e <= 8; e += 1) for (let f = 0; f <= 8; f += 1) for (let g = 0; g <= 8; g += 1) {
+  if (new Set([a,b,c,d,e,f,g]).size !== 7) continue;
+  if (a + g === a && b * 3 === e && d * 3 === c && c + d === a && b ** 3 === f && c * d === c) q8Candidates.push([a,b,c,d,e,f,g]);
+}
+assert.strictEqual(q8Candidates.length, 1, "활용 7회 교체 8번은 서로 다른 수 조건에서 해가 하나여야 합니다.");
+
+function countDrawnTriangles(points, atomicEdges) {
+  const edgeSet = new Set(atomicEdges.map(([a,b]) => a < b ? `${a},${b}` : `${b},${a}`));
+  const sideExists = (a, b) => {
+    const pa = points[a], pb = points[b];
+    const onSide = points.map((point, index) => ({ point, index }))
+      .filter(({ point }) => Math.abs((point[0]-pa[0])*(pb[1]-pa[1])-(point[1]-pa[1])*(pb[0]-pa[0])) < 1e-9)
+      .filter(({ point }) => (point[0]-pa[0])*(point[0]-pb[0]) + (point[1]-pa[1])*(point[1]-pb[1]) <= 0)
+      .sort((left, right) => (left.point[0]-pa[0])*(pb[0]-pa[0])+(left.point[1]-pa[1])*(pb[1]-pa[1]) - ((right.point[0]-pa[0])*(pb[0]-pa[0])+(right.point[1]-pa[1])*(pb[1]-pa[1])));
+    return onSide.slice(0, -1).every((entry, index) => edgeSet.has(entry.index < onSide[index + 1].index ? `${entry.index},${onSide[index + 1].index}` : `${onSide[index + 1].index},${entry.index}`));
+  };
+  let count = 0;
+  for (let a = 0; a < points.length; a += 1) for (let b = a + 1; b < points.length; b += 1) for (let c = b + 1; c < points.length; c += 1) {
+    const area = Math.abs((points[b][0]-points[a][0])*(points[c][1]-points[a][1])-(points[b][1]-points[a][1])*(points[c][0]-points[a][0]));
+    if (area > 1e-9 && sideExists(a,b) && sideExists(a,c) && sideExists(b,c)) count += 1;
+  }
+  return count;
+}
+const latticePoints = [[0,0],[-1,1],[1,1],[-2,2],[0,2],[2,2]];
+const latticeEdges = [[0,1],[0,2],[1,2],[1,3],[1,4],[2,4],[2,5],[3,4],[4,5]];
+const fourSeparatePoints = Array.from({length:4}, (_,group) => [[group*4,0],[group*4-1,1],[group*4+1,1]]).flat();
+const fourSeparateEdges = Array.from({length:4}, (_,group) => [[group*3,group*3+1],[group*3,group*3+2],[group*3+1,group*3+2]]).flat();
+const splitPoints = [[0,0],[-1,2],[1,2],[0,2]], splitEdges = [[0,1],[0,2],[1,3],[3,2],[0,3]];
+assert.deepStrictEqual([countDrawnTriangles(latticePoints,latticeEdges),countDrawnTriangles(fourSeparatePoints,fourSeparateEdges),countDrawnTriangles(splitPoints,splitEdges)], [5,4,3], "활용 7회 교체 12번의 정삼각형 수 후보가 다릅니다.");
+
+const utilizationSevenQ13 = utilizationSeven.questions.find((question) => question.number === 13);
+assert.match(utilizationSevenQ13.prompt, /빈 칸은 0/, "활용 7회 교체 13번은 빈 높이 칸의 뜻을 명시해야 합니다.");
+const utilizationSevenQ13Svg = publicContext.window.PremierFigures.render("u7-q13", utilizationSevenQ13);
+const q13Cells = [...utilizationSevenQ13Svg.matchAll(/data-stack-cell="(one|two)" data-row="(\d+)" data-column="(\d+)" data-height="(\d+)"/g)].map((match) => ({ map: match[1], row: Number(match[2]), column: Number(match[3]), height: Number(match[4]) }));
+for (const map of ["one", "two"]) {
+  const cells = q13Cells.filter((cell) => cell.map === map);
+  assert.strictEqual(cells.length, 9, `활용 7회 교체 13번 ${map}: 3×3 높이표여야 합니다.`);
+  assert.strictEqual(new Set(cells.map((cell) => `${cell.row},${cell.column}`)).size, 9, `활용 7회 교체 13번 ${map}: 높이 칸이 중복됩니다.`);
+  assert(cells.every((cell) => cell.height >= 0 && cell.height <= 3), `활용 7회 교체 13번 ${map}: 상자 높이를 벗어난 수가 있습니다.`);
+}
+const q13Answers = ["one", "two"].map((map) => 27 - q13Cells.filter((cell) => cell.map === map).reduce((sum, cell) => sum + cell.height, 0));
+assert(q13Answers.every((answer) => answer > 0), "활용 7회 교체 13번의 채울 개수는 양수여야 합니다.");
+
+const remaining = [5,6,7], q19Candidates = [];
+for (const topRight of remaining) for (const bottomLeft of remaining) for (const bottomRight of remaining) {
+  if (new Set([topRight,bottomLeft,bottomRight]).size !== 3) continue;
+  if (1 + topRight + 4 === 2 + 4 + bottomLeft && 2 + 4 + bottomLeft === 4 + 3 + bottomRight) q19Candidates.push([topRight,bottomLeft,bottomRight]);
+}
+assert.strictEqual(q19Candidates.length, 1, "활용 7회 교체 19번의 빈칸 배치는 하나여야 합니다.");
+
+const utilizationSevenQ20 = utilizationSeven.questions.find((question) => question.number === 20);
+assert.match(utilizationSevenQ20.prompt, /바로 위의 두 원/, "활용 7회 교체 20번은 부모 원 두 개를 명시해야 합니다.");
+const utilizationSevenQ20Svg = publicContext.window.PremierFigures.render("u7-q20", utilizationSevenQ20);
+const q20Parents = [...utilizationSevenQ20Svg.matchAll(/data-parent-number="(\d+)"/g)].map((match) => Number(match[1]));
+const q20Derived = [...utilizationSevenQ20Svg.matchAll(/data-derived-number="(\d+|A)"/g)].map((match) => match[1]);
+const digitSum = (value) => String(value).split("").reduce((sum, digit) => sum + Number(digit), 0);
+const expectedDerived = q20Parents.slice(0, -1).map((value, index) => digitSum(value) + digitSum(q20Parents[index + 1]));
+assert.deepStrictEqual(q20Derived.slice(0, -1).map(Number), expectedDerived.slice(0, -1), "활용 7회 교체 20번의 제시된 수가 규칙과 다릅니다.");
+assert.strictEqual(q20Derived[q20Derived.length - 1], "A", "활용 7회 교체 20번의 마지막 원은 A여야 합니다.");
+assert.strictEqual(new Set([expectedDerived[expectedDerived.length - 1]]).size, 1, "활용 7회 교체 20번의 A 후보는 하나여야 합니다.");
 
 const utilizationEight = publicContext.window.PREMIER_EXAMS["utilization-8"];
 const utilizationEightQ5 = utilizationEight.questions.find((question) => question.number === 5);
@@ -157,6 +283,7 @@ console.log(`- safe Premier release catalog: ${catalog.series.flatMap((series) =
 console.log("- utilization 1 q16 wording/render contract: 7 cells");
 console.log("- utilization 1 print contract: A4 portrait, 4 pages");
 console.log("- utilization 5 q17 replacement contract: all blocks visible, zero hidden candidates");
+console.log("- utilization 7 q4/q6/q8/q12/q13/q19/q20 replacement contracts: one candidate each");
 console.log("- utilization 8 q5 mirror contract: unique reflected point set");
 console.log(`- utilization 8 q11 triangle-lattice contract: ${triangleSizes.size} exact side lengths`);
 console.log("- utilization 8 q18 dissection contract: one congruent three-piece candidate");
