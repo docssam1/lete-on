@@ -44,6 +44,27 @@
       publishedAt: "2025-07",
       checkedAt: "2026-08-22"
     },
+    "WM-M21-INITIAL-2025": {
+      title: "원수학 2026년 1월 중2-1 기본반 최초 입학전형 공지 미러",
+      url: "https://www.gangmom.kr/news/6916927bf713b0cfec739b32",
+      grade: "B",
+      publishedAt: "2025-11",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M21-CHANGE-2025": {
+      title: "원수학 중2-1 기본반 문항수·시험시간 변경 공지 미러",
+      url: "https://www.gangmom.kr/news/692911a225d0669bb2ed8336",
+      grade: "B",
+      publishedAt: "2025-11",
+      checkedAt: "2026-08-24"
+    },
+    "WM-M21-JULY-2026": {
+      title: "원수학 2026년 7월 중2-1 기본반 신입생 입학테스트 공지 미러",
+      url: "https://www.gangmom.kr/news/6a0fb52a1679e8440b3bcbf1",
+      grade: "B",
+      publishedAt: "2026-05",
+      checkedAt: "2026-08-24"
+    },
     "DG-SCOPE-MIRROR": {
       title: "깊은생각 예비고1 입학테스트 범위 공지 미러",
       url: "https://www.gangmom.kr/news/6902cf1da52af7ec2ec7f57b",
@@ -111,8 +132,11 @@
       code: "WM",
       publicName: "원수학 입학테스트 대비",
       eyebrow: "대수·기하 분리 평가",
-      summary: "공통수학1 기본반 입학을 위한 중등 대수와 기하 누적 평가 구조를 반영합니다.",
+      summary: "중2-1 기본반 신입과 공통수학1 기본반 입학의 서로 다른 대수·기하 평가 구조를 분리해 반영합니다.",
       facts: [
+        { label: "중2-1 기본반 현행 구조", value: "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외", state: "verified", sourceIds: ["WM-M21-CHANGE-2025"] },
+        { label: "중2-1 최신 전형 창", value: "2026년 7월 공지 기준 120분", state: "verified", sourceIds: ["WM-M21-JULY-2026"] },
+        { label: "중2-1 공지 변경 이력", value: "최초 25+25 공지 후 같은 전형을 20+20으로 정정", state: "verified", sourceIds: ["WM-M21-INITIAL-2025", "WM-M21-CHANGE-2025"] },
         { label: "공개 구성 사례", value: "중등대수 25 + 중등기하 25", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] },
         { label: "공개 시간 사례", value: "대수 90분 + 휴식 20분 + 기하 90분", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] },
         { label: "공개 판정 사례", value: "35문항 이상, 영역별 과락 별도", state: "verified", sourceIds: ["WM-ENTRY-2025-MIRROR"] }
@@ -126,8 +150,8 @@
         round: "2025-09",
         sourceIds: ["WM-ENTRY-2025-MIRROR"]
       },
-      style: "대수와 기하를 따로 진단하고 전체 점수뿐 아니라 영역 과락 조건까지 설명합니다.",
-      caveat: "문항 수·판정 기준은 공지 회차별로 달라질 수 있습니다. 보유 대수 25문항과 기하 26문항은 공식 25+25 시험으로 합치지 않습니다."
+      style: "대수와 기하를 따로 진단하고 전체 점수뿐 아니라 영역별 누적 공백과 시간 안배를 설명합니다.",
+      caveat: "중2-1의 과거 35/50 컷과 공통수학1의 25+25 구조를 현재 중2-1 40문항에 적용하지 않습니다. 중2-1 최신 합격선과 실물 성적표는 확인 필요입니다."
     },
     {
       code: "ED",
@@ -199,7 +223,7 @@
   ];
 
   root.HIGHSELECT_PUBLIC_PROFILES = {
-    updatedAt: "2026-08-23",
+    updatedAt: "2026-08-24",
     evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과, 운영 확정=우리 모의고사 설정. 외부 수치는 해당 회차에만 적용.",
     sources,
     profiles

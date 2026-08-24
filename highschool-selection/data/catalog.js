@@ -24,9 +24,9 @@
       id: "WM",
       name: "원수학 입학·승급",
       shortName: "원수학",
-      description: "공통수학1·2 기본/실력 과정의 승급·입학 대비",
-      scope: "중등 누적 + 공통수학1·2",
-      levels: ["기본", "실력", "실력직행", "전과정 심화"],
+      description: "중2-1 시작부터 공통수학1·2 기본/실력 과정까지 과정별 입학·승급 대비",
+      scope: "중1 누적 + 공통수학1·2",
+      levels: ["중2-1 기본", "기본", "실력", "실력직행", "전과정 심화"],
       accent: "#35705a"
     },
     {
@@ -175,26 +175,53 @@
       note: "2024년 5월 원본 판본은 출제 근거로 보존하고, 학생 제공본은 공통 A4 폼의 1차 판매용 모의고사로 운영합니다. 조건이 부족했던 29번만 같은 세부유형·난도의 검산 완료 문항으로 교체했습니다. 이 판본의 시간과 기준은 회차 전체 승인 전에는 판정에 사용하지 않습니다."
     },
     {
-      id: "wm-algebra-geometry-diagnostic",
+      id: "wm-middle21-basic-entry-r01",
       programId: "WM",
-      title: "원수학 대수·기하 누적 진단",
-      track: "대수·기하",
+      title: "원수학 중2-1 기본반 입학 대비 1회",
+      track: "중2-1 기본반 신입",
       curriculumVersion: "2022-revised",
-      scopeLabel: "목표 규격 대수 25 · 기하 25 (보유 기하 원본 26문항 충돌)",
-      questionCount: 50,
+      scopeLabel: "중1 대수 20 + 중1 기하 20 · 중1 통계 제외",
+      questionCount: 40,
+      durationMinutes: 100,
+      scheduledWindowMinutes: 120,
       pageCount: null,
-      sourceRole: "internal-variant",
-      sourceStatus: "structure_conflict",
-      answerStatus: "review_pending",
-      classificationStatus: "draft",
+      sourceRole: "research-blueprint",
+      sourceStatus: "official_structure_verified",
+      answerStatus: "not_authored",
+      classificationStatus: "blueprint_mapped",
       releaseStatus: "blocked",
       assetPolicy: "signed-page-images",
       visible: true,
       sourceCandidates: [
-        { sectionId: "ALG", questionCount: 25, status: "audited" },
-        { sectionId: "GEO", questionCount: 26, status: "audited" }
+        { poolId: "HS_G7", role: "middle-depth-reference", status: "private_candidate_locked" },
+        { poolId: "DP_G7", role: "entrance-style-reference", status: "private_candidate_locked" },
+        { poolId: "AG_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" },
+        { poolId: "HX_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" },
+        { poolId: "SM_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" }
       ],
-      note: "대수 25문항과 별도 기하 26문항의 구조는 확인했지만 공개 입학 규격 25+25와 충돌합니다. 회차가 일치하는 기하 25문항 원본 확인 전에는 합치거나 공개하지 않습니다."
+      note: "최초 공지는 25+25였으나 같은 2026년 1월 신입 전형 시행 전에 공식 변경 공지로 20+20·각 50분으로 정정됐고, 2026년 7월 전형 창도 120분으로 재확인했습니다. 실제 첫 시행이 40문항이었을 가능성은 높지만 성적표·실물 시험지로 최종 확정하기 전까지 합격선과 문항은 공개하지 않습니다. A급·절판 중1 심화 자료는 원문 공개가 아닌 비공개 후보 풀로만 색인합니다."
+    },
+    {
+      id: "wm-algebra-geometry-diagnostic",
+      programId: "WM",
+      title: "원수학 공통수학1 기본반 입학 대비 1회",
+      track: "공통수학1 기본반 입학",
+      curriculumVersion: "2022-revised",
+      scopeLabel: "중2·3 대수 25 · 중2·3 기하 25 (중2 확률 포함)",
+      questionCount: 50,
+      pageCount: null,
+      sourceRole: "internal-variant",
+      sourceStatus: "partial_audited",
+      answerStatus: "partial_source_present",
+      classificationStatus: "section_types_mapped",
+      releaseStatus: "blocked",
+      assetPolicy: "signed-page-images",
+      visible: true,
+      sourceCandidates: [
+        { sectionId: "ALG", questionCount: 25, status: "audited_internal_variant" },
+        { sectionId: "GEO", questionCount: 25, status: "missing_exact_source" }
+      ],
+      note: "공개 입학 규격 25+25와 지필드 제작 대수 25문항·답풀이 존재를 확인했습니다. 기하 25문항의 정확한 원본과 답안이 없으므로 응시·채점·판정은 잠급니다. 공개 커트라인은 동일 회차 승인 전까지 참고값으로만 둡니다."
     },
     {
       id: "ed-middle1-entry",

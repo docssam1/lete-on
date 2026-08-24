@@ -34,15 +34,29 @@ test("first SH exam is review-complete but stays locked until final whole-round 
   assert.equal(catalog.writer, "T");
 });
 
-test("version and structure conflicts remain blocked instead of being assembled as current exams", () => {
+test("version conflicts and partial WM sources remain blocked instead of being assembled as current exams", () => {
   const dp = catalog.exams.find(item => item.id === "dp-common1-entry");
   assert.equal(dp.sourceStatus, "version_unmatched");
   assert.equal(dp.releaseStatus, "blocked");
   const wm = catalog.exams.find(item => item.id === "wm-algebra-geometry-diagnostic");
   assert.equal(wm.questionCount, 50);
-  assert.equal(wm.sourceStatus, "structure_conflict");
+  assert.equal(wm.sourceStatus, "partial_audited");
   assert.equal(wm.releaseStatus, "blocked");
-  assert.deepEqual(Array.from(wm.sourceCandidates, item => item.questionCount), [25, 26]);
+  assert.deepEqual(Array.from(wm.sourceCandidates, item => item.questionCount), [25, 25]);
+  assert.deepEqual(Array.from(wm.sourceCandidates, item => item.status), ["audited_internal_variant", "missing_exact_source"]);
+});
+
+test("WM middle2-1 entry is a separate corrected 40-item locked blueprint", () => {
+  const exam = catalog.exams.find(item => item.id === "wm-middle21-basic-entry-r01");
+  assert.equal(exam.track, "중2-1 기본반 신입");
+  assert.equal(exam.questionCount, 40);
+  assert.equal(exam.durationMinutes, 100);
+  assert.equal(exam.scheduledWindowMinutes, 120);
+  assert.equal(exam.sourceStatus, "official_structure_verified");
+  assert.equal(exam.answerStatus, "not_authored");
+  assert.equal(exam.releaseStatus, "blocked");
+  assert.deepEqual(Array.from(exam.sourceCandidates, item => item.poolId), ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"]);
+  assert.equal(exam.note.includes("35/50"), false);
 });
 
 test("the audited DP source revision is a separate locked review round", () => {

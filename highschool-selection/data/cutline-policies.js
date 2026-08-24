@@ -52,6 +52,7 @@
     { examId: "dp-common1-entry", policyId: null, status: "review-pending", approvedBy: null, approvedAt: null },
     { examId: "dp-middle2-2-transfer", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "dp-common1-entry-202405", policyId: null, status: "review-pending", approvedBy: null, approvedAt: null },
+    { examId: "wm-middle21-basic-entry-r01", policyId: null, status: "needs-current-cutline", approvedBy: null, approvedAt: null },
     { examId: "wm-algebra-geometry-diagnostic", policyId: null, status: "blocked-source-conflict", approvedBy: null, approvedAt: null },
     { examId: "ed-middle1-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "ed-high-advance-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
@@ -69,7 +70,7 @@
   }
 
   root.HIGHSELECT_CUTLINE_POLICIES = {
-    updatedAt: "2026-08-22",
+    updatedAt: "2026-08-24",
     policy: "학원·지점·과정·회차가 모두 일치하고 사용자가 시험별로 승인한 규칙만 판정에 사용합니다.",
     referenceCutlines,
     examAssignments,

@@ -54,6 +54,15 @@ test("cutoffs are scoped records and never a global academy number", () => {
   });
 });
 
+test("WM advertising separates middle2-1 corrected structure from common-math cutline", () => {
+  const wm = data.profiles.find(profile => profile.code === "WM");
+  const middleFact = wm.facts.find(fact => fact.label === "중2-1 기본반 현행 구조");
+  assert.equal(middleFact.value, "중1 대수 20 + 중1 기하 20 · 각 50분 · 통계 제외");
+  assert.deepEqual(middleFact.sourceIds, ["WM-M21-CHANGE-2025"]);
+  assert.equal(wm.cutline.course, "공통수학1 기본반 입학");
+  assert.equal(wm.caveat.includes("현재 중2-1 40문항에 적용하지 않습니다"), true);
+});
+
 test("public sources are dated HTTPS pages and do not expose private assets", () => {
   Object.values(data.sources).forEach(source => {
     assert.match(source.url, /^https:\/\//);

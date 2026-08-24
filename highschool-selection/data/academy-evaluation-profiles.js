@@ -40,17 +40,17 @@
     WM: Object.freeze({
       programId: "WM",
       displayName: "원수학",
-      paperStyle: "중등대수와 중등기하를 분리하는 입학·승급형",
-      defaultDuration: "공개 사례 대수 90분 + 휴식 20분 + 기하 90분",
+      paperStyle: "지원 과정에 맞춰 대수와 기하를 분리하는 입학·승급형",
+      defaultDuration: "과정별 공개 규격 분리",
       difficultyFlow: "기본 정석 안정성과 두 영역의 누적 공백을 독립 확인",
       reportTitle: "원수학 대수·기하 진단",
       primaryAxes: Object.freeze(["대수 수행률", "기하 수행률", "영역별 과락 위험", "단원·세부유형", "누적 공백"]),
       evaluationCriteria: Object.freeze([
         "전체 점수와 대수·기하 영역 점수를 분리 평가",
-        "공개 25+25 구조와 보유 원본 구조가 일치하는 회차만 조립",
+        "중2-1 신입 20+20과 공통수학1 입학 25+25를 서로 다른 시험으로 조립",
         "영역 최소 기준은 승인된 동일 회차에서만 표시"
       ]),
-      decisionPolicy: "대수·기하 원본 구조 충돌이 해소되기 전 합격 판정 잠금"
+      decisionPolicy: "동일 과정·회차의 원본과 기준이 확인되기 전 합격 판정 잠금"
     }),
     ED: Object.freeze({
       programId: "ED",
@@ -104,6 +104,7 @@
     "dp-middle1-entry": Object.freeze({ scope: "초5-1~초6-2 누적", duration: "확인 필요", paperVariant: "돌파 중1 입학" }),
     "dp-middle2-2-transfer": Object.freeze({ scope: "중1-1~중2-2 전 과정", duration: "원본 회차 150분", paperVariant: "돌파 중2-2 편입" }),
     "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2 누적", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),
+    "wm-middle21-basic-entry-r01": Object.freeze({ scope: "중1 대수 20 + 중1 기하 20 · 통계 제외", duration: "각 50분 · 전체 전형 창 120분", paperVariant: "원수학 중2-1 기본반 신입" }),
     "wm-algebra-geometry-diagnostic": Object.freeze({ scope: "중등대수 25 + 중등기하 25 목표", duration: "90분 + 20분 + 90분 공개 사례", paperVariant: "원수학 대수·기하" }),
     "ed-middle1-entry": Object.freeze({ scope: "초5 12 + 초6 18", duration: "확인 필요", paperVariant: "이든 중1 시작" }),
     "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 학기별 누적", duration: "확인 필요", paperVariant: "이든 고등선행" })
@@ -115,5 +116,5 @@
     return Object.freeze({ profile, exam: examOverrides[String(examId || "")] || null });
   }
 
-  return Object.freeze({ updatedAt: "2026-08-23", profiles, examOverrides, resolve });
+  return Object.freeze({ updatedAt: "2026-08-24", profiles, examOverrides, resolve });
 });

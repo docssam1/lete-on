@@ -89,6 +89,15 @@
       evidenceRefs: ["PUBLIC:DP-ENTRY-MIRROR"]
     },
     {
+      id: "WM:middle-entry",
+      programCode: "WM",
+      trackId: "middle-entry",
+      scopeKey: "middle1-algebra-geometry-no-statistics",
+      scopeLabel: "중1 대수·기하 누적 · 통계 제외",
+      evidenceStatus: "verified",
+      evidenceRefs: ["PUBLIC:WM-M21-CHANGE-2025", "PUBLIC:WM-M21-JULY-2026"]
+    },
+    {
       id: "WM:common-math-entry",
       programCode: "WM",
       trackId: "common-math-entry",
@@ -143,6 +152,7 @@
     { examId: "dp-common1-entry", programCode: "DP", trackId: "common-math-entry" },
     { examId: "dp-middle2-2-transfer", programCode: "DP", trackId: "middle-transfer" },
     { examId: "dp-common1-entry-202405", programCode: "DP", trackId: "common-math-entry" },
+    { examId: "wm-middle21-basic-entry-r01", programCode: "WM", trackId: "middle-entry" },
     { examId: "wm-algebra-geometry-diagnostic", programCode: "WM", trackId: "common-math-entry" },
     { examId: "ed-middle1-entry", programCode: "ED", trackId: "middle-entry" },
     { examId: "ed-high-advance-entry", programCode: "ED", trackId: "high-advance" },
@@ -175,7 +185,7 @@
 
   const api = {
     schemaVersion: 1,
-    updatedAt: "2026-08-22",
+    updatedAt: "2026-08-24",
     evidenceStatuses: ["verified", "observed", "needs-review"],
     trackDefinitions,
     programTrackBindings,
