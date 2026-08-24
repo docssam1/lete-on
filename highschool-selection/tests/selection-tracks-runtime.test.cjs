@@ -4,6 +4,7 @@ const http = require("node:http");
 const path = require("node:path");
 
 const { createApp } = require("../server/app.js");
+const contracts = require("../server/exam-contracts.js");
 
 const SECRET = "track-test-session-secret-with-at-least-32-characters";
 
@@ -48,4 +49,12 @@ test("program track response preserves scope evidence status and rejects unknown
   const sm = await (await fetch(`${env.base}/programs/SM/selection-tracks`)).json();
   assert.equal(sm.tracks[0].evidenceStatus, "needs-review");
   assert.equal((await fetch(`${env.base}/programs/UNKNOWN/selection-tracks`)).status, 404);
+});
+
+test("every runnable exam contract has an explicit program and neutral track assignment", () => {
+  assert.deepEqual(Object.values(contracts.EXAMS).map(exam => [exam.examId, exam.programCode, exam.trackId]), [
+    ["sh-selection-r01", "SH", "high-selection"],
+    ["dp-middle2-2-transfer", "DP", "middle-transfer"],
+    ["dp-common1-entry-202405", "DP", "common-math-entry"]
+  ]);
 });
