@@ -28,7 +28,7 @@
           round("premier-utilization-02", "활용 모의고사 2회", 13, 7, true),
           round("premier-utilization-03", "활용 모의고사 3회", 16, 4, true),
           round("premier-utilization-04", "활용 모의고사 4회", 14, 6, true),
-          round("premier-utilization-05", "활용 모의고사 5회", 19, 1, true),
+          round("premier-utilization-05", "활용 모의고사 5회", 20, 0, true),
           round("premier-utilization-06", "활용 모의고사 6회", 15, 5, true),
           round("premier-utilization-07", "활용 모의고사 7회", 13, 7, true),
           round("premier-utilization-08", "활용 모의고사 8회", 17, 3, true)

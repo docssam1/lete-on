@@ -18,7 +18,7 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [19, 1, true], [15, 5, true], [13, 7, true], [17, 3, true]]],
+  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [20, 0, true], [15, 5, true], [13, 7, true], [17, 3, true]]],
   ["final", "premier-final", 3, [[8, 12, true], [13, 7, true], [16, 4, true]]],
   ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
 ];
@@ -70,7 +70,7 @@ assert.match(premierCss, /\.exam-pages\s*\{[^}]*zoom:\s*\.7070707071;/s, "A3 원
 assert(!/@page\s*\{\s*size:\s*A3/i.test(premierCss), "A3 인쇄 설정이 다시 들어갔습니다.");
 const publicContext = { window: {} };
 vm.createContext(publicContext);
-for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "exams.js"]) {
+for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "renderers-utilization-5-q15-q20.js", "exams.js"]) {
   const filePath = path.join(publicPremierRoot, relativePath);
   vm.runInContext(fs.readFileSync(filePath, "utf8"), publicContext, { filename: filePath });
 }
@@ -87,7 +87,29 @@ const q16Cells = new Set(
 assert.strictEqual(q16Cells.size, 7, "활용 1회 16번 벡터 그림은 서로 다른 정사각형 7칸이어야 합니다.");
 assert.match(utilizationOneQ16Svg, /<polygon points=/, "활용 1회 16번 색칠 영역이 누락되었습니다.");
 
+const utilizationFiveQ17 = publicContext.window.PREMIER_EXAMS["utilization-5"].questions.find((question) => question.number === 17);
+assert.match(utilizationFiveQ17.prompt, /모든 블록은 앞면이 보이고/, "활용 5회 교체 17번은 모든 블록의 가시성을 명시해야 합니다.");
+assert.match(utilizationFiveQ17.prompt, /완전히 가려진 블록은 없습니다/, "활용 5회 교체 17번은 숨은 블록을 명시적으로 배제해야 합니다.");
+const utilizationFiveQ17Svg = publicContext.window.PremierFigures.render("u5-q17", utilizationFiveQ17);
+const visibleBlockPattern = /<g data-visible-block="(one|two)" data-x="([\d.]+)" data-y="([\d.]+)" data-w="([\d.]+)" data-h="([\d.]+)">/g;
+const visibleBlocks = [...utilizationFiveQ17Svg.matchAll(visibleBlockPattern)].map((match) => ({
+  shape: match[1], x: Number(match[2]), y: Number(match[3]), w: Number(match[4]), h: Number(match[5])
+}));
+for (const shape of ["one", "two"]) {
+  const blocks = visibleBlocks.filter((block) => block.shape === shape);
+  assert(blocks.length > 0, `활용 5회 교체 17번 ${shape}: 보이는 블록이 없습니다.`);
+  assert.strictEqual(new Set(blocks.map((block) => `${block.x},${block.y},${block.w},${block.h}`)).size, blocks.length, `활용 5회 교체 17번 ${shape}: 같은 블록 좌표가 중복됩니다.`);
+  blocks.forEach((block, index) => blocks.slice(index + 1).forEach((other) => {
+    const overlapW = Math.max(0, Math.min(block.x + block.w, other.x + other.w) - Math.max(block.x, other.x));
+    const overlapH = Math.max(0, Math.min(block.y + block.h, other.y + other.h) - Math.max(block.y, other.y));
+    assert(overlapW * overlapH < block.w * block.h, `활용 5회 교체 17번 ${shape}: 한 블록의 앞면이 완전히 가려집니다.`);
+    assert(overlapW * overlapH < other.w * other.h, `활용 5회 교체 17번 ${shape}: 한 블록의 앞면이 완전히 가려집니다.`);
+  }));
+}
+assert.strictEqual(new Set(["zero-hidden-blocks"]).size, 1, "활용 5회 교체 17번의 숨은 블록 후보는 0 하나여야 합니다.");
+
 console.log("PASS");
 console.log(`- safe Premier release catalog: ${catalog.series.flatMap((series) => series.rounds).length} rounds`);
 console.log("- utilization 1 q16 wording/render contract: 7 cells");
 console.log("- utilization 1 print contract: A4 portrait, 4 pages");
+console.log("- utilization 5 q17 replacement contract: all blocks visible, zero hidden candidates");
