@@ -1,4 +1,5 @@
-import { G1_GENERATORS } from "./g1-generators.js?v=20260816a";
+import { G1_GENERATORS } from "./g1-generators.js?v=20260823m";
+import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
 import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260822e";
 import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260822e";
 import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260822e";
@@ -8,6 +9,7 @@ import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260822h";
 import { BOOK08_GENERATORS } from "./book08-generators.js?v=20260822i";
 import { BOOK09_GENERATORS } from "./book09-generators.js?v=20260822j";
 import { BOOK10_GENERATORS } from "./book10-generators.js?v=20260822k";
+import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -1013,7 +1015,7 @@ function reverseInitialCount({ difficulty = 2 }) {
   }).join(". ");
   const reverseSteps = [...operations].reverse().map((operation) => operation.delta > 0 ? `-${operation.delta}` : `+${Math.abs(operation.delta)}`);
   return {
-    prompt: `${context.subject}들이 ${context.place}에 모였습니다. ${actionText}. 마지막에 ${final}${context.unit}이 남아 있다면 처음에 있던 ${context.subject}은 몇 ${context.unit}이었을까요?`,
+    prompt: `${context.subject}들이 ${context.place}에 모였습니다. ${actionText}. 마지막에 ${final}${context.unit}이 남아 있다면 처음에 있던 ${topicOf(context.subject)} 몇 ${context.unit}이었을까요?`,
     visual: { kind: "reverse-count-timeline", operations, final, unit: context.unit },
     answer: `${initial}${context.unit}`,
     solution: `마지막 ${final}${context.unit}부터 일어난 일을 거꾸로 되돌립니다. ${final} ${reverseSteps.join(" ")} = ${initial}이므로 처음에는 ${initial}${context.unit}이 있었습니다.`,
@@ -1888,7 +1890,7 @@ function balanceOrderChain({ difficulty = 2 }) {
 }
 
 function diagnosticAnimalBalanceOrder({ difficulty = 2 }) {
-  const count = difficulty === 3 ? 4 : 3;
+  const count = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
   const ordered = shuffle(["토끼", "거북", "다람쥐", "여우", "사슴", "오리"]).slice(0, count);
   const relations = [];
   for (let index = 0; index < count - 1; index += 1) {
@@ -1897,19 +1899,589 @@ function diagnosticAnimalBalanceOrder({ difficulty = 2 }) {
       ? { left: ordered[index + 1], right: ordered[index], heavier: "left" }
       : { left: ordered[index], right: ordered[index + 1], heavier: "right" });
   }
-  if (difficulty >= 2) {
-    const reverse = Math.random() < 0.5;
-    relations.push(reverse
-      ? { left: ordered.at(-1), right: ordered[0], heavier: "left" }
-      : { left: ordered[0], right: ordered.at(-1), heavier: "right" });
-  }
   return {
-    prompt: "다음 양팔저울을 보고 가장 가벼운 동물을 쓰세요.",
+    prompt: "다음 양팔저울을 보고 가장 가벼운 동물부터 차례대로 쓰세요.",
     visual: { kind: "diagnostic-animal-balance-order", relations: shuffle(relations) },
-    answer: ordered[0],
-    solution: `저울판이 내려간 쪽이 더 무겁습니다. ${ordered.join(" → ")} 순서이므로 가장 가벼운 동물은 ${ordered[0]}입니다.`,
+    answer: ordered.join(", "),
+    solution: `저울판이 내려간 쪽이 더 무겁습니다. 저울의 관계를 이어 보면 가벼운 순서로 ${ordered.join(" → ")}입니다.`,
     meta: { ordered, relations }
   };
+}
+
+function diagnosticPartWholeBar({ difficulty = 2 }) {
+  const partCount = difficulty === 3 ? 3 : 2;
+  let parts;
+  let total;
+  do {
+    const min = difficulty === 1 ? 1 : 2;
+    const max = difficulty === 1 ? 5 : difficulty === 2 ? 10 : 9;
+    parts = Array.from({ length: partCount }, () => randomInt(min, max));
+    total = parts.reduce((sum, value) => sum + value, 0);
+  } while (
+    (difficulty === 1 && (total < 6 || total > 10))
+    || (difficulty === 2 && (total < 10 || total > 20))
+    || (difficulty === 3 && (total < 15 || total > 27))
+  );
+
+  const blankIndex = partCount - 1;
+  const answer = parts[blankIndex];
+  const shownParts = parts.map((value, index) => index === blankIndex ? null : value);
+  const knownSum = parts.slice(0, blankIndex).reduce((sum, value) => sum + value, 0);
+  return {
+    prompt: partCount === 2
+      ? "전체와 두 부분을 나타낸 막대입니다. 빈칸에 알맞은 수를 써 넣으세요."
+      : "전체와 세 부분을 나타낸 막대입니다. 빈칸에 알맞은 수를 써 넣으세요.",
+    visual: { kind: "diagnostic-part-whole-bar", total, parts: shownParts, widths: parts },
+    answer: String(answer),
+    solution: `${parts.slice(0, blankIndex).join(" + ")} + □ = ${total}입니다. ${total} - ${knownSum} = ${answer}이므로 빈칸은 ${answer}입니다.`,
+    meta: { total, parts, blankIndex, answer }
+  };
+}
+
+function diagnosticDialogueConditionNumber({ difficulty = 2 }) {
+  const names = shuffle(["관호", "주연", "민서", "도윤", "서아", "유준"]);
+  const base = randomInt(difficulty === 1 ? 3 : 5, difficulty === 3 ? 12 : 10);
+  const more = randomInt(1, difficulty === 1 ? 4 : 7);
+  if (difficulty < 3) {
+    const answer = base + more;
+    return {
+      prompt: `다음 글을 읽고 ${subjectOf(names[1])} 가진 사탕의 개수를 구하세요.\n${names[0]}: 나는 사탕을 ${base}개 가지고 있어.\n${names[1]}: 나는 ${names[0]}보다 사탕을 ${more}개 더 가지고 있어.`,
+      answer: `${answer}개`,
+      solution: `${subjectOf(names[1])} ${names[0]}보다 ${more}개 더 가지고 있으므로 ${base} + ${more} = ${answer}개입니다.`,
+      meta: { names: names.slice(0, 2), base, more, less: 0, answer }
+    };
+  }
+
+  const second = base + more;
+  const less = randomInt(1, Math.min(7, second - 1));
+  const answer = second - less;
+  return {
+    prompt: `다음 글을 읽고 ${subjectOf(names[2])} 가진 사탕의 개수를 구하세요.\n${names[0]}: 나는 사탕을 ${base}개 가지고 있어.\n${names[1]}: 나는 ${names[0]}보다 사탕을 ${more}개 더 가지고 있어.\n${names[2]}: 나는 ${names[1]}보다 사탕을 ${less}개 덜 가지고 있어.`,
+    answer: `${answer}개`,
+    solution: `${subjectOf(names[1])} ${base} + ${more} = ${second}개를 가지고 있습니다. ${subjectOf(names[2])} 여기에서 ${less}개 적으므로 ${second} - ${less} = ${answer}개입니다.`,
+    meta: { names: names.slice(0, 3), base, more, less, second, answer }
+  };
+}
+
+function diagnosticNumberRelation({ difficulty = 2 }) {
+  const max = difficulty === 3 ? 12 : 9;
+  const makeDisc = (blankIndex = null) => {
+    let outer;
+    let center;
+    do {
+      outer = Array.from({ length: 4 }, () => randomInt(1, max));
+      center = outer.reduce((sum, value) => sum + value, 0) / 2;
+    } while (!Number.isInteger(center) || center < 4 || center > (difficulty === 3 ? 20 : 15));
+    return { outer, center, blankIndex };
+  };
+
+  const examples = Array.from({ length: difficulty === 1 ? 1 : 2 }, () => makeDisc());
+  const targets = Array.from({ length: difficulty === 3 ? 2 : 1 }, () => makeDisc(randomInt(0, 3)));
+  const answerValues = targets.map((disc) => disc.outer[disc.blankIndex]);
+  const answer = difficulty === 3
+    ? answerValues.reduce((sum, value) => sum + value, 0)
+    : answerValues[0];
+  return {
+    prompt: difficulty === 3
+      ? "원 안의 수 규칙을 찾아 두 빈칸에 들어갈 수의 합을 구하세요."
+      : "원 안의 수 규칙을 찾아 빈칸에 알맞은 수를 써 넣으세요.",
+    visual: {
+      kind: "diagnostic-number-relation",
+      examples,
+      targets,
+      showHint: difficulty === 1
+    },
+    answer: String(answer),
+    solution: `각 원에서 바깥 네 수의 합은 가운데 수의 2배입니다. ${targets.map((disc, index) => `${disc.center} × 2에서 보이는 세 수를 빼면 ${answerValues[index]}`).join("이고, ")}${difficulty === 3 ? `이므로 두 수의 합은 ${answerValues.join(" + ")} = ${answer}입니다.` : "입니다."}`,
+    meta: { examples, targets, answerValues, answer }
+  };
+}
+
+function diagnosticCryptarithmSolutions(first, second, sum) {
+  const value = (tokens, assign) => tokens.reduce((total, token) => (
+    total * 10 + (typeof token === "number" ? token : assign[token])
+  ), 0);
+  const solutions = [];
+  for (let square = 0; square <= 9; square += 1) {
+    for (let circle = 0; circle <= 9; circle += 1) {
+      if (square === circle) continue;
+      const assign = { "□": square, "○": circle };
+      if ([first, second, sum].some((tokens) => typeof tokens[0] === "string" && assign[tokens[0]] === 0)) continue;
+      if (value(first, assign) + value(second, assign) === value(sum, assign)) solutions.push(assign);
+    }
+  }
+  return solutions;
+}
+
+function diagnosticTwoDigitCryptarithm({ difficulty = 2 }) {
+  const square = randomInt(5, 9);
+  const knownOnes = randomInt(10 - square, 9);
+  const knownTens = 10 - square;
+  const resultOnes = knownOnes + square - 10;
+  const circle = 1;
+  const first = ["□", knownOnes];
+  const second = difficulty === 3 ? [9, "□"] : [knownTens, "□"];
+  const sum = difficulty === 3 ? ["○", "□", resultOnes] : ["○", "○", resultOnes];
+  const solutions = diagnosticCryptarithmSolutions(first, second, sum);
+  if (solutions.length !== 1 || solutions[0]["□"] !== square || solutions[0]["○"] !== circle) {
+    return diagnosticTwoDigitCryptarithm({ difficulty });
+  }
+  const hint = difficulty === 1 ? "단, ○는 1입니다." : "";
+  return {
+    prompt: `같은 모양은 같은 숫자, 다른 모양은 다른 숫자를 나타냅니다. 세로셈을 완성하고 두 모양이 나타내는 숫자를 구하세요.${hint ? ` ${hint}` : ""}`,
+    visual: { kind: "cryptarithm-vertical", first, second, sum },
+    answer: `□=${square}, ○=${circle}`,
+    solution: `일의 자리에서 ${knownOnes} + □의 일의 자리 숫자가 ${resultOnes}이므로 □=${square}이고 1을 받아올립니다. 백의 자리에서 ○=1입니다. 따라서 □=${square}, ○=${circle}입니다.`,
+    meta: { first, second, sum, square, circle, solutions: solutions.length }
+  };
+}
+
+function chainedNumberCondition({ difficulty = 2 }) {
+  const names = shuffle(["영은", "진수", "정은", "유나", "민준", "서아"]);
+  if (difficulty === 1) {
+    const base = randomInt(3, 10);
+    const firstMore = randomInt(1, 5);
+    const answer = base + firstMore;
+    return {
+      prompt: `다음 설명을 읽고 알맞은 수를 구하세요.\n· ${topicOf(names[0])} 풍선을 ${base}개 가지고 있습니다.\n· ${topicOf(names[1])} ${names[0]}보다 풍선을 ${firstMore}개 더 가지고 있습니다.\n· ${subjectOf(names[1])} 가진 풍선은 몇 개입니까?`,
+      answer: `${answer}개`,
+      solution: `${subjectOf(names[1])} ${names[0]}보다 ${firstMore}개 더 가지고 있으므로 ${base} + ${firstMore} = ${answer}개입니다.`,
+      meta: { mode: "one-step", names: names.slice(0, 2), base, firstMore, answer }
+    };
+  }
+
+  if (difficulty === 2) {
+    const base = randomInt(3, 12);
+    const firstMore = randomInt(1, 5);
+    const secondMore = randomInt(1, 6);
+    const middle = base + firstMore;
+    const answer = middle + secondMore;
+    return {
+      prompt: `다음 설명을 읽고 알맞은 수를 구하세요.\n· ${topicOf(names[0])} 풍선을 ${base}개 가지고 있습니다.\n· ${topicOf(names[1])} ${names[0]}보다 풍선을 ${firstMore}개 더 가지고 있습니다.\n· ${topicOf(names[2])} ${names[1]}보다 풍선을 ${secondMore}개 더 가지고 있습니다.\n· ${subjectOf(names[2])} 가진 풍선은 몇 개입니까?`,
+      answer: `${answer}개`,
+      solution: `${subjectOf(names[1])} ${base} + ${firstMore} = ${middle}개를 가지고 있습니다. ${subjectOf(names[2])} ${middle} + ${secondMore} = ${answer}개를 가지고 있습니다.`,
+      meta: { mode: "two-step", names: names.slice(0, 3), base, firstMore, secondMore, middle, answer }
+    };
+  }
+
+  let a;
+  let b;
+  let c;
+  let total;
+  let firstGap;
+  let bMore;
+  let halfMore;
+  do {
+    total = randomInt(18, 30);
+    firstGap = randomInt(3, 8);
+    a = total - firstGap;
+    bMore = randomInt(1, 6);
+    b = a + bMore;
+    halfMore = randomInt(3, 8);
+    c = b / 2 + halfMore;
+  } while (!Number.isInteger(c) || new Set([a, b, c]).size !== 3);
+  return {
+    prompt: `A, B, C는 방학 동안 책을 읽었습니다. 세 사람이 읽은 책은 각각 몇 권입니까?\n· A: ${firstGap}권 더 읽으면 ${total}권이 됩니다.\n· B: A보다 ${bMore}권 더 많이 읽었습니다.\n· C: B가 읽은 책의 절반보다 ${halfMore}권 더 읽었습니다.`,
+    answer: `A=${a}권, B=${b}권, C=${c}권`,
+    solution: `A는 ${total} - ${firstGap} = ${a}권입니다. B는 ${a} + ${bMore} = ${b}권입니다. C는 ${b}의 절반인 ${b / 2}권보다 ${halfMore}권 더 읽었으므로 ${c}권입니다.`,
+    meta: { mode: "three-step", total, firstGap, bMore, halfMore, a, b, c }
+  };
+}
+
+const POLYCUBE_PERMUTATIONS = [
+  [0, 1, 2], [0, 2, 1], [1, 0, 2],
+  [1, 2, 0], [2, 0, 1], [2, 1, 0]
+];
+
+function permutationSign(permutation) {
+  let inversions = 0;
+  for (let left = 0; left < permutation.length; left += 1) {
+    for (let right = left + 1; right < permutation.length; right += 1) {
+      if (permutation[left] > permutation[right]) inversions += 1;
+    }
+  }
+  return inversions % 2 ? -1 : 1;
+}
+
+const POLYCUBE_ROTATIONS = POLYCUBE_PERMUTATIONS.flatMap((axes) => (
+  [-1, 1].flatMap((sx) => [-1, 1].flatMap((sy) => [-1, 1].map((sz) => ({ axes, signs: [sx, sy, sz] })) ))
+)).filter(({ axes, signs }) => permutationSign(axes) * signs[0] * signs[1] * signs[2] === 1);
+
+const PENTACUBE_SHAPES = [
+  [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0], [1, 0, 1]],
+  [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [1, 1, 0]],
+  [[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 0, 1], [0, 1, 0]],
+  [[0, 0, 0], [1, 0, 0], [1, 0, 1], [2, 0, 1], [1, 1, 0]],
+  [[0, 0, 0], [0, 1, 0], [0, 2, 0], [1, 0, 0], [0, 1, 1]]
+];
+
+function normalizePolycube(coords) {
+  const mins = [0, 1, 2].map((axis) => Math.min(...coords.map((point) => point[axis])));
+  return coords
+    .map((point) => point.map((value, axis) => value - mins[axis]))
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+}
+
+function polycubeKey(coords) {
+  return normalizePolycube(coords).map((point) => point.join(",")).join(";");
+}
+
+function rotatedPolycubeVariants(coords) {
+  const variants = new Map();
+  for (const { axes, signs } of POLYCUBE_ROTATIONS) {
+    const rotated = coords.map((point) => [
+      signs[0] * point[axes[0]],
+      signs[1] * point[axes[1]],
+      signs[2] * point[axes[2]]
+    ]);
+    const normalized = normalizePolycube(rotated);
+    variants.set(polycubeKey(normalized), normalized);
+  }
+  return [...variants.values()];
+}
+
+function canonicalPolycubeKey(coords) {
+  return rotatedPolycubeVariants(coords).map(polycubeKey).sort()[0];
+}
+
+function cubeDifferentShape({ difficulty = 2 }) {
+  const optionCount = difficulty === 1 ? 4 : difficulty === 3 ? 6 : 5;
+  const baseIndex = randomInt(0, PENTACUBE_SHAPES.length - 1);
+  const base = PENTACUBE_SHAPES[baseIndex];
+  const distractors = PENTACUBE_SHAPES.filter((shape, index) => (
+    index !== baseIndex && canonicalPolycubeKey(shape) !== canonicalPolycubeKey(base)
+  ));
+  const sameOptions = shuffle(rotatedPolycubeVariants(base)).slice(0, optionCount - 1);
+  const distractor = sample(rotatedPolycubeVariants(sample(distractors)));
+  const answerIndex = randomInt(0, optionCount - 1);
+  const options = [...sameOptions];
+  options.splice(answerIndex, 0, distractor);
+  const labels = ["①", "②", "③", "④", "⑤", "⑥"];
+  return {
+    prompt: "다음은 정육면체 5개를 면끼리 붙여 만든 도형입니다. 돌려 보았을 때 나머지와 모양이 다른 하나를 고르세요.",
+    visual: { kind: "cube-different-shape", options },
+    answer: labels[answerIndex],
+    solution: `${labels.filter((_, index) => index !== answerIndex).join("·")}은 돌리면 서로 포개집니다. ${labels[answerIndex]}은 정육면체가 이어진 방향이 달라 포개지지 않습니다.`,
+    meta: { options, answerIndex, optionCount }
+  };
+}
+
+function maskedAdditionFirstPattern() {
+  const topTens = randomInt(6, 9);
+  const bottomTens = randomInt(10 - topTens, 9);
+  const topOnes = randomInt(1, 7);
+  const bottomOnes = randomInt(1, 9 - topOnes);
+  const top = topTens * 10 + topOnes;
+  const bottom = bottomTens * 10 + bottomOnes;
+  const result = top + bottom;
+  return {
+    top: String(top),
+    bottom: String(bottom),
+    result: String(result),
+    hidden: { top: [0], bottom: [1], result: [0] },
+    answerDigits: [topTens, bottomOnes, Math.floor(result / 100)]
+  };
+}
+
+function maskedAdditionSecondPattern() {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const top = randomInt(220, 879);
+    const bottom = randomInt(10, 99);
+    const result = top + bottom;
+    if (result > 999 || Math.floor(result / 100) === Math.floor(top / 100)) continue;
+    return {
+      top: String(top),
+      bottom: String(bottom),
+      result: String(result),
+      hidden: { top: [], bottom: [0, 1], result: [0] },
+      answerDigits: [Math.floor(bottom / 10), bottom % 10, Math.floor(result / 100)]
+    };
+  }
+  return maskedAdditionSecondPattern();
+}
+
+function maskedVerticalAdditions({ difficulty = 2 }) {
+  const equations = [maskedAdditionFirstPattern()];
+  if (difficulty >= 2) equations.push(maskedAdditionSecondPattern());
+  if (difficulty === 3) {
+    let extra;
+    do {
+      extra = maskedAdditionSecondPattern();
+    } while (equations.some((equation) => equation.top === extra.top && equation.bottom === extra.bottom));
+    equations.push(extra);
+  }
+  const labels = ["①", "②", "③"];
+  const answer = equations.map((equation, index) => `${labels[index]} ${equation.answerDigits.join("·")}`).join(", ");
+  const solution = equations.map((equation, index) => (
+    `${labels[index]} ${equation.top} + ${equation.bottom} = ${equation.result}이므로 가려진 숫자는 차례로 ${equation.answerDigits.join(", ")}입니다.`
+  )).join(" ");
+  return {
+    prompt: equations.length === 1
+      ? "다음 세로셈에서 파란 칸에 가려진 숫자를 위에서부터 차례로 쓰세요."
+      : "다음 각 세로셈에서 파란 칸에 가려진 숫자를 위에서부터 차례로 쓰세요.",
+    visual: { kind: "masked-vertical-additions", equations },
+    answer,
+    solution,
+    meta: { difficulty, equations }
+  };
+}
+
+function givenShapeExpression({ difficulty = 2 }) {
+  const symbols = shuffle(["★", "▲", "●", "◆"]);
+  let values;
+  let termIndexes;
+  let operators;
+  if (difficulty === 1) {
+    values = [randomInt(5, 15), randomInt(3, 12)];
+    termIndexes = [0, 1, 0];
+    operators = ["", "+", "−"];
+  } else if (difficulty === 2) {
+    const largest = randomInt(12, 20);
+    values = [largest, largest - 1, largest - 2];
+    termIndexes = [0, 1, 2, 1];
+    operators = ["", "+", "−", "+"];
+  } else {
+    values = shuffle([randomInt(10, 18), randomInt(5, 9), randomInt(2, 4), randomInt(19, 24)]);
+    termIndexes = [0, 1, 2, 3, 1];
+    operators = ["", "+", "+", "−", "+"];
+  }
+  const entries = values.map((value, index) => ({ symbol: symbols[index], value }));
+  const terms = termIndexes.map((entryIndex, index) => ({
+    operator: operators[index],
+    symbol: entries[entryIndex].symbol,
+    value: entries[entryIndex].value
+  }));
+  const result = terms.reduce((total, term, index) => {
+    if (index === 0) return term.value;
+    return term.operator === "+" ? total + term.value : total - term.value;
+  }, 0);
+  if (result < 1 || result > 80) return givenShapeExpression({ difficulty });
+  const numericExpression = terms.map((term) => `${term.operator}${term.value}`).join(" ");
+  return {
+    prompt: "각 도형이 나타내는 수를 이용하여 다음 식을 계산하세요.",
+    visual: { kind: "given-shape-expression", entries, terms },
+    answer: String(result),
+    solution: `${terms.map((term) => `${term.operator}${term.symbol}(${term.value})`).join(" ")}이므로 ${numericExpression} = ${result}입니다.`,
+    meta: { difficulty, entries, terms, result }
+  };
+}
+
+function pairedGrowingSequences({ difficulty = 2 }) {
+  const givenCount = difficulty === 3 ? 4 : 5;
+  const answerCount = difficulty === 1 ? 1 : difficulty === 2 ? 2 : 3;
+  const totalCount = givenCount + answerCount;
+  const stepGrowth = difficulty === 1 ? 0 : difficulty === 2 ? 1 : 2;
+  const firstStart = randomInt(1, 5);
+  const firstStep = randomInt(1, 3);
+  const firstFull = [firstStart];
+  let step = firstStep;
+  while (firstFull.length < totalCount) {
+    firstFull.push(firstFull[firstFull.length - 1] + step);
+    step += stepGrowth;
+  }
+  const secondStart = randomInt(1, difficulty === 3 ? 2 : 3);
+  const secondFull = [secondStart];
+  while (secondFull.length < totalCount) secondFull.push(secondFull[secondFull.length - 1] * 2);
+  const rows = [
+    { full: firstFull, givenCount, rule: { kind: "growing-step", firstStep, stepGrowth } },
+    { full: secondFull, givenCount, rule: { kind: "times-two" } }
+  ].map((row) => ({
+    ...row,
+    items: row.full.map((value, index) => index < givenCount ? value : null),
+    answers: row.full.slice(givenCount)
+  }));
+  const labels = ["①", "②"];
+  const answer = rows.map((row, index) => `${labels[index]} ${row.answers.join(", ")}`).join(" / ");
+  const firstRule = stepGrowth === 0
+    ? `${firstStep}씩 커집니다.`
+    : `커지는 수가 ${firstStep}부터 ${stepGrowth}씩 늘어납니다.`;
+  return {
+    prompt: "각 수열의 규칙을 찾아 빈칸에 알맞은 수를 차례로 쓰세요.",
+    visual: { kind: "paired-growing-sequences", rows },
+    answer,
+    solution: `① ${firstRule} 이어지는 수는 ${rows[0].answers.join(", ")}입니다. ② 앞 수를 2배하므로 이어지는 수는 ${rows[1].answers.join(", ")}입니다.`,
+    meta: { difficulty, givenCount, answerCount, stepGrowth, rows }
+  };
+}
+
+function cutReCutPieces({ difficulty = 2 }) {
+  const firstParts = difficulty === 3 ? 3 : 2;
+  const itemCount = randomInt(difficulty === 1 ? 3 : 5, difficulty === 3 ? 7 : difficulty === 2 ? 9 : 5);
+  const firstTotal = itemCount * firstParts;
+  const eaten = randomInt(difficulty === 1 ? 1 : 3, firstTotal - 2);
+  const remaining = firstTotal - eaten;
+  const answer = remaining * 2;
+  const firstCut = firstParts === 2 ? "반으로" : "똑같이 3조각으로";
+  const hint = difficulty === 1 ? ` 처음 자르면 ${firstTotal}조각이 됩니다.` : "";
+  return {
+    prompt: `${itemCount}개의 사과를 각각 ${firstCut} 잘라 ${eaten}조각을 먹은 후, 남은 조각을 모두 반으로 잘랐습니다.${hint} 사과는 모두 몇 조각일까요?`,
+    answer: `${answer}조각`,
+    solution: `처음 자르면 ${itemCount} × ${firstParts} = ${firstTotal}조각입니다. ${eaten}조각을 먹으면 ${firstTotal} - ${eaten} = ${remaining}조각이 남고, 이를 모두 반으로 자르면 ${remaining} × 2 = ${answer}조각입니다.`,
+    meta: { difficulty, firstParts, itemCount, firstTotal, eaten, remaining, answer }
+  };
+}
+
+function triangleFanCount({ difficulty = 2 }) {
+  const configs = difficulty === 1
+    ? [[3, 0], [3, 1]]
+    : difficulty === 2
+      ? [[4, 1], [3, 2]]
+      : [[5, 1], [4, 2], [5, 2]];
+  const [rayCount, horizontalCount] = sample(configs);
+  const positionPresets = horizontalCount === 0
+    ? [[]]
+    : horizontalCount === 1
+      ? [[0.4], [0.5], [0.6]]
+      : [[0.34, 0.62], [0.4, 0.7], [0.3, 0.56]];
+  const horizontalFractions = sample(positionPresets);
+  const oneLevel = Array.from({ length: rayCount - 1 }, (_, index) => index + 1).reduce((total, value) => total + value, 0);
+  const levelCount = horizontalCount + 1;
+  const answer = oneLevel * levelCount;
+  const repeated = Array.from({ length: levelCount }, () => oneLevel).join(" + ");
+  return {
+    prompt: "다음 도형에서 찾을 수 있는 크고 작은 삼각형은 모두 몇 개인가요?",
+    visual: { kind: "triangle-fan-count", rayCount, horizontalFractions },
+    answer: `${answer}개`,
+    solution: `꼭짓점에서 내려오는 선 ${rayCount}개로 밑변 한 줄에서 만들 수 있는 삼각형을 빠짐없이 세면 ${oneLevel}개입니다. 밑변이 되는 줄이 ${levelCount}곳이므로 ${repeated} = ${answer}개입니다.`,
+    meta: { difficulty, rayCount, horizontalCount, horizontalFractions, oneLevel, levelCount, answer }
+  };
+}
+
+function applyLadderOperation(value, operation) {
+  if (operation.kind === "add") return value + operation.amount;
+  if (operation.kind === "subtract") return value - operation.amount;
+  return value * operation.amount;
+}
+
+function ladderOperationLabel(operation) {
+  if (operation.kind === "add") return `+${operation.amount}`;
+  if (operation.kind === "subtract") return `−${operation.amount}`;
+  return `×${operation.amount}`;
+}
+
+function runOperationLadder(topValues, rungs, columnCount) {
+  const bottomValues = Array(columnCount).fill(null);
+  const routes = [];
+  for (let start = 0; start < columnCount; start += 1) {
+    let column = start;
+    let value = topValues[start];
+    const steps = [];
+    for (const rung of rungs) {
+      if (column !== rung.left && column !== rung.right) continue;
+      column = column === rung.left ? rung.right : rung.left;
+      value = applyLadderOperation(value, rung.operation);
+      steps.push({ operation: rung.operation, column, value });
+    }
+    bottomValues[column] = value;
+    routes.push({ start, end: column, steps });
+  }
+  return { bottomValues, routes };
+}
+
+function reverseOperationLadder({ difficulty = 2 }) {
+  const columnCount = difficulty === 1 ? 3 : 4;
+  let rungs;
+  if (difficulty === 1) {
+    rungs = [
+      { left: 0, right: 1, leftY: 0.34, rightY: 0.34, operation: { kind: "add", amount: randomInt(1, 4) } },
+      { left: 1, right: 2, leftY: 0.66, rightY: 0.66, operation: { kind: "subtract", amount: randomInt(1, 3) } }
+    ];
+  } else {
+    rungs = [
+      ...(difficulty === 3 ? [{ left: 0, right: 1, leftY: 0.16, rightY: 0.16, operation: { kind: "add", amount: randomInt(1, 3) } }] : []),
+      { left: 2, right: 3, leftY: 0.26, rightY: 0.26, operation: { kind: "subtract", amount: randomInt(1, 3) } },
+      { left: 1, right: 2, leftY: 0.43, rightY: 0.43, operation: { kind: "add", amount: randomInt(2, 5) } },
+      { left: 0, right: 1, leftY: 0.38, rightY: 0.67, operation: { kind: "subtract", amount: randomInt(1, 4) } },
+      { left: 2, right: 3, leftY: 0.72, rightY: 0.61, operation: { kind: "multiply", amount: 2 } }
+    ];
+  }
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const topValues = Array.from({ length: columnCount }, () => randomInt(difficulty === 3 ? 5 : 3, difficulty === 3 ? 14 : 10));
+    const { bottomValues, routes } = runOperationLadder(topValues, rungs, columnCount);
+    if (bottomValues.some((value) => !Number.isInteger(value) || value < 1 || value > 50)) continue;
+    const answer = topValues.join(", ");
+    return {
+      prompt: "사다리를 위에서 아래로 따라가며 표시된 계산을 합니다. 아래 결과를 보고 위 빈칸의 수를 왼쪽부터 차례로 구하세요.",
+      visual: { kind: "reverse-operation-ladder", columnCount, rungs: rungs.map((rung) => ({ ...rung, label: ladderOperationLabel(rung.operation) })), bottomValues },
+      answer,
+      solution: `각 아래 수에서 지나온 계산을 거꾸로 하면 위의 수는 왼쪽부터 ${answer}입니다.`,
+      meta: { difficulty, columnCount, rungs, topValues, bottomValues, routes }
+    };
+  }
+  return reverseOperationLadder({ difficulty });
+}
+
+function evaluatePlusMinusPattern(numbers, operators) {
+  return numbers.slice(1).reduce((total, value, index) => (
+    operators[index] === "+" ? total + value : total - value
+  ), numbers[0]);
+}
+
+function plusMinusMultiTarget({ difficulty = 2 }) {
+  const numberCount = difficulty + 3;
+  const rowCount = difficulty + 1;
+  const topChoices = difficulty === 1 ? [7, 9, 11] : difficulty === 2 ? [9, 11, 13] : [11, 13, 15];
+  const top = sample(topChoices);
+  const numbers = Array.from({ length: numberCount }, (_, index) => top - index * 2);
+  const slotCount = numberCount - 1;
+  const grouped = new Map();
+  for (let mask = 0; mask < (1 << slotCount); mask += 1) {
+    const operators = Array.from({ length: slotCount }, (_, index) => (mask & (1 << index)) ? "-" : "+");
+    const result = evaluatePlusMinusPattern(numbers, operators);
+    const patterns = grouped.get(result) || [];
+    patterns.push(operators);
+    grouped.set(result, patterns);
+  }
+  const allPlus = "+".repeat(slotCount);
+  const candidates = [...grouped.entries()]
+    .filter(([target, patterns]) => target > 0 && patterns.length === 1 && patterns[0].join("") !== allPlus)
+    .map(([target, patterns]) => ({ target, operators: patterns[0] }));
+  if (candidates.length < rowCount) return plusMinusMultiTarget({ difficulty });
+  const rows = shuffle(candidates).slice(0, rowCount).sort((a, b) => b.target - a.target);
+  const labels = ["①", "②", "③", "④"];
+  const answer = rows.map((row, index) => `${labels[index]} ${row.operators.join(" ")}`).join(" / ");
+  const equations = rows.map((row, index) => {
+    const expression = numbers.slice(1).reduce((text, value, operatorIndex) => `${text}${row.operators[operatorIndex]}${value}`, String(numbers[0]));
+    return `${labels[index]} ${expression}=${row.target}`;
+  }).join(", ");
+  return {
+    prompt: "보기와 같이 수 사이의 빈칸에 + 또는 -를 하나씩 넣어 오른쪽의 수가 되게 하세요.",
+    visual: { kind: "plus-minus-multi-target", numbers, exampleResult: numbers.reduce((total, value) => total + value, 0), rows },
+    answer,
+    solution: `각 줄에 부호를 넣어 직접 계산하면 ${equations}입니다.`,
+    meta: { difficulty, numberCount, rowCount, numbers, rows }
+  };
+}
+
+function twoCustomOperations({ difficulty = 2 }) {
+  const offset = difficulty === 1 ? 1 : randomInt(2, difficulty === 3 ? 5 : 3);
+  const secondCopies = difficulty === 3 ? 3 : 2;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const maximum = difficulty === 3 ? 12 : difficulty === 2 ? 9 : 6;
+    const first = { symbol: "✣", left: randomInt(1, maximum), right: randomInt(1, maximum) };
+    const second = { symbol: "◎", left: randomInt(1, maximum), right: randomInt(1, maximum) };
+    first.result = first.left + first.right + offset;
+    second.result = second.left + Array.from({ length: secondCopies }, () => second.right).reduce((total, value) => total + value, 0);
+    if (first.result === second.result) continue;
+    const repeatedRight = Array.from({ length: secondCopies }, () => "나").join(" + ");
+    const labels = ["①", "②"];
+    const queries = [first, second];
+    return {
+      prompt: "다음 두 가지 새 연산의 약속을 보고 물음에 답하세요.",
+      visual: {
+        kind: "two-custom-operations",
+        definitions: [
+          { symbol: "✣", expression: `가 + 나 + ${offset}` },
+          { symbol: "◎", expression: `가 + ${repeatedRight}` }
+        ],
+        queries
+      },
+      answer: queries.map((query, index) => `${labels[index]} ${query.result}`).join(", "),
+      solution: `① ${first.left}+${first.right}+${offset}=${first.result}, ② ${second.left}+${Array.from({ length: secondCopies }, () => second.right).join("+")}=${second.result}입니다.`,
+      meta: { difficulty, offset, secondCopies, queries }
+    };
+  }
+  return twoCustomOperations({ difficulty });
 }
 
 function balanceGivenUnitWeight({ difficulty = 2 }) {
@@ -2044,6 +2616,527 @@ function bookInterleavedNumberSequence({ difficulty = 2 }) {
     answer: gaps.map((gap, index) => `${["ㄱ", "ㄴ", "ㄷ"][index]}=${items[gap]}`).join(", "),
     solution: rules.map((rule, index) => `${index + 1}번째 수열은 ${rule.step}씩 커집니다.`).join(" ") + ` 따라서 빈칸은 ${gaps.map((gap) => items[gap]).join(", ")}입니다.`,
     meta: { strands, rules, items, gaps }
+  };
+}
+
+function practiceInterleavedPairSequence({ difficulty = 2 }) {
+  const strands = difficulty === 3 ? 3 : 2;
+  const rounds = difficulty === 1 ? 4 : 5;
+  const step = randomInt(1, difficulty === 3 ? 4 : 3);
+  const start = randomInt(2, difficulty === 3 ? 8 : 10);
+  const separation = randomInt(2, 4);
+  const starts = Array.from({ length: strands }, (_, index) => start + separation * index);
+  const shownLength = (rounds - 1) * strands + 1;
+  const values = Array.from({ length: shownLength }, (_, index) => {
+    const strand = index % strands;
+    const round = Math.floor(index / strands);
+    return starts[strand] + step * round;
+  });
+  const gap = shownLength - 1;
+  const answer = values[gap];
+  const guide = difficulty === 1 ? "한 칸씩 건너뛴 수끼리 살펴보세요. " : "";
+  const strandText = Array.from({ length: strands }, (_, strand) => {
+    const strandValues = values.filter((_, index) => index % strands === strand);
+    return `${strand + 1}번째 수열 ${strandValues.join(" → ")}`;
+  }).join(", ");
+  return {
+    prompt: `${guide}번갈아 나오는 수의 규칙을 찾아 빈칸에 알맞은 수를 쓰세요.`,
+    visual: { kind: "number-sequences", rows: [{ items: values.map((value, index) => index === gap ? null : value) }] },
+    answer: String(answer),
+    solution: `${strandText}처럼 각 수열은 ${step}씩 커집니다. 따라서 빈칸은 ${answer}입니다.`,
+    meta: { difficulty, strands, rounds, step, starts, shownLength, values, gap, answer }
+  };
+}
+
+function practiceCalendarWeekdaySum({ difficulty = 2 }) {
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+  const month = randomInt(1, 12);
+  const lastDate = monthDays[month - 1];
+  const firstWeekday = randomInt(1, 4);
+  const targetOffset = difficulty === 3 ? 3 : 2;
+  const targetWeekday = (firstWeekday + targetOffset) % 7;
+  const weekdayFor = (date) => (firstWeekday + date - 1) % 7;
+  const dateAt = (week, weekday) => {
+    const date = 1 + weekday - firstWeekday + week * 7;
+    return date >= 1 && date <= lastDate ? date : null;
+  };
+  let columns;
+  let rows;
+  if (difficulty === 1) {
+    columns = [0, 1, 2, 3, 4, 5, 6];
+    rows = [0, 1].map((week) => columns.map((weekday) => dateAt(week, weekday)));
+  } else if (difficulty === 2) {
+    columns = [firstWeekday - 1, firstWeekday, firstWeekday + 1];
+    rows = [[null, 1, null], [7, null, null]];
+  } else {
+    columns = [firstWeekday - 1, firstWeekday];
+    rows = [[null, 1], [7, null]];
+  }
+  const dates = Array.from({ length: lastDate }, (_, index) => index + 1)
+    .filter((date) => weekdayFor(date) === targetWeekday);
+  const answer = dates.reduce((total, date) => total + date, 0);
+  const addition = dates.join(" + ");
+  return {
+    prompt: `아래는 찢어진 ${month}월 달력입니다. 이 달의 ${weekdays[targetWeekday]}요일 날짜를 모두 더하면 얼마인지 구하세요.`,
+    visual: { kind: "torn-calendar", month, columns, headers: columns.map((weekday) => weekdays[weekday]), rows },
+    answer: String(answer),
+    solution: `${month}월 1일은 ${weekdays[firstWeekday]}요일이므로 ${weekdays[targetWeekday]}요일은 ${dates.join("일, ")}일입니다. ${addition} = ${answer}입니다.`,
+    meta: { difficulty, month, lastDate, firstWeekday, targetWeekday, targetOffset, columns, rows, dates, answer }
+  };
+}
+
+function practiceHeightExtremes({ difficulty = 2 }) {
+  const count = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6;
+  const names = shuffle(["동화", "슬기", "지현", "주희", "영희", "민준", "서윤", "하린"]).slice(0, count);
+  const order = shuffle(names);
+  const relations = order.slice(0, -1).map((taller, index) => ({ taller, shorter: order[index + 1] }));
+  const clues = relations.map(({ taller, shorter }, index) => {
+    const reverseWording = difficulty !== 1 && index % 2 === 1;
+    return reverseWording
+      ? `${koreanParticle(shorter, "은", "는")} ${taller}보다 작습니다.`
+      : `${koreanParticle(taller, "은", "는")} ${shorter}보다 큽니다.`;
+  });
+  const shownClues = difficulty === 1 ? clues : shuffle(clues);
+  return {
+    prompt: "다음 글을 읽고, 키가 가장 큰 사람과 가장 작은 사람의 이름을 각각 쓰세요.",
+    visual: { kind: "height-extremes", names, clues: shownClues },
+    answer: `가장 큰 사람 ${order[0]}, 가장 작은 사람 ${order.at(-1)}`,
+    solution: `조건을 큰 사람부터 한 줄로 이으면 ${order.join(" > ")}입니다. 따라서 가장 큰 사람은 ${order[0]}, 가장 작은 사람은 ${order.at(-1)}입니다.`,
+    meta: { difficulty, count, names, order, relations, clues: shownClues, tallest: order[0], shortest: order.at(-1) }
+  };
+}
+
+function practiceAlignedRodLengths({ difficulty = 2 }) {
+  const knownLength = sample(difficulty === 1 ? [2] : [2, 4, 6]);
+  const knownLabel = "가";
+  const unitTotal = difficulty === 3 ? 10 : 6;
+  const total = knownLength * unitTotal;
+  const rows = difficulty === 3
+    ? [
+        [{ label: "나", length: knownLength * 7 }, ...Array.from({ length: 3 }, () => ({ label: "가", length: knownLength }))],
+        Array.from({ length: 4 }, () => ({ label: "다", length: total / 4 })),
+        Array.from({ length: 5 }, () => ({ label: "라", length: total / 5 })),
+        Array.from({ length: 10 }, () => ({ label: "마", length: total / 10 }))
+      ]
+    : difficulty === 1
+      ? [
+          [{ label: "나", length: knownLength * 4 }, { label: "가", length: knownLength }, { label: "가", length: knownLength }],
+          Array.from({ length: 3 }, () => ({ label: "다", length: total / 3 }))
+        ]
+      : [
+        [{ label: "나", length: knownLength * 4 }, { label: "가", length: knownLength }, { label: "가", length: knownLength }],
+        Array.from({ length: 3 }, () => ({ label: "다", length: total / 3 })),
+        Array.from({ length: 4 }, () => ({ label: "라", length: total / 4 }))
+      ];
+  const answerLabels = difficulty === 1 ? ["나", "다"] : difficulty === 3 ? ["나", "다", "라", "마"] : ["나", "다", "라"];
+  const values = Object.fromEntries(rows.flat().map((part) => [part.label, part.length]));
+  const answer = answerLabels.map((label) => `${label} ${values[label]}cm`).join(", ");
+  const rowCounts = rows.slice(1).map((row) => row.length);
+  const easyHint = difficulty === 1 ? ` 전체 막대의 길이는 ${total}cm입니다.` : "";
+  return {
+    prompt: `여러 막대가 양 끝이 맞도록 쌓여 있습니다. 막대 ${knownLabel}의 길이가 ${knownLength}cm일 때, 막대 ${answerLabels.join("·")}의 길이를 각각 구하세요.${easyHint}`,
+    visual: { kind: "aligned-rod-lengths", rows, knownLabel, knownLength, total, unitTotal, showTotal: difficulty === 1 },
+    answer,
+    solution: `그림에서 전체 길이는 ${knownLabel} 막대 ${unitTotal}개의 길이와 같으므로 ${knownLength} × ${unitTotal} = ${total}cm입니다. ${rows.slice(1).map((row, index) => `${row[0].label}는 ${total}cm를 ${rowCounts[index]}개로 똑같이 나눈 ${row[0].length}cm`).join(", ")}이고, 나머지 길이를 확인하면 ${answer}입니다.`,
+    meta: { difficulty, knownLabel, knownLength, unitTotal, total, rows, values, answerLabels, rowCounts }
+  };
+}
+
+function practiceTwoFunctionMachines({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const multiplier = difficulty === 1 ? 1 : difficulty === 2 ? 2 : randomInt(2, 3);
+    const add = difficulty === 1 ? 2 : difficulty === 2 ? 2 : randomInt(1, 5);
+    const targetInput = difficulty === 1 ? 4 : difficulty === 2 ? randomInt(4, 6) : randomInt(5, 8);
+    const middle = multiplier * targetInput + add;
+    const result = difficulty === 1 ? 1 : difficulty === 2 ? randomInt(1, 2) : randomInt(2, 4);
+    const constant = middle * result;
+    const divisorInputs = Array.from({ length: constant }, (_, index) => index + 1)
+      .filter((value) => constant % value === 0 && value !== middle);
+    if (divisorInputs.length < 3) continue;
+    const firstInputs = difficulty === 3 ? [1, 3, 4] : [1, 2, 3];
+    const preferred = divisorInputs.filter((value) => value <= 10);
+    const secondInputs = shuffle(preferred.length >= 3 ? preferred : divisorInputs).slice(0, 3).sort((a, b) => a - b);
+    const firstExamples = firstInputs.map((input) => ({ input, output: multiplier * input + add }));
+    const secondExamples = secondInputs.map((input) => ({ input, output: constant / input }));
+    return {
+      prompt: "동그라미와 네모 안의 수가 보기와 같은 규칙으로 바뀝니다. 빈칸에 알맞은 수를 차례로 쓰세요.",
+      visual: {
+        kind: "two-function-machines",
+        firstExamples,
+        secondExamples,
+        targetInput,
+        middle,
+        result,
+        firstHint: difficulty === 1 ? `${multiplier === 1 ? "그 수" : `${multiplier}배`}보다 ${add} 큰 수` : "",
+        secondHint: difficulty === 1 ? `${constant}을 입력한 수로 나눈 수` : ""
+      },
+      answer: `첫 빈칸 ${middle}, 다음 빈칸 ${result}`,
+      solution: `동그라미 규칙은 ${multiplier === 1 ? `입력한 수에 ${numberObject(add)} 더하는` : `입력한 수에 ${numberObject(multiplier)} 곱한 뒤 ${numberObject(add)} 더하는`} 것입니다. ${targetInput}${multiplier === 1 ? "" : ` × ${multiplier}`} + ${add} = ${middle}입니다. 네모 규칙은 ${numberObject(constant)} 입력한 수로 나누는 것이므로 ${constant} ÷ ${middle} = ${result}입니다.`,
+      meta: { difficulty, multiplier, add, constant, firstInputs, secondInputs, firstExamples, secondExamples, targetInput, middle, result }
+    };
+  }
+  return null;
+}
+
+function practiceVerticalShapeCryptarithm({ difficulty = 2 }) {
+  const visible = sample([0, 2, 4, 6]);
+  const solutions = [];
+  for (let spade = 1; spade <= 9; spade += 1) {
+    for (let heart = 0; heart <= 9; heart += 1) {
+      for (let star = 1; star <= 9; star += 1) {
+        if (new Set([spade, heart, star]).size !== 3) continue;
+        if ((10 * spade + heart) + (10 * star + heart) === 110 * star + visible) solutions.push({ spade, heart, star });
+      }
+    }
+  }
+  if (solutions.length !== 1) return null;
+  const values = solutions[0];
+  const valueSum = values.spade + values.heart + values.star;
+  const hardQuestion = difficulty === 3 ? " 그리고 세 도형이 나타내는 수의 합도 구하세요." : "";
+  const hint = difficulty === 1 ? " 단, ★는 1입니다." : "";
+  const baseAnswer = `♠=${values.spade}, ♥=${values.heart}, ★=${values.star}`;
+  return {
+    prompt: `같은 도형은 같은 숫자, 다른 도형은 다른 숫자를 나타냅니다. 세로셈을 완성하고 각 도형이 나타내는 수를 구하세요.${hint}${hardQuestion}`,
+    visual: { kind: "cryptarithm-vertical", first: ["♠", "♥"], second: ["★", "♥"], sum: ["★", "★", visible] },
+    answer: difficulty === 3 ? `${baseAnswer}, 합 ${valueSum}` : baseAnswer,
+    solution: `백의 자리의 ★는 받아올린 1입니다. 일의 자리에서 ♥ + ♥의 일의 자리 수가 ${visible}이므로 ♥=${values.heart}이고, 십의 자리를 맞추면 ♠=${values.spade}입니다.${difficulty === 3 ? ` 세 수의 합은 ${values.spade} + ${values.heart} + ${values.star} = ${valueSum}입니다.` : ""}`,
+    meta: { difficulty, visible, values, valueSum, solutionCount: solutions.length }
+  };
+}
+
+function practiceSquareSymbolChain({ difficulty = 2 }) {
+  const square = randomInt(difficulty === 1 ? 2 : 3, difficulty === 3 ? 7 : 6);
+  const subtract = randomInt(1, Math.min(square, difficulty === 1 ? 2 : 4));
+  const add = randomInt(difficulty === 1 ? 3 : 5, difficulty === 3 ? 10 : 9);
+  const circle = square * 3;
+  const heart = circle + square - subtract;
+  const doubleCircle = heart * 2 - square;
+  const star = doubleCircle - heart + add;
+  const triangle = star + doubleCircle - square;
+  const hard = difficulty === 3;
+  const rows = [
+    ["square", "+", "square", "+", "square", "=", "circle"],
+    ["circle", "+", "square", "-", subtract, "=", "heart"],
+    ["heart", "+", "heart", "-", "square", "=", "doubleCircle"],
+    ["doubleCircle", "-", "heart", "+", add, "=", "star"]
+  ];
+  if (hard) rows.push(["star", "+", "doubleCircle", "-", "square", "=", "triangle"]);
+  const target = hard ? "triangle" : "star";
+  const answer = hard ? triangle : star;
+  const given = difficulty === 1 ? { square, circle } : { square };
+  return {
+    prompt: `${difficulty === 1 ? `□가 ${square}, ○가 ${circle}일 때` : `□가 ${square}일 때`}, 식을 차례로 계산하여 ${hard ? "▲" : "★"}이 나타내는 수를 구하세요.`,
+    visual: { kind: "symbol-chain", rows, given, target },
+    answer: String(answer),
+    solution: `○=${square} + ${square} + ${square}=${circle}, ♥=${circle} + ${square} - ${subtract}=${heart}, ◎=${heart} + ${heart} - ${square}=${doubleCircle}, ★=${doubleCircle} - ${heart} + ${add}=${star}${hard ? `, ▲=${star} + ${doubleCircle} - ${square}=${triangle}` : ""}입니다.`,
+    meta: { difficulty, square, circle, heart, doubleCircle, star, triangle: hard ? triangle : null, subtract, add, target, result: answer, rows, given }
+  };
+}
+
+const UNUSED_CARD_EQUATION_CATALOG = new Map();
+
+function chooseSets(values, size, start = 0, chosen = [], result = []) {
+  if (chosen.length === size) {
+    result.push([...chosen]);
+    return result;
+  }
+  for (let index = start; index <= values.length - (size - chosen.length); index += 1) {
+    chosen.push(values[index]);
+    chooseSets(values, size, index + 1, chosen, result);
+    chosen.pop();
+  }
+  return result;
+}
+
+function unusedCardPairings(targets, candidates) {
+  const solutions = [];
+  const search = (targetIndex, remaining, pairs) => {
+    if (targetIndex === targets.length) {
+      if (remaining.length === 1) solutions.push({ pairs: pairs.map((pair) => [...pair]), unused: remaining[0] });
+      return;
+    }
+    for (let left = 0; left < remaining.length; left += 1) {
+      for (let right = left + 1; right < remaining.length; right += 1) {
+        if (remaining[left] + remaining[right] !== targets[targetIndex]) continue;
+        const next = remaining.filter((_, index) => index !== left && index !== right);
+        search(targetIndex + 1, next, [...pairs, [remaining[left], remaining[right]]]);
+      }
+    }
+  };
+  search(0, candidates, []);
+  return solutions;
+}
+
+function unusedCardCatalog(limit, equationCount) {
+  const cacheKey = `${limit}:${equationCount}`;
+  if (UNUSED_CARD_EQUATION_CATALOG.has(cacheKey)) return UNUSED_CARD_EQUATION_CATALOG.get(cacheKey);
+  const values = Array.from({ length: limit }, (_, index) => index + 1);
+  const catalog = chooseSets(values, equationCount).flatMap((targets) => {
+    const candidates = values.filter((value) => !targets.includes(value));
+    const solutions = unusedCardPairings(targets, candidates);
+    const unusedValues = [...new Set(solutions.map((solution) => solution.unused))];
+    return solutions.length && unusedValues.length === 1 ? [{ targets, solutions, unused: unusedValues[0] }] : [];
+  });
+  UNUSED_CARD_EQUATION_CATALOG.set(cacheKey, catalog);
+  return catalog;
+}
+
+function practiceUnusedNumberCardEquations({ difficulty = 2 }) {
+  const equationCount = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const limit = equationCount * 3 + 1;
+  const picked = sample(unusedCardCatalog(limit, equationCount));
+  if (!picked) return null;
+  const targets = shuffle(picked.targets);
+  const candidates = Array.from({ length: limit }, (_, index) => index + 1).filter((value) => !targets.includes(value));
+  const solutions = unusedCardPairings(targets, candidates);
+  const unusedValues = [...new Set(solutions.map((solution) => solution.unused))];
+  if (!solutions.length || unusedValues.length !== 1) return null;
+  const shownSolution = sample(solutions);
+  return {
+    prompt: `1부터 ${limit}까지의 수를 한 번씩만 사용하여 ${equationCount}개의 덧셈식을 완성하려고 합니다. ${targets.join(", ")}은 이미 사용하였을 때, 사용할 수 없는 수는 무엇입니까?`,
+    visual: { kind: "unused-card-equations", cards: Array.from({ length: limit }, (_, index) => index + 1), targets },
+    answer: String(unusedValues[0]),
+    solution: `${shownSolution.pairs.map((pair, index) => `${pair[0]} + ${pair[1]} = ${targets[index]}`).join(", ")}로 만들 수 있습니다. 한 번도 쓰이지 않은 수는 ${unusedValues[0]}입니다.`,
+    meta: { difficulty, limit, equationCount, targets, candidates, solutionCount: solutions.length, unusedValues, shownPairs: shownSolution.pairs }
+  };
+}
+
+const PRACTICE_LETTER_CRYPTARITHMS = [
+  ["AB", "BC", "A"], ["AB", "CA", "C"], ["AC", "BA", "B"], ["AC", "CB", "A"],
+  ["BA", "AC", "B"], ["BA", "CB", "C"], ["BC", "AB", "A"], ["BC", "CA", "B"],
+  ["CA", "AB", "C"], ["CA", "BC", "B"], ["CB", "AC", "A"], ["CB", "BA", "C"]
+];
+
+function solvePracticeLetterCryptarithm(first, second, resultSymbol) {
+  const solutions = [];
+  for (let A = 0; A <= 9; A += 1) {
+    for (let B = 0; B <= 9; B += 1) {
+      for (let C = 0; C <= 9; C += 1) {
+        if (new Set([A, B, C]).size !== 3) continue;
+        const values = { A, B, C };
+        if (!values[first[0]] || !values[second[0]] || !values[resultSymbol]) continue;
+        const firstValue = 10 * values[first[0]] + values[first[1]];
+        const secondValue = 10 * values[second[0]] + values[second[1]];
+        if (firstValue + secondValue === 111 * values[resultSymbol]) solutions.push({ ...values, firstValue, secondValue });
+      }
+    }
+  }
+  return solutions;
+}
+
+function practiceTwoDigitLetterCryptarithm({ difficulty = 2 }) {
+  const [first, second, resultSymbol] = sample(PRACTICE_LETTER_CRYPTARITHMS);
+  const solutions = solvePracticeLetterCryptarithm(first, second, resultSymbol);
+  if (solutions.length !== 1) return null;
+  const values = solutions[0];
+  const hint = difficulty === 1 ? ` 단, ${resultSymbol}=${values[resultSymbol]}입니다.` : "";
+  const valueSum = values.A + values.B + values.C;
+  return {
+    prompt: `같은 글자는 같은 숫자, 다른 글자는 다른 숫자를 나타냅니다. 세로셈을 완성하여 A, B, C가 나타내는 수를 구하세요.${hint}${difficulty === 3 ? " 그리고 세 수의 합도 구하세요." : ""}`,
+    visual: { kind: "cryptarithm-vertical", first: [...first], second: [...second], sum: [resultSymbol, resultSymbol, resultSymbol] },
+    answer: `A=${values.A}, B=${values.B}, C=${values.C}${difficulty === 3 ? `, 합 ${valueSum}` : ""}`,
+    solution: `${values.firstValue} + ${values.secondValue} = ${111 * values[resultSymbol]}이므로 A=${values.A}, B=${values.B}, C=${values.C}입니다.${difficulty === 3 ? ` 세 수의 합은 ${values.A} + ${values.B} + ${values.C} = ${valueSum}입니다.` : ""}`,
+    meta: { difficulty, first, second, resultSymbol, values: { A: values.A, B: values.B, C: values.C }, valueSum, solutionCount: solutions.length }
+  };
+}
+
+function practiceRecorderMatchstickLength({ difficulty = 2 }) {
+  const pencilUnits = difficulty === 1 ? 1 : difficulty === 2 ? sample([2, 3]) : sample([3, 4]);
+  const topMatchCount = pencilUnits + 1;
+  const answer = pencilUnits * 2 + 1;
+  const rows = [
+    [...Array.from({ length: topMatchCount }, () => ({ kind: "match", units: 1 })), { kind: "pencil", units: pencilUnits }],
+    [{ kind: "pencil", units: pencilUnits }, { kind: "match", units: 1 }, { kind: "pencil", units: pencilUnits }]
+  ];
+  return {
+    prompt: "리코더의 길이를 성냥개비와 연필을 사용하여 나타냈습니다. 리코더의 길이를 성냥개비만으로 나타내려면 몇 개가 필요합니까?",
+    visual: { kind: "recorder-matchstick-length", rows, totalUnits: answer, pencilUnits },
+    answer: `${answer}개`,
+    solution: `두 줄의 전체 길이가 같으므로 연필 1개의 길이는 성냥개비 ${pencilUnits}개의 길이와 같습니다. 따라서 리코더의 길이는 성냥개비 ${topMatchCount}개와 연필 1개, 곧 ${topMatchCount} + ${pencilUnits} = ${answer}개입니다.`,
+    meta: { difficulty, pencilUnits, topMatchCount, bottomMatchCount: 1, topPencilCount: 1, bottomPencilCount: 2, answer, rows }
+  };
+}
+
+const TRANSFORM_SHAPE_NAMES = { triangle: "세모", circle: "동그라미", diamond: "마름모", square: "네모" };
+const TRANSFORM_POSITION_NAMES = ["왼쪽 위", "오른쪽 위", "왼쪽 아래", "오른쪽 아래"];
+const TRANSFORM_DIRECTION_NAMES = ["위쪽", "오른쪽", "아래쪽", "왼쪽"];
+const TRANSFORM_OPERATION_NAMES = {
+  "flip-lr": "오른쪽으로 뒤집기",
+  "flip-tb": "아래로 뒤집기",
+  "rotate-cw": "오른쪽으로 1/4바퀴 돌리기",
+  "rotate-ccw": "왼쪽으로 1/4바퀴 돌리기"
+};
+const TRANSFORM_OPERATION_CONNECTORS = {
+  "flip-lr": "오른쪽으로 뒤집고",
+  "flip-tb": "아래로 뒤집고",
+  "rotate-cw": "오른쪽으로 1/4바퀴 돌리고",
+  "rotate-ccw": "왼쪽으로 1/4바퀴 돌리고"
+};
+const TRANSFORM_OPERATION_ENDINGS = {
+  "flip-lr": "오른쪽으로 뒤집은",
+  "flip-tb": "아래로 뒤집은",
+  "rotate-cw": "오른쪽으로 1/4바퀴 돌린",
+  "rotate-ccw": "왼쪽으로 1/4바퀴 돌린"
+};
+
+function transformShapeGrid(grid, operation) {
+  const output = Array(4);
+  grid.forEach((cell, index) => {
+    const row = Math.floor(index / 2);
+    const column = index % 2;
+    let nextRow = row;
+    let nextColumn = column;
+    let direction = cell.direction || 0;
+    if (operation === "flip-lr") {
+      nextColumn = 1 - column;
+      direction = (4 - direction) % 4;
+    } else if (operation === "flip-tb") {
+      nextRow = 1 - row;
+      direction = (2 - direction + 4) % 4;
+    } else if (operation === "rotate-cw") {
+      nextRow = column;
+      nextColumn = 1 - row;
+      direction = (direction + 1) % 4;
+    } else {
+      nextRow = 1 - column;
+      nextColumn = row;
+      direction = (direction + 3) % 4;
+    }
+    output[nextRow * 2 + nextColumn] = { ...cell, direction };
+  });
+  return output;
+}
+
+function practiceShapeRotateFlipGrid({ difficulty = 2 }) {
+  const shapes = shuffle(["triangle", "circle", "diamond", "square"]);
+  const start = shapes.map((shape) => ({ shape, direction: shape === "triangle" ? (difficulty === 2 ? 0 : randomInt(0, 3)) : 0 }));
+  const operations = difficulty === 1
+    ? [sample(["flip-lr", "flip-tb", "rotate-cw"])]
+    : difficulty === 2
+      ? ["flip-lr", "rotate-cw"]
+      : sample([
+        ["flip-tb", "rotate-cw", "flip-lr"],
+        ["rotate-ccw", "flip-lr", "rotate-cw"],
+        ["flip-lr", "rotate-cw", "rotate-cw"]
+      ]);
+  const stages = [start];
+  for (const operation of operations) stages.push(transformShapeGrid(stages.at(-1), operation));
+  const final = stages.at(-1);
+  const instruction = operations.map((operation, index) => index === operations.length - 1
+    ? TRANSFORM_OPERATION_ENDINGS[operation]
+    : TRANSFORM_OPERATION_CONNECTORS[operation]).join(" ");
+  const answer = final.map((cell, index) => `${TRANSFORM_POSITION_NAMES[index]} ${TRANSFORM_SHAPE_NAMES[cell.shape]}${cell.shape === "triangle" ? `(${TRANSFORM_DIRECTION_NAMES[cell.direction]})` : ""}`).join(", ");
+  return {
+    prompt: `처음 모양을 ${instruction} 모양을 그리세요.`,
+    visual: { kind: "shape-transform-grid", start, operations },
+    answerVisual: { kind: "shape-transform-grid", answerOnly: true, final },
+    responseKind: "drawing",
+    answer,
+    solution: `${operations.map((operation) => TRANSFORM_OPERATION_NAMES[operation]).join(" → ")} 순서로 한 칸씩 옮기면 ${answer}가 됩니다.`,
+    meta: { difficulty, start, operations, stages, final }
+  };
+}
+
+function practiceTwoDigitCardThresholdCount({ difficulty = 2 }) {
+  const cardCount = difficulty === 1 ? 4 : difficulty === 3 ? 6 : 5;
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const cards = shuffle([0, ...shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, cardCount - 1)]);
+    const threshold = randomInt(difficulty === 1 ? 20 : 30, difficulty === 3 ? 75 : 65);
+    const numbers = [];
+    for (const tens of cards) {
+      if (tens === 0) continue;
+      for (const ones of cards) {
+        if (ones === tens) continue;
+        const value = tens * 10 + ones;
+        if (value > threshold) numbers.push(value);
+      }
+    }
+    numbers.sort((a, b) => a - b);
+    const maximum = (cardCount - 1) * (cardCount - 1);
+    if (numbers.length < 2 || numbers.length > maximum - 2) continue;
+    return {
+      prompt: `다음 ${cardCount}장의 숫자 카드를 한 번씩만 써서 두 자리 수를 만들 때 ${threshold}보다 큰 수는 모두 몇 개입니까?`,
+      visual: { kind: "cards", values: cards },
+      answer: `${numbers.length}개`,
+      solution: `${numbers.join("·")}로 모두 ${numbers.length}개입니다. 십의 자리에 0은 올 수 없고, 한 수 안에서 같은 카드를 두 번 쓰지 않습니다.`,
+      meta: { difficulty, cards, threshold, numbers, answer: numbers.length }
+    };
+  }
+  return null;
+}
+
+const PRACTICE_CUBE_FILL_MAPS = {
+  1: [
+    [[3, 3, 3], [3, 2, 2], [2, 1, 1]],
+    [[3, 3, 3], [3, 3, 2], [2, 2, 1]],
+    [[3, 3, 3], [3, 2, 1], [2, 1, 1]]
+  ],
+  2: [
+    [[4, 4, 4, 4], [4, 3, 3, 2], [3, 2, 2, 1], [2, 2, 1, 1]],
+    [[4, 4, 4, 4], [4, 4, 3, 2], [3, 2, 2, 1], [2, 2, 1, 1]],
+    [[4, 4, 4, 4], [4, 3, 3, 2], [3, 3, 2, 2], [2, 2, 2, 1]],
+    [[4, 4, 4, 4], [4, 3, 3, 2], [3, 2, 2, 1], [2, 1, 1, 1]]
+  ],
+  3: [
+    [[4, 4, 4, 3], [4, 3, 2, 2], [3, 2, 2, 1], [2, 1, 1, 1]],
+    [[4, 4, 3, 3], [3, 3, 2, 2], [3, 2, 1, 1], [2, 1, 1, 1]],
+    [[4, 4, 3, 2], [3, 3, 2, 1], [3, 2, 1, 1], [2, 1, 1, 1]]
+  ]
+};
+
+function practiceCubeAddToMatch({ difficulty = 2 }) {
+  const map = sample(PRACTICE_CUBE_FILL_MAPS[difficulty]).map((row) => [...row]);
+  const size = map.length;
+  const current = map.flat().reduce((total, height) => total + height, 0);
+  const target = size * size * size;
+  const need = target - current;
+  const fullMap = Array.from({ length: size }, () => Array(size).fill(size));
+  return {
+    prompt: `왼쪽 그림의 쌓기나무를 오른쪽과 같은 ${size}×${size}×${size} 정육면체로 쌓으려면 몇 개의 쌓기나무가 더 필요합니까?`,
+    visual: { kind: "cube-add-to-match", map, fullMap, width: size, depth: size },
+    answer: `${need}개`,
+    solution: `오른쪽 정육면체는 ${size} × ${size} × ${size} = ${target}개입니다. 왼쪽 그림은 층별로 세면 ${current}개이므로 ${target} - ${current} = ${need}개가 더 필요합니다.`,
+    meta: { difficulty, map, fullMap, width: size, depth: size, height: size, current, target, need }
+  };
+}
+
+function practiceOverlappingRunSequence({ difficulty = 2 }) {
+  const start = randomInt(1, difficulty === 3 ? 5 : 3);
+  const full = [start, start + 1, start + 2, start + 2, start + 3, start + 4, start + 3, start + 4, start + 5, start + 6, start + 4, start + 5, start + 6];
+  const blanks = difficulty === 1 ? [10] : difficulty === 2 ? [10] : [6, 10];
+  const items = full.map((value, index) => blanks.includes(index) ? null : value);
+  const answers = blanks.map((index) => full[index]);
+  return {
+    prompt: `수를 규칙에 따라 이어 썼습니다. ${blanks.length === 1 ? "빈칸" : "두 빈칸"}에 알맞은 수를 쓰세요.`,
+    visual: { kind: "overlapping-run-sequence", items, blanks },
+    answer: answers.join(", "),
+    solution: `끝의 묶음도 ${start + 4}, ${start + 5}, ${start + 6}처럼 1씩 커지는 수입니다.${blanks.length > 1 ? ` 앞의 빈칸은 ${start + 3}입니다.` : ""} 따라서 빈칸은 ${answers.join(", ")}입니다.`,
+    meta: { difficulty, start, full, items, blanks, answers }
+  };
+}
+
+function practiceAlternatingLineTotal({ difficulty = 2 }) {
+  const firstCount = randomInt(difficulty === 1 ? 4 : 5, difficulty === 3 ? 9 : 7);
+  const includeEnds = difficulty === 3;
+  const secondCount = firstCount - 1 + (includeEnds ? 2 : 0);
+  const total = firstCount + secondCount;
+  const line = [];
+  if (includeEnds) line.push("girl");
+  for (let index = 0; index < firstCount; index += 1) {
+    line.push("boy");
+    if (index < firstCount - 1) line.push("girl");
+  }
+  if (includeEnds) line.push("girl");
+  const condition = includeEnds
+    ? "남학생과 남학생 사이에 여학생이 1명씩 서고, 줄의 양 끝에도 여학생이 1명씩 섭니다."
+    : "남학생과 남학생 사이에 여학생이 1명씩 섭니다.";
+  return {
+    prompt: `남학생 ${firstCount}명이 한 줄로 서 있습니다. ${condition} 학생들은 모두 몇 명입니까?`,
+    visual: { kind: "alternating-people", line },
+    answer: `${total}명`,
+    solution: `남학생 사이의 틈은 ${firstCount - 1}곳이므로 여학생은 ${firstCount - 1}명${includeEnds ? `에 양 끝 2명을 더한 ${secondCount}명` : ""}입니다. 모두 ${firstCount} + ${secondCount} = ${total}명입니다.`,
+    meta: { difficulty, firstCount, includeEnds, secondCount, total, line }
   };
 }
 
@@ -3029,7 +4122,8 @@ function sourceTwoDigitSumDifference({ difficulty = 2 }) {
     prompt: "다음 주어진 조건을 만족하는 두 자리 수를 구하세요.",
     visual: { kind: "number-conditions", sum, gap },
     answer: String(tens * 10 + ones),
-    solution: `십의 자리와 일의 자리의 합이 ${sum}, 차가 ${gap}입니다. 두 수를 만족하는 십의 자리는 ${tens}, 일의 자리는 ${ones}이므로 ${tens * 10 + ones}입니다.`
+    solution: `십의 자리와 일의 자리의 합이 ${sum}, 차가 ${gap}입니다. 두 수를 만족하는 십의 자리는 ${tens}, 일의 자리는 ${ones}이므로 ${tens * 10 + ones}입니다.`,
+    meta: { difficulty, tens, ones, sum, gap, answer: tens * 10 + ones }
   };
 }
 
@@ -3983,6 +5077,8 @@ function equalLineSumEightCardsTwelve({ difficulty = 2 }) {
 const FOLD_LINES = {
   v: { keep: (p) => 0.5 - p.x, mirror: (p) => ({ x: 1 - p.x, y: p.y }), label: "세로" },
   h: { keep: (p) => 0.5 - p.y, mirror: (p) => ({ x: p.x, y: 1 - p.y }), label: "가로" },
+  vq: { keep: (p) => 0.25 - p.x, mirror: (p) => ({ x: 0.5 - p.x, y: p.y }), label: "세로" },
+  hq: { keep: (p) => 0.25 - p.y, mirror: (p) => ({ x: p.x, y: 0.5 - p.y }), label: "가로" },
   d1: { keep: (p) => p.x - p.y, mirror: (p) => ({ x: p.y, y: p.x }), label: "대각선" },
   d2: { keep: (p) => 1 - p.x - p.y, mirror: (p) => ({ x: 1 - p.y, y: 1 - p.x }), label: "대각선" }
 };
@@ -4105,6 +5201,16 @@ function paperFoldHoleCount({ difficulty = 2 }) {
   const directions = folds === 1 ? [first] : [first, first === "v" ? "h" : "v"];
   const holeCount = randomInt(1, folds === 1 ? 3 : 2);
   return foldQuestion({ directions, holeCount }) || paperFoldHoleCount({ difficulty });
+}
+
+function practiceThreeFoldHoleCount({ difficulty = 2 }) {
+  const verticalFirst = Math.random() < 0.5;
+  const directions = difficulty === 1
+    ? (verticalFirst ? ["v", "h"] : ["h", "v"])
+    : (verticalFirst ? ["v", "h", "vq"] : ["h", "v", "hq"]);
+  const holeCount = difficulty === 3 ? 3 : 2;
+  const margin = difficulty === 3 ? 0.045 : 0.055;
+  return foldQuestion({ directions, holeCount, margin }) || practiceThreeFoldHoleCount({ difficulty });
 }
 
 // ── 색종이 접기: 수가 쓰인 색종이 (더클래식 1과정 1권 41·50쪽) ──────────
@@ -4782,7 +5888,7 @@ function setUnionCount({ difficulty = 2 }) {
   const second = randomInt(Math.max(both + 2, scale[0]), scale[1]);
   const total = first + second - both;
   return {
-    prompt: `어느 반 학생들에게 ${pair[0]}와 ${pair[1]}을 좋아하는지 조사했습니다. ${pair[0]}를 좋아하는 학생은 ${first}명, ${pair[1]}을 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
+    prompt: `어느 반 학생들에게 ${withOf(pair[0])} ${objectOf(pair[1])} 좋아하는지 조사했습니다. ${objectOf(pair[0])} 좋아하는 학생은 ${first}명, ${objectOf(pair[1])} 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
     answer: `${total}명`,
     solution: `두 수를 그냥 더하면 둘 다 좋아하는 ${both}명을 두 번 세게 됩니다. ${first} + ${second} - ${both} = ${total}이므로 모두 ${total}명입니다.`,
     meta: { first, second, both, total }
@@ -5290,6 +6396,8 @@ function cubeHiddenCountWalled({ difficulty = 2 }) {
 
 
 export const GENERATORS = {
+  ...MOCK06_GENERATORS,
+  ...G1_WINTER_GENERATORS,
   ...BOOK01_GENERATORS,
   ...BOOK03_GENERATORS,
   ...BOOK04_GENERATORS,
@@ -5305,10 +6413,39 @@ export const GENERATORS = {
   reverseTransferTotal,
   balanceOrderChain,
   diagnosticAnimalBalanceOrder,
+  diagnosticPartWholeBar,
+  diagnosticDialogueConditionNumber,
+  diagnosticNumberRelation,
+  diagnosticTwoDigitCryptarithm,
+  chainedNumberCondition,
+  cubeDifferentShape,
+  maskedVerticalAdditions,
+  givenShapeExpression,
+  pairedGrowingSequences,
+  cutReCutPieces,
+  triangleFanCount,
+  reverseOperationLadder,
+  plusMinusMultiTarget,
+  twoCustomOperations,
   balanceGivenUnitWeight,
   distinctShapeValueEquation,
   constantStepNumberSequence,
   bookInterleavedNumberSequence,
+  practiceInterleavedPairSequence,
+  practiceCalendarWeekdaySum,
+  practiceHeightExtremes,
+  practiceAlignedRodLengths,
+  practiceTwoFunctionMachines,
+  practiceVerticalShapeCryptarithm,
+  practiceSquareSymbolChain,
+  practiceUnusedNumberCardEquations,
+  practiceTwoDigitLetterCryptarithm,
+  practiceRecorderMatchstickLength,
+  practiceShapeRotateFlipGrid,
+  practiceTwoDigitCardThresholdCount,
+  practiceCubeAddToMatch,
+  practiceOverlappingRunSequence,
+  practiceAlternatingLineTotal,
   previousTwoSumSequence,
   repeatingNumberSequence,
   repeatingSymbolSequence,
@@ -5463,5 +6600,6 @@ export const GENERATORS = {
   pianoZigzag,
   goStoneTriangle,
   lineOrder,
-  paperFoldHoleCount
+  paperFoldHoleCount,
+  practiceThreeFoldHoleCount
 };
