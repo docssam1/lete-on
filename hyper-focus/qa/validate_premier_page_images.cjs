@@ -72,6 +72,14 @@ const library = fs.readFileSync(libraryPath, "utf8");
 assert.match(library, /\.\.\/fields-classic\/print-viewer\/documents\.js/, "프리미어 서재가 공용 인쇄 문서 목록을 읽지 않습니다.");
 assert.match(library, /\.\.\/fields-classic\/print-viewer\/\?doc=/, "프리미어 서재가 공용 이미지 시험지로 연결되지 않습니다.");
 assert(!/\.\/viewer\.html\?exam=/.test(library), "프리미어 서재가 예전 HTML 재제작 시험지로 되돌아갔습니다.");
+assert.match(library, /async function assetAvailable/, "비공개 이미지가 없을 때 회차를 잠그는 자산 확인이 없습니다.");
+assert.match(library, /method:\s*'HEAD'/, "프리미어 서재가 원본 전체를 내려받지 않고 자산 존재를 확인해야 합니다.");
+assert.match(library, /비공개 자산 대기/, "공개 저장소에서 유료 원본을 잠그는 안내가 없습니다.");
+
+const restoreScript = fs.readFileSync(path.join(root, "scripts", "restore-premier-private-assets.ps1"), "utf8");
+assert.match(restoreScript, /if \(-not \$repoInfo\.isPrivate\)/, "비공개 자산 복원 스크립트가 PUBLIC 저장소를 차단하지 않습니다.");
+assert.match(restoreScript, /if \(\$branch -eq "main"\)/, "비공개 자산 복원 스크립트가 main 실행을 차단하지 않습니다.");
+assert.match(restoreScript, /PREMIER_REQUIRE_PRIVATE_ASSETS/, "복원 뒤 67쪽 배포 게이트를 실행하지 않습니다.");
 
 assert.strictEqual(totalPages, 67, "학생용 문제지 이미지는 총 67쪽이어야 합니다.");
 if (privateAssetsPresent) {
