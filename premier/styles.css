@@ -212,11 +212,13 @@ a { color: inherit; }
 }
 
 @media print {
-  @page { size: A3 portrait; margin: 0; }
+  @page { size: A4 portrait; margin: 0; }
   body { background: #fff; }
   .viewer-bar { display: none; }
   .viewer-shell { padding: 0; }
-  .exam-pages { width: 297mm; margin: 0; }
+  /* The worksheet is authored on the original A3 canvas. Chromium's print
+     zoom maps 297 x 420 mm to 210 x 297 mm without changing question flow. */
+  .exam-pages { width: 297mm; margin: 0; zoom: .7070707071; }
   .exam-page { width: 297mm; height: 420mm; min-height: 0; margin: 0; padding: 14mm 14mm 12mm; box-shadow: none; break-after: page; }
   .exam-page:last-child { break-after: auto; }
   .paper-grid { height: 348mm; min-height: 0; }
