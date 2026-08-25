@@ -3547,7 +3547,7 @@
           if (lengths[i] + lengths[j] > lengths[k]) triangles.push([lengths[i], lengths[j], lengths[k]]);
         }
         const evidence = `<span hidden data-congruence-kind="side-combinations" data-values="${lengths.join(",")}"></span>`;
-        return result(`길이가 각각 ${lengths.join("cm, ")}cm인 막대가 한 개씩 있습니다. 이 중 서로 다른 막대 3개를 골라 만들 수 있는 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${triangleSidesSvg(triangles[0] || lengths.slice(0, 3))}${evidence}`, triangles.length, `세 길이를 작은 순서로 a, b, c라 할 때 a+b>c인 조합만 가능합니다. 모든 조합을 확인하면 ${triangles.map(items => `(${items.join(", ")})`).join(", ")}의 ${triangles.length}가지입니다.`);
+        return result(`길이가 각각 ${lengths.join("cm, ")}cm인 막대가 한 개씩 있습니다. 이 중 서로 다른 막대 3개를 골라 만들 수 있는 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${triangleSidesSvg(triangles[0] || lengths.slice(0, 3))}${evidence}`, triangles.length, `세 길이를 작은 순서로 놓고 앞의 두 길이의 합이 마지막 길이보다 큰 막대 세 개만 적습니다. 조건을 만족하는 것은 ${triangles.map(items => `(${items.join(", ")})`).join(", ")}로 모두 ${triangles.length}가지입니다.`);
       }
       const start = int(rng, 20, 30 + level * 5);
       const angles = [start, start + 15, start + 30, start + 50, start + 70];
@@ -3571,7 +3571,7 @@
         const valid = [];
         for (let i = 0; i < sticks.length; i += 1) for (let j = i + 1; j < sticks.length; j += 1) for (let k = j + 1; k < sticks.length; k += 1) if (sticks[i] + sticks[j] > sticks[k]) valid.push([sticks[i], sticks[j], sticks[k]]);
         const evidence = `<span hidden data-congruence-kind="stick-triangles" data-values="${sticks.join(",")}"></span>`;
-        return result(`길이가 ${sticks.join("cm, ")}cm인 막대가 한 개씩 있습니다. 막대 3개를 골라 삼각형을 만들 때, 합동이 아닌 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${evidence}`, valid.length, `사용한 세 막대의 길이가 같으면 합동인 삼각형입니다. 세 길이의 합 조건을 만족하는 조합을 세면 ${valid.length}가지입니다.`);
+        return result(`길이가 ${sticks.join("cm, ")}cm인 막대가 한 개씩 있습니다. 막대 3개를 골라 삼각형을 만들 때, 합동이 아닌 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${evidence}`, valid.length, `사용한 세 막대의 길이가 같으면 합동인 삼각형입니다. 세 막대를 하나씩 골라 가장 짧은 두 길이의 합이 가장 긴 길이보다 큰지 확인하면 ${valid.length}가지입니다.`);
       }
       const sides = pick(rng, [6, 8, 10, 12].slice(0, 2 + level));
       const parts = Array.from({ length: sides - 1 }, (_, index) => index + 2).filter(value => sides % value === 0);
@@ -4292,7 +4292,7 @@
         const scale = int(rng, 1, 1 + level);
         const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
         const faces = int(rng, 2, 3 + Math.min(level, 1));
-        return result(`각기둥 겉면의 두 점을 잇기 위해 지나갈 옆면 ${faces}개를 그림처럼 한 평면에 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 겉면을 따라가는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces, width, height })}${angularSolidEvidence("prism-shortest-route", [faces, width, height, answer])}`, answer, `펼친 면에서 가장 짧은 길이는 두 점을 잇는 직선입니다. √(${width}²+${height}²)=${answer}cm입니다.`);
+        return result(`각기둥 겉면의 두 점을 잇기 위해 지나갈 옆면 ${faces}개를 그림처럼 한 평면에 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 겉면을 따라가는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces, width, height })}${angularSolidEvidence("prism-shortest-route", [faces, width, height, answer])}`, answer, `펼친 면에서 가장 짧은 길이는 두 점을 잇는 직선입니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
       }
       if (kind === 4) {
         const vertices = 6 * sides;
@@ -4370,7 +4370,7 @@
         const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
         const scale = int(rng, 1, 1 + level);
         const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
-        return result(`사각뿔의 서로 이웃한 옆면 두 개를 그림처럼 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 사각뿔의 겉면을 따라 두 점을 잇는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces: 2, width, height, label: "옆면 두 개를 펼친 모습" })}${angularSolidEvidence("pyramid-shortest-route", [2, width, height, answer])}`, answer, `두 옆면을 펼친 평면에서 직선이 가장 짧습니다. √(${width}²+${height}²)=${answer}cm입니다.`);
+        return result(`사각뿔의 서로 이웃한 옆면 두 개를 그림처럼 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 사각뿔의 겉면을 따라 두 점을 잇는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces: 2, width, height, label: "옆면 두 개를 펼친 모습" })}${angularSolidEvidence("pyramid-shortest-route", [2, width, height, answer])}`, answer, `두 옆면을 펼친 평면에서 직선이 가장 짧습니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
       }
       if (kind === 3) {
         const vertices = sides + 2;
@@ -4388,7 +4388,7 @@
       const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
       const scale = int(rng, 1, 1 + level);
       const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
-      return result(`정사면체의 네 면을 모두 지나도록 두 점을 잇는 경로를 전개도 위에 나타냈습니다. 펼친 전개도에서 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 가장 짧은 경로의 길이를 구하세요.${surfaceRouteSvg({ faces: 4, width, height, label: "네 면을 모두 지나는 전개도 경로" })}${angularSolidEvidence("tetra-all-face-route", [4, width, height, answer])}`, answer, `전개도에서 네 면을 모두 지나는 범위가 고정되어 있으므로 두 점을 잇는 직선이 가장 짧습니다. 길이는 √(${width}²+${height}²)=${answer}cm입니다.`);
+      return result(`정사면체의 네 면을 모두 지나도록 두 점을 잇는 경로를 전개도 위에 나타냈습니다. 펼친 전개도에서 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 가장 짧은 경로의 길이를 구하세요.${surfaceRouteSvg({ faces: 4, width, height, label: "네 면을 모두 지나는 전개도 경로" })}${angularSolidEvidence("tetra-all-face-route", [4, width, height, answer])}`, answer, `전개도에서 네 면을 모두 지나는 범위가 고정되어 있으므로 두 점을 잇는 직선이 가장 짧습니다. 가로 ${width}cm, 세로 ${height}cm, 빗변 ${answer}cm가 되는 직각삼각형을 확인하면 가장 짧은 길이는 ${answer}cm입니다.`);
     },
     decimalNaturalDivisionAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -4917,7 +4917,7 @@
       if (kind === 2) {
         const a = int(rng, 4, 9 + level), b = int(rng, 5, 10 + level), c = int(rng, 6, 12 + level);
         const faces = [a * b, b * c, c * a], answer = a * b * c;
-        return result(`직육면체에서 한 꼭짓점에서 만나는 서로 이웃한 세 면의 넓이가 각각 ${faces.join("cm², ")}cm²입니다. 직육면체의 부피를 구하세요.${cuboidSvg({ a: "□", b: "□", c: "□" })}${volumeEvidence("three-face-areas-volume", faces)}`, answer, `세 면의 넓이를 모두 곱하면 (abc)²입니다. √(${faces.join("×")})=${answer}이므로 부피는 ${answer}cm³입니다.`);
+        return result(`직육면체에서 한 꼭짓점에서 만나는 서로 이웃한 세 면의 넓이가 각각 ${faces.join("cm², ")}cm²입니다. 직육면체의 부피를 구하세요.${cuboidSvg({ a: "□", b: "□", c: "□" })}${volumeEvidence("three-face-areas-volume", faces)}`, answer, `세 면에 공통으로 들어가는 모서리 길이를 맞추면 가로 ${a}cm, 세로 ${b}cm, 높이 ${c}cm입니다. 따라서 부피는 ${a}×${b}×${c}=${answer}cm³입니다.`);
       }
       if (kind === 3) {
         const layers = int(rng, 3, 5 + level), side = int(rng, 1, 3);
@@ -6076,7 +6076,7 @@
       if (kind === 2) {
         const shots = int(rng, 4, 6 + level), atLeast = int(rng, 2, shots - 1);
         const favorable = Array.from({ length: shots - atLeast + 1 }, (_, i) => combination(shots, atLeast + i)).reduce((a, b) => a + b, 0);
-        return result(`한 번 명중할 가능성이 1/2인 사수가 독립적으로 ${shots}발을 쏩니다. ${atLeast}발 이상 명중할 가능성을 분수로 나타내세요.${averageProbabilityEvidence("at-least-hits", [shots, atLeast])}`, fraction(favorable, 2 ** shots), `${shots}번의 성공·실패 배열 ${2 ** shots}가지 중 ${atLeast}번 이상 성공하는 배열을 조합으로 세면 ${favorable}가지이므로 ${fraction(favorable, 2 ** shots)}입니다.`);
+        return result(`한 번 명중할 가능성이 1/2인 사수가 독립적으로 ${shots}발을 쏩니다. ${atLeast}발 이상 명중할 가능성을 분수로 나타내세요.${averageProbabilityEvidence("at-least-hits", [shots, atLeast])}`, fraction(favorable, 2 ** shots), `${shots}번의 명중·빗나감 결과는 모두 ${2 ** shots}가지입니다. 그중 ${atLeast}발 이상 명중한 결과를 하나씩 세면 ${favorable}가지이므로 ${fraction(favorable, 2 ** shots)}입니다.`);
       }
       if (kind === 3) {
         const choices = int(rng, 3, 5), people = int(rng, 3, Math.min(choices, 4 + level));
@@ -6090,7 +6090,7 @@
         return result(`서로 독립인 두 사건 A, B가 일어날 가능성이 각각 ${p1n}/${p1d}, ${p2n}/${p2d}입니다. 적어도 하나가 일어날 가능성을 분수로 나타내세요.${averageProbabilityEvidence("at-least-one", [p1n, p1d, p2n, p2d])}`, fraction(numerator, denominator), `둘 다 일어나지 않을 가능성을 1에서 빼면 ${fraction(numerator, denominator)}입니다.`);
       }
       const total = int(rng, 8, 14 + level * 2), winners = int(rng, 3, Math.min(6, total - 2));
-      return result(`${total}개의 제비 중 당첨 제비가 ${winners}개 있습니다. 한 번에 하나씩 되돌려 넣지 않고 2개를 뽑을 때 모두 당첨일 가능성을 분수로 나타내세요.${averageProbabilityEvidence("two-winners", [total, winners])}`, fraction(combination(winners, 2), combination(total, 2)), `전체 2개 조합 ${combination(total, 2)}가지 중 당첨 2개 조합은 ${combination(winners, 2)}가지이므로 ${fraction(combination(winners, 2), combination(total, 2))}입니다.`);
+      return result(`${total}개의 제비 중 당첨 제비가 ${winners}개 있습니다. 한 번에 하나씩 되돌려 넣지 않고 2개를 뽑을 때 모두 당첨일 가능성을 분수로 나타내세요.${averageProbabilityEvidence("two-winners", [total, winners])}`, fraction(combination(winners, 2), combination(total, 2)), `첫째 제비를 뽑은 뒤 둘째 제비를 뽑는 순서로 생각합니다. 모두 당첨일 가능성은 ${winners}/${total}×${winners - 1}/${total - 1}=${fraction(winners * (winners - 1), total * (total - 1))}입니다.`);
     },
     average({ rng, level }) {
       const count = 4 + Math.min(level, 1);
@@ -6442,7 +6442,7 @@
         const sum = 2 * (half1 + half2);
         const diff = Math.abs(half1 - half2) * 2;
         const answer = 4 * side;
-        return result(`두 대각선의 길이의 합이 ${sum}cm, 차가 ${diff}cm인 마름모가 있습니다. 이 마름모의 두 대각선을 따라 잘라 생기는 4개의 직각삼각형을 겹치지 않게 이어 붙여 직사각형을 만들 때, 네 변의 길이의 합을 구하세요.${rhombusDiagonalSvg(half1, half2)}`, answer, `대각선의 반은 (${sum}+${diff})÷2÷2 = ${half1}cm, (${sum}-${diff})÷2÷2 = ${half2}cm입니다. 직각삼각형의 빗변은 √(${half1}²+${half2}²) = ${side}cm이고, 이 변이 직사각형의 네 변이 되므로 둘레는 ${side} × 4 = ${answer}cm입니다.`);
+        return result(`두 대각선의 길이의 합이 ${sum}cm, 차가 ${diff}cm인 마름모가 있습니다. 이 마름모의 두 대각선을 따라 잘라 생기는 4개의 직각삼각형을 겹치지 않게 이어 붙여 직사각형을 만들 때, 네 변의 길이의 합을 구하세요.${rhombusDiagonalSvg(half1, half2)}`, answer, `대각선의 반은 (${sum}+${diff})÷2÷2 = ${half1}cm, (${sum}-${diff})÷2÷2 = ${half2}cm입니다. 이 두 길이와 빗변 ${side}cm가 직각삼각형의 세 변이 됩니다. 이 변이 직사각형의 네 변이 되므로 둘레는 ${side}×4=${answer}cm입니다.`);
       }
       const apexAngle = int(rng, 20 + level * 5, 59 + level * 5) * 2;
       const base = (180 - apexAngle) / 2;
@@ -6569,7 +6569,7 @@
       const divisors = allDivisors(value).filter(divisor => divisor <= Math.sqrt(value));
       const first = divisors[divisors.length - 1];
       const second = value / first;
-      return result(`두 자연수의 곱이 ${value.toLocaleString()}일 때, 두 수의 차가 가장 작도록 하는 두 수의 합을 구하세요.`, first + second, `${value.toLocaleString()}의 약수 중 제곱근에 가장 가까운 약수는 ${first.toLocaleString()}입니다. 다른 수는 ${second.toLocaleString()}이므로 합은 ${first.toLocaleString()} + ${second.toLocaleString()} = ${(first + second).toLocaleString()}입니다.`);
+      return result(`두 자연수의 곱이 ${value.toLocaleString()}일 때, 두 수의 차가 가장 작도록 하는 두 수의 합을 구하세요.`, first + second, `${value.toLocaleString()}의 약수 짝 중 서로 가장 가까운 수는 ${first.toLocaleString()}와 ${second.toLocaleString()}입니다. 따라서 합은 ${first.toLocaleString()}+${second.toLocaleString()}=${(first + second).toLocaleString()}입니다.`);
     },
     primeFactorBasicAdvanced({ rng, level, variant = 0 }) {
       const primes = level === 0 ? [2, 3, 5] : level === 1 ? [2, 3, 5, 7] : [2, 3, 5, 7, 11];
