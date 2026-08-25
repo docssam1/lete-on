@@ -274,6 +274,11 @@ test("admin draft builder lists only safe candidates and supports placement add,
   assert.equal(created.status, 201);
   const draft = await created.json();
   safeBuilderWalk(draft);
+  const constraintsChanged = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/constraints`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" }, body: JSON.stringify({ constraints: { questionCount: 1, totalPoints: 2, maxPerFamily: 1 } })
+  });
+  assert.equal(constraintsChanged.status, 200);
+  assert.equal((await constraintsChanged.json()).draft.status, "review_required");
   const invalidDraft = await fetch(`${env.base}/admin/exam-drafts`, {
     method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
     body: JSON.stringify({ mode: "SH", title: "제약 누락", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] } })

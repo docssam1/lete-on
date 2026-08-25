@@ -172,7 +172,28 @@ function createApp(options) {
       return true;
     }
 
-    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/output-preview$/);
+    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/constraints$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const body = await readJson(request, 32 * 1024);
+      let draft;
+      try { draft = draftCore.createExamDraft(Object.assign({}, cleanRecord.draft, { constraints: body.constraints, status: "review_required" })); }
+      catch (error) { throw new HttpError(400, error.message); }
+      const placements = cleanRecord.placements.map(function (placement) {
+        return draftCore.createExamPlacement({
+          id: placement.id, draftId: placement.draftId, mode: placement.mode, writer: placement.writer, item: placement.item, order: placement.order,
+          points: placement.points, scopeVersion: placement.scopeVersion, revision: placement.revision, replacementHistory: placement.replacementHistory
+        }, draft);
+      });
+      const next = { draft, placements };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/output-preview$/);
     if (match) {
       requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       if (request.method !== "GET") throw new HttpError(405, "허용되지 않은 요청입니다.");
