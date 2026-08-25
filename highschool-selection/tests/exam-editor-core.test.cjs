@@ -1,46 +1,109 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const core = require("../data/question-bank-core.js");
+const sourceLineage = require("../data/source-lineage.js");
 const editor = require("../data/exam-editor-core.js");
 
-function candidate(itemId, overrides = {}) {
+function makeQuestion(index, overrides = {}) {
+  const mode = overrides.mode || "SH";
+  const difficultyBand = overrides.difficultyBand || "standard";
+  const relation = overrides.relation || "original";
+  const questionId = overrides.questionId || core.createNeutralId("question", mode, `editor:item-${index}`);
+  const originalQuestionId = relation === "original"
+    ? questionId
+    : (overrides.originalQuestionId || core.createNeutralId("question", mode, `editor:original-${index}`));
+  const familyId = overrides.familyId || originalQuestionId;
+  const sourceAsset = sourceLineage.createSourceAssetReference({
+    sourceAssetId: core.createNeutralId("source", mode, `editor:asset-${index}`),
+    sourceFingerprint: `sha256:${String(index).padStart(64, "0")}`,
+    pageNumber: index,
+    itemLocator: { code: `E${String(index).padStart(3, "0")}` },
+    assetVariant: relation
+  });
+  const lineage = sourceLineage.createQuestionLineage({
+    mode,
+    id: core.createNeutralId("lineage", mode, `editor:lineage-${index}`),
+    sourceExamId: core.createNeutralId("exam", mode, "editor:source-exam"),
+    originalQuestionId,
+    questionId,
+    questionTypeId: core.createNeutralId("type", mode, `editor:type-${index}`),
+    relation,
+    sourceAsset
+  });
+  const userApproval = sourceLineage.createUserApproval({
+    mode,
+    id: core.createNeutralId("approval", mode, `editor:approval-${index}`),
+    questionId,
+    status: "approved",
+    decisionVersion: 1
+  });
+  const {
+    familyId: _familyId,
+    relation: _relation,
+    originalQuestionId: _originalQuestionId,
+    questionId: _questionId,
+    ...recordOverrides
+  } = overrides;
   return {
-    itemId,
-    itemVersionId: `${itemId}-v1`,
-    releaseStatus: "approved",
-    classificationStatus: "verified",
-    answerStatus: "verified",
-    singleAnswerStatus: "verified",
-    userApprovalStatus: "approved",
-    figureRequired: false,
-    curriculumPath: "M1-1/ALG/INTEGER/OPERATION",
-    ...overrides
+    id: questionId,
+    itemVersionId: `editor-item-${index}-v1`,
+    mode,
+    writer: "T",
+    curriculum: core.createCurriculumPath({
+      grade: "G10",
+      major: "M01",
+      minor: `S${String(index).padStart(3, "0")}`,
+      detail: `D${String(index).padStart(3, "0")}`
+    }),
+    provenance: core.createProvenanceRecord({
+      mode,
+      role: "internal-variant",
+      status: "cleared",
+      referenceId: core.createNeutralId("source", mode, `editor:source-${index}`)
+    }),
+    answerVerification: core.createAnswerVerification({ status: "verified", reviewCount: 2 }),
+    inputType: "input",
+    generationKind: "parameterized",
+    difficultyBand,
+    variant: core.createVariantRecord({ mode, familyId, band: difficultyBand }),
+    lineage,
+    userApproval,
+    singleAnswerAudit: { status: "passed", validOutcomeCount: 1, evidenceCode: `EDITOR-${index}` },
+    figureAudit: { required: false, status: "not_required" },
+    reviewStatus: "approved",
+    ...recordOverrides
   };
 }
 
-function draft() {
-  return editor.createDraft({
+function fixture() {
+  const questions = [makeQuestion(1), makeQuestion(2), makeQuestion(3)];
+  const questionsByItemId = Object.fromEntries(questions.map(question => [question.id, question]));
+  const draft = editor.createDraft({
     draftId: "draft-wm-m21-r01",
     profileId: "WM",
     targetId: "middle21-basic-entry",
     durationMinutes: 120,
-    scopeKeys: ["M1-1", "M1-2"],
-    placements: [
-      { placementId: "p-001", itemId: "q-001", itemVersionId: "q-001-v1", score: 2, selectionKind: "recommended" },
-      { placementId: "p-002", itemId: "q-002", itemVersionId: "q-002-v1", score: 3, selectionKind: "recommended" },
-      { placementId: "p-003", itemId: "q-003", itemVersionId: "q-003-v1", score: 4, selectionKind: "recommended" }
-    ]
+    scopeKeys: ["G10"],
+    placements: questions.map((question, index) => ({
+      placementId: `p-00${index + 1}`,
+      itemId: question.id,
+      itemVersionId: question.itemVersionId,
+      score: index + 2,
+      selectionKind: "recommended"
+    }))
   });
+  return { draft, questions, questionsByItemId };
 }
 
-function replacementEvidence(sourceItemId, candidateItemId, relationship = "twin", overrides = {}) {
+function replacementEvidence(source, candidate, relationship = "twin", overrides = {}) {
   return {
-    evidenceId: `evidence-${sourceItemId}-${candidateItemId}`,
+    evidenceId: `evidence-${source.id}-${candidate.id}`,
     status: "approved",
     relationship,
-    sourceItemId,
-    sourceItemVersionId: `${sourceItemId}-v1`,
-    candidateItemId,
-    candidateItemVersionId: `${candidateItemId}-v1`,
+    sourceItemId: source.id,
+    sourceItemVersionId: source.itemVersionId,
+    candidateItemId: candidate.id,
+    candidateItemVersionId: candidate.itemVersionId,
     familyMatched: true,
     detailMatched: true,
     solutionStructureMatched: true,
@@ -50,100 +113,195 @@ function replacementEvidence(sourceItemId, candidateItemId, relationship = "twin
 }
 
 test("drag reorder changes placements only and keeps canonical item ids intact", () => {
-  const original = draft();
-  const moved = editor.movePlacement(original, "p-003", 0);
+  const { draft, questions } = fixture();
+  const moved = editor.movePlacement(draft, "p-003", 0);
 
-  assert.deepEqual(original.placements.map(item => item.itemId), ["q-001", "q-002", "q-003"]);
-  assert.deepEqual(moved.placements.map(item => item.itemId), ["q-003", "q-001", "q-002"]);
+  assert.deepEqual(draft.placements.map(item => item.itemId), questions.map(question => question.id));
+  assert.deepEqual(moved.placements.map(item => item.itemId), [questions[2].id, questions[0].id, questions[1].id]);
   assert.deepEqual(moved.placements.map(item => item.order), [1, 2, 3]);
   assert.equal(moved.sortMode, "user");
-  assert.equal(moved.revision, original.revision + 1);
+  assert.equal(moved.revision, draft.revision + 1);
 });
 
-test("replace changes one placement and preserves an audit trail", () => {
-  const original = draft();
-  const replaced = editor.replacePlacement(original, {
+test("replace changes one placement and preserves versioned audit evidence", () => {
+  const { draft, questions, questionsByItemId } = fixture();
+  const replacement = makeQuestion(102, {
+    relation: "twin",
+    originalQuestionId: questions[1].variant.familyId,
+    familyId: questions[1].variant.familyId
+  });
+  const evidence = replacementEvidence(questions[1], replacement);
+  const replaced = editor.replacePlacement(draft, {
     placementId: "p-002",
-    candidate: candidate("q-102"),
+    candidate: replacement,
+    questionsByItemId,
     relationship: "twin",
-    replacementEvidence: replacementEvidence("q-002", "q-102"),
+    replacementEvidence: evidence,
     reasonCode: "same_type_new_form"
   });
 
-  assert.equal(original.placements[1].itemId, "q-002");
-  assert.equal(replaced.placements[1].itemId, "q-102");
+  assert.equal(draft.placements[1].itemId, questions[1].id);
+  assert.equal(replaced.placements[1].itemId, replacement.id);
+  assert.equal(replaced.placements[1].itemVersionId, replacement.itemVersionId);
   assert.equal(replaced.placements[1].selectionKind, "twin");
   assert.deepEqual(replaced.placements[1].replacementHistory[0], {
-    fromItemId: "q-002",
-    fromItemVersionId: "q-002-v1",
-    toItemId: "q-102",
-    toItemVersionId: "q-102-v1",
+    fromItemId: questions[1].id,
+    fromItemVersionId: questions[1].itemVersionId,
+    toItemId: replacement.id,
+    toItemVersionId: replacement.itemVersionId,
     relationship: "twin",
     reasonCode: "same_type_new_form",
-    evidenceId: "evidence-q-002-q-102"
+    evidenceId: evidence.evidenceId
   });
+  assert.equal(replaced.revision, draft.revision + 1);
 });
 
-test("unverified answers and unaudited figures cannot be added or used as replacements", () => {
-  assert.throws(() => editor.addItem(draft(), {
+test("the complete question gate blocks unapproved, ambiguous, unaudited, and unversioned candidates", () => {
+  const { draft, questionsByItemId } = fixture();
+  const unapproved = makeQuestion(4);
+  unapproved.userApproval = sourceLineage.createUserApproval({
+    mode: "SH",
+    id: core.createNeutralId("approval", "SH", "editor:approval-pending"),
+    questionId: unapproved.id,
+    status: "pending",
+    decisionVersion: 1
+  });
+  assert.throws(() => editor.addItem(draft, {
     placementId: "p-004",
-    candidate: candidate("q-004", { answerStatus: "pending" })
-  }), /candidate.answer.not_verified/);
-
-  assert.throws(() => editor.replacePlacement(draft(), {
-    placementId: "p-001",
-    candidate: candidate("q-104", { figureRequired: true, figureStatus: "pending" }),
-    relationship: "similar",
-    replacementEvidence: replacementEvidence("q-001", "q-104", "similar")
-  }), /candidate.figure.not_verified/);
-
-  assert.throws(() => editor.addItem(draft(), {
-    placementId: "p-004",
-    candidate: candidate("q-004", { singleAnswerStatus: "pending" })
-  }), /candidate.single_answer.not_verified/);
-
-  assert.throws(() => editor.addItem(draft(), {
-    placementId: "p-004",
-    candidate: candidate("q-004", { userApprovalStatus: "pending" })
+    candidate: unapproved,
+    questionsByItemId
   }), /candidate.user_approval.not_approved/);
+
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: makeQuestion(5, { singleAnswerAudit: { status: "passed", validOutcomeCount: 2 } }),
+    questionsByItemId
+  }), /candidate.single_answer.multiple/);
+
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: makeQuestion(6, {
+      inputType: "figure_select",
+      generationKind: "figure_only",
+      figureAudit: {
+        required: true,
+        status: "passed",
+        evidenceVisible: true,
+        hiddenStateConstrained: false,
+        positionUnambiguous: true,
+        contrastSufficient: true
+      }
+    }),
+    questionsByItemId
+  }), /candidate.figure_visibility.hiddenStateConstrained/);
+
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: makeQuestion(7, { itemVersionId: "" }),
+    questionsByItemId
+  }), /candidate.item_version_id.missing/);
 });
 
-test("the same canonical question cannot be selected twice", () => {
-  assert.throws(() => editor.addItem(draft(), {
+test("the same canonical question or question family cannot be selected twice", () => {
+  const { draft, questions, questionsByItemId } = fixture();
+  assert.throws(() => editor.addItem(draft, {
     placementId: "p-004",
-    candidate: candidate("q-002")
+    candidate: questions[1],
+    questionsByItemId
   }), /already selected/);
+
+  const sameFamily = makeQuestion(104, {
+    relation: "similar",
+    originalQuestionId: questions[0].variant.familyId,
+    familyId: questions[0].variant.familyId
+  });
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: sameFamily,
+    questionsByItemId
+  }), /question family is already selected/);
+});
+
+test("twin and similar replacements require matching lineage and approved evidence", () => {
+  const { draft, questions, questionsByItemId } = fixture();
+  const wrongRelation = makeQuestion(105, {
+    relation: "similar",
+    originalQuestionId: questions[0].variant.familyId,
+    familyId: questions[0].variant.familyId
+  });
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: wrongRelation,
+    questionsByItemId,
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], wrongRelation, "twin")
+  }), /relationship does not match/);
+
+  const validTwin = makeQuestion(106, {
+    relation: "twin",
+    originalQuestionId: questions[0].variant.familyId,
+    familyId: questions[0].variant.familyId
+  });
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: validTwin,
+    questionsByItemId,
+    relationship: "twin"
+  }), /verified replacement evidence is required/);
+
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: validTwin,
+    questionsByItemId,
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], validTwin, "twin", { solutionStructureMatched: false })
+  }), /solution structure is not verified/);
+
+  const wrongFamily = makeQuestion(107, { relation: "twin" });
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: wrongFamily,
+    questionsByItemId,
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], wrongFamily)
+  }), /same question family/);
 });
 
 test("sorting supports type, difficulty, objective-first, and deterministic random order", () => {
+  const { draft, questions } = fixture();
   const metadata = {
-    "q-001": { typeCode: "T03", difficultyBand: "raised", inputType: "input" },
-    "q-002": { typeCode: "T01", difficultyBand: "lowered", inputType: "single_choice" },
-    "q-003": { typeCode: "T02", difficultyBand: "standard", inputType: "ox" }
+    [questions[0].id]: { typeCode: "T03", difficultyBand: "raised", inputType: "input" },
+    [questions[1].id]: { typeCode: "T01", difficultyBand: "lowered", inputType: "single_choice" },
+    [questions[2].id]: { typeCode: "T02", difficultyBand: "standard", inputType: "ox" }
   };
 
-  assert.deepEqual(editor.sortPlacements(draft(), "type_asc", metadata).placements.map(item => item.itemId), ["q-002", "q-003", "q-001"]);
-  assert.deepEqual(editor.sortPlacements(draft(), "difficulty_asc", metadata).placements.map(item => item.itemId), ["q-002", "q-003", "q-001"]);
-  assert.deepEqual(editor.sortPlacements(draft(), "objective_subjective", metadata).placements.map(item => item.itemId), ["q-002", "q-003", "q-001"]);
+  const expected = [questions[1].id, questions[2].id, questions[0].id];
+  assert.deepEqual(editor.sortPlacements(draft, "type_asc", metadata).placements.map(item => item.itemId), expected);
+  assert.deepEqual(editor.sortPlacements(draft, "difficulty_asc", metadata).placements.map(item => item.itemId), expected);
+  assert.deepEqual(editor.sortPlacements(draft, "objective_subjective", metadata).placements.map(item => item.itemId), expected);
   assert.deepEqual(
-    editor.sortPlacements(draft(), "random", metadata, { seed: 77 }).placements.map(item => item.itemId),
-    editor.sortPlacements(draft(), "random", metadata, { seed: 77 }).placements.map(item => item.itemId)
+    editor.sortPlacements(draft, "random", metadata, { seed: 77 }).placements.map(item => item.itemId),
+    editor.sortPlacements(draft, "random", metadata, { seed: 77 }).placements.map(item => item.itemId)
   );
 });
 
-test("view mode is presentation state and does not expose answers in the draft model", () => {
-  const withSolutions = editor.setViewMode(draft(), "question_solution_answer");
+test("view mode is presentation state, increments once, and exposes no answers", () => {
+  const { draft } = fixture();
+  const withSolutions = editor.setViewMode(draft, "question_solution_answer");
   assert.equal(withSolutions.viewMode, "question_solution_answer");
+  assert.equal(withSolutions.revision, draft.revision + 1);
+  assert.equal(editor.setViewMode(withSolutions, "question_solution_answer").revision, withSolutions.revision);
   assert.equal(JSON.stringify(withSolutions).includes("answerKey"), false);
 });
 
 test("summary updates after selection and preserves difficulty and response balance", () => {
+  const { draft, questions } = fixture();
   const metadata = {
-    "q-001": { typeCode: "ALG", difficultyBand: "standard", inputType: "input" },
-    "q-002": { typeCode: "ALG", difficultyBand: "raised", inputType: "single_choice" },
-    "q-003": { typeCode: "GEO", difficultyBand: "raised", inputType: "ox" }
+    [questions[0].id]: { typeCode: "ALG", difficultyBand: "standard", inputType: "input" },
+    [questions[1].id]: { typeCode: "ALG", difficultyBand: "raised", inputType: "single_choice" },
+    [questions[2].id]: { typeCode: "GEO", difficultyBand: "raised", inputType: "ox" }
   };
-  const summary = editor.summarizeDraft(draft(), metadata);
+  const summary = editor.summarizeDraft(draft, metadata);
   assert.equal(summary.itemCount, 3);
   assert.equal(summary.totalScore, 9);
   assert.deepEqual(summary.byDifficulty, { lowered: 0, standard: 1, raised: 2, unknown: 0 });
@@ -152,85 +310,107 @@ test("summary updates after selection and preserves difficulty and response bala
 });
 
 test("scope changes keep placements visible and report what must be replaced", () => {
+  const { draft, questions } = fixture();
   const metadata = {
-    "q-001": { curriculumPath: "M1-1/ALG/INTEGER/OPERATION" },
-    "q-002": { curriculumPath: "M1-2/GEO/ANGLES/PARALLEL" },
-    "q-003": {}
+    [questions[0].id]: questions[0],
+    [questions[1].id]: { curriculum: core.createCurriculumPath({ grade: "G11", major: "M01", minor: "S001", detail: "D001" }) },
+    [questions[2].id]: {}
   };
-  const result = editor.changeScope(draft(), ["M1-2"], metadata);
+  const result = editor.changeScope(draft, ["G11"], metadata);
 
   assert.equal(result.draft.placements.length, 3);
+  assert.equal(result.draft.revision, draft.revision + 1);
   assert.deepEqual(result.reconciliation.keptPlacementIds, ["p-002"]);
   assert.deepEqual(result.reconciliation.outOfScopePlacementIds, ["p-001"]);
   assert.deepEqual(result.reconciliation.classificationPendingPlacementIds, ["p-003"]);
 });
 
 test("new and replacement candidates must belong to the selected scope", () => {
-  assert.throws(() => editor.addItem(draft(), {
+  const { draft, questionsByItemId } = fixture();
+  assert.throws(() => editor.addItem(draft, {
     placementId: "p-004",
-    candidate: candidate("q-004", { curriculumPath: "M2-1/ALG/EXPRESSIONS/CALCULATION" })
+    candidate: makeQuestion(4, {
+      curriculum: core.createCurriculumPath({ grade: "G11", major: "M01", minor: "S001", detail: "D001" })
+    }),
+    questionsByItemId
   }), /outside the selected scope/);
 
-  assert.throws(() => editor.replacePlacement(draft(), {
+  const missingClassification = makeQuestion(101, { curriculum: null });
+  assert.throws(() => editor.replacePlacement(draft, {
     placementId: "p-001",
-    candidate: candidate("q-101", { curriculumPath: "" }),
-    relationship: "similar",
-    replacementEvidence: replacementEvidence("q-001", "q-101", "similar")
-  }), /classification is required/);
+    candidate: missingClassification,
+    questionsByItemId,
+    relationship: "manual"
+  }), /candidate.curriculum/);
 });
 
-test("twin and similar replacements require approved relation evidence", () => {
-  assert.throws(() => editor.replacePlacement(draft(), {
-    placementId: "p-001",
-    candidate: candidate("q-101"),
-    relationship: "twin"
-  }), /verified replacement evidence is required/);
-
-  assert.throws(() => editor.replacePlacement(draft(), {
-    placementId: "p-001",
-    candidate: candidate("q-101"),
-    relationship: "similar",
-    replacementEvidence: replacementEvidence("q-001", "q-101", "similar", { solutionStructureMatched: false })
-  }), /solution structure is not verified/);
-
-  assert.throws(() => editor.replacePlacement(draft(), {
-    placementId: "p-001",
-    candidate: candidate("q-101"),
-    relationship: "twin",
-    replacementEvidence: replacementEvidence("q-002", "q-101")
-  }), /source does not match/);
-});
-
-test("one placement projection drives question, answer, solution, and analysis numbering", () => {
-  const moved = editor.movePlacement(draft(), "p-003", 0);
+test("one placement projection drives every numbered output", () => {
+  const { draft, questions } = fixture();
+  const moved = editor.movePlacement(draft, "p-003", 0);
   const projection = editor.createDraftProjection(moved);
   assert.deepEqual(projection.entries.map(entry => [entry.number, entry.placementId, entry.itemId, entry.itemVersionId]), [
-    [1, "p-003", "q-003", "q-003-v1"],
-    [2, "p-001", "q-001", "q-001-v1"],
-    [3, "p-002", "q-002", "q-002-v1"]
+    [1, "p-003", questions[2].id, questions[2].itemVersionId],
+    [2, "p-001", questions[0].id, questions[0].itemVersionId],
+    [3, "p-002", questions[1].id, questions[1].itemVersionId]
   ]);
   assert.equal(projection.revision, moved.revision);
 });
 
-test("final readiness rechecks version, scope, single answer, and user approval", () => {
-  const metadata = {
-    "q-001": candidate("q-001"),
-    "q-002": candidate("q-002"),
-    "q-003": candidate("q-003")
-  };
-  assert.equal(editor.evaluateDraftReadiness(draft(), metadata).eligible, true);
+test("final readiness rechecks version, scope, full gates, and family uniqueness", () => {
+  const { draft, questions, questionsByItemId } = fixture();
+  assert.equal(editor.evaluateDraftReadiness(draft, questionsByItemId).eligible, true);
 
-  const stale = { ...metadata, "q-002": candidate("q-002", { itemVersionId: "q-002-v2" }) };
-  const staleResult = editor.evaluateDraftReadiness(draft(), stale);
+  const stale = makeQuestion(2, {
+    questionId: questions[1].id,
+    itemVersionId: "editor-item-2-v2"
+  });
+  const staleResult = editor.evaluateDraftReadiness(draft, { ...questionsByItemId, [stale.id]: stale });
   assert.equal(staleResult.eligible, false);
   assert.ok(staleResult.issues.includes("placement.version.mismatch:p-002"));
 
-  const blocked = { ...metadata, "q-003": candidate("q-003", { userApprovalStatus: "pending" }) };
-  assert.equal(editor.evaluateDraftReadiness(draft(), blocked).eligible, false);
+  const blocked = makeQuestion(3, {
+    questionId: questions[2].id,
+    userApproval: sourceLineage.createUserApproval({
+      mode: "SH",
+      id: core.createNeutralId("approval", "SH", "editor:readiness-pending"),
+      questionId: questions[2].id,
+      status: "pending",
+      decisionVersion: 1
+    })
+  });
+  const blockedResult = editor.evaluateDraftReadiness(draft, { ...questionsByItemId, [blocked.id]: blocked });
+  assert.equal(blockedResult.eligible, false);
+  assert.ok(blockedResult.issues.includes("candidate.user_approval.not_approved:p-003"));
+
+  const duplicateFamily = makeQuestion(20, {
+    familyId: questions[0].variant.familyId,
+    originalQuestionId: questions[0].variant.familyId,
+    relation: "similar"
+  });
+  const familyDraft = editor.createDraft({
+    draftId: "draft-family-check",
+    profileId: "WM",
+    targetId: "middle21-basic-entry",
+    durationMinutes: 120,
+    scopeKeys: ["G10"],
+    placements: [questions[0], duplicateFamily].map((question, index) => ({
+      placementId: `pf-${index + 1}`,
+      itemId: question.id,
+      itemVersionId: question.itemVersionId,
+      score: 2
+    }))
+  });
+  const familyResult = editor.evaluateDraftReadiness(familyDraft, {
+    [questions[0].id]: questions[0],
+    [duplicateFamily.id]: duplicateFamily
+  });
+  assert.equal(familyResult.eligible, false);
+  assert.ok(familyResult.issues.includes("placement.family.duplicate:pf-2"));
 });
 
-test("readiness reports an invalid draft without trying to create a projection", () => {
-  const invalid = { ...draft(), revision: 0 };
+test("readiness reports an invalid draft without creating a projection", () => {
+  const { draft } = fixture();
+  const invalid = { ...draft, revision: 0 };
   const result = editor.evaluateDraftReadiness(invalid, {});
   assert.equal(result.eligible, false);
   assert.equal(result.projection, null);

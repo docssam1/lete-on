@@ -362,13 +362,13 @@ function createApp(options) {
   function publicEditorCandidate(entry) {
     const candidate = entry.candidate;
     const result = {
-      itemId: candidate.itemId,
+      itemId: candidate.id,
       itemVersionId: candidate.itemVersionId,
-      curriculumPath: candidate.curriculumPath,
+      curriculumPath: candidate.curriculum.key,
       typeCode: candidate.typeCode,
       difficultyBand: candidate.difficultyBand,
       inputType: candidate.inputType,
-      figureRequired: candidate.figureRequired,
+      figureRequired: candidate.figureAudit.required === true,
       eligible: true
     };
     if (entry.relation) {
@@ -437,6 +437,7 @@ function createApp(options) {
         return { draft: examEditorCore.addItem(draft, {
           placementId: security.clean(operation.placementId),
           candidate: editorCandidate(registry, operation.itemId, operation.itemVersionId),
+          questionsByItemId: editorMetadata(draft, registry),
           index: operation.index,
           score: operation.score,
           locked: operation.locked,
@@ -461,6 +462,7 @@ function createApp(options) {
         return { draft: examEditorCore.replacePlacement(draft, {
           placementId: security.clean(operation.placementId),
           candidate: editorCandidate(registry, operation.itemId, operation.itemVersionId),
+          questionsByItemId: editorMetadata(draft, registry),
           relationship,
           reasonCode: security.clean(operation.reasonCode || "user_selected"),
           replacementEvidence: evidence

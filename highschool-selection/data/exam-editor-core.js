@@ -1,10 +1,15 @@
 (function (root, factory) {
   "use strict";
-  const api = factory();
+  const validation = typeof module !== "undefined" && module.exports
+    ? require("../shared/question-bank-validation.js")
+    : root.HIGHSELECT_QUESTION_BANK_VALIDATION;
+  const api = factory(validation);
   root.HIGHSELECT_EXAM_EDITOR_CORE = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
-})(typeof window !== "undefined" ? window : globalThis, function () {
+})(typeof window !== "undefined" ? window : globalThis, function (validation) {
   "use strict";
+
+  if (!validation) throw new Error("question bank validation module is required");
 
   const SORT_MODES = Object.freeze([
     "user",
@@ -133,16 +138,13 @@
   }
 
   function validateCandidate(candidate) {
-    const issues = [];
     if (!candidate || typeof candidate !== "object") return Object.freeze(["candidate.missing"]);
-    if (!candidate.itemId) issues.push("candidate.item_id.missing");
-    if (!candidate.itemVersionId) issues.push("candidate.item_version_id.missing");
-    if (candidate.releaseStatus !== "approved") issues.push("candidate.release.not_approved");
-    if (candidate.classificationStatus !== "verified") issues.push("candidate.classification.not_verified");
-    if (candidate.answerStatus !== "verified") issues.push("candidate.answer.not_verified");
-    if (candidate.singleAnswerStatus !== "verified") issues.push("candidate.single_answer.not_verified");
-    if (candidate.userApprovalStatus !== "approved") issues.push("candidate.user_approval.not_approved");
-    if (candidate.figureRequired && candidate.figureStatus !== "verified") issues.push("candidate.figure.not_verified");
+    const issues = [];
+    if (typeof candidate.itemVersionId !== "string" || !candidate.itemVersionId.trim()) {
+      issues.push("candidate.item_version_id.missing");
+    }
+    const report = validation.evaluateQuestionGates(candidate);
+    report.issues.forEach(function (issue) { issues.push(`candidate.${issue}`); });
     return Object.freeze(issues);
   }
 
@@ -170,7 +172,10 @@
 
   function isCurriculumPathInScope(curriculumPath, scopeKeys) {
     if (!scopeKeys || scopeKeys.length === 0) return true;
-    const path = String(curriculumPath == null ? "" : curriculumPath).replace(/\/+$/, "");
+    const rawPath = curriculumPath && typeof curriculumPath === "object"
+      ? curriculumPath.key
+      : curriculumPath;
+    const path = String(rawPath == null ? "" : rawPath).replace(/\/+$/, "");
     if (!path) return null;
     return scopeKeys.some(function (scopeKey) {
       return path === scopeKey || path.startsWith(`${scopeKey}/`);
@@ -178,9 +183,28 @@
   }
 
   function assertCandidateInScope(draft, candidate) {
-    const match = isCurriculumPathInScope(candidate.curriculumPath, draft.scopeKeys);
+    const match = isCurriculumPathInScope(candidate.curriculum, draft.scopeKeys);
     invariant(match !== false, "candidate is outside the selected scope");
     invariant(match !== null, "candidate curriculum classification is required");
+  }
+
+  function selectedQuestion(questionsByItemId, itemId, itemVersionId) {
+    const question = questionsByItemId && questionsByItemId[itemId];
+    invariant(question && question.id === itemId, "selected item metadata is required");
+    if (itemVersionId != null) {
+      invariant(question.itemVersionId === itemVersionId, "selected item version does not match");
+    }
+    return question;
+  }
+
+  function assertFamilyAvailable(draft, candidate, questionsByItemId, excludedPlacementId) {
+    const familyId = candidate && candidate.variant && candidate.variant.familyId;
+    invariant(typeof familyId === "string" && familyId, "candidate family is required");
+    draft.placements.forEach(function (placement) {
+      if (placement.placementId === excludedPlacementId) return;
+      const existing = selectedQuestion(questionsByItemId, placement.itemId, placement.itemVersionId);
+      invariant(existing.variant.familyId !== familyId, "question family is already selected");
+    });
   }
 
   function addItem(draft, input) {
@@ -188,13 +212,14 @@
     assertCandidate(input.candidate);
     assertCandidateInScope(draft, input.candidate);
     const next = mutableDraft(draft);
-    invariant(!next.placements.some(function (placement) { return placement.itemId === input.candidate.itemId; }), "item is already selected");
+    invariant(!next.placements.some(function (placement) { return placement.itemId === input.candidate.id; }), "item is already selected");
     invariant(!next.placements.some(function (placement) { return placement.placementId === input.placementId; }), "placementId is already selected");
+    assertFamilyAvailable(draft, input.candidate, input.questionsByItemId);
     const index = input.index == null ? next.placements.length : Number(input.index);
     invariant(Number.isSafeInteger(index) && index >= 0 && index <= next.placements.length, "add index is out of range");
     next.placements.splice(index, 0, normalizePlacement({
       placementId: input.placementId,
-      itemId: input.candidate.itemId,
+      itemId: input.candidate.id,
       itemVersionId: input.candidate.itemVersionId,
       score: input.score,
       locked: input.locked,
@@ -237,18 +262,22 @@
     invariant(index >= 0, "placement was not found");
     invariant(!next.placements[index].locked, "locked placement cannot be replaced");
     invariant(!next.placements.some(function (placement, placementIndex) {
-      return placementIndex !== index && placement.itemId === input.candidate.itemId;
+      return placementIndex !== index && placement.itemId === input.candidate.id;
     }), "replacement item is already selected");
     const current = next.placements[index];
+    const currentQuestion = selectedQuestion(input.questionsByItemId, current.itemId, current.itemVersionId);
+    assertFamilyAvailable(draft, input.candidate, input.questionsByItemId, current.placementId);
     let evidenceId = null;
     if (relationship !== "manual") {
+      invariant(input.candidate.lineage && input.candidate.lineage.relation === relationship, "replacement relationship does not match candidate lineage");
+      invariant(input.candidate.variant.familyId === currentQuestion.variant.familyId, "replacement must stay in the same question family");
       const evidence = input.replacementEvidence;
       invariant(evidence && typeof evidence === "object", "verified replacement evidence is required");
       invariant(typeof evidence.evidenceId === "string" && evidence.evidenceId.trim(), "replacement evidenceId is required");
       invariant(evidence.status === "approved", "replacement evidence is not approved");
       invariant(evidence.relationship === relationship, "replacement evidence relationship does not match");
       invariant(evidence.sourceItemId === current.itemId && evidence.sourceItemVersionId === current.itemVersionId, "replacement evidence source does not match");
-      invariant(evidence.candidateItemId === input.candidate.itemId && evidence.candidateItemVersionId === input.candidate.itemVersionId, "replacement evidence candidate does not match");
+      invariant(evidence.candidateItemId === input.candidate.id && evidence.candidateItemVersionId === input.candidate.itemVersionId, "replacement evidence candidate does not match");
       invariant(evidence.familyMatched === true, "replacement family is not verified");
       invariant(evidence.detailMatched === true, "replacement detail type is not verified");
       invariant(evidence.solutionStructureMatched === true, "replacement solution structure is not verified");
@@ -258,13 +287,13 @@
     current.replacementHistory.push({
       fromItemId: current.itemId,
       fromItemVersionId: current.itemVersionId,
-      toItemId: input.candidate.itemId,
+      toItemId: input.candidate.id,
       toItemVersionId: input.candidate.itemVersionId,
       relationship,
       reasonCode: input.reasonCode || "user_selected",
       evidenceId
     });
-    current.itemId = input.candidate.itemId;
+    current.itemId = input.candidate.id;
     current.itemVersionId = input.candidate.itemVersionId;
     current.selectionKind = relationship;
     next.sortMode = "user";
@@ -286,7 +315,7 @@
     const reconciliation = { keptPlacementIds: [], outOfScopePlacementIds: [], classificationPendingPlacementIds: [] };
     next.placements.forEach(function (placement) {
       const item = metadata[placement.itemId];
-      const match = isCurriculumPathInScope(item && item.curriculumPath, next.scopeKeys);
+      const match = isCurriculumPathInScope(item && (item.curriculum || item.curriculumPath), next.scopeKeys);
       if (match === true) reconciliation.keptPlacementIds.push(placement.placementId);
       else if (match === false) reconciliation.outOfScopePlacementIds.push(placement.placementId);
       else reconciliation.classificationPendingPlacementIds.push(placement.placementId);
@@ -365,19 +394,23 @@
         projection: null
       });
     }
+    const familyIds = new Set();
     draft.placements.forEach(function (placement) {
       const candidate = metadata[placement.itemId];
       if (!candidate) {
         issues.push(`placement.metadata.missing:${placement.placementId}`);
         return;
       }
-      if (candidate.itemId !== placement.itemId || candidate.itemVersionId !== placement.itemVersionId) {
+      if (candidate.id !== placement.itemId || candidate.itemVersionId !== placement.itemVersionId) {
         issues.push(`placement.version.mismatch:${placement.placementId}`);
       }
       validateCandidate(candidate).forEach(function (issue) {
         issues.push(`${issue}:${placement.placementId}`);
       });
-      const inScope = isCurriculumPathInScope(candidate.curriculumPath, draft.scopeKeys);
+      const familyId = candidate.variant && candidate.variant.familyId;
+      if (familyId && familyIds.has(familyId)) issues.push(`placement.family.duplicate:${placement.placementId}`);
+      if (familyId) familyIds.add(familyId);
+      const inScope = isCurriculumPathInScope(candidate.curriculum, draft.scopeKeys);
       if (inScope === false) issues.push(`placement.scope.outside:${placement.placementId}`);
       if (inScope === null) issues.push(`placement.scope.classification_pending:${placement.placementId}`);
     });

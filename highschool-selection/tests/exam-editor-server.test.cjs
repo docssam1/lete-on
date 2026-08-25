@@ -8,54 +8,115 @@ const path = require("node:path");
 const { createApp } = require("../server/app.js");
 const { hashApprovalCode } = require("../server/security.js");
 const editorCore = require("../data/exam-editor-core.js");
+const questionBankCore = require("../data/question-bank-core.js");
+const sourceLineage = require("../data/source-lineage.js");
 const draftStoreModule = require("../server/exam-draft-store.js");
+const editorRegistryModule = require("../server/exam-editor-registry.js");
 
 const SECRET = "exam-editor-server-test-secret-with-32-characters";
 
-function candidate(itemId, overrides = {}) {
-  return Object.assign({
-    itemId,
-    itemVersionId: `${itemId}-v1`,
-    curriculumPath: "2022/HS/ALGEBRA/NUMBER",
-    typeCode: "ALG_NUMBER_PATTERN",
-    difficultyBand: "raised",
+function makeQuestion(index, overrides = {}) {
+  const mode = "SH";
+  const relation = overrides.relation || "original";
+  const questionId = questionBankCore.createNeutralId("question", mode, `editor-server:item-${index}`);
+  const originalQuestionId = relation === "original" ? questionId : overrides.originalQuestionId;
+  const familyId = overrides.familyId || originalQuestionId;
+  const questionTypeId = overrides.questionTypeId || questionBankCore.createNeutralId("type", mode, `editor-server:type-${index}`);
+  const lineage = sourceLineage.createQuestionLineage({
+    mode,
+    id: questionBankCore.createNeutralId("lineage", mode, `editor-server:lineage-${index}`),
+    sourceExamId: questionBankCore.createNeutralId("exam", mode, "editor-server:source-exam"),
+    originalQuestionId,
+    questionId,
+    questionTypeId,
+    relation,
+    sourceAsset: sourceLineage.createSourceAssetReference({
+      sourceAssetId: questionBankCore.createNeutralId("source", mode, `editor-server:asset-${index}`),
+      sourceFingerprint: `sha256:${String(index).padStart(64, "0")}`,
+      pageNumber: index,
+      itemLocator: { code: `S${index}` },
+      assetVariant: relation
+    })
+  });
+  const approvalStatus = overrides.approvalStatus || "approved";
+  return {
+    id: questionId,
+    itemVersionId: `editor-server-${index}-v1`,
+    mode,
+    writer: "T",
+    curriculum: questionBankCore.createCurriculumPath({
+      grade: "G10",
+      major: overrides.major || "M01",
+      minor: overrides.minor || `S${index}`,
+      detail: overrides.detail || `D${index}`
+    }),
+    provenance: questionBankCore.createProvenanceRecord({
+      mode,
+      role: "internal-variant",
+      status: "cleared",
+      referenceId: questionBankCore.createNeutralId("source", mode, `editor-server:source-${index}`)
+    }),
+    answerVerification: questionBankCore.createAnswerVerification({ status: "verified", reviewCount: 2 }),
     inputType: "input",
-    figureRequired: false,
-    figureStatus: "verified",
-    releaseStatus: "approved",
-    classificationStatus: "verified",
-    answerStatus: "verified",
-    singleAnswerStatus: "verified",
-    userApprovalStatus: "approved"
-  }, overrides);
+    generationKind: "parameterized",
+    difficultyBand: "raised",
+    variant: questionBankCore.createVariantRecord({ mode, familyId, band: "raised" }),
+    lineage,
+    userApproval: sourceLineage.createUserApproval({
+      mode,
+      id: questionBankCore.createNeutralId("approval", mode, `editor-server:approval-${index}`),
+      questionId,
+      status: approvalStatus,
+      decisionVersion: 1
+    }),
+    singleAnswerAudit: { status: "passed", validOutcomeCount: 1, evidenceCode: `SERVER-${index}` },
+    figureAudit: { required: false, status: "not_required" },
+    reviewStatus: "approved",
+    typeCode: overrides.typeCode || "ALG_NUMBER_PATTERN"
+  };
 }
 
-function registryData() {
+function createRegistryFixture() {
+  const q1 = makeQuestion(201);
+  const q2 = makeQuestion(202, {
+    relation: "twin",
+    originalQuestionId: q1.id,
+    familyId: q1.id,
+    questionTypeId: q1.lineage.questionTypeId
+  });
+  const q3 = makeQuestion(203, { major: "M02", typeCode: "GEO_SOLID" });
+  const locked = makeQuestion(204, { approvalStatus: "pending" });
   return {
+    q1, q2, q3, locked,
+    evidenceId: "ev_q1_q2",
+    data: {
     schemaVersion: "highselect-private-exam-editor-registry/v1",
     candidates: {
-      q_001: candidate("q_001"),
-      q_002: candidate("q_002"),
-      q_003: candidate("q_003", { curriculumPath: "2022/HS/GEOMETRY/SOLID", typeCode: "GEO_SOLID" }),
-      q_locked: candidate("q_locked", { userApprovalStatus: "pending" })
+      [q1.id]: q1,
+      [q2.id]: q2,
+      [q3.id]: q3,
+      [locked.id]: locked
     },
     relations: {
       ev_q1_q2: {
         evidenceId: "ev_q1_q2",
         status: "approved",
         relationship: "twin",
-        sourceItemId: "q_001",
-        sourceItemVersionId: "q_001-v1",
-        candidateItemId: "q_002",
-        candidateItemVersionId: "q_002-v1",
+        sourceItemId: q1.id,
+        sourceItemVersionId: q1.itemVersionId,
+        candidateItemId: q2.id,
+        candidateItemVersionId: q2.itemVersionId,
         familyMatched: true,
         detailMatched: true,
         solutionStructureMatched: true,
         difficultyCompatible: true
       }
     }
+    }
   };
 }
+
+const REGISTRY = createRegistryFixture();
 
 function privateConfig() {
   return {
@@ -86,7 +147,7 @@ async function start() {
     assetSecret: `${SECRET}-asset`,
     privateConfig: privateConfig(),
     privateScorer: { schemaVersion: "highselect-private-scorer/v1", exams: {} },
-    privateExamEditorRegistry: registryData(),
+    privateExamEditorRegistry: REGISTRY.data,
     privateExamDrafts: { schemaVersion: "highselect-private-exam-drafts/v1", drafts: {} },
     cookieSecure: false,
     staticRoot: path.join(__dirname, "..")
@@ -112,10 +173,27 @@ function adminHeaders(cookie, origin) {
 function assertNoPrivateFields(value) {
   if (!value || typeof value !== "object") return;
   Object.entries(value).forEach(function ([key, child]) {
-    assert.equal(/answer|solution|explanation|sourcepath|storagepath|pdfurl/i.test(key), false, `private key leaked: ${key}`);
+    assert.equal(/answer|solution|explanation|sourcepath|storagepath|pdfurl|fingerprint|itemlocator|bbox|pagenumber/i.test(key), false, `private key leaked: ${key}`);
     assertNoPrivateFields(child);
   });
 }
+
+test("registry rejects legacy status-only projections instead of trusting release labels", () => {
+  assert.throws(() => editorRegistryModule.normalize({
+    schemaVersion: editorRegistryModule.SCHEMA_VERSION,
+    candidates: {
+      q_legacy: {
+        itemId: "q_legacy",
+        itemVersionId: "q_legacy-v1",
+        curriculumPath: "G10/M01/S01/D01",
+        releaseStatus: "approved",
+        answerStatus: "verified",
+        userApprovalStatus: "approved"
+      }
+    },
+    relations: {}
+  }), /is not allowed/);
+});
 
 test("candidate search is admin-only, release-gated and metadata-only", async t => {
   const env = await start();
@@ -126,27 +204,27 @@ test("candidate search is admin-only, release-gated and metadata-only", async t 
   assert.equal((await fetch(`${env.base}/admin/exam-editor/candidates`, { headers: { Cookie: student.cookie } })).status, 403);
 
   const admin = await login(env.base);
-  const response = await fetch(`${env.base}/admin/exam-editor/candidates?scopeKey=2022%2FHS%2FALGEBRA&limit=10`, {
+  const response = await fetch(`${env.base}/admin/exam-editor/candidates?scopeKey=G10%2FM01&limit=10`, {
     headers: { Cookie: admin.cookie }
   });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
   const packet = await response.json();
-  assert.deepEqual(packet.items.map(item => item.itemId), ["q_001", "q_002"]);
+  assert.deepEqual(packet.items.map(item => item.itemId).sort(), [REGISTRY.q1.id, REGISTRY.q2.id].sort());
   assert.equal(packet.items.every(item => item.eligible === true), true);
   assertNoPrivateFields(packet);
-  assert.equal(JSON.stringify(packet).includes("q_locked"), false);
+  assert.equal(JSON.stringify(packet).includes(REGISTRY.locked.id), false);
 
-  const related = await fetch(`${env.base}/admin/exam-editor/candidates?sourceItemId=q_001&sourceItemVersionId=q_001-v1&relationship=twin`, {
+  const related = await fetch(`${env.base}/admin/exam-editor/candidates?sourceItemId=${encodeURIComponent(REGISTRY.q1.id)}&sourceItemVersionId=${encodeURIComponent(REGISTRY.q1.itemVersionId)}&relationship=twin`, {
     headers: { Cookie: admin.cookie }
   });
   assert.equal(related.status, 200);
   const relatedPacket = await related.json();
-  assert.deepEqual(relatedPacket.items.map(item => [item.itemId, item.replacement.evidenceId]), [["q_002", "ev_q1_q2"]]);
+  assert.deepEqual(relatedPacket.items.map(item => [item.itemId, item.replacement.evidenceId]), [[REGISTRY.q2.id, REGISTRY.evidenceId]]);
   assertNoPrivateFields(relatedPacket);
 
   assert.equal((await fetch(`${env.base}/admin/exam-editor/candidates?unknown=1`, { headers: { Cookie: admin.cookie } })).status, 400);
-  assert.equal((await fetch(`${env.base}/admin/exam-editor/candidates?sourceItemId=q_001&relationship=twin`, { headers: { Cookie: admin.cookie } })).status, 400);
+  assert.equal((await fetch(`${env.base}/admin/exam-editor/candidates?sourceItemId=${encodeURIComponent(REGISTRY.q1.id)}&relationship=twin`, { headers: { Cookie: admin.cookie } })).status, 400);
 });
 
 test("draft editing enforces origin, revision CAS, item versions and server-side replacement evidence", async t => {
@@ -158,7 +236,7 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
     profileId: "profile_hs_selection",
     targetId: "target_mock_r01",
     durationMinutes: 60,
-    scopeKeys: ["2022/HS/ALGEBRA"]
+    scopeKeys: ["G10/M01"]
   };
   const csrfBlocked = await fetch(`${env.base}/admin/exam-editor/drafts`, {
     method: "POST",
@@ -190,13 +268,13 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
     headers: adminHeaders(admin.cookie, env.base),
     body: JSON.stringify({
       expectedRevision: 1,
-      operation: { kind: "add", placementId: "placement_001", itemId: "q_001", itemVersionId: "q_001-v1", score: 2, selectionKind: "manual" }
+      operation: { kind: "add", placementId: "placement_001", itemId: REGISTRY.q1.id, itemVersionId: REGISTRY.q1.itemVersionId, score: 2, selectionKind: "manual" }
     })
   });
   assert.equal(addResponse.status, 200);
   const added = await addResponse.json();
   assert.equal(added.record.draft.revision, 2);
-  assert.equal(added.record.draft.placements[0].itemVersionId, "q_001-v1");
+  assert.equal(added.record.draft.placements[0].itemVersionId, REGISTRY.q1.itemVersionId);
 
   const staleResponse = await fetch(draftUrl, {
     method: "PATCH",
@@ -210,7 +288,7 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
     headers: adminHeaders(admin.cookie, env.base),
     body: JSON.stringify({
       expectedRevision: 2,
-      operation: { kind: "replace", placementId: "placement_001", itemId: "q_002", itemVersionId: "q_002-v2", relationship: "twin", evidenceId: "ev_q1_q2" }
+      operation: { kind: "replace", placementId: "placement_001", itemId: REGISTRY.q2.id, itemVersionId: `${REGISTRY.q2.itemVersionId}-stale`, relationship: "twin", evidenceId: REGISTRY.evidenceId }
     })
   });
   assert.equal(badVersion.status, 404);
@@ -221,8 +299,8 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
     body: JSON.stringify({
       expectedRevision: 2,
       operation: {
-        kind: "replace", placementId: "placement_001", itemId: "q_002", itemVersionId: "q_002-v1",
-        relationship: "twin", evidenceId: "ev_q1_q2", solutionStructureMatched: true
+        kind: "replace", placementId: "placement_001", itemId: REGISTRY.q2.id, itemVersionId: REGISTRY.q2.itemVersionId,
+        relationship: "twin", evidenceId: REGISTRY.evidenceId, solutionStructureMatched: true
       }
     })
   });
@@ -233,21 +311,21 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
     headers: adminHeaders(admin.cookie, env.base),
     body: JSON.stringify({
       expectedRevision: 2,
-      operation: { kind: "replace", placementId: "placement_001", itemId: "q_002", itemVersionId: "q_002-v1", relationship: "twin", evidenceId: "ev_q1_q2" }
+      operation: { kind: "replace", placementId: "placement_001", itemId: REGISTRY.q2.id, itemVersionId: REGISTRY.q2.itemVersionId, relationship: "twin", evidenceId: REGISTRY.evidenceId }
     })
   });
   assert.equal(replacedResponse.status, 200);
   const replaced = await replacedResponse.json();
   assert.equal(replaced.record.draft.revision, 3);
-  assert.equal(replaced.record.draft.placements[0].itemId, "q_002");
-  assert.equal(replaced.record.draft.placements[0].replacementHistory[0].evidenceId, "ev_q1_q2");
+  assert.equal(replaced.record.draft.placements[0].itemId, REGISTRY.q2.id);
+  assert.equal(replaced.record.draft.placements[0].replacementHistory[0].evidenceId, REGISTRY.evidenceId);
   assertNoPrivateFields(replaced);
 
   const readinessResponse = await fetch(`${draftUrl}/readiness`, { headers: { Cookie: admin.cookie } });
   assert.equal(readinessResponse.status, 200);
   const readiness = await readinessResponse.json();
   assert.equal(readiness.eligible, true);
-  assert.deepEqual(readiness.projection.entries.map(entry => [entry.number, entry.itemId, entry.itemVersionId]), [[1, "q_002", "q_002-v1"]]);
+  assert.deepEqual(readiness.projection.entries.map(entry => [entry.number, entry.itemId, entry.itemVersionId]), [[1, REGISTRY.q2.id, REGISTRY.q2.itemVersionId]]);
   assertNoPrivateFields(readiness);
 });
 
@@ -258,7 +336,7 @@ test("locked candidates cannot be inserted even when their identifier is known",
   const createdResponse = await fetch(`${env.base}/admin/exam-editor/drafts`, {
     method: "POST",
     headers: adminHeaders(admin.cookie, env.base),
-    body: JSON.stringify({ profileId: "profile_hs", targetId: "target_hs", durationMinutes: 50, scopeKeys: ["2022/HS/ALGEBRA"] })
+    body: JSON.stringify({ profileId: "profile_hs", targetId: "target_hs", durationMinutes: 50, scopeKeys: ["G10/M01"] })
   });
   const created = await createdResponse.json();
   const response = await fetch(`${env.base}/admin/exam-editor/drafts/${created.draftId}`, {
@@ -266,7 +344,7 @@ test("locked candidates cannot be inserted even when their identifier is known",
     headers: adminHeaders(admin.cookie, env.base),
     body: JSON.stringify({
       expectedRevision: 1,
-      operation: { kind: "add", placementId: "placement_locked", itemId: "q_locked", itemVersionId: "q_locked-v1", score: 1, selectionKind: "manual" }
+      operation: { kind: "add", placementId: "placement_locked", itemId: REGISTRY.locked.id, itemVersionId: REGISTRY.locked.itemVersionId, score: 1, selectionKind: "manual" }
     })
   });
   assert.equal(response.status, 409);
@@ -285,7 +363,7 @@ test("file draft store persists atomically and rejects stale revisions and live 
     profileId: "profile_file",
     targetId: "target_file",
     durationMinutes: 60,
-    scopeKeys: ["2022/HS/ALGEBRA"],
+    scopeKeys: ["G10/M01"],
     placements: []
   });
   const created = store.create({

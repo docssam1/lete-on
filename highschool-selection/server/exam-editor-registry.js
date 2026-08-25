@@ -3,10 +3,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const editorCore = require("../data/exam-editor-core.js");
+const questionBankCore = require("../data/question-bank-core.js");
+const sourceLineage = require("../data/source-lineage.js");
 
 const SCHEMA_VERSION = "highselect-private-exam-editor-registry/v1";
-const INPUT_TYPES = new Set(["single_choice", "multi_choice", "ox", "input", "multi_input", "ordered_list", "unordered_set"]);
-const DIFFICULTY_BANDS = new Set(["lowered", "standard", "raised"]);
 
 function fail(message) { throw new Error(message); }
 function clean(value) { return String(value == null ? "" : value).trim(); }
@@ -24,37 +24,69 @@ function token(value, label) {
   return result;
 }
 
-function curriculumPath(value, label) {
-  const result = clean(value).replace(/\/+$/, "");
-  if (!result || result.length > 180 || result.includes("..") || result.includes("\\")) fail(`${label} is invalid`);
-  return result;
+function optionalToken(value, label) {
+  if (value == null || value === "") return null;
+  return token(value, label);
+}
+
+function normalizeSingleAnswerAudit(value, key) {
+  exactKeys(value, new Set(["status", "validOutcomeCount", "evidenceCode"]), `candidates.${key}.singleAnswerAudit`);
+  const count = Number(value.validOutcomeCount);
+  if (!Number.isSafeInteger(count) || count < 0) fail(`candidates.${key}.singleAnswerAudit.validOutcomeCount is invalid`);
+  return Object.freeze({
+    status: clean(value.status),
+    validOutcomeCount: count,
+    evidenceCode: optionalToken(value.evidenceCode, `candidates.${key}.singleAnswerAudit.evidenceCode`)
+  });
+}
+
+function normalizeFigureAudit(value, key) {
+  exactKeys(value, new Set([
+    "required", "status", "evidenceVisible", "hiddenStateConstrained", "positionUnambiguous", "contrastSufficient"
+  ]), `candidates.${key}.figureAudit`);
+  return Object.freeze({
+    required: value.required === true,
+    status: clean(value.status),
+    evidenceVisible: value.evidenceVisible === true,
+    hiddenStateConstrained: value.hiddenStateConstrained === true,
+    positionUnambiguous: value.positionUnambiguous === true,
+    contrastSufficient: value.contrastSufficient === true
+  });
 }
 
 function normalizeCandidate(value, key) {
   exactKeys(value, new Set([
-    "itemId", "itemVersionId", "curriculumPath", "typeCode", "difficultyBand", "inputType",
-    "figureRequired", "figureStatus", "releaseStatus", "classificationStatus", "answerStatus",
-    "singleAnswerStatus", "userApprovalStatus"
+    "id", "itemVersionId", "mode", "writer", "curriculum", "provenance", "answerVerification",
+    "inputType", "generationKind", "difficultyBand", "variant", "lineage", "userApproval",
+    "singleAnswerAudit", "figureAudit", "reviewStatus", "typeCode"
   ]), `candidates.${key}`);
-  const itemId = token(value.itemId, `candidates.${key}.itemId`);
-  if (itemId !== key) fail(`candidates.${key}.itemId does not match key`);
+  const itemId = token(value.id, `candidates.${key}.id`);
+  if (itemId !== key) fail(`candidates.${key}.id does not match key`);
+  const mode = clean(value.mode).toUpperCase();
+  if (!questionBankCore.PROGRAM_MODES.includes(mode)) fail(`candidates.${key}.mode is invalid`);
   const candidate = {
-    itemId,
+    id: itemId,
     itemVersionId: token(value.itemVersionId, `candidates.${key}.itemVersionId`),
-    curriculumPath: curriculumPath(value.curriculumPath, `candidates.${key}.curriculumPath`),
+    mode,
+    writer: clean(value.writer),
+    curriculum: questionBankCore.createCurriculumPath(value.curriculum),
+    provenance: questionBankCore.createProvenanceRecord(Object.assign({ mode }, value.provenance)),
+    answerVerification: questionBankCore.createAnswerVerification(value.answerVerification),
     typeCode: token(value.typeCode, `candidates.${key}.typeCode`),
     difficultyBand: clean(value.difficultyBand),
     inputType: clean(value.inputType),
-    figureRequired: value.figureRequired === true,
-    figureStatus: clean(value.figureStatus),
-    releaseStatus: clean(value.releaseStatus),
-    classificationStatus: clean(value.classificationStatus),
-    answerStatus: clean(value.answerStatus),
-    singleAnswerStatus: clean(value.singleAnswerStatus),
-    userApprovalStatus: clean(value.userApprovalStatus)
+    generationKind: clean(value.generationKind),
+    variant: questionBankCore.createVariantRecord(Object.assign({ mode }, value.variant)),
+    lineage: sourceLineage.createQuestionLineage(Object.assign({ mode }, value.lineage)),
+    userApproval: sourceLineage.createUserApproval(Object.assign({ mode }, value.userApproval)),
+    singleAnswerAudit: normalizeSingleAnswerAudit(value.singleAnswerAudit, key),
+    figureAudit: normalizeFigureAudit(value.figureAudit, key),
+    reviewStatus: clean(value.reviewStatus)
   };
-  if (!DIFFICULTY_BANDS.has(candidate.difficultyBand)) fail(`candidates.${key}.difficultyBand is invalid`);
-  if (!INPUT_TYPES.has(candidate.inputType)) fail(`candidates.${key}.inputType is invalid`);
+  if (!questionBankCore.DIFFICULTY_BANDS.includes(candidate.difficultyBand)) fail(`candidates.${key}.difficultyBand is invalid`);
+  if (!questionBankCore.INPUT_TYPES.includes(candidate.inputType)) fail(`candidates.${key}.inputType is invalid`);
+  if (!questionBankCore.GENERATION_KINDS.includes(candidate.generationKind)) fail(`candidates.${key}.generationKind is invalid`);
+  if (!questionBankCore.REVIEW_STATUSES.includes(candidate.reviewStatus)) fail(`candidates.${key}.reviewStatus is invalid`);
   return Object.freeze(candidate);
 }
 
@@ -83,6 +115,8 @@ function normalizeRelation(value, key, candidates) {
   const candidate = candidates[relation.candidateItemId];
   if (!source || source.itemVersionId !== relation.sourceItemVersionId) fail(`relations.${key} source version is invalid`);
   if (!candidate || candidate.itemVersionId !== relation.candidateItemVersionId) fail(`relations.${key} candidate version is invalid`);
+  if (candidate.lineage.relation !== relation.relationship) fail(`relations.${key} candidate lineage does not match`);
+  if (source.variant.familyId !== candidate.variant.familyId) fail(`relations.${key} question family does not match`);
   return Object.freeze(relation);
 }
 
@@ -129,14 +163,14 @@ function createRegistry(raw) {
       const limit = Math.min(100, Math.max(1, Number(opts.limit) || 30));
       return Object.values(data.candidates).filter(function (candidate) {
         if (editorCore.validateCandidate(candidate).length) return false;
-        if (scopeKey && !(candidate.curriculumPath === scopeKey || candidate.curriculumPath.startsWith(`${scopeKey}/`))) return false;
-        if ((sourceItemId || relationship) && !relationByCandidate.has(candidate.itemId)) return false;
-        if (query && !`${candidate.itemId} ${candidate.typeCode} ${candidate.curriculumPath}`.toLowerCase().includes(query)) return false;
+        if (scopeKey && !(candidate.curriculum.key === scopeKey || candidate.curriculum.key.startsWith(`${scopeKey}/`))) return false;
+        if ((sourceItemId || relationship) && !relationByCandidate.has(candidate.id)) return false;
+        if (query && !`${candidate.id} ${candidate.typeCode} ${candidate.curriculum.key}`.toLowerCase().includes(query)) return false;
         return true;
       }).sort(function (left, right) {
-        return left.curriculumPath.localeCompare(right.curriculumPath) || left.typeCode.localeCompare(right.typeCode) || left.itemId.localeCompare(right.itemId);
+        return left.curriculum.key.localeCompare(right.curriculum.key) || left.typeCode.localeCompare(right.typeCode) || left.id.localeCompare(right.id);
       }).slice(0, limit).map(function (candidate) {
-        const relation = relationByCandidate.get(candidate.itemId);
+        const relation = relationByCandidate.get(candidate.id);
         return { candidate, relation: relation || null };
       });
     }
