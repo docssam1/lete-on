@@ -15,6 +15,7 @@ const TYPE_KEY_RE = /^[a-z][a-z0-9-]{1,79}$/;
 const AREA_KEYS = new Set(["arithmetic", "spatial", "pattern", "logic", "combinatorics", "measurement"]);
 const JSON_MIME_RE = /^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i;
 const QUESTION_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const PAGE_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_REQUEST_BYTES = 131072;
 const MAX_MANIFEST_BYTES = 2 * 1024 * 1024;
 const MAX_ANSWER_BYTES = 1024 * 1024;
@@ -388,21 +389,34 @@ type SafeQuestion = {
   typeCode: string;
   difficultyLabel: string;
   prompt: string;
+  assetId: string | null;
+  assetAlt: string;
+};
+
+type SafePage = {
+  number: number;
   assetId: string;
   assetAlt: string;
 };
 
 function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevision: number): {
+  deliveryMode: "question_images" | "page_images";
   title: string;
   subtitle: string;
   description: string;
   durationMinutes: number | null;
   questions: SafeQuestion[];
+  pages: SafePage[];
 } {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new ApiError(409, "manifest_invalid");
   inspectJson(value, FORBIDDEN_PROBLEM_KEYS, true);
   const manifest = value as JsonObject;
-  if (manifest.schemaVersion !== 1 || asRevision(manifest.manifestRevision) !== expectedRevision) {
+  const deliveryMode = manifest.schemaVersion === 1
+    ? "question_images"
+    : manifest.schemaVersion === 2 && manifest.deliveryMode === "page_images"
+      ? "page_images"
+      : null;
+  if (!deliveryMode || asRevision(manifest.manifestRevision) !== expectedRevision) {
     throw new ApiError(409, "manifest_revision_mismatch");
   }
   if (manifest.status !== "published") throw new ApiError(409, "manifest_not_published");
@@ -421,12 +435,15 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
     const number = Number(question.number);
     const revision = asRevision(question.revision);
     const match = QUESTION_KEY_RE.exec(String(question.questionKey || ""));
-    const assetId = assertUuid(question.assetId, "question_asset_invalid");
+    const assetId = deliveryMode === "question_images"
+      ? assertUuid(question.assetId, "question_asset_invalid")
+      : null;
     if (
       number !== index + 1 || revision !== expectedRevision || !match
       || match[1] !== exam.series || match[2] !== expectedRound
       || match[3] !== String(number).padStart(2, "0")
-      || seenKeys.has(String(question.questionKey)) || seenAssets.has(assetId)
+      || seenKeys.has(String(question.questionKey))
+      || (assetId !== null && seenAssets.has(assetId))
     ) throw new ApiError(409, "question_identity_invalid");
     if (question.releaseStatus !== "verified"
       || !Array.isArray(question.lockReasons) || question.lockReasons.length !== 0) {
@@ -440,7 +457,7 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       throw new ApiError(409, "question_classification_invalid");
     }
     seenKeys.add(String(question.questionKey));
-    seenAssets.add(assetId);
+    if (assetId !== null) seenAssets.add(assetId);
     return {
       number,
       questionKey: String(question.questionKey),
@@ -454,11 +471,39 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       typeId,
       typeCode: question.typeCode == null ? "" : asSafeText(question.typeCode, 80, false, "question_classification_invalid"),
       difficultyLabel: question.difficultyLabel == null ? "" : asSafeText(question.difficultyLabel, 40, false, "question_invalid"),
-      prompt: asSafeText(question.prompt, 10000, false, "question_invalid"),
+      prompt: question.prompt == null && deliveryMode === "page_images"
+        ? `원본 시험지 ${number}번`
+        : asSafeText(question.prompt, 10000, false, "question_invalid"),
       assetId,
-      assetAlt: asSafeText(question.assetAlt, 300, false, "question_asset_invalid")
+      assetAlt: question.assetAlt == null && deliveryMode === "page_images"
+        ? ""
+        : asSafeText(question.assetAlt, 300, false, "question_asset_invalid")
     };
   });
+  const pages: SafePage[] = [];
+  if (deliveryMode === "page_images") {
+    if (!Array.isArray(manifest.pages) || manifest.pages.length < 1 || manifest.pages.length > 20) {
+      throw new ApiError(409, "page_manifest_invalid");
+    }
+    const pageNumbers = new Set<number>();
+    const pageAssets = new Set<string>();
+    manifest.pages.forEach((raw, index) => {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new ApiError(409, "page_manifest_invalid");
+      const page = raw as JsonObject;
+      const number = Number(page.number);
+      const assetId = assertUuid(page.assetId, "page_asset_invalid");
+      if (number !== index + 1 || pageNumbers.has(number) || pageAssets.has(assetId)) {
+        throw new ApiError(409, "page_identity_invalid");
+      }
+      pageNumbers.add(number);
+      pageAssets.add(assetId);
+      pages.push({
+        number,
+        assetId,
+        assetAlt: asSafeText(page.assetAlt, 300, false, "page_asset_invalid")
+      });
+    });
+  }
   const duration = manifest.durationMinutes == null ? null : Number(manifest.durationMinutes);
   if (duration != null && (!Number.isInteger(duration) || duration < 1 || duration > 300)) {
     throw new ApiError(409, "manifest_invalid");
@@ -466,6 +511,7 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
   const title = asSafeText(manifest.title, 200, false, "manifest_invalid");
   if (title !== exam.title) throw new ApiError(409, "manifest_exam_mismatch");
   return {
+    deliveryMode,
     title,
     subtitle: manifest.subtitle == null
       ? `${questions.length}문항`
@@ -474,8 +520,58 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       ? ""
       : asSafeText(manifest.description, 1000, true, "manifest_invalid"),
     durationMinutes: duration,
-    questions
+    questions,
+    pages
   };
+}
+
+async function verifyPageAssets(
+  userClient: SupabaseClient,
+  service: SupabaseClient,
+  examId: string,
+  revision: number,
+  pages: SafePage[]
+): Promise<Array<Omit<SafePage, "assetId"> & { signedAssetUrl: string; mimeType: string }>> {
+  const ids = pages.map(page => page.assetId);
+  const { data, error } = await userClient
+    .from("hf_mock_assets")
+    .select("id,mock_exam_id,asset_kind,mime_type,revision,sha256,byte_size")
+    .in("id", ids);
+  if (error || !Array.isArray(data) || data.length !== ids.length) {
+    throw new ApiError(404, "page_asset_not_available");
+  }
+  const totalBytes = data.reduce((sum, row) => sum + Number(row.byte_size || 0), 0);
+  if (!Number.isSafeInteger(totalBytes) || totalBytes < 1 || totalBytes > MAX_EXAM_ASSET_BYTES) {
+    throw new ApiError(409, "page_asset_mismatch");
+  }
+  const visibleById = new Map(data.map(row => [String(row.id), row as JsonObject]));
+  const output = [];
+  for (const page of pages) {
+    const visible = visibleById.get(page.assetId);
+    if (!visible || visible.mock_exam_id !== examId || Number(visible.revision) !== revision
+      || visible.asset_kind !== "page" || !PAGE_MIMES.has(String(visible.mime_type || ""))) {
+      throw new ApiError(409, "page_asset_mismatch");
+    }
+    const full = await serviceAsset(service, page.assetId);
+    validateAssetMetadata(full, 104857600);
+    if (full.mock_exam_id !== examId || Number(full.revision) !== revision
+      || full.asset_kind !== "page" || !PAGE_MIMES.has(String(full.mime_type || ""))
+      || full.sha256 !== visible.sha256 || Number(full.byte_size) !== Number(visible.byte_size)) {
+      throw new ApiError(409, "page_asset_mismatch");
+    }
+    await readVerifiedBytes(service, full, MAX_QUESTION_ASSET_BYTES);
+    const { data: signed, error: signedError } = await service.storage
+      .from(String(full.bucket_id))
+      .createSignedUrl(String(full.object_path), SIGNED_URL_SECONDS);
+    if (signedError || !signed?.signedUrl) throw new ApiError(503, "page_asset_unavailable");
+    output.push({
+      number: page.number,
+      assetAlt: page.assetAlt,
+      signedAssetUrl: signed.signedUrl,
+      mimeType: String(full.mime_type)
+    });
+  }
+  return output;
 }
 
 async function verifyQuestionAssets(
@@ -485,7 +581,10 @@ async function verifyQuestionAssets(
   revision: number,
   questions: SafeQuestion[]
 ): Promise<Array<SafeQuestion & { signedAssetUrl: string; mimeType: string }>> {
-  const ids = questions.map(question => question.assetId);
+  const ids = questions.map(question => {
+    if (!question.assetId) throw new ApiError(409, "question_asset_mismatch");
+    return question.assetId;
+  });
   const { data, error } = await userClient
     .from("hf_mock_assets")
     .select("id,mock_exam_id,asset_kind,mime_type,revision,sha256,byte_size")
@@ -500,12 +599,14 @@ async function verifyQuestionAssets(
   const visibleById = new Map(data.map(row => [String(row.id), row as JsonObject]));
   const output = [];
   for (const question of questions) {
-    const visible = visibleById.get(question.assetId);
+    const assetId = question.assetId;
+    if (!assetId) throw new ApiError(409, "question_asset_mismatch");
+    const visible = visibleById.get(assetId);
     if (!visible || visible.mock_exam_id !== examId || Number(visible.revision) !== revision
       || visible.asset_kind !== "question" || !QUESTION_MIMES.has(String(visible.mime_type || ""))) {
       throw new ApiError(409, "question_asset_mismatch");
     }
-    const full = await serviceAsset(service, question.assetId);
+    const full = await serviceAsset(service, assetId);
     validateAssetMetadata(full, 104857600);
     if (full.mock_exam_id !== examId || Number(full.revision) !== revision
       || full.asset_kind !== "question" || !QUESTION_MIMES.has(String(full.mime_type || ""))
@@ -640,7 +741,12 @@ async function loadExam(
   });
   if (beginError) mapRpcError(beginError, "begin");
   const attempt = rpcRow(beginData, "attempt_start_failed");
-  const questions = await verifyQuestionAssets(userClient, service, String(exam.raw.id), revision, manifest.questions);
+  const questions = manifest.deliveryMode === "question_images"
+    ? await verifyQuestionAssets(userClient, service, String(exam.raw.id), revision, manifest.questions)
+    : manifest.questions;
+  const pages = manifest.deliveryMode === "page_images"
+    ? await verifyPageAssets(userClient, service, String(exam.raw.id), revision, manifest.pages)
+    : [];
 
   return {
     exam: exam.safe,
@@ -655,7 +761,12 @@ async function loadExam(
     durationMinutes: manifest.durationMinutes,
     questionCount: questions.length,
     signedUrlExpiresIn: SIGNED_URL_SECONDS,
-    questions: questions.map(({ assetId: _assetId, ...question }) => question)
+    deliveryMode: manifest.deliveryMode,
+    pages,
+    questions: questions.map(({ assetId: _assetId, assetAlt: _assetAlt, ...question }) => {
+      if (manifest.deliveryMode === "page_images") return question;
+      return { ...question, assetAlt: _assetAlt };
+    })
   };
 }
 

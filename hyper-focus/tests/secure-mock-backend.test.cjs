@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, "..");
 const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 
 const migration = read("supabase/migrations/20260823151425_secure_mock_delivery_v1.sql");
+const pageMigration = read("supabase/migrations/20260825015511_secure_mock_page_images.sql");
 const edge = read("supabase/functions/secure-mock/index.ts");
 const edgeDeno = read("supabase/functions/secure-mock/deno.json");
 const config = read("supabase/config.toml");
@@ -41,6 +42,9 @@ function testRevisionAndAttemptSchema() {
   ].forEach(pattern => assert.match(migration, pattern));
   assert.doesNotMatch(migration, /jsonb_object_length/i);
   assert.match(migration, /pg_catalog\.jsonb_object_keys\(p_marks\)/);
+  assert.match(pageMigration, /asset_kind in \('manifest', 'question', 'page', 'answer', 'explanation', 'cover'\)/);
+  assert.match(pageMigration, /hf_mock_assets\.asset_kind in \('manifest', 'question', 'page', 'cover'\)/);
+  assert.match(pageMigration, /on public\.hf_mock_assets for select to authenticated/);
 }
 
 function testServiceOnlyRpcContract() {
@@ -168,6 +172,9 @@ function testManifestAndAssetFailClosedRules() {
   assert.match(edge, /revision !== expectedRevision/);
   assert.match(edge, /visible\.mock_exam_id !== examId \|\| Number\(visible\.revision\) !== revision/);
   assert.match(edge, /visible\.asset_kind !== "question"/);
+  assert.match(edge, /manifest\.schemaVersion === 2 && manifest\.deliveryMode === "page_images"/);
+  assert.match(edge, /visible\.asset_kind !== "page"/);
+  assert.match(edge, /verifyPageAssets\(userClient, service/);
   assert.match(edge, /createSignedUrl\(String\(full\.object_path\), SIGNED_URL_SECONDS\)/);
   assert.match(edge, /crypto\.subtle\.digest\("SHA-256"/);
   assert.match(edge, /bytes\.byteLength !== Number\(asset\.byte_size\)/);
