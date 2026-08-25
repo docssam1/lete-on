@@ -307,6 +307,11 @@ test("admin draft builder lists only safe candidates and supports placement add,
   const removed = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements/${encodeURIComponent(withPlacement.placements[0].id)}`, { method: "DELETE", headers: { Cookie: auth.cookie } });
   assert.equal(removed.status, 200);
   assert.equal((await removed.json()).placements.length, 0);
+  const batch = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements/batch`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" }, body: JSON.stringify({ itemIds: [candidatePayload.candidates[0].itemId], points: 2 })
+  });
+  assert.equal(batch.status, 200);
+  assert.equal((await batch.json()).placements[0].points, 2);
   const student = await login(env.base);
   const forbidden = await fetch(`${env.base}/admin/exam-drafts`, { headers: { Cookie: student.cookie } });
   assert.equal(forbidden.status, 403);

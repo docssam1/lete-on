@@ -206,6 +206,28 @@ function createApp(options) {
       await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
     }
 
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/placements\/batch$/);
+    if (match) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const body = await readJson(request, 64 * 1024);
+      if (!Array.isArray(body.itemIds) || body.itemIds.length < 1 || body.itemIds.length > 100) throw new HttpError(400, "추가할 후보 목록이 올바르지 않습니다.");
+      const itemIds = body.itemIds.map(function (itemId) { return String(itemId || ""); });
+      if (new Set(itemIds).size !== itemIds.length) throw new HttpError(400, "같은 후보를 한 번만 선택해 주세요.");
+      const configuredCandidates = (context.config.examDraftCandidates || []).filter(function (candidate) { return candidate.mode === cleanRecord.draft.mode; });
+      let placements = cleanRecord.placements;
+      itemIds.forEach(function (itemId) {
+        const candidate = configuredCandidates.find(function (item) { return item.itemId === itemId; });
+        if (!candidate) throw new HttpError(404, "검증된 후보를 찾을 수 없습니다.");
+        placements = draftCore.appendPlacement(cleanRecord.draft, placements, candidate, body.points);
+      });
+      const next = { draft: cleanRecord.draft, placements };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
     match = pathname.match(/^\/admin\/exam-drafts(?:\/([^/]+))?(?:\/(candidates|placements))?$/);
     if (match) {
       const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
