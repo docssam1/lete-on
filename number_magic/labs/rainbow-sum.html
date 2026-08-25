@@ -65,6 +65,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 .fb{text-align:center;font-size:14.5px;font-weight:800;min-height:24px;margin-top:10px}
 .fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
 .dots{font-weight:900;color:var(--sub);align-self:center;padding:0 2px;font-size:15px}
+.friends{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+.friend{border:2px solid var(--line);border-radius:99px;padding:5px 13px;font-size:14px;
+  font-weight:900;color:#b8bcc6;background:var(--mist);opacity:.6;font-variant-numeric:tabular-nums}
+.friend.got{border-color:var(--gold-deep);background:var(--gold);color:var(--blue-deep);opacity:1}
+.friend.got::before{content:'🌈 '}
 @media (prefers-reduced-motion:reduce){.numcell{transition:none}}
 </style>
 </head>
@@ -118,9 +123,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
   <!-- ③ 직접 하기 -->
   <section class="card" id="p3">
     <h2>이번엔 네 차례!</h2>
+    <div class="friends" id="friendRow" title="무지개 친구 — 이 수들을 직접 만들면 모을 수 있어요"></div>
     <div class="row" style="margin:0 0 14px">
       <button class="pick on" data-n="10">1~10</button>
       <button class="pick" data-n="9">1~9</button>
+      <button class="pick" data-n="11">1~11</button>
+      <button class="pick" data-n="12">1~12</button>
+      <button class="pick" data-n="13">1~13</button>
       <button class="pick" data-n="20">1~20</button>
       <button class="pick" data-n="100">1~100</button>
     </div>
@@ -241,6 +250,21 @@ document.getElementById('playBtn').onclick=function(){
   })();
 };
 
+/* ── 무지개 친구 모으기 (55·66·78·91·5050) ── */
+var FRIENDS=[55,66,78,91,5050];
+function loadFriends(){try{return JSON.parse(localStorage.getItem('nm_rainbow_friends')||'[]')}catch(e){return[]}}
+function saveFriends(a){try{localStorage.setItem('nm_rainbow_friends',JSON.stringify(a))}catch(e){}}
+var gotFriends=loadFriends();
+function drawFriends(){
+  var fr=document.getElementById('friendRow');fr.innerHTML='';
+  FRIENDS.forEach(function(n){
+    var d=document.createElement('span');
+    d.className='friend'+(gotFriends.indexOf(n)>=0?' got':'');
+    d.textContent=n;fr.appendChild(d);
+  });
+}
+drawFriends();
+
 /* ── ③ 직접 하기 ── */
 var userRow=document.getElementById('userRow'),userSvg=document.getElementById('userSvg');
 var N=10,userCells=[],sel=null,doneCnt=0,arcIdx=0;
@@ -314,7 +338,12 @@ document.getElementById('checkBtn').onclick=function(){
   var fb=document.getElementById('userFb');
   if(ok){
     fb.className='fb ok';
-    fb.textContent='🌈 정답! 1부터 '+N+'까지의 합 = '+total+' — 가우스처럼 해냈어요!';
+    var msg='🌈 정답! 1부터 '+N+'까지의 합 = '+total+' — 가우스처럼 해냈어요!';
+    if(FRIENDS.indexOf(total)>=0&&gotFriends.indexOf(total)<0){
+      gotFriends.push(total);saveFriends(gotFriends);drawFriends();
+      msg='🎉 새 무지개 친구 '+total+'를 만났어요! '+(gotFriends.length===FRIENDS.length?'다섯 친구를 전부 모았어요! 👑':'('+gotFriends.length+'/'+FRIENDS.length+')');
+    }
+    fb.textContent=msg;
   }else{
     fb.className='fb no';
     fb.textContent='빨간 칸을 다시 봐요. 짝의 합은 (첫 수 + 끝 수), 쌍의 수는 전체의 절반!';
