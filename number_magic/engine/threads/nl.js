@@ -19,7 +19,7 @@
     ['🦋', '나비',   'butterflies', '蝴蝶'],
     ['🌼', '꽃',     'flowers',     '花'],
     ['🍓', '딸기',   'strawberries','草莓'],
-    ['🐢', '거북이', 'turtles',     '乌龟'],
+    ['animal:turtle', '거북이', 'turtles', '乌龟'],
     ['🍪', '쿠키',   'cookies',     '饼干']
   ];
 
@@ -434,7 +434,17 @@
      mode:'lineup' 줄서기 상황 + 왼쪽/오른쪽에서 몇째 친구 콕 짚기 → storyCard(tap)
      mode:'stairs' 계단에 있는 동물 친구가 아래에서 몇째 계단인지 숫자로 답 → storyCard(numpad) */
   const FRIEND_EMOJI  = ['🧒','👧','👦','🧑','👩','👨','🧓','👴','👵'];
-  const CRITTER_EMOJI = ['🐿️','🐰','🐻','🦊','🐱','🐶'];
+  /* [토큰, ko, en, zh] — 토큰은 storyCard(stairs) emoji 필드용(art() 경유 SVG),
+     ko/en/zh는 prompt 문장에 그대로 들어가는 낱말(문장에 토큰 문자열을 직접 넣지 않음).
+     필즈 더 클래식 자체 창작 동물 SVG 10종 중 계단 장면에 어울리는 6종. */
+  const CRITTERS = [
+    ['animal:squirrel', '다람쥐', 'squirrel', '松鼠'],
+    ['animal:rabbit',   '토끼',   'rabbit',   '兔子'],
+    ['animal:bear',     '곰',     'bear',     '熊'],
+    ['animal:fox',      '여우',   'fox',      '狐狸'],
+    ['animal:deer',     '사슴',   'deer',     '鹿'],
+    ['animal:duck',     '오리',   'duck',     '鸭子']
+  ];
   const LINEUP_SCENES = [
     { ko:'미끄럼틀 앞에 친구들이 줄을 섰어요!', en:'Friends are lining up at the slide!', zh:'朋友们在滑梯前排队呢！' },
     { ko:'버스 정류장에 친구들이 줄을 섰어요!', en:'Friends are lining up at the bus stop!', zh:'朋友们在公交站排队呢！' },
@@ -448,12 +458,12 @@
     if (mode === 'stairs') {
       const total   = lv === 'practice' ? R(rng, 4, 5) : R(rng, 5, 8);
       const k       = R(rng, 1, total);
-      const critter = pick(rng, CRITTER_EMOJI);
+      const [critterTok, cKo, cEn, cZh] = pick(rng, CRITTERS);
       return {
         prompt: {
-          ko: `${critter} 친구가 계단에 있어요! 아래에서부터 세어서 몇째 계단인지 숫자로 답해요`,
-          en: `The ${critter} friend is on a step! Count from the bottom and type which step it is`,
-          zh: `${critter}朋友在台阶上！从下面数一数，是第几级台阶？`
+          ko: `${cKo} 친구가 계단에 있어요! 아래에서부터 세어서 몇째 계단인지 숫자로 답해요`,
+          en: `The ${cEn} friend is on a step! Count from the bottom and type which step it is`,
+          zh: `${cZh}朋友在台阶上！从下面数一数，是第几级台阶？`
         },
         answer:     k,
         answerType: 'number',
@@ -461,7 +471,7 @@
         interaction:'numpad',
         layout:     'stairs',
         total, mark: k - 1,
-        emoji:      critter
+        emoji:      critterTok
       };
     }
 
@@ -649,7 +659,7 @@
   /* ── 분류 놀이 창작 소재 쌍(종류 A/B) ── */
   const SORT_PAIRS = [
     [['🍎', '사과', 'apple', '苹果'],   ['🍌', '바나나', 'banana', '香蕉']],
-    [['🐶', '강아지', 'dog', '小狗'],   ['🐱', '고양이', 'cat', '猫']],
+    [['animal:rabbit', '토끼', 'rabbit', '兔子'],   ['animal:turtle', '거북이', 'turtle', '乌龟']],
     [['⚽', '축구공', 'soccer ball', '足球'], ['🏀', '농구공', 'basketball', '篮球']]
   ];
 

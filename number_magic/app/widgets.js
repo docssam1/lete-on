@@ -6,6 +6,21 @@ function esc(s){
   return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
 
+/* it.e / problem.emoji 등에 담긴 문자열을 그린다.
+   'animal:kind' 형태면 NM_ANIMALS(animal-art.js, widgets.js보다 먼저 로드)의
+   SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
+   반환값은 innerHTML로 삽입 가능한 HTML 문자열(플레인 이모지도 안전하게 escape). */
+function art(e){
+  if(typeof e==='string'&&e.indexOf('animal:')===0){
+    var kind=e.slice(7);
+    if(window.NM_ANIMALS&&typeof window.NM_ANIMALS.svg==='function'){
+      var svg=window.NM_ANIMALS.svg(kind);
+      if(svg) return '<span class="nm-art-animal">'+svg+'</span>';
+    }
+  }
+  return esc(e);
+}
+
 function renderKaTeX(tex){
   if(window.katex){
     try{ return katex.renderToString(tex,{throwOnError:false,displayMode:false}); }
@@ -692,7 +707,7 @@ function renderTapCount(problem, container, onAnswer){
       const el=document.createElement('button');
       const ord=marked.indexOf(it.id);
       el.className='nm-tc-item'+(ord>=0?' on':'');
-      el.innerHTML=`<span class="nm-tc-emoji">${it.e}</span>`+
+      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e)}</span>`+
         (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
         e.stopPropagation();
@@ -740,7 +755,7 @@ function renderTapMake(problem, container, onAnswer){
   const root=document.createElement('div');
   root.className='nm-tm-wrap';
   root.innerHTML=`
-    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${em}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
+    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${art(em)}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
     <div class="nm-tm-board"></div>
     <div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div>
     <button class="nm-tm-done">✔</button>`;
@@ -751,12 +766,13 @@ function renderTapMake(problem, container, onAnswer){
 
   board.addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(e.target.classList.contains('nm-tm-stamp')){   /* 스탬프 탭 = 지우기 */
-      e.target.remove();stamps--;cnt.textContent=stamps;return;
+    const hitStamp=e.target.closest('.nm-tm-stamp');   /* 스탬프(또는 그 안 SVG) 탭 = 지우기 */
+    if(hitStamp&&board.contains(hitStamp)){
+      hitStamp.remove();stamps--;cnt.textContent=stamps;return;
     }
     if(stamps>=12)return;                              /* 판이 꽉 참 */
     const s=document.createElement('span');
-    s.className='nm-tm-stamp';s.textContent=em;
+    s.className='nm-tm-stamp';s.innerHTML=art(em);
     board.appendChild(s);stamps++;cnt.textContent=stamps;
   });
 
@@ -783,7 +799,7 @@ function renderNumberBond(problem, container, onAnswer){
   let fill=0, lock=false;
 
   /* 알려진 원 내용: 이모지 나열 + 숫자 (0이면 숫자만) */
-  const known=n=>`<div class="nm-nb-dots">${em.repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
+  const known=n=>`<div class="nm-nb-dots">${art(em).repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
   const askHtml=`<div class="nm-nb-dots" id="nbAskDots"></div><div class="nm-nb-num ask" id="nbAskNum">?</div>`;
 
   const top   = dir==='join' ? askHtml : known(problem.whole);
@@ -813,12 +829,13 @@ function renderNumberBond(problem, container, onAnswer){
 
   askNode.addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(e.target.classList.contains('nm-nb-fill')){   /* 채운 이모지 탭 = 지우기 */
-      e.target.remove();fill--;askNum.textContent=fill;return;
+    const hitFill=e.target.closest('.nm-nb-fill');   /* 채운 이모지(또는 그 안 SVG) 탭 = 지우기 */
+    if(hitFill&&askDots.contains(hitFill)){
+      hitFill.remove();fill--;askNum.textContent=fill;return;
     }
     if(fill>=9)return;
     const s=document.createElement('span');
-    s.className='nm-nb-fill';s.textContent=em;
+    s.className='nm-nb-fill';s.innerHTML=art(em);
     askDots.appendChild(s);fill++;askNum.textContent=fill;
   });
 
@@ -1254,7 +1271,7 @@ function renderStoryCard(problem, container, onAnswer){
       if(i===problem.mark){
         const em=document.createElement('div');
         em.className='nm-sc-stairq-em';
-        em.textContent=problem.emoji||'🐿️';
+        em.innerHTML=art(problem.emoji||'🐿️');
         col.appendChild(em);
       }
       const bar=document.createElement('div');
@@ -1268,7 +1285,7 @@ function renderStoryCard(problem, container, onAnswer){
     chars.forEach((em,i)=>{
       const c=document.createElement('button');
       c.className='nm-sc-char';
-      c.textContent=em;
+      c.innerHTML=art(em);
       if(interaction==='tap'){
         c.addEventListener('pointerup',e=>{
           e.stopPropagation();
@@ -1339,7 +1356,7 @@ function renderBalanceScale(problem, container, onAnswer){
   const pans=root.querySelectorAll('.nm-bs-pan');
   const counts=[left,right];
   pans.forEach((pan,i)=>{
-    pan.querySelector('.nm-bs-items').textContent=em.repeat(counts[i]);
+    pan.querySelector('.nm-bs-items').innerHTML=art(em).repeat(counts[i]);
     pan.addEventListener('pointerup',e=>{
       e.stopPropagation();
       if(lock)return;
@@ -1471,8 +1488,8 @@ function renderSortBasket(problem, container, onAnswer){
   root.innerHTML=`
     <div class="nm-sb-scatter"></div>
     <div class="nm-sb-baskets">
-      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
-      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${art(problem.basketA.emoji)}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${art(problem.basketB.emoji)}</span><span class="nm-sb-basket-cnt">0</span></div>
     </div>
     <div class="nm-sb-choices"></div>`;
   container.appendChild(root);
@@ -1486,7 +1503,7 @@ function renderSortBasket(problem, container, onAnswer){
   items.forEach(it=>{
     const chip=document.createElement('button');
     chip.className='nm-sb-chip';
-    chip.textContent=it.e;
+    chip.innerHTML=art(it.e);
     chip.addEventListener('pointerup',e=>{
       e.stopPropagation();
       chip.remove();
