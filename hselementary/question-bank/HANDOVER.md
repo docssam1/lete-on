@@ -4,11 +4,11 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
-- Total types: 186
-- Implemented types: 130 (deterministic generator availability check)
-- Pending types: 56
-- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and all six units in grade 5 semester 1
-- Next unit: grade 5 semester 2, unit 1 (number ranges and rounding)
+- Total types: 489 across 6 semesters, 36 major units, and 174 subunits
+- Implemented types: 489 (deterministic generator availability check)
+- Pending types: 0
+- Completed: all six units in grades 4, 5, and 6 for both semesters
+- Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
 
 ## Required Standard
 
@@ -42,7 +42,7 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 8 detailed graph types across 10,800 generated questions, including data-to-SVG coordinate checks. The movement audit covers 12 detailed types across 10,800 generated questions and confirms that every type stays on its assigned generator branch. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The factors-and-multiples audit covers 12 types across 12,600 generated questions, including factor ranges, divisibility, common-factor remainder conditions, periods, divisor counts, and GCD/LCM relations. The patterns-and-correspondences audit covers 4 types across 4,200 generated questions, including numerical transforms, cipher shifts, chained correspondence tables, shape-count relations, circular positions, pricing, and speed conditions. The fraction-addition-and-subtraction audit covers 4 types across 12,600 generated questions. The perimeter-and-area audit covers 4 types across 12,600 generated questions, independently checking rectilinear boundaries, cut rectangles, square arrangements, partitioned areas, scale factors, polyomino boundaries, equal-area quadrilaterals, and moving points. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep generated every one of the 489 types at all three difficulty offsets across 20 seeds each (29,340 questions, 0 missing prompts, answers, or solutions). The math-notation audit covers 489 types across 73,350 generated questions. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
 ## Implementation Notes
 
@@ -64,12 +64,11 @@ The current ready set has passed regression coverage, including an 8,400-generat
 
 ## Next Steps
 
-1. Query the private source memory for grade 5 semester 2 unit 1 (number ranges and rounding).
-2. Inspect only the relevant source pages needed to confirm structures and diagrams.
-3. Record the classification decision before implementation.
-4. Add dedicated generators and SVG diagrams for every type in the unit. Keep graph safeguards in graph-audit.js when a later unit uses any chart renderer.
-5. Run syntax checks, high-volume answer checks, and desktop/mobile browser verification.
-6. Update the ready count and commit only the completed unit.
+1. Query private source memory before revising an existing type or responding to a curriculum change.
+2. Re-check the original advanced-course structure before changing a generator; never lower difficulty by replacing it with generic arithmetic.
+3. Run the relevant unit audit, `math-notation-audit.js`, and a fresh generator sweep before unlocking a changed type.
+4. For graph, 3D, folding, or geometry changes, apply the dedicated visibility and single-answer audits as well as desktop/mobile checks.
+5. Update the catalog count only from a fresh programmatic count of `curriculum.js`.
 
 ## Recent Commits
 
