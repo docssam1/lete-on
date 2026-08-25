@@ -667,7 +667,7 @@ function showWrongsRetry(wrongs, origCfg){
     if(window.katex){
       try{ katex.render(p.tex||'', document.getElementById('nm-ex-qtex2'), {throwOnError:false}); }catch(_){}
     } else {
-      document.getElementById('nm-ex-qtex2').textContent = (p.tex||'').replace(/\\square/g,'□').replace(/\\/g,'');
+      document.getElementById('nm-ex-qtex2').textContent = NM_EXAM.texToPlain ? NM_EXAM.texToPlain(p.tex||'') : (p.tex||'').replace(/\\square/g,'□').replace(/\\/g,'');
     }
 
     var inp = document.getElementById('nm-ex-ans2');

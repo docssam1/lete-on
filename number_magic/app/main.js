@@ -1257,13 +1257,14 @@ function runPractice(body,u){
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
-  if(isMulti)ensureMultiState(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     ${pracTex}
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
@@ -1431,11 +1432,12 @@ function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
   const isMulti=Array.isArray(fill.answer);
-  if(isMulti)ensureMultiState(fill.answer);
+  if(isMulti)ensureMultiState(fill.answer,fill.answerShape);
+  const shapeCls=isMulti&&fill.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
     <div class="nm-fill"><span data-tex="${esc(fill.tex)}"></span></div>
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
   </div>`;
@@ -1548,13 +1550,14 @@ function stepLabNumpad(body,u){
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const isMulti=Array.isArray(cur.answer);
-  if(isMulti)ensureMultiState(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
@@ -1630,11 +1633,12 @@ function stepArena(body,u){
 function nextArena(body,u,need){
   const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
   const isMulti=Array.isArray(cur.answer);
-  if(isMulti)ensureMultiState(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
     <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
   </div>`;
   renderMath(body);
@@ -1716,15 +1720,18 @@ function buildNumpad(pad,cb,opts){
 function applyMinusKey(inp){ return inp===''?'-':(inp==='-'?'':inp); }
 
 /* ── 다칸 답(배열 answer) 공용 헬퍼 — practice/check/lab/arena 넘패드 공용 ──
-   S.sub.mvals(문자열 배열)+S.sub.mfocus(포커스 idx)로 상태 보관(save() 직렬화 안전).
-   answerArr 길이만큼 mvals를 초기화하고, 화면 HTML과 탭 바인딩을 제공한다. */
-function ensureMultiState(answerArr){
-  if(!Array.isArray(S.sub.mvals)||S.sub.mvals.length!==answerArr.length){
-    S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0;
+   S.sub.mvals(문자열 배열)+S.sub.mfocus(포커스 idx)+S.sub.mshape(answerShape)로
+   상태 보관(save() 직렬화 안전). answerArr 길이만큼 mvals를 초기화하고,
+   화면 HTML과 탭 바인딩을 제공한다. shape 렌더는 widgets.js의 multiBoxesHtml을
+   공유해 두 화면(이 파일·widgets.js renderFallback)의 분수 모양이 갈라지지 않게 한다. */
+function ensureMultiState(answerArr, shape){
+  if(!Array.isArray(S.sub.mvals)||S.sub.mvals.length!==answerArr.length||S.sub.mshape!==shape){
+    S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0;S.sub.mshape=shape;
   }
 }
 function multiScreenHtml(){
-  const vals=S.sub.mvals,focus=S.sub.mfocus;
+  const vals=S.sub.mvals,focus=S.sub.mfocus,shape=S.sub.mshape;
+  if(window.NM_WIDGETS&&NM_WIDGETS.multiBoxesHtml)return NM_WIDGETS.multiBoxesHtml(vals,focus,shape);
   return vals.map((v,i)=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`)
     .join('<span class="nm-ans-sep">,</span>');
 }

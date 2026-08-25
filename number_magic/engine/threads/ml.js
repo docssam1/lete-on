@@ -1403,7 +1403,12 @@ NM_TGEN['ml_end9'] = function(params, rng) {
 };
 
 /* ── ML_FRAC_MULDIV — 분수의 곱셈·나눗셈 ──────────────────────
-   분모를 고정해 박고 분자만 답으로 받는다 (ml_frac_same과 같은 패턴) */
+   2026-08-25 승격: 결과 분모(d1*d2 등)는 입력의 두 분모를 곱하기만 하면
+   나오는, 학생이 직접 구해야 할 값이라 "분모를 미리 박아 주는" 구식 설계는
+   오히려 "분모는 분모끼리 곱해요"라는 이 유닛의 핵심 스킬을 대신 해 준
+   셈이었다. 이제 결과 전체(분자·분모, 약분 없이 그대로)를 answerShape:
+   'fraction'으로 받는다 — steps 스캐폴드가 없는 answerType:'number'라
+   다칸 답 넘패드(main.js/widgets.js)로 그대로 흘러 승격에 안전했다. */
 NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
   const op   = params.op || 'mul';
   const lv   = params.level || 'main';
@@ -1415,24 +1420,24 @@ NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
   const n2 = R(rng, 1, d2 - 1);   /* div일 때도 n2>=1 항상 보장 */
 
   if (op === 'mul') {
-    const answer = n1 * n2;
     return {
       prompt:{ ko:`분자는 분자끼리, 분모는 분모끼리 곱해요`,
                en:`Multiply numerators together and denominators together`,
                zh:`分子乘分子，分母乘分母` },
-      tex:`\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${d1 * d2}}`,
-      answer, answerType:'number', widget:'numpad'
+      tex:`\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\square`,
+      answer:[n1 * n2, d1 * d2], answerShape:'fraction',
+      answerType:'number', widget:'numpad'
     };
   }
 
   /* div: (n1/d1) ÷ (n2/d2) = (n1/d1) × (d2/n2) */
-  const answer = n1 * d2;
   return {
     prompt:{ ko:`나눗셈을 곱셈으로 바꾸고 뒤집어요`,
              en:`Turn division into multiplication and flip the second fraction`,
              zh:`把除法变成乘法，再把第二个分数倒过来` },
-    tex:`\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${d1 * n2}}`,
-    answer, answerType:'number', widget:'numpad'
+    tex:`\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\square`,
+    answer:[n1 * d2, d1 * n2], answerShape:'fraction',
+    answerType:'number', widget:'numpad'
   };
 };
 

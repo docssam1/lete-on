@@ -139,6 +139,13 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-ans-box:not(:empty){color:var(--blue)}
 .nm-ans-box.cur{border-color:var(--gold-deep);background:#fffdf7;color:var(--blue-deep)}
 .nm-ans-sep{font-size:20px;font-weight:900;color:#9aa2b1}
+/* 다칸 답 — 분수 모양(answerShape:'fraction'|'mixed'). 분자 위 / 가로줄 / 분모 아래,
+   대분수는 자연수 박스를 왼쪽에 붙인다. 답칸(.nm-ans-box) 크기·색은 그대로 재사용. */
+.nm-numpad-screen.nm-multi-shape{gap:0}
+.nm-frac{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.nm-frac-bar{width:100%;min-width:38px;height:2px;background:var(--blue-deep);border-radius:1px}
+.nm-mixed{display:inline-flex;align-items:center;gap:8px}
+.nm-mixed .nm-ans-box{height:44px}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
 .nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}

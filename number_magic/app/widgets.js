@@ -74,19 +74,36 @@ function numpadState(screenEl, maxLen){
   };
 }
 
+/* ── 다칸 답(배열 answer) 화면 HTML — 가로 나열(shape 없음) 또는 분수 모양 ──
+   shape:'fraction' → 분자 박스(0) / 가로줄 / 분모 박스(1), 채움 순서 분자→분모.
+   shape:'mixed'    → 자연수 박스(0) 왼쪽 + 분수 스택(분자 1 / 가로줄 / 분모 2) 오른쪽.
+   shape 없음(undefined) → 기존 콤마 나열("77, 41").
+   widgets.js(multiPadState)·main.js(multiScreenHtml) 양쪽이 이 한 함수를 공유해
+   두 렌더 경로의 모양이 갈라지지 않게 한다. */
+function multiBoxesHtml(vals, focus, shape){
+  const box=i=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${vals[i]!==''?esc(vals[i]):'?'}</span>`;
+  if(shape==='fraction'){
+    return `<span class="nm-frac">${box(0)}<span class="nm-frac-bar"></span>${box(1)}</span>`;
+  }
+  if(shape==='mixed'){
+    return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`;
+  }
+  return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>');
+}
+
 /* ── 다칸 답(배열 answer) 공용 상태 — numpad 화면에 답칸 N개, 탭으로 포커스 이동 ──
-   answerArr: 정답 배열(길이 N). screenEl에 칸을 렌더링, buildNumpad 콜백에서 handle(val) 호출.
+   answerArr: 정답 배열(길이 N). shape: problem.answerShape('fraction'|'mixed'|undefined).
+   screenEl에 칸을 렌더링, buildNumpad 콜백에서 handle(val) 호출.
    ok 판정은 호출부가 isFull()/equals()로 확인. */
-function multiPadState(screenEl, answerArr){
+function multiPadState(screenEl, answerArr, shape){
   const n=answerArr.length;
   let vals=new Array(n).fill('');
   let focus=0;
   function paint(){
     if(!screenEl)return;
     screenEl.classList.add('nm-multi');
-    screenEl.innerHTML=vals.map((v,i)=>
-      `<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`
-    ).join('<span class="nm-ans-sep">,</span>');
+    screenEl.classList.toggle('nm-multi-shape', !!shape);
+    screenEl.innerHTML=multiBoxesHtml(vals,focus,shape);
     screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
       b.addEventListener('pointerup',e=>{e.stopPropagation();focus=+b.dataset.i;paint();});
     });
@@ -1701,7 +1718,7 @@ function renderFallback(problem, container, onAnswer){
   let submitted=false;
 
   if(isMulti){
-    const mp=multiPadState(screen,problem.answer);
+    const mp=multiPadState(screen,problem.answer,problem.answerShape);
     const decAny=problem.answer.some(a=>!Number.isInteger(a));
     buildNumpad(root.querySelector('#wfPad'),val=>{
       if(submitted)return;
@@ -1756,6 +1773,8 @@ window.NM_WIDGETS={
   renderCrossSum,
   renderSortBasket,
   renderTallyBuild,
+  // 다칸 답 화면 HTML — main.js의 multiScreenHtml()이 재사용(분수 모양 렌더 공유)
+  multiBoxesHtml,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

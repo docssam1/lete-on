@@ -36,17 +36,70 @@
 const $ = (sel, ctx) => (ctx || document).querySelector(sel);
 const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
 
+/* KaTeX 미로딩(CDN 지연·차단) 시 폴백 — LaTeX 명령어를 사람이 읽는 기호로 치환한다.
+   engine/threads/*.js 전수 스캔(2026-08-25)으로 뽑은 실사용 명령어 전부 포함.
+   치환표에 없는 명령어가 새로 생기면 마지막 줄에서 백슬래시만 벗겨진 채 이름이
+   그대로 남는다(예: "\\foo" → "foo") — 여전히 읽을 수는 있고, 옛 동작과 같다. */
+function texToPlain(tex){
+  let s = String(tex==null?'':tex);
+  s = s.replace(/\\square/g,'□');
+  s = s.replace(/\\dfrac\{([^{}]*)\}\{([^{}]*)\}/g,'$1/$2');
+  s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,'$1/$2');
+  s = s.replace(/\\sqrt\{([^{}]*)\}/g,'√$1');
+  s = s.replace(/\\text\{([^{}]*)\}/g,'$1');
+  s = s.replace(/\\times/g,'×');
+  s = s.replace(/\\div/g,'÷');
+  s = s.replace(/\\cdot/g,'×');
+  s = s.replace(/\\bigcirc/g,'○');
+  s = s.replace(/\\cdots/g,'⋯');
+  s = s.replace(/\\dots/g,'…');
+  s = s.replace(/\\Rightarrow/g,'⇒');
+  s = s.replace(/\\rightarrow/g,'→');
+  s = s.replace(/\\therefore/g,'∴');
+  s = s.replace(/\\gcd/g,'gcd');
+  s = s.replace(/\\qquad/g,'    ');
+  s = s.replace(/\\quad/g,'  ');
+  s = s.replace(/\\[;,!]/g,' ');
+  s = s.replace(/[{}]/g,'');
+  s = s.replace(/\\/g,'');
+  return s;
+}
+
 function renderKaTeX(tex, el){
   if(window.katex){
     try{ katex.render(tex, el, {throwOnError:false}); return; }catch(_){}
   }
-  el.textContent = tex.replace(/\\square/g,'□').replace(/\\/g,'');
+  el.textContent = texToPlain(tex);
 }
 
 function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* 다칸 답(배열) 표기: [3,5] → "3, 5". 단일 답은 그대로. */
+/* 다칸 답(배열) 표기: [3,5] → "3, 5". 단일 답은 그대로.
+   answerShape가 있으면(분수 정답) 이 대신 ansTex()의 \dfrac 수식을 쓴다 — fmtAns는
+   answerShape 없는 배열(다칸 답 일반형)에만 쓴다. */
 function fmtAns(a){ return Array.isArray(a) ? a.join(', ') : a; }
+/* answerShape 정답을 KaTeX tex로: 'fraction'→[n,d]='\dfrac{n}{d}', 'mixed'→[w,n,d]='w\dfrac{n}{d}'.
+   answerShape 없으면 null(호출부가 fmtAns로 폴백). */
+function ansTex(p){
+  if(!p||!p.answerShape||!Array.isArray(p.answer))return null;
+  if(p.answerShape==='fraction'){
+    const [n,d]=p.answer;
+    return `\\dfrac{${n}}{${d}}`;
+  }
+  if(p.answerShape==='mixed'){
+    const [w,n,d]=p.answer;
+    return `${w}\\dfrac{${n}}{${d}}`;
+  }
+  return null;
+}
+/* 정답 셀 HTML — answerShape면 KaTeX용 <span data-tex>, 아니면 기존 텍스트.
+   호출부는 innerHTML을 채운 뒤 반드시 '.nm-ans-tex'에 renderKaTeX을 돌려야 한다
+   (기존 '.nm-vp-tex' 루프와 같은 패턴 — 아래 각 render()에 추가돼 있음). */
+function ansHtml(p){
+  const tex=ansTex(p);
+  if(tex)return `<span class="nm-ans-tex" data-tex="${esc(tex)}"></span>`;
+  return esc(String(fmtAns(p.answer)));
+}
 /* 다칸 답 채점: raw는 콤마로 구분한 사용자 입력 문자열("3, 5" 등), answer는 problem.answer.
    answer가 배열이 아니면 기존 parseFloat 비교와 동일. */
 function matchesAnswer(raw, answer){
@@ -161,6 +214,11 @@ function parseWorksheetCode(code){
    공개 API
    ──────────────────────────────────────────────────────── */
 const NM_EXAM = {
+
+  /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
+  texToPlain,
+  /* answerShape 정답 → \dfrac tex(테스트/검증용 노출). */
+  ansTex,
 
   /* 학습지 코드 생성 */
   worksheetCode(config){
@@ -836,7 +894,7 @@ const NM_EXAM = {
           <td>${w.i+1}</td>
           <td class="nm-rtex" data-tex="${esc(w.p.tex||'')}"></td>
           <td class="nm-wrong-ans">${w.myAns??'—'}</td>
-          <td class="nm-correct-ans">${fmtAns(w.p.answer)}</td>
+          <td class="nm-correct-ans">${ansHtml(w.p)}</td>
         </tr>`).join('')}
       </tbody>
     </table>
@@ -852,6 +910,9 @@ const NM_EXAM = {
 </div>`;
 
     $$('.nm-rtex', container).forEach(el => {
+      renderKaTeX(el.dataset.tex || '', el);
+    });
+    $$('.nm-ans-tex', container).forEach(el => {
       renderKaTeX(el.dataset.tex || '', el);
     });
 
@@ -931,7 +992,15 @@ const NM_EXAM = {
 
       const ak = document.createElement('div');
       ak.className = 'nm-ak-item';
-      ak.textContent = `${i+1}. ${fmtAns(p.answer)}`;
+      ak.appendChild(document.createTextNode(`${i+1}. `));
+      const akTex = ansTex(p);
+      if(akTex){
+        const akSpan = document.createElement('span');
+        renderKaTeX(akTex, akSpan);
+        ak.appendChild(akSpan);
+      } else {
+        ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+      }
       answerGrid.appendChild(ak);
     });
 
@@ -977,7 +1046,7 @@ window.examScreen = function(container){
         if(mode==='online'){
           ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
         } else {
           ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
         }
@@ -990,7 +1059,7 @@ window.examScreen = function(container){
         if(mode==='online'){
           ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
         } else {
           ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
         }
@@ -1009,7 +1078,7 @@ window.examScreen = function(container){
             ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
             : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
         } else {
           ansRow = '';
         }
@@ -1067,6 +1136,7 @@ window.examScreen = function(container){
 
       /* KaTeX 인라인 렌더 */
       container.querySelectorAll('.nm-vp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
+      container.querySelectorAll('.nm-ans-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
       /* 입력값 복원 + Enter 이동 */
       const inps = [...container.querySelectorAll('.nm-vp-inp')];
@@ -1163,7 +1233,15 @@ window.examScreen = function(container){
 
         const ak = document.createElement('div');
         ak.className = 'nm-print-ak-item';
-        ak.textContent = `${circled(i+1)} ${fmtAns(p.answer)}`;
+        ak.appendChild(document.createTextNode(`${circled(i+1)} `));
+        const pwTex = ansTex(p);
+        if(pwTex){
+          const pwSpan = document.createElement('span');
+          renderKaTeX(pwTex, pwSpan);
+          ak.appendChild(pwSpan);
+        } else {
+          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+        }
         akGrid.appendChild(ak);
       });
 
