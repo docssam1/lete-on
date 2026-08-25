@@ -405,6 +405,62 @@ window.NM_ROADMAP = {
       theme:{ko:'W12-2 · 직선의 관계와 원 — 평행·수직 조건·원의 방정식',en:'W12-2 · Relations Between Lines & Circles — Parallel/Perpendicular, Circle Equations',zh:'W12-2·直线的关系与圆——平行·垂直条件·圆的方程'},
       units:['M-34','M-35'],
       tip:{ko:'x항·y항을 완전제곱으로 묶으면 원의 중심과 반지름이 한눈에 보여요!',en:'Complete the square on x and y, and a circle\'s center and radius appear at a glance!',zh:'把x、y项配成完全平方，圆的中心和半径一眼就看出来！'}
+    },
+
+    /* ─────── W13 : 기호의 탑 — 대수 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W13 대수" 스토리 스테이지. log(M-37)·
+       Σ(M-42)가 §13 기호 전환 교육 대상 — 두 유닛 모두 practice가
+       "기호 해독"으로 시작한다(계산은 discover 이후). 2022 개정
+       과목명 준수 — "고3" 표기 없음(전부 "대수"). */
+    {
+      id:'W13-1', icon:'🪜', grade:'대수',
+      edu:{ko:'대수 지수와 로그',en:'Algebra Exponents & Logarithms',zh:'代数指数与对数'},
+      theme:{ko:'W13-1 · 지수와 로그 — 유리수 지수·log의 정의와 성질',en:'W13-1 · Exponents & Logarithms — Rational Exponents, log Definition & Properties',zh:'W13-1·指数与对数——有理数指数·log的定义与性质'},
+      units:['M-36','M-37','M-38'],
+      tip:{ko:'log_a N = x는 "a를 몇 번 곱해야 N이 되는가" — 지수 사다리를 거꾸로 읽는 것뿐이에요!',en:'log_a N = x asks "how many times must a be multiplied to reach N" — just reading the exponent ladder backward!',zh:'log_a N = x问的是"a要乘几次才能得到N"——只是反过来读指数梯子而已！'}
+    },
+    {
+      id:'W13-2', icon:'📐', grade:'대수',
+      edu:{ko:'대수 삼각함수와 수열',en:'Algebra Trigonometry & Sequences',zh:'代数三角函数与数列'},
+      theme:{ko:'W13-2 · 삼각함수와 수열 — 특수각의 값·등차수열·등비수열',en:'W13-2 · Trigonometry & Sequences — Special-Angle Values, Arithmetic & Geometric Sequences',zh:'W13-2·三角函数与数列——特殊角的值·等差数列·等比数列'},
+      units:['M-39','M-40','M-41'],
+      tip:{ko:'30-60-90 삼각형의 변의 비는 1:√3:2 — 이 하나만 알면 특수각 값이 다 나와요!',en:'A 30-60-90 triangle has side ratio 1:√3:2 — know this one thing and every special-angle value follows!',zh:'30-60-90三角形的边比是1:√3:2——知道这一点，特殊角的值全都能推出来！'}
+    },
+    {
+      id:'W13-3', icon:'🌈', grade:'대수',
+      edu:{ko:'대수 Σ와 무지개 덧셈법',en:'Algebra Σ & the Rainbow-Sum Trick',zh:'代数Σ与彩虹加法法'},
+      theme:{ko:'W13-3 · Σ(시그마) — 이미 아는 마법이 새 기호 옷을 입어요',en:'W13-3 · Sigma (Σ) — Magic You Already Know, in New Symbolic Clothes',zh:'W13-3·Σ(西格玛)——早就会的魔法换上新符号的外衣'},
+      units:['M-42'],
+      tip:{ko:'Σk=n(n+1)÷2는 무지개 덧셈법 그 공식이고, Σk²=n(n+1)(2n+1)÷6은 제곱수의 합이에요 — 새로 외울 게 없어요!',en:'Σk=n(n+1)÷2 is exactly the rainbow-sum formula, and Σk²=n(n+1)(2n+1)÷6 is the sum of squares — nothing new to memorize!',zh:'Σk=n(n+1)÷2正是彩虹加法法的公式，Σk²=n(n+1)(2n+1)÷6就是平方数之和——完全不用背新东西！'}
+    },
+
+    /* ─────── W14 : 변화의 정상 — 미적분Ⅰ (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W14 미적분Ⅰ" 스토리 스테이지 — 로드맵의
+       마지막 월드. lim(M-43)·f′·d/dx(M-44)·∫(M-46)가 §13 기호 전환
+       교육 대상. W14-2 다음에 🔬 미적분 실험실(기존
+       fields-classic/calculus 이식, 새로 만들지 않음)을 외부 링크
+       노드로 연결한다 — MASTER-ROADMAP.md §2 "개념 실험실 원칙"·
+       작업지시 반영. */
+    {
+      id:'W14-1', icon:'🧭', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 극한과 미분',en:'Calculus Ⅰ Limits & Derivatives',zh:'微积分Ⅰ极限与导数'},
+      theme:{ko:'W14-1 · 극한과 미분 — 극한값 계산·미분계수와 도함수',en:'W14-1 · Limits & Derivatives — Evaluating Limits, Derivatives',zh:'W14-1·极限与导数——极限值计算·导数与导函数'},
+      units:['M-43','M-44'],
+      tip:{ko:'0/0 꼴이 나오면 당황하지 말고 분자를 인수분해해서 분모와 약분해요!',en:'Hit a 0/0 form? Don\'t panic — factor the numerator and cancel with the denominator!',zh:'遇到0/0型别慌——把分子因式分解后和分母约分！'}
+    },
+    {
+      id:'W14-2', icon:'📏', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 접선과 적분',en:'Calculus Ⅰ Tangent Lines & Integration',zh:'微积分Ⅰ切线与积分'},
+      theme:{ko:'W14-2 · 접선과 적분 — 접선의 방정식·다항함수의 적분',en:'W14-2 · Tangent Lines & Integration — Tangent Line Equations, Integrating Polynomials',zh:'W14-2·切线与积分——切线方程·多项式函数的积分'},
+      units:['M-45','M-46'],
+      tip:{ko:'∫는 미분의 반대 방향 — 계수를 (n+1)로 나누고 지수를 하나 늘리면 돼요!',en:'∫ reverses differentiation — divide the coefficient by (n+1) and raise the exponent by one!',zh:'∫是求导的反方向——系数除以(n+1)，指数加1就行！'}
+    },
+    {
+      id:'LAB-CALC1', icon:'🔬', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 개념 실험실',en:'Calculus Ⅰ Concept Lab',zh:'微积分Ⅰ概念实验室'},
+      theme:{ko:'🔬 미적분 실험실 — 극값·부정적분·적분조건·유사문제를 직접 조작해봐요',en:'🔬 Calculus Lab — manipulate extrema, antiderivatives, integral conditions & practice problems yourself',zh:'🔬微积分实验室——亲手操作极值·不定积分·积分条件与相似题'},
+      link:'../fields-classic/calculus/',
+      tip:{ko:'그래프를 직접 움직여 보면서 극한·접선·극값·넓이가 왜 그렇게 되는지 눈으로 확인해요(새 탭에서 열려요).',en:'Drag the graph yourself to see why limits, tangents, extrema, and area work the way they do (opens in a new tab).',zh:'亲自拖动图像，用眼睛确认极限、切线、极值和面积为什么是那样(会在新标签页打开)。'}
     }
 
   ]

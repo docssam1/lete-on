@@ -900,6 +900,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-road-gamestone-title{font-size:13px;font-weight:800;color:#6a4f10}
 .nm-road-gamestone-tip{font-size:10px;color:#8a7030;line-height:1.4;margin-top:2px}
 .nm-road-gamestone.played .nm-road-gamestone-title{color:#2d7a26}
+/* 외부 링크 스톤(🔬 개념 실험실 등) — 게임스톤과 구분되는 실험실 팔레트, 2026-08-25 */
+.nm-road-linkstone{background:linear-gradient(135deg,#eef2ff,#dce6ff);border-color:#7c93e8}
+.nm-road-linkstone .nm-road-gamestone-title{color:#2d3d8f}
+.nm-road-linkstone .nm-road-gamestone-tip{color:#4a5aa0}
 
 /* ============================================================
    Make-10 미니게임 (nm-mg-*)

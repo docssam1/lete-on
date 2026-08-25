@@ -161,6 +161,20 @@ const COURSE_SPEC = [
    drills:['MD31','MD32','MD33','MD30'], magic:[['M-31'],['M-32'],['M-33']]},
  {id:39, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
    drills:['MD34','MD35'], magic:[['M-34'],['M-35']]},
+
+ /* 40~43 실배치(2026-08-25, 고등 W13·W14): MASTER-ROADMAP.md §6.
+    course40(대수 진입부)은 W12 마지막 재료 MD35를, course42(미적분Ⅰ
+    진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(36·38과 같은
+    관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·
+    "미적분Ⅰ"). */
+ {id:40, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+   drills:['MD36','MD37','MD38','MD35'], magic:[['M-36'],['M-37'],['M-38']]},
+ {id:41, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
+   drills:['MD39','MD40','MD41','MD42'], magic:[['M-39'],['M-40'],['M-41'],['M-42']]},
+ {id:42, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
+   drills:['MD43','MD44','MD42'], magic:[['M-43'],['M-44']]},
+ {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
+   drills:['MD45','MD46'], magic:[['M-45'],['M-46']]},
 ];
 
 function buildCourses(NM_THREADS){

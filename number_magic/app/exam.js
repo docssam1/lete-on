@@ -100,6 +100,18 @@ function texToPlain(tex){
   s = s.replace(/\\equiv/g,'≡');
   s = s.replace(/\\alpha/g,'α');
   s = s.replace(/\\beta/g,'β');
+  /* 고등 W13·W14(대수·미적분Ⅰ, 2026-08-25) 신규 명령 — \sum·\int는 실제
+     기호로, \lim·\log·\sin·\cos·\tan은 그대로 읽는 이름이라 단어로,
+     \to는 "다가간다"는 뜻의 화살표로 바꾼다. 순서는 서로 겹치는 부분
+     문자열이 없어 무관하다(예: "\to"는 "\tan" 안의 부분열이 아니다). */
+  s = s.replace(/\\sum/g,'Σ');
+  s = s.replace(/\\int/g,'∫');
+  s = s.replace(/\\lim/g,'lim');
+  s = s.replace(/\\log/g,'log');
+  s = s.replace(/\\sin/g,'sin');
+  s = s.replace(/\\cos/g,'cos');
+  s = s.replace(/\\tan/g,'tan');
+  s = s.replace(/\\to/g,'→');
   s = s.replace(/\\qquad/g,'    ');
   s = s.replace(/\\quad/g,'  ');
   s = s.replace(/\\[;,!]/g,' ');

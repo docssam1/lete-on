@@ -1035,6 +1035,131 @@ MD35:{ name:{ko:'원의 방정식',en:'The Equation of a Circle',zh:'圆的方�
   levels:[{id:1,label:{ko:'완성형(연습)',en:'complete the square (practice)',zh:'配方(练习)'},params:{mode:'basic'}},
           {id:2,label:{ko:'더 큰 범위',en:'wider range',zh:'更大范围'},params:{mode:'wide'}},
           {id:3,label:{ko:'공통계수 나누기(실전)',en:'divide out the common coefficient (main)',zh:'先除公共系数(实战)'},params:{mode:'leadingCoeff'}}] },
+
+/* ── MD 고등 W13(대수) 신규 7종 (2026-08-25) ── 근거:
+   MASTER-ROADMAP.md §6(W13 대수) — 2022 개정 교육과정 '대수' 과목의
+   표준 연산 유형을 자체 설계(교재 원문 없음). gen 함수는
+   engine/threads/mid6.js. unit은 data/units/M-36.js~M-42.js. 2022
+   개정 과목명 준수 — "고3" 표기 없음. log(MD37)·Σ(MD42)는 §13 기호
+   전환 교육 대상이라 유닛 practice가 mode:'decode'를 쓴다(아래
+   레벨은 전부 실제 계산 모드). */
+MD36:{ name:{ko:'거듭제곱근과 유리수 지수',en:'Radicals & Rational Exponents',zh:'方根与有理数指数'}, gen:'md36_rationalExponent', prereq:['MD15'],
+  unit:'M-36',
+  concept:{ko:'ⁿ√(aᵐ)은 a^(m/n)과 같아요 — 근호의 지수(n)는 분모로, 거듭제곱의 지수(m)는 분자로 가고, 기약분수로 줄여요.',
+    en:'The nth root of aᵐ equals a raised to m/n — the root index (n) becomes the denominator, the power (m) the numerator, reduced to lowest terms.',
+    zh:'aᵐ的n次方根等于a的m/n次方——根指数(n)作分母，幂指数(m)作分子，并约分到最简。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'표기법 익히기(연습)',en:'learn the notation (practice)',zh:'熟悉记法(练习)'},params:{mode:'basic'}},
+          {id:2,label:{ko:'약분이 필요한 경우',en:'needs reducing',zh:'需要约分'},params:{mode:'reduce'}},
+          {id:3,label:{ko:'더 큰 범위(실전)',en:'wider range (main)',zh:'更大范围(实战)'},params:{mode:'wide'}}] },
+
+MD37:{ name:{ko:'로그의 정의',en:'The Definition of Logarithms',zh:'对数的定义'}, gen:'md37_logDefinition', prereq:['MD10'],
+  unit:'M-37', symbols:[{sym:'log',read:'로그',translate:'"몇 번 곱해야 이 수가 되는가"를 묻는 지수 사다리의 반대 방향',birth:'로그를 발명한 네이피어(1614)는 큰 수의 곱셈을 덧셈으로 바꾸려 했다 — log는 logos(비율)+arithmos(수)의 합성어'}],
+  concept:{ko:'log_a N = x는 "a를 x번 곱하면 N"이라는 뜻이에요(a^x=N) — 지수 사다리를 오르며 몇 번째 칸인지 찾는 거예요.',
+    en:'log_a N = x means "a multiplied by itself x times gives N" (a^x=N) — you climb the exponent ladder to find which rung.',
+    zh:'log_a N = x的意思是"a自乘x次得到N"(a^x=N)——沿着指数梯子往上爬，找出是第几级。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'로그값 구하기(연습)',en:'find the log value (practice)',zh:'求对数值(练习)'},params:{mode:'value'}},
+          {id:2,label:{ko:'진수 구하기(반대 방향)',en:'find N (the other direction)',zh:'求真数(反方向)'},params:{mode:'findN'}},
+          {id:3,label:{ko:'더 큰 범위(실전)',en:'wider range (main)',zh:'更大范围(实战)'},params:{mode:'wide'}}] },
+
+MD38:{ name:{ko:'로그의 성질',en:'Properties of Logarithms',zh:'对数的性质'}, gen:'md38_logProperties', prereq:['MD37'],
+  unit:'M-38',
+  concept:{ko:'log_a X + log_a Y = log_a(XY), log_a X - log_a Y = log_a(X÷Y) — 로그의 덧뺄셈은 안의 수의 곱나눗이 돼요. 밑변환도 정수로 떨어지는 경우만 다뤄요.',
+    en:'log_a X + log_a Y = log_a(XY), log_a X - log_a Y = log_a(X÷Y) — adding/subtracting logs multiplies/divides what\'s inside. Change-of-base is limited to cases landing on integers.',
+    zh:'log_a X + log_a Y = log_a(XY)，log_a X - log_a Y = log_a(X÷Y)——对数的加减对应真数的乘除。换底只处理结果为整数的情形。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'덧셈 성질(연습)',en:'the addition property (practice)',zh:'加法性质(练习)'},params:{mode:'sumProduct'}},
+          {id:2,label:{ko:'뺄셈 성질',en:'the subtraction property',zh:'减法性质'},params:{mode:'diffQuotient'}},
+          {id:3,label:{ko:'밑변환(정수만, 실전)',en:'change of base (integers only, main)',zh:'换底(仅整数，实战)'},params:{mode:'changeBase'}}] },
+
+MD39:{ name:{ko:'삼각함수의 값(특수각)',en:'Trig Values of Special Angles',zh:'特殊角三角函数值'}, gen:'md39_trigSpecialAngle', prereq:['MD15'],
+  unit:'M-39',
+  concept:{ko:'0°·30°·45°·60°·90°의 sin·cos·tan 값은 정삼각형·직각이등변삼각형의 변의 비에서 나와요. 근호가 있는 값은 [계수,근호안,분모] 순서로 그대로 받아요.',
+    en:'sin·cos·tan values at 0°,30°,45°,60°,90° come from the side ratios of equilateral and right-isosceles triangles. Values with a root are entered as [coefficient, radicand, denominator], in order.',
+    zh:'0°、30°、45°、60°、90°的sin·cos·tan值来自等边三角形和等腰直角三角形的边比。带根号的值按[系数,根号内,分母]顺序输入。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'정수·기약분수(연습)',en:'integers & simple fractions (practice)',zh:'整数与简单分数(练习)'},params:{mode:'basic'}},
+          {id:2,label:{ko:'근호가 있는 값',en:'values with a root',zh:'带根号的值'},params:{mode:'mixed'}},
+          {id:3,label:{ko:'전체 혼합(실전)',en:'all mixed (main)',zh:'全部混合(实战)'},params:{mode:'wide'}}] },
+
+MD40:{ name:{ko:'등차수열',en:'Arithmetic Sequences',zh:'等差数列'}, gen:'md40_arithmeticSeq', prereq:['MD1'],
+  unit:'M-40', lineage:['rainbow-sum'],
+  concept:{ko:'등차수열의 일반항은 aₙ=a₁+(n-1)d, 합은 Sₙ=n(2a₁+(n-1)d)÷2예요. 두 항을 알면 d와 a₁을 거꾸로 구할 수도 있어요.',
+    en:'The general term of an arithmetic sequence is aₙ=a₁+(n-1)d, and its sum is Sₙ=n(2a₁+(n-1)d)÷2. Given two terms, you can work backward to find d and a₁.',
+    zh:'等差数列的通项是aₙ=a₁+(n-1)d，求和是Sₙ=n(2a₁+(n-1)d)÷2。知道两项也能反过来求d和a₁。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'일반항 값 구하기(연습)',en:'find a term (practice)',zh:'求项值(练习)'},params:{mode:'nthTerm'}},
+          {id:2,label:{ko:'두 항으로 a₁,d 구하기',en:'find a₁,d from two terms',zh:'由两项求a₁,d'},params:{mode:'findRule'}},
+          {id:3,label:{ko:'합 구하기(실전)',en:'find the sum (main)',zh:'求和(实战)'},params:{mode:'sum',wide:true}}] },
+
+MD41:{ name:{ko:'등비수열',en:'Geometric Sequences',zh:'等比数列'}, gen:'md41_geometricSeq', prereq:['MD1'],
+  unit:'M-41',
+  concept:{ko:'등비수열의 일반항은 aₙ=a₁×r^(n-1)이에요. 합은 각 항을 직접 나열해 더한 것과 같아요 — a₁+a₁r+a₁r²+….',
+    en:'The general term of a geometric sequence is aₙ=a₁×r^(n-1). Its sum is just each term added one by one — a₁+a₁r+a₁r²+….',
+    zh:'等比数列的通项是aₙ=a₁×r^(n-1)。求和就是把每一项依次相加——a₁+a₁r+a₁r²+…。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'일반항 값 구하기(연습)',en:'find a term (practice)',zh:'求项值(练习)'},params:{mode:'nthTerm'}},
+          {id:2,label:{ko:'두 항으로 a₁,r 구하기',en:'find a₁,r from two terms',zh:'由两项求a₁,r'},params:{mode:'findRule'}},
+          {id:3,label:{ko:'합 구하기(실전)',en:'find the sum (main)',zh:'求和(实战)'},params:{mode:'sum',wide:true}}] },
+
+MD42:{ name:{ko:'Σ(시그마) 계산',en:'Sigma Notation',zh:'Σ(求和符号)计算'}, gen:'md42_sigmaSum', prereq:['MD40'],
+  unit:'M-42', lineage:['rainbow-sum'], symbols:[{sym:'Σ',read:'시그마',translate:'k에 시작부터 끝까지 하나씩 넣어서 다 더해라',birth:'오일러(1755)가 합(Sum)을 뜻하는 그리스 대문자 Σ(시그마)를 처음 이 용도로 썼다'}],
+  concept:{ko:'Σk(k=1~n)=n(n+1)÷2는 무지개 덧셈법과 똑같은 공식이고, Σk²=n(n+1)(2n+1)÷6은 제곱수의 합과 같아요 — 이미 아는 마법에 새 기호 옷을 입힌 거예요.',
+    en:'Σk from 1 to n equals n(n+1)÷2, the exact same formula as the rainbow-sum trick, and Σk² equals n(n+1)(2n+1)÷6, the sum-of-squares formula — the same magic wearing a new symbol.',
+    zh:'Σk(k=1~n)=n(n+1)÷2和彩虹加法法是同一个公式，Σk²=n(n+1)(2n+1)÷6就是平方数之和——是同一套魔法换了个符号的新衣服。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'Σk(무지개 덧셈법, 연습)',en:'Σk (rainbow sum, practice)',zh:'Σk(彩虹加法法，练习)'},params:{mode:'sumK'}},
+          {id:2,label:{ko:'Σk²(제곱수의 합)',en:'Σk² (sum of squares)',zh:'Σk²(平方数之和)'},params:{mode:'sumK2'}},
+          {id:3,label:{ko:'Σ(pk+q) 쪼개기(실전)',en:'split Σ(pk+q) (main)',zh:'拆分Σ(pk+q)(实战)'},params:{mode:'sumAffine',wide:true}}] },
+
+/* ── MD 고등 W14(미적분Ⅰ) 신규 4종 (2026-08-25) ── 근거:
+   MASTER-ROADMAP.md §6(W14 미적분Ⅰ) — 2022 개정 교육과정 '미적분Ⅰ'
+   과목의 표준 연산 유형을 자체 설계(교재 원문 없음). 연속 조건
+   상수 결정·극값·넓이는 이번 범위에서 제외(작업지시). gen 함수는
+   engine/threads/mid7.js. unit은 data/units/M-43.js~M-46.js.
+   lim(MD43)·f′,d/dx(MD44)·∫(MD46)은 §13 기호 전환 교육 대상이라
+   유닛 practice가 mode:'decode'를 쓴다(아래 레벨은 전부 실제 계산
+   모드). */
+MD43:{ name:{ko:'함수의 극한값 계산',en:'Evaluating Limits',zh:'函数极限值的计算'}, gen:'md43_limit', prereq:['MD21'],
+  unit:'M-43', symbols:[{sym:'lim',read:'리미트',translate:'x가 그 값에 한없이 가까워질 때 식이 어디로 다가가는지',birth:'"한계(limit)"의 준말 — 다가가는 화살표(→) 표기는 20세기 초에 정착됐다'}],
+  concept:{ko:'다항식은 x=a를 그대로 대입하면 극한값이 나와요. 0/0 꼴이면 분자를 인수분해해서 분모와 같은 인수를 약분한 뒤 다시 대입해요.',
+    en:'For polynomials, substitute x=a directly to get the limit. For a 0/0 form, factor the numerator, cancel the factor matching the denominator, then substitute again.',
+    zh:'多项式直接代入x=a就是极限值。遇到0/0型，先把分子因式分解，约去和分母相同的因式，再代入。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'대입형(연습)',en:'direct substitution (practice)',zh:'直接代入型(练习)'},params:{mode:'directSub'}},
+          {id:2,label:{ko:'약분형(0/0 꼴)',en:'0/0 form, factor & cancel',zh:'约分型(0/0型)'},params:{mode:'factorCancel'}},
+          {id:3,label:{ko:'더 큰 범위(실전)',en:'wider range (main)',zh:'更大范围(实战)'},params:{mode:'factorCancel',wide:true}}] },
+
+MD44:{ name:{ko:'미분계수와 도함수',en:'Derivatives',zh:'导数与导函数'}, gen:'md44_derivative', prereq:['MD43'],
+  unit:'M-44', symbols:[{sym:"f'",read:'프라임',translate:'순간의 기울기(도함수)를 구하라',birth:'라이프니츠는 d(작은 차이)로, 라그랑주는 프라임(′)으로 썼다 — 같은 것의 두 옷'},{sym:'d/dx',read:'디엑스분의디',translate:'x가 아주 조금 변할 때 y가 얼마나 변하는지의 비율',birth:'라이프니츠(1670년대)가 만든 표기 — dx는 "아주 작은 x 조각"'}],
+  concept:{ko:'axⁿ의 도함수는 naxⁿ⁻¹ — 지수를 앞으로 곱해 내리고 1 줄여요. f\'(x₀)는 도함수에 x₀를 대입한 값이에요.',
+    en:'The derivative of ax^n is n·a·x^(n-1) — bring the exponent down as a multiplier and reduce it by 1. f\'(x₀) is the derivative evaluated at x₀.',
+    zh:'ax^n的导数是n·a·x^(n-1)——把指数乘到前面再减1。f\'(x₀)就是把x₀代入导函数。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'이차함수 도함수(연습, 2다칸)',en:'derivative of a quadratic (practice, 2 slots)',zh:'二次函数的导数(练习，2格)'},params:{mode:'polyPrime'}},
+          {id:2,label:{ko:'삼차함수 도함수(3다칸)',en:'derivative of a cubic (3 slots)',zh:'三次函数的导数(3格)'},params:{mode:'polyPrime',cubic:true}},
+          {id:3,label:{ko:'미분계수 f\'(a)(실전)',en:'derivative value f\'(a) (main)',zh:'导数值f\'(a)(实战)'},params:{mode:'evalPrime',wide:true}}] },
+
+MD45:{ name:{ko:'접선의 기울기와 방정식',en:'Tangent Line Slope & Equation',zh:'切线的斜率与方程'}, gen:'md45_tangentLine', prereq:['MD44'],
+  unit:'M-45',
+  concept:{ko:'접선의 기울기는 그 점에서의 미분계수 f\'(x₀)예요. 접선의 방정식 y=mx+n은 m=f\'(x₀), n=f(x₀)-m·x₀로 구해요.',
+    en:'The slope of the tangent line is the derivative f\'(x₀) at that point. The tangent line y=mx+n has m=f\'(x₀) and n=f(x₀)-m·x₀.',
+    zh:'切线的斜率就是该点的导数f\'(x₀)。切线方程y=mx+n中，m=f\'(x₀)，n=f(x₀)-m·x₀。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'기울기만(연습)',en:'slope only (practice)',zh:'仅求斜率(练习)'},params:{mode:'slope'}},
+          {id:2,label:{ko:'접선의 방정식(2다칸)',en:'tangent line equation (2 slots)',zh:'切线方程(2格)'},params:{mode:'lineEq'}},
+          {id:3,label:{ko:'더 큰 범위(실전)',en:'wider range (main)',zh:'更大范围(实战)'},params:{mode:'lineEq',wide:true}}] },
+
+MD46:{ name:{ko:'다항함수의 적분',en:'Integrating Polynomials',zh:'多项式函数的积分'}, gen:'md46_polyIntegral', prereq:['MD44'],
+  unit:'M-46', symbols:[{sym:'∫',read:'인테그랄',translate:'잘게 쪼개 다 더해라',birth:'라이프니츠(1675)가 합(summa)의 첫 글자 S를 길게 늘여 만든 글자'}],
+  concept:{ko:'∫axⁿdx = (a÷(n+1))xⁿ⁺¹(+C) — 계수를 (n+1)로 나누고 지수를 하나 늘려요. 정적분 ∫[p,q]f(x)dx는 원시함수 F로 F(q)-F(p)를 계산해요.',
+    en:'∫ax^n dx = (a÷(n+1))x^(n+1) (+C) — divide the coefficient by (n+1) and raise the exponent by one. A definite integral ∫[p,q]f(x)dx equals F(q)-F(p) for the antiderivative F.',
+    zh:'∫ax^n dx = (a÷(n+1))x^(n+1)(+C)——系数除以(n+1)，指数加1。定积分∫[p,q]f(x)dx用原函数F计算F(q)-F(p)。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'일차식의 부정적분(연습, 2다칸)',en:'antiderivative of a linear function (practice, 2 slots)',zh:'一次式的不定积分(练习，2格)'},params:{mode:'antiderivative'}},
+          {id:2,label:{ko:'이차식의 부정적분(3다칸)',en:'antiderivative of a quadratic (3 slots)',zh:'二次式的不定积分(3格)'},params:{mode:'antiderivative',deg2:true}},
+          {id:3,label:{ko:'정적분 값(실전)',en:'definite integral value (main)',zh:'定积分值(实战)'},params:{mode:'definiteInt',wide:true}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

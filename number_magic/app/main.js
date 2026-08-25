@@ -600,6 +600,17 @@ function screenRoadmap(){
       if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
       return;
     }
+    /* 외부 링크 노드(🔬 개념 실험실 등 — MASTER-ROADMAP.md §2) — 새 탭에서 연다.
+       기존 게임스톤과 같은 카드를 재사용하는 최소 침습 확장(2026-08-25). */
+    if(ch.link){
+      html+=`<div class="nm-road-gamestone nm-road-linkstone" data-link="${esc(ch.link)}">
+        <div class="nm-road-gamestone-icon">${ch.icon}</div>
+        <div class="nm-road-gamestone-title">${L(ch.theme)}</div>
+        ${ch.tip?`<div class="nm-road-gamestone-tip">💡 ${L(ch.tip)}</div>`:''}
+      </div>`;
+      if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+      return;
+    }
     const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
     html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
       <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
@@ -650,6 +661,10 @@ function screenRoadmap(){
       S.miniGameId=el.dataset.game;S.miniGame=null;
       S._fromRoadmap=true;S.view='minigame';save();render();
     };
+  });
+  /* 외부 링크 스톤 클릭 — 새 탭에서 연다(2026-08-25, 미적분 실험실 이식) */
+  scr.querySelectorAll('.nm-road-linkstone[data-link]').forEach(el=>{
+    el.onclick=()=>{ window.open(el.dataset.link,'_blank','noopener'); };
   });
 }
 
@@ -1749,7 +1764,12 @@ function stepDiscover(body,u){
   const kid = u.tier==='basic';
   /* 개념 스토리 훅(§7·§13): 중등·고등은 docssam 선생님 캐릭터가, 그 외는 누미가 말풍선으로 연다 */
   const st=d.story||u.story;
-  const isMidHigh=/^(middle|high)/.test(u.tier||'');
+  /* 중·고 판정 — tier가 "middle*"·"high*"로 시작하는 기존 규칙에 더해
+     2022 개정 과목명을 그대로 쓰는 고등 tier(algebra·calculus1, W13·W14,
+     2026-08-25)도 명시적으로 포함한다. "고3" 같은 학년 표기 대신 과목명을
+     tier id로 쓰라는 작업지시라 접두어 규칙만으로는 안 걸린다 — 정규식을
+     넓히는 대신 새 tier를 나열해 실수로 다른 tier까지 걸리지 않게 한다. */
+  const isMidHigh=/^(middle|high)/.test(u.tier||'')||u.tier==='algebra'||u.tier==='calculus1';
   const storyHtml=st?`<div class="nm-story${isMidHigh?' doc':''}">
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
