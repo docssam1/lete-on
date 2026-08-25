@@ -160,7 +160,89 @@ window.NM_CURRICULUM = {
       desc:{ko:'수들의 관계로 푸는 마법 — 등차수열과 경시로 가는 길',
         en:'The magic of solving through relationships between numbers — the path to arithmetic sequences and competition math',
         zh:'通过数字间关系来解题的魔法——通向等差数列与竞赛之路'},
-      levels:[{ id:'H-A', title:{ko:'준비 중',en:'Coming soon',zh:'即将推出'}, units:[], available:false }]
+      /* 경시의 탑(과정-로드맵.md §3 CHALLENGE, 2026-08-25) — 고급-목차.md 신규 13종.
+         26~28은 그 과정의 4단원 구성 그대로, 'boost'는 몰아주기/어림하기/큰 수 정복처럼
+         Level 3(과정 19·24)의 드릴 보강으로도 쓰이는 3종을 모아 둔 것(고급-목차.md §2①). */
+      levels:[
+        { id:'26', available:true,
+          title:{ko:'26 곱셈의 정점',en:'26 · Peak of Multiplication',zh:'26·乘法之巅'},
+          units:['H-01','H-02'] },
+        { id:'27', available:true,
+          title:{ko:'27 수의 비밀',en:'27 · Secrets of Numbers',zh:'27·数的秘密'},
+          units:['H-03','H-04','H-05','H-06'] },
+        { id:'28', available:true,
+          title:{ko:'28 제곱의 산',en:'28 · Mountain of Squares',zh:'28·平方之山'},
+          units:['H-07','H-08','H-09','H-10'] },
+        { id:'boost', available:true,
+          title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
+          units:['H-11','H-12','H-13'] }
+      ]
+    },
+
+    /* ===== MIDDLE1 · 음수의 동굴 (중1 정수와 유리수, W8) =====
+       근거: MASTER-ROADMAP.md §5(중1 W8) + 중등연산-목차.md(G03~G25 실측).
+       이 교재는 정수·유리수 사칙연산과 거듭제곱만 다룬다 — 문자와 식·
+       일차방정식·정비례반비례는 목차에 없어 다음 배치로 미룬다. */
+    {
+      id:'middle1', name:'MIDDLE1', grade:'중1', order:4,
+      title:'MIDDLE1', subtitle:{ko:'음수의 동굴 · 정수와 유리수',en:'The Cave of Negatives · Integers & Rationals',zh:'负数洞窟·整数与有理数'},
+      ageFrom:12, ageLabel:'중1',
+      color:'#16417C', accent:'#C9A063',
+      desc:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 것부터 시작해요',
+        en:'Above and below sea level, points scored and lost — it all starts with naming the two directions from 0',
+        zh:'海拔与海拔以下，得分与失分——从给0两侧的方向命名开始'},
+      levels:[
+        { id:'29', available:true,
+          title:{ko:'29 정수의 세계',en:'29 · World of Integers',zh:'29·整数的世界'},
+          units:['M-01','M-02','M-03'] },
+        { id:'30', available:true,
+          title:{ko:'30 부호의 규칙',en:'30 · Rules of Sign',zh:'30·符号的规则'},
+          units:['M-04','M-05','M-06'] },
+        { id:'31', available:true,
+          title:{ko:'31 유리수 정복',en:'31 · Conquering Rationals',zh:'31·征服有理数'},
+          units:['M-07','M-08','M-09'] }
+      ]
+    },
+
+    /* ===== MIDDLE2 · 식의 탑 (중2 식의 계산, W9) =====
+       근거: MASTER-ROADMAP.md §5(중2 W9) — 지수법칙·단항식·다항식·
+       등식 변형까지, 2022 개정 교육과정 '식의 계산' 범위의 표준 유형. */
+    {
+      id:'middle2', name:'MIDDLE2', grade:'중2', order:5,
+      title:'MIDDLE2', subtitle:{ko:'식의 탑 · 식의 계산',en:'Tower of Expressions · Expression Calculus',zh:'式之塔·式的运算'},
+      ageFrom:13, ageLabel:'중2',
+      color:'#5a4a8a', accent:'#C9A063',
+      desc:{ko:'큰 수를 짧게 쓰려는 게으름이 만든 지수법칙부터, 문자로 이루어진 식을 다루는 법까지',
+        en:'From the exponent laws born of wanting to write big numbers short, to handling expressions made of letters',
+        zh:'从懒得写长数字而诞生的指数法则，到处理由字母组成的式子'},
+      levels:[
+        { id:'32', available:true,
+          title:{ko:'32 지수와 단항식',en:'32 · Exponents & Monomials',zh:'32·指数与单项式'},
+          units:['M-10','M-11','M-12'] },
+        { id:'33', available:true,
+          title:{ko:'33 다항식과 등식',en:'33 · Polynomials & Equations',zh:'33·多项式与等式'},
+          units:['M-13','M-14'] }
+      ]
+    },
+
+    /* ===== MIDDLE3 · 근호의 산맥 (중3 제곱근·실수, 다항식의 곱셈과 인수분해, W10) =====
+       근거: MASTER-ROADMAP.md §5(중3 W10). */
+    {
+      id:'middle3', name:'MIDDLE3', grade:'중3', order:6,
+      title:'MIDDLE3', subtitle:{ko:'근호의 산맥 · 제곱근과 다항식',en:'Radical Mountains · Roots & Polynomials',zh:'根号山脉·平方根与多项式'},
+      ageFrom:14, ageLabel:'중3',
+      color:'#16417C', accent:'#7c3aed',
+      desc:{ko:'다 쓸 수 없어서 "무리수" — 제곱근을 다루는 법부터, 곱셈공식으로 완성되는 무지개 덧셈법의 마지막 걸음까지',
+        en:'Numbers you can never finish writing — "irrational." From handling square roots to the final step of the rainbow-addition lineage, completed by the multiplication formulas',
+        zh:'写不完的数——"无理数"。从处理平方根，到由乘法公式完成的彩虹加法法家族的最后一步'},
+      levels:[
+        { id:'34', available:true,
+          title:{ko:'34 제곱근의 세계',en:'34 · World of Square Roots',zh:'34·平方根的世界'},
+          units:['M-15','M-16','M-17'] },
+        { id:'35', available:true,
+          title:{ko:'35 곱셈공식과 인수분해',en:'35 · Formulas & Factoring',zh:'35·乘法公式与因式分解'},
+          units:['M-18','M-19','M-20'] }
+      ]
     }
   ],
 

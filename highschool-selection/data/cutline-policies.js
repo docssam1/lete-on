@@ -43,6 +43,96 @@
       evidenceId: "WM-ENTRY-2025-MIRROR",
       evidenceStatus: "verified",
       usage: "reference-only"
+    },
+    {
+      id: "CL-WM-DC-2026-07-M21B",
+      programId: "WM",
+      branchId: "WM-BR-DC",
+      courseId: "WM-M21-BASIC-ENTRY",
+      roundId: "2026-07",
+      curriculumVersion: "2022-revised",
+      rule: {
+        kind: "composite-correct-count",
+        minimum: 28,
+        denominator: 40,
+        sectionMinimums: [{ sectionId: "ALG", minimum: 13 }, { sectionId: "GEO", minimum: 12 }],
+        reviewFrom: 25
+      },
+      evidenceId: "WM-M21-JULY-2026",
+      evidenceStatus: "verified",
+      usage: "reference-only"
+    },
+    {
+      id: "CL-WM-DC-2026-05-M22B",
+      programId: "WM",
+      branchId: "WM-BR-DC",
+      courseId: "WM-M22-BASIC-TRANSFER",
+      roundId: "2026-05",
+      curriculumVersion: "2022-revised",
+      rule: {
+        kind: "composite-correct-count",
+        minimum: 32,
+        denominator: 45,
+        sectionMinimums: [{ sectionId: "ALG", minimum: 15 }, { sectionId: "GEO", minimum: 13 }],
+        reviewFrom: 28
+      },
+      evidenceId: "WM-M22-MAY-2026",
+      evidenceStatus: "verified",
+      usage: "reference-only"
+    },
+    {
+      id: "CL-WM-DC-2026-09-M22B",
+      programId: "WM",
+      branchId: "WM-BR-DC",
+      courseId: "WM-M22-BASIC-TRANSFER",
+      roundId: "2026-09",
+      curriculumVersion: "2022-revised",
+      rule: {
+        kind: "composite-correct-count",
+        minimum: 35,
+        denominator: 50,
+        sectionMinimums: [{ sectionId: "ALG", minimum: 17 }, { sectionId: "GEO", minimum: 15 }],
+        reviewFrom: 32
+      },
+      evidenceId: "WM-M22-SEP-2026",
+      evidenceStatus: "verified",
+      usage: "reference-only"
+    },
+    {
+      id: "CL-WM-DC-2026-07-M31B",
+      programId: "WM",
+      branchId: "WM-BR-DC",
+      courseId: "WM-M31-BASIC-TRANSFER",
+      roundId: "2026-07",
+      curriculumVersion: "2022-revised",
+      rule: {
+        kind: "composite-correct-count",
+        minimum: 35,
+        denominator: 50,
+        sectionMinimums: [{ sectionId: "ALG", minimum: 17 }, { sectionId: "GEO", minimum: 15 }],
+        reviewFrom: 32
+      },
+      evidenceId: "WM-M31-JULY-2026",
+      evidenceStatus: "verified",
+      usage: "reference-only"
+    },
+    {
+      id: "CL-WM-DC-2026-06-M32B",
+      programId: "WM",
+      branchId: "WM-BR-DC",
+      courseId: "WM-M32-BASIC-TRANSFER",
+      roundId: "2026-06-SUPERSEDED",
+      curriculumVersion: "2022-revised",
+      rule: {
+        kind: "composite-correct-count",
+        minimum: 35,
+        denominator: 50,
+        sectionMinimums: [{ sectionId: "ALG", minimum: 17 }, { sectionId: "GEO", minimum: 15 }],
+        reviewFrom: 32
+      },
+      evidenceId: "WM-M32-JUNE-2026",
+      evidenceStatus: "verified",
+      usage: "reference-only"
     }
   ];
 
@@ -52,6 +142,7 @@
     { examId: "dp-common1-entry", policyId: null, status: "review-pending", approvedBy: null, approvedAt: null },
     { examId: "dp-middle2-2-transfer", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "dp-common1-entry-202405", policyId: null, status: "review-pending", approvedBy: null, approvedAt: null },
+    { examId: "wm-middle21-basic-entry-r01", policyId: null, status: "reference-available-review-pending", approvedBy: null, approvedAt: null },
     { examId: "wm-algebra-geometry-diagnostic", policyId: null, status: "blocked-source-conflict", approvedBy: null, approvedAt: null },
     { examId: "ed-middle1-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "ed-high-advance-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
@@ -69,7 +160,7 @@
   }
 
   root.HIGHSELECT_CUTLINE_POLICIES = {
-    updatedAt: "2026-08-22",
+    updatedAt: "2026-08-24",
     policy: "학원·지점·과정·회차가 모두 일치하고 사용자가 시험별로 승인한 규칙만 판정에 사용합니다.",
     referenceCutlines,
     examAssignments,

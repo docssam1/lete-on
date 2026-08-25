@@ -71,6 +71,33 @@ function loadExamResponse(overrides = {}) {
   };
 }
 
+function pageQuestion(number, overrides = {}) {
+  const value = question(number, overrides);
+  delete value.signedAssetUrl;
+  delete value.assetAlt;
+  delete value.mimeType;
+  return value;
+}
+
+function page(number, overrides = {}) {
+  return {
+    number,
+    signedAssetUrl: `${PROJECT_URL}/storage/v1/object/sign/hf-mock-private/utilization/01/page_${String(number).padStart(3, "0")}.webp?token=page-${number}`,
+    assetAlt: `프리미어 활용 모의고사 1회 ${number}쪽`,
+    mimeType: "image/webp",
+    ...overrides
+  };
+}
+
+function pageExamResponse(overrides = {}) {
+  return loadExamResponse({
+    deliveryMode: "page_images",
+    pages: [page(1), page(2)],
+    questions: [pageQuestion(1), pageQuestion(2)],
+    ...overrides
+  });
+}
+
 function answerResponse(overrides = {}) {
   return {
     attemptId: ATTEMPT_ID,
@@ -289,6 +316,23 @@ async function testRetryIdentifiersAreStable() {
   assert.equal(retriedSaves[0].body.submissionId, retriedSaves[1].body.submissionId);
 }
 
+async function testSecurePageImageContract() {
+  const h = harness({ responses: { loadExam: pageExamResponse() } });
+  const document = await load(h);
+  assert.equal(document.deliveryMode, "page_images");
+  assert.equal(document.pages.length, 2);
+  assert.equal(document.pages[0].number, 1);
+  assert.match(document.pages[0].signedAssetUrl, /\/storage\/v1\/object\/sign\/hf-mock-private\//);
+  assert.equal(document.questions[0].problemHtml, "");
+  assert.equal(document.questions[0].sourceMode, "secure-page-image");
+
+  const wrongOrigin = pageExamResponse({ pages: [page(1, { signedAssetUrl: "https://example.test/page.webp?token=x" }), page(2)] });
+  await rejectsCode(load(harness({ responses: { loadExam: wrongOrigin } })), "HF_SECURE_MOCK_SIGNED_URL_INVALID");
+
+  const missingPages = pageExamResponse({ pages: [] });
+  await rejectsCode(load(harness({ responses: { loadExam: missingPages } })), "HF_SECURE_MOCK_PAGE_CONTRACT_INVALID");
+}
+
 async function testClientCannotSubmitDerivedOrIdentityFields() {
   const h = harness();
   await load(h);
@@ -494,7 +538,7 @@ function testCheckedInEdgeContractMatchesClient() {
   assert.match(listBody, /data\.map\(row => normalizeExam\(row as JsonObject\)\)/);
   [
     "exam", "attemptId", "attemptNo", "attemptStatus", "serverSeed", "manifestRevision", "title",
-    "subtitle", "description", "durationMinutes", "questionCount", "signedUrlExpiresIn", "questions"
+    "subtitle", "description", "durationMinutes", "questionCount", "signedUrlExpiresIn", "deliveryMode", "pages", "questions"
   ].forEach(field => assert.match(loadBody, new RegExp(`\\b${field}\\b`)));
   ["attemptId", "attemptStatus", "manifestRevision", "answersViewedAt", "answers"]
     .forEach(field => assert.match(answerBody, new RegExp(`\\b${field}\\b`)));
@@ -517,6 +561,7 @@ async function main() {
   await testFeatureGateHasNoSideEffects();
   await testEdgeOnlyPayloadContractsAndLocalImageMarkup();
   await testRetryIdentifiersAreStable();
+  await testSecurePageImageContract();
   await testClientCannotSubmitDerivedOrIdentityFields();
   await testProblemResponseSecurityGates();
   await testAnswersMustMatchExactQuestionRevisionAndUniqueCandidate();

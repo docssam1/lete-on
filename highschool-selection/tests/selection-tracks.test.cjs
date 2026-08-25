@@ -60,7 +60,7 @@ test("the model supports non-high tracks without treating the whole product as h
       .filter(item => item.trackId === "middle-entry")
       .map(item => item.programCode)
   );
-  assert.deepEqual(middleEntryPrograms, ["DP", "ED"]);
+  assert.deepEqual(middleEntryPrograms, ["DP", "WM", "ED"]);
   assert.ok(data.getTrack("middle-transfer"));
   assert.equal(data.getTrack("middle-entry").targetStage, "middle");
   assert.equal(data.getTrack("middle-transfer").targetStage, "middle");
@@ -89,6 +89,15 @@ test("DP and ED middle-entry observations are separate locked exam cards", () =>
   assert.equal(ed.releaseStatus, "blocked");
   assert.equal(data.resolveExamTrack(ed.id).track.id, "middle-entry");
   assert.notEqual(dp.id, ed.id);
+});
+
+test("WM middle2-1 entry stays separate from WM common-math entry", () => {
+  const middle = data.resolveExamTrack("wm-middle21-basic-entry-r01");
+  const common = data.resolveExamTrack("wm-algebra-geometry-diagnostic");
+  assert.equal(middle.track.id, "middle-entry");
+  assert.equal(middle.binding.scopeKey, "middle1-algebra-geometry-no-statistics");
+  assert.equal(common.track.id, "common-math-entry");
+  assert.equal(common.binding.scopeKey, "middle-algebra-geometry");
 });
 
 test("program-track scopes preserve their evidence status instead of inferring a generic transfer range", () => {

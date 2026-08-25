@@ -71,7 +71,7 @@ Free 요금제는 비용이 없지만 비활성 프로젝트 일시정지와 저
 
 - Supabase 관리자 부트스트랩·TOTP 전환은 사용자 결정으로 이번 작업 범위에서 보류했으며, 현재 승인번호 관리자 흐름을 유지함
 - 실제 관리자·학생 두 계정을 사용한 AAL2, 교차 학생 차단, 번호 회전 RLS 통합 테스트 미실행
-- 보안형 모의고사 전달 코드와 정적 계약 검사는 완료했지만 새 migration·Edge Function 원격 미적용, private asset·회차 데이터 없음
+- 보안형 모의고사 전달 코드와 정적 계약 검사는 완료했고, 원본 PDF 쪽을 HTML로 재편집하지 않는 `page_images` manifest v2·private `page` 자산·서명 URL 뷰어 계약도 로컬에 추가함. 새 migration·Edge Function은 원격 미적용이며 private asset·회차 데이터 없음
 - `mock/index.html`·`mock/viewer.html` 화면 연결, 영상 채점·답안 열람 채점, 제출 잠금, 회차별 RLS, 포털 15회 목록, 관리자 8·3·4 상품 토글 계약은 로컬 검증 완료. 실제 DB 적용과 명시적 2·3회차 재응시 흐름은 미구현
 - 난이도별 3번째 이후 유료 맞춤 문제는 아직 공개 브라우저 생성기와 `accessTier`에 의존하므로 서버 보안 경계가 아님. 별도 Secure Problem Bank API·RLS로 옮기기 전에는 유료 보호 완료로 간주하거나 공개 판매하지 않음
 - `data.js`의 기존 학생 명단·옛 승인번호 제거 전

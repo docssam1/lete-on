@@ -21,6 +21,15 @@
           reusableFor: ["DP", "WM", "ED", "DG", "SM"],
           status: "private-source-indexing",
           rule: "황소 고등 선발의 중등 누적 유형을 우선 대조하고 다른 시험은 범위·난도·표기 호환성을 다시 검사"
+        },
+        {
+          id: "wm-middle21-private-pools",
+          label: "원수학 중2-1 입반 후보 풀",
+          priorityFor: ["WM"],
+          reusableFor: ["SH", "DP", "ED"],
+          status: "private-candidate-locked",
+          sourcePoolIds: ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"],
+          rule: "중1-1 대수와 중1-2 기하만 사용하고 통계·학년 밖 기호·구교육과정 표현을 제외한 뒤 원문 대조와 정답 검산을 통과한 문항만 승인"
         }
       ],
       compatibilityChecks: [
@@ -111,10 +120,20 @@
       {
         id: "WM",
         reportModel: "level-placement",
-        targets: [{ id: "common-entry", scopeKey: "middle-algebra-geometry", state: "structure-conflict", label: "공통수학 입학·승급" }],
+        targets: [
+          {
+            id: "middle21-basic-entry",
+            scopeKey: "middle1-algebra-geometry-no-statistics",
+            state: "official-structure-verified",
+            label: "중2-1 기본반 신입",
+            recommendedExamId: "wm-middle21-basic-entry-r01",
+            difficultyPlan: "기준 심화 중심 · 꼬리문항은 조건 결합과 시간 압박을 강화"
+          },
+          { id: "common-entry", scopeKey: "middle-algebra-geometry", state: "partial-audited", label: "공통수학1 기본반 입학" }
+        ],
         reportAxes: ["문항 O/X", "대수·기하 영역", "단원", "세부유형", "난이도", "취약 우선순위"],
-        typeEmphasis: ["대수", "기하", "누적 복습"],
-        scorePolicy: "규격과 원본이 일치한 회차만 영역 최소 기준을 사용"
+        typeEmphasis: ["대수", "기하", "누적 복습", "정확한 개념 적용", "연결 소문항"],
+        scorePolicy: "과정별 규격과 원본이 일치한 회차만 영역 최소 기준을 사용하며, 과거 50문항 컷을 현재 40문항 시험에 환산하지 않음"
       },
       {
         id: "ED",

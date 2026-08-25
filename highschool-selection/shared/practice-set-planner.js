@@ -372,7 +372,7 @@
       "practice",
       asOf.replace(/[^0-9A-Z]/gi, ""),
       policy.version,
-      input.learnerId.slice(-8),
+      input.learnerId,
       selectionDigest
     ].join(":");
     const practiceSetId = core.createNeutralId("practiceSet", mode, stableKey);

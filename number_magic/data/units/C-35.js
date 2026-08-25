@@ -29,7 +29,7 @@ window.NM_UNITS['C-35'] = {
         desc:{ko:'<b>분모를 10, 100, 1000으로 부풀리자!</b> 5에 2를 곱하면 10, 25에 4를 곱하면 100 — 분모 속에 숨은 2와 5를 찾아 짝을 채워 주면 분수가 소수로 변신해. <b>1/5 = 2/10 = 0.2</b>, <b>4/25 = 16/100 = 0.16</b>.',
               en:'<b>Inflate the denominator to 10, 100, or 1000!</b> Multiply 5 by 2 to get 10; multiply 25 by 4 to get 100 — find the hidden 2s and 5s in the denominator, fill in the missing partner, and the fraction turns into a decimal. <b>1/5 = 2/10 = 0.2</b>, <b>4/25 = 16/100 = 0.16</b>.',
               zh:'<b>把分母变大到10、100或1000！</b>5乘以2得10，25乘以4得100——找到藏在分母里的2和5，配齐它们的搭档，分数就变成小数了。<b>1/5 = 2/10 = 0.2</b>，<b>4/25 = 16/100 = 0.16</b>。'},
-        mathSteps:['1/5','× (2/2)','= 2/10','= 0.2'],
+        mathSteps:['\\dfrac{1}{5}','\\times \\dfrac{2}{2}','= \\dfrac{2}{10}','= 0.2'],
         result:{ko:'분모·분자에 똑같은 수를 곱하면 값은 그대로, 모양만 바뀌어요!',en:'Multiply top and bottom by the same number — the value stays the same, only the look changes!',zh:'分子分母同乘一个数，值不变，样子变了！'},
         book:{ko:'부풀리기 짝: 5→×2(10) · 25→×4(100) · 125→×8(1000) · 2→×5(10) · 4→×25(100) · 8→×125(1000). 전부 2와 5의 짝이에요.',
               en:'Inflation partners: 5→×2(10) · 25→×4(100) · 125→×8(1000) · 2→×5(10) · 4→×25(100) · 8→×125(1000). All are pairs of 2 and 5.',
@@ -40,7 +40,7 @@ window.NM_UNITS['C-35'] = {
         desc:{ko:'8=2×2×2는 2가 세 번! 그래서 1000(=2×2×2×5×5×5)을 만들려면 5를 세 번 곱해야 해요: 8×125=1000. 그래서 3/8 = (3×125)/(8×125) = 375/1000 = <b>0.375</b>.',
               en:'8=2×2×2 has three 2s! To make 1000(=2×2×2×5×5×5) you need to multiply by 5 three times: 8×125=1000. So 3/8 = (3×125)/(8×125) = 375/1000 = <b>0.375</b>.',
               zh:'8=2×2×2有三个2！要凑成1000(=2×2×2×5×5×5)就要乘三次5：8×125=1000。所以3/8 = (3×125)/(8×125) = 375/1000 = <b>0.375</b>。'},
-        mathSteps:['3/8','× (125/125)','= 375/1000','= 0.375'],
+        mathSteps:['\\dfrac{3}{8}','\\times \\dfrac{125}{125}','= \\dfrac{375}{1000}','= 0.375'],
         result:{ko:'2가 몇 번 숨어 있는지 세면, 몇 배로 부풀려야 할지 바로 알 수 있어요!',en:'Count how many 2s are hidden, and you instantly know how much to inflate by!',zh:'数一数藏了几个2，马上就知道要放大几倍！'},
         book:null },
 

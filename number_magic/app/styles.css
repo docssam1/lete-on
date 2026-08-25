@@ -139,6 +139,13 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-ans-box:not(:empty){color:var(--blue)}
 .nm-ans-box.cur{border-color:var(--gold-deep);background:#fffdf7;color:var(--blue-deep)}
 .nm-ans-sep{font-size:20px;font-weight:900;color:#9aa2b1}
+/* 다칸 답 — 분수 모양(answerShape:'fraction'|'mixed'). 분자 위 / 가로줄 / 분모 아래,
+   대분수는 자연수 박스를 왼쪽에 붙인다. 답칸(.nm-ans-box) 크기·색은 그대로 재사용. */
+.nm-numpad-screen.nm-multi-shape{gap:0}
+.nm-frac{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.nm-frac-bar{width:100%;min-width:38px;height:2px;background:var(--blue-deep);border-radius:1px}
+.nm-mixed{display:inline-flex;align-items:center;gap:8px}
+.nm-mixed .nm-ans-box{height:44px}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
 .nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
@@ -160,6 +167,36 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-rule{background:var(--blue-deep);color:#fff;border-radius:15px;padding:16px 18px;margin-top:4px}
 .nm-rule b{color:var(--gold-bright);font-size:12px;letter-spacing:.05em}
 .nm-rule p{font-size:15px;margin-top:5px;font-weight:600}
+
+/* 학습지 도우미 화면(?ws=) */
+.nm-wsh-wrap{padding:4px 2px 24px}
+.nm-wsh-name{font-size:20px;font-weight:900;color:var(--blue-deep);margin-bottom:8px}
+.nm-wsh-unit-title{font-size:16px;font-weight:800;color:var(--blue);margin-bottom:6px}
+.nm-wsh-sentence{font-size:14px;line-height:1.65;color:var(--ink);margin:0 0 14px}
+.nm-wsh-noconcept{color:var(--sub);font-style:italic}
+.nm-wsh-warn{font-size:14px;color:var(--sub);line-height:1.6}
+.nm-wsh-login-hint{font-size:13px;color:var(--sub);margin-top:10px;text-align:center}
+.nm-wsh-grade{margin-top:16px}
+
+/* 편지함(📬) */
+.nm-mailbtn{position:relative}
+.nm-mb-dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;
+  background:#e0433b;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.nm-mb-section-h{font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.03em;margin:16px 0 8px;text-transform:uppercase}
+.nm-mb-drill-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.nm-mb-drill-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;flex-wrap:wrap}
+.nm-mb-drill-name{font-weight:800;font-size:13px;color:var(--blue-deep)}
+.nm-mb-drill-meta{font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.nm-mb-drill-meta code{background:#eef2fa;border-radius:6px;padding:2px 6px;font-size:10.5px}
+.nm-mb-env-list{display:flex;flex-direction:column;gap:10px}
+.nm-mb-env-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;box-shadow:0 10px 26px -20px rgba(22,65,124,.4);text-align:left}
+.nm-mb-env-card:active{transform:scale(.98)}
+.nm-mb-env-card.opened{opacity:.7}
+.nm-mb-env-icon{font-size:22px}
+.nm-mb-env-label{flex:1;font-weight:800;font-size:14px;color:var(--blue-deep)}
+.nm-mb-env-badge{font-size:11px;font-weight:800;border-radius:999px;padding:4px 10px}
+.nm-mb-env-badge.new{background:#e0433b;color:#fff}
+.nm-mb-env-badge.done{background:#eef2fa;color:var(--sub)}
 
 /* 핵심체크 */
 .nm-fill{text-align:center;font-size:24px;font-weight:800;margin:12px 0}
@@ -460,6 +497,30 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-tmcard .close{background:none;border:none;color:#9aa2b1;font-weight:700;font-size:14px;cursor:pointer}
 
 /* ============================================================
+   체험 게이트 (Phase 2B) — 잠긴 유닛/편지함/인쇄 카드 + 승인번호 모달
+   ============================================================ */
+.nm-unit.trial-locked{opacity:.55;background:#f5f4f0}
+.nm-unit-lock{position:absolute;top:6px;right:8px;font-size:13px}
+.nm-road-stone.trial-locked{opacity:.6}
+.nm-gc-unit-row.trial-locked{opacity:.55}
+.nm-gate-card-inline{text-align:center}
+.nm-gate-card-inline .nm-card-h{margin-bottom:8px}
+
+.nm-gate-overlay{position:fixed;inset:0;background:rgba(14,44,87,.55);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:90;padding:24px}
+.nm-gate-card{background:#fff;border-radius:22px;padding:28px 22px 22px;max-width:360px;width:100%;
+  text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);position:relative}
+.nm-gate-x{position:absolute;top:10px;right:12px;border:none;background:none;color:#9aa2b1;font-size:16px;cursor:pointer;padding:6px}
+.nm-gate-ico{font-size:34px;margin-bottom:6px}
+.nm-gate-card h3{font-size:18px;color:var(--blue-deep);margin:0 0 6px}
+.nm-gate-card p{font-size:13.5px;color:#4a5468;line-height:1.55;margin:0 0 16px}
+.nm-gate-inputrow{display:flex;gap:8px;margin-bottom:8px}
+.nm-gate-inputrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:11px;padding:11px 12px;font-size:14px;font-family:'Pretendard',sans-serif;color:var(--ink)}
+.nm-gate-inputrow input:focus{border-color:var(--blue);outline:none}
+.nm-gate-msg{font-size:12.5px;color:#c0392b;min-height:16px;margin-bottom:8px}
+.nm-gate-note{font-size:12px;color:var(--sub);margin:0}
+
+/* ============================================================
    온보딩 — 캐릭터+이름 선택 → 구름 등장 연출
    ============================================================ */
 .nm-ob{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;
@@ -541,6 +602,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   padding:10px 0;border-top:1px solid var(--line);margin-top:4px}
 .nm-ex-code-row code{font-size:13px;background:var(--mist);padding:3px 8px;border-radius:6px;flex:1;word-break:break-all}
 .nm-ex-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+
+.nm-ex-concept-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  color:var(--sub);margin:10px 0 4px;cursor:pointer;user-select:none}
+.nm-ex-concept-toggle input{width:16px;height:16px;accent-color:var(--blue);cursor:pointer}
 
 .nm-ex-btn-primary{padding:12px 24px;background:var(--blue);color:#fff;border:none;border-radius:14px;
   font-size:15px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
@@ -984,3 +1049,15 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-py-cell.ask{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;color:#b8860b}
 .nm-py-cell.ask.found{border-style:solid;border-color:var(--ok);background:#eafaf1;color:var(--ok);animation:tc-pop .3s ease}
 .nm-py-choices{display:flex;gap:14px;justify-content:center}
+
+/* ── 개념 스토리 훅(§13): docssam 선생님(중·고) / 누미(초·유아) + 말풍선 ── */
+.nm-story{display:flex;align-items:flex-end;gap:10px;margin:4px 0 14px}
+.nm-story-char{width:74px;height:auto;flex:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
+.nm-story-numi{font-size:44px;flex:none;line-height:1}
+.nm-story-bubble{position:relative;background:#f2f6fd;border:1.5px solid #cdddf3;border-radius:16px;
+  padding:12px 14px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.nm-story-bubble::before{content:'';position:absolute;left:-8px;bottom:16px;width:14px;height:14px;
+  background:#f2f6fd;border-left:1.5px solid #cdddf3;border-bottom:1.5px solid #cdddf3;
+  transform:rotate(45deg)}
+.nm-story-hist{background:var(--mist);border-radius:12px;padding:10px 12px;font-size:12.5px;
+  color:var(--sub);line-height:1.6;margin:0 0 14px}

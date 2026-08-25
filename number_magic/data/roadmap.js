@@ -275,6 +275,100 @@ window.NM_ROADMAP = {
       theme:{ko:'약수와 배수 — 공약수·공배수·배수 판정법',en:'Factors & Multiples — GCD, LCM & Divisibility Rules',zh:'因数与倍数——公因数·公倍数·整除规律'},
       units:['T-DV4','T-DV5'],
       tip:{ko:'GCD로 피자를 공평하게 나누고, LCM으로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
+    },
+
+    /* ─────── CR9~CR11 + CRB : 경시의 탑 (과정 26~28 + Level 3 보강, 2026-08-25 Phase 2) ─────────
+       고급-목차.md 신규 13종. 스토리 여행의 맨 끝에 이어 붙여 findNextRoadUnit()의
+       추천 순서를 흐트러뜨리지 않는다 — 기존 관례(그대로 grade:'창의' 탭 재사용)를 따름. */
+    {
+      id:'CR9', icon:'🏔️', grade:'창의',
+      edu:{ko:'경시의 탑 26',en:'Tower of Challenges · 26',zh:'竞赛之塔·26'},
+      theme:{ko:'26 곱셈의 정점 — 한쪽으로 모으기·100 보수 곱',en:'26 · Peak of Multiplication',zh:'26·乘法之巅'},
+      units:['H-01','H-02'],
+      tip:{ko:'곱하는 수를 나눈 만큼 곱해지는 수를 키워봐요 — 어떤 곱셈도 쉬워져요!',en:'Shrink the multiplier, grow the multiplicand by the same amount — any multiplication gets easy!',zh:'把乘数缩小多少，就把被乘数放大多少——再难的乘法也变简单！'}
+    },
+    {
+      id:'CR10', icon:'🔐', grade:'창의',
+      edu:{ko:'경시의 탑 27',en:'Tower of Challenges · 27',zh:'竞赛之塔·27'},
+      theme:{ko:'27 수의 비밀 — 진법·1001 법칙·순환소수·100 근처 나눗셈',en:'27 · Secrets of Numbers',zh:'27·数的秘密'},
+      units:['H-03','H-04','H-05','H-06'],
+      tip:{ko:'1001을 곱하면 세 자리 수가 통째로 다시 나타나요 — 비밀은 7×11×13!',en:'Multiply by 1001 and a 3-digit number reappears whole — the secret is 7×11×13!',zh:'乘以1001，三位数会原样再出现一次——秘密是7×11×13！'}
+    },
+    {
+      id:'CR11', icon:'⛰️', grade:'창의',
+      edu:{ko:'경시의 탑 28',en:'Tower of Challenges · 28',zh:'竞赛之塔·28'},
+      theme:{ko:'28 제곱의 산 — 근처 수의 제곱·분리 제곱법·제곱수의 합',en:'28 · Mountain of Squares',zh:'28·平方之山'},
+      units:['H-07','H-08','H-09','H-10'],
+      tip:{ko:'다섯 자리 수도 앞부분·뒷부분으로 쪼개면 이미 배운 마법으로 다 풀려요!',en:'Even a 5-digit number splits into a front and back part you can solve with tricks you already know!',zh:'五位数也能拆成前后两部分，用学过的魔法就能解开！'}
+    },
+    {
+      id:'CRB', icon:'🎁', grade:'창의',
+      edu:{ko:'경시의 탑 보강',en:'Tower of Challenges · Booster',zh:'竞赛之塔·补强'},
+      theme:{ko:'보강 · 몰아주기 곱·어림하기·큰 수 정복',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
+      units:['H-11','H-12','H-13'],
+      tip:{ko:'0의 개수만 세어도 억인지 조인지 바로 알 수 있어요!',en:'Just count the zeros to know if it\'s a hundred-million or a trillion!',zh:'只要数一数0的个数，就能立刻知道是亿还是万亿！'}
+    },
+
+    /* ─────── W8 : 음수의 동굴 — 중1 정수와 유리수 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W8 음수의 동굴(중1)" 스토리 스테이지. 경시의
+       탑(CR9~CRB) 다음, 초등 트랙 끝에 이어 붙는다 — 필수 연산 관문
+       §4 "CHALLENGE 1부 ← W8 정수·유리수 사칙"과도 정합. */
+    {
+      id:'W8-1', icon:'🌋', grade:'중1',
+      edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
+      units:['M-01','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+    },
+    {
+      id:'W8-2', icon:'🎲', grade:'중1',
+      edu:{ko:'중1 부호의 규칙',en:'G7 Rules of Sign',zh:'初一符号的规则'},
+      theme:{ko:'W8-2 · 부호의 규칙 — 곱셈·나눗셈·거듭제곱·혼합',en:'W8-2 · Rules of Sign — ×÷, Powers & Mixed Ops',zh:'W8-2·符号的规则——乘除·乘方·混合运算'},
+      units:['M-04','M-05','M-06'],
+      tip:{ko:'음수 개수가 짝이면 +, 홀이면 − — 부호부터 정하고 시작해요!',en:'Even negatives = +, odd = − : decide the sign first!',zh:'负数个数为偶得正，为奇得负——先定符号！'}
+    },
+    {
+      id:'W8-3', icon:'🔁', grade:'중1',
+      edu:{ko:'중1 유리수 정복',en:'G7 Conquering Rationals',zh:'初一征服有理数'},
+      theme:{ko:'W8-3 · 유리수 정복 — 곱나눗·유한소수·순환소수',en:'W8-3 · Conquering Rationals — × ÷, Terminating & Repeating',zh:'W8-3·征服有理数——乘除·有限小数·循环小数'},
+      units:['M-07','M-08','M-09'],
+      tip:{ko:'분모 속 2와 5만 있으면 끝나는 소수, 다른 수가 숨어 있으면 영원히 반복돼요!',en:'Only 2s and 5s in the denominator? It ends. Anything else hiding? It repeats forever!',zh:'分母只有2和5就会结束，藏着别的数就会永远循环！'}
+    },
+
+    /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
+       동굴) 다음, 문자로 된 식을 다루는 첫 관문. */
+    {
+      id:'W9-1', icon:'📐', grade:'중2',
+      edu:{ko:'중2 지수와 단항식',en:'G8 Exponents & Monomials',zh:'初二指数与单项式'},
+      theme:{ko:'W9-1 · 지수와 단항식 — 지수법칙·곱나눗·동류항',en:'W9-1 · Exponents & Monomials — Laws, × ÷, Like Terms',zh:'W9-1·指数与单项式——法则·乘除·同类项'},
+      units:['M-10','M-11','M-12'],
+      tip:{ko:'큰 수를 짧게 쓰려는 게으름이 지수법칙을 만들었어요 — 곱한 횟수만 세면 끝!',en:'Laziness about writing big numbers invented the exponent laws — just count how many times you multiplied!',zh:'懒得写长数字，于是发明了指数法则——只需数一数乘了几次！'}
+    },
+    {
+      id:'W9-2', icon:'🎁', grade:'중2',
+      edu:{ko:'중2 다항식과 등식',en:'G8 Polynomials & Equations',zh:'初二多项式与等式'},
+      theme:{ko:'W9-2 · 다항식과 등식 — 전개·이항 감각',en:'W9-2 · Polynomials & Equations — Expanding & Transposing',zh:'W9-2·多项式与等式——展开·移项感'},
+      units:['M-13','M-14'],
+      tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
+    },
+
+    /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
+       인수분해 (2026-08-25) ───────────────────────────────────
+       MASTER-ROADMAP.md §3 "W10 근호의 산맥(중3)" 스토리 스테이지. */
+    {
+      id:'W10-1', icon:'🔓', grade:'중3',
+      edu:{ko:'중3 제곱근의 세계',en:'G9 World of Square Roots',zh:'初三平方根的世界'},
+      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷',zh:'W10-1·平方根的世界——值·化简·乘除'},
+      units:['M-15','M-16','M-17'],
+      tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
+    },
+    {
+      id:'W10-2', icon:'🌈', grade:'중3',
+      edu:{ko:'중3 곱셈공식과 인수분해',en:'G9 Formulas & Factoring',zh:'初三乘法公式与因式分解'},
+      theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
+      units:['M-18','M-19','M-20'],
+      tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
     }
 
   ]

@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-24'] = {
   id:'C-24', tier:'intermediate', level:'C', order:24,
+  lineage:['rainbow-sum'],
   generator:'ml_diff2sq',
   title:{ ko:'차가 2인 두 수의 곱', en:'Products of Numbers 2 Apart', zh:'相差2的两数之积' },
   subtitle:{ ko:'12×14 = 13²−1: 가운데 수의 제곱에서 1만 빼요!', en:'12×14 = 13²−1: the middle number squared, minus one!', zh:'12×14 = 13²−1：中间数的平方减1！' },
@@ -52,7 +53,9 @@ window.NM_UNITS['C-24'] = {
               zh:'记住一个平方数，<b>免费得到一个相邻乘积</b>！知道15²=225→14×16=224。20²=400→19×21=399。25²=625→24×26=624。反过来也一样：看到19×21要立刻想到"中间数20！"把11²~20²装进武器库！'},
         mathSteps:['15²=225 → 14×16=224','20²=400 → 19×21=399','25²=625 → 24×26=624'],
         result:{ko:'제곱수 하나 = 곱셈 하나 공짜! 11²~20²을 외워요.',en:'One square = one free product! Learn 11²–20².',zh:'一个平方数=一个免费乘积！记住11²~20²。'},
-        book:null }
+        book:{ko:'고급 과정에서는 "차가 2"라는 제한을 풀어요: 기준수와 차이가 얼마든, 심지어 평균을 직접 구해서든 같은 평균²−차² 마법이 통해요.',
+              en:'The advanced course drops the "2 apart" limit — any anchor, any gap (even one you compute as an average yourself) still obeys the same average²−gap² magic.',
+              zh:'高级课程会打破"相差2"的限制——不管基准数和差是多少，甚至自己求出平均值，同样的平均²−差²魔法都成立。'} }
     ],
     rule:{ ko:'① 두 수의 차가 2인지 확인  ② 가운데 수의 제곱 구하기  ③ 1 빼면 답',
       en:'① Check the two numbers are 2 apart  ② Square the middle number  ③ Subtract 1',

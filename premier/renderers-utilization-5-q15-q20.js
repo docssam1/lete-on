@@ -46,21 +46,23 @@
     return wrap("0 0 465 292", body);
   });
 
-  function block(x, y, w, h) {
+  function block(x, y, w, h, shape) {
     const d = 10;
-    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#d9dde2" stroke="${INK}" stroke-width="1"/>${poly([[x, y], [x + d, y - d], [x + w + d, y - d], [x + w, y]], `fill="#f6f7f8" stroke="${INK}" stroke-width="1"`)}${poly([[x + w, y], [x + w + d, y - d], [x + w + d, y + h - d], [x + w, y + h]], `fill="#bfc8d1" stroke="${INK}" stroke-width="1"`)}`;
+    const attrs = shape ? ` data-visible-block="${shape}" data-x="${x}" data-y="${y}" data-w="${w}" data-h="${h}"` : "";
+    return `<g${attrs}><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#d9dde2" stroke="${INK}" stroke-width="1"/>${poly([[x, y], [x + d, y - d], [x + w + d, y - d], [x + w, y]], `fill="#f6f7f8" stroke="${INK}" stroke-width="1"`)}${poly([[x + w, y], [x + w + d, y - d], [x + w + d, y + h - d], [x + w, y + h]], `fill="#bfc8d1" stroke="${INK}" stroke-width="1"`)}</g>`;
   }
 
   register("u5-q17", function () {
     let body = `<rect x="20" y="8" width="260" height="68" rx="5" fill="#fafbfc" stroke="${GRID}" stroke-width="1"/>`;
     body += text(34, 29, "보기", `font-size="13" font-weight="800" fill="${NAVY}"`) + block(150, 25, 24, 38);
     body += text(25, 105, "(1)", `font-size="14" font-weight="800" fill="${NAVY}"`);
-    body += block(67, 157, 28, 42) + block(102, 176, 28, 42) + block(137, 176, 28, 42) + block(172, 176, 28, 42)
-      + block(102, 143, 28, 28) + block(137, 143, 28, 28) + block(172, 143, 28, 28) + block(102, 108, 28, 28) + block(137, 108, 28, 28);
+    body += block(67, 157, 28, 42, "one") + block(102, 176, 28, 42, "one") + block(137, 176, 28, 42, "one") + block(172, 176, 28, 42, "one")
+      + block(102, 143, 28, 28, "one") + block(137, 143, 28, 28, "one") + block(172, 143, 28, 28, "one") + block(102, 108, 28, 28, "one") + block(137, 108, 28, 28, "one");
     body += text(190, 105, "(2)", `font-size="14" font-weight="800" fill="${NAVY}"`);
-    body += block(224, 154, 28, 48) + block(259, 154, 28, 48) + block(294, 154, 28, 48) + block(329, 154, 28, 48)
-      + block(259, 119, 28, 28) + block(294, 119, 28, 28) + block(259, 84, 28, 28) + block(294, 84, 28, 28);
-    return wrap("0 0 390 230", body);
+    body += block(224, 154, 28, 48, "two") + block(259, 154, 28, 48, "two") + block(294, 154, 28, 48, "two") + block(329, 154, 28, 48, "two")
+      + block(259, 119, 28, 28, "two") + block(294, 119, 28, 28, "two") + block(259, 84, 28, 28, "two") + block(294, 84, 28, 28, "two");
+    body += text(195, 229, "그림 뒤에 완전히 가려진 블록은 없습니다.", `text-anchor="middle" font-size="11" font-weight="750" fill="${NAVY}"`);
+    return wrap("0 0 390 242", body);
   });
 
   function triangle(x, y, top, left, right, inside) {
