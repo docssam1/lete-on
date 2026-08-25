@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
@@ -27,6 +29,8 @@ COLUMN_GAP = 18.0
 COLUMN_WIDTH = (PAGE_WIDTH - (2 * MARGIN_X) - COLUMN_GAP) / 2
 CONTENT_TOP = 78.0
 CONTENT_BOTTOM = PAGE_HEIGHT - FOOTER_HEIGHT - 10.0
+ITEM_ROW_GAP = 12.0
+ITEM_ROW_HEIGHT = (CONTENT_BOTTOM - CONTENT_TOP - ITEM_ROW_GAP) / 2
 
 
 @dataclass(frozen=True)
@@ -208,15 +212,22 @@ def add_cover(document: pymupdf.Document, manifest: dict, font_path: Path | None
     accent = (0.24, 0.09, 0.48)
     page.draw_rect(page.rect, color=None, fill=(0.975, 0.97, 0.985))
     page.draw_rect(pymupdf.Rect(0, 0, 18, PAGE_HEIGHT), color=None, fill=accent)
-    heading = manifest["title"] + (" 문항별 해설" if solution else "")
-    insert_text(page, (52, 128), heading, 26, font, accent)
-    insert_text(page, (52, 160), manifest["roundLabel"], 13, font, (0.28, 0.28, 0.32))
-    page.draw_line(pymupdf.Point(52, 184), pymupdf.Point(540, 184), color=accent, width=1.5)
+    # Keep the product title intact and place the longer solution label on its
+    # own line.  A single-line concatenation clips on A4 for Korean titles.
+    insert_text(page, (52, 128), manifest["title"], 26, font, accent)
+    if solution:
+        insert_text(page, (52, 158), "문제별 풀이", 17, font, accent)
+        insert_text(page, (52, 184), manifest["roundLabel"], 13, font, (0.28, 0.28, 0.32))
+        divider_y = 206
+    else:
+        insert_text(page, (52, 160), manifest["roundLabel"], 13, font, (0.28, 0.28, 0.32))
+        divider_y = 184
+    page.draw_line(pymupdf.Point(52, divider_y), pymupdf.Point(540, divider_y), color=accent, width=1.5)
     if solution:
         lines = [
-            "교사용·검수용 비공개 자료",
-            "원문 해설 대조 후 독립 검산을 완료한 문항만 확정합니다.",
-            "현재 문서는 사용자 최종 승인 전 검수용 초안입니다.",
+            "정답을 확인한 뒤 틀린 문항의 풀이 과정을 다시 작성하세요.",
+            "답만 외우지 말고 식을 세운 근거와 계산 과정을 확인하세요.",
+            "같은 유형은 조건을 바꾸어 한 번 더 풀어보세요.",
         ]
     else:
         lines = [
@@ -232,10 +243,15 @@ def add_cover(document: pymupdf.Document, manifest: dict, font_path: Path | None
     page.draw_line(pymupdf.Point(118, 458), pymupdf.Point(300, 458), color=(0.45, 0.45, 0.5), width=0.8)
     insert_text(page, (330, 454), "응시일", 11, font, accent)
     page.draw_line(pymupdf.Point(392, 458), pymupdf.Point(520, 458), color=(0.45, 0.45, 0.5), width=0.8)
-    insert_text(page, (54, 775), "검수용 초안 · 외부 배포 금지", 8.5, font, (0.45, 0.42, 0.5))
+    insert_text(page, (54, 775), manifest["footer"], 8.5, font, (0.45, 0.42, 0.5))
 
 
-def add_answer_sheet(document: pymupdf.Document, manifest: dict, font_path: Path | None) -> None:
+def add_answer_sheet(
+    document: pymupdf.Document,
+    manifest: dict,
+    font_path: Path | None,
+    page_number: int,
+) -> None:
     page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
     font = load_font(page, font_path)
     draw_page_header(page, manifest["title"], "답안 작성표", font)
@@ -253,7 +269,175 @@ def add_answer_sheet(document: pymupdf.Document, manifest: dict, font_path: Path
         page.draw_rect(number_rect, color=(0.68, 0.64, 0.76), fill=(0.96, 0.94, 0.98), width=0.5)
         page.draw_rect(answer_rect, color=(0.68, 0.64, 0.76), fill=(1, 1, 1), width=0.5)
         insert_text(page, (x + 9, y + 22), str(index + 1), 9, font, (0.22, 0.12, 0.38))
-    draw_footer(page, "답안은 쉼표와 단위를 구분해 정확히 적으세요.", 1, font)
+    draw_footer(page, "답안은 쉼표와 단위를 구분해 정확히 적으세요.", page_number, font)
+
+
+def draw_answer_value(
+    page: pymupdf.Page,
+    rect: pymupdf.Rect,
+    value: str,
+    font: str,
+) -> None:
+    """Draw canonical answers, preserving stacked fractions when possible."""
+    text = str(value).strip()
+    match = re.fullmatch(r"(-?)(\d+)\s*/\s*(\d+)(.*)", text)
+    color = (0.12, 0.12, 0.15)
+    if not match:
+        page.insert_textbox(rect, text, fontsize=9.5, fontname=font, color=color, align=1)
+        return
+
+    sign, numerator, denominator, suffix = match.groups()
+    center_x = rect.x0 + rect.width / 2
+    fraction_width = max(20.0, 7.0 * max(len(numerator), len(denominator)))
+    if sign:
+        # Place a leading minus immediately beside the fraction bar so the
+        # visual grouping remains unambiguous in print.
+        insert_text(page, (center_x - fraction_width / 2 - 5.5, rect.y0 + 20), sign, 10, font, color)
+    page.insert_textbox(
+        pymupdf.Rect(center_x - fraction_width / 2, rect.y0 + 2, center_x + fraction_width / 2, rect.y0 + 16),
+        numerator,
+        fontsize=8.5,
+        fontname=font,
+        color=color,
+        align=1,
+    )
+    page.draw_line(
+        pymupdf.Point(center_x - fraction_width / 2, rect.y0 + 17),
+        pymupdf.Point(center_x + fraction_width / 2, rect.y0 + 17),
+        color=color,
+        width=0.7,
+    )
+    page.insert_textbox(
+        pymupdf.Rect(center_x - fraction_width / 2, rect.y0 + 18, center_x + fraction_width / 2, rect.y0 + 32),
+        denominator,
+        fontsize=8.5,
+        fontname=font,
+        color=color,
+        align=1,
+    )
+    if suffix.strip():
+        insert_text(page, (center_x + fraction_width / 2 + 4, rect.y0 + 22), suffix.strip(), 8, font, color)
+
+
+def add_answer_key_sheet(
+    document: pymupdf.Document,
+    manifest: dict,
+    answer_data: dict,
+    font_path: Path | None,
+    page_number: int,
+) -> None:
+    page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
+    font = load_font(page, font_path)
+    draw_page_header(page, manifest["title"], "정답표", font)
+    answers = {int(item["examNumber"]): item for item in answer_data.get("answers", [])}
+    cell_height = 31.0
+    for index in range(40):
+        number = index + 1
+        column = 0 if index < 20 else 1
+        row = index if index < 20 else index - 20
+        x = MARGIN_X if column == 0 else PAGE_WIDTH / 2 + 12
+        y = 90 + row * cell_height
+        number_rect = pymupdf.Rect(x, y, x + 34, y + cell_height)
+        answer_rect = pymupdf.Rect(x + 34, y, x + 245, y + cell_height)
+        page.draw_rect(number_rect, color=(0.68, 0.64, 0.76), fill=(0.96, 0.94, 0.98), width=0.5)
+        page.draw_rect(answer_rect, color=(0.68, 0.64, 0.76), fill=(1, 1, 1), width=0.5)
+        insert_text(page, (x + 9, y + 20), str(number), 9, font, (0.22, 0.12, 0.38))
+        answer = answers.get(number)
+        draw_answer_value(page, pymupdf.Rect(x + 40, y, x + 239, y + cell_height), answer["canonical"] if answer else "검수 대기", font)
+    draw_footer(
+        page,
+        "분수는 약분된 값으로 표시했습니다. 단위·순서 조건은 문항 지시를 따릅니다.",
+        page_number,
+        font,
+    )
+
+
+def add_commentary_sheet(
+    document: pymupdf.Document,
+    manifest: dict,
+    font_path: Path | None,
+    page_number: int,
+) -> None:
+    page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
+    font = load_font(page, font_path)
+    draw_page_header(page, manifest["title"], "점수 확인과 공부 방법", font)
+    accent = (0.24, 0.09, 0.48)
+
+    reference = manifest.get("referenceCutline", {})
+    info_lines = manifest.get(
+        "commentaryIntro",
+        [
+            "대수 20문제와 기하 20문제를 차례로 풉니다.",
+            "각 영역은 50분이며 기하에서는 통계를 빼고 출제했습니다.",
+            "총점과 대수·기하 점수, 풀이 과정을 함께 살펴보세요.",
+        ],
+    )
+    insert_text(page, (42, 102), "이렇게 풀어 보세요", 14, font, accent)
+    for index, line in enumerate(info_lines):
+        insert_text(page, (48, 130 + index * 22), "• " + line, 9.5, font, (0.18, 0.18, 0.21))
+
+    if reference:
+        box = pymupdf.Rect(42, 205, 553, 283)
+        page.draw_rect(box, color=(0.73, 0.68, 0.82), fill=(0.975, 0.965, 0.99), width=0.8)
+        insert_text(page, (54, 229), "시험 안내에 나온 점수", 11, font, accent)
+        total = reference.get("minimum", "-")
+        denominator = reference.get("denominator", 40)
+        algebra = reference.get("algebraMinimum", "-")
+        geometry = reference.get("geometryMinimum", "-")
+        review = reference.get("reviewFrom", "-")
+        insert_text(
+            page,
+            (54, 255),
+            f"총 {total}/{denominator} · 대수 {algebra}/20 · 기하 {geometry}/20 · {review}점부터 풀이 과정 확인",
+            10,
+            font,
+            (0.18, 0.18, 0.21),
+        )
+        insert_text(
+            page,
+            (54, 274),
+            "연습 결과를 살펴보는 기준입니다. 실제 합격 여부와는 다를 수 있습니다.",
+            8.5,
+            font,
+            (0.48, 0.18, 0.18),
+        )
+
+    insert_text(page, (42, 321), "점수에 따라 이렇게 공부하세요", 14, font, accent)
+    score_bands = manifest.get("scoreBands", [])
+    y = 347.0
+    for band in score_bands:
+        page.draw_rect(pymupdf.Rect(42, y, 553, y + 45), color=(0.82, 0.80, 0.86), fill=(1, 1, 1), width=0.6)
+        insert_text(page, (54, y + 18), band["label"], 10.0, font, accent)
+        page.insert_textbox(
+            pymupdf.Rect(145, y + 6, 540, y + 40),
+            band["comment"],
+            fontsize=8.3,
+            fontname=font,
+            color=(0.18, 0.18, 0.21),
+            lineheight=1.18,
+        )
+        y += 52
+
+    section_heading_y = y + 4
+    insert_text(page, (42, section_heading_y), "대수와 기하 점수 확인", 14, font, accent)
+    section_comments = manifest.get("sectionComments", [])
+    y = section_heading_y + 24
+    for line in section_comments:
+        page.insert_textbox(
+            pymupdf.Rect(48, y, 548, y + 34),
+            "• " + line,
+            fontsize=8.8,
+            fontname=font,
+            color=(0.18, 0.18, 0.21),
+            lineheight=1.2,
+        )
+        y += 37
+    draw_footer(
+        page,
+        "정답만 확인하지 말고 틀린 이유와 다시 풀 수 있는지를 기록하세요.",
+        page_number,
+        font,
+    )
 
 
 def render_crop(
@@ -264,7 +448,26 @@ def render_crop(
     exam_number: int,
     font: str,
 ) -> None:
-    target_page.show_pdf_page(target_rect, source_document, crop.page_number - 1, clip=crop.rect)
+    # Flatten the imported source crop before placing it.  Some source PDFs
+    # contain several subset Korean fonts; although they are embedded, a few
+    # browser and mobile viewers substitute those subsets incorrectly.  A
+    # 3x lossless render keeps equations and diagrams print-sharp while making
+    # the visible question / solution text independent of the viewer's font
+    # engine.  Our own header, footer, numbering, and answer sheets remain
+    # searchable text.
+    source_page = source_document[crop.page_number - 1]
+    source_pixmap = source_page.get_pixmap(
+        matrix=pymupdf.Matrix(3.0, 3.0),
+        clip=crop.rect,
+        alpha=False,
+        annots=False,
+    )
+    target_page.insert_image(
+        target_rect,
+        stream=source_pixmap.tobytes("png"),
+        keep_proportion=False,
+        overlay=True,
+    )
     scale_x = target_rect.width / crop.rect.width
     scale_y = target_rect.height / crop.rect.height
     local_x0 = (crop.anchor_rect.x0 - crop.rect.x0) * scale_x
@@ -288,6 +491,116 @@ def render_crop(
     )
 
 
+def solution_supplement_height(entry: dict) -> float:
+    lines = entry.get("solutionSupplementLines", [])
+    if not lines:
+        return 0.0
+    return 27.0 + len(lines) * 14.0
+
+
+def solution_entry_height(entry: dict) -> float:
+    crop: Crop = entry["crop"]
+    crop_height = min(
+        crop.rect.height * (COLUMN_WIDTH / crop.rect.width),
+        CONTENT_BOTTOM - CONTENT_TOP,
+    )
+    supplement = solution_supplement_height(entry)
+    return crop_height + (5.0 if supplement else 0.0) + supplement
+
+
+def draw_solution_supplement(
+    page: pymupdf.Page,
+    entry: dict,
+    rect: pymupdf.Rect,
+    font: str,
+) -> None:
+    lines = entry.get("solutionSupplementLines", [])
+    if not lines:
+        return
+    page.draw_rect(
+        rect,
+        color=(0.72, 0.66, 0.82),
+        fill=(0.975, 0.965, 0.99),
+        width=0.7,
+    )
+    insert_text(page, (rect.x0 + 8, rect.y0 + 16), "풀이를 더 자세히", 8.4, font, (0.24, 0.09, 0.48))
+    for index, line in enumerate(lines):
+        insert_text(
+            page,
+            (rect.x0 + 8, rect.y0 + 34 + index * 14),
+            line,
+            7.5,
+            font,
+            (0.16, 0.16, 0.19),
+        )
+
+
+def plan_balanced_solution_pages(entries: list[dict]) -> list[tuple[list[dict], list[dict]]]:
+    """Partition ordered solution crops into balanced two-column pages.
+
+    The old renderer filled the left column greedily and then the right.  That
+    could strand one short explanation on a final page.  This planner examines
+    every valid ordered split, minimizes page count first, and then minimizes
+    column-height imbalance without shrinking the source explanations.
+    """
+
+    capacity = CONTENT_BOTTOM - CONTENT_TOP
+    gap = 7.0
+    heights = [solution_entry_height(entry) for entry in entries]
+    prefix = [0.0]
+    for height in heights:
+        prefix.append(prefix[-1] + height)
+
+    def stack_height(start: int, end: int) -> float:
+        count = end - start
+        if count <= 0:
+            return 0.0
+        return prefix[end] - prefix[start] + gap * (count - 1)
+
+    @lru_cache(maxsize=None)
+    def solve(start: int) -> tuple[int, float, tuple[tuple[int, int], ...]]:
+        if start == len(entries):
+            return 0, 0.0, ()
+        best: tuple[int, float, tuple[tuple[int, int], ...]] | None = None
+        for split in range(start + 1, len(entries) + 1):
+            left_height = stack_height(start, split)
+            if left_height > capacity + 0.01:
+                break
+            for end in range(split, len(entries) + 1):
+                if end == split and end != len(entries):
+                    continue
+                right_height = stack_height(split, end)
+                if right_height > capacity + 0.01:
+                    break
+                remaining_pages, remaining_penalty, remaining_plan = solve(end)
+                empty_penalty = capacity * 3 if end == split else 0.0
+                short_column_penalty = max(0.0, capacity * 0.16 - min(left_height, right_height))
+                penalty = (
+                    abs(left_height - right_height)
+                    + empty_penalty
+                    + short_column_penalty * 2
+                    + remaining_penalty
+                )
+                candidate = (
+                    1 + remaining_pages,
+                    penalty,
+                    ((split, end),) + remaining_plan,
+                )
+                if best is None or candidate[:2] < best[:2]:
+                    best = candidate
+        if best is None:
+            raise ValueError(f"Unable to place solution item {start + 1}")
+        return best
+
+    _, _, encoded = solve(0)
+    pages: list[tuple[list[dict], list[dict]]] = []
+    start = 0
+    for split, end in encoded:
+        pages.append((entries[start:split], entries[split:end]))
+        start = end
+    return pages
+
+
 def add_crop_pages(
     document: pymupdf.Document,
     manifest: dict,
@@ -295,38 +608,101 @@ def add_crop_pages(
     source_documents: dict[str, pymupdf.Document],
     font_path: Path | None,
     solution: bool,
+    page_number_start: int = 0,
 ) -> None:
     section_order = [section["id"] for section in manifest["sections"]]
-    page_counter = 0
+    page_counter = page_number_start
     for section_id in section_order:
         section = next(section for section in manifest["sections"] if section["id"] == section_id)
         section_items = [item for item in items if item["sectionId"] == section_id]
-        page: pymupdf.Page | None = None
-        font = "helv"
-        column = 0
-        cursor_y = CONTENT_TOP
-        for entry in section_items:
-            crop: Crop = entry["crop"]
-            height = crop.rect.height * (COLUMN_WIDTH / crop.rect.width)
-            if height > CONTENT_BOTTOM - CONTENT_TOP:
-                height = CONTENT_BOTTOM - CONTENT_TOP
-            if page is None or cursor_y + height > CONTENT_BOTTOM:
-                if page is not None and column == 0:
-                    column = 1
-                    cursor_y = CONTENT_TOP
-                else:
-                    page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
-                    font = load_font(page, font_path)
-                    page_counter += 1
-                    subtitle = f"{section['label']} · {section['minutes']}분" + (" · 해설" if solution else "")
-                    draw_page_header(page, manifest["title"], subtitle, font)
-                    draw_footer(page, manifest["footer"], page_counter, font)
-                    column = 0
-                    cursor_y = CONTENT_TOP
-            x0 = MARGIN_X if column == 0 else MARGIN_X + COLUMN_WIDTH + COLUMN_GAP
-            target = pymupdf.Rect(x0, cursor_y, x0 + COLUMN_WIDTH, cursor_y + height)
-            render_crop(page, source_documents[entry["bookId"]], crop, target, int(entry["examNumber"]), font)
-            cursor_y += height + 7
+        if not solution:
+            # The student exam always uses a fixed four-item page: the first
+            # two items in the left column and the next two in the right
+            # column.  Earlier height-driven packing could leave one item by
+            # itself on the left while three items accumulated on the right.
+            # Fixed slots preserve reading order and make every printed page
+            # predictable.
+            slots = ((0, 0), (0, 1), (1, 0), (1, 1))
+            for chunk_start in range(0, len(section_items), 4):
+                chunk = section_items[chunk_start : chunk_start + 4]
+                page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
+                font = load_font(page, font_path)
+                page_counter += 1
+                subtitle = f"{section['label']} · {section['minutes']}분"
+                draw_page_header(page, manifest["title"], subtitle, font)
+                draw_footer(page, manifest["footer"], page_counter, font)
+                divider_y = CONTENT_TOP + ITEM_ROW_HEIGHT + ITEM_ROW_GAP / 2
+                for column in (0, 1):
+                    x0 = MARGIN_X if column == 0 else MARGIN_X + COLUMN_WIDTH + COLUMN_GAP
+                    page.draw_line(
+                        pymupdf.Point(x0, divider_y),
+                        pymupdf.Point(x0 + COLUMN_WIDTH, divider_y),
+                        color=(0.88, 0.86, 0.91),
+                        width=0.45,
+                    )
+                for entry, (column, row) in zip(chunk, slots):
+                    crop: Crop = entry["crop"]
+                    slot_x0 = MARGIN_X if column == 0 else MARGIN_X + COLUMN_WIDTH + COLUMN_GAP
+                    slot_y0 = CONTENT_TOP + row * (ITEM_ROW_HEIGHT + ITEM_ROW_GAP)
+                    available_width = COLUMN_WIDTH
+                    available_height = ITEM_ROW_HEIGHT - 5.0
+                    scale = min(
+                        available_width / crop.rect.width,
+                        available_height / crop.rect.height,
+                    )
+                    target_width = crop.rect.width * scale
+                    target_height = crop.rect.height * scale
+                    target = pymupdf.Rect(
+                        slot_x0,
+                        slot_y0,
+                        slot_x0 + target_width,
+                        slot_y0 + target_height,
+                    )
+                    render_crop(
+                        page,
+                        source_documents[entry["bookId"]],
+                        crop,
+                        target,
+                        int(entry["examNumber"]),
+                        font,
+                    )
+            continue
+
+        for left_entries, right_entries in plan_balanced_solution_pages(section_items):
+            page = document.new_page(width=PAGE_WIDTH, height=PAGE_HEIGHT)
+            font = load_font(page, font_path)
+            page_counter += 1
+            subtitle = f"{section['label']} · {section['minutes']}분 · 해설"
+            draw_page_header(page, manifest["title"], subtitle, font)
+            draw_footer(page, manifest["footer"], page_counter, font)
+            for column, column_entries in enumerate((left_entries, right_entries)):
+                x0 = MARGIN_X if column == 0 else MARGIN_X + COLUMN_WIDTH + COLUMN_GAP
+                cursor_y = CONTENT_TOP
+                for entry in column_entries:
+                    crop: Crop = entry["crop"]
+                    crop_height = min(
+                        crop.rect.height * (COLUMN_WIDTH / crop.rect.width),
+                        CONTENT_BOTTOM - CONTENT_TOP,
+                    )
+                    target = pymupdf.Rect(x0, cursor_y, x0 + COLUMN_WIDTH, cursor_y + crop_height)
+                    render_crop(
+                        page,
+                        source_documents[entry["bookId"]],
+                        crop,
+                        target,
+                        int(entry["examNumber"]),
+                        font,
+                    )
+                    supplement_height = solution_supplement_height(entry)
+                    if supplement_height:
+                        supplement_rect = pymupdf.Rect(
+                            x0,
+                            target.y1 + 5,
+                            x0 + COLUMN_WIDTH,
+                            target.y1 + 5 + supplement_height,
+                        )
+                        draw_solution_supplement(page, entry, supplement_rect, font)
+                    cursor_y += crop_height + (5 if supplement_height else 0) + supplement_height + 7
 
 
 def write_audit(
@@ -408,14 +784,25 @@ def main() -> None:
         exam = pymupdf.open()
         add_cover(exam, manifest, args.font, solution=False)
         add_crop_pages(exam, manifest, question_items, question_documents, args.font, solution=False)
-        add_answer_sheet(exam, manifest, args.font)
+        add_answer_sheet(exam, manifest, args.font, page_number=len(exam))
         args.exam_output.parent.mkdir(parents=True, exist_ok=True)
         exam.save(args.exam_output, garbage=4, deflate=True)
         exam.close()
 
         solution = pymupdf.open()
         add_cover(solution, manifest, args.font, solution=True)
-        add_crop_pages(solution, manifest, solution_items, solution_documents, args.font, solution=True)
+        if answer_data:
+            add_answer_key_sheet(solution, manifest, answer_data, args.font, page_number=2)
+        add_commentary_sheet(solution, manifest, args.font, page_number=len(solution) + 1)
+        add_crop_pages(
+            solution,
+            manifest,
+            solution_items,
+            solution_documents,
+            args.font,
+            solution=True,
+            page_number_start=len(solution),
+        )
         args.solution_output.parent.mkdir(parents=True, exist_ok=True)
         solution.save(args.solution_output, garbage=4, deflate=True)
         solution.close()

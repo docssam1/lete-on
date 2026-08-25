@@ -65,6 +65,74 @@
     auditActions: ["KEEP_RETAG", "MOVE_COURSE", "REVISE", "EXCLUDE", "ADD_NEW"],
     generationKinds: ["parameterized", "bespoke", "figure_only"],
     difficultyBands: ["lowered", "standard", "raised"],
+    geometryPipeline: {
+      principle: "외부 문제 그림을 복제하지 않고 검증된 기하 관계 데이터로 새 SVG를 생성",
+      stages: [
+        "formalize",
+        "validate_constraints",
+        "allocate_coordinates",
+        "render_svg",
+        "solve_independently",
+        "verify_unique_answer",
+        "audit_visual",
+        "owner_approval"
+      ],
+      itemFields: [
+        "entities",
+        "relations",
+        "givens",
+        "target",
+        "constructionSteps",
+        "theoremTrace",
+        "diagramSeed",
+        "rendererVersion",
+        "answerValidator",
+        "visualAudit",
+        "sourceLicense",
+        "derivativePolicy"
+      ],
+      renderPolicy: {
+        format: "svg",
+        accessibility: ["문제 본문과 같은 조건만 시각화", "색상 없이도 구별", "점·각·길이 표기 겹침 금지"],
+        variants: ["desktop", "mobile", "print"],
+        lockOnFailure: true
+      },
+      sourceReferences: [
+        {
+          id: "geometry3k-intergps",
+          role: "형식 언어·도형 관계 스키마 참고",
+          verifiedFacts: ["3002문항", "도형 주석", "논리 형식"],
+          codeLicense: "MIT",
+          productionAssetPolicy: "원문·원도형을 학생용 자산으로 직접 가져오지 않음"
+        },
+        {
+          id: "pgps9k",
+          role: "구조·의미 관계, 정리 기반 풀이 프로그램, 유형 체계 참고",
+          verifiedFacts: ["9022문항", "서로 다른 도형 4000개", "30개 문제 유형", "도형 의존 문항 90% 초과"],
+          codeAndDatasetLicense: "MIT repository declaration",
+          productionAssetPolicy: "출판사 원천이 섞인 원문·원도형은 직접 판매 자산으로 사용하지 않음"
+        },
+        {
+          id: "geogen",
+          role: "생성기·좌표 배치·그리기·풀이·검증 모듈 분리 참고",
+          verifiedFacts: ["generator", "allocator", "plotter", "solver", "target_finder", "verifier"],
+          codeLicense: "MIT with third-party notices",
+          productionAssetPolicy: "구조만 참고하고 우리 교육과정·검산 규칙으로 독립 구현"
+        },
+        {
+          id: "geoeval",
+          role: "난도별 벤치마크와 시각·문장 동시 평가 참고",
+          verifiedFacts: ["main 2000", "backward 750", "augmented 2000", "hard 300"],
+          accessPolicy: "학술 신청 및 비밀번호 필요",
+          productionAssetPolicy: "직접 수집·판매용 사용 금지"
+        },
+        {
+          id: "dl4gps",
+          role: "후속 기하 데이터셋과 풀이기 탐색 인덱스",
+          productionAssetPolicy: "데이터셋으로 계산하지 않음"
+        }
+      ]
+    },
     modes: [
       { id: "SH", label: "황소 고등형", rule: "고등과정 선발·중등 누적 심화" },
       { id: "DP", label: "돌파형", rule: "중1 입학 선수 과정과 공통수학 입반을 시험별 분리" },
