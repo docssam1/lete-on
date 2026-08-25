@@ -497,6 +497,30 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-tmcard .close{background:none;border:none;color:#9aa2b1;font-weight:700;font-size:14px;cursor:pointer}
 
 /* ============================================================
+   체험 게이트 (Phase 2B) — 잠긴 유닛/편지함/인쇄 카드 + 승인번호 모달
+   ============================================================ */
+.nm-unit.trial-locked{opacity:.55;background:#f5f4f0}
+.nm-unit-lock{position:absolute;top:6px;right:8px;font-size:13px}
+.nm-road-stone.trial-locked{opacity:.6}
+.nm-gc-unit-row.trial-locked{opacity:.55}
+.nm-gate-card-inline{text-align:center}
+.nm-gate-card-inline .nm-card-h{margin-bottom:8px}
+
+.nm-gate-overlay{position:fixed;inset:0;background:rgba(14,44,87,.55);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:90;padding:24px}
+.nm-gate-card{background:#fff;border-radius:22px;padding:28px 22px 22px;max-width:360px;width:100%;
+  text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);position:relative}
+.nm-gate-x{position:absolute;top:10px;right:12px;border:none;background:none;color:#9aa2b1;font-size:16px;cursor:pointer;padding:6px}
+.nm-gate-ico{font-size:34px;margin-bottom:6px}
+.nm-gate-card h3{font-size:18px;color:var(--blue-deep);margin:0 0 6px}
+.nm-gate-card p{font-size:13.5px;color:#4a5468;line-height:1.55;margin:0 0 16px}
+.nm-gate-inputrow{display:flex;gap:8px;margin-bottom:8px}
+.nm-gate-inputrow input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:11px;padding:11px 12px;font-size:14px;font-family:'Pretendard',sans-serif;color:var(--ink)}
+.nm-gate-inputrow input:focus{border-color:var(--blue);outline:none}
+.nm-gate-msg{font-size:12.5px;color:#c0392b;min-height:16px;margin-bottom:8px}
+.nm-gate-note{font-size:12px;color:var(--sub);margin:0}
+
+/* ============================================================
    온보딩 — 캐릭터+이름 선택 → 구름 등장 연출
    ============================================================ */
 .nm-ob{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;

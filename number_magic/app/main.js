@@ -83,8 +83,23 @@ if(!S.character_unlocked)S.character_unlocked={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
+/* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
+   hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
+   병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
+   자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
+if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
+
+/* ---------- 체험 게이트 (Phase 2B) ----------
+   승인번호 없이는 각 티어의 대표 유닛만 플레이 가능. 대표 유닛 선정은
+   과정-로드맵.md §10 "체험 유닛 선정" 그대로: 유아 N-01·N-09, 초급 A-01, 창의 C-06.
+   난이도 잠금(자유 선택 원칙)과는 무관한 별개의 축 — active면 이 체크는 전부 통과. */
+const TRIAL_UNITS=['N-01','N-09','A-01','C-06'];
+function isTrialUnit(uid){return TRIAL_UNITS.indexOf(uid)>=0;}
+function accountActive(){return !!(S.account&&S.account.status==='active');}
+function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
    캐릭터 이름 = 고유 아이디. 온보딩에서 이름이 비어 있지 않고 중복이 아니면
@@ -111,6 +126,53 @@ async function cloudClaim(name,state){
   if(!r.ok)throw new Error('cloudClaim '+r.status);
   return true;
 }
+/* ---------- 승인번호 (nm_codes, Phase 2B) ----------
+   RLS가 이미 "active=true 행만 select 가능"으로 걸려 있으므로, code로만 조회해서
+   행이 오면 유효(=active)한 것이고 안 오면 오타든 비활성이든 똑같이 "없음"이다 —
+   회수(재검증)도 같은 함수 재사용: 비활성화된 코드는 RLS가 그 순간부터 숨겨준다. */
+async function nmCheckCode(code){
+  const url=`${SB_URL}/rest/v1/nm_codes?code=eq.${encodeURIComponent(code)}&select=code`;
+  const r=await fetch(url,{headers:sbHdr()});
+  if(!r.ok)throw new Error('nmCheckCode '+r.status);
+  const rows=await r.json();
+  return rows.length>0;
+}
+/* 코드 제출(잠금 모달·설정 화면 공용). 성공 시 S.account를 active로 갱신하고 저장까지 한다. */
+async function applyAccountCode(code){
+  code=(code||'').trim();
+  if(!code)return{ok:false,reason:'empty'};
+  try{
+    const valid=await nmCheckCode(code);
+    if(valid){
+      S.account={status:'active',code,checkedAt:Date.now()};
+      save();
+      return{ok:true};
+    }
+    return{ok:false,reason:'invalid'};
+  }catch(e){
+    return{ok:false,reason:'network'};
+  }
+}
+/* 회수 동기화: active+code인 프로필만, 하루 1회 재검증. 코드 없는 grandfather는 대상 아님.
+   네트워크 실패면 상태를 그대로 두고 조용히 넘어간다(오프라인에서 잠그지 않는다). */
+async function reverifyAccountIfNeeded(){
+  const acc=S.account;
+  if(!acc||acc.status!=='active'||!acc.code)return;
+  const DAY=86400000;
+  if(acc.checkedAt&&(Date.now()-acc.checkedAt)<DAY)return;
+  try{
+    const valid=await nmCheckCode(acc.code);
+    if(valid){
+      S.account.checkedAt=Date.now();save();
+    }else{
+      S.account={status:'trial',code:null,checkedAt:Date.now()};
+      save();
+      toast(S.lang==='ko'?'학원 승인이 해제되어 체험 모드로 돌아갔어요.':S.lang==='en'?'Academy approval was removed — back to trial mode.':'学院授权已取消，已恢复体验模式。',false);
+      render();
+    }
+  }catch(e){ /* 오프라인 — 다음에 다시 시도 */ }
+}
+
 let cloudTimer=null;
 function cloudPushSoon(){
   if(!S.cloudLinked||!S.name)return;
@@ -548,11 +610,12 @@ function screenRoadmap(){
       if(!u)return;
       const done=stepDone(uid,'stamp');
       const isNext=uid===nextId;
-      const cls='nm-road-stone'+(done?' done':isNext?' next':'');
+      const locked=unitLocked(uid);
+      const cls='nm-road-stone'+(done?' done':isNext?' next':'')+(locked?' trial-locked':'');
       html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
-        ${done?'⭐':''}
+        ${done?'⭐':locked?'🔒':''}
         <div class="nm-road-stone-title">${L(u.title)}</div>
-        ${isNext?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
+        ${isNext&&!locked?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
       </div>`;
     });
     if(ch.tip){
@@ -602,6 +665,7 @@ function findNextRoadUnit(){
 }
 
 function enterRoadUnit(uid){
+  if(unitLocked(uid)){showGateModal();return;}
   S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
   S._fromRoadmap=true;
   save();render();
@@ -876,10 +940,11 @@ function screenGradeCourse(){
         const u=UNITS[uid];if(!u)return;
         const done=stepDone(uid,'stamp');
         const isNext=uid===nextId;
-        bodyHtml+=`<div class="nm-gc-unit-row" data-uid="${uid}">
+        const locked=unitLocked(uid);
+        bodyHtml+=`<div class="nm-gc-unit-row${locked?' trial-locked':''}" data-uid="${uid}">
           <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
           <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
-          ${done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
+          ${locked?'<span style="font-size:11px">🔒</span>':done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
         </div>`;
       });
       if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
@@ -1010,13 +1075,15 @@ function envelopeForWeek(weekKey){
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
 
-/* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관) */
+/* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관, 단 firstWeek 이전은 제외 —
+   신규 학생이 과거 봉투 8개를 한번에 받지 않도록, Phase 2B §10 잔여) */
 function mailboxWeeks(){
   const weeks = recentWeekKeys(8);
+  const first = S.firstWeek || weeks[weeks.length-1];
   return weeks.map((wk,i) => ({
     weekKey: wk, isCurrent: i===0,
     opened: !!(S.mailbox.opened && S.mailbox.opened[wk])
-  })).filter(w => w.isCurrent || !w.opened);
+  })).filter(w => w.weekKey >= first).filter(w => w.isCurrent || !w.opened);
 }
 function mailboxUnreadCount(){ return mailboxWeeks().filter(w=>!w.opened).length; }
 
@@ -1026,6 +1093,24 @@ function screenMailbox(){
   const scr=$('#screen');
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
+
+  /* 편지함도 같은 게이트(§10) — trial이면 봉투 목록조차 만들지 않는다 */
+  if(!accountActive()){
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card nm-gate-card-inline">
+        <div class="nm-card-h">🔒 ${lk('편지함은 학원 승인 후 열려요','The mailbox unlocks after academy approval','学院授权后才能开启信箱')}</div>
+        <p class="nm-wsh-sentence">${lk('승인번호가 있으면 지금 바로 열 수 있어요.','If you already have a code, you can unlock it right now.','有授权码即可立即解锁。')}</p>
+        <button class="nm-btn full" id="mbGate">🔑 ${lk('승인번호 입력','Enter code','输入授权码')}</button>
+      </div>
+    </div>`;
+    $('#mbBack').onclick=()=>{S.view='town';save();render();};
+    $('#mbGate').onclick=showGateModal;
+    return;
+  }
 
   if(S._mbWeek){
     const env = envelopeForWeek(S._mbWeek);
@@ -1117,6 +1202,57 @@ function showTownModal(title,desc,onGo){
   if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
+}
+/* ---------- 체험 게이트 안내 모달 (Phase 2B) ----------
+   잠긴 유닛/편지함/인쇄 어디서 열든 항상 같은 모달 하나(§10 "같은 게이트, 같은 안내").
+   screenTown()의 #tmodal(등급 소개용)과는 별개 — 그건 render()가 스크린을 통째로
+   갈아끼울 때 사라지지만, 이 모달은 town 밖(screenTier/roadmap/mailbox/exam)에서도
+   떠야 해서 body에 직접 붙였다 뗀다. */
+function gateModalHtml(){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return `<div class="nm-gate-overlay" id="nmGateModal">
+    <div class="nm-gate-card">
+      <button class="nm-gate-x" id="nmGateClose" aria-label="close">✕</button>
+      <div class="nm-gate-ico">🔒</div>
+      <h3>${ko?'승인번호가 있으면 모두 열려요':en?'Unlock everything with your academy code':'输入学院授权码即可解锁全部'}</h3>
+      <p>${ko?'지금은 체험 모드예요. 각 단계 대표 유닛만 먼저 만나볼 수 있어요.':en?'You’re in trial mode — try a taste from each level first.':'当前为体验模式，先体验各阶段的代表单元。'}</p>
+      <div class="nm-gate-inputrow">
+        <input id="nmGateCode" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" maxlength="24" autocomplete="off">
+        <button class="nm-btn" id="nmGateSubmit">${ko?'확인':en?'Apply':'确认'}</button>
+      </div>
+      <div class="nm-gate-msg" id="nmGateMsg"></div>
+      <p class="nm-gate-note">${ko?'승인번호가 없나요? 다니는 학원 선생님께 문의해 주세요.':en?"Don't have a code? Ask your academy for one.":'没有授权码？请咨询所在学院老师。'}</p>
+    </div>
+  </div>`;
+}
+function showGateModal(){
+  if($('#nmGateModal'))return;
+  document.body.insertAdjacentHTML('beforeend',gateModalHtml());
+  const close=()=>{const m=$('#nmGateModal');if(m)m.remove();};
+  $('#nmGateClose').onclick=close;
+  $('#nmGateModal').addEventListener('click',e=>{if(e.target.id==='nmGateModal')close();});
+  const inp=$('#nmGateCode'),msg=$('#nmGateMsg'),btn=$('#nmGateSubmit');
+  const ko=S.lang==='ko',en=S.lang==='en';
+  async function submit(){
+    const code=(inp.value||'').trim();
+    if(!code){msg.textContent=ko?'코드를 입력해 주세요.':en?'Please enter a code.':'请输入授权码。';return;}
+    btn.disabled=true;
+    msg.textContent=ko?'확인 중…':en?'Checking…':'检查中…';
+    const res=await applyAccountCode(code);
+    btn.disabled=false;
+    if(res.ok){
+      toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
+      close();
+      render();
+    }else if(res.reason==='network'){
+      msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
+    }else{
+      msg.textContent=ko?'코드를 확인해 주세요.':en?'Please check your code.':'请确认授权码。';
+    }
+  }
+  btn.onclick=submit;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+  inp.focus();
 }
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
@@ -1346,11 +1482,11 @@ function screenTier(){
         <div class="nm-level-t">${L(lvl.title)}</div>
         <div class="nm-unit-row">`;
       units.forEach(uid=>{
-        const u=UNITS[uid];const done=unitDone(uid);
-        html+=`<button class="nm-unit ${done?'done':''}" data-unit="${uid}">
+        const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
+        html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''}" data-unit="${uid}">
           <span class="nm-unit-ic">${u.icon||'✦'}</span>
           <span class="nm-unit-name">${L(u.title)}</span>
-          ${done?'<span class="nm-unit-check">✓</span>':''}
+          ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':''}
         </button>`;
       });
       html+=`</div></div>`;
@@ -1368,6 +1504,7 @@ function screenTier(){
    유닛 — 6단계 STEP 흐름
    ============================================================ */
 function enterUnit(uid){
+  if(unitLocked(uid)){showGateModal();return;}
   S.view='unit';S.unit=uid;S.sub={};
   const u=UNITS[uid];
   const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
@@ -1975,9 +2112,11 @@ function screenCloset(){
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
   <div id="nm-idcard-slot"></div>
+  <div id="nm-account-slot"></div>
   <div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
+  renderAccountCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
@@ -1998,6 +2137,46 @@ function screenCloset(){
         if(ci)ci.textContent=S.coins;
       }
     });
+  }
+}
+
+/* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
+   설정/프로필 화면 쪽 코드 입력 지점. 게이트 모달과 로직(applyAccountCode)을 공유. */
+function renderAccountCard(){
+  const slot=$('#nm-account-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const acc=S.account||{status:'trial'};
+  if(acc.status==='active'){
+    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 유닛 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
+    return;
+  }
+  slot.innerHTML=`<div class="nm-idcard">
+    <div class="nm-idcard-t">🔒 ${ko?'체험 모드':en?'Trial mode':'体验模式'}</div>
+    <div class="nm-idcard-row">
+      <input id="accCode" maxlength="24" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" autocomplete="off">
+      <button class="nm-btn" id="accSubmit">${ko?'확인':en?'Apply':'确认'}</button>
+    </div>
+    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 유닛·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
+  </div>`;
+  $('#accCode').addEventListener('keydown',e=>{if(e.key==='Enter')submitAcc();});
+  $('#accSubmit').onclick=submitAcc;
+  async function submitAcc(){
+    const inp=$('#accCode'),msg=$('#accMsg'),btn=$('#accSubmit');
+    const code=(inp.value||'').trim();
+    if(!code){msg.textContent=ko?'코드를 입력해 주세요.':en?'Please enter a code.':'请输入授权码。';return;}
+    btn.disabled=true;
+    msg.textContent=ko?'확인 중…':en?'Checking…':'检查中…';
+    const res=await applyAccountCode(code);
+    btn.disabled=false;
+    if(res.ok){
+      toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
+      renderAccountCard();
+    }else if(res.reason==='network'){
+      msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
+    }else{
+      msg.textContent=ko?'코드를 확인해 주세요.':en?'Please check your code.':'请确认授权码。';
+    }
   }
 }
 
@@ -2072,6 +2251,24 @@ function renderIdCard(){
 /* ---------- 시험 / 학습지 화면 ---------- */
 function screenExam(){
   const scr=$('#screen');
+  /* 학습지 인쇄도 같은 게이트(§10) */
+  if(!accountActive()){
+    const ko=S.lang==='ko', en=S.lang==='en';
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="backExam">${t('back')}</button>
+      <div class="nm-unit-title">📝 ${ko?'학습지 & 시험':en?'Worksheet & Exam':'学习单 & 考试'}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card nm-gate-card-inline">
+        <div class="nm-card-h">🔒 ${ko?'학습지 인쇄는 학원 승인 후 열려요':en?'Worksheet printing unlocks after academy approval':'学院授权后才能打印学习单'}</div>
+        <p class="nm-wsh-sentence">${ko?'승인번호가 있으면 지금 바로 열 수 있어요.':en?'If you already have a code, you can unlock it right now.':'有授权码即可立即解锁。'}</p>
+        <button class="nm-btn full" id="examGate">🔑 ${ko?'승인번호 입력':en?'Enter code':'输入授权码'}</button>
+      </div>
+    </div>`;
+    $('#backExam').onclick=()=>{S.view='town';save();render();};
+    $('#examGate').onclick=showGateModal;
+    return;
+  }
   if(!window.NM_EXAM||!window.examScreen){
     scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
       <p style="padding:40px;text-align:center">시험 모듈 로딩 실패</p>`;
@@ -2159,6 +2356,7 @@ function screenWorksheetHelper(wsId){
 function boot(){
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
   render();
+  reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }
 if(window.katex)boot(); else{const t2=setInterval(()=>{if(window.katex){clearInterval(t2);boot();}},60);setTimeout(()=>{if(!window.katex)boot();},1500);}
 })();
