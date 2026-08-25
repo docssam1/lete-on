@@ -119,7 +119,7 @@
   }
 
   function currentDifficultyLabel() {
-    return ({ "-1": "심화 낮춤", "0": "심화 기준", "1": "심화 올림" })[String(state.difficulty)] || "심화 기준";
+    return ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(state.difficulty)] || "심화 기준";
   }
 
   function visibleTypes() {

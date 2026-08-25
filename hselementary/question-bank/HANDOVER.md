@@ -15,6 +15,7 @@
 - Use the actual advanced-course problem structure as the baseline.
 - Do not label or classify content as `일품`; that source level is not present.
 - Easy, standard, and hard variants must preserve the same mathematical structure. Adjust only number ranges, conditions, or reasoning depth.
+- Use the display labels `심화 쉬움` (-1), `심화 기준` (0), and `심화 어려움` (1). They are variants of the same advanced-course structure, not separate curricula.
 - Build a dedicated generator for each type. Do not substitute generic arithmetic filler.
 - Keep formulas readable with structured HTML/SVG and verify that no symbols, fractions, or layouts break on mobile.
 - Validate answers algorithmically and stress-test every generator before marking a type ready.
