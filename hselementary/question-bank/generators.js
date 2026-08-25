@@ -4786,12 +4786,22 @@
     ratioEquationTwoAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
       if (kind === 0) {
-        const lowPercent = pick(rng, [5, 6, 8]), highPercent = lowPercent + pick(rng, [6, 8, 10]), targetPercent = highPercent - pick(rng, [2, 3]);
-        const lowMass = pick(rng, [100, 200, 300]), highMass = lowMass * (targetPercent - lowPercent) / (highPercent - targetPercent);
+        const { lowPercent, lowMass, highPercent, targetPercent } = pick(rng, [
+          { lowPercent: 5, lowMass: 200, highPercent: 15, targetPercent: 10 },
+          { lowPercent: 6, lowMass: 300, highPercent: 14, targetPercent: 10 },
+          { lowPercent: 6, lowMass: 200, highPercent: 16, targetPercent: 12 },
+          { lowPercent: 8, lowMass: 200, highPercent: 20, targetPercent: 12 },
+        ]);
+        const highMass = lowMass * (targetPercent - lowPercent) / (highPercent - targetPercent);
         return result(`진하기가 ${lowPercent}%인 소금물 ${lowMass}g과 ${highPercent}%인 소금물을 섞어 ${targetPercent}%인 소금물을 만들려고 합니다. ${highPercent}% 소금물은 몇 g 넣어야 합니까?${ratioEvidence("target-mixture-mass", [lowPercent, lowMass, highPercent, targetPercent])}`, highMass, `소금의 양을 같게 놓으면 ${lowMass}×${lowPercent}%+x×${highPercent}%=(${lowMass}+x)×${targetPercent}%입니다. x=${highMass}g입니다.`);
       }
       if (kind === 1) {
-        const mass = pick(rng, [400, 500, 600]), firstPercent = pick(rng, [6, 8, 10]), targetPercent = firstPercent + pick(rng, [2, 4, 5]);
+        const { mass, firstPercent, targetPercent } = pick(rng, [
+          { mass: 400, firstPercent: 6, targetPercent: 12 },
+          { mass: 500, firstPercent: 8, targetPercent: 10 },
+          { mass: 600, firstPercent: 10, targetPercent: 15 },
+          { mass: 600, firstPercent: 8, targetPercent: 12 },
+        ]);
         const finalMass = mass * firstPercent / targetPercent, answer = mass - finalMass;
         return result(`진하기가 ${firstPercent}%인 소금물 ${mass}g을 매일 같은 양씩 증발시켰더니 진하기가 ${targetPercent}%가 되었습니다. 증발한 물은 모두 몇 g입니까?${ratioEvidence("evaporated-water", [mass, firstPercent, targetPercent])}`, answer, `소금의 양은 ${mass * firstPercent / 100}g으로 변하지 않습니다. 최종 무게는 ${mass * firstPercent / 100}÷${targetPercent}%=${finalMass}g이므로 ${answer}g이 증발했습니다.`);
       }
@@ -6268,13 +6278,13 @@
       const kind = int(rng, 0, 2), pi = 3.14;
       if (kind === 0) {
         const radius = int(rng, 2, 5 + level), height = int(rng, 8, 14 + level);
-        const answer = decimal(2 * pi * radius * height, 2);
-        return result(`반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 옆면을 빈틈없이 감싸는 종이의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-net", a: radius, b: height })}${circleSolidEvidence("cylinder-lateral", [radius, height, pi])}`, answer, `옆면 전개도는 가로 ${2 * pi * radius}cm, 세로 ${height}cm인 직사각형이므로 ${answer}cm²입니다.`);
+        const circumference = decimal(2 * pi * radius, 2), answer = decimal(2 * pi * radius * height, 2);
+        return result(`반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 옆면을 빈틈없이 감싸는 종이의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-net", a: radius, b: height })}${circleSolidEvidence("cylinder-lateral", [radius, height, pi])}`, answer, `옆면 전개도는 가로 ${circumference}cm, 세로 ${height}cm인 직사각형이므로 ${answer}cm²입니다.`);
       }
       if (kind === 1) {
         const radius = int(rng, 2, 5), width = int(rng, 8, 13 + level), turns = int(rng, 3, 7);
-        const answer = decimal(2 * pi * radius * width * turns, 2);
-        return result(`반지름이 ${radius}cm이고 폭이 ${width}cm인 원기둥 모양 롤러를 ${turns}바퀴 굴렸습니다. 겹치지 않게 칠한 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-wrap", a: radius, b: width, c: turns })}${circleSolidEvidence("roller-area", [radius, width, turns, pi])}`, answer, `한 바퀴에 ${2 * pi * radius}×${width}cm²를 칠하므로 ${turns}바퀴는 ${answer}cm²입니다.`);
+        const circumference = decimal(2 * pi * radius, 2), answer = decimal(2 * pi * radius * width * turns, 2);
+        return result(`반지름이 ${radius}cm이고 폭이 ${width}cm인 원기둥 모양 롤러를 ${turns}바퀴 굴렸습니다. 겹치지 않게 칠한 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-wrap", a: radius, b: width, c: turns })}${circleSolidEvidence("roller-area", [radius, width, turns, pi])}`, answer, `한 바퀴에 ${circumference}×${width}cm²를 칠하므로 ${turns}바퀴는 ${answer}cm²입니다.`);
       }
       const unit = int(rng, 3, 6 + level), circumference = 3 * unit, height = 4 * unit, path = 5 * unit;
       return result(`원기둥 옆면을 한 바퀴 감아 오른 선을 전개했더니 가로 ${circumference}cm, 세로 ${height}cm인 직사각형의 대각선이 되었습니다. 선의 길이를 구하세요.${solidDiagramSvg({ kind: "cylinder-wrap", a: decimal(circumference / (2 * pi), 2), b: height, c: 1 })}${circleSolidEvidence("cylinder-helix", [circumference, height])}`, path, `전개도에서 ${circumference}-${height}-${path}는 3:4:5인 직각삼각형이므로 선의 길이는 ${path}cm입니다.`);
@@ -6283,12 +6293,13 @@
       const kind = int(rng, 0, 2), pi = 3.14;
       if (kind === 0) {
         const radius = int(rng, 2, 4 + level), multiple = int(rng, 2, 5), slant = radius * multiple, answer = 360 / multiple;
-        return result(`밑면의 반지름이 ${radius}cm, 모선이 ${slant}cm인 원뿔의 옆면을 펼쳤습니다. 부채꼴의 중심각을 구하세요.${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-net-angle", [radius, slant])}`, answer, `부채꼴의 호 ${2 * pi * radius}cm는 반지름 ${slant}cm인 원주의 ${radius}/${slant}이므로 중심각은 ${answer}°입니다.`);
+        const baseCircumference = decimal(2 * pi * radius, 2);
+        return result(`밑면의 반지름이 ${radius}cm, 모선이 ${slant}cm인 원뿔의 옆면을 펼쳤습니다. 부채꼴의 중심각을 구하세요.${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-net-angle", [radius, slant])}`, answer, `부채꼴의 호 ${baseCircumference}cm는 반지름 ${slant}cm인 원주의 ${radius}/${slant}이므로 중심각은 ${answer}°입니다.`);
       }
       if (kind === 1) {
         const radius = int(rng, 3, 6 + level), slant = radius + int(rng, 4, 8), ribs = int(rng, 5, 8);
-        const answer = decimal(ribs * slant + 2 * pi * radius, 2);
-        return result(`원뿔 모양 골조를 만들려고 길이 ${slant}cm인 모선 철사 ${ribs}개와 밑면 둘레 철사 한 개를 사용합니다. 밑면 반지름이 ${radius}cm일 때 필요한 철사의 전체 길이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-frame", [radius, slant, ribs, pi])}`, answer, `모선은 ${slant}×${ribs}cm, 밑면 둘레는 ${2 * pi * radius}cm이므로 모두 ${answer}cm입니다.`);
+        const baseCircumference = decimal(2 * pi * radius, 2), answer = decimal(ribs * slant + 2 * pi * radius, 2);
+        return result(`원뿔 모양 골조를 만들려고 길이 ${slant}cm인 모선 철사 ${ribs}개와 밑면 둘레 철사 한 개를 사용합니다. 밑면 반지름이 ${radius}cm일 때 필요한 철사의 전체 길이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-frame", [radius, slant, ribs, pi])}`, answer, `모선은 ${slant}×${ribs}cm, 밑면 둘레는 ${baseCircumference}cm이므로 모두 ${answer}cm입니다.`);
       }
       const radius = int(rng, 2, 5), turns = int(rng, 2, 5), slant = radius * turns;
       return result(`밑면의 반지름이 ${radius}cm이고 모선이 ${slant}cm인 원뿔을 옆으로 굴립니다. 꼭짓점을 중심으로 처음 방향으로 돌아올 때까지 원뿔은 몇 바퀴 구릅니까?${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-roll", [radius, slant])}`, turns, `꼭짓점 둘레의 큰 원주는 밑면 원주의 ${slant}/${radius}=${turns}배이므로 ${turns}바퀴입니다.`);
