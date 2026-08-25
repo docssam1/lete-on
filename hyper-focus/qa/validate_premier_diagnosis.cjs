@@ -181,6 +181,9 @@ const viewerHtml = fs.readFileSync(path.join(root, "fields-classic", "print-view
 assert.match(viewerHtml, /id="diagnosisBtn"/);
 assert.match(viewerHtml, /\.\.\/\.\.\/premier\/diagnosis\.html\?exam=/);
 assert.match(viewerHtml, /documentKey\.startsWith\("premier-"\)/);
+const premierDiagnosisHandler = viewerHtml.match(/function openPremierDiagnosis\(\)\{[\s\S]*?\n\}/)?.[0] || "";
+assert.match(premierDiagnosisHandler, /location\.href=url;/, "프리미어 진단 버튼은 모바일 팝업 차단 없이 같은 화면에서 이동해야 합니다.");
+assert.doesNotMatch(premierDiagnosisHandler, /window\.open\(/, "프리미어 진단 버튼에 팝업 방식을 다시 사용하면 안 됩니다.");
 
 const releaseCatalog = loadWindowScript("hyper-focus/mock/premier-release-catalog.js", "GFIELD_HF_PREMIER_RELEASE_CATALOG");
 const releaseRounds = releaseCatalog.series.flatMap((series) => series.rounds);

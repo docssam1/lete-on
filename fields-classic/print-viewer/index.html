@@ -124,7 +124,7 @@ function openAnswerGuide(){
 function openPremierDiagnosis(){
   if(!documentKey.startsWith("premier-"))return;
   const url=`../../premier/diagnosis.html?exam=${encodeURIComponent(documentKey)}&student=${encodeURIComponent(student)}`;
-  window.open(url,"_blank","noopener");
+  location.href=url;
 }
 
 function watermark(){
