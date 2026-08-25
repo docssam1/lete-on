@@ -312,6 +312,12 @@ test("admin draft builder lists only safe candidates and supports placement add,
   });
   assert.equal(batch.status, 200);
   assert.equal((await batch.json()).placements[0].points, 2);
+  const preview = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/output-preview?questionsPerPage=5`, { headers: { Cookie: auth.cookie } });
+  assert.equal(preview.status, 200);
+  const previewPayload = await preview.json();
+  assert.equal(previewPayload.pages.length, 1);
+  assert.equal(previewPayload.answerResponseLayout[0].responseType, candidatePayload.candidates[0].responseType);
+  safeBuilderWalk(previewPayload);
   const student = await login(env.base);
   const forbidden = await fetch(`${env.base}/admin/exam-drafts`, { headers: { Cookie: student.cookie } });
   assert.equal(forbidden.status, 403);

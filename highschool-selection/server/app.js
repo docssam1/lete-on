@@ -15,6 +15,7 @@ const security = require("./security.js");
 const draftCore = require("../data/exam-draft-core.js");
 const candidateQuery = require("../data/exam-candidate-query.js");
 const bankCore = require("../data/question-bank-core.js");
+const outputPreview = require("../data/exam-output-preview.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -170,7 +171,19 @@ function createApp(options) {
       return true;
     }
 
-    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/scope$/);
+    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/output-preview$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "GET") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const questionsPerPage = url.searchParams.has("questionsPerPage") ? Number(url.searchParams.get("questionsPerPage")) : 10;
+      sendJson(response, 200, outputPreview.build(cleanRecord.draft, cleanRecord.placements, { questionsPerPage }));
+      return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/scope$/);
     if (match) {
       requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
