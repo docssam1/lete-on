@@ -340,15 +340,15 @@
           "number": 5,
           "area": "공간과 도형",
           "type": "3×3×3 상자 완성에 필요한 쌓기나무",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 6,
           "area": "공간과 도형",
           "type": "격자와 중앙 도형의 정사각형 세기",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 7,
@@ -389,15 +389,15 @@
           "number": 12,
           "area": "공간과 도형",
           "type": "다섯 번 접은 곱셈표의 맨 위 수",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 13,
           "area": "수와 연산",
           "type": "평형저울 도형 등가 관계",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 14,
@@ -424,8 +424,8 @@
           "number": 17,
           "area": "규칙과 관계",
           "type": "가로세로 일정한 차 수 배열",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 18,
@@ -449,8 +449,8 @@
           "reviewStatus": "verified"
         }
       ],
-      "eligibleCount": 11,
-      "lockedCount": 9
+      "eligibleCount": 16,
+      "lockedCount": 4
     },
     {
       "key": "premier-utilization-4",

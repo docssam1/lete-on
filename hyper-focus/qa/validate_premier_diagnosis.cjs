@@ -21,7 +21,7 @@ assert.strictEqual(data.policy, "original-image-single-answer-only");
 assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4회여야 합니다.");
 
 const expectedCounts = [
-  20, 14, 11, 12, 17, 11, 12, 15,
+  20, 14, 16, 12, 17, 11, 12, 15,
   8, 13, 16,
   16, 17, 14, 15
 ];
@@ -46,8 +46,8 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 211);
-assert.strictEqual(lockedTotal, 89);
+assert.strictEqual(eligibleTotal, 216);
+assert.strictEqual(lockedTotal, 84);
 
 const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
 assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
@@ -72,6 +72,55 @@ for (const top of [1, 2, 5, 6]) {
   }
 }
 assert.deepStrictEqual([...q04Sums], [23], "활용 2회 4번은 가능한 모든 시작 방향에서 바닥면 합이 23이어야 합니다.");
+
+const utilizationThree = data.exams.find((exam) => exam.key === "premier-utilization-3");
+for (const number of [5, 6, 12, 13, 17]) {
+  assert.strictEqual(utilizationThree.questions.find((question) => question.number === number).scoringEligible, true, `활용 3회 ${number}번은 독립 검산된 채점 문항이어야 합니다.`);
+}
+assert.strictEqual(27 - [3, 3, 2, 2, 1].reduce((sum, height) => sum + height, 0), 16, "활용 3회 5번의 3×3×3 상자 잔여 수가 다릅니다.");
+const outerGridSquares = [1, 2, 3].reduce((sum, size) => sum + (4 - size + 1) * (3 - size + 1), 0);
+assert.strictEqual(outerGridSquares - 2 + 1 + 1, 20, "활용 3회 6번의 끊긴 두 칸·중앙 정사각형·기울어진 정사각형 분류가 다릅니다.");
+
+function foldNumberGrid(grid, direction) {
+  const height = grid.length;
+  const width = grid[0].length;
+  const flip = (stack) => [...stack].reverse();
+  if (direction === "R2L") {
+    const next = grid.map((row) => row.slice(0, width / 2).map((stack) => [...stack]));
+    for (let row = 0; row < height; row += 1) for (let column = width / 2; column < width; column += 1) next[row][width - 1 - column].push(...flip(grid[row][column]));
+    return next;
+  }
+  if (direction === "L2R") {
+    const next = grid.map((row) => row.slice(width / 2).map((stack) => [...stack]));
+    for (let row = 0; row < height; row += 1) for (let column = 0; column < width / 2; column += 1) next[row][width / 2 - 1 - column].push(...flip(grid[row][column]));
+    return next;
+  }
+  if (direction === "U2D") {
+    const next = grid.slice(height / 2).map((row) => row.map((stack) => [...stack]));
+    for (let row = 0; row < height / 2; row += 1) for (let column = 0; column < width; column += 1) next[height / 2 - 1 - row][column].push(...flip(grid[row][column]));
+    return next;
+  }
+  const next = grid.slice(0, height / 2).map((row) => row.map((stack) => [...stack]));
+  for (let row = height / 2; row < height; row += 1) for (let column = 0; column < width; column += 1) next[height - 1 - row][column].push(...flip(grid[row][column]));
+  return next;
+}
+let foldedGrid = Array.from({ length: 4 }, (_, row) => Array.from({ length: 8 }, (_, column) => [(row + 1) * (column + 1)]));
+for (const direction of ["R2L", "U2D", "L2R", "D2U", "L2R"]) foldedGrid = foldNumberGrid(foldedGrid, direction);
+assert.strictEqual(foldedGrid[0][0][foldedGrid[0][0].length - 1], 9, "활용 3회 12번의 다섯 번 접기 최상층이 다릅니다.");
+
+const balanceRatios = new Set();
+for (let square = 1; square <= 20; square += 1) for (let triangle = 1; triangle <= 20; triangle += 1) for (let circle = 1; circle <= 20; circle += 1) {
+  if (square + triangle === circle && 3 * square === circle + 3 * triangle && (square + circle) % triangle === 0) balanceRatios.add((square + circle) / triangle);
+}
+assert.deepStrictEqual([...balanceRatios], [5], "활용 3회 13번의 빈 접시 삼각형 수가 유일하지 않습니다.");
+
+const stepPairs = [];
+for (let horizontal = -10; horizontal <= 10; horizontal += 1) for (let vertical = -10; vertical <= 10; vertical += 1) {
+  const value = (row, column) => 3 + horizontal * column + vertical * row;
+  if (value(0, 1) === 5 && value(0, 2) === 7 && value(1, 2) === 14 && value(2, 0) === 17 && value(2, 2) === 21 && value(3, 1) === 26 && value(3, 4) === 32) stepPairs.push([horizontal, vertical]);
+}
+assert.deepStrictEqual(stepPairs, [[2, 7]], "활용 3회 17번의 가로·세로 증가 규칙이 유일하지 않습니다.");
+assert.deepStrictEqual([[2, 1], [2, 3], [3, 3]].map(([row, column]) => 3 + 2 * column + 7 * row), [19, 23, 30], "활용 3회 17번의 빈칸 값이 다릅니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [
