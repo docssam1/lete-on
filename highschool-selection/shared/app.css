@@ -329,6 +329,9 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .replacement-checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
 .replacement-checks .check { min-height: 48px; font-size: 11px; }
 .builder-approval { display: flex; justify-content: end; align-items: center; gap: 10px; }
+.audit-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.audit-list li { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.audit-list li span { color: var(--muted); font-size: 10px; text-align: right; }
 .output-preview { padding: 20px 24px; }
 .output-preview-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
 .output-preview-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
@@ -376,6 +379,8 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
   .builder-actions { grid-template-columns: 1fr; }
   .builder-scope-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .builder-approval { justify-content: start; }
+  .audit-list li { display: grid; gap: 3px; }
+  .audit-list li span { text-align: left; }
   .grid-3 { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .exam-grid { grid-template-columns: 1fr; }
