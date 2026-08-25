@@ -50,6 +50,7 @@ The current ready set has passed its unit-specific regression coverage. A final 
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Graph regression check: `graph-audit.js`
+- Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
 - Plane-transformation detail routing check: `movement-audit.js`
 - Mixed-operation regression check: `mixed-operation-audit.js`
 - Factors-and-multiples regression check: `factors-audit.js`

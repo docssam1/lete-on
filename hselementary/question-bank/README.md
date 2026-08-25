@@ -27,7 +27,7 @@
 - `curriculum.js`: 학기·단원·유형 분류
 - `generators.js`: 난이도별 문제·정답·풀이 생성기
 - `math-notation.js`: 분수·대분수·문자/빈칸 분수와 넓이/부피 단위를 판독하는 공통 표기 모듈
-- `math-notation-audit.js`: 482개 전 유형의 분수·대분수·문자/빈칸 분수·넓이/부피 단위·SVG 치수 표기 검수
+- `math-notation-audit.js`: 489개 전 유형의 분수·대분수·문자/빈칸 분수·넓이/부피 단위·SVG 치수 표기 검수
 - `mixed-operation-audit.js`: 5-1 자연수의 혼합 계산 4유형의 식·답·유일한 기호 조합 검산
 - `factors-audit.js`: 5-1 약수와 배수 12유형의 약수·소인수·공약수·공배수 조건 검산
 - `correspondence-audit.js`: 5-1 규칙과 대응 4유형의 변환 규칙·대응표·도형 배열·실제 조건 검산
@@ -45,6 +45,7 @@
 - `decimal-division-audit.js`: 6-1 소수의 나눗셈 24유형의 나눗셈·반올림·수직선·이동·넓이·만남 조건 독립 검산
 - `ratio-percent-audit.js`: 6-1 비와 비율 36유형의 비·백분율·밀도·할인·진하기·비율식 조건 독립 검산
 - `advanced-graphs-audit.js`: 6-1 여러 가지 그래프 24유형의 비율 합·눈금·도수·평균·결합 조건 독립 검산
+- `GRAPH_READABILITY_VALIDATION.md`: 모든 그래프의 눈금·격자선·좌표·모바일 가독성 공개 기준
 - `volume-surface-audit.js`: 6-1 직육면체의 부피와 겉넓이 24유형의 겉넓이·부피·수조·관통 구멍 조건 독립 검산
 - `fraction-division-6-2-audit.js`: 6-2 분수의 나눗셈 36유형의 연산·단위량·일률·거리·도형·혼합 계산 독립 검산
 - `decimal-division-6-2-audit.js`: 6-2 소수의 나눗셈 36유형의 비교·활용·반올림·나머지·단위량·관계식 독립 검산
