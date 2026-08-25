@@ -25,3 +25,13 @@
 5. 기존 Node 서버와 병행 검증한 뒤에만 GitHub Pages의 API 대상을 전환한다.
 
 현재 단계는 운영 배포가 아니라, 원문과 정답을 노출하지 않는 데이터 기반을 잠근 상태다.
+
+## Edge Function 읽기 게이트
+
+`supabase/functions/draft-admin`은 아직 화면에 연결하지 않은 관리자 전용 읽기 게이트다. `GET`만 허용하며 `action=readiness`와 `action=candidates&mode=SH`만 지원한다. 원문·정답·해설·저장 경로를 선택하거나 반환하지 않는다.
+
+- Supabase Auth 사용자와 `hs_staff_accounts.status=active`를 모두 확인한다.
+- 권한은 서버가 설정한 `app_metadata.gfield_role=admin`만 사용한다. 브라우저가 수정할 수 있는 `user_metadata`는 사용하지 않는다.
+- `HIGHSELECT_ALLOWED_ORIGINS`에는 운영 GitHub Pages 주소와 필요한 로컬 개발 주소만 JSON 배열로 설정한다. 와일드카드는 사용하지 않는다.
+- `SUPABASE_SECRET_KEY` 또는 레거시 `SUPABASE_SERVICE_ROLE_KEY`는 Edge Function 비밀값으로만 설정한다. 공개 코드·브라우저 설정에는 넣지 않는다.
+- 초안 생성·수정·승인 API와 GitHub Pages 전환은 원격 DB/RLS 검증 후에만 추가한다.
