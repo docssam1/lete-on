@@ -143,6 +143,14 @@ function testStaticPortalContract() {
     "공개 카탈로그·보안 클라이언트·결합 모듈은 portal.js보다 먼저 로드해야 합니다.");
   assert.match(indexHtml, /id="collectionStatus"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(indexHtml, /id="collectionRetry"[^>]*hidden/);
+  assert.match(indexHtml, /class="campaign-showcase"[\s\S]*HYPER FOCUS REPORT/,
+    "공개 홈에 하이퍼 포커스 리포트 광고가 있어야 합니다.");
+  assert.match(indexHtml, /54 TYPE DIAGNOSIS[\s\S]*문항 진단 살펴보기/,
+    "공개 홈에 54유형 문항 진단 광고와 진입 링크가 있어야 합니다.");
+  assert.match(indexHtml, /15 PREMIER MOCK EXAMS[\s\S]*활용 8회·파이널 3회·최종 4회[\s\S]*data-login-open/,
+    "공개 홈에 15회 모의고사 광고가 있어야 하며 응시는 로그인으로 연결해야 합니다.");
+  assert.match(indexHtml, /premier-report-ad-fast\.mp4/,
+    "기존 누적 진단 리포트 광고 영상을 복원해야 합니다.");
 
   assert.match(portalSource, /auth\.canAccess\(session, product\.permission\)/,
     "큰 모의고사 책은 기존 상품 권한으로 제어해야 합니다.");
