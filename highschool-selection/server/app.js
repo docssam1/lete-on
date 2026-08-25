@@ -116,7 +116,10 @@ function materializeDraftRecord(record) {
 function publicDraft(record) {
   const clean = materializeDraftRecord(record);
   const baseValidation = draftCore.validateExamDraft(clean.draft, clean.placements);
-  const validation = clean.draft.constraints ? baseValidation : Object.freeze({ eligible: false, issues: Object.freeze(baseValidation.issues.concat(["constraint.missing"]).sort()), summary: baseValidation.summary });
+  const statusIssue = clean.draft.status === "approved" ? [] : ["draft.status_not_approved"];
+  const constraintIssue = clean.draft.constraints ? [] : ["constraint.missing"];
+  const issues = baseValidation.issues.concat(statusIssue, constraintIssue).sort();
+  const validation = issues.length === 0 ? baseValidation : Object.freeze({ eligible: false, issues: Object.freeze(issues), summary: baseValidation.summary });
   return { draft: clean.draft, placements: clean.placements, validation };
 }
 
@@ -172,7 +175,21 @@ function createApp(options) {
       return true;
     }
 
-    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/constraints$/);
+    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/approve$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = materializeDraftRecord(record);
+      const validation = draftCore.validateExamDraft(cleanRecord.draft, cleanRecord.placements);
+      if (!cleanRecord.draft.constraints || !validation.eligible) throw new HttpError(409, "문항 수·총점·범위·검수 조건을 모두 충족한 뒤 확정할 수 있습니다.");
+      const draft = draftCore.createExamDraft(Object.assign({}, cleanRecord.draft, { status: "approved" }));
+      const next = { draft, placements: cleanRecord.placements };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/constraints$/);
     if (match) {
       requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");

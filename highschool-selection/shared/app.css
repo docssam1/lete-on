@@ -328,6 +328,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .builder-scope-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 8px; align-items: end; }
 .replacement-checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
 .replacement-checks .check { min-height: 48px; font-size: 11px; }
+.builder-approval { display: flex; justify-content: end; align-items: center; gap: 10px; }
 .output-preview { padding: 20px 24px; }
 .output-preview-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
 .output-preview-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
@@ -374,6 +375,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
   .builder-sidebar { position: static; }
   .builder-actions { grid-template-columns: 1fr; }
   .builder-scope-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .builder-approval { justify-content: start; }
   .grid-3 { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .exam-grid { grid-template-columns: 1fr; }

@@ -326,8 +326,12 @@ test("admin draft builder lists only safe candidates and supports placement add,
   assert.equal(preview.status, 200);
   const previewPayload = await preview.json();
   assert.equal(previewPayload.pages.length, 1);
+  assert.equal(previewPayload.eligibleForProduction, false);
   assert.equal(previewPayload.answerResponseLayout[0].responseType, candidatePayload.candidates[0].responseType);
   safeBuilderWalk(previewPayload);
+  const approved = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/approve`, { method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" }, body: "{}" });
+  assert.equal(approved.status, 200);
+  assert.equal((await approved.json()).draft.status, "approved");
   const student = await login(env.base);
   const forbidden = await fetch(`${env.base}/admin/exam-drafts`, { headers: { Cookie: student.cookie } });
   assert.equal(forbidden.status, 403);
