@@ -115,7 +115,8 @@ function materializeDraftRecord(record) {
 
 function publicDraft(record) {
   const clean = materializeDraftRecord(record);
-  const validation = draftCore.validateExamDraft(clean.draft, clean.placements);
+  const baseValidation = draftCore.validateExamDraft(clean.draft, clean.placements);
+  const validation = clean.draft.constraints ? baseValidation : Object.freeze({ eligible: false, issues: Object.freeze(baseValidation.issues.concat(["constraint.missing"]).sort()), summary: baseValidation.summary });
   return { draft: clean.draft, placements: clean.placements, validation };
 }
 
@@ -179,7 +180,7 @@ function createApp(options) {
       if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
       const cleanRecord = publicDraft(record);
       const questionsPerPage = url.searchParams.has("questionsPerPage") ? Number(url.searchParams.get("questionsPerPage")) : 10;
-      sendJson(response, 200, outputPreview.build(cleanRecord.draft, cleanRecord.placements, { questionsPerPage }));
+      sendJson(response, 200, outputPreview.build(cleanRecord.draft, cleanRecord.placements, { questionsPerPage, validation: cleanRecord.validation }));
       return true;
     }
 
@@ -235,7 +236,7 @@ function createApp(options) {
       itemIds.forEach(function (itemId) {
         const candidate = configuredCandidates.find(function (item) { return item.itemId === itemId; });
         if (!candidate) throw new HttpError(404, "검증된 후보를 찾을 수 없습니다.");
-        placements = draftCore.appendPlacement(cleanRecord.draft, placements, candidate, body.points);
+        placements = draftCore.appendPlacement(cleanRecord.draft, placements, candidate, body.points, undefined, cleanRecord.draft.constraints || undefined);
       });
       const next = { draft: cleanRecord.draft, placements };
       await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
@@ -255,10 +256,12 @@ function createApp(options) {
         const body = await readJson(request, 64 * 1024);
         const mode = String(body.mode || "").toUpperCase();
         if (!bankCore.PROGRAM_MODES.includes(mode)) throw new HttpError(400, "시험 모드가 올바르지 않습니다.");
-        const draft = draftCore.createExamDraft({
+        if (body.constraints == null) throw new HttpError(400, "목표 문항 수, 총점, 유형군 제한을 설정해 주세요.");
+        let draft;
+        try { draft = draftCore.createExamDraft({
           id: bankCore.createNeutralId("examDraft", mode, `draft:${crypto.randomUUID()}`), mode, writer: bankCore.WRITER,
-          title: body.title, scope: body.scope, status: "draft", scopeVersion: 1
-        });
+          title: body.title, scope: body.scope, constraints: body.constraints, status: "draft", scopeVersion: 1
+        }); } catch (error) { throw new HttpError(400, error.message); }
         const record = { draft, placements: [] };
         await draftStore.save(record);
         sendJson(response, 201, publicDraft(record));
@@ -282,7 +285,7 @@ function createApp(options) {
         const itemId = String(body.itemId || "");
         const candidate = configuredCandidates.find(function (item) { return item.itemId === itemId; });
         if (!candidate) throw new HttpError(404, "검증된 후보를 찾을 수 없습니다.");
-        const placements = draftCore.appendPlacement(cleanRecord.draft, cleanRecord.placements, candidate, body.points);
+        const placements = draftCore.appendPlacement(cleanRecord.draft, cleanRecord.placements, candidate, body.points, undefined, cleanRecord.draft.constraints || undefined);
         const next = { draft: cleanRecord.draft, placements };
         await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
       }

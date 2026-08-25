@@ -130,3 +130,15 @@ test("draft validation blocks stale, out-of-scope, review-required, duplicate, a
     "placement.2.review_required"
   ]);
 });
+
+test("draft constraints require the planned question count and total points", () => {
+  const value = ids("SH"), constrained = drafts.createExamDraft({
+    id: value.draft, mode: "SH", writer: "T", title: "Constrained draft", scope: { curriculumVersion: "2022-revised", paths: [path("LIN")] },
+    constraints: { questionCount: 1, totalPoints: 3, maxPerFamily: 1 }, status: "draft", scopeVersion: 1
+  });
+  const placements = drafts.appendPlacement(constrained, [], candidate("SH"), 2, value.placementA, constrained.constraints);
+  const validation = drafts.validateExamDraft(constrained, placements);
+  assert.equal(validation.eligible, false);
+  assert.deepEqual(validation.issues, ["constraint.total_points"]);
+  assert.throws(() => drafts.freezeConstraints({ questionCount: 1, totalPoints: 1, maxPerFamily: 0 }), /maxPerFamily/);
+});

@@ -269,11 +269,16 @@ test("admin draft builder lists only safe candidates and supports placement add,
   const auth = await login(env.base, "관리자", "ADMIN-001");
   const created = await fetch(`${env.base}/admin/exam-drafts`, {
     method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "SH", title: "관리자 초안", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] } })
+    body: JSON.stringify({ mode: "SH", title: "관리자 초안", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] }, constraints: { questionCount: 1, totalPoints: 2, maxPerFamily: 1 } })
   });
   assert.equal(created.status, 201);
   const draft = await created.json();
   safeBuilderWalk(draft);
+  const invalidDraft = await fetch(`${env.base}/admin/exam-drafts`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "SH", title: "제약 누락", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] } })
+  });
+  assert.equal(invalidDraft.status, 400);
   const candidates = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/candidates?sort=response_type`, { headers: { Cookie: auth.cookie } });
   assert.equal(candidates.status, 200);
   const candidatePayload = await candidates.json();

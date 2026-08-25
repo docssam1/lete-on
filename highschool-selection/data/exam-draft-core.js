@@ -72,8 +72,20 @@
     });
   }
 
+  function freezeConstraints(value) {
+    if (value == null) return null;
+    exactKeys(value, ["questionCount", "totalPoints", "maxPerFamily"], "exam draft constraints");
+    const questionCount = positiveInteger(value.questionCount, "exam draft questionCount");
+    invariant(questionCount <= 100, "exam draft questionCount is too large");
+    const totalPoints = Number(value.totalPoints);
+    invariant(Number.isFinite(totalPoints) && totalPoints > 0 && totalPoints <= 1000, "exam draft totalPoints is invalid");
+    const maxPerFamily = positiveInteger(value.maxPerFamily, "exam draft maxPerFamily");
+    invariant(maxPerFamily <= 10, "exam draft maxPerFamily is too large");
+    return Object.freeze({ questionCount, totalPoints, maxPerFamily });
+  }
+
   function createExamDraft(input) {
-    exactKeys(input, ["id", "mode", "writer", "title", "scope", "status", "scopeVersion"], "exam draft");
+    exactKeys(input, ["id", "mode", "writer", "title", "scope", "status", "scopeVersion", "constraints"], "exam draft");
     const mode = String(input.mode || "").toUpperCase();
     invariant(core.PROGRAM_MODES.includes(mode), "examDraft.mode is not allowed");
     invariant(core.isNeutralId(input.id, "examDraft", mode), "examDraft.id is invalid");
@@ -90,7 +102,8 @@
       title,
       scope: freezeScope(input.scope),
       status,
-      scopeVersion
+      scopeVersion,
+      constraints: freezeConstraints(input.constraints)
     });
   }
 
@@ -233,7 +246,7 @@
     assertPlacementSet(draft, placements);
     const candidate = createCandidate(candidateInput, draft);
     invariant(!placements.some(function (placement) { return placement.item.itemId === candidate.itemId; }), "the same item is already placed");
-    const config = constraints || {};
+    const config = Object.assign({}, draft.constraints || {}, constraints || {});
     const maxPerFamily = config.maxPerFamily == null ? 1 : Number(config.maxPerFamily);
     invariant(Number.isSafeInteger(maxPerFamily) && maxPerFamily >= 1, "append maxPerFamily is invalid");
     const familyUses = placements.filter(function (placement) { return placement.item.familyId === candidate.familyId; }).length;
@@ -317,7 +330,7 @@
   function validateExamDraft(draftInput, placements, constraints) {
     const draft = createExamDraft(draftInput);
     const issues = [];
-    const config = constraints || {};
+    const config = Object.assign({}, draft.constraints || {}, constraints || {});
     const items = sortedPlacements(placements || []);
     const placementIds = new Set(), itemIds = new Set(), familyCounts = new Map();
     items.forEach(function (placement, index) {
@@ -349,6 +362,7 @@
     VERIFICATION_STATES,
     LINEAGE_RELATIONS,
     DRAFT_STATUSES,
+    freezeConstraints,
     PLACEMENT_OUTPUT_KEYS,
     FORBIDDEN_CONTENT_KEYS,
     createExamDraft,

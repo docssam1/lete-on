@@ -11,7 +11,7 @@
   function count(value) { const number = Number(value == null ? 10 : value); if (!Number.isSafeInteger(number) || number < 1 || number > 20) throw new TypeError("questionsPerPage must be between 1 and 20"); return number; }
   function build(draft, placements, options) {
     const questionsPerPage = count(options && options.questionsPerPage);
-    const validation = drafts.validateExamDraft(draft, placements);
+    const validation = options && options.validation ? options.validation : drafts.validateExamDraft(draft, placements);
     const rows = placements.slice().sort(function (a, b) { return a.order - b.order; }).map(function (placement, index) {
       return Object.freeze({ number: index + 1, placementId: placement.id, points: placement.points, responseType: placement.item.responseType });
     });

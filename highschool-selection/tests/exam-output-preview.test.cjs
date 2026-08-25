@@ -5,7 +5,7 @@ const drafts = require("../data/exam-draft-core.js");
 const preview = require("../data/exam-output-preview.js");
 
 const mode = "SH";
-const draft = drafts.createExamDraft({ id: core.createNeutralId("examDraft", mode, "output-preview"), mode, writer: "T", title: "Output preview", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] }, status: "draft", scopeVersion: 1 });
+const draft = drafts.createExamDraft({ id: core.createNeutralId("examDraft", mode, "output-preview"), mode, writer: "T", title: "Output preview", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] }, constraints: { questionCount: 1, totalPoints: 3, maxPerFamily: 1 }, status: "draft", scopeVersion: 1 });
 const candidate = { itemId: core.createSharedBankId("question", "output-item"), mode, familyId: core.createSharedBankId("question", "output-family"), typeId: core.createSharedBankId("type", "output-type"), curriculum: { grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }, responseType: "input", classificationVerified: true, answerVerified: true, rightsVerified: true, releaseEligible: true, lineageRelation: "original", difficultyBand: "standard", coreConditionVerified: true, solutionStructureVerified: true };
 
 test("output preview exposes only question ordering, points, and response formats", () => {
