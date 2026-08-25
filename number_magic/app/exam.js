@@ -45,6 +45,18 @@ function renderKaTeX(tex, el){
 
 function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* 다칸 답(배열) 표기: [3,5] → "3, 5". 단일 답은 그대로. */
+function fmtAns(a){ return Array.isArray(a) ? a.join(', ') : a; }
+/* 다칸 답 채점: raw는 콤마로 구분한 사용자 입력 문자열("3, 5" 등), answer는 problem.answer.
+   answer가 배열이 아니면 기존 parseFloat 비교와 동일. */
+function matchesAnswer(raw, answer){
+  if(Array.isArray(answer)){
+    const parts=String(raw==null?'':raw).split(',').map(s=>parseFloat(s.trim()));
+    return parts.length===answer.length && parts.every((v,i)=>v===answer[i]);
+  }
+  return parseFloat(raw)===answer;
+}
+
 /* 원형 번호 ①②③... */
 function circled(n){
   if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
@@ -774,7 +786,7 @@ const NM_EXAM = {
       clearInterval(timerInterval);
       const elapsed = Math.round((Date.now()-startTime)/1000);
       let score = 0;
-      problems.forEach((p,i)=>{ if(answers[i]===p.answer) score++; });
+      problems.forEach((p,i)=>{ if(matchesAnswer(answers[i],p.answer)) score++; });
       onDone && onDone({ score, total:count, time:elapsed, problems, answers, seed, thread, level });
     }
 
@@ -804,7 +816,7 @@ const NM_EXAM = {
     const m = Math.floor(time/60), sec = time%60;
 
     const wrongs = problems.map((p,i)=>({p,i,myAns:answers[i]}))
-                           .filter(x=>x.myAns !== x.p.answer);
+                           .filter(x=>!matchesAnswer(x.myAns,x.p.answer));
 
     container.innerHTML = `
 <div class="nm-exam-result">
@@ -824,7 +836,7 @@ const NM_EXAM = {
           <td>${w.i+1}</td>
           <td class="nm-rtex" data-tex="${esc(w.p.tex||'')}"></td>
           <td class="nm-wrong-ans">${w.myAns??'—'}</td>
-          <td class="nm-correct-ans">${w.p.answer}</td>
+          <td class="nm-correct-ans">${fmtAns(w.p.answer)}</td>
         </tr>`).join('')}
       </tbody>
     </table>
@@ -919,7 +931,7 @@ const NM_EXAM = {
 
       const ak = document.createElement('div');
       ak.className = 'nm-ak-item';
-      ak.textContent = `${i+1}. ${p.answer}`;
+      ak.textContent = `${i+1}. ${fmtAns(p.answer)}`;
       answerGrid.appendChild(ak);
     });
 
@@ -965,7 +977,7 @@ window.examScreen = function(container){
         if(mode==='online'){
           ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
         } else {
           ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
         }
@@ -978,7 +990,7 @@ window.examScreen = function(container){
         if(mode==='online'){
           ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
         } else {
           ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
         }
@@ -991,10 +1003,13 @@ window.examScreen = function(container){
       } else {
         /* 세로셈 불가 → 인라인 KaTeX */
         let ansRow;
+        const isMulti=Array.isArray(p.answer);
         if(mode==='online'){
-          ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
+          ansRow = isMulti
+            ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
+            : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
         } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+          ansRow = `<span class="nm-vp-ans-val">${fmtAns(p.answer)}</span>`;
         } else {
           ansRow = '';
         }
@@ -1004,7 +1019,7 @@ window.examScreen = function(container){
 </div>`;
       }
       const stateClass = graded && mode==='online'
-        ? (parseFloat(userAnswers[i])===p.answer ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
+        ? (matchesAnswer(userAnswers[i],p.answer) ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
         : '';
       return `<div class="nm-ws-cell${wide?' nm-ws-wide':''}${stateClass}" data-ci="${i}">
   <span class="nm-ws-cnum">${num}</span>
@@ -1076,7 +1091,7 @@ window.examScreen = function(container){
       const gradeBtn = container.querySelector('#nm-ws-grade');
       if(gradeBtn) gradeBtn.addEventListener('click', ()=>{
         graded = true; gradeScore = 0;
-        problems.forEach((p,i)=>{ if(parseFloat(userAnswers[i])===p.answer) gradeScore++; });
+        problems.forEach((p,i)=>{ if(matchesAnswer(userAnswers[i],p.answer)) gradeScore++; });
         render();
       });
 
@@ -1148,7 +1163,7 @@ window.examScreen = function(container){
 
         const ak = document.createElement('div');
         ak.className = 'nm-print-ak-item';
-        ak.textContent = `${circled(i+1)} ${p.answer}`;
+        ak.textContent = `${circled(i+1)} ${fmtAns(p.answer)}`;
         akGrid.appendChild(ak);
       });
 
@@ -1204,7 +1219,7 @@ window.examScreen = function(container){
         if(!isNaN(v)) answers[current] = v;
         current++;
         if(current >= wrongProblems.length){
-          const score = wrongProblems.filter((p,i)=>answers[i]===p.answer).length;
+          const score = wrongProblems.filter((p,i)=>matchesAnswer(answers[i],p.answer)).length;
           cnt.innerHTML = `<div class="nm-exam-result">
             <div class="nm-result-score">오답 재시험: ${score}/${wrongProblems.length} 맞혔어요!</div>
             <button id="nm-ex-back" class="nm-btn nm-btn-primary">메뉴로 돌아가기</button>

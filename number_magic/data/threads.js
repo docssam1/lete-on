@@ -259,10 +259,11 @@ MX5:{ name:{ko:'분수·소수 혼합 총정리',en:'Mixed review',zh:'分数小
   levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
 
 /* ── 창의수연 중급 전략 (학습지 지원용) ─────────────── */
-ML12:{ name:{ko:'곱해서 10·100 만들기',en:'Pairs of 10 & 100',zh:'凑10凑100'}, gen:'ml_pair10', prereq:['ML4'],
+ML12:{ name:{ko:'곱해서 10·100·1000 만들기',en:'Pairs of 10, 100 & 1000',zh:'凑10凑100凑1000'}, gen:'ml_pair10', prereq:['ML4'],
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'10 짝꿍',en:'pairs of 10',zh:'凑10'},params:{level:'practice',target:10}},
-          {id:2,label:{ko:'100 짝꿍',en:'pairs of 100',zh:'凑100'},params:{level:'main',target:100}}] },
+          {id:2,label:{ko:'100 짝꿍',en:'pairs of 100',zh:'凑100'},params:{level:'main',target:100}},
+          {id:3,label:{ko:'1000 짝꿍',en:'pairs of 1000',zh:'凑1000'},params:{level:'main',target:1000}}] },
 ML13:{ name:{ko:'"9"를 곱하라',en:'Multiply by 9',zh:'乘9'}, gen:'ml_x9', prereq:['ML4'],
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
@@ -351,6 +352,32 @@ DC5:{ name:{ko:'소수를 나누기',en:'Decimal division',zh:'小数除法'}, g
   widgets:['steps','decimal','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
           {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
+
+/* ── EL 초등 신규 5종 (과정-로드맵.md §3 Level1~2 신규 소요, 2026-08-25 Phase 1) ── */
+EL1:{ name:{ko:'역연산으로 빈칸 찾기',en:'Missing Number by Inverse Operation',zh:'逆运算求空格'}, gen:'el_inverse', prereq:['AD3','DV3'],
+  widgets:['steps','numpad'],
+  levels:[{id:1,label:{ko:'덧셈·뺄셈',en:'Add & Subtract',zh:'加减法'},params:{mode:'as',max:100}},
+          {id:2,label:{ko:'곱셈·나눗셈',en:'Multiply & Divide',zh:'乘除法'},params:{mode:'md',max:12}},
+          {id:3,label:{ko:'혼합·큰 수',en:'Mixed & Bigger',zh:'混合与大数'},params:{mode:'mix',max:999}}] },
+EL2:{ name:{ko:'검산',en:'Checking by Inverse Calculation',zh:'验算'}, gen:'el_check', prereq:['AD6','ML4'],
+  widgets:['steps','numpad'],
+  levels:[{id:1,label:{ko:'덧셈 검산',en:'Check Addition',zh:'加法验算'},params:{mode:'add',max:500}},
+          {id:2,label:{ko:'뺄셈 검산',en:'Check Subtraction',zh:'减法验算'},params:{mode:'sub',max:500}},
+          {id:3,label:{ko:'곱셈·나눗셈 검산',en:'Check Multiply & Divide',zh:'乘除法验算'},params:{mode:'muldiv',max:12}}] },
+EL3:{ name:{ko:'크기 비교',en:'Comparing Expressions',zh:'比较大小'}, gen:'el_compare', prereq:['AD3','ML2'],
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{mode:'simple'}},
+          {id:2,label:{ko:'큰 수',en:'bigger numbers',zh:'较大的数'},params:{mode:'wide'}},
+          {id:3,label:{ko:'값과 차 구하기',en:'value & difference',zh:'求值与差'},params:{mode:'diff'}}] },
+EL4:{ name:{ko:'평균',en:'Average',zh:'平均数'}, gen:'el_average', prereq:['AD6','DV4'],
+  widgets:['steps','numpad'],
+  levels:[{id:1,label:{ko:'세 수의 평균',en:'average of 3',zh:'三个数的平均'},params:{mode:'find',n:3}},
+          {id:2,label:{ko:'다섯 수의 평균',en:'average of 5',zh:'五个数的平均'},params:{mode:'find',n:5}},
+          {id:3,label:{ko:'평균으로 빠진 수 찾기',en:'find the missing number',zh:'由平均数求缺失的数'},params:{mode:'missing'}}] },
+EL5:{ name:{ko:'비례식',en:'Proportions',zh:'比例式'}, gen:'el_ratio', prereq:['MX3'],
+  widgets:['steps','numpad'],
+  levels:[{id:1,label:{ko:'빈 항 구하기',en:'find the term',zh:'求空项'},params:{mode:'direct'}},
+          {id:2,label:{ko:'외항·내항의 곱',en:'cross products',zh:'外项内项之积'},params:{mode:'steps'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

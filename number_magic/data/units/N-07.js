@@ -7,6 +7,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['N-07'] = {
   id:'N-07', tier:'basic', level:'N', order:7,
+  lineage:['ten-friends'],
   generator:'nl7_relation', edu:'유아',
   title:{ ko:'수 이웃과 10 짝꿍', en:'Number Neighbors & Partners of 10', zh:'数的邻居与凑十朋友' },
   subtitle:{ ko:'1 큰 수, 1 작은 수, 그리고 10을 채우는 짝!', en:'One more, one less, and partners that fill 10!', zh:'大1的数、小1的数，还有凑满10的好朋友！' },

@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-17'] = {
   id:'C-17', tier:'intermediate', level:'C', order:17,
+  lineage:['ten-friends'],
   generator:'ml_x25',
   title:{ ko:'×25 전략', en:'The ×25 Strategy', zh:'×25策略' },
   subtitle:{ ko:'25는 100의 4분의 1! ×25 = ×100 ÷ 4', en:'25 is a quarter of 100! ×25 = ×100 ÷ 4', zh:'25是100的四分之一！×25 = ×100 ÷ 4' },

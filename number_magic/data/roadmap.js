@@ -212,8 +212,8 @@ window.NM_ROADMAP = {
     {
       id:'R12', icon:'🤝', grade:'창의',
       edu:{ko:'짝 만들기',en:'Creative strategy',zh:'创意策略'},
-      theme:{ko:'3단계 · 짝 만들기 — 10·100을 만들어라',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
-      units:['C-02','C-04','C-03'] },
+      theme:{ko:'3단계 · 짝 만들기 — 10·100·1000을 만들어라',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
+      units:['C-02','C-04','C-03','C-34'] },
 
     /* ─────── R13 : 자리이동과 ×5·×25 ─────── */
     {
@@ -266,7 +266,7 @@ window.NM_ROADMAP = {
       id:'CR8', icon:'🎨', grade:'창의',
       edu:{ko:'분수와 소수',en:'Creative strategy',zh:'创意策略'},
       theme:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
-      units:['C-21','C-22','C-31','C-32','C-25','C-33'] },
+      units:['C-21','C-22','C-31','C-32','C-25','C-33','C-35'] },
 
     /* ─────── R17 : 약수와 배수 ─────── */
     {

@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-16'] = {
   id:'C-16', tier:'intermediate', level:'C', order:16,
+  lineage:['ten-friends'],
   generator:'ml_x5',
   title:{ ko:'×5 전략', en:'The ×5 Strategy', zh:'×5策略' },
   subtitle:{ ko:'5는 10의 절반! ×5 = ×10 ÷ 2', en:'5 is half of 10! ×5 = ×10 ÷ 2', zh:'5是10的一半！×5 = ×10 ÷ 2' },

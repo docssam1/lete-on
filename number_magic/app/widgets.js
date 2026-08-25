@@ -32,14 +32,19 @@ function renderKaTeX(tex){
 function buildNumpad(container, cb, opts){
   opts=opts||{};
   container.innerHTML='';
-  const keys=opts.decimal
+  const keys=opts.decimal&&opts.negative
+    ?['1','2','3','4','5','6','7','8','9','.','-','0','del','ok']
+    :opts.decimal
     ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :opts.negative
+    ?['1','2','3','4','5','6','7','8','9','-','0','del','ok']
     :['1','2','3','4','5','6','7','8','9','del','0','ok'];
-  if(opts.decimal)container.classList.add('dec');else container.classList.remove('dec');
+  /* 소수·음수 어느 쪽이든 4열 레이아웃(기존 .dec CSS 재사용 — 13~14키가 3열에 안 맞음) */
+  if(opts.decimal||opts.negative)container.classList.add('dec');else container.classList.remove('dec');
   keys.forEach(k=>{
     const b=document.createElement('button');
-    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
-    b.textContent=k==='del'?'←':k==='ok'?'✓':k;
+    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
+    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;
     b.addEventListener('pointerup',e=>{e.stopPropagation();cb(k);});
     container.appendChild(b);
   });
@@ -58,13 +63,50 @@ function numpadState(screenEl, maxLen){
   return {
     handle(val){
       if(val==='del'){ inp=inp.slice(0,-1); }
+      else if(val==='-'){ inp=inp===''?'-':(inp==='-'?'':inp); /* 선두 - 1회만: 빈칸→'-', '-'→취소 */ }
       else if(val==='.'&&inp.includes('.')){ /* 소수점 중복 방지 */ }
-      else if(inp.length<(maxLen||4)){ inp+=val; }
+      else if(inp.replace('-','').length<(maxLen||4)){ inp+=val; }
       if(screenEl) screenEl.textContent=inp||' ';
       return inp;
     },
     get(){ return inp; },
     clear(){ inp=''; if(screenEl) screenEl.textContent=' '; }
+  };
+}
+
+/* ── 다칸 답(배열 answer) 공용 상태 — numpad 화면에 답칸 N개, 탭으로 포커스 이동 ──
+   answerArr: 정답 배열(길이 N). screenEl에 칸을 렌더링, buildNumpad 콜백에서 handle(val) 호출.
+   ok 판정은 호출부가 isFull()/equals()로 확인. */
+function multiPadState(screenEl, answerArr){
+  const n=answerArr.length;
+  let vals=new Array(n).fill('');
+  let focus=0;
+  function paint(){
+    if(!screenEl)return;
+    screenEl.classList.add('nm-multi');
+    screenEl.innerHTML=vals.map((v,i)=>
+      `<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`
+    ).join('<span class="nm-ans-sep">,</span>');
+    screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
+      b.addEventListener('pointerup',e=>{e.stopPropagation();focus=+b.dataset.i;paint();});
+    });
+  }
+  paint();
+  return {
+    handle(val){
+      let cur=vals[focus];
+      if(val==='del'){ cur=''; }
+      else if(val==='-'){ cur=cur===''?'-':(cur==='-'?'':cur); }
+      else if(val==='.'){ if(!cur.includes('.'))cur+='.'; }
+      else if(cur.replace('-','').length<6){ cur+=val; }
+      vals[focus]=cur;
+      paint();
+    },
+    isFull(){ return vals.every(v=>v!==''&&v!=='-'); },
+    values(){ return vals.slice(); },
+    equals(){ return vals.length===n&&vals.every((v,i)=>parseFloat(v)===answerArr[i]); },
+    clear(){ vals=new Array(n).fill('');focus=0;paint(); },
+    shake(){ shake(screenEl); }
   };
 }
 
@@ -472,7 +514,7 @@ function renderSteps(problem, container, onAnswer){
         return;
       }
       ns.handle(val);
-    },{decimal:decStep});
+    },{decimal:decStep,negative:s.blank<0||!!s.negative||!!problem.negative});
   }
 
   show();
@@ -526,7 +568,7 @@ function renderVertical(problem, container, onAnswer){
     }
     ns.handle(val);
     root.querySelector('#wvAns').textContent=ns.get()||'?';
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────
@@ -560,7 +602,7 @@ function renderMissing(problem, container, onAnswer){
       return;
     }
     ns.handle(val);
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────
@@ -1655,9 +1697,26 @@ function renderFallback(problem, container, onAnswer){
   container.appendChild(root);
 
   const screen=root.querySelector('#wfScreen');
-  const ns=numpadState(screen,4);
+  const isMulti=Array.isArray(problem.answer);
   let submitted=false;
 
+  if(isMulti){
+    const mp=multiPadState(screen,problem.answer);
+    const decAny=problem.answer.some(a=>!Number.isInteger(a));
+    buildNumpad(root.querySelector('#wfPad'),val=>{
+      if(submitted)return;
+      if(val==='ok'){
+        if(!mp.isFull())return;
+        submitted=true;
+        onAnswer(mp.values().map(Number)); // 원본 numpad 위젯들과 동일하게 '사용자 입력값'을 그대로 넘긴다 — 채점은 호출부 책임
+        return;
+      }
+      mp.handle(val);
+    },{decimal:decAny,negative:!!problem.negative});
+    return;
+  }
+
+  const ns=numpadState(screen,4);
   buildNumpad(root.querySelector('#wfPad'),val=>{
     if(submitted)return;
     if(val==='ok'){
@@ -1668,7 +1727,7 @@ function renderFallback(problem, container, onAnswer){
       return;
     }
     ns.handle(val);
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────

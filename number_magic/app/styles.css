@@ -130,8 +130,15 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-key.ok{background:var(--gold);color:#4a370f;border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep)}
 .nm-key.del{color:var(--no)}
 .nm-key.dot{color:#5a7ab8;font-size:24px;font-weight:900}
+.nm-key.neg{color:#c0392b;font-size:24px;font-weight:900}
 .nm-numpad.dec{grid-template-columns:repeat(4,1fr);max-width:320px}
 .nm-numpad.dec .nm-key.ok{grid-column:span 2}
+/* 다칸 답(배열 answer) — 넘패드 화면에 답칸 N개, 탭으로 포커스 이동 */
+.nm-numpad-screen.nm-multi{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap}
+.nm-ans-box{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:36px;padding:0 6px;border-radius:9px;border:2px solid var(--line);background:#fff;font-size:22px;font-weight:900;color:#c3c8d4;cursor:pointer}
+.nm-ans-box:not(:empty){color:var(--blue)}
+.nm-ans-box.cur{border-color:var(--gold-deep);background:#fffdf7;color:var(--blue-deep)}
+.nm-ans-sep{font-size:20px;font-weight:900;color:#9aa2b1}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
 .nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}

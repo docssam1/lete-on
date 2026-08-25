@@ -132,7 +132,7 @@ window.NM_CURRICULUM = {
           units:['C-07','C-08','C-06','C-27'] },
         { id:'3', available:true,
           title:{ko:'3단계 · 짝 만들기',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
-          units:['C-02','C-04','C-03'] },
+          units:['C-02','C-04','C-03','C-34'] },
         { id:'4', available:true,
           title:{ko:'4단계 · 반과 배',en:'Stage 4 · Halves and Doubles',zh:'第4阶 · 折半与翻倍'},
           units:['C-16','C-17','C-28','C-29'] },
@@ -147,7 +147,7 @@ window.NM_CURRICULUM = {
           units:['C-23','C-24','C-12','C-05'] },
         { id:'8', available:true,
           title:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
-          units:['C-21','C-22','C-31','C-32','C-25','C-33'] },
+          units:['C-21','C-22','C-31','C-32','C-25','C-33','C-35'] },
       ]
     },
 

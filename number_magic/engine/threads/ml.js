@@ -657,6 +657,42 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
     };
   }
 
+  if (target === 1000) {
+    /* 곱해서 1000 만들기 — 계보1(2와 5는 친구) 세 번째 관문.
+       8×125, 2×500, 4×250, 40×25, 5×200, 10×100, 20×50 중 매번 다른 짝을 뽑아
+       (target===10/100처럼 짝을 고정하지 않고) 생성을 다양화한다. */
+    const pairs1000 = [[8,125],[2,500],[4,250],[40,25],[5,200],[10,100],[20,50]];
+    const pair      = pick(rng, pairs1000);
+    const bMax3      = lv === 'practice' ? 9 : 12;
+    const extraCount3= lv === 'practice' ? R(rng, 1, 2) : R(rng, 2, 3);
+    const extras3 = [];
+    for (let i = 0; i < extraCount3; i++) {
+      let v;
+      do { v = R(rng, 2, bMax3); } while (v === pair[0] || v === pair[1]);
+      extras3.push(v);
+    }
+    const factors3 = shuffle(rng, [pair[0], pair[1], ...extras3]);
+    const tex3 = factors3.join(' \\times ') + ' = \\square';
+
+    const steps3 = [{ tex: `${pair[0]} \\times ${pair[1]} = \\square`, blank: 1000 }];
+    let running3 = 1000;
+    extras3.forEach(v => {
+      const prev = running3;
+      running3 *= v;
+      steps3.push({ tex: `${prev} \\times ${v} = \\square`, blank: running3 });
+    });
+    const answer3 = running3;
+
+    return {
+      prompt:{ ko:`${factors3.join(' × ')}를 쌍을 찾아 계산해요 (1000을 만드는 쌍이 있어요!)`,
+               en:`Find the pair that makes 1000 to compute ${factors3.join(' × ')}`,
+               zh:`找到乘积为1000的对，计算 ${factors3.join(' × ')}` },
+      tex: tex3,
+      answer: answer3, answerType:'steps', widget:'steps',
+      steps: steps3
+    };
+  }
+
   /* target===100: 4×25=100 짝은 고정, 인수 개수(3~5개)와 값을 다양화 */
   const bMax2      = lv === 'practice' ? 9 : 12;
   const extraCount2= lv === 'practice' ? 1 : R(rng, 2, 3);
