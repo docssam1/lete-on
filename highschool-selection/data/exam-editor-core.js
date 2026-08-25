@@ -47,9 +47,15 @@
       }));
     });
     return Object.freeze(Object.assign({}, draft, {
+      revision: draft.revision,
       scopeKeys: Object.freeze((draft.scopeKeys || []).slice()),
       placements: Object.freeze(placements)
     }));
+  }
+
+  function bumpRevision(draft) {
+    draft.revision += 1;
+    return draft;
   }
 
   function normalizeScopeKeys(scopeKeys) {
@@ -68,11 +74,13 @@
     invariant(input && typeof input === "object", "placement is required");
     invariant(typeof input.placementId === "string" && input.placementId.trim(), "placementId is required");
     invariant(typeof input.itemId === "string" && input.itemId.trim(), "itemId is required");
+    invariant(typeof input.itemVersionId === "string" && input.itemVersionId.trim(), "itemVersionId is required");
     const score = Number(input.score == null ? 0 : input.score);
     invariant(Number.isFinite(score) && score >= 0, "placement.score must be non-negative");
     return {
       placementId: input.placementId,
       itemId: input.itemId,
+      itemVersionId: input.itemVersionId,
       order,
       score,
       locked: Boolean(input.locked),
@@ -88,11 +96,14 @@
     invariant(typeof input.targetId === "string" && input.targetId.trim(), "targetId is required");
     const durationMinutes = Number(input.durationMinutes);
     invariant(Number.isSafeInteger(durationMinutes) && durationMinutes > 0, "durationMinutes must be a positive integer");
+    const revision = Number(input.revision == null ? 1 : input.revision);
+    invariant(Number.isSafeInteger(revision) && revision >= 1, "revision must be a positive integer");
     const placements = (input.placements || []).map(function (placement, index) {
       return normalizePlacement(placement, index + 1);
     });
     const draft = {
       draftId: input.draftId,
+      revision,
       profileId: input.profileId,
       targetId: input.targetId,
       durationMinutes,
@@ -110,6 +121,7 @@
     invariant(draft && typeof draft === "object", "draft is required");
     return {
       draftId: draft.draftId,
+      revision: draft.revision,
       profileId: draft.profileId,
       targetId: draft.targetId,
       durationMinutes: draft.durationMinutes,
@@ -124,9 +136,12 @@
     const issues = [];
     if (!candidate || typeof candidate !== "object") return Object.freeze(["candidate.missing"]);
     if (!candidate.itemId) issues.push("candidate.item_id.missing");
+    if (!candidate.itemVersionId) issues.push("candidate.item_version_id.missing");
     if (candidate.releaseStatus !== "approved") issues.push("candidate.release.not_approved");
     if (candidate.classificationStatus !== "verified") issues.push("candidate.classification.not_verified");
     if (candidate.answerStatus !== "verified") issues.push("candidate.answer.not_verified");
+    if (candidate.singleAnswerStatus !== "verified") issues.push("candidate.single_answer.not_verified");
+    if (candidate.userApprovalStatus !== "approved") issues.push("candidate.user_approval.not_approved");
     if (candidate.figureRequired && candidate.figureStatus !== "verified") issues.push("candidate.figure.not_verified");
     return Object.freeze(issues);
   }
@@ -134,9 +149,11 @@
   function validateDraft(draft) {
     const issues = [];
     if (!draft || !Array.isArray(draft.placements)) return Object.freeze(["draft.placements.missing"]);
+    if (!Number.isSafeInteger(draft.revision) || draft.revision < 1) issues.push("draft.revision.invalid");
     const placementIds = new Set();
     const itemIds = new Set();
     draft.placements.forEach(function (placement, index) {
+      if (!placement.itemVersionId) issues.push("draft.item_version_id.missing");
       if (placementIds.has(placement.placementId)) issues.push("draft.placement_id.duplicate");
       placementIds.add(placement.placementId);
       if (itemIds.has(placement.itemId)) issues.push("draft.item_id.duplicate");
@@ -178,13 +195,14 @@
     next.placements.splice(index, 0, normalizePlacement({
       placementId: input.placementId,
       itemId: input.candidate.itemId,
+      itemVersionId: input.candidate.itemVersionId,
       score: input.score,
       locked: input.locked,
       selectionKind: input.selectionKind || "manual",
       replacementHistory: []
     }, index + 1));
     next.sortMode = "user";
-    return freezeDraft(next);
+    return freezeDraft(bumpRevision(next));
   }
 
   function removePlacement(draft, placementId) {
@@ -194,7 +212,7 @@
     invariant(!next.placements[index].locked, "locked placement cannot be removed");
     next.placements.splice(index, 1);
     next.sortMode = "user";
-    return freezeDraft(next);
+    return freezeDraft(bumpRevision(next));
   }
 
   function movePlacement(draft, placementId, toIndex) {
@@ -206,7 +224,7 @@
     const moved = next.placements.splice(fromIndex, 1)[0];
     next.placements.splice(destination, 0, moved);
     next.sortMode = "user";
-    return freezeDraft(next);
+    return freezeDraft(bumpRevision(next));
   }
 
   function replacePlacement(draft, input) {
@@ -222,22 +240,43 @@
       return placementIndex !== index && placement.itemId === input.candidate.itemId;
     }), "replacement item is already selected");
     const current = next.placements[index];
+    let evidenceId = null;
+    if (relationship !== "manual") {
+      const evidence = input.replacementEvidence;
+      invariant(evidence && typeof evidence === "object", "verified replacement evidence is required");
+      invariant(typeof evidence.evidenceId === "string" && evidence.evidenceId.trim(), "replacement evidenceId is required");
+      invariant(evidence.status === "approved", "replacement evidence is not approved");
+      invariant(evidence.relationship === relationship, "replacement evidence relationship does not match");
+      invariant(evidence.sourceItemId === current.itemId && evidence.sourceItemVersionId === current.itemVersionId, "replacement evidence source does not match");
+      invariant(evidence.candidateItemId === input.candidate.itemId && evidence.candidateItemVersionId === input.candidate.itemVersionId, "replacement evidence candidate does not match");
+      invariant(evidence.familyMatched === true, "replacement family is not verified");
+      invariant(evidence.detailMatched === true, "replacement detail type is not verified");
+      invariant(evidence.solutionStructureMatched === true, "replacement solution structure is not verified");
+      invariant(evidence.difficultyCompatible === true, "replacement difficulty is not verified");
+      evidenceId = evidence.evidenceId;
+    }
     current.replacementHistory.push({
       fromItemId: current.itemId,
+      fromItemVersionId: current.itemVersionId,
       toItemId: input.candidate.itemId,
+      toItemVersionId: input.candidate.itemVersionId,
       relationship,
-      reasonCode: input.reasonCode || "user_selected"
+      reasonCode: input.reasonCode || "user_selected",
+      evidenceId
     });
     current.itemId = input.candidate.itemId;
+    current.itemVersionId = input.candidate.itemVersionId;
     current.selectionKind = relationship;
     next.sortMode = "user";
-    return freezeDraft(next);
+    return freezeDraft(bumpRevision(next));
   }
 
   function setViewMode(draft, viewMode) {
     const next = mutableDraft(draft);
-    next.viewMode = enumValue(viewMode, VIEW_MODES, "viewMode");
-    return freezeDraft(next);
+    const normalized = enumValue(viewMode, VIEW_MODES, "viewMode");
+    if (next.viewMode === normalized) return freezeDraft(next);
+    next.viewMode = normalized;
+    return freezeDraft(bumpRevision(next));
   }
 
   function changeScope(draft, scopeKeys, metadataByItemId) {
@@ -253,7 +292,7 @@
       else reconciliation.classificationPendingPlacementIds.push(placement.placementId);
     });
     return Object.freeze({
-      draft: freezeDraft(next),
+      draft: freezeDraft(bumpRevision(next)),
       reconciliation: Object.freeze({
         keptPlacementIds: Object.freeze(reconciliation.keptPlacementIds),
         outOfScopePlacementIds: Object.freeze(reconciliation.outOfScopePlacementIds),
@@ -294,7 +333,60 @@
       });
     }
     next.sortMode = sortMode;
-    return freezeDraft(next);
+    return freezeDraft(bumpRevision(next));
+  }
+
+  function createDraftProjection(draft) {
+    const issues = validateDraft(draft);
+    invariant(issues.length === 0, `invalid draft: ${issues.join(", ")}`);
+    return Object.freeze({
+      draftId: draft.draftId,
+      revision: draft.revision,
+      entries: Object.freeze(draft.placements.map(function (placement, index) {
+        return Object.freeze({
+          number: index + 1,
+          placementId: placement.placementId,
+          itemId: placement.itemId,
+          itemVersionId: placement.itemVersionId,
+          score: placement.score
+        });
+      }))
+    });
+  }
+
+  function evaluateDraftReadiness(draft, metadataByItemId) {
+    const draftIssues = Array.from(validateDraft(draft));
+    const issues = draftIssues.slice();
+    const metadata = metadataByItemId || {};
+    if (!draft || !Array.isArray(draft.placements)) {
+      return Object.freeze({
+        eligible: false,
+        issues: Object.freeze(Array.from(new Set(issues)).sort()),
+        projection: null
+      });
+    }
+    draft.placements.forEach(function (placement) {
+      const candidate = metadata[placement.itemId];
+      if (!candidate) {
+        issues.push(`placement.metadata.missing:${placement.placementId}`);
+        return;
+      }
+      if (candidate.itemId !== placement.itemId || candidate.itemVersionId !== placement.itemVersionId) {
+        issues.push(`placement.version.mismatch:${placement.placementId}`);
+      }
+      validateCandidate(candidate).forEach(function (issue) {
+        issues.push(`${issue}:${placement.placementId}`);
+      });
+      const inScope = isCurriculumPathInScope(candidate.curriculumPath, draft.scopeKeys);
+      if (inScope === false) issues.push(`placement.scope.outside:${placement.placementId}`);
+      if (inScope === null) issues.push(`placement.scope.classification_pending:${placement.placementId}`);
+    });
+    const uniqueIssues = Array.from(new Set(issues)).sort();
+    return Object.freeze({
+      eligible: uniqueIssues.length === 0,
+      issues: Object.freeze(uniqueIssues),
+      projection: draftIssues.length === 0 ? createDraftProjection(draft) : null
+    });
   }
 
   function summarizeDraft(draft, metadataByItemId) {
@@ -335,6 +427,8 @@
     isCurriculumPathInScope,
     setViewMode,
     sortPlacements,
-    summarizeDraft
+    summarizeDraft,
+    createDraftProjection,
+    evaluateDraftReadiness
   });
 });
