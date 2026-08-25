@@ -85,6 +85,10 @@ function testStaticUiSecurityContract() {
   assert.match(viewerHtml, /secureMock\.loadExam\(examId\)/);
   assert.doesNotMatch(viewerHtml, /secureMock\.loadExam\(examId\s*,/);
   assert.match(viewerHtml, /secureMock\.loadAnswers\(doc\.attemptId\)/);
+  assert.match(viewerHtml, /doc\.deliveryMode==='page_images'/, "원본 PDF 쪽 이미지 전달 분기가 누락되었습니다.");
+  assert.match(viewerHtml, /doc\.pages\.map\(pageImageSheet\)/, "서명된 원본 쪽 이미지를 순서대로 렌더해야 합니다.");
+  assert.match(viewerHtml, /class="secure-page-image"[\s\S]*referrerpolicy="no-referrer"/, "비공개 쪽 이미지는 referrer를 보내면 안 됩니다.");
+  assert.match(viewerHtml, /\.sheet\.secure-page-sheet\{min-height:0;padding:0\}/, "원본 쪽 이미지는 HTML 문제지 여백으로 재편집하면 안 됩니다.");
   assert.match(indexHtml, /secureMock\.saveAttempt\(\{attemptId:exam\.attemptId,marks\}\)/);
   assert.doesNotMatch(indexHtml, /saveAttempt\(\{[^}]*\b(?:student|seed|score|correctCount|wrongTypeIds)\b/);
 

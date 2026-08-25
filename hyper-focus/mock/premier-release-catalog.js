@@ -18,20 +18,20 @@
   });
 
   root.GFIELD_HF_PREMIER_RELEASE_CATALOG = Object.freeze({
-    version: "2026-08-23",
+    version: "2026-08-25",
     series: Object.freeze([
       Object.freeze({
         key: "utilization",
         label: "활용 모의고사",
         rounds: Object.freeze([
-          round("premier-utilization-01", "활용 모의고사 1회", 19, 1, true),
-          round("premier-utilization-02", "활용 모의고사 2회", 13, 7, true),
+          round("premier-utilization-01", "활용 모의고사 1회", 20, 0, false),
+          round("premier-utilization-02", "활용 모의고사 2회", 14, 6, true),
           round("premier-utilization-03", "활용 모의고사 3회", 16, 4, true),
-          round("premier-utilization-04", "활용 모의고사 4회", 14, 6, true),
-          round("premier-utilization-05", "활용 모의고사 5회", 19, 1, true),
-          round("premier-utilization-06", "활용 모의고사 6회", 15, 5, true),
-          round("premier-utilization-07", "활용 모의고사 7회", 13, 7, true),
-          round("premier-utilization-08", "활용 모의고사 8회", 17, 3, true)
+          round("premier-utilization-04", "활용 모의고사 4회", 13, 7, true),
+          round("premier-utilization-05", "활용 모의고사 5회", 17, 3, true),
+          round("premier-utilization-06", "활용 모의고사 6회", 13, 7, true),
+          round("premier-utilization-07", "활용 모의고사 7회", 12, 8, true),
+          round("premier-utilization-08", "활용 모의고사 8회", 16, 4, true)
         ])
       }),
       Object.freeze({
@@ -39,7 +39,7 @@
         label: "파이널 모의고사",
         rounds: Object.freeze([
           round("premier-final-01", "파이널 모의고사 1회", 8, 12, true),
-          round("premier-final-02", "파이널 모의고사 2회", 13, 7, true),
+          round("premier-final-02", "파이널 모의고사 2회", 14, 6, true),
           round("premier-final-03", "파이널 모의고사 3회", 16, 4, true)
         ])
       }),

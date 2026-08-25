@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>프리미어 채점·진단 | GFIELD</title>
+<style>
+:root{--navy:#102a49;--blue:#1e5f91;--gold:#d4a52c;--ink:#142033;--muted:#64748b;--line:#dbe3ec;--paper:#fff;--bg:#edf2f7;--ok:#147a52;--bad:#be3a32;--lock:#7c8798}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+button,select{font:inherit}.topbar{position:sticky;top:0;z-index:10;background:rgba(16,42,73,.97);color:#fff;border-bottom:3px solid var(--gold)}
+.topbar-inner{width:min(1180px,100%);min-height:66px;margin:auto;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{font-weight:950;letter-spacing:.08em}.brand small{display:block;margin-top:3px;color:#d8e4f0;font-size:10px;letter-spacing:.02em}.top-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.top-actions a,.top-actions button{min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.35);border-radius:7px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none;cursor:pointer}.top-actions .ghost{background:transparent;color:#fff}
+main{width:min(1180px,100%);margin:auto;padding:22px 18px 60px}.hero{padding:22px;background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:10px;box-shadow:0 7px 24px rgba(15,23,42,.07)}.eyebrow{font-size:11px;font-weight:950;letter-spacing:.1em;color:#a26a18}.hero-row{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-top:6px}.hero h1{margin:0;color:var(--navy);font-size:26px}.hero p{margin:9px 0 0;color:var(--muted);font-size:13px;line-height:1.65}.select-wrap{display:grid;gap:5px;min-width:240px;color:var(--muted);font-size:11px;font-weight:900}.select-wrap select{height:43px;padding:0 36px 0 12px;border:1px solid #bac8d7;border-radius:7px;background:#fff;color:var(--ink);font-weight:900}
+.notice{margin-top:12px;padding:12px 14px;border:1px solid #efd998;border-radius:8px;background:#fff9e9;color:#6d5311;font-size:12px;font-weight:800;line-height:1.6}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.metric{padding:16px;background:#fff;border:1px solid var(--line);border-radius:9px}.metric-label{font-size:11px;font-weight:900;color:var(--muted)}.metric-value{margin-top:5px;font-size:25px;font-weight:950;color:var(--navy)}.metric-note{margin-top:3px;font-size:10px;color:var(--muted)}
+.section{margin-top:18px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 5px 18px rgba(15,23,42,.05)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}.section h2{margin:0;color:var(--navy);font-size:18px}.section-head p{margin:0;color:var(--muted);font-size:11px}.area-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.area-card{padding:13px;border:1px solid var(--line);border-radius:8px;background:#f8fafc}.area-card.is-weak{border-color:#e7aaa5;background:#fff6f5}.area-title{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:950}.area-rate{color:var(--blue)}.bar{height:7px;margin-top:9px;border-radius:99px;background:#e3e9f0;overflow:hidden}.bar>span{display:block;height:100%;border-radius:inherit;background:var(--blue)}.area-card.is-weak .bar>span{background:var(--bad)}.area-meta{margin-top:7px;color:var(--muted);font-size:10px}.weak-list{display:flex;flex-wrap:wrap;gap:7px}.weak-chip{padding:8px 10px;border:1px solid #efb8b3;border-radius:7px;background:#fff4f2;color:#862a24;font-size:11px;font-weight:900}.empty{padding:15px;border:1px dashed #cbd5e1;border-radius:8px;color:var(--muted);font-size:12px;text-align:center}
+.questions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.question{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:8px}.question.is-locked{background:#f4f6f8;color:#697586}.qnum{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:950}.question.is-locked .qnum{background:var(--lock)}.qarea{font-size:10px;font-weight:900;color:var(--blue)}.qtype{margin-top:3px;font-size:12px;font-weight:850;line-height:1.35}.ox{display:flex;gap:5px}.ox button{width:40px;height:38px;border:1px solid #bdc9d6;border-radius:7px;background:#fff;color:#526173;font-weight:950;cursor:pointer}.ox button.o.is-on{border-color:var(--ok);background:var(--ok);color:#fff}.ox button.x.is-on{border-color:var(--bad);background:var(--bad);color:#fff}.locked-label{padding:7px 9px;border-radius:6px;background:#e3e7ec;color:#667281;font-size:10px;font-weight:950;white-space:nowrap}.footer-note{margin-top:16px;color:var(--muted);font-size:11px;line-height:1.7;text-align:center}
+@media(max-width:780px){.topbar-inner{align-items:flex-start;padding:10px 11px}.brand{font-size:13px}.top-actions a,.top-actions button{min-height:34px;padding:0 9px;font-size:11px}main{padding:12px 8px 36px}.hero{padding:16px}.hero-row{display:block}.hero h1{font-size:21px}.select-wrap{min-width:0;margin-top:14px}.summary{grid-template-columns:repeat(2,1fr)}.metric{padding:13px}.metric-value{font-size:21px}.section{padding:14px}.section-head{display:block}.section-head p{margin-top:5px}.area-grid,.questions{grid-template-columns:1fr}.question{grid-template-columns:42px minmax(0,1fr) auto;gap:8px}.qnum{width:38px;height:38px}.qtype{font-size:11px}.ox button{width:36px;height:36px}}
+@media print{.topbar,.select-wrap,.notice,.questions,.footer-note{display:none!important}body{background:#fff}main{width:100%;padding:0}.hero,.section{box-shadow:none;break-inside:avoid}.summary{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+  <div class="brand">G-FIELD PREMIER<small>원본 이미지 시험지 · O/X 채점 · 부족 영역 진단</small></div>
+  <div class="top-actions"><a id="paperLink" href="./">시험지 보기</a><button class="ghost" type="button" id="printReport">진단표 인쇄</button><button class="ghost" type="button" id="resetBtn">초기화</button></div>
+</div></header>
+<main>
+  <section class="hero">
+    <div class="eyebrow">PREMIER HYPER FOCUS DIAGNOSIS</div>
+    <div class="hero-row"><div><h1 id="examTitle">프리미어 채점·진단</h1><p>시험지에서 푼 결과를 O/X로 표시하면 부족한 영역과 유형을 자동으로 정리합니다.<br>원본 조건이나 그림이 불확실한 문항은 점수에서 자동 제외됩니다.</p></div><label class="select-wrap">회차 선택<select id="examSelect"></select></label></div>
+  </section>
+  <div class="notice" id="policyNotice">정답을 공개하는 화면이 아닙니다. 풀이 영상 또는 선생님 확인 후 스스로 O/X를 표시하세요.</div>
+  <section class="summary" id="summary"></section>
+  <section class="section"><div class="section-head"><h2>부족 영역 진단</h2><p>미응답은 정답률에서 제외하고, 검수 제외 문항은 처음부터 분모에 넣지 않습니다.</p></div><div class="area-grid" id="areaGrid"></div></section>
+  <section class="section"><div class="section-head"><h2>부족 유형</h2><p>현재 X로 표시한 문항의 유형입니다.</p></div><div id="weakTypes"></div></section>
+  <section class="section"><div class="section-head"><h2>문항별 O/X 채점</h2><p id="questionStatus"></p></div><div class="questions" id="questions"></div></section>
+  <p class="footer-note">이 진단은 원본 PDF의 검수 완료 문항만 사용합니다. 원본 오류·복수답으로 채점에서 제외된 문항은 안전한 대체 문항 검수 후 별도로 연결됩니다.</p>
+</main>
+<script src="./diagnosis-data.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const allExams=window.PREMIER_DIAGNOSIS_DATA?.exams||[];
+const student=(params.get("student")||"학생").trim().slice(0,30);
+let examKey=params.get("exam")||allExams[0]?.key||"";
+let exam=allExams.find(item=>item.key===examKey)||allExams[0];
+const byId=id=>document.getElementById(id);
+function storageKey(){return `gfield-premier-diagnosis:${exam.key}:${student}`}
+function loadState(){try{const value=JSON.parse(localStorage.getItem(storageKey())||"{}");return value&&typeof value==="object"?value:{}}catch(error){return {}}}
+function saveState(value){localStorage.setItem(storageKey(),JSON.stringify(value))}
+function paperUrl(){return `../fields-classic/print-viewer/?doc=${encodeURIComponent(exam.key)}&student=${encodeURIComponent(student)}`}
+function setExam(nextKey){const url=new URL(location.href);url.searchParams.set("exam",nextKey);if(student!=="학생")url.searchParams.set("student",student);location.href=url.toString()}
+function aggregateByArea(state){
+  const groups=new Map();
+  exam.questions.filter(q=>q.scoringEligible).forEach(question=>{
+    const row=groups.get(question.area)||{label:question.area,total:0,answered:0,correct:0};row.total+=1;
+    const mark=state[question.number];if(mark==="O"||mark==="X"){row.answered+=1;if(mark==="O")row.correct+=1}groups.set(question.area,row);
+  });
+  return [...groups.values()].map(row=>({...row,rate:row.answered?Math.round(row.correct/row.answered*100):null})).sort((a,b)=>(a.rate??101)-(b.rate??101)||a.label.localeCompare(b.label,"ko"));
+}
+function renderSummary(state){
+  const eligible=exam.questions.filter(q=>q.scoringEligible);const marks=eligible.map(q=>state[q.number]).filter(mark=>mark==="O"||mark==="X");const correct=marks.filter(mark=>mark==="O").length;const answered=marks.length;const rate=answered?Math.round(correct/answered*100):0;
+  const weakAreas=aggregateByArea(state).filter(row=>row.answered&&row.rate<70).length;
+  const metrics=[["채점 가능",`${eligible.length}문항`,`검수 제외 ${exam.lockedCount}문항`],["채점 완료",`${answered}/${eligible.length}`,`미응답 ${eligible.length-answered}문항`],["현재 정답률",answered?`${rate}%`:`-`,`입력한 문항 기준`],["부족 영역",`${weakAreas}개`,`정답률 70% 미만`]];
+  byId("summary").innerHTML=metrics.map(item=>`<article class="metric"><div class="metric-label">${item[0]}</div><div class="metric-value">${item[1]}</div><div class="metric-note">${item[2]}</div></article>`).join("");
+  byId("questionStatus").textContent=`채점 ${answered}문항 · O ${correct} · X ${answered-correct} · 검수 제외 ${exam.lockedCount}`;
+}
+function renderAreas(state){
+  const rows=aggregateByArea(state);const answeredRows=rows.filter(row=>row.answered);const weakest=answeredRows.length?Math.min(...answeredRows.map(row=>row.rate)):null;
+  byId("areaGrid").innerHTML=rows.map(row=>`<article class="area-card ${row.answered&&row.rate===weakest&&row.rate<70?"is-weak":""}"><div class="area-title"><span>${row.label}</span><span class="area-rate">${row.rate===null?"미채점":`${row.rate}%`}</span></div><div class="bar"><span style="width:${row.rate??0}%"></span></div><div class="area-meta">정답 ${row.correct} · 채점 ${row.answered}/${row.total}</div></article>`).join("");
+}
+function renderWeakTypes(state){
+  const wrong=exam.questions.filter(q=>q.scoringEligible&&state[q.number]==="X");
+  if(!wrong.length){byId("weakTypes").innerHTML=`<div class="empty">X로 표시한 문항이 생기면 부족 유형이 여기에 정리됩니다.</div>`;return}
+  const grouped=new Map();wrong.forEach(q=>{const key=`${q.area}|${q.type}`;const row=grouped.get(key)||{area:q.area,type:q.type,numbers:[]};row.numbers.push(q.number);grouped.set(key,row)});
+  byId("weakTypes").innerHTML=`<div class="weak-list">${[...grouped.values()].map(row=>`<span class="weak-chip">${row.area} · ${row.type} (${row.numbers.join(", ")}번)</span>`).join("")}</div>`;
+}
+function markQuestion(number,mark){const state=loadState();state[number]=state[number]===mark?null:mark;if(state[number]===null)delete state[number];saveState(state);renderAll()}
+function renderQuestions(state){
+  byId("questions").innerHTML=exam.questions.map(q=>{
+    if(!q.scoringEligible)return `<article class="question is-locked"><div class="qnum">${q.number}</div><div><div class="qarea">${q.area}</div><div class="qtype">${q.type}</div></div><span class="locked-label">채점 제외</span></article>`;
+    const mark=state[q.number];return `<article class="question"><div class="qnum">${q.number}</div><div><div class="qarea">${q.area}</div><div class="qtype">${q.type}</div></div><div class="ox"><button class="o ${mark==="O"?"is-on":""}" type="button" data-number="${q.number}" data-mark="O" aria-pressed="${mark==="O"}">O</button><button class="x ${mark==="X"?"is-on":""}" type="button" data-number="${q.number}" data-mark="X" aria-pressed="${mark==="X"}">X</button></div></article>`;
+  }).join("");
+  byId("questions").querySelectorAll("button[data-number]").forEach(button=>button.addEventListener("click",()=>markQuestion(Number(button.dataset.number),button.dataset.mark)));
+}
+function renderAll(){const state=loadState();renderSummary(state);renderAreas(state);renderWeakTypes(state);renderQuestions(state)}
+function init(){
+  if(!exam){byId("examTitle").textContent="진단 데이터를 찾을 수 없습니다.";return}
+  byId("examSelect").innerHTML=allExams.map(item=>`<option value="${item.key}" ${item.key===exam.key?"selected":""}>${item.title}</option>`).join("");
+  byId("examSelect").addEventListener("change",event=>setExam(event.target.value));
+  byId("examTitle").textContent=`${exam.title} 채점·진단`;
+  byId("paperLink").href=paperUrl();
+  byId("printReport").addEventListener("click",()=>window.print());
+  byId("resetBtn").addEventListener("click",()=>{if(confirm(`${exam.title}의 O/X 기록을 모두 지울까요?`)){localStorage.removeItem(storageKey());renderAll()}});
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>

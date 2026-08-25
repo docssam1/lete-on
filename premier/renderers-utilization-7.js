@@ -34,7 +34,7 @@
     if (mode === "blocks") body += `<path d="M${offsetX + 30} 20V65H${offsetX} M${offsetX + 45} 95V50H${offsetX + 75} M${offsetX} 80H${offsetX + 45}" fill="none" stroke="${INK}" stroke-width="3"/>`;
     return body;
   }
-  figures.register("u7-q4", () => svg("0 0 390 112", optionGrid(8, "①", "rows") + optionGrid(105, "②", "columns") + optionGrid(202, "③", "bands") + optionGrid(299, "④", "blocks")));
+  figures.register("u7-q4", () => svg("0 0 390 112", `<g data-region-choice="1">${optionGrid(8, "①", "rows")}</g><g data-region-choice="2">${optionGrid(105, "②", "columns")}</g><g data-region-choice="3">${optionGrid(202, "③", "bands")}</g><g data-region-choice="4">${optionGrid(299, "④", "blocks")}</g>`));
 
   figures.register("u7-q5", () => {
     const cells = [];
@@ -82,7 +82,7 @@
   }
   figures.register("u7-q12", () => {
     const single = (x, y) => `<path d="M${x} ${y}L${x - 13.5} ${y + 23.4}L${x + 13.5} ${y + 23.4}Z" fill="none" stroke="${INK}" stroke-width="2"/>`;
-    return svg("0 0 390 118", `${text(65, 15, "①", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${triangleSet(65, 27, 2, 2)}${text(195, 15, "②", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${single(170,30)}${single(220,30)}${single(170,72)}${single(220,72)}${text(325, 15, "③", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${single(325,27)}<line x1="325" y1="27" x2="325" y2="74" stroke="${INK}" stroke-width="2"/>`);
+    return svg("0 0 390 118", `<g data-triangle-choice="1">${text(65, 15, "①", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${triangleSet(65, 27, 2, 2)}</g><g data-triangle-choice="2">${text(195, 15, "②", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${single(170,30)}${single(220,30)}${single(170,72)}${single(220,72)}</g><g data-triangle-choice="3">${text(325, 15, "③", `text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`)}${single(325,27)}<line x1="325" y1="27" x2="325" y2="74" stroke="${INK}" stroke-width="2"/></g>`);
   });
 
   function cube(x, y, size, fill) {
@@ -100,7 +100,17 @@
     body += `<path d="M${offsetX + 54} 84L${offsetX + 108} 56L${offsetX + 162} 84V138L${offsetX + 108} 166L${offsetX + 54} 138Z M${offsetX + 108} 56V110M${offsetX + 54} 84L${offsetX + 108} 110L${offsetX + 162} 84" fill="none" stroke="#77828e" stroke-width="1.1" stroke-dasharray="4 3"/>`;
     return body;
   }
-  figures.register("u7-q13", () => svg("0 0 410 190", `${stackGroup([[1, 2, 3], [0, 3, 3], [0, 0, 3]], 8)}${stackGroup([[1, 0, 0], [2, 1, 0], [1, 1, 0]], 205)}${text(105, 183, "①  □개", `text-anchor="middle" font-size="13" font-weight="800" fill="${INK}"`)}${text(302, 183, "②  □개", `text-anchor="middle" font-size="13" font-weight="800" fill="${INK}"`)}`));
+  function heightMap(map, offsetX, id) {
+    const cell = 24;
+    return `<g data-height-map="${id}">${map.map((row, y) => row.map((value, x) => `<g data-stack-cell="${id}" data-row="${y}" data-column="${x}" data-height="${value}">${rect(offsetX + x * cell, 48 + y * cell, cell, cell, value || "", value ? "#fff" : "#f1f3f5")}</g>`).join("")).join("")}</g>`;
+  }
+  function boxGuide(offsetX) {
+    return `<path d="M${offsetX} 50L${offsetX + 34} 32L${offsetX + 68} 50V84L${offsetX + 34} 102L${offsetX} 84ZM${offsetX + 34} 32V66M${offsetX} 50L${offsetX + 34} 66L${offsetX + 68} 50M${offsetX + 34} 66V102" fill="none" stroke="${LINE}" stroke-width="1.2" stroke-dasharray="4 3"/>${text(offsetX + 34,122,"3×3×3",`text-anchor="middle" font-size="11" font-weight="800" fill="${INK}"`)}`;
+  }
+  figures.register("u7-q13", () => {
+    const maps = [[[1, 2, 3], [0, 3, 3], [0, 0, 3]], [[1, 0, 0], [2, 1, 0], [1, 1, 0]]];
+    return svg("0 0 410 172", `${boxGuide(15)}${heightMap(maps[0], 100, "one")}${boxGuide(220)}${heightMap(maps[1], 305, "two")}${text(104,160,"①  □개",`text-anchor="middle" font-size="13" font-weight="800" fill="${INK}"`)}${text(309,160,"②  □개",`text-anchor="middle" font-size="13" font-weight="800" fill="${INK}"`)}`);
+  });
 
   figures.register("u7-q14", () => svg("0 0 330 72", `<rect x="25" y="8" width="280" height="56" fill="#fff" stroke="${LINE}"/>${text(165, 44, "74  >  □5,      3□  <  39", `text-anchor="middle" font-size="23" font-weight="850" fill="${INK}"`)}`));
 
@@ -125,8 +135,8 @@
   });
 
   figures.register("u7-q20", () => {
-    const top = [1,15,9,7,16,14];
-    const bottom = [24,7,13,13,11,9,"A"];
-    return svg("0 0 390 112", `${top.map((value,index)=>circle(70+index*50,25,17,value,"#e3e7eb")).join("")}${bottom.map((value,index)=>circle(45+index*50,82,17,value,value==="A"?"#fff4cf":"#e3e7eb")).join("")}${top.map((_,index)=>`<path d="M${62+index*50} 40L${53+index*50} 64M${78+index*50} 40L${87+index*50} 64" stroke="#a8b1bb"/>`).join("")}`);
+    const top = [15, 9, 7, 16, 14];
+    const bottom = [15, 16, 14, "A"];
+    return svg("0 0 390 112", `${top.map((value,index)=>`<g data-parent-number="${value}">${circle(70+index*62,25,17,value,"#e3e7eb")}</g>`).join("")}${bottom.map((value,index)=>`<g data-derived-number="${value}">${circle(101+index*62,82,17,value,value==="A"?"#fff4cf":"#e3e7eb")}</g>`).join("")}${bottom.map((_,index)=>`<path d="M${78+index*62} 40L${94+index*62} 65M${124+index*62} 40L${108+index*62} 65" stroke="#a8b1bb"/>`).join("")}`);
   });
 })(window);

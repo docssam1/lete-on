@@ -554,11 +554,86 @@
     };
   }
 
+  function normalizePageQuestion(rawQuestion, index, exam, manifestRevision) {
+    const trail = `response.questions[${index}]`;
+    const question = assertPlainObject(rawQuestion, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail}: 문항 형식이 올바르지 않습니다.`);
+    inspectObject(question, trail, PROBLEM_FORBIDDEN_KEYS, {
+      rejectAnswerPrefixes: true,
+      code: "HF_SECURE_MOCK_RESPONSE_SECRET_FIELD"
+    });
+    assertAllowedKeys(
+      question,
+      new Set([
+        "number", "questionKey", "revision", "areaKey", "areaLabel", "typeKey", "typeTitle",
+        "typeId", "typeCode", "difficultyLabel", "prompt", "releaseStatus", "lockReasons"
+      ]),
+      trail,
+      "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID",
+      false
+    );
+    if (question.releaseStatus !== "verified" || !Array.isArray(question.lockReasons) || question.lockReasons.length) {
+      throw failure("HF_SECURE_MOCK_QUESTION_LOCKED", `${trail}: 공개 가능한 검증 상태가 아닙니다.`);
+    }
+    const questionKey = String(question.questionKey || "");
+    const match = QUESTION_KEY_RE.exec(questionKey);
+    const expectedNumber = String(index + 1).padStart(2, "0");
+    const expectedRound = String(exam.roundNo).padStart(2, "0");
+    const typeId = question.typeId == null ? null : Number(question.typeId);
+    if (
+      question.number !== index + 1 || !match || match[1] !== exam.series
+      || match[2] !== expectedRound || match[3] !== expectedNumber
+      || question.revision !== manifestRevision || !AREA_KEYS.has(question.areaKey)
+      || !TYPE_KEY_RE.test(String(question.typeKey || ""))
+      || (typeId != null && (!Number.isInteger(typeId) || typeId < 1 || typeId > 54))
+    ) {
+      throw failure("HF_SECURE_MOCK_QUESTION_ID_INVALID", `${trail}: 문항 식별자와 분류가 회차·순서에 맞지 않습니다.`);
+    }
+    return {
+      number: question.number,
+      questionKey,
+      revision: manifestRevision,
+      areaKey: question.areaKey,
+      areaLabel: safePlainText(question.areaLabel, 100, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 영역명`, false),
+      typeKey: question.typeKey,
+      typeTitle: safePlainText(question.typeTitle, 200, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 유형명`, false),
+      typeId,
+      typeCode: safePlainText(question.typeCode, 80, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 유형 코드`, true),
+      difficultyLabel: safePlainText(question.difficultyLabel, 40, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 난이도`, true),
+      prompt: safePlainText(question.prompt, 10000, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 문제 문장`, false),
+      releaseStatus: "verified",
+      lockReasons: [],
+      problemHtml: "",
+      sourceMode: "secure-page-image"
+    };
+  }
+
+  function normalizePage(rawPage, index) {
+    const trail = `response.pages[${index}]`;
+    const page = assertPlainObject(rawPage, "HF_SECURE_MOCK_PAGE_CONTRACT_INVALID", `${trail}: 시험지 쪽 형식이 올바르지 않습니다.`);
+    const signedAssetUrl = page.signedAssetUrl;
+    const safeFields = { ...page };
+    delete safeFields.signedAssetUrl;
+    inspectObject(safeFields, trail, PROBLEM_FORBIDDEN_KEYS, {
+      rejectAnswerPrefixes: true,
+      code: "HF_SECURE_MOCK_RESPONSE_SECRET_FIELD"
+    });
+    assertAllowedKeys(page, new Set(["number", "assetAlt", "mimeType", "signedAssetUrl"]), trail, "HF_SECURE_MOCK_PAGE_CONTRACT_INVALID", false);
+    if (page.number !== index + 1 || !["image/jpeg", "image/png", "image/webp"].includes(page.mimeType)) {
+      throw failure("HF_SECURE_MOCK_PAGE_CONTRACT_INVALID", `${trail}: 시험지 쪽 순서나 형식이 올바르지 않습니다.`);
+    }
+    return Object.freeze({
+      number: page.number,
+      assetAlt: safePlainText(page.assetAlt, 500, "HF_SECURE_MOCK_PAGE_CONTRACT_INVALID", `${trail} 설명`, false),
+      mimeType: page.mimeType,
+      signedAssetUrl: validateSignedQuestionUrl(signedAssetUrl)
+    });
+  }
+
   function normalizeExamResponse(data, requestedExamId, loadEventId) {
     const allowedTop = new Set([
       "exam", "attemptId", "attemptNo", "serverSeed", "manifestRevision", "questions",
       "attemptStatus", "title", "durationMinutes", "subtitle", "description", "questionCount",
-      "signedUrlExpiresIn"
+      "signedUrlExpiresIn", "deliveryMode", "pages"
     ]);
     assertAllowedKeys(data, allowedTop, "response", "HF_SECURE_MOCK_EDGE_RESPONSE_INVALID", false);
     inspectObject({ subtitle: data.subtitle, description: data.description }, "response", PROBLEM_FORBIDDEN_KEYS, {
@@ -581,10 +656,23 @@
     if (!["in_progress", "grading", "submitted"].includes(data.attemptStatus)) {
       throw failure("HF_SECURE_MOCK_ATTEMPT_INVALID", "서버 응시 상태가 올바르지 않습니다.");
     }
+    const deliveryMode = data.deliveryMode == null ? "question_images" : data.deliveryMode;
+    if (!["question_images", "page_images"].includes(deliveryMode)) {
+      throw failure("HF_SECURE_MOCK_EXAM_CONTRACT_INVALID", "시험지 전달 방식이 올바르지 않습니다.");
+    }
     if (!Array.isArray(data.questions) || !data.questions.length || data.questions.length > 100) {
       throw failure("HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", "서버 문제지의 문항 수가 올바르지 않습니다.");
     }
-    const questions = data.questions.map((question, index) => normalizeQuestion(question, index, exam, manifestRevision));
+    const questions = data.questions.map((question, index) => deliveryMode === "page_images"
+      ? normalizePageQuestion(question, index, exam, manifestRevision)
+      : normalizeQuestion(question, index, exam, manifestRevision));
+    const pages = deliveryMode === "page_images"
+      ? (Array.isArray(data.pages) ? data.pages.map(normalizePage) : [])
+      : [];
+    if ((deliveryMode === "page_images" && (pages.length < 1 || pages.length > 20))
+      || (deliveryMode === "question_images" && data.pages != null && (!Array.isArray(data.pages) || data.pages.length))) {
+      throw failure("HF_SECURE_MOCK_PAGE_CONTRACT_INVALID", "시험지 쪽 수가 올바르지 않습니다.");
+    }
     const compoundKeys = questions.map(question => `${question.questionKey}@${question.revision}`);
     if (new Set(compoundKeys).size !== compoundKeys.length) {
       throw failure("HF_SECURE_MOCK_QUESTION_ID_INVALID", "서버 문제지에 중복 문항이 있습니다.");
@@ -641,6 +729,8 @@
       seed: serverSeed,
       questionCount: questions.length,
       signedUrlExpiresIn,
+      deliveryMode,
+      pages,
       questions
     });
     const context = Object.freeze({ exam, document, loadEventId });
