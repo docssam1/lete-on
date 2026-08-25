@@ -95,7 +95,7 @@ const COURSE_SPEC = [
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
    drills:['DC2','DC4','ML11'], magic:[['C-24'],['ML10']]},
  {id:19, tier:'level3', title:{ko:'약수와 배수',en:'Factors & Multiples',zh:'因数与倍数'},
-   drills:['DV7'], magic:[['C-04']]},
+   drills:['DV7'], magic:[['C-04'],['H-11']]},
  {id:20, tier:'level3', title:{ko:'이분모 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
    drills:['FR4','FR10','MX4'], magic:[['C-21'],['C-22']]},
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
@@ -105,16 +105,21 @@ const COURSE_SPEC = [
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8'], magic:[['C-05'],['C-32']]},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4'], magic:[['C-25'],['C-33']]},
+   drills:['MX3','DV8','EL4'], magic:[['C-25'],['C-33'],['H-12'],['H-13']]},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], boss:true},
 
- {id:26, tier:'challenge', title:{ko:'곱셈의 정점 (준비 중)',en:'Peak of Multiplication (coming soon)',zh:'乘法之巅（即将推出）'},
-   drills:['ML19','ML20','ML23'], magic:[], comingSoon:true},
- {id:27, tier:'challenge', title:{ko:'수의 비밀 (준비 중)',en:'Secrets of Numbers (coming soon)',zh:'数的秘密（即将推出）'},
-   drills:['DV7','DV8','MX2'], magic:[], comingSoon:true},
- {id:28, tier:'challenge', title:{ko:'제곱의 산 (준비 중)',en:'Mountain of Squares (coming soon)',zh:'平方之山（即将推出）'},
-   drills:['ML11','ML20','MX4'], magic:[], comingSoon:true},
+ /* 26~28 실배치(2026-08-25 Phase 2, 고급-목차.md §2②): 로드맵 §3의 4단원 구성 그대로.
+    각 과정 4단원 중 신규 유닛(H-01·02, H-03~06, H-07~10)이 magic, 1단계에서 이미
+    확장해 둔 기존 유닛(C-12 엑스맨 세 자리, C-15 피라미드 곱셈, C-01 제곱수 점화식)은
+    "1단계 확장 레벨들도 드릴 재료로"(작업지시)에 따라 drills로 재사용한다 — 새 id를
+    지어내지 않고 threads.js에 이미 있는 스레드만 쓴다는 기존 규칙을 그대로 지켰다. */
+ {id:26, tier:'challenge', title:{ko:'곱셈의 정점',en:'Peak of Multiplication',zh:'乘法之巅'},
+   drills:['ML8','ML18'], magic:[['H-01'],['H-02'],['C-12'],['C-15']]},
+ {id:27, tier:'challenge', title:{ko:'수의 비밀',en:'Secrets of Numbers',zh:'数的秘密'},
+   drills:['DV7','DV8','MX2'], magic:[['H-03'],['H-04'],['H-05'],['H-06']]},
+ {id:28, tier:'challenge', title:{ko:'제곱의 산',en:'Mountain of Squares',zh:'平方之山'},
+   drills:['ML11','ML20','MX4'], magic:[['H-07'],['H-08'],['H-09'],['H-10']]},
 ];
 
 function buildCourses(NM_THREADS){

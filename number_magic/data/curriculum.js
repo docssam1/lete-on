@@ -160,7 +160,23 @@ window.NM_CURRICULUM = {
       desc:{ko:'수들의 관계로 푸는 마법 — 등차수열과 경시로 가는 길',
         en:'The magic of solving through relationships between numbers — the path to arithmetic sequences and competition math',
         zh:'通过数字间关系来解题的魔法——通向等差数列与竞赛之路'},
-      levels:[{ id:'H-A', title:{ko:'준비 중',en:'Coming soon',zh:'即将推出'}, units:[], available:false }]
+      /* 경시의 탑(과정-로드맵.md §3 CHALLENGE, 2026-08-25) — 고급-목차.md 신규 13종.
+         26~28은 그 과정의 4단원 구성 그대로, 'boost'는 몰아주기/어림하기/큰 수 정복처럼
+         Level 3(과정 19·24)의 드릴 보강으로도 쓰이는 3종을 모아 둔 것(고급-목차.md §2①). */
+      levels:[
+        { id:'26', available:true,
+          title:{ko:'26 곱셈의 정점',en:'26 · Peak of Multiplication',zh:'26·乘法之巅'},
+          units:['H-01','H-02'] },
+        { id:'27', available:true,
+          title:{ko:'27 수의 비밀',en:'27 · Secrets of Numbers',zh:'27·数的秘密'},
+          units:['H-03','H-04','H-05','H-06'] },
+        { id:'28', available:true,
+          title:{ko:'28 제곱의 산',en:'28 · Mountain of Squares',zh:'28·平方之山'},
+          units:['H-07','H-08','H-09','H-10'] },
+        { id:'boost', available:true,
+          title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
+          units:['H-11','H-12','H-13'] }
+      ]
     }
   ],
 
