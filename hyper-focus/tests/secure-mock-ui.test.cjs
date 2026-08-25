@@ -85,6 +85,9 @@ function testStaticUiSecurityContract() {
   assert.match(viewerHtml, /secureMock\.loadExam\(examId\)/);
   assert.doesNotMatch(viewerHtml, /secureMock\.loadExam\(examId\s*,/);
   assert.match(viewerHtml, /secureMock\.loadAnswers\(doc\.attemptId\)/);
+  assert.match(viewerHtml, /publicRelease\?\.answersAvailable===true/, "정답 자산이 없는 회차는 정답 버튼을 숨겨야 합니다.");
+  assert.match(viewerHtml, /id="videoLink"[^>]*rel="noopener noreferrer"[^>]*hidden/, "영상 채점 링크는 새 창 보안 속성과 함께 기본 숨김이어야 합니다.");
+  assert.match(viewerHtml, /publicRelease\?\.videoUrl/, "검수된 공개 카탈로그의 해설 영상만 연결해야 합니다.");
   assert.match(viewerHtml, /doc\.deliveryMode==='page_images'/, "원본 PDF 쪽 이미지 전달 분기가 누락되었습니다.");
   assert.match(viewerHtml, /doc\.pages\.map\(pageImageSheet\)/, "서명된 원본 쪽 이미지를 순서대로 렌더해야 합니다.");
   assert.match(viewerHtml, /class="secure-page-image"[\s\S]*referrerpolicy="no-referrer"/, "비공개 쪽 이미지는 referrer를 보내면 안 됩니다.");
