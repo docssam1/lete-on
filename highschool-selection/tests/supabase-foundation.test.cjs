@@ -9,6 +9,7 @@ const bankCore = require("../data/question-bank-core.js");
 const root = path.join(__dirname, "..");
 const migration = fs.readFileSync(path.join(root, "supabase", "migrations", "20260825092754_highselect_secure_draft_foundation.sql"), "utf8");
 const config = fs.readFileSync(path.join(root, "supabase", "config.toml"), "utf8");
+const edgeFunction = fs.readFileSync(path.join(root, "supabase", "functions", "draft-admin", "index.ts"), "utf8");
 
 test("Supabase draft foundation stores only protected operational metadata", () => {
   ["hs_staff_accounts", "hs_exam_draft_candidates", "hs_exam_drafts", "hs_exam_draft_placements", "hs_exam_draft_replacements", "hs_exam_draft_audit"].forEach(table => {
@@ -37,4 +38,17 @@ test("Supabase contracts match the current opaque IDs and guarded local auth def
   assert.match(config, /\[storage\.vector\]\s+enabled = false/);
   assert.match(config, /\[analytics\]\s+enabled = false/);
   assert.doesNotMatch(config, /sb_(?:secret|service_role)_/i);
+});
+
+test("Supabase draft edge gate checks active staff and returns metadata only", () => {
+  assert.match(config, /\[functions\.draft-admin\][\s\S]*verify_jwt = true/);
+  assert.match(edgeFunction, /user\.app_metadata\?\.gfield_role !== "admin"/);
+  assert.match(edgeFunction, /from\("hs_staff_accounts"\)/);
+  assert.match(edgeFunction, /staff\?\.status !== "active"/);
+  assert.match(edgeFunction, /action === "readiness"/);
+  assert.match(edgeFunction, /action === "candidates"/);
+  assert.match(edgeFunction, /classification_verified", true/);
+  assert.match(edgeFunction, /rights_verified", true/);
+  assert.match(edgeFunction, /HIGHSELECT_ALLOWED_ORIGINS/);
+  assert.doesNotMatch(edgeFunction, /questionText|answerKey|correctAnswer|pdfUrl|sourcePath|storagePath|solutionText|user_metadata/i);
 });
