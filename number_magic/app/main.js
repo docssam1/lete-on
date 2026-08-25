@@ -1744,16 +1744,24 @@ function stepDiscover(body,u){
   const two = S.range==='twoDigit';
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   const kid = u.tier==='basic';
+  /* 개념 스토리 훅(§7·§13): 중등·고등은 docssam 선생님 캐릭터가, 그 외는 누미가 말풍선으로 연다 */
+  const st=d.story||u.story;
+  const isMidHigh=/^(middle|high)/.test(u.tier||'');
+  const storyHtml=st?`<div class="nm-story${isMidHigh?' doc':''}">
+      ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
+      <div class="nm-story-bubble">${L(st.hook)}</div>
+    </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    <div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+    <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
+    const headTxt=L(s.head);
     wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
-      <div class="nm-ch">${L(s.head)}</div>
+      <div class="nm-ch">${/\\/.test(headTxt)?`<span data-tex="${headTxt.replace(/"/g,'&quot;')}"></span>`:headTxt}</div>
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
     if(s.terms)conceptExpr(wrap, s.terms);

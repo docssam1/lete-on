@@ -52,7 +52,18 @@ window.NM_UNITS['M-10'] = {
         result:{ko:'거듭제곱을 다시 거듭제곱하면 지수끼리 곱해요, 나누면 지수끼리 빼요!',en:'A power of a power multiplies the exponents; dividing subtracts them!',zh:'幂的乘方指数相乘，幂的相除指数相减！'},
         book:{ko:'(aᵐ)ⁿ=aᵐⁿ, aᵐ÷aⁿ=aᵐ⁻ⁿ(m>n)이에요. 세 법칙이 한 식에 섞이면 안쪽 괄호부터 하나씩 정리해요.',
               en:'(aᵐ)ⁿ=aᵐⁿ and aᵐ÷aⁿ=aᵐ⁻ⁿ (m>n). When all the rules mix in one expression, simplify from the innermost brackets outward.',
-              zh:'(aᵐ)ⁿ=aᵐⁿ，aᵐ÷aⁿ=aᵐ⁻ⁿ(m>n)。三个法则混在一个式子里时，从最里面的括号开始依次化简。'} }
+              zh:'(aᵐ)ⁿ=aᵐⁿ，aᵐ÷aⁿ=aᵐ⁻ⁿ(m>n)。三个法则混在一个式子里时，从最里面的括号开始依次化简。'} },
+
+      { tag:{ko:'③ 그런데 왜 0제곱은 1일까? -1제곱은?',en:'3) But why is the zeroth power 1? And the -1st?',zh:'③ 那为什么0次方是1？-1次方呢？'},
+        head:{ko:'2^0=1,\\quad 2^{-1}=\\dfrac{1}{2}',en:'2^0=1,\\quad 2^{-1}=\\dfrac{1}{2}',zh:'2^0=1,\\quad 2^{-1}=\\dfrac{1}{2}'},
+        desc:{ko:'사다리를 한 칸씩 내려가 보면 저절로 답이 나와요. 2³=8, 2²=4, 2¹=2 — 지수가 1 줄 때마다 <b>÷2</b>가 되죠? 그 규칙을 멈추지 않고 한 칸 더 내려가면 2⁰=2÷2=<b>1</b>, 또 한 칸 내려가면 2⁻¹=1÷2=<b>1/2</b>. 0제곱이 1인 건 약속이 아니라 <b>사다리의 규칙이 시켜서</b>예요. 어떤 수든 같아요: 5⁰=1, 100⁰=1.',
+              en:'Walk down the ladder one rung at a time and the answer appears by itself. 2³=8, 2²=4, 2¹=2 — each time the exponent drops by 1, you <b>divide by 2</b>. Keep the rule going one more rung: 2⁰=2÷2=<b>1</b>, and one more: 2⁻¹=1÷2=<b>1/2</b>. The zeroth power is 1 not by decree, but because <b>the ladder\'s own rule demands it</b>. It works for any base: 5⁰=1, 100⁰=1.',
+              zh:'沿着梯子一格一格往下走，答案自己就出来了。2³=8，2²=4，2¹=2——指数每降1就<b>÷2</b>。让规则继续往下一格：2⁰=2÷2=<b>1</b>，再下一格：2⁻¹=1÷2=<b>1/2</b>。0次方等于1不是规定，而是<b>梯子的规则要求的</b>。任何底数都一样：5⁰=1，100⁰=1。'},
+        mathSteps:['2^3=8 \\xrightarrow{\\div2} 2^2=4 \\xrightarrow{\\div2} 2^1=2', '\\xrightarrow{\\div2} 2^0=1', '\\xrightarrow{\\div2} 2^{-1}=\\tfrac12'],
+        result:{ko:'사다리를 내려가면 0제곱=1, -1제곱=역수 — 규칙이 스스로 알려줘요!',en:'Walk down the ladder: the 0th power is 1, the -1st is the reciprocal — the rule tells you itself!',zh:'沿梯子往下走：0次方=1，-1次方=倒数——规则自己告诉你！'},
+        book:{ko:'a⁰=1(a≠0), a⁻ⁿ=1/aⁿ. 나눗셈 법칙 aᵐ÷aᵐ=aᵐ⁻ᵐ=a⁰이 1이 되는 것과도 딱 맞아요(같은 수끼리 나누면 1이니까).',
+              en:'a⁰=1 (a≠0) and a⁻ⁿ=1/aⁿ. This matches the division rule too: aᵐ÷aᵐ=aᵐ⁻ᵐ=a⁰, and anything divided by itself is 1.',
+              zh:'a⁰=1(a≠0)，a⁻ⁿ=1/aⁿ。这和除法法则也完全吻合：aᵐ÷aᵐ=aᵐ⁻ᵐ=a⁰，而同数相除本来就是1。'} }
     ],
     rule:{ ko:'① 곱셈은 지수를 더하기(aᵐ×aⁿ=aᵐ⁺ⁿ)  ② 거듭제곱의 거듭제곱은 지수를 곱하기((aᵐ)ⁿ=aᵐⁿ)  ③ 나눗셈은 지수를 빼기(aᵐ÷aⁿ=aᵐ⁻ⁿ)',
       en:'① Multiplying adds exponents (aᵐ×aⁿ=aᵐ⁺ⁿ)  ② A power of a power multiplies them ((aᵐ)ⁿ=aᵐⁿ)  ③ Dividing subtracts them (aᵐ÷aⁿ=aᵐ⁻ⁿ)',
