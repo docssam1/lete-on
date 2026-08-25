@@ -4,40 +4,75 @@
   const core = root.HIGHSELECT_EXAM_EDITOR_CORE;
   const outputs = root.HIGHSELECT_EXAM_OUTPUT_SETTINGS;
   const standards = root.HIGHSELECT_DEFAULT_EXAM_SETS;
-  const wm = root.HIGHSELECT_WM_MIDDLE21_BASIC_ENTRY_R01_BLUEPRINT;
+  const wmInitial = root.HIGHSELECT_WM_MIDDLE21_BASIC_ENTRY_R01_BLUEPRINT;
+  const wmDiagnostic = root.HIGHSELECT_WM_MIDDLE21_DIAGNOSTIC_METADATA;
   const bankCore = root.HIGHSELECT_QUESTION_BANK_CORE;
-  if (!core || !outputs || !standards || !wm || !bankCore) return;
+  if (!core || !outputs || !standards || !wmInitial || !wmDiagnostic || !bankCore) return;
 
   const dom = Object.fromEntries([
     "draft-state", "draft-title", "candidate-search", "candidate-list", "candidate-count",
-    "placement-list", "draft-summary", "sort-mode", "view-mode", "scope-dialog",
+    "placement-list", "draft-summary", "sort-mode", "view-mode", "round-select", "scope-dialog",
     "scope-options", "scope-reconcile", "builder-status", "print-preview", "preview-pages"
   ].map(function (id) { return [id, document.getElementById(id)]; }));
   const standard = standards.getStandard("WM-M21-BASIC-ENTRY-2026-07");
   const approvedCandidates = Array.isArray(root.HIGHSELECT_EXAM_EDITOR_CANDIDATES) ? root.HIGHSELECT_EXAM_EDITOR_CANDIDATES : [];
   const scopeKey = function (item) { return ["2022-revised", item.semester, item.majorUnit, item.minorUnit].join("/"); };
-  const metadata = Object.fromEntries(wm.items.map(function (item) {
-    return [item.id, {
-      itemId: item.id, number: item.number, label: `${item.semester} · ${item.minorUnit}`,
-      typeCode: item.typeId, typeLabel: item.typeLabel, difficultyBand: item.difficultyBand,
-      inputType: "short_answer", curriculumPath: scopeKey(item), releaseStatus: "locked",
-      classificationStatus: "pending", answerStatus: "pending", figureRequired: item.sectionId === "GEO",
-      figureStatus: item.sectionId === "GEO" ? "pending" : "not_required", relationship: "manual"
-    }];
-  }));
-  approvedCandidates.forEach(function (item) { metadata[item.itemId] = item; });
+
+  function roundNumber(examId) {
+    const match = String(examId || "").match(/r(\d{2})$/);
+    return match ? Number(match[1]) : 1;
+  }
+  function roundBlueprint(examId) {
+    const round = wmDiagnostic.rounds[examId];
+    if (!round) throw new Error("대표 회차 정보를 찾을 수 없습니다.");
+    return Object.freeze({
+      blueprint: Object.freeze({ examId, scheduledWindowMinutes: wmInitial.blueprint.scheduledWindowMinutes }),
+      items: Object.freeze(round.items.map(function (item) {
+        return Object.freeze({
+          id: item.id,
+          number: item.number,
+          sectionId: item.cutlineSectionId,
+          semester: `${item.gradeBand}-${item.semester}`,
+          majorUnit: item.majorUnit,
+          minorUnit: item.minorUnit,
+          typeId: item.detailTypeId,
+          typeLabel: item.detailType,
+          difficultyBand: item.difficulty,
+          classificationStatus: item.classificationStatus
+        });
+      }))
+    });
+  }
+  function metadataFor(round) {
+    const result = Object.fromEntries(round.items.map(function (item) {
+      return [item.id, {
+        itemId: item.id, number: item.number, label: `${item.semester} · ${item.minorUnit}`,
+        typeCode: item.typeId, typeLabel: item.typeLabel, difficultyBand: item.difficultyBand,
+        inputType: "short_answer", curriculumPath: scopeKey(item), releaseStatus: "locked",
+        classificationStatus: item.classificationStatus, answerStatus: "verified", figureRequired: item.sectionId === "GEO",
+        figureStatus: item.sectionId === "GEO" ? "pending" : "not_required", relationship: "manual"
+      }];
+    }));
+    approvedCandidates.forEach(function (item) { result[item.itemId] = item; });
+    return result;
+  }
+  function createRoundDraft(round) {
+    return core.createDraft({
+      draftId: `${round.blueprint.examId}-draft`, profileId: standard.programCode,
+      targetId: round.blueprint.examId, durationMinutes: round.blueprint.scheduledWindowMinutes,
+      scopeKeys: Array.from(new Set(round.items.map(scopeKey))),
+      placements: round.items.map(function (item) { return { placementId: `place-${String(item.number).padStart(2, "0")}`, itemId: item.id, score: 1, selectionKind: "recommended" }; })
+    });
+  }
 
   let candidateFilter = "all";
   let dragPlacementId = null;
   let dragCandidateId = null;
   let pendingReplacementId = null;
   let revision = null;
-  let draft = core.createDraft({
-    draftId: "wm-middle21-basic-entry-r01-draft", profileId: standard.programCode,
-    targetId: wm.blueprint.examId, durationMinutes: wm.blueprint.scheduledWindowMinutes,
-    scopeKeys: Array.from(new Set(wm.items.map(scopeKey))),
-    placements: wm.items.map(function (item) { return { placementId: `place-${String(item.number).padStart(2, "0")}`, itemId: item.id, score: 1, selectionKind: "recommended" }; })
-  });
+  let wm = roundBlueprint(dom["round-select"].value);
+  let metadata = metadataFor(wm);
+  let draft = createRoundDraft(wm);
 
   function html(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
@@ -184,6 +219,25 @@
   dom["sort-mode"].addEventListener("change", function () { draft = core.sortPlacements(draft, dom["sort-mode"].value, metadata, { seed: 20260825 }); dirty("정렬을 적용했습니다."); render(); });
   dom["view-mode"].addEventListener("change", function () { draft = core.setViewMode(draft, dom["view-mode"].value); dirty(); renderPlacements(); });
   dom["draft-title"].addEventListener("input", function () { dirty(); renderPreview(); });
+  dom["round-select"].addEventListener("change", function () {
+    try {
+      wm = roundBlueprint(dom["round-select"].value);
+      metadata = metadataFor(wm);
+      draft = createRoundDraft(wm);
+      revision = null;
+      pendingReplacementId = null;
+      candidateFilter = "all";
+      dom["candidate-search"].value = "";
+      dom["sort-mode"].value = "user";
+      dom["view-mode"].value = "question";
+      dom["draft-title"].value = `중2-1 기본반 대비 ${roundNumber(wm.blueprint.examId)}회`;
+      dom["draft-state"].textContent = "저장 전";
+      dom["draft-state"].className = "badge review";
+      dom["builder-status"].textContent = `${roundNumber(wm.blueprint.examId)}회 대표 구성을 불러왔습니다. 답안과 원문은 편집 화면에 표시하지 않습니다.`;
+      document.querySelectorAll("[data-candidate-filter]").forEach(function (button) { button.classList.toggle("is-active", button.dataset.candidateFilter === "all"); });
+      render();
+    } catch (error) { dom["builder-status"].textContent = error.message; }
+  });
   document.querySelectorAll(".builder-output input,.builder-output select").forEach(function (input) { input.addEventListener("change", function () { dirty(); renderPreview(); }); });
   async function saveDraft() {
     try {

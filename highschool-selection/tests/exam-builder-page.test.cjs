@@ -23,6 +23,16 @@ test("administrator editor exposes selection, scope, drag ordering, and four-up 
   assert.match(page, /draggable="true"/);
 });
 
+test("administrator editor can switch between all four Won Math representative rounds", () => {
+  assert.match(html, /id="round-select"/);
+  ["r01", "r02", "r03", "r04"].forEach(round => assert.match(html, new RegExp(`wm-middle21-basic-entry-${round}`)));
+  assert.match(html, /wm-middle21-diagnostic-metadata\.js/);
+  assert.match(page, /wmDiagnostic\.rounds\[examId\]/);
+  assert.match(page, /createRoundDraft\(wm\)/);
+  assert.match(page, /dom\["round-select"\]\.addEventListener\("change"/);
+  assert.match(page, /답안과 원문은 편집 화면에 표시하지 않습니다/);
+});
+
 test("builder keeps unverified slots locked and blocks server save without canonical bank IDs", () => {
   assert.match(page, /releaseStatus: "locked"/);
   assert.match(page, /core\.validateCandidate\(item\)/);
