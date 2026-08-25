@@ -148,12 +148,27 @@ function say(text){
   _sayWeb(text,lang);
 }
 function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
+/* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
+const _sfxCache={};
+function playSfx(kind){
+  try{
+    const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
+    const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
+    let a=_sfxCache[url];
+    if(!a){a=new Audio(url);_sfxCache[url]=a;}
+    a.currentTime=0;a.volume=.85;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+window.NM_SFX=playSfx;
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
+/* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
+function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
 
 /* ---------- Web Audio 앰비언스 (신비한 배경음악 + 물소리, 외부 파일 없이 합성) ---------- */
 let actx=null;
@@ -1460,13 +1475,13 @@ function stepLabWidget(body,u){
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
-      toast(pickVoice(u.voice.wrong),false);
+      voiceLine(u,u.voice.wrong,false);
     }
   });
 }
@@ -1515,12 +1530,12 @@ function handleLabNumpad(val,body,u){
   if(val==='ok'){
     const inp=S.sub.inp||'';if(inp==='')return;
     if(parseFloat(inp)===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
-    }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
   if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
@@ -1535,13 +1550,13 @@ function pickTile(el,i,n,body,u){
   pk.onclick=()=>{
     const cur=S.sub.cur;const sum=p[0].n+p[1].n;
     if(sum===(cur.target||10)){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.li++;S.sub.cur=null;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
-    }else{toast(pickVoice(u.voice.wrong),false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
+    }else{voiceLine(u,u.voice.wrong,false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
 
@@ -1606,7 +1621,7 @@ function stepStamp(body,u){
     <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
-  confetti();say(L(u.voice.finish));
+  confetti();playSfx("great-job");say(L(u.voice.finish));
   $('#toMap').onclick=exitUnit;
 }
 
