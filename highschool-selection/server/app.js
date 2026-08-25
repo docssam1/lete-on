@@ -389,6 +389,20 @@ function createApp(options) {
     };
   }
 
+  function publicExamDraftSummary(record) {
+    return {
+      draftId: record.draftId,
+      profileId: record.draft.profileId,
+      targetId: record.draft.targetId,
+      durationMinutes: record.draft.durationMinutes,
+      scopeKeys: record.draft.scopeKeys,
+      revision: record.draft.revision,
+      itemCount: record.draft.placements.length,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt
+    };
+  }
+
   function editorMetadata(draft, registry) {
     return Object.fromEntries(draft.placements.map(function (placement) {
       return [placement.itemId, registry.getCandidate(placement.itemId, placement.itemVersionId)];
@@ -769,6 +783,16 @@ function createApp(options) {
         sourceItemVersionId,
         relationship
       }).map(publicEditorCandidate);
+      sendJson(response, 200, { items, count: items.length });
+      return true;
+    }
+
+    if (pathname === "/admin/exam-editor/drafts" && request.method === "GET") {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      requireExamEditorInfrastructure();
+      const items = examDraftStore.list().map(publicExamDraftSummary).sort(function (left, right) {
+        return right.updatedAt.localeCompare(left.updatedAt) || left.draftId.localeCompare(right.draftId);
+      });
       sendJson(response, 200, { items, count: items.length });
       return true;
     }

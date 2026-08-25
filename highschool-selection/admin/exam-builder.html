@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>시험지 편집 · 선발·누적 진단</title>
+  <link rel="stylesheet" href="../shared/app.css?v=20260825">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header"><nav class="shell nav"><a class="brand" href="../"><span class="brand-mark">SL</span><span>시험지 편집<small>EXAM ASSEMBLY</small></span></a><div class="nav-links"><a class="button ghost" href="./">승인 관리</a><a class="button ghost" href="./review.html">문항 검수</a></div></nav></header>
+  <main id="main" class="shell app-main builder-main">
+    <div class="page-title"><div><p class="eyebrow">Verified placement editor</p><h1>문항을 고르고 시험지 순서를 편집합니다</h1><p>원문은 바꾸지 않습니다. 검수된 문항의 배치·순서·교체 이력만 저장합니다.</p></div><span class="badge review" id="builder-state">서버 확인 중</span></div>
+    <section class="panel builder-start" aria-label="시험지 초안 열기"><div class="builder-start-fields"><label>저장된 초안<select id="draft-list"><option value="">새 초안 만들기</option></select></label><label>과정 코드<input id="profile-id" value="SH" maxlength="32"></label><label>시험 식별자<input id="target-id" value="selection-mock-r01" maxlength="80"></label><label>시간(분)<input id="duration-minutes" type="number" min="1" max="600" value="60"></label></div><button class="button accent" id="create-draft" type="button">새 초안 열기</button><button class="button ghost" id="refresh-drafts" type="button">목록 새로고침</button></section>
+    <section class="builder-toolbar" aria-label="시험지 편집 도구"><label>정렬<select id="sort-mode"><option value="user">사용자 순서</option><option value="type_asc">유형 오름차순</option><option value="difficulty_asc">난이도 오름차순</option><option value="objective_subjective">객관식 우선</option><option value="random">무작위</option></select></label><label>보기<select id="view-mode"><option value="question">문제만</option><option value="question_answer">문제 + 정답</option><option value="question_solution_answer">문제 + 해설 + 정답</option></select></label><button class="button ghost" id="check-readiness" type="button">확정 전 검수</button><span class="builder-revision" id="draft-revision">초안을 열어 주세요.</span></section>
+    <section class="builder-workspace" aria-label="시험지 문항 편집">
+      <aside class="panel builder-candidates"><div class="section-head compact"><div><p class="eyebrow">Question bank</p><h2>검수 후보</h2></div><span class="badge" id="candidate-count">0개</span></div><label class="builder-search">검색<input id="candidate-search" type="search" placeholder="교육과정 경로·유형 코드"></label><div class="builder-replace-controls"><span id="replace-context">추가할 문항을 선택하세요.</span><div><button class="button soft is-active" data-relation="manual" type="button">직접</button><button class="button soft" data-relation="twin" type="button">쌍둥이</button><button class="button soft" data-relation="similar" type="button">유사</button></div></div><div class="builder-candidate-list" id="candidate-list"></div></aside>
+      <section class="panel builder-selected"><div class="section-head compact"><div><p class="eyebrow">Selected placements</p><h2>선택한 문제</h2></div><span class="badge" id="selected-count">0문항</span></div><div class="builder-summary" id="draft-summary"></div><ol class="builder-placement-list" id="placement-list"></ol><p class="builder-note">끌어서 순서를 바꾸면 문제·답안·풀이·분석지 번호가 같은 순서로 다시 계산됩니다.</p></section>
+    </section>
+    <section class="panel builder-scope"><div class="section-head compact"><div><p class="eyebrow">Curriculum scope</p><h2>출제 범위</h2></div><button class="button ghost" id="apply-scope" type="button">범위 적용</button></div><label>한 줄에 하나씩 교육과정 경로를 입력하세요.<textarea id="scope-keys" rows="4" placeholder="2022/HS/ALGEBRA"></textarea></label><p class="status" id="scope-status"></p></section>
+    <p class="status" id="builder-status" aria-live="polite"></p>
+  </main>
+  <script src="../shared/runtime.js"></script><script src="../shared/auth.js"></script><script src="../shared/exam-builder-page.js"></script>
+</body>
+</html>

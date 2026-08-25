@@ -26,6 +26,7 @@
 - `GET /admin/exam-reviews/sh-selection-r01/items/:number/evidence`
 - `GET /review-assets/:examId/:number/:role.ext?sub=...&exp=...&rv=...&sig=...`
 - `GET /admin/exam-editor/candidates`
+- `GET /admin/exam-editor/drafts`
 - `POST /admin/exam-editor/drafts`
 - `GET /admin/exam-editor/drafts/:draftId`
 - `PATCH /admin/exam-editor/drafts/:draftId`

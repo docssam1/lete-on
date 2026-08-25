@@ -53,6 +53,9 @@ function emptyRoot() { return { schemaVersion: SCHEMA_VERSION, drafts: {} }; }
 function createMemoryStore(initial) {
   let root = normalize(initial || emptyRoot());
   return {
+    list() {
+      return Object.values(root.drafts).map(function (record) { return record; });
+    },
     read(draftId) {
       return root.drafts[draftId] || null;
     },
@@ -123,6 +126,7 @@ function createFileStore(filePath, staleLockMs) {
     }
   }
   return {
+    list() { return Object.values(load().drafts); },
     read(draftId) { return load().drafts[draftId] || null; },
     create(record) {
       const normalized = normalizeRecord(record, record && record.draftId);

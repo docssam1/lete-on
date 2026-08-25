@@ -178,6 +178,12 @@ test("draft editing enforces origin, revision CAS, item versions and server-side
   assert.deepEqual(created.draft.placements, []);
   assertNoPrivateFields(created);
 
+  const listResponse = await fetch(`${env.base}/admin/exam-editor/drafts`, { headers: { Cookie: admin.cookie } });
+  assert.equal(listResponse.status, 200);
+  const listed = await listResponse.json();
+  assert.deepEqual(listed.items.map(item => [item.draftId, item.revision, item.itemCount]), [[created.draftId, 1, 0]]);
+  assertNoPrivateFields(listed);
+
   const draftUrl = `${env.base}/admin/exam-editor/drafts/${encodeURIComponent(created.draftId)}`;
   const addResponse = await fetch(draftUrl, {
     method: "PATCH",
