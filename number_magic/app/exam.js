@@ -25,6 +25,24 @@
   .nm-print-blank { display: inline-block; min-width: 40px; border-bottom: 2px solid #000; }
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
   .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
+  .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .nm-print-qr-code { font-family: monospace; font-size: 10px; }
+  .nm-print-qr-wrap svg { width: 21mm; height: 21mm; shape-rendering: crispEdges; }
+  .nm-print-qr-cap { font-size: 8px; color: #333; max-width: 26mm; text-align: center; line-height: 1.15; }
+  .nm-print-concept-page { page-break-after: always; break-after: page; }
+  .nm-cp-body { margin-top: 6px; }
+  .nm-cp-block { margin-bottom: 16px; }
+  .nm-cp-badge { display: inline-block; font-size: 11px; background: #eee; border-radius: 10px; padding: 2px 10px; margin-bottom: 4px; }
+  .nm-cp-title { margin: 0 0 6px; font-size: 16px; }
+  .nm-cp-sentence { margin: 0; font-size: 13px; line-height: 1.6; }
+  .nm-cp-stage { margin-bottom: 10px; }
+  .nm-cp-stage-h { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .nm-cp-stage-d { font-size: 12.5px; line-height: 1.6; }
+  .nm-cp-mathsteps { margin: 6px 0; font-size: 13px; }
+  .nm-cp-mathsteps > div { margin: 2px 0; }
+  .nm-cp-arrow { color: #888; }
+  .nm-cp-rule { background: #f4f4f4; border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-top: 6px; }
+  .nm-cp-rule p { margin: 4px 0 0; }
 }
 @media screen {
   .nm-print-sheet { display: none; }
@@ -108,6 +126,140 @@ function matchesAnswer(raw, answer){
     return parts.length===answer.length && parts.every((v,i)=>v===answer[i]);
   }
   return parseFloat(raw)===answer;
+}
+
+/* ── 학습지 ID QR + 개념 연동 (2026-08-25) ──────────────────
+   QR에 담는 URL은 불변 규약: https://docssam1.github.io/lete-on/number_magic/?ws=<학습지ID>
+   학습지 ID(=worksheetCode에서 '#'을 뗀 값)는 스레드·레벨·문항수·시드를 그대로 담고 있어서
+   나중에 문항을 재생성할 수 있다(과정-로드맵.md §11) — 채점 회수는 Phase 2. */
+const WS_BASE_URL = 'https://docssam1.github.io/lete-on/number_magic/?ws=';
+function wsUrlFromCode(code){ return WS_BASE_URL + String(code||'').replace(/^#/,''); }
+
+/* QR을 <img>/canvas가 아니라 인라인 SVG(경로 하나)로 그린다 — 인쇄 시 canvas는
+   프린트 다이얼로그가 뜨는 타이밍에 따라 비어 있는 채로 인쇄될 위험이 있어 제외
+   (작업 지시 §2 "canvas면 인쇄 누락 위험"). SVG는 일반 DOM이라 항상 같이 인쇄된다. */
+function qrSvg(text){
+  if(!window.qrcode) return ''; // vendor/qrcode.js 미로딩 — 캡션·코드 텍스트만으로 폴백
+  let q;
+  try{
+    q = window.qrcode(0, 'M'); // typeNumber 0=자동, 오류정정 M(15%) — 학습지 인쇄 잉크 번짐 대비
+    q.addData(text);
+    q.make();
+  }catch(e){ return ''; }
+  const n = q.getModuleCount();
+  const quiet = 4; // 모듈 단위 여백(표준 권장치) — 폰 카메라 인식률 확보
+  const size = n + quiet*2;
+  let d = '';
+  for(let r=0;r<n;r++){
+    for(let c=0;c<n;c++){
+      if(q.isDark(r,c)) d += `M${c+quiet} ${r+quiet}h1v1h-1z`;
+    }
+  }
+  return `<svg viewBox="0 0 ${size} ${size}" class="nm-qr-svg" role="img" aria-label="QR code">`
+       + `<rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+
+/* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬). */
+function qrHeaderBlockHtml(code){
+  return `<div class="nm-print-qr-wrap">
+    <span class="nm-print-qr-code">${esc(code)}</span>
+    ${qrSvg(wsUrlFromCode(code))}
+    <span class="nm-print-qr-cap">QR을 찍으면 개념 설명이 열려요</span>
+  </div>`;
+}
+
+/* 스레드+레벨 → 관련 유닛 해석. threads.js의 단일 unit 필드로는 표현이 안 되는
+   레벨별 유닛(ML12·ML16·ML17처럼 같은 제너레이터를 여러 유닛이 나눠 쓰는 경우)만
+   여기서 오버라이드한다 — main.js의 학습지 도우미 화면(?ws=)도 이 함수를 그대로 쓴다. */
+const UNIT_LEVEL_OVERRIDE = {
+  ML12:{1:'C-02',2:'C-04',3:'C-34'},
+  ML16:{1:'C-16',2:'C-28'},
+  ML17:{1:'C-17',2:'C-29'},
+};
+function resolveConceptUnit(threadId, level){
+  const th = (window.NM_THREADS||{})[threadId];
+  if(!th) return null;
+  const ov = UNIT_LEVEL_OVERRIDE[threadId];
+  const uid = (ov && ov[level]) || th.unit || null;
+  const u = uid ? (window.NM_UNITS||{})[uid] : null;
+  return { threadId, thread:th, unitId:uid, unit:(u && u.discover) ? u : null };
+}
+
+/* 다국어 안내: exam.js는 처음부터 한글 전용이다(이름/날짜/점수 라벨, "정답지 / Answer Key" 등
+   전부 하드코딩 한국어 — S.lang을 참조하는 코드가 없다). 개념 페이지도 같은 관례를 따른다. */
+function pickKo(field){ return field ? (field.ko || field.en || '') : ''; }
+
+/* 개념 페이지의 계단식 수식(mathSteps) — cellHtml과 같은 data-tex 패턴, 호출부가
+   렌더 후 '.nm-cp-tex'에 renderKaTeX을 돌려야 한다. */
+function mathStepsHtmlPrint(steps){
+  if(!steps || !steps.length) return '';
+  return `<div class="nm-cp-mathsteps">` + steps.map((tex,i) =>
+    (i ? '<div class="nm-cp-arrow">↓</div>' : '') + `<div class="nm-cp-tex" data-tex="${esc(tex)}"></div>`
+  ).join('') + `</div>`;
+}
+
+/* 유형 하나(스레드+레벨)의 개념 블록 — 관련 유닛이 있으면 그 유닛의 마법 노트(제목·앞
+   1~2단계·규칙)를, 없으면 threads.js의 concept 필드를, 그것도 없으면 이름만. */
+function conceptBlockHtml(threadId, level){
+  const info = resolveConceptUnit(threadId, level);
+  if(!info) return '';
+  const nm = (info.thread.name && info.thread.name.ko) || threadId;
+  if(info.unit){
+    const u = info.unit, d = u.discover;
+    const title = (u.title && u.title.ko) || nm;
+    const stages = (d.stages||[]).slice(0,2); // 학습지 한 장 분량으로 축약 — 도입부면 충분
+    const stagesHtml = stages.map(s => `<div class="nm-cp-stage">`
+        + (s.head ? `<div class="nm-cp-stage-h">${esc(pickKo(s.head))}</div>` : '')
+        + (s.desc ? `<div class="nm-cp-stage-d">${pickKo(s.desc)}</div>` : '') // desc는 <b> 등 자체 저작 HTML 포함(main.js stepDiscover와 동일하게 그대로 삽입)
+        + mathStepsHtmlPrint(s.mathSteps)
+        + `</div>`).join('');
+    const ruleHtml = d.rule ? `<div class="nm-cp-rule"><b>마법의 규칙</b><p>${esc(pickKo(d.rule))}</p></div>` : '';
+    return `<div class="nm-cp-block">
+      <div class="nm-cp-badge">📓 ${esc(nm)}</div>
+      <h3 class="nm-cp-title">${esc(title)}</h3>
+      ${stagesHtml}${ruleHtml}
+    </div>`;
+  }
+  if(info.thread.concept){
+    return `<div class="nm-cp-block">
+      <h3 class="nm-cp-title">${esc(nm)}</h3>
+      <p class="nm-cp-sentence">${esc(pickKo(info.thread.concept))}</p>
+    </div>`;
+  }
+  return `<div class="nm-cp-block"><h3 class="nm-cp-title">${esc(nm)}</h3></div>`;
+}
+
+/* items: [{thread,level}, ...] — 현재는 학습지 한 장이 스레드 하나뿐이라 늘 1개짜리
+   배열이지만, 나중에 혼합 학습지가 생겨도 이 함수는 그대로 여러 유형을 순서대로
+   이어붙인다(작업 지시 §5-4, "넘치면 자연 페이지 나눔" — 높이를 고정하지 않는다). */
+function conceptPageHtml(items, code){
+  const blocks = items.map(it => conceptBlockHtml(it.thread, it.level)).join('');
+  if(!blocks) return '';
+  return `<div class="nm-print-concept-page">
+  <div class="nm-print-header">
+    <h2 style="margin:0">Numbers of Magic — 개념 노트</h2>
+    <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em;align-items:flex-start">
+      <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
+      ${qrHeaderBlockHtml(code)}
+    </div>
+  </div>
+  <div class="nm-cp-body">${blocks}</div>
+</div>`;
+}
+
+/* "첫 장에 개념 넣기" 토글 — localStorage에 기억, 기본값 끔(기존 인쇄 결과 무변경). */
+const CONCEPT_TOGGLE_KEY = 'nm_ws_concept_page';
+function getConceptPageOn(){ try{ return localStorage.getItem(CONCEPT_TOGGLE_KEY)==='1'; }catch(e){ return false; } }
+function setConceptPageOn(v){ try{ localStorage.setItem(CONCEPT_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
+function conceptToggleRowHtml(){
+  return `<label class="nm-ex-concept-toggle">
+    <input type="checkbox" id="nm-ex-concept-chk" ${getConceptPageOn()?'checked':''}>
+    <span>📖 첫 장에 개념 넣기</span>
+  </label>`;
+}
+function bindConceptToggle(container){
+  const chk = container.querySelector('#nm-ex-concept-chk');
+  if(chk) chk.addEventListener('change', () => setConceptPageOn(chk.checked));
 }
 
 /* 원형 번호 ①②③... */
@@ -225,6 +377,19 @@ const NM_EXAM = {
     const { thread, level, count, seed } = config;
     return `#${thread}-L${level}x${count}-${seed}`;
   },
+
+  /* 학습지 코드 → 설정 파싱 (main.js의 ?ws= 도우미 화면이 사용). 실패 시 null. */
+  parseWorksheetCode,
+
+  /* 학습지 ID(코드) → 개념 화면 QR URL. main.js도 같은 규약을 써야 하면 이걸 재사용할 것. */
+  worksheetUrl: wsUrlFromCode,
+
+  /* QR 인라인 SVG 문자열(모듈 격자 그대로, 폰트/이미지 의존 없음). */
+  qrSvg,
+
+  /* 스레드+레벨 → 관련 유닛 해석({threadId, thread, unitId, unit}) — 학습지 도우미
+     화면(main.js)과 인쇄 개념 페이지가 같은 매핑을 쓴다. */
+  resolveConceptUnit,
 
   /* ── 1. 시험 설정 화면 ── */
   renderExamSetup(container, onStart){
@@ -622,7 +787,8 @@ const NM_EXAM = {
     <div class="nm-ex-count-btns">
       ${WORD_OPTS.map(w => `<button class="nm-ex-cnt-btn${w.key===wordType?' sel':''}" data-w="${w.key}">${w.label}</button>`).join('')}
     </div>
-    <div class="nm-ex-actions" style="margin-top:22px">
+    ${conceptToggleRowHtml()}
+    <div class="nm-ex-actions" style="margin-top:10px">
       <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
       <button id="nm-ex-print-start" class="nm-ex-btn-secondary">🖨️ 인쇄하여 풀기</button>
     </div>
@@ -680,6 +846,7 @@ const NM_EXAM = {
         container.querySelector('#nm-ex-preview-dice').addEventListener('click', () => {
           previewSeed = NM_RNG.newCode(); render();
         });
+        bindConceptToggle(container);
 
         container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
           onStart && onStart(makeConfig());
@@ -749,6 +916,7 @@ const NM_EXAM = {
       코드: <code id="nm-ex-code-preview"></code>
       <button id="nm-ex-new-seed" class="nm-ex-btn-ghost">🎲 새 코드</button>
     </div>
+    ${conceptToggleRowHtml()}
     <div class="nm-ex-actions">
       <button id="nm-ex-start" class="nm-ex-btn-primary">▶ 학습지 시작</button>
       <button id="nm-ex-print" class="nm-ex-btn-secondary">🖨️ 인쇄</button>
@@ -767,6 +935,7 @@ const NM_EXAM = {
       container.querySelector('#nm-ex-new-seed').addEventListener('click', () => {
         currentSeed = NM_RNG.newCode(); refreshCode();
       });
+      bindConceptToggle(container);
       container.querySelector('#nm-ex-start').addEventListener('click', () => {
         onStart && onStart(getConfig());
       });
@@ -948,14 +1117,17 @@ const NM_EXAM = {
     const th = (window.NM_THREADS || {})[thread] || {};
     const thName = (th.name||{}).ko || thread;
 
+    const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
+
     sheet.innerHTML = `
+${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — ${esc(thName)} 학습지</h2>
   <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
     <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    <span style="margin-left:auto;font-family:monospace;font-size:0.85em">${esc(code)}</span>
+    ${qrHeaderBlockHtml(code)}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems"></div>
@@ -965,6 +1137,8 @@ const NM_EXAM = {
 </div>`;
 
     document.body.appendChild(sheet);
+
+    sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
     const problemGrid  = sheet.querySelector('#nm-print-problems');
     const answerGrid   = sheet.querySelector('#nm-print-answers');
@@ -1185,14 +1359,17 @@ window.examScreen = function(container){
       const sheet = document.createElement('div');
       sheet.className = 'nm-print-sheet';
       sheet.setAttribute('aria-hidden','true');
+      const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
+
       sheet.innerHTML = `
+${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0;font-size:16px">${esc(label||thread)} 연산 학습지</h2>
   <div style="display:flex;gap:20px;margin-top:6px;font-size:12px">
     <span>이름: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:80px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:50px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    <span style="margin-left:auto;font-family:monospace;font-size:11px">${esc(code)}</span>
+    ${qrHeaderBlockHtml(code)}
   </div>
 </div>
 <div class="nm-print-ws-grid" id="nm-pw-probs"></div>
@@ -1201,6 +1378,8 @@ window.examScreen = function(container){
   <div class="nm-print-ak-grid" id="nm-pw-aks"></div>
 </div>`;
       document.body.appendChild(sheet);
+
+      sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
       const probGrid = sheet.querySelector('#nm-pw-probs');
       const akGrid   = sheet.querySelector('#nm-pw-aks');

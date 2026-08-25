@@ -236,6 +236,11 @@ function charChipHTML(){
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
+  if(wsHelperId){
+    app.innerHTML='<div id="screen"></div>';
+    screenWorksheetHelper(wsHelperId);
+    return;
+  }
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
     screenWelcome();
@@ -1874,6 +1879,79 @@ function screenExam(){
   </div><div id="nm-exam-cnt" class="nm-step-body"></div>`;
   $('#backExam').onclick=()=>{S.view='town';save();render();};
   window.examScreen(document.getElementById('nm-exam-cnt'));
+}
+
+/* ============================================================
+   학습지 도우미 화면 (?ws=<학습지ID>) — 과정-로드맵.md §11
+   QR로 열리는 독립 화면. 학생 선택/로그인 프로필 없이도 동작한다(부모가 찍는 시나리오
+   전제). S(로컬 프로필)에는 남기지 않는 URL 기반 임시 상태라 wsHelperId는 전역 let.
+   ID의 스레드 프리픽스(threads.js 키)로 유형을 찾고, 시드가 ID 안에 그대로 있어서
+   나중에(Phase 2) 같은 ID로 문항을 다시 만들어 채점 화면을 열 수 있다. */
+let wsHelperId = (function(){
+  try{ return new URLSearchParams(location.search).get('ws') || null; }catch(e){ return null; }
+})();
+
+function exitWsHelper(){
+  wsHelperId = null;
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+}
+
+function screenWorksheetHelper(wsId){
+  const scr = $('#screen');
+  const canParse = window.NM_EXAM && NM_EXAM.parseWorksheetCode && NM_EXAM.resolveConceptUnit;
+  const cfg = canParse ? NM_EXAM.parseWorksheetCode(wsId) : null;
+  const info = (cfg && (window.NM_THREADS||{})[cfg.thread]) ? NM_EXAM.resolveConceptUnit(cfg.thread, cfg.level) : null;
+  const th = info && info.thread;
+  const ko=S.lang==='ko', en=S.lang==='en';
+
+  let bodyHtml;
+  if(!cfg || !th){
+    bodyHtml = `<div class="nm-card">
+      <div class="nm-card-h">📄 ${esc(wsId)}</div>
+      <p class="nm-wsh-warn">${ko?'이 학습지 ID를 알아볼 수 없어요. 학습지에 인쇄된 코드를 다시 확인해 주세요.':en?"We couldn't recognize this worksheet ID — please check the code printed on the sheet.":'无法识别这个学习单编号，请重新确认单子上印的代码。'}</p>
+    </div>`;
+  } else {
+    const u = info.unit; // {..., discover} 또는 null
+    const conceptBody = u
+      ? `<div class="nm-wsh-unit-title">${esc(L(u.title))}</div>
+         ${(u.discover.stages||[]).slice(0,1).map(s=>`<p class="nm-wsh-sentence">${L(s.desc)}</p>`).join('')}`
+      : (th.concept
+          ? `<p class="nm-wsh-sentence">${esc(L(th.concept))}</p>`
+          : `<p class="nm-wsh-sentence nm-wsh-noconcept">${ko?'이 유형은 아직 개념 설명이 준비되지 않았어요.':en?'A concept note for this type is not ready yet.':'这个类型的概念说明还没准备好。'}</p>`);
+    const ruleBox = (u && u.discover && u.discover.rule)
+      ? `<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${esc(L(u.discover.rule))}</p></div>` : '';
+    const unitBtn = info.unitId
+      ? (S.onboarded
+          ? `<button class="nm-btn full" id="wshGoUnit">${ko?'✨ 이 마법 배우러 가기':en?'✨ Go learn this magic':'✨ 去学这个魔法'}</button>`
+          : `<p class="nm-wsh-login-hint">${ko?'앱에서 로그인(캐릭터 선택) 후 이용해 주세요.':en?'Please log in (pick a character) on the app first.':'请先在应用中登录（选择角色）后使用。'}</p>`)
+      : '';
+    bodyHtml = `<div class="nm-card">
+      <div class="nm-card-h">📄 ${esc(wsId)}</div>
+      <div class="nm-wsh-name">${esc(L(th.name))}</div>
+      ${conceptBody}
+      ${ruleBox}
+      ${unitBtn}
+      <div class="nm-rule nm-wsh-grade">
+        <b>✏️ ${ko?'채점 입력':en?'Enter grading':'录入批改'}</b>
+        <p>${ko?'준비 중이에요 — 곧 이 화면에서 틀린 번호만 골라 저장할 수 있어요!':en?"Coming soon — you'll be able to mark the wrong numbers and save right here!":'即将上线——很快就能在这里只标记错题号并保存！'}</p>
+      </div>
+    </div>`;
+  }
+
+  scr.innerHTML = `<div class="nm-unit-bar">
+    <button class="nm-back" id="wshBack">${t('back')}</button>
+    <div class="nm-unit-title">${ko?'학습지 도우미':en?'Worksheet Helper':'学习单助手'}</div>
+  </div>
+  <div class="nm-step-body nm-wsh-wrap">${bodyHtml}</div>`;
+
+  $('#wshBack').onclick = () => { exitWsHelper(); render(); };
+  const goBtn = $('#wshGoUnit');
+  if(goBtn) goBtn.onclick = () => {
+    exitWsHelper();
+    S.unit = info.unitId; S.step = null; S.sub = {}; S.tierId = null; S.view = 'unit'; S._fromRoadmap = false;
+    save(); render();
+  };
+  renderMath(scr);
 }
 
 /* ---------- 시작 ---------- */
