@@ -431,6 +431,21 @@ function rodRatioTotalBook3({ difficulty = 2 }) {
   };
 }
 
+function rodComparisonTotalUnitTest({ difficulty = 2 }) {
+  const ratio = sample(difficulty === 1 ? [2, 3] : difficulty === 2 ? [2, 5] : [4, 5, 6]);
+  const unit = randomInt(difficulty === 1 ? 2 : 3, difficulty === 3 ? 8 : 7);
+  const first = unit;
+  const second = unit * ratio;
+  const total = first + second;
+  return {
+    prompt: `그림과 같이 막대 ㉡의 길이는 막대 ㉠의 길이의 ${ratio}배이고, 두 막대의 길이의 합은 ${total}cm입니다. ㉠과 ㉡의 길이를 각각 구하세요.`,
+    visual: { kind: "book3", subtype: "rod-comparison-total", ratio, total },
+    answer: `㉠=${first}cm, ㉡=${second}cm`,
+    solution: `전체를 ㉠과 같은 길이 ${ratio + 1}칸으로 나눕니다. 전체 ${total}cm를 ${ratio + 1}칸으로 똑같이 나누면 한 칸은 ${unit}cm입니다. 따라서 ㉠은 ${first}cm, ㉡은 ${second}cm입니다.`,
+    meta: { family: "rod-comparison-total-unit-test", ratio, unit, first, second, total }
+  };
+}
+
 function unitObjectLength({ difficulty = 2 }) {
   const counts = difficulty === 1 ? [4, 5] : difficulty === 2 ? sample([[4, 5], [5, 6], [3, 7]]) : sample([[6, 8], [7, 9], [5, 8]]);
   const common = difficulty === 3 ? randomInt(3, 7) : randomInt(2, 5);
@@ -1185,6 +1200,7 @@ export const BOOK03_GENERATORS = {
   walkingStepRatio,
   routeDistanceMultiple,
   rodRatioTotalBook3,
+  rodComparisonTotalUnitTest,
   unitObjectLength,
   equivalentObjectLength,
   objectCombinationEquivalentCount,

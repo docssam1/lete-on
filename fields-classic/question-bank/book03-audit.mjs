@@ -139,6 +139,14 @@ function validate(type, problem, difficulty) {
     case "rod-total":
       assert(meta.first + meta.second === meta.total, id, difficulty, "rod total mismatch");
       return;
+    case "rod-comparison-total-unit-test":
+      assert(meta.second === meta.first * meta.ratio, id, difficulty, "rod ratio mismatch");
+      assert(meta.first + meta.second === meta.total, id, difficulty, "rod combined total mismatch");
+      assert(meta.first === meta.unit, id, difficulty, "rod unit mismatch");
+      assert(problem.answer === `㉠=${meta.first}cm, ㉡=${meta.second}cm`, id, difficulty, "rod visible answer mismatch");
+      assert(!/\d+(?:을|를) /.test(problem.solution), id, difficulty, "rod solution has a bare-number particle");
+      assert(problem.visual?.subtype === "rod-comparison-total" && problem.visual.ratio === meta.ratio && problem.visual.total === meta.total, id, difficulty, "rod source visual mismatch");
+      return;
     case "unit-object":
       assert(meta.counts.every((count, index) => count * meta.lengths[index] === meta.total), id, difficulty, "object length mismatch");
       return;
@@ -299,10 +307,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 44) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 45) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
-const expectedReadyQuestions = [1, 2, 6, 7, 8, 11, 12, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+const expectedReadyQuestions = [1, 2, 6, 7, 8, 9, 11, 12, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
 const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
 if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
 if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
@@ -319,7 +327,13 @@ if (unitTestQuestions.find((question) => question.number === 17)?.difficulty !==
 
 const question19Type = typeById(unitTestQuestions.find((question) => question.number === 19)?.typeId);
 const question23Type = typeById(unitTestQuestions.find((question) => question.number === 23)?.typeId);
+const question9Type = typeById(unitTestQuestions.find((question) => question.number === 9)?.typeId);
 for (let run = 0; run < 100; run += 1) {
+  const question9 = GENERATORS[question9Type.generator]({ difficulty: 2 });
+  assert([2, 5].includes(question9.meta.ratio), question9Type.id, 2, "unit-test ratio changed");
+  assert(question9.meta.first + question9.meta.second === question9.meta.total, question9Type.id, 2, "unit-test total changed");
+  assert(question9.visual.subtype === "rod-comparison-total", question9Type.id, 2, "unit-test rod visual changed");
+
   const question19 = GENERATORS[question19Type.generator]({ difficulty: 2 });
   assert(question19.meta.template === "practice", question19Type.id, 2, "unit-test clue template changed");
   assert(JSON.stringify(question19.meta.countRows) === JSON.stringify([[1,1,0],[2,1,0],[1,1,1],[1,2,2]]), question19Type.id, 2, "unit-test clue rows changed");

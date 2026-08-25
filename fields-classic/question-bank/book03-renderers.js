@@ -470,6 +470,10 @@ function simpleBook3Markup(visual) {
     const maxUnits = Math.max(...visual.rows.map((row) => row.units));
     return `<div class="b3-rods" style="--max-units:${maxUnits}">${visual.rows.map((row) => `<div><b>${row.label}</b><span style="--units:${row.units}">${Array.from({length:row.units},()=>"<i></i>").join("")}</span>${visual.given?.label === row.label ? `<em>1개 ${visual.given.value}cm</em>` : ""}</div>`).join("")}${visual.total ? `<strong>전체 ${visual.total}cm</strong>` : ""}</div>`;
   }
+  if (visual.subtype === "rod-comparison-total") {
+    const cells = (count) => Array.from({ length: count }, () => "<i></i>").join("");
+    return `<div class="b3-rod-comparison" style="--ratio:${visual.ratio}"><div><b>㉠</b><span class="first">${cells(1)}</span></div><div><b>㉡</b><span class="second">${cells(visual.ratio)}</span><em>㉠의 ${visual.ratio}배</em></div><strong>㉠ + ㉡ = ${visual.total}cm</strong></div>`;
+  }
   if (visual.subtype === "object-measure") return `<div class="b3-object-measure"><strong>${visual.total}cm</strong>${visual.rows.map((row) => `<div><b>${row.icon}</b><span>${Array.from({length:row.count},()=>`<i>${row.icon === "성냥" ? "┃" : "▭"}</i>`).join("")}</span><em>${row.count}개</em></div>`).join("")}</div>`;
   if (visual.subtype === "object-equation") return `<div class="b3-object-equation"><span>${visual.left.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><b>=</b><span>${visual.right.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><small>성냥 1개 ${visual.match}cm · ${visual.givenTarget === "log" ? "통나무" : "연필"} 1개 ${visual.givenValue}cm</small></div>`;
   if (visual.subtype === "object-count-equivalence") return `<div class="b3-object-count"><div><b>리코더 1개</b><span>= 연필 ${visual.pencils}자루 + 성냥개비 ${visual.matches}개</span></div><div><b>연필 1자루</b><span>= 성냥개비 ${visual.pencilInMatches}개</span></div><strong>리코더 1개 = 성냥개비 ?개</strong></div>`;
@@ -571,7 +575,7 @@ export function book03Markup(visual) {
   if (visual.subtype === "grid-path") return gridPathMarkup(visual);
   if (visual.subtype === "number-line") return numberLineMarkup(visual);
   if (visual.subtype === "segment-chain") return segmentChainMarkup(visual);
-  if (["step-ratio","route-multiple","rods","object-measure","object-equation","object-count-equivalence","meeting-distance","difference-unit"].includes(visual.subtype)) return simpleBook3Markup(visual);
+  if (["step-ratio","route-multiple","rods","rod-comparison-total","object-measure","object-equation","object-count-equivalence","meeting-distance","difference-unit"].includes(visual.subtype)) return simpleBook3Markup(visual);
   if (visual.subtype === "mixed-interval") return mixedIntervalMarkup(visual);
   if (visual.subtype === "equation-chain") return equationChainMarkup(visual);
   if (visual.subtype === "binary-weight") return binaryWeightMarkup(visual);
