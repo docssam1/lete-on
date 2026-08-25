@@ -25,6 +25,11 @@
 - `POST /admin/exam-reviews/sh-selection-r01/final-confirmation`
 - `GET /admin/exam-reviews/sh-selection-r01/items/:number/evidence`
 - `GET /review-assets/:examId/:number/:role.ext?sub=...&exp=...&rv=...&sig=...`
+- `GET /admin/exam-editor/candidates`
+- `POST /admin/exam-editor/drafts`
+- `GET /admin/exam-editor/drafts/:draftId`
+- `PATCH /admin/exam-editor/drafts/:draftId`
+- `GET /admin/exam-editor/drafts/:draftId/readiness`
 
 학생 화면과 API를 같은 HTTPS 출처에서 실행하는 구성이 기본입니다. `shared/runtime.js`가 현재 HTTPS 출처를 API 주소와 허용 이미지 호스트로 사용합니다. 별도 출처를 사용할 때는 화면보다 먼저 `window.HIGHSELECT_RUNTIME`을 주입해야 합니다.
 
@@ -40,6 +45,8 @@
 | `HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH` | 공개 저장소 밖의 반복연습 정책·검수 완료 후보 메타데이터 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_PRACTICE_PATH` | 반복연습 계획·관리자 승인 상태 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_PRACTICE_ASSETS_PATH` | 중립 문항 ID를 검수된 단일 이미지 자산에 연결하는 비공개 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_EXAM_EDITOR_REGISTRY_PATH` | 시험지 후보의 현재 버전·공개 검수 상태와 교체 근거를 보관하는 비공개 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH` | 관리자 시험지 초안·revision·배치 이력을 저장하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
 
@@ -112,6 +119,14 @@ detailType, difficulty(lowered|standard|raised), evidence[]
 
 학생은 공개 완료된 시험에 대한 현재 개별 승인이 있는 프로그램만 계획할 수 있습니다. 관리자는 승인 직전에 학생 권한, HMAC 기반 학습자 결속, 현재 레지스트리로 재생성한 계획을 모두 대조합니다. 계획 파일의 학생 ID나 문항 구성이 바뀌면 공개하지 않고 `409`로 닫습니다. 저장은 같은 디렉터리 잠금, revision 비교, 임시 파일 flush, 원자 교체를 사용합니다. 모든 선택 문항의 이미지가 존재할 때만 학생·세트·승인 버전·문항 위치·내부 자산 revision·만료시각에 묶인 단기 서명 URL을 만들며, 내부 자산 키·revision·경로는 URL과 JSON에 노출하지 않습니다. 승인 렌더 자산 또는 비공개 채점기가 연결되기 전에는 해당 페이지나 시도 제출 경로가 `423`으로 잠겨 있습니다.
 
+## 비공개 시험지 편집 설정
+
+`HIGHSELECT_PRIVATE_EXAM_EDITOR_REGISTRY_PATH`는 `highselect-private-exam-editor-registry/v1` JSON입니다. 문항 원문·답·풀이·원본 경로는 넣지 않고, 중립 문항 ID와 현재 버전, 교육과정 경로, 세부유형, 난도, 입력 방식, 그림 필요 여부, 공개 승인 상태만 둡니다. 쌍둥이·유사 교체 근거는 원문 문항·버전과 후보 문항·버전에 결속하며 문항군·세부유형·풀이 구조·난도 관계가 모두 검증된 경우에만 `approved`로 둡니다.
+
+`HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH`는 `highselect-private-exam-drafts/v1` JSON입니다. 초안은 원문 문항을 복제하지 않고 배치 ID, 중립 문항 ID, 문항 버전, 순서, 배점, 교체 근거 ID만 저장합니다. 변경 요청은 관리자 세션, 같은 `Origin`, `X-Highselect-Admin: 1`, JSON 형식과 현재 초안 revision을 모두 요구합니다. 다른 화면이 먼저 저장했거나 문항 버전이 바뀌면 `409`로 닫고 자동 덮어쓰지 않습니다.
+
+후보 검색 API는 검수 잠금 문항을 반환하지 않으며 답안 상태 필드도 내보내지 않습니다. 교체 요청의 관계 판정값은 클라이언트 입력을 신뢰하지 않고 비공개 레지스트리의 근거 ID로 다시 검증합니다. readiness 응답은 현재 문항 버전과 범위를 재검사하고, 통과한 경우에만 문제·답안·풀이·분석지에 공통으로 사용할 번호 projection을 반환합니다.
+
 ## 점수와 판정
 
 SH-R01은 공식 배점이 확인되지 않았으므로 문항당 1점, 40점 만점의 **운영 점수**만 계산합니다. 시험과 정확히 연결된 버전 커트라인이 승인되지 않은 동안 서버는 `cutlineDecision: null`을 반환하고 화면은 합격/불합격을 표시하지 않습니다.
@@ -127,7 +142,7 @@ docker build -f highschool-selection/server/Dockerfile -t highselect-server .
 통합 검증은 다음 파일에 있습니다.
 
 ```text
-node --test highschool-selection/tests/server-flow.test.cjs highschool-selection/tests/admin-access-grants.test.cjs highschool-selection/tests/admin-exam-reviews.test.cjs highschool-selection/tests/review-store.test.cjs highschool-selection/tests/practice-set-runtime.test.cjs highschool-selection/tests/practice-store.test.cjs
+node --test highschool-selection/tests/server-flow.test.cjs highschool-selection/tests/admin-access-grants.test.cjs highschool-selection/tests/admin-exam-reviews.test.cjs highschool-selection/tests/review-store.test.cjs highschool-selection/tests/practice-set-runtime.test.cjs highschool-selection/tests/practice-store.test.cjs highschool-selection/tests/exam-editor-core.test.cjs highschool-selection/tests/exam-editor-server.test.cjs
 ```
 
-검증 범위는 보안 쿠키, 시험별 승인, 8쪽 서명 이미지, 위변조 거부, 무답안 40문항 스키마, 제출·운영 채점·분석지, 미완료 release gate 차단, 관리자 문항 검수·회차 최종 확인, 보호 근거 이미지 서명, PDF 정적 노출 차단입니다.
+검증 범위는 보안 쿠키, 시험별 승인, 8쪽 서명 이미지, 위변조 거부, 무답안 40문항 스키마, 제출·운영 채점·분석지, 미완료 release gate 차단, 관리자 문항 검수·회차 최종 확인, 보호 근거 이미지 서명, 시험지 후보 잠금, 초안 revision 충돌, 교체 근거 위조 거부, PDF 정적 노출 차단입니다.
