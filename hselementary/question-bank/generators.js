@@ -349,7 +349,7 @@
     return `<svg class="geometry-diagram clock-diagram" viewBox="0 0 180 180" aria-label="${hour}시 ${String(minute).padStart(2, "0")}분 시계"><circle cx="90" cy="90" r="76"/>${ticks}<line class="hour-hand" x1="90" y1="90" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}"/><line class="minute-hand" x1="90" y1="90" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}"/><circle cx="90" cy="90" r="4"/></svg>`;
   };
   const verticalOperation = (top, bottom, partials, total) => `<div class="long-operation" aria-label="세로 계산"><span>${top}</span><span>× ${bottom}</span><i></i>${partials.map(value => `<span>${value}</span>`).join("")}<i></i><strong>${total}</strong></div>`;
-  const gridShapeSvg = (points, size = 8, guide = "") => {
+  const gridShapeSvg = (points, size = 8, guide = "", attributes = {}) => {
     const margin = 18;
     const cell = 18;
     const extent = size * cell;
@@ -360,8 +360,24 @@
     const polygon = points.map(([x, y]) => `${margin + x * cell},${margin + (size - y) * cell}`).join(" ");
     const [ax, ay] = points[0];
     const guides = guide === "vertical" ? `<line class="guide-line" x1="${margin + 4 * cell}" y1="${margin}" x2="${margin + 4 * cell}" y2="${margin + extent}"/>` : guide === "horizontal" ? `<line class="guide-line" x1="${margin}" y1="${margin + 4 * cell}" x2="${margin + extent}" y2="${margin + 4 * cell}"/>` : "";
-    return `<svg class="movement-grid" viewBox="0 0 ${margin * 2 + extent} ${margin * 2 + extent}" aria-label="격자 위의 도형">${lines}${guides}<polygon points="${polygon}"/><circle cx="${margin + ax * cell}" cy="${margin + (size - ay) * cell}" r="4"/><text x="${margin + ax * cell - 9}" y="${margin + (size - ay) * cell - 8}">A</text></svg>`;
+    const metadata = Object.entries(attributes).map(([name, value]) => ` ${name}="${value}"`).join("");
+    return `<svg class="movement-grid" viewBox="0 0 ${margin * 2 + extent} ${margin * 2 + extent}" aria-label="격자 위의 도형" data-vertex-count="${points.length}"${metadata}>${lines}${guides}<polygon points="${polygon}"/><circle cx="${margin + ax * cell}" cy="${margin + (size - ay) * cell}" r="4"/><text x="${margin + ax * cell - 9}" y="${margin + (size - ay) * cell - 8}">A</text></svg>`;
   };
+  const movementShapeModels = [
+    { id: "triangle", offsets: [[0, 0], [2, 0], [1, 2]] },
+    { id: "l-shape", offsets: [[0, 0], [3, 0], [3, 1], [1, 1], [1, 3], [0, 3]] },
+    { id: "stair-step", offsets: [[0, 0], [3, 0], [3, 1], [2, 1], [2, 2], [1, 2], [1, 3], [0, 3]] },
+    { id: "bent-figure", offsets: [[0, 0], [3, 0], [3, 3], [2, 3], [2, 1], [1, 1], [1, 2], [0, 2]] }
+  ].map(model => ({
+    ...model,
+    maxX: Math.max(...model.offsets.map(([x]) => x)),
+    maxY: Math.max(...model.offsets.map(([, y]) => y))
+  }));
+  const movementShapeModel = (rng, level) => {
+    const count = 2 + (level >= 0 ? 1 : 0) + (level > 0 ? 1 : 0);
+    return pick(rng, movementShapeModels.slice(0, count));
+  };
+  const placeMovementShape = (model, x, y) => model.offsets.map(([offsetX, offsetY]) => [x + offsetX, y + offsetY]);
   const directionArrowSvg = (direction) => {
     const turns = ({ "위": 0, "오른쪽": 90, "아래": 180, "왼쪽": 270 })[direction];
     return `<svg class="direction-arrow" viewBox="0 0 120 120" aria-label="${direction}쪽 화살표"><g transform="rotate(${turns} 60 60)"><path d="M60 14 L91 51 H73 V103 H47 V51 H29 Z"/></g></svg>`;
@@ -2313,29 +2329,32 @@
     },
     planeTransform({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
-        const ax = int(rng, 1, 2);
-        const ay = int(rng, 1, 2);
-        const points = [[ax, ay], [ax + 2, ay], [ax + 1, ay + 2]];
-        const dx = int(rng, 1 + level, Math.min(3 + level, 6 - ax));
-        const dy = int(rng, 1, Math.min(3, 4 - ay));
+        const model = movementShapeModel(rng, level);
+        const ax = int(rng, 0, 7 - model.maxX);
+        const ay = int(rng, 0, 7 - model.maxY);
+        const points = placeMovementShape(model, ax, ay);
+        const dx = int(rng, 1, Math.min(3 + Math.max(0, level), 8 - ax - model.maxX));
+        const dy = int(rng, 1, Math.min(3 + Math.max(0, level), 8 - ay - model.maxY));
         const answer = `${ax + dx}, ${ay + dy}`;
-        return result(`격자의 왼쪽 아래 꼭짓점을 (0, 0)으로 봅니다. 도형을 오른쪽으로 ${dx}칸, 위로 ${dy}칸 밀었을 때 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points)}`, answer, `밀기는 모든 점을 같은 방향으로 같은 칸 수만큼 옮깁니다. A(${ax}, ${ay})는 (${ax} + ${dx}, ${ay} + ${dy})이므로 (${answer})입니다.`);
+        return result(`격자의 왼쪽 아래 꼭짓점을 (0, 0)으로 봅니다. 도형을 오른쪽으로 ${dx}칸, 위로 ${dy}칸 밀었을 때 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points, 8, "", { "data-shape-model": model.id })}`, answer, `밀기는 모든 점을 같은 방향으로 같은 칸 수만큼 옮깁니다. A(${ax}, ${ay})는 (${ax} + ${dx}, ${ay} + ${dy})이므로 (${answer})입니다.`);
       }
       if (variant % 3 === 1) {
+        const model = movementShapeModel(rng, level);
         const vertical = rng() > 0.5;
-        const ax = vertical ? int(rng, 1, 2) : int(rng, 1, 5);
-        const ay = vertical ? int(rng, 1, 5) : int(rng, 1, 2);
-        const points = [[ax, ay], [ax + 2, ay], [ax, ay + 2]];
+        const ax = vertical ? int(rng, 0, 3 - model.maxX) : int(rng, 0, 8 - model.maxX);
+        const ay = vertical ? int(rng, 0, 8 - model.maxY) : int(rng, 0, 3 - model.maxY);
+        const points = placeMovementShape(model, ax, ay);
         const final = vertical ? [8 - ax, ay] : [ax, 8 - ay];
         const direction = vertical ? "좌우" : "위아래";
-        return result(`점선을 기준으로 도형을 ${direction}로 뒤집었습니다. 뒤집은 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points, 8, vertical ? "vertical" : "horizontal")}`, `${final[0]}, ${final[1]}`, `${vertical ? "세로선 x=4" : "가로선 y=4"}에서 같은 거리만큼 반대쪽으로 옮깁니다. 따라서 A의 위치는 (${final[0]}, ${final[1]})입니다.`);
+        return result(`점선을 기준으로 도형을 ${direction}로 뒤집었습니다. 뒤집은 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points, 8, vertical ? "vertical" : "horizontal", { "data-shape-model": model.id })}`, `${final[0]}, ${final[1]}`, `${vertical ? "세로선 x=4" : "가로선 y=4"}에서 같은 거리만큼 반대쪽으로 옮깁니다. 따라서 A의 위치는 (${final[0]}, ${final[1]})입니다.`);
       }
       const turns = int(rng, 1, Math.min(3, 1 + level));
-      const ax = int(rng, 1, 3);
-      const ay = int(rng, 1, 3);
-      const points = [[ax, ay], [ax + 2, ay], [ax + 1, ay + 2]];
+      const model = movementShapeModel(rng, level);
+      const ax = int(rng, 0, 8 - model.maxX);
+      const ay = int(rng, 0, 8 - model.maxY);
+      const points = placeMovementShape(model, ax, ay);
       const final = rotatePointClockwise(points[0], turns);
-      return result(`격자의 중심 (4, 4)를 기준으로 도형을 시계 방향으로 90°씩 ${turns}번 돌렸습니다. 돌린 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points)}`, `${final[0]}, ${final[1]}`, `시계 방향 90° 회전을 ${turns}번 적용하면 A(${ax}, ${ay})는 (${final[0]}, ${final[1]})로 이동합니다.`);
+      return result(`격자의 중심 (4, 4)를 기준으로 도형을 시계 방향으로 90°씩 ${turns}번 돌렸습니다. 돌린 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points, 8, "", { "data-shape-model": model.id })}`, `${final[0]}, ${final[1]}`, `시계 방향 90° 회전을 ${turns}번 적용하면 A(${ax}, ${ay})는 (${final[0]}, ${final[1]})로 이동합니다.`);
     },
     sequentialTransform({ rng, level, variant = 0 }) {
       const directions = ["위", "오른쪽", "아래", "왼쪽"];

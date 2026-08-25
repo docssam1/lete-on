@@ -18,6 +18,7 @@
 - Use the display labels `심화 쉬움` (-1), `심화 기준` (0), and `심화 어려움` (1). They are variants of the same advanced-course structure, not separate curricula.
 - Build a dedicated generator for each type. Do not substitute generic arithmetic filler.
 - Keep formulas readable with structured HTML/SVG and verify that no symbols, fractions, or layouts break on mobile.
+- For plane transformations, use source-backed triangle and composite grid figures rather than repeating one simple shape. Independently calculate the labeled point after every translation, reflection, or rotation, and keep every vertex inside the visible grid.
 - Validate answers algorithmically and stress-test every generator before marking a type ready.
 - For every graph, draw numeric tick labels and grid lines, use only values that are exact multiples of the stated tick step, state the tick step in the question, reverse-check plotted coordinates against the data, and confirm labels at 375px without clipping or overlap. Run `node graph-audit.js` whenever a graph generator changes.
 - For cube stacks, 3D solids, holes, and folded paper, apply `GEOMETRY_VALIDATION.md`: enumerate all valid answer candidates, require exactly one, and reject views where required height, color, position, direction, or fold evidence is not visible or inferable.
@@ -57,7 +58,7 @@ The full regression suite has 29 dedicated audits. The 2026-08-25 run passed eve
 - Numeric display policy: `numeric-display-audit.js` checks all 489 types across 146,700 generated questions
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
-- Plane-transformation detail routing check: `movement-audit.js`
+- Plane-transformation detail routing, composite-shape diversity, grid bounds, and point-coordinate check: `movement-audit.js`
 - Mixed-operation regression check: `mixed-operation-audit.js`
 - Factors-and-multiples regression check: `factors-audit.js`
 - Patterns-and-correspondences regression check: `correspondence-audit.js`
