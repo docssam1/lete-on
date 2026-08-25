@@ -1,7 +1,7 @@
 import { G1_GENERATORS } from "./g1-generators.js?v=20260823m";
 import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
 import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260822e";
-import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260825j";
+import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260825k";
 import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260822e";
 import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260822f";
 import { BOOK06_GENERATORS } from "./book06-generators.js?v=20260822g";

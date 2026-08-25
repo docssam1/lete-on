@@ -5,7 +5,10 @@ import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./s
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
 const book = CURRICULUM.find((item) => item.id === "book-03");
 const units = book?.units || [];
-const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
+const verifiedUnitTestTypeIds = (book?.source?.unitTestQuestions || [])
+  .filter((question) => question.verified)
+  .map((question) => question.typeId);
+const typeIds = [...new Set([...units.flatMap((unit) => unit.typeIds), ...verifiedUnitTestTypeIds])];
 const stages = TEXTBOOK_STAGES.map((stage) => stage.id);
 
 const fail = (id, difficulty, message) => { throw new Error(`${id} / L${difficulty}: ${message}`); };
@@ -212,6 +215,13 @@ function validate(type, problem, difficulty) {
       if (meta.mode === "read") assert(numeric === meta.answer, id, difficulty, "source cell answer mismatch");
       if (meta.mode === "color") assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "source reverse cell answer missing");
       return;
+    case "four-cell-binary-code":
+      assert(meta.rows === 1 && meta.columns === 4, id, difficulty, "four-cell source layout mismatch");
+      assert(JSON.stringify(meta.weights) === JSON.stringify([8, 4, 2, 1]), id, difficulty, "four-cell source weights mismatch");
+      assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "four-cell source answer mismatch");
+      assert(problem.answer === String(meta.answer), id, difficulty, "four-cell visible answer mismatch");
+      assert(problem.visual?.examples?.every((example) => example.colored.reduce((sum, index) => sum + meta.weights[index], 0) === example.value), id, difficulty, "four-cell example mismatch");
+      return;
     case "symbol-code": {
       const lookup = Object.fromEntries(meta.symbols.map((symbol, index) => [symbol, meta.values[index]]));
       meta.rows.forEach((row) => assert(row.symbols.reduce((sum, symbol) => sum + lookup[symbol], 0) === row.total, id, difficulty, "symbol row mismatch"));
@@ -289,10 +299,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 42) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 44) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
-const expectedReadyQuestions = [2, 6, 7, 8, 11, 12, 16, 17, 18, 20, 21, 24];
+const expectedReadyQuestions = [1, 2, 6, 7, 8, 11, 12, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
 const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
 if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
 if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
@@ -306,6 +316,19 @@ for (const question of unitTestQuestions) {
 }
 if (unitTestQuestions.find((question) => question.number === 16)?.difficulty !== 2) throw new Error("book-03 question 16 difficulty changed");
 if (unitTestQuestions.find((question) => question.number === 17)?.difficulty !== 3) throw new Error("book-03 question 17 difficulty changed");
+
+const question19Type = typeById(unitTestQuestions.find((question) => question.number === 19)?.typeId);
+const question23Type = typeById(unitTestQuestions.find((question) => question.number === 23)?.typeId);
+for (let run = 0; run < 100; run += 1) {
+  const question19 = GENERATORS[question19Type.generator]({ difficulty: 2 });
+  assert(question19.meta.template === "practice", question19Type.id, 2, "unit-test clue template changed");
+  assert(JSON.stringify(question19.meta.countRows) === JSON.stringify([[1,1,0],[2,1,0],[1,1,1],[1,2,2]]), question19Type.id, 2, "unit-test clue rows changed");
+  assert([[3,1,0],[1,1,2],[2,2,1]].some((counts) => JSON.stringify(counts) === JSON.stringify(question19.meta.targetCounts)), question19Type.id, 2, "unit-test target row changed");
+
+  const question23 = GENERATORS[question23Type.generator]({ difficulty: 2 });
+  assert(question23.meta.answer >= 8 && question23.meta.answer <= 15, question23Type.id, 2, "unit-test target range changed");
+  assert(JSON.stringify(question23.visual.examples.map((example) => example.value)) === JSON.stringify([1,2,3,4,5,6,7]), question23Type.id, 2, "unit-test examples changed");
+}
 
 for (const unit of units) {
   for (const typeId of unit.typeIds) {

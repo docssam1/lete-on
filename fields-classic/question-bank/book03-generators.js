@@ -788,7 +788,40 @@ function coloredCellNumberCode({ difficulty = 2 }) {
   };
 }
 
-function symbolValueCode({ difficulty = 2 }) {
+function fourCellBinaryCode({ difficulty = 2 }) {
+  const rows = 1;
+  const columns = 4;
+  const columnWeights = [8, 4, 2, 1];
+  const weights = [...columnWeights];
+  const coloredFor = (value) => columnWeights
+    .map((weight, index) => (value & weight) ? index : -1)
+    .filter((index) => index >= 0);
+  const exampleValues = difficulty === 3 ? [1, 2, 4, 7] : [1, 2, 3, 4, 5, 6, 7];
+  const target = difficulty === 1 ? randomInt(1, 7) : randomInt(8, 15);
+  const colored = coloredFor(target);
+  const examples = exampleValues.map((value) => ({ value, colored: coloredFor(value) }));
+  return {
+    prompt: "보기의 규칙에 따라 네 칸의 색칠한 모양이 나타내는 수를 구하세요.",
+    visual: {
+      kind: "book3",
+      subtype: "cell-code",
+      rows,
+      columns,
+      weights,
+      columnWeights,
+      colored,
+      target,
+      mode: "read",
+      examples,
+      showWeights: false
+    },
+    answer: String(target),
+    solution: `오른쪽부터 각 칸은 1, 2, 4, 8을 나타냅니다. 색칠한 칸의 값은 ${colored.map((index) => weights[index]).join(", ")}입니다. 모두 더하면 ${target}입니다.`,
+    meta: { family: "four-cell-binary-code", rows, columns, weights, colored, target, answer: target, sourceReady: true }
+  };
+}
+
+function symbolValueCode({ difficulty = 2, template: forcedTemplate = null } = {}) {
   const symbols = ["○", "☆", "◇"];
   const star = randomInt(1, difficulty === 3 ? 5 : 3);
   let circle = randomInt(difficulty === 1 ? 4 : 7, difficulty === 3 ? 20 : 14);
@@ -796,7 +829,9 @@ function symbolValueCode({ difficulty = 2 }) {
   let diamond = randomInt(difficulty === 1 ? 6 : 8, difficulty === 3 ? 25 : 20);
   while (diamond === star || diamond === circle) diamond = randomInt(6, difficulty === 3 ? 25 : 20);
   const values = [circle, star, diamond];
-  const template = Math.random() < 0.5 ? "practice" : "advanced";
+  const template = ["practice", "advanced"].includes(forcedTemplate)
+    ? forcedTemplate
+    : Math.random() < 0.5 ? "practice" : "advanced";
   const rowSymbolIndexes = template === "practice"
     ? [[0, 1], [0, 0, 1], [2, 0, 1], [2, 2, 0, 1, 1]]
     : [[0, 1], [0, 0, 0, 1, 1], [2, 1], [2, 2, 2, 1]];
@@ -821,6 +856,10 @@ function symbolValueCode({ difficulty = 2 }) {
       : `첫째 상자를 두 번 모은 것과 둘째 상자를 비교하면 ○ 하나가 ${rows[1].total - rows[0].total * 2}이므로 ○=${circle}입니다. ☆=${rows[0].total - circle}, ◇=${rows[2].total - star}입니다. 따라서 ${targetSymbols.map((symbol) => values[symbols.indexOf(symbol)]).join(" + ")} = ${answer}입니다.`,
     meta: { family: "symbol-value-code", symbols, values, rows, countRows, targetCounts, targetSymbols, answer, template, valueLimit: 30 }
   };
+}
+
+function symbolValueCodeUnitTest({ difficulty = 2 } = {}) {
+  return symbolValueCode({ difficulty, template: "practice" });
 }
 
 function rotateMatrix(matrix) {
@@ -1160,7 +1199,9 @@ export const BOOK03_GENERATORS = {
   cryptarithmLinkedEquations,
   binaryWeightSelection,
   coloredCellNumberCode,
+  fourCellBinaryCode,
   symbolValueCode,
+  symbolValueCodeUnitTest,
   magicSquareThreeComplete,
   magicSquareThreeTarget,
   magicSquareFourTarget,

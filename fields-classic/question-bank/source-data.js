@@ -399,7 +399,9 @@ export const TYPES = [
 
   type("binary-weight-selection", "number", "마법카드와 도형수", "1·2·4·8 무게추로 목표 무게 만들기", { generator: "binaryWeightSelection", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 2~3, 확인1 1~2, 연습 2~7, 심화 4" }),
+  type("four-cell-binary-code", "pattern", "마법카드와 도형수", "네 칸 색칠 규칙으로 비밀 수 찾기", { generator: "fourCellBinaryCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 23번" }),
   type("symbol-value-code", "number", "마법카드와 도형수", "도형 묶음의 수를 비교해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 98·113쪽 · 도형 묶음 상자 4개 구조" }),
+  type("symbol-value-code-unit-test", "number", "마법카드와 도형수", "네 개의 도형 묶음을 비교해 비밀 수 찾기", { generator: "symbolValueCodeUnitTest", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 19번" }),
   type("magic-square-three-complete", "number", "마방진", "주어진 아홉 수로 3×3 마방진 완성하기", { generator: "magicSquareThreeComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-three-target", "number", "마방진", "3×3 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareThreeTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-four-target", "number", "마방진", "4×4 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareFourTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -3356,7 +3358,7 @@ export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
 
 const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
   "book-03": Object.freeze([
-    { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: false },
+    { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: true, difficulty: 2 },
     { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
     { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false },
     { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
@@ -3374,13 +3376,13 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
     { number: 16, typeId: "cryptarithm-missing-digit-column", label: "두 도형 세로 덧셈", verified: true, difficulty: 2 },
     { number: 17, typeId: "cryptarithm-missing-digit-column", label: "같은 두 자리 수 세 번 더하기", verified: true, difficulty: 3 },
     { number: 18, typeId: "cryptarithm-linked-equations", label: "이어진 복면산", verified: true, difficulty: 3 },
-    { number: 19, typeId: "symbol-value-code", label: "도형 자리값 암호", verified: false },
+    { number: 19, typeId: "symbol-value-code-unit-test", label: "도형 묶음의 비밀 수", verified: true, difficulty: 2 },
     { number: 20, typeId: "magic-square-three-complete", label: "3×3 마방진 완성", verified: true, difficulty: 2 },
     { number: 21, typeId: "magic-square-four-target", label: "4×4 마방진의 한 칸", verified: true, difficulty: 2 },
-    { number: 22, typeId: "polygon-ring-equal-sum", label: "오각진의 같은 합", verified: false },
-    { number: 23, typeId: "colored-cell-number-code", label: "색칠 칸의 비밀 수", verified: false },
+    { number: 22, typeId: "polygon-ring-equal-sum", label: "오각진의 같은 합", verified: true, difficulty: 2 },
+    { number: 23, typeId: "four-cell-binary-code", label: "네 칸 색칠의 비밀 수", verified: true, difficulty: 2 },
     { number: 24, typeId: "triangle-max-edge-sum", label: "삼각형 세 변의 합", verified: true, difficulty: 2 },
-    { number: 25, typeId: "number-line-six-points", label: "여섯 점 사이의 거리", verified: false }
+    { number: 25, typeId: "number-line-six-points", label: "여섯 점 사이의 거리", verified: true, difficulty: 2 }
   ])
 });
 
