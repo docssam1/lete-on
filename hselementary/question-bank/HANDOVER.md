@@ -58,6 +58,7 @@ The current ready set has passed its unit-specific regression coverage. A final 
 - Fraction-addition-and-subtraction regression check: `fraction-add-sub-audit.js`
 - Perimeter-and-area regression check: `perimeter-area-audit.js`
 - Geometry single-answer and visibility gate: `GEOMETRY_VALIDATION.md`
+- Space-and-solids source and visibility contract: `SPACE_SOLIDS_SOURCE_ALIGNMENT.md`
 - Duplicate names must be resolved with semester/unit/type IDs. Do not route generators by display name alone.
 - Source evidence and detailed classification notes are maintained outside the public repository. Query that memory before opening source pages or designing a new type.
 - Never add original textbook pages, extracted source images, or private absolute paths to this repository.
