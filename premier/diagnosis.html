@@ -34,6 +34,7 @@ main{width:min(1180px,100%);margin:auto;padding:22px 18px 60px}.hero{padding:22p
   <section class="section"><div class="section-head"><h2>문항별 O/X 채점</h2><p id="questionStatus"></p></div><div class="questions" id="questions"></div></section>
   <p class="footer-note">이 진단은 원본 PDF의 검수 완료 문항만 사용합니다. 원본 오류·복수답으로 채점에서 제외된 문항은 안전한 대체 문항 검수 후 별도로 연결됩니다.</p>
 </main>
+<script src="../fields-classic/print-viewer/documents.js"></script>
 <script src="./diagnosis-data.js"></script>
 <script>
 const params=new URLSearchParams(location.search);
@@ -46,6 +47,22 @@ function storageKey(){return `gfield-premier-diagnosis:${exam.key}:${student}`}
 function loadState(){try{const value=JSON.parse(localStorage.getItem(storageKey())||"{}");return value&&typeof value==="object"?value:{}}catch(error){return {}}}
 function saveState(value){localStorage.setItem(storageKey(),JSON.stringify(value))}
 function paperUrl(){return `../fields-classic/print-viewer/?doc=${encodeURIComponent(exam.key)}&student=${encodeURIComponent(student)}`}
+async function updatePaperLink(){
+  const link=byId("paperLink");
+  const source=window.GFIELD_PRINT_DOCUMENTS?.[exam.key];
+  if(!source){link.href="./";link.textContent="시험지 준비 중";return}
+  const viewerBase=new URL("../fields-classic/print-viewer/",location.href);
+  const firstPage=new URL(`${source.pagesBase}${source.pagePrefix||""}${String(source.startPage||1).padStart(3,"0")}.${source.pageExt||"webp"}`,viewerBase);
+  try{
+    let response=await fetch(firstPage,{method:"HEAD",cache:"no-store"});
+    if(response.status===405)response=await fetch(firstPage,{method:"GET",cache:"no-store"});
+    if(response.ok){link.href=paperUrl();link.textContent="시험지 보기";link.removeAttribute("aria-disabled");return}
+  }catch(error){}
+  link.href="./";
+  link.textContent="시험지 준비 중";
+  link.setAttribute("aria-disabled","true");
+  link.title="승인된 원본 이미지 자산을 준비하고 있습니다.";
+}
 function setExam(nextKey){const url=new URL(location.href);url.searchParams.set("exam",nextKey);if(student!=="학생")url.searchParams.set("student",student);location.href=url.toString()}
 function aggregateByArea(state){
   const groups=new Map();
@@ -86,7 +103,7 @@ function init(){
   byId("examSelect").innerHTML=allExams.map(item=>`<option value="${item.key}" ${item.key===exam.key?"selected":""}>${item.title}</option>`).join("");
   byId("examSelect").addEventListener("change",event=>setExam(event.target.value));
   byId("examTitle").textContent=`${exam.title} 채점·진단`;
-  byId("paperLink").href=paperUrl();
+  updatePaperLink();
   byId("printReport").addEventListener("click",()=>window.print());
   byId("resetBtn").addEventListener("click",()=>{if(confirm(`${exam.title}의 O/X 기록을 모두 지울까요?`)){localStorage.removeItem(storageKey());renderAll()}});
   renderAll();

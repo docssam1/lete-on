@@ -170,6 +170,9 @@ const serialized = JSON.stringify(data).toLowerCase();
 
 const diagnosisHtml = fs.readFileSync(path.join(root, "premier", "diagnosis.html"), "utf8");
 assert.match(diagnosisHtml, /diagnosis-data\.js/);
+assert.match(diagnosisHtml, /print-viewer\/documents\.js/);
+assert.match(diagnosisHtml, /async function updatePaperLink\(\)/);
+assert.match(diagnosisHtml, /시험지 준비 중/);
 assert.match(diagnosisHtml, /scoringEligible/);
 assert.match(diagnosisHtml, /gfield-premier-diagnosis:/);
 assert.match(diagnosisHtml, /부족 영역 진단/);
@@ -181,6 +184,8 @@ const viewerHtml = fs.readFileSync(path.join(root, "fields-classic", "print-view
 assert.match(viewerHtml, /id="diagnosisBtn"/);
 assert.match(viewerHtml, /\.\.\/\.\.\/premier\/diagnosis\.html\?exam=/);
 assert.match(viewerHtml, /documentKey\.startsWith\("premier-"\)/);
+assert.match(viewerHtml, /승인된 원본 이미지 자산을 준비하고 있습니다/);
+assert.match(viewerHtml, /프리미어 모의고사 서재로 돌아가기/);
 const premierDiagnosisHandler = viewerHtml.match(/function openPremierDiagnosis\(\)\{[\s\S]*?\n\}/)?.[0] || "";
 assert.match(premierDiagnosisHandler, /location\.href=url;/, "프리미어 진단 버튼은 모바일 팝업 차단 없이 같은 화면에서 이동해야 합니다.");
 assert.doesNotMatch(premierDiagnosisHandler, /window\.open\(/, "프리미어 진단 버튼에 팝업 방식을 다시 사용하면 안 됩니다.");
