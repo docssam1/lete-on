@@ -178,6 +178,26 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-wsh-login-hint{font-size:13px;color:var(--sub);margin-top:10px;text-align:center}
 .nm-wsh-grade{margin-top:16px}
 
+/* 편지함(📬) */
+.nm-mailbtn{position:relative}
+.nm-mb-dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;
+  background:#e0433b;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.nm-mb-section-h{font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.03em;margin:16px 0 8px;text-transform:uppercase}
+.nm-mb-drill-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.nm-mb-drill-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;flex-wrap:wrap}
+.nm-mb-drill-name{font-weight:800;font-size:13px;color:var(--blue-deep)}
+.nm-mb-drill-meta{font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.nm-mb-drill-meta code{background:#eef2fa;border-radius:6px;padding:2px 6px;font-size:10.5px}
+.nm-mb-env-list{display:flex;flex-direction:column;gap:10px}
+.nm-mb-env-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;box-shadow:0 10px 26px -20px rgba(22,65,124,.4);text-align:left}
+.nm-mb-env-card:active{transform:scale(.98)}
+.nm-mb-env-card.opened{opacity:.7}
+.nm-mb-env-icon{font-size:22px}
+.nm-mb-env-label{flex:1;font-weight:800;font-size:14px;color:var(--blue-deep)}
+.nm-mb-env-badge{font-size:11px;font-weight:800;border-radius:999px;padding:4px 10px}
+.nm-mb-env-badge.new{background:#e0433b;color:#fff}
+.nm-mb-env-badge.done{background:#eef2fa;color:var(--sub)}
+
 /* 핵심체크 */
 .nm-fill{text-align:center;font-size:24px;font-weight:800;margin:12px 0}
 .nm-open-q{font-size:16px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:14px}

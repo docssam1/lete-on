@@ -1179,6 +1179,110 @@ ${conceptHtml}
     });
 
     setTimeout(() => { window.print(); }, 350);
+  },
+
+  /* ── 4b. 혼합 학습지 인쇄(편지함 봉투용) ──────────────────────
+     items: [{thread,level,count,seed,label?}] — 한 봉투에 담긴 여러 드릴을
+     한 번의 인쇄로 이어붙인다(과정-로드맵.md §12 "혼합 학습지"). 문항 생성·
+     정답 렌더링은 renderPrint의 단일 항목 로직을 그대로 재사용하고, 항목별로
+     자기 학습지 코드(#THREAD-Lx-COUNTxSEED)를 그대로 갖는다 — 기존 ?ws=
+     도우미 화면이 그 코드를 이미 그대로 이해하므로 새 규약이 필요 없다.
+     envelopeCode는 표지에만 쓰는 표시용 라벨(예: W2026-W35-C4). */
+  renderPrintMulti(items, envelopeCode){
+    if(!items || !items.length) return;
+    const old = document.querySelector('.nm-print-sheet');
+    if(old) old.remove();
+
+    const built = items.map(cfg => {
+      const numericSeed = NM_RNG.hashSeed(cfg.seed);
+      const problems = buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed);
+      applyWordProblems(problems, cfg.wordType, numericSeed);
+      const code = NM_EXAM.worksheetCode(cfg);
+      const th = (window.NM_THREADS || {})[cfg.thread] || {};
+      return { cfg, problems, code, thName: (th.name||{}).ko || cfg.thread };
+    });
+
+    const sheet = document.createElement('div');
+    sheet.className = 'nm-print-sheet';
+    sheet.setAttribute('aria-hidden', 'true');
+
+    const conceptHtml = getConceptPageOn()
+      ? conceptPageHtml(items.map(it => ({thread:it.thread, level:it.level})), envelopeCode)
+      : '';
+
+    const sectionsHtml = built.map((b,i) => `
+<div class="nm-print-header"${i>0 ? ' style="page-break-before:always"' : ''}>
+  <h2 style="margin:0">Numbers of Magic — ${esc(b.thName)} 학습지</h2>
+  <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
+    <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
+    <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
+    <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${b.cfg.count}</span>
+    ${qrHeaderBlockHtml(b.code)}
+  </div>
+</div>
+<div class="nm-print-grid" id="nm-print-problems-${i}"></div>`).join('');
+
+    const answerSectionsHtml = built.map((b,i) => `
+<div class="nm-print-answer-key">
+  <h3 style="margin:0 0 8px 0">정답지 / Answer Key — ${esc(b.thName)} <span style="font-family:monospace;font-size:0.85em">${esc(b.code)}</span></h3>
+  <div class="nm-ak-grid" id="nm-print-answers-${i}"></div>
+</div>`).join('');
+
+    sheet.innerHTML = `
+${conceptHtml}
+<div class="nm-print-header">
+  <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode||'')}</h2>
+  <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
+    <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
+    <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
+  </div>
+</div>
+${sectionsHtml}
+${answerSectionsHtml}`;
+
+    document.body.appendChild(sheet);
+    sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
+
+    built.forEach((b,i) => {
+      const problemGrid = sheet.querySelector(`#nm-print-problems-${i}`);
+      const answerGrid  = sheet.querySelector(`#nm-print-answers-${i}`);
+      b.problems.forEach((p, qi) => {
+        const card = document.createElement('div');
+        card.className = 'nm-print-item';
+        const numEl = document.createElement('div');
+        numEl.className = 'nm-q-num';
+        numEl.textContent = `${qi+1}.`;
+        const texEl = document.createElement('div');
+        texEl.className = 'nm-q-tex';
+        card.appendChild(numEl);
+        card.appendChild(texEl);
+        if(p.word){
+          texEl.textContent = p.word;
+          const blank = document.createElement('div');
+          blank.textContent = '답: __________';
+          blank.style.marginTop = '6px';
+          card.appendChild(blank);
+        } else {
+          renderKaTeX(p.tex || '', texEl);
+        }
+        problemGrid.appendChild(card);
+
+        const ak = document.createElement('div');
+        ak.className = 'nm-ak-item';
+        ak.appendChild(document.createTextNode(`${qi+1}. `));
+        const akTex = ansTex(p);
+        if(akTex){
+          const akSpan = document.createElement('span');
+          renderKaTeX(akTex, akSpan);
+          ak.appendChild(akSpan);
+        } else {
+          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+        }
+        answerGrid.appendChild(ak);
+      });
+    });
+
+    setTimeout(() => { window.print(); }, 350);
   }
 
 }; // end NM_EXAM

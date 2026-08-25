@@ -72,7 +72,7 @@ const KEY='nm_state_v1';
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
   character:{number:3,color:'blue',bg:'plain',cape:'none'},
-  character_unlocked:{} };}
+  character_unlocked:{}, mailbox:{opened:{}} };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -80,6 +80,7 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
+if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
@@ -121,7 +122,7 @@ function cloudPushSoon(){
     }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
   },1500);
 }
-function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;save();}
+function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
 
 /* ---------- 유틸 ---------- */
@@ -259,6 +260,7 @@ function render(){
   else if(S.view==='roadmap')screenRoadmap();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
+  else if(S.view==='mailbox')screenMailbox();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -475,7 +477,10 @@ function screenTown(){
         🏫 ${S.lang==='ko'?'학년별 교실':S.lang==='en'?'Grade Rooms':'按年级'}
       </button>
     </div>
-    <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
+    <div class="nm-town-hud info">
+      <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
+      <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
+    </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
       <button class="nm-iconbtn" id="townZin">＋</button>
@@ -491,6 +496,7 @@ function screenTown(){
   townCleanup=initTownWorld(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
+  const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -902,6 +908,205 @@ function screenGradeCourse(){
     });
   }
   draw();
+}
+
+/* ============================================================
+   편지함(📬) — 과정-로드맵.md §10·§11·§12
+   매주 월요일(ISO 주차) 기준, 학생의 현재 과정 위치에서 "마법 1 + 드릴
+   2~3종"을 뽑아 그 주의 학습지 봉투를 만든다. 서버 없이 클라이언트에서
+   주차를 계산하고, 문항은 (주차+과정)으로 고정한 시드로 매번 같은 걸
+   재생성하므로(§10 "가족 모두 같은 주엔 같은 문제지") 저장이 필요 없다 —
+   저장하는 건 "열람 여부"뿐(S.mailbox.opened[weekKey]).
+   드릴 각 항목은 기존 학습지 코드 규약(#THREAD-Lx-COUNTxSEED, exam.js
+   parseWorksheetCode)을 그대로 따르는 시드를 쓰므로, 인쇄물의 QR/ID는
+   이미 있는 ?ws= 도우미 화면에서 그대로 열린다 — 새 규약을 만들지 않았다.
+   ============================================================ */
+
+/* ISO-8601 주차: 월요일 시작, 그 주의 목요일이 속한 연도가 기준 연도.
+   표준 알고리즘(문서 없이도 재현 가능하도록 직접 구현) — 서버 호출 없음. */
+function isoWeekInfo(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7; // Mon=0..Sun=6
+  d.setUTCDate(d.getUTCDate() - dayNum + 3); // 그 주의 목요일
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNum + 3);
+  const week = 1 + Math.round((d - firstThursday) / (7*86400000));
+  return { year: d.getUTCFullYear(), week };
+}
+function weekKeyFor(date){
+  const wi = isoWeekInfo(date);
+  return `${wi.year}-W${String(wi.week).padStart(2,'0')}`;
+}
+/* 최근 n개 ISO 주차 키(이번 주가 0번째, 과거로 갈수록 뒤) */
+function recentWeekKeys(n){
+  const out = [];
+  const now = new Date();
+  for(let i=0;i<n;i++){
+    const d = new Date(now.getTime() - i*7*86400000);
+    out.push(weekKeyFor(d));
+  }
+  return out;
+}
+
+/* 유닛id → 그 유닛을 마법 슬롯으로 쓰는 과정 키('C4' 등). 없으면 null. */
+function courseForUnit(unitId){
+  const C = window.NM_COURSES || {};
+  for(const cid in C){
+    const sessions = C[cid].sessions || [];
+    for(const s of sessions){
+      if(s.magic && s.magic.indexOf(unitId) >= 0) return cid;
+    }
+  }
+  return null;
+}
+/* 가장 최근에 손댄 유닛(progress.touchedAt 최대). 없으면 null. */
+function mostRecentTouchedUnit(){
+  let best=null, bestT=-1;
+  Object.keys(S.progress||{}).forEach(uid=>{
+    const p = S.progress[uid];
+    const ts = (p && p.touchedAt) || 0;
+    if(ts > bestT){ bestT = ts; best = uid; }
+  });
+  return best;
+}
+/* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
+   없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
+   단위 진행 기록이 없다), 가장 최근에 손댄 마법 유닛이 속한 과정으로
+   대신한다(스펙의 "없으면 최근 학습 유닛의 과정" 그대로). 아무 기록도
+   없는 완전 신규 학생은 과정1부터. */
+function currentCourseKey(){
+  const uid = mostRecentTouchedUnit();
+  if(uid){
+    const cid = courseForUnit(uid);
+    if(cid) return cid;
+  }
+  return 'C1';
+}
+/* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
+function primarySessionOf(course){
+  if(!course || !course.sessions) return null;
+  const withMagic = course.sessions.find(s => !s.test && s.magic && s.magic.length);
+  return withMagic || course.sessions.find(s => !s.test) || null;
+}
+/* 항목 시드 = 주차+과정+항목순서(결정적, Math.random 없음) — 학습지 코드
+   규약(parseWorksheetCode)이 요구하는 소문자 영숫자만 남긴다. */
+function envItemSeed(weekKey, courseKey, i){
+  return (weekKey + courseKey + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+/* weekKey → 그 주 봉투(placements 모델, §12). courses.js/threads.js 미로딩 시 null. */
+function envelopeForWeek(weekKey){
+  if(!window.NM_COURSES || !window.NM_THREADS) return null;
+  const courseKey = currentCourseKey();
+  const course = NM_COURSES[courseKey];
+  if(!course) return null;
+  const session = primarySessionOf(course);
+  if(!session) return null;
+  const placements = (session.drills||[]).map((d,i) => ({
+    order: i+1, thread: d.t, level: d.lv, count: d.n,
+    seed: envItemSeed(weekKey, courseKey, i)
+  }));
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
+}
+function mailboxEnvelopeCode(env){ return env.wsId; }
+
+/* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관) */
+function mailboxWeeks(){
+  const weeks = recentWeekKeys(8);
+  return weeks.map((wk,i) => ({
+    weekKey: wk, isCurrent: i===0,
+    opened: !!(S.mailbox.opened && S.mailbox.opened[wk])
+  })).filter(w => w.isCurrent || !w.opened);
+}
+function mailboxUnreadCount(){ return mailboxWeeks().filter(w=>!w.opened).length; }
+
+function screenMailbox(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+
+  if(S._mbWeek){
+    const env = envelopeForWeek(S._mbWeek);
+    if(!env){
+      scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">${t('back')}</button>
+        <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div></div>
+        <div class="nm-step-body"><div class="nm-card">${lk('학습지 데이터를 아직 불러오지 못했어요.','Worksheet data is not ready yet.','学习单数据还没准备好。')}</div></div>`;
+      $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+      return;
+    }
+    const magicHtml = (env.magic||[]).map(id=>{
+      const u = UNITS[id];
+      if(u){
+        return `<div class="nm-wsh-unit-title">✨ ${esc(L(u.title))}</div>`;
+      }
+      const th=(window.NM_THREADS||{})[id];
+      return `<div class="nm-wsh-unit-title">✨ ${esc(th?L(th.name):id)}</div>`;
+    }).join('') || `<p class="nm-wsh-sentence">${lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
+    const goUnit = (env.magic||[]).find(id=>UNITS[id]);
+    const drillRows = env.placements.map(p=>{
+      const th=(window.NM_THREADS||{})[p.thread];
+      const code = NM_EXAM.worksheetCode({thread:p.thread, level:p.level, count:p.count, seed:p.seed});
+      return `<div class="nm-mb-drill-row">
+        <span class="nm-mb-drill-name">${esc(th?L(th.name):p.thread)}</span>
+        <span class="nm-mb-drill-meta">Lv.${p.level} × ${p.count} <code>${esc(code)}</code></span>
+      </div>`;
+    }).join('');
+
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <div class="nm-unit-title">📬 ${esc(env.wsId)}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card">
+        <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
+        <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
+        <div class="nm-mb-section-h">${lk('✨ 이번 주 마법','✨ Magic This Week','✨ 本周魔法')}</div>
+        ${magicHtml}
+        ${goUnit ? `<button class="nm-btn full" id="mbGoUnit">${lk('✨ 이 마법 배우러 가기','✨ Go learn this magic','✨ 去学这个魔法')}</button>` : ''}
+        <div class="nm-mb-section-h">${lk('✏️ 드릴 학습지','✏️ Drill Worksheets','✏️ 练习题')}</div>
+        <div class="nm-mb-drill-list">${drillRows}</div>
+        <button class="nm-btn full nm-btn-secondary" id="mbPrint">🖨️ ${lk('학습지 인쇄','Print worksheets','打印学习单')}</button>
+      </div>
+    </div>`;
+    $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+    if(goUnit){
+      $('#mbGoUnit').onclick=()=>{
+        S._mbWeek=null;
+        S.unit=goUnit;S.step=null;S.sub={};S.tierId=null;S.view='unit';S._fromRoadmap=false;
+        save();render();
+      };
+    }
+    $('#mbPrint').onclick=()=>{
+      const items = env.placements.map(p=>({thread:p.thread, level:p.level, count:p.count, seed:p.seed}));
+      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId);
+    };
+    if(!S.mailbox.opened) S.mailbox.opened={};
+    if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
+    renderMath(scr);
+    return;
+  }
+
+  const weeks = mailboxWeeks();
+  const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
+    <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
+    <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+    ${w.opened?`<span class="nm-mb-env-badge done">${lk('읽음','Read','已读')}</span>`:`<span class="nm-mb-env-badge new">${lk('새 봉투','New','新')}</span>`}
+  </button>`).join('');
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="mbBack">${t('back')}</button>
+    <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
+  </div>
+  <div class="nm-step-body nm-wsh-wrap">
+    <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
+    <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
+  </div>`;
+  $('#mbBack').onclick=()=>{S.view='town';save();render();};
+  scr.querySelectorAll('.nm-mb-env-card[data-week]').forEach(el=>{
+    el.onclick=()=>{ S._mbWeek=el.dataset.week; screenMailbox(); };
+  });
 }
 
 function showTownModal(title,desc,onGo){
@@ -1691,7 +1896,7 @@ function stepStamp(body,u){
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;save();}
+  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;S.progress[S.unit].touchedAt=Date.now();save();}
   body.innerHTML=`<div class="nm-card center stamp">
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
@@ -1931,10 +2136,6 @@ function screenWorksheetHelper(wsId){
       ${conceptBody}
       ${ruleBox}
       ${unitBtn}
-      <div class="nm-rule nm-wsh-grade">
-        <b>✏️ ${ko?'채점 입력':en?'Enter grading':'录入批改'}</b>
-        <p>${ko?'준비 중이에요 — 곧 이 화면에서 틀린 번호만 골라 저장할 수 있어요!':en?"Coming soon — you'll be able to mark the wrong numbers and save right here!":'即将上线——很快就能在这里只标记错题号并保存！'}</p>
-      </div>
     </div>`;
   }
 

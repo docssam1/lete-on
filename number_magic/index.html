@@ -18,7 +18,7 @@
 #nm-intro .sound{position:absolute;bottom:26px;left:20px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:99px;width:46px;height:46px;font-size:20px;cursor:pointer;backdrop-filter:blur(4px)}
 html.skip-intro #nm-intro{display:none}
 </style>
-<script>if(/[?&]enter=1\b/.test(location.search))document.documentElement.classList.add('skip-intro');</script>
+<script>if(/[?&]enter=1\b/.test(location.search)||/[?&]ws=/.test(location.search))document.documentElement.classList.add('skip-intro');</script>
 <script>
 /* 카카오톡 인앱브라우저 → 기본 브라우저(크롬/사파리)로 열기.
    카카오톡 공식 스킴 openExternal 사용 — 다만 이것만 부르면 외부 브라우저가
