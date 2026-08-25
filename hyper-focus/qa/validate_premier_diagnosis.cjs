@@ -21,7 +21,7 @@ assert.strictEqual(data.policy, "original-image-single-answer-only");
 assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4회여야 합니다.");
 
 const expectedCounts = [
-  20, 14, 16, 12, 17, 11, 12, 15,
+  20, 14, 16, 13, 17, 11, 12, 15,
   8, 13, 16,
   16, 17, 14, 15
 ];
@@ -46,8 +46,8 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 216);
-assert.strictEqual(lockedTotal, 84);
+assert.strictEqual(eligibleTotal, 217);
+assert.strictEqual(lockedTotal, 83);
 
 const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
 assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
@@ -121,6 +121,21 @@ for (let horizontal = -10; horizontal <= 10; horizontal += 1) for (let vertical 
 }
 assert.deepStrictEqual(stepPairs, [[2, 7]], "활용 3회 17번의 가로·세로 증가 규칙이 유일하지 않습니다.");
 assert.deepStrictEqual([[2, 1], [2, 3], [3, 3]].map(([row, column]) => 3 + 2 * column + 7 * row), [19, 23, 30], "활용 3회 17번의 빈칸 값이 다릅니다.");
+
+const utilizationFour = data.exams.find((exam) => exam.key === "premier-utilization-4");
+assert.strictEqual(utilizationFour.questions.find((question) => question.number === 6).scoringEligible, true, "활용 4회 6번은 숫자와 거울축이 선명한 단일답 문항이어야 합니다.");
+assert.strictEqual(utilizationFour.questions.find((question) => question.number === 19).scoringEligible, false, "활용 4회 19번은 모바일에서 접기 화살표가 작아 채점에서 제외해야 합니다.");
+const horizontalMirrorDigit = new Map([["0", "0"], ["1", "1"], ["2", "5"], ["3", "3"], ["5", "2"], ["6", "9"], ["8", "8"], ["9", "6"]]);
+const mirroredClockCandidates = [];
+for (let hour = 0; hour < 24; hour += 1) for (let minute = 0; minute < 60; minute += 1) {
+  const realTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  const mirrored = [...realTime].map((character) => character === ":" ? ":" : horizontalMirrorDigit.get(character)).join("");
+  if (mirrored === "02:52") mirroredClockCandidates.push(realTime);
+}
+assert.deepStrictEqual(mirroredClockCandidates, ["05:25"], "활용 4회 6번의 아래쪽 거울상 시각이 유일하지 않습니다.");
+const currentMinutes = 5 * 60 + 25;
+const previousMinutes = currentMinutes - (3 * 60 + 20);
+assert.strictEqual(`${String(Math.floor(previousMinutes / 60)).padStart(2, "0")}:${String(previousMinutes % 60).padStart(2, "0")}`, "02:05", "활용 4회 6번의 3시간 20분 전 시각이 다릅니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [

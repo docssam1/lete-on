@@ -496,8 +496,8 @@
           "number": 6,
           "area": "측정과 시간",
           "type": "디지털시계 아래 거울의 시각",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 7,
@@ -598,8 +598,8 @@
           "reviewStatus": "verified"
         }
       ],
-      "eligibleCount": 12,
-      "lockedCount": 8
+      "eligibleCount": 13,
+      "lockedCount": 7
     },
     {
       "key": "premier-utilization-5",
