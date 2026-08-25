@@ -33,7 +33,7 @@ function draft(mode) {
 function candidate(mode, overrides) {
   const value = ids(mode);
   return Object.assign({
-    itemId: value.itemA, mode: "BNK", familyId: value.familyA, typeId: value.typeA, curriculum: path("LIN"),
+    itemId: value.itemA, mode: "BNK", familyId: value.familyA, typeId: value.typeA, curriculum: path("LIN"), responseType: "input",
     classificationVerified: true, answerVerified: true, rightsVerified: true, releaseEligible: true,
     lineageRelation: "original", difficultyBand: "standard", coreConditionVerified: true, solutionStructureVerified: true
   }, overrides || {});

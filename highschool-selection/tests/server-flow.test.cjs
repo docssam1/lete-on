@@ -10,6 +10,7 @@ const { hashApprovalCode } = require("../server/security.js");
 const schemaModule = require("../data/review-only/sh-r01-response-schema.js");
 const reportSecurity = require("../shared/report-security.js");
 const examSecurity = require("../shared/exam-security.js");
+const bankCore = require("../data/question-bank-core.js");
 
 const EXAM_ID = "sh-selection-r01";
 const SECRET = "test-session-secret-with-at-least-32-characters";
@@ -19,7 +20,8 @@ function privateConfig(root, released = true) {
     schemaVersion: "highselect-private-config/v1",
     students: [
       { studentId: "student_a", name: "테스트학생", approvalCodeHash: hashApprovalCode("PASS-001", Buffer.alloc(16, 1).toString("base64url")), grants: [EXAM_ID] },
-      { studentId: "student_b", name: "잠금학생", approvalCodeHash: hashApprovalCode("PASS-002", Buffer.alloc(16, 2).toString("base64url")), grants: [] }
+      { studentId: "student_b", name: "잠금학생", approvalCodeHash: hashApprovalCode("PASS-002", Buffer.alloc(16, 2).toString("base64url")), grants: [] },
+      { studentId: "admin_a", name: "관리자", approvalCodeHash: hashApprovalCode("ADMIN-001", Buffer.alloc(16, 3).toString("base64url")), role: "admin", grants: [] }
     ],
     exams: {
       [EXAM_ID]: {
@@ -35,7 +37,13 @@ function privateConfig(root, released = true) {
         signedAssetsStatus: "verified",
         finalRoundConfirmation: true
       }
-    }
+    },
+    examDraftCandidates: [{
+      itemId: bankCore.createSharedBankId("question", "builder-item-a"), mode: "SH", familyId: bankCore.createSharedBankId("question", "builder-family-a"),
+      typeId: bankCore.createSharedBankId("type", "builder-type-a"), curriculum: { grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }, responseType: "input",
+      classificationVerified: true, answerVerified: true, rightsVerified: true, releaseEligible: true, lineageRelation: "original", difficultyBand: "standard",
+      coreConditionVerified: true, solutionStructureVerified: true
+    }]
   };
 }
 
@@ -108,6 +116,14 @@ function safeWalk(value) {
   for (const [key, item] of Object.entries(value)) {
     assert.equal(/answer|solution|explanation|sourcepath|storagepath|pdfurl/i.test(key), false, `private key leaked: ${key}`);
     safeWalk(item);
+  }
+}
+
+function safeBuilderWalk(value) {
+  if (!value || typeof value !== "object") return;
+  for (const [key, item] of Object.entries(value)) {
+    assert.equal(/^(answer|answers|answerSpec|answerKey|correctAnswer|solution|explanation|sourcePath|storagePath|pdfUrl)$/i.test(key), false, `private builder key leaked: ${key}`);
+    safeBuilderWalk(item);
   }
 }
 
@@ -240,4 +256,40 @@ test("the isolated server never exposes a PDF through its static route", async t
   t.after(() => env.server.close());
   const response = await fetch(`${env.base}/private-source.pdf`);
   assert.equal(response.status, 404);
+});
+
+test("admin draft builder lists only safe candidates and supports placement add, reorder, and removal", async t => {
+  const env = await start();
+  t.after(() => env.server.close());
+  const auth = await login(env.base, "관리자", "ADMIN-001");
+  const created = await fetch(`${env.base}/admin/exam-drafts`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "SH", title: "관리자 초안", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] } })
+  });
+  assert.equal(created.status, 201);
+  const draft = await created.json();
+  safeBuilderWalk(draft);
+  const candidates = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/candidates?sort=response_type`, { headers: { Cookie: auth.cookie } });
+  assert.equal(candidates.status, 200);
+  const candidatePayload = await candidates.json();
+  assert.equal(candidatePayload.candidates.length, 1);
+  assert.equal(candidatePayload.candidates[0].responseType, "input");
+  safeBuilderWalk(candidatePayload);
+  const added = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ itemId: candidatePayload.candidates[0].itemId, points: 3 })
+  });
+  assert.equal(added.status, 200);
+  const withPlacement = await added.json();
+  assert.equal(withPlacement.placements.length, 1);
+  const reordered = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/reorder`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" }, body: JSON.stringify({ placementIds: [withPlacement.placements[0].id] })
+  });
+  assert.equal(reordered.status, 200);
+  const removed = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements/${encodeURIComponent(withPlacement.placements[0].id)}`, { method: "DELETE", headers: { Cookie: auth.cookie } });
+  assert.equal(removed.status, 200);
+  assert.equal((await removed.json()).placements.length, 0);
+  const student = await login(env.base);
+  const forbidden = await fetch(`${env.base}/admin/exam-drafts`, { headers: { Cookie: student.cookie } });
+  assert.equal(forbidden.status, 403);
 });

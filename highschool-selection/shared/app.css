@@ -310,6 +310,18 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .gate-list li { counter-increment: gate; position: relative; padding: 11px 8px 11px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 .gate-list li::before { content: counter(gate, decimal-leading-zero); position: absolute; left: 4px; color: var(--accent); font-family: ui-monospace, monospace; font-size: 10px; }
 .admin-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
+.builder-layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 16px; }
+.builder-sidebar { position: sticky; top: 86px; }
+.builder-sidebar h2, .builder-summary h2 { margin: 4px 0 0; font-family: Georgia, "Noto Serif KR", serif; font-size: 25px; font-weight: 500; }
+.builder-workspace { display: grid; gap: 16px; min-width: 0; }
+.builder-summary { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+.builder-summary .muted { margin: 8px 0 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.builder-metrics { display: flex; flex-wrap: wrap; justify-content: end; gap: 6px; }
+.builder-metrics .badge { display: grid; gap: 2px; text-align: center; }
+.builder-metrics small { color: currentColor; font-size: 9px; font-weight: 800; opacity: .72; }
+.builder-panel { padding: 0; overflow: hidden; }
+.builder-table { min-width: 880px; }
+.builder-scope { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .check-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; }
 .check { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 10px; }
 .check input { margin-top: 4px; }
@@ -345,7 +357,8 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .screen-only { display: initial; }
 
 @media (max-width: 900px) {
-  .hero-grid, .report-grid, .admin-grid, .viewer-shell, .diagnostic-cover { grid-template-columns: 1fr; }
+  .hero-grid, .report-grid, .admin-grid, .builder-layout, .viewer-shell, .diagnostic-cover { grid-template-columns: 1fr; }
+  .builder-sidebar { position: static; }
   .grid-3 { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .exam-grid { grid-template-columns: 1fr; }
@@ -405,6 +418,9 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
   .middle-track div + div { border-left: 0; border-top: 1px solid var(--line); }
   .practice-loop article + article, .practice-loop article:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
   .review-summary { grid-template-columns: 1fr 1fr; }
+  .builder-summary { display: block; }
+  .builder-metrics { justify-content: start; margin-top: 14px; }
+  .builder-scope { grid-template-columns: 1fr; }
   .review-toolbar { display: block; }
   .review-filters { margin-top: 14px; overflow-x: auto; }
 }

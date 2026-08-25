@@ -96,7 +96,7 @@
 
   function createCandidate(input, draft) {
     exactKeys(input, [
-      "itemId", "mode", "familyId", "typeId", "curriculum", "classificationVerified", "answerVerified",
+      "itemId", "mode", "familyId", "typeId", "curriculum", "responseType", "classificationVerified", "answerVerified",
       "rightsVerified", "releaseEligible", "lineageRelation", "difficultyBand", "coreConditionVerified", "solutionStructureVerified"
     ], "placement candidate");
     invariant(draft && core.isNeutralId(draft.id, "examDraft", draft.mode), "draft is invalid");
@@ -106,6 +106,8 @@
     invariant(neutralQuestionId(input.familyId, draft.mode), "placement candidate familyId is invalid");
     invariant(neutralTypeId(input.typeId, draft.mode), "placement candidate typeId is invalid");
     const curriculum = core.createCurriculumPath(input.curriculum);
+    const responseType = String(input.responseType || "");
+    invariant(core.INPUT_TYPES.includes(responseType), "placement candidate responseType is invalid");
     const lineageRelation = String(input.lineageRelation || "");
     invariant(LINEAGE_RELATIONS.includes(lineageRelation), "placement candidate lineageRelation is invalid");
     const difficultyBand = String(input.difficultyBand || "");
@@ -119,6 +121,7 @@
       familyId: input.familyId,
       typeId: input.typeId,
       curriculum,
+      responseType,
       classificationVerified: input.classificationVerified,
       answerVerified: input.answerVerified,
       rightsVerified: input.rightsVerified,

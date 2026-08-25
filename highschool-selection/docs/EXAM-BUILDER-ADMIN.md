@@ -1,0 +1,44 @@
+# 관리자 시험 초안 편집기
+
+`admin/exam-builder.html`은 운영 API와 관리자 세션이 있을 때만 동작한다. GitHub Pages 정적 배포에서는 생성·조회·저장이 차단된다.
+
+## 보관 원칙
+
+- 후보 인덱스와 초안에는 중립 ID, 교육과정 경로, 응답 형식, 난이도, 검증 상태만 저장한다.
+- 문항 원문, 정답값, 해설, PDF 주소, 원본 저장 경로는 이 계약과 API 응답에 넣지 않는다.
+- 정답 검산·권리·분류·공개 적합성이 모두 확인되지 않은 후보는 초안에 남아도 `review_required`로 잠긴다.
+- 범위를 바꾸는 기능은 배치를 지우지 않고 `out_of_scope` 또는 `classification_required` 상태로 표시해야 한다.
+
+## 비공개 운영 설정
+
+비공개 `highselect-private-config/v1` 설정에 아래처럼 `examDraftCandidates` 배열을 둘 수 있다. 이 파일은 공개 저장소에 올리지 않는다.
+
+```json
+{
+  "examDraftCandidates": [{
+    "itemId": "qst-bnk-0000000000000000",
+    "mode": "SH",
+    "familyId": "qst-bnk-1111111111111111",
+    "typeId": "typ-bnk-2222222222222222",
+    "curriculum": { "grade": "G09", "major": "ALG", "minor": "EQ", "detail": "LIN" },
+    "responseType": "single_choice",
+    "classificationVerified": true,
+    "answerVerified": true,
+    "rightsVerified": true,
+    "releaseEligible": true,
+    "lineageRelation": "original",
+    "difficultyBand": "standard",
+    "coreConditionVerified": true,
+    "solutionStructureVerified": true
+  }]
+}
+```
+
+후보의 `mode`는 대상 프로그램 코드여야 한다. `responseType`은 질문은행의 허용 응답 형식만 쓴다. 등록 시 알 수 없는 필드와 보호된 콘텐츠 필드는 거부된다.
+
+## 저장·API
+
+- `HIGHSELECT_EXAM_DRAFT_STORE_PATH`를 설정하면 초안·배치가 운영 서버의 제한된 파일에 영속 저장된다. 설정하지 않으면 서버 메모리에만 남는다.
+- 모든 `/admin/exam-drafts` 요청은 HttpOnly 관리자 세션이 필요하고, 응답은 `Cache-Control: no-store`다.
+- 지원 흐름: 초안 생성·선택, 후보 필터/정렬, 한 개 후보 추가, 배치 삭제, 위/아래 순서 변경.
+- 초안은 배치 ID를 보존하므로 삭제·정렬은 원본 질문 레지스트리를 변경하지 않는다.

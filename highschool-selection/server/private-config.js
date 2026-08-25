@@ -3,6 +3,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { clean } = require("./security.js");
+const core = require("../data/question-bank-core.js");
+const drafts = require("../data/exam-draft-core.js");
 
 const RELEASE_FIELDS = Object.freeze({
   releaseStatus: "released",
@@ -37,6 +39,18 @@ function validateExam(examId, exam) {
   }));
 }
 
+function validateDraftCandidate(candidate, index) {
+  if (!candidate || typeof candidate !== "object") fail(`examDraftCandidates[${index}] is invalid`);
+  const mode = String(candidate.mode || "").toUpperCase();
+  if (!core.PROGRAM_MODES.includes(mode)) fail(`examDraftCandidates[${index}].mode is invalid`);
+  const draft = drafts.createExamDraft({
+    id: core.createNeutralId("examDraft", mode, `private-candidate-${index}`), mode, writer: "T", title: "Private candidate validation",
+    scope: { curriculumVersion: "private", paths: [{ grade: "G00", major: "SAFE", minor: "SAFE", detail: "SAFE" }] }, status: "draft", scopeVersion: 1
+  });
+  try { return drafts.createCandidate(candidate, draft); }
+  catch (error) { fail(`examDraftCandidates[${index}] ${error.message}`); }
+}
+
 function normalize(raw) {
   if (!raw || typeof raw !== "object" || raw.schemaVersion !== "highselect-private-config/v1") fail("private config schemaVersion is invalid");
   const students = (Array.isArray(raw.students) ? raw.students : []).map(validateStudent);
@@ -50,7 +64,10 @@ function normalize(raw) {
   });
   const exams = {};
   Object.entries(raw.exams || {}).forEach(function (entry) { exams[entry[0]] = validateExam(entry[0], entry[1]); });
-  return Object.freeze({ schemaVersion: raw.schemaVersion, students: Object.freeze(students), exams: Object.freeze(exams) });
+  const examDraftCandidates = (Array.isArray(raw.examDraftCandidates) ? raw.examDraftCandidates : []).map(validateDraftCandidate);
+  const candidateIds = new Set();
+  examDraftCandidates.forEach(function (candidate) { if (candidateIds.has(candidate.itemId)) fail("duplicate exam draft candidate itemId"); candidateIds.add(candidate.itemId); });
+  return Object.freeze({ schemaVersion: raw.schemaVersion, students: Object.freeze(students), exams: Object.freeze(exams), examDraftCandidates: Object.freeze(examDraftCandidates) });
 }
 
 function load(configPath) {

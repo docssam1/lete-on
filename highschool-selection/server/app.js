@@ -9,8 +9,12 @@ const contracts = require("./exam-contracts.js");
 const privateConfig = require("./private-config.js");
 const privateScorer = require("./private-scorer.js");
 const { createStore } = require("./attempt-store.js");
+const { createStore: createDraftStore } = require("./exam-draft-store.js");
 const { buildReport } = require("./report-builder.js");
 const security = require("./security.js");
+const draftCore = require("../data/exam-draft-core.js");
+const candidateQuery = require("../data/exam-candidate-query.js");
+const bankCore = require("../data/question-bank-core.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -90,6 +94,30 @@ function requireExamAccess(context, examId) {
   return { exam, privateExam };
 }
 
+function requireAdmin(context) {
+  if (context.user.role !== "admin") throw new HttpError(403, "관리자 권한이 필요합니다.");
+  return context;
+}
+
+function materializeDraftRecord(record) {
+  if (!record || typeof record !== "object" || !Array.isArray(record.placements)) throw new Error("exam draft record is invalid");
+  const draft = draftCore.createExamDraft(record.draft);
+  const placements = record.placements.map(function (placement) {
+    return draftCore.createExamPlacement({
+      id: placement && placement.id, draftId: placement && placement.draftId, mode: placement && placement.mode, writer: placement && placement.writer,
+      item: placement && placement.item, order: placement && placement.order, points: placement && placement.points, scopeVersion: placement && placement.scopeVersion,
+      revision: placement && placement.revision, replacementHistory: placement && placement.replacementHistory
+    }, draft);
+  });
+  return { draft, placements };
+}
+
+function publicDraft(record) {
+  const clean = materializeDraftRecord(record);
+  const validation = draftCore.validateExamDraft(clean.draft, clean.placements);
+  return { draft: clean.draft, placements: clean.placements, validation };
+}
+
 function pagePath(privateExam, pageNumber) {
   const fileName = `page-${String(pageNumber).padStart(2, "0")}.png`;
   const root = path.resolve(privateExam.pageAssetRoot);
@@ -116,6 +144,7 @@ function createApp(options) {
   const loadConfig = opts.loadConfig || privateConfig.createLoader({ config: opts.privateConfig, configPath: opts.privateConfigPath });
   const scorer = opts.scorer || privateScorer.createAdapter({ data: opts.privateScorer, scorerPath: opts.privateScorerPath });
   const store = opts.store || createStore({ filePath: opts.attemptStorePath });
+  const draftStore = opts.draftStore || createDraftStore({ filePath: opts.examDraftStorePath });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
   const dummyApprovalHash = security.hashApprovalCode("INVALID-APPROVAL-CODE", Buffer.alloc(16, 0).toString("base64url"));
@@ -141,7 +170,77 @@ function createApp(options) {
       return true;
     }
 
-    let match = pathname.match(/^\/exams\/([^/]+)\/(pages|response-schema|attempts)$/);
+    let match = pathname.match(/^\/admin\/exam-drafts(?:\/([^/]+))?(?:\/(candidates|placements))?$/);
+    if (match) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const draftId = match[1] ? decodeURIComponent(match[1]) : "";
+      const action = match[2] || "";
+      if (!draftId && !action && request.method === "GET") {
+        const records = await draftStore.list();
+        sendJson(response, 200, records.map(function (record) { return publicDraft(record); }));
+        return true;
+      }
+      if (!draftId && !action && request.method === "POST") {
+        const body = await readJson(request, 64 * 1024);
+        const mode = String(body.mode || "").toUpperCase();
+        if (!bankCore.PROGRAM_MODES.includes(mode)) throw new HttpError(400, "시험 모드가 올바르지 않습니다.");
+        const draft = draftCore.createExamDraft({
+          id: bankCore.createNeutralId("examDraft", mode, `draft:${crypto.randomUUID()}`), mode, writer: bankCore.WRITER,
+          title: body.title, scope: body.scope, status: "draft", scopeVersion: 1
+        });
+        const record = { draft, placements: [] };
+        await draftStore.save(record);
+        sendJson(response, 201, publicDraft(record));
+        return true;
+      }
+      const record = await draftStore.get(draftId);
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      if (!action && request.method === "GET") { sendJson(response, 200, cleanRecord); return true; }
+      const configuredCandidates = (context.config.examDraftCandidates || []).filter(function (candidate) { return candidate.mode === cleanRecord.draft.mode; });
+      if (action === "candidates" && request.method === "GET") {
+        const candidates = candidateQuery.queryCandidates(cleanRecord.draft, configuredCandidates, {
+          sort: url.searchParams.get("sort") || "item_id", pathKey: url.searchParams.get("pathKey"), difficultyBand: url.searchParams.get("difficultyBand"),
+          responseType: url.searchParams.get("responseType"), typeId: url.searchParams.get("typeId")
+        });
+        sendJson(response, 200, { candidates, facets: candidateQuery.candidateFacets(cleanRecord.draft, configuredCandidates) });
+        return true;
+      }
+      if (action === "placements" && request.method === "POST") {
+        const body = await readJson(request, 32 * 1024);
+        const itemId = String(body.itemId || "");
+        const candidate = configuredCandidates.find(function (item) { return item.itemId === itemId; });
+        if (!candidate) throw new HttpError(404, "검증된 후보를 찾을 수 없습니다.");
+        const placements = draftCore.appendPlacement(cleanRecord.draft, cleanRecord.placements, candidate, body.points);
+        const next = { draft: cleanRecord.draft, placements };
+        await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/placements\/([^/]+)$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "DELETE") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const next = { draft: cleanRecord.draft, placements: draftCore.removePlacement(cleanRecord.draft, cleanRecord.placements, decodeURIComponent(match[2])) };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/reorder$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const body = await readJson(request, 32 * 1024); const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const next = { draft: cleanRecord.draft, placements: draftCore.reorderPlacements(cleanRecord.draft, cleanRecord.placements, body.placementIds) };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/exams\/([^/]+)\/(pages|response-schema|attempts)$/);
     if (match) {
       const examId = decodeURIComponent(match[1]);
       const action = match[2];
