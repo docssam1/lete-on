@@ -44,11 +44,16 @@
 
 The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep generated every one of the 489 types at all three difficulty offsets across 20 seeds each (29,340 questions, 0 missing prompts, answers, or solutions). The math-notation audit covers 489 types across 73,350 generated questions. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
+The full regression suite has 29 dedicated audits. The 2026-08-25 run passed every audit after the latest generator updates. In addition to answer checks, the bank now rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+
 ## Implementation Notes
 
 - Main generator logic: `generators.js`
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
+- Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
+- Elementary explanation policy: `elementary-language-audit.js` checks all 489 types across 146,700 generated questions
+- Numeric display policy: `numeric-display-audit.js` checks all 489 types across 146,700 generated questions
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
 - Plane-transformation detail routing check: `movement-audit.js`
@@ -69,11 +74,16 @@ The current ready set has passed its unit-specific regression coverage. A final 
 1. Query private source memory before revising an existing type or responding to a curriculum change.
 2. Re-check the original advanced-course structure before changing a generator; never lower difficulty by replacing it with generic arithmetic.
 3. Run the relevant unit audit, `math-notation-audit.js`, and a fresh generator sweep before unlocking a changed type.
-4. For graph, 3D, folding, or geometry changes, apply the dedicated visibility and single-answer audits as well as desktop/mobile checks.
-5. Update the catalog count only from a fresh programmatic count of `curriculum.js`.
+4. Also run `elementary-language-audit.js` and `numeric-display-audit.js` for any generator text or numeric-display change.
+5. For graph, 3D, folding, or geometry changes, apply the dedicated visibility and single-answer audits as well as desktop/mobile checks.
+6. Update the catalog count only from a fresh programmatic count of `curriculum.js`.
 
 ## Recent Commits
 
+- `821cc55e` Normalize generated numeric displays and add the display audit
+- `914cb9f0` Keep elementary solution language in scope and add the language audit
+- `a5c74e76` Codify graph readability checks
+- `b8df6481` Record the 6-2 space-and-solids validation contract
 - `4db13e1` Add verified advanced mixed operation generators
 - `31fb037` Add verified advanced quadrilateral generators
 - `0dc06d9` Add advanced fraction unit generators
