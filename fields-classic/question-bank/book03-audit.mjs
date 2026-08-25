@@ -16,6 +16,33 @@ const assert = (condition, id, difficulty, message) => { if (!condition) fail(id
 const firstNumber = (value) => Number(String(value).replaceAll(",", "").match(/-?\d+(?:\.\d+)?/)?.[0]);
 const lineSum = (values, indexes) => indexes.reduce((sum, index) => sum + values[index], 0);
 
+function countQ13Solutions(fixed) {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 1; square <= 9; square += 1) for (let circle = 0; circle <= 9; circle += 1) {
+    if (new Set([diamond, square, circle]).size !== 3) continue;
+    if (diamond * 10 + circle + square * 10 + circle === square * 110 + fixed) count += 1;
+  }
+  return count;
+}
+
+function countQ14Solutions(leadingFixed, unitFixed) {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 0; square <= 9; square += 1) for (let circle = 0; circle <= 9; circle += 1) {
+    if (new Set([diamond, square, circle]).size !== 3) continue;
+    if (leadingFixed * 100 + square * 10 + circle + circle * 10 + unitFixed === diamond * 111) count += 1;
+  }
+  return count;
+}
+
+function countQ15Solutions() {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 0; square <= 9; square += 1) for (let circle = 1; circle <= 9; circle += 1) for (let triangle = 1; triangle <= 9; triangle += 1) for (let cross = 0; cross <= 9; cross += 1) {
+    if (new Set([diamond, square, circle, triangle, cross]).size !== 5) continue;
+    if (circle * 100 + cross * 10 + diamond + diamond * 10 + triangle === triangle * 1000 + square * 110 + circle) count += 1;
+  }
+  return count;
+}
+
 function validateSurface(problem, id, difficulty) {
   const text = [problem.prompt, problem.answer, problem.solution].join(" ");
   assert(problem.prompt?.trim(), id, difficulty, "prompt missing");
@@ -217,6 +244,21 @@ function validate(type, problem, difficulty) {
       if (meta.values.length >= 3) assert(meta.values[2] === meta.values[0] * 3, id, difficulty, "linked second relation mismatch");
       if (meta.values.length >= 4) assert(meta.values[3] === meta.values[0] * 5, id, difficulty, "linked third relation mismatch");
       return;
+    case "unit-test-cryptarithm-q13":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q13 equation mismatch");
+      assert(meta.solutionCount === 1, id, difficulty, "q13 solution count changed");
+      assert(problem.visual?.addends?.[0]?.length === 2 && problem.visual?.sum?.length === 3, id, difficulty, "q13 visual structure changed");
+      return;
+    case "unit-test-cryptarithm-q14":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q14 equation mismatch");
+      assert(meta.solutionCount === 1, id, difficulty, "q14 solution count changed");
+      assert(problem.visual?.addends?.[0]?.length === 3 && problem.visual?.addends?.[1]?.length === 2 && problem.visual?.sum?.length === 3, id, difficulty, "q14 visual structure changed");
+      return;
+    case "unit-test-cryptarithm-q15":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q15 equation mismatch");
+      assert(meta.solutionCount === 1 && new Set(meta.values).size === 5, id, difficulty, "q15 values changed");
+      assert(problem.visual?.addends?.[0]?.length === 3 && problem.visual?.addends?.[1]?.length === 2 && problem.visual?.sum?.length === 4, id, difficulty, "q15 visual structure changed");
+      return;
     case "binary-weight":
       assert(meta.selected.reduce((sum, value) => sum + value, 0) === meta.target, id, difficulty, "binary target mismatch");
       assert(new Set(meta.selected).size === meta.selected.length, id, difficulty, "weight reused");
@@ -315,10 +357,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 46) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 49) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
-const expectedReadyQuestions = [1, 2, 6, 7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+const expectedReadyQuestions = [1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
 const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
 if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
 if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
@@ -337,6 +379,10 @@ const question19Type = typeById(unitTestQuestions.find((question) => question.nu
 const question23Type = typeById(unitTestQuestions.find((question) => question.number === 23)?.typeId);
 const question9Type = typeById(unitTestQuestions.find((question) => question.number === 9)?.typeId);
 const question10Type = typeById(unitTestQuestions.find((question) => question.number === 10)?.typeId);
+const question13Type = typeById(unitTestQuestions.find((question) => question.number === 13)?.typeId);
+const question14Type = typeById(unitTestQuestions.find((question) => question.number === 14)?.typeId);
+const question15Type = typeById(unitTestQuestions.find((question) => question.number === 15)?.typeId);
+assert(countQ15Solutions() === 1, question15Type.id, 3, "source q15 is not unique");
 for (let run = 0; run < 100; run += 1) {
   const question9 = GENERATORS[question9Type.generator]({ difficulty: 2 });
   assert([2, 5].includes(question9.meta.ratio), question9Type.id, 2, "unit-test ratio changed");
@@ -347,6 +393,17 @@ for (let run = 0; run < 100; run += 1) {
   assert(question10.meta.firstUnits === 5 && question10.meta.segmentUnits === 4, question10Type.id, 2, "unit-test overlapping rod proportions changed");
   assert(question10.meta.first / 5 === question10.meta.third / 4, question10Type.id, 2, "unit-test overlapping rod scale changed");
   assert(question10.visual.subtype === "overlapping-rods-common-unit", question10Type.id, 2, "unit-test overlapping rod visual changed");
+
+  const question13 = GENERATORS[question13Type.generator]({ difficulty: 2 });
+  assert(countQ13Solutions(question13.meta.fixed) === 1, question13Type.id, 2, "unit-test q13 is not unique");
+  assert(JSON.stringify(question13.meta.sourceCase) === JSON.stringify({ fixed: 6, diamond: 9, square: 1, circle: 8 }), question13Type.id, 2, "unit-test q13 source case changed");
+
+  const question14 = GENERATORS[question14Type.generator]({ difficulty: 2 });
+  assert(countQ14Solutions(question14.meta.leadingFixed, question14.meta.unitFixed) === 1, question14Type.id, 2, "unit-test q14 is not unique");
+  assert(JSON.stringify(question14.meta.sourceCase) === JSON.stringify({ leadingFixed: 1, unitFixed: 4, diamond: 2, square: 3, circle: 8 }), question14Type.id, 2, "unit-test q14 source case changed");
+
+  const question15 = GENERATORS[question15Type.generator]({ difficulty: 3 });
+  assert(JSON.stringify(question15.meta.sourceCase) === JSON.stringify({ diamond: 8, square: 0, circle: 9, triangle: 1, cross: 2 }), question15Type.id, 3, "unit-test q15 source case changed");
 
   const question19 = GENERATORS[question19Type.generator]({ difficulty: 2 });
   assert(question19.meta.template === "practice", question19Type.id, 2, "unit-test clue template changed");

@@ -750,6 +750,82 @@ function cryptarithmLinkedEquations({ difficulty = 2 }) {
   };
 }
 
+const UNIT_TEST_CRYPTO_SHAPES = ["◇", "□", "○", "△", "✚", "☆", "⬡"];
+
+const UNIT_TEST_Q14_CASES = (() => {
+  const cases = [];
+  for (let leadingFixed = 1; leadingFixed <= 9; leadingFixed += 1) {
+    for (let unitFixed = 0; unitFixed <= 9; unitFixed += 1) {
+      const solutions = [];
+      for (let diamond = 1; diamond <= 9; diamond += 1) {
+        for (let square = 0; square <= 9; square += 1) {
+          for (let circle = 0; circle <= 9; circle += 1) {
+            if (new Set([diamond, square, circle]).size !== 3) continue;
+            const first = leadingFixed * 100 + square * 10 + circle;
+            const second = circle * 10 + unitFixed;
+            if (first + second === diamond * 111) solutions.push({ diamond, square, circle, first, second });
+          }
+        }
+      }
+      if (solutions.length === 1) cases.push({ leadingFixed, unitFixed, ...solutions[0] });
+    }
+  }
+  return cases;
+})();
+
+function unitTestCryptarithmQ13() {
+  const fixed = sample([0, 2, 4, 6]);
+  const [diamondSymbol, squareSymbol, circleSymbol] = shuffle(UNIT_TEST_CRYPTO_SHAPES).slice(0, 3);
+  const diamond = 9;
+  const square = 1;
+  const circle = 5 + fixed / 2;
+  const first = diamond * 10 + circle;
+  const second = square * 10 + circle;
+  const sum = square * 110 + fixed;
+  const symbols = [diamondSymbol, squareSymbol, circleSymbol];
+  const values = [diamond, square, circle];
+  return {
+    prompt: "다음 세로셈에서 같은 도형은 같은 숫자를, 다른 도형은 다른 숫자를 나타냅니다. 각 도형이 나타내는 숫자를 구하세요.",
+    visual: { kind: "cryptarithm-vertical", addends: [[diamondSymbol, circleSymbol], [squareSymbol, circleSymbol]], sum: [squareSymbol, squareSymbol, String(fixed)] },
+    answer: symbols.map((symbol, index) => `${symbol}=${values[index]}`).join(", "),
+    solution: `일의 자리에서 ${circleSymbol}+${circleSymbol}의 끝 숫자가 ${fixed}이므로 ${circleSymbol}는 ${circle}입니다. 십의 자리와 백의 자리까지 맞추면 ${diamondSymbol}는 ${diamond}, ${squareSymbol}는 ${square}입니다. 실제로 ${first}+${second}=${sum}입니다.`,
+    meta: { family: "unit-test-cryptarithm-q13", symbols, values, fixed, first, second, sum, solutionCount: 1, sourceCase: { fixed: 6, diamond: 9, square: 1, circle: 8 } }
+  };
+}
+
+function unitTestCryptarithmQ14({ difficulty = 2 }) {
+  const pool = difficulty === 1
+    ? UNIT_TEST_Q14_CASES.filter((item) => item.leadingFixed <= 4)
+    : difficulty === 3
+      ? UNIT_TEST_Q14_CASES.filter((item) => item.leadingFixed >= 5)
+      : UNIT_TEST_Q14_CASES;
+  const chosen = sample(pool);
+  const [diamondSymbol, squareSymbol, circleSymbol] = shuffle(UNIT_TEST_CRYPTO_SHAPES).slice(0, 3);
+  const symbols = [diamondSymbol, squareSymbol, circleSymbol];
+  const values = [chosen.diamond, chosen.square, chosen.circle];
+  const sum = chosen.diamond * 111;
+  return {
+    prompt: "다음 세로셈에서 같은 도형은 같은 숫자를, 다른 도형은 다른 숫자를 나타냅니다. 각 도형이 나타내는 숫자를 구하세요.",
+    visual: { kind: "cryptarithm-vertical", addends: [[String(chosen.leadingFixed), squareSymbol, circleSymbol], [circleSymbol, String(chosen.unitFixed)]], sum: [diamondSymbol, diamondSymbol, diamondSymbol] },
+    answer: symbols.map((symbol, index) => `${symbol}=${values[index]}`).join(", "),
+    solution: `일의 자리부터 차례로 맞추면 ${circleSymbol}는 ${chosen.circle}, ${squareSymbol}는 ${chosen.square}, ${diamondSymbol}는 ${chosen.diamond}입니다. 실제로 ${chosen.first}+${chosen.second}=${sum}입니다.`,
+    meta: { family: "unit-test-cryptarithm-q14", symbols, values, leadingFixed: chosen.leadingFixed, unitFixed: chosen.unitFixed, first: chosen.first, second: chosen.second, sum, solutionCount: 1, sourceCase: { leadingFixed: 1, unitFixed: 4, diamond: 2, square: 3, circle: 8 } }
+  };
+}
+
+function unitTestCryptarithmQ15() {
+  const [diamondSymbol, squareSymbol, circleSymbol, triangleSymbol, crossSymbol] = shuffle(UNIT_TEST_CRYPTO_SHAPES).slice(0, 5);
+  const symbols = [diamondSymbol, squareSymbol, circleSymbol, triangleSymbol, crossSymbol];
+  const values = [8, 0, 9, 1, 2];
+  return {
+    prompt: "다음 세로셈에서 같은 도형은 같은 숫자를, 다른 도형은 다른 숫자를 나타냅니다. 각 도형이 나타내는 숫자를 구하세요.",
+    visual: { kind: "cryptarithm-vertical", addends: [[circleSymbol, crossSymbol, diamondSymbol], [diamondSymbol, triangleSymbol]], sum: [triangleSymbol, squareSymbol, squareSymbol, circleSymbol] },
+    answer: symbols.map((symbol, index) => `${symbol}=${values[index]}`).join(", "),
+    solution: `일의 자리부터 더하면 ${diamondSymbol}+${triangleSymbol}=${circleSymbol}, 십의 자리에서 받아올림이 생깁니다. 차례로 맞추면 ${diamondSymbol}=8, ${squareSymbol}=0, ${circleSymbol}=9, ${triangleSymbol}=1, ${crossSymbol}=2입니다. 실제로 928+81=1009입니다.`,
+    meta: { family: "unit-test-cryptarithm-q15", symbols, values, first: 928, second: 81, sum: 1009, solutionCount: 1, sourceCase: { diamond: 8, square: 0, circle: 9, triangle: 1, cross: 2 } }
+  };
+}
+
 function binaryWeightSelection({ difficulty = 2 }) {
   const weights = [1, 2, 4, 8];
   const wantedCount = difficulty === 1 ? randomInt(1, 2) : difficulty === 2 ? randomInt(2, 3) : randomInt(3, 4);
@@ -1229,6 +1305,9 @@ export const BOOK03_GENERATORS = {
   cryptarithmFixedDigitAddition,
   cryptarithmMissingDigitColumn,
   cryptarithmLinkedEquations,
+  unitTestCryptarithmQ13,
+  unitTestCryptarithmQ14,
+  unitTestCryptarithmQ15,
   binaryWeightSelection,
   coloredCellNumberCode,
   fourCellBinaryCode,
