@@ -1,8 +1,8 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260825b";
-import { GENERATORS } from "./generators.js?v=20260825b";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260825j";
+import { GENERATORS } from "./generators.js?v=20260825j";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
-import { book03Markup } from "./book03-renderers.js?v=20260825b";
+import { book03Markup } from "./book03-renderers.js?v=20260825j";
 import { book04Markup } from "./book04-renderers.js?v=20260822e";
 import { book05Markup } from "./book05-renderers.js?v=20260822f";
 import { book06Markup } from "./book06-renderers.js?v=20260822g";
@@ -3107,7 +3107,11 @@ function renderWorksheet() {
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
+      ${question.responseKind === "drawing"
+        ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>'
+        : question.responseKind === "visual-fill"
+          ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
+          : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
   }).join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";

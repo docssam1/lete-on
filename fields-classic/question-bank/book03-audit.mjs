@@ -50,19 +50,32 @@ function validate(type, problem, difficulty) {
   validateSurface(problem, id, difficulty);
 
   switch (meta.family) {
-    case "tangram-fit":
-      assert(meta.optionKinds.filter((kind) => kind === meta.targetKind).length === 1, id, difficulty, "tangram answer not unique");
-      assert(numeric === meta.correctOption, id, difficulty, "wrong tangram option");
+    case "tangram-composition":
+      assert(meta.template === "five-piece-square", id, difficulty, "wrong tangram composition template");
+      assert(JSON.stringify([...meta.pieceIds].sort()) === JSON.stringify([3,4,5,6,7]), id, difficulty, "wrong five-piece tangram inventory");
+      assert(problem.answerVisual?.complete === true && problem.visual?.complete === false, id, difficulty, "tangram drawing answer is not gated");
       return;
     case "tangram-area": {
-      const total = meta.selected.reduce((sum, pieceId) => sum + meta.pieceAreas[pieceId], 0);
+      const total = meta.selected.reduce((sum, pieceId) => sum + meta.pieceAreas[pieceId] * meta.unitArea, 0);
       assert(numeric === total, id, difficulty, "tangram area mismatch");
+      assert(!problem.visual.pieceAreas, id, difficulty, "tangram visual leaks piece areas");
       return;
     }
-    case "unit-grid-area":
-      assert(meta.areaTwice === meta.fullCount * 2 + meta.halfCount, id, difficulty, "unit area mismatch");
-      assert(meta.halfCount % 2 === 0, id, difficulty, "fractional half cells unexpected");
+    case "unit-grid-area": {
+      if (meta.points?.length) {
+        const shoelace = Math.abs(meta.points.reduce((sum, [x, y], index) => {
+          const [nextX, nextY] = meta.points[(index + 1) % meta.points.length];
+          return sum + x * nextY - nextX * y;
+        }, 0));
+        assert(meta.connected === true, id, difficulty, "unit area figure must be connected");
+        assert(meta.areaTwice === shoelace, id, difficulty, "unit polygon area mismatch");
+        assert(problem.answer === (shoelace % 2 === 0 ? String(shoelace / 2) : `${Math.floor(shoelace / 2)}와 1/2`), id, difficulty, "unit polygon answer mismatch");
+      } else {
+        assert(meta.areaTwice === meta.fullCount * 2 + meta.halfCount, id, difficulty, "unit area mismatch");
+        assert(meta.halfCount % 2 === 0, id, difficulty, "fractional half cells unexpected");
+      }
       return;
+    }
     case "shape-area-growth":
       meta.areas.forEach((area, index) => assert(area === (meta.start + index) ** 2, id, difficulty, "growth area mismatch"));
       assert(numeric === meta.answer, id, difficulty, "growth answer mismatch");
@@ -72,13 +85,19 @@ function validate(type, problem, difficulty) {
       assert(numeric === meta.answer, id, difficulty, "nested answer mismatch");
       return;
     case "equal-fraction":
-    case "incomplete-fraction":
       assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "invalid fraction parts");
       assert(problem.answer === `${meta.shaded}/${meta.parts}`, id, difficulty, "fraction answer mismatch");
       return;
+    case "incomplete-fraction":
+      assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "invalid fraction parts");
+      assert(problem.answer === `${meta.shaded}/${meta.parts}`, id, difficulty, "fraction answer mismatch");
+      assert(meta.visibleLines > 0 && meta.visibleLines < meta.internalLines, id, difficulty, "incomplete guide-line count mismatch");
+      assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "incomplete/answer visual state mismatch");
+      return;
     case "equal-partition-drawing":
       assert(meta.shaded > 0 && meta.shaded <= meta.parts, id, difficulty, "invalid partition drawing");
-      assert(problem.answerVisual?.visibleLines === meta.parts, id, difficulty, "answer partition incomplete");
+      assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "answer partition incomplete");
+      assert(problem.answerVisual?.parts === meta.parts, id, difficulty, "answer partition count mismatch");
       return;
     case "oblique-square-area":
       assert(meta.areas.every((area, index) => area === meta.squares[index].dx ** 2 + meta.squares[index].dy ** 2), id, difficulty, "oblique area mismatch");
@@ -187,10 +206,28 @@ function validate(type, problem, difficulty) {
       assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "cell code mismatch");
       assert(numeric === meta.answer, id, difficulty, "cell answer mismatch");
       return;
+    case "colored-cell-number-code":
+      assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "source cell code mismatch");
+      assert(meta.rows === 1 ? meta.columns === 5 : meta.rows === 2 && meta.columns === 4, id, difficulty, "source cell layout mismatch");
+      if (meta.mode === "read") assert(numeric === meta.answer, id, difficulty, "source cell answer mismatch");
+      if (meta.mode === "color") assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "source reverse cell answer missing");
+      return;
     case "symbol-code": {
       const lookup = Object.fromEntries(meta.symbols.map((symbol, index) => [symbol, meta.values[index]]));
       meta.rows.forEach((row) => assert(row.symbols.reduce((sum, symbol) => sum + lookup[symbol], 0) === row.total, id, difficulty, "symbol row mismatch"));
       assert(meta.targetSymbols.reduce((sum, symbol) => sum + lookup[symbol], 0) === meta.answer, id, difficulty, "symbol target mismatch");
+      return;
+    }
+    case "symbol-value-code": {
+      assert(meta.symbols.length === 3 && new Set(meta.symbols).size === 3, id, difficulty, "three source symbols required");
+      assert(meta.values.length === 3 && new Set(meta.values).size === 3, id, difficulty, "three distinct symbol values required");
+      const totalForCounts = (counts, values = meta.values) => counts.reduce((sum, count, index) => sum + count * values[index], 0);
+      meta.rows.forEach((row, index) => {
+        assert(row.total === totalForCounts(meta.countRows[index]), id, difficulty, "source symbol clue mismatch");
+        assert(row.symbols.length === meta.countRows[index].reduce((sum, count) => sum + count, 0), id, difficulty, "source symbol count mismatch");
+      });
+      assert(meta.answer === totalForCounts(meta.targetCounts), id, difficulty, "source symbol target mismatch");
+      assert(numeric === meta.answer, id, difficulty, "source symbol answer mismatch");
       return;
     }
     case "magic-three-complete":
@@ -214,6 +251,13 @@ function validate(type, problem, difficulty) {
       const lines = meta.size === 6 ? [[0,1,2],[2,3,4],[4,5,0]] : [[0,1,2,3],[3,4,5,6],[6,7,8,0]];
       lines.forEach((line) => assert(lineSum(meta.solution, line) === meta.lineSum, id, difficulty, "triangle line mismatch"));
       assert(meta.uniqueCount === 1, id, difficulty, "triangle answer not unique");
+      return;
+    }
+    case "equal-line-eight-complete-book3": {
+      [[0,1,2], [2,3,4], [4,5,6], [6,7,0]].forEach((line) => assert(lineSum(meta.layout, line) === meta.lineSum, id, difficulty, "book3 eight-card line mismatch"));
+      assert(new Set(meta.layout).size === 8 && meta.layout.every((value) => value >= 1 && value <= 8), id, difficulty, "book3 eight-card reuse");
+      assert(meta.candidateCount === 1, id, difficulty, "book3 eight-card completion not unique");
+      assert(problem.responseKind === "visual-fill" && problem.answerVisual?.shown?.length === 8, id, difficulty, "book3 eight-card full answer missing");
       return;
     }
     default:

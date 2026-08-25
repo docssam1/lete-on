@@ -106,7 +106,7 @@ assert(unitCount === 40, `expected 40 units, got ${unitCount}`);
 assert(rangeCount === 244, `expected 244 ranges, got ${rangeCount}`);
 assert(sourceQuestionCount === 1613, `expected 1613 source questions, got ${sourceQuestionCount}`);
 assert(sourceKeys.size === sourceQuestionCount, "source question keys are not unique");
-assert(curriculumTypeIds.size === 426, `expected 426 curriculum types, got ${curriculumTypeIds.size}`);
+assert(curriculumTypeIds.size === 427, `expected 427 curriculum types, got ${curriculumTypeIds.size}`);
 assert(detailedTypeCount === 473, `expected 473 detailed types, got ${detailedTypeCount}`);
 assert(detailedReferenceCount === 893, `expected 893 detailed references, got ${detailedReferenceCount}`);
 assert(detailedQuestionCount === 1613, `expected 1613 detailed source questions, got ${detailedQuestionCount}`);

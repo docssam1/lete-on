@@ -97,6 +97,7 @@ export const TYPES = [
   type("fold-number-cut-sum-l-shape", "geometry", "색종이 접기", "L자 부분을 자른 번호 색종이의 합", { generator: "foldNumberCutSumLShape", sourceMatched: true }),
   type("equal-line-sum", "number", "수 배열과 합", "가로·세로 각 줄의 합 같게 만들기", { generator: "sourceEqualLineCross", sourceMatched: true }),
   type("equal-line-sum-eight-cards", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 줄의 합 만들기", { generator: "equalLineSumEightCards", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("equal-line-sum-eight-cards-complete-book3", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 사각 둘레 완성하기", { generator: "equalLineSumEightCardsCompleteBook3", sourceMatched: true, textbookSource: "더클래식 1과정 3권 119쪽 연습 16번" }),
   type("equal-line-sum-eight-cards-fifteen-top-left", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 네 변의 합을 같게 만들기", { generator: "equalLineSumEightCardsFifteenTopLeft", sourceMatched: true }),
   type("equal-line-sum-eight-cards-twelve", "number", "수 배열과 합", "1부터 8까지 써서 각 줄의 합을 같게 만들기", { generator: "equalLineSumEightCardsTwelve", sourceMatched: true }),
   type("symbol-sum-grid", "number", "매트릭스", "도형 매트릭스의 빈 합 구하기", { generator: "sourceSymbolSumGrid", sourceMatched: true }),
@@ -364,14 +365,14 @@ export const TYPES = [
 
   // 더클래식 1과정 3권: 페이지가 아니라 단원·단계·문항 번호로 원본을 대조했다.
   // 같은 단원 안에서도 풀이 구조가 달라지는 지점마다 별도 생성기로 나눈다.
-  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 다조각 조립 그림 재설계 중" }),
-  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 넓이표 구조 재설계 중" }),
-  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 연결 도형 구조 재설계 중" }),
+  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 1~3" }),
+  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 연습 1" }),
+  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 4~5, 확인1 1~2, 연습 2~5" }),
   type("growing-shape-area-sum", "pattern", "넓이 규칙", "커지는 정사각형·정삼각형 넓이의 합", { generator: "growingShapeAreaSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("nested-square-outer-area", "pattern", "넓이 규칙", "겹쳐 커지는 가장 바깥 정사각형의 넓이", { generator: "nestedSquareOuterArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 분할 도형군 재설계 중" }),
-  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 18조각 포함 그림 재설계 중" }),
-  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 빠진 선 조건 재설계 중" }),
+  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 1~3, 연습 8~12" }),
+  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 4, 연습 14~15" }),
+  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 확인2 1~4, 연습 13·16~20" }),
   type("oblique-square-grid-area", "geometry", "단위넓이", "모눈 위 기울어진 정사각형의 넓이", { generator: "obliqueSquareGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("folded-strip-length", "geometry", "단위길이", "모눈 위 접힌 테이프·리본의 전체 길이", { generator: "foldedStripLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -397,15 +398,15 @@ export const TYPES = [
   type("cryptarithm-linked-equations", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "cryptarithmLinkedEquations", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("binary-weight-selection", "number", "마법카드와 도형수", "1·2·4·8 무게추로 목표 무게 만들기", { generator: "binaryWeightSelection", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 5칸·2×3·역방향 구조 확장 중" }),
-  type("symbol-value-code", "number", "마법카드와 도형수", "도형 기호마다 정해진 값을 더해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 자리값 암호 구조 재설계 중" }),
+  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 2~3, 확인1 1~2, 연습 2~7, 심화 4" }),
+  type("symbol-value-code", "number", "마법카드와 도형수", "도형 묶음의 수를 비교해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 98·113쪽 · 도형 묶음 상자 4개 구조" }),
   type("magic-square-three-complete", "number", "마방진", "주어진 아홉 수로 3×3 마방진 완성하기", { generator: "magicSquareThreeComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-three-target", "number", "마방진", "3×3 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareThreeTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-four-target", "number", "마방진", "4×4 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareFourTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("polygon-ring-equal-sum", "number", "수 배열과 합", "오각진의 다섯 줄 합을 같게 만들기", { generator: "polygonRingEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-six", "number", "수 배열과 합", "1부터 6까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumSix", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-nine", "number", "수 배열과 합", "1부터 9까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumNine", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 전체 완성형 난이도 복원 중" }),
+  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 연습 19, 심화 3" }),
 
   // 더클래식 1과정 4권: 153문항을 단계와 인쇄 문제 번호로 직접 대조했다.
   // 기존 검증 유형과 풀이 구조가 같은 문항은 재사용하고, 다른 구조만 새 유형으로 둔다.
@@ -1142,8 +1143,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "two-digit-even-ones-greater-gap": "일의 자리에는 짝수를 놓고, 십의 자리와의 차가 조건에 맞는지 확인합니다.",
   "two-digit-odd-bounded-gap": "주어진 범위 안의 홀수를 먼저 적고 두 자리 숫자의 차를 하나씩 확인합니다.",
   "number-baseball": "자리와 숫자가 모두 맞는 것과 숫자만 맞는 것을 나누어 후보를 지웁니다.",
-  "tangram-shape-composition": "빈자리의 변과 꼭짓점을 살펴 같은 모양의 칠교 조각을 돌려 맞춥니다.",
-  "tangram-piece-area": "모눈 한 칸을 1로 보고 선택한 칠교 조각이 차지한 온칸과 반칸을 더합니다.",
+  "tangram-shape-composition": "이미 놓인 조각의 변에 맞추어 정사각형, 두 작은 삼각형, 중간 삼각형, 평행사변형을 빈틈없이 놓습니다.",
+  "tangram-piece-area": "4×4 칠교판에서 한 칸을 기준으로 조각 넓이를 세고, 모아 만든 정사각형은 사용한 조각의 넓이를 더합니다.",
   "unit-grid-area": "온칸을 먼저 세고 반칸 두 개를 온칸 하나로 묶습니다.",
   "growing-shape-area-sum": "각 모양의 가로와 세로 또는 작은 삼각형 수를 세어 단계별 넓이를 적습니다.",
   "nested-square-outer-area": "가장 바깥 정사각형의 한 변이 단계마다 얼마나 늘어나는지 먼저 찾습니다.",
@@ -1180,6 +1181,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "magic-square-four-target": "1부터 16까지를 쓰면 한 줄의 합이 34임을 이용해 색칠한 칸을 찾습니다.",
   "polygon-ring-equal-sum": "오각형 한 변의 세 수를 보고 목표 합에서 두 수를 빼 다음 원을 채웁니다.",
   "equal-line-sum-eight-cards": "완성된 가로나 세로 한 줄의 합을 기준으로 빈칸을 차례로 채웁니다.",
+  "equal-line-sum-eight-cards-complete-book3": "한 변의 합에서 이미 놓인 수를 빼며 빈칸을 채우고, 1부터 8까지를 한 번씩 썼는지 확인합니다.",
   "triangle-max-edge-sum": "세 꼭짓점의 수가 두 줄씩 세어진다는 점을 이용해 큰 수나 작은 수를 꼭짓점에 놓습니다.",
   "triangle-edge-sum-six": "한 변의 목표 합에서 이미 놓인 두 수를 빼 남은 원의 수를 찾습니다.",
   "triangle-edge-sum-nine": "네 수가 놓이는 한 변씩 목표 합을 맞추고 쓴 수는 카드에서 지웁니다.",
@@ -1967,7 +1969,7 @@ const BOOK03_UNIT04_REFS = Object.freeze({
     type: [problemNumbers("check", 2, [4])],
     practice: [problemNumbers("practice", 1, [15])]
   }),
-  "equal-line-sum-eight-cards": stageReferences({
+  "equal-line-sum-eight-cards-complete-book3": stageReferences({
     practice: [problemNumbers("practice", 1, [16])]
   }),
   "triangle-max-edge-sum": stageReferences({
@@ -3433,13 +3435,11 @@ export const CURRICULUM = [
     detailedStagedUnit("마법카드와 마방진", [
       "binary-weight-selection", "colored-cell-number-code", "symbol-value-code",
       "magic-square-three-complete", "magic-square-three-target", "magic-square-four-target",
-      "polygon-ring-equal-sum", "equal-line-sum-eight-cards", "triangle-max-edge-sum",
+      "polygon-ring-equal-sum", "equal-line-sum-eight-cards-complete-book3", "triangle-max-edge-sum",
       "triangle-edge-sum-six", "triangle-edge-sum-nine", "magic-square-four-complete"
     ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS, {
       sourceAuditBlockedStages: {
         "magic-square-three-complete": ["concept"],
-        "polygon-ring-equal-sum": ["type", "practice"],
-        "equal-line-sum-eight-cards": ["practice"]
       }
     })
   ] },
