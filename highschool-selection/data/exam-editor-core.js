@@ -1,10 +1,15 @@
 (function (root, factory) {
   "use strict";
-  const api = factory();
+  const validation = typeof module !== "undefined" && module.exports
+    ? require("../shared/question-bank-validation.js")
+    : root.HIGHSELECT_QUESTION_BANK_VALIDATION;
+  const api = factory(validation);
   root.HIGHSELECT_EXAM_EDITOR_CORE = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
-})(typeof window !== "undefined" ? window : globalThis, function () {
+})(typeof window !== "undefined" ? window : globalThis, function (validation) {
   "use strict";
+
+  if (!validation) throw new Error("question bank validation module is required");
 
   const SORT_MODES = Object.freeze([
     "user",
@@ -121,14 +126,9 @@
   }
 
   function validateCandidate(candidate) {
-    const issues = [];
     if (!candidate || typeof candidate !== "object") return Object.freeze(["candidate.missing"]);
-    if (!candidate.itemId) issues.push("candidate.item_id.missing");
-    if (candidate.releaseStatus !== "approved") issues.push("candidate.release.not_approved");
-    if (candidate.classificationStatus !== "verified") issues.push("candidate.classification.not_verified");
-    if (candidate.answerStatus !== "verified") issues.push("candidate.answer.not_verified");
-    if (candidate.figureRequired && candidate.figureStatus !== "verified") issues.push("candidate.figure.not_verified");
-    return Object.freeze(issues);
+    const report = validation.evaluateQuestionGates(candidate);
+    return Object.freeze(report.issues.map(function (issue) { return `candidate.${issue}`; }));
   }
 
   function validateDraft(draft) {
@@ -153,7 +153,10 @@
 
   function isCurriculumPathInScope(curriculumPath, scopeKeys) {
     if (!scopeKeys || scopeKeys.length === 0) return true;
-    const path = String(curriculumPath == null ? "" : curriculumPath).replace(/\/+$/, "");
+    const rawPath = curriculumPath && typeof curriculumPath === "object"
+      ? curriculumPath.key
+      : curriculumPath;
+    const path = String(rawPath == null ? "" : rawPath).replace(/\/+$/, "");
     if (!path) return null;
     return scopeKeys.some(function (scopeKey) {
       return path === scopeKey || path.startsWith(`${scopeKey}/`);
@@ -161,9 +164,25 @@
   }
 
   function assertCandidateInScope(draft, candidate) {
-    const match = isCurriculumPathInScope(candidate.curriculumPath, draft.scopeKeys);
+    const match = isCurriculumPathInScope(candidate.curriculum, draft.scopeKeys);
     invariant(match !== false, "candidate is outside the selected scope");
     invariant(match !== null, "candidate curriculum classification is required");
+  }
+
+  function selectedQuestion(questionsByItemId, itemId) {
+    const question = questionsByItemId && questionsByItemId[itemId];
+    invariant(question && question.id === itemId, "selected item metadata is required");
+    return question;
+  }
+
+  function assertFamilyAvailable(draft, candidate, questionsByItemId, excludedPlacementId) {
+    const familyId = candidate && candidate.variant && candidate.variant.familyId;
+    invariant(typeof familyId === "string" && familyId, "candidate family is required");
+    draft.placements.forEach(function (placement) {
+      if (placement.placementId === excludedPlacementId) return;
+      const existing = selectedQuestion(questionsByItemId, placement.itemId);
+      invariant(existing.variant.familyId !== familyId, "question family is already selected");
+    });
   }
 
   function addItem(draft, input) {
@@ -171,13 +190,14 @@
     assertCandidate(input.candidate);
     assertCandidateInScope(draft, input.candidate);
     const next = mutableDraft(draft);
-    invariant(!next.placements.some(function (placement) { return placement.itemId === input.candidate.itemId; }), "item is already selected");
+    invariant(!next.placements.some(function (placement) { return placement.itemId === input.candidate.id; }), "item is already selected");
     invariant(!next.placements.some(function (placement) { return placement.placementId === input.placementId; }), "placementId is already selected");
+    assertFamilyAvailable(draft, input.candidate, input.questionsByItemId);
     const index = input.index == null ? next.placements.length : Number(input.index);
     invariant(Number.isSafeInteger(index) && index >= 0 && index <= next.placements.length, "add index is out of range");
     next.placements.splice(index, 0, normalizePlacement({
       placementId: input.placementId,
-      itemId: input.candidate.itemId,
+      itemId: input.candidate.id,
       score: input.score,
       locked: input.locked,
       selectionKind: input.selectionKind || "manual",
@@ -219,16 +239,22 @@
     invariant(index >= 0, "placement was not found");
     invariant(!next.placements[index].locked, "locked placement cannot be replaced");
     invariant(!next.placements.some(function (placement, placementIndex) {
-      return placementIndex !== index && placement.itemId === input.candidate.itemId;
+      return placementIndex !== index && placement.itemId === input.candidate.id;
     }), "replacement item is already selected");
     const current = next.placements[index];
+    const currentQuestion = selectedQuestion(input.questionsByItemId, current.itemId);
+    assertFamilyAvailable(draft, input.candidate, input.questionsByItemId, current.placementId);
+    if (relationship !== "manual") {
+      invariant(input.candidate.lineage && input.candidate.lineage.relation === relationship, "replacement relationship does not match candidate lineage");
+      invariant(input.candidate.variant.familyId === currentQuestion.variant.familyId, "replacement must stay in the same question family");
+    }
     current.replacementHistory.push({
       fromItemId: current.itemId,
-      toItemId: input.candidate.itemId,
+      toItemId: input.candidate.id,
       relationship,
       reasonCode: input.reasonCode || "user_selected"
     });
-    current.itemId = input.candidate.itemId;
+    current.itemId = input.candidate.id;
     current.selectionKind = relationship;
     next.sortMode = "user";
     return freezeDraft(next);
@@ -247,7 +273,7 @@
     const reconciliation = { keptPlacementIds: [], outOfScopePlacementIds: [], classificationPendingPlacementIds: [] };
     next.placements.forEach(function (placement) {
       const item = metadata[placement.itemId];
-      const match = isCurriculumPathInScope(item && item.curriculumPath, next.scopeKeys);
+      const match = isCurriculumPathInScope(item && (item.curriculum || item.curriculumPath), next.scopeKeys);
       if (match === true) reconciliation.keptPlacementIds.push(placement.placementId);
       else if (match === false) reconciliation.outOfScopePlacementIds.push(placement.placementId);
       else reconciliation.classificationPendingPlacementIds.push(placement.placementId);
