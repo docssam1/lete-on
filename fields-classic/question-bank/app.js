@@ -624,11 +624,11 @@ function geometryWorksheetSolution(problem) {
   }
 }
 
-function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt) {
+function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null) {
   const worksheet = globalThis.GW_GEN;
   const info = worksheet?.typeInfo(item.worksheetCode);
   if (!worksheet || !info) return null;
-  const intensity = activeDifficulty();
+  const intensity = difficultyOverride || activeDifficulty();
   const requestedLevel = item.worksheetLevel || info.levels[0];
   const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
   const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
@@ -648,7 +648,8 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }
   const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
   const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
-  return withProblemContext({
+  return {
+    ...withProblemContext({
     prompt: made.prompt,
     visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
     answer: made.answerText,
@@ -656,7 +657,9 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
     solution: geometryWorksheetSolution(made),
     responseKind: made.type === "VP" ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-  }, item, reference);
+    }, item, reference),
+    generationDifficulty: intensity
+  };
 }
 
 function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null) {
@@ -671,11 +674,11 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
       const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return withProblemContext(generated, item, reference);
+      if (generated) return { ...withProblemContext(generated, item, reference), generationDifficulty: difficulty };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
-    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt);
+    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride);
   }
   return null;
 }
@@ -714,6 +717,101 @@ function buildQuestions() {
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function syncQuestionCountControls() {
+  state.count = state.questions.length;
+  $("questionCount").value = String(state.count);
+  $("countChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.count) === state.count);
+  });
+  updateSummary();
+}
+
+function moveQuestion(fromIndex, toIndex) {
+  if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= state.questions.length || toIndex >= state.questions.length) return;
+  const [question] = state.questions.splice(fromIndex, 1);
+  state.questions.splice(toIndex, 0, question);
+  renderWorksheet();
+}
+
+function replaceQuestion(index) {
+  const current = state.questions[index];
+  if (!current) return;
+  const currentSignature = problemSignature(current);
+  const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
+  let replacement = null;
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty);
+    if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
+      replacement = candidate;
+      break;
+    }
+  }
+  if (!replacement) {
+    window.alert("같은 유형의 새 문항을 만들지 못했습니다. 잠시 후 다시 눌러 주세요.");
+    return;
+  }
+  state.questions[index] = replacement;
+  renderWorksheet();
+}
+
+function removeQuestion(index) {
+  if (state.questions.length <= 1) {
+    window.alert("시험지에는 한 문제 이상이 필요합니다.");
+    return;
+  }
+  state.questions.splice(index, 1);
+  syncQuestionCountControls();
+  renderWorksheet();
+}
+
+function bindQuestionEditor() {
+  const grid = $("questionGrid");
+  let draggedIndex = null;
+  grid.querySelectorAll(".question-card").forEach((card) => {
+    const index = Number(card.dataset.questionIndex);
+    const handle = card.querySelector("[data-drag-handle]");
+    handle?.addEventListener("dragstart", (event) => {
+      draggedIndex = index;
+      card.classList.add("is-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", String(index));
+    });
+    handle?.addEventListener("dragend", () => {
+      draggedIndex = null;
+      card.classList.remove("is-dragging");
+      grid.querySelectorAll(".drop-target").forEach((item) => item.classList.remove("drop-target"));
+    });
+    card.addEventListener("dragover", (event) => {
+      if (draggedIndex === null || draggedIndex === index) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      card.classList.add("drop-target");
+    });
+    card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
+    card.addEventListener("drop", (event) => {
+      event.preventDefault();
+      card.classList.remove("drop-target");
+      const fromIndex = draggedIndex ?? Number(event.dataTransfer.getData("text/plain"));
+      moveQuestion(fromIndex, index);
+    });
+  });
+  grid.querySelectorAll("[data-question-action]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.questionIndex);
+    if (button.dataset.questionAction === "up") moveQuestion(index, index - 1);
+    if (button.dataset.questionAction === "down") moveQuestion(index, index + 1);
+    if (button.dataset.questionAction === "replace") replaceQuestion(index);
+    if (button.dataset.questionAction === "remove") removeQuestion(index);
+  }));
+  grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
+    const index = Number(input.dataset.questionIndex);
+    if (state.questions[index]) state.questions[index].responseValue = input.value;
+  }));
+}
+
+function escapeAttribute(value) {
+  return String(value || "").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function shapeSymbol(shape) {
@@ -2995,18 +3093,26 @@ function renderWorksheet() {
   $("worksheetTitle").textContent = title;
   $("questionGrid").innerHTML = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card">
+    return `<article class="question-card" data-question-index="${index}">
+      <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
+        <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
+        <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
+        <button type="button" data-question-action="down" data-question-index="${index}" title="아래로 이동" aria-label="아래로 이동" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button>
+        <button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>
+        <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
+      </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
+      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
   }).join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
+  bindQuestionEditor();
 }
 
 function openAnswers() {
