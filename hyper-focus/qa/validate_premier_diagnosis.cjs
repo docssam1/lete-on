@@ -21,7 +21,7 @@ assert.strictEqual(data.policy, "original-image-single-answer-only");
 assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4회여야 합니다.");
 
 const expectedCounts = [
-  20, 14, 16, 13, 17, 11, 12, 15,
+  20, 14, 16, 13, 17, 13, 12, 15,
   8, 13, 16,
   16, 17, 14, 15
 ];
@@ -46,8 +46,8 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 217);
-assert.strictEqual(lockedTotal, 83);
+assert.strictEqual(eligibleTotal, 219);
+assert.strictEqual(lockedTotal, 81);
 
 const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
 assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
@@ -136,6 +136,18 @@ assert.deepStrictEqual(mirroredClockCandidates, ["05:25"], "활용 4회 6번의 
 const currentMinutes = 5 * 60 + 25;
 const previousMinutes = currentMinutes - (3 * 60 + 20);
 assert.strictEqual(`${String(Math.floor(previousMinutes / 60)).padStart(2, "0")}:${String(previousMinutes % 60).padStart(2, "0")}`, "02:05", "활용 4회 6번의 3시간 20분 전 시각이 다릅니다.");
+
+const utilizationSix = data.exams.find((exam) => exam.key === "premier-utilization-6");
+for (const number of [3, 16]) {
+  assert.strictEqual(utilizationSix.questions.find((question) => question.number === number).scoringEligible, true, `활용 6회 ${number}번은 독립 검산과 가시성 검수를 통과해야 합니다.`);
+}
+for (const number of [2, 8, 9, 11, 17, 18, 20]) {
+  assert.strictEqual(utilizationSix.questions.find((question) => question.number === number).scoringEligible, false, `활용 6회 ${number}번은 원본 조건 또는 가시성 문제로 채점에서 제외해야 합니다.`);
+}
+assert.strictEqual([1, 3, 2, 4].reduce((sum, length) => sum + length, 0), 10, "활용 6회 3번의 색테이프 길이가 다릅니다.");
+const utilizationSixMirrorBlanks = [54 - 41, 25 + 55];
+assert.deepStrictEqual(utilizationSixMirrorBlanks, [13, 80], "활용 6회 16번의 두 거울 숫자 빈칸이 다릅니다.");
+assert.strictEqual(utilizationSixMirrorBlanks.reduce((sum, value) => sum + value, 0), 93, "활용 6회 16번의 빈칸 합이 다릅니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [

@@ -773,8 +773,8 @@
           "number": 3,
           "area": "측정과 시간",
           "type": "모눈 위 세 번 꺾은 색테이프 길이",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 4,
@@ -864,8 +864,8 @@
           "number": 16,
           "area": "공간과 도형",
           "type": "거울에 비친 디지털 숫자 식",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 17,
@@ -896,8 +896,8 @@
           "reviewStatus": "locked"
         }
       ],
-      "eligibleCount": 11,
-      "lockedCount": 9
+      "eligibleCount": 13,
+      "lockedCount": 7
     },
     {
       "key": "premier-utilization-7",
