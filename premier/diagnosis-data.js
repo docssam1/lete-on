@@ -1397,8 +1397,8 @@
           "number": 7,
           "area": "측정과 시간",
           "type": "7월 한 주 날짜 합과 마지막 날 요일",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 8,
@@ -1492,8 +1492,8 @@
           "reviewStatus": "verified"
         }
       ],
-      "eligibleCount": 13,
-      "lockedCount": 7
+      "eligibleCount": 14,
+      "lockedCount": 6
     },
     {
       "key": "premier-final-3",

@@ -39,7 +39,7 @@
         label: "파이널 모의고사",
         rounds: Object.freeze([
           round("premier-final-01", "파이널 모의고사 1회", 8, 12, true),
-          round("premier-final-02", "파이널 모의고사 2회", 13, 7, true),
+          round("premier-final-02", "파이널 모의고사 2회", 14, 6, true),
           round("premier-final-03", "파이널 모의고사 3회", 16, 4, true)
         ])
       }),

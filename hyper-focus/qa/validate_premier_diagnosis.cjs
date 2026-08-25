@@ -22,7 +22,7 @@ assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4
 
 const expectedCounts = [
   20, 14, 16, 13, 17, 13, 12, 16,
-  8, 13, 16,
+  8, 14, 16,
   16, 17, 14, 15
 ];
 const allowedAreas = new Set(["수와 연산", "공간과 도형", "논리와 관계", "규칙과 관계", "경우의 수", "측정과 시간"]);
@@ -46,8 +46,8 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 220);
-assert.strictEqual(lockedTotal, 80);
+assert.strictEqual(eligibleTotal, 221);
+assert.strictEqual(lockedTotal, 79);
 
 const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
 assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
@@ -155,6 +155,12 @@ assert.strictEqual(utilizationEight.questions.find((question) => question.number
 let unfoldedHoleCount = 1;
 for (let fold = 0; fold < 3; fold += 1) unfoldedHoleCount *= 2;
 assert.strictEqual(unfoldedHoleCount, 8, "활용 8회 7번의 세 번 접은 색종이 구멍 수가 다릅니다.");
+
+const finalTwo = data.exams.find((exam) => exam.key === "premier-final-2");
+assert.strictEqual(finalTwo.questions.find((question) => question.number === 7).scoringEligible, true, "파이널 2회 7번은 원본의 날짜 합 56을 기준으로 검산된 단일답 문항이어야 합니다.");
+const weekDateSum = Array.from({ length: 7 }, (_, index) => 5 + index).reduce((sum, date) => sum + date, 0);
+assert.strictEqual(weekDateSum, 56, "파이널 2회 7번의 일요일 5일부터 토요일 11일까지 합이 다릅니다.");
+assert.strictEqual((31 - 5) % 7, 5, "파이널 2회 7번의 7월 31일이 금요일인지 확인하는 요일 이동값이 다릅니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [
