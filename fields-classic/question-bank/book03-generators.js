@@ -446,6 +446,21 @@ function rodComparisonTotalUnitTest({ difficulty = 2 }) {
   };
 }
 
+function overlappingRodCommonUnitTest({ difficulty = 2 }) {
+  const [firstUnits, segmentUnits] = difficulty === 1 ? sample([[4, 2], [4, 3]]) : difficulty === 2 ? [5, 4] : sample([[6, 4], [7, 5]]);
+  const unit = randomInt(difficulty === 1 ? 2 : 3, difficulty === 3 ? 9 : 7);
+  const first = firstUnits * unit;
+  const third = segmentUnits * unit;
+  const offsetUnits = firstUnits - 1;
+  return {
+    prompt: `다음 그림에서 막대 ㉠의 길이가 ${first}cm일 때, 막대 ㉢의 길이를 구하세요.`,
+    visual: { kind: "book3", subtype: "overlapping-rods-common-unit", firstUnits, segmentUnits, offsetUnits, first },
+    answer: `${third}cm`,
+    solution: `막대 ㉠은 같은 눈금 ${firstUnits}칸이므로 한 칸은 ${first}cm를 ${firstUnits}칸으로 똑같이 나눈 ${unit}cm입니다. 막대 ㉢은 ${segmentUnits}칸이므로 길이는 ${third}cm입니다.`,
+    meta: { family: "overlapping-rods-common-unit-test", firstUnits, segmentUnits, offsetUnits, unit, first, third, sourceCase: { firstUnits: 5, segmentUnits: 4, first: 25, third: 20 } }
+  };
+}
+
 function unitObjectLength({ difficulty = 2 }) {
   const counts = difficulty === 1 ? [4, 5] : difficulty === 2 ? sample([[4, 5], [5, 6], [3, 7]]) : sample([[6, 8], [7, 9], [5, 8]]);
   const common = difficulty === 3 ? randomInt(3, 7) : randomInt(2, 5);
@@ -1201,6 +1216,7 @@ export const BOOK03_GENERATORS = {
   routeDistanceMultiple,
   rodRatioTotalBook3,
   rodComparisonTotalUnitTest,
+  overlappingRodCommonUnitTest,
   unitObjectLength,
   equivalentObjectLength,
   objectCombinationEquivalentCount,

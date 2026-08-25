@@ -463,6 +463,22 @@ function segmentChainMarkup(visual) {
   return `<svg class="b3-svg b3-segment-chain" viewBox="0 0 390 145" role="img" aria-label="A B C D 사이의 겹친 거리"><line x1="45" y1="90" x2="345" y2="90"/>${labels}${arc(0,2,28,visual.givens.AC)}${arc(1,3,48,visual.givens.BD)}${arc(0,3,8,visual.givens.AD)}<text x="195" y="138">${visual.target} = ?</text></svg>`;
 }
 
+function overlappingRodsMarkup(visual) {
+  const cell = 34;
+  const left = 22;
+  const totalUnits = visual.offsetUnits + visual.segmentUnits * 2;
+  const width = left * 2 + totalUnits * cell;
+  const topEnd = left + visual.firstUnits * cell;
+  const bottomStart = left + visual.offsetUnits * cell;
+  const bottomMiddle = bottomStart + visual.segmentUnits * cell;
+  const bottomEnd = bottomMiddle + visual.segmentUnits * cell;
+  const ticks = Array.from({ length: totalUnits + 1 }, (_, index) => {
+    const x = left + index * cell;
+    return `<line class="ruler-tick" x1="${x}" y1="64" x2="${x}" y2="76"/>`;
+  }).join("");
+  return `<svg class="b3-svg b3-overlapping-rods" viewBox="0 0 ${width} 150" role="img" aria-label="공통 눈금 위에 어긋나게 놓인 막대 ㉠, ㉡, ㉢"><line class="ruler" x1="${left}" y1="70" x2="${bottomEnd}" y2="70"/>${ticks}<rect x="${left}" y="25" width="${visual.firstUnits * cell}" height="30"/><text x="${(left + topEnd) / 2}" y="45">㉠ = ${visual.first}cm</text><rect x="${bottomStart}" y="88" width="${visual.segmentUnits * cell}" height="30"/><rect x="${bottomMiddle}" y="88" width="${visual.segmentUnits * cell}" height="30"/><text x="${(bottomStart + bottomMiddle) / 2}" y="108">㉡</text><text x="${(bottomMiddle + bottomEnd) / 2}" y="108">㉢</text><g class="guide"><line x1="${left}" y1="18" x2="${left}" y2="128"/><line x1="${bottomMiddle}" y1="18" x2="${bottomMiddle}" y2="128"/><line x1="${bottomEnd}" y1="18" x2="${bottomEnd}" y2="128"/></g></svg>`;
+}
+
 function simpleBook3Markup(visual) {
   if (visual.subtype === "step-ratio") return `<div class="b3-simple"><div class="b3-step-row"><span>아이</span><b>👣</b><em>${visual.personSteps}걸음</em></div><div class="b3-step-row dog"><span>강아지</span><b>${"·".repeat(Math.min(visual.ratio, 7))}</b><em>아이 한 걸음마다 ${visual.ratio}걸음</em></div></div>`;
   if (visual.subtype === "route-multiple") return `<div class="b3-route"><span>집</span><i style="--weight:${visual.first}">${visual.first}분</i><span>도서관</span><i style="--weight:${visual.second}">?</i><span>학교</span><strong>전체 ${visual.whole}분</strong></div>`;
@@ -575,6 +591,7 @@ export function book03Markup(visual) {
   if (visual.subtype === "grid-path") return gridPathMarkup(visual);
   if (visual.subtype === "number-line") return numberLineMarkup(visual);
   if (visual.subtype === "segment-chain") return segmentChainMarkup(visual);
+  if (visual.subtype === "overlapping-rods-common-unit") return overlappingRodsMarkup(visual);
   if (["step-ratio","route-multiple","rods","rod-comparison-total","object-measure","object-equation","object-count-equivalence","meeting-distance","difference-unit"].includes(visual.subtype)) return simpleBook3Markup(visual);
   if (visual.subtype === "mixed-interval") return mixedIntervalMarkup(visual);
   if (visual.subtype === "equation-chain") return equationChainMarkup(visual);
