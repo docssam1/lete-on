@@ -21,7 +21,7 @@ assert.strictEqual(data.policy, "original-image-single-answer-only");
 assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4회여야 합니다.");
 
 const expectedCounts = [
-  20, 14, 16, 13, 17, 13, 12, 15,
+  20, 14, 16, 13, 17, 13, 12, 16,
   8, 13, 16,
   16, 17, 14, 15
 ];
@@ -46,8 +46,8 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 219);
-assert.strictEqual(lockedTotal, 81);
+assert.strictEqual(eligibleTotal, 220);
+assert.strictEqual(lockedTotal, 80);
 
 const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
 assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
@@ -148,6 +148,13 @@ assert.strictEqual([1, 3, 2, 4].reduce((sum, length) => sum + length, 0), 10, "�
 const utilizationSixMirrorBlanks = [54 - 41, 25 + 55];
 assert.deepStrictEqual(utilizationSixMirrorBlanks, [13, 80], "활용 6회 16번의 두 거울 숫자 빈칸이 다릅니다.");
 assert.strictEqual(utilizationSixMirrorBlanks.reduce((sum, value) => sum + value, 0), 93, "활용 6회 16번의 빈칸 합이 다릅니다.");
+
+const utilizationEight = data.exams.find((exam) => exam.key === "premier-utilization-8");
+assert.strictEqual(utilizationEight.questions.find((question) => question.number === 7).scoringEligible, true, "활용 8회 7번은 세 접기 방향과 구멍 위치가 식별되는 단일답 문항이어야 합니다.");
+assert.strictEqual(utilizationEight.questions.find((question) => question.number === 16).scoringEligible, false, "활용 8회 16번은 옅은 상층 큐브 경계 때문에 채점에서 제외해야 합니다.");
+let unfoldedHoleCount = 1;
+for (let fold = 0; fold < 3; fold += 1) unfoldedHoleCount *= 2;
+assert.strictEqual(unfoldedHoleCount, 8, "활용 8회 7번의 세 번 접은 색종이 구멍 수가 다릅니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [

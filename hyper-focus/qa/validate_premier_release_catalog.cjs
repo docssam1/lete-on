@@ -18,7 +18,7 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[20, 0, false], [14, 6, true], [16, 4, true], [13, 7, true], [17, 3, true], [13, 7, true], [12, 8, true], [15, 5, true]]],
+  ["utilization", "premier-utilization", 8, [[20, 0, false], [14, 6, true], [16, 4, true], [13, 7, true], [17, 3, true], [13, 7, true], [12, 8, true], [16, 4, true]]],
   ["final", "premier-final", 3, [[8, 12, true], [13, 7, true], [16, 4, true]]],
   ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
 ];

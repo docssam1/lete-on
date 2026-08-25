@@ -1099,8 +1099,8 @@
           "number": 7,
           "area": "공간과 도형",
           "type": "세 번 접은 색종이 구멍 펼치기",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 8,
@@ -1194,8 +1194,8 @@
           "reviewStatus": "verified"
         }
       ],
-      "eligibleCount": 15,
-      "lockedCount": 5
+      "eligibleCount": 16,
+      "lockedCount": 4
     },
     {
       "key": "premier-final-1",
