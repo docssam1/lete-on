@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-15'] = {
   id:'C-15', tier:'intermediate', level:'C', order:15,
+  lineage:['place-magic'],
   generator:'ml_placeshift',
   title:{ ko:'자리이동 곱셈', en:'Place-Shift Multiplication', zh:'移位乘法' },
   subtitle:{ ko:'23×44: 23×4를 구한 뒤 한 칸 밀어 자기와 더해요!', en:'23×44: find 23×4, shift it one place, add to itself!', zh:'23×44：先算23×4，错开一位加自己！' },
@@ -52,7 +53,9 @@ window.NM_UNITS['C-15'] = {
               zh:'练出发现<b>重复数字数</b>的眼力。31×55？→ 31×5=155，1550+155=1705。12×77？→ 12×7=84，840+84=924。乘法次数是竖式的一半！知道何时用哪个工具，才是真正的魔法师。'},
         mathSteps:['31×55: 31×5=155','1550 + 155','= 1705'],
         result:{ko:'반복 숫자를 보면 자리이동! 곱셈이 절반으로 줄어요.',en:'See repeated digits → place-shift! Half the multiplying.',zh:'看到重复数字→移位！乘法减半。'},
-        book:null }
+        book:{ko:'고급 과정에서는 11×11, 111×111처럼 반복 숫자끼리 곱하면 파스칼의 삼각형을 닮은 피라미드 모양 숫자가 나온다는 걸 배워요.',
+              en:'In the advanced course you\'ll see that multiplying two repeated-digit numbers (11×11, 111×111…) makes a pyramid-shaped number that mirrors Pascal\'s triangle.',
+              zh:'在高级课程中会学到，两个重复数字的数相乘（11×11、111×111……）会出现像帕斯卡三角形一样的金字塔形数字。'} }
     ],
     rule:{ ko:'① 반복 숫자 수(22~99)인지 확인  ② 숫자 하나로 한 번만 곱하기  ③ 한 칸 밀어(×10) 원래 곱과 더하기',
       en:'① Spot a repeated-digit number (22–99)  ② Multiply by the single digit just once  ③ Shift one place (×10) and add the original',

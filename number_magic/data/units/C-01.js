@@ -52,7 +52,9 @@ window.NM_UNITS['C-01'] = {
               zh:'一个数乘以自身叫做<b>完全平方数</b>。1²=1，2²=4，3²=9，4²=16，5²=25……相邻平方数的差总是奇数：4-1=3，9-4=5，16-9=7，25-16=9！'},
         mathSteps:['1²=1, 2²=4, 3²=9','차이: 3, 5, 7, 9…','연속 홀수!'],
         result:{ko:'제곱수의 차이가 연속 홀수! 수학의 아름다운 패턴이에요.',en:'Differences between squares are consecutive odd numbers — a beautiful pattern in maths!',zh:'平方数之差是连续奇数——数学中的美丽规律！'},
-        book:null }
+        book:{ko:'고급 과정에서는 이 패턴을 공식으로 써요: ★²=(★−1)²+(★−1)+★. 옆 제곱수만 알면 못 외운 제곱수도 바로 구할 수 있어요. 1로 끝나는 수(61²=60²+60+61)도 같은 원리예요.',
+              en:'The advanced course turns this pattern into a formula: n²=(n−1)²+(n−1)+n — know one neighbouring square and any square you haven\'t memorised follows instantly. Numbers ending in 1 (61²=60²+60+61) use the same idea.',
+              zh:'高级课程把这个规律写成公式：★²=(★−1)²+(★−1)+★——只要知道相邻的平方数，没背过的平方数也能立刻求出。尾数是1的数（61²=60²+60+61）也是同样的原理。'} }
     ],
     rule:{ ko:'① aⁿ = a를 n번 곱함  ② 10ⁿ = 1 뒤에 0이 n개  ③ 제곱수 차이 = 연속 홀수',
       en:'① aⁿ = a multiplied n times  ② 10ⁿ = 1 with n zeros  ③ Differences between squares = consecutive odd numbers',
