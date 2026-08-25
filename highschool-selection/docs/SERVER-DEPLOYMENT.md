@@ -22,9 +22,12 @@
 | `HIGHSELECT_PRIVATE_CONFIG_PATH` | 공개 저장소 밖의 학생·시험 승인 설정 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_SCORER_PATH` | 공개 저장소 밖의 답안·분류·채점 JSON 절대경로 |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
+| `HIGHSELECT_EXAM_DRAFT_STORE_PATH` | 관리자 시험 초안·배치·검수 이력 저장 JSON 절대경로. 미설정 시 재시작에 보존되지 않음 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
 
 운영 쿠키는 기본적으로 `HttpOnly; Secure; SameSite=Lax`입니다. `HIGHSELECT_COOKIE_SECURE=false`는 로컬 격리 시험에서만 사용할 수 있습니다.
+
+GitHub Pages는 공개 정적 화면에만 사용할 수 있습니다. 승인번호, 학생 기록, 채점, 시험 초안 편집, 비공개 후보 인덱스는 GitHub Pages만으로 운영할 수 없으며, 별도 HTTPS 운영 서버와 공개 저장소 밖의 설정이 필요합니다.
 
 ## 비공개 승인 설정
 
