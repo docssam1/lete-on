@@ -2,7 +2,7 @@
 (function (root) {
   "use strict";
   root.PREMIER_DIAGNOSIS_DATA = {
-  "version": "2026-08-24",
+  "version": "2026-08-25",
   "policy": "original-image-single-answer-only",
   "exams": [
     {
@@ -184,8 +184,8 @@
           "number": 4,
           "area": "공간과 도형",
           "type": "주사위 굴리기 바닥면 합",
-          "scoringEligible": false,
-          "reviewStatus": "locked"
+          "scoringEligible": true,
+          "reviewStatus": "verified"
         },
         {
           "number": 5,
@@ -300,8 +300,8 @@
           "reviewStatus": "verified"
         }
       ],
-      "eligibleCount": 13,
-      "lockedCount": 7
+      "eligibleCount": 14,
+      "lockedCount": 6
     },
     {
       "key": "premier-utilization-3",

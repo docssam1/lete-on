@@ -21,7 +21,7 @@ assert.strictEqual(data.policy, "original-image-single-answer-only");
 assert.strictEqual(data.exams.length, 15, "활용 8회·파이널 3회·최종 4회여야 합니다.");
 
 const expectedCounts = [
-  20, 13, 11, 12, 17, 11, 12, 15,
+  20, 14, 11, 12, 17, 11, 12, 15,
   8, 13, 16,
   16, 17, 14, 15
 ];
@@ -46,8 +46,32 @@ data.exams.forEach((exam, examIndex) => {
   eligibleTotal += exam.eligibleCount;
   lockedTotal += exam.lockedCount;
 });
-assert.strictEqual(eligibleTotal, 210);
-assert.strictEqual(lockedTotal, 90);
+assert.strictEqual(eligibleTotal, 211);
+assert.strictEqual(lockedTotal, 89);
+
+const utilizationTwo = data.exams.find((exam) => exam.key === "premier-utilization-2");
+assert.strictEqual(utilizationTwo.questions.find((question) => question.number === 4).scoringEligible, true, "활용 2회 4번은 전수 검산된 단일답 문항이어야 합니다.");
+function rollDie(state, direction) {
+  const { top, bottom, north, south, east, west } = state;
+  if (direction === "E") return { top: west, bottom: east, north, south, east: top, west: bottom };
+  if (direction === "W") return { top: east, bottom: west, north, south, east: bottom, west: top };
+  return { top: north, bottom: south, north: bottom, south: top, east, west };
+}
+const q04Sums = new Set();
+for (const top of [1, 2, 5, 6]) {
+  for (const north of [1, 2, 5, 6]) {
+    const state = { top, bottom: 7 - top, north, south: 7 - north, east: 3, west: 4 };
+    if (new Set(Object.values(state)).size !== 6) continue;
+    let current = state;
+    let sum = 0;
+    for (const direction of ["E", "E", "S", "W", "W", "S", "E"]) {
+      current = rollDie(current, direction);
+      sum += current.bottom;
+    }
+    q04Sums.add(sum);
+  }
+}
+assert.deepStrictEqual([...q04Sums], [23], "활용 2회 4번은 가능한 모든 시작 방향에서 바닥면 합이 23이어야 합니다.");
 
 const serialized = JSON.stringify(data).toLowerCase();
 [
