@@ -149,7 +149,10 @@ ML7:{ name:{ko:'세 자리×한 자리',en:'3d×1d',zh:'三位乘一位'}, gen:'
 ML8:{ name:{ko:'두 자리×두 자리',en:'2d×2d',zh:'两位乘两位'}, gen:'ml8_mul2d2d', prereq:['ML6'],
   widgets:['steps','vertical','numpad'],
   levels:[{id:1,label:{ko:'쉬운 수',en:'easy',zh:'简单'},params:{easy:true}},
-          {id:2,label:{ko:'자유',en:'any',zh:'任意'},params:{easy:false}}] },
+          {id:2,label:{ko:'자유',en:'any',zh:'任意'},params:{easy:false}},
+          /* 고급 C '엑스맨 곱셈' 확장 — 3자리×2자리 · 3자리×3자리 (정독 수치 범위) */
+          {id:3,label:{ko:'엑스맨(3자리×2자리)',en:'X-cross (3d×2d)',zh:'X交叉(三位×两位)'},params:{digits:'3x2'}},
+          {id:4,label:{ko:'엑스맨(3자리×3자리)',en:'X-cross (3d×3d)',zh:'X交叉(三位×三位)'},params:{digits:'3x3'}}] },
 ML9:{ name:{ko:'세 자리×두 자리',en:'3d×2d',zh:'三位乘两位'}, gen:'ml9_mul3d2d', prereq:['ML8'],
   widgets:['vertical','steps','numpad'],
   levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
@@ -166,7 +169,11 @@ ML11:{ name:{ko:'제곱수·거듭제곱',en:'Squares & powers',zh:'平方数与
   widgets:['array','steps','numpad'],
   levels:[{id:1,label:{ko:'11²~20²',en:'11²-20²',zh:'11²~20²'},params:{lo:11,hi:20}},
           {id:2,label:{ko:'21²~40²',en:'21²-40²',zh:'21²~40²'},params:{lo:21,hi:40}},
-          {id:3,label:{ko:'2·3·5 거듭제곱',en:'powers of 2,3,5',zh:'2·3·5的乘方'},params:{powers:true}}] },
+          {id:3,label:{ko:'2·3·5 거듭제곱',en:'powers of 2,3,5',zh:'2·3·5的乘方'},params:{powers:true}},
+          /* 고급 A '1로 끝나는 수의 제곱' 확장 (11²~991², 정독 수치 범위) */
+          {id:4,label:{ko:'1로 끝나는 수의 제곱',en:'Squares ending in 1',zh:'尾数1的平方'},params:{mode:'end1'}},
+          /* 고급 D '제곱수 점화식' 확장 (11²~501², 방향 자유 선택) */
+          {id:5,label:{ko:'제곱수 점화식',en:'Square recurrence',zh:'平方数递推'},params:{mode:'adjacent'}}] },
 
 /* ── DV 나눗셈 ───────────────────────────── */
 DV1:{ name:{ko:'반으로 나누기(÷2)',en:'Halving',zh:'除以2'}, gen:'dv1_half', prereq:['ML1'],
@@ -331,7 +338,10 @@ ML18:{ name:{ko:'자리 이동 곱셈',en:'Place-shift multiplication',zh:'位�
     zh:'遇到22、55、99这样数字重复的数，只用一个数字乘一次，再移一位（×10）加起来就行。'},
   widgets:['steps','vertical','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
-          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
+          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}},
+          /* 고급 D '피라미드 곱셈' 확장 — 반복숫자끼리의 곱(2~6자리, 정독 수치 범위) */
+          {id:3,label:{ko:'피라미드 곱셈(연습)',en:'Pyramid multiplication (practice)',zh:'金字塔乘法(练习)'},params:{mode:'pyramid',level:'practice'}},
+          {id:4,label:{ko:'피라미드 곱셈(실전)',en:'Pyramid multiplication (main)',zh:'金字塔乘法(实战)'},params:{mode:'pyramid',level:'main'}}] },
 ML19:{ name:{ko:'VEDA 1로 끝나는 곱',en:'VEDA ending-in-1',zh:'VEDA尾数1'}, gen:'ml_veda', prereq:['ML8'],
   unit:'C-23',
   concept:{ko:'일의 자리끼리, 교차로 곱해 더한 값, 십의 자리끼리 — 이 세 걸음이면 두 자리 수 곱셈이 한 번에 끝나요.',
@@ -347,7 +357,18 @@ ML20:{ name:{ko:'차가 2인 두 수의 곱',en:'Difference-of-2 product',zh:'�
     zh:'两个相差2的数相乘，只要把中间那个数平方再减1就是答案。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
-          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
+          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}},
+          /* 고급 B-1 '같은 수만큼 큰/작은 수의 곱' 확장 — 기준수 제시형(차이 k 일반화) */
+          {id:3,label:{ko:'기준수 제시형(연습)',en:'Given-anchor form (practice)',zh:'给定基准数(练习)'},params:{mode:'anchorGiven',level:'practice'}},
+          {id:4,label:{ko:'기준수 제시형(실전)',en:'Given-anchor form (main)',zh:'给定基准数(实战)'},params:{mode:'anchorGiven',level:'main'}},
+          /* 고급 E-2 '평균값을 이용한 곱셈 1' 확장 — 평균 직접 계산형 */
+          {id:5,label:{ko:'평균 계산형(연습)',en:'Average-calc form (practice)',zh:'求平均值(练习)'},params:{mode:'avgCalc',level:'practice'}},
+          {id:6,label:{ko:'평균 계산형(실전)',en:'Average-calc form (main)',zh:'求平均值(实战)'},params:{mode:'avgCalc',level:'main'}},
+          /* 고급 A-6 '유명한 제곱수와 1 차이 나는 수의 제곱' 확장 — 유명 기준수 근처(★칸 일반화) */
+          {id:7,label:{ko:'유명 기준수 근처',en:'Near a famous square',zh:'靠近熟知的平方数'},params:{mode:'famousNear'}},
+          /* 고급 E '평균값을 이용한 곱셈 2·3' 확장 — 3·4자리 제곱(재귀형) */
+          {id:8,label:{ko:'세 자리 수의 제곱',en:'3-digit squares',zh:'三位数的平方'},params:{mode:'sq3d'}},
+          {id:9,label:{ko:'네 자리 수의 제곱',en:'4-digit squares',zh:'四位数的平方'},params:{mode:'sq4d'}}] },
 ML21:{ name:{ko:'몇 자리 수일까요',en:'Digit prediction',zh:'几位数'}, gen:'ml_digit_pred', prereq:['ML8'],
   unit:'C-09',
   concept:{ko:'계산하기 전에 앞자리끼리 곱해 크기부터 어림해요. 답이 몇 자리 수일지 미리 알면 검산도 쉬워져요.',
@@ -415,7 +436,10 @@ MX6:{ name:{ko:'곱을 이용한 가우스 덧셈',en:'Gauss sum',zh:'高斯求�
     zh:'把第一个数和最后一个数配对，每一对的和都相同。这个和乘以对数，就一次得到总和。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
-          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
+          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}},
+          /* 고급 B '가우스 덧셈의 응용' 확장 — 제곱 공식형(끝²−첫²+첫+끝)÷2, 연속한 자연수 전용 */
+          {id:3,label:{ko:'제곱 공식(연습)',en:'Square formula (practice)',zh:'平方公式(练习)'},params:{mode:'squareForm',level:'practice'}},
+          {id:4,label:{ko:'제곱 공식(실전, 세 자리)',en:'Square formula (3-digit)',zh:'平方公式(三位数)'},params:{mode:'squareForm',level:'main'}}] },
 ML23:{ name:{ko:'차근차근 곱하기',en:'Step-by-step multiplication',zh:'逐步乘法'}, gen:'ml_partial', prereq:['ML4'],
   unit:'C-26',
   concept:{ko:'큰 수 곱셈은 두 수를 자리별로 쪼개 하나씩 곱한 다음, 마지막에 조각들을 다 더하면 돼요.',

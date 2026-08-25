@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-05'] = {
   id:'C-05', tier:'intermediate', level:'C', order:5,
+  lineage:['rainbow-sum'],
   generator:'ml_gauss',
   title:{ ko:'가우스 덧셈 마법', en:'Gauss Addition Magic', zh:'高斯加法魔法' },
   subtitle:{ ko:'1+2+…+100=5050: 쌍을 지어 더해요!', en:'1+2+…+100=5050: pair them up to add!', zh:'1+2+…+100=5050：配对相加！' },
@@ -52,7 +53,9 @@ window.NM_UNITS['C-05'] = {
               zh:'1到n的和=<b>n×(n+1)÷2</b>。快速示例：1到20=20×21÷2=210。1到50=50×51÷2=1275。这个公式可以瞬间计算任意大小的和！'},
         mathSteps:['1+2+…+20','= 20×(20+1)÷2','= 20×21÷2','= 420÷2 = 210'],
         result:{ko:'1+2+…+20=210! 공식 n(n+1)÷2를 써봐요.',en:'1+2+…+20=210! Use the formula n(n+1)÷2.',zh:'1+2+…+20=210！使用公式n(n+1)÷2。'},
-        book:null }
+        book:{ko:'고급 과정에서는 이 짝짓기 셈을 제곱 공식으로 한 번 더 변신시켜요: (끝²−첫²+첫+끝)÷2. 세 자리 수열까지도 순식간에!',
+              en:'In the advanced course this pairing trick transforms once more into a square formula: (last²−first²+first+last)÷2 — instant sums even for three-digit sequences!',
+              zh:'在高级课程中，这个配对法会再变身成平方公式：(末²−首²+首+末)÷2，连三位数数列也能瞬间求和！'} }
     ],
     rule:{ ko:'① 처음과 끝을 짝지으면 모두 같은 합  ② 쌍의 합 × 쌍의 수 = 전체 합  ③ 공식: n(n+1)÷2',
       en:'① Pairing first and last gives equal sums  ② Pair sum × number of pairs = total  ③ Formula: n(n+1)÷2',

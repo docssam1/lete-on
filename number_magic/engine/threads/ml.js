@@ -340,6 +340,75 @@ NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
 
 /* ── ML8 — 두 자리×두 자리 ───────────────────────────────── */
 NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
+  /* ── 고급 C-1 확장: 엑스맨 곱셈 (세 자리 이상) ─────────────────
+     원본(고급 C '엑스맨 곱셈')은 3자리×2자리 · 3자리×3자리만 실제
+     훈련문제로 다룬다(4자리 이상은 핵심체크 토론일 뿐, 문제화 안 됨).
+     제너레이터 주의점(정독): 자리별 부분합이 두 자리 이상으로 자리올림이
+     발생하는 경우가 다수 있다 — 여기서는 각 조각을 "제 자리값을 실은
+     정수"로 만들어 마지막에 실제 덧셈으로 합치므로(자릿수를 자르지 않음)
+     올림이 자동으로 정확히 반영된다. */
+  if (params.digits === '3x2' || params.digits === '3x3') {
+    const a2 = R(rng, 1, 9), a1 = R(rng, 0, 9), a0 = R(rng, 0, 9);
+    const a  = a2 * 100 + a1 * 10 + a0;
+
+    if (params.digits === '3x2') {
+      /* b0을 1~9로 둬(0 제외) 매번 진짜 X 교차곱(십자리 조각)이 0이 되는
+         맥빠진 문제가 나오지 않도록 한다 */
+      const b1 = R(rng, 1, 9), b0 = R(rng, 1, 9);
+      const b  = b1 * 10 + b0;
+      const p1000 = a2 * b1;
+      const p100  = a2 * b0 + a1 * b1;
+      const p10   = a1 * b0 + a0 * b1;
+      const p1    = a0 * b0;
+      const answer = p1000 * 1000 + p100 * 100 + p10 * 10 + p1;
+
+      return {
+        prompt: {
+          ko: `${a} × ${b}를 엑스맨 곱셈(X자 교차곱)으로 계산해요`,
+          en: `Calculate ${a} × ${b} using X-cross multiplication`,
+          zh: `用X交叉法计算 ${a} × ${b}`
+        },
+        tex: `${a} \\times ${b} = \\square`,
+        answer, answerType: 'steps', widget: 'steps',
+        steps: [
+          { tex: `${a2} \\times ${b1} = \\square \\;\\text{(천)}`, blank: p1000 },
+          { tex: `${a2}\\times${b0} + ${a1}\\times${b1} = \\square \\;\\text{(백, X)}`, blank: p100 },
+          { tex: `${a1}\\times${b0} + ${a0}\\times${b1} = \\square \\;\\text{(십, X)}`, blank: p10 },
+          { tex: `${a0} \\times ${b0} = \\square \\;\\text{(일)}`, blank: p1 },
+          { tex: `${p1000}\\times1000 + ${p100}\\times100 + ${p10}\\times10 + ${p1} = \\square`, blank: answer }
+        ]
+      };
+    }
+
+    /* 3x3 */
+    const b2 = R(rng, 1, 9), b1 = R(rng, 0, 9), b0 = R(rng, 0, 9);
+    const b  = b2 * 100 + b1 * 10 + b0;
+    const p10000 = a2 * b2;
+    const p1000  = a2 * b1 + a1 * b2;
+    const p100   = a2 * b0 + a1 * b1 + a0 * b2;
+    const p10    = a1 * b0 + a0 * b1;
+    const p1     = a0 * b0;
+    const answer = p10000 * 10000 + p1000 * 1000 + p100 * 100 + p10 * 10 + p1;
+
+    return {
+      prompt: {
+        ko: `${a} × ${b}를 엑스맨 곱셈(X자 교차곱)으로 계산해요`,
+        en: `Calculate ${a} × ${b} using X-cross multiplication`,
+        zh: `用X交叉法计算 ${a} × ${b}`
+      },
+      tex: `${a} \\times ${b} = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${a2} \\times ${b2} = \\square \\;\\text{(만)}`, blank: p10000 },
+        { tex: `${a2}\\times${b1} + ${a1}\\times${b2} = \\square \\;\\text{(천, X)}`, blank: p1000 },
+        { tex: `${a2}\\times${b0} + ${a1}\\times${b1} + ${a0}\\times${b2} = \\square \\;\\text{(백, X)}`, blank: p100 },
+        { tex: `${a1}\\times${b0} + ${a0}\\times${b1} = \\square \\;\\text{(십, X)}`, blank: p10 },
+        { tex: `${a0} \\times ${b0} = \\square \\;\\text{(일)}`, blank: p1 },
+        { tex: `${p10000}\\times10000 + ${p1000}\\times1000 + ${p100}\\times100 + ${p10}\\times10 + ${p1} = \\square`, blank: answer }
+      ]
+    };
+  }
+
   const easy = params.easy !== false;
   let a, b;
 
@@ -529,6 +598,80 @@ NM_TGEN['ml10_specialMul'] = function(params, rng) {
 /* ── ML11 — 제곱수·거듭제곱 ──────────────────────────────── */
 NM_TGEN['ml11_squares'] = function(params, rng) {
   const powers = params.powers === true;
+
+  /* ── 고급 A-5 확장: "1"로 끝나는 수의 제곱 ★1²=★0²+★0+★1 ──────
+     제너레이터 주의점(정독): 핵심체크가 세제곱·일반화까지 은근히
+     요구하는 심화형이다 — 두 자리~여섯 자리 결과까지 자릿수를 늘려가며
+     패턴이 유지됨을 보여야 원본 취지에 가깝다(11²~991²). */
+  if (params.mode === 'end1') {
+    const k    = R(rng, 1, 99);       // n = 10k+1, n:11~991
+    const n    = 10 * k + 1;
+    const base = n - 1;               // 항상 10의 배수라 base² 계산이 쉬움
+    const baseSq = base * base;
+    const answer  = baseSq + base + n;
+
+    return {
+      prompt: {
+        ko: `${n}²을 "1로 끝나는 수의 제곱" 마법으로 계산해요`,
+        en: `Compute ${n}² using the "ends-in-1" square trick`,
+        zh: `用"尾数为1的平方"魔法计算 ${n}²`
+      },
+      tex: `${n}^2 = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${base}^2 = \\square`, blank: baseSq },
+        { tex: `${baseSq} + ${base} + ${n} = \\square`, blank: answer }
+      ]
+    };
+  }
+
+  /* ── 고급 D-4 확장: 제곱수 점화식 ★²=(★∓1)²∓(2★∓1) ──────────
+     원본은 "앞(내림) 또는 뒤(올림) 중 계산이 편한 쪽을 자유롭게 고른다"는
+     유연성이 핵심이다 — 방향을 매번 rng로 섞어 두 방향 모두 나오게 한다.
+     고급 A-6(유명한 제곱수와 1차이)과 공식은 완전히 같지만, A-6은 "외운
+     기준수(25·50·100 등) 근처를 ★칸 일반화"이고 이쪽은 "임의의 연속한
+     정수를 바로 옆 제곱수 1칸에서" 유도한다는 점이 다르다 — 두 유닛을
+     그대로 복제하지 않도록 여기서는 항상 거리 1, n은 임의 정수로 둔다. */
+  if (params.mode === 'adjacent') {
+    const n = R(rng, 11, 501);
+    const goDown = R(rng, 0, 1) === 0;
+
+    if (goDown) {
+      const prev   = n - 1;
+      const prevSq = prev * prev;
+      const answer = prevSq + prev + n;
+      return {
+        prompt: {
+          ko: `${n}²을 바로 앞 제곱수 ${prev}²에서 유도해요`,
+          en: `Derive ${n}² from the previous square ${prev}²`,
+          zh: `从前一个平方数 ${prev}² 推出 ${n}²`
+        },
+        tex: `${n}^2 = \\square`,
+        answer, answerType: 'steps', widget: 'steps',
+        steps: [
+          { tex: `${prev}^2 = \\square`, blank: prevSq },
+          { tex: `${prevSq} + ${prev} + ${n} = \\square`, blank: answer }
+        ]
+      };
+    }
+
+    const next   = n + 1;
+    const nextSq = next * next;
+    const answer = nextSq - next - n;
+    return {
+      prompt: {
+        ko: `${n}²을 바로 뒤 제곱수 ${next}²에서 유도해요`,
+        en: `Derive ${n}² from the next square ${next}²`,
+        zh: `从后一个平方数 ${next}² 推出 ${n}²`
+      },
+      tex: `${n}^2 = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${next}^2 = \\square`, blank: nextSq },
+        { tex: `${nextSq} - ${next} - ${n} = \\square`, blank: answer }
+      ]
+    };
+  }
 
   if (!powers) {
     /* 제곱수: n²  (lo~hi 범위) */
@@ -726,6 +869,38 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
 
 /* ── ML_GAUSS — 가우스 덧셈 (등차수열 합) ────────────────────── */
 NM_TGEN['ml_gauss'] = function(params, rng) {
+  /* ── 고급 B-4 확장: 가우스 덧셈의 응용 (끝²−첫²+첫+끝)÷2 ────────
+     원본은 기존 가우스 페어링 공식을 "제곱" 형태로 다시 유도한 것이다.
+     제너레이터 주의점(정독): 이 공식은 "연속한 자연수"에만 적용된다 —
+     등차가 2 이상인 수열(홀짝수만 더하기 등)에는 못 쓴다고 원본이 직접
+     경고한다. 그래서 이 모드는 공차를 항상 1로 고정한다(기존 가우스
+     페어링 모드는 공차 1~3을 그대로 유지 — 아래에서 분기).
+     수치 범위(정독): 두 자리(5~15)에서 세 자리(300~500)까지. */
+  if (params.mode === 'squareForm') {
+    const lv2 = params.level || 'main';
+    const a1  = lv2 === 'practice' ? R(rng, 5, 15) : R(rng, 300, 400);
+    const span = lv2 === 'practice' ? R(rng, 3, 12) : R(rng, 20, 100);
+    const last = Math.min(a1 + span, lv2 === 'practice' ? 60 : 500);
+    const diffSq = last * last - a1 * a1;
+    const withEnds = diffSq + a1 + last;
+    const answer = withEnds / 2;
+
+    return {
+      prompt: {
+        ko: `${a1}부터 ${last}까지 더한 값을 제곱 공식으로 계산해요`,
+        en: `Find ${a1} + ${a1 + 1} + \\dots + ${last} using the square formula`,
+        zh: `用平方公式求 ${a1} 加到 ${last} 的和`
+      },
+      tex: `${a1} + ${a1 + 1} + \\cdots + ${last} = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${last}^2 - ${a1}^2 = \\square`, blank: diffSq },
+        { tex: `${diffSq} + ${a1} + ${last} = \\square`, blank: withEnds },
+        { tex: `${withEnds} \\div 2 = \\square`, blank: answer }
+      ]
+    };
+  }
+
   const lv = params.level || 'main';
   /* 시작수·공차·항수를 모두 다양화 (1부터 시작하는 짝수 n개 고정 탈피).
      항수는 짝의 개수 계산(가우스 페어링)을 그대로 쓸 수 있도록 항상 짝수로 뽑는다. */
@@ -883,6 +1058,43 @@ NM_TGEN['ml_x11'] = function(params, rng) {
 
 /* ── ML_PLACESHIFT — 자리이동 곱셈 (반복 자릿수 인수) ───────── */
 NM_TGEN['ml_placeshift'] = function(params, rng) {
+  /* ── 고급 D-1 확장: 피라미드 곱셈 (반복숫자끼리의 곱) ─────────────
+     11×11, 111×111처럼 같은 숫자가 반복되는 두 수(자릿수 다른 반복
+     숫자끼리도 가능: 222×333 등)를 곱하면 파스칼의 삼각형 계수를 닮은
+     대칭 숫자열이 나온다.
+     제너레이터 주의점(정독): 반복 숫자가 4 이상이면(444×444 등) 파스칼
+     계수(1,2,3,4…)가 10을 넘어가 받아올림이 발생해서 더 이상 단순
+     대칭 피라미드로 안 보인다 — 최종 합산 단계는 항상 "실제 곱셈"으로
+     계산하므로 값 자체는 정확하지만, 시각적으로 자릿수가 대칭이 깨지는
+     지점(반복 4자리 이상)이 있다는 것은 학습지 해설에서 별도로 짚어야
+     한다. 여기서는 자릿수 2~6까지만 다룬다(정독 수치 범위). */
+  if (params.mode === 'pyramid') {
+    const lv2  = params.level || 'main';
+    const lens = lv2 === 'practice' ? [2, 3] : [2, 3, 4, 5, 6];
+    const len  = pick(rng, lens);
+    const d1   = R(rng, 1, 9);
+    const d2   = R(rng, 1, 9);
+    const rep  = (d) => String(d).repeat(len);
+    const a = parseInt(rep(d1), 10);
+    const b = parseInt(rep(d2), 10);
+    const peak = d1 * d2;              /* 파스칼 삼각형의 정점(가운데) 계수 */
+    const answer = a * b;
+
+    return {
+      prompt: {
+        ko: `${a} × ${b}를 피라미드 곱셈으로 계산해요`,
+        en: `Calculate ${a} × ${b} using pyramid multiplication`,
+        zh: `用金字塔乘法计算 ${a} × ${b}`
+      },
+      tex: `${a} \\times ${b} = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${d1} \\times ${d2} = \\square \\;\\text{(피라미드 꼭대기 계수)}`, blank: peak },
+        { tex: `${a} \\times ${b} = \\square`, blank: answer }
+      ]
+    };
+  }
+
   const lv = params.level || 'main';
   const REPD = lv === 'practice' ? [2,3,4] : [2,3,4,5,6,7,8,9];
   const d      = pick(rng, REPD);
@@ -1247,6 +1459,146 @@ NM_TGEN['ml_veda'] = function(params, rng) {
 
 /* ── ML_DIFF2SQ — 차가 2인 두 수의 곱 (n²−1) ────────────────── */
 NM_TGEN['ml_diff2sq'] = function(params, rng) {
+  /* ── 고급 확장 4종 — 전부 같은 뿌리(합차공식 A×B = M²−D²)를 다른
+     각도로 가르친다. 정독에서 발견한 대로, 서로 복제되지 않도록
+     "무엇이 주어지고 무엇을 학생이 직접 구하는가"를 의도적으로
+     다르게 설계했다(아래 각 모드 주석 참조). */
+
+  /* B-1 "같은 수만큼 큰/작은 수의 곱" — 기준수 제시형.
+     차이(d)를 1로 고정하지 않고 일반화한 것이 원본 C-24(ml_diff2sq
+     기본형) 대비 확장 포인트다. 기준수 A와 두 수(A−d, A+d)를 문제에
+     이미 제시하므로, 학생은 "평균을 구하는" 단계 없이 바로 A²−d²만
+     계산한다 — 아래 E-2(avgCalc, 평균을 직접 계산)와 구분되는 지점.
+     수치 범위(정독): 두 자리(93×87)~세 자리(999×1001). */
+  if (params.mode === 'anchorGiven') {
+    const lv2 = params.level || 'main';
+    const A = lv2 === 'practice' ? R(rng, 20, 90) : R(rng, 50, 1000);
+    const dMax = Math.max(1, Math.min(A - 1, lv2 === 'practice' ? 8 : 15));
+    const d = R(rng, 1, dMax);
+    const x = A - d, y = A + d;
+    const Asq = A * A, dSq = d * d;
+    const answer = Asq - dSq;
+
+    return {
+      prompt: {
+        ko: `${x}와 ${y}는 기준수 ${A}보다 각각 ${d}만큼 작고 커요. ${x} × ${y}는?`,
+        en: `${x} and ${y} are each ${d} away from the anchor ${A}. What is ${x} × ${y}?`,
+        zh: `${x}和${y}分别比基准数${A}小${d}和大${d}。${x} × ${y}是多少？`
+      },
+      tex: `${x} \\times ${y} = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${A}^2 = \\square`, blank: Asq },
+        { tex: `${Asq} - ${dSq} = \\square`, blank: answer }
+      ]
+    };
+  }
+
+  /* E-2 "평균값을 이용한 곱셈 1" — 평균 계산형.
+     기준수를 주지 않고 두 수만 준다 — 학생이 평균과 차를 직접 구하는
+     3단계(평균 구하기→차 구하기→평균²−차²)가 핵심이라 B-1(anchorGiven)
+     과 스텝 구조 자체가 다르다. 수치 범위(정독): 8×12(평균10)~
+     242×202(평균222), 차는 항상 짝수(평균이 정수)만. */
+  if (params.mode === 'avgCalc') {
+    const lv2 = params.level || 'main';
+    const A = lv2 === 'practice' ? R(rng, 10, 30) : R(rng, 30, 222);
+    const dMax = Math.max(1, Math.min(A - 1, lv2 === 'practice' ? 6 : 20));
+    const d = R(rng, 1, dMax);
+    const x = A - d, y = A + d;
+    const Asq = A * A, dSq = d * d;
+    const answer = Asq - dSq;
+
+    return {
+      prompt: {
+        ko: `${x} × ${y}를 평균값 곱셈으로 계산해요`,
+        en: `Calculate ${x} × ${y} using the average-value method`,
+        zh: `用平均值乘法计算 ${x} × ${y}`
+      },
+      tex: `${x} \\times ${y} = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `(${x} + ${y}) \\div 2 = \\square`, blank: A },
+        { tex: `${A} - ${x} = \\square`, blank: d },
+        { tex: `${A}^2 - ${d}^2 = \\square`, blank: answer }
+      ]
+    };
+  }
+
+  /* A-6 "유명한 제곱수와 1 차이 나는 수의 제곱" — 유명 기준수 근처.
+     ML11의 D-4(adjacent, 거리 항상 1·임의의 정수)와 공식은 같지만
+     "동전의 양면"으로 갈라놓은 지점: 여기는 학생이 이미 외운 유명한
+     기준수(25·50·90·100·120·150·200·249·501, 원문 실제 등장 값)에서
+     출발하고, 거리 ★는 1로 국한하지 않는다(핵심체크가 ★칸 일반화를
+     직접 요구 — 97²=100²−100×3−97×3 예시). */
+  if (params.mode === 'famousNear') {
+    const FAMOUS = [25, 50, 90, 100, 120, 150, 200, 249, 501];
+    const A = pick(rng, FAMOUS);
+    const d = R(rng, 1, 5);
+    const up = R(rng, 0, 1) === 1;
+    const n = up ? A + d : A - d;
+    const Asq = A * A;
+    const cross = d * (A + n);
+    const answer = up ? Asq + cross : Asq - cross;
+
+    return {
+      prompt: {
+        ko: `${n}²을 외운 제곱수 ${A}² 근처에서 구해요`,
+        en: `Find ${n}² starting from the memorized square ${A}²`,
+        zh: `从记住的平方数 ${A}² 出发求 ${n}²`
+      },
+      tex: `${n}^2 = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${A}^2 = \\square`, blank: Asq },
+        { tex: `${d} \\times (${A} + ${n}) = \\square`, blank: cross },
+        up
+          ? { tex: `${Asq} + ${cross} = \\square`, blank: answer }
+          : { tex: `${Asq} - ${cross} = \\square`, blank: answer }
+      ]
+    };
+  }
+
+  /* E-4 "평균값을 이용한 곱셈 2·3" — 3·4자리 수의 제곱(재귀형).
+     n을 끝 r자리(3자리 수는 끝 2자리, 4자리 수는 끝 3자리)만큼 위아래로
+     벌려 (n−r)(n+r)+r² 로 구한다 — E-2의 평균값 공식(M²−D²의 변형,
+     여기선 M=n·D=r가 아니라 두 인수 (n−r),(n+r)의 곱에 r²를 더하는
+     동치식)을 큰 수에 재귀적으로 재사용한 것이다. 4자리는 r 자체가
+     3자리 수라 "r²을 구하는 것"이 다시 3자리 제곱법 문제가 된다는
+     재귀 구조를 별도 스텝으로 노출한다(정독 제너레이터 주의점).
+     수치 범위(정독): 3자리 210~999, 4자리 1125~5134. */
+  if (params.mode === 'sq3d' || params.mode === 'sq4d') {
+    const is4 = params.mode === 'sq4d';
+    let n, r;
+    do {
+      n = is4 ? R(rng, 1125, 5134) : R(rng, 210, 999);
+      r = is4 ? (n % 1000) : (n % 100);
+    } while (r === 0);
+    const x = n - r, y = n + r;
+    const xy = x * y;
+    const rSq = r * r;
+    const answer = xy + rSq;
+
+    const steps = [
+      { tex: `${n} - ${r} = \\square`, blank: x },
+      { tex: `${n} + ${r} = \\square`, blank: y },
+      { tex: `${x} \\times ${y} = \\square`, blank: xy }
+    ];
+    if (is4) steps.push({ tex: `${r}^2 = \\square \\;\\text{(3자리 제곱법 재사용)}`, blank: rSq });
+    steps.push({ tex: `${xy} + ${rSq} = \\square`, blank: answer });
+
+    const splitDigits = is4 ? 3 : 2;
+    return {
+      prompt: {
+        ko: `${n}²을 분리해서 계산해요(끝 ${splitDigits}자리 기준)`,
+        en: `Compute ${n}² by splitting off the last ${splitDigits} digits`,
+        zh: `按末${splitDigits}位拆分计算 ${n}²`
+      },
+      tex: `${n}^2 = \\square`,
+      answer, answerType: 'steps', widget: 'steps',
+      steps
+    };
+  }
+
   const lv = params.level || 'main';
   /* 교재 사례(97×99, 249×251)처럼 main은 두 자리~세 자리 일부까지 확대 */
   let n;
