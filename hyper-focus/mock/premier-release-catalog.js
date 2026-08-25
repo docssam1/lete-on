@@ -7,13 +7,15 @@
 (function (root) {
   "use strict";
 
-  const round = (key, label, verifiedCount, lockedCount, visualGate) => Object.freeze({
+  const round = (key, label, verifiedCount, lockedCount, visualGate, options = {}) => Object.freeze({
     key,
     label,
-    releaseStatus: "review_pending",
+    releaseStatus: options.releaseStatus || "review_pending",
     verifiedCount,
     lockedCount,
     visualGate,
+    videoUrl: options.videoUrl || null,
+    answersAvailable: options.answersAvailable === true,
     href: null
   });
 
@@ -24,7 +26,11 @@
         key: "utilization",
         label: "활용 모의고사",
         rounds: Object.freeze([
-          round("premier-utilization-01", "활용 모의고사 1회", 20, 0, false),
+          round("premier-utilization-01", "활용 모의고사 1회", 20, 0, false, {
+            releaseStatus: "published",
+            videoUrl: "https://www.youtube.com/watch?v=iIlWZpVmdgY",
+            answersAvailable: false
+          }),
           round("premier-utilization-02", "활용 모의고사 2회", 14, 6, true),
           round("premier-utilization-03", "활용 모의고사 3회", 16, 4, true),
           round("premier-utilization-04", "활용 모의고사 4회", 13, 7, true),
