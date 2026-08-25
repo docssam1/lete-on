@@ -68,7 +68,7 @@ function validate(type, problem, difficulty) {
       assert(numeric === meta.answer, id, difficulty, "growth answer mismatch");
       return;
     case "nested-square-area":
-      meta.areas.forEach((area, index) => assert(area === meta.sides[index] ** 2, id, difficulty, "nested square mismatch"));
+      meta.areas.forEach((area, index) => assert(area === meta.sides[index] ** 2 * meta.unitArea, id, difficulty, "nested square mismatch"));
       assert(numeric === meta.answer, id, difficulty, "nested answer mismatch");
       return;
     case "equal-fraction":
@@ -82,7 +82,7 @@ function validate(type, problem, difficulty) {
       return;
     case "oblique-square-area":
       assert(meta.areas.every((area, index) => area === meta.squares[index].dx ** 2 + meta.squares[index].dy ** 2), id, difficulty, "oblique area mismatch");
-      assert(numeric === meta.answer, id, difficulty, "oblique answer mismatch");
+      assert(problem.answer === (meta.areas.length === 1 ? String(meta.areas[0]) : `㉠=${meta.areas[0]}, ㉡=${meta.areas[1]}`), id, difficulty, "oblique answer mismatch");
       return;
     case "folded-strip":
       assert(meta.segments.reduce((sum, value) => sum + value, 0) === meta.answer, id, difficulty, "strip total mismatch");
@@ -95,10 +95,13 @@ function validate(type, problem, difficulty) {
     case "segment-chain": {
       const [ab, bc, cd] = meta.gaps;
       assert(meta.givens.AC === ab + bc && meta.givens.BD === bc + cd && meta.givens.AD === ab + bc + cd, id, difficulty, "segment givens mismatch");
-      const expected = { AB: ab, BC: bc, CD: cd }[meta.target];
-      assert(numeric === expected, id, difficulty, "segment answer mismatch");
+      assert(problem.answer === `AB=${ab}cm, BC=${bc}cm, CD=${cd}cm`, id, difficulty, "segment answer mismatch");
       return;
     }
+    case "object-count-equivalence":
+      assert(meta.answer === meta.pencils * meta.pencilInMatches + meta.matches, id, difficulty, "object count relation mismatch");
+      assert(numeric === meta.answer, id, difficulty, "object count answer mismatch");
+      return;
     case "equal-interval":
       assert(meta.right - meta.left === meta.divisions * meta.unit, id, difficulty, "interval mismatch");
       assert(numeric === meta.unit, id, difficulty, "interval answer mismatch");
@@ -146,9 +149,31 @@ function validate(type, problem, difficulty) {
       assert(meta.number === meta.digit * 11 && meta.number * 2 === meta.sum && numeric === meta.answer, id, difficulty, "repeated cryptarithm mismatch");
       return;
     case "cryptarithm-fixed-digit":
-    case "cryptarithm-missing-digit":
       assert(meta.first + meta.second === meta.sum && numeric === meta.answer, id, difficulty, "column addition mismatch");
       return;
+    case "cryptarithm-two-symbol-column": {
+      assert(meta.symbols.length === 2 && new Set(meta.symbols).size === 2, id, difficulty, "two distinct symbols required");
+      assert(meta.values.length === 2 && new Set(meta.values).size === 2, id, difficulty, "two distinct values required");
+      assert(meta.addendNumbers.reduce((total, value) => total + value, 0) === meta.sum, id, difficulty, "two-symbol column sum mismatch");
+      const tokenValue = (token, values) => {
+        const symbolIndex = meta.symbols.indexOf(token);
+        return symbolIndex >= 0 ? values[symbolIndex] : Number(token);
+      };
+      const rowValue = (row, values) => row.reduce((total, token) => total * 10 + tokenValue(token, values), 0);
+      assert(rowValue(meta.sumRow, meta.values) === meta.sum, id, difficulty, "visible result row mismatch");
+      const solutions = [];
+      for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) {
+        if (first === second) continue;
+        const values = [first, second];
+        if (meta.addends.some((row) => tokenValue(row[0], values) === 0)) continue;
+        if (meta.addends.reduce((total, row) => total + rowValue(row, values), 0) === rowValue(meta.sumRow, values)) solutions.push(values);
+      }
+      assert(solutions.length === 1, id, difficulty, `two-symbol solution count ${solutions.length}`);
+      const askIndex = meta.symbols.indexOf(meta.askSymbol);
+      assert(askIndex >= 0 && solutions[0][askIndex] === numeric && numeric === meta.answer, id, difficulty, "asked symbol answer mismatch");
+      assert(problem.visual?.addends?.length === (difficulty === 3 ? 3 : 2), id, difficulty, "source addend structure mismatch");
+      return;
+    }
     case "cryptarithm-linked":
       assert(meta.values[1] === meta.values[0] * 2, id, difficulty, "linked first relation mismatch");
       if (meta.values.length >= 3) assert(meta.values[2] === meta.values[0] * 3, id, difficulty, "linked second relation mismatch");
@@ -220,7 +245,23 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 41) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 42) throw new Error(`book-03 type count ${typeIds.length}`);
+
+const unitTestQuestions = book.source?.unitTestQuestions || [];
+const expectedReadyQuestions = [2, 6, 7, 8, 11, 12, 16, 17, 18, 20, 21, 24];
+const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
+if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
+if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
+if (unitTestQuestions.some((question, index) => question.number !== index + 1)) throw new Error("book-03 unit test questions must be ordered 1-25");
+if (JSON.stringify(readyQuestions) !== JSON.stringify(expectedReadyQuestions)) throw new Error(`book-03 ready questions ${readyQuestions.join(",")}`);
+for (const question of unitTestQuestions) {
+  const type = typeById(question.typeId);
+  if (!type) throw new Error(`book-03 unit test unknown type ${question.number}:${question.typeId}`);
+  if (question.verified && type.sourceAuditBlocked) throw new Error(`book-03 unit test exposes blocked type ${question.number}:${question.typeId}`);
+  if (question.verified && ![1, 2, 3].includes(question.difficulty)) throw new Error(`book-03 unit test difficulty missing ${question.number}`);
+}
+if (unitTestQuestions.find((question) => question.number === 16)?.difficulty !== 2) throw new Error("book-03 question 16 difficulty changed");
+if (unitTestQuestions.find((question) => question.number === 17)?.difficulty !== 3) throw new Error("book-03 question 17 difficulty changed");
 
 for (const unit of units) {
   for (const typeId of unit.typeIds) {

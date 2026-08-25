@@ -1,8 +1,50 @@
 (() => {
   const detailed = (name, generatorKey, labels) => ({
     name,
-    types: labels.map((label, variant) => ({ name: label, label, generatorKey, variant }))
+    types: labels.map((definition, variant) => {
+      const type = typeof definition === "string" ? { label: definition } : definition;
+      return {
+        ...type,
+        name: type.name || type.label,
+        label: type.label || type.name,
+        generatorKey,
+        variant: Number.isInteger(type.variant) ? type.variant : variant
+      };
+    })
   });
+
+  const sourced = (label, difficultyBand, sourceTier, sourceEvidence = "4-1 실력 p.4-15 · 심화 p.8-19 · 경시 p.1-12 문제 구조 대조") => ({
+    label,
+    difficultyBand,
+    sourceTier,
+    sourceVerified: true,
+    sourceEvidence: `${sourceEvidence} · 확인 구조: ${label}`
+  });
+
+  const sourcedAngle = (label, difficultyBand, sourceTier) => sourced(label, difficultyBand, sourceTier, "4-1 실력 p.18-31 · 심화 p.21-34 · 경시 p.14-27 문제 구조 대조");
+  const sourcedMultiplyDivide = (label, difficultyBand, sourceTier) => sourced(label, difficultyBand, sourceTier, "4-1 실력 p.32-45 · 심화 p.35-48 · 경시 p.28-41 문제 구조 대조");
+  const movementEvidence = [
+    "4-1 심화 p.50-51 개념탐구 1·Mission · 경시 p.43 대조",
+    "4-1 심화 p.52-53 개념탐구 2·Mission · 경시 p.44 대조",
+    "4-1 심화 p.54-55 개념탐구 3·Mission · 경시 p.45 대조",
+    "4-1 심화 p.56-57 개념탐구 4·Mission · 경시 p.46 대조"
+  ];
+  const barGraphEvidence = [
+    "4-1 심화 p.60-61 개념탐구 1·Mission · 경시 p.49-50 대조",
+    "4-1 심화 p.62-63 개념탐구 2·Mission · 경시 p.51-52 대조"
+  ];
+  const rulesEvidence = [
+    "4-1 심화 p.66-67 개념탐구 1·Mission · 경시 p.55-56 대조",
+    "4-1 심화 p.68-69 개념탐구 2·Mission · 경시 p.57-58 대조",
+    "4-1 심화 p.70-71 개념탐구 3·Mission · 경시 p.59-60 대조",
+    "4-1 심화 p.72-73 개념탐구 4·Mission · 경시 p.61-62 대조",
+    "4-1 실력 p.70-71 · 심화 p.74-75 개념탐구 5·Mission · 경시 p.63-64 대조",
+    "4-1 심화 p.76-77 개념탐구 6·Mission · 경시 p.65-66 대조"
+  ];
+  const sourcedMovement = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, movementEvidence[exploration - 1]);
+  const sourcedBarGraph = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, barGraphEvidence[exploration - 1]);
+  const sourcedRules = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, rulesEvidence[exploration - 1]);
+  const sourced42 = (label, difficultyBand, sourceEvidence) => sourced(label, difficultyBand, "advanced", sourceEvidence);
 
   const semester = (id, units) => ({
     id,
@@ -29,7 +71,12 @@
               name: type.name || type.label || definition.name,
               label: type.label || type.name || "핵심 유형",
               generatorKey: type.generatorKey || "",
-              variant: Number.isInteger(type.variant) ? type.variant : undefined
+              variant: Number.isInteger(type.variant) ? type.variant : undefined,
+              difficultyBand: Number.isInteger(type.difficultyBand) ? type.difficultyBand : 0,
+              sourceTier: type.sourceTier || "advanced",
+              sourceVerified: Boolean(type.sourceVerified),
+              sourceEvidence: type.sourceEvidence || "",
+              reviewLocked: Boolean(type.reviewLocked)
             }))
           };
         })
@@ -39,28 +86,260 @@
 
   const semesters = [
     semester("4-1", [
-      ["큰 수", "큰 수 알아보기", "큰 수의 크기 비교", "큰 수의 규칙성과 뛰어 세기", "큰 수의 활용", "조건에 맞는 수 찾기", "수 카드로 수 만들기"],
-      ["각도", "여러 각도", "각도의 계산", "다각형의 내각의 합", "다각형의 외각의 성질", "내각과 외각의 성질의 활용", "시침과 분침 사이의 각도"],
-      ["곱셈과 나눗셈", "곱셈 알아보기", "곱셈 응용 문제", "나눗셈 알아보기", "나눗셈 응용 문제", "나눗셈의 나머지", "곱셈식 완성하기"],
+      ["큰 수",
+        detailed("큰 수 알아보기", "largeNumberPlaceValue", [
+          sourced("자리 숫자가 나타내는 값의 차 구하기", -1, "ability"),
+          sourced("큰 수를 합으로 나타낸 식의 빈칸", 0, "advanced"),
+          sourced("확대·축소한 수의 자릿값 배수 관계", 1, "advanced-contest-overlap")
+        ]),
+        detailed("큰 수의 크기 비교", "largeNumberCompare", [
+          sourced("두 부등식에 공통으로 들어갈 숫자의 합", 1, "advanced-contest-overlap"),
+          sourced("서로 다른 표현의 큰 수 크기 비교", 0, "advanced"),
+          sourced("부등식을 만족하는 가장 큰 숫자", -1, "ability")
+        ]),
+        detailed("큰 수의 규칙성과 뛰어 세기", "largeNumberSkipPattern", [
+          sourced("일정하게 뛰어 센 특정 번째 수", 0, "advanced"),
+          sourced("같은 간격 수직선의 두 수 구하기", -1, "ability"),
+          sourced("잘못 뛰어 센 횟수 바로잡기", 1, "advanced-contest-overlap")
+        ]),
+        detailed("큰 수의 활용", "largeNumberApplication", [
+          sourced("금액을 가장 적은 지폐·수표로 바꾸기", 0, "advanced"),
+          sourced("자연수를 이어 쓴 수의 마지막 자리", 1, "advanced-contest-overlap"),
+          sourced("같은 물체를 쌓은 높이와 단위 환산", 0, "advanced-contest-overlap")
+        ]),
+        detailed("조건에 맞는 수 찾기", "conditionedNumber", [
+          sourced("범위와 자리 조건을 만족하는 수의 개수", 1, "advanced-contest-overlap"),
+          sourced("두 자리를 바꾼 수의 차로 숫자 찾기", 1, "advanced-contest-overlap"),
+          sourced("여러 자리 조건을 만족하는 가장 큰 수", 0, "advanced")
+        ]),
+        detailed("수 카드로 수 만들기", "digitCardNumber", [
+          sourced("기준 수에 가장 가까운 수 만들기", 0, "advanced"),
+          sourced("중복 수 카드로 몇 번째 큰 수 만들기", 1, "advanced-contest-overlap"),
+          sourced("0을 포함한 가장 큰 수와 작은 수의 차", -1, "ability")
+        ])
+      ],
+      ["각도",
+        detailed("여러 각도", "multiAngle", [
+          sourcedAngle("여러 반직선으로 만들 수 있는 각의 수", 0, "advanced"),
+          sourcedAngle("같은 간격 반직선의 예각과 둔각 세기", 1, "advanced-contest-overlap"),
+          sourcedAngle("반직선을 더 그었을 때 늘어나는 각", 0, "advanced")
+        ]),
+        detailed("각도의 계산", "angleCalculation", [
+          sourcedAngle("한 직선 위 같은 크기인 두 각", -1, "ability"),
+          sourcedAngle("한 점 둘레의 남은 각 구하기", -1, "ability"),
+          sourcedAngle("맞꼭지각을 나눈 각 구하기", 0, "advanced")
+        ]),
+        detailed("다각형의 내각의 합", "polygonInterior", [
+          sourcedAngle("다각형의 빠진 한 내각", -1, "ability"),
+          sourcedAngle("크기가 같은 두 내각 구하기", 0, "advanced"),
+          sourcedAngle("표시한 두 내각의 합 구하기", 0, "advanced")
+        ]),
+        detailed("다각형의 외각의 성질", "polygonExterior", [
+          sourcedAngle("다각형의 빠진 한 외각", -1, "ability"),
+          sourcedAngle("크기가 같은 두 외각 구하기", 0, "advanced"),
+          sourcedAngle("오각별의 뾰족한 각 구하기", 1, "advanced-contest-overlap")
+        ]),
+        detailed("내각과 외각의 성질의 활용", "interiorExteriorApplication", [
+          sourcedAngle("종이를 접어 생긴 각 구하기", 0, "advanced"),
+          sourcedAngle("정사각형을 돌려 생긴 각 구하기", -1, "ability"),
+          sourcedAngle("정다각형의 외각으로 내각 구하기", 0, "advanced")
+        ]),
+        detailed("시침과 분침 사이의 각도", "clockAngle", [
+          sourcedAngle("주어진 시각의 시침과 분침 사이 각", 1, "advanced-contest-overlap"),
+          sourcedAngle("분침이 움직인 각도로 시간 구하기", -1, "ability"),
+          sourcedAngle("같은 시간 동안 두 바늘의 이동각 차", 0, "advanced")
+        ])
+      ],
+      ["곱셈과 나눗셈",
+        detailed("곱셈 알아보기", "multiplicationUnderstanding", [
+          sourcedMultiplyDivide("전체 수에서 사용한 수 빼기", -1, "ability"),
+          sourcedMultiplyDivide("같은 움직임을 여러 번 반복한 거리", -1, "ability"),
+          sourcedMultiplyDivide("간격과 개수로 전체 길이 구하기", 0, "advanced")
+        ]),
+        detailed("곱셈 응용 문제", "multiplicationApplication", [
+          sourcedMultiplyDivide("99를 곱하는 식을 분배법칙으로 계산", -1, "ability"),
+          sourcedMultiplyDivide("공통인 수를 묶어 계산하기", 0, "advanced"),
+          sourcedMultiplyDivide("여러 수를 곱한 결과의 자릿수", 1, "advanced-contest-overlap")
+        ]),
+        detailed("나눗셈 알아보기", "divisionUnderstanding", [
+          sourcedMultiplyDivide("양 끝에 놓인 물체의 개수", 0, "advanced"),
+          sourcedMultiplyDivide("묶음 수와 판매 금액으로 단가 구하기", 0, "advanced"),
+          sourcedMultiplyDivide("기계 한 대의 작업량으로 전체 구하기", 1, "advanced-contest-overlap")
+        ]),
+        detailed("나눗셈 응용 문제", "divisionApplication", [
+          sourcedMultiplyDivide("나눗셈의 몫의 각 자리 숫자 합", -1, "ability"),
+          sourcedMultiplyDivide("값이 같은 두 곱셈식의 빈칸", 0, "advanced"),
+          sourcedMultiplyDivide("연속한 자연수의 합으로 큰 수 찾기", 1, "advanced-contest-overlap")
+        ]),
+        detailed("나눗셈의 나머지", "advancedRemainder", [
+          sourcedMultiplyDivide("같은 나머지를 갖는 수의 범위", 0, "advanced"),
+          sourcedMultiplyDivide("잘못 나눈 계산의 나머지 바로잡기", 1, "advanced-contest-overlap"),
+          sourcedMultiplyDivide("나눗셈식에서 몫과 나머지의 합", -1, "ability")
+        ]),
+        detailed("곱셈식 완성하기", "multiplicationCompletion", [
+          sourcedMultiplyDivide("세로셈에서 곱해지는 수의 빈칸", 0, "advanced"),
+          sourcedMultiplyDivide("부분곱으로 곱하는 수의 빈칸", 1, "advanced-contest-overlap"),
+          sourcedMultiplyDivide("세로셈 결과의 빈칸 숫자", -1, "ability")
+        ])
+      ],
       ["평면도형의 이동",
-        detailed("평면도형 밀기, 뒤집기, 돌리기", "planeTransform", ["밀기 후 점의 위치 찾기", "뒤집기 후 점의 위치 찾기", "돌리기 후 점의 위치 찾기"]),
-        detailed("연속 이동", "sequentialTransform", ["돌리기와 좌우 뒤집기를 이어서 하기", "돌리기와 위아래 뒤집기를 이어서 하기", "묶음 이동을 반복한 뒤 방향 찾기"]),
-        detailed("평면도형 이동의 활용 ①", "movementPatternOne", ["반복 무늬의 N번째 모양 찾기", "반복 무늬에서 특정 모양의 개수 구하기", "연속한 두 위치의 모양 찾기"]),
-        detailed("평면도형 이동의 활용 ②", "movementPatternTwo", ["전자 숫자 카드를 180° 돌려 읽기", "거울에 비친 시계의 실제 시각 찾기", "180° 돌린 수와 처음 수의 차 구하기"])
+        detailed("평면도형 밀기, 뒤집기, 돌리기", "planeTransform", [
+          sourcedMovement("밀기 후 점의 위치 찾기", -1, "ability", 1),
+          sourcedMovement("뒤집기 후 점의 위치 찾기", 0, "advanced", 1),
+          sourcedMovement("돌리기 후 점의 위치 찾기", 0, "advanced", 1)
+        ]),
+        detailed("연속 이동", "sequentialTransform", [
+          sourcedMovement("돌리기와 좌우 뒤집기를 이어서 하기", 0, "advanced", 2),
+          sourcedMovement("돌리기와 위아래 뒤집기를 이어서 하기", 0, "advanced", 2),
+          sourcedMovement("묶음 이동을 반복한 뒤 방향 찾기", 1, "advanced-contest-overlap", 2)
+        ]),
+        detailed("평면도형 이동의 활용 ①", "movementPatternOne", [
+          sourcedMovement("반복 무늬의 N번째 모양 찾기", -1, "ability", 3),
+          sourcedMovement("반복 무늬에서 특정 모양의 개수 구하기", 0, "advanced", 3),
+          sourcedMovement("연속한 두 위치의 모양 찾기", 1, "advanced-contest-overlap", 3)
+        ]),
+        detailed("평면도형 이동의 활용 ②", "movementPatternTwo", [
+          sourcedMovement("전자 숫자 카드를 180° 돌려 읽기", 0, "advanced", 4),
+          sourcedMovement("거울에 비친 시계의 실제 시각 찾기", 1, "advanced-contest-overlap", 4),
+          sourcedMovement("180° 돌린 수와 처음 수의 차 구하기", 1, "advanced-contest-overlap", 4)
+        ])
       ],
       ["막대그래프",
-        detailed("막대그래프의 이해", "barGraphUnderstanding", ["전체 수로 빠진 막대의 값 구하기", "비율 조건으로 숨은 막대의 값 구하기", "합과 차로 숨은 두 막대의 값 구하기"]),
-        detailed("막대그래프의 활용", "barGraphApplication", ["거리 막대그래프로 왕복 시간 구하기", "두 항목 막대그래프 비교하기", "막대그래프와 단가로 전체 금액 구하기"])
+        detailed("막대그래프의 이해", "barGraphUnderstanding", [
+          sourcedBarGraph("전체 수로 빠진 막대의 값 구하기", -1, "ability", 1),
+          sourcedBarGraph("비율 조건으로 숨은 막대의 값 구하기", 0, "advanced", 1),
+          sourcedBarGraph("합과 차로 숨은 두 막대의 값 구하기", 1, "advanced-contest-overlap", 1)
+        ]),
+        detailed("막대그래프의 활용", "barGraphApplication", [
+          sourcedBarGraph("거리 막대그래프로 왕복 시간 구하기", 0, "advanced", 2),
+          sourcedBarGraph("두 항목 막대그래프 비교하기", 0, "advanced", 2),
+          sourcedBarGraph("막대그래프와 단가로 전체 금액 구하기", 1, "advanced-contest-overlap", 2)
+        ])
       ],
-      ["규칙 찾기", "일렬로 나열한 수에서 규칙 찾기", "여러 가지 배열에서 수들의 규칙", "배열된 수들의 합", "연산의 규칙", "나열된 도형에서의 규칙", "조건을 만족하는 수의 개수"]
+      ["규칙 찾기",
+        detailed("일렬로 나열한 수에서 규칙 찾기", "advancedLinePattern", [
+          sourcedRules("일정하게 커지는 수열의 N번째 수", -1, "ability", 1),
+          sourcedRules("두 규칙이 번갈아 나타나는 수열", 0, "advanced", 1),
+          sourcedRules("분자와 분모가 각각 변하는 분수 수열", 1, "advanced-contest-overlap", 1)
+        ]),
+        detailed("여러 가지 배열에서 수들의 규칙", "arrayNumberRules", [
+          sourcedRules("뱀 모양 배열의 지정 위치 수", 0, "advanced", 2),
+          sourcedRules("삼각 배열에서 N번째 줄의 끝 수", -1, "ability", 2),
+          sourcedRules("뱀 모양 배열에서 수의 위치 역산", 1, "advanced-contest-overlap", 2)
+        ]),
+        detailed("배열된 수들의 합", "advancedArraySum", [
+          sourcedRules("일정한 간격으로 나열된 수의 합", 0, "advanced", 3),
+          sourcedRules("연속한 홀수의 합에서 가장 큰 수", 1, "advanced-contest-overlap", 3),
+          sourcedRules("3×3 연속한 수의 합과 가장 큰 수", 1, "advanced-contest-overlap", 3)
+        ]),
+        detailed("연산의 규칙", "advancedOperationRule", [
+          sourcedRules("한 가지 기호 연산의 규칙", -1, "ability", 4),
+          sourcedRules("두 가지 기호 연산을 차례로 계산", 0, "advanced", 4),
+          sourcedRules("세 꼭짓점 수와 가운데 수의 규칙", 1, "advanced-contest-overlap", 4)
+        ]),
+        detailed("나열된 도형에서의 규칙", "advancedShapePattern", [
+          sourcedRules("이어 붙인 다각형의 성냥개비 수", -1, "ability", 5),
+          sourcedRules("성냥개비 수로 만들 수 있는 도형 수", 0, "advanced", 5),
+          sourcedRules("이어 붙인 입체 상자의 성냥개비 수", 1, "advanced-contest-overlap", 5),
+          sourcedRules("점과 선으로 커지는 정사각형의 점 수", 0, "advanced", 5),
+          sourcedRules("소용돌이 모양 점 배열의 점 수", 1, "advanced-contest-overlap", 5),
+          sourcedRules("육각형으로 퍼지는 바둑돌의 수", 1, "advanced-contest-overlap", 5),
+          sourcedRules("점으로 이은 정사각형 수 역산", 1, "advanced-contest-overlap", 5),
+          sourcedRules("두 종류 동전 배열의 전체 금액", 0, "advanced", 5)
+        ]),
+        detailed("조건을 만족하는 수의 개수", "conditionedNumberCount", [
+          sourcedRules("수 카드로 만든 범위 안의 배수 개수", 1, "advanced-contest-overlap", 6),
+          sourcedRules("연속한 수를 쓸 때 특정 숫자의 사용 횟수", 0, "advanced", 6),
+          sourcedRules("일정한 배수에서 특정 숫자의 사용 횟수", 1, "advanced-contest-overlap", 6)
+        ])
+      ]
     ]),
     semester("4-2", [
       ["분수의 덧셈과 뺄셈", "분수의 이해", "분수의 종류와 크기 비교", "분수의 덧셈과 뺄셈 1", "분수의 덧셈과 뺄셈 2", "조건에 맞는 분수 찾기", "식 세워 풀기"],
       ["삼각형", "삼각형의 개수", "예각삼각형, 직각삼각형, 둔각삼각형", "이등변삼각형", "정삼각형"],
       ["소수의 덧셈과 뺄셈", "소수의 이해", "소수의 덧셈과 뺄셈", "소수의 덧셈과 뺄셈 활용", "조건에 맞는 소수"],
-      ["사각형", "수선과 평행선", "평행선의 조건과 성질", "평행선 사이의 각도 ①", "평행선 사이의 각도 ②", "사각형의 종류와 성질", "사각형의 성질의 활용", "정사각형", "사각형의 개수"],
-      ["꺾은선그래프", "꺾은선그래프의 이해", "꺾은선그래프의 활용"],
-      ["다각형", "정다각형과 대각선", "정다각형의 활용", "평면 덮기", "도형 나누기와 만들기"]
+      ["사각형",
+        detailed("수선과 평행선", "quadPerpParallelDistance", [
+          sourced42("수직인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("평행인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("비로 주어진 평행선 사이 거리", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("연속한 수선으로 전체 거리 구하기", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("전체 거리에서 수선의 빈 길이 구하기", 1, "4-2 심화 p.35-36 개념탐구 1·Mission")
+        ]),
+        detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
+          sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
+          sourced42("여러 평행선의 엇각 합", 0, "4-2 심화 p.37-38 개념탐구 2·Mission"),
+          sourced42("각의 조건으로 평행한 직선 찾기", 1, "4-2 심화 p.37-38 개념탐구 2·Mission")
+        ]),
+        detailed("평행선 사이의 각도 ①", "quadAngleChainOne", [
+          sourced42("한 번 꺾인 선의 끝각", -1, "4-2 심화 p.39-40 개념탐구 3·Mission"),
+          sourced42("두 번 꺾인 선의 끝각", 0, "4-2 심화 p.39-40 개념탐구 3·Mission"),
+          sourced42("바깥각이 섞인 꺾은선", 1, "4-2 심화 p.39-40 개념탐구 3·Mission")
+        ]),
+        detailed("평행선 사이의 각도 ②", "quadAngleChainTwo", [
+          sourced42("여러 번 꺾인 선의 끝각", 1, "4-2 심화 p.41-42 개념탐구 4·Mission"),
+          sourced42("평행한 거울 사이 레이저의 각", 1, "4-2 심화 p.41-42 개념탐구 4·Mission")
+        ]),
+        detailed("사각형의 종류와 성질", "quadPropertyRelations", [
+          sourced42("점 배열에서 볼록한 사각형 세기", 1, "4-2 심화 p.43-44 개념탐구 5·Mission"),
+          sourced42("평행사변형의 각을 나눈 선", 0, "4-2 심화 p.43-44 개념탐구 5·Mission"),
+          { label: "접어 만든 마름모의 각", reviewLocked: true },
+          { label: "사다리꼴과 마름모의 복합 각", reviewLocked: true }
+        ]),
+        detailed("사각형의 성질의 활용", "quadPropertyApplication", [
+          sourced42("이어 붙인 여러 도형의 둘레", 0, "4-2 심화 p.45-46 개념탐구 6·Mission"),
+          { label: "사각형과 삼각형의 복합 각", reviewLocked: true },
+          { label: "평행사변형과 마름모의 길이 관계", reviewLocked: true }
+        ]),
+        detailed("정사각형", "quadSquareSpecial", [
+          sourced42("겹쳐 이어 붙인 정사각형의 둘레", 0, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          sourced42("접은 정사각형에서 생긴 각", 1, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          sourced42("붙여 놓은 정사각형의 변 길이", 0, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          { label: "정사각형 대각선의 복합 각", reviewLocked: true }
+        ]),
+        detailed("사각형의 개수", "quadRectangleCount", [
+          sourced42("직사각형 모눈의 모든 직사각형", -1, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("표시한 칸을 포함하는 직사각형", 0, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("직사각형과 정사각형을 함께 세기", 0, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("계단 모양 모눈의 직사각형", 1, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          { label: "대각선이 있는 모눈의 사각형", reviewLocked: true },
+          { label: "동심 직사각형 세기", reviewLocked: true },
+          { label: "평행사변형과 사다리꼴 세기", reviewLocked: true }
+        ])],
+      ["꺾은선그래프",
+        detailed("꺾은선그래프의 이해", "lineGraphUnderstanding", [
+          sourced42("두 날의 자료 값 차 구하기", -1, "4-2 심화 p.52-53 개념탐구 1·Mission"),
+          sourced42("연속한 여러 날의 자료 값 합", 0, "4-2 심화 p.52-53 개념탐구 1·Mission"),
+          sourced42("가장 큰 값과 가장 작은 값의 차", 0, "4-2 심화 p.52-53 개념탐구 1·Mission")
+        ]),
+        detailed("꺾은선그래프의 활용", "lineGraphApplication", [
+          sourced42("두 이동 그래프와 연료 사용량 비교", 0, "4-2 심화 p.54-55 개념탐구 2·Mission"),
+          sourced42("물탱크 그래프에서 한 수도꼭지의 시간 역산", 1, "4-2 심화 p.54-55 개념탐구 2·Mission"),
+          sourced42("두 판매 그래프와 단가로 금액 차 구하기", 1, "4-2 심화 p.54-55 개념탐구 2·Mission")
+        ])
+      ],
+      ["다각형",
+        detailed("정다각형과 대각선", "polygonDiagonals", [
+          sourced42("한 꼭짓점에서 그을 수 있는 대각선 수", -1, "4-2 심화 p.58-59 개념탐구 1·Mission"),
+          sourced42("전체 대각선 수로 정다각형 역산", 1, "4-2 심화 p.58-59 개념탐구 1·Mission"),
+          sourced42("두 정다각형의 대각선 수 차", 0, "4-2 심화 p.58-59 개념탐구 1·Mission")
+        ]),
+        detailed("정다각형의 활용", "regularPolygonApplication", [
+          sourced42("한 내각으로 한 외각 구하기", -1, "4-2 심화 p.60-61 개념탐구 2·Mission"),
+          sourced42("정다각형의 한 변으로 둘레 구하기", -1, "4-2 심화 p.60-61 개념탐구 2·Mission"),
+          sourced42("한 점을 채운 정다각형의 빈 각", 0, "4-2 심화 p.60-61 개념탐구 2·Mission")
+        ]),
+        detailed("평면 덮기", "tessellationCover", [
+          sourced42("정사각형 타일로 덮은 바닥의 타일 수", -1, "4-2 심화 p.62-63 개념탐구 3·Mission"),
+          sourced42("교차 색칠한 타일 중 한 색의 수", 0, "4-2 심화 p.62-63 개념탐구 3·Mission"),
+          sourced42("서로 다른 크기 직사각형의 덮기", 0, "4-2 심화 p.62-63 개념탐구 3·Mission")
+        ]),
+        detailed("도형 나누기와 만들기", "shapePartitionCompose", [
+          sourced42("ㄴ자 조각을 돌려 놓는 방법의 수", 0, "4-2 심화 p.64 개념탐구 4·Mission"),
+          sourced42("막대 조각을 돌려 놓는 방법의 수", 0, "4-2 심화 p.64 개념탐구 4·Mission"),
+          sourced42("ㅜ자 조각을 돌려 놓는 방법의 수", 1, "4-2 심화 p.64 개념탐구 4·Mission")
+        ])
+      ]
     ]),
     semester("5-1", [
       ["자연수의 혼합 계산", "혼합 계산의 순서", "하나의 식으로 나타내기", "식 세워 풀기", "혼합 계산식 만들기"],
@@ -95,15 +374,15 @@
       ],
       ["소수의 곱셈",
         detailed("소수와 자연수의 곱셈", "decimalNaturalAdvanced", ["같은 소수를 여러 번 더한 값", "곱하는 순서를 바꾸어 계산하기", "공통인 수로 묶어 계산하기", "빠진 소수점으로 곱한 자연수 찾기", "반올림한 분수합의 자연수 찾기", "조건을 모두 만족하는 소수 찾기", "소수 수열의 특정 번째 수", "넓이의 차로 직사각형의 변 구하기", "속력과 시간으로 터널 길이 구하기", "곱이 자연수가 되는 두 자리 수의 범위", "반올림한 몫을 만족하는 자연수의 합"]),
-        detailed("소수와 소수의 곱셈", "decimalDecimalAdvanced", ["소수 곱의 빠진 숫자 찾기", "반올림한 몫으로 소수의 범위 찾기", "넓이 증가량으로 정사각형의 변 구하기", "서로 다른 숫자의 소수 곱 관계", "곱을 계산하지 않고 자릿수 판단하기", "분배법칙으로 소수식 계산하기", "ㄱ자 모양 도형의 넓이", "잘못 나눈 계산을 바르게 고치기", "두 이동 거리의 차 구하기", "곱셈식의 빈칸 숫자 찾기", "겹쳐 놓은 정사각형의 공통 넓이"])
+        detailed("소수와 소수의 곱셈", "decimalDecimalAdvanced", ["소수 곱의 빠진 숫자 찾기", "반올림한 몫으로 소수의 범위 찾기", "넓이 증가량으로 정사각형의 변 구하기", "서로 다른 숫자의 소수 곱 관계", "곱을 계산하지 않고 자릿수 판단하기", "분배법칙으로 소수식 계산하기", "ㄱ자 모양 도형의 넓이", "잘못 나눈 계산을 바르게 고치기", "두 이동 거리의 차 구하기", "곱셈식의 빈칸 숫자 찾기", "정확히 3장이 겹치는 부분의 넓이"])
       ],
       ["직육면체",
-        detailed("직육면체의 성질", "cuboidPropertiesAdvanced", ["띠 모양 종이로 만든 직육면체의 높이", "같은 정육면체로 자른 개수와 모서리 합", "여러 조각으로 자른 뒤 모서리 길이의 합", "쌓기나무를 모두 자른 정육면체의 개수", "직육면체를 묶은 전체 모서리 길이"]),
-        detailed("직육면체의 전개도", "cuboidNetAdvanced", ["면의 크기로 전개도에 올 수 없는 면 찾기", "종이에 그릴 수 있는 가장 큰 정육면체 전개도", "전개도를 그리는 가장 작은 도화지", "전개도를 그리고 남는 부분의 넓이", "면 종이로 만들 수 있는 가장 큰 정육면체"]),
-        detailed("직육면체의 전개도와 겨냥도", "cuboidNetViewAdvanced", ["전개도에서 마주 보는 면 찾기", "한 모서리와 수직인 모서리의 개수", "한 꼭짓점에서 만나는 세 면의 수", "전개도에서 마주 보는 면의 수의 곱", "겉면을 따라가는 가장 짧은 거리"]),
-        detailed("직육면체의 활용", "cuboidApplicationAdvanced", ["쌓기나무를 넣는 가장 작은 상자", "세 방향으로 두른 끈의 전체 길이", "상자에 넣을 수 있는 직육면체의 최대 개수", "묶음 상자의 높이 역산하기", "세 끈의 길이로 가장 짧은 모서리 구하기"]),
-        detailed("주사위에 관한 문제 ①", "diceArrangementAdvanced", ["세 면의 합으로 보이지 않는 면 찾기", "주사위 전개도의 빈 면 완성하기", "이어 붙인 주사위의 바닥면 합", "맞닿은 면이 같은 주사위 줄", "쌓은 주사위의 보이는 면의 합"]),
-        detailed("주사위에 관한 문제 ②", "diceRollingAdvanced", ["주사위를 굴린 뒤 윗면 찾기", "굴린 기록으로 마주 보는 면 찾기", "여러 주사위의 바닥면 합", "격자 길을 따라 굴린 윗면의 합", "두 경로의 윗면 합으로 면의 수 찾기"])
+        detailed("직육면체의 성질", "cuboidPropertiesAdvanced", ["격자 직육면체의 작은 정육면체 수", "가장 큰 정육면체로 자른 개수와 모서리 합", "두 방향으로 자른 조각의 모서리 길이 합", "격자에서 만들 수 있는 직육면체 크기 수", "같은 직육면체 조각으로 만드는 직육면체 수"]),
+        detailed("직육면체의 전개도", "cuboidNetAdvanced", ["그려진 전개도가 들어가는 종이 찾기", "모서리를 잘라 만든 상자의 모서리 길이 합", "전개도에 필요한 가장 작은 도화지", "전개도를 오리고 남는 종이의 넓이", "한 칸을 붙여 완성하는 위치 모두 찾기"]),
+        detailed("직육면체의 전개도와 겨냥도", "cuboidNetViewAdvanced", ["한 꼭짓점에서 만날 수 없는 세 면 찾기", "한 모서리와 평행·수직인 모서리 수", "한 꼭짓점에서 만나는 세 면의 곱", "마주 보는 면의 곱 중 가장 큰 값", "모서리만 따라가는 가장 짧은 거리"]),
+        detailed("직육면체의 활용", "cuboidApplicationAdvanced", ["쌓기 모양을 담는 가장 작은 상자", "세 방향으로 두른 끈의 전체 길이", "방향을 바꾸어 넣는 직육면체의 최대 개수", "묶음 상자의 높이 역산하기", "세 끈의 길이로 가장 짧은 모서리 구하기"]),
+        detailed("주사위에 관한 문제 ①", "diceArrangementAdvanced", ["회전하여 같은 주사위의 면 배치 수", "주사위 전개도의 빈 면 완성하기", "세 방향의 면 합으로 보이지 않는 면 찾기", "맞닿은 두 면의 합이 일정한 주사위 줄", "쌓은 주사위의 보이는 면의 합"]),
+        detailed("주사위에 관한 문제 ②", "diceRollingAdvanced", ["격자 길을 굴린 뒤 윗면 찾기", "굴린 기록으로 마주 보는 면 찾기", "여러 경로를 굴린 주사위의 바닥면 합", "격자 길을 따라 굴린 윗면의 합", "두 경로의 윗면 합으로 면의 수 찾기"])
       ],
       ["평균과 가능성",
         detailed("평균 구하기", "averageCalculationAdvanced", ["자료의 합으로 평균 구하기", "두 사람의 평균 조건으로 빈 점수 찾기", "한 수를 바꾼 뒤 원래 수 찾기", "도수분포표에서 빠진 학생 수 찾기", "겹치는 두 집단의 평균 구하기", "일정하게 변하는 자료의 처음 값 찾기"]),

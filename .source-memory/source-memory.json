@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-21",
+  "updated": "2026-08-24",
   "sources": [
     {
       "id": "handover",
@@ -70,9 +70,9 @@
       "path": "hyper-focus/qa/HF_VISIBILITY_DECISIONS.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "502a061f2b78bd57ff6632e88d3db68bce67a72d229b99b78bc83fe81f939e83",
-      "size": 3754,
-      "mtime_ns": 1787232438545882200
+      "sha256": "cb29200f9c4cf294ea69fb9a850f50da5da3e42ed4d7092ff074bf2b9d45f2d6",
+      "size": 5942,
+      "mtime_ns": 1787543272949713500
     },
     {
       "id": "hf-q06-q09-generator-audit",
@@ -4195,6 +4195,32 @@
           "role": "source",
           "locator": "file identity and title",
           "note": "Fingerprint verified; page-level content not yet inspected"
+        }
+      ]
+    },
+    {
+      "id": "hf-premier-source-visibility-rules",
+      "title": "프리미어 원본 이미지·진단 공개 규칙",
+      "aliases": [
+        "프리미어 모의고사 원본 검수"
+      ],
+      "tags": [
+        "hyper-focus",
+        "premier",
+        "single-answer",
+        "visibility",
+        "diagnosis"
+      ],
+      "summary": "PDF 문제 쪽은 이미지 시험지로 보존하되 원본 단일정답 검수 통과 문항만 O/X 영역·유형 진단에 포함하고, 공개 저장소에는 유료 페이지 이미지를 올리지 않는다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-24",
+      "pointers": [
+        {
+          "source_id": "hf-visibility-decisions",
+          "role": "decision",
+          "locator": "section 프리미어 원본 모의고사",
+          "note": "이미지 시험지, 채점 제외, 공개 저장소 자산 금지 기준"
         }
       ]
     }

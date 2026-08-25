@@ -103,6 +103,35 @@
     return wrapSvg(svg, isoBBox(width, depth, height, u));
   }
 
+  // Connected cube pieces can contain side branches or overhangs that a
+  // height map cannot represent. Render their exposed top/front/right faces
+  // directly from integer [x,y,z] coordinates so other programs can reuse
+  // the same worksheet cube style for mental-rotation questions.
+  function renderIsoCoords(coords, options) {
+    options = options || {};
+    const u = options.u || 20;
+    const cubes = (coords || []).map((point) => point.map(Number));
+    if (!cubes.length) return "";
+    const occupied = new Set(cubes.map((point) => point.join(",")));
+    const ordered = [...cubes].sort((a, b) => (
+      (a[0] + a[2] + a[1]) - (b[0] + b[2] + b[1])
+      || a[2] - b[2]
+      || a[0] - b[0]
+      || a[1] - b[1]
+    ));
+    let svg = "";
+    for (const [x, y, z] of ordered) {
+      const pal = PALETTES.grey;
+      if (!occupied.has([x, y + 1, z].join(","))) svg += polygon(quadY(x, y + 1, z, u), pal.top, pal.stroke);
+      if (!occupied.has([x, y, z + 1].join(","))) svg += polygon(quadZ(x, y, z + 1, u), pal.left, pal.stroke);
+      if (!occupied.has([x + 1, y, z].join(","))) svg += polygon(quadX(x + 1, y, z, u), pal.right, pal.stroke);
+    }
+    const width = Math.max(...cubes.map(([x]) => x)) + 1;
+    const height = Math.max(...cubes.map(([, y]) => y)) + 1;
+    const depth = Math.max(...cubes.map(([, , z]) => z)) + 1;
+    return wrapSvg(svg, isoBBox(width, depth, height, u), "ws-iso ws-polycube");
+  }
+
   // Full-footprint floor plane at y=0, spanning x:[0,width] and z:[0,depth]
   // -- same corner-plane shape as quadY but not limited to one unit cell.
   function floorQuad(width, depth, u) {
@@ -450,6 +479,7 @@
 
   global.GW_RENDER = {
     renderIso,
+    renderIsoCoords,
     renderIsoTop,
     renderIsoWalled,
     renderIsoBox,

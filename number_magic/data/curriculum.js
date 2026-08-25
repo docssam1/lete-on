@@ -88,10 +88,10 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== ADVANCE · 중급 (창의수연 A~F) ===== */
+    /* ===== ADVANCE · 중급 (구구 기초 + 창의 전략 8단계) ===== */
     {
       id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
-      title:'ADVANCE', subtitle:{ko:'중급 · 구구 기초 + 창의수연 A~F',en:'Intermediate · Times Tables + Creative Math A–F',zh:'中级 · 口诀基础 + 创意数学A~F'},
+      title:'ADVANCE', subtitle:{ko:'중급 · 구구 기초 + 창의 전략 8단계',en:'Intermediate · Times Tables + Creative Math A–F',zh:'中级 · 口诀基础 + 创意数学A~F'},
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
       desc:{ko:'곱셈의 기초 구구부터 창의 전략까지 — 분해·조합·패턴으로 수를 정복해요',
@@ -123,30 +123,31 @@ window.NM_CURRICULUM = {
         { id:'구구H', available:true,
           title:{ko:'구구 H · 두 자리×한 자리',en:'Times H · 2-Digit × 1-Digit',zh:'口诀H · 两位乘一位'},
           units:['B-21','B-22','B-23'] },
-        /* ── 창의수연 중급 A · 거듭제곱과 쌍 곱 ── */
-        { id:'A', available:true,
-          title:{ko:'A단계 · 거듭제곱과 쌍 곱',en:'Level A · Powers & Pair Products',zh:'A阶段 · 幂运算与对乘'},
-          units:['C-01','C-02','C-03','C-04'] },
-        /* ── 창의수연 중급 B · 가우스·×9·분배·올림빼기 ── */
-        { id:'B', available:true,
-          title:{ko:'B단계 · 가우스·×9·분배·올림빼기',en:'Level B · Gauss · ×9 · Distribute · Over-subtract',zh:'B阶段 · 高斯·×9·分配·过乘减'},
-          units:['C-05','C-06','C-07','C-08'] },
-        /* ── 창의수연 중급 C · 창의 곱셈법 6가지 ── */
-        { id:'C', available:true,
-          title:{ko:'C단계 · 창의 곱셈법 6가지',en:'Level C · 6 Creative Multiplication Methods',zh:'C阶段 · 六种创意乘法'},
-          units:['C-09','C-10','C-11','C-12','C-13','C-14'] },
-        /* ── 창의수연 중급 D · 자리이동·×5·×25 ── */
-        { id:'D', available:true,
-          title:{ko:'D단계 · 자리이동·×5·×25',en:'Level D · Place-Shift · ×5 · ×25',zh:'D阶段 · 位移·×5·×25'},
-          units:['C-15','C-16','C-17'] },
-        /* ── 창의수연 중급 E · 나눗셈 3법과 분수 덧뺄셈 ── */
-        { id:'E', available:true,
-          title:{ko:'E단계 · 나눗셈 3법·분수 덧뺄셈',en:'Level E · 3 Division Methods · Fraction ±',zh:'E阶段 · 三种除法·分数加减'},
-          units:['C-18','C-19','C-20','C-21','C-22'] },
-        /* ── 창의수연 중급 F · VEDA·차이곱·소수 ── */
-        { id:'F', available:true,
-          title:{ko:'F단계 · VEDA·차이곱·소수',en:'Level F · VEDA · Difference Products · Decimals',zh:'F阶段 · VEDA·差乘·小数'},
-          units:['C-23','C-24','C-25'] }
+        /* ── 창의 전략 8단계 (난이도순 재설계 · 2026-08-23) ── */
+        { id:'1', available:true,
+          title:{ko:'1단계 · 곱셈의 문',en:'Stage 1 · Gateway to Multiplication',zh:'第1阶 · 乘法之门'},
+          units:['C-01','C-26','C-09'] },
+        { id:'2', available:true,
+          title:{ko:'2단계 · 쪼개기',en:'Stage 2 · Splitting',zh:'第2阶 · 拆分'},
+          units:['C-07','C-08','C-06','C-27'] },
+        { id:'3', available:true,
+          title:{ko:'3단계 · 짝 만들기',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
+          units:['C-02','C-04','C-03','C-34'] },
+        { id:'4', available:true,
+          title:{ko:'4단계 · 반과 배',en:'Stage 4 · Halves and Doubles',zh:'第4阶 · 折半与翻倍'},
+          units:['C-16','C-17','C-28','C-29'] },
+        { id:'5', available:true,
+          title:{ko:'5단계 · 나눗셈 세 가지 길',en:'Stage 5 · Three Roads of Division',zh:'第5阶 · 除法三法'},
+          units:['C-18','C-19','C-20'] },
+        { id:'6', available:true,
+          title:{ko:'6단계 · 곱셈 알고리즘 여행',en:'Stage 6 · A Tour of Multiplication',zh:'第6阶 · 乘法算法之旅'},
+          units:['C-15','C-13','C-10','C-11','C-14','C-30'] },
+        { id:'7', available:true,
+          title:{ko:'7단계 · 수의 관계',en:'Stage 7 · Relationships Between Numbers',zh:'第7阶 · 数的关系'},
+          units:['C-23','C-24','C-12','C-05'] },
+        { id:'8', available:true,
+          title:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
+          units:['C-21','C-22','C-31','C-32','C-25','C-33','C-35'] },
       ]
     },
 
@@ -159,7 +160,23 @@ window.NM_CURRICULUM = {
       desc:{ko:'수들의 관계로 푸는 마법 — 등차수열과 경시로 가는 길',
         en:'The magic of solving through relationships between numbers — the path to arithmetic sequences and competition math',
         zh:'通过数字间关系来解题的魔法——通向等差数列与竞赛之路'},
-      levels:[{ id:'H-A', title:{ko:'준비 중',en:'Coming soon',zh:'即将推出'}, units:[], available:false }]
+      /* 경시의 탑(과정-로드맵.md §3 CHALLENGE, 2026-08-25) — 고급-목차.md 신규 13종.
+         26~28은 그 과정의 4단원 구성 그대로, 'boost'는 몰아주기/어림하기/큰 수 정복처럼
+         Level 3(과정 19·24)의 드릴 보강으로도 쓰이는 3종을 모아 둔 것(고급-목차.md §2①). */
+      levels:[
+        { id:'26', available:true,
+          title:{ko:'26 곱셈의 정점',en:'26 · Peak of Multiplication',zh:'26·乘法之巅'},
+          units:['H-01','H-02'] },
+        { id:'27', available:true,
+          title:{ko:'27 수의 비밀',en:'27 · Secrets of Numbers',zh:'27·数的秘密'},
+          units:['H-03','H-04','H-05','H-06'] },
+        { id:'28', available:true,
+          title:{ko:'28 제곱의 산',en:'28 · Mountain of Squares',zh:'28·平方之山'},
+          units:['H-07','H-08','H-09','H-10'] },
+        { id:'boost', available:true,
+          title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
+          units:['H-11','H-12','H-13'] }
+      ]
     }
   ],
 

@@ -85,7 +85,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 @media(max-width:600px){#cGrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:600px){.exam-actions{grid-template-columns:1fr}.exam-action{min-height:44px}}
 @media(max-width:600px){.answer-modal{padding:10px}.answer-sheet{max-height:calc(100vh - 20px);padding:16px}.answer-sheet-title{font-size:16px}}
-.q-card{background:#fff;border:2px solid #e8edf5;border-radius:10px;padding:6px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;user-select:none}
+.q-card{background:#fff;border:2px solid #e8edf5;border-radius:10px;padding:6px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;user-select:none}.q-card.animal-card{grid-column:span 3}
 .q-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
 .q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.q-card.ok::before{background:var(--ok);opacity:1}
 .q-card.no{border-color:rgba(239,68,68,.4);background:var(--no-bg)}.q-card.no::before{background:var(--no);opacity:1}
@@ -100,7 +100,9 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .q-hint{font-size:8px;color:var(--g-muted);margin-top:2px;text-align:center;display:none}
 .q-dual{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .q-dual label{font-size:8px;color:var(--g-muted);display:block;margin-bottom:2px;font-weight:700;text-align:center}
-.q-animal{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:4px}
+.balance-pair{display:flex;justify-content:center;gap:8px;margin:1px 0 7px}.balance-scene{position:relative;width:134px;height:116px;border:1px solid #d6e4ed;border-radius:9px;background:linear-gradient(180deg,#f8fcff,#edf5fa);overflow:hidden}.balance-scene:after{content:"";position:absolute;left:10px;right:10px;bottom:10px;height:3px;border-radius:3px;background:#a8b8c3}.balance-beam{position:absolute;left:15px;top:73px;width:104px;height:7px;border-radius:7px;background:linear-gradient(#e5b578,#a76f38);box-shadow:0 1px 0 #87572d;transform-origin:center}.balance-scene.right-down .balance-beam{transform:rotate(9deg)}.balance-scene.left-down .balance-beam{transform:rotate(-9deg)}.balance-pivot{position:absolute;left:56px;top:75px;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:29px solid #8b9ba8;filter:drop-shadow(0 1px 0 #61717d)}.balance-animal{position:absolute;z-index:2;width:52px;height:64px;object-fit:contain;mix-blend-mode:multiply}.balance-animal.left{left:8px}.balance-animal.right{right:8px}.balance-scene.right-down .balance-animal.left{bottom:35px}.balance-scene.right-down .balance-animal.right{bottom:13px}.balance-scene.left-down .balance-animal.left{bottom:13px}.balance-scene.left-down .balance-animal.right{bottom:35px}.balance-name{position:absolute;z-index:3;bottom:1px;font-size:10px;font-weight:800;color:#365166}.balance-name.left{left:12px}.balance-name.right{right:10px}.q-animal{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:4px}
+.similar-seesaw-grid{display:grid;grid-template-columns:repeat(var(--scale-count),minmax(122px,1fr));gap:9px;justify-items:center;margin:6px auto;max-width:620px}.similar-seesaw-grid .balance-scene{width:132px}.similar-seesaw-grid .balance-caption{margin:0;color:#557184;font-size:10px;font-weight:800;text-align:center}@media(max-width:560px){.similar-seesaw-grid{grid-template-columns:repeat(2,minmax(118px,1fr));gap:6px}.similar-seesaw-grid .balance-scene{width:122px;height:104px}.similar-seesaw-grid .balance-beam{top:66px;width:94px}.similar-seesaw-grid .balance-pivot{left:51px;top:68px}.similar-seesaw-grid .balance-animal{width:46px;height:57px}.similar-seesaw-grid .balance-name{font-size:9px}}
+@media(max-width:720px){.balance-pair{display:grid;gap:3px}.balance-scene{width:122px;height:104px;margin:auto}.balance-beam{top:66px;width:94px}.balance-pivot{left:51px;top:68px}.balance-animal{width:46px;height:57px}.balance-name{font-size:9px}}
 .a-btn{padding:6px 2px;border-radius:7px;border:1.5px solid #e2e8f0;background:#fff;color:var(--g-ink);font-size:9px;font-weight:700;font-family:Pretendard,sans-serif;cursor:pointer;text-align:center;line-height:1.3}
 .a-btn.sel{border-color:var(--g-blue);background:rgba(22,65,124,.08);color:var(--g-blue)}
 .a-order{font-size:8px;color:var(--g-muted);text-align:center;margin-bottom:2px}
@@ -176,7 +178,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .r-comment{font-size:12px;color:#374151;line-height:1.8;background:rgba(22,65,124,.04);border-left:3px solid var(--g-blue);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:10px}
 .wrong-item{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .wrong-left{flex:1}.wrong-num{font-size:11px;font-weight:900;color:var(--no)}.wrong-topic{font-size:12px;font-weight:700;color:var(--g-ink);margin:2px 0}.wrong-area{font-size:10px;color:var(--g-muted)}.wrong-key{margin-top:5px;color:#475569;font-size:10px;line-height:1.55}
-.wrong-link{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;background:var(--g-blue);color:#fff;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap;flex-shrink:0}
+.wrong-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}.wrong-link{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;background:var(--g-blue);color:#fff;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap}.wrong-actions .similar-btn{padding:7px 10px;border-radius:8px;font-size:10px}
 .s-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1.5px solid #f1f5f9}
 .s-item:last-child{border-bottom:none}
 .s-tn{font-size:13px;font-weight:700;color:var(--g-ink)}.s-vol{font-size:10px;color:var(--g-muted);margin-top:2px}
@@ -199,7 +201,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 @media print{
   body{background:#fff!important}
   body::before{content:attr(data-print-watermark);position:fixed;z-index:9999;inset:0;pointer-events:none;color:rgba(22,65,124,.12);font:900 26px Pretendard,sans-serif;letter-spacing:.08em;white-space:pre;line-height:12;transform:rotate(-32deg)}
-  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.answer-modal,.wrong-link,.s-link{display:none!important}
+  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.answer-modal,.wrong-link,.similar-btn,.s-link{display:none!important}
   #result{display:block!important;margin:0!important}
   .res-hero{background:#16417C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
@@ -363,6 +365,25 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
   <div id="result"></div>
 </main>
+<div id="similarModal" role="dialog" aria-modal="true" aria-labelledby="similarModalTitle">
+  <div class="similar-card">
+    <div class="similar-header">
+      <strong class="similar-title" id="similarModalTitle">유사문제</strong>
+      <button type="button" class="similar-close" onclick="closeSimilar()" aria-label="닫기">×</button>
+    </div>
+    <div class="similar-lv" aria-label="문제 난이도">
+      <button type="button" class="lv-chip active" onclick="setSimilarLv(1)">기초</button>
+      <button type="button" class="lv-chip" onclick="setSimilarLv(2)">보통</button>
+      <button type="button" class="lv-chip" onclick="setSimilarLv(3)">심화</button>
+    </div>
+    <div class="similar-problem" id="similarProblemArea"></div>
+    <input id="similarAnswer" class="similar-input" type="text" autocomplete="off" placeholder="답을 입력하세요" onkeydown="if(event.key==='Enter')checkSimilar()" />
+    <button type="button" class="similar-check-btn" onclick="checkSimilar()">정답 확인</button>
+    <div id="similarResult" class="similar-result"></div>
+    <div id="similarHint" class="similar-hint"></div>
+    <button id="similarNextBtn" type="button" class="similar-next" onclick="nextSimilar()">다음 문제</button>
+  </div>
+</div>
 <div class="answer-modal" id="answerModal" role="dialog" aria-modal="true" aria-labelledby="answerSheetTitle">
   <div class="answer-sheet" id="answerSheet">
     <div class="answer-watermark" id="answerWatermark" aria-hidden="true"></div>
@@ -582,7 +603,7 @@ function buildQ(){
   const g=document.getElementById('qGrid');g.innerHTML='';
   anim=[];s12=['',''];
   QS.forEach((q,i)=>{
-    const c=document.createElement('div');c.className='q-card';c.id='qc'+i;
+    const c=document.createElement('div');c.className='q-card'+(q.in==='animal'?' animal-card':'');c.id='qc'+i;
     if(inputMode==='ox'){c.onclick=()=>setOX(i);}
     const typeTag=`<span class="q-type ${TYPST[q.t]}">${q.t}</span>`;
     const numTag=`<div class="q-num">Q${String(q.id).padStart(2,'0')}</div>`;
@@ -595,7 +616,7 @@ function buildQ(){
 function bIn(q,i){
   if(q.in==='num')return`<input class="q-inp" type="text" inputmode="numeric" id="qi${i}" placeholder="${q.ph}" oninput="chkQ(${i})">`;
   if(q.in==='dual')return`<div class="q-dual"><div><label>${q.lb[0]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}a" placeholder="${q.ph[0]}" oninput="chkQ(${i})"></div><div><label>${q.lb[1]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}b" placeholder="${q.ph[1]}" oninput="chkQ(${i})"></div></div>`;
-  if(q.in==='animal')return`<div><div class="q-animal"><button class="a-btn" onclick="selA('다람쥐',this)">🐿다람쥐</button><button class="a-btn" onclick="selA('거북',this)">🐢거북</button><button class="a-btn" onclick="selA('토끼',this)">🐇토끼</button></div><div class="a-order" id="ao">가벼운 순서로 탭</div><button class="a-clr" onclick="clrA()">초기화</button></div>`;
+  if(q.in==='animal')return`<div><div class="balance-pair" aria-label="토끼가 거북보다 무겁고, 거북이 다람쥐보다 무거운 양팔저울"><div class="balance-scene right-down" role="img" aria-label="토끼 쪽이 내려간 양팔저울"><span class="balance-beam"></span><span class="balance-pivot"></span><img class="balance-animal left" src="./assets/animal-turtle.png" alt="거북"/><img class="balance-animal right" src="./assets/animal-rabbit.png" alt="토끼"/><b class="balance-name left">거북</b><b class="balance-name right">토끼</b></div><div class="balance-scene left-down" role="img" aria-label="거북 쪽이 내려간 양팔저울"><span class="balance-beam"></span><span class="balance-pivot"></span><img class="balance-animal left" src="./assets/animal-turtle.png" alt="거북"/><img class="balance-animal right" src="./assets/animal-squirrel.png" alt="다람쥐"/><b class="balance-name left">거북</b><b class="balance-name right">다람쥐</b></div></div><div class="q-animal"><button class="a-btn" onclick="selA('다람쥐',this)">🐿다람쥐</button><button class="a-btn" onclick="selA('거북',this)">🐢거북</button><button class="a-btn" onclick="selA('토끼',this)">🐇토끼</button></div><div class="a-order" id="ao">가벼운 순서로 탭</div><button class="a-clr" onclick="clrA()">초기화</button></div>`;
   if(q.in==='sym')return`<div><div class="sym-lbl">① 빈칸</div><div class="sym-row" id="sga">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(0,'${s}',this)">${s}</button>`).join('')}</div><div class="sym-lbl">② 빈칸</div><div class="sym-row" id="sgb">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(1,'${s}',this)">${s}</button>`).join('')}</div></div>`;
 }
 function buildC(){
@@ -713,13 +734,14 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 <div class="strategy-card"><div class="strategy-title">학습 전략</div>
   <div class="strategy-body">안녕하세요. 지필드 영재교육입니다. <b>${nm2}</b> 학생의 필즈 대비 선발 모의 진단 레벨은 <b>${sc}점</b>으로 <b>${li.lv}</b>입니다.<br><br>${li.tx}<br><br>${CD.comment}<br><br>당부 드리고 싶은 건 학원이 중요한 것이 아니라 <b>연산 → 교과 → 사고력</b> 순으로 균형이 맞아야 합니다. 필즈에 입학하게 되면 E1반은 <b>필즈 입문</b>, E2반은 <b>필즈 베이직</b>이 부교재로 진행됩니다. 입문 정도라면 <b>교과 3-1 과정 + 기적의 계산법 5권</b> 정도의 연산이 필요하고, 베이직은 <b>교과 2-1 과정 + 기적의 계산법 3·4권</b> 정도의 수행률이 필요합니다.</div>
 </div>
-${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div><div class="wrong-key"><b>풀이 핵심</b> · ${keyPoint(q)}</div></div><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
+${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div><div class="wrong-key"><b>풀이 핵심</b> · ${keyPoint(q)}</div></div><div class="wrong-actions"><button type="button" class="similar-btn" onclick="openSimilar(${q.id},'${q.t}')">유사문제</button><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div></div>`).join('')}</div>`:''}
 <div class="res-actions">
   ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}&view=type" target="_blank" rel="noopener">약점 처방전 · 유형별로 보기</a><a class="res-prescription" href="${prescriptionUrl}&view=mixed" target="_blank" rel="noopener">약점 처방전 · 섞어서 보기</a>`:`<div class="res-locked">약점 처방전은 승인번호로 열립니다. 승인번호를 넣고 다시 시작하거나 선생님께 문의해 주세요.</div>`}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">약점 유사 문제 및 상담 신청하기 →</a>
 </div>`;
   setTimeout(()=>{
+    if(typeof Chart==='undefined')return;
     const tCtx=document.getElementById('cTY')?.getContext('2d');
     if(tCtx)charts.push(new Chart(tCtx,{type:'doughnut',data:{labels:TY,datasets:[{data:TY.map(t=>pct(ts[t].ok,ts[t].tot)),backgroundColor:TY.map(t=>TY_CLR[t]),borderColor:'rgba(255,255,255,.8)',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#64748b',font:{size:10},padding:6}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}}));
     const bData=BA_ORDER.filter(b=>baMap[b].tot>0);
@@ -802,6 +824,28 @@ ${seq.join(', ')}, □`,
 };
 
 const TYPE_NAMES={'식의계산':'식의계산','수':'수','논리추리':'논리추리','규칙':'규칙','도형':'도형'};
+const SEESAW_ANIMALS={
+  '토끼':'animal-rabbit.png','거북':'animal-turtle.png','다람쥐':'animal-squirrel.png','곰':'animal-bear.png',
+  '여우':'animal-fox.png','너구리':'animal-raccoon.png','사슴':'animal-deer.png','늑대':'animal-wolf.png',
+  '오리':'animal-duck.png','호랑이':'animal-tiger.png'
+};
+const SEESAW_SETS=[
+  ['토끼','거북','다람쥐'],['곰','토끼','거북'],['여우','너구리','다람쥐'],['사슴','늑대','오리','호랑이']
+];
+function shuffleCopy(items){return [...items].sort(()=>Math.random()-.5);}
+function seesawScene(left,right,heavier,index){
+  const leftDown=left===heavier;
+  return `<div><div class="balance-scene ${leftDown?'left-down':'right-down'}" role="img" aria-label="${heavier} 쪽이 내려간 양팔저울"><span class="balance-beam"></span><span class="balance-pivot"></span><img class="balance-animal left" src="./assets/${SEESAW_ANIMALS[left]}" alt="${left}"/><img class="balance-animal right" src="./assets/${SEESAW_ANIMALS[right]}" alt="${right}"/><b class="balance-name left">${left}</b><b class="balance-name right">${right}</b></div><p class="balance-caption">[저울 ${index}]</p></div>`;
+}
+function genSeesawSimilar(level){
+  const candidates=level===3?SEESAW_SETS.filter(set=>set.length===4):SEESAW_SETS.filter(set=>set.length===3);
+  const order=shuffleCopy(candidates[Math.floor(Math.random()*candidates.length)]);
+  const pairs=order.slice(1).map((heavier,index)=>{
+    const lighter=order[index];
+    return Math.random()<.5?{left:lighter,right:heavier,heavier}:{left:heavier,right:lighter,heavier};
+  });
+  return {answer:order[0],order,pairs};
+}
 
 function openSimilar(qid, qtype) {
   _simId=qid; _simType=qtype; _simLv=1;
@@ -809,6 +853,8 @@ function openSimilar(qid, qtype) {
   const label=pngInfo?pngInfo.name:qtype;
   document.getElementById('similarModalTitle').textContent=`Q${qid} 유사문제 · ${label}`;
   document.getElementById('similarModal').classList.add('show');
+  const levelLabels=qid===8?['기초 비교','순서 비교','4마리 비교']:['기초','보통','심화'];
+  document.querySelectorAll('.lv-chip').forEach((chip,index)=>{chip.textContent=levelLabels[index];});
   document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
   generateSimilar();
 }
@@ -821,7 +867,11 @@ function setSimilarLv(lv){
 async function generateSimilar(){
   const area=document.getElementById('similarProblemArea');
   const pngInfo=PNG_TYPE_MAP[_simId];
-  if(pngInfo && window.LiveGen && (_simId===4||_simId===25)){
+  if(_simId===8){
+    const d=genSeesawSimilar(_simLv);
+    _simQ={text:'',answer:d.answer,hint:`저울판이 내려간 쪽이 더 무겁습니다. ${d.order.join(' → ')} 순서입니다.`,isPng:true};
+    area.innerHTML=`<div class="similar-problem-text" style="margin-bottom:8px">다음 양팔저울을 보고 <b>가장 가벼운 동물</b>을 쓰세요.</div><div class="similar-seesaw-grid" style="--scale-count:${d.pairs.length}">${d.pairs.map((pair,index)=>seesawScene(pair.left,pair.right,pair.heavier,index+1)).join('')}</div>`;
+  } else if(pngInfo && window.LiveGen && (_simId===4||_simId===25)){
     // 라이브 생성 유형: Canvas/이미지 실시간 렌더 (정답 다양성 보장)
     if(_simId===4){
       const d=LiveGen.genFold();

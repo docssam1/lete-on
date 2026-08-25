@@ -228,6 +228,8 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/dv.js"></script>
 <script src="engine/threads/fr.js"></script>
 <script src="engine/threads/dc_mx.js"></script>
+<script src="engine/threads/el.js"></script>
+<script src="engine/threads/adv.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -287,6 +289,23 @@ var TOPICS = [
       {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
       {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
     ]
+  },
+  { id:'challenge', label:'경시의 탑', en:'Tower of Challenges', icon:'🏔️', color:'#C9A063', section:'magic',
+    subs:[
+      {label:'한쪽으로 모으기', thread:'CH1', level:2, desc:'세 자리×두 자리'},
+      {label:'100 보수 곱', thread:'CH2', level:2, desc:'100 넘는·안 넘는 수'},
+      {label:'진법 → 십진수', thread:'CH3', level:1, desc:'5진법 변환'},
+      {label:'1001 자릿수 이동법칙', thread:'CH4', level:2, desc:'세 자리 곱셈'},
+      {label:'순환소수 반복마디', thread:'CH5', level:1, desc:'9·99·999로 나누기'},
+      {label:'100 근처 수의 나눗셈', thread:'CH6', level:2, desc:'네 자리 ÷ 두 자리'},
+      {label:'100 근처 수의 제곱', thread:'CH7', level:2, desc:'90~110 제곱'},
+      {label:'제곱·세제곱 계산법', thread:'CH8', level:1, desc:'세 자리 제곱'},
+      {label:'분리 제곱법', thread:'CH9', level:2, desc:'다섯 자리 제곱'},
+      {label:'제곱수의 합', thread:'CH10', level:2, desc:'세 자리 구간'},
+      {label:'몰아주기 곱', thread:'CH11', level:1, desc:'십의 자리 같음'},
+      {label:'어림하기 곱셈법', thread:'CH12', level:2, desc:'세 자리 곱셈'},
+      {label:'큰 수 정복', thread:'CH13', level:1, desc:'만·억·조'},
+    ]
   }
 ];
 
@@ -305,6 +324,16 @@ var body = document.getElementById('dr-body');
 
 /* ── 헬퍼 ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* 다칸 답(배열) 채점 — app/exam.js의 matchesAnswer와 동일 로직(이 파일은 별도 스코프라 자체 보유) */
+function matchesAnswer(raw, answer){
+  if(Array.isArray(answer)){
+    var parts = String(raw==null?'':raw).split(',').map(function(s){return parseFloat(s.trim());});
+    if(parts.length !== answer.length) return false;
+    for(var i=0;i<answer.length;i++){ if(parts[i] !== answer[i]) return false; }
+    return true;
+  }
+  return parseFloat(raw) === answer;
+}
 
 /* topicKey → {cat, sub} */
 function parseTopic(key){
@@ -656,7 +685,7 @@ function showWrongsRetry(wrongs, origCfg){
     if(window.katex){
       try{ katex.render(p.tex||'', document.getElementById('nm-ex-qtex2'), {throwOnError:false}); }catch(_){}
     } else {
-      document.getElementById('nm-ex-qtex2').textContent = (p.tex||'').replace(/\\square/g,'□').replace(/\\/g,'');
+      document.getElementById('nm-ex-qtex2').textContent = NM_EXAM.texToPlain ? NM_EXAM.texToPlain(p.tex||'') : (p.tex||'').replace(/\\square/g,'□').replace(/\\/g,'');
     }
 
     var inp = document.getElementById('nm-ex-ans2');
@@ -668,7 +697,7 @@ function showWrongsRetry(wrongs, origCfg){
       if(!isNaN(v)) answers[current] = v;
       current++;
       if(current >= wrongProblems.length){
-        var score = wrongProblems.filter(function(p,i){return answers[i]===p.answer;}).length;
+        var score = wrongProblems.filter(function(p,i){return matchesAnswer(answers[i],p.answer);}).length;
         var elapsed = Math.round((Date.now()-startTime)/1000);
         wrap.innerHTML =
           '<div class="nm-exam-result">' +

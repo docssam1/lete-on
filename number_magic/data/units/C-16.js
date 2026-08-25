@@ -1,18 +1,19 @@
-/* Numbers of Magic — 유닛 C-16: ×5 / ÷5 전략 (중급 D 챕터2) */
+/* Numbers of Magic — 유닛 C-16: ×5 전략 (중급 창의전략 4단계) */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-16'] = {
   id:'C-16', tier:'intermediate', level:'C', order:16,
+  lineage:['ten-friends'],
   generator:'ml_x5',
-  title:{ ko:'×5 / ÷5 전략', en:'The ×5 / ÷5 Strategy', zh:'×5/÷5策略' },
-  subtitle:{ ko:'5는 10의 절반! ×5=×10÷2, ÷5=×2÷10', en:'5 is half of 10! ×5=×10÷2 and ÷5=×2÷10', zh:'5是10的一半！×5=×10÷2，÷5=×2÷10' },
+  title:{ ko:'×5 전략', en:'The ×5 Strategy', zh:'×5策略' },
+  subtitle:{ ko:'5는 10의 절반! ×5 = ×10 ÷ 2', en:'5 is half of 10! ×5 = ×10 ÷ 2', zh:'5是10的一半！×5 = ×10 ÷ 2' },
   icon:'✋',
 
   practice:{
     generator:'ml_x5', level:'practice', count:5,
-    params:{ mode:'mul' },
+    params:{ level:'practice', mode:'mul' },
     intro:{
       ko:'5를 곱할 때는 10을 곱하고 반으로 나누면 돼. 5는 10의 절반이니까! 준비됐지?',
       en:"To multiply by 5, multiply by 10 and halve it — because 5 is half of 10! Ready?",
@@ -34,37 +35,37 @@ window.NM_UNITS['C-16'] = {
               en:'You may swap the order: halve first (48÷2=24) then ×10 (=240). For even numbers, halving first is easier!',
               zh:'顺序可以换：先折半(48÷2=24)再×10(=240)。偶数先折半更容易！'} },
 
-      { tag:{ko:'② ÷5 = ×2 ÷ 10',en:'2) ÷5 = ×2 ÷ 10',zh:'② ÷5 = ×2 ÷ 10'},
-        head:{ko:'85÷5: 두 배 하고 10으로 나눠요 = 17!',en:'85÷5: double it, divide by 10 = 17!',zh:'85÷5：翻倍再除以10=17！'},
-        desc:{ko:'나누기 5도 마법이 있어요! ÷5는 <b>×2 하고 ÷10</b>과 같아요. 85÷5 = 85×2÷10 = 170÷10 = <b>17</b>. 왜냐하면 5로 나누기 = 10/2로 나누기 = 2를 곱하고 10으로 나누기니까요. 나눗셈이 두 배 만들기로 변신!',
-              en:'Dividing by 5 has magic too! ÷5 equals <b>×2 then ÷10</b>. 85÷5 = 85×2÷10 = 170÷10 = <b>17</b>. Because dividing by 5 = dividing by 10/2 = multiplying by 2 and dividing by 10. Division becomes doubling!',
-              zh:'除以5也有魔法！÷5等于<b>×2再÷10</b>。85÷5 = 85×2÷10 = 170÷10 = <b>17</b>。因为除以5=除以10/2=乘2再除以10。除法变成了翻倍！'},
-        mathSteps:['85 ÷ 5','= 85 × 2 ÷ 10','= 170 ÷ 10','= 17'],
-        result:{ko:'85÷5=17! 두 배 하고 0 하나 지우기.',en:'85÷5=17! Double, then drop a zero.',zh:'85÷5=17！翻倍，去掉一个0。'},
-        book:{ko:'분수로 보면: ÷5 = ÷(10/2) = ×(2/10). 곱하기와 나누기를 뒤집는 이 기술은 ÷25, ÷50에도 그대로 통해요.',
-              en:'In fractions: ÷5 = ÷(10/2) = ×(2/10). This invert trick extends to ÷25 and ÷50 as well.',
-              zh:'用分数看：÷5 = ÷(10/2) = ×(2/10)。这个倒转技巧同样适用于÷25、÷50。'} },
+      { tag:{ko:'② ×50, ×500도 똑같이',en:'2) ×50 and ×500 work the same way',zh:'② ×50、×500也一样'},
+        head:{ko:'36×50: 3600의 절반 = 1800!',en:'36×50: half of 3600 = 1800!',zh:'36×50：3600的一半=1800！'},
+        desc:{ko:'50은 100의 절반, 500은 1000의 절반이에요 — <b>×5 가족</b>이죠. 그래서 ×50은 <b>×100 하고 반으로</b>: 36×50 = 36×100÷2 = 3600÷2 = <b>1800</b>. 0의 개수만 늘어날 뿐 방법은 완전히 똑같아요. ×5 하나만 익히면 ×50, ×500까지 전부 내 것!',
+              en:'50 is half of 100, and 500 is half of 1000 — they\'re all part of the <b>×5 family</b>. So ×50 means <b>×100 then halve</b>: 36×50 = 36×100÷2 = 3600÷2 = <b>1800</b>. Only the zeros change — the method stays identical. Master ×5, and ×50, ×500 come free!',
+              zh:'50是100的一半，500是1000的一半——都是<b>×5家族</b>。所以×50就是<b>×100再折半</b>：36×50 = 36×100÷2 = 3600÷2 = <b>1800</b>。只是0的个数变多，方法完全一样。学会×5，×50、×500也顺带学会！'},
+        mathSteps:['36 × 50','= 36 × 100 ÷ 2','= 3600 ÷ 2','= 1800'],
+        result:{ko:'36×50=1800! ×5 가족은 전부 같은 방법.',en:'36×50=1800! The whole ×5 family uses the same trick.',zh:'36×50=1800！×5家族都是同一招。'},
+        book:{ko:'0을 붙이는 규칙: ×5는 0 한 개(×10), ×50은 0 두 개(×100), ×500은 0 세 개(×1000). 붙인 0의 개수만큼 마지막에 나눗셈 ÷2를 해요.',
+              en:'The zero rule: ×5 adds one zero (×10), ×50 adds two (×100), ×500 adds three (×1000). However many zeros you add, finish with one ÷2.',
+              zh:'加0规则：×5加一个0(×10)，×50加两个0(×100)，×500加三个0(×1000)。不管加几个0，最后都÷2一次。'} },
 
       { tag:{ko:'③ 절반 만들기 연습',en:'3) Practising halving',zh:'③ 练习折半'},
         head:{ko:'반 나누기가 빠르면 ×5가 빨라요',en:'Fast halving makes fast ×5',zh:'折半快，×5就快'},
-        desc:{ko:'이 전략의 심장은 <b>절반 만들기</b>예요. 홀수 십의 절반도 연습해요: 340÷2 → 300÷2=150, 40÷2=20 → 170. 큰 수도 쪼개서 반으로: 760÷2 = 380. 절반 만들기가 손에 익으면 ×5·÷5·×50·×25가 모두 내 것이 돼요!',
-              en:'The heart of this strategy is <b>halving</b>. Practise halving awkward numbers too: 340÷2 → 300÷2=150, 40÷2=20 → 170. Split big numbers to halve them: 760÷2 = 380. Master halving, and ×5, ÷5, ×50, ×25 all become yours!',
-              zh:'这个策略的核心是<b>折半</b>。也要练不顺手的数：340÷2 → 300÷2=150，40÷2=20 → 170。大数拆开折半：760÷2=380。折半熟练了，×5、÷5、×50、×25都是你的！'},
+        desc:{ko:'이 전략의 심장은 <b>절반 만들기</b>예요. 홀수 십의 절반도 연습해요: 340÷2 → 300÷2=150, 40÷2=20 → 170. 큰 수도 쪼개서 반으로: 760÷2 = 380. 절반 만들기가 손에 익으면 ×5·×50·×500이 모두 내 것이 돼요!',
+              en:'The heart of this strategy is <b>halving</b>. Practise halving awkward numbers too: 340÷2 → 300÷2=150, 40÷2=20 → 170. Split big numbers to halve them: 760÷2 = 380. Master halving, and ×5, ×50, ×500 all become yours!',
+              zh:'这个策略的核心是<b>折半</b>。也要练不顺手的数：340÷2 → 300÷2=150，40÷2=20 → 170。大数拆开折半：760÷2=380。折半熟练了，×5、×50、×500都是你的！'},
         mathSteps:['340÷2: 300÷2=150','40÷2=20','150+20=170'],
         result:{ko:'절반도 쪼개서! 백 먼저, 십 나중 — 반 나누기 달인.',en:'Split to halve! Hundreds first, tens next — a halving master.',zh:'折半也拆开！先百位后十位——折半达人。'},
         book:null }
     ],
-    rule:{ ko:'① ×5 = ×10 후 ÷2 (짝수면 ÷2 먼저)  ② ÷5 = ×2 후 ÷10  ③ 절반 만들기는 자리별로 쪼개서',
-      en:'① ×5 = ×10 then ÷2 (halve first if even)  ② ÷5 = ×2 then ÷10  ③ Halve place by place',
-      zh:'① ×5 = ×10后÷2(偶数先÷2)  ② ÷5 = ×2后÷10  ③ 折半按数位拆开' }
+    rule:{ ko:'① ×5 = ×10 후 ÷2 (짝수면 ÷2 먼저)  ② ×50=×100÷2, ×500=×1000÷2 — 0만 늘어남  ③ 절반 만들기는 자리별로 쪼개서',
+      en:'① ×5 = ×10 then ÷2 (halve first if even)  ② ×50=×100÷2, ×500=×1000÷2 — only the zeros grow  ③ Halve place by place',
+      zh:'① ×5 = ×10后÷2(偶数先÷2)  ② ×50=×100÷2，×500=×1000÷2——只是0变多  ③ 折半按数位拆开' }
   },
 
   check:{
     fills:[
       { tex:'64 \\times 5 = \\square', answer:320,
         hint:{ ko:'640÷2=? 또는 64÷2=32, ×10', en:'640÷2=? Or 64÷2=32, then ×10', zh:'640÷2=？或64÷2=32再×10' } },
-      { tex:'95 \\div 5 = \\square', answer:19,
-        hint:{ ko:'95×2=190, 190÷10=?', en:'95×2=190, 190÷10=?', zh:'95×2=190，190÷10=？' } }
+      { tex:'42 \\times 5 = \\square', answer:210,
+        hint:{ ko:'42×10=420, 420÷2=?', en:'42×10=420, 420÷2=?', zh:'42×10=420，420÷2=？' } }
     ],
     open:{ ko:'×5=×10÷2가 항상 성립하는 이유를 설명하고, 같은 원리로 ×50은 어떻게 계산할지 말해 봐요.',
       en:'Explain why ×5=×10÷2 always works, and using the same idea, how would you compute ×50?',
@@ -76,25 +77,25 @@ window.NM_UNITS['C-16'] = {
 
   lab:{
     generator:'ml_x5', level:'main', count:4,
-    params:{ mode:'div' },
+    params:{ mode:'mul', level:'main' },
     intro:{
-      ko:'이번엔 ÷5 마법! 두 배 하고 10으로 나눠봐.',
-      en:'Now ÷5 magic! Double it, then divide by 10.',
-      zh:'现在是÷5魔法！翻倍再除以10。'
+      ko:'이번엔 더 큰 수! ×10 하고 반으로 나눠봐.',
+      en:'Now with bigger numbers! Multiply by 10, then halve.',
+      zh:'现在数更大了！乘10再折半。'
     }
   },
 
   arena:{
     generator:'ml_x5', level:'main', count:8, timeLimit:300,
     params:{ mode:'mul' },
-    rule:{ ko:'5분 안에 ×5/÷5 문제를 모두 풀어요!', en:'Solve all ×5/÷5 problems in 5 minutes!', zh:'5分钟内解答所有×5/÷5题！' }
+    rule:{ ko:'5분 안에 ×5 문제를 모두 풀어요!', en:'Solve all ×5 problems in 5 minutes!', zh:'5分钟内解答所有×5题！' }
   },
 
   stamp:{ label:{ ko:'절반 마법사', en:'Halving Wizard', zh:'折半魔法师' }, coins:30 },
 
   voice:{
     correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'절반의 마법! ✋',en:'Halving magic!',zh:'折半魔法！'}, {ko:'대단해! 🌟',en:'Amazing!',zh:'太棒了！'} ],
-    wrong:[ {ko:'×10 하고 반으로 나눠봐!',en:'×10 then halve!',zh:'×10再折半！'}, {ko:'÷5는 ×2 하고 ÷10이야!',en:'÷5 is ×2 then ÷10!',zh:'÷5是×2再÷10！'} ],
+    wrong:[ {ko:'×10 하고 반으로 나눠봐!',en:'×10 then halve!',zh:'×10再折半！'}, {ko:'5는 10의 절반이야!',en:'5 is half of 10!',zh:'5是10的一半！'} ],
     finish:{ ko:'완벽해! 절반 마법사! ✋✨', en:'Perfect! Halving Wizard!', zh:'完美！折半魔法师！' }
   }
 };

@@ -328,8 +328,8 @@ NM_TGEN['mx2_series'] = function(params, rng) {
   const mode = params.mode || 'nat';
 
   if (mode === 'nat') {
-    /* 1 + 2 + 3 + … + n = n(n+1)/2  (가우스 공식) */
-    const n   = R(rng, 4, 20);
+    /* 1 + 2 + 3 + … + n = n(n+1)/2  (가우스 공식) — 항수 범위 확대 */
+    const n   = R(rng, 4, 100);
     const sum = (n * (n + 1)) / 2;    /* n*(n+1)은 짝수 → 항상 정수 */
     return {
       prompt: {
@@ -348,8 +348,8 @@ NM_TGEN['mx2_series'] = function(params, rng) {
     };
   }
 
-  /* mode === 'oddEven' */
-  const n    = R(rng, 3, 10);
+  /* mode === 'oddEven' — 항수 범위 확대 */
+  const n    = R(rng, 3, 60);
   const kind = pick(rng, ['odd', 'even']);
 
   if (kind === 'odd') {
@@ -446,9 +446,17 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
 /* ── MX4 — 제곱근 ────────────────────────────────────────────── */
 NM_TGEN['mx4_sqrt'] = function(params, rng) {
   const hi   = params.hi || 400;
-  const nMax = (hi === 400) ? 20 : 40;
-  const n    = R(rng, 11, nMax);
+  const nMax = (hi === 400) ? 20 : Math.round(Math.sqrt(hi));
+  /* hi가 정해 주는 상한(nMax)은 그대로 두되, 하한을 낮춰 정수 n의 후보를
+     최대한 늘리고, 같은 n이라도 제곱근·제곱 두 표기를 섞어 다양성을 더한다. */
+  const n    = R(rng, 2, nMax);
   const sq   = n * n;
+  const tex = pick(rng, [
+    `\\sqrt{${sq}} = \\square`,
+    `\\square = \\sqrt{${sq}}`,
+    `\\square^2 = ${sq}`,
+    `${sq} = \\square^2`
+  ]);
 
   return {
     prompt: {
@@ -456,7 +464,7 @@ NM_TGEN['mx4_sqrt'] = function(params, rng) {
       en: `Find the square root of ${sq}`,
       zh: `求${sq}的平方根`
     },
-    tex:        `\\sqrt{${sq}} = \\square`,
+    tex,
     answer:     n,
     answerType: 'number',
     widget:     'array',

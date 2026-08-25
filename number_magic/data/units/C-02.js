@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-02'] = {
   id:'C-02', tier:'intermediate', level:'C', order:2,
+  lineage:['ten-friends'],
   generator:'ml_pair10',
   title:{ ko:'곱해서 10 만들기', en:'Making Pairs of 10', zh:'凑10乘法' },
   subtitle:{ ko:'2×5=10! 쌍을 찾으면 곱셈이 쉬워져요', en:'2×5=10! Find the pair and make multiplication easy', zh:'2×5=10！找到对，乘法变简单' },

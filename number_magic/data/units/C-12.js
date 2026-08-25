@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-12'] = {
   id:'C-12', tier:'intermediate', level:'C', order:12,
+  lineage:['place-magic'],
   generator:'ml8_mul2d2d',
   title:{ ko:'엑스맨 곱셈', en:'X-Cross Multiplication', zh:'X交叉乘法' },
   subtitle:{ ko:'X자로 교차해서 곱해요: 가운데 조각 두 개를 한 번에!', en:'Cross-multiply in an X: catch both middle pieces at once!', zh:'画X交叉相乘：一次抓住中间两块！' },
@@ -52,7 +53,9 @@ window.NM_UNITS['C-12'] = {
               zh:'全全乘法(C-10)有四块，X法把中间两块<b>一次抓住</b>，缩成三块。熟练后光画X就能看出答案。经典顺序：<b>右列→X→左列</b>，即个位→十位→百位。'},
         mathSteps:['풀풀: 4조각','엑스맨: 세로+X+세로 = 3조각','가운데를 한 번에!'],
         result:{ko:'조각이 적을수록 빨라요! X 하나로 가운데를 통째로.',en:'Fewer pieces, more speed! One X captures the whole middle.',zh:'块越少越快！一个X包揽整个中间。'},
-        book:null }
+        book:{ko:'고급 과정에서는 세 자리×두 자리, 세 자리×세 자리로 확장돼요. X가 하나 더 생겨 조각이 늘어나지만 원리는 똑같아요 — 자리를 하나씩 옮겨가며 쌓기만 하면 돼요.',
+              en:'The advanced course extends this to 3-digit×2-digit and 3-digit×3-digit — one more X appears and there are more pieces, but the same idea still works: stack them place by place.',
+              zh:'高级课程会扩展到三位数×两位数、三位数×三位数——多一个X、多几块，但原理不变：一位一位错开叠加即可。'} }
     ],
     rule:{ ko:'① 세로끼리: 십×십(백), 일×일(일)  ② X 교차곱의 합 = 십의 조각  ③ 자리값 살려 더하기(올림 조심)',
       en:'① Columns: tens×tens (hundreds), ones×ones (ones)  ② Sum of X cross-products = tens piece  ③ Add with place values (mind carries)',

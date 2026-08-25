@@ -10,6 +10,7 @@
 .toolbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;background:rgba(16,36,64,.96);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 .toolbar b{font-size:14px}.actions{display:flex;gap:7px;flex-wrap:nowrap;justify-content:flex-end}.actions button,.actions a{flex:0 0 auto;white-space:nowrap;border:1px solid rgba(255,255,255,.3);border-radius:7px;background:#fff;color:var(--navy);padding:8px 11px;text-decoration:none;font:800 12px inherit;cursor:pointer}.actions .gold{background:var(--gold);border-color:var(--gold)}
 .pages{width:min(210mm,calc(100% - 24px));margin:22px auto}.sheet{position:relative;min-height:297mm;margin:0 0 18px;padding:15mm 15mm 18mm;background:var(--paper);box-shadow:0 10px 35px rgba(20,33,54,.15);overflow:hidden}
+.sheet.secure-page-sheet{min-height:0;padding:0;background:#fff}.secure-page-image{display:block;width:100%;height:auto}.secure-page-sheet .watermark{z-index:2}
 .watermark{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:rgba(16,36,64,.045);font-size:42px;font-weight:950;transform:rotate(-28deg);white-space:nowrap}
 .head{position:relative;display:flex;justify-content:space-between;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:10px;margin-bottom:18px}.brand{color:var(--navy);font-size:12px;font-weight:950;letter-spacing:.14em}.head h1{margin:5px 0 0;font-size:24px;letter-spacing:-.04em}.meta{text-align:right;color:var(--muted);font-size:11px;font-weight:750;line-height:1.65}
 .instructions{position:relative;margin-bottom:16px;padding:10px 12px;border:1px solid #e4d3aa;background:#fffbef;border-radius:7px;font-size:11px;line-height:1.65}
@@ -18,15 +19,20 @@
 .hf-variation-problem{display:block;width:auto;max-width:100%;max-height:210px;object-fit:contain;margin:auto}
 .hf-variation-text-only{width:min(520px,100%);padding:10px 12px;border:1px solid #d9dee7;border-radius:8px;color:#7a8492;font-size:10px}.hf-variation-text-only b{display:block;margin-bottom:7px;color:#53647a}.hf-variation-text-only span{display:block;height:27px;border-bottom:1px solid #d9dee7}
 .hf-spatial{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;max-width:640px}.hf-spatial figure,.hf-three-views figure{margin:0;text-align:center}.hf-spatial figcaption,.hf-three-views figcaption{margin-top:3px;color:#667;font-size:10px}.hf-spatial-main{width:150px}.hf-option-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:7px}.hf-option{position:relative;min-height:74px;padding:5px;border:1px solid #d7dde5;border-radius:7px;background:#fff}.hf-option b{position:absolute;top:3px;left:4px;z-index:2;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px}.hf-option svg{display:block;width:68px;height:68px;margin:auto}.hf-net-wrap .hf-net{display:block;width:110px;max-height:150px}.hf-three-views{display:flex;align-items:end;justify-content:center;gap:22px;flex-wrap:wrap}.hf-view-grid{display:block;width:auto;max-width:120px;height:auto}.hf-die{display:block;width:95px}.hf-dice-path{display:block;width:auto;max-width:230px;max-height:170px}
-.solutions{display:none}.solutions.show{display:block}.solution{position:relative;padding:13px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.75}.solution b{color:var(--navy)}.empty{padding:80px 20px;text-align:center;color:var(--muted)}
-@media(max-width:720px){.toolbar{display:block;padding:8px 10px;overflow-x:auto;background:var(--navy);box-shadow:0 3px 12px rgba(0,0,0,.2)}.toolbar>b{display:none}.actions{width:max-content;min-width:100%;justify-content:flex-start;flex-wrap:nowrap}.actions button,.actions a{padding:8px 10px}.pages{width:100%;margin:0}.sheet{min-height:0;margin:0;padding:22px 14px;box-shadow:none}.head{align-items:start}.head h1{font-size:19px}.meta{font-size:9px}.question{padding:13px 0}.prompt{font-size:13px}.hf-fig svg,.q01-fig svg{width:140px}.hf-grid svg{max-width:105px}.hf-spatial{align-items:center;gap:10px;flex-wrap:wrap}.hf-spatial-main{width:120px}.hf-option-grid{width:100%;flex-basis:100%;grid-template-columns:repeat(4,1fr)}.hf-option{min-height:63px}.hf-option svg{width:57px;height:57px}.hf-three-views{gap:14px}.hf-view-grid{max-width:92px}.figure{min-height:125px}}
-@media print{body{background:#fff}.toolbar{display:none}.pages{width:100%;margin:0}.sheet{width:210mm;min-height:297mm;margin:0;padding:13mm 14mm;box-shadow:none;page-break-after:always}.sheet:last-child{page-break-after:auto}.solutions:not(.show){display:none!important}@page{size:A4 portrait;margin:0}}
+.solutions{display:none}.solutions.show{display:block}.solution{position:relative;padding:13px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.75}.solution b{color:var(--navy)}.empty{padding:80px 20px;text-align:center;color:var(--muted)}.viewer-error{display:none;width:min(210mm,calc(100% - 24px));margin:12px auto -10px;padding:10px 13px;border:1px solid #e2a4a8;border-radius:8px;background:#fff8f8;color:#a22631;font-size:12px;font-weight:800}.viewer-error.show{display:block}
+@media(max-width:720px){.toolbar{display:block;padding:8px 10px;overflow-x:auto;background:var(--navy);box-shadow:0 3px 12px rgba(0,0,0,.2)}.toolbar>b{display:none}.actions{width:max-content;min-width:100%;justify-content:flex-start;flex-wrap:nowrap}.actions button,.actions a{padding:8px 10px}.pages{width:100%;margin:0}.sheet{min-height:0;margin:0;padding:22px 14px;box-shadow:none}.sheet.secure-page-sheet{padding:0}.head{align-items:start}.head h1{font-size:19px}.meta{font-size:9px}.question{padding:13px 0}.prompt{font-size:13px}.hf-fig svg,.q01-fig svg{width:140px}.hf-grid svg{max-width:105px}.hf-spatial{align-items:center;gap:10px;flex-wrap:wrap}.hf-spatial-main{width:120px}.hf-option-grid{width:100%;flex-basis:100%;grid-template-columns:repeat(4,1fr)}.hf-option{min-height:63px}.hf-option svg{width:57px;height:57px}.hf-three-views{gap:14px}.hf-view-grid{max-width:92px}.figure{min-height:125px}}
+@media print{body{background:#fff}.toolbar{display:none}.pages{width:100%;margin:0}.sheet{width:210mm;min-height:297mm;margin:0;padding:13mm 14mm;box-shadow:none;page-break-after:always}.sheet.secure-page-sheet{min-height:0;padding:0}.sheet:last-child{page-break-after:auto}.solutions:not(.show){display:none!important}@page{size:A4 portrait;margin:0}}
 </style>
 </head>
 <body>
-<header class="toolbar"><b>G-FIELD HYPER FOCUS VIEWER</b><div class="actions"><a id="backLink" href="./">채점 화면</a><button type="button" id="regenBtn">다른 문제</button><button type="button" id="answerBtn">정답·풀이 보기</button><button type="button" class="gold" onclick="window.print()">인쇄</button></div></header>
+<header class="toolbar"><b>G-FIELD HYPER FOCUS VIEWER</b><div class="actions"><a id="backLink" href="./">채점 화면</a><a id="videoLink" href="#" target="_blank" rel="noopener noreferrer" hidden>해설 영상</a><button type="button" id="regenBtn">다른 문제</button><button type="button" id="answerBtn">정답·풀이 보기</button><button type="button" class="gold" onclick="window.print()">인쇄</button></div></header>
 <main id="pages" class="pages"><div class="sheet"><div class="empty">문제지를 만드는 중입니다.</div></div></main>
 <script src="../../config.js"></script>
+<script src="../data.js"></script>
+<script src="../supabase-config.js"></script>
+<script src="../supabase-client.js"></script>
+<script src="../portal-auth.js"></script>
+<script src="../secure-mock.js"></script>
 <script src="./access-policy.js"></script>
 <script src="../generator/q01.js"></script>
 <script src="../generator/stacking.js"></script>
@@ -37,54 +43,83 @@
 <script src="../generator/combinatorics.js"></script>
 <script src="../generator/applications.js"></script>
 <script src="./exam-blueprints.js"></script>
+<script src="./premier-release-catalog.js"></script>
 <script src="./variation-bank.js"></script>
 <script src="./mock-core.js"></script>
+<script src="./secure-flow.js"></script>
 <script>
 (async function(){
   const params=new URLSearchParams(location.search);
   const mode=params.get('mode')==='practice'?'practice':'exam';
   const examId=params.get('exam')||HFMockBlueprints.reviewExamId;
-  const student=HFMock.safeStudent(params.get('student'));
-  const seed=HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
   const typeIds=(params.get('types')||'').split(',').map(Number).filter(Boolean);
   const count=Number(params.get('count'));
   const difficulty=['easy','same','hard'].includes(params.get('difficulty'))?params.get('difficulty'):'same';
   const difficultyByType={};
   (params.get('levels')||'').split(',').forEach(pair=>{const [rawId,level]=pair.split(':');const typeId=Number(rawId);if(typeId&&['easy','same','hard'].includes(level))difficultyByType[typeId]=level;});
   const storedAccess=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG);
-  let doc;
-  try{
-    if(mode==='practice')await HFMock.preparePractice(typeIds);else await HFMock.prepareExam(examId);
-    doc=mode==='practice'
-      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier:storedAccess.paid?'paid':'free'})
-      :HFMock.createExam(examId,seed);
-  }catch(error){
-    document.getElementById('pages').innerHTML=`<section class="sheet"><div class="empty">${String(error.message||error)}<br><a href="./?exam=${encodeURIComponent(examId)}">돌아가기</a></div></section>`;
+  const portalSession=await window.GFieldHFPortalAuth?.ready();
+  const remoteMode=Boolean(window.GFieldHFPortalAuth?.isSupabaseEnabled());
+  const remoteExam=remoteMode&&mode==='exam';
+  const requestedStudent=remoteMode?'':HFMock.safeStudent(params.get('student'));
+  const seed=remoteExam?null:HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
+  const secureMock=window.GFieldHFSecureMock;
+  const secureFlow=window.HFMockSecureFlow;
+  const secureMockEnabled=window.GFIELD_HF_SUPABASE_CONFIG?.features?.secureMockDelivery===true;
+  function releaseRound(slug){for(const series of (window.GFIELD_HF_PREMIER_RELEASE_CATALOG?.series||[])){const found=(series.rounds||[]).find(round=>round.key===slug);if(found)return found}return null}
+  function showState(message,href,label){
+    const pages=document.getElementById('pages');const sheet=document.createElement('section');sheet.className='sheet';const empty=document.createElement('div');empty.className='empty';empty.textContent=String(message||'문제지를 표시하지 못했습니다.');
+    if(href){empty.appendChild(document.createElement('br'));const link=document.createElement('a');link.href=href;link.textContent=label||'돌아가기';empty.appendChild(link)}
+    sheet.appendChild(empty);pages.replaceChildren(sheet);document.getElementById('answerBtn').style.display='none';document.getElementById('regenBtn').style.display='none';
+  }
+  if(remoteMode&&!portalSession){showState('승인번호 로그인이 필요합니다.','../?login=1','승인번호로 로그인');return}
+  if(remoteMode&&mode==='practice'&&!window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus')){showState('이 맞춤 문제지를 볼 수 있는 학습 권한이 없습니다.','../diagnosis.html?section=similar','맞춤 학습으로 돌아가기');return}
+  if(remoteExam&&(!secureMockEnabled||typeof secureMock?.loadExam!=='function'||typeof secureMock?.loadAnswers!=='function'||!secureFlow)){
+    showState('온라인 모의고사는 보안형 문제 전송 연결 전까지 검수 대기 상태입니다.','./','모의고사 목록으로 돌아가기');
     document.getElementById('answerBtn').style.display='none';
     document.getElementById('regenBtn').style.display='none';
+    return;
+  }
+  const student=HFMock.safeStudent(portalSession?.name||requestedStudent);
+  const portalPaid=window.GFieldHFPortalAuth?.canAccess(portalSession,'hyperfocus-extra')||window.GFieldHFPortalAuth?.canAccess(portalSession,'problem-bank');
+  const accessTier=remoteMode?(portalPaid?'paid':'free'):(portalPaid||storedAccess.paid?'paid':'free');
+  let doc;
+  try{
+    if(mode==='practice')await HFMock.preparePractice(typeIds);else if(!remoteMode)await HFMock.prepareExam(examId);
+    doc=mode==='practice'
+      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier})
+      :remoteExam?await secureMock.loadExam(examId):HFMock.createExam(examId,seed);
+  }catch(error){
+    showState(String(error?.message||'문제지를 안전하게 불러오지 못했습니다.'),`./?exam=${encodeURIComponent(examId)}`,'돌아가기');
     return;
   }
   const pages=document.getElementById('pages');
   if(!doc.questions.length){
-    pages.innerHTML='<section class="sheet"><div class="empty">선택된 약점 유형이 없습니다.<br><a href="./">진단 모의고사로 돌아가기</a></div></section>';
-    document.getElementById('answerBtn').style.display='none';
-    document.getElementById('regenBtn').style.display='none';
+    showState('선택된 약점 유형이 없습니다.','./','진단 모의고사로 돌아가기');
     return;
   }
-  if(doc.questions.every(q=>q.sourceMode==='variation-bank'))document.getElementById('regenBtn').style.display='none';
+  if(remoteExam||doc.questions.every(q=>q.sourceMode==='variation-bank'))document.getElementById('regenBtn').style.display='none';
   const perPage=mode==='practice'?4:2;
   const chunks=[];
-  for(let i=0;i<doc.questions.length;i+=perPage)chunks.push(doc.questions.slice(i,i+perPage));
+  const pageImageMode=remoteExam&&doc.deliveryMode==='page_images';
+  if(!pageImageMode)for(let i=0;i<doc.questions.length;i+=perPage)chunks.push(doc.questions.slice(i,i+perPage));
   const today=new Intl.DateTimeFormat('ko-KR',{dateStyle:'medium'}).format(new Date());
   function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function sheet(chunk,pageNo){return `<section class="sheet"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">G-FIELD GIFTED EDUCATION</div><h1>${esc(doc.title)}</h1></div><div class="meta">${esc(student)} 학생<br>${esc(doc.subtitle)}<br>${today} · ${pageNo}/${chunks.length}</div></div>${pageNo===1?`<div class="instructions">문제의 조건과 그림을 자세히 살펴보고 답을 쓰세요. ${doc.durationMinutes?`권장 시간은 ${doc.durationMinutes}분입니다.`:''} 정답과 풀이는 문제를 모두 푼 뒤 확인하세요.</div>`:''}${chunk.map(q=>`<article class="question"><div class="qhead"><span class="num">${q.number}</span><div><span class="tag">${esc(q.typeCode)} · ${esc(q.typeTitle)} · ${esc(q.difficultyLabel)}</span><div class="prompt">${esc(q.prompt)}</div></div></div><div class="figure">${q.problemHtml}</div><div class="answer-line">답: ____________________</div></article>`).join('')}</section>`;}
-  const solutionChunks=[];for(let i=0;i<doc.questions.length;i+=8)solutionChunks.push(doc.questions.slice(i,i+8));
-  const solutionHtml=solutionChunks.map((chunk,index)=>`<section class="sheet solutions"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">ANSWER &amp; GUIDE</div><h1>정답 및 간단 풀이</h1></div><div class="meta">${esc(student)} 학생<br>${index+1}/${solutionChunks.length}</div></div>${chunk.map(q=>`<div class="solution"><b>${q.number}. ${esc(q.typeTitle)}</b><br>${esc(q.answerText)}</div>`).join('')}</section>`).join('');
-  pages.innerHTML=chunks.map((chunk,index)=>sheet(chunk,index+1)).join('')+solutionHtml;
-  const canonical=new URLSearchParams(params);canonical.set('seed',seed);canonical.set('student',student);if(mode==='exam')canonical.set('exam',examId);history.replaceState(null,'',`${location.pathname}?${canonical}`);
-  const back=new URL('./',location.href);back.searchParams.set('student',student);back.searchParams.set('seed',seed);back.searchParams.set('exam',examId);document.getElementById('backLink').href=back;
-  document.getElementById('answerBtn').onclick=function(){const open=!document.querySelector('.solutions')?.classList.contains('show');document.querySelectorAll('.solutions').forEach(el=>el.classList.toggle('show',open));this.textContent=open?'정답·풀이 닫기':'정답·풀이 보기';};
-  document.getElementById('regenBtn').onclick=function(){params.set('seed',HFMock.makeSeed());params.set('student',student);location.search=params;};
+  function pageImageSheet(page){return `<section class="sheet secure-page-sheet"><img class="secure-page-image" src="${esc(page.signedAssetUrl)}" alt="${esc(page.assetAlt)}" loading="eager" decoding="async" referrerpolicy="no-referrer"><div class="watermark">${esc(student)} · GFIELD</div></section>`;}
+  function solutionHtml(rows){const solutionChunks=[];for(let i=0;i<rows.length;i+=8)solutionChunks.push(rows.slice(i,i+8));return solutionChunks.map((chunk,index)=>`<section class="sheet solutions"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">ANSWER &amp; GUIDE</div><h1>정답 및 간단 풀이</h1></div><div class="meta">${esc(student)} 학생<br>${index+1}/${solutionChunks.length}</div></div>${chunk.map(row=>`<div class="solution"><b>${row.number}. ${esc(row.typeTitle)}</b><br>${esc(row.answerText)}</div>`).join('')}</section>`).join('')}
+  const allowLocalSolutions=mode==='practice'||!remoteMode;
+  pages.innerHTML=(pageImageMode?doc.pages.map(pageImageSheet).join(''):chunks.map((chunk,index)=>sheet(chunk,index+1)).join(''))+(allowLocalSolutions?solutionHtml(doc.questions):'');
+  const canonical=remoteExam?new URLSearchParams({exam:doc.id}):new URLSearchParams(params);if(!remoteExam){canonical.set('seed',seed);if(remoteMode)canonical.delete('student');else canonical.set('student',student);if(mode==='exam')canonical.set('exam',examId)}history.replaceState(null,'',`${location.pathname}?${canonical}`);
+  const back=mode==='practice'?new URL('../diagnosis.html?section=similar',location.href):new URL('./',location.href);if(remoteExam){back.searchParams.set('exam',doc.id)}else{if(!remoteMode)back.searchParams.set('student',student);back.searchParams.set('seed',seed);if(mode==='exam')back.searchParams.set('exam',examId)}document.getElementById('backLink').href=back;
+  function setViewerError(message){let node=document.getElementById('viewerError');if(!node){node=document.createElement('div');node.id='viewerError';node.className='viewer-error';node.setAttribute('role','status');pages.before(node)}node.textContent=String(message||'');node.classList.toggle('show',Boolean(message))}
+  function toggleSolutions(button){const open=!document.querySelector('.solutions')?.classList.contains('show');document.querySelectorAll('.solutions').forEach(el=>el.classList.toggle('show',open));button.textContent=open?'정답·풀이 닫기':'정답·풀이 보기'}
+  const answerButton=document.getElementById('answerBtn');
+  const publicRelease=remoteExam?releaseRound(doc.id):null;
+  const videoLink=document.getElementById('videoLink');
+  if(remoteExam&&publicRelease?.videoUrl){videoLink.href=publicRelease.videoUrl;videoLink.hidden=false}
+  if(remoteExam&&publicRelease?.answersAvailable===true){answerButton.onclick=async function(){if(document.querySelector('.solutions')){toggleSolutions(this);return}this.disabled=true;this.textContent='보호 답안 확인 중';setViewerError('');try{const bundle=await secureMock.loadAnswers(doc.attemptId);const rows=doc.questions.map((question,index)=>{const answer=bundle.answers[index];if(!answer||answer.questionKey!==question.questionKey||answer.revision!==question.revision)throw new Error('문제와 보호 답안이 일치하지 않습니다.');return{number:question.number,typeTitle:question.typeTitle,answerText:answer.answerText}});pages.insertAdjacentHTML('beforeend',solutionHtml(rows));try{sessionStorage.setItem(secureFlow.gradingSignalKey(doc.attemptId),String(doc.manifestRevision))}catch(e){}this.disabled=false;toggleSolutions(this)}catch(error){this.disabled=false;this.textContent='정답·풀이 다시 확인';setViewerError(String(error?.message||'보호 답안을 불러오지 못했습니다.'))}}}else if(allowLocalSolutions){answerButton.onclick=function(){toggleSolutions(this)}}else answerButton.style.display='none';
+  document.getElementById('regenBtn').onclick=function(){if(remoteExam)return;params.set('seed',HFMock.makeSeed());if(remoteMode)params.delete('student');else params.set('student',student);location.search=params;};
 })();
 </script>
 </body>

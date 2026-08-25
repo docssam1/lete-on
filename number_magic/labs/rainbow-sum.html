@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무지개 덧셈법 — 수의 마법 개념실험실</title>
+<!-- Numbers of Magic 개념실험실 1호: 가우스 짝짓기 = 무지개 덧셈법
+     콘텐츠 전부 창작(이야기 서술·그림·문구 자체 작성) — 외부 교재/영상 미사용
+     내레이션: Web Speech(ko) 폴백. 추후 generate-audio 파이프라인으로 MP3 교체 가능 -->
+<style>
+:root{
+  --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;
+  --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
+  --ok:#2E9E6B;--no:#D9534F;
+  --r1:#E85D5D;--r2:#F09A3E;--r3:#E9C34A;--r4:#5FB876;--r5:#5B8DD9;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 500px at 30% -10%,#eef3fb,transparent 60%),var(--paper);
+  min-height:100dvh;padding:18px 14px 60px}
+.wrap{max-width:640px;margin:0 auto}
+.hero{text-align:center;padding:10px 0 18px}
+.hero h1{font-size:clamp(24px,6.5vw,32px);font-weight:900;letter-spacing:-.03em;color:var(--blue-deep)}
+.hero p{font-size:14px;color:var(--sub);margin-top:6px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:14px 0 18px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 16px;
+  font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 12px 30px -22px rgba(22,65,124,.3);display:none}
+.card.on{display:block}
+.card h2{font-size:17px;color:var(--blue-deep);margin-bottom:12px}
+.story p{font-size:15px;line-height:1.75;margin-bottom:12px}
+.story .legend{font-size:12.5px;color:var(--sub);background:var(--mist);border-radius:11px;padding:9px 12px}
+.speak{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;margin-bottom:12px}
+.btn{border:none;background:var(--blue);color:#fff;border-radius:13px;padding:12px 20px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn.gold{background:var(--gold-deep)}
+.btn:disabled{opacity:.45;cursor:default}
+.stage{position:relative;margin:6px 0 4px}
+.numrow{display:flex;justify-content:space-between;gap:4px}
+.numcell{flex:1 1 0;max-width:52px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--line);border-radius:12px;background:#fff;font-weight:900;
+  font-size:clamp(13px,4vw,18px);color:var(--blue-deep);transition:.18s;cursor:pointer;user-select:none}
+.numcell.lit{border-color:var(--gold-deep);background:var(--gold);transform:translateY(-2px)}
+.numcell.sel{border-color:var(--blue);background:#e8f0fb}
+.numcell.done{opacity:.45;cursor:default}
+.numcell.mid{border-style:dashed}
+.caption{text-align:center;font-size:15px;font-weight:800;color:var(--blue-deep);min-height:26px;margin-top:10px}
+.formula{text-align:center;font-size:clamp(18px,5.5vw,24px);font-weight:900;color:var(--ink);
+  margin-top:8px;min-height:32px;font-variant-numeric:tabular-nums}
+.formula b{color:var(--gold-deep)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;justify-content:center}
+.pick{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:9px 14px;
+  font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.pick.on{border-color:var(--blue);color:var(--blue);background:#e8f0fb}
+.qline{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;
+  font-size:16px;font-weight:800;margin-top:14px}
+.qline input{width:74px;padding:10px;border:2px solid var(--line);border-radius:11px;
+  font-size:17px;font-weight:800;text-align:center;font-family:inherit;color:var(--ink)}
+.qline input:focus{outline:none;border-color:var(--blue)}
+.qline input.good{border-color:var(--ok);background:#effaf4}
+.qline input.bad{border-color:var(--no);background:#fdf1f0}
+.fb{text-align:center;font-size:14.5px;font-weight:800;min-height:24px;margin-top:10px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.dots{font-weight:900;color:var(--sub);align-self:center;padding:0 2px;font-size:15px}
+.friends{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+.friend{border:2px solid var(--line);border-radius:99px;padding:5px 13px;font-size:14px;
+  font-weight:900;color:#b8bcc6;background:var(--mist);opacity:.6;font-variant-numeric:tabular-nums}
+.friend.got{border-color:var(--gold-deep);background:var(--gold);color:var(--blue-deep);opacity:1}
+.friend.got::before{content:'🌈 '}
+@media (prefers-reduced-motion:reduce){.numcell{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>🌈 무지개 덧셈법</h1>
+    <p>1부터 10까지 다 더하라고? 무지개를 그리면 10초 만에 끝나요.</p>
+  </header>
+
+  <nav class="tabs" aria-label="단계">
+    <button class="tab on" data-p="p1">① 이야기</button>
+    <button class="tab" data-p="p2">② 무지개 보기</button>
+    <button class="tab" data-p="p3">③ 직접 하기</button>
+  </nav>
+
+  <!-- ① 이야기 -->
+  <section class="card on story" id="p1">
+    <h2>선생님을 놀라게 한 아이</h2>
+    <button class="speak" data-say="story">🔊 읽어 주기</button>
+    <div id="storyText">
+      <p>아주 옛날 독일의 한 교실. 선생님이 말했어요. <b>"1부터 100까지 전부 더해 보렴!"</b>
+      아이들이 1 더하기 2, 더하기 3… 끙끙대는 사이, 한 아이가 몇 초 만에 손을 들었어요.
+      <b>"5050이요!"</b></p>
+      <p>그 아이의 비밀은 이거였어요. 수를 <b>앞에서 하나, 뒤에서 하나</b>씩 짝지으면 —
+      1과 100, 2와 99, 3과 98… <b>모든 짝의 합이 똑같이 101</b>! 짝이 50개니까
+      101×50=5050. 이 아이가 나중에 위대한 수학자가 된 <b>가우스</b>예요.</p>
+      <p>짝끼리 선을 이어 보면 꼭 <b>무지개</b> 같아요. 그래서 우리는 이 마법을
+      <b>무지개 덧셈법</b>이라고 불러요. 🌈</p>
+      <div class="legend">※ 어린 가우스 이야기는 옛날부터 전해 내려오는 일화예요.
+      숫자나 상황은 전하는 사람마다 조금씩 달라요 — 하지만 짝짓기 마법 자체는 진짜랍니다!</div>
+    </div>
+    <div class="row"><button class="btn" data-go="p2">무지개 보러 가기 →</button></div>
+  </section>
+
+  <!-- ② 무지개 보기 -->
+  <section class="card" id="p2">
+    <h2>1부터 10까지, 무지개 한 번에</h2>
+    <div class="stage">
+      <svg id="arcSvg" viewBox="0 0 600 190" style="width:100%;display:block" aria-hidden="true"></svg>
+      <div class="numrow" id="demoRow"></div>
+    </div>
+    <div class="caption" id="demoCap">▶ 를 누르면 무지개가 그려져요</div>
+    <div class="formula" id="demoFormula"></div>
+    <div class="row">
+      <button class="btn" id="playBtn">▶ 무지개 그리기</button>
+      <button class="speak" data-say="demo" style="margin:0">🔊 설명 듣기</button>
+    </div>
+  </section>
+
+  <!-- ③ 직접 하기 -->
+  <section class="card" id="p3">
+    <h2>이번엔 네 차례!</h2>
+    <div class="friends" id="friendRow" title="무지개 친구 — 이 수들을 직접 만들면 모을 수 있어요"></div>
+    <div class="row" style="margin:0 0 14px">
+      <button class="pick on" data-n="10">1~10</button>
+      <button class="pick" data-n="9">1~9</button>
+      <button class="pick" data-n="11">1~11</button>
+      <button class="pick" data-n="12">1~12</button>
+      <button class="pick" data-n="13">1~13</button>
+      <button class="pick" data-n="20">1~20</button>
+      <button class="pick" data-n="100">1~100</button>
+    </div>
+    <div class="stage">
+      <svg id="userSvg" viewBox="0 0 600 190" style="width:100%;display:block" aria-hidden="true"></svg>
+      <div class="numrow" id="userRow"></div>
+    </div>
+    <div class="caption" id="userCap"></div>
+    <div class="qline" id="userQ" style="display:none">
+      한 쌍의 합 <input id="inPair" inputmode="numeric" maxlength="4"> ×
+      쌍의 수 <input id="inCnt" inputmode="numeric" maxlength="3">
+      <span id="midTerm" style="display:none">+ 가운데 수 <input id="inMid" inputmode="numeric" maxlength="3"></span>
+      = <input id="inTotal" inputmode="numeric" maxlength="5">
+      <button class="btn gold" id="checkBtn">확인</button>
+    </div>
+    <div class="fb" id="userFb"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var RAINBOW=['#E85D5D','#F09A3E','#E9C34A','#5FB876','#5B8DD9','#8B6BC7','#D96BB0'];
+
+/* ── 탭 전환 ── */
+function show(id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===id)});
+  document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('on',c.id===id)});
+  window.speechSynthesis&&speechSynthesis.cancel();
+}
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(t.dataset.p)}});
+document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
+
+/* ── 읽어 주기 (Web Speech 폴백 — MP3 파이프라인 연결 전까지) ── */
+var SAY={
+  story:'아주 옛날 독일의 한 교실. 선생님이 1부터 100까지 전부 더해 보라고 했어요. 한 아이가 몇 초 만에 외쳤어요. 오천오십이요! 비밀은 짝짓기. 1과 100, 2와 99. 모든 짝의 합이 똑같이 101이에요. 짝이 50개니까 101 곱하기 50은 5050. 짝끼리 선을 이으면 무지개 같아서, 무지개 덧셈법이라고 불러요.',
+  demo:'1과 10을 이어요. 합은 11. 2와 9도 11. 3과 8도, 4와 7도, 5와 6도 전부 11이에요. 11이 5쌍이니까, 11 곱하기 5는 55!'
+};
+document.querySelectorAll('.speak').forEach(function(b){
+  b.onclick=function(){
+    if(!window.speechSynthesis)return;
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(SAY[b.dataset.say]);
+    u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u);
+  };
+});
+
+/* ── 숫자 줄 + 아치 그리기 공통 ── */
+function cells(n){ // 표시 셀 배열: 값 목록(…은 null)
+  if(n<=20){var a=[];for(var i=1;i<=n;i++)a.push(i);return a}
+  return [1,2,3,null,n-2,n-1,n]; // 1~100은 축약 표시
+}
+function buildRow(rowEl,vals){
+  rowEl.innerHTML='';
+  return vals.map(function(v){
+    var d=document.createElement('div');
+    if(v===null){d.className='dots';d.textContent='…'}
+    else{d.className='numcell';d.textContent=v;d.dataset.v=v}
+    rowEl.appendChild(d);return d;
+  });
+}
+function arcPath(svg,rowEl,elA,elB,color,idx){
+  var sb=svg.getBoundingClientRect(),ra=elA.getBoundingClientRect(),rb=elB.getBoundingClientRect();
+  var sx=600/sb.width;
+  var x1=(ra.left+ra.width/2-sb.left)*sx,x2=(rb.left+rb.width/2-sb.left)*sx;
+  var h=170-idx*26;if(h<40)h=40;
+  var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d','M '+x1+' 185 Q '+((x1+x2)/2)+' '+(185-h)+' '+x2+' 185');
+  p.setAttribute('fill','none');p.setAttribute('stroke',color);
+  p.setAttribute('stroke-width','7');p.setAttribute('stroke-linecap','round');p.setAttribute('opacity','.85');
+  svg.appendChild(p);
+  var len=p.getTotalLength();
+  p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+  p.getBoundingClientRect();
+  p.style.transition='stroke-dashoffset .55s ease';
+  p.style.strokeDashoffset='0';
+  return p;
+}
+var labelFlip=false;
+function arcLabel(svg,pathEl,text,color){
+  // 라벨을 아치 경로의 35%/65% 지점에 번갈아 얹어 중앙 겹침 방지 (halo로 가독 확보)
+  labelFlip=!labelFlip;
+  var pt=pathEl.getPointAtLength(pathEl.getTotalLength()*(labelFlip?0.35:0.65));
+  var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',pt.x);t.setAttribute('y',pt.y+5);
+  t.setAttribute('text-anchor','middle');t.setAttribute('font-size','15');
+  t.setAttribute('font-weight','900');t.setAttribute('fill',color||'#0E2C57');
+  t.setAttribute('stroke','#fff');t.setAttribute('stroke-width','4');
+  t.setAttribute('paint-order','stroke');
+  t.textContent=text;svg.appendChild(t);
+}
+
+/* ── ② 데모: 1~10 자동 애니메이션 ── */
+var demoRow=document.getElementById('demoRow'),arcSvg=document.getElementById('arcSvg');
+var demoCells=buildRow(demoRow,cells(10));
+var playing=false;
+document.getElementById('playBtn').onclick=function(){
+  if(playing)return;playing=true;
+  arcSvg.innerHTML='';
+  demoCells.forEach(function(c){c.classList.remove('lit')});
+  document.getElementById('demoFormula').textContent='';
+  var cap=document.getElementById('demoCap');
+  var pairs=[[0,9],[1,8],[2,7],[3,6],[4,5]];
+  var i=0;
+  (function step(){
+    if(i<pairs.length){
+      var a=demoCells[pairs[i][0]],b=demoCells[pairs[i][1]];
+      a.classList.add('lit');b.classList.add('lit');
+      var p=arcPath(arcSvg,demoRow,a,b,RAINBOW[i],i);
+      arcLabel(arcSvg,p,(+a.textContent)+(+b.textContent),RAINBOW[i]);
+      cap.textContent=a.textContent+' + '+b.textContent+' = 11';
+      i++;setTimeout(step,850);
+    }else{
+      cap.textContent='전부 11! 11이 다섯 쌍이에요';
+      document.getElementById('demoFormula').innerHTML='11 × 5 = <b>55</b>';
+      playing=false;
+    }
+  })();
+};
+
+/* ── 무지개 친구 모으기 (55·66·78·91·5050) ── */
+var FRIENDS=[55,66,78,91,5050];
+function loadFriends(){try{return JSON.parse(localStorage.getItem('nm_rainbow_friends')||'[]')}catch(e){return[]}}
+function saveFriends(a){try{localStorage.setItem('nm_rainbow_friends',JSON.stringify(a))}catch(e){}}
+var gotFriends=loadFriends();
+function drawFriends(){
+  var fr=document.getElementById('friendRow');fr.innerHTML='';
+  FRIENDS.forEach(function(n){
+    var d=document.createElement('span');
+    d.className='friend'+(gotFriends.indexOf(n)>=0?' got':'');
+    d.textContent=n;fr.appendChild(d);
+  });
+}
+drawFriends();
+
+/* ── ③ 직접 하기 ── */
+var userRow=document.getElementById('userRow'),userSvg=document.getElementById('userSvg');
+var N=10,userCells=[],sel=null,doneCnt=0,arcIdx=0;
+function setup(n){
+  N=n;sel=null;doneCnt=0;arcIdx=0;
+  userSvg.innerHTML='';
+  userCells=buildRow(userRow,cells(n));
+  document.getElementById('userQ').style.display='none';
+  document.getElementById('userFb').textContent='';document.getElementById('userFb').className='fb';
+  ['inPair','inCnt','inMid','inTotal'].forEach(function(id){
+    var el=document.getElementById(id);el.value='';el.className='';
+  });
+  var cap=document.getElementById('userCap');
+  if(n<=20){
+    cap.textContent='합이 같아지는 두 수를 차례로 눌러 짝을 지어요 (앞에서 하나, 뒤에서 하나!)';
+    userCells.forEach(function(c){
+      if(!c.dataset.v)return;
+      c.onclick=function(){onTap(c)};
+    });
+  }else{
+    cap.textContent='수가 너무 많아요! 그래도 규칙은 같아요 — 짝의 합과 쌍의 수만 알면 끝';
+    [[0,6],[1,5],[2,4]].forEach(function(pr,i){
+      var p=arcPath(userSvg,userRow,userCells[pr[0]],userCells[pr[1]],RAINBOW[i],i);
+      arcLabel(userSvg,p,n+1,RAINBOW[i]);
+      userCells[pr[0]].classList.add('lit');userCells[pr[1]].classList.add('lit');
+    });
+    askFormula();
+  }
+}
+function onTap(c){
+  if(c.classList.contains('done'))return;
+  if(!sel){sel=c;c.classList.add('sel');return}
+  if(sel===c){c.classList.remove('sel');sel=null;return}
+  var a=+sel.dataset.v,b=+c.dataset.v,target=N+1;
+  if(a+b===target){
+    sel.classList.remove('sel');
+    sel.classList.add('lit','done');c.classList.add('lit','done');
+    var p=arcPath(userSvg,userRow,sel,c,RAINBOW[arcIdx%RAINBOW.length],arcIdx);
+    arcLabel(userSvg,p,target,RAINBOW[(arcIdx)%RAINBOW.length]);arcIdx++;
+    doneCnt++;sel=null;
+    var pairsNeeded=Math.floor(N/2);
+    document.getElementById('userCap').textContent=a+' + '+b+' = '+target+'  ('+doneCnt+'/'+pairsNeeded+'쌍)';
+    if(doneCnt===pairsNeeded){
+      if(N%2===1){
+        var mid=userCells[Math.floor(N/2)];
+        mid.classList.add('mid','lit');
+        document.getElementById('userCap').textContent='가운데 '+mid.textContent+'는 짝이 없어요 — 혼자 남았네!';
+      }else{
+        document.getElementById('userCap').textContent='무지개 완성! 이제 계산해 볼까요?';
+      }
+      askFormula();
+    }
+  }else{
+    document.getElementById('userCap').textContent=a+' + '+b+' = '+(a+b)+' … 합이 '+target+'가 되는 짝을 찾아봐요!';
+    sel.classList.remove('sel');sel=null;
+  }
+}
+function askFormula(){
+  document.getElementById('userQ').style.display='flex';
+  document.getElementById('midTerm').style.display=(N%2===1)?'inline':'none';
+}
+document.getElementById('checkBtn').onclick=function(){
+  var pair=N+1,cnt=Math.floor(N/2),mid=(N%2===1)?Math.ceil(N/2):0;
+  var total=pair*cnt+mid;
+  var ok=true;
+  function chk(id,ans){
+    var el=document.getElementById(id),v=+el.value;
+    var good=(v===ans);el.className=good?'good':'bad';if(!good)ok=false;
+  }
+  chk('inPair',pair);chk('inCnt',cnt);if(N%2===1)chk('inMid',mid);chk('inTotal',total);
+  var fb=document.getElementById('userFb');
+  if(ok){
+    fb.className='fb ok';
+    var msg='🌈 정답! 1부터 '+N+'까지의 합 = '+total+' — 가우스처럼 해냈어요!';
+    if(FRIENDS.indexOf(total)>=0&&gotFriends.indexOf(total)<0){
+      gotFriends.push(total);saveFriends(gotFriends);drawFriends();
+      msg='🎉 새 무지개 친구 '+total+'를 만났어요! '+(gotFriends.length===FRIENDS.length?'다섯 친구를 전부 모았어요! 👑':'('+gotFriends.length+'/'+FRIENDS.length+')');
+    }
+    fb.textContent=msg;
+  }else{
+    fb.className='fb no';
+    fb.textContent='빨간 칸을 다시 봐요. 짝의 합은 (첫 수 + 끝 수), 쌍의 수는 전체의 절반!';
+  }
+};
+document.querySelectorAll('.pick').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.pick').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on');setup(+b.dataset.n);
+  };
+});
+setup(10);
+window.addEventListener('resize',function(){ // 아치 좌표는 렌더 시점 좌표라 리사이즈 시 다시
+  var n=N;setup(n);
+});
+})();
+</script>
+</body>
+</html>

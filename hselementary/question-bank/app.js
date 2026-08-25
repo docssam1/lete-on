@@ -2,12 +2,14 @@
   const curriculum = window.HSE_CURRICULUM;
   const generatorApi = window.HSE_GENERATORS;
   const mathNotation = window.HSE_MATH_NOTATION;
-  if (!curriculum || !generatorApi || !mathNotation) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
+  const identityApi = window.HSE_IDENTITY;
+  if (!curriculum || !generatorApi || !mathNotation || !identityApi) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
 
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
+  const difficultyBandLabel = type => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(type.difficultyBand)] || "심화 기준";
 
   function renderMathNotation(markup) {
     const template = document.createElement("template");
@@ -119,7 +121,7 @@
   }
 
   function currentDifficultyLabel() {
-    return ({ "-1": "심화 낮춤", "0": "심화 기준", "1": "심화 올림" })[String(state.difficulty)] || "심화 기준";
+    return ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(state.difficulty)] || "심화 기준";
   }
 
   function visibleTypes() {
@@ -148,14 +150,14 @@
   }
 
   function typeTreeRow(type) {
-    const ready = Boolean(type.generator);
+    const ready = Boolean(type.generator) && !type.reviewLocked;
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
-      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
+      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
     '</label>';
   }
 
@@ -167,7 +169,7 @@
       const unitTypes = visible.filter(type => type.unitId === unit.id);
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
-      const readyCount = unitTypes.filter(type => type.generator).length;
+      const readyCount = unitTypes.filter(type => type.generator && !type.reviewLocked).length;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
         '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
           '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
@@ -221,13 +223,13 @@
 
   function showTypePreview(typeId, anchor) {
     const type = typeById.get(typeId);
-    if (!type?.generator) return;
+    if (!type?.generator || type.reviewLocked) return;
     clearTimeout(previewHideTimer);
     const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
     if (!generated) return;
     const popover = ensurePreviewPopover();
     previewAnchor = anchor;
-    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
+    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
   }
@@ -249,7 +251,7 @@
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
@@ -280,15 +282,32 @@
   }
 
   function buildQuestions() {
-    const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator);
+    const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator && !type.reviewLocked);
     if (!selected.length) return;
     state.generation += 1;
     const level = currentLevel();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
+    const seenPrompts = new Set();
+    const seenAnswersByType = new Map();
     state.questions = Array.from({ length: state.count }, (_, index) => {
       const type = selected[index % selected.length];
-      const seed = (baseSeed + index * 7919 + hash(type.id)) >>> 0;
-      const generated = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+      const typeAnswers = seenAnswersByType.get(type.id) || new Set();
+      let generated;
+      let uniquePromptFallback;
+      for (let attempt = 0; attempt < 32; attempt += 1) {
+        const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
+        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+        if (!candidate || seenPrompts.has(candidate.prompt)) continue;
+        uniquePromptFallback ||= candidate;
+        if (!typeAnswers.has(String(candidate.answer))) {
+          generated = candidate;
+          break;
+        }
+      }
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      seenPrompts.add(generated.prompt);
+      typeAnswers.add(String(generated.answer));
+      seenAnswersByType.set(type.id, typeAnswers);
       return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
     });
     state.view = "problem";
@@ -334,7 +353,6 @@
   function renderWorksheet() {
     const student = $("studentNameInput").value.trim();
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
-    if (student) localStorage.setItem("hseStudent", student);
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
     $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
@@ -417,14 +435,28 @@
   $("solutionTab").addEventListener("click", () => { state.view = "solution"; renderWorksheet(); });
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
+  $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
   addEventListener("resize", () => positionTypePreview(previewAnchor));
   addEventListener("scroll", () => hideTypePreview(true), true);
   addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
   const params = new URLSearchParams(location.search);
-  $("studentNameInput").value = params.get("student") || localStorage.getItem("hseStudent") || "";
+  const identity = identityApi.resolve({
+    session: window.HSELEMENTARY_SESSION || window.GFIELD_SESSION,
+    access: window.HSELEMENTARY_ACCESS,
+    localStorage,
+    sessionStorage,
+    search: location.search
+  });
+  const studentNameInput = $("studentNameInput");
+  studentNameInput.value = identity.name;
+  studentNameInput.readOnly = !identity.canEditName;
+  studentNameInput.setAttribute("aria-readonly", identity.canEditName ? "false" : "true");
+  studentNameInput.dataset.identitySource = identity.source || "none";
+  studentNameInput.dataset.nameEditPermission = identity.canEditName ? "granted" : "locked";
+  studentNameInput.title = identity.canEditName ? "관리자가 학생 이름 변경을 허용했습니다." : "로그인한 이름이 자동으로 적용됩니다.";
   const reviewType = typeById.get(params.get("type"));
-  if (reviewType?.generator) {
+  if (reviewType?.generator && !reviewType.reviewLocked) {
     state.level = "simwha";
     state.grade = reviewType.grade;
     state.term = reviewType.term;
@@ -437,5 +469,5 @@
   }
   renderUnitOptions();
   renderCatalog();
-  if (reviewType?.generator && params.get("review") === "1") buildQuestions();
+  if (reviewType?.generator && !reviewType.reviewLocked && params.get("review") === "1") buildQuestions();
 })();

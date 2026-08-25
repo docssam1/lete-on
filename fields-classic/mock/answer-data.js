@@ -58,10 +58,14 @@ const PRACTICE_ANSWER_TYPE_META = {
   "colored-shape-number":["규칙과 관계","도형 수 표현","색칠한 도형이 나타내는 수"],
   "unused-number-card-equations":["수와 연산","수 카드와 식","여러 식에 수 카드를 한 번씩 쓰고 남는 수 찾기"],
   "cryptarithm":["수와 연산","복면산과 식","세로셈 복면산"],
+  "two-digit-letter-cryptarithm":["수와 연산","복면산과 식","두 자리 글자 덧셈으로 세 글자 값 찾기"],
   "balance-scale":["논리와 문제해결","무게 비교","양팔저울의 균형 관계"],
   "rod-length-ratio":["도형과 공간","길이와 측정","막대의 배수 관계와 전체 길이"],
+  "recorder-matchstick-length":["도형과 공간","길이와 측정","성냥개비와 연필로 나타낸 리코더 길이"],
   "fold-diagonal-hole-count":["도형과 공간","색종이 접기","대각선으로 여러 번 접은 색종이의 구멍 개수"],
   "fold-diagonal-unfold":["도형과 공간","도형 움직이기","도형을 돌리고 뒤집은 결과 그리기"],
+  "shape-rotate-flip-grid":["도형과 공간","도형 움직이기","네 도형을 차례로 뒤집고 돌린 결과"],
+  "overlapping-run-sequence":["규칙과 관계","수 규칙","겹쳐 이어지는 연속수 묶음의 빈칸"],
   "equalize-transfer":["수와 연산","합과 차 문장제","주고받아 같게 만들기"],
   "two-digit-card-threshold-count":["수와 연산","수 카드와 식","수 카드로 기준보다 큰 두 자리 수의 개수"],
   "cube-add-to-match":["도형과 공간","쌓기나무","목표 입체까지 더 필요한 쌓기나무"],
@@ -73,6 +77,29 @@ const PRACTICE_ANSWER_TYPE_META = {
   "number-card-plus-minus":["수와 연산","수 카드와 식","수 카드로 덧셈·뺄셈 식 완성"],
   "cube-hidden-count":["도형과 공간","쌓기나무","보이지 않는 쌓기나무의 개수"],
   "repeat-pattern":["규칙과 관계","반복 규칙","모양과 색의 반복 규칙"]
+  ,"congruent-equal-sum-partition-draw":["도형과 공간","도형 분할","합이 같은 합동 도형 네 조각으로 나누기"]
+  ,"paired-magic-square-colored-sum":["수와 연산","수 배열과 합","두 마방진의 색칠한 칸 합"]
+  ,"triangle-max-edge-sum":["수와 연산","수 배열과 합","삼각형 세 변의 합을 같고 가장 크게 만들기"]
+  ,"distinct-zero-one-shape-values":["수와 연산","복면산과 식","0과 1의 성질로 서로 다른 도형값 구하기"]
+  ,"shape-value-matrix-all":["수와 연산","매트릭스","4×4 도형표에서 다섯 도형값 구하기"]
+  ,"repeated-two-digit-shape-addition":["수와 연산","복면산과 식","반복되는 두 자리 도형 세로 덧셈"]
+  ,"five-person-photo-order":["논리와 문제해결","순서와 비교","사진 속 다섯 사람의 좌우 순서"]
+  ,"food-preference-logic-four":["논리와 문제해결","조건 연결","네 사람의 좋아하는 음식 연결"]
+  ,"relative-position-number-grid-nine":["논리와 문제해결","조건 배치","1부터 9까지 상대 위치 조건 배치"]
+  ,"three-fold-line-unfold":["도형과 공간","색종이 접기","세 번 접어 그은 선을 펼치기"]
+  ,"directional-triangle-sum-grid":["수와 연산","수 배열과 합","삼각형 방향의 합에 맞춰 1부터 7까지 놓기"]
+  ,"sudoku-four-square-region":["논리와 문제해결","조건 배치","1부터 4까지 행·열·굵은 칸에 한 번씩 놓기"]
+  ,"two-class-total-difference":["수와 연산","합과 차 문장제","두 반의 전체와 차이로 많은 반 구하기"]
+  ,"number-ball-pair-targets":["수와 연산","수 카드와 식","수 공 두 개로 여러 목표 수 만들기"]
+  ,"diagonal-sum-difference-square":["규칙과 관계","수 규칙","대각선 합의 차로 가운데 수 구하기"]
+  ,"three-person-book-chain":["수와 연산","합과 차 문장제","세 사람이 읽은 책 수의 이어진 조건"]
+  ,"grid-color-count-sequence":["규칙과 관계","도형 규칙","3×3 색칠 칸의 개수와 위치 규칙"]
+  ,"given-shape-expression":["수와 연산","복면산과 식","값이 주어진 도형의 덧셈과 뺄셈"]
+  ,"paired-growing-sequences":["규칙과 관계","수 규칙","커지는 간격 수열과 두 배 수열"]
+  ,"reverse-operation-ladder":["규칙과 관계","수 규칙","사다리 경로의 계산을 거꾸로 하기"]
+  ,"plus-minus-multi-target":["수와 연산","수 카드와 식","여러 목표값에 맞게 +와 - 넣기"]
+  ,"two-custom-operations":["수와 연산","연산 약속","두 새 연산의 약속을 각각 계산하기"]
+  ,"practice-three-fold-hole-count":["도형과 공간","색종이 접기","세 번 반으로 접고 여러 구멍 펼치기"]
 };
 
 function practiceAnswerQuestion(no, typeId, diff, summary, answer, note) {
@@ -141,15 +168,15 @@ window.FIELDS_MOCK_ANSWERS = {
       practiceAnswerQuestion(5,"shape-sum-table","중","도형 매트릭스의 빈 합","16","행·열 합으로 각 도형 값을 계산"),
       practiceAnswerQuestion(6,"vertical-addition","상","두 세로 덧셈의 가려진 숫자","① 9·5·1, ② 7·5·4","각 자리의 올림까지 확인"),
       practiceAnswerQuestion(7,"person-item-logic","상","네 사람과 네 동물 연결","연수-새, 예라-원숭이, 재훈-고양이, 수현-강아지","세 조건과 일대일 조건을 모두 확인"),
-      practiceAnswerQuestion(8,"shape-equation","중","도형 값으로 혼합식 계산","36","18+17-16+17"),
-      practiceAnswerQuestion(9,"number-table-rule","중","두 수열의 빈칸","16, 64","증가폭 수열과 두 배 수열을 분리"),
+      practiceAnswerQuestion(8,"given-shape-expression","중","도형 값으로 혼합식 계산","36","18+17-16+17"),
+      practiceAnswerQuestion(9,"paired-growing-sequences","중","두 수열의 빈칸","① 16, 22 / ② 32, 64","증가폭 수열과 두 배 수열을 분리"),
       practiceAnswerQuestion(10,"cut-recut-pieces","중","자르고 먹고 다시 자른 조각 수","14조각","12조각에서 5조각을 먹고 남은 7조각을 반으로 자름"),
       practiceAnswerQuestion(11,"repeat-shape-color-dual","중","아이스크림 맛과 개수의 14번째","민트맛 2개","맛 네 칸 주기와 개수 세 칸 주기를 함께 적용"),
       practiceAnswerQuestion(12,"triangle-count","중","크고 작은 삼각형 세기","12개","크기별 삼각형을 나누어 셈"),
-      practiceAnswerQuestion(13,"function-machine","중","사다리형 수 변환을 거꾸로 계산","7","마지막 값에서 역연산"),
-      practiceAnswerQuestion(14,"operator-insertion","중","+와 -를 넣어 네 식 완성","++++ / ++-+ / +-++ / -+-+","각 식의 목표값을 직접 대입해 확인"),
-      practiceAnswerQuestion(15,"custom-operation","중","두 새 연산 약속","15, 16","각 약속의 정의에 수를 대입"),
-      practiceAnswerQuestion(16,"fold-hole-count","중","접은 색종이 구멍 펼치기","16개","접기 두 번의 대칭 위치를 모두 펼침"),
+      practiceAnswerQuestion(13,"reverse-operation-ladder","중","사다리 경로의 계산을 거꾸로 하기","5, 4, 5, 7","각 아래 수에서 사다리 경로의 계산을 거꾸로 적용"),
+      practiceAnswerQuestion(14,"plus-minus-multi-target","중","여러 목표값에 맞게 +와 - 넣기","① + + - + / ② + - + + / ③ - + - +","보기의 모두 더한 식은 답에서 제외하고 각 목표값의 세 줄만 확인"),
+      practiceAnswerQuestion(15,"two-custom-operations","중","두 새 연산의 약속을 각각 계산하기","① 15, ② 16","9+4+2와 2+7+7을 각각 계산"),
+      practiceAnswerQuestion(16,"practice-three-fold-hole-count","중","세 번 반으로 접고 구멍 펼치기","16개","세 번 접어 8겹이므로 구멍 2개를 펼치면 16개"),
       practiceAnswerQuestion(17,"two-digit-card-enumeration","중","30보다 작은 두 자리 수 모두 쓰기","10, 12, 14, 17, 20, 21, 24, 27","십의 자리 1과 2로 나누어 중복 없이 열거"),
       practiceAnswerQuestion(18,"erase-expression-target","중","식 일부를 지워 30 만들기","10을 지움","27-5+8=30"),
       practiceAnswerQuestion(19,"collection-repeat-gap","상","두 2 사이의 수 개수","8개","모으기 단위가 커지는 반복을 펼쳐 확인"),
@@ -164,19 +191,19 @@ window.FIELDS_MOCK_ANSWERS = {
       practiceAnswerQuestion(3,"unused-number-card-equations","중","1~10으로 세 덧셈식 완성 후 남는 수","7","사용된 아홉 수를 지우면 7만 남음"),
       practiceAnswerQuestion(4,"magic-square","상","마방진의 가장 큰 빈칸","7","한 줄 합 21을 만족하도록 채움"),
       practiceAnswerQuestion(5,"edge-sum-grid","상","2~7로 삼각형 세 변의 합 14","위 5 / 변 3·2 / 아래 6·1·7","세 변의 합과 수 카드 중복을 모두 확인"),
-      practiceAnswerQuestion(6,"cryptarithm","상","ABC+BA=BBB 복면산","A=9, B=1, C=2","92+19=111"),
+      practiceAnswerQuestion(6,"two-digit-letter-cryptarithm","상","AC+BA=BBB 복면산","A=9, B=1, C=2","92+19=111"),
       practiceAnswerQuestion(7,"repeat-shape-color-dual","중","24번째 큰 모양","세로로 놓인 빨간 원 2개","모양 주기와 색 주기를 따로 계산"),
       practiceAnswerQuestion(8,"go-stone-difference-inverse","상","검은 돌이 9개 더 많은 번째","17번째","두 칸마다 검은 돌 차가 1씩 증가"),
       practiceAnswerQuestion(9,"balance-scale","중","연속 저울 관계의 마지막 세모","6개","같은 무게를 치환해 마지막 저울을 맞춤"),
-      practiceAnswerQuestion(10,"rod-length-ratio","하","리코더 길이의 성냥개비 수","5개","같은 길이 단위를 그림에 대응"),
+      practiceAnswerQuestion(10,"recorder-matchstick-length","하","리코더 길이의 성냥개비 수","5개","연필 1개는 성냥개비 2개의 길이"),
       practiceAnswerQuestion(11,"fold-diagonal-hole-count","상","대각선 접기 구멍 펼치기","10개","접은 선 위 구멍과 일반 구멍의 복제 수를 구분"),
-      practiceAnswerQuestion(12,"fold-diagonal-unfold","상","두 번 돌리고 뒤집은 최종 모양","왼쪽 위 네모, 오른쪽 위 원, 왼쪽 아래 마름모, 오른쪽 아래 세모","각 변환을 한 단계씩 적용"),
+      practiceAnswerQuestion(12,"shape-rotate-flip-grid","상","오른쪽으로 뒤집고 1/4바퀴 돌린 최종 모양","왼쪽 위 네모, 오른쪽 위 원, 왼쪽 아래 마름모, 오른쪽 아래 오른쪽을 향한 세모","각 변환을 한 단계씩 적용"),
       practiceAnswerQuestion(13,"set-union-count","중","사과와 포도를 둘 다 좋아하는 수","5명","12+15-22"),
       practiceAnswerQuestion(14,"equalize-transfer","중","반을 준 뒤 두 사람이 18개일 때 원래 수","9개","처음은 같은 수이고 한 사람이 자기 것의 반을 줌"),
       practiceAnswerQuestion(15,"two-digit-card-threshold-count","중","35보다 큰 두 자리 수의 개수","10개","37·39·70·72·73·79·90·92·93·97"),
       practiceAnswerQuestion(16,"cube-add-to-match","상","4x4x4 정육면체까지 더 필요한 개수","22개","전체 64개-원본 입체 42개"),
       practiceAnswerQuestion(17,"order-position","중","네 사람 승패 조건의 3등","미나","조건을 승패 순서로 연결"),
-      practiceAnswerQuestion(18,"number-table-rule","중","세 수 묶음 수열의 빈칸","5","묶음의 시작 수가 한 칸씩 커짐"),
+      practiceAnswerQuestion(18,"overlapping-run-sequence","중","겹쳐 이어지는 연속수 묶음의 빈칸","5","끝 묶음은 5, 6, 7"),
       practiceAnswerQuestion(19,"alternating-line-total","하","남학생 사이에 여학생을 한 명씩 세운 전체","11명","남학생 6명 사이의 틈은 5곳"),
       practiceAnswerQuestion(20,"split-merge-tree","중","가르기·모으기 나무의 가장 큰 빈칸","8","부모는 두 자식의 합")
     ]
@@ -184,26 +211,26 @@ window.FIELDS_MOCK_ANSWERS = {
   "mock-6": {
     label: "필즈 대비 실전 모의고사 6회", short: "실전 6회", video: "https://www.youtube.com/watch?v=uBSJ_-2IhR8", examNote: null,
     questions: [
-      practiceAnswerQuestion(1,"congruent-partition","상","4x4를 합이 같은 합동 도형 네 개로 분할","원본 답지의 바람개비형 분할","각 조각은 같은 모양·크기이고 수의 합도 같음"),
-      practiceAnswerQuestion(2,"magic-square","상","두 마방진의 색칠한 칸 합","왼쪽 8, 오른쪽 7","1~9 마방진을 완성한 뒤 색칠 칸 확인"),
-      practiceAnswerQuestion(3,"edge-sum-grid","상","1~6으로 삼각형 세 변의 합 12","위 6 / 변 1·2 / 아래 5·3·4","세 변 합과 수 카드 중복을 모두 확인"),
-      practiceAnswerQuestion(4,"shape-equation","중","0~4를 한 번씩 쓰는 도형 식","원 4, 세모 0, 네모 1, 별 2","도형별 식을 작은 값부터 대입"),
-      practiceAnswerQuestion(5,"shape-sum-table","상","도형 매트릭스에서 다섯 도형 값","세모 1, 파란 원 3, 노란 네모 7, 주황 원 8, 분홍 네모 4","행·열 합을 교차 계산"),
-      practiceAnswerQuestion(6,"symbol-relation","중","원·마름모 관계의 세 값","2, 4, 7","반복된 기호식을 차례로 정리"),
-      practiceAnswerQuestion(7,"order-position","상","사진 속 다섯 사람의 좌우 조건","유리-소희-준희-예진-여울","사진을 보는 방향을 기준으로 조건 배치"),
-      practiceAnswerQuestion(8,"person-item-logic","상","네 사람과 네 음식 선호 연결","민지-떡볶이, 주연-순대, 별-만두, 경호-김밥","좋아함·싫어함 조건을 표에서 소거"),
-      practiceAnswerQuestion(9,"latin-square","상","1~9를 조건에 맞게 3x3 배치","7 4 1 / 6 5 9 / 3 8 2","주어진 상대 위치와 중복 금지 조건을 모두 확인"),
-      practiceAnswerQuestion(10,"fold-diagonal-unfold","상","세 번 접은 색종이를 펴서 선 완성","원본 답지의 2x2 내부선 모양","접은 순서의 역순으로 대칭"),
+      practiceAnswerQuestion(1,"congruent-equal-sum-partition-draw","상","4x4를 합이 같은 합동 도형 네 개로 분할","원본 답지의 바람개비형 분할","각 조각은 같은 모양·크기이고 수의 합도 같음"),
+      practiceAnswerQuestion(2,"paired-magic-square-colored-sum","상","두 마방진의 색칠한 칸 합","15 (왼쪽 8, 오른쪽 7)","1~9 마방진을 완성한 뒤 8+7을 계산"),
+      practiceAnswerQuestion(3,"triangle-max-edge-sum","상","1~6으로 삼각형 세 변의 합 12","위 6 / 변 1·2 / 아래 5·3·4","세 변 합과 수 카드 중복을 모두 확인"),
+      practiceAnswerQuestion(4,"distinct-zero-one-shape-values","중","0~4를 한 번씩 쓰는 도형 식","동그라미 4, 세모 0, 별 1, 네모 2","0과 1의 성질부터 찾고 네모×네모=동그라미 확인"),
+      practiceAnswerQuestion(5,"shape-value-matrix-all","상","도형 매트릭스에서 다섯 도형 값","세모 1, 초록 동그라미 3, 노랑 네모 7, 주황 마름모 8, 분홍 별 4","행·열 합을 교차 계산"),
+      practiceAnswerQuestion(6,"repeated-two-digit-shape-addition","중","원·마름모 관계의 세 값","동그라미 2, 마름모 4, 네모 7","반복된 기호식을 차례로 정리"),
+      practiceAnswerQuestion(7,"five-person-photo-order","상","사진 속 다섯 사람의 좌우 조건","유리-소희-준희-예진-여울","사진을 보는 방향을 기준으로 조건 배치"),
+      practiceAnswerQuestion(8,"food-preference-logic-four","상","네 사람과 네 음식 선호 연결","민지-떡볶이, 주연-순대, 별-만두, 경호-김밥","좋아함·싫어함 조건을 표에서 소거"),
+      practiceAnswerQuestion(9,"relative-position-number-grid-nine","상","1~9를 조건에 맞게 3x3 배치","7 4 1 / 6 5 9 / 3 8 2","주어진 상대 위치와 중복 금지 조건을 모두 확인"),
+      practiceAnswerQuestion(10,"three-fold-line-unfold","상","세 번 접은 색종이를 펴서 선 완성","원본 답지의 2x2 내부선 모양","접은 순서의 역순으로 대칭"),
       practiceAnswerQuestion(11,"cube-fill-box","중","3x3x3 상자를 채우는 데 더 필요한 수","18개","전체 27개-놓인 9개"),
-      practiceAnswerQuestion(12,"edge-sum-grid","상","삼각형 바깥 합에 맞춰 1~7 배치","안쪽 위부터 2·3·1, 아래 6·4·7·5","세 방향의 합과 숫자 중복을 확인"),
-      practiceAnswerQuestion(13,"latin-square","상","1~4의 4x4 라틴 퍼즐","1 2 3 4 / 4 3 2 1 / 2 1 4 3 / 3 4 1 2","행·열·굵은 칸에 1~4가 한 번씩"),
-      practiceAnswerQuestion(14,"total-difference","중","두 반 전체 90명과 차 10명","50명","90에서 차 10을 뺀 80을 반으로 나눈 뒤 10을 더함"),
+      practiceAnswerQuestion(12,"directional-triangle-sum-grid","상","삼각형 바깥 합에 맞춰 1~7 배치","안쪽 위부터 2·3·1, 아래 6·4·7·5","세 방향의 합과 숫자 중복을 확인"),
+      practiceAnswerQuestion(13,"sudoku-four-square-region","상","1~4의 4x4 라틴 퍼즐","1 2 3 4 / 4 3 2 1 / 2 1 4 3 / 3 4 1 2","행·열·굵은 칸에 1~4가 한 번씩"),
+      practiceAnswerQuestion(14,"two-class-total-difference","중","두 반 전체 90명과 차 10명","50명","90에서 차 10을 뺀 80을 반으로 나눈 뒤 10을 더함"),
       practiceAnswerQuestion(15,"set-union-count","중","동물·나무를 모두 그리고 싶은 학생 수","17명","13+10-6"),
-      practiceAnswerQuestion(16,"number-card-plus-minus","중","수 카드로 여섯 식 완성","5, 18, 5, 8, 5, 8","각 식의 빈칸을 덧셈·뺄셈으로 역산"),
-      practiceAnswerQuestion(17,"function-machine","중","네 수의 규칙으로 마지막 가운데 수","4","네 바깥 수의 같은 계산 규칙을 적용"),
-      practiceAnswerQuestion(18,"chained-number-condition","중","세 사람이 읽은 책 수의 연속 조건","A 16권, B 18권, C 14권","A+4=20, B=A+2, C=B÷2+5"),
+      practiceAnswerQuestion(16,"number-ball-pair-targets","중","수 공으로 다섯 목표 식 완성","18-7=11 / 26+5=31 / 8+7=15 / 29-5=24 / 18-8=10","각 목표마다 쓸 수 있는 두 공과 연산을 확인"),
+      practiceAnswerQuestion(17,"diagonal-sum-difference-square","중","네 수의 규칙으로 마지막 가운데 수","4","두 대각선 합의 차를 계산"),
+      practiceAnswerQuestion(18,"three-person-book-chain","중","세 사람이 읽은 책 수의 연속 조건","A 16권, B 18권, C 14권","A+4=20, B=A+2, C=B÷2+5"),
       practiceAnswerQuestion(19,"cube-hidden-count","중","계단형 입체의 보이지 않는 쌓기나무","4개","각 기둥의 높이에서 보이는 맨 앞 블록을 제외"),
-      practiceAnswerQuestion(20,"repeat-pattern","중","3x3 색칠 변화의 ⑥ 모양","양쪽 두 세로줄을 색칠","변화 주기를 단계별로 이어 확인")
+      practiceAnswerQuestion(20,"grid-color-count-sequence","중","3x3 색칠 변화의 ⑥ 모양","양쪽 두 세로줄을 색칠","색칠 칸이 하나씩 늘어나는 위치를 단계별로 확인")
     ]
   },
   "final-2": {
@@ -269,24 +296,24 @@ window.FIELDS_MOCK_ANSWERS = {
     examNote: "파이널 4회와 같은 시험지입니다. 파이널 4회 상품은 중복이라 없앴고, 이 확정 답은 실전 4회의 것으로 싣습니다. 해설 영상도 실전 4회 것입니다.",
     questions: [
       {"no":1,"summary":"세 구슬의 저울 관계로 필요한 가 구슬 수","domain":"논리와 문제해결","middle":"무게 비교","type":"양팔저울의 균형 관계","typeId":"balance-scale","diff":"중","answer":"가 구슬 5개","note":"가=1, 나=2, 다=3으로 놓으면 나+다=5"},
-      {"no":2,"summary":"같은 막대로 구성된 가·나·다·라 길이","domain":"도형과 공간","middle":"길이와 측정","type":"막대의 배수 관계와 전체 길이","typeId":"rod-length-ratio","diff":"중","answer":"나 8cm, 다 4cm, 라 3cm","note":"가 막대 2cm를 기준으로 전체 길이를 각각 분할"},
+      {"no":2,"summary":"양 끝이 맞는 가·나·다·라 막대의 길이","domain":"도형과 공간","middle":"길이와 측정","type":"양 끝이 맞는 막대의 길이 비율","typeId":"aligned-rod-common-length","diff":"중","answer":"나 8cm, 다 4cm, 라 3cm","note":"그림의 전체 길이는 가 막대 6개와 같아 12cm"},
       {"no":3,"summary":"다섯 수 카드를 +·×·- 혼합 계산식에 한 번씩 넣기","domain":"수와 연산","middle":"수 카드와 식","type":"수 카드를 혼합 계산식에 한 번씩 넣기","typeId":"number-card-mixed-operations","diff":"중","answer":"위 2+9=11, 왼쪽 2×7=14, 오른쪽 11-5=6","note":"5·7·9·11·14를 한 번씩 사용"},
       {"no":4,"summary":"번호 색종이를 접고 잘라 남은 수의 합","domain":"도형과 공간","middle":"색종이 접기","type":"번호 색종이를 접고 자른 뒤 남은 수의 합","typeId":"fold-number-remaining-sum","diff":"중","answer":"18","note":"접힌 뒤 잘려 나간 네 칸의 합 6을 전체 합 24에서 제외"},
       {"no":5,"summary":"1~6을 삼각형 둘레에 놓아 세 변 합 같게 만들기","domain":"수와 연산","middle":"수 배열과 합","type":"가로·세로 각 줄의 합 같게 만들기","typeId":"equal-line-sum","diff":"중","answer":"한 줄의 합 11","note":"위 2, 왼쪽 아래 4, 오른쪽 아래 6, 왼쪽 변 5, 오른쪽 변 3, 아래 변 1"},
       {"no":6,"summary":"1~9 마방진의 색칠한 칸 값","domain":"수와 연산","middle":"수 배열과 합","type":"가로·세로·대각선 합이 같은 마방진","typeId":"magic-square","diff":"상","answer":"8","note":"마방진은 2,7,6 / 9,5,1 / 4,3,8; 색칠한 칸은 오른쪽 아래"},
       {"no":7,"summary":"순위표의 가려진 서로 다른 세 자리 숫자","domain":"논리와 문제해결","middle":"순서와 비교","type":"순위표의 가려진 서로 다른 숫자 찾기","typeId":"hidden-score-ranking","diff":"중","answer":"세윤 203장, 현희 193장, 도연 192장","note":"가려진 숫자는 각각 0·1·2이며 모두 다름"},
       {"no":8,"summary":"네 수 카드로 만든 두 자리 짝수의 개수","domain":"수와 연산","middle":"수 카드와 식","type":"수 카드로 만든 두 자리 짝수의 개수","typeId":"two-digit-even-count","diff":"중","answer":"6개","note":"일의 자리 2·4 각각에 남은 세 카드를 십의 자리로 사용"},
-      {"no":9,"summary":"번갈아 2씩 커지는 수열의 빈칸","domain":"규칙과 관계","middle":"수 규칙","type":"수 배열표의 규칙 찾기","typeId":"number-table-rule","diff":"하","answer":"7","note":"3,5 / 4,6 / 5,7 / 6,8의 두 수열 교대"},
-      {"no":10,"summary":"두 단계 수 변환 기계의 역·순방향 값","domain":"규칙과 관계","middle":"수 규칙","type":"수 변환 기계의 규칙","typeId":"function-machine","diff":"중","answer":"첫 빈칸 10, 다음 빈칸 1","note":"첫 기계는 ×2+2, 둘째 기계는 10을 입력 수로 나눔"},
+      {"no":9,"summary":"두 수열이 번갈아 나오는 규칙의 빈칸","domain":"규칙과 관계","middle":"수 규칙","type":"두 수열이 번갈아 나오는 규칙","typeId":"interleaved-pair-sequence","diff":"하","answer":"7","note":"3,5 / 4,6 / 5,7 / 6,8 다음 첫 수열의 수"},
+      {"no":10,"summary":"두 수 변환 규칙을 차례로 적용한 값","domain":"규칙과 관계","middle":"수 규칙","type":"두 수 변환 규칙을 차례로 적용하기","typeId":"two-function-machine-chain","diff":"중","answer":"첫 빈칸 10, 다음 빈칸 1","note":"첫 기계는 ×2+2, 둘째 기계는 10을 입력 수로 나눔"},
       {"no":11,"summary":"불규칙하게 붙은 도형의 사각형 세기","domain":"도형과 공간","middle":"도형 세기","type":"크고 작은 사각형 세기","typeId":"square-count","diff":"중","answer":"10개","note":"한 칸 5개, 두 칸 4개, 세 칸 1개"},
       {"no":12,"summary":"여러 번 오고 간 뒤 현재 수에서 처음 인원 찾기","domain":"논리와 문제해결","middle":"과정 추론","type":"여러 번 오고 간 뒤 처음 수 거꾸로 찾기","typeId":"reverse-initial-count","diff":"중","answer":"9명","note":"처음+4-6+5-3=9이므로 증감이 서로 상쇄됨"},
-      {"no":13,"summary":"찢어진 7월 달력에서 수요일 날짜의 합","domain":"규칙과 관계","middle":"달력과 시간","type":"달력에서 같은 요일 날짜의 합","typeId":"calendar-weekday-sum","diff":"중","answer":"85","note":"수요일은 3·10·17·24·31일"},
+      {"no":13,"summary":"찢어진 7월 달력에서 수요일 날짜의 합","domain":"규칙과 관계","middle":"달력과 시간","type":"찢어진 달력에서 같은 요일 날짜를 모두 더하기","typeId":"calendar-all-weekday-sum","diff":"중","answer":"85","note":"수요일은 3·10·17·24·31일"},
       {"no":14,"summary":"계단 타일의 7번째 흰색·검은색 차이","domain":"규칙과 관계","middle":"도형 규칙","type":"구슬 배열의 개수 규칙","typeId":"growing-shape-count","diff":"중","answer":"흰색 타일이 7개 더 많다","note":"7번째 흰색 28개, 검은색 21개"},
-      {"no":15,"summary":"세 도형이 있는 세로 덧셈 복면산","domain":"수와 연산","middle":"복면산과 식","type":"세로셈 복면산","typeId":"cryptarithm","diff":"상","answer":"스페이드 9, 하트 8, 별 1","note":"98+18=116"},
-      {"no":16,"summary":"연속 기호식으로 마지막 별 값 구하기","domain":"수와 연산","middle":"복면산과 식","type":"도형이 나타내는 수와 식","typeId":"shape-equation","diff":"상","answer":"17","note":"네모 4, 동그라미 12, 하트 14, 이중 원 24를 차례로 계산"},
+      {"no":15,"summary":"두 자리 도형 덧셈에서 세 도형의 값 찾기","domain":"수와 연산","middle":"복면산과 식","type":"두 자리 도형 덧셈에서 세 도형의 값 찾기","typeId":"vertical-shape-cryptarithm-values","diff":"상","answer":"스페이드 9, 하트 8, 별 1","note":"98+18=116"},
+      {"no":16,"summary":"네모 값에서 시작해 연속 도형식 계산하기","domain":"수와 연산","middle":"복면산과 식","type":"네모 값에서 시작하는 연속 도형식","typeId":"square-symbol-chain","diff":"상","answer":"17","note":"네모 4, 동그라미 12, 하트 14, 이중 원 24를 차례로 계산"},
       {"no":17,"summary":"4x4 도형표의 행·열 합으로 빈 합 채우기","domain":"수와 연산","middle":"매트릭스","type":"도형의 가로·세로 합 매트릭스","typeId":"shape-sum-table","diff":"중","answer":"세 번째 행 24, 아래 첫째·둘째·셋째 열도 각각 24","note":"원 5, 네모 11, 별 7, 세모 3; 넷째 열 합 26과도 일치"},
       {"no":18,"summary":"4x4 과일표의 행·열 합으로 빈 합 채우기","domain":"수와 연산","middle":"매트릭스","type":"도형의 가로·세로 합 매트릭스","typeId":"shape-sum-table","diff":"중","answer":"네 번째 행 34, 아래 열 합은 37, 44, 40, 44","note":"바나나 15, 사과 5, 포도 12"},
-      {"no":19,"summary":"다섯 사람 키 비교로 가장 큰·작은 사람","domain":"논리와 문제해결","middle":"순서와 비교","type":"키의 크고 작은 순서","typeId":"height-order","diff":"중","answer":"가장 큰 사람 동화, 가장 작은 사람 영희","note":"동화>슬기>지현>주희>영희 순서"},
+      {"no":19,"summary":"다섯 사람 키 비교로 가장 큰·작은 사람","domain":"논리와 문제해결","middle":"순서와 비교","type":"키 비교 조건으로 가장 큰·작은 사람 찾기","typeId":"height-extremes-chain","diff":"중","answer":"가장 큰 사람 동화, 가장 작은 사람 영희","note":"동화>슬기>지현>주희>영희 순서"},
       {"no":20,"summary":"네 사람과 네 동물 조건 연결","domain":"논리와 문제해결","middle":"조건 연결","type":"사람과 동물·음식 조건 연결","typeId":"person-item-logic","diff":"상","answer":"주연-햄스터, 유빈-원숭이, 유준-고양이, 관호-강아지","note":"원본의 세 조건과 일대일 대응을 모두 만족"}
     ]
   }
