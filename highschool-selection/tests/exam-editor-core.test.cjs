@@ -80,6 +80,7 @@ function fixture() {
   const questionsByItemId = Object.fromEntries(questions.map(question => [question.id, question]));
   const draft = editor.createDraft({
     draftId: "draft-wm-m21-r01",
+    mode: "SH",
     profileId: "WM",
     targetId: "middle21-basic-entry",
     durationMinutes: 120,
@@ -121,6 +122,65 @@ test("drag reorder changes placements only and keeps canonical item ids intact",
   assert.deepEqual(moved.placements.map(item => item.order), [1, 2, 3]);
   assert.equal(moved.sortMode, "user");
   assert.equal(moved.revision, draft.revision + 1);
+});
+
+test("score editing changes one placement, increments revision, and rejects invalid or locked edits", () => {
+  const { draft } = fixture();
+  const scored = editor.setPlacementScore(draft, "p-002", 4.5);
+  assert.equal(scored.placements[1].score, 4.5);
+  assert.equal(draft.placements[1].score, 3);
+  assert.equal(scored.revision, draft.revision + 1);
+  assert.equal(editor.setPlacementScore(scored, "p-002", 4.5).revision, scored.revision);
+  assert.throws(() => editor.setPlacementScore(draft, "p-002", 0), /positive/);
+  assert.throws(() => editor.setPlacementScore(draft, "p-002", -1), /positive/);
+  const locked = editor.createDraft({
+    draftId: "draft-locked-score",
+    mode: "SH",
+    profileId: "WM",
+    targetId: "locked-score",
+    durationMinutes: 60,
+    scopeKeys: ["G10"],
+    placements: [{ ...draft.placements[0], placementId: "locked-1", locked: true }]
+  });
+  assert.throws(() => editor.setPlacementScore(locked, "locked-1", 3), /locked placement score/);
+});
+
+test("drafts require a supported program mode", () => {
+  const base = {
+    draftId: "draft-mode-check",
+    profileId: "WM",
+    targetId: "mode-check",
+    durationMinutes: 60,
+    scopeKeys: ["G10"],
+    placements: []
+  };
+  assert.throws(() => editor.createDraft(base), /mode is not allowed/);
+  assert.throws(() => editor.createDraft({ ...base, mode: "XX" }), /mode is not allowed/);
+  assert.equal(editor.createDraft({ ...base, mode: "sh" }).mode, "SH");
+});
+
+test("drafts require at least one scope and empty scope checks fail closed", () => {
+  const { draft, questionsByItemId } = fixture();
+  assert.throws(() => editor.createDraft({
+    draftId: "draft-empty-scope",
+    mode: "SH",
+    profileId: "WM",
+    targetId: "empty-scope",
+    durationMinutes: 60,
+    scopeKeys: [],
+    placements: []
+  }), /at least one scope key/);
+  assert.throws(() => editor.createDraft({
+    draftId: "draft-slash-scope",
+    mode: "SH",
+    profileId: "WM",
+    targetId: "slash-scope",
+    durationMinutes: 60,
+    scopeKeys: ["/"],
+    placements: []
+  }), /scope key is invalid/);
+  assert.throws(() => editor.changeScope(draft, [], questionsByItemId), /at least one scope key/);
+  assert.equal(editor.isCurriculumPathInScope("G10/M01/S01/D01", []), false);
 });
 
 test("replace changes one placement and preserves versioned audit evidence", () => {
@@ -202,7 +262,7 @@ test("the complete question gate blocks unapproved, ambiguous, unaudited, and un
   }), /candidate.item_version_id.missing/);
 });
 
-test("the same canonical question or question family cannot be selected twice", () => {
+test("the same canonical question and related variants cannot be added as new placements", () => {
   const { draft, questions, questionsByItemId } = fixture();
   assert.throws(() => editor.addItem(draft, {
     placementId: "p-004",
@@ -210,16 +270,33 @@ test("the same canonical question or question family cannot be selected twice", 
     questionsByItemId
   }), /already selected/);
 
-  const sameFamily = makeQuestion(104, {
+  const relatedFamily = core.createNeutralId("question", "SH", "editor:new-related-family");
+  const relatedVariant = makeQuestion(105, {
     relation: "similar",
-    originalQuestionId: questions[0].variant.familyId,
-    familyId: questions[0].variant.familyId
+    originalQuestionId: relatedFamily,
+    familyId: relatedFamily
   });
   assert.throws(() => editor.addItem(draft, {
-    placementId: "p-004",
-    candidate: sameFamily,
+    placementId: "p-005",
+    candidate: relatedVariant,
     questionsByItemId
-  }), /question family is already selected/);
+  }), /new placement candidate must be original/);
+});
+
+test("new and replacement candidates must match the draft program mode", () => {
+  const { draft, questionsByItemId } = fixture();
+  const otherMode = makeQuestion(108, { mode: "WM" });
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: otherMode,
+    questionsByItemId
+  }), /candidate mode does not match draft mode/);
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: otherMode,
+    questionsByItemId,
+    relationship: "manual"
+  }), /candidate mode does not match draft mode/);
 });
 
 test("twin and similar replacements require matching lineage and approved evidence", () => {
@@ -389,6 +466,7 @@ test("final readiness rechecks version, scope, full gates, and family uniqueness
   });
   const familyDraft = editor.createDraft({
     draftId: "draft-family-check",
+    mode: "SH",
     profileId: "WM",
     targetId: "middle21-basic-entry",
     durationMinutes: 120,
@@ -406,6 +484,39 @@ test("final readiness rechecks version, scope, full gates, and family uniqueness
   });
   assert.equal(familyResult.eligible, false);
   assert.ok(familyResult.issues.includes("placement.family.duplicate:pf-2"));
+
+  const replacementOnly = makeQuestion(30, {
+    relation: "twin",
+    originalQuestionId: questions[0].id,
+    familyId: questions[0].id
+  });
+  const replacementOnlyDraft = editor.createDraft({
+    draftId: "draft-replacement-only",
+    mode: "SH",
+    profileId: "WM",
+    targetId: "replacement-only",
+    durationMinutes: 60,
+    scopeKeys: ["G10"],
+    placements: [{
+      placementId: "replacement-only-1",
+      itemId: replacementOnly.id,
+      itemVersionId: replacementOnly.itemVersionId,
+      score: 2
+    }]
+  });
+  const replacementOnlyResult = editor.evaluateDraftReadiness(replacementOnlyDraft, {
+    [replacementOnly.id]: replacementOnly
+  });
+  assert.equal(replacementOnlyResult.eligible, false);
+  assert.ok(replacementOnlyResult.issues.includes("draft.original.minimum"));
+
+  const wrongMode = makeQuestion(31, { mode: "WM" });
+  const wrongModeResult = editor.evaluateDraftReadiness(draft, {
+    ...questionsByItemId,
+    [questions[0].id]: { ...wrongMode, id: questions[0].id, itemVersionId: questions[0].itemVersionId }
+  });
+  assert.equal(wrongModeResult.eligible, false);
+  assert.ok(wrongModeResult.issues.includes("placement.mode.mismatch:p-001"));
 });
 
 test("readiness reports an invalid draft without creating a projection", () => {
@@ -420,4 +531,18 @@ test("readiness reports an invalid draft without creating a projection", () => {
   assert.equal(missing.eligible, false);
   assert.equal(missing.projection, null);
   assert.deepEqual(missing.issues, ["draft.placements.missing"]);
+
+  const empty = editor.createDraft({
+    draftId: "draft-empty-readiness",
+    mode: "SH",
+    profileId: "WM",
+    targetId: "empty",
+    durationMinutes: 60,
+    scopeKeys: ["G10"],
+    placements: []
+  });
+  const emptyResult = editor.evaluateDraftReadiness(empty, {});
+  assert.equal(emptyResult.eligible, false);
+  assert.equal(emptyResult.projection, null);
+  assert.ok(emptyResult.issues.includes("draft.placements.empty"));
 });

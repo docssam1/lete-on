@@ -12,7 +12,13 @@ test("private source and visual-review artifacts are ignored by Git", () => {
     "highschool-selection/review/review-manifest.json",
     "highschool-selection/review/unresolved-review-01.png"
   ];
-  const ignored = execFileSync("git", ["check-ignore", "--no-index", ...candidates], {
+  const ignored = execFileSync("git", [
+    "-c",
+    `safe.directory=${root.replaceAll("\\", "/")}`,
+    "check-ignore",
+    "--no-index",
+    ...candidates
+  ], {
     cwd: root,
     encoding: "utf8"
   }).trim().split(/\r?\n/).map(value => value.replaceAll("\\", "/"));

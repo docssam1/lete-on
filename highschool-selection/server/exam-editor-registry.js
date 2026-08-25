@@ -146,10 +146,16 @@ function createRegistry(raw) {
     search(options) {
       const opts = options || {};
       const scopeKey = clean(opts.scopeKey).replace(/\/+$/, "");
+      const scopeKeys = Array.isArray(opts.scopeKeys)
+        ? Array.from(new Set(opts.scopeKeys.map(function (value) { return clean(value).replace(/\/+$/, ""); }).filter(Boolean)))
+        : (scopeKey ? [scopeKey] : []);
       const query = clean(opts.query).toLowerCase();
+      const mode = clean(opts.mode).toUpperCase();
       const sourceItemId = clean(opts.sourceItemId);
       const sourceItemVersionId = clean(opts.sourceItemVersionId);
       const relationship = clean(opts.relationship);
+      const originalOnly = opts.originalOnly === true;
+      if (!scopeKeys.length) return [];
       const relationByCandidate = new Map();
       if (sourceItemId || relationship) {
         Object.values(data.relations).forEach(function (relation) {
@@ -163,7 +169,11 @@ function createRegistry(raw) {
       const limit = Math.min(100, Math.max(1, Number(opts.limit) || 30));
       return Object.values(data.candidates).filter(function (candidate) {
         if (editorCore.validateCandidate(candidate).length) return false;
-        if (scopeKey && !(candidate.curriculum.key === scopeKey || candidate.curriculum.key.startsWith(`${scopeKey}/`))) return false;
+        if (mode && candidate.mode !== mode) return false;
+        if (originalOnly && candidate.lineage.relation !== "original") return false;
+        if (scopeKeys.length && !scopeKeys.some(function (selectedScope) {
+          return candidate.curriculum.key === selectedScope || candidate.curriculum.key.startsWith(`${selectedScope}/`);
+        })) return false;
         if ((sourceItemId || relationship) && !relationByCandidate.has(candidate.id)) return false;
         if (query && !`${candidate.id} ${candidate.typeCode} ${candidate.curriculum.key}`.toLowerCase().includes(query)) return false;
         return true;

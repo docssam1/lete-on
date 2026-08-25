@@ -380,12 +380,18 @@ function createApp(options) {
     return result;
   }
 
-  function publicExamDraft(record) {
+  function publicExamDraft(record, registry) {
+    const selectedItems = registry ? record.draft.placements.map(function (placement) {
+      const candidate = registry.getCandidate(placement.itemId, placement.itemVersionId);
+      return candidate ? publicEditorCandidate({ candidate, relation: null }) : null;
+    }).filter(Boolean) : [];
     return {
       draftId: record.draftId,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
-      draft: record.draft
+      draft: record.draft,
+      migrationRequired: record.migrationRequired === true,
+      selectedItems
     };
   }
 
@@ -408,6 +414,7 @@ function createApp(options) {
       add: new Set(["kind", "placementId", "itemId", "itemVersionId", "index", "score", "locked", "selectionKind"]),
       remove: new Set(["kind", "placementId"]),
       move: new Set(["kind", "placementId", "toIndex"]),
+      set_score: new Set(["kind", "placementId", "score"]),
       replace: new Set(["kind", "placementId", "itemId", "itemVersionId", "relationship", "reasonCode", "evidenceId"]),
       change_scope: new Set(["kind", "scopeKeys"]),
       sort: new Set(["kind", "mode", "seed"]),
@@ -435,6 +442,9 @@ function createApp(options) {
       }
       if (kind === "move") {
         return { draft: examEditorCore.movePlacement(draft, security.clean(operation.placementId), operation.toIndex), reconciliation: null };
+      }
+      if (kind === "set_score") {
+        return { draft: examEditorCore.setPlacementScore(draft, security.clean(operation.placementId), operation.score), reconciliation: null };
       }
       if (kind === "replace") {
         const relationship = security.clean(operation.relationship || "manual");
@@ -746,13 +756,26 @@ function createApp(options) {
       throw new HttpError(405, "허용되지 않은 요청입니다.");
     }
 
+    if (request.method === "GET" && pathname === "/admin/exam-editor/status") {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      requireExamEditorInfrastructure();
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "편집 상태 요청에 검색 조건을 지정할 수 없습니다.");
+      sendJson(response, 200, { ready: true });
+      return true;
+    }
+
     if (request.method === "GET" && pathname === "/admin/exam-editor/candidates") {
       requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       const registry = requireExamEditorInfrastructure();
-      const allowedSearchKeys = new Set(["scopeKey", "q", "limit", "sourceItemId", "sourceItemVersionId", "relationship"]);
+      const allowedSearchKeys = new Set(["draftId", "scopeKey", "q", "limit", "sourceItemId", "sourceItemVersionId", "relationship"]);
       for (const key of url.searchParams.keys()) {
         if (!allowedSearchKeys.has(key)) throw new HttpError(400, "후보 검색 조건에 허용되지 않은 항목이 있습니다.");
       }
+      const draftId = security.clean(url.searchParams.get("draftId"));
+      if (!/^draft_[A-Za-z0-9]+$/.test(draftId)) throw new HttpError(400, "후보 검색 초안 ID가 올바르지 않습니다.");
+      const draftRecord = examDraftStore.read(draftId);
+      if (!draftRecord) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+      if (draftRecord.migrationRequired) throw new HttpError(409, "이전 초안은 과정과 출제 범위를 확인해 새 초안으로 옮겨야 합니다.");
       const limitText = url.searchParams.get("limit");
       const limit = limitText == null ? 30 : Number(limitText);
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new HttpError(400, "후보 검색 개수가 올바르지 않습니다.");
@@ -763,13 +786,22 @@ function createApp(options) {
       if ((relationship || sourceItemId || sourceItemVersionId) && (!relationship || !sourceItemId || !sourceItemVersionId)) {
         throw new HttpError(400, "유사문항 검색에는 원문 문항과 버전, 관계가 모두 필요합니다.");
       }
+      if (relationship && !draftRecord.draft.placements.some(function (placement) {
+        return placement.itemId === sourceItemId && placement.itemVersionId === sourceItemVersionId;
+      })) throw new HttpError(409, "현재 초안에 있는 문항만 교체 후보를 찾을 수 있습니다.");
+      const rawScopeKey = security.clean(url.searchParams.get("scopeKey"));
+      const scopeKey = rawScopeKey.replace(/\/+$/, "");
+      if (url.searchParams.has("scopeKey") && !scopeKey) throw new HttpError(400, "후보 검색 범위가 올바르지 않습니다.");
+      if (scopeKey && !draftRecord.draft.scopeKeys.includes(scopeKey)) throw new HttpError(400, "현재 초안에 포함된 범위만 검색할 수 있습니다.");
       const items = registry.search({
-        scopeKey: url.searchParams.get("scopeKey"),
+        scopeKeys: scopeKey ? [scopeKey] : draftRecord.draft.scopeKeys,
         query: url.searchParams.get("q"),
+        mode: draftRecord.draft.mode,
         limit,
         sourceItemId,
         sourceItemVersionId,
-        relationship
+        relationship,
+        originalOnly: !relationship
       }).map(publicEditorCandidate);
       sendJson(response, 200, { items, count: items.length });
       return true;
@@ -778,14 +810,15 @@ function createApp(options) {
     if (pathname === "/admin/exam-editor/drafts" && request.method === "POST") {
       const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       requireAdminMutation(request, true, configuredOrigin);
-      requireExamEditorInfrastructure();
+      const registry = requireExamEditorInfrastructure();
       const body = await readJson(request, 32 * 1024);
-      exactKeys(body, new Set(["profileId", "targetId", "durationMinutes", "scopeKeys"]), "시험지 초안");
+      exactKeys(body, new Set(["mode", "profileId", "targetId", "durationMinutes", "scopeKeys"]), "시험지 초안");
       const draftId = `draft_${crypto.randomUUID().replace(/-/g, "")}`;
       let draft;
       try {
         draft = examEditorCore.createDraft({
           draftId,
+          mode: security.clean(body.mode).toUpperCase(),
           profileId: security.clean(body.profileId),
           targetId: security.clean(body.targetId),
           durationMinutes: body.durationMinutes,
@@ -812,7 +845,7 @@ function createApp(options) {
         }
         throw error;
       }
-      sendJson(response, 201, publicExamDraft(record));
+      sendJson(response, 201, publicExamDraft(record, registry));
       return true;
     }
 
@@ -825,10 +858,11 @@ function createApp(options) {
       const current = examDraftStore.read(draftId);
       if (!current) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
       if (request.method === "GET" && action === "draft") {
-        sendJson(response, 200, publicExamDraft(current));
+        sendJson(response, 200, publicExamDraft(current, registry));
         return true;
       }
       if (request.method === "GET" && action === "readiness") {
+        if (current.migrationRequired) throw new HttpError(409, "이전 초안은 과정과 출제 범위를 확인해 새 초안으로 옮겨야 합니다.");
         const readiness = examEditorCore.evaluateDraftReadiness(current.draft, editorMetadata(current.draft, registry));
         sendJson(response, 200, {
           draftId: current.draftId,
@@ -861,10 +895,13 @@ function createApp(options) {
           if (error && (error.code === "EXAM_DRAFT_BUSY" || error.code === "EXAM_DRAFT_CONFLICT")) {
             throw new HttpError(409, "시험지 초안이 다른 화면에서 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
           }
+          if (error && error.code === "EXAM_DRAFT_MIGRATION_REQUIRED") {
+            throw new HttpError(409, "이전 초안은 과정과 출제 범위를 확인해 새 초안으로 옮겨야 합니다.");
+          }
           throw error;
         }
         if (!record) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
-        sendJson(response, 200, { record: publicExamDraft(record), reconciliation });
+        sendJson(response, 200, { record: publicExamDraft(record, registry), reconciliation });
         return true;
       }
       throw new HttpError(405, "허용되지 않은 요청입니다.");

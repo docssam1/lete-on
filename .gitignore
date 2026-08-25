@@ -13,6 +13,7 @@ reading-world/private/
 /tmp/
 **/__pycache__/
 /highschool-selection/private/
+/highschool-selection/node_modules/
 /highschool-selection/**/private/
 /highschool-selection/**/*.pdf
 /highschool-selection/**/*.hwp

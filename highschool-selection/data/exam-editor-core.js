@@ -25,6 +25,7 @@
   ]);
   const SELECTION_KINDS = Object.freeze(["recommended", "manual", "twin", "similar"]);
   const RELATIONSHIPS = Object.freeze(["manual", "twin", "similar"]);
+  const PROGRAM_MODES = Object.freeze(["SH", "DP", "WM", "ED", "DG", "SM"]);
   const DIFFICULTY_ORDER = Object.freeze({ lowered: 0, standard: 1, raised: 2 });
   const OBJECTIVE_INPUT_TYPES = new Set(["single_choice", "multi_choice", "ox"]);
 
@@ -69,8 +70,11 @@
       const key = String(value == null ? "" : value).trim();
       invariant(key.length > 0 && key.length <= 160, "scope key is invalid");
       invariant(!key.includes("..") && !key.includes("\\"), "scope key is invalid");
-      return key.replace(/\/+$/, "");
+      const normalizedKey = key.replace(/\/+$/, "");
+      invariant(normalizedKey.length > 0, "scope key is invalid");
+      return normalizedKey;
     });
+    invariant(normalized.length > 0, "at least one scope key is required");
     invariant(new Set(normalized).size === normalized.length, "scope keys must be unique");
     return normalized;
   }
@@ -81,7 +85,7 @@
     invariant(typeof input.itemId === "string" && input.itemId.trim(), "itemId is required");
     invariant(typeof input.itemVersionId === "string" && input.itemVersionId.trim(), "itemVersionId is required");
     const score = Number(input.score == null ? 0 : input.score);
-    invariant(Number.isFinite(score) && score >= 0, "placement.score must be non-negative");
+    invariant(Number.isFinite(score) && score > 0, "placement.score must be positive");
     return {
       placementId: input.placementId,
       itemId: input.itemId,
@@ -99,6 +103,7 @@
     invariant(typeof input.draftId === "string" && input.draftId.trim(), "draftId is required");
     invariant(typeof input.profileId === "string" && input.profileId.trim(), "profileId is required");
     invariant(typeof input.targetId === "string" && input.targetId.trim(), "targetId is required");
+    const mode = enumValue(String(input.mode || "").toUpperCase(), PROGRAM_MODES, "mode");
     const durationMinutes = Number(input.durationMinutes);
     invariant(Number.isSafeInteger(durationMinutes) && durationMinutes > 0, "durationMinutes must be a positive integer");
     const revision = Number(input.revision == null ? 1 : input.revision);
@@ -109,6 +114,7 @@
     const draft = {
       draftId: input.draftId,
       revision,
+      mode,
       profileId: input.profileId,
       targetId: input.targetId,
       durationMinutes,
@@ -127,6 +133,7 @@
     return {
       draftId: draft.draftId,
       revision: draft.revision,
+      mode: draft.mode,
       profileId: draft.profileId,
       targetId: draft.targetId,
       durationMinutes: draft.durationMinutes,
@@ -152,10 +159,20 @@
     const issues = [];
     if (!draft || !Array.isArray(draft.placements)) return Object.freeze(["draft.placements.missing"]);
     if (!Number.isSafeInteger(draft.revision) || draft.revision < 1) issues.push("draft.revision.invalid");
+    if (!PROGRAM_MODES.includes(draft.mode)) issues.push("draft.mode.invalid");
+    if (!Array.isArray(draft.scopeKeys) || draft.scopeKeys.length === 0) {
+      issues.push("draft.scope.missing");
+    } else if (draft.scopeKeys.some(function (value) {
+      const key = String(value == null ? "" : value).trim().replace(/\/+$/, "");
+      return !key || key.includes("..") || key.includes("\\");
+    })) {
+      issues.push("draft.scope.invalid");
+    }
     const placementIds = new Set();
     const itemIds = new Set();
     draft.placements.forEach(function (placement, index) {
       if (!placement.itemVersionId) issues.push("draft.item_version_id.missing");
+      if (!Number.isFinite(placement.score) || placement.score <= 0) issues.push("draft.score.non_positive");
       if (placementIds.has(placement.placementId)) issues.push("draft.placement_id.duplicate");
       placementIds.add(placement.placementId);
       if (itemIds.has(placement.itemId)) issues.push("draft.item_id.duplicate");
@@ -171,7 +188,7 @@
   }
 
   function isCurriculumPathInScope(curriculumPath, scopeKeys) {
-    if (!scopeKeys || scopeKeys.length === 0) return true;
+    if (!scopeKeys || scopeKeys.length === 0) return false;
     const rawPath = curriculumPath && typeof curriculumPath === "object"
       ? curriculumPath.key
       : curriculumPath;
@@ -197,6 +214,10 @@
     return question;
   }
 
+  function assertCandidateMode(draft, candidate) {
+    invariant(candidate.mode === draft.mode, "candidate mode does not match draft mode");
+  }
+
   function assertFamilyAvailable(draft, candidate, questionsByItemId, excludedPlacementId) {
     const familyId = candidate && candidate.variant && candidate.variant.familyId;
     invariant(typeof familyId === "string" && familyId, "candidate family is required");
@@ -210,7 +231,9 @@
   function addItem(draft, input) {
     invariant(input && typeof input === "object", "add input is required");
     assertCandidate(input.candidate);
+    assertCandidateMode(draft, input.candidate);
     assertCandidateInScope(draft, input.candidate);
+    invariant(input.candidate.lineage && input.candidate.lineage.relation === "original", "new placement candidate must be original");
     const next = mutableDraft(draft);
     invariant(!next.placements.some(function (placement) { return placement.itemId === input.candidate.id; }), "item is already selected");
     invariant(!next.placements.some(function (placement) { return placement.placementId === input.placementId; }), "placementId is already selected");
@@ -252,9 +275,22 @@
     return freezeDraft(bumpRevision(next));
   }
 
+  function setPlacementScore(draft, placementId, score) {
+    const next = mutableDraft(draft);
+    const placement = next.placements.find(function (item) { return item.placementId === placementId; });
+    invariant(placement, "placement was not found");
+    invariant(!placement.locked, "locked placement score cannot be changed");
+    const normalized = Number(score);
+    invariant(Number.isFinite(normalized) && normalized > 0, "placement.score must be positive");
+    if (placement.score === normalized) return freezeDraft(next);
+    placement.score = normalized;
+    return freezeDraft(bumpRevision(next));
+  }
+
   function replacePlacement(draft, input) {
     invariant(input && typeof input === "object", "replacement input is required");
     assertCandidate(input.candidate);
+    assertCandidateMode(draft, input.candidate);
     assertCandidateInScope(draft, input.candidate);
     const relationship = enumValue(input.relationship || "manual", RELATIONSHIPS, "relationship");
     const next = mutableDraft(draft);
@@ -394,7 +430,9 @@
         projection: null
       });
     }
+    if (draft.placements.length === 0) issues.push("draft.placements.empty");
     const familyIds = new Set();
+    let originalCount = 0;
     draft.placements.forEach(function (placement) {
       const candidate = metadata[placement.itemId];
       if (!candidate) {
@@ -404,6 +442,8 @@
       if (candidate.id !== placement.itemId || candidate.itemVersionId !== placement.itemVersionId) {
         issues.push(`placement.version.mismatch:${placement.placementId}`);
       }
+      if (candidate.mode !== draft.mode) issues.push(`placement.mode.mismatch:${placement.placementId}`);
+      if (candidate.lineage && candidate.lineage.relation === "original") originalCount += 1;
       validateCandidate(candidate).forEach(function (issue) {
         issues.push(`${issue}:${placement.placementId}`);
       });
@@ -414,11 +454,12 @@
       if (inScope === false) issues.push(`placement.scope.outside:${placement.placementId}`);
       if (inScope === null) issues.push(`placement.scope.classification_pending:${placement.placementId}`);
     });
+    if (draft.placements.length > 0 && originalCount < 1) issues.push("draft.original.minimum");
     const uniqueIssues = Array.from(new Set(issues)).sort();
     return Object.freeze({
       eligible: uniqueIssues.length === 0,
       issues: Object.freeze(uniqueIssues),
-      projection: draftIssues.length === 0 ? createDraftProjection(draft) : null
+      projection: uniqueIssues.length === 0 ? createDraftProjection(draft) : null
     });
   }
 
@@ -447,6 +488,7 @@
   return Object.freeze({
     SORT_MODES,
     VIEW_MODES,
+    PROGRAM_MODES,
     SELECTION_KINDS,
     RELATIONSHIPS,
     createDraft,
@@ -455,6 +497,7 @@
     addItem,
     removePlacement,
     movePlacement,
+    setPlacementScore,
     replacePlacement,
     changeScope,
     isCurriculumPathInScope,

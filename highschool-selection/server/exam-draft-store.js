@@ -10,11 +10,54 @@ const SCHEMA_VERSION = "highselect-private-exam-drafts/v1";
 function fail(message) { throw new Error(message); }
 function clean(value) { return String(value == null ? "" : value).trim(); }
 function serializable(value) { return JSON.parse(JSON.stringify(value)); }
+function hasUsableScopeKey(values) {
+  return Array.isArray(values) && values.some(function (value) {
+    return clean(value).replace(/\/+$/, "").length > 0;
+  });
+}
 
 function token(value, label) {
   const result = clean(value);
   if (!result || result.length > 180 || !/^[A-Za-z0-9._:-]+$/.test(result)) fail(`${label} is invalid`);
   return result;
+}
+
+function normalizeLegacyDraft(value, key) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) fail(`drafts.${key}.draft is invalid`);
+  const allowed = new Set(["draftId", "revision", "mode", "profileId", "targetId", "durationMinutes", "scopeKeys", "sortMode", "viewMode", "placements"]);
+  Object.keys(value).forEach(function (field) { if (!allowed.has(field)) fail(`drafts.${key}.draft.${field} is not allowed`); });
+  const originalMode = clean(value.mode).toUpperCase();
+  const originalScopeKeys = value.scopeKeys == null ? [] : value.scopeKeys;
+  if (!Array.isArray(originalScopeKeys)) fail(`drafts.${key}.draft.scopeKeys is invalid`);
+  const hasUsableScope = hasUsableScopeKey(originalScopeKeys);
+  const placements = Array.isArray(value.placements) ? value.placements : [];
+  const originalScores = placements.map(function (placement, index) {
+    const score = Number(!placement || placement.score == null ? 0 : placement.score);
+    if (!Number.isFinite(score) || score < 0) fail(`drafts.${key}.draft.placements.${index}.score is invalid`);
+    return score;
+  });
+  const checked = editorCore.createDraft(Object.assign({}, serializable(value), {
+    mode: editorCore.PROGRAM_MODES.includes(originalMode) ? originalMode : "SH",
+    scopeKeys: hasUsableScope ? originalScopeKeys : ["MIGRATION_SCOPE_REQUIRED"],
+    placements: placements.map(function (placement, index) {
+      return Object.assign({}, placement, { score: originalScores[index] > 0 ? originalScores[index] : 1 });
+    })
+  }));
+  const normalized = {
+    draftId: checked.draftId,
+    revision: checked.revision,
+    profileId: checked.profileId,
+    targetId: checked.targetId,
+    durationMinutes: checked.durationMinutes,
+    scopeKeys: Object.freeze(hasUsableScope ? checked.scopeKeys.slice() : originalScopeKeys.slice()),
+    sortMode: checked.sortMode,
+    viewMode: checked.viewMode,
+    placements: Object.freeze(checked.placements.map(function (placement, index) {
+      return Object.freeze(Object.assign({}, placement, { score: originalScores[index] }));
+    }))
+  };
+  if (editorCore.PROGRAM_MODES.includes(originalMode)) normalized.mode = originalMode;
+  return Object.freeze(normalized);
 }
 
 function normalizeRecord(value, key) {
@@ -26,16 +69,26 @@ function normalizeRecord(value, key) {
   const createdAt = clean(value.createdAt);
   const updatedAt = clean(value.updatedAt);
   if (!Number.isFinite(Date.parse(createdAt)) || !Number.isFinite(Date.parse(updatedAt))) fail(`drafts.${key} timestamp is invalid`);
-  const draft = editorCore.createDraft(serializable(value.draft));
+  const serializedDraft = serializable(value.draft);
+  const storedMode = clean(serializedDraft && serializedDraft.mode).toUpperCase();
+  const storedScopeKeys = serializedDraft && serializedDraft.scopeKeys;
+  const migrationRequired = !editorCore.PROGRAM_MODES.includes(storedMode)
+    || !Array.isArray(storedScopeKeys)
+    || !hasUsableScopeKey(storedScopeKeys);
+  const draft = migrationRequired
+    ? normalizeLegacyDraft(serializedDraft, key)
+    : editorCore.createDraft(serializedDraft);
   if (draft.draftId !== draftId) fail(`drafts.${key}.draft identity does not match`);
-  return Object.freeze({
+  const record = {
     draftId,
     createdBy: token(value.createdBy, `drafts.${key}.createdBy`),
     updatedBy: token(value.updatedBy, `drafts.${key}.updatedBy`),
     createdAt,
     updatedAt,
     draft
-  });
+  };
+  Object.defineProperty(record, "migrationRequired", { value: migrationRequired, enumerable: false });
+  return Object.freeze(record);
 }
 
 function normalize(raw) {
@@ -65,6 +118,7 @@ function createMemoryStore(initial) {
     update(draftId, expectedRevision, mutate) {
       const current = root.drafts[draftId];
       if (!current) return null;
+      if (current.migrationRequired) { const error = new Error("legacy exam draft requires an explicit program mode migration"); error.code = "EXAM_DRAFT_MIGRATION_REQUIRED"; throw error; }
       if (current.draft.revision !== expectedRevision) { const error = new Error("exam draft revision changed"); error.code = "EXAM_DRAFT_CONFLICT"; throw error; }
       const nextRecord = normalizeRecord(mutate(serializable(current)), draftId);
       root = normalize({ schemaVersion: SCHEMA_VERSION, drafts: Object.assign({}, serializable(root.drafts), { [draftId]: nextRecord }) });
@@ -137,6 +191,7 @@ function createFileStore(filePath, staleLockMs) {
       const next = writeMutation(function (root) {
         const current = root.drafts[draftId];
         if (!current) return root;
+        if (current.migrationRequired) { const error = new Error("legacy exam draft requires an explicit program mode migration"); error.code = "EXAM_DRAFT_MIGRATION_REQUIRED"; throw error; }
         if (current.draft.revision !== expectedRevision) { const error = new Error("exam draft revision changed"); error.code = "EXAM_DRAFT_CONFLICT"; throw error; }
         result = normalizeRecord(mutate(serializable(current)), draftId);
         return { schemaVersion: SCHEMA_VERSION, drafts: Object.assign({}, serializable(root.drafts), { [draftId]: result }) };
