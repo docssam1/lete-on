@@ -55,6 +55,10 @@ test("every runnable exam contract has an explicit program and neutral track ass
   assert.deepEqual(Object.values(contracts.EXAMS).map(exam => [exam.examId, exam.programCode, exam.trackId]), [
     ["sh-selection-r01", "SH", "high-selection"],
     ["dp-middle2-2-transfer", "DP", "middle-transfer"],
-    ["dp-common1-entry-202405", "DP", "common-math-entry"]
+    ["dp-common1-entry-202405", "DP", "common-math-entry"],
+    ["wm-middle21-basic-entry-r01", "WM", "middle-entry"],
+    ["wm-middle21-basic-entry-r02", "WM", "middle-entry"],
+    ["wm-middle21-basic-entry-r03", "WM", "middle-entry"],
+    ["wm-middle21-basic-entry-r04", "WM", "middle-entry"]
   ]);
 });

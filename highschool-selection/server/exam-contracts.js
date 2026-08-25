@@ -3,8 +3,32 @@
 const shR01Schema = require("../data/review-only/sh-r01-response-schema.js");
 const dpMiddle22Schema = require("../data/review-only/dp-middle22-entry-202404-response-schema.js");
 const dpCommon1Schema = require("../data/review-only/dp-cm1-entry-202405-response-schema.js");
+const wmMiddle21Schema = require("../data/review-only/wm-middle21-response-schema.js");
 
-const EXAMS = Object.freeze({
+const WM_MIDDLE21_EXAMS = Object.freeze(Object.fromEntries(wmMiddle21Schema.EXAM_IDS.map(function (examId, index) {
+  return [examId, Object.freeze({
+    examId,
+    programCode: "WM",
+    trackId: "middle-entry",
+    title: `원수학 중2-1 기본반 입학 대비 ${index + 1}회`,
+    deliveryRole: "representative-mock",
+    formProfile: "sale-mock-a4-v1",
+    durationMinutes: 100,
+    scheduledWindowMinutes: 120,
+    questionCount: 40,
+    pageCount: 12,
+    responseSchemaVersion: wmMiddle21Schema.SCHEMA_VERSION,
+    operationalScorePolicy: Object.freeze({
+      kind: "unit-points",
+      pointsPerItem: 1,
+      totalPoints: 40,
+      label: "진단 점수"
+    }),
+    cutlinePolicy: null
+  })];
+})));
+
+const EXAMS = Object.freeze(Object.assign({
   "sh-selection-r01": Object.freeze({
     examId: "sh-selection-r01",
     programCode: "SH",
@@ -59,7 +83,7 @@ const EXAMS = Object.freeze({
     }),
     cutlinePolicy: null
   })
-});
+}, WM_MIDDLE21_EXAMS));
 
 function getExamContract(examId) {
   return EXAMS[String(examId || "")] || null;
@@ -69,6 +93,7 @@ function responseSchemaFor(examId, studentId) {
   if (examId === shR01Schema.EXAM_ID) return shR01Schema.forStudent(studentId);
   if (examId === dpMiddle22Schema.EXAM_ID) return dpMiddle22Schema.forStudent(studentId);
   if (examId === dpCommon1Schema.EXAM_ID) return dpCommon1Schema.forStudent(studentId);
+  if (wmMiddle21Schema.EXAM_IDS.includes(examId)) return wmMiddle21Schema.forStudent(examId, studentId);
   return null;
 }
 

@@ -46,17 +46,28 @@ test("version conflicts and partial WM sources remain blocked instead of being a
   assert.deepEqual(Array.from(wm.sourceCandidates, item => item.status), ["audited_internal_variant", "missing_exact_source"]);
 });
 
-test("WM middle2-1 entry is a separate corrected 40-item locked blueprint", () => {
-  const exam = catalog.exams.find(item => item.id === "wm-middle21-basic-entry-r01");
-  assert.equal(exam.track, "중2-1 기본반 신입");
-  assert.equal(exam.questionCount, 40);
-  assert.equal(exam.durationMinutes, 100);
-  assert.equal(exam.scheduledWindowMinutes, 120);
-  assert.equal(exam.sourceStatus, "official_structure_verified");
-  assert.equal(exam.answerStatus, "not_authored");
-  assert.equal(exam.releaseStatus, "blocked");
-  assert.deepEqual(Array.from(exam.sourceCandidates, item => item.poolId), ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"]);
-  assert.equal(exam.note.includes("35/50"), false);
+test("WM middle2-1 representative set has four verified rounds pending final confirmation", () => {
+  const exams = catalog.exams.filter(item => /^wm-middle21-basic-entry-r0[1-4]$/.test(item.id));
+  assert.equal(exams.length, 4);
+  exams.forEach((exam, index) => {
+    assert.equal(exam.title, `원수학 중2-1 기본반 입학 대비 ${index + 1}회`);
+    assert.equal(exam.track, "중2-1 기본반 신입");
+    assert.equal(exam.questionCount, 40);
+    assert.equal(exam.durationMinutes, 100);
+    assert.equal(exam.scheduledWindowMinutes, 120);
+    assert.equal(exam.pageCount, 12);
+    assert.equal(exam.sourceStatus, "audited");
+    assert.equal(exam.answerStatus, "verified");
+    assert.equal(exam.classificationStatus, "verified");
+    assert.equal(exam.releaseStatus, "review_pending");
+    assert.equal(exam.reviewProgress.questionInventory, "40/40");
+    assert.equal(exam.reviewProgress.answerReview, "verified");
+    assert.equal(exam.reviewProgress.classificationReview, "verified");
+    assert.equal(exam.reviewProgress.layoutReview, "passed");
+    assert.equal(exam.reviewProgress.releaseDecision, "final_confirmation_pending");
+    assert.equal(exam.note.includes("35/50"), false);
+  });
+  assert.deepEqual(Array.from(exams, exam => exam.privateAnswerPageCount), [13, 11, 12, 12]);
 });
 
 test("the audited DP source revision is a separate locked review round", () => {

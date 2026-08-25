@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const grading = require("../shared/grading.js");
 const shR01Metadata = require("../data/sh-r01-diagnostic-metadata.js");
+const wmMiddle21Metadata = require("../data/wm-middle21-diagnostic-metadata.js");
 
 const TYPES = new Set(["input", "multi_input", "ordered_list", "unordered_set", "self_check"]);
 const DIFFICULTIES = new Set(["lowered", "standard", "raised"]);
@@ -37,8 +38,10 @@ function validateClassification(value, number) {
 }
 
 function publicClassification(examId, number) {
-  if (examId !== "sh-selection-r01") return null;
-  const item = shR01Metadata.reportMetadataFor(number);
+  let item = null;
+  if (examId === "sh-selection-r01") item = shR01Metadata.reportMetadataFor(number);
+  else if (wmMiddle21Metadata.rounds[examId]) item = wmMiddle21Metadata.reportMetadataFor(examId, number);
+  else return null;
   if (!item || item.points !== 1 || item.reviewStatus !== "verified" || item.classificationStatus !== "verified") {
     fail(`item ${number} public diagnostic metadata is not verified`);
   }
