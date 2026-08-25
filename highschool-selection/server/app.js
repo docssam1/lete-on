@@ -22,6 +22,9 @@ const practicePlanner = require("../shared/practice-set-planner.js");
 const practiceRegistryModule = require("./practice-registry.js");
 const practiceStoreModule = require("./practice-store.js");
 const practiceAssetsModule = require("./practice-assets.js");
+const examEditorCore = require("../data/exam-editor-core.js");
+const examEditorRegistryModule = require("./exam-editor-registry.js");
+const examDraftStoreModule = require("./exam-draft-store.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -293,6 +296,14 @@ function createApp(options) {
     data: opts.privatePracticeAssets,
     filePath: opts.privatePracticeAssetsPath
   });
+  const loadExamEditorRegistry = opts.loadExamEditorRegistry || examEditorRegistryModule.createLoader({
+    data: opts.privateExamEditorRegistry,
+    filePath: opts.privateExamEditorRegistryPath
+  });
+  const examDraftStore = opts.examDraftStore || examDraftStoreModule.createStore({
+    data: opts.privateExamDrafts,
+    filePath: opts.privateExamDraftsPath
+  });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
   const dummyApprovalHash = security.hashApprovalCode("INVALID-APPROVAL-CODE", Buffer.alloc(16, 0).toString("base64url"));
@@ -337,6 +348,129 @@ function createApp(options) {
 
   function requirePracticeInfrastructure() {
     if (!loadPracticeMode || !practiceStore) throw new HttpError(503, "비공개 반복연습 저장소가 연결되지 않았습니다.");
+  }
+
+  function requireExamEditorInfrastructure() {
+    if (!loadExamEditorRegistry || !examDraftStore) throw new HttpError(503, "비공개 시험지 편집 저장소가 연결되지 않았습니다.");
+    let registry;
+    try { registry = loadExamEditorRegistry(); }
+    catch (_) { throw new HttpError(503, "검수된 시험지 후보 목록을 확인해 주세요."); }
+    if (!registry) throw new HttpError(503, "검수된 시험지 후보 목록이 연결되지 않았습니다.");
+    return registry;
+  }
+
+  function publicEditorCandidate(entry) {
+    const candidate = entry.candidate;
+    const result = {
+      itemId: candidate.itemId,
+      itemVersionId: candidate.itemVersionId,
+      curriculumPath: candidate.curriculumPath,
+      typeCode: candidate.typeCode,
+      difficultyBand: candidate.difficultyBand,
+      inputType: candidate.inputType,
+      figureRequired: candidate.figureRequired,
+      eligible: true
+    };
+    if (entry.relation) {
+      result.replacement = {
+        evidenceId: entry.relation.evidenceId,
+        relationship: entry.relation.relationship
+      };
+    }
+    return result;
+  }
+
+  function publicExamDraft(record) {
+    return {
+      draftId: record.draftId,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      draft: record.draft
+    };
+  }
+
+  function editorMetadata(draft, registry) {
+    return Object.fromEntries(draft.placements.map(function (placement) {
+      return [placement.itemId, registry.getCandidate(placement.itemId, placement.itemVersionId)];
+    }).filter(function (entry) { return Boolean(entry[1]); }));
+  }
+
+  function editorCandidate(registry, itemId, itemVersionId) {
+    const candidate = registry.getCandidate(itemId, itemVersionId);
+    if (!candidate) throw new HttpError(404, "현재 버전의 검수된 문항 후보를 찾을 수 없습니다.");
+    return candidate;
+  }
+
+  function applyEditorOperation(draft, operation, registry) {
+    if (!operation || typeof operation !== "object" || Array.isArray(operation)) throw new HttpError(400, "시험지 편집 작업 형식이 올바르지 않습니다.");
+    const kind = security.clean(operation.kind);
+    const operationFields = {
+      add: new Set(["kind", "placementId", "itemId", "itemVersionId", "index", "score", "locked", "selectionKind"]),
+      remove: new Set(["kind", "placementId"]),
+      move: new Set(["kind", "placementId", "toIndex"]),
+      replace: new Set(["kind", "placementId", "itemId", "itemVersionId", "relationship", "reasonCode", "evidenceId"]),
+      change_scope: new Set(["kind", "scopeKeys"]),
+      sort: new Set(["kind", "mode", "seed"]),
+      set_view: new Set(["kind", "viewMode"])
+    };
+    if (!operationFields[kind]) throw new HttpError(400, "지원하지 않는 시험지 편집 작업입니다.");
+    exactKeys(operation, operationFields[kind], "시험지 편집 작업");
+    try {
+      if (kind === "add") {
+        if (!operation.placementId || !["manual", "recommended"].includes(operation.selectionKind || "manual")) {
+          throw new HttpError(400, "문항 추가 정보가 올바르지 않습니다.");
+        }
+        return { draft: examEditorCore.addItem(draft, {
+          placementId: security.clean(operation.placementId),
+          candidate: editorCandidate(registry, operation.itemId, operation.itemVersionId),
+          index: operation.index,
+          score: operation.score,
+          locked: operation.locked,
+          selectionKind: operation.selectionKind || "manual"
+        }), reconciliation: null };
+      }
+      if (kind === "remove") {
+        return { draft: examEditorCore.removePlacement(draft, security.clean(operation.placementId)), reconciliation: null };
+      }
+      if (kind === "move") {
+        return { draft: examEditorCore.movePlacement(draft, security.clean(operation.placementId), operation.toIndex), reconciliation: null };
+      }
+      if (kind === "replace") {
+        const relationship = security.clean(operation.relationship || "manual");
+        let evidence = null;
+        if (relationship !== "manual") {
+          evidence = registry.getReplacementEvidence(operation.evidenceId);
+          if (!evidence) throw new HttpError(409, "현재 문항과 후보 문항의 검수된 교체 근거를 찾을 수 없습니다.");
+        } else if (operation.evidenceId != null) {
+          throw new HttpError(400, "직접 교체에는 유사문항 근거를 지정할 수 없습니다.");
+        }
+        return { draft: examEditorCore.replacePlacement(draft, {
+          placementId: security.clean(operation.placementId),
+          candidate: editorCandidate(registry, operation.itemId, operation.itemVersionId),
+          relationship,
+          reasonCode: security.clean(operation.reasonCode || "user_selected"),
+          replacementEvidence: evidence
+        }), reconciliation: null };
+      }
+      if (kind === "change_scope") {
+        const result = examEditorCore.changeScope(draft, operation.scopeKeys, editorMetadata(draft, registry));
+        return { draft: result.draft, reconciliation: result.reconciliation };
+      }
+      if (kind === "sort") {
+        return {
+          draft: examEditorCore.sortPlacements(draft, operation.mode, editorMetadata(draft, registry), { seed: operation.seed }),
+          reconciliation: null
+        };
+      }
+      if (kind === "set_view") {
+        return { draft: examEditorCore.setViewMode(draft, operation.viewMode), reconciliation: null };
+      }
+      throw new HttpError(400, "지원하지 않는 시험지 편집 작업입니다.");
+    } catch (error) {
+      if (error instanceof HttpError) throw error;
+      if (error instanceof TypeError) throw new HttpError(409, "현재 시험지 상태와 편집 조건이 일치하지 않습니다.");
+      throw error;
+    }
   }
 
   function requireStudentPracticeMode(context, mode) {
@@ -606,6 +740,130 @@ function createApp(options) {
       }
       if (action === "attempts" && request.method === "POST") {
         throw new HttpError(423, "검수된 반복연습 채점 구성이 아직 연결되지 않았습니다.");
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    if (request.method === "GET" && pathname === "/admin/exam-editor/candidates") {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const registry = requireExamEditorInfrastructure();
+      const allowedSearchKeys = new Set(["scopeKey", "q", "limit", "sourceItemId", "sourceItemVersionId", "relationship"]);
+      for (const key of url.searchParams.keys()) {
+        if (!allowedSearchKeys.has(key)) throw new HttpError(400, "후보 검색 조건에 허용되지 않은 항목이 있습니다.");
+      }
+      const limitText = url.searchParams.get("limit");
+      const limit = limitText == null ? 30 : Number(limitText);
+      if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new HttpError(400, "후보 검색 개수가 올바르지 않습니다.");
+      const relationship = security.clean(url.searchParams.get("relationship"));
+      const sourceItemId = security.clean(url.searchParams.get("sourceItemId"));
+      const sourceItemVersionId = security.clean(url.searchParams.get("sourceItemVersionId"));
+      if (relationship && !["twin", "similar"].includes(relationship)) throw new HttpError(400, "유사문항 관계가 올바르지 않습니다.");
+      if ((relationship || sourceItemId || sourceItemVersionId) && (!relationship || !sourceItemId || !sourceItemVersionId)) {
+        throw new HttpError(400, "유사문항 검색에는 원문 문항과 버전, 관계가 모두 필요합니다.");
+      }
+      const items = registry.search({
+        scopeKey: url.searchParams.get("scopeKey"),
+        query: url.searchParams.get("q"),
+        limit,
+        sourceItemId,
+        sourceItemVersionId,
+        relationship
+      }).map(publicEditorCandidate);
+      sendJson(response, 200, { items, count: items.length });
+      return true;
+    }
+
+    if (pathname === "/admin/exam-editor/drafts" && request.method === "POST") {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      requireAdminMutation(request, true, configuredOrigin);
+      requireExamEditorInfrastructure();
+      const body = await readJson(request, 32 * 1024);
+      exactKeys(body, new Set(["profileId", "targetId", "durationMinutes", "scopeKeys"]), "시험지 초안");
+      const draftId = `draft_${crypto.randomUUID().replace(/-/g, "")}`;
+      let draft;
+      try {
+        draft = examEditorCore.createDraft({
+          draftId,
+          profileId: security.clean(body.profileId),
+          targetId: security.clean(body.targetId),
+          durationMinutes: body.durationMinutes,
+          scopeKeys: body.scopeKeys,
+          placements: []
+        });
+      } catch (_) {
+        throw new HttpError(400, "시험지 초안 설정이 올바르지 않습니다.");
+      }
+      const timestamp = new Date(now()).toISOString();
+      let record;
+      try {
+        record = examDraftStore.create({
+          draftId,
+          createdBy: context.user.studentId,
+          updatedBy: context.user.studentId,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          draft
+        });
+      } catch (error) {
+        if (error && (error.code === "EXAM_DRAFT_BUSY" || error.code === "EXAM_DRAFT_CONFLICT")) {
+          throw new HttpError(409, "시험지 초안이 동시에 변경되었습니다. 다시 시도해 주세요.");
+        }
+        throw error;
+      }
+      sendJson(response, 201, publicExamDraft(record));
+      return true;
+    }
+
+    const editorDraftMatch = pathname.match(/^\/admin\/exam-editor\/drafts\/([^/]+)(?:\/(readiness))?$/);
+    if (editorDraftMatch) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const registry = requireExamEditorInfrastructure();
+      const draftId = decodeURIComponent(editorDraftMatch[1]);
+      const action = editorDraftMatch[2] || "draft";
+      const current = examDraftStore.read(draftId);
+      if (!current) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+      if (request.method === "GET" && action === "draft") {
+        sendJson(response, 200, publicExamDraft(current));
+        return true;
+      }
+      if (request.method === "GET" && action === "readiness") {
+        const readiness = examEditorCore.evaluateDraftReadiness(current.draft, editorMetadata(current.draft, registry));
+        sendJson(response, 200, {
+          draftId: current.draftId,
+          revision: current.draft.revision,
+          eligible: readiness.eligible,
+          issues: readiness.issues,
+          projection: readiness.projection
+        });
+        return true;
+      }
+      if (request.method === "PATCH" && action === "draft") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 32 * 1024);
+        exactKeys(body, new Set(["expectedRevision", "operation"]), "시험지 편집 요청");
+        const expectedRevision = Number(body.expectedRevision);
+        if (!Number.isSafeInteger(expectedRevision) || expectedRevision < 1) throw new HttpError(400, "시험지 편집 버전이 올바르지 않습니다.");
+        let reconciliation = null;
+        let record;
+        try {
+          record = examDraftStore.update(draftId, expectedRevision, function (latest) {
+            const applied = applyEditorOperation(latest.draft, body.operation, registry);
+            reconciliation = applied.reconciliation;
+            latest.updatedBy = context.user.studentId;
+            latest.updatedAt = new Date(now()).toISOString();
+            latest.draft = applied.draft;
+            return latest;
+          });
+        } catch (error) {
+          if (error instanceof HttpError) throw error;
+          if (error && (error.code === "EXAM_DRAFT_BUSY" || error.code === "EXAM_DRAFT_CONFLICT")) {
+            throw new HttpError(409, "시험지 초안이 다른 화면에서 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+          }
+          throw error;
+        }
+        if (!record) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+        sendJson(response, 200, { record: publicExamDraft(record), reconciliation });
+        return true;
       }
       throw new HttpError(405, "허용되지 않은 요청입니다.");
     }
