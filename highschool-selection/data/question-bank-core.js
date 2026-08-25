@@ -21,7 +21,9 @@
     approval: "apr",
     learner: "lrn",
     attempt: "atm",
-    practiceSet: "pst"
+    practiceSet: "pst",
+    examDraft: "drf",
+    placement: "plc"
   });
   const CURRICULUM_LEVELS = Object.freeze(["grade", "major", "minor", "detail"]);
   const SOURCE_ROLES = Object.freeze(["actual", "recommended", "textbook", "internal-variant"]);
@@ -42,7 +44,7 @@
   const GENERATION_KINDS = Object.freeze(["parameterized", "bespoke", "figure_only"]);
   const DIFFICULTY_BANDS = Object.freeze(["lowered", "standard", "raised"]);
   const REVIEW_STATUSES = Object.freeze(["draft", "audit_pending", "approved", "excluded"]);
-  const NEUTRAL_ID_PATTERN = /^(exm|qst|var|fig|pol|src|typ|lin|apr|lrn|atm|pst)-(sh|dp|wm|ed|dg|sm)-([0-9a-f]{16})$/;
+  const NEUTRAL_ID_PATTERN = /^(exm|qst|var|fig|pol|src|typ|lin|apr|lrn|atm|pst|drf|plc)-(sh|dp|wm|ed|dg|sm)-([0-9a-f]{16})$/;
   const SHARED_ID_PATTERN = /^(qst|var|fig|src|typ|lin)-bnk-([0-9a-f]{16})$/;
   const CODE_PATTERN = /^[A-Z0-9][A-Z0-9_-]{0,31}$/;
   const OPAQUE_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/;
