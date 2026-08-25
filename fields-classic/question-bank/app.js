@@ -1,8 +1,8 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260823t";
-import { GENERATORS } from "./generators.js?v=20260823t";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260825b";
+import { GENERATORS } from "./generators.js?v=20260825b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
-import { book03Markup } from "./book03-renderers.js?v=20260822e";
+import { book03Markup } from "./book03-renderers.js?v=20260825b";
 import { book04Markup } from "./book04-renderers.js?v=20260822e";
 import { book05Markup } from "./book05-renderers.js?v=20260822f";
 import { book06Markup } from "./book06-renderers.js?v=20260822g";
@@ -41,7 +41,7 @@ function requestedStage() {
 const state = {
   mode: "exam",
   stage: requestedStage(),
-  selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
+  selected: { exam: new Set(), curriculum: new Set(), unitTest: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
   curriculumStage: "type",
@@ -78,6 +78,7 @@ function isReady(item) {
   const ownGenerator = item?.generator && GENERATORS[item.generator];
   const geometryGenerator = item?.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode);
   const provenanceApproved = item?.sourceMatched || item?.bankApproved;
+  if (item?.sourceAuditBlocked) return false;
   return Boolean(provenanceApproved && (ownGenerator || geometryGenerator));
 }
 
@@ -313,6 +314,10 @@ function curriculumKey(bookId, unitIndex, typeId) {
   return `${bookId}:${unitIndex}:${typeId}`;
 }
 
+function unitTestKey(bookId, number) {
+  return `${bookId}:${number}`;
+}
+
 function hasBookSource(item, book, unit = null) {
   // 문제 번호별 typeStudyRefs는 해당 권 원본을 직접 대조했다는 가장 강한 근거다.
   // 다른 권에서 먼저 만든 생성기를 재사용해도 문자열 출처 때문에 잠기지 않아야 한다.
@@ -326,7 +331,8 @@ function typeStageReferences(unit, typeId, stageId) {
 
 function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
   const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
-  return isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
+  const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
+  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
 }
 
 function studyReferenceLabel(references = []) {
@@ -385,15 +391,30 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
+    const testQuestions = book.source.unitTestQuestions || [];
+    const testReadyCount = testQuestions.filter((question) => question.verified && isSelectableType(typeById(question.typeId))).length;
+    const testQuestionRows = testQuestions.length ? `<div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
+      ${testQuestions.map((question) => {
+        const item = typeById(question.typeId);
+        const ready = question.verified && isSelectableType(item);
+        const key = unitTestKey(book.id, question.number);
+        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+          <input type="checkbox" data-unit-test-key="${key}" ${state.selected.unitTest.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <b>${question.number}번</b><span><strong>${question.label}</strong><small>${item?.middle || "유형 대조 중"}</small></span>
+          <em>${ready ? "유사문제 연결" : "원본 구조 재설계 중"}</em>
+        </label>`;
+      }).join("")}
+    </div>` : "";
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
-        <div><strong>단원 테스트 유사문제</strong><span>문항별 유형 대조 후 연결</span><em>분석 중</em></div>
+        <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
         ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
+      ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
       <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
@@ -402,6 +423,11 @@ function renderCurriculum() {
   $("curriculumTree").querySelectorAll("input[data-curriculum-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.curriculum.add(input.dataset.curriculumKey);
     else state.selected.curriculum.delete(input.dataset.curriculumKey);
+    updateSummary();
+  }));
+  $("curriculumTree").querySelectorAll("input[data-unit-test-key]").forEach((input) => input.addEventListener("change", () => {
+    if (input.checked) state.selected.unitTest.add(input.dataset.unitTestKey);
+    else state.selected.unitTest.delete(input.dataset.unitTestKey);
     updateSummary();
   }));
 }
@@ -449,6 +475,22 @@ function selectedReferences() {
         result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
       }
     }
+    for (const key of state.selected.unitTest) {
+      const separator = key.lastIndexOf(":");
+      const bookId = key.slice(0, separator);
+      const number = Number(key.slice(separator + 1));
+      const book = CURRICULUM.find((item) => item.id === bookId);
+      const question = book?.source.unitTestQuestions?.find((item) => item.number === number);
+      const type = typeById(question?.typeId);
+      if (book && question?.verified && isSelectableType(type)) {
+        result.push({
+          typeId: question.typeId,
+          reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
+          difficulty: question.difficulty || 2,
+          fixedSeed: `unit-test:${book.id}:${number}`
+        });
+      }
+    }
     return result;
   }
   const result = [];
@@ -490,6 +532,22 @@ function toggleVisible(selector, set, keyGetter) {
     if (shouldSelect) set.add(key);
     else set.delete(key);
   });
+  updateSummary();
+}
+
+function toggleCurriculumSelections() {
+  const curriculumInputs = [...document.querySelectorAll("#curriculumTree input[data-curriculum-key]")].filter((input) => !input.disabled);
+  const testInputs = [...document.querySelectorAll("#curriculumTree input[data-unit-test-key]")].filter((input) => !input.disabled);
+  const inputs = [...curriculumInputs, ...testInputs];
+  const shouldSelect = inputs.some((input) => !input.checked);
+  for (const input of inputs) {
+    input.checked = shouldSelect;
+    const isTest = Boolean(input.dataset.unitTestKey);
+    const set = isTest ? state.selected.unitTest : state.selected.curriculum;
+    const key = isTest ? input.dataset.unitTestKey : input.dataset.curriculumKey;
+    if (shouldSelect) set.add(key);
+    else set.delete(key);
+  }
   updateSummary();
 }
 
@@ -601,9 +659,9 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }, item, reference);
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null) {
   if (item.generator && GENERATORS[item.generator]) {
-    const difficulty = activeDifficulty();
+    const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
     // 답이 유일해야 하는 배치·추리 생성기는 조건이 안 맞으면 null을 준다. 실패는 정상이므로
     // 다시 뽑는다(중복 회피 루프와 별개). 받아 주지 않으면 빈 문항 카드가 나간다.
@@ -640,7 +698,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -1649,10 +1707,11 @@ function g1SourceMarkup(visual) {
 
 function cryptarithmVerticalMarkup(visual) {
   // 자리를 오른쪽으로 맞춰 세로셈처럼 세운다. 자리 수가 다르면 왼쪽을 빈칸으로 채운다.
-  const width = Math.max(visual.first.length, visual.second.length, visual.sum.length);
+  const addends = visual.addends || [visual.first, visual.second];
+  const width = Math.max(...addends.map((row) => row.length), visual.sum.length);
   const pad = (row) => Array.from({ length: width - row.length }, () => "").concat(row);
   const line = (row, sign) => `<div class="cv-row">${sign ? `<b class="cv-sign">${sign}</b>` : `<b class="cv-sign"></b>`}${pad(row).map((cell) => `<span>${cell}</span>`).join("")}</div>`;
-  return `<div class="cryptarithm-vertical" style="--cv-cols:${width}">${line(visual.first, "")}${line(visual.second, "+")}<div class="cv-bar"></div>${line(visual.sum, "")}</div>`;
+  return `<div class="cryptarithm-vertical" style="--cv-cols:${width}">${addends.map((row, index) => line(row, index === addends.length - 1 ? "+" : "")).join("")}<div class="cv-bar"></div>${line(visual.sum, "")}</div>`;
 }
 
 function foldGeometryHelpers() {
@@ -2973,7 +3032,7 @@ function initControls() {
   $("worksheetStudent").textContent = student;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
-  $("toggleCurriculum").addEventListener("click", () => toggleVisible("#curriculumTree input[data-curriculum-key]", state.selected.curriculum, (input) => input.dataset.curriculumKey));
+  $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
   $("toggleBankTypes").addEventListener("click", () => toggleVisible("#bankTypeTree input[data-type-id]", state.selected.type, (input) => input.dataset.typeId));
   $("countChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.count = Number(button.dataset.count);

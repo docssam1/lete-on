@@ -98,9 +98,9 @@ function unitGridArea({ difficulty = 2 }) {
 }
 
 function growingShapeAreaSum({ difficulty = 2 }) {
-  const shape = sample(["triangle", "square", "pentagon", "hexagon"]);
-  const count = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6;
-  const start = difficulty === 3 && Math.random() < 0.5 ? 2 : 1;
+  const shape = sample(["triangle", "square"]);
+  const count = difficulty === 1 ? randomInt(3, 4) : difficulty === 2 ? randomInt(4, 6) : randomInt(5, 7);
+  const start = 1;
   const areas = Array.from({ length: count }, (_, index) => (start + index) * (start + index));
   const answer = areas.reduce((sum, value) => sum + value, 0);
   const shapeLabel = { triangle: "정삼각형", square: "정사각형", pentagon: "정오각형", hexagon: "정육각형" }[shape];
@@ -114,28 +114,29 @@ function growingShapeAreaSum({ difficulty = 2 }) {
 }
 
 function nestedSquareOuterArea({ difficulty = 2 }) {
-  const count = difficulty === 1 ? randomInt(4, 5) : difficulty === 2 ? randomInt(5, 7) : randomInt(7, 9);
-  const firstSide = sample([1, 2]);
-  const step = difficulty === 3 ? 2 : 1;
+  const count = difficulty === 1 ? 6 : difficulty === 2 ? 7 : randomInt(8, 9);
+  const firstSide = 1;
+  const step = 1;
+  const unitArea = difficulty === 1 ? randomInt(1, 3) : difficulty === 2 ? randomInt(1, 4) : randomInt(2, 6);
   const sides = Array.from({ length: count }, (_, index) => firstSide + step * index);
-  const areas = sides.map((side) => side * side);
-  const askSum = difficulty === 3 && Math.random() < 0.5;
+  const areas = sides.map((side) => side * side * unitArea);
+  const askSum = difficulty === 1;
   const answer = askSum ? areas.reduce((sum, value) => sum + value, 0) : areas.at(-1);
   return {
     prompt: askSum
-      ? `정사각형을 같은 규칙으로 ${count}번째까지 겹쳐 그렸습니다. 가장 바깥 정사각형들의 넓이를 1번째부터 모두 더한 값을 구하세요.`
-      : `정사각형을 같은 규칙으로 겹쳐 그렸습니다. ${count}번째 모양에서 가장 바깥 정사각형의 넓이를 구하세요.`,
-    visual: { kind: "book3", subtype: "nested-square-area", sides: sides.slice(0, Math.min(5, sides.length)), target: count, askSum },
+      ? `작은 정사각형 한 칸의 넓이가 ${unitArea}입니다. 정사각형을 같은 규칙으로 ${count}번째까지 겹쳐 그렸을 때, 가장 바깥 정사각형들의 넓이를 1번째부터 모두 더한 값을 구하세요.`
+      : `작은 정사각형 한 칸의 넓이가 ${unitArea}입니다. 정사각형을 같은 규칙으로 겹쳐 그렸을 때, ${count}번째 모양에서 가장 바깥 정사각형의 넓이를 구하세요.`,
+    visual: { kind: "book3", subtype: "nested-square-area", sides: sides.slice(0, Math.min(5, sides.length)), target: count, askSum, unitArea },
     answer: String(answer),
     solution: `가장 바깥 정사각형의 한 변은 ${sides.join(", ")}로 늘어납니다. 넓이는 ${areas.join(", ")}${askSum ? `이고 이를 모두 더하면 ${answer}` : `이므로 ${count}번째는 ${answer}`}입니다.`,
-    meta: { family: "nested-square-area", count, firstSide, step, sides, areas, askSum, answer }
+    meta: { family: "nested-square-area", count, firstSide, step, unitArea, sides, areas, askSum, answer }
   };
 }
 
 function fractionShapeFor(difficulty) {
   if (difficulty === 1) return sample([{ shape: "triangle", parts: 3 }, { shape: "square", parts: 4 }, { shape: "hexagon", parts: 6 }]);
   if (difficulty === 2) return sample([{ shape: "square", parts: 8 }, { shape: "hexagon", parts: 6 }, { shape: "hexagon", parts: 12 }]);
-  return sample([{ shape: "triangle", parts: 6 }, { shape: "square", parts: 12 }, { shape: "hexagon", parts: 12 }]);
+  return sample([{ shape: "triangle", parts: 6 }, { shape: "square", parts: 12 }, { shape: "hexagon", parts: 12 }, { shape: "hexagon", parts: 18 }]);
 }
 
 function equalPartShadedFraction({ difficulty = 2 }) {
@@ -190,14 +191,15 @@ function obliqueSquareGridArea({ difficulty = 2 }) {
     return { dx, dy, offsetX: index * 7, offsetY: index % 2 };
   });
   const areas = squares.map(({ dx, dy }) => dx * dx + dy * dy);
-  const answer = areas.reduce((sum, value) => sum + value, 0);
+  const answer = count === 1 ? String(areas[0]) : `㉠=${areas[0]}, ㉡=${areas[1]}`;
   return {
     prompt: count === 1
       ? "모눈 한 칸의 넓이가 1일 때, 기울어진 정사각형의 넓이를 구하세요."
-      : "모눈 한 칸의 넓이가 1일 때, 두 기울어진 정사각형 넓이의 합을 구하세요.",
+      : "모눈 한 칸의 넓이가 1일 때, ㉠과 ㉡ 정사각형의 넓이를 각각 구하세요.",
     visual: { kind: "book3", subtype: "oblique-square-area", squares },
-    answer: String(answer),
-    solution: `각 정사각형을 둘러싼 큰 사각형에서 바깥 삼각형을 빼면 넓이는 ${areas.join(", ")}입니다.${count > 1 ? ` 합은 ${answer}입니다.` : ""}`,
+    answer,
+    responseKind: count === 1 ? "text" : "list",
+    solution: `각 정사각형을 둘러싼 큰 사각형에서 바깥 삼각형을 빼면 넓이는 ${areas.join(", ")}입니다.`,
     meta: { family: "oblique-square-area", squares, areas, answer }
   };
 }
@@ -233,7 +235,7 @@ function midpointNumberLine({ difficulty = 2 }) {
   const right = middle + gap;
   return {
     prompt: `수직선에서 ${left}와 ${right}의 중간수를 구하세요.`,
-    visual: { kind: "book3", subtype: "number-line", left, right, divisions: difficulty + 3, target: "middle" },
+    visual: { kind: "book3", subtype: "number-line", left, right, divisions: difficulty === 1 ? 4 : difficulty === 2 ? 6 : 8, target: "middle" },
     answer: String(middle),
     solution: `${left}와 ${right}를 더하면 ${left + right}이고 이를 똑같이 두 수로 가르면 ${middle}입니다.`,
     meta: { family: "midpoint", left, right, middle }
@@ -244,14 +246,14 @@ function segmentChainDistance({ difficulty = 2 }) {
   const gaps = Array.from({ length: 3 }, () => randomInt(difficulty === 1 ? 3 : 6, difficulty === 3 ? 24 : 16));
   const [ab, bc, cd] = gaps;
   const givens = { AC: ab + bc, BD: bc + cd, AD: ab + bc + cd };
-  const target = sample(["AB", "BC", "CD"]);
   const answers = { AB: ab, BC: bc, CD: cd };
   return {
-    prompt: `수직선 위 A, B, C, D 사이의 겹친 거리가 그림과 같습니다. ${target}의 길이를 구하세요.`,
-    visual: { kind: "book3", subtype: "segment-chain", labels: ["A", "B", "C", "D"], gaps, givens, target },
-    answer: `${answers[target]}cm`,
+    prompt: "수직선 위 A, B, C, D 사이의 겹친 거리가 그림과 같습니다. AB, BC, CD의 길이를 각각 구하세요.",
+    visual: { kind: "book3", subtype: "segment-chain", labels: ["A", "B", "C", "D"], gaps, givens, target: "AB · BC · CD" },
+    answer: `AB=${ab}cm, BC=${bc}cm, CD=${cd}cm`,
+    responseKind: "list",
     solution: `AC와 BD를 더하면 가운데 BC를 두 번 세므로, BC는 ${givens.AC} + ${givens.BD} - ${givens.AD} = ${bc}cm입니다. 이어서 AB는 ${givens.AC} - ${bc} = ${ab}cm, CD는 ${givens.BD} - ${bc} = ${cd}cm입니다.`,
-    meta: { family: "segment-chain", gaps, givens, target, answer: answers[target] }
+    meta: { family: "segment-chain", gaps, givens, answers }
   };
 }
 
@@ -290,7 +292,7 @@ function routeDistanceMultiple({ difficulty = 2 }) {
   const answer = wholeMultiple - 1;
   return {
     prompt: `집에서 도서관까지는 같은 걸음으로 ${first}분, 집에서 학교까지는 ${whole}분 걸립니다. 도서관이 집과 학교 사이에 있을 때, 도서관에서 학교까지의 거리는 도서관에서 집까지의 거리의 몇 배입니까?`,
-    visual: { kind: "book3", subtype: "route-multiple", first, whole, second },
+    visual: { kind: "book3", subtype: "route-multiple", first, whole, second, ratio: answer, segments: [first, second] },
     answer: `${answer}배`,
     solution: `도서관에서 학교까지는 ${whole} - ${first} = ${second}분 거리입니다. ${second}는 ${first}의 ${answer}배입니다.`,
     meta: { family: "route-multiple", first, whole, second, answer }
@@ -306,7 +308,7 @@ function rodRatioTotalBook3({ difficulty = 2 }) {
   const total = first + second;
   return {
     prompt: `막대 ㉠과 ㉡을 이어 놓은 전체 길이가 ${total}cm입니다. 그림의 같은 칸 길이가 모두 같을 때 두 막대의 길이를 각각 구하세요.`,
-    visual: { kind: "book3", subtype: "rods", rows: [{ label: "㉠", units: firstUnits }, { label: "㉡", units: secondUnits }], total },
+    visual: { kind: "book3", subtype: "rods", rows: [{ label: "㉠", units: firstUnits }, { label: "㉡", units: secondUnits }], total, maxUnits: secondUnits },
     answer: `㉠=${first}cm, ㉡=${second}cm`,
     solution: `전체는 같은 길이 ${firstUnits + secondUnits}칸입니다. 한 칸은 ${total}을 ${firstUnits + secondUnits}칸으로 똑같이 나눈 ${unit}cm이므로 ㉠은 ${first}cm, ㉡은 ${second}cm입니다.`,
     meta: { family: "rod-total", firstUnits, secondUnits, unit, first, second, total }
@@ -341,6 +343,20 @@ function equivalentObjectLength({ difficulty = 2 }) {
     answer: `${answer}cm`,
     solution: `양쪽에서 성냥개비 3개를 지우면 통나무 1개와 성냥개비 2개의 길이가 연필 2자루와 같습니다. 성냥개비 1개는 ${match}cm이므로 관계를 거꾸로 계산하면 답은 ${answer}cm입니다.`,
     meta: { family: "equivalent-object", match, pencil, log, givenTarget, givenValue, askTarget, answer }
+  };
+}
+
+function objectCombinationEquivalentCount({ difficulty = 2 }) {
+  const pencilInMatches = difficulty === 1 ? randomInt(2, 3) : difficulty === 2 ? randomInt(3, 5) : randomInt(5, 7);
+  const pencils = difficulty === 1 ? 1 : randomInt(1, difficulty === 3 ? 3 : 2);
+  const matches = randomInt(1, difficulty === 3 ? 7 : 5);
+  const answer = pencils * pencilInMatches + matches;
+  return {
+    prompt: `리코더 1개의 길이는 연필 ${pencils}자루와 성냥개비 ${matches}개를 이은 길이와 같습니다. 연필 1자루의 길이가 성냥개비 ${pencilInMatches}개를 이은 길이와 같을 때, 리코더 1개는 성냥개비 몇 개를 이은 길이와 같습니까?`,
+    visual: { kind: "book3", subtype: "object-count-equivalence", pencils, matches, pencilInMatches },
+    answer: `${answer}개`,
+    solution: `연필 ${pencils}자루는 성냥개비 ${pencils} × ${pencilInMatches} = ${pencils * pencilInMatches}개와 같습니다. 여기에 성냥개비 ${matches}개를 더하면 ${answer}개입니다.`,
+    meta: { family: "object-count-equivalence", pencils, matches, pencilInMatches, answer }
   };
 }
 
@@ -386,8 +402,8 @@ function mixedIntervalDistance({ difficulty = 2 }) {
   const leftStart = randomInt(2, 15);
   const join = leftStart + leftDivisions * leftUnit;
   const rightEnd = join + rightDivisions * rightUnit;
-  const leftIndex = randomInt(0, leftDivisions - 1);
-  const rightIndex = randomInt(1, rightDivisions);
+  const leftIndex = randomInt(1, leftDivisions - 1);
+  const rightIndex = randomInt(1, rightDivisions - 1);
   const targetLeft = leftStart + leftIndex * leftUnit;
   const targetRight = join + rightIndex * rightUnit;
   const answer = targetRight - targetLeft;
@@ -411,7 +427,7 @@ function differenceUnitMeasure({ difficulty = 2 }) {
   const answer = total / difference;
   return {
     prompt: `연필의 길이는 막대 ㉠으로 재면 ${firstCount}번이고, 막대 ㉡으로 재면 ${secondCount}번입니다. 막대 ㉢의 길이는 ㉠에서 ㉡을 잘라낸 길이와 같습니다. 연필을 ㉢으로 재면 몇 번입니까?`,
-    visual: { kind: "book3", subtype: "difference-unit", firstCount, secondCount },
+    visual: { kind: "book3", subtype: "difference-unit", firstCount, secondCount, firstLength, secondLength, difference, total },
     answer: `${answer}번`,
     solution: `같은 전체 길이를 맞추면 ㉠은 ${secondCount}칸, ㉡은 ${firstCount}칸으로 볼 수 있습니다. 두 막대의 차는 1칸이고 연필 전체는 ${firstCount * secondCount}칸이므로 ${answer}번입니다.`,
     meta: { family: "difference-unit", firstCount, secondCount, scale, firstLength, secondLength, difference, total, answer }
@@ -486,47 +502,70 @@ function cryptarithmFixedDigitAddition({ difficulty = 2 }) {
 }
 
 function cryptarithmMissingDigitColumn({ difficulty = 2 }) {
-  let first;
-  let second;
+  const [firstSymbol, secondSymbol] = sample([
+    ["□", "○"],
+    ["○", "◇"],
+    ["◇", "□"]
+  ]);
+  let firstValue;
+  let secondValue;
+  let addends;
   let sum;
-  let hiddenRow;
-  let hiddenIndex;
-  if (difficulty === 1) {
-    do {
-      first = randomInt(11, 48);
-      second = randomInt(2, 9);
-    } while (first % 10 + second >= 10);
-    sum = first + second;
-    hiddenRow = "second";
-    hiddenIndex = 0;
-  } else if (difficulty === 2) {
-    do {
-      first = randomInt(24, 68);
-      second = randomInt(14, 29);
-      sum = first + second;
-    } while (first % 10 + second % 10 < 10 || sum >= 100);
-    hiddenRow = "second";
-    hiddenIndex = 0;
+  let sumRow;
+
+  if (difficulty === 3) {
+    // 원본 연습 8~11번처럼 같은 두 자리 수를 세 번 더한다.
+    // 17+17+17=51, 24+24+24=72, 31+31+31=93만 이 꼴에서 유일해다.
+    const candidate = sample([
+      { firstValue: 1, secondValue: 7, sum: 51 },
+      { firstValue: 2, secondValue: 4, sum: 72 },
+      { firstValue: 3, secondValue: 1, sum: 93 }
+    ]);
+    ({ firstValue, secondValue, sum } = candidate);
+    addends = Array.from({ length: 3 }, () => [firstSymbol, secondSymbol]);
+    sumRow = [String(Math.floor(sum / 10)), firstSymbol];
   } else {
-    do {
-      first = randomInt(124, 487);
-      second = randomInt(58, 296);
-      sum = first + second;
-    } while (String(second).length !== 3 || first % 10 + second % 10 < 10 || sum >= 900);
-    hiddenRow = Math.random() < 0.5 ? "first" : "second";
-    hiddenIndex = randomInt(0, 1);
+    // 원본 확인 1~2번처럼 두 도형이 여러 자리에 반복되는 두 자리 덧셈이다.
+    // 일의 자리의 보이는 숫자가 첫 도형을, 십의 자리가 둘째 도형을 하나로 정한다.
+    firstValue = randomInt(2, 7);
+    const onesFixed = difficulty === 1
+      ? randomInt(1, 9 - firstValue)
+      : randomInt(10 - firstValue, 9);
+    const carry = firstValue + onesFixed >= 10 ? 1 : 0;
+    const tensFixed = randomInt(1, 8 - firstValue);
+    secondValue = tensFixed + firstValue + carry;
+    const onesResult = (firstValue + onesFixed) % 10;
+    addends = [
+      [String(tensFixed), firstSymbol],
+      [firstSymbol, String(onesFixed)]
+    ];
+    sum = secondValue * 10 + onesResult;
+    sumRow = [secondSymbol, String(onesResult)];
   }
-  const firstRow = digitRow(first);
-  const secondRow = digitRow(second);
-  const targetRow = hiddenRow === "first" ? firstRow : secondRow;
-  const answer = Number(targetRow[hiddenIndex]);
-  targetRow[hiddenIndex] = "□";
+
+  const askFirst = Math.random() < 0.5;
+  const askSymbol = askFirst ? firstSymbol : secondSymbol;
+  const answer = askFirst ? firstValue : secondValue;
+  const firstNumber = Number(addends[0].map((token) => token === firstSymbol ? firstValue : token === secondSymbol ? secondValue : token).join(""));
+  const addendNumbers = addends.map((row) => Number(row.map((token) => token === firstSymbol ? firstValue : token === secondSymbol ? secondValue : token).join("")));
   return {
-    prompt: "세로셈이 맞도록 빈칸에 알맞은 숫자를 쓰세요.",
-    visual: { kind: "cryptarithm-vertical", first: firstRow, second: secondRow, sum: digitRow(sum) },
+    prompt: `같은 도형은 같은 수를, 다른 도형은 다른 수를 나타냅니다. ${askSymbol}가 나타내는 수를 구하세요.`,
+    visual: { kind: "cryptarithm-vertical", addends, sum: sumRow },
     answer: String(answer),
-    solution: `알고 있는 수와 합을 자리별로 거꾸로 계산합니다. ${first} + ${second} = ${sum}이므로 빈칸은 ${answer}입니다.`,
-    meta: { family: "cryptarithm-missing-digit", first, second, sum, hiddenRow, hiddenIndex, answer }
+    solution: difficulty === 3
+      ? `${firstNumber}을 세 번 더하면 ${sum}입니다. 따라서 ${firstSymbol}는 ${firstValue}, ${secondSymbol}는 ${secondValue}이고 ${askSymbol}는 ${answer}입니다.`
+      : `일의 자리부터 계산하면 ${firstSymbol}는 ${firstValue}입니다. 십의 자리까지 계산하면 ${secondSymbol}는 ${secondValue}이므로 ${askSymbol}는 ${answer}입니다.`,
+    meta: {
+      family: "cryptarithm-two-symbol-column",
+      symbols: [firstSymbol, secondSymbol],
+      values: [firstValue, secondValue],
+      addends,
+      addendNumbers,
+      sum,
+      sumRow,
+      askSymbol,
+      answer
+    }
   };
 }
 
@@ -890,6 +929,7 @@ export const BOOK03_GENERATORS = {
   rodRatioTotalBook3,
   unitObjectLength,
   equivalentObjectLength,
+  objectCombinationEquivalentCount,
   proportionalRodsCommonTotal,
   meetingDistanceRatio,
   mixedIntervalDistance,

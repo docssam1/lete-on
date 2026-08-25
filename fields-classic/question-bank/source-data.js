@@ -364,14 +364,14 @@ export const TYPES = [
 
   // 더클래식 1과정 3권: 페이지가 아니라 단원·단계·문항 번호로 원본을 대조했다.
   // 같은 단원 안에서도 풀이 구조가 달라지는 지점마다 별도 생성기로 나눈다.
-  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 다조각 조립 그림 재설계 중" }),
+  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 넓이표 구조 재설계 중" }),
+  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 연결 도형 구조 재설계 중" }),
   type("growing-shape-area-sum", "pattern", "넓이 규칙", "커지는 정사각형·정삼각형 넓이의 합", { generator: "growingShapeAreaSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("nested-square-outer-area", "pattern", "넓이 규칙", "겹쳐 커지는 가장 바깥 정사각형의 넓이", { generator: "nestedSquareOuterArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 분할 도형군 재설계 중" }),
+  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 18조각 포함 그림 재설계 중" }),
+  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 빠진 선 조건 재설계 중" }),
   type("oblique-square-grid-area", "geometry", "단위넓이", "모눈 위 기울어진 정사각형의 넓이", { generator: "obliqueSquareGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("folded-strip-length", "geometry", "단위길이", "모눈 위 접힌 테이프·리본의 전체 길이", { generator: "foldedStripLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -383,6 +383,7 @@ export const TYPES = [
   type("rod-ratio-total-book3", "geometry", "막대와 배수", "막대의 묶음 수와 전체 길이로 각각의 길이 구하기", { generator: "rodRatioTotalBook3", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("unit-object-length", "geometry", "단위길이", "같은 물건 여러 개로 잰 한 개의 길이", { generator: "unitObjectLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("equivalent-object-length", "geometry", "단위길이", "여러 물건을 늘어놓은 같은 길이 관계", { generator: "equivalentObjectLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("object-combination-equivalent-count", "geometry", "단위길이", "물건의 조합을 한 가지 단위 개수로 바꾸기", { generator: "objectCombinationEquivalentCount", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("proportional-rods-common-total", "geometry", "막대와 배수", "같은 전체 길이를 이루는 막대들의 길이", { generator: "proportionalRodsCommonTotal", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("meeting-distance-ratio", "number", "거리와 배수", "속도의 배수로 만날 때까지 간 거리 나누기", { generator: "meetingDistanceRatio", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("mixed-interval-distance", "geometry", "수직선과 길이", "서로 다른 간격으로 나눈 수직선의 거리", { generator: "mixedIntervalDistance", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -391,20 +392,20 @@ export const TYPES = [
   type("cryptarithm-single-double", "number", "복면산", "한 자리 같은 도형을 두 번 더하는 복면산", { generator: "cryptarithmSingleDouble", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-repeated-number-double", "number", "복면산", "같은 도형으로 만든 두 자리 수를 두 번 더하기", { generator: "cryptarithmRepeatedNumberDouble", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-fixed-digit-addition", "number", "복면산", "도형과 주어진 숫자가 섞인 덧셈", { generator: "cryptarithmFixedDigitAddition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("cryptarithm-missing-digit-column", "number", "복면산", "자리별 빈 숫자를 채우는 세로 덧셈", { generator: "cryptarithmMissingDigitColumn", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("cryptarithm-missing-digit-column", "number", "복면산", "두 도형이 반복되는 세로 덧셈", { generator: "cryptarithmMissingDigitColumn", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-multi-symbol-carry", "number", "복면산", "여러 도형과 받아올림이 함께 있는 복면산", { generator: "verticalCryptarithmShapeSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-linked-equations", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "cryptarithmLinkedEquations", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("binary-weight-selection", "number", "마법카드와 도형수", "1·2·4·8 무게추로 목표 무게 만들기", { generator: "binaryWeightSelection", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("symbol-value-code", "number", "마법카드와 도형수", "도형 기호마다 정해진 값을 더해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 5칸·2×3·역방향 구조 확장 중" }),
+  type("symbol-value-code", "number", "마법카드와 도형수", "도형 기호마다 정해진 값을 더해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 자리값 암호 구조 재설계 중" }),
   type("magic-square-three-complete", "number", "마방진", "주어진 아홉 수로 3×3 마방진 완성하기", { generator: "magicSquareThreeComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-three-target", "number", "마방진", "3×3 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareThreeTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-four-target", "number", "마방진", "4×4 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareFourTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("polygon-ring-equal-sum", "number", "수 배열과 합", "오각진의 다섯 줄 합을 같게 만들기", { generator: "polygonRingEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-six", "number", "수 배열과 합", "1부터 6까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumSix", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-nine", "number", "수 배열과 합", "1부터 9까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumNine", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, sourceAuditBlocked: true, textbookSource: "더클래식 1과정 3권 · 전체 완성형 난이도 복원 중" }),
 
   // 더클래식 1과정 4권: 153문항을 단계와 인쇄 문제 번호로 직접 대조했다.
   // 기존 검증 유형과 풀이 구조가 같은 문항은 재사용하고, 다른 구조만 새 유형으로 둔다.
@@ -996,11 +997,12 @@ const stagedUnit = (label, typeIds, activities, checks, advanced, practice) => u
   }
 });
 
-const detailedStagedUnit = (label, typeIds, activities, checks, advanced, practice, typeStudyRefs) => ({
+const detailedStagedUnit = (label, typeIds, activities, checks, advanced, practice, typeStudyRefs, options = {}) => ({
   ...stagedUnit(label, typeIds, activities, checks, advanced, practice),
   // 세부 유형마다 실제 등장하는 단계와 문항 번호가 다르다. 이 표가 있으면 단원 전체
   // 범위를 모든 유형에 붙이지 않고, 현재 선택한 단계의 근거 문항만 사용한다.
-  typeStudyRefs
+  typeStudyRefs,
+  ...options
 });
 
 const stageReferences = ({ concept = [], type: typeRefs = [], practice = [], advanced = [] }) => ({
@@ -1158,6 +1160,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "rod-ratio-total-book3": "두 막대가 차지하는 같은 크기 묶음을 모두 세고 전체 길이를 묶음 수로 나눕니다.",
   "unit-object-length": "전체 길이를 똑같은 물건의 개수만큼 가르면 한 개의 길이가 됩니다.",
   "equivalent-object-length": "양쪽에서 같은 물건을 같은 수만큼 지우고 남은 물건끼리 비교합니다.",
+  "object-combination-equivalent-count": "연필 한 자루를 성냥개비 개수로 바꾸고, 처음부터 있던 성냥개비를 더합니다.",
   "proportional-rods-common-total": "같은 전체 길이를 이루는 막대 수를 보고 한 막대의 길이를 거꾸로 구합니다.",
   "number-line-six-points": "겹친 긴 거리에서 이미 아는 구간을 차례로 빼 작은 구간을 찾습니다.",
   "meeting-distance-ratio": "두 사람이 간 거리를 속도의 배수와 같은 묶음으로 나누어 전체 묶음 수를 셉니다.",
@@ -1166,7 +1169,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "cryptarithm-single-double": "같은 도형 두 개를 더한 수를 똑같이 두 수로 가릅니다.",
   "cryptarithm-repeated-number-double": "일의 자리부터 같은 숫자를 두 번 더하고 받아올림을 십의 자리에 보냅니다.",
   "cryptarithm-fixed-digit-addition": "보이는 숫자부터 계산해 같은 자리의 도형 값을 찾습니다.",
-  "cryptarithm-missing-digit-column": "일의 자리에서 시작해 빈칸과 받아올림을 차례로 채웁니다.",
+  "cryptarithm-missing-digit-column": "일의 자리부터 계산해 반복되는 두 도형의 값을 차례로 찾습니다.",
   "cryptarithm-multi-symbol-carry": "일의 자리의 받아올림을 표시하고, 같은 도형에는 같은 숫자를 넣습니다.",
   "cryptarithm-linked-equations": "첫 번째 식에서 찾은 도형 값을 두 번째 식의 같은 도형에 넣습니다.",
   "binary-weight-selection": "목표 수보다 크지 않은 가장 큰 추부터 골라 남은 무게를 만듭니다.",
@@ -1882,7 +1885,10 @@ const BOOK03_UNIT02_REFS = Object.freeze({
   }),
   "equivalent-object-length": stageReferences({
     type: [problemNumbers("check", 2, [1])],
-    practice: [problemNumbers("practice", 1, [12, 15])]
+    practice: [problemNumbers("practice", 1, [15])]
+  }),
+  "object-combination-equivalent-count": stageReferences({
+    practice: [problemNumbers("practice", 1, [12])]
   }),
   "proportional-rods-common-total": stageReferences({
     type: [problemNumbers("check", 2, [2])],
@@ -3346,6 +3352,36 @@ export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
   })
 });
 
+const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
+  "book-03": Object.freeze([
+    { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: false },
+    { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
+    { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false },
+    { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
+    { number: 5, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
+    { number: 6, typeId: "folded-strip-length", label: "접힌 리본의 전체 길이", verified: true, difficulty: 2 },
+    { number: 7, typeId: "midpoint-number-line", label: "두 수의 중간수", verified: true, difficulty: 2 },
+    { number: 8, typeId: "segment-chain-distance", label: "A·B·C·D 사이의 거리", verified: true, difficulty: 2 },
+    { number: 9, typeId: "rod-ratio-total-book3", label: "막대의 묶음 수와 길이", verified: false },
+    { number: 10, typeId: "proportional-rods-common-total", label: "겹쳐 놓은 막대의 길이", verified: false },
+    { number: 11, typeId: "equal-interval-length", label: "똑같이 나눈 한 칸의 거리", verified: true, difficulty: 2 },
+    { number: 12, typeId: "difference-unit-measure", label: "두 단위길이의 차", verified: true, difficulty: 2 },
+    { number: 13, typeId: "cryptarithm-multi-symbol-carry", label: "여러 도형 복면산", verified: false },
+    { number: 14, typeId: "cryptarithm-multi-symbol-carry", label: "여러 도형 복면산", verified: false },
+    { number: 15, typeId: "cryptarithm-multi-symbol-carry", label: "다섯 도형 복면산", verified: false },
+    { number: 16, typeId: "cryptarithm-missing-digit-column", label: "두 도형 세로 덧셈", verified: true, difficulty: 2 },
+    { number: 17, typeId: "cryptarithm-missing-digit-column", label: "같은 두 자리 수 세 번 더하기", verified: true, difficulty: 3 },
+    { number: 18, typeId: "cryptarithm-linked-equations", label: "이어진 복면산", verified: true, difficulty: 3 },
+    { number: 19, typeId: "symbol-value-code", label: "도형 자리값 암호", verified: false },
+    { number: 20, typeId: "magic-square-three-complete", label: "3×3 마방진 완성", verified: true, difficulty: 2 },
+    { number: 21, typeId: "magic-square-four-target", label: "4×4 마방진의 한 칸", verified: true, difficulty: 2 },
+    { number: 22, typeId: "polygon-ring-equal-sum", label: "오각진의 같은 합", verified: false },
+    { number: 23, typeId: "colored-cell-number-code", label: "색칠 칸의 비밀 수", verified: false },
+    { number: 24, typeId: "triangle-max-edge-sum", label: "삼각형 세 변의 합", verified: true, difficulty: 2 },
+    { number: 25, typeId: "number-line-six-points", label: "여섯 점 사이의 거리", verified: false }
+  ])
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -3383,10 +3419,12 @@ export const CURRICULUM = [
     detailedStagedUnit("단위길이와 배수", [
       "folded-strip-length", "midpoint-number-line", "segment-chain-distance",
       "equal-interval-length", "walking-step-ratio", "route-distance-multiple",
-      "rod-ratio-total-book3", "unit-object-length", "equivalent-object-length",
+      "rod-ratio-total-book3", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count",
       "proportional-rods-common-total", "number-line-six-points", "meeting-distance-ratio",
       "mixed-interval-distance", "difference-unit-measure"
-    ], [4,4], [2,2], 4, 16, BOOK03_UNIT02_REFS),
+    ], [4,4], [2,2], 4, 16, BOOK03_UNIT02_REFS, {
+      sourceAuditBlockedStages: { "number-line-six-points": ["advanced"] }
+    }),
     detailedStagedUnit("복면산", [
       "cryptarithm-single-double", "cryptarithm-repeated-number-double",
       "cryptarithm-fixed-digit-addition", "cryptarithm-missing-digit-column",
@@ -3397,7 +3435,13 @@ export const CURRICULUM = [
       "magic-square-three-complete", "magic-square-three-target", "magic-square-four-target",
       "polygon-ring-equal-sum", "equal-line-sum-eight-cards", "triangle-max-edge-sum",
       "triangle-edge-sum-six", "triangle-edge-sum-nine", "magic-square-four-complete"
-    ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS)
+    ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS, {
+      sourceAuditBlockedStages: {
+        "magic-square-three-complete": ["concept"],
+        "polygon-ring-equal-sum": ["type", "practice"],
+        "equal-line-sum-eight-cards": ["practice"]
+      }
+    })
   ] },
   { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [
     detailedStagedUnit("도형 분할과 움직이기", [
@@ -3608,6 +3652,7 @@ export const CURRICULUM = [
       unitTest: CURRICULUM_TEST_FILES[book.id],
       unitTestQuestionCount: 25,
       unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
+      unitTestQuestions: CURRICULUM_UNIT_TEST_QUESTIONS[book.id] || [],
       goldenBellIncluded: false,
       reviewIncluded: index > 0,
       reviewSourceBookId: index > 0 ? `book-${String(index).padStart(2, "0")}` : null,
