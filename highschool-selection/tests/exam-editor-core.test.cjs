@@ -8,7 +8,7 @@ function makeQuestion(index, overrides = {}) {
   const mode = overrides.mode || "SH";
   const difficultyBand = overrides.difficultyBand || "standard";
   const relation = overrides.relation || "original";
-  const questionId = core.createNeutralId("question", mode, `editor:item-${index}`);
+  const questionId = overrides.questionId || core.createNeutralId("question", mode, `editor:item-${index}`);
   const originalQuestionId = relation === "original"
     ? questionId
     : (overrides.originalQuestionId || core.createNeutralId("question", mode, `editor:original-${index}`));
@@ -41,10 +41,12 @@ function makeQuestion(index, overrides = {}) {
     familyId: _familyId,
     relation: _relation,
     originalQuestionId: _originalQuestionId,
+    questionId: _questionId,
     ...recordOverrides
   } = overrides;
   return {
     id: questionId,
+    itemVersionId: `editor-item-${index}-v1`,
     mode,
     writer: "T",
     curriculum: core.createCurriculumPath({
@@ -85,11 +87,29 @@ function fixture() {
     placements: questions.map((question, index) => ({
       placementId: `p-00${index + 1}`,
       itemId: question.id,
+      itemVersionId: question.itemVersionId,
       score: index + 2,
       selectionKind: "recommended"
     }))
   });
   return { draft, questions, questionsByItemId };
+}
+
+function replacementEvidence(source, candidate, relationship = "twin", overrides = {}) {
+  return {
+    evidenceId: `evidence-${source.id}-${candidate.id}`,
+    status: "approved",
+    relationship,
+    sourceItemId: source.id,
+    sourceItemVersionId: source.itemVersionId,
+    candidateItemId: candidate.id,
+    candidateItemVersionId: candidate.itemVersionId,
+    familyMatched: true,
+    detailMatched: true,
+    solutionStructureMatched: true,
+    difficultyCompatible: true,
+    ...overrides
+  };
 }
 
 test("drag reorder changes placements only and keeps canonical item ids intact", () => {
@@ -100,35 +120,43 @@ test("drag reorder changes placements only and keeps canonical item ids intact",
   assert.deepEqual(moved.placements.map(item => item.itemId), [questions[2].id, questions[0].id, questions[1].id]);
   assert.deepEqual(moved.placements.map(item => item.order), [1, 2, 3]);
   assert.equal(moved.sortMode, "user");
+  assert.equal(moved.revision, draft.revision + 1);
 });
 
-test("replace changes one placement and preserves an audit trail", () => {
+test("replace changes one placement and preserves versioned audit evidence", () => {
   const { draft, questions, questionsByItemId } = fixture();
   const replacement = makeQuestion(102, {
     relation: "twin",
     originalQuestionId: questions[1].variant.familyId,
     familyId: questions[1].variant.familyId
   });
+  const evidence = replacementEvidence(questions[1], replacement);
   const replaced = editor.replacePlacement(draft, {
     placementId: "p-002",
     candidate: replacement,
     questionsByItemId,
     relationship: "twin",
+    replacementEvidence: evidence,
     reasonCode: "same_type_new_form"
   });
 
   assert.equal(draft.placements[1].itemId, questions[1].id);
   assert.equal(replaced.placements[1].itemId, replacement.id);
+  assert.equal(replaced.placements[1].itemVersionId, replacement.itemVersionId);
   assert.equal(replaced.placements[1].selectionKind, "twin");
   assert.deepEqual(replaced.placements[1].replacementHistory[0], {
     fromItemId: questions[1].id,
+    fromItemVersionId: questions[1].itemVersionId,
     toItemId: replacement.id,
+    toItemVersionId: replacement.itemVersionId,
     relationship: "twin",
-    reasonCode: "same_type_new_form"
+    reasonCode: "same_type_new_form",
+    evidenceId: evidence.evidenceId
   });
+  assert.equal(replaced.revision, draft.revision + 1);
 });
 
-test("the complete question gate blocks unapproved, ambiguous, and unaudited figure candidates", () => {
+test("the complete question gate blocks unapproved, ambiguous, unaudited, and unversioned candidates", () => {
   const { draft, questionsByItemId } = fixture();
   const unapproved = makeQuestion(4);
   unapproved.userApproval = sourceLineage.createUserApproval({
@@ -166,6 +194,12 @@ test("the complete question gate blocks unapproved, ambiguous, and unaudited fig
     }),
     questionsByItemId
   }), /candidate.figure_visibility.hiddenStateConstrained/);
+
+  assert.throws(() => editor.addItem(draft, {
+    placementId: "p-004",
+    candidate: makeQuestion(7, { itemVersionId: "" }),
+    questionsByItemId
+  }), /candidate.item_version_id.missing/);
 });
 
 test("the same canonical question or question family cannot be selected twice", () => {
@@ -188,7 +222,7 @@ test("the same canonical question or question family cannot be selected twice", 
   }), /question family is already selected/);
 });
 
-test("replacement relation must match lineage and stay in the current family", () => {
+test("twin and similar replacements require matching lineage and approved evidence", () => {
   const { draft, questions, questionsByItemId } = fixture();
   const wrongRelation = makeQuestion(105, {
     relation: "similar",
@@ -199,15 +233,37 @@ test("replacement relation must match lineage and stay in the current family", (
     placementId: "p-001",
     candidate: wrongRelation,
     questionsByItemId,
-    relationship: "twin"
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], wrongRelation, "twin")
   }), /relationship does not match/);
 
-  const wrongFamily = makeQuestion(106, { relation: "twin" });
+  const validTwin = makeQuestion(106, {
+    relation: "twin",
+    originalQuestionId: questions[0].variant.familyId,
+    familyId: questions[0].variant.familyId
+  });
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: validTwin,
+    questionsByItemId,
+    relationship: "twin"
+  }), /verified replacement evidence is required/);
+
+  assert.throws(() => editor.replacePlacement(draft, {
+    placementId: "p-001",
+    candidate: validTwin,
+    questionsByItemId,
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], validTwin, "twin", { solutionStructureMatched: false })
+  }), /solution structure is not verified/);
+
+  const wrongFamily = makeQuestion(107, { relation: "twin" });
   assert.throws(() => editor.replacePlacement(draft, {
     placementId: "p-001",
     candidate: wrongFamily,
     questionsByItemId,
-    relationship: "twin"
+    relationship: "twin",
+    replacementEvidence: replacementEvidence(questions[0], wrongFamily)
   }), /same question family/);
 });
 
@@ -229,10 +285,12 @@ test("sorting supports type, difficulty, objective-first, and deterministic rand
   );
 });
 
-test("view mode is presentation state and does not expose answers in the draft model", () => {
+test("view mode is presentation state, increments once, and exposes no answers", () => {
   const { draft } = fixture();
   const withSolutions = editor.setViewMode(draft, "question_solution_answer");
   assert.equal(withSolutions.viewMode, "question_solution_answer");
+  assert.equal(withSolutions.revision, draft.revision + 1);
+  assert.equal(editor.setViewMode(withSolutions, "question_solution_answer").revision, withSolutions.revision);
   assert.equal(JSON.stringify(withSolutions).includes("answerKey"), false);
 });
 
@@ -261,6 +319,7 @@ test("scope changes keep placements visible and report what must be replaced", (
   const result = editor.changeScope(draft, ["G11"], metadata);
 
   assert.equal(result.draft.placements.length, 3);
+  assert.equal(result.draft.revision, draft.revision + 1);
   assert.deepEqual(result.reconciliation.keptPlacementIds, ["p-002"]);
   assert.deepEqual(result.reconciliation.outOfScopePlacementIds, ["p-001"]);
   assert.deepEqual(result.reconciliation.classificationPendingPlacementIds, ["p-003"]);
@@ -276,12 +335,89 @@ test("new and replacement candidates must belong to the selected scope", () => {
     questionsByItemId
   }), /outside the selected scope/);
 
-  const missingClassification = makeQuestion(101);
-  missingClassification.curriculum = null;
+  const missingClassification = makeQuestion(101, { curriculum: null });
   assert.throws(() => editor.replacePlacement(draft, {
     placementId: "p-001",
     candidate: missingClassification,
     questionsByItemId,
     relationship: "manual"
   }), /candidate.curriculum/);
+});
+
+test("one placement projection drives every numbered output", () => {
+  const { draft, questions } = fixture();
+  const moved = editor.movePlacement(draft, "p-003", 0);
+  const projection = editor.createDraftProjection(moved);
+  assert.deepEqual(projection.entries.map(entry => [entry.number, entry.placementId, entry.itemId, entry.itemVersionId]), [
+    [1, "p-003", questions[2].id, questions[2].itemVersionId],
+    [2, "p-001", questions[0].id, questions[0].itemVersionId],
+    [3, "p-002", questions[1].id, questions[1].itemVersionId]
+  ]);
+  assert.equal(projection.revision, moved.revision);
+});
+
+test("final readiness rechecks version, scope, full gates, and family uniqueness", () => {
+  const { draft, questions, questionsByItemId } = fixture();
+  assert.equal(editor.evaluateDraftReadiness(draft, questionsByItemId).eligible, true);
+
+  const stale = makeQuestion(2, {
+    questionId: questions[1].id,
+    itemVersionId: "editor-item-2-v2"
+  });
+  const staleResult = editor.evaluateDraftReadiness(draft, { ...questionsByItemId, [stale.id]: stale });
+  assert.equal(staleResult.eligible, false);
+  assert.ok(staleResult.issues.includes("placement.version.mismatch:p-002"));
+
+  const blocked = makeQuestion(3, {
+    questionId: questions[2].id,
+    userApproval: sourceLineage.createUserApproval({
+      mode: "SH",
+      id: core.createNeutralId("approval", "SH", "editor:readiness-pending"),
+      questionId: questions[2].id,
+      status: "pending",
+      decisionVersion: 1
+    })
+  });
+  const blockedResult = editor.evaluateDraftReadiness(draft, { ...questionsByItemId, [blocked.id]: blocked });
+  assert.equal(blockedResult.eligible, false);
+  assert.ok(blockedResult.issues.includes("candidate.user_approval.not_approved:p-003"));
+
+  const duplicateFamily = makeQuestion(20, {
+    familyId: questions[0].variant.familyId,
+    originalQuestionId: questions[0].variant.familyId,
+    relation: "similar"
+  });
+  const familyDraft = editor.createDraft({
+    draftId: "draft-family-check",
+    profileId: "WM",
+    targetId: "middle21-basic-entry",
+    durationMinutes: 120,
+    scopeKeys: ["G10"],
+    placements: [questions[0], duplicateFamily].map((question, index) => ({
+      placementId: `pf-${index + 1}`,
+      itemId: question.id,
+      itemVersionId: question.itemVersionId,
+      score: 2
+    }))
+  });
+  const familyResult = editor.evaluateDraftReadiness(familyDraft, {
+    [questions[0].id]: questions[0],
+    [duplicateFamily.id]: duplicateFamily
+  });
+  assert.equal(familyResult.eligible, false);
+  assert.ok(familyResult.issues.includes("placement.family.duplicate:pf-2"));
+});
+
+test("readiness reports an invalid draft without creating a projection", () => {
+  const { draft } = fixture();
+  const invalid = { ...draft, revision: 0 };
+  const result = editor.evaluateDraftReadiness(invalid, {});
+  assert.equal(result.eligible, false);
+  assert.equal(result.projection, null);
+  assert.ok(result.issues.includes("draft.revision.invalid"));
+
+  const missing = editor.evaluateDraftReadiness(null, {});
+  assert.equal(missing.eligible, false);
+  assert.equal(missing.projection, null);
+  assert.deepEqual(missing.issues, ["draft.placements.missing"]);
 });
