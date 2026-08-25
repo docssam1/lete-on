@@ -64,6 +64,12 @@ const districtCopy = {
     coordinateDistrict: ["Coordinates District", "Coordinates, similarity, and middle-school geometry"]
   }
 };
+const cameraCopy = {
+  ko: { overview: "전체 지도", nearby: "내 주변" },
+  zh: { overview: "全景地图", nearby: "我的周围" },
+  ja: { overview: "全体マップ", nearby: "近くを見る" },
+  en: { overview: "Full map", nearby: "Nearby" }
+};
 const qaZone = /^(127\.0\.0\.1|localhost)$/.test(location.hostname)
   ? new URLSearchParams(location.search).get("qaZone")
   : null;
@@ -106,6 +112,7 @@ let activeDistrict = null;
 let activeNpc = null;
 let targetPoint = null;
 let targetZone = null;
+let pendingActivationId = null;
 let destinationCameraYaw = null;
 let pointerStart = null;
 let joystickPointer = null;
@@ -362,6 +369,7 @@ function updatePlayer(delta, time) {
   if (manual) {
     targetPoint = null;
     targetZone = null;
+    pendingActivationId = null;
     destinationCameraYaw = null;
     const yaw = cameraController.yaw;
     const forward = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
@@ -526,6 +534,11 @@ function updateZone() {
   if (host) host.dataset.activeDistrict = activeDistrict?.id || "";
   window.dispatchEvent(new CustomEvent("geometry-zone-change", { detail: { id: activeZone?.id || null } }));
   window.dispatchEvent(new CustomEvent("geometry-district-change", { detail: { id: activeDistrict?.id || null } }));
+  const arrived = activeZone || activeDistrict;
+  if (arrived?.id && pendingActivationId === arrived.id) {
+    pendingActivationId = null;
+    window.dispatchEvent(new CustomEvent("geometry-place-activate", { detail: { id: arrived.id } }));
+  }
 }
 
 function createZoneLabels() {
@@ -541,7 +554,11 @@ function createZoneLabels() {
     label.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      setDestination(zone);
+      if (activeZone?.id === zone.id || activeDistrict?.id === zone.id) {
+        window.dispatchEvent(new CustomEvent("geometry-place-activate", { detail: { id: zone.id } }));
+      } else {
+        setDestination(zone, null, { enterOnArrival: true });
+      }
     });
     host.append(label);
     zoneLabels.set(zone.id, label);
@@ -563,6 +580,21 @@ function updateZoneLabelCopy(force = false) {
     label.querySelector("span").textContent = text[1];
     label.setAttribute("aria-label", text.join(" · "));
   });
+  updateCameraButtonCopy(cameraController?.mode);
+}
+
+function updateCameraButtonCopy(mode = "explore") {
+  if (!cameraButton) return;
+  const language = document.documentElement.lang?.split("-")[0] || "ko";
+  const copy = cameraCopy[language] || cameraCopy.ko;
+  const showingOverview = mode === "overview";
+  const label = showingOverview ? copy.nearby : copy.overview;
+  const text = cameraButton.querySelector(".camera-control-label");
+  const icon = cameraButton.querySelector("b");
+  if (text) text.textContent = label;
+  if (icon) icon.textContent = showingOverview ? "⌖" : "▦";
+  cameraButton.setAttribute("aria-label", label);
+  cameraButton.title = label;
 }
 
 function updateZoneLabels() {
@@ -586,9 +618,10 @@ function updateZoneLabels() {
   });
 }
 
-function setDestination(zone = null, point = null) {
+function setDestination(zone = null, point = null, { enterOnArrival = false } = {}) {
   targetPoint = zone ? zone.entry.clone() : point ? resolvePosition(point.clone()) : null;
   targetZone = zone;
+  pendingActivationId = enterOnArrival && zone ? zone.id : null;
   destinationCameraYaw = zone
     ? Math.atan2(zone.entry.x - zone.x, zone.entry.z - zone.z)
     : null;
@@ -620,12 +653,17 @@ function moveToWorldPoint(clientX, clientY) {
   let zone = buildingHit
     ? destinations.find((candidate) => candidate.id === buildingHit.object.userData.zoneId)
     : null;
+  const directBuildingHit = Boolean(zone);
   const hit = new THREE.Vector3();
   if (!zone) {
     if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
     zone = destinations.find((candidate) => Math.hypot(hit.x - candidate.x, hit.z - candidate.z) < candidate.radius + 2.2);
   }
-  setDestination(zone, hit);
+  if (directBuildingHit && (activeZone?.id === zone.id || activeDistrict?.id === zone.id)) {
+    window.dispatchEvent(new CustomEvent("geometry-place-activate", { detail: { id: zone.id } }));
+    return;
+  }
+  setDestination(zone, hit, { enterOnArrival: directBuildingHit });
 }
 
 function bindControls() {
@@ -672,10 +710,13 @@ function bindControls() {
   });
   window.addEventListener("keyup", (event) => keys.delete(event.code));
   cameraButton?.addEventListener("click", () => {
-    const mode = cameraController.cycleMode();
+    const nearbyMode = matchMedia("(pointer: coarse)").matches ? "follow" : "explore";
+    const mode = cameraController.mode === "overview" ? nearbyMode : "overview";
+    cameraController.setMode(mode);
     cameraController.zoom = mode === "overview" ? .2 : mode === "explore" ? .68 : .92;
     cameraController.target = mode === "overview" ? overviewTarget : player;
     if (host) host.dataset.cameraMode = mode;
+    updateCameraButtonCopy(mode);
   });
   zoomInButton?.addEventListener("click", () => { cameraController.zoom = THREE.MathUtils.clamp(cameraController.zoom + .1, .22, 1.5); });
   zoomOutButton?.addEventListener("click", () => { cameraController.zoom = THREE.MathUtils.clamp(cameraController.zoom - .1, .22, 1.5); });
@@ -701,6 +742,7 @@ function getWorldState() {
     activeDistrict: activeDistrict?.id || null,
     activeNpc: activeNpc?.id || null,
     targetZone: targetZone?.id || null,
+    pendingActivation: pendingActivationId,
     cameraMode: cameraController?.mode || null,
     navigation: /^(127\.0\.0\.1|localhost)$/.test(location.hostname) && player ? {
       target: targetPoint ? { x: targetPoint.x, z: targetPoint.z } : null,
@@ -843,6 +885,7 @@ async function buildWorld() {
     pitch: .72
   });
   host.dataset.cameraMode = cameraController.mode;
+  updateCameraButtonCopy(cameraController.mode);
   resize();
   bindControls();
   lastFrameTime = 0;

@@ -807,6 +807,7 @@ function speak(text) {
 }
 
 let introFinishing = false;
+let placeActivationTimer = 0;
 
 function enterWorldMap() {
   if (onboarding) {
@@ -949,6 +950,15 @@ window.addEventListener("geometry-zone-change", (event) => {
   const place = places.find((candidate) => candidate.id === event.detail?.id);
   if (place) showPlacePrompt(place);
   else if (activePlace && !activePlace.roadmap) hidePlacePrompt();
+});
+window.addEventListener("geometry-place-activate", (event) => {
+  const place = [...places, ...districtPlaces].find((candidate) => candidate.id === event.detail?.id);
+  if (!place || isNavigating) return;
+  showPlacePrompt(place);
+  clearTimeout(placeActivationTimer);
+  placeActivationTimer = window.setTimeout(() => {
+    if (activePlace?.id === place.id && !isNavigating) enterActivePlace();
+  }, 520);
 });
 window.addEventListener("geometry-district-change", (event) => {
   const place = districtPlaces.find((candidate) => candidate.id === event.detail?.id);
