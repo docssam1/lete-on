@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>시험지 편집 · 선발·누적 진단</title>
+  <link rel="stylesheet" href="../shared/app.css?v=20260825">
+</head>
+<body class="builder-body">
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header">
+    <nav class="shell nav">
+      <a class="brand" href="../"><span class="brand-mark">SL</span><span>시험지 편집<small>EXAM ASSEMBLY</small></span></a>
+      <div class="nav-links"><a class="button ghost" href="./">승인 관리</a><a class="button ghost" href="./review.html">문항 검수</a><button class="button accent" id="save-draft" type="button">초안 저장</button></div>
+    </nav>
+  </header>
+
+  <main id="main" class="shell app-main builder-main">
+    <div class="page-title builder-title">
+      <div><p class="eyebrow">Canonical item → exam placement</p><h1>문항을 고르고 시험지 순서를 편집합니다</h1><p>문항 원문은 바꾸지 않습니다. 시험지에 놓인 문항의 선택·교체·순서·출력 설정만 변경합니다.</p></div>
+      <span class="badge review" id="draft-state">저장 전</span>
+    </div>
+
+    <section class="builder-commandbar" aria-label="시험지 기본 설정">
+      <label>기준 시험<select id="standard-select"><option value="WM-M21-BASIC-ENTRY-2026-07">원수학 중2-1 기본반 입학 · 40문항</option></select></label>
+      <label>초안 이름<input id="draft-title" value="중2-1 기본반 대비 1회"></label>
+      <label>검색<input id="candidate-search" type="search" placeholder="단원·세부유형 검색"></label>
+      <button class="button ghost" id="open-scope" type="button">범위 변경</button><button class="button accent builder-mobile-save" id="save-draft-mobile" type="button">초안 저장</button>
+    </section>
+
+    <section class="builder-workspace">
+      <aside class="builder-candidates" aria-labelledby="candidate-title">
+        <div class="builder-panel-head"><div><p class="eyebrow">Question bank</p><h2 id="candidate-title">문항 후보</h2></div><span id="candidate-count">0개</span></div>
+        <p class="builder-help">승인·분류·정답·그림 검사를 모두 통과한 문항만 추가 버튼이 열립니다.</p>
+        <div class="builder-filter-row" role="tablist" aria-label="후보 종류">
+          <button class="is-active" type="button" data-candidate-filter="all">전체</button><button type="button" data-candidate-filter="twin">쌍둥이</button><button type="button" data-candidate-filter="similar">유사</button><button type="button" data-candidate-filter="locked">검수 대기</button>
+        </div>
+        <div class="builder-candidate-list" id="candidate-list"></div>
+      </aside>
+
+      <section class="builder-selection" aria-labelledby="selection-title">
+        <div class="builder-panel-head builder-panel-head-dark"><div><p class="eyebrow">Selected placements</p><h2 id="selection-title">선택한 문제 목록</h2></div><div class="builder-view-controls"><label>정렬<select id="sort-mode"><option value="user">사용자 순서</option><option value="type_asc">유형 오름차순</option><option value="difficulty_asc">난이도 오름차순</option><option value="objective_subjective">객관식 우선</option><option value="random">무작위</option></select></label><label>보기<select id="view-mode"><option value="question">문제만</option><option value="question_answer">문제 + 정답</option><option value="question_solution_answer">문제 + 해설 + 정답</option></select></label></div></div>
+        <div class="builder-metrics" id="draft-summary"></div>
+        <div class="builder-reconcile" id="scope-reconcile" hidden></div>
+        <ol class="builder-placement-list" id="placement-list"></ol>
+      </section>
+    </section>
+
+    <section class="panel builder-output" aria-labelledby="output-title">
+      <div class="section-head"><div><p class="eyebrow">Print & preview</p><h2 id="output-title">시험지 출력 설정</h2></div><span class="badge" id="preview-pages">0쪽</span></div>
+      <div class="builder-output-grid">
+        <label>용도<select id="output-purpose"><option value="entry_test">입학 TEST</option><option value="mock_exam">모의고사</option><option value="transfer_test">편입 TEST</option><option value="practice">연습문제</option><option value="remediation">취약 보완</option></select></label>
+        <label>배치<select id="output-layout"><option value="four_up">4문항 · 왼쪽 2 / 오른쪽 2</option><option value="two_up">2문항</option><option value="six_up">6문항</option></select></label>
+        <label>색상<select id="output-theme"><option value="violet">보라</option><option value="blue">파랑</option><option value="green">초록</option><option value="slate">회색</option></select></label>
+        <label>QR<select id="output-qr"><option value="none">없음</option><option value="answer_entry">답안 입력</option><option value="diagnostic_report">진단지</option></select></label>
+        <label class="builder-check"><input id="show-points" type="checkbox"> 배점 표시</label><label class="builder-check"><input id="show-difficulty" type="checkbox"> 난도 표시</label><label class="builder-check"><input id="show-workspace" type="checkbox"> 풀이 공간</label><label class="builder-check"><input id="show-answer-space" type="checkbox" checked> 답안 공간</label>
+      </div>
+      <div class="builder-preview" id="print-preview" aria-live="polite"></div>
+    </section>
+
+    <dialog class="builder-scope-dialog" id="scope-dialog"><form method="dialog"><div class="builder-panel-head"><div><p class="eyebrow">Curriculum scope</p><h2>범위 추가·변경</h2></div><button class="button ghost" value="cancel">닫기</button></div><p>범위를 바꿔도 담아 둔 문항은 자동으로 지우지 않습니다. 범위 밖 문항을 따로 표시합니다.</p><div id="scope-options" class="builder-scope-options"></div><div class="builder-dialog-actions"><button class="button accent" id="apply-scope" value="default">범위 적용</button></div></form></dialog>
+    <p class="status" id="builder-status" aria-live="polite"></p>
+  </main>
+
+  <script src="../shared/runtime.js"></script><script src="../data/question-bank-core.js"></script><script src="../data/default-exam-sets.js"></script><script src="../data/exam-editor-core.js"></script><script src="../data/exam-output-settings.js"></script><script src="../data/review-only/wm-middle21-basic-entry-r01-blueprint.js"></script><script src="../shared/exam-builder-page.js"></script>
+</body>
+</html>

@@ -22,6 +22,7 @@ const practicePlanner = require("../shared/practice-set-planner.js");
 const practiceRegistryModule = require("./practice-registry.js");
 const practiceStoreModule = require("./practice-store.js");
 const practiceAssetsModule = require("./practice-assets.js");
+const examDraftStoreModule = require("./exam-draft-store.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -289,6 +290,10 @@ function createApp(options) {
     data: opts.privatePracticeStore,
     filePath: opts.privatePracticeStorePath
   });
+  const examDraftStore = opts.examDraftStore || examDraftStoreModule.createStore({
+    data: opts.privateExamDrafts,
+    filePath: opts.privateExamDraftPath
+  });
   const loadPracticeAsset = opts.loadPracticeAsset || practiceAssetsModule.createLoader({
     data: opts.privatePracticeAssets,
     filePath: opts.privatePracticeAssetsPath
@@ -337,6 +342,29 @@ function createApp(options) {
 
   function requirePracticeInfrastructure() {
     if (!loadPracticeMode || !practiceStore) throw new HttpError(503, "비공개 반복연습 저장소가 연결되지 않았습니다.");
+  }
+
+  function requireExamDraftInfrastructure() {
+    if (!examDraftStore) throw new HttpError(503, "관리자 시험지 초안 저장소가 연결되지 않았습니다.");
+  }
+
+  function editableDraft(value, draftId, existing, adminId, outputSettings) {
+    exactKeys(value, new Set(examDraftStoreModule.EDITABLE_DRAFT_FIELDS), "시험지 초안");
+    if (draftId && value.draftId !== draftId) throw new HttpError(400, "시험지 초안 식별자가 요청 주소와 일치하지 않습니다.");
+    return Object.assign({}, value, {
+      draftId: draftId || value.draftId,
+      outputSettings: outputSettings == null ? (existing ? existing.outputSettings : null) : outputSettings,
+      createdAt: existing ? existing.createdAt : new Date(now()).toISOString(),
+      updatedAt: new Date(now()).toISOString(),
+      updatedBy: adminId
+    });
+  }
+
+  function mapExamDraftError(error) {
+    if (error && (error.code === "EXAM_DRAFT_BUSY" || error.code === "EXAM_DRAFT_CONFLICT")) {
+      throw new HttpError(409, "시험지 초안이 동시에 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+    }
+    throw error;
   }
 
   function requireStudentPracticeMode(context, mode) {
@@ -606,6 +634,62 @@ function createApp(options) {
       }
       if (action === "attempts" && request.method === "POST") {
         throw new HttpError(423, "검수된 반복연습 채점 구성이 아직 연결되지 않았습니다.");
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    if (pathname === "/admin/exam-drafts" || pathname.startsWith("/admin/exam-drafts/")) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      requireExamDraftInfrastructure();
+      if (request.method === "GET" && pathname === "/admin/exam-drafts") {
+        sendJson(response, 200, examDraftStore.list());
+        return true;
+      }
+      if (request.method === "POST" && pathname === "/admin/exam-drafts") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 64 * 1024);
+        exactKeys(body, new Set(["draft", "outputSettings"]), "시험지 초안 요청");
+        let saved;
+        try { saved = examDraftStore.create(editableDraft(body.draft, null, null, context.user.studentId, body.outputSettings)); }
+        catch (error) { mapExamDraftError(error); }
+        sendJson(response, 201, saved);
+        return true;
+      }
+      const draftMatch = pathname.match(/^\/admin\/exam-drafts\/([^/]+)$/);
+      if (!draftMatch) throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const draftId = decodeURIComponent(draftMatch[1]);
+      if (request.method === "GET") {
+        const state = examDraftStore.read(draftId);
+        if (!state) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+        sendJson(response, 200, state);
+        return true;
+      }
+      if (request.method === "PUT") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 64 * 1024);
+        exactKeys(body, new Set(["expectedRevision", "draft", "outputSettings"]), "시험지 초안 변경 요청");
+        if (typeof body.expectedRevision !== "string" || !body.expectedRevision) throw new HttpError(400, "시험지 초안 버전을 확인해 주세요.");
+        let saved;
+        try {
+          saved = examDraftStore.update(draftId, body.expectedRevision, function (current) {
+            return editableDraft(body.draft, draftId, current, context.user.studentId, body.outputSettings);
+          });
+        } catch (error) { mapExamDraftError(error); }
+        if (!saved) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+        sendJson(response, 200, saved);
+        return true;
+      }
+      if (request.method === "DELETE") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 16 * 1024);
+        exactKeys(body, new Set(["expectedRevision"]), "시험지 초안 삭제 요청");
+        if (typeof body.expectedRevision !== "string" || !body.expectedRevision) throw new HttpError(400, "시험지 초안 버전을 확인해 주세요.");
+        let removed;
+        try { removed = examDraftStore.remove(draftId, body.expectedRevision); }
+        catch (error) { mapExamDraftError(error); }
+        if (!removed) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
+        sendJson(response, 200, Object.assign({ ok: true }, removed));
+        return true;
       }
       throw new HttpError(405, "허용되지 않은 요청입니다.");
     }

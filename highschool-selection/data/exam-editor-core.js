@@ -166,6 +166,49 @@
     invariant(match !== null, "candidate curriculum classification is required");
   }
 
+  function lineageValue(item, group, field) {
+    const value = item && item[group] && item[group][field];
+    return typeof value === "string" && value.trim() ? value.trim() : null;
+  }
+
+  function currentItemMetadata(input, itemId) {
+    const metadata = input.currentItem || input.currentItemMetadata ||
+      (input.metadataByItemId && input.metadataByItemId[itemId]);
+    invariant(metadata && typeof metadata === "object", "current item metadata is required for twin or similar replacement");
+    const metadataItemId = metadata.itemId || metadata.id;
+    invariant(metadataItemId === itemId, "current item metadata does not match the placement");
+    invariant(metadata.classificationStatus === "verified", "current item lineage is not verified");
+    return metadata;
+  }
+
+  function assertReplacementLineage(input, current, relationship) {
+    if (relationship === "manual") return;
+    const existing = currentItemMetadata(input, current.itemId);
+    const candidate = input.candidate;
+    const checks = [
+      {
+        current: lineageValue(existing, "variant", "familyId"),
+        candidate: lineageValue(candidate, "variant", "familyId")
+      },
+      {
+        current: lineageValue(existing, "lineage", "questionTypeId"),
+        candidate: lineageValue(candidate, "lineage", "questionTypeId")
+      },
+      {
+        current: lineageValue(existing, "lineage", "originalQuestionId"),
+        candidate: lineageValue(candidate, "lineage", "originalQuestionId")
+      }
+    ].filter(function (check) {
+      return check.current !== null && check.candidate !== null;
+    });
+    invariant(checks.length > 0, "replacement lineage cannot be verified");
+    invariant(checks.every(function (check) {
+      return check.current === check.candidate;
+    }), "replacement lineage does not match");
+    const declaredRelation = lineageValue(candidate, "lineage", "relation");
+    invariant(declaredRelation === null || declaredRelation === relationship, "candidate lineage relation does not match the replacement relationship");
+  }
+
   function addItem(draft, input) {
     invariant(input && typeof input === "object", "add input is required");
     assertCandidate(input.candidate);
@@ -222,6 +265,7 @@
       return placementIndex !== index && placement.itemId === input.candidate.itemId;
     }), "replacement item is already selected");
     const current = next.placements[index];
+    assertReplacementLineage(input, current, relationship);
     current.replacementHistory.push({
       fromItemId: current.itemId,
       toItemId: input.candidate.itemId,

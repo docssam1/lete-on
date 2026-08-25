@@ -43,7 +43,11 @@ test("replace changes one placement and preserves an audit trail", () => {
   const original = draft();
   const replaced = editor.replacePlacement(original, {
     placementId: "p-002",
-    candidate: candidate("q-102"),
+    currentItem: candidate("q-002", { variant: { familyId: "family-002" } }),
+    candidate: candidate("q-102", {
+      variant: { familyId: "family-002" },
+      lineage: { relation: "twin" }
+    }),
     relationship: "twin",
     reasonCode: "same_type_new_form"
   });
@@ -57,6 +61,71 @@ test("replace changes one placement and preserves an audit trail", () => {
     relationship: "twin",
     reasonCode: "same_type_new_form"
   });
+});
+
+test("similar replacement accepts a verified common question type from the metadata registry", () => {
+  const replaced = editor.replacePlacement(draft(), {
+    placementId: "p-001",
+    metadataByItemId: {
+      "q-001": candidate("q-001", { lineage: { questionTypeId: "type-integer-operation" } })
+    },
+    candidate: candidate("q-101", {
+      lineage: { relation: "similar", questionTypeId: "type-integer-operation" }
+    }),
+    relationship: "similar"
+  });
+
+  assert.equal(replaced.placements[0].itemId, "q-101");
+  assert.equal(replaced.placements[0].selectionKind, "similar");
+});
+
+test("twin and similar replacements reject missing, mismatched, or contradictory lineage", () => {
+  assert.throws(() => editor.replacePlacement(draft(), {
+    placementId: "p-001",
+    candidate: candidate("q-101", { variant: { familyId: "family-001" } }),
+    relationship: "twin"
+  }), /current item metadata is required/);
+
+  assert.throws(() => editor.replacePlacement(draft(), {
+    placementId: "p-001",
+    currentItemMetadata: candidate("q-001", { variant: { familyId: "family-001" } }),
+    candidate: candidate("q-101", { variant: { familyId: "family-other" } }),
+    relationship: "twin"
+  }), /lineage does not match/);
+
+  assert.throws(() => editor.replacePlacement(draft(), {
+    placementId: "p-001",
+    currentItem: candidate("q-001", {
+      variant: { familyId: "family-001" },
+      lineage: { questionTypeId: "type-a" }
+    }),
+    candidate: candidate("q-101", {
+      variant: { familyId: "family-001" },
+      lineage: { relation: "similar", questionTypeId: "type-b" }
+    }),
+    relationship: "similar"
+  }), /lineage does not match/);
+
+  assert.throws(() => editor.replacePlacement(draft(), {
+    placementId: "p-001",
+    currentItem: candidate("q-001", { variant: { familyId: "family-001" } }),
+    candidate: candidate("q-101", {
+      variant: { familyId: "family-001" },
+      lineage: { relation: "similar" }
+    }),
+    relationship: "twin"
+  }), /lineage relation does not match/);
+});
+
+test("manual replacement remains compatible without lineage metadata", () => {
+  const replaced = editor.replacePlacement(draft(), {
+    placementId: "p-003",
+    candidate: candidate("q-103"),
+    relationship: "manual"
+  });
+
+  assert.equal(replaced.placements[2].itemId, "q-103");
+  assert.equal(replaced.placements[2].selectionKind, "manual");
 });
 
 test("unverified answers and unaudited figures cannot be added or used as replacements", () => {
