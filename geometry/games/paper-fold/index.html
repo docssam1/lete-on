@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-pwa-defer="tutorial">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Paper Fold</title>
-  <link rel="stylesheet" href="./styles.css?v=paper-fold-8" />
+  <link rel="stylesheet" href="./styles.css?v=paper-fold-9" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -55,7 +55,17 @@
     <div id="tutorial" class="dialog" hidden>
       <section class="tutorial-card" role="dialog" aria-modal="true">
         <img src="../../world-map/assets/foldy-character.webp" alt="Foldy" />
-        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
+        <div id="tutorialDemo" class="tutorial-demo" data-step="0" aria-hidden="true">
+          <div class="tutorial-paper">
+            <span class="tutorial-sheet"></span>
+            <span class="tutorial-flap"></span>
+            <span class="tutorial-crease"></span>
+            <i class="tutorial-mark tutorial-mark-a"></i>
+            <i class="tutorial-mark tutorial-mark-b"></i>
+          </div>
+          <span class="tutorial-hand"></span>
+        </div>
+        <div class="tutorial-copy"><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
       </section>
     </div>
 
@@ -77,7 +87,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=paper-fold-6"></script>
+  <script type="module" src="./app.js?v=paper-fold-7"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

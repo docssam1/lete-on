@@ -39,6 +39,8 @@
   var isInApp = /kakaotalk|kakaostory|naver|daumapps|instagram|fban|fbav|line\//i.test(ua);
   var standalone = false;
   var deferredPrompt = null;
+  var pendingBannerKind = null;
+  var waitingForTutorial = false;
 
   try {
     standalone = !!(window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches)) || window.navigator.standalone === true;
@@ -62,8 +64,26 @@
     try { localStorage.setItem("gfield-pwa-hide-until", String(Date.now() + 3 * 24 * 60 * 60 * 1000)); } catch (error) {}
   }
 
+  function tutorialIsOpen() {
+    var tutorial = document.getElementById("tutorial");
+    return document.documentElement.getAttribute("data-pwa-defer") === "tutorial" || !!(tutorial && !tutorial.hidden);
+  }
+
   function showBanner(kind) {
     if (standalone || isDismissed()) return;
+    if (tutorialIsOpen()) {
+      pendingBannerKind = kind;
+      if (!waitingForTutorial) {
+        waitingForTutorial = true;
+        window.addEventListener("gfield:tutorial-finished", function () {
+          waitingForTutorial = false;
+          var nextKind = pendingBannerKind;
+          pendingBannerKind = null;
+          if (nextKind) window.setTimeout(function () { showBanner(nextKind); }, 700);
+        }, { once: true });
+      }
+      return;
+    }
     var banner = document.getElementById("gf-install-banner");
     if (!banner) {
       banner = document.createElement("div");

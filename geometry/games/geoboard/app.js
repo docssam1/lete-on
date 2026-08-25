@@ -12,7 +12,7 @@
      names the RULE that was broken (자기 교차 / 겹친 선 / 중복 꼭짓점 / 열린 모양)
      and marks the offending band or peg red immediately.
    - Success shows one of GOOD JOB! / GREAT JOB! / SUCCESS! for about a second.
-   - Storage: the tutorial flag `gfield-geoboard-tutorial-v1`, this game's own
+   - Storage: the tutorial flag `gfield-geoboard-tutorial-v2`, this game's own
      record inside the shared profile under PROGRESS_KEY, and the already-shared
      keys every game uses (`gfield-language`, `gfield-audio-muted`, `gfield-points`,
      `gfield-rewarded-games`). `gfield-profile` is only ever read-modify-written by
@@ -24,8 +24,9 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-2";
-import { messages, text } from "./i18n.js?v=geoboard-2";
+} from "./levels.js?v=geoboard-5";
+import { messages, text } from "./i18n.js?v=geoboard-7";
+import { audioCueUrl } from "./audio-cues.js?v=geoboard-audio-1";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -39,7 +40,7 @@ const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const params = new URLSearchParams(location.search);
 const saved = readGameProgress(PROGRESS_KEY);
 const SESSION_SIZE = 5;
-const TUTORIAL_KEY = "gfield-geoboard-tutorial-v1";
+const TUTORIAL_KEY = "gfield-geoboard-tutorial-v2";
 
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
@@ -70,6 +71,9 @@ const ui = {
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), stats: $("#shapeStats"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
   tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
+  tutorialBoard: $("#tutorialBoard"), tutorialBands: $("#tutorialBandLayer"), tutorialPegs: $("#tutorialPegLayer"),
+  tutorialHits: $("#tutorialHitLayer"), tutorialHand: $("#tutorialHand"),
+  tutorialWatching: $("#tutorialWatching"),
   levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
 };
 
@@ -90,8 +94,9 @@ function loadSession() {
 
 /* -------------------------------------------------------------------- audio */
 
-// Short synthesised blips only. No sampled praise, and nothing at all on a wrong
-// action beyond a low, plain tone.
+// Taps and wrong actions stay lightweight WebAudio blips. Cubi's tutorial, hint
+// and success lines use the checked-in MP3 pack first, with browser speech only
+// as a fallback when a file cannot load or autoplay is unavailable.
 function playTone(kind) {
   if (!state.audio || reducedMotion || !window.AudioContext) return;
   try {
@@ -107,7 +112,18 @@ function playTone(kind) {
   } catch { /* Audio is optional. */ }
 }
 
-function speak(line) {
+let activeVoiceAudio = null;
+
+function stopVoice() {
+  if (activeVoiceAudio) {
+    activeVoiceAudio.pause();
+    activeVoiceAudio.currentTime = 0;
+    activeVoiceAudio = null;
+  }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+
+function speakFallback(line) {
   if (!state.audio || !("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(line);
@@ -117,12 +133,38 @@ function speak(line) {
   speechSynthesis.speak(utterance);
 }
 
+function speak(line, cueKey) {
+  if (!state.audio) return;
+  stopVoice();
+  if (!cueKey || typeof Audio !== "function") {
+    speakFallback(line);
+    return;
+  }
+
+  const audio = new Audio(audioCueUrl(state.lang, cueKey));
+  audio.preload = "auto";
+  activeVoiceAudio = audio;
+  let failed = false;
+  const fallback = () => {
+    if (failed) return;
+    failed = true;
+    if (activeVoiceAudio === audio) activeVoiceAudio = null;
+    speakFallback(line);
+  };
+  audio.addEventListener("ended", () => {
+    if (activeVoiceAudio === audio) activeVoiceAudio = null;
+  }, { once: true });
+  audio.addEventListener("error", fallback, { once: true });
+  const playing = audio.play();
+  if (playing?.catch) playing.catch(fallback);
+}
+
 // The ONLY entry point that makes Cubi talk. Called from the tutorial, the hint
 // button and level completion — nowhere else.
-function cubiSays(line) {
+function cubiSays(line, cueKey) {
   ui.bubble.textContent = line;
   ui.guide.classList.add("show");
-  speak(line);
+  speak(line, cueKey);
   clearTimeout(cubiSays.timer);
   cubiSays.timer = setTimeout(() => ui.guide.classList.remove("show"), 6000);
 }
@@ -448,10 +490,12 @@ function solveProblem() {
 
 function showSuccess() {
   const words = ["successGood", "successGreat", "successPop"];
-  ui.success.querySelector("strong").textContent = t(words[state.problem % words.length]);
+  const cueKey = words[state.problem % words.length];
+  ui.success.querySelector("strong").textContent = t(cueKey);
   ui.success.classList.remove("show");
   void ui.success.offsetWidth;
   ui.success.classList.add("show");
+  speak(t(cueKey), cueKey);
 }
 
 // Points follow paper-fold exactly: one award per problem id ever, and only for a
@@ -530,7 +574,7 @@ function showComplete() {
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
   $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
   ui.complete.hidden = false;
-  cubiSays(t("guideComplete"));
+  cubiSays(t("guideComplete"), "successGreat");
 }
 
 function renderLevelList() {
@@ -552,17 +596,225 @@ function renderLevelList() {
 /* ---------------------------------------------------------------- tutorial */
 
 const tutorialSteps = ["tutorial1", "tutorial2", "tutorial3", "tutorial4"];
+const tutorialScenes = [
+  { points: [[0, 1]], duration: 3600 },
+  { points: [[0, 1], [2, 1]], duration: 4400 },
+  { points: [[0, 2], [2, 2], [1, 0]], duration: 5600 },
+  { points: [[0, 2], [2, 2], [1, 0], [0, 2]], duration: 6800, practiceAt: 5700, solved: true }
+];
+const tutorialGrid = { cols: 3, rows: 3 };
+const tutorialPracticeTarget = [[0, 2], [2, 2], [1, 0], [0, 2]];
+const TUTORIAL_DRAG_MS = reducedMotion ? 520 : 1050;
 let tutorialStep = 0;
+let tutorialMode = "watching";
+let tutorialPracticePath = [];
+let tutorialTimers = [];
+let tutorialFrames = new Set();
+
+function clearTutorialTimers() {
+  tutorialTimers.forEach(clearTimeout);
+  tutorialTimers = [];
+  tutorialFrames.forEach(cancelAnimationFrame);
+  tutorialFrames.clear();
+}
+
+function tutorialLater(callback, delay) {
+  const timer = setTimeout(callback, delay);
+  tutorialTimers.push(timer);
+  return timer;
+}
+
+function tutorialFrame(callback) {
+  const frame = requestAnimationFrame((time) => {
+    tutorialFrames.delete(frame);
+    callback(time);
+  });
+  tutorialFrames.add(frame);
+}
+
+function setTutorialHandPosition(x, y) {
+  ui.tutorialHand.style.left = `${x}%`;
+  ui.tutorialHand.style.top = `${y}%`;
+  ui.tutorialHand.classList.add("visible");
+}
+
+function pulseTutorialPeg(point) {
+  const peg = ui.tutorialPegs.querySelector(`[data-x="${point[0]}"][data-y="${point[1]}"]`);
+  peg?.classList.remove("active");
+  void peg?.getBoundingClientRect();
+  peg?.classList.add("active");
+}
+
+function tapTutorialPeg(point) {
+  setTutorialHandPosition(pegX(point[0], tutorialGrid), pegY(point[1], tutorialGrid));
+  ui.tutorialHand.classList.remove("tap");
+  void ui.tutorialHand.offsetWidth;
+  ui.tutorialHand.classList.add("tap");
+  pulseTutorialPeg(point);
+}
+
+function animateTutorialBand(from, to, onDone) {
+  const fromX = pegX(from[0], tutorialGrid);
+  const fromY = pegY(from[1], tutorialGrid);
+  const toX = pegX(to[0], tutorialGrid);
+  const toY = pegY(to[1], tutorialGrid);
+  const band = svgNode("line", {
+    class: "tutorial-band",
+    x1: fromX, y1: fromY, x2: fromX, y2: fromY
+  });
+  ui.tutorialBands.append(band);
+  ui.tutorialHand.classList.add("dragging");
+
+  let started = null;
+  const draw = (time) => {
+    if (started === null) started = time;
+    const raw = Math.max(0, Math.min(1, (time - started) / TUTORIAL_DRAG_MS));
+    const eased = raw < .5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+    const x = fromX + (toX - fromX) * eased;
+    const y = fromY + (toY - fromY) * eased;
+    band.setAttribute("x2", x);
+    band.setAttribute("y2", y);
+    setTutorialHandPosition(x, y);
+    if (raw < 1) {
+      tutorialFrame(draw);
+      return;
+    }
+
+    ui.tutorialHand.classList.remove("dragging");
+    tapTutorialPeg(to);
+    onDone?.();
+  };
+  tutorialFrame(draw);
+}
+
+function renderTutorialPegGrid() {
+  const next = tutorialMode === "practice" ? tutorialPracticeTarget[tutorialPracticePath.length] : null;
+  ui.tutorialPegs.replaceChildren();
+  for (let y = 0; y < tutorialGrid.rows; y += 1) {
+    for (let x = 0; x < tutorialGrid.cols; x += 1) {
+      const point = [x, y];
+      const used = tutorialPracticePath.some((item) => samePoint(item, point));
+      const isNext = next && samePoint(next, point);
+      ui.tutorialPegs.append(svgNode("circle", {
+        class: `tutorial-peg${used ? " done" : ""}${isNext ? " next" : ""}`,
+        cx: pegX(x, tutorialGrid), cy: pegY(y, tutorialGrid), r: 3.3,
+        "data-x": x, "data-y": y
+      }));
+    }
+  }
+}
+
+function playTutorialScene(scene) {
+  ui.tutorialBands.replaceChildren();
+  ui.tutorialHits.replaceChildren();
+  ui.tutorialHand.classList.remove("visible", "tap", "dragging");
+  renderTutorialPegGrid();
+
+  tutorialLater(() => tapTutorialPeg(scene.points[0]), 400);
+  scene.points.slice(1).forEach((point, offset) => {
+    const index = offset + 1;
+    const moveAt = 1350 + offset * 1450;
+    tutorialLater(() => animateTutorialBand(scene.points[index - 1], point, () => {
+      if (!scene.solved || index !== scene.points.length - 1) return;
+      ui.tutorialBands.querySelectorAll(".tutorial-band").forEach((band) => band.classList.add("solved"));
+    }), moveAt);
+  });
+}
+
+function addTutorialPracticeBand(from, to) {
+  ui.tutorialBands.append(svgNode("line", {
+    class: "tutorial-band practice",
+    x1: pegX(from[0], tutorialGrid), y1: pegY(from[1], tutorialGrid),
+    x2: pegX(to[0], tutorialGrid), y2: pegY(to[1], tutorialGrid)
+  }));
+}
+
+function finishTutorialPractice() {
+  tutorialMode = "ready";
+  ui.tutorialHits.replaceChildren();
+  ui.tutorialBands.querySelectorAll(".tutorial-band").forEach((band) => band.classList.add("solved"));
+  ui.tutorialPegs.querySelectorAll(".tutorial-peg").forEach((peg) => peg.classList.remove("next"));
+  ui.tutorialWatching.textContent = t("tutorialPracticeDone");
+  ui.tutorialText.textContent = t("tutorialPracticeComplete");
+  ui.tutorialNext.textContent = t("tutorialStart");
+  playTone("success");
+  speak(t("tutorialPracticeComplete"), "tutorialComplete");
+}
+
+function onTutorialPracticePeg(x, y) {
+  if (tutorialMode !== "practice") return;
+  const point = [x, y];
+  const expected = tutorialPracticeTarget[tutorialPracticePath.length];
+  if (!samePoint(point, expected)) {
+    const peg = ui.tutorialPegs.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+    peg?.classList.remove("wrong");
+    void peg?.getBoundingClientRect();
+    peg?.classList.add("wrong");
+    playTone("wrong");
+    return;
+  }
+
+  const from = tutorialPracticePath[tutorialPracticePath.length - 1];
+  tutorialPracticePath.push(point);
+  if (from) addTutorialPracticeBand(from, point);
+  playTone(tutorialPracticePath.length === tutorialPracticeTarget.length ? "close" : "tap");
+  renderTutorialPegGrid();
+  pulseTutorialPeg(point);
+  if (tutorialPracticePath.length === tutorialPracticeTarget.length) finishTutorialPractice();
+}
+
+function startTutorialPractice() {
+  clearTutorialTimers();
+  tutorialMode = "practice";
+  tutorialPracticePath = [];
+  ui.tutorialBands.replaceChildren();
+  ui.tutorialHits.replaceChildren();
+  ui.tutorialHand.classList.remove("visible", "tap", "dragging");
+  renderTutorialPegGrid();
+
+  for (let y = 0; y < tutorialGrid.rows; y += 1) {
+    for (let x = 0; x < tutorialGrid.cols; x += 1) {
+      ui.tutorialHits.append(svgNode("circle", {
+        class: "tutorial-hit", cx: pegX(x, tutorialGrid), cy: pegY(y, tutorialGrid), r: 10,
+        "data-x": x, "data-y": y, tabindex: 0,
+        role: "button", "aria-label": t("pegAria", { row: y + 1, col: x + 1 })
+      }));
+    }
+  }
+
+  ui.tutorialWatching.textContent = t("tutorialPracticeLabel");
+  ui.tutorialText.textContent = t("tutorialPractice");
+  ui.tutorialNext.textContent = t("tutorialSkipPractice");
+  speak(t("tutorialPractice"), "tutorialPractice");
+}
 
 // Only on the very first problem of a first visit — never again on this device.
+function releaseTutorialPwaDefer() {
+  delete document.documentElement.dataset.pwaDefer;
+  window.dispatchEvent(new CustomEvent("gfield:tutorial-finished"));
+}
+
 function openTutorial() {
-  if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
-  if (localStorage.getItem(TUTORIAL_KEY) === "done") return;
+  const replay = params.get("tutorial") === "1";
+  if (state.problem !== 0 || state.level !== readyLevels[0].id) {
+    releaseTutorialPwaDefer();
+    return;
+  }
+  if (!replay && localStorage.getItem(TUTORIAL_KEY) === "done") {
+    releaseTutorialPwaDefer();
+    return;
+  }
+  state.locked = true;
+  tutorialStep = 0;
+  tutorialMode = "watching";
+  tutorialPracticePath = [];
   ui.tutorial.hidden = false;
   renderTutorial();
 }
 
 function renderTutorial() {
+  clearTutorialTimers();
+  tutorialMode = "watching";
   const line = t(tutorialSteps[tutorialStep]);
   ui.tutorialText.textContent = line;
   ui.tutorialDots.replaceChildren(...tutorialSteps.map((_, index) => {
@@ -570,8 +822,29 @@ function renderTutorial() {
     if (index === tutorialStep) dot.className = "active";
     return dot;
   }));
-  ui.tutorialNext.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialStart" : "tutorialNext");
-  speak(line);
+  const scene = tutorialScenes[tutorialStep];
+  ui.tutorialWatching.textContent = t("tutorialWatching");
+  ui.tutorialNext.textContent = t("tutorialSkip");
+  playTutorialScene(scene);
+  speak(line, tutorialSteps[tutorialStep]);
+
+  if (tutorialStep < tutorialSteps.length - 1) {
+    tutorialLater(() => {
+      tutorialStep += 1;
+      renderTutorial();
+    }, scene.duration);
+  } else {
+    tutorialLater(startTutorialPractice, scene.practiceAt);
+  }
+}
+
+function finishTutorial() {
+  clearTutorialTimers();
+  localStorage.setItem(TUTORIAL_KEY, "done");
+  ui.tutorial.hidden = true;
+  state.locked = false;
+  stopVoice();
+  releaseTutorialPwaDefer();
 }
 
 /* ---------------------------------------------------------------- language */
@@ -585,6 +858,7 @@ function applyLanguage() {
   $("#retryButton").textContent = t("retry");
   $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   $("#modelLabel").textContent = t("modelLabel");
+  ui.tutorialBoard.setAttribute("aria-label", t("tutorialBoardAria"));
   ui.next.textContent = t("next");
   $("#dialogTitle").textContent = t("chooseLevel");
   $("#closeLevels").setAttribute("aria-label", t("close"));
@@ -614,9 +888,24 @@ ui.hits.addEventListener("keydown", (event) => {
   onPegTap(Number(node.dataset.x), Number(node.dataset.y));
 });
 
+ui.tutorialHits.addEventListener("pointerdown", (event) => {
+  const node = event.target.closest(".tutorial-hit");
+  if (!node) return;
+  event.preventDefault();
+  onTutorialPracticePeg(Number(node.dataset.x), Number(node.dataset.y));
+});
+ui.tutorialHits.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const node = event.target.closest(".tutorial-hit");
+  if (!node) return;
+  event.preventDefault();
+  onTutorialPracticePeg(Number(node.dataset.x), Number(node.dataset.y));
+});
+
 $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
-  cubiSays(t(problem().kind === "open" ? "hintOpen" : "hintClosed"));
+  const cueKey = problem().kind === "open" ? "hintOpen" : "hintClosed";
+  cubiSays(t(cueKey), cueKey);
 });
 $("#retryButton").addEventListener("click", () => {
   if (state.solved) return;
@@ -627,12 +916,7 @@ ui.next.addEventListener("click", nextProblem);
 $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
-ui.tutorialNext.addEventListener("click", () => {
-  if (tutorialStep < tutorialSteps.length - 1) { tutorialStep += 1; renderTutorial(); return; }
-  localStorage.setItem(TUTORIAL_KEY, "done");
-  ui.tutorial.hidden = true;
-  cubiSays(t("guideStart"));
-});
+ui.tutorialNext.addEventListener("click", finishTutorial);
 $("#nextLevelButton").addEventListener("click", () => {
   const next = levels.find((level) => level.id === state.level + 1);
   if (next?.ready) location.assign(`?level=${next.id}`);
@@ -644,7 +928,7 @@ $("#practiceButton").addEventListener("click", () => location.assign(`?level=${s
 $("#soundButton").addEventListener("click", () => {
   state.audio = !state.audio;
   localStorage.setItem("gfield-audio-muted", String(!state.audio));
-  if (!state.audio && "speechSynthesis" in window) speechSynthesis.cancel();
+  if (!state.audio) stopVoice();
   applyLanguage();
 });
 

@@ -4,6 +4,9 @@ import {
   hasSelfIntersection, polygonArea, answerKey
 } from "./levels.js";
 import { LANGUAGES, messages, text } from "./i18n.js";
+import { AUDIO_CUES, AUDIO_CUE_KEYS, validateAudioCueMap } from "./audio-cues.js";
+import { existsSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 function assert(condition, message) {
   if (!condition) throw new Error(`Geoboard self-test: ${message}`);
@@ -55,4 +58,13 @@ for (const lang of LANGUAGES) {
   assert(messages[lang].successGreat === "GREAT JOB!", `${lang} success text drifted`);
 }
 
-console.log(`Geoboard self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales.`);
+assert(validateAudioCueMap(), "audio cue keys differ between languages");
+for (const lang of LANGUAGES) {
+  for (const cue of AUDIO_CUE_KEYS) {
+    const audioPath = fileURLToPath(new URL(AUDIO_CUES[lang][cue], import.meta.url));
+    assert(existsSync(audioPath), `${lang}/${cue} audio file is missing`);
+    assert(statSync(audioPath).size >= 256, `${lang}/${cue} audio file is empty`);
+  }
+}
+
+console.log(`Geoboard self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales, ${AUDIO_CUE_KEYS.length} audio cues.`);

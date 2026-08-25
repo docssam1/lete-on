@@ -41,6 +41,19 @@ geometry/assets/audio/cubi/
     zh/
     ja/
     en/
+  geoboard/
+    ko/
+      tutorial1.mp3
+      tutorial2.mp3
+      tutorial3.mp3
+      tutorial4.mp3
+      tutorial-practice.mp3
+      tutorial-complete.mp3
+      hint-open.mp3
+      hint-closed.mp3
+    zh/
+    ja/
+    en/
 ```
 
 The three tutorial cues are generated in all four languages. Success phrases remain English but use the language-specific Cubi voice so the character sound stays consistent with the selected language.
@@ -52,9 +65,10 @@ Run from the repository root:
 
 ```text
 node scripts/generate-cubi-audio.js
+node scripts/generate-geoboard-audio.js
 ```
 
-The script uses the installed `edge-tts` package and creates 24 non-empty MP3 files. Tutorial lines use a youthful pitch and slightly quick delivery. Success cues use a faster, higher, stronger setting.
+The scripts use the installed `edge-tts` package. The Cube Town pack creates 24 non-empty MP3 files, and the Geoboard pack creates 32 files covering the four tutorial scenes, guided practice, practice completion, and two hints in four languages. Tutorial lines use a youthful pitch and slightly quick delivery. Success cues use a faster, higher, stronger setting and are shared instead of duplicated per game.
 
 ## Current Code Hook
 

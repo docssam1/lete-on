@@ -148,13 +148,62 @@ button { cursor: pointer }
 .dialog header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #d6dbe3; background: #fdfcf8 }
 .dialog h2 { margin: 0; color: var(--navy) }
 .dialog header button { width: 36px; height: 36px; border: 1px solid #c3ccd9; border-radius: 6px; background: #fff }
-.tutorial-card { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 12px; padding: 18px }
-.tutorial-card .cubi-sprite { width: 140px; height: 140px }
-.tutorial-card p { font-size: 19px; font-weight: 800; line-height: 1.45 }
+.tutorial-card {
+  width: min(820px, 96vw) !important;
+  display: grid;
+  grid-template-columns: 132px minmax(180px, 240px) minmax(200px, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  overflow: hidden !important;
+}
+.tutorial-card .cubi-sprite { width: 128px; height: 128px; filter: drop-shadow(0 8px 7px #1d355733) }
+.tutorial-demo { position: relative; width: min(100%, 220px); aspect-ratio: 1; justify-self: center }
+.tutorial-board { width: 100%; height: 100%; display: block; border-radius: 10px; filter: drop-shadow(0 7px 12px #3340382b) }
+.tutorial-peg { fill: #8a6a3a; stroke: #fff8e8; stroke-width: 1 }
+.tutorial-peg.active { animation: tutorial-peg-pulse .7s ease }
+.tutorial-peg.done { fill: #d99d35 }
+.tutorial-peg.next { fill: #ffd96a; stroke: #8a5a00; stroke-width: 1.8; animation: tutorial-next-peg 1.05s ease-in-out infinite }
+.tutorial-peg.wrong { animation: tutorial-wrong-peg .38s ease }
+.tutorial-hit { fill: transparent; pointer-events: all; cursor: pointer; outline: none }
+.tutorial-hit:focus-visible { fill: #f5be4629; stroke: #1e527e; stroke-width: 1.5 }
+.tutorial-band { stroke: var(--band); stroke-width: 3.4; stroke-linecap: round; fill: none; filter: drop-shadow(0 1px 1px #8c2f2744); transition: stroke .25s ease }
+.tutorial-band.practice { stroke-dasharray: 100; animation: tutorial-practice-band .24s ease-out both }
+.tutorial-band.solved { stroke: #2f8f5b; filter: drop-shadow(0 1px 1px #1f704044) }
+.tutorial-hand {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  left: 50%;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 31px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 2px #1d355766);
+  transform: translate(-38%, -82%);
+  opacity: 0;
+  transition: opacity .16s ease;
+}
+.tutorial-hand::before { content: "\261d" }
+.tutorial-hand.visible { opacity: 1 }
+.tutorial-hand.dragging { transform: translate(-38%, -82%) scale(.92) }
+.tutorial-hand.tap { animation: tutorial-hand-tap .36s ease }
+.tutorial-copy { min-width: 0 }
+.tutorial-watching { display: inline-flex; align-items: center; min-height: 26px; padding: 5px 9px; border-radius: 99px; background: #e8f1e5; color: #35623c; font-size: 11px; font-weight: 900 }
+.tutorial-card p { min-height: 82px; margin: 12px 0 0; font-size: 18px; font-weight: 800; line-height: 1.45 }
 .tutorial-card button, .complete-actions > * { min-height: 46px; border: 0; border-radius: 7px; background: #2f4f74; color: #fff; font-weight: 900; text-decoration: none }
 .tutorial-dots { display: flex; gap: 6px; margin: 12px 0 }
 .tutorial-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d5d8dd }
 .tutorial-dots i.active { background: var(--brass) }
+@keyframes tutorial-peg-pulse { 50% { fill: #ffd86c; stroke: #8a5a00; stroke-width: 2; transform: scale(1.55); transform-origin: center } }
+@keyframes tutorial-next-peg { 50% { opacity: .62; transform: scale(1.45); transform-origin: center } }
+@keyframes tutorial-wrong-peg { 35%, 75% { fill: #dc4e46; transform: translateX(1.4px); transform-origin: center } 55% { transform: translateX(-1.4px) } }
+@keyframes tutorial-practice-band { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+@keyframes tutorial-hand-tap { 50% { transform: translate(-38%, -72%) scale(.86) } }
 .level-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; padding: 12px }
 .level-card { min-width: 0; min-height: 155px; display: grid; align-content: start; gap: 7px; padding: 11px; border: 1px solid #d0d6df; border-radius: 7px; background: #fff; text-align: left }
 .level-card span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brass); color: #4a3200; font-weight: 900 }
@@ -222,9 +271,12 @@ button { cursor: pointer }
   .toast { top: 46px; font-size: 11px; padding: 5px 11px }
   .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }
   .level-card { min-height: 96px }
-  .tutorial-card { grid-template-columns: 110px 1fr }
-  .tutorial-card .cubi-sprite { width: 100px; height: 100px }
-  .tutorial-card p { font-size: 15px }
+  .tutorial-card { grid-template-columns: 92px minmax(140px, 190px) minmax(180px, 1fr); gap: 10px; padding: 10px }
+  .tutorial-card .cubi-sprite { width: 88px; height: 88px }
+  .tutorial-demo { width: min(100%, 168px) }
+  .tutorial-card p { min-height: 62px; margin-top: 7px; font-size: 14px; line-height: 1.35 }
+  .tutorial-dots { margin: 7px 0 }
+  .tutorial-card button { min-height: 38px; font-size: 12px }
 }
 
 @media (orientation: portrait) and (max-width: 600px) {
@@ -239,9 +291,11 @@ button { cursor: pointer }
   .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
   .cubi-guide { position: fixed }
   .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }
-  .tutorial-card { grid-template-columns: 96px 1fr }
-  .tutorial-card .cubi-sprite { width: 90px; height: 90px }
-  .tutorial-card p { font-size: 15px }
+  .tutorial-card { grid-template-columns: 76px minmax(0, 1fr); gap: 8px; padding: 12px }
+  .tutorial-card .cubi-sprite { width: 72px; height: 72px; align-self: start }
+  .tutorial-demo { grid-column: 1 / -1; grid-row: 2; width: min(210px, 64vw) }
+  .tutorial-copy { grid-column: 2; grid-row: 1 }
+  .tutorial-card p { min-height: 0; margin-top: 6px; font-size: 14px }
 }
 
 @media (prefers-reduced-motion: reduce) {
