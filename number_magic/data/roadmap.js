@@ -196,48 +196,38 @@ window.NM_ROADMAP = {
 
     /* ─────── R10 : 창의 전략 입문 ─────── */
     {
-      id:'R10', icon:'🔺', grade:'창의',
-      edu:{ko:'창의수연 기초 전략',en:'Creative math basic strategies',zh:'创意数学基础策略'},
-      theme:{ko:'수의 마법 — 쌍·거듭제곱·가우스',en:'Number Magic — Pairs, Powers & Gauss',zh:'数字魔法——对、幂与高斯'},
-      units:['C-01','C-02','C-03','C-04','C-05'],
-      tip:{ko:'1+2+3...+20을 20초 만에? 가우스의 비밀을 배워요!',en:'Sum 1+2+...+20 in 20 seconds? Learn the Gauss secret!',zh:'20秒内求1+2+...+20？学习高斯的秘密！'}
-    },
+      id:'R10', icon:'🚪', grade:'창의',
+      edu:{ko:'곱셈의 문',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'1단계 · 곱셈의 문 — 표기와 자리별 곱',en:'Stage 1 · Gateway to Multiplication',zh:'第1阶 · 乘法之门'},
+      units:['C-01','C-26','C-09'] },
 
     /* ─────── R11 : 곱셈 전략 I ─────── */
     {
-      id:'R11', icon:'🧠', grade:'창의',
-      edu:{ko:'창의수연 곱셈 전략 I',en:'Creative math multiplication I',zh:'创意数学乘法策略I'},
-      theme:{ko:'빠른 곱셈 I — ×9·분배·올림빼기',en:'Fast Multiplication I — ×9, Distribute, Over-subtract',zh:'快速乘法I——×9·分配·多乘减'},
-      units:['C-06','C-07','C-08'],
-      tip:{ko:'9를 곱할 땐 10을 곱하고 한 번 빼면 돼요!',en:'To multiply by 9: multiply by 10 then subtract once!',zh:'乘9时：先乘10，再减一次！'}
-    },
+      id:'R11', icon:'✂️', grade:'창의',
+      edu:{ko:'쪼개기',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'2단계 · 쪼개기 — 분배법칙 +와 −',en:'Stage 2 · Splitting',zh:'第2阶 · 拆分'},
+      units:['C-07','C-08','C-06','C-27'] },
 
     /* ─────── R12 : 창의 곱셈 핵심 ─────── */
     {
-      id:'R12', icon:'🌸', grade:'창의',
-      edu:{ko:'창의수연 창의 곱셈법',en:'Creative multiplication methods',zh:'创意乘法方法'},
-      theme:{ko:'창의 곱셈법 — 6가지 검법',en:'6 Creative Multiplication Methods',zh:'六种创意乘法'},
-      units:['C-09','C-10','C-11','C-12','C-13','C-14'],
-      tip:{ko:'세로식, 넓이 곱셈, 격자... 나만의 방법을 찾아봐요!',en:'Column, area model, lattice... find your own method!',zh:'竖式、面积乘法、格子法...找到自己的方法！'}
-    },
+      id:'R12', icon:'🤝', grade:'창의',
+      edu:{ko:'짝 만들기',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'3단계 · 짝 만들기 — 10·100·1000을 만들어라',en:'Stage 3 · Making Pairs',zh:'第3阶 · 配对'},
+      units:['C-02','C-04','C-03','C-34'] },
 
     /* ─────── R13 : 자리이동과 ×5·×25 ─────── */
     {
       id:'R13', icon:'✋', grade:'창의',
-      edu:{ko:'창의수연 특수 곱셈',en:'Creative math special multiplication',zh:'创意数学特殊乘法'},
-      theme:{ko:'지름길 곱셈 — 자리이동·×5·×25',en:'Shortcut Multiplication — Shift, ×5, ×25',zh:'捷径乘法——位移·×5·×25'},
-      units:['C-15','C-16','C-17'],
-      tip:{ko:'40×25=1000! 규칙을 찾으면 계산이 쉬워져요.',en:'40×25=1000! Find the pattern and calculation becomes easy!',zh:'40×25=1000！找到规律，计算就变简单了！'}
-    },
+      edu:{ko:'반과 배',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'4단계 · 반과 배 — ×5·×25와 그 나눗셈',en:'Stage 4 · Halves and Doubles',zh:'第4阶 · 折半与翻倍'},
+      units:['C-16','C-17','C-28','C-29'] },
 
     /* ─────── R14 : 나눗셈 3형제 ─────── */
     {
       id:'R14', icon:'🪓', grade:'창의',
-      edu:{ko:'초3-2 나눗셈',en:'G3-2 Division',zh:'小3-2除法'},
-      theme:{ko:'나눗셈 3형제 — 분해·약분·부풀리기',en:'3 Division Methods — Decompose, Simplify, Expand',zh:'三种除法——分解·约分·扩张'},
-      units:['C-18','C-19','C-20'],
-      tip:{ko:'312÷3: 300÷3=100, 12÷3=4, 합치면 104!',en:'312÷3: 300÷3=100, 12÷3=4, combine → 104!',zh:'312÷3：300÷3=100，12÷3=4，合并→104！'}
-    },
+      edu:{ko:'나눗셈 3법',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'5단계 · 나눗셈 세 가지 길',en:'Stage 5 · Three Roads of Division',zh:'第5阶 · 除法三法'},
+      units:['C-18','C-19','C-20'] },
 
     /* ─────── T14 : 초4~초5 분수·약수 확장 ─────── */
     {
@@ -250,12 +240,10 @@ window.NM_ROADMAP = {
 
     /* ─────── R15 : 분수의 세계 ─────── */
     {
-      id:'R15', icon:'🎨', grade:'창의',
-      edu:{ko:'초4-2 분수',en:'G4-2 Fractions',zh:'小4-2分数'},
-      theme:{ko:'분수의 세계 — 같은 분모·다른 분모',en:'Fraction World — Same & Different Denominators',zh:'分数世界——同分母与异分母'},
-      units:['C-21','C-22'],
-      tip:{ko:'피자를 같은 크기로 나누면 분수가 보여요!',en:'When you cut pizza into equal pieces, fractions appear!',zh:'把比萨切成相等的块，分数就出现了！'}
-    },
+      id:'R15', icon:'🌸', grade:'창의',
+      edu:{ko:'곱셈 알고리즘',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'6단계 · 곱셈 알고리즘 여행',en:'Stage 6 · A Tour of Multiplication',zh:'第6阶 · 乘法算法之旅'},
+      units:['C-15','C-13','C-10','C-11','C-14','C-30'] },
 
     /* ─────── T15 : 초4-2~초5-1 소수·혼합계산 ─────── */
     {
@@ -268,12 +256,17 @@ window.NM_ROADMAP = {
 
     /* ─────── R16 : 마스터의 길 ─────── */
     {
-      id:'R16', icon:'🏆', grade:'창의',
-      edu:{ko:'창의수연 고급',en:'Creative math advanced',zh:'创意数学高级'},
-      theme:{ko:'마스터의 길 — VEDA·차이곱·소수',en:'Master Path — VEDA, Difference Products, Decimals',zh:'大师之路——VEDA·差积·小数'},
-      units:['C-23','C-24','C-25'],
-      tip:{ko:'23×27=(25-2)(25+2)=625-4=621! 수의 아름다움이에요.',en:'23×27=(25-2)(25+2)=625-4=621! The beauty of numbers.',zh:'23×27=(25-2)(25+2)=625-4=621！数字之美。'}
-    },
+      id:'R16', icon:'🔗', grade:'창의',
+      edu:{ko:'수의 관계',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'7단계 · 수의 관계 — VEDA·차이곱·가우스',en:'Stage 7 · Relationships Between Numbers',zh:'第7阶 · 数的关系'},
+      units:['C-23','C-24','C-12','C-05'] },
+
+    /* ─────── CR8 : 창의 8단계 · 분수와 소수 ─────── */
+    {
+      id:'CR8', icon:'🎨', grade:'창의',
+      edu:{ko:'분수와 소수',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
+      units:['C-21','C-22','C-31','C-32','C-25','C-33','C-35'] },
 
     /* ─────── R17 : 약수와 배수 ─────── */
     {

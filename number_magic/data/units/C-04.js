@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-04'] = {
   id:'C-04', tier:'intermediate', level:'C', order:4,
+  lineage:['ten-friends'],
   generator:'ml_pair10',
   title:{ ko:'곱해서 100 만들기', en:'Making Pairs of 100', zh:'凑100乘法' },
   subtitle:{ ko:'4×25=100! 이 쌍을 찾으면 ×100으로 바뀌어요', en:'4×25=100! Find this pair and it becomes ×100', zh:'4×25=100！找到这个对就变成×100' },

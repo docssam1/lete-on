@@ -230,6 +230,7 @@ let scene, renderer, camera, cameraController, clock;
 let player, companion, docent, playerVelocity = new THREE.Vector3(), targetPoint = null;
 let activeZone = null, worldReady = false, villagePaused = false;
 let npcs = [], activeNpc = null;
+let animatedDecor = [];
 let joystickPointer = null, runHeld = false, pointerStart = null;
 const joystickInput = new THREE.Vector2();
 const keys = new Set();
@@ -265,6 +266,10 @@ function seededRandom(seed) { let value = seed >>> 0; return () => ((value = (va
 function createRoad(x1, z1, x2, z2, width = 2.1) {
   const dx = x2 - x1, dz = z2 - z1, length = Math.hypot(dx, dz);
   addMesh(scene, new THREE.BoxGeometry(width, .08, length), mat(0xd8b77b), [(x1 + x2) / 2, .08, (z1 + z2) / 2], [0, Math.atan2(dx, dz), 0]);
+  const edgeAngle = Math.atan2(dx, dz);
+  const sideX = Math.cos(edgeAngle) * width * .52, sideZ = -Math.sin(edgeAngle) * width * .52;
+  addMesh(scene, new THREE.BoxGeometry(.12, .04, length), mat(0xc9955e), [(x1 + x2) / 2 + sideX, .105, (z1 + z2) / 2 + sideZ], [0, edgeAngle, 0]);
+  addMesh(scene, new THREE.BoxGeometry(.12, .04, length), mat(0xc9955e), [(x1 + x2) / 2 - sideX, .105, (z1 + z2) / 2 - sideZ], [0, edgeAngle, 0]);
   for (let t = 0; t <= 1; t += .16) {
     addMesh(scene, new THREE.BoxGeometry(.12, .035, .42), mat(0xf5e6c2), [x1 + dx * t, .135, z1 + dz * t], [0, Math.atan2(dx, dz), 0]);
   }
@@ -272,10 +277,85 @@ function createRoad(x1, z1, x2, z2, width = 2.1) {
 
 function createTree(x, z, scale = 1, color = 0x4d9863) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(scale); scene.add(g);
-  addMesh(g, new THREE.CylinderGeometry(.18, .25, 1.45, 8), mat(0x80502f), [0, .72, 0]);
-  addMesh(g, new THREE.ConeGeometry(.92, 1.55, 9), mat(color), [0, 1.75, 0]);
-  addMesh(g, new THREE.ConeGeometry(.68, 1.22, 9), mat(new THREE.Color(color).multiplyScalar(1.08)), [0, 2.45, 0]);
+  addMesh(g, new THREE.CylinderGeometry(.16, .27, 1.55, 8), mat(0x80502f), [0, .77, 0]);
+  const foliage = new THREE.Group(); foliage.position.y = 2.1; g.add(foliage);
+  const leaf = mat(color);
+  const leafLight = mat(new THREE.Color(color).multiplyScalar(1.1));
+  addMesh(foliage, new THREE.DodecahedronGeometry(.9, 0), leaf, [-.48, -.08, .08], [0, .2, 0], [1.05, .9, 1]);
+  addMesh(foliage, new THREE.DodecahedronGeometry(1.02, 0), leaf, [.42, -.04, .04], [0, -.25, 0], [1.08, .92, 1]);
+  addMesh(foliage, new THREE.DodecahedronGeometry(.96, 0), leafLight, [0, .62, -.03], [0, .1, 0], [1.05, .95, 1]);
+  const fruitSeed = Math.abs(Math.round(x * 17 + z * 29));
+  if (fruitSeed % 5 === 0) {
+    const fruitMat = mat([0xe9b849, 0xe66d4d, 0xf09b4b][fruitSeed % 3]);
+    [[-.62,2.05,.55],[.63,2.22,.4],[.05,2.83,.72]].forEach(p => addMesh(g, new THREE.SphereGeometry(.13, 8, 6), fruitMat, p));
+  }
+  animatedDecor.push({ mesh: foliage, kind: 'foliage', phase: fruitSeed * .17 });
   addCollider(x, z, .72 * scale);
+}
+
+function createBush(x, z, scale = 1, color = 0x5aa36a, bloom = null) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(scale); scene.add(g);
+  const leaf = mat(color);
+  addMesh(g, new THREE.DodecahedronGeometry(.48, 0), leaf, [-.32, .43, 0]);
+  addMesh(g, new THREE.DodecahedronGeometry(.55, 0), leaf, [.25, .48, .02]);
+  addMesh(g, new THREE.DodecahedronGeometry(.42, 0), mat(new THREE.Color(color).multiplyScalar(1.08)), [0, .77, -.04]);
+  if (bloom) {
+    const petals = mat(bloom);
+    [[-.35,.75,.35],[.23,.86,.4],[.55,.48,.26]].forEach(p => addMesh(g, new THREE.SphereGeometry(.075, 7, 5), petals, p));
+  }
+  animatedDecor.push({ mesh: g, kind: 'bush', phase: Math.abs(x * .31 + z * .19) });
+  addCollider(x, z, .38 * scale);
+}
+
+function createRockCluster(x, z, scale = 1) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(scale); scene.add(g);
+  const stone = mat(0x8d9994);
+  addMesh(g, new THREE.DodecahedronGeometry(.48, 0), stone, [0, .34, 0], [.12, 0, -.08], [1.25,.8,1]);
+  addMesh(g, new THREE.DodecahedronGeometry(.3, 0), mat(0xaab2a8), [.55, .2, .12], [0,.4,0], [1,.72,1]);
+  addMesh(g, new THREE.DodecahedronGeometry(.22, 0), stone, [-.48, .15, .2], [0,-.2,0], [1,.7,1]);
+  addCollider(x, z, .55 * scale);
+}
+
+function createFenceLine(x1, z1, x2, z2, count = 6) {
+  const dx = (x2 - x1) / count, dz = (z2 - z1) / count;
+  const angle = Math.atan2(dx, dz);
+  for (let i = 0; i <= count; i += 1) {
+    const x = x1 + dx * i, z = z1 + dz * i;
+    addMesh(scene, new THREE.CylinderGeometry(.055, .075, .78, 6), mat(0xf0dfb4), [x, .39, z]);
+    if (i < count) addMesh(scene, new THREE.BoxGeometry(.1, .12, Math.hypot(dx,dz) * 1.04), mat(0xd8bb82), [x + dx/2, .48, z + dz/2], [0, angle, 0]);
+  }
+}
+
+function createPond(x, z, radius = 2.5) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  addMesh(g, new THREE.CylinderGeometry(radius + .28, radius + .45, .18, 24), mat(0xd5b977), [0, .02, 0], [0,.08,0], [1,.95,.78]);
+  const water = addMesh(g, new THREE.CircleGeometry(radius, 32), mat(0x57b7c7, { roughness: .18, metalness: .03, transparent: true, opacity: .88 }), [0, .125, 0], [-Math.PI/2,0,0], [1,.78,1]);
+  animatedDecor.push({ mesh: water, kind: 'water', phase: x * .1 });
+  for (let i = 0; i < 7; i += 1) {
+    const a = i / 7 * Math.PI * 2;
+    const rx = Math.cos(a) * radius * .92, rz = Math.sin(a) * radius * .72;
+    addMesh(g, new THREE.CylinderGeometry(.025,.035,.45,5), mat(0x4f8b55), [rx,.32,rz], [0,0,(i%2-.5)*.15]);
+  }
+  addCollider(x, z, radius * .72);
+}
+
+function createSignpost(x, z, rotation = 0) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = rotation; scene.add(g);
+  addMesh(g, new THREE.CylinderGeometry(.07,.09,1.3,7), mat(0x81512d), [0,.65,0]);
+  addMesh(g, new THREE.BoxGeometry(1.35,.42,.14), mat(0xe3b96d), [0,1.08,0]);
+  addMesh(g, new THREE.ConeGeometry(.23,.38,3), mat(0xe3b96d), [.82,1.08,0], [0,0,-Math.PI/2]);
+}
+
+function createPicnicArea(x, z) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  addMesh(g, new THREE.CylinderGeometry(1.55,1.62,.05,20), mat(0xf3dfae), [0,.07,0]);
+  addMesh(g, new THREE.BoxGeometry(1.55,.16,.9), mat(0x9a6237), [0,.65,0]);
+  [[-.55,.32,-.62],[.55,.32,-.62],[-.55,.32,.62],[.55,.32,.62]].forEach(p=>addMesh(g,new THREE.CylinderGeometry(.055,.07,.65,6),mat(0x6e472d),p));
+  addMesh(g, new THREE.BoxGeometry(1.55,.13,.34), mat(0xb77b43), [0,.43,-.75]);
+  addMesh(g, new THREE.BoxGeometry(1.55,.13,.34), mat(0xb77b43), [0,.43,.75]);
+  addMesh(g, new THREE.SphereGeometry(.18,8,6), mat(0xe65f52), [-.35,.86,0]);
+  addMesh(g, new THREE.SphereGeometry(.16,8,6), mat(0xf1c65b), [.15,.83,.1]);
+  addCollider(x,z,1.15);
 }
 
 function createLamp(x, z) {
@@ -316,6 +396,12 @@ function createBuildingBase(zone, width, depth, wallColor, roofColor) {
   addMesh(g, new THREE.BoxGeometry(1.1, 1.7, .14), mat(0x704725), [0, .87, depth / 2 + .08]);
   addMesh(g, new THREE.BoxGeometry(.63, .63, .12), mat(0xaedce6, { emissive: 0x4e8796, emissiveIntensity: .2 }), [-width * .27, 1.55, depth / 2 + .08]);
   addMesh(g, new THREE.BoxGeometry(.63, .63, .12), mat(0xaedce6, { emissive: 0x4e8796, emissiveIntensity: .2 }), [width * .27, 1.55, depth / 2 + .08]);
+  addMesh(g, new THREE.BoxGeometry(width * .96, .18, .72), mat(0xb58453), [0, .14, depth / 2 + .32]);
+  addMesh(g, new THREE.BoxGeometry(.38, 1.2, .38), mat(0x765044), [width * .3, 3.15, -.55]);
+  addMesh(g, new THREE.BoxGeometry(.92, .13, .13), mat(0xf2e2b8), [-width * .27, 1.87, depth / 2 + .15]);
+  addMesh(g, new THREE.BoxGeometry(.92, .13, .13), mat(0xf2e2b8), [width * .27, 1.87, depth / 2 + .15]);
+  addMesh(g, new THREE.BoxGeometry(.78, .18, .28), mat(0x8b5635), [-width * .27, 1.18, depth / 2 + .18]);
+  addMesh(g, new THREE.BoxGeometry(.78, .18, .28), mat(0x8b5635), [width * .27, 1.18, depth / 2 + .18]);
   addCollider(zone.x, zone.z, Math.max(width, depth) * .56);
   return g;
 }
@@ -404,6 +490,8 @@ function rebuildCompanion() {
 }
 
 function buildWorld() {
+  colliders.length = 0;
+  animatedDecor = [];
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x9fd6e6);
   scene.fog = new THREE.Fog(0x9fd6e6, 42, 82);
@@ -421,9 +509,11 @@ function buildWorld() {
   const sun = new THREE.DirectionalLight(0xfff0ce, 3.0); sun.position.set(-13, 24, 16); sun.castShadow = true; sun.shadow.mapSize.set(1536, 1536); sun.shadow.camera.left = -34; sun.shadow.camera.right = 34; sun.shadow.camera.top = 34; sun.shadow.camera.bottom = -34; sun.shadow.camera.near = 1; sun.shadow.camera.far = 70; sun.shadow.bias = -.00045; scene.add(sun);
   const fill = new THREE.DirectionalLight(0xffc985, .65); fill.position.set(16, 10, -14); scene.add(fill);
 
-  addMesh(scene, new THREE.CylinderGeometry(31, 31.8, 1.5, 72), mat(0x4d9db2, { roughness: .35, metalness: .04 }), [0, -1.22, 0]);
-  addMesh(scene, new THREE.CylinderGeometry(27.75, 28.35, .7, 72), mat(0xe0c58a), [0, -.55, 0]);
-  addMesh(scene, new THREE.CylinderGeometry(27, 27.5, .92, 72), mat(0x72b36c), [0, -.18, 0]);
+  const ocean = addMesh(scene, new THREE.CylinderGeometry(31, 31.8, 1.5, 72), mat(0x4d9db2, { roughness: .28, metalness: .04 }), [0, -1.22, 0]);
+  animatedDecor.push({ mesh: ocean, kind: 'ocean', phase: 0 });
+  addMesh(scene, new THREE.CylinderGeometry(28.15, 28.75, .72, 72), mat(0xe0c58a), [0, -.55, 0]);
+  addMesh(scene, new THREE.CylinderGeometry(27.3, 27.75, .92, 72), mat(0x72b36c), [0, -.18, 0]);
+  addMesh(scene, new THREE.TorusGeometry(27.55, .16, 8, 72), mat(0xf3ddb0), [0, .05, 0], [Math.PI/2,0,0]);
   createRoad(0, 0, -12, -7); createRoad(0, 0, 12, -7); createRoad(0, 0, 11, 10); createRoad(0, 0, -11, 10); createRoad(0, 0, 0, -16);
   addMesh(scene, new THREE.CylinderGeometry(5.2, 5.3, .1, 32), mat(0xe8c98e), [0, .06, 0]);
   addMesh(scene, new THREE.TorusGeometry(4.9, .12, 8, 48), mat(0xb97c46), [0, .13, 0], [Math.PI / 2, 0, 0]);
@@ -431,17 +521,27 @@ function buildWorld() {
   createFlagPlaza(zoneDefinitions[0]); createLibrary(zoneDefinitions[1]); createObservatory(zoneDefinitions[2]); createShop(zoneDefinitions[3]); createGuideBooth(zoneDefinitions[4]); zoneDefinitions.forEach(createZoneRing);
   docent = createDocent(zoneDefinitions[4]);
 
+  createPond(-18.2, -1.5, 2.7);
+  createPicnicArea(17.8, 1.1);
+  createSignpost(-5.7, -1.2, -.85); createSignpost(5.6, 1.15, 2.3);
+  createFenceLine(-20.5, 7.1, -15.2, 9.4, 6);
+  createFenceLine(14.8, -16.5, 20.3, -13.8, 6);
+  [[-21.4,-7.5,1.1],[-20.2,5.2,.9],[20.8,6.2,1],[18.8,-17.2,.85],[-7.8,19.2,.9],[8.2,20.1,1]].forEach(([x,z,s])=>createRockCluster(x,z,s));
+  [[-15.1,4.2,0xef91aa],[-13.8,4.7,0xf4bf62],[-19.8,-6.1,0xa88ad5],[18.5,7.2,0xf18a74],[16.7,-14.3,0xf0c75f],[7.6,18.4,0xe9819c],[-8.7,18.2,0x9d88d0]].forEach(([x,z,c],i)=>createBush(x,z,.78+(i%3)*.08,i%2?0x65a55e:0x4f9964,c));
+
   const rand = seededRandom(1207);
   const protectedAreas = zoneDefinitions.map(z => ({ x: z.x, z: z.z, radius: z.radius + 2.4 })).concat([{ x: 0, z: 0, radius: 6.2 }]);
   let attempts = 0, planted = 0;
   while (planted < 36 && attempts < 380) {
     attempts += 1; const angle = rand() * Math.PI * 2; const radius = 8 + rand() * 17.2; const x = Math.cos(angle) * radius; const z = Math.sin(angle) * radius;
     if (protectedAreas.some(a => Math.hypot(x - a.x, z - a.z) < a.radius)) continue;
+    if (colliders.some(c => Math.hypot(x - c.x, z - c.z) < c.radius + 1.1)) continue;
     createTree(x, z, .7 + rand() * .52, rand() > .3 ? 0x4d9863 : 0x6aa45b); planted += 1;
   }
   [[-4.6,-4.5],[4.8,-4.4],[5.1,4.4],[-4.8,4.5],[-7.4,1.8],[7.3,1.5]].forEach(([x,z])=>createLamp(x,z));
   createBench(-4.6,2.9,-.85); createBench(4.5,-2.9,2.25); createBench(2.8,4.8,-2.6);
   createFlowerPatch(-5.5,-2.1,0xef87a1); createFlowerPatch(5.7,2.2,0x9e86d1); createFlowerPatch(-3.8,5.2,0xf3b75e); createFlowerPatch(3.2,-5.4,0xee7f77);
+  createFlowerPatch(-16.2,2.1,0xf6a6b7); createFlowerPatch(16.1,4.3,0xf3c85c);
 
   rebuildCharacter();
   companion = createCubiCompanion(THREE, characterState.companionSkin); scene.add(companion);
@@ -621,6 +721,14 @@ function animateVillage(time) {
   if (!worldReady || villagePaused || document.hidden || $('#villageScreen').hidden) return;
   const delta = Math.min(clock.getDelta(), .04);
   updateMovement(delta); cameraController.update(delta); updateZones(time); updateNPCs(delta); updateNpcProximity();
+  for (const item of animatedDecor) {
+    if (item.kind === 'foliage') item.mesh.rotation.z = Math.sin(time * .00085 + item.phase) * .025;
+    else if (item.kind === 'bush') item.mesh.rotation.z = Math.sin(time * .0007 + item.phase) * .012;
+    else if (item.kind === 'water') {
+      item.mesh.material.opacity = .82 + Math.sin(time * .0015 + item.phase) * .055;
+      item.mesh.rotation.z = Math.sin(time * .00022) * .025;
+    } else if (item.kind === 'ocean') item.mesh.rotation.y = time * .000008;
+  }
   if (docent) { docent.position.y = docent.userData.baseY + Math.sin(time * .0022) * .1; docent.rotation.y += delta * .5; }
   renderer.render(scene, camera);
 }

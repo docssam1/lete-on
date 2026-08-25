@@ -414,23 +414,15 @@ NM_TGEN['fr7_frDiv'] = function(params, rng){
    FR8 — 분수 ↔ 소수 변환
    ============================================================ */
 NM_TGEN['fr8_frDec'] = function(params, rng){
-  var commonFractions = [
-    {n:1, d:2,  dec:50,  decStr:'0.50'},
-    {n:1, d:4,  dec:25,  decStr:'0.25'},
-    {n:3, d:4,  dec:75,  decStr:'0.75'},
-    {n:1, d:5,  dec:20,  decStr:'0.20'},
-    {n:2, d:5,  dec:40,  decStr:'0.40'},
-    {n:3, d:5,  dec:60,  decStr:'0.60'},
-    {n:4, d:5,  dec:80,  decStr:'0.80'},
-    {n:1, d:10, dec:10,  decStr:'0.10'},
-    {n:3, d:10, dec:30,  decStr:'0.30'},
-    {n:7, d:10, dec:70,  decStr:'0.70'},
-    {n:1, d:20, dec:5,   decStr:'0.05'},
-    {n:1, d:25, dec:4,   decStr:'0.04'},
-    {n:1, d:50, dec:2,   decStr:'0.02'}
-  ];
-
-  var fr  = pick(rng, commonFractions);
+  /* 분모가 100의 약수(2,4,5,10,20,25,50,100)이면 n/d는 항상 소수 둘째 자리
+     안에서 정확히 끝난다. 고정된 13쌍 목록 대신 분모·분자를 직접 뽑아
+     대응 쌍을 크게 늘린다. */
+  var DENOMS = [2,4,5,10,20,25,50,100];
+  var d   = pick(rng, DENOMS);
+  var n   = R(rng, 1, d - 1);
+  var dec = Math.round(n / d * 100);
+  var decStr = '0.' + String(dec).padStart(2, '0');
+  var fr  = { n: n, d: d, dec: dec, decStr: decStr };
   var dir = pick(rng, [0, 1]); // 0=분수→소수, 1=소수→분수
 
   if(dir === 0){

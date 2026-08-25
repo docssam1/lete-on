@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사각수 친구들 — 수의 마법 개념실험실</title>
+<!-- Numbers of Magic 개념실험실 3호: 사각수 = 홀수의 합 (ㄱ자 두르기)
+     콘텐츠 전부 창작 — 외부 교재/영상 미사용. 내레이션: Web Speech(ko) 폴백 -->
+<style>
+:root{
+  --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;
+  --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
+  --ok:#2E9E6B;--ok-deep:#1F7A50;--no:#D9534F;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 500px at 30% -10%,#e9f6ef,transparent 60%),var(--paper);
+  min-height:100dvh;padding:18px 14px 60px}
+.wrap{max-width:640px;margin:0 auto}
+.hero{text-align:center;padding:10px 0 18px}
+.hero h1{font-size:clamp(24px,6.5vw,32px);font-weight:900;letter-spacing:-.03em;color:var(--ok-deep)}
+.hero p{font-size:14px;color:var(--sub);margin-top:6px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:14px 0 18px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 16px;
+  font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.tab.on{background:var(--ok-deep);border-color:var(--ok-deep);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 12px 30px -22px rgba(31,122,80,.35);display:none}
+.card.on{display:block}
+.card h2{font-size:17px;color:var(--ok-deep);margin-bottom:12px}
+.story p{font-size:15px;line-height:1.75;margin-bottom:12px}
+.story .legend{font-size:12.5px;color:var(--sub);background:var(--mist);border-radius:11px;padding:9px 12px}
+.speak{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;margin-bottom:12px}
+.btn{border:none;background:var(--ok-deep);color:#fff;border-radius:13px;padding:12px 20px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn.gold{background:var(--gold-deep)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;justify-content:center}
+.gridbox{display:flex;justify-content:center;margin:8px 0}
+.caption{text-align:center;font-size:15px;font-weight:800;color:var(--ok-deep);min-height:26px;margin-top:10px}
+.formula{text-align:center;font-size:clamp(17px,5vw,22px);font-weight:900;color:var(--ink);
+  margin-top:6px;min-height:30px;font-variant-numeric:tabular-nums}
+.formula b{color:var(--gold-deep)}
+.friends{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+.friend{border:2px solid var(--line);border-radius:99px;padding:5px 12px;font-size:14px;
+  font-weight:900;color:#b8bcc6;background:var(--mist);opacity:.6;font-variant-numeric:tabular-nums}
+.friend.got{border-color:var(--ok-deep);background:#eafaf1;color:var(--ok-deep);opacity:1}
+.friend.got::before{content:'🟩 '}
+.qline{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;
+  font-size:16px;font-weight:800;margin-top:14px}
+.qline input{width:84px;padding:10px;border:2px solid var(--line);border-radius:11px;
+  font-size:18px;font-weight:800;text-align:center;font-family:inherit;color:var(--ink)}
+.qline input:focus{outline:none;border-color:var(--ok-deep)}
+.qline input.good{border-color:var(--ok);background:#effaf4}
+.qline input.bad{border-color:var(--no);background:#fdf1f0}
+.fb{text-align:center;font-size:14.5px;font-weight:800;min-height:24px;margin-top:10px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>🟩 사각수 친구들</h1>
+    <p>홀수를 ㄱ자로 두르면, 네모가 자라요.</p>
+  </header>
+
+  <nav class="tabs" aria-label="단계">
+    <button class="tab on" data-p="p1">① 이야기</button>
+    <button class="tab" data-p="p2">② 네모 보기</button>
+    <button class="tab" data-p="p3">③ 직접 하기</button>
+  </nav>
+
+  <!-- ① 이야기 -->
+  <section class="card on story" id="p1">
+    <h2>조약돌을 놓던 사람들</h2>
+    <button class="speak" data-say="story">🔊 읽어 주기</button>
+    <p>아주 오래전 그리스 사람들은 수를 <b>조약돌</b>로 놓아 보며 공부했어요.
+    조약돌 몇 개는 세모가 되고, 몇 개는 <b>네모</b>가 됐죠. 네모가 되는 수 —
+    1, 4, 9, 16, 25… 를 <b>사각수</b>라고 불러요.</p>
+    <p>사각수엔 놀라운 비밀이 있어요. 네모의 바깥에 조약돌을 <b>ㄱ자로 한 겹</b> 두르면
+    한 치수 큰 네모가 돼요. 그런데 그 ㄱ자에 들어가는 조약돌 수가…
+    <b>1, 3, 5, 7 — 홀수!</b> 그래서 <b>1+3+5+7 = 16 = 4×4</b>.
+    홀수를 차례로 더하면 언제나 사각수가 돼요.</p>
+    <p>무지개 덧셈법의 친구들도 여기 숨어 있어요. 이웃한 삼각수 둘을 붙이면 사각수가 돼요 —
+    <b>55+66 = 121 = 11×11</b>! 🌈</p>
+    <div class="legend">※ "계산하다(calculate)"라는 말은 조약돌을 뜻하는 라틴어
+    <b>칼쿨루스(calculus)</b>에서 왔어요. 조약돌 놓기가 진짜 계산의 시작이었답니다.</div>
+    <div class="row"><button class="btn" data-go="p2">네모가 자라는 것 보기 →</button></div>
+  </section>
+
+  <!-- ② 네모 보기 -->
+  <section class="card" id="p2">
+    <h2>1에서 시작해 ㄱ자로 두르기</h2>
+    <div class="gridbox"><svg id="demoSvg" viewBox="0 0 240 240" style="width:min(300px,80vw)"></svg></div>
+    <div class="caption" id="demoCap">▶ 를 누르면 네모가 자라요</div>
+    <div class="formula" id="demoFormula"></div>
+    <div class="row">
+      <button class="btn" id="playBtn">▶ 네모 키우기</button>
+      <button class="speak" data-say="demo" style="margin:0">🔊 설명 듣기</button>
+    </div>
+  </section>
+
+  <!-- ③ 직접 하기 -->
+  <section class="card" id="p3">
+    <h2>홀수를 더해 친구를 모으자!</h2>
+    <div class="friends" id="friendRow"></div>
+    <div class="gridbox"><svg id="userSvg" viewBox="0 0 240 240" style="width:min(300px,80vw)"></svg></div>
+    <div class="caption" id="userCap">＋ 버튼으로 다음 홀수를 둘러요</div>
+    <div class="formula" id="userSum"></div>
+    <div class="row">
+      <button class="btn" id="addBtn">＋ 다음 홀수 두르기</button>
+      <button class="btn gold" id="resetBtn">처음부터</button>
+    </div>
+    <div class="qline" id="quiz">
+      <span id="quizQ"></span>
+      <input id="inQuiz" inputmode="numeric" maxlength="4">
+      <button class="btn gold" id="quizBtn">확인</button>
+    </div>
+    <div class="fb" id="userFb"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var COLORS=['#2E9E6B','#5B8DD9','#F09A3E','#E85D5D','#8B6BC7','#E9C34A','#D96BB0','#5FB876','#C9A063','#16417C'];
+
+function show(id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===id)});
+  document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('on',c.id===id)});
+  window.speechSynthesis&&speechSynthesis.cancel();
+}
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(t.dataset.p)}});
+document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
+
+var SAY={
+  story:'옛날 그리스 사람들은 조약돌로 수를 놓아 봤어요. 네모가 되는 수, 1, 4, 9, 16을 사각수라고 해요. 네모 바깥에 조약돌을 기역자로 한 겹 두르면 한 치수 큰 네모가 돼요. 그 기역자에 들어가는 수가 홀수예요. 그래서 1 더하기 3 더하기 5 더하기 7은 16, 4 곱하기 4!',
+  demo:'조약돌 하나에서 시작해요. 3개를 기역자로 두르면 2 곱하기 2. 5개를 두르면 3 곱하기 3. 7개를 두르면 4 곱하기 4. 홀수를 두를 때마다 네모가 한 치수씩 자라요.'
+};
+document.querySelectorAll('.speak').forEach(function(b){
+  b.onclick=function(){
+    if(!window.speechSynthesis)return;
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(SAY[b.dataset.say]);
+    u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u);
+  };
+});
+
+/* ── 점 네모: 레이어 k(1~n)는 max(행,열)=k-1 인 칸 = ㄱ자, 점 2k-1개 ── */
+function drawSquare(svg,layers,animateLayer){
+  svg.innerHTML='';
+  var n=Math.max(layers,1);
+  var maxN=10, cell=240/(maxN+1);      // 항상 10×10 기준 배치 → 자라는 게 보인다
+  for(var k=1;k<=layers;k++){
+    var col=COLORS[(k-1)%COLORS.length];
+    var cells=[];
+    for(var r=0;r<k;r++)for(var c=0;c<k;c++)if(Math.max(r,c)===k-1)cells.push([r,c]);
+    cells.forEach(function(rc,i){
+      var cx=cell*(rc[1]+1),cy=cell*(rc[0]+1);
+      var dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('cx',cx);dot.setAttribute('cy',cy);dot.setAttribute('r',cell*.36);
+      dot.setAttribute('fill',col);
+      if(animateLayer===k){
+        dot.style.opacity='0';dot.style.transition='opacity .25s ease '+(i*70)+'ms';
+        requestAnimationFrame(function(){requestAnimationFrame(function(){dot.style.opacity='1'})});
+      }
+      svg.appendChild(dot);
+    });
+  }
+}
+function sumFormula(n){
+  var parts=[];for(var k=1;k<=n;k++)parts.push(2*k-1);
+  return parts.join('+')+' = <b>'+(n*n)+'</b> = '+n+'×'+n;
+}
+
+/* ── ② 데모: 1→4→9→16→25 자동 ── */
+var demoSvg=document.getElementById('demoSvg');
+drawSquare(demoSvg,1);
+var demoBusy=false;
+document.getElementById('playBtn').onclick=function(){
+  if(demoBusy)return;demoBusy=true;
+  var cap=document.getElementById('demoCap'),f=document.getElementById('demoFormula');
+  var k=1;
+  drawSquare(demoSvg,1);cap.textContent='조약돌 1개 — 1도 사각수!';f.innerHTML='1 = 1×1';
+  var t=setInterval(function(){
+    k++;
+    drawSquare(demoSvg,k,k);
+    cap.textContent='홀수 '+(2*k-1)+'개를 ㄱ자로 두르면 '+k+'×'+k+'!';
+    f.innerHTML=sumFormula(k);
+    if(k>=5){clearInterval(t);cap.textContent='홀수를 두를 때마다 네모가 자라요! 🟩';demoBusy=false;}
+  },1400);
+};
+
+/* ── ③ 직접 하기: 친구 수집 + 퀴즈 ── */
+var FRIENDS=[1,4,9,16,25,36,49,64,81,100];
+function loadF(){try{return JSON.parse(localStorage.getItem('nm_square_friends')||'[]')}catch(e){return[]}}
+function saveF(a){try{localStorage.setItem('nm_square_friends',JSON.stringify(a))}catch(e){}}
+var got=loadF();
+function drawFriends(){
+  var fr=document.getElementById('friendRow');fr.innerHTML='';
+  FRIENDS.forEach(function(n){
+    var d=document.createElement('span');
+    d.className='friend'+(got.indexOf(n)>=0?' got':'');
+    d.textContent=n;fr.appendChild(d);
+  });
+}
+drawFriends();
+
+var userSvg=document.getElementById('userSvg');
+var lv=0;
+function refresh(anim){
+  drawSquare(userSvg,lv,anim?lv:0);
+  document.getElementById('userSum').innerHTML=lv?sumFormula(lv):'';
+  document.getElementById('userCap').textContent=
+    lv===0?'＋ 버튼으로 다음 홀수를 둘러요'
+    :lv>=10?'10×10=100 완성! 사각수 왕이에요 👑'
+    :'다음 홀수는 '+(2*lv+1)+'개 — 두르면 '+(lv+1)+'×'+(lv+1);
+  document.getElementById('addBtn').disabled=lv>=10;
+}
+document.getElementById('addBtn').onclick=function(){
+  if(lv>=10)return;
+  lv++;refresh(true);
+  var sq=lv*lv;
+  if(got.indexOf(sq)<0){got.push(sq);saveF(got);drawFriends();}
+};
+document.getElementById('resetBtn').onclick=function(){lv=0;refresh(false);};
+refresh(false);
+
+/* 퀴즈: 홀수를 1부터 (2n-1)까지 더하면? */
+var qn=0;
+function newQuiz(){
+  qn=5+Math.floor(Math.random()*6);   // 5~10
+  document.getElementById('quizQ').textContent='퀴즈: 1+3+5+…+'+(2*qn-1)+' = ?';
+  var i=document.getElementById('inQuiz');i.value='';i.className='';
+}
+newQuiz();
+document.getElementById('quizBtn').onclick=function(){
+  var i=document.getElementById('inQuiz'),fb=document.getElementById('userFb');
+  if(+i.value===qn*qn){
+    i.className='good';fb.className='fb ok';
+    fb.textContent='🟩 정답! 홀수 '+qn+'개의 합 = '+qn+'×'+qn+' = '+(qn*qn)+' — 세지 말고 네모로!';
+    if(got.indexOf(qn*qn)<0){got.push(qn*qn);saveF(got);drawFriends();}
+    setTimeout(newQuiz,1600);
+  }else{
+    i.className='bad';fb.className='fb no';
+    fb.textContent='홀수가 몇 개인지 세어 봐요 — 홀수 n개의 합은 n×n!';
+  }
+};
+})();
+</script>
+</body>
+</html>

@@ -96,6 +96,8 @@ button,input{font:inherit}
 .acts a:hover{background:var(--navy-d)}
 .acts a.ghost{background:#fff;color:var(--navy);border-color:var(--line)}
 .acts a.ghost:hover{background:#f5f9fd}
+.acts a.bank{background:#087f83;border-color:#087f83}
+.acts a.bank:hover{background:#05686c}
 .acts button.off{background:#eef2f7;border-color:#dde5f0;color:#95a4b7;cursor:not-allowed}
 .acts a.ask{background:#fff;color:var(--gold);border-color:#ecdcb2}
 
@@ -210,8 +212,8 @@ const catalog = [
     key:"diagnostic", tile:"진단", accent:"#1d679f",
     title:"중등 성취도 진단",
     copy:"40문항을 풀고 O/X 또는 답안으로 채점하면 학기·영역·난이도·단원 분석과 처방이 바로 나옵니다.",
-    chips:["40문항","문항별 유사문제","풀이 영상"],
-    take:"./diagnostic.html", report:"./report.html"
+    chips:["40문항","유사문제 400문항","풀이 영상"],
+    take:"./diagnostic.html", report:"./report.html", bank:"./question-bank/"
   },
   {
     key:"mock-1", tile:"1회", accent:"#3f6ea8",
@@ -284,7 +286,7 @@ async function init(){
         <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open ? `<span>응시 ${counts[item.key]}/3</span>` : ""}</div>
         <div class="acts">
           ${open
-            ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>`
+          ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>${item.bank?`<a class="bank" href="${item.bank}">문제은행</a>`:""}`
             : `<button class="off" type="button" disabled>잠김</button><a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>`}
         </div>
       </article>

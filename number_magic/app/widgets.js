@@ -6,6 +6,21 @@ function esc(s){
   return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
 
+/* it.e / problem.emoji 등에 담긴 문자열을 그린다.
+   'animal:kind' 형태면 NM_ANIMALS(animal-art.js, widgets.js보다 먼저 로드)의
+   SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
+   반환값은 innerHTML로 삽입 가능한 HTML 문자열(플레인 이모지도 안전하게 escape). */
+function art(e){
+  if(typeof e==='string'&&e.indexOf('animal:')===0){
+    var kind=e.slice(7);
+    if(window.NM_ANIMALS&&typeof window.NM_ANIMALS.svg==='function'){
+      var svg=window.NM_ANIMALS.svg(kind);
+      if(svg) return '<span class="nm-art-animal">'+svg+'</span>';
+    }
+  }
+  return esc(e);
+}
+
 function renderKaTeX(tex){
   if(window.katex){
     try{ return katex.renderToString(tex,{throwOnError:false,displayMode:false}); }
@@ -17,14 +32,19 @@ function renderKaTeX(tex){
 function buildNumpad(container, cb, opts){
   opts=opts||{};
   container.innerHTML='';
-  const keys=opts.decimal
+  const keys=opts.decimal&&opts.negative
+    ?['1','2','3','4','5','6','7','8','9','.','-','0','del','ok']
+    :opts.decimal
     ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :opts.negative
+    ?['1','2','3','4','5','6','7','8','9','-','0','del','ok']
     :['1','2','3','4','5','6','7','8','9','del','0','ok'];
-  if(opts.decimal)container.classList.add('dec');else container.classList.remove('dec');
+  /* 소수·음수 어느 쪽이든 4열 레이아웃(기존 .dec CSS 재사용 — 13~14키가 3열에 안 맞음) */
+  if(opts.decimal||opts.negative)container.classList.add('dec');else container.classList.remove('dec');
   keys.forEach(k=>{
     const b=document.createElement('button');
-    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
-    b.textContent=k==='del'?'←':k==='ok'?'✓':k;
+    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
+    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;
     b.addEventListener('pointerup',e=>{e.stopPropagation();cb(k);});
     container.appendChild(b);
   });
@@ -43,13 +63,50 @@ function numpadState(screenEl, maxLen){
   return {
     handle(val){
       if(val==='del'){ inp=inp.slice(0,-1); }
+      else if(val==='-'){ inp=inp===''?'-':(inp==='-'?'':inp); /* 선두 - 1회만: 빈칸→'-', '-'→취소 */ }
       else if(val==='.'&&inp.includes('.')){ /* 소수점 중복 방지 */ }
-      else if(inp.length<(maxLen||4)){ inp+=val; }
+      else if(inp.replace('-','').length<(maxLen||4)){ inp+=val; }
       if(screenEl) screenEl.textContent=inp||' ';
       return inp;
     },
     get(){ return inp; },
     clear(){ inp=''; if(screenEl) screenEl.textContent=' '; }
+  };
+}
+
+/* ── 다칸 답(배열 answer) 공용 상태 — numpad 화면에 답칸 N개, 탭으로 포커스 이동 ──
+   answerArr: 정답 배열(길이 N). screenEl에 칸을 렌더링, buildNumpad 콜백에서 handle(val) 호출.
+   ok 판정은 호출부가 isFull()/equals()로 확인. */
+function multiPadState(screenEl, answerArr){
+  const n=answerArr.length;
+  let vals=new Array(n).fill('');
+  let focus=0;
+  function paint(){
+    if(!screenEl)return;
+    screenEl.classList.add('nm-multi');
+    screenEl.innerHTML=vals.map((v,i)=>
+      `<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`
+    ).join('<span class="nm-ans-sep">,</span>');
+    screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
+      b.addEventListener('pointerup',e=>{e.stopPropagation();focus=+b.dataset.i;paint();});
+    });
+  }
+  paint();
+  return {
+    handle(val){
+      let cur=vals[focus];
+      if(val==='del'){ cur=''; }
+      else if(val==='-'){ cur=cur===''?'-':(cur==='-'?'':cur); }
+      else if(val==='.'){ if(!cur.includes('.'))cur+='.'; }
+      else if(cur.replace('-','').length<6){ cur+=val; }
+      vals[focus]=cur;
+      paint();
+    },
+    isFull(){ return vals.every(v=>v!==''&&v!=='-'); },
+    values(){ return vals.slice(); },
+    equals(){ return vals.length===n&&vals.every((v,i)=>parseFloat(v)===answerArr[i]); },
+    clear(){ vals=new Array(n).fill('');focus=0;paint(); },
+    shake(){ shake(screenEl); }
   };
 }
 
@@ -457,7 +514,7 @@ function renderSteps(problem, container, onAnswer){
         return;
       }
       ns.handle(val);
-    },{decimal:decStep});
+    },{decimal:decStep,negative:s.blank<0||!!s.negative||!!problem.negative});
   }
 
   show();
@@ -511,7 +568,7 @@ function renderVertical(problem, container, onAnswer){
     }
     ns.handle(val);
     root.querySelector('#wvAns').textContent=ns.get()||'?';
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────
@@ -545,7 +602,7 @@ function renderMissing(problem, container, onAnswer){
       return;
     }
     ns.handle(val);
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────
@@ -692,7 +749,7 @@ function renderTapCount(problem, container, onAnswer){
       const el=document.createElement('button');
       const ord=marked.indexOf(it.id);
       el.className='nm-tc-item'+(ord>=0?' on':'');
-      el.innerHTML=`<span class="nm-tc-emoji">${it.e}</span>`+
+      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e)}</span>`+
         (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
         e.stopPropagation();
@@ -740,7 +797,7 @@ function renderTapMake(problem, container, onAnswer){
   const root=document.createElement('div');
   root.className='nm-tm-wrap';
   root.innerHTML=`
-    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${em}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
+    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${art(em)}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
     <div class="nm-tm-board"></div>
     <div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div>
     <button class="nm-tm-done">✔</button>`;
@@ -751,12 +808,13 @@ function renderTapMake(problem, container, onAnswer){
 
   board.addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(e.target.classList.contains('nm-tm-stamp')){   /* 스탬프 탭 = 지우기 */
-      e.target.remove();stamps--;cnt.textContent=stamps;return;
+    const hitStamp=e.target.closest('.nm-tm-stamp');   /* 스탬프(또는 그 안 SVG) 탭 = 지우기 */
+    if(hitStamp&&board.contains(hitStamp)){
+      hitStamp.remove();stamps--;cnt.textContent=stamps;return;
     }
     if(stamps>=12)return;                              /* 판이 꽉 참 */
     const s=document.createElement('span');
-    s.className='nm-tm-stamp';s.textContent=em;
+    s.className='nm-tm-stamp';s.innerHTML=art(em);
     board.appendChild(s);stamps++;cnt.textContent=stamps;
   });
 
@@ -783,7 +841,7 @@ function renderNumberBond(problem, container, onAnswer){
   let fill=0, lock=false;
 
   /* 알려진 원 내용: 이모지 나열 + 숫자 (0이면 숫자만) */
-  const known=n=>`<div class="nm-nb-dots">${em.repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
+  const known=n=>`<div class="nm-nb-dots">${art(em).repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
   const askHtml=`<div class="nm-nb-dots" id="nbAskDots"></div><div class="nm-nb-num ask" id="nbAskNum">?</div>`;
 
   const top   = dir==='join' ? askHtml : known(problem.whole);
@@ -813,12 +871,13 @@ function renderNumberBond(problem, container, onAnswer){
 
   askNode.addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(e.target.classList.contains('nm-nb-fill')){   /* 채운 이모지 탭 = 지우기 */
-      e.target.remove();fill--;askNum.textContent=fill;return;
+    const hitFill=e.target.closest('.nm-nb-fill');   /* 채운 이모지(또는 그 안 SVG) 탭 = 지우기 */
+    if(hitFill&&askDots.contains(hitFill)){
+      hitFill.remove();fill--;askNum.textContent=fill;return;
     }
     if(fill>=9)return;
     const s=document.createElement('span');
-    s.className='nm-nb-fill';s.textContent=em;
+    s.className='nm-nb-fill';s.innerHTML=art(em);
     askDots.appendChild(s);fill++;askNum.textContent=fill;
   });
 
@@ -1153,7 +1212,8 @@ function renderGridPaint(problem, container, onAnswer){
     const a=document.createElement('span');a.className='nm-gp-arrow';a.textContent='👉';line.appendChild(a);
   }
   const row=document.createElement('div');
-  row.className='nm-gp-row';
+  // 서수(single) 모드는 "왼쪽에서 몇째"가 의미를 가지므로 절대 줄바꿈되면 안 됨 → 한 줄 고정
+  row.className='nm-gp-row'+(mode==='single'?' oneline':'');
   line.appendChild(row);
   if(mode==='single' && problem.dir==='right'){
     const a=document.createElement('span');a.className='nm-gp-arrow flip';a.textContent='👈';line.appendChild(a);
@@ -1253,7 +1313,7 @@ function renderStoryCard(problem, container, onAnswer){
       if(i===problem.mark){
         const em=document.createElement('div');
         em.className='nm-sc-stairq-em';
-        em.textContent=problem.emoji||'🐿️';
+        em.innerHTML=art(problem.emoji||'🐿️');
         col.appendChild(em);
       }
       const bar=document.createElement('div');
@@ -1267,7 +1327,7 @@ function renderStoryCard(problem, container, onAnswer){
     chars.forEach((em,i)=>{
       const c=document.createElement('button');
       c.className='nm-sc-char';
-      c.textContent=em;
+      c.innerHTML=art(em);
       if(interaction==='tap'){
         c.addEventListener('pointerup',e=>{
           e.stopPropagation();
@@ -1338,7 +1398,7 @@ function renderBalanceScale(problem, container, onAnswer){
   const pans=root.querySelectorAll('.nm-bs-pan');
   const counts=[left,right];
   pans.forEach((pan,i)=>{
-    pan.querySelector('.nm-bs-items').textContent=em.repeat(counts[i]);
+    pan.querySelector('.nm-bs-items').innerHTML=art(em).repeat(counts[i]);
     pan.addEventListener('pointerup',e=>{
       e.stopPropagation();
       if(lock)return;
@@ -1470,8 +1530,8 @@ function renderSortBasket(problem, container, onAnswer){
   root.innerHTML=`
     <div class="nm-sb-scatter"></div>
     <div class="nm-sb-baskets">
-      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
-      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${art(problem.basketA.emoji)}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${art(problem.basketB.emoji)}</span><span class="nm-sb-basket-cnt">0</span></div>
     </div>
     <div class="nm-sb-choices"></div>`;
   container.appendChild(root);
@@ -1485,7 +1545,7 @@ function renderSortBasket(problem, container, onAnswer){
   items.forEach(it=>{
     const chip=document.createElement('button');
     chip.className='nm-sb-chip';
-    chip.textContent=it.e;
+    chip.innerHTML=art(it.e);
     chip.addEventListener('pointerup',e=>{
       e.stopPropagation();
       chip.remove();
@@ -1637,9 +1697,26 @@ function renderFallback(problem, container, onAnswer){
   container.appendChild(root);
 
   const screen=root.querySelector('#wfScreen');
-  const ns=numpadState(screen,4);
+  const isMulti=Array.isArray(problem.answer);
   let submitted=false;
 
+  if(isMulti){
+    const mp=multiPadState(screen,problem.answer);
+    const decAny=problem.answer.some(a=>!Number.isInteger(a));
+    buildNumpad(root.querySelector('#wfPad'),val=>{
+      if(submitted)return;
+      if(val==='ok'){
+        if(!mp.isFull())return;
+        submitted=true;
+        onAnswer(mp.values().map(Number)); // 원본 numpad 위젯들과 동일하게 '사용자 입력값'을 그대로 넘긴다 — 채점은 호출부 책임
+        return;
+      }
+      mp.handle(val);
+    },{decimal:decAny,negative:!!problem.negative});
+    return;
+  }
+
+  const ns=numpadState(screen,4);
   buildNumpad(root.querySelector('#wfPad'),val=>{
     if(submitted)return;
     if(val==='ok'){
@@ -1650,7 +1727,7 @@ function renderFallback(problem, container, onAnswer){
       return;
     }
     ns.handle(val);
-  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer),negative:!!problem.negative});
 }
 
 /* ─────────────────────────────────────────

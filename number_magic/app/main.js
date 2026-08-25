@@ -148,12 +148,27 @@ function say(text){
   _sayWeb(text,lang);
 }
 function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
+/* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
+const _sfxCache={};
+function playSfx(kind){
+  try{
+    const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
+    const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
+    let a=_sfxCache[url];
+    if(!a){a=new Audio(url);_sfxCache[url]=a;}
+    a.currentTime=0;a.volume=.85;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+window.NM_SFX=playSfx;
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
+/* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
+function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
 
 /* ---------- Web Audio 앰비언스 (신비한 배경음악 + 물소리, 외부 파일 없이 합성) ---------- */
 let actx=null;
@@ -1241,19 +1256,22 @@ function runPractice(body,u){
   /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer);
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     ${pracTex}
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.started=true;
   renderMath(body);
-  const isDecAns=cur&&!Number.isInteger(cur.answer);
-  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns});
+  if(isMulti)bindMultiBoxes($('#pscreen'));
+  const isDecAns=cur&&(isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer));
+  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns,negative:!!cur.negative});
   say(first?L(cfg.intro):L(cur.prompt));
 }
 function runPracticeWidget(body,u,cur,first,need){
@@ -1280,8 +1298,20 @@ function runPracticeWidget(body,u,cur,first,need){
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
+  const isMulti=Array.isArray(cur.answer);
   if(val==='ok'){
-    const inp=S.sub.inp||'';if(inp==='')return;
+    if(isMulti){
+      if(!multiIsFull())return;
+      if(multiEquals(cur.answer)){
+        toast(t('correct'),true);numiHappy();
+        S.sub.pIdx++;S.sub.mvals=null;S.sub.cur=null;
+        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+        S.sub.cur=genProblem(u.practice,'practice');save();
+        setTimeout(()=>runPractice(body,u),650);
+      }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      return;
+    }
+    const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
     if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
@@ -1291,8 +1321,14 @@ function handlePractice(val,body,u){
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
+  if(isMulti){
+    applyMultiKey(val);
+    const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);
+    return;
+  }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
-  else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
+  else if(val==='-'){S.sub.inp=applyMinusKey(S.sub.inp||'');}
+  else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 
@@ -1394,16 +1430,30 @@ function mathStepsExpr(container, steps, kid){
 function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
+  const isMulti=Array.isArray(fill.answer);
+  if(isMulti)ensureMultiState(fill.answer);
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
     <div class="nm-fill"><span data-tex="${esc(fill.tex)}"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
   </div>`;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
   buildNumpad($('#pad'),val=>{
-    if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
+    if(val==='ok'){
+      if(isMulti){
+        if(!multiIsFull())return;
+        if(multiEquals(fill.answer)){
+          toast(t('correct'),true);numiHappy();
+          S.sub.fi++;S.sub.mvals=null;
+          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+          else setTimeout(()=>stepCheck(body,u),700);
+        }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+        return;
+      }
+      const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
       if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
@@ -1412,10 +1462,12 @@ function stepCheck(body,u){
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
-    else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
+    else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+    else if((S.sub.inp||'').replace('-','').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  },{decimal:!Number.isInteger(fill.answer)});
+  },{decimal:isMulti?fill.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(fill.answer),negative:!!fill.negative});
 }
 function openQuestion(body,u){
   const c=u.check;
@@ -1460,13 +1512,13 @@ function stepLabWidget(body,u){
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
-      toast(pickVoice(u.voice.wrong),false);
+      voiceLine(u,u.voice.wrong,false);
     }
   });
 }
@@ -1495,35 +1547,54 @@ function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer);
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.labStarted=true;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
   say(first?L(cfg.intro):L(cur.prompt));
-  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+  const decAny=isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer);
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u),{decimal:decAny,negative:!!cur.negative});
 }
 function handleLabNumpad(val,body,u){
   const cur=S.sub.cur;const need=u.lab.count||4;
+  const isMulti=Array.isArray(cur.answer);
   if(val==='ok'){
-    const inp=S.sub.inp||'';if(inp==='')return;
+    if(isMulti){
+      if(!multiIsFull())return;
+      if(multiEquals(cur.answer)){
+        playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+        S.sub.li++;S.sub.mvals=null;S.sub.cur=null;
+        if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+        S.sub.cur=genProblem(u.lab,'main');save();
+        setTimeout(()=>stepLab(body,u),650);
+      }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      return;
+    }
+    const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
     if(parseFloat(inp)===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
-    }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
-  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+  else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+  else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
@@ -1534,13 +1605,13 @@ function pickTile(el,i,n,body,u){
   pk.onclick=()=>{
     const cur=S.sub.cur;const sum=p[0].n+p[1].n;
     if(sum===(cur.target||10)){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.li++;S.sub.cur=null;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
-    }else{toast(pickVoice(u.voice.wrong),false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
+    }else{voiceLine(u,u.voice.wrong,false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
 
@@ -1558,22 +1629,37 @@ function stepArena(body,u){
 }
 function nextArena(body,u,need){
   const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer);
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
     <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
   </div>`;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
+  const decAny=isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer);
   buildNumpad($('#pad'),val=>{
-    if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
+    if(val==='ok'){
+      if(isMulti){
+        if(!multiIsFull())return;
+        if(multiEquals(S.sub.cur.answer)){S.sub.score++;numiHappyToast();}else toast('✗',false);
+        S.sub.mvals=null;S.sub.ai++;
+        if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
+        nextArena(body,u,need);return;
+      }
+      const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
       if(parseFloat(inp)===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+    else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:decAny,negative:!!cur.negative});
 }
 function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
@@ -1604,7 +1690,7 @@ function stepStamp(body,u){
     <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
-  confetti();say(L(u.voice.finish));
+  confetti();playSfx("great-job");say(L(u.voice.finish));
   $('#toMap').onclick=exitUnit;
 }
 
@@ -1612,15 +1698,52 @@ function stepStamp(body,u){
 function buildNumpad(pad,cb,opts){
   opts=opts||{};
   pad.innerHTML='';
-  const keys=opts.decimal
+  const keys=opts.decimal&&opts.negative
+    ?['1','2','3','4','5','6','7','8','9','.','-','0','del','ok']
+    :opts.decimal
     ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :opts.negative
+    ?['1','2','3','4','5','6','7','8','9','-','0','del','ok']
     :['1','2','3','4','5','6','7','8','9','del','0','ok'];
-  if(opts.decimal) pad.classList.add('dec'); else pad.classList.remove('dec');
+  /* 소수·음수 어느 쪽이든 4열 레이아웃(기존 .dec CSS 재사용) */
+  if(opts.decimal||opts.negative) pad.classList.add('dec'); else pad.classList.remove('dec');
   keys.forEach(k=>{
-    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
-    b.textContent=k==='del'?'←':k==='ok'?'✓':k;b.onclick=()=>cb(k);pad.appendChild(b);
+    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
+    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;b.onclick=()=>cb(k);pad.appendChild(b);
   });
 }
+/* 선두 - 1회만 허용: 빈칸→'-', 이미 '-'뿐이면 취소. 숫자 입력은 그대로. */
+function applyMinusKey(inp){ return inp===''?'-':(inp==='-'?'':inp); }
+
+/* ── 다칸 답(배열 answer) 공용 헬퍼 — practice/check/lab/arena 넘패드 공용 ──
+   S.sub.mvals(문자열 배열)+S.sub.mfocus(포커스 idx)로 상태 보관(save() 직렬화 안전).
+   answerArr 길이만큼 mvals를 초기화하고, 화면 HTML과 탭 바인딩을 제공한다. */
+function ensureMultiState(answerArr){
+  if(!Array.isArray(S.sub.mvals)||S.sub.mvals.length!==answerArr.length){
+    S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0;
+  }
+}
+function multiScreenHtml(){
+  const vals=S.sub.mvals,focus=S.sub.mfocus;
+  return vals.map((v,i)=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`)
+    .join('<span class="nm-ans-sep">,</span>');
+}
+function bindMultiBoxes(screenEl){
+  screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
+    b.addEventListener('pointerup',e=>{e.stopPropagation();S.sub.mfocus=+b.dataset.i;screenEl.innerHTML=multiScreenHtml();bindMultiBoxes(screenEl);});
+  });
+}
+function applyMultiKey(val){
+  const vals=S.sub.mvals;let cur=vals[S.sub.mfocus];
+  if(val==='del'){ cur=''; }
+  else if(val==='-'){ cur=applyMinusKey(cur); }
+  else if(val==='.'){ if(!cur.includes('.'))cur+='.'; }
+  else if(cur.replace('-','').length<6){ cur+=val; }
+  vals[S.sub.mfocus]=cur;
+}
+function multiIsFull(){ return S.sub.mvals.every(v=>v!==''&&v!=='-'); }
+function multiEquals(answerArr){ return S.sub.mvals.length===answerArr.length&&S.sub.mvals.every((v,i)=>parseFloat(v)===answerArr[i]); }
+function multiClear(answerArr){ S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0; }
 function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cur?'on':i===cur?'now':''}"></span>`;return h;}
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function numiHappy(){const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}

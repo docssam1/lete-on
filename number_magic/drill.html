@@ -228,6 +228,7 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/dv.js"></script>
 <script src="engine/threads/fr.js"></script>
 <script src="engine/threads/dc_mx.js"></script>
+<script src="engine/threads/el.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -305,6 +306,16 @@ var body = document.getElementById('dr-body');
 
 /* ── 헬퍼 ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* 다칸 답(배열) 채점 — app/exam.js의 matchesAnswer와 동일 로직(이 파일은 별도 스코프라 자체 보유) */
+function matchesAnswer(raw, answer){
+  if(Array.isArray(answer)){
+    var parts = String(raw==null?'':raw).split(',').map(function(s){return parseFloat(s.trim());});
+    if(parts.length !== answer.length) return false;
+    for(var i=0;i<answer.length;i++){ if(parts[i] !== answer[i]) return false; }
+    return true;
+  }
+  return parseFloat(raw) === answer;
+}
 
 /* topicKey → {cat, sub} */
 function parseTopic(key){
@@ -668,7 +679,7 @@ function showWrongsRetry(wrongs, origCfg){
       if(!isNaN(v)) answers[current] = v;
       current++;
       if(current >= wrongProblems.length){
-        var score = wrongProblems.filter(function(p,i){return answers[i]===p.answer;}).length;
+        var score = wrongProblems.filter(function(p,i){return matchesAnswer(answers[i],p.answer);}).length;
         var elapsed = Math.round((Date.now()-startTime)/1000);
         wrap.innerHTML =
           '<div class="nm-exam-result">' +

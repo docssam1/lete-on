@@ -31,6 +31,9 @@ const FILES = {
     path.join(PREMIER_DIR, "renderers-utilization-5-q15-q20.js")
   ],
   round6Renderer: path.join(PREMIER_DIR, "renderers-utilization-6.js"),
+  round7Renderer: path.join(PREMIER_DIR, "renderers-utilization-7.js"),
+  round8Renderer: path.join(PREMIER_DIR, "renderers-utilization-8.js"),
+  final1Renderer: path.join(PREMIER_DIR, "renderers-final-1.js"),
   deployWorkflow: path.resolve(PREMIER_DIR, "..", ".github", "workflows", "deploy-pages.yml")
 };
 
@@ -144,8 +147,8 @@ const examsSource = readRequired(FILES.exams);
 const exams = loadExams(examsSource);
 const examIds = Object.keys(exams).sort();
 
-verify("활용 1·2·3·4·5·6회만 등록되어 있다", () => {
-  assert.deepEqual(examIds, ["utilization-1", "utilization-2", "utilization-3", "utilization-4", "utilization-5", "utilization-6"]);
+verify("활용 1~8회와 파이널 1회만 등록되어 있다", () => {
+  assert.deepEqual(examIds, ["final-1", "utilization-1", "utilization-2", "utilization-3", "utilization-4", "utilization-5", "utilization-6", "utilization-7", "utilization-8"]);
 });
 
 verify("각 회차에 1~20번이 정확히 한 번씩 있다", () => {
@@ -223,13 +226,19 @@ let round3;
 let round4;
 let round5;
 let round6;
-verify("여섯 회차 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
+let round7;
+let round8;
+let final1;
+verify("활용 여덟 회차와 파이널 1회 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
   round1 = rendererRegistry(FILES.round1Renderer);
   round2 = rendererRegistry(FILES.round2Renderer);
   round3 = mergeRendererRegistries(FILES.round3Renderers.map(rendererRegistry));
   round4 = mergeRendererRegistries(FILES.round4Renderers.map(rendererRegistry));
   round5 = mergeRendererRegistries(FILES.round5Renderers.map(rendererRegistry));
   round6 = rendererRegistry(FILES.round6Renderer);
+  round7 = rendererRegistry(FILES.round7Renderer);
+  round8 = rendererRegistry(FILES.round8Renderer);
+  final1 = rendererRegistry(FILES.final1Renderer);
   const forbiddenContent = /(?:정답|해설|풀이)\s*(?:[:：]|보기|확인)|\b(?:answerKey|correctAnswer|solution|explanation)\b/i;
   assert.doesNotMatch(round1.source, forbiddenContent, "1회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round2.source, forbiddenContent, "2회 그림 파일에 정답·해설 데이터가 있습니다.");
@@ -237,17 +246,23 @@ verify("여섯 회차 그림 파일을 VM에서 안전하게 등록할 수 있�
   assert.doesNotMatch(round4.source, forbiddenContent, "4회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round5.source, forbiddenContent, "5회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round6.source, forbiddenContent, "6회 그림 파일에 정답·해설 데이터가 있습니다.");
+  assert.doesNotMatch(round7.source, forbiddenContent, "7회 그림 파일에 정답·해설 데이터가 있습니다.");
+  assert.doesNotMatch(round8.source, forbiddenContent, "8회 그림 파일에 정답·해설 데이터가 있습니다.");
+  assert.doesNotMatch(final1.source, forbiddenContent, "파이널 1회 그림 파일에 정답·해설 데이터가 있습니다.");
 });
 
 verify("모든 figure ID가 해당 회차 그림 파일에 등록되고 실제 마크업을 만든다", () => {
-  assert.ok(round1 && round2 && round3 && round4 && round5 && round6, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
+  assert.ok(round1 && round2 && round3 && round4 && round5 && round6 && round7 && round8 && final1, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
   [
     [exams["utilization-1"], round1, "u1-"],
     [exams["utilization-2"], round2, "u2-"],
     [exams["utilization-3"], round3, "u3-"],
     [exams["utilization-4"], round4, "u4-"],
     [exams["utilization-5"], round5, "u5-"],
-    [exams["utilization-6"], round6, "u6-"]
+    [exams["utilization-6"], round6, "u6-"],
+    [exams["utilization-7"], round7, "u7-"],
+    [exams["utilization-8"], round8, "u8-"],
+    [exams["final-1"], final1, "f1-"]
   ].forEach(([exam, renderer, prefix]) => {
     const referenced = exam.questions.filter((item) => item.figure).map((item) => String(item.figure));
     assert.equal(new Set(referenced).size, referenced.length, `${exam.id}가 같은 figure ID를 여러 문항에 공유합니다.`);
@@ -1072,9 +1087,314 @@ verify("6회 렌더러가 뷰어에서 로드된다", () => {
   assert.equal(6 * 12 / 18, 4);
 });
 
+verify("7회 수·요일·역추적 문항의 계산 결과가 원본과 일치한다", () => {
+  const threeDigitNumbers = [];
+  for (let value = 100; value < 300; value += 1) {
+    const ones = value % 10;
+    const tens = Math.floor(value / 10) % 10;
+    if (ones + tens === 5 && value % 2 === 0) threeDigitNumbers.push(value);
+  }
+  assert.deepEqual(threeDigitNumbers, [114, 132, 150, 214, 232, 250]);
+  assert.equal(new Date(Date.UTC(2016, 8, 18)).getUTCDay(), 0);
+  const starts = [];
+  for (let initial = 1; initial <= 200; initial += 1) {
+    let remaining = initial;
+    for (const extra of [3, 2, 1]) remaining -= remaining / 2 + extra;
+    if (remaining === 4) starts.push(initial);
+  }
+  assert.deepEqual(starts, [54]);
+  assert.equal([8, 9, 10, 11, 12, 1, 2].reduce((sum, value) => sum + value, 0) + 7, 60);
+  assert.equal(35 - 5 * 3 + 5 * 5 - 3, 42);
+});
+
+verify("7회 직사각형·숫자카드·문자식은 정답 후보가 하나로 좁혀진다", () => {
+  const occupied = new Set();
+  [[2], [1, 2, 3], [0, 1, 2, 3, 4], [1, 2, 3], [2]].forEach((xs, y) => xs.forEach((x) => occupied.add(`${x},${y}`)));
+  let rectangles = 0;
+  for (let x1 = 0; x1 < 5; x1 += 1) for (let x2 = x1; x2 < 5; x2 += 1) {
+    for (let y1 = 0; y1 < 5; y1 += 1) for (let y2 = y1; y2 < 5; y2 += 1) {
+      let complete = true;
+      for (let x = x1; x <= x2; x += 1) for (let y = y1; y <= y2; y += 1) if (!occupied.has(`${x},${y}`)) complete = false;
+      if (complete) rectangles += 1;
+    }
+  }
+  assert.equal(rectangles, 54);
+
+  const cardSolutions = [];
+  permutations([2, 5, 4, 8], (cards) => {
+    const first = 10 * cards[0] + cards[1];
+    if (first - cards[2] + cards[3] === 39) cardSolutions.push([first, cards[2], cards[3]]);
+  });
+  cardSolutions.sort((a, b) => a[0] - b[0]);
+  assert.deepEqual(cardSolutions, [[42, 8, 5], [45, 8, 2]]);
+  assert.match(question(exams, "utilization-7", 6).prompt, /두\s*자리\s*수가\s*더\s*작은/);
+
+  const letterSolutions = [];
+  for (let b = 0; b <= 8; b += 1) for (let d = 0; d <= 8; d += 1) {
+    const g = 0, c = 3 * d, a = c + d, e = 3 * b, f = b ** 3;
+    const values = [a, b, c, d, e, f, g];
+    if (values.every((value) => value >= 0 && value <= 8) && new Set(values).size === values.length && c * d === c) {
+      letterSolutions.push({ A: a, B: b, C: c, D: d, E: e, F: f, G: g });
+    }
+  }
+  assert.deepEqual(letterSolutions, [{ A: 4, B: 2, C: 3, D: 1, E: 6, F: 8, G: 0 }]);
+});
+
+verify("7회 공간·규칙 문항은 가시 조건과 하나의 완성값을 가진다", () => {
+  assert.match(question(exams, "utilization-7", 4).prompt, /보기의\s*네\s*가지/);
+  assert.match(question(exams, "utilization-7", 8).prompt, /서로\s*다른\s*수/);
+  assert.match(question(exams, "utilization-7", 12).prompt, /정삼각형이\s*정확히\s*4개/);
+  assert.match(question(exams, "utilization-7", 19).prompt, /가운데\s*원에는\s*4/);
+  assert.match(question(exams, "utilization-7", 20).prompt, /모든\s*자리\s*숫자/);
+  assert.deepEqual([27 - 15, 27 - 6], [12, 21]);
+  assert.deepEqual(range(1, 9).filter((digit) => 74 > 10 * digit + 5 && 30 + digit < 39), [1, 2, 3, 4, 5, 6]);
+  assert.equal(range(1, 6).reduce((sum, value) => sum + value, 0), 21);
+  assert.equal(1 + 2 * (10 - 5), 11);
+
+  const trianglePlacements = [];
+  permutations([5, 6, 7], (tail) => {
+    const [topRight, bottomLeft, bottomRight] = tail;
+    const sums = [1 + topRight + 4, 2 + bottomLeft + 4, 3 + bottomRight + 4];
+    if (new Set(sums).size === 1) trianglePlacements.push([topRight, bottomLeft, bottomRight]);
+  });
+  assert.deepEqual(trianglePlacements, [[7, 6, 5]]);
+
+  const digitSum = (value) => String(value).split("").reduce((sum, digit) => sum + Number(digit), 0);
+  const top = [1, 15, 9, 7, 16, 14];
+  const chain = [24];
+  top.forEach((value) => chain.push(digitSum(value) + digitSum(chain[chain.length - 1])));
+  assert.deepEqual(chain, [24, 7, 13, 13, 11, 9, 14]);
+});
+
+verify("7회 렌더러가 뷰어에서 로드되고 손글씨 원본을 공개하지 않는다", () => {
+  const viewer = readRequired(FILES.viewer);
+  assert.match(viewer, /renderers-utilization-7\.js/);
+  assert.doesNotMatch(round7.source, /<image\b|data:image|\.pdf\b/i);
+  assert.equal(round7.registry.size, 14);
+});
+
+verify("8회 수와 연산 문항의 계산 결과가 원본 조건과 일치한다", () => {
+  assert.equal(((12 - 7) * 4 - 8) / 3, 4);
+  assert.deepEqual(range(0, 9).filter((value) => 9 + value * 2 === 18 - value), [3]);
+  assert.deepEqual(range(0, 9).filter((value) => 60 + value < 67 && value * 10 + 5 > 27), [3, 4, 5, 6]);
+  assert.equal([3, 4, 5, 6].reduce((sum, value) => sum + value, 0), 18);
+  assert.equal(9 / (3 / 4) / (2 / 3), 18);
+  assert.deepEqual(range(1, 30).filter((start) => range(start, start + 6).reduce((sum, value) => sum + value, 0) === 70), [7]);
+  assert.equal(2 ** 3, 8);
+  assert.equal(7 * 4 / 2, 14);
+  assert.equal(3 * 10 + 3 * 5 + 4 * 1, 49);
+  const targetSolutions = [];
+  for (let tens = 0; tens <= 10; tens += 1) for (let fives = 0; fives <= 10; fives += 1) {
+    const ones = 10 - tens - fives;
+    if (ones >= 0 && tens * 10 + fives * 5 + ones === 49) targetSolutions.push([tens, fives, ones]);
+  }
+  assert.deepEqual(targetSolutions, [[3, 3, 4]]);
+  assert.equal(2 * (6 + 2), 16);
+  assert.deepEqual([[4,5],[3,6],[7,5],[8,6]].map(([a,b]) => String(a * b).split("").reduce((sum,digit) => sum + Number(digit), 0)), [2,9,8,12]);
+});
+
+verify("8회 길·거울·도형 세기 조건은 답을 하나로 고정한다", () => {
+  assert.equal(8 + (8 - 2), 14);
+
+  const roads = {
+    S:[["A",1],["D",1]], A:[["B",1],["E",1]], B:[["C",1],["F",1]], C:[["T",2]],
+    D:[["E",1],["G",1]], E:[["F",1]], F:[["H",1]], G:[["H",2]], H:[["T",1]], T:[]
+  };
+  const routes = [];
+  function walkRoad(node, distance, route) {
+    if (node === "T") { if (distance === 5) routes.push(route); return; }
+    roads[node].forEach(([next, length]) => walkRoad(next, distance + length, route + next));
+  }
+  walkRoad("S", 0, "S");
+  assert.deepEqual(routes.sort(), ["SABCT","SABFHT","SAEFHT","SDEFHT","SDGHT"]);
+  assert.equal(6 + 3 + 1, 10);
+
+  const points = [];
+  for (let row = 1; row <= 4; row += 1) for (let column = 0; column <= row; column += 1) {
+    points.push([2 * column - row, row]);
+  }
+  const sideLengths = new Set();
+  for (let a = 0; a < points.length; a += 1) for (let b = a + 1; b < points.length; b += 1) for (let c = b + 1; c < points.length; c += 1) {
+    const distance = (p, q) => (p[0] - q[0]) ** 2 + 3 * (p[1] - q[1]) ** 2;
+    const sides = [distance(points[a], points[b]), distance(points[a], points[c]), distance(points[b], points[c])];
+    if (sides[0] > 0 && sides[0] === sides[1] && sides[1] === sides[2]) sideLengths.add(sides[0]);
+  }
+  assert.deepEqual([...sideLengths].sort((a,b) => a-b), [4, 12, 16, 28, 36]);
+  assert.equal(sideLengths.size, 5);
+  assert.equal(3 * 3 - 1, 8);
+});
+
+verify("8회 쌓기나무 문항은 높이표와 모든 노출면을 전수검사한다", () => {
+  const heightMap = [[1,1,1,1],[2,2,2,2],[3,2,1,1]];
+  const cubes = new Set();
+  heightMap.forEach((row, y) => row.forEach((height, x) => {
+    for (let z = 0; z < height; z += 1) cubes.add(`${x},${y},${z}`);
+  }));
+  assert.equal(cubes.size, 19);
+  const directions = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+  const paintedThree = [...cubes].filter((key) => {
+    const [x,y,z] = key.split(",").map(Number);
+    return directions.filter(([dx,dy,dz]) => !cubes.has(`${x+dx},${y+dy},${z+dz}`)).length === 3;
+  });
+  assert.equal(paintedThree.length, 7);
+
+  const viewMap = [[0,3,0],[0,2,0],[1,1,1]];
+  assert.equal(viewMap.flat().reduce((sum, value) => sum + value, 0), 8);
+  assert.deepEqual(viewMap[0].map((_, x) => Math.max(...viewMap.map((row) => row[x]))), [1,3,1]);
+  assert.deepEqual(viewMap.map((row) => Math.max(...row)), [3,2,1]);
+  assert.match(question(exams, "utilization-8", 17).prompt, /각\s*자리의\s*높이/);
+});
+
+verify("8회 구멍 종이와 삼각 수 배치는 정답 후보가 각각 하나다", () => {
+  const partitionMarkup = round8.registry.get("u8-q18")({}, question(exams, "utilization-8", 18));
+  assert.equal((partitionMarkup.match(/width="72" height="72"/g) || []).length, 4);
+
+  const board = [[2,1,3,2,1],[4,3,1,2,4],[2,2,3,4,5],[1,5,3,4,2],[4,4,2,3,1]];
+  const holes = [[0,0],[2,1],[1,2]];
+  const placements = [];
+  for (let y = 0; y <= 2; y += 1) for (let x = 0; x <= 2; x += 1) {
+    const visible = holes.map(([dx,dy]) => board[y+dy][x+dx]).sort((a,b) => a-b);
+    if (visible.join(",") === "2,2,4") placements.push([x,y]);
+  }
+  assert.deepEqual(placements, [[1,2]]);
+  assert.match(question(exams, "utilization-8", 19).prompt, /돌리거나\s*뒤집지\s*않고/);
+
+  function triangleSolutions(center) {
+    const values = [1,2,3,4].filter((value) => value !== center);
+    const solutions = [];
+    permutations(values, ([left, right, bottom]) => {
+      const sums = [5 + left + center + 6, 5 + right + center + 7, 6 + bottom + center + 7];
+      if (new Set(sums).size === 1) solutions.push([left,right,bottom]);
+    });
+    return solutions;
+  }
+  assert.deepEqual(triangleSolutions(4), [[3,2,1]]);
+  assert.deepEqual(triangleSolutions(1), [[4,3,2]]);
+  assert.match(question(exams, "utilization-8", 20).prompt, /첫째\s*그림은\s*가운데에\s*4/);
+});
+
+verify("8회 렌더러가 뷰어에서 로드되고 원본 자료를 공개하지 않는다", () => {
+  const viewer = readRequired(FILES.viewer);
+  assert.match(viewer, /renderers-utilization-8\.js/);
+  assert.doesNotMatch(round8.source, /<image\b|data:image|\.pdf\b/i);
+  assert.equal(round8.registry.size, 15);
+});
+
+verify("파이널 1회 계산 문항은 원본 조건에서 하나의 값으로 검산된다", () => {
+  assert.deepEqual(range(0, 20).filter((value) => value - 3 + 8 + value === 9 + 8 + 2), [7]);
+  const boxMaps = [
+    [[3,3,2],[2,0,0],[1,0,0]],
+    [[3,2,0],[2,1,0],[1,0,0]]
+  ];
+  assert.deepEqual(boxMaps.map((map) => 27 - map.flat().reduce((sum,value) => sum + value, 0)), [16,18]);
+
+  const cardSolutions = [];
+  permutations([2,5,4,8], (cards) => {
+    const first = 10 * cards[0] + cards[1];
+    if (first - cards[2] + cards[3] === 39) cardSolutions.push([first,cards[2],cards[3]]);
+  });
+  cardSolutions.sort((a,b) => a[0] - b[0]);
+  assert.deepEqual(cardSolutions, [[42,8,5],[45,8,2]]);
+  assert.match(question(exams, "final-1", 3).prompt, /두\s*자리\s*수가\s*더\s*작은/);
+
+  const symbols = [];
+  for (let star=0;star<=9;star+=1) for(let square=0;square<=9;square+=1) for(let triangle=0;triangle<=9;triangle+=1) {
+    if (new Set([star,square,triangle]).size === 3 && star*square===20 && square*triangle===40 && triangle*star===32) symbols.push([star,square,triangle]);
+  }
+  assert.deepEqual(symbols, [[4,5,8]]);
+  assert.deepEqual([37+26-20-19, 19+20-26-37], [24,-24]);
+  assert.equal(130 - 39 - (39+3) - (39+3-11), 18);
+  const triples=[];
+  for(let a=1;a<=9;a+=1)for(let b=a+1;b<=9;b+=1)for(let c=b+1;c<=9;c+=1)if(a+b+c===12)triples.push([a,b,c]);
+  assert.equal(triples.length, 7);
+  const coinWays=[];
+  for(let tens=0;tens<=20;tens+=1)for(let fifties=0;fifties<=4;fifties+=1)if(tens*10+fifties*50===200)coinWays.push([tens,fifties]);
+  assert.equal(coinWays.length, 5);
+  assert.equal(9*60+10+15*5, 10*60+25);
+  assert.equal(2*4 + 3*8 + 4*16, 96);
+  assert.equal(String(8*6).split("").reduce((sum,digit)=>sum+Number(digit),0), 12);
+  assert.equal(10*4-15-9, 16);
+});
+
+verify("파이널 1회 순서·원탁·수 배치는 방향 조건까지 포함해 유일하다", () => {
+  const runners = ["가영","지혜","신영","용희","영수"];
+  assert.equal(runners[3], "용희");
+
+  const people=["재하","주원","하은","무겸","아영"], seatings=[];
+  permutations(people, (seats) => {
+    if(seats[0]!=="재하") return;
+    const at=(name)=>seats.indexOf(name);
+    const adjacent=(a,b)=>((at(a)-at(b)+5)%5===1)||((at(b)-at(a)+5)%5===1);
+    if(adjacent("재하","주원") && (at("하은")-at("주원")+5)%5===2 && (at("아영")-at("무겸")+5)%5===1) seatings.push(seats.slice());
+  });
+  assert.deepEqual(seatings, [["재하","하은","무겸","아영","주원"]]);
+  assert.match(question(exams,"final-1",11).prompt,/시계방향/);
+
+  const nodes=["L","A","B","C","D","E","F","R"], nodeIndex=Object.fromEntries(nodes.map((name,index)=>[name,index]));
+  const edges=[["L","A"],["L","B"],["L","C"],["A","B"],["B","C"],["D","E"],["E","F"],["D","R"],["E","R"],["F","R"],["A","D"],["B","E"],["C","F"],["A","E"],["B","D"],["B","F"],["C","E"]];
+  const graphSolutions=[];
+  permutations([1,2,3,4,5,6,7,8], (values) => {
+    if(values[nodeIndex.B]!==1 || values[nodeIndex.A]>=values[nodeIndex.C]) return;
+    if(edges.every(([a,b])=>Math.abs(values[nodeIndex[a]]-values[nodeIndex[b]])!==1)) graphSolutions.push(values.slice());
+  });
+  assert.deepEqual(graphSolutions, [[7,3,1,4,5,8,6,2]]);
+});
+
+verify("파이널 1회 영역 나누기와 겹침 문제는 보이는 정보로 한 후보만 남는다", () => {
+  const icons=[[0,0],[4,1],[2,2],[0,3],[4,4]];
+  const boards=[
+    [[0,1,2,3,4],[0,1,2,3,4],[0,1,2,3,4],[0,1,2,3,4],[0,1,2,3,4]],
+    [[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],[3,3,3,3,3],[4,4,4,4,4]],
+    [[0,0,1,1,1],[0,0,1,2,2],[0,3,3,2,2],[4,3,3,3,2],[4,4,4,4,2]],
+    [[0,0,0,1,1],[2,0,1,1,1],[2,2,2,3,3],[2,4,3,3,3],[4,4,4,4,3]]
+  ];
+  function validBoard(board) {
+    return range(0,4).every((group) => {
+      const cells=[];
+      board.forEach((row,y)=>row.forEach((value,x)=>{if(value===group)cells.push([x,y]);}));
+      if(cells.length!==5 || icons.filter(([x,y])=>board[y][x]===group).length!==1) return false;
+      const seen=new Set([cells[0].join(",")]), queue=[cells[0]];
+      while(queue.length){const [x,y]=queue.shift();[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const key=`${x+dx},${y+dy}`;if(!seen.has(key)&&cells.some(([cx,cy])=>cx===x+dx&&cy===y+dy)){seen.add(key);queue.push([x+dx,y+dy]);}});}
+      return seen.size===5;
+    });
+  }
+  assert.deepEqual(boards.map(validBoard), [false,true,false,false]);
+  assert.match(question(exams,"final-1",5).prompt,/보기의\s*네\s*가지/);
+  assert.match(question(exams,"final-1",9).prompt,/보기의\s*네\s*그림/);
+
+  const rectangles=[[20,70,150,100],[85,25,145,115],[130,45,160,145],[100,105,160,110]];
+  const coverCount=(x,y)=>rectangles.filter(([rx,ry,w,h])=>x>rx&&x<rx+w&&y>ry&&y<ry+h).length;
+  assert.deepEqual([[275,70],[240,205],[100,90],[200,60],[145,80],[120,125],[145,120]].map(([x,y])=>coverCount(x,y)),[1,1,2,2,3,3,4]);
+});
+
+verify("파이널 1회 1~13 수 배열은 모든 직선 합을 전수검사해 한 배치만 남는다", () => {
+  const fixed={0:2,4:9,6:12,8:10,10:5}, positions=Array(13), used=new Set(Object.values(fixed));
+  Object.entries(fixed).forEach(([index,value])=>{positions[Number(index)]=value;});
+  const unknown=[1,2,3,5,7,9,11,12], remaining=range(1,13).filter((value)=>!used.has(value)), lines=[];
+  for(let index=0;index<6;index+=1)lines.push([index,12,index+6]);
+  for(let side=0;side<6;side+=1){const middle=side*2;lines.push([(middle+11)%12,middle,(middle+1)%12]);}
+  const solutions=[];
+  permutations(remaining, (values) => {
+    unknown.forEach((position,index)=>{positions[position]=values[index];});
+    const sums=lines.map((line)=>line.reduce((sum,position)=>sum+positions[position],0));
+    if(new Set(sums).size===1)solutions.push(positions.slice());
+  });
+  assert.deepEqual(solutions, [[2,6,4,11,9,1,12,8,10,3,5,13,7]]);
+});
+
+verify("파이널 1회 렌더러가 로드되고 공개 원본·정답 데이터가 없다", () => {
+  const viewer=readRequired(FILES.viewer);
+  assert.match(viewer,/renderers-final-1\.js/);
+  assert.doesNotMatch(final1.source,/<image\b|data:image|\.pdf\b/i);
+  assert.equal(final1.registry.size,15);
+  assert.match(question(exams,"final-1",8).prompt,/대칭선/);
+  assert.match(question(exams,"final-1",17).prompt,/잠들\s*때\s*정확한\s*시각/);
+  assert.match(question(exams,"final-1",18).prompt,/접는\s*선에\s*있지\s*않고/);
+});
+
 if (failures.length > 0) {
   console.error(`\n${failures.length}개 검사가 실패했고 ${passed}개가 통과했습니다.`);
   process.exitCode = 1;
 } else {
-  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1·2·3·4·5·6회 뷰어 데이터가 배포 기준을 만족합니다.`);
+  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1~8회와 파이널 1회 뷰어 데이터가 배포 기준을 만족합니다.`);
 }

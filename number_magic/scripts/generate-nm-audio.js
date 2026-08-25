@@ -40,7 +40,9 @@ if (!GOOGLE_TTS_KEY) {
 // ── Load all unit data ─────────────────────────────────────────────────────────
 const window = { NM_UNITS: {} };
 const unitsDir = path.join(__dirname, '../data/units');
-const unitFiles = fs.readdirSync(unitsDir).filter(f => /^A-\d+\.js$/.test(f)).sort();
+/* 유아(N)는 전면 음성(원장 지시: "유아쪽은 mp3를 넣고 다른쪽은 대표적인 것만") —
+   N 유닛은 intro·finish에 더해 correct/wrong·마법 노트 rule까지 생성한다. */
+const unitFiles = fs.readdirSync(unitsDir).filter(f => /^[AN]-\d+\.js$/.test(f)).sort();
 
 for (const file of unitFiles) {
   try {
@@ -97,10 +99,42 @@ for (const unit of units) {
       });
     }
   }
+
+  // 유아(tier basic) 전면 음성: 정답/오답 코멘트 + 마법 노트 rule
+  if (unit.tier === 'basic') {
+    ['correct', 'wrong'].forEach(kind => {
+      (unit.voice?.[kind] || []).forEach((line, i) => {
+        for (const lang of ['ko', 'en', 'zh']) {
+          const text = typeof line === 'string' ? line : line[lang];
+          if (text) tasks.push({
+            unitId: id, key: `${kind}${i}`, lang,
+            text,
+            storagePath: `number-magic/${id}-${kind}${i}-${lang}.mp3`,
+          });
+        }
+      });
+    });
+    if (unit.discover?.rule) {
+      for (const lang of ['ko', 'en', 'zh']) {
+        const text = unit.discover.rule[lang];
+        if (text) tasks.push({
+          unitId: id, key: 'rule', lang,
+          text,
+          storagePath: `number-magic/${id}-rule-${lang}.mp3`,
+        });
+      }
+    }
+  }
 }
 
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} tasks (~${totalChars.toLocaleString()} chars total)`);
+if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점검
+  const byUnit = {};
+  tasks.forEach(t => { byUnit[t.unitId] = (byUnit[t.unitId] || 0) + 1; });
+  console.log(Object.entries(byUnit).map(([k, v]) => `${k}:${v}`).join(' '));
+  process.exit(0);
+}
 console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Neural2-A`);
 console.log('');
 
