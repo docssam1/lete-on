@@ -312,6 +312,42 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .gate-list li::before { content: counter(gate, decimal-leading-zero); position: absolute; left: 4px; color: var(--accent); font-family: ui-monospace, monospace; font-size: 10px; }
 .admin-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
 .admin-grid > * { min-width: 0; }
+.builder-main { padding-bottom: 92px; }
+.builder-start { display: flex; align-items: end; gap: 10px; margin-bottom: 16px; }
+.builder-start-fields { flex: 1; display: grid; grid-template-columns: minmax(180px, 1.4fr) repeat(3, minmax(110px, .65fr)); gap: 10px; }
+.builder-start label, .builder-toolbar label, .builder-scope label, .builder-search { display: grid; gap: 5px; color: var(--muted); font-size: 11px; font-weight: 850; }
+.builder-start input, .builder-start select, .builder-toolbar select, .builder-search input, .builder-scope textarea { min-height: 40px; width: 100%; padding: 7px 10px; border: 1px solid #bbb3a5; border-radius: 8px; background: #fff; color: var(--ink); }
+.builder-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 0 0 16px; padding: 13px 2px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.builder-toolbar label { min-width: 150px; }
+.builder-revision { margin-left: auto; color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 10px; overflow-wrap: anywhere; }
+.builder-workspace { display: grid; grid-template-columns: minmax(280px, .78fr) minmax(420px, 1.22fr); gap: 16px; align-items: start; }
+.builder-candidates, .builder-selected { min-width: 0; }
+.section-head.compact { align-items: center; margin-bottom: 14px; }
+.section-head.compact h2 { font-size: 24px; }
+.builder-search { margin-bottom: 12px; }
+.builder-replace-controls { display: grid; gap: 9px; padding: 11px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+.builder-replace-controls > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.builder-replace-controls .button { min-height: 32px; padding: 0 10px; font-size: 11px; }
+.builder-replace-controls .is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
+.builder-candidate-list, .builder-placement-list { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.builder-candidate, .builder-placement { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.builder-candidate strong, .builder-placement strong { display: block; overflow-wrap: anywhere; }
+.builder-candidate small, .builder-candidate span, .builder-placement small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.builder-candidate button, .builder-placement button { min-height: 34px; padding: 0 10px; border-color: var(--line); background: var(--paper); color: var(--ink); font-size: 11px; }
+.builder-candidate.is-disabled { opacity: .48; }
+.builder-summary { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.builder-summary div { display: grid; gap: 2px; padding: 10px; }
+.builder-summary div + div { border-left: 1px solid var(--line); }
+.builder-summary span { color: var(--muted); font-size: 10px; }
+.builder-summary strong { font-size: 14px; }
+.builder-placement { grid-template-columns: 20px 32px minmax(0, 1fr) auto; cursor: grab; }
+.builder-placement.is-dragging { opacity: .45; }
+.builder-grip { color: var(--muted); font-weight: 950; letter-spacing: -2px; }
+.builder-placement > b { color: var(--accent-dark); font-family: ui-monospace, Consolas, monospace; }
+.builder-placement-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+.builder-note { margin: 12px 0 0; color: var(--muted); font-size: 11px; }
+.builder-scope { margin-top: 16px; }
+.builder-scope textarea { min-height: 94px; resize: vertical; font-family: ui-monospace, Consolas, monospace; font-size: 11px; }
 .check-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; }
 .check { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 10px; }
 .check input { margin-top: 4px; }
@@ -449,7 +485,10 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .editor-toast { position: fixed; right: 18px; bottom: 18px; z-index: 100; max-width: min(360px, calc(100% - 36px)); padding: 11px 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--white); box-shadow: var(--shadow); font-size: 11px; }
 
 @media (max-width: 900px) {
-  .hero-grid, .report-grid, .admin-grid, .viewer-shell, .diagnostic-cover { grid-template-columns: 1fr; }
+  .hero-grid, .report-grid, .admin-grid, .viewer-shell, .diagnostic-cover, .builder-workspace { grid-template-columns: 1fr; }
+  .builder-start { display: grid; grid-template-columns: 1fr 1fr; }
+  .builder-start-fields { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .builder-revision { width: 100%; margin-left: 0; }
   .grid-3 { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .exam-grid { grid-template-columns: 1fr; }
@@ -484,6 +523,13 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
   .hero { padding: 62px 0 52px; }
   .form-row, .analysis-grid { grid-template-columns: 1fr; }
   .login-wrap { margin: 40px auto; }
+  .builder-start { grid-template-columns: 1fr; }
+  .builder-start-fields { grid-template-columns: 1fr; }
+  .builder-toolbar { align-items: stretch; }
+  .builder-toolbar label { min-width: 0; }
+  .builder-toolbar .button { width: 100%; }
+  .builder-placement { grid-template-columns: 16px 28px minmax(0, 1fr); }
+  .builder-placement-actions { grid-column: 3; }
   .login-wrap h1 { font-size: clamp(32px, 10vw, 42px); }
   .login-wrap p, .login-wrap .notice { overflow-wrap: anywhere; }
   .answer-grid { grid-template-columns: repeat(3, 1fr); }

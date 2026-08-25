@@ -53,7 +53,8 @@
     selectedPlacementId: null,
     busy: false,
     searchSequence: 0,
-    draggedPlacementId: null
+    draggedPlacementId: null,
+    serverDrafts: []
   };
   const scoreTimers = new Map();
   const pendingScores = new Map();
@@ -126,6 +127,7 @@
       draftId: packet.draftId,
       profileId: packet.draft.profileId,
       targetId: packet.draft.targetId,
+      itemCount: packet.draft.placements.length,
       updatedAt: packet.updatedAt
     });
     localStorage.setItem(recentKey, JSON.stringify(recent.slice(0, 5)));
@@ -133,18 +135,32 @@
   }
 
   function renderRecentDrafts() {
-    let recent = [];
-    try { recent = JSON.parse(localStorage.getItem(recentKey) || "[]"); } catch (_) {}
-    recent = Array.isArray(recent) ? recent.filter(item => item && /^draft_[A-Za-z0-9]+$/.test(item.draftId || "")) : [];
+    let localRecent = [];
+    try { localRecent = JSON.parse(localStorage.getItem(recentKey) || "[]"); } catch (_) {}
+    localRecent = Array.isArray(localRecent) ? localRecent : [];
+    const byId = new Map();
+    localRecent.concat(state.serverDrafts).forEach(function (item) {
+      if (item && /^draft_[A-Za-z0-9]+$/.test(item.draftId || "") && !byId.has(item.draftId)) byId.set(item.draftId, item);
+    });
+    const recent = Array.from(byId.values()).sort(function (left, right) {
+      return String(right.updatedAt || "").localeCompare(String(left.updatedAt || "")) || left.draftId.localeCompare(right.draftId);
+    }).slice(0, 20);
     elements.recentButtons.replaceChildren();
     recent.forEach(function (item) {
-      const button = make("button", "recent-draft-button", `${item.profileId || "시험지"} · ${item.draftId.slice(-8)}`);
+      const count = Number.isSafeInteger(item.itemCount) ? ` · ${item.itemCount}문항` : "";
+      const button = make("button", "recent-draft-button", `${item.targetId || item.profileId || "시험지"}${count} · ${item.draftId.slice(-8)}`);
       button.type = "button";
       button.dataset.draftId = item.draftId;
       button.title = item.draftId;
       elements.recentButtons.append(button);
     });
     elements.recent.hidden = recent.length === 0;
+  }
+
+  async function loadDraftList() {
+    const packet = await request("/admin/exam-editor/drafts");
+    state.serverDrafts = Array.isArray(packet.items) ? packet.items : [];
+    renderRecentDrafts();
   }
 
   function setWorkspace(active) {
@@ -781,6 +797,7 @@
     }
     try {
       await request("/admin/exam-editor/status");
+      await loadDraftList();
       elements.connection.textContent = "운영 API 연결";
       elements.connection.className = "badge open";
       setAlert("검수 완료 문항만 시험지에 담을 수 있습니다.");

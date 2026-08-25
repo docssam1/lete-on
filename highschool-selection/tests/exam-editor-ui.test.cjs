@@ -40,6 +40,8 @@ test("editor client uses admin-only API mutations, revision CAS, conflict reload
   assert.match(script, /mode:\s*elements\.createForm\.mode\.value/);
   assert.match(script, /new URLSearchParams\(\{ draftId: state\.packet\.draftId/);
   assert.match(script, /await request\("\/admin\/exam-editor\/status"\)/);
+  assert.match(script, /await request\("\/admin\/exam-editor\/drafts"\)/);
+  assert.match(script, /state\.serverDrafts/);
   assert.doesNotMatch(script, /params\.set\("mode"/);
   assert.doesNotMatch(script, /params\.set\("originalOnly"/);
   assert.match(script, /const changed = await performMutation\(/);
