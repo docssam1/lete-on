@@ -43,6 +43,11 @@ function privateConfig(root, released = true) {
       typeId: bankCore.createSharedBankId("type", "builder-type-a"), curriculum: { grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }, responseType: "input",
       classificationVerified: true, answerVerified: true, rightsVerified: true, releaseEligible: true, lineageRelation: "original", difficultyBand: "standard",
       coreConditionVerified: true, solutionStructureVerified: true
+    }, {
+      itemId: bankCore.createSharedBankId("question", "builder-item-b"), mode: "SH", familyId: bankCore.createSharedBankId("question", "builder-family-a"),
+      typeId: bankCore.createSharedBankId("type", "builder-type-a"), curriculum: { grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }, responseType: "single_choice",
+      classificationVerified: true, answerVerified: true, rightsVerified: true, releaseEligible: true, lineageRelation: "twin", difficultyBand: "standard",
+      coreConditionVerified: true, solutionStructureVerified: true
     }]
   };
 }
@@ -272,7 +277,7 @@ test("admin draft builder lists only safe candidates and supports placement add,
   const candidates = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/candidates?sort=response_type`, { headers: { Cookie: auth.cookie } });
   assert.equal(candidates.status, 200);
   const candidatePayload = await candidates.json();
-  assert.equal(candidatePayload.candidates.length, 1);
+  assert.equal(candidatePayload.candidates.length, 2);
   assert.equal(candidatePayload.candidates[0].responseType, "input");
   safeBuilderWalk(candidatePayload);
   const added = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements`, {
@@ -282,6 +287,19 @@ test("admin draft builder lists only safe candidates and supports placement add,
   assert.equal(added.status, 200);
   const withPlacement = await added.json();
   assert.equal(withPlacement.placements.length, 1);
+  const changedScope = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/scope`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] } })
+  });
+  assert.equal(changedScope.status, 200);
+  assert.equal((await changedScope.json()).draft.scopeVersion, 2);
+  const replacementCandidate = candidatePayload.candidates.find(candidate => candidate.lineageRelation === "twin");
+  const replaced = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/placements/${encodeURIComponent(withPlacement.placements[0].id)}/replace`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ itemId: replacementCandidate.itemId, reasonCode: "SOURCE_CORRECTION", sameFamily: true, sameDetailType: true, sameCoreConditions: true, sameSolutionStructure: true, difficultyReviewed: true })
+  });
+  assert.equal(replaced.status, 200);
+  assert.equal((await replaced.json()).placements[0].item.itemId, replacementCandidate.itemId);
   const reordered = await fetch(`${env.base}/admin/exam-drafts/${encodeURIComponent(draft.draft.id)}/reorder`, {
     method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" }, body: JSON.stringify({ placementIds: [withPlacement.placements[0].id] })
   });

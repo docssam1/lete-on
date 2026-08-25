@@ -170,7 +170,43 @@ function createApp(options) {
       return true;
     }
 
-    let match = pathname.match(/^\/admin\/exam-drafts(?:\/([^/]+))?(?:\/(candidates|placements))?$/);
+    let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/scope$/);
+    if (match) {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const body = await readJson(request, 64 * 1024);
+      const changed = draftCore.changeDraftScope(cleanRecord.draft, cleanRecord.placements, body.scope);
+      const next = { draft: changed.draft, placements: changed.placements };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/placements\/([^/]+)\/replace$/);
+    if (match) {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "POST") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const record = await draftStore.get(decodeURIComponent(match[1]));
+      if (!record) throw new HttpError(404, "시험 초안을 찾을 수 없습니다.");
+      const cleanRecord = publicDraft(record);
+      const placementId = decodeURIComponent(match[2]);
+      const placement = cleanRecord.placements.find(function (item) { return item.id === placementId; });
+      if (!placement) throw new HttpError(404, "배치를 찾을 수 없습니다.");
+      const body = await readJson(request, 32 * 1024);
+      const configuredCandidates = (context.config.examDraftCandidates || []).filter(function (candidate) { return candidate.mode === cleanRecord.draft.mode; });
+      const candidate = configuredCandidates.find(function (item) { return item.itemId === String(body.itemId || ""); });
+      if (!candidate) throw new HttpError(404, "검증된 후보를 찾을 수 없습니다.");
+      if (cleanRecord.placements.some(function (item) { return item.id !== placementId && item.item.itemId === candidate.itemId; })) throw new HttpError(409, "같은 후보가 이미 다른 배치에 있습니다.");
+      const replaced = draftCore.replacePlacement(cleanRecord.draft, placement, candidate, {
+        reasonCode: body.reasonCode, sameFamily: body.sameFamily, sameDetailType: body.sameDetailType, sameCoreConditions: body.sameCoreConditions,
+        sameSolutionStructure: body.sameSolutionStructure, difficultyReviewed: body.difficultyReviewed, reviewer: bankCore.WRITER
+      });
+      const next = { draft: cleanRecord.draft, placements: cleanRecord.placements.map(function (item) { return item.id === placementId ? replaced : item; }) };
+      await draftStore.save(next); sendJson(response, 200, publicDraft(next)); return true;
+    }
+
+    match = pathname.match(/^\/admin\/exam-drafts(?:\/([^/]+))?(?:\/(candidates|placements))?$/);
     if (match) {
       const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       const draftId = match[1] ? decodeURIComponent(match[1]) : "";

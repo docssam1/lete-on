@@ -322,6 +322,12 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .builder-panel { padding: 0; overflow: hidden; }
 .builder-table { min-width: 880px; }
 .builder-scope { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.builder-actions { display: grid; grid-template-columns: minmax(220px, .75fr) minmax(0, 1.25fr); gap: 18px; align-items: end; }
+.builder-actions h2 { margin: 4px 0 6px; font-size: 18px; }
+.builder-actions p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.builder-scope-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 8px; align-items: end; }
+.replacement-checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.replacement-checks .check { min-height: 48px; font-size: 11px; }
 .check-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; }
 .check { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 10px; }
 .check input { margin-top: 4px; }
@@ -359,6 +365,8 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 @media (max-width: 900px) {
   .hero-grid, .report-grid, .admin-grid, .builder-layout, .viewer-shell, .diagnostic-cover { grid-template-columns: 1fr; }
   .builder-sidebar { position: static; }
+  .builder-actions { grid-template-columns: 1fr; }
+  .builder-scope-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-3 { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .exam-grid { grid-template-columns: 1fr; }
@@ -421,6 +429,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
   .builder-summary { display: block; }
   .builder-metrics { justify-content: start; margin-top: 14px; }
   .builder-scope { grid-template-columns: 1fr; }
+  .builder-scope-form, .replacement-checks { grid-template-columns: 1fr; }
   .review-toolbar { display: block; }
   .review-filters { margin-top: 14px; overflow-x: auto; }
 }
