@@ -202,6 +202,47 @@ window.NM_CURRICULUM = {
           title:{ko:'31 유리수 정복',en:'31 · Conquering Rationals',zh:'31·征服有理数'},
           units:['M-07','M-08','M-09'] }
       ]
+    },
+
+    /* ===== MIDDLE2 · 식의 탑 (중2 식의 계산, W9) =====
+       근거: MASTER-ROADMAP.md §5(중2 W9) — 지수법칙·단항식·다항식·
+       등식 변형까지, 2022 개정 교육과정 '식의 계산' 범위의 표준 유형. */
+    {
+      id:'middle2', name:'MIDDLE2', grade:'중2', order:5,
+      title:'MIDDLE2', subtitle:{ko:'식의 탑 · 식의 계산',en:'Tower of Expressions · Expression Calculus',zh:'式之塔·式的运算'},
+      ageFrom:13, ageLabel:'중2',
+      color:'#5a4a8a', accent:'#C9A063',
+      desc:{ko:'큰 수를 짧게 쓰려는 게으름이 만든 지수법칙부터, 문자로 이루어진 식을 다루는 법까지',
+        en:'From the exponent laws born of wanting to write big numbers short, to handling expressions made of letters',
+        zh:'从懒得写长数字而诞生的指数法则，到处理由字母组成的式子'},
+      levels:[
+        { id:'32', available:true,
+          title:{ko:'32 지수와 단항식',en:'32 · Exponents & Monomials',zh:'32·指数与单项式'},
+          units:['M-10','M-11','M-12'] },
+        { id:'33', available:true,
+          title:{ko:'33 다항식과 등식',en:'33 · Polynomials & Equations',zh:'33·多项式与等式'},
+          units:['M-13','M-14'] }
+      ]
+    },
+
+    /* ===== MIDDLE3 · 근호의 산맥 (중3 제곱근·실수, 다항식의 곱셈과 인수분해, W10) =====
+       근거: MASTER-ROADMAP.md §5(중3 W10). */
+    {
+      id:'middle3', name:'MIDDLE3', grade:'중3', order:6,
+      title:'MIDDLE3', subtitle:{ko:'근호의 산맥 · 제곱근과 다항식',en:'Radical Mountains · Roots & Polynomials',zh:'根号山脉·平方根与多项式'},
+      ageFrom:14, ageLabel:'중3',
+      color:'#16417C', accent:'#7c3aed',
+      desc:{ko:'다 쓸 수 없어서 "무리수" — 제곱근을 다루는 법부터, 곱셈공식으로 완성되는 무지개 덧셈법의 마지막 걸음까지',
+        en:'Numbers you can never finish writing — "irrational." From handling square roots to the final step of the rainbow-addition lineage, completed by the multiplication formulas',
+        zh:'写不完的数——"无理数"。从处理平方根，到由乘法公式完成的彩虹加法法家族的最后一步'},
+      levels:[
+        { id:'34', available:true,
+          title:{ko:'34 제곱근의 세계',en:'34 · World of Square Roots',zh:'34·平方根的世界'},
+          units:['M-15','M-16','M-17'] },
+        { id:'35', available:true,
+          title:{ko:'35 곱셈공식과 인수분해',en:'35 · Formulas & Factoring',zh:'35·乘法公式与因式分解'},
+          units:['M-18','M-19','M-20'] }
+      ]
     }
   ],
 

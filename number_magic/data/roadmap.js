@@ -333,6 +333,42 @@ window.NM_ROADMAP = {
       theme:{ko:'W8-3 · 유리수 정복 — 곱나눗·유한소수·순환소수',en:'W8-3 · Conquering Rationals — × ÷, Terminating & Repeating',zh:'W8-3·征服有理数——乘除·有限小数·循环小数'},
       units:['M-07','M-08','M-09'],
       tip:{ko:'분모 속 2와 5만 있으면 끝나는 소수, 다른 수가 숨어 있으면 영원히 반복돼요!',en:'Only 2s and 5s in the denominator? It ends. Anything else hiding? It repeats forever!',zh:'分母只有2和5就会结束，藏着别的数就会永远循环！'}
+    },
+
+    /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
+       동굴) 다음, 문자로 된 식을 다루는 첫 관문. */
+    {
+      id:'W9-1', icon:'📐', grade:'중2',
+      edu:{ko:'중2 지수와 단항식',en:'G8 Exponents & Monomials',zh:'初二指数与单项式'},
+      theme:{ko:'W9-1 · 지수와 단항식 — 지수법칙·곱나눗·동류항',en:'W9-1 · Exponents & Monomials — Laws, × ÷, Like Terms',zh:'W9-1·指数与单项式——法则·乘除·同类项'},
+      units:['M-10','M-11','M-12'],
+      tip:{ko:'큰 수를 짧게 쓰려는 게으름이 지수법칙을 만들었어요 — 곱한 횟수만 세면 끝!',en:'Laziness about writing big numbers invented the exponent laws — just count how many times you multiplied!',zh:'懒得写长数字，于是发明了指数法则——只需数一数乘了几次！'}
+    },
+    {
+      id:'W9-2', icon:'🎁', grade:'중2',
+      edu:{ko:'중2 다항식과 등식',en:'G8 Polynomials & Equations',zh:'初二多项式与等式'},
+      theme:{ko:'W9-2 · 다항식과 등식 — 전개·이항 감각',en:'W9-2 · Polynomials & Equations — Expanding & Transposing',zh:'W9-2·多项式与等式——展开·移项感'},
+      units:['M-13','M-14'],
+      tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
+    },
+
+    /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
+       인수분해 (2026-08-25) ───────────────────────────────────
+       MASTER-ROADMAP.md §3 "W10 근호의 산맥(중3)" 스토리 스테이지. */
+    {
+      id:'W10-1', icon:'🔓', grade:'중3',
+      edu:{ko:'중3 제곱근의 세계',en:'G9 World of Square Roots',zh:'初三平方根的世界'},
+      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷',zh:'W10-1·平方根的世界——值·化简·乘除'},
+      units:['M-15','M-16','M-17'],
+      tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
+    },
+    {
+      id:'W10-2', icon:'🌈', grade:'중3',
+      edu:{ko:'중3 곱셈공식과 인수분해',en:'G9 Formulas & Factoring',zh:'初三乘法公式与因式分解'},
+      theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
+      units:['M-18','M-19','M-20'],
+      tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
     }
 
   ]

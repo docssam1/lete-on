@@ -231,6 +231,8 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/el.js"></script>
 <script src="engine/threads/adv.js"></script>
 <script src="engine/threads/mid.js"></script>
+<script src="engine/threads/mid2.js"></script>
+<script src="engine/threads/mid3.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -336,6 +338,47 @@ var TOPICS = [
       {label:'유한소수 판별(약분 필요)', thread:'MD8', level:2, desc:'약분 후 판정'},
       {label:'순환소수→분수 (1·1자리)', thread:'MD9', level:1, desc:'비순환1·순환1'},
       {label:'순환소수→분수 (실전)', thread:'MD9', level:4, desc:'비순환2·순환2'},
+    ]
+  },
+  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', icon:'📐', color:'#5a4a8a', section:'magic',
+    subs:[
+      {label:'지수법칙 곱셈(aᵐ×aⁿ)', thread:'MD10', level:1, desc:'지수를 더하기'},
+      {label:'거듭제곱의 거듭제곱', thread:'MD10', level:2, desc:'지수를 곱하기'},
+      {label:'지수법칙 나눗셈(aᵐ÷aⁿ)', thread:'MD10', level:3, desc:'지수를 빼기'},
+      {label:'지수법칙 혼합(실전)', thread:'MD10', level:4, desc:'밑 혼합'},
+      {label:'단항식 곱셈', thread:'MD11', level:1, desc:'계수·지수 다칸'},
+      {label:'단항식 나눗셈', thread:'MD11', level:2, desc:'계수·지수 다칸'},
+      {label:'단항식 곱나눗 혼합(실전)', thread:'MD11', level:3, desc:'세 단항식'},
+      {label:'다항식 덧뺄(일차식)', thread:'MD12', level:1, desc:'동류항 정리'},
+      {label:'다항식 덧뺄(이차식)', thread:'MD12', level:2, desc:'x²·x·상수'},
+      {label:'괄호 앞 부호 바꾸기(실전)', thread:'MD12', level:3, desc:'전부 변호'},
+      {label:'(단항식)×(다항식) 이항식', thread:'MD13', level:1, desc:'분배법칙'},
+      {label:'문자 있는 단항식으로 전개', thread:'MD13', level:2, desc:'차수 상승'},
+      {label:'삼항식 전개(실전)', thread:'MD13', level:3, desc:'세 항 분배'},
+      {label:'등식 변형(덧셈식)', thread:'MD14', level:1, desc:'이항 감각'},
+      {label:'등식 변형(뺄셈식)', thread:'MD14', level:2, desc:'이항 감각'},
+      {label:'등식 변형→풀이 완주(실전)', thread:'MD14', level:3, desc:'이항+나눗셈'},
+    ]
+  },
+  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', icon:'🌈', color:'#16417C', section:'magic',
+    subs:[
+      {label:'완전제곱수의 제곱근', thread:'MD15', level:1, desc:'√N=k'},
+      {label:'(√a)²=a', thread:'MD15', level:2, desc:'근호 제곱'},
+      {label:'√(a²)=|a|(실전)', thread:'MD15', level:3, desc:'절댓값'},
+      {label:'근호 정리(연습)', thread:'MD16', level:1, desc:'√48=4√3'},
+      {label:'근호 정리(실전)', thread:'MD16', level:2, desc:'더 큰 수'},
+      {label:'계수 있는 근호 정리', thread:'MD16', level:3, desc:'계수까지 곱함'},
+      {label:'제곱근 곱셈(정수로 떨어짐)', thread:'MD17', level:1, desc:'√a×√b'},
+      {label:'제곱근 나눗셈(정수로 떨어짐)', thread:'MD17', level:2, desc:'√a÷√b'},
+      {label:'제곱근 곱셈(근호 남음, 실전)', thread:'MD17', level:3, desc:'근호 정리 연계'},
+      {label:'분모 유리화(기본형)', thread:'MD18', level:1, desc:'1/√n'},
+      {label:'분모 유리화(계수 있음)', thread:'MD18', level:2, desc:'c/√n'},
+      {label:'분모 유리화(분모부터 정리, 실전)', thread:'MD18', level:3, desc:'근호 정리 연계'},
+      {label:'곱셈공식 (x+a)(x+b)', thread:'MD19', level:1, desc:'합과 곱'},
+      {label:'곱셈공식 (x+a)²', thread:'MD19', level:2, desc:'완전제곱식'},
+      {label:'합차공식(실전)', thread:'MD19', level:3, desc:'(x+a)(x-a)'},
+      {label:'인수분해 기초(모두 양수)', thread:'MD20', level:1, desc:'p,q 찾기'},
+      {label:'인수분해 기초(부호 섞임, 실전)', thread:'MD20', level:2, desc:'p,q 찾기'},
     ]
   }
 ];

@@ -132,6 +132,20 @@ const COURSE_SPEC = [
    drills:['MD4','MD5','MD6'], magic:[['M-04'],['M-05'],['M-06']]},
  {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
    drills:['MD7','MD8','MD9'], magic:[['M-07'],['M-08'],['M-09']]},
+
+ /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
+    drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
+    — course32는 W8 마지막 재료 MD9를, course34(중3 진입부)는 중2 재료
+    MD14를 복습 풀에 얹는다(다른 과정들처럼 spec.drills에 얹으면 자기
+    재료로도 잡히고 이후 과정의 priorPool 순환에도 자동으로 실린다). */
+ {id:32, tier:'middle2', title:{ko:'지수와 단항식',en:'Exponents & Monomials',zh:'指数与单项式'},
+   drills:['MD10','MD11','MD12','MD9'], magic:[['M-10'],['M-11'],['M-12']]},
+ {id:33, tier:'middle2', title:{ko:'다항식과 등식',en:'Polynomials & Equations',zh:'多项式与等式'},
+   drills:['MD13','MD14'], magic:[['M-13'],['M-14']]},
+ {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
+   drills:['MD15','MD16','MD17','MD14'], magic:[['M-15'],['M-16'],['M-17']]},
+ {id:35, tier:'middle3', title:{ko:'곱셈공식과 인수분해',en:'Formulas & Factoring',zh:'乘法公式与因式分解'},
+   drills:['MD18','MD19','MD20'], magic:[['M-18'],['M-19'],['M-20']]},
 ];
 
 function buildCourses(NM_THREADS){
