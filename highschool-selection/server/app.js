@@ -193,6 +193,17 @@ function createApp(options) {
       return true;
     }
 
+    if (pathname === "/admin/exam-drafts/readiness") {
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (request.method !== "GET") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const candidateCounts = bankCore.PROGRAM_MODES.reduce(function (counts, mode) {
+        counts[mode] = (context.config.examDraftCandidates || []).filter(function (candidate) { return candidate.mode === mode; }).length;
+        return counts;
+      }, {});
+      sendJson(response, 200, { candidateCounts, draftStore: draftStore.persistent === true ? "persistent" : "memory_only" });
+      return true;
+    }
+
     let match = pathname.match(/^\/admin\/exam-drafts\/([^/]+)\/approve$/);
     if (match) {
       const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));

@@ -267,6 +267,9 @@ test("admin draft builder lists only safe candidates and supports placement add,
   const env = await start();
   t.after(() => env.server.close());
   const auth = await login(env.base, "관리자", "ADMIN-001");
+  const readiness = await fetch(`${env.base}/admin/exam-drafts/readiness`, { headers: { Cookie: auth.cookie } });
+  assert.equal(readiness.status, 200);
+  assert.deepEqual(await readiness.json(), { candidateCounts: { SH: 2, DP: 0, WM: 0, ED: 0, DG: 0, SM: 0 }, draftStore: "memory_only" });
   const created = await fetch(`${env.base}/admin/exam-drafts`, {
     method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
     body: JSON.stringify({ mode: "SH", title: "관리자 초안", scope: { curriculumVersion: "2022-revised", paths: [{ grade: "G09", major: "ALG", minor: "EQ", detail: "LIN" }] }, constraints: { questionCount: 1, totalPoints: 2, maxPerFamily: 1 } })

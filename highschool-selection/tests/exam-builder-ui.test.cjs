@@ -16,7 +16,9 @@ test("exam builder UI uses the protected admin API and contains no question, ans
   assert.match(script, /\/admin\/exam-drafts/);
   assert.match(script, /data-up/);
   assert.match(html, /id="audit-list"/);
+  assert.match(html, /id="builder-readiness"/);
   assert.match(script, /DRAFT_APPROVED/);
+  assert.match(script, /\/admin\/exam-drafts\/readiness/);
   assert.match(css, /\.builder-layout/);
   assert.match(css, /\.builder-layout, \.viewer-shell/);
   const combined = html + script;

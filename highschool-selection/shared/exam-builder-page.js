@@ -3,7 +3,7 @@
   const session = HIGHSELECT_AUTH.requireAdmin("../login.html");
   if (!session) return;
   const api = String(HIGHSELECT_RUNTIME.apiBase || "").replace(/\/$/, "");
-  const state = { drafts: [], current: null, candidates: [], outputPreview: null };
+  const state = { drafts: [], current: null, candidates: [], outputPreview: null, readiness: null };
   const $ = function (selector) { return document.querySelector(selector); };
   const esc = function (value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]; }); };
   const responseLabel = { input: "주관식", multi_input: "주관식", single_choice: "객관식", multi_choice: "객관식", ox: "O/X", ordered_list: "순서", unordered_set: "집합", figure_select: "도형 선택", construction: "작도" };
@@ -30,6 +30,17 @@
   async function refreshCandidates() { if (!currentId()) return; const params = new URLSearchParams({ sort: $("#candidate-sort").value }); if ($("#response-filter").value) params.set("responseType", $("#response-filter").value); const payload = await request(`/admin/exam-drafts/${encodeURIComponent(currentId())}/candidates?${params}`); state.candidates = payload.candidates; renderCandidates(); }
   function renderOutputPreview() { const node = $("#output-preview"), preview = state.outputPreview; if (!preview) { node.innerHTML = '<div class="empty">초안을 선택하면 출력 구성과 답안 입력 형식을 확인할 수 있습니다.</div>'; return; } const pages = preview.pages.map(function (page) { return `<article><p class="eyebrow">Page ${page.pageNumber}</p><ol>${page.questions.map(function (question) { return `<li><b>${question.number}번</b><span>${question.points}점 · ${esc(responseLabel[question.responseType] || question.responseType)}</span></li>`; }).join("")}</ol></article>`; }).join(""); const eligibility = preview.eligibleForProduction ? '<span class="badge open">출력 게이트 통과</span>' : `<span class="badge review">출력 잠금 · ${preview.issues.length}건</span>`; node.innerHTML = `<div class="output-preview-head">${eligibility}<span>답안 입력 ${preview.answerResponseLayout.length}개</span></div><div class="output-preview-pages">${pages || '<div class="empty">배치된 문항이 없습니다.</div>'}</div>`; }
   async function refreshOutputPreview() { if (!currentId()) { state.outputPreview = null; renderOutputPreview(); return; } state.outputPreview = await request(`/admin/exam-drafts/${encodeURIComponent(currentId())}/output-preview?questionsPerPage=${encodeURIComponent($("#preview-page-size").value)}`); renderOutputPreview(); }
+  async function refreshReadiness() {
+    state.readiness = await request("/admin/exam-drafts/readiness");
+    const node = $("#builder-readiness"), currentMode = $("#draft-mode").value;
+    const candidateCount = Number(state.readiness.candidateCounts[currentMode] || 0);
+    const needsCandidateSetup = candidateCount === 0;
+    const memoryOnly = state.readiness.draftStore === "memory_only";
+    if (!needsCandidateSetup && !memoryOnly) { node.hidden = true; return; }
+    node.hidden = false;
+    node.className = "notice";
+    node.textContent = [needsCandidateSetup ? `${currentMode} 검증 후보가 0개입니다. 비공개 후보 인덱스를 등록하기 전에는 출제할 수 없습니다.` : "", memoryOnly ? "초안 저장소가 메모리 전용입니다. 서버를 재시작하면 초안이 사라집니다." : ""].filter(Boolean).join(" ");
+  }
   async function selectDraft(id) { const record = await request(`/admin/exam-drafts/${encodeURIComponent(id)}`); state.current = record; renderCurrent(); await refreshCandidates(); await refreshOutputPreview(); }
   async function refreshDrafts(selectId) { state.drafts = await request("/admin/exam-drafts"); renderDraftList(); if (selectId || (state.drafts[0] && !state.current)) await selectDraft(selectId || state.drafts[0].draft.id); }
   async function mutate(work, success) { try { setStatus("저장 중입니다."); const next = await work(); state.current = next; const index = state.drafts.findIndex(function (record) { return record.draft.id === next.draft.id; }); if (index >= 0) state.drafts[index] = next; renderDraftList(); renderCurrent(); await refreshCandidates(); await refreshOutputPreview(); setStatus(success || "저장했습니다.", "ok"); } catch (error) { setStatus(error.message, "error"); } }
@@ -38,6 +49,7 @@
   $("#approve-draft").addEventListener("click", function () { if (!currentId()) return; mutate(function () { return request(`/admin/exam-drafts/${encodeURIComponent(currentId())}/approve`, { method: "POST", body: "{}" }); }, "초안 검수를 확정했습니다. 원문 시험지 공개는 별도 게이트가 필요합니다."); });
   $("#scope-form").addEventListener("submit", function (event) { event.preventDefault(); if (!currentId()) return; const scope = { curriculumVersion: state.current.draft.scope.curriculumVersion, paths: [{ grade: $("#change-scope-grade").value.trim().toUpperCase(), major: $("#change-scope-major").value.trim().toUpperCase(), minor: $("#change-scope-minor").value.trim().toUpperCase(), detail: $("#change-scope-detail").value.trim().toUpperCase() }] }; mutate(function () { return request(`/admin/exam-drafts/${encodeURIComponent(currentId())}/scope`, { method: "POST", body: JSON.stringify({ scope }) }); }, "범위를 변경했고 기존 배치를 재검토 상태로 갱신했습니다."); });
   $("#draft-select").addEventListener("change", function (event) { if (event.target.value) selectDraft(event.target.value).catch(function (error) { setStatus(error.message, "error"); }); });
+  $("#draft-mode").addEventListener("change", function () { if (state.readiness) refreshReadiness().catch(function (error) { setStatus(error.message, "error"); }); });
   ["#candidate-sort", "#response-filter"].forEach(function (selector) { $(selector).addEventListener("change", function () { refreshCandidates().catch(function (error) { setStatus(error.message, "error"); }); }); });
   $("#candidate-reload").addEventListener("click", function () { refreshCandidates().catch(function (error) { setStatus(error.message, "error"); }); });
   $("#preview-reload").addEventListener("click", function () { refreshOutputPreview().catch(function (error) { setStatus(error.message, "error"); }); });
@@ -49,5 +61,5 @@
   $("#replacement-placement").addEventListener("change", renderReplacementOptions);
   $("#replacement-form").addEventListener("submit", function (event) { event.preventDefault(); if (!currentId() || !$("#replacement-candidate").value) return; mutate(function () { return request(`/admin/exam-drafts/${encodeURIComponent(currentId())}/placements/${encodeURIComponent($("#replacement-placement").value)}/replace`, { method: "POST", body: JSON.stringify({ itemId: $("#replacement-candidate").value, reasonCode: $("#replacement-reason").value.trim().toUpperCase(), sameFamily: $("#same-family").checked, sameDetailType: $("#same-type").checked, sameCoreConditions: $("#same-conditions").checked, sameSolutionStructure: $("#same-solution").checked, difficultyReviewed: $("#difficulty-reviewed").checked }) }); }, "교체 이력과 검수 확인을 기록했습니다."); });
   if (!api) { $("#mode-badge").textContent = "운영 서버 필요"; $("#mode-badge").className = "badge locked"; $("#builder-notice").textContent = "정적 GitHub Pages에서는 초안 저장과 후보 조회가 차단됩니다. 보호된 운영 API에서만 사용하세요."; $("#draft-form").querySelectorAll("input,select,button").forEach(function (node) { node.disabled = true; }); return; }
-  $("#mode-badge").textContent = "운영 API 연결"; $("#mode-badge").className = "badge open"; refreshDrafts().catch(function (error) { setStatus(error.message, "error"); });
+  $("#mode-badge").textContent = "운영 API 연결"; $("#mode-badge").className = "badge open"; Promise.all([refreshReadiness(), refreshDrafts()]).catch(function (error) { setStatus(error.message, "error"); });
 })();

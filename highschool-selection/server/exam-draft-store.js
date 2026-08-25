@@ -27,6 +27,7 @@ function createStore(options) {
   }
   function serial(action) { const next = queue.then(action, action); queue = next.then(function () {}, function () {}); return next; }
   return {
+    persistent: Boolean(filePath),
     list: function () { return serial(function () { return read().drafts.slice(); }); },
     get: function (id) { return serial(function () { return read().drafts.find(function (record) { return record.draft.id === id; }) || null; }); },
     save: function (record) { return serial(function () {
