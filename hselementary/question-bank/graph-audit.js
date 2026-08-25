@@ -15,10 +15,27 @@ const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.map
   unitName: barGraphUnit.name,
   subunitName: subunit.name
 })));
-const lineGraphTypes = [
-  { id: "4-2-u5-t1", name: "꺾은선그래프의 이해", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" },
-  { id: "4-2-u5-t2", name: "꺾은선그래프의 활용", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" }
-];
+const semester42 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2");
+const lineGraphUnit = semester42.units.find(unit => unit.id === "4-2-u5");
+const lineGraphTypes = lineGraphUnit.subunits.flatMap(subunit => subunit.types.map(type => ({
+  ...type,
+  semesterId: semester42.id,
+  unitId: lineGraphUnit.id,
+  unitName: lineGraphUnit.name,
+  subunitName: subunit.name
+})));
+const lineGraphSignatures = {
+  lineGraphUnderstanding: [
+    "목요일의 배출량은 수요일보다",
+    "화요일부터 목요일까지 배출량의 합",
+    "가장 많은 날과 가장 적은 날의 배출량 차"
+  ],
+  lineGraphApplication: [
+    "사용한 휘발유 양의 차",
+    "가 수도꼭지만 사용했다면",
+    "판매 금액은 초콜릿 판매 금액보다"
+  ]
+};
 
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
 const numberList = value => (value || "").split(",").filter(Boolean).map(Number);
@@ -33,7 +50,7 @@ for (const type of barGraphTypes) {
     for (let seed = 1; seed <= 450; seed += 1) {
       let generated;
       try {
-        generated = api.generate(type, 0, difficulty, seed, seed);
+        generated = api.generate(type, 0, difficulty, seed, type.variant);
       } catch (error) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
         continue;
@@ -82,6 +99,7 @@ for (const type of lineGraphTypes) {
       const svg = generated.prompt.match(/<svg class="line-chart"[^>]*>/)?.[0];
       check(Boolean(svg), `${type.id} / 시드 ${seed}: 꺾은선그래프 SVG가 없습니다.`);
       if (!svg) continue;
+      check(generated.prompt.includes(lineGraphSignatures[type.generatorKey][type.variant]), `${type.id} / 시드 ${seed}: 세부 유형과 원본 구조가 다릅니다.`);
 
       const step = Number(attribute(svg, "data-chart-step"));
       const scaleMax = Number(attribute(svg, "data-chart-scale-max"));
