@@ -184,7 +184,7 @@ def build(output: Path, font_path: Path) -> None:
         text(page, body_rect, body, font=fonts["body"], size=7.2, color=MUTED, align=align)
 
     page.draw_rect(pymupdf.Rect(0, 674, A4.width, 789), color=VIOLET_DARK, fill=VIOLET_DARK)
-    text(page, pymupdf.Rect(40, 692, 182, 713), "시험 당일 · 50분", font=fonts["bold"], size=11.3, color=WHITE)
+    text(page, pymupdf.Rect(40, 692, 182, 713), "과목별 · 50분", font=fonts["bold"], size=11.3, color=WHITE)
     test_steps = [
         ("0-35", "확실한 문제부터", "막히면 표시하고 이동"),
         ("35-45", "어려운 문제 다시", "조건을 천천히 읽기"),
