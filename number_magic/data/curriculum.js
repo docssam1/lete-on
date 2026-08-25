@@ -177,6 +177,31 @@ window.NM_CURRICULUM = {
           title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
           units:['H-11','H-12','H-13'] }
       ]
+    },
+
+    /* ===== MIDDLE1 · 음수의 동굴 (중1 정수와 유리수, W8) =====
+       근거: MASTER-ROADMAP.md §5(중1 W8) + 중등연산-목차.md(G03~G25 실측).
+       이 교재는 정수·유리수 사칙연산과 거듭제곱만 다룬다 — 문자와 식·
+       일차방정식·정비례반비례는 목차에 없어 다음 배치로 미룬다. */
+    {
+      id:'middle1', name:'MIDDLE1', grade:'중1', order:4,
+      title:'MIDDLE1', subtitle:{ko:'음수의 동굴 · 정수와 유리수',en:'The Cave of Negatives · Integers & Rationals',zh:'负数洞窟·整数与有理数'},
+      ageFrom:12, ageLabel:'중1',
+      color:'#16417C', accent:'#C9A063',
+      desc:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 것부터 시작해요',
+        en:'Above and below sea level, points scored and lost — it all starts with naming the two directions from 0',
+        zh:'海拔与海拔以下，得分与失分——从给0两侧的方向命名开始'},
+      levels:[
+        { id:'29', available:true,
+          title:{ko:'29 정수의 세계',en:'29 · World of Integers',zh:'29·整数的世界'},
+          units:['M-01','M-02','M-03'] },
+        { id:'30', available:true,
+          title:{ko:'30 부호의 규칙',en:'30 · Rules of Sign',zh:'30·符号的规则'},
+          units:['M-04','M-05','M-06'] },
+        { id:'31', available:true,
+          title:{ko:'31 유리수 정복',en:'31 · Conquering Rationals',zh:'31·征服有理数'},
+          units:['M-07','M-08','M-09'] }
+      ]
     }
   ],
 

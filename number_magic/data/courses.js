@@ -120,6 +120,18 @@ const COURSE_SPEC = [
    drills:['DV7','DV8','MX2'], magic:[['H-03'],['H-04'],['H-05'],['H-06']]},
  {id:28, tier:'challenge', title:{ko:'제곱의 산',en:'Mountain of Squares',zh:'平方之山'},
    drills:['ML11','ML20','MX4'], magic:[['H-07'],['H-08'],['H-09'],['H-10']]},
+
+ /* 29~31 실배치(2026-08-25, 중등 W8 · 중1 정수와 유리수): MASTER-ROADMAP.md
+    §8 Phase 3. drills는 그 과정에서 처음 등장하는 MD 스레드 + 경시의 탑
+    (CH-시리즈) 재료 일부(작업 지시 "이전 과정 복습 풀에는 경시의 탑 재료
+    일부 포함") — CH5(순환소수 나눗셈)는 course29의 자기 재료로 등록해
+    이후 과정(30·31)의 priorPool 복습 순환에도 자동으로 실린다. */
+ {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
+   drills:['MD1','MD2','MD3','CH5'], magic:[['M-01'],['M-02'],['M-03']]},
+ {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
+   drills:['MD4','MD5','MD6'], magic:[['M-04'],['M-05'],['M-06']]},
+ {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
+   drills:['MD7','MD8','MD9'], magic:[['M-07'],['M-08'],['M-09']]},
 ];
 
 function buildCourses(NM_THREADS){

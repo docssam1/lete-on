@@ -307,6 +307,32 @@ window.NM_ROADMAP = {
       theme:{ko:'보강 · 몰아주기 곱·어림하기·큰 수 정복',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
       units:['H-11','H-12','H-13'],
       tip:{ko:'0의 개수만 세어도 억인지 조인지 바로 알 수 있어요!',en:'Just count the zeros to know if it\'s a hundred-million or a trillion!',zh:'只要数一数0的个数，就能立刻知道是亿还是万亿！'}
+    },
+
+    /* ─────── W8 : 음수의 동굴 — 중1 정수와 유리수 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W8 음수의 동굴(중1)" 스토리 스테이지. 경시의
+       탑(CR9~CRB) 다음, 초등 트랙 끝에 이어 붙는다 — 필수 연산 관문
+       §4 "CHALLENGE 1부 ← W8 정수·유리수 사칙"과도 정합. */
+    {
+      id:'W8-1', icon:'🌋', grade:'중1',
+      edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
+      units:['M-01','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+    },
+    {
+      id:'W8-2', icon:'🎲', grade:'중1',
+      edu:{ko:'중1 부호의 규칙',en:'G7 Rules of Sign',zh:'初一符号的规则'},
+      theme:{ko:'W8-2 · 부호의 규칙 — 곱셈·나눗셈·거듭제곱·혼합',en:'W8-2 · Rules of Sign — ×÷, Powers & Mixed Ops',zh:'W8-2·符号的规则——乘除·乘方·混合运算'},
+      units:['M-04','M-05','M-06'],
+      tip:{ko:'음수 개수가 짝이면 +, 홀이면 − — 부호부터 정하고 시작해요!',en:'Even negatives = +, odd = − : decide the sign first!',zh:'负数个数为偶得正，为奇得负——先定符号！'}
+    },
+    {
+      id:'W8-3', icon:'🔁', grade:'중1',
+      edu:{ko:'중1 유리수 정복',en:'G7 Conquering Rationals',zh:'初一征服有理数'},
+      theme:{ko:'W8-3 · 유리수 정복 — 곱나눗·유한소수·순환소수',en:'W8-3 · Conquering Rationals — × ÷, Terminating & Repeating',zh:'W8-3·征服有理数——乘除·有限小数·循环小数'},
+      units:['M-07','M-08','M-09'],
+      tip:{ko:'분모 속 2와 5만 있으면 끝나는 소수, 다른 수가 숨어 있으면 영원히 반복돼요!',en:'Only 2s and 5s in the denominator? It ends. Anything else hiding? It repeats forever!',zh:'分母只有2和5就会结束，藏着别的数就会永远循环！'}
     }
 
   ]
