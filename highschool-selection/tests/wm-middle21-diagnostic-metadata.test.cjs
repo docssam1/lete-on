@@ -4,7 +4,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const core = require("../data/question-bank-core.js");
 const diagnostic = require("../data/wm-middle21-diagnostic-metadata.js");
+const responseSchema = require("../data/review-only/wm-middle21-response-schema.js");
 const privateScorer = require("../server/private-scorer.js");
+const reportBuilder = require("../server/report-builder.js");
+const reportSecurity = require("../shared/report-security.js");
 
 const EXAM_IDS = Array.from({ length: 4 }, (_, index) =>
   `wm-middle21-basic-entry-r${String(index + 1).padStart(2, "0")}`
@@ -139,4 +142,71 @@ test("private scorer derives WM report classification from the reviewed public p
     evidence: ["pol-wm-test"]
   };
   assert.throws(() => privateScorer.normalize(raw), /private classification differs/);
+});
+
+test("all four representative rounds produce a complete printable diagnostic report", async () => {
+  const scorerData = {
+    schemaVersion: "highselect-private-scorer/v1",
+    exams: Object.fromEntries(EXAM_IDS.map((examId, roundIndex) => [examId, {
+      gradingVersion: `wm-m21-r${String(roundIndex + 1).padStart(2, "0")}-v1`,
+      classificationStatus: "verified",
+      items: Array.from({ length: 40 }, (_, index) => ({
+        number: index + 1,
+        responseType: "input",
+        answerSpec: { type: "input", answers: [`key-${roundIndex + 1}-${index + 1}`] }
+      }))
+    }]))
+  };
+  const scorer = privateScorer.createAdapter({ data: scorerData });
+
+  for (let roundIndex = 0; roundIndex < EXAM_IDS.length; roundIndex += 1) {
+    const examId = EXAM_IDS[roundIndex];
+    const schema = responseSchema.forStudent(examId, "student_wm");
+    const answers = schema.questions.map(question => ({
+      number: question.number,
+      responseType: question.responseType,
+      value: question.number % 4 === 0 ? "wrong" : `key-${roundIndex + 1}-${question.number}`
+    }));
+    const scored = await scorer.score(examId, answers, schema);
+    const attemptId = `att_wm_${roundIndex + 1}`;
+    const title = `원수학 중2-1 기본반 입학 대비 ${roundIndex + 1}회`;
+    const report = reportBuilder.buildReport({
+      attemptId,
+      studentId: "student_wm",
+      exam: { examId, title },
+      submittedAt: "2026-08-25T09:00:00.000Z",
+      scored
+    });
+    const validated = reportSecurity.validateReport(report, {
+      attemptId,
+      session: { studentId: "student_wm" },
+      catalog: {
+        exams: [{
+          id: examId,
+          title,
+          questionCount: 40,
+          programId: "WM",
+          curriculumVersion: "2022-revised",
+          releaseStatus: "released",
+          answerStatus: "verified",
+          classificationStatus: "verified"
+        }]
+      },
+      cutlinePolicies: { referenceCutlines: [], examAssignments: [] }
+    });
+
+    assert.equal(validated.questionCount, 40);
+    assert.equal(validated.correctCount, 30);
+    assert.equal(validated.wrongCount, 10);
+    assert.equal(validated.score, 30);
+    assert.equal(validated.totalPoints, 40);
+    assert.equal(validated.accuracy, 75);
+    assert.deepEqual(validated.byDomain.map(row => [row.label, row.questionCount]), [["대수", 20], ["기하", 20]]);
+    assert.ok(validated.byTermUnit.length > 1);
+    assert.ok(validated.byType.length > 1);
+    assert.ok(validated.byDifficulty.length >= 2);
+    assert.ok(validated.weakPriorities.length > 0);
+    assert.ok(validated.comments.some(comment => comment.type === "item-prescription"));
+    assert.equal(validated.cutline.available, false);
+  }
 });
