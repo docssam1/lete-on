@@ -369,6 +369,42 @@ window.NM_ROADMAP = {
       theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
       units:['M-18','M-19','M-20'],
       tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
+    },
+
+    /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W11 공통수학1" 스토리 스테이지. "고1"
+       대신 2022 개정 과목명 "공통수학1"을 grade에 그대로 쓴다(과목명
+       준수 원칙, 작업지시). */
+    {
+      id:'W11-1', icon:'📦', grade:'공통수학1',
+      edu:{ko:'공통수학1 다항식과 나머지정리',en:'Common Math 1 Polynomials & the Remainder Theorem',zh:'公共数学1多项式与余数定理'},
+      theme:{ko:'W11-1 · 다항식과 나머지정리 — 곱셈공식 확장·항등식·인수분해 심화',en:'W11-1 · Polynomials & the Remainder Theorem — Extended Formulas, Identities, Advanced Factoring',zh:'W11-1·多项式与余数定理——乘法公式扩展·恒等式·因式分解进阶'},
+      units:['M-21','M-22','M-23','M-24','M-25'],
+      tip:{ko:'나눗셈을 다 하지 않아도 P(a)만 계산하면 나머지가 바로 나와요 — 대입 한 번의 지름길!',en:'You don\'t need long division — just compute P(a) and the remainder appears, a one-substitution shortcut!',zh:'不用做完整除法，算出P(a)余数就出来了——一次代入的捷径！'}
+    },
+    {
+      id:'W11-2', icon:'🔭', grade:'공통수학1',
+      edu:{ko:'공통수학1 이차방정식과 행렬',en:'Common Math 1 Quadratics & Matrices',zh:'公共数学1二次方程与矩阵'},
+      theme:{ko:'W11-2 · 이차방정식과 행렬 — 판별식·근과 계수·근의 공식·부등식·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
+      units:['M-26','M-27','M-28','M-29','M-30'],
+      tip:{ko:'판별식은 근을 구하기 전에 몇 개인지 미리 아는 정찰병이에요!',en:'The discriminant scouts ahead and tells you the root count before you even solve!',zh:'判别式是求根之前先知道有几个根的侦察兵！'}
+    },
+
+    /* ─────── W12 : 도형의 방정식 나라 — 공통수학2 (2026-08-25) ────
+       MASTER-ROADMAP.md §3 "W12 공통수학2" 스토리 스테이지. */
+    {
+      id:'W12-1', icon:'📏', grade:'공통수학2',
+      edu:{ko:'공통수학2 점과 직선',en:'Common Math 2 Points & Lines',zh:'公共数学2点与直线'},
+      theme:{ko:'W12-1 · 점과 직선 — 두 점 사이의 거리·중점과 내분점·직선의 방정식',en:'W12-1 · Points & Lines — Distance, Midpoints & Division Points, Line Equations',zh:'W12-1·点与直线——两点间距离·中点与内分点·直线方程'},
+      units:['M-31','M-32','M-33'],
+      tip:{ko:'두 점 사이의 거리는 결국 피타고라스 정리 — 가로·세로 차를 제곱해 더하고 제곱근을 씌워요!',en:'Distance between two points is just the Pythagorean theorem — square the differences, add, take the root!',zh:'两点间距离其实就是勾股定理——差平方后相加，再开方！'}
+    },
+    {
+      id:'W12-2', icon:'⭕', grade:'공통수학2',
+      edu:{ko:'공통수학2 직선의 관계와 원',en:'Common Math 2 Relations Between Lines & Circles',zh:'公共数学2直线的关系与圆'},
+      theme:{ko:'W12-2 · 직선의 관계와 원 — 평행·수직 조건·원의 방정식',en:'W12-2 · Relations Between Lines & Circles — Parallel/Perpendicular, Circle Equations',zh:'W12-2·直线的关系与圆——平行·垂直条件·圆的方程'},
+      units:['M-34','M-35'],
+      tip:{ko:'x항·y항을 완전제곱으로 묶으면 원의 중심과 반지름이 한눈에 보여요!',en:'Complete the square on x and y, and a circle\'s center and radius appear at a glance!',zh:'把x、y项配成完全平方，圆的中心和半径一眼就看出来！'}
     }
 
   ]

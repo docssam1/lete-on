@@ -894,6 +894,9 @@ function screenGradeCourse(){
     {key:'중1',label:{ko:'중1',en:'Grade 7',zh:'初一'}},
     {key:'중2',label:{ko:'중2',en:'Grade 8',zh:'初二'}},
     {key:'중3',label:{ko:'중3',en:'Grade 9',zh:'初三'}},
+    /* 2022 개정 과목명 준수 — "고1"·"고2" 표기 없음(작업지시) */
+    {key:'공통수학1',label:{ko:'공통수학1',en:'Math 1',zh:'数学1'}},
+    {key:'공통수학2',label:{ko:'공통수학2',en:'Math 2',zh:'数学2'}},
   ];
   S._gcGrade=S._gcGrade||'초1';
 

@@ -243,6 +243,48 @@ window.NM_CURRICULUM = {
           title:{ko:'35 곱셈공식과 인수분해',en:'35 · Formulas & Factoring',zh:'35·乘法公式与因式分解'},
           units:['M-18','M-19','M-20'] }
       ]
+    },
+
+    /* ===== HIGHMATH1 · 다항식의 탑 (공통수학1, W11) =====
+       근거: MASTER-ROADMAP.md §6(W11 공통수학1). 2022 개정 과목명
+       준수 — "고1" 표기 없음(전부 "공통수학1"). */
+    {
+      id:'highmath1', name:'HIGHMATH1', grade:'공통수학1', order:7,
+      title:'HIGHMATH1', subtitle:{ko:'다항식의 탑 · 방정식과 부등식',en:'Tower of Polynomials · Equations & Inequalities',zh:'多项式之塔·方程与不等式'},
+      ageFrom:16, ageLabel:'공통수학1',
+      color:'#0f2e4f', accent:'#e0a03c',
+      desc:{ko:'괄호 두 개를 곱하는 것부터 판별식·근의 공식·행렬까지 — 다항식을 다루는 손이 한 단계 더 정교해져요',
+        en:'From multiplying two brackets to the discriminant, the quadratic formula, and matrices — handling polynomials gets a level more precise',
+        zh:'从两括号相乘到判别式、求根公式、矩阵——处理多项式的手法更进一层'},
+      levels:[
+        { id:'36', available:true,
+          title:{ko:'36 다항식과 나머지정리',en:'36 · Polynomials & the Remainder Theorem',zh:'36·多项式与余数定理'},
+          units:['M-21','M-22','M-23','M-24','M-25'] },
+        { id:'37', available:true,
+          title:{ko:'37 이차방정식과 행렬',en:'37 · Quadratics & Matrices',zh:'37·二次方程与矩阵'},
+          units:['M-26','M-27','M-28','M-29','M-30'] }
+      ]
+    },
+
+    /* ===== HIGHMATH2 · 도형의 방정식 나라 (공통수학2, W12) =====
+       근거: MASTER-ROADMAP.md §6(W12 공통수학2). "고1" 표기 없음
+       (전부 "공통수학2"). */
+    {
+      id:'highmath2', name:'HIGHMATH2', grade:'공통수학2', order:8,
+      title:'HIGHMATH2', subtitle:{ko:'도형의 방정식 나라 · 좌표평면 위의 도형',en:'Land of Coordinate Geometry · Shapes on the Plane',zh:'图形方程之国·坐标平面上的图形'},
+      ageFrom:16, ageLabel:'공통수학2',
+      color:'#1b6e5b', accent:'#2f9e78',
+      desc:{ko:'두 점 사이의 거리부터 직선·원의 방정식까지 — 좌표평면 위의 도형을 식으로 붙잡아요',
+        en:'From the distance between two points to lines and circles — pinning down shapes on the coordinate plane with equations',
+        zh:'从两点间的距离到直线、圆的方程——用方程把坐标平面上的图形定住'},
+      levels:[
+        { id:'38', available:true,
+          title:{ko:'38 점과 직선',en:'38 · Points & Lines',zh:'38·点与直线'},
+          units:['M-31','M-32','M-33'] },
+        { id:'39', available:true,
+          title:{ko:'39 직선의 관계와 원',en:'39 · Relations Between Lines & Circles',zh:'39·直线的关系与圆'},
+          units:['M-34','M-35'] }
+      ]
     }
   ],
 

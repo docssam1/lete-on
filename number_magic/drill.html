@@ -233,6 +233,8 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/mid.js"></script>
 <script src="engine/threads/mid2.js"></script>
 <script src="engine/threads/mid3.js"></script>
+<script src="engine/threads/mid4.js"></script>
+<script src="engine/threads/mid5.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -379,6 +381,59 @@ var TOPICS = [
       {label:'합차공식(실전)', thread:'MD19', level:3, desc:'(x+a)(x-a)'},
       {label:'인수분해 기초(모두 양수)', thread:'MD20', level:1, desc:'p,q 찾기'},
       {label:'인수분해 기초(부호 섞임, 실전)', thread:'MD20', level:2, desc:'p,q 찾기'},
+    ]
+  },
+  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', icon:'📦', color:'#0f2e4f', section:'magic',
+    subs:[
+      {label:'다항식 곱셈(이항식×이항식)', thread:'MD21', level:1, desc:'전개 3다칸'},
+      {label:'다항식 나눗셈(조립제법)', thread:'MD21', level:2, desc:'몫·나머지'},
+      {label:'다항식 곱셈(이항×삼항, 실전)', thread:'MD21', level:3, desc:'전개 4다칸'},
+      {label:'곱셈공식 확장 (x+a)³', thread:'MD22', level:1, desc:'계수 3다칸'},
+      {label:'곱셈공식 확장(a 음수)', thread:'MD22', level:2, desc:'부호 포함'},
+      {label:'합·차의 세제곱 공식(실전)', thread:'MD22', level:3, desc:'x³±a³'},
+      {label:'항등식(계수 직접 비교)', thread:'MD23', level:1, desc:'a,b 찾기'},
+      {label:'항등식(전개 후 비교)', thread:'MD23', level:2, desc:'a,b 찾기'},
+      {label:'항등식(전개 후 비교, 실전)', thread:'MD23', level:3, desc:'더 큰 범위'},
+      {label:'나머지정리(이차식)', thread:'MD24', level:1, desc:'P(a) 계산'},
+      {label:'나머지정리(삼차식)', thread:'MD24', level:2, desc:'P(a) 계산'},
+      {label:'나머지정리(계수 역산, 실전)', thread:'MD24', level:3, desc:'나머지→k'},
+      {label:'인수분해 심화(합의 세제곱)', thread:'MD25', level:1, desc:'x³+a³'},
+      {label:'인수분해 심화(차의 세제곱)', thread:'MD25', level:2, desc:'x³-a³'},
+      {label:'인수분해 심화(치환, 실전)', thread:'MD25', level:3, desc:'사차식'},
+      {label:'판별식 D값', thread:'MD26', level:1, desc:'D=b²-4ac'},
+      {label:'판별식(실근 개수)', thread:'MD26', level:2, desc:'개수 판정'},
+      {label:'판별식(중근 조건, 실전)', thread:'MD26', level:3, desc:'k=±'},
+      {label:'근과 계수(a=1)', thread:'MD27', level:1, desc:'합과 곱'},
+      {label:'근과 계수(a≠1)', thread:'MD27', level:2, desc:'합과 곱'},
+      {label:'근과 계수(α²+β², 실전)', thread:'MD27', level:3, desc:'대칭식'},
+      {label:'근의 공식(a=1)', thread:'MD28', level:1, desc:'[p,q,r]'},
+      {label:'근의 공식(a≠1)', thread:'MD28', level:2, desc:'[p,q,r]'},
+      {label:'근의 공식(실전 범위)', thread:'MD28', level:3, desc:'[p,q,r]'},
+      {label:'이차부등식(인수분해된 형태)', thread:'MD29', level:1, desc:'해 구간'},
+      {label:'이차부등식(전개된 형태)', thread:'MD29', level:2, desc:'해 구간'},
+      {label:'이차부등식(x²계수≠1, 실전)', thread:'MD29', level:3, desc:'해 구간'},
+      {label:'행렬 덧셈·뺄셈', thread:'MD30', level:1, desc:'4다칸'},
+      {label:'행렬 스칼라곱', thread:'MD30', level:2, desc:'4다칸'},
+      {label:'행렬곱(실전)', thread:'MD30', level:3, desc:'4다칸'},
+    ]
+  },
+  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', icon:'📏', color:'#1b6e5b', section:'magic',
+    subs:[
+      {label:'두 점 사이의 거리(연습)', thread:'MD31', level:1, desc:'[계수,근호안]'},
+      {label:'두 점 사이의 거리(더 큰 좌표)', thread:'MD31', level:2, desc:'[계수,근호안]'},
+      {label:'두 점 사이의 거리(음수 좌표, 실전)', thread:'MD31', level:3, desc:'[계수,근호안]'},
+      {label:'중점', thread:'MD32', level:1, desc:'좌표 2다칸'},
+      {label:'내분점(m:n)', thread:'MD32', level:2, desc:'좌표 2다칸'},
+      {label:'외분점(실전)', thread:'MD32', level:3, desc:'좌표 2다칸'},
+      {label:'직선의 방정식(두 점 통과)', thread:'MD33', level:1, desc:'y=ax+b'},
+      {label:'직선의 방정식(일반형→기울기절편형)', thread:'MD33', level:2, desc:'y=ax+b'},
+      {label:'직선의 방정식(실전 범위)', thread:'MD33', level:3, desc:'y=ax+b'},
+      {label:'두 직선의 평행 조건', thread:'MD34', level:1, desc:'k 구하기'},
+      {label:'두 직선의 수직 조건', thread:'MD34', level:2, desc:'k 구하기'},
+      {label:'평행·수직 혼합(실전)', thread:'MD34', level:3, desc:'k 구하기'},
+      {label:'원의 방정식(완성형)', thread:'MD35', level:1, desc:'[중심,반지름]'},
+      {label:'원의 방정식(더 큰 범위)', thread:'MD35', level:2, desc:'[중심,반지름]'},
+      {label:'원의 방정식(공통계수, 실전)', thread:'MD35', level:3, desc:'[중심,반지름]'},
     ]
   }
 ];

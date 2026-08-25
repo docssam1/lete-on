@@ -146,6 +146,21 @@ const COURSE_SPEC = [
    drills:['MD15','MD16','MD17','MD14'], magic:[['M-15'],['M-16'],['M-17']]},
  {id:35, tier:'middle3', title:{ko:'곱셈공식과 인수분해',en:'Formulas & Factoring',zh:'乘法公式与因式分解'},
    drills:['MD18','MD19','MD20'], magic:[['M-18'],['M-19'],['M-20']]},
+
+ /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.
+    course36은 W10 마지막 재료 MD20을, course38(공통수학2 진입부)은
+    W11 마지막 재료 MD30을 복습 풀에 얹는다(32~35와 같은 관례 —
+    spec.drills에 얹으면 자기 재료로도 잡히고 이후 과정의 priorPool
+    순환에도 자동으로 실린다). 2022 개정 과목명 준수 — "고1" 표기
+    없음(전부 "공통수학1"·"공통수학2"). */
+ {id:36, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
+   drills:['MD21','MD22','MD23','MD24','MD25','MD20'], magic:[['M-21'],['M-22'],['M-23'],['M-24'],['M-25']]},
+ {id:37, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
+   drills:['MD26','MD27','MD28','MD29','MD30'], magic:[['M-26'],['M-27'],['M-28'],['M-29'],['M-30']]},
+ {id:38, tier:'highmath2', title:{ko:'점과 직선',en:'Points & Lines',zh:'点与直线'},
+   drills:['MD31','MD32','MD33','MD30'], magic:[['M-31'],['M-32'],['M-33']]},
+ {id:39, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
+   drills:['MD34','MD35'], magic:[['M-34'],['M-35']]},
 ];
 
 function buildCourses(NM_THREADS){
