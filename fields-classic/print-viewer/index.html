@@ -309,7 +309,17 @@ async function render(){
 }
 
 render().catch(error=>{
-  status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  if(documentKey.startsWith("premier-")){
+    status.textContent="이 시험지는 현재 승인된 원본 이미지 자산을 준비하고 있습니다.";
+    const line=document.createElement("br");
+    const back=document.createElement("a");
+    back.href="../../premier/";
+    back.textContent="프리미어 모의고사 서재로 돌아가기";
+    back.style.color="#1e5f91";
+    status.append(line,back);
+  }else{
+    status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  }
   status.style.color="#b91c1c";
 });
 </script>
