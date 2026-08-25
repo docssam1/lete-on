@@ -148,3 +148,9 @@ engine/threads/*.js 로 구현되어 있고, 유아용 NL 스레드(nl.js)가 �
 - 참조 원천: 두뇌로 과정표·6세 상위권 페이스·다함책 드릴 형태·필즈 운영 로드맵
   (Drive `1adIC-1P6IlTBn2bzb8OgNSELJBK_pUvQ`)·학부모 정체 고충.
 
+
+## source-to-memory는 원장 자체 스킬 (2026-08-25)
+`https://github.com/docssam1/source-to-memory`는 **원장이 직접 만든 스킬**이다 —
+드라이브 라이선스 원본을 내용 복사 없이 위치·판정 포인터로만 카탈로그화(`.source-memory/`).
+장기 기억 노트를 드라이브 `지필드메모리/source-to-memory/` 폴더에 남겼다(사용법·불변 규칙·
+새 세션 안내). 새 세션은 드라이브 원본이 필요할 때 이 카탈로그부터 연다.
