@@ -24,8 +24,8 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-2";
-import { messages, text } from "./i18n.js?v=geoboard-2";
+} from "./levels.js?v=geoboard-4";
+import { messages, text } from "./i18n.js?v=geoboard-4";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -650,6 +650,7 @@ function applyLanguage() {
   $("#retryButton").textContent = t("retry");
   $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   $("#modelLabel").textContent = t("modelLabel");
+  $("#buildLabel").textContent = t("buildLabel");
   ui.next.textContent = t("next");
   $("#dialogTitle").textContent = t("chooseLevel");
   $("#closeLevels").setAttribute("aria-label", t("close"));
