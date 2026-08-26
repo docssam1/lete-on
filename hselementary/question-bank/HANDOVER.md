@@ -4,8 +4,8 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
-- Total types: 493 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 493 (deterministic generator availability check)
+- Total types: 523 across 6 semesters, 36 major units, and 174 subunits
+- Implemented types: 523 (deterministic generator availability check)
 - Pending types: 0
 - Completed: all six units in grades 4, 5, and 6 for both semesters
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
@@ -44,9 +44,9 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 493 types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 150 seeds. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 523 types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 50 seeds per difficulty. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
-The full regression suite has 29 dedicated audits. The 2026-08-25 run passed every audit after the latest generator updates. In addition to answer checks, the bank now rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+The full regression suite has 30 dedicated audits. The 2026-08-26 run passed the updated 4-2 fraction audit and all shared notation, language, numeric-display, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
 
 ## Implementation Notes
 
@@ -54,8 +54,9 @@ The full regression suite has 29 dedicated audits. The 2026-08-25 run passed eve
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Elementary explanation policy: `elementary-language-audit.js` checks all 493 types across 150 seeds per difficulty
-- Numeric display policy: `numeric-display-audit.js` checks all 493 types across 150 seeds per difficulty
+- Elementary explanation policy: `elementary-language-audit.js` checks all 523 types across 100 seeds per difficulty
+- Numeric display policy: `numeric-display-audit.js` checks all 523 types across 100 seeds per difficulty
+- 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 36 types and 36 distinct source structures
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
 - Plane-transformation detail routing, composite-shape diversity, grid bounds, and point-coordinate check: `movement-audit.js`
