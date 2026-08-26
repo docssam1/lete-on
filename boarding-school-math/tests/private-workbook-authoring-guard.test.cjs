@@ -291,7 +291,20 @@ test("student answer disclosures fail closed without treating a condition number
     ["Answer 7\u034F:11", "7:11"],
     ["Answer 7\\colon 11", "7:11"],
     ["Answer 7\\mathbin{:}11", "7:11"],
-    ["정답은 4:7", "4:7"]
+    ["정답은 4:7", "4:7"],
+    ["7", "7"],
+    ["Enter 7.", "7"],
+    ["Final value: 7", "7"],
+    ["계산값은 7", "7"],
+    ["计算值为 7", "7"],
+    ["Ｆｉｎａｌ　ｖａｌｕｅ：７", "7"],
+    ["4 ∶ 7", "4:7"],
+    ["4 ⋮ 7", "4:7"],
+    ["계산값7", "7"],
+    ["值7", "7"],
+    ["Final value7", "7"],
+    ["value_7", "7"],
+    ["7_items", "7"]
   ];
   blocked.forEach(function (entry) {
     assert.throws(function () {
@@ -299,11 +312,33 @@ test("student answer disclosures fail closed without treating a condition number
     }, /STUDENT_ANSWER_LEAK/);
   });
   [
-    ["The condition gives 117 as an input value.", "17"]
+    ["The condition gives 117 as an input value.", "17"],
+    ["The condition gives 7.5 as an input value.", "7"],
+    ["The condition gives 70 as an input value.", "7"],
+    ["The condition gives 7:11 as an input ratio.", "7"],
+    ["The condition gives 7,000 as an input quantity.", "7"]
   ].forEach(function (entry) {
     assert.doesNotThrow(function () {
       validator.assertStudentContentDoesNotRevealAnswer(entry[0], entry[1], "synthetic-component");
     });
+  });
+});
+
+test("full workbook preflight blocks bare expected-response disclosure in every student locale", function () {
+  const contentByLocale = {
+    ko: "계산값1",
+    en: "value_1",
+    "zh-Hans": "计算值1"
+  };
+  Object.entries(contentByLocale).forEach(function (entry) {
+    const pack = syntheticWorkbookPack();
+    const responseComponent = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+      return component.responseMode !== null;
+    });
+    responseComponent.contentByLocale[entry[0]] = entry[1];
+    assert.throws(function () {
+      validator.validatePack(pack, "synthetic-workbook.json");
+    }, /STUDENT_ANSWER_LEAK/);
   });
 });
 

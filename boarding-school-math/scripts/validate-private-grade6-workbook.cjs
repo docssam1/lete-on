@@ -174,7 +174,7 @@ function normalizeForAnswerLeakScan(value) {
     .replace(/[\\${}]/gu, " ")
     .replace(/[\p{C}\p{M}]/gu, "")
     .replace(/\s+/gu, " ")
-    .replace(/[\u2236\uA789\uFE13\uFE55\uFF1A]/gu, ":")
+    .replace(/[\u2236\u22EE\uA789\uFE13\uFE55\uFF1A]/gu, ":")
     .replace(/\s*:\s*/gu, ":")
     .trim();
 }
@@ -257,6 +257,29 @@ function disclosedResponseStartsCandidate(candidate, normalizedResponse) {
   return !!match && answerValueBoundary(candidate.slice(match[0].length, match[0].length + 1));
 }
 
+function containsStandaloneExpectedResponse(normalizedContent, normalizedResponse) {
+  // A response-bearing student string must never contain the exact canonical
+  // response as a visible token. Looking only after a small list of labels is
+  // not sufficient: an author can disclose a value bare or after a synonym
+  // such as "final value". Only digits and joined numeric notation can make
+  // a numeric occurrence part of a larger condition: Hangul, Han, and Latin
+  // text may attach directly to a visible number and must not shield a leak.
+  let index = normalizedContent.indexOf(normalizedResponse);
+  while (index !== -1) {
+    const before = index === 0 ? "" : normalizedContent[index - 1];
+    const afterIndex = index + normalizedResponse.length;
+    const after = afterIndex >= normalizedContent.length ? "" : normalizedContent[afterIndex];
+    const beforeNeighbor = index < 2 ? "" : normalizedContent[index - 2];
+    const afterNeighbor = afterIndex + 1 >= normalizedContent.length ? "" : normalizedContent[afterIndex + 1];
+    const joinsNumericTokenBefore = ".,:/".includes(before) && /[0-9]/u.test(beforeNeighbor);
+    const joinsNumericTokenAfter = ".,:/".includes(after) && /[0-9]/u.test(afterNeighbor);
+    const embedded = /\p{N}/u.test(before) || /\p{N}/u.test(after) || joinsNumericTokenBefore || joinsNumericTokenAfter;
+    if (!embedded) return true;
+    index = normalizedContent.indexOf(normalizedResponse, index + 1);
+  }
+  return false;
+}
+
 function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference, locale) {
   const normalizedContent = assertStudentAnswerLabelAbsent(content, reference);
   // Response-bearing student blocks accept plain text only until content is
@@ -264,6 +287,7 @@ function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, refe
   assertResponseStudentTextSyntax(content, locale, reference);
   const normalizedResponse = normalizeForAnswerLeakScan(expectedResponse);
   assert(nonBlankText(normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
+  assert(!containsStandaloneExpectedResponse(normalizedContent, normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
   ANSWER_VALUE_LABEL.lastIndex = 0;
   let label;
   while ((label = ANSWER_VALUE_LABEL.exec(normalizedContent))) {
