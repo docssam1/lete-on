@@ -20,6 +20,15 @@ const CONFIDENTIALITY_MARKER = "GFIELD_PRIVATE_WORKBOOK_DO_NOT_COMMIT";
 const DRAFT_STATE = "draft-pending-independent-review";
 const PRODUCTION_STATE = "local-draft-no-pdf-or-download";
 const LOCAL_BINDING_STATE = "candidate-not-public-bound";
+const EEA_POWER_EVIDENCE_ID = "6.EE.A.1-isolated-positive-whole-number-power-evaluation";
+const EEA_POWER_BASE_MIN = 2;
+const EEA_POWER_BASE_MAX = 12;
+const EEA_POWER_EXPONENT_MIN = 2;
+const EEA_POWER_EXPONENT_MAX = 5;
+const EEA_POWER_RESULT_MAX = 250000n;
+const EEA_WORKED_EXAMPLE_BASE_MIN = 2;
+const EEA_WORKED_EXAMPLE_BASE_MAX = 20;
+const EEA_WORKED_EXAMPLE_RESULT_MAX = 3200000n;
 const REQUIRED_REVIEWS = Object.freeze([
   "math-correctness", "age-appropriateness", "answer-uniqueness",
   "translation-ko", "translation-en", "translation-zh-Hans", "rights"
@@ -291,6 +300,229 @@ function containsStandaloneExpectedResponse(normalizedContent, normalizedRespons
   return false;
 }
 
+function containsEeaNumericEquivalentAnswer(content, expectedResponse) {
+  const digits = String(expectedResponse);
+  if (!/^[1-9][0-9]*$/u.test(digits)) return false;
+  const normalized = String(content).normalize("NFKC");
+  const prefix = "(?:\\+)?0*";
+  const decimalZeroSuffix = "(?:[.,]0+)?";
+  function matches(expression) {
+    return new RegExp("(^|[^\\p{N}])" + expression + "(?![\\p{N}])", "u").test(normalized);
+  }
+  if (matches(prefix + escapeRegExpLiteral(digits) + decimalZeroSuffix)) return true;
+  if (digits.length < 4) return false;
+  const groups = [];
+  let offset = digits.length;
+  while (offset > 0) {
+    const nextOffset = Math.max(0, offset - 3);
+    groups.unshift(digits.slice(nextOffset, offset));
+    offset = nextOffset;
+  }
+  const groupingSeparator = "[.,\\s\\u00a0\\u202f\\u2009']+";
+  const expression = prefix + escapeRegExpLiteral(groups[0]) + groupingSeparator + groups.slice(1).map(escapeRegExpLiteral).join(groupingSeparator) + decimalZeroSuffix;
+  return matches(expression);
+}
+
+function eeaRomanNumeral(expectedResponse) {
+  const value = Number(String(expectedResponse));
+  if (!Number.isSafeInteger(value) || value < 1 || value > 3999) return null;
+  const symbols = Object.freeze([
+    [1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"],
+    [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]
+  ]);
+  let remainder = value;
+  let result = "";
+  symbols.forEach(function (entry) {
+    while (remainder >= entry[0]) {
+      result += entry[1];
+      remainder -= entry[0];
+    }
+  });
+  return result;
+}
+
+function containsEeaRomanAnswerToken(content, expectedResponse) {
+  const roman = eeaRomanNumeral(expectedResponse);
+  if (!roman) return false;
+  const matcher = new RegExp("(^|[^A-Za-z])" + roman + "(?![A-Za-z])", "iu");
+  return matcher.test(String(content).normalize("NFKC"));
+}
+
+function eeaEnglishNumberWord(value) {
+  const ones = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+  const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  function belowOneThousand(candidate) {
+    assert(candidate >= 0 && candidate < 1000, "EEA_CROSS_STUDENT_ANSWER_LEAK", "number-word");
+    if (candidate < 20) return ones[candidate];
+    if (candidate < 100) {
+      const tensDigit = Math.floor(candidate / 10);
+      const onesDigit = candidate % 10;
+      return onesDigit === 0 ? tens[tensDigit] : `${tens[tensDigit]}-${ones[onesDigit]}`;
+    }
+    const hundredsDigit = Math.floor(candidate / 100);
+    const remainder = candidate % 100;
+    return `${ones[hundredsDigit]} hundred${remainder === 0 ? "" : ` ${belowOneThousand(remainder)}`}`;
+  }
+  assert(Number.isSafeInteger(value) && value >= 0 && value <= Number(EEA_POWER_RESULT_MAX), "EEA_CROSS_STUDENT_ANSWER_LEAK", "number-word");
+  if (value < 1000) return belowOneThousand(value);
+  const thousands = Math.floor(value / 1000);
+  const remainder = value % 1000;
+  return `${belowOneThousand(thousands)} thousand${remainder === 0 ? "" : ` ${belowOneThousand(remainder)}`}`;
+}
+
+function eeaEnglishNumberWordVariants(value) {
+  const variants = [eeaEnglishNumberWord(value)];
+  if (value >= 1000 && value < 10000) {
+    const hundreds = Math.floor(value / 100);
+    const remainder = value % 100;
+    variants.push(`${eeaEnglishNumberWord(hundreds)} hundred${remainder === 0 ? "" : ` ${eeaEnglishNumberWord(remainder)}`}`);
+  }
+  return Object.freeze(Array.from(new Set(variants)));
+}
+
+function eeaKoreanSinoNumberWord(value, includeOneCoefficient) {
+  const digits = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+  const places = Object.freeze([[1000, "천"], [100, "백"], [10, "십"], [1, ""]]);
+  function belowTenThousand(candidate) {
+    let remainder = candidate;
+    let result = "";
+    places.forEach(function (entry) {
+      const place = entry[0];
+      const unit = entry[1];
+      const digit = Math.floor(remainder / place);
+      remainder %= place;
+      if (digit === 0) return;
+      if (place === 1 || digit > 1 || includeOneCoefficient) result += digits[digit];
+      result += unit;
+    });
+    return result;
+  }
+  assert(Number.isSafeInteger(value) && value >= 0 && value <= Number(EEA_POWER_RESULT_MAX), "EEA_CROSS_STUDENT_ANSWER_LEAK", "number-word");
+  if (value === 0) return "영";
+  const tenThousands = Math.floor(value / 10000);
+  const remainder = value % 10000;
+  return `${tenThousands === 0 ? "" : `${tenThousands === 1 && !includeOneCoefficient ? "" : belowTenThousand(tenThousands)}만`}${remainder === 0 ? "" : belowTenThousand(remainder)}`;
+}
+
+function eeaKoreanNativeNumberWords(value) {
+  return Object.freeze({
+    1: Object.freeze(["하나"]),
+    2: Object.freeze(["둘"]),
+    3: Object.freeze(["셋"]),
+    4: Object.freeze(["넷"]),
+    5: Object.freeze(["다섯"]),
+    6: Object.freeze(["여섯"]),
+    7: Object.freeze(["일곱"]),
+    8: Object.freeze(["여덟"]),
+    9: Object.freeze(["아홉"])
+  })[value] || Object.freeze([]);
+}
+
+function eeaKoreanBoundNumberWords(value) {
+  return Object.freeze({
+    1: Object.freeze(["한", "하나"]),
+    2: Object.freeze(["두", "둘"]),
+    3: Object.freeze(["세", "셋"]),
+    4: Object.freeze(["네", "넷"])
+  })[value] || Object.freeze([]);
+}
+
+function eeaChineseNumberWord(value, includeLeadingOne) {
+  const digits = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+  const places = Object.freeze([[1000, "千"], [100, "百"], [10, "十"], [1, ""]]);
+  function belowTenThousand(candidate) {
+    let remainder = candidate;
+    let result = "";
+    let pendingZero = false;
+    places.forEach(function (entry) {
+      const place = entry[0];
+      const unit = entry[1];
+      const digit = Math.floor(remainder / place);
+      remainder %= place;
+      if (digit === 0) {
+        if (result && remainder > 0) pendingZero = true;
+        return;
+      }
+      if (pendingZero) result += "零";
+      pendingZero = false;
+      if (!(place === 10 && digit === 1 && result === "" && !includeLeadingOne)) result += digits[digit];
+      result += unit;
+    });
+    return result;
+  }
+  assert(Number.isSafeInteger(value) && value >= 0 && value <= Number(EEA_POWER_RESULT_MAX), "EEA_CROSS_STUDENT_ANSWER_LEAK", "number-word");
+  if (value === 0) return digits[0];
+  const tenThousands = Math.floor(value / 10000);
+  const remainder = value % 10000;
+  if (tenThousands === 0) return belowTenThousand(remainder);
+  return `${belowTenThousand(tenThousands)}万${remainder === 0 ? "" : `${remainder < 1000 ? "零" : ""}${belowTenThousand(remainder)}`}`;
+}
+
+function eeaNumberWordForms(expectedResponse) {
+  const text = String(expectedResponse);
+  if (!/^(?:0|[1-9][0-9]*)$/u.test(text)) return null;
+  const value = Number(text);
+  if (!Number.isSafeInteger(value) || value < 0 || value > Number(EEA_POWER_RESULT_MAX)) return null;
+  return Object.freeze({
+    english: eeaEnglishNumberWordVariants(value),
+    korean: Object.freeze([eeaKoreanSinoNumberWord(value, false), eeaKoreanSinoNumberWord(value, true)]),
+    koreanNative: eeaKoreanNativeNumberWords(value),
+    koreanBound: eeaKoreanBoundNumberWords(value),
+    chinese: Object.freeze([eeaChineseNumberWord(value, false), eeaChineseNumberWord(value, true)])
+  });
+}
+
+function containsEeaEnglishNumberWord(content, word) {
+  const joiner = "(?:[\\s,\\-\\u2010-\\u2015\\u2212\\u2796\\uFE58\\uFE63\\uFF0D])*";
+  const rawParts = word.split(/[ -]/u).filter(Boolean);
+  const parts = rawParts.map(function (part, index) {
+    return part === "one" && ["hundred", "thousand"].includes(rawParts[index + 1]) ? "(?:one|a)" : escapeRegExpLiteral(part);
+  });
+  let expression = parts[0];
+  for (let index = 1; index < parts.length; index += 1) {
+    const separator = ["hundred", "thousand"].includes(rawParts[index - 1])
+      ? joiner + "(?:and" + joiner + ")?"
+      : joiner;
+    expression += separator + parts[index];
+  }
+  const matcher = new RegExp("(^|[^\\p{L}])" + expression + "(?![\\p{L}])", "iu");
+  return matcher.test(String(content).normalize("NFKC"));
+}
+
+function containsEeaKoreanNumberWord(content, word) {
+  const normalized = String(content).normalize("NFKC");
+  if (word.length > 1) return normalized.replace(/[\s,'\-\u2010-\u2015\u2212\u2796\uFE58\uFE63\uFF0D]/gu, "").includes(word);
+  const matcher = new RegExp("(^|[^\\p{Script=Hangul}])" + escapeRegExpLiteral(word) + "(?![\\p{Script=Hangul}])", "u");
+  return matcher.test(normalized);
+}
+
+function containsEeaChineseNumberWord(content, word) {
+  const expression = escapeRegExpLiteral(word)
+    .replace(/零/gu, "零?")
+    .replace(/二(?=[百千万])/gu, "[二两兩]")
+    .replace(/万/gu, "[万萬]");
+  return new RegExp(expression, "u").test(String(content).normalize("NFKC"));
+}
+
+function containsEeaKoreanBoundNumberWord(content, word) {
+  const normalized = String(content).normalize("NFKC");
+  const counters = "(?:개|명|번|가지|장|권|대|마리|살|시|분|초|줄|칸|회|번째)";
+  const particle = "(?:의|은|는|이|가|을|를|와|과|도|만|이다|입니다)?";
+  const matcher = new RegExp("(^|[^\\p{Script=Hangul}])" + escapeRegExpLiteral(word) + "\\s*" + counters + particle + "(?![\\p{Script=Hangul}])", "u");
+  return matcher.test(normalized);
+}
+
+function containsEeaLocalizedAnswerWord(content, expectedResponse) {
+  const forms = eeaNumberWordForms(expectedResponse);
+  if (!forms) return false;
+  const normalized = String(content).normalize("NFKC");
+  return forms.english.some(function (word) { return containsEeaEnglishNumberWord(normalized, word); }) ||
+    forms.korean.some(function (word) { return containsEeaKoreanNumberWord(normalized, word); }) ||
+    forms.koreanNative.some(function (word) { return containsEeaKoreanNumberWord(normalized, word); }) ||
+    forms.koreanBound.some(function (word) { return containsEeaKoreanBoundNumberWord(normalized, word); }) ||
+    forms.chinese.some(function (word) { return containsEeaChineseNumberWord(normalized, word); });
+}
+
 function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference, locale) {
   const normalizedContent = assertStudentAnswerLabelAbsent(content, reference);
   // Response-bearing student blocks accept plain text only until content is
@@ -358,27 +590,51 @@ function validateVerification(verification, reference) {
 }
 
 function validateStandardsEvidence(evidence, policy, unit, reference) {
-  if (unit.unitId !== "ccss-6-ns-c") {
-    assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
+  if (unit.unitId === "ccss-6-ns-c") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-graphing-observation-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    const requiredAutomaticEvidence = new Set([
+      "6.NS.C.6-quadrant-classification",
+      "6.NS.C.7-signed-rational-order",
+      "6.NS.C.8-same-axis-distance"
+    ]);
+    assert(
+      evidence.autoEvidenceIds.length === requiredAutomaticEvidence.size &&
+        new Set(evidence.autoEvidenceIds).size === requiredAutomaticEvidence.size &&
+        evidence.autoEvidenceIds.every(function (evidenceId) { return typeof evidenceId === "string" && requiredAutomaticEvidence.has(evidenceId); }),
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
     return;
   }
-  assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
-  assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
-  assert(evidence.state === "partial-graphing-observation-locked", "STANDARDS_EVIDENCE_INVALID", reference);
-  assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
-  const requiredAutomaticEvidence = new Set([
-    "6.NS.C.6-quadrant-classification",
-    "6.NS.C.7-signed-rational-order",
-    "6.NS.C.8-same-axis-distance"
-  ]);
-  assert(
-    evidence.autoEvidenceIds.length === requiredAutomaticEvidence.size &&
-      new Set(evidence.autoEvidenceIds).size === requiredAutomaticEvidence.size &&
-      evidence.autoEvidenceIds.every(function (evidenceId) { return typeof evidenceId === "string" && requiredAutomaticEvidence.has(evidenceId); }),
-    "STANDARDS_EVIDENCE_INVALID",
-    reference
-  );
-  requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+  if (unit.unitId === "ccss-6-ee-a") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-whole-number-power-evaluation-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(
+      evidence.autoEvidenceIds.length === 1 && evidence.autoEvidenceIds[0] === EEA_POWER_EVIDENCE_ID,
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    const requiredLockLanguage = Object.freeze({
+      ko: ["6.EE.A.1", "지수 표기", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4", "완전 숙달", "승급"],
+      en: ["6.EE.A.1", "exponent notation", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4", "full mastery", "promotion"],
+      "zh-Hans": ["6.EE.A.1", "指数记法", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4", "完全掌握", "升学"]
+    });
+    policy.included.forEach(function (locale) {
+      const lockText = evidence.lockedEvidenceByLocale[locale].toLocaleLowerCase("en-US");
+      assert(requiredLockLanguage[locale].every(function (requiredText) {
+        return lockText.includes(requiredText.toLocaleLowerCase("en-US"));
+      }), "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
+  assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
 }
 
 function validateFrontMatter(frontMatter, policy, reference) {
@@ -743,6 +999,67 @@ function canonicalWholeLcm(check, reference) {
   return String((check.left / greatestCommonDivisor(check.left, check.right)) * check.right);
 }
 
+function canonicalWholeNumberPower(check, reference) {
+  assertExactDataKeys(check, ["kind", "base", "exponent"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    Number.isSafeInteger(check.base) && check.base >= EEA_POWER_BASE_MIN && check.base <= EEA_POWER_BASE_MAX &&
+      Number.isSafeInteger(check.exponent) && check.exponent >= EEA_POWER_EXPONENT_MIN && check.exponent <= EEA_POWER_EXPONENT_MAX,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  const result = BigInt(check.base) ** BigInt(check.exponent);
+  assert(result <= EEA_POWER_RESULT_MAX, "ARITHMETIC_CHECK_INVALID", reference);
+  return String(result);
+}
+
+function countExactTextOccurrences(value, target) {
+  let count = 0;
+  let offset = 0;
+  while (offset <= value.length - target.length) {
+    const index = value.indexOf(target, offset);
+    if (index === -1) break;
+    count += 1;
+    offset = index + target.length;
+  }
+  return count;
+}
+
+function wholeNumberPowerPromptRepresentation(content, check, reference) {
+  const value = String(content);
+  assert(value === value.normalize("NFKC"), "EEA_POWER_PROMPT_INVALID", reference);
+  const notation = `${check.base}^${check.exponent}`;
+  const repeatedFactors = Array.from({ length: check.exponent }, function () { return String(check.base); }).join(" × ");
+  const notationCount = countExactTextOccurrences(value, notation);
+  const repeatedFactorCount = countExactTextOccurrences(value, repeatedFactors);
+  const isNotation = notationCount === 1 && repeatedFactorCount === 0;
+  const isRepeatedFactor = notationCount === 0 && repeatedFactorCount === 1;
+  assert(isNotation || isRepeatedFactor, "EEA_POWER_PROMPT_INVALID", reference);
+  const display = isNotation ? notation : repeatedFactors;
+  const surroundingText = value.replace(display, "");
+  assert(!/[\p{N}^*×]/u.test(surroundingText), "EEA_POWER_PROMPT_INVALID", reference);
+  return isNotation ? "power-notation" : "repeated-factor";
+}
+
+function validateWholeNumberPowerPrompt(component, check, reference) {
+  const representations = Object.entries(component.component.contentByLocale).map(function (entry) {
+    const locale = entry[0];
+    const content = entry[1];
+    const representation = wholeNumberPowerPromptRepresentation(content, check, reference);
+    const display = representation === "power-notation"
+      ? `${check.base}^${check.exponent}`
+      : Array.from({ length: check.exponent }, function () { return String(check.base); }).join(" × ");
+    const exactTemplate = Object.freeze({
+      ko: representation === "power-notation" ? `다음 식의 값을 구하세요: ${display}.` : `다음 반복곱의 값을 구하세요: ${display}.`,
+      en: representation === "power-notation" ? `Find the value of ${display}.` : `Find the value of the repeated product ${display}.`,
+      "zh-Hans": representation === "power-notation" ? `求 ${display} 的值。` : `求重复乘积 ${display} 的值。`
+    });
+    assert(content === exactTemplate[locale], "EEA_POWER_PROMPT_INVALID", reference);
+    return representation;
+  });
+  assert(new Set(representations).size === 1, "EEA_POWER_PROMPT_INVALID", reference);
+  return representations[0];
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -762,6 +1079,7 @@ function canonicalAnswer(check, reference) {
     assert(positiveInteger(check.perGroup) && positiveInteger(check.groups) && check.perGroup * check.groups <= 1000000000, "ARITHMETIC_CHECK_INVALID", reference);
     return String(check.perGroup * check.groups);
   }
+  if (kind === "whole-number-power") return canonicalWholeNumberPower(check, reference);
   if (kind === "whole-percent") {
     assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
@@ -810,6 +1128,130 @@ function validateNscAutomaticEvidence(answerReferences, unit, reference) {
   }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
 }
 
+function validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-a") return;
+  assert(answerReferences.length > 0, "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "whole-number-power";
+  }), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const exponentCounts = new Map();
+  const notationCounts = new Map();
+  const fingerprints = new Set();
+  const representations = new Set();
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const fingerprint = `${check.base}^${check.exponent}`;
+    assert(!fingerprints.has(fingerprint), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    fingerprints.add(fingerprint);
+    exponentCounts.set(check.exponent, (exponentCounts.get(check.exponent) || 0) + 1);
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    const representation = validateWholeNumberPowerPrompt(component, check, answerReference.referenceId);
+    representations.add(representation);
+    if (representation === "power-notation") notationCounts.set(check.exponent, (notationCounts.get(check.exponent) || 0) + 1);
+  });
+  for (let exponent = EEA_POWER_EXPONENT_MIN; exponent <= EEA_POWER_EXPONENT_MAX; exponent += 1) {
+    assert((exponentCounts.get(exponent) || 0) >= 2, "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    assert((notationCounts.get(exponent) || 0) >= 1, "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  }
+  [
+    function (base) { return base >= 2 && base <= 4; },
+    function (base) { return base >= 5 && base <= 8; },
+    function (base) { return base >= 9 && base <= 12; }
+  ].forEach(function (inBand) {
+    assert(answerReferences.some(function (answerReference) { return inBand(answerReference.arithmeticCheck.base); }), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  });
+  assert(representations.has("power-notation") && representations.has("repeated-factor"), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+}
+
+function escapeRegExpLiteral(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+}
+
+function validateEeaWorkedExampleContent(content, locale, reference) {
+  const value = String(content);
+  // Chinese prose conventionally uses a full-width colon after 示例. Preserve
+  // that single required locale mark while keeping the mathematical display
+  // itself NFKC-stable (therefore plain ASCII digits, caret, and × only).
+  const normalizedForTemplate = locale === "zh-Hans" ? value.replace(/^示例：/u, "示例:") : value;
+  assert((locale !== "zh-Hans" || value.startsWith("示例：")) && normalizedForTemplate === normalizedForTemplate.normalize("NFKC"), "EEA_WORKED_EXAMPLE_INVALID", reference);
+  const template = Object.freeze({
+    ko: Object.freeze({ prefix: "예시: ", suffix: "." }),
+    en: Object.freeze({ prefix: "Worked example: ", suffix: "." }),
+    "zh-Hans": Object.freeze({ prefix: "示例:", suffix: "。" })
+  })[locale];
+  assert(template, "EEA_WORKED_EXAMPLE_INVALID", reference);
+  const matcher = new RegExp(`^${escapeRegExpLiteral(template.prefix)}([0-9]+)\\^([0-9]+) = ([0-9]+(?: × [0-9]+)*) = ([0-9]+)${escapeRegExpLiteral(template.suffix)}$`, "u");
+  const match = matcher.exec(normalizedForTemplate);
+  assert(match, "EEA_WORKED_EXAMPLE_INVALID", reference);
+  const base = Number(match[1]);
+  const exponent = Number(match[2]);
+  assert(
+    Number.isSafeInteger(base) && base >= EEA_WORKED_EXAMPLE_BASE_MIN && base <= EEA_WORKED_EXAMPLE_BASE_MAX &&
+      Number.isSafeInteger(exponent) && exponent >= EEA_POWER_EXPONENT_MIN && exponent <= EEA_POWER_EXPONENT_MAX,
+    "EEA_WORKED_EXAMPLE_INVALID",
+    reference
+  );
+  const factors = Array.from({ length: exponent }, function () { return String(base); }).join(" × ");
+  const result = BigInt(base) ** BigInt(exponent);
+  assert(result <= EEA_WORKED_EXAMPLE_RESULT_MAX && match[3] === factors && match[4] === String(result), "EEA_WORKED_EXAMPLE_INVALID", reference);
+  return Object.freeze({ base, exponent, result: String(result) });
+}
+
+function assertEeaNonWorkedStudentTextHasNoNumericNotation(content, reference) {
+  const normalized = String(content).normalize("NFKC");
+  // EE.A v1 reserves numeric notation for a narrowly parsed worked example
+  // or an exact response prompt. Keeping every other student-visible field
+  // number-free closes alternate decimal, scientific, grouped, and Roman
+  // numeral encodings before they can become an answer-disclosure channel.
+  // Roman answer tokens are checked against the same-pack response set below,
+  // rather than banning ordinary English one-letter pronouns such as I.
+  assert(!/[\p{N}]/u.test(normalized), "EEA_NONRESPONSE_NUMERIC_NOT_ALLOWED", reference);
+}
+
+function validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-a") return;
+  const expectedResponses = new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; }));
+  const nonResponseFields = [];
+  [pack.frontMatter.titleByLocale, pack.frontMatter.learningTargetsByLocale, pack.frontMatter.howToUseByLocale,
+    pack.closingMatter.glossaryByLocale, pack.closingMatter.retentionNoticeByLocale].forEach(function (localizedText) {
+    Object.entries(localizedText).forEach(function (entry) {
+      assertEeaNonWorkedStudentTextHasNoNumericNotation(entry[1], reference);
+      nonResponseFields.push(Object.freeze({ content: entry[1], reference }));
+    });
+  });
+  sections.forEach(function (entry) {
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
+      assertEeaNonWorkedStudentTextHasNoNumericNotation(localeEntry[1], entry.section.sectionId);
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+    });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      const workedExampleFacts = component.componentType === "worked-example"
+        ? Object.entries(component.contentByLocale).map(function (localeEntry) {
+          return validateEeaWorkedExampleContent(localeEntry[1], localeEntry[0], component.componentId);
+        })
+        : null;
+      if (workedExampleFacts) {
+        assert(new Set(workedExampleFacts.map(function (fact) { return JSON.stringify(fact); })).size === 1, "EEA_WORKED_EXAMPLE_INVALID", component.componentId);
+        assert(!expectedResponses.has(workedExampleFacts[0].result), "EEA_WORKED_EXAMPLE_ANSWER_LEAK", component.componentId);
+      }
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+        if (component.componentType !== "worked-example") assertEeaNonWorkedStudentTextHasNoNumericNotation(localeEntry[1], component.componentId);
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+      });
+    });
+  });
+  nonResponseFields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    expectedResponses.forEach(function (expectedResponse) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "EEA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsEeaNumericEquivalentAnswer(field.content, expectedResponse), "EEA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsEeaRomanAnswerToken(field.content, expectedResponse), "EEA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsEeaLocalizedAnswerWord(field.content, expectedResponse), "EEA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
@@ -829,6 +1271,10 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (answerReference.responseMode === "comparison-symbol-exact") assert(answerReference.arithmeticCheck.kind === "signed-rational-comparison", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (answerReference.responseMode === "numeric-exact") assert(!["ratio-canonical", "signed-rational-comparison"].includes(answerReference.arithmeticCheck.kind), "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  if (artifact.resourceBinding.unitId === "ccss-6-ee-a") {
+    assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "whole-number-power", "EEA_RESPONSE_CONTRACT_INVALID", reference);
+  }
+  if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
@@ -851,7 +1297,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   });
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
-    return resource.unitId === "ccss-6-ns-c" && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+    return ["ccss-6-ns-c", "ccss-6-ee-a"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
     return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
@@ -870,6 +1316,25 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   assertDenseArray(artifact.answerReferences, "TEACHER_ARTIFACT_INVALID", reference);
   if (["assignment-builder"].includes(resource.resourceType)) assert(artifact.answerReferences.length === 0, "TEACHER_ARTIFACT_INVALID", reference);
   return Object.freeze({ resource, artifact });
+}
+
+function validateEeaTeacherObservationEvidence(artifacts, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-a") return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "EEA_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observationCount = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    }).length;
+    assert(observationCount === 1, "EEA_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+  });
 }
 
 function validateAssessmentPlaceholders(placeholders, plan, reference) {
@@ -1015,6 +1480,7 @@ function validatePack(pack, fileName) {
   });
   if (pack.coverageState === "plan-complete") assert(seenTeacherResources.size === expectedTeacher.size, "TEACHER_COVERAGE_INCOMPLETE", reference);
   else assert(seenTeacherResources.size > 0 && seenTeacherResources.size < expectedTeacher.size, "PARTIAL_COVERAGE_STATE_INVALID", reference);
+  validateEeaTeacherObservationEvidence(artifacts, unit, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -1034,6 +1500,8 @@ function validatePack(pack, fileName) {
     });
   });
   validateNscAutomaticEvidence(answerReferences, unit, reference);
+  validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference);
+  validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -1227,6 +1695,15 @@ module.exports = Object.freeze({
   canonicalAnswer,
   validateStandardsEvidence,
   validateNscAutomaticEvidence,
+  validateEeaAutomaticEvidence,
+  validateEeaWorkedExampleContent,
+  validateEeaStudentVisibleSeparation,
+  validateEeaTeacherObservationEvidence,
+  assertEeaNonWorkedStudentTextHasNoNumericNotation,
+  containsEeaNumericEquivalentAnswer,
+  containsEeaRomanAnswerToken,
+  containsEeaEnglishNumberWord,
+  containsEeaLocalizedAnswerWord,
   validatePack,
   validateDirectory
 });

@@ -10,6 +10,7 @@ const repositoryRoot = path.resolve(projectRoot, "..");
 const validator = require("../scripts/validate-private-grade6-workbook.cjs");
 const publicAudit = require("../scripts/audit-public-exposure.cjs");
 const resourcePlans = require("../resources/k8-resource-plan.js");
+const registry = require("../curriculum/us-k8-content-registry.js");
 
 function writeFixtureFile(root, relativePath, content) {
   const target = path.join(root, relativePath);
@@ -45,6 +46,67 @@ function hasFinding(findings, code) {
 
 function localText(ko, en, zhHans) {
   return { ko, en, "zh-Hans": zhHans };
+}
+
+const SYNTHETIC_EEA_POWER_PAIRS = Object.freeze([
+  Object.freeze({ base: 8, exponent: 2 }), Object.freeze({ base: 9, exponent: 2 }),
+  Object.freeze({ base: 10, exponent: 2 }), Object.freeze({ base: 11, exponent: 2 }),
+  Object.freeze({ base: 12, exponent: 2 }), Object.freeze({ base: 3, exponent: 3 }),
+  Object.freeze({ base: 4, exponent: 3 }), Object.freeze({ base: 5, exponent: 3 }),
+  Object.freeze({ base: 6, exponent: 3 }), Object.freeze({ base: 7, exponent: 3 }),
+  Object.freeze({ base: 8, exponent: 4 }), Object.freeze({ base: 9, exponent: 4 }),
+  Object.freeze({ base: 10, exponent: 4 }), Object.freeze({ base: 11, exponent: 4 }),
+  Object.freeze({ base: 12, exponent: 4 }), Object.freeze({ base: 2, exponent: 4 }),
+  Object.freeze({ base: 2, exponent: 5 }), Object.freeze({ base: 3, exponent: 5 }),
+  Object.freeze({ base: 4, exponent: 5 }), Object.freeze({ base: 5, exponent: 5 }),
+  Object.freeze({ base: 6, exponent: 5 }), Object.freeze({ base: 7, exponent: 5 })
+]);
+
+// These fixture-only examples deliberately remain outside the response
+// contract above. This keeps public regression coverage from reproducing a
+// private workbook's authored examples or expected responses.
+const SYNTHETIC_EEA_WORKED_EXAMPLES = Object.freeze([
+  Object.freeze({ base: 13, exponent: 2 }),
+  Object.freeze({ base: 14, exponent: 2 })
+]);
+
+function independentlyRepeatedWholePower(base, exponent) {
+  let result = 1n;
+  for (let factor = 0; factor < exponent; factor += 1) result *= BigInt(base);
+  return String(result);
+}
+
+function syntheticEeaPowerPrompt(pair, representation) {
+  const display = representation === "repeated-factor"
+    ? Array.from({ length: pair.exponent }, function () { return String(pair.base); }).join(" × ")
+    : `${pair.base}^${pair.exponent}`;
+  return localText(
+    representation === "power-notation" ? `다음 식의 값을 구하세요: ${display}.` : `다음 반복곱의 값을 구하세요: ${display}.`,
+    representation === "power-notation" ? `Find the value of ${display}.` : `Find the value of the repeated product ${display}.`,
+    representation === "power-notation" ? `求 ${display} 的值。` : `求重复乘积 ${display} 的值。`
+  );
+}
+
+function syntheticEeaWorkedExample(pair) {
+  const factors = Array.from({ length: pair.exponent }, function () { return String(pair.base); }).join(" × ");
+  const result = independentlyRepeatedWholePower(pair.base, pair.exponent);
+  return localText(
+    `예시: ${pair.base}^${pair.exponent} = ${factors} = ${result}.`,
+    `Worked example: ${pair.base}^${pair.exponent} = ${factors} = ${result}.`,
+    `示例：${pair.base}^${pair.exponent} = ${factors} = ${result}。`
+  );
+}
+
+function syntheticEeaStandardsEvidence() {
+  return {
+    state: "partial-whole-number-power-evaluation-locked",
+    autoEvidenceIds: ["6.EE.A.1-isolated-positive-whole-number-power-evaluation"],
+    lockedEvidenceByLocale: localText(
+      "자동 근거는 6.EE.A.1의 제한된 양의 정수 거듭제곱 계산뿐이다. 6.EE.A.1의 지수 표기 읽기와 쓰기, 6.EE.A.2, 6.EE.A.3, 6.EE.A.4의 식과 동치 설명은 교사 관찰로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
+      "The automatic evidence is limited to positive whole-number power evaluation within 6.EE.A.1. Exponent notation reading and writing for 6.EE.A.1, together with expression and equivalence explanations in 6.EE.A.2, 6.EE.A.3, and 6.EE.A.4, remain teacher-observation work. It is not a full mastery or promotion decision.",
+      "自动证据仅限于 6.EE.A.1 中正整数幂的计算。6.EE.A.1 的指数记法读写，以及 6.EE.A.2、6.EE.A.3 和 6.EE.A.4 的式子和等价说明，仍是教师观察内容。这不是完全掌握或升学决定。"
+    )
+  };
 }
 
 function independentlyReducedSignedRational(numerator, denominator) {
@@ -124,9 +186,12 @@ function localBinding(resource) {
 function syntheticWorkbookPack(unitId) {
   const selectedUnitId = unitId || "ccss-6-rp-a";
   const plan = resourcePlans.buildUnitPlan(selectedUnitId);
-  const lineage = selectedUnitId === "ccss-6-ns-c"
-    ? { clusterId: "6.NS.C", skillId: "skill:us-core-k8:6-ns-c:anchor" }
-    : { clusterId: "6.RP.A", skillId: "skill:us-core-k8:6-rp-a:anchor" };
+  const selectedUnit = registry.units.find(function (unit) { return unit.unitId === selectedUnitId; });
+  assert(selectedUnit);
+  const lineage = {
+    clusterId: selectedUnit.clusterId,
+    skillId: registry.skillIdForCluster(selectedUnit.clusterId)
+  };
   const studentResources = plan.resourcesByAudience.student.filter(function (resource) {
     return resource.testType === "guided-practice" && ["concept-workbook", "guided-practice", "homework"].includes(resource.resourceType);
   });
@@ -136,19 +201,35 @@ function syntheticWorkbookPack(unitId) {
   });
   const responseComponents = [];
   let componentNumber = 0;
+  let workedExampleNumber = 0;
   const studentSections = studentResources.map(function (resource, sectionIndex) {
     const components = resource.plannedComponents.flatMap(function (planComponent) {
       return Array.from({ length: planComponent.plannedCount }, function () {
         componentNumber += 1;
         const isTeaching = ["concept-summary", "worked-example"].includes(planComponent.componentType);
+        const eeaPair = !isTeaching && selectedUnitId === "ccss-6-ee-a"
+          ? SYNTHETIC_EEA_POWER_PAIRS[responseComponents.length]
+          : null;
+        const eeaWorkedExample = isTeaching && planComponent.componentType === "worked-example" && selectedUnitId === "ccss-6-ee-a"
+          ? SYNTHETIC_EEA_WORKED_EXAMPLES[workedExampleNumber++]
+          : null;
+        const eeaConceptSummary = isTeaching && planComponent.componentType === "concept-summary" && selectedUnitId === "ccss-6-ee-a";
+        assert(isTeaching || selectedUnitId !== "ccss-6-ee-a" || eeaPair);
+        assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-a" || eeaWorkedExample);
         const componentId = `cmp-dft-s${String(sectionIndex + 1).padStart(2, "0")}c${String(componentNumber).padStart(3, "0")}`;
         const component = {
           componentId,
           componentType: planComponent.componentType,
           sequence: 0,
           contentByLocale: isTeaching
-            ? localText("개념 예시: \\frac{1}{2}", "Worked example: \\frac{1}{2}", "示例：\\frac{1}{2}" )
-            : localText("수를 구하세요.", "Find the number.", "求这个数。"),
+            ? eeaWorkedExample
+              ? syntheticEeaWorkedExample(eeaWorkedExample)
+              : eeaConceptSummary
+                ? localText("지수 표기 개요", "Exponent notation overview", "指数记法概览")
+                : localText("개념 예시: \\frac{1}{2}", "Worked example: \\frac{1}{2}", "示例：\\frac{1}{2}" )
+            : eeaPair
+              ? syntheticEeaPowerPrompt(eeaPair, responseComponents.length % 2 === 0 ? "power-notation" : "repeated-factor")
+              : localText("수를 구하세요.", "Find the number.", "求这个数。"),
           responseMode: isTeaching ? null : "numeric-exact",
           teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`
         };
@@ -180,14 +261,17 @@ function syntheticWorkbookPack(unitId) {
     const answerReferences = resource.resourceType === "assignment-builder" ? [] : responseComponents
       .filter(function (entry) { return entry.resource.sessionId === resource.sessionId; })
       .map(function (entry) {
+        const eeaPair = selectedUnitId === "ccss-6-ee-a" ? SYNTHETIC_EEA_POWER_PAIRS[responseComponents.indexOf(entry)] : null;
         return {
           referenceId: entry.component.teacherReferenceId,
           componentId: entry.component.componentId,
           responseMode: "numeric-exact",
-          expectedResponse: "1",
+          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : "1",
           solutionByLocale: localText("교사용 풀이", "Teacher solution", "教师解析"),
           uniquenessProofByLocale: localText("교사용 검산", "Teacher check", "教师检验"),
-          arithmeticCheck: { kind: "whole-quotient", total: 1, groups: 1 }
+          arithmeticCheck: eeaPair
+            ? { kind: "whole-number-power", base: eeaPair.base, exponent: eeaPair.exponent }
+            : { kind: "whole-quotient", total: 1, groups: 1 }
         };
       });
     return {
@@ -209,6 +293,18 @@ function syntheticWorkbookPack(unitId) {
       answerReferences
     };
   });
+  if (selectedUnitId === "ccss-6-ee-a") {
+    teacherArtifacts.filter(function (artifact) {
+      return artifact.resourceBinding.resourceType === "lesson-plan" || artifact.resourceBinding.resourceType === "assignment-builder";
+    }).forEach(function (artifact, index) {
+      artifact.components.push({
+        componentId: `tcmp-dft-eea-observation-${index + 1}`,
+        componentType: "teacher-observation-rubric",
+        sequence: artifact.components.length + 1,
+        contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+      });
+    });
+  }
   return {
     schemaVersion: "gfield-private-workbook-draft-v1",
     confidentiality: "GFIELD_PRIVATE_WORKBOOK_DO_NOT_COMMIT",
@@ -229,7 +325,7 @@ function syntheticWorkbookPack(unitId) {
         autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
         lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
       }
-    } : {}),
+    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: {
@@ -967,6 +1063,359 @@ test("Grade 6 6.NS.C allows only explicit non-automatic teacher observation rubr
   });
   assert.throws(function () {
     validator.validatePack(nonNscPack, "synthetic-rp-a-observation.json");
+  }, /TEACHER_COMPONENT_INVALID/);
+});
+
+test("Grade 6 isolated whole-number powers use a bounded BigInt contract and independent repeated multiplication", function () {
+  for (let base = 2; base <= 12; base += 1) {
+    for (let exponent = 2; exponent <= 5; exponent += 1) {
+      assert.equal(validator.canonicalAnswer({ kind: "whole-number-power", base, exponent }, "synthetic-eea-power"), independentlyRepeatedWholePower(base, exponent));
+    }
+  }
+  assert.equal(
+    validator.canonicalAnswer({ kind: "whole-number-power", base: 12, exponent: 4 }, "synthetic-eea-power-boundary"),
+    independentlyRepeatedWholePower(12, 4)
+  );
+  [
+    { kind: "whole-number-power", base: 1, exponent: 2 },
+    { kind: "whole-number-power", base: 13, exponent: 2 },
+    { kind: "whole-number-power", base: 2, exponent: 1 },
+    { kind: "whole-number-power", base: 2, exponent: 6 },
+    { kind: "whole-number-power", base: 0, exponent: 0 },
+    { kind: "whole-number-power", base: -2, exponent: 2 },
+    { kind: "whole-number-power", base: 2.5, exponent: 2 },
+    { kind: "whole-number-power", base: 2, exponent: 2.5 },
+    { kind: "whole-number-power", base: "2", exponent: 2 },
+    { kind: "whole-number-power", base: 2, exponent: "2" },
+    { kind: "whole-number-power", base: Number.NaN, exponent: 2 },
+    { kind: "whole-number-power", base: 2, exponent: Number.POSITIVE_INFINITY },
+    { kind: "whole-number-power", base: 8, exponent: 4, result: "not-permitted" }
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalAnswer(check, "synthetic-eea-power-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+  const inherited = Object.create({ kind: "whole-number-power", base: 2, exponent: 2 });
+  assert.throws(function () {
+    validator.canonicalAnswer(inherited, "synthetic-eea-power-inherited");
+  }, /ARITHMETIC_CHECK_INVALID/);
+  const accessor = { kind: "whole-number-power", exponent: 2 };
+  Object.defineProperty(accessor, "base", { enumerable: true, get: function () { return 2; } });
+  assert.throws(function () {
+    validator.canonicalAnswer(accessor, "synthetic-eea-power-accessor");
+  }, /ARITHMETIC_CHECK_INVALID/);
+});
+
+test("Grade 6 6.EE.A keeps isolated power evaluation explicit and locks the remaining expression evidence", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-ee-a" };
+  const evidence = syntheticEeaStandardsEvidence();
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-eea-evidence");
+  });
+  [
+    Object.assign({}, evidence, { state: "plan-complete" }),
+    Object.assign({}, evidence, { autoEvidenceIds: [] }),
+    Object.assign({}, evidence, { autoEvidenceIds: [evidence.autoEvidenceIds[0], evidence.autoEvidenceIds[0]] }),
+    Object.assign({}, evidence, { lockedEvidenceByLocale: Object.assign({}, evidence.lockedEvidenceByLocale, { en: "6.EE.A.1 only" }) })
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateStandardsEvidence(candidate, policy, unit, "synthetic-eea-evidence-invalid");
+    }, /STANDARDS_EVIDENCE_INVALID/);
+  });
+
+  const pack = syntheticWorkbookPack("ccss-6-ee-a");
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-eea-pack.json");
+  });
+  const answerReferences = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  assert.equal(answerReferences.length, 22);
+  assert.deepEqual(new Set(answerReferences.map(function (answerReference) { return answerReference.arithmeticCheck.exponent; })), new Set([2, 3, 4, 5]));
+  assert.deepEqual(new Set(answerReferences.map(function (answerReference) { return answerReference.arithmeticCheck.kind; })), new Set(["whole-number-power"]));
+
+  const genericContractPack = JSON.parse(JSON.stringify(pack));
+  const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  genericReference.expectedResponse = "1";
+  genericReference.arithmeticCheck = { kind: "whole-product", perGroup: 1, groups: 1 };
+  assert.throws(function () {
+    validator.validatePack(genericContractPack, "synthetic-eea-generic-contract.json");
+  }, /EEA_RESPONSE_CONTRACT_INVALID/);
+
+  const driftPack = JSON.parse(JSON.stringify(pack));
+  const driftComponent = driftPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  driftComponent.contentByLocale.en = "Compute 8^4.";
+  assert.throws(function () {
+    validator.validatePack(driftPack, "synthetic-eea-translation-drift.json");
+  }, /EEA_POWER_PROMPT_INVALID/);
+
+  const unicodePowerPack = JSON.parse(JSON.stringify(pack));
+  const unicodePowerComponent = unicodePowerPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  unicodePowerComponent.contentByLocale["zh-Hans"] = "计算 8²。";
+  assert.throws(function () {
+    validator.validatePack(unicodePowerPack, "synthetic-eea-unicode-power.json");
+  }, /EEA_POWER_PROMPT_INVALID/);
+
+  const repeatedLanguageDriftPack = JSON.parse(JSON.stringify(pack));
+  const repeatedLanguageDriftComponent = repeatedLanguageDriftPack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  })[1];
+  repeatedLanguageDriftComponent.contentByLocale.en = "Find the value of 9 × 9.";
+  assert.throws(function () {
+    validator.validatePack(repeatedLanguageDriftPack, "synthetic-eea-repeated-language-drift.json");
+  }, /EEA_POWER_PROMPT_INVALID/);
+
+  [
+    { locale: "ko", content: "다음 식의 값을 구하세요: 8^2. 육십사" },
+    { locale: "en", content: "Find the value of 8^2. sixty-four" },
+    { locale: "zh-Hans", content: "求 8^2 的值。六十四" }
+  ].forEach(function (mutation) {
+    const wordLeakPack = JSON.parse(JSON.stringify(pack));
+    const wordLeakComponent = wordLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+      return component.responseMode !== null;
+    });
+    wordLeakComponent.contentByLocale[mutation.locale] = mutation.content;
+    assert.throws(function () {
+      validator.validatePack(wordLeakPack, `synthetic-eea-number-word-${mutation.locale}.json`);
+    }, /EEA_POWER_PROMPT_INVALID/);
+  });
+
+  const mostlyRepeatedPack = JSON.parse(JSON.stringify(pack));
+  const mostlyRepeatedComponents = new Map(mostlyRepeatedPack.studentSections.flatMap(function (section) { return section.components; }).map(function (component) {
+    return [component.componentId, component];
+  }));
+  mostlyRepeatedPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).filter(function (answerReference) {
+    return answerReference.arithmeticCheck.exponent === 5;
+  }).forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const display = Array.from({ length: check.exponent }, function () { return String(check.base); }).join(" × ");
+    mostlyRepeatedComponents.get(answerReference.componentId).contentByLocale = localText(
+      `다음 반복곱의 값을 구하세요: ${display}.`,
+      `Find the value of the repeated product ${display}.`,
+      `求重复乘积 ${display} 的值。`
+    );
+  });
+  assert.throws(function () {
+    validator.validatePack(mostlyRepeatedPack, "synthetic-eea-mostly-repeated.json");
+  }, /EEA_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const workedExampleLeakPack = JSON.parse(JSON.stringify(pack));
+  const workedExample = workedExampleLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "worked-example";
+  });
+  const firstReference = workedExampleLeakPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  const firstCheck = firstReference.arithmeticCheck;
+  const firstFactors = Array.from({ length: firstCheck.exponent }, function () { return String(firstCheck.base); }).join(" × ");
+  const solvedDisplay = `${firstCheck.base}^${firstCheck.exponent} = ${firstFactors} = ${firstReference.expectedResponse}`;
+  workedExample.contentByLocale = localText(`예시: ${solvedDisplay}.`, `Worked example: ${solvedDisplay}.`, `示例：${solvedDisplay}。`);
+  assert.throws(function () {
+    validator.validatePack(workedExampleLeakPack, "synthetic-eea-worked-example-leak.json");
+  }, /EEA_WORKED_EXAMPLE_ANSWER_LEAK/);
+
+  const workedExampleTeXPack = JSON.parse(JSON.stringify(pack));
+  const workedExampleTeX = workedExampleTeXPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "worked-example";
+  });
+  workedExampleTeX.contentByLocale.ko = `$${workedExampleTeX.contentByLocale.ko}$`;
+  assert.throws(function () {
+    validator.validatePack(workedExampleTeXPack, "synthetic-eea-worked-example-tex.json");
+  }, /EEA_WORKED_EXAMPLE_INVALID/);
+
+  const reversedWorkedExamplePack = JSON.parse(JSON.stringify(pack));
+  const reversedWorkedExample = reversedWorkedExamplePack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "worked-example";
+  });
+  reversedWorkedExample.contentByLocale = localText(
+    "예시: 169 = 13^2 = 13 × 13.",
+    "Worked example: 169 = 13^2 = 13 × 13.",
+    "示例：169 = 13^2 = 13 × 13。"
+  );
+  assert.throws(function () {
+    validator.validatePack(reversedWorkedExamplePack, "synthetic-eea-worked-example-reversed.json");
+  }, /EEA_WORKED_EXAMPLE_INVALID/);
+
+  const conceptSummaryLeakPack = JSON.parse(JSON.stringify(pack));
+  const conceptSummary = conceptSummaryLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  const syntheticExpectedResponse = conceptSummaryLeakPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0].expectedResponse;
+  conceptSummary.contentByLocale = localText(
+    `개념 확인 ${syntheticExpectedResponse}.`,
+    `Concept check ${syntheticExpectedResponse}.`,
+    `概念检查 ${syntheticExpectedResponse}。`
+  );
+  assert.throws(function () {
+    validator.validatePack(conceptSummaryLeakPack, "synthetic-eea-concept-summary-leak.json");
+  }, /EEA_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+
+  ["Concept check 999."].forEach(function (content, index) {
+    const nonWorkedNumericNotationPack = JSON.parse(JSON.stringify(pack));
+    const nonWorkedNumericNotation = nonWorkedNumericNotationPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+      return component.componentType === "concept-summary";
+    });
+    nonWorkedNumericNotation.contentByLocale.en = content;
+    assert.throws(function () {
+      validator.validatePack(nonWorkedNumericNotationPack, `synthetic-eea-nonworked-numeric-notation-${index}.json`);
+    }, /EEA_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+  });
+
+  const benignEnglishConceptPack = JSON.parse(JSON.stringify(pack));
+  const benignEnglishConcept = benignEnglishConceptPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  benignEnglishConcept.contentByLocale.en = "I review exponent notation.";
+  assert.doesNotThrow(function () {
+    validator.validatePack(benignEnglishConceptPack, "synthetic-eea-benign-english-pronoun.json");
+  });
+
+  const romanLeakPack = JSON.parse(JSON.stringify(pack));
+  const romanLeakConcept = romanLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  romanLeakConcept.contentByLocale.en = "Concept lxiv.";
+  assert.throws(function () {
+    validator.validatePack(romanLeakPack, "synthetic-eea-roman-leak.json");
+  }, /EEA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const groupedExpectedResponse = answerReferences.find(function (answerReference) {
+    return answerReference.expectedResponse.length >= 4;
+  }).expectedResponse;
+  [",", ".", String.fromCharCode(0x00a0)].forEach(function (separator, index) {
+    const groupedDecimalLeakPack = JSON.parse(JSON.stringify(pack));
+    const groupedDecimalSummary = groupedDecimalLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+      return component.componentType === "concept-summary";
+    });
+    const groupedDecimal = groupedExpectedResponse.replace(/\B(?=(\d{3})+(?!\d))/gu, separator);
+    groupedDecimalSummary.contentByLocale.en = `Concept check ${groupedDecimal}.`;
+    assert.equal(validator.containsEeaNumericEquivalentAnswer(groupedDecimal, groupedExpectedResponse), true);
+    assert.throws(function () {
+      validator.validatePack(groupedDecimalLeakPack, `synthetic-eea-grouped-decimal-leak-${index}.json`);
+    }, /EEA_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+  });
+  [`0${groupedExpectedResponse}`, `+${groupedExpectedResponse}`, `${groupedExpectedResponse}.0`, `${groupedExpectedResponse},0`].forEach(function (display, index) {
+    const numericEquivalentLeakPack = JSON.parse(JSON.stringify(pack));
+    const numericEquivalentSummary = numericEquivalentLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+      return component.componentType === "concept-summary";
+    });
+    numericEquivalentSummary.contentByLocale.en = `Concept check ${display}.`;
+    assert.equal(validator.containsEeaNumericEquivalentAnswer(display, groupedExpectedResponse), true);
+    assert.throws(function () {
+      validator.validatePack(numericEquivalentLeakPack, `synthetic-eea-numeric-equivalent-leak-${index}.json`);
+    }, /EEA_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+  });
+
+  const localizedWordLeakPack = JSON.parse(JSON.stringify(pack));
+  const localizedWordSummary = localizedWordLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  localizedWordSummary.contentByLocale = localText(
+    "개념 확인 백이십일.",
+    "Concept check one hundred twenty-one.",
+    "概念检查一百二十一。"
+  );
+  assert.throws(function () {
+    validator.validatePack(localizedWordLeakPack, "synthetic-eea-localized-word-leak.json");
+  }, /EEA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const englishAndWordLeakPack = JSON.parse(JSON.stringify(pack));
+  const englishAndWordSummary = englishAndWordLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  englishAndWordSummary.contentByLocale.en = "Concept check a hundred and twenty-one.";
+  assert.throws(function () {
+    validator.validatePack(englishAndWordLeakPack, "synthetic-eea-english-and-word-leak.json");
+  }, /EEA_CROSS_STUDENT_ANSWER_LEAK/);
+  const englishVariantAnswer = answerReferences.find(function (answerReference) {
+    return answerReference.arithmeticCheck.base === 11 && answerReference.arithmeticCheck.exponent === 2;
+  }).expectedResponse;
+  assert.equal(validator.containsEeaLocalizedAnswerWord("Concept check one hundred twenty−one.", englishVariantAnswer), true);
+
+  const koreanSpacedWordLeakPack = JSON.parse(JSON.stringify(pack));
+  const koreanSpacedWordSummary = koreanSpacedWordLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  koreanSpacedWordSummary.contentByLocale.ko = "개념 확인 백 이십 일.";
+  assert.throws(function () {
+    validator.validatePack(koreanSpacedWordLeakPack, "synthetic-eea-korean-spaced-word-leak.json");
+  }, /EEA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const chineseTwoWordLeakPack = JSON.parse(JSON.stringify(pack));
+  const chineseTwoWordSummary = chineseTwoWordLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "concept-summary";
+  });
+  chineseTwoWordSummary.contentByLocale["zh-Hans"] = "概念检查两万零七百三十六。";
+  assert.throws(function () {
+    validator.validatePack(chineseTwoWordLeakPack, "synthetic-eea-chinese-two-word-leak.json");
+  }, /EEA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  // A non-contract sentinel keeps lexical guard coverage independent of the
+  // external private response set; EE.A power answers begin above this value.
+  const nonPrivateWordSentinel = "1";
+  ["개념 확인 일.", "개념 확인 하나.", "Concept check one.", "概念检查一。"].forEach(function (content) {
+    assert.equal(validator.containsEeaLocalizedAnswerWord(content, nonPrivateWordSentinel), true);
+  });
+  ["개념 확인 한 개.", "개념 확인 한 개의."].forEach(function (content) {
+    assert.equal(validator.containsEeaLocalizedAnswerWord(content, nonPrivateWordSentinel), true);
+  });
+  assert.equal(validator.containsEeaLocalizedAnswerWord("사용 안내", nonPrivateWordSentinel), false);
+  assert.equal(validator.containsEeaLocalizedAnswerWord("한, 알겠습니다.", nonPrivateWordSentinel), false);
+
+  const tenThousandAnswer = answerReferences.find(function (answerReference) {
+    return answerReference.arithmeticCheck.base === 10 && answerReference.arithmeticCheck.exponent === 4;
+  }).expectedResponse;
+  assert.equal(validator.containsEeaLocalizedAnswerWord("개념 확인 일만.", tenThousandAnswer), true);
+  const englishThousandsAnswer = answerReferences.find(function (answerReference) {
+    return answerReference.arithmeticCheck.base === 11 && answerReference.arithmeticCheck.exponent === 4;
+  }).expectedResponse;
+  assert.equal(validator.containsEeaLocalizedAnswerWord("Concept check fourteen thousand and six hundred forty-one.", englishThousandsAnswer), true);
+  assert.equal(validator.containsEeaEnglishNumberWord("Concept check a thousand one.", "one thousand one"), true);
+  const colloquialHundredsAnswer = answerReferences.find(function (answerReference) {
+    return answerReference.arithmeticCheck.base === 8 && answerReference.arithmeticCheck.exponent === 4;
+  }).expectedResponse;
+  assert.equal(validator.containsEeaLocalizedAnswerWord("Concept check forty hundred ninety-six.", colloquialHundredsAnswer), true);
+  const chineseVariantAnswer = answerReferences.find(function (answerReference) {
+    return answerReference.arithmeticCheck.base === 12 && answerReference.arithmeticCheck.exponent === 4;
+  }).expectedResponse;
+  assert.equal(validator.containsEeaLocalizedAnswerWord("概念检查兩萬零七百三十六。", chineseVariantAnswer), true);
+
+  const duplicatePowerPack = JSON.parse(JSON.stringify(pack));
+  const duplicateComponents = duplicatePowerPack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  });
+  const duplicateReferences = duplicatePowerPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  duplicateComponents[1].contentByLocale = duplicateComponents[0].contentByLocale;
+  duplicateReferences[1].expectedResponse = duplicateReferences[0].expectedResponse;
+  duplicateReferences[1].arithmeticCheck = duplicateReferences[0].arithmeticCheck;
+  assert.throws(function () {
+    validator.validatePack(duplicatePowerPack, "synthetic-eea-duplicate-power.json");
+  }, /EEA_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const missingObservationPack = JSON.parse(JSON.stringify(pack));
+  const advancedBuilder = missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "assignment-builder" && artifact.resourceBinding.levelId === "advanced";
+  });
+  advancedBuilder.components = advancedBuilder.components.filter(function (component) {
+    return component.componentType !== "teacher-observation-rubric";
+  });
+  assert.throws(function () {
+    validator.validatePack(missingObservationPack, "synthetic-eea-missing-observation.json");
+  }, /EEA_TEACHER_OBSERVATION_INCOMPLETE/);
+
+  const invalidObservationPack = JSON.parse(JSON.stringify(pack));
+  const solutionGuide = invalidObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "solution-guide";
+  });
+  solutionGuide.components.push({
+    componentId: "tcmp-dft-eea-invalid-observation",
+    componentType: "teacher-observation-rubric",
+    sequence: solutionGuide.components.length + 1,
+    contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+  });
+  assert.throws(function () {
+    validator.validatePack(invalidObservationPack, "synthetic-eea-invalid-observation.json");
   }, /TEACHER_COMPONENT_INVALID/);
 });
 
