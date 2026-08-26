@@ -4,6 +4,9 @@ import {
   hasSelfIntersection, polygonArea, answerKey
 } from "./levels.js";
 import { LANGUAGES, messages, text } from "./i18n.js";
+import {
+  DOT_BOARD_REFERENCE, squareBoardSummary, triangularBoardSummary
+} from "./lattice-enumerator.js";
 
 function assert(condition, message) {
   if (!condition) throw new Error(`Geoboard self-test: ${message}`);
@@ -14,7 +17,8 @@ assert(levels.length === 5, "five levels must be declared");
 assert(readyLevels.length === 2, "only levels 1 and 2 may be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
-assert(ids.length === 20 && new Set(ids).size === 20, "the 20 ready problems need unique ids");
+const expectedProblemCount = readyLevels.reduce((total, level) => total + level.problemCount, 0);
+assert(ids.length === expectedProblemCount && new Set(ids).size === expectedProblemCount, `the ${expectedProblemCount} ready problems need unique ids`);
 
 for (const level of readyLevels) {
   for (const problem of level.problems) {
@@ -47,6 +51,34 @@ assert(segmentsIntersect([0, 0], [2, 2], [0, 2], [2, 0]), "crossing segments wer
 assert(!segmentsIntersect([0, 0], [1, 0], [0, 2], [1, 2]), "separate segments were marked crossing");
 assert(hasSelfIntersection(bowTie) && !hasSelfIntersection(square), "self-intersection detection failed");
 assert(polygonArea(square) === 4, "polygon area calculation failed");
+
+for (const expected of DOT_BOARD_REFERENCE.square) {
+  const actual = squareBoardSummary(expected.size);
+  assert(actual.triangles.placementCount === expected.trianglePlacements,
+    `${expected.size}x${expected.size} square board triangle placement count drifted`);
+  assert(actual.triangles.typeCount === expected.triangleTypes,
+    `${expected.size}x${expected.size} square board triangle type count drifted`);
+  assert(actual.squares.placementCount === expected.squarePlacements,
+    `${expected.size}x${expected.size} square board square placement count drifted`);
+  assert(actual.squares.typeCount === expected.squareTypes,
+    `${expected.size}x${expected.size} square board square type count drifted`);
+  assert(actual.equilateralTriangles.placementCount === 0,
+    `${expected.size}x${expected.size} square board must not claim an exact equilateral triangle`);
+}
+
+for (const expected of DOT_BOARD_REFERENCE.triangular) {
+  const actual = triangularBoardSummary(expected.size);
+  assert(actual.equilateralTriangles.placementCount === expected.equilateralPlacements,
+    `triangular board size ${expected.size} equilateral placement count drifted`);
+  assert(actual.equilateralTriangles.typeCount === expected.equilateralTypes,
+    `triangular board size ${expected.size} equilateral type count drifted`);
+  // Independent closed form for the number of equilateral placements in a
+  // triangular patch: choose(size + 2, 4).
+  const n = expected.size;
+  const formula = (n + 2) * (n + 1) * n * (n - 1) / 24;
+  assert(actual.equilateralTriangles.placementCount === formula,
+    `triangular board size ${n} disagrees with the independent formula`);
+}
 
 const koreanKeys = Object.keys(messages.ko).sort();
 for (const lang of LANGUAGES) {

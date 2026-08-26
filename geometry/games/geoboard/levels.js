@@ -13,9 +13,9 @@
      pool, exactly like Mirror Manor does, so shipping them later is pure data work:
      author a pool, flip the flag. No engine or validator restructuring.
    - The pure helpers `isClosed`, `hasSelfIntersection`, `vertexCount`, `edgeCount`
-     and `polygonArea` are exported so .selftest.mjs can re-check them and so
-     levels 3-5 (equal-area shapes, vertex/edge conditions) can be built on top of
-     them without new machinery.
+     and `polygonArea` are exported so .selftest.mjs can re-check them. Levels 3-5
+     use separate square-lattice, triangular-lattice, and compound-figure
+     enumerators; they stay locked until those enumerators prove every answer.
 
    THE ACCEPTANCE RULE, stated once and enforced everywhere:
 
@@ -254,7 +254,9 @@ export function shapeKey(problem) {
 /** Shape name shown above the model board; derived, so no spec has to repeat it. */
 function shapeNameKey(kind, corners) {
   if (kind === "open") return corners === 2 ? "shapeSegment" : "shapePath";
-  return corners === 3 ? "shapeTriangle" : "shapeQuad";
+  if (corners === 3) return "shapeTriangle";
+  if (corners === 4) return "shapeQuad";
+  return "shapePentagon";
 }
 
 function makeProblem(level, kind, index, vertices) {
@@ -293,10 +295,11 @@ const level1Specs = [
 ];
 
 /**
- * LEVEL 2 — 제시된 삼각형·사각형을 그대로 만들기.
- * Every entry is a CLOSED simple polygon of 3 or 4 corners, and the child must
- * rebuild it in the same place and the same way round. Triangles and quadrilaterals
- * alternate so a session of five always shows both.
+ * LEVEL 2 — 제시된 삼각형·사각형·오각형을 그대로 만들기.
+ * RAY B1-2 p.36 explicitly asks children to make all three polygon families on a
+ * geoboard. Every entry is a CLOSED simple polygon, and the child must rebuild it
+ * in the same place and orientation. The pool is grouped in fives so the first two
+ * sessions establish triangles/quadrilaterals and the third introduces pentagons.
  */
 const level2Specs = [
   [[1, 1], [3, 1], [1, 3]],             // right triangle, legs 2 and 2
@@ -308,19 +311,24 @@ const level2Specs = [
   [[0, 3], [1, 1], [3, 1], [2, 3]],     // parallelogram
   [[1, 0], [3, 0], [4, 2], [0, 2]],     // trapezium, parallel sides 2 and 4
   [[0, 0], [4, 1], [2, 3]],             // scalene triangle, no two sides alike
-  [[2, 0], [4, 2], [2, 3], [0, 2]]      // kite
+  [[2, 0], [4, 2], [2, 3], [0, 2]],     // kite
+  [[1, 4], [1, 2], [2, 0], [3, 2], [3, 4]], // symmetrical house pentagon
+  [[0, 4], [0, 1], [2, 0], [4, 2], [3, 4]], // wide asymmetric pentagon
+  [[0, 0], [3, 0], [4, 1], [4, 3], [0, 3]], // rectangle with one cut corner
+  [[0, 0], [4, 0], [4, 3], [2, 2], [0, 3]], // concave pentagon
+  [[1, 0], [4, 1], [3, 4], [1, 3], [0, 1]]  // irregular pentagon
 ];
 
 /* ------------------------------------------------------------------ level table */
 
 export const levelMeta = [
-  { id: 1, kind: "open", titleKey: "level1Title", descKey: "level1Desc", ready: true },
-  { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true },
-  // Levels 3-5 come straight from the design table. They ship with no problems, are
-  // greyed out in the picker and are unreachable through ?level=N.
-  { id: 3, kind: "condition", titleKey: "level3Title", descKey: "level3Desc", ready: false },
-  { id: 4, kind: "equal-area", titleKey: "level4Title", descKey: "level4Desc", ready: false },
-  { id: 5, kind: "layout", titleKey: "level5Title", descKey: "level5Desc", ready: false }
+  { id: 1, kind: "open", titleKey: "level1Title", descKey: "level1Desc", ready: true, problemCount: 10 },
+  { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
+  // Levels 3-5 are source/design-backed but remain locked until their independent
+  // enumerators and browser interactions are implemented and verified.
+  { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: false },
+  { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: false },
+  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: false }
 ];
 
 const pools = {
@@ -380,7 +388,7 @@ export function validateLevels() {
       assert(level.problems.length === 0, `level ${level.id} is not ready and must ship no problems.`);
       return;
     }
-    assert(level.problems.length === 10, `level ${level.id} needs a pool of 10, found ${level.problems.length}.`);
+    assert(level.problems.length === level.problemCount, `level ${level.id} needs a pool of ${level.problemCount}, found ${level.problems.length}.`);
 
     const canonical = new Map();
     const shapes = new Map();
@@ -405,7 +413,7 @@ export function validateLevels() {
       shapes.set(shape, label);
     });
 
-    assert(canonical.size === 10, `level ${level.id} pool is not 10 canonically distinct problems.`);
+    assert(canonical.size === level.problemCount, `level ${level.id} pool is not ${level.problemCount} canonically distinct problems.`);
   });
   return true;
 }
@@ -444,7 +452,7 @@ function validateFigure(problem) {
   } else {
     assert(isClosed(points), `${label} is on level 2 and must be CLOSED.`);
     assert(vertices.length >= 3, `${label} closed figure needs at least three corners.`);
-    assert(vertices.length <= 4, `${label} should be a triangle or a quadrilateral.`);
+    assert(vertices.length <= 5, `${label} should be a triangle, quadrilateral, or pentagon.`);
     assert(edgeCount(points) === vertices.length, `${label} closed polygon has the wrong edge count.`);
     assert(polygonArea(points) > 0, `${label} closed polygon encloses no area.`);
   }

@@ -24,8 +24,8 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-4";
-import { messages, text } from "./i18n.js?v=geoboard-4";
+} from "./levels.js?v=geoboard-5";
+import { messages, text } from "./i18n.js?v=geoboard-5";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 

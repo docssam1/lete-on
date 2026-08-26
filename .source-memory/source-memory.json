@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-24",
+  "updated": "2026-08-27",
   "sources": [
     {
       "id": "handover",
@@ -110,9 +110,9 @@
       "path": "geometry/games/geoboard/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "161ab966a9ae59f40db7433e44e99fe6cc86ea0dee8f31fa6487abb788265f79",
-      "size": 22827,
-      "mtime_ns": 1787138066480953100
+      "sha256": "388ad34a011d31971ec3f872519e53c6192d6c0bb17f44b3512aabe39902a51b",
+      "size": 23507,
+      "mtime_ns": 1787763705331258300
     },
     {
       "id": "geometry-geoboard-selftest",
@@ -120,9 +120,9 @@
       "path": "geometry/games/geoboard/geoboard.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "8d120421ff818e1f1c93b502b2278823360a3d0d681c1e8b7d095570db929665",
-      "size": 3144,
-      "mtime_ns": 1787234861605039000
+      "sha256": "dc71c7da3ede1fac278e490b6ca07b14bff01b41503849432d7b312580c7d38d",
+      "size": 5065,
+      "mtime_ns": 1787764270308000000
     },
     {
       "id": "cmath-nc1-2-shape-start",
@@ -213,6 +213,26 @@
       "sha256": "4884fa86be4439d39507ef4f299c58981c0d056b982b7ab9dcb04c755ad85990",
       "size": 26864432,
       "mtime_ns": 1686900846000000000
+    },
+    {
+      "id": "geometry-seed-tangram-dotboard-note",
+      "title": "GFIELD 칠교·점판 출처 메모",
+      "path": "E:\\Codex\\source-memory-private\\geometry\\seed-tangram-and-dotboard-2026-08-27.md",
+      "kind": "markdown",
+      "sensitivity": "private",
+      "sha256": "dce360a23ec57d6cce8aec1aaa02d6b644ad21a128749707859b86f163f8fce4",
+      "size": 1263,
+      "mtime_ns": 1787763419053941500
+    },
+    {
+      "id": "geometry-geoboard-lattice-enumerator",
+      "title": "Geoboard exact lattice enumerator",
+      "path": "geometry/games/geoboard/lattice-enumerator.js",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "cdf4b0dcd090135fec7dc7efc9c343c93e61a2297fcce8cc70d0eb27ac139136",
+      "size": 5467,
+      "mtime_ns": 1787764266052873500
     }
   ],
   "records": [
@@ -4092,10 +4112,10 @@
         "ray",
         "single-answer"
       ],
-      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 이를 위한 열린 선 조작 연습, 2단계는 제시된 삼각형·사각형 재현으로 연결한다. 현재 공개 범위는 20문제이며 위치·방향까지 같은 하나의 답만 인정한다.",
+      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 열린 선 조작 연습, 2단계는 세 도형군의 위치·방향 1:1 재현으로 연결한다. 현재 공개 범위는 25문제이며 정답 edge set 하나만 인정한다.",
       "status": "verified",
       "sensitivity": "private",
-      "updated": "2026-08-20",
+      "updated": "2026-08-27",
       "pointers": [
         {
           "source_id": "ray-b1-2",
@@ -4113,13 +4133,13 @@
           "source_id": "geometry-geoboard-levels",
           "role": "code",
           "locator": "LEVELS, LEVEL_PROBLEMS, acceptsAnswer, validateLevels",
-          "note": "1단계 조작 연습과 2단계 닫힌 도형 재현을 분리하고 위치·방향까지 같은 edge set 하나만 허용"
+          "note": "1단계 열린 모양 10문제와 2단계 삼각형·사각형·오각형 15문제의 위치·방향 1:1 정답 검증"
         },
         {
           "source_id": "geometry-geoboard-selftest",
           "role": "test",
           "locator": "full deterministic test suite",
-          "note": "20개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+          "note": "25개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
         }
       ]
     },
@@ -4221,6 +4241,61 @@
           "role": "decision",
           "locator": "section 프리미어 원본 모의고사",
           "note": "이미지 시험지, 채점 제외, 공개 저장소 자산 금지 기준"
+        }
+      ]
+    },
+    {
+      "id": "geometry.tangram.seed-book-1-inbox",
+      "title": "시드 칠교놀이1 원본 등록",
+      "aliases": [
+        "시드 칠교놀이1"
+      ],
+      "tags": [
+        "geometry",
+        "tangram",
+        "source-inbox"
+      ],
+      "summary": "Google Drive의 시드 칠교놀이1 PDF를 칠교 게임과 문제은행의 후보 원본으로 등록했다. 파일 정체와 메타데이터만 확인했으며 페이지별 유형·문항·정답은 아직 검수 전이므로 구현 근거로 직접 사용하지 않는다.",
+      "status": "draft",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "geometry-seed-tangram-dotboard-note",
+          "role": "note",
+          "locator": "시드 칠교놀이1 절",
+          "note": "Google Drive 파일 식별 정보와 검수 대기 상태"
+        }
+      ]
+    },
+    {
+      "id": "geometry.geoboard.square-triangular-lattice-decision",
+      "title": "점판 공작소 격자별 도형 문제 설계",
+      "aliases": [
+        "점판 정사각형 정삼각형"
+      ],
+      "tags": [
+        "geometry",
+        "geoboard",
+        "dotboard",
+        "single-answer"
+      ],
+      "summary": "Geoboard는 점판으로 표시한다. 정사각 점판에서 점 3개는 일반 삼각형, 점 4개는 정사각형을 만들며, 삼각 점판에서는 점 3개로 정삼각형을 만든다. 종류 수와 전체 배치 수를 구분하고 가능한 꼭짓점 조합을 전수 열거한다. 검산 기준은 정사각 점판 3x3·4x4·5x5의 정사각형이 각각 3종류/6개, 5종류/20개, 8종류/50개이며, 삼각 점판 한 변 3·4·5점의 정삼각형은 2종류/5개, 4종류/15개, 6종류/35개다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "geometry-seed-tangram-dotboard-note",
+          "role": "decision",
+          "locator": "점판 공작소 결정 절",
+          "note": "2026-08-27 사용자 결정과 수학적 격자 제약 기록"
+        },
+        {
+          "source_id": "geometry-geoboard-lattice-enumerator",
+          "role": "code",
+          "locator": "enumerateTriangles, enumerateSquares, enumerateEquilateralTriangles, DOT_BOARD_REFERENCE",
+          "note": "종류와 전체 배치를 분리해 전수 열거하고 고정 기준값과 교차 검산"
         }
       ]
     }
