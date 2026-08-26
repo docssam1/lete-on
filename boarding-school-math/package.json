@@ -1,0 +1,13 @@
+{
+  "name": "gfield-boarding-school-math-foundation",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "test": "node --test tests/program-contract.test.cjs tests/us-k8-domain-spine.test.cjs tests/supabase-private-foundation.test.cjs",
+    "test:browser": "node --test tests/foundation-browser.test.cjs",
+    "audit:public": "node scripts/audit-public-exposure.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GFIELD 보딩스쿨 수학 K-8 교육과정과 경시 진입 경로">
+  <title>GFIELD Boarding School Math</title>
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="GFIELD Math home">
+      <span class="brand-mark">G</span>
+      <span>GFIELD <b>Math</b></span>
+    </a>
+    <div class="locale-switch" role="group" aria-label="Language">
+      <button type="button" data-locale="ko" aria-pressed="true">KO</button>
+      <button type="button" data-locale="en" aria-pressed="false">EN</button>
+      <button type="button" data-locale="zh-Hans" aria-pressed="false">中文</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow" data-copy="eyebrow"></p>
+      <h1 data-copy="heroTitle"></h1>
+      <p class="hero-copy" data-copy="heroCopy"></p>
+      <div class="scope-strip" aria-label="Program scope">
+        <span>K–8 Core</span><span>Singapore</span><span>Math Kangaroo</span><span>SASMO</span><span>AMC 8</span>
+      </div>
+    </section>
+
+    <section class="control-panel" aria-labelledby="view-heading">
+      <div>
+        <p class="control-label" id="view-heading" data-copy="viewAs"></p>
+        <div class="segmented" role="group" aria-label="Audience">
+          <button type="button" data-role="student" aria-pressed="true" data-copy="student"></button>
+          <button type="button" data-role="teacher" aria-pressed="false" data-copy="teacher"></button>
+        </div>
+      </div>
+      <div>
+        <p class="control-label" data-copy="chooseGrade"></p>
+        <div class="grade-switch" id="grade-switch" role="group" aria-label="Grade"></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pathways-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow" data-copy="pathwayEyebrow"></p><h2 id="pathways-heading" data-copy="pathwaysTitle"></h2></div>
+        <p id="program-count" class="section-stat"></p>
+      </div>
+      <div class="card-grid" id="program-grid"></div>
+    </section>
+
+    <section class="section split-section">
+      <div class="panel" aria-labelledby="domains-heading">
+        <p class="eyebrow">CCSS K–8</p>
+        <h2 id="domains-heading" data-copy="domainsTitle"></h2>
+        <div class="domain-list" id="domain-list"></div>
+        <p class="source-note"><span data-copy="source"></span> <a href="https://corestandards.org/mathematics-standards/" target="_blank" rel="noreferrer">Common Core</a></p>
+      </div>
+      <div class="panel accent-panel" aria-labelledby="resources-heading">
+        <p class="eyebrow" data-copy="audienceEyebrow"></p>
+        <h2 id="resources-heading" data-copy="resourcesTitle"></h2>
+        <ul class="resource-list" id="resource-list"></ul>
+      </div>
+    </section>
+
+    <section class="promotion" aria-labelledby="promotion-heading">
+      <div><p class="eyebrow" data-copy="promotionEyebrow"></p><h2 id="promotion-heading" data-copy="promotionTitle"></h2></div>
+      <p data-copy="promotionCopy"></p>
+      <div class="evidence-flow" id="evidence-flow"></div>
+    </section>
+
+    <aside class="preview-note" role="note">
+      <strong data-copy="previewTitle"></strong>
+      <span data-copy="previewCopy"></span>
+    </aside>
+  </main>
+
+  <footer><span>GFIELD Boarding School Math</span><span>Foundation v0.1 · 2026-08-26</span></footer>
+  <script src="./shared/program-contract.js"></script>
+  <script src="./shared/program-catalog.js"></script>
+  <script src="./curriculum/us-k8-domain-spine.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
