@@ -8,16 +8,18 @@ const inventory = JSON.parse(fs.readFileSync(path.join(directory, "4-1-source-it
 const crosswalks = ["1-2", "3-4", "5-6"].map(range =>
   JSON.parse(fs.readFileSync(path.join(directory, `4-1-crosswalk-units-${range}.json`), "utf8"))
 );
-const mappings = crosswalks.flatMap(item => item.mappings || []);
-const mappingBySourceId = new Map(mappings.map(item => [item.sourceItemId, item]));
+const legacyMappings = crosswalks.flatMap(item => item.mappings || []);
+const nativeMappings = JSON.parse(fs.readFileSync(path.join(directory, "4-1-native-generators.json"), "utf8")).mappings || [];
+const mappingBySourceId = new Map(legacyMappings.map(item => [item.sourceItemId, item]));
+for (const mapping of nativeMappings) mappingBySourceId.set(mapping.sourceItemId, mapping);
 
-if (mappingBySourceId.size !== mappings.length) throw new Error("중복된 4-1 원문 문항 매핑이 있습니다.");
+if (new Set(nativeMappings.map(item => item.sourceItemId)).size !== nativeMappings.length) throw new Error("중복된 4-1 전용 생성기 매핑이 있습니다.");
 
 const payload = {
   version: "2026-08-26",
   totals: inventory.totals,
   exceptions: inventory.exceptions,
-  verifiedMappings: mappings.length,
+  verifiedMappings: mappingBySourceId.size,
   items: inventory.items.map(item => {
     const mapping = mappingBySourceId.get(item.sourceItemId);
     return {

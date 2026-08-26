@@ -5,8 +5,8 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8877/hselementary/question-bank/`
 - Total runtime types: 914 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 550 (deterministic runtime availability check)
-- Review-locked types: 364 (316 source-inventoried 4-1 items plus 48 source-complex 4-2 items)
+- Implemented types: 559 (deterministic runtime availability check)
+- Review-locked types: 355 (307 source-inventoried 4-1 items plus 48 source-complex 4-2 items)
 - Exact source-item mapping: 417 items: all 329 items in 4-1 plus 88 items in the 4-2 triangle and decimal units. Do not describe the remaining entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Completed: all six units in grades 4, 5, and 6 for both semesters
@@ -27,7 +27,7 @@
 
 ## Completed Generator Groups
 
-- Grade 4-1 unit 1: 66 source items, 4 exact-match generators ready
+- Grade 4-1 unit 1: 66 source items, 13 generators ready; exploration group 1 has all 11 source-native variants
 - Grade 4-1 unit 2: 66 source items, all generators review-locked
 - Grade 4-1 unit 3: 65 source items, 1 exact-match generator ready; source example 6-4 does not exist
 - Grade 4-1 unit 4: 44 source items, 1 exact-match generator ready
@@ -46,9 +46,9 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates every one of the 550 runtime-ready types at all three difficulty offsets across 20 seeds each. The legacy generator-family audits remain available, but 4-1 only exposes the 13 generators whose complete structure matches one exact source item. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates every one of the 559 runtime-ready types at all three difficulty offsets across 20 seeds each. The legacy generator-family audits remain available; 4-1 exposes 11 source-native variants for its first exploration group plus 11 other exact source matches. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
-The full regression suite has 43 dedicated audits. The source-item taxonomy gate requires each mapped exploration, example, and Mission problem to have its own source ID and page locator. The 2026-08-26 run passed the new 4-1 inventory, crosswalk, runtime taxonomy, and availability gates together with the existing 4-2 and shared audits. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+The full regression suite has 44 dedicated audits. The source-item taxonomy gate requires each mapped exploration, example, and Mission problem to have its own source ID and page locator. The 2026-08-26 run passed the new 4-1 inventory, source-native large-number, crosswalk, runtime taxonomy, and availability gates together with the existing 4-2 and shared audits. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
 
 ## Implementation Notes
 
@@ -56,7 +56,7 @@ The full regression suite has 43 dedicated audits. The source-item taxonomy gate
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 550 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 559 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - Elementary explanation policy: `elementary-language-audit.js` checks the generator-family catalog across 100 seeds per difficulty; the 13 public 4-1 mappings are a verified subset
 - Numeric display policy: `numeric-display-audit.js` checks the generator-family catalog across 100 seeds per difficulty; the runtime sweep checks public availability separately

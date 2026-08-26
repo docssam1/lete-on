@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "status": "verified-native-generators",
+  "mappings": [
+    { "sourceItemId": "4-1-u1-e1-exploration", "generatorKey": "source41LargeNumberOne", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-example-1-1", "generatorKey": "source41LargeNumberOne", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-example-1-2", "generatorKey": "source41LargeNumberOne", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-example-1-3", "generatorKey": "source41LargeNumberOne", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-example-1-4", "generatorKey": "source41LargeNumberOne", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-1", "generatorKey": "source41LargeNumberOne", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-2", "generatorKey": "source41LargeNumberOne", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-3", "generatorKey": "source41LargeNumberOne", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-4", "generatorKey": "source41LargeNumberOne", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-5", "generatorKey": "source41LargeNumberOne", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e1-mission-6", "generatorKey": "source41LargeNumberOne", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+  ]
+}

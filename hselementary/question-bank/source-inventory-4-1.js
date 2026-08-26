@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 13,
+  "verifiedMappings": 22,
   "items": [
     {
       "unit": 1,
@@ -33,10 +33,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 4,
       "typeLabel": "큰 수의 자릿값과 읽기",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -50,10 +51,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 4,
       "typeLabel": "큰 수 읽고 쓰기",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -67,10 +69,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 4,
       "typeLabel": "배수 변화 뒤 자릿값 비교",
       "sourceVerified": true,
-      "generatorKey": "largeNumberPlaceValue",
+      "generatorKey": "source41LargeNumberOne",
       "variant": 2,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -85,8 +87,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 4,
       "typeLabel": "자릿값 분해식의 빈칸",
       "sourceVerified": true,
-      "generatorKey": "largeNumberPlaceValue",
-      "variant": 1,
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false
@@ -103,10 +105,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 4,
       "typeLabel": "특정 숫자의 자릿값 순서",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -120,10 +123,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "자릿값별 계수로 수 나타내기",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -137,10 +141,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "단위 개수로 만든 수의 자리숫자",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -154,10 +159,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "두 숫자의 자릿값 배수",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -171,10 +177,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "배수 변화 뒤 자리숫자 합",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -188,10 +195,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "수 범위의 특정 숫자 빈도",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -205,10 +213,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 5,
       "typeLabel": "거리 단위 환산 뒤 자리숫자 차",
       "sourceVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberOne",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,

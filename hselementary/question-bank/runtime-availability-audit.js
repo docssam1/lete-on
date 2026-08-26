@@ -22,8 +22,8 @@ const ready = types.filter(type => generatorApi.generatorKey(type) && !type.revi
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 
 if (types.length !== 914) failures.push(`런타임 유형은 914개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 550) failures.push(`생성 가능 유형은 550개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 364) failures.push(`검수 대기 유형은 364개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 559) failures.push(`생성 가능 유형은 559개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 355) failures.push(`검수 대기 유형은 355개여야 하나 ${locked.length}개입니다.`);
 
 for (const type of ready) {
   for (const difficulty of [-1, 0, 1]) {
@@ -40,7 +40,8 @@ for (const type of ready) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 문제·정답·풀이가 비었습니다.`);
         break;
       }
-      if (/undefined|null|NaN|Infinity/.test(`${generated.prompt} ${generated.answer} ${generated.solution}`)) {
+      const visible = `${generated.prompt} ${generated.answer} ${generated.solution}`.replace(/<[^>]*>/g, " ");
+      if (/undefined|null|NaN|Infinity/.test(visible)) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 잘못된 값이 노출됩니다.`);
         break;
       }
@@ -54,4 +55,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 914 · 생성 가능 550 · 검수 대기 364 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 914 · 생성 가능 559 · 검수 대기 355 · ${generatedCount.toLocaleString()}회 생성`);

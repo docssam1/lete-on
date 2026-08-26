@@ -166,6 +166,107 @@
     return [...values].sort((a, b) => a - b);
   };
   const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
+  const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+  const source41SmallUnits = ["", "십", "백", "천"];
+  const source41LargeUnits = ["", "만", "억", "조", "경", "해"];
+  const source41Power = exponent => 10n ** BigInt(exponent);
+  const source41FormatInteger = value => {
+    const text = String(value).replace(/,/g, "");
+    return text.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+  const source41DigitAt = (value, exponent) => Number(BigInt(value) / source41Power(exponent) % 10n);
+  const source41ReadFourDigits = value => {
+    const digits = String(value).padStart(4, "0").split("").map(Number);
+    return digits.map((digit, index) => {
+      if (!digit) return "";
+      const unit = source41SmallUnits[3 - index];
+      return `${digit === 1 && unit ? "" : source41DigitWords[digit]}${unit}`;
+    }).join("");
+  };
+  const source41ReadKorean = value => {
+    const plain = String(value).replace(/,/g, "").replace(/^0+(?=\d)/, "");
+    if (plain === "0") return "영";
+    const padded = plain.padStart(Math.ceil(plain.length / 4) * 4, "0");
+    const groups = padded.match(/.{4}/g);
+    return groups.map((group, index) => {
+      const groupValue = Number(group);
+      if (!groupValue) return "";
+      const largeUnit = source41LargeUnits[groups.length - index - 1];
+      return `${source41ReadFourDigits(groupValue)}${largeUnit}`;
+    }).filter(Boolean).join(" ");
+  };
+  const source41ReadEnglishUnderThousand = value => {
+    const ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+    const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+    const parts = [];
+    if (value >= 100) {
+      parts.push(`${ones[Math.floor(value / 100)]} hundred`);
+      value %= 100;
+    }
+    if (value >= 20) {
+      parts.push(tens[Math.floor(value / 10)]);
+      if (value % 10) parts.push(ones[value % 10]);
+    } else if (value) {
+      parts.push(ones[value]);
+    }
+    return parts.join(" ");
+  };
+  const source41ReadEnglish = value => {
+    const units = ["", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion"];
+    const plain = String(value).replace(/,/g, "").replace(/^0+(?=\d)/, "");
+    if (plain === "0") return "zero";
+    const padded = plain.padStart(Math.ceil(plain.length / 3) * 3, "0");
+    const groups = padded.match(/.{3}/g);
+    return groups.map((group, index) => {
+      const groupValue = Number(group);
+      if (!groupValue) return "";
+      const unit = units[groups.length - index - 1];
+      return `${source41ReadEnglishUnderThousand(groupValue)}${unit ? ` ${unit}` : ""}`;
+    }).filter(Boolean).join(" ");
+  };
+  const source41PlaceLabel = exponent => {
+    if (exponent === 0) return "일";
+    const group = Math.floor(exponent / 4);
+    return `${source41SmallUnits[exponent % 4]}${source41LargeUnits[group]}`;
+  };
+  const source41RandomIntegerText = (rng, length, { zeroCount = 0, trailingZeros = 0 } = {}) => {
+    const digits = Array.from({ length }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
+    for (let index = length - trailingZeros; index < length; index += 1) digits[index] = 0;
+    const zeroCandidates = shuffle(rng, Array.from({ length: Math.max(0, length - trailingZeros - 1) }, (_, index) => index + 1).filter(index => digits[index] !== 0));
+    zeroCandidates.slice(0, zeroCount).forEach(index => { digits[index] = 0; });
+    return digits.join("");
+  };
+  const source41NumberWithDigitsAt = (rng, length, marks, trailingZeros = 0) => {
+    const excluded = new Set(marks.map(mark => mark.digit));
+    const allowed = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !excluded.has(digit));
+    const leadingAllowed = allowed.filter(Boolean);
+    const digits = Array.from({ length }, (_, index) => pick(rng, index === 0 ? leadingAllowed : allowed));
+    for (let index = length - trailingZeros; index < length; index += 1) digits[index] = 0;
+    marks.forEach(mark => {
+      if (mark.exponent < trailingZeros || mark.exponent >= length) throw new Error("표시할 자리의 범위가 잘못되었습니다.");
+      digits[length - mark.exponent - 1] = mark.digit;
+    });
+    return digits.join("");
+  };
+  const source41MarkedInteger = (value, marks) => {
+    const text = String(value);
+    const byExponent = new Map(marks.map(mark => [mark.exponent, mark.label]));
+    return text.split("").map((digit, index) => {
+      const exponent = text.length - index - 1;
+      const comma = index > 0 && (text.length - index) % 3 === 0 ? "," : "";
+      const label = byExponent.get(exponent);
+      return `${comma}${label ? `<span class="marked-digit"><u>${digit}</u><small>${label}</small></span>` : digit}`;
+    }).join("");
+  };
+  const source41ReadNamedPlaces = (value, namedUnits) => String(value).split("").map((character, index, digits) => {
+    const digit = Number(character);
+    if (!digit) return "";
+    const exponent = digits.length - index - 1;
+    if (exponent === 0) return source41DigitWords[digit];
+    if (exponent <= 3) return `${digit === 1 ? "" : source41DigitWords[digit]}${source41SmallUnits[exponent]}`;
+    return `${source41DigitWords[digit]}${namedUnits[exponent - 4]}`;
+  }).filter(Boolean).join(" ");
+  const source41Evidence = (kind, payload, expected) => `<span hidden data-source41-kind="${kind}" data-source41-payload="${encodeURIComponent(JSON.stringify(payload))}" data-source41-expected="${encodeURIComponent(String(expected))}"></span>`;
   const fractionEquation = (kind, terms, expected, body) => {
     const termText = terms.map(({ numerator, denominator }) => `${numerator}/${denominator}`).join(";");
     return `<div class="equation" data-fraction-kind="${kind}" data-fraction-terms="${termText}" data-fraction-expected="${expected.numerator}/${expected.denominator}">${body}</div>`;
@@ -2087,6 +2188,317 @@
   }
 
   const generators = {
+    source41LargeNumberOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수 원문 분기는 0부터 10까지여야 합니다.");
+      const symbolLabels = ["㉠", "㉡", "㉢", "㉣"];
+
+      if (variant === 0) {
+        const namedUnitSets = [
+          ["별", "달", "꽃", "숲", "빛"],
+          ["솔", "강", "산", "들", "구름"],
+          ["봄", "여름", "가을", "겨울", "하늘"]
+        ];
+        const namedUnits = pick(rng, namedUnitSets);
+        const customNumber = source41RandomIntegerText(rng, [7, 8, 9][level], { zeroCount: level });
+        const customReading = source41ReadNamedPlaces(customNumber, namedUnits);
+        const statements = shuffle(rng, [
+          { role: "advantage", text: "각 자리마다 이름이 달라 자리값을 한 자리씩 살피기 쉽습니다." },
+          { role: "disadvantage", text: "수가 더 커질 때마다 새 이름이 필요해 외울 말이 많아집니다." },
+          { role: "other", text: "아무리 큰 수도 두 글자로만 읽을 수 있습니다." },
+          { role: "other", text: "0인 자리의 이름도 빠짐없이 소리 내어 읽어야 합니다." }
+        ]).map((statement, index) => ({ ...statement, label: symbolLabels[index] }));
+        const advantage = statements.find(statement => statement.role === "advantage").label;
+        const disadvantage = statements.find(statement => statement.role === "disadvantage").label;
+        const comparisonNumber = source41RandomIntegerText(rng, [13, 16, 19][level], { zeroCount: level * 2 });
+        const koreanReading = source41ReadKorean(comparisonNumber);
+        const englishReading = source41ReadEnglish(comparisonNumber);
+        const storyNumber = source41RandomIntegerText(rng, [10, 13, 16][level], { zeroCount: level + 1 });
+        const storyReading = source41ReadKorean(storyNumber);
+        const stories = [
+          ["별 관측 자료", "빛 점"],
+          ["큰 지도 자료", "작은 점"],
+          ["전자책 자료실", "글자"]
+        ];
+        const [storyPlace, storyThing] = pick(rng, stories);
+        const answer = `(1) ${customReading} / (2) ${advantage}, ${disadvantage} / (3) 우리말: ${koreanReading}; 영어: ${englishReading}; 묶음: 4자리, 3자리 / (4) ${source41FormatInteger(storyNumber)}`;
+        const payload = {
+          variant,
+          level,
+          namedUnits,
+          customNumber,
+          statements: statements.map(({ role, label }) => ({ role, label })),
+          comparisonNumber,
+          storyNumber
+        };
+        const evidence = source41Evidence("exploration-four-part", payload, answer);
+        const unitRules = namedUnits.map((unit, index) => index === 0
+          ? `천을 10묶음 모은 값을 <b>${unit}</b>`
+          : `${namedUnits[index - 1]}을 10묶음 모은 값을 <b>${unit}</b>`).join(", ");
+        const prompt = `<div class="source-exploration"><ol class="source-parts"><li>${unitRules}(이)라고 부르기로 했습니다. ${source41FormatInteger(customNumber)}을 새 단위로 읽으세요.</li><li>보기에서 이 방법의 장점과 단점을 차례로 고르세요.<ul class="choice-list">${statements.map(statement => `<li><b>${statement.label}</b> ${statement.text}</li>`).join("")}</ul></li><li>${source41FormatInteger(comparisonNumber)}을 우리말과 영어로 각각 읽고, 오른쪽부터 몇 자리씩 묶는지도 쓰세요.</li><li>${storyPlace}에는 ${storyReading}개의 ${storyThing}이 있습니다. 이 큰 수 이야기에 나온 수를 숫자로 쓰세요.</li></ol></div>${evidence}`;
+        const solution = `(1) 각 숫자를 그 자리의 새 이름과 짝지으면 ${customReading}입니다. (2) 자리값을 바로 살피는 설명은 ${advantage}, 새 이름을 계속 외워야 한다는 설명은 ${disadvantage}입니다. (3) 우리말로 ${koreanReading}, 영어로 ${englishReading}입니다. 우리말은 오른쪽부터 네 자리씩, 영어는 세 자리씩 묶습니다. (4) ${storyReading}을 네 자리씩 나누어 쓰면 ${source41FormatInteger(storyNumber)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const readNumber = source41RandomIntegerText(rng, [9, 13, 17][level], { zeroCount: level * 2 });
+        const writeNumber = source41RandomIntegerText(rng, [8, 12, 16][level], { zeroCount: level * 2 + 1 });
+        const readText = source41ReadKorean(readNumber);
+        const writeText = source41ReadKorean(writeNumber);
+        const answer = `(1) ${readText} / (2) ${source41FormatInteger(writeNumber)}`;
+        const payload = { variant, level, readNumber, writeNumber };
+        const evidence = source41Evidence("read-and-write", payload, answer);
+        const prompt = `<ol class="source-parts"><li>${source41FormatInteger(readNumber)}을 우리말로 읽으세요.</li><li>${writeText}을 숫자로 나타내세요.</li></ol>${evidence}`;
+        const solution = `(1) 오른쪽부터 네 자리씩 끊어 만, 억, 조, 경의 단위를 붙이면 ${readText}입니다. (2) ${writeText}의 각 묶음을 알맞은 네 자리에 놓으면 ${source41FormatInteger(writeNumber)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const configs = [
+          { length: 9, upPower: 1, downPower: 1, lowRange: [1, 2], gapRange: [1, 2], multipliers: [2] },
+          { length: 13, upPower: 2, downPower: 2, lowRange: [2, 4], gapRange: [3, 4], multipliers: [2, 3] },
+          { length: 17, upPower: 3, downPower: 3, lowRange: [3, 5], gapRange: [5, 7], multipliers: [2, 3, 4] }
+        ];
+        const config = configs[level];
+        const multiplier = pick(rng, config.multipliers);
+        const lowDigit = int(rng, 1, Math.floor(9 / multiplier));
+        const highDigit = lowDigit * multiplier;
+        const lowExponent = int(rng, ...config.lowRange);
+        const highExponent = Math.max(config.upPower, lowExponent + int(rng, ...config.gapRange));
+        const transformedFirst = source41NumberWithDigitsAt(rng, config.length, [{ exponent: highExponent, digit: highDigit }], config.upPower);
+        const transformedSecond = source41NumberWithDigitsAt(rng, config.length - config.downPower, [{ exponent: lowExponent, digit: lowDigit }]);
+        const first = BigInt(transformedFirst) / source41Power(config.upPower);
+        const second = BigInt(transformedSecond) * source41Power(config.downPower);
+        const firstMarkedExponent = highExponent - config.upPower;
+        const secondMarkedExponent = lowExponent + config.downPower;
+        const highValue = BigInt(highDigit) * source41Power(highExponent);
+        const lowValue = BigInt(lowDigit) * source41Power(lowExponent);
+        const quotient = highValue / lowValue;
+        const answer = source41FormatInteger(quotient);
+        const payload = {
+          variant,
+          level,
+          first: first.toString(),
+          second: second.toString(),
+          upPower: config.upPower,
+          downPower: config.downPower,
+          firstMarkedExponent,
+          secondMarkedExponent
+        };
+        const evidence = source41Evidence("scaled-place-ratio", payload, answer);
+        const firstShown = source41MarkedInteger(first.toString(), [{ exponent: firstMarkedExponent, label: "㉠" }]);
+        const secondShown = source41MarkedInteger(second.toString(), [{ exponent: secondMarkedExponent, label: "㉡" }]);
+        const prompt = `첫째 수 ${firstShown}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수에서 표시한 숫자 ㉠이 나타내는 값은, 둘째 수 ${secondShown}을 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 한 수에서 표시한 숫자 ㉡이 나타내는 값의 몇 배인지 구하세요.${evidence}`;
+        const solution = `첫째 수를 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ㉠의 값은 ${source41FormatInteger(highValue)}입니다. 둘째 수를 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 하면 ㉡의 값은 ${source41FormatInteger(lowValue)}입니다. ${source41FormatInteger(highValue)}을 ${source41FormatInteger(lowValue)}으로 나누면 ${answer}배입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const highestExponent = [5, 6, 7][level];
+        const exponents = Array.from({ length: 5 }, (_, index) => highestExponent - index);
+        const counts = level === 0
+          ? [int(rng, 1, 8), int(rng, 2, 9), int(rng, 1, 9), int(rng, 1, 9), int(rng, 1, 9)]
+          : level === 1
+            ? [int(rng, 2, 12), int(rng, 12, 55), int(rng, 11, 35), int(rng, 11, 35), int(rng, 11, 35)]
+            : [int(rng, 10, 30), int(rng, 60, 180), int(rng, 40, 120), int(rng, 40, 120), int(rng, 40, 120)];
+        const total = counts.reduce((sum, count, index) => sum + BigInt(count) * source41Power(exponents[index]), 0n);
+        const answer = counts[1];
+        const payload = { variant, level, total: total.toString(), exponents, counts: counts.map((count, index) => index === 1 ? null : count), blankIndex: 1 };
+        const evidence = source41Evidence("expanded-count-blank", payload, answer);
+        const terms = exponents.map((exponent, index) => `${source41FormatInteger(source41Power(exponent))}이 ${index === 1 ? "□" : counts[index]}개`).join(", ");
+        const prompt = `${source41FormatInteger(total)}은 ${terms}인 수입니다. □에 알맞은 수를 구하세요.${evidence}`;
+        const knownValue = counts.reduce((sum, count, index) => index === 1 ? sum : sum + BigInt(count) * source41Power(exponents[index]), 0n);
+        const remainder = total - knownValue;
+        const solution = `전체 수에서 □가 아닌 네 부분의 값을 빼면 ${source41FormatInteger(remainder)}이 남습니다. 이것은 ${source41FormatInteger(source41Power(exponents[1]))}이 몇 개인지를 나타내므로 ${source41FormatInteger(remainder)}을 ${source41FormatInteger(source41Power(exponents[1]))}으로 나누면 □는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const targetDigit = int(rng, 2, 8);
+        const exponentPools = [[3, 4, 5, 6], [4, 6, 8, 10], [6, 10, 14, 17]];
+        const assignedExponents = shuffle(rng, exponentPools[level]);
+        const minimumLengths = [8, 12, 19];
+        const firstText = source41NumberWithDigitsAt(rng, Math.max(minimumLengths[level], assignedExponents[0] + 2), [{ exponent: assignedExponents[0], digit: targetDigit }]);
+        const secondText = source41NumberWithDigitsAt(rng, Math.max(minimumLengths[level], assignedExponents[1] + 2), [{ exponent: assignedExponents[1], digit: targetDigit }]);
+        const scalePower = [1, 2, 3][level];
+        const thirdFinalText = source41NumberWithDigitsAt(rng, Math.max(minimumLengths[level], assignedExponents[2] + 2), [{ exponent: assignedExponents[2], digit: targetDigit }], scalePower);
+        const thirdBase = BigInt(thirdFinalText) / source41Power(scalePower);
+        const fourthExponent = assignedExponents[3];
+        let fourth = null;
+        for (let attempt = 0; attempt < 300 && !fourth; attempt += 1) {
+          const unitExponents = [fourthExponent - 1, Math.max(1, fourthExponent - 2), 0];
+          const counts = [
+            targetDigit * 10 + int(rng, 1, 3),
+            level === 0 ? int(rng, 1, 7) : level === 1 ? int(rng, 12, 39) : int(rng, 40, 89),
+            level === 0 ? int(rng, 2, 9) : level === 1 ? int(rng, 20, 99) : int(rng, 100, 999)
+          ];
+          const value = counts.reduce((sum, count, index) => sum + BigInt(count) * source41Power(unitExponents[index]), 0n);
+          const occurrences = value.toString().split("").filter(digit => Number(digit) === targetDigit).length;
+          if (source41DigitAt(value, fourthExponent) === targetDigit && occurrences === 1) fourth = { unitExponents, counts, value };
+        }
+        if (!fourth) throw new Error("단위 개수로 나타낼 비교 수를 만들지 못했습니다.");
+        const representations = [
+          { label: "㉠", value: BigInt(firstText), exponent: assignedExponents[0] },
+          { label: "㉡", value: BigInt(secondText), exponent: assignedExponents[1] },
+          { label: "㉢", value: BigInt(thirdFinalText), exponent: assignedExponents[2] },
+          { label: "㉣", value: fourth.value, exponent: assignedExponents[3] }
+        ];
+        const answer = [...representations].sort((left, right) => right.exponent - left.exponent).map(item => item.label).join(", ");
+        const payload = {
+          variant,
+          level,
+          targetDigit,
+          firstNumber: firstText,
+          secondNumber: secondText,
+          thirdBase: thirdBase.toString(),
+          scalePower,
+          fourthUnitExponents: fourth.unitExponents,
+          fourthCounts: fourth.counts
+        };
+        const evidence = source41Evidence("represented-digit-order", payload, answer);
+        const fourthText = fourth.unitExponents.map((exponent, index) => `${source41FormatInteger(source41Power(exponent))}이 ${fourth.counts[index]}개`).join(", ");
+        const prompt = `다음 네 수에서 숫자 ${targetDigit}이 나타내는 값을 비교하여 큰 것부터 기호를 쓰세요.<ol class="choice-list"><li><b>㉠</b> ${source41ReadKorean(firstText)}</li><li><b>㉡</b> ${source41FormatInteger(secondText)}</li><li><b>㉢</b> ${source41FormatInteger(thirdBase)}을 ${source41FormatInteger(source41Power(scalePower))}배 한 수</li><li><b>㉣</b> ${fourthText}인 수</li></ol>${evidence}`;
+        const solution = `네 수를 숫자로 나타내면 ㉠은 ${source41FormatInteger(firstText)}, ㉡은 ${source41FormatInteger(secondText)}, ㉢은 ${source41FormatInteger(thirdFinalText)}, ㉣은 ${source41FormatInteger(fourth.value)}입니다. 숫자 ${targetDigit}의 자리값을 각각 살펴 큰 것부터 놓으면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const groupWidth = [3, 4, 5][level];
+        const groupBase = 10 ** groupWidth;
+        const coefficients = Array.from({ length: 4 }, () => level === 0
+          ? int(rng, 2, Math.min(99, groupBase - 1))
+          : level === 1
+            ? int(rng, 100, groupBase - 1)
+            : int(rng, 10000, groupBase - 1));
+        const powers = [groupWidth * 3, groupWidth * 2, groupWidth, 0];
+        const value = coefficients.reduce((sum, coefficient, index) => sum + BigInt(coefficient) * source41Power(powers[index]), 0n);
+        const answer = coefficients.map((coefficient, index) => `${symbolLabels[index]} ${coefficient}`).join(", ");
+        const payload = { variant, level, value: value.toString(), groupWidth };
+        const evidence = source41Evidence("four-coefficients", payload, answer);
+        const equation = coefficients.map((coefficient, index) => `${symbolLabels[index]} × ${source41FormatInteger(source41Power(powers[index]))}`).join(" + ");
+        const prompt = `다음 식의 ㉠, ㉡, ㉢, ㉣에 알맞은 수를 차례로 구하세요.<div class="equation expanded">${source41FormatInteger(value)} = ${equation}</div>${evidence}`;
+        const solution = `오른쪽부터 ${groupWidth}자리씩 나누면 ${coefficients.join(", ")}입니다. 각 묶음은 차례로 ${powers.map(exponent => source41FormatInteger(source41Power(exponent))).join(", ")}의 개수이므로 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const configs = [
+          { exponents: [7, 4, 1], scalePower: 2, ranges: [[20, 99], [120, 999], [120, 999]] },
+          { exponents: [9, 6, 3], scalePower: 3, ranges: [[200, 899], [1000, 8999], [1000, 8999]] },
+          { exponents: [12, 8, 4], scalePower: 4, ranges: [[2000, 8999], [10000, 89999], [10000, 89999]] }
+        ];
+        const config = configs[level];
+        const counts = config.ranges.map(rangeValue => int(rng, ...rangeValue));
+        const base = counts.reduce((sum, count, index) => sum + BigInt(count) * source41Power(config.exponents[index]), 0n);
+        const scaled = base * source41Power(config.scalePower);
+        const scaledText = scaled.toString();
+        const eligibleExponents = scaledText.split("").map((digit, index) => ({ digit: Number(digit), exponent: scaledText.length - index - 1 })).filter(item => item.digit !== 0);
+        if (eligibleExponents.length < 2) return generators.source41LargeNumberOne({ rng, level, variant });
+        const requested = shuffle(rng, eligibleExponents).slice(0, 2);
+        const answer = requested[0].digit + requested[1].digit;
+        const payload = { variant, level, exponents: config.exponents, counts, scalePower: config.scalePower, requestedExponents: requested.map(item => item.exponent) };
+        const evidence = source41Evidence("unit-count-scaled-digit-sum", payload, answer);
+        const parts = config.exponents.map((exponent, index) => `${source41FormatInteger(source41Power(exponent))}이 ${counts[index]}개`).join(", ");
+        const prompt = `${parts}인 수를 ${source41FormatInteger(source41Power(config.scalePower))}배 했습니다. 이 수의 ${source41PlaceLabel(requested[0].exponent)}의 자리 숫자와 ${source41PlaceLabel(requested[1].exponent)}의 자리 숫자의 합을 구하세요.${evidence}`;
+        const solution = `먼저 단위와 개수를 곱해 모두 더하면 ${source41FormatInteger(base)}입니다. 이를 ${source41FormatInteger(source41Power(config.scalePower))}배 한 수는 ${source41FormatInteger(scaled)}입니다. 두 자리 숫자는 ${requested[0].digit}, ${requested[1].digit}이므로 합은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const configs = [
+          { length: 10, lowRange: [1, 2], gapRange: [2, 3], multipliers: [2] },
+          { length: 14, lowRange: [2, 4], gapRange: [4, 6], multipliers: [2, 3] },
+          { length: 18, lowRange: [3, 5], gapRange: [7, 10], multipliers: [2, 3, 4] }
+        ];
+        const config = configs[level];
+        const multiplier = pick(rng, config.multipliers);
+        const lowDigit = int(rng, 1, Math.floor(9 / multiplier));
+        const highDigit = lowDigit * multiplier;
+        const lowExponent = int(rng, ...config.lowRange);
+        const highExponent = lowExponent + int(rng, ...config.gapRange);
+        const numberText = source41NumberWithDigitsAt(rng, config.length, [
+          { exponent: highExponent, digit: highDigit },
+          { exponent: lowExponent, digit: lowDigit }
+        ]);
+        const highValue = BigInt(highDigit) * source41Power(highExponent);
+        const lowValue = BigInt(lowDigit) * source41Power(lowExponent);
+        const answer = source41FormatInteger(highValue / lowValue);
+        const payload = { variant, level, number: numberText, highExponent, lowExponent };
+        const evidence = source41Evidence("two-marked-place-ratio", payload, answer);
+        const shown = source41MarkedInteger(numberText, [
+          { exponent: highExponent, label: "㉠" },
+          { exponent: lowExponent, label: "㉡" }
+        ]);
+        const prompt = `다음 수에서 표시한 숫자 ㉠이 나타내는 값은 표시한 숫자 ㉡이 나타내는 값의 몇 배인지 구하세요.<div class="equation expanded">${shown}</div>${evidence}`;
+        const solution = `㉠이 나타내는 값은 ${source41FormatInteger(highValue)}, ㉡이 나타내는 값은 ${source41FormatInteger(lowValue)}입니다. ${source41FormatInteger(highValue)}을 ${source41FormatInteger(lowValue)}으로 나누면 ${answer}배입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const configs = [
+          { length: 10, upPower: 1, downPower: 1, zeroCount: 0 },
+          { length: 14, upPower: 2, downPower: 3, zeroCount: 2 },
+          { length: 18, upPower: 3, downPower: 4, zeroCount: 4 }
+        ];
+        const config = configs[level];
+        const baseText = source41RandomIntegerText(rng, config.length, { zeroCount: config.zeroCount, trailingZeros: config.downPower });
+        const sourceDigits = baseText.split("").map((digit, index) => ({ digit: Number(digit), exponent: baseText.length - index - 1 })).filter(item => item.digit !== 0 && item.exponent >= config.downPower);
+        if (sourceDigits.length < 2) return generators.source41LargeNumberOne({ rng, level, variant });
+        const selected = shuffle(rng, sourceDigits).slice(0, 2);
+        const upExponent = selected[0].exponent + config.upPower;
+        const downExponent = selected[1].exponent - config.downPower;
+        const upValue = BigInt(baseText) * source41Power(config.upPower);
+        const downValue = BigInt(baseText) / source41Power(config.downPower);
+        const answer = source41DigitAt(upValue, upExponent) + source41DigitAt(downValue, downExponent);
+        const payload = { variant, level, base: baseText, upPower: config.upPower, downPower: config.downPower, upExponent, downExponent };
+        const evidence = source41Evidence("two-scale-digit-sum", payload, answer);
+        const prompt = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 한 수의 ${source41PlaceLabel(upExponent)}의 자리 숫자와, 같은 수를 ${source41FormatInteger(source41Power(config.downPower))}분의 1로 한 수의 ${source41PlaceLabel(downExponent)}의 자리 숫자의 합을 구하세요.${evidence}`;
+        const solution = `${source41FormatInteger(baseText)}을 ${source41FormatInteger(source41Power(config.upPower))}배 하면 ${source41FormatInteger(upValue)}, ${source41FormatInteger(source41Power(config.downPower))}분의 1로 하면 ${source41FormatInteger(downValue)}입니다. 구하는 두 자리 숫자가 ${source41DigitAt(upValue, upExponent)}, ${source41DigitAt(downValue, downExponent)}이므로 합은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const clues = [];
+        let exponent = int(rng, 3 + level * 2, 5 + level * 2);
+        for (let index = 0; index < 4; index += 1) {
+          if (index) exponent += int(rng, 1, 1 + level);
+          const leading = level === 0 ? 1 : int(rng, 1 + level - 1, 3 + level * 2);
+          const repeatLength = int(rng, 1, Math.min(exponent - 1, index + level + 1));
+          const repeatedDigit = int(rng, 2, 8);
+          const subtrahend = BigInt(String(repeatedDigit).repeat(repeatLength));
+          const base = BigInt(leading) * source41Power(exponent);
+          const value = base - subtrahend;
+          const count = value.toString().split("").filter(digit => digit === "9").length;
+          clues.push({ base: base.toString(), subtrahend: subtrahend.toString(), value: value.toString(), count, exponent });
+        }
+        const answer = clues.reduce((sum, clue) => sum + clue.count, 0);
+        const payload = { variant, level, clues: clues.map(({ base, subtrahend }) => ({ base, subtrahend })), targetDigit: 9 };
+        const evidence = source41Evidence("four-number-digit-count", payload, answer);
+        const prompt = `다음 네 수를 모두 숫자로 쓸 때 숫자 9를 모두 몇 번 쓰는지 구하세요.<ol class="choice-list">${clues.map(clue => `<li>${source41FormatInteger(clue.base)}보다 ${source41FormatInteger(clue.subtrahend)} 작은 수</li>`).join("")}</ol>${evidence}`;
+        const solution = `${clues.map((clue, index) => `${symbolLabels[index]}의 수 ${source41FormatInteger(clue.value)}에는 9가 ${clue.count}번`).join(", ")} 있습니다. 모두 더하면 ${clues.map(clue => clue.count).join(" + ")} = ${answer}번입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const speedLengths = [7, 9, 10];
+      const speed = source41RandomIntegerText(rng, speedLengths[level], { zeroCount: level, trailingZeros: [2, 3, 3][level] });
+      const seconds = pick(rng, [[20, 30, 40, 50], [300, 500, 700, 900], [2400, 3600, 4800, 7200]][level]);
+      const centimeters = BigInt(speed) * BigInt(seconds) * 100n;
+      const centimeterText = centimeters.toString();
+      const placeDigits = centimeterText.split("").map((digit, index) => ({ digit: Number(digit), exponent: centimeterText.length - index - 1 }));
+      const pairs = [];
+      for (let firstIndex = 0; firstIndex < placeDigits.length; firstIndex += 1) for (let secondIndex = firstIndex + 1; secondIndex < placeDigits.length; secondIndex += 1) {
+        if (placeDigits[firstIndex].digit !== placeDigits[secondIndex].digit) pairs.push([placeDigits[firstIndex], placeDigits[secondIndex]]);
+      }
+      if (!pairs.length) return generators.source41LargeNumberOne({ rng, level, variant });
+      const requested = pick(rng, pairs);
+      const answer = Math.abs(requested[0].digit - requested[1].digit);
+      const situations = ["달 탐사 장치가 보낸 전파", "기상 위성이 보낸 신호", "우주 관측소가 보낸 전파"];
+      const situation = pick(rng, situations);
+      const payload = { variant, level, speed, seconds, requestedExponents: requested.map(item => item.exponent), centimeterUnit: 100 };
+      const evidence = source41Evidence("signal-distance-digit-difference", payload, answer);
+      const prompt = `${situation}는 1초에 약 ${source41FormatInteger(speed)}m를 갑니다. 이 신호가 ${source41FormatInteger(seconds)}초 동안 간 거리를 cm로 나타냈을 때 ${source41PlaceLabel(requested[0].exponent)}의 자리 숫자와 ${source41PlaceLabel(requested[1].exponent)}의 자리 숫자의 차를 구하세요.${evidence}`;
+      const solution = `${source41FormatInteger(seconds)}초 동안 간 거리는 ${source41FormatInteger(speed)} × ${source41FormatInteger(seconds)} = ${source41FormatInteger(BigInt(speed) * BigInt(seconds))}m입니다. 1m는 100cm이므로 ${source41FormatInteger(centimeters)}cm입니다. 두 자리 숫자의 차는 ${requested[0].digit}과 ${requested[1].digit}의 차인 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
       const digitCount = 11 + level;
       const makeDigits = () => Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
