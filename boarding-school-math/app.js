@@ -4,7 +4,8 @@
   const catalog = window.GFIELDMathProgramCatalog;
   const spine = window.GFIELDUSK8DomainSpine;
   const registry = window.GFIELDUSK8ContentRegistry;
-  if (!catalog || !spine || !registry) throw new Error("GFIELD math foundation data failed to load");
+  const resourcePlan = window.GFIELDK8ResourcePlan;
+  if (!catalog || !spine || !registry || !resourcePlan) throw new Error("GFIELD math foundation data failed to load");
 
   const copy = {
     ko: {
@@ -16,6 +17,7 @@
       domainsTitle: "이 학년의 핵심 영역", unitsTitle: "학년별 학습 단위", unitLocked: "앵커 스킬 · 검수 대기", source: "기준:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "이 역할의 자료",
       promotionEyebrow: "PROMOTION & PLACEMENT", promotionTitle: "승급은 근거를 모아 결정합니다",
       promotionCopy: "공통기준이나 대회 참가조건을 임의의 ‘미국 공식 컷’으로 바꾸지 않습니다. 진단·단원 숙달·유지 확인·교사 검토를 모으고, 실제 컷은 학교가 버전별로 설정합니다.",
+      resourceLocked: "콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다.", cadenceTitle: "수업 기본안", grade6Cadence: "단원당 3주 · 주 2회 · 회당 75분 · 가정학습 주 2회 30분 · 학교 조정 가능", grade6Retention: "유지 확인은 최소 7일 뒤 별도 시도로 예약됩니다.", templateCadence: "수업 시간과 회차는 학교별 설정 후 확정됩니다.", plannedComponents: "계획 구성",
       previewTitle: "기반 미리보기", previewCopy: "학생 로그인과 실제 기록은 아직 연결하지 않았습니다. 공개 데이터 노출을 막는 새 인증 저장소 전환 후 활성화합니다.",
       active: "운영", planned: "예정", locked: "잠금", core: "핵심", accelerated: "심화", competition: "경시", bridge: "연결",
       evidence: ["진단", "단원 숙달", "유지 확인", "교사 검토"]
@@ -28,6 +30,7 @@
       domainsTitle: "Core domains for this grade", unitsTitle: "Grade learning units", unitLocked: "Anchor skill · review pending", source: "Source:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "Resources for this role",
       promotionEyebrow: "PROMOTION & PLACEMENT", promotionTitle: "Promotion requires multiple forms of evidence",
       promotionCopy: "Standards and contest eligibility are not presented as a national US cut score. Diagnosis, unit mastery, retention checks, and teacher review are combined; each school owns and versions its thresholds.",
+      resourceLocked: "Content and downloads remain locked until independent review and authenticated signing.", cadenceTitle: "Default lesson cadence", grade6Cadence: "3 weeks per unit · 2 meetings weekly · 75 minutes each · two 30-minute home blocks weekly · school configurable", grade6Retention: "Retention is scheduled as a separate attempt at least 7 days later.", templateCadence: "Lesson time and session count require school configuration.", plannedComponents: "planned components",
       previewTitle: "Foundation preview", previewCopy: "Student login and real records are not connected yet. They activate only after migration to the new private authenticated store.",
       active: "Active", planned: "Planned", locked: "Locked", core: "Core", accelerated: "Accelerated", competition: "Competition", bridge: "Bridge",
       evidence: ["Diagnostic", "Unit mastery", "Retention check", "Teacher review"]
@@ -40,6 +43,7 @@
       domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色资源", resourcesTitle: "本角色资料",
       promotionEyebrow: "晋级与分班", promotionTitle: "依据多项证据决定晋级",
       promotionCopy: "不把课程标准或竞赛资格误称为美国全国统一分数线。综合诊断、单元掌握、保持性检查和教师评估，由学校自行设定并版本化门槛。",
+      resourceLocked: "内容和下载在独立审核及认证签署完成前保持锁定。", cadenceTitle: "默认课次安排", grade6Cadence: "每单元 3 周 · 每周 2 次 · 每次 75 分钟 · 每周两次 30 分钟家庭学习 · 可由学校调整", grade6Retention: "保持性检查将在至少 7 天后作为独立尝试安排。", templateCadence: "课时与课次数量需由学校配置后确定。", plannedComponents: "计划组件",
       previewTitle: "基础预览", previewCopy: "学生登录与真实记录尚未连接。迁移到新的私有认证存储后才会启用。",
       active: "运行", planned: "计划", locked: "锁定", core: "核心", accelerated: "进阶", competition: "竞赛", bridge: "衔接",
       evidence: ["诊断", "单元掌握", "保持检查", "教师评估"]
@@ -108,9 +112,23 @@
   }
 
   function renderResources() {
-    const resources = catalog.resourceRules[state.role];
-    document.getElementById("resource-list").innerHTML = resources.map(function (resource) {
-      return `<li>${local(resourceLabels[resource])}</li>`;
+    const plans = resourcePlan.buildGradePlans(state.grade);
+    const plan = plans[0];
+    const resources = resourcePlan.projectAudience(plan, state.role).resources;
+    const grouped = new Map();
+    resources.forEach(function (resource) {
+      const existing = grouped.get(resource.resourceType) || { resourceType: resource.resourceType, levels: new Set(), components: 0, sessions: new Set() };
+      existing.levels.add(resource.levelId);
+      existing.sessions.add(resource.sessionId);
+      resource.plannedComponents.forEach(function (component) { existing.components += component.plannedCount; });
+      grouped.set(resource.resourceType, existing);
+    });
+    document.getElementById("resource-state").textContent = copy[state.locale].resourceLocked;
+    const cadence = document.getElementById("cadence-summary");
+    cadence.innerHTML = `<strong>${copy[state.locale].cadenceTitle}</strong><span>${plan.cadence ? copy[state.locale].grade6Cadence : copy[state.locale].templateCadence}</span>${plan.retentionSchedule ? `<span>${copy[state.locale].grade6Retention}</span>` : ""}`;
+    document.getElementById("resource-list").innerHTML = [...grouped.values()].map(function (resource) {
+      const levels = [...resource.levels].map(function (level) { return copy[state.locale][level]; }).join(" · ");
+      return `<li><div><b>${local(resourceLabels[resource.resourceType])}</b><span>${levels} · ${resource.components} ${copy[state.locale].plannedComponents}</span></div></li>`;
     }).join("");
   }
 

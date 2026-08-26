@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { spawnSync } = require("node:child_process");
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const checks = [
@@ -29,6 +30,25 @@ const findings = checks.flatMap(function (check) {
   const content = fs.readFileSync(target, "utf8");
   return check.pattern.test(content) ? [{ code: check.code, file: check.file, message: check.message }] : [];
 });
+
+const trackedPrivateDrafts = spawnSync(
+  "git",
+  ["ls-files", "-z", "--", "boarding-school-math/private-authoring"],
+  { cwd: repoRoot, encoding: "utf8" }
+);
+if (trackedPrivateDrafts.status !== 0) {
+  findings.push({
+    code: "PRIVATE_AUTHORING_TRACKING_AUDIT_UNAVAILABLE",
+    file: "boarding-school-math/private-authoring",
+    message: "The public audit could not verify that local assessment drafts are absent from the Git index."
+  });
+} else if (String(trackedPrivateDrafts.stdout || "").split("\0").filter(Boolean).length) {
+  findings.push({
+    code: "PRIVATE_AUTHORING_TRACKED",
+    file: "boarding-school-math/private-authoring",
+    message: "An assessment authoring draft is tracked in the public Git index."
+  });
+}
 
 if (!findings.length) {
   console.log("PASS public exposure audit: no targeted legacy findings");

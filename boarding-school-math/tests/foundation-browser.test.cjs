@@ -53,7 +53,17 @@ test("desktop interactions preserve grade role and language contracts", async fu
 
   await page.locator('[data-role="teacher"]').click();
   assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-pressed"), "true");
-  assert.deepEqual(await page.locator("#resource-list li").allTextContents(), ["수업 교안", "정답지", "해설지", "평가 루브릭", "과제 생성기", "교사용 분석"]);
+  assert.deepEqual(await page.locator("#resource-list li b").allTextContents(), ["수업 교안", "정답지", "해설지", "평가 루브릭", "과제 생성기", "교사용 분석"]);
+  assert.equal(await page.locator("#resource-list").getByText("정답지", { exact: true }).count(), 1);
+
+  await page.locator('[data-grade="6"]').click();
+  assert.equal(await page.locator("#cadence-summary").getByText("단원당 3주 · 주 2회 · 회당 75분 · 가정학습 주 2회 30분 · 학교 조정 가능", { exact: true }).count(), 1);
+  assert.equal(await page.locator("#resource-state").getByText("콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다.", { exact: true }).count(), 1);
+  assert.equal(await page.locator("#resource-list a, #resource-list button").count(), 0);
+
+  await page.locator('[data-role="student"]').click();
+  assert.equal(await page.locator("#resource-list").getByText("정답지", { exact: true }).count(), 0);
+  assert.equal(await page.locator("#resource-list").getByText("개념 워크북", { exact: true }).count(), 1);
 
   await page.locator('[data-locale="en"]').click();
   assert.equal(await page.locator("html").getAttribute("lang"), "en");

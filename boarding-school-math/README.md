@@ -1,6 +1,6 @@
 # GFIELD Boarding School Math
 
-This directory is the shared K–8 boarding-school program layer for the existing GFIELD elementary and middle-school math applications. It does not replace `number_magic`, `hselementary`, `fields-classic`, or `hsmiddle`. Algebra2 remains a separate in-scope workstream and is not inferred from unrelated high-school course labels.
+This directory is the shared K–8 boarding-school program layer for the existing GFIELD elementary and middle-school math applications. It does not replace `number_magic`, `hselementary`, `fields-classic`, or `hsmiddle`.
 
 ## Architecture decision
 
@@ -45,7 +45,15 @@ The first contract tests cover K–8 scope, student/teacher separation, Korean/E
 
 `curriculum/us-k8-content-registry.js` turns each of those 94 verified cluster records into one stable GFIELD course → unit → anchor-skill lineage. Foundation, core, and advanced identify the intended evidence type (readiness, direct application, or within-grade multi-step transfer), not an official standard band, score cut, or released question difficulty. The registry has no prompts, answers, or worksheets; a cluster anchor is intentionally not treated as a completed individual-standard skill decomposition. Student and teacher resource types stay disjoint, and every generated metadata record remains rights-locked until a reviewed item and server signature exist.
 
-The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. High-school, generic algebra, and calculus course tiers are excluded rather than guessed to be Algebra2. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
+## Workbook resource plan
+
+`resources/k8-resource-plan.js` creates one metadata-only student/teacher resource plan for each of the 94 verified K–8 units. Each resource record preserves the full `course → unit → skill → level → testType → resourceType` lineage and contains only planned component counts; it rejects prompts, options, item IDs, answers, solutions, rubrics, learner IDs, reviewer IDs, and release IDs. Student and teacher arrays are always separate.
+
+Grade 6 is the first cadence-ready template: 3 weeks per unit, 2 × 75-minute meetings and two 30-minute home blocks each week, for 6 sessions across 10 units (60 meetings / 30 weeks before diagnostic, intervention, and competition weeks). A retention check is a separate signed attempt, scheduled at least 7 days after the unit rather than treated as the next in-class task. The schedule is a GFIELD default that a school may override. Levels live on resource records rather than on calendar sessions, so a foundation/core/advanced artifact can be independently bound and reviewed later.
+
+This is a workbook production plan, not a released workbook. It does not generate pages, questions, answer keys, PDFs, download links, or a promotion decision. The viewer shows planning status only; its student/teacher toggle is not an authorization boundary. Actual student and teacher materials stay locked until reviewed content is stored and delivered through authenticated role checks.
+
+The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
 
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.
 
@@ -62,6 +70,8 @@ The report derives item points, domain scores, a school-configured internal perf
 ## Question-bank release boundary
 
 `question-bank/item-release-contract.js` separates student-safe prompt data from private answers, scoring rules, solutions, rubrics, and item/asset rights records. Course-placement prompts use `authenticated-assessment` delivery and remain outside public Git history. Even a `public-practice` bundle produces only a locked candidate without prompt payload; this repository has no public exporter until a verified signed-release-manifest gate is implemented. The local validator is only a schema-shape preflight. It can mark a bundle `structurally-ready-for-authenticated-signer-verification`, never verify a hash, approve a reviewer, release an item, or promote a learner. An authenticated signer must reload database roles and evidence, recompute canonical public/private/rights/rubric/review hashes, use a trusted clock for rights expiry, sanitize asset bytes, scan answer leakage, and create the signed immutable release manifest.
+
+The `private-authoring/` directory is intentionally Git-ignored. It may hold local, unreviewed authoring drafts only; it is not a deployment source, public backup, or substitute for an authenticated item store. Assessment prompts, answers, solutions, rubric drafts, and reviewer notes must never be committed to the public repository. Run `npm run validate:private-grade6` locally to check the complete Grade 6 authoring set against the locked plan and student-delivery contract; it prints only status codes and item identifiers, never prompt or answer content.
 
 `assessment/grade6-placement-plan.js` is the first locked full-form plan: 42 one-point slots across all ten Grade 6 CCSS clusters and five domains, with 10 foundation, 22 core, and 10 advanced tasks. Its 18 multiple-choice, 14 numeric, 6 short-answer, and 4 constructed-response slots are only a form plan. Every slot has a null item ID until a real bilingual item, private scoring specification, rights record, independent review bundle, and authenticated server signature are present. The plan is not a national placement cut or a released exam.
 

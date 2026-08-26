@@ -68,8 +68,15 @@ h2 { margin: 0; font-size: clamp(1.75rem, 3.5vw, 2.7rem); line-height: 1.08; }
 .unit-item span { margin-top: 4px; color: var(--muted); font-size: .73rem; }
 .unit-item small { color: var(--teal); font-size: .7rem; font-weight: 800; text-align: right; }
 .resource-list { margin: 28px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-.resource-list li { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, .16); }
+.resource-list li { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, .16); }
 .resource-list li::before { content: "↗"; color: #7ed7cb; }
+.resource-list b, .resource-list span { display: block; }
+.resource-list b { font-size: .9rem; }
+.resource-list span { margin-top: 4px; color: rgba(255, 255, 255, .68); font-size: .72rem; line-height: 1.5; }
+.resource-state { margin: 16px 0 0; color: #d9b566; font-size: .76rem; line-height: 1.55; }
+.cadence-summary { display: grid; gap: 5px; margin-top: 18px; padding: 13px; border: 1px solid rgba(126, 215, 203, .28); background: rgba(126, 215, 203, .08); }
+.cadence-summary strong { color: #7ed7cb; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }
+.cadence-summary span { color: rgba(255, 255, 255, .82); font-size: .78rem; line-height: 1.55; }
 .source-note { margin: 24px 0 0; color: var(--muted); font-size: .78rem; }
 
 .promotion { margin: 16px 0 0; padding: clamp(28px, 5vw, 58px); border: 1px solid var(--line); background: #e5ece7; display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; }
