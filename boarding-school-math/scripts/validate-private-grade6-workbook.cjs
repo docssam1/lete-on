@@ -71,13 +71,17 @@ const LAYOUT_KEYS = new Set([
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
 const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
-const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|answer|正确答案|答案|결과|result|结果|풀이|solution|解答)/iu;
-const ANSWER_VALUE_LABEL = /(?:correct\s+answer|answer|정답|답|正确答案|答案|결과|result|结果|풀이|solution|解答)/giu;
+const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|\bans(?:wer)?|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/iu;
+const ANSWER_VALUE_LABEL = /(?:correct\s+answer|\bans(?:wer)?|정답|답|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/giu;
 const ANSWER_VALUE_GRAMMAR_CONNECTOR = /^\s*(?:은|는|is|are|equals?|是|为)\s*/iu;
 const ANSWER_VALUE_SEPARATOR = /^(?:[\s\p{P}\p{S}\p{C}\p{M}\p{Z}])+/u;
 const ANSWER_VALUE_WRAPPER = /^(?:[\[("“‘]+\s*)+/u;
 const HTML_TAG = /<[A-Za-z/!][^>]*>/u;
 const HTML_ENTITY = /&(?:#(?:x[0-9a-f]+|\d+)|[a-z][a-z0-9]+);/iu;
+const SAFE_STUDENT_TEX_COMMANDS = new Set([
+  "boxed", "cdot", "displaystyle", "div", "dfrac", "frac", "left", "mathit", "mathbf", "mathrm", "mathsf", "mathtt",
+  "operatorname", "overline", "right", "sqrt", "text", "tfrac", "times", "underline"
+]);
 const RESPONSE_TEXT_LOCALE_PATTERNS = Object.freeze({
   en: /^[\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
   ko: /^[\p{Script=Hangul}\p{Script=Han}\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
@@ -134,6 +138,13 @@ function requireLocales(value, policy, code, reference) {
   policy.included.forEach(function (locale) { assert(nonBlankText(value[locale]), code, reference); });
 }
 
+function requireStudentVisibleLocales(value, policy, code, reference) {
+  requireLocales(value, policy, code, reference);
+  Object.entries(value).forEach(function (entry) {
+    assertStudentVisibleTextIsNeutral(entry[1], entry[0], reference);
+  });
+}
+
 function normalizeForAnswerLeakScan(value) {
   return String(value)
     .normalize("NFKC")
@@ -152,26 +163,65 @@ function normalizeForAnswerLeakScan(value) {
 
 function normalizeForAnswerLabelScan(value) {
   // A TeX spacing command such as `\\!` is visually a zero/negative-width
-  // separator. Treat punctuation, symbols, and invisible formatting as absent
-  // for the label scan so `An\\!swer` cannot bypass the student-content rule.
-  return normalizeForAnswerLeakScan(value).replace(/[\p{P}\p{S}\p{C}\p{M}\p{Z}]/gu, "");
+  // separator. Text-display commands are likewise absent to a reader, so
+  // retain their payload for the label scan.
+  const labelNormalized = String(value)
+    .normalize("NFKC")
+    .replace(/\\(?:boxed|text|mathrm|mathit|mathbf|mathsf|mathtt|operatorname)\s*\{([^{}]*)\}/giu, "$1");
+  return normalizeForAnswerLeakScan(labelNormalized).replace(/[\p{P}\p{S}\p{C}\p{M}\p{Z}]/gu, "");
 }
 
-function assertResponseStudentTextSyntax(content, locale, reference) {
+function assertStudentVisibleTextSyntax(content, locale, reference) {
   const value = String(content);
   const compatibilityNormalized = value.normalize("NFKC");
-  // Response blocks are deliberately plain text. Reject every ampersand rather
-  // than trying to mirror browser-specific named/numeric entity recovery
-  // rules, including semicolon-less numeric forms such as `&#115`.
+  // Student-visible text may keep TeX in an explicitly non-response worked
+  // example, but it never accepts HTML/entity recovery or invisible controls.
   assert(!HTML_TAG.test(value) && !HTML_ENTITY.test(value) && !/&/u.test(value) &&
     !HTML_TAG.test(compatibilityNormalized) && !HTML_ENTITY.test(compatibilityNormalized) && !/&/u.test(compatibilityNormalized),
   "STUDENT_MARKUP_UNSUPPORTED", reference);
-  assert(!/[\\]/u.test(value) && !/[\\]/u.test(compatibilityNormalized), "STUDENT_TEX_UNSUPPORTED", reference);
+  [value, compatibilityNormalized].forEach(function (candidate) {
+    // Worked examples may use a deliberately small mathematical TeX subset.
+    // Every other command (including invisible/layout or Unicode-escape
+    // commands) is rejected rather than trying to blacklist all renderers.
+    const matcher = /\\([A-Za-z]+)\*?/gu;
+    let match;
+    while ((match = matcher.exec(candidate))) {
+      assert(SAFE_STUDENT_TEX_COMMANDS.has(match[1].toLowerCase()), "STUDENT_TEX_UNSUPPORTED", reference);
+    }
+    assert(!/\\(?![A-Za-z])/u.test(candidate), "STUDENT_TEX_UNSUPPORTED", reference);
+  });
   assert(!/[\p{C}\p{M}]/u.test(value) && !/[\p{C}\p{M}]/u.test(compatibilityNormalized), "STUDENT_CHARACTER_UNSUPPORTED", reference);
   if (locale != null) {
     const allowed = RESPONSE_TEXT_LOCALE_PATTERNS[locale];
     assert(allowed && allowed.test(value) && allowed.test(compatibilityNormalized), "STUDENT_CHARACTER_UNSUPPORTED", reference);
   }
+}
+
+function assertStudentAnswerLabelAbsent(value, reference) {
+  const normalizedContent = normalizeForAnswerLeakScan(value);
+  const compactLabelContent = normalizeForAnswerLabelScan(value);
+  assert(!ANSWER_REVEALING_TEXT.test(normalizedContent) && !ANSWER_REVEALING_TEXT.test(compactLabelContent), "STUDENT_ANSWER_LEAK", reference);
+  return normalizedContent;
+}
+
+function assertStudentVisibleTextIsNeutral(content, locale, reference) {
+  assertStudentVisibleTextSyntax(content, locale, reference);
+  assertStudentAnswerLabelAbsent(content, reference);
+}
+
+function assertStudentNeutralId(value, prefix, code, reference) {
+  assertId(value, prefix, code, reference);
+  assertStudentAnswerLabelAbsent(value, reference);
+}
+
+function assertResponseStudentTextSyntax(content, locale, reference) {
+  // Response blocks are deliberately plain text. Reject every ampersand rather
+  // than trying to mirror browser-specific named/numeric entity recovery
+  // rules, including semicolon-less numeric forms such as `&#115`.
+  assertStudentVisibleTextSyntax(content, locale, reference);
+  const value = String(content);
+  const compatibilityNormalized = value.normalize("NFKC");
+  assert(!/[\\]/u.test(value) && !/[\\]/u.test(compatibilityNormalized), "STUDENT_TEX_UNSUPPORTED", reference);
 }
 
 function answerValueBoundary(nextCharacter) {
@@ -190,9 +240,7 @@ function disclosedResponseStartsCandidate(candidate, normalizedResponse) {
 }
 
 function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference, locale) {
-  const normalizedContent = normalizeForAnswerLeakScan(content);
-  const compactLabelContent = normalizeForAnswerLabelScan(content);
-  assert(!ANSWER_REVEALING_TEXT.test(normalizedContent) && !ANSWER_REVEALING_TEXT.test(compactLabelContent), "STUDENT_ANSWER_LEAK", reference);
+  const normalizedContent = assertStudentAnswerLabelAbsent(content, reference);
   // Response-bearing student blocks accept plain text only until content is
   // separated into validated text and math blocks with an explicit allowlist.
   assertResponseStudentTextSyntax(content, locale, reference);
@@ -252,14 +300,14 @@ function validateVerification(verification, reference) {
 function validateFrontMatter(frontMatter, policy, reference) {
   assertOnlyKeys(frontMatter, FRONT_MATTER_KEYS, "FRONT_MATTER_INVALID", reference);
   ["titleByLocale", "learningTargetsByLocale", "howToUseByLocale"].forEach(function (field) {
-    requireLocales(frontMatter[field], policy, "FRONT_MATTER_INVALID", reference);
+    requireStudentVisibleLocales(frontMatter[field], policy, "FRONT_MATTER_INVALID", reference);
   });
 }
 
 function validateClosingMatter(closingMatter, policy, reference) {
   assertOnlyKeys(closingMatter, CLOSING_MATTER_KEYS, "CLOSING_MATTER_INVALID", reference);
   ["glossaryByLocale", "retentionNoticeByLocale"].forEach(function (field) {
-    requireLocales(closingMatter[field], policy, "CLOSING_MATTER_INVALID", reference);
+    requireStudentVisibleLocales(closingMatter[field], policy, "CLOSING_MATTER_INVALID", reference);
   });
 }
 
@@ -298,20 +346,20 @@ function assertPlannedComponentCounts(components, resource, reference) {
 
 function validateStudentComponent(component, policy, reference) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
-  assertId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
+  assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
   assert(Number.isInteger(component.sequence) && component.sequence > 0 && component.sequence <= 100, "STUDENT_COMPONENT_INVALID", reference);
-  requireLocales(component.contentByLocale, policy, "STUDENT_COMPONENT_INVALID", reference);
+  requireStudentVisibleLocales(component.contentByLocale, policy, "STUDENT_COMPONENT_INVALID", reference);
   const isTeachingBlock = TEACHING_COMPONENT_TYPES.has(component.componentType);
   if (isTeachingBlock) {
     assert(component.responseMode === null && component.teacherReferenceId === null, "STUDENT_COMPONENT_INVALID", reference);
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
-    assertId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
+    assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
     Object.entries(component.contentByLocale).forEach(function (entry) {
       const locale = entry[0];
       const content = entry[1];
       assertResponseStudentTextSyntax(content, locale, reference);
-      assert(!ANSWER_REVEALING_TEXT.test(normalizeForAnswerLeakScan(content)), "STUDENT_ANSWER_LEAK", reference);
+      assertStudentAnswerLabelAbsent(content, reference);
     });
   }
 }
@@ -319,11 +367,11 @@ function validateStudentComponent(component, policy, reference) {
 function validateStudentSection(section, plan, policy, seenSectionIds, seenComponentIds, expectedResources) {
   const reference = localReference(section && section.sectionId, "student-section");
   assertOnlyKeys(section, SECTION_KEYS, "STUDENT_SECTION_INVALID", reference);
-  assertId(section.sectionId, "sct-dft-", "STUDENT_SECTION_INVALID", reference);
+  assertStudentNeutralId(section.sectionId, "sct-dft-", "STUDENT_SECTION_INVALID", reference);
   assert(!seenSectionIds.has(section.sectionId), "DUPLICATE_STUDENT_SECTION", reference);
   seenSectionIds.add(section.sectionId);
   assert(section.sectionVersion === 1 && section.audience === "student" && section.productionState === PRODUCTION_STATE, "STUDENT_SECTION_INVALID", reference);
-  requireLocales(section.titleByLocale, policy, "STUDENT_SECTION_INVALID", reference);
+  requireStudentVisibleLocales(section.titleByLocale, policy, "STUDENT_SECTION_INVALID", reference);
   const resource = findResource(plan, section.resourceBinding, reference);
   assert(resource.audience === "student", "STUDENT_SECTION_INVALID", reference);
   assert(expectedResources.has(resource.resourcePlanItemId), "STUDENT_RESOURCE_NOT_IN_SCOPE", reference);
@@ -537,7 +585,7 @@ function validateHomeStudyPlan(homeStudyPlan, componentMap, reference) {
   const assignedComponents = new Set();
   homeStudyPlan.forEach(function (block) {
     assertOnlyKeys(block, HOME_BLOCK_KEYS, "HOME_STUDY_PLAN_INVALID", reference);
-    assertId(block.blockId, "hbk-dft-", "HOME_STUDY_PLAN_INVALID", reference);
+    assertStudentNeutralId(block.blockId, "hbk-dft-", "HOME_STUDY_PLAN_INVALID", reference);
     assert(!blockIds.has(block.blockId), "HOME_STUDY_PLAN_INVALID", reference);
     blockIds.add(block.blockId);
     assert(Number.isInteger(block.week) && block.week >= 1 && block.week <= resourcePlans.GRADE6_CADENCE.weeksPerUnit, "HOME_STUDY_PLAN_INVALID", reference);
@@ -693,6 +741,29 @@ function assertNoReparsePointInPath(absolutePath) {
   });
 }
 
+function gitMarkerExists(directory) {
+  try {
+    fs.lstatSync(path.join(directory, ".git"));
+    return true;
+  } catch (error) {
+    if (error && error.code === "ENOENT") return false;
+    fail("PRIVATE_WORKBOOK_ROOT_UNSAFE", "root");
+  }
+}
+
+function assertOutsideAnyGitWorktree(absolutePath) {
+  let current = absolutePath;
+  while (true) {
+    // Git-discoverable normal repositories and linked worktrees are represented
+    // by a `.git` directory or file. A private authoring root cannot live
+    // beneath either one, even when it is outside this public repository.
+    assert(!gitMarkerExists(current), "PRIVATE_WORKBOOK_ROOT_INSIDE_GIT_WORKTREE", "root");
+    const parent = path.dirname(current);
+    if (parent === current) return;
+    current = parent;
+  }
+}
+
 function parseRoot(args) {
   assert(args.length === 2 && args[0] === "--root" && path.isAbsolute(args[1]), "PRIVATE_WORKBOOK_ROOT_REQUIRED", "command");
   return args[1];
@@ -738,6 +809,7 @@ function validateDirectory(rootArgument) {
   assertNoReparsePointInPath(lexicalRoot);
   const root = fs.realpathSync(lexicalRoot);
   assert(!isInside(root, repoRoot), "PRIVATE_WORKBOOK_ROOT_INSIDE_REPOSITORY", "root");
+  assertOutsideAnyGitWorktree(root);
   const files = sourceFiles(root);
   const packIds = new Set();
   const unitIds = new Set();

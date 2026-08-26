@@ -236,6 +236,7 @@ test("private workbook authoring requires an external JSON-only root and is neve
   assert.equal(packageJson.scripts["validate:private-grade6-workbook"], "node scripts/validate-private-grade6-workbook.cjs");
   assert.match(validatorSource, /GFIELD_PRIVATE_WORKBOOK_DO_NOT_COMMIT/);
   assert.match(validatorSource, /PRIVATE_WORKBOOK_ROOT_INSIDE_REPOSITORY/);
+  assert.match(validatorSource, /PRIVATE_WORKBOOK_ROOT_INSIDE_GIT_WORKTREE/);
   assert.match(validatorSource, /PRIVATE_WORKBOOK_PREFLIGHT_BLOCKED_IN_CI/);
   assert.match(validatorSource, /workbook-draft\\\.json/);
   assert.match(validatorSource, /TEACHING_COMPONENT_TYPES/);
@@ -361,6 +362,144 @@ test("full workbook preflight keeps TeX in worked examples but blocks markup in 
   assert.throws(function () { validator.validatePack(pack, "synthetic-workbook.json"); }, /STUDENT_MARKUP_UNSUPPORTED/);
 });
 
+test("worked examples admit only the reviewed mathematical TeX subset", function () {
+  const pack = syntheticWorkbookPack();
+  const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode === null;
+  });
+  workedExample.contentByLocale.en = "$\\boxed{\\displaystyle \\sqrt{\\frac{1}{2}} \\times 3}$";
+  assert.doesNotThrow(function () { validator.validatePack(pack, "synthetic-workbook.json"); });
+});
+
+test("student-visible metadata, worked examples, and response identifiers cannot carry answer labels", function () {
+  const mutations = [
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        pack.frontMatter.titleByLocale.en = "Answer: 1";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        pack.frontMatter.titleByLocale["zh-Hans"] = "答：0";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        pack.studentSections[0].titleByLocale.en = "Answer: 1";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "Answer: 1";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "Ans: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\color{red}swer: 1";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\unicode{x73}wer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\vphantom{x}swer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\hphantom{x}swer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\rlap{x}swer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\char123swer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_TEX_UNSUPPORTED/,
+      apply: function (pack) {
+        const workedExample = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode === null;
+        });
+        workedExample.contentByLocale.en = "An\\!swer: 0";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        const responseComponent = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode !== null;
+        });
+        responseComponent.componentId = "cmp-dft-answer-1";
+      }
+    },
+    {
+      expected: /STUDENT_ANSWER_LEAK/,
+      apply: function (pack) {
+        const responseComponent = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+          return component.responseMode !== null;
+        });
+        responseComponent.teacherReferenceId = "ref-dft-answer-1";
+      }
+    }
+  ];
+  mutations.forEach(function (mutation) {
+    const pack = syntheticWorkbookPack();
+    mutation.apply(pack);
+    assert.throws(function () {
+      validator.validatePack(pack, "synthetic-workbook.json");
+    }, mutation.expected);
+  });
+});
+
 test("fraction-division checks reduce rational quotients exactly without floating-point arithmetic", function () {
   assert.equal(validator.canonicalAnswer({
     kind: "rational-quotient",
@@ -483,5 +622,18 @@ test("private workbook preflight rejects CI, non-JSON files, and a nested juncti
     }, /PRIVATE_WORKBOOK_ROOT_UNSAFE/);
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
+test("private workbook preflight rejects an external root inside a Git-discoverable worktree", function () {
+  const worktreeRoot = createTempGitRepository();
+  try {
+    const draftRoot = path.join(worktreeRoot, "private-workbook-authoring");
+    fs.mkdirSync(draftRoot);
+    assert.throws(function () {
+      validator.validateDirectory(draftRoot);
+    }, /PRIVATE_WORKBOOK_ROOT_INSIDE_GIT_WORKTREE/);
+  } finally {
+    fs.rmSync(worktreeRoot, { recursive: true, force: true });
   }
 });
