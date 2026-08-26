@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-03'] = {
   id:'C-03', tier:'intermediate', level:'C', order:3,
+  lineage:['ten-friends'],
   generator:'ml_pair10',
   title:{ ko:'분해곱셈법', en:'Decomposition Multiplication', zh:'分解乘法法' },
   subtitle:{ ko:'48×25: 48을 12×4로 분해하면 12×100=1200!', en:'48×25: decompose 48 as 12×4, then 12×100=1200!', zh:'48×25：把48分解为12×4，则12×100=1200！' },

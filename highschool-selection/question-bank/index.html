@@ -75,6 +75,10 @@
         return;
       }
       select.disabled=false;
+      if(target.recommendedExamId&&visibleExams.some(exam=>exam.id===target.recommendedExamId)){
+        select.value=target.recommendedExamId;
+        return;
+      }
       const match=visibleExams.find(exam=>{
         const resolved=tracks.resolveExamTrack(exam.id);
         return exam.programId===profile.id&&resolved&&resolved.binding&&resolved.binding.scopeKey===target.scopeKey;

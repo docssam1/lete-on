@@ -75,7 +75,7 @@
     const response = await fetch(api + path, Object.assign({
       credentials: "include",
       cache: "no-store",
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json", "X-Highselect-Admin": "1" }
     }, options || {}));
     if (!String(response.headers.get("Cache-Control") || "").toLowerCase().includes("no-store")) throw new Error("검수 응답의 캐시 차단 헤더가 없습니다.");
     const data = await response.json().catch(function () { return {}; });

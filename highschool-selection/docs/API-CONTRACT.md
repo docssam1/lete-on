@@ -16,6 +16,7 @@ GET    /practice-sets/:practiceSetId/pages
 POST   /practice-sets/:practiceSetId/attempts
 GET    /admin/access-grants
 POST   /admin/access-grants
+PUT    /admin/access-grants/:grantId
 DELETE /admin/access-grants/:grantId
 GET    /admin/exam-reviews/:examId
 POST   /admin/exam-reviews/:examId/items/:number/resolution
@@ -38,17 +39,25 @@ GET    /admin/exam-reviews/:examId/items/:number/evidence
 - 불확실한 문항은 검증된 채점 제외 정책과 함께 `scoring_excluded`로 처리하고 정답을 추측하지 않음
 - 검수 API는 `Cache-Control: no-store`를 반환하고 관리자 세션을 매 요청마다 다시 검사
 
+## 학생별 시험 승인
+
+`GET /admin/access-grants`는 관리자 세션에서만 학생 이름, 중립 승인 ID, 허용 시험 ID, 선택 만료일을 반환합니다. 승인번호와 승인번호 해시는 반환하지 않습니다.
+
+`POST /admin/access-grants`는 신규 승인을 만들고, `PUT /admin/access-grants/:grantId`는 중립 승인 ID로 기존 승인을 수정합니다. 두 경로 모두 `studentName`, `approvalCode`, `examIds[]`, 선택 `expiresAt(YYYY-MM-DD)`을 받습니다. 동명이인은 서로 다른 승인 ID와 승인번호로 분리하며 이름만으로 기존 계정을 덮어쓰지 않습니다. 승인번호는 서버에서 즉시 scrypt 해시로 바꾸고, 존재하는 운영 시험만 허용하며, 한국시간 기준 만료일이 지난 학생은 로그인과 기존 세션을 모두 차단합니다. 수정으로 승인번호가 바뀌면 이전 승인번호로 발급된 세션도 즉시 무효화합니다.
+
+`DELETE /admin/access-grants/:grantId`는 해당 학생 승인 레코드를 취소합니다. 관리자 계정은 이 경로로 변경하거나 삭제할 수 없습니다. 변경 요청은 현재 운영 출처와 정확히 같은 `Origin`, `X-Highselect-Admin: 1` 헤더를 요구하며 POST/PUT은 JSON만 받습니다. 설정 파일 잠금과 버전 검사를 통과하지 못한 동시 변경은 덮어쓰지 않고 `409`로 실패합니다. 모든 응답은 `Cache-Control: no-store`이며 비공개 설정 파일 밖에 승인 상태를 복제하지 않습니다.
+
 ## 선발 트랙 응답
 
 `GET /selection-tracks`는 중립 `trackId`, 표시명, 대상 단계, 입학 목적만 반환합니다. `GET /programs/:programCode/selection-tracks`는 해당 프로그램의 `trackId`, 범위 코드와 `evidenceStatus`를 반환합니다. 학원·프로그램 코드를 `trackId`에 합치지 않으며, `needs-review` 연결은 확인된 시험 규격처럼 표시하거나 시험 생성의 기본값으로 사용하지 않습니다. 시험 목록은 기존 `examId`를 유지하고 서버가 `ExamTrackAssignment`를 조인합니다.
 
 ## SH-R01 문항별 검수
 
-`GET /admin/exam-reviews/sh-selection-r01`은 `examId`, `roundCode`, `reviewVersion`과 1~40번 상태만 반환합니다. 문항 상태에는 중립 `itemId`, 번호, 답 검산 상태, 분류 검증 상태, 시각 감사 상태, 원본·교정 산출물 지문 일치 여부, 에이전트 처리 상태만 둡니다. 지문값 자체와 비공개 파일 주소는 반환하지 않습니다.
+`GET /admin/exam-reviews/sh-selection-r01`은 `examId`, `roundCode`, `reviewVersion`과 1~40번 상태만 반환합니다. 문항 상태에는 중립 `itemId`, 번호, 답 검산 상태, 분류 검증 상태, 시각 감사 상태, 원본·교정 산출물 지문 일치 여부, 에이전트 처리 상태만 둡니다. 회차 최종 확인이 이미 저장된 경우에는 같은 검수 버전과 문항 수 집계만 `finalConfirmation`으로 함께 반환합니다. 확인자 ID·시각, 지문값 자체와 비공개 파일 주소는 반환하지 않습니다.
 
 `POST /admin/exam-reviews/sh-selection-r01/items/:number/resolution`은 현재 `reviewVersion`과 중립 문항 ID를 다시 대조합니다. `agent_verify`와 `replacement_verified`는 답 검산·분류·시각·원본 지문·교정 산출물 지문 중 하나라도 미완료이면 거부합니다. `scoring_excluded`는 문제 페이지 시각 감사와 원본 지문이 통과하고 채점 제외 정책에 포함된 경우에만 허용합니다. 정적 화면과 브라우저 저장소는 처리 근거로 사용하지 않습니다.
 
-`POST /admin/exam-reviews/sh-selection-r01/final-confirmation`은 40문항이 모두 `agent_verified|replacement_verified|scoring_excluded` 중 하나이고, 7개 교정 결정과 12개 분류검수 큐가 모두 해소되며 답안 입력 구성·채점 정책·인쇄 감사·학생별 서명 자산이 통과한 동일 `reviewVersion`에서만 허용합니다. 사용자는 문항마다 승인하지 않고 완성된 시험 1회 전체만 한 번 확인합니다. 요청에는 `itemCount`, `activeItemCount`, `excludedItemCount`만 포함하고 정답·풀이를 넣지 않습니다.
+`POST /admin/exam-reviews/sh-selection-r01/final-confirmation`은 40문항이 모두 `agent_verified|replacement_verified|scoring_excluded` 중 하나이고, 교정 결정과 분류검수 큐가 모두 해소되며 답안 입력 구성·채점 정책·인쇄 감사·학생별 서명 자산이 통과한 동일 `reviewVersion`에서만 허용합니다. 사용자는 문항마다 승인하지 않고 완성된 시험 1회 전체만 한 번 확인합니다. 요청에는 `itemCount`, `activeItemCount`, `excludedItemCount`만 포함하고 정답·풀이를 넣지 않습니다. 이 API는 확인 상태만 저장하며 시험을 `released`로 자동 승격하지 않습니다.
 
 Q3 동형·동난도 대체문항은 비공개 검산 산출물로 완료되어 있습니다. 운영 서버는 비공개 교정 레지스트리의 지문과 일치할 때만 Q3을 `replacement_verified`로 반환하며 공개 응답에는 지문값을 노출하지 않습니다. Q4·Q8·Q10·Q11·Q34·Q39는 확정된 교정 종류를 실행한 보호 산출물의 지문이 일치할 때까지 처리 대기입니다.
 
@@ -90,4 +99,8 @@ pages[] = { number, url, mimeType }
 
 `POST /practice-sets/plan`은 승인된 문항의 중립 ID, 교육과정 코드, 원문→쌍둥이→유사문제 관계, 난이도, 숙달 상태와 재도전 예정일만 반환합니다. 문제 원문, 답, 풀이, 원본 위치는 반환하지 않습니다.
 
-계획 결과가 완전하더라도 `releaseStatus=approval_required`이며, 관리자가 해당 `practiceSetId`를 승인하기 전에는 페이지 API가 응답하지 않습니다. `GET /practice-sets/:practiceSetId/pages`는 시험지와 같은 학생별 단기 서명 이미지 정책을 적용합니다. 풀이 결과는 정답 값이 아니라 `correct|incorrect`와 문항·계열 중립 ID만 반복 이력에 기록합니다.
+학생 요청 본문은 `{ mode }`만 허용합니다. `learnerId`, 후보 문항, 이전 풀이 이력은 요청에서 받지 않습니다. 학습자 ID와 후보는 로그인 세션·서버 비공개 레지스트리에서 결정하며, 검수된 시도 저장소가 연결되기 전에는 서버가 빈 이력으로만 첫 계획을 만듭니다. 학생에게 해당 프로그램의 공개 완료된 시험별 승인이 하나도 없으면 계획을 만들지 않습니다. 같은 학생·과정·계획일·정책·선택 문항 조합은 같은 중립 `practiceSetId`를 사용하며, 저장 충돌을 덮어쓰지 않습니다.
+
+계획 결과가 완전하더라도 `releaseStatus=approval_required`이며, 관리자가 해당 `practiceSetId`를 승인하기 전에는 페이지 API가 응답하지 않습니다. `POST /practice-sets/:practiceSetId/approve`는 관리자 세션, 동일 출처 `Origin`, `X-Highselect-Admin: 1`, JSON 본문 `{ decisionVersion }`을 요구합니다. 승인 직전에 학생의 현재 프로그램 권한과 비공개 문항 레지스트리로 계획을 다시 계산해 정확히 일치할 때만 `released`로 바꿉니다.
+
+`GET /practice-sets/:practiceSetId/pages`는 시험지와 같은 학생별 단기 서명 이미지 정책을 적용합니다. 승인된 렌더 자산이 연결되지 않은 계획은 승인 상태와 무관하게 잠금을 유지합니다. `POST /practice-sets/:practiceSetId/attempts`도 서버의 검수된 채점 구성이 연결되기 전에는 잠금을 유지하며, 이후 풀이 결과는 정답 값이 아니라 `correct|incorrect`와 문항·계열 중립 ID만 반복 이력에 기록합니다.

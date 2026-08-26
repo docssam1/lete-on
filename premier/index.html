@@ -4,31 +4,61 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>프리미어 모의고사 서재 | G-FIELD</title>
-  <meta name="description" content="프리미어 모의고사 시험지 뷰어와 인쇄">
+  <meta name="description" content="프리미어 모의고사 원본 이미지 시험지와 인쇄">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="library">
   <header class="library-head"><div>
     <small>G-FIELD PREMIER</small>
     <h1>프리미어 모의고사 서재</h1>
-    <p>원본 문항 순서와 2단 구성을 살린 프리미어 문제지 뷰어입니다.</p>
+    <p>원본 PDF의 문제 쪽을 그대로 분할한 프리미어 이미지 시험지입니다.</p>
   </div></header>
   <main class="library-main">
     <section class="library-grid" id="examGrid" aria-live="polite"></section>
   </main>
-  <script src="./exams.js"></script>
+  <script src="../fields-classic/print-viewer/documents.js"></script>
   <script>
   (function () {
-    const exams = Object.values(window.PREMIER_EXAMS || {});
+    const exams = Object.entries(window.GFIELD_PRINT_DOCUMENTS || {})
+      .filter(([key]) => key.startsWith('premier-'))
+      .map(([key, document]) => ({ key, ...document }));
     const grid = document.getElementById('examGrid');
     grid.innerHTML = exams.map((exam) => `
-      <article class="exam-card">
-        <div class="exam-card-top"><span class="round-tile">${exam.round}회</span><span class="state">시험지 검수 완료</span></div>
+      <article class="exam-card" data-exam="${exam.key}">
+        <div class="exam-card-top"><span class="round-tile">${exam.title.replace('프리미어 ', '')}</span><span class="state is-locked">자산 확인 중</span></div>
         <h2>${exam.title}</h2>
-        <p>${exam.description}</p>
-        <div class="card-meta"><span>20문항</span><span>60분</span><span>문제지만 제공</span><span>A3 인쇄</span></div>
-        <a class="open-viewer" href="./viewer.html?exam=${encodeURIComponent(exam.id)}">시험지 열기</a>
+        <p>PDF 문제 쪽 ${exam.pageCount}면을 원본 레이아웃 그대로 제공합니다.</p>
+        <div class="card-meta"><span>20문항</span><span>60분</span><span>해설 쪽 제외</span><span>이미지 인쇄</span></div>
+        <a class="open-viewer is-disabled" aria-disabled="true">자산 확인 중</a>
       </article>`).join('');
+
+    const viewerBase = new URL('../fields-classic/print-viewer/', location.href);
+    async function assetAvailable(exam) {
+      const firstPage = new URL(`${exam.pagesBase}${exam.pagePrefix || ''}001.${exam.pageExt || 'webp'}`, viewerBase);
+      try {
+        let response = await fetch(firstPage, { method: 'HEAD', cache: 'no-store' });
+        if (response.status === 405) response = await fetch(firstPage, { method: 'GET', cache: 'no-store' });
+        return response.ok;
+      } catch (error) {
+        return false;
+      }
+    }
+    exams.forEach(async (exam) => {
+      const card = grid.querySelector(`[data-exam="${exam.key}"]`);
+      const state = card.querySelector('.state');
+      const link = card.querySelector('.open-viewer');
+      if (await assetAvailable(exam)) {
+        state.textContent = '원본 이미지';
+        state.classList.remove('is-locked');
+        link.textContent = '시험지 열기';
+        link.classList.remove('is-disabled');
+        link.removeAttribute('aria-disabled');
+        link.href = `../fields-classic/print-viewer/?doc=${encodeURIComponent(exam.key)}`;
+      } else {
+        state.textContent = '비공개 자산 대기';
+        link.textContent = '승인 후 열림';
+      }
+    });
   })();
   </script>
 </body>

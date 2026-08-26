@@ -65,6 +65,7 @@ test("summary UI is admin-only and keeps answers, originals, and private paths o
   assert.match(page, /buildFinalConfirmationRequest/);
   assert.equal(page.includes("/round-decision"), false);
   assert.match(page, /final-confirmation/);
+  assert.match(page, /X-Highselect-Admin/);
   assert.match(page, /보호 산출물 확인/);
   assert.equal(/localStorage\.setItem|sessionStorage\.setItem|[A-Za-z]:[\\/]|file:\/\//.test(combined), false);
   ["questionText", "correctAnswer", "sourcePath", "pdfUrl", "downloadUrl"].forEach(term => {

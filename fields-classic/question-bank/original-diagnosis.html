@@ -3,45 +3,61 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f3f7fa" />
+  <meta name="theme-color" content="#eef3f8" />
   <title>필즈 더 클래식 원본 시험 진단</title>
-  <link rel="stylesheet" href="./original-diagnosis.css?v=20260822a" />
+  <link rel="stylesheet" href="./original-diagnosis.css?v=20260822c" />
   <link rel="stylesheet" href="./original-diagnosis-watermark.css?v=20260822a" />
 </head>
 <body>
   <div class="student-watermark" id="studentWatermark" aria-hidden="true"></div>
   <header class="diagnosis-header">
     <a href="./index.html" class="back-link">문제은행</a>
-    <div><span>ORIGINAL TEST REVIEW</span><strong>원본 시험 진단</strong></div>
-    <span id="studentName"></span>
+    <div class="brand"><span>G</span><strong>FIELD · FIELDS THE CLASSIC</strong><small>원본 선발시험 빠른 진단</small></div>
+    <span class="student-name" id="studentName"></span>
   </header>
   <main class="diagnosis-shell">
-    <section class="exam-select-panel" aria-labelledby="examSelectTitle">
+    <section class="intro-card">
       <div>
-        <span>시험지를 푼 뒤 채점한 결과를 입력합니다.</span>
-        <h1 id="examSelectTitle">어떤 원본 시험을 진단할까요?</h1>
+        <p class="eyebrow">ORIGINAL TEST DIAGNOSIS</p>
+        <h1>원본 시험 결과를 진단해 보세요</h1>
+        <p>실제 시험지를 푼 뒤 문항별 결과를 입력하면 점수와 약점 유형을 정리해 드립니다.</p>
       </div>
-      <select id="examSelect" aria-label="원본 시험 선택"></select>
+      <label class="exam-select-label">시험 선택
+        <select id="examSelect" aria-label="원본 시험 선택"></select>
+      </label>
     </section>
-
-    <section class="score-panel" aria-live="polite">
-      <div><span>입력 완료</span><strong id="answeredCount">0 / 20</strong></div>
-      <div><span>맞힌 문항</span><strong id="correctCount">0</strong></div>
-      <div><span>현재 점수</span><strong id="scoreValue">-</strong></div>
-      <button type="button" id="clearAnswers">입력 지우기</button>
+    <section class="progress-card" aria-live="polite">
+      <div class="progress-stat"><span>입력 완료</span><strong id="answeredCount">0 / 20</strong></div>
+      <div class="progress-stat"><span>맞힌 문항</span><strong id="correctCount">0</strong></div>
+      <div class="progress-stat"><span>예상 점수</span><strong id="scoreValue">-</strong></div>
+      <div class="progress-track"><i id="progressBar"></i></div>
+      <button type="button" class="clear-button" id="clearAnswers">입력 지우기</button>
     </section>
-
     <section class="response-panel" aria-labelledby="responseTitle">
-      <div class="section-heading"><div><span id="examTiming"></span><h2 id="responseTitle"></h2></div><p>각 문항에 O 또는 X를 한 번만 선택하세요.</p></div>
+      <div class="section-heading">
+        <div><span id="examTiming"></span><h2 id="responseTitle"></h2></div>
+        <p>맞힌 문항은 O, 틀린 문항은 X를 눌러 입력하세요.</p>
+      </div>
       <div id="responseGrid" class="response-grid"></div>
+      <div class="submit-area"><button type="button" id="showResult" disabled>채점하고 진단 받기</button></div>
     </section>
-
     <section class="result-panel" id="resultPanel" hidden aria-labelledby="resultTitle">
-      <div class="section-heading"><div><span>유형별 진단</span><h2 id="resultTitle">학습 결과</h2></div><p>틀린 문항의 사고 구조를 기준으로 정리했습니다.</p></div>
-      <div class="result-summary" id="resultSummary"></div>
-      <div class="weak-types" id="weakTypes"></div>
+      <div class="result-hero">
+        <span>진단 결과</span>
+        <strong id="resultScore">0점</strong>
+        <p id="resultTitle"></p>
+        <small id="resultMessage"></small>
+      </div>
+      <div class="analysis-grid">
+        <article class="analysis-card"><h3>영역별 정답률</h3><div id="domainAnalysis" class="domain-analysis"></div></article>
+        <article class="analysis-card"><h3>집중할 유형</h3><div id="weakTypes" class="weak-types"></div></article>
+      </div>
+      <article class="detail-card">
+        <h3>문항별 결과</h3>
+        <div class="detail-scroll"><table><thead><tr><th>번호</th><th>영역</th><th>유형</th><th>결과</th></tr></thead><tbody id="resultDetails"></tbody></table></div>
+      </article>
     </section>
   </main>
-  <script type="module" src="./original-diagnosis.js?v=20260822b"></script>
+  <script type="module" src="./original-diagnosis.js?v=20260822c"></script>
 </body>
 </html>

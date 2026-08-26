@@ -72,7 +72,7 @@ const KEY='nm_state_v1';
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
   character:{number:3,color:'blue',bg:'plain',cape:'none'},
-  character_unlocked:{} };}
+  character_unlocked:{}, mailbox:{opened:{}} };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -80,10 +80,26 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
+if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
+/* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
+   hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
+   병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
+   자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
+if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
+
+/* ---------- 체험 게이트 (Phase 2B) ----------
+   승인번호 없이는 각 티어의 대표 유닛만 플레이 가능. 대표 유닛 선정은
+   과정-로드맵.md §10 "체험 유닛 선정" 그대로: 유아 N-01·N-09, 초급 A-01, 창의 C-06.
+   난이도 잠금(자유 선택 원칙)과는 무관한 별개의 축 — active면 이 체크는 전부 통과. */
+const TRIAL_UNITS=['N-01','N-09','A-01','C-06'];
+function isTrialUnit(uid){return TRIAL_UNITS.indexOf(uid)>=0;}
+function accountActive(){return !!(S.account&&S.account.status==='active');}
+function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
    캐릭터 이름 = 고유 아이디. 온보딩에서 이름이 비어 있지 않고 중복이 아니면
@@ -110,6 +126,53 @@ async function cloudClaim(name,state){
   if(!r.ok)throw new Error('cloudClaim '+r.status);
   return true;
 }
+/* ---------- 승인번호 (nm_codes, Phase 2B) ----------
+   RLS가 이미 "active=true 행만 select 가능"으로 걸려 있으므로, code로만 조회해서
+   행이 오면 유효(=active)한 것이고 안 오면 오타든 비활성이든 똑같이 "없음"이다 —
+   회수(재검증)도 같은 함수 재사용: 비활성화된 코드는 RLS가 그 순간부터 숨겨준다. */
+async function nmCheckCode(code){
+  const url=`${SB_URL}/rest/v1/nm_codes?code=eq.${encodeURIComponent(code)}&select=code`;
+  const r=await fetch(url,{headers:sbHdr()});
+  if(!r.ok)throw new Error('nmCheckCode '+r.status);
+  const rows=await r.json();
+  return rows.length>0;
+}
+/* 코드 제출(잠금 모달·설정 화면 공용). 성공 시 S.account를 active로 갱신하고 저장까지 한다. */
+async function applyAccountCode(code){
+  code=(code||'').trim();
+  if(!code)return{ok:false,reason:'empty'};
+  try{
+    const valid=await nmCheckCode(code);
+    if(valid){
+      S.account={status:'active',code,checkedAt:Date.now()};
+      save();
+      return{ok:true};
+    }
+    return{ok:false,reason:'invalid'};
+  }catch(e){
+    return{ok:false,reason:'network'};
+  }
+}
+/* 회수 동기화: active+code인 프로필만, 하루 1회 재검증. 코드 없는 grandfather는 대상 아님.
+   네트워크 실패면 상태를 그대로 두고 조용히 넘어간다(오프라인에서 잠그지 않는다). */
+async function reverifyAccountIfNeeded(){
+  const acc=S.account;
+  if(!acc||acc.status!=='active'||!acc.code)return;
+  const DAY=86400000;
+  if(acc.checkedAt&&(Date.now()-acc.checkedAt)<DAY)return;
+  try{
+    const valid=await nmCheckCode(acc.code);
+    if(valid){
+      S.account.checkedAt=Date.now();save();
+    }else{
+      S.account={status:'trial',code:null,checkedAt:Date.now()};
+      save();
+      toast(S.lang==='ko'?'학원 승인이 해제되어 체험 모드로 돌아갔어요.':S.lang==='en'?'Academy approval was removed — back to trial mode.':'学院授权已取消，已恢复体验模式。',false);
+      render();
+    }
+  }catch(e){ /* 오프라인 — 다음에 다시 시도 */ }
+}
+
 let cloudTimer=null;
 function cloudPushSoon(){
   if(!S.cloudLinked||!S.name)return;
@@ -121,7 +184,7 @@ function cloudPushSoon(){
     }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
   },1500);
 }
-function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;save();}
+function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
 
 /* ---------- 유틸 ---------- */
@@ -148,12 +211,27 @@ function say(text){
   _sayWeb(text,lang);
 }
 function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
+/* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
+const _sfxCache={};
+function playSfx(kind){
+  try{
+    const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
+    const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
+    let a=_sfxCache[url];
+    if(!a){a=new Audio(url);_sfxCache[url]=a;}
+    a.currentTime=0;a.volume=.85;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+window.NM_SFX=playSfx;
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
+/* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
+function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
 
 /* ---------- Web Audio 앰비언스 (신비한 배경음악 + 물소리, 외부 파일 없이 합성) ---------- */
 let actx=null;
@@ -221,6 +299,11 @@ function charChipHTML(){
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
+  if(wsHelperId){
+    app.innerHTML='<div id="screen"></div>';
+    screenWorksheetHelper(wsHelperId);
+    return;
+  }
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
     screenWelcome();
@@ -239,6 +322,7 @@ function render(){
   else if(S.view==='roadmap')screenRoadmap();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
+  else if(S.view==='mailbox')screenMailbox();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -455,7 +539,10 @@ function screenTown(){
         🏫 ${S.lang==='ko'?'학년별 교실':S.lang==='en'?'Grade Rooms':'按年级'}
       </button>
     </div>
-    <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
+    <div class="nm-town-hud info">
+      <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
+      <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
+    </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
       <button class="nm-iconbtn" id="townZin">＋</button>
@@ -471,6 +558,7 @@ function screenTown(){
   townCleanup=initTownWorld(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
+  const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -512,6 +600,17 @@ function screenRoadmap(){
       if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
       return;
     }
+    /* 외부 링크 노드(🔬 개념 실험실 등 — MASTER-ROADMAP.md §2) — 새 탭에서 연다.
+       기존 게임스톤과 같은 카드를 재사용하는 최소 침습 확장(2026-08-25). */
+    if(ch.link){
+      html+=`<div class="nm-road-gamestone nm-road-linkstone" data-link="${esc(ch.link)}">
+        <div class="nm-road-gamestone-icon">${ch.icon}</div>
+        <div class="nm-road-gamestone-title">${L(ch.theme)}</div>
+        ${ch.tip?`<div class="nm-road-gamestone-tip">💡 ${L(ch.tip)}</div>`:''}
+      </div>`;
+      if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+      return;
+    }
     const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
     html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
       <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
@@ -522,11 +621,12 @@ function screenRoadmap(){
       if(!u)return;
       const done=stepDone(uid,'stamp');
       const isNext=uid===nextId;
-      const cls='nm-road-stone'+(done?' done':isNext?' next':'');
+      const locked=unitLocked(uid);
+      const cls='nm-road-stone'+(done?' done':isNext?' next':'')+(locked?' trial-locked':'');
       html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
-        ${done?'⭐':''}
+        ${done?'⭐':locked?'🔒':''}
         <div class="nm-road-stone-title">${L(u.title)}</div>
-        ${isNext?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
+        ${isNext&&!locked?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
       </div>`;
     });
     if(ch.tip){
@@ -562,6 +662,10 @@ function screenRoadmap(){
       S._fromRoadmap=true;S.view='minigame';save();render();
     };
   });
+  /* 외부 링크 스톤 클릭 — 새 탭에서 연다(2026-08-25, 미적분 실험실 이식) */
+  scr.querySelectorAll('.nm-road-linkstone[data-link]').forEach(el=>{
+    el.onclick=()=>{ window.open(el.dataset.link,'_blank','noopener'); };
+  });
 }
 
 function findNextRoadUnit(){
@@ -576,6 +680,7 @@ function findNextRoadUnit(){
 }
 
 function enterRoadUnit(uid){
+  if(unitLocked(uid)){showGateModal();return;}
   S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
   S._fromRoadmap=true;
   save();render();
@@ -801,6 +906,12 @@ function screenGradeCourse(){
     {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
     {key:'초5',label:{ko:'초5',en:'Grade 5',zh:'五年级'}},
     {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
+    {key:'중1',label:{ko:'중1',en:'Grade 7',zh:'初一'}},
+    {key:'중2',label:{ko:'중2',en:'Grade 8',zh:'初二'}},
+    {key:'중3',label:{ko:'중3',en:'Grade 9',zh:'初三'}},
+    /* 2022 개정 과목명 준수 — "고1"·"고2" 표기 없음(작업지시) */
+    {key:'공통수학1',label:{ko:'공통수학1',en:'Math 1',zh:'数学1'}},
+    {key:'공통수학2',label:{ko:'공통수학2',en:'Math 2',zh:'数学2'}},
   ];
   S._gcGrade=S._gcGrade||'초1';
 
@@ -850,10 +961,11 @@ function screenGradeCourse(){
         const u=UNITS[uid];if(!u)return;
         const done=stepDone(uid,'stamp');
         const isNext=uid===nextId;
-        bodyHtml+=`<div class="nm-gc-unit-row" data-uid="${uid}">
+        const locked=unitLocked(uid);
+        bodyHtml+=`<div class="nm-gc-unit-row${locked?' trial-locked':''}" data-uid="${uid}">
           <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
           <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
-          ${done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
+          ${locked?'<span style="font-size:11px">🔒</span>':done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
         </div>`;
       });
       if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
@@ -884,6 +996,225 @@ function screenGradeCourse(){
   draw();
 }
 
+/* ============================================================
+   편지함(📬) — 과정-로드맵.md §10·§11·§12
+   매주 월요일(ISO 주차) 기준, 학생의 현재 과정 위치에서 "마법 1 + 드릴
+   2~3종"을 뽑아 그 주의 학습지 봉투를 만든다. 서버 없이 클라이언트에서
+   주차를 계산하고, 문항은 (주차+과정)으로 고정한 시드로 매번 같은 걸
+   재생성하므로(§10 "가족 모두 같은 주엔 같은 문제지") 저장이 필요 없다 —
+   저장하는 건 "열람 여부"뿐(S.mailbox.opened[weekKey]).
+   드릴 각 항목은 기존 학습지 코드 규약(#THREAD-Lx-COUNTxSEED, exam.js
+   parseWorksheetCode)을 그대로 따르는 시드를 쓰므로, 인쇄물의 QR/ID는
+   이미 있는 ?ws= 도우미 화면에서 그대로 열린다 — 새 규약을 만들지 않았다.
+   ============================================================ */
+
+/* ISO-8601 주차: 월요일 시작, 그 주의 목요일이 속한 연도가 기준 연도.
+   표준 알고리즘(문서 없이도 재현 가능하도록 직접 구현) — 서버 호출 없음. */
+function isoWeekInfo(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7; // Mon=0..Sun=6
+  d.setUTCDate(d.getUTCDate() - dayNum + 3); // 그 주의 목요일
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNum + 3);
+  const week = 1 + Math.round((d - firstThursday) / (7*86400000));
+  return { year: d.getUTCFullYear(), week };
+}
+function weekKeyFor(date){
+  const wi = isoWeekInfo(date);
+  return `${wi.year}-W${String(wi.week).padStart(2,'0')}`;
+}
+/* 최근 n개 ISO 주차 키(이번 주가 0번째, 과거로 갈수록 뒤) */
+function recentWeekKeys(n){
+  const out = [];
+  const now = new Date();
+  for(let i=0;i<n;i++){
+    const d = new Date(now.getTime() - i*7*86400000);
+    out.push(weekKeyFor(d));
+  }
+  return out;
+}
+
+/* 유닛id → 그 유닛을 마법 슬롯으로 쓰는 과정 키('C4' 등). 없으면 null. */
+function courseForUnit(unitId){
+  const C = window.NM_COURSES || {};
+  for(const cid in C){
+    const sessions = C[cid].sessions || [];
+    for(const s of sessions){
+      if(s.magic && s.magic.indexOf(unitId) >= 0) return cid;
+    }
+  }
+  return null;
+}
+/* 가장 최근에 손댄 유닛(progress.touchedAt 최대). 없으면 null. */
+function mostRecentTouchedUnit(){
+  let best=null, bestT=-1;
+  Object.keys(S.progress||{}).forEach(uid=>{
+    const p = S.progress[uid];
+    const ts = (p && p.touchedAt) || 0;
+    if(ts > bestT){ bestT = ts; best = uid; }
+  });
+  return best;
+}
+/* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
+   없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
+   단위 진행 기록이 없다), 가장 최근에 손댄 마법 유닛이 속한 과정으로
+   대신한다(스펙의 "없으면 최근 학습 유닛의 과정" 그대로). 아무 기록도
+   없는 완전 신규 학생은 과정1부터. */
+function currentCourseKey(){
+  const uid = mostRecentTouchedUnit();
+  if(uid){
+    const cid = courseForUnit(uid);
+    if(cid) return cid;
+  }
+  return 'C1';
+}
+/* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
+function primarySessionOf(course){
+  if(!course || !course.sessions) return null;
+  const withMagic = course.sessions.find(s => !s.test && s.magic && s.magic.length);
+  return withMagic || course.sessions.find(s => !s.test) || null;
+}
+/* 항목 시드 = 주차+과정+항목순서(결정적, Math.random 없음) — 학습지 코드
+   규약(parseWorksheetCode)이 요구하는 소문자 영숫자만 남긴다. */
+function envItemSeed(weekKey, courseKey, i){
+  return (weekKey + courseKey + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+/* weekKey → 그 주 봉투(placements 모델, §12). courses.js/threads.js 미로딩 시 null. */
+function envelopeForWeek(weekKey){
+  if(!window.NM_COURSES || !window.NM_THREADS) return null;
+  const courseKey = currentCourseKey();
+  const course = NM_COURSES[courseKey];
+  if(!course) return null;
+  const session = primarySessionOf(course);
+  if(!session) return null;
+  const placements = (session.drills||[]).map((d,i) => ({
+    order: i+1, thread: d.t, level: d.lv, count: d.n,
+    seed: envItemSeed(weekKey, courseKey, i)
+  }));
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
+}
+function mailboxEnvelopeCode(env){ return env.wsId; }
+
+/* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관, 단 firstWeek 이전은 제외 —
+   신규 학생이 과거 봉투 8개를 한번에 받지 않도록, Phase 2B §10 잔여) */
+function mailboxWeeks(){
+  const weeks = recentWeekKeys(8);
+  const first = S.firstWeek || weeks[weeks.length-1];
+  return weeks.map((wk,i) => ({
+    weekKey: wk, isCurrent: i===0,
+    opened: !!(S.mailbox.opened && S.mailbox.opened[wk])
+  })).filter(w => w.weekKey >= first).filter(w => w.isCurrent || !w.opened);
+}
+function mailboxUnreadCount(){ return mailboxWeeks().filter(w=>!w.opened).length; }
+
+function screenMailbox(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+
+  /* 편지함도 같은 게이트(§10) — trial이면 봉투 목록조차 만들지 않는다 */
+  if(!accountActive()){
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card nm-gate-card-inline">
+        <div class="nm-card-h">🔒 ${lk('편지함은 학원 승인 후 열려요','The mailbox unlocks after academy approval','学院授权后才能开启信箱')}</div>
+        <p class="nm-wsh-sentence">${lk('승인번호가 있으면 지금 바로 열 수 있어요.','If you already have a code, you can unlock it right now.','有授权码即可立即解锁。')}</p>
+        <button class="nm-btn full" id="mbGate">🔑 ${lk('승인번호 입력','Enter code','输入授权码')}</button>
+      </div>
+    </div>`;
+    $('#mbBack').onclick=()=>{S.view='town';save();render();};
+    $('#mbGate').onclick=showGateModal;
+    return;
+  }
+
+  if(S._mbWeek){
+    const env = envelopeForWeek(S._mbWeek);
+    if(!env){
+      scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">${t('back')}</button>
+        <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div></div>
+        <div class="nm-step-body"><div class="nm-card">${lk('학습지 데이터를 아직 불러오지 못했어요.','Worksheet data is not ready yet.','学习单数据还没准备好。')}</div></div>`;
+      $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+      return;
+    }
+    const magicHtml = (env.magic||[]).map(id=>{
+      const u = UNITS[id];
+      if(u){
+        return `<div class="nm-wsh-unit-title">✨ ${esc(L(u.title))}</div>`;
+      }
+      const th=(window.NM_THREADS||{})[id];
+      return `<div class="nm-wsh-unit-title">✨ ${esc(th?L(th.name):id)}</div>`;
+    }).join('') || `<p class="nm-wsh-sentence">${lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
+    const goUnit = (env.magic||[]).find(id=>UNITS[id]);
+    const drillRows = env.placements.map(p=>{
+      const th=(window.NM_THREADS||{})[p.thread];
+      const code = NM_EXAM.worksheetCode({thread:p.thread, level:p.level, count:p.count, seed:p.seed});
+      return `<div class="nm-mb-drill-row">
+        <span class="nm-mb-drill-name">${esc(th?L(th.name):p.thread)}</span>
+        <span class="nm-mb-drill-meta">Lv.${p.level} × ${p.count} <code>${esc(code)}</code></span>
+      </div>`;
+    }).join('');
+
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <div class="nm-unit-title">📬 ${esc(env.wsId)}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card">
+        <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
+        <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
+        <div class="nm-mb-section-h">${lk('✨ 이번 주 마법','✨ Magic This Week','✨ 本周魔法')}</div>
+        ${magicHtml}
+        ${goUnit ? `<button class="nm-btn full" id="mbGoUnit">${lk('✨ 이 마법 배우러 가기','✨ Go learn this magic','✨ 去学这个魔法')}</button>` : ''}
+        <div class="nm-mb-section-h">${lk('✏️ 드릴 학습지','✏️ Drill Worksheets','✏️ 练习题')}</div>
+        <div class="nm-mb-drill-list">${drillRows}</div>
+        <button class="nm-btn full nm-btn-secondary" id="mbPrint">🖨️ ${lk('학습지 인쇄','Print worksheets','打印学习单')}</button>
+      </div>
+    </div>`;
+    $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+    if(goUnit){
+      $('#mbGoUnit').onclick=()=>{
+        S._mbWeek=null;
+        S.unit=goUnit;S.step=null;S.sub={};S.tierId=null;S.view='unit';S._fromRoadmap=false;
+        save();render();
+      };
+    }
+    $('#mbPrint').onclick=()=>{
+      const items = env.placements.map(p=>({thread:p.thread, level:p.level, count:p.count, seed:p.seed}));
+      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId);
+    };
+    if(!S.mailbox.opened) S.mailbox.opened={};
+    if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
+    renderMath(scr);
+    return;
+  }
+
+  const weeks = mailboxWeeks();
+  const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
+    <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
+    <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+    ${w.opened?`<span class="nm-mb-env-badge done">${lk('읽음','Read','已读')}</span>`:`<span class="nm-mb-env-badge new">${lk('새 봉투','New','新')}</span>`}
+  </button>`).join('');
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="mbBack">${t('back')}</button>
+    <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
+  </div>
+  <div class="nm-step-body nm-wsh-wrap">
+    <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
+    <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
+  </div>`;
+  $('#mbBack').onclick=()=>{S.view='town';save();render();};
+  scr.querySelectorAll('.nm-mb-env-card[data-week]').forEach(el=>{
+    el.onclick=()=>{ S._mbWeek=el.dataset.week; screenMailbox(); };
+  });
+}
+
 function showTownModal(title,desc,onGo){
   const modal=$('#tmodal');
   $('#tmTitle').textContent=title;
@@ -892,6 +1223,57 @@ function showTownModal(title,desc,onGo){
   if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
+}
+/* ---------- 체험 게이트 안내 모달 (Phase 2B) ----------
+   잠긴 유닛/편지함/인쇄 어디서 열든 항상 같은 모달 하나(§10 "같은 게이트, 같은 안내").
+   screenTown()의 #tmodal(등급 소개용)과는 별개 — 그건 render()가 스크린을 통째로
+   갈아끼울 때 사라지지만, 이 모달은 town 밖(screenTier/roadmap/mailbox/exam)에서도
+   떠야 해서 body에 직접 붙였다 뗀다. */
+function gateModalHtml(){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return `<div class="nm-gate-overlay" id="nmGateModal">
+    <div class="nm-gate-card">
+      <button class="nm-gate-x" id="nmGateClose" aria-label="close">✕</button>
+      <div class="nm-gate-ico">🔒</div>
+      <h3>${ko?'승인번호가 있으면 모두 열려요':en?'Unlock everything with your academy code':'输入学院授权码即可解锁全部'}</h3>
+      <p>${ko?'지금은 체험 모드예요. 각 단계 대표 유닛만 먼저 만나볼 수 있어요.':en?'You’re in trial mode — try a taste from each level first.':'当前为体验模式，先体验各阶段的代表单元。'}</p>
+      <div class="nm-gate-inputrow">
+        <input id="nmGateCode" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" maxlength="24" autocomplete="off">
+        <button class="nm-btn" id="nmGateSubmit">${ko?'확인':en?'Apply':'确认'}</button>
+      </div>
+      <div class="nm-gate-msg" id="nmGateMsg"></div>
+      <p class="nm-gate-note">${ko?'승인번호가 없나요? 다니는 학원 선생님께 문의해 주세요.':en?"Don't have a code? Ask your academy for one.":'没有授权码？请咨询所在学院老师。'}</p>
+    </div>
+  </div>`;
+}
+function showGateModal(){
+  if($('#nmGateModal'))return;
+  document.body.insertAdjacentHTML('beforeend',gateModalHtml());
+  const close=()=>{const m=$('#nmGateModal');if(m)m.remove();};
+  $('#nmGateClose').onclick=close;
+  $('#nmGateModal').addEventListener('click',e=>{if(e.target.id==='nmGateModal')close();});
+  const inp=$('#nmGateCode'),msg=$('#nmGateMsg'),btn=$('#nmGateSubmit');
+  const ko=S.lang==='ko',en=S.lang==='en';
+  async function submit(){
+    const code=(inp.value||'').trim();
+    if(!code){msg.textContent=ko?'코드를 입력해 주세요.':en?'Please enter a code.':'请输入授权码。';return;}
+    btn.disabled=true;
+    msg.textContent=ko?'확인 중…':en?'Checking…':'检查中…';
+    const res=await applyAccountCode(code);
+    btn.disabled=false;
+    if(res.ok){
+      toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
+      close();
+      render();
+    }else if(res.reason==='network'){
+      msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
+    }else{
+      msg.textContent=ko?'코드를 확인해 주세요.':en?'Please check your code.':'请确认授权码。';
+    }
+  }
+  btn.onclick=submit;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+  inp.focus();
 }
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
@@ -1121,11 +1503,11 @@ function screenTier(){
         <div class="nm-level-t">${L(lvl.title)}</div>
         <div class="nm-unit-row">`;
       units.forEach(uid=>{
-        const u=UNITS[uid];const done=unitDone(uid);
-        html+=`<button class="nm-unit ${done?'done':''}" data-unit="${uid}">
+        const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
+        html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''}" data-unit="${uid}">
           <span class="nm-unit-ic">${u.icon||'✦'}</span>
           <span class="nm-unit-name">${L(u.title)}</span>
-          ${done?'<span class="nm-unit-check">✓</span>':''}
+          ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':''}
         </button>`;
       });
       html+=`</div></div>`;
@@ -1143,6 +1525,7 @@ function screenTier(){
    유닛 — 6단계 STEP 흐름
    ============================================================ */
 function enterUnit(uid){
+  if(unitLocked(uid)){showGateModal();return;}
   S.view='unit';S.unit=uid;S.sub={};
   const u=UNITS[uid];
   const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
@@ -1241,19 +1624,23 @@ function runPractice(body,u){
   /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     ${pracTex}
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.started=true;
   renderMath(body);
-  const isDecAns=cur&&!Number.isInteger(cur.answer);
-  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns});
+  if(isMulti)bindMultiBoxes($('#pscreen'));
+  const isDecAns=cur&&(isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer));
+  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns,negative:!!cur.negative});
   say(first?L(cfg.intro):L(cur.prompt));
 }
 function runPracticeWidget(body,u,cur,first,need){
@@ -1280,8 +1667,20 @@ function runPracticeWidget(body,u,cur,first,need){
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
+  const isMulti=Array.isArray(cur.answer);
   if(val==='ok'){
-    const inp=S.sub.inp||'';if(inp==='')return;
+    if(isMulti){
+      if(!multiIsFull())return;
+      if(multiEquals(cur.answer)){
+        toast(t('correct'),true);numiHappy();
+        S.sub.pIdx++;S.sub.mvals=null;S.sub.cur=null;
+        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+        S.sub.cur=genProblem(u.practice,'practice');save();
+        setTimeout(()=>runPractice(body,u),650);
+      }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      return;
+    }
+    const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
     if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
@@ -1291,8 +1690,14 @@ function handlePractice(val,body,u){
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
+  if(isMulti){
+    applyMultiKey(val);
+    const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);
+    return;
+  }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
-  else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
+  else if(val==='-'){S.sub.inp=applyMinusKey(S.sub.inp||'');}
+  else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 
@@ -1357,16 +1762,29 @@ function stepDiscover(body,u){
   const two = S.range==='twoDigit';
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   const kid = u.tier==='basic';
+  /* 개념 스토리 훅(§7·§13): 중등·고등은 docssam 선생님 캐릭터가, 그 외는 누미가 말풍선으로 연다 */
+  const st=d.story||u.story;
+  /* 중·고 판정 — tier가 "middle*"·"high*"로 시작하는 기존 규칙에 더해
+     2022 개정 과목명을 그대로 쓰는 고등 tier(algebra·calculus1, W13·W14,
+     2026-08-25)도 명시적으로 포함한다. "고3" 같은 학년 표기 대신 과목명을
+     tier id로 쓰라는 작업지시라 접두어 규칙만으로는 안 걸린다 — 정규식을
+     넓히는 대신 새 tier를 나열해 실수로 다른 tier까지 걸리지 않게 한다. */
+  const isMidHigh=/^(middle|high)/.test(u.tier||'')||u.tier==='algebra'||u.tier==='calculus1';
+  const storyHtml=st?`<div class="nm-story${isMidHigh?' doc':''}">
+      ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
+      <div class="nm-story-bubble">${L(st.hook)}</div>
+    </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    <div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+    <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
+    const headTxt=L(s.head);
     wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
-      <div class="nm-ch">${L(s.head)}</div>
+      <div class="nm-ch">${/\\/.test(headTxt)?`<span data-tex="${headTxt.replace(/"/g,'&quot;')}"></span>`:headTxt}</div>
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
     if(s.terms)conceptExpr(wrap, s.terms);
@@ -1394,16 +1812,31 @@ function mathStepsExpr(container, steps, kid){
 function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
+  const isMulti=Array.isArray(fill.answer);
+  if(isMulti)ensureMultiState(fill.answer,fill.answerShape);
+  const shapeCls=isMulti&&fill.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
     <div class="nm-fill"><span data-tex="${esc(fill.tex)}"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
   </div>`;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
   buildNumpad($('#pad'),val=>{
-    if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
+    if(val==='ok'){
+      if(isMulti){
+        if(!multiIsFull())return;
+        if(multiEquals(fill.answer)){
+          toast(t('correct'),true);numiHappy();
+          S.sub.fi++;S.sub.mvals=null;
+          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+          else setTimeout(()=>stepCheck(body,u),700);
+        }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+        return;
+      }
+      const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
       if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
@@ -1412,10 +1845,12 @@ function stepCheck(body,u){
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
-    else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
+    else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+    else if((S.sub.inp||'').replace('-','').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  },{decimal:!Number.isInteger(fill.answer)});
+  },{decimal:isMulti?fill.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(fill.answer),negative:!!fill.negative});
 }
 function openQuestion(body,u){
   const c=u.check;
@@ -1445,7 +1880,7 @@ function stepLabWidget(body,u){
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
-  const origTex=cur.tex?`${esc(cur.tex.split('=')[0].trim())} = \\square`:'';
+  const origTex=cur.tex?esc(labDisplayTex(cur.tex)):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
@@ -1460,13 +1895,13 @@ function stepLabWidget(body,u){
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
-      toast(pickVoice(u.voice.wrong),false);
+      voiceLine(u,u.voice.wrong,false);
     }
   });
 }
@@ -1491,39 +1926,65 @@ function stepLabPairs(body,u){
     b.onclick=()=>pickTile(b,i,n,body,u);expr.appendChild(b);
   });
 }
+/* 문제 수식 표시: 빈칸(\square)이 이미 들어 있는 수식은 원문 그대로 —
+   구식 split('=') 규칙은 등호가 여러 개인 중·고등 수식을 첫 등호에서 잘라버린다 */
+function labDisplayTex(tex){
+  if(!tex)return '';
+  return /\\square/.test(tex) ? tex : `${tex.split('=')[0].trim()} = \\square`;
+}
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-lab-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.labStarted=true;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
   say(first?L(cfg.intro):L(cur.prompt));
-  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+  const decAny=isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer);
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u),{decimal:decAny,negative:!!cur.negative});
 }
 function handleLabNumpad(val,body,u){
   const cur=S.sub.cur;const need=u.lab.count||4;
+  const isMulti=Array.isArray(cur.answer);
   if(val==='ok'){
-    const inp=S.sub.inp||'';if(inp==='')return;
+    if(isMulti){
+      if(!multiIsFull())return;
+      if(multiEquals(cur.answer)){
+        playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+        S.sub.li++;S.sub.mvals=null;S.sub.cur=null;
+        if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+        S.sub.cur=genProblem(u.lab,'main');save();
+        setTimeout(()=>stepLab(body,u),650);
+      }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      return;
+    }
+    const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
     if(parseFloat(inp)===cur.answer){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
-    }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
-  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+  else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+  else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
@@ -1534,13 +1995,13 @@ function pickTile(el,i,n,body,u){
   pk.onclick=()=>{
     const cur=S.sub.cur;const sum=p[0].n+p[1].n;
     if(sum===(cur.target||10)){
-      toast(pickVoice(u.voice.correct),true);numiHappy();
+      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.li++;S.sub.cur=null;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
-    }else{toast(pickVoice(u.voice.wrong),false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
+    }else{voiceLine(u,u.voice.wrong,false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
 
@@ -1558,22 +2019,38 @@ function stepArena(body,u){
 }
 function nextArena(body,u,need){
   const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
+  const isMulti=Array.isArray(cur.answer);
+  if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
+  const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
-    <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
-    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-arena-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
   </div>`;
   renderMath(body);
+  if(isMulti)bindMultiBoxes($('#pscreen'));
+  const decAny=isMulti?cur.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(cur.answer);
   buildNumpad($('#pad'),val=>{
-    if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
+    if(val==='ok'){
+      if(isMulti){
+        if(!multiIsFull())return;
+        if(multiEquals(S.sub.cur.answer)){S.sub.score++;numiHappyToast();}else toast('✗',false);
+        S.sub.mvals=null;S.sub.ai++;
+        if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
+        nextArena(body,u,need);return;
+      }
+      const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
       if(parseFloat(inp)===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
+    else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:decAny,negative:!!cur.negative});
 }
 function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
@@ -1596,7 +2073,7 @@ function stepStamp(body,u){
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;save();}
+  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;S.progress[S.unit].touchedAt=Date.now();save();}
   body.innerHTML=`<div class="nm-card center stamp">
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
@@ -1604,7 +2081,7 @@ function stepStamp(body,u){
     <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
-  confetti();say(L(u.voice.finish));
+  confetti();playSfx("great-job");say(L(u.voice.finish));
   $('#toMap').onclick=exitUnit;
 }
 
@@ -1612,15 +2089,55 @@ function stepStamp(body,u){
 function buildNumpad(pad,cb,opts){
   opts=opts||{};
   pad.innerHTML='';
-  const keys=opts.decimal
+  const keys=opts.decimal&&opts.negative
+    ?['1','2','3','4','5','6','7','8','9','.','-','0','del','ok']
+    :opts.decimal
     ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :opts.negative
+    ?['1','2','3','4','5','6','7','8','9','-','0','del','ok']
     :['1','2','3','4','5','6','7','8','9','del','0','ok'];
-  if(opts.decimal) pad.classList.add('dec'); else pad.classList.remove('dec');
+  /* 소수·음수 어느 쪽이든 4열 레이아웃(기존 .dec CSS 재사용) */
+  if(opts.decimal||opts.negative) pad.classList.add('dec'); else pad.classList.remove('dec');
   keys.forEach(k=>{
-    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
-    b.textContent=k==='del'?'←':k==='ok'?'✓':k;b.onclick=()=>cb(k);pad.appendChild(b);
+    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
+    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;b.onclick=()=>cb(k);pad.appendChild(b);
   });
 }
+/* 선두 - 1회만 허용: 빈칸→'-', 이미 '-'뿐이면 취소. 숫자 입력은 그대로. */
+function applyMinusKey(inp){ return inp===''?'-':(inp==='-'?'':inp); }
+
+/* ── 다칸 답(배열 answer) 공용 헬퍼 — practice/check/lab/arena 넘패드 공용 ──
+   S.sub.mvals(문자열 배열)+S.sub.mfocus(포커스 idx)+S.sub.mshape(answerShape)로
+   상태 보관(save() 직렬화 안전). answerArr 길이만큼 mvals를 초기화하고,
+   화면 HTML과 탭 바인딩을 제공한다. shape 렌더는 widgets.js의 multiBoxesHtml을
+   공유해 두 화면(이 파일·widgets.js renderFallback)의 분수 모양이 갈라지지 않게 한다. */
+function ensureMultiState(answerArr, shape){
+  if(!Array.isArray(S.sub.mvals)||S.sub.mvals.length!==answerArr.length||S.sub.mshape!==shape){
+    S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0;S.sub.mshape=shape;
+  }
+}
+function multiScreenHtml(){
+  const vals=S.sub.mvals,focus=S.sub.mfocus,shape=S.sub.mshape;
+  if(window.NM_WIDGETS&&NM_WIDGETS.multiBoxesHtml)return NM_WIDGETS.multiBoxesHtml(vals,focus,shape);
+  return vals.map((v,i)=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${v!==''?esc(v):'?'}</span>`)
+    .join('<span class="nm-ans-sep">,</span>');
+}
+function bindMultiBoxes(screenEl){
+  screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
+    b.addEventListener('pointerup',e=>{e.stopPropagation();S.sub.mfocus=+b.dataset.i;screenEl.innerHTML=multiScreenHtml();bindMultiBoxes(screenEl);});
+  });
+}
+function applyMultiKey(val){
+  const vals=S.sub.mvals;let cur=vals[S.sub.mfocus];
+  if(val==='del'){ cur=''; }
+  else if(val==='-'){ cur=applyMinusKey(cur); }
+  else if(val==='.'){ if(!cur.includes('.'))cur+='.'; }
+  else if(cur.replace('-','').length<6){ cur+=val; }
+  vals[S.sub.mfocus]=cur;
+}
+function multiIsFull(){ return S.sub.mvals.every(v=>v!==''&&v!=='-'); }
+function multiEquals(answerArr){ return S.sub.mvals.length===answerArr.length&&S.sub.mvals.every((v,i)=>parseFloat(v)===answerArr[i]); }
+function multiClear(answerArr){ S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0; }
 function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cur?'on':i===cur?'now':''}"></span>`;return h;}
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function numiHappy(){const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}
@@ -1635,9 +2152,11 @@ function screenCloset(){
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
   <div id="nm-idcard-slot"></div>
+  <div id="nm-account-slot"></div>
   <div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
+  renderAccountCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
@@ -1658,6 +2177,46 @@ function screenCloset(){
         if(ci)ci.textContent=S.coins;
       }
     });
+  }
+}
+
+/* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
+   설정/프로필 화면 쪽 코드 입력 지점. 게이트 모달과 로직(applyAccountCode)을 공유. */
+function renderAccountCard(){
+  const slot=$('#nm-account-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const acc=S.account||{status:'trial'};
+  if(acc.status==='active'){
+    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 유닛 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
+    return;
+  }
+  slot.innerHTML=`<div class="nm-idcard">
+    <div class="nm-idcard-t">🔒 ${ko?'체험 모드':en?'Trial mode':'体验模式'}</div>
+    <div class="nm-idcard-row">
+      <input id="accCode" maxlength="24" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" autocomplete="off">
+      <button class="nm-btn" id="accSubmit">${ko?'확인':en?'Apply':'确认'}</button>
+    </div>
+    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 유닛·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
+  </div>`;
+  $('#accCode').addEventListener('keydown',e=>{if(e.key==='Enter')submitAcc();});
+  $('#accSubmit').onclick=submitAcc;
+  async function submitAcc(){
+    const inp=$('#accCode'),msg=$('#accMsg'),btn=$('#accSubmit');
+    const code=(inp.value||'').trim();
+    if(!code){msg.textContent=ko?'코드를 입력해 주세요.':en?'Please enter a code.':'请输入授权码。';return;}
+    btn.disabled=true;
+    msg.textContent=ko?'확인 중…':en?'Checking…':'检查中…';
+    const res=await applyAccountCode(code);
+    btn.disabled=false;
+    if(res.ok){
+      toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
+      renderAccountCard();
+    }else if(res.reason==='network'){
+      msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
+    }else{
+      msg.textContent=ko?'코드를 확인해 주세요.':en?'Please check your code.':'请确认授权码。';
+    }
   }
 }
 
@@ -1732,6 +2291,24 @@ function renderIdCard(){
 /* ---------- 시험 / 학습지 화면 ---------- */
 function screenExam(){
   const scr=$('#screen');
+  /* 학습지 인쇄도 같은 게이트(§10) */
+  if(!accountActive()){
+    const ko=S.lang==='ko', en=S.lang==='en';
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="backExam">${t('back')}</button>
+      <div class="nm-unit-title">📝 ${ko?'학습지 & 시험':en?'Worksheet & Exam':'学习单 & 考试'}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      <div class="nm-card nm-gate-card-inline">
+        <div class="nm-card-h">🔒 ${ko?'학습지 인쇄는 학원 승인 후 열려요':en?'Worksheet printing unlocks after academy approval':'学院授权后才能打印学习单'}</div>
+        <p class="nm-wsh-sentence">${ko?'승인번호가 있으면 지금 바로 열 수 있어요.':en?'If you already have a code, you can unlock it right now.':'有授权码即可立即解锁。'}</p>
+        <button class="nm-btn full" id="examGate">🔑 ${ko?'승인번호 입력':en?'Enter code':'输入授权码'}</button>
+      </div>
+    </div>`;
+    $('#backExam').onclick=()=>{S.view='town';save();render();};
+    $('#examGate').onclick=showGateModal;
+    return;
+  }
   if(!window.NM_EXAM||!window.examScreen){
     scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
       <p style="padding:40px;text-align:center">시험 모듈 로딩 실패</p>`;
@@ -1746,10 +2323,80 @@ function screenExam(){
   window.examScreen(document.getElementById('nm-exam-cnt'));
 }
 
+/* ============================================================
+   학습지 도우미 화면 (?ws=<학습지ID>) — 과정-로드맵.md §11
+   QR로 열리는 독립 화면. 학생 선택/로그인 프로필 없이도 동작한다(부모가 찍는 시나리오
+   전제). S(로컬 프로필)에는 남기지 않는 URL 기반 임시 상태라 wsHelperId는 전역 let.
+   ID의 스레드 프리픽스(threads.js 키)로 유형을 찾고, 시드가 ID 안에 그대로 있어서
+   나중에(Phase 2) 같은 ID로 문항을 다시 만들어 채점 화면을 열 수 있다. */
+let wsHelperId = (function(){
+  try{ return new URLSearchParams(location.search).get('ws') || null; }catch(e){ return null; }
+})();
+
+function exitWsHelper(){
+  wsHelperId = null;
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+}
+
+function screenWorksheetHelper(wsId){
+  const scr = $('#screen');
+  const canParse = window.NM_EXAM && NM_EXAM.parseWorksheetCode && NM_EXAM.resolveConceptUnit;
+  const cfg = canParse ? NM_EXAM.parseWorksheetCode(wsId) : null;
+  const info = (cfg && (window.NM_THREADS||{})[cfg.thread]) ? NM_EXAM.resolveConceptUnit(cfg.thread, cfg.level) : null;
+  const th = info && info.thread;
+  const ko=S.lang==='ko', en=S.lang==='en';
+
+  let bodyHtml;
+  if(!cfg || !th){
+    bodyHtml = `<div class="nm-card">
+      <div class="nm-card-h">📄 ${esc(wsId)}</div>
+      <p class="nm-wsh-warn">${ko?'이 학습지 ID를 알아볼 수 없어요. 학습지에 인쇄된 코드를 다시 확인해 주세요.':en?"We couldn't recognize this worksheet ID — please check the code printed on the sheet.":'无法识别这个学习单编号，请重新确认单子上印的代码。'}</p>
+    </div>`;
+  } else {
+    const u = info.unit; // {..., discover} 또는 null
+    const conceptBody = u
+      ? `<div class="nm-wsh-unit-title">${esc(L(u.title))}</div>
+         ${(u.discover.stages||[]).slice(0,1).map(s=>`<p class="nm-wsh-sentence">${L(s.desc)}</p>`).join('')}`
+      : (th.concept
+          ? `<p class="nm-wsh-sentence">${esc(L(th.concept))}</p>`
+          : `<p class="nm-wsh-sentence nm-wsh-noconcept">${ko?'이 유형은 아직 개념 설명이 준비되지 않았어요.':en?'A concept note for this type is not ready yet.':'这个类型的概念说明还没准备好。'}</p>`);
+    const ruleBox = (u && u.discover && u.discover.rule)
+      ? `<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${esc(L(u.discover.rule))}</p></div>` : '';
+    const unitBtn = info.unitId
+      ? (S.onboarded
+          ? `<button class="nm-btn full" id="wshGoUnit">${ko?'✨ 이 마법 배우러 가기':en?'✨ Go learn this magic':'✨ 去学这个魔法'}</button>`
+          : `<p class="nm-wsh-login-hint">${ko?'앱에서 로그인(캐릭터 선택) 후 이용해 주세요.':en?'Please log in (pick a character) on the app first.':'请先在应用中登录（选择角色）后使用。'}</p>`)
+      : '';
+    bodyHtml = `<div class="nm-card">
+      <div class="nm-card-h">📄 ${esc(wsId)}</div>
+      <div class="nm-wsh-name">${esc(L(th.name))}</div>
+      ${conceptBody}
+      ${ruleBox}
+      ${unitBtn}
+    </div>`;
+  }
+
+  scr.innerHTML = `<div class="nm-unit-bar">
+    <button class="nm-back" id="wshBack">${t('back')}</button>
+    <div class="nm-unit-title">${ko?'학습지 도우미':en?'Worksheet Helper':'学习单助手'}</div>
+  </div>
+  <div class="nm-step-body nm-wsh-wrap">${bodyHtml}</div>`;
+
+  $('#wshBack').onclick = () => { exitWsHelper(); render(); };
+  const goBtn = $('#wshGoUnit');
+  if(goBtn) goBtn.onclick = () => {
+    exitWsHelper();
+    S.unit = info.unitId; S.step = null; S.sub = {}; S.tierId = null; S.view = 'unit'; S._fromRoadmap = false;
+    save(); render();
+  };
+  renderMath(scr);
+}
+
 /* ---------- 시작 ---------- */
 function boot(){
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
   render();
+  reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }
 if(window.katex)boot(); else{const t2=setInterval(()=>{if(window.katex){clearInterval(t2);boot();}},60);setTimeout(()=>{if(!window.katex)boot();},1500);}
 })();

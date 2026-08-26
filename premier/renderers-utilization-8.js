@@ -10,7 +10,11 @@
 
   figures.register("u8-q2", () => svg("0 0 320 82", `<rect x="28" y="8" width="264" height="66" fill="#fff" stroke="${LINE}"/>${text(160,35,"9 + □ + □",`text-anchor="middle" font-size="19" font-weight="850" fill="${INK}"`)}${text(160,63,"18 − □",`text-anchor="middle" font-size="19" font-weight="850" fill="${INK}"`)}`));
   figures.register("u8-q3", () => svg("0 0 320 72", `<rect x="30" y="8" width="260" height="56" fill="#fff" stroke="${LINE}"/>${text(160,44,"6□  <  67,      □5  >  27",`text-anchor="middle" font-size="22" font-weight="850" fill="${INK}"`)}`));
-  figures.register("u8-q5", () => svg("0 0 360 155", `<rect x="25" y="15" width="310" height="118" fill="#fff" stroke="${LINE}"/><line x1="180" y1="5" x2="180" y2="143" stroke="${INK}" stroke-width="1.5" stroke-dasharray="5 4"/>${[[62,37],[96,101],[180,52],[180,109],[222,36],[264,67],[232,112],[312,102]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="#66717d"/>`).join("")}${text(180,153,"거울",`text-anchor="middle" font-size="11" fill="${INK}"`)}`));
+  figures.register("u8-q5", () => {
+    const paperPoints = [[180, 47, "line"], [180, 105, "line"], [224, 32, "right"], [275, 59, "right"], [231, 104, "right"], [308, 111, "right"]];
+    const points = paperPoints.map(([x, y, role], index) => `<circle data-paper-point="${index + 1}" data-role="${role}" cx="${x}" cy="${y}" r="6" fill="#66717d"/>`).join("");
+    return svg("0 0 360 165", `<rect x="25" y="15" width="310" height="118" fill="#fff" stroke="${LINE}"/><line data-mirror-axis="180" x1="180" y1="5" x2="180" y2="143" stroke="${INK}" stroke-width="1.5" stroke-dasharray="5 4"/>${points}${text(180,153,"거울",`text-anchor="middle" font-size="11" fill="${INK}"`)}${text(327,128,"← 오른쪽에서 봄",`text-anchor="end" font-size="10.5" font-weight="800" fill="${INK}"`)}`);
+  });
 
   figures.register("u8-q7", () => svg("0 0 390 112", `${[[10,20,92,72,"①","→"],[128,28,62,64,"②","↑"],[220,35,48,48,"③","↗"],[302,39,55,43,"구멍",""]].map(([x,y,w,h,label,arrow])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#eee8d9" stroke="${LINE}"/>${text(x+w/2,y-4,label,`text-anchor="middle" font-size="10" font-weight="800" fill="${INK}"`)}${arrow?text(x+w/2,y+h/2+6,arrow,`text-anchor="middle" font-size="22" font-weight="900" fill="${INK}"`):`<circle cx="${x+w-10}" cy="${y+10}" r="4" fill="#fff" stroke="${INK}"/>`}`).join("")}<path d="M56 20V92M128 60H190M220 35L268 83" stroke="${LINE}" stroke-dasharray="4 3"/>`));
 
@@ -22,10 +26,14 @@
 
   figures.register("u8-q11", () => {
     let body = "";
+    const side = 45;
+    const rowHeight = side * Math.sqrt(3) / 2;
     for (let row = 1; row <= 4; row += 1) for (let column = 0; column <= row; column += 1) {
-      body += `<circle cx="${190 + (column - row / 2) * 45}" cy="${20 + row * 31}" r="3.4" fill="${INK}"/>`;
+      const x = 190 + (column - row / 2) * side;
+      const y = 7 + row * rowHeight;
+      body += `<circle data-triangle-point="${row},${column}" cx="${x.toFixed(4)}" cy="${y.toFixed(4)}" r="3.4" fill="${INK}"/>`;
     }
-    return svg("0 0 380 175", body + text(190,166,"점 사이의 간격은 모두 같습니다.",`text-anchor="middle" font-size="11" fill="${INK}"`));
+    return svg("0 0 380 190", body + text(190,184,"가까운 점 사이의 간격은 모두 같습니다.",`text-anchor="middle" font-size="11" fill="${INK}"`));
   });
 
   figures.register("u8-q13", () => svg("0 0 250 155", `<circle cx="125" cy="78" r="65" fill="#fff" stroke="${LINE}"/><circle cx="125" cy="78" r="44" fill="#fff" stroke="${LINE}"/><circle cx="125" cy="78" r="23" fill="#d9dde1" stroke="${LINE}"/>${text(125,85,"10",`text-anchor="middle" font-size="17" font-weight="900" fill="${INK}"`)}${text(125,116,"5",`text-anchor="middle" font-size="15" font-weight="900" fill="${INK}"`)}${text(125,139,"1",`text-anchor="middle" font-size="15" font-weight="900" fill="${INK}"`)}`));
@@ -48,7 +56,7 @@
 
   figures.register("u8-q17", () => { const map=[[0,3,0],[0,2,0],[1,1,1]]; return svg("0 0 410 175", `${heightGrid(map,10,38,34)}${text(61,155,"위·높이",`text-anchor="middle" font-size="11" fill="${INK}"`)}${heightGrid([[1,3,1]],150,72,34)}${text(201,125,"앞",`text-anchor="middle" font-size="11" fill="${INK}"`)}${heightGrid([[3,2,1]],285,72,34)}${text(336,125,"오른쪽 옆",`text-anchor="middle" font-size="11" fill="${INK}"`)}`); });
 
-  figures.register("u8-q18", () => svg("0 0 390 118", `${[0,1,2,3].map(index=>{const x=12+index*96;const label=text(x+36,14,["①","②","③","④"][index],`text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`);const frame=`<rect x="${x}" y="24" width="72" height="72" fill="#fff" stroke="${INK}"/>`;const cuts=index===1?`<path d="M${x} 24L${x+72} 96M${x+72} 24L${x} 96" stroke="${INK}"/>`:index===0?`<path d="M${x+25} 24V96M${x+49} 24V96" stroke="${INK}"/>`:index===2?`<path d="M${x} 60H${x+72}M${x+18} 24L${x+54} 96" stroke="${INK}"/>`:`<path d="M${x+36} 24V96M${x} 52H${x+36}M${x+36} 72H${x+72}" stroke="${INK}"/>`;return label+frame+cuts;}).join("")}`));
+  figures.register("u8-q18", () => svg("0 0 390 118", `${[0,1,2,3].map(index=>{const x=12+index*96;const label=text(x+36,14,["①","②","③","④"][index],`text-anchor="middle" font-size="11" font-weight="900" fill="${INK}"`);const frame=`<rect x="${x}" y="24" width="72" height="72" fill="#fff" stroke="${INK}"/>`;const cuts=index===1?`<path d="M${x} 24L${x+72} 96M${x+72} 24L${x} 96" stroke="${INK}"/>`:index===0?`<path d="M${x+24} 24V96M${x+48} 24V96" stroke="${INK}"/>`:index===2?`<path d="M${x} 60H${x+72}M${x+18} 24L${x+54} 96" stroke="${INK}"/>`:`<path d="M${x+36} 24V96M${x} 52H${x+36}M${x+36} 72H${x+72}" stroke="${INK}"/>`;return `<g data-dissection-choice="${index + 1}" data-piece-count="${[3,4,4,4][index]}" data-congruent="${index === 0 ? "true" : "false"}">${label}${frame}${cuts}</g>`;}).join("")}`));
 
   figures.register("u8-q19", () => {
     const board=[[2,1,3,2,1],[4,3,1,2,4],[2,2,3,4,5],[1,5,3,4,2],[4,4,2,3,1]];

@@ -13,6 +13,16 @@ const level2Audio = path.join(root, 'reading-world/private/bricks-250-level-2-au
 const level3Audio = process.argv[3] || process.env.BRICKS_LEVEL3_AUDIO_DIR;
 
 const originals = new Map();
+const mockQuestions = () => Array.from({ length: 9 }, (_, index) => {
+  const trueFalse = index >= 1 && index <= 3;
+  return [
+    trueFalse ? 'Recalling Facts and Details' : 'Understanding the Passage',
+    `Private source question ${index + 1}`,
+    trueFalse ? ['True', 'False'] : ['First choice', 'Second choice', 'Third choice'],
+    trueFalse ? 'A' : ['A', 'B', 'C'][index % 3],
+    '',
+  ];
+});
 for (const level of [2, 3]) {
   for (const unit of source.levels[String(level)]) {
     const lessonId = `brl${level}-${String(unit.unit).padStart(2, '0')}`;
@@ -44,7 +54,7 @@ async function verifyBook(browser, level, viewport, screenshotName) {
     const requestedBook = (requestUrl.searchParams.get('book_id') || '').replace(/^eq\./, '');
     const requestedLesson = (requestUrl.searchParams.get('lesson_id') || '').replace(/^eq\./, '');
     const passage = originals.get(`${requestedBook}:${requestedLesson}`);
-    const body = passage ? [{ original_passage: passage, original_questions: [] }] : [];
+    const body = passage ? [{ original_passage: passage, original_questions: mockQuestions() }] : [];
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
   await page.route('**/storage/v1/object/public/audio/bricks-reading-250-*/**-original.mp3', async route => {
@@ -91,6 +101,10 @@ async function verifyBook(browser, level, viewport, screenshotName) {
   await page.waitForFunction(() => document.querySelectorAll('.sentence-line').length >= 8);
   const originalText = await page.locator('.reading-card').innerText();
   if (!originalText.includes(source.levels[String(level)][0].title)) throw new Error(`${bookId}: original title missing`);
+  await page.locator('[data-act="open-original-questions"]').click();
+  await page.waitForFunction(() => document.querySelector('#question-drawer .badge')?.textContent === '1/9');
+  const questionNumbers = await page.locator('#question-drawer .number-strip .num').count();
+  if (questionNumbers !== 9) throw new Error(`${bookId}: expected 9 original questions, found ${questionNumbers}`);
   await page.locator('[data-act="listen-all"]').first().click();
   await page.waitForFunction(() => document.querySelectorAll('.sentence-line.reading-now').length > 0, null, { timeout: 10000 });
   if (audioRequests < 1) throw new Error(`${bookId}: publisher audio was not requested`);

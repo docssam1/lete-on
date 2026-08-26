@@ -1,8 +1,8 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822m";
-import { GENERATORS } from "./generators.js?v=20260822k";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260825n";
+import { GENERATORS } from "./generators.js?v=20260825n";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
-import { book03Markup } from "./book03-renderers.js?v=20260822e";
+import { book03Markup } from "./book03-renderers.js?v=20260825m";
 import { book04Markup } from "./book04-renderers.js?v=20260822e";
 import { book05Markup } from "./book05-renderers.js?v=20260822f";
 import { book06Markup } from "./book06-renderers.js?v=20260822g";
@@ -10,12 +10,12 @@ import { book07Markup } from "./book07-renderers.js?v=20260822h";
 import { book08Markup } from "./book08-renderers.js?v=20260822i";
 import { book09Markup } from "./book09-renderers.js?v=20260822j";
 import { book10Markup } from "./book10-renderers.js?v=20260822k";
+import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
-const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "ours", "diagnostic", "practice", "final"]);
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
   { label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
@@ -23,11 +23,25 @@ const OUR_MOCK_EXAM_GROUPS = [
   { label: "파이널 모의고사", exams: FINAL_EXAM_TYPES }
 ];
 const OUR_MOCK_EXAMS = OUR_MOCK_EXAM_GROUPS.flatMap((group) => group.exams);
+const MOCK_EXAM_NAV = [
+  { id: "diagnostic", label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
+  ...PRACTICE_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("실전 모의고사 ", "실전 "), exams: [exam] })),
+  ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
+];
+const stageIds = new Set([...AGE_STAGES.map((item) => item.id), ...MOCK_EXAM_NAV.map((item) => item.id)]);
+
+function requestedStage() {
+  const requested = params.get("age");
+  if (requested === "ours" || requested === "diagnostic") return "diagnostic";
+  if (requested === "practice") return `exam:${PRACTICE_EXAM_TYPES[0]?.id}`;
+  if (requested === "final") return `exam:${FINAL_EXAM_TYPES[0]?.id}`;
+  return stageIds.has(requested) ? requested : "diagnostic";
+}
 
 const state = {
   mode: "exam",
-  stage: stageIds.has(params.get("age")) ? params.get("age") : "ours",
-  selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
+  stage: requestedStage(),
+  selected: { exam: new Set(), curriculum: new Set(), unitTest: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
   curriculumStage: "type",
@@ -64,6 +78,7 @@ function isReady(item) {
   const ownGenerator = item?.generator && GENERATORS[item.generator];
   const geometryGenerator = item?.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode);
   const provenanceApproved = item?.sourceMatched || item?.bankApproved;
+  if (item?.sourceAuditBlocked) return false;
   return Boolean(provenanceApproved && (ownGenerator || geometryGenerator));
 }
 
@@ -226,8 +241,8 @@ function setMode(mode) {
 }
 
 function renderStageButtons() {
-  const stages = [{ id: "ours", label: "우리 모의고사" }, ...AGE_STAGES];
-  $("examAgeButtons").innerHTML = stages.map((item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`).join("");
+  const button = (item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`;
+  $("examAgeButtons").innerHTML = `${MOCK_EXAM_NAV.map(button).join("")}<span class="stage-separator">원본 선발시험</span>${AGE_STAGES.map(button).join("")}`;
   $("examAgeButtons").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.stage = button.dataset.stage;
     renderStageButtons();
@@ -236,10 +251,8 @@ function renderStageButtons() {
 }
 
 function visibleExams() {
-  if (state.stage === "ours") return OUR_MOCK_EXAMS;
-  if (state.stage === "diagnostic") return DIAGNOSTIC_EXAM_TYPES;
-  if (state.stage === "practice") return PRACTICE_EXAM_TYPES;
-  if (state.stage === "final") return FINAL_EXAM_TYPES;
+  const mockStage = MOCK_EXAM_NAV.find((item) => item.id === state.stage);
+  if (mockStage) return mockStage.exams;
   return EXAMS.filter((exam) => exam.stage === state.stage);
 }
 
@@ -250,11 +263,14 @@ function examKey(examId, number) {
 function renderExamList() {
   const exams = visibleExams();
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
-  $("examStageTitle").textContent = stage?.label || (state.stage === "ours" ? "우리 모의고사" : state.stage === "diagnostic" ? "진단 모의고사" : state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
+  const mockStage = MOCK_EXAM_NAV.find((item) => item.id === state.stage);
+  $("examStageTitle").textContent = stage?.label || mockStage?.label || "시험지 선택";
   $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
-  $("examNotice").textContent = state.stage === "ours"
-    ? "진단·실전·파이널 모의고사를 먼저 고릅니다. 문항을 고르면 그 구조를 유지한 유사문제를 만들 수 있습니다."
-    : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
+  $("examNotice").textContent = state.stage === "diagnostic"
+    ? "필즈 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
+    : mockStage
+      ? `${mockStage.label}의 문항을 고릅니다. 실제 출제 구조를 기준으로 유사문제를 만듭니다.`
+      : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
   const examMarkup = (exam) => {
     const rows = exam.questions.map((sourceQuestion) => {
       const item = typeById(sourceQuestion.typeId);
@@ -275,13 +291,12 @@ function renderExamList() {
     // 링크만 걸어 두면 빈 뷰어로 들어가게 된다.
     // 파일명에 붙은 괄호 안 시행일(230206 등)은 화면에 내보내지 않는다. 파일을 찾는 데만 쓰는 값이다.
     const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
-    const diagnosisLink = exam.verified && exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">O/X 진단</a>` : "";
-    const diagnosisStatus = diagnosisLink || `<span class="exam-source-status">유형 대조 중</span>`;
+    const diagnosisLink = exam.verified && exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">빠른 채점·진단</a>` : "";
+    const examReady = exam.questions.every((sourceQuestion) => sourceQuestion.verified === true && isSelectableType(typeById(sourceQuestion.typeId)));
+    const diagnosisStatus = diagnosisLink || `<span class="exam-source-status">${examReady ? "원본 대조 완료" : "유형 대조 중"}</span>`;
     return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${diagnosisStatus}</div>${rows}</details>`;
   };
-  const groups = state.stage === "ours"
-    ? OUR_MOCK_EXAM_GROUPS
-    : [{ label: "", exams }];
+  const groups = [{ label: "", exams }];
   $("examTypeList").innerHTML = groups.map((group) => {
     if (!group.exams.length) return "";
     const heading = group.label ? `<div class="exam-collection-title"><strong>${group.label}</strong><span>${group.exams.length}개 시험지</span></div>` : "";
@@ -299,6 +314,10 @@ function curriculumKey(bookId, unitIndex, typeId) {
   return `${bookId}:${unitIndex}:${typeId}`;
 }
 
+function unitTestKey(bookId, number) {
+  return `${bookId}:${number}`;
+}
+
 function hasBookSource(item, book, unit = null) {
   // 문제 번호별 typeStudyRefs는 해당 권 원본을 직접 대조했다는 가장 강한 근거다.
   // 다른 권에서 먼저 만든 생성기를 재사용해도 문자열 출처 때문에 잠기지 않아야 한다.
@@ -312,7 +331,8 @@ function typeStageReferences(unit, typeId, stageId) {
 
 function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
   const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
-  return isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
+  const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
+  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
 }
 
 function studyReferenceLabel(references = []) {
@@ -371,22 +391,43 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
+    const testQuestions = book.source.unitTestQuestions || [];
+    const testReadyCount = testQuestions.filter((question) => question.verified && isSelectableType(typeById(question.typeId))).length;
+    const testQuestionRows = testQuestions.length ? `<div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
+      ${testQuestions.map((question) => {
+        const item = typeById(question.typeId);
+        const ready = question.verified && isSelectableType(item);
+        const key = unitTestKey(book.id, question.number);
+        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+          <input type="checkbox" data-unit-test-key="${key}" ${state.selected.unitTest.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <b>${question.number}번</b><span><strong>${question.label}</strong><small>${item?.middle || "유형 대조 중"}</small></span>
+          <em>${ready ? "유사문제 연결" : "원본 구조 재설계 중"}</em>
+        </label>`;
+      }).join("")}
+    </div>` : "";
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
-        <div><strong>단원 테스트 유사문제</strong><span>문항별 유형 대조 후 연결</span><em>분석 중</em></div>
+        <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
+        ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
+      ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨 제외${book.source.reviewIncluded ? "" : " · 교재 뒤 리뷰 제외"}</p>
+      <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
 
   $("curriculumTree").querySelectorAll("input[data-curriculum-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.curriculum.add(input.dataset.curriculumKey);
     else state.selected.curriculum.delete(input.dataset.curriculumKey);
+    updateSummary();
+  }));
+  $("curriculumTree").querySelectorAll("input[data-unit-test-key]").forEach((input) => input.addEventListener("change", () => {
+    if (input.checked) state.selected.unitTest.add(input.dataset.unitTestKey);
+    else state.selected.unitTest.delete(input.dataset.unitTestKey);
     updateSummary();
   }));
 }
@@ -434,6 +475,22 @@ function selectedReferences() {
         result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
       }
     }
+    for (const key of state.selected.unitTest) {
+      const separator = key.lastIndexOf(":");
+      const bookId = key.slice(0, separator);
+      const number = Number(key.slice(separator + 1));
+      const book = CURRICULUM.find((item) => item.id === bookId);
+      const question = book?.source.unitTestQuestions?.find((item) => item.number === number);
+      const type = typeById(question?.typeId);
+      if (book && question?.verified && isSelectableType(type)) {
+        result.push({
+          typeId: question.typeId,
+          reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
+          difficulty: question.difficulty || 2,
+          fixedSeed: `unit-test:${book.id}:${number}`
+        });
+      }
+    }
     return result;
   }
   const result = [];
@@ -475,6 +532,22 @@ function toggleVisible(selector, set, keyGetter) {
     if (shouldSelect) set.add(key);
     else set.delete(key);
   });
+  updateSummary();
+}
+
+function toggleCurriculumSelections() {
+  const curriculumInputs = [...document.querySelectorAll("#curriculumTree input[data-curriculum-key]")].filter((input) => !input.disabled);
+  const testInputs = [...document.querySelectorAll("#curriculumTree input[data-unit-test-key]")].filter((input) => !input.disabled);
+  const inputs = [...curriculumInputs, ...testInputs];
+  const shouldSelect = inputs.some((input) => !input.checked);
+  for (const input of inputs) {
+    input.checked = shouldSelect;
+    const isTest = Boolean(input.dataset.unitTestKey);
+    const set = isTest ? state.selected.unitTest : state.selected.curriculum;
+    const key = isTest ? input.dataset.unitTestKey : input.dataset.curriculumKey;
+    if (shouldSelect) set.add(key);
+    else set.delete(key);
+  }
   updateSummary();
 }
 
@@ -551,11 +624,11 @@ function geometryWorksheetSolution(problem) {
   }
 }
 
-function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt) {
+function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null) {
   const worksheet = globalThis.GW_GEN;
   const info = worksheet?.typeInfo(item.worksheetCode);
   if (!worksheet || !info) return null;
-  const intensity = activeDifficulty();
+  const intensity = difficultyOverride || activeDifficulty();
   const requestedLevel = item.worksheetLevel || info.levels[0];
   const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
   const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
@@ -575,7 +648,8 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }
   const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
   const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
-  return withProblemContext({
+  return {
+    ...withProblemContext({
     prompt: made.prompt,
     visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
     answer: made.answerText,
@@ -583,12 +657,14 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
     solution: geometryWorksheetSolution(made),
     responseKind: made.type === "VP" ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-  }, item, reference);
+    }, item, reference),
+    generationDifficulty: intensity
+  };
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null) {
   if (item.generator && GENERATORS[item.generator]) {
-    const difficulty = activeDifficulty();
+    const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
     // 답이 유일해야 하는 배치·추리 생성기는 조건이 안 맞으면 null을 준다. 실패는 정상이므로
     // 다시 뽑는다(중복 회피 루프와 별개). 받아 주지 않으면 빈 문항 카드가 나간다.
@@ -598,11 +674,11 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
       const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return withProblemContext(generated, item, reference);
+      if (generated) return { ...withProblemContext(generated, item, reference), generationDifficulty: difficulty };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
-    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt);
+    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride);
   }
   return null;
 }
@@ -625,7 +701,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -641,6 +717,101 @@ function buildQuestions() {
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function syncQuestionCountControls() {
+  state.count = state.questions.length;
+  $("questionCount").value = String(state.count);
+  $("countChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.count) === state.count);
+  });
+  updateSummary();
+}
+
+function moveQuestion(fromIndex, toIndex) {
+  if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= state.questions.length || toIndex >= state.questions.length) return;
+  const [question] = state.questions.splice(fromIndex, 1);
+  state.questions.splice(toIndex, 0, question);
+  renderWorksheet();
+}
+
+function replaceQuestion(index) {
+  const current = state.questions[index];
+  if (!current) return;
+  const currentSignature = problemSignature(current);
+  const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
+  let replacement = null;
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty);
+    if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
+      replacement = candidate;
+      break;
+    }
+  }
+  if (!replacement) {
+    window.alert("같은 유형의 새 문항을 만들지 못했습니다. 잠시 후 다시 눌러 주세요.");
+    return;
+  }
+  state.questions[index] = replacement;
+  renderWorksheet();
+}
+
+function removeQuestion(index) {
+  if (state.questions.length <= 1) {
+    window.alert("시험지에는 한 문제 이상이 필요합니다.");
+    return;
+  }
+  state.questions.splice(index, 1);
+  syncQuestionCountControls();
+  renderWorksheet();
+}
+
+function bindQuestionEditor() {
+  const grid = $("questionGrid");
+  let draggedIndex = null;
+  grid.querySelectorAll(".question-card").forEach((card) => {
+    const index = Number(card.dataset.questionIndex);
+    const handle = card.querySelector("[data-drag-handle]");
+    handle?.addEventListener("dragstart", (event) => {
+      draggedIndex = index;
+      card.classList.add("is-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", String(index));
+    });
+    handle?.addEventListener("dragend", () => {
+      draggedIndex = null;
+      card.classList.remove("is-dragging");
+      grid.querySelectorAll(".drop-target").forEach((item) => item.classList.remove("drop-target"));
+    });
+    card.addEventListener("dragover", (event) => {
+      if (draggedIndex === null || draggedIndex === index) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      card.classList.add("drop-target");
+    });
+    card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
+    card.addEventListener("drop", (event) => {
+      event.preventDefault();
+      card.classList.remove("drop-target");
+      const fromIndex = draggedIndex ?? Number(event.dataTransfer.getData("text/plain"));
+      moveQuestion(fromIndex, index);
+    });
+  });
+  grid.querySelectorAll("[data-question-action]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.questionIndex);
+    if (button.dataset.questionAction === "up") moveQuestion(index, index - 1);
+    if (button.dataset.questionAction === "down") moveQuestion(index, index + 1);
+    if (button.dataset.questionAction === "replace") replaceQuestion(index);
+    if (button.dataset.questionAction === "remove") removeQuestion(index);
+  }));
+  grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
+    const index = Number(input.dataset.questionIndex);
+    if (state.questions[index]) state.questions[index].responseValue = input.value;
+  }));
+}
+
+function escapeAttribute(value) {
+  return String(value || "").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function shapeSymbol(shape) {
@@ -891,7 +1062,8 @@ function edgeSumCycleMarkup(visual) {
 }
 
 function equalizeBagsMarkup(visual) {
-  const bag = (name, count) => `<div class="candy-bag"><strong>${name}</strong><div class="bag-shape" aria-label="사탕 ${count}개">${Array.from({ length: count }, () => "<i></i>").join("")}</div></div>`;
+  const item = visual.item || "사탕";
+  const bag = (name, count) => `<div class="candy-bag"><strong>${name}</strong><div class="bag-shape" aria-label="${item} ${count}개">${Array.from({ length: count }, () => "<i></i>").join("")}</div></div>`;
   return `<div class="equalize-bags">${bag(visual.names[0], visual.higher)}<span class="transfer-arrow">몇 개를<br>줄까요?</span>${bag(visual.names[1], visual.lower)}</div>`;
 }
 
@@ -1280,13 +1452,20 @@ function balanceScaleCircleTargetMarkup(visual) {
 }
 
 function balanceScaleStarTargetMarkup(visual) {
-  const symbols = { circle: "○", star: "☆", diamond: "◇" };
+  const symbols = { circle: "○", square: "□", star: "☆", triangle: "△" };
   const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
-  const first = scale(`${pieces("star", visual.starLeft)}${pieces("circle", 1)}`, pieces("diamond", visual.diamondRight), "[그림 1]");
-  const second = scale(`${pieces("circle", visual.circleLeft)}${pieces("diamond", 1)}`, pieces("star", visual.starRight), "[그림 2]");
-  const third = scale(`${pieces("circle", visual.targetCircleCount)}${pieces("diamond", visual.targetDiamonds)}`, "<strong>☆ (　)개</strong>", "[그림 3]");
-  return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">${visual.hint}</p>` : ""}</div>`;
+  if (visual.mode === "direct") {
+    const first = scale(pieces("circle", visual.circleCount), pieces("square", visual.squareCount), "[그림 1]");
+    return `<div class="three-object-balances balance-learning-step is-direct">${first}<strong class="balance-target">○ 1개 = □ (　)개</strong></div>`;
+  }
+  if (visual.mode === "cancel") {
+    const first = scale(`${pieces("circle", visual.circleCount)}${pieces("triangle", visual.triangleCount)}`, `${pieces("square", visual.squareCount)}${pieces("triangle", visual.triangleCount)}`, "[그림 1]");
+    return `<div class="three-object-balances balance-learning-step is-cancel">${first}<p class="balance-hint">양쪽에 똑같이 있는 △를 함께 지워 보세요.</p><strong class="balance-target">○ 1개 = □ (　)개</strong></div>`;
+  }
+  const first = scale(pieces("circle", visual.circleCount), pieces("square", visual.squareCount), "[그림 1]");
+  const second = scale(`${pieces("star", visual.starCount)}${pieces("square", visual.extraSquares)}`, pieces("circle", visual.rightCircleCount), "[그림 2]");
+  return `<div class="three-object-balances balance-learning-step is-substitute">${first}${second}<p class="balance-hint">[그림 1]의 ○를 □로 바꾸어 넣어 보세요.</p><strong class="balance-target">☆ 1개 = □ (　)개</strong></div>`;
 }
 
 function balanceScaleFourObjectsMarkup(visual) {
@@ -1417,6 +1596,178 @@ function g1SourceMarkup(visual) {
     const repeated = (symbol, count) => Array.from({ length: count }, () => symbol).join(" ");
     return `<div class="g1-balance-relations"><section><span>${repeated("▭", visual.triangleRectangles)}</span><b>=</b><span>△</span><small>[그림 1]</small></section><section><span>${repeated("▭", visual.circleRectangles)} ${repeated("△", visual.circleTriangles)}</span><b>=</b><span>○</span><small>[그림 2]</small></section><section><span>△ ○</span><b>=</b><span>▭ (　)개</span><small>[그림 3]</small></section></div>`;
   }
+  if (visual.kind === "g1-summer-height-order") {
+    return `<div class="g1-height-order"><div class="g1-condition-panel"><strong>어린이들의 말</strong><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div><div class="g1-rank-slots"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div>`;
+  }
+  if (visual.kind === "g1-summer-balance-chain") {
+    const pieces = (symbol, count, center) => {
+      const spacing = Math.min(20, 54 / Math.max(1, count - 1));
+      return Array.from({ length: count }, (_, index) => `<text x="${center - (count - 1) * spacing / 2 + index * spacing}" y="33">${symbol}</text>`).join("");
+    };
+    const scale = (left, right, label) => `<section><svg viewBox="0 0 220 104" role="img" aria-label="${label} 양팔저울"><line x1="24" y1="62" x2="196" y2="62"/><line x1="110" y1="54" x2="110" y2="87"/><path d="M84 88h52l-12 10H96z"/><ellipse cx="58" cy="55" rx="39" ry="7"/><ellipse cx="162" cy="55" rx="39" ry="7"/>${left}${right}</svg><small>${label}</small></section>`;
+    return `<div class="g1-summer-balance">${scale(pieces("○", visual.circles, 58), pieces("□", visual.squares, 162), "[그림 1]")}${scale(pieces("□", 1, 58), pieces("△", visual.triangles, 162), "[그림 2]")}${scale(pieces("○", 1, 58), `<text x="162" y="33" class="target">△ (　)개</text>`, "[그림 3]")}</div>`;
+  }
+  if (visual.kind === "g1-summer-five-box-weight") {
+    const slots = Array.from({ length: visual.boxCount }, () => "<span>　</span>").join("<b>&gt;</b>");
+    return `<div class="g1-five-box-weight"><div class="g1-condition-panel"><strong>상자 무게 조건</strong><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div><div class="g1-box-order" aria-label="무거운 순서 빈칸">${slots}</div></div>`;
+  }
+  if (visual.kind === "g1-summer-four-shape-chain") {
+    return `<div class="g1-summer-shape-chain"><p>☆ + ○ = ${visual.sum}</p><p>◇ − ☆ = ${visual.difference}</p><p>◇ + ◇ = ${visual.diamond * 2}</p><p>○ − □ = ${visual.difference}</p></div>`;
+  }
+  if (visual.kind === "g1-summer-pentagon-product") {
+    const [, upperLeft, lowerLeft, lowerRight, upperRight] = visual.values;
+    const [topLeftProduct, leftProduct, bottomProduct, rightProduct, topRightProduct] = visual.products;
+    return `<svg class="g1-summer-pentagon" viewBox="0 0 320 270" role="img" aria-label="오각형의 이웃한 두 수의 곱"><path d="M160 28L68 96L103 212H217L252 96Z"/><circle cx="160" cy="28" r="25" class="target"/><circle cx="68" cy="96" r="25"/><circle cx="103" cy="212" r="25"/><circle cx="217" cy="212" r="25"/><circle cx="252" cy="96" r="25"/><rect x="94" y="47" width="46" height="34" rx="2"/><rect x="67" y="137" width="46" height="34" rx="2"/><rect x="137" y="196" width="46" height="34" rx="2"/><rect x="207" y="137" width="46" height="34" rx="2"/><rect x="180" y="47" width="46" height="34" rx="2"/><text x="160" y="35" class="target-text">　</text><text x="68" y="103">${upperLeft}</text><text x="103" y="219">${lowerLeft}</text><text x="217" y="219">${lowerRight}</text><text x="252" y="103">${upperRight}</text><text x="117" y="70" class="product">${topLeftProduct}</text><text x="90" y="160" class="product">${leftProduct}</text><text x="160" y="219" class="product">${bottomProduct}</text><text x="230" y="160" class="product">${rightProduct}</text><text x="203" y="70" class="product">${topRightProduct}</text></svg>`;
+  }
+  if (visual.kind === "g1-summer-four-by-four-sum") {
+    const cells = visual.cells || ["□", "□", "□", "□", "△", "◇", "☆", "○", "△", "☆", "☆", "○", "△", "△", "◇", "◇"];
+    const targetRow = Number.isInteger(visual.targetRow) ? visual.targetRow : 2;
+    return `<div class="g1-sum-layout"><div class="g1-sum-core">${cells.map((cell) => `<span>${cell}</span>`).join("")}</div><div class="g1-sum-rows">${visual.rowSums.map((sum, index) => `<b class="${index === targetRow ? "target" : ""}">${index === targetRow ? "　" : sum}</b>`).join("")}</div><div class="g1-sum-columns">${visual.columnSums.map((sum) => `<b>${sum}</b>`).join("")}</div></div>`;
+  }
+  if (visual.kind === "g1-summer-circle-points") {
+    const pointMarkup = Array.from({ length: visual.points }, (_, index) => {
+      const angle = -Math.PI / 2 + (Math.PI * 2 * index) / visual.points;
+      const x = 120 + Math.cos(angle) * 82;
+      const y = 120 + Math.sin(angle) * 82;
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5"/>`;
+    }).join("");
+    return `<svg class="g1-summer-circle-points" viewBox="0 0 240 240" role="img" aria-label="원 위의 ${visual.points}개 점"><circle cx="120" cy="120" r="82" class="outline"/>${pointMarkup}</svg>`;
+  }
+  if (visual.kind === "g1-summer-vertical-shape-addition") {
+    return `<div class="g1-summer-vertical-addition"><p>◎　□</p><p>＋◆　□</p><hr/><p>◆　◆　${visual.finalDigit}</p></div>`;
+  }
+  if (visual.kind === "g1-summer-one-three-rods") {
+    return `<div class="g1-summer-rods"><section><i>㉠</i></section><section><i>㉡</i><i>㉡</i><i>㉡</i></section><strong><i>㉠</i><i>㉡</i><b>${visual.total}cm</b></strong></div>`;
+  }
+  if (visual.kind === "g1-summer-square-composition") {
+    const n = visual.targetUnits;
+    const u = 23;
+    const width = (n * 2 + 1) * u;
+    const height = n * 2 * u;
+    const rightX = (n + 1) * u;
+    const targetY = n * u;
+    const leftTop = (n - 1) * u;
+    const smallX = leftTop;
+    return `<svg class="g1-summer-square-composition" viewBox="0 0 ${width + 12} ${height + 12}" role="img" aria-label="정사각형을 붙여 만든 도형"><rect x="6" y="6" width="${width}" height="${height}"/><rect x="6" y="6" width="${leftTop}" height="${leftTop}"/><rect x="${6 + smallX}" y="6" width="${u}" height="${u}"/><rect x="${6 + smallX + u}" y="6" width="${u}" height="${u}"/><rect x="${6 + smallX}" y="${6 + u}" width="${u * 2}" height="${leftTop - u}"/><rect x="6" y="${6 + leftTop}" width="${rightX}" height="${rightX}"/><rect x="${6 + rightX}" y="6" width="${n * u}" height="${n * u}"/><rect class="target" x="${6 + rightX}" y="${6 + targetY}" width="${n * u}" height="${n * u}"/><text x="${6 + smallX + u / 2}" y="${6 + u * .68}">㉠</text><text x="${6 + rightX + n * u / 2}" y="${6 + targetY + n * u / 2 + 8}">㉡</text><text x="${6 + smallX + u / 2}" y="${6 + u + 15}" class="measure">${visual.unit}cm</text></svg>`;
+  }
+  if (visual.kind === "g1-summer-fold-cut-triangles") {
+    const diagonal = visual.diagonal === "left" ? "M18 68L68 16" : "M18 16L68 68";
+    return `<div class="g1-summer-fold-cut"><svg viewBox="0 0 130 130" role="img" aria-label="첫 번째 접기"><rect x="12" y="12" width="104" height="104"/><path class="dash" d="M64 12V116"/><path class="arrow" d="M98 58Q84 85 65 79"/><path class="arrow-head" d="M65 79l9-2-4 8z"/></svg><b>→</b><svg viewBox="0 0 82 130" role="img" aria-label="두 번째 접기"><rect x="8" y="12" width="60" height="104"/><path class="dash" d="M8 64H68"/><path class="arrow" d="M52 40Q39 56 44 77"/><path class="arrow-head" d="M44 77l-5-8 9 3z"/></svg><b>→</b><svg viewBox="0 0 84 130" role="img" aria-label="대각선 자르기"><text x="9" y="19">✂</text><rect x="18" y="22" width="50" height="72"/><path class="seam" d="M43 22V94"/><path class="cut" d="${diagonal}"/></svg></div>`;
+  }
+  if (visual.kind === "g1-summer-four-symbol-relation") {
+    return `<div class="g1-summer-four-symbol"><p>☆ + □ = ◇</p><p>☆ + ☆ + ☆ = ○ + ○ + ○ + ○</p><p>☆ + ☆ = ◇ + ○</p></div>`;
+  }
+  if (visual.kind === "g1-summer-shape-height-cycle") {
+    const stack = ({ shape, height, number }) => `<section><span>${Array.from({ length: height }, () => `<i>${shape}</i>`).join("")}</span><b>${number}</b></section>`;
+    return `<div class="g1-summer-shape-cycle">${visual.items.map(stack).join("")}<em>…</em><section class="target"><span></span><b>${visual.target}</b></section></div>`;
+  }
+  if (visual.kind === "g1-summer-orange-ratio") {
+    return `<div class="g1-summer-orange-ratio"><section><b>어린이</b><span>○ ○ ○</span><em>귤 1개</em></section><section><b>어른</b><span>○</span><em>귤 3개</em></section><strong>모두 ${visual.people}명 · 귤 ${visual.oranges}개</strong></div>`;
+  }
+  if (visual.kind === "g1-summer-rectilinear-perimeter") {
+    const { height, top, inner, lower, notch } = visual;
+    const scale = 18;
+    const h = height * scale;
+    const topW = top * scale;
+    const lowerW = lower * scale;
+    const notchW = notch * scale;
+    const insetX = topW - notchW;
+    const upperY = h * .33;
+    const lowerY = h * .67;
+    return `<svg class="g1-summer-perimeter" viewBox="0 0 ${lowerW + 90} ${h + 62}" role="img" aria-label="직각으로 꺾인 도형의 둘레"><path d="M43 20H${43 + topW}V${20 + upperY}H${43 + insetX}V${20 + lowerY}H${43 + lowerW}V${20 + h}H43Z"/><path class="measure" d="M43 11H${43 + topW}"/><text x="${43 + topW / 2}" y="10">${top}cm</text><path class="measure" d="M30 20V${20 + h}"/><text x="15" y="${20 + h / 2}">${height}cm</text><path class="measure" d="M${43 + insetX} ${20 + lowerY - 10}H${43 + lowerW}"/><text x="${43 + insetX + (lowerW - insetX) / 2}" y="${20 + lowerY - 13}">${inner}cm</text><path class="measure" d="M43 ${h + 33}H${43 + lowerW}"/><text x="${43 + lowerW / 2}" y="${h + 52}">${lower}cm</text></svg>`;
+  }
+  if (visual.kind === "g1-summer-opposite-sequences") {
+    const top = Array.from({ length: 4 }, (_, index) => visual.topStart + visual.topStep * index);
+    const bottom = Array.from({ length: 4 }, (_, index) => visual.bottomStart + visual.bottomStep * index);
+    return `<table class="g1-summer-sequences"><tbody><tr>${top.map((item) => `<td>${item}</td>`).join("")}<td>…</td><td>${visual.topLast}</td></tr><tr>${bottom.map((item) => `<td>${item}</td>`).join("")}<td>…</td><td>㉠</td></tr></tbody></table>`;
+  }
+  if (visual.kind === "g1-fall-linear-table") {
+    const columns = [...visual.anchors, { input: visual.targetInput, output: "㉠" }];
+    return `<table class="g1-fall-linear-table"><tbody><tr><th>윗줄</th>${columns.map((item) => `<td>${item.input}</td>`).join("")}</tr><tr><th>아랫줄</th>${columns.map((item) => `<td class="${item.output === "㉠" ? "target" : ""}">${item.output}</td>`).join("")}</tr></tbody></table>`;
+  }
+  if (visual.kind === "g1-fall-three-person-transfer") {
+    return `<div class="g1-fall-transfer"><div>${visual.people.map((person) => `<section><b>${person.name}</b><span>${person.count ?? "?"}개</span></section>`).join("")}</div><p><strong>${visual.people[1].name}</strong><em>구슬 ${visual.transfer}개</em><strong>${visual.people[2].name}</strong></p></div>`;
+  }
+  if (visual.kind === "g1-fall-number-set-chain") {
+    return `<div class="g1-fall-number-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><ol>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ol></div>`;
+  }
+  if (visual.kind === "g1-fall-latin-two-target") {
+    const cells = visual.grid.map((value, index) => {
+      const targetIndex = visual.targetIndices.indexOf(index);
+      const label = targetIndex === 0 ? "㉠" : targetIndex === 1 ? "㉡" : "";
+      const shown = visual.clueIndices.includes(index) ? value : label;
+      return `<span class="${label ? "target" : ""}">${shown}</span>`;
+    }).join("");
+    return `<div class="g1-fall-latin" style="--latin-size:${visual.size}">${cells}</div>`;
+  }
+  if (visual.kind === "g1-fall-pentagon-products-all") {
+    const productPositions = [[117, 70], [90, 160], [160, 219], [230, 160], [203, 70]];
+    const circles = [[160, 28], [68, 96], [103, 212], [217, 212], [252, 96]];
+    return `<svg class="g1-fall-pentagon" viewBox="0 0 320 270" role="img" aria-label="오각형의 다섯 원과 이웃한 두 수의 곱"><path d="M160 28L68 96L103 212H217L252 96Z"/>${circles.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="25"/><text x="${x}" y="${y + 7}">　</text>`).join("")}${productPositions.map(([x, y], index) => `<rect x="${x - 23}" y="${y - 17}" width="46" height="34"/><text x="${x}" y="${y + 7}" class="product">${visual.products[index]}</text>`).join("")}</svg>`;
+  }
+  if (visual.kind === "g1-fall-shape-sum-four-targets") {
+    return `<div class="g1-fall-four-sums"><div class="core">${visual.symbols.map((symbol) => `<span>${symbol}</span>`).join("")}</div><div class="rows">${visual.rowSums.map((sum, index) => `<b class="${visual.hiddenRows.includes(index) ? "target" : ""}">${visual.hiddenRows.includes(index) ? "　" : sum}</b>`).join("")}</div><div class="columns">${visual.columnSums.map((sum, index) => `<b class="${visual.hiddenColumns.includes(index) ? "target" : ""}">${visual.hiddenColumns.includes(index) ? "　" : sum}</b>`).join("")}</div></div>`;
+  }
+  if (visual.kind === "g1-fall-four-one-rods") {
+    return `<div class="g1-fall-rods"><section class="short">${Array.from({ length: visual.shortCount }, () => "<i>㉠</i>").join("")}</section><section class="long"><i>㉡</i></section><strong><span>㉠</span><span>㉡</span><b>${visual.total}cm</b></strong></div>`;
+  }
+  if (visual.kind === "g1-fall-stacked-square-sides") {
+    return `<svg class="g1-fall-stacked-squares" viewBox="0 0 230 145" role="img" aria-label="크기가 다른 정사각형 네 개"><rect x="8" y="8" width="120" height="120"/><rect x="128" y="8" width="80" height="80"/><rect x="128" y="88" width="40" height="40"/><rect x="168" y="88" width="40" height="40"/><text x="68" y="72">가</text><text x="168" y="52">나</text><text x="148" y="113">다</text><text x="188" y="113">라</text><path d="M8 136H128"/><text x="68" y="143" class="measure">${visual.big}cm</text></svg>`;
+  }
+  if (visual.kind === "g1-fall-three-fold-crease-cut") {
+    const diagonal = visual.diagonal === "up" ? "M20 100L100 20" : "M20 20L100 100";
+    const otherDiagonal = visual.diagonal === "up" ? "M20 20L100 100" : "M20 100L100 20";
+    const panels = [`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="M10 60H110"/><path class="arrow" d="M88 35Q60 50 60 76"/></svg>`, `<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="M60 10V110"/><path class="arrow" d="M88 55Q70 67 53 61"/></svg>`];
+    if (visual.folds >= 3) panels.push(`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="${diagonal}"/><path class="arrow" d="M82 84Q63 70 54 53"/></svg>`);
+    if (visual.folds >= 4) panels.push(`<svg viewBox="0 0 120 120"><rect x="10" y="10" width="100" height="100"/><path class="dash" d="${otherDiagonal}"/><path class="arrow" d="M38 84Q57 70 66 53"/></svg>`);
+    return `<div class="g1-fall-crease-cut">${panels.map((panel, index) => `${index ? "<b>→</b>" : ""}${panel}`).join("")}</div>`;
+  }
+  if (visual.kind === "g1-fall-triple-share") {
+    return `<div class="g1-fall-triple-share"><strong>모두 ${visual.total}장</strong><div><section><b>${visual.largerName}</b><span>□ □ □</span></section><section><b>${visual.smallerName}</b><span>□</span></section></div></div>`;
+  }
+  if (visual.kind === "g1-fall-four-blank-addition") {
+    const width = Math.max(...visual.rows.map((row) => row.length));
+    const row = (digits, sign = "") => `<p><b>${sign}</b>${Array.from({ length: width - digits.length }, () => "<i></i>").join("")}${digits.map((digit) => `<i class="${digit === null ? "blank" : ""}">${digit === null ? "" : digit}</i>`).join("")}</p>`;
+    return `<div class="g1-fall-blank-addition">${row(visual.rows[0])}${row(visual.rows[1], "+")}<hr/>${row(visual.rows[2])}</div>`;
+  }
+  if (visual.kind === "g1-fall-square-chain-perimeter") {
+    return `<svg class="g1-fall-square-chain" viewBox="0 0 245 190" role="img" aria-label="여러 정사각형을 붙인 직사각형"><rect x="10" y="10" width="150" height="150"/><rect x="160" y="10" width="60" height="60"/><rect x="160" y="70" width="60" height="60"/><rect x="160" y="130" width="30" height="30"/><rect class="target" x="190" y="130" width="30" height="30"/><path class="measure" d="M10 174H220"/><text x="115" y="187">${visual.totalWidth}cm</text></svg>`;
+  }
+  if (visual.kind === "g1-fall-consecutive-three-sum") {
+    const shown = (value) => {
+      const digits = String(value).split("");
+      return digits.map((digit, index) => index < digits.length - visual.visibleDigits ? "□" : digit).join("");
+    };
+    return `<div class="g1-fall-consecutive-sum"><p>${shown(visual.values[0])}</p><p>＋ ${shown(visual.values[1])}</p><p>${shown(visual.values[2])}</p><hr/><strong>${visual.total}</strong></div>`;
+  }
+  if (visual.kind === "g1-winter-shared-box-multiplication") {
+    return `<svg class="g1-winter-shared-box" viewBox="0 0 300 225" role="img" aria-label="공유 상자가 있는 두 단계 곱셈"><path d="M150 50L55 103M150 50L150 103M150 137L150 180M245 103L150 180"/><rect x="116" y="12" width="68" height="46"/><rect class="target" x="21" y="80" width="68" height="46"/><rect x="116" y="80" width="68" height="46"/><rect x="211" y="80" width="68" height="46"/><rect x="116" y="168" width="68" height="46"/><text x="150" y="43">${visual.topProduct}</text><text x="55" y="111">㉠</text><text x="150" y="111">　</text><text x="245" y="111">${visual.right}</text><text x="150" y="199">${visual.bottomProduct}</text><text class="times" x="103" y="112">×</text><text class="times" x="198" y="112">×</text></svg>`;
+  }
+  if (visual.kind === "g1-winter-shape-sum-target-row") {
+    return `<div class="g1-winter-sum-layout"><div class="core">${visual.grid.flat().map((symbol) => `<span>${symbol}</span>`).join("")}</div><div class="rows">${visual.rowSums.map((value, index) => `<b class="${index === visual.targetRow ? "target" : ""}">${value === null ? "㉠" : value}</b>`).join("")}</div><div class="columns">${visual.columnSums.map((value) => `<b>${value}</b>`).join("")}</div></div>`;
+  }
+  if (visual.kind === "g1-winter-opponent-step-game") {
+    const width = visual.limit * 34 + 30;
+    const points = Array.from({ length: visual.limit }, (_, index) => `${18 + index * 34},${visual.limit * 13 - index * 13 + 18} ${50 + index * 34},${visual.limit * 13 - index * 13 + 18} ${50 + index * 34},${visual.limit * 13 - index * 13 + 5}`).join(" ");
+    return `<div class="g1-winter-step-game"><div class="events"><b>시작 ${visual.start}번째</b><span>A 승리 ${visual.wins}번</span><span>비김 ${visual.draws}번</span><span>A 패배 ${visual.losses}번</span></div><svg viewBox="0 0 ${width} ${visual.limit * 13 + 42}" role="img" aria-label="계단 이동"><polyline points="${points}"/>${Array.from({ length: visual.limit }, (_, index) => `<text x="${34 + index * 34}" y="${visual.limit * 13 - index * 13 + 13}">${index + 1}</text>`).join("")}</svg></div>`;
+  }
+  if (visual.kind === "g1-winter-sudoku-four-full") {
+    return `<div class="g1-winter-sudoku">${visual.puzzle.flat().map((value, index) => `<span class="r${Math.floor(index / 4)} c${index % 4}">${value ?? ""}</span>`).join("")}</div>`;
+  }
+  if (visual.kind === "g1-winter-product-placement-four") {
+    return `<div class="g1-winter-product-layout"><div class="core">${Array.from({ length: 16 }, (_, index) => `<span class="${visual.shadedIndices.includes(index) ? "target" : "plain"}">${visual.shadedIndices.includes(index) ? "" : "·"}</span>`).join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="cards">${visual.numbers.map((value) => `<i>${value}</i>`).join("")}</div></div>`;
+  }
+  if (visual.kind === "g1-winter-three-digit-cards-above") {
+    return `<div class="g1-winter-card-threshold"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><strong>${visual.threshold}보다 큰 수</strong></div>`;
+  }
+  if (visual.kind === "g1-winter-three-balance-substitution") {
+    const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" ");
+    const r = visual.relations;
+    return `<div class="g1-winter-three-balance"><section><span>${repeat("☆", r.starCount)}</span><b>=</b><span>${repeat("◇", r.diamondCount)}</span></section><section><span>□</span><b>=</b><span>${repeat("☆", r.squareStars)} ${repeat("◇", r.squareDiamonds)}</span></section><section><span>○</span><b>=</b><span>${repeat("□", r.circleSquares)} ${repeat("◇", r.circleDiamonds)}</span></section><p>○ 1개 = ◇ (　)개</p></div>`;
+  }
+  if (visual.kind === "g1-winter-three-cards-parity-chain") {
+    return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
+  }
   if (visual.kind === "g1-stacked-shape-cycle") {
     return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${item.shape}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
   }
@@ -1454,17 +1805,27 @@ function g1SourceMarkup(visual) {
 
 function cryptarithmVerticalMarkup(visual) {
   // 자리를 오른쪽으로 맞춰 세로셈처럼 세운다. 자리 수가 다르면 왼쪽을 빈칸으로 채운다.
-  const width = Math.max(visual.first.length, visual.second.length, visual.sum.length);
+  const addends = visual.addends || [visual.first, visual.second];
+  const width = Math.max(...addends.map((row) => row.length), visual.sum.length);
   const pad = (row) => Array.from({ length: width - row.length }, () => "").concat(row);
   const line = (row, sign) => `<div class="cv-row">${sign ? `<b class="cv-sign">${sign}</b>` : `<b class="cv-sign"></b>`}${pad(row).map((cell) => `<span>${cell}</span>`).join("")}</div>`;
-  return `<div class="cryptarithm-vertical" style="--cv-cols:${width}">${line(visual.first, "")}${line(visual.second, "+")}<div class="cv-bar"></div>${line(visual.sum, "")}</div>`;
+  return `<div class="cryptarithm-vertical" style="--cv-cols:${width}">${addends.map((row, index) => line(row, index === addends.length - 1 ? "+" : "")).join("")}<div class="cv-bar"></div>${line(visual.sum, "")}</div>`;
 }
 
 function foldGeometryHelpers() {
-  const KEEP = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y };
+  const KEEP = {
+    v: (p) => 0.5 - p.x,
+    h: (p) => 0.5 - p.y,
+    vq: (p) => 0.25 - p.x,
+    hq: (p) => 0.25 - p.y,
+    d1: (p) => p.x - p.y,
+    d2: (p) => 1 - p.x - p.y
+  };
   const MIRROR = {
     v: (p) => ({ x: 1 - p.x, y: p.y }),
     h: (p) => ({ x: p.x, y: 1 - p.y }),
+    vq: (p) => ({ x: 0.5 - p.x, y: p.y }),
+    hq: (p) => ({ x: p.x, y: 0.5 - p.y }),
     d1: (p) => ({ x: p.y, y: p.x }),
     d2: (p) => ({ x: 1 - p.y, y: 1 - p.x })
   };
@@ -1823,10 +2184,19 @@ function foldUnfoldChoiceMarkup(visual) {
 function paperFoldMarkup(visual) {
   const SIZE = visual.stages.length > 3 ? 84 : 100;
   const GAP = 34;
-  const KEEP = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y };
+  const KEEP = {
+    v: (p) => 0.5 - p.x,
+    h: (p) => 0.5 - p.y,
+    vq: (p) => 0.25 - p.x,
+    hq: (p) => 0.25 - p.y,
+    d1: (p) => p.x - p.y,
+    d2: (p) => 1 - p.x - p.y
+  };
   const MIRROR = {
     v: (p) => ({ x: 1 - p.x, y: p.y }),
     h: (p) => ({ x: p.x, y: 1 - p.y }),
+    vq: (p) => ({ x: 0.5 - p.x, y: p.y }),
+    hq: (p) => ({ x: p.x, y: 0.5 - p.y }),
     d1: (p) => ({ x: p.y, y: p.x }),
     d2: (p) => ({ x: 1 - p.y, y: 1 - p.x })
   };
@@ -2048,6 +2418,17 @@ function balanceOrderChainMarkup(visual) {
   return `<div class="balance-order-work">${visual.relations.map(scale).join("")}</div>`;
 }
 
+const DIAGNOSTIC_ANIMAL_ASSETS = {
+  토끼: "animal-rabbit.png", 거북: "animal-turtle.png", 다람쥐: "animal-squirrel.png",
+  여우: "animal-fox.png", 사슴: "animal-deer.png", 오리: "animal-duck.png"
+};
+
+function diagnosticAnimalBalanceOrderMarkup(visual) {
+  const load = (name) => `<div class="animal-balance-load"><img src="../mock/assets/${DIAGNOSTIC_ANIMAL_ASSETS[name]}" alt="${name}" /><strong>${name}</strong></div>`;
+  const scale = (row, index) => `<figure class="animal-balance ${row.heavier}">${load(row.left)}<span class="animal-balance-beam"></span><span class="animal-balance-pivot"></span>${load(row.right)}<figcaption>[저울 ${index + 1}]</figcaption></figure>`;
+  return `<div class="animal-balance-order-work">${visual.relations.map(scale).join("")}</div>`;
+}
+
 function balanceUnitEquationsMarkup(visual) {
   const side = (items) => `<div class="balance-equation-side">${items.map((item) => `<i>${item}</i>`).join("")}</div>`;
   return `<div class="balance-unit-work"><p>${visual.unit} = ${visual.unitGrams}g</p>${visual.equations.map((row) => `<div>${side(row.left)}<b>=</b>${side(row.right)}</div>`).join("")}</div>`;
@@ -2221,7 +2602,7 @@ function triangleEdgeSumMarkup(visual) {
 // ── main 갈래에서 이식: 파이널 2·3회 시각자료 (2026-08-18) ──────────────
 
 function symbolChainMarkup(visual) {
-  const symbols = { circle: "○", heart: "♥", club: "♣", diamond: "◆", star: "★", triangle: "▲" };
+  const symbols = { square: "□", circle: "○", doubleCircle: "◎", heart: "♥", club: "♣", diamond: "◆", star: "★", triangle: "▲" };
   const token = (value) => symbols[value]
     ? `<span class="chain-symbol ${value}">${symbols[value]}</span>`
     : `<span class="chain-token">${value}</span>`;
@@ -2229,9 +2610,82 @@ function symbolChainMarkup(visual) {
   return `<div class="symbol-chain"><div class="symbol-chain-given">${givens}</div><div class="symbol-chain-board">${visual.rows.map((row) => `<p>${row.map(token).join("")}</p>`).join("")}</div></div>`;
 }
 
+function alignedRodLengthsMarkup(visual) {
+  const rows = visual.rows.map((row) => `<div class="aligned-rod-row">${row.map((part) => `<span style="--rod-part:${part.length}" title="막대 ${part.label}">${part.label}</span>`).join("")}</div>`).join("");
+  return `<div class="aligned-rods"><div class="aligned-rod-board">${rows}</div><p><b>${visual.knownLabel}</b> 막대 = ${visual.knownLength}cm${visual.showTotal ? ` · 전체 ${visual.total}cm` : ""}</p></div>`;
+}
+
+function twoFunctionMachinesMarkup(visual) {
+  const examples = (items, shape) => `<div class="function-example-list">${items.map(({ input, output }) => `<p><span class="function-shape ${shape}">${input}</span><b>→</b><strong>${output}</strong></p>`).join("")}</div>`;
+  return `<div class="two-function-machines"><section><header>동그라미 규칙</header>${examples(visual.firstExamples, "circle")}${visual.firstHint ? `<small>${visual.firstHint}</small>` : ""}</section><section><header>네모 규칙</header>${examples(visual.secondExamples, "square")}${visual.secondHint ? `<small>${visual.secondHint}</small>` : ""}</section><div class="function-target"><span class="function-shape circle">${visual.targetInput}</span><b>→</b><span class="function-shape square blank">?</span><b>→</b><span class="function-result blank">?</span></div></div>`;
+}
+
+function unusedCardEquationsMarkup(visual) {
+  const cards = `<div class="number-cards compact">${visual.cards.map((value) => `<span class="number-card">${value}</span>`).join("")}</div>`;
+  const equations = `<div class="unused-card-equations">${visual.targets.map((target) => `<p><i></i><b>+</b><i></i><b>=</b><strong>${target}</strong></p>`).join("")}</div>`;
+  return `<div class="unused-card-work">${cards}${equations}</div>`;
+}
+
+function recorderMatchstickLengthMarkup(visual) {
+  const segment = (item) => item.kind === "match"
+    ? `<i class="measure-match" style="--measure-span:${item.units}" aria-label="성냥개비"></i>`
+    : `<i class="measure-pencil" style="--measure-span:${item.units}" aria-label="연필"></i>`;
+  const rows = visual.rows.map((row) => `<div class="measure-row" style="--measure-columns:${visual.totalUnits}">${row.map(segment).join("")}</div>`).join("");
+  return `<div class="recorder-measure"><div class="recorder-shape" aria-label="리코더"><i></i><span></span></div>${rows}</div>`;
+}
+
+const transformOperationLabels = {
+  "flip-lr": ["↔", "오른쪽으로 뒤집기"],
+  "flip-tb": ["↕", "아래로 뒤집기"],
+  "rotate-cw": ["↻", "오른쪽으로 1/4바퀴"],
+  "rotate-ccw": ["↺", "왼쪽으로 1/4바퀴"]
+};
+
+function shapeTransformGridSvg(grid, blank = false) {
+  const cells = Array.from({ length: 4 }, (_, index) => {
+    const row = Math.floor(index / 2);
+    const column = index % 2;
+    const x = 8 + column * 72;
+    const y = 8 + row * 72;
+    if (blank) return `<rect x="${x}" y="${y}" width="72" height="72"/>`;
+    const cell = grid[index];
+    const cx = x + 36;
+    const cy = y + 36;
+    const shape = matrixShapeSvg(cell.shape, cx, cy, 31, cell.shape === "circle" ? "#f8e8e6" : "#fff", "#4b5d68", 2.5);
+    return `<rect x="${x}" y="${y}" width="72" height="72"/><g transform="rotate(${(cell.direction || 0) * 90} ${cx} ${cy})">${shape}</g>`;
+  }).join("");
+  return `<svg class="shape-transform-grid" viewBox="0 0 160 160" role="img" aria-label="네 칸 도형 배치"><g>${cells}</g></svg>`;
+}
+
+function shapeTransformGridMarkup(visual) {
+  if (visual.answerOnly) return `<div class="shape-transform-answer">${shapeTransformGridSvg(visual.final)}</div>`;
+  const operations = visual.operations.map((operation) => {
+    const [symbol, label] = transformOperationLabels[operation];
+    return `<div class="shape-transform-operation"><b>${symbol}</b><span>${label}</span></div>`;
+  }).join("");
+  return `<div class="shape-transform-work">${shapeTransformGridSvg(visual.start)}<div class="shape-transform-operations">${operations}</div><b class="shape-transform-arrow">→</b>${shapeTransformGridSvg(null, true)}</div>`;
+}
+
+function cubeAddToMatchMarkup(visual) {
+  const renderer = globalThis.GW_RENDER;
+  if (!renderer?.renderIso) return "";
+  const actual = renderer.renderIso(visual.map, visual.width, visual.depth, { u: 22 });
+  const full = renderer.renderIso(visual.fullMap, visual.width, visual.depth, { u: 22 });
+  return `<div class="cube-add-match"><figure><div>${actual}</div><figcaption>현재 모양</figcaption></figure><b>→</b><figure><div>${full}</div><figcaption>완성 모양</figcaption></figure></div>`;
+}
+
+function overlappingRunSequenceMarkup(visual) {
+  return `<div class="overlapping-run-sequence">${visual.items.map((value) => value === null ? "<i>?</i>" : `<span>${value}</span>`).join("<b>,</b>")}<strong>…</strong></div>`;
+}
+
+function alternatingPeopleMarkup(visual) {
+  return `<div class="alternating-people" aria-label="남학생과 여학생이 번갈아 선 모습">${visual.line.map((kind) => `<i class="${kind}"><b>${kind === "boy" ? "남" : "여"}</b></i>`).join("")}</div>`;
+}
+
 function matrixShapeSvg(shape, cx, cy, size, fill = "none", stroke = "#596a73", width = 2) {
   if (shape === "circle") return `<circle cx="${cx}" cy="${cy}" r="${size / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
   if (shape === "square") return `<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+  if (shape === "diamond") return `<polygon points="${cx},${cy - size * 0.62} ${cx + size * 0.62},${cy} ${cx},${cy + size * 0.62} ${cx - size * 0.62},${cy}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
   const top = cy - size * 0.58;
   const bottom = cy + size * 0.46;
   return `<polygon points="${cx},${top} ${cx - size * 0.58},${bottom} ${cx + size * 0.58},${bottom}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
@@ -2368,8 +2822,113 @@ function numberSequencesMarkup(visual) {
   return `<div class="number-sequences">${visual.rows.map((row, index) => `<div><b>(${index + 1})</b>${row.items.map((value) => `<span${value === null ? ' class="blank"' : ""}>${value === null ? "" : value}</span>`).join("")}</div>`).join("")}</div>`;
 }
 
+function heightExtremesMarkup(visual) {
+  return `<div class="height-extremes-work"><div class="height-name-row">${visual.names.map((name) => `<span>${name}</span>`).join("")}</div><ul>${visual.clues.map((clue) => `<li>${clue}</li>`).join("")}</ul></div>`;
+}
+
+function diagnosticPartWholeBarMarkup(visual) {
+  const parts = visual.parts.map((value, index) => `<span style="--part-width:${visual.widths[index]}"><b>${value === null ? "?" : value}</b></span>`).join("");
+  return `<div class="diagnostic-part-whole"><div class="whole"><small>전체</small><b>${visual.total}</b></div><div class="parts">${parts}</div></div>`;
+}
+
+function diagnosticNumberDiscMarkup(disc, label) {
+  const positions = [[55, 55], [115, 55], [55, 112], [115, 112]];
+  const values = disc.outer.map((value, index) => `<text class="${disc.blankIndex === index ? "blank" : ""}" x="${positions[index][0]}" y="${positions[index][1]}">${disc.blankIndex === index ? "?" : value}</text>`).join("");
+  return `<div class="diagnostic-disc"><svg viewBox="0 0 170 165" role="img" aria-label="바깥 네 수와 가운데 수의 관계 원판"><circle class="outer" cx="85" cy="82" r="66"/><circle class="inner" cx="85" cy="82" r="28"/><path d="M85 16V54M85 110V148M19 82H57M113 82H151"/>${values}<text class="center" x="85" y="89">${disc.center}</text></svg><b>${label}</b></div>`;
+}
+
+function diagnosticNumberRelationMarkup(visual) {
+  const examples = visual.examples.map((disc, index) => diagnosticNumberDiscMarkup(disc, visual.examples.length === 1 ? "보기" : `보기 ${index + 1}`)).join("");
+  const targets = visual.targets.map((disc, index) => diagnosticNumberDiscMarkup(disc, visual.targets.length === 1 ? "문제" : `문제 ${index + 1}`)).join("");
+  return `<div class="diagnostic-number-relation"><div>${examples}${targets}</div>${visual.showHint ? "<p>힌트: 바깥 네 수를 모두 더해 보세요.</p>" : ""}</div>`;
+}
+
+function cubeDifferentShapeMarkup(visual) {
+  const labels = ["①", "②", "③", "④", "⑤", "⑥"];
+  return `<div class="cube-different-shape-work">${visual.options.map((coords, index) => `<figure>${globalThis.GW_RENDER?.renderIsoCoords(coords, { u: 24 }) || ""}<figcaption>${labels[index]}</figcaption></figure>`).join("")}</div>`;
+}
+
+function maskedAdditionNumberMarkup(value, hiddenIndexes = []) {
+  const hidden = new Set(hiddenIndexes);
+  return [...String(value)].map((digit, index) => hidden.has(index)
+    ? '<i class="masked-digit" aria-label="가려진 숫자"></i>'
+    : `<b>${digit}</b>`).join("");
+}
+
+function maskedVerticalAdditionsMarkup(visual) {
+  const labels = ["①", "②", "③"];
+  return `<div class="masked-vertical-additions-work">${visual.equations.map((equation, index) => `<figure><figcaption>${labels[index]}</figcaption><div class="masked-vertical-equation"><div class="top"><span></span><p>${maskedAdditionNumberMarkup(equation.top, equation.hidden.top)}</p></div><div class="bottom"><span>+</span><p>${maskedAdditionNumberMarkup(equation.bottom, equation.hidden.bottom)}</p></div><hr><div class="result"><span></span><p>${maskedAdditionNumberMarkup(equation.result, equation.hidden.result)}</p></div></div></figure>`).join("")}</div>`;
+}
+
+function givenShapeExpressionMarkup(visual) {
+  const values = visual.entries.map((entry) => `<span><i>${entry.symbol}</i><b>=</b><strong>${entry.value}</strong></span>`).join("");
+  const expression = visual.terms.map((term, index) => `${index ? `<b>${term.operator}</b>` : ""}<i>${term.symbol}</i>`).join("");
+  return `<div class="given-shape-expression-work"><div class="given-shape-values">${values}</div><div class="given-shape-calculation">${expression}<b>=</b><em>?</em></div></div>`;
+}
+
+function pairedGrowingSequencesMarkup(visual) {
+  const labels = ["①", "②"];
+  return `<div class="paired-growing-sequences-work">${visual.rows.map((row, rowIndex) => `<div><b>${labels[rowIndex]}</b><p style="--sequence-count:${row.items.length}">${row.items.map((value) => `<span class="${value === null ? "blank" : ""}">${value === null ? "" : value}</span>`).join("")}</p></div>`).join("")}</div>`;
+}
+
+function triangleFanCountMarkup(visual) {
+  const apexX = 180;
+  const apexY = 22;
+  const baseY = 205;
+  const baseHalf = 145;
+  const rays = Array.from({ length: visual.rayCount }, (_, index) => {
+    const x = apexX - baseHalf + (baseHalf * 2 * index) / (visual.rayCount - 1);
+    return `<line x1="${apexX}" y1="${apexY}" x2="${x}" y2="${baseY}"/>`;
+  }).join("");
+  const horizontals = visual.horizontalFractions.map((fraction) => {
+    const y = apexY + (baseY - apexY) * fraction;
+    const halfWidth = baseHalf * fraction;
+    return `<line x1="${apexX - halfWidth}" y1="${y}" x2="${apexX + halfWidth}" y2="${y}"/>`;
+  }).join("");
+  return `<svg class="triangle-fan-count" viewBox="0 0 360 230" role="img" aria-label="꼭짓점에서 여러 선과 가로선으로 나뉜 삼각형"><g>${rays}${horizontals}<line x1="${apexX - baseHalf}" y1="${baseY}" x2="${apexX + baseHalf}" y2="${baseY}"/></g></svg>`;
+}
+
+function reverseOperationLadderMarkup(visual) {
+  const topY = 50;
+  const bottomY = 210;
+  const leftX = visual.columnCount === 3 ? 80 : 48;
+  const rightX = visual.columnCount === 3 ? 280 : 312;
+  const xs = Array.from({ length: visual.columnCount }, (_, index) => leftX + ((rightX - leftX) * index) / (visual.columnCount - 1));
+  const rails = xs.map((x, index) => `<line class="rail" x1="${x}" y1="${topY}" x2="${x}" y2="${bottomY}"/><rect class="top-blank" x="${x - 20}" y="7" width="40" height="35" rx="4"/><circle class="bottom-value" cx="${x}" cy="232" r="19"/><text class="bottom-text" x="${x}" y="237">${visual.bottomValues[index]}</text>`).join("");
+  const rungs = visual.rungs.map((rung) => {
+    const x1 = xs[rung.left];
+    const x2 = xs[rung.right];
+    const y1 = topY + (bottomY - topY) * rung.leftY;
+    const y2 = topY + (bottomY - topY) * rung.rightY;
+    const labelX = (x1 + x2) / 2;
+    const labelY = (y1 + y2) / 2 - 7;
+    return `<line class="rung" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><text class="operation-label" x="${labelX}" y="${labelY}">${rung.label}</text>`;
+  }).join("");
+  return `<svg class="reverse-operation-ladder" viewBox="0 0 360 258" role="img" aria-label="계산이 표시된 사다리 타기">${rails}${rungs}</svg>`;
+}
+
+function plusMinusExpressionMarkup(numbers, operators, target, blankOperators = false) {
+  const terms = numbers.slice(1).map((value, index) => `${blankOperators ? '<i class="operator-blank" aria-label="연산 기호 빈칸"></i>' : `<b>${operators[index]}</b>`}<span>${value}</span>`).join("");
+  return `<p><span>${numbers[0]}</span>${terms}<em>=</em><strong>${target}</strong></p>`;
+}
+
+function plusMinusMultiTargetMarkup(visual) {
+  const labels = ["①", "②", "③", "④"];
+  const exampleOperators = Array(visual.numbers.length - 1).fill("+");
+  const rows = visual.rows.map((row, index) => `<figure><figcaption>${labels[index]}</figcaption>${plusMinusExpressionMarkup(visual.numbers, row.operators, row.target, true)}</figure>`).join("");
+  return `<div class="plus-minus-multi-target-work"><div class="plus-minus-example"><small>보기</small>${plusMinusExpressionMarkup(visual.numbers, exampleOperators, visual.exampleResult)}</div><div class="plus-minus-targets">${rows}</div></div>`;
+}
+
+function twoCustomOperationsMarkup(visual) {
+  const labels = ["①", "②"];
+  const definitions = visual.definitions.map((definition) => `<p><span>가</span><b>${definition.symbol}</b><span>나</span><em>=</em><strong>${definition.expression}</strong></p>`).join("");
+  const queries = visual.queries.map((query, index) => `<p><small>${labels[index]}</small><span>${query.left}</span><b>${query.symbol}</b><span>${query.right}</span><em>=</em><i aria-label="답을 쓰는 빈칸"></i></p>`).join("");
+  return `<div class="two-custom-operations-work"><div class="custom-operation-definitions">${definitions}</div><div class="custom-operation-queries">${queries}</div></div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind.startsWith("mock6-")) return `<div class="visual mock06-visual">${mock06Markup(visual)}</div>`;
   if (visual.kind === "book1") return `<div class="visual book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="visual book03-visual">${book03Markup(visual)}</div>`;
   if (visual.kind === "book4") return `<div class="visual book04-visual">${book04Markup(visual)}</div>`;
@@ -2423,8 +2982,20 @@ function visualMarkup(visual) {
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "repeat-shape-answer") return `<div class="visual repeat-shape-answer-visual">${repeatShapeAnswerMarkup(visual)}</div>`;
   if (visual.kind === "number-sequences") return `<div class="visual number-sequences-visual">${numberSequencesMarkup(visual)}</div>`;
+  if (visual.kind === "height-extremes") return `<div class="visual height-extremes-visual">${heightExtremesMarkup(visual)}</div>`;
+  if (visual.kind === "diagnostic-part-whole-bar") return `<div class="visual diagnostic-part-whole-visual">${diagnosticPartWholeBarMarkup(visual)}</div>`;
+  if (visual.kind === "diagnostic-number-relation") return `<div class="visual diagnostic-number-relation-visual">${diagnosticNumberRelationMarkup(visual)}</div>`;
+  if (visual.kind === "cube-different-shape") return `<div class="visual cube-different-shape-visual">${cubeDifferentShapeMarkup(visual)}</div>`;
+  if (visual.kind === "masked-vertical-additions") return `<div class="visual masked-vertical-additions-visual">${maskedVerticalAdditionsMarkup(visual)}</div>`;
+  if (visual.kind === "given-shape-expression") return `<div class="visual given-shape-expression-visual">${givenShapeExpressionMarkup(visual)}</div>`;
+  if (visual.kind === "paired-growing-sequences") return `<div class="visual paired-growing-sequences-visual">${pairedGrowingSequencesMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-fan-count") return `<div class="visual triangle-fan-count-visual">${triangleFanCountMarkup(visual)}</div>`;
+  if (visual.kind === "reverse-operation-ladder") return `<div class="visual reverse-operation-ladder-visual">${reverseOperationLadderMarkup(visual)}</div>`;
+  if (visual.kind === "plus-minus-multi-target") return `<div class="visual plus-minus-multi-target-visual">${plusMinusMultiTargetMarkup(visual)}</div>`;
+  if (visual.kind === "two-custom-operations") return `<div class="visual two-custom-operations-visual">${twoCustomOperationsMarkup(visual)}</div>`;
   if (visual.kind === "equal-partition-tree") return `<div class="visual equal-partition-visual">${equalPartitionTreeMarkup(visual)}</div>`;
   if (visual.kind === "balance-order-chain") return `<div class="visual balance-order-visual">${balanceOrderChainMarkup(visual)}</div>`;
+  if (visual.kind === "diagnostic-animal-balance-order") return `<div class="visual diagnostic-animal-balance-visual">${diagnosticAnimalBalanceOrderMarkup(visual)}</div>`;
   if (visual.kind === "balance-unit-equations") return `<div class="visual balance-unit-visual">${balanceUnitEquationsMarkup(visual)}</div>`;
   if (visual.kind === "distinct-shape-equations") return `<div class="visual distinct-shape-visual">${distinctShapeEquationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-pattern-sequence") return `<div class="visual symbol-pattern-visual">${symbolPatternSequenceMarkup(visual)}</div>`;
@@ -2480,6 +3051,14 @@ function visualMarkup(visual) {
   // 이제 생성기가 단계 폴리곤(stages)을 주므로 실제 접는 과정을 화살표와 함께 그린다.
   if (visual.kind === "triangle-edge-sum") return `<div class="visual triangle-edge-sum-visual">${triangleEdgeSumMarkup(visual)}</div>`;
   if (visual.kind === "symbol-chain") return `<div class="visual symbol-chain-visual">${symbolChainMarkup(visual)}</div>`;
+  if (visual.kind === "aligned-rod-lengths") return `<div class="visual aligned-rods-visual">${alignedRodLengthsMarkup(visual)}</div>`;
+  if (visual.kind === "two-function-machines") return `<div class="visual two-function-machines-visual">${twoFunctionMachinesMarkup(visual)}</div>`;
+  if (visual.kind === "unused-card-equations") return `<div class="visual unused-card-equations-visual">${unusedCardEquationsMarkup(visual)}</div>`;
+  if (visual.kind === "recorder-matchstick-length") return `<div class="visual recorder-matchstick-visual">${recorderMatchstickLengthMarkup(visual)}</div>`;
+  if (visual.kind === "shape-transform-grid") return `<div class="visual shape-transform-grid-visual">${shapeTransformGridMarkup(visual)}</div>`;
+  if (visual.kind === "cube-add-to-match") return `<div class="visual cube-add-to-match-visual">${cubeAddToMatchMarkup(visual)}</div>`;
+  if (visual.kind === "overlapping-run-sequence") return `<div class="visual overlapping-run-sequence-visual">${overlappingRunSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "alternating-people") return `<div class="visual alternating-people-visual">${alternatingPeopleMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-three") return `<div class="visual shape-matrix-three-visual">${shapeMatrixThreeMarkup(visual)}</div>`;
   if (visual.kind === "triangle-position-cycle") return `<div class="visual triangle-position-cycle-visual">${trianglePositionCycleMarkup(visual)}</div>`;
   if (visual.kind === "triangle-position-answer") return `<div class="visual triangle-position-answer-visual">${triangleCycleSvg(visual.position)}</div>`;
@@ -2514,18 +3093,30 @@ function renderWorksheet() {
   $("worksheetTitle").textContent = title;
   $("questionGrid").innerHTML = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card">
+    return `<article class="question-card" data-question-index="${index}">
+      <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
+        <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
+        <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
+        <button type="button" data-question-action="down" data-question-index="${index}" title="아래로 이동" aria-label="아래로 이동" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button>
+        <button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>
+        <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
+      </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
+      ${question.responseKind === "drawing"
+        ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>'
+        : question.responseKind === "visual-fill"
+          ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
+          : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
   }).join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
+  bindQuestionEditor();
 }
 
 function openAnswers() {
@@ -2551,7 +3142,7 @@ function initControls() {
   $("worksheetStudent").textContent = student;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
-  $("toggleCurriculum").addEventListener("click", () => toggleVisible("#curriculumTree input[data-curriculum-key]", state.selected.curriculum, (input) => input.dataset.curriculumKey));
+  $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
   $("toggleBankTypes").addEventListener("click", () => toggleVisible("#bankTypeTree input[data-type-id]", state.selected.type, (input) => input.dataset.typeId));
   $("countChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.count = Number(button.dataset.count);
@@ -2620,10 +3211,9 @@ setMode("exam");
   if (!wanted) return;
   const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
-  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = "ours";
+  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = `exam:${exam.id}`;
   else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
-  else if (FINAL_EXAM_TYPES.includes(exam)) state.stage = "final";
-  else if (PRACTICE_EXAM_TYPES.includes(exam)) state.stage = "practice";
+  else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam)) state.stage = `exam:${exam.id}`;
   else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
   renderStageButtons();
   renderExamList();

@@ -46,8 +46,20 @@ test("academy profiles select report axes and type priorities without publishing
   assert.equal(transfer.difficultyPlan, "기준 우선 · 올림 유형으로 변별");
   assert.equal(dp.targets.some(target => target.id === "director-transfer"), true);
   assert.equal(dp.targets.find(target => target.id === "director-transfer").difficultyPlan.includes("올림 우선"), true);
+  assert.equal(dp.targets.find(target => target.id === "common1-entry").recommendedExamId, "dp-common1-entry-202405");
+  assert.equal(pageSource.includes("target.recommendedExamId"), true);
   assert.equal(dp.typeEmphasis.includes("그래프 해석"), true);
   assert.equal(dp.scorePolicy.includes("원본 배점·컷"), true);
+});
+
+test("one shared question registry can serve every academy blueprint", () => {
+  assert.equal(bank.sharedRegistry.identityPolicy.includes("하나의 ID"), true);
+  assert.deepEqual(Array.from(bank.sharedRegistry.consumers), ["SH", "DP", "WM", "ED", "DG", "SM"]);
+  const hwangso = bank.sharedRegistry.sourcePriorities.find(source => source.id === "hwangso-middle-textbooks");
+  assert.deepEqual(Array.from(hwangso.priorityFor), ["SH"]);
+  assert.deepEqual(Array.from(hwangso.reusableFor), ["DP", "WM", "ED", "DG", "SM"]);
+  assert.equal(bank.sharedRegistry.compatibilityChecks.some(rule => rule.includes("2022 개정")), true);
+  assert.equal(bank.sharedRegistry.perExamOverrides.includes("커트라인·과락"), true);
 });
 
 test("practice bank is student-session gated and exposes no admin route", () => {

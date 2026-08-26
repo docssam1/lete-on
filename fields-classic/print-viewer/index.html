@@ -10,7 +10,7 @@
 html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:#e7edf3;color:#0f172a}
 .toolbar{position:sticky;top:0;z-index:20;min-height:64px;padding:10px max(18px,calc((100vw - 1280px)/2));background:#fff;border-bottom:1px solid #cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 4px 18px rgba(15,23,42,.09)}
 .title{font-size:16px;font-weight:900;color:#16417c}.meta{font-size:11px;font-weight:700;color:#64748b;margin-top:3px}
-.actions{display:flex;gap:8px}.btn{min-height:40px;padding:0 15px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer}
+.actions{display:flex;gap:8px;justify-content:flex-end}.btn{min-height:40px;padding:0 15px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer}
 .btn.primary{background:#16417c;border-color:#16417c;color:#fff}.btn:disabled{opacity:.45;cursor:wait}
 .document-head{width:min(1180px,100%);margin:18px auto 0;padding:0 12px}.document-head-inner{padding:18px 20px;background:#fff;border:1px solid #cbd5e1;border-left:5px solid #16417c;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.document-kicker{font-size:10px;letter-spacing:.12em;font-weight:900;color:#a26a18}.document-name{margin-top:4px;font-size:19px;font-weight:900;color:#0f274b;letter-spacing:0}.document-caption{margin-top:7px;font-size:12px;font-weight:700;color:#64748b}.course-summary{width:min(1180px,100%);margin:12px auto 0;padding:0 12px;background:transparent;border:0;box-shadow:none}.course-summary-inner{padding:14px 16px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.course-summary-title{font-size:13px;font-weight:900;color:#16417c}.course-topics{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0;padding:0;list-style:none}.course-topics li{padding:5px 8px;border-radius:5px;background:#edf3f8;color:#334155;font-size:11px;font-weight:800}
 .status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
@@ -23,7 +23,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 .watermark{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
 .watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:34pt;font-weight:900;color:rgba(22,65,124,.14);white-space:nowrap;letter-spacing:0}
 .watermark span:nth-child(1){top:25%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:75%}
-@media(max-width:760px){.toolbar{align-items:flex-start;padding:10px 12px}.title{font-size:14px}.actions{gap:5px}.btn{padding:0 10px}.document-head{margin-top:10px;padding:0 8px}.document-head-inner{padding:14px 15px}.document-name{font-size:16px}.course-summary{padding:0 8px}.viewer-layout{display:block;padding:10px 5px 30px}.page-rail{position:sticky;top:64px;z-index:10;margin:0 3px 9px;padding:9px 10px;display:flex;align-items:center;gap:10px;overflow:hidden}.page-rail-title{margin:0;white-space:nowrap}.page-jumps{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.page-jump{min-width:64px;flex:0 0 64px}.pages{display:block;padding:7px}.page{box-shadow:none}.page.is-open+.page.is-open{display:none}.page-turn-layer{top:7px;bottom:7px;left:7px!important;right:7px!important;width:auto}.cover-shell{border-width:7px}.cover-kicker{font-size:9px}.cover-brand{font-size:17px}.cover-title{font-size:34px}.cover-round-number{font-size:104px}.cover-round-unit{font-size:28px}.cover-meta{font-size:9px}.cover-student{font-size:11px}}
+@media(max-width:760px){.toolbar{align-items:flex-start;min-height:54px;padding:10px 12px;overflow:hidden}.title{font-size:14px}.meta{display:none}.toolbar>div:first-child{flex:0 0 29%;min-width:0}.actions{flex:1 1 auto;gap:5px;max-width:71%;justify-content:flex-start;overflow-x:auto;scrollbar-width:none}.actions::-webkit-scrollbar{display:none}.btn{flex:0 0 auto;min-height:34px;padding:0 9px;font-size:10px}.document-head{margin-top:10px;padding:0 8px}.document-head-inner{padding:14px 15px}.document-name{font-size:16px}.course-summary{padding:0 8px}.viewer-layout{display:block;padding:10px 5px 30px}.page-rail{position:sticky;top:54px;z-index:10;margin:0 3px 9px;padding:9px 10px;display:flex;align-items:center;gap:10px;overflow:hidden}.page-rail-title{margin:0;white-space:nowrap}.page-jumps{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.page-jump{min-width:64px;flex:0 0 64px}.pages{display:block;padding:7px}.page{box-shadow:none}.page.is-open+.page.is-open{display:none}.page-turn-layer{top:7px;bottom:7px;left:7px!important;right:7px!important;width:auto}.cover-shell{border-width:7px}.cover-kicker{font-size:9px}.cover-brand{font-size:17px}.cover-title{font-size:34px}.cover-round-number{font-size:104px}.cover-round-unit{font-size:28px}.cover-meta{font-size:9px}.cover-student{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.page-turn-layer{display:none!important}}
 @page{size:A4;margin:0}
 @media print{
@@ -45,6 +45,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
     <button class="btn" id="nextBtn" type="button" disabled aria-label="다음 두 쪽">▶</button>
     <button class="btn" id="videoBtn" type="button" style="display:none" onclick="openLessonVideo()">▶ 학습영상</button>
     <button class="btn" id="answerBtn" type="button" style="display:none" onclick="openAnswerGuide()">☑ 유형별 풀이</button>
+    <button class="btn" id="diagnosisBtn" type="button" style="display:none" onclick="openPremierDiagnosis()">O/X 채점·진단</button>
     <button class="btn primary" id="printBtn" type="button" onclick="window.print()" disabled>인쇄</button>
   </div>
 </header>
@@ -81,7 +82,7 @@ const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
 const lessonVideo=params.get("video")||source?.videoUrl||"";
 const topics=(params.get("topics")||"").split("|").map(v=>v.trim()).filter(Boolean);
-const documentFamily=documentKey==="diagnostic"?"진단 모의고사":documentKey.startsWith("mock-set")?"실전 모의고사":documentKey==="killer"?"킬러문항 완전 해제":"필즈 더 클래식";
+const documentFamily=documentKey==="diagnostic"?"진단 모의고사":documentKey.startsWith("mock-set")?"실전 모의고사":documentKey.startsWith("premier-")?"프리미어 모의고사":documentKey==="killer"?"킬러문항 완전 해제":"필즈 더 클래식";
 const status=document.getElementById("status");
 const pages=document.getElementById("pages");
 const printBtn=document.getElementById("printBtn");
@@ -101,6 +102,7 @@ if(answerAnalysis){
   answerBtn.textContent="✅ 정답·분석";
   answerBtn.style.display="";
 }
+if(documentKey.startsWith("premier-"))document.getElementById("diagnosisBtn").style.display="";
 if(topics.length){
   document.getElementById("courseSummary").style.display="";
   const topicList=document.getElementById("courseTopics");
@@ -118,6 +120,11 @@ function openAnswerGuide(){
       : "";
   if(!url)return;
   window.open(url,"_blank","noopener");
+}
+function openPremierDiagnosis(){
+  if(!documentKey.startsWith("premier-"))return;
+  const url=`../../premier/diagnosis.html?exam=${encodeURIComponent(documentKey)}&student=${encodeURIComponent(student)}`;
+  location.href=url;
 }
 
 function watermark(){
@@ -144,6 +151,10 @@ function spreadLabel(start){
 }
 function createCover(){
   const cover=source.cover;
+  const premierDocument=documentKey.startsWith("premier-");
+  const coverKicker=cover.kicker||(premierDocument?"GFIELD ACADEMY · PREMIER HYPER FOCUS":"GFIELD ACADEMY · FIELDS THE CLASSIC");
+  const coverBrand=cover.brand||(premierDocument?"G-FIELD PREMIER":"FIELDS THE CLASSIC");
+  const coverProgram=cover.program||(premierDocument?"프리미어":"필즈 더 클래식");
   const sheet=document.createElement("section");
   sheet.className="page exam-cover";
   sheet.dataset.page="1";
@@ -151,10 +162,10 @@ function createCover(){
   const shell=document.createElement("div");
   shell.className="cover-shell";
   shell.innerHTML=`
-    <div class="cover-kicker">${cover.kicker||"GFIELD ACADEMY · FIELDS THE CLASSIC"}</div>
-    <div class="cover-brand">FIELDS THE CLASSIC</div>
+    <div class="cover-kicker">${coverKicker}</div>
+    <div class="cover-brand">${coverBrand}</div>
     <div class="cover-rule"></div>
-    <div class="cover-title">필즈 더 클래식<strong>${cover.title}</strong></div>
+    <div class="cover-title">${coverProgram}<strong>${cover.title}</strong></div>
     <div class="cover-round"><span class="cover-round-number${cover.mark.length>2?" is-word":""}">${cover.mark}</span><span class="cover-round-unit">${cover.unit||""}</span></div>
     <div class="cover-meta"><span>${cover.subtitle}</span><span>${cover.meta}</span></div>
     <div class="cover-student"><span>이름</span><span class="cover-student-name"></span></div>`;
@@ -298,7 +309,17 @@ async function render(){
 }
 
 render().catch(error=>{
-  status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  if(documentKey.startsWith("premier-")){
+    status.textContent="이 시험지는 현재 승인된 원본 이미지 자산을 준비하고 있습니다.";
+    const line=document.createElement("br");
+    const back=document.createElement("a");
+    back.href="../../premier/";
+    back.textContent="프리미어 모의고사 서재로 돌아가기";
+    back.style.color="#1e5f91";
+    status.append(line,back);
+  }else{
+    status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  }
   status.style.color="#b91c1c";
 });
 </script>

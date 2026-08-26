@@ -97,6 +97,7 @@ export const TYPES = [
   type("fold-number-cut-sum-l-shape", "geometry", "색종이 접기", "L자 부분을 자른 번호 색종이의 합", { generator: "foldNumberCutSumLShape", sourceMatched: true }),
   type("equal-line-sum", "number", "수 배열과 합", "가로·세로 각 줄의 합 같게 만들기", { generator: "sourceEqualLineCross", sourceMatched: true }),
   type("equal-line-sum-eight-cards", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 줄의 합 만들기", { generator: "equalLineSumEightCards", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("equal-line-sum-eight-cards-complete-book3", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 사각 둘레 완성하기", { generator: "equalLineSumEightCardsCompleteBook3", sourceMatched: true, textbookSource: "더클래식 1과정 3권 119쪽 연습 16번" }),
   type("equal-line-sum-eight-cards-fifteen-top-left", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 네 변의 합을 같게 만들기", { generator: "equalLineSumEightCardsFifteenTopLeft", sourceMatched: true }),
   type("equal-line-sum-eight-cards-twelve", "number", "수 배열과 합", "1부터 8까지 써서 각 줄의 합을 같게 만들기", { generator: "equalLineSumEightCardsTwelve", sourceMatched: true }),
   type("symbol-sum-grid", "number", "매트릭스", "도형 매트릭스의 빈 합 구하기", { generator: "sourceSymbolSumGrid", sourceMatched: true }),
@@ -117,7 +118,7 @@ export const TYPES = [
   type("balance-scale", "logic", "무게 비교", "양팔저울의 균형 관계", { generator: "sourceBalanceRelations", sourceMatched: true }),
   type("balance-scale-three-objects", "logic", "무게 비교", "세 물건 양팔저울 관계", { generator: "balanceScaleThreeObjects", sourceMatched: true }),
   type("balance-scale-circle-target", "logic", "무게 비교", "세 저울의 관계로 필요한 원 개수 구하기", { generator: "balanceScaleCircleTarget", sourceMatched: true }),
-  type("balance-scale-star-target", "logic", "무게 비교", "두 저울의 관계로 필요한 별 개수 구하기", { generator: "balanceScaleStarTarget", sourceMatched: true }),
+  type("balance-scale-star-target", "logic", "무게 비교", "기호 양팔저울 관계", { generator: "balanceScaleStarTarget", sourceMatched: true }),
   type("balance-scale-four-objects", "logic", "무게 비교", "네 물건을 잇는 세 양팔저울", { generator: "balanceScaleFourObjects", sourceMatched: true }),
   type("symbol-relation", "number", "복면산과 식", "여러 기호의 관계로 값 구하기", { generator: "symbolRelationThreeToFour", sourceMatched: true }),
   type("symbol-relation-2to3", "number", "복면산과 식", "별 두 개와 원 세 개의 관계식", { generator: "symbolRelationTwoToThree", sourceMatched: true }),
@@ -136,7 +137,7 @@ export const TYPES = [
   type("colored-shape-number", "pattern", "도형 수 표현", "색칠한 도형이 나타내는 수", { generator: "sourceColoredShapeNumber", sourceMatched: true }),
   type("height-order", "logic", "순서와 비교", "키의 크고 작은 순서"),
   type("g1-bus-two-stops", "number", "합과 차 문장제", "두 정류장에서 타고 내린 승객 수", { generator: "g1BusTwoStops", sourceMatched: true }),
-  type("g1-height-order-four", "logic", "순서와 비교", "여러 사람의 키 순서 비교", { generator: "g1HeightOrder", sourceMatched: true }),
+  type("g1-height-order-four", "logic", "순서와 비교", "네 사람의 키 순서 비교", { generator: "g1HeightOrderFour", sourceMatched: true }),
   type("g1-two-digit-ones-greater", "number", "조건에 맞는 수", "일의 자리 숫자가 더 큰 두 자리 수", { generator: "g1TwoDigitOnesGreater", sourceMatched: true }),
   type("g1-front-back-between", "logic", "순서와 비교", "앞·뒤 순서로 사이 사람 수 구하기", { generator: "g1FrontBackBetween", sourceMatched: true }),
   type("g1-shape-add-subtract-chain", "number", "복면산과 식", "도형 덧셈·뺄셈 관계를 차례로 풀기", { generator: "g1ShapeAddSubtractChain", sourceMatched: true }),
@@ -153,6 +154,50 @@ export const TYPES = [
   type("g1-paired-sequences", "pattern", "수 규칙", "두 줄 수열의 같은 번째 수", { generator: "g1PairedSequences", sourceMatched: true }),
   type("g1-ratio-distribution", "number", "합과 차 문장제", "서로 다른 먹는 양으로 사람 수 나누기", { generator: "g1RatioDistribution", sourceMatched: true }),
   type("g1-odd-even-sum-difference", "number", "연속수와 합", "1부터 어떤 수까지 홀짝 합의 차", { generator: "g1OddEvenSumDifference", sourceMatched: true }),
+  type("g1-summer-equalize-transfer", "number", "합과 차 문장제", "두 사람의 수를 같게 만드는 주고받기", { generator: "g1SummerEqualizeTransfer", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 1번" }),
+  type("g1-summer-height-order-five", "logic", "순서와 비교", "다섯 사람의 키 순서와 등수", { generator: "g1SummerHeightOrderFive", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 2번" }),
+  type("g1-summer-two-digit-sum-gap", "number", "조건에 맞는 수", "자리 합과 차로 두 자리 수 찾기", { generator: "g1SummerTwoDigitSumGap", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 3번" }),
+  type("g1-summer-balance-shape-chain", "logic", "무게 비교", "저울의 도형을 바꾸어 같은 무게 찾기", { generator: "g1SummerBalanceShapeChain", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 4번·초1 3차 3번" }),
+  type("g1-summer-five-box-weight-order", "logic", "순서와 비교", "다섯 상자의 무게 순서", { generator: "g1SummerFiveBoxWeightOrder", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 5번" }),
+  type("g1-summer-four-shape-add-subtract", "number", "복면산과 식", "네 도형의 덧셈·뺄셈 관계", { generator: "g1SummerFourShapeAddSubtract", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 6번" }),
+  type("g1-summer-pentagon-adjacent-product", "number", "수 배열과 곱", "오각형 이웃 수의 곱", { generator: "g1SummerPentagonAdjacentProduct", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 7번" }),
+  type("g1-summer-four-by-four-shape-sum", "number", "매트릭스", "4×4 도형표의 가로·세로 합", { generator: "g1SummerFourByFourShapeSum", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 8번" }),
+  type("g1-summer-circle-point-segments", "geometry", "도형 세기", "원 위의 점을 이은 선분 수", { generator: "g1SummerCirclePointSegments", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 9번" }),
+  type("g1-summer-four-by-four-shape-sum-bottom", "number", "매트릭스", "4×4 도형표의 아래 합 구하기", { generator: "g1SummerFourByFourShapeSumBottom", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 10번" }),
+  type("g1-summer-vertical-shape-addition", "number", "복면산과 식", "도형으로 된 세로 덧셈", { generator: "g1SummerVerticalShapeAddition", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 11번" }),
+  type("g1-summer-one-three-rods", "geometry", "길이와 측정", "한 칸 막대와 세 칸 막대의 길이", { generator: "g1SummerOneToThreeRods", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 12번" }),
+  type("g1-summer-triangular-color-difference", "pattern", "도형 규칙", "삼각형 배열의 색칠 조각 차", { generator: "g1SummerTriangularColorDifference", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 13번" }),
+  type("g1-summer-square-side-composition", "geometry", "길이와 측정", "붙인 정사각형의 한 변 길이", { generator: "g1SummerSquareSideComposition", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 14번" }),
+  type("g1-summer-fold-cut-triangle-count", "geometry", "색종이 접기", "접고 자른 뒤 생기는 삼각형 수", { generator: "g1SummerFoldCutTriangleCount", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 15번" }),
+  type("g1-summer-four-symbol-relation", "number", "복면산과 식", "네 도형 관계식으로 값 찾기", { generator: "g1SummerFourSymbolRelation", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 16번" }),
+  type("g1-summer-shape-height-dual-cycle", "pattern", "반복 규칙", "도형 종류와 높이의 이중 주기", { generator: "g1SummerShapeHeightDualCycle", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 17번·초1 3차 18번" }),
+  type("g1-summer-orange-ratio-distribution", "number", "합과 차 문장제", "어른과 어린이의 서로 다른 귤 수", { generator: "g1SummerOrangeRatioDistribution", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 18번·초1 4차 19번" }),
+  type("g1-summer-rectilinear-perimeter", "geometry", "둘레와 배열", "직각으로 꺾인 도형의 둘레", { generator: "g1SummerRectilinearPerimeter", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 19번" }),
+  type("g1-summer-opposite-step-sequences", "pattern", "수 규칙", "반대 방향으로 뛰는 두 수열", { generator: "g1SummerOppositeStepSequences", sourceMatched: true, textbookSource: "더 클래식 초1 2차 선발시험 20번·초1 4차 18번" }),
+  type("g1-fall-three-person-total-transfer", "number", "합과 차 문장제", "세 사람의 전체 수와 주고받기", { generator: "g1FallThreePersonTotalTransfer", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 1번" }),
+  type("g1-fall-number-set-offset-chain", "logic", "조건에 맞는 수", "기준 수와 차이가 이어지는 수 조건", { generator: "g1FallNumberSetOffsetChain", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 5번" }),
+  type("g1-fall-four-by-four-latin-two-target", "logic", "수 배치", "4×4 수 배열에서 두 칸의 수 찾기", { generator: "g1FallFourByFourLatinTwoTarget", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 6번" }),
+  type("g1-fall-pentagon-adjacent-products-all", "number", "수 배열과 곱", "오각형의 모든 이웃 곱으로 수 찾기", { generator: "g1FallPentagonAdjacentProductsAll", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 7번" }),
+  type("g1-fall-four-by-four-shape-sum-four-targets", "number", "매트릭스", "4×4 도형표의 네 줄 합 구하기", { generator: "g1FallFourByFourShapeSumFourTargets", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 8번" }),
+  type("g1-fall-four-short-one-long-rods", "geometry", "길이와 측정", "짧은 막대 네 개와 긴 막대 한 개", { generator: "g1FallFourShortOneLongRods", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 9번" }),
+  type("g1-fall-stacked-square-side-chain", "geometry", "길이와 측정", "겹쳐 쌓인 정사각형 변의 길이", { generator: "g1FallStackedSquareSideChain", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 10번" }),
+  type("g1-fall-aa-ab-ccc-shape-addition", "number", "복면산과 식", "AA와 AB를 더해 CCC가 되는 도형 덧셈", { generator: "g1FallAaAbCccShapeAddition", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 11번" }),
+  type("g1-fall-three-fold-crease-cut-count", "geometry", "색종이 접기", "세 번 접은 선을 자른 조각 수", { generator: "g1FallThreeFoldCreaseCutCount", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 13번" }),
+  type("g1-fall-total-triple-share", "number", "합과 차 문장제", "전체를 3대1로 나누기", { generator: "g1FallTotalTripleShare", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 14번" }),
+  type("g1-fall-paired-four-blank-additions", "number", "복면산과 식", "짝지은 네 빈칸 세로 덧셈", { generator: "g1FallFourBlankAddition", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 15번" }),
+  type("g1-fall-square-chain-shaded-perimeter", "geometry", "둘레와 배열", "붙인 정사각형에서 색칠한 정사각형 둘레", { generator: "g1FallSquareChainShadedPerimeter", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 16번" }),
+  type("g1-fall-linear-input-output-table", "pattern", "대응 규칙", "일정하게 늘어나는 입력·출력표", { generator: "g1FallLinearInputOutputTable", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 17번" }),
+  type("g1-fall-alternating-result-cryptarithm", "number", "복면산과 식", "네 자리 교대 모양이 되는 세로 덧셈", { generator: "g1FallAlternatingResultCryptarithm", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 19번" }),
+  type("g1-fall-consecutive-three-sum-completion", "number", "연속수와 합", "합으로 세 연속수 세로셈 완성하기", { generator: "g1FallConsecutiveThreeSumCompletion", sourceMatched: true, textbookSource: "더 클래식 초1 3차 선발시험 20번" }),
+  type("g1-winter-shared-box-multiplication", "number", "곱셈 관계", "공유한 상자의 수를 이용해 두 단계 곱셈 거꾸로 풀기", { generator: "g1WinterSharedBoxMultiplication", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 2번" }),
+  type("g1-winter-shape-sum-target-row", "number", "매트릭스", "4×4 그림값의 가로·세로 합으로 목표 줄 구하기", { generator: "g1WinterShapeSumGridTargetRow", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 3번" }),
+  type("g1-winter-opponent-step-game", "logic", "이동 규칙", "승패에 따라 반대로 움직이는 두 사람의 계단 위치", { generator: "g1WinterOpponentStepGame", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 4번" }),
+  type("g1-winter-sudoku-four-full", "logic", "수 배치", "4×4 행·열·2×2 구역 숫자판 완성하기", { generator: "g1WinterSudokuFourFullGrid", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 5번" }),
+  type("g1-winter-two-digit-odd-sum-order", "number", "조건에 맞는 수", "자리 합·홀수·자리 크기로 두 자리 수 찾기", { generator: "g1WinterTwoDigitOddSumOrder", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 8번" }),
+  type("g1-winter-product-placement-four", "number", "수 배열과 곱", "4×4 색칠 칸에 수를 놓아 가로·세로 곱 맞추기", { generator: "g1WinterProductPlacementFourGrid", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 10번" }),
+  type("g1-winter-three-digit-cards-above", "number", "수 카드와 식", "세 숫자 카드로 기준보다 큰 세 자리 수 세기", { generator: "g1WinterThreeDigitCardsAbove", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 13번" }),
+  type("g1-winter-three-balance-substitution", "logic", "무게 비교", "세 저울의 관계를 차례로 바꾸어 같은 무게 찾기", { generator: "g1WinterThreeBalanceSubstitution", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 14번" }),
+  type("g1-winter-three-cards-parity-chain", "logic", "조건에 맞는 수", "세 수 카드의 차와 짝수 조건으로 합 구하기", { generator: "g1WinterThreeCardsParityChain", sourceMatched: true, textbookSource: "더 클래식 초1 4차 선발시험 15번" }),
   type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기", { generator: "hiddenScoreRanking", sourceMatched: true }),
   type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기", { generator: "totalDifference", sourceMatched: true, textbookSource: "더클래식 1과정 2권 18~21쪽·단원 테스트 3·5번" }),
   type("total-difference-candy", "number", "합과 차 문장제", "전체 사탕 수와 차이로 두 수 구하기", { generator: "totalDifferenceCandyShare", sourceMatched: true }),
@@ -171,31 +216,64 @@ export const TYPES = [
   type("segment-count", "geometry", "도형 세기", "원 위의 두 점을 이은 선분 개수"),
   type("square-side-composition", "geometry", "길이와 측정", "붙인 정사각형의 변의 길이"),
   type("rectilinear-perimeter", "geometry", "둘레와 배열", "직각으로 꺾인 도형의 둘레"),
-  type("chained-number-condition", "logic", "조건 배치", "차이가 이어지는 수 카드 조건"),
+  type("chained-number-condition", "logic", "조건 배치", "차이가 이어지는 수 카드 조건", { generator: "chainedNumberCondition", sourceMatched: true, textbookSource: "실전 모의고사 3회 3번" }),
   type("latin-square", "logic", "조건 배치", "가로·세로·굵은 칸 수 퍼즐"),
-  type("vertical-addition", "number", "복면산과 식", "빈칸이 있는 세로 덧셈"),
+  type("vertical-addition", "number", "복면산과 식", "빈칸이 있는 세로 덧셈", { generator: "maskedVerticalAdditions", sourceMatched: true, textbookSource: "실전 모의고사 3회 6번" }),
   type("consecutive-number-addition", "number", "연속수와 합", "연속하는 수의 세로 덧셈"),
   type("step-game", "logic", "과정 추론", "승패 규칙에 따른 계단 위치"),
   type("multiplication-matrix", "number", "매트릭스", "곱에 맞게 수 매트릭스 채우기"),
   type("three-digit-card-count", "number", "수 카드와 식", "조건에 맞는 세 자리 수의 개수"),
-  type("unused-number-card-equations", "number", "수 카드와 식", "여러 식에 수 카드를 한 번씩 쓰고 남는 수 찾기"),
-  type("two-digit-card-threshold-count", "number", "수 카드와 식", "수 카드로 기준보다 큰 두 자리 수의 개수"),
+  type("unused-number-card-equations", "number", "수 카드와 식", "여러 식에 수 카드를 한 번씩 쓰고 남는 수 찾기", { generator: "practiceUnusedNumberCardEquations", sourceMatched: true, textbookSource: "실전 모의고사 5회 3번" }),
+  type("two-digit-card-threshold-count", "number", "수 카드와 식", "수 카드로 기준보다 큰 두 자리 수의 개수", { generator: "practiceTwoDigitCardThresholdCount", sourceMatched: true, textbookSource: "실전 모의고사 5회 15번" }),
   type("venn-count", "logic", "집합과 포함", "두 조건에 모두 해당하는 사람 수"),
   type("congruent-partition", "geometry", "도형 분할", "합이 같은 합동 도형으로 나누기"),
-  type("triangle-count", "geometry", "도형 세기", "크고 작은 삼각형 세기"),
+  type("triangle-count", "geometry", "도형 세기", "크고 작은 삼각형 세기", { generator: "triangleFanCount", sourceMatched: true, textbookSource: "실전 모의고사 3회 12번" }),
   type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기", { generator: "squareCountShape", sourceMatched: true }),
   type("calendar-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일 날짜의 합"),
   type("person-item-logic", "logic", "조건 연결", "사람과 동물·음식 조건 연결", { generator: "personItemLogicBook1", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수", { generator: "setUnionCount", sourceMatched: true }),
   type("custom-operation", "number", "연산 약속", "새 기호의 계산 약속"),
   type("operator-insertion", "number", "수 카드와 식", "+와 -를 넣어 식 완성하기"),
-  type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수"),
-  type("alternating-line-total", "logic", "순서와 비교", "두 종류를 번갈아 세운 전체 인원"),
+  type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수", { generator: "cutReCutPieces", sourceMatched: true, textbookSource: "실전 모의고사 3회 10번" }),
+  type("alternating-line-total", "logic", "순서와 비교", "두 종류를 번갈아 세운 전체 인원", { generator: "practiceAlternatingLineTotal", sourceMatched: true, textbookSource: "실전 모의고사 5회 19번" }),
   type("reverse-initial-count", "logic", "과정 추론", "여러 번 오고 간 뒤 처음 수 거꾸로 찾기", { generator: "reverseInitialCount", sourceMatched: true }),
   type("function-machine", "pattern", "수 규칙", "수 변환 기계의 규칙"),
   type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수", { generator: "collectionRepeatGap", sourceMatched: true }),
   type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14, generator: "magicSquare", sourceMatched: true }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4, sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  // 실전 모의고사 3~6회 원본 전용 세부 유형. 비슷한 범용 유형과 구조가 달라 합치지 않는다.
+  type("given-shape-expression", "number", "복면산과 식", "주어진 도형 값으로 혼합식 계산하기", { generator: "givenShapeExpression", sourceMatched: true, textbookSource: "실전 모의고사 3회 8번" }),
+  type("paired-growing-sequences", "pattern", "수 규칙", "증가폭 수열과 배수 수열을 함께 완성하기", { generator: "pairedGrowingSequences", sourceMatched: true, textbookSource: "실전 모의고사 3회 9번" }),
+  type("reverse-operation-ladder", "number", "거꾸로 계산", "사다리 경로의 계산을 거꾸로 적용하기", { generator: "reverseOperationLadder", sourceMatched: true, textbookSource: "실전 모의고사 3회 13번" }),
+  type("plus-minus-multi-target", "number", "수 카드와 식", "같은 수 사이에 더하기와 빼기를 넣어 여러 목표 만들기", { generator: "plusMinusMultiTarget", sourceMatched: true, textbookSource: "실전 모의고사 3회 14번" }),
+  type("two-custom-operations", "number", "연산 약속", "두 가지 새 연산 약속을 각각 계산하기", { generator: "twoCustomOperations", sourceMatched: true, textbookSource: "실전 모의고사 3회 15번" }),
+  type("practice-three-fold-hole-count", "geometry", "색종이 접기", "세 번 반으로 접고 뚫은 구멍 수 구하기", { generator: "practiceThreeFoldHoleCount", sourceMatched: true, textbookSource: "실전 모의고사 3회 16번" }),
+  type("aligned-rod-common-length", "geometry", "길이와 측정", "양 끝이 맞는 여러 막대의 길이 구하기", { generator: "practiceAlignedRodLengths", sourceMatched: true, textbookSource: "실전 모의고사 4회 2번" }),
+  type("interleaved-pair-sequence", "pattern", "수 규칙", "두 수열이 번갈아 놓인 수열의 빈칸", { generator: "practiceInterleavedPairSequence", sourceMatched: true, textbookSource: "실전 모의고사 4회 9번" }),
+  type("two-function-machine-chain", "pattern", "대응 규칙", "두 수 변환 규칙을 차례로 적용하기", { generator: "practiceTwoFunctionMachines", sourceMatched: true, textbookSource: "실전 모의고사 4회 10번" }),
+  type("calendar-all-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일의 날짜를 모두 더하기", { generator: "practiceCalendarWeekdaySum", sourceMatched: true, textbookSource: "실전 모의고사 4회 13번" }),
+  type("vertical-shape-cryptarithm-values", "number", "복면산과 식", "두 자리 도형 세로셈에서 각 도형 값 구하기", { generator: "practiceVerticalShapeCryptarithm", sourceMatched: true, textbookSource: "실전 모의고사 4회 15번" }),
+  type("square-symbol-chain", "number", "복면산과 식", "네모 값에서 이어지는 기호식 계산하기", { generator: "practiceSquareSymbolChain", sourceMatched: true, textbookSource: "실전 모의고사 4회 16번" }),
+  type("height-extremes-chain", "logic", "순서와 비교", "여러 사람의 키 조건으로 가장 큰 사람과 작은 사람 찾기", { generator: "practiceHeightExtremes", sourceMatched: true, textbookSource: "실전 모의고사 4회 19번" }),
+  type("two-digit-letter-cryptarithm", "number", "복면산과 식", "두 자리 글자 세로셈 복면산", { generator: "practiceTwoDigitLetterCryptarithm", sourceMatched: true, textbookSource: "실전 모의고사 5회 6번" }),
+  type("recorder-matchstick-length", "geometry", "길이와 측정", "성냥과 연필의 관계로 리코더 길이 구하기", { generator: "practiceRecorderMatchstickLength", sourceMatched: true, textbookSource: "실전 모의고사 5회 10번" }),
+  type("shape-rotate-flip-grid", "geometry", "도형 움직이기", "여러 도형을 뒤집고 돌린 결과 그리기", { generator: "practiceShapeRotateFlipGrid", sourceMatched: true, textbookSource: "실전 모의고사 5회 12번" }),
+  type("overlapping-run-sequence", "pattern", "수 규칙", "끝이 겹치며 이어지는 연속수 묶음의 빈칸", { generator: "practiceOverlappingRunSequence", sourceMatched: true, textbookSource: "실전 모의고사 5회 18번" }),
+  type("congruent-equal-sum-partition-draw", "geometry", "도형 분할", "합이 같은 합동 도형 네 개로 나누어 그리기", { generator: "practiceCongruentEqualSumPartition", sourceMatched: true, textbookSource: "실전 모의고사 6회 1번" }),
+  type("paired-magic-square-colored-sum", "number", "마방진", "두 마방진에서 색칠한 두 칸의 합 구하기", { generator: "practiceTwoMagicColoredSums", sourceMatched: true, textbookSource: "실전 모의고사 6회 2번" }),
+  type("distinct-zero-one-shape-values", "number", "복면산과 식", "0과 1을 포함한 서로 다른 도형 값 구하기", { generator: "practiceDistinctZeroOneShapeValues", sourceMatched: true, textbookSource: "실전 모의고사 6회 4번" }),
+  type("shape-value-matrix-all", "number", "매트릭스", "도형 매트릭스의 모든 도형 값 구하기", { generator: "practiceShapeValueMatrix", sourceMatched: true, textbookSource: "실전 모의고사 6회 5번" }),
+  type("repeated-two-digit-shape-addition", "number", "복면산과 식", "반복되는 두 자리 도형 세로 덧셈", { generator: "practiceRepeatedTwoDigitShapeAddition", sourceMatched: true, textbookSource: "실전 모의고사 6회 6번" }),
+  type("five-person-photo-order", "logic", "순서와 비교", "사진 속 다섯 사람의 좌우 순서 정하기", { generator: "practiceFivePersonPhotoLine", sourceMatched: true, textbookSource: "실전 모의고사 6회 7번" }),
+  type("food-preference-logic-four", "logic", "조건 연결", "네 사람과 네 음식 선호 조건 연결하기", { generator: "practiceFoodPreferenceLogic", sourceMatched: true, textbookSource: "실전 모의고사 6회 8번" }),
+  type("relative-position-number-grid-nine", "logic", "수 배치", "1부터 9까지 상대 위치 조건으로 수 배열하기", { generator: "practiceRelativeNumberGridNine", sourceMatched: true, textbookSource: "실전 모의고사 6회 9번" }),
+  type("three-fold-line-unfold", "geometry", "색종이 접기", "세 방향으로 접은 선을 펼쳐 완성하기", { generator: "practiceThreeFoldLineUnfold", sourceMatched: true, textbookSource: "실전 모의고사 6회 10번" }),
+  type("directional-triangle-sum-grid", "number", "수 배열과 합", "삼각형 바깥 합에 맞게 수 배치하기", { generator: "practiceDirectionalTriangleSums", sourceMatched: true, textbookSource: "실전 모의고사 6회 12번" }),
+  type("two-class-total-difference", "number", "합과 차 문장제", "두 반의 전체와 차이로 많은 반 구하기", { generator: "practiceTwoClassTotalDifference", sourceMatched: true, textbookSource: "실전 모의고사 6회 14번" }),
+  type("number-ball-pair-targets", "number", "수 카드와 식", "수 공 두 개와 더하기·빼기로 여러 목표 만들기", { generator: "practiceNumberBallPairTargets", sourceMatched: true, textbookSource: "실전 모의고사 6회 16번" }),
+  type("diagonal-sum-difference-square", "number", "수 배열과 합", "네 모서리의 두 대각선 합 차 구하기", { generator: "practiceDiagonalDifferenceSquare", sourceMatched: true, textbookSource: "실전 모의고사 6회 17번" }),
+  type("three-person-book-chain", "number", "합과 차 문장제", "세 사람이 읽은 책 수의 연속 조건", { generator: "practiceThreePersonBookChain", sourceMatched: true, textbookSource: "실전 모의고사 6회 18번" }),
+  type("grid-color-count-sequence", "pattern", "도형 규칙", "3×3 칸의 색칠 개수 변화 규칙", { generator: "practiceGridColorCountSequence", sourceMatched: true, textbookSource: "실전 모의고사 6회 20번" }),
   // F24~F31: 파이널 2·3회 연결 재검토(FINAL-SOURCE-AUDIT.md)에서 분리된 유형.
   // 기존 유형과 이름이 비슷하지만 구조가 달라 새로 등록한다. 생성기가 검산을 통과하기 전까지 잠금.
   type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수", { generator: "diagonalFoldHoleCount", sourceMatched: true }),
@@ -231,8 +309,8 @@ export const TYPES = [
   type("cube-three-view-minmax", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기", geometryWorksheet("VM", "L3")),
   type("cube-missing-view", "geometry", "쌓기나무 바탕그림", "두 방향의 모양을 보고 나머지 방향 그리기", geometryWorksheet("VP", "L3")),
   type("cube-count-solid", "geometry", "쌓기나무 개수", "입체 그림에서 쌓기나무 전체 개수 세기", geometryWorksheet("IC", "L2", { sourceMatched: true })),
-  type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape" }),
-  type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build" }),
+  type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape", generator: "cubeDifferentShape", sourceMatched: true, textbookSource: "실전 모의고사 3회 4번" }),
+  type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build", generator: "practiceCubeAddToMatch", sourceMatched: true, textbookSource: "실전 모의고사 5회 16번" }),
   type("cube-fill-rectangular-box", "geometry", "쌓기나무 채우기", "직육면체 상자를 채우는 데 필요한 개수", geometryWorksheet("FB", "L3")),
   type("cube-fill-box", "geometry", "쌓기나무 채우기", "정육면체를 완성하는 데 필요한 개수", geometryWorksheet("CU", "L3", { generator: "cubeFillBoxWorksheet", sourceMatched: true })),
   type("cube-hidden-count", "geometry", "숨은 쌓기나무", "벽 없이 어느 쪽에서도 보이지 않는 쌓기나무의 개수", geometryWorksheet("IN", "L3", { sourceMatched: true })),
@@ -255,10 +333,12 @@ export const TYPES = [
   type("magic-card", "number", "수 카드와 식", "마법카드로 수 찾기", { status: "curriculum" }),
   type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { generator: "halfGiveReverse", sourceMatched: true }),
   type("argument-logic", "logic", "조건 추리", "조건을 따져 옳고 그름 판단하기", { status: "curriculum" }),
-  // 진단 모의고사 원본의 구조 색인이다. 생성기를 만들기 전에는 문제은행에서 잠근다.
-  type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { status: "classified" }),
-  type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { status: "classified" }),
-  type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { status: "classified" }),
+  // 진단 모의고사 원본의 구조를 그대로 유지하는 전용 유형이다.
+  type("diagnostic-part-whole-bar", "number", "수의 구성", "부분 막대의 길이로 전체와 남은 부분 구하기", { generator: "diagnosticPartWholeBar", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 1번" }),
+  type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { generator: "diagnosticDialogueConditionNumber", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 2번" }),
+  type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { generator: "diagnosticNumberRelation", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 9번" }),
+  type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { generator: "diagnosticTwoDigitCryptarithm", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 20번" }),
+  type("diagnostic-animal-balance-order", "logic", "양팔저울", "동물 양팔저울로 무게 순서 정하기", { generator: "diagnosticAnimalBalanceOrder", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 8번" }),
 
   // 더클래식 1과정 1권: 단원 안에서도 실제 문항의 풀이 구조가 바뀌는 곳마다
   // 별도 유형으로 나눈다. 페이지는 판본마다 달라질 수 있어 문제 번호만 런타임에 쓴다.
@@ -285,14 +365,14 @@ export const TYPES = [
 
   // 더클래식 1과정 3권: 페이지가 아니라 단원·단계·문항 번호로 원본을 대조했다.
   // 같은 단원 안에서도 풀이 구조가 달라지는 지점마다 별도 생성기로 나눈다.
-  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("tangram-shape-composition", "geometry", "칠교와 넓이", "칠교 조각으로 같은 모양 완성하기", { generator: "tangramShapeComposition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 1~3" }),
+  type("tangram-piece-area", "geometry", "칠교와 넓이", "칠교 조각과 만든 도형의 넓이", { generator: "tangramPieceArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 연습 1" }),
+  type("unit-grid-area", "geometry", "단위넓이", "모눈에서 온칸과 반칸을 세어 넓이 구하기", { generator: "unitGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 4~5, 확인1 1~2, 연습 2~5" }),
   type("growing-shape-area-sum", "pattern", "넓이 규칙", "커지는 정사각형·정삼각형 넓이의 합", { generator: "growingShapeAreaSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("nested-square-outer-area", "pattern", "넓이 규칙", "겹쳐 커지는 가장 바깥 정사각형의 넓이", { generator: "nestedSquareOuterArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 1~3, 연습 8~12" }),
+  type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 4, 연습 14~15" }),
+  type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 확인2 1~4, 연습 13·16~20" }),
   type("oblique-square-grid-area", "geometry", "단위넓이", "모눈 위 기울어진 정사각형의 넓이", { generator: "obliqueSquareGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("folded-strip-length", "geometry", "단위길이", "모눈 위 접힌 테이프·리본의 전체 길이", { generator: "foldedStripLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -302,8 +382,11 @@ export const TYPES = [
   type("walking-step-ratio", "number", "배수 문장제", "한 걸음 길이의 배수로 걸음 수 구하기", { generator: "walkingStepRatio", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("route-distance-multiple", "number", "배수 문장제", "이어진 두 길의 거리 배수 구하기", { generator: "routeDistanceMultiple", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("rod-ratio-total-book3", "geometry", "막대와 배수", "막대의 묶음 수와 전체 길이로 각각의 길이 구하기", { generator: "rodRatioTotalBook3", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("rod-comparison-total-unit-test", "geometry", "막대와 배수", "한 막대의 배수 관계와 두 막대의 합으로 길이 구하기", { generator: "rodComparisonTotalUnitTest", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 9번" }),
+  type("overlapping-rod-common-unit-test", "geometry", "막대와 배수", "어긋나게 놓은 막대의 공통 눈금으로 길이 구하기", { generator: "overlappingRodCommonUnitTest", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 10번" }),
   type("unit-object-length", "geometry", "단위길이", "같은 물건 여러 개로 잰 한 개의 길이", { generator: "unitObjectLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("equivalent-object-length", "geometry", "단위길이", "여러 물건을 늘어놓은 같은 길이 관계", { generator: "equivalentObjectLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("object-combination-equivalent-count", "geometry", "단위길이", "물건의 조합을 한 가지 단위 개수로 바꾸기", { generator: "objectCombinationEquivalentCount", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("proportional-rods-common-total", "geometry", "막대와 배수", "같은 전체 길이를 이루는 막대들의 길이", { generator: "proportionalRodsCommonTotal", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("meeting-distance-ratio", "number", "거리와 배수", "속도의 배수로 만날 때까지 간 거리 나누기", { generator: "meetingDistanceRatio", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("mixed-interval-distance", "geometry", "수직선과 길이", "서로 다른 간격으로 나눈 수직선의 거리", { generator: "mixedIntervalDistance", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -312,20 +395,25 @@ export const TYPES = [
   type("cryptarithm-single-double", "number", "복면산", "한 자리 같은 도형을 두 번 더하는 복면산", { generator: "cryptarithmSingleDouble", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-repeated-number-double", "number", "복면산", "같은 도형으로 만든 두 자리 수를 두 번 더하기", { generator: "cryptarithmRepeatedNumberDouble", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-fixed-digit-addition", "number", "복면산", "도형과 주어진 숫자가 섞인 덧셈", { generator: "cryptarithmFixedDigitAddition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("cryptarithm-missing-digit-column", "number", "복면산", "자리별 빈 숫자를 채우는 세로 덧셈", { generator: "cryptarithmMissingDigitColumn", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("cryptarithm-missing-digit-column", "number", "복면산", "두 도형이 반복되는 세로 덧셈", { generator: "cryptarithmMissingDigitColumn", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-multi-symbol-carry", "number", "복면산", "여러 도형과 받아올림이 함께 있는 복면산", { generator: "verticalCryptarithmShapeSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-linked-equations", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "cryptarithmLinkedEquations", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("cryptarithm-unit-test-q13", "number", "복면산", "두 자리 두 수의 합에서 세 도형 값 찾기", { generator: "unitTestCryptarithmQ13", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 13번" }),
+  type("cryptarithm-unit-test-q14", "number", "복면산", "세 자리 수와 두 자리 수를 더해 같은 도형 세 자리 만들기", { generator: "unitTestCryptarithmQ14", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 14번" }),
+  type("cryptarithm-unit-test-q15", "number", "복면산", "다섯 도형 세로셈에서 네 자리 합 만들기", { generator: "unitTestCryptarithmQ15", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 15번" }),
 
   type("binary-weight-selection", "number", "마법카드와 도형수", "1·2·4·8 무게추로 목표 무게 만들기", { generator: "binaryWeightSelection", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("symbol-value-code", "number", "마법카드와 도형수", "도형 기호마다 정해진 값을 더해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("colored-cell-number-code", "pattern", "마법카드와 도형수", "색칠한 칸의 자리값을 더해 수 나타내기", { generator: "coloredCellNumberCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동1 2~3, 확인1 1~2, 연습 2~7, 심화 4" }),
+  type("four-cell-binary-code", "pattern", "마법카드와 도형수", "네 칸 색칠 규칙으로 비밀 수 찾기", { generator: "fourCellBinaryCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 23번" }),
+  type("symbol-value-code", "number", "마법카드와 도형수", "도형 묶음의 수를 비교해 비밀 수 찾기", { generator: "symbolValueCode", sourceMatched: true, textbookSource: "더클래식 1과정 3권 98·113쪽 · 도형 묶음 상자 4개 구조" }),
+  type("symbol-value-code-unit-test", "number", "마법카드와 도형수", "네 개의 도형 묶음을 비교해 비밀 수 찾기", { generator: "symbolValueCodeUnitTest", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 19번" }),
   type("magic-square-three-complete", "number", "마방진", "주어진 아홉 수로 3×3 마방진 완성하기", { generator: "magicSquareThreeComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-three-target", "number", "마방진", "3×3 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareThreeTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-four-target", "number", "마방진", "4×4 마방진의 색칠한 한 칸 구하기", { generator: "magicSquareFourTarget", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("polygon-ring-equal-sum", "number", "수 배열과 합", "오각진의 다섯 줄 합을 같게 만들기", { generator: "polygonRingEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-six", "number", "수 배열과 합", "1부터 6까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumSix", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("triangle-edge-sum-nine", "number", "수 배열과 합", "1부터 9까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumNine", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 연습 19, 심화 3" }),
 
   // 더클래식 1과정 4권: 153문항을 단계와 인쇄 문제 번호로 직접 대조했다.
   // 기존 검증 유형과 풀이 구조가 같은 문항은 재사용하고, 다른 구조만 새 유형으로 둔다.
@@ -766,27 +854,30 @@ export const EXAMS = [
   makeExam({
     id: "g1-2022-05", stage: "g1_summer", label: "더 클래식 초1 2차 선발시험",
     file: "더_클래식_1학년_2차_선발시험(20220530).pdf", layout: "four",
-    typeIds: ["equalize-transfer","height-order","two-digit-condition","balance-scale","weight-order","shape-equation","adjacent-product-pentagon","shape-sum-table","segment-count","shape-sum-table","cryptarithm","rod-length-ratio","colored-triangle-difference","square-side-composition","fold-cut-piece-count","symbol-relation","repeat-pattern","ratio-distribution","rectilinear-perimeter","paired-sequences"]
+    typeIds: ["g1-summer-equalize-transfer","g1-summer-height-order-five","g1-summer-two-digit-sum-gap","g1-summer-balance-shape-chain","g1-summer-five-box-weight-order","g1-summer-four-shape-add-subtract","g1-summer-pentagon-adjacent-product","g1-summer-four-by-four-shape-sum","g1-summer-circle-point-segments","g1-summer-four-by-four-shape-sum-bottom","g1-summer-vertical-shape-addition","g1-summer-one-three-rods","g1-summer-triangular-color-difference","g1-summer-square-side-composition","g1-summer-fold-cut-triangle-count","g1-summer-four-symbol-relation","g1-summer-shape-height-dual-cycle","g1-summer-orange-ratio-distribution","g1-summer-rectilinear-perimeter","g1-summer-opposite-step-sequences"],
+    verifiedQuestionNumbers: Array.from({ length: 20 }, (_, index) => index + 1)
   }),
   makeExam({
     id: "g1-2019-08", stage: "g1_fall", label: "더 클래식 초1 3차 선발시험",
     file: "더_클래식_1학년_3차_선발시험(20190828).pdf", layout: "four",
-    typeIds: ["multi-person-transfer","height-order","balance-scale","two-digit-condition","chained-number-condition","grid-number-placement","adjacent-product-pentagon","shape-sum-table","rod-length-ratio","square-side-composition","cryptarithm","colored-triangle-difference","fold-cut-piece-count","vertical-addition","vertical-addition","rectilinear-perimeter","number-table-rule","repeat-pattern","cryptarithm","consecutive-number-addition"]
+    typeIds: ["g1-fall-three-person-total-transfer","g1-height-order-four","g1-summer-balance-shape-chain","g1-two-digit-ones-greater","g1-fall-number-set-offset-chain","g1-fall-four-by-four-latin-two-target","g1-fall-pentagon-adjacent-products-all","g1-fall-four-by-four-shape-sum-four-targets","g1-fall-four-short-one-long-rods","g1-fall-stacked-square-side-chain","g1-fall-aa-ab-ccc-shape-addition","g1-triangle-color-difference","g1-fall-three-fold-crease-cut-count","g1-fall-total-triple-share","g1-fall-paired-four-blank-additions","g1-fall-square-chain-shaded-perimeter","g1-fall-linear-input-output-table","g1-summer-shape-height-dual-cycle","g1-fall-alternating-result-cryptarithm","g1-fall-consecutive-three-sum-completion"],
+    verifiedQuestionNumbers: Array.from({ length: 20 }, (_, index) => index + 1)
   }),
   makeExam({
     id: "g1-2022-02", stage: "g1_winter", label: "더 클래식 초1 4차 선발시험",
     file: "더_클래식_1학년_4차_선발시험(20220215).pdf", layout: "four",
-    typeIds: ["magic-square","multiplication-matrix","shape-sum-table","step-game","latin-square","cryptarithm","repeat-pattern","two-digit-condition","total-difference","order-position","height-order","multiplication-matrix","three-digit-card-count","balance-scale","chained-number-condition","venn-count","polygon-stone-rearrangement","ratio-distribution","ratio-distribution","odd-even-sum-difference"]
+    typeIds: ["magic-square-three-complete","g1-winter-shared-box-multiplication","g1-winter-shape-sum-target-row","g1-winter-opponent-step-game","g1-winter-sudoku-four-full","g1-repeated-digit-addition","g1-stacked-shape-dual-cycle","g1-winter-two-digit-odd-sum-order","total-difference","g1-winter-product-placement-four","g1-height-order-four","g1-front-back-between","g1-winter-three-digit-cards-above","g1-winter-three-balance-substitution","g1-winter-three-cards-parity-chain","set-union-count","g1-polygon-stone-rearrangement","g1-summer-opposite-step-sequences","g1-summer-orange-ratio-distribution","g1-odd-even-sum-difference"],
+    verifiedQuestionNumbers: Array.from({ length: 20 }, (_, index) => index + 1)
   })
 ];
 
 export const PRACTICE_EXAM_TYPES = [
   { id: "mock-1", label: "실전 모의고사 1회", questions: ["repeat-shape-color-dual","edge-sum-grid","grid-number-placement-five","five-card-sum-pyramid","order-position-seven-people","arrow-number-grid","addition-table-grid-offset","total-difference","shape-sum-table-bottom-target","equal-line-sum-eight-cards-twelve","bus-board-then-leave","shape-sum-table-bottom-target","shape-equation-add-subtract","two-digit-parity-gap","balance-scale-star-target","square-tile-growth","symbol-relation","fold-number-cut-sum-main-diagonal","go-stone-difference-inverse","number-line-six-points"] },
   { id: "mock-2", label: "실전 모의고사 2회", questions: ["edge-sum-grid","l-grid-placement","repeat-four-items-with-duplicate","five-card-sum-pyramid","order-position","addition-table-grid-offset","arrow-number-grid","shape-sum-table-bottom-target","equal-line-sum-eight-cards-fifteen-top-left","total-difference","two-digit-even-ones-greater-gap","shape-sum-table-bottom-target","bus-board-then-leave","shape-equation-add-subtract","fold-number-cut-sum-main-diagonal","square-tile-growth","balance-scale-star-target","symbol-relation","number-line-six-points","go-stone-difference-inverse-white"] },
-  { id: "mock-3", label: "실전 모의고사 3회", questions: ["cube-count-solid","set-union-count","chained-number-condition","cube-different-shape","shape-sum-table","vertical-addition","person-item-logic","shape-equation","number-table-rule","cut-recut-pieces","repeat-pattern","triangle-count","function-machine","operator-insertion","custom-operation","fold-hole-count","two-digit-card-enumeration","erase-expression-target","collection-repeat-gap","magic-square"] },
-  { id: "mock-4", label: "실전 모의고사 4회", questions: ["balance-scale","rod-length-ratio","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","number-table-rule","function-machine","square-count","reverse-initial-count","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
-  { id: "mock-5", label: "실전 모의고사 5회", questions: ["shape-sum-table","colored-shape-number","unused-number-card-equations","magic-square","edge-sum-grid","cryptarithm","repeat-shape-color-dual","go-stone-difference-inverse","balance-scale","rod-length-ratio","fold-diagonal-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","two-digit-card-threshold-count","cube-add-to-match","order-position","number-table-rule","alternating-line-total","split-merge-tree"] },
-  { id: "mock-6", label: "실전 모의고사 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","chained-number-condition","cube-hidden-count","repeat-pattern"] }
+  { id: "mock-3", label: "실전 모의고사 3회", questions: ["cube-count-solid","set-union-count","chained-number-condition","cube-different-shape","shape-sum-table","vertical-addition","person-item-logic","given-shape-expression","paired-growing-sequences","cut-recut-pieces","repeat-pattern","triangle-count","reverse-operation-ladder","plus-minus-multi-target","two-custom-operations","practice-three-fold-hole-count","two-digit-card-enumeration","erase-expression-target","collection-repeat-gap","magic-square"] },
+  { id: "mock-4", label: "실전 모의고사 4회", questions: ["balance-scale","aligned-rod-common-length","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","interleaved-pair-sequence","two-function-machine-chain","square-count","reverse-initial-count","calendar-all-weekday-sum","growing-shape-count","vertical-shape-cryptarithm-values","square-symbol-chain","shape-sum-table","shape-sum-table","height-extremes-chain","person-item-logic"] },
+  { id: "mock-5", label: "실전 모의고사 5회", questions: ["shape-sum-table","colored-shape-number","unused-number-card-equations","magic-square","edge-sum-grid","two-digit-letter-cryptarithm","repeat-shape-color-dual","go-stone-difference-inverse","balance-scale","recorder-matchstick-length","fold-diagonal-hole-count","shape-rotate-flip-grid","set-union-count","equalize-transfer","two-digit-card-threshold-count","cube-add-to-match","order-position","overlapping-run-sequence","alternating-line-total","split-merge-tree"] },
+  { id: "mock-6", label: "실전 모의고사 6회", questions: ["congruent-equal-sum-partition-draw","paired-magic-square-colored-sum","triangle-max-edge-sum","distinct-zero-one-shape-values","shape-value-matrix-all","repeated-two-digit-shape-addition","five-person-photo-order","food-preference-logic-four","relative-position-number-grid-nine","three-fold-line-unfold","cube-fill-box","directional-triangle-sum-grid","sudoku-four-square-region","two-class-total-difference","set-union-count","number-ball-pair-targets","diagonal-sum-difference-square","three-person-book-chain","cube-hidden-count","grid-color-count-sequence"] }
 ].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => ({
   ...question(index + 1, typeId),
   verified: true
@@ -804,14 +895,14 @@ export const DIAGNOSTIC_EXAM_TYPES = [
     file: "필즈 대비 선발 진단 모의고사 · 25문항",
     sourceViewer: false,
     questions: [
-      question(1, "rod-length-ratio", "같은 단위로 나타낸 막대의 길이"),
+      question(1, "diagnostic-part-whole-bar", "부분 막대의 길이로 전체와 남은 부분 구하기"),
       question(2, "diagnostic-dialogue-condition-number", "대화 속 조건에 맞는 수 구하기"),
       question(3, "equalize-transfer", "주고받아 같게 만들기"),
       question(4, "fold-hole-count", "한 번 접은 색종이의 구멍 개수"),
       question(5, "total-difference", "더 많이 가진 수와 전체 수로 두 수 구하기"),
       question(6, "order-position", "줄 세우기에서 등수 정하기"),
       question(7, "set-union-count", "집합과 포함 관계"),
-      question(8, "balance-order-chain", "양팔저울로 무게 순서 정하기"),
+      question(8, "diagnostic-animal-balance-order", "동물 양팔저울로 무게 순서 정하기"),
       question(9, "diagnostic-number-relation", "수의 관계 조건으로 빈칸 구하기"),
       question(10, "shape-sum-table", "같은 두 도형의 수가 있는 표"),
       question(11, "paired-sequences", "두 수열의 규칙"),
@@ -914,11 +1005,12 @@ const stagedUnit = (label, typeIds, activities, checks, advanced, practice) => u
   }
 });
 
-const detailedStagedUnit = (label, typeIds, activities, checks, advanced, practice, typeStudyRefs) => ({
+const detailedStagedUnit = (label, typeIds, activities, checks, advanced, practice, typeStudyRefs, options = {}) => ({
   ...stagedUnit(label, typeIds, activities, checks, advanced, practice),
   // 세부 유형마다 실제 등장하는 단계와 문항 번호가 다르다. 이 표가 있으면 단원 전체
   // 범위를 모든 유형에 붙이지 않고, 현재 선택한 단계의 근거 문항만 사용한다.
-  typeStudyRefs
+  typeStudyRefs,
+  ...options
 });
 
 const stageReferences = ({ concept = [], type: typeRefs = [], practice = [], advanced = [] }) => ({
@@ -1058,8 +1150,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "two-digit-even-ones-greater-gap": "일의 자리에는 짝수를 놓고, 십의 자리와의 차가 조건에 맞는지 확인합니다.",
   "two-digit-odd-bounded-gap": "주어진 범위 안의 홀수를 먼저 적고 두 자리 숫자의 차를 하나씩 확인합니다.",
   "number-baseball": "자리와 숫자가 모두 맞는 것과 숫자만 맞는 것을 나누어 후보를 지웁니다.",
-  "tangram-shape-composition": "빈자리의 변과 꼭짓점을 살펴 같은 모양의 칠교 조각을 돌려 맞춥니다.",
-  "tangram-piece-area": "모눈 한 칸을 1로 보고 선택한 칠교 조각이 차지한 온칸과 반칸을 더합니다.",
+  "tangram-shape-composition": "이미 놓인 조각의 변에 맞추어 정사각형, 두 작은 삼각형, 중간 삼각형, 평행사변형을 빈틈없이 놓습니다.",
+  "tangram-piece-area": "4×4 칠교판에서 한 칸을 기준으로 조각 넓이를 세고, 모아 만든 정사각형은 사용한 조각의 넓이를 더합니다.",
   "unit-grid-area": "온칸을 먼저 세고 반칸 두 개를 온칸 하나로 묶습니다.",
   "growing-shape-area-sum": "각 모양의 가로와 세로 또는 작은 삼각형 수를 세어 단계별 넓이를 적습니다.",
   "nested-square-outer-area": "가장 바깥 정사각형의 한 변이 단계마다 얼마나 늘어나는지 먼저 찾습니다.",
@@ -1076,6 +1168,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "rod-ratio-total-book3": "두 막대가 차지하는 같은 크기 묶음을 모두 세고 전체 길이를 묶음 수로 나눕니다.",
   "unit-object-length": "전체 길이를 똑같은 물건의 개수만큼 가르면 한 개의 길이가 됩니다.",
   "equivalent-object-length": "양쪽에서 같은 물건을 같은 수만큼 지우고 남은 물건끼리 비교합니다.",
+  "object-combination-equivalent-count": "연필 한 자루를 성냥개비 개수로 바꾸고, 처음부터 있던 성냥개비를 더합니다.",
   "proportional-rods-common-total": "같은 전체 길이를 이루는 막대 수를 보고 한 막대의 길이를 거꾸로 구합니다.",
   "number-line-six-points": "겹친 긴 거리에서 이미 아는 구간을 차례로 빼 작은 구간을 찾습니다.",
   "meeting-distance-ratio": "두 사람이 간 거리를 속도의 배수와 같은 묶음으로 나누어 전체 묶음 수를 셉니다.",
@@ -1084,7 +1177,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "cryptarithm-single-double": "같은 도형 두 개를 더한 수를 똑같이 두 수로 가릅니다.",
   "cryptarithm-repeated-number-double": "일의 자리부터 같은 숫자를 두 번 더하고 받아올림을 십의 자리에 보냅니다.",
   "cryptarithm-fixed-digit-addition": "보이는 숫자부터 계산해 같은 자리의 도형 값을 찾습니다.",
-  "cryptarithm-missing-digit-column": "일의 자리에서 시작해 빈칸과 받아올림을 차례로 채웁니다.",
+  "cryptarithm-missing-digit-column": "일의 자리부터 계산해 반복되는 두 도형의 값을 차례로 찾습니다.",
   "cryptarithm-multi-symbol-carry": "일의 자리의 받아올림을 표시하고, 같은 도형에는 같은 숫자를 넣습니다.",
   "cryptarithm-linked-equations": "첫 번째 식에서 찾은 도형 값을 두 번째 식의 같은 도형에 넣습니다.",
   "binary-weight-selection": "목표 수보다 크지 않은 가장 큰 추부터 골라 남은 무게를 만듭니다.",
@@ -1095,6 +1188,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "magic-square-four-target": "1부터 16까지를 쓰면 한 줄의 합이 34임을 이용해 색칠한 칸을 찾습니다.",
   "polygon-ring-equal-sum": "오각형 한 변의 세 수를 보고 목표 합에서 두 수를 빼 다음 원을 채웁니다.",
   "equal-line-sum-eight-cards": "완성된 가로나 세로 한 줄의 합을 기준으로 빈칸을 차례로 채웁니다.",
+  "equal-line-sum-eight-cards-complete-book3": "한 변의 합에서 이미 놓인 수를 빼며 빈칸을 채우고, 1부터 8까지를 한 번씩 썼는지 확인합니다.",
   "triangle-max-edge-sum": "세 꼭짓점의 수가 두 줄씩 세어진다는 점을 이용해 큰 수나 작은 수를 꼭짓점에 놓습니다.",
   "triangle-edge-sum-six": "한 변의 목표 합에서 이미 놓인 두 수를 빼 남은 원의 수를 찾습니다.",
   "triangle-edge-sum-nine": "네 수가 놓이는 한 변씩 목표 합을 맞추고 쓴 수는 카드에서 지웁니다.",
@@ -1366,6 +1460,50 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "profession-assignment-b9": "가능한 직업이 하나뿐인 사람부터 정하고 같은 직업 칸을 다른 사람에게서 지웁니다.",
   "activity-enrollment-b9": "활동별 전체 인원에 맞게 표시를 채운 뒤 컴퓨터 칸이 비는 학생을 찾습니다.",
   "g1-odd-even-sum-difference": "홀수와 짝수를 차례로 한 쌍씩 묶어 각 쌍에서 생기는 차이를 더합니다.",
+  "g1-summer-equalize-transfer": "두 수의 차를 반으로 나누면 같게 만들기 위해 옮길 수가 됩니다.",
+  "g1-summer-height-order-five": "조건마다 더 큰 사람을 위에 적어 다섯 사람의 순서를 한 줄로 잇습니다.",
+  "g1-summer-two-digit-sum-gap": "두 자리의 합과 차를 함께 만족하는 십의 자리와 일의 자리를 찾습니다.",
+  "g1-summer-balance-shape-chain": "첫 저울에서 한 도형의 무게를 찾고 다음 저울의 같은 도형을 바꾸어 넣습니다.",
+  "g1-summer-five-box-weight-order": "무겁다와 가볍다 조건을 화살표로 이어 다섯 상자의 순서를 정합니다.",
+  "g1-summer-four-shape-add-subtract": "같은 도형끼리 지워 한 도형의 값을 먼저 찾고 나머지 식에 넣습니다.",
+  "g1-summer-pentagon-adjacent-product": "이웃한 두 꼭짓점의 수를 곱해 변의 수와 맞는지 차례로 확인합니다.",
+  "g1-summer-four-by-four-shape-sum": "같은 그림이 반복되는 줄부터 그림값을 찾고 목표 줄을 더합니다.",
+  "g1-summer-circle-point-segments": "새 점 하나를 추가할 때 앞의 모든 점과 이어지는 선분을 더합니다.",
+  "g1-summer-four-by-four-shape-sum-bottom": "가로와 세로의 같은 그림 구성을 찾아 이미 아는 합을 옮겨 씁니다.",
+  "g1-summer-vertical-shape-addition": "일의 자리부터 같은 도형의 숫자와 받아올림을 차례로 찾습니다.",
+  "g1-summer-one-three-rods": "긴 막대 한 개를 짧은 막대 몇 개와 같은지 바꾸어 전체 길이를 셉니다.",
+  "g1-summer-triangular-color-difference": "한 단계씩 늘어나는 흰 조각과 색칠 조각을 따로 세어 차를 구합니다.",
+  "g1-summer-square-side-composition": "겹친 길이를 빼고 바깥에 남은 같은 길이 조각을 더합니다.",
+  "g1-summer-fold-cut-triangle-count": "접은 횟수와 잘린 위치를 따라 펼칠 때 대칭으로 늘어나는 조각을 셉니다.",
+  "g1-summer-four-symbol-relation": "가장 단순한 식에서 도형값을 찾고 같은 도형을 다음 식에 넣습니다.",
+  "g1-summer-shape-height-dual-cycle": "도형의 반복 마디와 높이의 반복 마디를 따로 찾은 뒤 같은 번째에서 합칩니다.",
+  "g1-summer-orange-ratio-distribution": "어린이 한 묶음과 어른 한 묶음이 먹는 양을 비교해 사람 수를 나눕니다.",
+  "g1-summer-rectilinear-perimeter": "오목하게 들어간 변을 바깥쪽으로 옮겨 같은 길이의 큰 직사각형처럼 계산합니다.",
+  "g1-summer-opposite-step-sequences": "위 수열의 이동 횟수를 먼저 찾고 아래 수열도 같은 횟수만큼 반대 방향으로 움직입니다.",
+  "g1-fall-three-person-total-transfer": "주고받은 뒤의 차이를 거꾸로 되돌려 처음 세 사람의 수를 찾습니다.",
+  "g1-fall-number-set-offset-chain": "기준 수 하나를 정하고 모든 조건의 차를 더하거나 빼 후보를 확인합니다.",
+  "g1-fall-four-by-four-latin-two-target": "각 가로줄과 세로줄에 같은 수가 한 번씩만 오도록 빈칸을 채웁니다.",
+  "g1-fall-pentagon-adjacent-products-all": "변의 곱을 이웃한 꼭짓점끼리 나누어 다섯 수를 한 바퀴 정합니다.",
+  "g1-fall-four-by-four-shape-sum-four-targets": "같은 그림이 반복되는 줄부터 그림값을 구한 뒤 네 목표 줄을 각각 더합니다.",
+  "g1-fall-four-short-one-long-rods": "긴 막대를 짧은 막대 네 개로 바꾸어 같은 단위로 전체 길이를 계산합니다.",
+  "g1-fall-stacked-square-side-chain": "큰 정사각형의 변을 작은 정사각형 몇 칸과 같은지 단계별로 바꿉니다.",
+  "g1-fall-aa-ab-ccc-shape-addition": "일의 자리에서 같은 숫자의 합과 받아올림을 찾고 왼쪽 자리로 이동합니다.",
+  "g1-fall-three-fold-crease-cut-count": "접힌 선이 펼칠 때마다 대칭으로 복사되는 위치를 순서대로 표시합니다.",
+  "g1-fall-total-triple-share": "작은 몫 한 개와 큰 몫 세 개, 모두 네 묶음으로 전체를 나눕니다.",
+  "g1-fall-paired-four-blank-additions": "완성된 자리의 합에서 보이는 숫자를 빼 각 빈칸을 차례로 채웁니다.",
+  "g1-fall-square-chain-shaded-perimeter": "색칠한 정사각형의 네 변 중 다른 정사각형과 맞닿지 않은 변만 셉니다.",
+  "g1-fall-linear-input-output-table": "입력이 한 칸 늘 때 출력이 얼마나 늘어나는지 찾아 목표 입력까지 이어갑니다.",
+  "g1-fall-alternating-result-cryptarithm": "일의 자리부터 받아올림을 표시하며 같은 도형에 같은 숫자를 넣습니다.",
+  "g1-fall-consecutive-three-sum-completion": "가운데 수를 전체 합을 3으로 나눈 값으로 잡고 앞뒤 연속수를 찾습니다.",
+  "g1-winter-shared-box-multiplication": "아래 곱셈에서 함께 쓰는 가운데 수를 먼저 찾고, 그 수로 위 곱셈을 거꾸로 풉니다.",
+  "g1-winter-shape-sum-target-row": "같은 그림이 여러 번 나온 줄부터 그림값을 찾고 목표 줄의 그림값을 모두 더합니다.",
+  "g1-winter-opponent-step-game": "한 사람이 올라가면 다른 사람은 내려간다는 규칙으로 상대의 움직임만 차례로 표시합니다.",
+  "g1-winter-sudoku-four-full": "각 가로줄·세로줄·굵은 네 칸에서 아직 쓰지 않은 수를 하나씩 찾습니다.",
+  "g1-winter-two-digit-odd-sum-order": "일의 자리가 홀수인지 먼저 보고, 자리 합과 두 자리의 크기 조건을 함께 확인합니다.",
+  "g1-winter-product-placement-four": "가로의 두 수를 곱해 가능한 짝을 찾고, 세로 곱까지 맞는 순서로 놓습니다.",
+  "g1-winter-three-digit-cards-above": "백의 자리부터 카드를 바꾸어 수를 빠짐없이 만든 뒤 기준 수와 비교합니다.",
+  "g1-winter-three-balance-substitution": "첫째 저울의 물건을 마름모로 바꾸고, 그 값을 다음 저울에 차례로 넣습니다.",
+  "g1-winter-three-cards-parity-chain": "짝수인 ㄱ의 후보부터 놓고 차 조건을 거꾸로 따라 ㄴ과 ㄷ을 찾습니다.",
   "multi-method-multiplication-b10": "한 수를 십의 자리와 일의 자리로 나누어 각각 곱한 뒤 두 값을 더합니다.",
   "same-tens-complement-product-b10": "같은 십의 자리와 합이 10인 일의 자리를 표시해 빠른 곱셈 규칙을 적용합니다.",
   "same-ones-complement-product-b10": "같은 일의 자리와 합이 10인 십의 자리를 표시해 두 부분으로 계산합니다.",
@@ -1756,7 +1894,10 @@ const BOOK03_UNIT02_REFS = Object.freeze({
   }),
   "equivalent-object-length": stageReferences({
     type: [problemNumbers("check", 2, [1])],
-    practice: [problemNumbers("practice", 1, [12, 15])]
+    practice: [problemNumbers("practice", 1, [15])]
+  }),
+  "object-combination-equivalent-count": stageReferences({
+    practice: [problemNumbers("practice", 1, [12])]
   }),
   "proportional-rods-common-total": stageReferences({
     type: [problemNumbers("check", 2, [2])],
@@ -1835,7 +1976,7 @@ const BOOK03_UNIT04_REFS = Object.freeze({
     type: [problemNumbers("check", 2, [4])],
     practice: [problemNumbers("practice", 1, [15])]
   }),
-  "equal-line-sum-eight-cards": stageReferences({
+  "equal-line-sum-eight-cards-complete-book3": stageReferences({
     practice: [problemNumbers("practice", 1, [16])]
   }),
   "triangle-max-edge-sum": stageReferences({
@@ -2408,7 +2549,8 @@ const BOOK06_UNIT04_REFS = Object.freeze({
 });
 
 // 7권은 교사용 지도서의 정답 표기와 수업용 교재의 인쇄 문제 번호를 함께 대조했다.
-// 설명 예시와 리뷰는 제외하고 활동·확인·연습·도전 180문항만 한 유형에 한 번씩 배정한다.
+// 설명 예시를 제외하고 현재 권의 활동·확인·연습·도전 180문항만 한 유형에 한 번씩 배정한다.
+// 책 뒤 리뷰는 이 집계와 분리해 6권 유형의 재출제 근거로 연결한다.
 const BOOK07_UNIT01_REFS = Object.freeze({
   "calendar-month-shift-weekday-b7": stageReferences({
     concept: [problemNumbers("activity", 1, [1, 2])],
@@ -3155,6 +3297,100 @@ const BOOK10_UNIT04_REFS = Object.freeze({
   "positive-range-number-digit-count-b10": stageReferences({ practice: [problemNumbers("practice", 1, [9])] })
 });
 
+const reviewQuestionLinks = (rows) => Object.freeze(rows.flatMap(([group, numbers, typeId]) =>
+  numbers.map((number) => Object.freeze({ group, number, typeId }))
+));
+
+export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
+  "book-02": Object.freeze({
+    sourceBookId: "book-01",
+    verified: true,
+    links: reviewQuestionLinks([
+      [1, [1], "shape-mirror-direction"],
+      [1, [2, 3], "shape-quarter-half-turn"],
+      [1, [4, 10], "symbol-balanced-congruent-partition"],
+      [1, [5], "digital-digit-transform"],
+      [1, [6, 7], "digital-two-digit-transform"],
+      [1, [8], "digital-transform-board-sum"],
+      [1, [9], "rotational-partition-two"],
+      [2, [1, 4, 5], "fold-cut-shape-choice"],
+      [2, [2, 3, 6], "fold-number-cut-sum-textbook"],
+      [2, [7], "fold-punch-shape-count"],
+      [2, [8], "fold-hole-count"],
+      [2, [9], "fold-cut-piece-count"],
+      [3, [1], "circular-magic-line-sum"],
+      [3, [2, 3], "cross-shape-magic-sum"],
+      [3, [4], "equal-line-sum-eight-cards"],
+      [3, [5], "triangle-edge-sum-six"],
+      [3, [6, 7], "gakuro-grid-sum"],
+      [3, [8], "circle-line-ring-equal-sum"],
+      [4, [1, 2], "two-digit-condition"],
+      [4, [3, 4], "place-value-condition-three"],
+      [4, [5, 9], "person-item-logic"],
+      [4, [6, 7], "relative-order-logic"],
+      [4, [8], "place-value-condition-four"]
+    ])
+  }),
+  "book-03": Object.freeze({
+    sourceBookId: "book-02",
+    verified: true,
+    links: reviewQuestionLinks([
+      [1, [1], "equal-partition-four"],
+      [1, [2], "equal-partition-three"],
+      [1, [3, 4, 5, 10], "shape-sum-table"],
+      [1, [6], "equalize-transfer"],
+      [1, [7, 8, 9], "total-difference"],
+      [2, [1], "balance-order-chain"],
+      [2, [2, 3, 4], "balance-given-unit-weight"],
+      [2, [5, 6, 7, 8, 9, 10], "distinct-shape-value-equation"],
+      [3, [1], "interleaved-number-sequence"],
+      [3, [2, 3], "repeating-symbol-sequence"],
+      [3, [4], "square-border-stone-growth"],
+      [3, [5], "matchstick-shared-polygon-growth"],
+      [3, [6], "staircase-tile-growth"],
+      [3, [7], "repeated-fold-cut-count"],
+      [3, [8], "triangular-stone-growth"],
+      [4, [1, 8], "four-number-center-rule"],
+      [4, [2, 4], "number-grid-row-rule"],
+      [4, [3], "two-digit-compose-rule"],
+      [4, [5], "sudoku-three-row-column"],
+      [4, [6], "sudoku-three-region"],
+      [4, [7], "sudoku-four-square-region"],
+      [4, [9], "sudoku-four-irregular-region"]
+    ])
+  })
+});
+
+const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
+  "book-03": Object.freeze([
+    { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: true, difficulty: 2 },
+    { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
+    { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false },
+    { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
+    { number: 5, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
+    { number: 6, typeId: "folded-strip-length", label: "접힌 리본의 전체 길이", verified: true, difficulty: 2 },
+    { number: 7, typeId: "midpoint-number-line", label: "두 수의 중간수", verified: true, difficulty: 2 },
+    { number: 8, typeId: "segment-chain-distance", label: "A·B·C·D 사이의 거리", verified: true, difficulty: 2 },
+    { number: 9, typeId: "rod-comparison-total-unit-test", label: "막대의 배수 관계와 전체 길이", verified: true, difficulty: 2 },
+    { number: 10, typeId: "overlapping-rod-common-unit-test", label: "어긋나게 놓은 막대의 길이", verified: true, difficulty: 2 },
+    { number: 11, typeId: "equal-interval-length", label: "똑같이 나눈 한 칸의 거리", verified: true, difficulty: 2 },
+    { number: 12, typeId: "difference-unit-measure", label: "두 단위길이의 차", verified: true, difficulty: 2 },
+    { number: 13, typeId: "cryptarithm-unit-test-q13", label: "두 자리 두 수의 도형 복면산", verified: true, difficulty: 2 },
+    { number: 14, typeId: "cryptarithm-unit-test-q14", label: "같은 도형 세 자리 복면산", verified: true, difficulty: 2 },
+    { number: 15, typeId: "cryptarithm-unit-test-q15", label: "다섯 도형 네 자리 복면산", verified: true, difficulty: 3 },
+    { number: 16, typeId: "cryptarithm-missing-digit-column", label: "두 도형 세로 덧셈", verified: true, difficulty: 2 },
+    { number: 17, typeId: "cryptarithm-missing-digit-column", label: "같은 두 자리 수 세 번 더하기", verified: true, difficulty: 3 },
+    { number: 18, typeId: "cryptarithm-linked-equations", label: "이어진 복면산", verified: true, difficulty: 3 },
+    { number: 19, typeId: "symbol-value-code-unit-test", label: "도형 묶음의 비밀 수", verified: true, difficulty: 2 },
+    { number: 20, typeId: "magic-square-three-complete", label: "3×3 마방진 완성", verified: true, difficulty: 2 },
+    { number: 21, typeId: "magic-square-four-target", label: "4×4 마방진의 한 칸", verified: true, difficulty: 2 },
+    { number: 22, typeId: "polygon-ring-equal-sum", label: "오각진의 같은 합", verified: true, difficulty: 2 },
+    { number: 23, typeId: "four-cell-binary-code", label: "네 칸 색칠의 비밀 수", verified: true, difficulty: 2 },
+    { number: 24, typeId: "triangle-max-edge-sum", label: "삼각형 세 변의 합", verified: true, difficulty: 2 },
+    { number: 25, typeId: "number-line-six-points", label: "여섯 점 사이의 거리", verified: true, difficulty: 2 }
+  ])
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -3192,10 +3428,12 @@ export const CURRICULUM = [
     detailedStagedUnit("단위길이와 배수", [
       "folded-strip-length", "midpoint-number-line", "segment-chain-distance",
       "equal-interval-length", "walking-step-ratio", "route-distance-multiple",
-      "rod-ratio-total-book3", "unit-object-length", "equivalent-object-length",
+      "rod-ratio-total-book3", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count",
       "proportional-rods-common-total", "number-line-six-points", "meeting-distance-ratio",
       "mixed-interval-distance", "difference-unit-measure"
-    ], [4,4], [2,2], 4, 16, BOOK03_UNIT02_REFS),
+    ], [4,4], [2,2], 4, 16, BOOK03_UNIT02_REFS, {
+      sourceAuditBlockedStages: { "number-line-six-points": ["advanced"] }
+    }),
     detailedStagedUnit("복면산", [
       "cryptarithm-single-double", "cryptarithm-repeated-number-double",
       "cryptarithm-fixed-digit-addition", "cryptarithm-missing-digit-column",
@@ -3204,9 +3442,13 @@ export const CURRICULUM = [
     detailedStagedUnit("마법카드와 마방진", [
       "binary-weight-selection", "colored-cell-number-code", "symbol-value-code",
       "magic-square-three-complete", "magic-square-three-target", "magic-square-four-target",
-      "polygon-ring-equal-sum", "equal-line-sum-eight-cards", "triangle-max-edge-sum",
+      "polygon-ring-equal-sum", "equal-line-sum-eight-cards-complete-book3", "triangle-max-edge-sum",
       "triangle-edge-sum-six", "triangle-edge-sum-nine", "magic-square-four-complete"
-    ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS)
+    ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS, {
+      sourceAuditBlockedStages: {
+        "magic-square-three-complete": ["concept"],
+      }
+    })
   ] },
   { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [
     detailedStagedUnit("도형 분할과 움직이기", [
@@ -3408,16 +3650,25 @@ export const CURRICULUM = [
       "last-number-from-digit-total", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"
     ], [4,6], [4,4], 5, 20, BOOK10_UNIT04_REFS)
   ] }
-].map((book, index) => ({
-  ...book,
-  source: {
-    textbook: `더클래식 1과정 ${index + 1}권 수업용 교재`,
-    unitTest: CURRICULUM_TEST_FILES[book.id],
-    unitTestQuestionCount: 25,
-    unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
-    goldenBellIncluded: false,
-    reviewIncluded: index === 0
-  }
-}));
+].map((book, index) => {
+  const review = CURRICULUM_REVIEW_CROSSWALK[book.id];
+  return {
+    ...book,
+    source: {
+      textbook: `더클래식 1과정 ${index + 1}권 수업용 교재`,
+      unitTest: CURRICULUM_TEST_FILES[book.id],
+      unitTestQuestionCount: 25,
+      unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
+      unitTestQuestions: CURRICULUM_UNIT_TEST_QUESTIONS[book.id] || [],
+      goldenBellIncluded: false,
+      reviewIncluded: index > 0,
+      reviewSourceBookId: index > 0 ? `book-${String(index).padStart(2, "0")}` : null,
+      reviewSourceBookLabel: index > 0 ? `${index}권` : null,
+      reviewRole: index > 0 ? "previous-book-review" : null,
+      reviewQuestionCount: review?.links.length || 0,
+      reviewVerified: Boolean(review?.verified)
+    }
+  };
+});
 
 export const typeById = (id) => byId[id];

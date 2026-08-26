@@ -1,511 +1,253 @@
 /* ============================================================
-   Numbers of Magic — 과정(Course) 편성 데이터
-   CURRICULUM_DESIGN.md §3 기반 전 과정 정의.
-   구조: tier → course(4세션) → session
-   세션 1~3 = 새 마법(concept) + 복습 드릴 / 세션 4 = Test
+   Numbers of Magic — 과정(Course) 편성 데이터 (Phase 2 재편, 2026-08-25)
+   과정-로드맵.md §3 "새 과정표 — Level 1~3, 과정 1~25" + "CHALLENGE · 경시의 탑
+   26~28"이 명세다. 옛 과정(BASIC B1~5·PRIME P1~10·ADVANCE M1~6·CHALLENGE
+   H1~9·창의 8단계 A1~8)은 전면 폐기·재편 — grep 확인 결과 NM_COURSES를
+   읽는 코드가 앱 어디에도 없어(스토리모드는 data/roadmap.js의 NM_ROADMAP을
+   따로 씀) 안전하게 교체할 수 있었다.
+
+   구조: tier → course(C1~C28) → session.
+   세션 = { magic:[유닛/스레드id...]|null, drills:[{t,lv,n}...] } 또는
+         { test:true, pool:[{t,lv,n}...], passRate }.
+
+   이 파일은 표를 그대로 박아넣지 않고 **COURSE_SPEC(표 원문의 ID만 그대로 옮긴
+   것) + buildCourses()(세션 편성 규칙)**로 나눴다 — 표가 바뀌면 SPEC만 고치면
+   되고, 편성 규칙(레벨 배정·드릴 순환·세션 수)은 한 곳에서만 관리된다.
+
+   ── COURSE_SPEC 파싱 규칙 (§3 표 원문 그대로) ──
+   - drills: 그 과정의 "드릴 재료" 열에 적힌 스레드 id 그대로(★역연산=EL1,
+     ★검산=EL2, ★평균=EL4 — 과정-로드맵.md §3 각주 그대로).
+   - magic: 그 과정의 "마법 슬롯" 열에서 뽑은 유닛/스레드 id. "·"로 붙어
+     있는 id(공백 없음, 예 A-20·21, N-06·N-07)는 **한 세션에 같이 들어가는
+     묶음**, " · "로 띄어 붙은 항목은 **서로 다른 세션**. 과정 2~10(PRIME
+     재배치 38유닛)은 §3의 "초급(PRIME) 38유닛 재배치" 표를 썼다 — 메인
+     표의 축약 표기(예: 과정4 "A-05~07")보다 그 표가 전량(폐기 0개)을
+     명시한 1차 자료이기 때문. ML10처럼 유닛이 아니라 스레드 자체가 마법인
+     경우도 있다(threads.js에 있으면 그대로 인정).
+   - 과정 25(레벨 보스)·26~28(경시의 탑)은 표에 마법 슬롯 id가 없다(25=
+     "총정리", 26~28=고급 유닛 미제작). **새 id를 지어내지 않고** magic:[]로
+     비워 buildCourses()가 magic:null 세션만 만들게 하고, comingSoon(26~28)·
+     boss(25) 플래그로 표시한다. 26~28의 드릴 재료도 표에 없으므로 지어내는
+     대신 그 경시 주제와 맞닿은, 이미 threads.js에 존재하는 스레드를 재사용
+     했다(새 id 없음 — 곱셈의 정점→ML19/20/23, 수의 비밀→DV7/8·MX2,
+     제곱의 산→ML11/20·MX4).
+
+   ── buildCourses() 편성 규칙 ──
+   1. **레벨**: 과정의 드릴 재료가 그 과정에서 처음 등장하면 레벨1. 같은
+      스레드가 나중 과정에서 다시 "드릴 재료"(자기 과정 것)로 나오면
+      레벨을 1단 올린다(threads.js 최대 레벨에서 캡) — 예: DV3는 과정9
+      레벨1, 과정12에서 다시 나오지만 DV3는 레벨이 1개뿐이라 그대로 캡.
+      모든 레벨은 threads.js에 실존하는 id만 배정되므로(캡 로직) 무효
+      레벨이 나올 수 없다.
+   2. **세션 수**: 마법 세그먼트 수를 3~5개로 clamp(레벨보스·경시의 탑은
+      고정 3) — 세그먼트가 모자라면 magic:null 드릴 세션으로 채우고,
+      넘치면 뒤에서부터 합쳐 5개로 줄인다.
+   3. **세션별 드릴**: 그 과정 자기 재료에서 2종을 세션 index 기반으로
+      결정적으로 순환 선택(Math.random 없음 — `drills[(i*2)%len]` 식이라
+      같은 입력엔 항상 같은 출력) + **과정 1을 제외하고** 이전 모든 과정이
+      자기 재료로 등록했던 스레드 풀(priorPool)에서 전역 세션 카운터
+      기반으로 1종을 순환 추가(§2 "과정 번호가 클수록 이전 풀에서 순환
+      샘플"). 두 원칙 다 시드가 아니라 인덱스 기반이라 같은 스펙에서
+      항상 같은 결과가 나온다(harness가 2회 빌드 동일성으로 검증).
+   4. **Test pool**: 그 과정 자기 드릴 재료 전체(레벨보스는 레벨3 과정
+      17~24가 등록한 전 스레드 + 자기 재료 = "전 유형 풀").
    ============================================================ */
 (function(){
 'use strict';
 
-window.NM_COURSES = {
+const COURSE_SPEC = [
+ {id:1, tier:'level1', title:{ko:'자릿값과 첫 덧셈',en:'Place Value & First Addition',zh:'位值与加法入门'},
+   drills:['NS1','NS2','NS3','AD1'], magic:[['N-06','N-07']]},
+ {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
+   drills:['AD2','NS5','NS4'], magic:[['A-01'],['A-02']]},
+ {id:3, tier:'level1', title:{ko:'두 자리 덧뺄셈 시작',en:'Two-digit ± Begins',zh:'两位数加减开始'},
+   drills:['AD3','SB3'], magic:[['A-03'],['A-04']]},
+ {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
+   drills:['AD5','SB4','AD6'], magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']]},
+ {id:5, tier:'level1', title:{ko:'뺄셈 마법과 구구단 첫걸음',en:'Subtraction Magic & Times Tables Begin',zh:'减法魔法与乘法口诀入门'},
+   drills:['SB5','ML1','ML2'], magic:[['A-10'],['A-11'],['A-12']]},
+ {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
+   drills:['SB6','SB7','ML3'], magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17']]},
+ {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
+   drills:['ML4','AD7'], magic:[['A-18'],['A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25']]},
+ {id:8, tier:'level1', title:{ko:'몇십 곱과 나눗셈의 시작',en:'Multiplying Tens & Division Begins',zh:'整十乘法与除法开始'},
+   drills:['ML5','DV1','DV2'], magic:[['A-30','A-31','A-32'],['A-33','A-34']]},
+ {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
+   drills:['ML6','ML22','DV3'], magic:[['A-26'],['A-27'],['A-29']]},
+ {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
+   drills:['ML7','EL2'], magic:[['A-28'],['A-35']]},
 
-/* ══════════════════════════════════════════════════════════
-   BASIC — 수의 나라 (B1~B5)
-   ══════════════════════════════════════════════════════════ */
+ {id:11, tier:'level2', title:{ko:'두 자리×두 자리 곱셈',en:'2-digit × 2-digit Multiplication',zh:'两位数乘两位数'},
+   drills:['ML8'], magic:[['C-26'],['C-15']]},
+ {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
+   drills:['DV3','DV4','EL1'], magic:[['C-18']]},
+ {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
+   drills:['FR1','FR2'], magic:[['C-16']]},
+ {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
+   drills:['FR3','ML9'], magic:[['C-17'],['C-28'],['C-29']]},
+ {id:15, tier:'level2', title:{ko:'두 자리로 나누기와 분수',en:'Dividing by 2 Digits & Fractions',zh:'除以两位数与分数'},
+   drills:['DV5'], magic:[['C-19'],['C-20']]},
+ {id:16, tier:'level2', title:{ko:'배수 판별과 혼합계산',en:'Divisibility & Mixed Operations',zh:'整除判别与混合运算'},
+   drills:['DV6','MX1'], magic:[['C-30']]},
 
-B1:{
-  tier:'basic', order:1,
-  title:{ ko:'수의 나라 첫 걸음', en:'First Steps in Number Land', zh:'数字王国第一步' },
-  sessions:[
-    { magic:'B1-NS1',
-      drills:[] },
-    { magic:'B1-NS2',
-      drills:[{t:'NS1',lv:1,n:6}] },
-    { magic:null,
-      drills:[{t:'NS1',lv:1,n:6},{t:'NS2',lv:1,n:8}] },
-    { test:true,
-      pool:[{t:'NS1',lv:1,n:8},{t:'NS2',lv:1,n:8},{t:'NS2',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
+ {id:17, tier:'level3', title:{ko:'소수의 시작',en:'Decimals Begin',zh:'小数入门'},
+   drills:['DC1'], magic:[['C-13']]},
+ {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
+   drills:['DC2','DC4','ML11'], magic:[['C-24'],['ML10']]},
+ {id:19, tier:'level3', title:{ko:'약수와 배수',en:'Factors & Multiples',zh:'因数与倍数'},
+   drills:['DV7'], magic:[['C-04'],['H-11']]},
+ {id:20, tier:'level3', title:{ko:'이분모 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
+   drills:['FR4','FR10','MX4'], magic:[['C-21'],['C-22']]},
+ {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
+   drills:['FR6','FR11'], magic:[['C-23']]},
+ {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
+   drills:['FR7'], magic:[['C-03']]},
+ {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
+   drills:['MX2','FR8'], magic:[['C-05'],['C-32']]},
+ {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
+   drills:['MX3','DV8','EL4'], magic:[['C-25'],['C-33'],['H-12'],['H-13']]},
+ {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
+   drills:['MX5'], magic:[], boss:true},
 
-B2:{
-  tier:'basic', order:2,
-  title:{ ko:'짝꿍 수 (보수 5·10)', en:'Number Bonds 5 & 10', zh:'数字好朋友(凑5·凑10)' },
-  sessions:[
-    { magic:'B2-NS3',
-      drills:[{t:'NS2',lv:1,n:6},{t:'NS1',lv:1,n:4}] },
-    { magic:'B2-NS3:deepen',
-      drills:[{t:'NS3',lv:1,n:6},{t:'NS2',lv:2,n:6}] },
-    { magic:null,
-      drills:[{t:'NS3',lv:1,n:6},{t:'NS3',lv:2,n:6},{t:'NS2',lv:2,n:6}] },
-    { test:true,
-      pool:[{t:'NS3',lv:1,n:8},{t:'NS3',lv:2,n:8},{t:'NS2',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
+ /* 26~28 실배치(2026-08-25 Phase 2, 고급-목차.md §2②): 로드맵 §3의 4단원 구성 그대로.
+    각 과정 4단원 중 신규 유닛(H-01·02, H-03~06, H-07~10)이 magic, 1단계에서 이미
+    확장해 둔 기존 유닛(C-12 엑스맨 세 자리, C-15 피라미드 곱셈, C-01 제곱수 점화식)은
+    "1단계 확장 레벨들도 드릴 재료로"(작업지시)에 따라 drills로 재사용한다 — 새 id를
+    지어내지 않고 threads.js에 이미 있는 스레드만 쓴다는 기존 규칙을 그대로 지켰다. */
+ {id:26, tier:'challenge', title:{ko:'곱셈의 정점',en:'Peak of Multiplication',zh:'乘法之巅'},
+   drills:['ML8','ML18'], magic:[['H-01'],['H-02'],['C-12'],['C-15']]},
+ {id:27, tier:'challenge', title:{ko:'수의 비밀',en:'Secrets of Numbers',zh:'数的秘密'},
+   drills:['DV7','DV8','MX2'], magic:[['H-03'],['H-04'],['H-05'],['H-06']]},
+ {id:28, tier:'challenge', title:{ko:'제곱의 산',en:'Mountain of Squares',zh:'平方之山'},
+   drills:['ML11','ML20','MX4'], magic:[['H-07'],['H-08'],['H-09'],['H-10']]},
 
-B3:{
-  tier:'basic', order:3,
-  title:{ ko:'더하기와 빼기', en:'Addition & Subtraction', zh:'加法与减法' },
-  sessions:[
-    { magic:'B3-AD1',
-      drills:[{t:'NS2',lv:2,n:6},{t:'NS3',lv:2,n:6}] },
-    { magic:'B3-SB1',
-      drills:[{t:'AD1',lv:1,n:6},{t:'NS3',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6},{t:'NS3',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'AD1',lv:1,n:8},{t:'SB1',lv:1,n:8},{t:'NS3',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
+ /* 29~31 실배치(2026-08-25, 중등 W8 · 중1 정수와 유리수): MASTER-ROADMAP.md
+    §8 Phase 3. drills는 그 과정에서 처음 등장하는 MD 스레드 + 경시의 탑
+    (CH-시리즈) 재료 일부(작업 지시 "이전 과정 복습 풀에는 경시의 탑 재료
+    일부 포함") — CH5(순환소수 나눗셈)는 course29의 자기 재료로 등록해
+    이후 과정(30·31)의 priorPool 복습 순환에도 자동으로 실린다. */
+ {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
+   drills:['MD1','MD2','MD3','CH5'], magic:[['M-01'],['M-02'],['M-03']]},
+ {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
+   drills:['MD4','MD5','MD6'], magic:[['M-04'],['M-05'],['M-06']]},
+ {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
+   drills:['MD7','MD8','MD9'], magic:[['M-07'],['M-08'],['M-09']]},
 
-B4:{
-  tier:'basic', order:4,
-  title:{ ko:'두 배 수 (twin)', en:'Doubles (twin numbers)', zh:'翻倍数' },
-  sessions:[
-    { magic:'B4-NS5',
-      drills:[{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:4},{t:'NS3',lv:2,n:4}] },
-    { magic:'B4-NS5:deepen',
-      drills:[{t:'NS5',lv:1,n:6},{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'NS5',lv:1,n:6},{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6}] },
-    { test:true,
-      pool:[{t:'NS5',lv:1,n:8},{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6}],
-      passRate:0.8 }
-  ]
-},
+ /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
+    drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
+    — course32는 W8 마지막 재료 MD9를, course34(중3 진입부)는 중2 재료
+    MD14를 복습 풀에 얹는다(다른 과정들처럼 spec.drills에 얹으면 자기
+    재료로도 잡히고 이후 과정의 priorPool 순환에도 자동으로 실린다). */
+ {id:32, tier:'middle2', title:{ko:'지수와 단항식',en:'Exponents & Monomials',zh:'指数与单项式'},
+   drills:['MD10','MD11','MD12','MD9'], magic:[['M-10'],['M-11'],['M-12']]},
+ {id:33, tier:'middle2', title:{ko:'다항식과 등식',en:'Polynomials & Equations',zh:'多项式与等式'},
+   drills:['MD13','MD14'], magic:[['M-13'],['M-14']]},
+ {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
+   drills:['MD15','MD16','MD17','MD14'], magic:[['M-15'],['M-16'],['M-17']]},
+ {id:35, tier:'middle3', title:{ko:'곱셈공식과 인수분해',en:'Formulas & Factoring',zh:'乘法公式与因式分解'},
+   drills:['MD18','MD19','MD20'], magic:[['M-18'],['M-19'],['M-20']]},
 
-B5:{
-  tier:'basic', order:5,
-  title:{ ko:'짝수·홀수와 크기 비교', en:'Even, Odd & Comparing Numbers', zh:'奇偶数与大小比较' },
-  sessions:[
-    { magic:'B5-CMP',
-      drills:[{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6},{t:'NS5',lv:1,n:4}] },
-    { magic:'B5-CMP:deepen',
-      drills:[{t:'NS1',lv:1,n:6},{t:'AD1',lv:1,n:6},{t:'NS3',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'NS1',lv:1,n:8},{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6},{t:'NS5',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'NS1',lv:1,n:8},{t:'AD1',lv:1,n:6},{t:'SB1',lv:1,n:6},{t:'NS5',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+ /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.
+    course36은 W10 마지막 재료 MD20을, course38(공통수학2 진입부)은
+    W11 마지막 재료 MD30을 복습 풀에 얹는다(32~35와 같은 관례 —
+    spec.drills에 얹으면 자기 재료로도 잡히고 이후 과정의 priorPool
+    순환에도 자동으로 실린다). 2022 개정 과목명 준수 — "고1" 표기
+    없음(전부 "공통수학1"·"공통수학2"). */
+ {id:36, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
+   drills:['MD21','MD22','MD23','MD24','MD25','MD20'], magic:[['M-21'],['M-22'],['M-23'],['M-24'],['M-25']]},
+ {id:37, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
+   drills:['MD26','MD27','MD28','MD29','MD30'], magic:[['M-26'],['M-27'],['M-28'],['M-29'],['M-30']]},
+ {id:38, tier:'highmath2', title:{ko:'점과 직선',en:'Points & Lines',zh:'点与直线'},
+   drills:['MD31','MD32','MD33','MD30'], magic:[['M-31'],['M-32'],['M-33']]},
+ {id:39, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
+   drills:['MD34','MD35'], magic:[['M-34'],['M-35']]},
 
-/* ══════════════════════════════════════════════════════════
-   PRIME — 초급 마법 (P1~P10)
-   ══════════════════════════════════════════════════════════ */
+ /* 40~43 실배치(2026-08-25, 고등 W13·W14): MASTER-ROADMAP.md §6.
+    course40(대수 진입부)은 W12 마지막 재료 MD35를, course42(미적분Ⅰ
+    진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(36·38과 같은
+    관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·
+    "미적분Ⅰ"). */
+ {id:40, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+   drills:['MD36','MD37','MD38','MD35'], magic:[['M-36'],['M-37'],['M-38']]},
+ {id:41, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
+   drills:['MD39','MD40','MD41','MD42'], magic:[['M-39'],['M-40'],['M-41'],['M-42']]},
+ {id:42, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
+   drills:['MD43','MD44','MD42'], magic:[['M-43'],['M-44']]},
+ {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
+   drills:['MD45','MD46'], magic:[['M-45'],['M-46']]},
+];
 
-P1:{
-  tier:'beginner', order:1,
-  title:{ ko:'더해서 10이 되는 수', en:'Find the Ten', zh:'找出凑十的数' },
-  sessions:[
-    { magic:'A-01',
-      drills:[{t:'NS2',lv:2,n:6},{t:'NS3',lv:2,n:6},{t:'AD1',lv:1,n:6}] },
-    { magic:'A-01:deepen',
-      drills:[{t:'AD8',lv:1,n:6},{t:'NS3',lv:2,n:4},{t:'AD1',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'AD8',lv:1,n:8},{t:'AD8',lv:2,n:4},{t:'NS3',lv:2,n:4},{t:'AD1',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'AD8',lv:1,n:10},{t:'AD8',lv:2,n:4},{t:'NS3',lv:2,n:6},{t:'AD1',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+function buildCourses(NM_THREADS){
+  NM_THREADS = NM_THREADS || {};
+  const maxLevel = t => {
+    const th = NM_THREADS[t];
+    if(!th || !th.levels || !th.levels.length) return 1;
+    return Math.max.apply(null, th.levels.map(l=>l.id));
+  };
+  const homeLevel = {};   // thread -> level assigned when it's OWN material (escalates on reuse, capped)
+  const priorPool = [];   // ordered list of distinct threads introduced as OWN material by earlier courses
+  const seenPool = {};
+  let globalSessionIdx = 0;
+  const OUT = {};
 
-P2:{
-  tier:'beginner', order:2,
-  title:{ ko:'수 이사의 마법', en:'Moving Numbers', zh:'搬数字魔法' },
-  sessions:[
-    { magic:'A-02',
-      drills:[{t:'NS3',lv:2,n:6},{t:'AD8',lv:1,n:6},{t:'AD1',lv:1,n:4},{t:'NS5',lv:1,n:4}] },
-    { magic:'A-02:deepen',
-      drills:[{t:'AD2',lv:1,n:6},{t:'NS3',lv:2,n:4},{t:'AD8',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'AD2',lv:1,n:8},{t:'AD8',lv:1,n:6},{t:'NS3',lv:2,n:4},{t:'NS5',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'AD2',lv:1,n:10},{t:'NS3',lv:2,n:6},{t:'AD8',lv:1,n:6},{t:'NS5',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+  COURSE_SPEC.forEach(spec => {
+    spec.drills.forEach(t => {
+      if(homeLevel[t] == null) homeLevel[t] = 1;
+      else homeLevel[t] = Math.min(homeLevel[t] + 1, maxLevel(t));
+    });
 
-P3:{
-  tier:'beginner', order:3,
-  title:{ ko:'우선 10을 더해요', en:'Add 10 First', zh:'先加十法' },
-  sessions:[
-    { magic:'A-03',
-      drills:[{t:'AD2',lv:1,n:6},{t:'AD8',lv:1,n:6},{t:'NS4',lv:1,n:4},{t:'SB2',lv:1,n:4}] },
-    { magic:'A-03:deepen',
-      drills:[{t:'AD3',lv:1,n:6},{t:'AD2',lv:1,n:4},{t:'NS4',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'AD3',lv:2,n:8},{t:'AD8',lv:2,n:4},{t:'SB2',lv:1,n:4},{t:'AD2',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'AD3',lv:1,n:8},{t:'AD3',lv:2,n:4},{t:'AD2',lv:1,n:6},{t:'AD8',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+    let segments = spec.magic.slice();
+    const targetCount = (spec.boss || spec.comingSoon) ? 3 : Math.min(Math.max(segments.length, 3), 5);
+    if(segments.length === 0){
+      segments = new Array(targetCount).fill(null);
+    } else {
+      while(segments.length < targetCount) segments.push(null);
+      while(segments.length > targetCount){
+        const last = segments.pop();
+        segments[segments.length-1] = segments[segments.length-1].concat(last);
+      }
+    }
 
-P4:{
-  tier:'beginner', order:4,
-  title:{ ko:'계단식 덧셈', en:'Staircase Addition', zh:'阶梯加法' },
-  sessions:[
-    { magic:'A-04',
-      drills:[{t:'AD3',lv:2,n:6},{t:'AD4',lv:1,n:6},{t:'AD2',lv:1,n:4},{t:'SB3',lv:1,n:4}] },
-    { magic:'A-04:deepen',
-      drills:[{t:'AD5',lv:1,n:6},{t:'AD3',lv:2,n:4},{t:'AD4',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'AD5',lv:1,n:8},{t:'AD3',lv:2,n:4},{t:'SB3',lv:2,n:4},{t:'AD4',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'AD5',lv:1,n:10},{t:'AD3',lv:2,n:6},{t:'AD4',lv:1,n:4},{t:'SB3',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+    const sessions = segments.map((seg, i) => {
+      const ownA = spec.drills[(i*2) % spec.drills.length];
+      const ownB = spec.drills.length > 1 ? spec.drills[(i*2+1) % spec.drills.length] : null;
+      const ownIds = (ownB && ownB !== ownA) ? [ownA, ownB] : [ownA];
+      const drills = ownIds.map(t => ({t, lv:homeLevel[t], n:6}));
+      if(spec.id > 1 && priorPool.length){
+        const pt = priorPool[globalSessionIdx % priorPool.length];
+        drills.push({t:pt, lv:homeLevel[pt], n:4});
+      }
+      globalSessionIdx++;
+      return { magic: seg, drills };
+    });
 
-P5:{
-  tier:'beginner', order:5,
-  title:{ ko:'더 빼고 돌려받기 마법', en:'Compensation Subtraction', zh:'补偿减法魔法' },
-  sessions:[
-    { magic:'A-05',
-      drills:[{t:'AD5',lv:1,n:6},{t:'SB3',lv:2,n:6},{t:'SB4',lv:1,n:4},{t:'AD8',lv:1,n:4}] },
-    { magic:'A-05:deepen',
-      drills:[{t:'SB5',lv:1,n:6},{t:'SB3',lv:2,n:4},{t:'AD5',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'SB5',lv:1,n:8},{t:'AD5',lv:2,n:4},{t:'SB4',lv:2,n:4},{t:'AD8',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'SB5',lv:1,n:10},{t:'AD5',lv:2,n:4},{t:'SB3',lv:2,n:4},{t:'AD8',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
+    let poolThreads = spec.drills.slice();
+    if(spec.boss){
+      const tierOwned = [];
+      COURSE_SPEC.filter(s => s.id>=17 && s.id<=24).forEach(s => s.drills.forEach(t => {
+        if(tierOwned.indexOf(t)<0) tierOwned.push(t);
+      }));
+      poolThreads = tierOwned.concat(spec.drills).filter((t,i,a)=>a.indexOf(t)===i);
+    }
+    const pool = poolThreads.map(t => ({t, lv:homeLevel[t], n: spec.boss ? 6 : 8}));
+    sessions.push({ test:true, pool, passRate:0.8 });
 
-P6:{
-  tier:'beginner', order:6,
-  title:{ ko:'식의 변형 마법', en:'Expression Transformation', zh:'算式变形魔法' },
-  sessions:[
-    { magic:'A-06',
-      drills:[{t:'SB5',lv:1,n:6},{t:'SB4',lv:2,n:6},{t:'AD5',lv:2,n:4},{t:'AD6',lv:1,n:4}] },
-    { magic:'A-06:deepen',
-      drills:[{t:'SB7',lv:1,n:6},{t:'SB5',lv:1,n:4},{t:'AD6',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'SB7',lv:2,n:8},{t:'SB5',lv:1,n:4},{t:'AD6',lv:1,n:4},{t:'SB4',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'SB7',lv:1,n:8},{t:'SB7',lv:2,n:4},{t:'SB5',lv:1,n:6},{t:'AD5',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
+    OUT['C'+spec.id] = {
+      tier: spec.tier, order: spec.id,
+      title: spec.title,
+      comingSoon: !!spec.comingSoon,
+      boss: !!spec.boss,
+      sessions
+    };
 
-P7:{
-  tier:'beginner', order:7,
-  title:{ ko:'배와 반, 구구 2~5단', en:'Doubles, Halves & Tables 2-5', zh:'翻倍与减半·乘法口诀2~5' },
-  sessions:[
-    { magic:'A-07',
-      drills:[{t:'AD6',lv:1,n:6},{t:'SB6',lv:1,n:6},{t:'AD8',lv:2,n:4},{t:'NS5',lv:2,n:4}] },
-    { magic:'A-07:deepen',
-      drills:[{t:'ML1',lv:1,n:6},{t:'ML2',lv:1,n:6},{t:'AD6',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'ML2',lv:2,n:6},{t:'ML2',lv:3,n:6},{t:'SB6',lv:1,n:4},{t:'AD6',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'ML1',lv:1,n:6},{t:'ML2',lv:1,n:6},{t:'ML2',lv:2,n:6},{t:'ML2',lv:3,n:6}],
-      passRate:0.8 }
-  ]
-},
+    spec.drills.forEach(t => { if(!seenPool[t]){ seenPool[t]=true; priorPool.push(t); } });
+  });
 
-P8:{
-  tier:'beginner', order:8,
-  title:{ ko:'구구 6~9단과 역구구', en:'Times Tables 6-9 & Reverse', zh:'乘法口诀6~9与逆运算' },
-  sessions:[
-    { magic:'P8-ML3',
-      drills:[{t:'ML2',lv:3,n:8},{t:'SB6',lv:1,n:4},{t:'AD7',lv:1,n:4},{t:'DV1',lv:1,n:4}] },
-    { magic:'P8-ML4',
-      drills:[{t:'ML3',lv:2,n:6},{t:'ML2',lv:3,n:4},{t:'DV1',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'ML4',lv:2,n:8},{t:'ML3',lv:3,n:4},{t:'DV1',lv:2,n:4},{t:'AD7',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'ML3',lv:1,n:6},{t:'ML3',lv:2,n:4},{t:'ML4',lv:1,n:6},{t:'ML4',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-P9:{
-  tier:'beginner', order:9,
-  title:{ ko:'몇십 곱과 첫 나눗셈', en:'Multiplying Tens & First Division', zh:'整十乘法与初识除法' },
-  sessions:[
-    { magic:'A-08',
-      drills:[{t:'ML4',lv:2,n:6},{t:'AD7',lv:1,n:4},{t:'SB6',lv:2,n:4},{t:'DV1',lv:2,n:4}] },
-    { magic:'A-08:deepen',
-      drills:[{t:'ML5',lv:1,n:6},{t:'DV2',lv:1,n:6},{t:'ML4',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'ML5',lv:2,n:6},{t:'DV2',lv:1,n:6},{t:'AD7',lv:2,n:4},{t:'DV1',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'ML5',lv:1,n:8},{t:'ML5',lv:2,n:4},{t:'DV2',lv:1,n:6},{t:'ML4',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-P10:{
-  tier:'beginner', order:10,
-  title:{ ko:'분배 암산과 나머지 나눗셈', en:'Distributive Mental Math & Remainders', zh:'分配心算与余数除法' },
-  sessions:[
-    { magic:'A-09',
-      drills:[{t:'ML5',lv:2,n:6},{t:'DV2',lv:1,n:6},{t:'ML4',lv:2,n:4},{t:'AD7',lv:2,n:4}] },
-    { magic:'A-09:deepen',
-      drills:[{t:'ML6',lv:1,n:6},{t:'DV3',lv:1,n:6},{t:'ML5',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'ML6',lv:2,n:6},{t:'DV3',lv:1,n:6},{t:'SB6',lv:2,n:4},{t:'AD7',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'ML6',lv:1,n:6},{t:'ML6',lv:2,n:4},{t:'DV3',lv:1,n:8},{t:'ML5',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-/* ══════════════════════════════════════════════════════════
-   ADVANCE — 중급 마법 (M1~M6)
-   ══════════════════════════════════════════════════════════ */
-
-M1:{
-  tier:'advance', order:1,
-  title:{ ko:'큰 수 곱하기', en:'Multiplying Big Numbers', zh:'大数乘法' },
-  sessions:[
-    { magic:'M-01',
-      drills:[{t:'ML6',lv:2,n:6},{t:'DV3',lv:1,n:6},{t:'AD7',lv:2,n:4},{t:'SB6',lv:2,n:4}] },
-    { magic:'M-01:deepen',
-      drills:[{t:'ML7',lv:1,n:6},{t:'ML8',lv:1,n:6},{t:'ML6',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'ML8',lv:2,n:6},{t:'ML7',lv:2,n:4},{t:'DV3',lv:1,n:4},{t:'ML6',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'ML7',lv:1,n:6},{t:'ML7',lv:2,n:4},{t:'ML8',lv:1,n:6},{t:'ML8',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-M2:{
-  tier:'advance', order:2,
-  title:{ ko:'밀어서 나누기', en:'Long Division', zh:'推步除法' },
-  sessions:[
-    { magic:'M-02',
-      drills:[{t:'ML8',lv:2,n:6},{t:'ML7',lv:2,n:4},{t:'DV3',lv:1,n:6},{t:'ML4',lv:2,n:4}] },
-    { magic:'M-02:deepen',
-      drills:[{t:'DV4',lv:1,n:6},{t:'ML8',lv:2,n:4},{t:'ML7',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DV4',lv:2,n:8},{t:'ML8',lv:2,n:4},{t:'DV3',lv:1,n:4},{t:'ML7',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'DV4',lv:1,n:8},{t:'DV4',lv:2,n:6},{t:'ML8',lv:2,n:4},{t:'ML7',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-M3:{
-  tier:'advance', order:3,
-  title:{ ko:'분수 나라 입문', en:'Introduction to Fractions', zh:'分数王国入门' },
-  sessions:[
-    { magic:'M-03',
-      drills:[{t:'DV4',lv:2,n:6},{t:'ML8',lv:2,n:4},{t:'ML7',lv:2,n:4},{t:'DV3',lv:1,n:4}] },
-    { magic:'M-03:deepen',
-      drills:[{t:'FR1',lv:1,n:6},{t:'FR2',lv:1,n:6},{t:'DV4',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'FR1',lv:1,n:8},{t:'FR2',lv:1,n:6},{t:'ML8',lv:2,n:4},{t:'DV4',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'FR1',lv:1,n:8},{t:'FR2',lv:1,n:8},{t:'DV4',lv:2,n:4},{t:'ML8',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-M4:{
-  tier:'advance', order:4,
-  title:{ ko:'대분수 마법과 세 자리 곱', en:'Mixed Numbers & 3-digit Multiplication', zh:'带分数魔法与三位数乘法' },
-  sessions:[
-    { magic:'M-04',
-      drills:[{t:'FR2',lv:1,n:6},{t:'ML8',lv:2,n:6},{t:'DV4',lv:2,n:4}] },
-    { magic:'M-04:deepen',
-      drills:[{t:'FR3',lv:1,n:6},{t:'ML9',lv:1,n:6},{t:'FR2',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'FR3',lv:2,n:6},{t:'ML9',lv:1,n:6},{t:'ML8',lv:2,n:4},{t:'FR2',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'FR3',lv:1,n:6},{t:'FR3',lv:2,n:4},{t:'ML9',lv:1,n:6},{t:'FR2',lv:1,n:4},{t:'ML8',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-M5:{
-  tier:'advance', order:5,
-  title:{ ko:'두 자리 수로 나누기', en:'Dividing by 2-digit Numbers', zh:'除以两位数' },
-  sessions:[
-    { magic:'M-05',
-      drills:[{t:'ML9',lv:1,n:6},{t:'FR3',lv:2,n:4},{t:'FR1',lv:1,n:4},{t:'ML8',lv:2,n:4}] },
-    { magic:'M-05:deepen',
-      drills:[{t:'DV5',lv:1,n:6},{t:'ML9',lv:1,n:4},{t:'FR3',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DV5',lv:2,n:6},{t:'ML9',lv:1,n:4},{t:'FR3',lv:2,n:4},{t:'ML8',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'DV5',lv:1,n:6},{t:'DV5',lv:2,n:6},{t:'ML9',lv:1,n:4},{t:'FR3',lv:2,n:4},{t:'ML8',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-M6:{
-  tier:'advance', order:6,
-  title:{ ko:'혼합 계산과 배수 판별', en:'Order of Operations & Divisibility', zh:'混合运算与整除判别' },
-  sessions:[
-    { magic:'M-06',
-      drills:[{t:'DV5',lv:2,n:6},{t:'ML9',lv:1,n:4},{t:'FR3',lv:2,n:4},{t:'ML8',lv:2,n:4}] },
-    { magic:'M-06:deepen',
-      drills:[{t:'MX1',lv:1,n:6},{t:'DV6',lv:1,n:6},{t:'DV5',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'MX1',lv:2,n:6},{t:'DV6',lv:2,n:6},{t:'DV5',lv:2,n:4},{t:'ML9',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'MX1',lv:1,n:6},{t:'MX1',lv:2,n:6},{t:'DV6',lv:1,n:4},{t:'DV6',lv:2,n:4},{t:'DV5',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-/* ══════════════════════════════════════════════════════════
-   CHALLENGE — 고급 마법 (H1~H9)
-   ══════════════════════════════════════════════════════════ */
-
-H1:{
-  tier:'challenge', order:1,
-  title:{ ko:'소수 덧뺄셈과 분수↔소수', en:'Decimal ± & Fraction↔Decimal', zh:'小数加减与分数小数互换' },
-  sessions:[
-    { magic:'H-01',
-      drills:[{t:'MX1',lv:2,n:6},{t:'DV6',lv:2,n:6},{t:'DV5',lv:2,n:4},{t:'ML9',lv:1,n:4}] },
-    { magic:'H-01:deepen',
-      drills:[{t:'DC1',lv:1,n:6},{t:'FR8',lv:1,n:6},{t:'MX1',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DC1',lv:2,n:6},{t:'FR8',lv:1,n:6},{t:'DV6',lv:2,n:4},{t:'MX1',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'DC1',lv:1,n:6},{t:'DC1',lv:2,n:4},{t:'FR8',lv:1,n:6},{t:'MX1',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H2:{
-  tier:'challenge', order:2,
-  title:{ ko:'소수 곱셈과 19단 입문', en:'Decimal Multiplication & 11-19 Tables', zh:'小数乘法与19段入门' },
-  sessions:[
-    { magic:'H-02',
-      drills:[{t:'DC1',lv:2,n:6},{t:'ML11',lv:1,n:4},{t:'MX1',lv:2,n:4}] },
-    { magic:'H-02:deepen',
-      drills:[{t:'DC2',lv:1,n:6},{t:'ML10',lv:1,n:6},{t:'DC1',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DC2',lv:1,n:8},{t:'ML10',lv:1,n:6},{t:'ML11',lv:1,n:4},{t:'DC1',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'DC2',lv:1,n:8},{t:'ML10',lv:1,n:8},{t:'DC1',lv:2,n:6}],
-      passRate:0.8 }
-  ]
-},
-
-H3:{
-  tier:'challenge', order:3,
-  title:{ ko:'소수 나눗셈과 99단·기준곱', en:'Decimal Division & 99-table', zh:'小数除法与99段·基准乘' },
-  sessions:[
-    { magic:'H-03',
-      drills:[{t:'DC2',lv:1,n:6},{t:'ML10',lv:1,n:6},{t:'ML11',lv:2,n:4}] },
-    { magic:'H-03:deepen',
-      drills:[{t:'DC3',lv:1,n:6},{t:'ML10',lv:2,n:6},{t:'DC2',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'DC3',lv:1,n:8},{t:'ML10',lv:2,n:6},{t:'ML11',lv:2,n:4},{t:'DC2',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'DC3',lv:1,n:8},{t:'ML10',lv:2,n:8},{t:'DC2',lv:1,n:6}],
-      passRate:0.8 }
-  ]
-},
-
-H4:{
-  tier:'challenge', order:4,
-  title:{ ko:'약수·배수·최대공약수·최소공배수', en:'Factors, GCD & LCM', zh:'因数倍数·最大公因数·最小公倍数' },
-  sessions:[
-    { magic:'H-04',
-      drills:[{t:'ML10',lv:2,n:6},{t:'DC1',lv:2,n:4},{t:'DC2',lv:1,n:4},{t:'ML11',lv:3,n:4}] },
-    { magic:'H-04:deepen',
-      drills:[{t:'DV7',lv:1,n:6},{t:'DV7',lv:2,n:4},{t:'ML10',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DV7',lv:3,n:6},{t:'ML10',lv:3,n:4},{t:'ML11',lv:3,n:4},{t:'DC3',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'DV7',lv:1,n:6},{t:'DV7',lv:2,n:4},{t:'DV7',lv:3,n:4},{t:'ML10',lv:2,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H5:{
-  tier:'challenge', order:5,
-  title:{ ko:'이분모 분수 덧뺄셈', en:'Unlike Denominators ±', zh:'异分母分数加减' },
-  sessions:[
-    { magic:'H-05',
-      drills:[{t:'DV7',lv:3,n:6},{t:'MX4',lv:1,n:4},{t:'ML10',lv:3,n:4}] },
-    { magic:'H-05:deepen',
-      drills:[{t:'FR4',lv:1,n:6},{t:'FR5',lv:1,n:6},{t:'DV7',lv:3,n:4}] },
-    { magic:null,
-      drills:[{t:'FR4',lv:2,n:6},{t:'FR5',lv:1,n:6},{t:'MX4',lv:2,n:4},{t:'DV7',lv:3,n:4}] },
-    { test:true,
-      pool:[{t:'FR4',lv:1,n:6},{t:'FR4',lv:2,n:4},{t:'FR5',lv:1,n:6},{t:'DV7',lv:3,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H6:{
-  tier:'challenge', order:6,
-  title:{ ko:'분수 곱셈과 거듭제곱', en:'Fraction Multiplication & Powers', zh:'分数乘法与乘方' },
-  sessions:[
-    { magic:'H-06',
-      drills:[{t:'FR4',lv:2,n:6},{t:'FR5',lv:1,n:6},{t:'ML10',lv:3,n:4}] },
-    { magic:'H-06:deepen',
-      drills:[{t:'FR6',lv:1,n:6},{t:'ML11',lv:2,n:4},{t:'FR4',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'FR6',lv:2,n:6},{t:'ML11',lv:3,n:4},{t:'FR5',lv:1,n:4},{t:'ML10',lv:3,n:4}] },
-    { test:true,
-      pool:[{t:'FR6',lv:1,n:6},{t:'FR6',lv:2,n:4},{t:'ML11',lv:2,n:4},{t:'FR4',lv:2,n:4},{t:'FR5',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H7:{
-  tier:'challenge', order:7,
-  title:{ ko:'분수 나눗셈과 분해 기법', en:'Fraction Division', zh:'分数除法' },
-  sessions:[
-    { magic:'H-07',
-      drills:[{t:'FR6',lv:2,n:6},{t:'ML11',lv:3,n:4},{t:'ML10',lv:3,n:4}] },
-    { magic:'H-07:deepen',
-      drills:[{t:'FR7',lv:1,n:6},{t:'FR6',lv:2,n:4},{t:'ML11',lv:3,n:4}] },
-    { magic:null,
-      drills:[{t:'FR7',lv:1,n:8},{t:'FR6',lv:2,n:4},{t:'ML10',lv:3,n:4},{t:'ML11',lv:3,n:4}] },
-    { test:true,
-      pool:[{t:'FR7',lv:1,n:10},{t:'FR6',lv:2,n:6},{t:'ML11',lv:3,n:4},{t:'ML10',lv:3,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H8:{
-  tier:'challenge', order:8,
-  title:{ ko:'수열의 합과 비와 비율', en:'Series Sums & Ratios', zh:'数列求和与比例' },
-  sessions:[
-    { magic:'H-08',
-      drills:[{t:'FR7',lv:1,n:6},{t:'FR8',lv:1,n:4},{t:'ML11',lv:3,n:4}] },
-    { magic:'H-08:deepen',
-      drills:[{t:'MX2',lv:1,n:6},{t:'MX3',lv:1,n:6},{t:'FR7',lv:1,n:4}] },
-    { magic:null,
-      drills:[{t:'MX2',lv:2,n:6},{t:'MX3',lv:2,n:6},{t:'FR8',lv:1,n:4},{t:'FR7',lv:1,n:4}] },
-    { test:true,
-      pool:[{t:'MX2',lv:1,n:6},{t:'MX2',lv:2,n:4},{t:'MX3',lv:1,n:6},{t:'MX3',lv:2,n:4},{t:'FR7',lv:1,n:4}],
-      passRate:0.8 }
-  ]
-},
-
-H9:{
-  tier:'challenge', order:9,
-  title:{ ko:'소인수분해와 총정리', en:'Prime Factorization & Final Review', zh:'质因数分解与综合总结' },
-  sessions:[
-    { magic:'H-09',
-      drills:[{t:'MX3',lv:2,n:6},{t:'MX2',lv:2,n:4},{t:'FR7',lv:1,n:4}] },
-    { magic:'H-09:deepen',
-      drills:[{t:'DV8',lv:1,n:4},{t:'DV8',lv:2,n:4},{t:'MX5',lv:1,n:4},{t:'MX3',lv:2,n:4}] },
-    { magic:null,
-      drills:[{t:'DV8',lv:3,n:4},{t:'MX5',lv:1,n:6},{t:'MX2',lv:2,n:4},{t:'MX3',lv:2,n:4}] },
-    { test:true,
-      pool:[{t:'DV8',lv:2,n:4},{t:'DV8',lv:3,n:4},{t:'MX5',lv:1,n:6},{t:'MX3',lv:2,n:4},{t:'MX2',lv:2,n:4}],
-      passRate:0.8 }
-  ]
+  return OUT;
 }
 
-}; // end NM_COURSES
+window.NM_COURSE_SPEC = COURSE_SPEC;   // 검증 하네스·향후 편집용 원본 노출
+window.NM_COURSES = buildCourses(window.NM_THREADS);
 
-if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_COURSES;
+if(typeof module!=='undefined'&&module.exports)module.exports={COURSE_SPEC,buildCourses,NM_COURSES:window.NM_COURSES};
 })();

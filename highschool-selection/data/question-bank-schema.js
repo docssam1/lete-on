@@ -10,6 +10,38 @@
       common1: ["다항식", "방정식과 부등식", "경우의 수", "행렬"],
       common2: ["도형의 방정식", "집합과 명제", "함수와 그래프"]
     },
+    sharedRegistry: {
+      identityPolicy: "한 문항은 하나의 ID로 관리하고 학원별 시험지에 복제하지 않음",
+      consumers: ["SH", "DP", "WM", "ED", "DG", "SM"],
+      sourcePriorities: [
+        {
+          id: "hwangso-middle-textbooks",
+          label: "황소 중등 교재",
+          priorityFor: ["SH"],
+          reusableFor: ["DP", "WM", "ED", "DG", "SM"],
+          status: "private-source-indexing",
+          rule: "황소 고등 선발의 중등 누적 유형을 우선 대조하고 다른 시험은 범위·난도·표기 호환성을 다시 검사"
+        },
+        {
+          id: "wm-middle21-private-pools",
+          label: "원수학 중2-1 입반 후보 풀",
+          priorityFor: ["WM"],
+          reusableFor: ["SH", "DP", "ED"],
+          status: "private-candidate-locked",
+          sourcePoolIds: ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"],
+          rule: "중1-1 대수와 중1-2 기하만 사용하고 통계·학년 밖 기호·구교육과정 표현을 제외한 뒤 원문 대조와 정답 검산을 통과한 문항만 승인"
+        }
+      ],
+      compatibilityChecks: [
+        "2022 개정 교육과정 범위 일치",
+        "학년·대단원·소단원·세부유형 일치",
+        "핵심 조건과 풀이 구조 일치",
+        "시험별 난도·배점·문항 위치 적합",
+        "구교육과정 기호·용어·범위 제거 또는 현행화",
+        "정답·그림·수식 감사와 사용자 승인"
+      ],
+      perExamOverrides: ["배점", "문항 순서", "시험시간", "난도 곡선", "평가축", "커트라인·과락"]
+    },
     practice: {
       stages: [
         { id: "original", label: "본시험", description: "승인된 원본으로 현재 위치를 확인" },
@@ -34,12 +66,12 @@
     generationKinds: ["parameterized", "bespoke", "figure_only"],
     difficultyBands: ["lowered", "standard", "raised"],
     modes: [
-      { id: "SH", label: "SH 모드", rule: "고등과정 선발·중등 누적 심화" },
-      { id: "DP", label: "DP 모드", rule: "중1 입학 선수 과정과 공통수학 입반을 시험별 분리" },
-      { id: "WM", label: "WM 모드", rule: "기본/실력 승급형·전범위 누적" },
-      { id: "ED", label: "ED 모드", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
-      { id: "DG", label: "DG 모드", rule: "이차함수-부등식 연결·심화 수준" },
-      { id: "SM", label: "SM 모드", rule: "추천 샘플의 범위·난도 구조" }
+      { id: "SH", label: "황소 고등형", rule: "고등과정 선발·중등 누적 심화" },
+      { id: "DP", label: "돌파형", rule: "중1 입학 선수 과정과 공통수학 입반을 시험별 분리" },
+      { id: "WM", label: "원수학형", rule: "기본/실력 승급형·전범위 누적" },
+      { id: "ED", label: "이든형", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
+      { id: "DG", label: "깊생형", rule: "이차함수-부등식 연결·심화 수준" },
+      { id: "SM", label: "생수형", rule: "추천 샘플의 범위·난도 구조" }
     ],
     // The public bank stores a *blueprint*, not originals or answer keys.
     // A profile gives the planner its scope, report axes and type priorities.
@@ -78,7 +110,7 @@
             label: "중2-2 전 과정까지 편입 1차",
             difficultyPlan: "기준 우선 · 올림 유형으로 변별"
           },
-          { id: "common1-entry", scopeKey: "common-math-1", state: "audited-revision", label: "공통수학1 입학", difficultyPlan: "원본 회차의 난도 배열 유지" },
+          { id: "common1-entry", scopeKey: "common-math-1", state: "audited-revision", label: "공통수학1 입학", recommendedExamId: "dp-common1-entry-202405", difficultyPlan: "원본 회차의 난도 배열 유지" },
           { id: "director-transfer", scopeKey: "target-class-confirmation", state: "observed", label: "원장반·상위 편입", difficultyPlan: "올림 우선 · 조건 결합·그래프·경계 전수 확인 강화" }
         ],
         reportAxes: ["문항 O/X", "과정", "단원", "세부유형", "난이도", "취약 우선순위"],
@@ -88,10 +120,20 @@
       {
         id: "WM",
         reportModel: "level-placement",
-        targets: [{ id: "common-entry", scopeKey: "middle-algebra-geometry", state: "structure-conflict", label: "공통수학 입학·승급" }],
+        targets: [
+          {
+            id: "middle21-basic-entry",
+            scopeKey: "middle1-algebra-geometry-no-statistics",
+            state: "official-structure-verified",
+            label: "중2-1 기본반 신입",
+            recommendedExamId: "wm-middle21-basic-entry-r01",
+            difficultyPlan: "기준 심화 중심 · 꼬리문항은 조건 결합과 시간 압박을 강화"
+          },
+          { id: "common-entry", scopeKey: "middle-algebra-geometry", state: "partial-audited", label: "공통수학1 기본반 입학" }
+        ],
         reportAxes: ["문항 O/X", "대수·기하 영역", "단원", "세부유형", "난이도", "취약 우선순위"],
-        typeEmphasis: ["대수", "기하", "누적 복습"],
-        scorePolicy: "규격과 원본이 일치한 회차만 영역 최소 기준을 사용"
+        typeEmphasis: ["대수", "기하", "누적 복습", "정확한 개념 적용", "연결 소문항"],
+        scorePolicy: "과정별 규격과 원본이 일치한 회차만 영역 최소 기준을 사용하며, 과거 50문항 컷을 현재 40문항 시험에 환산하지 않음"
       },
       {
         id: "ED",
