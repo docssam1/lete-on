@@ -44,7 +44,7 @@ test("desktop interactions preserve grade role and language contracts", async fu
   assert.equal(await page.locator("#resource-list li").count(), 6);
 
   await page.locator('[data-grade="8"]').click();
-  assert.equal(await page.locator(".program-card").count(), 6);
+  assert.equal(await page.locator(".program-card").count(), 5);
   assert.equal(await page.locator(".domain-item").count(), 5);
   assert.equal(await page.locator("#domain-list").getByText("함수", { exact: true }).count(), 1);
 

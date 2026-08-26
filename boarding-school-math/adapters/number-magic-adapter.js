@@ -10,6 +10,10 @@
 
   if (!contract) throw new Error("GFIELDMathContract is required");
 
+  const BOARDING_TIERS = Object.freeze([
+    "level1", "level2", "level3", "challenge", "middle1", "middle2", "middle3"
+  ]);
+
   function localized(source, field) {
     if (!source || !source.ko || !source.en) throw new Error(`${field} must include ko and en`);
     return Object.freeze({ ko: source.ko, en: source.en, "zh-Hans": source.zh || source["zh-Hans"] });
@@ -28,9 +32,11 @@
     if (new Set(levelIds).size !== levelIds.length) throw new Error(`${id} has duplicate level ids`);
   }
 
-  function buildCourseMemberships(courseSpec) {
+  function buildCourseMemberships(courseSpec, allowedTiers) {
     const memberships = new Map();
+    const tierFilter = allowedTiers ? new Set(allowedTiers) : null;
     (courseSpec || []).forEach(function (course) {
+      if (tierFilter && !tierFilter.has(course.tier)) return;
       (course.drills || []).forEach(function (threadId) {
         if (!memberships.has(threadId)) memberships.set(threadId, []);
         memberships.get(threadId).push(`C${course.id}`);
@@ -52,13 +58,20 @@
     if (!threads || typeof threads !== "object") throw new Error("Number Magic threads are required");
     const ids = Object.keys(threads);
     const idSet = new Set(ids);
-    const memberships = buildCourseMemberships(courseSpec);
+    const allMemberships = buildCourseMemberships(courseSpec);
+    const memberships = buildCourseMemberships(courseSpec, BOARDING_TIERS);
+    const scopedIds = ids.filter(function (id) {
+      return memberships.has(id) || !allMemberships.has(id);
+    });
     const threadRows = [];
     const contentRecords = [];
 
     ids.forEach(function (id) {
+      validateLegacyThread(id, threads[id], idSet);
+    });
+
+    scopedIds.forEach(function (id) {
       const thread = threads[id];
-      validateLegacyThread(id, thread, idSet);
       const mappingState = thread.unit ? "unit-linked" : thread.concept ? "concept-only" : "needs-unit-mapping";
       const unit = thread.unit || "legacy-thread-registry";
       const title = localized(thread.name, `${id}.name`);
@@ -115,11 +128,12 @@
         unitLinked: threadRows.filter(function (row) { return row.mappingState === "unit-linked"; }).length,
         conceptOnly: threadRows.filter(function (row) { return row.mappingState === "concept-only"; }).length,
         needsUnitMapping: threadRows.filter(function (row) { return row.mappingState === "needs-unit-mapping"; }).length,
+        excludedOutOfScope: ids.length - scopedIds.length,
         standardsPending: threadRows.length,
         publishable: contentRecords.filter(contract.canPublishContent).length
       })
     });
   }
 
-  return Object.freeze({ adapt, buildCourseMemberships });
+  return Object.freeze({ adapt, buildCourseMemberships, BOARDING_TIERS });
 });

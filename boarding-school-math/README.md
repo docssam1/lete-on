@@ -1,6 +1,6 @@
 # GFIELD Boarding School Math
 
-This directory is the shared program layer for the existing GFIELD math applications. It does not replace `number_magic`, `hselementary`, `fields-classic`, `hsmiddle`, or `highschool-selection`. It gives them one curriculum, pathway, audience, localization, promotion, and source-rights contract.
+This directory is the shared K–8 boarding-school program layer for the existing GFIELD elementary and middle-school math applications. It does not replace `number_magic`, `hselementary`, `fields-classic`, or `hsmiddle`. Algebra2 remains a separate in-scope workstream and is not inferred from unrelated high-school course labels.
 
 ## Architecture decision
 
@@ -22,7 +22,7 @@ Every content record also declares:
 - Singapore mastery/model-method enrichment;
 - Math Kangaroo grades 1–8;
 - SASMO K2–grade 8;
-- AMC 8 preparation, with AMC 10/12 shown only as later pathways;
+- AMC 8 preparation;
 - school-configured promotion decisions using diagnostic, mastery, retention, and teacher-review evidence.
 
 The Common Core standards are not treated as a national promotion cut score. Each adopting school must version and own its thresholds.
@@ -41,7 +41,7 @@ npm run audit:public
 
 The first contract tests cover K–8 scope, student/teacher separation, Korean/English labels, promotion-policy honesty, AMC eligibility labeling, and the public source-rights gate.
 
-The Number Magic adapter imports all legacy threads and levels without changing their generator keys or prerequisites. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
+The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. High-school, generic algebra, and calculus course tiers are excluded rather than guessed to be Algebra2. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
 
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.
 

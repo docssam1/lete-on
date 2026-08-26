@@ -64,24 +64,6 @@
         preparationBandNotOfficial: true,
         sources: [source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/")],
         status: { state: "active", reason: "Eligibility is official; grades 6–8 are GFIELD's preparation band, not an MAA placement rule." }
-      },
-      {
-        id: "amc-10-bridge",
-        title: { ko: "AMC 10 브리지", en: "AMC 10 Bridge", "zh-Hans": "AMC 10 衔接" },
-        pathway: "bridge",
-        grades: [8, 9, 10],
-        officialEligibility: "Grade 10 or below and under 17.5 years of age on competition day",
-        sources: [source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/")],
-        status: { state: "planned", reason: "Only grade 8 bridge metadata is in the current K–8 delivery scope." }
-      },
-      {
-        id: "amc-12-future",
-        title: { ko: "AMC 12 후속 경로", en: "AMC 12 Future Pathway", "zh-Hans": "AMC 12 后续路径" },
-        pathway: "bridge",
-        grades: [11, 12],
-        officialEligibility: "Grade 12 or below and under 19.5 years of age on competition day",
-        sources: [source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/")],
-        status: { state: "planned", reason: "Visible as a long-term destination but outside the current elementary-middle implementation scope." }
       }
     ]),
     promotionPolicies: Object.freeze([

@@ -41,6 +41,17 @@ test("AMC official eligibility and GFIELD prep band are distinguished", function
   assert.deepEqual(amc8.grades, [6, 7, 8]);
 });
 
+test("the boarding catalog contains no post-grade-8 competition pathway", function () {
+  assert.equal(catalog.programs.some(function (program) {
+    return program.id === "amc-10-bridge" || program.id === "amc-12-future";
+  }), false);
+  catalog.programs.forEach(function (program) {
+    program.grades.forEach(function (grade) {
+      if (grade !== "K") assert.ok(grade <= 8, `${program.id} must stay within K-8`);
+    });
+  });
+});
+
 test("unlicensed or unreviewed source content cannot publish", function () {
   const base = {
     course: "amc-8",
