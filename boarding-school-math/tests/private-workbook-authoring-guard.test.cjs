@@ -47,6 +47,65 @@ function localText(ko, en, zhHans) {
   return { ko, en, "zh-Hans": zhHans };
 }
 
+function independentlyReducedSignedRational(numerator, denominator) {
+  assert(Number.isInteger(numerator) && Number.isInteger(denominator) && denominator > 0);
+  if (numerator === 0) return "0";
+  const sign = numerator < 0 ? "-" : "";
+  const magnitude = Math.abs(numerator);
+  let divisor = 1;
+  for (let candidate = 2; candidate <= Math.min(magnitude, denominator); candidate += 1) {
+    if (magnitude % candidate === 0 && denominator % candidate === 0) divisor = candidate;
+  }
+  const reducedNumerator = magnitude / divisor;
+  const reducedDenominator = denominator / divisor;
+  return `${sign}${reducedDenominator === 1 ? reducedNumerator : `${reducedNumerator}/${reducedDenominator}`}`;
+}
+
+function independentBinaryGcd(first, second) {
+  let left = first < 0n ? -first : first;
+  let right = second < 0n ? -second : second;
+  if (left === 0n) return right;
+  if (right === 0n) return left;
+  let sharedPowersOfTwo = 0n;
+  while (((left | right) & 1n) === 0n) {
+    left >>= 1n;
+    right >>= 1n;
+    sharedPowersOfTwo += 1n;
+  }
+  while ((left & 1n) === 0n) left >>= 1n;
+  do {
+    while ((right & 1n) === 0n) right >>= 1n;
+    if (left > right) [left, right] = [right, left];
+    right -= left;
+  } while (right !== 0n);
+  return left << sharedPowersOfTwo;
+}
+
+function independentlyReducedBigIntRational(numerator, denominator) {
+  assert(denominator > 0n);
+  if (numerator === 0n) return "0";
+  const negative = numerator < 0n;
+  const magnitude = negative ? -numerator : numerator;
+  const divisor = independentBinaryGcd(magnitude, denominator);
+  const reducedNumerator = magnitude / divisor;
+  const reducedDenominator = denominator / divisor;
+  const value = reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
+  return negative ? `-${value}` : value;
+}
+
+function independentlyCompareByCommonDenominator(leftNumerator, leftDenominator, rightNumerator, rightDenominator) {
+  const commonDenominator = (leftDenominator / independentBinaryGcd(leftDenominator, rightDenominator)) * rightDenominator;
+  const leftScaled = leftNumerator * (commonDenominator / leftDenominator);
+  const rightScaled = rightNumerator * (commonDenominator / rightDenominator);
+  return leftScaled < rightScaled ? -1 : leftScaled > rightScaled ? 1 : 0;
+}
+
+function independentlyMeasuredDistance(leftNumerator, leftDenominator, rightNumerator, rightDenominator) {
+  const commonDenominator = (leftDenominator / independentBinaryGcd(leftDenominator, rightDenominator)) * rightDenominator;
+  const difference = leftNumerator * (commonDenominator / leftDenominator) - rightNumerator * (commonDenominator / rightDenominator);
+  return independentlyReducedBigIntRational(difference < 0n ? -difference : difference, commonDenominator);
+}
+
 function localBinding(resource) {
   return {
     resourcePlanItemId: resource.resourcePlanItemId,
@@ -304,7 +363,15 @@ test("student answer disclosures fail closed without treating a condition number
     ["值7", "7"],
     ["Final value7", "7"],
     ["value_7", "7"],
-    ["7_items", "7"]
+    ["7_items", "7"],
+    ["−3⁄4", "-3/4"],
+    ["- 3 / 4", "-3/4"],
+    ["＋3／4", "3/4"],
+    ["−0", "0"],
+    ["‒3/4", "-3/4"],
+    ["–3/4", "-3/4"],
+    ["➖3/4", "-3/4"],
+    ["-3⧸4", "-3/4"]
   ];
   blocked.forEach(function (entry) {
     assert.throws(function () {
@@ -316,7 +383,12 @@ test("student answer disclosures fail closed without treating a condition number
     ["The condition gives 7.5 as an input value.", "7"],
     ["The condition gives 70 as an input value.", "7"],
     ["The condition gives 7:11 as an input ratio.", "7"],
-    ["The condition gives 7,000 as an input quantity.", "7"]
+    ["The condition gives 7,000 as an input quantity.", "7"],
+    ["The condition gives −3⁄4 as an input value.", "3/4"],
+    ["The condition gives -3/40 as an input value.", "3/4"],
+    ["The condition gives ＋30 as an input value.", "3"],
+    ["The condition gives −0.5 as an input value.", "0"],
+    ["The condition gives ＋3／40 as an input value.", "3/4"]
   ].forEach(function (entry) {
     assert.doesNotThrow(function () {
       validator.assertStudentContentDoesNotRevealAnswer(entry[0], entry[1], "synthetic-component");
@@ -340,6 +412,82 @@ test("full workbook preflight blocks bare expected-response disclosure in every 
       validator.validatePack(pack, "synthetic-workbook.json");
     }, /STUDENT_ANSWER_LEAK/);
   });
+});
+
+test("signed-rational answer references stay numeric-exact and block Unicode-equivalent leaks", function () {
+  const pack = syntheticWorkbookPack();
+  const responseComponent = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  const answerReference = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (reference) {
+    return reference.componentId === responseComponent.componentId;
+  });
+  answerReference.expectedResponse = "-3/4";
+  answerReference.arithmeticCheck = {
+    kind: "signed-rational-operation", operation: "identity", numerator: -6, denominator: 8
+  };
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  });
+  responseComponent.contentByLocale.en = "−3⁄4";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /STUDENT_ANSWER_LEAK/);
+  responseComponent.contentByLocale.en = "Find the number.";
+  responseComponent.responseMode = "ratio-canonical";
+  answerReference.responseMode = "ratio-canonical";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /ANSWER_REFERENCE_MODE_MISMATCH/);
+});
+
+test("signed-rational comparison references accept only an undisclosed strict comparison symbol", function () {
+  const pack = syntheticWorkbookPack();
+  const responseComponent = pack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  const answerReference = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (reference) {
+    return reference.componentId === responseComponent.componentId;
+  });
+  responseComponent.responseMode = "comparison-symbol-exact";
+  responseComponent.contentByLocale = localText("두 수 사이의 빈칸에 알맞은 기호를 쓰세요.", "Write the correct sign in the blank between the two values.", "在两个数之间的空格里写出正确的符号。");
+  answerReference.responseMode = "comparison-symbol-exact";
+  answerReference.expectedResponse = "<";
+  answerReference.arithmeticCheck = {
+    kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: -3, leftDenominator: 4, rightNumerator: -1, rightDenominator: 2
+  };
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  });
+  responseComponent.contentByLocale.en = "-3/4<-1/2";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /STUDENT_ANSWER_LEAK/);
+  responseComponent.contentByLocale.en = "-3/4>-1/2";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /STUDENT_ANSWER_LEAK/);
+  ["≪", "≺", "⋖", "⩽", "⪡", "⧀", "⧁", "⊰", "⊱", "⩹", "⩻"].forEach(function (glyph) {
+    responseComponent.contentByLocale.en = `-3/4${glyph}-1/2`;
+    assert.throws(function () {
+      validator.validatePack(pack, "synthetic-workbook.json");
+    }, /STUDENT_ANSWER_LEAK/);
+  });
+  responseComponent.contentByLocale.en = "-3/4＜-1/2";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /STUDENT_ANSWER_LEAK/);
+  responseComponent.contentByLocale.en = "Write the correct sign in the blank between the two values.";
+  responseComponent.responseMode = "numeric-exact";
+  answerReference.responseMode = "numeric-exact";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /ANSWER_REFERENCE_MODE_MISMATCH/);
+  responseComponent.responseMode = "ratio-canonical";
+  answerReference.responseMode = "ratio-canonical";
+  assert.throws(function () {
+    validator.validatePack(pack, "synthetic-workbook.json");
+  }, /ANSWER_REFERENCE_MODE_MISMATCH/);
 });
 
 test("response-bearing student content rejects unparsed TeX commands", function () {
@@ -591,6 +739,166 @@ test("fraction-division checks reduce rational quotients exactly without floatin
       divisorDenominator: 4,
       answer: "7"
     }, "synthetic-extra-key");
+  }, /ARITHMETIC_CHECK_INVALID/);
+});
+
+test("Grade 6 signed-rational operations use exact reduction, order, and distance", function () {
+  [
+    [{ kind: "signed-rational-operation", operation: "identity", numerator: -6, denominator: 8 }, "-3/4"],
+    [{ kind: "signed-rational-operation", operation: "opposite", numerator: -3, denominator: 4 }, "3/4"],
+    [{ kind: "signed-rational-operation", operation: "opposite", numerator: 0, denominator: 11 }, "0"],
+    [{ kind: "signed-rational-operation", operation: "absolute-value", numerator: -10, denominator: 15 }, "2/3"],
+    [{ kind: "signed-rational-operation", operation: "minimum", leftNumerator: -1, leftDenominator: 2, rightNumerator: -2, rightDenominator: 3 }, "-2/3"],
+    [{ kind: "signed-rational-operation", operation: "maximum", leftNumerator: -1, leftDenominator: 2, rightNumerator: -2, rightDenominator: 3 }, "-1/2"],
+    [{ kind: "signed-rational-operation", operation: "distance", leftNumerator: -3, leftDenominator: 4, rightNumerator: 0, rightDenominator: 4 }, "3/4"],
+    [{ kind: "signed-rational-operation", operation: "distance", leftNumerator: 0, leftDenominator: 3, rightNumerator: -1, rightDenominator: 6 }, "1/6"],
+    [{ kind: "signed-rational-operation", operation: "axis-distance", axis: "horizontal", firstXNumerator: -3, firstXDenominator: 4, firstYNumerator: 1, firstYDenominator: 2, secondXNumerator: 5, secondXDenominator: 4, secondYNumerator: 2, secondYDenominator: 4 }, "2"],
+    [{ kind: "signed-rational-operation", operation: "axis-distance", axis: "vertical", firstXNumerator: -2, firstXDenominator: 3, firstYNumerator: -1, firstYDenominator: 6, secondXNumerator: -4, secondXDenominator: 6, secondYNumerator: 5, secondYDenominator: 6 }, "1"]
+  ].forEach(function (entry) {
+    assert.equal(validator.canonicalAnswer(entry[0], "synthetic-ns-c"), entry[1]);
+  });
+
+  const numerators = [-23, -11, -5, -1, 0, 1, 4, 7, 19];
+  const denominators = [1, 2, 3, 4, 5, 7, 8];
+  numerators.forEach(function (numerator) {
+    denominators.forEach(function (denominator) {
+      assert.equal(validator.canonicalAnswer({
+        kind: "signed-rational-operation", operation: "identity", numerator, denominator
+      }, "synthetic-ns-c-identity"), independentlyReducedSignedRational(numerator, denominator));
+      assert.equal(validator.canonicalAnswer({
+        kind: "signed-rational-operation", operation: "opposite", numerator, denominator
+      }, "synthetic-ns-c-opposite"), independentlyReducedSignedRational(-numerator, denominator));
+      assert.equal(validator.canonicalAnswer({
+        kind: "signed-rational-operation", operation: "absolute-value", numerator, denominator
+      }, "synthetic-ns-c-absolute"), independentlyReducedSignedRational(Math.abs(numerator), denominator));
+      numerators.forEach(function (rightNumerator) {
+        denominators.forEach(function (rightDenominator) {
+          const comparison = numerator * rightDenominator - rightNumerator * denominator;
+          const minimumNumerator = comparison <= 0 ? numerator : rightNumerator;
+          const minimumDenominator = comparison <= 0 ? denominator : rightDenominator;
+          const maximumNumerator = comparison >= 0 ? numerator : rightNumerator;
+          const maximumDenominator = comparison >= 0 ? denominator : rightDenominator;
+          assert.equal(validator.canonicalAnswer({
+            kind: "signed-rational-operation", operation: "minimum", leftNumerator: numerator, leftDenominator: denominator, rightNumerator, rightDenominator
+          }, "synthetic-ns-c-minimum"), independentlyReducedSignedRational(minimumNumerator, minimumDenominator));
+          assert.equal(validator.canonicalAnswer({
+            kind: "signed-rational-operation", operation: "maximum", leftNumerator: numerator, leftDenominator: denominator, rightNumerator, rightDenominator
+          }, "synthetic-ns-c-maximum"), independentlyReducedSignedRational(maximumNumerator, maximumDenominator));
+          assert.equal(validator.canonicalAnswer({
+            kind: "signed-rational-operation", operation: "axis-distance", axis: "horizontal",
+            firstXNumerator: numerator, firstXDenominator: denominator, firstYNumerator: 0, firstYDenominator: 1,
+            secondXNumerator: rightNumerator, secondXDenominator: rightDenominator, secondYNumerator: 0, secondYDenominator: 1
+          }, "synthetic-ns-c-axis-distance"), independentlyReducedSignedRational(Math.abs(numerator * rightDenominator - rightNumerator * denominator), denominator * rightDenominator));
+        });
+      });
+    });
+  });
+});
+
+test("Grade 6 signed-rational comparisons use strict value or absolute-magnitude order", function () {
+  [
+    [{ kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: -2, leftDenominator: 3, rightNumerator: -1, rightDenominator: 2 }, "<"],
+    [{ kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: 1, leftDenominator: 4, rightNumerator: -1, rightDenominator: 4 }, ">"],
+    [{ kind: "signed-rational-comparison", basis: "absolute-magnitude", leftNumerator: -1, leftDenominator: 2, rightNumerator: 3, rightDenominator: 4 }, "<"],
+    [{ kind: "signed-rational-comparison", basis: "absolute-magnitude", leftNumerator: -5, leftDenominator: 6, rightNumerator: 2, rightDenominator: 3 }, ">"]
+  ].forEach(function (entry) {
+    assert.equal(validator.canonicalAnswer(entry[0], "synthetic-ns-c-comparison"), entry[1]);
+  });
+  [
+    { kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: -1, leftDenominator: 2, rightNumerator: -2, rightDenominator: 4 },
+    { kind: "signed-rational-comparison", basis: "absolute-magnitude", leftNumerator: -1, leftDenominator: 2, rightNumerator: 2, rightDenominator: 4 },
+    { kind: "signed-rational-comparison", basis: "ordinal", leftNumerator: -1, leftDenominator: 2, rightNumerator: 1, rightDenominator: 2 },
+    { kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: -1, leftDenominator: 2, rightNumerator: 1, rightDenominator: 2, answer: "<" }
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalAnswer(check, "synthetic-ns-c-comparison-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+});
+
+test("Grade 6 signed-rational minimum, maximum, and distance retain an independent BigInt boundary check", function () {
+  const numerators = [-999999937n, -999983n, -123456789n, -1n, 0n, 1n, 123456789n, 999983n, 999999893n];
+  const denominators = [1n, 2n, 99991n, 999983n, 999999929n];
+  const values = numerators.flatMap(function (numerator) {
+    return denominators.map(function (denominator) { return { numerator, denominator }; });
+  });
+  values.forEach(function (left) {
+    values.forEach(function (right) {
+      const comparison = independentlyCompareByCommonDenominator(left.numerator, left.denominator, right.numerator, right.denominator);
+      const lower = comparison <= 0 ? left : right;
+      const upper = comparison >= 0 ? left : right;
+      const checkBase = {
+        kind: "signed-rational-operation",
+        leftNumerator: Number(left.numerator),
+        leftDenominator: Number(left.denominator),
+        rightNumerator: Number(right.numerator),
+        rightDenominator: Number(right.denominator)
+      };
+      assert.equal(validator.canonicalAnswer(Object.assign({}, checkBase, { operation: "minimum" }), "synthetic-ns-c-boundary-minimum"), independentlyReducedBigIntRational(lower.numerator, lower.denominator));
+      assert.equal(validator.canonicalAnswer(Object.assign({}, checkBase, { operation: "maximum" }), "synthetic-ns-c-boundary-maximum"), independentlyReducedBigIntRational(upper.numerator, upper.denominator));
+      if (comparison !== 0) {
+        assert.equal(validator.canonicalAnswer({
+          kind: "signed-rational-comparison", basis: "signed-value",
+          leftNumerator: Number(left.numerator), leftDenominator: Number(left.denominator),
+          rightNumerator: Number(right.numerator), rightDenominator: Number(right.denominator)
+        }, "synthetic-ns-c-boundary-signed-comparison"), comparison < 0 ? "<" : ">");
+      }
+      const leftMagnitude = left.numerator < 0n ? -left.numerator : left.numerator;
+      const rightMagnitude = right.numerator < 0n ? -right.numerator : right.numerator;
+      const magnitudeComparison = independentlyCompareByCommonDenominator(leftMagnitude, left.denominator, rightMagnitude, right.denominator);
+      if (magnitudeComparison !== 0) {
+        assert.equal(validator.canonicalAnswer({
+          kind: "signed-rational-comparison", basis: "absolute-magnitude",
+          leftNumerator: Number(left.numerator), leftDenominator: Number(left.denominator),
+          rightNumerator: Number(right.numerator), rightDenominator: Number(right.denominator)
+        }, "synthetic-ns-c-boundary-magnitude-comparison"), magnitudeComparison < 0 ? "<" : ">");
+      }
+      assert.equal(validator.canonicalAnswer({
+        kind: "signed-rational-operation", operation: "axis-distance", axis: "horizontal",
+        firstXNumerator: Number(left.numerator), firstXDenominator: Number(left.denominator), firstYNumerator: 0, firstYDenominator: 1,
+        secondXNumerator: Number(right.numerator), secondXDenominator: Number(right.denominator), secondYNumerator: 0, secondYDenominator: 1
+      }, "synthetic-ns-c-boundary-axis-distance"), independentlyMeasuredDistance(left.numerator, left.denominator, right.numerator, right.denominator));
+    });
+    assert.equal(validator.canonicalAnswer({
+      kind: "signed-rational-operation", operation: "distance", leftNumerator: Number(left.numerator), leftDenominator: Number(left.denominator), rightNumerator: 0, rightDenominator: 1
+    }, "synthetic-ns-c-boundary-zero-distance"), independentlyMeasuredDistance(left.numerator, left.denominator, 0n, 1n));
+  });
+});
+
+test("Grade 6 signed-rational operations reject unsafe or out-of-contract input", function () {
+  [
+    { kind: "signed-rational-operation", operation: "identity", numerator: -1.5, denominator: 2 },
+    { kind: "signed-rational-operation", operation: "identity", numerator: 1, denominator: 0 },
+    { kind: "signed-rational-operation", operation: "identity", numerator: 1, denominator: -2 },
+    { kind: "signed-rational-operation", operation: "opposite", numerator: 1000000001, denominator: 1 },
+    { kind: "signed-rational-operation", operation: "absolute-value", numerator: -1, denominator: 2, answer: "1/2" },
+    { kind: "signed-rational-operation", operation: "minimum", leftNumerator: -1, leftDenominator: 2, rightNumerator: 1, rightDenominator: 0 },
+    { kind: "signed-rational-operation", operation: "minimum", numerator: -1, denominator: 2 },
+    { kind: "signed-rational-operation", operation: "distance", leftNumerator: -1, leftDenominator: 2, rightNumerator: 1, rightDenominator: 2 },
+    { kind: "signed-rational-operation", operation: "axis-distance", axis: "horizontal", firstXNumerator: 0, firstXDenominator: 1, firstYNumerator: 1, firstYDenominator: 2, secondXNumerator: 1, secondXDenominator: 1, secondYNumerator: 2, secondYDenominator: 3 },
+    { kind: "signed-rational-operation", operation: "axis-distance", axis: "vertical", firstXNumerator: 0, firstXDenominator: 1, firstYNumerator: 0, firstYDenominator: 1, secondXNumerator: 1, secondXDenominator: 1, secondYNumerator: 1, secondYDenominator: 1 },
+    { kind: "signed-rational-operation", operation: "axis-distance", axis: "diagonal", firstXNumerator: 0, firstXDenominator: 1, firstYNumerator: 1, firstYDenominator: 1, secondXNumerator: 0, secondXDenominator: 1, secondYNumerator: 2, secondYDenominator: 1 },
+    { kind: "signed-rational-operation", operation: "unknown", numerator: -1, denominator: 2 }
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalAnswer(check, "synthetic-ns-c-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+  const accessor = { kind: "signed-rational-operation", numerator: -1, denominator: 2 };
+  Object.defineProperty(accessor, "operation", {
+    enumerable: true,
+    get: function () { return "identity"; }
+  });
+  assert.throws(function () {
+    validator.canonicalAnswer(accessor, "synthetic-ns-c-accessor");
+  }, /ARITHMETIC_CHECK_INVALID/);
+  const comparisonAccessor = { kind: "signed-rational-comparison", leftNumerator: -1, leftDenominator: 2, rightNumerator: 1, rightDenominator: 2 };
+  Object.defineProperty(comparisonAccessor, "basis", {
+    enumerable: true,
+    get: function () { return "signed-value"; }
+  });
+  assert.throws(function () {
+    validator.canonicalAnswer(comparisonAccessor, "synthetic-ns-c-comparison-accessor");
   }, /ARITHMETIC_CHECK_INVALID/);
 });
 

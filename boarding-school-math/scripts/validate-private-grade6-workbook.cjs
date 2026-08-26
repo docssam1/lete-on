@@ -69,7 +69,7 @@ const LAYOUT_KEYS = new Set([
   "teacherArtifactLayouts"
 ]);
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
-const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact"]);
+const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
 const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|\bans(?:wer)?|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/iu;
 const ANSWER_VALUE_LABEL = /(?:correct\s+answer|\bans(?:wer)?|정답|답|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/giu;
@@ -82,6 +82,7 @@ const SAFE_STUDENT_TEX_COMMANDS = new Set([
   "boxed", "cdot", "displaystyle", "div", "dfrac", "frac", "left", "mathit", "mathbf", "mathrm", "mathsf", "mathtt",
   "operatorname", "overline", "right", "sqrt", "text", "tfrac", "times", "underline"
 ]);
+const SAFE_COMPARISON_PROMPT_MATH_SYMBOLS = new Set(["+", "-", "/", "|"]);
 const RESPONSE_TEXT_LOCALE_PATTERNS = Object.freeze({
   en: /^[\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
   ko: /^[\p{Script=Hangul}\p{Script=Han}\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
@@ -173,9 +174,12 @@ function normalizeForAnswerLeakScan(value) {
     .replace(/\\[a-z]+\*?/giu, " ")
     .replace(/[\\${}]/gu, " ")
     .replace(/[\p{C}\p{M}]/gu, "")
+    .replace(/[\u2010-\u2015\u2212\u2796\uFE58\uFE63\uFF0D]/gu, "-")
+    .replace(/[\u2044\u2215\u29F8\uFF0F]/gu, "/")
     .replace(/\s+/gu, " ")
     .replace(/[\u2236\u22EE\uA789\uFE13\uFE55\uFF1A]/gu, ":")
-    .replace(/\s*:\s*/gu, ":")
+    .replace(/\s*([:/])\s*/gu, "$1")
+    .replace(/([+-])\s*(?=[0-9])/gu, "$1")
     .trim();
 }
 
@@ -273,7 +277,12 @@ function containsStandaloneExpectedResponse(normalizedContent, normalizedRespons
     const afterNeighbor = afterIndex + 1 >= normalizedContent.length ? "" : normalizedContent[afterIndex + 1];
     const joinsNumericTokenBefore = ".,:/".includes(before) && /[0-9]/u.test(beforeNeighbor);
     const joinsNumericTokenAfter = ".,:/".includes(after) && /[0-9]/u.test(afterNeighbor);
-    const embedded = /\p{N}/u.test(before) || /\p{N}/u.test(after) || joinsNumericTokenBefore || joinsNumericTokenAfter;
+    const numericContinuation = /\p{N}/u.test(after) || joinsNumericTokenAfter;
+    const positiveEquivalentPrefix = before === "+";
+    const negativeZeroEquivalentPrefix = before === "-" && normalizedResponse === "0";
+    if ((positiveEquivalentPrefix || negativeZeroEquivalentPrefix) && !numericContinuation) return true;
+    const distinctNegativePrefix = before === "-" && normalizedResponse !== "0";
+    const embedded = /\p{N}/u.test(before) || /\p{N}/u.test(after) || joinsNumericTokenBefore || joinsNumericTokenAfter || distinctNegativePrefix;
     if (!embedded) return true;
     index = normalizedContent.indexOf(normalizedResponse, index + 1);
   }
@@ -287,7 +296,14 @@ function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, refe
   assertResponseStudentTextSyntax(content, locale, reference);
   const normalizedResponse = normalizeForAnswerLeakScan(expectedResponse);
   assert(nonBlankText(normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
-  assert(!containsStandaloneExpectedResponse(normalizedContent, normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
+  if (["<", ">"].includes(normalizedResponse)) {
+    const hasUnsupportedMathSymbol = Array.from(normalizedContent).some(function (symbol) {
+      return /\p{Sm}/u.test(symbol) && !SAFE_COMPARISON_PROMPT_MATH_SYMBOLS.has(symbol);
+    });
+    assert(!hasUnsupportedMathSymbol, "STUDENT_ANSWER_LEAK", reference);
+  } else {
+    assert(!containsStandaloneExpectedResponse(normalizedContent, normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
+  }
   ANSWER_VALUE_LABEL.lastIndex = 0;
   let label;
   while ((label = ANSWER_VALUE_LABEL.exec(normalizedContent))) {
@@ -470,6 +486,10 @@ function nonNegativeInteger(value) {
   return Number.isSafeInteger(value) && value >= 0 && value <= 1000000000;
 }
 
+function signedInteger(value) {
+  return Number.isSafeInteger(value) && Math.abs(value) <= 1000000000;
+}
+
 function greatestCommonDivisor(left, right) {
   let a = Math.abs(left);
   let b = Math.abs(right);
@@ -492,13 +512,105 @@ function greatestCommonDivisorBigInt(left, right) {
   return a;
 }
 
-function canonicalRational(numerator, denominator, reference) {
-  assert(denominator > 0n && numerator >= 0n, "ARITHMETIC_CHECK_INVALID", reference);
+function canonicalSignedRational(numerator, denominator, reference) {
+  assert(denominator > 0n, "ARITHMETIC_CHECK_INVALID", reference);
   if (numerator === 0n) return "0";
-  const divisor = greatestCommonDivisorBigInt(numerator, denominator);
-  const reducedNumerator = numerator / divisor;
+  const negative = numerator < 0n;
+  const absoluteNumerator = negative ? -numerator : numerator;
+  const divisor = greatestCommonDivisorBigInt(absoluteNumerator, denominator);
+  const reducedNumerator = absoluteNumerator / divisor;
   const reducedDenominator = denominator / divisor;
-  return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
+  const magnitude = reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
+  return negative ? `-${magnitude}` : magnitude;
+}
+
+function canonicalRational(numerator, denominator, reference) {
+  assert(numerator >= 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  return canonicalSignedRational(numerator, denominator, reference);
+}
+
+function signedRationalParts(numerator, denominator, reference) {
+  assert(signedInteger(numerator) && positiveInteger(denominator), "ARITHMETIC_CHECK_INVALID", reference);
+  return Object.freeze({ numerator: BigInt(numerator), denominator: BigInt(denominator) });
+}
+
+function compareSignedRationals(left, right) {
+  const difference = left.numerator * right.denominator - right.numerator * left.denominator;
+  return difference < 0n ? -1 : difference > 0n ? 1 : 0;
+}
+
+function canonicalSignedRationalDistance(left, right, reference) {
+  const numerator = left.numerator * right.denominator - right.numerator * left.denominator;
+  const absoluteNumerator = numerator < 0n ? -numerator : numerator;
+  return canonicalSignedRational(absoluteNumerator, left.denominator * right.denominator, reference);
+}
+
+function canonicalSignedRationalOpposite(check, reference) {
+  assertExactDataKeys(check, ["kind", "numerator", "denominator"], "ARITHMETIC_CHECK_INVALID", reference);
+  const value = signedRationalParts(check.numerator, check.denominator, reference);
+  return canonicalSignedRational(-value.numerator, value.denominator, reference);
+}
+
+function canonicalSignedRationalAbsoluteValue(check, reference) {
+  assertExactDataKeys(check, ["kind", "numerator", "denominator"], "ARITHMETIC_CHECK_INVALID", reference);
+  const value = signedRationalParts(check.numerator, check.denominator, reference);
+  return canonicalSignedRational(value.numerator < 0n ? -value.numerator : value.numerator, value.denominator, reference);
+}
+
+function canonicalSignedRationalOperation(check, reference) {
+  const operation = ownDataValue(check, "operation", "ARITHMETIC_CHECK_INVALID", reference);
+  if (["identity", "opposite", "absolute-value"].includes(operation)) {
+    assertExactDataKeys(check, ["kind", "operation", "numerator", "denominator"], "ARITHMETIC_CHECK_INVALID", reference);
+    const value = signedRationalParts(check.numerator, check.denominator, reference);
+    if (operation === "identity") return canonicalSignedRational(value.numerator, value.denominator, reference);
+    if (operation === "opposite") return canonicalSignedRational(-value.numerator, value.denominator, reference);
+    return canonicalSignedRational(value.numerator < 0n ? -value.numerator : value.numerator, value.denominator, reference);
+  }
+  if (operation === "axis-distance") {
+    assertExactDataKeys(check, [
+      "kind", "operation", "axis",
+      "firstXNumerator", "firstXDenominator", "firstYNumerator", "firstYDenominator",
+      "secondXNumerator", "secondXDenominator", "secondYNumerator", "secondYDenominator"
+    ], "ARITHMETIC_CHECK_INVALID", reference);
+    assert(["horizontal", "vertical"].includes(check.axis), "ARITHMETIC_CHECK_INVALID", reference);
+    const firstX = signedRationalParts(check.firstXNumerator, check.firstXDenominator, reference);
+    const firstY = signedRationalParts(check.firstYNumerator, check.firstYDenominator, reference);
+    const secondX = signedRationalParts(check.secondXNumerator, check.secondXDenominator, reference);
+    const secondY = signedRationalParts(check.secondYNumerator, check.secondYDenominator, reference);
+    if (check.axis === "horizontal") {
+      assert(compareSignedRationals(firstY, secondY) === 0, "ARITHMETIC_CHECK_INVALID", reference);
+      return canonicalSignedRationalDistance(firstX, secondX, reference);
+    }
+    assert(compareSignedRationals(firstX, secondX) === 0, "ARITHMETIC_CHECK_INVALID", reference);
+    return canonicalSignedRationalDistance(firstY, secondY, reference);
+  }
+  assert(["minimum", "maximum", "distance"].includes(operation), "ARITHMETIC_CHECK_INVALID", reference);
+  assertExactDataKeys(check, [
+    "kind", "operation", "leftNumerator", "leftDenominator", "rightNumerator", "rightDenominator"
+  ], "ARITHMETIC_CHECK_INVALID", reference);
+  const left = signedRationalParts(check.leftNumerator, check.leftDenominator, reference);
+  const right = signedRationalParts(check.rightNumerator, check.rightDenominator, reference);
+  const comparison = compareSignedRationals(left, right);
+  if (operation === "minimum") return canonicalSignedRational((comparison <= 0 ? left : right).numerator, (comparison <= 0 ? left : right).denominator, reference);
+  if (operation === "maximum") return canonicalSignedRational((comparison >= 0 ? left : right).numerator, (comparison >= 0 ? left : right).denominator, reference);
+  assert(left.numerator === 0n || right.numerator === 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  return canonicalSignedRationalDistance(left, right, reference);
+}
+
+function canonicalSignedRationalComparison(check, reference) {
+  assertExactDataKeys(check, [
+    "kind", "basis", "leftNumerator", "leftDenominator", "rightNumerator", "rightDenominator"
+  ], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(["signed-value", "absolute-magnitude"].includes(check.basis), "ARITHMETIC_CHECK_INVALID", reference);
+  const left = signedRationalParts(check.leftNumerator, check.leftDenominator, reference);
+  const right = signedRationalParts(check.rightNumerator, check.rightDenominator, reference);
+  const leftCompared = check.basis === "absolute-magnitude" && left.numerator < 0n
+    ? Object.freeze({ numerator: -left.numerator, denominator: left.denominator }) : left;
+  const rightCompared = check.basis === "absolute-magnitude" && right.numerator < 0n
+    ? Object.freeze({ numerator: -right.numerator, denominator: right.denominator }) : right;
+  const comparison = compareSignedRationals(leftCompared, rightCompared);
+  assert(comparison !== 0, "ARITHMETIC_CHECK_INVALID", reference);
+  return comparison < 0 ? "<" : ">";
 }
 
 function powerOfTen(exponent, reference) {
@@ -636,6 +748,8 @@ function canonicalAnswer(check, reference) {
       reference
     );
   }
+  if (kind === "signed-rational-operation") return canonicalSignedRationalOperation(check, reference);
+  if (kind === "signed-rational-comparison") return canonicalSignedRationalComparison(check, reference);
   if (kind === "decimal-operation") return canonicalDecimalOperation(check, reference);
   if (kind === "greatest-common-factor") return canonicalWholeGcf(check, reference);
   if (kind === "least-common-multiple") return canonicalWholeLcm(check, reference);
@@ -659,7 +773,8 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   const expected = canonicalAnswer(answerReference.arithmeticCheck, reference);
   assert(answerReference.expectedResponse === expected, "ANSWER_REFERENCE_CALCULATION_MISMATCH", reference);
   if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
-  if (answerReference.responseMode === "numeric-exact") assert(answerReference.arithmeticCheck.kind !== "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  if (answerReference.responseMode === "comparison-symbol-exact") assert(answerReference.arithmeticCheck.kind === "signed-rational-comparison", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  if (answerReference.responseMode === "numeric-exact") assert(!["ratio-canonical", "signed-rational-comparison"].includes(answerReference.arithmeticCheck.kind), "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
