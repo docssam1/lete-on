@@ -121,8 +121,12 @@ function localBinding(resource) {
   };
 }
 
-function syntheticWorkbookPack() {
-  const plan = resourcePlans.buildUnitPlan("ccss-6-rp-a");
+function syntheticWorkbookPack(unitId) {
+  const selectedUnitId = unitId || "ccss-6-rp-a";
+  const plan = resourcePlans.buildUnitPlan(selectedUnitId);
+  const lineage = selectedUnitId === "ccss-6-ns-c"
+    ? { clusterId: "6.NS.C", skillId: "skill:us-core-k8:6-ns-c:anchor" }
+    : { clusterId: "6.RP.A", skillId: "skill:us-core-k8:6-rp-a:anchor" };
   const studentResources = plan.resourcesByAudience.student.filter(function (resource) {
     return resource.testType === "guided-practice" && ["concept-workbook", "guided-practice", "homework"].includes(resource.resourceType);
   });
@@ -212,13 +216,20 @@ function syntheticWorkbookPack() {
     packVersion: 1,
     programId: "us-core-k8",
     targetGrade: 6,
-    unitId: "ccss-6-rp-a",
-    clusterId: "6.RP.A",
-    skillId: "skill:us-core-k8:6-rp-a:anchor",
+    unitId: selectedUnitId,
+    clusterId: lineage.clusterId,
+    skillId: lineage.skillId,
     resourcePlanId: plan.planId,
     cadenceProfileId: resourcePlans.GRADE6_CADENCE.cadenceProfileId,
     state: "draft-pending-independent-review",
     coverageState: "plan-complete",
+    ...(selectedUnitId === "ccss-6-ns-c" ? {
+      standardsEvidence: {
+        state: "partial-graphing-observation-locked",
+        autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
+        lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
+      }
+    } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: {
@@ -814,6 +825,149 @@ test("Grade 6 signed-rational comparisons use strict value or absolute-magnitude
       validator.canonicalAnswer(check, "synthetic-ns-c-comparison-invalid");
     }, /ARITHMETIC_CHECK_INVALID/);
   });
+});
+
+test("Grade 6 quadrant classification requires two non-axis signed rational coordinates", function () {
+  [
+    [{ kind: "quadrant-classification", xNumerator: 3, xDenominator: 5, yNumerator: 7, yDenominator: 9 }, "1"],
+    [{ kind: "quadrant-classification", xNumerator: -3, xDenominator: 5, yNumerator: 7, yDenominator: 9 }, "2"],
+    [{ kind: "quadrant-classification", xNumerator: -3, xDenominator: 5, yNumerator: -7, yDenominator: 9 }, "3"],
+    [{ kind: "quadrant-classification", xNumerator: 3, xDenominator: 5, yNumerator: -7, yDenominator: 9 }, "4"]
+  ].forEach(function (entry) {
+    assert.equal(validator.canonicalAnswer(entry[0], "synthetic-ns-c-quadrant"), entry[1]);
+  });
+  [
+    { kind: "quadrant-classification", xNumerator: 0, xDenominator: 1, yNumerator: 1, yDenominator: 2 },
+    { kind: "quadrant-classification", xNumerator: 1, xDenominator: 2, yNumerator: 0, yDenominator: 1 },
+    { kind: "quadrant-classification", xNumerator: 1, xDenominator: -2, yNumerator: 1, yDenominator: 2 },
+    { kind: "quadrant-classification", xNumerator: 1, xDenominator: 2, yNumerator: 1, yDenominator: 2, answer: "1" }
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalAnswer(check, "synthetic-ns-c-quadrant-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+});
+
+test("Grade 6 6.NS.C keeps partial graphing evidence explicit and separate from automatic entries", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-ns-c" };
+  const evidence = {
+    state: "partial-graphing-observation-locked",
+    autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
+    lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
+  };
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-ns-c-evidence");
+  });
+  assert.doesNotThrow(function () {
+    validator.validateNscAutomaticEvidence([
+      { expectedResponse: "1", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "2", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "3", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "4", arithmeticCheck: { kind: "quadrant-classification" } },
+      { arithmeticCheck: { kind: "signed-rational-comparison", basis: "signed-value" } },
+      { arithmeticCheck: { kind: "signed-rational-operation", operation: "axis-distance" } }
+    ], unit, "synthetic-ns-c-evidence");
+  });
+  assert.throws(function () {
+    validator.validateStandardsEvidence(Object.assign({}, evidence, { state: "plan-complete" }), policy, unit, "synthetic-ns-c-evidence");
+  }, /STANDARDS_EVIDENCE_INVALID/);
+  assert.throws(function () {
+    validator.validateNscAutomaticEvidence([
+      { expectedResponse: "1", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "2", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "3", arithmeticCheck: { kind: "quadrant-classification" } },
+      { expectedResponse: "4", arithmeticCheck: { kind: "quadrant-classification" } },
+      { arithmeticCheck: { kind: "signed-rational-comparison", basis: "absolute-magnitude" } },
+      { arithmeticCheck: { kind: "signed-rational-operation", operation: "axis-distance" } }
+    ], unit, "synthetic-ns-c-evidence");
+  }, /NSC_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+  assert.throws(function () {
+    validator.validateNscAutomaticEvidence([
+      { arithmeticCheck: { kind: "signed-rational-comparison" } },
+      { arithmeticCheck: { kind: "signed-rational-operation", operation: "axis-distance" } }
+    ], unit, "synthetic-ns-c-evidence");
+  }, /NSC_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+});
+
+test("Grade 6 6.NS.C allows only explicit non-automatic teacher observation rubrics", function () {
+  const pack = syntheticWorkbookPack("ccss-6-ns-c");
+  const responseComponents = pack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  });
+  const references = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  function referenceFor(component) {
+    return references.find(function (reference) { return reference.componentId === component.componentId; });
+  }
+  [
+    { component: responseComponents[0], expectedResponse: "1", arithmeticCheck: { kind: "quadrant-classification", xNumerator: 3, xDenominator: 5, yNumerator: 7, yDenominator: 9 } },
+    { component: responseComponents[1], expectedResponse: "2", arithmeticCheck: { kind: "quadrant-classification", xNumerator: -3, xDenominator: 5, yNumerator: 7, yDenominator: 9 } },
+    { component: responseComponents[2], expectedResponse: "3", arithmeticCheck: { kind: "quadrant-classification", xNumerator: -3, xDenominator: 5, yNumerator: -7, yDenominator: 9 } },
+    { component: responseComponents[3], expectedResponse: "4", arithmeticCheck: { kind: "quadrant-classification", xNumerator: 3, xDenominator: 5, yNumerator: -7, yDenominator: 9 } }
+  ].forEach(function (entry) {
+    const answerReference = referenceFor(entry.component);
+    answerReference.expectedResponse = entry.expectedResponse;
+    answerReference.arithmeticCheck = entry.arithmeticCheck;
+  });
+
+  const comparisonComponent = responseComponents[4];
+  const comparisonReference = referenceFor(comparisonComponent);
+  comparisonComponent.responseMode = "comparison-symbol-exact";
+  comparisonComponent.contentByLocale = localText("두 수 사이 빈칸에 알맞은 기호를 쓰세요.", "Write the correct sign in the blank between the values.", "在两个数之间的空格里写出正确的符号。");
+  comparisonReference.responseMode = "comparison-symbol-exact";
+  comparisonReference.expectedResponse = "<";
+  comparisonReference.arithmeticCheck = { kind: "signed-rational-comparison", basis: "signed-value", leftNumerator: -3, leftDenominator: 4, rightNumerator: -1, rightDenominator: 2 };
+
+  const distanceComponent = responseComponents[5];
+  const distanceReference = referenceFor(distanceComponent);
+  distanceReference.expectedResponse = "1";
+  distanceReference.arithmeticCheck = {
+    kind: "signed-rational-operation", operation: "axis-distance", axis: "horizontal",
+    firstXNumerator: 0, firstXDenominator: 1, firstYNumerator: 1, firstYDenominator: 2,
+    secondXNumerator: 1, secondXDenominator: 1, secondYNumerator: 2, secondYDenominator: 4
+  };
+
+  const lessonPlan = pack.teacherArtifacts.find(function (artifact) { return artifact.resourceBinding.resourceType === "lesson-plan"; });
+  lessonPlan.components.push({
+    componentId: "tcmp-dft-nsc-observation-lesson",
+    componentType: "teacher-observation-rubric",
+    sequence: lessonPlan.components.length + 1,
+    contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+  });
+  const assignmentBuilder = pack.teacherArtifacts.find(function (artifact) { return artifact.resourceBinding.resourceType === "assignment-builder"; });
+  assignmentBuilder.components.push({
+    componentId: "tcmp-dft-nsc-observation-home",
+    componentType: "teacher-observation-rubric",
+    sequence: assignmentBuilder.components.length + 1,
+    contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+  });
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-ns-c-observation.json");
+  });
+
+  const duplicateObservationPack = JSON.parse(JSON.stringify(pack));
+  const duplicateLesson = duplicateObservationPack.teacherArtifacts.find(function (artifact) { return artifact.resourceBinding.resourceType === "lesson-plan"; });
+  duplicateLesson.components.push({
+    componentId: "tcmp-dft-nsc-observation-duplicate",
+    componentType: "teacher-observation-rubric",
+    sequence: duplicateLesson.components.length + 1,
+    contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+  });
+  assert.throws(function () {
+    validator.validatePack(duplicateObservationPack, "synthetic-ns-c-observation-duplicate.json");
+  }, /TEACHER_COMPONENT_INVALID/);
+
+  const nonNscPack = syntheticWorkbookPack();
+  const nonNscLesson = nonNscPack.teacherArtifacts.find(function (artifact) { return artifact.resourceBinding.resourceType === "lesson-plan"; });
+  nonNscLesson.components.push({
+    componentId: "tcmp-dft-rpa-observation",
+    componentType: "teacher-observation-rubric",
+    sequence: nonNscLesson.components.length + 1,
+    contentByLocale: localText("교사 관찰", "Teacher observation", "教师观察")
+  });
+  assert.throws(function () {
+    validator.validatePack(nonNscPack, "synthetic-rp-a-observation.json");
+  }, /TEACHER_COMPONENT_INVALID/);
 });
 
 test("Grade 6 signed-rational minimum, maximum, and distance retain an independent BigInt boundary check", function () {

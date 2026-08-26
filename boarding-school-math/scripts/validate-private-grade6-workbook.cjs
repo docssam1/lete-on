@@ -26,13 +26,15 @@ const REQUIRED_REVIEWS = Object.freeze([
 ]);
 const PACK_KEYS = new Set([
   "schemaVersion", "confidentiality", "packId", "packVersion", "programId", "targetGrade", "unitId", "clusterId",
-  "skillId", "resourcePlanId", "cadenceProfileId", "state", "coverageState", "deliveryState", "localePolicy",
+  "skillId", "resourcePlanId", "cadenceProfileId", "state", "coverageState", "standardsEvidence", "deliveryState", "localePolicy",
   "frontMatter", "studentSections", "teacherArtifacts", "homeStudyPlan", "assessmentPlaceholders", "closingMatter",
   "rightsDraft", "verification", "layoutPlan"
 ]);
 const LOCALE_POLICY_KEYS = new Set(["required", "included"]);
 const FRONT_MATTER_KEYS = new Set(["titleByLocale", "learningTargetsByLocale", "howToUseByLocale"]);
+const STANDARDS_EVIDENCE_KEYS = new Set(["state", "autoEvidenceIds", "lockedEvidenceByLocale"]);
 const CLOSING_MATTER_KEYS = new Set(["glossaryByLocale", "retentionNoticeByLocale"]);
+const NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT = "teacher-observation-rubric";
 const HOME_BLOCK_KEYS = new Set(["blockId", "week", "sequence", "minutes", "componentIds"]);
 const SECTION_KEYS = new Set([
   "sectionId", "sectionVersion", "audience", "titleByLocale", "resourceBinding", "productionState", "components"
@@ -355,6 +357,30 @@ function validateVerification(verification, reference) {
   assert(verification.releaseState === "not-eligible", "WORKBOOK_VERIFICATION_INVALID", reference);
 }
 
+function validateStandardsEvidence(evidence, policy, unit, reference) {
+  if (unit.unitId !== "ccss-6-ns-c") {
+    assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
+    return;
+  }
+  assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+  assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+  assert(evidence.state === "partial-graphing-observation-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+  assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+  const requiredAutomaticEvidence = new Set([
+    "6.NS.C.6-quadrant-classification",
+    "6.NS.C.7-signed-rational-order",
+    "6.NS.C.8-same-axis-distance"
+  ]);
+  assert(
+    evidence.autoEvidenceIds.length === requiredAutomaticEvidence.size &&
+      new Set(evidence.autoEvidenceIds).size === requiredAutomaticEvidence.size &&
+      evidence.autoEvidenceIds.every(function (evidenceId) { return typeof evidenceId === "string" && requiredAutomaticEvidence.has(evidenceId); }),
+    "STANDARDS_EVIDENCE_INVALID",
+    reference
+  );
+  requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+}
+
 function validateFrontMatter(frontMatter, policy, reference) {
   assertOnlyKeys(frontMatter, FRONT_MATTER_KEYS, "FRONT_MATTER_INVALID", reference);
   ["titleByLocale", "learningTargetsByLocale", "howToUseByLocale"].forEach(function (field) {
@@ -613,6 +639,19 @@ function canonicalSignedRationalComparison(check, reference) {
   return comparison < 0 ? "<" : ">";
 }
 
+function canonicalQuadrantClassification(check, reference) {
+  assertExactDataKeys(check, [
+    "kind", "xNumerator", "xDenominator", "yNumerator", "yDenominator"
+  ], "ARITHMETIC_CHECK_INVALID", reference);
+  const x = signedRationalParts(check.xNumerator, check.xDenominator, reference);
+  const y = signedRationalParts(check.yNumerator, check.yDenominator, reference);
+  assert(x.numerator !== 0n && y.numerator !== 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  if (x.numerator > 0n && y.numerator > 0n) return "1";
+  if (x.numerator < 0n && y.numerator > 0n) return "2";
+  if (x.numerator < 0n && y.numerator < 0n) return "3";
+  return "4";
+}
+
 function powerOfTen(exponent, reference) {
   assert(Number.isInteger(exponent) && exponent >= 0 && exponent <= 12, "ARITHMETIC_CHECK_INVALID", reference);
   return 10n ** BigInt(exponent);
@@ -750,10 +789,25 @@ function canonicalAnswer(check, reference) {
   }
   if (kind === "signed-rational-operation") return canonicalSignedRationalOperation(check, reference);
   if (kind === "signed-rational-comparison") return canonicalSignedRationalComparison(check, reference);
+  if (kind === "quadrant-classification") return canonicalQuadrantClassification(check, reference);
   if (kind === "decimal-operation") return canonicalDecimalOperation(check, reference);
   if (kind === "greatest-common-factor") return canonicalWholeGcf(check, reference);
   if (kind === "least-common-multiple") return canonicalWholeLcm(check, reference);
   fail("ARITHMETIC_CHECK_INVALID", reference);
+}
+
+function validateNscAutomaticEvidence(answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-ns-c") return;
+  const quadrantResponses = new Set(answerReferences.filter(function (answerReference) {
+    return answerReference.arithmeticCheck.kind === "quadrant-classification";
+  }).map(function (answerReference) { return answerReference.expectedResponse; }));
+  assert(["1", "2", "3", "4"].every(function (quadrant) { return quadrantResponses.has(quadrant); }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.some(function (answerReference) {
+    return answerReference.arithmeticCheck.kind === "signed-rational-comparison" && answerReference.arithmeticCheck.basis === "signed-value";
+  }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.some(function (answerReference) {
+    return answerReference.arithmeticCheck.kind === "signed-rational-operation" && answerReference.arithmeticCheck.operation === "axis-distance";
+  }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
 }
 
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
@@ -792,7 +846,17 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   const resource = findResource(plan, artifact.resourceBinding, reference);
   assert(resource.audience === "teacher" && expectedResources.has(resource.resourcePlanItemId), "TEACHER_RESOURCE_NOT_IN_SCOPE", reference);
   assertDenseArray(artifact.components, "TEACHER_ARTIFACT_INVALID", reference);
-  assertPlannedComponentCounts(artifact.components, resource, reference);
+  const observationComponents = artifact.components.filter(function (component) {
+    return component && component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+  });
+  assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
+  assert(observationComponents.every(function () {
+    return resource.unitId === "ccss-6-ns-c" && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+  }), "TEACHER_COMPONENT_INVALID", reference);
+  const plannedComponents = artifact.components.filter(function (component) {
+    return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+  });
+  assertPlannedComponentCounts(plannedComponents, resource, reference);
   const componentIds = new Set();
   const sequences = [];
   artifact.components.forEach(function (component) {
@@ -919,6 +983,7 @@ function validatePack(pack, fileName) {
   validateFrontMatter(pack.frontMatter, pack.localePolicy, reference);
   validateClosingMatter(pack.closingMatter, pack.localePolicy, reference);
   const unit = standardUnit(pack, reference);
+  validateStandardsEvidence(pack.standardsEvidence, pack.localePolicy, unit, reference);
   const plan = resourcePlans.buildUnitPlan(unit.unitId);
   assert(pack.resourcePlanId === plan.planId && pack.cadenceProfileId === resourcePlans.GRADE6_CADENCE.cadenceProfileId, "WORKBOOK_PLAN_BINDING_INVALID", reference);
   validateRightsDraft(pack.rightsDraft, reference);
@@ -958,14 +1023,17 @@ function validatePack(pack, fileName) {
   validateHomeStudyPlan(pack.homeStudyPlan, componentMap, reference);
   const seenReferenceIds = new Set();
   const referencedComponents = new Set();
+  const answerReferences = [];
   artifacts.forEach(function (entry) {
     entry.artifact.answerReferences.forEach(function (answerReference) {
       const component = validateAnswerReference(answerReference, componentMap, pack.localePolicy, entry.artifact, seenReferenceIds);
       assert(component.component.teacherReferenceId === answerReference.referenceId, "ANSWER_REFERENCE_LINK_MISMATCH", answerReference.referenceId);
       assert(!referencedComponents.has(answerReference.componentId), "DUPLICATE_COMPONENT_ANSWER_REFERENCE", answerReference.referenceId);
       referencedComponents.add(answerReference.componentId);
+      answerReferences.push(answerReference);
     });
   });
+  validateNscAutomaticEvidence(answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -1157,6 +1225,8 @@ module.exports = Object.freeze({
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
   canonicalAnswer,
+  validateStandardsEvidence,
+  validateNscAutomaticEvidence,
   validatePack,
   validateDirectory
 });
