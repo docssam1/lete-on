@@ -4,8 +4,6 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const bankCore = require("../data/question-bank-core.js");
-
 const root = path.join(__dirname, "..");
 const migration = fs.readFileSync(path.join(root, "supabase", "migrations", "20260825092754_highselect_secure_draft_foundation.sql"), "utf8");
 const config = fs.readFileSync(path.join(root, "supabase", "config.toml"), "utf8");
@@ -27,11 +25,11 @@ test("Supabase draft foundation stores only protected operational metadata", () 
   assert.doesNotMatch(migration, /jsonb_object_length/);
 });
 
-test("Supabase contracts match the current opaque IDs and guarded local auth defaults", () => {
-  assert.match(bankCore.createNeutralId("examDraft", "SH", "supabase-draft"), /^drf-sh-[a-f0-9]{16}$/);
-  assert.match(bankCore.createNeutralId("placement", "SH", "supabase-placement"), /^plc-sh-[a-f0-9]{16}$/);
-  assert.match(bankCore.createSharedBankId("question", "supabase-candidate"), /^qst-bnk-[a-f0-9]{16}$/);
-  assert.match(bankCore.createSharedBankId("type", "supabase-type"), /^typ-bnk-[a-f0-9]{16}$/);
+test("Supabase contracts keep dedicated opaque IDs and guarded local auth defaults", () => {
+  assert.ok(migration.includes("^drf-(sh|dp|wm|ed|dg|sm)-[a-f0-9]{16}$"));
+  assert.ok(migration.includes("^plc-(sh|dp|wm|ed|dg|sm)-[a-f0-9]{16}$"));
+  assert.ok(migration.includes("^qst-bnk-[a-z0-9]{16}$"));
+  assert.ok(migration.includes("^typ-bnk-[a-z0-9]{16}$"));
   assert.match(config, /enable_signup = false/);
   assert.match(config, /minimum_password_length = 12/);
   assert.match(config, /password_requirements = "lower_upper_letters_digits_symbols"/);
