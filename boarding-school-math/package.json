@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "test": "node --test tests/program-contract.test.cjs tests/us-k8-domain-spine.test.cjs tests/supabase-private-foundation.test.cjs tests/number-magic-adapter.test.cjs tests/diagnostic-engine.test.cjs",
+    "test": "node --test tests/program-contract.test.cjs tests/us-k8-domain-spine.test.cjs tests/us-k8-cluster-map.test.cjs tests/k8-competition-profiles.test.cjs tests/supabase-private-foundation.test.cjs tests/number-magic-adapter.test.cjs tests/diagnostic-engine.test.cjs",
     "test:browser": "node --test tests/foundation-browser.test.cjs",
     "audit:public": "node scripts/audit-public-exposure.cjs"
   },

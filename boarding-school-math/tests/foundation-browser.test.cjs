@@ -40,7 +40,7 @@ test("desktop interactions preserve grade role and language contracts", async fu
   page.on("pageerror", function (error) { errors.push(error.message); });
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.equal(await page.locator(".program-card").count(), 2);
+  assert.equal(await page.locator(".program-card").count(), 1);
   assert.equal(await page.locator("#resource-list li").count(), 6);
 
   await page.locator('[data-grade="8"]').click();

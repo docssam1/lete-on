@@ -41,6 +41,19 @@ test("AMC official eligibility and GFIELD prep band are distinguished", function
   assert.deepEqual(amc8.grades, [6, 7, 8]);
 });
 
+test("SASMO kindergarten eligibility is K2-specific rather than generic K", function () {
+  const sasmo = catalog.programs.find(function (program) { return program.id === "sasmo-k2-8"; });
+  assert.equal(sasmo.grades.includes("K"), false);
+  assert.equal(sasmo.officialGradeKeys[0], "K2");
+  assert.equal(sasmo.kindergartenEligibility, "K2-only");
+});
+
+test("Singapore primary source points to the current October 2025 revision", function () {
+  const singapore = catalog.programs.find(function (program) { return program.id === "singapore-mastery"; });
+  assert.match(singapore.sources[0].url, /updated-october-2025\.pdf$/);
+  assert.match(singapore.sources[0].documentRevision, /applicable to Primary 6 from 2026/);
+});
+
 test("the boarding catalog contains no post-grade-8 competition pathway", function () {
   assert.equal(catalog.programs.some(function (program) {
     return program.id === "amc-10-bridge" || program.id === "amc-12-future";

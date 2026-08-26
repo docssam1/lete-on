@@ -11,8 +11,8 @@
   if (!contract) throw new Error("GFIELDMathContract must load before program-catalog.js");
 
   const verified = "2026-08-26";
-  const source = function (authority, url) {
-    return Object.freeze({ authority, url, lastVerified: verified });
+  const source = function (authority, url, documentRevision) {
+    return Object.freeze({ authority, url, documentRevision: documentRevision || "current official page; revision date not stated", lastVerified: verified });
   };
 
   const catalog = {
@@ -25,7 +25,7 @@
         pathway: "core",
         grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8],
         standardsMode: "ccss-id-required-per-skill",
-        sources: [source("Common Core State Standards Initiative", "https://corestandards.org/mathematics-standards/")],
+        sources: [source("Common Core State Standards Initiative", "https://corestandards.org/mathematics-standards/", "official current-site copy; PDF revision number not stated")],
         status: { state: "active", reason: "Target backbone; skill-level CCSS crosswalk remains to be authored and reviewed." }
       },
       {
@@ -34,8 +34,8 @@
         pathway: "accelerated",
         grades: [1, 2, 3, 4, 5, 6, 7, 8],
         standardsMode: "moe-primary-verified-secondary-crosswalk-pending",
-        sources: [source("Singapore Ministry of Education", "https://www.moe.gov.sg/-/media/files/primary/2021-primary-mathematics-syllabus-p1-to-p6-updated-dec-2024.pdf")],
-        status: { state: "active", reason: "Primary 1–6 official spine is verified; grades 7–8 mapping stays locked until the secondary syllabus crosswalk is complete." }
+        sources: [source("Singapore Ministry of Education", "https://www.moe.gov.sg/-/media/files/primary/2021-primary-mathematics-syllabus-p1-to-p6-updated-october-2025.pdf", "2021 syllabus; updated October 2025; applicable to Primary 6 from 2026")],
+        status: { state: "active", reason: "Primary 1–6 official spine is current for 2026; grades 7–8 mapping stays locked until the secondary syllabus crosswalk is complete." }
       },
       {
         id: "math-kangaroo-1-8",
@@ -43,14 +43,22 @@
         pathway: "competition",
         grades: [1, 2, 3, 4, 5, 6, 7, 8],
         officialBands: [[1, 2], [3, 4], [5, 6], [7, 8]],
-        sources: [source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/free-question-samples/")],
+        profileId: "math-kangaroo-usa-k8",
+        sources: [
+          source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/"),
+          source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/"),
+          source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/")
+        ],
         status: { state: "active", reason: "Band and format metadata may be public; original problem text needs an explicit rights record." }
       },
       {
         id: "sasmo-k2-8",
         title: { ko: "SASMO K2–8", en: "SASMO K2–Grade 8", "zh-Hans": "SASMO K2–8 年级" },
         pathway: "competition",
-        grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8],
+        grades: [1, 2, 3, 4, 5, 6, 7, 8],
+        officialGradeKeys: ["K2", 1, 2, 3, 4, 5, 6, 7, 8],
+        kindergartenEligibility: "K2-only",
+        profileId: "sasmo-k2-8",
         officialEligibility: "K2 and differentiated papers for grades 1–12",
         sources: [source("Singapore and Asian Schools Math Olympiad", "https://sasmo.simcc.org/")],
         status: { state: "active", reason: "Grade structure is verified; past-paper reproduction remains permission-required until a license is recorded." }
@@ -62,7 +70,12 @@
         grades: [6, 7, 8],
         officialEligibility: "Grade 8 or below and under 15.5 years of age on competition day",
         preparationBandNotOfficial: true,
-        sources: [source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/")],
+        profileId: "maa-amc-8",
+        sources: [
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/"),
+          source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"),
+          source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
+        ],
         status: { state: "active", reason: "Eligibility is official; grades 6–8 are GFIELD's preparation band, not an MAA placement rule." }
       }
     ]),

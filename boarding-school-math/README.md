@@ -41,6 +41,8 @@ npm run audit:public
 
 The first contract tests cover K–8 scope, student/teacher separation, Korean/English labels, promotion-policy honesty, AMC eligibility labeling, and the public source-rights gate.
 
+`curriculum/us-k8-cluster-map.js` maps all 94 official K–8 CCSS cluster IDs and standard-number ranges to short Korean and English GFIELD labels. The labels are paraphrases, not copied standard text. Every cluster remains locked for question release until its skill breakdown, prerequisite links, items, answers, and review evidence are complete. CCSS does not dictate GFIELD unit order, pacing, or promotion policy.
+
 The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. High-school, generic algebra, and calculus course tiers are excluded rather than guessed to be Algebra2. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
 
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.
