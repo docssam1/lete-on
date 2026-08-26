@@ -706,6 +706,327 @@ function squareRowBoundaryNumber({ difficulty = 2 }) {
   };
 }
 
+function rowMajorGridTwoTargetSumBook5({ difficulty = 2 }) {
+  const columns = difficulty === 1 ? 5 : difficulty === 2 ? 7 : 8;
+  const rows = difficulty === 1 ? 5 : difficulty === 2 ? 6 : 7;
+  const start = randomInt(1, difficulty === 3 ? 9 : 4);
+  const flat = Array.from({ length: rows * columns }, (_, index) => start + index);
+  const values = Array.from({ length: rows }, (_, row) => flat.slice(row * columns, (row + 1) * columns));
+  const targetIndexes = shuffle(Array.from({ length: flat.length - columns * 2 }, (_, index) => index + columns * 2)).slice(0, 2).sort((a, b) => a - b);
+  const clueIndexes = [...new Set([0, 1, columns, columns + 1, targetIndexes[0] - 1, targetIndexes[1] - 1].filter((index) => index >= 0 && !targetIndexes.includes(index)))];
+  const answer = targetIndexes.reduce((total, index) => total + flat[index], 0);
+  return {
+    prompt: "수를 왼쪽에서 오른쪽으로 차례로 쓰고 다음 줄로 내려갔습니다. 두 물음표에 들어갈 수의 합을 구하세요.",
+    visual: { kind: "book5", subtype: "row-major-targets", rows, columns, values, targetIndexes, clueIndexes },
+    answer: String(answer),
+    solution: `한 줄에 ${columns}개씩 수가 놓입니다. 두 물음표는 ${flat[targetIndexes[0]]}, ${flat[targetIndexes[1]]}이므로 합은 ${answer}입니다.`,
+    meta: { family: "row-major-two-target-sum-book5", rows, columns, start, values, targetIndexes, clueIndexes, answer }
+  };
+}
+
+function radialLineCycleTwoPartBook5({ difficulty = 2 }) {
+  const lineCount = 5;
+  const start = randomInt(1, difficulty === 3 ? 5 : 2);
+  const maximumPosition = difficulty === 1 ? 4 : 6;
+  const firstTarget = { line: randomInt(0, lineCount - 1), position: randomInt(3, maximumPosition) };
+  let secondTarget = { line: randomInt(0, lineCount - 1), position: randomInt(3, maximumPosition) };
+  while (secondTarget.line === firstTarget.line && secondTarget.position === firstTarget.position) secondTarget = { line: randomInt(0, lineCount - 1), position: randomInt(3, maximumPosition) };
+  const firstAnswer = start + firstTarget.line + (firstTarget.position - 1) * lineCount;
+  const secondNumber = start + secondTarget.line + (secondTarget.position - 1) * lineCount;
+  return {
+    prompt: `(1) ${firstTarget.line + 1}번 줄의 ${firstTarget.position}번째 수를 구하세요. (2) ${secondNumber}은 몇 번 줄의 몇 번째 수인지 구하세요.`,
+    visual: { kind: "book5", subtype: "radial-cycle", lineCount, start, firstTarget, secondTarget, previewPositions: maximumPosition },
+    answer: `(1) ${firstAnswer}, (2) ${secondTarget.line + 1}번 줄의 ${secondTarget.position}번째 수`,
+    solution: `한 줄의 수는 ${lineCount}씩 커집니다. 따라서 (1)은 ${firstAnswer}, (2) ${secondNumber}은 ${secondTarget.line + 1}번 줄의 ${secondTarget.position}번째 수입니다.`,
+    meta: { family: "radial-line-cycle-two-part-book5", lineCount, start, firstTarget, secondTarget, firstAnswer, secondNumber }
+  };
+}
+
+function datesForWeekday(days, firstWeekday, weekdayIndex) {
+  const firstDate = ((weekdayIndex - firstWeekday + 7) % 7) + 1;
+  const dates = [];
+  for (let date = firstDate; date <= days; date += 7) dates.push(date);
+  return dates;
+}
+
+function calendarWeekdayListOrdinalBook5({ difficulty = 2 }) {
+  const month = randomInt(1, 12);
+  const days = MONTH_DAYS[month - 1];
+  const firstWeekday = randomInt(0, 6);
+  const listWeekday = randomInt(0, 6);
+  let ordinalWeekday = randomInt(0, 6);
+  const ordinal = difficulty === 1 ? 3 : randomInt(3, 4);
+  let ordinalDates = datesForWeekday(days, firstWeekday, ordinalWeekday);
+  while (ordinalDates.length < ordinal) {
+    ordinalWeekday = randomInt(0, 6);
+    ordinalDates = datesForWeekday(days, firstWeekday, ordinalWeekday);
+  }
+  const listDates = datesForWeekday(days, firstWeekday, listWeekday);
+  const ordinalDate = ordinalDates[ordinal - 1];
+  const visibleDates = [1, 2, 3].filter((date) => date <= days && !listDates.includes(date) && date !== ordinalDate);
+  return {
+    prompt: `(1) ${month}월의 모든 ${WEEKDAYS[listWeekday]}요일 날짜를 쓰세요. (2) ${ordinal}번째 ${WEEKDAYS[ordinalWeekday]}요일은 며칠인가요?`,
+    visual: { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), visibleDates },
+    answer: `(1) ${listDates.join(", ")}일, (2) ${ordinalDate}일`,
+    solution: `같은 요일은 7일씩 차이 납니다. ${WEEKDAYS[listWeekday]}요일 날짜는 ${listDates.join(", ")}일이고, ${ordinal}번째 ${WEEKDAYS[ordinalWeekday]}요일은 ${ordinalDate}일입니다.`,
+    meta: { family: "calendar-weekday-list-ordinal-book5", month, days, firstWeekday, listWeekday, listDates, ordinalWeekday, ordinal, ordinalDate }
+  };
+}
+
+function calendarSpecialDateOffsetBook5({ difficulty = 2 }) {
+  const month = randomInt(1, 11);
+  const days = MONTH_DAYS[month - 1];
+  const nextDays = MONTH_DAYS[month];
+  const firstWeekday = randomInt(0, 6);
+  const sourceDate = randomInt(3, Math.min(days - 4, difficulty === 1 ? 18 : 26));
+  const targetMonth = month + 1;
+  const targetDate = randomInt(1, Math.min(nextDays, difficulty === 3 ? 24 : 15));
+  const offset = days - sourceDate + targetDate;
+  const sourceWeekday = (firstWeekday + sourceDate - 1) % 7;
+  const targetWeekday = (sourceWeekday + offset) % 7;
+  const nextFirstWeekday = (firstWeekday + days) % 7;
+  return {
+    prompt: `어느 해 ${month}월 ${sourceDate}일은 ${WEEKDAYS[sourceWeekday]}요일입니다. 같은 해 ${targetMonth}월 ${targetDate}일은 무슨 요일인가요?`,
+    visual: { kind: "book5", subtype: "calendar-pair", calendars: [
+      { month, days, firstWeekday, cells: calendarCells(days, firstWeekday), visibleDates: [sourceDate] },
+      { month: month + 1, days: nextDays, firstWeekday: nextFirstWeekday, cells: calendarCells(nextDays, nextFirstWeekday), hiddenDates: targetMonth === month + 1 ? [targetDate] : [], visibleDates: [] }
+    ], sourceDate },
+    answer: `${WEEKDAYS[targetWeekday]}요일`,
+    solution: `두 날짜 사이는 ${offset}일입니다. 7일씩 묶고 남은 만큼 ${WEEKDAYS[sourceWeekday]}요일에서 옮기면 ${WEEKDAYS[targetWeekday]}요일입니다.`,
+    meta: { family: "calendar-special-date-offset-book5", month, days, firstWeekday, sourceDate, sourceWeekday, targetMonth, targetDate, offset, targetWeekday }
+  };
+}
+
+function calendarWeekdaySumYearBoundaryBook5({ difficulty = 2 }) {
+  const month = 12;
+  const days = 31;
+  const firstWeekday = randomInt(0, 6);
+  let weekdayIndex = randomInt(0, 6);
+  let dates = datesForWeekday(days, firstWeekday, weekdayIndex);
+  while (dates.length < 3) {
+    weekdayIndex = randomInt(0, 6);
+    dates = datesForWeekday(days, firstWeekday, weekdayIndex);
+  }
+  const pair = [dates[1], dates[2]];
+  const pairSum = pair[0] + pair[1];
+  const januaryFirstWeekday = (firstWeekday + days) % 7;
+  return {
+    prompt: `어느 해 12월의 두 번째 ${WEEKDAYS[weekdayIndex]}요일 날짜와 세 번째 ${WEEKDAYS[weekdayIndex]}요일 날짜를 더하면 ${pairSum}일입니다. 다음 해 1월 1일은 무슨 요일인가요?`,
+    visual: { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), hiddenDates: pair, visibleDates: [] },
+    answer: `${WEEKDAYS[januaryFirstWeekday]}요일`,
+    solution: `두 날짜는 7일 차이이므로 작은 날짜는 ${pair[0]}일, 큰 날짜는 ${pair[1]}일입니다. 12월 1일의 요일을 찾고 31일 뒤로 옮기면 다음 해 1월 1일은 ${WEEKDAYS[januaryFirstWeekday]}요일입니다.`,
+    meta: { family: "calendar-weekday-sum-year-boundary-book5", firstWeekday, weekdayIndex, pair, pairSum, januaryFirstWeekday }
+  };
+}
+
+function countUpRightWithShortcut(rows, columns, shortcut) {
+  const ways = Array.from({ length: rows }, () => Array(columns).fill(0));
+  ways[0][0] = 1;
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      if (row || column) ways[row][column] += (row ? ways[row - 1][column] : 0) + (column ? ways[row][column - 1] : 0);
+      if (row === shortcut.row && column === shortcut.column) ways[row + 1][column + 1] += ways[row][column];
+    }
+  }
+  return ways[rows - 1][columns - 1];
+}
+
+function shortestPathDiagonalShortcutBook5({ difficulty = 2 }) {
+  const rows = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
+  const columns = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6;
+  const shortcut = { row: randomInt(0, rows - 2), column: randomInt(0, columns - 2) };
+  const answer = countUpRightWithShortcut(rows, columns, shortcut);
+  const fromTop = [rows - 1 - shortcut.row, shortcut.column];
+  const toTop = [rows - 2 - shortcut.row, shortcut.column + 1];
+  return {
+    prompt: "A에서 B까지 선을 따라 가장 짧게 가는 방법은 모두 몇 가지인가요? 사선 지름길도 사용할 수 있습니다.",
+    visual: { kind: "book5", subtype: "route-grid", rows, columns, blocked: [], start: [rows - 1, 0], end: [0, columns - 1], startLabel: "A", endLabel: "B", diagonalEdges: [{ from: fromTop, to: toTop }] },
+    answer: `${answer}가지`,
+    solution: `각 점까지 오는 길의 수를 왼쪽과 아래쪽에서 더합니다. 사선이 시작하는 점의 길 수도 사선 끝점에 한 번 더 더하면 도착점은 ${answer}가지입니다.`,
+    meta: { family: "shortest-diagonal-shortcut-book5", rows, columns, shortcut, answer }
+  };
+}
+
+function squareCycleSolutionCount(edges) {
+  let count = 0;
+  for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) for (let d = 1; d <= 9; d += 1) {
+    if (new Set([a, b, c, d]).size !== 4) continue;
+    if (a * b === edges[0] && b * c === edges[1] && c * d === edges[2] && d * a === edges[3]) count += 1;
+  }
+  return count;
+}
+
+function squareProductCycleFillBook5({ difficulty = 2 }) {
+  let vertices;
+  let edges;
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    vertices = shuffle(Array.from({ length: 8 }, (_, index) => index + 2)).slice(0, 4);
+    edges = vertices.map((value, index) => value * vertices[(index + 1) % 4]);
+    if (squareCycleSolutionCount(edges) === 1) break;
+  }
+  if (squareCycleSolutionCount(edges) !== 1) return squareProductCycleFillBook5({ difficulty });
+  const answer = `왼쪽 위 ${vertices[0]}, 오른쪽 위 ${vertices[1]}, 오른쪽 아래 ${vertices[2]}, 왼쪽 아래 ${vertices[3]}`;
+  return {
+    prompt: "이웃한 두 원의 수를 곱한 값이 변에 적혀 있습니다. 네 원에 알맞은 수를 모두 쓰세요.",
+    visual: { kind: "book5", subtype: "product-cycle", vertices, edges, targetIndex: -1, visibleVertices: [] },
+    answer,
+    answerVisual: { kind: "book5", subtype: "product-cycle", vertices, edges, targetIndex: -1, visibleVertices: [0, 1, 2, 3] },
+    responseKind: "visual-fill",
+    solution: `한 변의 곱을 만들 수 있는 한 자리 수의 짝을 찾고 옆 변과 함께 확인합니다. 시계 방향으로 ${vertices.join(", ")}입니다.`,
+    meta: { family: "square-product-cycle-fill-book5", vertices, edges, solutionCount: 1 }
+  };
+}
+
+const CHECKERBOARD_BASES_BOOK5 = Object.freeze([
+  [[2, null, null, 3], [null, 9, 5, null], [null, 6, 4, null], [8, null, null, 7]],
+  [[null, 5, null, 6], [null, 4, 8, null], [9, null, null, 3], [7, null, 2, null]]
+]);
+
+function checkerboardProductMatrixBook5({ difficulty = 2 }) {
+  const source = sample(CHECKERBOARD_BASES_BOOK5);
+  const rowOrder = shuffle([0, 1, 2, 3]);
+  const columnOrder = shuffle([0, 1, 2, 3]);
+  const cells = rowOrder.map((row) => columnOrder.map((column) => source[row][column]));
+  const active = [];
+  cells.forEach((rowValues, row) => rowValues.forEach((value, column) => { if (value != null) active.push([row, column]); }));
+  const rowProducts = cells.map((row) => product(row.filter((value) => value != null)));
+  const columnProducts = Array.from({ length: 4 }, (_, column) => product(cells.map((row) => row[column]).filter((value) => value != null)));
+  const cardPool = [2, 3, 4, 5, 6, 7, 8, 9];
+  const answer = active.map(([row, column]) => `${row + 1}행 ${column + 1}열=${cells[row][column]}`).join(", ");
+  return {
+    prompt: "2부터 9까지의 수 카드를 한 번씩 넣어 각 가로줄과 세로줄의 곱을 맞추세요.",
+    visual: { kind: "book5", subtype: "checkerboard-products", cells, active, rowProducts, columnProducts, cardPool, revealed: [] },
+    answer,
+    answerVisual: { kind: "book5", subtype: "checkerboard-products", cells, active, rowProducts, columnProducts, cardPool, revealed: active },
+    responseKind: "visual-fill",
+    solution: `곱을 두 수로 가르고 가로와 세로에 함께 맞는 카드만 남깁니다. 완성한 배치는 ${answer}입니다.`,
+    meta: { family: "checkerboard-product-matrix-book5", cells, active, rowProducts, columnProducts, cardPool }
+  };
+}
+
+const SYMBOLS_BOOK5 = ["○", "△", "□", "◇", "☆", "＋"];
+function symbolMap(names) {
+  const icons = shuffle(SYMBOLS_BOOK5).slice(0, names.length);
+  return Object.fromEntries(names.map((name, index) => [name, icons[index]]));
+}
+
+function symbolZeroOneNetworkBook5({ difficulty = 2 }) {
+  const base = 2;
+  const icons = symbolMap(["diamond", "plus", "square", "circle", "pentagon"]);
+  const values = { diamond: base, plus: base * base, square: 1, circle: 0, pentagon: base + 1 };
+  const equations = [`${icons.diamond} × ${icons.diamond} = ${icons.plus}`, `${icons.diamond} × ${icons.square} = ${icons.diamond}`, `${icons.plus} + ${icons.circle} = ${icons.plus}`, `${icons.square} + ${icons.diamond} = ${icons.pentagon}`];
+  return {
+    prompt: "0부터 4까지 서로 다른 수를 도형에 하나씩 넣었습니다. 식을 보고 물음표 도형의 수를 구하세요.",
+    visual: { kind: "book5", subtype: "symbol-equations", equations, target: icons.pentagon, cardPool: [0, 1, 2, 3, 4] },
+    answer: String(values.pentagon),
+    solution: `${icons.circle}=0, ${icons.square}=1부터 찾고 식을 이어 풀면 ${icons.pentagon}=${values.pentagon}입니다.`,
+    meta: { family: "symbol-zero-one-network-book5", base, icons, values }
+  };
+}
+
+function symbolCrossNetworkBook5({ difficulty = 2 }) {
+  const icons = symbolMap(["circle", "square", "diamond", "triangle", "plus", "pentagon"]);
+  const values = { circle: 2, square: 4, diamond: 1, triangle: 3, plus: 9, pentagon: 5 };
+  const equations = [`${icons.circle} × ${icons.circle} = ${icons.square}`, `${icons.circle} + ${icons.diamond} = ${icons.triangle}`, `${icons.square} + ${icons.pentagon} = ${icons.plus}`, `${icons.triangle} × ${icons.triangle} = ${icons.plus}`];
+  return {
+    prompt: "1, 2, 3, 4, 5, 9를 도형에 한 번씩 넣었습니다. 식을 보고 물음표 도형의 수를 구하세요.",
+    visual: { kind: "book5", subtype: "symbol-equations", equations, target: icons.pentagon, cardPool: [1, 2, 3, 4, 5, 9] },
+    answer: "5",
+    solution: `${icons.circle}=2이므로 ${icons.square}=4, ${icons.triangle}=3, ${icons.plus}=9입니다. 따라서 ${icons.pentagon}=5입니다.`,
+    meta: { family: "symbol-cross-network-book5", icons, values }
+  };
+}
+
+function symbolSquareProductNetworkBook5({ difficulty = 2 }) {
+  const icons = symbolMap(["diamond", "square", "circle", "pentagon", "triangle", "plus"]);
+  const values = { diamond: 2, square: 4, circle: 8, pentagon: 3, triangle: 9, plus: 6 };
+  const equations = [`${icons.diamond} × ${icons.diamond} = ${icons.square}`, `${icons.square} × ${icons.square} = ${icons.diamond} × ${icons.circle}`, `${icons.pentagon} × ${icons.pentagon} = ${icons.triangle}`, `${icons.plus} × ${icons.plus} = ${icons.square} × ${icons.triangle}`];
+  return {
+    prompt: "2, 3, 4, 6, 8, 9를 도형에 한 번씩 넣었습니다. 식을 보고 물음표 도형의 수를 구하세요.",
+    visual: { kind: "book5", subtype: "symbol-equations", equations, target: icons.plus, cardPool: [2, 3, 4, 6, 8, 9] },
+    answer: "6",
+    solution: `${icons.diamond}=2, ${icons.square}=4, ${icons.pentagon}=3, ${icons.triangle}=9를 찾습니다. ${icons.plus} × ${icons.plus}=36이므로 ${icons.plus}=6입니다.`,
+    meta: { family: "symbol-square-product-network-book5", icons, values }
+  };
+}
+
+function squarePaperGrowthBook5({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9, difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12);
+  const answer = target * target;
+  return {
+    prompt: `정사각형 색종이를 같은 규칙으로 늘어놓았습니다. ${target}번째 모양에 필요한 색종이는 모두 몇 장인가요?`,
+    visual: { kind: "book5", subtype: "square-paper-growth", previewStages: [1, 2, 3, 4], target },
+    answer: `${answer}장`,
+    solution: `${target}번째 모양은 한 줄에 ${target}장씩 ${target}줄이므로 모두 ${answer}장입니다.`,
+    meta: { family: "square-paper-growth-book5", target, answer }
+  };
+}
+
+function squareRowTwoBoundariesBook5({ difficulty = 2 }) {
+  const firstRow = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 5 : 7, difficulty === 1 ? 6 : difficulty === 2 ? 8 : 11);
+  const secondRow = randomInt(firstRow + 1, firstRow + (difficulty === 3 ? 4 : 2));
+  const firstAnswer = firstRow * firstRow;
+  const secondAnswer = (secondRow - 1) * (secondRow - 1) + 1;
+  return {
+    prompt: `(1) ${firstRow}번째 줄의 마지막 수를 구하세요. (2) ${secondRow}번째 줄의 첫 수를 구하세요.`,
+    visual: { kind: "book5", subtype: "square-row-pair", firstRow, secondRow },
+    answer: `(1) ${firstAnswer}, (2) ${secondAnswer}`,
+    solution: `${firstRow}번째 줄의 마지막 수는 ${firstRow} × ${firstRow} = ${firstAnswer}입니다. ${secondRow - 1}번째 줄의 마지막 수 다음이므로 ${secondRow}번째 줄의 첫 수는 ${secondAnswer}입니다.`,
+    meta: { family: "square-row-two-boundaries-book5", firstRow, secondRow, firstAnswer, secondAnswer }
+  };
+}
+
+function calendarOrdinalSumInferWeekdayBook5({ difficulty = 2 }) {
+  const month = randomInt(1, 12);
+  const days = MONTH_DAYS[month - 1];
+  const weekdayIndex = randomInt(0, 6);
+  const firstOccurrence = randomInt(1, Math.min(7, days - 21));
+  const firstWeekday = (weekdayIndex - (firstOccurrence - 1) + 7) % 7;
+  const secondDate = firstOccurrence + 7;
+  const fourthDate = firstOccurrence + 21;
+  const dateSum = secondDate + fourthDate;
+  return {
+    prompt: `어느 해 ${month}월의 두 번째 ${WEEKDAYS[weekdayIndex]}요일 날짜와 네 번째 ${WEEKDAYS[weekdayIndex]}요일 날짜를 더하면 ${dateSum}일입니다. ${month}월 1일은 무슨 요일인가요?`,
+    visual: { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), hiddenDates: [secondDate, fourthDate], visibleDates: [] },
+    answer: `${WEEKDAYS[firstWeekday]}요일`,
+    solution: `두 날짜는 14일 차이입니다. 합과 차로 두 번째 날짜 ${secondDate}일을 찾으면 첫 번째 ${WEEKDAYS[weekdayIndex]}요일은 ${firstOccurrence}일입니다. 따라서 1일은 ${WEEKDAYS[firstWeekday]}요일입니다.`,
+    meta: { family: "calendar-ordinal-sum-infer-weekday-book5", month, days, weekdayIndex, firstOccurrence, firstWeekday, secondDate, fourthDate, dateSum }
+  };
+}
+
+function regularTriangleGridCountBook5({ difficulty = 2 }) {
+  const order = difficulty === 1 ? randomInt(2, 4) : difficulty === 2 ? randomInt(4, 6) : randomInt(6, 8);
+  let upward = 0;
+  for (let side = 1; side <= order; side += 1) upward += triangular(order - side + 1);
+  let downward = 0;
+  for (let side = 1; side <= Math.floor(order / 2); side += 1) downward += triangular(order - side * 2 + 1);
+  const answer = upward + downward;
+  return {
+    prompt: "큰 정삼각형을 작은 정삼각형으로 나누었습니다. 그림에서 찾을 수 있는 크고 작은 정삼각형은 모두 몇 개인가요?",
+    visual: { kind: "book5", subtype: "triangle-count", mode: "grid", order },
+    answer: `${answer}개`,
+    solution: `위쪽을 향한 삼각형 ${upward}개와 아래쪽을 향한 삼각형 ${downward}개를 더하면 ${answer}개입니다.`,
+    meta: { family: "regular-triangle-grid-count-book5", order, upward, downward, answer }
+  };
+}
+
+function squareBorderStoneGrowthBook5({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 3 : difficulty === 2 ? 6 : 8, difficulty === 1 ? 5 : difficulty === 2 ? 8 : 11);
+  const side = target + 2;
+  const black = 4 * (side - 1);
+  const white = (side - 2) * (side - 2);
+  const difference = Math.abs(black - white);
+  const moreColor = black > white ? "검은색" : black < white ? "흰색" : "같음";
+  const answer = moreColor === "같음" ? "두 색의 개수가 같습니다" : `${moreColor}, ${difference}개`;
+  return {
+    prompt: `같은 규칙으로 바둑돌을 늘어놓을 때 ${target}번째 모양에서는 어떤 색깔의 바둑돌이 몇 개 더 많은가요?`,
+    visual: { kind: "book5", subtype: "border-stone-growth", previewStages: [1, 2, 3, 4], target },
+    answer,
+    solution: `${target}번째는 한 변에 ${side}개가 놓입니다. 검은 돌은 테두리 ${black}개, 흰 돌은 안쪽 ${white}개이므로 ${answer}입니다.`,
+    meta: { family: "square-border-stone-growth-book5", target, side, black, white, difference, moreColor }
+  };
+}
+
 export const BOOK05_GENERATORS = {
   sequentialPathNumberGrid,
   diagonalFillNumberGrid,
@@ -737,5 +1058,21 @@ export const BOOK05_GENERATORS = {
   triangleFigureCount,
   squareGridCount,
   triangularRowBoundaryNumber,
-  squareRowBoundaryNumber
+  squareRowBoundaryNumber,
+  rowMajorGridTwoTargetSumBook5,
+  radialLineCycleTwoPartBook5,
+  calendarWeekdayListOrdinalBook5,
+  calendarSpecialDateOffsetBook5,
+  calendarWeekdaySumYearBoundaryBook5,
+  shortestPathDiagonalShortcutBook5,
+  squareProductCycleFillBook5,
+  checkerboardProductMatrixBook5,
+  symbolZeroOneNetworkBook5,
+  symbolCrossNetworkBook5,
+  symbolSquareProductNetworkBook5,
+  squarePaperGrowthBook5,
+  squareRowTwoBoundariesBook5,
+  calendarOrdinalSumInferWeekdayBook5,
+  regularTriangleGridCountBook5,
+  squareBorderStoneGrowthBook5
 };

@@ -1,10 +1,10 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260826b";
-import { GENERATORS } from "./generators.js?v=20260826b";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260826c";
+import { GENERATORS } from "./generators.js?v=20260826c";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260825m";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
-import { book05Markup } from "./book05-renderers.js?v=20260822f";
+import { book05Markup } from "./book05-renderers.js?v=20260826c";
 import { book06Markup } from "./book06-renderers.js?v=20260822g";
 import { book07Markup } from "./book07-renderers.js?v=20260822h";
 import { book08Markup } from "./book08-renderers.js?v=20260822i";
