@@ -70,6 +70,7 @@ const ui = {
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), stats: $("#shapeStats"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
   tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
+  tutorialDemo: $("#tutorialDemoLayer"), tutorialPegs: $("#tutorialPegLayer"),
   levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
 };
 
@@ -553,18 +554,81 @@ function renderLevelList() {
 
 const tutorialSteps = ["tutorial1", "tutorial2", "tutorial3", "tutorial4"];
 let tutorialStep = 0;
+let tutorialReturnFocus = null;
+
+const tutorialPeg = (x, y, active, delay) => {
+  const peg = svgNode("circle", { class: `tutorial-demo-peg${active ? " active" : ""}`, cx: x, cy: y, r: 4 });
+  if (delay) peg.style.setProperty("--delay", delay);
+  return peg;
+};
+
+function tutorialLine(a, b, delay, bad) {
+  const line = svgNode("line", {
+    class: `tutorial-demo-band${bad ? " bad" : ""}`,
+    x1: a[0], y1: a[1], x2: b[0], y2: b[1], pathLength: 100
+  });
+  line.style.setProperty("--delay", delay);
+  return line;
+}
+
+function tutorialTap(x, y, delay) {
+  const tap = svgNode("circle", { class: "tutorial-demo-tap", cx: x, cy: y, r: 7 });
+  tap.style.setProperty("--delay", delay);
+  return tap;
+}
+
+function renderTutorialDemo() {
+  ui.tutorialDemo.replaceChildren();
+  ui.tutorialPegs.replaceChildren();
+  const coords = [18, 39, 61, 82];
+  coords.forEach((y, row) => coords.forEach((x, col) => {
+    const sequence = tutorialStep === 0 && (row === 1 || row === 2) && (col === 1 || col === 2);
+    ui.tutorialPegs.append(tutorialPeg(x, y, sequence, `${(row + col) * .16}s`));
+  }));
+
+  if (tutorialStep === 0) return;
+  if (tutorialStep === 1) {
+    ui.tutorialDemo.append(tutorialLine([39, 61], [82, 39], ".65s"));
+    ui.tutorialDemo.append(tutorialTap(39, 61, "0s"), tutorialTap(82, 39, "1.05s"));
+    return;
+  }
+  if (tutorialStep === 2) {
+    ui.tutorialDemo.append(tutorialLine([18, 18], [82, 82], ".1s"));
+    ui.tutorialDemo.append(tutorialLine([82, 18], [18, 82], ".8s", true));
+    ui.tutorialDemo.append(tutorialTap(82, 18, ".35s"), tutorialTap(18, 82, "1.05s"));
+    return;
+  }
+
+  const triangle = [[39, 82], [61, 39], [82, 82]];
+  const fill = svgNode("polygon", {
+    class: "tutorial-demo-fill",
+    points: triangle.map((point) => point.join(",")).join(" ")
+  });
+  fill.style.setProperty("--delay", "1.85s");
+  ui.tutorialDemo.append(fill);
+  ui.tutorialDemo.append(tutorialLine(triangle[0], triangle[1], ".1s"));
+  ui.tutorialDemo.append(tutorialLine(triangle[1], triangle[2], ".7s"));
+  ui.tutorialDemo.append(tutorialLine(triangle[2], triangle[0], "1.3s"));
+  ui.tutorialDemo.append(tutorialTap(triangle[0][0], triangle[0][1], "0s"));
+  ui.tutorialDemo.append(tutorialTap(triangle[1][0], triangle[1][1], ".6s"));
+  ui.tutorialDemo.append(tutorialTap(triangle[2][0], triangle[2][1], "1.2s"));
+  ui.tutorialDemo.append(tutorialTap(triangle[0][0], triangle[0][1], "1.8s"));
+}
 
 // Only on the very first problem of a first visit — never again on this device.
 function openTutorial() {
   if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
   if (localStorage.getItem(TUTORIAL_KEY) === "done") return;
+  tutorialReturnFocus = document.activeElement;
   ui.tutorial.hidden = false;
   renderTutorial();
+  queueMicrotask(() => ui.tutorialNext.focus());
 }
 
 function renderTutorial() {
   const line = t(tutorialSteps[tutorialStep]);
   ui.tutorialText.textContent = line;
+  renderTutorialDemo();
   ui.tutorialDots.replaceChildren(...tutorialSteps.map((_, index) => {
     const dot = document.createElement("i");
     if (index === tutorialStep) dot.className = "active";
@@ -632,6 +696,10 @@ ui.tutorialNext.addEventListener("click", () => {
   localStorage.setItem(TUTORIAL_KEY, "done");
   ui.tutorial.hidden = true;
   cubiSays(t("guideStart"));
+  const target = tutorialReturnFocus instanceof HTMLElement && tutorialReturnFocus !== document.body
+    ? tutorialReturnFocus
+    : ui.hits.querySelector(".peg-hit");
+  target?.focus();
 });
 $("#nextLevelButton").addEventListener("click", () => {
   const next = levels.find((level) => level.id === state.level + 1);
