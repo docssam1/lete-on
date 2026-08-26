@@ -5,3 +5,4 @@ supabase/.temp/
 # enter the public repository. They live in an authenticated content store
 # after independent review; local drafting is intentionally ignored.
 private-authoring/
+private-workbook-authoring/

@@ -57,13 +57,19 @@ test("desktop interactions preserve grade role and language contracts", async fu
   assert.equal(await page.locator("#resource-list").getByText("정답지", { exact: true }).count(), 1);
 
   await page.locator('[data-grade="6"]').click();
+  assert.equal(await page.locator('[data-unit-id="ccss-6-rp-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await page.locator("#cadence-summary").getByText("선택 단원: 비와 비율 · 6.RP.A", { exact: true }).count(), 1);
   assert.equal(await page.locator("#cadence-summary").getByText("단원당 3주 · 주 2회 · 회당 75분 · 가정학습 주 2회 30분 · 학교 조정 가능", { exact: true }).count(), 1);
-  assert.equal(await page.locator("#resource-state").getByText("콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다.", { exact: true }).count(), 1);
+  assert.equal(await page.locator("#resource-state").getByText("콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다. 교사용 표시는 메타데이터 미리보기이며 로그인 권한이 아닙니다.", { exact: true }).count(), 1);
   assert.equal(await page.locator("#resource-list a, #resource-list button").count(), 0);
 
   await page.locator('[data-role="student"]').click();
+  assert.equal(await page.locator("#resource-state").getByText("콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다.", { exact: true }).count(), 1);
   assert.equal(await page.locator("#resource-list").getByText("정답지", { exact: true }).count(), 0);
   assert.equal(await page.locator("#resource-list").getByText("개념 워크북", { exact: true }).count(), 1);
+  await page.locator('[data-unit-id="ccss-6-ns-a"]').click();
+  assert.equal(await page.locator('[data-unit-id="ccss-6-ns-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await page.locator('[data-unit-id="ccss-6-rp-a"]').getAttribute("aria-pressed"), "false");
 
   await page.locator('[data-locale="en"]').click();
   assert.equal(await page.locator("html").getAttribute("lang"), "en");

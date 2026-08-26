@@ -27,8 +27,14 @@ test("every verified K-8 unit receives one rights-locked student/teacher resourc
     assert.equal(plan.publicationState, resources.PLAN_STATES.metadataOnly);
     assert.ok(plan.resourcesByAudience.student.length > 0);
     assert.ok(plan.resourcesByAudience.teacher.length > 0);
-    plan.resourcesByAudience.student.forEach(function (resource) { assert.equal(resource.audience, "student"); });
-    plan.resourcesByAudience.teacher.forEach(function (resource) { assert.equal(resource.audience, "teacher"); });
+    plan.resourcesByAudience.student.forEach(function (resource) {
+      assert.equal(resource.audience, "student");
+      assert.equal(resource.deliveryRequirement, "authenticated-student-only");
+    });
+    plan.resourcesByAudience.teacher.forEach(function (resource) {
+      assert.equal(resource.audience, "teacher");
+      assert.equal(resource.deliveryRequirement, "authenticated-teacher-or-admin-only");
+    });
   });
 });
 

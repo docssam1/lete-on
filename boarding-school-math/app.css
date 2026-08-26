@@ -62,7 +62,9 @@ h2 { margin: 0; font-size: clamp(1.75rem, 3.5vw, 2.7rem); line-height: 1.08; }
 .domain-item span { color: var(--muted); font-size: .78rem; }
 .unit-divider { height: 1px; margin: 30px 0 22px; background: var(--line); }
 .unit-list { display: grid; gap: 8px; margin-top: 14px; }
-.unit-item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.unit-item { appearance: none; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; font: inherit; text-align: left; }
+.unit-item[aria-pressed="true"] { border-bottom-color: var(--teal); box-shadow: inset 3px 0 0 var(--teal); padding-left: 10px; }
+.unit-item:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
 .unit-item b, .unit-item span, .unit-item small { display: block; }
 .unit-item b { font-size: .9rem; }
 .unit-item span { margin-top: 4px; color: var(--muted); font-size: .73rem; }

@@ -124,9 +124,9 @@
   function freezeComponents(components) {
     return Object.freeze(components.map(function (component) { return Object.freeze({ componentType: component.componentType, plannedCount: component.plannedCount }); }));
   }
-  function deliveryRequirement(audience, signedItemRequired) {
+  function deliveryRequirement(audience) {
     if (audience === "teacher") return "authenticated-teacher-or-admin-only";
-    return signedItemRequired ? "authenticated-student-only" : "reviewed-public-or-authenticated-student";
+    return "authenticated-student-only";
   }
   function findUnit(unitId) {
     const unit = registry.units.find(function (candidate) { return candidate.unitId === unitId; });
@@ -163,7 +163,7 @@
       levelId: definition.levelId,
       testType: definition.testType,
       resourceType: definition.resourceType,
-      deliveryRequirement: deliveryRequirement(definition.audience, resolved.testType.signedItemRequired),
+      deliveryRequirement: deliveryRequirement(definition.audience),
       signedItemRequired: resolved.testType.signedItemRequired,
       plannedComponents: freezeComponents(definition.plannedComponents),
       bindingState: PLAN_STATES.unbound
@@ -226,7 +226,7 @@
       audience: resource.audience
     });
     if (resource.signedItemRequired !== resolved.testType.signedItemRequired) fail("resource signed item requirement is invalid");
-    if (resource.deliveryRequirement !== deliveryRequirement(resource.audience, resource.signedItemRequired)) fail("resource delivery requirement is invalid");
+    if (resource.deliveryRequirement !== deliveryRequirement(resource.audience)) fail("resource delivery requirement is invalid");
     if (resource.bindingState !== PLAN_STATES.unbound) fail("public resource plans cannot bind item or release IDs");
     if (plan.grade === 6 && resource.testType === "retention-check" && resource.sessionId !== GRADE6_RETENTION_SCHEDULE.sessionId) fail("Grade 6 retention must use the delayed retention schedule");
     denseArray(resource.plannedComponents, "resource.plannedComponents");

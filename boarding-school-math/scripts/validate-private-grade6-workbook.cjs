@@ -1,0 +1,710 @@
+#!/usr/bin/env node
+"use strict";
+
+/*
+ * Local-only preflight for Grade 6 instructional workbook drafts.
+ *
+ * The draft root must be explicit and outside this Git worktree. The public
+ * repository contains this validator and no workbook prompt, answer, teacher
+ * guide, asset, PDF, or export. A structural pass is never a rights, math,
+ * translation, or release approval.
+ */
+
+const fs = require("node:fs");
+const path = require("node:path");
+const registry = require("../curriculum/us-k8-content-registry.js");
+const resourcePlans = require("../resources/k8-resource-plan.js");
+
+const SCHEMA_VERSION = "gfield-private-workbook-draft-v1";
+const CONFIDENTIALITY_MARKER = "GFIELD_PRIVATE_WORKBOOK_DO_NOT_COMMIT";
+const DRAFT_STATE = "draft-pending-independent-review";
+const PRODUCTION_STATE = "local-draft-no-pdf-or-download";
+const LOCAL_BINDING_STATE = "candidate-not-public-bound";
+const REQUIRED_REVIEWS = Object.freeze([
+  "math-correctness", "age-appropriateness", "answer-uniqueness",
+  "translation-ko", "translation-en", "translation-zh-Hans", "rights"
+]);
+const PACK_KEYS = new Set([
+  "schemaVersion", "confidentiality", "packId", "packVersion", "programId", "targetGrade", "unitId", "clusterId",
+  "skillId", "resourcePlanId", "cadenceProfileId", "state", "coverageState", "deliveryState", "localePolicy",
+  "frontMatter", "studentSections", "teacherArtifacts", "homeStudyPlan", "assessmentPlaceholders", "closingMatter",
+  "rightsDraft", "verification", "layoutPlan"
+]);
+const LOCALE_POLICY_KEYS = new Set(["required", "included"]);
+const FRONT_MATTER_KEYS = new Set(["titleByLocale", "learningTargetsByLocale", "howToUseByLocale"]);
+const CLOSING_MATTER_KEYS = new Set(["glossaryByLocale", "retentionNoticeByLocale"]);
+const HOME_BLOCK_KEYS = new Set(["blockId", "week", "sequence", "minutes", "componentIds"]);
+const SECTION_KEYS = new Set([
+  "sectionId", "sectionVersion", "audience", "titleByLocale", "resourceBinding", "productionState", "components"
+]);
+const ARTIFACT_KEYS = new Set([
+  "artifactId", "artifactVersion", "audience", "titleByLocale", "resourceBinding", "productionState", "components",
+  "lessonSegments", "answerReferences"
+]);
+const BINDING_KEYS = new Set([
+  "resourcePlanItemId", "courseId", "unitId", "skillId", "sessionId", "audience", "levelId", "testType",
+  "resourceType", "bindingState"
+]);
+const STUDENT_COMPONENT_KEYS = new Set([
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId"
+]);
+const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
+const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
+const REFERENCE_KEYS = new Set([
+  "referenceId", "componentId", "responseMode", "expectedResponse", "solutionByLocale", "uniquenessProofByLocale",
+  "arithmeticCheck"
+]);
+const PLACEHOLDER_KEYS = new Set([
+  "resourcePlanItemId", "sessionId", "levelId", "testType", "resourceType", "status"
+]);
+const RIGHTS_KEYS = new Set([
+  "mode", "originType", "authority", "translationAllowed", "derivativeAllowed", "externalSourceUsed",
+  "contestWordingUsed", "decision"
+]);
+const VERIFICATION_KEYS = new Set([
+  "authorMathCheck", "authorTranslationCheck", "authorRightsCheck", "requiredReviews", "releaseState"
+]);
+const LAYOUT_KEYS = new Set([
+  "studentTargetPages", "teacherTargetPages", "frontMatterPages", "closingPages", "studentSectionLayouts",
+  "teacherArtifactLayouts"
+]);
+const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
+const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact"]);
+const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
+const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|answer|正确答案|答案|결과|result|结果|풀이|solution|解答)/iu;
+const ANSWER_VALUE_LABEL = /(?:correct\s+answer|answer|정답|답|正确答案|答案|결과|result|结果|풀이|solution|解答)/giu;
+const ANSWER_VALUE_GRAMMAR_CONNECTOR = /^\s*(?:은|는|is|are|equals?|是|为)\s*/iu;
+const ANSWER_VALUE_SEPARATOR = /^(?:[\s\p{P}\p{S}\p{C}\p{M}\p{Z}])+/u;
+const ANSWER_VALUE_WRAPPER = /^(?:[\[("“‘]+\s*)+/u;
+
+class ValidationError extends Error {
+  constructor(code, reference) {
+    super(code);
+    this.code = code;
+    this.reference = reference;
+  }
+}
+
+function fail(code, reference) {
+  throw new ValidationError(code, reference);
+}
+
+function assert(condition, code, reference) {
+  if (!condition) fail(code, reference);
+}
+
+function isRecord(value) {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function nonBlankText(value) {
+  return typeof value === "string" && value.length > 0 && value.trim() === value;
+}
+
+function assertRecord(value, code, reference) {
+  assert(isRecord(value), code, reference);
+}
+
+function assertDenseArray(value, code, reference) {
+  assert(Array.isArray(value), code, reference);
+  for (let index = 0; index < value.length; index += 1) {
+    assert(Object.prototype.hasOwnProperty.call(value, index), code, reference);
+  }
+}
+
+function assertOnlyKeys(value, allowed, code, reference) {
+  assertRecord(value, code, reference);
+  assert(Object.keys(value).every(function (key) { return allowed.has(key); }), code, reference);
+}
+
+function assertId(value, prefix, code, reference) {
+  assert(typeof value === "string" && new RegExp(`^${prefix}[a-z0-9][a-z0-9-]{3,79}$`).test(value), code, reference);
+}
+
+function requireLocales(value, policy, code, reference) {
+  assertOnlyKeys(value, new Set(policy.included), code, reference);
+  policy.required.forEach(function (locale) { assert(nonBlankText(value[locale]), code, reference); });
+  policy.included.forEach(function (locale) { assert(nonBlankText(value[locale]), code, reference); });
+}
+
+function normalizeForAnswerLeakScan(value) {
+  return String(value)
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/\\(?:boxed|text|mathrm|displaystyle)\s*\{([^{}]*)\}/gu, "$1")
+    .replace(/\\colon\b/gu, ":")
+    .replace(/\\(?:longrightarrow|rightarrow|longmapsto|mapsto|implies|to)\b/gu, " ")
+    .replace(/\\[a-z]+\*?/giu, " ")
+    .replace(/[\\${}]/gu, " ")
+    .replace(/[\p{C}\p{M}]/gu, "")
+    .replace(/\s+/gu, " ")
+    .replace(/[\u2236\uA789\uFE13\uFE55\uFF1A]/gu, ":")
+    .replace(/\s*:\s*/gu, ":")
+    .trim();
+}
+
+function answerValueBoundary(nextCharacter) {
+  return nextCharacter === "" || /\s/u.test(nextCharacter) || ",.;!?%()]}\"'”’".includes(nextCharacter);
+}
+
+function disclosedResponseStartsCandidate(candidate, normalizedResponse) {
+  if (candidate.startsWith(normalizedResponse)) {
+    return answerValueBoundary(candidate.slice(normalizedResponse.length, normalizedResponse.length + 1));
+  }
+  const ratio = /^([1-9][0-9]*):([1-9][0-9]*)$/.exec(normalizedResponse);
+  if (!ratio) return false;
+  const ratioWithVariantSeparator = new RegExp(`^${ratio[1]}(?:[\\s\\p{P}\\p{S}])+${ratio[2]}`, "u");
+  const match = ratioWithVariantSeparator.exec(candidate);
+  return !!match && answerValueBoundary(candidate.slice(match[0].length, match[0].length + 1));
+}
+
+function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference) {
+  const normalizedContent = normalizeForAnswerLeakScan(content);
+  assert(!ANSWER_REVEALING_TEXT.test(normalizedContent), "STUDENT_ANSWER_LEAK", reference);
+  const normalizedResponse = normalizeForAnswerLeakScan(expectedResponse);
+  assert(nonBlankText(normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
+  ANSWER_VALUE_LABEL.lastIndex = 0;
+  let label;
+  while ((label = ANSWER_VALUE_LABEL.exec(normalizedContent))) {
+    let candidate = normalizedContent.slice(label.index + label[0].length);
+    candidate = candidate.replace(ANSWER_VALUE_GRAMMAR_CONNECTOR, "").replace(ANSWER_VALUE_SEPARATOR, "").replace(ANSWER_VALUE_WRAPPER, "");
+    assert(!disclosedResponseStartsCandidate(candidate, normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
+  }
+}
+
+function validateLocalePolicy(policy, reference) {
+  assertOnlyKeys(policy, LOCALE_POLICY_KEYS, "LOCALE_POLICY_INVALID", reference);
+  assertDenseArray(policy.required, "LOCALE_POLICY_INVALID", reference);
+  assertDenseArray(policy.included, "LOCALE_POLICY_INVALID", reference);
+  assert(JSON.stringify(policy.required) === JSON.stringify(["ko", "en"]), "LOCALE_POLICY_INVALID", reference);
+  assert(policy.included.length >= 2 && policy.included.length <= 3, "LOCALE_POLICY_INVALID", reference);
+  assert(policy.included[0] === "ko" && policy.included[1] === "en", "LOCALE_POLICY_INVALID", reference);
+  if (policy.included.length === 3) assert(policy.included[2] === "zh-Hans", "LOCALE_POLICY_INVALID", reference);
+  assert(new Set(policy.included).size === policy.included.length, "LOCALE_POLICY_INVALID", reference);
+}
+
+function localReference(value, fallback) {
+  return value && typeof value === "string" ? value : fallback;
+}
+
+function standardUnit(pack, reference) {
+  const unit = registry.units.find(function (candidate) { return candidate.unitId === pack.unitId; });
+  assert(unit && unit.grade === 6, "WORKBOOK_UNIT_NOT_GRADE6", reference);
+  const expectedSkillId = registry.skillIdForCluster(unit.clusterId);
+  assert(pack.clusterId === unit.clusterId && pack.skillId === expectedSkillId, "WORKBOOK_LINEAGE_INVALID", reference);
+  assert(pack.programId === registry.COURSE_ID && pack.targetGrade === 6, "WORKBOOK_LINEAGE_INVALID", reference);
+  return unit;
+}
+
+function validateRightsDraft(rights, reference) {
+  assertOnlyKeys(rights, RIGHTS_KEYS, "WORKBOOK_RIGHTS_DRAFT_INVALID", reference);
+  assert(rights.mode === "owned_original" && rights.originType === "gfield-authored" && rights.authority === "GFIELD", "WORKBOOK_RIGHTS_DRAFT_INVALID", reference);
+  assert(rights.translationAllowed === true && rights.derivativeAllowed === true, "WORKBOOK_RIGHTS_DRAFT_INVALID", reference);
+  assert(rights.externalSourceUsed === false && rights.contestWordingUsed === false, "WORKBOOK_RIGHTS_DRAFT_INVALID", reference);
+  assert(rights.decision === "pending-independent-review", "WORKBOOK_RIGHTS_DRAFT_INVALID", reference);
+}
+
+function validateVerification(verification, reference) {
+  assertOnlyKeys(verification, VERIFICATION_KEYS, "WORKBOOK_VERIFICATION_INVALID", reference);
+  ["authorMathCheck", "authorTranslationCheck", "authorRightsCheck"].forEach(function (field) {
+    assert(verification[field] === "complete-not-independent", "WORKBOOK_VERIFICATION_INVALID", reference);
+  });
+  assertDenseArray(verification.requiredReviews, "WORKBOOK_VERIFICATION_INVALID", reference);
+  assert(JSON.stringify(verification.requiredReviews) === JSON.stringify(REQUIRED_REVIEWS), "WORKBOOK_VERIFICATION_INVALID", reference);
+  assert(verification.releaseState === "not-eligible", "WORKBOOK_VERIFICATION_INVALID", reference);
+}
+
+function validateFrontMatter(frontMatter, policy, reference) {
+  assertOnlyKeys(frontMatter, FRONT_MATTER_KEYS, "FRONT_MATTER_INVALID", reference);
+  ["titleByLocale", "learningTargetsByLocale", "howToUseByLocale"].forEach(function (field) {
+    requireLocales(frontMatter[field], policy, "FRONT_MATTER_INVALID", reference);
+  });
+}
+
+function validateClosingMatter(closingMatter, policy, reference) {
+  assertOnlyKeys(closingMatter, CLOSING_MATTER_KEYS, "CLOSING_MATTER_INVALID", reference);
+  ["glossaryByLocale", "retentionNoticeByLocale"].forEach(function (field) {
+    requireLocales(closingMatter[field], policy, "CLOSING_MATTER_INVALID", reference);
+  });
+}
+
+function findResource(plan, binding, reference) {
+  assertOnlyKeys(binding, BINDING_KEYS, "RESOURCE_BINDING_INVALID", reference);
+  const candidates = (plan.resourcesByAudience[binding.audience] || []).filter(function (resource) {
+    return resource.resourcePlanItemId === binding.resourcePlanItemId;
+  });
+  assert(candidates.length === 1, "RESOURCE_BINDING_INVALID", reference);
+  const resource = candidates[0];
+  ["courseId", "unitId", "skillId", "sessionId", "audience", "levelId", "testType", "resourceType"].forEach(function (field) {
+    assert(binding[field] === resource[field], "RESOURCE_BINDING_INVALID", reference);
+  });
+  assert(binding.bindingState === LOCAL_BINDING_STATE, "RESOURCE_BINDING_INVALID", reference);
+  assert(resource.bindingState === resourcePlans.PLAN_STATES.unbound, "PUBLIC_RESOURCE_ALREADY_BOUND", reference);
+  assert(resource.deliveryRequirement === (resource.audience === "student" ? "authenticated-student-only" : "authenticated-teacher-or-admin-only"), "RESOURCE_DELIVERY_BOUNDARY_INVALID", reference);
+  return resource;
+}
+
+function componentCounts(components) {
+  const counts = new Map();
+  components.forEach(function (component) {
+    counts.set(component.componentType, (counts.get(component.componentType) || 0) + 1);
+  });
+  return counts;
+}
+
+function assertPlannedComponentCounts(components, resource, reference) {
+  const actual = componentCounts(components);
+  const planned = new Map(resource.plannedComponents.map(function (component) { return [component.componentType, component.plannedCount]; }));
+  assert(actual.size === planned.size, "PLANNED_COMPONENT_COUNT_MISMATCH", reference);
+  planned.forEach(function (count, componentType) {
+    assert(actual.get(componentType) === count, "PLANNED_COMPONENT_COUNT_MISMATCH", reference);
+  });
+}
+
+function validateStudentComponent(component, policy, reference) {
+  assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
+  assertId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
+  assert(Number.isInteger(component.sequence) && component.sequence > 0 && component.sequence <= 100, "STUDENT_COMPONENT_INVALID", reference);
+  requireLocales(component.contentByLocale, policy, "STUDENT_COMPONENT_INVALID", reference);
+  const isTeachingBlock = TEACHING_COMPONENT_TYPES.has(component.componentType);
+  if (isTeachingBlock) {
+    assert(component.responseMode === null && component.teacherReferenceId === null, "STUDENT_COMPONENT_INVALID", reference);
+  } else {
+    assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
+    assertId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
+    Object.values(component.contentByLocale).forEach(function (content) {
+      assert(!ANSWER_REVEALING_TEXT.test(normalizeForAnswerLeakScan(content)), "STUDENT_ANSWER_LEAK", reference);
+    });
+  }
+}
+
+function validateStudentSection(section, plan, policy, seenSectionIds, seenComponentIds, expectedResources) {
+  const reference = localReference(section && section.sectionId, "student-section");
+  assertOnlyKeys(section, SECTION_KEYS, "STUDENT_SECTION_INVALID", reference);
+  assertId(section.sectionId, "sct-dft-", "STUDENT_SECTION_INVALID", reference);
+  assert(!seenSectionIds.has(section.sectionId), "DUPLICATE_STUDENT_SECTION", reference);
+  seenSectionIds.add(section.sectionId);
+  assert(section.sectionVersion === 1 && section.audience === "student" && section.productionState === PRODUCTION_STATE, "STUDENT_SECTION_INVALID", reference);
+  requireLocales(section.titleByLocale, policy, "STUDENT_SECTION_INVALID", reference);
+  const resource = findResource(plan, section.resourceBinding, reference);
+  assert(resource.audience === "student", "STUDENT_SECTION_INVALID", reference);
+  assert(expectedResources.has(resource.resourcePlanItemId), "STUDENT_RESOURCE_NOT_IN_SCOPE", reference);
+  assertDenseArray(section.components, "STUDENT_SECTION_INVALID", reference);
+  assertPlannedComponentCounts(section.components, resource, reference);
+  const sequences = [];
+  section.components.forEach(function (component) {
+    validateStudentComponent(component, policy, localReference(component && component.componentId, reference));
+    assert(!seenComponentIds.has(component.componentId), "DUPLICATE_STUDENT_COMPONENT", component.componentId);
+    seenComponentIds.add(component.componentId);
+    sequences.push(component.sequence);
+  });
+  assert(JSON.stringify(sequences.sort(function (left, right) { return left - right; })) === JSON.stringify(section.components.map(function (_component, index) { return index + 1; })), "STUDENT_COMPONENT_SEQUENCE_INVALID", reference);
+  return Object.freeze({ resource, section });
+}
+
+function validateTeacherComponent(component, policy, reference) {
+  assertOnlyKeys(component, TEACHER_COMPONENT_KEYS, "TEACHER_COMPONENT_INVALID", reference);
+  assertId(component.componentId, "tcmp-dft-", "TEACHER_COMPONENT_INVALID", reference);
+  assert(Number.isInteger(component.sequence) && component.sequence > 0 && component.sequence <= 100, "TEACHER_COMPONENT_INVALID", reference);
+  requireLocales(component.contentByLocale, policy, "TEACHER_COMPONENT_INVALID", reference);
+}
+
+function validateLessonSegments(segments, artifact, policy, reference) {
+  assertDenseArray(segments, "LESSON_SEGMENTS_INVALID", reference);
+  if (artifact.resourceBinding.resourceType !== "lesson-plan") {
+    assert(segments.length === 0, "LESSON_SEGMENTS_INVALID", reference);
+    return;
+  }
+  assert(segments.length >= 4 && segments.length <= 8, "LESSON_SEGMENTS_INVALID", reference);
+  const ids = new Set();
+  const sequences = [];
+  let totalMinutes = 0;
+  segments.forEach(function (segment) {
+    assertOnlyKeys(segment, SEGMENT_KEYS, "LESSON_SEGMENTS_INVALID", reference);
+    assertId(segment.segmentId, "seg-dft-", "LESSON_SEGMENTS_INVALID", reference);
+    assert(!ids.has(segment.segmentId), "LESSON_SEGMENTS_INVALID", reference);
+    ids.add(segment.segmentId);
+    assert(Number.isInteger(segment.sequence) && segment.sequence > 0, "LESSON_SEGMENTS_INVALID", reference);
+    assert(Number.isInteger(segment.minutes) && segment.minutes >= 5 && segment.minutes <= 30, "LESSON_SEGMENTS_INVALID", reference);
+    requireLocales(segment.instructionByLocale, policy, "LESSON_SEGMENTS_INVALID", reference);
+    sequences.push(segment.sequence);
+    totalMinutes += segment.minutes;
+  });
+  assert(JSON.stringify(sequences.sort(function (left, right) { return left - right; })) === JSON.stringify(segments.map(function (_segment, index) { return index + 1; })), "LESSON_SEGMENTS_INVALID", reference);
+  assert(totalMinutes === resourcePlans.GRADE6_CADENCE.minutesPerSession, "LESSON_MINUTES_INVALID", reference);
+}
+
+function positiveInteger(value) {
+  return Number.isSafeInteger(value) && value > 0 && value <= 1000000000;
+}
+
+function greatestCommonDivisor(left, right) {
+  let a = Math.abs(left);
+  let b = Math.abs(right);
+  while (b) {
+    const next = a % b;
+    a = b;
+    b = next;
+  }
+  return a;
+}
+
+function canonicalAnswer(check, reference) {
+  assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
+  if (check.kind === "ratio-canonical") {
+    assertOnlyKeys(check, new Set(["kind", "left", "right"]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(positiveInteger(check.left) && positiveInteger(check.right), "ARITHMETIC_CHECK_INVALID", reference);
+    const divisor = greatestCommonDivisor(check.left, check.right);
+    return `${check.left / divisor}:${check.right / divisor}`;
+  }
+  if (check.kind === "whole-quotient") {
+    assertOnlyKeys(check, new Set(["kind", "total", "groups"]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(positiveInteger(check.total) && positiveInteger(check.groups) && check.total % check.groups === 0, "ARITHMETIC_CHECK_INVALID", reference);
+    return String(check.total / check.groups);
+  }
+  if (check.kind === "whole-product") {
+    assertOnlyKeys(check, new Set(["kind", "perGroup", "groups"]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(positiveInteger(check.perGroup) && positiveInteger(check.groups) && check.perGroup * check.groups <= 1000000000, "ARITHMETIC_CHECK_INVALID", reference);
+    return String(check.perGroup * check.groups);
+  }
+  if (check.kind === "whole-percent") {
+    assertOnlyKeys(check, new Set(["kind", "part", "whole"]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
+    return String((100 * check.part) / check.whole);
+  }
+  if (check.kind === "percent-of-whole") {
+    assertOnlyKeys(check, new Set(["kind", "whole", "percent"]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(positiveInteger(check.whole) && positiveInteger(check.percent) && check.percent <= 100 && (check.whole * check.percent) % 100 === 0, "ARITHMETIC_CHECK_INVALID", reference);
+    return String((check.whole * check.percent) / 100);
+  }
+  fail("ARITHMETIC_CHECK_INVALID", reference);
+}
+
+function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
+  const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
+  assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
+  assertId(answerReference.referenceId, "ref-dft-", "ANSWER_REFERENCE_INVALID", reference);
+  assert(!seenReferenceIds.has(answerReference.referenceId), "DUPLICATE_ANSWER_REFERENCE", reference);
+  seenReferenceIds.add(answerReference.referenceId);
+  const component = componentMap.get(answerReference.componentId);
+  assert(component, "ANSWER_REFERENCE_COMPONENT_UNKNOWN", reference);
+  assert(component.component.responseMode === answerReference.responseMode, "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  assert(component.section.resourceBinding.sessionId === artifact.resourceBinding.sessionId, "ANSWER_REFERENCE_SESSION_MISMATCH", reference);
+  assert(RESPONSE_MODES.has(answerReference.responseMode), "ANSWER_REFERENCE_INVALID", reference);
+  assert(nonBlankText(answerReference.expectedResponse), "ANSWER_REFERENCE_INVALID", reference);
+  requireLocales(answerReference.solutionByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
+  requireLocales(answerReference.uniquenessProofByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
+  const expected = canonicalAnswer(answerReference.arithmeticCheck, reference);
+  assert(answerReference.expectedResponse === expected, "ANSWER_REFERENCE_CALCULATION_MISMATCH", reference);
+  if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  if (answerReference.responseMode === "numeric-exact") assert(answerReference.arithmeticCheck.kind !== "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  Object.values(component.component.contentByLocale).forEach(function (content) {
+    assertStudentContentDoesNotRevealAnswer(content, answerReference.expectedResponse, reference);
+  });
+  return component;
+}
+
+function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expectedResources) {
+  const reference = localReference(artifact && artifact.artifactId, "teacher-artifact");
+  assertOnlyKeys(artifact, ARTIFACT_KEYS, "TEACHER_ARTIFACT_INVALID", reference);
+  assertId(artifact.artifactId, "art-dft-", "TEACHER_ARTIFACT_INVALID", reference);
+  assert(!seenArtifactIds.has(artifact.artifactId), "DUPLICATE_TEACHER_ARTIFACT", reference);
+  seenArtifactIds.add(artifact.artifactId);
+  assert(artifact.artifactVersion === 1 && artifact.audience === "teacher" && artifact.productionState === PRODUCTION_STATE, "TEACHER_ARTIFACT_INVALID", reference);
+  requireLocales(artifact.titleByLocale, policy, "TEACHER_ARTIFACT_INVALID", reference);
+  const resource = findResource(plan, artifact.resourceBinding, reference);
+  assert(resource.audience === "teacher" && expectedResources.has(resource.resourcePlanItemId), "TEACHER_RESOURCE_NOT_IN_SCOPE", reference);
+  assertDenseArray(artifact.components, "TEACHER_ARTIFACT_INVALID", reference);
+  assertPlannedComponentCounts(artifact.components, resource, reference);
+  const componentIds = new Set();
+  const sequences = [];
+  artifact.components.forEach(function (component) {
+    validateTeacherComponent(component, policy, localReference(component && component.componentId, reference));
+    assert(!componentIds.has(component.componentId), "DUPLICATE_TEACHER_COMPONENT", reference);
+    componentIds.add(component.componentId);
+    sequences.push(component.sequence);
+  });
+  assert(JSON.stringify(sequences.sort(function (left, right) { return left - right; })) === JSON.stringify(artifact.components.map(function (_component, index) { return index + 1; })), "TEACHER_COMPONENT_SEQUENCE_INVALID", reference);
+  validateLessonSegments(artifact.lessonSegments, artifact, policy, reference);
+  assertDenseArray(artifact.answerReferences, "TEACHER_ARTIFACT_INVALID", reference);
+  if (["assignment-builder"].includes(resource.resourceType)) assert(artifact.answerReferences.length === 0, "TEACHER_ARTIFACT_INVALID", reference);
+  return Object.freeze({ resource, artifact });
+}
+
+function validateAssessmentPlaceholders(placeholders, plan, reference) {
+  assertDenseArray(placeholders, "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+  const expected = plan.resourcesByAudience.student.filter(function (resource) {
+    return resource.signedItemRequired && ["quiz", "test"].includes(resource.resourceType);
+  });
+  assert(placeholders.length === expected.length, "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+  const expectedById = new Map(expected.map(function (resource) { return [resource.resourcePlanItemId, resource]; }));
+  const seen = new Set();
+  placeholders.forEach(function (placeholder) {
+    assertOnlyKeys(placeholder, PLACEHOLDER_KEYS, "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+    const resource = expectedById.get(placeholder.resourcePlanItemId);
+    assert(resource && !seen.has(resource.resourcePlanItemId), "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+    seen.add(resource.resourcePlanItemId);
+    ["sessionId", "levelId", "testType", "resourceType"].forEach(function (field) {
+      assert(placeholder[field] === resource[field], "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+    });
+    assert(placeholder.status === "not-authored-in-workbook-pack", "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
+  });
+}
+
+function validateHomeStudyPlan(homeStudyPlan, componentMap, reference) {
+  assertDenseArray(homeStudyPlan, "HOME_STUDY_PLAN_INVALID", reference);
+  assert(homeStudyPlan.length === resourcePlans.GRADE6_CADENCE.homeBlocksPerWeek * resourcePlans.GRADE6_CADENCE.weeksPerUnit, "HOME_STUDY_PLAN_INVALID", reference);
+  const blockIds = new Set();
+  const sequences = [];
+  const weeks = new Map();
+  const assignedComponents = new Set();
+  homeStudyPlan.forEach(function (block) {
+    assertOnlyKeys(block, HOME_BLOCK_KEYS, "HOME_STUDY_PLAN_INVALID", reference);
+    assertId(block.blockId, "hbk-dft-", "HOME_STUDY_PLAN_INVALID", reference);
+    assert(!blockIds.has(block.blockId), "HOME_STUDY_PLAN_INVALID", reference);
+    blockIds.add(block.blockId);
+    assert(Number.isInteger(block.week) && block.week >= 1 && block.week <= resourcePlans.GRADE6_CADENCE.weeksPerUnit, "HOME_STUDY_PLAN_INVALID", reference);
+    assert(Number.isInteger(block.sequence) && block.sequence > 0, "HOME_STUDY_PLAN_INVALID", reference);
+    assert(block.minutes === resourcePlans.GRADE6_CADENCE.minutesPerHomeBlock, "HOME_STUDY_PLAN_INVALID", reference);
+    assertDenseArray(block.componentIds, "HOME_STUDY_PLAN_INVALID", reference);
+    assert(block.componentIds.length >= 2 && block.componentIds.length <= 3, "HOME_STUDY_PLAN_INVALID", reference);
+    block.componentIds.forEach(function (componentId) {
+      const component = componentMap.get(componentId);
+      assert(component && component.component.responseMode !== null && !assignedComponents.has(componentId), "HOME_STUDY_PLAN_INVALID", reference);
+      assignedComponents.add(componentId);
+    });
+    sequences.push(block.sequence);
+    weeks.set(block.week, (weeks.get(block.week) || 0) + 1);
+  });
+  assert(JSON.stringify(sequences.sort(function (left, right) { return left - right; })) === JSON.stringify(homeStudyPlan.map(function (_block, index) { return index + 1; })), "HOME_STUDY_PLAN_INVALID", reference);
+  for (let week = 1; week <= resourcePlans.GRADE6_CADENCE.weeksPerUnit; week += 1) {
+    assert(weeks.get(week) === resourcePlans.GRADE6_CADENCE.homeBlocksPerWeek, "HOME_STUDY_PLAN_INVALID", reference);
+  }
+}
+
+function validateLayouts(layoutPlan, sections, artifacts, reference) {
+  assertOnlyKeys(layoutPlan, LAYOUT_KEYS, "LAYOUT_PLAN_INVALID", reference);
+  ["studentTargetPages", "teacherTargetPages", "frontMatterPages", "closingPages"].forEach(function (field) {
+    assert(Number.isInteger(layoutPlan[field]) && layoutPlan[field] >= 0 && layoutPlan[field] <= 100, "LAYOUT_PLAN_INVALID", reference);
+  });
+  assert(layoutPlan.studentTargetPages >= 8 && layoutPlan.teacherTargetPages >= 4, "LAYOUT_PLAN_INVALID", reference);
+  function validateEntries(entries, expectedIds, startPage, finalPage, code) {
+    assertDenseArray(entries, code, reference);
+    assert(entries.length === expectedIds.size, code, reference);
+    const ids = new Set();
+    let nextPage = startPage;
+    entries.forEach(function (entry) {
+      assertOnlyKeys(entry, LAYOUT_ENTRY_KEYS, code, reference);
+      assert(typeof entry.id === "string" && expectedIds.has(entry.id) && !ids.has(entry.id), code, reference);
+      ids.add(entry.id);
+      assert(Number.isInteger(entry.startPage) && Number.isInteger(entry.endPage) && entry.startPage === nextPage && entry.endPage >= entry.startPage, code, reference);
+      nextPage = entry.endPage + 1;
+    });
+    assert(nextPage === finalPage + 1, code, reference);
+  }
+  validateEntries(
+    layoutPlan.studentSectionLayouts,
+    new Set(sections.map(function (entry) { return entry.section.sectionId; })),
+    layoutPlan.frontMatterPages + 1,
+    layoutPlan.studentTargetPages - layoutPlan.closingPages,
+    "STUDENT_LAYOUT_INVALID"
+  );
+  validateEntries(
+    layoutPlan.teacherArtifactLayouts,
+    new Set(artifacts.map(function (entry) { return entry.artifact.artifactId; })),
+    1,
+    layoutPlan.teacherTargetPages,
+    "TEACHER_LAYOUT_INVALID"
+  );
+}
+
+function instructionalStudentResources(plan) {
+  return plan.resourcesByAudience.student.filter(function (resource) {
+    return resource.testType === "guided-practice" && ["concept-workbook", "guided-practice", "homework"].includes(resource.resourceType);
+  });
+}
+
+function instructionalTeacherResources(plan) {
+  const instructionalSessions = new Set(instructionalStudentResources(plan).map(function (resource) { return resource.sessionId; }));
+  return plan.resourcesByAudience.teacher.filter(function (resource) {
+    return instructionalSessions.has(resource.sessionId) && ["lesson-plan", "solution-guide", "assignment-builder", "answer-key"].includes(resource.resourceType);
+  });
+}
+
+function validatePack(pack, fileName) {
+  const reference = localReference(pack && pack.packId, fileName);
+  assertOnlyKeys(pack, PACK_KEYS, "WORKBOOK_PACK_FIELDS_INVALID", reference);
+  assert(pack.schemaVersion === SCHEMA_VERSION && pack.confidentiality === CONFIDENTIALITY_MARKER, "WORKBOOK_PACK_SCHEMA_INVALID", reference);
+  assertId(pack.packId, "wbk-dft-", "WORKBOOK_PACK_ID_INVALID", reference);
+  assert(pack.packVersion === 1 && pack.state === DRAFT_STATE && pack.deliveryState === "locked", "WORKBOOK_PACK_STATE_INVALID", reference);
+  assert(["partial", "plan-complete"].includes(pack.coverageState), "WORKBOOK_PACK_STATE_INVALID", reference);
+  validateLocalePolicy(pack.localePolicy, reference);
+  validateFrontMatter(pack.frontMatter, pack.localePolicy, reference);
+  validateClosingMatter(pack.closingMatter, pack.localePolicy, reference);
+  const unit = standardUnit(pack, reference);
+  const plan = resourcePlans.buildUnitPlan(unit.unitId);
+  assert(pack.resourcePlanId === plan.planId && pack.cadenceProfileId === resourcePlans.GRADE6_CADENCE.cadenceProfileId, "WORKBOOK_PLAN_BINDING_INVALID", reference);
+  validateRightsDraft(pack.rightsDraft, reference);
+  validateVerification(pack.verification, reference);
+  assertDenseArray(pack.studentSections, "STUDENT_SECTIONS_INVALID", reference);
+  assertDenseArray(pack.teacherArtifacts, "TEACHER_ARTIFACTS_INVALID", reference);
+
+  const expectedStudent = new Map(instructionalStudentResources(plan).map(function (resource) { return [resource.resourcePlanItemId, resource]; }));
+  const expectedTeacher = new Map(instructionalTeacherResources(plan).map(function (resource) { return [resource.resourcePlanItemId, resource]; }));
+  const seenSectionIds = new Set();
+  const seenComponentIds = new Set();
+  const seenStudentResources = new Set();
+  const sections = pack.studentSections.map(function (section) {
+    const result = validateStudentSection(section, plan, pack.localePolicy, seenSectionIds, seenComponentIds, expectedStudent);
+    assert(!seenStudentResources.has(result.resource.resourcePlanItemId), "DUPLICATE_STUDENT_RESOURCE", result.section.sectionId);
+    seenStudentResources.add(result.resource.resourcePlanItemId);
+    return result;
+  });
+  if (pack.coverageState === "plan-complete") assert(seenStudentResources.size === expectedStudent.size, "INSTRUCTIONAL_COVERAGE_INCOMPLETE", reference);
+  else assert(seenStudentResources.size > 0 && seenStudentResources.size < expectedStudent.size, "PARTIAL_COVERAGE_STATE_INVALID", reference);
+
+  const seenArtifactIds = new Set();
+  const seenTeacherResources = new Set();
+  const artifacts = pack.teacherArtifacts.map(function (artifact) {
+    const result = validateTeacherArtifact(artifact, plan, pack.localePolicy, seenArtifactIds, expectedTeacher);
+    assert(!seenTeacherResources.has(result.resource.resourcePlanItemId), "DUPLICATE_TEACHER_RESOURCE", result.artifact.artifactId);
+    seenTeacherResources.add(result.resource.resourcePlanItemId);
+    return result;
+  });
+  if (pack.coverageState === "plan-complete") assert(seenTeacherResources.size === expectedTeacher.size, "TEACHER_COVERAGE_INCOMPLETE", reference);
+  else assert(seenTeacherResources.size > 0 && seenTeacherResources.size < expectedTeacher.size, "PARTIAL_COVERAGE_STATE_INVALID", reference);
+
+  const componentMap = new Map();
+  sections.forEach(function (entry) {
+    entry.section.components.forEach(function (component) { componentMap.set(component.componentId, Object.freeze({ component, section: entry.section })); });
+  });
+  validateHomeStudyPlan(pack.homeStudyPlan, componentMap, reference);
+  const seenReferenceIds = new Set();
+  const referencedComponents = new Set();
+  artifacts.forEach(function (entry) {
+    entry.artifact.answerReferences.forEach(function (answerReference) {
+      const component = validateAnswerReference(answerReference, componentMap, pack.localePolicy, entry.artifact, seenReferenceIds);
+      assert(component.component.teacherReferenceId === answerReference.referenceId, "ANSWER_REFERENCE_LINK_MISMATCH", answerReference.referenceId);
+      assert(!referencedComponents.has(answerReference.componentId), "DUPLICATE_COMPONENT_ANSWER_REFERENCE", answerReference.referenceId);
+      referencedComponents.add(answerReference.componentId);
+    });
+  });
+  sections.forEach(function (entry) {
+    entry.section.components.forEach(function (component) {
+      if (component.responseMode === null) return;
+      assert(referencedComponents.has(component.componentId), "MISSING_TEACHER_ANSWER_REFERENCE", component.componentId);
+    });
+  });
+  validateAssessmentPlaceholders(pack.assessmentPlaceholders, plan, reference);
+  validateLayouts(pack.layoutPlan, sections, artifacts, reference);
+  return Object.freeze({ sectionCount: sections.length, componentCount: componentMap.size, artifactCount: artifacts.length });
+}
+
+function isInside(candidate, parent) {
+  const relative = path.relative(parent, candidate);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+}
+
+function assertNoReparsePointInPath(absolutePath) {
+  const parsed = path.parse(absolutePath);
+  let current = parsed.root;
+  const parts = absolutePath.slice(parsed.root.length).split(path.sep).filter(Boolean);
+  parts.forEach(function (part) {
+    current = path.join(current, part);
+    const stat = fs.lstatSync(current);
+    assert(stat.isDirectory() && !stat.isSymbolicLink(), "PRIVATE_WORKBOOK_ROOT_UNSAFE", "root");
+  });
+}
+
+function parseRoot(args) {
+  assert(args.length === 2 && args[0] === "--root" && path.isAbsolute(args[1]), "PRIVATE_WORKBOOK_ROOT_REQUIRED", "command");
+  return args[1];
+}
+
+function sourceFiles(root) {
+  const rootStat = fs.lstatSync(root);
+  assert(rootStat.isDirectory() && !rootStat.isSymbolicLink(), "PRIVATE_WORKBOOK_ROOT_UNSAFE", "root");
+  const files = [];
+  fs.readdirSync(root, { withFileTypes: true }).forEach(function (entry) {
+    assert(entry.isFile() && !entry.isSymbolicLink(), "PRIVATE_WORKBOOK_PATH_UNSAFE", entry.name);
+    assert(/^grade6-[a-z0-9-]+-workbook-draft\.json$/.test(entry.name), "PRIVATE_WORKBOOK_FILE_NAME_INVALID", entry.name);
+    files.push(entry.name);
+  });
+  assert(files.length > 0, "PRIVATE_WORKBOOK_PACKS_MISSING", "root");
+  return files.sort();
+}
+
+function loadPack(root, fileName) {
+  const reference = fileName;
+  const fullPath = path.join(root, fileName);
+  const stat = fs.lstatSync(fullPath);
+  assert(stat.isFile() && !stat.isSymbolicLink() && stat.size > 0 && stat.size <= 1024 * 1024, "PRIVATE_WORKBOOK_FILE_UNSAFE", reference);
+  let value;
+  try {
+    value = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+  } catch (_error) {
+    fail("PRIVATE_WORKBOOK_JSON_INVALID", reference);
+  }
+  assertRecord(value, "PRIVATE_WORKBOOK_JSON_INVALID", reference);
+  return value;
+}
+
+function validateDirectory(rootArgument) {
+  if (process.env.CI && process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT !== "1") {
+    fail("PRIVATE_WORKBOOK_PREFLIGHT_BLOCKED_IN_CI", "command");
+  }
+  const projectRoot = path.resolve(__dirname, "..");
+  const repoRoot = path.resolve(projectRoot, "..");
+  assert(fs.existsSync(rootArgument), "PRIVATE_WORKBOOK_ROOT_MISSING", "root");
+  const lexicalRoot = path.resolve(rootArgument);
+  assert(!isInside(lexicalRoot, repoRoot), "PRIVATE_WORKBOOK_ROOT_INSIDE_REPOSITORY", "root");
+  assertNoReparsePointInPath(lexicalRoot);
+  const root = fs.realpathSync(lexicalRoot);
+  assert(!isInside(root, repoRoot), "PRIVATE_WORKBOOK_ROOT_INSIDE_REPOSITORY", "root");
+  const files = sourceFiles(root);
+  const packIds = new Set();
+  const unitIds = new Set();
+  let totals = { packs: 0, sections: 0, components: 0, artifacts: 0 };
+  files.forEach(function (fileName) {
+    const pack = loadPack(root, fileName);
+    const result = validatePack(pack, fileName);
+    assert(!packIds.has(pack.packId), "DUPLICATE_WORKBOOK_PACK", fileName);
+    assert(!unitIds.has(pack.unitId), "DUPLICATE_WORKBOOK_UNIT", fileName);
+    packIds.add(pack.packId);
+    unitIds.add(pack.unitId);
+    totals = {
+      packs: totals.packs + 1,
+      sections: totals.sections + result.sectionCount,
+      components: totals.components + result.componentCount,
+      artifacts: totals.artifacts + result.artifactCount
+    };
+  });
+  return Object.freeze(totals);
+}
+
+function main() {
+  try {
+    const root = parseRoot(process.argv.slice(2));
+    const result = validateDirectory(root);
+    process.stdout.write(`PRIVATE_GRADE6_WORKBOOK_PREFLIGHT_OK packs=${result.packs} sections=${result.sections} components=${result.components} teacherArtifacts=${result.artifacts} state=${DRAFT_STATE}\n`);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      process.stderr.write(`PRIVATE_GRADE6_WORKBOOK_PREFLIGHT_FAILED code=${error.code} ref=${error.reference}\n`);
+      process.exitCode = 1;
+      return;
+    }
+    process.stderr.write("PRIVATE_GRADE6_WORKBOOK_PREFLIGHT_FAILED code=UNEXPECTED_VALIDATOR_ERROR ref=validator\n");
+    process.exitCode = 1;
+  }
+}
+
+if (require.main === module) main();
+
+module.exports = Object.freeze({
+  SCHEMA_VERSION,
+  CONFIDENTIALITY_MARKER,
+  DRAFT_STATE,
+  assertStudentContentDoesNotRevealAnswer,
+  validatePack,
+  validateDirectory
+});
