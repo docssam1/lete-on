@@ -625,13 +625,19 @@ def detailed_commentary(items: list[dict], result: dict) -> dict:
     }
 
 
-def draw_detailed_page(pdf: canvas.Canvas, round_number: int, items: list[dict], result: dict) -> None:
+def draw_detailed_page(pdf: canvas.Canvas, round_number: int, items: list[dict], result: dict,
+                       sample: bool) -> None:
     analysis = detailed_commentary(items, result)
     pdf.setFillColor(PAPER)
     pdf.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
-    header(pdf, round_number, 3, sample=True, result=result)
+    header(pdf, round_number, 3, sample=sample, result=result)
     draw_text(pdf, MARGIN, PAGE_H - 106, "그래프와 상세 코멘트", 13, NAVY, True)
-    draw_text(pdf, MARGIN, PAGE_H - 123, "40문항 채점 결과를 영역·난도·세부유형으로 나누어 본 작성 예시입니다.", 6.7, MUTED)
+    subtitle = (
+        "40문항 채점 결과를 영역·난도·세부유형으로 나누어 본 작성 예시입니다."
+        if sample else
+        "40문항 채점 결과를 영역·난도·세부유형으로 나누어 자동 분석했습니다."
+    )
+    draw_text(pdf, MARGIN, PAGE_H - 123, subtitle, 6.7, MUTED)
 
     top_y, top_h = 548, 165
     gap = 10
@@ -665,7 +671,8 @@ def draw_detailed_page(pdf: canvas.Canvas, round_number: int, items: list[dict],
 
     x, y, w, h = MARGIN, 56, PAGE_W - 2 * MARGIN, 275
     rounded_box(pdf, x, y, w, h, white, LINE, 10)
-    draw_text(pdf, x + 14, y + h - 24, "선생님 상세 코멘트 · 작성 예시", 10, NAVY, True)
+    comment_title = "선생님 상세 코멘트 · 작성 예시" if sample else "선생님 상세 코멘트"
+    draw_text(pdf, x + 14, y + h - 24, comment_title, 10, NAVY, True)
     divider_x = x + 302
     pdf.setStrokeColor(LINE)
     pdf.line(divider_x, y + 16, divider_x, y + h - 42)
@@ -697,7 +704,12 @@ def draw_detailed_page(pdf: canvas.Canvas, round_number: int, items: list[dict],
         pdf.drawCentredString(right_x + 17.5, row_y + 4, day)
         draw_wrapped(pdf, right_x + 45, row_y + 7, body, right_w - 45, 5.7, INK, False, 8.2)
         row_y -= 47
-    draw_text(pdf, right_x, y + 21, "※ 이 페이지는 가상 학생 결과로 만든 작성 예시입니다.", 5.3, MUTED)
+    note = (
+        "※ 이 페이지는 가상 학생 결과로 만든 작성 예시입니다."
+        if sample else
+        "※ 이 페이지는 학생의 채점 결과와 검증된 문항 분류로 자동 작성했습니다."
+    )
+    draw_text(pdf, right_x, y + 21, note, 5.3, MUTED)
     footer(pdf, round_number)
 
 
@@ -734,7 +746,7 @@ def build_pdf(path: Path, round_number: int, items: list[dict], sample: bool,
     footer(pdf, round_number)
     if detailed:
         pdf.showPage()
-        draw_detailed_page(pdf, round_number, items, active_result(sample, result))
+        draw_detailed_page(pdf, round_number, items, active_result(sample, result), sample)
     pdf.save()
 
 
@@ -766,7 +778,10 @@ def main() -> None:
         target = args.output_dir / (
             f"원수학 중2-1 기본반 대비 모의고사 {round_number}회_{safe_name}_개인학습분석지.pdf"
         )
-        build_pdf(target, round_number, metadata[round_id]["items"], sample=False, result=result)
+        build_pdf(
+            target, round_number, metadata[round_id]["items"],
+            sample=False, result=result, detailed=True,
+        )
         print(target)
         return
     outputs = []
