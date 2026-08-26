@@ -4,9 +4,10 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8877/hselementary/question-bank/`
-- Total types: 640 across 6 semesters, 36 major units, and 174 subunits
+- Total types: 680 across 6 semesters, 36 major units, and 174 subunits
 - Implemented types: 632 (deterministic generator availability check)
-- Review-locked types: 8 source-complex quadrilateral types in 4-2
+- Review-locked types: 40 newly inventoried exploration/example items plus 8 source-complex quadrilateral types in 4-2
+- Exact source-item mapping: 88 items in 4-2 triangle and decimal units. Do not describe all 680 entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
 - Pending types: 0
 - Completed: all six units in grades 4, 5, and 6 for both semesters
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
@@ -47,7 +48,7 @@
 
 The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 632 ready types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 50 seeds per difficulty. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
-The full regression suite has 38 dedicated audits. The 2026-08-26 run passed the updated 4-2 fraction, triangle, decimal, quadrilateral, graph, and polygon audits and all shared notation, language, numeric-display, identity, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+The full regression suite has 39 dedicated audits. The source-item taxonomy gate requires each mapped exploration, example, and Mission problem to have its own source ID and page locator. The 2026-08-26 run passed the updated 4-2 fraction, triangle, decimal, quadrilateral, graph, and polygon audits and all shared notation, language, numeric-display, identity, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
 
 ## Implementation Notes
 

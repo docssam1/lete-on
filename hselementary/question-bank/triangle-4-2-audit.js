@@ -1,13 +1,13 @@
 "use strict";
 
-// Independent answer and visibility audit for the 24 source-backed 4-2 triangle types.
+// Independent answer and visibility audit for the 24 implemented 4-2 triangle Mission types.
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2").units.find(item => item.id === "4-2-u2");
-const types = unit.subunits.flatMap(subunit => subunit.types);
+const types = unit.subunits.flatMap(subunit => subunit.types).filter(type => type.sourceSection === "mission");
 const failures = [];
 const seenKinds = new Set();
 const check = (condition, message) => { if (!condition) failures.push(message); };
@@ -112,4 +112,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 삼각형 단원 감사 통과: ${types.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종`);
+console.log(`4-2 삼각형 Mission 감사 통과: ${types.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종`);

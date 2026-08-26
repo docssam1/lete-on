@@ -45,6 +45,14 @@
   const sourcedBarGraph = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, barGraphEvidence[exploration - 1]);
   const sourcedRules = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, rulesEvidence[exploration - 1]);
   const sourced42 = (label, difficultyBand, sourceEvidence) => sourced(label, difficultyBand, "advanced", sourceEvidence);
+  const sourceItem42 = (label, difficultyBand, sourceItemId, pdfPage, printedPage, reviewLocked = false) => ({
+    ...sourced42(label, difficultyBand, `4-2 심화 PDF p.${pdfPage} · 교재 p.${printedPage} · ${sourceItemId}`),
+    sourceItemId,
+    sourceSection: sourceItemId.includes("mission") ? "mission" : sourceItemId.includes("example") ? "example" : "exploration",
+    sourcePdfPage: pdfPage,
+    sourcePrintedPage: printedPage,
+    reviewLocked
+  });
 
   const semester = (id, units) => ({
     id,
@@ -76,6 +84,10 @@
               sourceTier: type.sourceTier || "advanced",
               sourceVerified: Boolean(type.sourceVerified),
               sourceEvidence: type.sourceEvidence || "",
+              sourceItemId: type.sourceItemId || "",
+              sourceSection: type.sourceSection || "",
+              sourcePdfPage: Number.isInteger(type.sourcePdfPage) ? type.sourcePdfPage : undefined,
+              sourcePrintedPage: Number.isInteger(type.sourcePrintedPage) ? type.sourcePrintedPage : undefined,
               reviewLocked: Boolean(type.reviewLocked)
             }))
           };
@@ -264,16 +276,112 @@
         detailed("식 세워 풀기", "fractionWordEquation", ["두 분수의 합과 차", "잘못 계산한 분수 바로잡기", "세 분수의 두 수씩 합", "세 물건의 무게 관계", "같은 수가 들어간 두 분수식", "수직선에서 같은 간격의 분수"])
       ],
       ["삼각형",
-        detailed("삼각형의 개수", "triangleCount", ["한 꼭짓점에서 나눈 삼각형 세기", "격자 안의 크고 작은 삼각형 세기", "표시한 점을 포함하는 삼각형 세기", "두 부채꼴 모양의 삼각형 세기", "여러 선이 교차하는 삼각형 세기", "점판에서 조건에 맞는 삼각형 세기"]),
-        detailed("예각삼각형, 직각삼각형, 둔각삼각형", "triangleAngleType", ["각의 종류별 삼각형 개수 분류", "별 모양에서 예각·둔각삼각형 세기", "두 각을 골라 둔각삼각형 만들기", "격자점에서 둔각삼각형 세기", "예각과 둔각삼각형 개수의 차", "점판에서 조건에 맞는 둔각삼각형 세기"]),
-        detailed("이등변삼각형", "isoscelesTriangle", ["겹친 이등변삼각형의 둘레", "같은 길이 조건으로 각 구하기", "이어 붙인 이등변삼각형의 둘레", "이등변삼각형을 돌린 뒤의 각", "접은 이등변삼각형의 각", "원 위의 점으로 이등변삼각형 만들기"]),
-        detailed("정삼각형", "equilateralTriangle", ["이어 붙인 정삼각형의 둘레", "정삼각형과 정사각형의 각", "겹친 정삼각형에서 각 구하기", "직각삼각형 속 정삼각형의 길이", "여러 정삼각형의 선분 길이", "30°·60° 도형의 선분 길이"])
+        detailed("삼각형의 개수", "triangleCount", [
+          sourceItem42("부채꼴 선 배열의 삼각형 세기", 0, "4-2-triangle-1-mission-1", 16, 21),
+          sourceItem42("정사각형 대각선 배열의 삼각형 세기", 0, "4-2-triangle-1-mission-2", 16, 21),
+          sourceItem42("표시한 점을 포함하는 삼각형 세기", 0, "4-2-triangle-1-mission-3", 16, 21),
+          sourceItem42("분할된 부채꼴의 삼각형 세기", 1, "4-2-triangle-1-mission-4", 16, 21),
+          sourceItem42("교차선 도형의 삼각형 세기", 1, "4-2-triangle-1-mission-5", 16, 21),
+          sourceItem42("여러 부채꼴이 겹친 삼각형 세기", 1, "4-2-triangle-1-mission-6", 16, 21),
+          sourceItem42("불규칙 선 배열의 모든 삼각형", 1, "4-2-triangle-1-exploration", 15, 20, true),
+          sourceItem42("별 모양 삼각 격자의 삼각형 세기", 0, "4-2-triangle-1-example-1", 15, 20, true),
+          sourceItem42("색칠한 삼각형을 포함하는 삼각형", 1, "4-2-triangle-1-example-2", 15, 20, true),
+          sourceItem42("두 선 배열에서 삼각형 각각 세기", 1, "4-2-triangle-1-example-3", 15, 20, true),
+          sourceItem42("큰 삼각형 내부의 모든 삼각형", 1, "4-2-triangle-1-example-4", 15, 20, true)
+        ]),
+        detailed("예각삼각형, 직각삼각형, 둔각삼각형", "triangleAngleType", [
+          sourceItem42("둔각삼각형 개수로 가능한 값 찾기", 0, "4-2-triangle-2-mission-1", 18, 23),
+          sourceItem42("별 모양의 예각·둔각삼각형 세기", 0, "4-2-triangle-2-mission-2", 18, 23),
+          sourceItem42("두 각을 골라 둔각삼각형 만드는 방법", 1, "4-2-triangle-2-mission-3", 18, 23),
+          sourceItem42("모눈 도형의 둔각삼각형 세기", 1, "4-2-triangle-2-mission-4", 18, 23),
+          sourceItem42("예각과 둔각삼각형 수의 차", 1, "4-2-triangle-2-mission-5", 18, 23),
+          sourceItem42("점판에서 직각삼각형 세기", 1, "4-2-triangle-2-mission-6", 18, 23),
+          sourceItem42("점판에 서로 다른 둔각삼각형 그리기", 0, "4-2-triangle-2-exploration", 17, 22, true),
+          sourceItem42("정삼각형을 나누어 둔각삼각형 만들기", 0, "4-2-triangle-2-example-1", 17, 22, true),
+          sourceItem42("선분 도형의 예각·둔각삼각형 세기", 0, "4-2-triangle-2-example-2", 17, 22, true),
+          sourceItem42("직각 표시 도형의 직각삼각형 세기", 0, "4-2-triangle-2-example-3", 17, 22, true),
+          sourceItem42("각 두 개를 골라 둔각삼각형 만드는 방법", 1, "4-2-triangle-2-example-4", 17, 22, true)
+        ]),
+        detailed("이등변삼각형", "isoscelesTriangle", [
+          sourceItem42("맞붙인 이등변삼각형의 둘레", 0, "4-2-triangle-3-mission-1", 20, 25),
+          sourceItem42("같은 길이 선분이 있는 각 구하기", 0, "4-2-triangle-3-mission-2", 20, 25),
+          sourceItem42("여러 이등변삼각형을 이은 둘레", 0, "4-2-triangle-3-mission-3", 20, 25),
+          sourceItem42("이등변삼각형을 이어 만든 각", 1, "4-2-triangle-3-mission-4", 20, 25),
+          sourceItem42("접은 이등변삼각형의 각", 1, "4-2-triangle-3-mission-5", 20, 25),
+          sourceItem42("원 위 점으로 이등변삼각형 만들기", 1, "4-2-triangle-3-mission-6", 20, 25),
+          sourceItem42("직선을 추가해 이등변삼각형 최대로 만들기", 1, "4-2-triangle-3-exploration", 19, 24, true),
+          sourceItem42("점판에서 서로 다른 이등변삼각형 세기", 1, "4-2-triangle-3-example-1", 19, 24, true),
+          sourceItem42("이등변삼각형 띠의 짧은 변 구하기", 0, "4-2-triangle-3-example-2", 19, 24, true),
+          sourceItem42("연속한 이등변삼각형의 각 구하기", 1, "4-2-triangle-3-example-3", 19, 24, true),
+          sourceItem42("접은 이등변삼각형의 각 구하기", 1, "4-2-triangle-3-example-4", 19, 24, true)
+        ]),
+        detailed("정삼각형", "equilateralTriangle", [
+          sourceItem42("정삼각형을 이어 만든 도형의 둘레", 0, "4-2-triangle-4-mission-1", 22, 27),
+          sourceItem42("정삼각형과 사각형이 겹친 각", 0, "4-2-triangle-4-mission-2", 22, 27),
+          sourceItem42("정삼각형이 이어진 도형의 각", 1, "4-2-triangle-4-mission-3", 22, 27),
+          sourceItem42("정삼각형이 이어진 도형의 길이와 각", 1, "4-2-triangle-4-mission-4", 22, 27),
+          sourceItem42("정삼각형으로 이룬 육각형의 길이", 1, "4-2-triangle-4-mission-5", 22, 27),
+          sourceItem42("정삼각형과 사다리꼴의 선분 길이", 1, "4-2-triangle-4-mission-6", 22, 27),
+          sourceItem42("성냥개비를 옮겨 정삼각형 수 줄이기", 1, "4-2-triangle-4-exploration", 21, 26, true),
+          sourceItem42("정삼각형과 마름모에서 각 구하기", 0, "4-2-triangle-4-example-1", 21, 26, true),
+          sourceItem42("직각삼각형 속 정삼각형의 각", 0, "4-2-triangle-4-example-2", 21, 26, true),
+          sourceItem42("정삼각형을 이어 붙인 색칠 도형의 둘레", 1, "4-2-triangle-4-example-3", 21, 26, true),
+          sourceItem42("정사각형과 정삼각형의 선분 길이 합", 1, "4-2-triangle-4-example-4", 21, 26, true)
+        ])
       ],
       ["소수의 덧셈과 뺄셈",
-        detailed("소수의 이해", "decimalUnderstanding", ["기준 수에 가까운 소수 순서", "세분한 수직선의 두 소수 합", "소수의 빈 자리 숫자 추론", "그림 사이의 같은 간격 구하기", "일정하게 타는 양초의 남은 시간", "원형 길에서 두 사람이 걸은 거리 차"]),
-        detailed("소수의 덧셈과 뺄셈", "decimalAddSubAdvanced", ["겹친 두 선분의 길이", "여러 소수 계산값의 순서", "약속 기호가 있는 소수 계산", "직선 위 네 사람의 거리 관계", "공통 부등식을 만족하는 소수 세기", "겹친 원의 영역별 소수 추론"]),
-        detailed("소수의 덧셈과 뺄셈 활용", "decimalApplication", ["일정한 규칙의 소수 수열", "소수점을 빠뜨린 계산 바로잡기", "같은 소수를 여러 번 더한 값", "합과 차로 두 소수 구하기", "세 소수의 두 수씩 합", "서로 다른 빠르기로 걸은 거리"]),
-        detailed("조건에 맞는 소수", "conditionedDecimal", ["자리값을 바꾼 두 수의 차", "자릿수 합 조건의 소수 세기", "소수 두 자리의 크기 관계", "자리 숫자의 비가 정해진 소수", "수 카드로 만든 소수의 순서", "두 자리 숫자를 바꾼 소수의 범위"])
+        detailed("소수의 이해", "decimalUnderstanding", [
+          sourceItem42("기준 수에 가까운 소수 순서", 0, "4-2-decimal-1-mission-1", 26, 31),
+          sourceItem42("수직선 두 소수의 자리 숫자 합", 0, "4-2-decimal-1-mission-2", 26, 31),
+          sourceItem42("순서가 정해진 소수의 빈 자리 숫자", 1, "4-2-decimal-1-mission-3", 26, 31),
+          sourceItem42("그림 사이의 같은 간격 구하기", 0, "4-2-decimal-1-mission-4", 26, 31),
+          sourceItem42("일정하게 타는 양초의 남은 시간", 0, "4-2-decimal-1-mission-5", 26, 31),
+          sourceItem42("원형 길에서 두 사람이 걸은 거리 차", 1, "4-2-decimal-1-mission-6", 26, 31),
+          sourceItem42("기준 무게의 10배 역산", 0, "4-2-decimal-1-exploration", 25, 30, true),
+          sourceItem42("복명수와 소수의 단위 환산", -1, "4-2-decimal-1-example-1", 25, 30, true),
+          sourceItem42("두 소수 사이의 가장 작은·큰 소수", 0, "4-2-decimal-1-example-2", 25, 30, true),
+          sourceItem42("도형을 움직인 수직선의 위치", 0, "4-2-decimal-1-example-3", 25, 30, true),
+          sourceItem42("일정하게 타는 양초의 전체 시간", 0, "4-2-decimal-1-example-4", 25, 30, true)
+        ]),
+        detailed("소수의 덧셈과 뺄셈", "decimalAddSubAdvanced", [
+          sourceItem42("겹친 두 선분의 길이", 0, "4-2-decimal-2-mission-1", 28, 33),
+          sourceItem42("여러 소수 계산값의 순서", 0, "4-2-decimal-2-mission-2", 28, 33),
+          sourceItem42("약속 기호가 있는 소수 계산", 1, "4-2-decimal-2-mission-3", 28, 33),
+          sourceItem42("직선 위 네 사람의 거리 관계", 0, "4-2-decimal-2-mission-4", 28, 33),
+          sourceItem42("공통 부등식을 만족하는 소수 세기", 1, "4-2-decimal-2-mission-5", 28, 33),
+          sourceItem42("겹친 원의 영역별 소수 추론", 1, "4-2-decimal-2-mission-6", 28, 33),
+          sourceItem42("서로 다른 빠르기의 달리기 시간 차", 0, "4-2-decimal-2-exploration", 27, 32, true),
+          sourceItem42("두 계산식 사이의 소수 한 자리 수", 0, "4-2-decimal-2-example-1", 27, 32, true),
+          sourceItem42("가려진 계산식의 가장 작은 소수", 1, "4-2-decimal-2-example-2", 27, 32, true),
+          sourceItem42("직선 위 네 사람 사이의 거리", 0, "4-2-decimal-2-example-3", 27, 32, true),
+          sourceItem42("규칙에 따라 늘어놓은 소수의 합", 0, "4-2-decimal-2-example-4", 27, 32, true)
+        ]),
+        detailed("소수의 덧셈과 뺄셈 활용", "decimalApplication", [
+          sourceItem42("일정한 규칙의 소수 수열", 0, "4-2-decimal-3-mission-1", 30, 35),
+          sourceItem42("소수점을 빠뜨린 계산 바로잡기", 0, "4-2-decimal-3-mission-2", 30, 35),
+          sourceItem42("같은 소수를 여러 번 더한 값", 0, "4-2-decimal-3-mission-3", 30, 35),
+          sourceItem42("합과 차로 두 소수 구하기", 0, "4-2-decimal-3-mission-4", 30, 35),
+          sourceItem42("세 소수의 두 수씩 합", 1, "4-2-decimal-3-mission-5", 30, 35),
+          sourceItem42("서로 다른 빠르기로 걸은 거리", 0, "4-2-decimal-3-mission-6", 30, 35),
+          sourceItem42("등차 소수 수열의 특정 번째 수", 0, "4-2-decimal-3-exploration", 29, 34, true),
+          sourceItem42("세 사람의 두 수씩 합으로 차 구하기", 0, "4-2-decimal-3-example-1", 29, 34, true),
+          sourceItem42("같은 두께 책을 쌓은 전체 높이", -1, "4-2-decimal-3-example-2", 29, 34, true),
+          sourceItem42("거리표에서 두 지점 사이 거리", 0, "4-2-decimal-3-example-3", 29, 34, true),
+          sourceItem42("세 막대의 합과 차로 길이 차 구하기", 1, "4-2-decimal-3-example-4", 29, 34, true)
+        ]),
+        detailed("조건에 맞는 소수", "conditionedDecimal", [
+          sourceItem42("자리값을 바꾼 두 수의 차", 1, "4-2-decimal-4-mission-1", 32, 37),
+          sourceItem42("자릿수 합 조건의 소수 세기", 1, "4-2-decimal-4-mission-2", 32, 37),
+          sourceItem42("소수 두 자리의 크기 관계", 1, "4-2-decimal-4-mission-3", 32, 37),
+          sourceItem42("자리 숫자의 비가 정해진 소수", 1, "4-2-decimal-4-mission-4", 32, 37),
+          sourceItem42("수 카드로 만든 소수의 순서", 1, "4-2-decimal-4-mission-5", 32, 37),
+          sourceItem42("두 자리 숫자를 바꾼 소수의 범위", 1, "4-2-decimal-4-mission-6", 32, 37),
+          sourceItem42("범위 안의 소수 네 자리 수 세기", 0, "4-2-decimal-4-exploration", 31, 36, true),
+          sourceItem42("자리값이 다른 두 수의 차로 자연수 구하기", 1, "4-2-decimal-4-example-1", 31, 36, true),
+          sourceItem42("서로 다른 숫자의 소수식 최댓값", 1, "4-2-decimal-4-example-2", 31, 36, true),
+          sourceItem42("수 카드로 만든 소수의 순위 차", 1, "4-2-decimal-4-example-3", 31, 36, true),
+          sourceItem42("수 카드로 만든 소수의 차 조건", 1, "4-2-decimal-4-example-4", 31, 36, true)
+        ])
       ],
       ["사각형",
         detailed("수선과 평행선", "quadPerpParallelDistance", [
