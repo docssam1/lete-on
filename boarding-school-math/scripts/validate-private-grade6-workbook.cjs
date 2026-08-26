@@ -105,7 +105,7 @@ function assert(condition, code, reference) {
 }
 
 function isRecord(value) {
-  return !!value && typeof value === "object" && !Array.isArray(value);
+  return !!value && typeof value === "object" && !Array.isArray(value) && Object.getPrototypeOf(value) === Object.prototype;
 }
 
 function nonBlankText(value) {
@@ -125,7 +125,25 @@ function assertDenseArray(value, code, reference) {
 
 function assertOnlyKeys(value, allowed, code, reference) {
   assertRecord(value, code, reference);
-  assert(Object.keys(value).every(function (key) { return allowed.has(key); }), code, reference);
+  const keys = Object.getOwnPropertyNames(value);
+  assert(
+    Object.getOwnPropertySymbols(value).length === 0 &&
+    keys.every(function (key) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      return allowed.has(key) && descriptor && Object.prototype.hasOwnProperty.call(descriptor, "value");
+    }),
+  code, reference);
+}
+
+function assertExactDataKeys(value, expected, code, reference) {
+  assertOnlyKeys(value, new Set(expected), code, reference);
+  assert(Object.getOwnPropertyNames(value).length === expected.length, code, reference);
+}
+
+function ownDataValue(value, key, code, reference) {
+  const descriptor = Object.getOwnPropertyDescriptor(value, key);
+  assert(descriptor && Object.prototype.hasOwnProperty.call(descriptor, "value"), code, reference);
+  return descriptor.value;
 }
 
 function assertId(value, prefix, code, reference) {
@@ -459,38 +477,130 @@ function canonicalRational(numerator, denominator, reference) {
   return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
 }
 
+function powerOfTen(exponent, reference) {
+  assert(Number.isInteger(exponent) && exponent >= 0 && exponent <= 12, "ARITHMETIC_CHECK_INVALID", reference);
+  return 10n ** BigInt(exponent);
+}
+
+function canonicalDecimalFromScaled(coefficient, scale, reference) {
+  assert(typeof coefficient === "bigint" && coefficient >= 0n && Number.isInteger(scale) && scale >= 0 && scale <= 12, "ARITHMETIC_CHECK_INVALID", reference);
+  if (coefficient === 0n) return "0";
+  let normalizedCoefficient = coefficient;
+  let normalizedScale = scale;
+  while (normalizedScale > 0 && normalizedCoefficient % 10n === 0n) {
+    normalizedCoefficient /= 10n;
+    normalizedScale -= 1;
+  }
+  const digits = String(normalizedCoefficient).padStart(normalizedScale + 1, "0");
+  const whole = normalizedScale === 0 ? digits : digits.slice(0, -normalizedScale);
+  const fractional = normalizedScale === 0 ? "" : digits.slice(-normalizedScale);
+  assert(whole.length <= 12 && fractional.length <= 8, "ARITHMETIC_CHECK_INVALID", reference);
+  return normalizedScale === 0 ? whole : `${whole}.${fractional}`;
+}
+
+function parseCanonicalDecimal(value, maximumScale, reference) {
+  assert(typeof value === "string" && /^(?:0|[1-9][0-9]{0,5})(?:\.[0-9]+)?$/u.test(value), "ARITHMETIC_CHECK_INVALID", reference);
+  const parts = value.split(".");
+  const fractional = parts[1] || "";
+  assert(fractional.length <= maximumScale, "ARITHMETIC_CHECK_INVALID", reference);
+  const coefficient = BigInt(`${parts[0]}${fractional}`);
+  assert(canonicalDecimalFromScaled(coefficient, fractional.length, reference) === value, "ARITHMETIC_CHECK_INVALID", reference);
+  return Object.freeze({ coefficient, scale: fractional.length });
+}
+
+function canonicalTerminatingDecimal(numerator, denominator, reference) {
+  assert(numerator >= 0n && denominator > 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  if (numerator === 0n) return "0";
+  const divisor = greatestCommonDivisorBigInt(numerator, denominator);
+  const reducedNumerator = numerator / divisor;
+  const reducedDenominator = denominator / divisor;
+  let remainingDenominator = reducedDenominator;
+  let powersOfTwo = 0;
+  let powersOfFive = 0;
+  while (remainingDenominator % 2n === 0n) {
+    remainingDenominator /= 2n;
+    powersOfTwo += 1;
+  }
+  while (remainingDenominator % 5n === 0n) {
+    remainingDenominator /= 5n;
+    powersOfFive += 1;
+  }
+  assert(remainingDenominator === 1n, "ARITHMETIC_CHECK_INVALID", reference);
+  const scale = Math.max(powersOfTwo, powersOfFive);
+  assert(scale <= 8, "ARITHMETIC_CHECK_INVALID", reference);
+  const scaledCoefficient = reducedNumerator * (powerOfTen(scale, reference) / reducedDenominator);
+  return canonicalDecimalFromScaled(scaledCoefficient, scale, reference);
+}
+
+function canonicalDecimalOperation(check, reference) {
+  assertExactDataKeys(check, ["kind", "operation", "left", "right"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(["add", "subtract", "multiply", "divide"].includes(check.operation), "ARITHMETIC_CHECK_INVALID", reference);
+  const maximumScale = check.operation === "multiply" ? 2 : check.operation === "divide" ? 3 : 3;
+  const left = parseCanonicalDecimal(check.left, maximumScale, reference);
+  const right = parseCanonicalDecimal(check.right, check.operation === "divide" ? 2 : maximumScale, reference);
+  if (check.operation === "add" || check.operation === "subtract") {
+    const scale = Math.max(left.scale, right.scale);
+    const leftCoefficient = left.coefficient * powerOfTen(scale - left.scale, reference);
+    const rightCoefficient = right.coefficient * powerOfTen(scale - right.scale, reference);
+    assert(check.operation !== "subtract" || leftCoefficient >= rightCoefficient, "ARITHMETIC_CHECK_INVALID", reference);
+    return canonicalDecimalFromScaled(check.operation === "add" ? leftCoefficient + rightCoefficient : leftCoefficient - rightCoefficient, scale, reference);
+  }
+  if (check.operation === "multiply") {
+    return canonicalDecimalFromScaled(left.coefficient * right.coefficient, left.scale + right.scale, reference);
+  }
+  assert(right.coefficient > 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  return canonicalTerminatingDecimal(
+    left.coefficient * powerOfTen(right.scale, reference),
+    powerOfTen(left.scale, reference) * right.coefficient,
+    reference
+  );
+}
+
+function canonicalWholeGcf(check, reference) {
+  assertExactDataKeys(check, ["kind", "left", "right"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(Number.isSafeInteger(check.left) && Number.isSafeInteger(check.right) && check.left >= 1 && check.left <= 100 && check.right >= 1 && check.right <= 100, "ARITHMETIC_CHECK_INVALID", reference);
+  return String(greatestCommonDivisor(check.left, check.right));
+}
+
+function canonicalWholeLcm(check, reference) {
+  assertExactDataKeys(check, ["kind", "left", "right"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(Number.isSafeInteger(check.left) && Number.isSafeInteger(check.right) && check.left >= 1 && check.left <= 12 && check.right >= 1 && check.right <= 12, "ARITHMETIC_CHECK_INVALID", reference);
+  return String((check.left / greatestCommonDivisor(check.left, check.right)) * check.right);
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
-  if (check.kind === "ratio-canonical") {
-    assertOnlyKeys(check, new Set(["kind", "left", "right"]), "ARITHMETIC_CHECK_INVALID", reference);
+  const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
+  if (kind === "ratio-canonical") {
+    assertExactDataKeys(check, ["kind", "left", "right"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.left) && positiveInteger(check.right), "ARITHMETIC_CHECK_INVALID", reference);
     const divisor = greatestCommonDivisor(check.left, check.right);
     return `${check.left / divisor}:${check.right / divisor}`;
   }
-  if (check.kind === "whole-quotient") {
-    assertOnlyKeys(check, new Set(["kind", "total", "groups"]), "ARITHMETIC_CHECK_INVALID", reference);
+  if (kind === "whole-quotient") {
+    assertExactDataKeys(check, ["kind", "total", "groups"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.total) && positiveInteger(check.groups) && check.total % check.groups === 0, "ARITHMETIC_CHECK_INVALID", reference);
     return String(check.total / check.groups);
   }
-  if (check.kind === "whole-product") {
-    assertOnlyKeys(check, new Set(["kind", "perGroup", "groups"]), "ARITHMETIC_CHECK_INVALID", reference);
+  if (kind === "whole-product") {
+    assertExactDataKeys(check, ["kind", "perGroup", "groups"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.perGroup) && positiveInteger(check.groups) && check.perGroup * check.groups <= 1000000000, "ARITHMETIC_CHECK_INVALID", reference);
     return String(check.perGroup * check.groups);
   }
-  if (check.kind === "whole-percent") {
-    assertOnlyKeys(check, new Set(["kind", "part", "whole"]), "ARITHMETIC_CHECK_INVALID", reference);
+  if (kind === "whole-percent") {
+    assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
     return String((100 * check.part) / check.whole);
   }
-  if (check.kind === "percent-of-whole") {
-    assertOnlyKeys(check, new Set(["kind", "whole", "percent"]), "ARITHMETIC_CHECK_INVALID", reference);
+  if (kind === "percent-of-whole") {
+    assertExactDataKeys(check, ["kind", "whole", "percent"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.whole) && positiveInteger(check.percent) && check.percent <= 100 && (check.whole * check.percent) % 100 === 0, "ARITHMETIC_CHECK_INVALID", reference);
     return String((check.whole * check.percent) / 100);
   }
-  if (check.kind === "rational-quotient") {
-    assertOnlyKeys(check, new Set([
+  if (kind === "rational-quotient") {
+    assertExactDataKeys(check, [
       "kind", "dividendNumerator", "dividendDenominator", "divisorNumerator", "divisorDenominator"
-    ]), "ARITHMETIC_CHECK_INVALID", reference);
+    ], "ARITHMETIC_CHECK_INVALID", reference);
     assert(
       nonNegativeInteger(check.dividendNumerator) && positiveInteger(check.dividendDenominator) &&
       positiveInteger(check.divisorNumerator) && positiveInteger(check.divisorDenominator),
@@ -502,6 +612,9 @@ function canonicalAnswer(check, reference) {
       reference
     );
   }
+  if (kind === "decimal-operation") return canonicalDecimalOperation(check, reference);
+  if (kind === "greatest-common-factor") return canonicalWholeGcf(check, reference);
+  if (kind === "least-common-multiple") return canonicalWholeLcm(check, reference);
   fail("ARITHMETIC_CHECK_INVALID", reference);
 }
 
@@ -782,6 +895,51 @@ function sourceFiles(root) {
   return files.sort();
 }
 
+function assertNoDuplicateJsonKeys(source, reference) {
+  const containers = [];
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (character === "\"") {
+      const start = index;
+      let closed = false;
+      index += 1;
+      while (index < source.length) {
+        const current = source[index];
+        if (current === "\\") {
+          index += 1;
+          assert(index < source.length, "PRIVATE_WORKBOOK_JSON_INVALID", reference);
+          index += 1;
+          continue;
+        }
+        if (current === "\"") {
+          closed = true;
+          break;
+        }
+        assert(current.charCodeAt(0) > 0x1f, "PRIVATE_WORKBOOK_JSON_INVALID", reference);
+        index += 1;
+      }
+      assert(closed, "PRIVATE_WORKBOOK_JSON_INVALID", reference);
+      let next = index + 1;
+      while (next < source.length && /[\t\n\r ]/u.test(source[next])) next += 1;
+      const keys = containers[containers.length - 1];
+      if (source[next] === ":" && keys instanceof Set) {
+        let key;
+        try {
+          key = JSON.parse(source.slice(start, index + 1));
+        } catch (_error) {
+          fail("PRIVATE_WORKBOOK_JSON_INVALID", reference);
+        }
+        assert(!keys.has(key), "PRIVATE_WORKBOOK_JSON_DUPLICATE_KEY", reference);
+        keys.add(key);
+      }
+      continue;
+    }
+    if (character === "{") containers.push(new Set());
+    else if (character === "[") containers.push(null);
+    else if (character === "}" || character === "]") containers.pop();
+  }
+}
+
 function loadPack(root, fileName) {
   const reference = fileName;
   const fullPath = path.join(root, fileName);
@@ -789,8 +947,11 @@ function loadPack(root, fileName) {
   assert(stat.isFile() && !stat.isSymbolicLink() && stat.size > 0 && stat.size <= 1024 * 1024, "PRIVATE_WORKBOOK_FILE_UNSAFE", reference);
   let value;
   try {
-    value = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+    const source = fs.readFileSync(fullPath, "utf8");
+    assertNoDuplicateJsonKeys(source, reference);
+    value = JSON.parse(source);
   } catch (_error) {
+    if (_error instanceof ValidationError) throw _error;
     fail("PRIVATE_WORKBOOK_JSON_INVALID", reference);
   }
   assertRecord(value, "PRIVATE_WORKBOOK_JSON_INVALID", reference);
@@ -855,6 +1016,7 @@ module.exports = Object.freeze({
   DRAFT_STATE,
   assertResponseStudentTextSyntax,
   assertStudentContentDoesNotRevealAnswer,
+  assertNoDuplicateJsonKeys,
   canonicalAnswer,
   validatePack,
   validateDirectory

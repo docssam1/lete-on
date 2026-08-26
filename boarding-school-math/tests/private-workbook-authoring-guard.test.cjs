@@ -559,6 +559,85 @@ test("fraction-division checks reduce rational quotients exactly without floatin
   }, /ARITHMETIC_CHECK_INVALID/);
 });
 
+test("Grade 6 decimal, GCF, and LCM checks use canonical exact arithmetic", function () {
+  [
+    [{ kind: "decimal-operation", operation: "add", left: "12.34", right: "0.56" }, "12.9"],
+    [{ kind: "decimal-operation", operation: "subtract", left: "6.2", right: "0.85" }, "5.35"],
+    [{ kind: "decimal-operation", operation: "multiply", left: "2.5", right: "0.04" }, "0.1"],
+    [{ kind: "decimal-operation", operation: "divide", left: "1.25", right: "0.5" }, "2.5"],
+    [{ kind: "decimal-operation", operation: "add", left: "0", right: "0.001" }, "0.001"],
+    [{ kind: "greatest-common-factor", left: 84, right: 60 }, "12"],
+    [{ kind: "greatest-common-factor", left: 1, right: 24 }, "1"],
+    [{ kind: "least-common-multiple", left: 8, right: 12 }, "24"],
+    [{ kind: "least-common-multiple", left: 1, right: 12 }, "12"]
+  ].forEach(function (entry) {
+    assert.equal(validator.canonicalAnswer(entry[0], "synthetic-ns-b"), entry[1]);
+  });
+});
+
+test("Grade 6 decimal, GCF, and LCM checks reject noncanonical or out-of-scope input", function () {
+  [
+    { kind: "decimal-operation", operation: "add", left: 1.2, right: "0.3" },
+    { kind: "decimal-operation", operation: "add", left: "01", right: "0.3" },
+    { kind: "decimal-operation", operation: "add", left: "1.20", right: "0.3" },
+    { kind: "decimal-operation", operation: "add", left: "1e3", right: "0.3" },
+    { kind: "decimal-operation", operation: "subtract", left: "0.1", right: "0.2" },
+    { kind: "decimal-operation", operation: "multiply", left: "1.234", right: "0.2" },
+    { kind: "decimal-operation", operation: "divide", left: "1", right: "0" },
+    { kind: "decimal-operation", operation: "divide", left: "1", right: "3" },
+    { kind: "decimal-operation", operation: "divide", left: "1", right: "512" },
+    { kind: "decimal-operation", operation: "add", left: "1", right: "2", answer: "3" },
+    { kind: "greatest-common-factor", left: 0, right: 2 },
+    { kind: "greatest-common-factor", left: 101, right: 2 },
+    { kind: "least-common-multiple", left: 0, right: 2 },
+    { kind: "least-common-multiple", left: 2, right: 13 }
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalAnswer(check, "synthetic-ns-b-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+});
+
+test("arithmetic checks reject inherited, accessor, and non-data fields", function () {
+  const inherited = Object.create({ kind: "decimal-operation", operation: "add", left: "1", right: "2" });
+  assert.throws(function () {
+    validator.canonicalAnswer(inherited, "synthetic-inherited-check");
+  }, /ARITHMETIC_CHECK_INVALID/);
+
+  const accessor = { kind: "greatest-common-factor", right: 2 };
+  Object.defineProperty(accessor, "left", {
+    enumerable: true,
+    get: function () { return 2; }
+  });
+  assert.throws(function () {
+    validator.canonicalAnswer(accessor, "synthetic-accessor-check");
+  }, /ARITHMETIC_CHECK_INVALID/);
+
+  const kindAccessor = { left: 2, right: 2 };
+  Object.defineProperty(kindAccessor, "kind", {
+    enumerable: true,
+    get: function () { return "greatest-common-factor"; }
+  });
+  assert.throws(function () {
+    validator.canonicalAnswer(kindAccessor, "synthetic-kind-accessor-check");
+  }, /ARITHMETIC_CHECK_INVALID/);
+});
+
+test("private workbook source rejects duplicate JSON keys before parsing", function () {
+  assert.doesNotThrow(function () {
+    validator.assertNoDuplicateJsonKeys('{"a":"value: still a value","nested":{"a":1},"items":[{"a":2}]}', "synthetic-json");
+  });
+  [
+    '{"a":1,"a":2}',
+    '{"a":1,"\\u0061":2}',
+    '{"nested":{"x":1,"x":2}}'
+  ].forEach(function (source) {
+    assert.throws(function () {
+      validator.assertNoDuplicateJsonKeys(source, "synthetic-json");
+    }, /PRIVATE_WORKBOOK_JSON_DUPLICATE_KEY/);
+  });
+});
+
 test("public audit checks staged index and all marker history without touching this repository", function () {
   const stagedRoot = createTempGitRepository();
   const historyRoot = createTempGitRepository();
