@@ -569,6 +569,30 @@ export const TYPES = [
   type("last-number-from-digit-total", "number", "수와 숫자", "쓴 숫자의 전체 개수로 마지막 수 찾기", { generator: "lastNumberFromDigitTotal", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
   type("repeated-digit-concatenation", "number", "수 이어 붙이기", "같은 숫자를 이어 붙이고 더해 목표 수 만들기", { generator: "repeatedDigitConcatenation", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 6권 단원 테스트: 원본 25문항과 공식 답안을 1:1 대조했다.
+  type("midpoint-pair-unit-test-book6", "geometry", "수직선과 길이", "두 수직선의 중간 수 각각 구하기", { generator: "unitTestMidpointPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 1번" }),
+  type("split-target-distance-unit-test-book6", "geometry", "수직선과 길이", "서로 다르게 나눈 수직선의 두 점 거리", { generator: "unitTestSplitTargetsBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 2번" }),
+  type("rod-difference-ratio-unit-test-book6", "number", "비와 측정", "같은 길이를 잰 횟수로 두 끈의 차 구하기", { generator: "unitTestRodDifferenceRatioBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 3·25번" }),
+  type("equal-bar-pieces-unit-test-book6", "number", "분수와 비", "같은 길이의 조각 수와 합으로 두 길이 구하기", { generator: "unitTestEqualBarsBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 4번" }),
+  type("two-object-weight-unit-test-book6", "logic", "비와 양팔저울", "두 물건의 개수 관계와 합으로 각각의 무게 구하기", { generator: "unitTestTwoWeightBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 5번" }),
+  type("symbol-card-chain-unit-test-book6", "number", "도형 수 추리", "다섯 수 카드와 이어진 도형식", { generator: "unitTestSymbolCardChainBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 6번" }),
+  type("rectangle-rhombus-side-unit-test-book6", "geometry", "붙인 도형의 둘레", "직사각형 둘레로 붙인 마름모 한 변 찾기", { generator: "unitTestRectangleRhombusBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 7번" }),
+  type("rectangle-triangle-square-unit-test-book6", "geometry", "붙인 도형의 둘레", "직사각형·정삼각형·정사각형을 붙인 둘레", { generator: "unitTestAttachedThreeShapesBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 8번" }),
+  type("three-square-shaded-perimeter-unit-test-book6", "geometry", "정사각형 분할", "크기가 다른 세 정사각형의 색칠 부분 둘레", { generator: "unitTestThreeSquaresBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 9번" }),
+  type("scattered-side-perimeter-unit-test-book6", "geometry", "직각 도형의 둘레", "흩어진 네 변으로 직각 도형 둘레 구하기", { generator: "unitTestScatteredPerimeterBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 10번" }),
+  type("square-triangle-strip-unit-test-book6", "geometry", "붙인 도형의 둘레", "정사각형 둘과 정삼각형 넷을 붙인 둘레", { generator: "unitTestSquareTriangleStripBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 11번" }),
+  type("square-tiling-shaded-unit-test-book6", "geometry", "정사각형 분할", "여러 정사각형으로 나눈 색칠한 작은 정사각형 둘레", { generator: "unitTestSquareTilingBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 12번" }),
+  type("round-pair-eight-addends-unit-test-book6", "number", "덧셈을 간편하게", "여덟 수를 네 쌍의 둥근 수로 묶어 더하기", { generator: "unitTestRoundPairEightBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 13번" }),
+  type("even-odd-position-pair-unit-test-book6", "number", "홀수와 짝수", "짝수와 홀수의 순서를 각각 구하기", { generator: "unitTestEvenOddPositionPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 14번" }),
+  type("facing-page-sum-unit-test-book6", "number", "책의 쪽수", "마주 보는 두 쪽수의 합으로 왼쪽 쪽 찾기", { generator: "unitTestFacingPageSumBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 15번" }),
+  type("range-number-digit-pair-unit-test-book6", "number", "수와 숫자", "두 범위의 수 개수와 숫자 개수 함께 구하기", { generator: "unitTestRangeDigitPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 16번" }),
+  type("consecutive-even-sum-pair-unit-test-book6", "number", "연속수의 합", "개수가 짝수인 두 연속수의 합", { generator: "unitTestConsecutiveEvenPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 17번" }),
+  type("consecutive-odd-sum-pair-unit-test-book6", "number", "연속수의 합", "개수가 홀수인 두 연속수의 합", { generator: "unitTestConsecutiveOddPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 18번" }),
+  type("sign-insertion-triple-unit-test-book6", "number", "연산 기호 넣기", "같은 네 수로 세 가지 목표값 만들기", { generator: "unitTestSignTripleBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 19번" }),
+  type("plus-concatenation-pair-unit-test-book6", "number", "수 이어 붙이기", "같은 다섯 수로 이어 붙인 두 식 만들기", { generator: "unitTestPlusConcatenationPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 21번" }),
+  type("balance-chain-equivalence-unit-test-book6", "logic", "비와 양팔저울", "세 저울의 관계로 같은 무게 개수 구하기", { generator: "unitTestBalanceChainBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 22번" }),
+  type("fold-cut-open-perimeter-unit-test-book6", "geometry", "접기와 둘레", "두 번 접어 자른 뒤 처음 직사각형 둘레 찾기", { generator: "unitTestFoldCutOpenPerimeterBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 23번" }),
+
   // 더클래식 1과정 7권: 180문항을 네 단계와 인쇄 문제 번호로 직접 대조했다.
   // 달력·시계, 우기기, 가로수, 팔린드롬·벤다이어그램을 풀이 구조별로 나눈다.
   type("calendar-month-shift-weekday-b7", "pattern", "달력과 시계", "다음 달 같은 날짜·1일의 요일 찾기", { generator: "calendarMonthShiftWeekdayBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
@@ -3502,6 +3526,33 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
     { number: 23, typeId: "regular-triangle-grid-count-book5", label: "정삼각형 모눈의 삼각형 세기", verified: true, difficulty: 2 },
     { number: 24, typeId: "two-digit-digit-difference-rank", label: "자리 숫자의 차와 크기 순서", verified: true, difficulty: 2 },
     { number: 25, typeId: "square-border-stone-growth-book5", label: "네모 테두리와 안쪽 바둑돌 차", verified: true, difficulty: 2 }
+  ]),
+  "book-06": Object.freeze([
+    { number: 1, typeId: "midpoint-pair-unit-test-book6", label: "두 수직선의 중간 수", verified: true, difficulty: 2 },
+    { number: 2, typeId: "split-target-distance-unit-test-book6", label: "서로 다르게 나눈 수직선의 두 점 거리", verified: true, difficulty: 2 },
+    { number: 3, typeId: "rod-difference-ratio-unit-test-book6", label: "두 끈의 차이로 재는 횟수", verified: true, difficulty: 2 },
+    { number: 4, typeId: "equal-bar-pieces-unit-test-book6", label: "같은 길이의 조각 수와 두 막대 길이", verified: true, difficulty: 2 },
+    { number: 5, typeId: "two-object-weight-unit-test-book6", label: "두 도형의 개수 관계와 각각의 무게", verified: true, difficulty: 2 },
+    { number: 6, typeId: "symbol-card-chain-unit-test-book6", label: "다섯 수 카드와 이어진 도형식", verified: true, difficulty: 3 },
+    { number: 7, typeId: "rectangle-rhombus-side-unit-test-book6", label: "직사각형에 붙인 마름모 한 변", verified: true, difficulty: 2 },
+    { number: 8, typeId: "rectangle-triangle-square-unit-test-book6", label: "세 도형을 붙인 둘레", verified: true, difficulty: 3 },
+    { number: 9, typeId: "three-square-shaded-perimeter-unit-test-book6", label: "세 정사각형의 색칠 부분 둘레", verified: true, difficulty: 2 },
+    { number: 10, typeId: "scattered-side-perimeter-unit-test-book6", label: "흩어진 변으로 직각 도형 둘레 구하기", verified: true, difficulty: 2 },
+    { number: 11, typeId: "square-triangle-strip-unit-test-book6", label: "정사각형과 정삼각형을 붙인 둘레", verified: true, difficulty: 2 },
+    { number: 12, typeId: "square-tiling-shaded-unit-test-book6", label: "나눈 정사각형의 색칠 부분 둘레", verified: true, difficulty: 3 },
+    { number: 13, typeId: "round-pair-eight-addends-unit-test-book6", label: "여덟 수를 둥근 수로 묶어 더하기", verified: true, difficulty: 2 },
+    { number: 14, typeId: "even-odd-position-pair-unit-test-book6", label: "짝수와 홀수의 순서", verified: true, difficulty: 2 },
+    { number: 15, typeId: "facing-page-sum-unit-test-book6", label: "마주 보는 쪽수의 합", verified: true, difficulty: 2 },
+    { number: 16, typeId: "range-number-digit-pair-unit-test-book6", label: "두 범위의 수 개수와 숫자 개수", verified: true, difficulty: 3 },
+    { number: 17, typeId: "consecutive-even-sum-pair-unit-test-book6", label: "개수가 짝수인 연속수의 합", verified: true, difficulty: 2 },
+    { number: 18, typeId: "consecutive-odd-sum-pair-unit-test-book6", label: "개수가 홀수인 연속수의 합", verified: true, difficulty: 2 },
+    { number: 19, typeId: "sign-insertion-triple-unit-test-book6", label: "같은 네 수로 세 목표값 만들기", verified: true, difficulty: 2 },
+    { number: 20, typeId: "consecutive-sign-insertion", label: "이어진 수 사이에 더하기·빼기 넣기", verified: true, difficulty: 2 },
+    { number: 21, typeId: "plus-concatenation-pair-unit-test-book6", label: "이어 붙이기로 두 식 만들기", verified: true, difficulty: 2 },
+    { number: 22, typeId: "balance-chain-equivalence-unit-test-book6", label: "세 저울의 무게 관계", verified: true, difficulty: 3 },
+    { number: 23, typeId: "fold-cut-open-perimeter-unit-test-book6", label: "접어 자른 뒤 처음 둘레", verified: true, difficulty: 3 },
+    { number: 24, typeId: "last-number-from-digit-total", label: "쓴 숫자의 개수로 마지막 수 찾기", verified: true, difficulty: 2 },
+    { number: 25, typeId: "rod-difference-ratio-unit-test-book6", label: "두 끈의 차이로 재는 횟수", verified: true, difficulty: 2 }
   ])
 });
 

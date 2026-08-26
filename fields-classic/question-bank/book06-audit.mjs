@@ -6,6 +6,19 @@ const iterations = Number.parseInt(process.argv[2] || "1000", 10);
 const book = CURRICULUM.find((item) => item.id === "book-06");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
+const unitTestQuestions = book?.source?.unitTestQuestions || [];
+const expectedUnitTestTypes = [
+  "midpoint-pair-unit-test-book6", "split-target-distance-unit-test-book6", "rod-difference-ratio-unit-test-book6",
+  "equal-bar-pieces-unit-test-book6", "two-object-weight-unit-test-book6", "symbol-card-chain-unit-test-book6",
+  "rectangle-rhombus-side-unit-test-book6", "rectangle-triangle-square-unit-test-book6", "three-square-shaded-perimeter-unit-test-book6",
+  "scattered-side-perimeter-unit-test-book6", "square-triangle-strip-unit-test-book6", "square-tiling-shaded-unit-test-book6",
+  "round-pair-eight-addends-unit-test-book6", "even-odd-position-pair-unit-test-book6", "facing-page-sum-unit-test-book6",
+  "range-number-digit-pair-unit-test-book6", "consecutive-even-sum-pair-unit-test-book6", "consecutive-odd-sum-pair-unit-test-book6",
+  "sign-insertion-triple-unit-test-book6", "consecutive-sign-insertion", "plus-concatenation-pair-unit-test-book6",
+  "balance-chain-equivalence-unit-test-book6", "fold-cut-open-perimeter-unit-test-book6", "last-number-from-digit-total",
+  "rod-difference-ratio-unit-test-book6"
+];
+const auditedTypeIds = [...new Set([...typeIds, ...unitTestQuestions.map((question) => question.typeId)])];
 const expectedUnitCounts = [40, 44, 41, 34];
 const sum = (items) => items.reduce((total, value) => total + value, 0);
 const product = (items) => items.reduce((total, value) => total * value, 1);
@@ -227,6 +240,63 @@ function validate(problem, id, difficulty) {
     case "repeated-digit-concat":
       assert(meta.values.every((value, index) => value === Number(String(meta.digit).repeat(index + 1))), id, difficulty, "같은 숫자 이어 붙이기 오류");
       assert(sum(meta.values) === meta.answer && numeric === meta.answer, id, difficulty, "이어 붙인 수 합 오류"); return;
+    case "unit-midpoint-pair":
+      assert(meta.parts.length === 2 && meta.parts.every((part) => (part.left + part.right) / 2 === part.middle), id, difficulty, "두 중점 오류"); return;
+    case "unit-split-targets":
+      assert(meta.middle === meta.start + meta.leftIntervals * meta.leftUnit, id, difficulty, "왼쪽 분할 오류");
+      assert(meta.end === meta.middle + meta.rightIntervals * meta.rightUnit, id, difficulty, "오른쪽 분할 오류");
+      assert(meta.first === meta.start + meta.leftTarget * meta.leftUnit && meta.second === meta.middle + meta.rightTarget * meta.rightUnit, id, difficulty, "표시한 점 오류");
+      assert(Math.abs(meta.second - meta.first) === meta.answer && numeric === meta.answer, id, difficulty, "두 점 거리 오류"); return;
+    case "unit-rod-ratio":
+      assert(Number.isInteger(meta.answer) && meta.answer * (meta.shortCount - meta.longCount) === meta.longCount * meta.shortCount && numeric === meta.answer, id, difficulty, "끈 차이 횟수 오류"); return;
+    case "unit-equal-bars":
+      assert(meta.firstCount * meta.first === meta.secondCount * meta.second, id, difficulty, "같은 막대 길이 오류");
+      assert(meta.first + meta.second === meta.total && sameArray(meta.answer, [meta.first, meta.second]), id, difficulty, "두 막대 길이 오류"); return;
+    case "unit-two-weight":
+      assert(meta.circleCount * meta.circle === meta.squareCount * meta.square, id, difficulty, "두 물건 평형 오류");
+      assert(meta.circle + meta.square === meta.total && sameArray(meta.answer, [meta.circle, meta.square]), id, difficulty, "두 물건 무게 오류"); return;
+    case "unit-symbol-chain": {
+      const { diamond, square, triangle, circle, cross } = meta.symbols;
+      assert(meta.values[diamond] * 3 === meta.values[square] * 4, id, difficulty, "첫 도형식 오류");
+      assert(meta.values[triangle] * 3 === meta.values[circle] * 4, id, difficulty, "둘째 도형식 오류");
+      assert(meta.values[diamond] + meta.values[triangle] === meta.values[circle] * 2, id, difficulty, "셋째 도형식 오류");
+      assert(meta.values[triangle] + meta.values[circle] === meta.values[cross] * 2 && numeric === meta.answer, id, difficulty, "마지막 도형식 오류"); return;
+    }
+    case "unit-rectangle-rhombus":
+      assert(meta.rectanglePerimeter === 2 * (meta.width + meta.shared) && numeric === meta.shared, id, difficulty, "직사각형·마름모 오류"); return;
+    case "unit-three-shapes":
+      assert(meta.perimeter === 2 * meta.width + 5 * meta.side && numeric === meta.width, id, difficulty, "세 도형 둘레 오류"); return;
+    case "unit-three-squares":
+      assert(meta.small === meta.large - meta.middle && meta.answer === 2 * meta.middle && numeric === meta.answer, id, difficulty, "세 정사각형 색칠 둘레 오류"); return;
+    case "unit-scattered-perimeter":
+      assert(meta.answer === 2 * (sum(meta.horizontal) + sum(meta.vertical)) && numeric === meta.answer, id, difficulty, "흩어진 변 둘레 오류"); return;
+    case "unit-square-triangle-strip":
+      assert(meta.outsideEdges === 10 && meta.answer === meta.side * 10 && numeric === meta.answer, id, difficulty, "정사각형·정삼각형 둘레 오류"); return;
+    case "unit-square-tiling":
+      assert(meta.total === meta.unit * 7 && meta.answer === meta.unit * 4 && numeric === meta.answer, id, difficulty, "정사각형 분할 둘레 오류"); return;
+    case "unit-round-pair-eight":
+      assert(meta.pairs.length === 4 && meta.pairs.every((pair) => sum(pair) === meta.base), id, difficulty, "여덟 수 짝 오류");
+      assert(meta.answer === meta.base * 4 && numeric === meta.answer, id, difficulty, "여덟 수 합 오류"); return;
+    case "unit-even-odd-pair":
+      assert(meta.evenValue === meta.evenPosition * 2 && meta.oddValue === meta.oddPosition * 2 - 1, id, difficulty, "짝홀수 순서 오류"); return;
+    case "unit-facing-sum":
+      assert(meta.left % 2 === 0 && meta.right === meta.left + 1 && meta.left + meta.right === meta.pageSum && numeric === meta.left, id, difficulty, "마주 보는 쪽수 합 오류"); return;
+    case "unit-range-digit-pair":
+      assert(meta.parts.length === 2 && meta.parts.every((part) => part.numberCount === part.end - part.start + 1 && part.digitCount === countWrittenDigits(part.start, part.end)), id, difficulty, "두 범위 숫자 개수 오류"); return;
+    case "unit-consecutive-even-pair":
+    case "unit-consecutive-odd-pair":
+      assert(meta.parts.length === 2 && meta.parts.every((part) => sum(Array.from({ length: part.count }, (_, index) => part.start + index)) === part.answer), id, difficulty, "두 연속수 합 오류"); return;
+    case "unit-sign-triple":
+      assert(meta.patterns.length === 3 && meta.patterns.every((pattern, index) => meta.values.slice(1).reduce((total, value, itemIndex) => total + (pattern[itemIndex] === "+" ? value : -value), meta.values[0]) === meta.targets[index]), id, difficulty, "세 기호식 오류");
+      assert(new Set(meta.targets).size === 3, id, difficulty, "세 목표값 중복"); return;
+    case "unit-join-pair":
+      assert(meta.patterns.length === 2 && meta.patterns.every((pattern, index) => evaluateJoinedExpression(meta.digits, pattern) === meta.targets[index]), id, difficulty, "두 이어 붙이기 식 오류"); return;
+    case "unit-balance-chain":
+      assert(meta.answer === 6 && numeric === 6, id, difficulty, "세 저울 등가 오류"); return;
+    case "unit-fold-cut-open":
+      assert(meta.openedPerimeter === meta.openedSide * 4, id, difficulty, "펼친 정사각형 둘레 오류");
+      assert(meta.foldedWidth === meta.openedSide + meta.cut && meta.originalWidth === meta.foldedWidth * 2 && meta.originalHeight === meta.openedSide * 2, id, difficulty, "접기 전 길이 오류");
+      assert(meta.answer === 2 * (meta.originalWidth + meta.originalHeight) && numeric === meta.answer, id, difficulty, "처음 색종이 둘레 오류"); return;
     default:
       fail(id, difficulty, `검산 분기 없음: ${meta.family}`);
   }
@@ -244,6 +314,13 @@ function referenceKeys(stage, references) {
 if (!book) throw new Error("book-06 missing");
 if (units.length !== 4) throw new Error(`book-06 unit count ${units.length}`);
 if (typeIds.length !== 62) throw new Error(`book-06 type count ${typeIds.length}`);
+if (unitTestQuestions.length !== 25) throw new Error(`book-06 unit test count ${unitTestQuestions.length}`);
+unitTestQuestions.forEach((question, index) => {
+  if (question.number !== index + 1) throw new Error(`book-06 unit test number ${question.number}, expected ${index + 1}`);
+  if (question.typeId !== expectedUnitTestTypes[index]) throw new Error(`book-06 unit test ${question.number} type ${question.typeId}, expected ${expectedUnitTestTypes[index]}`);
+  if (!question.verified) throw new Error(`book-06 unit test ${question.number} is not verified`);
+  if (!typeById(question.typeId)) throw new Error(`book-06 unit test ${question.number} unknown type ${question.typeId}`);
+});
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -271,7 +348,7 @@ units.forEach((unit, unitIndex) => {
 if (sourceQuestionCount !== 159) throw new Error(`book-06 source count ${sourceQuestionCount}`);
 
 let generated = 0;
-for (const typeId of typeIds) {
+for (const typeId of auditedTypeIds) {
   const type = typeById(typeId);
   const generator = GENERATORS[type.generator];
   for (const difficulty of [1, 2, 3]) {
@@ -283,4 +360,4 @@ for (const typeId of typeIds) {
   }
 }
 
-console.log(`book-06 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} generated checks`);
+console.log(`BOOK06_AUDIT_OK bodyTypes=${typeIds.length} unitTestQuestions=${unitTestQuestions.length} auditedTypes=${auditedTypeIds.length} sourceQuestions=${sourceQuestionCount} generated=${generated.toLocaleString("en-US")}`);
