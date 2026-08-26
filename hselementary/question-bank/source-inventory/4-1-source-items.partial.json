@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "status": "in-progress-checkpoint",
+  "source": {
+    "title": "생각하는 황소 4-1 심화",
+    "fileName": "생각하는 황소 4-1 심화.pdf",
+    "renderedPageRange": [8, 77],
+    "reviewMethod": "rendered page direct visual inspection",
+    "ocrAcceptedAsEvidence": false
+  },
+  "progress": {
+    "renderedPagesVisuallyReviewed": 70,
+    "renderedPagesTotal": 70,
+    "unitStartsVerified": 6,
+    "explorationGroupsVerified": 30,
+    "expectedSourceItems": 330,
+    "observedSourceItems": 329,
+    "detailedRecordsPersisted": 0,
+    "remainingWork": "Persist the 329 visually reviewed source items as individual records with sourceItemId, pages, section, item number, and short Korean type name; then create the Markdown inventory."
+  },
+  "countRule": {
+    "explorationPerGroup": 1,
+    "examplesPerGroupExpected": 4,
+    "missionsPerGroup": 6,
+    "expectedItemsPerGroup": 11,
+    "splitSubquestions": false
+  },
+  "units": [
+    {
+      "unit": 1,
+      "name": "큰 수",
+      "unitTitlePdfPage": 7,
+      "unitTitlePrintedPage": 3,
+      "firstSourcePdfPage": 8,
+      "firstSourcePrintedPage": 4,
+      "expectedItemCount": 66,
+      "observedItemCount": 66,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "큰 수 알아보기", "pdfPages": [8, 9], "printedPages": [4, 5], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "큰 수의 크기 비교", "pdfPages": [10, 11], "printedPages": [6, 7], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 3, "sourceTitle": "큰 수의 규칙성과 뛰어 세기", "pdfPages": [12, 13], "printedPages": [8, 9], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 4, "sourceTitle": "큰 수의 활용", "pdfPages": [14, 15], "printedPages": [10, 11], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 5, "sourceTitle": "조건에 맞는 수 찾기", "pdfPages": [16, 17], "printedPages": [12, 13], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 6, "sourceTitle": "수 카드로 수 만들기", "pdfPages": [18, 19], "printedPages": [14, 15], "expectedItemCount": 11, "observedItemCount": 11}
+      ]
+    },
+    {
+      "unit": 2,
+      "name": "각도",
+      "unitTitlePdfPage": 21,
+      "unitTitlePrintedPage": 17,
+      "firstSourcePdfPage": 22,
+      "firstSourcePrintedPage": 18,
+      "expectedItemCount": 66,
+      "observedItemCount": 66,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "각과 각도", "pdfPages": [22, 23], "printedPages": [18, 19], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "각도의 계산", "pdfPages": [24, 25], "printedPages": [20, 21], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 3, "sourceTitle": "다각형의 내각의 합", "pdfPages": [26, 27], "printedPages": [22, 23], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 4, "sourceTitle": "다각형의 외각의 성질", "pdfPages": [28, 29], "printedPages": [24, 25], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 5, "sourceTitle": "내각과 외각의 성질의 활용", "pdfPages": [30, 31], "printedPages": [26, 27], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 6, "sourceTitle": "시침과 분침 사이의 각도", "pdfPages": [32, 33], "printedPages": [28, 29], "expectedItemCount": 11, "observedItemCount": 11}
+      ]
+    },
+    {
+      "unit": 3,
+      "name": "곱셈과 나눗셈",
+      "unitTitlePdfPage": 35,
+      "unitTitlePrintedPage": 31,
+      "firstSourcePdfPage": 36,
+      "firstSourcePrintedPage": 32,
+      "expectedItemCount": 66,
+      "observedItemCount": 65,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "곱셈 알아보기", "pdfPages": [36, 37], "printedPages": [32, 33], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "곱셈 응용 문제", "pdfPages": [38, 39], "printedPages": [34, 35], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 3, "sourceTitle": "나눗셈 알아보기", "pdfPages": [40, 41], "printedPages": [36, 37], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 4, "sourceTitle": "나눗셈 응용 문제", "pdfPages": [42, 43], "printedPages": [38, 39], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 5, "sourceTitle": "나눗셈의 나머지", "pdfPages": [44, 45], "printedPages": [40, 41], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 6, "sourceTitle": "계산식 완성하기", "pdfPages": [46, 47], "printedPages": [42, 43], "expectedItemCount": 11, "observedItemCount": 10, "missingItem": "예제 6-4"}
+      ]
+    },
+    {
+      "unit": 4,
+      "name": "평면도형의 이동",
+      "unitTitlePdfPage": 49,
+      "unitTitlePrintedPage": 45,
+      "firstSourcePdfPage": 50,
+      "firstSourcePrintedPage": 46,
+      "expectedItemCount": 44,
+      "observedItemCount": 44,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "평면도형 밀기, 뒤집기, 돌리기", "pdfPages": [50, 51], "printedPages": [46, 47], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "연속된 이동", "pdfPages": [52, 53], "printedPages": [48, 49], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 3, "sourceTitle": "평면도형의 이동의 활용 ①", "pdfPages": [54, 55], "printedPages": [50, 51], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 4, "sourceTitle": "평면도형의 이동의 활용 ②", "pdfPages": [56, 57], "printedPages": [52, 53], "expectedItemCount": 11, "observedItemCount": 11}
+      ]
+    },
+    {
+      "unit": 5,
+      "name": "막대그래프",
+      "unitTitlePdfPage": 59,
+      "unitTitlePrintedPage": 55,
+      "firstSourcePdfPage": 60,
+      "firstSourcePrintedPage": 56,
+      "expectedItemCount": 22,
+      "observedItemCount": 22,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "막대그래프의 이해", "pdfPages": [60, 61], "printedPages": [56, 57], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "막대그래프의 활용", "pdfPages": [62, 63], "printedPages": [58, 59], "expectedItemCount": 11, "observedItemCount": 11}
+      ]
+    },
+    {
+      "unit": 6,
+      "name": "규칙 찾기",
+      "unitTitlePdfPage": 65,
+      "unitTitlePrintedPage": 61,
+      "firstSourcePdfPage": 66,
+      "firstSourcePrintedPage": 62,
+      "expectedItemCount": 66,
+      "observedItemCount": 66,
+      "groups": [
+        {"exploration": 1, "sourceTitle": "일렬로 나열한 수들의 규칙", "pdfPages": [66, 67], "printedPages": [62, 63], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 2, "sourceTitle": "여러 가지 배열에서 수들의 규칙", "pdfPages": [68, 69], "printedPages": [64, 65], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 3, "sourceTitle": "배열된 수들의 합", "pdfPages": [70, 71], "printedPages": [66, 67], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 4, "sourceTitle": "연산의 규칙", "pdfPages": [72, 73], "printedPages": [68, 69], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 5, "sourceTitle": "나열한 도형에서의 규칙", "pdfPages": [74, 75], "printedPages": [70, 71], "expectedItemCount": 11, "observedItemCount": 11},
+        {"exploration": 6, "sourceTitle": "조건을 만족하는 수의 개수", "pdfPages": [76, 77], "printedPages": [72, 73], "expectedItemCount": 11, "observedItemCount": 11}
+      ]
+    }
+  ],
+  "missingSourceSlots": [
+    {
+      "sourceItemId": "4-1-u3-e6-example-6-4",
+      "section": "example",
+      "item": "6-4",
+      "expectedPdfPage": 46,
+      "expectedPrintedPage": 42,
+      "status": "absent-from-visually-reviewed-source",
+      "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
+    }
+  ],
+  "unreviewedPages": [],
+  "guessedItems": []
+}
