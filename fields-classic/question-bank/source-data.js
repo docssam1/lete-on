@@ -247,7 +247,7 @@ export const TYPES = [
   type("reverse-operation-ladder", "number", "거꾸로 계산", "사다리 경로의 계산을 거꾸로 적용하기", { generator: "reverseOperationLadder", sourceMatched: true, textbookSource: "실전 모의고사 3회 13번" }),
   type("plus-minus-multi-target", "number", "수 카드와 식", "같은 수 사이에 더하기와 빼기를 넣어 여러 목표 만들기", { generator: "plusMinusMultiTarget", sourceMatched: true, textbookSource: "실전 모의고사 3회 14번" }),
   type("two-custom-operations", "number", "연산 약속", "두 가지 새 연산 약속을 각각 계산하기", { generator: "twoCustomOperations", sourceMatched: true, textbookSource: "실전 모의고사 3회 15번" }),
-  type("practice-three-fold-hole-count", "geometry", "색종이 접기", "세 번 반으로 접고 뚫은 구멍 수 구하기", { generator: "practiceThreeFoldHoleCount", sourceMatched: true, textbookSource: "실전 모의고사 3회 16번" }),
+  type("practice-three-fold-hole-count", "geometry", "색종이 접기", "세 번 반으로 접고 뚫은 구멍 수 구하기", { generator: "practiceThreeFoldHoleCount", sourceMatched: true, textbookSource: "실전 모의고사 3회 16번·더클래식 1과정 4권 도전 2번" }),
   type("aligned-rod-common-length", "geometry", "길이와 측정", "양 끝이 맞는 여러 막대의 길이 구하기", { generator: "practiceAlignedRodLengths", sourceMatched: true, textbookSource: "실전 모의고사 4회 2번" }),
   type("interleaved-pair-sequence", "pattern", "수 규칙", "두 수열이 번갈아 놓인 수열의 빈칸", { generator: "practiceInterleavedPairSequence", sourceMatched: true, textbookSource: "실전 모의고사 4회 9번" }),
   type("two-function-machine-chain", "pattern", "대응 규칙", "두 수 변환 규칙을 차례로 적용하기", { generator: "practiceTwoFunctionMachines", sourceMatched: true, textbookSource: "실전 모의고사 4회 10번" }),
@@ -303,12 +303,15 @@ export const TYPES = [
   type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-cut-shape-choice", "geometry", "색종이 접기", "접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoice", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("fold-cut-unfold-one-draw", "geometry", "색종이 접어 자르기", "한 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldOneDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 1번·연습 2번" }),
+  type("fold-cut-unfold-two-draw", "geometry", "색종이 접어 자르기", "두 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldTwoDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 연습 1번" }),
   // Geometry worksheet 13유형. 이름이 비슷해도 묻는 정보가 다르면 합치지 않는다.
   type("cube-top-number-grid", "geometry", "쌓기나무 바탕그림", "위에서 본 바탕그림의 수로 전체 개수와 앞·옆 모양 구하기", geometryWorksheet("TC", "L2")),
   type("cube-three-views", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양을 보고 쌓기나무 개수 구하기", geometryWorksheet("VC", "L3")),
   type("cube-three-view-minmax", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기", geometryWorksheet("VM", "L3")),
   type("cube-missing-view", "geometry", "쌓기나무 바탕그림", "두 방향의 모양을 보고 나머지 방향 그리기", geometryWorksheet("VP", "L3")),
-  type("cube-count-solid", "geometry", "쌓기나무 개수", "입체 그림에서 쌓기나무 전체 개수 세기", geometryWorksheet("IC", "L2", { sourceMatched: true })),
+  type("cube-count-solid", "geometry", "쌓기나무 개수", "입체 그림에서 쌓기나무 전체 개수 세기", geometryWorksheet("IC", "L2", { worksheetOptions: { promptMode: "total" }, sourceMatched: true, textbookSource: "더클래식 1과정 4권·9권 · 문제 번호별 대조" })),
+  type("cube-minimum-from-solid", "geometry", "쌓기나무 개수", "입체 그림에서 필요한 쌓기나무의 최소 개수", geometryWorksheet("IC", "L2", { worksheetOptions: { promptMode: "minimum" }, sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 3번·연습 14번" })),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape", generator: "cubeDifferentShape", sourceMatched: true, textbookSource: "실전 모의고사 3회 4번" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build", generator: "practiceCubeAddToMatch", sourceMatched: true, textbookSource: "실전 모의고사 5회 16번" }),
   type("cube-fill-rectangular-box", "geometry", "쌓기나무 채우기", "직육면체 상자를 채우는 데 필요한 개수", geometryWorksheet("FB", "L3")),
@@ -316,7 +319,7 @@ export const TYPES = [
   type("cube-hidden-count", "geometry", "숨은 쌓기나무", "벽 없이 어느 쪽에서도 보이지 않는 쌓기나무의 개수", geometryWorksheet("IN", "L3", { sourceMatched: true })),
   type("cube-painted-faces", "geometry", "쌓기나무 색칠", "겉면을 칠한 뒤 색칠된 면의 전체 수", geometryWorksheet("PN", "L4", { worksheetOptions: { variant: "faces" } })),
   type("cube-painted-cube-count", "geometry", "쌓기나무 색칠", "색칠된 면의 수에 맞는 낱개 쌓기나무 개수", geometryWorksheet("PN", "L4", { worksheetOptions: { variant: "count" } })),
-  type("cube-black-white-alternating", "geometry", "쌓기나무 색칠", "같은 색이 맞닿지 않게 쌓은 흰색·검은색 개수", geometryWorksheet("BW", "L3")),
+  type("cube-black-white-alternating", "geometry", "쌓기나무 색칠", "같은 색이 맞닿지 않게 쌓은 흰색·검은색 개수", geometryWorksheet("BW", "L3", { sourceMatched: true, textbookSource: "더클래식 1과정 4권 도전 3번·9권 · 문제 번호별 대조" })),
   type("cube-tunnel", "geometry", "쌓기나무 구멍", "여러 방향으로 구멍을 뚫은 뒤 남은 개수", geometryWorksheet("HL", "L3")),
   type("cube-pattern-sequence", "geometry", "쌓기나무 규칙", "규칙에 따라 커지는 쌓기나무의 n번째 개수", geometryWorksheet("SQ", "L3", { worksheetOptions: { mode: "nth", excludeKinds: ["triangular-stair"] } })),
   type("cube-pattern-stage-from-count", "geometry", "쌓기나무 규칙", "쌓기나무 개수로 몇 번째 모양인지 찾기", geometryWorksheet("SQ", "L3", { worksheetOptions: { mode: "which", excludeKinds: ["triangular-stair"] } })),
@@ -421,7 +424,9 @@ export const TYPES = [
   type("tetromino-square-composition", "geometry", "도형 분할", "돌려서 빈자리에 맞는 네 칸 조각 고르기", { generator: "tetrominoSquareComposition", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
   type("digital-grid-transform", "pattern", "디지털 숫자", "숫자 배열판을 돌리거나 뒤집은 자리 찾기", { generator: "digitalGridTransform", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
   type("digital-transform-arithmetic", "number", "디지털 숫자", "움직인 디지털 두 자리 수의 덧셈·뺄셈", { generator: "digitalTransformArithmetic", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
-  type("fold-number-grid-multi", "geometry", "색종이 접기", "번호판을 한두 번 접어 잘린 수의 합 구하기", { generator: "foldNumberGridMulti", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("fold-number-grid-one", "geometry", "색종이 접어 자르기", "한 번 접어 잘린 수의 합 구하기", { generator: "foldDiagonalNumberSum", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 2번·연습 3번" }),
+  type("fold-number-grid-two-orthogonal", "geometry", "색종이 접어 자르기", "가로·세로로 두 번 접어 잘린 수의 합", { generator: "foldNumberGridTwo", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 3번·연습 4~5번" }),
+  type("fold-number-grid-two-diagonal", "geometry", "색종이 접어 자르기", "대각선으로 두 번 접어 잘린 수의 합", { generator: "foldNumberGridTwoDiagonal", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 4번·연습 6~7번" }),
   type("fold-surface-top-trace", "geometry", "색종이 접기", "여러 번 접은 색종이의 맨 위 색 찾기", { generator: "foldSurfaceTopTrace", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
   type("pair-sum-card-completion", "number", "합과 차", "합이 같은 두 수 카드의 빈 카드 찾기", { generator: "pairSumCardCompletion", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
   type("shape-difference-chain", "number", "비교와 차", "도형 사이의 차를 이어 새로운 차 구하기", { generator: "shapeDifferenceChain", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
@@ -770,7 +775,7 @@ export const TYPES = [
 
   type("cube-solid-to-views-b9", "geometry", "쌓기나무 바탕그림", "입체 모양을 앞·옆 모양으로 나타내기", { generator: "cubeSolidToViewsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
   type("cube-layer-views-b9", "geometry", "쌓기나무 바탕그림", "층별 모양을 앞·옆 모양으로 나타내기", { generator: "cubeLayerViewsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
-  type("cube-shell-interior-b9", "geometry", "쌓기나무 채우기", "직육면체의 겉면을 걷어 낸 안쪽 개수", { generator: "cubeShellInteriorBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("cube-shell-interior-b9", "geometry", "쌓기나무 채우기", "직육면체의 겉면을 걷어 낸 안쪽 개수", { generator: "cubeShellInteriorBook9", sourceMatched: true, textbookSource: "더클래식 1과정 4권 도전 4번·9권 · 문제 번호별 대조" }),
   type("cube-view-model-choice-b9", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양과 맞는 입체 고르기", { generator: "cubeViewModelChoiceBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
 
   type("magic-square-swap-pair-b9", "number", "마방진", "두 수의 자리를 바꾸어 마방진 고치기", { generator: "magicSquareSwapPairBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
@@ -1172,6 +1177,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "shape-transform": "가운데 점이나 거울의 위치를 표시하고, 도형의 꼭짓점을 하나씩 옮겨 그립니다.",
   "fold-hole-count": "접은 횟수마다 겹친 장수가 어떻게 늘어나는지 먼저 셉니다.",
   "fold-diagonal-hole-count": "대각선 접은 선을 기준으로 구멍의 짝이 생기는 위치를 찾습니다.",
+  "practice-three-fold-hole-count": "접은 순서의 반대로 세 번 펼치며 구멍이 대칭으로 늘어나는 자리를 셉니다.",
   "fold-diagonal-unfold": "접은 선을 기준으로 잘린 선을 같은 거리의 반대쪽에 옮겨 그립니다.",
   "fold-cut-piece-count": "접힌 종이의 겹 수와 자르는 선이 지나가는 횟수를 나누어 생각합니다.",
   "fold-number-remaining-sum": "접은 선을 기준으로 잘려 나갈 칸을 먼저 찾고, 남은 수만 더합니다.",
@@ -1182,6 +1188,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "fold-stack-order": "마지막 접기부터 거꾸로 펼쳐 각 조각의 위아래 순서를 찾습니다.",
   "fold-punch-shape-count": "접힌 겹 수와 펀치 모양이 펼쳐질 때 생기는 짝을 함께 셉니다.",
   "fold-cut-shape-choice": "접은 선을 기준으로 잘린 모양을 뒤집어 붙여 펼친 모양을 만듭니다.",
+  "fold-cut-unfold-one-draw": "접은 선을 거울처럼 한 번 되펼쳐 잘린 부분을 대칭으로 그립니다.",
+  "fold-cut-unfold-two-draw": "나중에 접은 선부터 거꾸로 두 번 되펼쳐 잘린 부분을 네 자리에 그립니다.",
   "magic-square": "가로·세로·대각선의 합이 같다는 조건으로 한 줄의 합부터 찾습니다.",
   "gakuro": "삼각형 옆에 적힌 합을 보며 한 줄에 같은 수가 겹치지 않게 채웁니다.",
   "grid-number-placement": "위·아래·왼쪽·오른쪽 조건을 하나씩 표시하고 확실한 자리부터 채웁니다.",
@@ -1247,6 +1255,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "congruent-partition": "전체 칸 수를 같은 조각 수로 나누고, 각 조각의 모양과 넓이가 같은지 확인합니다.",
   "cube-top-number-grid": "위에서 본 각 칸의 수는 그 자리에 쌓인 층수입니다. 칸의 수를 더해 전체를 구합니다.",
   "cube-count-solid": "위에서 보이는 꼭대기마다 아래에 받치는 쌓기나무가 있는지 층별로 셉니다.",
+  "cube-minimum-from-solid": "보이는 꼭대기 아래에 반드시 받쳐야 하는 쌓기나무만 줄별로 세어 더합니다.",
   "cube-three-views": "위에서 본 자리와 앞·옆에서 본 가장 높은 층을 함께 맞춥니다.",
   "cube-missing-view": "두 방향에서 보이는 높이를 위에서 본 자리에 표시한 뒤 남은 방향을 읽습니다.",
   "cube-pattern-sequence": "각 단계의 층별 개수를 적고, 단계가 하나 늘 때 추가되는 수를 찾습니다.",
@@ -1335,7 +1344,6 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "tetromino-square-composition": "빈자리의 꺾인 방향과 네 칸의 이어진 모양을 조각과 비교합니다.",
   "digital-grid-transform": "숫자 하나만 보지 말고 배열판의 네 모서리부터 옮긴 자리를 표시합니다.",
   "digital-transform-arithmetic": "각 디지털 수를 먼저 움직여 새 수를 적은 뒤 덧셈이나 뺄셈을 합니다.",
-  "fold-number-grid-multi": "접은 선을 하나씩 거꾸로 펼쳐 잘린 칸과 짝이 되는 번호를 모두 찾습니다.",
   "fold-surface-top-trace": "접을 때 움직이는 쪽이 위로 올라간다는 것을 접는 순서마다 표시합니다.",
   "pair-sum-card-completion": "한 쌍의 목표 합에서 보이는 카드 수를 빼 빈 카드의 수를 찾습니다.",
   "shape-difference-chain": "이웃한 도형 사이의 차를 같은 방향으로 이어 더합니다.",
@@ -1348,6 +1356,9 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "forest-congruent-partition-draw-book4": "나무 하나를 포함한 세 칸 조각을 먼저 찾고 돌려서 같은 모양이 되는지 확인합니다.",
   "digital-grid-upright-after-moves": "숫자의 자리와 방향을 판과 함께 움직여 마지막에 똑바로 놓인 수만 더합니다.",
   "digital-self-half-turn-calculation": "두 자리 수를 반 바퀴 돌릴 때 숫자의 순서도 거꾸로 바뀌는지 확인합니다.",
+  "fold-number-grid-one": "한 번 접은 선을 되펼쳐 칠한 부분과 대칭인 칸의 수를 함께 더합니다.",
+  "fold-number-grid-two-orthogonal": "가로와 세로 접은 선을 거꾸로 펼쳐 같은 자리에 겹친 네 칸의 수를 더합니다.",
+  "fold-number-grid-two-diagonal": "두 대각선을 접은 순서의 반대로 펼쳐 같은 자리에 겹친 네 칸의 수를 더합니다.",
   "overlapping-paper-bottom": "맨 위 색종이를 한 장씩 지우며 마지막까지 남는 글자를 따라갑니다.",
   "measurement-age-difference-book4": "나이 차를 같은 방향으로 이어 더해 두 사람의 차를 구합니다.",
   "measurement-distance-difference-book4": "앞뒤 위치의 차를 한 줄에 표시하고 두 사람 사이의 차를 더합니다.",
@@ -2210,23 +2221,36 @@ const BOOK04_UNIT01_REFS = Object.freeze({
 });
 
 const BOOK04_UNIT02_REFS = Object.freeze({
-  "fold-cut-shape-choice": stageReferences({
+  "fold-cut-unfold-one-draw": stageReferences({
     concept: [problemNumbers("activity", 1, [1])],
-    practice: [problemNumbers("practice", 1, [1])],
-    advanced: [problemNumbers("advanced", 1, [1, 2])]
+    practice: [problemNumbers("practice", 1, [2])]
   }),
-  "fold-number-grid-multi": stageReferences({
-    concept: [problemNumbers("activity", 1, [2, 3, 4])],
-    practice: [problemNumbers("practice", 1, [2, 3, 4, 5, 6, 7])]
+  "fold-cut-unfold-two-draw": stageReferences({
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "fold-number-grid-one": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "fold-number-grid-two-orthogonal": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [4, 5])]
+  }),
+  "fold-number-grid-two-diagonal": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [6, 7])]
   }),
   "fold-surface-top-trace": stageReferences({
     type: [problemNumbers("check", 1, [1, 2, 3, 4])],
     practice: [problemNumbers("practice", 1, [8, 9, 10, 11])]
   }),
   "cube-count-solid": stageReferences({
-    concept: [problemNumbers("activity", 2, [1, 3])],
-    practice: [problemNumbers("practice", 1, [12, 14])],
-    advanced: [problemNumbers("advanced", 1, [3])]
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "cube-minimum-from-solid": stageReferences({
+    concept: [problemNumbers("activity", 2, [3])],
+    practice: [problemNumbers("practice", 1, [14])]
   }),
   "cube-step-sequence": stageReferences({
     concept: [problemNumbers("activity", 2, [2])],
@@ -2244,7 +2268,16 @@ const BOOK04_UNIT02_REFS = Object.freeze({
     type: [problemNumbers("check", 2, [3])],
     practice: [problemNumbers("practice", 1, [17])]
   }),
-  "cube-painted-cube-count": stageReferences({
+  "three-fold-cut-line-book4": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "practice-three-fold-hole-count": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "cube-black-white-alternating": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "cube-shell-interior-b9": stageReferences({
     advanced: [problemNumbers("advanced", 1, [4])]
   })
 });
@@ -3562,7 +3595,7 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
     { number: 3, typeId: "digital-grid-upright-after-moves", label: "숫자판을 두 번 뒤집은 뒤 똑바른 수", verified: true, difficulty: 2 },
     { number: 4, typeId: "digital-self-half-turn-calculation", label: "두 자리 수와 반 바퀴 돌린 수 계산", verified: true, difficulty: 2 },
     { number: 5, typeId: "rotational-partition-two", label: "두 개의 같은 테트로미노로 나누기", verified: true, difficulty: 2 },
-    { number: 6, typeId: "fold-number-grid-multi", label: "번호판을 접어 자른 수의 합", verified: true, difficulty: 2 },
+    { number: 6, typeId: "fold-number-grid-two-orthogonal", label: "가로·세로로 두 번 접어 자른 수의 합", verified: true, difficulty: 2 },
     { number: 7, typeId: "overlapping-paper-bottom", label: "겹친 색종이의 가장 밑 찾기", verified: true, difficulty: 2 },
     { number: 8, typeId: "cube-count-solid", label: "입체 그림의 쌓기나무 개수", verified: true, difficulty: 2 },
     { number: 9, typeId: "cube-fill-rectangular-box", label: "직육면체 상자에 더 필요한 쌓기나무", verified: true, difficulty: 3 },
@@ -3813,9 +3846,11 @@ export const CURRICULUM = [
       "shape-mirror-direction", "digital-digit-transform", "digital-grid-transform", "digital-transform-arithmetic"
     ], [4,6], [4,4], 4, 20, BOOK04_UNIT01_REFS),
     detailedStagedUnit("색종이 접기와 쌓기나무", [
-      "fold-cut-shape-choice", "fold-number-grid-multi", "fold-surface-top-trace", "cube-count-solid",
-      "cube-step-sequence", "cube-hidden-count-walled", "cube-top-number-grid", "cube-fill-rectangular-box",
-      "cube-painted-cube-count"
+      "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw", "fold-number-grid-one",
+      "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal", "fold-surface-top-trace",
+      "cube-count-solid", "cube-minimum-from-solid", "cube-step-sequence", "cube-hidden-count-walled",
+      "cube-top-number-grid", "cube-fill-rectangular-box", "three-fold-cut-line-book4",
+      "practice-three-fold-hole-count", "cube-black-white-alternating", "cube-shell-interior-b9"
     ], [4,3], [4,3], 4, 17, BOOK04_UNIT02_REFS),
     detailedStagedUnit("양팔저울과 비교하기", [
       "pair-sum-card-completion", "shape-difference-chain", "measurement-order-chain", "balance-unit-ratio"

@@ -125,7 +125,7 @@
 @media print{.g1-fold-paper.cut-once{width:52px;height:32px}.g1-fold-paper.cut-once::before,.g1-fold-paper.cut-once::after{top:15px}.g1-fold-paper.cut-cross::before,.g1-fold-paper.cut-cross-diagonal::before{top:24px}.g1-fold-paper.cut-cross::after,.g1-fold-paper.cut-cross-diagonal::after{left:24px;top:4px;height:44px}.g1-fold-paper.cut-once.cut-cross::before{top:15px}.g1-fold-paper.cut-once.cut-cross::after{top:3px;height:26px}}
 
 /* main 갈래에서 이식한 색종이 접기·세로셈 복면산 시각자료 (2026-08-18) */
-.fold-number-svg,.fold-diag-svg,.fold-inverse-svg,.fold-pieces-svg,.fold-punch-svg,.fold-unfold-stage-svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+.fold-number-svg,.fold-diag-svg,.fold-inverse-svg,.fold-pieces-svg,.fold-punch-svg,.fold-unfold-stage-svg,.fold-cut-draw-svg,.fold-two-diagonal-svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
 .fold-stack-svg{display:block;width:100%;max-width:220px;height:auto;margin:0 auto}
 .fold-unfold-choice-work{display:flex;flex-direction:column;gap:10px}
 .fold-unfold-options{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}

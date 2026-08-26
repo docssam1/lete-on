@@ -348,14 +348,14 @@ function foldCoordinate(row, column, size, folds) {
   return { row: currentRow, column: currentColumn, rows, columns };
 }
 
-function foldNumberGridMulti({ difficulty = 2 }) {
+function foldNumberGridOrthogonal({ difficulty = 2, foldCount = 2 }) {
   const size = 4;
   const start = randomInt(1, difficulty === 3 ? 25 : 8);
   const values = Array.from({ length: size * size }, (_, index) => start + index);
   const grid = Array.from({ length: size }, (_, row) => values.slice(row * size, (row + 1) * size));
   const vertical = { axis: "vertical", direction: sample(["오른쪽을 왼쪽으로", "왼쪽을 오른쪽으로"]) };
   const horizontal = { axis: "horizontal", direction: sample(["아래쪽을 위쪽으로", "위쪽을 아래쪽으로"]) };
-  const folds = difficulty === 1 ? [sample([vertical, horizontal])] : shuffle([vertical, horizontal]);
+  const folds = foldCount === 1 ? [sample([vertical, horizontal])] : shuffle([vertical, horizontal]);
   const finalSize = folds.reduce((current, fold) => ({
     rows: fold.axis === "horizontal" ? current.rows / 2 : current.rows,
     columns: fold.axis === "vertical" ? current.columns / 2 : current.columns
@@ -372,8 +372,16 @@ function foldNumberGridMulti({ difficulty = 2 }) {
     visual: { kind: "book4", subtype: "fold-number-grid", grid, folds, foldedRows: finalSize.rows, foldedColumns: finalSize.columns, target },
     answer: String(answer),
     solution: `접은 선을 따라 표시한 칸을 펼치면 ${cutCells.map((cell) => cell.value).join(", ")}이 함께 잘립니다. 합은 ${cutCells.map((cell) => cell.value).join(" + ")} = ${answer}입니다.`,
-    meta: { family: "fold-number-grid", size, grid, folds, finalSize, target, cutCells, answer }
+    meta: { family: "fold-number-grid", structure: foldCount === 1 ? "one-orthogonal-fold" : "two-orthogonal-folds", size, grid, folds, finalSize, target, cutCells, answer }
   };
+}
+
+function foldNumberGridOne({ difficulty = 2 }) {
+  return foldNumberGridOrthogonal({ difficulty, foldCount: 1 });
+}
+
+function foldNumberGridTwo({ difficulty = 2 }) {
+  return foldNumberGridOrthogonal({ difficulty, foldCount: 2 });
 }
 
 function reverseStack(stack) {
@@ -859,7 +867,8 @@ export const BOOK04_GENERATORS = {
   digitalTransformArithmetic,
   digitalGridUprightAfterMoves,
   digitalSelfHalfTurnCalculation,
-  foldNumberGridMulti,
+  foldNumberGridOne,
+  foldNumberGridTwo,
   foldSurfaceTopTrace,
   overlappingPaperBottom,
   pairSumCardCompletion,

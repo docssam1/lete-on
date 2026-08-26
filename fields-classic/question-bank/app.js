@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260826h";
-import { GENERATORS } from "./generators.js?v=20260826h";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260827a";
+import { GENERATORS } from "./generators.js?v=20260827a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260825m";
@@ -648,9 +648,20 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }
   const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
   const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
+  const icPromptMode = made.type === "IC" ? item.worksheetOptions?.promptMode : null;
+  if (icPromptMode === "total" || icPromptMode === "minimum") {
+    made.answer.askFloor = false;
+    made.answer.askUpper = false;
+    made.answerText = `${made.answer.total}개`;
+  }
+  const prompt = icPromptMode === "total"
+    ? "다음은 쌓기나무를 쌓아 만든 입체 모양입니다. 사용된 쌓기나무는 모두 몇 개입니까?"
+    : icPromptMode === "minimum"
+      ? "쌓기나무로 쌓은 모양입니다. 사용된 쌓기나무는 최소 몇 개입니까?"
+      : made.prompt;
   return {
     ...withProblemContext({
-    prompt: made.prompt,
+    prompt,
     visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
     answer: made.answerText,
     answerVisual: hasAnswerVisual ? { kind: "geometry-worksheet-answer", problem: made } : null,
@@ -2181,6 +2192,86 @@ function foldUnfoldChoiceMarkup(visual) {
   return `<div class="fold-unfold-choice-work">${stageSvg}<div class="fold-unfold-options">${optionSvg}</div></div>`;
 }
 
+function foldCutUnfoldDrawMarkup(visual) {
+  const { foldLine, foldArrow } = foldGeometryHelpers();
+  const size = 92;
+  const top = 7;
+  const polygonPoints = (polygon, shift) => polygon.map((point) => `${(shift + point.x * size).toFixed(1)},${(top + point.y * size).toFixed(1)}`).join(" ");
+  if (visual.reveal) {
+    let answer = `<rect x="7" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    for (let line = 1; line < 4; line += 1) {
+      answer += `<line x1="${7 + line * size / 4}" y1="${top}" x2="${7 + line * size / 4}" y2="${top + size}" stroke="#d6a09a" stroke-width="1" stroke-dasharray="4 3"/>`;
+      answer += `<line x1="7" y1="${top + line * size / 4}" x2="${7 + size}" y2="${top + line * size / 4}" stroke="#d6a09a" stroke-width="1" stroke-dasharray="4 3"/>`;
+    }
+    for (const cut of visual.unfoldedCuts) answer += `<polygon points="${polygonPoints(cut, 7)}" fill="#fff" stroke="#b03a5b" stroke-width="1.4"/>`;
+    return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${size + 14} ${size + 14}" role="img" aria-label="색종이를 펼친 정답 그림">${answer}</svg>`;
+  }
+
+  let shift = 7;
+  let parts = "";
+  visual.stages.forEach((stage, index) => {
+    parts += `<polygon points="${polygonPoints(stage.polygon, shift)}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    if (stage.fold) {
+      const segment = foldLine(stage.polygon, stage.fold);
+      if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(top + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(top + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      const arrow = foldArrow(stage.polygon, stage.fold);
+      if (arrow) parts += foldArrowSvg(arrow.from, arrow.to, shift, top, size);
+    } else {
+      parts += `<polygon points="${polygonPoints(visual.cut, shift)}" fill="#b03a5b"/>`;
+    }
+    if (index < visual.stages.length - 1) {
+      shift += size + 10;
+      parts += foldStepArrowSvg(shift, top + size / 2);
+      shift += 42;
+    }
+  });
+  shift += size + 10;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#7ba7bb" stroke-width="2"/>`;
+  for (let line = 1; line < 4; line += 1) {
+    parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
+    parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
+  }
+  return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
+}
+
+function foldTwoDiagonalGridMarkup(visual) {
+  const { clip } = foldGeometryHelpers();
+  const keep = {
+    d1: (point) => point.x - point.y,
+    d2: (point) => 1 - point.x - point.y
+  };
+  const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const first = clip(square, keep[visual.directions[0]]);
+  const folded = clip(first, keep[visual.directions[1]]);
+  const size = 118;
+  const top = 7;
+  const points = (polygon, shift) => polygon.map((point) => `${(shift + point.x * size).toFixed(1)},${(top + point.y * size).toFixed(1)}`).join(" ");
+  let shift = 7;
+  let parts = `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  for (let row = 0; row < 4; row += 1) for (let column = 0; column < 4; column += 1) {
+    const x = shift + column * size / 4;
+    const y = top + row * size / 4;
+    parts += `<rect x="${x}" y="${y}" width="${size / 4}" height="${size / 4}" fill="none" stroke="#d6a09a" stroke-width="1"/>`;
+    parts += `<text x="${x + size / 8}" y="${y + size / 8 + 5}" text-anchor="middle" font-size="14" font-weight="700" fill="#333">${visual.grid[row][column]}</text>`;
+  }
+  const firstLine = visual.directions[0] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
+  parts += `<line x1="${shift + firstLine[0] * size}" y1="${top + firstLine[1] * size}" x2="${shift + firstLine[2] * size}" y2="${top + firstLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
+  shift += size + 14;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<polygon points="${points(first, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
+  const secondLine = visual.directions[1] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
+  parts += `<line x1="${shift + secondLine[0] * size}" y1="${top + secondLine[1] * size}" x2="${shift + secondLine[2] * size}" y2="${top + secondLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
+  shift += size + 14;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<polygon points="${points(folded, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
+  parts += `<circle cx="${shift + visual.target.x * size}" cy="${top + visual.target.y * size}" r="8" fill="#b03a5b"/>`;
+  return `<svg class="fold-two-diagonal-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="수가 쓰인 색종이를 대각선으로 두 번 접어 자르기">${parts}</svg>`;
+}
+
 function paperFoldMarkup(visual) {
   const SIZE = visual.stages.length > 3 ? 84 : 100;
   const GAP = 34;
@@ -3081,6 +3172,8 @@ function visualMarkup(visual) {
   if (visual.kind === "fold-punch") return `<div class="visual fold-punch-visual">${foldPunchMarkup(visual)}</div>`;
   if (visual.kind === "fold-stack") return `<div class="visual fold-stack-visual">${foldStackMarkup(visual)}</div>`;
   if (visual.kind === "fold-unfold-choice") return `<div class="visual fold-unfold-visual">${foldUnfoldChoiceMarkup(visual)}</div>`;
+  if (visual.kind === "fold-cut-unfold-draw") return `<div class="visual fold-unfold-visual">${foldCutUnfoldDrawMarkup(visual)}</div>`;
+  if (visual.kind === "fold-two-diagonal-grid") return `<div class="visual fold-diagonal-visual">${foldTwoDiagonalGridMarkup(visual)}</div>`;
   return "";
 }
 

@@ -13,7 +13,7 @@ const stages = TEXTBOOK_STAGES.map((stage) => stage.id);
 const expectedUnitCounts = [42, 35, 34, 42];
 const expectedUnitTestTypes = [
   "star-congruent-partition-draw-book4", "forest-congruent-partition-draw-book4", "digital-grid-upright-after-moves",
-  "digital-self-half-turn-calculation", "rotational-partition-two", "fold-number-grid-multi", "overlapping-paper-bottom",
+  "digital-self-half-turn-calculation", "rotational-partition-two", "fold-number-grid-two-orthogonal", "overlapping-paper-bottom",
   "cube-count-solid", "cube-fill-rectangular-box", "shape-difference-chain", "measurement-age-difference-book4",
   "measurement-distance-difference-book4", "balance-unit-ratio", "balance-unit-ratio", "race-third-place-book4",
   "directional-landmark-placement-book4", "circular-seat-blank-book4", "g1-front-back-between",
@@ -212,6 +212,18 @@ function validate(type, problem, difficulty) {
       assert(meta.cutCells.length === 2 ** meta.folds.length, id, difficulty, "fold layer count mismatch");
       return;
     }
+    case "fold-number-grid-diagonal-two": {
+      assert(meta.directions.length === 2 && meta.directions.every((direction) => direction === "d1" || direction === "d2"), id, difficulty, "diagonal fold structure mismatch");
+      assert(meta.cutCells.length === 4, id, difficulty, "two diagonal folds must cut four cells");
+      assert(meta.cutCells.reduce((sum, cell) => sum + cell.value, 0) === meta.answer && numeric === meta.answer, id, difficulty, "diagonal fold sum mismatch");
+      return;
+    }
+    case "fold-cut-unfold-draw":
+      assert(meta.foldCount === (meta.structure === "one-fold" ? 1 : 2), id, difficulty, "fold count label mismatch");
+      assert(meta.directions.length === meta.foldCount, id, difficulty, "fold direction count mismatch");
+      assert(meta.unfoldedCuts.length === 2 ** meta.foldCount, id, difficulty, "unfolded cut count mismatch");
+      assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "drawing answer missing");
+      return;
     case "fold-surface-top": {
       const allLabels = meta.finalStacks.flat(2);
       assert(allLabels.length === 4 && new Set(allLabels).size === 4, id, difficulty, "surface stack lost or duplicated a cell");
@@ -322,7 +334,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-04 missing");
 if (units.length !== 4) throw new Error(`book-04 unit count ${units.length}`);
-if (typeIds.length !== 28) throw new Error(`book-04 type count ${typeIds.length}`);
+if (typeIds.length !== 35) throw new Error(`book-04 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-04 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-04 unit test number ${question.number}, expected ${index + 1}`);

@@ -2,7 +2,7 @@ import { G1_GENERATORS } from "./g1-generators.js?v=20260823m";
 import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
 import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260822e";
 import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260825n";
-import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260826b";
+import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260827a";
 import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260826c";
 import { BOOK06_GENERATORS } from "./book06-generators.js?v=20260826e";
 import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260826h";
@@ -5816,6 +5816,72 @@ function foldCutShapeChoice({ difficulty = 2 }) {
   };
 }
 
+function foldCutUnfoldDrawCore({ difficulty = 2, foldCount }) {
+  const directions = foldCount === 1
+    ? [sample(["v", "h", "d1", "d2"])]
+    : sample([["v", "h"], ["h", "v"]]);
+  const stages = buildFoldStages(directions);
+  const folded = stages.at(-1).polygon;
+  const margin = difficulty === 1 ? 0.12 : difficulty === 3 ? 0.075 : 0.095;
+  const centers = placeHoles(folded, 1, margin * 1.4);
+  if (!centers.length) return foldCutUnfoldDrawCore({ difficulty, foldCount });
+  const center = centers[0];
+  const half = margin * 0.48;
+  const triangle = Math.random() < 0.5;
+  const cut = triangle
+    ? [{ x: center.x - half, y: center.y + half }, { x: center.x + half, y: center.y + half }, { x: center.x, y: center.y - half }]
+    : [{ x: center.x - half, y: center.y - half }, { x: center.x + half, y: center.y - half }, { x: center.x + half, y: center.y + half }, { x: center.x - half, y: center.y + half }];
+  if (cut.some((point) => !pointInPolygon(folded, point))) return foldCutUnfoldDrawCore({ difficulty, foldCount });
+  let unfoldedCuts = [cut];
+  for (let index = directions.length - 1; index >= 0; index -= 1) {
+    unfoldedCuts = unfoldedCuts.concat(unfoldedCuts.map((polygon) => mirrorPolygon(polygon, directions[index])));
+  }
+  const times = foldCount === 1 ? "한 번" : "두 번";
+  return {
+    prompt: `색종이를 ${times} 접은 후 칠해진 부분을 잘라냈습니다. 남은 부분을 펼쳤을 때의 모양을 모눈에 그리세요.`,
+    visual: { kind: "fold-cut-unfold-draw", stages, cut, unfoldedCuts, reveal: false },
+    answer: "그림 답안",
+    answerVisual: { kind: "fold-cut-unfold-draw", stages, cut, unfoldedCuts, reveal: true },
+    responseKind: "drawing",
+    solution: `접은 선을 거울처럼 ${times === "한 번" ? "한 번" : "두 번"} 되펼치면 잘린 부분이 ${unfoldedCuts.length}곳에 대칭으로 나타납니다.`,
+    meta: { family: "fold-cut-unfold-draw", structure: foldCount === 1 ? "one-fold" : "two-fold", foldCount, directions, cut, unfoldedCuts }
+  };
+}
+
+function foldCutUnfoldOneDraw({ difficulty = 2 }) {
+  return foldCutUnfoldDrawCore({ difficulty, foldCount: 1 });
+}
+
+function foldCutUnfoldTwoDraw({ difficulty = 2 }) {
+  return foldCutUnfoldDrawCore({ difficulty, foldCount: 2 });
+}
+
+function foldNumberGridTwoDiagonal({ difficulty = 2 }) {
+  const size = 4;
+  const firstRow = Array.from({ length: size }, () => randomInt(1, difficulty === 3 ? 15 : 9));
+  const secondRow = Array.from({ length: size }, () => randomInt(1, difficulty === 3 ? 15 : 9));
+  const grid = [firstRow, secondRow, [...firstRow], [...secondRow]];
+  const directions = sample([["d1", "d2"], ["d2", "d1"]]);
+  const groups = new Map();
+  for (let row = 0; row < size; row += 1) for (let column = 0; column < size; column += 1) {
+    const point = foldPointIn({ x: (column + 0.5) / size, y: (row + 0.5) / size }, directions);
+    const key = `${point.x.toFixed(4)}:${point.y.toFixed(4)}`;
+    if (!groups.has(key)) groups.set(key, { point, cells: [] });
+    groups.get(key).cells.push({ row, column, value: grid[row][column] });
+  }
+  const candidates = [...groups.values()].filter((group) => group.cells.length === 4);
+  if (!candidates.length) return foldNumberGridTwoDiagonal({ difficulty });
+  const chosen = sample(candidates);
+  const answer = chosen.cells.reduce((sum, cell) => sum + cell.value, 0);
+  return {
+    prompt: "수가 쓰인 색종이를 대각선으로 두 번 접어 칠해진 부분을 잘라냈습니다. 펼쳤을 때 잘려나간 부분에 있는 수들의 합을 구하세요.",
+    visual: { kind: "fold-two-diagonal-grid", grid, directions, target: chosen.point },
+    answer: String(answer),
+    solution: `두 대각선을 차례로 펼치면 ${chosen.cells.map((cell) => cell.value).join(", ")}이 함께 잘립니다. 합은 ${chosen.cells.map((cell) => cell.value).join(" + ")} = ${answer}입니다.`,
+    meta: { family: "fold-number-grid-diagonal-two", structure: "two-diagonal-folds", size, grid, directions, target: chosen.point, cutCells: chosen.cells, answer }
+  };
+}
+
 function diagonalFoldHoleCount({ difficulty = 2 }) {
   // 파이널 2회 15번: 대각선을 따라 세 번 접고 구멍 하나 → 8개.
   const folds = difficulty === 1 ? 2 : 3;
@@ -6547,6 +6613,9 @@ export const GENERATORS = {
   foldStackFind,
   foldStackOrder,
   foldCutShapeChoice,
+  foldCutUnfoldOneDraw,
+  foldCutUnfoldTwoDraw,
+  foldNumberGridTwoDiagonal,
   verticalCryptarithmShapeSum,
 
   ...G1_GENERATORS,
