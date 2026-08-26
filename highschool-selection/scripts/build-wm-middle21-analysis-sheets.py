@@ -193,6 +193,27 @@ def sample_result() -> dict:
     }
 
 
+def detailed_example_result() -> dict:
+    noncorrect = {
+        4: "wrong", 8: "wrong", 12: "wrong", 16: "review",
+        24: "wrong", 25: "review", 28: "wrong", 30: "wrong",
+        32: "wrong", 36: "wrong", 37: "review", 40: "wrong",
+    }
+    return {
+        "examId": ROUND_IDS[0],
+        "student": {"displayName": "김지필", "attemptedAt": "2026-08-26", "retestAt": "2026-09-09"},
+        "states": {number: noncorrect.get(number, "correct") for number in range(1, 41)},
+        "retests": [
+            {"label": "1차 재시험", "correct": 8, "total": 12, "date": "2026-09-02"},
+            {"label": "2차 재시험", "correct": 11, "total": 12, "date": "2026-09-09"},
+        ],
+    }
+
+
+def active_result(sample: bool, result: dict | None) -> dict | None:
+    return result if result else sample_result() if sample else None
+
+
 def set_font(pdf: canvas.Canvas, bold: bool, size: float) -> None:
     pdf.setFont("KoreanBold" if bold else "Korean", size)
 
@@ -257,7 +278,7 @@ def display_date(value: str) -> str:
 
 
 def draw_identity(pdf: canvas.Canvas, sample: bool, result: dict | None = None) -> None:
-    active = sample_result() if sample else result
+    active = active_result(sample, result)
     y = PAGE_H - 108
     draw_text(pdf, MARGIN, y, "이름", 7, MUTED, True)
     draw_text(pdf, MARGIN + 30, y, active["student"]["displayName"] if active else "", 8.5, INK, True)
@@ -284,7 +305,7 @@ def score_box(pdf: canvas.Canvas, x: float, y: float, w: float, h: float,
 
 
 def draw_score_summary(pdf: canvas.Canvas, sample: bool, result: dict | None = None) -> None:
-    active = sample_result() if sample else result
+    active = active_result(sample, result)
     if active:
         correct = {number for number, state in active["states"].items() if state == "correct"}
         total_value = str(len(correct))
@@ -303,7 +324,7 @@ def draw_score_summary(pdf: canvas.Canvas, sample: bool, result: dict | None = N
 
 
 def result_cells(sample: bool, result: dict | None = None) -> dict[int, str]:
-    active = sample_result() if sample else result
+    active = active_result(sample, result)
     if not active:
         return {}
     return {number: RESULT_STATES[state] for number, state in active["states"].items()}
@@ -463,7 +484,7 @@ def draw_detail_half(pdf: canvas.Canvas, items: list[dict], x: float, y: float, 
 
 
 def draw_retest_boxes(pdf: canvas.Canvas, sample: bool, result: dict | None = None) -> None:
-    active = sample_result() if sample else result
+    active = active_result(sample, result)
     x, y, w, h = MARGIN, 47, PAGE_W - 2 * MARGIN, 116
     rounded_box(pdf, x, y, w, h, PAPER, LINE, 10)
     draw_text(pdf, x + 14, y + h - 23, "오답 재시험 기록", 9.5, NAVY, True)
@@ -488,8 +509,200 @@ def draw_retest_boxes(pdf: canvas.Canvas, sample: bool, result: dict | None = No
     draw_text(pdf, x + 14, y + 8, "정답을 외우기보다 틀린 이유와 다시 쓴 풀이를 함께 확인합니다.", 5.9, MUTED)
 
 
+def grouped_metrics(items: list[dict], result: dict, key: str) -> list[dict]:
+    rows = defaultdict(lambda: {"total": 0, "correct": 0, "wrong": [], "review": []})
+    for item in items:
+        label = item[key]
+        row = rows[label]
+        row["total"] += 1
+        state = result["states"][item["number"]]
+        if state == "correct":
+            row["correct"] += 1
+        else:
+            row[state].append(item["number"])
+    return [dict(label=label, **values) for label, values in rows.items()]
+
+
+def draw_bar_card(pdf: canvas.Canvas, x: float, y: float, w: float, h: float,
+                  title: str, subtitle: str, rows: list[dict], colors: list,
+                  benchmarks: dict[str, float] | None = None, note: str = "") -> None:
+    rounded_box(pdf, x, y, w, h, white, LINE, 10)
+    draw_text(pdf, x + 14, y + h - 23, title, 9.5, NAVY, True)
+    draw_text(pdf, x + 14, y + h - 39, subtitle, 5.7, MUTED)
+    label_w = 61 if w < 300 else 142
+    value_w = 49
+    bar_x = x + 14 + label_w
+    bar_w = w - 28 - label_w - value_w
+    available = h - 66 - (13 if note else 0)
+    row_gap = available / max(len(rows), 1)
+    for index, row in enumerate(rows):
+        row_y = y + h - 65 - index * row_gap
+        total = row["total"]
+        percent = 100 * row["correct"] / total if total else 0
+        fit_text(pdf, x + 14, row_y + 3, row["label"], label_w - 6, 6.2, INK, True, 5.0)
+        pdf.setFillColor(SOFT)
+        pdf.roundRect(bar_x, row_y, bar_w, 10, 5, fill=1, stroke=0)
+        if percent:
+            pdf.setFillColor(colors[index % len(colors)])
+            pdf.roundRect(bar_x, row_y, max(5, bar_w * percent / 100), 10, 5, fill=1, stroke=0)
+        if benchmarks and row["label"] in benchmarks:
+            marker_x = bar_x + bar_w * benchmarks[row["label"]] / 100
+            pdf.setStrokeColor(NAVY)
+            pdf.setLineWidth(1.1)
+            pdf.line(marker_x, row_y - 2, marker_x, row_y + 12)
+        draw_text(pdf, bar_x + bar_w + 7, row_y + 1, f"{row['correct']}/{total} · {percent:.0f}%", 5.8, INK, True)
+    if note:
+        draw_text(pdf, x + 14, y + 11, note, 5.2, MUTED)
+
+
+def wrap_lines(text: str, width: float, size: float, bold: bool = False) -> list[str]:
+    font = "KoreanBold" if bold else "Korean"
+    lines: list[str] = []
+    current = ""
+    for word in text.split():
+        candidate = word if not current else f"{current} {word}"
+        if pdfmetrics.stringWidth(candidate, font, size) <= width:
+            current = candidate
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
+
+
+def draw_wrapped(pdf: canvas.Canvas, x: float, y: float, text: str, width: float,
+                 size: float = 6.4, color=INK, bold: bool = False,
+                 leading: float = 9.2) -> float:
+    for line in wrap_lines(text, width, size, bold):
+        draw_text(pdf, x, y, line, size, color, bold)
+        y -= leading
+    return y
+
+
+def detailed_commentary(items: list[dict], result: dict) -> dict:
+    domain_rows = grouped_metrics(items, result, "domain")
+    difficulty_rows = grouped_metrics(items, result, "difficulty")
+    difficulty_order = {"lowered": 0, "standard": 1, "raised": 2}
+    difficulty_rows.sort(key=lambda row: difficulty_order[row["label"]])
+    for row in difficulty_rows:
+        row["label"] = DIFFICULTY_LABELS[row["label"]]
+    detail_rows = grouped_metrics(items, result, "detailType")
+    weak_rows = sorted(
+        (row for row in detail_rows if row["wrong"] or row["review"]),
+        key=lambda row: (row["correct"] / row["total"], -(len(row["wrong"]) + len(row["review"])), row["label"]),
+    )[:4]
+    correct_total = sum(1 for state in result["states"].values() if state == "correct")
+    wrong_numbers = [number for number, state in result["states"].items() if state == "wrong"]
+    review_numbers = [number for number, state in result["states"].items() if state == "review"]
+    domains = {row["label"]: row for row in domain_rows}
+    algebra, geometry = domains["대수"], domains["기하"]
+    if correct_total >= 28 and algebra["correct"] >= 13 and geometry["correct"] >= 12:
+        cutoff_text = "공개 참고선인 총 28문항, 대수 13문항, 기하 12문항을 모두 충족했습니다."
+    else:
+        cutoff_text = "공개 참고선과 비교하면 부족한 영역이 있어 해당 영역의 기본 유형부터 다시 확인해야 합니다."
+    weakest_difficulty = min(difficulty_rows, key=lambda row: row["correct"] / row["total"])
+    first_weak = weak_rows[0]
+    weak_numbers = first_weak["wrong"] + first_weak["review"]
+    return {
+        "domainRows": domain_rows,
+        "difficultyRows": difficulty_rows,
+        "weakRows": weak_rows,
+        "overview": (
+            f"총 {correct_total}/40문항, 대수 {algebra['correct']}/20문항, 기하 {geometry['correct']}/20문항입니다. "
+            f"{cutoff_text} 오답 {len(wrong_numbers)}문항과 다시 확인 {len(review_numbers)}문항은 모두 재학습 대상으로 봅니다."
+        ),
+        "interpretation": (
+            f"가장 낮은 난도 구간은 {weakest_difficulty['label']}로 "
+            f"{weakest_difficulty['correct']}/{weakest_difficulty['total']}문항을 맞혔습니다. "
+            f"점수만 올리기보다 이 구간의 풀이 조건과 식 또는 도형 표시를 한 줄씩 다시 적는 연습이 필요합니다."
+        ),
+        "priority": (
+            f"첫 우선 유형은 ‘{first_weak['label']}’입니다. 관련 재학습 문항은 "
+            f"{', '.join(map(str, weak_numbers))}번이며, 개념 확인 1회 뒤 같은 유형의 기초 2문항과 기준 2문항을 이어서 풉니다."
+        ),
+    }
+
+
+def draw_detailed_page(pdf: canvas.Canvas, round_number: int, items: list[dict], result: dict) -> None:
+    analysis = detailed_commentary(items, result)
+    pdf.setFillColor(PAPER)
+    pdf.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
+    header(pdf, round_number, 3, sample=True, result=result)
+    draw_text(pdf, MARGIN, PAGE_H - 106, "그래프와 상세 코멘트", 13, NAVY, True)
+    draw_text(pdf, MARGIN, PAGE_H - 123, "40문항 채점 결과를 영역·난도·세부유형으로 나누어 본 작성 예시입니다.", 6.7, MUTED)
+
+    top_y, top_h = 548, 165
+    gap = 10
+    half_w = (PAGE_W - 2 * MARGIN - gap) / 2
+    draw_bar_card(
+        pdf, MARGIN, top_y, half_w, top_h,
+        "영역별 정답률", "정답 문항 수 / 영역별 20문항",
+        analysis["domainRows"], [MINT, CORAL],
+        {"대수": 65, "기하": 60}, "검은 선: 공개 참고선 · 대수 13/20, 기하 12/20",
+    )
+    draw_bar_card(
+        pdf, MARGIN + half_w + gap, top_y, half_w, top_h,
+        "난도별 정답률", "각 난도에 포함된 문항 수 기준",
+        analysis["difficultyRows"], [VIOLET, GOLD, CORAL],
+        note="막대 끝 숫자는 정답 수와 정답률입니다.",
+    )
+
+    weak_chart_rows = []
+    for row in analysis["weakRows"]:
+        weak_chart_rows.append({
+            **row,
+            "wrong": row["wrong"],
+            "review": row["review"],
+        })
+    draw_bar_card(
+        pdf, MARGIN, 348, PAGE_W - 2 * MARGIN, 185,
+        "취약 세부유형", "정답률이 낮은 순서 · 오답과 다시 확인 문항을 함께 계산",
+        weak_chart_rows, [CORAL, GOLD, VIOLET, MINT],
+        note="표본 수가 적은 유형은 다음 시험에서 다시 확인한 뒤 우선순위를 조정합니다.",
+    )
+
+    x, y, w, h = MARGIN, 56, PAGE_W - 2 * MARGIN, 275
+    rounded_box(pdf, x, y, w, h, white, LINE, 10)
+    draw_text(pdf, x + 14, y + h - 24, "선생님 상세 코멘트 · 작성 예시", 10, NAVY, True)
+    divider_x = x + 302
+    pdf.setStrokeColor(LINE)
+    pdf.line(divider_x, y + 16, divider_x, y + h - 42)
+
+    left_x, left_w = x + 14, 274
+    cursor_y = y + h - 53
+    for label, body, color in [
+        ("01  결과 해석", analysis["overview"], VIOLET),
+        ("02  학습 상태", analysis["interpretation"], GOLD),
+        ("03  먼저 고칠 유형", analysis["priority"], CORAL),
+    ]:
+        draw_text(pdf, left_x, cursor_y, label, 6.7, color, True)
+        cursor_y = draw_wrapped(pdf, left_x, cursor_y - 15, body, left_w, 6.0, INK, False, 8.6) - 13
+
+    right_x, right_w = divider_x + 15, x + w - divider_x - 29
+    draw_text(pdf, right_x, y + h - 54, "2주 학습 순서", 7.4, NAVY, True)
+    plans = [
+        ("1일", "오답·다시 확인 문항의 조건을 한 줄로 다시 적고 풀이를 고칩니다."),
+        ("3일", "취약 1순위 유형을 기초 2문항, 기준 2문항으로 다시 풉니다."),
+        ("7일", "오답 12문항만 50분 안에 재시험하고 풀이 과정을 함께 확인합니다."),
+        ("14일", "같은 세부유형의 새 문제로 최종 확인하며 90% 이상을 목표로 합니다."),
+    ]
+    row_y = y + h - 87
+    for index, (day, body) in enumerate(plans):
+        pdf.setFillColor([VIOLET, GOLD, CORAL, MINT][index])
+        pdf.roundRect(right_x, row_y - 2, 35, 18, 7, fill=1, stroke=0)
+        set_font(pdf, True, 5.8)
+        pdf.setFillColor(white)
+        pdf.drawCentredString(right_x + 17.5, row_y + 4, day)
+        draw_wrapped(pdf, right_x + 45, row_y + 7, body, right_w - 45, 5.7, INK, False, 8.2)
+        row_y -= 47
+    draw_text(pdf, right_x, y + 21, "※ 이 페이지는 가상 학생 결과로 만든 작성 예시입니다.", 5.3, MUTED)
+    footer(pdf, round_number)
+
+
 def build_pdf(path: Path, round_number: int, items: list[dict], sample: bool,
-              result: dict | None = None) -> None:
+              result: dict | None = None, detailed: bool = False) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     pdf = canvas.Canvas(str(path), pagesize=A4, pageCompression=1)
     pdf.setTitle(f"원수학 중2-1 기본반 대비 {round_number}회 학습 분석지")
@@ -519,6 +732,9 @@ def build_pdf(path: Path, round_number: int, items: list[dict], sample: bool,
     draw_detail_half(pdf, items[20:], MARGIN + half_w + gap, table_y, half_w, sample, result)
     draw_retest_boxes(pdf, sample, result)
     footer(pdf, round_number)
+    if detailed:
+        pdf.showPage()
+        draw_detailed_page(pdf, round_number, items, active_result(sample, result))
     pdf.save()
 
 
@@ -528,10 +744,19 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
     parser.add_argument("--result-file", type=Path)
+    parser.add_argument("--detailed-example", action="store_true")
     args = parser.parse_args()
 
     register_fonts()
     metadata = load_metadata(args.repo_root.resolve(), args.node.resolve())
+    if args.detailed_example:
+        if args.result_file:
+            raise ValueError("--detailed-example cannot be combined with --result-file")
+        result = detailed_example_result()
+        target = args.output_dir / "원수학 중2-1 기본반 대비 모의고사 1회_그래프와 상세코멘트_작성예시.pdf"
+        build_pdf(target, 1, metadata[ROUND_IDS[0]]["items"], sample=True, result=result, detailed=True)
+        print(target)
+        return
     if args.result_file:
         with args.result_file.resolve().open("r", encoding="utf-8") as handle:
             result = normalize_result(json.load(handle))

@@ -59,6 +59,12 @@ class ResultInputValidationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "at most 3"):
             MODULE.normalize_result(payload)
 
+    def test_detailed_example_metrics_match_visible_scores(self) -> None:
+        result = MODULE.detailed_example_result()
+        self.assertEqual(sum(state == "correct" for state in result["states"].values()), 28)
+        self.assertEqual(sum(result["states"][number] == "correct" for number in range(1, 21)), 16)
+        self.assertEqual(sum(result["states"][number] == "correct" for number in range(21, 41)), 12)
+
 
 if __name__ == "__main__":
     unittest.main()
