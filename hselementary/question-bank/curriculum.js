@@ -85,6 +85,7 @@
               sourceVerified: Boolean(type.sourceVerified),
               sourceEvidence: type.sourceEvidence || "",
               sourceItemId: type.sourceItemId || "",
+              sourceItemLabel: type.sourceItemLabel || "",
               sourceSection: type.sourceSection || "",
               sourcePdfPage: Number.isInteger(type.sourcePdfPage) ? type.sourcePdfPage : undefined,
               sourcePrintedPage: Number.isInteger(type.sourcePrintedPage) ? type.sourcePrintedPage : undefined,
@@ -582,6 +583,49 @@
       ["원기둥, 원뿔, 구", "원기둥", "원뿔", "여러 가지 회전체", "원기둥과 원뿔의 겉넓이"]
     ])
   ];
+
+  const buildSourceSemester41 = legacySemester => {
+    const inventory = window.HSE_SOURCE_INVENTORY_41;
+    if (!inventory?.items?.length) return legacySemester;
+
+    const units = [];
+    for (const item of inventory.items) {
+      let unit = units.find(entry => entry.number === item.unit);
+      if (!unit) {
+        unit = { number: item.unit, name: item.unitName, groups: [] };
+        units.push(unit);
+      }
+      let group = unit.groups.find(entry => entry.number === item.exploration);
+      if (!group) {
+        group = { number: item.exploration, name: item.groupTitle, types: [] };
+        unit.groups.push(group);
+      }
+      group.types.push({
+        label: item.typeLabel,
+        generatorKey: item.generatorKey,
+        variant: item.variant,
+        difficultyBand: item.difficultyBand,
+        sourceTier: item.sourceTier,
+        sourceVerified: item.sourceVerified,
+        sourceEvidence: `4-1 심화 PDF p.${item.sourcePdfPage} · 교재 p.${item.sourcePrintedPage} · ${item.sourceItemId}`,
+        sourceItemId: item.sourceItemId,
+        sourceItemLabel: item.sourceItemLabel,
+        sourceSection: item.sourceSection,
+        sourcePdfPage: item.sourcePdfPage,
+        sourcePrintedPage: item.sourcePrintedPage,
+        reviewLocked: item.reviewLocked
+      });
+    }
+
+    units.sort((a, b) => a.number - b.number);
+    for (const unit of units) unit.groups.sort((a, b) => a.number - b.number);
+    return semester("4-1", units.map(unit => [
+      unit.name,
+      ...unit.groups.map(group => ({ name: group.name, types: group.types }))
+    ]));
+  };
+
+  semesters[0] = buildSourceSemester41(semesters[0]);
 
   window.HSE_CURRICULUM = {
     version: "2026-08-26",

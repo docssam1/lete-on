@@ -129,7 +129,7 @@
     return types.filter(type => {
       if (type.grade !== state.grade || type.term !== state.term) return false;
       if (state.unitId && type.unitId !== state.unitId) return false;
-      if (search && !`${typeDisplayName(type)} ${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
+      if (search && !`${typeDisplayName(type)} ${type.sourceItemLabel || ""} ${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
       return true;
     });
   }
@@ -153,10 +153,11 @@
     const ready = Boolean(type.generator) && !type.reviewLocked;
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
+    const sourceLabel = type.sourceItemLabel ? escapeHtml(type.sourceItemLabel) + " · " : "";
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
     '</label>';
   }
