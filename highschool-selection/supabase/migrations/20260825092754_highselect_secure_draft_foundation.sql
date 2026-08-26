@@ -15,7 +15,7 @@ declare
   path_value jsonb;
 begin
   if jsonb_typeof(value) <> 'object'
-     or jsonb_object_length(value) <> 2
+     or (select count(*) from pg_catalog.jsonb_object_keys(value)) <> 2
      or not (value ? 'curriculumVersion' and value ? 'paths')
      or jsonb_typeof(value -> 'curriculumVersion') <> 'string'
      or jsonb_typeof(value -> 'paths') <> 'array'
@@ -24,7 +24,7 @@ begin
   end if;
   for path_value in select * from jsonb_array_elements(value -> 'paths') loop
     if jsonb_typeof(path_value) <> 'object'
-       or jsonb_object_length(path_value) <> 4
+       or (select count(*) from pg_catalog.jsonb_object_keys(path_value)) <> 4
        or not (path_value ? 'grade' and path_value ? 'major' and path_value ? 'minor' and path_value ? 'detail')
        or jsonb_typeof(path_value -> 'grade') <> 'string'
        or jsonb_typeof(path_value -> 'major') <> 'string'
@@ -51,7 +51,7 @@ declare
   max_per_family integer;
 begin
   if jsonb_typeof(value) <> 'object'
-     or jsonb_object_length(value) <> 3
+     or (select count(*) from pg_catalog.jsonb_object_keys(value)) <> 3
      or not (value ? 'questionCount' and value ? 'totalPoints' and value ? 'maxPerFamily')
      or jsonb_typeof(value -> 'questionCount') <> 'number'
      or jsonb_typeof(value -> 'totalPoints') <> 'number'

@@ -23,6 +23,8 @@ test("Supabase draft foundation stores only protected operational metadata", () 
   assert.match(migration, /unique \(draft_id, sort_order\)/);
   assert.match(migration, /check \(from_item_id <> to_item_id\)/);
   assert.doesNotMatch(migration, /questionText|answerKey|correctAnswer|pdfUrl|sourcePath|storagePath|solutionText/i);
+  assert.match(migration, /pg_catalog\.jsonb_object_keys/);
+  assert.doesNotMatch(migration, /jsonb_object_length/);
 });
 
 test("Supabase contracts match the current opaque IDs and guarded local auth defaults", () => {
