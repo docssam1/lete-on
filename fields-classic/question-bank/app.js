@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260826e";
-import { GENERATORS } from "./generators.js?v=20260826e";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260826h";
+import { GENERATORS } from "./generators.js?v=20260826h";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260825m";
@@ -3084,6 +3084,28 @@ function visualMarkup(visual) {
   return "";
 }
 
+function worksheetVisualMarkup(question) {
+  if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
+  if (!Array.isArray(question.parts) || question.parts.length <= 1) return visualMarkup(question.visual);
+  return `<div class="multi-part-visuals">${question.parts.map((part, index) => {
+    const picture = visualMarkup(part.visual);
+    return `<figure><figcaption>(${index + 1})</figcaption>${part.prompt ? `<p>${part.prompt}</p>` : ""}${picture}</figure>`;
+  }).join("")}</div>`;
+}
+
+function answerVisualMarkup(question) {
+  if (Array.isArray(question.answerVisuals) && question.answerVisuals.some(Boolean)) {
+    return `<div class="multi-part-visuals answer-part-visuals">${question.answerVisuals.map((visual, index) => (
+      `<figure><figcaption>(${index + 1})</figcaption>${visual ? visualMarkup(visual) : ""}</figure>`
+    )).join("")}</div>`;
+  }
+  if (!question.answerVisual) return "";
+  if (question.answerVisual.kind === "letter-block-answer") {
+    return `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`;
+  }
+  return visualMarkup(question.answerVisual);
+}
+
 function watermarkMarkup() {
   return Array.from({ length: 3 }, () => `<span>${student} · GFIELD · ${student} · GFIELD · ${student}</span>`).join("");
 }
@@ -3106,7 +3128,7 @@ function renderWorksheet() {
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
-      ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
+      ${worksheetVisualMarkup(question)}
       ${question.responseKind === "drawing"
         ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>'
         : question.responseKind === "visual-fill"
@@ -3126,11 +3148,7 @@ function openAnswers() {
     // 나머지 answerVisual은 조용히 버려져서, 도형 행렬·삼각형 위치 문항의 답안이
     // 말로만 적혀 나왔다. 그림을 그리되 글로 쓴 답도 함께 남긴다 — 채점자가 그림만
     // 보고 판단하지 않아도 되게.
-    const answerPicture = !question.answerVisual
-      ? ""
-      : question.answerVisual.kind === "letter-block-answer"
-        ? `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`
-        : visualMarkup(question.answerVisual);
+    const answerPicture = answerVisualMarkup(question);
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
     return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");

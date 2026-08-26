@@ -6,6 +6,17 @@ const iterations = Number.parseInt(process.argv[2] || "1000", 10);
 const book = CURRICULUM.find((item) => item.id === "book-07");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
+const unitTestQuestions = book?.source?.unitTestQuestions || [];
+const expectedUnitTestTypes = [
+  "calendar-month-shift-weekday-b7", "calendar-cross-month-weekday-b7", "elapsed-time-analog-b7", "find-end-time-b7",
+  "consecutive-full-month-reverse-b7", "arithmetic-sequence-nth-b7", "arithmetic-sequence-position-b7", "shared-polygon-matchsticks-b7",
+  "two-score-value-assumption-b7", "correct-wrong-score-assumption-b7", "climb-slip-days-b7", "doubling-half-full-day-b7",
+  "polygon-border-side-count-inverse-b7", "polygon-stakes-from-side-b7", "between-objects-subdivision-count-b7", "linked-sequence-correspondence-b7",
+  "venn-overlap-with-neither-b7", "reversed-difference-largest-unit-test-book7", "clock-palindrome-unpadded-unit-test-book7",
+  "three-digit-palindrome-digit-sum-b7", "mirror-clock-elapsed-b7", "shared-consumption-assumption-b7",
+  "polygon-border-shape-conversion-b7", "four-group-three-clues-unit-test-book7", "reversed-digit-pair-range-b7"
+];
+const auditedTypeIds = [...new Set([...typeIds, ...unitTestQuestions.map((question) => question.typeId)])];
 const expectedUnitCounts = [38, 52, 43, 47];
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -233,6 +244,14 @@ function validate(problem, id, difficulty) {
       const valid = allClockPalindromes(meta.startHour, meta.endHour);
       assert(valid.length > 0 && same(valid, meta.valid) && numeric === valid.length, id, difficulty, "시각 대칭수 오류"); return;
     }
+    case "unit-unpadded-clock-palindrome-b7": {
+      const valid = [];
+      for (let hour = meta.startHour; hour < meta.endHour; hour += 1) for (let minute = 0; minute < 60; minute += 1) {
+        const text = `${hour}${minute}`;
+        if (isPalindrome(text)) valid.push({ hour, minute, text });
+      }
+      assert(valid.length > 0 && same(valid, meta.valid) && numeric === valid.length, id, difficulty, "앞자리 없는 시각 대칭수 오류"); return;
+    }
     case "reverse-difference-list": {
       const valid = reverseDifferenceValues(meta.difference);
       assert(same(valid, meta.valid) && problem.answer === valid.join(", "), id, difficulty, "자리 바꿈 차 목록 오류"); return;
@@ -279,6 +298,9 @@ function validate(problem, id, difficulty) {
     case "four-complement":
       assert(meta.complements.every((value, index) => value === meta.total - meta.groups[index]), id, difficulty, "네 모둠 여집합 오류");
       assert(sum(meta.complements) / 3 === meta.total && numeric === meta.total, id, difficulty, "네 모둠 전체 오류"); return;
+    case "unit-four-group-three-clues-b7":
+      assert(meta.notFirst === meta.total - meta.groups[0] && meta.notSecond === meta.total - meta.groups[1], id, difficulty, "세 조건 모둠 여집합 오류");
+      assert(meta.neitherThirdNorFourth === meta.groups[0] + meta.groups[1] && numeric === meta.total, id, difficulty, "세 조건 모둠 전체 오류"); return;
     case "reverse-add-palindrome":
       assert(Number([...String(meta.start)].reverse().join("")) === meta.reversed && meta.start + meta.reversed === meta.result && isPalindrome(meta.result) && numeric === meta.result, id, difficulty, "거꾸로 더해 대칭수 오류"); return;
     case "stone-moves": {
@@ -317,6 +339,13 @@ function referenceKeys(stage, references) {
 if (!book) throw new Error("book-07 missing");
 if (units.length !== 4) throw new Error(`book-07 unit count ${units.length}`);
 if (typeIds.length !== 72) throw new Error(`book-07 type count ${typeIds.length}`);
+if (unitTestQuestions.length !== 25) throw new Error(`book-07 unit test count ${unitTestQuestions.length}`);
+unitTestQuestions.forEach((question, index) => {
+  if (question.number !== index + 1) throw new Error(`book-07 unit test number ${question.number}, expected ${index + 1}`);
+  if (question.typeId !== expectedUnitTestTypes[index]) throw new Error(`book-07 unit test ${question.number} type ${question.typeId}, expected ${expectedUnitTestTypes[index]}`);
+  if (!question.verified) throw new Error(`book-07 unit test ${question.number} is not verified`);
+  if (!typeById(question.typeId)) throw new Error(`book-07 unit test ${question.number} unknown type ${question.typeId}`);
+});
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -344,7 +373,7 @@ units.forEach((unit, unitIndex) => {
 if (sourceQuestionCount !== 180) throw new Error(`book-07 source count ${sourceQuestionCount}`);
 
 let generated = 0;
-for (const typeId of typeIds) {
+for (const typeId of auditedTypeIds) {
   const type = typeById(typeId);
   const generator = GENERATORS[type.generator];
   for (const difficulty of [1, 2, 3]) {
@@ -356,4 +385,4 @@ for (const typeId of typeIds) {
   }
 }
 
-console.log(`book-07 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} generated checks`);
+console.log(`book-07 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} body types, ${unitTestQuestions.length} unit-test questions, ${auditedTypeIds.length} audited types, ${generated.toLocaleString("en-US")} generated checks`);

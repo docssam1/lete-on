@@ -1092,6 +1092,66 @@ function threeCircleEqualSum({ difficulty = 2 }) {
   });
 }
 
+function unitTestLargestReversedDifferenceBook7({ difficulty = 2 }) {
+  const digitGap = randomInt(difficulty === 1 ? 7 : 3, difficulty === 3 ? 7 : 6);
+  const difference = digitGap * 9;
+  const valid = reversedDifferenceValues(difference);
+  const largest = valid.at(-1);
+  return book7Problem({
+    prompt: `앞뒤 숫자를 바꾼 수와 처음 수의 차가 ${difference}일 때, 만들 수 있는 가장 큰 두 자리 수를 구하세요.`,
+    subtype: "reverse-digits",
+    visual: { difference, mode: "extreme" },
+    answer: String(largest),
+    solution: `십의 자리와 일의 자리의 차는 ${difference}÷9=${digitGap}입니다. 조건에 맞는 수는 ${valid.join(", ")}이므로 가장 큰 수는 ${largest}입니다.`,
+    family: "reverse-difference-extreme",
+    meta: { digitGap, difference, valid, smallest: valid[0], largest }
+  });
+}
+
+function unitTestUnpaddedClockPalindromeBook7({ difficulty = 2 }) {
+  const startHour = difficulty === 1 ? randomInt(1, 5) : randomInt(6, 9);
+  const hours = difficulty === 3 ? 4 : 3;
+  const endHour = Math.min(12, startHour + hours);
+  const valid = [];
+  for (let hour = startHour; hour < endHour; hour += 1) {
+    for (let minute = 0; minute < 60; minute += 1) {
+      const text = `${hour}${minute}`;
+      if (isPalindrome(text)) valid.push({ hour, minute, text });
+    }
+  }
+  if (!valid.length) return unitTestUnpaddedClockPalindromeBook7({ difficulty });
+  return book7Problem({
+    prompt: `${startHour}시부터 ${endHour}시까지 시와 분을 그대로 이어 쓴 수가 대칭수가 되는 시각은 모두 몇 번인가요?`,
+    subtype: "palindrome-list",
+    visual: { digits: 4, examples: [`${startHour}시 8분 → ${startHour}8`, `${Math.min(10, endHour - 1)}시 6분 → ${Math.min(10, endHour - 1)}6`], range: [startHour, endHour] },
+    answer: `${valid.length}번`,
+    solution: `조건에 맞는 시각은 ${valid.map(({ hour, minute }) => `${hour}시 ${minute}분`).join(", ")}으로 모두 ${valid.length}번입니다.`,
+    family: "unit-unpadded-clock-palindrome-b7",
+    meta: { startHour, endHour, valid, count: valid.length }
+  });
+}
+
+function unitTestFourGroupThreeCluesBook7({ difficulty = 2 }) {
+  const first = randomInt(4, difficulty === 3 ? 16 : 11);
+  const second = randomInt(4, difficulty === 3 ? 16 : 11);
+  const third = randomInt(3, difficulty === 3 ? 13 : 9);
+  const fourth = randomInt(3, difficulty === 3 ? 13 : 9);
+  const groups = [first, second, third, fourth];
+  const total = sum(groups);
+  const notFirst = total - first;
+  const notSecond = total - second;
+  const neitherThirdNorFourth = first + second;
+  return book7Problem({
+    prompt: `학생들을 겹치지 않는 가, 나, 다, 라 네 모둠으로 나누었습니다. 가 모둠이 아닌 학생은 ${notFirst}명, 나 모둠이 아닌 학생은 ${notSecond}명이고, 다 또는 라 모둠이 아닌 학생은 ${neitherThirdNorFourth}명입니다. 학생은 모두 몇 명인가요?`,
+    subtype: "condition-list",
+    visual: { conditions: [`가 모둠 아님 ${notFirst}명`, `나 모둠 아님 ${notSecond}명`, `다·라 모둠 아님 ${neitherThirdNorFourth}명`] },
+    answer: `${total}명`,
+    solution: `전체를 □명이라 하면 가 모둠은 □-${notFirst}, 나 모둠은 □-${notSecond}명입니다. 두 모둠의 합이 ${neitherThirdNorFourth}명이므로 □×2-${notFirst + notSecond}=${neitherThirdNorFourth}, 전체는 ${total}명입니다.`,
+    family: "unit-four-group-three-clues-b7",
+    meta: { groups, total, notFirst, notSecond, neitherThirdNorFourth }
+  });
+}
+
 export const BOOK07_GENERATORS = Object.freeze({
   calendarMonthShiftWeekdayBook7,
   calendarCrossMonthKnownWeekday,
@@ -1164,5 +1224,8 @@ export const BOOK07_GENERATORS = Object.freeze({
   reverseAddPalindrome,
   minimumStoneMoves,
   kaprekar495,
-  threeCircleEqualSum
+  threeCircleEqualSum,
+  unitTestLargestReversedDifferenceBook7,
+  unitTestUnpaddedClockPalindromeBook7,
+  unitTestFourGroupThreeCluesBook7
 });

@@ -1,9 +1,10 @@
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
-import { BOOK10_GENERATORS } from "./book10-generators.js";
+import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS, BOOK10_UNIT_TEST_REUSED_GENERATORS } from "./book10-generators.js";
 import { book10Markup } from "./book10-renderers.js";
 
 const iterations = Number(process.env.BOOK10_ITERATIONS || 1000);
+const unitTestIterations = Math.max(100, Number(process.env.BOOK10_UNIT_TEST_ITERATIONS || 120));
 const book = CURRICULUM.find((item) => item.id === "book-10");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
@@ -65,6 +66,78 @@ function baseballScore(secret, guess) {
 const baseballCandidates = permutations(range(1, 9), 3);
 const countDigit = (from, to, digit) => range(from, to).reduce((total, value) => total + [...String(value)].filter((item) => item === String(digit)).length, 0);
 const writtenDigits = (from, to) => range(from, to).reduce((total, value) => total + String(value).length, 0);
+
+function cardNumbers(cards, length, repeat = false) {
+  const output = [];
+  const visit = (chosen) => {
+    if (chosen.length === length) {
+      if (chosen[0] !== 0) output.push(Number(chosen.join("")));
+      return;
+    }
+    cards.forEach((digit) => {
+      if (!repeat && chosen.includes(digit)) return;
+      visit([...chosen, digit]);
+    });
+  };
+  visit([]);
+  return output;
+}
+
+const unitTestMapping = Object.freeze({
+  1: BOOK10_UNIT_TEST_GENERATORS.q01,
+  2: BOOK10_UNIT_TEST_GENERATORS.q02,
+  3: BOOK10_UNIT_TEST_GENERATORS.q03,
+  4: BOOK10_UNIT_TEST_GENERATORS.q04,
+  5: BOOK10_UNIT_TEST_GENERATORS.q05,
+  6: BOOK10_UNIT_TEST_GENERATORS.q06,
+  7: BOOK10_UNIT_TEST_GENERATORS.q07,
+  8: BOOK10_UNIT_TEST_GENERATORS.q08,
+  9: BOOK10_UNIT_TEST_GENERATORS.q09,
+  10: BOOK10_UNIT_TEST_GENERATORS.q10,
+  11: BOOK10_UNIT_TEST_GENERATORS.q11,
+  12: BOOK10_UNIT_TEST_GENERATORS.q12,
+  13: BOOK10_UNIT_TEST_GENERATORS.q13,
+  14: BOOK10_UNIT_TEST_GENERATORS.q14,
+  15: BOOK10_UNIT_TEST_GENERATORS.q15,
+  16: BOOK10_UNIT_TEST_GENERATORS.q16,
+  17: BOOK10_UNIT_TEST_GENERATORS.q17,
+  18: BOOK10_UNIT_TEST_GENERATORS.q18,
+  19: BOOK10_UNIT_TEST_GENERATORS.q19,
+  20: BOOK10_UNIT_TEST_GENERATORS.q20,
+  21: BOOK10_UNIT_TEST_GENERATORS.q21,
+  22: BOOK10_UNIT_TEST_GENERATORS.q22,
+  23: BOOK10_UNIT_TEST_GENERATORS.q23,
+  24: BOOK10_UNIT_TEST_GENERATORS.q24,
+  25: BOOK10_UNIT_TEST_GENERATORS.q25
+});
+
+const originalUnitTestAnswers = Object.freeze({
+  1: "(1) 136, (2) 820, (3) 69, (4) 145",
+  2: "(1) 120, (2) 1770, (3) 30, (4) 72",
+  3: "(1) 7 + 8 + 9 + 10 + 11 + 12 = 57 / (2) 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 = 92",
+  4: "(1) 9 + 10 + 11 + 12 + 13 = 55 / (2) 9 + 10 + 11 + 12 + 13 + 14 + 15 = 84",
+  5: "(1) 126, (2) 24",
+  6: "5점",
+  7: "4",
+  8: "9명, 72개",
+  9: "8분 후",
+  10: "5g",
+  11: "●=4g, ◇=8g, ■=2g, ★=6g",
+  12: "60개",
+  13: "18개",
+  14: "64개",
+  15: "543, 542, 541, 532, 531, 521, 432, 431, 421, 321",
+  16: "8+2+1, 7+3+1, 6+4+1, 6+3+2, 5+4+2",
+  17: "431",
+  18: "64번",
+  19: "140번",
+  20: "131개",
+  21: "492개",
+  22: "88",
+  23: "250",
+  24: "2, 1",
+  25: "홀수 39, 짝수 40"
+});
 
 function solveLinear(equations) {
   const matrix = equations.map((row) => row.map(Number));
@@ -244,6 +317,132 @@ function validate(problem, id, difficulty) {
       assert(numeric === countDigit(meta.from, meta.to, meta.digit), id, difficulty, "구간 숫자 등장 횟수 오류"); return;
     case "positive-range-number-digit-count-b10":
       assert(numeric === writtenDigits(meta.from, meta.to), id, difficulty, "구간 전체 숫자 수 오류"); return;
+    case "book10-unit-q01":
+    case "book10-unit-q02": {
+      const expectedParity = meta.questionNumber === 1 ? 0 : 1;
+      assert(meta.parts.length === 4 && meta.counts.length === 4, id, difficulty, "연속수 복수 소문항 구조 오류");
+      assert(meta.parts.every((part, index) => part.count === meta.counts[index]
+        && part.values.length === part.count
+        && part.values.every((value, valueIndex) => valueIndex === 0 || value === part.values[valueIndex - 1] + 1)
+        && sum(part.values) === part.total
+        && part.count % 2 === expectedParity), id, difficulty, "연속수 복수 소문항 검산 오류");
+      assert(problem.answer === meta.resultValues.map((value, index) => `(${index + 1}) ${value}`).join(", "), id, difficulty, "연속수 복수 답 표기 오류");
+      return;
+    }
+    case "book10-unit-q03":
+    case "book10-unit-q04": {
+      assert(meta.parts.length === 2 && meta.parts.every((part) => part.values.length === part.count && sum(part.values) === part.target), id, difficulty, "연속수 표현 소문항 검산 오류");
+      const expectedAnswer = meta.parts.map((part, index) => `(${index + 1}) ${part.values.join(" + ")} = ${part.total}`).join(" / ");
+      assert(problem.answer === expectedAnswer, id, difficulty, "연속수 표현 답 표기 오류");
+      return;
+    }
+    case "book10-unit-q05": {
+      const expected = Array.from({ length: meta.size }, (_, row) => Array.from({ length: meta.size }, (_, column) => meta.start + row * 7 + column)).flat();
+      const alternative = Array.from({ length: meta.size }, (_, row) => Array.from({ length: meta.size }, (_, column) => meta.alternativeStart + row * 7 + column)).flat();
+      assert(same(meta.values, expected) && sum(meta.values) === meta.total, id, difficulty, "단원 달력 블록 합 오류");
+      assert(same(meta.alternativeValues, alternative) && sum(alternative) === meta.alternativeTotal && meta.alternativeMaximum === alternative.at(-1), id, difficulty, "단원 달력 두 번째 조건 오류");
+      assert(problem.answer === `(1) ${meta.total}, (2) ${meta.alternativeMaximum}`, id, difficulty, "단원 달력 답 표기 오류");
+      return;
+    }
+    case "book10-unit-q06": {
+      const solved = solveLinear(meta.equations);
+      assert(solved && Math.abs(solved[0] - meta.values["가"]) < 1e-8 && Math.abs(solved[1] - meta.values["나"]) < 1e-8, id, difficulty, "두 영역 점수 해가 유일하지 않음");
+      assert(meta.equations.every(([first, second, total]) => first * meta.values["가"] + second * meta.values["나"] === total), id, difficulty, "두 영역 점수 식 오류");
+      assert(problem.answer === `${meta.values["나"]}점`, id, difficulty, "두 영역 점수 답 오류");
+      return;
+    }
+    case "book10-unit-q07": {
+      const { A, B, C } = meta.values;
+      assert(A + B === meta.pairSums[0] && B + C === meta.pairSums[1] && C + A === meta.pairSums[2], id, difficulty, "세 쌍의 합 식 오류");
+      const solved = solveLinear([[1, 1, 0, meta.pairSums[0]], [0, 1, 1, meta.pairSums[1]], [1, 0, 1, meta.pairSums[2]]]);
+      assert(solved && solved.every((value, index) => Math.abs(value - [A, B, C][index]) < 1e-8), id, difficulty, "세 쌍의 합 해가 유일하지 않음");
+      assert(problem.answer === String(C), id, difficulty, "세 쌍의 합 답 오류");
+      return;
+    }
+    case "book10-unit-q08":
+      assert(meta.oldPeople * meta.oldShare === meta.newPeople * meta.newShare && meta.newPeople === meta.oldPeople + meta.added, id, difficulty, "단원 나눔 식 오류");
+      assert(numericAnswer(problem) === meta.oldPeople && meta.total === meta.oldPeople * meta.oldShare && problem.answer === `${meta.oldPeople}명, ${meta.total}개`, id, difficulty, "단원 나눔 답 오류");
+      return;
+    case "book10-unit-q09":
+      assert(meta.slowStart + meta.slowRate * meta.minutes === meta.fastStart + meta.fastRate * meta.minutes && Number.isInteger(meta.minutes), id, difficulty, "단원 따라잡기 식 오류");
+      assert(numericAnswer(problem) === meta.minutes, id, difficulty, "단원 따라잡기 답 오류");
+      return;
+    case "book10-unit-q10":
+      assert(meta.equations.every(([first, second, total]) => first * meta.values[0] + second * meta.values[1] === total), id, difficulty, "단원 두 물건 식 오류");
+      assert(numericAnswer(problem) === meta.values[0], id, difficulty, "단원 두 물건 답 오류");
+      return;
+    case "book10-unit-q11": {
+      assert(meta.equations.every((row) => sum(row.slice(0, 4).map((coefficient, index) => coefficient * meta.values[index])) === row[4]), id, difficulty, "단원 네 모양 식 오류");
+      const solved = solveLinear(meta.equations);
+      assert(solved && solved.every((value, index) => Math.abs(value - meta.values[index]) < 1e-8), id, difficulty, "단원 네 모양 해가 유일하지 않음");
+      assert(problem.answer === `●=${meta.values[0]}g, ◇=${meta.values[1]}g, ■=${meta.values[2]}g, ★=${meta.values[3]}g`, id, difficulty, "단원 네 모양 답 오류");
+      return;
+    }
+    case "book10-unit-q12":
+    case "book10-unit-q13":
+    case "book10-unit-q14": {
+      const expected = cardNumbers(meta.cards, meta.length, meta.repeat);
+      assert(same(meta.candidates, expected) && numericAnswer(problem) === expected.length, id, difficulty, "단원 숫자 카드 개수 오류");
+      return;
+    }
+    case "book10-unit-q15": {
+      const expected = permutations(meta.cards, meta.length).filter((digits) => digits.every((digit, index) => index === 0 || digits[index - 1] > digit))
+        .map((digits) => Number(digits.join(""))).sort((first, second) => second - first);
+      assert(same(meta.candidates, expected) && new Set(meta.candidates).size === expected.length, id, difficulty, "내림차순 전체 목록 오류");
+      assert(problem.answer === expected.join(", "), id, difficulty, "내림차순 전체 답 표기 오류");
+      return;
+    }
+    case "book10-unit-q16": {
+      const expected = combinations(meta.cards, meta.pickCount).filter((chosen) => sum(chosen) === meta.target);
+      const expectedAnswer = expected.map((chosen) => [...chosen].sort((first, second) => second - first).join("+"));
+      assert(expected.length === meta.solutions.length && same(meta.solutions, expected), id, difficulty, "목표 합 전체 목록 누락");
+      assert(expected.every((chosen) => sum(chosen) === meta.target) && new Set(expectedAnswer).size === expectedAnswer.length, id, difficulty, "목표 합 목록 중복 또는 오답");
+      assert(same(meta.answerList, expectedAnswer) && problem.answer === expectedAnswer.join(", "), id, difficulty, "목표 합 전체 답 표기 오류");
+      return;
+    }
+    case "book10-unit-q17": {
+      const expected = range(100, 999).filter((value) => sum([...String(value)].map(Number)) === meta.target)
+        .sort((first, second) => second - first);
+      assert(same(meta.candidates, expected) && meta.resultValue === expected[meta.rank - 1], id, difficulty, "내림차순 자리 합 목록 오류");
+      assert(problem.answer === String(expected[meta.rank - 1]), id, difficulty, "내림차순 자리 합 답 오류");
+      return;
+    }
+    case "book10-unit-q18":
+    case "book10-unit-q19":
+      assert(meta.result === countDigit(meta.from, meta.to, meta.digit) && numericAnswer(problem) === meta.result, id, difficulty, "단원 숫자 등장 횟수 오류");
+      return;
+    case "book10-unit-q20":
+    case "book10-unit-q21":
+      assert(meta.result === writtenDigits(meta.from, meta.to) && numericAnswer(problem) === meta.result, id, difficulty, "단원 전체 숫자 수 오류");
+      return;
+    case "book10-unit-q22":
+    case "book10-unit-q23":
+      assert(meta.last !== null && writtenDigits(1, meta.last) === meta.target && writtenDigits(1, meta.last - 1) < meta.target, id, difficulty, "단원 마지막 수 조건 오류");
+      assert(problem.answer === String(meta.last), id, difficulty, "단원 마지막 수 답 오류");
+      return;
+    case "book10-unit-q24":
+      assert(meta.parts.length === 2 && meta.parts.every((part) => part.addends.length === 3
+        && part.addends[1] === part.addends[0] + 1
+        && part.addends[2] === part.addends[1] + 1
+        && sum(part.addends) === part.total
+        && String(part.total).endsWith(part.ending)
+        && Number(`${part.blank}${part.ending}`) === part.total), id, difficulty, "두 세로셈 전체 검산 오류");
+      assert(problem.answer === meta.parts.map((part) => part.blank).join(", "), id, difficulty, "두 세로셈 빈칸 답 오류");
+      return;
+    case "book10-unit-q25": {
+      const expected = meta.cases.map((item) => {
+        let even = 0;
+        let odd = 0;
+        for (let value = 1; value <= item.max; value += 1) {
+          if (value % 2 === 0) even += value;
+          else odd += value;
+        }
+        return { ...item, even, odd, difference: Math.abs(even - odd) };
+      });
+      assert(same(meta.cases, expected) && expected.every((item) => item.difference === meta.targetDifference), id, difficulty, "짝수 홀수 합 차 오류");
+      assert(problem.answer === `홀수 ${expected[0].max}, 짝수 ${expected[1].max}`, id, difficulty, "짝수 홀수 답 오류");
+      return;
+    }
     default: fail(id, difficulty, `알 수 없는 family ${meta.family}`);
   }
 }
@@ -254,6 +453,10 @@ assert(same(units.map((unit) => Object.values(unit.studyRefs).flat().reduce((tot
 assert(typeIds.length === 52, "book-10", 0, `유형 수 ${typeIds.length}`);
 assert(book10TypeIds.length === 42, "book-10", 0, `10권 전용 유형 수 ${book10TypeIds.length}`);
 assert(Object.keys(BOOK10_GENERATORS).length === 42, "book-10", 0, `전용 생성기 수 ${Object.keys(BOOK10_GENERATORS).length}`);
+assert(same(Object.keys(unitTestMapping), range(1, 25).map((number) => String(number))), "book-10-unit-test", 0, "단원 테스트 25문항 매핑 누락");
+assert(Object.values(unitTestMapping).every((generator) => typeof generator === "function"), "book-10-unit-test", 0, "단원 테스트 생성기 연결 오류");
+assert(Object.keys(BOOK10_UNIT_TEST_REUSED_GENERATORS).length === 6
+  && Object.values(BOOK10_UNIT_TEST_REUSED_GENERATORS).every((generator) => typeof generator === "function"), "book-10-unit-test", 0, "재사용 생성기 export 오류");
 
 for (const unit of units) {
   assert(unit.typeStudyRefs && Object.keys(unit.typeStudyRefs).length === unit.typeIds.length, "book-10", 0, `${unit.label} 세부 번호표 누락`);
@@ -262,6 +465,45 @@ for (const unit of units) {
     assert(type?.generator && GENERATORS[type.generator], typeId, 0, "연결 생성기 없음");
     assert(textbookGuideForType(typeId) !== fallbackGuide, typeId, 0, "개념 풀이 안내 없음");
     for (const stage of TEXTBOOK_STAGES) assert(Array.isArray(unit.typeStudyRefs[typeId][stage.id]), typeId, 0, `${stage.label} 번호표 없음`);
+  }
+}
+
+let unitDifficultyFingerprints = 0;
+for (const [questionNumber, generator] of Object.entries(unitTestMapping)) {
+  const byDifficulty = [1, 2, 3].map((difficulty) => {
+    const problem = generator({ difficulty });
+    validate(problem, `book10-unit-q${String(questionNumber).padStart(2, "0")}`, difficulty);
+    assert(problem.meta?.difficulty === difficulty, `book10-unit-q${String(questionNumber).padStart(2, "0")}`, difficulty, "난이도 메타 누락");
+    return problem;
+  });
+  const fingerprints = byDifficulty.map((problem) => JSON.stringify({
+    prompt: problem.prompt,
+    visual: problem.visual,
+    answer: problem.answer,
+    structure: Object.fromEntries(Object.entries(problem.meta).filter(([key]) => key !== "difficulty"))
+  }));
+  assert(new Set(fingerprints).size === 3, `book10-unit-q${String(questionNumber).padStart(2, "0")}`, 0, "난이도별 구조 fingerprint 중복");
+  assert(byDifficulty[1].answer === originalUnitTestAnswers[Number(questionNumber)], `book10-unit-q${String(questionNumber).padStart(2, "0")}`, 2, "원본 중간 난이도 공식 답 변경");
+  unitDifficultyFingerprints += 3;
+}
+
+let unitTestGenerated = 0;
+for (const [questionNumber, generator] of Object.entries(unitTestMapping)) {
+  for (let iteration = 0; iteration < unitTestIterations; iteration += 1) {
+    const difficulty = (iteration % 3) + 1;
+    const problem = generator({ difficulty });
+    validate(problem, `book10-unit-q${String(questionNumber).padStart(2, "0")}`, difficulty);
+    unitTestGenerated += 1;
+  }
+}
+
+let reusedGenerated = 0;
+for (const [questionNumber, generator] of Object.entries(BOOK10_UNIT_TEST_REUSED_GENERATORS)) {
+  for (let iteration = 0; iteration < unitTestIterations; iteration += 1) {
+    const difficulty = (iteration % 3) + 1;
+    const problem = generator({ difficulty, max: 30 });
+    validate(problem, `book10-unit-reuse-${questionNumber}`, difficulty);
+    reusedGenerated += 1;
   }
 }
 
@@ -281,4 +523,4 @@ for (const id of book10TypeIds) {
   }
 }
 
-console.log(`BOOK10_AUDIT_OK sourceQuestions=182 types=${typeIds.length} book10Types=${book10TypeIds.length} generated=${generated}`);
+console.log(`BOOK10_AUDIT_OK sourceQuestions=182 types=${typeIds.length} book10Types=${book10TypeIds.length} unitDifficultyFingerprints=${unitDifficultyFingerprints} unitTestGenerated=${unitTestGenerated} reusedGenerated=${reusedGenerated} generated=${generated}`);
