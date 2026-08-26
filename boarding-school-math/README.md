@@ -43,6 +43,8 @@ The first contract tests cover K–8 scope, student/teacher separation, Korean/E
 
 `curriculum/us-k8-cluster-map.js` maps all 94 official K–8 CCSS cluster IDs and standard-number ranges to short Korean and English GFIELD labels. The labels are paraphrases, not copied standard text. Every cluster remains locked for question release until its skill breakdown, prerequisite links, items, answers, and review evidence are complete. CCSS does not dictate GFIELD unit order, pacing, or promotion policy.
 
+`curriculum/us-k8-content-registry.js` turns each of those 94 verified cluster records into one stable GFIELD course → unit → anchor-skill lineage. Foundation, core, and advanced identify the intended evidence type (readiness, direct application, or within-grade multi-step transfer), not an official standard band, score cut, or released question difficulty. The registry has no prompts, answers, or worksheets; a cluster anchor is intentionally not treated as a completed individual-standard skill decomposition. Student and teacher resource types stay disjoint, and every generated metadata record remains rights-locked until a reviewed item and server signature exist.
+
 The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. High-school, generic algebra, and calculus course tiers are excluded rather than guessed to be Algebra2. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
 
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.

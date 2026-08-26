@@ -1,9 +1,14 @@
 (function (root, factory) {
-  const api = factory();
+  const registry = typeof module === "object" && module.exports
+    ? require("../curriculum/us-k8-content-registry.js")
+    : root.GFIELDUSK8ContentRegistry;
+  const api = factory(registry);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.GFIELDGrade6PlacementPlan = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (registry) {
   "use strict";
+
+  if (!registry) throw new Error("GFIELDUSK8ContentRegistry is required");
 
   const clusterSpecs = Object.freeze([
     Object.freeze({ clusterId: "6.RP.A", standardRange: "1-3", domainId: "G6-RP", difficulties: ["foundation", "foundation", "core", "core", "core", "core", "advanced", "advanced"], responseTypes: ["multiple-choice", "numeric", "multiple-choice", "numeric", "short-answer", "multiple-choice", "numeric", "constructed-response"] }),
@@ -26,6 +31,7 @@
       return Object.freeze({
         slotId: `slot-bdg-g6-${clusterSlug}-${String(index + 1).padStart(2, "0")}`,
         clusterId: spec.clusterId,
+        skillId: registry.skillIdForCluster(spec.clusterId),
         standardRange: `${spec.clusterId}.${spec.standardRange}`,
         domainId: spec.domainId,
         difficulty,
