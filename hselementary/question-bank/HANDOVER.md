@@ -3,9 +3,9 @@
 ## Current State
 
 - Branch: `agent/hsmiddle-question-bank`
-- Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
-- Total types: 543 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 543 (deterministic generator availability check)
+- Local page: `http://127.0.0.1:8877/hselementary/question-bank/`
+- Total types: 563 across 6 semesters, 36 major units, and 174 subunits
+- Implemented types: 563 (deterministic generator availability check)
 - Pending types: 0
 - Completed: all six units in grades 4, 5, and 6 for both semesters
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
@@ -31,9 +31,9 @@
 - Grade 4-1 unit 4: plane transformations, 12 detailed types
 - Grade 4-1 unit 5: bar graphs, 6 detailed types
 - Grade 4-1 unit 6: finding rules, 6 types
-- Grade 4-2 unit 1: fraction addition and subtraction, 6 types
+- Grade 4-2 unit 1: fraction addition and subtraction, 36 source-backed Mission types
 - Grade 4-2 unit 2: triangles, 24 source-backed Mission types
-- Grade 4-2 unit 3: decimal addition and subtraction, 4 types
+- Grade 4-2 unit 3: decimal addition and subtraction, 24 source-backed Mission types
 - Grade 4-2 unit 4: quadrilaterals, 8 types
 - Grade 4-2 unit 5: line graphs, 2 types
 - Grade 4-2 unit 6: polygons, 4 types
@@ -44,9 +44,9 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 543 types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 50 seeds per difficulty. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 563 types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 50 seeds per difficulty. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
-The full regression suite has 31 dedicated audits. The 2026-08-26 run passed the updated 4-2 fraction and triangle audits and all shared notation, language, numeric-display, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+The full regression suite has 32 dedicated audits. The 2026-08-26 run passed the updated 4-2 fraction, triangle, and decimal audits and all shared notation, language, numeric-display, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
 
 ## Implementation Notes
 
@@ -54,10 +54,11 @@ The full regression suite has 31 dedicated audits. The 2026-08-26 run passed the
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Elementary explanation policy: `elementary-language-audit.js` checks all 543 types across 100 seeds per difficulty
-- Numeric display policy: `numeric-display-audit.js` checks all 543 types across 100 seeds per difficulty
+- Elementary explanation policy: `elementary-language-audit.js` checks all 563 types across 100 seeds per difficulty
+- Numeric display policy: `numeric-display-audit.js` checks all 563 types across 100 seeds per difficulty
 - 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 36 types and 36 distinct source structures
 - 4-2 triangle source routing, coordinate visibility, and independent answer check: `triangle-4-2-audit.js` covers 24 types and 24 distinct source structures
+- 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
 - Plane-transformation detail routing, composite-shape diversity, grid bounds, and point-coordinate check: `movement-audit.js`

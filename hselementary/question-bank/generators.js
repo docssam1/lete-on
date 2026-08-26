@@ -48,6 +48,7 @@
   const shuffle = (rng, values) => [...values].sort(() => rng() - 0.5);
   const decimal = (value, places = 2) => Number(value.toFixed(places)).toString();
   const fixedDecimal = (scaled, places) => (scaled / 10 ** places).toFixed(places);
+  const plainDecimal = (scaled, places) => String(Number(fixedDecimal(scaled, places)));
   const roundTo = (value, unit) => Math.round(value / unit) * unit;
   const floorTo = (value, unit) => Math.floor(value / unit) * unit;
   const ceilTo = (value, unit) => Math.ceil(value / unit) * unit;
@@ -638,6 +639,22 @@
     }).join("");
     return `<svg class="geometry-diagram decimal-line" viewBox="0 0 240 88" aria-label="소수 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}</svg>`;
   };
+  const decimal42Evidence = (kind, values, expected) => `<span hidden data-decimal42-kind="${kind}" data-decimal42-values="${encodeURIComponent(JSON.stringify(values))}" data-decimal42-expected="${encodeURIComponent(String(expected))}"></span>`;
+  const markedDecimalLineSvg = ({ start, step, count, marks, places }) => {
+    const left = 22;
+    const right = 258;
+    const y = 48;
+    const xFor = index => left + (right - left) * index / (count - 1);
+    const markMap = new Map(marks.map(mark => [mark.index, mark.label]));
+    const ticks = Array.from({ length: count }, (_, index) => {
+      const x = xFor(index);
+      const label = markMap.get(index) || (index === 0 || index === count - 1 ? fixedDecimal(start + step * index, places) : "");
+      return `<line x1="${x.toFixed(1)}" y1="${y - 7}" x2="${x.toFixed(1)}" y2="${y + 7}"/>${label ? `<text x="${x.toFixed(1)}" y="${y + 25}">${label}</text>` : ""}`;
+    }).join("");
+    return `<svg class="geometry-diagram decimal42-number-line" viewBox="0 0 280 94" data-start="${start}" data-step="${step}" data-count="${count}" aria-label="같은 간격으로 나눈 소수 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}</svg>`;
+  };
+  const overlapSegmentSvg = ({ first, second, total }) => `<svg class="geometry-diagram decimal42-overlap" viewBox="0 0 280 112" data-lengths="${first},${second},${total}" aria-label="일직선 위에서 일부가 겹친 두 선분"><line x1="24" y1="62" x2="256" y2="62"/><circle cx="24" cy="62" r="3"/><circle cx="104" cy="62" r="3"/><circle cx="184" cy="62" r="3"/><circle cx="256" cy="62" r="3"/><text x="24" y="88">가</text><text x="104" y="88">나</text><text x="184" y="88">다</text><text x="256" y="88">라</text><path class="dimension-line" d="M24 42V31H184V42 M104 24V13H256V24 M24 100V106H256V100"/></svg>`;
+  const decimalVennSvg = ({ leftOnly, rightOnly, topLeft, topRight, leftRight, center }) => `<svg class="geometry-diagram decimal42-venn" viewBox="0 0 260 190" aria-label="세 원이 겹친 영역의 소수"><circle cx="130" cy="69" r="58"/><circle cx="87" cy="120" r="58"/><circle cx="173" cy="120" r="58"/><text x="126" y="39">□</text><text x="70" y="139">${fixedDecimal(leftOnly, 2)}</text><text x="183" y="139">${fixedDecimal(rightOnly, 2)}</text><text x="94" y="79">${fixedDecimal(topLeft, 2)}</text><text x="159" y="79">${fixedDecimal(topRight, 2)}</text><text x="128" y="151">${fixedDecimal(leftRight, 2)}</text><text x="126" y="108">${fixedDecimal(center, 2)}</text></svg>`;
   const numberGrid = (rows, columns, valueAt) => `<div class="number-grid" style="--grid-columns:${columns}">${Array.from({ length: rows * columns }, (_, index) => `<span>${valueAt(Math.floor(index / columns) + 1, index % columns + 1)}</span>`).join("")}</div>`;
   const numberTriangle = (rows) => `<div class="number-triangle">${Array.from({ length: rows }, (_, rowIndex) => {
     const start = rowIndex * (rowIndex + 1) / 2 + 1;
@@ -3394,96 +3411,264 @@
       return result(`30°인 각의 맞은편 짧은 변이 ${short}cm인 직각삼각형이 있습니다. 빗변에서 ${extra}cm를 제외한 나머지 선분의 길이를 구하세요.${triangleRelationSvg("right", `${short}cm`)}${evidence}`, answer, `30°인 각의 맞은편 변은 빗변의 절반이므로 빗변은 ${short}×2=${hypotenuse}cm입니다. ${extra}cm를 빼면 ${answer}cm입니다.`);
     },
     decimalUnderstanding({ rng, level, variant = 0 }) {
-      if (variant % 3 === 0) {
-        const places = level === 2 ? 3 : 2;
-        const scale = 10 ** places;
-        const start = int(rng, scale / 10, scale / 2);
-        const step = int(rng, 2, 5 + level);
-        const count = 7;
-        const hiddenIndex = int(rng, 1, count - 2);
-        const answer = fixedDecimal(start + step * hiddenIndex, places);
-        return result(`아래 수직선에서 □ 안에 알맞은 소수를 구하세요.${decimalLineSvg({ start, step, count, hiddenIndex, places })}`, answer, `눈금 한 칸의 크기는 ${fixedDecimal(step, places)}입니다. 시작 수 ${fixedDecimal(start, places)}에서 ${hiddenIndex}칸 이동하면 ${fixedDecimal(start, places)} + ${fixedDecimal(step * hiddenIndex, places)} = ${answer}입니다.`);
+      const kind = variant % 6;
+      if (kind === 0) {
+        const target = int(rng, 18, 27) * 100;
+        const offsets = shuffle(rng, [-211, -143, -76, 39, 108, 187]).slice(0, 5 + level);
+        const values = offsets.map(offset => target + offset);
+        const labels = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"].slice(0, values.length);
+        const answer = labels.map((label, index) => ({ label, distance: Math.abs(values[index] - target) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
+        const evidence = decimal42Evidence("nearest-order", [target, ...values], answer);
+        return result(`다음 소수들을 ${fixedDecimal(target, 2)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${fixedDecimal(target, 2)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
       }
-      if (variant % 3 === 1) {
-        const kg = int(rng, 3, 8 + level);
-        const grams = int(rng, 12, 96) * 10;
-        const answer = fixedDecimal(kg * 1000 + grams, 3);
-        return result(`${kg}kg ${grams}g을 kg 단위의 소수로 나타내세요.`, answer, `1kg은 1000g이므로 ${grams}g은 ${fixedDecimal(grams, 3)}kg입니다. 따라서 ${kg}kg ${grams}g = ${answer}kg입니다.`);
+      if (kind === 1) {
+        const start = int(rng, 0, 12);
+        const step = int(rng, 1, 2 + level);
+        const firstIndex = int(rng, 2, 4);
+        const secondIndex = int(rng, 7, 9);
+        const first = start + step * firstIndex;
+        const second = start + step * secondIndex;
+        const answer = fixedDecimal(first + second, 3);
+        const evidence = decimal42Evidence("marked-line-sum", [start, step, firstIndex, secondIndex], answer);
+        return result(`수직선에서 ㉠과 ㉡이 나타내는 소수의 합을 구하세요.${markedDecimalLineSvg({ start, step, count: 11, marks: [{ index: firstIndex, label: "㉠" }, { index: secondIndex, label: "㉡" }], places: 3 })}${evidence}`, answer, `눈금 한 칸은 ${fixedDecimal(step, 3)}입니다. ㉠=${fixedDecimal(first, 3)}, ㉡=${fixedDecimal(second, 3)}이므로 합은 ${answer}입니다.`);
       }
-      const values = Array.from({ length: 5 + level }, () => int(rng, 120, 980));
-      const target = pick(rng, values);
-      const answer = Math.round(target / 10) * 10;
-      return result(`다음 소수 중 ${fixedDecimal(target, 2)}에 가장 가까운 일의 자리 수를 구하세요.<div class="sequence">${values.map(value => fixedDecimal(value, 2)).join(", ")}</div>`, answer, `${fixedDecimal(target, 2)}은 일의 자리에서 반올림할 때 소수 첫째 자리 ${Math.floor(target / 10) % 10}을 보고 ${answer}이 됩니다.`);
+      if (kind === 2) {
+        const tens = int(rng, 2, 6);
+        const whole = `${tens}8`;
+        const answer = 36;
+        const evidence = decimal42Evidence("ordered-missing-digits", [tens], answer);
+        return result(`다음 소수 세 자리 수는 작은 수부터 차례로 쓴 것입니다. 0부터 9까지의 숫자 중 A, B, C, D, E에 알맞은 숫자의 합을 구하세요.<div class="sequence">${whole}.1A8, ${whole}.10B, ${tens}C.083, ${tens}D.0E1</div>${evidence}`, answer, `첫 두 수의 순서에서 A=0, B=9이고, 뒤의 두 수와 비교하면 C=9, D=9, E=9입니다. 합은 ${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const pictureCount = 4 + level;
+        const widthCm = int(rng, 42, 65);
+        const gapCm = int(rng, 28, 64);
+        const wallCm = pictureCount * widthCm + (pictureCount + 1) * gapCm;
+        const answer = fixedDecimal(gapCm, 2);
+        const evidence = decimal42Evidence("equal-picture-gaps", [wallCm, pictureCount, widthCm], answer);
+        return result(`가로가 ${fixedDecimal(wallCm, 2)}m인 벽에 가로 ${widthCm}cm인 그림 ${pictureCount}개를 걸었습니다. 벽의 양 끝과 그림 사이, 그림과 그림 사이의 간격을 모두 같게 할 때 한 간격은 몇 m입니까?${evidence}`, answer, `그림의 전체 폭은 ${widthCm}×${pictureCount}=${pictureCount * widthCm}cm이고 간격은 ${pictureCount + 1}곳입니다. (${wallCm}-${pictureCount * widthCm})÷${pictureCount + 1}=${gapCm}cm=${answer}m입니다.`);
+      }
+      if (kind === 4) {
+        const totalMinutes = (2 + level) * 60 + pick(rng, [20, 30, 40, 50]);
+        const elapsed = pick(rng, [20, 30, 40]);
+        const burnPerMinute = int(rng, 12, 28);
+        const initial = totalMinutes * burnPerMinute;
+        const remaining = initial - elapsed * burnPerMinute;
+        const answer = `${Math.floor((totalMinutes - elapsed) / 60)}시간 ${(totalMinutes - elapsed) % 60}분`;
+        const evidence = decimal42Evidence("candle-remaining-time", [initial, remaining, elapsed], answer);
+        return result(`길이가 ${fixedDecimal(initial, 2)}cm인 양초에 불을 붙이고 ${elapsed}분 뒤 길이를 재었더니 ${fixedDecimal(remaining, 2)}cm였습니다. 같은 빠르기로 탈 때 남은 양초가 모두 타는 데 걸리는 시간을 구하세요.${evidence}`, answer, `${elapsed}분 동안 ${fixedDecimal(initial - remaining, 2)}cm가 타므로 1분에 ${fixedDecimal(burnPerMinute, 2)}cm씩 탑니다. 남은 시간을 계산하면 ${answer}입니다.`);
+      }
+      const circumferenceKm = int(rng, 1, 2 + level);
+      const firstStride = int(rng, 390, 470);
+      const secondStride = 1000 - firstStride;
+      const steps = circumferenceKm * 1000;
+      const differenceScaled = steps * Math.abs(firstStride - secondStride);
+      const answer = plainDecimal(differenceScaled, 6);
+      const evidence = decimal42Evidence("opposite-walk-distance", [circumferenceKm, firstStride, secondStride], answer);
+      return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 서로 반대편에서 두 사람이 동시에 출발해 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${answer}km입니다.`);
     },
     decimalAddSubAdvanced({ rng, level, variant = 0 }) {
-      const places = level === 2 ? 3 : 2;
-      const scale = 10 ** places;
-      if (variant % 3 === 0) {
-        const first = int(rng, 120, 540 + level * 220);
-        const hidden = int(rng, 80, 360 + level * 180);
-        const total = first + hidden;
-        return result(`□ 안에 알맞은 소수를 구하세요.<div class="equation">${fixedDecimal(first, places)} + □ = ${fixedDecimal(total, places)}</div>`, fixedDecimal(hidden, places), `전체에서 알려진 수를 빼면 □ = ${fixedDecimal(total, places)} - ${fixedDecimal(first, places)} = ${fixedDecimal(hidden, places)}입니다.`);
+      const kind = variant % 6;
+      if (kind === 0) {
+        const overlap = int(rng, 1800, 3600 + level * 700);
+        const leftOnly = int(rng, 2300, 4600);
+        const rightOnly = int(rng, 2100, 4400);
+        const first = leftOnly + overlap;
+        const second = overlap + rightOnly;
+        const total = leftOnly + overlap + rightOnly;
+        const answer = fixedDecimal(overlap, 3);
+        const evidence = decimal42Evidence("overlap-segment", [first, second, total], answer);
+        return result(`일직선 위의 네 점 가, 나, 다, 라에서 가다=${fixedDecimal(first, 3)}cm, 나라=${fixedDecimal(second, 3)}cm, 가라=${fixedDecimal(total, 3)}cm입니다. 겹친 부분 나다의 길이를 구하세요.${overlapSegmentSvg({ first, second, total })}${evidence}`, answer, `가다와 나라의 길이를 더하면 겹친 나다를 두 번 셉니다. 따라서 나다=${fixedDecimal(first, 3)}+${fixedDecimal(second, 3)}-${fixedDecimal(total, 3)}=${answer}cm입니다.`);
       }
-      if (variant % 3 === 1) {
-        const count = int(rng, 8 + level, 12 + level * 3);
-        const first = int(rng, 80, 250);
-        const difference = int(rng, 11, 37 + level * 8);
-        const last = first + difference * (count - 1);
-        const total = count * (first + last) / 2;
-        return result(`다음 규칙으로 나열한 ${count}개의 소수의 합을 구하세요.<div class="sequence">${fixedDecimal(first, places)}, ${fixedDecimal(first + difference, places)}, ${fixedDecimal(first + difference * 2, places)}, …, ${fixedDecimal(last, places)}</div>`, fixedDecimal(total, places), `첫째 수와 마지막 수의 합은 ${fixedDecimal(first + last, places)}이고, 이를 짝지으면 ${count}개 전체의 합은 ${count} × ${fixedDecimal(first + last, places)} ÷ 2 = ${fixedDecimal(total, places)}입니다.`);
+      if (kind === 1) {
+        const raw = [
+          [int(rng, 520, 760), -int(rng, 120, 290), int(rng, 60, 180)],
+          [int(rng, 340, 620), int(rng, 120, 260), -int(rng, 80, 210)],
+          [int(rng, 180, 380), int(rng, 240, 430), -int(rng, 40, 130)]
+        ];
+        const totals = raw.map(values => values.reduce((sum, value) => sum + value, 0));
+        const labels = ["㉠", "㉡", "㉢"];
+        const answer = labels.map((label, index) => ({ label, value: totals[index] })).sort((a, b) => b.value - a.value).map(item => item.label).join(", ");
+        const evidence = decimal42Evidence("calculation-order", raw, answer);
+        const expressions = raw.map((values, index) => `${labels[index]} ${values.map((value, valueIndex) => `${valueIndex && value >= 0 ? "+ " : value < 0 ? "- " : ""}${fixedDecimal(Math.abs(value), 2)}`).join(" ")}`);
+        return result(`다음 계산 결과를 큰 수부터 차례로 기호를 쓰세요.<div class="sequence">${expressions.join("<br>")}</div>${evidence}`, answer, `각 식을 소수점끼리 맞추어 계산한 뒤 비교하면 ${answer}입니다.`);
       }
-      const a = int(rng, 350, 780 + level * 260);
-      const b = int(rng, 90, 260 + level * 110);
-      const c = int(rng, 40, 180 + level * 80);
-      const answer = a - b + c;
-      return result(`소수점을 맞추어 계산하세요.<div class="equation">${fixedDecimal(a, places)} - ${fixedDecimal(b, places)} + ${fixedDecimal(c, places)} = □</div>`, fixedDecimal(answer, places), `${fixedDecimal(a, places)} - ${fixedDecimal(b, places)} = ${fixedDecimal(a - b, places)}이고, 여기에 ${fixedDecimal(c, places)}을 더하면 ${fixedDecimal(answer, places)}입니다.`);
+      if (kind === 2) {
+        const a = int(rng, 520, 780);
+        const b = int(rng, 170, 360);
+        const c = int(rng, 240, 470);
+        const first = 2 * a - b;
+        const answerScaled = 2 * first - c;
+        const answer = fixedDecimal(answerScaled, 2);
+        const evidence = decimal42Evidence("decimal-symbol-operation", [a, b, c], answer);
+        return result(`두 소수에 대하여 가 △ 나 = 가 - 나 + 가로 약속합니다. 다음을 계산하세요.<div class="equation">(${fixedDecimal(a, 2)} △ ${fixedDecimal(b, 2)}) △ ${fixedDecimal(c, 2)}</div>${evidence}`, answer, `먼저 ${fixedDecimal(a, 2)}△${fixedDecimal(b, 2)}=${fixedDecimal(first, 2)}입니다. 다시 약속대로 계산하면 ${fixedDecimal(first, 2)}-${fixedDecimal(c, 2)}+${fixedDecimal(first, 2)}=${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const hyunju = int(rng, 180, 310);
+        const sangmin = hyunju + int(rng, 40, 110);
+        const yunyoung = sangmin - int(rng, 90, 170);
+        const firstDistance = Math.abs(hyunju - sangmin);
+        const secondDistance = Math.abs(yunyoung - hyunju);
+        const answerScaled = Math.abs(firstDistance - secondDistance);
+        const answer = fixedDecimal(answerScaled, 2);
+        const evidence = decimal42Evidence("four-person-distance", [hyunju, sangmin, yunyoung], answer);
+        return result(`직선 위에서 현주는 기준점보다 ${fixedDecimal(hyunju, 2)}m 앞, 상민은 ${fixedDecimal(sangmin, 2)}m 앞에 있습니다. 윤영은 상민보다 ${fixedDecimal(sangmin - yunyoung, 2)}m 뒤에 있습니다. 현주와 상민 사이의 거리와 윤영과 현주 사이 거리의 차를 구하세요.${evidence}`, answer, `현주-상민은 ${fixedDecimal(firstDistance, 2)}m, 윤영-현주는 ${fixedDecimal(secondDistance, 2)}m이므로 차는 ${answer}m입니다.`);
+      }
+      if (kind === 4) {
+        const lowerA = int(rng, 105, 135 + level * 10);
+        const upperA = lowerA + int(rng, 22, 38);
+        const lowerB = lowerA + int(rng, 3, 10);
+        const upperB = upperA - int(rng, 3, 9);
+        const candidates = [];
+        for (let value = 0; value < 1000; value += 1) if (lowerA < value && value < upperA && lowerB < value && value < upperB) candidates.push(value);
+        const answer = candidates.length;
+        const evidence = decimal42Evidence("common-hundredths", [lowerA, upperA, lowerB, upperB], answer);
+        return result(`소수 두 자리 수 □가 다음 두 식을 모두 만족합니다. □에 들어갈 수 있는 수는 모두 몇 개입니까?<div class="equation">${fixedDecimal(lowerA, 2)} &lt; □ &lt; ${fixedDecimal(upperA, 2)}<br>${fixedDecimal(lowerB, 2)} &lt; □ &lt; ${fixedDecimal(upperB, 2)}</div>${evidence}`, answer, `두 범위가 겹치는 부분에서 0.01씩 커지는 수를 세면 ${answer}개입니다.`);
+      }
+      const topLeft = int(rng, 90, 180);
+      const topRight = int(rng, 80, 170);
+      const leftRight = int(rng, 70, 150);
+      const center = int(rng, 60, 130);
+      const topOnly = int(rng, 120, 240);
+      const total = topOnly + topLeft + topRight + center;
+      const leftOnly = total - topLeft - leftRight - center;
+      const rightOnly = total - topRight - leftRight - center;
+      const answer = fixedDecimal(topOnly, 2);
+      const evidence = decimal42Evidence("venn-circle-sum", [total, topLeft, topRight, center], answer);
+      return result(`세 원 각각에 들어 있는 네 소수의 합은 모두 ${fixedDecimal(total, 2)}입니다. 위쪽 원의 □에 알맞은 소수를 구하세요.${decimalVennSvg({ leftOnly, rightOnly, topLeft, topRight, leftRight, center })}${evidence}`, answer, `위쪽 원에서 알려진 세 수의 합을 전체 합에서 빼면 □=${fixedDecimal(total, 2)}-${fixedDecimal(topLeft, 2)}-${fixedDecimal(topRight, 2)}-${fixedDecimal(center, 2)}=${answer}입니다.`);
     },
     decimalApplication({ rng, level, variant = 0 }) {
-      const scale = 100;
-      if (variant % 3 === 0) {
-        const weights = [int(rng, 420, 790), int(rng, 480, 860), int(rng, 510, 920)];
-        const [a, b, c] = weights;
-        const answer = Math.max(...weights) - Math.min(...weights);
-        return result(`세 상자 A, B, C의 무게가 있습니다. A와 B의 합은 ${fixedDecimal(a + b, 2)}kg, B와 C의 합은 ${fixedDecimal(b + c, 2)}kg, C와 A의 합은 ${fixedDecimal(c + a, 2)}kg입니다. 가장 무거운 상자와 가장 가벼운 상자의 무게 차를 구하세요.`, fixedDecimal(answer, 2), `A = (${fixedDecimal(a + b, 2)} + ${fixedDecimal(c + a, 2)} - ${fixedDecimal(b + c, 2)}) ÷ 2 = ${fixedDecimal(a, 2)}kg처럼 각각의 무게를 구할 수 있습니다. 세 무게의 최댓값과 최솟값의 차는 ${fixedDecimal(answer, 2)}kg입니다.`);
+      const kind = variant % 6;
+      if (kind === 0) {
+        const start = int(rng, 1800, 2600);
+        const step = int(rng, 24, 55 + level * 8);
+        const missingIndex = int(rng, 1, 2);
+        const values = Array.from({ length: 4 }, (_, index) => start + step * index);
+        const answer = plainDecimal(values[missingIndex], 2);
+        const evidence = decimal42Evidence("decimal-sequence", [start, step, missingIndex], answer);
+        return result(`일정한 규칙으로 나열한 수에서 □에 알맞은 수를 구하세요.<div class="sequence">${values.map((value, index) => index === missingIndex ? "□" : fixedDecimal(value, 2)).join(" → ")}</div>${evidence}`, answer, `이웃한 두 수의 차는 ${fixedDecimal(step, 2)}이므로 □=${answer}입니다.`);
       }
-      if (variant % 3 === 1) {
-        const base = int(rng, 540, 920);
-        const thickness = int(rng, 18, 37);
-        const count = int(rng, 16 + level * 3, 28 + level * 5);
-        const answer = base + thickness * count;
-        return result(`높이가 ${fixedDecimal(base, 2)}cm인 책상 위에 두께가 ${fixedDecimal(thickness, 2)}cm인 책 ${count}권을 포개어 놓았습니다. 바닥에서 가장 위 책의 윗면까지의 높이를 구하세요.`, fixedDecimal(answer, 2), `책 ${count}권의 높이는 ${fixedDecimal(thickness, 2)} × ${count} = ${fixedDecimal(thickness * count, 2)}cm입니다. 책상 높이를 더하면 ${fixedDecimal(base, 2)} + ${fixedDecimal(thickness * count, 2)} = ${fixedDecimal(answer, 2)}cm입니다.`);
+      if (kind === 1) {
+        const addends = [int(rng, 310, 520), int(rng, 330, 560), int(rng, 340, 590), int(rng, 350, 620)];
+        const missedIndex = int(rng, 0, addends.length - 1);
+        const wrongTotal = addends.reduce((sum, value, index) => sum + (index === missedIndex ? value * 100 : value), 0);
+        const answer = fixedDecimal(addends[missedIndex], 2);
+        const evidence = decimal42Evidence("missing-decimal-point", [missedIndex, ...addends], answer);
+        return result(`${addends.map(value => fixedDecimal(value, 2)).join(" + ")}을 계산하면서 한 수의 소수점을 빠뜨렸더니 ${fixedDecimal(wrongTotal, 2)}가 되었습니다. 소수점을 빠뜨린 수를 구하세요.${evidence}`, answer, `소수점을 빠뜨리면 그 수를 100배로 계산하게 됩니다. 잘못된 합과 바른 나머지 수들을 비교하면 빠뜨린 수는 ${answer}입니다.`);
       }
-      const ahead = int(rng, 140, 430 + level * 100);
-      const behind = int(rng, 90, 350 + level * 100);
-      const answer = ahead + behind;
-      return result(`직선 도로에서 지수는 현우보다 ${fixedDecimal(ahead, 2)}km 앞에 있고, 상민이는 현우보다 ${fixedDecimal(behind, 2)}km 뒤에 있습니다. 지수와 상민이 사이의 거리를 구하세요.`, fixedDecimal(answer, 2), `현우를 기준으로 한 사람은 앞, 한 사람은 뒤에 있으므로 두 거리를 더합니다. ${fixedDecimal(ahead, 2)} + ${fixedDecimal(behind, 2)} = ${fixedDecimal(answer, 2)}km입니다.`);
+      if (kind === 2) {
+        const repeats = 4 + level;
+        const targetRepeats = 9 + level;
+        const value = int(rng, 240, 380);
+        const offset = int(rng, 280, 460);
+        const given = repeats * value;
+        const answerScaled = targetRepeats * value - offset;
+        const answer = plainDecimal(answerScaled, 2);
+        const evidence = decimal42Evidence("repeated-decimal", [repeats, targetRepeats, given, offset], answer);
+        return result(`어떤 소수를 ${repeats}번 더했더니 ${fixedDecimal(given, 2)}가 되었습니다. 이 소수를 ${targetRepeats}번 더한 값에서 ${fixedDecimal(offset, 2)}를 뺀 수를 구하세요.${evidence}`, answer, `어떤 소수는 ${fixedDecimal(given, 2)}÷${repeats}=${fixedDecimal(value, 2)}입니다. ${fixedDecimal(value, 2)}×${targetRepeats}-${fixedDecimal(offset, 2)}=${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const smaller = int(rng, 420, 680);
+        const difference = int(rng, 60, 160) * 2;
+        const larger = smaller + difference;
+        const sum = larger + smaller;
+        const answerScaled = larger * 100;
+        const answer = plainDecimal(answerScaled, 2);
+        const evidence = decimal42Evidence("sum-difference-hundredfold", [sum, difference], answer);
+        return result(`합이 ${fixedDecimal(sum, 2)}이고 차가 ${fixedDecimal(difference, 2)}인 두 소수 중 큰 수의 100배를 구하세요.${evidence}`, answer, `큰 수는 (${fixedDecimal(sum, 2)}+${fixedDecimal(difference, 2)})÷2=${fixedDecimal(larger, 2)}입니다. 100배는 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const values = [int(rng, 280, 470), int(rng, 480, 690), int(rng, 700, 930)];
+        const pairSums = [values[0] + values[1], values[1] + values[2], values[0] + values[2]];
+        const answer = fixedDecimal(Math.max(...values), 2);
+        const evidence = decimal42Evidence("pairwise-decimal-sums", pairSums, answer);
+        return result(`서로 다른 세 소수 가, 나, 다가 있습니다. 가+나=${fixedDecimal(pairSums[0], 2)}, 나+다=${fixedDecimal(pairSums[1], 2)}, 가+다=${fixedDecimal(pairSums[2], 2)}일 때 가장 큰 소수를 구하세요.${evidence}`, answer, `세 합을 모두 더한 뒤 2로 나누면 세 수의 합입니다. 각 수를 구해 비교하면 가장 큰 수는 ${answer}입니다.`);
+      }
+      const firstHalfHour = int(rng, 250, 390);
+      const secondHour = int(rng, 460, 620);
+      const hours = 3 + level;
+      const firstDistance = firstHalfHour * hours * 2;
+      const secondDistance = secondHour * hours;
+      const answerScaled = Math.abs(firstDistance - secondDistance);
+      const answer = plainDecimal(answerScaled, 3);
+      const evidence = decimal42Evidence("different-walking-rates", [firstHalfHour, secondHour, hours], answer);
+      return result(`선영이는 30분 동안 ${fixedDecimal(firstHalfHour, 3)}km, 수정이는 1시간 동안 ${fixedDecimal(secondHour, 3)}km를 일정한 빠르기로 걷습니다. 같은 곳에서 동시에 같은 방향으로 출발한 지 ${hours}시간 뒤 두 사람 사이의 거리는 몇 km입니까?${evidence}`, answer, `선영이는 ${fixedDecimal(firstDistance, 3)}km, 수정이는 ${fixedDecimal(secondDistance, 3)}km를 걷습니다. 두 거리의 차는 ${answer}km입니다.`);
     },
     conditionedDecimal({ rng, level, variant = 0 }) {
-      if (variant % 2 === 0) {
-        let pool = [];
-        let candidates = [];
-        for (let attempt = 0; attempt < 80; attempt += 1) {
-          pool = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
-          candidates = permutationNumbers(pool).map(value => String(value).split("").map(Number)).filter(digits => digits.length === pool.length).filter(digits => digits[0] + digits[1] === digits[2] + digits[3]);
-          if (candidates.length >= 2 && candidates.length <= 8) break;
+      const kind = variant % 6;
+      if (kind === 0) {
+        const byDifference = new Map();
+        for (let value = 102; value <= 987; value += 1) {
+          const digits = String(value).padStart(3, "0").split("").map(Number);
+          if (digits[0] === 0 || new Set(digits).size !== 3) continue;
+          const reversed = digits[2] * 100 + digits[1] * 10 + digits[0];
+          const difference = value * 100 - reversed * 10;
+          if (!byDifference.has(difference)) byDifference.set(difference, []);
+          byDifference.get(difference).push(reversed);
+        }
+        const uniqueCases = [...byDifference.entries()].filter(([, reversed]) => reversed.length === 1).map(([difference, reversed]) => ({ difference, reversed: reversed[0] }));
+        const selected = pick(rng, uniqueCases);
+        const answer = selected.reversed;
+        const evidence = decimal42Evidence("reversed-place-value", [selected.difference], answer);
+        return result(`각 자리 숫자가 서로 다른 세 자리 자연수 ABC가 있습니다. ABC의 1/10에서 CBA의 1/100을 뺀 수가 ${fixedDecimal(selected.difference, 3)}일 때 CBA를 구하세요.${evidence}`, answer, `조건을 만족하는 서로 다른 세 자리 숫자를 큰 자리부터 확인하면 CBA=${answer} 한 가지로 정해집니다.`);
+      }
+      if (kind === 1) {
+        const lower = int(rng, 9300, 9560);
+        const upper = lower + int(rng, 180, 260);
+        const targetSum = int(rng, 8, 11);
+        const candidates = [];
+        for (let value = lower + 1; value < upper; value += 1) if (Math.floor(value / 10) % 10 + value % 10 === targetSum) candidates.push(value);
+        const answer = candidates.length;
+        const evidence = decimal42Evidence("tail-digit-sum-count", [lower, upper, targetSum], answer);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 둘째 자리와 셋째 자리 숫자의 합이 ${targetSum}인 수는 모두 몇 개입니까?${evidence}`, answer, `범위의 수를 0.001씩 확인하여 마지막 두 자리 숫자의 합이 ${targetSum}인 경우를 세면 ${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const lower = int(rng, 2050, 2180);
+        const upper = int(rng, 2380, 2520);
+        const candidates = [];
+        for (let value = lower + 1; value < upper; value += 1) if (Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) candidates.push(value);
+        const answer = candidates.length;
+        const evidence = decimal42Evidence("tenths-greater-count", [lower, upper], answer);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리 숫자가 소수 둘째 자리 숫자보다 큰 수는 모두 몇 개입니까?${evidence}`, answer, `주어진 범위에서 소수 첫째 자리와 둘째 자리를 비교해 세면 ${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const lower = int(rng, 2725, 2860);
+        const upper = int(rng, 3320, 3480);
+        const candidates = [];
+        for (let value = lower + 1; value < upper; value += 1) {
+          const digits = [Math.floor(value / 1000), Math.floor(value / 100) % 10, Math.floor(value / 10) % 10, value % 10];
+          if (digits[1] === digits[2] * 2 && new Set(digits).size === 4) candidates.push(value);
         }
         const answer = candidates.length;
-        return result(`수 카드 ${pool.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 A.BCD 꼴의 소수를 만듭니다. 일의 자리와 소수 첫째 자리의 합이 소수 둘째 자리와 소수 셋째 자리의 합과 같은 수는 모두 몇 개인지 구하세요.`, answer, `카드의 순서를 정한 뒤 ‘일의 자리 + 소수 첫째 자리 = 소수 둘째 자리 + 소수 셋째 자리’ 조건을 만족하는 경우를 세면 ${answer}개입니다.`);
+        const evidence = decimal42Evidence("digit-ratio-count", [lower, upper], answer);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리와 둘째 자리 숫자의 비가 2:1이고 네 자리 숫자가 모두 다른 수는 몇 개입니까?${evidence}`, answer, `범위 안의 수를 전부 확인해 두 자리의 비와 서로 다른 숫자 조건을 함께 만족하는 경우를 세면 ${answer}개입니다.`);
       }
-      let lower = 0;
-      let upper = 0;
-      let candidates = [];
-      for (let attempt = 0; attempt < 80; attempt += 1) {
-        lower = int(rng, 210, 320 + level * 70);
-        upper = lower + int(rng, 95, 160 + level * 60);
-        candidates = [];
-        for (let value = lower + 1; value < upper; value += 1) {
-          const digits = String(value).padStart(3, "0").split("").map(Number);
-          if (new Set(digits).size === 3 && digits[1] + digits[2] === digits[0]) candidates.push(value);
-        }
-        if (candidates.length >= 2) break;
+      if (kind === 4) {
+        const cards = shuffle(rng, [1, 2, 3, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
+        const values = permutationNumbers(cards).filter(value => value >= 1000).sort((a, b) => a - b);
+        const largest = values[values.length - 1];
+        const fourthSmallest = values[3];
+        const answerScaled = largest - fourthSmallest;
+        const answer = fixedDecimal(answerScaled, 3);
+        const evidence = decimal42Evidence("decimal-card-order", cards, answer);
+        return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 A.BCD 꼴의 소수를 만듭니다. 만들 수 있는 가장 큰 수와 넷째로 작은 수의 차를 구하세요.${evidence}`, answer, `가능한 배열을 작은 수부터 정리해 가장 큰 수와 넷째로 작은 수를 찾은 뒤 빼면 ${answer}입니다.`);
       }
-      return result(`${fixedDecimal(lower, 2)}보다 크고 ${fixedDecimal(upper, 2)}보다 작은 소수 둘째 자리 수 중, 각 자리 숫자가 서로 다르고 소수 첫째 자리 숫자가 일의 자리 숫자와 소수 둘째 자리 숫자의 합인 수는 모두 몇 개인지 구하세요.`, candidates.length, `백분의 일의 자리까지 나타낸 수를 정수 ${lower + 1}부터 ${upper - 1}까지 확인합니다. 세 자리 숫자가 모두 다르고 ‘일의 자리 = 소수 첫째 자리 + 소수 둘째 자리’를 만족하는 수는 ${candidates.length}개입니다.`);
+      const lower = int(rng, 400, 430);
+      const upperAfterSwap = int(rng, 470, 500);
+      const increase = 18;
+      const candidates = [];
+      for (let value = lower + 1; value < 1000; value += 1) {
+        const tenths = Math.floor(value / 100) % 10;
+        const hundredths = Math.floor(value / 10) % 10;
+        const thousandths = value % 10;
+        const swapped = tenths * 100 + thousandths * 10 + hundredths;
+        if (swapped < upperAfterSwap && swapped - value === increase) candidates.push(value);
+      }
+      if (!candidates.length) throw new Error("자리 숫자를 바꾼 소수 후보를 만들지 못했습니다.");
+      const answerScaled = Math.max(...candidates) - Math.min(...candidates);
+      const answer = fixedDecimal(answerScaled, 3);
+      const evidence = decimal42Evidence("swapped-tail-range", [lower, upperAfterSwap, increase], answer);
+      return result(`${fixedDecimal(lower, 3)}보다 큰 소수 세 자리 수가 있습니다. 이 수의 소수 둘째 자리와 셋째 자리 숫자를 바꾼 수는 ${fixedDecimal(upperAfterSwap, 3)}보다 작고 처음 수보다 ${fixedDecimal(increase, 3)}만큼 큽니다. 가능한 수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence}`, answer, `조건을 만족하는 수를 0.001씩 확인한 뒤 최댓값에서 최솟값을 빼면 ${answer}입니다.`);
     },
     multiply({ rng, level }) {
       const r = range(level);
