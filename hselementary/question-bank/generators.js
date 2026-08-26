@@ -546,6 +546,86 @@
     }
     return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
   };
+  const triangle42Evidence = (kind, values, expected) => `<span hidden data-triangle42-kind="${kind}" data-triangle42-values="${encodeURIComponent(JSON.stringify(values))}" data-triangle42-expected="${encodeURIComponent(String(expected))}"></span>`;
+  const triangleFanMarkedSvg = (parts, markedIndex = -1, dotBoard = false) => {
+    const left = 24;
+    const right = 216;
+    const baseY = 138;
+    const apexX = 120;
+    const apexY = 18;
+    const basePoints = Array.from({ length: parts + 1 }, (_, index) => ({ x: left + (right - left) * index / parts, y: baseY }));
+    const rays = basePoints.map(point => `<line x1="${apexX}" y1="${apexY}" x2="${point.x.toFixed(1)}" y2="${baseY}"/>`).join("");
+    const dots = dotBoard ? [...basePoints, { x: apexX, y: apexY }].map(point => `<circle class="diagram-dot" cx="${point.x.toFixed(1)}" cy="${point.y}" r="3"/>`).join("") : "";
+    const mark = markedIndex >= 0 ? `<circle class="highlight-dot" cx="${basePoints[markedIndex].x.toFixed(1)}" cy="${baseY}" r="6"/><text x="${basePoints[markedIndex].x.toFixed(1)}" y="${baseY + 18}">●</text>` : "";
+    return `<svg class="geometry-diagram triangle-fan" viewBox="0 0 240 166" data-parts="${parts}" data-marked-index="${markedIndex}" aria-label="한 꼭짓점과 밑변의 ${parts + 1}개 점을 이은 삼각형"><g><line x1="${left}" y1="${baseY}" x2="${right}" y2="${baseY}"/>${rays}${dots}${mark}</g></svg>`;
+  };
+  const triangleDoubleFanSvg = (leftParts, rightParts) => {
+    const fan = (offset, width, parts, apexX) => {
+      const end = offset + width;
+      const y = 132;
+      const points = Array.from({ length: parts + 1 }, (_, index) => offset + width * index / parts);
+      return `<line x1="${offset}" y1="${y}" x2="${end}" y2="${y}"/>${points.map(x => `<line x1="${apexX}" y1="22" x2="${x.toFixed(1)}" y2="${y}"/>`).join("")}`;
+    };
+    return `<svg class="geometry-diagram triangle-double-fan" viewBox="0 0 280 154" data-left-parts="${leftParts}" data-right-parts="${rightParts}" aria-label="나란히 놓인 두 부채꼴 모양 삼각형"><g>${fan(14, 116, leftParts, 72)}${fan(150, 116, rightParts, 208)}</g></svg>`;
+  };
+  const triangleCrossRectanglesSvg = count => {
+    const width = 62;
+    const gap = 12;
+    const start = (280 - (count * width + (count - 1) * gap)) / 2;
+    const shapes = Array.from({ length: count }, (_, index) => {
+      const x = start + index * (width + gap);
+      return `<rect x="${x}" y="34" width="${width}" height="82"/><line x1="${x}" y1="34" x2="${x + width}" y2="116"/><line x1="${x + width}" y1="34" x2="${x}" y2="116"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-cross-rectangles" viewBox="0 0 280 148" data-cross-count="${count}" aria-label="대각선이 교차하는 직사각형 ${count}개"><g>${shapes}</g></svg>`;
+  };
+  const trianglePointBoardSvg = (points, requiredIndex = -1, lines = []) => {
+    const minX = Math.min(...points.map(point => point[0]));
+    const maxX = Math.max(...points.map(point => point[0]));
+    const minY = Math.min(...points.map(point => point[1]));
+    const maxY = Math.max(...points.map(point => point[1]));
+    const rangeX = Math.max(1, maxX - minX);
+    const rangeY = Math.max(1, maxY - minY);
+    const scale = Math.min(184 / rangeX, 98 / rangeY);
+    const originX = 120 - rangeX * scale / 2;
+    const originY = 77 + rangeY * scale / 2;
+    const project = ([x, y]) => [originX + (x - minX) * scale, originY - (y - minY) * scale];
+    const grid = `${Array.from({ length: Math.floor(rangeX) + 1 }, (_, index) => { const x = originX + index * scale; return `<line class="diagram-grid" x1="${x.toFixed(1)}" y1="${(originY - rangeY * scale).toFixed(1)}" x2="${x.toFixed(1)}" y2="${originY.toFixed(1)}"/>`; }).join("")}${Array.from({ length: Math.floor(rangeY) + 1 }, (_, index) => { const y = originY - index * scale; return `<line class="diagram-grid" x1="${originX.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(originX + rangeX * scale).toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join("")}`;
+    const lineMarkup = lines.map(([a, b]) => {
+      const first = project(points[a]);
+      const second = project(points[b]);
+      return `<line x1="${first[0].toFixed(1)}" y1="${first[1].toFixed(1)}" x2="${second[0].toFixed(1)}" y2="${second[1].toFixed(1)}"/>`;
+    }).join("");
+    const dots = points.map((point, index) => {
+      const [x, y] = project(point);
+      return `<circle class="${index === requiredIndex ? "highlight-dot" : "diagram-dot"}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === requiredIndex ? 6 : 3}"/><text x="${(x + 7).toFixed(1)}" y="${(y - 5).toFixed(1)}">${String.fromCharCode(65 + index)}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-point-board" viewBox="0 0 240 150" data-points="${points.map(point => point.join(",")).join(";")}" data-required-index="${requiredIndex}" data-uniform-scale="${scale.toFixed(3)}" aria-label="같은 간격의 모눈 위에 표시한 삼각형 점판"><g>${grid}${lineMarkup}${dots}</g></svg>`;
+  };
+  const triangleKindFromPoints = (first, second, third) => {
+    const cross = (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+    if (Math.abs(cross) < 1e-9) return "line";
+    const squared = [[first, second], [second, third], [third, first]].map(([a, b]) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2).sort((a, b) => a - b);
+    if (Math.abs(squared[0] + squared[1] - squared[2]) < 1e-9) return "right";
+    return squared[0] + squared[1] > squared[2] ? "acute" : "obtuse";
+  };
+  const trianglePointCounts = (points, requiredIndex = -1) => {
+    const totals = { acute: 0, right: 0, obtuse: 0 };
+    for (let a = 0; a < points.length - 2; a += 1) for (let b = a + 1; b < points.length - 1; b += 1) for (let c = b + 1; c < points.length; c += 1) {
+      if (requiredIndex >= 0 && ![a, b, c].includes(requiredIndex)) continue;
+      const kind = triangleKindFromPoints(points[a], points[b], points[c]);
+      if (kind !== "line") totals[kind] += 1;
+    }
+    return totals;
+  };
+  const isoscelesDiamondSvg = ({ upper, lower, base }) => `<svg class="geometry-diagram isosceles-diamond" viewBox="0 0 240 170" data-upper="${upper}" data-lower="${lower}" data-base="${base}" aria-label="같은 밑변을 공유하는 두 이등변삼각형"><polygon points="42,86 120,20 198,86 120,148"/><line x1="42" y1="86" x2="198" y2="86"/><text x="70" y="48">${upper}</text><text x="70" y="128">${lower}</text><text x="116" y="102">${base}</text><g class="equal-marks"><text x="166" y="48">=</text><text x="166" y="128">=</text></g></svg>`;
+  const isoscelesChainSvg = count => `<svg class="geometry-diagram isosceles-chain" viewBox="0 0 260 150" data-count="${count}" aria-label="이등변삼각형을 이어 붙인 도형"><g>${Array.from({ length: Math.min(5, count) }, (_, index) => { const x = 18 + index * 44; return `<polygon points="${x},126 ${x + 44},126 ${x + 22},42"/>`; }).join("")}</g><text x="238" y="88">…</text></svg>`;
+  const triangleRelationSvg = (kind, first = "", second = "") => {
+    if (kind === "square") return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 160" aria-label="한 변을 공유하는 정사각형과 정삼각형의 공통 꼭짓점 각"><rect x="40" y="40" width="80" height="80"/><polygon points="120,120 120,40 189.3,80"/><path class="angle-mark" d="M88 120 A32 32 0 0 1 147.7 104"/><text x="87" y="99">㉠</text><text x="120" y="137">O</text></svg>`;
+    if (kind === "straight") return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 132" aria-label="직선 위에 나란히 놓인 세 각"><line x1="24" y1="104" x2="216" y2="104"/><line x1="120" y1="104" x2="66" y2="34"/><line x1="120" y1="104" x2="158" y2="34"/><text x="72" y="88">60°</text><text x="121" y="72">${first}</text><text x="164" y="91">㉠</text></svg>`;
+    if (kind === "right-full") return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 160" aria-label="정삼각형을 높이로 나눈 두 직각삼각형"><polygon points="36,130 204,130 120,34"/><line x1="120" y1="34" x2="120" y2="130"/><path class="right-mark" d="M120 118h12v12"/><text x="120" y="147">${first}</text><text x="168" y="119">30°</text><text x="146" y="124">?</text></svg>`;
+    if (kind === "right") return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 160" aria-label="정삼각형을 이용해 나눈 직각삼각형"><polygon points="36,130 204,130 120,34"/><line x1="120" y1="34" x2="120" y2="130"/><path class="right-mark" d="M120 118h12v12"/><text x="155" y="146">${first}</text><text x="168" y="119">30°</text><text x="92" y="82">?</text></svg>`;
+    return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 160" aria-label="서로 이어진 정삼각형의 길이와 각 관계"><polygon points="30,126 110,126 70,57"/><polygon points="110,126 190,126 150,57"/><line x1="70" y1="57" x2="150" y2="57"/><text x="64" y="48">${first}</text><text x="144" y="48">${second}</text><text x="106" y="145">?</text></svg>`;
+  };
   const decimalLineSvg = ({ start, step, count, hiddenIndex, places }) => {
     const left = 20;
     const right = 220;
@@ -3133,48 +3213,185 @@
       return result(`0부터 ${mixedFraction(totalNumerator, lineDenominator)}까지를 같은 간격으로 나눈 수직선입니다. ▲가 나타내는 수를 구하세요.${fraction42NumberLineSvg({ totalNumerator, denominator: lineDenominator, intervals, targetIndex })}${evidence}`, answer, `한 눈금은 ${mixedFraction(totalNumerator, lineDenominator)}÷${intervals}입니다. 0에서 ${targetIndex}칸 간 값은 ${answer}입니다.`);
     },
     triangleCount({ rng, level, variant = 0 }) {
-      if (variant % 2 === 0) {
-        const side = int(rng, 3 + level, 4 + level);
-        const answer = Math.floor(side * (side + 2) * (2 * side + 1) / 8);
-        return result(`한 변을 ${side}등분하여 만든 아래 정삼각형 격자에서 크기가 서로 다른 정삼각형은 모두 몇 개인지 구하세요.${triangleLatticeSvg(side)}`, answer, `작은 정삼각형부터 큰 정삼각형까지 같은 방향과 거꾸로 된 방향을 모두 세면 ${answer}개입니다.`);
+      const kind = variant % 6;
+      if (kind === 0) {
+        const parts = int(rng, 6 + level, 8 + level * 2);
+        const answer = parts * (parts + 1) / 2;
+        const evidence = triangle42Evidence("fan-count", [parts], answer);
+        return result(`한 꼭짓점에서 밑변의 모든 등분점으로 선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts)}${evidence}`, answer, `꼭짓점에서 내려간 선 ${parts + 1}개 중 두 선을 고르면 삼각형 하나가 정해집니다. ${parts}+${parts - 1}+…+1=${answer}개입니다.`);
       }
-      const parts = int(rng, 5 + level, 7 + level * 2);
+      if (kind === 1) {
+        const side = int(rng, 4 + level, 5 + level);
+        const answer = Math.floor(side * (side + 2) * (2 * side + 1) / 8);
+        const evidence = triangle42Evidence("lattice-count", [side], answer);
+        return result(`한 변을 ${side}등분한 정삼각형 격자에서 선을 따라 그릴 수 있는 크고 작은 정삼각형은 모두 몇 개입니까?${triangleLatticeSvg(side)}${evidence}`, answer, `작은 정삼각형부터 큰 정삼각형까지 위쪽과 아래쪽 방향을 빠짐없이 세면 ${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const parts = int(rng, 7 + level, 9 + level * 2);
+        const markedIndex = int(rng, 1, parts - 1);
+        const answer = parts;
+        const evidence = triangle42Evidence("marked-fan-count", [parts, markedIndex], answer);
+        return result(`밑변의 ●을 꼭짓점으로 포함하면서 선을 따라 그릴 수 있는 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts, markedIndex)}${evidence}`, answer, `●과 나머지 밑변 점 하나, 위 꼭짓점을 고르면 삼각형이 됩니다. ● 이외의 밑변 점이 ${parts}개이므로 답은 ${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const leftParts = int(rng, 4 + level, 6 + level);
+        const rightParts = int(rng, 5 + level, 7 + level);
+        const answer = leftParts * (leftParts + 1) / 2 + rightParts * (rightParts + 1) / 2;
+        const evidence = triangle42Evidence("double-fan-count", [leftParts, rightParts], answer);
+        return result(`서로 떨어진 두 부채꼴 모양에서 선을 따라 그릴 수 있는 삼각형은 모두 몇 개입니까?${triangleDoubleFanSvg(leftParts, rightParts)}${evidence}`, answer, `왼쪽은 ${leftParts * (leftParts + 1) / 2}개, 오른쪽은 ${rightParts * (rightParts + 1) / 2}개입니다. 두 모양은 선을 공유하지 않으므로 합은 ${answer}개입니다.`);
+      }
+      if (kind === 4) {
+        const rectangleCount = int(rng, 2, 2 + level);
+        const answer = rectangleCount * 8;
+        const evidence = triangle42Evidence("cross-rectangle-count", [rectangleCount], answer);
+        return result(`각 직사각형에 두 대각선을 모두 그었습니다. 그어진 선을 따라 만들 수 있는 삼각형은 모두 몇 개입니까?${triangleCrossRectanglesSvg(rectangleCount)}${evidence}`, answer, `직사각형 하나에는 중심을 꼭짓점으로 하는 작은 삼각형 4개와 큰 삼각형 4개가 있어 8개입니다. ${rectangleCount}개에서는 ${rectangleCount}×8=${answer}개입니다.`);
+      }
+      const parts = int(rng, 7 + level, 10 + level * 2);
       const answer = parts * (parts + 1) / 2;
-      return result(`아래와 같이 꼭짓점에서 밑변의 ${parts}등분점으로 선분을 모두 그었습니다. 만들어진 삼각형은 모두 몇 개인지 구하세요.${triangleFanSvg(parts)}`, answer, `꼭짓점을 공통으로 하는 삼각형은 밑변의 두 점을 고르면 하나가 정해집니다. 따라서 ${parts} + ${parts - 1} + … + 1 = ${answer}개입니다.`);
+      const evidence = triangle42Evidence("dot-fan-count", [parts], answer);
+      return result(`점판에서 위쪽 점과 아래쪽 점들을 잇는 선을 따라 만들 수 있는 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts, -1, true)}${evidence}`, answer, `위쪽 점을 공통 꼭짓점으로 하고 아래쪽 점 두 개를 고르면 됩니다. ${parts}+${parts - 1}+…+1=${answer}개입니다.`);
     },
-    triangleAngleType({ rng, level }) {
+    triangleAngleType({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
       const source = {
         acute: [[50, 60, 70], [40, 65, 75], [55, 55, 70], [30, 70, 80], [45, 60, 75]],
         right: [[30, 60, 90], [45, 45, 90], [25, 65, 90]],
         obtuse: [[20, 40, 120], [35, 35, 110], [25, 55, 100], [45, 30, 105], [15, 45, 120]]
       };
-      const count = 5 + level;
-      const kinds = shuffle(rng, ["acute", "acute", "right", "obtuse", "obtuse", level > 0 ? "acute" : "right", level > 1 ? "obtuse" : "acute"]).slice(0, count);
-      const triangles = kinds.map((kind, index) => source[kind][(index + int(rng, 0, source[kind].length - 1)) % source[kind].length]);
-      const totals = {
-        acute: kinds.filter(kind => kind === "acute").length,
-        right: kinds.filter(kind => kind === "right").length,
-        obtuse: kinds.filter(kind => kind === "obtuse").length
-      };
-      return result(`다음 삼각형을 각의 크기에 따라 분류할 때 예각삼각형, 직각삼각형, 둔각삼각형은 각각 몇 개인지 차례로 구하세요.${triangleAngleCards(triangles)}`, `${totals.acute}, ${totals.right}, ${totals.obtuse}`, `한 각이 90°보다 크면 둔각삼각형, 90°이면 직각삼각형, 세 각이 모두 90°보다 작으면 예각삼각형입니다. 따라서 예각 ${totals.acute}개, 직각 ${totals.right}개, 둔각 ${totals.obtuse}개입니다.`);
+      if (kind === 0) {
+        const count = 6 + level;
+        const kinds = shuffle(rng, ["acute", "acute", "right", "obtuse", "obtuse", "acute", "right", "obtuse"]).slice(0, count);
+        const triangles = kinds.map((item, index) => source[item][(index + int(rng, 0, source[item].length - 1)) % source[item].length]);
+        const totals = { acute: kinds.filter(item => item === "acute").length, right: kinds.filter(item => item === "right").length, obtuse: kinds.filter(item => item === "obtuse").length };
+        const answer = `${totals.acute}, ${totals.right}, ${totals.obtuse}`;
+        const evidence = triangle42Evidence("angle-card-count", triangles, answer);
+        return result(`다음 삼각형을 예각삼각형, 직각삼각형, 둔각삼각형으로 분류하여 각각의 개수를 차례로 쓰세요.${triangleAngleCards(triangles)}${evidence}`, answer, `가장 큰 각을 기준으로 90°보다 작음, 같음, 큼을 확인하면 예각 ${totals.acute}개, 직각 ${totals.right}개, 둔각 ${totals.obtuse}개입니다.`);
+      }
+      const pointSets = [
+        [[0, 3], [1, 0], [4, 2], [0, 2], [3, 0]],
+        [[0, 0], [2, 0], [4, 0], [0, 2], [2, 3], [4, 2]],
+        [[0, 0], [2, 0], [4, 0], [1, 2], [3, 2], [2, 4], [5, 3]]
+      ];
+      if (kind === 1) {
+        const points = pointSets[0];
+        const totals = trianglePointCounts(points);
+        const answer = `${totals.acute}, ${totals.obtuse}`;
+        const starLines = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]];
+        const evidence = triangle42Evidence("star-angle-count", [points, -1, "acute-obtuse"], answer);
+        return result(`별 모양의 다섯 꼭짓점 중 세 점을 골라 삼각형을 만듭니다. 예각삼각형과 둔각삼각형의 개수를 차례로 구하세요.${trianglePointBoardSvg(points, -1, starLines)}${evidence}`, answer, `세 점을 고르는 모든 경우를 그려 보고 가장 큰 각이 직각보다 작은지 큰지 확인하면 예각 ${totals.acute}개, 둔각 ${totals.obtuse}개입니다.`);
+      }
+      if (kind === 2) {
+        const angles = shuffle(rng, [15, 20, 25, 35, 40, 45, 55, 65, 70]).slice(0, 6 + level).sort((a, b) => a - b);
+        let answer = 0;
+        for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) if (angles[first] + angles[second] < 90) answer += 1;
+        const evidence = triangle42Evidence("obtuse-angle-pairs", angles, answer);
+        return result(`다음 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정할 때 둔각삼각형이 되는 방법은 몇 가지입니까?<div class="sequence">${angles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `고른 두 각의 합이 90°보다 작으면 나머지 한 각이 90°보다 커집니다. 조건을 만족하는 두 각의 짝을 세면 ${answer}가지입니다.`);
+      }
+      const points = pointSets[Math.min(level, pointSets.length - 1)];
+      if (kind === 3) {
+        const totals = trianglePointCounts(points);
+        const evidence = triangle42Evidence("grid-obtuse-count", [points, -1, "obtuse"], totals.obtuse);
+        return result(`격자점 중 서로 다른 세 점을 골라 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points)}${evidence}`, totals.obtuse, `일직선인 세 점을 제외하고 각 삼각형의 가장 긴 변을 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
+      }
+      if (kind === 4) {
+        const totals = trianglePointCounts(points);
+        const answer = Math.abs(totals.acute - totals.obtuse);
+        const evidence = triangle42Evidence("grid-angle-difference", [points, -1, "acute-obtuse-difference"], answer);
+        return result(`점판의 점 중 세 점을 골라 만든 삼각형에서 예각삼각형과 둔각삼각형의 개수 차를 구하세요.${trianglePointBoardSvg(points)}${evidence}`, answer, `예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개이므로 개수 차는 ${answer}개입니다.`);
+      }
+      const requiredIndex = int(rng, 0, points.length - 1);
+      const totals = trianglePointCounts(points, requiredIndex);
+      const evidence = triangle42Evidence("required-point-obtuse", [points, requiredIndex, "obtuse"], totals.obtuse);
+      return result(`●로 표시한 점을 꼭짓점으로 포함하여 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points, requiredIndex)}${evidence}`, totals.obtuse, `●과 다른 두 점을 고른 뒤 가장 긴 변을 기준으로 각의 종류를 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
     },
-    isoscelesTriangle({ rng, level }) {
+    isoscelesTriangle({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const upper = int(rng, 8 + level * 2, 14 + level * 3);
+        const lower = int(rng, 7 + level * 2, 13 + level * 3);
+        const base = int(rng, 6, Math.min(upper * 2 - 1, lower * 2 - 1));
+        const answer = 2 * upper + 2 * lower;
+        const evidence = triangle42Evidence("isosceles-diamond-perimeter", [upper, lower, base], answer);
+        return result(`같은 밑변을 공유하는 두 이등변삼각형의 같은 두 변 길이는 각각 ${upper}cm, ${lower}cm입니다. 두 삼각형을 합친 연꼴 모양의 바깥 둘레를 구하세요.${isoscelesDiamondSvg({ upper, lower, base })}${evidence}`, answer, `공유한 밑변 ${base}cm는 바깥 둘레에 포함되지 않습니다. 바깥쪽 네 변은 ${upper}, ${upper}, ${lower}, ${lower}cm이므로 둘레는 ${answer}cm입니다.`);
+      }
       const vertexAngles = level === 0 ? [80, 90, 100] : level === 1 ? [80, 90, 100, 110] : [70, 80, 100, 110];
       const vertex = pick(rng, vertexAngles);
-      const base = (180 - vertex) / 2;
-      const answer = vertex - base;
-      return result(`이등변삼각형 ABC에서 AB=AC이고 D는 BC 위의 점입니다. AD=BD, ∠BAC=${vertex}°일 때 ∠CAD의 크기를 구하세요.${isoscelesSplitSvg(vertex)}`, answer, `이등변삼각형 ABC의 밑각은 (180 - ${vertex}) ÷ 2 = ${base}°입니다. AD=BD이므로 ∠BAD=∠ABD=${base}°입니다. 따라서 ∠CAD=${vertex} - ${base}=${answer}°입니다.`);
+      const baseAngle = (180 - vertex) / 2;
+      if (kind === 1) {
+        const answer = vertex - baseAngle;
+        const evidence = triangle42Evidence("isosceles-split-angle", [vertex], answer);
+        return result(`이등변삼각형 ABC에서 AB=AC이고 D는 BC 위의 점입니다. AD=BD, ∠BAC=${vertex}°일 때 ∠CAD를 구하세요.${isoscelesSplitSvg(vertex)}${evidence}`, answer, `△ABC의 밑각은 ${baseAngle}°이고 AD=BD이므로 ∠BAD도 ${baseAngle}°입니다. 따라서 ∠CAD=${vertex}-${baseAngle}=${answer}°입니다.`);
+      }
+      if (kind === 2) {
+        const count = int(rng, 18 + level * 12, 36 + level * 18);
+        const equalSide = int(rng, 7 + level, 12 + level * 2);
+        const base = int(rng, 4, Math.min(equalSide - 1, 8 + level));
+        const answer = 2 * equalSide + count * base;
+        const evidence = triangle42Evidence("isosceles-chain-perimeter", [count, equalSide, base], answer);
+        return result(`같은 이등변삼각형 ${count}개를 이웃한 도형과 같은 길이의 한 변씩 겹치게 이어 붙였습니다. 같은 두 변은 ${equalSide}cm, 밑변은 ${base}cm일 때 전체 둘레를 구하세요.${equilateralChainSvg()}${evidence}`, answer, `첫 삼각형의 둘레는 2×${equalSide}+${base}cm이고, 한 개를 더 붙일 때마다 밑변 ${base}cm만큼 둘레가 늘어납니다. 전체는 2×${equalSide}+${count}×${base}=${answer}cm입니다.`);
+      }
+      if (kind === 3) {
+        const answer = vertex;
+        const evidence = triangle42Evidence("isosceles-rotation-angle", [vertex], answer);
+        return result(`꼭지각이 ${vertex}°인 이등변삼각형을 꼭짓점을 중심으로 돌려 한쪽 같은 변이 다른 쪽 같은 변과 겹치게 했습니다. 돌린 작은 각은 몇 도입니까?${isoscelesSplitSvg(vertex)}${evidence}`, answer, `겹치게 되는 두 같은 변 사이의 각이 바로 꼭지각이므로 돌린 각은 ${answer}°입니다.`);
+      }
+      if (kind === 4) {
+        const foldVertex = pick(rng, [60, 80, 100, 120]);
+        const foldBase = (180 - foldVertex) / 2;
+        const answer = foldBase / 2;
+        const evidence = triangle42Evidence("isosceles-fold-angle", [foldVertex], answer);
+        return result(`꼭지각이 ${foldVertex}°인 이등변삼각형에서 한 밑각을 정확히 반으로 접었습니다. 접은 선과 밑변이 이루는 작은 각을 구하세요.${isoscelesSplitSvg(foldVertex)}${evidence}`, answer, `밑각은 (180-${foldVertex})÷2=${foldBase}°입니다. 접은 선이 밑각을 반으로 나누므로 작은 각은 ${foldBase}÷2=${answer}°입니다.`);
+      }
+      const pointCount = int(rng, 8 + level, 10 + level * 2);
+      const signatures = new Set();
+      for (let a = 0; a < pointCount - 2; a += 1) for (let b = a + 1; b < pointCount - 1; b += 1) for (let c = b + 1; c < pointCount; c += 1) {
+        const steps = [[a, b], [b, c], [c, a]].map(([first, second]) => Math.min(Math.abs(first - second), pointCount - Math.abs(first - second))).sort((x, y) => x - y);
+        if (steps[0] === steps[1] || steps[1] === steps[2]) signatures.add(steps.join("-"));
+      }
+      const answer = signatures.size;
+      const evidence = triangle42Evidence("circle-isosceles-shapes", [pointCount], answer);
+      return result(`원 위에 같은 간격으로 찍은 ${pointCount}개 점 중 세 점을 골라 이등변삼각형을 만듭니다. 돌리거나 뒤집어 같은 모양은 하나로 볼 때 서로 다른 모양은 몇 가지입니까?${circlePointsSvg({ points: pointCount })}${evidence}`, answer, `세 점 사이의 원둘레 간격을 작은 순서로 비교하여 두 변의 길이가 같은 경우만 남기고, 같은 간격 묶음을 하나로 세면 ${answer}가지입니다.`);
     },
     equilateralTriangle({ rng, level, variant = 0 }) {
-      if (variant % 2 === 0) {
+      const kind = variant % 6;
+      if (kind === 0) {
         const side = int(rng, 3 + level, 5 + level);
         const count = int(rng, 12 + level * 8, 24 + level * 12);
         const answer = (count + 2) * side;
-        return result(`한 변의 길이가 ${side}cm인 정삼각형을 이웃한 도형과 한 변씩 겹치도록 ${count}개 이어 붙였습니다. 전체 둘레의 길이를 구하세요.${equilateralChainSvg()}`, answer, `정삼각형 1개로 시작하면 둘레는 3변이고, 한 개를 더 붙일 때마다 겹친 1변은 사라지고 2변이 새로 생겨 전체 변 수가 1개씩 늘어납니다. 따라서 둘레는 (${count} + 2) × ${side} = ${answer}cm입니다.`);
+        const evidence = triangle42Evidence("equilateral-chain-perimeter", [side, count], answer);
+        return result(`한 변이 ${side}cm인 정삼각형을 이웃한 도형과 한 변씩 겹치게 ${count}개 이어 붙였습니다. 전체 둘레를 구하세요.${equilateralChainSvg()}${evidence}`, answer, `처음 3변에서 한 개를 붙일 때마다 바깥 변이 1개씩 늘어납니다. 둘레는 (${count}+2)×${side}=${answer}cm입니다.`);
       }
-      const side = int(rng, 5 + level, 7 + level * 2);
-      const answer = 3 * side * (side + 1) / 2;
-      return result(`길이가 같은 성냥개비로 한 변을 ${side}등분한 정삼각형 격자를 만들었습니다. 사용한 성냥개비는 모두 몇 개인지 구하세요.${triangleLatticeSvg(side)}`, answer, `가로·왼쪽 아래 방향·오른쪽 아래 방향의 성냥개비 수가 각각 1 + 2 + … + ${side} = ${side * (side + 1) / 2}개입니다. 세 방향을 합하면 ${answer}개입니다.`);
+      if (kind === 1) {
+        const answer = 150;
+        const evidence = triangle42Evidence("square-equilateral-angle", [90, 60], answer);
+        return result(`정사각형과 정삼각형이 한 변을 공유하고 있습니다. 공통 꼭짓점 O에서 두 도형의 안쪽 각을 이어 만든 ㉠의 크기를 구하세요.${triangleRelationSvg("square")}${evidence}`, answer, `정사각형의 각 90°와 정삼각형의 각 60°가 이어져 있으므로 ㉠은 90+60=${answer}°입니다.`);
+      }
+      if (kind === 2) {
+        const given = pick(rng, [20, 25, 35, 40, 45]);
+        const answer = 180 - 60 - given;
+        const evidence = triangle42Evidence("overlap-equilateral-angle", [given], answer);
+        return result(`한 직선 위에서 정삼각형의 한 각 60°와 ${given}°인 각, ㉠이 차례로 놓여 있습니다. ㉠의 크기를 구하세요.${triangleRelationSvg("straight", `${given}°`)}${evidence}`, answer, `직선 위의 각의 합은 180°이므로 ㉠=180-60-${given}=${answer}°입니다.`);
+      }
+      if (kind === 3) {
+        const side = int(rng, 4 + level, 8 + level * 2) * 2;
+        const perimeter = side * 3;
+        const answer = side / 2;
+        const evidence = triangle42Evidence("equilateral-right-length", [perimeter], answer);
+        return result(`둘레가 ${perimeter}cm인 정삼각형의 꼭짓점에서 밑변에 수선을 그어 두 직각삼각형으로 나누었습니다. 직각삼각형 하나의 짧은 밑변 길이를 구하세요.${triangleRelationSvg("right-full", `${side}cm`)}${evidence}`, answer, `정삼각형의 한 변은 ${perimeter}÷3=${side}cm입니다. 수선이 밑변을 똑같이 둘로 나누므로 짧은 밑변은 ${side}÷2=${answer}cm입니다.`);
+      }
+      if (kind === 4) {
+        const side = int(rng, 4 + level, 8 + level * 2);
+        const count = int(rng, 6 + level * 3, 12 + level * 5);
+        const perimeter = (count + 2) * side;
+        const evidence = triangle42Evidence("equilateral-chain-side", [count, perimeter], side);
+        return result(`같은 정삼각형 ${count}개를 한 변씩 겹치게 이어 붙인 도형의 둘레가 ${perimeter}cm입니다. 정삼각형 한 변의 길이를 구하세요.${equilateralChainSvg()}${evidence}`, side, `바깥 둘레는 정삼각형 한 변의 ${count + 2}배입니다. 따라서 한 변은 ${perimeter}÷${count + 2}=${side}cm입니다.`);
+      }
+      const short = int(rng, 6 + level * 2, 12 + level * 3);
+      const extra = int(rng, 4 + level, 9 + level * 2);
+      const hypotenuse = short * 2;
+      const answer = hypotenuse - extra;
+      const evidence = triangle42Evidence("thirty-sixty-segment", [short, extra], answer);
+      return result(`30°인 각의 맞은편 짧은 변이 ${short}cm인 직각삼각형이 있습니다. 빗변에서 ${extra}cm를 제외한 나머지 선분의 길이를 구하세요.${triangleRelationSvg("right", `${short}cm`)}${evidence}`, answer, `30°인 각의 맞은편 변은 빗변의 절반이므로 빗변은 ${short}×2=${hypotenuse}cm입니다. ${extra}cm를 빼면 ${answer}cm입니다.`);
     },
     decimalUnderstanding({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
