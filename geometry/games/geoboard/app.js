@@ -40,6 +40,7 @@ const params = new URLSearchParams(location.search);
 const saved = readGameProgress(PROGRESS_KEY);
 const SESSION_SIZE = 5;
 const TUTORIAL_KEY = "gfield-geoboard-tutorial-v1";
+const forceTutorial = params.get("tutorial") === "1";
 
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
@@ -618,7 +619,7 @@ function renderTutorialDemo() {
 // Only on the very first problem of a first visit — never again on this device.
 function openTutorial() {
   if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
-  if (localStorage.getItem(TUTORIAL_KEY) === "done") return;
+  if (!forceTutorial && localStorage.getItem(TUTORIAL_KEY) === "done") return;
   tutorialReturnFocus = document.activeElement;
   ui.tutorial.hidden = false;
   renderTutorial();
