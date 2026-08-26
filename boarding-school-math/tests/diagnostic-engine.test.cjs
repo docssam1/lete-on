@@ -3,13 +3,24 @@ const assert = require("node:assert/strict");
 const engine = require("../assessment/diagnostic-engine.js");
 
 function item(index, overrides) {
-  const domains = ["G6-RP", "G6-NS", "G6-EE", "G6-G", "G6-SP", "MP"];
+  const lineages = [
+    { domainId: "G6-RP", unitId: "ccss-6-rp-a", clusterId: "6.RP.A", standardRange: "6.RP.A.1-3" },
+    { domainId: "G6-NS", unitId: "ccss-6-ns-a", clusterId: "6.NS.A", standardRange: "6.NS.A.1" },
+    { domainId: "G6-EE", unitId: "ccss-6-ee-a", clusterId: "6.EE.A", standardRange: "6.EE.A.1-4" },
+    { domainId: "G6-G", unitId: "ccss-6-g-a", clusterId: "6.G.A", standardRange: "6.G.A.1-4" },
+    { domainId: "G6-SP", unitId: "ccss-6-sp-a", clusterId: "6.SP.A", standardRange: "6.SP.A.1-3" },
+    { domainId: "MP", unitId: "gfield-6-mp-a", clusterId: "6.MP.A", standardRange: "6.MP.A.1" }
+  ];
   const responseTypes = ["multiple-choice", "numeric", "short-answer", "constructed-response"];
   const responseType = responseTypes[index % responseTypes.length];
+  const lineage = lineages[index % lineages.length];
   return Object.assign({
     itemId: `qst-bnk-${String(index).padStart(16, "0")}`,
+    unitId: lineage.unitId,
+    clusterId: lineage.clusterId,
+    standardRange: lineage.standardRange,
     skillId: `grade6:skill-${index}`,
-    domainId: domains[index % domains.length],
+    domainId: lineage.domainId,
     maxPoints: responseType === "constructed-response" ? 3 : index % 3 === 0 ? 2 : 1,
     responseType,
     difficulty: engine.DIFFICULTIES[index % engine.DIFFICULTIES.length],
@@ -114,9 +125,16 @@ test("a 42-item multi-domain approved blueprint passes the placement contract", 
 
 test("placement blueprints reject token domain coverage and token difficulty coverage", function () {
   const domainSkew = blueprint(42);
+  const lineageByDomain = {
+    "G6-RP": { unitId: "ccss-6-rp-a", clusterId: "6.RP.A", standardRange: "6.RP.A.1-3" },
+    "G6-NS": { unitId: "ccss-6-ns-a", clusterId: "6.NS.A", standardRange: "6.NS.A.1" },
+    "G6-EE": { unitId: "ccss-6-ee-a", clusterId: "6.EE.A", standardRange: "6.EE.A.1-4" },
+    "G6-G": { unitId: "ccss-6-g-a", clusterId: "6.G.A", standardRange: "6.G.A.1-4" }
+  };
   domainSkew.items = domainSkew.items.map(function (sourceItem, index) {
     const tailDomains = ["G6-NS", "G6-EE", "G6-G"];
-    return Object.assign({}, sourceItem, { domainId: index < 39 ? "G6-RP" : tailDomains[index - 39] });
+    const domainId = index < 39 ? "G6-RP" : tailDomains[index - 39];
+    return Object.assign({}, sourceItem, lineageByDomain[domainId], { domainId });
   });
   assert.throws(function () { engine.validateBlueprint(domainSkew); }, /at least 4 items per domain/);
 
@@ -215,6 +233,31 @@ test("attempt results must be dense and cannot omit a scored item through an emp
   assert.throws(function () { engine.validateAttempt(source, sparse); }, /dense array without empty slots/);
 });
 
+test("analysis rebinds stored results to immutable blueprint order and retains cluster-level evidence", function () {
+  const source = blueprint(42);
+  const activePolicy = policy();
+  const reversed = attemptFor(source, function (sourceItem, index) {
+    return index % 5 === 0
+      ? { awardedPoints: 0, errorType: "concept-gap" }
+      : { awardedPoints: sourceItem.maxPoints };
+  });
+  reversed.itemResults.reverse();
+  const report = engine.analyzeAttempt(source, reversed, activePolicy, evidenceFor(source, reversed, activePolicy));
+
+  assert.deepEqual(report.itemFeedback.map(function (row) { return row.itemId; }), source.items.map(function (row) { return row.itemId; }));
+  assert.equal(report.itemFeedback[0].unitId, source.items[0].unitId);
+  assert.equal(report.itemFeedback[0].clusterId, source.items[0].clusterId);
+  assert.equal(report.itemFeedback[0].standardRange, source.items[0].standardRange);
+  assert.equal(report.itemFeedback[0].difficulty, source.items[0].difficulty);
+  assert.equal(report.clusters.length, 6);
+  assert.equal(report.clusterPriorities.length, 6);
+  report.clusterPriorities.forEach(function (priority) {
+    assert.equal(priority.evidenceState, "cluster-range-only-pending-teacher-confirmation");
+    assert.ok(priority.itemCount > 0);
+    assert.deepEqual(Object.keys(priority.difficultyEvidence).sort(), engine.DIFFICULTIES.slice().sort());
+  });
+});
+
 test("score, domains, item comments, and lesson priorities are derived from one exact result set", function () {
   const source = blueprint(42);
   const activePolicy = policy();
@@ -305,7 +348,8 @@ test("diagnostic evidence never makes an automatic promotion decision", function
   assert.equal(ready.promotionReview.automaticPromotion, false);
   assert.equal(ready.promotionReview.requiresServerAuthorization, true);
   assert.equal(ready.promotionReview.serverAuthorizationVerified, false);
-  assert.equal(ready.promotionReview.decisionAuthority, "GFIELD Campus A");
+  assert.equal(ready.promotionReview.decisionAuthority, "pol-bdg-campus-a-2026");
+  assert.equal(Object.hasOwn(ready.policy, "owner"), false);
 });
 
 test("a low domain or prerequisite gap stays blocked even when the total score is high", function () {

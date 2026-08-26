@@ -32,7 +32,7 @@
   ]);
   const EVIDENCE_TYPES = Object.freeze(["diagnostic", "unit-mastery", "retention-check", "teacher-review"]);
   const ITEM_FIELDS = Object.freeze([
-    "itemId", "skillId", "domainId", "maxPoints", "responseType", "difficulty", "scoringMode", "reviewState"
+    "itemId", "unitId", "clusterId", "standardRange", "skillId", "domainId", "maxPoints", "responseType", "difficulty", "scoringMode", "reviewState"
   ]);
   const BLUEPRINT_FIELDS = Object.freeze(["schemaVersion", "id", "programId", "targetGrade", "version", "purpose", "items"]);
   const ATTEMPT_FIELDS = Object.freeze([
@@ -129,6 +129,9 @@
     if (!isRecord(item)) fail(`${field} must be an object`);
     assertKnownFields(item, ITEM_FIELDS, field);
     requireText(item.itemId, `${field}.itemId`, /^qst-bnk-[a-z0-9]{16}$/);
+    requireText(item.unitId, `${field}.unitId`, /^[a-z0-9][a-z0-9-]{2,127}$/);
+    requireText(item.clusterId, `${field}.clusterId`, /^[A-Za-z0-9][A-Za-z0-9._:-]{1,63}$/);
+    requireText(item.standardRange, `${field}.standardRange`, /^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/);
     requireText(item.skillId, `${field}.skillId`, /^[a-z0-9][a-z0-9:-]{2,127}$/);
     requireText(item.domainId, `${field}.domainId`, /^[A-Za-z0-9][A-Za-z0-9._:-]{1,63}$/);
     if (!Number.isInteger(item.maxPoints) || item.maxPoints < 1 || item.maxPoints > 4) fail(`${field}.maxPoints must be 1-4`);
@@ -158,6 +161,14 @@
     }
     blueprint.items.forEach(validateItem);
     assertUnique(blueprint.items.map(function (item) { return item.itemId; }), "blueprint item ids");
+    const clusterLineage = new Map();
+    blueprint.items.forEach(function (item) {
+      const lineage = `${item.unitId}|${item.domainId}|${item.standardRange}`;
+      if (clusterLineage.has(item.clusterId) && clusterLineage.get(item.clusterId) !== lineage) {
+        fail("blueprint cluster lineage must be consistent");
+      }
+      clusterLineage.set(item.clusterId, lineage);
+    });
     const domains = new Set(blueprint.items.map(function (item) { return item.domainId; }));
     if (domains.size < rule.minDomains) fail(`${blueprint.purpose} requires at least ${rule.minDomains} domains`);
     if (blueprint.purpose === "course-placement") {
@@ -336,25 +347,78 @@
       return suppliedEvidence[type] != null;
     }).map(function (type) { return suppliedEvidence[type].recordId; }), "evidence record ids");
 
-    const itemById = new Map(blueprint.items.map(function (item) { return [item.itemId, item]; }));
+    const resultByItemId = new Map(attempt.itemResults.map(function (result) { return [result.itemId, result]; }));
     const domainMap = new Map();
-    const itemFeedback = attempt.itemResults.map(function (result) {
-      const item = itemById.get(result.itemId);
+    const clusterMap = new Map();
+
+    function newDifficultyEvidence() {
+      return Object.fromEntries(DIFFICULTIES.map(function (difficulty) {
+        return [difficulty, { earnedPoints: 0, maxPoints: 0, itemCount: 0 }];
+      }));
+    }
+
+    function addEvidence(bucket, item, result) {
+      bucket.earnedPoints += result.awardedPoints;
+      bucket.maxPoints += item.maxPoints;
+      bucket.itemCount += 1;
+      if (result.errorType) bucket.errorCounts[result.errorType] = (bucket.errorCounts[result.errorType] || 0) + 1;
+      if (bucket.difficultyEvidence) {
+        const difficulty = bucket.difficultyEvidence[item.difficulty];
+        difficulty.earnedPoints += result.awardedPoints;
+        difficulty.maxPoints += item.maxPoints;
+        difficulty.itemCount += 1;
+      }
+    }
+
+    function freezeDifficultyEvidence(value) {
+      return Object.freeze(Object.fromEntries(DIFFICULTIES.map(function (difficulty) {
+        const evidence = value[difficulty];
+        return [difficulty, Object.freeze({
+          earnedPoints: evidence.earnedPoints,
+          maxPoints: evidence.maxPoints,
+          itemCount: evidence.itemCount,
+          percentage: evidence.maxPoints ? round1(100 * evidence.earnedPoints / evidence.maxPoints) : null
+        })];
+      })));
+    }
+
+    const itemFeedback = blueprint.items.map(function (item) {
+      // Results may arrive in storage order rather than form order. Rebind by
+      // immutable item ID and always project feedback in the blueprint order.
+      const result = resultByItemId.get(item.itemId);
       if (!domainMap.has(item.domainId)) {
         domainMap.set(item.domainId, { domainId: item.domainId, earnedPoints: 0, maxPoints: 0, itemCount: 0, errorCounts: {} });
       }
+      if (!clusterMap.has(item.clusterId)) {
+        clusterMap.set(item.clusterId, {
+          unitId: item.unitId,
+          clusterId: item.clusterId,
+          standardRange: item.standardRange,
+          domainId: item.domainId,
+          skillIds: new Set(),
+          earnedPoints: 0,
+          maxPoints: 0,
+          itemCount: 0,
+          errorCounts: {},
+          difficultyEvidence: newDifficultyEvidence()
+        });
+      }
       const domain = domainMap.get(item.domainId);
-      domain.earnedPoints += result.awardedPoints;
-      domain.maxPoints += item.maxPoints;
-      domain.itemCount += 1;
-      if (result.errorType) domain.errorCounts[result.errorType] = (domain.errorCounts[result.errorType] || 0) + 1;
+      const cluster = clusterMap.get(item.clusterId);
+      addEvidence(domain, item, result);
+      addEvidence(cluster, item, result);
+      cluster.skillIds.add(item.skillId);
       const outcomeCode = result.awardedPoints === item.maxPoints ? "full-credit" :
         result.awardedPoints > 0 ? "partial-credit" : "no-credit";
       const commentCode = result.awardedPoints === item.maxPoints ? "secure" : result.errorType;
       return Object.freeze({
         itemId: item.itemId,
+        unitId: item.unitId,
+        clusterId: item.clusterId,
+        standardRange: item.standardRange,
         skillId: item.skillId,
         domainId: item.domainId,
+        difficulty: item.difficulty,
         earnedPoints: result.awardedPoints,
         maxPoints: item.maxPoints,
         outcomeCode,
@@ -370,6 +434,22 @@
         percentage: round1(100 * domain.earnedPoints / domain.maxPoints)
       }));
     }).sort(function (left, right) { return left.domainId.localeCompare(right.domainId); });
+    const clusters = Array.from(clusterMap.values()).map(function (cluster) {
+      return Object.freeze({
+        unitId: cluster.unitId,
+        clusterId: cluster.clusterId,
+        standardRange: cluster.standardRange,
+        domainId: cluster.domainId,
+        skillIds: Object.freeze(Array.from(cluster.skillIds).sort()),
+        earnedPoints: cluster.earnedPoints,
+        maxPoints: cluster.maxPoints,
+        itemCount: cluster.itemCount,
+        errorCounts: Object.freeze(Object.assign({}, cluster.errorCounts)),
+        difficultyEvidence: freezeDifficultyEvidence(cluster.difficultyEvidence),
+        percentage: round1(100 * cluster.earnedPoints / cluster.maxPoints),
+        evidenceState: "cluster-range-only-pending-teacher-confirmation"
+      });
+    }).sort(function (left, right) { return left.clusterId.localeCompare(right.clusterId); });
     const earnedPoints = domains.reduce(function (sum, domain) { return sum + domain.earnedPoints; }, 0);
     const maxPoints = domains.reduce(function (sum, domain) { return sum + domain.maxPoints; }, 0);
     const exactPercentage = 100 * earnedPoints / maxPoints;
@@ -399,6 +479,25 @@
         Object.keys(domain.errorCounts).length ? "guided-practice" : "consolidate";
       return Object.freeze({ domainId: domain.domainId, mode, percentage: domain.percentage, errorCounts: Object.freeze(Object.assign({}, domain.errorCounts)) });
     });
+    const clusterPriorities = clusters.slice().sort(function (left, right) {
+      return left.percentage - right.percentage || left.clusterId.localeCompare(right.clusterId);
+    }).map(function (cluster) {
+      const mode = 100 * cluster.earnedPoints / cluster.maxPoints < policy.promotionReview.minDomainPercent ? "repair" :
+        Object.keys(cluster.errorCounts).length ? "guided-practice" : "consolidate";
+      return Object.freeze({
+        unitId: cluster.unitId,
+        clusterId: cluster.clusterId,
+        standardRange: cluster.standardRange,
+        domainId: cluster.domainId,
+        skillIds: cluster.skillIds,
+        mode,
+        percentage: cluster.percentage,
+        itemCount: cluster.itemCount,
+        errorCounts: cluster.errorCounts,
+        difficultyEvidence: cluster.difficultyEvidence,
+        evidenceState: "cluster-range-only-pending-teacher-confirmation"
+      });
+    });
 
     return Object.freeze({
       schemaVersion: SCHEMA_VERSION,
@@ -408,7 +507,6 @@
       policy: Object.freeze({
         id: policy.id,
         version: policy.version,
-        owner: policy.owner,
         schoolId: policy.schoolId,
         programId: policy.programId,
         targetGrade: policy.targetGrade,
@@ -417,14 +515,19 @@
       }),
       score: Object.freeze({ earnedPoints, maxPoints, percentage, performanceBand: band.id }),
       domains: Object.freeze(domains),
+      clusters: Object.freeze(clusters),
       itemFeedback: Object.freeze(itemFeedback),
       lessonPriorities: Object.freeze(lessonPriorities),
+      clusterPriorities: Object.freeze(clusterPriorities),
       promotionReview: Object.freeze({
         status,
         automaticPromotion: false,
         requiresServerAuthorization: true,
         serverAuthorizationVerified: false,
-        decisionAuthority: policy.owner,
+        // A policy ID is an opaque, validated authority reference. The input
+        // owner label is deliberately not copied into an analysis artifact,
+        // because a browser-supplied display label is not trusted evidence.
+        decisionAuthority: policy.id,
         blockers: Object.freeze(blockers),
         missingEvidence: Object.freeze(missingEvidence),
         lowDomainIds: Object.freeze(lowDomains.map(function (domain) { return domain.domainId; })),

@@ -76,6 +76,13 @@ const ANSWER_VALUE_LABEL = /(?:correct\s+answer|answer|정답|답|正确答案|�
 const ANSWER_VALUE_GRAMMAR_CONNECTOR = /^\s*(?:은|는|is|are|equals?|是|为)\s*/iu;
 const ANSWER_VALUE_SEPARATOR = /^(?:[\s\p{P}\p{S}\p{C}\p{M}\p{Z}])+/u;
 const ANSWER_VALUE_WRAPPER = /^(?:[\[("“‘]+\s*)+/u;
+const HTML_TAG = /<[A-Za-z/!][^>]*>/u;
+const HTML_ENTITY = /&(?:#(?:x[0-9a-f]+|\d+)|[a-z][a-z0-9]+);/iu;
+const RESPONSE_TEXT_LOCALE_PATTERNS = Object.freeze({
+  en: /^[\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
+  ko: /^[\p{Script=Hangul}\p{Script=Han}\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u,
+  "zh-Hans": /^[\p{Script=Han}\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]*$/u
+});
 
 class ValidationError extends Error {
   constructor(code, reference) {
@@ -143,6 +150,30 @@ function normalizeForAnswerLeakScan(value) {
     .trim();
 }
 
+function normalizeForAnswerLabelScan(value) {
+  // A TeX spacing command such as `\\!` is visually a zero/negative-width
+  // separator. Treat punctuation, symbols, and invisible formatting as absent
+  // for the label scan so `An\\!swer` cannot bypass the student-content rule.
+  return normalizeForAnswerLeakScan(value).replace(/[\p{P}\p{S}\p{C}\p{M}\p{Z}]/gu, "");
+}
+
+function assertResponseStudentTextSyntax(content, locale, reference) {
+  const value = String(content);
+  const compatibilityNormalized = value.normalize("NFKC");
+  // Response blocks are deliberately plain text. Reject every ampersand rather
+  // than trying to mirror browser-specific named/numeric entity recovery
+  // rules, including semicolon-less numeric forms such as `&#115`.
+  assert(!HTML_TAG.test(value) && !HTML_ENTITY.test(value) && !/&/u.test(value) &&
+    !HTML_TAG.test(compatibilityNormalized) && !HTML_ENTITY.test(compatibilityNormalized) && !/&/u.test(compatibilityNormalized),
+  "STUDENT_MARKUP_UNSUPPORTED", reference);
+  assert(!/[\\]/u.test(value) && !/[\\]/u.test(compatibilityNormalized), "STUDENT_TEX_UNSUPPORTED", reference);
+  assert(!/[\p{C}\p{M}]/u.test(value) && !/[\p{C}\p{M}]/u.test(compatibilityNormalized), "STUDENT_CHARACTER_UNSUPPORTED", reference);
+  if (locale != null) {
+    const allowed = RESPONSE_TEXT_LOCALE_PATTERNS[locale];
+    assert(allowed && allowed.test(value) && allowed.test(compatibilityNormalized), "STUDENT_CHARACTER_UNSUPPORTED", reference);
+  }
+}
+
 function answerValueBoundary(nextCharacter) {
   return nextCharacter === "" || /\s/u.test(nextCharacter) || ",.;!?%()]}\"'”’".includes(nextCharacter);
 }
@@ -158,9 +189,13 @@ function disclosedResponseStartsCandidate(candidate, normalizedResponse) {
   return !!match && answerValueBoundary(candidate.slice(match[0].length, match[0].length + 1));
 }
 
-function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference) {
+function assertStudentContentDoesNotRevealAnswer(content, expectedResponse, reference, locale) {
   const normalizedContent = normalizeForAnswerLeakScan(content);
-  assert(!ANSWER_REVEALING_TEXT.test(normalizedContent), "STUDENT_ANSWER_LEAK", reference);
+  const compactLabelContent = normalizeForAnswerLabelScan(content);
+  assert(!ANSWER_REVEALING_TEXT.test(normalizedContent) && !ANSWER_REVEALING_TEXT.test(compactLabelContent), "STUDENT_ANSWER_LEAK", reference);
+  // Response-bearing student blocks accept plain text only until content is
+  // separated into validated text and math blocks with an explicit allowlist.
+  assertResponseStudentTextSyntax(content, locale, reference);
   const normalizedResponse = normalizeForAnswerLeakScan(expectedResponse);
   assert(nonBlankText(normalizedResponse), "STUDENT_ANSWER_LEAK", reference);
   ANSWER_VALUE_LABEL.lastIndex = 0;
@@ -272,7 +307,10 @@ function validateStudentComponent(component, policy, reference) {
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
-    Object.values(component.contentByLocale).forEach(function (content) {
+    Object.entries(component.contentByLocale).forEach(function (entry) {
+      const locale = entry[0];
+      const content = entry[1];
+      assertResponseStudentTextSyntax(content, locale, reference);
       assert(!ANSWER_REVEALING_TEXT.test(normalizeForAnswerLeakScan(content)), "STUDENT_ANSWER_LEAK", reference);
     });
   }
@@ -338,6 +376,10 @@ function positiveInteger(value) {
   return Number.isSafeInteger(value) && value > 0 && value <= 1000000000;
 }
 
+function nonNegativeInteger(value) {
+  return Number.isSafeInteger(value) && value >= 0 && value <= 1000000000;
+}
+
 function greatestCommonDivisor(left, right) {
   let a = Math.abs(left);
   let b = Math.abs(right);
@@ -347,6 +389,26 @@ function greatestCommonDivisor(left, right) {
     b = next;
   }
   return a;
+}
+
+function greatestCommonDivisorBigInt(left, right) {
+  let a = left < 0n ? -left : left;
+  let b = right < 0n ? -right : right;
+  while (b !== 0n) {
+    const next = a % b;
+    a = b;
+    b = next;
+  }
+  return a;
+}
+
+function canonicalRational(numerator, denominator, reference) {
+  assert(denominator > 0n && numerator >= 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  if (numerator === 0n) return "0";
+  const divisor = greatestCommonDivisorBigInt(numerator, denominator);
+  const reducedNumerator = numerator / divisor;
+  const reducedDenominator = denominator / divisor;
+  return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
 }
 
 function canonicalAnswer(check, reference) {
@@ -377,6 +439,21 @@ function canonicalAnswer(check, reference) {
     assert(positiveInteger(check.whole) && positiveInteger(check.percent) && check.percent <= 100 && (check.whole * check.percent) % 100 === 0, "ARITHMETIC_CHECK_INVALID", reference);
     return String((check.whole * check.percent) / 100);
   }
+  if (check.kind === "rational-quotient") {
+    assertOnlyKeys(check, new Set([
+      "kind", "dividendNumerator", "dividendDenominator", "divisorNumerator", "divisorDenominator"
+    ]), "ARITHMETIC_CHECK_INVALID", reference);
+    assert(
+      nonNegativeInteger(check.dividendNumerator) && positiveInteger(check.dividendDenominator) &&
+      positiveInteger(check.divisorNumerator) && positiveInteger(check.divisorDenominator),
+      "ARITHMETIC_CHECK_INVALID", reference
+    );
+    return canonicalRational(
+      BigInt(check.dividendNumerator) * BigInt(check.divisorDenominator),
+      BigInt(check.dividendDenominator) * BigInt(check.divisorNumerator),
+      reference
+    );
+  }
   fail("ARITHMETIC_CHECK_INVALID", reference);
 }
 
@@ -398,8 +475,8 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   assert(answerReference.expectedResponse === expected, "ANSWER_REFERENCE_CALCULATION_MISMATCH", reference);
   if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (answerReference.responseMode === "numeric-exact") assert(answerReference.arithmeticCheck.kind !== "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
-  Object.values(component.component.contentByLocale).forEach(function (content) {
-    assertStudentContentDoesNotRevealAnswer(content, answerReference.expectedResponse, reference);
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
   return component;
 }
@@ -704,7 +781,9 @@ module.exports = Object.freeze({
   SCHEMA_VERSION,
   CONFIDENTIALITY_MARKER,
   DRAFT_STATE,
+  assertResponseStudentTextSyntax,
   assertStudentContentDoesNotRevealAnswer,
+  canonicalAnswer,
   validatePack,
   validateDirectory
 });

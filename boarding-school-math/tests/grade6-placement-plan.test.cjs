@@ -25,13 +25,14 @@ test("Grade 6 placement plan uses 42 locked authenticated slots rather than a 12
     assert.deepEqual(Object.keys(slot).sort(), [
       "clusterId", "difficulty", "domainId", "itemId", "itemVersion", "maxPoints", "releaseState",
       "responseType", "scoringMode", "skillId", "slotId", "standardRange"
-    ].sort());
+      , "unitId"].sort());
     assert.match(slot.slotId, /^slot-bdg-g6-[a-z]+-[a-z]-\d{2}$/);
     assert.equal(slot.itemId, null);
     assert.equal(slot.itemVersion, null);
     assert.equal(slot.releaseState, "locked-awaiting-reviewed-item");
     assert.equal(slot.maxPoints, 1);
     assert.equal(slot.skillId, registry.skillIdForCluster(slot.clusterId));
+    assert.equal(slot.unitId, registry.units.find(function (unit) { return unit.clusterId === slot.clusterId; }).unitId);
   });
   assert.equal(new Set(plan.slots.map(function (slot) { return slot.slotId; })).size, 42);
 });
@@ -74,6 +75,9 @@ test("difficulty and response distributions independently satisfy the diagnostic
     items: slots.map(function (slot, index) {
       return {
         itemId: `qst-bnk-${String(index + 1).padStart(16, "0")}`,
+        unitId: slot.unitId,
+        clusterId: slot.clusterId,
+        standardRange: slot.standardRange,
         skillId: slot.skillId,
         domainId: slot.domainId,
         maxPoints: slot.maxPoints,

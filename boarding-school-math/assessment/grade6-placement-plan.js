@@ -25,11 +25,14 @@
 
   const rowsByCluster = clusterSpecs.map(function (spec) {
     if (spec.difficulties.length !== spec.responseTypes.length) throw new Error(`${spec.clusterId} plan arrays must match`);
+    const unit = registry.units.find(function (candidate) { return candidate.clusterId === spec.clusterId; });
+    if (!unit || unit.grade !== 6) throw new Error(`${spec.clusterId} must map to one Grade 6 unit`);
     const clusterSlug = spec.clusterId.toLowerCase().replace(/\./g, "-").replace(/^6-/, "");
     return spec.difficulties.map(function (difficulty, index) {
       const responseType = spec.responseTypes[index];
       return Object.freeze({
         slotId: `slot-bdg-g6-${clusterSlug}-${String(index + 1).padStart(2, "0")}`,
+        unitId: unit.unitId,
         clusterId: spec.clusterId,
         skillId: registry.skillIdForCluster(spec.clusterId),
         standardRange: `${spec.clusterId}.${spec.standardRange}`,
