@@ -13,6 +13,12 @@
     "oneNumberedMissionIsOneType": true,
     "splitSubquestions": false
   },
+  "languagePolicy": {
+    "audience": "elementary-student-parent-teacher",
+    "sourceLocationIsNotTypeName": true,
+    "childReadableKoreanTypeNameRequired": true,
+    "description": "원문 뜻은 유지하되 초등학생과 학부모가 문제에서 무엇을 해야 하는지 바로 알 수 있는 한글 유형명을 사용한다."
+  },
   "totals": {
     "units": 6,
     "groups": 30,
@@ -44,7 +50,8 @@
       "sourcePdfPage": 8,
       "sourcePrintedPage": 4,
       "typeLabel": "큰 수의 자릿값과 읽기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -57,7 +64,8 @@
       "sourcePdfPage": 8,
       "sourcePrintedPage": 4,
       "typeLabel": "큰 수 읽고 쓰기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -70,7 +78,8 @@
       "sourcePdfPage": 8,
       "sourcePrintedPage": 4,
       "typeLabel": "배수 변화 뒤 자릿값 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -83,7 +92,8 @@
       "sourcePdfPage": 8,
       "sourcePrintedPage": 4,
       "typeLabel": "자릿값 분해식의 빈칸",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -96,7 +106,8 @@
       "sourcePdfPage": 8,
       "sourcePrintedPage": 4,
       "typeLabel": "특정 숫자의 자릿값 순서",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -108,8 +119,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
-      "typeLabel": "자릿값별 계수로 수 나타내기",
-      "sourceVerified": true
+      "typeLabel": "각 자리 단위의 개수로 수 나타내기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -121,8 +133,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
-      "typeLabel": "단위 개수로 만든 수의 자리숫자",
-      "sourceVerified": true
+      "typeLabel": "단위 개수로 만든 수의 특정 자리 숫자 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -135,7 +148,8 @@
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
       "typeLabel": "두 숫자의 자릿값 배수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -147,8 +161,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
-      "typeLabel": "배수 변화 뒤 자리숫자 합",
-      "sourceVerified": true
+      "typeLabel": "수를 몇 배 한 뒤 각 자리 숫자의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -160,8 +175,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
-      "typeLabel": "수 범위의 특정 숫자 빈도",
-      "sourceVerified": true
+      "typeLabel": "정해진 수 범위에 특정 숫자가 쓰인 횟수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -173,8 +189,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 5,
-      "typeLabel": "거리 단위 환산 뒤 자리숫자 차",
-      "sourceVerified": true
+      "typeLabel": "거리 단위를 바꾼 뒤 두 자리 숫자의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -186,8 +203,9 @@
       "sourceItemLabel": "개념탐구 2 본문",
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
-      "typeLabel": "빈칸 부등식의 경우의 수",
-      "sourceVerified": true
+      "typeLabel": "빈칸에 숫자를 넣어 두 큰 수의 크기 비교하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -199,8 +217,9 @@
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
-      "typeLabel": "두 부등식의 공통 숫자",
-      "sourceVerified": true
+      "typeLabel": "두 크기 비교식을 모두 맞게 하는 숫자 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -212,8 +231,9 @@
       "sourceItemLabel": "예제 2-2",
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
-      "typeLabel": "서로 다른 표현의 큰 수 정렬",
-      "sourceVerified": true
+      "typeLabel": "여러 방법으로 나타낸 큰 수를 크기 순서로 나열하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -225,8 +245,9 @@
       "sourceItemLabel": "예제 2-3",
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
-      "typeLabel": "범위 안 특정 자리숫자 개수",
-      "sourceVerified": true
+      "typeLabel": "정해진 범위에서 특정 자리 숫자의 개수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -239,7 +260,8 @@
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
       "typeLabel": "빈칸 수의 최댓값 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -251,8 +273,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
-      "typeLabel": "부등식을 만족하는 숫자",
-      "sourceVerified": true
+      "typeLabel": "크기 비교식을 맞게 하는 숫자 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -265,7 +288,8 @@
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
       "typeLabel": "가려진 숫자의 크기 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -278,7 +302,8 @@
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
       "typeLabel": "공통 기호 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -290,8 +315,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
-      "typeLabel": "연속 부등식의 빈칸 경우의 수",
-      "sourceVerified": true
+      "typeLabel": "이어진 크기 비교식의 빈칸에 들어갈 숫자 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -304,7 +330,8 @@
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
       "typeLabel": "여러 표현의 수 크기 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -316,8 +343,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 11,
       "sourcePrintedPage": 7,
-      "typeLabel": "거리 자료의 큰 수 정렬",
-      "sourceVerified": true
+      "typeLabel": "거리로 나타낸 큰 수를 크기 순서로 나열하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -330,7 +358,8 @@
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
       "typeLabel": "일정한 간격의 큰 수 뛰어 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -343,7 +372,8 @@
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
       "typeLabel": "사이 수 개수로 간격 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -356,7 +386,8 @@
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
       "typeLabel": "큰 수 수직선 눈금 읽기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -369,7 +400,8 @@
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
       "typeLabel": "잘못 센 뛰어 세기 횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -382,7 +414,8 @@
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
       "typeLabel": "목표값까지 최소 뛰어 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -394,8 +427,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "큰 수 수직선의 미지수",
-      "sourceVerified": true
+      "typeLabel": "큰 수 수직선에서 알 수 없는 눈금의 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -408,7 +442,8 @@
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
       "typeLabel": "뛴 횟수에 따른 값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -421,7 +456,8 @@
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
       "typeLabel": "뛰어 세기 단위 오류 바로잡기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -434,7 +470,8 @@
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
       "typeLabel": "목표 수에 가장 가까운 값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -446,8 +483,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "수열 구간의 항 개수",
-      "sourceVerified": true
+      "typeLabel": "일정한 간격으로 나열한 수에서 두 수 사이의 개수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -459,8 +497,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "등차 뛰어 세기의 먼 항",
-      "sourceVerified": true
+      "typeLabel": "같은 수만큼 뛰어 센 먼 번째 수 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -473,7 +512,8 @@
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
       "typeLabel": "화폐를 쌓은 높이와 단위 환산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -486,7 +526,8 @@
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
       "typeLabel": "권종별 지폐 수 차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -499,7 +540,8 @@
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
       "typeLabel": "수 범위에 쓰인 0의 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -512,7 +554,8 @@
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
       "typeLabel": "이어 쓴 수의 끝 세 자리",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -525,7 +568,8 @@
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
       "typeLabel": "동전 개수 비와 합계",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -538,7 +582,8 @@
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
       "typeLabel": "단위 환산과 일정한 생산량",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -550,8 +595,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "이어 쓴 수의 숫자 빈도",
-      "sourceVerified": true
+      "typeLabel": "수를 이어 썼을 때 특정 숫자가 쓰인 횟수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -564,7 +610,8 @@
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
       "typeLabel": "일정 증가액의 목표 연도",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -577,7 +624,8 @@
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
       "typeLabel": "동전 가치와 쌓은 높이",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -590,7 +638,8 @@
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
       "typeLabel": "월별 지급액의 기간",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -603,7 +652,8 @@
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
       "typeLabel": "매출액의 최소 지폐 교환",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -615,8 +665,9 @@
       "sourceItemLabel": "개념탐구 5 본문",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "서로 다른 숫자로 만든 근삿값 사이",
-      "sourceVerified": true
+      "typeLabel": "서로 다른 숫자로 기준에 가장 가까운 두 수 사이의 수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -628,8 +679,9 @@
       "sourceItemLabel": "예제 5-1",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "범위와 같은 자리숫자 조건",
-      "sourceVerified": true
+      "typeLabel": "정해진 범위에서 두 자리의 숫자가 같은 수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -642,7 +694,8 @@
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
       "typeLabel": "자리 바꾸기와 숫자 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -655,7 +708,8 @@
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
       "typeLabel": "범위와 자리 합 조건의 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -668,7 +722,8 @@
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
       "typeLabel": "기호 조건을 만족하는 끝 세 자리",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -681,7 +736,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "자릿값 배수와 숫자 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -694,7 +750,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "수와 거꾸로 쓴 수의 자릿수 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -707,7 +764,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "거꾸로 쓴 수와 연속 0 조건",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -720,7 +778,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "서로 다른 숫자의 최소 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -733,7 +792,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "세 자리 합이 정해진 최대 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -746,7 +806,8 @@
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
       "typeLabel": "반복 증가와 자리 조건의 최대 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -758,8 +819,9 @@
       "sourceItemLabel": "개념탐구 6 본문",
       "sourcePdfPage": 18,
       "sourcePrintedPage": 14,
-      "typeLabel": "반복 수 카드로 만든 극값의 차",
-      "sourceVerified": true
+      "typeLabel": "수 카드를 두 번씩 써서 만든 두 번째 큰 수와 가장 작은 수의 차",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -771,8 +833,9 @@
       "sourceItemLabel": "예제 6-1",
       "sourcePdfPage": 18,
       "sourcePrintedPage": 14,
-      "typeLabel": "모든 숫자로 만든 두 번째 근삿값",
-      "sourceVerified": true
+      "typeLabel": "모든 숫자로 기준에 두 번째로 가까운 수 만들기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -785,7 +848,8 @@
       "sourcePdfPage": 18,
       "sourcePrintedPage": 14,
       "typeLabel": "수 조각 배열의 세 번째 큰 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -798,7 +862,8 @@
       "sourcePdfPage": 18,
       "sourcePrintedPage": 14,
       "typeLabel": "수 카드 순서 통계의 차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -811,7 +876,8 @@
       "sourcePdfPage": 18,
       "sourcePrintedPage": 14,
       "typeLabel": "숫자 카드 회전 오류 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -823,8 +889,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
-      "typeLabel": "기준보다 큰 순열 수의 개수",
-      "sourceVerified": true
+      "typeLabel": "수 카드를 한 번씩 써서 기준보다 큰 수의 개수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -836,8 +903,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
-      "typeLabel": "중복 허용 수 카드의 세 번째 극값",
-      "sourceVerified": true
+      "typeLabel": "수 카드를 여러 번 써서 세 번째로 큰 수와 작은 수의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -849,8 +917,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
-      "typeLabel": "고정 자리 반복 카드의 극값 차",
-      "sourceVerified": true
+      "typeLabel": "수 카드를 두 번씩 써서 만든 가장 큰 수와 작은 수의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -862,8 +931,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
-      "typeLabel": "다섯 숫자의 극값 합으로 빈 카드 찾기",
-      "sourceVerified": true
+      "typeLabel": "다섯 수 카드로 만든 가장 큰 수와 작은 수의 합에서 빈 카드 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -875,8 +945,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
-      "typeLabel": "극값 합 범위의 수 카드",
-      "sourceVerified": true
+      "typeLabel": "가장 큰 수와 작은 수의 합 조건에 맞는 수 카드 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 1,
@@ -889,7 +960,8 @@
       "sourcePdfPage": 19,
       "sourcePrintedPage": 15,
       "typeLabel": "반복 카드와 자리 곱의 최대 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -902,7 +974,8 @@
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
       "typeLabel": "각의 크기 관계로 위치 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -915,7 +988,8 @@
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
       "typeLabel": "여러 직선에서 예각 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -928,7 +1002,8 @@
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
       "typeLabel": "둔각 개수의 최댓값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -940,8 +1015,9 @@
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
-      "typeLabel": "각의 종류 연산 판별",
-      "sourceVerified": true
+      "typeLabel": "예각·직각·둔각을 계산해 각의 종류 판단하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -953,8 +1029,9 @@
       "sourceItemLabel": "예제 1-4",
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
-      "typeLabel": "한 점의 직선에서 평각 세기",
-      "sourceVerified": true
+      "typeLabel": "한 점에서 뻗은 직선들로 만든 180도인 각 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -967,7 +1044,8 @@
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
       "typeLabel": "같은 크기 각의 예각 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -980,7 +1058,8 @@
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
       "typeLabel": "예각 개수 최대화",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -993,7 +1072,8 @@
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
       "typeLabel": "각의 종류 계산식 판별",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1006,7 +1086,8 @@
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
       "typeLabel": "직각 안의 예각 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1019,7 +1100,8 @@
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
       "typeLabel": "여러 선분의 180도 미만 각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1031,8 +1113,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 23,
       "sourcePrintedPage": 19,
-      "typeLabel": "여러 직선의 맞꼭지각 세기",
-      "sourceVerified": true
+      "typeLabel": "여러 직선이 만날 때 마주 보는 같은 각 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1045,7 +1128,8 @@
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
       "typeLabel": "두 삼각형을 맞댄 각 만들기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1058,7 +1142,8 @@
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
       "typeLabel": "겹친 정삼각형의 전체 각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1071,7 +1156,8 @@
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
       "typeLabel": "한 점 둘레의 각도 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1084,7 +1170,8 @@
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
       "typeLabel": "직각 안의 각도 배수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1097,7 +1184,8 @@
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
       "typeLabel": "직선 교차각의 차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1109,8 +1197,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "직선과 맞꼭지각 계산",
-      "sourceVerified": true
+      "typeLabel": "교차한 직선에서 마주 보는 같은 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1123,7 +1212,8 @@
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
       "typeLabel": "분수 관계 각도의 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1135,8 +1225,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "교차 직선의 미지각",
-      "sourceVerified": true
+      "typeLabel": "교차 직선에서 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1149,7 +1240,8 @@
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
       "typeLabel": "겹친 둔각에서 각의 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1161,8 +1253,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "맞꼭지각과 각도 차",
-      "sourceVerified": true
+      "typeLabel": "마주 보는 같은 각을 이용해 두 각의 크기 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1174,8 +1267,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "주어진 합성각의 부분각 차",
-      "sourceVerified": true
+      "typeLabel": "주어진 큰 각을 나눈 두 각의 크기 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1187,8 +1281,9 @@
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "연결된 다각형의 표시각 합",
-      "sourceVerified": true
+      "typeLabel": "연결된 다각형에서 표시된 각들의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1200,8 +1295,9 @@
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "두 내각 이등분선의 끼인각",
-      "sourceVerified": true
+      "typeLabel": "삼각형 안쪽 각을 반으로 나눈 두 선 사이의 각 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1214,7 +1310,8 @@
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
       "typeLabel": "삼각형과 직각선의 각도 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1226,8 +1323,9 @@
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "오목다각형의 미지각 합",
-      "sourceVerified": true
+      "typeLabel": "오목다각형에서 모르는 각들의 크기 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1239,8 +1337,9 @@
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "복합 다각형의 표시각 합",
-      "sourceVerified": true
+      "typeLabel": "여러 다각형이 연결된 도형에서 표시된 각들의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1252,8 +1351,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "내각 분할과 중심각",
-      "sourceVerified": true
+      "typeLabel": "도형 안쪽 각을 나누어 가운데 각 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1266,7 +1366,8 @@
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
       "typeLabel": "삼각형 안팎의 각도 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1278,8 +1379,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "꺾은선 도형의 미지각",
-      "sourceVerified": true
+      "typeLabel": "꺾은선 도형에서 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1291,8 +1393,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "다각형 안팎의 표시각 합",
-      "sourceVerified": true
+      "typeLabel": "다각형 안팎에 표시된 각들의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1305,7 +1408,8 @@
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
       "typeLabel": "복합 다각형의 끝각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1318,7 +1422,8 @@
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
       "typeLabel": "교차 삼각형의 각도 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1330,8 +1435,9 @@
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "삼각형 외각과 같은 각의 추론",
-      "sourceVerified": true
+      "typeLabel": "삼각형 바깥쪽 각과 크기가 같은 각 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1343,8 +1449,9 @@
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "겹친 삼각형의 미지각",
-      "sourceVerified": true
+      "typeLabel": "겹친 삼각형에서 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1357,7 +1464,8 @@
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
       "typeLabel": "정팔각형 연장선의 각도 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1370,7 +1478,8 @@
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
       "typeLabel": "삼각형 회전 횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1383,7 +1492,8 @@
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
       "typeLabel": "오각별의 꼭짓각 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1395,8 +1505,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "오목사각형의 미지각",
-      "sourceVerified": true
+      "typeLabel": "오목사각형에서 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1409,7 +1520,8 @@
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
       "typeLabel": "겹친 삼각형의 중심각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1421,8 +1533,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "다각형의 외각 합",
-      "sourceVerified": true
+      "typeLabel": "다각형 바깥쪽 각들의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1434,8 +1547,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "같은 각 조건의 부분각 차",
-      "sourceVerified": true
+      "typeLabel": "크기가 같은 각 조건으로 나뉜 두 각의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1448,7 +1562,8 @@
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
       "typeLabel": "별 모양 도형의 각도 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1461,7 +1576,8 @@
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
       "typeLabel": "겹친 사각형의 꼭짓각 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1474,7 +1590,8 @@
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
       "typeLabel": "두 번 접은 직사각형의 각도",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1486,8 +1603,9 @@
       "sourceItemLabel": "예제 5-1",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "겹친 직각삼각형의 합성각",
-      "sourceVerified": true
+      "typeLabel": "겹친 직각삼각형에서 여러 각을 합친 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1500,7 +1618,8 @@
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
       "typeLabel": "삼각형 회전과 겹친 각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1513,7 +1632,8 @@
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
       "typeLabel": "삼각형 접기의 각도 차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1525,8 +1645,9 @@
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "정사각형 접기의 미지각",
-      "sourceVerified": true
+      "typeLabel": "정사각형을 접었을 때 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1538,8 +1659,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "겹친 직각삼각형의 미지각",
-      "sourceVerified": true
+      "typeLabel": "겹친 직각삼각형에서 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1552,7 +1674,8 @@
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
       "typeLabel": "두 삼각형의 바깥각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1565,7 +1688,8 @@
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
       "typeLabel": "직각삼각형의 회전각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1578,7 +1702,8 @@
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
       "typeLabel": "삼각형 접기의 두 각 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1591,7 +1716,8 @@
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
       "typeLabel": "직사각형 이중 접기의 각도 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1603,8 +1729,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "두 번 접은 직사각형의 미지각",
-      "sourceVerified": true
+      "typeLabel": "직사각형을 두 번 접었을 때 모르는 각의 크기 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1617,7 +1744,8 @@
       "sourcePdfPage": 32,
       "sourcePrintedPage": 28,
       "typeLabel": "시곗바늘 위치와 각도 추론",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1630,7 +1758,8 @@
       "sourcePdfPage": 32,
       "sourcePrintedPage": 28,
       "typeLabel": "시각별 시곗바늘 그리기와 각도",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1643,7 +1772,8 @@
       "sourcePdfPage": 32,
       "sourcePrintedPage": 28,
       "typeLabel": "시각별 작은 각 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1656,7 +1786,8 @@
       "sourcePdfPage": 32,
       "sourcePrintedPage": 28,
       "typeLabel": "바늘 위치와 각도로 시각 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1669,7 +1800,8 @@
       "sourcePdfPage": 32,
       "sourcePrintedPage": 28,
       "typeLabel": "시침 위치와 각도로 시각 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1682,7 +1814,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "주어진 시각의 바늘 각도",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1695,7 +1828,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "여러 시각의 작은 각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1708,7 +1842,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "시간 간격의 시침 회전각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1721,7 +1856,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "눈금 없는 시계의 시각 추론",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1734,7 +1870,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "분침 회전각으로 종료 시각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 2,
@@ -1747,7 +1884,8 @@
       "sourcePdfPage": 33,
       "sourcePrintedPage": 29,
       "typeLabel": "회전한 시계의 바늘 각도 추론",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1760,7 +1898,8 @@
       "sourcePdfPage": 36,
       "sourcePrintedPage": 32,
       "typeLabel": "단위 작업량으로 포장 잔량 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1773,7 +1912,8 @@
       "sourcePdfPage": 36,
       "sourcePrintedPage": 32,
       "typeLabel": "두 상품의 판매 이익 합산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1786,7 +1926,8 @@
       "sourcePdfPage": 36,
       "sourcePrintedPage": 32,
       "typeLabel": "통과 시간으로 터널 길이 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1799,7 +1940,8 @@
       "sourcePdfPage": 36,
       "sourcePrintedPage": 32,
       "typeLabel": "단체 할인 입장료 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1812,7 +1954,8 @@
       "sourcePdfPage": 36,
       "sourcePrintedPage": 32,
       "typeLabel": "마주 보는 나무 간격으로 둘레 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1825,7 +1968,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "상자별 수량으로 전체 개수 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1838,7 +1982,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "판매량 변화를 반영한 이익 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1851,7 +1996,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "매듭 손실을 고려한 연결 길이",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1864,7 +2010,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "과일별 전체 수확량 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1877,7 +2024,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "반복되는 시계 종소리 횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1890,7 +2038,8 @@
       "sourcePdfPage": 37,
       "sourcePrintedPage": 33,
       "typeLabel": "인원과 시간으로 포장 잔량 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1903,7 +2052,8 @@
       "sourcePdfPage": 38,
       "sourcePrintedPage": 34,
       "typeLabel": "곱셈 성질과 수 카드 활용",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1915,8 +2065,9 @@
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 38,
       "sourcePrintedPage": 34,
-      "typeLabel": "분배법칙으로 곱셈 간단히 하기",
-      "sourceVerified": true
+      "typeLabel": "같은 수를 묶어 곱셈을 간단히 계산하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1929,7 +2080,8 @@
       "sourcePdfPage": 38,
       "sourcePrintedPage": 34,
       "typeLabel": "곱셈 순서를 바꾸어 계산하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1941,8 +2093,9 @@
       "sourceItemLabel": "예제 2-3",
       "sourcePdfPage": 38,
       "sourcePrintedPage": 34,
-      "typeLabel": "거듭제곱 곱의 일의 자리 찾기",
-      "sourceVerified": true
+      "typeLabel": "같은 수를 여러 번 곱한 결과의 일의 자리 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1955,7 +2108,8 @@
       "sourcePdfPage": 38,
       "sourcePrintedPage": 34,
       "typeLabel": "수 카드 곱의 최댓값과 최솟값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1968,7 +2122,8 @@
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
       "typeLabel": "공통 인수를 묶어 곱셈식 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1981,7 +2136,8 @@
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
       "typeLabel": "곱을 쉬운 수로 묶어 계산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -1994,7 +2150,8 @@
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
       "typeLabel": "큰 곱의 각 자리 숫자 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2007,7 +2164,8 @@
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
       "typeLabel": "곱의 차로 세 자리 수 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2019,8 +2177,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
-      "typeLabel": "수 카드 곱의 극값 차이",
-      "sourceVerified": true
+      "typeLabel": "수 카드로 만든 가장 큰 곱과 가장 작은 곱의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2033,7 +2192,8 @@
       "sourcePdfPage": 39,
       "sourcePrintedPage": 35,
       "typeLabel": "자리 조건을 만족하는 최대 곱",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2046,7 +2206,8 @@
       "sourcePdfPage": 40,
       "sourcePrintedPage": 36,
       "typeLabel": "총이익으로 실제 판매 수량 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2059,7 +2220,8 @@
       "sourcePdfPage": 40,
       "sourcePrintedPage": 36,
       "typeLabel": "양쪽 나무 수로 도로 길이 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2072,7 +2234,8 @@
       "sourcePdfPage": 40,
       "sourcePrintedPage": 36,
       "typeLabel": "포장 판매와 낱개 판매 금액 합산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2085,7 +2248,8 @@
       "sourcePdfPage": 40,
       "sourcePrintedPage": 36,
       "typeLabel": "서로 다른 기계의 생산량 나누기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2097,8 +2261,9 @@
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 40,
       "sourcePrintedPage": 36,
-      "typeLabel": "가격 인상일 역산하기",
-      "sourceVerified": true
+      "typeLabel": "판매 금액의 변화로 가격을 올린 날 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2111,7 +2276,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "부족한 나눗셈의 최소 보충량",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2124,7 +2290,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "독서 속도에 따른 완료일 차이",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2137,7 +2304,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "회전 속도로 횟수 차이 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2150,7 +2318,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "공전 주기의 몫과 남은 날",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2163,7 +2332,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "차이 조건으로 세 봉지 무게 나누기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2176,7 +2346,8 @@
       "sourcePdfPage": 41,
       "sourcePrintedPage": 37,
       "typeLabel": "열차 길이와 속력으로 통과 시간 구하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2188,8 +2359,9 @@
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
-      "typeLabel": "찢어진 나눗셈의 피제수 찾기",
-      "sourceVerified": true
+      "typeLabel": "찢어진 나눗셈에서 나누어지는 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2202,7 +2374,8 @@
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
       "typeLabel": "곱과 몫이 세 자리인 수 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2215,7 +2388,8 @@
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
       "typeLabel": "곱셈 등식의 빈 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2228,7 +2402,8 @@
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
       "typeLabel": "몫과 자릿수 합 조건의 수 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2241,7 +2416,8 @@
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
       "typeLabel": "연속한 자연수의 합으로 첫 수 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2254,7 +2430,8 @@
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
       "typeLabel": "기준값에 가장 가까운 곱 만들기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2267,7 +2444,8 @@
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
       "typeLabel": "곱셈 조건을 만족하는 수 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2280,7 +2458,8 @@
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
       "typeLabel": "수 카드 최대 나눗셈의 몫 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2292,8 +2471,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
-      "typeLabel": "연산 관계식으로 네 수의 곱 구하기",
-      "sourceVerified": true
+      "typeLabel": "계산 관계를 이용해 네 수의 곱 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2306,7 +2486,8 @@
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
       "typeLabel": "몫과 나머지가 같은 세 자리 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2319,7 +2500,8 @@
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
       "typeLabel": "연속한 수의 합에서 최댓값 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2332,7 +2514,8 @@
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
       "typeLabel": "몫과 나머지로 가려진 수 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2345,7 +2528,8 @@
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
       "typeLabel": "몫과 나머지가 같은 수의 범위",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2358,7 +2542,8 @@
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
       "typeLabel": "수 카드로 나눗셈식 완성하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2371,7 +2556,8 @@
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
       "typeLabel": "잘못 나눈 몫과 나머지 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2383,8 +2569,9 @@
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "더하기 전 수의 나머지 역산",
-      "sourceVerified": true
+      "typeLabel": "수를 더한 뒤의 나머지로 원래 나머지 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2397,7 +2584,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
       "typeLabel": "주어진 범위에서 나머지 최대로",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2410,7 +2598,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
       "typeLabel": "최대 나머지를 갖는 가까운 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2423,7 +2612,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
       "typeLabel": "숫자를 채워 나머지 최대로",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2436,7 +2626,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
       "typeLabel": "몫과 나머지로 빈 숫자 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2449,7 +2640,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
       "typeLabel": "특정 나머지인 세 자리 수 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2461,8 +2653,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "등차수열 나눗셈의 나머지 합",
-      "sourceVerified": true
+      "typeLabel": "같은 간격으로 커지는 수들을 나눈 나머지의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2475,7 +2668,8 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "복면산 곱셈식 완성하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2488,7 +2682,8 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "곱셈 세로셈의 숨은 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2501,7 +2696,8 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "나눗셈 세로셈의 숨은 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2514,7 +2710,8 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "같은 숫자 배열의 곱셈 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2527,7 +2724,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "곱셈 세로셈 빈칸 채우기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2540,7 +2738,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "뒤집힌 숫자 배열의 곱셈",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2553,7 +2752,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈의 기호 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2566,7 +2766,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "0과 1로 만든 곱셈식 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2579,7 +2780,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈 빈칸 채우기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -2592,7 +2794,8 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "수 카드 곱셈식 모두 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2605,7 +2808,8 @@
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
       "typeLabel": "밀기·뒤집기·돌리기 결과 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2618,7 +2822,8 @@
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
       "typeLabel": "세 가지 이동 뒤의 도형 그리기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2631,7 +2836,8 @@
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
       "typeLabel": "회전 규칙의 빈 도형 채우기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2643,8 +2849,9 @@
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "연속 평행이동 결과 그리기",
-      "sourceVerified": true
+      "typeLabel": "도형을 같은 방향으로 여러 번 민 결과 그리기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2657,7 +2864,8 @@
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
       "typeLabel": "잘못된 회전에서 원래 도형 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2670,7 +2878,8 @@
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
       "typeLabel": "무늬 구성의 이동 방식 비교",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2683,7 +2892,8 @@
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
       "typeLabel": "연속 회전 규칙의 빈칸 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2695,8 +2905,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
-      "typeLabel": "가로와 세로로 평행이동하기",
-      "sourceVerified": true
+      "typeLabel": "도형을 가로와 세로로 밀어 옮기기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2709,7 +2920,8 @@
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
       "typeLabel": "좌우 대칭인 알파벳 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2722,7 +2934,8 @@
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
       "typeLabel": "상하좌우 대칭 색칠 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2735,7 +2948,8 @@
       "sourcePdfPage": 51,
       "sourcePrintedPage": 47,
       "typeLabel": "잘못된 뒤집기에서 바른 모양 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2748,7 +2962,8 @@
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
       "typeLabel": "기호 규칙에 따른 연속 이동",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2761,7 +2976,8 @@
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
       "typeLabel": "반복 회전과 뒤집기 결과",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2774,7 +2990,8 @@
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
       "typeLabel": "여러 번 뒤집고 돌린 모양",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2787,7 +3004,8 @@
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
       "typeLabel": "잘못된 연속 이동 바로잡기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2800,7 +3018,8 @@
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
       "typeLabel": "반복 이동 뒤 위치 추적",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2813,7 +3032,8 @@
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
       "typeLabel": "반복 회전 뒤 뒤집은 모양",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2825,8 +3045,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "합성 이동과 같은 한 번의 이동",
-      "sourceVerified": true
+      "typeLabel": "여러 번 움직인 것과 같은 한 번의 움직임 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2839,7 +3060,8 @@
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
       "typeLabel": "도형 이동의 주기 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2852,7 +3074,8 @@
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
       "typeLabel": "이동 순서를 거꾸로 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2865,7 +3088,8 @@
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
       "typeLabel": "색칠칸 이동 뒤 위치 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2878,7 +3102,8 @@
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
       "typeLabel": "이동 순서 오류 바로잡기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2891,7 +3116,8 @@
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
       "typeLabel": "뒤집어 붙인 무늬의 원 개수 최대화",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2904,7 +3130,8 @@
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
       "typeLabel": "반복 무늬의 특정 모양 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2917,7 +3144,8 @@
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
       "typeLabel": "뒤집어 잇는 띠무늬 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2930,7 +3158,8 @@
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
       "typeLabel": "주기 무늬에 필요한 조각 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2943,7 +3172,8 @@
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
       "typeLabel": "반복 타일 무늬 이어 그리기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2956,7 +3186,8 @@
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
       "typeLabel": "원무늬 최대화와 조각 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2969,7 +3200,8 @@
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
       "typeLabel": "회전 반복의 특정 번째 무늬",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2982,7 +3214,8 @@
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
       "typeLabel": "반복 무늬의 빈칸 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -2995,7 +3228,8 @@
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
       "typeLabel": "좌우 뒤집기 띠무늬의 도형 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3008,7 +3242,8 @@
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
       "typeLabel": "완성 무늬에서 기본 조각 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3020,8 +3255,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "투명 무늬 조각의 결합 경우 수",
-      "sourceVerified": true
+      "typeLabel": "투명 무늬 조각을 겹쳐 만들 수 있는 모양의 수",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3034,7 +3270,8 @@
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
       "typeLabel": "이동 뒤 남은 바둑돌 색 판별",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3047,7 +3284,8 @@
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
       "typeLabel": "숫자 카드를 반회전한 값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3060,7 +3298,8 @@
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
       "typeLabel": "거꾸로 보인 전자시계 읽기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3073,7 +3312,8 @@
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
       "typeLabel": "회전과 거울상으로 시각 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3086,7 +3326,8 @@
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
       "typeLabel": "회전한 수 카드 계산 바로잡기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3099,7 +3340,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "반회전 수 카드의 잘못된 뺄셈",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3112,7 +3354,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "거꾸로 본 전자시계 시각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3125,7 +3368,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "카드 이동 뒤 같은 표정 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3138,7 +3382,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "반회전해 같은 네 자리 수 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3151,7 +3396,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "이동 뒤 남은 바둑돌 색 차이",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -3164,7 +3410,8 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
       "typeLabel": "거울 시계의 미래 시각",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3177,7 +3424,8 @@
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
       "typeLabel": "표 합계와 소비량의 막대 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3190,7 +3438,8 @@
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
       "typeLabel": "최댓값에 맞춘 세로 눈금 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3203,7 +3452,8 @@
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
       "typeLabel": "눈금 단위를 바꾼 막대그래프",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3216,7 +3466,8 @@
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
       "typeLabel": "개수·금액 합계로 동전 막대 완성",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3228,8 +3479,9 @@
       "sourceItemLabel": "예제 1-4",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "관계식에 따른 마을별 학생 막대",
-      "sourceVerified": true
+      "typeLabel": "주어진 수 관계에 맞춰 마을별 학생 막대 완성하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3242,7 +3494,8 @@
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
       "typeLabel": "배수·차이 조건의 요일별 운동 막대",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3254,8 +3507,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "표와 그래프의 결측 자료 보완",
-      "sourceVerified": true
+      "typeLabel": "표와 막대그래프에서 비어 있는 자료 채우기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3268,7 +3522,8 @@
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
       "typeLabel": "계절 막대의 눈금 단위 변환",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3281,7 +3536,8 @@
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
       "typeLabel": "같음·차이 조건의 과일 선호 막대",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3294,7 +3550,8 @@
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
       "typeLabel": "분수·차이 조건의 학년별 막대",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3306,8 +3563,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "빈도 배수·합계의 주사위 막대",
-      "sourceVerified": true
+      "typeLabel": "주사위 눈이 나온 횟수의 관계로 막대 완성하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3320,7 +3578,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "거리 막대 비와 동일 속력 이동 시간",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3332,8 +3591,9 @@
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "누적 막대와 월별 일수의 결측 구간",
-      "sourceVerified": true
+      "typeLabel": "누적 막대와 월별 일수로 비어 있는 기간 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3346,7 +3606,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "성별 합계 차로 반별 인원차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3359,7 +3620,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "판매량 합계로 특정 빵 매출",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3371,8 +3633,9 @@
       "sourceItemLabel": "예제 2-4",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "점수 분포와 총 정답 수의 인원 역산",
-      "sourceVerified": true
+      "typeLabel": "점수별 학생 수와 총 정답 수로 인원 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3385,7 +3648,8 @@
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
       "typeLabel": "거리 막대와 동일 속력의 통학 시간",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3397,8 +3661,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "색별 막대와 중복 보유의 결측 인원",
-      "sourceVerified": true
+      "typeLabel": "색깔별 막대와 여러 색 보유 조건으로 비어 있는 인원 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3410,8 +3675,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "전체 판매량으로 결측 막대와 단가",
-      "sourceVerified": true
+      "typeLabel": "전체 판매량으로 비어 있는 막대와 한 개 가격 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3423,8 +3689,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "찢어진 막대와 관계식의 최댓값 차",
-      "sourceVerified": true
+      "typeLabel": "찢어진 막대와 수의 관계로 가장 큰 값과 작은 값의 차 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3436,8 +3703,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "성별 막대와 전체 합계의 결측 반",
-      "sourceVerified": true
+      "typeLabel": "남녀별 막대와 전체 합계로 비어 있는 반 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -3450,7 +3718,8 @@
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
       "typeLabel": "막대 순위·차이의 전체 인원 최솟값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3462,8 +3731,9 @@
       "sourceItemLabel": "개념탐구 1 본문",
       "sourcePdfPage": 66,
       "sourcePrintedPage": 62,
-      "typeLabel": "분자·분모 등차 분수열의 특정 항",
-      "sourceVerified": true
+      "typeLabel": "분자와 분모가 일정하게 바뀌는 분수 배열의 특정 번째 분수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3475,8 +3745,9 @@
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 66,
       "sourcePrintedPage": 62,
-      "typeLabel": "교대 등차수열에서 수의 위치",
-      "sourceVerified": true
+      "typeLabel": "번갈아 놓인 같은 간격 수 배열에서 수의 위치 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3489,7 +3760,8 @@
       "sourcePdfPage": 66,
       "sourcePrintedPage": 62,
       "typeLabel": "대각선 순서쌍의 항과 위치",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3502,7 +3774,8 @@
       "sourcePdfPage": 66,
       "sourcePrintedPage": 62,
       "typeLabel": "분모별 분수 묶음의 항 위치",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3514,8 +3787,9 @@
       "sourceItemLabel": "예제 1-4",
       "sourcePdfPage": 66,
       "sourcePrintedPage": 62,
-      "typeLabel": "분자·분모 등차 분수열의 첫 1",
-      "sourceVerified": true
+      "typeLabel": "분자와 분모가 일정하게 바뀌는 분수 배열에서 처음 1이 되는 곳 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3527,8 +3801,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
-      "typeLabel": "여러 규칙 수열의 빈 항",
-      "sourceVerified": true
+      "typeLabel": "여러 규칙으로 나열한 수에서 빈칸 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3540,8 +3815,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
-      "typeLabel": "등차수열의 특정 항",
-      "sourceVerified": true
+      "typeLabel": "같은 수만큼 커지는 배열의 특정 번째 수 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3553,8 +3829,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
-      "typeLabel": "두 배 자연수 묶음의 소속과 자리",
-      "sourceVerified": true
+      "typeLabel": "두 배씩 묶은 자연수에서 묶음과 자리 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3566,8 +3843,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
-      "typeLabel": "두 항으로 찾는 공차와 먼 항",
-      "sourceVerified": true
+      "typeLabel": "두 수로 일정한 증가량을 찾아 먼 번째 수 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3579,8 +3857,9 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
-      "typeLabel": "분자 증가·분모 감소 분수열",
-      "sourceVerified": true
+      "typeLabel": "분자는 커지고 분모는 작아지는 분수 배열에서 빈칸 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3593,7 +3872,8 @@
       "sourcePdfPage": 67,
       "sourcePrintedPage": 63,
       "typeLabel": "합이 일정한 분수 묶음의 특정 항",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3606,7 +3886,8 @@
       "sourcePdfPage": 68,
       "sourcePrintedPage": 64,
       "typeLabel": "정사각 테두리 확장 배열의 값과 좌표",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3618,8 +3899,9 @@
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 68,
       "sourcePrintedPage": 64,
-      "typeLabel": "대각선 자연수 삼각 배열의 좌표값",
-      "sourceVerified": true
+      "typeLabel": "대각선 수 삼각 배열에서 행과 열의 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3631,8 +3913,9 @@
       "sourceItemLabel": "예제 2-2",
       "sourcePdfPage": 68,
       "sourcePrintedPage": 64,
-      "typeLabel": "파스칼 삼각형 먼 행의 앞부분 합",
-      "sourceVerified": true
+      "typeLabel": "위 두 수를 더해 만드는 삼각 배열의 먼 줄 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3645,7 +3928,8 @@
       "sourcePdfPage": 68,
       "sourcePrintedPage": 64,
       "typeLabel": "30×30 테두리 배열의 마지막 칸",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3658,7 +3942,8 @@
       "sourcePdfPage": 68,
       "sourcePrintedPage": 64,
       "typeLabel": "양손 손가락 왕복 배열의 수 위치",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3671,7 +3956,8 @@
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
       "typeLabel": "좌우 대칭 수 삼각형의 빈칸",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3684,7 +3970,8 @@
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
       "typeLabel": "요일 지그재그 배열의 수 위치",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3696,8 +3983,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
-      "typeLabel": "정사각 테두리 확장 배열의 좌표값",
-      "sourceVerified": true
+      "typeLabel": "정사각 테두리 수 배열에서 주어진 행과 열의 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3710,7 +3998,8 @@
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
       "typeLabel": "연속 자연수 삼각 배열의 행 끝값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3723,7 +4012,8 @@
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
       "typeLabel": "대각선 자연수 삼각 배열의 수 좌표",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3735,8 +4025,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 69,
       "sourcePrintedPage": 65,
-      "typeLabel": "여덟 음판 왕복 순환의 타격음",
-      "sourceVerified": true
+      "typeLabel": "여덟 음판을 왕복해 두드릴 때 특정 번째 음 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3748,8 +4039,9 @@
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "등차수열 첫째항부터 특정 항의 합",
-      "sourceVerified": true
+      "typeLabel": "같은 수만큼 커지는 배열을 첫째 수부터 특정 번째 수까지 더하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3762,7 +4054,8 @@
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
       "typeLabel": "연속 홀수 합의 마지막 항",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3774,8 +4067,9 @@
       "sourceItemLabel": "예제 3-2",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "홀수 차이 수열의 항과 위치",
-      "sourceVerified": true
+      "typeLabel": "홀수만큼 차이가 커지는 수 배열에서 수와 위치 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3787,8 +4081,9 @@
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "자연수의 연속합 표현 가짓수",
-      "sourceVerified": true
+      "typeLabel": "자연수를 연속한 수의 합으로 나타내는 방법 수",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3800,8 +4095,9 @@
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "8열 수표의 3×3 부분합 최솟값",
-      "sourceVerified": true
+      "typeLabel": "8열 수 배열표에서 3×3칸 합 중 가장 작은 값 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3813,8 +4109,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "끝값이 주어진 등차수열의 합",
-      "sourceVerified": true
+      "typeLabel": "마지막 수가 주어진 같은 간격 수 배열의 합 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3826,8 +4123,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "고정 자연수의 연속합 표현 수",
-      "sourceVerified": true
+      "typeLabel": "주어진 수를 연속한 자연수의 합으로 나타내는 방법 수",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3839,8 +4137,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "7열 수표의 2×3 부분합 최댓값",
-      "sourceVerified": true
+      "typeLabel": "7열 수 배열표에서 2×3칸 합 중 가장 큰 값 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3853,7 +4152,8 @@
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
       "typeLabel": "평일 합으로 찾는 3주 뒤 날짜",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3866,7 +4166,8 @@
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
       "typeLabel": "홀수 증가 묶음의 특정 묶음 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3879,7 +4180,8 @@
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
       "typeLabel": "가로·세로 세 칸 합의 교차칸",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3891,8 +4193,9 @@
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 72,
       "sourcePrintedPage": 68,
-      "typeLabel": "ㄴ자 세 수의 연산 빈칸",
-      "sourceVerified": true
+      "typeLabel": "ㄴ자에 놓인 세 수의 약속 계산에서 빈칸 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3904,8 +4207,9 @@
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 72,
       "sourcePrintedPage": 68,
-      "typeLabel": "두 기호 연산의 합성식",
-      "sourceVerified": true
+      "typeLabel": "두 가지 기호 약속 계산을 차례로 적용하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3917,8 +4221,9 @@
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 72,
       "sourcePrintedPage": 68,
-      "typeLabel": "짝지은 두 연산의 중첩식",
-      "sourceVerified": true
+      "typeLabel": "두 가지 약속 계산을 차례로 적용하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3930,8 +4235,9 @@
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 72,
       "sourcePrintedPage": 68,
-      "typeLabel": "네 꼭짓점 수의 중심 연산값",
-      "sourceVerified": true
+      "typeLabel": "네 꼭짓점의 수로 가운데 값 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3943,8 +4249,9 @@
       "sourceItemLabel": "예제 4-4",
       "sourcePdfPage": 72,
       "sourcePrintedPage": 68,
-      "typeLabel": "가지형 수 연결의 반복 연산값",
-      "sourceVerified": true
+      "typeLabel": "가지처럼 연결된 수에 약속 계산 반복하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3956,8 +4263,9 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "나머지·가중합 기호의 합성 연산",
-      "sourceVerified": true
+      "typeLabel": "나머지와 곱셈으로 정한 두 약속 계산을 차례로 적용하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3969,8 +4277,9 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "거듭제곱과 둘째 수 덧셈의 역산",
-      "sourceVerified": true
+      "typeLabel": "앞 수를 여러 번 곱한 뒤 뒤 수를 더하는 약속에서 빈 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3982,8 +4291,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "제곱과 둘째 수 뺄셈의 중첩 역산",
-      "sourceVerified": true
+      "typeLabel": "같은 수를 두 번 곱한 뒤 수를 빼는 약속에서 빈 수 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -3995,8 +4305,9 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "수 변화와 도형 순환의 빈칸",
-      "sourceVerified": true
+      "typeLabel": "수와 도형이 반복해 바뀌는 규칙에서 빈칸 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4009,7 +4320,8 @@
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
       "typeLabel": "두 자리 수의 자릿값 변환",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4021,8 +4333,9 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "삼각형 꼭짓점의 중심 연산값",
-      "sourceVerified": true
+      "typeLabel": "삼각형 꼭짓점의 수로 가운데 값 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4035,7 +4348,8 @@
       "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
       "typeLabel": "열별 계단형 사각 상자의 성냥개비 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4048,7 +4362,8 @@
       "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
       "typeLabel": "회전 결합 정사각형의 변 길이",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4061,7 +4376,8 @@
       "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
       "typeLabel": "회전 확장 오각형 테두리의 바둑돌 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4074,7 +4390,8 @@
       "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
       "typeLabel": "중심 육각 점 배열의 바둑돌 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4086,8 +4403,9 @@
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "교대 흑백 정사각 고리의 색별 타일 수",
-      "sourceVerified": true
+      "typeLabel": "흑백이 번갈아 놓인 정사각 고리의 색별 타일 수 구하기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4100,7 +4418,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "겹침 오각형 점 격자의 단계별 점 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4113,7 +4432,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "흑백 삼각 점 배열의 단계별 돌 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4126,7 +4446,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "층층 계단형 상자 골격의 성냥개비 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4139,7 +4460,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "삼각 격자 확장 성냥개비 도형의 항",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4152,7 +4474,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "주기적 흑백 평면 점 배열의 검은 돌 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4165,7 +4488,8 @@
       "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
       "typeLabel": "정육각 벌집 고리의 단계별 타일 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4178,7 +4502,8 @@
       "sourcePdfPage": 76,
       "sourcePrintedPage": 72,
       "typeLabel": "수 카드로 만든 3 미만 소수의 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4191,7 +4516,8 @@
       "sourcePdfPage": 76,
       "sourcePrintedPage": 72,
       "typeLabel": "중복 숫자 카드의 세 자리 수 개수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4204,7 +4530,8 @@
       "sourcePdfPage": 76,
       "sourcePrintedPage": 72,
       "typeLabel": "최소·차소 소수 차의 숫자 카드",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4217,7 +4544,8 @@
       "sourcePdfPage": 76,
       "sourcePrintedPage": 72,
       "typeLabel": "세 자리 구간의 최다 숫자 사용 횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4229,8 +4557,9 @@
       "sourceItemLabel": "예제 6-4",
       "sourcePdfPage": 76,
       "sourcePrintedPage": 72,
-      "typeLabel": "1부터 9999까지 특정 숫자 빈도",
-      "sourceVerified": true
+      "typeLabel": "1부터 9999까지 특정 숫자가 쓰인 횟수 세기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4243,7 +4572,8 @@
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
       "typeLabel": "5의 배수 표기의 특정 숫자 카드 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4256,7 +4586,8 @@
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
       "typeLabel": "다섯 숫자 카드의 짝수 배열 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4268,8 +4599,9 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
-      "typeLabel": "최대·차대 다섯 자리 수 차의 카드 역산",
-      "sourceVerified": true
+      "typeLabel": "가장 큰 수와 두 번째 큰 수의 차로 수 카드 찾기",
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4282,7 +4614,8 @@
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
       "typeLabel": "제한 범위의 숫자 카드 부분배열 수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4295,7 +4628,8 @@
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
       "typeLabel": "1부터 999까지 최소 사용 숫자·횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     },
     {
       "unit": 6,
@@ -4308,7 +4642,8 @@
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
       "typeLabel": "세 자리 구간의 최다 사용 숫자와 횟수",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "typeLanguageVerified": true
     }
   ]
 }

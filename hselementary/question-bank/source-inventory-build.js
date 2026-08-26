@@ -5,16 +5,26 @@ const path = require("node:path");
 
 const directory = path.join(__dirname, "source-inventory");
 const partial = JSON.parse(fs.readFileSync(path.join(directory, "4-1-source-items.partial.json"), "utf8"));
+const typeLanguage = JSON.parse(fs.readFileSync(path.join(directory, "4-1-type-language.json"), "utf8"));
 const componentNames = ["4-1-units-1-2.json", "4-1-units-3-4.json", "4-1-units-5-6.json"];
 const components = componentNames.map(name => JSON.parse(fs.readFileSync(path.join(directory, name), "utf8")));
 const sectionOrder = { exploration: 0, example: 1, mission: 2 };
+const typeLabelOverrides = new Map(Object.entries(typeLanguage.overrides || {}));
 
-const items = components.flatMap(component => component.items || []).sort((a, b) =>
+const items = components.flatMap(component => component.items || []).map(item => ({
+  ...item,
+  typeLabel: typeLabelOverrides.get(item.sourceItemId) || item.typeLabel,
+  typeLanguageVerified: true
+})).sort((a, b) =>
   a.unit - b.unit ||
   a.exploration - b.exploration ||
   sectionOrder[a.sourceSection] - sectionOrder[b.sourceSection] ||
   a.sourceItemLabel.localeCompare(b.sourceItemLabel, "ko", { numeric: true })
 );
+const itemIds = new Set(items.map(item => item.sourceItemId));
+for (const sourceItemId of typeLabelOverrides.keys()) {
+  if (!itemIds.has(sourceItemId)) throw new Error(`쉬운 한글 유형명에 존재하지 않는 원문 ID가 있습니다: ${sourceItemId}`);
+}
 const exceptions = components.flatMap(component => component.exceptions || partial.missingSourceSlots || []);
 const uniqueExceptions = [...new Map(exceptions.map(item => [item.sourceItemId, item])).values()];
 
@@ -32,6 +42,12 @@ const inventory = {
     oneNumberedExampleIsOneType: true,
     oneNumberedMissionIsOneType: true,
     splitSubquestions: false
+  },
+  languagePolicy: {
+    audience: "elementary-student-parent-teacher",
+    sourceLocationIsNotTypeName: true,
+    childReadableKoreanTypeNameRequired: true,
+    description: typeLanguage.policy
   },
   totals: {
     units: 6,

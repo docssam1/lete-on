@@ -43,6 +43,7 @@
 - `numeric-display-audit.js`: 생성 가능한 전 유형의 문제·풀이·정답에 긴 부동소수점 꼬리가 표시되지 않는지 검수
 - `source-item-taxonomy-audit.js`: 4-2 삼각형·소수의 개념탐구 1문제, 예제 4문제, Mission 6문제를 각각 고유 유형으로 등록했는지 검수
 - `source-inventory-audit.js`: 4-1 원문 329문항의 고유 ID, 구간, PDF·교재 쪽수, 결번을 검수
+- `source-type-language-audit.js`: 4-1의 329개 유형명이 문제번호가 아닌 고유한 쉬운 한글 설명인지, 어려운 분류 용어가 남지 않았는지 검수
 - `source-crosswalk-audit.js`: 기존 4-1 생성기 95개와 원문 문항의 일치·보류 교차표 및 활성 13개 생성기를 검수
 - `source-4-1-large-number-1-audit.js`: 큰 수 개념탐구 1의 원문 11항목을 11구조·세 난이도·16,500회 독립 계산으로 검수
 - `source-runtime-taxonomy-audit.js`: 브라우저에서 사용하는 4-1의 329유형, 생성 가능 22개, 검수 대기 307개를 검수

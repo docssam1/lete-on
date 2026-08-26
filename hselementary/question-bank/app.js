@@ -10,6 +10,7 @@
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
   const difficultyBandLabel = type => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(type.difficultyBand)] || "심화 기준";
+  const verbalizeType = type => `풀이 목표는 '${typeDisplayName(type).trim()}'입니다.`;
 
   function renderMathNotation(markup) {
     const template = document.createElement("template");
@@ -153,7 +154,7 @@
     const ready = Boolean(type.generator) && !type.reviewLocked;
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
-    const sourceLabel = type.sourceItemLabel ? escapeHtml(type.sourceItemLabel) + " · " : "";
+    const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
@@ -224,13 +225,21 @@
 
   function showTypePreview(typeId, anchor) {
     const type = typeById.get(typeId);
-    if (!type?.generator || type.reviewLocked) return;
+    if (!type) return;
     clearTimeout(previewHideTimer);
-    const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
-    if (!generated) return;
     const popover = ensurePreviewPopover();
     previewAnchor = anchor;
-    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+    const source = type.sourceItemLabel
+      ? `원문 ${escapeHtml(type.sourceItemLabel)} · 교재 ${type.sourcePrintedPage}쪽`
+      : `${type.grade}학년 ${type.term}학기 분류`;
+    const summary = `<div class="type-preview-summary"><b>어떤 문제인가요?</b><p>${escapeHtml(verbalizeType(type))}</p><small>${source}</small></div>`;
+    if (!type.generator || type.reviewLocked) {
+      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<footer>원문 구조와 정답 검수 후 생성 가능</footer>`;
+    } else {
+      const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
+      if (!generated) return;
+      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+    }
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
   }
