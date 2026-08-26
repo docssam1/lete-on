@@ -46,3 +46,9 @@ The Number Magic adapter imports only elementary and middle-school legacy thread
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.
 
 The staged Supabase migration creates authenticated, owner-scoped accounts and learning state. It is not applied to production until a replacement login is connected and legacy data is migrated without exposing names or access codes.
+
+## Diagnostic and placement contract
+
+`assessment/diagnostic-engine.js` separates short unit screeners from full course-placement evidence. A 12-item set may be used as a unit screener, but it cannot produce a placement review. The GFIELD course-placement contract requires 36–60 approved items across at least four domains, at least four items in every included domain, at least 20% of the form in each difficulty band, and at least two response types. These are internal form-construction safeguards, not a claim of psychometric reliability; real forms still require item review, piloting, and school approval.
+
+The report derives item points, domain scores, a school-configured internal performance band, error comments, and lesson priorities from the same exact result set. It never makes an automatic promotion decision. Promotion remains a versioned school decision that requires diagnostic, unit-mastery, retention, and teacher-review evidence. Evidence references are bound to one learner, school, program, assessment, and policy version, but this local engine does not prove that the referenced database records exist. It can mark a report only as `eligible-for-server-verification`; a future authenticated server must reload the policy, evidence, reviewer accounts, and attempt before a school decision. No national US cut score is built in.
