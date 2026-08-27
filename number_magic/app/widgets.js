@@ -88,6 +88,13 @@ function multiBoxesHtml(vals, focus, shape){
   if(shape==='mixed'){
     return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`;
   }
+  /* 2×2 행렬 — 가로 나열(a, b, c, d) 대신 실제 행렬 모양으로.
+     칸 순서는 행 우선(a11,a12,a21,a22)이라 문제 tex의 pmatrix와 같다. */
+  if(shape==='matrix2'&&vals.length===4){
+    return `<span class="nm-mat2"><span class="nm-mat2-br left"></span>`+
+      `<span class="nm-mat2-grid">${box(0)}${box(1)}${box(2)}${box(3)}</span>`+
+      `<span class="nm-mat2-br right"></span></span>`;
+  }
   return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>');
 }
 
@@ -103,7 +110,11 @@ function multiPadState(screenEl, answerArr, shape){
     if(!screenEl)return;
     screenEl.classList.add('nm-multi');
     screenEl.classList.toggle('nm-multi-shape', !!shape);
-    screenEl.innerHTML=multiBoxesHtml(vals,focus,shape);
+    const lg=(window.S&&window.S.lang)||'ko';
+    /* 칸이 3개 이상이면(행렬·삼차식 계수 등) 이동 방법을 명시 — 자동 이동은 답 자릿수를
+       흘리므로 하지 않는다. 눌러서 옮기는 방식임을 한 줄로 안내. */
+    const hint=n>=3?`<span class="nm-multi-hint">${lg==='en'?'Tap a box to move':lg==='zh'?'点击方格切换':'칸을 눌러 옮겨요'}</span>`:'';
+    screenEl.innerHTML=multiBoxesHtml(vals,focus,shape)+hint;
     screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
       b.addEventListener('pointerup',e=>{e.stopPropagation();focus=+b.dataset.i;paint();});
     });
