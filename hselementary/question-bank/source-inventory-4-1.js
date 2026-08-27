@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 149,
+  "verifiedMappings": 160,
   "items": [
     {
       "unit": 1,
@@ -2748,10 +2748,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱셈 성질과 수 카드 활용",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2766,10 +2767,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 수를 묶어 곱셈을 간단히 계산하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2784,10 +2786,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱셈 순서를 바꾸어 계산하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2802,10 +2805,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 수를 여러 번 곱한 결과의 일의 자리 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2820,10 +2824,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드 곱의 최댓값과 최솟값",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2838,10 +2843,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "공통 인수를 묶어 곱셈식 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2856,10 +2862,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱을 쉬운 수로 묶어 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2874,10 +2881,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "큰 곱의 각 자리 숫자 합",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2892,10 +2900,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱의 차로 세 자리 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2910,10 +2919,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드로 만든 가장 큰 곱과 가장 작은 곱의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2928,10 +2938,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "자리 조건을 만족하는 최대 곱",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationTwo",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,

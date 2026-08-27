@@ -1166,6 +1166,44 @@
     9: { days: 365, chimesPerHalfDay: 78, chimesPerDay: 156, answer: 56940 },
     10: { itemsPerBox: 20, boxes: 1557, ratePerMinute: 16, people: 24, totalMinutes: 80, answer: 420 }
   };
+  const source41MultiplicationTwoSourceAnchors = {
+    0: { repeatedDigit: 3, repeatCount: 299, multiplier: 299, digitSum: 1812, pairedFactors: [3125, 32], pairedProduct: 100000, cards: [1, 3, 4, 6, 8, 9], maximumFactors: [941, 863], maximumProduct: 812083 },
+    1: { expressions: ["72×99", "87×72+72×13", "559×93-59×93", "71×79+26×71-71×95", "99999×22222+33333×33334"], answers: [7128, 7200, 46500, 710, 3333300000] },
+    2: { expressions: ["488×25", "5×7×25×3×16", "28×75×15×6", "2×4×8×16×777×625×125×25×5"], answers: [12200, 42000, 189000, 7770000000000] },
+    3: { bases: [23, 37], counts: [23, 37], answer: 9 },
+    4: { cards: [2, 4, 5, 6, 7], maximumFactors: [652, 74], maximumProduct: 48248, minimumFactors: [467, 25], minimumProduct: 11675, rejectedPencilMaximumFactors: [642, 75], rejectedPencilMaximumProduct: 48150 },
+    5: { expressions: ["39×54+66×39", "234×98-84×98", "3245×43-3245×28+649×25×3", "1999999×444444"], answers: [4680, 14700, 97350, 888887555556] },
+    6: { expressions: ["250000×4000", "5×9×7×2", "888×125", "2048×50"], answers: [1000000000, 630, 111000, 102400] },
+    7: { repeatedDigit: 2, repeatCount: 8, multiplier: 399999, product: "8888866577778", answer: 93 },
+    8: { multipliers: [87, 78], difference: 2277, answer: 253 },
+    9: { cards: [1, 3, 4, 7, 8], maximumFactors: [741, 83], maximumProduct: 61503, minimumFactors: [378, 14], minimumProduct: 5292, answer: 56211 },
+    10: { digitSum: 19, lastThreeDigitProduct: 24, multiplier: 79, candidates: [7138, 7183, 7318, 7381, 7813, 7831, 8146, 8164, 8416, 8461, 8614, 8641, 9226, 9262, 9622], maximumNumber: 9622, answer: 760138 }
+  };
+  const source41DigitSum = value => [...String(value).replace(/\D/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
+  const source41CardRow = cards => `<div class="source41-card-row" role="img" aria-label="수 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card">${card}</span>`).join("")}</div>`;
+  const source41CardProductExtremes = (cards, leftLength) => {
+    const arrangements = operatorPermutations(cards);
+    const byExpression = new Map();
+    arrangements.forEach(arrangement => {
+      let left = Number(arrangement.slice(0, leftLength).join(""));
+      let right = Number(arrangement.slice(leftLength).join(""));
+      if (leftLength === cards.length - leftLength && right > left) [left, right] = [right, left];
+      const key = `${left}×${right}`;
+      byExpression.set(key, { left, right, product: left * right });
+    });
+    const expressions = [...byExpression.values()];
+    const maximumProduct = Math.max(...expressions.map(item => item.product));
+    const minimumProduct = Math.min(...expressions.map(item => item.product));
+    const maxima = expressions.filter(item => item.product === maximumProduct);
+    const minima = expressions.filter(item => item.product === minimumProduct);
+    return { maxima, minima, maximum: maxima[0], minimum: minima[0], arrangementCount: arrangements.length };
+  };
+  const source41PowerOnesDigit = (base, count) => {
+    let answer = 1;
+    for (let index = 0; index < count; index += 1) answer = answer * (base % 10) % 10;
+    return answer;
+  };
+  const source41RepeatedDigitValue = (digit, count) => BigInt(String(digit).repeat(count));
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -6653,6 +6691,286 @@
       const evidence = source41Evidence("hourly-clock-chimes", payload, answer);
       const prompt = `어느 시계탑의 종은 1시 정각에 1번, 2시 정각에 2번, 3시 정각에 3번과 같이 정각의 시각만큼 울립니다. 자정과 정오에는 각각 12번 울리고 정각이 아닌 때에는 울리지 않습니다. 이 종은 ${days}일 동안 모두 몇 번 울리는지 구하세요.${evidence}`;
       const solution = `12시간 동안 울리는 수는 1+2+⋯+12=${chimesPerHalfDay}번이고 하루에는 ${chimesPerHalfDay}×2=${chimesPerDay}번입니다. ${days}일 동안 ${chimesPerDay}×${days}=${answer.toLocaleString()}번 울립니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41MultiplicationTwo({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("곱셈 응용 문제 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const sourceAnchor = source41MultiplicationTwoSourceAnchors[variant];
+
+      if (variant === 0) {
+        const repeatedDigit = pick(rng, level === 0 ? [2, 3] : level === 1 ? [2, 3, 4] : [3, 4, 5]);
+        const repeatCount = repeatedDigit * 100 - 1;
+        const repeatedProduct = source41RepeatedDigitValue(repeatedDigit, repeatCount) * BigInt(repeatCount);
+        const repeatedDigitSum = source41DigitSum(repeatedProduct);
+        const pairCount = pick(rng, [[3, 4], [4, 5], [5, 6]][level]);
+        const firstFactor = 5 ** pairCount;
+        const secondFactor = 2 ** pairCount;
+        const pairedProduct = firstFactor * secondFactor;
+        let cards = [];
+        let cardExtremes = null;
+        for (let attempt = 0; attempt < 300; attempt += 1) {
+          cards = shuffle(rng, Array.from({ length: 7 + level }, (_, index) => index + 1)).slice(0, 6).sort((left, right) => left - right);
+          cardExtremes = source41CardProductExtremes(cards, 3);
+          if (cardExtremes.maxima.length === 1) break;
+        }
+        if (!cardExtremes || cardExtremes.maxima.length !== 1) throw new Error("가장 큰 곱을 만드는 수 카드 식을 하나로 정하지 못했습니다.");
+        const maximum = cardExtremes.maximum;
+        const answer = `(1) ${repeatedDigitSum} / (2) ${format(pairedProduct)}, ㉠ / (3) ${maximum.left}×${maximum.right}=${format(maximum.product)}`;
+        const payload = {
+          variant,
+          level,
+          repeatedDigit,
+          repeatCount,
+          multiplier: repeatCount,
+          repeatedProduct: String(repeatedProduct),
+          repeatedDigitSum,
+          pairedFactors: [firstFactor, secondFactor],
+          pairCount,
+          pairedProduct,
+          reasonChoice: "㉠",
+          cards,
+          maximum,
+          maximumCount: cardExtremes.maxima.length,
+          arrangementCount: cardExtremes.arrangementCount,
+          sourceAnchor,
+          complexity: (level + 1) * 1000000 + repeatCount * 1000 + pairedProduct + maximum.product
+        };
+        const evidence = source41Evidence("multiplication-properties-three-part", payload, answer);
+        const prompt = `<ol class="source-parts"><li>숫자 ${repeatedDigit}을 ${repeatCount}번 이어 쓴 수에 ${repeatCount}을 곱했습니다. 계산한 값의 각 자리 숫자를 모두 더하세요.</li><li>${format(firstFactor)}×${format(secondFactor)}을 계산하고, 알맞은 까닭을 고르세요.<ul class="choice-list"><li><b>㉠</b> 2와 5를 같은 수만큼 짝지으면 10이 반복해서 곱해집니다.</li><li><b>㉡</b> 두 수의 끝자리만 곱하면 언제나 전체 곱을 알 수 있습니다.</li><li><b>㉢</b> 두 수를 더한 뒤 10을 곱하면 같은 값이 됩니다.</li></ul></li><li>수 카드를 한 번씩 모두 사용하여 (세 자리 수)×(세 자리 수)의 곱을 가장 크게 만드세요. 두 수 중 큰 수를 앞에 쓰세요.${source41CardRow(cards)}</li></ol>${evidence}`;
+        const solution = `(1) 정확히 곱한 값의 각 자리 숫자를 더하면 ${repeatedDigitSum}입니다. (2) ${firstFactor}에는 5가 ${pairCount}개, ${secondFactor}에는 2가 ${pairCount}개 곱해져 있어 2와 5를 ${pairCount}쌍 만들 수 있습니다. 따라서 곱은 ${format(pairedProduct)}이고 까닭은 ㉠입니다. (3) 모든 카드 배치를 확인하면 가장 큰 곱은 ${maximum.left}×${maximum.right}=${format(maximum.product)} 하나입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const roundBase = 10 ** (level + 2);
+        const firstFactor = int(rng, 32 + level * 18, 88 + level * 45);
+        const commonFactor = int(rng, 42 + level * 16, 96 + level * 42);
+        const firstPart = int(rng, Math.floor(roundBase * 0.55), Math.floor(roundBase * 0.82));
+        const secondPart = roundBase - firstPart;
+        const sharedMultiplier = int(rng, 44 + level * 12, 98 + level * 35);
+        const subtracted = int(rng, 12 + level * 4, 38 + level * 11);
+        const added = subtracted + int(rng, 4 + level * 3, 18 + level * 8) * 10;
+        const fourthFactor = int(rng, 35 + level * 10, 85 + level * 30);
+        const fourthTarget = int(rng, 1 + level, 3 + level) * 10;
+        const fourthA = int(rng, 45 + level * 12, 82 + level * 28);
+        const fourthB = int(rng, 18 + level * 5, 42 + level * 12);
+        const fourthC = fourthA + fourthB - fourthTarget;
+        const repeatedLength = level + 3;
+        const repunit = (10n ** BigInt(repeatedLength) - 1n) / 9n;
+        const coefficient = int(rng, 1, 3);
+        const factorPairs = shuffle(rng, [[2, 3, 3], [3, 2, 3], [4, 2, 1]]).filter(([multiplier]) => multiplier * coefficient <= 9);
+        const [repeatedMultiplier, repeatedPart, finalPart] = factorPairs[0];
+        const repeatedBase = BigInt(coefficient) * repunit;
+        const fifthLeft = BigInt(repeatedMultiplier) * repeatedBase;
+        const fifthMiddle = BigInt(repeatedPart) * repunit;
+        const fifthRight = BigInt(finalPart) * repunit + 1n;
+        const values = [
+          BigInt(firstFactor) * BigInt(roundBase - 1),
+          BigInt(commonFactor) * BigInt(firstPart + secondPart),
+          BigInt(added - subtracted) * BigInt(sharedMultiplier),
+          BigInt(fourthFactor) * BigInt(fourthA + fourthB - fourthC),
+          fifthLeft * fifthMiddle + repeatedBase * fifthRight
+        ];
+        const expressions = [
+          `${firstFactor}×${format(roundBase - 1)}`,
+          `${firstPart}×${commonFactor}+${commonFactor}×${secondPart}`,
+          `${added}×${sharedMultiplier}-${subtracted}×${sharedMultiplier}`,
+          `${fourthFactor}×${fourthA}+${fourthB}×${fourthFactor}-${fourthFactor}×${fourthC}`,
+          `${fifthLeft}×${fifthMiddle}+${repeatedBase}×${fifthRight}`
+        ];
+        const answer = values.map((value, index) => `(${index + 1}) ${format(value)}`).join(" / ");
+        const payload = { variant, level, expressions, values: values.map(String), roundBase, fifthRoundBase: String(10n ** BigInt(repeatedLength)), sourceAnchor, complexity: (level + 1) * 1000000 + roundBase + repeatedLength * 10000 };
+        const evidence = source41Evidence("group-common-factors-five-part", payload, answer);
+        const prompt = `같은 수를 묶거나 곱하기 쉬운 수를 만들어 계산하세요.<ol class="source-parts">${expressions.map(expression => `<li><span class="equation">${expression}</span></li>`).join("")}</ol>${evidence}`;
+        const solution = `(1) ${firstFactor}×(${format(roundBase)}-1)=${format(values[0])}입니다. (2) ${commonFactor}을 묶으면 ${commonFactor}×(${firstPart}+${secondPart})=${format(values[1])}입니다. (3) ${sharedMultiplier}을 묶으면 (${added}-${subtracted})×${sharedMultiplier}=${format(values[2])}입니다. (4) ${fourthFactor}을 묶으면 ${fourthFactor}×(${fourthA}+${fourthB}-${fourthC})=${format(values[3])}입니다. (5) ${format(repeatedBase)}을 묶으면 괄호 안의 값이 ${format(10n ** BigInt(repeatedLength))}이 되어 ${format(values[4])}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const firstNumber = int(rng, 45 + level * 35, 125 + level * 80) * 4;
+        const secondOddA = int(rng, 3, 7 + level * 2) * 2 + 1;
+        const secondOddB = int(rng, 2, 6 + level * 2) * 2 + 1;
+        const thirdFirst = int(rng, 5 + level * 3, 12 + level * 5) * 4;
+        const thirdOther = int(rng, 2 + level, 6 + level * 2) * 3;
+        const powerFactors = [
+          [2, 4],
+          [2, 4, 8],
+          [2, 4, 8, 16]
+        ][level];
+        const fiveFactors = [
+          [25, 5],
+          [125, 25, 5],
+          [625, 125, 25, 5]
+        ][level];
+        const oddFactor = pick(rng, [333, 555, 777, 999]);
+        const factorLists = [
+          [firstNumber, 25],
+          [5, secondOddA, 25, secondOddB, 16],
+          [thirdFirst, 75, thirdOther, 6],
+          [...powerFactors, oddFactor, ...fiveFactors]
+        ];
+        const values = factorLists.map(factors => factors.reduce((product, factor) => product * BigInt(factor), 1n));
+        const expressions = factorLists.map(factors => factors.join("×"));
+        const answer = values.map((value, index) => `(${index + 1}) ${format(value)}`).join(" / ");
+        const pairedZeros = [3, 6, 10][level];
+        const payload = { variant, level, factorLists, values: values.map(String), pairedZeros, sourceAnchor, complexity: (level + 1) * 1000000 + pairedZeros * 100000 + Number(values[1] % 100000n) };
+        const evidence = source41Evidence("reorder-products-four-part", payload, answer);
+        const prompt = `곱하는 순서를 바꾸어 계산하기 쉬운 두 수끼리 먼저 곱하세요.<ol class="source-parts">${expressions.map(expression => `<li><span class="equation">${expression}</span></li>`).join("")}</ol>${evidence}`;
+        const solution = `(1) ${firstNumber}을 4의 배수로 보고 4와 25를 먼저 곱합니다. (2) 16×25=400을 먼저 만들 수 있습니다. (3) ${thirdFirst}과 75, ${thirdOther}과 6을 알맞게 묶어 계산합니다. (4) 2가 곱해진 수들과 5가 곱해진 수들을 짝지으면 10이 ${pairedZeros}번 곱해집니다. 답은 ${values.map((value, index) => `(${index + 1}) ${format(value)}`).join(", ")}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const endings = [2, 3, 7, 8];
+        const firstBase = int(rng, 1 + level, 4 + level * 2) * 10 + pick(rng, endings);
+        let secondBase = 0;
+        do secondBase = int(rng, 2 + level, 6 + level * 2) * 10 + pick(rng, endings); while (secondBase === firstBase);
+        const firstCount = int(rng, 17 + level * 14, 31 + level * 24);
+        const secondCount = int(rng, 19 + level * 16, 37 + level * 28);
+        const firstOnes = source41PowerOnesDigit(firstBase, firstCount);
+        const secondOnes = source41PowerOnesDigit(secondBase, secondCount);
+        const answer = firstOnes * secondOnes % 10;
+        const payload = { variant, level, bases: [firstBase, secondBase], counts: [firstCount, secondCount], onesDigits: [firstOnes, secondOnes], answer, sourceAnchor, complexity: (level + 1) * 1000000 + firstCount * secondCount };
+        const evidence = source41Evidence("repeated-product-ones-digit", payload, answer);
+        const prompt = `${firstBase}을 ${firstCount}번 곱한 수와 ${secondBase}을 ${secondCount}번 곱한 수를 서로 곱했습니다. 계산한 값의 일의 자리 숫자를 구하세요.${evidence}`;
+        const solution = `큰 수 전체를 쓰지 않고 일의 자리만 차례로 곱합니다. ${firstBase}을 ${firstCount}번 곱한 수의 일의 자리는 ${firstOnes}, ${secondBase}을 ${secondCount}번 곱한 수의 일의 자리는 ${secondOnes}입니다. 따라서 ${firstOnes}×${secondOnes}의 일의 자리인 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4 || variant === 9) {
+        let cards = [];
+        let extremes = null;
+        for (let attempt = 0; attempt < 400; attempt += 1) {
+          cards = shuffle(rng, Array.from({ length: 7 + level }, (_, index) => index + 1)).slice(0, 5).sort((left, right) => left - right);
+          extremes = source41CardProductExtremes(cards, 3);
+          if (extremes.maxima.length === 1 && extremes.minima.length === 1) break;
+        }
+        if (!extremes || extremes.maxima.length !== 1 || extremes.minima.length !== 1) throw new Error("가장 큰 곱과 가장 작은 곱이 각각 하나인 수 카드를 만들지 못했습니다.");
+        const maximum = extremes.maximum;
+        const minimum = extremes.minimum;
+        const difference = maximum.product - minimum.product;
+        const answer = variant === 4
+          ? `가장 큰 곱 ${maximum.left}×${maximum.right}=${format(maximum.product)} / 가장 작은 곱 ${minimum.left}×${minimum.right}=${format(minimum.product)}`
+          : difference;
+        const payload = { variant, level, cards, maximum, minimum, maximumCount: extremes.maxima.length, minimumCount: extremes.minima.length, arrangementCount: extremes.arrangementCount, difference, sourceAnchor, complexity: (level + 1) * 1000000 + maximum.product + difference };
+        const evidence = source41Evidence(variant === 4 ? "five-card-product-extremes" : "five-card-product-extreme-gap", payload, answer);
+        const question = variant === 4
+          ? "(세 자리 수)×(두 자리 수)의 곱이 가장 클 때와 가장 작을 때의 곱셈식을 각각 쓰세요."
+          : "(세 자리 수)×(두 자리 수)의 가장 큰 곱과 가장 작은 곱의 차를 구하세요.";
+        const prompt = `다음 수 카드를 한 번씩 모두 사용합니다. ${question}${source41CardRow(cards)}${evidence}`;
+        const solution = `가능한 카드 배치를 모두 확인하면 가장 큰 곱은 ${maximum.left}×${maximum.right}=${format(maximum.product)}, 가장 작은 곱은 ${minimum.left}×${minimum.right}=${format(minimum.product)}입니다.${variant === 9 ? ` 두 곱의 차는 ${format(maximum.product)}-${format(minimum.product)}=${format(difference)}입니다.` : ""}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const commonAdd = int(rng, 24 + level * 8, 58 + level * 22);
+        const addA = int(rng, 25 + level * 15, 65 + level * 28);
+        const addB = int(rng, 20 + level * 10, 55 + level * 24);
+        const commonSubtract = int(rng, 42 + level * 18, 96 + level * 42);
+        const subtractA = int(rng, 140 + level * 80, 320 + level * 140);
+        const subtractB = int(rng, 40 + level * 25, subtractA - 30);
+        const smallBase = int(rng, 180 + level * 110, 520 + level * 210);
+        const largeBase = smallBase * 5;
+        const middleB = int(rng, 18 + level * 7, 36 + level * 12);
+        const middleA = middleB + 15;
+        const repeatedLength = level + 4;
+        const repunit = (10n ** BigInt(repeatedLength) - 1n) / 9n;
+        const hugeLeft = 2n * 10n ** BigInt(repeatedLength) - 1n;
+        const hugeRight = 4n * repunit;
+        const expressions = [
+          `${commonAdd}×${addA}+${addB}×${commonAdd}`,
+          `${subtractA}×${commonSubtract}-${subtractB}×${commonSubtract}`,
+          `${largeBase}×${middleA}-${largeBase}×${middleB}+${smallBase}×25×3`,
+          `${hugeLeft}×${hugeRight}`
+        ];
+        const values = [
+          BigInt(commonAdd) * BigInt(addA + addB),
+          BigInt(subtractA - subtractB) * BigInt(commonSubtract),
+          BigInt(largeBase) * 15n + BigInt(smallBase) * 75n,
+          hugeLeft * hugeRight
+        ];
+        const answer = values.map((value, index) => `(${index + 1}) ${format(value)}`).join(" / ");
+        const payload = { variant, level, expressions, values: values.map(String), repeatedLength, sourceAnchor, complexity: (level + 1) * 1000000 + repeatedLength * 100000 + Number(values[2] % 100000n) };
+        const evidence = source41Evidence("common-factor-mission-four-part", payload, answer);
+        const prompt = `같은 수를 찾아 묶은 뒤 계산하세요.<ol class="source-parts">${expressions.map(expression => `<li><span class="equation">${expression}</span></li>`).join("")}</ol>${evidence}`;
+        const solution = `(1) ${commonAdd}을 묶습니다. (2) ${commonSubtract}을 묶습니다. (3) 앞의 두 곱은 ${largeBase}×15이고 뒤의 곱은 ${smallBase}×75이므로 두 값이 같습니다. (4) 큰 수의 모양을 이용해 정확히 곱합니다. 답은 ${values.map((value, index) => `(${index + 1}) ${format(value)}`).join(", ")}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const zeroA = 25 * 10 ** (level + 2);
+        const zeroB = 4 * 10 ** (level + 1);
+        const oddA = int(rng, 2 + level, 5 + level * 2) * 2 + 1;
+        const oddB = int(rng, 3 + level, 7 + level * 2) * 2 + 1;
+        const factor125 = int(rng, 45 + level * 20, 110 + level * 45) * 8;
+        const factor50 = int(rng, 240 + level * 160, 720 + level * 380) * 2;
+        const factorLists = [[zeroA, zeroB], [5, oddA, oddB, 2], [factor125, 125], [factor50, 50]];
+        const values = factorLists.map(factors => factors.reduce((product, factor) => product * factor, 1));
+        const expressions = factorLists.map(factors => factors.join("×"));
+        const answer = values.map((value, index) => `(${index + 1}) ${format(value)}`).join(" / ");
+        const payload = { variant, level, factorLists, values, sourceAnchor, complexity: (level + 1) * 1000000 + values[0] / 1000 + factor125 + factor50 };
+        const evidence = source41Evidence("easy-product-mission-four-part", payload, answer);
+        const prompt = `곱하기 쉬운 수끼리 먼저 묶어 계산하세요.<ol class="source-parts">${expressions.map(expression => `<li><span class="equation">${expression}</span></li>`).join("")}</ol>${evidence}`;
+        const solution = `(1) 25×4를 먼저 만들고 10을 알맞게 붙입니다. (2) 5×2=10을 먼저 만듭니다. (3) ${factor125} 안의 8과 125를 먼저 곱합니다. (4) ${factor50}을 2의 배수로 보고 2×50=100을 먼저 만듭니다. 답은 ${values.map((value, index) => `(${index + 1}) ${format(value)}`).join(", ")}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const repeatedDigit = int(rng, 1 + level, 3 + level);
+        const repeatCount = int(rng, 5 + level, 7 + level * 2);
+        const multiplierDigits = int(rng, 4 + level, 5 + level * 2);
+        const leading = int(rng, 2 + level, 4 + level);
+        const repeatedValue = source41RepeatedDigitValue(repeatedDigit, repeatCount);
+        const multiplier = BigInt(leading) * 10n ** BigInt(multiplierDigits - 1) - 1n;
+        const product = repeatedValue * multiplier;
+        const answer = source41DigitSum(product);
+        const payload = { variant, level, repeatedDigit, repeatCount, multiplier: String(multiplier), product: String(product), answer, sourceAnchor, complexity: (level + 1) * 1000000 + repeatCount * multiplierDigits * 10000 + answer };
+        const evidence = source41Evidence("large-product-digit-sum", payload, answer);
+        const prompt = `숫자 ${repeatedDigit}을 ${repeatCount}번 이어 쓴 수와 ${format(multiplier)}의 곱을 계산했습니다. 계산한 값의 각 자리 숫자를 모두 더하면 얼마인지 구하세요.${evidence}`;
+        const solution = `두 수를 정확히 곱하면 ${format(product)}입니다. 각 자리 숫자를 모두 더하면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const unknown = int(rng, 120 + level * 130, 399 + level * 250);
+        const gap = int(rng, 4 + level * 2, 9 + level * 4);
+        const smaller = int(rng, 28 + level * 12, 65 + level * 24);
+        const larger = smaller + gap;
+        const difference = unknown * gap;
+        const answer = unknown;
+        const payload = { variant, level, unknown, multipliers: [larger, smaller], gap, difference, answer, sourceAnchor, complexity: (level + 1) * 1000000 + difference + larger * 1000 };
+        const evidence = source41Evidence("three-digit-number-from-product-gap", payload, answer);
+        const prompt = `어떤 세 자리 자연수에 ${larger}을 곱한 값과 ${smaller}을 곱한 값의 차는 ${format(difference)}입니다. 어떤 세 자리 자연수를 구하세요.${evidence}`;
+        const solution = `같은 수에 곱한 두 값의 차이므로 어떤 수에 ${larger}-${smaller}=${gap}을 곱한 값이 ${format(difference)}입니다. 따라서 ${format(difference)}÷${gap}=${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      let digitSum = 0;
+      let lastThreeDigitProduct = 0;
+      let candidates = [];
+      for (let attempt = 0; attempt < 500; attempt += 1) {
+        const seedDigits = [int(rng, 4 + level, 9), int(rng, 1, 9), int(rng, 1, 9), int(rng, 1, 9)];
+        digitSum = seedDigits.reduce((sum, digit) => sum + digit, 0);
+        lastThreeDigitProduct = seedDigits.slice(1).reduce((product, digit) => product * digit, 1);
+        candidates = [];
+        for (let number = 1000; number <= 9999; number += 1) {
+          const digits = String(number).split("").map(Number);
+          if (digits.reduce((sum, digit) => sum + digit, 0) !== digitSum) continue;
+          if (digits.slice(1).reduce((product, digit) => product * digit, 1) !== lastThreeDigitProduct) continue;
+          candidates.push(number);
+        }
+        const minimumCandidates = [3, 5, 8][level];
+        if (candidates.length >= minimumCandidates && candidates.length <= 60) break;
+      }
+      if (candidates.length < [3, 5, 8][level]) throw new Error("자리 조건을 만족하는 수가 충분한 최대 곱 문제를 만들지 못했습니다.");
+      const maximumNumber = Math.max(...candidates);
+      const multiplier = int(rng, 24 + level * 18, 58 + level * 24);
+      const answer = maximumNumber * multiplier;
+      const payload = { variant, level, digitSum, lastThreeDigitProduct, multiplier, candidates, candidateCount: candidates.length, maximumNumber, maximumCount: candidates.filter(number => number === maximumNumber).length, answer, sourceAnchor, complexity: (level + 1) * 1000000 + candidates.length * 10000 + answer };
+      const evidence = source41Evidence("digit-conditions-maximum-product", payload, answer);
+      const prompt = `네 자리 자연수의 각 자리 숫자의 합은 ${digitSum}이고, 천의 자리 숫자를 제외한 세 자리 숫자의 곱은 ${lastThreeDigitProduct}입니다. 조건을 만족하는 네 자리 자연수에 ${multiplier}을 곱한 값 중 가장 큰 값을 구하세요.${evidence}`;
+      const solution = `조건을 만족하는 수를 큰 수부터 확인하면 가장 큰 수는 ${format(maximumNumber)} 하나입니다. 양수 ${multiplier}을 곱하므로 가장 큰 곱은 ${format(maximumNumber)}×${multiplier}=${format(answer)}입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
