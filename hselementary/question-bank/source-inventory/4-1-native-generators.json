@@ -184,6 +184,14 @@
     { "sourceItemId": "4-1-u4-e1-mission-3", "generatorKey": "source41PlaneTransformOne", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u4-e1-mission-4", "generatorKey": "source41PlaneTransformOne", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u4-e1-mission-5", "generatorKey": "source41PlaneTransformOne", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u4-e1-mission-6", "generatorKey": "source41PlaneTransformOne", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u4-e1-mission-6", "generatorKey": "source41PlaneTransformOne", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-exploration", "generatorKey": "source41PlaneTransformTwo", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-example-2-1", "generatorKey": "source41PlaneTransformTwo", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-example-2-4", "generatorKey": "source41PlaneTransformTwo", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-mission-1", "generatorKey": "source41PlaneTransformTwo", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-mission-3", "generatorKey": "source41PlaneTransformTwo", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-mission-4", "generatorKey": "source41PlaneTransformTwo", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-mission-5", "generatorKey": "source41PlaneTransformTwo", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u4-e2-mission-6", "generatorKey": "source41PlaneTransformTwo", "variant": 11, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

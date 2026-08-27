@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 191,
+  "verifiedMappings": 199,
   "items": [
     {
       "unit": 1,
@@ -3958,13 +3958,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 2 본문",
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
-      "typeLabel": "기호 규칙에 따른 연속 이동",
+      "typeLabel": "세 기호의 뜻을 찾아 두 번 움직인 결과 고르기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3976,13 +3978,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
-      "typeLabel": "반복 회전과 뒤집기 결과",
+      "typeLabel": "90° 돌리기와 뒤집기를 여러 번 한 결과 고르기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3997,6 +4001,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 번 뒤집고 돌린 모양",
       "sourceVerified": true,
       "typeLanguageVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문 답 그림과 독립 계산 결과가 달라 공개할 수 없습니다.",
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4015,6 +4021,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "잘못된 연속 이동 바로잡기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "두 서술의 이동 결과가 같아 답을 하나로 고를 수 없습니다.",
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4030,13 +4038,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-4",
       "sourcePdfPage": 52,
       "sourcePrintedPage": 48,
-      "typeLabel": "반복 이동 뒤 위치 추적",
+      "typeLabel": "여러 번 움직인 별의 마지막 자리 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4048,13 +4058,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "반복 회전 뒤 뒤집은 모양",
+      "typeLabel": "180° 돌리기와 뒤집기를 여러 번 한 결과 고르기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4069,6 +4081,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 번 움직인 것과 같은 한 번의 움직임 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "위쪽과 아래쪽으로 뒤집은 결과가 같아 답이 하나로 정해지지 않습니다.",
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4084,13 +4098,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "도형 이동의 주기 찾기",
+      "typeLabel": "네 번마다 되풀이되는 도형의 30번째 모양 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4102,13 +4118,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "이동 순서를 거꾸로 복원",
+      "typeLabel": "연속 이동의 마지막 모양으로 처음 도형 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4120,13 +4138,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "색칠칸 이동 뒤 위치 합",
+      "typeLabel": "색칠칸을 옮긴 뒤 번호의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4138,13 +4158,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 53,
       "sourcePrintedPage": 49,
-      "typeLabel": "이동 순서 오류 바로잡기",
+      "typeLabel": "움직인 순서가 바뀐 도형을 바르게 고치기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "implementationStatus": "ready",
+      "generatorKey": "source41PlaneTransformTwo",
+      "variant": 11,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
