@@ -65,8 +65,14 @@ function Get-PdfPageCount([string]$PdfPath) {
 function Close-NewNpdfProcesses([int[]]$BeforeIds) {
   $processes = @(Get-Process print2pdf -ErrorAction SilentlyContinue | Where-Object { $BeforeIds -notcontains $_.Id })
   foreach ($process in $processes) {
-    [void]$process.CloseMainWindow()
-    if (-not $process.WaitForExit(5000)) { Stop-Process -Id $process.Id -Force }
+    try { [void]$process.CloseMainWindow() } catch {}
+    $deadline = (Get-Date).AddSeconds(5)
+    while ((Get-Process -Id $process.Id -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) {
+      Start-Sleep -Milliseconds 250
+    }
+    if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+      Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+    }
   }
 }
 
