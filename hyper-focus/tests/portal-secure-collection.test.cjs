@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, "..");
 const helperSource = fs.readFileSync(path.join(root, "portal-collection.js"), "utf8");
 const portalSource = fs.readFileSync(path.join(root, "portal.js"), "utf8");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const diagnosisHtml = fs.readFileSync(path.join(root, "diagnosis.html"), "utf8");
 
 function helper() {
   const context = {};
@@ -151,6 +152,12 @@ function testStaticPortalContract() {
     "공개 홈에 15회 모의고사 광고가 있어야 하며 응시는 로그인으로 연결해야 합니다.");
   assert.match(indexHtml, /premier-report-ad-fast\.mp4/,
     "기존 누적 진단 리포트 광고 영상을 복원해야 합니다.");
+  assert.match(diagnosisHtml, /DOMContentLoaded',buildDiagnosisSelector/,
+    "진단 문항 목록은 영상·이미지 load를 기다리지 않고 DOM 준비 시 생성해야 합니다.");
+  assert.doesNotMatch(diagnosisHtml, /window\.onload\s*=\s*function\(\)\{const viewArea/,
+    "진단 문항 목록 생성을 window.onload에 묶으면 느린 모바일 환경에서 빈 화면이 생깁니다.");
+  assert.match(diagnosisHtml, /preview\.style\.display='block';document\.body\.classList\.remove\('intro-active'\)/,
+    "SKIP은 인트로를 닫기 전에 다음 화면을 먼저 준비해야 합니다.");
 
   assert.match(portalSource, /auth\.canAccess\(session, product\.permission\)/,
     "큰 모의고사 책은 기존 상품 권한으로 제어해야 합니다.");
