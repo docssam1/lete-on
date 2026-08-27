@@ -29,7 +29,7 @@ export const PROGRESS_KEY = "mirrorManor";
 // triangular grids and level 5 a second simultaneous axis; both extend this list
 // rather than replacing it, which is why the validator reads it instead of
 // hard-coding "vertical"/"horizontal".
-export const SUPPORTED_AXIS_KINDS = ["vertical", "horizontal"];
+export const SUPPORTED_AXIS_KINDS = ["vertical", "horizontal", "diagonal"];
 
 const GRID = { cols: 8, rows: 6 };
 
@@ -361,7 +361,7 @@ const level3Specs = [
  * deliberately wrong visual readings. Arrow items are a small internal extension
  * of the same left/right reflection rule, not copies of a source worksheet item.
  */
-function symbolProblem(index, sourceKind, sourceText, decoyText) {
+function symbolProblem(index, sourceKind, sourceText, decoyText, axisKind = "vertical") {
   const choices = [
     { id: "normal", kind: "normal", text: sourceText },
     { id: "mirror", kind: "mirror", text: sourceText },
@@ -374,7 +374,7 @@ function symbolProblem(index, sourceKind, sourceText, decoyText) {
     level: 4,
     interaction: "symbol-reflection",
     grid: { ...GRID },
-    axis: { kind: "vertical", at: 4 },
+    axis: { kind: axisKind, at: axisKind === "horizontal" ? 3 : 4 },
     sourceKind,
     sourceText,
     choices: choices.slice(shift).concat(choices.slice(0, shift)),
@@ -390,9 +390,9 @@ const level4Specs = [
   symbolProblem(4, "word", "어머", "어모"),
   symbolProblem(5, "word", "마롱", "마봉"),
   symbolProblem(6, "word", "야옹이", "야용이"),
-  symbolProblem(7, "arrow", "→", "↑"),
-  symbolProblem(8, "arrow", "↗", "↘"),
-  symbolProblem(9, "arrow", "▶", "▲")
+  symbolProblem(7, "latin", "A", "F"),
+  symbolProblem(8, "arrow", "↑", "→", "horizontal"),
+  symbolProblem(9, "arrow", "→", "↗", "diagonal")
 ];
 
 /* ------------------------------------------------------------------- level table */
@@ -508,8 +508,12 @@ export function validateLevels() {
       assert(problem.interaction === level.interaction, `${problem.id} uses ${problem.interaction} on a ${level.interaction} level.`);
       assert(SUPPORTED_AXIS_KINDS.includes(problem.axis.kind), `${problem.id} uses unsupported axis "${problem.axis.kind}".`);
       assert(Number.isInteger(problem.axis.at) && problem.axis.at > 0, `${problem.id} has a non-integer mirror line.`);
-      const span = problem.axis.kind === "vertical" ? problem.grid.cols : problem.grid.rows;
-      assert(problem.axis.at * 2 === span, `${problem.id} does not put the mirror at the middle of the board.`);
+      if (problem.interaction === "symbol-reflection" && problem.axis.kind === "diagonal") {
+        assert(problem.axis.at === 4, `${problem.id} has an invalid diagonal mirror anchor.`);
+      } else {
+        const span = problem.axis.kind === "vertical" ? problem.grid.cols : problem.grid.rows;
+        assert(problem.axis.at * 2 === span, `${problem.id} does not put the mirror at the middle of the board.`);
+      }
 
       const key = canonicalKey(problem);
       assert(!canonical.has(key), `${problem.id} is a rotation/reflection of ${canonical.get(key)}.`);
@@ -659,9 +663,10 @@ function validateDistance(problem) {
 
 function validateSymbol(problem) {
   const { grid, axis, sourceKind, sourceText, choices, validation } = problem;
-  assert(sourceKind === "letter" || sourceKind === "word" || sourceKind === "arrow", `${problem.id} has an unsupported symbol kind.`);
+  assert(sourceKind === "letter" || sourceKind === "word" || sourceKind === "latin" || sourceKind === "arrow", `${problem.id} has an unsupported symbol kind.`);
   assert(grid.cols === GRID.cols && grid.rows === GRID.rows, `${problem.id} uses the wrong room size.`);
-  assert(axis.kind === "vertical" && axis.at === 4, `${problem.id} must use the vertical mirror.`);
+  assert(SUPPORTED_AXIS_KINDS.includes(axis.kind), `${problem.id} has an unsupported symbol mirror.`);
+  assert(axis.at === (axis.kind === "horizontal" ? 3 : 4), `${problem.id} has the wrong symbol mirror anchor.`);
   assert(typeof sourceText === "string" && sourceText.length > 0, `${problem.id} has no source symbol.`);
   assert(Array.isArray(choices) && choices.length === 3, `${problem.id} needs three symbol choices.`);
   const signatures = new Set(choices.map((choice) => `${choice.kind}:${choice.text}`));

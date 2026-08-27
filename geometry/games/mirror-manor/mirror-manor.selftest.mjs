@@ -69,7 +69,7 @@ for (const problem of levels[2].problems) {
 }
 
 for (const problem of levels[3].problems) {
-  assert(["letter", "word", "arrow"].includes(problem.sourceKind), `${problem.id} has no supported symbol kind`);
+  assert(["letter", "word", "latin", "arrow"].includes(problem.sourceKind), `${problem.id} has no supported symbol kind`);
   assert(problem.sourceText.length > 0, `${problem.id} has no source text`);
   assert(problem.choices.length === 3, `${problem.id} needs three choices`);
   assert(problem.choices.filter((choice) => choice.kind === "mirror").length === 1, `${problem.id} needs one mirrored choice`);
@@ -79,6 +79,10 @@ for (const problem of levels[3].problems) {
   assert(answer.text === problem.sourceText, `${problem.id} mirrors the wrong source text`);
   assert(new Set(problem.choices.map((choice) => `${choice.kind}:${choice.text}`)).size === 3, `${problem.id} repeats a visual choice role`);
 }
+
+assert(levels[3].problems.some((problem) => problem.sourceKind === "latin"), "level 4 needs an English symbol problem");
+assert(levels[3].problems.some((problem) => problem.axis.kind === "horizontal"), "level 4 needs an up-down reflection problem");
+assert(levels[3].problems.some((problem) => problem.axis.kind === "diagonal"), "level 4 needs a diagonal reflection problem");
 
 const koreanKeys = Object.keys(messages.ko).sort();
 for (const lang of LANGUAGES) {

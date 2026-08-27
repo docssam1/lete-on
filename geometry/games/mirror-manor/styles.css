@@ -114,17 +114,29 @@ button { cursor: pointer }
    three-choice interaction. The source glyph stays on the given side; choices
    stack on the answer side so the mirror and the reading order remain clear. */
 .symbol-cells { pointer-events: none }
-.symbol-source { position: absolute; z-index: 3; left: 24%; top: 50%; display: grid; place-items: center; width: 38%; min-height: 96px; transform: translate(-50%, -50%) }
+.symbol-source { position: absolute; z-index: 3; left: 24%; top: 50%; display: grid; place-items: center; width: 38%; min-height: 108px; transform: translate(-50%, -50%) }
 .symbol-source::after { content: ""; position: absolute; right: -16%; width: 24px; height: 2px; background: #2f6f92; opacity: .45 }
-.symbol-glyph { display: block; color: #243f5d; font-family: Arial, "Noto Sans KR", sans-serif; font-size: 48px; font-weight: 900; line-height: 1; white-space: nowrap }
+.symbol-glyph { display: block; color: #243f5d; font-family: "Arial Black", Arial, "Noto Sans KR", sans-serif; font-size: 54px; font-weight: 900; line-height: 1; white-space: nowrap; -webkit-text-stroke: .7px currentColor }
 .symbol-source .symbol-glyph { text-shadow: 0 2px #ffffff, 0 4px 9px #22334a33 }
 .symbol-choices { position: absolute; inset: 0; pointer-events: none }
-.symbol-choice { position: absolute; left: 75%; z-index: 8; display: grid; place-items: center; width: 112px; height: 66px; padding: 4px 10px; border: 2px solid #9aa8b7; border-radius: 10px; background: #ffffffb8; box-shadow: 0 4px 9px #22334a1c; pointer-events: auto; touch-action: manipulation }
+.symbol-choice { position: absolute; left: 75%; z-index: 8; display: grid; place-items: center; width: 116px; height: 72px; padding: 4px 10px; border: 2px solid #9aa8b7; border-radius: 10px; background: #ffffffb8; box-shadow: 0 4px 9px #22334a1c; pointer-events: auto; touch-action: manipulation }
 .symbol-choice:nth-child(1) { top: 24% }
 .symbol-choice:nth-child(2) { top: 50% }
 .symbol-choice:nth-child(3) { top: 76% }
-.symbol-choice .symbol-glyph { color: #344b62; font-size: 38px }
+.symbol-choice .symbol-glyph { color: #344b62; font-size: 46px }
 .symbol-mirror { transform: scaleX(-1) }
+.board.symbol-horizontal .symbol-source { left: 50%; top: 24% }
+.board.symbol-horizontal .symbol-choice { left: auto; top: 75% }
+.board.symbol-horizontal .symbol-choice:nth-child(1) { left: 24% }
+.board.symbol-horizontal .symbol-choice:nth-child(2) { left: 50% }
+.board.symbol-horizontal .symbol-choice:nth-child(3) { left: 76% }
+.board.symbol-horizontal .symbol-mirror { transform: scaleY(-1) }
+.board.symbol-diagonal .symbol-source { left: 24%; top: 24% }
+.board.symbol-diagonal .symbol-choice { left: 76%; top: 76% }
+.board.symbol-diagonal .symbol-choice:nth-child(1) { top: 52% }
+.board.symbol-diagonal .symbol-choice:nth-child(2) { top: 68% }
+.board.symbol-diagonal .symbol-choice:nth-child(3) { top: 84% }
+.board.symbol-diagonal .symbol-mirror { transform: rotate(-90deg) scaleX(-1) }
 .symbol-choice:hover, .symbol-choice:focus-visible { border-color: #b05a1e; background: #ffe6a866; outline: 0 }
 .symbol-choice.selected { border-color: #2a7f8f; background: #bce9ee99; box-shadow: 0 0 0 3px #2a7f8f44, 0 4px 9px #22334a1c }
 .symbol-choice.wrong { animation: shake .38s ease; border-color: #b84238; background: #dc5f5566 }
@@ -134,6 +146,7 @@ button { cursor: pointer }
 .mirror-line { position: absolute; z-index: 5; background: linear-gradient(90deg, #ffffffcc, var(--glass), #ffffffcc); box-shadow: 0 0 12px #7fd3e6cc; pointer-events: none; border-radius: 99px }
 .mirror-line.vertical { top: -2%; height: 104%; width: 6px; transform: translateX(-50%) }
 .mirror-line.horizontal { left: -2%; width: 104%; height: 6px; transform: translateY(-50%) }
+.mirror-line.diagonal { left: 50%; top: 50%; width: 142%; height: 6px; transform: translate(-50%, -50%) rotate(45deg) }
 
 /* ------------------------------------------------------------------ objects */
 .piece-layer { position: absolute; inset: 0; z-index: 4; pointer-events: none }
@@ -258,10 +271,10 @@ button { cursor: pointer }
   .next-button { min-height: 42px; font-size: 12px }
   .cubi-guide .cubi-sprite { width: 56px; height: 56px }
   .guide-bubble { display: none }
-  .symbol-source { min-height: 64px }
-  .symbol-glyph { font-size: 38px }
-  .symbol-choice { width: 82px; height: 50px; padding: 3px 6px; border-radius: 8px }
-  .symbol-choice .symbol-glyph { font-size: 28px }
+  .symbol-source { min-height: 72px }
+  .symbol-glyph { font-size: 46px }
+  .symbol-choice { width: 88px; height: 54px; padding: 3px 6px; border-radius: 8px }
+  .symbol-choice .symbol-glyph { font-size: 34px }
   .symbol-caption { bottom: 6%; font-size: 9px }
   /* Keep the feedback banner inside the mission bar so it never covers the board. */
   .toast { top: 48px; font-size: 12px; padding: 6px 12px }
