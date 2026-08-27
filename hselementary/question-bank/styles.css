@@ -692,6 +692,7 @@ button{
 .equation.comparison{font-size:18px;line-height:2}
 .choice-list{display:grid;gap:6px;margin:14px 0 0;padding-left:26px}.choice-list li{padding-left:4px;font-size:14px;line-height:1.55}.choice-list b{margin-right:6px;color:var(--accent)}
 .number-line{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto;align-items:end;gap:0;margin-top:24px;color:#445b73;font-size:10px;text-align:center}.number-line i{height:12px;border-top:2px solid #87a0b8;border-left:1px solid #87a0b8}.number-line span,.number-line b{padding:0 5px 5px}.number-line b{color:var(--accent);font-size:14px}
+.geometry-diagram.source41-number-line{display:block;width:min(420px,100%);height:auto;aspect-ratio:420/138;margin:18px auto 0;overflow:visible}.source41-number-line__axis,.source41-number-line__tick{stroke:#31566f!important;stroke-width:1.6!important}.source41-number-line__marker circle{fill:#31566f;stroke:#fff;stroke-width:1.2}.source41-number-line__marker line{stroke:#7f96a8;stroke-width:1.1}.geometry-diagram.source41-number-line text{fill:#24435d;font-size:14px;font-weight:900;text-anchor:middle;dominant-baseline:auto}.geometry-diagram.source41-number-line .is-start text{text-anchor:start}.geometry-diagram.source41-number-line .is-end text{text-anchor:end}.geometry-diagram.source41-number-line .is-unknown text{fill:#b77900;font-size:17px}.source41-skip-sequence{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;margin:15px 0;padding:11px 9px;border:1px solid #c4d4df;background:#f4f8fb;color:#173b58;font-variant-numeric:tabular-nums}.source41-skip-sequence b{white-space:nowrap;font-size:14px}.source41-skip-sequence span{color:#8a9aaa;font-size:15px}
 .problem-table{width:min(420px,100%);margin:16px auto 0;border-collapse:collapse;background:#fff;font-size:12px}.problem-table th,.problem-table td{padding:7px 9px;border:1px solid #9eb0c2;text-align:center}.problem-table th{background:#edf3f8}.problem-table td{font-weight:900}
 .condition-list{display:grid;gap:6px;margin:14px 0 0;padding-left:22px}.condition-list li{font-size:13px;line-height:1.55}
 .question-prompt svg text,.type-preview-question svg text{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}.geometry-diagram{display:block;width:min(210px,100%);height:140px;margin:14px auto 0;overflow:visible}.geometry-diagram line,.geometry-diagram path,.geometry-diagram polygon,.geometry-diagram rect,.geometry-diagram circle{fill:none;stroke:#294963;stroke-width:2;vector-effect:non-scaling-stroke}.geometry-diagram text,.problem-svg text{fill:#163853;font-size:11px;font-weight:900;text-anchor:middle;dominant-baseline:middle}.geometry-diagram .svg-measure-text{text-anchor:start}.geometry-diagram .svg-measure-fraction{font-size:9px}.geometry-diagram .crease{stroke:#8ca4b8;stroke-dasharray:5 4}.geometry-diagram .original{stroke:#8ca4b8;stroke-dasharray:4 4}.geometry-diagram .folded,.geometry-diagram .hour-hand{stroke:#d99b16;stroke-width:3}.geometry-diagram .minute-hand{stroke:#1d6fb8;stroke-width:2.5}.rotated-square rect:nth-of-type(2){stroke:#d99b16}.clock-pair{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px}.clock-pair .geometry-diagram{width:min(145px,48%);height:120px;margin:0}
@@ -828,9 +829,8 @@ button{
 }
 
 @media print{
-  body{
-    background:#fff;
-  }
+  html,body{background:#fff!important}
+  .app-shell{width:auto;margin:0;padding:0}
 
   .topbar{
     display:none;
@@ -920,4 +920,8 @@ button{
   .review-sidebar,.review-stage-head{display:none!important}
   .review-stage{padding:0!important;background:#fff!important}
   .review-layout{display:block!important;margin:0!important;border:0!important;box-shadow:none!important}
+  .question-item,.solution-item{break-inside:avoid;page-break-inside:avoid}
+  .geometry-diagram.source41-number-line{width:min(350px,100%);margin-top:8px}
+  .source41-skip-sequence{gap:3px;margin:8px 0;padding:6px}
+  .source41-skip-sequence b,.source41-skip-sequence span{font-size:11px}
 }

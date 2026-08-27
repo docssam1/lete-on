@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 32,
+  "verifiedMappings": 43,
   "items": [
     {
       "unit": 1,
@@ -449,13 +449,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
-      "typeLabel": "일정한 간격의 큰 수 뛰어 세기",
+      "typeLabel": "처음 네 수의 규칙을 찾아 먼 번째 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -467,13 +468,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
-      "typeLabel": "사이 수 개수로 간격 구하기",
+      "typeLabel": "두 수 사이의 개수로 한 번에 뛰는 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -485,13 +487,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-2",
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
-      "typeLabel": "큰 수 수직선 눈금 읽기",
+      "typeLabel": "두 큰 수를 보고 수직선의 빈 눈금 두 곳 읽기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -503,13 +506,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
-      "typeLabel": "잘못 센 뛰어 세기 횟수",
+      "typeLabel": "줄이는 수를 잘못 잡은 뛰어 세기 바로잡기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -521,13 +525,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 12,
       "sourcePrintedPage": 8,
-      "typeLabel": "목표값까지 최소 뛰어 세기",
+      "typeLabel": "가장 큰 수에서 기준을 넘는 최소 횟수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -539,13 +544,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "큰 수 수직선에서 알 수 없는 눈금의 수 찾기",
+      "typeLabel": "두 큰 수를 보고 수직선의 뒤쪽 빈 눈금 읽기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -557,13 +563,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "뛴 횟수에 따른 값",
+      "typeLabel": "몇 번 뛴 결과로 한 번에 뛰는 수를 찾아 다시 뛰기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -575,13 +582,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "뛰어 세기 단위 오류 바로잡기",
+      "typeLabel": "커지는 수를 잘못 잡은 뛰어 세기 바로잡기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -593,13 +601,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "목표 수에 가장 가까운 값",
+      "typeLabel": "같은 수만큼 뛰어 셀 때 기준에 가장 가까운 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -611,13 +620,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "일정한 간격으로 나열한 수에서 두 수 사이의 개수 세기",
+      "typeLabel": "같은 수만큼 커지는 수들 중 두 수 사이의 개수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -629,13 +639,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 13,
       "sourcePrintedPage": 9,
-      "typeLabel": "같은 수만큼 뛰어 센 먼 번째 수 구하기",
+      "typeLabel": "같은 수만큼 커지는 규칙으로 아주 먼 번째 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberThree",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,

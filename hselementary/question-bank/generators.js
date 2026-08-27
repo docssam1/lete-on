@@ -174,6 +174,22 @@
     const text = String(value).replace(/,/g, "");
     return text.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
+  const source41FormatLargeValue = value => {
+    const signed = BigInt(value);
+    const negative = signed < 0n;
+    const absolute = negative ? -signed : signed;
+    if (absolute < 100000000n) return `${negative ? "-" : ""}${source41FormatInteger(absolute)}`;
+    const groups = [];
+    let rest = absolute;
+    let unitIndex = 0;
+    while (rest > 0n) {
+      const group = rest % 10000n;
+      if (group) groups.push(`${group}${source41LargeUnits[unitIndex]}`);
+      rest /= 10000n;
+      unitIndex += 1;
+    }
+    return `${negative ? "-" : ""}${groups.reverse().join(" ")}`;
+  };
   const source41DigitAt = (value, exponent) => Number(BigInt(value) / source41Power(exponent) % 10n);
   const source41ReadFourDigits = value => {
     const digits = String(value).padStart(4, "0").split("").map(Number);
@@ -300,6 +316,27 @@
     };
     visit(0);
     return values;
+  };
+  const source41BigNumberLineSvg = ({ start, step, intervals, markers, ariaLabel }) => {
+    const left = 24;
+    const right = 396;
+    const y = 55;
+    const spacing = (right - left) / intervals;
+    const ticks = Array.from({ length: intervals + 1 }, (_, index) => {
+      const x = left + spacing * index;
+      const height = index % 5 === 0 ? 15 : 10;
+      return `<line class="source41-number-line__tick" data-index="${index}" x1="${x.toFixed(3)}" y1="${y - height / 2}" x2="${x.toFixed(3)}" y2="${y + height / 2}"/>`;
+    }).join("");
+    const markerText = markers.map((marker, markerIndex) => {
+      const x = left + spacing * marker.index;
+      const lane = marker.lane ?? markerIndex % 2;
+      const textY = lane ? 120 : 91;
+      const guideY = lane ? 101 : 73;
+      const markerClass = marker.kind === "unknown" ? " is-unknown" : "";
+      const edgeClass = marker.index <= 1 ? " is-start" : marker.index >= intervals - 1 ? " is-end" : "";
+      return `<g class="source41-number-line__marker${markerClass}${edgeClass}" data-marker-index="${marker.index}" data-marker-value="${marker.value ?? ""}"><circle cx="${x.toFixed(3)}" cy="${y}" r="3.4"/><line x1="${x.toFixed(3)}" y1="${y + 7}" x2="${x.toFixed(3)}" y2="${guideY}"/><text x="${x.toFixed(3)}" y="${textY}">${marker.label}</text></g>`;
+    }).join("");
+    return `<svg class="geometry-diagram source41-number-line" viewBox="0 0 420 138" data-start="${start}" data-step="${step}" data-intervals="${intervals}" role="img" aria-label="${ariaLabel}"><line class="source41-number-line__axis" x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}${markerText}</svg>`;
   };
   const fractionEquation = (kind, terms, expected, body) => {
     const termText = terms.map(({ numerator, denominator }) => `${numerator}/${denominator}`).join(";");
@@ -2836,6 +2873,221 @@
       const evidence = source41Evidence("mixed-distance-table-order", payload, answer);
       const prompt = `다음 표는 태양과 행성 사이의 거리를 나타낸 것입니다. 태양에서 가까운 순서대로 행성의 기호를 쓰세요.<table class="problem-table"><thead><tr><th>행성</th><th>태양과의 거리(km)</th></tr></thead><tbody>${rows.map(row => `<tr><th>${row.label}</th><td>${row.shown}</td></tr>`).join("")}</tbody></table>${evidence}`;
       const solution = `모든 거리를 숫자로 바꾸어 작은 것부터 비교하면 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41LargeNumberThree({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수의 규칙성과 뛰어 세기 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatLargeValue;
+      const sequenceSteps = [
+        [4062n, 6500n, 12500n],
+        [14062n, 23505n, 65000n],
+        [123505n, 650500n, 1205000n]
+      ];
+      const largeSteps = [
+        [1000000000n, 2000000000n, 2500000000n],
+        [3580000000n, 6500000000n, 12000000000n],
+        [12345000000n, 23750000000n, 65500000000n]
+      ];
+      const sequenceMarkup = values => `<div class="source41-skip-sequence">${values.map((value, index) => `${index ? '<span aria-hidden="true">→</span>' : ""}<b>${format(value)}</b>`).join("")}</div>`;
+
+      if (variant === 0) {
+        const step = pick(rng, sequenceSteps[level]);
+        const targetIndex = [100, 1000, 3000][level];
+        const start = BigInt(int(rng, [12000, 22000, 120000][level], [85000, 95000, 920000][level]));
+        const shown = Array.from({ length: 4 }, (_, index) => start + BigInt(index) * step);
+        const answerValue = start + BigInt(targetIndex - 1) * step;
+        const answer = format(answerValue);
+        const payload = { variant, level, start: String(start), step: String(step), targetIndex, shown: shown.map(String), complexity: targetIndex };
+        const evidence = source41Evidence("skip-sequence-nth-from-four", payload, answer);
+        const prompt = `처음 네 수의 규칙을 찾아 ${source41FormatInteger(targetIndex)}번째 수를 구하세요.${sequenceMarkup(shown)}${evidence}`;
+        const solution = `이웃한 두 수의 차는 언제나 ${format(step)}입니다. 첫 수를 1번째로 세므로 ${source41FormatInteger(targetIndex - 1)}번 더하여 ${format(start)} + ${format(step)} × ${source41FormatInteger(targetIndex - 1)} = ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const step = pick(rng, largeSteps[level]);
+        const insideCount = int(rng, [2, 4, 7][level], [4, 7, 11][level]);
+        const start = BigInt(int(rng, 18 + level * 12, 75 + level * 25)) * step;
+        const end = start + BigInt(insideCount + 1) * step;
+        const answer = format(step);
+        const payload = { variant, level, start: String(start), end: String(end), insideCount, intervalCount: insideCount + 1, step: String(step), complexity: insideCount + 1 };
+        const evidence = source41Evidence("skip-step-from-inside-count", payload, answer);
+        const prompt = `${format(start)}부터 ${format(end)}까지 같은 수만큼 뛰어 세었더니 두 수 사이에 수가 모두 ${insideCount}개 있었습니다. 한 번에 얼마씩 뛰어 센 것인지 구하세요.${evidence}`;
+        const solution = `두 수 사이의 수가 ${insideCount}개이면 뛰어 센 간격은 ${insideCount + 1}개입니다. ${format(end - start)}을 ${insideCount + 1}로 나누면 한 번에 ${answer}씩 뛰었습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const step = pick(rng, largeSteps[level]);
+        const start = BigInt(int(rng, 24, 86)) * step;
+        const values = Array.from({ length: 10 }, (_, index) => start + BigInt(index) * step);
+        const markers = [
+          { index: 0, label: format(values[0]), value: String(values[0]), lane: 0 },
+          { index: 2, label: "(가)", value: String(values[2]), kind: "unknown", lane: 1 },
+          { index: 5, label: format(values[5]), value: String(values[5]), lane: 0 },
+          { index: 8, label: "(나)", value: String(values[8]), kind: "unknown", lane: 1 }
+        ];
+        const answer = `(가) ${format(values[2])}, (나) ${format(values[8])}`;
+        const payload = { variant, level, start: String(start), step: String(step), intervals: 9, knownIndices: [0, 5], targetIndices: [2, 8], expectedValues: [String(values[2]), String(values[8])], complexity: String(step).length };
+        const evidence = source41Evidence("large-number-line-two-targets", payload, answer);
+        const line = source41BigNumberLineSvg({ start, step, intervals: 9, markers, ariaLabel: `${format(values[0])}과 ${format(values[5])}가 표시된 같은 간격 수직선` });
+        const prompt = `수직선의 눈금은 모두 같은 간격입니다. (가)와 (나)에 알맞은 수를 각각 구하세요.${line}${evidence}`;
+        const solution = `${format(values[0])}에서 ${format(values[5])}까지 5칸이므로 한 칸은 ${format(step)}입니다. 처음에서 2칸 간 수는 ${format(values[2])}, 처음에서 8칸 간 수는 ${format(values[8])}입니다. 따라서 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const correctStepChoices = [
+          [1200000000n, 2500000000n],
+          [120000000000n, 230000000000n],
+          [1250000000000n, 2375000000000n]
+        ];
+        const correctStep = pick(rng, correctStepChoices[level]);
+        const wrongStep = correctStep * 10n + correctStep / 2n;
+        const jumpCount = [3, 4, 5][level];
+        const wrongFinalUnit = [100000000n, 1000000000n, 10000000000n][level];
+        const wrongFinal = BigInt(int(rng, 30, 900)) * wrongFinalUnit;
+        const start = wrongFinal + BigInt(jumpCount) * wrongStep;
+        const correctFinal = start - BigInt(jumpCount) * correctStep;
+        const demonstrationStart = start + correctStep * BigInt(int(rng, 2, 8));
+        const demonstration = Array.from({ length: 5 }, (_, index) => demonstrationStart - BigInt(index) * correctStep);
+        const answer = format(correctFinal);
+        const payload = { variant, level, correctStep: String(correctStep), wrongStep: String(wrongStep), jumpCount, wrongFinal: String(wrongFinal), start: String(start), demonstration: demonstration.map(String), complexity: String(wrongStep).length };
+        const evidence = source41Evidence("correct-decreasing-skip-error", payload, answer);
+        const prompt = `어떤 수에서 다음과 같은 방법으로 ${jumpCount}번 작게 뛰어 세어야 했습니다.${sequenceMarkup(demonstration)}그런데 잘못하여 ${format(wrongStep)}씩 ${jumpCount}번 작게 뛰어 세었더니 ${format(wrongFinal)}이 되었습니다. 바르게 뛰어 센 마지막 수를 구하세요.${evidence}`;
+        const solution = `잘못 뛰기 전의 수는 ${format(wrongFinal)}에 ${format(wrongStep)}을 ${jumpCount}번 더한 ${format(start)}입니다. 바른 규칙은 한 번에 ${format(correctStep)}씩 작아지므로 ${format(start)}에서 ${format(correctStep)}을 ${jumpCount}번 빼면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const digitCount = [7, 8, 9][level];
+        const digits = shuffle(rng, Array.from({ length: 10 }, (_, digit) => digit)).slice(0, digitCount);
+        const greatest = BigInt(digits.slice().sort((left, right) => right - left).join(""));
+        const target = source41Power(digits.length);
+        const stepUnits = [1000n, 1000n, 10000n];
+        const stepRanges = [[20, 120], [60, 220], [100, 300]];
+        const step = BigInt(int(rng, ...stepRanges[level])) * stepUnits[level];
+        const jumps = (target - greatest) / step + 1n;
+        const answer = source41FormatInteger(jumps);
+        const payload = { variant, level, digits, greatest: String(greatest), target: String(target), step: String(step), strictGreater: true, jumps: String(jumps), complexity: digits.length };
+        const evidence = source41Evidence("greatest-digit-number-minimum-jumps", payload, answer);
+        const prompt = `${digits.join(", ")}의 숫자를 한 번씩 모두 사용하여 가장 큰 ${digits.length}자리 자연수를 만들었습니다. 이 수에서 ${format(step)}씩 크게 뛰어 세어 ${format(target)}보다 큰 수를 만들려면 적어도 몇 번 뛰어 세어야 하는지 구하세요.${evidence}`;
+        const solution = `가장 큰 수는 ${source41FormatInteger(greatest)}입니다. ${format(target)}보다 커야 하므로 차가 같은 경우도 한 번 더 뛰어야 합니다. (${source41FormatInteger(target - greatest)} ÷ ${format(step)})의 몫보다 1 큰 ${answer}번입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const step = pick(rng, largeSteps[level]);
+        const knownA = BigInt(int(rng, 110 + level * 100, 480 + level * 220)) * 1000000000000n;
+        const knownB = knownA + 10n * step;
+        const target = knownB + 7n * step;
+        const lineStart = knownA - step;
+        const markers = [
+          { index: 1, label: format(knownA), value: String(knownA), lane: 0 },
+          { index: 11, label: format(knownB), value: String(knownB), lane: 0 },
+          { index: 18, label: "㉠", value: String(target), kind: "unknown", lane: 1 }
+        ];
+        const answer = format(target);
+        const payload = { variant, level, lineStart: String(lineStart), step: String(step), intervals: 19, knownIndices: [1, 11], targetIndex: 18, target: String(target), complexity: 17 + level * 5 };
+        const evidence = source41Evidence("large-number-line-far-target", payload, answer);
+        const line = source41BigNumberLineSvg({ start: lineStart, step, intervals: 19, markers, ariaLabel: `${format(knownA)}과 ${format(knownB)}가 표시된 같은 간격 수직선` });
+        const prompt = `수직선의 눈금은 모두 같은 간격입니다. ㉠이 나타내는 수를 구하세요.${line}${evidence}`;
+        const solution = `${format(knownA)}에서 ${format(knownB)}까지 10칸이므로 한 칸은 ${format(step)}입니다. ㉠은 ${format(knownB)}에서 7칸 더 간 곳이므로 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const step = pick(rng, largeSteps[level]);
+        const firstJumpCount = [2, 3, 4][level];
+        const secondJumpCount = [3, 5, 7][level];
+        const firstStart = BigInt(int(rng, 18, 46)) * step;
+        const firstEnd = firstStart + BigInt(firstJumpCount) * step;
+        const secondStart = BigInt(int(rng, 52, 94)) * step + BigInt(int(rng, 1, 9)) * 100000000n;
+        const answerValue = secondStart + BigInt(secondJumpCount) * step;
+        const answer = format(answerValue);
+        const payload = { variant, level, firstStart: String(firstStart), firstEnd: String(firstEnd), firstJumpCount, secondStart: String(secondStart), secondJumpCount, step: String(step), complexity: firstJumpCount + secondJumpCount };
+        const evidence = source41Evidence("find-step-then-apply", payload, answer);
+        const prompt = `${format(firstStart)}에서 같은 수만큼 ${firstJumpCount}번 크게 뛰어 세었더니 ${format(firstEnd)}이 되었습니다. 같은 규칙으로 ${format(secondStart)}에서 ${secondJumpCount}번 크게 뛰어 센 수를 구하세요.${evidence}`;
+        const solution = `${format(firstEnd - firstStart)}을 ${firstJumpCount}로 나누면 한 번에 ${format(step)}씩 커집니다. ${format(secondStart)}에 ${format(step)}을 ${secondJumpCount}번 더하면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const correctStepChoices = [
+          [130000n, 250000n],
+          [1300000n, 2350000n],
+          [13000000n, 23750000n]
+        ];
+        const correctStep = pick(rng, correctStepChoices[level]);
+        const wrongStep = correctStep * 10n;
+        const jumpCount = [3, 3, 5][level];
+        const startUnit = [100000n, 1000000n, 10000000n][level];
+        const start = BigInt(int(rng, 240, 760)) * startUnit;
+        const wrongFinal = start + BigInt(jumpCount) * wrongStep;
+        const correctFinal = start + BigInt(jumpCount) * correctStep;
+        const answer = format(correctFinal);
+        const payload = { variant, level, correctStep: String(correctStep), wrongStep: String(wrongStep), jumpCount, wrongFinal: String(wrongFinal), start: String(start), complexity: String(wrongStep).length };
+        const evidence = source41Evidence("correct-increasing-skip-error", payload, answer);
+        const prompt = `어떤 수에서 ${format(correctStep)}씩 ${jumpCount}번 크게 뛰어 세어야 하는데, 잘못하여 ${format(wrongStep)}씩 ${jumpCount}번 크게 뛰어 세었더니 ${format(wrongFinal)}이 되었습니다. 바르게 뛰어 센 마지막 수를 구하세요.${evidence}`;
+        const solution = `처음 수는 ${format(wrongFinal)}에서 ${format(wrongStep)}을 ${jumpCount}번 뺀 ${format(start)}입니다. 이 수에 ${format(correctStep)}을 ${jumpCount}번 더하면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const step = pick(rng, largeSteps[level]);
+        const start = BigInt(int(rng, 24, 72)) * step;
+        const lowerJump = int(rng, [3, 6, 10][level], [6, 10, 16][level]);
+        const offsetTenths = pick(rng, [3, 7]);
+        const target = start + BigInt(lowerJump) * step + step * BigInt(offsetTenths) / 10n;
+        const lower = start + BigInt(lowerJump) * step;
+        const upper = lower + step;
+        const lowerDistance = target - lower;
+        const upperDistance = upper - target;
+        const answerValue = lowerDistance < upperDistance ? lower : upper;
+        const answer = format(answerValue);
+        const candidates = Array.from({ length: lowerJump + 3 }, (_, index) => start + BigInt(index) * step);
+        const minimumDistance = candidates.reduce((minimum, value) => {
+          const distance = value > target ? value - target : target - value;
+          return minimum === null || distance < minimum ? distance : minimum;
+        }, null);
+        const nearest = candidates.filter(value => (value > target ? value - target : target - value) === minimumDistance);
+        if (nearest.length !== 1 || nearest[0] !== answerValue) throw new Error("기준 수에 가장 가까운 뛰어 센 수가 하나로 정해지지 않았습니다.");
+        const payload = { variant, level, start: String(start), step: String(step), target: String(target), candidates: candidates.map(String), nearest: nearest.map(String), lower: String(lower), upper: String(upper), complexity: lowerJump + 1 };
+        const evidence = source41Evidence("nearest-reachable-skip-value", payload, answer);
+        const prompt = `${format(start)}에서 ${format(step)}씩 크게 뛰어 셀 때 ${format(target)}에 가장 가까운 수를 구하세요.${evidence}`;
+        const solution = `${format(target)}의 양쪽에 있는 뛰어 센 수는 ${format(lower)}와 ${format(upper)}입니다. 두 수와의 차는 각각 ${format(lowerDistance)}, ${format(upperDistance)}이므로 더 가까운 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const stepChoices = [
+          [6500n, 7500n, 12500n],
+          [65000n, 123500n, 250000n],
+          [650000n, 1235000n, 2500000n]
+        ];
+        const step = pick(rng, stepChoices[level]);
+        const intervalCount = int(rng, [20, 70, 300][level], [45, 140, 620][level]);
+        const start = BigInt(int(rng, 220, 840)) * step + BigInt(int(rng, 1, 999));
+        const end = start + BigInt(intervalCount) * step;
+        const shown = Array.from({ length: 4 }, (_, index) => start + BigInt(index) * step);
+        const answer = intervalCount - 1;
+        const payload = { variant, level, start: String(start), step: String(step), end: String(end), intervalCount, excludeEndpoints: true, complexity: intervalCount };
+        const evidence = source41Evidence("count-skip-values-between", payload, answer);
+        const prompt = `다음과 같이 같은 수만큼 크게 뛰어 셉니다.${sequenceMarkup(shown)}${format(start)}과 ${format(end)} 사이에 들어가는 수는 모두 몇 개인지 구하세요. 두 끝 수는 세지 않습니다.${evidence}`;
+        const solution = `${format(end - start)}을 ${format(step)}으로 나누면 두 끝 수 사이의 간격은 ${intervalCount}개입니다. 두 끝 수를 빼면 사이에 있는 수는 ${intervalCount} - 1 = ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const step = pick(rng, sequenceSteps[level].slice().reverse());
+      const targetIndex = [500, 2000, 5000][level];
+      const start = BigInt(int(rng, [100000, 400000, 800000][level], [600000, 900000, 1800000][level]));
+      const shown = Array.from({ length: 4 }, (_, index) => start + BigInt(index) * step);
+      const answerValue = start + BigInt(targetIndex - 1) * step;
+      const answer = format(answerValue);
+      const payload = { variant, level, start: String(start), step: String(step), targetIndex, shown: shown.map(String), complexity: targetIndex + String(step).length };
+      const evidence = source41Evidence("far-skip-sequence-nth", payload, answer);
+      const prompt = `다음과 같은 규칙으로 뛰어 셀 때 ${source41FormatInteger(targetIndex)}번째 수를 구하세요.${sequenceMarkup(shown)}${evidence}`;
+      const solution = `이웃한 두 수의 차는 ${format(step)}입니다. 첫 수에서 ${source41FormatInteger(targetIndex - 1)}번 뛰므로 ${format(start)} + ${format(step)} × ${source41FormatInteger(targetIndex - 1)} = ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
