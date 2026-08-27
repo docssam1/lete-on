@@ -81,4 +81,12 @@ test("검수 묶음은 원문·정답·경로 같은 위험한 필드를 받지 
   const wrongSource = packet();
   wrongSource.sources[0].sourceMemoryId = "MEM-2";
   assert.throws(() => builder.buildReview(curriculum(), [wrongSource]), /원본 자료가 다릅니다/);
+
+  const unsafeSource = packet();
+  unsafeSource.sources[0].sourcePath = "D:/private/book.pdf";
+  assert.throws(() => builder.buildReview(curriculum(), [unsafeSource]), /unsafe_keys/);
+
+  const copiedText = packet();
+  copiedText.sources[0].itemReviews[0].note = "문제 원문 ".repeat(60);
+  assert.throws(() => builder.buildReview(curriculum(), [copiedText]), /length/);
 });

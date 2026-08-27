@@ -13,6 +13,7 @@ const SAFE_ITEM_REVIEW_KEYS = new Set([
   "evidenceLocator",
   "note"
 ]);
+const SAFE_SOURCE_KEYS = new Set(["sourceMemoryId", "title", "itemReviews"]);
 
 function clean(value) {
   return String(value == null ? "" : value).trim();
@@ -27,6 +28,7 @@ function validatePacket(packet) {
   if (!packet || packet.schemaVersion !== 1 || !Array.isArray(packet.sources)) return ["packet.shape"];
   packet.sources.forEach((source, sourceIndex) => {
     const sourcePrefix = `source.${sourceIndex + 1}`;
+    if (Object.keys(source || {}).some(key => !SAFE_SOURCE_KEYS.has(key))) issues.push(`${sourcePrefix}.unsafe_keys`);
     if (!clean(source.sourceMemoryId) || !clean(source.title) || !Array.isArray(source.itemReviews)) issues.push(`${sourcePrefix}.shape`);
     (source.itemReviews || []).forEach((review, reviewIndex) => {
       const prefix = `${sourcePrefix}.review.${reviewIndex + 1}`;
@@ -37,6 +39,7 @@ function validatePacket(packet) {
       if (review && review.detailPrecision !== "verified") issues.push(`${prefix}.precision`);
       if (!clean(review && review.detailType) || !clean(review && review.solutionArchetype)) issues.push(`${prefix}.classification`);
       if (!clean(review && review.evidenceLocator)) issues.push(`${prefix}.evidence`);
+      if (clean(review && review.detailType).length > 120 || clean(review && review.solutionArchetype).length > 240 || clean(review && review.evidenceLocator).length > 240 || clean(review && review.note).length > 240) issues.push(`${prefix}.length`);
     });
   });
   return Array.from(new Set(issues)).sort();
@@ -117,4 +120,4 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, validatePacket, buildReview });
+module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, SAFE_SOURCE_KEYS, validatePacket, buildReview });
