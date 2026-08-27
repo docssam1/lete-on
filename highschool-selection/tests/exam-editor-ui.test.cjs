@@ -47,6 +47,8 @@ test("editor client uses admin-only API mutations, revision CAS, conflict reload
   assert.match(script, /\/admin\/question-bank\/items\/\$\{encodeURIComponent\(preview\.dataset\.pagePreviewId\)\}\/page-preview/);
   assert.match(script, /URL\.createObjectURL/);
   assert.match(script, /candidate\.semester.*candidate\.majorUnit.*candidate\.minorUnit.*candidate\.typeLabel/s);
+  assert.match(script, /완료 \$\{completed\.join/);
+  assert.match(script, /남음 \$\{pending\.join/);
   assert.match(script, /await request\("\/admin\/exam-editor\/status"\)/);
   assert.match(script, /await request\("\/admin\/exam-editor\/drafts"\)/);
   assert.match(script, /state\.serverDrafts/);

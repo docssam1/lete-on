@@ -52,6 +52,7 @@ function createCatalog(database) {
         difficultyStatus: question.difficulty.status,
         responseKind: question.responseFormat.kind,
         responseStatus: question.responseFormat.status,
+        reviewChecks: Object.freeze(Object.assign({}, question.reviewChecks)),
         profiles: question.usage.map(usage => Object.freeze({
           profileId: usage.profileId,
           label: labels.get(usage.profileId),

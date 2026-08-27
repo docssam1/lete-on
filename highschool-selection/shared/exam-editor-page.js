@@ -76,6 +76,10 @@
     DP: ["DP_STANDARD"], SM: ["SM_STANDARD"], WM: ["WM_BASIC", "WM_DUAL"],
     ED: ["ED_CUMULATIVE"], SH: ["SH_SELECTION"], DG: ["DG_ADVANCED"]
   };
+  const reviewCheckLabels = {
+    classification: "교육과정 분류", locator: "원본 위치", difficulty: "난이도", response: "답안 형식",
+    keyCheck: "답 확인", method: "풀이법", variants: "쌍둥이·유사문항", usageApproval: "시험지 사용 승인"
+  };
 
   function make(tag, className, text) {
     const node = document.createElement(tag);
@@ -283,7 +287,13 @@
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
         badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
         badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
-        main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges);
+        const checks = candidate.reviewChecks || {};
+        const completed = Object.keys(reviewCheckLabels).filter(key => checks[key]).map(key => reviewCheckLabels[key]);
+        const pending = Object.keys(reviewCheckLabels).filter(key => !checks[key]).map(key => reviewCheckLabels[key]);
+        const reviewLine = make("p", "candidate-review-line");
+        reviewLine.append(make("strong", "", `완료 ${completed.join(" · ") || "없음"}`));
+        if (pending.length) reviewLine.append(make("span", "", `남음 ${pending.join(" · ")}`));
+        main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges, reviewLine);
         const actions = make("div", "candidate-catalog-actions");
         const preview = make("button", "ghost compact-button", candidate.pagePreviewAvailable ? "원본 페이지" : "원본 준비 중");
         preview.type = "button";

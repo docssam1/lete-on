@@ -55,6 +55,16 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
     typeLabel: question.classification.typeLabel,
     difficulty: question.difficulty,
     responseFormat: question.responseFormat,
+    reviewChecks: {
+      classification: question.classification.status === "verified",
+      locator: question.locator.status === "verified",
+      difficulty: question.difficulty.status === "verified",
+      response: question.responseFormat.status === "verified",
+      keyCheck: question.answerCheck.status === "verified",
+      method: question.method.status === "verified",
+      variants: question.variantSet.status === "verified",
+      usageApproval: question.usageProfiles.some(usage => profileIds.has(usage.profileId) && usage.status === "approved")
+    },
     usage: question.usageProfiles.filter(usage => profileIds.has(usage.profileId) && statuses.has(usage.status))
   }));
   return {

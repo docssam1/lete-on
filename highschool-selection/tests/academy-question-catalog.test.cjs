@@ -36,6 +36,9 @@ test("학원형 문항 목록은 시험형과 교육과정 분류만 안전하�
   assert.equal(items[0].majorUnit, "함수");
   assert.equal(items[0].minorUnit, "일차함수");
   assert.equal(items[0].profiles[0].label, "돌파형");
+  assert.equal(items[0].reviewChecks.classification, true);
+  assert.equal(items[0].reviewChecks.method, false);
+  assert.equal(items[0].reviewChecks.usageApproval, false);
   assert.equal(Object.hasOwn(items[0], "sourceId"), false);
   assert.equal(JSON.stringify(items).includes("answer"), false);
 });
