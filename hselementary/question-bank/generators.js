@@ -1192,6 +1192,19 @@
     9: { totalGrams: 6100, multiplier: 3, extraGrams: 50, answer: 450, rejectedPencilAnswer: 4250 },
     10: { firstLength: 108, firstSpeed: 43, firstTime: 23, tunnelLength: 881, secondLength: 111, secondSpeed: 32, answerSeconds: 31 }
   };
+  const source41DivisionFourSourceAnchors = {
+    0: { dividendLastDigit: 8, divisor: 36, quotient: 26, dividends: [938, 948, 958, 968], answer: "938, 948, 958, 968" },
+    1: { multiplyBy: 2, divideBy: 4, candidates: [400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499], answer: 100 },
+    2: { leftFactors: [377, 77], rightFactors: [319, 91], blankDigit: 1, answer: 1 },
+    3: { divisors: [81, 82], digitSum: 12, candidatesBeforeDigitSum: [810, 811, 812, 813, 814, 815, 816, 817, 818, 819], answer: 813 },
+    4: { total: 1012, count: 8, first: 123, answer: 123 },
+    5: { factor: 736, target: 35000, answer: 48, nearestProduct: 35328, difference: 328 },
+    6: { firstFactor: 4, secondFactor: 5, candidates: [200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249], answer: 50 },
+    7: { firstCards: [1, 5, 4, 8, 7], firstExpression: "875÷14", firstQuotient: 62, firstRemainder: 7, secondCards: [9, 0, 2, 6, 4], secondExpression: "964÷20", secondQuotient: 48, secondRemainder: 4, winner: "현우", answer: 14 },
+    8: { firstProduct: 504, quotient: 6, secondProduct: 792, answer: 66528 },
+    9: { minimum: 750, divisor: 78, candidatesBeforeDigitSum: [790, 869, 948], digitSum: 21, answer: 948 },
+    10: { total: 3627, count: 13, largest: 285, answer: 285 }
+  };
   const source41DigitSum = value => [...String(value).replace(/\D/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
   const source41CardRow = cards => `<div class="source41-card-row" role="img" aria-label="수 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card">${card}</span>`).join("")}</div>`;
   const source41CardProductExtremes = (cards, leftLength) => {
@@ -7216,6 +7229,270 @@
       const prompt = `길이가 ${format(firstLength)}m인 첫째 열차가 1초에 ${format(firstSpeed)}m씩 달려 터널을 완전히 지나는 데 ${format(firstTime)}초가 걸렸습니다. 길이가 ${format(secondLength)}m인 둘째 열차가 1초에 ${format(secondSpeed)}m씩 달릴 때, 같은 터널을 완전히 지나는 데 몇 초가 걸리는지 구하세요.${evidence}`;
       const solution = `첫째 열차의 앞부분이 간 길이는 ${format(firstSpeed)}×${format(firstTime)}=${format(firstSpeed * firstTime)}m이고, 이는 터널 길이와 열차 길이를 더한 값입니다. 터널 길이는 ${format(firstSpeed * firstTime)}-${format(firstLength)}=${format(tunnelLength)}m입니다. 둘째 열차는 ${format(tunnelLength)}+${format(secondLength)}=${format(tunnelLength + secondLength)}m를 가야 하므로 ${format(tunnelLength + secondLength)}÷${format(secondSpeed)}=${format(secondTime)}초 걸립니다.`;
       return result(prompt, secondTime, solution);
+    },
+    source41DivisionFour({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("나눗셈 응용 문제 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const sourceAnchor = source41DivisionFourSourceAnchors[variant];
+      const complexityBase = (level + 1) * 1000000;
+
+      if (variant === 0) {
+        let divisor = 0; let quotient = 0; let visibleLastDigit = 0; let dividends = [];
+        for (let attempt = 0; attempt < 300; attempt += 1) {
+          divisor = int(rng, 24 + level * 8, 38 + level * 12);
+          quotient = int(rng, 18 + level * 7, 30 + level * 10);
+          visibleLastDigit = int(rng, 0, 9);
+          dividends = [];
+          for (let remainder = 0; remainder < divisor; remainder += 1) {
+            const dividend = divisor * quotient + remainder;
+            if (dividend >= 100 && dividend % 10 === visibleLastDigit) dividends.push(dividend);
+          }
+          if (dividends.length >= 2) break;
+        }
+        if (dividends.length < 2 || dividends.some(dividend => Math.floor(dividend / divisor) !== quotient || dividend % 10 !== visibleLastDigit)) throw new Error("찢어진 나눗셈의 가능한 수 목록을 만들지 못했습니다.");
+        const answer = dividends.join(", ");
+        const payload = { variant, level, divisor, quotient, visibleLastDigit, dividends, sourceAnchor, complexity: complexityBase + divisor * 100 + quotient * 10 + dividends.length };
+        const evidence = source41Evidence("torn-division-dividend-list", payload, answer);
+        const prompt = `다음은 나눗셈을 한 종이의 일부입니다. 나누어지는 수는 일의 자리 숫자 ${visibleLastDigit}만 보입니다. 나누어지는 수가 될 수 있는 수를 모두 구하세요.<div class="equation expanded">…${visibleLastDigit} ÷ ${format(divisor)} = ${format(quotient)} …</div>${evidence}`;
+        const solution = `${format(divisor)}×${format(quotient)}=${format(divisor * quotient)}입니다. 나머지는 ${format(divisor)}보다 작으므로 ${format(divisor * quotient)}부터 ${format(divisor * quotient + divisor - 1)}까지를 살피면, 일의 자리 숫자가 ${visibleLastDigit}인 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const [multiplyBy, divideBy] = [[2, 4], [2, 3], [3, 3]][level];
+        const candidates = [];
+        for (let number = 1; number <= 9999; number += 1) {
+          if (multiplyBy * number >= 100 && multiplyBy * number <= 999 && Math.floor(number / divideBy) >= 100 && Math.floor(number / divideBy) <= 999) candidates.push(number);
+        }
+        if (!candidates.length) throw new Error("두 계산 결과가 모두 세 자리인 자연수 범위를 만들지 못했습니다.");
+        const answer = candidates.length;
+        const payload = { variant, level, multiplyBy, divideBy, candidates, answer, sourceAnchor, complexity: complexityBase + candidates.length * 100 + multiplyBy * 10 + divideBy };
+        const evidence = source41Evidence("two-three-digit-results-count", payload, answer);
+        const prompt = `자연수 □에 대하여 ${multiplyBy}×□의 값과 □÷${divideBy}의 몫이 모두 세 자리 수입니다. □가 될 수 있는 자연수는 모두 몇 개인지 구하세요.${evidence}`;
+        const solution = `${multiplyBy}×□가 세 자리 수이려면 □은 ${format(Math.ceil(100 / multiplyBy))}부터 ${format(Math.floor(999 / multiplyBy))}까지입니다. □÷${divideBy}의 몫이 세 자리 수이려면 □은 ${format(100 * divideBy)}부터 ${format(1000 * divideBy - 1)}까지입니다. 두 조건을 모두 만족하는 수는 ${format(candidates[0])}부터 ${format(candidates[candidates.length - 1])}까지이므로 모두 ${format(answer)}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const factorSets = [
+          [13, 29, 7, 11],
+          [13, 23, 6, 11],
+          [19, 31, 5, 11]
+        ];
+        const [firstSmall, secondSmall, thirdSmall, fourthSmall] = factorSets[level];
+        const leftFirst = firstSmall * secondSmall;
+        const leftSecond = thirdSmall * fourthSmall;
+        const rightFirst = secondSmall * fourthSmall;
+        const rightSecond = firstSmall * thirdSmall;
+        const rightText = String(rightFirst);
+        if (rightText.length !== 3 || rightSecond < 10 || rightSecond > 99) throw new Error("가운데 숫자가 비는 곱셈식을 만들지 못했습니다.");
+        const blankDigit = Number(rightText[1]);
+        const candidates = [];
+        for (let digit = 0; digit <= 9; digit += 1) {
+          const testedRight = Number(`${rightText[0]}${digit}${rightText[2]}`);
+          if (leftFirst * leftSecond === testedRight * rightSecond) candidates.push(digit);
+        }
+        if (candidates.length !== 1 || candidates[0] !== blankDigit) throw new Error("곱셈식의 빈칸 숫자가 하나로 정해지지 않습니다.");
+        const payload = { variant, level, factors: [firstSmall, secondSmall, thirdSmall, fourthSmall], leftFirst, leftSecond, rightFirst, rightSecond, blankDigit, candidates, sourceAnchor, complexity: complexityBase + leftFirst * 100 + rightFirst };
+        const evidence = source41Evidence("cross-paired-factor-blank", payload, blankDigit);
+        const prompt = `다음 계산식의 □에 알맞은 숫자를 구하세요.<div class="equation expanded">${format(leftFirst)}×${format(leftSecond)} = ${rightText[0]}□${rightText[2]}×${format(rightSecond)}</div>${evidence}`;
+        const solution = `왼쪽의 곱은 ${format(leftFirst)}×${format(leftSecond)}=${format(leftFirst * leftSecond)}입니다. ${format(leftFirst * leftSecond)}÷${format(rightSecond)}=${format(rightFirst)}이므로 □에 들어갈 숫자는 ${blankDigit}입니다.`;
+        return result(prompt, blankDigit, solution);
+      }
+
+      if (variant === 3) {
+        const firstDivisor = 81 + level;
+        const secondDivisor = firstDivisor + 1;
+        const candidatesBeforeDigitSum = [];
+        for (let number = 100; number <= 999; number += 1) {
+          if (Math.floor(number / firstDivisor) >= 10 && Math.floor(number / secondDivisor) <= 9) candidatesBeforeDigitSum.push(number);
+        }
+        const sums = new Map();
+        candidatesBeforeDigitSum.forEach(number => {
+          const digitSum = source41DigitSum(number);
+          sums.set(digitSum, [...(sums.get(digitSum) || []), number]);
+        });
+        const uniqueSums = [...sums.entries()].filter(([, values]) => values.length === 1);
+        if (!uniqueSums.length) throw new Error("자리 수 조건에서 하나로 정해지는 자리수 합을 만들지 못했습니다.");
+        const [digitSum, values] = pick(rng, uniqueSums);
+        const answer = values[0];
+        const candidates = [];
+        for (let number = 100; number <= 999; number += 1) if (Math.floor(number / firstDivisor) >= 10 && Math.floor(number / secondDivisor) <= 9 && source41DigitSum(number) === digitSum) candidates.push(number);
+        if (candidates.length !== 1 || candidates[0] !== answer) throw new Error("세 자리 수 조건의 답이 하나로 정해지지 않습니다.");
+        const payload = { variant, level, firstDivisor, secondDivisor, digitSum, candidatesBeforeDigitSum, candidates, sourceAnchor, complexity: complexityBase + firstDivisor * 100 + digitSum };
+        const evidence = source41Evidence("near-divisors-and-digit-sum", payload, answer);
+        const prompt = `다음 조건을 모두 만족하는 수를 구하세요.<ul class="choice-list"><li>세 자리 자연수입니다.</li><li>나누는 수가 ${format(firstDivisor)}일 때 몫은 두 자리 수이고, 나누는 수가 ${format(secondDivisor)}일 때 몫은 한 자리 수입니다.</li><li>각 자리 숫자의 합은 ${format(digitSum)}입니다.</li></ul>${evidence}`;
+        const solution = `첫 번째 나눗셈의 몫이 두 자리 수이므로 수는 ${format(firstDivisor * 10)} 이상입니다. 두 번째 나눗셈의 몫이 한 자리 수이므로 수는 ${format(secondDivisor * 10 - 1)} 이하입니다. 이 범위에서 각 자리 숫자의 합이 ${format(digitSum)}인 수는 ${format(answer)} 하나입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4 || variant === 10) {
+        const count = variant === 4 ? 8 + level * 2 : 13 + level * 2;
+        const first = int(rng, variant === 4 ? 48 + level * 40 : 96 + level * 56, variant === 4 ? 148 + level * 70 : 220 + level * 90);
+        const total = count * (2 * first + count - 1) / 2;
+        const last = first + count - 1;
+        if (!Number.isInteger(total) || first <= 0) throw new Error("연속한 자연수의 합을 만들지 못했습니다.");
+        const answer = variant === 4 ? first : last;
+        const candidates = [];
+        for (let candidateFirst = 1; candidateFirst <= total; candidateFirst += 1) {
+          if (count * (2 * candidateFirst + count - 1) / 2 === total) candidates.push(candidateFirst);
+        }
+        if (candidates.length !== 1 || candidates[0] !== first) throw new Error("연속한 자연수의 합에서 첫 수가 하나로 정해지지 않습니다.");
+        const payload = { variant, level, total, count, first, last, candidates, answer, sourceAnchor, complexity: complexityBase + total * 10 + count };
+        const evidence = source41Evidence(variant === 4 ? "consecutive-even-count-first" : "consecutive-odd-count-last", payload, answer);
+        const prompt = variant === 4
+          ? `연속한 ${format(count)}개의 자연수의 합이 ${format(total)}일 때, 가장 작은 수를 구하세요.${evidence}`
+          : `연속한 ${format(count)}개의 자연수의 합이 ${format(total)}일 때, 가장 큰 수를 구하세요.${evidence}`;
+        const middle = first + Math.floor(count / 2);
+        const solution = variant === 4
+          ? `연속한 ${format(count)}개의 수를 양 끝부터 짝지으면 같은 합인 ${format(count / 2)}묶음입니다. 한 묶음의 합은 ${format(total)}÷${format(count / 2)}=${format(total / (count / 2))}입니다. 가운데 두 수는 연속하므로 작은 쪽은 (${format(total / (count / 2))}-1)÷2=${format(first + count / 2 - 1)}입니다. 이 수보다 앞에 ${format(count / 2 - 1)}개가 있으므로 가장 작은 수는 ${format(first + count / 2 - 1)}-${format(count / 2 - 1)}=${format(answer)}입니다.`
+          : `연속한 ${format(count)}개의 수의 가운데 수는 ${format(total)}÷${format(count)}=${format(total / count)}입니다. 가운데 수 ${format(middle)}에서 ${format((count - 1) / 2)}만큼 큰 수가 가장 큰 수이므로 ${format(total / count)}+${format((count - 1) / 2)}=${format(answer)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const factor = [736, 824, 918][level];
+        let target = 0; let answer = 0; let candidates = [];
+        for (let attempt = 0; attempt < 200; attempt += 1) {
+          const baseMultiplier = int(rng, 42 + level * 12, 70 + level * 18);
+          const offset = int(rng, 1, factor - 1);
+          target = factor * baseMultiplier + offset;
+          candidates = [];
+          const differences = [];
+          for (let multiplier = 1; multiplier <= Math.ceil(target / factor) + 1; multiplier += 1) differences.push({ multiplier, difference: Math.abs(factor * multiplier - target) });
+          const minimumDifference = Math.min(...differences.map(item => item.difference));
+          candidates = differences.filter(item => item.difference === minimumDifference).map(item => item.multiplier);
+          if (candidates.length === 1) {
+            answer = candidates[0];
+            break;
+          }
+        }
+        if (!answer || candidates.length !== 1) throw new Error("가장 가까운 곱의 자연수가 하나로 정해지지 않습니다.");
+        const nearestProduct = factor * answer;
+        const difference = Math.abs(nearestProduct - target);
+        const lowerMultiplier = Math.floor(target / factor);
+        const remainder = target % factor;
+        const upperMultiplier = lowerMultiplier + 1;
+        const lowerProduct = factor * lowerMultiplier;
+        const upperProduct = factor * upperMultiplier;
+        const lowerDifference = target - lowerProduct;
+        const upperDifference = upperProduct - target;
+        const payload = { variant, level, factor, target, answer, nearestProduct, difference, lowerMultiplier, upperMultiplier, lowerProduct, upperProduct, lowerDifference, upperDifference, remainder, candidates, sourceAnchor, complexity: complexityBase + target + answer * 100 };
+        const evidence = source41Evidence("nearest-product-natural-number", payload, answer);
+        const prompt = `다음 식의 계산 결과가 ${format(target)}에 가장 가까운 수가 되도록 □ 안에 알맞은 자연수를 구하세요.<div class="equation expanded">${format(factor)}×□</div>${evidence}`;
+        const solution = `${format(target)}÷${format(factor)}=${format(lowerMultiplier)} 나머지 ${format(remainder)}이므로 ${format(lowerMultiplier)}, ${format(upperMultiplier)} 두 수를 비교합니다. ${format(factor)}×${format(lowerMultiplier)}=${format(lowerProduct)}이고 목표와의 차는 ${format(lowerDifference)}입니다. ${format(factor)}×${format(upperMultiplier)}=${format(upperProduct)}이고 목표와의 차는 ${format(upperDifference)}입니다. 두 차 중 ${format(difference)}이 더 작으므로 □은 ${format(answer)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const firstFactor = 4 + level;
+        const secondFactor = 5 + level;
+        const candidates = [];
+        for (let number = 1; number <= 9999; number += 1) {
+          if (firstFactor * number >= 100 && firstFactor * number <= 999 && secondFactor * number >= 1000 && secondFactor * number <= 9999) candidates.push(number);
+        }
+        if (!candidates.length) throw new Error("두 곱의 자리 수 조건을 만족하는 범위를 만들지 못했습니다.");
+        const answer = candidates.length;
+        const payload = { variant, level, firstFactor, secondFactor, candidates, answer, sourceAnchor, complexity: complexityBase + candidates.length * 100 + firstFactor * 10 + secondFactor };
+        const evidence = source41Evidence("three-and-four-digit-products-count", payload, answer);
+        const prompt = `어떤 자연수를 ${firstFactor}배 했더니 세 자리 수가 되었고, ${secondFactor}배 했더니 네 자리 수가 되었습니다. 이러한 수는 모두 몇 개인지 구하세요.${evidence}`;
+        const solution = `${firstFactor}배 한 수가 세 자리 수가 되려면 처음 수는 ${format(Math.ceil(100 / firstFactor))}부터 ${format(Math.floor(999 / firstFactor))}까지입니다. ${secondFactor}배 한 수가 네 자리 수가 되려면 처음 수는 ${format(Math.ceil(1000 / secondFactor))}부터 ${format(Math.floor(9999 / secondFactor))}까지입니다. 두 범위에 함께 있는 수는 ${format(candidates[0])}부터 ${format(candidates[candidates.length - 1])}까지이므로 ${format(answer)}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const quotientCandidates = cards => operatorPermutations(cards).map(order => ({
+          dividend: Number(order.slice(0, 3).join("")),
+          divisor: Number(order.slice(3).join(""))
+        })).filter(item => item.dividend >= 100 && item.divisor >= 10).map(item => ({ ...item, quotient: Math.floor(item.dividend / item.divisor), remainder: item.dividend % item.divisor }));
+        const maximumExpression = cards => {
+          const candidates = quotientCandidates(cards);
+          const maximumQuotient = Math.max(...candidates.map(item => item.quotient));
+          return candidates.filter(item => item.quotient === maximumQuotient);
+        };
+        let firstCards = []; let secondCards = []; let firstMaximum = []; let secondMaximum = [];
+        for (let attempt = 0; attempt < 600; attempt += 1) {
+          firstCards = shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, 5);
+          secondCards = [0, ...shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, 4)];
+          firstMaximum = maximumExpression(firstCards);
+          secondMaximum = maximumExpression(secondCards);
+          if (firstMaximum.length === 1 && secondMaximum.length === 1 && firstMaximum[0].quotient !== secondMaximum[0].quotient) break;
+        }
+        if (firstMaximum.length !== 1 || secondMaximum.length !== 1 || firstMaximum[0].quotient === secondMaximum[0].quotient) throw new Error("수 카드 나눗셈의 최대 몫을 하나씩 만들지 못했습니다.");
+        const first = firstMaximum[0];
+        const second = secondMaximum[0];
+        const winner = first.quotient > second.quotient ? "현우" : "민재";
+        const difference = Math.abs(first.quotient - second.quotient);
+        const answer = `${winner}, ${difference}`;
+        const payload = { variant, level, firstCards, secondCards, firstMaximum: first, secondMaximum: second, answer, sourceAnchor, complexity: complexityBase + difference * 1000 + first.quotient * 10 + second.quotient };
+        const evidence = source41Evidence("card-division-maximum-quotient", payload, answer);
+        const prompt = `현우는 수 카드${source41CardRow(firstCards)}민재는 수 카드${source41CardRow(secondCards)}를 각각 한 장씩 가지고 있습니다. 두 사람은 각자 가진 수 카드를 모두 한 번씩 써서 몫이 가장 큰 (세 자리 수)÷(두 자리 수)의 나눗셈을 만들었습니다. 만든 나눗셈의 몫은 누구의 식이 얼마만큼 더 큰지 구하세요.${evidence}`;
+        const solution = `현우가 만들 수 있는 가장 큰 몫은 ${format(first.dividend)}÷${format(first.divisor)}=${format(first.quotient)} 나머지 ${format(first.remainder)}이고, 민재가 만들 수 있는 가장 큰 몫은 ${format(second.dividend)}÷${format(second.divisor)}=${format(second.quotient)} 나머지 ${format(second.remainder)}입니다. 따라서 ${winner}의 몫이 ${format(difference)} 더 큽니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const firstProduct = [504, 720, 840][level];
+        const secondProduct = [792, 1008, 1260][level];
+        const commonDivisors = [];
+        for (let number = 1; number <= Math.min(firstProduct, secondProduct); number += 1) if (firstProduct % number === 0 && secondProduct % number === 0) commonDivisors.push(number);
+        const possible = [];
+        commonDivisors.forEach(b => {
+          for (let quotient = 2; quotient <= 12; quotient += 1) {
+            if (b % quotient !== 0) continue;
+            const a = firstProduct / b;
+            const c = b / quotient;
+            const d = secondProduct / b;
+            if (a >= 1 && c >= 1 && d >= 1) possible.push({ a, b, c, d, quotient, product: a * b * c * d });
+          }
+        });
+        const productGroups = [...new Set(possible.map(item => item.product))];
+        const choices = possible.filter(item => item.quotient >= 3 && item.quotient <= 8);
+        if (!choices.length) throw new Error("네 자연수의 곱을 하나로 정하는 관계를 만들지 못했습니다.");
+        const selected = pick(rng, choices);
+        const matching = possible.filter(item => item.quotient === selected.quotient);
+        const answers = [...new Set(matching.map(item => item.product))];
+        if (answers.length !== 1 || answers[0] !== selected.product || productGroups.length < 2) throw new Error("주어진 관계에서 네 수의 곱이 하나로 정해지지 않습니다.");
+        const answer = selected.product;
+        const payload = { variant, level, firstProduct, secondProduct, quotient: selected.quotient, candidates: matching, answer, sourceAnchor, complexity: complexityBase + answer + matching.length * 100 };
+        const evidence = source41Evidence("four-natural-numbers-product", payload, answer);
+        const prompt = `네 자연수 가, 나, 다, 라가 다음을 만족할 때, 가×나×다×라의 값을 구하세요.<div class="equation expanded">가×나=${format(firstProduct)} &nbsp;&nbsp; 나÷다=${format(selected.quotient)} &nbsp;&nbsp; 나×라=${format(secondProduct)}</div>${evidence}`;
+        const solution = `가×나=${format(firstProduct)}, 나×라=${format(secondProduct)}입니다. 나÷다=${format(selected.quotient)}이므로 다는 나의 ${format(selected.quotient)}분의 1입니다. 따라서 가×나×다×라는 ${format(firstProduct)}×${format(secondProduct)}÷${format(selected.quotient)}=${format(answer)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const divisor = 78 + level * 2;
+        const minimum = 750 + level * 10;
+        const candidatesBeforeDigitSum = [];
+        for (let quotient = 1; quotient < divisor; quotient += 1) {
+          const number = divisor * quotient + quotient;
+          if (number >= 100 && number <= 999 && number > minimum) candidatesBeforeDigitSum.push(number);
+        }
+        const byDigitSum = new Map();
+        candidatesBeforeDigitSum.forEach(number => {
+          const digitSum = source41DigitSum(number);
+          byDigitSum.set(digitSum, [...(byDigitSum.get(digitSum) || []), number]);
+        });
+        const uniqueDigitSums = [...byDigitSum.entries()].filter(([, values]) => values.length === 1);
+        if (candidatesBeforeDigitSum.length < 3 || !uniqueDigitSums.length) throw new Error("몫과 나머지가 같은 수의 조건을 만들지 못했습니다.");
+        const [digitSum, values] = pick(rng, uniqueDigitSums);
+        const answer = values[0];
+        const candidates = [];
+        for (let number = 100; number <= 999; number += 1) {
+          const quotient = Math.floor(number / divisor);
+          const remainder = number % divisor;
+          if (number > minimum && quotient === remainder && source41DigitSum(number) === digitSum) candidates.push(number);
+        }
+        if (candidates.length !== 1 || candidates[0] !== answer) throw new Error("몫과 나머지가 같은 세 자리 수가 하나로 정해지지 않습니다.");
+        const payload = { variant, level, minimum, divisor, digitSum, candidatesBeforeDigitSum, candidates, sourceAnchor, complexity: complexityBase + divisor * 100 + digitSum * 10 + answer };
+        const evidence = source41Evidence("equal-quotient-remainder-digit-sum", payload, answer);
+        const prompt = `다음 조건을 모두 만족하는 수를 구하세요.<ul class="choice-list"><li>${format(minimum)}보다 큰 세 자리 자연수입니다.</li><li>나누는 수가 ${format(divisor)}일 때 몫과 나머지가 같습니다.</li><li>각 자리 숫자의 합은 ${format(digitSum)}입니다.</li></ul>${evidence}`;
+        const solution = `몫과 나머지를 같은 수로 놓으면, 나누어지는 수는 ${format(divisor)}×몫+몫입니다. ${format(minimum)}보다 큰 세 자리 수를 차례로 살피고 각 자리 숫자의 합이 ${format(digitSum)}인 수를 찾으면 ${format(answer)} 하나입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      throw new Error(`처리하지 못한 나눗셈 응용 문제 분기입니다: ${variant}`);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
       const digitCount = 11 + level;

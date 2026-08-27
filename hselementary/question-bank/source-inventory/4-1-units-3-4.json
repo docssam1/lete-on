@@ -471,7 +471,7 @@
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
-      "typeLabel": "곱셈 등식의 빈 숫자 찾기",
+      "typeLabel": "두 곱이 같도록 빈칸 숫자 찾기",
       "sourceVerified": true
     },
     {
@@ -484,7 +484,7 @@
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
-      "typeLabel": "몫과 자릿수 합 조건의 수 찾기",
+      "typeLabel": "두 몫과 자리 숫자의 합으로 수 찾기",
       "sourceVerified": true
     },
     {
@@ -510,7 +510,7 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
-      "typeLabel": "기준값에 가장 가까운 곱 만들기",
+      "typeLabel": "주어진 수에 가장 가까운 곱 만들기",
       "sourceVerified": true
     },
     {
@@ -1438,4 +1438,3 @@
     }
   ]
 }
-

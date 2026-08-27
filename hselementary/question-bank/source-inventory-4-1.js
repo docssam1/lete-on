@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 171,
+  "verifiedMappings": 181,
   "items": [
     {
       "unit": 1,
@@ -3166,10 +3166,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "찢어진 나눗셈에서 나누어지는 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3184,10 +3185,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱과 몫이 세 자리인 수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3199,13 +3201,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
-      "typeLabel": "곱셈 등식의 빈 숫자 찾기",
+      "typeLabel": "두 곱이 같도록 빈칸 숫자 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3217,13 +3220,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 42,
       "sourcePrintedPage": 38,
-      "typeLabel": "몫과 자릿수 합 조건의 수 찾기",
+      "typeLabel": "두 몫과 자리 숫자의 합으로 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3238,10 +3242,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "연속한 자연수의 합으로 첫 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3253,13 +3258,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 43,
       "sourcePrintedPage": 39,
-      "typeLabel": "기준값에 가장 가까운 곱 만들기",
+      "typeLabel": "주어진 수에 가장 가까운 곱 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3274,10 +3280,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "곱셈 조건을 만족하는 수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3292,10 +3299,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드 최대 나눗셈의 몫 비교",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3310,10 +3318,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "계산 관계를 이용해 네 수의 곱 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3328,10 +3337,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "몫과 나머지가 같은 세 자리 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFour",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3346,10 +3356,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "연속한 수의 합에서 최댓값 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "divisionApplication",
-      "variant": 2,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "generatorKey": "source41DivisionFour",
+      "variant": 10,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
