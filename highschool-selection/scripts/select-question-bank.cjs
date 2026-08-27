@@ -54,7 +54,7 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
     typeId: question.classification.typeId,
     typeLabel: question.classification.typeLabel,
     difficulty: question.difficulty,
-    usage: question.usageProfiles.filter(usage => profileIds.has(usage.profileId))
+    usage: question.usageProfiles.filter(usage => profileIds.has(usage.profileId) && statuses.has(usage.status))
   }));
   return {
     selectedProfiles: profiles.map(profile => ({ profileId: profile.profileId, label: profile.label })),

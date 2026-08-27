@@ -41,3 +41,10 @@ test("후보 상태는 기본 결과에 나오지 않고 관리자 선택에서�
   assert.equal(selector.selectQuestions(value, ["원수학 듀얼형"]).questionCount, 0);
   assert.equal(selector.selectQuestions(value, ["WM_DUAL"], ["source_verified", "approved", "candidate"]).questionCount, 2);
 });
+
+test("여러 시험형을 골라도 검수 전 후보 시험형을 확정 배지로 섞지 않는다", () => {
+  const selected = selector.selectQuestions(database(), ["DP_STANDARD", "WM_DUAL"]);
+  assert.equal(selected.questionCount, 2);
+  assert.equal(selected.questions.every(question => question.usage.length === 1), true);
+  assert.equal(selected.questions.every(question => question.usage[0].profileId === "DP_STANDARD"), true);
+});

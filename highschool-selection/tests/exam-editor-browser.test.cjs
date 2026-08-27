@@ -76,6 +76,15 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   assert.ok(candidateRequests.some(url => /[?&]draftId=draft_[A-Za-z0-9]+/.test(url)));
   assert.equal(candidateRequests.some(url => /[?&](mode|originalOnly)=/.test(url)), false);
 
+  await page.locator('#candidate-mode [data-mode="catalog"]').click();
+  await page.locator('#academy-profile-filters input[value="SH_SELECTION"]').uncheck();
+  await page.locator('#academy-profile-filters input[value="DP_STANDARD"]').check();
+  await page.locator("#candidate-list .candidate-row.is-catalog").waitFor();
+  assert.match(await page.locator("#candidate-list .candidate-path").first().textContent(), /중2-1.*함수.*일차함수.*교점/);
+  assert.equal(await page.locator("#candidate-list .candidate-row.is-catalog button").first().isDisabled(), true);
+  await page.locator('#candidate-mode [data-mode="new"]').click();
+  await page.locator("#candidate-list [data-candidate-id]").first().waitFor();
+
   await page.locator("#candidate-list [data-candidate-id]").first().click();
   const scoreInput = page.locator("[data-score-placement]").first();
   await scoreInput.waitFor();

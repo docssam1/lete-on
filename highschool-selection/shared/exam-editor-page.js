@@ -21,7 +21,9 @@
     editScope: document.getElementById("edit-scope"),
     applyScope: document.getElementById("apply-scope"),
     candidateMode: document.getElementById("candidate-mode"),
+    candidateScopeField: document.getElementById("candidate-scope-field"),
     candidateScope: document.getElementById("candidate-scope"),
+    academyProfileFilters: document.getElementById("academy-profile-filters"),
     candidateSearchForm: document.getElementById("candidate-search-form"),
     candidateQuery: document.getElementById("candidate-query"),
     candidateContext: document.getElementById("candidate-context"),
@@ -54,7 +56,8 @@
     busy: false,
     searchSequence: 0,
     draggedPlacementId: null,
-    serverDrafts: []
+    serverDrafts: [],
+    profileMode: null
   };
   const scoreTimers = new Map();
   const pendingScores = new Map();
@@ -64,6 +67,10 @@
     single_choice: "객관식", multi_choice: "복수 선택", ox: "O/X", input: "단답형",
     multi_input: "복수 입력", ordered_list: "순서형", unordered_set: "집합형",
     figure_select: "그림 선택", construction: "작도"
+  };
+  const defaultProfilesByMode = {
+    DP: ["DP_STANDARD"], SM: ["SM_STANDARD"], WM: ["WM_BASIC", "WM_DUAL"],
+    ED: ["ED_CUMULATIVE"], SH: ["SH_SELECTION"], DG: ["DG_ADVANCED"]
   };
 
   function make(tag, className, text) {
@@ -177,6 +184,13 @@
     state.packet = packet;
     updateMetadata(packet.selectedItems);
     const draft = packet.draft;
+    if (state.profileMode !== draft.mode) {
+      const defaults = new Set(defaultProfilesByMode[draft.mode] || []);
+      Array.from(elements.academyProfileFilters.querySelectorAll("input[type=checkbox]")).forEach(function (input) {
+        input.checked = defaults.has(input.value);
+      });
+      state.profileMode = draft.mode;
+    }
     elements.draftTitle.textContent = `${draft.mode || "과정 미지정"} · ${draft.profileId} · ${draft.targetId}`;
     elements.draftRevision.textContent = `버전 ${draft.revision}`;
     elements.scopeKeys.value = draft.scopeKeys.join("\n");
@@ -214,13 +228,22 @@
     const replacementReady = Boolean(selectedPlacement()) && !(state.packet && state.packet.migrationRequired);
     Array.from(elements.candidateMode.querySelectorAll("[data-mode]")).forEach(function (button) {
       const mode = button.dataset.mode;
-      button.disabled = mode !== "new" && !replacementReady;
+      button.disabled = ["twin", "similar"].includes(mode) && !replacementReady;
       const active = state.candidateMode === mode;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
+    const catalogMode = state.candidateMode === "catalog";
+    elements.academyProfileFilters.hidden = !catalogMode;
+    elements.candidateScopeField.hidden = catalogMode;
+    elements.candidateQuery.placeholder = catalogMode ? "학기 · 대단원 · 소단원 · 세부 유형 검색" : "문항 ID · 유형 · 범위 검색";
     const placement = selectedPlacement();
-    elements.candidateContext.textContent = state.candidateMode === "new"
+    const checkedProfiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.parentElement.textContent.trim());
+    elements.candidateContext.textContent = catalogMode
+      ? checkedProfiles.length
+        ? `${checkedProfiles.join(" · ")}에서 원본 확인 또는 사용 승인된 문항만 표시합니다.`
+        : "시험형을 하나 이상 선택하세요."
+      : state.candidateMode === "new"
       ? "현재 범위에서 검수 완료 문항을 찾습니다."
       : placement
         ? `${placement.order}번 문항의 ${state.candidateMode === "twin" ? "쌍둥이" : "유사"} 후보만 표시합니다.`
@@ -233,6 +256,26 @@
 
   function renderCandidates() {
     elements.candidateList.replaceChildren();
+    if (state.candidateMode === "catalog") {
+      state.candidates.forEach(function (candidate) {
+        const row = make("article", "candidate-row is-catalog");
+        const main = make("div", "candidate-main");
+        const title = make("div", "candidate-title");
+        title.append(make("strong", "", candidate.typeLabel), make("code", "", `${candidate.paperId} · ${candidate.number}번`));
+        const badges = make("div", "candidate-badges");
+        (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
+        main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges);
+        const button = make("button", "ghost compact-button", "조립 전 검수");
+        button.type = "button";
+        button.disabled = true;
+        row.append(main, button);
+        elements.candidateList.append(row);
+      });
+      elements.candidateCount.textContent = `${state.candidates.length}개`;
+      elements.candidateEmpty.hidden = state.candidates.length > 0;
+      return;
+    }
     const selectedIds = new Set(state.packet ? state.packet.draft.placements.map(item => item.itemId) : []);
     state.candidates.forEach(function (candidate) {
       updateMetadata([candidate]);
@@ -438,6 +481,34 @@
     }
     const sequence = ++state.searchSequence;
     elements.candidateList.setAttribute("aria-busy", "true");
+    if (state.candidateMode === "catalog") {
+      const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.value);
+      if (!profiles.length) {
+        state.candidates = [];
+        renderCandidates();
+        renderCandidateMode();
+        elements.candidateList.removeAttribute("aria-busy");
+        return;
+      }
+      const catalogParams = new URLSearchParams({ profiles: profiles.join(","), limit: "300" });
+      const catalogQuery = elements.candidateQuery.value.trim();
+      if (catalogQuery) catalogParams.set("q", catalogQuery);
+      try {
+        const packet = await request(`/admin/question-bank/catalog?${catalogParams}`);
+        if (sequence !== state.searchSequence) return;
+        state.candidates = packet.items || [];
+        renderCandidateMode();
+        renderCandidates();
+      } catch (error) {
+        if (sequence !== state.searchSequence) return;
+        state.candidates = [];
+        renderCandidates();
+        setAlert(error.message, "error");
+      } finally {
+        if (sequence === state.searchSequence) elements.candidateList.removeAttribute("aria-busy");
+      }
+      return;
+    }
     const params = new URLSearchParams({ draftId: state.packet.draftId, limit: "100" });
     const scopeKey = elements.candidateScope.value;
     const query = elements.candidateQuery.value.trim();
@@ -575,7 +646,7 @@
     const button = event.target.closest("[data-mode]");
     if (!button || button.disabled) return;
     state.candidateMode = button.dataset.mode;
-    if (state.candidateMode === "new") state.selectedPlacementId = null;
+    if (["new", "catalog"].includes(state.candidateMode)) state.selectedPlacementId = null;
     renderCandidateMode();
     renderPlacements();
     await searchCandidates();
@@ -583,6 +654,10 @@
 
   elements.candidateSearchForm.addEventListener("submit", function (event) { event.preventDefault(); searchCandidates(); });
   elements.candidateScope.addEventListener("change", searchCandidates);
+  elements.academyProfileFilters.addEventListener("change", function () {
+    renderCandidateMode();
+    if (state.candidateMode === "catalog") searchCandidates();
+  });
 
   elements.candidateList.addEventListener("click", async function (event) {
     const button = event.target.closest("[data-candidate-id]");

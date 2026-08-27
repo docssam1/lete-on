@@ -439,6 +439,11 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .compact-field select { min-height: 34px; padding: 0 26px 0 9px; font-size: 10px; }
 .candidate-search { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; grid-column: 1 / -1; }
 .candidate-search input { min-height: 38px; }
+.academy-profile-filters { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; margin: 0; padding: 9px; border: 1px solid var(--line); border-radius: 7px; background: #fbf8f1; }
+.academy-profile-filters legend { padding: 0 4px; color: var(--muted); font-size: 9px; font-weight: 900; }
+.academy-profile-filters label { display: inline-flex; align-items: center; gap: 5px; min-height: 29px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--ink); font-size: 9px; font-weight: 850; cursor: pointer; }
+.academy-profile-filters label:has(input:checked) { border-color: var(--accent); background: #fff4df; color: var(--accent-dark); }
+.academy-profile-filters input { width: 13px; height: 13px; margin: 0; accent-color: var(--accent); }
 .candidate-context { grid-column: 1 / -1; margin: -1px 1px 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
 .candidate-list { max-height: calc(100vh - 360px); min-height: 180px; overflow-y: auto; overscroll-behavior: contain; }
 .candidate-list[aria-busy="true"] { opacity: .55; }
@@ -453,6 +458,9 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .candidate-badges { display: flex; flex-wrap: wrap; gap: 4px; }
 .candidate-badge { padding: 3px 6px; border-radius: 4px; background: #ece8df; color: #575c55; font-size: 9px; font-weight: 850; }
 .candidate-badge.figure { background: #e7eff2; color: var(--navy); }
+.candidate-badge.profile { background: #fff0d5; color: var(--accent-dark); }
+.candidate-row.is-catalog { min-height: 106px; }
+.candidate-row.is-catalog .candidate-path { white-space: normal; line-height: 1.45; }
 .editor-empty { display: grid; place-items: center; min-height: 160px; padding: 24px; color: var(--muted); text-align: center; font-size: 12px; }
 
 .draft-pane-head { align-items: center; }

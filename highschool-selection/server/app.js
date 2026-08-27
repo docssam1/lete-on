@@ -25,6 +25,7 @@ const practiceAssetsModule = require("./practice-assets.js");
 const examEditorCore = require("../data/exam-editor-core.js");
 const examEditorRegistryModule = require("./exam-editor-registry.js");
 const examDraftStoreModule = require("./exam-draft-store.js");
+const academyQuestionCatalogModule = require("./academy-question-catalog.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -304,6 +305,10 @@ function createApp(options) {
     data: opts.privateExamDrafts,
     filePath: opts.privateExamDraftsPath
   });
+  const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
+    data: opts.privateAcademyQuestionDb,
+    filePath: opts.privateAcademyQuestionDbPath
+  });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
   const dummyApprovalHash = security.hashApprovalCode("INVALID-APPROVAL-CODE", Buffer.alloc(16, 0).toString("base64url"));
@@ -357,6 +362,15 @@ function createApp(options) {
     catch (_) { throw new HttpError(503, "검수된 시험지 후보 목록을 확인해 주세요."); }
     if (!registry) throw new HttpError(503, "검수된 시험지 후보 목록이 연결되지 않았습니다.");
     return registry;
+  }
+
+  function requireAcademyQuestionCatalog() {
+    if (!loadAcademyQuestionCatalog) throw new HttpError(503, "비공개 학원형 문항 DB가 연결되지 않았습니다.");
+    let catalog;
+    try { catalog = loadAcademyQuestionCatalog(); }
+    catch (_) { throw new HttpError(503, "학원형 문항 DB의 분류와 근거를 확인해 주세요."); }
+    if (!catalog) throw new HttpError(503, "비공개 학원형 문항 DB가 연결되지 않았습니다.");
+    return catalog;
   }
 
   function publicEditorCandidate(entry) {
@@ -775,6 +789,26 @@ function createApp(options) {
       requireExamEditorInfrastructure();
       if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "편집 상태 요청에 검색 조건을 지정할 수 없습니다.");
       sendJson(response, 200, { ready: true });
+      return true;
+    }
+
+    if (request.method === "GET" && pathname === "/admin/question-bank/catalog") {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const catalog = requireAcademyQuestionCatalog();
+      const allowedSearchKeys = new Set(["profiles", "q", "limit"]);
+      for (const key of url.searchParams.keys()) {
+        if (!allowedSearchKeys.has(key)) throw new HttpError(400, "문항 DB 검색 조건에 허용되지 않은 항목이 있습니다.");
+      }
+      const profileIds = Array.from(new Set(security.clean(url.searchParams.get("profiles")).split(",").map(security.clean).filter(Boolean)));
+      const knownProfileIds = new Set(catalog.profiles().map(profile => profile.profileId));
+      if (!profileIds.length || profileIds.some(profileId => !knownProfileIds.has(profileId))) {
+        throw new HttpError(400, "검색할 시험형을 확인해 주세요.");
+      }
+      const limitText = url.searchParams.get("limit");
+      const limit = limitText == null ? 100 : Number(limitText);
+      if (!Number.isSafeInteger(limit) || limit < 1 || limit > 300) throw new HttpError(400, "문항 DB 검색 개수가 올바르지 않습니다.");
+      const items = catalog.search({ profileIds, query: url.searchParams.get("q"), limit });
+      sendJson(response, 200, { profiles: catalog.profiles(), items, count: items.length });
       return true;
     }
 
