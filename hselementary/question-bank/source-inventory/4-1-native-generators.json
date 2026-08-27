@@ -120,6 +120,16 @@
     { "sourceItemId": "4-1-u2-e5-mission-2", "generatorKey": "source41AngleFive", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u2-e5-mission-3", "generatorKey": "source41AngleFive", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u2-e5-mission-5", "generatorKey": "source41AngleFive", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u2-e5-mission-6", "generatorKey": "source41AngleFive", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u2-e5-mission-6", "generatorKey": "source41AngleFive", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-exploration", "generatorKey": "source41AngleSix", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-example-6-1", "generatorKey": "source41AngleSix", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-example-6-2", "generatorKey": "source41AngleSix", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-example-6-3", "generatorKey": "source41AngleSix", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-1", "generatorKey": "source41AngleSix", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-2", "generatorKey": "source41AngleSix", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-3", "generatorKey": "source41AngleSix", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-4", "generatorKey": "source41AngleSix", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-5", "generatorKey": "source41AngleSix", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e6-mission-6", "generatorKey": "source41AngleSix", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

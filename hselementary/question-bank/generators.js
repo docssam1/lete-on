@@ -1037,6 +1037,107 @@
     const body = `<rect data-source-shape="rectangle" data-fold-role="original" x="38" y="34" width="164" height="174"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="one" x1="94" y1="34" x2="94" y2="208"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="two" x1="150" y1="34" x2="150" y2="208"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="one" points="${source41PointsText(firstPiecePoints)}"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="two" points="${source41PointsText(secondPiecePoints)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${firstPiecePoints[1][0].toFixed(1)}" y1="${firstPiecePoints[1][1].toFixed(1)}" x2="${firstPiecePoints[3][0].toFixed(1)}" y2="${firstPiecePoints[3][1].toFixed(1)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${secondPiecePoints[2][0].toFixed(1)}" y1="${secondPiecePoints[2][1].toFixed(1)}" x2="${secondPiecePoints[3][0].toFixed(1)}" y2="${secondPiecePoints[3][1].toFixed(1)}"/>${rays.slice(0, 5).map((angle, index) => source41AngleFiveRay(origin, angle, 84, `fold-${index + 1}`, "source41-fold-line", index, "main", `data-fold-role="folded-angle" data-fold-stage="${index + 1}"`)).join("")}${source41AngleFiveRay(origin, 180, 98, "straight-end", "", 5)}${[0, 1, 2, 3].map(index => source41AngleFiveSectorArc(origin, rays[index], data.gap, 24 + index * 8, `equal-${index + 1}`)).join("")}${source41AngleFiveSectorArc(origin, 4 * data.gap, data.answerNumber, 66, "target", true)}${[0, 1, 2, 3].map(index => source41AngleFiveEqualMark(origin, rays[index], data.gap, 17 + index * 6, index + 1)).join("")}${source41AngleFiveFoldTick(origin, rays[1], 58, 1)}${source41AngleFiveFoldTick(origin, rays[3], 58, 2)}`;
     return source41AngleFiveRoot({ variant: 10, origin, rays, sectors: [data.gap, data.gap, data.gap, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-shown-sector="${data.gap}" data-equal-sector-count="4" data-fold-role="twice-folded-rectangle"`, body, aria: "직사각형을 두 번 접은 전후 조각과 점선에서 가운데 각을 구하는 그림" });
   };
+  const source41AngleSixNormalize = angle => ((angle % 360) + 360) % 360;
+  const source41AngleSixTimeData = (hour, minute) => {
+    const normalizedHour = source41AngleSixNormalize(Number(hour) * 30) / 30 % 12;
+    const hourAngle = 30 * normalizedHour + 0.5 * minute;
+    const minuteAngle = 6 * minute;
+    const directedAngle = source41AngleSixNormalize(minuteAngle - hourAngle);
+    const smallAngle = Math.min(directedAngle, 360 - directedAngle);
+    return { hour: normalizedHour, minute, hourAngle, minuteAngle, directedAngle, smallAngle };
+  };
+  const source41AngleSixFormatTime = (hour, minute) => `${hour % 12 || 12}시 ${minute}분`;
+  const source41AngleSixEnumerate = predicate => {
+    const matches = [];
+    for (let hour = 0; hour < 12; hour += 1) {
+      for (let minute = 0; minute < 60; minute += 1) {
+        const data = source41AngleSixTimeData(hour, minute);
+        if (predicate(data)) matches.push(data);
+      }
+    }
+    return matches;
+  };
+  const source41AngleSixPoint = (clockAngle, radius, rotation = 0, center = [110, 110]) =>
+    source41PointAtAngle(center[0], center[1], radius, 90 - source41AngleSixNormalize(clockAngle + rotation));
+  const source41AngleSixClockSvg = ({ hour = 0, minute = 0, rotation = 0, numerals = true, showHour = true, showMinute = true, angleLabel = null, labelDirection = "hour-to-minute", state = "time" }) => {
+    const data = source41AngleSixTimeData(hour, minute);
+    const center = [110, 110];
+    const hourTip = source41AngleSixPoint(data.hourAngle, 48, rotation, center);
+    const minuteTip = source41AngleSixPoint(data.minuteAngle, 72, rotation, center);
+    const ticks = Array.from({ length: 60 }, (_, index) => {
+      const major = index % 5 === 0;
+      const outer = source41AngleSixPoint(index * 6, 87, 0, center);
+      const inner = source41AngleSixPoint(index * 6, major ? 77 : 82, 0, center);
+      return `<line class="source41-clock-tick${major ? " is-major" : ""}" data-tick-index="${index}" x1="${inner[0].toFixed(1)}" y1="${inner[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/>`;
+    }).join("");
+    const numbers = numerals ? Array.from({ length: 12 }, (_, index) => {
+      const value = index + 1;
+      const point = source41AngleSixPoint(value * 30, 66, 0, center);
+      return `<text class="source41-clock-number" data-clock-number="${value}" x="${point[0].toFixed(1)}" y="${point[1].toFixed(1)}">${value}</text>`;
+    }).join("") : "";
+    const directed = labelDirection === "minute-to-hour" ? source41AngleSixNormalize(data.hourAngle - data.minuteAngle) : data.directedAngle;
+    const arcStart = labelDirection === "minute-to-hour" ? data.minuteAngle : data.hourAngle;
+    const arcEnd = arcStart + directed;
+    const arcRadius = 31;
+    const startPoint = source41AngleSixPoint(arcStart, arcRadius, rotation, center);
+    const endPoint = source41AngleSixPoint(arcEnd, arcRadius, rotation, center);
+    const labelPoint = source41AngleSixPoint(arcStart + directed / 2, 43, rotation, center);
+    const angleMarkup = angleLabel === null ? "" : `<path class="source41-clock-angle" data-angle-direction="${labelDirection}" data-angle-value="${directed}" d="M${startPoint[0].toFixed(1)},${startPoint[1].toFixed(1)} A${arcRadius},${arcRadius} 0 ${directed > 180 ? 1 : 0} 1 ${endPoint[0].toFixed(1)},${endPoint[1].toFixed(1)}"/><text class="source41-clock-angle-label" data-angle-label="${angleLabel}" x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${angleLabel}°</text>`;
+    const hands = `${showHour ? `<line class="hour-hand" data-hand="hour" data-clock-angle="${data.hourAngle}" data-hand-length="48" x1="${center[0]}" y1="${center[1]}" x2="${hourTip[0].toFixed(1)}" y2="${hourTip[1].toFixed(1)}"/>` : ""}${showMinute ? `<line class="minute-hand" data-hand="minute" data-clock-angle="${data.minuteAngle}" data-hand-length="72" x1="${center[0]}" y1="${center[1]}" x2="${minuteTip[0].toFixed(1)}" y2="${minuteTip[1].toFixed(1)}"/>` : ""}`;
+    return `<svg class="geometry-diagram source41-clock${numerals ? " is-numbered" : " is-numberless"}" viewBox="0 0 220 220" data-clock-state="${state}" data-hour="${data.hour}" data-minute="${minute}" data-hour-angle="${data.hourAngle}" data-minute-angle="${data.minuteAngle}" data-small-angle="${data.smallAngle}" data-directed-angle="${data.directedAngle}" data-clock-rotation="${rotation}" data-numerals="${numerals}" aria-label="${numerals ? "숫자와 눈금이 있는" : "숫자와 12의 위치를 알 수 없는"} 시계"><circle class="source41-clock-face" cx="110" cy="110" r="90"/>${ticks}${numbers}${angleMarkup}${hands}<circle class="source41-clock-center" cx="110" cy="110" r="4"/></svg>`;
+  };
+  const source41AngleSixClockGrid = items => `<div class="source41-clock-grid">${items.map((item, index) => `<figure data-clock-item="${index + 1}">${source41AngleSixClockSvg(item)}<figcaption>${item.caption || source41AngleSixFormatTime(item.hour, item.minute)}</figcaption></figure>`).join("")}</div>`;
+  const source41AngleSixPickTimes = (rng, level, count) => {
+    const minutePools = [
+      [0, 10, 20, 30, 40, 50],
+      Array.from({ length: 15 }, (_, index) => index * 4),
+      Array.from({ length: 30 }, (_, index) => index * 2)
+    ];
+    const candidates = [];
+    for (let hour = 1; hour <= 12; hour += 1) {
+      for (const minute of minutePools[level]) {
+        const data = source41AngleSixTimeData(hour, minute);
+        if (data.smallAngle < 12 || data.smallAngle > 174 || !Number.isInteger(data.smallAngle)) continue;
+        candidates.push(data);
+      }
+    }
+    const selected = [];
+    for (const candidate of shuffle(rng, candidates)) {
+      if (selected.some(item => item.hour === candidate.hour && item.minute === candidate.minute)) continue;
+      if (selected.some(item => item.smallAngle === candidate.smallAngle)) continue;
+      selected.push(candidate);
+      if (selected.length === count) break;
+    }
+    if (selected.length !== count) throw new Error("서로 다른 시계 각도 문제를 만들지 못했습니다.");
+    return selected;
+  };
+  const source41AngleSixDirectionalTime = (rng, level, minimum, maximum) => {
+    const levelMargin = [10, 5, 0][level];
+    const candidates = source41AngleSixEnumerate(data =>
+      data.minute % 2 === 0 &&
+      Number.isInteger(data.directedAngle) &&
+      data.directedAngle >= minimum + levelMargin &&
+      data.directedAngle <= maximum - levelMargin &&
+      data.minute > 0
+    );
+    const selected = pick(rng, candidates);
+    const matches = source41AngleSixEnumerate(data => data.directedAngle === selected.directedAngle);
+    if (matches.length !== 1) throw new Error("방향까지 같은 숫자 없는 시계의 시각이 하나로 정해지지 않습니다.");
+    return { ...selected, candidates: matches.length };
+  };
+  const source41AngleSixSourceAnchors = {
+    0: { times: [[2, null], [null, 30], [5, 50]], directedAngle: 125 },
+    1: { times: [[4, 0], [2, 30], [6, 50], [10, 46]], angles: [120, 105, 95, 47] },
+    2: { times: [[8, 0], [11, 30], [3, 10], [7, 52]], angles: [120, 165, 35, 76] },
+    3: { minute: 40, hourRange: [1, 6], angle: 100, answer: [4, 40] },
+    4: { minute: 30, angle: 135, conflictingAnswers: [[1, 30], [10, 30]], officialAnswer: [1, 30] },
+    5: { times: [[3, 48], [6, 30]], angles: [174, 15] },
+    6: { times: [[1, 24], [4, 40], [8, 32], [11, 50]], angles: [102, 100, 64, 55] },
+    7: { start: [5, 40], end: [7, 20], hourHandTurn: 50 },
+    8: { answer: [9, 8], directedAngle: 134 },
+    9: { start: [4, 30], minuteHandTurn: 132, answer: [4, 52] },
+    10: { answer: [5, 40], directedAngle: 70 }
+  };
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -6088,6 +6189,167 @@
       const evidence = source41Evidence("twice-folded-rectangle-center-angle", payload, answer);
       const prompt = `직사각형을 두 번 접었습니다. 같은 표시의 네 각이 모두 ${gap}°일 때 가운데 ㉠의 크기를 구하세요.${source41AngleFiveTwiceFoldedRectangleSvg(payload)}${evidence}`;
       const solution = `한 직선 위의 각의 합은 180°입니다. 같은 네 각의 합은 ${gap}×4=${4 * gap}°이므로 ㉠=180-${4 * gap}=${answer}°입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41AngleSix({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("시침과 분침 사이의 각도 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 4) throw new Error("검수 대기: 예제 6-4는 작은 각 135°와 분침이 6을 가리킨다는 조건에서 1시 30분과 10시 30분이 모두 가능하고, '밤' 조건은 공식답과 충돌합니다.");
+      const timeList = times => times.map(time => source41AngleSixFormatTime(time.hour, time.minute)).join(", ");
+      const angleList = times => times.map(time => `${time.smallAngle}°`).join(", ");
+      const angleSteps = times => times.map(time => {
+        const difference = Math.abs(time.hourAngle - time.minuteAngle);
+        return `${source41AngleSixFormatTime(time.hour, time.minute)}는 시침 ${time.hourAngle}°, 분침 ${time.minuteAngle}°이므로 작은 각은 ${difference <= 180 ? difference : `360-${difference}`}=${time.smallAngle}°`;
+      }).join("; ");
+
+      if (variant === 0) {
+        const shownHour = int(rng, 1, 9);
+        const shownHourMinute = pick(rng, [10, 20, 30, 40, 50]);
+        const shownMinute = pick(rng, [10, 20, 30, 40, 50]);
+        const target = source41AngleSixDirectionalTime(rng, level, 70, 150);
+        const rotation = int(rng, 18, 342);
+        const answer = `(1) 알 수 없음; (2) 분침의 위치; (3) ${shownMinute}분이지만 몇 시인지는 알 수 없음; (4) 시침의 위치; (5) ${source41AngleSixFormatTime(target.hour, target.minute)}`;
+        const payload = {
+          variant,
+          level,
+          shownHour,
+          shownHourMinute,
+          shownMinute,
+          targetHour: target.hour,
+          targetMinute: target.minute,
+          targetDirectedAngle: target.directedAngle,
+          targetCandidateCount: target.candidates,
+          rotation,
+          sourceAnchor: source41AngleSixSourceAnchors[0],
+          complexity: (level + 1) * 1000 + target.directedAngle + Math.abs(rotation - 180)
+        };
+        const evidence = source41Evidence("clock-hand-position-and-numberless-time", payload, answer);
+        const clocks = source41AngleSixClockGrid([
+          { hour: shownHour, minute: shownHourMinute, showHour: true, showMinute: false, state: "hour-only", caption: `시침이 ${shownHour}와 ${shownHour + 1} 사이` },
+          { hour: 0, minute: shownMinute, showHour: false, showMinute: true, state: "minute-only", caption: `분침이 ${shownMinute / 5}을 가리킴` },
+          { hour: target.hour, minute: target.minute, rotation, numerals: false, showHour: true, showMinute: true, angleLabel: target.directedAngle, state: "numberless-directional", caption: "숫자와 12의 위치를 알 수 없음" }
+        ]);
+        const prompt = `세 시계를 보고 물음에 답하세요.<ol class="source41-clock-questions"><li>첫째 시계의 정확한 시각을 알 수 있나요?</li><li>첫째 시계의 정확한 시각을 알려면 어느 바늘의 위치가 더 필요한가요?</li><li>둘째 시계는 몇 분인지 알 수 있나요? 몇 시인지는 알 수 있나요?</li><li>둘째 시계의 정확한 시각을 알려면 어느 바늘의 위치가 더 필요한가요?</li><li>셋째 시계에서 짧은 바늘과 긴 바늘 사이에 표시된 각이 ${target.directedAngle}°일 때 시각을 구하세요.</li></ol>${clocks}${evidence}`;
+        const solution = `시침 하나만으로는 분을, 분침 하나만으로는 시를 정할 수 없습니다. 둘째 시계의 분침은 ${shownMinute / 5}을 가리키므로 ${shownMinute}분입니다. 셋째 시계는 짧은 바늘을 시침, 긴 바늘을 분침으로 구별하고 두 바늘의 놓인 순서를 그대로 유지해 숫자를 채우면 ${source41AngleSixFormatTime(target.hour, target.minute)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1 || variant === 5) {
+        const count = variant === 1 ? 4 : 2;
+        const times = source41AngleSixPickTimes(rng, Math.min(2, level + (variant === 5 ? 1 : 0)), count);
+        const answer = angleList(times);
+        const payload = {
+          variant,
+          level,
+          times: times.map(time => [time.hour, time.minute]),
+          angles: times.map(time => time.smallAngle),
+          sourceAnchor: source41AngleSixSourceAnchors[variant],
+          complexity: (level + 1) * 1000 + times.reduce((sum, time) => sum + time.minute + time.smallAngle, 0)
+        };
+        const evidence = source41Evidence(variant === 1 ? "draw-clock-hands-and-find-four-angles" : "draw-clock-hands-and-find-two-angles", payload, answer);
+        const clocks = source41AngleSixClockGrid(times.map(time => ({ ...time, showHour: false, showMinute: false, state: "blank-drawing", caption: source41AngleSixFormatTime(time.hour, time.minute) })));
+        const prompt = `각 빈 시계에 ${count === 4 ? "해당" : "주어진"} 시각의 시침과 분침을 그리고, 두 바늘이 이루는 작은 쪽 각을 차례로 구하세요.${clocks}${evidence}`;
+        const solution = `${angleSteps(times)}. 따라서 차례대로 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2 || variant === 6) {
+        for (let skip = 0; skip < variant + 1; skip += 1) rng();
+        const times = source41AngleSixPickTimes(rng, Math.min(2, level + (variant === 6 ? 1 : 0)), 4);
+        const answer = angleList(times);
+        const payload = {
+          variant,
+          level,
+          times: times.map(time => [time.hour, time.minute]),
+          angles: times.map(time => time.smallAngle),
+          sourceAnchor: source41AngleSixSourceAnchors[variant],
+          complexity: (level + 1) * 1000 + times.reduce((sum, time) => sum + time.minute + time.smallAngle, 0)
+        };
+        const evidence = source41Evidence(variant === 2 ? "four-clock-small-angle-calculation" : "four-clock-small-angle-mission", payload, answer);
+        const prompt = `다음 네 시각에서 시침과 분침이 이루는 작은 쪽 각을 차례로 구하세요.<div class="source41-clock-time-list">${times.map((time, index) => `<span>${source41CircledNumbers[index]} ${source41AngleSixFormatTime(time.hour, time.minute)}</span>`).join("")}</div>${evidence}`;
+        const solution = `${angleSteps(times)}. 따라서 차례대로 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        let selected = null;
+        const widths = [[3, 4], [4, 5], [5, 6]][level];
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const minute = pick(rng, [10, 20, 30, 40, 50]);
+          const width = pick(rng, widths);
+          const rangeStart = int(rng, 1, 11 - width);
+          const rangeEnd = rangeStart + width;
+          const targetHour = int(rng, rangeStart, rangeEnd - 1);
+          const target = source41AngleSixTimeData(targetHour, minute);
+          if (!Number.isInteger(target.smallAngle) || target.smallAngle < 35 || target.smallAngle > 160) continue;
+          const matches = source41AngleSixEnumerate(data => data.minute === minute && (data.hour || 12) >= rangeStart && (data.hour || 12) < rangeEnd && data.smallAngle === target.smallAngle);
+          if (matches.length === 1) selected = { ...target, rangeStart, rangeEnd, candidates: matches.length };
+        }
+        if (!selected) throw new Error("바늘의 범위와 각도로 시각이 하나인 문제를 만들지 못했습니다.");
+        const answer = source41AngleSixFormatTime(selected.hour, selected.minute);
+        const payload = { variant, level, ...selected, sourceAnchor: source41AngleSixSourceAnchors[3], complexity: (level + 1) * 1000 + (selected.rangeEnd - selected.rangeStart) * 100 + selected.smallAngle };
+        const evidence = source41Evidence("minute-position-angle-time-with-hour-range", payload, answer);
+        const prompt = `분침이 ${selected.minute / 5}을 가리키고 시침은 ${selected.rangeStart}와 ${selected.rangeEnd} 사이에 있습니다. 두 바늘이 이루는 작은 쪽 각이 ${selected.smallAngle}°일 때 시각을 구하세요.${evidence}`;
+        const solution = `분침이 ${selected.minute / 5}을 가리키므로 ${selected.minute}분입니다. 시침이 ${selected.rangeStart}와 ${selected.rangeEnd} 사이에 있는 시각을 하나씩 확인하면 작은 각이 ${selected.smallAngle}°인 시각은 ${answer} 하나입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const durationPools = [
+          Array.from({ length: 5 }, (_, index) => 40 + index * 10),
+          Array.from({ length: 9 }, (_, index) => 60 + index * 10),
+          Array.from({ length: 66 }, (_, index) => 70 + index * 2)
+        ];
+        const duration = pick(rng, durationPools[level]);
+        const startTotal = int(rng, 60, 660 - duration);
+        const startHour = Math.floor(startTotal / 60);
+        const startMinute = startTotal % 60;
+        const endTotal = startTotal + duration;
+        const endHour = Math.floor(endTotal / 60);
+        const endMinute = endTotal % 60;
+        const answerNumber = duration / 2;
+        const answer = `${answerNumber}°`;
+        const payload = { variant, level, start: [startHour, startMinute], end: [endHour, endMinute], duration, answerNumber, sourceAnchor: source41AngleSixSourceAnchors[7], complexity: (level + 1) * 1000 + duration };
+        const evidence = source41Evidence("hour-hand-turn-between-two-times", payload, answer);
+        const prompt = `책을 읽기 시작한 시각은 ${source41AngleSixFormatTime(startHour, startMinute)}이고 끝낸 시각은 ${source41AngleSixFormatTime(endHour, endMinute)}입니다. 책을 읽는 동안 시침이 움직인 각도를 구하세요.${evidence}`;
+        const solution = `읽은 시간은 ${duration}분입니다. 시침은 60분에 30°씩, 1분에 0.5°씩 움직이므로 ${duration}×0.5=${answerNumber}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8 || variant === 10) {
+        const limits = variant === 8 ? [104, 154] : [44, 96];
+        const target = source41AngleSixDirectionalTime(rng, level, limits[0], limits[1]);
+        const rotation = int(rng, 22, 338);
+        const answer = source41AngleSixFormatTime(target.hour, target.minute);
+        const payload = {
+          variant,
+          level,
+          targetHour: target.hour,
+          targetMinute: target.minute,
+          directedAngle: target.directedAngle,
+          candidateCount: target.candidates,
+          rotation,
+          sourceAnchor: source41AngleSixSourceAnchors[variant],
+          complexity: (level + 1) * 1000 + target.directedAngle + Math.abs(rotation - 180)
+        };
+        const evidence = source41Evidence(variant === 8 ? "rotated-numberless-clock-time" : "rolled-numberless-clock-time", payload, answer);
+        const clock = source41AngleSixClockSvg({ hour: target.hour, minute: target.minute, rotation, numerals: false, angleLabel: target.directedAngle, state: variant === 8 ? "numberless-rotated" : "numberless-rolled" });
+        const prompt = `숫자와 12의 위치를 알 수 없는 시계입니다. 짧은 바늘은 시침, 긴 바늘은 분침이며 그림에 표시된 각은 ${target.directedAngle}°입니다. 시계가 가리키는 시각을 구하세요.${clock}${evidence}`;
+        const solution = `두 바늘의 길이와 놓인 순서를 바꾸지 않고 시계 숫자를 채워 봅니다. 조건에 맞는 시각은 ${answer} 하나입니다. 시계 전체를 돌려도 두 바늘의 길이와 서로 놓인 순서는 바뀌지 않습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const startHour = int(rng, 1, 10);
+      const startMinute = pick(rng, [0, 10, 20, 30, 40, 50]);
+      const elapsed = int(rng, [12, 18, 24][level], [28, 42, 56][level]);
+      const minuteHandTurn = elapsed * 6;
+      const endTotal = (startHour * 60 + startMinute + elapsed) % 720;
+      const endHour = Math.floor(endTotal / 60);
+      const endMinute = endTotal % 60;
+      const answer = source41AngleSixFormatTime(endHour, endMinute);
+      const payload = { variant, level, start: [startHour, startMinute], elapsed, minuteHandTurn, end: [endHour, endMinute], sourceAnchor: source41AngleSixSourceAnchors[9], complexity: (level + 1) * 1000 + minuteHandTurn };
+      const evidence = source41Evidence("minute-hand-turn-to-end-time", payload, answer);
+      const prompt = `${source41AngleSixFormatTime(startHour, startMinute)}에 운동을 시작했습니다. 운동하는 동안 분침은 한 바퀴를 채 돌지 않고 ${minuteHandTurn}° 움직였습니다. 운동을 끝낸 시각을 구하세요.${evidence}`;
+      const solution = `분침은 1분에 6° 움직이므로 운동한 시간은 ${minuteHandTurn}÷6=${elapsed}분입니다. ${source41AngleSixFormatTime(startHour, startMinute)}에서 ${elapsed}분 뒤는 ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {

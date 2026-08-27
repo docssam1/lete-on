@@ -628,7 +628,7 @@
   semesters[0] = buildSourceSemester41(semesters[0]);
 
   window.HSE_CURRICULUM = {
-    version: "2026-08-27",
+    version: "2026-08-28",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],

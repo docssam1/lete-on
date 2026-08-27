@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_41 = {
-  "version": "2026-08-27",
+  "version": "2026-08-28",
   "totals": {
     "units": 6,
     "groups": 30,
@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 128,
+  "verifiedMappings": 138,
   "items": [
     {
       "unit": 1,
@@ -2331,10 +2331,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "시곗바늘 위치와 각도 추론",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2349,10 +2350,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "시각별 시곗바늘 그리기와 각도",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2367,10 +2369,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "시각별 작은 각 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2385,10 +2388,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "바늘 위치와 각도로 시각 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2421,10 +2425,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "주어진 시각의 바늘 각도",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2439,10 +2444,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 시각의 작은 각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2457,10 +2463,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "시간 간격의 시침 회전각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2475,10 +2482,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "눈금 없는 시계의 시각 추론",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2493,10 +2501,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "분침 회전각으로 종료 시각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2511,10 +2520,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "회전한 시계의 바늘 각도 추론",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleSix",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
