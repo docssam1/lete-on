@@ -64,12 +64,24 @@ function digitalTransformMarkup(visual) {
   return `<div class="b1-digital-transform"><div>${visual.digits.map(digitalDigit).join("")}<i>→</i><strong>${operationShort(visual.operation)}</strong></div><div class="b1-number-options">${options}</div></div>`;
 }
 
-function digitalBoardMarkup(visual) {
-  return `<div class="b1-digital-board">${visual.rows.map((row) => `<div>${digitalDigit(row.digit)}<span>→</span><strong>${operationShort(row.operation)}</strong><em>?</em></div>`).join("")}<b>나온 숫자의 합 = ?</b></div>`;
+function digitalOrientationBoardMarkup(visual) {
+  const operationLabels = {
+    "rotate-right-quarter": "오른쪽으로 반의 반 바퀴",
+    "rotate-left-quarter": "왼쪽으로 반의 반 바퀴",
+    "rotate-half": "반 바퀴"
+  };
+  const cells = visual.cells.map((cell) => `<span style="--turn:${cell.orientation * 90}deg">${digitalDigit(cell.digit)}</span>`).join("");
+  return `<div class="b1-digital-orientation-board"><div class="b1-digital-board-grid">${cells}</div><strong>숫자판 전체를 ${operationLabels[visual.operation]}</strong><b>똑바로 놓이는 수의 합 = ?</b></div>`;
 }
 
-function digitalAdditionMarkup(visual) {
-  return `<div class="b1-digital-addition">${visual.rows.map((row) => `<div><span>${row.source.map(digitalDigit).join("")}</span><i>→</i><strong>${operationShort(row.operation)}</strong></div>`).join("")}<b>움직인 뒤의 두 수를 더하세요.</b></div>`;
+const blankNumber = (digits, className = "") => `<span class="b1-number-blank ${className}" style="--digits:${digits}">${Array.from({ length: digits }, () => "<i></i>").join("")}</span>`;
+
+function digitalRelatedAdditionMarkup(visual) {
+  const source = `<span class="b1-digital-source">${visual.source.map(digitalDigit).join("")}</span>`;
+  if (visual.layout === "horizontal") {
+    return `<div class="b1-digital-related-addition horizontal"><div>${source}<b>+</b>${blankNumber(2, "transformed")}<b>=</b>${blankNumber(3, "sum")}</div><small>원래 수 + ${operationShort(visual.operation)} 수</small></div>`;
+  }
+  return `<div class="b1-digital-related-addition vertical"><div class="b1-vertical-calculation"><span>${source}<small>원래 수</small></span><span class="second"><b>+</b>${blankNumber(2, "transformed")}<small>돌린 수</small></span><span class="line"></span><span>${blankNumber(3, "sum")}</span></div><small>원래 수와 반 바퀴 돌린 수의 세로셈</small></div>`;
 }
 
 const circlePoints = (count, cx, cy, radius) => Array.from({ length: count }, (_, index) => {
@@ -123,8 +135,8 @@ export function book01Markup(visual) {
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
   if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
-  if (visual.subtype === "digital-board") return digitalBoardMarkup(visual);
-  if (visual.subtype === "digital-addition") return digitalAdditionMarkup(visual);
+  if (visual.subtype === "digital-orientation-board") return digitalOrientationBoardMarkup(visual);
+  if (visual.subtype === "digital-related-addition") return digitalRelatedAdditionMarkup(visual);
   if (visual.subtype === "circle-magic") return circleMagicMarkup(visual);
   if (visual.subtype === "cross-magic") return crossMagicMarkup(visual);
   if (visual.subtype === "sum-grid") return sumGridMarkup(visual);

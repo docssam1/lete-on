@@ -25,8 +25,8 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-assert(typeIds.length === 32, `expected 32 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 32, "duplicate type in book-01 curriculum");
+assert(typeIds.length === 34, `expected 34 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 34, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
@@ -104,9 +104,20 @@ function validateDigital(problem) {
     const transformed = BOOK01_INTERNALS.transformDisplay(source, problem.meta.operation);
     assert(Number(transformed.join("")) === problem.meta.result, "two-digit transform mismatch");
   } else if (family === "digital-board-sum") {
-    assert(problem.meta.results.reduce((sum, value) => sum + value, 0) === problem.meta.answer, "digital board sum mismatch");
-  } else if (family === "digital-addition") {
-    assert(problem.meta.values[0] + problem.meta.values[1] === problem.meta.answer, "digital addition mismatch");
+    const turns = { "rotate-right-quarter": 1, "rotate-left-quarter": 3, "rotate-half": 2 };
+    const upright = problem.visual.cells
+      .filter((cell) => (cell.orientation + turns[problem.meta.operation]) % 4 === 0)
+      .map((cell) => cell.digit);
+    assert(upright.join() === problem.meta.uprightDigits.join(), "digital board upright digits mismatch");
+    assert(upright.reduce((sum, value) => sum + value, 0) === problem.meta.answer, "digital board sum mismatch");
+    assert(new Set(problem.visual.cells.map((cell) => cell.digit)).size === 9, "digital board digits repeat");
+  } else if (family === "digital-related-addition") {
+    const source = String(problem.meta.source).padStart(2, "0").split("").map(Number);
+    const transformed = BOOK01_INTERNALS.transformDisplay(source, problem.meta.operation);
+    assert(Number(transformed.join("")) === problem.meta.transformed, "related digital transform mismatch");
+    assert(problem.meta.source !== problem.meta.transformed, "related digital addition repeats the same number");
+    assert(problem.meta.source + problem.meta.transformed === problem.meta.answer, "related digital addition mismatch");
+    assert(problem.visual.layout === problem.meta.layout, "related digital addition layout mismatch");
   }
 }
 

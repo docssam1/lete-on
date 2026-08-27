@@ -1,7 +1,7 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827e";
-import { GENERATORS } from "./generators.js?v=20260827b";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827f";
+import { GENERATORS } from "./generators.js?v=20260827c";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260827b";
+import { book01Markup } from "./book01-renderers.js?v=20260827c";
 import { book03Markup } from "./book03-renderers.js?v=20260825m";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
 import { book05Markup } from "./book05-renderers.js?v=20260826c";
@@ -344,9 +344,16 @@ function typeStageReferences(unit, typeId, stageId) {
 }
 
 function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
-  const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
-  const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
-  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
+  // 원본 교재에 이 세부 유형이 등장하는 단계와, 문제은행에서 난이도를 바꾸어
+  // 생성할 수 있는 단계는 구분한다. 원본 문항 번호가 없는 단계를 가짜 번호로
+  // 채우지는 않되, 검산된 생성기는 개념·유형·연습·심화 변형으로 사용할 수 있다.
+  return isReady(item) && hasBookSource(item, book, unit);
+}
+
+function sourceStageLabels(unit, typeId) {
+  return TEXTBOOK_STAGES
+    .filter((candidate) => typeStageReferences(unit, typeId, candidate.id).length > 0)
+    .map((candidate) => candidate.label);
 }
 
 function studyReferenceLabel(references = []) {
@@ -386,17 +393,16 @@ function renderCurriculum() {
         const ready = isSelectableCurriculumType(item, book, unit, stage.id);
         const sourceChecked = hasBookSource(item, book, unit);
         const sourceNumbers = studyReferenceLabel(typeReferences);
-        const availableStageLabels = TEXTBOOK_STAGES
-          .filter((candidate) => typeStageReferences(unit, item.id, candidate.id).length > 0)
-          .map((candidate) => candidate.label);
+        const availableStageLabels = sourceStageLabels(unit, item.id);
         const alternateStageLabel = availableStageLabels.length ? `${availableStageLabels.join("·")}에서 선택 가능` : "교재 원본 문항 없음";
+        const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item.id]?.includes(stage.id);
         const sourceState = sourceNumbers
           ? `${stage.label} 원본 ${sourceNumbers}`
-          : `${stage.label} 단계 원본 문항 없음 · ${alternateStageLabel}`;
-        return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+          : `${stage.label} 단계 변형 생성 · 원본은 ${alternateStageLabel}${sourceAuditBlocked ? " · 해당 단계 원본 검토 중" : ""}`;
+        return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"} ${sourceNumbers ? "source-stage" : "derived-stage"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
           <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
-          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked && !sourceNumbers ? alternateStageLabel : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? sourceNumbers ? "원본형 무한 생성" : "단계 변형 생성" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
       const readyCount = types.filter((item) => isSelectableCurriculumType(item, book, unit)).length;
@@ -528,9 +534,13 @@ function selectedReferences() {
       if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book, unit)) {
         const stage = activeTextbookStage();
         const sourceNumbers = studyReferenceLabel(typeStageReferences(unit, typeId, stage.id));
+        const availableStageLabels = sourceStageLabels(unit, typeId);
+        const stageReference = sourceNumbers
+          ? `${stage.label}(${sourceNumbers})`
+          : `${stage.label} 단계 변형(원본 ${availableStageLabels.join("·") || "문항 대조 전"})`;
         result.push({
           typeId,
-          reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}`,
+          reference: `${book.label} ${unit.label} · ${stageReference} · ${typeById(typeId)?.label || "세부 유형"}`,
           classification: questionClassificationForType(typeId)
         });
       }

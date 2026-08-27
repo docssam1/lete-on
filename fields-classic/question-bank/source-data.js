@@ -366,8 +366,10 @@ export const TYPES = [
   type("symbol-balanced-congruent-partition", "geometry", "도형 분할", "기호를 똑같이 가진 합동 도형으로 나누기", { generator: "symbolBalancedCongruentPartition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-digit-transform", "pattern", "디지털 숫자", "디지털 숫자를 뒤집거나 돌린 결과", { generator: "digitalDigitTransform", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-two-digit-transform", "pattern", "디지털 숫자", "두 자리 디지털 수를 움직인 결과", { generator: "digitalTwoDigitTransform", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("digital-transform-board-sum", "number", "디지털 숫자", "숫자판을 움직여 나온 수의 합", { generator: "digitalTransformBoardSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("digital-transform-addition", "number", "디지털 숫자", "디지털 수를 움직여 덧셈 완성하기", { generator: "digitalTransformAddition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("digital-transform-board-sum", "number", "디지털 숫자", "숫자판을 반의 반 바퀴 돌려 바로 선 수의 합", { generator: "digitalTransformBoardSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("digital-board-half-turn-sum", "number", "디지털 숫자", "숫자판을 반 바퀴 돌려 바로 선 수의 합", { generator: "digitalBoardHalfTurnSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("digital-flip-addition-horizontal", "number", "디지털 숫자", "원래 수와 오른쪽으로 뒤집은 수의 가로 덧셈", { generator: "digitalFlipAdditionHorizontal", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("digital-transform-addition", "number", "디지털 숫자", "원래 수와 반 바퀴 돌린 수의 세로 덧셈", { generator: "digitalTransformAddition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("circular-magic-line-sum", "number", "마방진", "원 모양에서 마주 보는 두 수의 합 같게 만들기", { generator: "circularMagicLineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("cross-shape-magic-sum", "number", "마방진", "십자·T자 모양의 줄 합 같게 만들기", { generator: "crossShapeMagicSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("gakuro-card-placement", "number", "가쿠로", "수 카드를 가로·세로 합에 맞게 놓기", { generator: "gakuroCardPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
@@ -1242,8 +1244,10 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "symbol-balanced-congruent-partition": "각 조각의 모양과 크기뿐 아니라 들어 있는 기호의 종류와 개수도 비교합니다.",
   "digital-digit-transform": "디지털 숫자의 막대를 움직인 뒤 켜진 막대가 어느 숫자인지 다시 읽습니다.",
   "digital-two-digit-transform": "두 자리 수의 각 숫자를 움직이고 자리의 순서가 바뀌는지도 확인합니다.",
-  "digital-transform-board-sum": "각 숫자판을 따로 움직여 나온 수를 적은 뒤 모두 더합니다.",
-  "digital-transform-addition": "움직인 뒤의 두 수를 정확히 읽고 세로로 맞추어 더합니다.",
+  "digital-transform-board-sum": "숫자판 전체를 반의 반 바퀴 돌린 뒤 똑바로 선 숫자만 골라 더합니다.",
+  "digital-board-half-turn-sum": "숫자판 전체를 반 바퀴 돌린 뒤 똑바로 선 숫자만 골라 더합니다.",
+  "digital-flip-addition-horizontal": "원래 두 자리 수를 오른쪽으로 뒤집어 읽은 수를 찾고 가로 덧셈을 완성합니다.",
+  "digital-transform-addition": "원래 두 자리 수를 반 바퀴 돌려 읽은 수를 찾고 세로셈의 자리를 맞추어 더합니다.",
   "circular-magic-line-sum": "가운데를 지나는 줄마다 양쪽 끝 두 수의 합이 같아야 합니다.",
   "cross-shape-magic-sum": "완성된 한 줄의 합을 먼저 찾고 빈 줄의 보이는 수를 뺍니다.",
   "gakuro-card-placement": "한 줄의 목표 합에서 보이는 수를 빼고, 쓰지 않은 수 카드 중 맞는 수를 고릅니다.",
@@ -1852,10 +1856,16 @@ const BOOK01_UNIT01_REFS = Object.freeze({
     concept: [problemNumbers("activity", 2, [3, 4])], practice: [problemNumbers("practice", 1, [13, 14])]
   }),
   "digital-transform-board-sum": stageReferences({
-    type: [problemNumbers("check", 2, [1, 2])], practice: [problemNumbers("practice", 1, [15, 16])], advanced: [problemNumbers("advanced", 1, [4])]
+    type: [problemNumbers("check", 2, [2])], practice: [problemNumbers("practice", 1, [15])]
+  }),
+  "digital-board-half-turn-sum": stageReferences({
+    type: [problemNumbers("check", 2, [1])], practice: [problemNumbers("practice", 1, [16])], advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "digital-flip-addition-horizontal": stageReferences({
+    type: [problemNumbers("check", 2, [3])], practice: [problemNumbers("practice", 1, [17])]
   }),
   "digital-transform-addition": stageReferences({
-    type: [problemNumbers("check", 2, [3, 4])], practice: [problemNumbers("practice", 1, [17, 18])]
+    type: [problemNumbers("check", 2, [4])], practice: [problemNumbers("practice", 1, [18])]
   })
 });
 
@@ -3863,7 +3873,8 @@ export const CURRICULUM = [
     detailedStagedUnit("도형 움직이기", [
       "shape-mirror-direction", "shape-quarter-half-turn", "shape-flip-composition",
       "rotational-partition-two", "rotational-partition-four", "symbol-balanced-congruent-partition",
-      "digital-digit-transform", "digital-two-digit-transform", "digital-transform-board-sum", "digital-transform-addition"
+      "digital-digit-transform", "digital-two-digit-transform", "digital-transform-board-sum", "digital-board-half-turn-sum",
+      "digital-flip-addition-horizontal", "digital-transform-addition"
     ], [6,4], [5,4], 4, 18, BOOK01_UNIT01_REFS),
     detailedStagedUnit("색종이 접기", [
       "fold-cut-shape-choice", "fold-number-cut-sum-textbook", "fold-cut-piece-count",

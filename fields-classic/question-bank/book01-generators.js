@@ -317,7 +317,7 @@ function symbolBalancedCongruentPartition({ difficulty = 2 } = {}) {
     answer: "그림과 같이 네 조각으로 나눕니다.",
     answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels },
     solution: "각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ○, △, □, ★가 하나씩 들어 있습니다.",
-    meta: { family: "symbol-partition", labels, templateName }
+    meta: { family: "symbol-partition", labels, symbols, templateName }
   };
 }
 
@@ -372,21 +372,21 @@ function digitalDigitTransform({ difficulty = 2 }) {
   };
 }
 
-function makeTwoDigitTransform(difficulty) {
-  const operations = difficulty === 1 ? ["mirror-top-bottom"] : ["mirror-left-right", "mirror-top-bottom", "rotate-half"];
+function makeTwoDigitTransform(difficulty, allowedOperations = null, requireChanged = difficulty > 1) {
+  const operations = allowedOperations || (difficulty === 1 ? ["mirror-top-bottom"] : ["mirror-left-right", "mirror-top-bottom", "rotate-half"]);
   for (let attempt = 0; attempt < 100; attempt += 1) {
     const operation = sample(operations);
     const pairs = validDigitPairs(operation, true);
     const source = [sample(pairs)[0], sample(pairs)[0]];
-    if (source[0] === 0) continue;
+    if (source[0] === 0 || source[0] === source[1]) continue;
     const transformed = transformDisplay(source, operation);
     if (!transformed || transformed[0] === 0) continue;
     const sourceValue = source[0] * 10 + source[1];
     const answer = transformed[0] * 10 + transformed[1];
-    if (answer === sourceValue && difficulty > 1) continue;
+    if (answer === sourceValue && requireChanged) continue;
     return { operation, source, transformed, sourceValue, answer };
   }
-  return { operation: "rotate-half", source: [6, 9], transformed: [6, 9], sourceValue: 69, answer: 69 };
+  return { operation: "rotate-half", source: [1, 9], transformed: [6, 1], sourceValue: 19, answer: 61 };
 }
 
 function digitalTwoDigitTransform({ difficulty = 2 }) {
@@ -402,35 +402,74 @@ function digitalTwoDigitTransform({ difficulty = 2 }) {
   };
 }
 
-function digitalTransformBoardSum({ difficulty = 2 }) {
-  const count = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
-  const operations = ["mirror-left-right", "mirror-top-bottom", "rotate-half"];
-  const rows = Array.from({ length: count }, () => {
-    const operation = sample(operations);
-    const [digit, result] = sample(validDigitPairs(operation, true));
-    return { digit, operation, result };
+const BOARD_TURN_LABELS = Object.freeze({
+  "rotate-right-quarter": "시계방향(오른쪽)으로 반의 반 바퀴",
+  "rotate-left-quarter": "시계 반대방향(왼쪽)으로 반의 반 바퀴",
+  "rotate-half": "반 바퀴"
+});
+
+const BOARD_TURN_STEPS = Object.freeze({
+  "rotate-right-quarter": 1,
+  "rotate-left-quarter": 3,
+  "rotate-half": 2
+});
+
+function makeDigitalOrientationBoard(operation, difficulty) {
+  const digits = shuffle([1,2,3,4,5,6,7,8,9]);
+  const turn = BOARD_TURN_STEPS[operation];
+  const uprightBeforeTurn = (4 - turn) % 4;
+  const targetCount = difficulty <= 1 ? 4 : difficulty >= 3 ? 2 : 3;
+  const targetIndices = new Set(shuffle([0,1,2,3,4,5,6,7,8]).slice(0, targetCount));
+  const cells = digits.map((digit, index) => {
+    if (targetIndices.has(index)) return { digit, orientation: uprightBeforeTurn };
+    const otherOrientations = [0,1,2,3].filter((value) => value !== uprightBeforeTurn);
+    return { digit, orientation: sample(otherOrientations) };
   });
-  const answer = rows.reduce((sum, row) => sum + row.result, 0);
+  const uprightDigits = cells.filter((cell) => (cell.orientation + turn) % 4 === 0).map((cell) => cell.digit);
+  return { operation, cells, uprightDigits, answer: uprightDigits.reduce((sum, digit) => sum + digit, 0) };
+}
+
+function makeDigitalBoardSum(operation, difficulty) {
+  const made = makeDigitalOrientationBoard(operation, difficulty);
   return {
-    prompt: "각 디지털 숫자를 화살표의 설명대로 움직였습니다. 나온 숫자를 모두 더하세요.",
-    visual: { kind: "book1", subtype: "digital-board", rows },
-    answer: String(answer),
-    solution: `움직인 뒤의 숫자는 ${rows.map((row) => row.result).join(", ")}이고, 합은 ${rows.map((row) => row.result).join(" + ")} = ${answer}입니다.`,
-    meta: { family: "digital-board-sum", results: rows.map((row) => row.result), answer }
+    prompt: `다음 숫자판을 ${BOARD_TURN_LABELS[operation]} 돌렸을 때, 똑바로 놓이는 수들의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "digital-orientation-board", cells: made.cells, operation },
+    answer: String(made.answer),
+    solution: `숫자판 전체를 ${BOARD_TURN_LABELS[operation]} 돌리면 ${made.uprightDigits.join(", ")}이 똑바로 놓입니다. 따라서 ${made.uprightDigits.join(" + ")} = ${made.answer}입니다.`,
+    meta: { family: "digital-board-sum", operation, uprightDigits: made.uprightDigits, answer: made.answer }
   };
 }
 
-function digitalTransformAddition({ difficulty = 2 }) {
-  const first = makeTwoDigitTransform(difficulty);
-  const second = makeTwoDigitTransform(difficulty);
-  const answer = first.answer + second.answer;
+function digitalTransformBoardSum({ difficulty = 2 }) {
+  const operation = sample(["rotate-right-quarter", "rotate-left-quarter"]);
+  return makeDigitalBoardSum(operation, difficulty);
+}
+
+function digitalBoardHalfTurnSum({ difficulty = 2 }) {
+  return makeDigitalBoardSum("rotate-half", difficulty);
+}
+
+function makeRelatedDigitalAddition(operation, layout, difficulty) {
+  const made = makeTwoDigitTransform(difficulty, [operation], true);
+  const answer = made.sourceValue + made.answer;
+  const transformedPhrase = operation === "mirror-left-right"
+    ? "그 수를 오른쪽으로 뒤집어 읽은 수"
+    : "그 수를 반 바퀴 돌려 읽은 수";
   return {
-    prompt: "두 디지털 수를 각각 설명대로 움직인 뒤, 새로 보이는 두 수를 더하세요.",
-    visual: { kind: "book1", subtype: "digital-addition", rows: [first, second] },
+    prompt: `다음 덧셈식은 원래 두 자리 수와 ${transformedPhrase}를 더한 것입니다. 빈칸에 알맞은 수를 구하세요.`,
+    visual: { kind: "book1", subtype: "digital-related-addition", source: made.source, operation, layout },
     answer: String(answer),
-    solution: `움직인 뒤 ${first.answer}과 ${second.answer}이므로 ${first.answer} + ${second.answer} = ${answer}입니다.`,
-    meta: { family: "digital-addition", values: [first.answer, second.answer], answer }
+    solution: `원래 수 ${made.sourceValue}을 ${OPERATION_LABELS[operation]} 읽으면 ${made.answer}입니다. 따라서 ${made.sourceValue} + ${made.answer} = ${answer}입니다.`,
+    meta: { family: "digital-related-addition", operation, layout, source: made.sourceValue, transformed: made.answer, answer }
   };
+}
+
+function digitalFlipAdditionHorizontal({ difficulty = 2 }) {
+  return makeRelatedDigitalAddition("mirror-left-right", "horizontal", difficulty);
+}
+
+function digitalTransformAddition({ difficulty = 2 }) {
+  return makeRelatedDigitalAddition("rotate-half", "vertical", difficulty);
 }
 
 function distinctPairValues(pairSum, count) {
@@ -737,6 +776,8 @@ export const BOOK01_GENERATORS = {
   digitalDigitTransform,
   digitalTwoDigitTransform,
   digitalTransformBoardSum,
+  digitalBoardHalfTurnSum,
+  digitalFlipAdditionHorizontal,
   digitalTransformAddition,
   circularMagicLineSum,
   crossShapeMagicSum,
