@@ -111,13 +111,26 @@ function buildReview(curriculumReviews, packets) {
   };
 }
 
+function loadConfig(config) {
+  if (!config || !clean(config.curriculumReviews) || !Array.isArray(config.packets) || !config.packets.length) {
+    throw new Error("황소 세부유형 빌드 설정을 확인해 주세요.");
+  }
+  return {
+    curriculumReviews: readJson(config.curriculumReviews),
+    packets: config.packets.map(readJson)
+  };
+}
+
 function main(args) {
-  if (args.length < 3) throw new Error("사용법: node build-hwangso-detail-review.cjs <단원검수표.json> <출력.json> <세부검수1.json> [세부검수2.json ...]");
-  const output = buildReview(readJson(args[0]), args.slice(2).map(readJson));
+  if (args.length < 2) throw new Error("사용법: node build-hwangso-detail-review.cjs <설정.json> <출력.json> 또는 <단원검수표.json> <출력.json> <세부검수1.json> [세부검수2.json ...]");
+  const inputs = args.length === 2
+    ? loadConfig(readJson(args[0]))
+    : { curriculumReviews: readJson(args[0]), packets: args.slice(2).map(readJson) };
+  const output = buildReview(inputs.curriculumReviews, inputs.packets);
   fs.mkdirSync(path.dirname(path.resolve(args[1])), { recursive: true });
   fs.writeFileSync(path.resolve(args[1]), `${JSON.stringify(output, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify(output.summary)}\n`);
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, SAFE_SOURCE_KEYS, validatePacket, buildReview });
+module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, SAFE_SOURCE_KEYS, validatePacket, buildReview, loadConfig });

@@ -90,3 +90,8 @@ test("검수 묶음은 원문·정답·경로 같은 위험한 필드를 받지 
   copiedText.sources[0].itemReviews[0].note = "문제 원문 ".repeat(60);
   assert.throws(() => builder.buildReview(curriculum(), [copiedText]), /length/);
 });
+
+test("검수 묶음 목록이 없는 빌드 설정은 받지 않는다", () => {
+  assert.throws(() => builder.loadConfig({ curriculumReviews: "curriculum.json", packets: [] }), /빌드 설정/);
+  assert.throws(() => builder.loadConfig({ packets: ["packet.json"] }), /빌드 설정/);
+});
