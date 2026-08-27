@@ -317,6 +317,41 @@
     visit(0);
     return values;
   };
+  const source41DistinctNumberCache = new Map();
+  const source41DistinctNumbers = length => {
+    if (source41DistinctNumberCache.has(length)) return source41DistinctNumberCache.get(length);
+    const values = [];
+    const digits = [];
+    const visit = usedMask => {
+      if (digits.length === length) {
+        values.push(Number(digits.join("")));
+        return;
+      }
+      for (let digit = 0; digit <= 9; digit += 1) {
+        if ((usedMask & (1 << digit)) || (!digits.length && digit === 0)) continue;
+        digits.push(digit);
+        visit(usedMask | (1 << digit));
+        digits.pop();
+      }
+    };
+    visit(0);
+    source41DistinctNumberCache.set(length, values);
+    return values;
+  };
+  const source41NearestDistinctNumber = (target, length) => {
+    const values = source41DistinctNumbers(length);
+    let left = 0;
+    let right = values.length;
+    while (left < right) {
+      const middle = Math.floor((left + right) / 2);
+      if (values[middle] < target) left = middle + 1;
+      else right = middle;
+    }
+    const candidates = [values[left - 1], values[left]].filter(value => value !== undefined);
+    const distance = Math.min(...candidates.map(value => Math.abs(value - target)));
+    const nearest = candidates.filter(value => Math.abs(value - target) === distance);
+    return { nearest, distance };
+  };
   const source41BigNumberLineSvg = ({ start, step, intervals, markers, ariaLabel }) => {
     const left = 24;
     const right = 396;
@@ -3342,6 +3377,358 @@
       const prompt = `어느 가게의 하루 매출이 다음과 같습니다. 이 돈을 모두 100만 원짜리 수표와 5만 원, 만 원, 오천 원, 천 원짜리 지폐로 바꾸려고 합니다. 수표와 지폐의 수를 가능한 적게 하면 모두 몇 장이 됩니까?${table}${evidence}`;
       const exchangeText = exchangeDenominations.map((denomination, index) => `${formatWon(denomination)}짜리 ${source41FormatInteger(exchangeCounts[index])}장`).join(", ");
       const solution = `매출액은 모두 ${formatWon(totalAmount)}입니다. 큰 금액부터 바꾸면 ${exchangeText}이므로 모두 ${answer}장입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41LargeNumberFive({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("조건에 맞는 수 찾기 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const digitSum = value => [...String(value).replace(/,/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
+      const symbolNumber = (tokens, ariaLabel) => `<div class="source41-symbol-number" role="img" aria-label="${ariaLabel}">${tokens.map(token => `<span class="${/^\d$/.test(String(token)) ? "is-digit" : "is-symbol"}">${token}</span>`).join("")}</div>`;
+      const conditionList = items => `<ul class="source41-condition-list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+      const countEqualPlaceDigitsUpTo = (limit, higherExponent, lowerExponent) => {
+        if (limit < 0) return 0;
+        const period = 10 ** (higherExponent + 1);
+        const block = 10 ** lowerExponent;
+        const length = limit + 1;
+        const fullPeriods = Math.floor(length / period);
+        const remainder = length % period;
+        let count = fullPeriods * 10 * block;
+        for (let digit = 0; digit <= 9; digit += 1) {
+          const start = digit * 10 ** higherExponent + digit * 10 ** lowerExponent;
+          count += Math.max(0, Math.min(block, remainder - start));
+        }
+        return count;
+      };
+      const countDigitSequences = (length, targetSum) => {
+        let counts = Array(targetSum + 1).fill(0);
+        counts[0] = 1;
+        for (let index = 0; index < length; index += 1) {
+          const next = Array(targetSum + 1).fill(0);
+          for (let sum = 0; sum <= targetSum; sum += 1) {
+            for (let digit = 0; digit <= 9 && sum + digit <= targetSum; digit += 1) next[sum + digit] += counts[sum];
+          }
+          counts = next;
+        }
+        return counts[targetSum];
+      };
+
+      if (variant === 0) {
+        const length = [5, 6, 7][level];
+        const place = 10 ** (length - 1);
+        const targetDigits = shuffle(rng, [2, 3, 4, 5, 6, 7, 8]).slice(0, 2).sort((left, right) => left - right);
+        const targets = targetDigits.map(digit => digit * place);
+        const nearestResults = targets.map(target => source41NearestDistinctNumber(target, length));
+        if (nearestResults.some(item => item.nearest.length !== 1)) return generators.source41LargeNumberFive({ rng, level, variant });
+        const nearest = nearestResults.map(item => item.nearest[0]);
+        const answerValue = nearest[1] - nearest[0] - 1;
+        const answer = format(answerValue);
+        const payload = { variant, level, length, targets, nearest, distances: nearestResults.map(item => item.distance), answerValue, complexity: length * 100 + targets[1] - targets[0] };
+        const evidence = source41Evidence("nearest-distinct-digit-between-count", payload, answer);
+        const prompt = `0부터 9까지의 숫자 중에서 같은 숫자를 두 번 쓰지 않고 만든 ${length}자리 자연수를 생각합니다. ${format(targets[1])}에 가장 가까운 수를 가, ${format(targets[0])}에 가장 가까운 수를 나라고 할 때, 가와 나 사이에는 자연수가 몇 개 있습니까?${evidence}`;
+        const solution = `${format(targets[1])}에 가장 가까운 수는 ${format(nearest[1])}, ${format(targets[0])}에 가장 가까운 수는 ${format(nearest[0])}입니다. 두 수 사이의 자연수는 ${format(nearest[1])} - ${format(nearest[0])} - 1 = ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const length = [7, 8, 9][level];
+        const minimum = 10 ** (length - 1);
+        const maximum = 10 ** length - 1;
+        const gap = int(rng, [60000, 140000, 300000][level], [180000, 420000, 900000][level]);
+        const lower = int(rng, minimum, maximum - gap - 1);
+        const upper = lower + gap;
+        const higherExponent = 4;
+        const lowerExponent = 3;
+        const answerValue = countEqualPlaceDigitsUpTo(upper - 1, higherExponent, lowerExponent) - countEqualPlaceDigitsUpTo(lower, higherExponent, lowerExponent);
+        const answer = format(answerValue);
+        const payload = { variant, level, lower, upper, higherExponent, lowerExponent, answerValue, complexity: length * 100 + gap };
+        const evidence = source41Evidence("matching-two-place-digits-in-range", payload, answer);
+        const prompt = `${format(lower)}보다 크고 ${format(upper)}보다 작은 자연수 중에서 만의 자리 숫자와 천의 자리 숫자가 같은 수는 모두 몇 개입니까?${evidence}`;
+        const solution = `십만씩 나누어 보면 만의 자리와 천의 자리 숫자가 00, 11, 22, …, 99가 되는 구간만 세면 됩니다. 두 끝의 일부 구간까지 빠짐없이 세면 ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const length = [7, 8, 9][level];
+        const higherExponent = length - 1;
+        const lowerExponent = length - 2;
+        const higherDigit = int(rng, 3, 9);
+        const lowerDigit = int(rng, 0, higherDigit - 1);
+        const suffix = source41RandomFixedDigits(rng, length - 2);
+        const numberText = `${higherDigit}${lowerDigit}${suffix}`;
+        const digitTotal = higherDigit + lowerDigit;
+        const difference = (higherDigit - lowerDigit) * (10 ** higherExponent - 10 ** lowerExponent);
+        const answer = format(numberText);
+        const payload = { variant, level, length, higherExponent, lowerExponent, suffix, higherDigit, lowerDigit, digitTotal, difference, numberText, complexity: length * 100 + difference };
+        const evidence = source41Evidence("swap-leading-digits-from-difference", payload, answer);
+        const display = symbolNumber(["가", "나", ...suffix], `${source41PlaceLabel(higherExponent)}의 자리 가, ${source41PlaceLabel(lowerExponent)}의 자리 나, 뒤의 숫자 ${suffix}`);
+        const prompt = `다음 수에서 ${source41PlaceLabel(higherExponent)}의 자리 숫자 가와 ${source41PlaceLabel(lowerExponent)}의 자리 숫자 나를 서로 바꾸었더니 처음 수보다 ${format(difference)}만큼 작아졌습니다. 처음 수를 구하세요. 단, 가와 나의 합은 ${digitTotal}입니다.${display}${evidence}`;
+        const placeDifference = 10 ** higherExponent - 10 ** lowerExponent;
+        const solution = `두 숫자의 차는 ${format(difference)} ÷ ${format(placeDifference)} = ${higherDigit - lowerDigit}입니다. 합이 ${digitTotal}이므로 큰 숫자는 ${higherDigit}, 작은 숫자는 ${lowerDigit}입니다. 처음 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const length = [8, 10, 12][level];
+        const firstDigit = int(rng, 2, 7);
+        const secondDigit = int(rng, 1, 8);
+        const prefix = firstDigit * 10 + secondDigit;
+        const place = 10 ** (length - 2);
+        const lower = prefix * place;
+        const upper = (prefix + 1) * place;
+        const pairTarget = int(rng, [3, 5, 8][level], [8, 12, 15][level]);
+        const remainingTarget = int(rng, 1, [2, 3, 4][level]);
+        const totalTarget = firstDigit + secondDigit + pairTarget + remainingTarget;
+        const remainingPositions = length - 4;
+        let pairWays = 0;
+        for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) if (first + second === pairTarget) pairWays += 1;
+        const remainingWays = countDigitSequences(remainingPositions, remainingTarget);
+        const answerValue = pairWays * remainingWays;
+        const answer = format(answerValue);
+        const higherPlace = source41PlaceLabel(length - 3);
+        const lowerPlace = source41PlaceLabel(length - 4);
+        const payload = { variant, level, length, lower, upper, firstDigit, secondDigit, pairTarget, remainingTarget, totalTarget, remainingPositions, pairWays, remainingWays, answerValue, complexity: length * 100 + pairWays * remainingWays };
+        const evidence = source41Evidence("bounded-digit-sum-count", payload, answer);
+        const prompt = `다음 조건을 모두 만족하는 자연수는 몇 개입니까?${conditionList([`${format(lower)}보다 크고 ${format(upper)}보다 작은 수`, `각 자리 숫자의 합이 ${totalTarget}인 수`, `${higherPlace}의 자리 숫자와 ${lowerPlace}의 자리 숫자의 합이 ${pairTarget}인 수`])}${evidence}`;
+        const solution = `앞의 두 자리 숫자는 ${firstDigit}, ${secondDigit}입니다. 두 지정 자리의 합이 ${pairTarget}이 되는 방법은 ${pairWays}가지이고, 남은 ${remainingPositions}자리의 합이 ${remainingTarget}이 되는 방법은 ${remainingWays}가지입니다. 따라서 ${pairWays} × ${remainingWays} = ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const wanted = [[1, 2], [2, 3], [3, 7]][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 120 && !selected; attempt += 1) {
+          const total = int(rng, [12, 14, 16][level], [28, 34, 42][level]);
+          const delta = int(rng, 1, 7);
+          const candidates = [];
+          for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) for (let d = 1; d <= 9; d += 1) {
+            if (new Set([a, b, c, d]).size !== 4) continue;
+            if (3 * a + b + c + d !== total || b !== c + delta || d <= Math.max(a, b, c)) continue;
+            candidates.push(100 * a + 10 * c + d);
+          }
+          const unique = [...new Set(candidates)].sort((left, right) => left - right);
+          if (unique.length >= wanted[0] && unique.length <= wanted[1]) selected = { total, delta, candidates: unique };
+        }
+        if (!selected) return generators.source41LargeNumberFive({ rng, level, variant });
+        const answer = selected.candidates.map(format).join(", ");
+        const payload = { variant, level, pattern: "AABCAD", total: selected.total, delta: selected.delta, candidates: selected.candidates, complexity: selected.candidates.length * 100 + selected.total };
+        const evidence = source41Evidence("repeated-symbol-possibilities", payload, answer);
+        const display = symbolNumber(["가", "가", "나", "다", "가", "라"], "가 가 나 다 가 라로 이루어진 여섯 자리 수");
+        const prompt = `다음 조건을 만족하는 여섯 자리 수를 모두 찾을 때, 가능한 세 자리 수 '가-다-라'를 모두 구하세요.${display}${conditionList(["숫자 0은 쓰지 않고, 서로 다른 글자는 서로 다른 숫자입니다.", `각 자리 숫자의 합은 ${selected.total}입니다.`, `나는 다에 ${selected.delta}을 더한 수입니다.`, "라가 가장 큰 숫자입니다."])}${evidence}`;
+        const solution = `가, 나, 다, 라에 1부터 9까지를 넣어 조건을 하나씩 확인하면 가능한 '가-다-라'는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const length = [7, 9, 11][level];
+        const higherIndex = 2;
+        const lowerIndex = higherIndex + 4;
+        const blankDigit = int(rng, 1, 9);
+        const digits = Array.from({ length }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
+        digits[higherIndex] = blankDigit;
+        digits[lowerIndex] = blankDigit;
+        const total = digits.reduce((sum, digit) => sum + digit, 0);
+        const higherExponent = length - higherIndex - 1;
+        const lowerExponent = length - lowerIndex - 1;
+        const tokens = digits.map((digit, index) => index === higherIndex ? "가" : index === lowerIndex ? "나" : digit);
+        const answer = `${blankDigit}, ${blankDigit}`;
+        const payload = { variant, level, length, digits, higherIndex, lowerIndex, higherExponent, lowerExponent, blankDigit, total, complexity: length * 100 + total };
+        const evidence = source41Evidence("place-value-ratio-two-blanks", payload, answer);
+        const display = symbolNumber(tokens, `${length}자리 수에서 가와 나가 표시된 수`);
+        const prompt = `다음 ${length}자리 수에서 가가 나타내는 값은 나가 나타내는 값의 10,000배입니다. 각 자리 숫자의 합이 ${total}일 때 가와 나에 알맞은 숫자를 차례로 구하세요.${display}${evidence}`;
+        const otherTotal = total - blankDigit * 2;
+        const solution = `가와 나는 네 자리만큼 떨어져 있으므로 두 숫자는 같습니다. 이미 보이는 숫자의 합은 ${otherTotal}이므로 가와 나의 합은 ${total} - ${otherTotal} = ${blankDigit * 2}입니다. 따라서 가와 나는 각각 ${blankDigit}이고, 차례로 쓰면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const length = [7, 8, 9][level];
+        const blankIndex = [2, 2, 3][level];
+        const carryRange = [[0, 3], [3, 6], [5, 20]][level];
+        let selected = null;
+        let fallback = null;
+        for (let attempt = 0; attempt < 240 && !selected; attempt += 1) {
+          const digits = Array.from({ length }, (_, index) => int(rng, index === 0 || index === length - 1 ? 1 : 0, 9));
+          const rows = [];
+          for (let blank = 0; blank <= 9; blank += 1) {
+            digits[blankIndex] = blank;
+            const numberText = digits.join("");
+            const reversedText = [...numberText].reverse().join("");
+            const sumText = String(BigInt(numberText) + BigInt(reversedText));
+            rows.push({ blank, numberText, reversedText, sumText, digitSum: digitSum(sumText) });
+          }
+          const maximum = Math.max(...rows.map(row => row.digitSum));
+          const winners = rows.filter(row => row.digitSum === maximum);
+          if (winners.length !== 1) continue;
+          const winner = winners[0];
+          let carry = 0;
+          let carryCount = 0;
+          for (let index = length - 1; index >= 0; index -= 1) {
+            const column = Number(winner.numberText[index]) + Number(winner.reversedText[index]) + carry;
+            carry = column >= 10 ? 1 : 0;
+            carryCount += carry;
+          }
+          const candidate = { pattern: `${winner.numberText.slice(0, blankIndex)}□${winner.numberText.slice(blankIndex + 1)}`, rows, winner, carryCount };
+          fallback ||= candidate;
+          if (carryCount >= carryRange[0] && carryCount <= carryRange[1]) selected = candidate;
+        }
+        selected ||= fallback;
+        if (!selected) return generators.source41LargeNumberFive({ rng, level, variant });
+        const answer = String(selected.winner.blank);
+        const payload = { variant, level, length, blankIndex, pattern: selected.pattern, rows: selected.rows, winner: selected.winner, carryCount: selected.carryCount, complexity: length * 100 + selected.carryCount * 20 };
+        const evidence = source41Evidence("reverse-add-max-digit-sum", payload, answer);
+        const prompt = `다음 수와 이 수를 거꾸로 써서 만든 수를 더한 뒤, 그 합의 각 자리 숫자를 다시 모두 더합니다. □가 어떤 숫자일 때 이 값이 가장 큽니까?<div class="source41-masked-number">${source41FormatMaskedInteger(selected.pattern)}</div>${evidence}`;
+        const checks = selected.rows.map(row => `${row.blank}→${row.digitSum}`).join(" · ");
+        const solution = `□에 0부터 9까지를 넣어 합의 자리 숫자를 더하면 ${checks}입니다. 가장 큰 값은 ${selected.winner.digitSum}이므로 □는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const multiplierRanges = [[2, 3], [3, 5], [5, 8]][level];
+        const options = [];
+        for (let multiplier = multiplierRanges[0]; multiplier <= multiplierRanges[1]; multiplier += 1) {
+          for (let total = 6; total <= 54; total += 2) {
+            const candidates = [];
+            for (let second = 1; second <= 9; second += 1) {
+              const first = multiplier * second;
+              if (first > 9) continue;
+              for (let third = 1; third <= 9; third += 1) {
+                const digits = [first, second, third, 0, 0, 0, 0, third, second, first];
+                if (digits.reduce((sum, digit) => sum + digit, 0) === total) candidates.push(digits.join(""));
+              }
+            }
+            if (candidates.length === 1) options.push({ multiplier, total, answerText: candidates[0] });
+          }
+        }
+        const selected = pick(rng, options);
+        const answer = format(selected.answerText);
+        const payload = { variant, level, length: 10, multiplier: selected.multiplier, total: selected.total, zeroCount: 4, answerText: selected.answerText, complexity: level * 100 + selected.multiplier * 10 + selected.total };
+        const evidence = source41Evidence("palindrome-consecutive-zero-number", payload, answer);
+        const prompt = `다음 조건을 모두 만족하는 수를 구하세요.${conditionList(["거꾸로 써도 같은 수가 되는 10자리 수입니다.", `십억의 자리 숫자는 억의 자리 숫자의 ${selected.multiplier}배입니다.`, "숫자 0이 4개이며 네 개가 이어져 있습니다.", `모든 자리 숫자의 합은 ${selected.total}입니다.`])}${evidence}`;
+        const solution = `거꾸로 써도 같고 0 네 개가 이어지려면 가운데 네 자리가 0000입니다. 앞의 세 자리를 조건에 맞게 차례로 확인하면 ${answer} 하나만 남습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const countRange = [[36, 72], [84, 144], [156, 432]][level];
+        const solve = (fixedA, fixedB, multiplier, pairSum) => {
+          const values = [];
+          for (let hundreds = 0; hundreds <= 9; hundreds += 1) {
+            const hundredMillions = multiplier * hundreds;
+            if (hundredMillions > 9) continue;
+            for (let thousands = 0; thousands <= 9; thousands += 1) {
+              const tens = pairSum - thousands;
+              if (tens < 0 || tens > 9) continue;
+              const fixedDigits = [hundredMillions, fixedA, fixedB, thousands, hundreds, tens];
+              if (new Set(fixedDigits).size !== fixedDigits.length) continue;
+              const remaining = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !fixedDigits.includes(digit));
+              const visit = (unused, placed = []) => {
+                if (!unused.length) {
+                  const digits = Array(10);
+                  digits[1] = hundredMillions;
+                  digits[2] = fixedA;
+                  digits[5] = fixedB;
+                  digits[6] = thousands;
+                  digits[7] = hundreds;
+                  digits[8] = tens;
+                  [0, 3, 4, 9].forEach((position, index) => { digits[position] = placed[index]; });
+                  if (digits[0] !== 0) values.push(digits.join(""));
+                  return;
+                }
+                for (let index = 0; index < unused.length; index += 1) visit([...unused.slice(0, index), ...unused.slice(index + 1)], [...placed, unused[index]]);
+              };
+              visit(remaining);
+            }
+          }
+          return values.sort();
+        };
+        let selected = null;
+        for (let attempt = 0; attempt < 200 && !selected; attempt += 1) {
+          const fixedA = int(rng, 0, 9);
+          const fixedB = int(rng, 0, 9);
+          if (fixedA === fixedB) continue;
+          const multiplier = int(rng, 2, 4);
+          const pairSum = int(rng, 4, 15);
+          const values = solve(fixedA, fixedB, multiplier, pairSum);
+          if (values.length >= countRange[0] && values.length <= countRange[1]) selected = { fixedA, fixedB, multiplier, pairSum, values };
+        }
+        if (!selected) return generators.source41LargeNumberFive({ rng, level, variant });
+        const answerText = selected.values[0];
+        const answer = format(answerText);
+        const payload = { variant, level, fixedA: selected.fixedA, fixedB: selected.fixedB, multiplier: selected.multiplier, pairSum: selected.pairSum, candidateCount: selected.values.length, answerText, complexity: selected.values.length };
+        const evidence = source41Evidence("smallest-all-different-number", payload, answer);
+        const prompt = `다음 조건을 모두 만족하는 수 중에서 가장 작은 수를 구하세요.${conditionList(["각 자리 숫자가 서로 다른 10자리 자연수입니다.", `천만의 자리 숫자는 ${selected.fixedA}, 만의 자리 숫자는 ${selected.fixedB}입니다.`, `천의 자리 숫자와 십의 자리 숫자의 합은 ${selected.pairSum}입니다.`, `억의 자리 숫자는 백의 자리 숫자의 ${selected.multiplier}배입니다.`])}${evidence}`;
+        const solution = `조건에 맞는 숫자 배치를 모두 비교하면 ${selected.values.length}가지입니다. 가장 높은 자리부터 작은 숫자를 놓을 수 있는지 차례로 확인하면 가장 작은 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const length = [5, 6, 7][level];
+        const selectedPositions = [[1, 3], [1, 3, 5], [1, 3, 5, 6]][level];
+        const chosenDigits = shuffle(rng, Array.from({ length: 10 }, (_, digit) => digit)).slice(0, selectedPositions.length);
+        const target = chosenDigits.reduce((sum, digit) => sum + digit, 0);
+        const digits = [];
+        let answerText = "";
+        const visit = (index, usedMask, selectedSum) => {
+          if (index === length) {
+            if (selectedSum === target) answerText = digits.join("");
+            return Boolean(answerText);
+          }
+          for (let digit = 9; digit >= 0; digit -= 1) {
+            if ((usedMask & (1 << digit)) || (index === 0 && digit === 0)) continue;
+            const nextSum = selectedSum + (selectedPositions.includes(index) ? digit : 0);
+            if (nextSum > target) continue;
+            digits.push(digit);
+            if (visit(index + 1, usedMask | (1 << digit), nextSum)) return true;
+            digits.pop();
+          }
+          return false;
+        };
+        visit(0, 0, 0);
+        if (!answerText) return generators.source41LargeNumberFive({ rng, level, variant });
+        const answer = format(answerText);
+        const placeNames = selectedPositions.map(index => `${source41PlaceLabel(length - index - 1)}의 자리`).join(", ");
+        const payload = { variant, level, length, selectedPositions, target, answerText, complexity: length * 100 + selectedPositions.length * 50 };
+        const evidence = source41Evidence("largest-distinct-position-sum", payload, answer);
+        const prompt = `각 자리 숫자가 모두 다른 ${length}자리 자연수에서 ${placeNames} 숫자의 합이 ${target}입니다. 이러한 수 중에서 가장 큰 수를 구하세요.${evidence}`;
+        const solution = `가장 높은 자리부터 9, 8, 7, …을 겹치지 않게 놓되, 지정된 자리의 합이 ${target}이 되도록 확인합니다. 조건을 만족하는 가장 큰 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const fixedExponents = [10, 7, 4];
+      const relationHigherExponent = 9;
+      const relationLowerExponent = 5;
+      const multiplier = 2;
+      const oneCount = [3, 4, 5][level];
+      const jumps = [4, 6, 8][level];
+      let selected = null;
+      for (let attempt = 0; attempt < 160 && !selected; attempt += 1) {
+        const start = BigInt(int(rng, 25, 82)) * source41Power(12) + BigInt(int(rng, 100, 899)) * source41Power(8) + BigInt(int(rng, 100, 999)) * source41Power(4);
+        const step = BigInt(int(rng, 12, 75)) * source41Power(8) + BigInt(int(rng, 1, 95)) * source41Power(6);
+        const reference = start + BigInt(jumps) * step;
+        const fixedByIndex = new Map(fixedExponents.map(exponent => [14 - exponent, source41DigitAt(reference, exponent)]));
+        const candidates = [];
+        for (let lowerDigit = 0; lowerDigit * multiplier <= 9; lowerDigit += 1) {
+          const fixed = new Map(fixedByIndex);
+          fixed.set(14 - relationHigherExponent, lowerDigit * multiplier);
+          fixed.set(14 - relationLowerExponent, lowerDigit);
+          const fixedOnes = [...fixed.values()].filter(digit => digit === 1).length;
+          const freePositions = Array.from({ length: 15 }, (_, index) => index).filter(index => !fixed.has(index));
+          const neededOnes = oneCount - fixedOnes;
+          if (neededOnes < 0 || neededOnes > freePositions.length) continue;
+          const onePositions = new Set(neededOnes ? freePositions.slice(-neededOnes) : []);
+          const digits = Array.from({ length: 15 }, (_, index) => fixed.has(index) ? fixed.get(index) : onePositions.has(index) ? 1 : 9);
+          if (digits[0] !== 0) candidates.push(digits.join(""));
+        }
+        if (candidates.length) selected = { start, step, reference, candidates: candidates.sort() };
+      }
+      if (!selected) return generators.source41LargeNumberFive({ rng, level, variant });
+      const answerText = selected.candidates[selected.candidates.length - 1];
+      const answer = format(answerText);
+      const matchingDigits = fixedExponents.map(exponent => source41DigitAt(selected.reference, exponent));
+      const payload = { variant, level, start: String(selected.start), step: String(selected.step), jumps, reference: String(selected.reference), fixedExponents, matchingDigits, relationHigherExponent, relationLowerExponent, multiplier, oneCount, candidates: selected.candidates, answerText, complexity: oneCount * 100 + jumps * 10 };
+      const evidence = source41Evidence("skip-count-place-match-largest", payload, answer);
+      const prompt = `다음 조건을 모두 만족하는 15자리 자연수 중에서 가장 큰 수를 구하세요.${conditionList([`${source41PlaceLabel(relationHigherExponent)}의 자리 숫자는 ${source41PlaceLabel(relationLowerExponent)}의 자리 숫자의 ${multiplier}배입니다.`, `${source41FormatLargeValue(selected.start)}에서 ${source41FormatLargeValue(selected.step)}씩 커지게 ${jumps}번 뛰어 세어 얻은 수와 백억의 자리, 천만의 자리, 만의 자리 숫자가 각각 같습니다.`, `숫자 1이 ${oneCount}개 있습니다.`])}${evidence}`;
+      const solution = `${jumps}번 뛰어 센 수는 ${source41FormatLargeValue(selected.reference)}이고, 백억·천만·만의 자리 숫자는 각각 ${matchingDigits.join(", ")}입니다. 이 자리와 두 배 조건을 지키면서 높은 자리부터 가장 큰 숫자를 놓고 숫자 1을 ${oneCount}개 쓰면 ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {

@@ -22,8 +22,8 @@ const ready = types.filter(type => generatorApi.generatorKey(type) && !type.revi
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 
 if (types.length !== 914) failures.push(`런타임 유형은 914개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 590) failures.push(`생성 가능 유형은 590개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 324) failures.push(`검수 대기 유형은 324개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 601) failures.push(`생성 가능 유형은 601개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 313) failures.push(`검수 대기 유형은 313개여야 하나 ${locked.length}개입니다.`);
 
 for (const type of ready) {
   for (const difficulty of [-1, 0, 1]) {
@@ -55,4 +55,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 914 · 생성 가능 590 · 검수 대기 324 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 914 · 생성 가능 601 · 검수 대기 313 · ${generatedCount.toLocaleString()}회 생성`);

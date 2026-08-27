@@ -45,6 +45,17 @@
     { "sourceItemId": "4-1-u1-e4-mission-3", "generatorKey": "source41LargeNumberFour", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u1-e4-mission-4", "generatorKey": "source41LargeNumberFour", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u1-e4-mission-5", "generatorKey": "source41LargeNumberFour", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u1-e4-mission-6", "generatorKey": "source41LargeNumberFour", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u1-e4-mission-6", "generatorKey": "source41LargeNumberFour", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-exploration", "generatorKey": "source41LargeNumberFive", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-example-5-1", "generatorKey": "source41LargeNumberFive", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-example-5-2", "generatorKey": "source41LargeNumberFive", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-example-5-3", "generatorKey": "source41LargeNumberFive", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-example-5-4", "generatorKey": "source41LargeNumberFive", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-1", "generatorKey": "source41LargeNumberFive", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-2", "generatorKey": "source41LargeNumberFive", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-3", "generatorKey": "source41LargeNumberFive", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-4", "generatorKey": "source41LargeNumberFive", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-5", "generatorKey": "source41LargeNumberFive", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u1-e5-mission-6", "generatorKey": "source41LargeNumberFive", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

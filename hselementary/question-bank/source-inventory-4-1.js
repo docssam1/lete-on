@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 53,
+  "verifiedMappings": 64,
   "items": [
     {
       "unit": 1,
@@ -867,13 +867,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 5 본문",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "서로 다른 숫자로 기준에 가장 가까운 두 수 사이의 수 세기",
+      "typeLabel": "서로 다른 숫자로 만든 두 가까운 수 사이의 자연수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -885,13 +886,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-1",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "정해진 범위에서 두 자리의 숫자가 같은 수 세기",
+      "typeLabel": "범위 안에서 만의 자리와 천의 자리 숫자가 같은 수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -903,13 +905,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-2",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "자리 바꾸기와 숫자 합",
+      "typeLabel": "두 자리 숫자를 바꿨을 때의 차와 합으로 처음 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -921,13 +924,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-3",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "범위와 자리 합 조건의 개수",
+      "typeLabel": "범위와 자리 숫자 합 조건을 모두 만족하는 수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -939,13 +943,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 16,
       "sourcePrintedPage": 12,
-      "typeLabel": "기호 조건을 만족하는 끝 세 자리",
+      "typeLabel": "같은 글자와 자리 숫자 합 조건으로 가능한 수 모두 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -957,13 +962,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "자릿값 배수와 숫자 합",
+      "typeLabel": "두 자리의 자릿값 관계와 자리 숫자 합으로 빈칸 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -975,13 +981,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "수와 거꾸로 쓴 수의 자릿수 합",
+      "typeLabel": "수를 거꾸로 더했을 때 자리 숫자 합이 가장 크게 되는 숫자 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -993,13 +1000,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "거꾸로 쓴 수와 연속 0 조건",
+      "typeLabel": "거꾸로 써도 같고 0이 네 번 이어지는 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1011,13 +1019,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "서로 다른 숫자의 최소 수",
+      "typeLabel": "각 자리 숫자가 모두 다른 가장 작은 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1029,13 +1038,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "세 자리 합이 정해진 최대 수",
+      "typeLabel": "서로 다른 자리 숫자의 합 조건으로 가장 큰 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1047,13 +1057,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 17,
       "sourcePrintedPage": 13,
-      "typeLabel": "반복 증가와 자리 조건의 최대 수",
+      "typeLabel": "뛰어 센 수의 자리 숫자와 반복 숫자 조건으로 가장 큰 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFive",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
