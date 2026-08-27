@@ -598,6 +598,175 @@
   const source41FiveTargetSvg = ({ apex, leftGiven, bottomGiven, rightGiven }) => `<svg class="geometry-diagram source41-five-target" viewBox="0 0 360 240" data-givens="${apex},${leftGiven},${bottomGiven},${rightGiven}" aria-label="세 직선과 삼각형 안팎의 다섯 표시각"><polygon points="180,42 70,188 292,188"/><line class="source41-extension-line" x1="92" y1="42" x2="270" y2="42"/><line class="source41-extension-line" x1="24" y1="148" x2="124" y2="220"/><line class="source41-extension-line" x1="238" y1="220" x2="338" y2="148"/><line x1="70" y1="188" x2="292" y2="188"/><line x1="211" y1="188" x2="292" y2="151"/><text class="source41-given-label" x="180" y="68">${apex}°</text><text class="source41-given-label" x="46" y="154">${leftGiven}°</text><text class="source41-given-label" x="77" y="216">${bottomGiven}°</text><text class="source41-given-label" x="316" y="158">${rightGiven}°</text><text class="source41-target-label" data-target-index="1" x="143" y="35">㉠</text><text class="source41-target-label" data-target-index="2" x="219" y="35">㉡</text><text class="source41-target-label" data-target-index="3" x="91" y="177">㉢</text><text class="source41-target-label" data-target-index="4" x="267" y="179">㉣</text><text class="source41-target-label" data-target-index="5" x="278" y="207">㉤</text></svg>`;
   const source41TwoTurnOctagonSvg = (knownAngles, targetLabel = "㉠") => `<svg class="geometry-diagram source41-two-turn-octagon" viewBox="0 0 360 240" data-known-angles="${knownAngles.join(",")}" aria-label="안으로 두 번 꺾이고 선이 교차하는 팔각형"><polygon points="46,158 62,70 137,25 270,40 318,105 280,205 177,94 125,126"/><line x1="177" y1="94" x2="280" y2="205"/><line x1="125" y1="126" x2="270" y2="40"/>${knownAngles.map((angle, index) => { const positions = [[44,176],[47,62],[137,16],[278,35],[328,105],[289,218],[195,82]]; return `<text class="source41-given-label" data-known-index="${index}" x="${positions[index][0]}" y="${positions[index][1]}">${angle}°</text>`; }).join("")}<text class="source41-target-label" x="124" y="145">${targetLabel}</text></svg>`;
   const source41FourTriangleCrossSvg = givenAngle => `<svg class="geometry-diagram source41-four-triangle-cross" viewBox="0 0 360 250" data-given-angle="${givenAngle}" data-target-count="8" aria-label="가운데에서 선이 교차하는 네 삼각형과 바깥쪽 표시각 여덟 개"><polygon data-triangle="1" points="151,116 38,53 42,177"/><polygon data-triangle="2" points="177,91 112,20 260,28"/><polygon data-triangle="3" points="215,121 322,62 326,184"/><polygon data-triangle="4" points="181,158 103,226 263,230"/><line x1="151" y1="116" x2="215" y2="121"/><line x1="177" y1="91" x2="181" y2="158"/><text class="source41-given-label" x="183" y="128">${givenAngle}°</text>${[[50,67],[51,160],[126,31],[243,38],[310,78],[311,167],[120,214],[247,217]].map((point, index) => `<text class="source41-target-label" data-target-index="${index + 1}" x="${point[0]}" y="${point[1]}">•</text>`).join("")}</svg>`;
+  const source41ThreeApexBisectorsSvg = data => {
+    const rawLeft = [0, 0];
+    const rawRight = [280, 0];
+    const rawFirst = source41LineIntersection(rawLeft, data.firstLeft, rawRight, 180 - data.firstRight);
+    const rawThird = source41LineIntersection(rawLeft, data.thirdLeft, rawRight, 180 - data.thirdRight);
+    const middleLeft = (data.firstLeft + data.thirdLeft) / 2;
+    const middleRight = (data.firstRight + data.thirdRight) / 2;
+    const rawMiddle = source41LineIntersection(rawLeft, middleLeft, rawRight, 180 - middleRight);
+    if (!rawFirst || !rawMiddle || !rawThird) throw new Error("세 삼각형의 꼭짓점을 만들지 못했습니다.");
+    const [left, right, first, middle, third] = source41FitPoints([rawLeft, rawRight, rawFirst, rawMiddle, rawThird], 360, 250, 34);
+    const marks = `${source41BisectorMarks(left, first, middle, third, "left")}${source41BisectorMarks(right, first, middle, third, "right")}`;
+    return `<svg class="geometry-diagram source41-three-apex" viewBox="0 0 360 250" data-apex-angles="${data.firstApex},${data.thirdApex}" data-left-base-angles="${data.firstLeft},${middleLeft},${data.thirdLeft}" data-right-base-angles="${data.firstRight},${middleRight},${data.thirdRight}" aria-label="두 밑 꼭짓점의 각을 반으로 나눈 세 삼각형"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/>${[first, middle, third].map((point, index) => `<g data-triangle-index="${index}"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/></g>`).join("")}${marks}<text class="source41-given-label" x="${first[0].toFixed(1)}" y="${(first[1] + 18).toFixed(1)}">${data.firstApex}°</text><text class="source41-target-label" x="${middle[0].toFixed(1)}" y="${(middle[1] + 19).toFixed(1)}">㉠</text><text class="source41-given-label" x="${third[0].toFixed(1)}" y="${(third[1] + 18).toFixed(1)}">${data.thirdApex}°</text></svg>`;
+  };
+  const source41OverlappingTrianglesSvg = (data, layout = "example") => {
+    const rawLeft = [0, 0];
+    const rawCenter = [layout === "example" ? 145 : 138, 0];
+    const rawRight = [280, 0];
+    const rawTopRight = source41LineIntersection(rawLeft, data.leftBase, rawCenter, data.leftBase + data.topRight);
+    const rawTopLeft = source41LineIntersection(rawRight, 180 - data.rightBase, rawCenter, 180 - data.topLeft - data.rightBase);
+    if (!rawTopRight || !rawTopLeft) throw new Error("겹친 두 삼각형의 꼭짓점을 만들지 못했습니다.");
+    const [left, center, right, topRight, topLeft] = source41FitPoints([rawLeft, rawCenter, rawRight, rawTopRight, rawTopLeft], 360, 250, 34);
+    return `<svg class="geometry-diagram source41-overlap-triangles is-${layout}" viewBox="0 0 360 250" data-given-angles="${data.leftBase},${data.topRight},${data.topLeft},${data.rightBase}" data-target-angle="${data.answerNumber}" aria-label="밑변의 한 점에서 겹친 두 삼각형"><polygon data-triangle="1" points="${source41PointsText([left, topRight, center])}"/><polygon data-triangle="2" points="${source41PointsText([center, topLeft, right])}"/><text class="source41-given-label" x="${(left[0] + 18).toFixed(1)}" y="${(left[1] - 10).toFixed(1)}">${data.leftBase}°</text><text class="source41-given-label" x="${topRight[0].toFixed(1)}" y="${(topRight[1] + 18).toFixed(1)}">${data.topRight}°</text><text class="source41-given-label" x="${topLeft[0].toFixed(1)}" y="${(topLeft[1] + 18).toFixed(1)}">${data.topLeft}°</text><text class="source41-given-label" x="${(right[0] - 18).toFixed(1)}" y="${(right[1] - 10).toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" x="${center[0].toFixed(1)}" y="${(center[1] - 22).toFixed(1)}">㉠</text></svg>`;
+  };
+  const source41ExteriorSumSvg = (sideCount, rotation = 90) => {
+    const center = [180, 125];
+    const points = source41RegularPolygonPoints(center[0], center[1], 82, sideCount, rotation);
+    const extensions = points.map((point, index) => {
+      const previous = points[(index + sideCount - 1) % sideCount];
+      const direction = source41Direction(previous, point);
+      const end = [point[0] + direction[0] * 25, point[1] + direction[1] * 25];
+      return `<line class="source41-extension-line" data-exterior-index="${index}" x1="${point[0].toFixed(1)}" y1="${point[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+    }).join("");
+    const marks = points.map((point, index) => {
+      const direction = source41Direction(center, point);
+      return `<circle class="source41-polygon-angle-mark" data-target-index="${index + 1}" cx="${(point[0] + direction[0] * 16).toFixed(1)}" cy="${(point[1] + direction[1] * 16).toFixed(1)}" r="3"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram source41-exterior-sum" viewBox="0 0 360 250" data-side-count="${sideCount}" data-target-count="${sideCount}" aria-label="각 변을 같은 방향으로 연장한 ${sideCount}각형"><polygon points="${source41PointsText(points)}"/>${extensions}${marks}</svg>`;
+  };
+  const source41RotatedIsoscelesSvg = data => {
+    const rawPivot = [0, 0];
+    const radius = 150;
+    const rawLeft = source41PointAtAngle(0, 0, radius, 180 - data.baseAngle);
+    const rawRight = source41PointAtAngle(0, 0, radius, data.baseAngle);
+    const rawTurnedLeft = source41PointAtAngle(0, 0, radius, 180 - data.baseAngle + data.turnAngle);
+    const rawTurnedRight = source41PointAtAngle(0, 0, radius, data.baseAngle + data.turnAngle);
+    const rawCross = source41LineIntersectionByPoints(rawLeft, rawPivot, rawTurnedLeft, rawTurnedRight);
+    if (!rawCross) throw new Error("돌린 삼각형의 표시각 교점을 만들지 못했습니다.");
+    const [pivot, left, right, turnedLeft, turnedRight, cross] = source41FitPoints([rawPivot, rawLeft, rawRight, rawTurnedLeft, rawTurnedRight, rawCross], 380, 250, 34);
+    const leftMark = [left[0] * 0.82 + right[0] * 0.09 + pivot[0] * 0.09, left[1] * 0.82 + right[1] * 0.09 + pivot[1] * 0.09];
+    const rightMark = [right[0] * 0.82 + left[0] * 0.09 + pivot[0] * 0.09, right[1] * 0.82 + left[1] * 0.09 + pivot[1] * 0.09];
+    return `<svg class="geometry-diagram source41-rotated-triangle" viewBox="0 0 380 250" data-pivot-angle="${data.pivotAngle}" data-base-angle="${data.baseAngle}" data-shown-angle="${data.shownAngle}" data-turn-angle="${data.turnAngle}" aria-label="한 꼭짓점을 중심으로 돌린 두 밑각이 같은 삼각형"><polygon class="source41-original-shape" points="${source41PointsText([left, pivot, right])}"/><polygon class="source41-turned-shape" points="${source41PointsText([turnedLeft, pivot, turnedRight])}"/><circle class="source41-equal-angle-mark" cx="${leftMark[0].toFixed(1)}" cy="${leftMark[1].toFixed(1)}" r="2.5"/><circle class="source41-equal-angle-mark" cx="${rightMark[0].toFixed(1)}" cy="${rightMark[1].toFixed(1)}" r="2.5"/><text class="source41-given-label" x="${pivot[0].toFixed(1)}" y="${(pivot[1] - 20).toFixed(1)}">${data.pivotAngle}°</text><text class="source41-given-label" x="${cross[0].toFixed(1)}" y="${(cross[1] - 17).toFixed(1)}">${data.shownAngle}°</text><text class="source41-target-label" x="${(pivot[0] + 25).toFixed(1)}" y="${(pivot[1] + 12).toFixed(1)}">㉠</text></svg>`;
+  };
+  const source41StarPolygonSvg = ({ sideCount, rotation, radiusX, radiusY }) => {
+    const center = [180, 125];
+    const points = Array.from({ length: sideCount }, (_, index) => {
+      const angle = (rotation - index * 360 / sideCount) * Math.PI / 180;
+      return [center[0] + radiusX * Math.cos(angle), center[1] - radiusY * Math.sin(angle)];
+    });
+    const order = Array.from({ length: sideCount }, (_, index) => (index * 2) % sideCount);
+    const path = order.map(index => points[index]);
+    const marks = points.map((point, index) => `<circle class="source41-polygon-angle-mark" data-target-index="${index + 1}" cx="${(point[0] * 0.84 + center[0] * 0.16).toFixed(1)}" cy="${(point[1] * 0.84 + center[1] * 0.16).toFixed(1)}" r="3"/>`).join("");
+    return `<svg class="geometry-diagram source41-star-polygon" viewBox="0 0 360 250" data-star-points="${sideCount}" data-star-step="2" data-winding="2" data-target-count="${sideCount}" aria-label="한 꼭짓점씩 건너 이어 그린 ${sideCount}개 꼭짓점의 별 모양"><polygon points="${source41PointsText(path)}"/>${marks}</svg>`;
+  };
+  const source41ConcaveQuadrilateralSvg = data => `<svg class="geometry-diagram source41-concave-quadrilateral" viewBox="0 0 360 250" data-small-outside="${data.smallOutside}" data-other-angles="${data.bottomAngle},${data.rightAngle}" data-target-angle="${data.answerNumber}" aria-label="한 꼭짓점이 안으로 들어간 사각형"><polygon points="74,30 128,125 60,220 318,136"/><text class="source41-target-label" x="83" y="54">㉠</text><text class="source41-given-label" x="113" y="126">${data.smallOutside}°</text><text class="source41-given-label" x="83" y="205">${data.bottomAngle}°</text><text class="source41-given-label" x="290" y="136">${data.rightAngle}°</text></svg>`;
+  const source41BisectedApexGeometry = data => {
+    const rawLeft = [-110, 0];
+    const rawBase = [0, 0];
+    const rawRight = [190, 0];
+    const baseAngle = 180 - data.rightBase - data.halfApex * 2;
+    const rawApex = source41LineIntersection(rawBase, baseAngle, rawRight, 180 - data.rightBase);
+    if (!rawApex) throw new Error("꼭짓각을 반으로 나눈 삼각형을 만들지 못했습니다.");
+    const firstDirection = source41Direction(rawApex, rawBase);
+    const secondDirection = source41Direction(rawApex, rawRight);
+    const sumDirection = [firstDirection[0] + secondDirection[0], firstDirection[1] + secondDirection[1]];
+    const sumLength = Math.hypot(sumDirection[0], sumDirection[1]) || 1;
+    const rawBisectorEnd = [rawApex[0] + sumDirection[0] / sumLength * 320, rawApex[1] + sumDirection[1] / sumLength * 320];
+    const lowerRayEnd = source41PointAtAngle(rawLeft[0], rawLeft[1], 320, data.leftSmall);
+    const upperRayEnd = source41PointAtAngle(rawLeft[0], rawLeft[1], 320, data.leftSmall * 2);
+    const rawTarget = source41LineIntersectionByPoints(rawApex, rawBisectorEnd, rawLeft, lowerRayEnd);
+    const rawUpper = source41LineIntersectionByPoints(rawApex, rawBisectorEnd, rawLeft, upperRayEnd);
+    const rawBisectorBase = source41LineIntersectionByPoints(rawApex, rawBisectorEnd, rawBase, rawRight);
+    if (!rawTarget || !rawUpper || !rawBisectorBase) throw new Error("각을 반으로 나눈 선과 두 보조선의 교점을 만들지 못했습니다.");
+    const bisectorVector = [rawBisectorBase[0] - rawApex[0], rawBisectorBase[1] - rawApex[1]];
+    const bisectorLengthSquared = bisectorVector[0] ** 2 + bisectorVector[1] ** 2;
+    const position = point => ((point[0] - rawApex[0]) * bisectorVector[0] + (point[1] - rawApex[1]) * bisectorVector[1]) / bisectorLengthSquared;
+    return {
+      rawLeft,
+      rawBase,
+      rawRight,
+      rawApex,
+      rawTarget,
+      rawUpper,
+      rawBisectorBase,
+      targetPosition: position(rawTarget),
+      upperPosition: position(rawUpper)
+    };
+  };
+  const source41BisectedApexDifferenceSvg = data => {
+    const geometry = source41BisectedApexGeometry(data);
+    const { rawLeft, rawBase, rawRight, rawApex, rawTarget, rawUpper } = geometry;
+    const [left, base, right, apex, target, upper] = source41FitPoints([rawLeft, rawBase, rawRight, rawApex, rawTarget, rawUpper], 380, 260, 34);
+    const marks = `${source41BisectorMarks(apex, base, target, right, "apex")}${source41BisectorMarks(left, right, target, upper, "left")}`;
+    return `<svg class="geometry-diagram source41-bisected-apex" viewBox="0 0 380 260" data-right-base="${data.rightBase}" data-left-small="${data.leftSmall}" data-half-apex="${data.halfApex}" data-first-target="${data.firstTarget}" data-second-target="${data.secondTarget}" data-difference="${data.answerNumber}" data-bisector-positions="${geometry.targetPosition.toFixed(3)},${geometry.upperPosition.toFixed(3)}" aria-label="꼭짓각을 반으로 나눈 선과 왼쪽 두 보조선"><polygon points="${source41PointsText([base, apex, right])}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${apex[0].toFixed(1)}" y1="${apex[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/>${marks}<text class="source41-given-label" x="${(left[0] + 30).toFixed(1)}" y="${(left[1] - 7).toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" x="${(left[0] + 40).toFixed(1)}" y="${(left[1] - 25).toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" x="${(right[0] - 22).toFixed(1)}" y="${(right[1] - 12).toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" x="${(target[0] - 20).toFixed(1)}" y="${(target[1] - 4).toFixed(1)}">㉠</text><text class="source41-target-label" x="${(apex[0] + 20).toFixed(1)}" y="${(apex[1] + 18).toFixed(1)}">㉡</text></svg>`;
+  };
+  const source41ClosedStarPath = tipAngles => {
+    const directions = [0];
+    for (let index = 1; index < tipAngles.length; index += 1) directions.push(directions[index - 1] + 180 - tipAngles[index]);
+    const vectors = directions.map(angle => {
+      const radians = angle * Math.PI / 180;
+      return [Math.cos(radians), -Math.sin(radians)];
+    });
+    const candidates = [70, 90, 110, 130, 150];
+    for (const first of candidates) {
+      for (const second of candidates) {
+        for (const third of candidates) {
+          const lengths = [first, second, third];
+          const partial = [
+            vectors[0][0] * first + vectors[1][0] * second + vectors[2][0] * third,
+            vectors[0][1] * first + vectors[1][1] * second + vectors[2][1] * third
+          ];
+          const fourthVector = vectors[3];
+          const fifthVector = vectors[4];
+          const determinant = fourthVector[0] * fifthVector[1] - fourthVector[1] * fifthVector[0];
+          if (Math.abs(determinant) < 1e-8) continue;
+          const fourth = (-partial[0] * fifthVector[1] + partial[1] * fifthVector[0]) / determinant;
+          const fifth = (-fourthVector[0] * partial[1] + fourthVector[1] * partial[0]) / determinant;
+          if (fourth < 35 || fifth < 35 || fourth > 280 || fifth > 280) continue;
+          lengths.push(fourth, fifth);
+          if (Math.max(...lengths) / Math.min(...lengths) > 3) continue;
+          const points = [[0, 0]];
+          for (let index = 0; index < 4; index += 1) points.push([points[index][0] + vectors[index][0] * lengths[index], points[index][1] + vectors[index][1] * lengths[index]]);
+          const cross = source41LineIntersectionByPoints(points[0], points[1], points[2], points[3]);
+          if (!cross) continue;
+          const onSegment = (start, end, point) => Math.abs(source41Distance(start, point) + source41Distance(point, end) - source41Distance(start, end)) < 1e-4;
+          if (!onSegment(points[0], points[1], cross) || !onSegment(points[2], points[3], cross)) continue;
+          const bounds = {
+            width: Math.max(...points.map(point => point[0])) - Math.min(...points.map(point => point[0])),
+            height: Math.max(...points.map(point => point[1])) - Math.min(...points.map(point => point[1]))
+          };
+          const aspectRatio = bounds.width / Math.max(1, bounds.height);
+          if (aspectRatio < 0.72 || aspectRatio > 1.65) continue;
+          const diagonal = Math.hypot(bounds.width, bounds.height);
+          const givenCrossGap = source41Distance(points[3], cross) / Math.max(1, diagonal);
+          const firstEdge = source41Distance(points[0], points[1]);
+          const crossEdgeRatio = Math.min(source41Distance(points[0], cross), source41Distance(points[1], cross)) / Math.max(1, firstEdge);
+          if (givenCrossGap < 0.24 || crossEdgeRatio < 0.14) continue;
+          return { points, cross, directions, lengths, givenCrossGap, crossEdgeRatio, aspectRatio };
+        }
+      }
+    }
+    return null;
+  };
+  const source41StarRelationSvg = data => {
+    const raw = source41ClosedStarPath(data.tipAngles);
+    if (!raw) throw new Error("조건에 맞는 오각별을 만들지 못했습니다.");
+    const flip = raw.points[3][1] > raw.cross[1] ? -1 : 1;
+    const canonicalPoints = raw.points.map(point => [point[0], point[1] * flip]);
+    const canonicalCross = [raw.cross[0], raw.cross[1] * flip];
+    const [first, second, third, fourth, fifth, cross] = source41FitPoints([...canonicalPoints, canonicalCross], 380, 260, 38);
+    const points = [first, second, third, fourth, fifth];
+    const center = [points.reduce((sum, point) => sum + point[0], 0) / 5, points.reduce((sum, point) => sum + point[1], 0) / 5];
+    const labelPoint = (index, amount = 0.17) => [points[index][0] * (1 - amount) + center[0] * amount, points[index][1] * (1 - amount) + center[1] * amount];
+    const targetOne = labelPoint(0);
+    const targetTwo = labelPoint(4);
+    const given = labelPoint(3, -0.11);
+    const crossLabel = [cross[0], cross[1] + 25];
+    const labelGap = source41Distance(given, crossLabel);
+    return `<svg class="geometry-diagram source41-star-relation" viewBox="0 0 380 260" data-tip-angles="${data.tipAngles.join(",")}" data-outside-angle="${data.outsideAngle}" data-target-sum="${data.answerNumber}" data-label-gap="${labelGap.toFixed(1)}" aria-label="교차각과 꼭짓각이 표시된 오각별"><polygon points="${source41PointsText(points)}"/><text class="source41-target-label" data-target-index="1" x="${targetOne[0].toFixed(1)}" y="${targetOne[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-target-index="2" x="${targetTwo[0].toFixed(1)}" y="${targetTwo[1].toFixed(1)}">㉡</text><text class="source41-given-label source41-star-tip-given" x="${given[0].toFixed(1)}" y="${given[1].toFixed(1)}">${data.givenTip}°</text><text class="source41-given-label source41-star-cross-given" x="${crossLabel[0].toFixed(1)}" y="${crossLabel[1].toFixed(1)}">${data.outsideAngle}°</text></svg>`;
+  };
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -5304,6 +5473,218 @@
       const evidence = source41Evidence("four-crossed-triangles-eight-angle-sum", payload, answer);
       const prompt = `그림의 선은 같은 방향으로 곧게 이어져 있습니다. 가운데의 ${givenAngle}°를 제외하고, 네 삼각형 바깥쪽에 표시된 여덟 각의 크기를 모두 더하면 몇 도인가요?${source41FourTriangleCrossSvg(givenAngle)}${evidence}`;
       const solution = `네 삼각형의 안쪽 각의 합은 180×4=720°입니다. 가운데에 모인 네 꼭짓각의 합은 360-${givenAngle}=${innerTipSum}°이므로, 바깥쪽 여덟 각의 합은 720-${innerTipSum}=${answer}°입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41AngleFour({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("다각형의 바깥각 원문 분기는 0부터 10까지여야 합니다.");
+      const gridPick = (minimum, maximum, step = 1) => pick(rng, Array.from({ length: Math.floor((maximum - minimum) / step) + 1 }, (_, index) => minimum + index * step));
+
+      if (variant === 0) {
+        let selected = null;
+        for (let attempt = 0; attempt < 1200 && !selected; attempt += 1) {
+          const step = [4, 2, 1][level];
+          const firstApex = gridPick([44, 42, 40][level], [76, 80, 84][level], step);
+          const thirdApex = gridPick([38, 36, 34][level], [70, 74, 78][level], step);
+          if ((firstApex + thirdApex) % 2) continue;
+          const firstLeft = gridPick(56, 78, 2);
+          const thirdLeft = gridPick(28, 50, 2);
+          const firstRight = 180 - firstApex - firstLeft;
+          const thirdRight = 180 - thirdApex - thirdLeft;
+          if (firstRight < 28 || firstRight > 86 || thirdRight < 42 || thirdRight > 108) continue;
+          if (firstLeft <= thirdLeft + 8 || thirdRight <= firstRight + 8) continue;
+          const answerNumber = (firstApex + thirdApex) / 2;
+          selected = { firstApex, thirdApex, firstLeft, firstRight, thirdLeft, thirdRight, answerNumber };
+        }
+        if (!selected) throw new Error("두 밑 꼭짓점의 각을 반으로 나눈 세 삼각형을 만들지 못했습니다.");
+        const answer = String(selected.answerNumber);
+        const payload = { variant, level, ...selected, middleLeft: (selected.firstLeft + selected.thirdLeft) / 2, middleRight: (selected.firstRight + selected.thirdRight) / 2, complexity: (level + 1) * 1000 + Math.abs(selected.firstApex - selected.thirdApex) * 10 + selected.firstLeft - selected.thirdLeft };
+        const evidence = source41Evidence("three-apex-double-bisector-center-angle", payload, answer);
+        const prompt = `같은 밑변 위에 꼭짓점이 서로 다른 세 삼각형을 그렸습니다. 두 밑 꼭짓점에서 가운데 꼭짓점으로 이은 선은 양옆 두 선 사이의 각을 각각 반으로 나눕니다. 양쪽 꼭짓각이 ${selected.firstApex}°와 ${selected.thirdApex}°일 때 가운데 ㉠의 크기를 구하세요.${source41ThreeApexBisectorsSvg(selected)}${evidence}`;
+        const firstBaseSum = 180 - selected.firstApex;
+        const thirdBaseSum = 180 - selected.thirdApex;
+        const middleBaseSum = (firstBaseSum + thirdBaseSum) / 2;
+        const solution = `양쪽 삼각형의 두 밑각의 합은 각각 180-${selected.firstApex}=${firstBaseSum}°, 180-${selected.thirdApex}=${thirdBaseSum}°입니다. 가운데 선들이 각을 반으로 나누므로 가운데 삼각형의 두 밑각의 합은 (${firstBaseSum}+${thirdBaseSum})÷2=${middleBaseSum}°입니다. 따라서 ㉠=180-${middleBaseSum}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1 || variant === 6) {
+        let selected = null;
+        for (let attempt = 0; attempt < 1000 && !selected; attempt += 1) {
+          const step = [5, 2, 1][level];
+          const leftBase = gridPick([35, 30, 25][level], [55, 58, 62][level], step);
+          const topRight = gridPick([20, 18, 15][level], [38, 42, 46][level], step);
+          const topLeft = gridPick([15, 14, 12][level], [38, 42, 46][level], step);
+          const rightBase = gridPick([25, 22, 20][level], [48, 52, 56][level], step);
+          const answerNumber = 180 - leftBase - topRight - topLeft - rightBase;
+          if (answerNumber < 28 || answerNumber > 92) continue;
+          selected = { leftBase, topRight, topLeft, rightBase, answerNumber };
+        }
+        if (!selected) throw new Error("겹친 두 삼각형 사이의 각 문제를 만들지 못했습니다.");
+        const answer = String(selected.answerNumber);
+        const kind = variant === 1 ? "overlapping-two-triangles-gap-angle" : "crossed-two-triangles-center-angle";
+        const payload = { variant, level, ...selected, givenSum: 180 - selected.answerNumber, complexity: (level + 1) * 1000 + 180 - selected.answerNumber };
+        const evidence = source41Evidence(kind, payload, answer);
+        const prompt = `${variant === 1 ? "밑변의 가운데 한 점에서" : "한 직선 위의 가운데 점에서"} 두 삼각형이 서로 겹쳐 있습니다. 그림의 네 각을 이용하여 두 윗선 사이의 작은 각 ㉠을 구하세요.${source41OverlappingTrianglesSvg(selected, variant === 1 ? "example" : "mission")}${evidence}`;
+        const firstCenter = 180 - selected.leftBase - selected.topRight;
+        const secondCenter = 180 - selected.topLeft - selected.rightBase;
+        const solution = `왼쪽 밑각과 오른쪽 위 각이 있는 삼각형의 가운데 각은 180-${selected.leftBase}-${selected.topRight}=${firstCenter}°입니다. 다른 삼각형의 가운데 각은 180-${selected.topLeft}-${selected.rightBase}=${secondCenter}°입니다. 밑변이 직선이므로 두 윗선 사이의 각은 180-${selected.leftBase}-${selected.topRight}-${selected.topLeft}-${selected.rightBase}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const sideCount = int(rng, [6, 8, 9][level], [8, 10, 12][level]);
+        const rotation = int(rng, 72, 108);
+        const answer = "360";
+        const payload = { variant, level, sideCount, rotation, exteriorAngle: 360 / sideCount, answerNumber: 360, complexity: (level + 1) * 1000 + sideCount * 10 };
+        const evidence = source41Evidence("same-direction-exterior-angle-sum", payload, answer);
+        const prompt = `모든 안쪽 각의 크기가 같은 ${sideCount}각형에서 각 변을 한쪽 방향으로 길게 늘였습니다. 각 꼭짓점에 표시된 ${sideCount}개의 바깥각을 모두 더하면 몇 도인가요?${source41ExteriorSumSvg(sideCount, rotation)}${evidence}`;
+        const solution = `다각형의 변을 따라 한 방향으로 돌면 바깥각만큼 모두 합쳐 한 바퀴를 돕니다. 한 바퀴는 360°이므로 표시된 ${sideCount}개 바깥각의 합은 ${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const pivotAngle = gridPick([112, 104, 96][level], [144, 150, 154][level], 2);
+        const baseAngle = (180 - pivotAngle) / 2;
+        const turnAngle = gridPick([10, 8, 6][level], [24, 30, 36][level], 2);
+        const shownAngle = baseAngle + turnAngle;
+        const answer = String(turnAngle);
+        const payload = { variant, level, pivotAngle, baseAngle, turnAngle, shownAngle, complexity: (level + 1) * 1000 + pivotAngle + turnAngle * 5 };
+        const evidence = source41Evidence("rotated-isosceles-triangle-turn", payload, answer);
+        const prompt = `두 밑각의 크기가 같은 삼각형을 한 꼭짓점을 중심으로 돌렸습니다. 돌리기 전 삼각형의 중심 꼭짓각은 ${pivotAngle}°이고, 원래 한 변과 돌린 뒤의 점선 변이 이루는 각은 ${shownAngle}°입니다. 몇 도만큼 돌렸는지 구하세요.${source41RotatedIsoscelesSvg(payload)}${evidence}`;
+        const solution = `두 밑각은 각각 (180-${pivotAngle})÷2=${baseAngle}°입니다. 그림의 ${shownAngle}°는 밑각 ${baseAngle}°와 돌린 각을 합한 것이므로, 돌린 각은 ${shownAngle}-${baseAngle}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const rotation = int(rng, 72, 108);
+        const radiusX = int(rng, [80, 84, 88][level], [94, 100, 106][level]);
+        const radiusY = int(rng, [82, 88, 94][level], [98, 106, 114][level]);
+        const answer = "180";
+        const payload = { variant, level, sideCount: 5, step: 2, winding: 2, rotation, radiusX, radiusY, answerNumber: 180, complexity: (level + 1) * 1000 + Math.abs(radiusX - radiusY) };
+        const evidence = source41Evidence("five-point-star-tip-angle-sum", payload, answer);
+        const prompt = `한 꼭짓점씩 건너 이어 만든 다섯 꼭짓점의 별 모양입니다. 교차점이 아니라 별의 다섯 끝에 표시된 각의 크기를 모두 더하면 몇 도인가요?${source41StarPolygonSvg({ sideCount: 5, rotation, radiusX, radiusY })}${evidence}`;
+        const solution = `별의 선을 따라가면 두 바퀴만큼 방향이 바뀝니다. 다섯 꼭짓각의 합은 5×180-2×360=900-720=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 600 && !selected; attempt += 1) {
+          const bottomAngle = gridPick(28, 54, step);
+          const rightAngle = gridPick(32, 62, step);
+          const answerNumber = gridPick([20, 18, 15][level], [48, 54, 60][level], step);
+          const smallOutside = bottomAngle + rightAngle + answerNumber;
+          if (smallOutside < 92 || smallOutside > 158) continue;
+          selected = { bottomAngle, rightAngle, smallOutside, answerNumber };
+        }
+        if (!selected) throw new Error("안으로 들어간 사각형의 각 문제를 만들지 못했습니다.");
+        const answer = String(selected.answerNumber);
+        const payload = { variant, level, ...selected, reflexAngle: 360 - selected.smallOutside, complexity: (level + 1) * 1000 + selected.smallOutside };
+        const evidence = source41Evidence("concave-quadrilateral-missing-tip-angle", payload, answer);
+        const prompt = `한 꼭짓점이 안으로 들어간 사각형입니다. 안으로 들어간 곳의 작은 바깥각은 ${selected.smallOutside}°이고 다른 두 각은 ${selected.bottomAngle}°, ${selected.rightAngle}°입니다. ㉠을 구하세요.${source41ConcaveQuadrilateralSvg(payload)}${evidence}`;
+        const solution = `안으로 들어간 꼭짓점의 안쪽 각은 360-${selected.smallOutside}=${payload.reflexAngle}°입니다. 사각형의 안쪽 각의 합은 360°이므로 ㉠=360-${payload.reflexAngle}-${selected.bottomAngle}-${selected.rightAngle}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        let selected = null;
+        for (let attempt = 0; attempt < 1800 && !selected; attempt += 1) {
+          const sideCount = int(rng, [5, 6, 7][level], [6, 8, 10][level]);
+          const target = int(rng, 32, 82);
+          const givens = Array.from({ length: sideCount - 2 }, () => int(rng, 28, Math.min(92, Math.floor((360 - target) / (sideCount - 1) + 28))));
+          const last = 360 - target - givens.reduce((sum, value) => sum + value, 0);
+          if (last < 25 || last > 118) continue;
+          const exteriorAngles = [target, ...givens, last];
+          if (Math.max(...exteriorAngles) >= 150) continue;
+          selected = { sideCount, target, givens: [...givens, last], exteriorAngles };
+        }
+        if (!selected) throw new Error("다각형의 남은 바깥각 문제를 만들지 못했습니다.");
+        const answer = String(selected.target);
+        const payload = { variant, level, ...selected, answerNumber: selected.target, complexity: (level + 1) * 1000 + selected.sideCount * 20 + Math.max(...selected.exteriorAngles) - Math.min(...selected.exteriorAngles) };
+        const evidence = source41Evidence("polygon-missing-exterior-angle", payload, answer);
+        const prompt = `${selected.sideCount}각형의 각 꼭짓점에서 한 방향으로 바깥각을 표시했습니다. ㉠의 크기를 구하세요.${source41ExteriorPolygonSvg(selected.exteriorAngles)}${evidence}`;
+        const solution = `한 방향의 바깥각을 모두 더하면 360°입니다. 따라서 ㉠=360-${selected.givens.join("-")}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        let selected = null;
+        for (let attempt = 0; attempt < 800 && !selected; attempt += 1) {
+          const rightBase = gridPick([65, 62, 58][level], [82, 86, 88][level], [5, 2, 1][level]);
+          const leftSmall = gridPick([10, 9, 8][level], [24, 26, 28][level], [5, 2, 1][level]);
+          const halfApex = gridPick(10, 28, 2);
+          const baseAngle = 180 - rightBase - halfApex * 2;
+          if (baseAngle < 28 || baseAngle > 92) continue;
+          const firstTarget = rightBase + leftSmall + halfApex;
+          const secondTarget = halfApex;
+          const answerNumber = firstTarget - secondTarget;
+          const candidate = { rightBase, leftSmall, halfApex, baseAngle, firstTarget, secondTarget, answerNumber };
+          let geometry;
+          try {
+            geometry = source41BisectedApexGeometry(candidate);
+          } catch {
+            continue;
+          }
+          const positions = [geometry.targetPosition, geometry.upperPosition];
+          if (positions.some(position => position < 0.1 || position > 0.9)) continue;
+          if (Math.abs(positions[0] - positions[1]) < 0.09) continue;
+          const mainScale = Math.max(
+            source41Distance(geometry.rawBase, geometry.rawRight),
+            source41Distance(geometry.rawBase, geometry.rawApex),
+            source41Distance(geometry.rawRight, geometry.rawApex)
+          );
+          const layoutPoints = [geometry.rawLeft, geometry.rawBase, geometry.rawRight, geometry.rawApex, geometry.rawTarget, geometry.rawUpper];
+          let layoutScale = 0;
+          for (let first = 0; first < layoutPoints.length; first += 1) {
+            for (let second = first + 1; second < layoutPoints.length; second += 1) layoutScale = Math.max(layoutScale, source41Distance(layoutPoints[first], layoutPoints[second]));
+          }
+          if (layoutScale / mainScale > 1.85) continue;
+          selected = { ...candidate, targetPosition: positions[0], upperPosition: positions[1] };
+        }
+        if (!selected) throw new Error("각을 반으로 나눈 선에서 두 각의 차 문제를 만들지 못했습니다.");
+        const answer = String(selected.answerNumber);
+        const payload = { variant, level, ...selected, complexity: (level + 1) * 1000 + selected.rightBase + selected.leftSmall * 5 + selected.halfApex };
+        const evidence = source41Evidence("bisected-apex-two-angle-difference", payload, answer);
+        const prompt = `큰 삼각형의 꼭짓각을 선 하나가 반으로 나눕니다. 왼쪽 점에서 그은 두 선 사이의 각과 밑변 사이의 각은 각각 ${selected.leftSmall}°이고, 오른쪽 밑각은 ${selected.rightBase}°입니다. 둔한 쪽 ㉠과 꼭짓점의 ㉡의 크기의 차를 구하세요.${source41BisectedApexDifferenceSvg(payload)}${evidence}`;
+        const solution = `㉡을 ${selected.halfApex}°라고 하면 꼭짓각을 반으로 나누었으므로 반대쪽도 ${selected.halfApex}°입니다. ㉠은 ${selected.leftSmall}+${selected.rightBase}+${selected.halfApex}=${selected.firstTarget}°이고 ㉡=${selected.secondTarget}°이므로, 두 각의 차는 ${selected.firstTarget}-${selected.secondTarget}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        let selected = null;
+        for (let attempt = 0; attempt < 1600 && !selected; attempt += 1) {
+          const outsideAngle = int(rng, [108, 104, 100][level], [136, 142, 148][level]);
+          const givenTip = int(rng, 26, 54);
+          const targetSum = outsideAngle - givenTip;
+          const hiddenSum = 180 - outsideAngle;
+          if (targetSum < 45 || targetSum > 110 || hiddenSum < 30 || hiddenSum > 80) continue;
+          const firstTarget = int(rng, 18, targetSum - 18);
+          const secondTarget = targetSum - firstTarget;
+          const firstHidden = int(rng, 14, hiddenSum - 14);
+          const secondHidden = hiddenSum - firstHidden;
+          if (Math.min(firstTarget, secondTarget, firstHidden, secondHidden) < 14) continue;
+          const tipAngles = [firstTarget, firstHidden, secondHidden, givenTip, secondTarget];
+          if (!source41ClosedStarPath(tipAngles)) continue;
+          selected = { outsideAngle, givenTip, targetSum, hiddenSum, firstTarget, secondTarget, firstHidden, secondHidden, tipAngles, answerNumber: targetSum };
+        }
+        if (!selected) throw new Error("교차각이 표시된 오각별 문제를 만들지 못했습니다.");
+        const answer = String(selected.answerNumber);
+        const payload = { variant, level, ...selected, complexity: (level + 1) * 1000 + selected.outsideAngle + Math.abs(selected.firstTarget - selected.secondTarget) * 4 };
+        const evidence = source41Evidence("five-point-star-crossing-target-sum", payload, answer);
+        const prompt = `오각별에서 한 꼭짓각은 ${selected.givenTip}°이고, 두 선이 만나는 곳의 바깥쪽 각은 ${selected.outsideAngle}°입니다. 별 끝의 ㉠과 ㉡의 크기의 합을 구하세요.${source41StarRelationSvg(payload)}${evidence}`;
+        const solution = `그림의 선을 같은 방향으로 따라가면 ${selected.outsideAngle}°는 ${selected.givenTip}°와 ㉠, ㉡을 합한 각입니다. 따라서 ㉠+㉡=${selected.outsideAngle}-${selected.givenTip}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const rotation = int(rng, 76, 104);
+      const radiusX = int(rng, [80, 86, 92][level], [96, 104, 112][level]);
+      const radiusY = int(rng, [82, 90, 98][level], [100, 110, 120][level]);
+      const answer = "540";
+      const payload = { variant, level, sideCount: 7, step: 2, winding: 2, rotation, radiusX, radiusY, answerNumber: 540, complexity: (level + 1) * 1000 + Math.abs(radiusX - radiusY) };
+      const evidence = source41Evidence("seven-point-star-tip-angle-sum", payload, answer);
+      const prompt = `한 꼭짓점씩 건너 이어 만든 일곱 꼭짓점의 별 모양입니다. 교차점이 아니라 별의 일곱 끝에 표시된 각을 모두 더하면 몇 도인가요?${source41StarPolygonSvg({ sideCount: 7, rotation, radiusX, radiusY })}${evidence}`;
+      const solution = `별의 선을 따라가면 두 바퀴만큼 방향이 바뀝니다. 일곱 꼭짓각의 합은 7×180-2×360=1260-720=${answer}°입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {

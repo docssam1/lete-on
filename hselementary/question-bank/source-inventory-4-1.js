@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 108,
+  "verifiedMappings": 119,
   "items": [
     {
       "unit": 1,
@@ -1912,13 +1912,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "삼각형 바깥쪽 각과 크기가 같은 각 찾기",
+      "typeLabel": "두 밑 꼭짓점의 각을 반으로 나누어 가운데 꼭짓각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1930,13 +1931,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "겹친 삼각형에서 모르는 각의 크기 구하기",
+      "typeLabel": "밑변의 한 점에서 겹친 두 삼각형 사이의 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1948,13 +1950,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "정팔각형 연장선의 각도 합",
+      "typeLabel": "모든 각이 같은 다각형의 바깥각을 한 바퀴 더하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1966,13 +1969,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "삼각형 회전 횟수",
+      "typeLabel": "두 밑각이 같은 삼각형을 돌린 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1984,13 +1988,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-4",
       "sourcePdfPage": 28,
       "sourcePrintedPage": 24,
-      "typeLabel": "오각별의 꼭짓각 합",
+      "typeLabel": "다섯 꼭짓점 별 모양에서 표시된 다섯 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2002,13 +2007,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "오목사각형에서 모르는 각의 크기 구하기",
+      "typeLabel": "안으로 들어간 사각형의 작은 바깥각으로 꼭짓각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2020,13 +2026,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "겹친 삼각형의 중심각",
+      "typeLabel": "한 직선 위에서 겹친 두 삼각형의 가운데 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2038,13 +2045,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "다각형 바깥쪽 각들의 합 구하기",
+      "typeLabel": "여러 바깥각으로 다각형의 남은 바깥각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2056,13 +2064,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "크기가 같은 각 조건으로 나뉜 두 각의 차 구하기",
+      "typeLabel": "꼭짓각을 반으로 나눈 선에서 두 각의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2074,13 +2083,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "별 모양 도형의 각도 합",
+      "typeLabel": "오각별의 교차각과 한 꼭짓각으로 두 꼭짓각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2092,13 +2102,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 29,
       "sourcePrintedPage": 25,
-      "typeLabel": "겹친 사각형의 꼭짓각 합",
+      "typeLabel": "일곱 꼭짓점 별 모양에서 표시된 일곱 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFour",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
