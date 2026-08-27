@@ -53,6 +53,8 @@ Grade 6 is the first cadence-ready template: 3 weeks per unit, 2 × 75-minute me
 
 This is a workbook production plan, not a released workbook. It does not generate pages, questions, answer keys, PDFs, download links, or a promotion decision. The viewer shows planning status only; its student/teacher toggle is not an authorization boundary. Every student resource is reserved for authenticated student delivery, and every teacher resource for authenticated teacher/admin delivery. A public-practice release needs a separate approved release contract; it is not implied by this plan.
 
+For local private QA only, `scripts/render-private-grade6-workbook.cjs` can render a preflight-validated external Grade 6 draft into separate student and teacher HTML files. The command requires an explicit external authoring root, unit ID, locale, and external output root; it rejects output inside this repository or any Git-marked ancestor. Student output is structurally built without teacher references, teacher-only answer keys or solutions, proofs, rubrics, or arithmetic checks. Teacher output stays in the external root and uses a print-repeating private-QA watermark. This is a local print-preview tool, not a release path, authenticated viewer, scorer, download endpoint, or public workbook exporter.
+
 The Number Magic adapter imports only elementary and middle-school legacy threads without changing their generator keys or prerequisites. Records without a source unit, reviewed standard mapping, or reviewed provenance remain visibly pending and cannot publish.
 
 `audit:public` is intentionally blocking while legacy public authentication or student-record findings remain. It reports only finding codes and file paths, never credential values or student identifiers.
