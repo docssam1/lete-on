@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 75,
+  "verifiedMappings": 86,
   "items": [
     {
       "unit": 1,
@@ -1288,10 +1288,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "각의 크기 관계로 위치 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1306,10 +1307,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 직선에서 예각 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1324,10 +1326,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "둔각 개수의 최댓값",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1342,10 +1345,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "예각·직각·둔각을 계산해 각의 종류 판단하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1357,13 +1361,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-4",
       "sourcePdfPage": 22,
       "sourcePrintedPage": 18,
-      "typeLabel": "한 점에서 뻗은 직선들로 만든 180도인 각 세기",
+      "typeLabel": "직선 두 개씩 짝 지어 마주 보는 같은 각의 쌍 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1378,10 +1383,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 크기 각의 예각 개수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1396,10 +1402,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "예각 개수 최대화",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1414,10 +1421,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "각의 종류 계산식 판별",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1432,10 +1440,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "직각 안의 예각 개수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1450,10 +1459,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 선분의 180도 미만 각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1468,10 +1478,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 직선이 만날 때 마주 보는 같은 각 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleOne",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,

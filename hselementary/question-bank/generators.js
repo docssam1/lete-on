@@ -283,6 +283,130 @@
     return `${source41DigitWords[digit]}${namedUnits[exponent - 4]}`;
   }).filter(Boolean).join(" ");
   const source41Evidence = (kind, payload, expected) => `<span hidden data-source41-kind="${kind}" data-source41-payload="${encodeURIComponent(JSON.stringify(payload))}" data-source41-expected="${encodeURIComponent(String(expected))}"></span>`;
+  const source41CircledNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"];
+  const source41AngleClass = value => value > 0 && value < 90
+    ? "acute"
+    : value === 90
+      ? "right"
+      : value > 90 && value < 180
+        ? "obtuse"
+        : value === 180 ? "straight" : "outside";
+  const source41AngleName = { acute: "예각", right: "직각", obtuse: "둔각", straight: "평각" };
+  const source41AngleDomain = {
+    acute: Array.from({ length: 89 }, (_, index) => index + 1),
+    right: [90],
+    obtuse: Array.from({ length: 89 }, (_, index) => index + 91),
+    straight: [180]
+  };
+  const source41SmallAngle = (first, second) => {
+    const difference = Math.abs(first - second) % 360;
+    return Math.min(difference, 360 - difference);
+  };
+  const source41CountAnglePairs = (angles, kind) => {
+    let count = 0;
+    for (let first = 0; first < angles.length; first += 1) {
+      for (let second = first + 1; second < angles.length; second += 1) {
+        if (source41AngleClass(source41SmallAngle(angles[first], angles[second])) === kind) count += 1;
+      }
+    }
+    return count;
+  };
+  const source41PointAtAngle = (cx, cy, radius, angle) => {
+    const radians = angle * Math.PI / 180;
+    return [cx + radius * Math.cos(radians), cy - radius * Math.sin(radians)];
+  };
+  const source41AngleRaySvg = ({ angles, fullLines = false, rightMark = false, rightPairs = [], equalGaps = [] }) => {
+    const cx = 130;
+    const cy = 92;
+    const radius = 72;
+    const rays = angles.map((angle, index) => {
+      const end = source41PointAtAngle(cx, cy, radius, angle);
+      if (!fullLines) return `<line data-ray-index="${index}" x1="${cx}" y1="${cy}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+      const start = source41PointAtAngle(cx, cy, radius, angle + 180);
+      return `<line data-line-index="${index}" x1="${start[0].toFixed(1)}" y1="${start[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+    }).join("");
+    const marks = equalGaps.map(index => {
+      const first = angles[index];
+      const second = angles[index + 1];
+      if (first === undefined || second === undefined) return "";
+      const point = source41PointAtAngle(cx, cy, 24, (first + second) / 2);
+      return `<circle class="source41-equal-angle-mark" cx="${point[0].toFixed(1)}" cy="${point[1].toFixed(1)}" r="2.2"/>`;
+    }).join("");
+    const markedRightPairs = rightPairs.length ? rightPairs : rightMark ? [[0, 90]] : [];
+    const squares = markedRightPairs.map(([first, second]) => {
+      const firstPoint = source41PointAtAngle(cx, cy, 13, first);
+      const secondPoint = source41PointAtAngle(cx, cy, 13, second);
+      const corner = [firstPoint[0] + secondPoint[0] - cx, firstPoint[1] + secondPoint[1] - cy];
+      return `<path class="source41-right-angle-mark" data-right-pair="${first},${second}" d="M${firstPoint[0].toFixed(1)} ${firstPoint[1].toFixed(1)}L${corner[0].toFixed(1)} ${corner[1].toFixed(1)}L${secondPoint[0].toFixed(1)} ${secondPoint[1].toFixed(1)}"/>`;
+    }).join("");
+    const kind = fullLines ? "직선" : "반직선";
+    return `<svg class="geometry-diagram source41-angle-rays" viewBox="0 0 260 176" data-ray-angles="${angles.join(",")}" data-full-lines="${fullLines ? "1" : "0"}" aria-label="한 점에서 만나는 ${angles.length}개의 ${kind}"><g>${rays}${marks}${squares}</g><circle class="source41-angle-center" cx="${cx}" cy="${cy}" r="3"/></svg>`;
+  };
+  const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
+    const toRadians = value => value * Math.PI / 180;
+    const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
+    return [side * Math.cos(toRadians(angleA)), -side * Math.sin(toRadians(angleA))];
+  };
+  const source41TriangleLocationSvg = options => {
+    const baseLeft = [0, 0];
+    const baseRight = [100, 0];
+    const rawPoints = options.map(option => source41TrianglePoint(option.angles));
+    const all = [baseLeft, baseRight, ...rawPoints];
+    const minX = Math.min(...all.map(point => point[0]));
+    const maxX = Math.max(...all.map(point => point[0]));
+    const minY = Math.min(...all.map(point => point[1]));
+    const maxY = Math.max(...all.map(point => point[1]));
+    const scale = Math.min(210 / Math.max(1, maxX - minX), 118 / Math.max(1, maxY - minY));
+    const offsetX = 25 + (210 - (maxX - minX) * scale) / 2 - minX * scale;
+    const offsetY = 22 + (118 - (maxY - minY) * scale) / 2 - minY * scale;
+    const mapPoint = point => [offsetX + point[0] * scale, offsetY + point[1] * scale];
+    const left = mapPoint(baseLeft);
+    const right = mapPoint(baseRight);
+    const candidates = rawPoints.map((point, index) => {
+      const mapped = mapPoint(point);
+      return `<g data-candidate="${index + 1}" data-angle-a="${options[index].angles[0]}" data-angle-b="${options[index].angles[1]}" data-angle-c="${options[index].angles[2]}"><line class="source41-candidate-guide" x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${mapped[0].toFixed(1)}" y2="${mapped[1].toFixed(1)}"/><line class="source41-candidate-guide" x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${mapped[0].toFixed(1)}" y2="${mapped[1].toFixed(1)}"/><circle class="source41-location-dot" cx="${mapped[0].toFixed(1)}" cy="${mapped[1].toFixed(1)}" r="4"/><text x="${(mapped[0] + 10).toFixed(1)}" y="${(mapped[1] - 8).toFixed(1)}">${source41CircledNumbers[index]}</text></g>`;
+    }).join("");
+    return `<svg class="geometry-diagram source41-angle-location" viewBox="0 0 260 176" data-option-count="${options.length}" aria-label="도서관과 마트, 집 후보 네 곳이 표시된 지도"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><circle class="source41-place-dot" cx="${left[0].toFixed(1)}" cy="${left[1].toFixed(1)}" r="4"/><circle class="source41-place-dot" cx="${right[0].toFixed(1)}" cy="${right[1].toFixed(1)}" r="4"/><text x="${left[0].toFixed(1)}" y="${(left[1] + 18).toFixed(1)}">도서관 A</text><text x="${right[0].toFixed(1)}" y="${(right[1] + 18).toFixed(1)}">마트 B</text>${candidates}</svg>`;
+  };
+  const source41AngleStatementBank = [
+    { id: "AA=O", left: "acute", op: "+", right: "acute", relation: "type", target: "obtuse" },
+    { id: "O-A=A", left: "obtuse", op: "-", right: "acute", relation: "type", target: "acute" },
+    { id: "A+O>S", left: "acute", op: "+", right: "obtuse", relation: ">", target: "straight" },
+    { id: "S-O=A", left: "straight", op: "-", right: "obtuse", relation: "type", target: "acute" },
+    { id: "R+A=O", left: "right", op: "+", right: "acute", relation: "type", target: "obtuse" },
+    { id: "O-A>R", left: "obtuse", op: "-", right: "acute", relation: ">", target: "right" },
+    { id: "S-A=O", left: "straight", op: "-", right: "acute", relation: "type", target: "obtuse" },
+    { id: "A+O=S", left: "acute", op: "+", right: "obtuse", relation: "type", target: "straight" },
+    { id: "R-A=A", left: "right", op: "-", right: "acute", relation: "type", target: "acute" },
+    { id: "O-A=R", left: "obtuse", op: "-", right: "acute", relation: "type", target: "right" },
+    { id: "O+O>S", left: "obtuse", op: "+", right: "obtuse", relation: ">", target: "straight" },
+    { id: "A+A<S", left: "acute", op: "+", right: "acute", relation: "<", target: "straight" },
+    { id: "A+A=R", left: "acute", op: "+", right: "acute", relation: "type", target: "right" },
+    { id: "A+A>R", left: "acute", op: "+", right: "acute", relation: ">", target: "right" },
+    { id: "A+A<R", left: "acute", op: "+", right: "acute", relation: "<", target: "right" },
+    { id: "O+O=S", left: "obtuse", op: "+", right: "obtuse", relation: "type", target: "straight" },
+    { id: "R+A>S", left: "right", op: "+", right: "acute", relation: ">", target: "straight" },
+    { id: "S-R=R", left: "straight", op: "-", right: "right", relation: "type", target: "right" },
+    { id: "O+R>S", left: "obtuse", op: "+", right: "right", relation: ">", target: "straight" },
+    { id: "O-R=A", left: "obtuse", op: "-", right: "right", relation: "type", target: "acute" },
+    { id: "S-A>R", left: "straight", op: "-", right: "acute", relation: ">", target: "right" },
+    { id: "S-O<R", left: "straight", op: "-", right: "obtuse", relation: "<", target: "right" }
+  ];
+  const source41AngleStatementText = statement => `(${source41AngleName[statement.left]}) ${statement.op} (${source41AngleName[statement.right]}) ${statement.relation === "type" ? "=" : statement.relation} (${source41AngleName[statement.target]})`;
+  const source41AngleStatementAlways = statement => {
+    const targetValue = statement.target === "right" ? 90 : statement.target === "straight" ? 180 : null;
+    for (const left of source41AngleDomain[statement.left]) {
+      for (const right of source41AngleDomain[statement.right]) {
+        const value = statement.op === "+" ? left + right : left - right;
+        const holds = statement.relation === "type"
+          ? source41AngleClass(value) === statement.target
+          : statement.relation === ">" ? value > targetValue : value < targetValue;
+        if (!holds) return false;
+      }
+    }
+    return true;
+  };
+  const source41AngleStatementList = statements => `<ol class="source41-angle-statements">${statements.map((statement, index) => `<li><b>${source41CircledNumbers[index]}</b><span>${source41AngleStatementText(statement)}</span></li>`).join("")}</ol>`;
   const source41DigitSlot = symbol => `<span class="math-digit-slot ${symbol === "○" ? "is-circle" : "is-square"}" role="img" aria-label="${symbol === "○" ? "동그라미" : "빈칸"}"></span>`;
   const source41FormatMaskedInteger = (pattern, blankSymbol = "□") => String(pattern).split("").map((character, index, characters) => {
     const comma = index > 0 && (characters.length - index) % 3 === 0 ? "," : "";
@@ -4171,6 +4295,200 @@
       const evidence = source41Evidence("repeated-cards-place-product-maximum", payload, answer);
       const prompt = `수 카드 ${digits.join(", ")}을 각각 세 번씩 사용하여 ${length}자리 자연수를 만듭니다. ${placeNames.map(place => `${place}의 자리 수`).join(", ")}의 곱이 ${targetProduct}인 가장 큰 수를 구하세요.${cardRow(digits.flatMap(digit => Array(repeat).fill(digit)), `${digits.join(", ")}이 각각 세 장씩 있는 수 카드`)}${evidence}`;
       const solution = `곱이 ${targetProduct}이 되는 세 자리 숫자를 모두 확인한 뒤, 남은 카드는 높은 자리부터 큰 숫자를 놓습니다. 가장 크게 만드는 지정 자리 숫자는 ${candidates[candidates.length - 1].fixedDigits.join(", ")}이고, 가장 큰 수는 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41AngleOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("각과 각도 원문 분기는 0부터 10까지여야 합니다.");
+      const chooseFromBand = bands => pick(rng, bands[level]);
+      const statementById = id => {
+        const statement = source41AngleStatementBank.find(item => item.id === id);
+        if (!statement) throw new Error(`각도 관계 문장 ${id}를 찾지 못했습니다.`);
+        return statement;
+      };
+      const statementAnswer = (statements, wantedTruth) => statements
+        .map((statement, index) => source41AngleStatementAlways(statement) === wantedTruth ? source41CircledNumbers[index] : "")
+        .filter(Boolean)
+        .join(", ");
+      const statementSolution = (statements, wantedTruth, answer) => {
+        const selected = statements.map((statement, index) => ({ statement, index })).filter(item => source41AngleStatementAlways(item.statement) === wantedTruth);
+        const details = selected.map(item => `${source41CircledNumbers[item.index]} ${source41AngleStatementText(item.statement)}`).join(", ");
+        return `각 종류에 알맞은 수를 여러 가지 넣어 확인합니다. 조건을 언제나 만족하는지 따져 보면 ${details}입니다. 따라서 답은 ${answer}입니다.`;
+      };
+      const chooseClearRaySet = (rayCount, kind, rightPairMode) => {
+        const minimumGap = [18, 10, 8][level];
+        const rightMargin = [10, 6, 4][level];
+        for (let attempt = 0; attempt < 500; attempt += 1) {
+          const markedPair = rightPairMode === "baseline"
+            ? [0, 90]
+            : (() => {
+                const first = pick(rng, Array.from({ length: 9 }, (_, index) => 10 + index * 5));
+                return [first, first + 90];
+              })();
+          const required = rightPairMode === "baseline" ? [0, 90, 180] : [0, ...markedPair, 180];
+          const candidates = Array.from({ length: 35 }, (_, index) => (index + 1) * 5).filter(angle => !required.includes(angle));
+          const angles = [...required, ...shuffle(rng, candidates).slice(0, rayCount - required.length)].sort((left, right) => left - right);
+          if (angles.some((angle, index) => index && angle - angles[index - 1] < minimumGap)) continue;
+          const allowedRightPairs = rightPairMode === "baseline" ? [[0, 90], [90, 180]] : [markedPair];
+          let unclear = false;
+          for (let first = 0; first < angles.length; first += 1) {
+            for (let second = first + 1; second < angles.length; second += 1) {
+              const difference = source41SmallAngle(angles[first], angles[second]);
+              const marked = allowedRightPairs.some(pair => pair[0] === angles[first] && pair[1] === angles[second]);
+              if (Math.abs(difference - 90) <= rightMargin && !(difference === 90 && marked)) unclear = true;
+            }
+          }
+          if (unclear || source41CountAnglePairs(angles, kind) < 2) continue;
+          return { angles, rightPairs: [markedPair], allowedRightPairs };
+        }
+        const fallbacks = rightPairMode === "baseline"
+          ? {
+              5: [0, 30, 90, 150, 180],
+              6: [0, 20, 35, 90, 150, 180],
+              7: [0, 30, 45, 90, 155, 170, 180],
+              8: [0, 25, 40, 65, 90, 105, 170, 180]
+            }
+          : {
+              5: [0, 50, 140, 165, 180],
+              6: [0, 25, 105, 115, 165, 180],
+              7: [0, 25, 100, 115, 135, 165, 180],
+              8: [0, 20, 40, 50, 80, 110, 160, 180]
+            };
+        const angles = fallbacks[rayCount];
+        const markedPair = rightPairMode === "baseline" ? [0, 90] : rayCount === 5 ? [50, 140] : rayCount === 6 || rayCount === 7 ? [25, 115] : [20, 110];
+        return { angles, rightPairs: [markedPair], allowedRightPairs: rightPairMode === "baseline" ? [[0, 90], [90, 180]] : [markedPair] };
+      };
+      const fullLineAngles = lineCount => {
+        const offset = int(rng, 0, 12);
+        return Array.from({ length: lineCount }, (_, index) => (offset + Math.round(index * 180 / lineCount)) % 180).sort((left, right) => left - right);
+      };
+      const evenlySplitAnswer = parts => {
+        const counts = [];
+        for (let separation = 1; separation * 2 < parts; separation += 1) counts.push(parts + 1 - separation);
+        return { counts, total: counts.reduce((sum, count) => sum + count, 0) };
+      };
+
+      if (variant === 0) {
+        let selected = null;
+        for (let attempt = 0; attempt < 120 && !selected; attempt += 1) {
+          const angleC = int(rng, [48, 44, 38][level], [56, 58, 60][level]);
+          const angleB = int(rng, [22, 17, 12][level], [32, 30, 28][level]);
+          const angleA = 180 - angleB - angleC;
+          if (new Set([angleA, angleB, angleC]).size !== 3 || angleA <= 90) continue;
+          const lowerDifference = angleC - angleB;
+          const upperDifference = angleA - angleC;
+          const triples = [
+            [angleA, angleB, angleC],
+            [angleB, angleA, angleC],
+            [angleC, angleA, angleB],
+            [angleA, angleC, angleB]
+          ];
+          const options = shuffle(rng, triples).map(angles => ({ angles }));
+          const matches = options.map((option, index) => ({ index, angles: option.angles })).filter(option => option.angles[1] === option.angles[2] - lowerDifference && option.angles[0] === option.angles[2] + upperDifference);
+          if (matches.length === 1) selected = { angleA, angleB, angleC, lowerDifference, upperDifference, options, answerIndex: matches[0].index };
+        }
+        if (!selected) throw new Error("각의 크기 관계로 집 위치가 하나인 문제를 만들지 못했습니다.");
+        const answer = source41CircledNumbers[selected.answerIndex];
+        const payload = { variant, level, angleA: selected.angleA, angleB: selected.angleB, angleC: selected.angleC, lowerDifference: selected.lowerDifference, upperDifference: selected.upperDifference, options: selected.options.map(option => option.angles), answerIndex: selected.answerIndex + 1, complexity: (level + 1) * 100 + selected.upperDifference };
+        const evidence = source41Evidence("triangle-location-angle-relations", payload, answer);
+        const prompt = `도서관과 마트, 집을 이으면 삼각형이 됩니다. 도서관의 각을 A, 마트의 각을 B, 집의 각을 C라고 할 때, B는 C보다 ${selected.lowerDifference}° 작고 A는 C보다 ${selected.upperDifference}° 큽니다. 집이 있는 곳을 고르세요.${source41TriangleLocationSvg(selected.options)}${evidence}`;
+        const solution = `삼각형의 세 각의 합은 180°입니다. B=C-${selected.lowerDifference}, A=C+${selected.upperDifference}이므로 C=${selected.angleC}°, B=${selected.angleB}°, A=${selected.angleA}°입니다. 이 세 각의 위치가 맞는 곳은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1 || variant === 5) {
+        const bands = variant === 1 ? [[4, 5], [5, 6, 7], [7, 8, 9]] : [[6, 7], [8, 9, 10], [10, 11, 12]];
+        const parts = chooseFromBand(bands);
+        const rotation = int(rng, -8, 8);
+        const angles = Array.from({ length: parts + 1 }, (_, index) => rotation + index * 180 / parts);
+        const counted = evenlySplitAnswer(parts);
+        const answer = String(source41CountAnglePairs(angles, "acute"));
+        if (Number(answer) !== counted.total) throw new Error("같은 크기로 나눈 평각의 예각 수가 두 계산에서 다릅니다.");
+        const kind = variant === 1 ? "equal-straight-fan-acute-count" : "equal-straight-fan-acute-count-extended";
+        const payload = { variant, level, parts, rotation, angles, groups: counted.counts, answer: Number(answer), complexity: parts * parts };
+        const evidence = source41Evidence(kind, payload, answer);
+        const prompt = `평각을 같은 크기의 각 ${parts}개로 나누었습니다. 그림의 반직선 두 개를 골라 만들 수 있는 예각은 모두 몇 개인가요?${source41AngleRaySvg({ angles, equalGaps: Array.from({ length: parts }, (_, index) => index) })}${evidence}`;
+        const groupText = counted.counts.map((count, index) => `${index + 1}칸 떨어진 것은 ${count}개`).join(", ");
+        const solution = `평각은 180°이므로 한 칸은 180°÷${parts}입니다. 두 반직선 사이가 90°보다 작은 경우만 세면 ${groupText}입니다. 따라서 ${counted.counts.join("+")}=${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2 || variant === 6) {
+        const kind = variant === 2 ? "obtuse" : "acute";
+        const rayCount = chooseFromBand(variant === 2 ? [[5, 6], [7], [8]] : [[5], [6], [7, 8]]);
+        const raySet = chooseClearRaySet(rayCount, kind, variant === 2 ? "baseline" : "interior");
+        const { angles, rightPairs, allowedRightPairs } = raySet;
+        const answer = String(source41CountAnglePairs(angles, kind));
+        const evidenceKind = variant === 2 ? "fixed-ray-obtuse-count" : "marked-ray-acute-count";
+        const payload = { variant, level, angles, rightPairs, allowedRightPairs, requestedKind: kind, rightSafetyMargin: [10, 6, 4][level], answer: Number(answer), complexity: rayCount * rayCount + level * 20 };
+        const evidence = source41Evidence(evidenceKind, payload, answer);
+        const prompt = `직각 표시가 있는 다음 그림에서 반직선 두 개를 골라 만들 수 있는 ${source41AngleName[kind]}은 모두 몇 개인가요?${source41AngleRaySvg({ angles, rightPairs })}${evidence}`;
+        const solution = `직각으로 표시된 두 반직선을 기준으로 나머지 반직선도 두 개씩 빠짐없이 짝 지어 봅니다. 90°보다 ${kind === "acute" ? "작은" : "크고 180°보다 작은"} 각만 세면 ${answer}개입니다. 표시되지 않은 각은 직각과 충분히 떨어지도록 그려 하나로 판단할 수 있습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3 || variant === 7) {
+        const sourceIds = variant === 3
+          ? ["AA=O", "O-A=A", "A+O>S", "S-O=A", "R+A=O", "O-A>R"]
+          : ["S-A=O", "A+O=S", "R+A=O", "O-A=R", "S-O=A", "O+O=S", "R-A=A", "A+A=R", "A+A>R", "A+A<R"];
+        const sourceStatements = sourceIds.map(statementById);
+        const extras = shuffle(rng, source41AngleStatementBank.filter(statement => !sourceIds.includes(statement.id)));
+        const count = variant === 3 ? [5, 6, 8][level] : [6, 10, 12][level];
+        const statements = shuffle(rng, [...sourceStatements.slice(0, Math.min(count, sourceStatements.length)), ...extras.slice(0, Math.max(0, count - sourceStatements.length))]);
+        const wantedTruth = variant === 3;
+        const answer = statementAnswer(statements, wantedTruth);
+        if (!answer) throw new Error("고를 각도 관계 문장이 없습니다.");
+        const truthValues = statements.map(source41AngleStatementAlways);
+        const evidenceKind = variant === 3 ? "always-true-angle-relations" : "false-angle-relations";
+        const payload = { variant, level, statements, truthValues, wantedTruth, selectedIndices: truthValues.map((truth, index) => truth === wantedTruth ? index + 1 : 0).filter(Boolean), complexity: statements.length * 20 + truthValues.filter(Boolean).length };
+        const evidence = source41Evidence(evidenceKind, payload, answer);
+        const prompt = `${variant === 3 ? "항상 옳은" : "항상 옳다고 할 수 없는"} 것을 모두 고르세요.${source41AngleStatementList(statements)}${evidence}`;
+        return result(prompt, answer, statementSolution(statements, wantedTruth, answer));
+      }
+
+      if (variant === 4 || variant === 10) {
+        const lineCount = chooseFromBand(variant === 4 ? [[4, 5], [6], [7, 8]] : [[5, 6], [7], [8, 9]]);
+        const angles = fullLineAngles(lineCount);
+        const linePairs = lineCount * (lineCount - 1) / 2;
+        const answer = String(linePairs * 2);
+        const evidenceKind = variant === 4 ? "concurrent-lines-vertical-pairs" : "many-concurrent-lines-vertical-pairs";
+        const payload = { variant, level, lineCount, angles, linePairs, pairsPerLinePair: 2, answer: Number(answer), complexity: lineCount * lineCount };
+        const evidence = source41Evidence(evidenceKind, payload, answer);
+        const prompt = `한 점에서 서로 다른 직선 ${lineCount}개가 만납니다. 그림에서 마주 보는 같은 각은 모두 몇 쌍인가요?${source41AngleRaySvg({ angles, fullLines: true })}${evidence}`;
+        const addends = Array.from({ length: lineCount - 1 }, (_, index) => lineCount - index - 1);
+        const solution = `직선 두 개를 고르는 방법은 ${addends.join("+")}=${linePairs}가지입니다. 직선 두 개가 만나면 마주 보는 같은 각이 2쌍씩 생기므로 ${linePairs}×2=${answer}쌍입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const insideCount = chooseFromBand([[2, 3], [4, 5], [6, 7]]);
+        const interval = 90 / (insideCount + 1);
+        const interior = Array.from({ length: insideCount }, (_, index) => (index + 1) * interval + (rng() - 0.5) * interval * 0.22);
+        const angles = [0, ...interior, 90];
+        const answer = String(source41CountAnglePairs(angles, "acute"));
+        const expected = angles.length * (angles.length - 1) / 2 - 1;
+        if (Number(answer) !== expected) throw new Error("직각 안의 예각 수가 두 계산에서 다릅니다.");
+        const payload = { variant, level, insideCount, angles, excludedRightPair: [0, angles.length - 1], answer: Number(answer), complexity: angles.length * angles.length };
+        const evidence = source41Evidence("right-angle-segment-acute-count", payload, answer);
+        const prompt = `직각 안에 꼭짓점이 같은 선분을 ${insideCount}개 그었습니다. 그림에서 만들 수 있는 예각은 모두 몇 개인가요?${source41AngleRaySvg({ angles, rightMark: true })}${evidence}`;
+        const solution = `경계 두 선분까지 모두 ${angles.length}개의 반직선이 있습니다. 두 개씩 짝 지은 각 중에서 바깥 경계끼리 만든 직각 1개만 빼면 모두 예각입니다. 따라서 ${angles.length * (angles.length - 1) / 2}-1=${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const extraRayCount = chooseFromBand([[3, 4], [5, 6], [7, 8]]);
+      const interval = 180 / (extraRayCount + 1);
+      const interior = Array.from({ length: extraRayCount }, (_, index) => (index + 1) * interval + (rng() - 0.5) * interval * 0.22);
+      const angles = [0, ...interior, 180];
+      let underStraight = 0;
+      for (let first = 0; first < angles.length; first += 1) {
+        for (let second = first + 1; second < angles.length; second += 1) if (source41SmallAngle(angles[first], angles[second]) < 180) underStraight += 1;
+      }
+      const answer = String(underStraight);
+      const expected = angles.length * (angles.length - 1) / 2 - 1;
+      if (underStraight !== expected) throw new Error("180도보다 작은 각의 수가 두 계산에서 다릅니다.");
+      const payload = { variant, level, extraRayCount, angles, excludedStraightPair: [0, angles.length - 1], answer: underStraight, complexity: angles.length * angles.length };
+      const evidence = source41Evidence("straight-line-extra-rays-under-180", payload, answer);
+      const prompt = `한 직선 위의 반대 방향 두 반직선 사이에 선분을 ${extraRayCount}개 그었습니다. 그림에서 만들 수 있는 180°보다 작은 각은 모두 몇 개인가요?${source41AngleRaySvg({ angles })}${evidence}`;
+      const solution = `반직선은 모두 ${angles.length}개입니다. 두 개씩 짝 지은 각 가운데 양쪽 끝 반직선이 만든 평각 1개만 180°이고 나머지는 모두 180°보다 작습니다. 따라서 ${angles.length * (angles.length - 1) / 2}-1=${answer}개입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
