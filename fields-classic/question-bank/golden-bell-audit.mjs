@@ -20,12 +20,30 @@ for (const book of GOLDEN_BELL_BOOKS) {
     if (!lesson.explanation?.steps?.length) fail(`${book.id}/${lesson.id}: missing concept explanation`);
     if (!lesson.original?.items?.length) fail(`${book.id}/${lesson.id}: missing original check`);
     if (!lesson.extension?.story || !lesson.extension?.answer || !lesson.extension?.explanation) fail(`${book.id}/${lesson.id}: missing story extension`);
+    if (!lesson.original.structureKey || lesson.original.structureKey !== lesson.extension.structureKey) {
+      fail(`${book.id}/${lesson.id}: story extension changed the original problem structure`);
+    }
     if (lesson.extension.prompt === lesson.original.prompt) fail(`${book.id}/${lesson.id}: story extension reused the original prompt`);
-    if (!lesson.extension.options.includes(lesson.extension.answer)) fail(`${book.id}/${lesson.id}: extension answer not visible`);
+    const extensionMode = lesson.extension.answerMode || "choice";
+    if (extensionMode === "choice") {
+      if (!lesson.extension.options?.includes(lesson.extension.answer)) fail(`${book.id}/${lesson.id}: extension answer not visible`);
+      if (new Set(lesson.extension.options).size !== lesson.extension.options.length) fail(`${book.id}/${lesson.id}: duplicate extension choices`);
+    } else if (extensionMode === "input") {
+      if (lesson.extension.options?.length) fail(`${book.id}/${lesson.id}: written extension must not add choices`);
+    } else fail(`${book.id}/${lesson.id}: unsupported extension answer mode ${extensionMode}`);
+    const originalModes = new Set(lesson.original.items.map((item) => item.answerMode || "choice"));
+    if (originalModes.size !== 1 || !originalModes.has(extensionMode)) {
+      fail(`${book.id}/${lesson.id}: story extension changed the original answer format`);
+    }
     for (const item of lesson.original.items) {
       originalItemCount += 1;
-      if (!item.options.includes(item.answer)) fail(`${book.id}/${lesson.id}/${item.id}: original answer not visible`);
-      if (new Set(item.options).size !== item.options.length) fail(`${book.id}/${lesson.id}/${item.id}: duplicate choices`);
+      const answerMode = item.answerMode || "choice";
+      if (answerMode === "choice") {
+        if (!item.options?.includes(item.answer)) fail(`${book.id}/${lesson.id}/${item.id}: original answer not visible`);
+        if (new Set(item.options).size !== item.options.length) fail(`${book.id}/${lesson.id}/${item.id}: duplicate choices`);
+      } else if (answerMode === "input") {
+        if (item.options?.length) fail(`${book.id}/${lesson.id}/${item.id}: written original must not add choices`);
+      } else fail(`${book.id}/${lesson.id}/${item.id}: unsupported answer mode ${answerMode}`);
     }
   }
 }
@@ -37,12 +55,23 @@ const approvedBook1Answers = new Map([
   ["equal-line-sums", ["2", "4", "10"]],
   ["preference-logic", ["딸기", "수영", "키위"]]
 ]);
+const approvedBook1AnswerModes = new Map([
+  ["clock-turning", ["input", "input", "input", "input", "input"]],
+  ["fold-one-cut", ["choice"]],
+  ["equal-line-sums", ["input", "input", "input"]],
+  ["preference-logic", ["input", "input", "input"]]
+]);
 for (const [lessonId, approvedAnswers] of approvedBook1Answers) {
   const lesson = book1.lessons.find((candidate) => candidate.id === lessonId);
   if (!lesson) fail(`book-01: missing approved lesson ${lessonId}`);
   const actualAnswers = lesson.original.items.map((item) => item.answer);
   if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
     fail(`book-01/${lessonId}: approved original answers changed`);
+  }
+  const actualModes = lesson.original.items.map((item) => item.answerMode || "choice");
+  const approvedModes = approvedBook1AnswerModes.get(lessonId);
+  if (JSON.stringify(actualModes) !== JSON.stringify(approvedModes)) {
+    fail(`book-01/${lessonId}: source answer format changed`);
   }
 }
 const requiredUnits = ["도형 움직이기", "색종이 접기", "마방진과 가쿠로 퍼즐", "수추리와 논리추리"];

@@ -33,22 +33,25 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         },
         original: {
           title: "원본 골든벨 확인",
-          prompt: "12를 가리키는 시계 바늘을 다음과 같이 돌리면 어떤 수를 가리키는지 고르세요.",
+          structureKey: "clock-turn-landing",
+          prompt: "12를 가리키고 있는 시계 바늘을 다음과 같이 돌리면 어떤 수를 가리키는지 구하시오.",
           visual: { kind: "clock", value: 12 },
           items: [
-            { id: "one-turn", prompt: "시계 방향으로 한 바퀴", options: ["3", "6", "9", "12"], answer: "12" },
-            { id: "half-clockwise", prompt: "시계 방향으로 반 바퀴", options: ["3", "6", "9", "12"], answer: "6" },
-            { id: "half-counter", prompt: "시계 반대 방향으로 반 바퀴", options: ["3", "6", "9", "12"], answer: "6" },
-            { id: "quarter-clockwise", prompt: "시계 방향으로 반의 반 바퀴", options: ["3", "6", "9", "12"], answer: "3" },
-            { id: "quarter-counter", prompt: "시계 반대 방향으로 반의 반 바퀴", options: ["3", "6", "9", "12"], answer: "9" }
+            { id: "one-turn", prompt: "(1) 시계 방향으로 한 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "12" },
+            { id: "half-clockwise", prompt: "(2) 시계 방향으로 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "half-counter", prompt: "(3) 시계 반대 방향으로 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "quarter-clockwise", prompt: "(4) 시계 방향으로 반의 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "quarter-counter", prompt: "(5) 시계 반대 방향으로 반의 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "9" }
           ]
         },
         extension: {
           title: "이야기 속 새 미션",
+          structureKey: "clock-turn-landing",
           story: "박물관의 두 번째 문에서는 바늘이 3에서 출발합니다.",
           prompt: "3을 가리키는 바늘을 시계 방향으로 반 바퀴 돌리면 어디를 가리킬까요?",
           visual: { kind: "clock", value: 3 },
-          options: ["6", "9", "12", "3"],
+          answerMode: "input",
+          inputMode: "numeric",
           answer: "9",
           explanation: "반 바퀴는 맞은편으로 가므로 3의 맞은편인 9입니다."
         }
@@ -75,7 +78,8 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         },
         original: {
           title: "원본 골든벨 확인",
-          prompt: "색종이를 한 번 접은 뒤 칠해진 부분을 잘라 냈습니다. 남은 부분을 펼쳤을 때의 모양을 고르세요.",
+          structureKey: "single-fold-unfold-choice",
+          prompt: "왼쪽 색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. 남은 부분을 펼쳤을 때의 그림을 고르시오.",
           visual: { kind: "fold-notch-options" },
           items: [
             { id: "fold-choice", prompt: "펼친 모양", options: ["1번", "2번", "3번", "4번"], answer: "3번" }
@@ -83,12 +87,13 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         },
         extension: {
           title: "이야기 속 새 미션",
-          story: "별 모양 펀치로 반으로 접은 초대장을 한 번 뚫었습니다.",
-          prompt: "접은 종이를 완전히 펼치면 별 모양 구멍은 몇 개가 될까요?",
-          visual: { kind: "fold-star" },
-          options: ["1개", "2개", "3개", "4개"],
-          answer: "2개",
-          explanation: "한 번 접힌 두 겹을 함께 뚫었으므로 펼치면 거울처럼 마주 보는 구멍 2개가 생깁니다."
+          structureKey: "single-fold-unfold-choice",
+          story: "별빛 초대장을 반으로 접은 뒤 별 모양 펀치로 한 번 뚫었습니다.",
+          prompt: "초대장을 완전히 펼쳤을 때의 별 모양 위치를 고르세요.",
+          visual: { kind: "fold-story-options" },
+          options: ["1번", "2번", "3번", "4번"],
+          answer: "2번",
+          explanation: "접은 선을 거울로 보면 펀치 자리가 반대쪽 같은 거리에도 생기므로 2번입니다."
         }
       },
       {
@@ -113,7 +118,8 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         },
         original: {
           title: "원본 골든벨 확인",
-          prompt: "모든 줄의 합이 같을 때 빈칸에 들어갈 수를 차례로 고르세요.",
+          structureKey: "equal-line-missing-value",
+          prompt: "모든 줄의 합이 같을 때, 빈 칸에 들어갈 수를 구하시오.",
           visual: {
             kind: "equal-line-set",
             diagrams: [
@@ -123,17 +129,19 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
             ]
           },
           items: [
-            { id: "sum-1", prompt: "(1) 위쪽 빈칸", options: ["1", "2", "3", "4"], answer: "2" },
-            { id: "sum-2", prompt: "(2) 오른쪽 빈칸", options: ["2", "4", "6", "8"], answer: "4" },
-            { id: "sum-3", prompt: "(3) 오른쪽 빈칸", options: ["7", "9", "10", "12"], answer: "10" }
+            { id: "sum-1", prompt: "(1) 빈 칸에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "sum-2", prompt: "(2) 빈 칸에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "sum-3", prompt: "(3) 빈 칸에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "10" }
           ]
         },
         extension: {
           title: "이야기 속 새 미션",
+          structureKey: "equal-line-missing-value",
           story: "새 광장의 가로 길에는 7, 5, 3이 놓이고 세로 길 아래에는 4가 놓였습니다.",
           prompt: "두 길의 합이 같아지려면 위쪽 빈칸에는 어떤 수가 들어갈까요?",
           visual: { kind: "equal-line", top: null, left: 7, center: 5, right: 3, bottom: 4 },
-          options: ["4", "5", "6", "7"],
+          answerMode: "input",
+          inputMode: "numeric",
           answer: "6",
           explanation: "가로줄은 7+5+3=15입니다. 세로줄도 15가 되어야 하므로 빈칸+5+4=15, 빈칸은 6입니다."
         }
@@ -161,20 +169,22 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         },
         original: {
           title: "원본 골든벨 확인",
-          prompt: "각자 하나씩 서로 다른 것을 좋아할 때 조건을 읽고 답을 고르세요.",
+          structureKey: "one-to-one-preference-elimination",
+          prompt: "각자 하나씩을 좋아할 때, 다음 조건을 읽고 물음에 답하시오.",
           visual: { kind: "logic-cards" },
           items: [
-            { id: "logic-1", prompt: "A와 B는 사과와 딸기 중 서로 다른 과일을 좋아합니다. B는 사과를 좋아합니다. A가 좋아하는 과일은?", options: ["사과", "딸기"], answer: "딸기" },
-            { id: "logic-2", prompt: "A, B, C는 축구, 수영, 스키를 하나씩 좋아합니다. A는 겨울에만 하는 운동을 좋아하고 B는 물을 무서워합니다. C가 좋아하는 운동은?", options: ["축구", "수영", "스키"], answer: "수영" },
-            { id: "logic-3", prompt: "A, B, C는 키위, 멜론, 포도를 하나씩 좋아합니다. A는 키위와 포도를 싫어하고 C는 포도를 좋아합니다. B가 좋아하는 과일은?", options: ["키위", "멜론", "포도"], answer: "키위" }
+            { id: "logic-1", prompt: "(1) A와 B는 사과, 딸기 중에서 서로 다른 과일을 좋아합니다. A가 좋아하는 과일을 구하시오.", conditions: ["A의 친구는 사과를 좋아합니다."], answerMode: "input", answer: "딸기" },
+            { id: "logic-2", prompt: "(2) A, B, C는 축구, 수영, 스키 중에서 서로 다른 운동을 좋아합니다. C가 좋아하는 운동을 구하시오.", conditions: ["A는 겨울에만 할 수 있는 운동을 좋아합니다.", "B는 물을 무서워합니다."], answerMode: "input", answer: "수영" },
+            { id: "logic-3", prompt: "(3) A, B, C는 키위, 멜론, 포도 중에서 서로 다른 과일을 좋아합니다. B가 좋아하는 과일을 구하시오.", conditions: ["A는 키위와 포도를 싫어합니다.", "C는 포도를 좋아합니다."], answerMode: "input", answer: "키위" }
           ]
         },
         extension: {
           title: "이야기 속 새 미션",
+          structureKey: "one-to-one-preference-elimination",
           story: "민지, 서윤, 도윤은 김밥, 샌드위치, 떡볶이를 하나씩 골랐습니다.",
           prompt: "민지는 떡볶이를 골랐고, 서윤은 김밥을 고르지 않았습니다. 도윤이 고른 음식은 무엇일까요?",
           visual: { kind: "logic-food" },
-          options: ["김밥", "샌드위치", "떡볶이"],
+          answerMode: "input",
           answer: "김밥",
           explanation: "민지가 떡볶이를 사용했습니다. 서윤은 김밥이 아니므로 샌드위치이고, 도윤에게는 김밥이 남습니다."
         }
