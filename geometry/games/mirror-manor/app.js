@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-4";
-import { messages, text } from "./i18n.js?v=mirror-manor-4";
+} from "./levels.js?v=mirror-manor-5";
+import { messages, text } from "./i18n.js?v=mirror-manor-5";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -145,6 +145,8 @@ function renderBoard() {
   ui.board.classList.toggle("is-drag", p.interaction === "drag-reflection");
   ui.board.classList.toggle("is-distance", p.interaction === "distance-match");
   ui.board.classList.toggle("is-symbol", p.interaction === "symbol-reflection");
+  ui.board.classList.toggle("symbol-horizontal", p.interaction === "symbol-reflection" && axis.kind === "horizontal");
+  ui.board.classList.toggle("symbol-diagonal", p.interaction === "symbol-reflection" && axis.kind === "diagonal");
   // The two sides are told apart visually by the silvered mirror band and the cell
   // shading; screen readers get the same information through the label instead of
   // on-board chips, which would sit on top of tappable answer cells.
@@ -152,7 +154,8 @@ function renderBoard() {
 
   ui.mirror.className = `mirror-line ${axis.kind}`;
   if (axis.kind === "vertical") ui.mirror.style.cssText = `left:${fraction(axis.at, grid.cols)};top:-2%;`;
-  else ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
+  else if (axis.kind === "horizontal") ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
+  else ui.mirror.style.cssText = "left:50%;top:50%;";
 
   renderCells();
   renderPieces();
