@@ -152,10 +152,16 @@ function applyReviews(index, packet) {
 }
 
 function main(args) {
-  if (args.length !== 3) throw new Error("사용법: node apply-project-type-reviews.cjs <공통인덱스.json> <검수결과.json> <출력.json>");
-  const output = applyReviews(readJson(args[0]), readJson(args[1]));
+  if (args.length < 3 || args.length > 4) throw new Error("사용법: node apply-project-type-reviews.cjs <공통인덱스.json> <검수결과.json> <출력.json> [후보ID고정검수표.json]");
+  const index = readJson(args[0]);
+  const expanded = expandBatchReviews(index, readJson(args[1]));
+  const output = applyReviews(index, expanded);
   fs.mkdirSync(path.dirname(path.resolve(args[2])), { recursive: true });
   fs.writeFileSync(path.resolve(args[2]), `${JSON.stringify(output, null, 2)}\n`, "utf8");
+  if (args[3]) {
+    fs.mkdirSync(path.dirname(path.resolve(args[3])), { recursive: true });
+    fs.writeFileSync(path.resolve(args[3]), `${JSON.stringify(expanded, null, 2)}\n`, "utf8");
+  }
   process.stdout.write(`${JSON.stringify(output.summary)}\n`);
 }
 

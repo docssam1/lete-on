@@ -11,6 +11,7 @@ function audit(index) {
   const bankIds = new Set((index.sourceBanks || []).map(bank => bank.sourceBankId));
   if (bankIds.size !== (index.sourceBanks || []).length) issues.push("duplicate_source_bank");
   const familyIds = new Set((index.conceptFamilies || []).map(family => family.conceptFamilyId));
+  const declaredSourceTypeKeys = new Set((index.sourceTypes || []).map(type => `${type.sourceBankId}:${type.sourceTypeId}`));
   const seenFamilyIds = new Set();
   const sourceTypeKeys = new Set();
   (index.conceptFamilies || []).forEach(family => {
@@ -32,6 +33,9 @@ function audit(index) {
     if (itemIds.has(item.itemId)) issues.push(`duplicate_item:${item.itemId}`);
     itemIds.add(item.itemId);
     if (!bankIds.has(item.sourceBankId)) issues.push(`unknown_item_bank:${item.itemId}`);
+    if (item.sourceTypeId !== null && item.sourceTypeId !== undefined && !declaredSourceTypeKeys.has(`${item.sourceBankId}:${item.sourceTypeId}`)) {
+      issues.push(`unknown_item_source_type:${item.itemId}`);
+    }
     if (item.conceptStatus === "mapped" && !familyIds.has(item.conceptFamilyId)) issues.push(`unknown_item_family:${item.itemId}`);
     if (item.conceptStatus !== "mapped" && item.conceptFamilyId !== null) issues.push(`unexpected_item_family:${item.itemId}`);
     if (Object.prototype.hasOwnProperty.call(item, "canonicalConceptFamilyId") && item.canonicalConceptFamilyId !== null && !familyIds.has(item.canonicalConceptFamilyId)) {
