@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 181,
+  "verifiedMappings": 191,
   "items": [
     {
       "unit": 1,
@@ -3753,10 +3753,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "밀기·뒤집기·돌리기 결과 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3768,13 +3769,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "세 가지 이동 뒤의 도형 그리기",
+      "typeLabel": "세 가지 이동 뒤의 도형 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3789,10 +3791,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "회전 규칙의 빈 도형 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3804,13 +3807,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "도형을 같은 방향으로 여러 번 민 결과 그리기",
+      "typeLabel": "차례로 민 세 위치 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3825,10 +3829,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "잘못된 회전에서 원래 도형 복원",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3861,10 +3866,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "연속 회전 규칙의 빈칸 완성",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3879,10 +3885,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "도형을 가로와 세로로 밀어 옮기기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3897,10 +3904,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "좌우 대칭인 알파벳 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3915,10 +3923,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "상하좌우 대칭 색칠 완성",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -3933,10 +3942,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "잘못된 뒤집기에서 바른 모양 복원",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformOne",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,

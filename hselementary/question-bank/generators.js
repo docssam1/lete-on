@@ -3305,6 +3305,123 @@
     };
   }
 
+  const source41TransformLabels = ["①", "②", "③", "④"];
+  const source41PlaneSourceAnchors = {
+    0: {
+      size: 3,
+      darkRows: ["111", "100", "001"],
+      labels: ["그대로", "좌우로 뒤집기", "위아래로 뒤집기", "시계 방향 90°", "시계 방향 180°", "시계 방향 270°"]
+    },
+    1: { rows: ["111", "111", "011"], finalRows: ["110", "111", "111"] },
+    2: { blankFrame: 5, sameAsFrame: 1 },
+    3: { positions: [[13, 0], [13, -3], [8, -3]] },
+    4: { originalRows: ["11110", "11110", "00010", "00011", "00010"], reflectedRows: ["01111", "01111", "01000", "11000", "01000"] },
+    6: { blankFrame: 6, sameAsFrame: 2 },
+    7: { finalVertices: [[5, 3], [7, 3], [6, 4], [5, 4]] },
+    8: { letters: ["L", "M", "N", "O", "P", "Q", "R", "S", "T"], symmetric: ["M", "O", "T"], answer: 3 },
+    9: { rows: 4, cols: 5, initial: [[1, 4], [2, 1], [3, 2], [4, 3]], closure: 14, add: 10 },
+    10: { wrongVertices: [[0, 4], [4, 4], [4, 1], [2, 0], [0, 3]], answerVertices: [[4, 0], [0, 0], [0, 3], [2, 4], [4, 1]] }
+  };
+  const source41PlaneShapeSets = [
+    [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [1, 2], [2, 2]],
+    [[0, 0], [1, 0], [0, 1], [1, 1], [2, 1], [2, 2], [3, 2], [3, 3]],
+    [[0, 0], [1, 0], [2, 0], [2, 1], [1, 1], [1, 2], [2, 2], [3, 2], [3, 3]],
+    [[0, 0], [1, 0], [2, 0], [0, 1], [2, 1], [0, 2], [1, 2], [1, 3], [2, 3]]
+  ];
+  const source41PlaneSortCells = cells => cells.map(cell => [cell[0], cell[1]]).sort((left, right) => left[1] - right[1] || left[0] - right[0]);
+  const source41PlaneCellKey = cells => JSON.stringify(source41PlaneSortCells(cells));
+  const source41PlanePolygonKey = vertices => {
+    const points = vertices.map(point => [point[0], point[1]]);
+    const candidates = [];
+    for (const sequence of [points, [...points].reverse()]) {
+      for (let offset = 0; offset < sequence.length; offset += 1) candidates.push(JSON.stringify([...sequence.slice(offset), ...sequence.slice(0, offset)]));
+    }
+    return candidates.sort()[0] || "[]";
+  };
+  const source41PlanePairKey = pair => pair.map(source41PlaneCellKey).join("/");
+  const source41PlaneUniqueBy = (values, keyFor) => values.filter((value, index) => values.findIndex(candidate => keyFor(candidate) === keyFor(value)) === index);
+  const source41PlaneRowsToCells = rows => rows.flatMap((row, y) => [...row].flatMap((value, x) => value === "1" ? [[x, y]] : []));
+  const source41PlaneConnected = cells => {
+    if (!cells.length) return false;
+    const remaining = new Set(cells.map(point => point.join(",")));
+    const queue = [cells[0]];
+    remaining.delete(cells[0].join(","));
+    while (queue.length) {
+      const [x, y] = queue.shift();
+      for (const point of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        const pointKey = point.join(",");
+        if (remaining.delete(pointKey)) queue.push(point);
+      }
+    }
+    return remaining.size === 0;
+  };
+  const source41PlaneMoveCells = (cells, dx, dy) => cells.map(([x, y]) => [x + dx, y + dy]);
+  const source41PlaneReflectCells = (cells, size, axis) => cells.map(([x, y]) => axis === "vertical" ? [size - 1 - x, y] : [x, size - 1 - y]);
+  const source41PlaneRotateCells = (cells, size, turns = 1) => {
+    let next = cells.map(cell => [cell[0], cell[1]]);
+    for (let count = 0; count < ((turns % 4) + 4) % 4; count += 1) next = next.map(([x, y]) => [size - 1 - y, x]);
+    return next;
+  };
+  const source41PlaneReflectVertices = (vertices, size, axis) => vertices.map(([x, y]) => axis === "vertical" ? [size - x, y] : [x, size - y]);
+  const source41PlaneRotateVertices = (vertices, size, turns = 1) => {
+    let next = vertices.map(point => [point[0], point[1]]);
+    for (let count = 0; count < ((turns % 4) + 4) % 4; count += 1) next = next.map(([x, y]) => [size - y, x]);
+    return next;
+  };
+  const source41PlaneInBounds = (points, size, vertex = false) => points.every(([x, y]) => Number.isInteger(x) && Number.isInteger(y) && x >= 0 && y >= 0 && x <= (vertex ? size : size - 1) && y <= (vertex ? size : size - 1));
+  const source41PlaneInRect = (points, rows, cols, vertex = false) => points.every(([x, y]) => Number.isInteger(x) && Number.isInteger(y) && x >= 0 && y >= 0 && x <= (vertex ? cols : cols - 1) && y <= (vertex ? rows : rows - 1));
+  const source41PlaneCellPanel = ({ cells, rows, cols, panelWidth, x = 0, y = 0, title = "", dark = [], light = [], guide = "", blank = false }) => {
+    const cell = 18;
+    const marginX = (panelWidth - cols * cell) / 2;
+    const marginY = 16;
+    const extentWidth = cols * cell;
+    const extentHeight = rows * cell;
+    const verticalGrid = Array.from({ length: cols + 1 }, (_, index) => `<line class="source41-plane-grid-line source41-plane-grid-vertical" x1="${marginX + index * cell}" y1="${marginY}" x2="${marginX + index * cell}" y2="${marginY + extentHeight}"/>`).join("");
+    const horizontalGrid = Array.from({ length: rows + 1 }, (_, index) => `<line class="source41-plane-grid-line source41-plane-grid-horizontal" x1="${marginX}" y1="${marginY + index * cell}" x2="${marginX + extentWidth}" y2="${marginY + index * cell}"/>`).join("");
+    const fillKey = new Map([...dark.map(point => [point.join(","), "dark"]), ...light.map(point => [point.join(","), "light"])]);
+    const painted = cells.map(([col, row]) => `<rect class="source41-plane-cell ${fillKey.get(`${col},${row}`) === "dark" ? "is-dark" : fillKey.get(`${col},${row}`) === "light" ? "is-light" : ""}" x="${marginX + col * cell + 1.4}" y="${marginY + row * cell + 1.4}" width="${cell - 2.8}" height="${cell - 2.8}"/>`).join("");
+    const line = guide === "vertical" ? `<line class="source41-plane-axis" x1="${marginX + extentWidth / 2}" y1="${marginY}" x2="${marginX + extentWidth / 2}" y2="${marginY + extentHeight}"/>` : guide === "horizontal" ? `<line class="source41-plane-axis" x1="${marginX}" y1="${marginY + extentHeight / 2}" x2="${marginX + extentWidth}" y2="${marginY + extentHeight / 2}"/>` : "";
+    const blankLayer = blank ? `<rect class="source41-plane-blank" x="${marginX}" y="${marginY}" width="${extentWidth}" height="${extentHeight}"/>` : "";
+    return `<g class="source41-plane-panel" transform="translate(${x} ${y})" data-cells="${encodeURIComponent(JSON.stringify(source41PlaneSortCells(cells)))}" data-dark="${encodeURIComponent(JSON.stringify(source41PlaneSortCells(dark)))}" data-light="${encodeURIComponent(JSON.stringify(source41PlaneSortCells(light)))}" data-rows="${rows}" data-cols="${cols}" data-blank="${blank}" data-grid-left="${marginX}" data-grid-top="${marginY}" data-grid-right="${marginX + extentWidth}" data-grid-bottom="${marginY + extentHeight}">${blankLayer}${verticalGrid}${horizontalGrid}${line}${blank ? "" : painted}<text class="source41-plane-label" x="${marginX + extentWidth / 2}" y="${marginY + extentHeight + 17}">${title}</text></g>`;
+  };
+  const source41PlaneVertexPanel = ({ vertices, rows, cols, panelWidth, x = 0, y = 0, title = "", guide = "" }) => {
+    const cell = 18;
+    const marginX = (panelWidth - cols * cell) / 2;
+    const marginY = 16;
+    const extentWidth = cols * cell;
+    const extentHeight = rows * cell;
+    const verticalGrid = Array.from({ length: cols + 1 }, (_, index) => `<line class="source41-plane-grid-line source41-plane-grid-vertical" x1="${marginX + index * cell}" y1="${marginY}" x2="${marginX + index * cell}" y2="${marginY + extentHeight}"/>`).join("");
+    const horizontalGrid = Array.from({ length: rows + 1 }, (_, index) => `<line class="source41-plane-grid-line source41-plane-grid-horizontal" x1="${marginX}" y1="${marginY + index * cell}" x2="${marginX + extentWidth}" y2="${marginY + index * cell}"/>`).join("");
+    const points = vertices.map(([col, row]) => `${marginX + col * cell},${marginY + row * cell}`).join(" ");
+    const axis = guide === "vertical" ? `<line class="source41-plane-axis" x1="${marginX + extentWidth / 2}" y1="${marginY}" x2="${marginX + extentWidth / 2}" y2="${marginY + extentHeight}"/>` : guide === "horizontal" ? `<line class="source41-plane-axis" x1="${marginX}" y1="${marginY + extentHeight / 2}" x2="${marginX + extentWidth}" y2="${marginY + extentHeight / 2}"/>` : "";
+    return `<g class="source41-plane-panel" transform="translate(${x} ${y})" data-vertices="${encodeURIComponent(JSON.stringify(vertices))}" data-rows="${rows}" data-cols="${cols}" data-grid-left="${marginX}" data-grid-top="${marginY}" data-grid-right="${marginX + extentWidth}" data-grid-bottom="${marginY + extentHeight}">${verticalGrid}${horizontalGrid}${axis}<polygon class="source41-plane-polygon" points="${points}"/>${vertices.map(([col, row]) => `<circle class="source41-plane-vertex" cx="${marginX + col * cell}" cy="${marginY + row * cell}" r="2.3"/>`).join("")}<text class="source41-plane-label" x="${marginX + extentWidth / 2}" y="${marginY + extentHeight + 17}">${title}</text></g>`;
+  };
+  const source41PlaneSvg = ({ panels, size, rows = size, cols = size, kind, columns = 4, vertex = false, ariaLabel }) => {
+    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows < 1 || cols < 1) throw new Error("격자의 행과 열 수가 필요합니다.");
+    const longestTitle = panels.reduce((length, panel) => Math.max(length, [...(panel.title || "")].length), 0);
+    const panelWidth = Math.max(cols * 18 + 38, longestTitle * 12 + 20);
+    const panelHeight = rows * 18 + 43;
+    const width = panelWidth * Math.min(columns, panels.length);
+    const height = panelHeight * Math.ceil(panels.length / columns);
+    const intrinsicWidth = Math.min(width, 640);
+    const markup = panels.map((panel, index) => (vertex ? source41PlaneVertexPanel : source41PlaneCellPanel)({ ...panel, rows, cols, panelWidth, x: index % columns * panelWidth, y: Math.floor(index / columns) * panelHeight })).join("");
+    return `<svg class="geometry-diagram source41-plane-transform" viewBox="0 0 ${width} ${height}" style="width:min(${intrinsicWidth}px,100%)" role="img" aria-label="${ariaLabel}" data-source41-plane-kind="${kind}" data-panel-count="${panels.length}" data-rows="${rows}" data-cols="${cols}">${markup}</svg>`;
+  };
+  const source41PlaneChoiceSvg = ({ choices, size, kind, vertex = false, ariaLabel }) => source41PlaneSvg({ panels: choices.map((choice, index) => ({ ...(vertex ? { vertices: choice } : { cells: choice }), title: source41TransformLabels[index] })), size, kind, columns: 4, vertex, ariaLabel });
+  const source41PlaneGlyphSvg = () => {
+    const paths = {
+      L: "M3 2V28H20", M: "M2 28V2L12 17L22 2V28", N: "M3 28V2L21 28V2", O: "M4 3Q12 -1 20 3V27Q12 32 4 27Z", P: "M3 28V2H16Q22 2 22 9Q22 16 16 16H3", Q: "M4 3Q12 -1 20 3V27Q12 32 4 27ZM14 20L24 30", R: "M3 28V2H16Q22 2 22 9Q22 16 16 16H3M13 16L23 28", S: "M21 4Q12 -1 4 5Q1 11 11 15Q22 18 19 25Q15 31 3 27", T: "M2 3H22M12 3V28" };
+    return `<svg class="geometry-diagram source41-plane-glyphs" viewBox="0 0 306 58" style="width:min(306px,100%)" role="img" aria-label="대칭을 살필 알파벳 모양"><g>${Object.entries(paths).map(([letter, path], index) => `<g transform="translate(${index * 34 + 4} 8)" data-letter="${letter}"><path class="source41-plane-glyph" d="${path}"/><text class="source41-plane-glyph-label" x="12" y="43">${letter}</text></g>`).join("")}</g></svg>`;
+  };
+  const source41PlaneClosure = (cells, rows, cols) => {
+    const output = new Map(cells.map(point => [point.join(","), point]));
+    const add = point => output.set(point.join(","), point);
+    for (const [x, y] of [...output.values()]) {
+      add([cols - 1 - x, y]); add([x, rows - 1 - y]); add([cols - 1 - x, rows - 1 - y]);
+    }
+    return source41PlaneSortCells([...output.values()]);
+  };
+
   const generators = {
     source41LargeNumberOne({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수 원문 분기는 0부터 10까지여야 합니다.");
@@ -8022,6 +8139,188 @@
       const hidden = productText[index];
       const shown = [...productText].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
       return result(`세로셈 결과의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, multiplier, [onesPartial, tensPartial], shown)}`, hidden, `${multiplicand} × ${multiplier} = ${product.toLocaleString()}이므로 □는 ${hidden}입니다.`);
+    },
+    source41PlaneTransformOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10 || variant === 5) throw new Error("검수 대기인 도형 이동 유형입니다.");
+      const sourceAnchor = source41PlaneSourceAnchors[variant];
+      const complexityBase = (level + 1) * 1000000;
+      const answerIndex = (choices, correct, keyFor = source41PlaneCellKey) => {
+        const index = choices.findIndex(choice => keyFor(choice) === keyFor(correct));
+        if (index < 0) throw new Error("정답 도형이 보기 안에 있어야 합니다.");
+        return source41TransformLabels[index];
+      };
+      const cellChoice = (correct, other, size, kind, label) => {
+        const candidates = source41PlaneUniqueBy([correct, ...other], source41PlaneCellKey);
+        if (candidates.length < 4 || !candidates.slice(0, 4).every(cells => source41PlaneInBounds(cells, size))) throw new Error("도형 선택지 네 개가 격자 안에서 서로 달라야 합니다.");
+        const choices = shuffle(rng, candidates.slice(0, 4));
+        return { choices, answer: answerIndex(choices, correct), svg: source41PlaneChoiceSvg({ choices, size, kind, ariaLabel: label }) };
+      };
+
+      if (variant === 0) {
+        const darkRows = [sourceAnchor.darkRows, ["1110", "1001", "0111", "0010"], ["11010", "10100", "01111", "10010", "00101"]][level];
+        const size = darkRows.length;
+        const dark = source41PlaneRowsToCells(darkRows);
+        const darkKeys = new Set(dark.map(point => point.join(",")));
+        const light = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => [x, y])).flat().filter(point => !darkKeys.has(point.join(",")));
+        if (dark.length + light.length !== size * size || dark.some(point => light.some(other => point[0] === other[0] && point[1] === other[1]))) throw new Error("처음 두 색 무늬는 빈칸이나 겹친 칸 없이 모두 색칠되어야 합니다.");
+        const transforms = [
+          [sourceAnchor.labels[0], cells => cells.map(point => [...point])],
+          [sourceAnchor.labels[1], cells => source41PlaneReflectCells(cells, size, "vertical")],
+          [sourceAnchor.labels[2], cells => source41PlaneReflectCells(cells, size, "horizontal")],
+          [sourceAnchor.labels[3], cells => source41PlaneRotateCells(cells, size, 1)],
+          [sourceAnchor.labels[4], cells => source41PlaneRotateCells(cells, size, 2)],
+          [sourceAnchor.labels[5], cells => source41PlaneRotateCells(cells, size, 3)]
+        ].map(([label, transform]) => ({ label, dark: transform(dark), light: transform(light) }));
+        const signatures = new Set(transforms.map(item => `${source41PlaneCellKey(item.dark)}/${source41PlaneCellKey(item.light)}`));
+        if (signatures.size !== 6) throw new Error("여섯 가지 이동 결과가 모두 달라야 합니다.");
+        const answer = "완성 그림 6개";
+        const payload = { variant, level, size, dark, light, transforms, sourceAnchor, complexity: complexityBase + transforms.length * 1000 };
+        const evidence = source41Evidence("six-asymmetric-motif-transforms", payload, answer);
+        const originalDiagram = source41PlaneSvg({ panels: [{ cells: [...dark, ...light], dark, light, title: "처음 무늬" }], size, kind: "six-motif-original", columns: 1, ariaLabel: "처음 두 색 무늬" });
+        const blankDiagram = source41PlaneSvg({ panels: transforms.map(item => ({ cells: [], title: item.label, blank: true })), size, kind: "six-motif-blanks", columns: 3, ariaLabel: "이동한 무늬를 그릴 여섯 빈 격자" });
+        const completedDiagram = source41PlaneSvg({ panels: transforms.map(item => ({ cells: [...item.dark, ...item.light], dark: item.dark, light: item.light, title: item.label })), size, kind: "six-motif-results", columns: 3, ariaLabel: "여섯 가지 이동의 완성 그림" });
+        const prompt = `처음 두 색 무늬를 보고, 아래 여섯 격자에 적힌 방법대로 옮긴 무늬를 각각 그리세요.${originalDiagram}${blankDiagram}${evidence}`;
+        const solution = `두 색 칸을 한 덩어리로 보고 모든 칸을 같은 방법으로 옮깁니다. 여섯 가지 완성 그림은 다음과 같습니다.${completedDiagram}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const size = 5 + level;
+        const base = source41PlaneShapeSets[level].map(([x, y]) => [x, y]);
+        const slide = source41PlaneMoveCells(base, 1 + level, 0);
+        const reflected = source41PlaneReflectCells(slide, size, "horizontal");
+        const correct = source41PlaneRotateCells(reflected, size, 1);
+        if (![base, slide, reflected, correct].every(cells => source41PlaneInBounds(cells, size)) || source41PlaneCellKey(base) === source41PlaneCellKey(correct)) throw new Error("밀기·뒤집기·돌리기 결과가 격자 안의 다른 모양이어야 합니다.");
+        const choice = cellChoice(correct, [source41PlaneRotateCells(reflected, size, 3), source41PlaneReflectCells(slide, size, "vertical"), source41PlaneRotateCells(slide, size, 1)], size, "slide-reflect-rotate", "마지막 도형 고르기");
+        const payload = { variant, level, size, base, slide, reflected, correct, choices: choice.choices, sourceAnchor, complexity: complexityBase + size * 1000 + base.length * 100 };
+        const evidence = source41Evidence("slide-top-bottom-reflect-clockwise-turn", payload, choice.answer);
+        const prompt = `도형을 오른쪽으로 ${1 + level}칸 민 뒤, 위아래로 뒤집고, 시계 방향으로 90° 돌렸습니다. 마지막 모양을 고르세요.${source41PlaneSvg({ panels: [{ cells: base, title: "처음" }], size, kind: "start-shape", columns: 1, ariaLabel: "처음 도형" })}${choice.svg}${evidence}`;
+        const solution = `밀기 뒤에는 모든 칸이 오른쪽으로 함께 옮겨집니다. 그 다음 위아래로 뒤집고 시계 방향으로 90° 돌린 모양은 ${choice.answer}입니다.`;
+        return result(prompt, choice.answer, solution);
+      }
+
+      if (variant === 2 || variant === 6) {
+        const size = 5 + level;
+        const base = source41PlaneShapeSets[(level + (variant === 6 ? 1 : 0)) % source41PlaneShapeSets.length].map(([x, y]) => [x, y]);
+        const frames = Array.from({ length: 6 }, (_, index) => source41PlaneRotateCells(base, size, index));
+        if (new Set(frames.slice(0, 4).map(source41PlaneCellKey)).size !== 4) throw new Error("90도씩 돌린 네 방향이 모두 다른 도형이어야 합니다.");
+        const blankIndex = variant === 2 ? 4 : 5;
+        const correct = frames[blankIndex];
+        const choices = cellChoice(correct, frames.filter((_, index) => index !== blankIndex), size, variant === 2 ? "five-frame-rotation" : "six-frame-rotation", "빈 도형 고르기");
+        const shown = frames.map((cells, index) => ({ cells: index === blankIndex ? [] : cells, title: index === blankIndex ? "빈칸" : `${index + 1}번째`, blank: index === blankIndex }));
+        const payload = { variant, level, size, base, frames, blankIndex, correct, choices: choices.choices, sourceAnchor, complexity: complexityBase + size * 1000 + (blankIndex + 1) * 100 };
+        const evidence = source41Evidence(variant === 2 ? "four-step-rotation-frame-five" : "four-step-rotation-frame-six", payload, choices.answer);
+        const prompt = `같은 도형을 시계 방향으로 90°씩 돌려 나열했습니다. 빈칸에 들어갈 도형을 고르세요.${source41PlaneSvg({ panels: shown, size, kind: "rotation-sequence", columns: 3, ariaLabel: "90도씩 돌린 도형 규칙" })}${choices.svg}${evidence}`;
+        const sameFrame = variant === 2 ? "첫째" : "둘째";
+        const solution = `90° 돌리기를 네 번 하면 처음 방향으로 돌아옵니다. 빈칸은 ${sameFrame} 도형과 같은 방향이므로 ${choices.answer}입니다.`;
+        return result(prompt, choices.answer, solution);
+      }
+
+      if (variant === 3) {
+        const size = 18 + level * 2;
+        const baseY = 3 + level;
+        const base = [[0, baseY], [1, baseY], [2, baseY], [0, baseY + 1], [1, baseY + 1], [1, baseY + 2]];
+        if (!source41PlaneConnected(base)) throw new Error("처음 도형의 모든 칸이 변을 맞대어 이어져야 합니다.");
+        const stepOne = [13 + level * 2, 0];
+        const stepTwo = [0, -(3 + level)];
+        const stepThree = [-(5 + level), 0];
+        const states = [source41PlaneMoveCells(base, ...stepOne), source41PlaneMoveCells(base, stepOne[0] + stepTwo[0], stepOne[1] + stepTwo[1]), source41PlaneMoveCells(base, stepOne[0] + stepTwo[0] + stepThree[0], stepOne[1] + stepTwo[1] + stepThree[1])];
+        if (!states.every(cells => source41PlaneInBounds(cells, size))) throw new Error("차례로 민 모든 도형이 격자 안에 있어야 합니다.");
+        const answer = `오른쪽 ${stepOne[0]}칸, 오른쪽 ${stepOne[0]}칸 위 ${Math.abs(stepTwo[1])}칸, 오른쪽 ${stepOne[0] + stepThree[0]}칸 위 ${Math.abs(stepTwo[1])}칸`;
+        const payload = { variant, level, size, base, steps: [stepOne, stepTwo, stepThree], states, sourceAnchor, complexity: complexityBase + (stepOne[0] + Math.abs(stepTwo[1]) + Math.abs(stepThree[0])) * 1000 };
+        const evidence = source41Evidence("three-cumulative-slides", payload, answer);
+        const prompt = `도형을 차례로 오른쪽 ${stepOne[0]}칸, 위로 ${Math.abs(stepTwo[1])}칸, 왼쪽 ${Math.abs(stepThree[0])}칸 밉니다. 매 단계가 끝난 뒤 처음 위치에서 어느 방향으로 몇 칸 옮겨졌는지 차례로 쓰세요.${source41PlaneSvg({ panels: [{ cells: base, title: "처음" }], size, kind: "cumulative-start", columns: 1, ariaLabel: "처음 도형" })}${evidence}`;
+        const solution = `도형의 모든 칸을 같은 방향으로 함께 옮깁니다. 세 위치는 차례로 ${answer}입니다.${source41PlaneSvg({ panels: states.map((cells, index) => ({ cells, title: `${index + 1}단계 뒤` })), size, kind: "cumulative-states", columns: 3, ariaLabel: "차례로 민 세 위치" })}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const size = 5 + level;
+        const original = level === 0 ? source41PlaneRowsToCells(sourceAnchor.originalRows) : source41PlaneShapeSets[(level + 2) % source41PlaneShapeSets.length].map(([x, y]) => [x, y]);
+        const wrong = source41PlaneRotateCells(original, size, 3);
+        const correct = source41PlaneReflectCells(original, size, "vertical");
+        if (level === 0 && source41PlaneCellKey(correct) !== source41PlaneCellKey(source41PlaneRowsToCells(sourceAnchor.reflectedRows))) throw new Error("원문 도형을 좌우로 뒤집은 결과가 원문 답과 달라졌습니다.");
+        const pairs = [
+          [original, correct],
+          [source41PlaneRotateCells(wrong, size, 1), source41PlaneReflectCells(wrong, size, "vertical")],
+          [source41PlaneRotateCells(wrong, size, 3), source41PlaneReflectCells(wrong, size, "horizontal")],
+          [source41PlaneReflectCells(wrong, size, "vertical"), source41PlaneRotateCells(wrong, size, 2)]
+        ];
+        if (source41PlaneUniqueBy(pairs, source41PlanePairKey).length !== 4 || !pairs.flat().every(cells => source41PlaneInBounds(cells, size))) throw new Error("복원 문제의 보기 네 쌍이 격자 안에서 모두 달라야 합니다.");
+        const choices = shuffle(rng, pairs);
+        const answer = answerIndex(choices, pairs[0], source41PlanePairKey);
+        const panels = choices.flatMap((pair, index) => [{ cells: pair[0], title: `${source41TransformLabels[index]} 처음` }, { cells: pair[1], title: `${source41TransformLabels[index]} 바른 결과` }]);
+        const payload = { variant, level, size, original, wrong, correct, choices, sourceAnchor, complexity: complexityBase + size * 1000 + original.length * 100 };
+        const evidence = source41Evidence("wrong-counterclockwise-turn-recover-and-right-reflect", payload, answer);
+        const prompt = `아래 도형은 처음 도형을 반시계 방향으로 90° 잘못 돌린 결과입니다. 처음 도형을 되찾은 뒤 좌우로 뒤집어야 합니다. 처음 도형과 바른 결과를 차례로 나타낸 보기를 고르세요.${source41PlaneSvg({ panels: [{ cells: wrong, title: "잘못 돌린 결과" }], size, kind: "wrong-turn", columns: 1, ariaLabel: "잘못 돌린 결과" })}${source41PlaneSvg({ panels, size, kind: "recover-and-reflect-choices", columns: 4, ariaLabel: "처음 도형과 바른 결과 보기" })}${evidence}`;
+        const solution = `잘못 돌린 도형을 시계 방향으로 90° 되돌리면 처음 도형이 됩니다. 그 도형을 좌우로 뒤집은 보기는 ${answer}입니다.${source41PlaneSvg({ panels: [{ cells: original, title: "되찾은 처음 도형" }, { cells: correct, title: "좌우로 뒤집은 결과" }], size, kind: "recover-and-reflect-result", columns: 2, ariaLabel: "되찾은 처음 도형과 바르게 뒤집은 결과" })}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const size = 8 + level;
+        const start = [[1, 1], [3, 1], [2, 2], [1, 2]];
+        const dx = 4 + level;
+        const dy = 2;
+        const correct = start.map(([x, y]) => [x + dx, y + dy]);
+        const candidates = [
+          correct,
+          start.map(([x, y]) => [x + dx, y + dy - 1]),
+          start.map(([x, y]) => [x + dx - 1, y + dy]),
+          start.map(([x, y]) => [x + dx - 1, y + dy - 1])
+        ];
+        if (source41PlaneUniqueBy(candidates, source41PlanePolygonKey).length !== 4 || !candidates.every(vertices => source41PlaneInBounds(vertices, size, true))) throw new Error("다각형 보기 네 개가 격자 안에서 모두 달라야 합니다.");
+        const choices = shuffle(rng, candidates);
+        const answer = answerIndex(choices, correct, source41PlanePolygonKey);
+        const payload = { variant, level, size, start, dx, dy, correct, choices, sourceAnchor, complexity: complexityBase + (dx + dy) * 1000 };
+        const evidence = source41Evidence("polygon-slide-right-and-down", payload, answer);
+        const prompt = `도형을 오른쪽으로 ${dx}칸, 아래쪽으로 ${dy}칸 밀었습니다. 옮긴 뒤의 모양을 고르세요.${source41PlaneSvg({ panels: [{ vertices: start, title: "처음" }], size, kind: "polygon-start", columns: 1, vertex: true, ariaLabel: "처음 다각형" })}${source41PlaneChoiceSvg({ choices, size, kind: "polygon-slide-choices", vertex: true, ariaLabel: "옮긴 다각형 보기" })}${evidence}`;
+        const solution = `모든 꼭짓점을 오른쪽 ${dx}칸, 아래쪽 ${dy}칸씩 똑같이 옮깁니다. 알맞은 모양은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const answer = 3;
+        const payload = { variant, level, letters: sourceAnchor.letters, symmetric: sourceAnchor.symmetric, sourceAnchor, complexity: complexityBase + (level + 1) * 900 };
+        const evidence = source41Evidence("fixed-vector-vertical-symmetry-glyphs", payload, answer);
+        const prompt = `아래 알파벳 모양을 세로선을 기준으로 좌우로 뒤집었을 때 처음과 같은 모양은 모두 몇 개인지 구하세요.${source41PlaneGlyphSvg()}${evidence}`;
+        const solution = `세로선을 기준으로 양쪽 모양이 같은 것은 M, O, T입니다. 따라서 모두 ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const rows = 4 + Math.min(1, level);
+        const cols = 5 + level;
+        const templates = [
+          [[0, 3], [1, 0], [2, 1], [3, 2]],
+          [[0, rows - 1], [2, 1], [cols - 3, 2], [cols - 2, rows - 2], [1, 0]],
+          [[1, rows - 1], [2, 1], [cols - 3, 2], [cols - 2, rows - 2], [0, 1], [cols - 1, rows - 2]]
+        ];
+        const initial = templates[level];
+        const closure = source41PlaneClosure(initial, rows, cols);
+        const answer = closure.length - initial.length;
+        if (answer <= 0 || closure.length === initial.length || !source41PlaneInRect(initial, rows, cols) || !source41PlaneInRect(closure, rows, cols)) throw new Error("대칭 색칠의 모든 칸이 직사각형 격자 안에서 하나로 정해져야 합니다.");
+        const payload = { variant, level, rows, cols, initial, closure, answer, sourceAnchor, complexity: complexityBase + rows * cols * 100 + answer };
+        const evidence = source41Evidence("horizontal-and-vertical-symmetry-closure", payload, answer);
+        const initialKeys = new Set(initial.map(point => point.join(",")));
+        const added = closure.filter(point => !initialKeys.has(point.join(",")));
+        const prompt = `색칠한 칸에만 색을 더 칠하여, 위아래로 뒤집어도 같고 좌우로 뒤집어도 같은 무늬를 만들려고 합니다. 가장 적게 더 칠해야 하는 칸 수를 구하세요.${source41PlaneSvg({ panels: [{ cells: initial, dark: initial, title: "처음 색칠" }], rows, cols, kind: "symmetry-closure", columns: 1, ariaLabel: "처음 색칠한 격자" })}${evidence}`;
+        const solution = `각 색칠한 칸은 좌우와 위아래로 뒤집은 자리에도 같은 색이 있어야 합니다. 필요한 모든 자리는 ${closure.length}칸이고 이미 ${initial.length}칸이 색칠되어 있으므로 ${closure.length}-${initial.length}=${answer}칸을 더 칠하면 됩니다.${source41PlaneSvg({ panels: [{ cells: closure, dark: initial, light: added, title: "완성한 무늬" }], rows, cols, kind: "symmetry-closure-result", columns: 1, ariaLabel: "상하좌우 대칭을 완성한 격자" })}`;
+        return result(prompt, answer, solution);
+      }
+
+      const size = 4 + level;
+      const wrong = level === 0 ? sourceAnchor.wrongVertices.map(point => [...point]) : [[0, size], [size, size], [size, 1], [Math.floor(size / 2), 0], [0, size - 1]];
+      const correct = source41PlaneRotateVertices(wrong, size, 2);
+      const variants = [correct, source41PlaneReflectVertices(wrong, size, "vertical"), source41PlaneReflectVertices(wrong, size, "horizontal"), source41PlaneRotateVertices(wrong, size, 1)];
+      if (source41PlaneUniqueBy(variants, source41PlanePolygonKey).length !== 4 || !variants.every(vertices => source41PlaneInBounds(vertices, size, true))) throw new Error("뒤집기 보기 네 개가 격자 안에서 모두 달라야 합니다.");
+      const choices = shuffle(rng, variants);
+      const answer = answerIndex(choices, correct, source41PlanePolygonKey);
+      const payload = { variant, level, size, wrong, correct, choices, sourceAnchor, complexity: complexityBase + size * 1000 + wrong.length * 100 };
+      const evidence = source41Evidence("wrong-left-reflection-then-top-reflection", payload, answer);
+      const prompt = `아래 도형은 처음 도형을 좌우로 잘못 뒤집은 결과입니다. 처음 도형은 위아래로 뒤집어야 했습니다. 바르게 뒤집은 결과를 고르세요.${source41PlaneSvg({ panels: [{ vertices: wrong, title: "잘못 뒤집은 결과", guide: "vertical" }], size, kind: "wrong-left-reflection", columns: 1, vertex: true, ariaLabel: "잘못 뒤집은 도형" })}${source41PlaneChoiceSvg({ choices, size, kind: "correct-top-reflection-choices", vertex: true, ariaLabel: "바른 뒤집기 결과 보기" })}${evidence}`;
+      const solution = `잘못 뒤집은 결과를 좌우로 한 번 더 뒤집어 처음 도형을 되찾고, 위아래로 뒤집습니다. 두 뒤집기를 이어 하면 180° 돌린 것과 같으므로 ${answer}입니다.`;
+      return result(prompt, answer, solution);
     },
     planeTransform({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

@@ -2821,7 +2821,7 @@
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "세 가지 이동 뒤의 도형 그리기",
+      "typeLabel": "세 가지 이동 뒤의 도형 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -2849,7 +2849,7 @@
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "도형을 같은 방향으로 여러 번 민 결과 그리기",
+      "typeLabel": "차례로 민 세 위치 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },

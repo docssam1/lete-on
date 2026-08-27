@@ -355,7 +355,7 @@
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
-        <p>${renderMathNotation(escapeHtml(question.solution))}</p>
+        <p>${renderMathNotation(question.solution)}</p>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
   }

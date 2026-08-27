@@ -874,7 +874,7 @@
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "세 가지 이동 뒤의 도형 그리기",
+      "typeLabel": "세 가지 이동 뒤의 도형 찾기",
       "sourceVerified": true
     },
     {
@@ -900,7 +900,7 @@
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 50,
       "sourcePrintedPage": 46,
-      "typeLabel": "연속 평행이동 결과 그리기",
+      "typeLabel": "차례로 민 세 위치 찾기",
       "sourceVerified": true
     },
     {
