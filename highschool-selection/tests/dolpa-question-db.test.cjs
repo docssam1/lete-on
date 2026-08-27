@@ -37,6 +37,8 @@ test("돌파 문항 DB는 문제 원문 없이 출처·유형·후속 검수 상
   assert.equal(database.summary.typeCount, 1);
   assert.equal(database.questions[0].difficulty.status, "pending");
   assert.equal(database.questions[0].answerCheck.status, "pending");
+  assert.equal(database.questions[0].classification.majorUnit, "함수");
+  assert.equal(database.questions[0].classification.minorUnit, "일차함수");
   assert.deepEqual(database.profileCatalog.map(profile => profile.profileId), [
     "DP_STANDARD", "SM_STANDARD", "WM_BASIC", "WM_DUAL", "ED_CUMULATIVE", "SH_SELECTION", "DG_ADVANCED"
   ]);

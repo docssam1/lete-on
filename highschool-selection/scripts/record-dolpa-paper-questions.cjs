@@ -44,6 +44,8 @@ function normalizeManifest(manifest, ledger) {
         semester,
         domain: ledgerCore.domainFor(unit),
         unit,
+        majorUnit: ledgerCore.domainFor(unit),
+        minorUnit: unit,
         typeId: ledgerCore.stableTypeId(semester, unit, typeLabel),
         typeLabel,
         status: "verified",

@@ -26,6 +26,8 @@
 
 시험형은 `돌파형`, `생수형`, `원수학 기본형`, `원수학 듀얼형`, `이든형`, `황소형`, `깊은생각형` 일곱 가지로 나눕니다. 원수학 기본형과 듀얼형은 같은 학원이라도 시험 범위와 구성 목적이 다르므로 서로 다른 프로필입니다. 돌파 원본 문항은 돌파형만 `source_verified`로 시작하고, 다른 시험형은 범위·난이도·문항 위치를 검수하기 전까지 `candidate`로 둡니다. 다른 시험형에 실제로 쓸 수 있다고 확인한 뒤에만 `approved`로 바꿉니다.
 
+문제은행 화면에서 시험형을 체크하면 `source_verified` 또는 `approved`인 문항만 기본 결과에 나옵니다. `candidate`는 관리자 검수 화면에서만 별도로 볼 수 있습니다. 결과는 학기 → 대단원 → 소단원 → 세부 유형 → 원본 시험지 문항 번호 순으로 정렬합니다.
+
 ## 실행 순서
 
 ```powershell
@@ -34,6 +36,7 @@ node scripts/audit-dolpa-work-ledger.cjs <ledger>
 node scripts/plan-dolpa-next-work.cjs <ledger> next 20
 node scripts/build-dolpa-question-db.cjs <ledger> <question-db>
 node scripts/audit-dolpa-question-db.cjs <question-db>
+node scripts/select-question-bank.cjs <question-db> DP_STANDARD
 ```
 
 시험지 하나를 열었을 때 표지부터 난이도까지 확인 가능한 항목을 한 번에 검수하고, 아래 형식의 비공개 manifest를 기록합니다.

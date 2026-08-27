@@ -51,6 +51,8 @@ function fromLedgerQuestion(question) {
       semester: question.curriculum.semester,
       domain: question.curriculum.domain,
       unit: question.curriculum.unit,
+      majorUnit: question.curriculum.domain,
+      minorUnit: question.curriculum.unit,
       typeId: question.type.typeId,
       typeLabel: question.type.label,
       status: question.classificationStatus,
@@ -103,13 +105,22 @@ function rebuildTypeCatalog(questions) {
         semester: question.classification.semester,
         domain: question.classification.domain,
         unit: question.classification.unit,
+        majorUnit: question.classification.majorUnit,
+        minorUnit: question.classification.minorUnit,
         label: question.classification.typeLabel,
         questionIds: []
       });
     }
     const type = map.get(key);
-    const expected = [type.semester, type.domain, type.unit, type.label].join("|");
-    const actual = [question.classification.semester, question.classification.domain, question.classification.unit, question.classification.typeLabel].join("|");
+    const expected = [type.semester, type.domain, type.unit, type.majorUnit, type.minorUnit, type.label].join("|");
+    const actual = [
+      question.classification.semester,
+      question.classification.domain,
+      question.classification.unit,
+      question.classification.majorUnit,
+      question.classification.minorUnit,
+      question.classification.typeLabel
+    ].join("|");
     if (expected !== actual) throw new Error(`같은 유형 ID에 서로 다른 분류가 연결됐습니다: ${key}`);
     type.questionIds.push(question.questionId);
   });
