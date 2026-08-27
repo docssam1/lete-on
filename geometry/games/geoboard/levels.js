@@ -8,14 +8,14 @@
      a PEG LATTICE: a vertex is a peg, an edge is a straight rubber band between two
      pegs, and nothing exists between pegs. That is a different world from the cell
      grid Mirror Manor uses, which is why none of its code is reused.
-   - docs/12_SOURCE_BACKED_FUTURE_GAMES.md section 5 fixes five levels. Only 1 and 2
-     are implemented. Levels 3-5 are declared here with `ready:false` and an EMPTY
-     pool, exactly like Mirror Manor does, so shipping them later is pure data work:
-     author a pool, flip the flag. No engine or validator restructuring.
+   - docs/12_SOURCE_BACKED_FUTURE_GAMES.md section 5 fixes five levels. All five
+     are implemented. Level 5 uses source-backed compound line figures, but every
+     answer is derived from the drawn segments instead of being typed by hand.
    - The pure helpers `isClosed`, `hasSelfIntersection`, `vertexCount`, `edgeCount`
-     and `polygonArea` are exported so .selftest.mjs can re-check them. Levels 3-5
+   - `polygonArea` and the other pure helpers are exported so .selftest.mjs can
+     re-check them. Levels 3-5
      use separate square-lattice, triangular-lattice, and compound-figure
-     enumerators; they stay locked until those enumerators prove every answer.
+     enumerators, and each enumerator is checked again by the self-test.
 
    THE ACCEPTANCE RULE, stated once and enforced everywhere:
 
@@ -305,6 +305,158 @@ function makeCountProblem(level, kind, index, boardSize, questionMode, value, ch
   };
 }
 
+/* ---------------------------------------------------- compound-figure maths */
+
+function combinations(items, size, start = 0, prefix = [], output = []) {
+  if (prefix.length === size) {
+    output.push(prefix);
+    return output;
+  }
+  for (let index = start; index <= items.length - (size - prefix.length); index += 1) {
+    combinations(items, size, index + 1, [...prefix, items[index]], output);
+  }
+  return output;
+}
+
+function segmentParameter(point, a, b) {
+  return Math.abs(b[0] - a[0]) >= Math.abs(b[1] - a[1])
+    ? (point[0] - a[0]) / (b[0] - a[0])
+    : (point[1] - a[1]) / (b[1] - a[1]);
+}
+
+/** True when collinear drawn segments cover the whole straight side a-b. */
+export function hasDrawnSide(a, b, segments) {
+  if (samePoint(a, b)) return false;
+  const intervals = [];
+  segments.forEach(([c, d]) => {
+    if (cross(a, b, c) !== 0 || cross(a, b, d) !== 0) return;
+    let start = segmentParameter(c, a, b);
+    let end = segmentParameter(d, a, b);
+    if (start > end) [start, end] = [end, start];
+    start = Math.max(0, start);
+    end = Math.min(1, end);
+    if (end > start) intervals.push([start, end]);
+  });
+  intervals.sort((left, right) => left[0] - right[0]);
+  let coveredUntil = 0;
+  for (const [start, end] of intervals) {
+    if (start > coveredUntil + 1e-9) return false;
+    coveredUntil = Math.max(coveredUntil, end);
+    if (coveredUntil >= 1 - 1e-9) return true;
+  }
+  return false;
+}
+
+const properIntersection = (a, b, c, d) => {
+  const abC = cross(a, b, c);
+  const abD = cross(a, b, d);
+  const cdA = cross(c, d, a);
+  const cdB = cross(c, d, b);
+  return abC * abD < 0 && cdA * cdB < 0;
+};
+
+function quadrilateralCycles(points) {
+  const [first, ...rest] = points;
+  const cycles = new Map();
+  rest.forEach((second) => rest.forEach((third) => rest.forEach((fourth) => {
+    if (new Set([pointKey(second), pointKey(third), pointKey(fourth)]).size !== 3) return;
+    const ring = [first, second, third, fourth];
+    const key = ring.map((point, index) => {
+      const next = ring[(index + 1) % ring.length];
+      return [pointKey(point), pointKey(next)].sort().join("-");
+    }).sort().join("|");
+    cycles.set(key, ring);
+  })));
+  return [...cycles.entries()].map(([key, ring]) => ({ key, ring }));
+}
+
+/** Enumerate every triangle and simple quadrilateral visible in a line figure. */
+export function enumerateCompoundShapes(points, segments) {
+  const triangles = combinations(points, 3).flatMap((vertices) => {
+    if (cross(vertices[0], vertices[1], vertices[2]) === 0) return [];
+    const visible = vertices.every((point, index) => hasDrawnSide(point, vertices[(index + 1) % 3], segments));
+    return visible ? [{ key: vertices.map(pointKey).sort().join("|"), vertices: vertices.map((point) => [...point]) }] : [];
+  });
+
+  const quadrilaterals = [];
+  combinations(points, 4).forEach((vertices) => {
+    quadrilateralCycles(vertices).forEach(({ key, ring }) => {
+      if (ring.some((point, index) => !hasDrawnSide(point, ring[(index + 1) % 4], segments))) return;
+      if (ring.some((point, index) => cross(point, ring[(index + 1) % 4], ring[(index + 2) % 4]) === 0)) return;
+      if (properIntersection(ring[0], ring[1], ring[2], ring[3]) || properIntersection(ring[1], ring[2], ring[3], ring[0])) return;
+      quadrilaterals.push({ key, vertices: ring.map((point) => [...point]) });
+    });
+  });
+  return { triangles, quadrilaterals };
+}
+
+const p = (id, x, y) => ({ id, point: [x, y] });
+const PAGE_42_POINTS = [
+  p("A", 0, 0), p("B", 1, 0), p("C", 2, 0),
+  p("D", 0, 1), p("R", 3, 1),
+  p("G", 0, 2), p("H", 1, 2), p("I", 2, 2)
+];
+const PAGE_42_BASE = [["A", "B"], ["B", "C"], ["A", "D"], ["D", "G"], ["G", "H"], ["H", "I"], ["C", "R"], ["R", "I"]];
+
+const PAGE_50_POINTS = [
+  p("L", 0, 1),
+  p("A", 1, 0), p("B", 2, 0), p("C", 3, 0), p("R", 4, 1),
+  p("D", 1, 2), p("E", 2, 2), p("F", 3, 2)
+];
+const PAGE_50_BASE = [["L", "A"], ["L", "D"], ["A", "B"], ["B", "C"], ["C", "R"], ["R", "F"], ["D", "E"], ["E", "F"]];
+
+// Visual transcription of the five printed diagrams. Coordinates, marked dots,
+// base lines and added bold lines are separate evidence. A lattice crossing that
+// has no printed dot is deliberately absent from `points` and is not a vertex.
+const level5Specs = [
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (1)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "B"], ["G", "C"], ["C", "I"]], expected: { triangles: 4, quadrilaterals: 3 } },
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (2)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "B"], ["D", "R"], ["D", "H"]], expected: { triangles: 2, quadrilaterals: 4 } },
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (3)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "C"], ["D", "R"], ["G", "R"]], expected: { triangles: 4, quadrilaterals: 4 } },
+  { sourceLocator: "RAY B1-2 PDF p.46 / printed p.50 / (1)", points: PAGE_50_POINTS, base: PAGE_50_BASE, added: [["A", "D"], ["D", "C"]], expected: { triangles: 2, quadrilaterals: 2 } },
+  { sourceLocator: "RAY B1-2 PDF p.46 / printed p.50 / (2)", points: PAGE_50_POINTS, base: PAGE_50_BASE, added: [["D", "C"], ["E", "C"]], expected: { triangles: 1, quadrilaterals: 3 } }
+];
+
+function answerChoices(answer, index, offset) {
+  const distractors = answer === 1 ? [2, 3] : [answer - 1, answer + 1];
+  const values = [answer, ...distractors];
+  const shift = (index + offset) % values.length;
+  return [...values.slice(shift), ...values.slice(0, shift)];
+}
+
+function makeCompoundProblem(index, spec) {
+  const pointMap = new Map(spec.points.map(({ id, point }) => [id, point]));
+  const toSegments = (edges) => edges.map(([from, to]) => [[...pointMap.get(from)], [...pointMap.get(to)]]);
+  const points = spec.points.map(({ point }) => [...point]);
+  const baseSegments = toSegments(spec.base);
+  const addedSegments = toSegments(spec.added);
+  const segments = [...baseSegments, ...addedSegments];
+  const found = enumerateCompoundShapes(points, segments);
+  if (found.triangles.length !== spec.expected.triangles || found.quadrilaterals.length !== spec.expected.quadrilaterals) {
+    throw new Error(`Geoboard Studio: source transcript count drifted at ${spec.sourceLocator}.`);
+  }
+  const triangleCount = spec.expected.triangles;
+  const quadrilateralCount = spec.expected.quadrilaterals;
+  return {
+    id: `geoboard-l5-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level: 5,
+    kind: "compound-count",
+    boardType: "compound",
+    grid: { cols: 4, rows: 4 },
+    points,
+    baseSegments,
+    addedSegments,
+    segments,
+    triangleCount,
+    quadrilateralCount,
+    triangleChoices: answerChoices(triangleCount, index, 0),
+    quadrilateralChoices: answerChoices(quadrilateralCount, index, 1),
+    shapeNameKey: "shapeCompound",
+    sourceLocator: spec.sourceLocator,
+    validation: { triangleSolutionCount: 1, quadrilateralSolutionCount: 1, convexOnly: false, visuallyTranscribed: true }
+  };
+}
+
 /**
  * LEVEL 1 — 점 두 개를 이어 선분과 열린 모양 만들기.
  * Segments first, then two-edge bends, then three-edge open paths. Every entry is
@@ -372,16 +524,15 @@ export const levelMeta = [
   { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
   { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10 },
   { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10 },
-  // Level 5 stays locked until its source figure pools and hidden-shape answers
-  // have been independently enumerated.
-  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: false }
+  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 5 }
 ];
 
 const pools = {
   1: level1Specs.map((vertices, index) => makeProblem(1, "open", index, vertices)),
   2: level2Specs.map((vertices, index) => makeProblem(2, "closed", index, vertices)),
   3: level3Specs.map(([size, mode, value, choices], index) => makeCountProblem(3, "square-count", index, size, mode, value, choices)),
-  4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices))
+  4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices)),
+  5: level5Specs.map((spec, index) => makeCompoundProblem(index, spec))
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -451,6 +602,13 @@ export function validateLevels() {
         validateCountProblem(problem);
         return;
       }
+      if (problem.kind === "compound-count") {
+        validateCompoundProblem(problem);
+        const key = compoundGraphKey(problem);
+        assert(!canonical.has(key), `${label} is a rotation/reflection of ${canonical.get(key)}.`);
+        canonical.set(key, label);
+        return;
+      }
 
       assert(problem.grid.cols === GRID.cols && problem.grid.rows === GRID.rows, `${label} uses an unexpected board size.`);
 
@@ -471,6 +629,62 @@ export function validateLevels() {
     }
   });
   return true;
+}
+
+function compoundGraphKey(problem) {
+  const transforms = [
+    ([x, y]) => [x, y], ([x, y]) => [-y, x], ([x, y]) => [-x, -y], ([x, y]) => [y, -x],
+    ([x, y]) => [-x, y], ([x, y]) => [y, x], ([x, y]) => [x, -y], ([x, y]) => [-y, -x]
+  ];
+  return transforms.map((transform) => {
+    const transformed = problem.segments.map(([a, b]) => [transform(a), transform(b)]);
+    const all = transformed.flat();
+    const minX = Math.min(...all.map(([x]) => x));
+    const minY = Math.min(...all.map(([, y]) => y));
+    return transformed.map(([a, b]) => {
+      const first = pointKey([a[0] - minX, a[1] - minY]);
+      const second = pointKey([b[0] - minX, b[1] - minY]);
+      return [first, second].sort().join("-");
+    }).sort().join("|");
+  }).sort()[0];
+}
+
+function validateCompoundProblem(problem) {
+  const label = problem.id;
+  assert(problem.boardType === "compound", `${label} must use the compound board renderer.`);
+  assert(problem.validation?.visuallyTranscribed === true, `${label} must be transcribed from the printed diagram.`);
+  assert(/^RAY B1-2 PDF p\.(38|46) /.test(problem.sourceLocator), `${label} needs an exact private-source locator.`);
+  assert(problem.points.length >= 7 && problem.points.length <= 12, `${label} needs a readable number of marked points.`);
+  assert(problem.segments.length >= 10 && problem.segments.length <= 18, `${label} needs a readable number of drawn segments.`);
+  assert(problem.baseSegments.length === 8, `${label} must preserve the eight printed base segments.`);
+  assert(problem.addedSegments.length === (problem.sourceLocator.includes("p.38") ? 3 : 2), `${label} has the wrong number of added bold lines.`);
+  assert(problem.segments.length === problem.baseSegments.length + problem.addedSegments.length, `${label} base and added line groups drifted.`);
+
+  const pointIds = new Set(problem.points.map(pointKey));
+  assert(pointIds.size === problem.points.length, `${label} repeats a graph point.`);
+  const edgeIds = new Set();
+  problem.segments.forEach(([a, b], index) => {
+    assert(pointIds.has(pointKey(a)) && pointIds.has(pointKey(b)), `${label} segment ${index} ends at an unmarked point.`);
+    assert(!samePoint(a, b), `${label} segment ${index} has zero length.`);
+    const id = [pointKey(a), pointKey(b)].sort().join("-");
+    assert(!edgeIds.has(id), `${label} repeats segment ${id}.`);
+    edgeIds.add(id);
+    problem.points.forEach((point) => {
+      if (samePoint(point, a) || samePoint(point, b)) return;
+      assert(!pointOnSegment(point, a, b), `${label} segment ${id} passes through marked point ${pointKey(point)} without splitting.`);
+    });
+  });
+  problem.segments.forEach(([a, b], first) => problem.segments.slice(first + 1).forEach(([c, d], offset) => {
+    assert(!properIntersection(a, b, c, d), `${label} segments ${first} and ${first + offset + 1} cross at an unmarked point.`);
+  }));
+
+  const found = enumerateCompoundShapes(problem.points, problem.segments);
+  assert(found.triangles.length === problem.triangleCount && problem.triangleCount > 0, `${label} triangle answer drifted.`);
+  assert(found.quadrilaterals.length === problem.quadrilateralCount && problem.quadrilateralCount > 0, `${label} quadrilateral answer drifted.`);
+  assert(problem.triangleChoices.length === 3 && new Set(problem.triangleChoices).size === 3, `${label} needs three distinct triangle choices.`);
+  assert(problem.quadrilateralChoices.length === 3 && new Set(problem.quadrilateralChoices).size === 3, `${label} needs three distinct quadrilateral choices.`);
+  assert(problem.triangleChoices.filter((value) => value === problem.triangleCount).length === 1, `${label} triangle choices need one answer.`);
+  assert(problem.quadrilateralChoices.filter((value) => value === problem.quadrilateralCount).length === 1, `${label} quadrilateral choices need one answer.`);
 }
 
 function validateCountProblem(problem) {
