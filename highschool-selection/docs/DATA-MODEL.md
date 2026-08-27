@@ -68,6 +68,37 @@ answerVerified, classificationEvidence, reviewStatus
 generatorPolicyId, figureAuditPolicyId
 ```
 
+## ProjectQuestionBankIndex
+
+학원별 원본 DB를 서로 덮어쓰지 않고 프로젝트 전체에서 함께 검색하기 위한 비공개 통합 인덱스입니다.
+
+```text
+SourceBank
+  sourceBankId, academyId, label, itemCount, status
+
+SourceOccurrence
+  itemId, sourceBankId, sourceItemId, sourceTypeId
+  classificationStatus, detailPrecision
+  conceptFamilyId, conceptStatus
+  academyFits[] = profileId + status
+
+ConceptFamily
+  conceptFamilyId
+  curriculum = course + semester + majorUnit + minorUnit
+  canonicalLabel, solutionArchetype
+  sourceTypes[] = sourceBankId + sourceTypeId + sourceLabel + status
+  mergeStatus = single_source | exact_verified
+
+OverlapCandidate
+  candidateId, leftConceptFamilyId, rightConceptFamilyId
+  score?, proposedRelation?, reason, evidence[]
+  status = review_required
+```
+
+기존 `DP-TYP-*`, `typ-sh-*`, `M1-*`, `CM1.*` 유형 ID는 원본 검수 이력을 보존하기 위해 삭제하거나 바꾸지 않습니다. 공통 개념은 별도 `CPT-*` ID에 연결합니다. 같은 교육과정 위치와 같은 세부 유형만 자동으로 묶고, 이름이 비슷하거나 같은 단원에 있다는 이유만으로 합치지 않습니다.
+
+원수학처럼 단원 수준까지만 확인된 분류는 `unit_only`, 황소 중등처럼 교육과정 분류 전인 문항은 `pending`으로 둡니다. 이 상태의 문항은 세부 유형 통계나 자동 시험 조립에 사용하지 않습니다. 선수 개념과 연계 개념은 병합하지 않고 별도 관계로 연결하며, 학원형은 공통 유형 ID가 아니라 `academyFits`에서 관리합니다.
+
 `pageCount`는 학생에게 보여 주는 문제 페이지 수입니다. 원본 전체 쪽수는 `sourcePageCount`, 답·풀이 비공개 쪽수는 `privateAnswerPageCount`로 분리합니다. 답안 값과 풀이 내용은 공개 카탈로그에 두지 않습니다.
 
 `sourceRole`은 출제 근거의 성격이고 `deliveryRole`은 판매·서비스 형태입니다. 실제 원본을 감사해 구성한 시험도 학생에게는 `first-sale-mock`과 공통 `formProfile`로 제공하며, 화면이나 인쇄물에 `원본형`을 상품명처럼 노출하지 않습니다.
