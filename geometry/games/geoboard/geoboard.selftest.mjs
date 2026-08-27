@@ -1,5 +1,6 @@
 import {
   levels, readyLevels, validateLevels, targetPoints, acceptsAnswer, allPlacements,
+  acceptsPartitionAnswer, partitionAnswerKey,
   isClosed, vertexCount, edgeCount, pointOnSegment, segmentsIntersect,
   hasSelfIntersection, polygonArea, answerKey
 } from "./levels.js";
@@ -14,14 +15,77 @@ function assert(condition, message) {
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 4, "levels 1 through 4 must be playable in this release");
+assert(readyLevels.length === 5, "all five levels must be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
 const expectedProblemCount = readyLevels.reduce((total, level) => total + level.problemCount, 0);
 assert(ids.length === expectedProblemCount && new Set(ids).size === expectedProblemCount, `the ${expectedProblemCount} ready problems need unique ids`);
 
+function chordKey(chord) {
+  return [...chord].sort((a, b) => a - b).join("-");
+}
+
+function independentPartitionKeys(problem) {
+  const n = problem.outline.length;
+  const diagonals = [];
+  for (let a = 0; a < n; a += 1) {
+    for (let b = a + 1; b < n; b += 1) {
+      const distance = b - a;
+      if (distance !== 1 && distance !== n - 1) diagonals.push([a, b]);
+    }
+  }
+  const groups = problem.lineTotal === 1
+    ? diagonals.map((line) => [line])
+    : diagonals.flatMap((first, i) => diagonals.slice(i + 1).map((second) => [first, second]));
+
+  function chordsCross([a, b], [c, d]) {
+    if ([a, b].includes(c) || [a, b].includes(d)) return false;
+    return ((a < c && c < b) !== (a < d && d < b));
+  }
+
+  function splitFaces(chords) {
+    let faces = [Array.from({ length: n }, (_, index) => index)];
+    for (const [a, b] of chords) {
+      const owner = faces.findIndex((face) => {
+        const ia = face.indexOf(a);
+        const ib = face.indexOf(b);
+        if (ia < 0 || ib < 0) return false;
+        const distance = Math.abs(ia - ib);
+        return distance > 1 && distance < face.length - 1;
+      });
+      if (owner < 0) return [];
+      const face = faces[owner];
+      const left = Math.min(face.indexOf(a), face.indexOf(b));
+      const right = Math.max(face.indexOf(a), face.indexOf(b));
+      faces.splice(owner, 1, face.slice(left, right + 1), [...face.slice(right), ...face.slice(0, left + 1)]);
+    }
+    return faces;
+  }
+
+  return groups.filter((chords) => {
+    if (chords.length === 2 && chordsCross(chords[0], chords[1])) return false;
+    const faces = splitFaces(chords);
+    return faces.length === problem.lineTotal + 1
+      && faces.filter((face) => face.length === 3).length === problem.targetTriangles
+      && faces.filter((face) => face.length === 4).length === problem.targetQuadrilaterals
+      && faces.every((face) => face.length === 3 || face.length === 4);
+  }).map((chords) => chords.map((chord) => chordKey(chord)).sort().join(" ")).sort();
+}
+
 for (const level of readyLevels) {
   for (const problem of level.problems) {
+    if (problem.kind === "partition") {
+      const independent = independentPartitionKeys(problem);
+      const shipped = [...problem.acceptedSolutionKeys].sort();
+      assert(JSON.stringify(independent) === JSON.stringify(shipped), `${problem.id} partition solutions disagree with independent enumeration`);
+      assert(independent.length > 0, `${problem.id} needs at least one accepted drawing`);
+      for (const solution of problem.acceptedSolutions) {
+        assert(solution.length === problem.lineTotal, `${problem.id} accepted a drawing with the wrong line count`);
+        assert(acceptsPartitionAnswer(problem, solution), `${problem.id} rejects an accepted partition`);
+        assert(problem.acceptedSolutionKeys.includes(partitionAnswerKey(solution)), `${problem.id} solution key drifted`);
+      }
+      continue;
+    }
     if (problem.kind === "square-count" || problem.kind === "triangle-count") {
       const summary = problem.kind === "square-count"
         ? squareBoardSummary(problem.boardSize).squares
