@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 43,
+  "verifiedMappings": 53,
   "items": [
     {
       "unit": 1,
@@ -658,13 +658,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
-      "typeLabel": "화폐를 쌓은 높이와 단위 환산",
+      "typeLabel": "1000원짜리 지폐를 쌓은 두께를 km로 바꾸기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -676,13 +677,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
-      "typeLabel": "권종별 지폐 수 차",
+      "typeLabel": "두 종류의 돈으로 바꿀 때 가장 많은 장수와 적은 장수의 차",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -694,13 +696,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
-      "typeLabel": "수 범위에 쓰인 0의 개수",
+      "typeLabel": "이어 쓴 자연수에서 숫자 0이 나온 횟수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -712,13 +715,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
-      "typeLabel": "이어 쓴 수의 끝 세 자리",
+      "typeLabel": "1부터 이어 쓴 수의 마지막 세 자리 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "largeNumberApplication",
-      "variant": 1,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 3,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -731,13 +734,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-4",
       "sourcePdfPage": 14,
       "sourcePrintedPage": 10,
-      "typeLabel": "동전 개수 비와 합계",
+      "typeLabel": "동전 수가 몇 배인지와 모은 돈으로 500원짜리 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -749,13 +753,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "단위 환산과 일정한 생산량",
+      "typeLabel": "m와 km로 나타낸 리본 길이에서 앞으로 만들 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -767,13 +772,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "수를 이어 썼을 때 특정 숫자가 쓰인 횟수 세기",
+      "typeLabel": "1부터 이어 쓴 수에서 숫자 1과 9가 나온 횟수 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -785,13 +791,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "일정 증가액의 목표 연도",
+      "typeLabel": "해마다 같은 금액이 늘 때 처음 기준을 넘는 해 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -803,13 +810,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "동전 가치와 쌓은 높이",
+      "typeLabel": "10원짜리 동전을 쌓은 높이를 km로 바꾸기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -821,13 +829,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "월별 지급액의 기간",
+      "typeLabel": "여러 사람이 매달 저금해 목표 금액을 모으는 기간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -839,13 +848,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 15,
       "sourcePrintedPage": 11,
-      "typeLabel": "매출액의 최소 지폐 교환",
+      "typeLabel": "여러 종류의 돈을 가장 적은 장수로 바꾸기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberFour",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,

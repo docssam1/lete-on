@@ -3090,6 +3090,260 @@
       const solution = `이웃한 두 수의 차는 ${format(step)}입니다. 첫 수에서 ${source41FormatInteger(targetIndex - 1)}번 뛰므로 ${format(start)} + ${format(step)} × ${source41FormatInteger(targetIndex - 1)} = ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
+    source41LargeNumberFour({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수의 활용 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatLargeValue;
+      const formatWithUnit = (value, unit) => {
+        const text = format(value);
+        return `${text}${/[가-힣]/.test(text) ? " " : ""}${unit}`;
+      };
+      const formatWon = value => formatWithUnit(value, "원");
+      const formatDollars = value => formatWithUnit(value, "달러");
+      const countDigitAtPlaceUpTo = (limit, targetDigit, factor) => {
+        if (limit <= 0 || factor > limit) return 0;
+        const higher = Math.floor(limit / (factor * 10));
+        const current = Math.floor(limit / factor) % 10;
+        const lower = limit % factor;
+        if (targetDigit === 0) {
+          if (higher === 0) return 0;
+          return (higher - 1) * factor + (current === 0 ? lower + 1 : factor);
+        }
+        return higher * factor + (current > targetDigit ? factor : current === targetDigit ? lower + 1 : 0);
+      };
+      const countDigitUpTo = (limit, targetDigit) => {
+        let total = 0;
+        for (let factor = 1; factor <= limit; factor *= 10) total += countDigitAtPlaceUpTo(limit, targetDigit, factor);
+        return total;
+      };
+      const countDigitInRange = (start, end, digit) => countDigitUpTo(end, digit) - countDigitUpTo(start - 1, digit);
+      const digitsWrittenThrough = end => {
+        let total = 0;
+        let first = 1;
+        let width = 1;
+        while (first <= end) {
+          const last = Math.min(end, first * 10 - 1);
+          total += (last - first + 1) * width;
+          first *= 10;
+          width += 1;
+        }
+        return total;
+      };
+      const moneyTable = rows => `<table class="problem-table source41-money-table"><thead><tr><th>돈의 종류</th><th>개수</th></tr></thead><tbody>${rows.map(([denomination, count]) => `<tr><th>${source41FormatInteger(denomination)}원짜리</th><td>${typeof count === "number" || typeof count === "bigint" ? source41FormatInteger(count) : count}개</td></tr>`).join("")}</tbody></table>`;
+      const concatPreview = end => `<div class="source41-concat-preview" aria-label="1부터 ${source41FormatInteger(end)}까지 자연수를 차례로 이어 쓴 모습">12345678910111213<span aria-hidden="true">…</span>${source41FormatInteger(end - 1)}${source41FormatInteger(end)}</div>`;
+
+      if (variant === 0) {
+        const thickness = pick(rng, [[8, 10], [11, 12, 15], [14, 16, 18]][level]);
+        const amountFactor = int(rng, [1, 100, 1000][level], [60, 500, 5000][level]);
+        const amountEok = BigInt(amountFactor) * 1000n;
+        const amountWon = amountEok * 100000000n;
+        const noteValue = 1000n;
+        const noteCount = amountWon / noteValue;
+        const groupNotes = 1000n;
+        const groupCount = noteCount / groupNotes;
+        const totalCentimeters = groupCount * BigInt(thickness);
+        const answerValue = totalCentimeters / 100000n;
+        if (totalCentimeters % 100000n !== 0n) throw new Error("지폐를 쌓은 높이가 km로 정확히 바뀌지 않습니다.");
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, noteValue: String(noteValue), groupNotes: String(groupNotes), thickness, amountWon: String(amountWon), noteCount: String(noteCount), totalCentimeters: String(totalCentimeters), complexity: amountFactor };
+        const evidence = source41Evidence("banknote-stack-height", payload, answer);
+        const prompt = `1000원짜리 지폐 1000장을 쌓은 두께는 ${thickness} cm입니다. 1000원짜리 지폐만으로 ${formatWon(amountWon)}을 쌓는다면 두께는 몇 km가 되겠습니까?${evidence}`;
+        const solution = `${formatWon(amountWon)}은 1000원짜리 지폐 ${source41FormatInteger(noteCount)}장입니다. 1000장씩 ${source41FormatInteger(groupCount)}묶음이므로 두께는 ${source41FormatInteger(groupCount)} × ${thickness} = ${source41FormatInteger(totalCentimeters)} cm, 즉 ${answer} km입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const highValue = 10000000n;
+        const lowValue = 1000000n;
+        const highCount = BigInt(int(rng, [3, 20, 100][level], [15, 80, 400][level]));
+        const lowCount = BigInt(int(rng, 1, 9));
+        const amount = highValue * highCount + lowValue * lowCount;
+        const maximumCount = amount / lowValue;
+        const minimumCount = highCount + lowCount;
+        const answerValue = maximumCount - minimumCount;
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, highValue: String(highValue), lowValue: String(lowValue), highCount: String(highCount), lowCount: String(lowCount), amount: String(amount), maximumCount: String(maximumCount), minimumCount: String(minimumCount), complexity: Number(highCount) };
+        const evidence = source41Evidence("check-count-difference", payload, answer);
+        const prompt = `은행에서 ${formatWon(amount)}을 1000만 원짜리 수표와 100만 원짜리 수표로 바꾸려고 합니다. 수표의 수가 가장 많을 때는 가장 적을 때보다 몇 장 더 많습니까?${evidence}`;
+        const solution = `가장 많을 때는 모두 100만 원짜리로 바꾸어 ${source41FormatInteger(maximumCount)}장입니다. 가장 적을 때는 1000만 원짜리 ${source41FormatInteger(highCount)}장과 100만 원짜리 ${source41FormatInteger(lowCount)}장으로 바꾸어 ${source41FormatInteger(minimumCount)}장입니다. 차는 ${answer}장입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const rangeUnit = 10 ** [1, 2, 3][level];
+        const start = int(rng, 1, 9) * rangeUnit;
+        const end = int(rng, [50, 50, 50][level], [300, 200, 150][level]) * rangeUnit;
+        const placeNames = ["일", "십", "백", "천", "만", "십만", "백만"];
+        const placeCounts = [];
+        for (let factor = 1, placeIndex = 0; factor <= end; factor *= 10, placeIndex += 1) {
+          const count = countDigitAtPlaceUpTo(end, 0, factor) - countDigitAtPlaceUpTo(start - 1, 0, factor);
+          if (count > 0) placeCounts.push([placeNames[placeIndex], count]);
+        }
+        const answerValue = placeCounts.reduce((sum, [, count]) => sum + count, 0);
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, start, end, digit: 0, placeCounts, answer: answerValue, complexity: end - start };
+        const evidence = source41Evidence("zero-count-in-written-range", payload, answer);
+        const prompt = `${source41FormatInteger(start)}부터 ${source41FormatInteger(end)}까지 자연수를 모두 쓰면 숫자 0은 모두 몇 번 쓰게 됩니까?${evidence}`;
+        const breakdown = placeCounts.map(([place, count]) => `${place}의 자리 ${source41FormatInteger(count)}번`).join(", ");
+        const solution = `각 자리에서 0이 나타나는 횟수를 따로 세면 ${breakdown}입니다. 모두 더하면 ${answer}번입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const end = int(rng, [35, 120, 1200][level], [89, 780, 4800][level]);
+        const totalDigits = digitsWrittenThrough(end);
+        const answer = `${end - 1}${end}`.slice(-3);
+        const payload = { variant, level, end, totalDigits, answer, complexity: totalDigits };
+        const evidence = source41Evidence("concatenated-natural-last-three", payload, answer);
+        const prompt = `1부터 자연수를 차례로 계속 이어 써서 ${source41FormatInteger(totalDigits)}자리 수를 만들었습니다. 이 수의 마지막 세 자리 수를 구하세요.${concatPreview(end)}${evidence}`;
+        const solution = `1자리 수, 2자리 수, 3자리 수처럼 나누어 자리 수를 세면 마지막에 쓴 자연수는 ${source41FormatInteger(end)}입니다. 이어 쓴 수의 끝을 확인하면 마지막 세 자리 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const knownDenominations = [
+          [10000, 1000],
+          [10000, 1000, 50],
+          [50000, 10000, 1000, 50]
+        ][level];
+        const knownRows = knownDenominations.map((denomination, index) => [denomination, int(rng, 20 * (index + 1), [240, 4200, 16000][level])]);
+        const ratio = [2, 3, 5][level];
+        const targetCount = int(rng, [100, 1000, 5000][level], [900, 5000, 20000][level]);
+        const knownAmount = knownRows.reduce((sum, [denomination, count]) => sum + BigInt(denomination) * BigInt(count), 0n);
+        const unknownAmount = BigInt(targetCount) * (500n + 100n * BigInt(ratio));
+        const totalAmount = knownAmount + unknownAmount;
+        const answer = source41FormatInteger(targetCount);
+        const table = moneyTable([...knownRows, [500, "□"], [100, "□"]]);
+        const payload = { variant, level, knownRows, ratio, targetCount, knownAmount: String(knownAmount), totalAmount: String(totalAmount), complexity: knownRows.length * 100000 + targetCount };
+        const evidence = source41Evidence("coin-ratio-from-total", payload, answer);
+        const prompt = `모은 돈이 다음 표와 같습니다. 100원짜리 동전의 개수는 500원짜리 동전 개수의 ${ratio}배이고, 모은 돈은 모두 ${formatWon(totalAmount)}입니다. 500원짜리 동전은 모두 몇 개입니까?${table}${evidence}`;
+        const solution = `개수가 알려진 돈은 모두 ${formatWon(knownAmount)}입니다. 남은 ${formatWon(unknownAmount)}에서 500원짜리 1개와 100원짜리 ${ratio}개를 한 묶음으로 보면 한 묶음은 ${500 + 100 * ratio}원입니다. ${source41FormatInteger(unknownAmount)} ÷ ${500 + 100 * ratio} = ${answer}이므로 500원짜리 동전은 ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const baseKm = BigInt(int(rng, [12000000, 120000000, 1200000000][level], [98000000, 980000000, 1980000000][level]));
+        const hourlyIncrease = BigInt(int(rng, [120, 1200, 12000][level], [950, 9500, 95000][level]));
+        const extraHours = int(rng, [2, 5, 10][level], [4, 9, 18][level]);
+        const beforeMeters = baseKm * 1000n;
+        const afterOneHour = baseKm + hourlyIncrease;
+        const answerValue = afterOneHour + BigInt(extraHours) * hourlyIncrease;
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, beforeMeters: String(beforeMeters), afterOneHour: String(afterOneHour), hourlyIncrease: String(hourlyIncrease), extraHours, answerValue: String(answerValue), complexity: String(baseKm).length * 100 + extraHours };
+        const evidence = source41Evidence("production-length-unit-change", payload, answer);
+        const prompt = `어제까지 만든 리본의 길이는 ${format(beforeMeters)} m입니다. 오늘 한 시간을 더 만들었더니 리본의 길이가 ${format(afterOneHour)} km가 되었습니다. 앞으로 ${extraHours}시간을 더 만들면 리본의 길이는 몇 km가 됩니까?${evidence}`;
+        const solution = `${format(beforeMeters)} m는 ${format(baseKm)} km입니다. 한 시간에 ${format(afterOneHour - baseKm)} km를 만들었으므로 앞으로 ${extraHours}시간 동안 ${format(hourlyIncrease * BigInt(extraHours))} km를 더 만듭니다. 따라서 ${answer} km입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const end = int(rng, [35, 100, 1000][level], [89, 399, 4999][level]);
+        const firstDigit = 1;
+        const secondDigit = 9;
+        const firstCount = countDigitInRange(1, end, firstDigit);
+        const secondCount = countDigitInRange(1, end, secondDigit);
+        if (firstCount <= secondCount) return generators.source41LargeNumberFour({ rng, level, variant });
+        const answerValue = firstCount - secondCount;
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, end, firstDigit, secondDigit, firstCount, secondCount, complexity: end };
+        const evidence = source41Evidence("digit-count-difference-in-concatenation", payload, answer);
+        const prompt = `1에서 ${source41FormatInteger(end)}까지 수를 차례로 늘어놓았습니다. 숫자 1은 숫자 9보다 몇 번 더 쓰였습니까?${concatPreview(end)}${evidence}`;
+        const solution = `1부터 ${source41FormatInteger(end)}까지 숫자 1은 ${source41FormatInteger(firstCount)}번, 숫자 9는 ${source41FormatInteger(secondCount)}번 쓰입니다. 따라서 ${answer}번 더 쓰였습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const startYear = int(rng, 2008, 2020);
+        const spanYears = [2, 4, 5][level];
+        const moneyUnit = 10000000n;
+        const startUnits = BigInt(int(rng, [12, 29, 60][level], [28, 59, 120][level]));
+        const annualUnits = BigInt(int(rng, [1, 2, 4][level], [3, 6, 10][level]));
+        const targetSteps = int(rng, [4, 8, 15][level], [7, 14, 25][level]);
+        const targetOffset = annualUnits > 1n ? BigInt(int(rng, 0, Number(annualUnits - 1n))) : 0n;
+        const startAmount = startUnits * moneyUnit;
+        const annualIncrease = annualUnits * moneyUnit;
+        const endYear = startYear + spanYears;
+        const endAmount = startAmount + BigInt(spanYears) * annualIncrease;
+        const targetAmount = startAmount + BigInt(targetSteps) * annualIncrease + targetOffset * moneyUnit;
+        let answerYear = startYear;
+        let amount = startAmount;
+        while (amount <= targetAmount) {
+          answerYear += 1;
+          amount += annualIncrease;
+        }
+        const answer = String(answerYear);
+        const payload = { variant, level, startYear, endYear, startAmount: String(startAmount), endAmount: String(endAmount), annualIncrease: String(annualIncrease), targetAmount: String(targetAmount), answerYear, complexity: targetSteps };
+        const evidence = source41Evidence("annual-growth-first-year-over-target", payload, answer);
+        const prompt = `어느 회사의 수출액은 ${startYear}년에 ${formatDollars(startAmount)}였고, 해마다 같은 금액씩 늘어 ${endYear}년에 ${formatDollars(endAmount)}가 되었습니다. 앞으로도 해마다 같은 금액씩 늘어난다면 수출액이 처음으로 ${formatDollars(targetAmount)}를 넘는 해는 몇 년입니까?${evidence}`;
+        const solution = `${startYear}년부터 ${endYear}년까지 ${spanYears}년 동안 ${formatDollars(endAmount - startAmount)} 늘었으므로 한 해에 ${formatDollars(annualIncrease)}씩 늘어납니다. 해마다 더해 처음 ${formatDollars(targetAmount)}를 넘는 해는 ${answerYear}년입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const coinValue = 10n;
+        const groupCoins = 100n;
+        const groupHeight = int(rng, [8, 13, 19][level], [12, 18, 25][level]);
+        const amountEok = BigInt(int(rng, [100, 1000, 5001][level], [999, 5000, 20000][level]));
+        const amountWon = amountEok * 100000000n;
+        const coinCount = amountWon / coinValue;
+        const groupCount = coinCount / groupCoins;
+        const totalCentimeters = groupCount * BigInt(groupHeight);
+        const answerValue = totalCentimeters / 100000n;
+        if (totalCentimeters % 100000n !== 0n) throw new Error("동전을 쌓은 높이가 km로 정확히 바뀌지 않습니다.");
+        const answer = source41FormatInteger(answerValue);
+        const payload = { variant, level, coinValue: String(coinValue), groupCoins: String(groupCoins), groupHeight, amountWon: String(amountWon), coinCount: String(coinCount), totalCentimeters: String(totalCentimeters), complexity: Number(amountEok) };
+        const evidence = source41Evidence("coin-stack-height-from-money", payload, answer);
+        const prompt = `10원짜리 동전 100개를 쌓은 높이는 ${groupHeight} cm입니다. ${formatWon(amountWon)}을 모두 10원짜리 동전으로 바꾸어 쌓는다면 높이는 몇 km가 됩니까?${evidence}`;
+        const solution = `${formatWon(amountWon)}은 10원짜리 동전 ${source41FormatInteger(coinCount)}개입니다. 100개씩 ${source41FormatInteger(groupCount)}묶음이므로 높이는 ${source41FormatInteger(groupCount)} × ${groupHeight} = ${source41FormatInteger(totalCentimeters)} cm, 즉 ${answer} km입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const peopleMillions = BigInt(int(rng, [1, 10, 61][level], [9, 60, 200][level]));
+        const people = peopleMillions * 1000000n;
+        const monthlyPerPerson = BigInt(pick(rng, [1000, 2000, 5000, 10000]));
+        const years = int(rng, [1, 5, 16][level], [3, 15, 40][level]);
+        const remainingMonths = int(rng, 1, 11);
+        const totalMonths = years * 12 + remainingMonths;
+        const monthlyTotal = people * monthlyPerPerson;
+        const targetAmount = monthlyTotal * BigInt(totalMonths);
+        const answer = `${years}년 ${remainingMonths}개월`;
+        const payload = { variant, level, people: String(people), monthlyPerPerson: String(monthlyPerPerson), monthlyTotal: String(monthlyTotal), targetAmount: String(targetAmount), totalMonths, years, remainingMonths, complexity: totalMonths };
+        const evidence = source41Evidence("group-monthly-saving-duration", payload, answer);
+        const prompt = `${format(people)}명이 각각 한 달에 ${source41FormatInteger(monthlyPerPerson)}원씩 저금합니다. 저금한 돈이 모두 ${formatWon(targetAmount)}이 되려면 몇 년 몇 개월이 걸립니까?${evidence}`;
+        const solution = `한 달에 저금하는 돈은 ${format(people)} × ${source41FormatInteger(monthlyPerPerson)} = ${formatWon(monthlyTotal)}입니다. ${formatWon(targetAmount)}을 모으는 데 ${source41FormatInteger(totalMonths)}개월이 걸리고, 이는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const originalDenominations = [50000n, 10000n, 5000n, 1000n, 500n, 100n];
+      const noteScale = [1, 8, 40][level];
+      const originalCounts = [
+        BigInt(int(rng, 8 * noteScale, 45 * noteScale)),
+        BigInt(int(rng, 25 * noteScale, 180 * noteScale)),
+        BigInt(int(rng, 20 * noteScale, 140 * noteScale)),
+        BigInt(int(rng, 80 * noteScale, 650 * noteScale)),
+        2n * BigInt(int(rng, 40 * noteScale, 300 * noteScale)),
+        10n * BigInt(int(rng, 120 * noteScale, 900 * noteScale))
+      ];
+      const totalAmount = originalDenominations.reduce((sum, denomination, index) => sum + denomination * originalCounts[index], 0n);
+      const exchangeDenominations = [1000000n, 50000n, 10000n, 5000n, 1000n];
+      let remainder = totalAmount;
+      const exchangeCounts = exchangeDenominations.map(denomination => {
+        const count = remainder / denomination;
+        remainder %= denomination;
+        return count;
+      });
+      if (remainder !== 0n) throw new Error("매출액을 주어진 지폐와 수표로 정확히 바꿀 수 없습니다.");
+      const answerValue = exchangeCounts.reduce((sum, count) => sum + count, 0n);
+      const answer = source41FormatInteger(answerValue);
+      const rows = originalDenominations.map((denomination, index) => [Number(denomination), originalCounts[index]]);
+      const table = moneyTable(rows);
+      const payload = { variant, level, originalDenominations: originalDenominations.map(String), originalCounts: originalCounts.map(String), totalAmount: String(totalAmount), exchangeDenominations: exchangeDenominations.map(String), exchangeCounts: exchangeCounts.map(String), complexity: Number(totalAmount / 1000n) };
+      const evidence = source41Evidence("minimum-money-piece-exchange", payload, answer);
+      const prompt = `어느 가게의 하루 매출이 다음과 같습니다. 이 돈을 모두 100만 원짜리 수표와 5만 원, 만 원, 오천 원, 천 원짜리 지폐로 바꾸려고 합니다. 수표와 지폐의 수를 가능한 적게 하면 모두 몇 장이 됩니까?${table}${evidence}`;
+      const exchangeText = exchangeDenominations.map((denomination, index) => `${formatWon(denomination)}짜리 ${source41FormatInteger(exchangeCounts[index])}장`).join(", ");
+      const solution = `매출액은 모두 ${formatWon(totalAmount)}입니다. 큰 금액부터 바꾸면 ${exchangeText}이므로 모두 ${answer}장입니다.`;
+      return result(prompt, answer, solution);
+    },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
       const digitCount = 11 + level;
       const makeDigits = () => Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
