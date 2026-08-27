@@ -1138,6 +1138,34 @@
     9: { start: [4, 30], minuteHandTurn: 132, answer: [4, 52] },
     10: { answer: [5, 40], directedAngle: 70 }
   };
+  const source41FormatHoursMinutes = totalMinutes => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours ? `${hours}시간` : ""}${hours && minutes ? " " : ""}${minutes ? `${minutes}분` : ""}`;
+  };
+  const source41FormatMinutesSeconds = totalSeconds => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes ? `${minutes}분` : ""}${minutes && seconds ? " " : ""}${seconds ? `${seconds}초` : ""}`;
+  };
+  const source41FormatMetersCentimeters = totalCentimeters => {
+    const meters = Math.floor(totalCentimeters / 100);
+    const centimeters = totalCentimeters % 100;
+    return `${meters ? `${meters}m` : ""}${meters && centimeters ? " " : ""}${centimeters ? `${centimeters}cm` : ""}`;
+  };
+  const source41MultiplicationOneSourceAnchors = {
+    0: { itemsPerBox: 15, boxes: 4660, ratePerMinute: 27, people: 18, totalMinutes: 135, answer: 4290, rejectedPencilAnswer: 4295 },
+    1: { buyPrices: [650, 460], sellPrices: [900, 850], quantities: [32, 45], answer: 25550 },
+    2: { vehicleLengthMeters: 8, speedCentimetersPerSecond: 875, totalSeconds: 72, travelMeters: 630, answer: 622, rejectedPencilAnswer: 638 },
+    3: { studentsPerClass: 34, classes: 8, fee: 800, groupSize: 10, discountPerGroup: 800, answer: 196000 },
+    4: { firstTree: 13, oppositeTree: 49, spacingMeters: 45, answer: 3240 },
+    5: { itemsPerBox: 24, boxes: 148, answer: 3552 },
+    6: { profitPerItem: 240, yesterday: 3000, decrease: 400, answer: 1344000 },
+    7: { ropeCentimeters: 273, ropes: 38, knotLossCentimeters: 16, answerCentimeters: 9782, answer: "97m 82cm", mismatchedAnswerPage: { tapeCentimeters: 325, tapes: 57, overlapCentimeters: 5 } },
+    8: { itemsPerBox: [42, 35, 22], boxes: [198, 238, 368], totals: [8316, 8330, 8096], answer: 234 },
+    9: { days: 365, chimesPerHalfDay: 78, chimesPerDay: 156, answer: 56940 },
+    10: { itemsPerBox: 20, boxes: 1557, ratePerMinute: 16, people: 24, totalMinutes: 80, answer: 420 }
+  };
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -6350,6 +6378,281 @@
       const evidence = source41Evidence("minute-hand-turn-to-end-time", payload, answer);
       const prompt = `${source41AngleSixFormatTime(startHour, startMinute)}에 운동을 시작했습니다. 운동하는 동안 분침은 한 바퀴를 채 돌지 않고 ${minuteHandTurn}° 움직였습니다. 운동을 끝낸 시각을 구하세요.${evidence}`;
       const solution = `분침은 1분에 6° 움직이므로 운동한 시간은 ${minuteHandTurn}÷6=${elapsed}분입니다. ${source41AngleSixFormatTime(startHour, startMinute)}에서 ${elapsed}분 뒤는 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41MultiplicationOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("곱셈 알아보기 개념탐구 1 원문 분기는 0부터 10까지여야 합니다.");
+
+      if (variant === 0 || variant === 10) {
+        const isPencilCase = variant === 10;
+        const itemsPerBox = int(rng, 12 + level * 2, 22 + level * 4);
+        const people = int(rng, 12 + level * 3, 22 + level * 4);
+        const ratePerMinute = int(rng, 13 + level * 2, 22 + level * 4);
+        const totalMinutes = int(rng, [75, 95, 125][level], [110, 150, 190][level]);
+        const packed = people * ratePerMinute * totalMinutes;
+        const boxes = Math.ceil(packed / itemsPerBox) + int(rng, 35 + level * 30, 110 + level * 70);
+        const totalItems = boxes * itemsPerBox;
+        const answer = totalItems - packed;
+        const payload = {
+          variant,
+          level,
+          itemsPerBox,
+          boxes,
+          people,
+          ratePerMinute,
+          totalMinutes,
+          totalItems,
+          packed,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[variant],
+          complexity: (level + 1) * 1000 + people + ratePerMinute + totalMinutes
+        };
+        const evidence = source41Evidence(isPencilCase ? "packing-team-remainder" : "packaging-work-remainder", payload, answer);
+        const item = isPencilCase ? "필통" : "초콜릿";
+        const prompt = `한 상자에 ${item}이 ${itemsPerBox}개씩 들어 있는 상자 ${boxes.toLocaleString()}개가 있습니다. ${item}을 한 개씩 포장하려고 합니다. 한 사람이 1분에 ${ratePerMinute}개씩 포장할 때 ${people}명이 ${source41FormatHoursMinutes(totalMinutes)} 동안 포장하고 남은 ${item}은 몇 개인지 구하세요.${evidence}`;
+        const solution = `처음 ${item}은 ${itemsPerBox}×${boxes.toLocaleString()}=${totalItems.toLocaleString()}개입니다. 작업 시간은 ${totalMinutes}분이고 포장한 수는 ${ratePerMinute}×${people}×${totalMinutes}=${packed.toLocaleString()}개입니다. 따라서 ${totalItems.toLocaleString()}-${packed.toLocaleString()}=${answer.toLocaleString()}개 남습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const firstBuy = int(rng, 32 + level * 5, 78 + level * 7) * 10;
+        const secondBuy = int(rng, 28 + level * 5, 72 + level * 8) * 10;
+        const firstProfit = int(rng, 12 + level * 3, 32 + level * 5) * 10;
+        const secondProfit = int(rng, 15 + level * 4, 40 + level * 6) * 10;
+        const firstQuantity = int(rng, 22 + level * 5, 48 + level * 8);
+        const secondQuantity = int(rng, 25 + level * 5, 55 + level * 9);
+        const firstSell = firstBuy + firstProfit;
+        const secondSell = secondBuy + secondProfit;
+        const firstGain = firstProfit * firstQuantity;
+        const secondGain = secondProfit * secondQuantity;
+        const answer = firstGain + secondGain;
+        const payload = {
+          variant,
+          level,
+          buyPrices: [firstBuy, secondBuy],
+          sellPrices: [firstSell, secondSell],
+          quantities: [firstQuantity, secondQuantity],
+          profits: [firstGain, secondGain],
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[1],
+          complexity: (level + 1) * 1000 + firstQuantity + secondQuantity + firstProfit + secondProfit
+        };
+        const evidence = source41Evidence("two-product-profit", payload, answer);
+        const prompt = `어느 가게에서 옥수수는 한 개에 ${firstBuy.toLocaleString()}원에 사 와서 ${firstSell.toLocaleString()}원에 팔고, 감자는 한 개에 ${secondBuy.toLocaleString()}원에 사 와서 ${secondSell.toLocaleString()}원에 팝니다. 옥수수 ${firstQuantity}개와 감자 ${secondQuantity}개를 모두 팔았을 때 이익은 얼마인지 구하세요.${evidence}`;
+        const solution = `옥수수 이익은 (${firstSell}-${firstBuy})×${firstQuantity}=${firstGain.toLocaleString()}원이고, 감자 이익은 (${secondSell}-${secondBuy})×${secondQuantity}=${secondGain.toLocaleString()}원입니다. 모두 ${firstGain.toLocaleString()}+${secondGain.toLocaleString()}=${answer.toLocaleString()}원입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const speedCentimetersPerSecond = int(rng, 26 + level * 3, 42 + level * 5) * 25;
+        const secondCandidates = Array.from({ length: 20 + level * 6 }, (_, index) => 44 + index * 4)
+          .filter(seconds => seconds <= [76, 100, 124][level] && seconds % 60 !== 0);
+        const totalSeconds = pick(rng, secondCandidates);
+        const travelMeters = speedCentimetersPerSecond * totalSeconds / 100;
+        const vehicleLengthMeters = int(rng, 6 + level, Math.min(18 + level * 2, travelMeters - 30));
+        const answer = travelMeters - vehicleLengthMeters;
+        const payload = {
+          variant,
+          level,
+          vehicleLengthMeters,
+          speedCentimetersPerSecond,
+          totalSeconds,
+          travelMeters,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[2],
+          complexity: (level + 1) * 1000 + totalSeconds + speedCentimetersPerSecond
+        };
+        const evidence = source41Evidence("vehicle-tunnel-length", payload, answer);
+        const prompt = `길이가 ${vehicleLengthMeters}m인 트럭이 1초에 ${speedCentimetersPerSecond}cm씩 일정하게 달립니다. 트럭의 앞부분이 터널 입구에 닿은 때부터 뒤끝이 터널 출구를 완전히 벗어날 때까지 ${source41FormatMinutesSeconds(totalSeconds)}가 걸렸습니다. 터널의 길이는 몇 m인지 구하세요.${evidence}`;
+        const solution = `트럭이 움직인 거리는 ${speedCentimetersPerSecond}×${totalSeconds}=${speedCentimetersPerSecond * totalSeconds}cm=${travelMeters}m입니다. 이 거리는 터널 길이와 트럭 길이의 합이므로 터널은 ${travelMeters}-${vehicleLengthMeters}=${answer}m입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        let studentsPerClass = 0;
+        let classes = 0;
+        let students = 0;
+        do {
+          studentsPerClass = int(rng, 24 + level * 2, 38 + level * 3);
+          classes = int(rng, 5 + level, 9 + level * 2);
+          students = studentsPerClass * classes;
+        } while (students % 10 === 0);
+        const fee = int(rng, 6 + level, 12 + level * 2) * 100;
+        const groupSize = 10;
+        const discountPerGroup = int(rng, 2, Math.max(2, Math.floor(fee / 100))) * 100;
+        const groups = Math.floor(students / groupSize);
+        const fullPrice = students * fee;
+        const discount = groups * discountPerGroup;
+        const answer = fullPrice - discount;
+        const payload = {
+          variant,
+          level,
+          studentsPerClass,
+          classes,
+          students,
+          fee,
+          groupSize,
+          discountPerGroup,
+          groups,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[3],
+          complexity: (level + 1) * 1000 + students + fee
+        };
+        const evidence = source41Evidence("grouped-admission-discount", payload, answer);
+        const prompt = `어느 학교 학생은 한 반에 ${studentsPerClass}명씩 모두 ${classes}반입니다. 박물관 입장료는 한 명에 ${fee.toLocaleString()}원이고, 10명마다 전체 입장료에서 ${discountPerGroup.toLocaleString()}원씩 할인합니다. 모든 학생이 입장할 때 내야 할 금액을 구하세요.${evidence}`;
+        const solution = `학생은 ${studentsPerClass}×${classes}=${students}명이고 정상 입장료는 ${students}×${fee.toLocaleString()}=${fullPrice.toLocaleString()}원입니다. 10명 묶음은 ${groups}개이므로 ${discountPerGroup.toLocaleString()}×${groups}=${discount.toLocaleString()}원을 할인합니다. 내야 할 금액은 ${fullPrice.toLocaleString()}-${discount.toLocaleString()}=${answer.toLocaleString()}원입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const halfIntervals = int(rng, 20 + level * 6, 38 + level * 11);
+        const firstTree = int(rng, 3, 18 + level * 3);
+        const oppositeTree = firstTree + halfIntervals;
+        const spacingMeters = int(rng, 4 + level, 12 + level * 2) * 5;
+        const totalIntervals = halfIntervals * 2;
+        const answer = totalIntervals * spacingMeters;
+        const payload = {
+          variant,
+          level,
+          halfIntervals,
+          firstTree,
+          oppositeTree,
+          spacingMeters,
+          totalIntervals,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[4],
+          complexity: (level + 1) * 1000 + halfIntervals + spacingMeters
+        };
+        const evidence = source41Evidence("opposite-trees-circle-perimeter", payload, answer);
+        const prompt = `원 모양 호수의 둘레에 ${spacingMeters}m 간격으로 나무를 심었더니 ${firstTree}번째 나무와 ${oppositeTree}번째 나무가 서로 마주 보게 되었습니다. 나무의 두께를 생각하지 않을 때 호수의 둘레를 구하세요.${evidence}`;
+        const solution = `두 나무 사이에는 ${oppositeTree}-${firstTree}=${halfIntervals}개의 간격이 있고 이 길이는 둘레의 절반입니다. 전체 간격은 ${halfIntervals}×2=${totalIntervals}개이므로 둘레는 ${spacingMeters}×${totalIntervals}=${answer.toLocaleString()}m입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const itemsPerBox = int(rng, 18 + level * 3, 38 + level * 5);
+        const boxes = int(rng, 90 + level * 30, 190 + level * 55);
+        const answer = itemsPerBox * boxes;
+        const payload = { variant, level, itemsPerBox, boxes, answer, sourceAnchor: source41MultiplicationOneSourceAnchors[5], complexity: (level + 1) * 1000 + itemsPerBox + boxes };
+        const evidence = source41Evidence("boxes-total-items", payload, answer);
+        const prompt = `창고에 한 상자에 음료수가 ${itemsPerBox}병씩 들어 있는 상자 ${boxes}개가 있습니다. 창고 안의 음료수는 모두 몇 병인지 구하세요.${evidence}`;
+        const solution = `한 상자에 ${itemsPerBox}병씩 ${boxes}상자이므로 ${itemsPerBox}×${boxes}=${answer.toLocaleString()}병입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const profitPerItem = int(rng, 12 + level * 3, 32 + level * 6) * 10;
+        const yesterday = int(rng, 22 + level * 5, 48 + level * 8) * 100;
+        const decrease = int(rng, 2 + level, Math.min(16 + level * 2, yesterday / 100 - 5)) * 100;
+        const today = yesterday - decrease;
+        const sold = yesterday + today;
+        const answer = sold * profitPerItem;
+        const payload = {
+          variant,
+          level,
+          profitPerItem,
+          yesterday,
+          decrease,
+          today,
+          sold,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[6],
+          complexity: (level + 1) * 1000 + sold + profitPerItem
+        };
+        const evidence = source41Evidence("two-day-sales-profit", payload, answer);
+        const prompt = `어느 가게에서 음료수 한 병을 팔면 이익이 ${profitPerItem.toLocaleString()}원입니다. 어제는 ${yesterday.toLocaleString()}병을 팔았고 오늘은 어제보다 ${decrease.toLocaleString()}병 적게 팔았습니다. 이틀 동안 음료수를 팔아 생긴 이익은 모두 얼마인지 구하세요.${evidence}`;
+        const solution = `오늘은 ${yesterday.toLocaleString()}-${decrease.toLocaleString()}=${today.toLocaleString()}병을 팔았습니다. 이틀 동안 ${yesterday.toLocaleString()}+${today.toLocaleString()}=${sold.toLocaleString()}병을 팔았으므로 이익은 ${sold.toLocaleString()}×${profitPerItem.toLocaleString()}=${answer.toLocaleString()}원입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        let pieceCentimeters = 0;
+        let ropes = 0;
+        let knotLossCentimeters = 0;
+        let totalCentimeters = 0;
+        for (let attempt = 0; attempt < 300 && totalCentimeters % 100 === 0; attempt += 1) {
+          pieceCentimeters = int(rng, 1 + level, 4 + level) * 100 + int(rng, 12, 94);
+          ropes = int(rng, 24 + level * 7, 48 + level * 12);
+          knotLossCentimeters = int(rng, 6 + level * 2, 20 + level * 4);
+          totalCentimeters = pieceCentimeters * ropes - knotLossCentimeters * (ropes - 1);
+        }
+        if (totalCentimeters <= 0 || totalCentimeters % 100 === 0) throw new Error("m와 cm를 모두 읽을 수 있는 매듭 로프 문제를 만들지 못했습니다.");
+        const answer = source41FormatMetersCentimeters(totalCentimeters);
+        const payload = {
+          variant,
+          level,
+          pieceCentimeters,
+          ropes,
+          knotLossCentimeters,
+          knots: ropes - 1,
+          totalCentimeters,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[7],
+          complexity: (level + 1) * 1000 + ropes + pieceCentimeters + knotLossCentimeters
+        };
+        const evidence = source41Evidence("knotted-ropes-length", payload, answer);
+        const prompt = `길이가 ${source41FormatMetersCentimeters(pieceCentimeters)}인 로프 ${ropes}개를 한 줄로 이어 긴 로프를 만들었습니다. 매듭 하나를 지을 때 두 로프에서 합하여 ${knotLossCentimeters}cm가 사용됩니다. 새로 만든 긴 로프의 길이는 몇 m 몇 cm인지 구하세요.${evidence}`;
+        const solution = `로프 ${ropes}개를 한 줄로 이으면 매듭은 ${ropes}-1=${ropes - 1}곳입니다. 처음 길이는 ${pieceCentimeters}×${ropes}=${(pieceCentimeters * ropes).toLocaleString()}cm이고 매듭에 쓰인 길이는 ${knotLossCentimeters}×${ropes - 1}=${(knotLossCentimeters * (ropes - 1)).toLocaleString()}cm입니다. 남은 길이는 ${totalCentimeters.toLocaleString()}cm=${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const fruitNames = ["귤", "사과", "복숭아"];
+        let itemsPerBox = [];
+        let boxes = [];
+        let totals = [];
+        for (let attempt = 0; attempt < 500; attempt += 1) {
+          itemsPerBox = Array.from({ length: 3 }, () => int(rng, 20 + level * 2, 46 + level * 4));
+          boxes = Array.from({ length: 3 }, () => int(rng, 150 + level * 30, 330 + level * 55));
+          totals = itemsPerBox.map((count, index) => count * boxes[index]);
+          if (new Set(totals).size === 3 && Math.max(...totals) - Math.min(...totals) >= 80) break;
+        }
+        if (new Set(totals).size !== 3 || Math.max(...totals) - Math.min(...totals) < 80) throw new Error("수확량의 가장 큰 값과 가장 작은 값이 분명한 문제를 만들지 못했습니다.");
+        const maximum = Math.max(...totals);
+        const minimum = Math.min(...totals);
+        const maximumIndex = totals.indexOf(maximum);
+        const minimumIndex = totals.indexOf(minimum);
+        const answer = maximum - minimum;
+        const table = `<table class="problem-table source41-harvest-table"><thead><tr><th>과일</th><th>한 상자에 든 수</th><th>상자 수</th></tr></thead><tbody>${fruitNames.map((name, index) => `<tr><th>${name}</th><td>${itemsPerBox[index]}개</td><td>${boxes[index]}상자</td></tr>`).join("")}</tbody></table>`;
+        const payload = {
+          variant,
+          level,
+          itemsPerBox,
+          boxes,
+          totals,
+          maximumIndex,
+          minimumIndex,
+          answer,
+          sourceAnchor: source41MultiplicationOneSourceAnchors[8],
+          complexity: (level + 1) * 1000 + maximum + minimum
+        };
+        const evidence = source41Evidence("three-harvest-total-gap", payload, answer);
+        const prompt = `수확한 과일을 남김없이 표와 같이 상자에 담았습니다. 가장 많이 수확한 과일은 가장 적게 수확한 과일보다 몇 개 더 많은지 구하세요.${table}${evidence}`;
+        const solution = `${fruitNames.map((name, index) => `${name}은 ${itemsPerBox[index]}×${boxes[index]}=${totals[index].toLocaleString()}개`).join(", ")}입니다. 가장 많은 ${fruitNames[maximumIndex]}과 가장 적은 ${fruitNames[minimumIndex]}의 차는 ${maximum.toLocaleString()}-${minimum.toLocaleString()}=${answer.toLocaleString()}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const days = pick(rng, [
+        [28, 30, 31, 60, 90],
+        [100, 120, 180, 200, 240],
+        [300, 365, 366]
+      ][level]);
+      const chimesPerHalfDay = 12 * 13 / 2;
+      const chimesPerDay = chimesPerHalfDay * 2;
+      const answer = chimesPerDay * days;
+      const payload = {
+        variant,
+        level,
+        days,
+        chimesPerHalfDay,
+        chimesPerDay,
+        answer,
+        sourceAnchor: source41MultiplicationOneSourceAnchors[9],
+        complexity: (level + 1) * 1000 + days
+      };
+      const evidence = source41Evidence("hourly-clock-chimes", payload, answer);
+      const prompt = `어느 시계탑의 종은 1시 정각에 1번, 2시 정각에 2번, 3시 정각에 3번과 같이 정각의 시각만큼 울립니다. 자정과 정오에는 각각 12번 울리고 정각이 아닌 때에는 울리지 않습니다. 이 종은 ${days}일 동안 모두 몇 번 울리는지 구하세요.${evidence}`;
+      const solution = `12시간 동안 울리는 수는 1+2+⋯+12=${chimesPerHalfDay}번이고 하루에는 ${chimesPerHalfDay}×2=${chimesPerDay}번입니다. ${days}일 동안 ${chimesPerDay}×${days}=${answer.toLocaleString()}번 울립니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {

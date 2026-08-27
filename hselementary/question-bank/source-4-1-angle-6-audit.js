@@ -251,7 +251,7 @@ for (const [sourceItemId, variant, locked, label] of sourceItems) {
 }
 
 check(nativeMappings.filter(mapping => mapping.generatorKey === generatorKey).length === 10, "시침과 분침 전용 공개 매핑은 10개여야 합니다.");
-check(runtimeInventory.verifiedMappings === 138, `4-1 공개 유형은 138개여야 하나 ${runtimeInventory.verifiedMappings}개입니다.`);
+check(runtimeInventory.verifiedMappings >= 138, `4-1 공개 유형이 각도 개념탐구 6 완료 기준 138개보다 줄었습니다: ${runtimeInventory.verifiedMappings}개`);
 
 try {
   api.generate({ generatorKey, variant: 4 }, 0, 0, 1, 4);

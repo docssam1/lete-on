@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 138,
+  "verifiedMappings": 149,
   "items": [
     {
       "unit": 1,
@@ -2539,10 +2539,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "단위 작업량으로 포장 잔량 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2557,10 +2558,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 상품의 판매 이익 합산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2575,10 +2577,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "통과 시간으로 터널 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2593,10 +2596,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "단체 할인 입장료 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2611,10 +2615,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "마주 보는 나무 간격으로 둘레 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2629,10 +2634,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "상자별 수량으로 전체 개수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2647,10 +2653,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "판매량 변화를 반영한 이익 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2665,10 +2672,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "매듭 손실을 고려한 연결 길이",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2683,10 +2691,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "과일별 전체 수확량 비교",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2701,10 +2710,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "반복되는 시계 종소리 횟수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2719,10 +2729,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "인원과 시간으로 포장 잔량 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41MultiplicationOne",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
