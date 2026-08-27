@@ -72,6 +72,30 @@ test("검수된 원수학 문항은 세부 유형으로 연결하고 원래 단�
   assert.deepEqual(audit.audit(index).issues, []);
 });
 
+test("황소 교재 문항은 검수된 단원까지만 연결하고 세부유형으로 가장하지 않는다", () => {
+  const input = fixture();
+  input.hwangsoMiddle.items = [{ id: "SH-M1", releaseStatus: "locked", discoveryStatus: "visual_verified", classificationStatus: "pending" }];
+  input.hwangsoMiddle.rejectedCandidates = [];
+  input.hwangsoCurriculumReviews = {
+    reviews: [{
+      sourceItemId: "SH-M1",
+      sourceUnitTypeId: "SH-UNT-TEST",
+      semester: "중1-1",
+      majorUnit: "수와 연산",
+      minorUnit: "소인수분해",
+      classificationStatus: "reviewed_unit",
+      detailPrecision: "unit_only",
+      evidence: ["source:p.3 단원 머리말"]
+    }]
+  };
+  const index = builder.buildIndex(input);
+  const item = index.items.find(candidate => candidate.sourceItemId === "SH-M1");
+  assert.equal(item.sourceTypeId, "SH-UNT-TEST");
+  assert.equal(item.conceptStatus, "unit_only");
+  assert.equal(item.conceptFamilyId, null);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
 test("공통 인덱스에는 원문·정답·경로를 넣지 않고 전체 검사를 통과한다", () => {
   const index = builder.buildIndex(fixture());
   assert.deepEqual(audit.audit(index).issues, []);
