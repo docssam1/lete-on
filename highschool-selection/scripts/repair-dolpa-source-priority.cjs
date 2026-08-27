@@ -70,13 +70,15 @@ catalog.records.forEach(function (record) {
 
 typeIndex.academy_profiles.돌파 = {
   profile_id: "PROFILE.DOLPA.ORIGINAL.FIRST.V1",
-  status: "돌파 원본 시험지 먼저",
+  status: "돌파 원본·검산 완료 대체 문항 분리",
   use: "원본 시험지 유형 확인 후 추가 연습",
-  calibration: "돌파 원본 회차의 문제 순서와 어려운 정도를 먼저 따른다."
+  calibration: "돌파 원본 회차의 문제 순서와 어려운 정도를 먼저 따르되, 검산 완료 대체 문항은 원본과 구분한다."
 };
 typeIndex.dolpa_source_rule = {
   primary: "dolpa-original-question-index-v1",
   primary_question_count: 60,
+  original_question_count: 59,
+  verified_replacement_count: 1,
   supplement: "고쟁이와 다른 참고 문제",
   supplement_rule: "돌파 원본과 풀이 방법이 같은지 확인하기 전에는 사용하지 않는다."
 };

@@ -20,6 +20,8 @@ const papers = Object.values(types.sets).map(function (set) {
     title: set.title,
     sourceKind: set.sourceKind,
     questionCount: set.items.length,
+    originalCount: set.originalCount,
+    replacementCount: set.replacementCount,
     questions: set.items.map(function (item) {
       return {
         number: item.number,
@@ -27,6 +29,7 @@ const papers = Object.values(types.sets).map(function (set) {
         unit: item.unit,
         type: item.label,
         sourceKind: item.sourceKind,
+        sourceRelation: item.sourceRelation,
         similarQuestionStatus: "만들기 전"
       };
     })
@@ -35,10 +38,11 @@ const papers = Object.values(types.sets).map(function (set) {
 
 const output = {
   schemaVersion: 1,
-  title: "돌파 원본 시험지 문제 유형",
+  title: "돌파 원본·검산 완료 대체 문항 유형",
   rules: [
     "돌파 원본 시험지를 먼저 사용한다.",
     "원본 문제 한 개를 문제 유형 한 개로 나눈다.",
+    "원문 조건 때문에 교체한 문항은 검산 완료 대체 문항으로 따로 표시한다.",
     "고쟁이와 다른 참고 문제는 추가 연습 문제로만 사용한다.",
     "돌파 원본과 맞춰 보지 않은 추가 문제는 학생에게 보여 주지 않는다."
   ],

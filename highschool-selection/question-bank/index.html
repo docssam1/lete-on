@@ -76,9 +76,11 @@
         return;
       }
       title.textContent=`${original.title} · ${original.items.length}문항`;
-      note.textContent='원본 시험지의 문제 한 개를 문제 유형 한 개로 나누었습니다. 추가 연습 문제는 이 수에 넣지 않았습니다.';
+      note.textContent=original.replacementCount
+        ? `원본 ${original.originalCount}문항과 검산 완료 대체 ${original.replacementCount}문항을 구분했습니다. 추가 연습 문제는 이 수에 넣지 않았습니다.`
+        : '원본 시험지의 문제 한 개를 문제 유형 한 개로 나누었습니다. 추가 연습 문제는 이 수에 넣지 않았습니다.';
       list.className='weak-list source-type-list';
-      list.innerHTML=original.items.map(item=>`<div class="source-type-item"><b>${String(item.number).padStart(2,'0')}</b><span>${esc(item.label)}</span><small>${esc(item.semester)} · ${esc(item.unit)}</small></div>`).join('');
+      list.innerHTML=original.items.map(item=>`<div class="source-type-item"><b>${String(item.number).padStart(2,'0')}</b><span>${esc(item.label)}</span><small>${esc(item.semester)} · ${esc(item.unit)}${item.sourceRelation==='replacement'?' · 검산 완료 대체 문항':''}</small></div>`).join('');
     }
     function renderExamOptions(preferredExamId){
       const profile=activeProfile();
