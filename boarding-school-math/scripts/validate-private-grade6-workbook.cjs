@@ -29,6 +29,81 @@ const EEA_POWER_RESULT_MAX = 250000n;
 const EEA_WORKED_EXAMPLE_BASE_MIN = 2;
 const EEA_WORKED_EXAMPLE_BASE_MAX = 20;
 const EEA_WORKED_EXAMPLE_RESULT_MAX = 3200000n;
+const EEB_SUBSTITUTION_EVIDENCE_ID = "6.EE.B.5-finite-positive-whole-equality-substitution-truth";
+const EEB_CANDIDATE_MIN = 1;
+const EEB_CANDIDATE_MAX = 24;
+const EEB_ADDITION_ADDEND_MIN = 1;
+const EEB_ADDITION_ADDEND_MAX = 20;
+const EEB_ADDITION_TOTAL_MAX = 44;
+const EEB_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
+  ko: "자동 근거는 6.EE.B.5의 제한된 양의 정수 등식 대입 판정뿐이다. 6.EE.B.5의 부등식, 후보 집합 전체 판단과 설명, 6.EE.B.6, 6.EE.B.7, 6.EE.B.8은 교사 관찰이 필요한 항목으로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
+  en: "The automatic evidence is limited to determining whether substituting a positive whole number makes an equality hold within 6.EE.B.5. Inequalities, whole-candidate-set evaluation and explanation in 6.EE.B.5, together with 6.EE.B.6, 6.EE.B.7, and 6.EE.B.8, remain locked for teacher observation. It is not a full mastery or promotion decision.",
+  "zh-Hans": "自动证据仅限于 6.EE.B.5 中正整数等式代入的真假判断。6.EE.B.5 的不等式、对整个候选集合的判断和说明，以及 6.EE.B.6、6.EE.B.7 和 6.EE.B.8，仍锁定为教师观察内容。这不是完全掌握或年级晋升决定。"
+});
+const EEB_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
+  "lesson-plan:core": Object.freeze({
+    ko: "6.EE.B.5의 대입 설명, 후보 집합 전체 판단, 부등식 이해를 교사 관찰로 기록한다.",
+    en: "Record 6.EE.B.5 substitution explanation, whole-candidate-set evaluation, and inequality understanding through teacher observation.",
+    "zh-Hans": "通过教师观察记录 6.EE.B.5 的代入说明、对整个候选集合的判断和不等式理解。"
+  }),
+  "assignment-builder:core": Object.freeze({
+    ko: "6.EE.B.6과 6.EE.B.7은 교사 관찰이 필요한 항목으로 잠긴다.",
+    en: "Keep 6.EE.B.6 and 6.EE.B.7 locked for teacher observation.",
+    "zh-Hans": "6.EE.B.6 和 6.EE.B.7 仍锁定为教师观察内容。"
+  }),
+  "assignment-builder:advanced": Object.freeze({
+    ko: "6.EE.B.8의 부등식은 교사 관찰이 필요한 항목으로 잠긴다.",
+    en: "Keep 6.EE.B.8 inequalities locked for teacher observation.",
+    "zh-Hans": "6.EE.B.8 的不等式仍锁定为教师观察内容。"
+  })
+});
+const EEB_STUDENT_STATIC_TEXT = Object.freeze({
+  frontMatter: Object.freeze({
+    titleByLocale: Object.freeze({
+      ko: "방정식: 후보 대입 연습",
+      en: "Equations: Candidate Substitution Practice",
+      "zh-Hans": "方程：候选数代入练习"
+    }),
+    learningTargetsByLocale: Object.freeze({
+      ko: "후보를 미지수 자리에 넣고 양쪽을 비교합니다.",
+      en: "Substitute the candidate value for the variable and compare both sides.",
+      "zh-Hans": "将候选数放入变量位置并核对等式。"
+    }),
+    howToUseByLocale: Object.freeze({
+      ko: "문항을 읽은 뒤 화면의 선택지를 고릅니다.",
+      en: "Read each prompt and choose the on-screen response.",
+      "zh-Hans": "阅读题目后选择屏幕上的选项。"
+    })
+  }),
+  closingMatter: Object.freeze({
+    glossaryByLocale: Object.freeze({
+      ko: "후보, 대입, 등식",
+      en: "candidate, substitution, equality",
+      "zh-Hans": "候选数、代入、等式"
+    }),
+    retentionNoticeByLocale: Object.freeze({
+      ko: "나중에 같은 절차를 다시 연습합니다.",
+      en: "Revisit the substitution procedure later.",
+      "zh-Hans": "之后再次练习代入步骤。"
+    })
+  }),
+  sectionTitlesByProfile: Object.freeze({
+    "g6-w1-s2-concept-model:concept-workbook:foundation": Object.freeze({ ko: "대입 준비", en: "Prepare to Substitute", "zh-Hans": "准备代入" }),
+    "g6-w1-s2-concept-model:concept-workbook:core": Object.freeze({ ko: "대입 연습", en: "Practice Substitution", "zh-Hans": "练习代入" }),
+    "g6-w2-s1-guided-practice:guided-practice:core": Object.freeze({ ko: "안내 연습", en: "Guided Practice", "zh-Hans": "引导练习" }),
+    "g6-w2-s2-independent-application:homework:core": Object.freeze({ ko: "가정 연습", en: "Home Practice", "zh-Hans": "家庭练习" }),
+    "g6-w2-s2-independent-application:homework:advanced": Object.freeze({ ko: "확장 가정 연습", en: "Extended Home Practice", "zh-Hans": "扩展家庭练习" }),
+    "g6-w3-s2-transfer-application:guided-practice:advanced": Object.freeze({ ko: "전이 연습", en: "Transfer Practice", "zh-Hans": "迁移练习" }),
+    "g6-w3-s2-transfer-application:homework:advanced": Object.freeze({ ko: "전이 가정 연습", en: "Transfer Home Practice", "zh-Hans": "迁移家庭练习" })
+  }),
+  conceptSummaryByProfile: Object.freeze({
+    "g6-w1-s2-concept-model:concept-workbook:foundation": Object.freeze({
+      ko: "후보를 미지수 자리에 넣고 양쪽을 비교합니다.",
+      en: "Substitute the candidate value for the variable and compare both sides.",
+      "zh-Hans": "将候选数放入变量位置并核对等式。"
+    })
+  })
+});
 const REQUIRED_REVIEWS = Object.freeze([
   "math-correctness", "age-appropriateness", "answer-uniqueness",
   "translation-ko", "translation-en", "translation-zh-Hans", "rights"
@@ -80,7 +155,7 @@ const LAYOUT_KEYS = new Set([
   "teacherArtifactLayouts"
 ]);
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
-const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact"]);
+const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact", "truth-value-exact"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
 const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|\bans(?:wer)?|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/iu;
 const ANSWER_VALUE_LABEL = /(?:correct\s+answer|\bans(?:wer)?|정답|답|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/giu;
@@ -634,6 +709,22 @@ function validateStandardsEvidence(evidence, policy, unit, reference) {
     });
     return;
   }
+  if (unit.unitId === "ccss-6-ee-b") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-positive-whole-equality-substitution-truth-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(
+      evidence.autoEvidenceIds.length === 1 && evidence.autoEvidenceIds[0] === EEB_SUBSTITUTION_EVIDENCE_ID,
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    policy.included.forEach(function (locale) {
+      assert(evidence.lockedEvidenceByLocale[locale] === EEB_LOCKED_EVIDENCE_BY_LOCALE[locale], "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
   assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
 }
 
@@ -1012,6 +1103,38 @@ function canonicalWholeNumberPower(check, reference) {
   return String(result);
 }
 
+function canonicalPositiveWholeEqualitySubstitutionTruth(check, reference) {
+  assertExactDataKeys(check, ["kind", "form", "candidateSet", "candidate", "addend", "total"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(check.form === "x-plus-p-equals-q", "ARITHMETIC_CHECK_INVALID", reference);
+  assertDenseArray(check.candidateSet, "ARITHMETIC_CHECK_INVALID", reference);
+  assert(check.candidateSet.length === 3, "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    check.candidateSet.every(function (value) {
+      return Number.isSafeInteger(value) && value >= EEB_CANDIDATE_MIN && value <= EEB_CANDIDATE_MAX;
+    }) &&
+      check.candidateSet[0] < check.candidateSet[1] && check.candidateSet[1] < check.candidateSet[2],
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  assert(
+    Number.isSafeInteger(check.candidate) && check.candidate >= EEB_CANDIDATE_MIN && check.candidate <= EEB_CANDIDATE_MAX &&
+      check.candidateSet.includes(check.candidate) &&
+      Number.isSafeInteger(check.addend) && check.addend >= EEB_ADDITION_ADDEND_MIN && check.addend <= EEB_ADDITION_ADDEND_MAX &&
+      Number.isSafeInteger(check.total) && check.total >= 2 && check.total <= EEB_ADDITION_TOTAL_MAX,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  const solution = BigInt(check.total) - BigInt(check.addend);
+  assert(solution >= BigInt(EEB_CANDIDATE_MIN) && solution <= BigInt(EEB_CANDIDATE_MAX), "ARITHMETIC_CHECK_INVALID", reference);
+  const holds = BigInt(check.candidate) + BigInt(check.addend) === BigInt(check.total);
+  if (holds) {
+    assert(check.candidate === Number(solution), "ARITHMETIC_CHECK_INVALID", reference);
+  } else {
+    assert(check.candidate !== Number(solution), "ARITHMETIC_CHECK_INVALID", reference);
+  }
+  return holds ? "true" : "false";
+}
+
 function countExactTextOccurrences(value, target) {
   let count = 0;
   let offset = 0;
@@ -1060,6 +1183,39 @@ function validateWholeNumberPowerPrompt(component, check, reference) {
   return representations[0];
 }
 
+function eebCandidateSetDisplay(check) {
+  return `{${check.candidateSet.join(", ")}}`;
+}
+
+function eebEqualityDisplay(check) {
+  return `x + ${check.addend} = ${check.total}`;
+}
+
+function koreanObjectParticleForPositiveWhole(value) {
+  return [0, 1, 3, 6, 7, 8].includes(value % 10) ? "을" : "를";
+}
+
+function normalizeEebChinesePunctuationForSyntax(content) {
+  return String(content).replace(/：/gu, ":").replace(/，/gu, ",").replace(/。/gu, ".").replace(/？/gu, "?");
+}
+
+function validatePositiveWholeEqualitySubstitutionTruthPrompt(component, check, reference) {
+  const candidateSet = eebCandidateSetDisplay(check);
+  const equality = eebEqualityDisplay(check);
+  const templates = Object.freeze({
+    ko: `후보 집합 ${candidateSet}에서 후보 ${check.candidate}${koreanObjectParticleForPositiveWhole(check.candidate)} ${equality}에 대입하세요. 이 등식이 성립하나요?`,
+    en: `From the candidate set ${candidateSet}, substitute candidate ${check.candidate} into ${equality}. Does the equality hold?`,
+    "zh-Hans": `在候选集合 ${candidateSet} 中，将候选数 ${check.candidate} 代入 ${equality}。这个等式成立吗？`
+  });
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    const locale = entry[0];
+    const content = entry[1];
+    const syntaxContent = locale === "zh-Hans" ? normalizeEebChinesePunctuationForSyntax(content) : content;
+    assert(syntaxContent === syntaxContent.normalize("NFKC"), "EEB_SUBSTITUTION_PROMPT_INVALID", reference);
+    assert(content === templates[locale], "EEB_SUBSTITUTION_PROMPT_INVALID", reference);
+  });
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -1080,6 +1236,7 @@ function canonicalAnswer(check, reference) {
     return String(check.perGroup * check.groups);
   }
   if (kind === "whole-number-power") return canonicalWholeNumberPower(check, reference);
+  if (kind === "positive-whole-equality-substitution-truth") return canonicalPositiveWholeEqualitySubstitutionTruth(check, reference);
   if (kind === "whole-percent") {
     assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
@@ -1126,6 +1283,42 @@ function validateNscAutomaticEvidence(answerReferences, unit, reference) {
   assert(answerReferences.some(function (answerReference) {
     return answerReference.arithmeticCheck.kind === "signed-rational-operation" && answerReference.arithmeticCheck.operation === "axis-distance";
   }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+}
+
+function validateEebAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-b") return;
+  assert(answerReferences.length === 22, "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "truth-value-exact" && answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth";
+  }), "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const fingerprints = new Set();
+  const equationFingerprints = new Set();
+  const truthCounts = new Map();
+  const candidatePositionCounts = [0, 0, 0];
+  const addendBandCounts = [0, 0, 0];
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const fingerprint = `${check.candidateSet.join(",")}|${check.candidate}|${check.addend}|${check.total}`;
+    assert(!fingerprints.has(fingerprint), "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    fingerprints.add(fingerprint);
+    const equationFingerprint = eebEqualityFactFingerprint(check);
+    assert(!equationFingerprints.has(equationFingerprint), "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    equationFingerprints.add(equationFingerprint);
+    const expected = canonicalPositiveWholeEqualitySubstitutionTruth(check, answerReference.referenceId);
+    truthCounts.set(expected, (truthCounts.get(expected) || 0) + 1);
+    const candidatePosition = check.candidateSet.indexOf(check.candidate);
+    assert(candidatePosition >= 0, "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    candidatePositionCounts[candidatePosition] += 1;
+    if (check.addend <= 6) addendBandCounts[0] += 1;
+    else if (check.addend <= 13) addendBandCounts[1] += 1;
+    else addendBandCounts[2] += 1;
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    validatePositiveWholeEqualitySubstitutionTruthPrompt(component, check, answerReference.referenceId);
+  });
+  assert(truthCounts.get("true") === 11 && truthCounts.get("false") === 11, "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(Math.max(...candidatePositionCounts) - Math.min(...candidatePositionCounts) <= 1, "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(addendBandCounts.every(function (count) { return count >= 4; }), "EEB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
 }
 
 function validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference) {
@@ -1252,6 +1445,169 @@ function validateEeaStudentVisibleSeparation(pack, sections, answerReferences, u
   });
 }
 
+function containsEebTruthResponseLabel(content) {
+  const normalized = String(content).normalize("NFKC");
+  // The exact static-template allowlist below controls every non-worked
+  // student field in EE.B v1. This helper is intentionally narrower: it
+  // catches explicit answer labels without treating ordinary Chinese copulas
+  // or ordinary instructional prose as an answer disclosure.
+  return /\b(?:true|false|t|f)\b/iu.test(normalized) ||
+    /(?:참|거짓|真|假|⊤|⊥|✓|✔|✗|✘|○|×)/u.test(normalized);
+}
+
+function containsEebSpelledPositiveWhole(content) {
+  const normalized = String(content).normalize("NFKC");
+  if (/\b(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|hundred|thousand|dozen|score)\b/iu.test(normalized)) return true;
+  if (/(?:하나|둘|셋|넷|다섯|여섯|일곱|여덟|아홉|열|스물|서른|마흔)/u.test(normalized)) return true;
+  if (/(^|[^\p{Script=Hangul}])(?:한|두|세|네)(?![\p{Script=Hangul}])/u.test(normalized)) return true;
+  if (/[〇零一二三四五六七八九十百千万萬亿億两兩壹贰貳叁參肆伍陆陸柒捌玖拾佰仟]/u.test(normalized)) return true;
+  for (let value = EEB_CANDIDATE_MIN; value <= EEB_ADDITION_TOTAL_MAX; value += 1) {
+    if (containsEeaRomanAnswerToken(normalized, String(value))) return true;
+  }
+  for (let value = EEB_CANDIDATE_MIN; value <= EEB_ADDITION_TOTAL_MAX; value += 1) {
+    const forms = eeaNumberWordForms(String(value));
+    if (
+      forms.english.some(function (word) { return containsEeaEnglishNumberWord(normalized, word); }) ||
+      forms.korean.some(function (word) { return containsEeaKoreanNumberWord(normalized, word); }) ||
+      forms.koreanNative.some(function (word) { return containsEeaKoreanNumberWord(normalized, word); }) ||
+      forms.koreanBound.some(function (word) { return containsEeaKoreanNumberWord(normalized, word); }) ||
+      forms.chinese.some(function (word) { return containsEeaChineseNumberWord(normalized, word); })
+    ) return true;
+  }
+  return false;
+}
+
+function assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse(content, reference) {
+  const normalized = String(content).normalize("NFKC");
+  // EE.B v1 needs no non-response mathematical display. Reject every TeX
+  // escape rather than trying to reconstruct presentation-only wrappers;
+  // otherwise a truth token can be visually split across safe TeX fragments.
+  assert(!normalized.includes("\\"), "EEB_NONRESPONSE_TEX_NOT_ALLOWED", reference);
+  assert(!/[\p{N}]/u.test(normalized), "EEB_NONRESPONSE_NUMERIC_NOT_ALLOWED", reference);
+  assert(/^[A-Za-z\p{Script=Hangul}\p{Script=Han}\s.,;:!?"'“”‘’()\-—–，。！？、】【、]*$/u.test(normalized), "EEB_NONRESPONSE_SCRIPT_NOT_ALLOWED", reference);
+  assert(!containsEebSpelledPositiveWhole(normalized), "EEB_NONRESPONSE_NUMBER_WORD_NOT_ALLOWED", reference);
+  assert(!containsEebTruthResponseLabel(normalized), "EEB_NONRESPONSE_TRUTH_LABEL_NOT_ALLOWED", reference);
+}
+
+function validateEebWorkedExampleContent(content, locale, reference) {
+  const value = String(content);
+  // Chinese prose conventionally uses a full-width colon after 示例. Keep that
+  // single locale mark while requiring every mathematical character to remain
+  // in the raw ASCII display that the parser validates below.
+  const normalizedForTemplate = locale === "zh-Hans" ? normalizeEebChinesePunctuationForSyntax(value) : value;
+  assert((locale !== "zh-Hans" || value.startsWith("示例：")) && normalizedForTemplate === normalizedForTemplate.normalize("NFKC"), "EEB_WORKED_EXAMPLE_INVALID", reference);
+  const matchers = Object.freeze({
+    ko: /^예시: x = ([0-9]+)(?:을|를) x \+ ([0-9]+) = ([0-9]+)에 대입하면 ([0-9]+) \+ ([0-9]+) = ([0-9]+)이므로 등식이 성립한다\.$/u,
+    en: /^Worked example: Substitute x = ([0-9]+) into x \+ ([0-9]+) = ([0-9]+)\. Since ([0-9]+) \+ ([0-9]+) = ([0-9]+), the equality holds\.$/u,
+    "zh-Hans": /^示例:将 x = ([0-9]+) 代入 x \+ ([0-9]+) = ([0-9]+)\.因为 ([0-9]+) \+ ([0-9]+) = ([0-9]+),所以等式成立\.$/u
+  });
+  const matcher = matchers[locale];
+  assert(matcher, "EEB_WORKED_EXAMPLE_INVALID", reference);
+  const match = matcher.exec(normalizedForTemplate);
+  assert(match, "EEB_WORKED_EXAMPLE_INVALID", reference);
+  const values = match.slice(1).map(function (value) { return Number(value); });
+  const [candidate, addend, total, substitutedCandidate, substitutedAddend, substitutedTotal] = values;
+  const exactTemplate = Object.freeze({
+    ko: `예시: x = ${candidate}${koreanObjectParticleForPositiveWhole(candidate)} x + ${addend} = ${total}에 대입하면 ${candidate} + ${addend} = ${total}이므로 등식이 성립한다.`,
+    en: `Worked example: Substitute x = ${candidate} into x + ${addend} = ${total}. Since ${candidate} + ${addend} = ${total}, the equality holds.`,
+    "zh-Hans": `示例：将 x = ${candidate} 代入 x + ${addend} = ${total}。因为 ${candidate} + ${addend} = ${total}，所以等式成立。`
+  })[locale];
+  assert(value === exactTemplate, "EEB_WORKED_EXAMPLE_INVALID", reference);
+  assert(
+    values.every(function (value) { return Number.isSafeInteger(value); }) &&
+      candidate >= EEB_CANDIDATE_MIN && candidate <= EEB_CANDIDATE_MAX &&
+      addend >= EEB_ADDITION_ADDEND_MIN && addend <= EEB_ADDITION_ADDEND_MAX &&
+      total >= 2 && total <= EEB_ADDITION_TOTAL_MAX &&
+      candidate === substitutedCandidate && addend === substitutedAddend && total === substitutedTotal &&
+      BigInt(candidate) + BigInt(addend) === BigInt(total),
+    "EEB_WORKED_EXAMPLE_INVALID",
+    reference
+  );
+  return Object.freeze({ candidate, addend, total });
+}
+
+function eebSubstitutionFactFingerprint(fact) {
+  return `${fact.candidate}|${fact.addend}|${fact.total}`;
+}
+
+function eebEqualityFactFingerprint(fact) {
+  return `${fact.addend}|${fact.total}`;
+}
+
+function eebStudentResourceProfile(resource) {
+  return `${resource.sessionId}:${resource.resourceType}:${resource.levelId}`;
+}
+
+function assertEebExactLocalizedStudentText(localizedText, expectedTextByLocale, reference) {
+  assert(expectedTextByLocale, "EEB_NONRESPONSE_TEMPLATE_INVALID", reference);
+  const actualLocales = Object.keys(localizedText).sort();
+  const expectedLocales = Object.keys(expectedTextByLocale).sort();
+  assert(JSON.stringify(actualLocales) === JSON.stringify(expectedLocales), "EEB_NONRESPONSE_TEMPLATE_INVALID", reference);
+  expectedLocales.forEach(function (locale) {
+    assert(localizedText[locale] === expectedTextByLocale[locale], "EEB_NONRESPONSE_TEMPLATE_INVALID", reference);
+    assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse(localizedText[locale], reference);
+  });
+}
+
+function validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-b") return;
+  const responseEquationFacts = new Set(answerReferences.map(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    return eebEqualityFactFingerprint(check);
+  }));
+  const expectedResponses = new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; }));
+  const nonResponseFields = [];
+  [
+    [pack.frontMatter, EEB_STUDENT_STATIC_TEXT.frontMatter],
+    [pack.closingMatter, EEB_STUDENT_STATIC_TEXT.closingMatter]
+  ].forEach(function (entry) {
+    Object.keys(entry[1]).forEach(function (field) {
+      assertEebExactLocalizedStudentText(entry[0][field], entry[1][field], reference);
+      Object.entries(entry[0][field]).forEach(function (localeEntry) {
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference }));
+      });
+    });
+  });
+  sections.forEach(function (entry) {
+    const resourceProfile = eebStudentResourceProfile(entry.resource);
+    assertEebExactLocalizedStudentText(
+      entry.section.titleByLocale,
+      EEB_STUDENT_STATIC_TEXT.sectionTitlesByProfile[resourceProfile],
+      entry.section.sectionId
+    );
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+    });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      const workedExampleFacts = component.componentType === "worked-example"
+        ? Object.entries(component.contentByLocale).map(function (localeEntry) {
+          return validateEebWorkedExampleContent(localeEntry[1], localeEntry[0], component.componentId);
+        })
+        : null;
+      if (workedExampleFacts) {
+        assert(new Set(workedExampleFacts.map(function (fact) { return JSON.stringify(fact); })).size === 1, "EEB_WORKED_EXAMPLE_INVALID", component.componentId);
+        assert(!responseEquationFacts.has(eebEqualityFactFingerprint(workedExampleFacts[0])), "EEB_WORKED_EXAMPLE_FACT_LEAK", component.componentId);
+      } else {
+        assert(component.componentType === "concept-summary", "EEB_NONRESPONSE_TEMPLATE_INVALID", component.componentId);
+        assertEebExactLocalizedStudentText(
+          component.contentByLocale,
+          EEB_STUDENT_STATIC_TEXT.conceptSummaryByProfile[resourceProfile],
+          component.componentId
+        );
+      }
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+      });
+    });
+  });
+  nonResponseFields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    expectedResponses.forEach(function (expectedResponse) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "EEB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
@@ -1271,10 +1627,15 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (answerReference.responseMode === "comparison-symbol-exact") assert(answerReference.arithmeticCheck.kind === "signed-rational-comparison", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (answerReference.responseMode === "numeric-exact") assert(!["ratio-canonical", "signed-rational-comparison"].includes(answerReference.arithmeticCheck.kind), "ANSWER_REFERENCE_MODE_MISMATCH", reference);
+  if (answerReference.responseMode === "truth-value-exact") assert(answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
   if (artifact.resourceBinding.unitId === "ccss-6-ee-a") {
     assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "whole-number-power", "EEA_RESPONSE_CONTRACT_INVALID", reference);
   }
+  if (artifact.resourceBinding.unitId === "ccss-6-ee-b") {
+    assert(answerReference.responseMode === "truth-value-exact" && answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth", "EEB_RESPONSE_CONTRACT_INVALID", reference);
+  }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
+  if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
@@ -1297,7 +1658,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   });
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
-    return ["ccss-6-ns-c", "ccss-6-ee-a"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
     return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
@@ -1334,6 +1695,31 @@ function validateEeaTeacherObservationEvidence(artifacts, unit, reference) {
       return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
     }).length;
     assert(observationCount === 1, "EEA_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+  });
+}
+
+function validateEebTeacherObservationEvidence(artifacts, unit, policy, reference) {
+  if (unit.unitId !== "ccss-6-ee-b") return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "EEB_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "EEB_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = EEB_TEACHER_OBSERVATION_BY_PROFILE[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "EEB_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      const locale = entry[0];
+      assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "EEB_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
   });
 }
 
@@ -1481,6 +1867,7 @@ function validatePack(pack, fileName) {
   if (pack.coverageState === "plan-complete") assert(seenTeacherResources.size === expectedTeacher.size, "TEACHER_COVERAGE_INCOMPLETE", reference);
   else assert(seenTeacherResources.size > 0 && seenTeacherResources.size < expectedTeacher.size, "PARTIAL_COVERAGE_STATE_INVALID", reference);
   validateEeaTeacherObservationEvidence(artifacts, unit, reference);
+  validateEebTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -1500,7 +1887,9 @@ function validatePack(pack, fileName) {
     });
   });
   validateNscAutomaticEvidence(answerReferences, unit, reference);
+  validateEebAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference);
+  validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
@@ -1689,16 +2078,28 @@ module.exports = Object.freeze({
   SCHEMA_VERSION,
   CONFIDENTIALITY_MARKER,
   DRAFT_STATE,
+  EEB_LOCKED_EVIDENCE_BY_LOCALE,
+  EEB_TEACHER_OBSERVATION_BY_PROFILE,
+  EEB_STUDENT_STATIC_TEXT,
   assertResponseStudentTextSyntax,
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
   canonicalAnswer,
   validateStandardsEvidence,
   validateNscAutomaticEvidence,
+  validateEebAutomaticEvidence,
   validateEeaAutomaticEvidence,
+  validatePositiveWholeEqualitySubstitutionTruthPrompt,
   validateEeaWorkedExampleContent,
+  validateEebWorkedExampleContent,
+  validateEebStudentVisibleSeparation,
+  validateEebTeacherObservationEvidence,
+  eebEqualityFactFingerprint,
+  assertEebExactLocalizedStudentText,
   validateEeaStudentVisibleSeparation,
   validateEeaTeacherObservationEvidence,
+  containsEebTruthResponseLabel,
+  assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse,
   assertEeaNonWorkedStudentTextHasNoNumericNotation,
   containsEeaNumericEquivalentAnswer,
   containsEeaRomanAnswerToken,
