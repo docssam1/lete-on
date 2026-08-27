@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-27",
+  "updated": "2026-08-28",
   "sources": [
     {
       "id": "handover",
@@ -340,9 +340,9 @@
       "path": "geometry/games/equal-partition/equal-partition.selftest.mjs",
       "kind": "code",
       "sensitivity": "public",
-      "sha256": "ba6e781d4ed325972e4ae9ea5abecd75cd029202b1e14a1ef458a796e056be03",
-      "size": 2138,
-      "mtime_ns": 1787842172036407800
+      "sha256": "d014193da205d133f84868ce54d64d9de2d246641fbbe69c06b603c06ef53428",
+      "size": 2250,
+      "mtime_ns": 1787842913005195400
     }
   ],
   "records": [
