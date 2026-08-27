@@ -64,6 +64,7 @@ test("private renderer keeps the student model structurally free of teacher and 
   assert.match(html, /data-layout-target-pages="3"/);
   assert.match(html, /class="private-watermark"/);
   assert.match(html, /@media print[\s\S]*?\.private-watermark\s*\{[^}]*position:\s*fixed/u);
+  assert.match(html, /\.private-watermark\s*\{[^}]*top:\s*-0\.34in;\s*right:\s*0\.08in;[^}]*pointer-events:\s*none;/u);
   assert.match(html, /student-safe-sentinel/);
   assert.doesNotMatch(html, /teacher-(?:reference|title|component|segment|answer|solution|proof)-sentinel/);
   assert.doesNotMatch(html, /teacherReferenceId|answerReferences|expectedResponse|solutionByLocale|uniquenessProofByLocale|arithmeticCheck/);
@@ -78,6 +79,8 @@ test("private renderer keeps teacher-only content out of student output and incl
   assert.match(html, /data-layout-target-pages="1"/);
   assert.match(html, /class="private-watermark"/);
   assert.match(html, /@media print[\s\S]*?\.private-watermark\s*\{[^}]*position:\s*fixed/u);
+  assert.match(html, /\.private-watermark\s*\{[^}]*top:\s*-0\.34in;\s*right:\s*0\.08in;[^}]*pointer-events:\s*none;/u);
+  assert.match(html, /main\[data-document-audience="teacher"\]\s+\.section\s*\{\s*break-inside:\s*auto;\s*page-break-inside:\s*auto;/u);
   assert.match(html, /student-safe-sentinel/);
   [
     "teacher-title-sentinel",
@@ -99,6 +102,26 @@ test("truth-value responses render two unselected student choices without answer
   assert.match(html, />Does not hold</);
   assert.doesNotMatch(html, /<input\b|\bchecked\b|\bvalue=/iu);
   assert.doesNotMatch(html, /class="answer-line"/);
+});
+
+test("private renderer renders a safe two-variable relation table without teacher answer fields", function () {
+  const draft = syntheticDraft();
+  draft.studentSections[0].components[0].relationTable = {
+    form: "y-equals-rate-times-x",
+    independentSymbol: "x",
+    dependentSymbol: "y",
+    independentValues: [0, 13, 14],
+    dependentValues: [0, 26, 28]
+  };
+  const student = renderer.buildStudentModel(draft, "en");
+  const studentHtml = renderer.renderStudentHtml(student, "en");
+  assert.match(studentHtml, /class="relation-table"/);
+  assert.match(studentHtml, />Independent variable x</);
+  assert.match(studentHtml, />Dependent variable y</);
+  assert.doesNotMatch(studentHtml, /teacher-(?:reference|title|component|segment|answer|solution|proof)-sentinel/);
+  const teacherHtml = renderer.renderTeacherHtml(renderer.buildTeacherModel(draft, "en"), "en");
+  assert.match(teacherHtml, /class="relation-table"/);
+  assert.match(teacherHtml, /teacher-answer-sentinel/);
 });
 
 test("renderer command requires one explicit external root, unit, locale, and output root", function () {

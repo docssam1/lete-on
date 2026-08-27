@@ -27,6 +27,9 @@ const COPY = Object.freeze({
     learningTarget: "학습 목표",
     howToUse: "사용 방법",
     response: "응답",
+    relationshipTable: "관계 표",
+    independentVariable: "독립변수",
+    dependentVariable: "종속변수",
     closing: "마무리",
     teacherArtifacts: "교사용 자료",
     lessonSegments: "수업 흐름",
@@ -44,6 +47,9 @@ const COPY = Object.freeze({
     learningTarget: "Learning target",
     howToUse: "How to use",
     response: "Response",
+    relationshipTable: "Relationship table",
+    independentVariable: "Independent variable",
+    dependentVariable: "Dependent variable",
     closing: "Closing",
     teacherArtifacts: "Teacher materials",
     lessonSegments: "Lesson flow",
@@ -61,6 +67,9 @@ const COPY = Object.freeze({
     learningTarget: "学习目标",
     howToUse: "使用方法",
     response: "作答",
+    relationshipTable: "关系表",
+    independentVariable: "自变量",
+    dependentVariable: "因变量",
     closing: "结束说明",
     teacherArtifacts: "教师资料",
     lessonSegments: "课堂流程",
@@ -241,6 +250,16 @@ function findDraft(privateRoot, unitId) {
   return selected.draft;
 }
 
+function relationTableForModel(table) {
+  if (table === undefined) return null;
+  return Object.freeze({
+    independentSymbol: table.independentSymbol,
+    dependentSymbol: table.dependentSymbol,
+    independentValues: Object.freeze(Array.from(table.independentValues)),
+    dependentValues: Object.freeze(Array.from(table.dependentValues))
+  });
+}
+
 function buildStudentModel(draft, locale) {
   const student = Object.freeze({
     audience: "student",
@@ -258,7 +277,8 @@ function buildStudentModel(draft, locale) {
           return Object.freeze({
             componentType: component.componentType,
             content: localized(component.contentByLocale, locale),
-            responseMode: component.responseMode
+            responseMode: component.responseMode,
+            relationTable: relationTableForModel(component.relationTable)
           });
         })
       });
@@ -302,6 +322,7 @@ function buildTeacherModel(draft, locale) {
           assert(component, "PRIVATE_RENDER_TEACHER_REFERENCE_INVALID");
           return Object.freeze({
             prompt: localized(component.contentByLocale, locale),
+            relationTable: relationTableForModel(component.relationTable),
             expectedResponse: reference.expectedResponse,
             solution: localized(reference.solutionByLocale, locale),
             uniqueness: localized(reference.uniquenessProofByLocale, locale)
@@ -342,12 +363,16 @@ p { margin: 6px 0; font-size: 13px; line-height: 1.65; white-space: normal; }
 .choice-box { width: 17px; height: 17px; border: 1.5px solid #334155; border-radius: 3px; background: #fff; }
 .teacher { border-left: 4px solid #7c3aed; background: #faf7ff; }
 .reference { border-left: 4px solid #047857; background: #f0fdf4; }
+.relation-table { width: 100%; margin: 10px 0; border-collapse: collapse; font-size: 12px; }
+.relation-table caption { margin-bottom: 5px; text-align: left; color: #475569; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.relation-table th, .relation-table td { padding: 6px 8px; border: 1px solid #bfdbfe; text-align: center; }
+.relation-table th { background: #eff6ff; color: #1e3a8a; }
 .reference-grid { display: grid; grid-template-columns: max-content 1fr; gap: 5px 12px; font-size: 12px; line-height: 1.55; }
 .reference-grid strong { color: #14532d; }
 footer { margin-top: 28px; padding-top: 9px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 10px; }
 .private-watermark { display: none; }
-@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } }
-@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .private-watermark { display: block; position: fixed; top: 0.08in; right: 0; z-index: 10; max-width: 3.4in; color: #9f1239; font-size: 8px; font-weight: 800; line-height: 1.2; opacity: 0.72; text-align: right; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] footer { margin-top: 5px; padding-top: 4px; font-size: 8px; } }
+@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } }
+@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] footer { margin-top: 5px; padding-top: 4px; font-size: 8px; } }
 </style>
 </head>
 <body>
@@ -361,6 +386,14 @@ ${body}
 </html>`;
 }
 
+function renderRelationTable(table, copy) {
+  if (table === null) return "";
+  const rows = table.independentValues.map(function (independentValue, index) {
+    return `<tr><td>${escapeHtml(independentValue)}</td><td>${escapeHtml(table.dependentValues[index])}</td></tr>`;
+  }).join("");
+  return `<table class="relation-table"><caption>${escapeHtml(copy.relationshipTable)}</caption><thead><tr><th>${escapeHtml(copy.independentVariable)} ${escapeHtml(table.independentSymbol)}</th><th>${escapeHtml(copy.dependentVariable)} ${escapeHtml(table.dependentSymbol)}</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 function renderStudentHtml(model, locale) {
   const copy = COPY[locale];
   const body = [
@@ -368,7 +401,8 @@ function renderStudentHtml(model, locale) {
     model.sections.map(function (section, sectionIndex) {
       const components = section.components.map(function (component, componentIndex) {
         const response = renderStudentResponseControl(component.responseMode, copy);
-        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${response}</article>`;
+        const relationTable = renderRelationTable(component.relationTable, copy);
+        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${response}</article>`;
       }).join("\n");
       return `<section class="section page-start"><h2>${escapeHtml(section.title)}</h2>${components}</section>`;
     }).join("\n"),
@@ -398,7 +432,8 @@ function renderTeacherHtml(model, locale) {
       : "";
     const references = artifact.references.length > 0
       ? `<h3>${escapeHtml(copy.teacherReference)}</h3>${artifact.references.map(function (reference) {
-        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div></article>`;
+        const relationTable = renderRelationTable(reference.relationTable, copy);
+        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}</article>`;
       }).join("\n")}`
       : "";
     const pageStart = artifactIndex === 0 ? "" : " page-start";
@@ -518,6 +553,8 @@ module.exports = Object.freeze({
   buildStudentModel,
   buildTeacherModel,
   parseArguments,
+  relationTableForModel,
+  renderRelationTable,
   renderStudentResponseControl,
   renderStudentHtml,
   renderTeacherHtml,

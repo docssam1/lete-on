@@ -35,6 +35,11 @@ const EEB_CANDIDATE_MAX = 24;
 const EEB_ADDITION_ADDEND_MIN = 1;
 const EEB_ADDITION_ADDEND_MAX = 20;
 const EEB_ADDITION_TOTAL_MAX = 44;
+const EEC_TABLE_EQUATION_EVIDENCE_ID = "6.EE.C.9-finite-whole-direct-variation-table-equation-completion";
+const EEC_RATE_MIN = 2;
+const EEC_RATE_MAX = 12;
+const EEC_INDEPENDENT_VALUE_MAX = 18;
+const EEC_DEPENDENT_VALUE_MAX = EEC_RATE_MAX * EEC_INDEPENDENT_VALUE_MAX;
 const EEB_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
   ko: "자동 근거는 6.EE.B.5의 제한된 양의 정수 등식 대입 판정뿐이다. 6.EE.B.5의 부등식, 후보 집합 전체 판단과 설명, 6.EE.B.6, 6.EE.B.7, 6.EE.B.8은 교사 관찰이 필요한 항목으로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
   en: "The automatic evidence is limited to determining whether substituting a positive whole number makes an equality hold within 6.EE.B.5. Inequalities, whole-candidate-set evaluation and explanation in 6.EE.B.5, together with 6.EE.B.6, 6.EE.B.7, and 6.EE.B.8, remain locked for teacher observation. It is not a full mastery or promotion decision.",
@@ -55,6 +60,28 @@ const EEB_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
     ko: "6.EE.B.8의 부등식은 교사 관찰이 필요한 항목으로 잠긴다.",
     en: "Keep 6.EE.B.8 inequalities locked for teacher observation.",
     "zh-Hans": "6.EE.B.8 的不等式仍锁定为教师观察内容。"
+  })
+});
+const EEC_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
+  ko: "자동 근거는 이미 x가 독립변수이고 y가 종속변수로 지정된 제한된 양의 정수 직접비례 표에서 y = □ × x의 계수를 완성하는 것뿐이다. 실제 상황의 변수·단위 선택, 표·그래프 작성과 해석, 표·그래프·방정식의 연결 설명, 비례형 이외 관계는 교사 관찰로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
+  en: "The automatic evidence is limited to completing the coefficient in y = □ × x from a finite positive-whole direct-variation table where x is already designated independent and y dependent. Choosing variables and units in a real-world context, constructing or interpreting tables and graphs, explaining the connection among table, graph, and equation, and non-proportional relationships remain teacher-observation work. It is not a full mastery or promotion decision.",
+  "zh-Hans": "自动证据仅限于在已指定 x 为自变量、y 为因变量的有限正整数正比例表中完成 y = □ × x 的系数。真实情境中的变量和单位选择、表格与图像的制作和解读、表格、图像与方程之间的联系说明，以及非正比例关系仍由教师观察。这不是完全掌握或年级晋升决定。"
+});
+const EEC_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
+  "lesson-plan:core": Object.freeze({
+    ko: "실제 상황에서 독립변수·종속변수와 단위를 정의하고, 표·그래프·방정식의 연결을 설명하는지를 교사 관찰로 기록한다.",
+    en: "Record through teacher observation whether the learner defines independent and dependent variables with units in context and explains the connection among table, graph, and equation.",
+    "zh-Hans": "通过教师观察记录学习者是否能在情境中定义带单位的自变量和因变量，并说明表格、图像和方程之间的联系。"
+  }),
+  "assignment-builder:core": Object.freeze({
+    ko: "표를 만들고 읽으며 두 변수의 관계를 설명하는 항목은 교사 관찰로 남긴다.",
+    en: "Keep constructing and reading a table and explaining the two-variable relationship for teacher observation.",
+    "zh-Hans": "制作和解读表格以及说明两个变量关系的项目仍由教师观察。"
+  }),
+  "assignment-builder:advanced": Object.freeze({
+    ko: "그래프의 축·눈금·순서쌍과 비례형 이외 관계의 해석은 교사 관찰로 남긴다.",
+    en: "Keep graph axes, scale, ordered pairs, and interpretation beyond the proportional form for teacher observation.",
+    "zh-Hans": "图像的坐标轴、刻度、有序数对以及正比例形式以外关系的解读仍由教师观察。"
   })
 });
 const EEB_STUDENT_STATIC_TEXT = Object.freeze({
@@ -132,7 +159,7 @@ const BINDING_KEYS = new Set([
   "resourceType", "bindingState"
 ]);
 const STUDENT_COMPONENT_KEYS = new Set([
-  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId"
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable"
 ]);
 const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
 const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
@@ -155,6 +182,7 @@ const LAYOUT_KEYS = new Set([
   "teacherArtifactLayouts"
 ]);
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
+const RELATION_TABLE_KEYS = new Set(["form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues"]);
 const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact", "truth-value-exact"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
 const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|\bans(?:wer)?|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/iu;
@@ -725,6 +753,22 @@ function validateStandardsEvidence(evidence, policy, unit, reference) {
     });
     return;
   }
+  if (unit.unitId === "ccss-6-ee-c") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-finite-whole-direct-variation-table-equation-completion-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(
+      evidence.autoEvidenceIds.length === 1 && evidence.autoEvidenceIds[0] === EEC_TABLE_EQUATION_EVIDENCE_ID,
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    policy.included.forEach(function (locale) {
+      assert(evidence.lockedEvidenceByLocale[locale] === EEC_LOCKED_EVIDENCE_BY_LOCALE[locale], "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
   assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
 }
 
@@ -775,7 +819,31 @@ function assertPlannedComponentCounts(components, resource, reference) {
   });
 }
 
-function validateStudentComponent(component, policy, reference) {
+function validateEecTableValues(independentValues, dependentValues, reference) {
+  assertDenseArray(independentValues, "EEC_RELATION_TABLE_INVALID", reference);
+  assertDenseArray(dependentValues, "EEC_RELATION_TABLE_INVALID", reference);
+  assert(independentValues.length === 3 && dependentValues.length === 3, "EEC_RELATION_TABLE_INVALID", reference);
+  assert(
+    independentValues[0] === 0 && dependentValues[0] === 0 &&
+      independentValues.slice(1).every(function (value) {
+        return Number.isSafeInteger(value) && value >= 1 && value <= EEC_INDEPENDENT_VALUE_MAX;
+      }) &&
+      dependentValues.slice(1).every(function (value) {
+        return Number.isSafeInteger(value) && value >= 1 && value <= EEC_DEPENDENT_VALUE_MAX;
+      }) &&
+      independentValues[1] < independentValues[2],
+    "EEC_RELATION_TABLE_INVALID",
+    reference
+  );
+}
+
+function validateEecRelationTable(table, reference) {
+  assertExactDataKeys(table, ["form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues"], "EEC_RELATION_TABLE_INVALID", reference);
+  assert(table.form === "y-equals-rate-times-x" && table.independentSymbol === "x" && table.dependentSymbol === "y", "EEC_RELATION_TABLE_INVALID", reference);
+  validateEecTableValues(table.independentValues, table.dependentValues, reference);
+}
+
+function validateStudentComponent(component, policy, reference, unitId) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
   assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
   assert(Number.isInteger(component.sequence) && component.sequence > 0 && component.sequence <= 100, "STUDENT_COMPONENT_INVALID", reference);
@@ -783,6 +851,7 @@ function validateStudentComponent(component, policy, reference) {
   const isTeachingBlock = TEACHING_COMPONENT_TYPES.has(component.componentType);
   if (isTeachingBlock) {
     assert(component.responseMode === null && component.teacherReferenceId === null, "STUDENT_COMPONENT_INVALID", reference);
+    assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -792,6 +861,8 @@ function validateStudentComponent(component, policy, reference) {
       assertResponseStudentTextSyntax(content, locale, reference);
       assertStudentAnswerLabelAbsent(content, reference);
     });
+    if (unitId === "ccss-6-ee-c") validateEecRelationTable(component.relationTable, reference);
+    else assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
   }
 }
 
@@ -810,7 +881,7 @@ function validateStudentSection(section, plan, policy, seenSectionIds, seenCompo
   assertPlannedComponentCounts(section.components, resource, reference);
   const sequences = [];
   section.components.forEach(function (component) {
-    validateStudentComponent(component, policy, localReference(component && component.componentId, reference));
+    validateStudentComponent(component, policy, localReference(component && component.componentId, reference), resource.unitId);
     assert(!seenComponentIds.has(component.componentId), "DUPLICATE_STUDENT_COMPONENT", component.componentId);
     seenComponentIds.add(component.componentId);
     sequences.push(component.sequence);
@@ -1135,6 +1206,42 @@ function canonicalPositiveWholeEqualitySubstitutionTruth(check, reference) {
   return holds ? "true" : "false";
 }
 
+function canonicalDirectVariationWholeTableCoefficient(check, reference) {
+  assertExactDataKeys(check, [
+    "kind", "form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues", "rate"
+  ], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    check.kind === "direct-variation-whole-table-coefficient" &&
+      check.form === "y-equals-rate-times-x" &&
+      check.independentSymbol === "x" &&
+      check.dependentSymbol === "y" &&
+      Number.isSafeInteger(check.rate) && check.rate >= EEC_RATE_MIN && check.rate <= EEC_RATE_MAX,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  validateEecTableValues(check.independentValues, check.dependentValues, reference);
+  check.independentValues.forEach(function (independentValue, index) {
+    const dependentValue = check.dependentValues[index];
+    assert(
+      BigInt(dependentValue) === BigInt(check.rate) * BigInt(independentValue),
+      "ARITHMETIC_CHECK_INVALID",
+      reference
+    );
+  });
+  const inferredRates = check.independentValues.slice(1).map(function (independentValue, offset) {
+    const dependentValue = check.dependentValues[offset + 1];
+    assert(dependentValue % independentValue === 0, "ARITHMETIC_CHECK_INVALID", reference);
+    return dependentValue / independentValue;
+  });
+  assert(inferredRates.length === 2 && inferredRates.every(function (rate) { return rate === check.rate; }), "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    !check.independentValues.includes(check.rate) && !check.dependentValues.includes(check.rate),
+    "EEC_TABLE_ANSWER_DISCLOSED",
+    reference
+  );
+  return String(check.rate);
+}
+
 function countExactTextOccurrences(value, target) {
   let count = 0;
   let offset = 0;
@@ -1216,6 +1323,23 @@ function validatePositiveWholeEqualitySubstitutionTruthPrompt(component, check, 
   });
 }
 
+function validateDirectVariationWholeTableCoefficientPrompt(component, check, reference) {
+  const relationTable = component.component.relationTable;
+  validateEecRelationTable(relationTable, reference);
+  ["form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues"].forEach(function (field) {
+    assert(JSON.stringify(relationTable[field]) === JSON.stringify(check[field]), "EEC_RELATION_TABLE_MISMATCH", reference);
+  });
+  const templates = Object.freeze({
+    ko: "표는 독립변수 x와 종속변수 y의 직접비례 관계를 나타냅니다. 방정식 y = □ × x의 계수를 구하세요.",
+    en: "The table shows a direct-variation relationship with x as the independent variable and y as the dependent variable. Find the coefficient in y = □ × x.",
+    "zh-Hans": "表格表示 x 为自变量、y 为因变量的正比例关系。求方程 y = □ × x 中的系数。"
+  });
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    const locale = entry[0];
+    assert(entry[1] === templates[locale], "EEC_TABLE_PROMPT_INVALID", reference);
+  });
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -1237,6 +1361,7 @@ function canonicalAnswer(check, reference) {
   }
   if (kind === "whole-number-power") return canonicalWholeNumberPower(check, reference);
   if (kind === "positive-whole-equality-substitution-truth") return canonicalPositiveWholeEqualitySubstitutionTruth(check, reference);
+  if (kind === "direct-variation-whole-table-coefficient") return canonicalDirectVariationWholeTableCoefficient(check, reference);
   if (kind === "whole-percent") {
     assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
@@ -1355,6 +1480,31 @@ function validateEeaAutomaticEvidence(answerReferences, componentMap, unit, refe
     assert(answerReferences.some(function (answerReference) { return inBand(answerReference.arithmeticCheck.base); }), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
   });
   assert(representations.has("power-notation") && representations.has("repeated-factor"), "EEA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+}
+
+function validateEecAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-c") return;
+  assert(answerReferences.length === 22, "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient";
+  }), "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const fingerprints = new Set();
+  const rateCounts = new Map();
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const fingerprint = `${check.rate}|${check.independentValues.join(",")}|${check.dependentValues.join(",")}`;
+    assert(!fingerprints.has(fingerprint), "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    fingerprints.add(fingerprint);
+    const expected = canonicalDirectVariationWholeTableCoefficient(check, answerReference.referenceId);
+    assert(answerReference.expectedResponse === expected, "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    rateCounts.set(check.rate, (rateCounts.get(check.rate) || 0) + 1);
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    validateDirectVariationWholeTableCoefficientPrompt(component, check, answerReference.referenceId);
+  });
+  for (let rate = EEC_RATE_MIN; rate <= EEC_RATE_MAX; rate += 1) {
+    assert(rateCounts.get(rate) === 2, "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  }
 }
 
 function escapeRegExpLiteral(value) {
@@ -1608,6 +1758,92 @@ function validateEebStudentVisibleSeparation(pack, sections, answerReferences, u
   });
 }
 
+function containsEecSupplementalLocalizedAnswerWord(content, expectedResponse) {
+  const normalized = String(content).normalize("NFKC");
+  const response = String(expectedResponse);
+  // Korean bound-cardinal forms are normally parsed only beside ordinary
+  // counting counters. EE.C prose can name variables, values, or a
+  // coefficient directly, so include those mathematical nouns here. Avoid
+  // the ambiguous Sino-Korean one-character forms (for example, "이 변수"
+  // can mean "this variable") and accept only the unambiguous native forms.
+  const koreanBoundForms = Object.freeze({
+    "2": Object.freeze(["두", "둘"]),
+    "3": Object.freeze(["세", "셋"]),
+    "4": Object.freeze(["네", "넷"])
+  })[response] || Object.freeze([]);
+  if (koreanBoundForms.some(function (word) {
+    return new RegExp(`(^|[^\\p{Script=Hangul}])${escapeRegExpLiteral(word)}\\s*(?:변수|값|계수|배|곱|항|칸|줄|행|열)(?:의|은|는|이|가|을|를|와|과|도|만|이다|입니다)?(?![\\p{Script=Hangul}])`, "u").test(normalized);
+  })) return true;
+
+  // Standard Chinese renders two as 二, while instructional text often uses
+  // 两/兩 before a classifier. Financial forms are also visually meaningful
+  // to a reader. They must not become an alternate coefficient channel.
+  const chineseAlternateMatcher = Object.freeze({
+    "2": /[两兩贰貳]/u,
+    "3": /[叁參]/u,
+    "4": /肆/u,
+    "5": /伍/u,
+    "6": /陆/u,
+    "7": /柒/u,
+    "8": /捌/u,
+    "9": /玖/u,
+    "10": /拾/u,
+    "11": /(?:拾壹|壹拾壹)/u,
+    "12": /(?:拾贰|拾貳|壹拾贰|壹拾貳)/u
+  })[response];
+  return !!chineseAlternateMatcher && chineseAlternateMatcher.test(normalized);
+}
+
+function containsEecLocalizedAnswerEquivalent(content, expectedResponse) {
+  return containsEeaNumericEquivalentAnswer(content, expectedResponse) ||
+    containsEeaRomanAnswerToken(content, expectedResponse) ||
+    containsEeaLocalizedAnswerWord(content, expectedResponse) ||
+    containsEecSupplementalLocalizedAnswerWord(content, expectedResponse);
+}
+
+function validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-ee-c") return;
+  const expectedResponses = new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; }));
+  const nonResponseFields = [];
+  [
+    ["front-matter", pack.frontMatter],
+    ["closing-matter", pack.closingMatter]
+  ].forEach(function (groupEntry) {
+    Object.entries(groupEntry[1]).forEach(function (fieldEntry) {
+      const fieldName = fieldEntry[0];
+      const localizedText = fieldEntry[1];
+      Object.entries(localizedText).forEach(function (entry) {
+        nonResponseFields.push(Object.freeze({
+          content: entry[1],
+          reference: `${reference}:${groupEntry[0]}:${fieldName}:${entry[0]}`
+        }));
+      });
+    });
+  });
+  sections.forEach(function (entry) {
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+    });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+      });
+    });
+  });
+  nonResponseFields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    expectedResponses.forEach(function (expectedResponse) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "EEC_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      // EE.C's answer set is deliberately a small whole-number coefficient
+      // band. A digit-only scan would let the same coefficient be disclosed
+      // as a localized word or Roman numeral in a student-facing teaching
+      // block. Reuse the established cross-locale equivalent checks so
+      // authoring text cannot state an answer in a different notation.
+      assert(!containsEecLocalizedAnswerEquivalent(field.content, expectedResponse), "EEC_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
@@ -1634,8 +1870,12 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (artifact.resourceBinding.unitId === "ccss-6-ee-b") {
     assert(answerReference.responseMode === "truth-value-exact" && answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth", "EEB_RESPONSE_CONTRACT_INVALID", reference);
   }
+  if (artifact.resourceBinding.unitId === "ccss-6-ee-c") {
+    assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient", "EEC_RESPONSE_CONTRACT_INVALID", reference);
+  }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
+  if (answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient") validateDirectVariationWholeTableCoefficientPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
@@ -1658,7 +1898,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   });
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
-    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
     return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
@@ -1719,6 +1959,31 @@ function validateEebTeacherObservationEvidence(artifacts, unit, policy, referenc
     Object.entries(observations[0].contentByLocale).forEach(function (entry) {
       const locale = entry[0];
       assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "EEB_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
+  });
+}
+
+function validateEecTeacherObservationEvidence(artifacts, unit, policy, reference) {
+  if (unit.unitId !== "ccss-6-ee-c") return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "EEC_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "EEC_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = EEC_TEACHER_OBSERVATION_BY_PROFILE[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "EEC_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      const locale = entry[0];
+      assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "EEC_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
     });
   });
 }
@@ -1868,6 +2133,7 @@ function validatePack(pack, fileName) {
   else assert(seenTeacherResources.size > 0 && seenTeacherResources.size < expectedTeacher.size, "PARTIAL_COVERAGE_STATE_INVALID", reference);
   validateEeaTeacherObservationEvidence(artifacts, unit, reference);
   validateEebTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
+  validateEecTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -1889,8 +2155,10 @@ function validatePack(pack, fileName) {
   validateNscAutomaticEvidence(answerReferences, unit, reference);
   validateEebAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference);
+  validateEecAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
+  validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -2078,10 +2346,14 @@ module.exports = Object.freeze({
   SCHEMA_VERSION,
   CONFIDENTIALITY_MARKER,
   DRAFT_STATE,
+  EEC_LOCKED_EVIDENCE_BY_LOCALE,
+  EEC_TABLE_EQUATION_EVIDENCE_ID,
+  EEC_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_LOCKED_EVIDENCE_BY_LOCALE,
   EEB_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_STUDENT_STATIC_TEXT,
   assertResponseStudentTextSyntax,
+  canonicalDirectVariationWholeTableCoefficient,
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
   canonicalAnswer,
@@ -2105,6 +2377,7 @@ module.exports = Object.freeze({
   containsEeaRomanAnswerToken,
   containsEeaEnglishNumberWord,
   containsEeaLocalizedAnswerWord,
+  containsEecLocalizedAnswerEquivalent,
   validatePack,
   validateDirectory
 });

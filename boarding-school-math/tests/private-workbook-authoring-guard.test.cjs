@@ -140,11 +140,42 @@ const SYNTHETIC_EEB_WORKED_EXAMPLES = Object.freeze([
   Object.freeze({ candidate: 22, addend: 19, total: 41 })
 ]);
 
+// Fixture-only EE.C table facts use input values outside the authored-pack
+// band. They exercise the public contract without copying private tables or
+// expected coefficients into this repository.
+const SYNTHETIC_EEC_TABLE_CASES = Object.freeze(Array.from({ length: 22 }, function (_, index) {
+  const rate = 2 + (index % 11);
+  const independentValues = index < 11 ? [0, 13, 14] : [0, 15, 18];
+  return Object.freeze({
+    kind: "direct-variation-whole-table-coefficient",
+    form: "y-equals-rate-times-x",
+    independentSymbol: "x",
+    dependentSymbol: "y",
+    independentValues: Object.freeze(independentValues),
+    dependentValues: Object.freeze(independentValues.map(function (value) { return value * rate; })),
+    rate
+  });
+}));
+
 function independentlySubstitutionTruth(check) {
   const matchingCandidates = check.candidateSet.filter(function (candidate) {
     return BigInt(candidate) + BigInt(check.addend) === BigInt(check.total);
   });
   return matchingCandidates.includes(check.candidate) ? "true" : "false";
+}
+
+function independentlyDirectVariationCoefficient(check) {
+  assert.equal(check.independentValues.length, 3);
+  assert.equal(check.dependentValues.length, 3);
+  assert.equal(check.independentValues[0], 0);
+  assert.equal(check.dependentValues[0], 0);
+  const coefficients = check.independentValues.slice(1).map(function (input, index) {
+    const output = check.dependentValues[index + 1];
+    assert.equal(output % input, 0);
+    return output / input;
+  });
+  assert.equal(new Set(coefficients).size, 1);
+  return String(coefficients[0]);
 }
 
 function syntheticKoreanObjectParticle(value) {
@@ -158,6 +189,14 @@ function syntheticEebSubstitutionPrompt(check) {
     `후보 집합 ${candidateSet}에서 후보 ${check.candidate}${syntheticKoreanObjectParticle(check.candidate)} ${equality}에 대입하세요. 이 등식이 성립하나요?`,
     `From the candidate set ${candidateSet}, substitute candidate ${check.candidate} into ${equality}. Does the equality hold?`,
     `在候选集合 ${candidateSet} 中，将候选数 ${check.candidate} 代入 ${equality}。这个等式成立吗？`
+  );
+}
+
+function syntheticEecTablePrompt() {
+  return localText(
+    "표는 독립변수 x와 종속변수 y의 직접비례 관계를 나타냅니다. 방정식 y = □ × x의 계수를 구하세요.",
+    "The table shows a direct-variation relationship with x as the independent variable and y as the dependent variable. Find the coefficient in y = □ × x.",
+    "表格表示 x 为自变量、y 为因变量的正比例关系。求方程 y = □ × x 中的系数。"
   );
 }
 
@@ -177,9 +216,22 @@ function syntheticEebStandardsEvidence() {
   };
 }
 
+function syntheticEecStandardsEvidence() {
+  return {
+    state: "partial-finite-whole-direct-variation-table-equation-completion-locked",
+    autoEvidenceIds: ["6.EE.C.9-finite-whole-direct-variation-table-equation-completion"],
+    lockedEvidenceByLocale: Object.assign({}, validator.EEC_LOCKED_EVIDENCE_BY_LOCALE)
+  };
+}
+
 function syntheticEebObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.EEB_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
+}
+
+function syntheticEecObservationText(resource) {
+  const profileId = `${resource.resourceType}:${resource.levelId}`;
+  return Object.assign({}, validator.EEC_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
 }
 
 function syntheticEebStaticText(group, key) {
@@ -296,6 +348,9 @@ function syntheticWorkbookPack(unitId) {
         const eebCheck = !isTeaching && selectedUnitId === "ccss-6-ee-b"
           ? SYNTHETIC_EEB_SUBSTITUTION_CASES[responseComponents.length]
           : null;
+        const eecCheck = !isTeaching && selectedUnitId === "ccss-6-ee-c"
+          ? SYNTHETIC_EEC_TABLE_CASES[responseComponents.length]
+          : null;
         const eeaWorkedExample = isTeaching && planComponent.componentType === "worked-example" && selectedUnitId === "ccss-6-ee-a"
           ? SYNTHETIC_EEA_WORKED_EXAMPLES[workedExampleNumber++]
           : null;
@@ -304,8 +359,10 @@ function syntheticWorkbookPack(unitId) {
           : null;
         const eeaConceptSummary = isTeaching && planComponent.componentType === "concept-summary" && selectedUnitId === "ccss-6-ee-a";
         const eebConceptSummary = isTeaching && planComponent.componentType === "concept-summary" && selectedUnitId === "ccss-6-ee-b";
+        const eecTeachingBlock = isTeaching && selectedUnitId === "ccss-6-ee-c";
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-a" || eeaPair);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-b" || eebCheck);
+        assert(isTeaching || selectedUnitId !== "ccss-6-ee-c" || eecCheck);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-a" || eeaWorkedExample);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-b" || eebWorkedExample);
         const componentId = `cmp-dft-s${String(sectionIndex + 1).padStart(2, "0")}c${String(componentNumber).padStart(3, "0")}`;
@@ -318,18 +375,31 @@ function syntheticWorkbookPack(unitId) {
               ? syntheticEeaWorkedExample(eeaWorkedExample)
               : eebWorkedExample
                 ? syntheticEebWorkedExample(eebWorkedExample)
-              : eeaConceptSummary
-                ? localText("지수 표기 개요", "Exponent notation overview", "指数记法概览")
-                : eebConceptSummary
-                  ? syntheticEebStaticText("conceptSummaryByProfile", syntheticEebStudentResourceProfile(resource))
-                  : localText("개념 예시: \\frac{1}{2}", "Worked example: \\frac{1}{2}", "示例：\\frac{1}{2}" )
+                : eeaConceptSummary
+                  ? localText("지수 표기 개요", "Exponent notation overview", "指数记法概览")
+                  : eebConceptSummary
+                    ? syntheticEebStaticText("conceptSummaryByProfile", syntheticEebStudentResourceProfile(resource))
+                    : eecTeachingBlock
+                      ? localText("표의 관계를 읽는 연습", "Read the relationship in a table", "阅读表格中的关系")
+                      : localText("개념 예시: \\frac{1}{2}", "Worked example: \\frac{1}{2}", "示例：\\frac{1}{2}" )
             : eeaPair
               ? syntheticEeaPowerPrompt(eeaPair, responseComponents.length % 2 === 0 ? "power-notation" : "repeated-factor")
               : eebCheck
                 ? syntheticEebSubstitutionPrompt(eebCheck)
-                : localText("수를 구하세요.", "Find the number.", "求这个数。"),
+                : eecCheck
+                  ? syntheticEecTablePrompt()
+                  : localText("수를 구하세요.", "Find the number.", "求这个数。"),
           responseMode: isTeaching ? null : selectedUnitId === "ccss-6-ee-b" ? "truth-value-exact" : "numeric-exact",
-          teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`
+          teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`,
+          ...(eecCheck ? {
+            relationTable: {
+              form: eecCheck.form,
+              independentSymbol: eecCheck.independentSymbol,
+              dependentSymbol: eecCheck.dependentSymbol,
+              independentValues: Array.from(eecCheck.independentValues),
+              dependentValues: Array.from(eecCheck.dependentValues)
+            }
+          } : {})
         };
         if (!isTeaching) responseComponents.push({ component, resource });
         return component;
@@ -363,17 +433,20 @@ function syntheticWorkbookPack(unitId) {
       .map(function (entry) {
         const eeaPair = selectedUnitId === "ccss-6-ee-a" ? SYNTHETIC_EEA_POWER_PAIRS[responseComponents.indexOf(entry)] : null;
         const eebCheck = selectedUnitId === "ccss-6-ee-b" ? SYNTHETIC_EEB_SUBSTITUTION_CASES[responseComponents.indexOf(entry)] : null;
+        const eecCheck = selectedUnitId === "ccss-6-ee-c" ? SYNTHETIC_EEC_TABLE_CASES[responseComponents.indexOf(entry)] : null;
         return {
           referenceId: entry.component.teacherReferenceId,
           componentId: entry.component.componentId,
           responseMode: eebCheck ? "truth-value-exact" : "numeric-exact",
-          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : "1",
+          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : "1",
           solutionByLocale: localText("교사용 풀이", "Teacher solution", "教师解析"),
           uniquenessProofByLocale: localText("교사용 검산", "Teacher check", "教师检验"),
           arithmeticCheck: eeaPair
             ? { kind: "whole-number-power", base: eeaPair.base, exponent: eeaPair.exponent }
             : eebCheck
               ? Object.assign({}, eebCheck, { candidateSet: Array.from(eebCheck.candidateSet) })
+              : eecCheck
+                ? Object.assign({}, eecCheck, { independentValues: Array.from(eecCheck.independentValues), dependentValues: Array.from(eecCheck.dependentValues) })
               : { kind: "whole-quotient", total: 1, groups: 1 }
         };
       });
@@ -396,16 +469,18 @@ function syntheticWorkbookPack(unitId) {
       answerReferences
     };
   });
-  if (["ccss-6-ee-a", "ccss-6-ee-b"].includes(selectedUnitId)) {
+  if (["ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c"].includes(selectedUnitId)) {
     teacherArtifacts.filter(function (artifact) {
       return artifact.resourceBinding.resourceType === "lesson-plan" || artifact.resourceBinding.resourceType === "assignment-builder";
     }).forEach(function (artifact, index) {
       artifact.components.push({
-        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-ee-a" ? "eea" : "eeb"}-observation-${index + 1}`,
+        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : "eec"}-observation-${index + 1}`,
         componentType: "teacher-observation-rubric",
         sequence: artifact.components.length + 1,
         contentByLocale: selectedUnitId === "ccss-6-ee-b"
           ? syntheticEebObservationText(artifact.resourceBinding)
+          : selectedUnitId === "ccss-6-ee-c"
+            ? syntheticEecObservationText(artifact.resourceBinding)
           : localText("교사 관찰", "Teacher observation", "教师观察")
       });
     });
@@ -430,7 +505,7 @@ function syntheticWorkbookPack(unitId) {
         autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
         lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
       }
-    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : {}),
+    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: selectedUnitId === "ccss-6-ee-b"
@@ -2003,4 +2078,131 @@ test("Grade 6 6.EE.B keeps finite positive-whole equality substitution truth exp
   assert.throws(function () {
     validator.validatePack(changedObservationLocalePack, "synthetic-eeb-observation-locale-parity.json");
   }, /EEB_TEACHER_OBSERVATION_INCOMPLETE/);
+});
+
+test("Grade 6 6.EE.C keeps finite direct-variation table coefficient evidence explicit and locks relationship reasoning", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-ee-c" };
+  const evidence = syntheticEecStandardsEvidence();
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-eec-evidence");
+  });
+  [
+    Object.assign({}, evidence, { state: "plan-complete" }),
+    Object.assign({}, evidence, { autoEvidenceIds: [] }),
+    Object.assign({}, evidence, { lockedEvidenceByLocale: Object.assign({}, evidence.lockedEvidenceByLocale, { en: "Table only." }) })
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateStandardsEvidence(candidate, policy, unit, "synthetic-eec-evidence-invalid");
+    }, /STANDARDS_EVIDENCE_INVALID/);
+  });
+
+  SYNTHETIC_EEC_TABLE_CASES.forEach(function (check) {
+    assert.equal(
+      validator.canonicalDirectVariationWholeTableCoefficient(Object.assign({}, check, {
+        independentValues: Array.from(check.independentValues),
+        dependentValues: Array.from(check.dependentValues)
+      }), "synthetic-eec-canonical"),
+      independentlyDirectVariationCoefficient(check)
+    );
+  });
+  [
+    Object.assign({}, SYNTHETIC_EEC_TABLE_CASES[0], { independentValues: [0, 2, 5], dependentValues: [0, 4, 10] }),
+    Object.assign({}, SYNTHETIC_EEC_TABLE_CASES[0], { rate: 1 }),
+    Object.assign({}, SYNTHETIC_EEC_TABLE_CASES[0], { dependentValues: [0, 26, 29] }),
+    Object.assign({}, SYNTHETIC_EEC_TABLE_CASES[0], { independentValues: [0, 14, 13] }),
+    Object.assign({}, SYNTHETIC_EEC_TABLE_CASES[0], { form: "x-equals-rate-times-y" })
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalDirectVariationWholeTableCoefficient(check, "synthetic-eec-invalid");
+    }, /(?:ARITHMETIC_CHECK_INVALID|EEC_TABLE_ANSWER_DISCLOSED|EEC_RELATION_TABLE_INVALID)/);
+  });
+
+  const pack = syntheticWorkbookPack("ccss-6-ee-c");
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-eec-pack.json");
+  });
+  const answerReferences = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  assert.equal(answerReferences.length, 22);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient";
+  }));
+  for (let rate = 2; rate <= 12; rate += 1) {
+    assert.equal(answerReferences.filter(function (answerReference) { return answerReference.expectedResponse === String(rate); }).length, 2);
+  }
+
+  const genericContractPack = JSON.parse(JSON.stringify(pack));
+  const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  genericReference.arithmeticCheck = { kind: "whole-quotient", total: 1, groups: 1 };
+  genericReference.expectedResponse = "1";
+  assert.throws(function () {
+    validator.validatePack(genericContractPack, "synthetic-eec-generic-contract.json");
+  }, /EEC_RESPONSE_CONTRACT_INVALID/);
+
+  const tableMismatchPack = JSON.parse(JSON.stringify(pack));
+  const tableMismatch = tableMismatchPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  tableMismatch.relationTable.dependentValues[1] += 1;
+  assert.throws(function () {
+    validator.validatePack(tableMismatchPack, "synthetic-eec-table-mismatch.json");
+  }, /EEC_RELATION_TABLE_MISMATCH/);
+
+  const changedPromptPack = JSON.parse(JSON.stringify(pack));
+  const changedPrompt = changedPromptPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  changedPrompt.contentByLocale.en += " Again.";
+  assert.throws(function () {
+    validator.validatePack(changedPromptPack, "synthetic-eec-prompt.json");
+  }, /EEC_TABLE_PROMPT_INVALID/);
+
+  const duplicateTablePack = JSON.parse(JSON.stringify(pack));
+  const duplicateComponents = duplicateTablePack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  });
+  const duplicateReferences = duplicateTablePack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  duplicateComponents[1].relationTable = JSON.parse(JSON.stringify(duplicateComponents[0].relationTable));
+  duplicateReferences[1].arithmeticCheck = JSON.parse(JSON.stringify(duplicateReferences[0].arithmeticCheck));
+  duplicateReferences[1].expectedResponse = duplicateReferences[0].expectedResponse;
+  assert.throws(function () {
+    validator.validatePack(duplicateTablePack, "synthetic-eec-duplicate-table.json");
+  }, /EEC_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const answerLeakPack = JSON.parse(JSON.stringify(pack));
+  answerLeakPack.frontMatter.titleByLocale.en = "6";
+  assert.throws(function () {
+    validator.validatePack(answerLeakPack, "synthetic-eec-student-answer-leak.json");
+  }, /EEC_CROSS_STUDENT_ANSWER_LEAK/);
+
+  [
+    ["en", "Seven belongs to a different example."],
+    ["ko", "일곱은 다른 예시에 속합니다."],
+    ["zh-Hans", "七属于另一个示例。"],
+    ["ko", "두 변수는 다른 예시에 속합니다."],
+    ["zh-Hans", "两个变量属于另一个示例。"]
+  ].forEach(function (entry) {
+    const localizedLeakPack = JSON.parse(JSON.stringify(pack));
+    localizedLeakPack.frontMatter.titleByLocale[entry[0]] = entry[1];
+    assert.throws(function () {
+      validator.validatePack(localizedLeakPack, `synthetic-eec-${entry[0]}-spelled-answer-leak.json`);
+    }, /EEC_CROSS_STUDENT_ANSWER_LEAK/);
+  });
+
+  const romanLeakPack = JSON.parse(JSON.stringify(pack));
+  romanLeakPack.frontMatter.titleByLocale.en = "VII belongs to a different example.";
+  assert.throws(function () {
+    validator.validatePack(romanLeakPack, "synthetic-eec-roman-answer-leak.json");
+  }, /EEC_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const missingObservationPack = JSON.parse(JSON.stringify(pack));
+  const missingObservation = missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  });
+  missingObservation.components = missingObservation.components.filter(function (component) {
+    return component.componentType !== "teacher-observation-rubric";
+  });
+  assert.throws(function () {
+    validator.validatePack(missingObservationPack, "synthetic-eec-missing-observation.json");
+  }, /EEC_TEACHER_OBSERVATION_INCOMPLETE/);
 });
