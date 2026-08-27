@@ -48,6 +48,7 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
     sourceId: question.sourceId,
     paperId: question.paperId,
     number: question.number,
+    sourceRelation: question.sourceRelation,
     semester: question.classification.semester,
     majorUnit: question.classification.majorUnit,
     minorUnit: question.classification.minorUnit,

@@ -103,14 +103,15 @@
           },
           {
             id: "middle2-2-transfer",
-            scopeKey: "middle1-1-to-middle2-2",
+            scopeKey: "middle1-1-to-middle2-1-systems",
             scopeKind: "terminal-unit",
-            terminalUnit: { course: "중2-2", unit: "전 과정" },
-            state: "verified-original",
-            label: "중2-2 전 과정까지 편입 1차",
-            difficultyPlan: "기준 우선 · 올림 유형으로 변별"
+            terminalUnit: { course: "중2-1", unit: "연립일차방정식" },
+            state: "scope-reassembly-required",
+            label: "중2-2 입반 대비",
+            recommendedExamId: "dp-middle2-2-transfer",
+            difficultyPlan: "범위 안의 돌파 원본만 사용 · 기준 우선 · 올림 유형으로 변별"
           },
-          { id: "common1-entry", scopeKey: "common-math-1", state: "audited-revision", label: "공통수학1 입학", recommendedExamId: "dp-common1-entry-202405", difficultyPlan: "원본 회차의 난도 배열 유지" },
+          { id: "common1-entry", scopeKey: "middle2-1-to-middle3-2", state: "scope-reassembly-required", label: "공통수학1 입학", recommendedExamId: "dp-common1-entry-202405", difficultyPlan: "범위 안의 돌파 원본만 사용 · 원본 회차의 난도 배열 유지" },
           { id: "director-transfer", scopeKey: "target-class-confirmation", state: "observed", label: "원장반·상위 편입", difficultyPlan: "올림 우선 · 조건 결합·그래프·경계 전수 확인 강화" }
         ],
         reportAxes: ["문항 O/X", "과정", "단원", "세부유형", "난이도", "취약 우선순위"],

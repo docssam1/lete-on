@@ -72,21 +72,21 @@
       id: "DP:middle-transfer",
       programCode: "DP",
       trackId: "middle-transfer",
-      scopeKey: "middle1-1-to-middle2-2",
-      scopeLabel: "중1-1~중2-2 누적",
+      scopeKey: "middle1-1-to-middle2-1-systems",
+      scopeLabel: "중1-1~중2-1 연립일차방정식까지",
       scopeKind: "terminal-unit",
-      terminalUnit: { course: "중2-2", unit: "전 과정" },
+      terminalUnit: { course: "중2-1", unit: "연립일차방정식" },
       evidenceStatus: "verified",
-      evidenceRefs: ["EXAM:dp-middle2-2-transfer"]
+      evidenceRefs: ["PUBLIC:DP-TIMETABLE-OFFICIAL-2026-09"]
     },
     {
       id: "DP:common-math-entry",
       programCode: "DP",
       trackId: "common-math-entry",
-      scopeKey: "common-math-1",
-      scopeLabel: "공통수학1",
+      scopeKey: "middle2-1-to-middle3-2",
+      scopeLabel: "중2-1~중3-2",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:DP-ENTRY-MIRROR"]
+      evidenceRefs: ["PUBLIC:DP-TIMETABLE-OFFICIAL-2026-09"]
     },
     {
       id: "WM:middle-entry",

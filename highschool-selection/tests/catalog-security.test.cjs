@@ -68,8 +68,8 @@ test("the audited DP source revision is a separate locked review round", () => {
   assert.equal(exam.privateAnswerPageCount, 1);
   assert.equal(exam.sourceStatus, "audited");
   assert.equal(exam.answerStatus, "found");
-  assert.equal(exam.classificationStatus, "verified");
-  assert.equal(exam.releaseStatus, "review_pending");
+  assert.equal(exam.classificationStatus, "partial_verified");
+  assert.equal(exam.releaseStatus, "blocked");
 });
 
 test("operational student pages keep stable codes and show Korean academy names", () => {

@@ -6,7 +6,10 @@ const ledgerCore = require("./build-dolpa-work-ledger.cjs");
 const dbCore = require("./build-dolpa-question-db.cjs");
 const dbAudit = require("./audit-dolpa-question-db.cjs");
 
-const QUESTION_FIELDS = Object.freeze(["number", "semester", "unit", "typeLabel", "sourceRelation"]);
+const QUESTION_FIELDS = Object.freeze([
+  "number", "semester", "unit", "typeLabel", "sourceRelation",
+  "page", "slot", "responseKind", "responseSlotCount"
+]);
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
@@ -20,6 +23,7 @@ function normalizeManifest(manifest, ledger) {
   if (!source) throw new Error(`작업 장부에 없는 원본입니다: ${manifest.sourceId}`);
   const evidenceId = String(manifest.evidenceId || "").trim();
   if (!evidenceId) throw new Error("문항 분류 근거 ID가 필요합니다.");
+  const answerEvidenceId = String(manifest.answerEvidenceId || "").trim();
   if (!Array.isArray(manifest.questions) || !manifest.questions.length) throw new Error("문항 분류가 필요합니다.");
   const questions = manifest.questions.map((item, index) => {
     const extra = Object.keys(item).filter(key => !QUESTION_FIELDS.includes(key));
@@ -32,6 +36,15 @@ function normalizeManifest(manifest, ledger) {
     if (!semester || !unit || !typeLabel) throw new Error(`${number}번의 학기·단원·세부 유형이 필요합니다.`);
     const sourceRelation = String(item.sourceRelation || "original");
     if (!["original", "replacement"].includes(sourceRelation)) throw new Error(`${number}번의 출처 관계를 확인해 주세요.`);
+    const page = Number(item.page);
+    const slot = Number(item.slot);
+    if (!Number.isSafeInteger(page) || page < 1) throw new Error(`${number}번의 원본 페이지를 확인해 주세요.`);
+    if (!Number.isSafeInteger(slot) || slot < 1) throw new Error(`${number}번의 페이지 안 문항 순서를 확인해 주세요.`);
+    const responseKind = String(item.responseKind || "").trim();
+    const responseSlotCount = Number(item.responseSlotCount);
+    if (!responseKind || !Number.isSafeInteger(responseSlotCount) || responseSlotCount < 1) {
+      throw new Error(`${number}번의 답안 형식을 확인해 주세요.`);
+    }
     const questionId = ledgerCore.stableQuestionId(manifest.sourceId, number);
     return {
       questionId,
@@ -39,7 +52,7 @@ function normalizeManifest(manifest, ledger) {
       paperId: manifest.paperId,
       number,
       sourceRelation,
-      locator: { page: null, slot: null, status: "pending", evidence: [] },
+      locator: { page, slot, status: "verified", evidence: [evidenceId] },
       classification: {
         semester,
         domain: ledgerCore.domainFor(unit),
@@ -53,8 +66,10 @@ function normalizeManifest(manifest, ledger) {
       },
       method: { tags: [], status: "pending", evidence: [] },
       difficulty: { band: null, status: "pending", evidence: [] },
-      responseFormat: { kind: null, status: "pending", evidence: [] },
-      answerCheck: { status: "pending", evidence: [] },
+      responseFormat: { kind: responseKind, slotCount: responseSlotCount, status: "verified", evidence: [evidenceId] },
+      answerCheck: answerEvidenceId
+        ? { status: "verified", evidence: [answerEvidenceId] }
+        : { status: "pending", evidence: [] },
       variantSet: { status: "not_started", originalId: questionId, twinIds: [], similarIds: [] },
       usageProfiles: dbCore.initialUsageProfiles("DP_STANDARD", [evidenceId]),
       releaseStatus: "locked"

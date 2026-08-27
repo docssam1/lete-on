@@ -5,6 +5,7 @@ const path = require("node:path");
 const selector = require("../scripts/select-question-bank.cjs");
 const dbCore = require("../scripts/build-dolpa-question-db.cjs");
 const dbAudit = require("../scripts/audit-dolpa-question-db.cjs");
+const dolpaScopes = require("../data/dolpa-target-scopes.js");
 
 function clean(value) { return String(value == null ? "" : value).trim(); }
 
@@ -33,7 +34,10 @@ function createCatalog(database) {
       const query = clean(opts.query).toLocaleLowerCase("ko");
       const limit = Math.min(300, Math.max(1, Number(opts.limit) || 100));
       const selected = selector.selectQuestions(database, profileIds);
+      const targetId = clean(opts.targetId);
+      if (targetId && !dolpaScopes.getTarget(targetId)) throw new Error("시험 범위를 확인해 주세요.");
       return selected.questions.filter(question => {
+        if (targetId && !dolpaScopes.evaluateQuestion(targetId, question).eligible) return false;
         if (!query) return true;
         return [
           question.questionId, question.paperId, question.semester, question.majorUnit,
@@ -53,6 +57,7 @@ function createCatalog(database) {
         responseKind: question.responseFormat.kind,
         responseStatus: question.responseFormat.status,
         reviewChecks: Object.freeze(Object.assign({}, question.reviewChecks)),
+        targetId: targetId || null,
         profiles: question.usage.map(usage => Object.freeze({
           profileId: usage.profileId,
           label: labels.get(usage.profileId),

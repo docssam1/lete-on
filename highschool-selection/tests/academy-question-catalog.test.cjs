@@ -6,10 +6,11 @@ const builder = require("../scripts/build-dolpa-question-db.cjs");
 const ledgerCore = require("../scripts/build-dolpa-work-ledger.cjs");
 const catalogModule = require("../server/academy-question-catalog.js");
 
-function database() {
-  const semester = "중2-1";
-  const unit = "일차함수";
-  const typeLabel = "두 직선의 교점 구하기";
+function database(options) {
+  const opts = options || {};
+  const semester = opts.semester || "중2-1";
+  const unit = opts.unit || "일차함수";
+  const typeLabel = opts.typeLabel || "두 직선의 교점 구하기";
   return builder.buildDatabase({
     taxonomyVersion: "dolpa-kr-math-v1",
     sources: [{ sourceId: "DP-SRC-AAAAAAAAAAAA", sourceFingerprint: "a".repeat(64) }],
@@ -48,4 +49,15 @@ test("다른 시험형의 검수 전 후보는 기본 문항 목록에 나오지
   assert.deepEqual(catalog.search({ profileIds: ["WM_DUAL"] }), []);
   assert.equal(catalog.profiles().some(profile => profile.profileId === "WM_BASIC"), true);
   assert.equal(catalog.profiles().some(profile => profile.profileId === "WM_DUAL"), true);
+});
+
+test("돌파 시험 대상이 정해지면 범위 밖 원본 문항을 구성 후보에서 뺀다", () => {
+  const outside = catalogModule.createCatalog(database());
+  assert.equal(outside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 0);
+
+  const inside = catalogModule.createCatalog(database({
+    unit: "연립일차방정식의 활용",
+    typeLabel: "거리와 속력 조건을 연립방정식으로 나타내기"
+  }));
+  assert.equal(inside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 1);
 });

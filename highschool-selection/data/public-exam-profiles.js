@@ -37,6 +37,13 @@
       publishedAt: "2026-08-14",
       checkedAt: "2026-08-22"
     },
+    "DP-TIMETABLE-OFFICIAL-2026-09": {
+      title: "돌파수학 공식 채널 2026년 9월 분당관 과정·테스트 범위표",
+      url: "https://blog.naver.com/dpmath/224366672272",
+      grade: "A",
+      publishedAt: "2026-08-03",
+      checkedAt: "2026-08-27"
+    },
     "WM-ENTRY-2025-MIRROR": {
       title: "원수학 공통수학1 기본반 입학전형 공지 미러",
       url: "https://www.gangmom.kr/news/687073e5431fcab188474d9f",
@@ -180,6 +187,8 @@
         { label: "예비중1 성적표 사례", value: "공통수학1 기본 · 30문항 · 60점 컷", state: "observed", sourceIds: [] },
         { label: "공개 범위 사례", value: "공통수학1 기본 전범위", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
         { label: "공개 규격 사례", value: "30문항 · 150분 · 20문항 기준", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
+        { label: "중2-2 입반 준비 범위", value: "중1-1~중2-1 연립일차방정식까지", state: "verified", sourceIds: ["DP-TIMETABLE-OFFICIAL-2026-09"] },
+        { label: "공통수학1 입반 준비 범위", value: "중2-1~중3-2", state: "verified", sourceIds: ["DP-TIMETABLE-OFFICIAL-2026-09"] },
         { label: "실출제 경향", value: "후반 변별형·조건 분기·그래프/조합 결합", state: "observed", sourceIds: [] }
       ],
       cutline: {
@@ -192,7 +201,7 @@
         sourceIds: ["DP-ENTRY-MIRROR"]
       },
       style: "초반 기본 정확도와 후반 복합 조건을 함께 보며, 공통수학1 실출제 원본은 별도 프로필로 관리합니다.",
-      caveat: "공개 수치는 2026년 특정 지점·반 공지 기준입니다. 중1 입학 선수 과정 성적표를 고등 시험에 섞지 않습니다."
+      caveat: "공개 수치는 2026년 특정 지점·반 공지 기준입니다. 원본 시험지는 문항 원천으로 보존하되, 현재 지원 과정의 범위 밖 문항과 원본이 아닌 대체 문항은 새 시험 구성에서 제외합니다."
     },
     {
       code: "WM",

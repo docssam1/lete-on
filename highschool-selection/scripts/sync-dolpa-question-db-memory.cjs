@@ -39,6 +39,12 @@ function sync(catalog, ledger, database, paths) {
   if (paths.pageAssets) {
     sources.push(source("dp-m22-page-assets-v1", "돌파 중2-2 문항 원본 페이지 목록", "지필드메모리/highschool-selection/artifacts/question-pages/dolpa/DP-SRC-DE99B9857905/manifest.json", paths.pageAssets));
   }
+  if (paths.targetSourcePlan) {
+    sources.push(source("dp-target-source-plan-v1", "돌파 시험별 원본 사용 계획", "지필드메모리/highschool-selection/question-bank/dolpa-target-source-plan-v1.json", paths.targetSourcePlan));
+  }
+  if (paths.targetAssembly) {
+    sources.push(source("dp-target-assembly-v1", "돌파 현재 범위 원본 문항 구성표", "지필드메모리/highschool-selection/question-bank/dolpa-target-assembly-v1.json", paths.targetAssembly));
+  }
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   upsert(catalog.records, "dp.question-db.20260827", {
@@ -65,19 +71,29 @@ function sync(catalog, ledger, database, paths) {
       note: "중2-2 원본 3~10쪽 PNG의 파일명·크기·해시 확인"
     });
   }
+  if (paths.targetSourcePlan && paths.targetAssembly) {
+    const assembly = readJson(paths.targetAssembly);
+    const middle = (assembly.targets || []).find(target => target.targetId === "dp-middle2-2-transfer");
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push(
+      { source_id: "dp-target-source-plan-v1", role: "decision", locator: "targets.dp-middle2-2-transfer", note: "검수한 원본 시험지와 선택 30문항의 고정 순서" },
+      { source_id: "dp-target-assembly-v1", role: "audit", locator: "targets.dp-middle2-2-transfer", note: `범위 안 원본 후보 ${middle ? middle.includedCount : 0}문항, 실제 구성 ${middle ? middle.selectedCount : 0}문항, 예비 ${middle ? middle.reserveCount : 0}문항 분리` }
+    );
+  }
   catalog.updated = "2026-08-27";
   return catalog;
 }
 
 function main(args) {
-  if (args.length < 5 || args.length > 6) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest]");
-  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath] = args.map(value => path.resolve(value));
+  if (args.length < 5 || args.length > 8) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly]");
+  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath, targetSourcePlanPath, targetAssemblyPath] = args.map(value => path.resolve(value));
   const catalog = sync(readJson(catalogPath), readJson(ledgerPath), readJson(databasePath), {
     ledger: ledgerPath,
     database: databasePath,
     paperLinks: paperLinksPath,
     reviewDecisions: reviewDecisionsPath,
-    pageAssets: pageAssetsPath
+    pageAssets: pageAssetsPath,
+    targetSourcePlan: targetSourcePlanPath,
+    targetAssembly: targetAssemblyPath
   });
   fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({ sources: catalog.sources.length, records: catalog.records.length })}\n`);

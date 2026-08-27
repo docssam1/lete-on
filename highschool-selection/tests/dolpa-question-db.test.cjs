@@ -70,11 +70,25 @@ test("새 시험지 분류는 한 번만 추가되고 다른 내용으로 재등
     sourceId: "DP-SRC-BBBBBBBBBBBB",
     title: "대표 시험 B",
     evidenceId: "audit.paper.b",
-    questions: [{ number: 1, semester: "중2-2", unit: "도형의 닮음", typeLabel: "평행선에서 길이비 구하기", sourceRelation: "original" }]
+    answerEvidenceId: "audit.paper.b.answers",
+    questions: [{
+      number: 1,
+      semester: "중2-2",
+      unit: "도형의 닮음",
+      typeLabel: "평행선에서 길이비 구하기",
+      sourceRelation: "original",
+      page: 3,
+      slot: 1,
+      responseKind: "input",
+      responseSlotCount: 1
+    }]
   };
   const added = recorder.merge(database, value, manifest);
   assert.equal(added.changed, true);
   assert.equal(added.database.summary.questionCount, 2);
+  assert.equal(added.database.summary.locatorVerifiedCount, 1);
+  assert.equal(added.database.summary.responseVerifiedCount, 1);
+  assert.equal(added.database.summary.answerVerifiedCount, 1);
   assert.equal(recorder.merge(added.database, value, manifest).changed, false);
   const changed = structuredClone(manifest);
   changed.questions[0].typeLabel = "삼각형의 넓이비 구하기";

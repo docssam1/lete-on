@@ -102,8 +102,8 @@
   const examOverrides = Object.freeze({
     "sh-selection-r01": Object.freeze({ scope: "중등 누적 40문항", duration: "110분", paperVariant: "황소 고등 선발 1회" }),
     "dp-middle1-entry": Object.freeze({ scope: "초5-1~초6-2 누적", duration: "확인 필요", paperVariant: "돌파 중1 입학" }),
-    "dp-middle2-2-transfer": Object.freeze({ scope: "중1-1~중2-2 전 과정", duration: "원본 회차 150분", paperVariant: "돌파 중2-2 편입" }),
-    "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2 누적", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),
+    "dp-middle2-2-transfer": Object.freeze({ scope: "중1-1~중2-1 연립일차방정식까지", duration: "현재 회차 확인 필요", paperVariant: "돌파 중2-2 입반 대비" }),
+    "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),
     "wm-middle21-basic-entry-r01": Object.freeze({ scope: "중1 대수 20 + 중1 기하 20 · 통계 제외", duration: "각 50분 · 전체 전형 창 120분", paperVariant: "원수학 중2-1 기본반 신입" }),
     "wm-algebra-geometry-diagnostic": Object.freeze({ scope: "중등대수 25 + 중등기하 25 목표", duration: "90분 + 20분 + 90분 공개 사례", paperVariant: "원수학 대수·기하" }),
     "ed-middle1-entry": Object.freeze({ scope: "초5 12 + 초6 18", duration: "확인 필요", paperVariant: "이든 중1 시작" }),
