@@ -130,6 +130,34 @@ test("legacy curriculum foundation remains available without feature regression"
   await page.close();
 });
 
+test("Grade 6 diagnostic blueprint separates role guidance from locked assessment content", async function () {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = collectErrors(page);
+  const response = await page.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
+  assert.equal(response.status(), 200);
+  assert.match(await page.locator("h1").innerText(), /진단은 점수를 먼저\s*만드는 화면이 아닙니다/);
+  assert.equal(await page.locator("#item-count").textContent(), "42");
+  assert.equal(await page.locator("#cluster-count").textContent(), "10");
+  assert.equal(await page.locator("#domain-count").textContent(), "5");
+  assert.equal(await page.locator(".cluster-card").count(), 10);
+  assert.match(await page.locator("#role-panel").innerText(), /교사는 점수보다 근거의 빈칸을 먼저 봅니다/);
+  assert.equal(await page.evaluate(function () {
+    return window.GFIELDGrade6PlacementPlan.plan.slots.every(function (slot) {
+      return slot.itemId === null && slot.itemVersion === null && slot.releaseState === "locked-awaiting-reviewed-item";
+    });
+  }), true);
+  assert.equal((await page.content()).includes("qst-bnk-"), false);
+
+  await page.locator('[data-role="student"]').click();
+  assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-panel").innerText(), /학생은 배정된 평가와 다음 학습만 봅니다/);
+  await page.locator('[data-role="student"]').focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator('[data-role="parent"]').getAttribute("aria-selected"), "true");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("home and curriculum foundation have no mobile horizontal overflow", async function () {
   for (const width of [320, 390, 768]) {
     const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: width < 600 });
@@ -174,4 +202,18 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
   assert.equal(dimensions.scroll, dimensions.client);
   assert.deepEqual(errors, []);
   await page.close();
+
+  const diagnostic = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const diagnosticErrors = collectErrors(diagnostic);
+  await diagnostic.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
+  const diagnosticDimensions = await diagnostic.evaluate(function () {
+    return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
+  });
+  assert.equal(diagnosticDimensions.scroll, diagnosticDimensions.client);
+  const roleTargets = await diagnostic.locator("[data-role]").evaluateAll(function (controls) {
+    return controls.map(function (control) { return control.getBoundingClientRect().height; });
+  });
+  roleTargets.forEach(function (height) { assert.ok(height >= 44, `diagnostic touch height ${height}`); });
+  assert.deepEqual(diagnosticErrors, []);
+  await diagnostic.close();
 });

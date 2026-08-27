@@ -273,7 +273,7 @@
 
     const primary = document.getElementById("goal-primary");
     primary.textContent = ["school", "singapore"].includes(goalId) ? "진단·숙달 구조 보기" : "GFIELD 준비 진단 구조 보기";
-    primary.href = "#diagnostic";
+    primary.href = "./diagnostic.html";
 
     setOriginalLink(definition, grade);
     renderGoalFlow(goalId, !document.getElementById("goal-original").hidden);

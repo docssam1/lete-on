@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GFIELD Grade 6 배치 진단의 범위와 검수 상태를 보여 주는 메타데이터 전용 설계 보드">
+  <title>Grade 6 진단 설계 보드 · GFIELD Math</title>
+  <link rel="stylesheet" href="./diagnostic.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="GFIELD Math home"><span class="brand-mark" aria-hidden="true">G</span><span>GFIELD <strong>MATH</strong></span></a>
+    <nav aria-label="주요 탐색">
+      <a href="./index.html#goals">목표 선택</a>
+      <a href="./catalog.html">커리큘럼 상세</a>
+    </nav>
+    <span class="status-chip">문항 미공개 · 설계 보드</span>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero shell">
+      <p class="eyebrow">GRADE 6 · COURSE PLACEMENT BLUEPRINT</p>
+      <h1>진단은 점수를 먼저<br><span>만드는 화면이 아닙니다.</span></h1>
+      <p class="lede">무엇을 확인할지, 어떤 근거가 더 필요한지, 교사가 어떤 순서로 판단할지를 먼저 고정합니다. 이 페이지에는 실제 문항·정답·학생 기록이 없습니다.</p>
+      <div class="hero-meta" aria-label="Grade 6 진단 설계 요약">
+        <div><strong id="item-count">42</strong><span>잠긴 진단 슬롯</span></div>
+        <div><strong id="cluster-count">10</strong><span>Grade 6 클러스터</span></div>
+        <div><strong id="domain-count">5</strong><span>영역 근거</span></div>
+        <div><strong>0</strong><span>공개 문항</span></div>
+      </div>
+    </section>
+
+    <section class="shell role-section" aria-labelledby="role-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">ROLE-SAFE VIEW</p>
+          <h2 id="role-heading">같은 진단도 보는 사람에 따라 다릅니다.</h2>
+        </div>
+        <p>아래는 화면 역할을 설명하는 공개 안내입니다. 실제 배정·응답·리포트는 인증된 시스템과 검수된 문항이 준비된 뒤에만 열립니다.</p>
+      </div>
+      <div class="role-tabs" role="tablist" aria-label="진단 역할별 안내">
+        <button type="button" role="tab" id="role-teacher" aria-controls="role-panel" aria-selected="true" tabindex="0" data-role="teacher">교사 설계</button>
+        <button type="button" role="tab" id="role-student" aria-controls="role-panel" aria-selected="false" tabindex="-1" data-role="student">학생 흐름</button>
+        <button type="button" role="tab" id="role-parent" aria-controls="role-panel" aria-selected="false" tabindex="-1" data-role="parent">보호자 이해</button>
+      </div>
+      <article class="role-panel" id="role-panel" role="tabpanel" aria-labelledby="role-teacher" tabindex="0" aria-live="polite"></article>
+    </section>
+
+    <section class="shell blueprint-section" aria-labelledby="blueprint-heading">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">TEACHER BLUEPRINT · METADATA ONLY</p>
+          <h2 id="blueprint-heading">42개의 문항이 아니라<br>42개의 검수 자리입니다.</h2>
+        </div>
+        <p>각 자리는 학년·영역·클러스터·응답 형식만 정의합니다. 실제 문항을 넣으려면 권리, 독립 검수, 채점 검산, 서버 서명이 모두 필요합니다.</p>
+      </div>
+      <div class="balance-grid" aria-label="진단 설계 분포">
+        <article><p>난이도 근거</p><div id="difficulty-balance" class="balance-list"></div></article>
+        <article><p>응답 형식</p><div id="response-balance" class="balance-list"></div></article>
+        <article><p>채점 경로</p><div id="scoring-balance" class="balance-list"></div></article>
+      </div>
+      <div class="cluster-list" id="cluster-list" aria-label="Grade 6 클러스터별 설계 범위"></div>
+    </section>
+
+    <section class="shell gate-section" aria-labelledby="gate-heading">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">RELEASE GATES</p>
+          <h2 id="gate-heading">이 네 가지가 끝나기 전에는<br>학생에게 열리지 않습니다.</h2>
+        </div>
+        <p>이 과정은 실제 점수, 자동 승급, 대회 점수 환산을 약속하지 않습니다.</p>
+      </div>
+      <ol class="gates">
+        <li><span>01</span><strong>문항·그림 권리 확인</strong><p>출처와 사용 권한이 항목별로 검수되어야 합니다.</p></li>
+        <li><span>02</span><strong>정답·채점 독립 검산</strong><p>하나의 답인지, 채점 규칙이 일관적인지 별도로 확인합니다.</p></li>
+        <li><span>03</span><strong>인증된 배정·서명</strong><p>공개 링크가 아니라 학생에게 배정된 평가로 전달합니다.</p></li>
+        <li><span>04</span><strong>교사 확인 후 수업 연결</strong><p>결과는 수업·유지 확인의 근거이며 자동 승급 결정이 아닙니다.</p></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer shell"><span>GFIELD Boarding School Mathematics · Grade 6 blueprint v1</span><a href="./index.html">홈으로 돌아가기</a></footer>
+
+  <script src="./shared/program-contract.js"></script>
+  <script src="./curriculum/us-k8-domain-spine.js"></script>
+  <script src="./curriculum/us-k8-cluster-map.js"></script>
+  <script src="./curriculum/us-k8-content-registry.js"></script>
+  <script src="./assessment/grade6-placement-plan.js"></script>
+  <script src="./diagnostic-view.js"></script>
+</body>
+</html>

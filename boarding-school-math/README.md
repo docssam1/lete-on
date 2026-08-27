@@ -31,6 +31,7 @@ The Common Core standards are not treated as a national promotion cut score. Eac
 
 - `index.html` is the goal-first product home: school mathematics, Singapore mastery, Math Kangaroo, SASMO, and AMC 8 lead to distinct explanations and grade choices.
 - `catalog.html` preserves the previous data-driven curriculum, unit, cadence, and student/teacher resource-plan viewer.
+- `diagnostic.html` is the public Grade 6 placement-blueprint viewer: it explains the 42 locked slots, coverage balance, release gates, and teacher/student/parent flows without publishing prompts, answers, learner records, or a placement decision.
 - `competition/official-original-links.js` records verified organizer-hosted English-original entry URLs. The first release supports SASMO Grade 1–8 where an exact organizer page has been verified; K2 stays visibly locked rather than being guessed from a Grade 1 paper.
 
 Official contest problems are not translated. UI guidance and independently authored GFIELD materials may be localized, but an official original opens in English on the organizer's site. GFIELD does not fetch, proxy, cache, embed, or store a contest-paper copy in the public repository.

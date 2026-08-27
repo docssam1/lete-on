@@ -75,6 +75,7 @@
 .omr-roadmap strong { margin-top: 6px; font-size: .78rem; }
 .omr-roadmap small { margin-top: 4px; color: #65717c; font-size: .64rem; line-height: 1.45; }
 .omr-roadmap > i { color: #4975ef; font-style: normal; font-weight: 900; }
+.diagnostic-link { margin: 18px 0 0; }
 
 @media (max-width: 720px) {
   .goal-list {
