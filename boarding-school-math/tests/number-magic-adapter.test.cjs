@@ -9,8 +9,11 @@ const courses = require("../../number_magic/data/courses.js");
 const result = adapter.adapt(threads, courses.COURSE_SPEC);
 
 test("only elementary and middle legacy tiers enter the boarding lineage", function () {
-  assert.equal(result.summary.threads, 116);
-  assert.equal(result.summary.levels, 293);
+  // Number Magic Phase 3 adds AD9 plus one reviewed elementary level each
+  // to NS1, AD3, and AD4. Keep this source snapshot explicit so a future
+  // upstream catalog change must be reviewed rather than silently absorbed.
+  assert.equal(result.summary.threads, 117);
+  assert.equal(result.summary.levels, 298);
   assert.equal(result.summary.excludedOutOfScope, 26);
   assert.equal(result.threadRows.some(function (row) { return row.legacyThreadId === "MD21"; }), false);
   assert.equal(result.threadRows.some(function (row) { return row.legacyThreadId === "MD43"; }), false);
@@ -26,12 +29,23 @@ test("legacy Korean English Chinese labels survive locale normalization", functi
 
 test("unresolved source lineage stays visible instead of being guessed", function () {
   assert.equal(result.summary.unitLinked, 58);
-  assert.equal(result.summary.conceptOnly, 5);
+  assert.equal(result.summary.conceptOnly, 6);
   assert.equal(result.summary.needsUnitMapping, 53);
-  assert.equal(result.summary.standardsPending, 116);
+  assert.equal(result.summary.standardsPending, 117);
   assert.equal(
     result.summary.unitLinked + result.summary.conceptOnly + result.summary.needsUnitMapping,
     result.summary.threads
+  );
+
+  const ad9 = result.threadRows.find(function (row) { return row.legacyThreadId === "AD9"; });
+  assert.ok(ad9, "the unassigned Phase 3 elementary thread must remain visible for review");
+  assert.equal(ad9.mappingState, "concept-only");
+  assert.deepEqual(ad9.legacyCourseIds, []);
+  assert.equal(ad9.standardsReview, "pending");
+  assert.equal(
+    result.contentRecords.filter(function (record) { return record.legacy.threadId === "AD9"; })
+      .every(function (record) { return record.publicationState === "locked"; }),
+    true
   );
 });
 
