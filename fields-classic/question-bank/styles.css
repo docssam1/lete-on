@@ -314,6 +314,12 @@
 .concept-guide{display:flex;align-items:flex-start;gap:7px;margin-top:8px;padding:8px 9px;border:1px solid #cfe4da;background:#f5fbf8;color:#395e50}
 .concept-guide strong{flex:0 0 auto;font-size:8px}
 .concept-guide span{font-size:8px;font-weight:800;line-height:1.55;word-break:keep-all}
+.representative-concept{margin:10px 10px 0;padding:9px 10px;border-left:3px solid #2f8f73;background:#f2f8f5;color:#294f42}
+.representative-concept strong{display:block;font-size:9px}
+.representative-concept p{margin:4px 0 0;font-size:8px;font-weight:750;line-height:1.55;word-break:keep-all}
+.representative-concept small{display:block;margin-top:5px;padding-top:5px;border-top:1px solid #d7e7e0;font-size:7px;font-weight:800;line-height:1.5;word-break:keep-all}
+.question-concept{display:flex;align-items:center;gap:6px;margin:3px 0 0 43px;color:#496b60;font-size:7px;font-weight:800}
+.question-concept strong{padding:2px 4px;border:1px solid #cfe2da;background:#f3f9f6;color:#2f705d}
 .type-preview .study-stage-banner{margin:8px 0 0}
 .type-preview .concept-guide{margin:8px 0 0}
 @media(max-width:700px){

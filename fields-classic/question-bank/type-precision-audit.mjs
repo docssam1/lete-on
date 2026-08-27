@@ -1,4 +1,4 @@
-import { ACADEMY_STYLES, CURRICULUM, DOMAINS, TYPES, typeById } from "./source-data.js";
+import { ACADEMY_STYLES, CURRICULUM, DOMAINS, REPRESENTATIVE_CONCEPTS, SOURCE_QUESTION_INDEX, TYPES, representativeConceptForType, typeById } from "./source-data.js";
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(`TYPE_PRECISION_AUDIT_FAILED: ${message}`);
@@ -7,6 +7,9 @@ const assert = (condition, message) => {
 const curriculumTypeIds = new Set(CURRICULUM.flatMap((book) => book.units.flatMap((unit) => unit.typeIds)));
 const academyStyleIds = new Set(ACADEMY_STYLES.map((item) => item.id));
 const domainIds = new Set(DOMAINS.map((item) => item.id));
+const representativeConceptIds = new Set(REPRESENTATIVE_CONCEPTS.map((item) => item.id));
+assert(representativeConceptIds.size === REPRESENTATIVE_CONCEPTS.length, "duplicate representative concept id");
+assert(REPRESENTATIVE_CONCEPTS.every((concept) => concept.label && concept.summary), "incomplete representative concept node");
 assert(new Set(TYPES.map((item) => item.id)).size === TYPES.length, "duplicate type id");
 for (const item of TYPES) {
   assert(domainIds.has(item.domain), `${item.id}: unknown major domain ${item.domain}`);
@@ -15,6 +18,33 @@ for (const item of TYPES) {
   assert(Array.isArray(item.academyStyleIds) && item.academyStyleIds.length, `${item.id}: academy style tag missing`);
   assert(new Set(item.academyStyleIds).size === item.academyStyleIds.length, `${item.id}: duplicate academy style tag`);
   assert(item.academyStyleIds.every((id) => academyStyleIds.has(id)), `${item.id}: unknown academy style tag`);
+  const concept = representativeConceptForType(item.id);
+  assert(concept?.id && concept?.label && concept?.summary && concept?.principle, `${item.id}: representative concept missing`);
+  assert(representativeConceptIds.has(concept.id), `${item.id}: unknown representative concept node`);
+}
+
+assert(SOURCE_QUESTION_INDEX.length > 0, "source question index is empty");
+assert(new Set(SOURCE_QUESTION_INDEX.map((entry) => entry.sourceKey)).size === SOURCE_QUESTION_INDEX.length,
+  "duplicate source question key");
+for (const entry of SOURCE_QUESTION_INDEX) {
+  const classification = entry.classification;
+  assert(Array.isArray(entry.typeIds) && entry.typeIds.length, `${entry.sourceKey}: question type list missing`);
+  assert(new Set(entry.typeIds).size === entry.typeIds.length, `${entry.sourceKey}: duplicate question type`);
+  assert(Array.isArray(entry.classifications) && entry.classifications.length === entry.typeIds.length,
+    `${entry.sourceKey}: question classification list mismatch`);
+  assert(entry.typeIds.every((typeId) => typeById(typeId)), `${entry.sourceKey}: unknown question type`);
+  assert(classification, `${entry.sourceKey}: question classification missing`);
+  assert(domainIds.has(classification.majorDomainId), `${entry.sourceKey}: unknown question major domain`);
+  assert(classification.minorDomain, `${entry.sourceKey}: question minor domain missing`);
+  assert(classification.detailedTypeId === entry.typeId, `${entry.sourceKey}: detailed type mismatch`);
+  assert(classification.representativeConceptId && classification.representativeConceptLabel,
+    `${entry.sourceKey}: representative concept reference missing`);
+  assert(Array.isArray(classification.academyStyleIds) && classification.academyStyleIds.length,
+    `${entry.sourceKey}: question academy style missing`);
+  assert(new Set(classification.academyStyleIds).size === classification.academyStyleIds.length,
+    `${entry.sourceKey}: duplicate question academy style`);
+  assert(classification.academyStyleIds.every((id) => academyStyleIds.has(id)),
+    `${entry.sourceKey}: unknown question academy style`);
 }
 const requiredTypes = new Map([
   ["fold-cut-unfold-one-draw", "한 번 접어 자르고 펼친 모양 그리기"],
@@ -107,4 +137,4 @@ assert(unverifiedMultiplicationCryptarithm, "multiplication-symbol placeholder m
 assert(!unverifiedMultiplicationCryptarithm.generator && !unverifiedMultiplicationCryptarithm.sourceMatched, "unverified multiplication cryptarithm was opened without source evidence");
 assert(!curriculumTypeIds.has("multiplicative-symbol-equation"), "unverified multiplication cryptarithm was linked to a textbook");
 
-console.log(`TYPE_PRECISION_AUDIT_OK exactTypes=${requiredTypes.size} curriculumTypes=${curriculumTypeIds.size} broadFoldTypes=0`);
+console.log(`TYPE_PRECISION_AUDIT_OK exactTypes=${requiredTypes.size} curriculumTypes=${curriculumTypeIds.size} sourceQuestions=${SOURCE_QUESTION_INDEX.length} broadFoldTypes=0`);

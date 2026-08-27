@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260827c";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827d";
 import { GENERATORS } from "./generators.js?v=20260827b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827b";
@@ -67,6 +67,8 @@ function withProblemContext(problem, item, reference) {
     ...problem,
     type: item,
     reference,
+    classification: questionClassificationForType(item.id),
+    representativeConcept: representativeConceptForType(item.id),
     studyStage,
     conceptGuide: studyStage?.id === "concept" ? textbookGuideForType(item.id) : ""
   };
@@ -185,8 +187,10 @@ function showTypePreview(anchor) {
     return;
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
+  const representativeConcept = representativeConceptForType(item.id);
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
     ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
+    ${representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
     ${learningMapPreviewMarkup(item)}
     ${problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
@@ -3247,6 +3251,7 @@ function renderWorksheet() {
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
       <div class="question-style-tags">${academyStyleLabels(question.type).map((label) => `<span>${label}</span>`).join("")}</div>
+      ${question.representativeConcept ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
@@ -3273,7 +3278,7 @@ function openAnswers() {
     // 보고 판단하지 않아도 되게.
     const answerPicture = answerVisualMarkup(question);
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${academyStyleLabels(question.type).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question.type).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }

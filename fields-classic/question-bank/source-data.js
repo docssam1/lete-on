@@ -950,17 +950,44 @@ export const TYPES = [
 ];
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
+const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
+
+// 원본 문항 하나가 문제은행에서 독립적으로 검색될 수 있도록 분류값을 문항에도
+// 고정한다. 세부 유형의 기본 분류를 물려받되, 학원 스타일은 문항별로 추가할 수 있다.
+// 대표 개념은 여러 유형이 공유하는 노드이므로 설명을 한 번 고치면 연결된 문항에 모두
+// 반영된다. 학원 스타일과 대표 개념 때문에 유형 자체를 복제하지 않는다.
+export const questionClassificationForType = (typeId, options = {}) => {
+  const item = byId[typeId];
+  if (!item) return null;
+  const academyStyleIds = [...new Set(options.academyStyleIds || item.academyStyleIds || [])];
+  return Object.freeze({
+    majorDomainId: item.domain,
+    majorDomainLabel: domainById[item.domain]?.label || item.domain,
+    minorDomain: item.middle,
+    detailedTypeId: item.id,
+    detailedTypeLabel: item.label,
+    representativeConceptId: item.conceptId || `concept:${item.domain}:${item.middle}`,
+    representativeConceptLabel: item.conceptLabel || item.middle,
+    academyStyleIds: Object.freeze(academyStyleIds)
+  });
+};
+
+const classifySourceQuestion = (entry, options = {}) => ({
+  ...entry,
+  classification: questionClassificationForType(entry.typeId, options)
+});
+
 const EXAM_PAGE_COUNTS = {
   "k6-2023-02": 12, "k7-2022-04": 12, "k7-2022-06": 12, "k7-2022-08": 12, "k7-2022-12": 12,
   "g1-2022-03": 7, "g1-2022-05": 7, "g1-2019-08": 7, "g1-2022-02": 7
 };
-const question = (number, typeId, note = "") => ({
+const question = (number, typeId, note = "", options = {}) => classifySourceQuestion({
   number,
   typeId,
   note: note || byId[typeId]?.label || "",
   difficulty: "actual",
   verified: false
-});
+}, options);
 
 const makeExam = ({ id, stage, label, file, layout, typeIds, verifiedQuestionNumbers = [] }) => ({
   id, stage, label, file, sourcePageCount: EXAM_PAGE_COUNTS[id], verified: verifiedQuestionNumbers.length === typeIds.length,
@@ -1739,7 +1766,45 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다."
 });
 
-export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
+const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
+  number: (middle) => `${middle}에서 수와 식의 관계를 이해하고 여러 표현을 서로 연결합니다.`,
+  pattern: (middle) => `${middle}에서 반복과 변화를 찾아 같은 규칙을 다음 단계에 적용합니다.`,
+  logic: (middle) => `${middle}에서 주어진 조건을 빠짐없이 정리해 가능한 경우를 좁힙니다.`,
+  geometry: (middle) => `${middle}에서 모양·위치·공간 관계를 관찰하고 변화를 정확히 나타냅니다.`
+});
+
+export const REPRESENTATIVE_CONCEPTS = Object.freeze([...TYPES.reduce((concepts, item) => {
+  const classification = questionClassificationForType(item.id);
+  if (!concepts.has(classification.representativeConceptId)) {
+    concepts.set(classification.representativeConceptId, Object.freeze({
+      id: classification.representativeConceptId,
+      label: classification.representativeConceptLabel,
+      summary: item.conceptSummary
+        || CONCEPT_SUMMARY_BY_DOMAIN[item.domain]?.(item.middle)
+        || `${item.middle}의 핵심 관계를 이해하고 같은 원리를 적용합니다.`
+    }));
+  }
+  return concepts;
+}, new Map()).values()]);
+
+const representativeConceptById = Object.fromEntries(REPRESENTATIVE_CONCEPTS.map((concept) => [concept.id, concept]));
+
+export const representativeConceptForType = (id) => {
+  const item = byId[id];
+  if (!item) return null;
+  const classification = questionClassificationForType(id);
+  const sharedConcept = representativeConceptById[classification.representativeConceptId];
+  const typeSpecificPrinciple = TEXTBOOK_CONCEPT_GUIDES[id];
+  return Object.freeze({
+    ...sharedConcept,
+    principle: typeSpecificPrinciple
+      || `${item.label} 문제에서 ${item.middle}의 관계를 찾아 말·그림·식으로 나타내고 같은 원리를 적용합니다.`,
+    specificity: typeSpecificPrinciple ? "type-specific" : "shared-middle"
+  });
+};
+
+export const textbookGuideForType = (id) => representativeConceptForType(id)?.principle
+  || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
 
 const CURRICULUM_TEST_FILES = {
   "book-01": "N30_1과정-1_테스트.pptx",
@@ -4063,7 +4128,7 @@ export const CURRICULUM = [
       unitTest: CURRICULUM_TEST_FILES[book.id],
       unitTestQuestionCount: 25,
       unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
-      unitTestQuestions: CURRICULUM_UNIT_TEST_QUESTIONS[book.id] || [],
+      unitTestQuestions: (CURRICULUM_UNIT_TEST_QUESTIONS[book.id] || []).map((entry) => classifySourceQuestion(entry)),
       goldenBellIncluded: false,
       reviewIncluded: index > 0,
       reviewSourceBookId: index > 0 ? `book-${String(index).padStart(2, "0")}` : null,
@@ -4076,3 +4141,89 @@ export const CURRICULUM = [
 });
 
 export const typeById = (id) => byId[id];
+
+const sourceQuestionRecord = (sourceKind, sourceId, sourceLabel, entry, extra = {}) => {
+  const typeIds = [...new Set(entry.typeIds || [entry.typeId, ...(entry.relatedTypeIds || [])].filter(Boolean))];
+  const classifications = typeIds.map((typeId) => questionClassificationForType(typeId)).filter(Boolean);
+  return Object.freeze({
+    sourceKey: `${sourceKind}:${sourceId}:q${entry.number}`,
+    sourceKind,
+    sourceId,
+    sourceLabel,
+    number: entry.number,
+    typeId: typeIds[0],
+    typeIds: Object.freeze(typeIds),
+    label: entry.note || entry.label || byId[typeIds[0]]?.label || "",
+    difficulty: entry.difficulty,
+    verified: entry.verified === true,
+    classification: entry.classification || classifications[0],
+    classifications: Object.freeze(classifications),
+    ...extra
+  });
+};
+
+const referenceNumbers = (reference) => reference.numbers
+  || Array.from({ length: reference.to - (reference.from || 1) + 1 }, (_, index) => (reference.from || 1) + index);
+
+const mergeQuestionRecords = (records) => [...records.reduce((index, record) => {
+  const previous = index.get(record.sourceKey);
+  if (!previous) {
+    index.set(record.sourceKey, record);
+    return index;
+  }
+  const typeIds = [...new Set([...previous.typeIds, ...record.typeIds])];
+  const classifications = typeIds.map((typeId) => questionClassificationForType(typeId)).filter(Boolean);
+  index.set(record.sourceKey, Object.freeze({
+    ...previous,
+    typeId: typeIds[0],
+    typeIds: Object.freeze(typeIds),
+    classification: classifications[0],
+    classifications: Object.freeze(classifications),
+    verified: previous.verified && record.verified
+  }));
+  return index;
+}, new Map()).values()];
+
+const textbookQuestionRecords = mergeQuestionRecords(CURRICULUM.flatMap((book) => book.units.flatMap((unitEntry, unitIndex) =>
+  unitEntry.typeIds.flatMap((typeId) => {
+    const typeReferences = unitEntry.typeStudyRefs?.[typeId] || unitEntry.studyRefs || {};
+    return TEXTBOOK_STAGES.flatMap((stage) => (typeReferences[stage.id] || []).flatMap((reference) =>
+      referenceNumbers(reference).map((number) => sourceQuestionRecord(
+        "textbook",
+        book.id,
+        `${book.label} ${unitEntry.label}`,
+        {
+          number,
+          typeId,
+          label: byId[typeId]?.label || "",
+          difficulty: stage.difficulty,
+          verified: Boolean(unitEntry.typeStudyRefs?.[typeId])
+        },
+        {
+          sourceKey: `textbook:${book.id}:u${unitIndex + 1}:${stage.id}:${reference.section}:${reference.group}:q${number}`,
+          bookId: book.id,
+          unitIndex,
+          unitLabel: unitEntry.label,
+          textbookStageId: stage.id,
+          textbookStageLabel: stage.label,
+          section: reference.section,
+          group: reference.group
+        }
+      ))
+    ));
+  })
+)));
+
+// 시험지·단원 테스트의 각 문항을 한 배열로 제공한다. 이후 통합 사고력 문제은행은
+// 이 색인에서 대단원, 소단원, 세부 유형, 대표 개념, 학원 스타일을 함께 검색한다.
+// 같은 유형이 여러 학원 스타일에 해당해도 문항을 복제하지 않고 style ID만 누적한다.
+export const SOURCE_QUESTION_INDEX = Object.freeze([
+  ...[...EXAMS, ...DIAGNOSTIC_EXAM_TYPES, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES]
+    .flatMap((exam) => exam.questions.map((entry) => sourceQuestionRecord(
+      "exam", exam.id, exam.label, entry, { stage: exam.stage || null }
+    ))),
+  ...CURRICULUM.flatMap((book) => book.source.unitTestQuestions.map((entry) => sourceQuestionRecord(
+    "unit-test", book.id, `${book.label} 단원 테스트`, entry, { bookId: book.id }
+  ))),
+  ...textbookQuestionRecords
+]);
