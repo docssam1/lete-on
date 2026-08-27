@@ -40,13 +40,24 @@ test("unresolved source lineage stays visible instead of being guessed", functio
   const ad9 = result.threadRows.find(function (row) { return row.legacyThreadId === "AD9"; });
   assert.ok(ad9, "the unassigned Phase 3 elementary thread must remain visible for review");
   assert.equal(ad9.mappingState, "concept-only");
+  assert.deepEqual(ad9.prerequisiteIds, ["AD3"]);
   assert.deepEqual(ad9.legacyCourseIds, []);
+  assert.equal(ad9.levelCount, 2);
   assert.equal(ad9.standardsReview, "pending");
-  assert.equal(
-    result.contentRecords.filter(function (record) { return record.legacy.threadId === "AD9"; })
-      .every(function (record) { return record.publicationState === "locked"; }),
-    true
-  );
+  const ad9Records = result.contentRecords.filter(function (record) { return record.legacy.threadId === "AD9"; });
+  assert.equal(ad9Records.length, 2);
+  ad9Records.forEach(function (record) {
+    assert.equal(record.publicationState, "locked");
+    assert.equal(record.standardsReview, "pending");
+    assert.equal(contract.canPublishContent(record), false);
+  });
+
+  const levelCounts = new Map(result.threadRows.map(function (row) {
+    return [row.legacyThreadId, row.levelCount];
+  }));
+  assert.equal(levelCounts.get("NS1"), 4);
+  assert.equal(levelCounts.get("AD3"), 4);
+  assert.equal(levelCounts.get("AD4"), 3);
 });
 
 test("no legacy item becomes public before provenance and standards review", function () {
