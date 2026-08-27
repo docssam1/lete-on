@@ -290,9 +290,9 @@
       "path": "geometry/games/polyomino/levels.js",
       "kind": "code",
       "sensitivity": "public",
-      "sha256": "2ccd22c5d4251875d9d548788a334072092e9524bf7336c1a7769c6f2fd7af01",
-      "size": 6722,
-      "mtime_ns": 1787834066148774600
+      "sha256": "ce439e72673c13e2b30cbb0693cd5c9830ad85364f612d0d791500d5e2fc2eb7",
+      "size": 16594,
+      "mtime_ns": 1787838746508000000
     },
     {
       "id": "geometry-polyomino-selftest",
@@ -300,9 +300,9 @@
       "path": "geometry/games/polyomino/polyomino.selftest.mjs",
       "kind": "code",
       "sensitivity": "public",
-      "sha256": "ae36c0877a743cff6586fe4bfbffd711c758fea75cfc6bd0a8ff2910e99340fe",
-      "size": 4116,
-      "mtime_ns": 1787834066149776000
+      "sha256": "43d48db16dd2dedf32d7358be10e01bf32ad3aa3854a9defcbb6a96886d71702",
+      "size": 9281,
+      "mtime_ns": 1787838746509000000
     }
   ],
   "records": [
@@ -4489,7 +4489,7 @@
         "ray",
         "single-answer"
       ],
-      "summary": "RAY Kids A4-2 pages 8-13 visually define dominoes and trominoes and pair pieces that are the same after turning. Pages 30-48 visually introduce pentomino observation, matching, tiling, and different-piece composition. Public levels 1 and 2 are an internal touch-game reconstruction: level 1 finds the same domino or tromino after rotation; level 2 separates rotation-only matches from reflected decoys. Twenty problems are independently checked for connectivity and exactly one accepted answer.",
+      "summary": "RAY Kids A4-2 pages 8-17 and 23-25 support domino, tromino, and tetromino rotation and repeated-piece tiling. Pages 30-50 support pentomino observation, same-pair composition, and different-piece composition. Five public levels contain 50 internal touch-game reconstructions: 20 single-choice rotation/reflection problems and 30 exact-cover problems. Exact-cover boards accept every valid full cover and are independently re-enumerated.",
       "status": "verified",
       "sensitivity": "private",
       "updated": "2026-08-27",
@@ -4497,20 +4497,20 @@
         {
           "source_id": "ray-a4-2-polyomino",
           "role": "source",
-          "locator": "PDF p. 8-13 and p. 30-48",
-          "note": "Pages visually inspected; source layout is not copied into the game"
+          "locator": "PDF p. 8-17, p. 23-25, and p. 30-50",
+          "note": "Pages visually inspected; source activity structure is reconstructed without copying the paid page layout"
         },
         {
           "source_id": "geometry-polyomino-levels",
           "role": "code",
-          "locator": "PIECES, level1Problems, level2Problems, validateLevels",
-          "note": "Coordinate-authored pieces and answer roles"
+          "locator": "PIECES, level1Problems, level2Problems, level3Problems, level4Problems, level5Problems, findCoverSolutions, validateLevels",
+          "note": "Coordinate-authored choices, source locators, compact exact-cover boards, and all-valid-cover acceptance"
         },
         {
           "source_id": "geometry-polyomino-selftest",
           "role": "test",
           "locator": "full deterministic test suite",
-          "note": "Independent rotation and reflection comparison for all 20 problems"
+          "note": "Independent rotation/reflection checks and a separately implemented exact-cover enumerator for all 50 problems and four locales"
         }
       ]
     }
