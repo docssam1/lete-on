@@ -1412,7 +1412,7 @@ function screenBoost(){
       <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
       <div class="nm-bubble">${esc(L(cur.prompt))}</div>
       ${useWidget ? `<div id="boostWidget" class="nm-lab-widget"></div>` : `
-        <div class="nm-lab-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+        <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
         <div class="nm-numpad-screen" id="boostScreen">&nbsp;</div>
         <div class="nm-numpad" id="boostPad"></div>`}
     </div>
@@ -2355,12 +2355,12 @@ function stepLabWidget(body,u){
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
-  const origTex=cur.tex?esc(labDisplayTex(cur.tex)):'';
+  const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    ${origTex?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span><span data-tex="${origTex}"></span></div>`:''}
+    ${origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div id="labWidget" class="nm-lab-widget"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
@@ -2407,6 +2407,14 @@ function labDisplayTex(tex){
   if(!tex)return '';
   return /\\square/.test(tex) ? tex : `${tex.split('=')[0].trim()} = \\square`;
 }
+/* 긴 문제 수식은 ⟹(\Rightarrow)에서 줄을 갈라 두 줄로 중앙 정렬 —
+   좁은 화면에서 'f'(x) =' 뒤에서 어색하게 꺾이는 것 방지(원장 지시: 줄 맞춰) */
+function labExprHtml(tex){
+  const d=labDisplayTex(tex);
+  const parts=d.split(/\\;?\\Rightarrow\\;?/);
+  if(parts.length<2)return `<span data-tex="${esc(d)}"></span>`;
+  return parts.map((pt,i)=>`<span class="nm-expr-line" data-tex="${esc((i?'\\Rightarrow\\; ':'')+pt.trim())}"></span>`).join('');
+}
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
@@ -2418,7 +2426,7 @@ function stepLabNumpad(body,u){
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div class="nm-lab-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+    <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
@@ -2499,7 +2507,7 @@ function nextArena(body,u,need){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
-    <div class="nm-arena-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+    <div class="nm-arena-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
   </div>`;
