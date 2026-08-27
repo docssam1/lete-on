@@ -1,0 +1,95 @@
+export const LANGUAGES = ["ko", "zh", "ja", "en"];
+
+export const messages = {
+  ko: {
+    gameTitle: "도형 조각 정원", gameSubtitle: "폴리오미노 퍼즐", back: "지도로 나가기",
+    levelLabel: "레벨 {level}", levels: "레벨", mute: "음소거", unmute: "소리 켜기",
+    problemOf: "{current} / {total}", target: "기준 조각", choices: "조각 보관함",
+    mission1: "돌려도 같은 조각 찾기", mission2: "돌리기와 뒤집기 구분하기",
+    prompt1: "기준 조각을 돌렸을 때 똑같아지는 조각을 옮기세요.",
+    prompt2: "뒤집지 않고 돌리기만 해서 똑같아지는 조각을 옮기세요.",
+    dropHere: "여기에 놓기", choosePiece: "조각을 선택한 뒤 기준 자리로 옮기세요.",
+    tapAgain: "선택한 조각을 다시 누르거나 기준 자리를 누르세요.",
+    wrongDifferent: "칸의 이어진 모양을 다시 살펴보세요.",
+    wrongMirror: "모양은 닮았지만 뒤집어야 해요. 돌리기만 해서 같은 조각을 찾아보세요.",
+    correct: "같은 조각을 정확히 찾았어요!", next: "다음 문제", hint: "힌트", clear: "선택 취소",
+    hint1: "조각을 머릿속으로 90도씩 돌려 보세요. 칸의 연결은 바뀌지 않아요.",
+    hint2: "왼쪽과 오른쪽이 뒤바뀌는 조각은 제외하세요. 회전만 허용돼요.",
+    level1Title: "도미노·트로미노", level1Desc: "두 칸·세 칸 조각을 돌려 같은 모양을 찾아요.",
+    level2Title: "돌리기와 뒤집기", level2Desc: "회전하면 같은 조각과 뒤집어야 같은 조각을 구분해요.",
+    level3Title: "같은 조각으로 채우기", level3Desc: "같은 조각으로 작은 판을 빈틈없이 채워요.",
+    level4Title: "펜토미노 관찰", level4Desc: "다섯 칸 조각의 종류와 방향을 탐구해요.",
+    level5Title: "큰 판 채우기", level5Desc: "제한된 조각으로 큰 판을 여러 방법으로 채워요.",
+    ready: "시작", coming: "원본 검수 중", chooseLevel: "도전할 레벨을 고르세요.", close: "닫기",
+    tutorial1: "조각은 같은 크기의 정사각형이 변끼리 이어진 모양이에요.",
+    tutorial2: "조각을 눌러 선택하고 기준 자리에 놓아 보세요.",
+    tutorial3: "돌려서 같으면 같은 조각이에요. 뒤집어야 같다면 아직 다른 방향의 조각이에요.",
+    tutorialNext: "다음", tutorialStart: "시작하기", completeTitle: "레벨 완료!",
+    completeText: "조각의 연결과 방향을 정확히 살펴봤어요.", nextLevel: "다음 레벨", practice: "같은 레벨 더 풀기", map: "마을로"
+  },
+  zh: {
+    gameTitle: "图形拼片花园", gameSubtitle: "多连方拼图", back: "返回地图",
+    levelLabel: "第 {level} 级", levels: "关卡", mute: "静音", unmute: "开启声音",
+    problemOf: "{current} / {total}", target: "目标拼片", choices: "拼片托盘",
+    mission1: "寻找旋转后相同的拼片", mission2: "区分旋转和翻面",
+    prompt1: "把旋转后与目标完全相同的拼片移过去。", prompt2: "只旋转、不翻面，找出相同的拼片。",
+    dropHere: "放在这里", choosePiece: "选择拼片后移到目标位置。", tapAgain: "再次点击拼片或点击目标位置。",
+    wrongDifferent: "再看看方格是怎样连接的。", wrongMirror: "形状很像，但需要翻面。请找只靠旋转就相同的拼片。",
+    correct: "找到了完全相同的拼片！", next: "下一题", hint: "提示", clear: "取消选择",
+    hint1: "在脑中把拼片每次旋转90度，方格的连接不会改变。", hint2: "排除左右翻转的拼片，这里只允许旋转。",
+    level1Title: "多米诺与三连方", level1Desc: "旋转两格和三格拼片，找出相同形状。",
+    level2Title: "旋转与翻面", level2Desc: "区分旋转后相同与翻面后才相同的拼片。",
+    level3Title: "相同拼片铺满", level3Desc: "用相同拼片无缝铺满小方格。",
+    level4Title: "观察五连方", level4Desc: "探索五格拼片的种类与方向。",
+    level5Title: "铺满大方格", level5Desc: "用有限拼片以不同方法铺满大方格。",
+    ready: "开始", coming: "原题审核中", chooseLevel: "选择要挑战的关卡。", close: "关闭",
+    tutorial1: "拼片由相同大小的正方形沿边连接而成。", tutorial2: "点击选择拼片，再放到目标位置。",
+    tutorial3: "旋转后相同就是同一拼片；必须翻面才相同则方向不同。", tutorialNext: "下一步", tutorialStart: "开始",
+    completeTitle: "关卡完成！", completeText: "你准确观察了拼片的连接和方向。", nextLevel: "下一关", practice: "再练一次", map: "返回小镇"
+  },
+  ja: {
+    gameTitle: "図形ピースの庭", gameSubtitle: "ポリオミノパズル", back: "マップへ戻る",
+    levelLabel: "レベル {level}", levels: "レベル", mute: "ミュート", unmute: "音を出す",
+    problemOf: "{current} / {total}", target: "お手本ピース", choices: "ピーストレイ",
+    mission1: "回すと同じピース", mission2: "回転と裏返しを区別",
+    prompt1: "回すとお手本と同じになるピースを運びましょう。", prompt2: "裏返さず、回すだけで同じになるピースを運びましょう。",
+    dropHere: "ここに置く", choosePiece: "ピースを選び、お手本の場所へ運びましょう。", tapAgain: "選んだピースかお手本の場所をもう一度押してください。",
+    wrongDifferent: "マスのつながり方をもう一度見ましょう。", wrongMirror: "似ていますが裏返しが必要です。回すだけで同じピースを探しましょう。",
+    correct: "同じピースを正しく見つけました！", next: "次の問題", hint: "ヒント", clear: "選択解除",
+    hint1: "頭の中で90度ずつ回しましょう。マスのつながりは変わりません。", hint2: "左右が裏返るピースは除きます。回転だけが使えます。",
+    level1Title: "ドミノ・トロミノ", level1Desc: "2マス・3マスのピースを回して同じ形を探します。",
+    level2Title: "回転と裏返し", level2Desc: "回転で同じ形と、裏返して同じ形を区別します。",
+    level3Title: "同じピースで敷く", level3Desc: "同じピースで小さな盤をすき間なく埋めます。",
+    level4Title: "ペントミノ観察", level4Desc: "5マスピースの種類と向きを調べます。",
+    level5Title: "大きな盤を敷く", level5Desc: "限られたピースで大きな盤をいろいろに埋めます。",
+    ready: "スタート", coming: "原本確認中", chooseLevel: "挑戦するレベルを選んでください。", close: "閉じる",
+    tutorial1: "ピースは同じ大きさの正方形が辺でつながった形です。", tutorial2: "ピースを押して選び、お手本の場所へ置きましょう。",
+    tutorial3: "回して同じなら同じピースです。裏返しが必要なら向きが違います。", tutorialNext: "次へ", tutorialStart: "始める",
+    completeTitle: "レベルクリア！", completeText: "ピースのつながりと向きを正確に見られました。", nextLevel: "次のレベル", practice: "もう一度", map: "町へ"
+  },
+  en: {
+    gameTitle: "Shape Piece Garden", gameSubtitle: "Polyomino Puzzles", back: "Back to map",
+    levelLabel: "LEVEL {level}", levels: "Levels", mute: "Mute", unmute: "Sound on",
+    problemOf: "{current} / {total}", target: "Target piece", choices: "Piece tray",
+    mission1: "Find the same turned piece", mission2: "Turn or flip?",
+    prompt1: "Move the piece that becomes identical when it is turned.", prompt2: "Move the piece that matches by turning only, without flipping.",
+    dropHere: "Drop here", choosePiece: "Choose a piece, then move it to the target.", tapAgain: "Tap the selected piece again or tap the target.",
+    wrongDifferent: "Look again at how the squares are connected.", wrongMirror: "It looks close, but it must be flipped. Find the piece that matches by turning only.",
+    correct: "You found the identical piece!", next: "Next problem", hint: "Hint", clear: "Clear selection",
+    hint1: "Turn the piece 90 degrees at a time in your mind. Its connections do not change.", hint2: "Leave out pieces whose left and right sides are flipped. Only turning is allowed.",
+    level1Title: "Dominoes and Trominoes", level1Desc: "Turn two- and three-square pieces to find matching shapes.",
+    level2Title: "Turning and Flipping", level2Desc: "Tell a turned match from a piece that only matches after a flip.",
+    level3Title: "Tile with One Piece", level3Desc: "Fill a small board with copies of the same piece.",
+    level4Title: "Explore Pentominoes", level4Desc: "Explore the families and directions of five-square pieces.",
+    level5Title: "Tile a Large Board", level5Desc: "Use a limited set of pieces to tile a larger board in different ways.",
+    ready: "Start", coming: "Source review", chooseLevel: "Choose a level to play.", close: "Close",
+    tutorial1: "A piece is made from equal squares joined along full sides.", tutorial2: "Tap a piece, then place it in the target space.",
+    tutorial3: "If turning makes it match, it is the same piece. If it needs a flip, its handed direction is different.", tutorialNext: "Next", tutorialStart: "Start",
+    completeTitle: "Level complete!", completeText: "You checked every connection and direction carefully.", nextLevel: "Next level", practice: "Practice again", map: "Back to town"
+  }
+};
+
+export function text(language, key, values = {}) {
+  const source = messages[language]?.[key] ?? messages.ko[key] ?? key;
+  return Object.entries(values).reduce((result, [name, value]) => result.replaceAll(`{${name}}`, String(value)), source);
+}

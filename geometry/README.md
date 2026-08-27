@@ -25,6 +25,9 @@
 - games/minmax/ - 최대·최소 큐브 챌린지
 - games/paper-fold/ - 색종이 접고 펼치기
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
+- games/mirror-manor/ - 거울 저택
+- games/geoboard/ - 점판 공작소
+- games/polyomino/ - 도형 조각 정원: 폴리오미노 퍼즐
 
 ## 색종이 생각 놀이터
 

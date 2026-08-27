@@ -50,7 +50,11 @@ export function createGeometryVillage(THREE, scene, options = {}) {
     ring: material(0xffd45b, 0.42, 0.08, { transparent: true, opacity: 0.72 }),
     flowerPink: material(0xef7f9b, 0.78),
     flowerBlue: material(0x659cd4, 0.78),
-    flowerYellow: material(0xf2c94c, 0.76)
+    flowerYellow: material(0xf2c94c, 0.76),
+    shapeMint: material(0x61b99a, 0.72),
+    shapeBlue: material(0x5797ca, 0.7),
+    shapeSun: material(0xf0bc45, 0.68),
+    shapeCoral: material(0xdf7766, 0.72)
   };
 
   const geometries = {
@@ -73,7 +77,8 @@ export function createGeometryVillage(THREE, scene, options = {}) {
     { id: "origamiStudio", name: "Origami Studio", x: 0, z: -34, radius: 5.5, entryDistance: 6.4, labelY: 8.3, signColor: materials.origamiPink, build: buildOrigamiStudio },
     { id: "mirrorManor", name: "Mirror Manor", x: 40, z: -20, radius: 5.8, entryDistance: 6.7, labelY: 8.2, signColor: materials.mirrorBlue, build: buildMirrorManor },
     { id: "geoboardYard", name: "Geoboard Yard", x: 43, z: 24, radius: 6, entryDistance: 7, labelY: 7.6, signColor: materials.geoboardGreen, build: buildGeoboardYard },
-    { id: "crystalPlaza", name: "Crystal Plaza", x: -28, z: 25, radius: 5.8, entryDistance: 6.8, labelY: 7.5, signColor: materials.crystalPink, build: buildCrystalPlaza }
+    { id: "crystalPlaza", name: "Crystal Plaza", x: -28, z: 25, radius: 5.8, entryDistance: 6.8, labelY: 7.5, signColor: materials.crystalPink, build: buildCrystalPlaza },
+    { id: "shapeGarden", name: "Shape Garden", x: 13, z: 35, radius: 6.4, entryDistance: 7, labelY: 8.1, signColor: materials.shapeMint, build: buildShapeGarden }
   ];
 
   placeSpecs.forEach(placeZone);
@@ -846,9 +851,84 @@ export function createGeometryVillage(THREE, scene, options = {}) {
     }
   }
 
+  function buildShapeGarden(group) {
+    const deck = box(group, materials.darkWood, 0, .3, 0, 9.4, .6, 6.8);
+    deck.receiveShadow = shadows;
+    box(group, materials.woodLight, 0, .72, 0, 8.75, .28, 6.15);
+
+    // The interlocking facade previews the pieces children manipulate inside.
+    box(group, materials.cream, 0, 2.35, -1.15, 7.5, 3.1, 3.65);
+    box(group, materials.darkWood, 0, 3.9, -1.15, 8.05, .3, 4.15);
+    const roof = mesh(geometries.pyramid, materials.shapeMint, group);
+    roof.position.set(0, 5.05, -1.15);
+    roof.scale.set(4.85, 1.75, 3.45);
+    roof.rotation.y = Math.PI / 4;
+
+    box(group, materials.darkWood, 0, 1.72, 1.02, 1.65, 2.55, .25);
+    addEntryDoor(group, materials.shapeBlue, {
+      y: 1.7, z: 1.17, width: 1.24, height: 2.18, depth: .08,
+      accentMaterial: materials.shapeSun, stripeWidth: .12,
+      windowMaterial: materials.cream, windowY: .34, glowColor: 0x79e6b7
+    });
+
+    [-2.35, 2.35].forEach((x) => {
+      box(group, materials.darkWood, x, 2.15, .72, 1.45, 1.45, .2);
+      box(group, materials.shapeBlue, x, 2.15, .84, 1.12, 1.12, .08);
+      box(group, materials.cream, x, 2.15, .9, .08, 1.12, .04);
+      box(group, materials.cream, x, 2.15, .9, 1.12, .08, .04);
+    });
+
+    const tileColors = [materials.shapeMint, materials.shapeBlue, materials.shapeSun, materials.shapeCoral];
+    const facadePieces = [
+      { cells: [[0, 0], [1, 0], [2, 0], [0, 1]], x: -2.55, y: 3.35, color: 0 },
+      { cells: [[0, 0], [1, 0], [1, 1], [2, 1]], x: .65, y: 3.2, color: 2 }
+    ];
+    facadePieces.forEach((piece) => {
+      piece.cells.forEach(([column, row]) => {
+        box(group, tileColors[piece.color], piece.x + column * .62, piece.y + row * .62, .96, .54, .54, .12);
+      });
+    });
+
+    for (let step = 0; step < 3; step += 1) {
+      box(group, materials.woodLight, 0, .17 + step * .15, 3.18 - step * .4, 3.5 - step * .42, .16, .68);
+    }
+
+    const gardenPieces = [
+      { x: -5.05, z: .5, cells: [[0, 0], [1, 0], [1, 1]], mat: materials.shapeCoral },
+      { x: 3.9, z: .25, cells: [[0, 0], [0, 1], [1, 1], [2, 1]], mat: materials.shapeSun }
+    ];
+    gardenPieces.forEach((piece, pieceIndex) => {
+      const bed = box(group, materials.darkWood, piece.x + 1, .28, piece.z, 3.35, .5, 2.85);
+      bed.receiveShadow = true;
+      box(group, materials.grassLight, piece.x + 1, .56, piece.z, 3.05, .16, 2.55);
+      piece.cells.forEach(([column, row], cellIndex) => {
+        const tile = box(group, piece.mat, piece.x + column * .82, .88, piece.z - .62 + row * .82, .68, .2, .68);
+        tile.rotation.y = (pieceIndex ? -.06 : .06) * cellIndex;
+      });
+    });
+
+    const mobile = new THREE.Group();
+    mobile.position.set(0, 6.45, -1.1);
+    group.add(mobile);
+    cylinder(mobile, materials.darkWood, 0, .15, 0, .06, 1.35, 8);
+    const emblemCells = [[-1, 0], [0, 0], [1, 0], [0, 1]];
+    emblemCells.forEach(([column, row], index) => {
+      const tile = box(mobile, tileColors[index], column * .5, .88 + row * .5, 0, .42, .42, .18);
+      tile.rotation.z = .08 * (index - 1.5);
+    });
+    mobile.userData.animation = { type: "sway", axis: "y", base: 0, amplitude: .12, speed: .72, phase: .6 };
+    animated.push(mobile);
+
+    for (const side of [-1, 1]) {
+      cylinder(group, materials.trunk, side * 5.25, 1.05, -2.75, .3, 2.1, 8);
+      const crown = mesh(geometries.sphere8, side < 0 ? materials.leavesLight : materials.leaves, group);
+      crown.position.set(side * 5.25, 2.7, -2.75);
+      crown.scale.set(1.18, 1.42, 1.18);
+    }
+  }
+
   function buildFutureDistricts() {
     const lots = [
-      { id: "shapeDistrict", x: 13, z: 35, color: materials.origamiBlue, shape: geometries.pyramid },
       { id: "spatialDistrict", x: -57, z: 20, color: materials.cubeGold, shape: geometries.cylinder6 },
       { id: "coordinateDistrict", x: 57, z: -37, color: materials.crystalPink, shape: geometries.crystal }
     ];
