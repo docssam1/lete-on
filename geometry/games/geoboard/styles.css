@@ -101,16 +101,13 @@ button { cursor: pointer }
 /* --------------------------------------------------------------- pegs, band */
 .peg { fill: #8a6a3a; stroke: #f7f1e2; stroke-width: .9 }
 .peg.model { fill: #8a6a3a; stroke: #f7f1e2; stroke-width: .9 }
+.peg.partition-peg { fill: #1d5f75; stroke: #fff8df; stroke-width: 1.25 }
 /* Transparent fill (not `fill:none`) is what makes an SVG circle hit-testable
    while staying invisible — this is the 30px+ finger target. */
 .peg-hit { fill: transparent; cursor: pointer; outline: none }
 .peg-hit:focus-visible { fill: #ffd77455; stroke: var(--navy); stroke-width: 1.4 }
 
 .band { stroke: var(--band); stroke-width: 2.6; stroke-linecap: round; fill: none }
-.compound-band { stroke-linecap: round; fill: none }
-.compound-band.base { stroke: #677683; stroke-width: 1.8 }
-.compound-band.added { stroke: #2a7f8f; stroke-width: 3.5 }
-.compound-band.solved { stroke: #2f8f5b }
 .band.solved { stroke: #2f8f5b }
 .band.ghost { stroke-dasharray: 4 3 }
 .band.bad { stroke: #c8261a; stroke-width: 3.4; animation: flash .3s steps(2, end) 2 }
@@ -121,6 +118,16 @@ button { cursor: pointer }
 .band-node.start { fill: #f0a92f; stroke: #7a4d05; stroke-width: 1.2 }
 .band-node.solved { fill: #2f8f5b }
 .peg-flag { fill: none; stroke: #c8261a; stroke-width: 1.8; animation: flash .3s steps(2, end) 2 }
+.partition-grid-line { stroke: #98acaa; stroke-width: .55; stroke-dasharray: 1.2 2.2; opacity: .46 }
+.partition-outline { fill: #f5d58b24; stroke: #1d5f75; stroke-width: 3.1; stroke-linejoin: round }
+.partition-line { fill: none; stroke: #e2574c; stroke-width: 3.8; stroke-linecap: round }
+.partition-line.solved { stroke: #277f58 }
+.partition-line.bad { stroke: #c8261a; stroke-width: 4.6; animation: flash .3s steps(2, end) 2 }
+.partition-start { fill: #fff3a6; stroke: #b56b19; stroke-width: 1.6; animation: partition-pulse .85s ease-in-out infinite alternate }
+.partition-face { stroke: none; opacity: .4 }
+.partition-face.sides-3 { fill: #f3a85f }
+.partition-face.sides-4 { fill: #69b7a5 }
+@keyframes partition-pulse { to { r: 8; opacity: .4 } }
 @keyframes flash { 50% { opacity: .15 } }
 
 /* ---------------------------------------------------------------- tool rail */
@@ -136,15 +143,11 @@ button { cursor: pointer }
 .found-shape { fill: #2f8f5b22; stroke: #2a7f8f; stroke-width: 2.2; stroke-linejoin: round }
 .found-question { fill: #82909b; font-size: 14px; font-weight: 900 }
 .count-question { fill: #2f4f74; font-size: 58px; font-weight: 900 }
-.compound-step-box { fill: #fffdf7; stroke: #b7c6cf; stroke-width: 1.3 }
-.compound-step-box.active { fill: #e5f5f3; stroke: #2a7f8f; stroke-width: 2 }
-.compound-step-box.done { fill: #e8f5e9; stroke: #2f8f5b }
-.compound-step-number { fill: #fff; stroke: none; font-size: 12px; font-weight: 900; paint-order: stroke; filter: drop-shadow(0 1px 0 #244f70) }
-.compound-step-label { fill: var(--navy); font-size: 10px; font-weight: 900 }
-.compound-step-answer { fill: #73828e; font-size: 17px; font-weight: 900 }
-.compound-step-answer.done { fill: #237148 }
+.partition-model-outline { fill: #74b8aa20; stroke: #2a6f82; stroke-width: 2.4; stroke-linejoin: round }
+.partition-model-text { fill: var(--navy); font-weight: 900 }
+.partition-model-text.text-0 { fill: #9b561e; font-size: 10px }
+.partition-model-text.text-1, .partition-model-text.text-2 { font-size: 8px }
 .tool-panel button { min-height: 46px; display: grid; place-items: center; padding: 6px; border: 1px solid #a9b6a0; border-radius: 7px; background: #f4f2e5; color: #3b4a3e; font-size: 12px; font-weight: 900; box-shadow: 0 3px #a7b39c }
-.tool-panel button[hidden] { display: none }
 
 /* --------------------------------------------------------------------- dock */
 .answer-dock { z-index: 8; display: grid; grid-template-columns: minmax(160px, 1.4fr) minmax(0, 1fr) 130px; gap: 10px; align-items: center; padding: 9px 118px 9px 14px; border-top: 1px solid #c6cebe; background: #fbfaf6ee; box-shadow: 0 -5px 18px #2b3d551d }
@@ -264,7 +267,6 @@ button { cursor: pointer }
   .toast { top: 46px; font-size: 11px; padding: 5px 11px }
   .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }
   .level-card { min-height: 96px }
-  .gf-install-banner { display: none !important }
   .dialog { padding: 7px }
   .tutorial-card { grid-template-columns: 78px minmax(150px, 185px) minmax(190px, 1fr); gap: 10px; padding: 10px }
   .tutorial-card .cubi-sprite { width: 78px; height: 78px }

@@ -1182,3 +1182,6 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 @media(prefers-reduced-motion:reduce){
   .nm-dex-flip{transition:none}
 }
+
+/* 문제 수식 두 줄 정렬 — ⟹에서 갈라 각 줄 중앙(원장 '줄 맞춰' 지시) */
+.nm-expr-line{display:block;text-align:center;line-height:1.7}

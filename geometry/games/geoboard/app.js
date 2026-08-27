@@ -22,6 +22,7 @@
 import {
   levels, readyLevels, validateLevels, GAME_ID, PROGRESS_KEY,
   samePoint, pointKey, targetPoints, acceptsAnswer,
+  acceptsPartitionAnswer, partitionFaces,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
 } from "./levels.js?v=geoboard-7";
@@ -62,13 +63,13 @@ const state = {
   problem: 0,
   queue: [],
   path: [],        // pegs the child has tapped, in order
+  partitionLines: [], // outline vertex-index pairs in level 5
   foundTypes: [],  // congruence keys collected in levels 3-4
   closed: false,   // set when the child taps the first peg again (level 2 only)
   locked: false,   // true while a wrong figure is flashing before it clears
   solved: false,
   wrong: 0,
   hints: 0,
-  compoundStep: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
   lang: language
 };
@@ -88,8 +89,7 @@ const levelData = () => levels.find((level) => level.id === state.level);
 const problem = () => state.queue[state.problem];
 const isCountProblem = (candidate = problem()) => candidate?.kind === "square-count" || candidate?.kind === "triangle-count";
 const isPlacementQuestion = (candidate = problem()) => isCountProblem(candidate) && candidate.questionMode === "placements";
-const isCompoundProblem = (candidate = problem()) => candidate?.kind === "compound-count";
-const isNumberChoiceQuestion = (candidate = problem()) => isPlacementQuestion(candidate) || isCompoundProblem(candidate);
+const isPartitionProblem = (candidate = problem()) => candidate?.kind === "partition";
 
 /* ------------------------------------------------------------------ session */
 
@@ -159,25 +159,13 @@ const pegX = (x, grid) => stepX(grid) * (x + .5);
 const pegY = (y, grid) => stepY(grid) * (y + .5);
 
 function boardPoints(candidate) {
-  if (isCompoundProblem(candidate)) return candidate.points;
+  if (isPartitionProblem(candidate)) return squareBoardPoints(candidate.grid.cols);
   if (candidate.boardType === "triangular") return triangularBoardPoints(candidate.boardSize);
   if (candidate.boardType === "square") return squareBoardPoints(candidate.boardSize);
   return squareBoardPoints(candidate.grid.cols);
 }
 
 function projectPoint(point, candidate) {
-  if (isCompoundProblem(candidate)) {
-    const xs = candidate.points.map(([x]) => x);
-    const ys = candidate.points.map(([, y]) => y);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
-    const scale = Math.min(74 / Math.max(1, maxX - minX), 74 / Math.max(1, maxY - minY));
-    const width = (maxX - minX) * scale;
-    const height = (maxY - minY) * scale;
-    return [(100 - width) / 2 + (point[0] - minX) * scale, (100 - height) / 2 + (point[1] - minY) * scale];
-  }
   if (candidate.boardType !== "triangular") return [pegX(point[0], candidate.grid), pegY(point[1], candidate.grid)];
   const spanX = Math.max(1, candidate.boardSize - 1);
   const spanY = Math.max(1, spanX * Math.sqrt(3) / 2);
@@ -244,21 +232,60 @@ function renderBoard() {
   ui.pegs.replaceChildren();
   boardPoints(p).forEach((point) => {
     const [cx, cy] = projectPoint(point, p);
-    ui.pegs.append(svgNode("circle", { class: "peg", cx, cy, r: PEG_RADIUS }));
+    const outlinePoint = isPartitionProblem(p) && p.outline.some((candidate) => samePoint(candidate, point));
+    ui.pegs.append(svgNode("circle", { class: `peg${outlinePoint ? " partition-peg" : ""}`, cx, cy, r: outlinePoint ? PEG_RADIUS * 1.35 : PEG_RADIUS }));
   });
 
   ui.bands.replaceChildren();
-  if (isCompoundProblem(p)) {
-    const drawSegments = (segments, className) => segments.forEach(([a, b]) => {
-      const [x1, y1] = projectPoint(a, p);
-      const [x2, y2] = projectPoint(b, p);
-      ui.bands.append(svgNode("line", { class: `${className}${state.solved ? " solved" : ""}`, x1, y1, x2, y2 }));
-    });
-    drawSegments(p.baseSegments, "compound-band base");
-    drawSegments(p.addedSegments, "compound-band added");
-  } else drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
+  if (isPartitionProblem(p)) renderPartitionBoard(p);
+  else drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
 
   renderHits();
+}
+
+function renderPartitionBoard(candidate) {
+  const grid = candidate.grid;
+  for (let index = 0; index < grid.cols; index += 1) {
+    ui.bands.append(svgNode("line", {
+      class: "partition-grid-line",
+      x1: pegX(index, grid), y1: pegY(0, grid),
+      x2: pegX(index, grid), y2: pegY(grid.rows - 1, grid)
+    }));
+  }
+  for (let index = 0; index < grid.rows; index += 1) {
+    ui.bands.append(svgNode("line", {
+      class: "partition-grid-line",
+      x1: pegX(0, grid), y1: pegY(index, grid),
+      x2: pegX(grid.cols - 1, grid), y2: pegY(index, grid)
+    }));
+  }
+
+  if (state.solved) {
+    partitionFaces(candidate.outline.length, state.partitionLines).forEach((face) => {
+      ui.bands.append(svgNode("polygon", {
+        class: `partition-face sides-${face.length}`,
+        points: face.map((index) => projectPoint(candidate.outline[index], candidate).join(",")).join(" ")
+      }));
+    });
+  }
+
+  ui.bands.append(svgNode("polygon", {
+    class: "partition-outline",
+    points: candidate.outline.map((point) => projectPoint(point, candidate).join(",")).join(" ")
+  }));
+  state.partitionLines.forEach(([fromIndex, toIndex], index) => {
+    const [x1, y1] = projectPoint(candidate.outline[fromIndex], candidate);
+    const [x2, y2] = projectPoint(candidate.outline[toIndex], candidate);
+    ui.bands.append(svgNode("line", {
+      class: `partition-line${state.solved ? " solved" : ""}`,
+      "data-partition-line": index,
+      x1, y1, x2, y2
+    }));
+  });
+  if (state.path.length === 1) {
+    const [cx, cy] = projectPoint(state.path[0], candidate);
+    ui.bands.append(svgNode("circle", { class: "partition-start", cx, cy, r: PEG_RADIUS * 2.25 }));
+  }
 }
 
 /** The child's figure as an explicit point list (closing peg repeated when closed). */
@@ -280,8 +307,9 @@ function renderHits() {
     ? [document.activeElement.dataset.x, document.activeElement.dataset.y]
     : null;
   ui.hits.replaceChildren();
-  if (isNumberChoiceQuestion(p)) return;
-  boardPoints(p).forEach(([x, y]) => {
+  if (isPlacementQuestion(p)) return;
+  const interactivePoints = isPartitionProblem(p) ? p.outline : boardPoints(p);
+  interactivePoints.forEach(([x, y]) => {
       const used = state.path.some((point) => samePoint(point, [x, y]));
       const isStart = state.path.length > 0 && samePoint(state.path[0], [x, y]);
       const [cx, cy] = projectPoint([x, y], p);
@@ -299,7 +327,7 @@ function renderHits() {
 
 function renderModel() {
   const p = problem();
-  if (isCompoundProblem(p)) return renderCompoundProgress(p);
+  if (isPartitionProblem(p)) return renderPartitionModel(p);
   if (isCountProblem(p)) return renderFoundGallery(p);
   const grid = p.grid;
   ui.model.replaceChildren();
@@ -316,29 +344,30 @@ function renderModel() {
   ui.modelShape.textContent = t(p.shapeNameKey);
 }
 
-function renderCompoundProgress(candidate) {
+function renderPartitionModel(candidate) {
   ui.model.replaceChildren();
-  ui.model.setAttribute("aria-label", t("compoundProgressAria", { step: Math.min(2, state.compoundStep + 1) }));
+  ui.model.setAttribute("aria-label", t("partitionModelAria", {
+    lines: candidate.lineTotal,
+    triangles: candidate.targetTriangles,
+    quadrilaterals: candidate.targetQuadrilaterals
+  }));
   ui.model.append(svgNode("rect", { class: "model-face", x: 0, y: 0, width: 100, height: 100, rx: 4 }));
-  const rows = [
-    { key: "triangleStep", answer: candidate.triangleCount, done: state.compoundStep >= 1 || state.solved },
-    { key: "quadrilateralStep", answer: candidate.quadrilateralCount, done: state.solved }
-  ];
-  rows.forEach((row, index) => {
-    const y = 11 + index * 43;
-    const active = !state.solved && state.compoundStep === index;
-    ui.model.append(svgNode("rect", { class: `compound-step-box${active ? " active" : ""}${row.done ? " done" : ""}`, x: 8, y, width: 84, height: 34, rx: 6 }));
-    const number = svgNode("text", { class: "compound-step-number", x: 18, y: y + 21, "text-anchor": "middle" });
-    number.textContent = String(index + 1);
-    ui.model.append(number);
-    const label = svgNode("text", { class: "compound-step-label", x: 30, y: y + 21 });
-    label.textContent = t(row.key);
-    ui.model.append(label);
-    const answer = svgNode("text", { class: `compound-step-answer${row.done ? " done" : ""}`, x: 82, y: y + 22, "text-anchor": "middle" });
-    answer.textContent = row.done ? row.answer : "?";
-    ui.model.append(answer);
+  const outline = svgNode("polygon", {
+    class: "partition-model-outline",
+    points: candidate.outline.map((point) => projectPoint(point, candidate).join(",")).join(" ")
   });
-  ui.modelShape.textContent = t(state.compoundStep === 0 ? "triangleStep" : "quadrilateralStep");
+  ui.model.append(outline);
+  const labels = [
+    [t("partitionLineBadge", { count: candidate.lineTotal }), 12],
+    [t("triangleTarget", { count: candidate.targetTriangles }), 84],
+    [t("quadrilateralTarget", { count: candidate.targetQuadrilaterals }), 94]
+  ];
+  labels.forEach(([line, y], index) => {
+    const textNode = svgNode("text", { class: `partition-model-text text-${index}`, x: 50, y, "text-anchor": "middle" });
+    textNode.textContent = line;
+    ui.model.append(textNode);
+  });
+  ui.modelShape.textContent = t("partitionGoal");
 }
 
 function countRepresentatives(candidate) {
@@ -514,7 +543,8 @@ function reportWrong(messageKey, marks) {
 function onPegTap(x, y) {
   if (state.solved || state.locked) return;
   const p = problem();
-  if (isNumberChoiceQuestion(p)) return;
+  if (isPlacementQuestion(p)) return;
+  if (isPartitionProblem(p)) return onPartitionPegTap(x, y);
   const target = [x, y];
   const path = state.path;
   const wanted = isCountProblem(p) ? (p.kind === "square-count" ? 4 : 3) : p.vertices.length;
@@ -577,6 +607,41 @@ function onPegTap(x, y) {
   if (p.kind === "open" && path.length === wanted) judge();
 }
 
+function onPartitionPegTap(x, y) {
+  const candidate = problem();
+  const point = [x, y];
+  const pointIndex = candidate.outline.findIndex((outlinePoint) => samePoint(outlinePoint, point));
+  if (pointIndex < 0) return;
+  if (state.path.length === 0) {
+    state.path = [point];
+    playTone("tap");
+    refresh();
+    return;
+  }
+  const startIndex = candidate.outline.findIndex((outlinePoint) => samePoint(outlinePoint, state.path[0]));
+  if (startIndex === pointIndex) return reportWrong("wrongSamePeg", { peg: point });
+  const distance = Math.abs(startIndex - pointIndex);
+  if (distance === 1 || distance === candidate.outline.length - 1) {
+    return reportWrong("wrongBoundaryLine", { ghost: [candidate.outline[startIndex], point] });
+  }
+  const chord = startIndex < pointIndex ? [startIndex, pointIndex] : [pointIndex, startIndex];
+  const key = chord.join("-");
+  if (state.partitionLines.some((line) => [...line].sort((a, b) => a - b).join("-") === key)) {
+    return reportWrong("wrongDupEdge", { ghost: [candidate.outline[startIndex], point] });
+  }
+  const crossing = state.partitionLines.findIndex((line) => {
+    const [a, b] = line;
+    if ([a, b].includes(chord[0]) || [a, b].includes(chord[1])) return false;
+    return segmentsIntersect(candidate.outline[a], candidate.outline[b], candidate.outline[chord[0]], candidate.outline[chord[1]]);
+  });
+  if (crossing >= 0) return reportWrong("wrongCrossing", { ghost: [candidate.outline[startIndex], point] });
+  state.partitionLines.push(chord);
+  state.path = [];
+  playTone("close");
+  refresh();
+  if (state.partitionLines.length === candidate.lineTotal) judgePartition(candidate);
+}
+
 function judge() {
   const p = problem();
   if (isCountProblem(p)) return judgeCountProblem(p);
@@ -594,6 +659,21 @@ function judge() {
     state.locked = false;
     clearBand();
   }, 900);
+}
+
+function judgePartition(candidate) {
+  if (acceptsPartitionAnswer(candidate, state.partitionLines)) return solveProblem();
+  state.wrong += 1;
+  state.locked = true;
+  playTone("wrong");
+  toast(t("wrongPartition"));
+  ui.bands.querySelectorAll(".partition-line").forEach((node) => node.classList.add("bad"));
+  setTimeout(() => {
+    state.locked = false;
+    state.partitionLines = [];
+    state.path = [];
+    refresh();
+  }, 950);
 }
 
 function rejectCountShape(messageKey) {
@@ -632,7 +712,6 @@ function judgeCountProblem(candidate) {
 
 function judgeCountChoice(value, button) {
   const candidate = problem();
-  if (isCompoundProblem(candidate)) return judgeCompoundChoice(value, button);
   if (!isPlacementQuestion(candidate) || state.solved || state.locked) return;
   if (value === candidate.answerValue) return solveProblem();
   state.wrong += 1;
@@ -642,32 +721,9 @@ function judgeCountChoice(value, button) {
   setTimeout(() => button.classList.remove("wrong"), 650);
 }
 
-function judgeCompoundChoice(value, button) {
-  const candidate = problem();
-  if (!isCompoundProblem(candidate) || state.solved || state.locked) return;
-  const expected = state.compoundStep === 0 ? candidate.triangleCount : candidate.quadrilateralCount;
-  if (value !== expected) {
-    state.wrong += 1;
-    playTone("wrong");
-    toast(t("wrongCompoundCount"));
-    button.classList.add("wrong");
-    setTimeout(() => button.classList.remove("wrong"), 650);
-    return;
-  }
-  if (state.compoundStep === 0) {
-    state.compoundStep = 1;
-    playTone("close");
-    toast(t("triangleCountCorrect"));
-    renderModel();
-    refresh();
-    ui.stats.querySelector(".count-choice")?.focus();
-    return;
-  }
-  solveProblem();
-}
-
 function clearBand() {
   state.path = [];
+  state.partitionLines = [];
   state.closed = false;
   refresh();
 }
@@ -715,12 +771,15 @@ function renderStatus() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  $("#modelLabel").textContent = t(isCompoundProblem(p) ? "countOrderLabel" : isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
-  $("#buildLabel").textContent = t(isCompoundProblem(p) ? "compoundFigureLabel" : p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
-  $("#retryButton").hidden = isCompoundProblem(p);
-  if (isCompoundProblem(p)) {
-    ui.prompt.textContent = t(state.compoundStep === 0 ? "promptCompoundTriangles" : "promptCompoundQuadrilaterals");
-    ui.answerPrompt.textContent = t("compoundProgress", { step: state.compoundStep + 1 });
+  $("#modelLabel").textContent = t(isPartitionProblem(p) ? "partitionGoalLabel" : isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
+  $("#buildLabel").textContent = t(isPartitionProblem(p) ? "partitionBuildLabel" : p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
+  if (isPartitionProblem(p)) {
+    ui.prompt.textContent = t("promptPartition", {
+      lines: p.lineTotal,
+      triangles: p.targetTriangles,
+      quadrilaterals: p.targetQuadrilaterals
+    });
+    ui.answerPrompt.textContent = t("partitionProgress", { done: state.partitionLines.length, total: p.lineTotal });
   } else if (isCountProblem(p)) {
     if (isPlacementQuestion(p)) {
       ui.prompt.textContent = t(p.kind === "square-count" ? "promptSquareCount" : "promptEquilateralCount", { size: p.boardSize });
@@ -742,11 +801,8 @@ function renderStatus() {
   // Live corner and side counts, straight from the exported pure helpers. They are
   // the vocabulary level 3 will ask about, so the child meets the words early.
   ui.stats.replaceChildren();
-  if (isNumberChoiceQuestion(p)) {
-    const choices = isCompoundProblem(p)
-      ? (state.compoundStep === 0 ? p.triangleChoices : p.quadrilateralChoices)
-      : p.answerChoices;
-    choices.forEach((value) => {
+  if (isPlacementQuestion(p)) {
+    p.answerChoices.forEach((value) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "count-choice";
@@ -758,7 +814,9 @@ function renderStatus() {
     ui.next.hidden = !state.solved;
     return;
   }
-  const stats = isCountProblem(p)
+  const stats = isPartitionProblem(p)
+    ? [["statTriangles", p.targetTriangles], ["statQuadrilaterals", p.targetQuadrilaterals]]
+    : isCountProblem(p)
     ? [["statBoardSize", p.boardSize], ["statKinds", state.foundTypes.length]]
     : [["statVertices", vertexCount(points)], ["statEdges", edgeCount(points)]];
   stats.forEach(([key, count]) => {
@@ -778,13 +836,13 @@ function refresh() {
 
 function resetProblem() {
   state.path = [];
+  state.partitionLines = [];
   state.foundTypes = [];
   state.closed = false;
   state.locked = false;
   state.solved = false;
   state.wrong = 0;
   state.hints = 0;
-  state.compoundStep = 0;
   ui.guide.classList.remove("show");
   renderModel();
   refresh();
@@ -801,15 +859,15 @@ function nextProblem() {
 
 function showComplete() {
   $("#completeTitle").textContent = t("levelComplete", { level: state.level });
-  $("#completeText").textContent = t(isCompoundProblem()
-    ? "completeCompoundText"
+  $("#completeText").textContent = t(isPartitionProblem()
+    ? "completePartitionText"
     : isPlacementQuestion()
     ? "completeCountText"
     : isCountProblem() ? "completeKindsText" : "completeText");
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
   $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
   ui.complete.hidden = false;
-  cubiSays(t(isCountProblem() || isCompoundProblem() ? "guideExploreComplete" : "guideComplete"));
+  cubiSays(t(isPartitionProblem() ? "guidePartitionComplete" : isCountProblem() ? "guideExploreComplete" : "guideComplete"));
 }
 
 function renderLevelList() {
@@ -960,8 +1018,8 @@ ui.hits.addEventListener("keydown", (event) => {
 $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
   const kind = problem().kind;
-  const hintKey = isCompoundProblem() ? "hintCompound"
-    : isPlacementQuestion() ? "hintCountAll"
+  const hintKey = isPlacementQuestion() ? "hintCountAll"
+    : kind === "partition" ? "hintPartition"
     : kind === "open" ? "hintOpen"
     : kind === "square-count" ? "hintSquare"
       : kind === "triangle-count" ? "hintEquilateral"
