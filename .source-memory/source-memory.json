@@ -110,9 +110,9 @@
       "path": "geometry/games/geoboard/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "a7e58518aeb8b3e4636c3f7115871a52b0f4988d983cf5e426cc4769c5865f34",
-      "size": 28158,
-      "mtime_ns": 1787795413645734500
+      "sha256": "5c6d6053f0ce7e2e0c79506c4e812cca1c96960482ac74cb82177d79802ec7a3",
+      "size": 35843,
+      "mtime_ns": 1787830900426764500
     },
     {
       "id": "geometry-geoboard-selftest",
@@ -120,9 +120,9 @@
       "path": "geometry/games/geoboard/geoboard.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "3dfcfe7aebcb8ed74ed345aeb844a10fe7e70c3c89b899c6eca9ac33ddd80d93",
-      "size": 6238,
-      "mtime_ns": 1787795493233246100
+      "sha256": "beddb50f3f715a87711ad5273ee8e3d2050dbd06f64303e450e931bf93f8aa16",
+      "size": 9129,
+      "mtime_ns": 1787831177377495300
     },
     {
       "id": "cmath-nc1-2-shape-start",
@@ -263,6 +263,16 @@
       "sha256": "96abb1653b148bdbd6adf00910f0cfde5b137cefce456979a3ad9012e857d6b3",
       "size": 7304,
       "mtime_ns": 1787819995513634200
+    },
+    {
+      "id": "fields-classic-1n-partition",
+      "title": "필즈 더 클래식 1과정 1N 도형분할과 색종이접기",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\필즈 더 클래식 학원\\1과정\\1-1\\수업용_더클래식_1과정_1N권_도형분할과_색종이접기(210709)-잠금 해제됨.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "1516270a060f56fb41853d18d6ff2cac934997900115425f8dbb1f717fad2361",
+      "size": 1810587,
+      "mtime_ns": 1673080944000000000
     }
   ],
   "records": [
@@ -4142,7 +4152,7 @@
         "ray",
         "single-answer"
       ],
-      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 열린 선 조작 연습, 2단계는 세 도형군의 위치·방향 1:1 재현으로 연결한다. 이 교재 근거의 위치·방향 재현 범위는 25문제이며 정답 edge set 하나만 인정한다. 여기에 사용자 결정과 격자 전수 열거로 검증한 레벨 3·4의 20문제를 더해 현재 플레이 가능한 전체 문제는 45개다.",
+      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 열린 선 조작 연습, 2단계는 세 도형군의 위치·방향 1:1 재현으로 연결한다. 레벨 3·4는 격자 전수 열거형 20문제다. RAY의 완성 그림 세기 활동은 레벨 5에서 제외했다. 레벨 5는 필즈 더 클래식 1과정 1N의 모눈·외곽선·선 추가 분할 활동을 시각 확인하고, 사용자 결정에 따라 선 1개 또는 2개로 목표한 삼각형·사각형 영역을 만드는 내부 확장 10문제로 구현했다. 가능한 모든 비교차 대각선 조합을 전수 열거해 모든 올바른 답을 인정하며, 현재 전체는 55문제다.",
       "status": "verified",
       "sensitivity": "private",
       "updated": "2026-08-27",
@@ -4157,19 +4167,25 @@
           "source_id": "ray-b1-2",
           "role": "source",
           "locator": "PDF p. 38 and p. 46, 도형의 개수",
-          "note": "점과 선으로 된 그림에서 삼각형·사각형의 개수를 세는 후속 활동을 시각 확인"
+          "note": "점과 선으로 된 그림에서 삼각형·사각형의 개수를 세는 후속 활동을 시각 확인. 이 완성 그림 세기 활동은 레벨 5에 사용하지 않음"
+        },
+        {
+          "source_id": "fields-classic-1n-partition",
+          "role": "source",
+          "locator": "PDF p. 20-24, 도형 분할 심화·연습",
+          "note": "모눈과 외곽선을 유지한 채 선을 추가해 도형을 나누는 활동을 페이지 이미지로 시각 확인"
         },
         {
           "source_id": "geometry-geoboard-levels",
           "role": "code",
-          "locator": "LEVELS, LEVEL_PROBLEMS, acceptsAnswer, validateLevels",
-          "note": "1단계 열린 모양 10문제와 2단계 삼각형·사각형·오각형 15문제의 위치·방향 1:1 정답 검증"
+          "locator": "levelMeta, level5Specs, enumeratePartitionSolutions, acceptsPartitionAnswer, validateLevels",
+          "note": "레벨 1~4의 45문제와 선 1개·2개 도형 분할 10문제의 데이터·정답 검증"
         },
         {
           "source_id": "geometry-geoboard-selftest",
           "role": "test",
           "locator": "full deterministic test suite",
-          "note": "위치·방향 재현 25문제와 격자 탐색 20문제, 총 45문제의 고유성·정답·기하 도우미·4개 언어 키를 검증"
+          "note": "총 55문제와 4개 언어 키를 검증하고, 레벨 5는 별도 분할 계산으로 가능한 답 집합을 독립 재검산"
         }
       ]
     },

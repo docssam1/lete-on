@@ -8,10 +8,10 @@
      a PEG LATTICE: a vertex is a peg, an edge is a straight rubber band between two
      pegs, and nothing exists between pegs. That is a different world from the cell
      grid Mirror Manor uses, which is why none of its code is reused.
-   - docs/12_SOURCE_BACKED_FUTURE_GAMES.md section 5 fixes five levels. Only 1 and 2
-     are implemented. Levels 3-5 are declared here with `ready:false` and an EMPTY
-     pool, exactly like Mirror Manor does, so shipping them later is pure data work:
-     author a pool, flip the flag. No engine or validator restructuring.
+   - docs/12_SOURCE_BACKED_FUTURE_GAMES.md section 5 fixes five levels. Levels 1-4
+     build and enumerate figures. Level 5 is deliberately a DIFFERENT action: add
+     exactly one or two diagonals to divide an outlined polygon into the requested
+     numbers of triangles and quadrilaterals.
    - The pure helpers `isClosed`, `hasSelfIntersection`, `vertexCount`, `edgeCount`
      and `polygonArea` are exported so .selftest.mjs can re-check them. Levels 3-5
      use separate square-lattice, triangular-lattice, and compound-figure
@@ -200,6 +200,107 @@ export function acceptsAnswer(problem, points) {
   return answerKey(points) === answerKey(targetPoints(problem));
 }
 
+/* --------------------------------------------------------- polygon partitions */
+
+const orderedChord = ([a, b]) => a < b ? [a, b] : [b, a];
+
+export function partitionAnswerKey(chords) {
+  return chords.map(orderedChord).map(([a, b]) => `${a}-${b}`).sort().join(" ");
+}
+
+function boundaryNeighbours(a, b, count) {
+  const distance = Math.abs(a - b);
+  return distance === 1 || distance === count - 1;
+}
+
+/** True only for a proper crossing. Chords sharing one outline vertex may meet. */
+export function partitionChordsCross(first, second) {
+  const [a, b] = orderedChord(first);
+  const [c, d] = orderedChord(second);
+  if (a === c || a === d || b === c || b === d) return false;
+  const cInside = a < c && c < b;
+  const dInside = a < d && d < b;
+  return cInside !== dInside;
+}
+
+/**
+ * Split a convex outline into bounded faces. Outline vertices are in clockwise or
+ * counter-clockwise order; each non-crossing chord splits exactly one current face.
+ */
+export function partitionFaces(vertexTotal, chords) {
+  let faces = [Array.from({ length: vertexTotal }, (_, index) => index)];
+  for (const rawChord of chords.map(orderedChord)) {
+    const [a, b] = rawChord;
+    const faceIndex = faces.findIndex((face) => {
+      const ia = face.indexOf(a);
+      const ib = face.indexOf(b);
+      if (ia < 0 || ib < 0) return false;
+      const distance = Math.abs(ia - ib);
+      return distance > 1 && distance < face.length - 1;
+    });
+    if (faceIndex < 0) return [];
+    const face = faces[faceIndex];
+    const ia = face.indexOf(a);
+    const ib = face.indexOf(b);
+    const start = Math.min(ia, ib);
+    const end = Math.max(ia, ib);
+    const first = face.slice(start, end + 1);
+    const second = [...face.slice(end), ...face.slice(0, start + 1)];
+    faces = [...faces.slice(0, faceIndex), first, second, ...faces.slice(faceIndex + 1)];
+  }
+  return faces;
+}
+
+export function partitionShapeCounts(vertexTotal, chords) {
+  const faces = partitionFaces(vertexTotal, chords);
+  return {
+    faces,
+    triangles: faces.filter((face) => face.length === 3).length,
+    quadrilaterals: faces.filter((face) => face.length === 4).length,
+    other: faces.filter((face) => face.length !== 3 && face.length !== 4).length
+  };
+}
+
+function choose(items, count, start = 0, chosen = [], output = []) {
+  if (chosen.length === count) {
+    output.push(chosen.map((item) => [...item]));
+    return output;
+  }
+  for (let index = start; index <= items.length - (count - chosen.length); index += 1) {
+    chosen.push(items[index]);
+    choose(items, count, index + 1, chosen, output);
+    chosen.pop();
+  }
+  return output;
+}
+
+/** Exhaust every legal set of one or two diagonals; there is no hand-authored key. */
+export function enumeratePartitionSolutions(vertexTotal, lineTotal, targetTriangles, targetQuadrilaterals) {
+  const diagonals = [];
+  for (let a = 0; a < vertexTotal; a += 1) {
+    for (let b = a + 1; b < vertexTotal; b += 1) {
+      if (!boundaryNeighbours(a, b, vertexTotal)) diagonals.push([a, b]);
+    }
+  }
+  return choose(diagonals, lineTotal).filter((chords) => {
+    for (let i = 0; i < chords.length; i += 1) {
+      for (let j = i + 1; j < chords.length; j += 1) {
+        if (partitionChordsCross(chords[i], chords[j])) return false;
+      }
+    }
+    const counts = partitionShapeCounts(vertexTotal, chords);
+    return counts.faces.length === lineTotal + 1
+      && counts.triangles === targetTriangles
+      && counts.quadrilaterals === targetQuadrilaterals
+      && counts.other === 0;
+  });
+}
+
+export function acceptsPartitionAnswer(problem, chords) {
+  const key = partitionAnswerKey(chords);
+  return problem.acceptedSolutionKeys.includes(key);
+}
+
 /* ------------------------------------------------------- dihedral canonical key */
 
 /**
@@ -305,6 +406,33 @@ function makeCountProblem(level, kind, index, boardSize, questionMode, value, ch
   };
 }
 
+function makePartitionProblem(index, spec) {
+  const solutions = enumeratePartitionSolutions(
+    spec.outline.length,
+    spec.lineTotal,
+    spec.targetTriangles,
+    spec.targetQuadrilaterals
+  );
+  return {
+    id: `geoboard-l5-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level: 5,
+    kind: "partition",
+    grid: { ...GRID },
+    outline: spec.outline.map(([x, y]) => [x, y]),
+    lineTotal: spec.lineTotal,
+    targetTriangles: spec.targetTriangles,
+    targetQuadrilaterals: spec.targetQuadrilaterals,
+    acceptedSolutions: solutions.map((chords) => chords.map(([a, b]) => [a, b])),
+    acceptedSolutionKeys: solutions.map(partitionAnswerKey),
+    validation: {
+      goal: "divide-outline-into-requested-triangles-and-quadrilaterals",
+      solutionCount: solutions.length,
+      acceptsEveryValidDrawing: true
+    }
+  };
+}
+
 /**
  * LEVEL 1 — 점 두 개를 이어 선분과 열린 모양 만들기.
  * Segments first, then two-edge bends, then three-edge open paths. Every entry is
@@ -365,6 +493,22 @@ const level4Specs = [
   [5, "types", 2], [5, "types", 4], [5, "types", 6], [5, "placements", 35, [40, 30, 35]]
 ];
 
+// Owner-approved interaction based on the visually checked Fields Classic 1N
+// partition pages: the grid and outline stay visible, and the child adds ONLY the
+// stated one or two lines. These are original lattice variants, not copied pages.
+const level5Specs = [
+  { outline: [[1, 1], [3, 1], [3, 3], [1, 3]], lineTotal: 1, targetTriangles: 2, targetQuadrilaterals: 0 },
+  { outline: [[2, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 1, targetTriangles: 1, targetQuadrilaterals: 1 },
+  { outline: [[1, 0], [3, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 1, targetTriangles: 0, targetQuadrilaterals: 2 },
+  { outline: [[0, 1], [4, 1], [4, 3], [0, 3]], lineTotal: 1, targetTriangles: 2, targetQuadrilaterals: 0 },
+  { outline: [[1, 0], [4, 1], [3, 4], [0, 4], [0, 1]], lineTotal: 1, targetTriangles: 1, targetQuadrilaterals: 1 },
+  { outline: [[2, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 3, targetQuadrilaterals: 0 },
+  { outline: [[1, 0], [3, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 2, targetQuadrilaterals: 1 },
+  { outline: [[1, 0], [3, 0], [4, 1], [4, 3], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 1, targetQuadrilaterals: 2 },
+  { outline: [[1, 0], [3, 0], [4, 1], [4, 3], [3, 4], [1, 4], [0, 3], [0, 1]], lineTotal: 2, targetTriangles: 0, targetQuadrilaterals: 3 },
+  { outline: [[0, 1], [2, 0], [4, 1], [4, 3], [2, 4], [0, 3]], lineTotal: 2, targetTriangles: 2, targetQuadrilaterals: 1 }
+];
+
 /* ------------------------------------------------------------------ level table */
 
 export const levelMeta = [
@@ -372,16 +516,15 @@ export const levelMeta = [
   { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
   { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10 },
   { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10 },
-  // Level 5 stays locked until its source figure pools and hidden-shape answers
-  // have been independently enumerated.
-  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: false }
+  { id: 5, kind: "partition", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 10 }
 ];
 
 const pools = {
   1: level1Specs.map((vertices, index) => makeProblem(1, "open", index, vertices)),
   2: level2Specs.map((vertices, index) => makeProblem(2, "closed", index, vertices)),
   3: level3Specs.map(([size, mode, value, choices], index) => makeCountProblem(3, "square-count", index, size, mode, value, choices)),
-  4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices))
+  4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices)),
+  5: level5Specs.map((spec, index) => makePartitionProblem(index, spec))
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -451,6 +594,10 @@ export function validateLevels() {
         validateCountProblem(problem);
         return;
       }
+      if (problem.kind === "partition") {
+        validatePartitionProblem(problem);
+        return;
+      }
 
       assert(problem.grid.cols === GRID.cols && problem.grid.rows === GRID.rows, `${label} uses an unexpected board size.`);
 
@@ -471,6 +618,29 @@ export function validateLevels() {
     }
   });
   return true;
+}
+
+function validatePartitionProblem(problem) {
+  const label = problem.id;
+  const { outline, grid } = problem;
+  assert(Array.isArray(outline) && outline.length >= 4 && outline.length <= 8, `${label} needs a 4-8 corner outline.`);
+  outline.forEach((point) => assert(isPeg(point, grid), `${label} outline uses a point outside the grid.`));
+  assert(new Set(outline.map(pointKey)).size === outline.length, `${label} repeats an outline point.`);
+  const turns = outline.map((point, index) => cross(point, outline[(index + 1) % outline.length], outline[(index + 2) % outline.length]));
+  assert(turns.every((turn) => turn > 0) || turns.every((turn) => turn < 0), `${label} outline must be strictly convex.`);
+  assert(problem.lineTotal === 1 || problem.lineTotal === 2, `${label} must ask for one or two lines.`);
+  assert(problem.targetTriangles + problem.targetQuadrilaterals === problem.lineTotal + 1,
+    `${label} target regions must account for every partition.`);
+  const recomputed = enumeratePartitionSolutions(
+    outline.length,
+    problem.lineTotal,
+    problem.targetTriangles,
+    problem.targetQuadrilaterals
+  );
+  assert(recomputed.length > 0, `${label} has no valid drawing.`);
+  assert(problem.validation.solutionCount === recomputed.length, `${label} solution count drifted.`);
+  assert(new Set(problem.acceptedSolutionKeys).size === recomputed.length, `${label} contains duplicate accepted drawings.`);
+  assert(recomputed.every((solution) => acceptsPartitionAnswer(problem, solution)), `${label} rejects a mathematically valid drawing.`);
 }
 
 function validateCountProblem(problem) {

@@ -672,7 +672,7 @@
   // 강도 = 묻는 것의 가짓수: ●○○ 개수만 / ●●○ 개수 + 앞·옆 그리기 /
   // ●●● 개수 + 앞·옆 그리기 + 가장 높은 층. 교재의 확인·연습·심화 코너가
   // 같은 바탕그림에 질문을 얹어 가는 방식 그대로다.
-  function genTC(rng, level, intensity) {
+  function genTC(rng, level, intensity, options) {
     const scale = countScale(rng, level, intensity);
     const width = scale.width;
     const depth = scale.depth;
@@ -689,20 +689,23 @@
     });
     const views = viewsOf(map, width, depth);
     const numberGrid = map.map((row) => row.slice());
-    const drawViews = i >= 2;
-    const askHeight = i >= 3;
-    let prompt = "위에서 본 모양에 쌓기나무의 개수를 써넣었습니다. 물음에 답하시오. ① 쌓기나무는 모두 몇 개입니까?";
-    if (drawViews) prompt += " ② 앞과 오른쪽 옆에서 본 모양을 그리시오.";
+    const drawOnly = options && options.promptMode === "draw-views";
+    const drawViews = drawOnly || i >= 2;
+    const askHeight = !drawOnly && i >= 3;
+    let prompt = drawOnly
+      ? "다음은 쌓기나무를 위에서 본 모양입니다. 각 칸의 수는 그 칸에 쌓여 있는 쌓기나무의 개수입니다. 앞과 오른쪽 옆에서 본 모양을 그리시오."
+      : "위에서 본 모양에 쌓기나무의 개수를 써넣었습니다. 물음에 답하시오. ① 쌓기나무는 모두 몇 개입니까?";
+    if (drawViews && !drawOnly) prompt += " ② 앞과 오른쪽 옆에서 본 모양을 그리시오.";
     if (askHeight) prompt += " ③ 가장 높이 쌓은 곳은 몇 층입니까?";
     const sum = mapTotal(map);
-    let answerText = "① " + sum + "개";
-    if (drawViews) answerText += "  ② 정답지의 그림 참고";
+    let answerText = drawOnly ? "정답지의 그림 참고" : "① " + sum + "개";
+    if (drawViews && !drawOnly) answerText += "  ② 정답지의 그림 참고";
     if (askHeight) answerText += "  ③ " + views.height + "층";
     return {
       type: "TC",
       prompt,
-      figures: { kind: "TC", width, depth, numberGrid, height: views.height, drawViews },
-      answer: { total: sum, front: views.front, side: views.side, height: views.height, drawViews, askHeight },
+      figures: { kind: "TC", width, depth, numberGrid, height: views.height, drawViews, dottedEmpty: Boolean(drawOnly) },
+      answer: { total: sum, front: views.front, side: views.side, height: views.height, drawViews, askHeight, askTotal: !drawOnly },
       answerText
     };
   }
@@ -713,14 +716,16 @@
   const SOLVE_TABLE_HINT = "풀이 방법 아래 칸에 앞에서 본 각 줄의 가장 높은 층수를, 오른쪽 칸에 옆에서 본 각 줄의 가장 높은 층수를 쓴 다음, 각 칸의 수를 정해 모두 더하기";
 
   // Shared generator for VC / VM / VP — see comment above enumerateShapes.
-  function genView3(rng, level, intensity, mode) {
+  function genView3(rng, level, intensity, mode, options) {
     const scale = viewScale(rng, level, intensity);
     const width = scale.width;
     const depth = scale.depth;
     const maxH = scale.maxH;
     // VC ●●●만 "1층에 놓인 개수"를 한 단계 더 묻는다 (세 방향을 읽어 표를
     // 채운 다음 그 표를 다시 읽어야 하므로 사고 단계가 하나 늘어난다).
-    const askFloor = mode === "VC" && normalizeIntensity(intensity) >= 3;
+    const countOnly = options && options.promptMode === "count-only";
+    const showSolveTable = !(options && options.showSolveTable === false);
+    const askFloor = mode === "VC" && !countOnly && normalizeIntensity(intensity) >= 3;
     const nodeCap = 20000;
     const maxTries = 250;
 
@@ -746,8 +751,8 @@
             prompt: askFloor
               ? "위, 앞, 오른쪽 옆에서 본 모양입니다. ① 쌓기나무는 모두 몇 개인지 구하시오. ② 1층에 놓인 쌓기나무는 몇 개입니까?"
               : "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓기나무는 모두 몇 개인지 구하시오.",
-            methodHint: SOLVE_TABLE_HINT,
-            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top, askFloor },
+            methodHint: showSolveTable ? SOLVE_TABLE_HINT : undefined,
+            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top, askFloor, showSolveTable },
             answer: { count: min, floor, askFloor, numbers: cloneMap(map), colMax: colMaxFromFrontView(front, width), rowMax: rowMaxFromSideView(side, depth) },
             answerText: askFloor ? "① " + min + "개  ② " + floor + "개" : min + "개"
           };
@@ -762,8 +767,8 @@
           return {
             type: "VM",
             prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓을 수 있는 쌓기나무의 최대 개수와 최소 개수를 각각 구하시오.",
-            methodHint: SOLVE_TABLE_HINT,
-            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top },
+            methodHint: showSolveTable ? SOLVE_TABLE_HINT : undefined,
+            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top, showSolveTable },
             answer: {
               max, min,
               numbers: maxShape,
@@ -829,8 +834,8 @@
       return {
         type: "VM",
         prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓을 수 있는 쌓기나무의 최대 개수와 최소 개수를 각각 구하시오.",
-        methodHint: SOLVE_TABLE_HINT,
-        figures: { kind: "views3", width, depth, height, top: fbTop, front: fbFront, side: fbSide, footprint: fbTop },
+        methodHint: showSolveTable ? SOLVE_TABLE_HINT : undefined,
+        figures: { kind: "views3", width, depth, height, top: fbTop, front: fbFront, side: fbSide, footprint: fbTop, showSolveTable },
         answer: {
           max: fbMax,
           min: fbMin,
@@ -854,8 +859,8 @@
         prompt: askFloor
           ? "위, 앞, 오른쪽 옆에서 본 모양입니다. ① 쌓기나무는 모두 몇 개인지 구하시오. ② 1층에 놓인 쌓기나무는 몇 개입니까?"
           : "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓기나무는 모두 몇 개인지 구하시오.",
-        methodHint: SOLVE_TABLE_HINT,
-        figures: { kind: "views3", width, depth, top, front, side, height, footprint: top, askFloor },
+        methodHint: showSolveTable ? SOLVE_TABLE_HINT : undefined,
+        figures: { kind: "views3", width, depth, top, front, side, height, footprint: top, askFloor, showSolveTable },
         answer: { count: mapTotal(map), floor: fbFloor, askFloor, numbers: cloneMap(map), colMax: colMaxFromFrontView(front, width), rowMax: rowMaxFromSideView(side, depth) },
         answerText: askFloor ? "① " + mapTotal(map) + "개  ② " + fbFloor + "개" : mapTotal(map) + "개"
       };
@@ -1142,7 +1147,7 @@
     const need = total - placed;
     return {
       type: "FB",
-      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자에 쌓기나무를 쌓았습니다. 상자를 완전히 채우려면 쌓기나무가 최소 몇 개 더 필요합니까?",
+      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자에 쌓기나무를 쌓았습니다. 오른쪽 그림처럼 상자를 완전히 채우려면 쌓기나무가 최소 몇 개 더 필요합니까?",
       figures: { kind: "iso-box", map, width: W, depth: D, boxH: H },
       answer: { need, total, placed },
       answerText: need + "개"
@@ -1800,10 +1805,10 @@
     const lv = isAllLevel(level) ? rng.pick(info.levels) : normalizeLevel(level);
     let problem;
     switch (canon) {
-      case "TC": problem = genTC(rng, lv, it); break;
-      case "VC": problem = genView3(rng, lv, it, "VC"); break;
-      case "VM": problem = genView3(rng, lv, it, "VM"); break;
-      case "VP": problem = genView3(rng, lv, it, "VP"); break;
+      case "TC": problem = genTC(rng, lv, it, options); break;
+      case "VC": problem = genView3(rng, lv, it, "VC", options); break;
+      case "VM": problem = genView3(rng, lv, it, "VM", options); break;
+      case "VP": problem = genView3(rng, lv, it, "VP", options); break;
       case "IC": problem = genIC(rng, lv, it); break;
       case "IH": problem = genIH(rng, lv, it); break;
       case "IN": problem = genIN(rng, lv, it); break;

@@ -54,7 +54,7 @@ const requiredTypes = new Map([
   ["fold-number-grid-two-diagonal", "대각선으로 두 번 접어 잘린 수의 합"],
   ["cube-count-solid", "입체 그림에서 쌓기나무 전체 개수 세기"],
   ["cube-minimum-from-solid", "입체 그림에서 필요한 쌓기나무의 최소 개수"],
-  ["cube-top-number-grid", "위에서 본 바탕그림의 수로 전체 개수와 앞·옆 모양 구하기"],
+  ["cube-top-number-grid", "위에서 본 바탕그림의 수로 앞·옆 모양 그리기"],
   ["cube-three-views", "위·앞·옆 모양을 보고 쌓기나무 개수 구하기"],
   ["cube-three-view-minmax", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기"],
   ["cube-missing-view", "두 방향의 모양을 보고 나머지 방향 그리기"],
@@ -95,6 +95,16 @@ const book09 = CURRICULUM.find((book) => book.id === "book-09");
 for (const typeId of ["cube-top-number-grid", "cube-three-views", "cube-three-view-minmax", "cube-missing-view"]) {
   assert(book09.units[1].typeIds.includes(typeId), `book 9 cube unit missing ${typeId}`);
 }
+assert(typeById("cube-top-number-grid").worksheetOptions?.promptMode === "draw-views",
+  "book 9 top-number-grid type is not locked to drawing front and side views");
+assert(typeById("cube-top-number-grid").worksheetLevel === "L3",
+  "book 9 top-number-grid actual difficulty is not the source 3-by-3 structure");
+assert(typeById("cube-three-views").worksheetOptions?.promptMode === "count-only",
+  "book 9 three-view count type adds a different question");
+assert(typeById("cube-three-views").worksheetOptions?.showSolveTable === false,
+  "book 9 three-view count problem exposes the answer scaffold");
+assert(typeById("cube-three-view-minmax").worksheetOptions?.showSolveTable === false,
+  "book 9 three-view min/max problem exposes the answer scaffold");
 
 const book05 = CURRICULUM.find((book) => book.id === "book-05");
 const book05MultiplicationTypes = [

@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827g";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827i";
 import { GENERATORS } from "./generators.js?v=20260827d";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827d";
@@ -662,7 +662,9 @@ function geometryWorksheetSolution(problem) {
   const answer = problem.answer || {};
   switch (problem.type) {
     case "TC":
-      return `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
+      return answer.askTotal === false
+        ? "앞과 오른쪽 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다."
+        : `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
     case "VC": {
       const values = (answer.numbers || []).flat().filter((value) => value > 0);
       return `위에서 본 모양의 각 자리에 앞·옆에서 본 가장 높은 층수를 맞춰 쓰고 더합니다. ${values.join(" + ")} = ${answer.count}이므로 ${answer.count}개입니다.`;
@@ -738,7 +740,7 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
     answer: made.answerText,
     answerVisual: hasAnswerVisual ? { kind: "geometry-worksheet-answer", problem: made } : null,
     solution: geometryWorksheetSolution(made),
-    responseKind: made.type === "VP" ? "drawing" : "text",
+    responseKind: made.type === "VP" || (made.type === "TC" && made.answer.askTotal === false) ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
     }, item, reference, sourceClassification),
     generationDifficulty: intensity

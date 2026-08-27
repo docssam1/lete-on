@@ -348,21 +348,23 @@
   // --- 2D view grids -----------------------------------------------------
 
   // Book-style top-view grid: bold solid grid lines, height numbers centred.
-  function renderNumberGrid(grid, width, depth, cellPx) {
+  function renderNumberGrid(grid, width, depth, cellPx, options) {
     cellPx = cellPx || 34;
+    options = options || {};
     const w = width * cellPx;
     const h = depth * cellPx;
     let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-number" preserveAspectRatio="xMidYMid meet">';
     for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
-        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="#333" stroke-width="1"/>';
         const v = grid[z][x];
+        const emptyDotted = options.dottedEmpty && !v;
+        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="' + (emptyDotted ? '#aaa' : '#333') + '" stroke-width="1"' + (emptyDotted ? ' stroke-dasharray="3 2"' : '') + '/>';
         if (v) {
           s += '<text x="' + (x * cellPx + cellPx / 2) + '" y="' + (z * cellPx + cellPx / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + cellPx * 0.42 + '">' + v + "</text>";
         }
       }
     }
-    s += '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#111" stroke-width="2.5"/>';
+    if (!options.dottedEmpty) s += '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#111" stroke-width="2.5"/>';
     s += "</svg>";
     return s;
   }

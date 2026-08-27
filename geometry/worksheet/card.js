@@ -23,7 +23,7 @@
   function renderFigures(p) {
     const f = p.figures;
     if (f.kind === "TC") {
-      const numberSvg = REN.renderNumberGrid(f.numberGrid, f.width, f.depth);
+      const numberSvg = REN.renderNumberGrid(f.numberGrid, f.width, f.depth, undefined, { dottedEmpty: f.dottedEmpty });
       const head = '<div class="ws-fig-row">' + figureBlock("위에서 본 모양 (칸 안의 수는 쌓기나무의 개수)", numberSvg) + "</div>";
       // 강도 ●○○은 개수만 물으므로 그릴 칸을 내주지 않는다.
       if (!f.drawViews) return head;
@@ -33,21 +33,19 @@
         '<div class="ws-fig-row">' + figureBlock("앞에서 본 모양", emptyFront) + figureBlock("오른쪽 옆에서 본 모양", emptySide) + "</div>";
     }
     if (f.kind === "views3") {
-      // VC/VM only (see generators.js's genView3): after the three view
-      // silhouettes, scaffold the textbook's written method with a second
-      // row holding the empty 위에서 본 모양 solve table (see render.js's
-      // renderSolveTable).
-      const solveSvg = REN.renderSolveTable(f.footprint, f.width, f.depth);
-      return (
+      const views = (
         '<div class="ws-fig-row">' +
         figureBlock("위", REN.renderViewGrid(f.top)) +
         figureBlock("앞", REN.renderViewGrid(f.front)) +
         figureBlock("오른쪽 옆", REN.renderViewGrid(f.side)) +
-        "</div>" +
-        '<div class="ws-fig-row">' +
-        figureBlock("위에서 본 모양에 수 쓰기 (아래·오른쪽 칸에는 앞·옆에서 본 가장 높은 층수를 쓰세요)", solveSvg) +
         "</div>"
       );
+      if (f.showSolveTable === false) return views;
+      const solveSvg = REN.renderSolveTable(f.footprint, f.width, f.depth);
+      return views +
+        '<div class="ws-fig-row">' +
+        figureBlock("위에서 본 모양에 수 쓰기 (아래·오른쪽 칸에는 앞·옆에서 본 가장 높은 층수를 쓰세요)", solveSvg) +
+        "</div>";
     }
     if (f.kind === "VP") {
       const hiddenRows = f.height;
@@ -84,7 +82,11 @@
       const caption = f.paint
         ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
         : full ? "쌓기나무 모양" : "쌓기나무 모양 (점선 = 상자 테두리)";
-      return figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
+      const current = figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
+      if (p.type !== "FB") return current;
+      const fullMap = Array.from({ length: f.depth }, () => Array(f.width).fill(f.boxH));
+      const target = figureBlock("완전히 채운 상자", REN.renderIsoBox(fullMap, f.width, f.depth, f.boxH, { noBox: true }), "ws-figure-lg");
+      return '<div class="ws-fig-row ws-fill-box-row">' + current + '<span class="ws-figure-arrow" aria-hidden="true">→</span>' + target + "</div>";
     }
     if (f.kind === "iso-holes") {
       return figureBlock("구멍이 뚫린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
@@ -103,6 +105,7 @@
   function answerBlank(p) {
     if (p.type === "VP") return ""; // the dotted grid above IS the answer area
     if (p.type === "TC") {
+      if (p.answer.askTotal === false) return "";
       // ②(그리기)는 위의 점선 모눈이 답란이고, ①·③만 숫자 답란이 필요하다.
       let line = "① ______ 개";
       if (p.answer.askHeight) line += "　③ ______ 층";
@@ -177,6 +180,7 @@
     const a = p.answer;
     switch (p.type) {
       case "TC": {
+        if (a.askTotal === false) return "앞·오른쪽 옆 모양 (그림 참고)";
         let s = "① 총 " + a.total + "개";
         if (a.drawViews) s += "　② 그림 참고";
         if (a.askHeight) s += "　③ " + a.height + "층";

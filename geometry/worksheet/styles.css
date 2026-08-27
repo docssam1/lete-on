@@ -333,6 +333,15 @@ select, .code-input, input[type="text"] {
   width: 100%;
 }
 .ws-fig-row + .ws-fig-row { margin-top: 10px; }
+.ws-fill-box-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 14px;
+}
+.ws-fill-box-row .ws-figure { min-width: 0; }
+.ws-fill-box-row .ws-figure-lg svg.ws-iso { width: 100%; height: auto; max-height: 160px; }
+.ws-figure-arrow { align-self: center; color: #3185a0; font-size: 24px; font-weight: 900; }
 
 .ws-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .ws-figure figcaption { font-size: 10.5px; font-weight: 800; color: #4a5450; }
