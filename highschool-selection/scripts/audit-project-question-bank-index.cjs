@@ -10,11 +10,12 @@ function audit(index) {
   core.walkForbidden(index, "", issues);
   const bankIds = new Set((index.sourceBanks || []).map(bank => bank.sourceBankId));
   if (bankIds.size !== (index.sourceBanks || []).length) issues.push("duplicate_source_bank");
-  const familyIds = new Set();
+  const familyIds = new Set((index.conceptFamilies || []).map(family => family.conceptFamilyId));
+  const seenFamilyIds = new Set();
   const sourceTypeKeys = new Set();
   (index.conceptFamilies || []).forEach(family => {
-    if (familyIds.has(family.conceptFamilyId)) issues.push(`duplicate_family:${family.conceptFamilyId}`);
-    familyIds.add(family.conceptFamilyId);
+    if (seenFamilyIds.has(family.conceptFamilyId)) issues.push(`duplicate_family:${family.conceptFamilyId}`);
+    seenFamilyIds.add(family.conceptFamilyId);
     if (!family.canonicalLabel || !family.sourceTypes.length) issues.push(`family_shape:${family.conceptFamilyId}`);
     family.sourceTypes.forEach(type => {
       const key = `${type.sourceBankId}:${type.sourceTypeId}`;
@@ -22,6 +23,9 @@ function audit(index) {
       sourceTypeKeys.add(key);
       if (!bankIds.has(type.sourceBankId)) issues.push(`unknown_family_bank:${key}`);
     });
+    if (Object.prototype.hasOwnProperty.call(family, "canonicalConceptFamilyId") && !familyIds.has(family.canonicalConceptFamilyId)) {
+      issues.push(`unknown_canonical_family:${family.conceptFamilyId}`);
+    }
   });
   const itemIds = new Set();
   (index.items || []).forEach(item => {
@@ -30,13 +34,34 @@ function audit(index) {
     if (!bankIds.has(item.sourceBankId)) issues.push(`unknown_item_bank:${item.itemId}`);
     if (item.conceptStatus === "mapped" && !familyIds.has(item.conceptFamilyId)) issues.push(`unknown_item_family:${item.itemId}`);
     if (item.conceptStatus !== "mapped" && item.conceptFamilyId !== null) issues.push(`unexpected_item_family:${item.itemId}`);
+    if (Object.prototype.hasOwnProperty.call(item, "canonicalConceptFamilyId") && item.canonicalConceptFamilyId !== null && !familyIds.has(item.canonicalConceptFamilyId)) {
+      issues.push(`unknown_item_canonical_family:${item.itemId}`);
+    }
   });
   const candidateIds = new Set();
+  const candidatesById = new Map();
   (index.overlapCandidates || []).forEach(candidate => {
     if (candidateIds.has(candidate.candidateId)) issues.push(`duplicate_candidate:${candidate.candidateId}`);
     candidateIds.add(candidate.candidateId);
+    candidatesById.set(candidate.candidateId, candidate);
     if (!familyIds.has(candidate.leftConceptFamilyId) || !familyIds.has(candidate.rightConceptFamilyId)) issues.push(`candidate_family:${candidate.candidateId}`);
-    if (candidate.status !== "review_required" || candidate.decision !== null) issues.push(`candidate_status:${candidate.candidateId}`);
+    if (!["review_required", "resolved", "evidence_required"].includes(candidate.status)) issues.push(`candidate_status:${candidate.candidateId}`);
+    if (candidate.status === "review_required" && candidate.decision !== null) issues.push(`candidate_pending_decision:${candidate.candidateId}`);
+    if (candidate.status !== "review_required" && !candidate.decision) issues.push(`candidate_resolved_decision:${candidate.candidateId}`);
+  });
+  const validRelations = new Set(["merge_detail", "same_concept_family", "related_method", "prerequisite", "keep_separate"]);
+  const relationIds = new Set();
+  (index.typeRelations || []).forEach(relation => {
+    if (relationIds.has(relation.relationId)) issues.push(`duplicate_relation:${relation.relationId}`);
+    relationIds.add(relation.relationId);
+    if (!candidateIds.has(relation.relationId)) issues.push(`relation_candidate:${relation.relationId}`);
+    if (!familyIds.has(relation.leftConceptFamilyId) || !familyIds.has(relation.rightConceptFamilyId)) issues.push(`relation_family:${relation.relationId}`);
+    if (!validRelations.has(relation.relation)) issues.push(`relation_kind:${relation.relationId}`);
+    const candidate = candidatesById.get(relation.relationId);
+    if (candidate && (candidate.leftConceptFamilyId !== relation.leftConceptFamilyId || candidate.rightConceptFamilyId !== relation.rightConceptFamilyId || candidate.decision !== relation.relation)) {
+      issues.push(`relation_mismatch:${relation.relationId}`);
+    }
+    if (relation.relation === "merge_detail" && (!Array.isArray(relation.evidence) || !relation.evidence.length)) issues.push(`relation_merge_evidence:${relation.relationId}`);
   });
   const expected = {
     sourceBankCount: (index.sourceBanks || []).length,
@@ -52,6 +77,19 @@ function audit(index) {
   Object.entries(expected).forEach(([key, value]) => {
     if (!index.summary || index.summary[key] !== value) issues.push(`summary:${key}`);
   });
+  const reviewedCount = (index.overlapCandidates || []).filter(candidate => candidate.status !== "review_required").length;
+  if (reviewedCount) {
+    const reviewedExpected = {
+      resolvedOverlapCount: (index.overlapCandidates || []).filter(candidate => candidate.status === "resolved").length,
+      evidenceRequiredCount: (index.overlapCandidates || []).filter(candidate => candidate.status === "evidence_required").length,
+      pendingOverlapCount: (index.overlapCandidates || []).filter(candidate => candidate.status === "review_required").length,
+      mergedAliasCount: (index.conceptFamilies || []).filter(family => family.canonicalStatus === "alias").length,
+      relationCount: (index.typeRelations || []).length
+    };
+    Object.entries(reviewedExpected).forEach(([key, value]) => {
+      if (!index.summary || index.summary[key] !== value) issues.push(`summary:${key}`);
+    });
+  }
   return { ok: issues.length === 0, issues, actual: expected };
 }
 

@@ -307,6 +307,8 @@ function createApp(options) {
     filePath: opts.privateExamDraftsPath
   });
   const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
+    projectData: opts.privateProjectQuestionIndex,
+    projectFilePath: opts.privateProjectQuestionIndexPath,
     data: opts.privateAcademyQuestionDb,
     filePath: opts.privateAcademyQuestionDbPath
   });

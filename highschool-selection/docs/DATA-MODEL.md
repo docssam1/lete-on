@@ -92,12 +92,20 @@ ConceptFamily
 OverlapCandidate
   candidateId, leftConceptFamilyId, rightConceptFamilyId
   score?, proposedRelation?, reason, evidence[]
-  status = review_required
+  status = review_required | resolved | evidence_required
+
+TypeRelation
+  relationId, leftConceptFamilyId, rightConceptFamilyId
+  relation = merge_detail | same_concept_family | related_method |
+             prerequisite | keep_separate
+  evidence[]
 ```
 
 기존 `DP-TYP-*`, `typ-sh-*`, `M1-*`, `CM1.*` 유형 ID는 원본 검수 이력을 보존하기 위해 삭제하거나 바꾸지 않습니다. 공통 개념은 별도 `CPT-*` ID에 연결합니다. 같은 교육과정 위치와 같은 세부 유형만 자동으로 묶고, 이름이 비슷하거나 같은 단원에 있다는 이유만으로 합치지 않습니다.
 
 원수학처럼 단원 수준까지만 확인된 분류는 `unit_only`, 황소 중등처럼 교육과정 분류 전인 문항은 `pending`으로 둡니다. 이 상태의 문항은 세부 유형 통계나 자동 시험 조립에 사용하지 않습니다. 선수 개념과 연계 개념은 병합하지 않고 별도 관계로 연결하며, 학원형은 공통 유형 ID가 아니라 `academyFits`에서 관리합니다.
+
+관리자 문제은행에서는 `mapped` 문항과 `unit_only` 문항을 함께 찾아볼 수 있습니다. `unit_only` 문항은 “세부유형 분류 전”으로 표시하고 시험지 조립에는 사용하지 않습니다. 검수 결과가 `merge_detail`이어도 원본 유형 ID는 지우지 않으며, 각 문항에는 공통 대표 유형 ID만 추가합니다. 이렇게 해야 출처별 원본과 공통 분류를 모두 되짚을 수 있습니다.
 
 `pageCount`는 학생에게 보여 주는 문제 페이지 수입니다. 원본 전체 쪽수는 `sourcePageCount`, 답·풀이 비공개 쪽수는 `privateAnswerPageCount`로 분리합니다. 답안 값과 풀이 내용은 공개 카탈로그에 두지 않습니다.
 
