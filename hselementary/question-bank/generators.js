@@ -3731,6 +3731,448 @@
       const solution = `${jumps}번 뛰어 센 수는 ${source41FormatLargeValue(selected.reference)}이고, 백억·천만·만의 자리 숫자는 각각 ${matchingDigits.join(", ")}입니다. 이 자리와 두 배 조건을 지키면서 높은 자리부터 가장 큰 숫자를 놓고 숫자 1을 ${oneCount}개 쓰면 ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
+    source41LargeNumberSix({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("수 카드로 수 만들기 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const conditionList = items => `<ul class="source41-condition-list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+      const cardRow = (cards, ariaLabel) => `<div class="source41-card-row" role="img" aria-label="${ariaLabel}">${cards.map(card => `<span class="source41-number-card${card === "?" || card === "□" ? " is-blank" : ""}">${card}</span>`).join("")}</div>`;
+      const digitalCardRow = cards => {
+        const segments = { 0: "abcdef", 1: "bc", 2: "abdeg", 5: "acdfg", 6: "acdefg", 8: "abcdefg", 9: "abcdfg" };
+        return `<div class="source41-card-row source41-digital-card-row" role="img" aria-label="180도 돌릴 수 있는 전자 숫자 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card is-digital" role="img" aria-label="숫자 ${card}">${[...(segments[card] || "")].map(segment => `<i class="source41-digital-segment is-${segment}"></i>`).join("")}</span>`).join("")}</div>`;
+      };
+      const pieceRow = pieces => `<div class="source41-piece-row" role="img" aria-label="수 조각 ${pieces.join(", ")}">${pieces.map(piece => `<span>${piece}</span>`).join("")}</div>`;
+      const nextPermutation = values => {
+        const output = values.slice();
+        let pivot = output.length - 2;
+        while (pivot >= 0 && output[pivot] >= output[pivot + 1]) pivot -= 1;
+        if (pivot < 0) return null;
+        let swapIndex = output.length - 1;
+        while (output[swapIndex] <= output[pivot]) swapIndex -= 1;
+        [output[pivot], output[swapIndex]] = [output[swapIndex], output[pivot]];
+        for (let left = pivot + 1, right = output.length - 1; left < right; left += 1, right -= 1) [output[left], output[right]] = [output[right], output[left]];
+        return output;
+      };
+      const previousPermutation = values => {
+        const output = values.slice();
+        let pivot = output.length - 2;
+        while (pivot >= 0 && output[pivot] <= output[pivot + 1]) pivot -= 1;
+        if (pivot < 0) return null;
+        let swapIndex = output.length - 1;
+        while (output[swapIndex] >= output[pivot]) swapIndex -= 1;
+        [output[pivot], output[swapIndex]] = [output[swapIndex], output[pivot]];
+        for (let left = pivot + 1, right = output.length - 1; left < right; left += 1, right -= 1) [output[left], output[right]] = [output[right], output[left]];
+        return output;
+      };
+      const repeatedExtremes = (cards, repeat = 2) => {
+        const digits = cards.flatMap(digit => Array(repeat).fill(digit));
+        const largestDigits = digits.slice().sort((left, right) => right - left);
+        const secondLargestDigits = previousPermutation(largestDigits);
+        const smallestDigits = digits.slice().sort((left, right) => left - right);
+        if (smallestDigits[0] === 0) {
+          const firstNonzero = smallestDigits.findIndex(Boolean);
+          [smallestDigits[0], smallestDigits[firstNonzero]] = [smallestDigits[firstNonzero], smallestDigits[0]];
+        }
+        return { secondLargest: BigInt(secondLargestDigits.join("")), smallest: BigInt(smallestDigits.join("")) };
+      };
+      const boundedPermutation = (digits, targetText, wantCeiling) => {
+        const sorted = digits.slice().sort((left, right) => wantCeiling ? left - right : right - left);
+        const targetDigits = [...targetText].map(Number);
+        const used = Array(sorted.length).fill(false);
+        const current = [];
+        const visit = (index, separated) => {
+          if (index === sorted.length) return current.slice();
+          for (let candidateIndex = 0; candidateIndex < sorted.length; candidateIndex += 1) {
+            if (used[candidateIndex] || (candidateIndex > 0 && sorted[candidateIndex] === sorted[candidateIndex - 1] && !used[candidateIndex - 1])) continue;
+            const digit = sorted[candidateIndex];
+            if (index === 0 && digit === 0) continue;
+            if (!separated && (wantCeiling ? digit < targetDigits[index] : digit > targetDigits[index])) continue;
+            used[candidateIndex] = true;
+            current.push(digit);
+            const found = visit(index + 1, separated || digit !== targetDigits[index]);
+            if (found) return found;
+            current.pop();
+            used[candidateIndex] = false;
+          }
+          return null;
+        };
+        return visit(0, false);
+      };
+      const closestPermutationRows = (digits, targetText) => {
+        const rows = new Map();
+        let lower = boundedPermutation(digits, targetText, false);
+        let upper = boundedPermutation(digits, targetText, true);
+        for (let index = 0; index < 4; index += 1) {
+          if (lower && lower[0] !== 0) {
+            const text = lower.join("");
+            rows.set(text, { text, distance: BigInt(targetText) - BigInt(text) });
+            lower = previousPermutation(lower);
+          }
+          if (upper && upper[0] !== 0) {
+            const text = upper.join("");
+            rows.set(text, { text, distance: BigInt(text) - BigInt(targetText) });
+            upper = nextPermutation(upper);
+          }
+        }
+        return [...rows.values()].sort((left, right) => left.distance < right.distance ? -1 : left.distance > right.distance ? 1 : left.text.localeCompare(right.text));
+      };
+      const pieceNumbers = pieces => {
+        const values = new Set();
+        const used = Array(pieces.length).fill(false);
+        const current = [];
+        const visit = () => {
+          if (current.length === pieces.length) {
+            if (!current[0].startsWith("0")) values.add(current.join(""));
+            return;
+          }
+          for (let index = 0; index < pieces.length; index += 1) {
+            if (used[index]) continue;
+            used[index] = true;
+            current.push(pieces[index]);
+            visit();
+            current.pop();
+            used[index] = false;
+          }
+        };
+        visit();
+        return [...values].sort((left, right) => left.localeCompare(right));
+      };
+      const selectedCardNumbers = (cards, count) => {
+        const values = new Set();
+        const used = Array(cards.length).fill(false);
+        const current = [];
+        const visit = () => {
+          if (current.length === count) {
+            values.add(current.join(""));
+            return;
+          }
+          for (let index = 0; index < cards.length; index += 1) {
+            if (used[index] || (!current.length && cards[index] === 0)) continue;
+            used[index] = true;
+            current.push(cards[index]);
+            visit();
+            current.pop();
+            used[index] = false;
+          }
+        };
+        visit();
+        return [...values].sort((left, right) => left.localeCompare(right));
+      };
+      const rotatedDigits = text => {
+        const rotated = { 0: 0, 1: 1, 2: 2, 5: 5, 6: 9, 8: 8, 9: 6 };
+        return [...text].reverse().map(digit => rotated[digit]).join("");
+      };
+      const limitedExtremes = (allowedDigits, maxUse, length, descending) => {
+        const found = [];
+        const counts = new Map(allowedDigits.map(digit => [digit, 0]));
+        const digits = [];
+        const order = allowedDigits.slice().sort((left, right) => descending ? right - left : left - right);
+        const visit = index => {
+          if (found.length >= 3) return;
+          if (index === length) {
+            found.push(digits.join(""));
+            return;
+          }
+          for (const digit of order) {
+            if ((index === 0 && digit === 0) || counts.get(digit) >= maxUse) continue;
+            counts.set(digit, counts.get(digit) + 1);
+            digits.push(digit);
+            visit(index + 1);
+            digits.pop();
+            counts.set(digit, counts.get(digit) - 1);
+            if (found.length >= 3) return;
+          }
+        };
+        visit(0);
+        return found;
+      };
+      const fixedMultisetExtreme = (cards, repeat, fixedByIndex, descending) => {
+        const counts = new Map(cards.map(card => [card, repeat]));
+        fixedByIndex.forEach(digit => counts.set(digit, counts.get(digit) - 1));
+        if ([...counts.values()].some(count => count < 0)) return null;
+        const length = cards.length * repeat;
+        const output = Array(length);
+        const order = cards.slice().sort((left, right) => descending ? right - left : left - right);
+        for (let index = 0; index < length; index += 1) {
+          if (fixedByIndex.has(index)) {
+            output[index] = fixedByIndex.get(index);
+            if (index === 0 && output[index] === 0) return null;
+            continue;
+          }
+          const digit = order.find(candidate => counts.get(candidate) > 0 && (index !== 0 || candidate !== 0));
+          if (digit === undefined) return null;
+          output[index] = digit;
+          counts.set(digit, counts.get(digit) - 1);
+        }
+        return output.join("");
+      };
+      const maxMinFromCards = cards => {
+        const descending = cards.slice().sort((left, right) => right - left);
+        const ascending = cards.slice().sort((left, right) => left - right);
+        if (ascending[0] === 0) {
+          const firstNonzero = ascending.findIndex(Boolean);
+          [ascending[0], ascending[firstNonzero]] = [ascending[firstNonzero], ascending[0]];
+        }
+        return { largest: BigInt(descending.join("")), smallest: BigInt(ascending.join("")) };
+      };
+      const largestWithPlaceProduct = (digits, repeat, fixedPositions, targetProduct) => {
+        const candidates = [];
+        for (const first of digits) for (const second of digits) for (const third of digits) {
+          if (first * second * third !== targetProduct) continue;
+          const usedCounts = new Map(digits.map(digit => [digit, 0]));
+          [first, second, third].forEach(digit => usedCounts.set(digit, usedCounts.get(digit) + 1));
+          if ([...usedCounts.values()].some(count => count > repeat)) continue;
+          const output = Array(digits.length * repeat);
+          [first, second, third].forEach((digit, index) => { output[fixedPositions[index]] = digit; });
+          const remaining = digits.flatMap(digit => Array(repeat - usedCounts.get(digit)).fill(digit)).sort((left, right) => right - left);
+          let remainingIndex = 0;
+          for (let index = 0; index < output.length; index += 1) if (output[index] === undefined) output[index] = remaining[remainingIndex++];
+          candidates.push({ fixedDigits: [first, second, third], text: output.join("") });
+        }
+        candidates.sort((left, right) => left.text.localeCompare(right.text));
+        return candidates;
+      };
+
+      if (variant === 0) {
+        let selected = null;
+        for (let attempt = 0; attempt < 160 && !selected; attempt += 1) {
+          const shown = shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, 3);
+          const fullDomain = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !shown.includes(digit));
+          const eligible = level < 2 ? fullDomain.filter(Boolean) : fullDomain;
+          const rows = eligible.map(hidden => {
+            const extremes = repeatedExtremes([...shown, hidden]);
+            return { hidden, ...extremes, difference: extremes.secondLargest - extremes.smallest };
+          });
+          const uniqueRows = rows.filter(row => rows.filter(other => other.difference === row.difference).length === 1);
+          if (!uniqueRows.length) continue;
+          const actual = pick(rng, uniqueRows);
+          const candidates = level === 0
+            ? shuffle(rng, rows.filter(row => row.hidden !== actual.hidden)).slice(0, 2).concat(actual).sort((left, right) => left.hidden - right.hidden)
+            : rows;
+          if (candidates.filter(row => row.difference === actual.difference).length === 1) selected = { shown, actual, candidates };
+        }
+        if (!selected) return generators.source41LargeNumberSix({ rng, level, variant });
+        const answer = String(selected.actual.hidden);
+        const cards = shuffle(rng, [...selected.shown, "?"]);
+        const candidateHint = level === 0 ? ` 단, ?에는 ${selected.candidates.map(row => row.hidden).join(", ")} 중 하나가 들어갑니다.` : level === 1 ? " 단, ?에는 1부터 9까지의 숫자 중 하나가 들어갑니다." : "";
+        const payload = { variant, level, shown: selected.shown, candidates: selected.candidates.map(row => ({ hidden: row.hidden, difference: String(row.difference) })), hidden: selected.actual.hidden, secondLargest: String(selected.actual.secondLargest), smallest: String(selected.actual.smallest), difference: String(selected.actual.difference), complexity: (level + 1) * 1000 + selected.candidates.length };
+        const evidence = source41Evidence("repeated-four-card-hidden-digit", payload, answer);
+        const prompt = `서로 다른 네 장의 수 카드를 각각 두 번씩 사용하여 8자리 자연수를 만듭니다.${candidateHint} 만들 수 있는 수 중 두 번째로 큰 수와 가장 작은 수의 차가 ${format(selected.actual.difference)}일 때 ?에 알맞은 숫자를 구하세요.${cardRow(cards, `수 카드 ${cards.join(", ")}`)}${evidence}`;
+        const solution = `?에 ${answer}을 넣으면 두 번째로 큰 수는 ${format(selected.actual.secondLargest)}, 가장 작은 수는 ${format(selected.actual.smallest)}입니다. 두 수의 차가 ${format(selected.actual.difference)}이고 다른 후보는 이 차를 만들지 못하므로 ?는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const length = [7, 8, 10][level];
+        const digits = Array.from({ length }, (_, digit) => digit);
+        let selected = null;
+        for (let attempt = 0; attempt < 80 && !selected; attempt += 1) {
+          const leading = int(rng, 2, length - 2);
+          const tailWidth = [0, 3, 6][level];
+          const tail = tailWidth ? String(int(rng, 1, 10 ** tailWidth - 1)).padStart(tailWidth, "0") : "";
+          const targetText = `${leading}${"0".repeat(length - 1 - tailWidth)}${tail}`;
+          const rows = closestPermutationRows(digits, targetText);
+          if (rows.length >= 3 && rows[1].distance !== rows[0].distance && rows[1].distance !== rows[2].distance) selected = { targetText, rows };
+        }
+        if (!selected) return generators.source41LargeNumberSix({ rng, level, variant });
+        const answerText = selected.rows[1].text;
+        const answer = format(answerText);
+        const payload = { variant, level, digits, targetText: selected.targetText, nearest: selected.rows.slice(0, 6).map(row => ({ text: row.text, distance: String(row.distance) })), answerText, complexity: length * 100000 + Number(selected.rows[1].distance) };
+        const evidence = source41Evidence("second-nearest-all-cards", payload, answer);
+        const prompt = `수 카드 ${digits.join(", ")}을 한 번씩만 사용하여 만들 수 있는 ${length}자리 자연수 중에서 ${format(selected.targetText)}에 두 번째로 가까운 수를 구하세요.${cardRow(digits, `수 카드 ${digits.join(", ")}`)}${evidence}`;
+        const solution = `${format(selected.targetText)}에 가까운 수들을 차례로 비교하면 ${selected.rows.slice(0, 3).map(row => `${format(row.text)}(차 ${format(row.distance)})`).join(", ")}입니다. 두 번째로 가까운 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const pieceCount = [4, 5, 6][level];
+        let pieces = [];
+        for (let attempt = 0; attempt < 80 && pieces.length !== pieceCount; attempt += 1) {
+          const candidates = [`0${int(rng, 1, 9)}`, String(int(rng, 1, 9))];
+          while (candidates.length < pieceCount) candidates.push(String(int(rng, 12, 98)));
+          if (new Set(candidates).size === pieceCount) pieces = shuffle(rng, candidates);
+        }
+        if (pieces.length !== pieceCount) return generators.source41LargeNumberSix({ rng, level, variant });
+        const values = pieceNumbers(pieces);
+        const answerText = values[values.length - 3];
+        const answer = format(answerText);
+        const payload = { variant, level, pieces, candidateCount: values.length, topThree: values.slice(-3).reverse(), answerText, complexity: pieceCount * 1000 + values.length };
+        const evidence = source41Evidence("third-largest-number-pieces", payload, answer);
+        const digitLength = pieces.reduce((sum, piece) => sum + piece.length, 0);
+        const prompt = `다음 수 조각을 모두 한 번씩 이어 붙여 만들 수 있는 ${digitLength}자리 자연수 중에서 세 번째로 큰 수를 구하세요.${pieceRow(pieces)}${evidence}`;
+        const solution = `큰 수가 되도록 앞 조각부터 비교하면 가장 큰 세 수는 ${values.slice(-3).reverse().map(format).join(", ")}입니다. 세 번째로 큰 수는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const count = [5, 7, 8][level];
+        const cards = shuffle(rng, Array.from({ length: 10 }, (_, digit) => digit)).slice(0, count);
+        if (!cards.includes(0)) cards[0] = 0;
+        const uniqueCards = [...new Set(cards)];
+        if (uniqueCards.length !== count) return generators.source41LargeNumberSix({ rng, level, variant });
+        const values = permutationNumbers(uniqueCards);
+        const thirdSmallest = BigInt(values[2]);
+        const thirdLargest = BigInt(values[values.length - 3]);
+        const answerValue = thirdLargest - thirdSmallest;
+        const answer = format(answerValue);
+        const payload = { variant, level, cards: uniqueCards, candidateCount: values.length, thirdLargest: String(thirdLargest), thirdSmallest: String(thirdSmallest), answerValue: String(answerValue), complexity: count * 1000 + values.length };
+        const evidence = source41Evidence("third-extremes-distinct-cards", payload, answer);
+        const prompt = `다음 수 카드를 한 번씩 모두 사용하여 ${count}자리 자연수를 만듭니다. 만들 수 있는 세 번째로 큰 수와 세 번째로 작은 수의 차를 구하세요.${cardRow(uniqueCards, `수 카드 ${uniqueCards.join(", ")}`)}${evidence}`;
+        const solution = `세 번째로 큰 수는 ${format(thirdLargest)}, 세 번째로 작은 수는 ${format(thirdSmallest)}입니다. 두 수의 차는 ${format(thirdLargest)} - ${format(thirdSmallest)} = ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const rotatable = [0, 1, 2, 5, 6, 8, 9];
+        const cardCount = [6, 7, 7][level];
+        const chooseCount = [4, 5, 6][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 80 && !selected; attempt += 1) {
+          const omitted = pick(rng, [2, 5, 6, 8, 9]);
+          const cards = cardCount === rotatable.length ? shuffle(rng, rotatable) : shuffle(rng, rotatable.filter(digit => digit !== omitted));
+          const values = selectedCardNumbers(cards, chooseCount);
+          if (values.length < 2) continue;
+          const numberText = values[1];
+          const rotatedText = rotatedDigits(numberText);
+          let target = 9n * 10n ** BigInt(chooseCount - 1);
+          if (BigInt(rotatedText) >= target) target = 10n ** BigInt(chooseCount);
+          const mistakenAddend = target - BigInt(rotatedText);
+          if (mistakenAddend > 0n) selected = { cards, values, numberText, rotatedText, target, mistakenAddend };
+        }
+        if (!selected) return generators.source41LargeNumberSix({ rng, level, variant });
+        const answerValue = BigInt(selected.numberText) + selected.mistakenAddend;
+        const answer = format(answerValue);
+        const payload = { variant, level, cards: selected.cards, chooseCount, candidateCount: selected.values.length, numberText: selected.numberText, rotatedText: selected.rotatedText, target: String(selected.target), mistakenAddend: String(selected.mistakenAddend), answerValue: String(answerValue), complexity: chooseCount * 1000 + selected.values.length };
+        const evidence = source41Evidence("rotated-card-calculation", payload, answer);
+        const prompt = `다음 수 카드 중 ${chooseCount}장을 골라 이어 붙여 두 번째로 작은 ${chooseCount}자리 자연수를 만들었습니다. 이 수에 어떤 수를 더해야 할 것을 잘못하여, 만든 수를 시계 반대 방향으로 180° 돌려서 생긴 수에 그 수를 더했더니 ${format(selected.target)}이 되었습니다. 바르게 계산한 값을 구하세요.${digitalCardRow(selected.cards)}${evidence}`;
+        const solution = `두 번째로 작은 수는 ${format(selected.numberText)}이고 180° 돌리면 ${format(selected.rotatedText)}입니다. 잘못 더한 수는 ${format(selected.target)} - ${format(selected.rotatedText)} = ${format(selected.mistakenAddend)}이므로, 바른 값은 ${format(selected.numberText)} + ${format(selected.mistakenAddend)} = ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const digits = Array.from({ length: 10 }, (_, digit) => digit);
+        const ranges = [[8, 30], [60, 220], [300, 900]][level];
+        const greaterCount = int(rng, ranges[0], ranges[1]);
+        let thresholdDigits = digits.slice().sort((left, right) => right - left);
+        for (let step = 0; step < greaterCount; step += 1) thresholdDigits = previousPermutation(thresholdDigits);
+        const thresholdText = thresholdDigits.join("");
+        const answer = format(greaterCount);
+        const payload = { variant, level, digits, thresholdText, greaterCount, complexity: greaterCount };
+        const evidence = source41Evidence("count-permutations-above-threshold", payload, answer);
+        const prompt = `수 카드 0부터 9까지를 모두 한 번씩 사용하여 만들 수 있는 10자리 자연수 중에서 ${format(thresholdText)}보다 큰 수는 모두 몇 개인지 구하세요.${cardRow(digits, "수 카드 0부터 9까지")}${evidence}`;
+        const solution = `가장 큰 수 ${format("9876543210")}부터 차례로 내려오며 ${format(thresholdText)}보다 큰 수만 세면 ${answer}개입니다. 높은 자리부터 기준 수보다 큰 숫자를 놓을 수 있는 경우를 차례로 세어도 같습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const digitCount = [5, 6, 7][level];
+        const allowedDigits = [0, ...shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, digitCount - 1)].sort((left, right) => left - right);
+        const omitted = int(rng, [2, 1, 0][level], [3, 2, 1][level]);
+        const length = digitCount * 2 - omitted;
+        const largest = limitedExtremes(allowedDigits, 2, length, true);
+        const smallest = limitedExtremes(allowedDigits, 2, length, false);
+        const thirdLargest = BigInt(largest[2]);
+        const thirdSmallest = BigInt(smallest[2]);
+        const answerValue = thirdLargest - thirdSmallest;
+        const answer = format(answerValue);
+        const payload = { variant, level, allowedDigits, maxUse: 2, length, largest, smallest, thirdLargest: String(thirdLargest), thirdSmallest: String(thirdSmallest), answerValue: String(answerValue), complexity: length * 1000 + digitCount };
+        const evidence = source41Evidence("limited-repeat-third-extremes", payload, answer);
+        const prompt = `수 카드 ${allowedDigits.join(", ")}을 각각 두 번까지 사용하여 만들 수 있는 ${length}자리 자연수 중에서 세 번째로 큰 수와 세 번째로 작은 수의 차를 구하세요.${cardRow(shuffle(rng, allowedDigits), `수 카드 ${allowedDigits.join(", ")}`)}${evidence}`;
+        const solution = `각 숫자를 두 번 넘게 쓰지 않도록 높은 자리부터 큰 숫자를 놓으면 세 번째로 큰 수는 ${format(thirdLargest)}입니다. 반대로 작은 숫자를 놓으면 세 번째로 작은 수는 ${format(thirdSmallest)}입니다. 차는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const cardCount = [5, 6, 7][level];
+        const cards = [0, ...shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, cardCount - 1)].sort((left, right) => left - right);
+        const length = cardCount * 2;
+        const fixedPositions = [1, 3 + level];
+        const fixedDigits = shuffle(rng, cards.filter(Boolean)).slice(0, 2);
+        const fixedByIndex = new Map(fixedPositions.map((position, index) => [position, fixedDigits[index]]));
+        const largestText = fixedMultisetExtreme(cards, 2, fixedByIndex, true);
+        const smallestText = fixedMultisetExtreme(cards, 2, fixedByIndex, false);
+        const answerValue = BigInt(largestText) - BigInt(smallestText);
+        const answer = format(answerValue);
+        const fixedConditions = fixedPositions.map((position, index) => `${source41PlaceLabel(length - position - 1)}의 자리 숫자는 ${fixedDigits[index]}입니다.`);
+        const payload = { variant, level, cards, repeat: 2, fixedPositions, fixedDigits, largestText, smallestText, answerValue: String(answerValue), complexity: length * 1000 + fixedPositions[1] * 100 };
+        const evidence = source41Evidence("fixed-place-repeated-card-extremes", payload, answer);
+        const prompt = `다음 ${cardCount}장의 수 카드를 각각 두 번씩 사용하여 ${length}자리 자연수를 만듭니다. 조건을 만족하는 가장 큰 수와 가장 작은 수의 차를 구하세요.${cardRow(cards, `수 카드 ${cards.join(", ")}`)}${conditionList(fixedConditions)}${evidence}`;
+        const solution = `정해진 자리에는 ${fixedDigits.join(", ")}을 먼저 놓습니다. 남은 카드를 큰 숫자부터 놓은 수는 ${format(largestText)}, 작은 숫자부터 놓되 0을 맨 앞에 놓지 않은 수는 ${format(smallestText)}입니다. 차는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const cardCount = [4, 5, 6][level];
+        const allDigits = shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, cardCount);
+        const hidden = pick(rng, allDigits);
+        const shown = allDigits.filter(digit => digit !== hidden);
+        const extremes = maxMinFromCards(allDigits);
+        const target = extremes.largest + extremes.smallest;
+        const candidates = Array.from({ length: 9 }, (_, index) => index + 1).filter(digit => !shown.includes(digit)).filter(digit => {
+          const trial = maxMinFromCards([...shown, digit]);
+          return trial.largest + trial.smallest === target;
+        });
+        if (candidates.length !== 1) return generators.source41LargeNumberSix({ rng, level, variant });
+        const answer = String(hidden);
+        const displayCards = shuffle(rng, [...shown, "□"]);
+        const payload = { variant, level, shown, cardCount, hidden, target: String(target), largest: String(extremes.largest), smallest: String(extremes.smallest), candidates, complexity: cardCount * 1000 };
+        const evidence = source41Evidence("hidden-nonzero-card-extreme-sum", payload, answer);
+        const prompt = `0이 아닌 서로 다른 숫자가 쓰인 ${cardCount}장의 수 카드를 모두 한 번씩 사용하여 만든 가장 큰 ${cardCount}자리 수와 가장 작은 ${cardCount}자리 수의 합은 ${format(target)}입니다. 숫자가 쓰여 있지 않은 카드의 수를 구하세요.${cardRow(displayCards, `수 카드 ${displayCards.join(", ")}`)}${evidence}`;
+        const solution = `빈 카드에 ${answer}을 넣으면 가장 큰 수는 ${format(extremes.largest)}, 가장 작은 수는 ${format(extremes.smallest)}이고 합은 ${format(target)}입니다. 다른 남은 숫자는 이 합을 만들지 못하므로 답은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const wantedCount = [1, 2, 3][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 180 && !selected; attempt += 1) {
+          const shown = [0, ...shuffle(rng, Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, 4)].sort((left, right) => left - right);
+          const rows = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !shown.includes(digit)).map(hidden => {
+            const extremes = maxMinFromCards([...shown, hidden]);
+            return { hidden, sum: extremes.largest + extremes.smallest };
+          }).sort((left, right) => left.sum < right.sum ? -1 : 1);
+          if (new Set(rows.map(row => String(row.sum))).size !== rows.length || rows.length < wantedCount) continue;
+          const start = int(rng, 0, rows.length - wantedCount);
+          const chosen = rows.slice(start, start + wantedCount);
+          const lower = start === 0 ? chosen[0].sum - 1n : (rows[start - 1].sum + chosen[0].sum) / 2n;
+          const upper = start + wantedCount === rows.length ? chosen[chosen.length - 1].sum + 1n : (chosen[chosen.length - 1].sum + rows[start + wantedCount].sum + 1n) / 2n;
+          const winners = rows.filter(row => row.sum > lower && row.sum < upper);
+          if (winners.length === wantedCount) selected = { shown, rows, lower, upper, winners };
+        }
+        if (!selected) return generators.source41LargeNumberSix({ rng, level, variant });
+        const answerDigits = selected.winners.map(row => row.hidden).sort((left, right) => left - right);
+        const answer = answerDigits.join(", ");
+        const displayCards = shuffle(rng, [...selected.shown, "□"]);
+        const payload = { variant, level, shown: selected.shown, lower: String(selected.lower), upper: String(selected.upper), rows: selected.rows.map(row => ({ hidden: row.hidden, sum: String(row.sum) })), answerDigits, complexity: wantedCount * 1000000 + Number(selected.upper - selected.lower) };
+        const evidence = source41Evidence("hidden-card-extreme-sum-range", payload, answer);
+        const prompt = `서로 다른 숫자가 쓰인 여섯 장의 수 카드를 한 번씩 사용하여 만들 수 있는 가장 큰 수와 가장 작은 수의 합이 ${format(selected.lower)}보다 크고 ${format(selected.upper)}보다 작습니다. □에 알맞은 숫자를 모두 구하세요.${cardRow(displayCards, `수 카드 ${displayCards.join(", ")}`)}${evidence}`;
+        const solution = `쓰이지 않은 숫자를 하나씩 넣어 가장 큰 수와 가장 작은 수의 합을 확인합니다. 두 경계 사이에 들어오는 빈 카드 숫자는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const maxDigit = [4, 5, 6][level];
+      const repeat = 3;
+      const digits = Array.from({ length: maxDigit }, (_, index) => index + 1);
+      const length = digits.length * repeat;
+      const fixedPositions = [0, 4, 8];
+      const products = new Map();
+      for (const first of digits) for (const second of digits) for (const third of digits) {
+        const product = first * second * third;
+        const group = products.get(product) || [];
+        group.push([first, second, third]);
+        products.set(product, group);
+      }
+      const productOptions = [...products.entries()].filter(([, triples]) => triples.length >= 3).map(([product]) => product);
+      const targetProduct = pick(rng, productOptions);
+      const candidates = largestWithPlaceProduct(digits, repeat, fixedPositions, targetProduct);
+      const answerText = candidates[candidates.length - 1].text;
+      const answer = format(answerText);
+      const placeNames = fixedPositions.map(position => source41PlaceLabel(length - position - 1));
+      const payload = { variant, level, digits, repeat, length, fixedPositions, targetProduct, candidateCount: candidates.length, answerText, fixedDigits: candidates[candidates.length - 1].fixedDigits, complexity: length * 1000 + candidates.length };
+      const evidence = source41Evidence("repeated-cards-place-product-maximum", payload, answer);
+      const prompt = `수 카드 ${digits.join(", ")}을 각각 세 번씩 사용하여 ${length}자리 자연수를 만듭니다. ${placeNames.map(place => `${place}의 자리 수`).join(", ")}의 곱이 ${targetProduct}인 가장 큰 수를 구하세요.${cardRow(digits.flatMap(digit => Array(repeat).fill(digit)), `${digits.join(", ")}이 각각 세 장씩 있는 수 카드`)}${evidence}`;
+      const solution = `곱이 ${targetProduct}이 되는 세 자리 숫자를 모두 확인한 뒤, 남은 카드는 높은 자리부터 큰 숫자를 놓습니다. 가장 크게 만드는 지정 자리 숫자는 ${candidates[candidates.length - 1].fixedDigits.join(", ")}이고, 가장 큰 수는 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
       const digitCount = 11 + level;
       const makeDigits = () => Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));

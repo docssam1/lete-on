@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 64,
+  "verifiedMappings": 75,
   "items": [
     {
       "unit": 1,
@@ -1079,10 +1079,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드를 두 번씩 써서 만든 두 번째 큰 수와 가장 작은 수의 차",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1097,10 +1098,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "모든 숫자로 기준에 두 번째로 가까운 수 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1115,10 +1117,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 조각 배열의 세 번째 큰 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1133,10 +1136,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드 순서 통계의 차",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1151,10 +1155,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "숫자 카드 회전 오류 계산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1169,10 +1174,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드를 한 번씩 써서 기준보다 큰 수의 개수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1187,10 +1193,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드를 여러 번 써서 세 번째로 큰 수와 작은 수의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1205,10 +1212,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드를 두 번씩 써서 만든 가장 큰 수와 작은 수의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1223,10 +1231,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "다섯 수 카드로 만든 가장 큰 수와 작은 수의 합에서 빈 카드 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1241,10 +1250,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "가장 큰 수와 작은 수의 합 조건에 맞는 수 카드 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -1259,10 +1269,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "반복 카드와 자리 곱의 최대 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberSix",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
