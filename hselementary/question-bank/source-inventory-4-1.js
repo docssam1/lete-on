@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_41 = {
-  "version": "2026-08-26",
+  "version": "2026-08-27",
   "totals": {
     "units": 6,
     "groups": 30,
@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 22,
+  "verifiedMappings": 32,
   "items": [
     {
       "unit": 1,
@@ -243,10 +243,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "빈칸에 숫자를 넣어 두 큰 수의 크기 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -261,10 +262,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 크기 비교식을 모두 맞게 하는 숫자 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "largeNumberCompare",
-      "variant": 0,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 1,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -280,10 +281,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 방법으로 나타낸 큰 수를 크기 순서로 나열하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -298,10 +300,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "정해진 범위에서 특정 자리 숫자의 개수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -313,13 +316,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-4",
       "sourcePdfPage": 10,
       "sourcePrintedPage": 6,
-      "typeLabel": "빈칸 수의 최댓값 비교",
+      "typeLabel": "빈칸에 숫자를 넣어 만든 가장 큰 수끼리 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -334,10 +338,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "크기 비교식을 맞게 하는 숫자 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -352,10 +357,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "가려진 숫자의 크기 비교",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -370,10 +376,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "공통 기호 숫자 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -388,10 +395,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "이어진 크기 비교식의 빈칸에 들어갈 숫자 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -406,10 +414,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 표현의 수 크기 비교",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,
@@ -424,10 +433,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "거리로 나타낸 큰 수를 크기 순서로 나열하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LargeNumberTwo",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 1,

@@ -267,6 +267,40 @@
     return `${source41DigitWords[digit]}${namedUnits[exponent - 4]}`;
   }).filter(Boolean).join(" ");
   const source41Evidence = (kind, payload, expected) => `<span hidden data-source41-kind="${kind}" data-source41-payload="${encodeURIComponent(JSON.stringify(payload))}" data-source41-expected="${encodeURIComponent(String(expected))}"></span>`;
+  const source41DigitSlot = symbol => `<span class="math-digit-slot ${symbol === "○" ? "is-circle" : "is-square"}" role="img" aria-label="${symbol === "○" ? "동그라미" : "빈칸"}"></span>`;
+  const source41FormatMaskedInteger = (pattern, blankSymbol = "□") => String(pattern).split("").map((character, index, characters) => {
+    const comma = index > 0 && (characters.length - index) % 3 === 0 ? "," : "";
+    return `${comma}${character === "□" ? source41DigitSlot(blankSymbol) : character}`;
+  }).join("");
+  const source41RandomFixedDigits = (rng, length, leadingNonzero = false) => Array.from(
+    { length },
+    (_, index) => int(rng, index === 0 && leadingNonzero ? 1 : 0, 9)
+  ).join("");
+  const source41FillPattern = (pattern, replacements) => {
+    let replacementIndex = 0;
+    return String(pattern).split("").map(character => character === "□"
+      ? String(replacements[replacementIndex++])
+      : character).join("");
+  };
+  const source41MaskedCandidates = pattern => {
+    const characters = String(pattern).split("");
+    const blankIndices = characters.map((character, index) => character === "□" ? index : -1).filter(index => index >= 0);
+    const values = [];
+    const visit = position => {
+      if (position === blankIndices.length) {
+        values.push(characters.join(""));
+        return;
+      }
+      const index = blankIndices[position];
+      for (let digit = index === 0 ? 1 : 0; digit <= 9; digit += 1) {
+        characters[index] = String(digit);
+        visit(position + 1);
+      }
+      characters[index] = "□";
+    };
+    visit(0);
+    return values;
+  };
   const fractionEquation = (kind, terms, expected, body) => {
     const termText = terms.map(({ numerator, denominator }) => `${numerator}/${denominator}`).join(";");
     return `<div class="equation" data-fraction-kind="${kind}" data-fraction-terms="${termText}" data-fraction-expected="${expected.numerator}/${expected.denominator}">${body}</div>`;
@@ -2497,6 +2531,311 @@
       const evidence = source41Evidence("signal-distance-digit-difference", payload, answer);
       const prompt = `${situation}는 1초에 약 ${source41FormatInteger(speed)}m를 갑니다. 이 신호가 ${source41FormatInteger(seconds)}초 동안 간 거리를 cm로 나타냈을 때 ${source41PlaceLabel(requested[0].exponent)}의 자리 숫자와 ${source41PlaceLabel(requested[1].exponent)}의 자리 숫자의 차를 구하세요.${evidence}`;
       const solution = `${source41FormatInteger(seconds)}초 동안 간 거리는 ${source41FormatInteger(speed)} × ${source41FormatInteger(seconds)} = ${source41FormatInteger(BigInt(speed) * BigInt(seconds))}m입니다. 1m는 100cm이므로 ${source41FormatInteger(centimeters)}cm입니다. 두 자리 숫자의 차는 ${requested[0].digit}과 ${requested[1].digit}의 차인 ${answer}입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41LargeNumberTwo({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수의 크기 비교 원문 분기는 0부터 10까지여야 합니다.");
+      const symbolLabels = ["㉠", "㉡", "㉢", "㉣"];
+      const compare = (left, right, relation) => relation === "<" ? BigInt(left) < BigInt(right) : BigInt(left) > BigInt(right);
+      const validDigits = (left, pattern, relation) => Array.from({ length: 10 }, (_, digit) => digit).filter(digit =>
+        compare(left, source41FillPattern(pattern, [digit]), relation)
+      );
+      const padded = (value, width) => String(value).padStart(width, "0");
+      const makeLowerComparison = (length, position, boundary) => {
+        const prefix = source41RandomFixedDigits(rng, position, true);
+        const suffixWidth = length - position - 1;
+        const maximum = source41Power(suffixWidth) - 1n;
+        let rightSuffix = BigInt(source41RandomFixedDigits(rng, suffixWidth));
+        if (rightSuffix <= 0n) rightSuffix = 1n;
+        if (rightSuffix >= maximum) rightSuffix = maximum - 1n;
+        const pattern = `${prefix}□${padded(rightSuffix, suffixWidth)}`;
+        const left = `${prefix}${boundary}${padded(rightSuffix - 1n, suffixWidth)}`;
+        return { left, pattern, relation: "<" };
+      };
+      const makeUpperComparison = (length, position, boundary) => {
+        const prefix = source41RandomFixedDigits(rng, position, true);
+        const suffixWidth = length - position - 1;
+        const maximum = source41Power(suffixWidth) - 1n;
+        let rightSuffix = BigInt(source41RandomFixedDigits(rng, suffixWidth));
+        if (rightSuffix <= 0n) rightSuffix = 1n;
+        if (rightSuffix >= maximum) rightSuffix = maximum - 1n;
+        const pattern = `${prefix}□${padded(rightSuffix, suffixWidth)}`;
+        const left = `${prefix}${boundary}${padded(rightSuffix + 1n, suffixWidth)}`;
+        return { left, pattern, relation: ">" };
+      };
+      const comparisonText = item => item.relation === "<"
+        ? `${source41FormatInteger(item.left)} &lt; ${source41FormatMaskedInteger(item.pattern)}`
+        : `${source41FormatInteger(item.left)} &gt; ${source41FormatMaskedInteger(item.pattern)}`;
+
+      if (variant === 0) {
+        const length = [8, 10, 12][level];
+        const positions = [[2, 4, 6], [2, 4, 6], [2, 5, 8]][level];
+        const rank = int(rng, [120, 180, 240][level], [760, 820, 880][level]);
+        const rankDigits = String(rank).padStart(3, "0").split("").map(Number);
+        const marks = positions.map((position, index) => ({ exponent: length - position - 1, digit: rankDigits[index] }));
+        const left = source41NumberWithDigitsAt(rng, length, marks);
+        const patternCharacters = left.split("");
+        positions.forEach(position => { patternCharacters[position] = "□"; });
+        const pattern = patternCharacters.join("");
+        const candidates = source41MaskedCandidates(pattern).filter(value => BigInt(left) < BigInt(value));
+        const answer = candidates.length;
+        const contributions = rankDigits.map((digit, index) => (9 - digit) * 10 ** (rankDigits.length - index - 1));
+        const payload = { variant, level, left, pattern, relation: "<", complexity: length };
+        const evidence = source41Evidence("comparison-triple-count", payload, answer);
+        const prompt = `다음 세 □에 0부터 9까지 숫자를 하나씩 써 넣을 때, 크기 비교가 맞는 방법은 모두 몇 가지인지 구하세요.<div class="equation expanded">${source41FormatInteger(left)} &lt; ${source41FormatMaskedInteger(pattern)}</div>${evidence}`;
+        const solution = `앞쪽 빈칸부터 비교합니다. 첫 빈칸이 ${rankDigits[0]}보다 큰 경우 ${contributions[0]}가지, 첫 빈칸이 같고 둘째 빈칸이 ${rankDigits[1]}보다 큰 경우 ${contributions[1]}가지, 앞의 두 빈칸이 같고 셋째 빈칸이 ${rankDigits[2]}보다 큰 경우 ${contributions[2]}가지입니다. 모두 ${contributions.join(" + ")} = ${answer}가지입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const length = [8, 10, 12][level];
+        const positions = [[1, 3], [2, 4], [3, 6]][level];
+        const low = int(rng, 2, 5);
+        const high = int(rng, low + 2, Math.min(9, low + 4));
+        const comparisons = [makeLowerComparison(length, positions[0], low), makeUpperComparison(length, positions[1], high)];
+        const common = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => comparisons.every(item => validDigits(item.left, item.pattern, item.relation).includes(digit)));
+        const answer = common.reduce((sum, digit) => sum + digit, 0);
+        const payload = { variant, level, comparisons, complexity: length + positions[1] };
+        const evidence = source41Evidence("common-digit-sum", payload, answer);
+        const prompt = `0부터 9까지 숫자 중에서 두 □에 공통으로 들어갈 수 있는 숫자들의 합을 구하세요.<div class="equation expanded">${comparisons.map(comparisonText).join("<br>")}</div>${evidence}`;
+        const solution = `첫째 비교에 들어갈 수 있는 숫자는 ${validDigits(comparisons[0].left, comparisons[0].pattern, comparisons[0].relation).join(", ")}, 둘째 비교에 들어갈 수 있는 숫자는 ${validDigits(comparisons[1].left, comparisons[1].pattern, comparisons[1].relation).join(", ")}입니다. 공통 숫자 ${common.join(", ")}의 합은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const unitExponent = [6, 8, 12][level];
+        const unit = source41Power(unitExponent);
+        const unitName = source41PlaceLabel(unitExponent);
+        const scalePower = [2, 4, 5][level];
+        const scale = source41Power(scalePower);
+        const arbitrary = () => BigInt(int(rng, 2, 8)) * unit + BigInt(source41RandomFixedDigits(rng, unitExponent));
+        let values;
+        let expandedTerms;
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const first = arbitrary();
+          const second = arbitrary() / scale * scale;
+          const third = arbitrary();
+          const exponents = [unitExponent, unitExponent - 1, Math.max(1, Math.floor(unitExponent / 2)), 0];
+          const coefficients = exponents.map((_, index) => int(rng, index === 0 ? 2 : 1, 8));
+          const fourth = coefficients.reduce((sum, coefficient, index) => sum + BigInt(coefficient) * source41Power(exponents[index]), 0n);
+          values = [first, second, third, fourth];
+          expandedTerms = exponents.map((exponent, index) => BigInt(coefficients[index]) * source41Power(exponent));
+          if (new Set(values.map(String)).size === 4) break;
+        }
+        if (new Set(values.map(String)).size !== 4) throw new Error("서로 다른 네 비교 수를 만들지 못했습니다.");
+        const thirdHigh = values[2] / unit;
+        const thirdLow = values[2] % unit;
+        const representations = [
+          source41ReadKorean(values[0]),
+          `${source41FormatInteger(values[1] / scale)}을 ${source41FormatInteger(scale)}배 한 수`,
+          `${unitName}이 ${thirdHigh}개이고 일이 ${source41FormatInteger(thirdLow)}개인 수`,
+          expandedTerms.map(source41FormatInteger).join(" + ")
+        ];
+        const answer = values.map((value, index) => ({ value, label: symbolLabels[index] }))
+          .sort((left, right) => left.value > right.value ? -1 : 1).map(item => item.label).join(", ");
+        const payload = { variant, level, values: values.map(String), complexity: unitExponent };
+        const evidence = source41Evidence("mixed-representation-desc", payload, answer);
+        const prompt = `다음에 나타낸 수를 큰 수부터 차례대로 기호를 쓰세요.<ol class="choice-list">${representations.map((text, index) => `<li><b>${symbolLabels[index]}</b> ${text}</li>`).join("")}</ol>${evidence}`;
+        const solution = `네 수를 숫자로 바꾸면 ${values.map((value, index) => `${symbolLabels[index]} ${source41FormatInteger(value)}`).join(", ")}입니다. 큰 수부터 비교하면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const freeDigits = [2, 3, 4][level];
+        const prefix = int(rng, 12, 87);
+        const targetPair = int(rng, 25, 88);
+        const lowerPair = int(rng, Math.max(10, targetPair - 12), targetPair - 1);
+        const blockUnit = source41Power(freeDigits);
+        const pairUnit = source41Power(freeDigits + 2);
+        const lower = BigInt(prefix) * pairUnit + BigInt(lowerPair) * blockUnit + BigInt(int(rng, 0, Number(blockUnit - 1n)));
+        const upper = BigInt(prefix + 1) * pairUnit;
+        const digits = String(targetPair).padStart(2, "0").split("").map(Number);
+        const conditions = [
+          { exponent: freeDigits + 1, digit: digits[0] },
+          { exponent: freeDigits, digit: digits[1] }
+        ];
+        const answer = source41FormatInteger(blockUnit);
+        const payload = { variant, level, lower: String(lower), upper: String(upper), digitLength: String(upper - 1n).length, conditions, complexity: freeDigits + 4 };
+        const evidence = source41Evidence("bounded-fixed-digit-count", payload, answer);
+        const prompt = `${source41FormatInteger(lower)}보다 크고 ${source41FormatInteger(upper)}보다 작은 ${payload.digitLength}자리 자연수 중에서 ${source41PlaceLabel(conditions[0].exponent)}의 자리 숫자가 ${digits[0]}이고 ${source41PlaceLabel(conditions[1].exponent)}의 자리 숫자가 ${digits[1]}인 수는 모두 몇 개인지 구하세요.${evidence}`;
+        const solution = `앞부분은 ${prefix}${targetPair}로 정해지고, 뒤의 ${freeDigits}자리에는 각각 0부터 9까지 들어갈 수 있습니다. 따라서 가능한 수는 ${answer}개입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const digitCount = 7;
+        const names = ["가온", "나래", "다온", "라온"];
+        const commonFirst = int(rng, 3, 6);
+        const forcedBlankPrefix = [0, 1, 2][level];
+        const reservedLargeDigits = Array.from({ length: forcedBlankPrefix }, (_, index) => 9 - index);
+        let groups = [];
+        for (let attempt = 0; attempt < 300 && groups.length < 4; attempt += 1) {
+          const blankIndices = new Set([1, 2].slice(0, forcedBlankPrefix));
+          const remainingPositions = shuffle(rng, Array.from({ length: digitCount - 1 - forcedBlankPrefix }, (_, index) => index + 1 + forcedBlankPrefix));
+          remainingPositions.slice(0, 3 - forcedBlankPrefix).forEach(index => blankIndices.add(index));
+          const forbidden = new Set([commonFirst, ...reservedLargeDigits]);
+          const visibleDigits = shuffle(rng, Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !forbidden.has(digit)))
+            .slice(0, digitCount - blankIndices.size - 1);
+          const characters = Array(digitCount).fill("□");
+          characters[0] = String(commonFirst);
+          let visibleIndex = 0;
+          for (let index = 1; index < digitCount; index += 1) {
+            if (!blankIndices.has(index)) characters[index] = String(visibleDigits[visibleIndex++]);
+          }
+          const pattern = characters.join("");
+          const used = new Set(characters.filter(character => character !== "□").map(Number));
+          const unused = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => !used.has(digit)).sort((left, right) => right - left);
+          const maximumDigits = characters.map(character => character === "□" ? String(unused.shift()) : character);
+          const maximum = maximumDigits.join("");
+          if (!groups.some(group => group.pattern === pattern || group.maximum === maximum)) groups.push({ pattern, maximum });
+        }
+        if (groups.length !== 4) throw new Error("서로 다른 빈칸 최대 수 네 개를 만들지 못했습니다.");
+        const assignedNames = shuffle(rng, names);
+        const displayed = shuffle(rng, groups.map((group, index) => ({ ...group, name: assignedNames[index] })));
+        const ordered = displayed.slice().sort((left, right) => BigInt(left.maximum) > BigInt(right.maximum) ? -1 : 1);
+        const answer = ordered.map(item => item.name).join(", ");
+        const payload = { variant, level, digitCount, patterns: displayed.map(item => item.pattern), names: displayed.map(item => item.name), complexity: forcedBlankPrefix + 1 };
+        const evidence = source41Evidence("masked-largest-fill-order", payload, answer);
+        const prompt = `네 학생은 각 수에 이미 쓰인 숫자는 그대로 두고, □마다 아직 쓰지 않은 서로 다른 숫자를 넣어 만들 수 있는 가장 큰 ${digitCount}자리 자연수를 만들었습니다. 큰 수를 만든 학생부터 차례대로 이름을 쓰세요.<ul class="choice-list">${displayed.map(item => `<li><b>${item.name}</b> ${source41FormatMaskedInteger(item.pattern)}</li>`).join("")}</ul>${evidence}`;
+        const solution = `각 수의 왼쪽 빈칸부터 아직 쓰지 않은 가장 큰 숫자를 넣습니다. 완성한 가장 큰 수는 ${displayed.map(item => `${item.name} ${source41FormatInteger(item.maximum)}`).join(", ")}이고, 큰 수부터 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const length = [8, 10, 12][level];
+        const position = [2, 4, 6][level];
+        const boundary = int(rng, 3, 6);
+        const comparison = rng() < 0.5 ? makeUpperComparison(length, position, boundary) : makeLowerComparison(length, position, boundary);
+        const digits = validDigits(comparison.left, comparison.pattern, comparison.relation);
+        const answer = digits.join(", ");
+        const payload = { variant, level, ...comparison, complexity: length + position };
+        const evidence = source41Evidence("single-comparison-digit-list", payload, answer);
+        const prompt = `0부터 9까지 숫자 중에서 □에 들어갈 수 있는 숫자를 모두 쓰세요.<div class="equation expanded">${comparisonText(comparison)}</div>${evidence}`;
+        const solution = `왼쪽부터 같은 자리끼리 비교하면 □에 들어갈 수 있는 숫자는 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const length = [8, 10, 12][level];
+        const commonPrefix = source41RandomFixedDigits(rng, level + 1, true);
+        const changingDigits = pick(rng, [[8, 6, 4, 2], [9, 7, 5, 3]]);
+        const assignedLabels = shuffle(rng, symbolLabels);
+        const groups = changingDigits.map((changingDigit, index) => {
+          const tailLength = length - commonPrefix.length - 1;
+          const tail = source41RandomFixedDigits(rng, tailLength);
+          const hiddenCount = Math.min(tailLength, 2 + level);
+          const hiddenTailIndices = shuffle(rng, Array.from({ length: tailLength }, (_, tailIndex) => tailIndex)).slice(0, hiddenCount);
+          const maskedTail = tail.split("").map((digit, tailIndex) => hiddenTailIndices.includes(tailIndex) ? "□" : digit).join("");
+          const pattern = `${commonPrefix}${changingDigit}${maskedTail}`;
+          const candidates = source41MaskedCandidates(pattern);
+          return { label: assignedLabels[index], pattern, minimum: candidates[0], maximum: candidates[candidates.length - 1] };
+        });
+        const displayed = shuffle(rng, groups);
+        const answer = displayed.slice().sort((left, right) => BigInt(left.minimum) > BigInt(right.maximum) ? -1 : 1).map(item => item.label).join(", ");
+        const payload = { variant, level, patterns: displayed.map(item => item.pattern), labels: displayed.map(item => item.label), complexity: commonPrefix.length + 1 };
+        const evidence = source41Evidence("wildcard-number-order", payload, answer);
+        const prompt = `각 □에는 0부터 9까지 어느 숫자를 넣어도 됩니다. 수의 크기를 비교하여 큰 수부터 차례대로 기호를 쓰세요.<ol class="choice-list">${displayed.map(item => `<li><b>${item.label}</b> ${source41FormatMaskedInteger(item.pattern)}</li>`).join("")}</ol>${evidence}`;
+        const solution = `□에 어떤 숫자가 들어가도 먼저 달라지는 고정된 자리를 비교하면 큰 수부터 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const length = [8, 10, 12][level];
+        const positions = [[2, 3], [4, 5], [6, 7]][level];
+        const overlapSize = [3, 2, 1][level];
+        const low = int(rng, 2, 7 - overlapSize);
+        const high = low + overlapSize - 1;
+        const comparisons = [makeLowerComparison(length, positions[0], low), makeUpperComparison(length, positions[1], high)];
+        const common = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => comparisons.every(item => validDigits(item.left, item.pattern, item.relation).includes(digit)));
+        const answer = common.join(", ");
+        const marked = comparisons.map((item, index) => comparisonText({ ...item, pattern: item.pattern.replace("□", index ? "㉡" : "㉠") }));
+        const payload = { variant, level, comparisons, complexity: length + positions[1] };
+        const evidence = source41Evidence("two-symbol-common-digits", payload, answer);
+        const prompt = `0부터 9까지 숫자 중에서 ㉠과 ㉡에 공통으로 들어갈 수 있는 숫자를 모두 구하세요.<div class="equation expanded">${marked.join("<br>")}</div>${evidence}`;
+        const solution = `㉠에 가능한 숫자와 ㉡에 가능한 숫자를 각각 찾은 뒤 공통인 숫자만 고르면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const length = [8, 10, 12][level];
+        const squareIndex = [1, 2, 3][level];
+        const circleIndex = length - 3;
+        const prefix = source41RandomFixedDigits(rng, squareIndex, true);
+        const low = int(rng, 2, 5);
+        const high = int(rng, low + 1, Math.min(8, low + 2 + level));
+        const circleMaximum = int(rng, 2, 5 + level);
+        const a = `${prefix}${high}${source41RandomFixedDigits(rng, length - squareIndex - 1)}`.split("");
+        const b = `${prefix}□${source41RandomFixedDigits(rng, length - squareIndex - 1)}`.split("");
+        const c = `${prefix}${low}${source41RandomFixedDigits(rng, length - squareIndex - 1)}`.split("");
+        a[squareIndex + 1] = "8";
+        b[squareIndex + 1] = "7";
+        c[squareIndex + 1] = "5";
+        c[circleIndex] = String(circleMaximum);
+        c[circleIndex + 1] = "8";
+        const d = c.slice();
+        d[circleIndex] = "□";
+        d[circleIndex + 1] = "2";
+        const top = a.join("");
+        const squarePattern = b.join("");
+        const middle = c.join("");
+        const circlePattern = d.join("");
+        const validPairs = [];
+        for (let square = 0; square <= 9; square += 1) for (let circle = 0; circle <= 9; circle += 1) {
+          const squareValue = source41FillPattern(squarePattern, [square]);
+          const circleValue = source41FillPattern(circlePattern, [circle]);
+          if (BigInt(top) > BigInt(squareValue) && BigInt(squareValue) > BigInt(middle) && BigInt(middle) > BigInt(circleValue)) validPairs.push([square, circle]);
+        }
+        const answer = validPairs.length;
+        const payload = { variant, level, top, squarePattern, middle, circlePattern, complexity: length };
+        const evidence = source41Evidence("chained-two-symbol-count", payload, answer);
+        const prompt = `□와 ○에 알맞은 숫자를 써 넣는 방법은 모두 몇 가지인지 구하세요.<div class="equation expanded">${source41FormatInteger(top)} &gt; ${source41FormatMaskedInteger(squarePattern)} &gt; ${source41FormatInteger(middle)} &gt; ${source41FormatMaskedInteger(circlePattern, "○")}</div>${evidence}`;
+        const squareDigits = [...new Set(validPairs.map(pair => pair[0]))];
+        const circleDigits = [...new Set(validPairs.map(pair => pair[1]))];
+        const solution = `□에는 ${squareDigits.join(", ")}, ○에는 ${circleDigits.join(", ")}가 들어갈 수 있습니다. 서로 독립적으로 고르므로 ${squareDigits.length} × ${circleDigits.length} = ${answer}가지입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const length = [7, 8, 10][level];
+        const leadingUnit = source41Power(length - 1);
+        const step = source41Power(length - 4);
+        const base = 2n * leadingUnit + BigInt(source41RandomFixedDigits(rng, length - 4));
+        const offsets = shuffle(rng, Array.from({ length: 60 }, (_, index) => index + 5)).slice(0, 4).sort((left, right) => left - right);
+        const orderedValues = offsets.map(offset => base + BigInt(offset) * step);
+        const values = shuffle(rng, orderedValues);
+        const difference = source41Power(length - 3);
+        const representations = [
+          source41FormatInteger(values[0]),
+          `${source41FormatInteger(values[1] - difference)}보다 ${source41FormatInteger(difference)} 큰 수`,
+          source41ReadKorean(values[2]),
+          `만이 ${source41FormatInteger(values[3] / 10000n)}개이고 일이 ${source41FormatInteger(values[3] % 10000n)}개인 수`
+        ];
+        const answer = values.map((value, index) => ({ value, label: symbolLabels[index] }))
+          .sort((left, right) => left.value < right.value ? -1 : 1).map(item => item.label).join(", ");
+        const payload = { variant, level, values: values.map(String), complexity: length };
+        const evidence = source41Evidence("mixed-representation-asc", payload, answer);
+        const prompt = `수의 크기를 비교하여 작은 수부터 차례대로 기호를 쓰세요.<ol class="choice-list">${representations.map((text, index) => `<li><b>${symbolLabels[index]}</b> ${text}</li>`).join("")}</ol>${evidence}`;
+        const solution = `네 수를 숫자로 나타내면 ${values.map((value, index) => `${symbolLabels[index]} ${source41FormatInteger(value)}`).join(", ")}입니다. 작은 수부터 놓으면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const length = [8, 9, 10][level];
+      const leadingUnit = source41Power(length - 1);
+      const step = source41Power(length - 3);
+      const base = 2n * leadingUnit;
+      const offsets = shuffle(rng, Array.from({ length: 70 }, (_, index) => index + 4)).slice(0, 8);
+      const values = offsets.map(offset => base + BigInt(offset) * step + BigInt(source41RandomFixedDigits(rng, length - 3)));
+      const labels = ["(가)", "(나)", "(다)", "(라)", "(마)", "(바)", "(사)", "(아)"];
+      const rows = values.map((value, index) => ({
+        label: labels[index],
+        value,
+        shown: index % 2 === 0 ? source41ReadKorean(value) : source41FormatInteger(value)
+      }));
+      const answer = rows.slice().sort((left, right) => left.value < right.value ? -1 : 1).map(row => row.label).join(", ");
+      const payload = { variant, level, values: values.map(String), labels, complexity: length };
+      const evidence = source41Evidence("mixed-distance-table-order", payload, answer);
+      const prompt = `다음 표는 태양과 행성 사이의 거리를 나타낸 것입니다. 태양에서 가까운 순서대로 행성의 기호를 쓰세요.<table class="problem-table"><thead><tr><th>행성</th><th>태양과의 거리(km)</th></tr></thead><tbody>${rows.map(row => `<tr><th>${row.label}</th><td>${row.shown}</td></tr>`).join("")}</tbody></table>${evidence}`;
+      const solution = `모든 거리를 숫자로 바꾸어 작은 것부터 비교하면 ${answer}입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
