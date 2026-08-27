@@ -18,6 +18,14 @@ window.NM_UNITS['N-08'] = {
       zh:'把数字放进机器，它会按规则变化！看规则算出答案' } },
 
   discover:{
+    story:{
+      hook:{ ko:'별 모양 자리에 1부터 12까지 숫자를 놓아, 어느 줄을 더해도 똑같이 26이 되게 만들 수 있을까요?',
+        en:'Place the numbers 1 to 12 on a star so that every line adds up to the same 26 — can it be done?',
+        zh:'把1到12放在星形的位置上，让每条线相加都等于26，能做到吗？' },
+      history:{ ko:'할 수 있어요. 1부터 12까지 전부 더하면 78로 늘 정해져 있으니, 어디에 큰 수를 놓느냐가 전부예요. 수를 넣으면 규칙대로 바뀌는 수 기계처럼, 이런 퍼즐도 숫자보다 규칙이 먼저랍니다.',
+        en:'Yes. The total 1 through 12 is always 78, so the whole puzzle is about where the big numbers go. Like a number machine that transforms whatever you feed it, the rule comes first and the digits follow.',
+        zh:'可以。1到12的总和永远是78，所以关键全在于把大数放在哪里。就像放进数字就按规则变身的数字机器，谜题里也是规则先于数字。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 수 기계는 규칙대로 바꿔요!',en:'1) The machine changes numbers by a rule!',zh:'① 数字机器按规则变化！'},

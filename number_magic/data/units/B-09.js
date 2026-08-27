@@ -21,6 +21,14 @@ window.NM_UNITS['B-09'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'우유갑 바코드 아래 13자리 숫자, 맨 끝 한 자리는 왜 붙어 있을까요?',
+        en:'The 13 digits under a milk carton barcode — why is that last one there?',
+        zh:'牛奶盒条形码下面的13位数字，最后一位是干什么的？' },
+      history:{ ko:'앞 12자리 중 짝수 번째 수만 3을 곱해 전부 더한 뒤, 일의 자리를 10에서 빼면 13번째 수가 나와요. 계산기가 바코드를 잘못 읽으면 이 수가 맞지 않아 삑 소리가 나죠. 자릿수를 더해 3의 배수인지 알아보는 마법과 뿌리가 같은 방법이에요.',
+        en:'Multiply every even-position digit of the first 12 by 3, add them all, then subtract the ones place from 10 — that gives the 13th digit. If the scanner misreads, the number no longer matches and it beeps. Same root as checking multiples of 3 by adding digits.',
+        zh:'把前12位中偶数位的数字乘以3后全部相加，再用10减去个位，就得到第13位数。扫描仪读错时这个数对不上，就会报错。和用数位和判断3的倍数是同一个根。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 3단·6단은 한 가족', en:'1) 3× and 6× are a family', zh:'① 3的乘法和6的乘法是一家人'},

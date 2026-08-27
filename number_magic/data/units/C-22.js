@@ -21,6 +21,14 @@ window.NM_UNITS['C-22'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'옛 수학자의 묘비에 나이 대신 이런 글이 있었대요. 일생의 1/6은 소년, 1/12은 청년, 1/7이 더 지나 결혼, 5년 뒤 아들이 태어나 아버지 삶의 절반을 살고 떠났으며, 4년 뒤 그도 세상을 떠났다. 몇 살까지 살았을까요?',
+        en:'An old mathematician had no age on his tomb, only this: one sixth of his life was boyhood, a twelfth more youth, a seventh more before marriage, a son born five years later lived half his fathers years, and he died four years after his son. How long did he live?',
+        zh:'一位古代数学家的墓碑上没有年龄，只有这段话：一生的1/6是童年，再1/12是青年，又过1/7后结婚，5年后儿子出生，儿子活了父亲寿命的一半，儿子去世4年后他也走了。他活了多少岁？' },
+      history:{ ko:'84살이에요. 1/6 + 1/12 + 1/7 + 1/2를 더하려면 분모를 84로 맞춰야 해요 — 14/84 + 7/84 + 12/84 + 42/84 = 75/84. 남은 9/84가 5년 + 4년 = 9년이니 전체는 84년이죠. 분모만 맞추면 묘비도 풀립니다.',
+        en:'Eighty-four. To add 1/6 + 1/12 + 1/7 + 1/2 you line the denominators up at 84: 14/84 + 7/84 + 12/84 + 42/84 = 75/84. The leftover 9/84 equals 5 + 4 = 9 years, so the whole life was 84. Match the denominators and even a tombstone gives up its answer.',
+        zh:'84岁。要把1/6 + 1/12 + 1/7 + 1/2相加，得把分母统一成84：14/84 + 7/84 + 12/84 + 42/84 = 75/84。剩下的9/84正好是5+4=9年，所以一生是84年。只要对齐分母，连墓碑也能解开。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 크기가 다르면 못 더해요',en:'1) Different sizes can\'t be added',zh:'① 大小不同不能加'},

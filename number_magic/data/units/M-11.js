@@ -21,6 +21,14 @@ window.NM_UNITS['M-11'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'a와 −a 중에 어느 쪽이 더 큰 수일까요?',
+        en:'Which is larger, a or −a?',
+        zh:'a和−a，哪个更大？' },
+      history:{ ko:'정할 수 없어요. a가 −3이면 −a는 3이라 −a가 더 크죠. 문자는 숫자를 담는 상자라서, 안에 무엇이 들었는지 모르면 크기도 정해지지 않아요. 단항식을 계산할 때 숫자는 숫자끼리, 문자는 문자끼리 묶는 것도 같은 이유예요 — 상자는 상자끼리 세는 겁니다.',
+        en:'You cannot say. If a is −3 then −a is 3, and −a wins. A letter is a box holding a number, so with the box closed its size is undecided. That is also why monomials group numbers with numbers and letters with letters — boxes get counted with boxes.',
+        zh:'无法确定。若a是−3，则−a是3，−a更大。字母是装数字的盒子，不知道里面装了什么，大小就定不下来。单项式计算时数字归数字、字母归字母，也是同一个道理——盒子要和盒子一起数。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 계수는 계수끼리, 문자는 문자끼리',en:'1) Coefficients with coefficients, letters with letters',zh:'① 系数归系数，字母归字母'},

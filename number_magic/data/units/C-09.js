@@ -21,6 +21,14 @@ window.NM_UNITS['C-09'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'62자리나 되는 수의 50제곱근을, 그 수를 보지도 않고 17이라고 맞힌 사람이 있었어요. 어떻게 알았을까요?',
+        en:'Someone named 17 as the 50th root of a 62-digit number without ever seeing the number. How?',
+        zh:'有人没看那个62位的数，就说出它的50次方根是17。怎么知道的？' },
+      history:{ ko:'50번 곱해서 62자리가 되는 자연수는 17밖에 없거든요. 16을 50번 곱하면 61자리, 18을 50번 곱하면 63자리라 낄 자리가 없어요. 답을 구하지 않고 몇 자리인지만 따져도 답이 하나로 좁혀지는 거예요.',
+        en:'Because 17 is the only whole number whose 50th power has 62 digits. Raise 16 to the 50th and you get 61 digits; raise 18 and you get 63 — nothing else fits. Counting digits alone, without computing anything, narrowed it to a single answer.',
+        zh:'因为50次方后是62位的自然数只有17。16的50次方是61位，18的50次方是63位，中间容不下别的数。什么都不算，只数位数，答案就被逼成了唯一一个。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 왜 자릿수를 예측할까?',en:'1) Why predict digits?',zh:'① 为什么预测位数？'},
