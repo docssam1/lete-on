@@ -61,6 +61,20 @@ function distances(vertices, metric) {
   return result.sort((a, b) => a - b);
 }
 
+export function squareTypeKey(vertices, metric = squareDistanceSquared) {
+  if (!Array.isArray(vertices) || vertices.length !== 4) return null;
+  const d = distances(vertices, metric);
+  if (d[0] === 0 || d[0] !== d[3] || d[4] !== d[5] || d[4] !== 2 * d[0]) return null;
+  return `square:${d[0]}`;
+}
+
+export function equilateralTriangleTypeKey(vertices, metric) {
+  if (!Array.isArray(vertices) || vertices.length !== 3) return null;
+  const d = distances(vertices, metric);
+  if (d[0] === 0 || d[0] !== d[1] || d[1] !== d[2]) return null;
+  return `equilateral:${d[0]}`;
+}
+
 function polygonAreaTwice(vertices) {
   const [a, b, c] = vertices;
   return Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]));
@@ -82,11 +96,9 @@ export function enumerateTriangles(points, metric = squareDistanceSquared) {
 export function enumerateSquares(points, metric = squareDistanceSquared) {
   const found = [];
   combinations(points, 4, (vertices) => {
-    const d = distances(vertices, metric);
-    // A non-degenerate square has four equal sides and two equal diagonals,
-    // with diagonal squared exactly twice side squared.
-    if (d[0] === 0 || d[0] !== d[3] || d[4] !== d[5] || d[4] !== 2 * d[0]) return;
-    found.push({ vertices, sideSquared: d[0], typeKey: `square:${d[0]}` });
+    const typeKey = squareTypeKey(vertices, metric);
+    if (!typeKey) return;
+    found.push({ vertices, sideSquared: Number(typeKey.split(":")[1]), typeKey });
   });
   return found;
 }
@@ -94,9 +106,9 @@ export function enumerateSquares(points, metric = squareDistanceSquared) {
 export function enumerateEquilateralTriangles(points, metric) {
   const found = [];
   combinations(points, 3, (vertices) => {
-    const d = distances(vertices, metric);
-    if (d[0] === 0 || d[0] !== d[1] || d[1] !== d[2]) return;
-    found.push({ vertices, sideSquared: d[0], typeKey: `equilateral:${d[0]}` });
+    const typeKey = equilateralTriangleTypeKey(vertices, metric);
+    if (!typeKey) return;
+    found.push({ vertices, sideSquared: Number(typeKey.split(":")[1]), typeKey });
   });
   return found;
 }

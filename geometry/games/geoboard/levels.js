@@ -32,6 +32,8 @@
    Every user-facing string lives in i18n.js. This file only carries keys.
    ========================================================================= */
 
+import { squareBoardSummary, triangularBoardSummary } from "./lattice-enumerator.js";
+
 export const GAME_ID = "geoboard";
 
 // Progress record name inside the shared `gfield-profile` object. This game never
@@ -274,6 +276,35 @@ function makeProblem(level, kind, index, vertices) {
   };
 }
 
+function makeCountProblem(level, kind, index, boardSize, questionMode, value, choices) {
+  const summary = kind === "square-count" ? squareBoardSummary(boardSize) : triangularBoardSummary(boardSize);
+  const availableTypeCount = kind === "square-count"
+    ? summary.squares.typeCount
+    : summary.equilateralTriangles.typeCount;
+  const availablePlacementCount = kind === "square-count"
+    ? summary.squares.placementCount
+    : summary.equilateralTriangles.placementCount;
+  return {
+    id: `geoboard-l${level}-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level,
+    kind,
+    boardType: kind === "square-count" ? "square" : "triangular",
+    grid: { cols: boardSize, rows: boardSize },
+    boardSize,
+    availableTypeCount,
+    availablePlacementCount,
+    questionMode,
+    ...(questionMode === "types" ? { targetKindCount: value } : { answerValue: value, answerChoices: [...choices] }),
+    shapeNameKey: kind === "square-count" ? "shapeSquare" : "shapeEquilateral",
+    validation: {
+      goal: questionMode === "types" ? "collect-distinct-congruence-types" : "choose-total-placement-count",
+      translationRotationReflectionAreSame: true,
+      expectedValue: value
+    }
+  };
+}
+
 /**
  * LEVEL 1 — 점 두 개를 이어 선분과 열린 모양 만들기.
  * Segments first, then two-edge bends, then three-edge open paths. Every entry is
@@ -319,21 +350,38 @@ const level2Specs = [
   [[1, 0], [4, 1], [3, 4], [1, 3], [0, 1]]  // irregular pentagon
 ];
 
+// Each session grows from a small target to every type the current board admits.
+// Different positions, turns, and reflections of the same side length are one
+// congruence type, so the target is never inflated by moving a shape around.
+const level3Specs = [
+  [3, "types", 1], [3, "types", 3], [3, "placements", 6, [5, 8, 6]],
+  [4, "types", 3], [4, "types", 5], [4, "placements", 20, [24, 18, 20]],
+  [5, "types", 4], [5, "types", 6], [5, "types", 8], [5, "placements", 50, [45, 50, 55]]
+];
+
+const level4Specs = [
+  [3, "types", 1], [3, "types", 2], [3, "placements", 5, [6, 4, 5]],
+  [4, "types", 2], [4, "types", 4], [4, "placements", 15, [12, 15, 18]],
+  [5, "types", 2], [5, "types", 4], [5, "types", 6], [5, "placements", 35, [40, 30, 35]]
+];
+
 /* ------------------------------------------------------------------ level table */
 
 export const levelMeta = [
   { id: 1, kind: "open", titleKey: "level1Title", descKey: "level1Desc", ready: true, problemCount: 10 },
   { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
-  // Levels 3-5 are source/design-backed but remain locked until their independent
-  // enumerators and browser interactions are implemented and verified.
-  { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: false },
-  { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: false },
+  { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10 },
+  { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10 },
+  // Level 5 stays locked until its source figure pools and hidden-shape answers
+  // have been independently enumerated.
   { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: false }
 ];
 
 const pools = {
   1: level1Specs.map((vertices, index) => makeProblem(1, "open", index, vertices)),
-  2: level2Specs.map((vertices, index) => makeProblem(2, "closed", index, vertices))
+  2: level2Specs.map((vertices, index) => makeProblem(2, "closed", index, vertices)),
+  3: level3Specs.map(([size, mode, value, choices], index) => makeCountProblem(3, "square-count", index, size, mode, value, choices)),
+  4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices))
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -399,6 +447,11 @@ export function validateLevels() {
       seenIds.add(problem.id);
       assert(problem.level === level.id, `${label} claims level ${problem.level}.`);
       assert(problem.kind === level.kind, `${label} is a ${problem.kind} figure on a ${level.kind} level.`);
+      if (problem.kind === "square-count" || problem.kind === "triangle-count") {
+        validateCountProblem(problem);
+        return;
+      }
+
       assert(problem.grid.cols === GRID.cols && problem.grid.rows === GRID.rows, `${label} uses an unexpected board size.`);
 
       validateFigure(problem);
@@ -413,9 +466,37 @@ export function validateLevels() {
       shapes.set(shape, label);
     });
 
-    assert(canonical.size === level.problemCount, `level ${level.id} pool is not ${level.problemCount} canonically distinct problems.`);
+    if (level.kind === "open" || level.kind === "closed") {
+      assert(canonical.size === level.problemCount, `level ${level.id} pool is not ${level.problemCount} canonically distinct problems.`);
+    }
   });
   return true;
+}
+
+function validateCountProblem(problem) {
+  const label = problem.id;
+  assert(problem.boardSize >= 3 && problem.boardSize <= 5, `${label} board size is outside the reviewed mobile range.`);
+  assert(problem.grid.cols === problem.boardSize && problem.grid.rows === problem.boardSize, `${label} grid and board size disagree.`);
+  if (problem.kind === "square-count") {
+    const summary = squareBoardSummary(problem.boardSize);
+    assert(problem.boardType === "square", `${label} must use a square dot board.`);
+    assert(problem.availableTypeCount === summary.squares.typeCount, `${label} square type total disagrees with enumeration.`);
+    assert(problem.availablePlacementCount === summary.squares.placementCount, `${label} square placement total disagrees with enumeration.`);
+  } else {
+    const summary = triangularBoardSummary(problem.boardSize);
+    assert(problem.boardType === "triangular", `${label} must use a triangular dot board.`);
+    assert(problem.availableTypeCount === summary.equilateralTriangles.typeCount, `${label} equilateral type total disagrees with enumeration.`);
+    assert(problem.availablePlacementCount === summary.equilateralTriangles.placementCount, `${label} equilateral placement total disagrees with enumeration.`);
+  }
+  if (problem.questionMode === "types") {
+    assert(Number.isInteger(problem.targetKindCount) && problem.targetKindCount >= 1, `${label} needs a positive target kind count.`);
+    assert(problem.targetKindCount <= problem.availableTypeCount, `${label} asks for more types than the board contains.`);
+  } else {
+    assert(problem.questionMode === "placements", `${label} has an unknown question mode.`);
+    assert(problem.answerValue === problem.availablePlacementCount, `${label} placement answer disagrees with enumeration.`);
+    assert(Array.isArray(problem.answerChoices) && problem.answerChoices.length === 3, `${label} needs three number choices.`);
+    assert(new Set(problem.answerChoices).size === 3 && problem.answerChoices.includes(problem.answerValue), `${label} choices must be distinct and include the answer.`);
+  }
 }
 
 /** Structural rules that hold for every target on every level. */

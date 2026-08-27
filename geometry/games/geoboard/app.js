@@ -2,10 +2,10 @@
    점판 공작소 (Geoboard Studio) — game engine.
 
    House rules encoded here (owner's handoff + docs/12_*.md section 5):
-   - ONE kind of answer action on the whole game: TAP A PEG. There is no submit
-     button, no drag, no rotate and no undo-by-a-different-gesture, because any of
-     those would be a second kind of answer on the same screen. "고무줄 풀기" is a
-     tool button beside 힌트, exactly like Mirror Manor's 다시.
+   - Shape problems use one answer action: TAP A PEG. Placement-count problems
+     use number choices instead, and never mix both controls on the same screen.
+     There is no submit, drag or rotate action. "고무줄 풀기" is a tool button
+     beside 힌트, exactly like Mirror Manor's 다시.
    - Cubi speaks in three places only: the first-visit tutorial, a hint the child
      opened, and level completion. Every ordinary tap gets a short blip instead.
    - A wrong action never plays praise audio and never points at the answer. It
@@ -24,8 +24,14 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-5";
-import { messages, text } from "./i18n.js?v=geoboard-5";
+} from "./levels.js?v=geoboard-6";
+import { messages, text } from "./i18n.js?v=geoboard-6";
+import {
+  squareBoardPoints, triangularBoardPoints,
+  squareDistanceSquared, triangularDistanceSquared,
+  squareTypeKey, equilateralTriangleTypeKey,
+  enumerateSquares, enumerateEquilateralTriangles
+} from "./lattice-enumerator.js?v=1";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -45,8 +51,8 @@ const forceTutorial = params.get("tutorial") === "1";
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
 
-// Levels 3-5 exist in the table but ship no problems yet, so a ?level=4 link (or an
-// old saved record) falls back to the highest level that is actually ready.
+// A locked level link (currently level 5) or a stale saved record falls back to
+// the highest level that is actually ready.
 const highestReady = readyLevels[readyLevels.length - 1].id;
 const askedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const startLevel = levels.find((level) => level.id === askedLevel)?.ready ? askedLevel : Math.min(Math.max(1, askedLevel), highestReady);
@@ -56,6 +62,7 @@ const state = {
   problem: 0,
   queue: [],
   path: [],        // pegs the child has tapped, in order
+  foundTypes: [],  // congruence keys collected in levels 3-4
   closed: false,   // set when the child taps the first peg again (level 2 only)
   locked: false,   // true while a wrong figure is flashing before it clears
   solved: false,
@@ -78,6 +85,8 @@ const ui = {
 const t = (key, vars) => text(state.lang, key, vars);
 const levelData = () => levels.find((level) => level.id === state.level);
 const problem = () => state.queue[state.problem];
+const isCountProblem = (candidate = problem()) => candidate?.kind === "square-count" || candidate?.kind === "triangle-count";
+const isPlacementQuestion = (candidate = problem()) => isCountProblem(candidate) && candidate.questionMode === "placements";
 
 /* ------------------------------------------------------------------ session */
 
@@ -146,6 +155,24 @@ const stepY = (grid) => 100 / grid.rows;
 const pegX = (x, grid) => stepX(grid) * (x + .5);
 const pegY = (y, grid) => stepY(grid) * (y + .5);
 
+function boardPoints(candidate) {
+  if (candidate.boardType === "triangular") return triangularBoardPoints(candidate.boardSize);
+  if (candidate.boardType === "square") return squareBoardPoints(candidate.boardSize);
+  return squareBoardPoints(candidate.grid.cols);
+}
+
+function projectPoint(point, candidate) {
+  if (candidate.boardType !== "triangular") return [pegX(point[0], candidate.grid), pegY(point[1], candidate.grid)];
+  const spanX = Math.max(1, candidate.boardSize - 1);
+  const spanY = Math.max(1, spanX * Math.sqrt(3) / 2);
+  const scale = Math.min(74 / spanX, 74 / spanY);
+  const width = spanX * scale;
+  const height = spanY * scale;
+  const x = point[0] + point[1] / 2;
+  const y = point[1] * Math.sqrt(3) / 2;
+  return [(100 - width) / 2 + x * scale, (100 - height) / 2 + y * scale];
+}
+
 // Finger target radius in viewBox units. The hit circle is 19% of the board's
 // width, so at 844x390 (board 218px, measured in a headless browser) it is a 41.5px
 // target and at 740x360 it is 38.3px — both clear of the 30px floor the house rules
@@ -163,29 +190,32 @@ function svgNode(name, attributes) {
 /* ----------------------------------------------------------------- drawing */
 
 /** Draw one figure (edges + corner dots) into a layer. Shared by board and model. */
-function drawFigure(layer, points, grid, options) {
+function drawFigure(layer, points, candidate, options) {
   const closed = isClosed(points);
   const settings = options || {};
   if (closed && points.length >= 4) {
     layer.append(svgNode("polygon", {
       class: `band-fill${settings.solved ? " solved" : ""}`,
-      points: points.slice(0, -1).map((point) => `${pegX(point[0], grid)},${pegY(point[1], grid)}`).join(" ")
+      points: points.slice(0, -1).map((point) => projectPoint(point, candidate).join(",")).join(" ")
     }));
   }
   for (let index = 0; index + 1 < points.length; index += 1) {
     const a = points[index];
     const b = points[index + 1];
+    const [x1, y1] = projectPoint(a, candidate);
+    const [x2, y2] = projectPoint(b, candidate);
     layer.append(svgNode("line", {
       class: `band${settings.solved ? " solved" : ""}${settings.badEdge === index ? " bad" : ""}`,
       "data-edge": index,
-      x1: pegX(a[0], grid), y1: pegY(a[1], grid), x2: pegX(b[0], grid), y2: pegY(b[1], grid)
+      x1, y1, x2, y2
     }));
   }
   points.forEach((point, index) => {
     if (closed && index === points.length - 1) return;
+    const [cx, cy] = projectPoint(point, candidate);
     layer.append(svgNode("circle", {
       class: `band-node${index === 0 ? " start" : ""}${settings.solved ? " solved" : ""}`,
-      cx: pegX(point[0], grid), cy: pegY(point[1], grid), r: PEG_RADIUS * 1.5
+      cx, cy, r: PEG_RADIUS * 1.5
     }));
   });
 }
@@ -196,14 +226,13 @@ function renderBoard() {
   ui.board.setAttribute("aria-label", `${t("boardAria")} ${grid.cols} x ${grid.rows}`);
 
   ui.pegs.replaceChildren();
-  for (let y = 0; y < grid.rows; y += 1) {
-    for (let x = 0; x < grid.cols; x += 1) {
-      ui.pegs.append(svgNode("circle", { class: "peg", cx: pegX(x, grid), cy: pegY(y, grid), r: PEG_RADIUS }));
-    }
-  }
+  boardPoints(p).forEach((point) => {
+    const [cx, cy] = projectPoint(point, p);
+    ui.pegs.append(svgNode("circle", { class: "peg", cx, cy, r: PEG_RADIUS }));
+  });
 
   ui.bands.replaceChildren();
-  drawFigure(ui.bands, currentPoints(), grid, { solved: state.solved });
+  drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
 
   renderHits();
 }
@@ -227,25 +256,26 @@ function renderHits() {
     ? [document.activeElement.dataset.x, document.activeElement.dataset.y]
     : null;
   ui.hits.replaceChildren();
-  for (let y = 0; y < grid.rows; y += 1) {
-    for (let x = 0; x < grid.cols; x += 1) {
+  if (isPlacementQuestion(p)) return;
+  boardPoints(p).forEach(([x, y]) => {
       const used = state.path.some((point) => samePoint(point, [x, y]));
       const isStart = state.path.length > 0 && samePoint(state.path[0], [x, y]);
+      const [cx, cy] = projectPoint([x, y], p);
       const node = svgNode("circle", {
         class: "peg-hit",
-        cx: pegX(x, grid), cy: pegY(y, grid), r: HIT_RADIUS,
+        cx, cy, r: p.boardType === "triangular" ? 8.6 : HIT_RADIUS,
         "data-x": x, "data-y": y,
         role: "button", tabindex: state.solved ? -1 : 0,
         "aria-label": `${t("pegAria", { row: y + 1, col: x + 1 })} ${isStart ? t("pegStart") : used ? t("pegUsed") : t("pegFree")}`
       });
       ui.hits.append(node);
-    }
-  }
+  });
   if (focused) ui.hits.querySelector(`.peg-hit[data-x="${focused[0]}"][data-y="${focused[1]}"]`)?.focus?.();
 }
 
 function renderModel() {
   const p = problem();
+  if (isCountProblem(p)) return renderFoundGallery(p);
   const grid = p.grid;
   ui.model.replaceChildren();
   ui.model.setAttribute("aria-label", `${t("modelAria")} — ${t(p.shapeNameKey)}`);
@@ -256,9 +286,83 @@ function renderModel() {
     }
   }
   const layer = svgNode("g", { class: "model-band" });
-  drawFigure(layer, targetPoints(p), grid, {});
+  drawFigure(layer, targetPoints(p), p, {});
   ui.model.append(layer);
   ui.modelShape.textContent = t(p.shapeNameKey);
+}
+
+function countRepresentatives(candidate) {
+  const placements = candidate.kind === "square-count"
+    ? enumerateSquares(squareBoardPoints(candidate.boardSize), squareDistanceSquared)
+    : enumerateEquilateralTriangles(triangularBoardPoints(candidate.boardSize), triangularDistanceSquared);
+  const byType = new Map();
+  placements.forEach((placement) => {
+    if (!byType.has(placement.typeKey)) byType.set(placement.typeKey, placement.vertices);
+  });
+  return byType;
+}
+
+function miniaturePoint(point, boardType) {
+  if (boardType === "triangular") return [point[0] + point[1] / 2, point[1] * Math.sqrt(3) / 2];
+  return [...point];
+}
+
+function gallerySlot(total, slot) {
+  if (total === 1) return { x: 25, y: 25, cell: 50 };
+  if (total === 2) return { x: 7 + slot * 46, y: 30, cell: 40 };
+  if (total === 3) return { x: 4 + slot * 31, y: 35, cell: 29 };
+  const rows = Math.ceil(total / 3);
+  const startY = rows === 2 ? 19 : 5;
+  return { x: 4 + (slot % 3) * 31, y: startY + Math.floor(slot / 3) * 31, cell: 29 };
+}
+
+function drawMiniature(layer, vertices, boardType, slot, total) {
+  const { x: originX, y: originY, cell } = gallerySlot(total, slot);
+  const points = vertices.map((point) => miniaturePoint(point, boardType));
+  const minX = Math.min(...points.map(([x]) => x));
+  const maxX = Math.max(...points.map(([x]) => x));
+  const minY = Math.min(...points.map(([, y]) => y));
+  const maxY = Math.max(...points.map(([, y]) => y));
+  const shapeSize = cell - 9;
+  const scale = Math.min(shapeSize / Math.max(1, maxX - minX), shapeSize / Math.max(1, maxY - minY));
+  const width = (maxX - minX) * scale;
+  const height = (maxY - minY) * scale;
+  const mapped = points.map(([x, y]) => [
+    originX + (cell - width) / 2 + (x - minX) * scale,
+    originY + (cell - height) / 2 + (y - minY) * scale
+  ]);
+  layer.append(svgNode("rect", { class: "found-slot", x: originX, y: originY, width: cell, height: cell, rx: 4 }));
+  layer.append(svgNode("polygon", {
+    class: "found-shape",
+    points: mapped.map((point) => point.join(",")).join(" ")
+  }));
+}
+
+function renderFoundGallery(candidate) {
+  ui.model.replaceChildren();
+  ui.model.setAttribute("aria-label", isPlacementQuestion(candidate)
+    ? t("countQuestionAria")
+    : t("foundGalleryAria", { done: state.foundTypes.length, total: candidate.targetKindCount }));
+  ui.model.append(svgNode("rect", { class: "model-face", x: 0, y: 0, width: 100, height: 100, rx: 4 }));
+  if (isPlacementQuestion(candidate)) {
+    const mark = svgNode("text", { class: "count-question", x: 50, y: 60, "text-anchor": "middle" });
+    mark.textContent = "?";
+    ui.model.append(mark);
+    ui.modelShape.textContent = t("chooseCount");
+    return;
+  }
+  const layer = svgNode("g", { class: "found-gallery" });
+  const representatives = countRepresentatives(candidate);
+  state.foundTypes.forEach((typeKey, index) => drawMiniature(layer, representatives.get(typeKey), candidate.boardType, index, candidate.targetKindCount));
+  for (let index = state.foundTypes.length; index < candidate.targetKindCount; index += 1) {
+    const { x, y, cell } = gallerySlot(candidate.targetKindCount, index);
+    layer.append(svgNode("rect", { class: "found-slot empty", x, y, width: cell, height: cell, rx: 4 }));
+    const question = svgNode("text", { class: "found-question", x: x + cell / 2, y: y + cell / 2 + 5, "text-anchor": "middle" });
+    question.textContent = "?";
+    layer.append(question);
+  }
+  ui.model.append(layer);
+  ui.modelShape.textContent = t("foundProgress", { done: state.foundTypes.length, total: candidate.targetKindCount });
 }
 
 /* ------------------------------------------------------- rule enforcement */
@@ -336,16 +440,19 @@ function reportWrong(messageKey, marks) {
   if (flagged.peg) {
     const [x, y] = flagged.peg;
     const p = problem();
-    const marker = svgNode("circle", { class: "peg-flag", cx: pegX(x, p.grid), cy: pegY(y, p.grid), r: PEG_RADIUS * 2.1 });
+    const [cx, cy] = projectPoint([x, y], p);
+    const marker = svgNode("circle", { class: "peg-flag", cx, cy, r: PEG_RADIUS * 2.1 });
     ui.bands.append(marker);
     setTimeout(() => marker.remove(), 620);
   }
   if (flagged.ghost) {
     const p = problem();
     const [a, b] = flagged.ghost;
+    const [x1, y1] = projectPoint(a, p);
+    const [x2, y2] = projectPoint(b, p);
     const ghost = svgNode("line", {
       class: "band ghost bad",
-      x1: pegX(a[0], p.grid), y1: pegY(a[1], p.grid), x2: pegX(b[0], p.grid), y2: pegY(b[1], p.grid)
+      x1, y1, x2, y2
     });
     ui.bands.append(ghost);
     setTimeout(() => ghost.remove(), 620);
@@ -357,9 +464,10 @@ function reportWrong(messageKey, marks) {
 function onPegTap(x, y) {
   if (state.solved || state.locked) return;
   const p = problem();
+  if (isPlacementQuestion(p)) return;
   const target = [x, y];
   const path = state.path;
-  const wanted = p.vertices.length;
+  const wanted = isCountProblem(p) ? (p.kind === "square-count" ? 4 : 3) : p.vertices.length;
 
   if (path.length === 0) {
     path.push(target);
@@ -379,6 +487,9 @@ function onPegTap(x, y) {
     // refused there instead of being silently accepted as a different figure.
     if (p.kind === "open") return reportWrong("wrongOpenOnly", { peg: target, ghost: [last, first] });
     if (path.length < 3) return reportWrong("wrongNeedThree", { peg: target });
+    if (isCountProblem(p) && path.length !== wanted) {
+      return reportWrong("wrongCornerCount", { peg: target, ghost: [last, first] });
+    }
     if (currentEdges().some(([a, b]) => edgeId(a, b) === edgeId(last, first))) {
       return reportWrong("wrongDupEdge", { peg: target, ghost: [last, first] });
     }
@@ -406,7 +517,7 @@ function onPegTap(x, y) {
   // A closed figure cannot grow past its model's corner count; the only tap left is
   // the first peg. This states the RULE, not the answer — the model already shows
   // how many corners the shape has.
-  if (p.kind === "closed" && path.length >= wanted) return reportWrong("wrongCloseNow", { peg: target });
+  if (p.kind !== "open" && path.length >= wanted) return reportWrong("wrongCloseNow", { peg: target });
 
   path.push(target);
   playTone("tap");
@@ -418,6 +529,7 @@ function onPegTap(x, y) {
 
 function judge() {
   const p = problem();
+  if (isCountProblem(p)) return judgeCountProblem(p);
   const points = currentPoints();
   if (acceptsAnswer(p, points)) return solveProblem();
 
@@ -434,6 +546,51 @@ function judge() {
   }, 900);
 }
 
+function rejectCountShape(messageKey) {
+  state.wrong += 1;
+  state.locked = true;
+  playTone("wrong");
+  toast(t(messageKey));
+  ui.bands.querySelectorAll(".band:not(.solved), .band-fill:not(.solved)").forEach((node) => node.classList.add("bad"));
+  setTimeout(() => {
+    state.locked = false;
+    state.path = [];
+    state.closed = false;
+    refresh();
+  }, 850);
+}
+
+function judgeCountProblem(candidate) {
+  const vertices = state.path.map((point) => [...point]);
+  const typeKey = candidate.kind === "square-count"
+    ? squareTypeKey(vertices, squareDistanceSquared)
+    : equilateralTriangleTypeKey(vertices, triangularDistanceSquared);
+
+  if (!typeKey) return rejectCountShape(candidate.kind === "square-count" ? "wrongSquare" : "wrongEquilateral");
+  if (state.foundTypes.includes(typeKey)) return rejectCountShape("duplicateKind");
+
+  state.foundTypes.push(typeKey);
+  state.path = [];
+  state.closed = false;
+  renderModel();
+
+  if (state.foundTypes.length >= candidate.targetKindCount) return solveProblem();
+  playTone("close");
+  toast(t("newKindFound", { done: state.foundTypes.length, total: candidate.targetKindCount }));
+  refresh();
+}
+
+function judgeCountChoice(value, button) {
+  const candidate = problem();
+  if (!isPlacementQuestion(candidate) || state.solved || state.locked) return;
+  if (value === candidate.answerValue) return solveProblem();
+  state.wrong += 1;
+  playTone("wrong");
+  toast(t("wrongCount"));
+  button.classList.add("wrong");
+  setTimeout(() => button.classList.remove("wrong"), 650);
+}
+
 function clearBand() {
   state.path = [];
   state.closed = false;
@@ -445,6 +602,7 @@ function solveProblem() {
   rewardProblem();
   playTone("success");
   showSuccess();
+  renderModel();
   refresh();
 }
 
@@ -482,15 +640,46 @@ function renderStatus() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  ui.prompt.textContent = t(p.kind === "open" ? "promptOpen" : "promptClosed");
-  ui.answerPrompt.textContent = t(p.kind === "open" ? "progressOpen" : "progressClosed", {
-    done: state.path.length, total: p.vertices.length
-  });
+  $("#modelLabel").textContent = t(isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
+  $("#buildLabel").textContent = t(p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
+  if (isCountProblem(p)) {
+    if (isPlacementQuestion(p)) {
+      ui.prompt.textContent = t(p.kind === "square-count" ? "promptSquareCount" : "promptEquilateralCount", { size: p.boardSize });
+      ui.answerPrompt.textContent = t("chooseCountPrompt");
+    } else {
+      ui.prompt.textContent = t(p.kind === "square-count" ? "promptSquareKinds" : "promptEquilateralKinds", {
+        count: p.targetKindCount,
+        size: p.boardSize
+      });
+      ui.answerPrompt.textContent = t("foundProgress", { done: state.foundTypes.length, total: p.targetKindCount });
+    }
+  } else {
+    ui.prompt.textContent = t(p.kind === "open" ? "promptOpen" : "promptClosed");
+    ui.answerPrompt.textContent = t(p.kind === "open" ? "progressOpen" : "progressClosed", {
+      done: state.path.length, total: p.vertices.length
+    });
+  }
 
   // Live corner and side counts, straight from the exported pure helpers. They are
   // the vocabulary level 3 will ask about, so the child meets the words early.
   ui.stats.replaceChildren();
-  [["statVertices", vertexCount(points)], ["statEdges", edgeCount(points)]].forEach(([key, count]) => {
+  if (isPlacementQuestion(p)) {
+    p.answerChoices.forEach((value) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "count-choice";
+      button.dataset.value = value;
+      button.textContent = value;
+      button.disabled = state.solved;
+      ui.stats.append(button);
+    });
+    ui.next.hidden = !state.solved;
+    return;
+  }
+  const stats = isCountProblem(p)
+    ? [["statBoardSize", p.boardSize], ["statKinds", state.foundTypes.length]]
+    : [["statVertices", vertexCount(points)], ["statEdges", edgeCount(points)]];
+  stats.forEach(([key, count]) => {
     const chip = document.createElement("b");
     chip.textContent = t(key, { count });
     ui.stats.append(chip);
@@ -507,6 +696,7 @@ function refresh() {
 
 function resetProblem() {
   state.path = [];
+  state.foundTypes = [];
   state.closed = false;
   state.locked = false;
   state.solved = false;
@@ -528,11 +718,13 @@ function nextProblem() {
 
 function showComplete() {
   $("#completeTitle").textContent = t("levelComplete", { level: state.level });
-  $("#completeText").textContent = t("completeText");
+  $("#completeText").textContent = t(isPlacementQuestion()
+    ? "completeCountText"
+    : isCountProblem() ? "completeKindsText" : "completeText");
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
   $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
   ui.complete.hidden = false;
-  cubiSays(t("guideComplete"));
+  cubiSays(t(isCountProblem() ? "guideExploreComplete" : "guideComplete"));
 }
 
 function renderLevelList() {
@@ -682,7 +874,13 @@ ui.hits.addEventListener("keydown", (event) => {
 
 $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
-  cubiSays(t(problem().kind === "open" ? "hintOpen" : "hintClosed"));
+  const kind = problem().kind;
+  const hintKey = isPlacementQuestion() ? "hintCountAll"
+    : kind === "open" ? "hintOpen"
+    : kind === "square-count" ? "hintSquare"
+      : kind === "triangle-count" ? "hintEquilateral"
+        : "hintClosed";
+  cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", () => {
   if (state.solved) return;
@@ -690,6 +888,11 @@ $("#retryButton").addEventListener("click", () => {
   clearBand();
 });
 ui.next.addEventListener("click", nextProblem);
+ui.stats.addEventListener("click", (event) => {
+  const button = event.target.closest(".count-choice");
+  if (!button) return;
+  judgeCountChoice(Number(button.dataset.value), button);
+});
 $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });

@@ -110,9 +110,9 @@
       "path": "geometry/games/geoboard/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "388ad34a011d31971ec3f872519e53c6192d6c0bb17f44b3512aabe39902a51b",
-      "size": 23507,
-      "mtime_ns": 1787763705331258300
+      "sha256": "a7e58518aeb8b3e4636c3f7115871a52b0f4988d983cf5e426cc4769c5865f34",
+      "size": 28158,
+      "mtime_ns": 1787795413645734500
     },
     {
       "id": "geometry-geoboard-selftest",
@@ -120,9 +120,9 @@
       "path": "geometry/games/geoboard/geoboard.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "dc71c7da3ede1fac278e490b6ca07b14bff01b41503849432d7b312580c7d38d",
-      "size": 5065,
-      "mtime_ns": 1787764270308000000
+      "sha256": "3dfcfe7aebcb8ed74ed345aeb844a10fe7e70c3c89b899c6eca9ac33ddd80d93",
+      "size": 6238,
+      "mtime_ns": 1787795493233246100
     },
     {
       "id": "cmath-nc1-2-shape-start",
@@ -230,9 +230,9 @@
       "path": "geometry/games/geoboard/lattice-enumerator.js",
       "kind": "code",
       "sensitivity": "public",
-      "sha256": "cdf4b0dcd090135fec7dc7efc9c343c93e61a2297fcce8cc70d0eb27ac139136",
-      "size": 5467,
-      "mtime_ns": 1787764266052873500
+      "sha256": "ff810b4d1920b94da9ee3e950ad63d09a8d37c906ee3ef6b0c30b8b834f1be28",
+      "size": 5976,
+      "mtime_ns": 1787794756961443500
     }
   ],
   "records": [
@@ -4112,7 +4112,7 @@
         "ray",
         "single-answer"
       ],
-      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 열린 선 조작 연습, 2단계는 세 도형군의 위치·방향 1:1 재현으로 연결한다. 현재 공개 범위는 25문제이며 정답 edge set 하나만 인정한다.",
+      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 열린 선 조작 연습, 2단계는 세 도형군의 위치·방향 1:1 재현으로 연결한다. 이 교재 근거의 위치·방향 재현 범위는 25문제이며 정답 edge set 하나만 인정한다. 여기에 사용자 결정과 격자 전수 열거로 검증한 레벨 3·4의 20문제를 더해 현재 플레이 가능한 전체 문제는 45개다.",
       "status": "verified",
       "sensitivity": "private",
       "updated": "2026-08-27",
@@ -4139,7 +4139,7 @@
           "source_id": "geometry-geoboard-selftest",
           "role": "test",
           "locator": "full deterministic test suite",
-          "note": "25개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+          "note": "위치·방향 재현 25문제와 격자 탐색 20문제, 총 45문제의 고유성·정답·기하 도우미·4개 언어 키를 검증"
         }
       ]
     },
@@ -4280,7 +4280,7 @@
         "dotboard",
         "single-answer"
       ],
-      "summary": "Geoboard는 점판으로 표시한다. 정사각 점판에서 점 3개는 일반 삼각형, 점 4개는 정사각형을 만들며, 삼각 점판에서는 점 3개로 정삼각형을 만든다. 종류 수와 전체 배치 수를 구분하고 가능한 꼭짓점 조합을 전수 열거한다. 검산 기준은 정사각 점판 3x3·4x4·5x5의 정사각형이 각각 3종류/6개, 5종류/20개, 8종류/50개이며, 삼각 점판 한 변 3·4·5점의 정삼각형은 2종류/5개, 4종류/15개, 6종류/35개다.",
+      "summary": "Geoboard는 점판으로 표시한다. 정사각 점판에서 점 3개는 일반 삼각형, 점 4개는 정사각형을 만들며, 삼각 점판에서는 점 3개로 정삼각형을 만든다. 종류 수와 전체 배치 수를 구분하고 가능한 꼭짓점 조합을 전수 열거한다. 검산 기준은 정사각 점판 3x3·4x4·5x5의 정사각형이 각각 3종류/6개, 5종류/20개, 8종류/50개이며, 삼각 점판 한 변 3·4·5점의 정삼각형은 2종류/5개, 4종류/15개, 6종류/35개다. 레벨 3·4에는 서로 다른 합동 종류를 직접 수집하는 문제와 전체 배치 수를 숫자로 고르는 문제를 분리해 공개하며, 같은 화면에서 두 조작을 섞지 않는다.",
       "status": "verified",
       "sensitivity": "private",
       "updated": "2026-08-27",
@@ -4295,7 +4295,7 @@
           "source_id": "geometry-geoboard-lattice-enumerator",
           "role": "code",
           "locator": "enumerateTriangles, enumerateSquares, enumerateEquilateralTriangles, DOT_BOARD_REFERENCE",
-          "note": "종류와 전체 배치를 분리해 전수 열거하고 고정 기준값과 교차 검산"
+          "note": "종류와 전체 배치를 분리해 전수 열거하고 고정 기준값과 교차 검산. 레벨 3·4 공개 문항의 정답도 이 계산에서 직접 검증"
         }
       ]
     }

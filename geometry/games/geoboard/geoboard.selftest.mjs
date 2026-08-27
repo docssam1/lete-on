@@ -14,7 +14,7 @@ function assert(condition, message) {
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 2, "only levels 1 and 2 may be playable in this release");
+assert(readyLevels.length === 4, "levels 1 through 4 must be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
 const expectedProblemCount = readyLevels.reduce((total, level) => total + level.problemCount, 0);
@@ -22,6 +22,22 @@ assert(ids.length === expectedProblemCount && new Set(ids).size === expectedProb
 
 for (const level of readyLevels) {
   for (const problem of level.problems) {
+    if (problem.kind === "square-count" || problem.kind === "triangle-count") {
+      const summary = problem.kind === "square-count"
+        ? squareBoardSummary(problem.boardSize).squares
+        : triangularBoardSummary(problem.boardSize).equilateralTriangles;
+      const expectedTypes = summary.typeCount;
+      assert(problem.availableTypeCount === expectedTypes, `${problem.id} available kind count drifted`);
+      assert(problem.availablePlacementCount === summary.placementCount, `${problem.id} available placement count drifted`);
+      if (problem.questionMode === "types") {
+        assert(problem.targetKindCount >= 1 && problem.targetKindCount <= expectedTypes, `${problem.id} target kind count is impossible`);
+      } else {
+        assert(problem.questionMode === "placements", `${problem.id} question mode is invalid`);
+        assert(problem.answerValue === summary.placementCount, `${problem.id} total-count answer drifted`);
+        assert(problem.answerChoices.includes(problem.answerValue), `${problem.id} choices omit the answer`);
+      }
+      continue;
+    }
     const target = targetPoints(problem);
     assert(acceptsAnswer(problem, target), `${problem.id} rejects its target`);
     assert(acceptsAnswer(problem, [...target].reverse()), `${problem.id} rejects reverse tap order`);
