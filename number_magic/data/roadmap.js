@@ -516,6 +516,15 @@ window.NM_ROADMAP = {
       tip:{ko:"f'(x)=0인 자리가 극값의 후보 — 그 x를 f(x)에 다시 대입하면 극댓값·극솟값이 나와요!",en:"Where f'(x)=0 are the candidates for extrema — substitute that x back into f(x) to get the local max/min!",zh:"f'(x)=0的位置是极值的候选——把那个x代回f(x)就能得到极大值·极小值！"}
     },
     {
+      /* 미적분을 "왜" 배우는지부터 여는 실험실 — 기법(LAB-CALC1)보다 앞에 둔다.
+         원장 지시(2026-08-25): 추상 곡선만이 아니라 실감나는 쓰임새와 흥미가 먼저. */
+      id:'LAB-WHYCALC', icon:'🍎', grade:'미적분Ⅰ',
+      edu:{ko:'미적분은 왜 태어났나',en:'Why Calculus Was Born',zh:'微积分为何诞生'},
+      theme:{ko:'🍎 개념 실험실 — 뉴턴·라이프니츠가 왜 만들었나, 롤러코스터·속도계·AI까지 어디에 쓰이나',en:'🍎 Concept Lab — why Newton & Leibniz created it, and where it lives today: coasters, speedometers, even AI',zh:'🍎概念实验室——牛顿与莱布尼茨为何创造它，以及它今天用在哪里：过山车、速度表、甚至AI'},
+      link:'labs/why-calculus.html',
+      tip:{ko:'롤러코스터에서 가장 무서운 지점을 직접 찾아보면 "기울기"가 몸으로 느껴져요. 카드를 눌러 실생활 쓰임새도 확인해요(새 탭에서 열려요).',en:'Find the scariest spot on a roller coaster yourself and you feel what "slope" means. Tap the cards for real-life uses (opens in a new tab).',zh:'亲手找出过山车最可怕的位置，就能体会什么是"斜率"。点击卡片看看现实中的用途(会在新标签页打开)。'}
+    },
+    {
       id:'LAB-CALC1', icon:'🔬', grade:'미적분Ⅰ',
       edu:{ko:'미적분Ⅰ 개념 실험실',en:'Calculus Ⅰ Concept Lab',zh:'微积分Ⅰ概念实验室'},
       theme:{ko:'🔬 미적분 실험실 — 극값·부정적분·적분조건·유사문제를 직접 조작해봐요',en:'🔬 Calculus Lab — manipulate extrema, antiderivatives, integral conditions & practice problems yourself',zh:'🔬微积分实验室——亲手操作极值·不定积分·积分条件与相似题'},
