@@ -98,61 +98,107 @@ function adaptHwangsoRound(metadata) {
   };
 }
 
-function adaptWonmathManifests(manifests) {
+function adaptWonmathManifests(manifests, detailReviews) {
   const typesById = new Map();
   const items = [];
+  const reviewByItemId = new Map(((detailReviews && detailReviews.reviews) || []).map(review => [review.sourceItemId, review]));
+  const usedReviewIds = new Set();
   manifests.forEach((manifest, roundIndex) => {
     const round = String(roundIndex + 1).padStart(2, "0");
     manifest.items.forEach(item => {
-      const sourceTypeId = String(item.typeId);
+      const sourceItemId = `R${round}-Q${String(item.examNumber).padStart(2, "0")}`;
+      const sourceUnitTypeId = String(item.typeId);
+      const review = reviewByItemId.get(sourceItemId);
+      if (review && (review.sourceUnitTypeId !== sourceUnitTypeId || review.majorUnit !== item.majorUnit || review.minorUnit !== item.minorUnit)) {
+        throw new Error(`원수학 세부유형 검수표가 구성표와 다릅니다: ${sourceItemId}`);
+      }
+      if (review) usedReviewIds.add(sourceItemId);
+      const verified = Boolean(review && review.detailPrecision === "verified" && ["reviewed", "verified"].includes(review.classificationStatus));
+      const sourceTypeId = verified ? review.sourceTypeId : sourceUnitTypeId;
       if (!typesById.has(sourceTypeId)) {
-        typesById.set(sourceTypeId, sourceType("WONMATH-M21", sourceTypeId, {
+        typesById.set(sourceTypeId, sourceType("WONMATH-M21", sourceTypeId, verified ? {
+          semester: review.semester,
+          majorUnit: review.majorUnit,
+          minorUnit: review.minorUnit,
+          detailType: review.detailType,
+          solutionArchetype: review.solutionArchetype,
+          detailPrecision: "verified",
+          status: review.classificationStatus,
+          evidence: review.evidence || []
+        } : {
           semester: "중1",
           majorUnit: item.majorUnit,
           minorUnit: item.minorUnit,
           detailType: item.minorUnit,
           detailPrecision: "unit_only",
           status: "verified_unit_only",
-          evidence: [`wonmath:${sourceTypeId}`]
+          evidence: [`wonmath:${sourceUnitTypeId}`]
         }));
       }
       items.push({
-        itemId: `WONMATH-M21:R${round}-Q${String(item.examNumber).padStart(2, "0")}`,
+        itemId: `WONMATH-M21:${sourceItemId}`,
         sourceBankId: "WONMATH-M21",
-        sourceItemId: `R${round}-Q${String(item.examNumber).padStart(2, "0")}`,
+        sourceItemId,
+        sourceUnitTypeId,
         sourceTypeId,
-        classificationStatus: "verified_unit_only",
-        detailPrecision: "unit_only",
+        classificationStatus: verified ? review.classificationStatus : "verified_unit_only",
+        detailPrecision: verified ? "verified" : "unit_only",
         academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
       });
     });
   });
+  const unknownReviewIds = Array.from(reviewByItemId.keys()).filter(id => !usedReviewIds.has(id));
+  if (unknownReviewIds.length) throw new Error(`원수학 세부유형 검수표에 구성표에 없는 문항이 있습니다: ${unknownReviewIds.join(", ")}`);
+  const allVerified = items.length > 0 && items.every(item => item.detailPrecision === "verified");
   return {
-    bank: { sourceBankId: "WONMATH-M21", academyId: "WM", label: "원수학 중2-1 기본반 4회", itemCount: items.length, status: "verified_unit_only" },
+    bank: { sourceBankId: "WONMATH-M21", academyId: "WM", label: "원수학 중2-1 기본반 4회", itemCount: items.length, status: allVerified ? "reviewed_detail" : "review_in_progress" },
     types: Array.from(typesById.values()),
     items
   };
 }
 
-function adaptHwangsoMiddle(index) {
+function adaptHwangsoMiddle(index, curriculumReviews) {
   const sourceItems = Array.isArray(index.items) ? index.items : [];
   const activeIds = new Set((index.activeQuestionCandidates || []).map(item => typeof item === "string" ? item : item.id));
   const rejectedIds = new Set((index.rejectedCandidates || []).map(item => typeof item === "string" ? item : item.id));
   const active = activeIds.size
     ? sourceItems.filter(item => activeIds.has(item.id))
     : sourceItems.filter(item => item.releaseStatus === "locked" && !rejectedIds.has(item.id) && item.discoveryStatus !== "rejected");
-  const items = active.map(item => ({
-    itemId: `HWANGSO-MIDDLE:${item.id}`,
-    sourceBankId: "HWANGSO-MIDDLE",
-    sourceItemId: item.id,
-    sourceTypeId: null,
-    classificationStatus: item.classificationStatus || "pending",
-    detailPrecision: "pending",
-    academyFits: [{ profileId: "SH_SELECTION", status: "candidate" }]
-  }));
+  const typesById = new Map();
+  const reviewByItemId = new Map(((curriculumReviews && curriculumReviews.reviews) || []).map(review => [review.sourceItemId, review]));
+  const usedReviewIds = new Set();
+  const items = active.map(item => {
+    const review = reviewByItemId.get(item.id);
+    if (review) usedReviewIds.add(item.id);
+    const reviewed = Boolean(review && review.detailPrecision === "unit_only" && review.classificationStatus === "reviewed_unit" && review.sourceUnitTypeId);
+    if (reviewed && !typesById.has(review.sourceUnitTypeId)) {
+      typesById.set(review.sourceUnitTypeId, sourceType("HWANGSO-MIDDLE", review.sourceUnitTypeId, {
+        semester: review.semester,
+        majorUnit: review.majorUnit,
+        minorUnit: review.minorUnit,
+        detailType: review.minorUnit,
+        detailPrecision: "unit_only",
+        status: "reviewed_unit",
+        evidence: review.evidence || []
+      }));
+    }
+    return {
+      itemId: `HWANGSO-MIDDLE:${item.id}`,
+      sourceBankId: "HWANGSO-MIDDLE",
+      sourceItemId: item.id,
+      sourceUnitTypeId: reviewed ? review.sourceUnitTypeId : null,
+      sourceTypeId: reviewed ? review.sourceUnitTypeId : null,
+      classificationStatus: reviewed ? "reviewed_unit" : item.classificationStatus || "pending",
+      detailPrecision: reviewed ? "unit_only" : "pending",
+      academyFits: [{ profileId: "SH_SELECTION", status: "candidate" }]
+    };
+  });
+  const unknownReviewIds = Array.from(reviewByItemId.keys()).filter(id => !usedReviewIds.has(id));
+  if (unknownReviewIds.length) throw new Error(`황소 교육과정 검수표에 활성 문항이 아닌 ID가 있습니다: ${unknownReviewIds.join(", ")}`);
+  const allUnitReviewed = items.length > 0 && items.every(item => item.detailPrecision === "unit_only");
   return {
-    bank: { sourceBankId: "HWANGSO-MIDDLE", academyId: "SH", label: "황소 중등 교재 후보", itemCount: items.length, status: "classification_pending" },
-    types: [],
+    bank: { sourceBankId: "HWANGSO-MIDDLE", academyId: "SH", label: "황소 중등 교재 후보", itemCount: items.length, status: allUnitReviewed ? "reviewed_unit" : "classification_in_progress" },
+    types: Array.from(typesById.values()),
     items
   };
 }
@@ -162,8 +208,8 @@ function buildIndex(inputs) {
     adaptDolpa(inputs.dolpa),
     adaptSharedTypes(inputs.sharedTypes),
     adaptHwangsoRound(inputs.hwangsoRound),
-    adaptWonmathManifests(inputs.wonmathManifests),
-    adaptHwangsoMiddle(inputs.hwangsoMiddle)
+    adaptWonmathManifests(inputs.wonmathManifests, inputs.wonmathDetailReviews),
+    adaptHwangsoMiddle(inputs.hwangsoMiddle, inputs.hwangsoCurriculumReviews)
   ];
   const sourceTypes = adapters.flatMap(adapter => adapter.types);
   const conceptFamilies = core.createConceptFamilies(sourceTypes);
@@ -243,7 +289,9 @@ function loadInputs(config) {
     sharedTypes: readJson(config.sharedTypeIndex),
     hwangsoRound: require(path.resolve(config.hwangsoRoundModule)).metadata,
     wonmathManifests: config.wonmathManifests.map(readJson),
+    wonmathDetailReviews: config.wonmathDetailReviews ? readJson(config.wonmathDetailReviews) : null,
     hwangsoMiddle: readJson(config.hwangsoMiddleIndex),
+    hwangsoCurriculumReviews: config.hwangsoCurriculumReviews ? readJson(config.hwangsoCurriculumReviews) : null,
     reviewDecisions: config.reviewDecisions ? readJson(config.reviewDecisions) : { candidates: [] }
   };
 }
