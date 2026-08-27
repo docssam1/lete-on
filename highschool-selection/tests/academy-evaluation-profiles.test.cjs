@@ -23,8 +23,8 @@ test("academy profile resolution keeps exam-specific scope and time separate", (
   assert.equal(sh.exam.duration, "110분");
   assert.equal(sh.exam.scope, "중등 누적 40문항");
   const dp = data.resolve("dp-middle2-2-transfer", "DP");
-  assert.equal(dp.exam.scope, "중1-1~중2-2 전 과정");
-  assert.equal(dp.exam.duration, "원본 회차 150분");
+  assert.equal(dp.exam.scope, "중1-1~중2-1 전 범위(일차함수까지)");
+  assert.equal(dp.exam.duration, "현재 회차 확인 필요");
   assert.equal(data.resolve("unknown", "WM").exam, null);
 });
 

@@ -21,7 +21,9 @@
     editScope: document.getElementById("edit-scope"),
     applyScope: document.getElementById("apply-scope"),
     candidateMode: document.getElementById("candidate-mode"),
+    candidateScopeField: document.getElementById("candidate-scope-field"),
     candidateScope: document.getElementById("candidate-scope"),
+    academyProfileFilters: document.getElementById("academy-profile-filters"),
     candidateSearchForm: document.getElementById("candidate-search-form"),
     candidateQuery: document.getElementById("candidate-query"),
     candidateContext: document.getElementById("candidate-context"),
@@ -42,6 +44,10 @@
     readinessDetail: document.getElementById("readiness-detail"),
     recent: document.getElementById("recent-drafts"),
     recentButtons: document.getElementById("recent-draft-buttons"),
+    questionPageDialog: document.getElementById("question-page-dialog"),
+    questionPageTitle: document.getElementById("question-page-title"),
+    questionPageImage: document.getElementById("question-page-image"),
+    closeQuestionPage: document.getElementById("close-question-page"),
     toast: document.getElementById("editor-toast")
   };
 
@@ -54,7 +60,8 @@
     busy: false,
     searchSequence: 0,
     draggedPlacementId: null,
-    serverDrafts: []
+    serverDrafts: [],
+    profileMode: null
   };
   const scoreTimers = new Map();
   const pendingScores = new Map();
@@ -64,6 +71,14 @@
     single_choice: "객관식", multi_choice: "복수 선택", ox: "O/X", input: "단답형",
     multi_input: "복수 입력", ordered_list: "순서형", unordered_set: "집합형",
     figure_select: "그림 선택", construction: "작도"
+  };
+  const defaultProfilesByMode = {
+    DP: ["DP_STANDARD"], SM: ["SM_STANDARD"], WM: ["WM_BASIC", "WM_DUAL"],
+    ED: ["ED_CUMULATIVE"], SH: ["SH_SELECTION"], DG: ["DG_ADVANCED"]
+  };
+  const reviewCheckLabels = {
+    classification: "교육과정 분류", locator: "원본 위치", difficulty: "난이도", response: "답안 형식",
+    keyCheck: "답 확인", method: "풀이법", variants: "쌍둥이·유사문항", usageApproval: "시험지 사용 승인"
   };
 
   function make(tag, className, text) {
@@ -112,6 +127,19 @@
       throw error;
     }
     return data;
+  }
+
+  async function requestImage(path) {
+    if (!apiBase) throw Object.assign(new Error("운영 편집 서버가 연결되지 않았습니다."), { status: 503 });
+    const response = await fetch(apiBase + path, { credentials: "include", headers: { Accept: "image/png" } });
+    if (!response.ok) {
+      const data = await response.json().catch(function () { return {}; });
+      if (response.status === 401) loginRedirect();
+      const error = new Error(data.message || "원본 페이지를 불러오지 못했습니다.");
+      error.status = response.status;
+      throw error;
+    }
+    return response.blob();
   }
 
   function selectedPlacement() {
@@ -177,6 +205,13 @@
     state.packet = packet;
     updateMetadata(packet.selectedItems);
     const draft = packet.draft;
+    if (state.profileMode !== draft.mode) {
+      const defaults = new Set(defaultProfilesByMode[draft.mode] || []);
+      Array.from(elements.academyProfileFilters.querySelectorAll("input[type=checkbox]")).forEach(function (input) {
+        input.checked = defaults.has(input.value);
+      });
+      state.profileMode = draft.mode;
+    }
     elements.draftTitle.textContent = `${draft.mode || "과정 미지정"} · ${draft.profileId} · ${draft.targetId}`;
     elements.draftRevision.textContent = `버전 ${draft.revision}`;
     elements.scopeKeys.value = draft.scopeKeys.join("\n");
@@ -214,13 +249,22 @@
     const replacementReady = Boolean(selectedPlacement()) && !(state.packet && state.packet.migrationRequired);
     Array.from(elements.candidateMode.querySelectorAll("[data-mode]")).forEach(function (button) {
       const mode = button.dataset.mode;
-      button.disabled = mode !== "new" && !replacementReady;
+      button.disabled = ["twin", "similar"].includes(mode) && !replacementReady;
       const active = state.candidateMode === mode;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
+    const catalogMode = state.candidateMode === "catalog";
+    elements.academyProfileFilters.hidden = !catalogMode;
+    elements.candidateScopeField.hidden = catalogMode;
+    elements.candidateQuery.placeholder = catalogMode ? "학기 · 대단원 · 소단원 · 세부 유형 검색" : "문항 ID · 유형 · 범위 검색";
     const placement = selectedPlacement();
-    elements.candidateContext.textContent = state.candidateMode === "new"
+    const checkedProfiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.parentElement.textContent.trim());
+    elements.candidateContext.textContent = catalogMode
+      ? checkedProfiles.length
+        ? `${checkedProfiles.join(" · ")}에서 원본 확인 또는 사용 승인된 문항만 표시합니다.`
+        : "시험형을 하나 이상 선택하세요."
+      : state.candidateMode === "new"
       ? "현재 범위에서 검수 완료 문항을 찾습니다."
       : placement
         ? `${placement.order}번 문항의 ${state.candidateMode === "twin" ? "쌍둥이" : "유사"} 후보만 표시합니다.`
@@ -233,6 +277,39 @@
 
   function renderCandidates() {
     elements.candidateList.replaceChildren();
+    if (state.candidateMode === "catalog") {
+      state.candidates.forEach(function (candidate) {
+        const row = make("article", "candidate-row is-catalog");
+        const main = make("div", "candidate-main");
+        const title = make("div", "candidate-title");
+        title.append(make("strong", "", candidate.typeLabel), make("code", "", `${candidate.paperId} · ${candidate.number}번`));
+        const badges = make("div", "candidate-badges");
+        (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
+        badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
+        const checks = candidate.reviewChecks || {};
+        const completed = Object.keys(reviewCheckLabels).filter(key => checks[key]).map(key => reviewCheckLabels[key]);
+        const pending = Object.keys(reviewCheckLabels).filter(key => !checks[key]).map(key => reviewCheckLabels[key]);
+        const reviewLine = make("p", "candidate-review-line");
+        reviewLine.append(make("strong", "", `완료 ${completed.join(" · ") || "없음"}`));
+        if (pending.length) reviewLine.append(make("span", "", `남음 ${pending.join(" · ")}`));
+        main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges, reviewLine);
+        const actions = make("div", "candidate-catalog-actions");
+        const preview = make("button", "ghost compact-button", candidate.pagePreviewAvailable ? "원본 페이지" : "원본 준비 중");
+        preview.type = "button";
+        preview.disabled = !candidate.pagePreviewAvailable;
+        if (candidate.pagePreviewAvailable) preview.dataset.pagePreviewId = candidate.questionId;
+        const assemble = make("button", "ghost compact-button", "조립 전 검수");
+        assemble.type = "button";
+        assemble.disabled = true;
+        actions.append(preview, assemble);
+        row.append(main, actions);
+        elements.candidateList.append(row);
+      });
+      elements.candidateCount.textContent = `${state.candidates.length}개`;
+      elements.candidateEmpty.hidden = state.candidates.length > 0;
+      return;
+    }
     const selectedIds = new Set(state.packet ? state.packet.draft.placements.map(item => item.itemId) : []);
     state.candidates.forEach(function (candidate) {
       updateMetadata([candidate]);
@@ -438,6 +515,34 @@
     }
     const sequence = ++state.searchSequence;
     elements.candidateList.setAttribute("aria-busy", "true");
+    if (state.candidateMode === "catalog") {
+      const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.value);
+      if (!profiles.length) {
+        state.candidates = [];
+        renderCandidates();
+        renderCandidateMode();
+        elements.candidateList.removeAttribute("aria-busy");
+        return;
+      }
+      const catalogParams = new URLSearchParams({ profiles: profiles.join(","), limit: "300" });
+      const catalogQuery = elements.candidateQuery.value.trim();
+      if (catalogQuery) catalogParams.set("q", catalogQuery);
+      try {
+        const packet = await request(`/admin/question-bank/catalog?${catalogParams}`);
+        if (sequence !== state.searchSequence) return;
+        state.candidates = packet.items || [];
+        renderCandidateMode();
+        renderCandidates();
+      } catch (error) {
+        if (sequence !== state.searchSequence) return;
+        state.candidates = [];
+        renderCandidates();
+        setAlert(error.message, "error");
+      } finally {
+        if (sequence === state.searchSequence) elements.candidateList.removeAttribute("aria-busy");
+      }
+      return;
+    }
     const params = new URLSearchParams({ draftId: state.packet.draftId, limit: "100" });
     const scopeKey = elements.candidateScope.value;
     const query = elements.candidateQuery.value.trim();
@@ -575,7 +680,7 @@
     const button = event.target.closest("[data-mode]");
     if (!button || button.disabled) return;
     state.candidateMode = button.dataset.mode;
-    if (state.candidateMode === "new") state.selectedPlacementId = null;
+    if (["new", "catalog"].includes(state.candidateMode)) state.selectedPlacementId = null;
     renderCandidateMode();
     renderPlacements();
     await searchCandidates();
@@ -583,8 +688,28 @@
 
   elements.candidateSearchForm.addEventListener("submit", function (event) { event.preventDefault(); searchCandidates(); });
   elements.candidateScope.addEventListener("change", searchCandidates);
+  elements.academyProfileFilters.addEventListener("change", function () {
+    renderCandidateMode();
+    if (state.candidateMode === "catalog") searchCandidates();
+  });
 
   elements.candidateList.addEventListener("click", async function (event) {
+    const preview = event.target.closest("[data-page-preview-id]");
+    if (preview && !preview.disabled) {
+      setBusy(preview, true, "불러오는 중");
+      try {
+        const blob = await requestImage(`/admin/question-bank/items/${encodeURIComponent(preview.dataset.pagePreviewId)}/page-preview`);
+        if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
+        elements.questionPageImage.src = URL.createObjectURL(blob);
+        elements.questionPageTitle.textContent = `${preview.dataset.pagePreviewId} 원본 페이지`;
+        elements.questionPageDialog.showModal();
+      } catch (error) {
+        setAlert(error.message, "error");
+      } finally {
+        setBusy(preview, false);
+      }
+      return;
+    }
     const button = event.target.closest("[data-candidate-id]");
     if (!button || button.disabled || !state.packet) return;
     const candidate = state.candidates.find(item => item.itemId === button.dataset.candidateId);
@@ -617,6 +742,15 @@
       renderCandidateMode();
       await searchCandidates();
     }
+  });
+
+  elements.closeQuestionPage.addEventListener("click", function () { elements.questionPageDialog.close(); });
+  elements.questionPageDialog.addEventListener("close", function () {
+    if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
+    elements.questionPageImage.removeAttribute("src");
+  });
+  elements.questionPageDialog.addEventListener("click", function (event) {
+    if (event.target === elements.questionPageDialog) elements.questionPageDialog.close();
   });
 
   elements.placementList.addEventListener("click", async function (event) {

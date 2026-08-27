@@ -44,7 +44,7 @@ test("program track response preserves scope evidence status and rejects unknown
   assert.equal(packet.programCode, "DP");
   assert.deepEqual(packet.tracks.map(track => track.trackId), ["middle-entry", "middle-transfer", "common-math-entry"]);
   assert.deepEqual(Object.keys(packet.tracks[0]).sort(), ["evidenceStatus", "scopeKey", "scopeLabel", "trackId"]);
-  assert.equal(packet.tracks.find(track => track.trackId === "middle-transfer").scopeKey, "middle1-1-to-middle2-2");
+  assert.equal(packet.tracks.find(track => track.trackId === "middle-transfer").scopeKey, "middle1-1-to-linear-function");
 
   const sm = await (await fetch(`${env.base}/programs/SM/selection-tracks`)).json();
   assert.equal(sm.tracks[0].evidenceStatus, "needs-review");

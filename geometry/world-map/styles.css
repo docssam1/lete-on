@@ -159,6 +159,7 @@ body { background: #fdf8d8; color: var(--ink); }
 .place-hotspot { position: absolute; appearance: none; border: 0; background: transparent; cursor: pointer; padding: 0; color: white; }
 .cube-castle { left: 13.1%; top: 8.1%; width: 20.7%; height: 36.4%; }
 .origami-studio { left: 38.2%; top: 16%; width: 17.6%; height: 30.5%; }
+.shape-garden { left: 45.5%; top: 61%; width: 15%; height: 22%; }
 .cube-castle::before {
   content: "";
   position: absolute;
@@ -225,6 +226,40 @@ body { background: #fdf8d8; color: var(--ink); }
   filter: drop-shadow(0 0 15px rgba(72,213,215,.9));
 }
 .origami-studio:hover span, .origami-studio:focus-visible span, .origami-studio.attention span { opacity: 1; transform: translate(-50%, 22%); }
+
+.shape-garden::before {
+  content: "";
+  position: absolute;
+  inset: 3%;
+  border: 4px solid transparent;
+  border-radius: 42% 42% 28% 28%;
+  background: transparent;
+  transition: background .2s ease, border-color .2s ease, filter .2s ease;
+}
+.shape-garden span {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 48%);
+  min-width: 128px;
+  padding: 8px 12px;
+  border: 3px solid var(--navy);
+  border-radius: 6px;
+  background: #e7f7e9;
+  color: var(--navy);
+  font-size: clamp(11px, 1.1vw, 17px);
+  line-height: 1.05;
+  font-weight: 950;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+.shape-garden:hover::before, .shape-garden:focus-visible::before, .shape-garden.attention::before {
+  border-color: rgba(83,183,143,.96);
+  background: rgba(105,205,162,.16);
+  filter: drop-shadow(0 0 15px rgba(83,183,143,.88));
+}
+.shape-garden:hover span, .shape-garden:focus-visible span, .shape-garden.attention span { opacity: 1; transform: translate(-50%, 22%); }
 
 .map-toolbar {
   position: absolute;
@@ -736,7 +771,7 @@ body { background: #fdf8d8; color: var(--ink); }
 .place-prompt[data-place="mirrorManor"] { --place-accent: #4d879f; --place-accent-dark: #31586a; }
 .place-prompt[data-place="geoboardYard"] { --place-accent: #3d815f; --place-accent-dark: #28543f; }
 .place-prompt[data-place="crystalPlaza"] { --place-accent: #b95f91; --place-accent-dark: #7a3d60; }
-.place-prompt[data-place="shapeDistrict"] { --place-accent: #4d83ad; --place-accent-dark: #315775; }
+.place-prompt[data-place="shapeGarden"] { --place-accent: #4b9a78; --place-accent-dark: #2f664e; }
 .place-prompt[data-place="spatialDistrict"] { --place-accent: #ba8532; --place-accent-dark: #765521; }
 .place-prompt[data-place="coordinateDistrict"] { --place-accent: #a95a89; --place-accent-dark: #703c5c; }
 .place-prompt.arrived { animation: place-prompt-arrive .44s cubic-bezier(.2,.86,.24,1.18) both; }
@@ -1092,6 +1127,7 @@ body { background: #fdf8d8; color: var(--ink); }
 .world-zone-label[data-zone="mirrorManor"] { --zone-accent: #6caac1; }
 .world-zone-label[data-zone="geoboardYard"] { --zone-accent: #4f9b72; }
 .world-zone-label[data-zone="crystalPlaza"] { --zone-accent: #c878b3; }
+.world-zone-label[data-zone="shapeGarden"] { --zone-accent: #61b99a; }
 .world-district-label {
   min-width: 142px;
   border-style: dashed;
@@ -1099,7 +1135,6 @@ body { background: #fdf8d8; color: var(--ink); }
   background: linear-gradient(rgba(241,250,225,.92),rgba(215,233,178,.94));
   opacity: .94;
 }
-.world-district-label[data-zone="shapeDistrict"] { --zone-accent: #6b9dc6; }
 .world-district-label[data-zone="spatialDistrict"] { --zone-accent: #d4a13f; }
 .world-district-label[data-zone="coordinateDistrict"] { --zone-accent: #bf6d9c; }
 .world-district-label::after { background: #dce9b8; }

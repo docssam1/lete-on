@@ -6,8 +6,26 @@ const { createApp } = require("../../server/app.js");
 const { hashApprovalCode } = require("../../server/security.js");
 const questionBankCore = require("../../data/question-bank-core.js");
 const sourceLineage = require("../../data/source-lineage.js");
+const dolpaDbBuilder = require("../../scripts/build-dolpa-question-db.cjs");
+const dolpaLedgerCore = require("../../scripts/build-dolpa-work-ledger.cjs");
 
 const SECRET = "exam-editor-browser-fixture-secret-2026";
+
+function academyQuestionDb() {
+  const semester = "중2-1";
+  const unit = "일차함수";
+  const typeLabel = "두 직선의 교점 구하기";
+  return dolpaDbBuilder.buildDatabase({
+    taxonomyVersion: "dolpa-kr-math-v1",
+    sources: [{ sourceId: "DP-SRC-AAAAAAAAAAAA", sourceFingerprint: "a".repeat(64) }],
+    questions: [{
+      questionId: "DP-Q-AAAAAAAAAAAA-001", sourceId: "DP-SRC-AAAAAAAAAAAA", paperId: "DP-PAPER-A", paperTitle: "A", number: 1,
+      sourceRelation: "original", curriculum: { semester, domain: "함수", unit },
+      type: { typeId: dolpaLedgerCore.stableTypeId(semester, unit, typeLabel), label: typeLabel, methodTags: [], methodReviewStatus: "pending" },
+      difficulty: { band: null, status: "pending", evidence: [] }, classificationStatus: "verified", evidence: ["paper.a"]
+    }]
+  }, null, "1".repeat(64));
+}
 
 function question(index, overrides) {
   const options = overrides || {};
@@ -117,6 +135,7 @@ const app = createApp({
   privateConfig,
   privateScorer: { schemaVersion: "highselect-private-scorer/v1", exams: {} },
   privateExamEditorRegistry: registry,
+  privateAcademyQuestionDb: academyQuestionDb(),
   privateExamDrafts: { schemaVersion: "highselect-private-exam-drafts/v1", drafts: {} },
   cookieSecure: false,
   staticRoot: path.resolve(__dirname, "../..")

@@ -110,9 +110,9 @@
       "path": "geometry/games/geoboard/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "5c6d6053f0ce7e2e0c79506c4e812cca1c96960482ac74cb82177d79802ec7a3",
-      "size": 35843,
-      "mtime_ns": 1787830900426764500
+      "sha256": "98b4ea7876b511411d2b62cb54ba5d476554de278156a2ca59c9463cf848920f",
+      "size": 36035,
+      "mtime_ns": 1787831765737608800
     },
     {
       "id": "geometry-geoboard-selftest",
@@ -120,9 +120,9 @@
       "path": "geometry/games/geoboard/geoboard.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "beddb50f3f715a87711ad5273ee8e3d2050dbd06f64303e450e931bf93f8aa16",
-      "size": 9129,
-      "mtime_ns": 1787831177377495300
+      "sha256": "f7dde0c69ff6f4743f5ef07101b2cdbdf427f1fb630d8cf95759e40e7d33aa6a",
+      "size": 9200,
+      "mtime_ns": 1787831765727422600
     },
     {
       "id": "cmath-nc1-2-shape-start",
@@ -273,6 +273,36 @@
       "sha256": "1516270a060f56fb41853d18d6ff2cac934997900115425f8dbb1f717fad2361",
       "size": 1810587,
       "mtime_ns": 1673080944000000000
+    },
+    {
+      "id": "ray-a4-2-polyomino",
+      "title": "RAY Kids A4-2 Domino and Tromino",
+      "path": "G:\\내 드라이브\\RAY\\레이키즈 A4-2.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "c99cfb978a91e188788c5650fbb4dd96bd8bcd44beab7fb41ff0981b3571ebb5",
+      "size": 19302862,
+      "mtime_ns": 1510730218000000000
+    },
+    {
+      "id": "geometry-polyomino-levels",
+      "title": "Geometry polyomino problem data",
+      "path": "geometry/games/polyomino/levels.js",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "2ccd22c5d4251875d9d548788a334072092e9524bf7336c1a7769c6f2fd7af01",
+      "size": 6722,
+      "mtime_ns": 1787834066148774600
+    },
+    {
+      "id": "geometry-polyomino-selftest",
+      "title": "Geometry polyomino independent self-test",
+      "path": "geometry/games/polyomino/polyomino.selftest.mjs",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "ae36c0877a743cff6586fe4bfbffd711c758fea75cfc6bd0a8ff2910e99340fe",
+      "size": 4116,
+      "mtime_ns": 1787834066149776000
     }
   ],
   "records": [
@@ -4446,6 +4476,41 @@
           "role": "test",
           "locator": "level 5 deterministic checks",
           "note": "Independent target-set reconstruction for all ten problems"
+        }
+      ]
+    },
+    {
+      "id": "geometry.polyomino.ray-a4-2-foundation",
+      "title": "Polyomino Garden RAY A4-2 evidence and public levels",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "polyomino",
+        "ray",
+        "single-answer"
+      ],
+      "summary": "RAY Kids A4-2 pages 8-13 visually define dominoes and trominoes and pair pieces that are the same after turning. Pages 30-48 visually introduce pentomino observation, matching, tiling, and different-piece composition. Public levels 1 and 2 are an internal touch-game reconstruction: level 1 finds the same domino or tromino after rotation; level 2 separates rotation-only matches from reflected decoys. Twenty problems are independently checked for connectivity and exactly one accepted answer.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "ray-a4-2-polyomino",
+          "role": "source",
+          "locator": "PDF p. 8-13 and p. 30-48",
+          "note": "Pages visually inspected; source layout is not copied into the game"
+        },
+        {
+          "source_id": "geometry-polyomino-levels",
+          "role": "code",
+          "locator": "PIECES, level1Problems, level2Problems, validateLevels",
+          "note": "Coordinate-authored pieces and answer roles"
+        },
+        {
+          "source_id": "geometry-polyomino-selftest",
+          "role": "test",
+          "locator": "full deterministic test suite",
+          "note": "Independent rotation and reflection comparison for all 20 problems"
         }
       ]
     }

@@ -111,29 +111,27 @@ test("program-track scopes preserve their evidence status instead of inferring a
   });
 
   const transfer = data.programTrackBindings.find(item => item.id === "DP:middle-transfer");
-  assert.equal(transfer.evidenceStatus, "verified");
-  assert.equal(transfer.scopeKey, "middle1-1-to-middle2-2");
+  assert.equal(transfer.evidenceStatus, "observed");
+  assert.equal(transfer.scopeKey, "middle1-1-to-linear-function");
   assert.equal(transfer.scopeKind, "terminal-unit");
-  assert.equal(transfer.terminalUnit.course, "중2-2");
-  assert.equal(transfer.terminalUnit.unit, "전 과정");
-  assert.deepEqual(Array.from(transfer.evidenceRefs), ["EXAM:dp-middle2-2-transfer"]);
+  assert.equal(transfer.terminalUnit.course, "중2-1");
+  assert.equal(transfer.terminalUnit.unit, "일차함수");
+  assert.deepEqual(Array.from(transfer.evidenceRefs), ["USER:DP-MIDDLE-CLASS-SCOPE-2026-08-27"]);
   assert.equal(data.programTrackBindings.some(item => item.trackId === "high-transfer"), false);
 });
 
-test("DP middle2-2 transfer is a separate locked card and never inherits a generic cutoff", () => {
+test("DP middle2-2 entry is rebuilt from originals through the full middle2-1 range", () => {
   const exam = catalog.exams.find(item => item.id === "dp-middle2-2-transfer");
   assert.equal(exam.programId, "DP");
   assert.equal(exam.questionCount, 30);
-  assert.equal(exam.pageCount, 10);
-  assert.equal(exam.sourcePageCount, 11);
-  assert.equal(exam.privateAnswerPageCount, 1);
-  assert.equal(exam.sourceStatus, "audited");
-  assert.equal(exam.answerStatus, "found");
-  assert.equal(exam.classificationStatus, "verified");
-  assert.equal(exam.releaseStatus, "review_pending");
+  assert.equal(exam.scopeLabel, "중1-1~중2-1 전 범위(일차함수까지) · 30문항");
+  assert.equal(exam.sourceStatus, "scope_reassembly_required");
+  assert.equal(exam.answerStatus, "partial_found");
+  assert.equal(exam.classificationStatus, "partial_verified");
+  assert.equal(exam.releaseStatus, "blocked");
   const resolved = data.resolveExamTrack(exam.id);
   assert.equal(resolved.track.id, "middle-transfer");
-  assert.equal(resolved.binding.scopeKey, "middle1-1-to-middle2-2");
+  assert.equal(resolved.binding.scopeKey, "middle1-1-to-linear-function");
 });
 
 test("all existing catalog exam IDs keep their program IDs and gain a compatible track assignment", () => {

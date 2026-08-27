@@ -1,0 +1,67 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const test = require("node:test");
+const builder = require("../scripts/build-dolpa-question-db.cjs");
+const ledgerCore = require("../scripts/build-dolpa-work-ledger.cjs");
+const catalogModule = require("../server/academy-question-catalog.js");
+
+function database(options) {
+  const opts = options || {};
+  const semester = opts.semester || "중2-1";
+  const unit = opts.unit || "일차함수";
+  const typeLabel = opts.typeLabel || "두 직선의 교점 구하기";
+  return builder.buildDatabase({
+    taxonomyVersion: "dolpa-kr-math-v1",
+    sources: [{ sourceId: "DP-SRC-AAAAAAAAAAAA", sourceFingerprint: "a".repeat(64) }],
+    questions: [{
+      questionId: "DP-Q-AAAAAAAAAAAA-001",
+      sourceId: "DP-SRC-AAAAAAAAAAAA",
+      paperId: "DP-PAPER-A",
+      paperTitle: "대표 시험 A",
+      number: 1,
+      sourceRelation: "original",
+      curriculum: { semester, domain: "함수", unit },
+      type: { typeId: ledgerCore.stableTypeId(semester, unit, typeLabel), label: typeLabel, methodTags: [], methodReviewStatus: "pending" },
+      difficulty: { band: null, status: "pending", evidence: [] },
+      classificationStatus: "verified",
+      evidence: ["paper.a"]
+    }]
+  }, null, "1".repeat(64));
+}
+
+test("학원형 문항 목록은 시험형과 교육과정 분류만 안전하게 반환한다", () => {
+  const catalog = catalogModule.createCatalog(database());
+  const items = catalog.search({ profileIds: ["DP_STANDARD"], query: "교점", limit: 20 });
+  assert.equal(items.length, 1);
+  assert.equal(items[0].majorUnit, "함수");
+  assert.equal(items[0].minorUnit, "일차함수");
+  assert.equal(items[0].profiles[0].label, "돌파형");
+  assert.equal(items[0].reviewChecks.classification, true);
+  assert.equal(items[0].reviewChecks.method, false);
+  assert.equal(items[0].reviewChecks.usageApproval, false);
+  assert.equal(Object.hasOwn(items[0], "sourceId"), false);
+  assert.equal(JSON.stringify(items).includes("answer"), false);
+});
+
+test("다른 시험형의 검수 전 후보는 기본 문항 목록에 나오지 않는다", () => {
+  const catalog = catalogModule.createCatalog(database());
+  assert.deepEqual(catalog.search({ profileIds: ["WM_DUAL"] }), []);
+  assert.equal(catalog.profiles().some(profile => profile.profileId === "WM_BASIC"), true);
+  assert.equal(catalog.profiles().some(profile => profile.profileId === "WM_DUAL"), true);
+});
+
+test("돌파 시험 대상이 정해지면 범위 밖 원본 문항을 구성 후보에서 뺀다", () => {
+  const outside = catalogModule.createCatalog(database({
+    semester: "중2-2",
+    unit: "도형의 닮음",
+    typeLabel: "닮음비로 길이 구하기"
+  }));
+  assert.equal(outside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 0);
+
+  const inside = catalogModule.createCatalog(database({
+    unit: "연립일차방정식의 활용",
+    typeLabel: "거리와 속력 조건을 연립방정식으로 나타내기"
+  }));
+  assert.equal(inside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 1);
+});

@@ -48,6 +48,8 @@
 | `HIGHSELECT_PRIVATE_PRACTICE_ASSETS_PATH` | 중립 문항 ID를 검수된 단일 이미지 자산에 연결하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_EXAM_EDITOR_REGISTRY_PATH` | 시험지 후보의 현재 버전·공개 검수 상태와 교체 근거를 보관하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH` | 관리자 시험지 초안·revision·배치 이력을 저장하는 비공개 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_ACADEMY_QUESTION_DB_PATH` | 학기·대단원·소단원·세부 유형과 학원형 사용 상태를 보관하는 비공개 문항 DB 절대경로 |
+| `HIGHSELECT_PRIVATE_ACADEMY_ASSET_ROOT` | 관리자만 보는 문항 원본 페이지 폴더. 각 원본 ID 폴더 안에 `manifest.json`과 검수된 PNG를 둡니다. |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
 
@@ -125,6 +127,10 @@ detailType, difficulty(lowered|standard|raised), evidence[]
 `HIGHSELECT_PRIVATE_EXAM_EDITOR_REGISTRY_PATH`는 `highselect-private-exam-editor-registry/v1` JSON입니다. 문항 원문·답·풀이·원본 경로는 넣지 않고, 중립 문항 ID와 현재 버전, 교육과정 경로, 세부유형, 난도, 입력 방식, 그림 필요 여부, 공개 승인 상태만 둡니다. 쌍둥이·유사 교체 근거는 원문 문항·버전과 후보 문항·버전에 결속하며 문항군·세부유형·풀이 구조·난도 관계가 모두 검증된 경우에만 `approved`로 둡니다.
 
 `HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH`는 `highselect-private-exam-drafts/v1` JSON입니다. 초안은 원문 문항을 복제하지 않고 배치 ID, 중립 문항 ID, 문항 버전, 순서, 배점, 교체 근거 ID만 저장합니다. 변경 요청은 관리자 세션, 같은 `Origin`, `X-Highselect-Admin: 1`, JSON 형식과 현재 초안 revision을 모두 요구합니다. 다른 화면이 먼저 저장했거나 문항 버전이 바뀌면 `409`로 닫고 자동 덮어쓰지 않습니다.
+
+`HIGHSELECT_PRIVATE_ACADEMY_QUESTION_DB_PATH`는 관리자 문제은행의 `분류 문항` 탭에서만 읽습니다. 돌파형·생수형·원수학 기본형·원수학 듀얼형·이든형·황소형·깊은생각형을 서로 다른 시험형으로 관리하며, `source_verified` 또는 `approved`인 문항만 기본 검색 결과에 보입니다. 분류만 끝나고 풀이법·유사문항 검수가 남은 문항은 이 목록에서 확인할 수 있지만 시험지에 바로 담을 수 없습니다.
+
+`HIGHSELECT_PRIVATE_ACADEMY_ASSET_ROOT`는 원본 전체 PDF가 아니라 문항이 있는 검수 페이지 PNG만 읽습니다. 화면에는 원본 경로나 답안 페이지를 보내지 않으며, 관리자로 로그인한 요청에서 문항 ID와 검수된 쪽 연결이 모두 맞을 때만 이미지를 전달합니다. 현재 돌파 중2-2 원본은 3~10쪽을 연결했고, 원본 PDF를 찾지 못한 회차는 버튼을 `원본 준비 중`으로 둡니다.
 
 후보 검색 API는 검수 잠금 문항을 반환하지 않으며 답안 상태 필드도 내보내지 않습니다. 교체 요청의 관계 판정값은 클라이언트 입력을 신뢰하지 않고 비공개 레지스트리의 근거 ID로 다시 검증합니다. readiness 응답은 현재 문항 버전과 범위를 재검사하고, 통과한 경우에만 문제·답안·풀이·분석지에 공통으로 사용할 번호 projection을 반환합니다.
 
