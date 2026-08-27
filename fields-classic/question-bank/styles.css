@@ -730,4 +730,32 @@
 .g1-winter-three-balance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;width:100%}.g1-winter-three-balance section{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:74px;padding:8px;border-bottom:4px double #63899a;background:#fff;text-align:center}.g1-winter-three-balance section span{font-size:17px;line-height:1.5}.g1-winter-three-balance section b{padding:0 4px}.g1-winter-three-balance p{grid-column:1/-1;margin:0;padding:7px;border:1px solid #d4a448;background:#fff4cb;text-align:center;font-size:12px;font-weight:900}
 @media(max-width:560px){.g1-winter-three-balance{grid-template-columns:1fr}.g1-winter-three-balance section{min-height:58px}.g1-winter-sudoku{grid-template-columns:repeat(4,42px)}.g1-winter-sudoku span{width:42px;height:42px}.g1-winter-card-threshold span,.g1-winter-card-chain span{width:39px;height:46px}.g1-winter-card-chain>div{gap:5px}}
 @media print{.g1-winter-sum-layout .core span,.g1-winter-product-layout .core span,.g1-winter-product-layout .cards i,.g1-winter-step-game .events>*,.g1-winter-sudoku span,.g1-winter-card-threshold span,.g1-winter-card-chain span,.g1-winter-card-chain ul,.g1-winter-three-balance section{background:#fff}}
+
+/* 교재는 권을 먼저 고른 뒤 단원과 세부 유형을 탐색한다. */
+.curriculum-book-tabs{display:grid;grid-template-columns:repeat(10,minmax(54px,1fr));gap:5px;padding:12px 0 9px;overflow-x:auto}
+.curriculum-book-tabs button{min-height:38px;padding:0 8px;border:1px solid #d5e0e6;border-radius:4px;background:#fff;color:#647988;font-size:10px;font-weight:900;white-space:nowrap}
+.curriculum-book-tabs button.active{border-color:#39afe8;background:#eaf8ff;color:#087fbd}
+.curriculum-inline-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-bottom:8px;border:1px solid #dce6eb;background:#dce6eb}
+.curriculum-inline-stages button{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px;min-height:42px;padding:7px 10px;border:0;border-top:3px solid transparent;background:#fff;color:#536b79;text-align:left}
+.curriculum-inline-stages button strong{font-size:10px}.curriculum-inline-stages button span{font-size:8px}
+.curriculum-inline-stages button.concept{border-top-color:#2d9b78}.curriculum-inline-stages button.type{border-top-color:#319bc9}.curriculum-inline-stages button.practice{border-top-color:#d7a72d}.curriculum-inline-stages button.advanced{border-top-color:#d96657}
+.curriculum-inline-stages button.active{background:#edf9ff;color:#087fbd}
+
+/* 그림형 문항도 잘리지 않도록 화면과 A4 모두 두 문항씩 같은 묶음으로 구성한다. */
+.question-grid{display:block}
+.question-page{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.question-page+.question-page{margin-top:9px;padding-top:9px;border-top:1px dashed #b9c8d0}
+
+/* T자 마방진의 연결선은 다섯 칸의 중심 사이에서만 끝난다. */
+.b1-five-card-magic.t-shape:before{right:75px}
+.b1-five-card-magic.t-shape:after{bottom:42px}
+
+@media(max-width:900px){.question-page{grid-template-columns:1fr}}
+@media(max-width:700px){.curriculum-book-tabs{grid-template-columns:repeat(10,64px)}.curriculum-inline-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{
+  .question-grid{display:block;padding:0;border:0;background:#fff}
+  .question-page{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr));min-height:245mm;padding:11px;break-after:page;page-break-after:always}
+  .question-page:last-child{break-after:auto;page-break-after:auto}
+  .question-page+.question-page{margin-top:0;border-top:0}
+}
 .b5-checker-products .cells span.empty{background:repeating-linear-gradient(135deg,#dce8ed 0 5px,#edf3f5 5px 10px)}
