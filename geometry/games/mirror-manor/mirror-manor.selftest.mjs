@@ -13,10 +13,10 @@ const cellKey = (cell) => cell.join(",");
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 2, "only levels 1 and 2 may be playable in this release");
+assert(readyLevels.length === 4, "levels 1 through 4 should be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
-assert(ids.length === 20 && new Set(ids).size === 20, "the 20 ready problems need unique ids");
+assert(ids.length === 40 && new Set(ids).size === 40, "the 40 ready problems need unique ids");
 
 for (const problem of levels[0].problems) {
   const targetIds = new Set(problem.targetCells.map(cellKey));
@@ -50,11 +50,42 @@ for (const problem of levels[1].problems) {
   }
 }
 
+for (const problem of levels[2].problems) {
+  assert(problem.grid.lattice === "square" || problem.grid.lattice === "triangle", `${problem.id} has no dot-grid kind`);
+  assert(sameCell(reflectCell(problem.sourceCell, problem.axis), problem.targetCell), `${problem.id} has the wrong reflected target`);
+  assert(problem.choices.length === 3 && new Set(problem.choices.map(cellKey)).size === 3, `${problem.id} needs three distinct choices`);
+  const matches = [];
+  for (let y = 0; y < problem.grid.rows; y += 1) {
+    for (let x = 0; x < problem.grid.cols; x += 1) {
+      const candidate = [x, y];
+      if (isGivenSide(candidate, problem.axis)) continue;
+      if (mirrorDistance(candidate, problem.axis) !== mirrorDistance(problem.sourceCell, problem.axis)) continue;
+      if (parallelCoord(candidate, problem.axis) !== parallelCoord(problem.sourceCell, problem.axis)) continue;
+      matches.push(candidate);
+    }
+  }
+  assert(matches.length === 1 && sameCell(matches[0], problem.targetCell), `${problem.id} has a non-unique answer`);
+  assert(problem.choices.some((choice) => sameCell(choice, problem.targetCell)), `${problem.id} omits the answer choice`);
+}
+
+for (const problem of levels[3].problems) {
+  assert(["letter", "word", "arrow"].includes(problem.sourceKind), `${problem.id} has no supported symbol kind`);
+  assert(problem.sourceText.length > 0, `${problem.id} has no source text`);
+  assert(problem.choices.length === 3, `${problem.id} needs three choices`);
+  assert(problem.choices.filter((choice) => choice.kind === "mirror").length === 1, `${problem.id} needs one mirrored choice`);
+  assert(problem.choices.filter((choice) => choice.kind === "normal").length === 1, `${problem.id} needs one normal choice`);
+  assert(problem.choices.filter((choice) => choice.kind === "decoy").length === 1, `${problem.id} needs one decoy choice`);
+  const answer = problem.choices.find((choice) => choice.kind === "mirror");
+  assert(answer.text === problem.sourceText, `${problem.id} mirrors the wrong source text`);
+  assert(new Set(problem.choices.map((choice) => `${choice.kind}:${choice.text}`)).size === 3, `${problem.id} repeats a visual choice role`);
+}
+
 const koreanKeys = Object.keys(messages.ko).sort();
 for (const lang of LANGUAGES) {
   assert(JSON.stringify(Object.keys(messages[lang]).sort()) === JSON.stringify(koreanKeys), `${lang} locale keys differ from Korean`);
   assert(text(lang, "levelLabel", { level: 2 }).includes("2"), `${lang} level label does not interpolate`);
   assert(text(lang, "hintPaintVertical") !== text(lang, "hintPaintHorizontal"), `${lang} mirror-axis hints must differ`);
+  assert(text(lang, "promptSymbol").length > 0 && text(lang, "hintSymbol").length > 0, `${lang} symbol copy is missing`);
   assert(messages[lang].successGood === "GOOD JOB!", `${lang} success text drifted`);
 }
 

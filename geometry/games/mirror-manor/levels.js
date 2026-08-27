@@ -11,10 +11,10 @@
    - The manor is NOT a paper game. There is no crease, no fold, no unfolding.
      A room has a mirror line; blocks, tiles and furniture stand on one side and
      the child completes what the mirror would show on the other side.
-   - Levels 3-5 are specified in docs/12_SOURCE_BACKED_FUTURE_GAMES.md but are not
-     implemented yet. They are declared here with `ready:false` and an empty pool
-     so that adding them later is pure data work: author a pool, flip the flag.
-     Nothing in the engine or the validator has to be restructured.
+   - Level 3 is the equal-distance choice activity from the future-game design.
+     It uses explicit square and triangular dot grids. Level 4 is the source-backed
+     letter/symbol choice activity; level 5 remains locked until its double-mirror
+     pool is verified.
 
    Every user-facing string lives in i18n.js. This file only carries keys.
    ========================================================================= */
@@ -75,6 +75,7 @@ export function inGrid(cell, grid) {
 }
 
 const sortCells = (cells) => [...cells].sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+const cellId = (cell) => cell.join(",");
 
 /** Move a cell list so its bounding box starts at (0,0); this is a piece "shape". */
 export function normalizeShape(cells) {
@@ -145,6 +146,13 @@ export function canonicalKey(problem) {
     const render = (list) => list.map((point) => point.join(",")).join(" ");
     return [render(forward), render(backward)].sort()[0];
   };
+  if (problem.interaction === "distance-match") {
+    return `${problem.interaction}#${problem.grid.lattice}#${problem.sourceCell.join(",")}#${problem.targetCell.join(",")}#${problem.choices.map(cellId).sort().join("|")}`;
+  }
+  if (problem.interaction === "symbol-reflection") {
+    const choices = problem.choices.map((choice) => `${choice.kind}:${choice.text}`).sort().join("|");
+    return `${problem.interaction}#${problem.sourceKind}#${problem.sourceText}#${choices}`;
+  }
   const cells = problem.interaction === "paint-reflection"
     ? problem.sourceCells
     : problem.givens.flatMap((given) => given.cells);
@@ -304,19 +312,104 @@ const level2Specs = [
   { axis: { kind: "vertical", at: 4 }, givens: [["stairsS", [0, 3]], ["frame", [2, 0]], ["candle", [0, 0]]] }
 ];
 
+/* ------------------------------------------------------------- level 3 authoring */
+
+/**
+ * Level 3 is deliberately a choice task, not a second drawing gesture. The child
+ * sees one marker on the near side and taps one of three dots on the far side.
+ * The correct dot is calculated by the same reflection formula as levels 1 and 2;
+ * the two distractors are authored by role: one keeps the parallel line but changes
+ * distance, and one keeps distance but changes the parallel line.
+ */
+function distanceProblem(index, lattice, source, distanceDecoy, directionDecoy) {
+  const axis = { kind: "vertical", at: 4 };
+  const grid = { cols: 8, rows: 6, lattice };
+  const targetCell = reflectCell(source, axis);
+  return {
+    id: `mirror-manor-l3-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level: 3,
+    interaction: "distance-match",
+    grid,
+    axis,
+    sourceCell: source,
+    targetCell,
+    choices: [targetCell, distanceDecoy, directionDecoy],
+    validation: { solutionCount: 1, allowRotationEquivalent: false, allowReflectionEquivalent: false }
+  };
+}
+
+const level3Specs = [
+  distanceProblem(0, "square", [3, 0], [5, 0], [4, 1]),
+  distanceProblem(1, "square", [2, 1], [6, 1], [5, 0]),
+  distanceProblem(2, "square", [1, 3], [5, 3], [6, 1]),
+  distanceProblem(3, "square", [3, 5], [5, 5], [4, 4]),
+  distanceProblem(4, "square", [0, 2], [6, 2], [7, 0]),
+  distanceProblem(5, "triangle", [3, 0], [5, 0], [4, 1]),
+  distanceProblem(6, "triangle", [2, 1], [6, 1], [5, 0]),
+  distanceProblem(7, "triangle", [1, 3], [5, 3], [6, 1]),
+  distanceProblem(8, "triangle", [3, 5], [5, 5], [4, 4]),
+  distanceProblem(9, "triangle", [0, 2], [6, 2], [7, 0])
+];
+
+/* ------------------------------------------------------------- level 4 authoring */
+
+/**
+ * RAY C1-1 p.19-23 asks children to write the letter or word seen in a mirror.
+ * The browser version uses three visual choices so a phone never needs freehand
+ * glyph drawing. `mirror` is the only answer role; `normal` and `decoy` are both
+ * deliberately wrong visual readings. Arrow items are a small internal extension
+ * of the same left/right reflection rule, not copies of a source worksheet item.
+ */
+function symbolProblem(index, sourceKind, sourceText, decoyText) {
+  const choices = [
+    { id: "normal", kind: "normal", text: sourceText },
+    { id: "mirror", kind: "mirror", text: sourceText },
+    { id: "decoy", kind: "decoy", text: decoyText }
+  ];
+  const shift = index % choices.length;
+  return {
+    id: `mirror-manor-l4-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level: 4,
+    interaction: "symbol-reflection",
+    grid: { ...GRID },
+    axis: { kind: "vertical", at: 4 },
+    sourceKind,
+    sourceText,
+    choices: choices.slice(shift).concat(choices.slice(0, shift)),
+    validation: { solutionCount: 1, allowRotationEquivalent: false, allowReflectionEquivalent: false }
+  };
+}
+
+const level4Specs = [
+  symbolProblem(0, "letter", "ㄱ", "ㄴ"),
+  symbolProblem(1, "letter", "ㅏ", "ㅗ"),
+  symbolProblem(2, "letter", "아", "오"),
+  symbolProblem(3, "letter", "움", "몸"),
+  symbolProblem(4, "word", "어머", "어모"),
+  symbolProblem(5, "word", "마롱", "마봉"),
+  symbolProblem(6, "word", "야옹이", "야용이"),
+  symbolProblem(7, "arrow", "→", "↑"),
+  symbolProblem(8, "arrow", "↗", "↘"),
+  symbolProblem(9, "arrow", "▶", "▲")
+];
+
 /* ------------------------------------------------------------------- level table */
 
 export const levelMeta = [
   { id: 1, interaction: "paint-reflection", titleKey: "level1Title", descKey: "level1Desc", color: "#3f9bb0", ready: true },
   { id: 2, interaction: "drag-reflection", titleKey: "level2Title", descKey: "level2Desc", color: "#c9793f", ready: true },
-  { id: 3, interaction: "distance-match", titleKey: "level3Title", descKey: "level3Desc", color: "#6f8ed6", ready: false },
-  { id: 4, interaction: "symbol-reflection", titleKey: "level4Title", descKey: "level4Desc", color: "#8f76c4", ready: false },
+  { id: 3, interaction: "distance-match", titleKey: "level3Title", descKey: "level3Desc", color: "#6f8ed6", ready: true },
+  { id: 4, interaction: "symbol-reflection", titleKey: "level4Title", descKey: "level4Desc", color: "#8f76c4", ready: true },
   { id: 5, interaction: "double-mirror", titleKey: "level5Title", descKey: "level5Desc", color: "#d4a636", ready: false }
 ];
 
 const pools = {
   1: level1Specs.map((spec, index) => paintProblem(index, spec)),
-  2: level2Specs.map((spec, index) => dragProblem(index, spec))
+  2: level2Specs.map((spec, index) => dragProblem(index, spec)),
+  3: level3Specs,
+  4: level4Specs
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -423,7 +516,9 @@ export function validateLevels() {
       canonical.set(key, problem.id);
 
       if (problem.interaction === "paint-reflection") validatePaint(problem);
-      else validateDrag(problem);
+      else if (problem.interaction === "drag-reflection") validateDrag(problem);
+      else if (problem.interaction === "distance-match") validateDistance(problem);
+      else validateSymbol(problem);
     });
   });
   return true;
@@ -519,6 +614,64 @@ function validateDrag(problem) {
   assert(targets.some((target) => shapeVariants(target.cells).map(shapeKey).includes(decoyKey)), `${problem.id} decoy is not a turned version of an object.`);
 
   assert(countDragSolutions(problem) === 1, `${problem.id} does not have exactly one solution.`);
+}
+
+function validateDistance(problem) {
+  const { grid, axis, sourceCell, targetCell, choices, validation } = problem;
+  assert(grid.lattice === "square" || grid.lattice === "triangle", `${problem.id} has an unsupported dot grid.`);
+  assert(sourceCell.length === 2 && targetCell.length === 2, `${problem.id} needs one source and one target dot.`);
+  assert(inGrid(sourceCell, grid) && isGivenSide(sourceCell, axis), `${problem.id} source is outside the given side.`);
+  assert(inGrid(targetCell, grid) && !isGivenSide(targetCell, axis), `${problem.id} target is outside the answer side.`);
+  assert(cellId(reflectCell(sourceCell, axis)) === cellId(targetCell), `${problem.id} target is not the reflection of its source.`);
+  assert(Array.isArray(choices) && choices.length === 3, `${problem.id} needs three answer choices.`);
+
+  const choiceIds = new Set(choices.map(cellId));
+  assert(choiceIds.size === choices.length, `${problem.id} repeats an answer choice.`);
+  choices.forEach((choice) => {
+    assert(inGrid(choice, grid) && !isGivenSide(choice, axis), `${problem.id} has a choice outside the answer side.`);
+  });
+  assert(choices.filter((choice) => cellId(choice) === cellId(targetCell)).length === 1, `${problem.id} does not have exactly one correct choice.`);
+
+  // Independent candidate enumeration: same distance and same parallel line have
+  // exactly one coordinate on the opposite side of a centered mirror.
+  const matching = [];
+  for (let x = 0; x < grid.cols; x += 1) {
+    for (let y = 0; y < grid.rows; y += 1) {
+      const candidate = [x, y];
+      if (isGivenSide(candidate, axis)) continue;
+      if (mirrorDistance(candidate, axis) !== mirrorDistance(sourceCell, axis)) continue;
+      if (parallelCoord(candidate, axis) !== parallelCoord(sourceCell, axis)) continue;
+      matching.push(candidate);
+    }
+  }
+  assert(matching.length === 1 && cellId(matching[0]) === cellId(targetCell), `${problem.id} has a non-unique distance answer.`);
+
+  const wrongDistance = choices.filter((choice) =>
+    parallelCoord(choice, axis) === parallelCoord(sourceCell, axis)
+    && mirrorDistance(choice, axis) !== mirrorDistance(sourceCell, axis));
+  const wrongDirection = choices.filter((choice) =>
+    parallelCoord(choice, axis) !== parallelCoord(sourceCell, axis)
+    && mirrorDistance(choice, axis) === mirrorDistance(sourceCell, axis));
+  assert(wrongDistance.length >= 1, `${problem.id} needs a distance distractor.`);
+  assert(wrongDirection.length >= 1, `${problem.id} needs a direction distractor.`);
+  assert(validation.solutionCount === 1, `${problem.id} must declare one solution.`);
+}
+
+function validateSymbol(problem) {
+  const { grid, axis, sourceKind, sourceText, choices, validation } = problem;
+  assert(sourceKind === "letter" || sourceKind === "word" || sourceKind === "arrow", `${problem.id} has an unsupported symbol kind.`);
+  assert(grid.cols === GRID.cols && grid.rows === GRID.rows, `${problem.id} uses the wrong room size.`);
+  assert(axis.kind === "vertical" && axis.at === 4, `${problem.id} must use the vertical mirror.`);
+  assert(typeof sourceText === "string" && sourceText.length > 0, `${problem.id} has no source symbol.`);
+  assert(Array.isArray(choices) && choices.length === 3, `${problem.id} needs three symbol choices.`);
+  const signatures = new Set(choices.map((choice) => `${choice.kind}:${choice.text}`));
+  assert(signatures.size === choices.length, `${problem.id} repeats a symbol choice.`);
+  choices.forEach((choice) => assert(typeof choice.text === "string" && choice.text.length > 0, `${problem.id} has an empty choice.`));
+  const mirrorChoices = choices.filter((choice) => choice.kind === "mirror");
+  assert(mirrorChoices.length === 1 && mirrorChoices[0].text === sourceText, `${problem.id} must have one reflected source choice.`);
+  assert(choices.filter((choice) => choice.kind === "normal").length === 1, `${problem.id} needs one unreflected choice.`);
+  assert(choices.filter((choice) => choice.kind === "decoy").length === 1, `${problem.id} needs one decoy choice.`);
+  assert(validation.solutionCount === 1, `${problem.id} must declare one solution.`);
 }
 
 /**
