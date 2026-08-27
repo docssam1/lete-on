@@ -36,7 +36,7 @@ const I18N={
     picked:'골랐어요!', langName:'한국어',
     obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
     obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
-    obWelcome:n=>`환영해요, ${n}!` },
+    obWelcome:n=>`환영해요, ${n}!`, titleCourse:'과정' },
   en:{ appName:'Numbers of Magic', start:'Start', back:'← Back', next:'Next →',
     coins:'Numi Coins', locked:'Coming soon', enter:'Enter', mapTitle:'Magic Number Town',
     skipAsk:'Already good at this?', skipYes:'Skip ahead!', skipNo:"Let's see it",
@@ -47,7 +47,7 @@ const I18N={
     picked:'Picked!', langName:'English',
     obTitle:'Your Number Friend', obSub:'Pick a character and tell us your name!',
     obNamePh:'Enter your name', obGo:'Ta-da! Start ✨', obNeedName:'Tell us your name first!',
-    obWelcome:n=>`Welcome, ${n}!` },
+    obWelcome:n=>`Welcome, ${n}!`, titleCourse:'Course' },
   zh:{ appName:'数字魔法', start:'开始', back:'← 返回', next:'下一个 →',
     coins:'努米金币', locked:'即将推出', enter:'进入', mapTitle:'数字魔法小镇',
     skipAsk:'这部分已经会了吗？', skipYes:'直接跳过！', skipNo:'看一看',
@@ -58,7 +58,7 @@ const I18N={
     picked:'选好了！', langName:'中文',
     obTitle:'我的数字朋友', obSub:'选一个角色，告诉我你的名字！',
     obNamePh:'请输入名字', obGo:'哇！开始吧 ✨', obNeedName:'请先告诉我你的名字！',
-    obWelcome:n=>`欢迎，${n}！` }
+    obWelcome:n=>`欢迎，${n}！`, titleCourse:'课程' }
 };
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])??I18N.ko[k]??k;
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
@@ -72,7 +72,8 @@ const KEY='nm_state_v1';
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
   character:{number:3,color:'blue',bg:'plain',cape:'none'},
-  character_unlocked:{}, mailbox:{opened:{}} };}
+  character_unlocked:{}, mailbox:{opened:{}},
+  boost:{doneWeeks:{},log:[]} /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -81,6 +82,9 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
+if(!S.boost)S.boost={doneWeeks:{},log:[]};
+if(!S.boost.doneWeeks)S.boost.doneWeeks={};
+if(!S.boost.log)S.boost.log=[];
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -309,6 +313,11 @@ function render(){
     screenWelcome();
     return;
   }
+  if(S.view==='title'){
+    app.innerHTML='<div id="screen"></div>';
+    screenTitle();
+    return;
+  }
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
@@ -323,6 +332,7 @@ function render(){
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='mailbox')screenMailbox();
+  else if(S.view==='boost')screenBoost();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -1056,6 +1066,88 @@ function mostRecentTouchedUnit(){
   });
   return best;
 }
+/* 가장 최근에 완료(도장)된 유닛 — 타이틀 화면 "최근 배지" 표시용. 없으면 null. */
+function mostRecentBadge(){
+  let best=null, bestT=-1;
+  Object.keys(S.progress||{}).forEach(uid=>{
+    const p=S.progress[uid];
+    if(p && p.done && (p.touchedAt||0) > bestT){ bestT=p.touchedAt||0; best=uid; }
+  });
+  if(!best) return null;
+  const u=UNITS[best];
+  return (u && u.stamp) ? { uid:best, label:L(u.stamp.label) } : null;
+}
+/* 타이틀 화면 "이어서 모험" 요약 한 줄 — "과정 N · 유닛제목" 형태(§14).
+   과정에 안 속한 유닛(예: 유아 레거시 유닛)은 유닛 제목만. */
+function progressSummaryLine(){
+  const uid = mostRecentTouchedUnit();
+  if(!uid) return '';
+  const u = UNITS[uid];
+  const uTitle = u ? L(u.title) : uid;
+  const cid = courseForUnit(uid);
+  if(!cid) return uTitle;
+  const num = String(cid).replace(/^C/,'');
+  return `${t('titleCourse')} ${num} · ${uTitle}`;
+}
+/* "이어서 모험" 진입 — enterRoadUnit과 같은 체험 게이트 확인을 거친다. */
+function enterContinueUnit(uid){
+  if(!uid){ S.view='town'; save(); render(); return; }
+  if(unitLocked(uid)){ showGateModal(); return; }
+  S.unit=uid; S.step=null; S.sub={}; S.tierId=null; S.view='unit'; S._fromRoadmap=false;
+  save(); render();
+}
+/* ============================================================
+   타이틀 화면 — 게임처럼 모드를 고르고 들어간다 (과정-로드맵.md §14)
+   진행 기록이 있는 프로필에서, 인트로 애니메이션 직후(about.html → ?enter=1)
+   에만 등장한다(boot()의 maybeShowTitle 참고). 선택은 기억하지 않음 —
+   매번 다시 고르는 게 의식(ritual)이라는 게 스펙의 핵심이라, 여기서 고른
+   view는 곧바로 실제 화면으로 넘어가며 저장될 뿐 'title' 자체는 저장 상태에
+   남기지 않는다.
+   ============================================================ */
+function screenTitle(){
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const uid = mostRecentTouchedUnit();
+  const summary = progressSummaryLine();
+  const badge = mostRecentBadge();
+
+  scr.innerHTML=`
+  <div class="nm-title">
+    <div class="nm-title-card">
+      <div class="nm-title-logo">
+        <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
+        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','수의 마법','数字魔法')}</div>
+      </div>
+      <div class="nm-title-char">${window.renderNumiChar?window.renderNumiChar(S.character,88):''}</div>
+      <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
+      <div class="nm-title-stats">
+        <span class="nm-title-chip">🪙 ${S.coins}</span>
+        ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
+      </div>
+      <div class="nm-title-btns">
+        <button class="nm-title-btn primary" id="ttContinue">
+          <span class="nm-title-btn-ico">▶</span>
+          <span class="nm-title-btn-txt">
+            <b>${lk('이어서 모험','Continue Adventure','继续冒险')}</b>
+            ${summary?`<small>${esc(summary)}</small>`:''}
+          </span>
+        </button>
+        <button class="nm-title-btn" id="ttStory">
+          <span class="nm-title-btn-ico">🗺</span>
+          <span class="nm-title-btn-txt"><b>${lk('스토리 모드','Story Mode','故事模式')}</b></span>
+        </button>
+        <button class="nm-title-btn" id="ttFree">
+          <span class="nm-title-btn-ico">🏘</span>
+          <span class="nm-title-btn-txt"><b>${lk('자유 탐험','Free Exploration','自由探索')}</b></span>
+        </button>
+      </div>
+    </div>
+  </div>`;
+  $('#ttContinue').onclick=()=>enterContinueUnit(uid);
+  $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
+  $('#ttFree').onclick=()=>{ S.view='town'; save(); render(); };
+}
 /* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
    없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
    단위 진행 기록이 없다), 가장 최근에 손댄 마법 유닛이 속한 과정으로
@@ -1095,6 +1187,144 @@ function envelopeForWeek(weekKey){
   return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
+
+/* ============================================================
+   정체 감지 → 보강 루프 (과정-로드맵.md §2-4)
+   감지: app/progress-stats.js(NM_STATS) — 유형(스레드)별 세션 정답률을
+   저장해 두고, 최근 2회 세션이 연속 60% 미만이면 그 유형을 "보강 필요"로
+   본다. 감지 자체는 저장된 기록만 보는 순수 함수라 항상 결정적이다.
+
+   삽입: "다음 과정 세션"의 실체가 이 앱에선 편지함의 주간 봉투
+   (envelopeForWeek, §10)뿐이라 — 그 봉투를 여는 순간을 "세션 시작"으로
+   본다. 보강 대상이 있으면 봉투 화면 맨 위에 "🌟 먼저 몸풀기 마법!" 카드를
+   얹는다(placements 자체를 건드리지 않고 화면에서만 앞에 붙인다 — 인쇄
+   학습지 구성은 그대로 유지). 아이가 이 카드를 눌러야만 보강 세션이
+   시작되고, 누르지 않고 그냥 아래 "이번 주 마법"으로 진행해도 막지 않는다
+   (잠금 아님, 자유 선택 원칙). 완료 결과는 S.boost.log에 남겨 부모
+   대시보드가 생기면 바로 읽을 수 있게 해 둔다(현재 이 앱엔 부모 대시보드/
+   리포트 화면이 없어 — 확인 완료 — UI 표시는 후속 과제로 남긴다).
+   ============================================================ */
+
+/* 보강 세션에 쓸 레벨 — 위 §4 다함식 시각화 위젯을 추가해 둔 스레드는
+   "가능하면 위 시각화 위젯 레벨"(작업지시) 원칙에 따라 그 레벨을 우선
+   쓴다. 그 외 스레드는 "해당 유형 낮은 레벨"(작업지시) 원칙대로 레벨 1. */
+const BOOST_VIZ_LEVEL = { NS1:4, AD3:4, AD4:3, AD9:1 };
+function boosterLevelFor(threadId){
+  return BOOST_VIZ_LEVEL[threadId] || 1;
+}
+/* 보강이 필요한 스레드 중 가장 급한 것 하나(정답률 최저) — 없으면 null. */
+function boosterPick(){
+  if(!window.NM_STATS) return null;
+  const list = NM_STATS.boostList();
+  return list.length ? list[0].thread : null;
+}
+/* 그 주에 이미 보강을 마쳤는지(완료 시에만 표시 — 카드를 보고도 안 누른
+   것은 "아직 안 함"으로 남겨 계속 부드럽게 권한다, 잠금 아님). */
+function boosterDoneThisWeek(weekKey){ return !!(S.boost.doneWeeks && S.boost.doneWeeks[weekKey]); }
+
+const BOOST_NEED = 5; /* 보강 세트 문항 수 — 정규 학습지(기본 20)보다 짧게, "몸풀기" */
+function startBooster(threadId, weekKey){
+  const level = boosterLevelFor(threadId);
+  S._boost = { threadId, level, weekKey, i:0, need:BOOST_NEED, score:0, cur:null };
+  S._boostRewarded=false;
+  S.view='boost'; save(); render();
+}
+function boostProblem(threadId, level, weekKey, i){
+  const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('boost'+weekKey+threadId+level+'i'+i));
+  const th = (window.NM_THREADS||{})[threadId];
+  const params = (th && th.levels[level-1] && th.levels[level-1].params) || {};
+  const gen = (window.NM_TGEN||{})[th && th.gen];
+  return gen ? gen(params, rng) : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+}
+function screenBoost(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const b=S._boost;
+  if(!b){ S.view='mailbox'; save(); render(); return; }
+
+  if(b.i>=b.need){
+    /* 완료 — 기록 + 살짝 보상 + 리포트용 로그 */
+    if(window.NM_STATS) NM_STATS.record(b.threadId, b.level, b.score, b.need, {boost:true});
+    S.boost.doneWeeks[b.weekKey]=true;
+    S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
+    if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
+    const already = !!S._boostRewarded;
+    if(!already){ coinAdd(6); S._boostRewarded=true; }
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
+    </div>
+    <div class="nm-step-body">
+      <div class="nm-card center">
+        <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-card-h">${lk('오늘도 한 걸음 더 튼튼해졌어요!','You just got a little stronger!','今天又变得更棒了！')}</div>
+        <div class="nm-score">${b.score} / ${b.need}</div>
+        <div class="nm-stamp-coins">🪙 +6 ${t('coins')}</div>
+        <button class="nm-btn full" id="boostToMailbox">${lk('학습지로 돌아가기','Back to worksheet','返回学习单')}</button>
+      </div>
+    </div>`;
+    save();
+    $('#boostToMailbox').onclick=()=>{ S._boost=null; S._boostRewarded=false; S.view='mailbox'; save(); render(); };
+    return;
+  }
+
+  if(!b.cur){ b.cur = boostProblem(b.threadId, b.level, b.weekKey, b.i); }
+  const cur=b.cur;
+  const useWidget = cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="boostBack">${t('back')}</button>
+    <div class="nm-unit-title">🌟 ${lk('먼저 몸풀기 마법!','Warm-up Magic First!','先来热身魔法！')}</div>
+  </div>
+  <div class="nm-step-body">
+    <div class="nm-dialog">
+      <div class="nm-prog">${dots(b.need,b.i)}</div>
+      <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+      <div class="nm-bubble">${esc(L(cur.prompt))}</div>
+      ${useWidget ? `<div id="boostWidget" class="nm-lab-widget"></div>` : `
+        <div class="nm-lab-expr"><span data-tex="${esc(labDisplayTex(cur.tex))}"></span></div>
+        <div class="nm-numpad-screen" id="boostScreen">&nbsp;</div>
+        <div class="nm-numpad" id="boostPad"></div>`}
+    </div>
+  </div>`;
+  $('#boostBack').onclick=()=>{ S._boost=null; S.view='mailbox'; save(); render(); };
+  renderMath(scr);
+
+  function advance(correct){
+    if(correct)b.score++;
+    b.i++; b.cur=null; save();
+    setTimeout(()=>screenBoost(),correct?600:900);
+  }
+
+  if(useWidget){
+    NM_WIDGETS.render(cur,$('#boostWidget'),val=>{
+      const ok = Array.isArray(cur.answer)
+        ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
+        : +val===cur.answer;
+      if(ok)playSfx("success");
+      advance(ok);
+    });
+  } else {
+    /* widgets.js의 numpadState는 그 파일 내부 클로저라 여기선 못 쓴다 —
+       stepArena/stepCheck과 같은 방식(S.sub.inp 대신 지역 inp)으로 인라인 처리. */
+    const screen=$('#boostScreen');
+    let inp='';
+    buildNumpad($('#boostPad'),val=>{
+      if(val==='ok'){
+        if(inp==='')return;
+        const ok=parseFloat(inp)===cur.answer;
+        advance(ok);
+        return;
+      }
+      if(val==='del')inp=inp.slice(0,-1);
+      else if(val==='-')inp=applyMinusKey(inp);
+      else if(inp.replace('-','').length<6&&!(val==='.'&&inp.includes('.')))inp+=val;
+      screen.textContent=inp||' ';
+    },{decimal:!Number.isInteger(cur.answer),negative:!!cur.negative});
+  }
+}
 
 /* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관, 단 firstWeek 이전은 제외 —
    신규 학생이 과거 봉투 8개를 한번에 받지 않도록, Phase 2B §10 잔여) */
@@ -1151,6 +1381,16 @@ function screenMailbox(){
       return `<div class="nm-wsh-unit-title">✨ ${esc(th?L(th.name):id)}</div>`;
     }).join('') || `<p class="nm-wsh-sentence">${lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
     const goUnit = (env.magic||[]).find(id=>UNITS[id]);
+    /* 정체 감지→보강 루프(§2-4) — 이 주의 봉투를 여는 순간이 "다음 과정 세션 시작".
+       보강 대상이 있고 이번 주에 아직 안 했다면 맨 위에 부드러운 카드를 얹는다. */
+    const boostThread = boosterDoneThisWeek(S._mbWeek) ? null : boosterPick();
+    const boostTh = boostThread && (window.NM_THREADS||{})[boostThread];
+    const boostCardHtml = boostTh ? `
+      <div class="nm-card nm-boost-card">
+        <div class="nm-mb-section-h">🌟 ${lk('먼저 몸풀기 마법!','Warm-up Magic First!','先来热身魔法！')}</div>
+        <p class="nm-wsh-sentence">${lk(`요즘 ${L(boostTh.name)}이(가) 살짝 어려웠나 봐요. 짧게 5문제만 몸풀고 시작해요!`,`${L(boostTh.name)} has been a bit tricky lately — let's warm up with 5 quick ones!`,`最近${L(boostTh.name)}好像有点难，先来热身5道题吧！`)}</p>
+        <button class="nm-btn full" id="mbBoostGo">🌟 ${lk('몸풀기 시작','Start warm-up','开始热身')}</button>
+      </div>` : '';
     const drillRows = env.placements.map(p=>{
       const th=(window.NM_THREADS||{})[p.thread];
       const code = NM_EXAM.worksheetCode({thread:p.thread, level:p.level, count:p.count, seed:p.seed});
@@ -1165,6 +1405,7 @@ function screenMailbox(){
       <div class="nm-unit-title">📬 ${esc(env.wsId)}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
+      ${boostCardHtml}
       <div class="nm-card">
         <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
         <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
@@ -1177,6 +1418,9 @@ function screenMailbox(){
       </div>
     </div>`;
     $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+    if(boostTh){
+      $('#mbBoostGo').onclick=()=>{ const wk=S._mbWeek; startBooster(boostThread, wk); };
+    }
     if(goUnit){
       $('#mbGoUnit').onclick=()=>{
         S._mbWeek=null;
@@ -2392,9 +2636,22 @@ function screenWorksheetHelper(wsId){
   renderMath(scr);
 }
 
+/* 타이틀 화면 게이트(§14) — "인트로 애니메이션 후"를 이 앱에서는 about.html이
+   ?enter=1을 달고 돌아오는 순간으로 본다(index.html의 기존 인트로→about 흐름,
+   되돌리지 않음). 진행 기록(mostRecentTouchedUnit)이 있는 온보딩된 프로필에서만
+   S.view를 'title'로 바꾼다 — save()는 하지 않는다(타이틀은 저장 상태가 아니라
+   "이번 진입"에서만 한 번 보이는 화면이라, 새로고침해도 URL에 enter=1이 없으면
+   바로 이전 화면으로 돌아간다). 신규 설치·진행 없음은 그대로 온보딩→마을. */
+function maybeShowTitle(){
+  if(!S.onboarded) return;
+  if(!/[?&]enter=1\b/.test(location.search)) return;
+  if(!mostRecentTouchedUnit()) return;
+  S.view='title';
+}
 /* ---------- 시작 ---------- */
 function boot(){
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
+  maybeShowTitle();
   render();
   reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }

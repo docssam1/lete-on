@@ -1,6 +1,6 @@
 import {
   levels, readyLevels, validateLevels, reflectCell, mirrorDistance,
-  parallelCoord, isGivenSide, classifyCell, classifyPlacement
+  parallelCoord, isGivenSide, classifyCell, classifyPlacement, doubleMirrorCopies
 } from "./levels.js";
 import { LANGUAGES, messages, text } from "./i18n.js";
 
@@ -13,10 +13,10 @@ const cellKey = (cell) => cell.join(",");
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 4, "levels 1 through 4 should be playable in this release");
+assert(readyLevels.length === 5, "levels 1 through 5 should be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
-assert(ids.length === 40 && new Set(ids).size === 40, "the 40 ready problems need unique ids");
+assert(ids.length === 50 && new Set(ids).size === 50, "the 50 ready problems need unique ids");
 
 for (const problem of levels[0].problems) {
   const targetIds = new Set(problem.targetCells.map(cellKey));
@@ -84,12 +84,31 @@ assert(levels[3].problems.some((problem) => problem.sourceKind === "latin"), "le
 assert(levels[3].problems.some((problem) => problem.axis.kind === "horizontal"), "level 4 needs an up-down reflection problem");
 assert(levels[3].problems.some((problem) => problem.axis.kind === "diagonal"), "level 4 needs a diagonal reflection problem");
 
+for (const problem of levels[4].problems) {
+  assert(problem.axis.kind === "double", `${problem.id} needs two mirror axes`);
+  const sourceIds = new Set(problem.sourceCells.map(cellKey));
+  const targetIds = new Set(problem.targetCells.map(cellKey));
+  assert(sourceIds.size === problem.sourceCells.length, `${problem.id} repeats a source cell`);
+  assert(targetIds.size === problem.targetCells.length, `${problem.id} repeats a target cell`);
+  assert(targetIds.size === sourceIds.size * 3, `${problem.id} needs three reflected copies per source cell`);
+
+  const independentlyReflected = new Set();
+  for (const source of problem.sourceCells) {
+    assert(source[0] < problem.axis.verticalAt && source[1] < problem.axis.horizontalAt, `${problem.id} source leaves the upper-left quadrant`);
+    for (const copy of doubleMirrorCopies(source, problem.axis)) independentlyReflected.add(cellKey(copy));
+  }
+  assert(independentlyReflected.size === targetIds.size, `${problem.id} reflection copies overlap`);
+  assert([...independentlyReflected].every((id) => targetIds.has(id)), `${problem.id} target set differs from independent reflection`);
+  assert([...targetIds].every((id) => !sourceIds.has(id)), `${problem.id} overlaps source and target cells`);
+}
+
 const koreanKeys = Object.keys(messages.ko).sort();
 for (const lang of LANGUAGES) {
   assert(JSON.stringify(Object.keys(messages[lang]).sort()) === JSON.stringify(koreanKeys), `${lang} locale keys differ from Korean`);
   assert(text(lang, "levelLabel", { level: 2 }).includes("2"), `${lang} level label does not interpolate`);
   assert(text(lang, "hintPaintVertical") !== text(lang, "hintPaintHorizontal"), `${lang} mirror-axis hints must differ`);
   assert(text(lang, "promptSymbol").length > 0 && text(lang, "hintSymbol").length > 0, `${lang} symbol copy is missing`);
+  assert(text(lang, "promptDouble").length > 0 && text(lang, "hintDouble").length > 0, `${lang} double-mirror copy is missing`);
   assert(messages[lang].successGood === "GOOD JOB!", `${lang} success text drifted`);
 }
 

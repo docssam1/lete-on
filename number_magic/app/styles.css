@@ -198,6 +198,11 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-mb-env-badge.new{background:#e0433b;color:#fff}
 .nm-mb-env-badge.done{background:#eef2fa;color:var(--sub)}
 
+/* 정체 감지→보강 루프(§2-4) — 몸풀기 카드 + 보강 세션 화면 */
+.nm-boost-card{flex:0 0 auto;overflow:visible;margin-bottom:12px;
+  border:2px solid var(--gold-deep);background:linear-gradient(180deg,#fffaf0,#fffdf7)}
+.nm-boost-card .nm-mb-section-h{margin-top:0;color:var(--gold-deep)}
+
 /* 핵심체크 */
 .nm-fill{text-align:center;font-size:24px;font-weight:800;margin:12px 0}
 .nm-open-q{font-size:16px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:14px}
@@ -568,6 +573,49 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   background:#fff9ec;border:1.5px solid #f0d060;border-radius:99px;padding:6px 18px}
 .nm-ob-welcome.show{animation:obWelcomeIn .5s ease 1s forwards}
 @keyframes obWelcomeIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ============================================================
+   타이틀 화면 — 게임처럼 모드를 고르고 들어간다 (§14, 2026-08-27 Phase 3)
+   ============================================================ */
+.nm-title{width:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:28px 20px;overflow-y:auto;
+  background:radial-gradient(1100px 600px at 50% -10%,#1c4a86,transparent 65%),
+    linear-gradient(165deg,var(--blue-deep) 0%,var(--blue) 55%,#123a6e 100%)}
+.nm-title-card{max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.nm-title-logo{margin-bottom:6px}
+.nm-title-logo-kr{
+  font-size:clamp(28px,8vw,38px);font-weight:900;letter-spacing:-.02em;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 2px 0 rgba(0,0,0,.15);
+}
+.nm-title-logo-sub{font-size:11px;font-weight:800;letter-spacing:.25em;color:rgba(255,255,255,.55);margin-top:2px}
+.nm-title-char{filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));animation:bob 3s ease-in-out infinite;margin:4px 0}
+.nm-title-hello{font-size:14px;font-weight:700;color:#fff;opacity:.92;margin-bottom:4px}
+.nm-title-stats{display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.nm-title-chip{font-size:12.5px;font-weight:800;color:#fff;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px}
+.nm-title-chip.gold{color:#4a370f;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:var(--gold-deep)}
+.nm-title-btns{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:10px}
+.nm-title-btn{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  border:1.5px solid rgba(255,255,255,.25);border-radius:18px;background:rgba(255,255,255,.08);
+  color:#fff;padding:14px 18px;cursor:pointer;transition:transform .12s,background .15s;
+  font-family:'Pretendard',sans-serif;
+}
+.nm-title-btn:active{transform:scale(.97)}
+.nm-title-btn:hover{background:rgba(255,255,255,.15)}
+.nm-title-btn-ico{font-size:24px;flex-shrink:0;width:30px;text-align:center}
+.nm-title-btn-txt{display:flex;flex-direction:column;gap:2px}
+.nm-title-btn-txt b{font-size:16px;font-weight:900}
+.nm-title-btn-txt small{font-size:11.5px;font-weight:700;opacity:.8}
+.nm-title-btn.primary{
+  border-color:var(--gold-deep);
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  color:#3a2a08;box-shadow:0 14px 28px -14px rgba(0,0,0,.5);
+}
+.nm-title-btn.primary:hover{background:linear-gradient(180deg,#fce4ab,var(--gold-deep))}
+.nm-title-btn.primary .nm-title-btn-txt small{opacity:.85}
 
 /* ============================================================
    시험 설정 — 섹션 피커

@@ -18,10 +18,13 @@ window.NM_THREADS = {
 
 /* ── NS 수 감각 ───────────────────────────── */
 NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeValue', prereq:[],
-  widgets:['missing','numpad'],
+  widgets:['missing','base10','numpad'],
   levels:[{id:1,label:{ko:'두세 자리',en:'2-3 digits',zh:'两三位'},params:{max:999}},
           {id:2,label:{ko:'네 자리',en:'4 digits',zh:'四位'},params:{max:9999}},
-          {id:3,label:{ko:'큰 수',en:'Big numbers',zh:'大数'},params:{max:99999}}] },
+          {id:3,label:{ko:'큰 수',en:'Big numbers',zh:'大数'},params:{max:99999}},
+          /* 과정-로드맵.md §4 다함식 위젯 — 십진블록(백판·십막대·낱개)으로 수 읽기.
+             2026-08-27 Phase 3 신규. */
+          {id:4,label:{ko:'십진블록 읽기',en:'Read base-10 blocks',zh:'读十进制方块'},params:{mode:'base10'}}] },
 NS2:{ name:{ko:'모으기·가르기',en:'Compose & Split',zh:'合与分'}, gen:'ns2_split', prereq:[],
   widgets:['cubes','split','numpad'],
   levels:[{id:1,label:{ko:'5까지',en:'to 5',zh:'到5'},params:{max:5}},
@@ -49,14 +52,27 @@ AD2:{ name:{ko:'받아올림 덧셈(한 자리)',en:'1-digit + (carry)',zh:'一�
   levels:[{id:1,label:{ko:'한 자리',en:'1-digit',zh:'一位'},params:{}},
           {id:2,label:{ko:'세 수',en:'3 numbers',zh:'三个数'},params:{terms:3}}] },
 AD3:{ name:{ko:'두 자리+한 자리',en:'2-digit + 1-digit',zh:'两位加一位'}, gen:'ad3_add2d1d', prereq:['AD2','NS1'],
-  widgets:['steps','numpad'],
+  widgets:['steps','base10','numpad'],
   levels:[{id:1,label:{ko:'올림×',en:'no carry',zh:'不进位'},params:{carry:false}},
           {id:2,label:{ko:'올림',en:'carry',zh:'进位'},params:{carry:true}},
-          {id:3,label:{ko:'세 자리+한 자리',en:'3d+1d',zh:'三位加一位'},params:{carry:true,threeDigit:true}}] },
+          {id:3,label:{ko:'세 자리+한 자리',en:'3d+1d',zh:'三位加一位'},params:{carry:true,threeDigit:true}},
+          /* §4 다함식 위젯 — 십진블록으로 두 수 더하기(올림=새 십막대로 묶임을 눈으로 봄).
+             2026-08-27 Phase 3 신규. */
+          {id:4,label:{ko:'십진블록 더하기',en:'Add with base-10 blocks',zh:'用十进制方块相加'},params:{mode:'base10'}}] },
 AD4:{ name:{ko:'몇십·몇백 덧뺄',en:'Tens & hundreds ±',zh:'整十整百加减'}, gen:'ad4_addTens', prereq:['NS1'],
-  widgets:['steps','numpad'],
+  widgets:['steps','numline','numpad'],
   levels:[{id:1,label:{ko:'몇십±몇십',en:'tens',zh:'几十'},params:{unit:10}},
-          {id:2,label:{ko:'몇백±몇백',en:'hundreds',zh:'几百'},params:{unit:100}}] },
+          {id:2,label:{ko:'몇백±몇백',en:'hundreds',zh:'几百'},params:{unit:100}},
+          /* §4 다함식 위젯 — 수직선 점프(+n씩 뛰어세기, 두 자리 범위). 유아 nl2_seq의
+             칩 나열을 실제 점프 아치로 확장한 독립 위젯. 2026-08-27 Phase 3 신규. */
+          {id:3,label:{ko:'수직선 점프',en:'Number-line hops',zh:'数轴跳跃'},params:{mode:'numline'}}] },
+AD9:{ name:{ko:'10 이용 덧셈(보정 전략)',en:'Compensation Addition (use 10)',zh:'借助10的加法(补偿策略)'}, gen:'ad9_compAdd', prereq:['AD3'],
+  concept:{ko:'9나 11을 더할 땐 10을 먼저 더하고 살짝 빼거나 더해요. 24+9는 24+10-1, 24+11은 24+10+1이에요.',
+    en:'Adding 9 or 11? Add 10 first, then nudge back or forward. 24+9 = 24+10-1, and 24+11 = 24+10+1.',
+    zh:'加9或11时，先加10再稍微减或加一点。24+9=24+10-1，24+11=24+10+1。'},
+  widgets:['compareSteps','steps','numpad'],
+  levels:[{id:1,label:{ko:'나란히 비교',en:'side by side',zh:'并排比较'},params:{mode:'compare'}},
+          {id:2,label:{ko:'암산 단계',en:'mental steps',zh:'心算步骤'},params:{mode:'abstract'}}] },
 AD5:{ name:{ko:'두 자리+두 자리(올림)',en:'2d+2d (carry)',zh:'两位加两位(进位)'}, gen:'ad5_add2d2d', prereq:['AD3','AD4'],
   widgets:['steps','vertical','numpad'],
   levels:[{id:1,label:{ko:'올림 1회',en:'1 carry',zh:'进位一次'},params:{carries:1}},

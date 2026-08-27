@@ -91,9 +91,11 @@ button { cursor: pointer }
 .board.is-symbol .board-cells { display: block }
 .cell { position: relative; min-width: 0; min-height: 0; padding: 0; border: 1px solid #cdbfa8; background: transparent }
 .cell.answer-side { background: #ffffff5c }
+.cell.double-source-quadrant:not(.given) { background: #2f6f9208 }
 .cell.given { background: #2f6f92; border-color: #ffffffcc; box-shadow: inset 0 0 0 2px #ffffff55 }
 .cell.painted { background: #e8823f; border-color: #fff; box-shadow: inset 0 0 0 2px #ffffff66 }
 .board.is-paint .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
+.board.is-double .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
 .board.is-drag .cell { pointer-events: none }
 .cell.wrong { animation: shake .38s ease; background: #dc5f55cc !important }
 @keyframes shake { 25% { transform: translateX(-4px) } 75% { transform: translateX(4px) } }
@@ -144,6 +146,7 @@ button { cursor: pointer }
 
 /* Mirror line: one bright silvered band, never a crease. */
 .mirror-line { position: absolute; z-index: 5; background: linear-gradient(90deg, #ffffffcc, var(--glass), #ffffffcc); box-shadow: 0 0 12px #7fd3e6cc; pointer-events: none; border-radius: 99px }
+.mirror-line[hidden] { display: none }
 .mirror-line.vertical { top: -2%; height: 104%; width: 6px; transform: translateX(-50%) }
 .mirror-line.horizontal { left: -2%; width: 104%; height: 6px; transform: translateY(-50%) }
 .mirror-line.diagonal { left: 50%; top: 50%; width: 142%; height: 6px; transform: translate(-50%, -50%) rotate(45deg) }
@@ -253,6 +256,9 @@ button { cursor: pointer }
 
 /* Mobile landscape (the 844x390 target). Everything must be on screen at once. */
 @media (orientation: landscape) and (max-height: 560px) {
+  /* Installation is offered from the map and town. It must never cover a live
+     game board on a short landscape phone. */
+  .manor-shell ~ .gf-install-banner { display: none !important }
   :root { --board-h: calc(var(--app-dvh) - 120px) }
   .manor-shell { grid-template-rows: 40px 32px minmax(0, 1fr) 48px }
   .topbar { padding: 3px 8px }

@@ -13,8 +13,8 @@
      the child completes what the mirror would show on the other side.
    - Level 3 is the equal-distance choice activity from the future-game design.
      It uses explicit square and triangular dot grids. Level 4 is the source-backed
-     letter/symbol choice activity; level 5 remains locked until its double-mirror
-     pool is verified.
+     letter/symbol choice activity. Level 5 is an owner-approved internal extension
+     whose answers are generated and independently checked from two mirror axes.
 
    Every user-facing string lives in i18n.js. This file only carries keys.
    ========================================================================= */
@@ -25,11 +25,9 @@ export const GAME_ID = "mirror-manor";
 // never writes to another game's record.
 export const PROGRESS_KEY = "mirrorManor";
 
-// Axis kinds the engine can draw and reflect across today. Level 3 will add
-// triangular grids and level 5 a second simultaneous axis; both extend this list
-// rather than replacing it, which is why the validator reads it instead of
-// hard-coding "vertical"/"horizontal".
-export const SUPPORTED_AXIS_KINDS = ["vertical", "horizontal", "diagonal"];
+// Axis kinds the engine can draw and reflect across today. `double` is the
+// level-5 pair of centered vertical and horizontal mirrors.
+export const SUPPORTED_AXIS_KINDS = ["vertical", "horizontal", "diagonal", "double"];
 
 const GRID = { cols: 8, rows: 6 };
 
@@ -72,6 +70,14 @@ export function isGivenSide(cell, axis) {
 
 export function inGrid(cell, grid) {
   return cell[0] >= 0 && cell[1] >= 0 && cell[0] < grid.cols && cell[1] < grid.rows;
+}
+
+/** Return the other three cells in a point's four-way orbit across two mirrors. */
+export function doubleMirrorCopies(cell, axis) {
+  const [x, y] = cell;
+  const reflectedX = 2 * axis.verticalAt - 1 - x;
+  const reflectedY = 2 * axis.horizontalAt - 1 - y;
+  return [[reflectedX, y], [x, reflectedY], [reflectedX, reflectedY]];
 }
 
 const sortCells = (cells) => [...cells].sort((a, b) => a[1] - b[1] || a[0] - b[0]);
@@ -152,6 +158,9 @@ export function canonicalKey(problem) {
   if (problem.interaction === "symbol-reflection") {
     const choices = problem.choices.map((choice) => `${choice.kind}:${choice.text}`).sort().join("|");
     return `${problem.interaction}#${problem.sourceKind}#${problem.sourceText}#${choices}`;
+  }
+  if (problem.interaction === "double-mirror") {
+    return `${problem.interaction}#${shapeVariants(problem.sourceCells).map(shapeKey).sort()[0]}`;
   }
   const cells = problem.interaction === "paint-reflection"
     ? problem.sourceCells
@@ -395,6 +404,49 @@ const level4Specs = [
   symbolProblem(9, "arrow", "→", "↗", "diagonal")
 ];
 
+/* ------------------------------------------------------------- level 5 authoring */
+
+/**
+ * Level 5 is an owner-approved internal extension of the source-backed mirror
+ * sequence. One pattern is shown in the upper-left quadrant. Every answer cell
+ * is computed by reflecting it across the centered vertical and horizontal
+ * mirrors, never authored by hand.
+ */
+function doubleMirrorProblem(index, picture) {
+  const axis = { kind: "double", verticalAt: 4, horizontalAt: 3 };
+  const sourceCells = [];
+  picture.forEach((line, row) => {
+    [...line].forEach((mark, column) => {
+      if (mark === "#") sourceCells.push([column, row]);
+    });
+  });
+  const targetCells = sortCells(sourceCells.flatMap((cell) => doubleMirrorCopies(cell, axis)));
+  return {
+    id: `mirror-manor-l5-${String(index + 1).padStart(2, "0")}`,
+    game: GAME_ID,
+    level: 5,
+    interaction: "double-mirror",
+    grid: { ...GRID },
+    axis,
+    sourceCells: sortCells(sourceCells),
+    targetCells,
+    validation: { solutionCount: 1, allowRotationEquivalent: false, allowReflectionEquivalent: false }
+  };
+}
+
+const level5Specs = [
+  ["##..", "....", "...."],
+  ["#...", "##..", "...."],
+  [".#..", "##..", "#..."],
+  ["###.", "..#.", "...."],
+  ["#.#.", ".##.", "...."],
+  ["..#.", ".##.", "#..."],
+  ["##..", "#...", "##.."],
+  ["#...", "###.", "..#."],
+  [".##.", "##..", ".#.."],
+  ["####", "..#.", ".##."]
+].map((picture, index) => doubleMirrorProblem(index, picture));
+
 /* ------------------------------------------------------------------- level table */
 
 export const levelMeta = [
@@ -402,14 +454,15 @@ export const levelMeta = [
   { id: 2, interaction: "drag-reflection", titleKey: "level2Title", descKey: "level2Desc", color: "#c9793f", ready: true },
   { id: 3, interaction: "distance-match", titleKey: "level3Title", descKey: "level3Desc", color: "#6f8ed6", ready: true },
   { id: 4, interaction: "symbol-reflection", titleKey: "level4Title", descKey: "level4Desc", color: "#8f76c4", ready: true },
-  { id: 5, interaction: "double-mirror", titleKey: "level5Title", descKey: "level5Desc", color: "#d4a636", ready: false }
+  { id: 5, interaction: "double-mirror", titleKey: "level5Title", descKey: "level5Desc", color: "#d4a636", ready: true }
 ];
 
 const pools = {
   1: level1Specs.map((spec, index) => paintProblem(index, spec)),
   2: level2Specs.map((spec, index) => dragProblem(index, spec)),
   3: level3Specs,
-  4: level4Specs
+  4: level4Specs,
+  5: level5Specs
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -507,12 +560,20 @@ export function validateLevels() {
       assert(problem.level === level.id, `${problem.id} claims level ${problem.level}.`);
       assert(problem.interaction === level.interaction, `${problem.id} uses ${problem.interaction} on a ${level.interaction} level.`);
       assert(SUPPORTED_AXIS_KINDS.includes(problem.axis.kind), `${problem.id} uses unsupported axis "${problem.axis.kind}".`);
-      assert(Number.isInteger(problem.axis.at) && problem.axis.at > 0, `${problem.id} has a non-integer mirror line.`);
-      if (problem.interaction === "symbol-reflection" && problem.axis.kind === "diagonal") {
-        assert(problem.axis.at === 4, `${problem.id} has an invalid diagonal mirror anchor.`);
+      if (problem.interaction === "double-mirror") {
+        assert(Number.isInteger(problem.axis.verticalAt) && problem.axis.verticalAt > 0, `${problem.id} has an invalid vertical mirror.`);
+        assert(Number.isInteger(problem.axis.horizontalAt) && problem.axis.horizontalAt > 0, `${problem.id} has an invalid horizontal mirror.`);
+        assert(problem.axis.verticalAt * 2 === problem.grid.cols, `${problem.id} has an off-center vertical mirror.`);
+        assert(problem.axis.horizontalAt * 2 === problem.grid.rows, `${problem.id} has an off-center horizontal mirror.`);
       } else {
+        assert(Number.isInteger(problem.axis.at) && problem.axis.at > 0, `${problem.id} has a non-integer mirror line.`);
+        if (problem.interaction === "symbol-reflection" && problem.axis.kind === "diagonal") {
+          assert(problem.axis.at === 4, `${problem.id} has an invalid diagonal mirror anchor.`);
+        }
         const span = problem.axis.kind === "vertical" ? problem.grid.cols : problem.grid.rows;
-        assert(problem.axis.at * 2 === span, `${problem.id} does not put the mirror at the middle of the board.`);
+        if (problem.axis.kind !== "diagonal") {
+          assert(problem.axis.at * 2 === span, `${problem.id} does not put the mirror at the middle of the board.`);
+        }
       }
 
       const key = canonicalKey(problem);
@@ -522,7 +583,8 @@ export function validateLevels() {
       if (problem.interaction === "paint-reflection") validatePaint(problem);
       else if (problem.interaction === "drag-reflection") validateDrag(problem);
       else if (problem.interaction === "distance-match") validateDistance(problem);
-      else validateSymbol(problem);
+      else if (problem.interaction === "symbol-reflection") validateSymbol(problem);
+      else validateDoubleMirror(problem);
     });
   });
   return true;
@@ -676,6 +738,31 @@ function validateSymbol(problem) {
   assert(mirrorChoices.length === 1 && mirrorChoices[0].text === sourceText, `${problem.id} must have one reflected source choice.`);
   assert(choices.filter((choice) => choice.kind === "normal").length === 1, `${problem.id} needs one unreflected choice.`);
   assert(choices.filter((choice) => choice.kind === "decoy").length === 1, `${problem.id} needs one decoy choice.`);
+  assert(validation.solutionCount === 1, `${problem.id} must declare one solution.`);
+}
+
+function validateDoubleMirror(problem) {
+  const { axis, grid, sourceCells, targetCells, validation } = problem;
+  const sourceIds = new Set(sourceCells.map(cellId));
+  const targetIds = new Set(targetCells.map(cellId));
+  assert(axis.kind === "double", `${problem.id} must use two mirrors.`);
+  assert(sourceCells.length >= 2 && sourceCells.length <= 7, `${problem.id} has an unsuitable source size.`);
+  assert(sourceIds.size === sourceCells.length, `${problem.id} repeats a source cell.`);
+  assert(targetIds.size === targetCells.length, `${problem.id} repeats an answer cell.`);
+  assert(targetCells.length === sourceCells.length * 3, `${problem.id} does not create three reflected copies.`);
+
+  sourceCells.forEach((cell) => {
+    assert(inGrid(cell, grid), `${problem.id} draws outside the board.`);
+    assert(cell[0] < axis.verticalAt && cell[1] < axis.horizontalAt, `${problem.id} source is not in the upper-left quadrant.`);
+    doubleMirrorCopies(cell, axis).forEach((copy) => {
+      assert(inGrid(copy, grid), `${problem.id} reflects outside the board.`);
+      assert(targetIds.has(cellId(copy)), `${problem.id} omits a reflected copy of ${cellId(cell)}.`);
+    });
+  });
+
+  const independent = new Set(sourceCells.flatMap((cell) => doubleMirrorCopies(cell, axis)).map(cellId));
+  assert(independent.size === targetIds.size && [...independent].every((id) => targetIds.has(id)), `${problem.id} answer set differs from independent reflection.`);
+  assert([...targetIds].every((id) => !sourceIds.has(id)), `${problem.id} overlaps an answer with the source quadrant.`);
   assert(validation.solutionCount === 1, `${problem.id} must declare one solution.`);
 }
 

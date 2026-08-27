@@ -250,9 +250,9 @@
       "path": "geometry/games/mirror-manor/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "b7fdfe322e99e10925a30dcd59983e75bf3163428efc7d60821ffd0ff19714f0",
-      "size": 36329,
-      "mtime_ns": 1787801116892017100
+      "sha256": "3d0375fdbae1b7cf93a7603d5999763036940725396528b797dd756d47b5bc26",
+      "size": 41243,
+      "mtime_ns": 1787820048780829300
     },
     {
       "id": "geometry-mirror-selftest",
@@ -260,9 +260,9 @@
       "path": "geometry/games/mirror-manor/mirror-manor.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "c43209f357aa4e9c7548e27d762d5a7d1f156b448f5d190fbd4c562c122b72cb",
-      "size": 5426,
-      "mtime_ns": 1787801076310284800
+      "sha256": "96abb1653b148bdbd6adf00910f0cfde5b137cefce456979a3ad9012e857d6b3",
+      "size": 7304,
+      "mtime_ns": 1787819995513634200
     }
   ],
   "records": [
@@ -4375,7 +4375,7 @@
         "symbol",
         "single-answer"
       ],
-      "summary": "RAY plus C1-1 p.19-23 teaches writing letters and words as seen in a mirror, including Korean consonant/vowel forms and word examples. Mirror Manor level 4 adapts the handwritten response to a mobile three-choice visual selection: one horizontally mirrored source glyph, one normal reading, and one distractor. The two arrow items are an explicitly marked internal extension of the same left-right reflection rule, not source copies.",
+      "summary": "RAY plus C1-1 p.19-23 supports Korean letter and word mirror activities. Level 4 uses seven source-based Korean items plus clearly marked internal extensions: one Latin letter, one horizontal arrow, and one diagonal arrow. Each problem has exactly one computed mirror-role answer among three choices.",
       "status": "verified",
       "sensitivity": "private",
       "updated": "2026-08-27",
@@ -4389,14 +4389,47 @@
         {
           "source_id": "geometry-mirror-levels",
           "role": "code",
-          "locator": "geometry/games/mirror-manor/levels.js:level4Specs,validateSymbol",
-          "note": "Eight source-shaped letter/word items and two marked internal arrow extensions, one mirror choice each"
+          "locator": "level4Specs,validateSymbol",
+          "note": "Seven source-based Korean items plus Latin, horizontal-arrow, and diagonal-arrow internal extensions"
         },
         {
           "source_id": "geometry-mirror-selftest",
           "role": "test",
-          "locator": "geometry/games/mirror-manor/mirror-manor.selftest.mjs",
-          "note": "40 IDs, four locales, and exactly one mirror role per level-4 problem"
+          "locator": "level 4 deterministic checks",
+          "note": "Exactly one mirror role and required Latin, horizontal, and diagonal coverage"
+        }
+      ]
+    },
+    {
+      "id": "geometry.mirror-manor.level5.double-axis",
+      "title": "Mirror Manor level 5 double-axis internal extension",
+      "aliases": [
+        "거울 저택 두 거울"
+      ],
+      "tags": [
+        "geometry",
+        "mirror-manor",
+        "reflection",
+        "double-mirror",
+        "internal-extension",
+        "single-answer"
+      ],
+      "summary": "Owner-approved internal extension, not an original-book copy. Ten upper-left quadrant patterns are completed across centered vertical and horizontal mirrors. Every target is generated from reflection formulas and independently re-enumerated for one valid answer set.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "geometry-mirror-levels",
+          "role": "code",
+          "locator": "doubleMirrorProblem,doubleMirrorCopies,validateDoubleMirror",
+          "note": "Computed three reflected copies per source cell with bounds and overlap checks"
+        },
+        {
+          "source_id": "geometry-mirror-selftest",
+          "role": "test",
+          "locator": "level 5 deterministic checks",
+          "note": "Independent target-set reconstruction for all ten problems"
         }
       ]
     }
