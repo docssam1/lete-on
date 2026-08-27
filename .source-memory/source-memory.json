@@ -303,6 +303,46 @@
       "sha256": "43d48db16dd2dedf32d7358be10e01bf32ad3aa3854a9defcbb6a96886d71702",
       "size": 9281,
       "mtime_ns": 1787838746509000000
+    },
+    {
+      "id": "prism-d1-1-equal-partition",
+      "title": "Prism D1-1 Equal Partition",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism D1-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "33053b2ae8a162e21a307ad077091fa3b5573c03a26a9ec43001c3ac61a48cd2",
+      "size": 4400942,
+      "mtime_ns": 1581583442000000000
+    },
+    {
+      "id": "prism-e4-3-congruence",
+      "title": "Prism E4-3 Congruent Division",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism E4-3.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "dd7a56ac704693bf6cd2df6e5b7b83316ed91b38e284b24890575be3c688a014",
+      "size": 3141184,
+      "mtime_ns": 1582350082000000000
+    },
+    {
+      "id": "geometry-equal-partition-levels",
+      "title": "Geometry equal partition problem data",
+      "path": "geometry/games/equal-partition/levels.js",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "28d67274abaa1bed55c10954a98aac75ebf451428189e322e340de182bb634ef",
+      "size": 11646,
+      "mtime_ns": 1787841218644527800
+    },
+    {
+      "id": "geometry-equal-partition-selftest",
+      "title": "Geometry equal partition deterministic self-test",
+      "path": "geometry/games/equal-partition/equal-partition.selftest.mjs",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "ba6e781d4ed325972e4ae9ea5abecd75cd029202b1e14a1ef458a796e056be03",
+      "size": 2138,
+      "mtime_ns": 1787842172036407800
     }
   ],
   "records": [
@@ -4511,6 +4551,48 @@
           "role": "test",
           "locator": "full deterministic test suite",
           "note": "Independent rotation/reflection checks and a separately implemented exact-cover enumerator for all 50 problems and four locales"
+        }
+      ]
+    },
+    {
+      "id": "geometry.equal-partition.prism-foundation",
+      "title": "Equal Partition Prism evidence and public levels",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "partition",
+        "prism",
+        "congruence",
+        "multi-answer"
+      ],
+      "summary": "Prism D1-1 pages 13-25 support equal-size-and-shape division, one-marker-per-region, and equal-sum constraints. Prism E4-3 pages 10-26 support congruent 2-, 3-, and 4-part division; its later similarity work is intentionally excluded. Five public levels contain 50 internally reconstructed grid problems. The validator derives connected regions from user boundaries and accepts every partition satisfying region-count, equal-area, marker, equal-sum, and congruence rules.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "prism-d1-1-equal-partition",
+          "role": "source",
+          "locator": "book p. 13-25",
+          "note": "Visually inspected; activity structure reconstructed without copying paid page layouts"
+        },
+        {
+          "source_id": "prism-e4-3-congruence",
+          "role": "source",
+          "locator": "book p. 10-26",
+          "note": "Visually inspected; congruence retained and later similarity excluded"
+        },
+        {
+          "source_id": "geometry-equal-partition-levels",
+          "role": "code",
+          "locator": "levels, regionsFromCuts, inspectPartition, findSolutions, validateLevels",
+          "note": "Fifty problems and all-valid-partition acceptance"
+        },
+        {
+          "source_id": "geometry-equal-partition-selftest",
+          "role": "test",
+          "locator": "full deterministic test suite",
+          "note": "All 50 sample partitions plus alternate valid answers"
         }
       ]
     }
