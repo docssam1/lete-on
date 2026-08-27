@@ -319,17 +319,17 @@ export const TYPES = [
   type("fold-cut-unfold-one-draw", "geometry", "색종이 접어 자르기", "한 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldOneDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 1번·연습 2번" }),
   type("fold-cut-unfold-two-draw", "geometry", "색종이 접어 자르기", "두 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldTwoDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 연습 1번" }),
   // Geometry worksheet 13유형. 이름이 비슷해도 묻는 정보가 다르면 합치지 않는다.
-  type("cube-top-number-grid", "geometry", "쌓기나무 바탕그림", "위에서 본 바탕그림의 수로 전체 개수와 앞·옆 모양 구하기", geometryWorksheet("TC", "L2")),
-  type("cube-three-views", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양을 보고 쌓기나무 개수 구하기", geometryWorksheet("VC", "L3")),
-  type("cube-three-view-minmax", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기", geometryWorksheet("VM", "L3")),
-  type("cube-missing-view", "geometry", "쌓기나무 바탕그림", "두 방향의 모양을 보고 나머지 방향 그리기", geometryWorksheet("VP", "L3")),
+  type("cube-top-number-grid", "geometry", "쌓기나무 바탕그림", "위에서 본 바탕그림의 수로 앞·옆 모양 그리기", geometryWorksheet("TC", "L3", { worksheetOptions: { promptMode: "draw-views" }, sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 확인 1번·연습 7번" })),
+  type("cube-three-views", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양을 보고 쌓기나무 개수 구하기", geometryWorksheet("VC", "L3", { worksheetOptions: { promptMode: "count-only", showSolveTable: false }, sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 활동 2번·연습 11~12번" })),
+  type("cube-three-view-minmax", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기", geometryWorksheet("VM", "L3", { worksheetOptions: { showSolveTable: false }, sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 확인 2번·연습 13~14번·도전 1~2번" })),
+  type("cube-missing-view", "geometry", "쌓기나무 바탕그림", "두 방향의 모양을 보고 나머지 방향 그리기", geometryWorksheet("VP", "L3", { sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 확인 2~3번·연습 8번" })),
   type("cube-count-solid", "geometry", "쌓기나무 개수", "입체 그림에서 쌓기나무 전체 개수 세기", geometryWorksheet("IC", "L2", { worksheetOptions: { promptMode: "total" }, sourceMatched: true, textbookSource: "더클래식 1과정 4권·9권 · 문제 번호별 대조" })),
   type("cube-minimum-from-solid", "geometry", "쌓기나무 개수", "입체 그림에서 필요한 쌓기나무의 최소 개수", geometryWorksheet("IC", "L2", { worksheetOptions: { promptMode: "minimum" }, sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 3번·연습 14번" })),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape", generator: "cubeDifferentShape", sourceMatched: true, textbookSource: "실전 모의고사 3회 4번" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build", generator: "practiceCubeAddToMatch", sourceMatched: true, textbookSource: "실전 모의고사 5회 16번" }),
-  type("cube-fill-rectangular-box", "geometry", "쌓기나무 채우기", "직육면체 상자를 채우는 데 필요한 개수", geometryWorksheet("FB", "L3")),
+  type("cube-fill-rectangular-box", "geometry", "쌓기나무 채우기", "직육면체 상자를 채우는 데 필요한 개수", geometryWorksheet("FB", "L3", { sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 확인 3번·연습 17번" })),
   type("cube-fill-box", "geometry", "쌓기나무 채우기", "정육면체를 완성하는 데 필요한 개수", geometryWorksheet("CU", "L3", { generator: "cubeFillBoxWorksheet", sourceMatched: true })),
-  type("cube-hidden-count", "geometry", "숨은 쌓기나무", "벽 없이 어느 쪽에서도 보이지 않는 쌓기나무의 개수", geometryWorksheet("IN", "L3", { sourceMatched: true })),
+  type("cube-hidden-count", "geometry", "숨은 쌓기나무", "벽 없이 어느 쪽에서도 보이지 않는 쌓기나무의 개수", geometryWorksheet("IN", "L3", { sourceMatched: true, textbookSource: "더클래식 1과정 4권·9권 · 문제 번호별 대조" })),
   type("cube-painted-faces", "geometry", "쌓기나무 색칠", "겉면을 칠한 뒤 색칠된 면의 전체 수", geometryWorksheet("PN", "L4", { worksheetOptions: { variant: "faces" } })),
   type("cube-painted-cube-count", "geometry", "쌓기나무 색칠", "색칠된 면의 수에 맞는 낱개 쌓기나무 개수", geometryWorksheet("PN", "L4", { worksheetOptions: { variant: "count" } })),
   type("cube-black-white-alternating", "geometry", "쌓기나무 색칠", "같은 색이 맞닿지 않게 쌓은 흰색·검은색 개수", geometryWorksheet("BW", "L3", { sourceMatched: true, textbookSource: "더클래식 1과정 4권 도전 3번·9권 · 문제 번호별 대조" })),
@@ -1311,7 +1311,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "cryptarithm": "일의 자리부터 계산하고, 받아올림이나 받아내림을 다음 자리에 표시합니다.",
   "magic-card": "각 카드에 나타난 수의 공통점을 찾아 선택한 카드가 뜻하는 수를 좁혀 갑니다.",
   "congruent-partition": "전체 칸 수를 같은 조각 수로 나누고, 각 조각의 모양과 넓이가 같은지 확인합니다.",
-  "cube-top-number-grid": "위에서 본 각 칸의 수는 그 자리에 쌓인 층수입니다. 칸의 수를 더해 전체를 구합니다.",
+  "cube-top-number-grid": "위에서 본 각 칸의 수는 그 자리에 쌓인 층수입니다. 앞과 옆에서는 각 줄에서 가장 높은 층만 보이도록 그립니다.",
   "cube-count-solid": "위에서 보이는 꼭대기마다 아래에 받치는 쌓기나무가 있는지 층별로 셉니다.",
   "cube-minimum-from-solid": "보이는 꼭대기 아래에 반드시 받쳐야 하는 쌓기나무만 줄별로 세어 더합니다.",
   "cube-three-views": "위에서 본 자리와 앞·옆에서 본 가장 높은 층을 함께 맞춥니다.",
@@ -2384,7 +2384,7 @@ const BOOK04_UNIT02_REFS = Object.freeze({
     type: [problemNumbers("check", 2, [1])],
     practice: [problemNumbers("practice", 1, [15])]
   }),
-  "cube-top-number-grid": stageReferences({
+  "cube-hidden-count": stageReferences({
     type: [problemNumbers("check", 2, [2])],
     practice: [problemNumbers("practice", 1, [16])]
   }),
@@ -3976,7 +3976,7 @@ export const CURRICULUM = [
       "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw", "fold-number-grid-one",
       "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal", "fold-surface-top-trace",
       "cube-count-solid", "cube-minimum-from-solid", "cube-step-sequence", "cube-hidden-count-walled",
-      "cube-top-number-grid", "cube-fill-rectangular-box", "three-fold-cut-line-book4",
+      "cube-hidden-count", "cube-fill-rectangular-box", "three-fold-cut-line-book4",
       "practice-three-fold-hole-count", "cube-black-white-alternating", "cube-shell-interior-b9"
     ], [4,3], [4,3], 4, 17, BOOK04_UNIT02_REFS),
     detailedStagedUnit("양팔저울과 비교하기", [
