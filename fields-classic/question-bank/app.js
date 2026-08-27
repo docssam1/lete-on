@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827i";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827j";
 import { GENERATORS } from "./generators.js?v=20260827d";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827d";
@@ -22,7 +22,6 @@ const OUR_MOCK_EXAM_GROUPS = [
   { label: "실전 모의고사", exams: PRACTICE_EXAM_TYPES },
   { label: "파이널 모의고사", exams: FINAL_EXAM_TYPES }
 ];
-const OUR_MOCK_EXAMS = OUR_MOCK_EXAM_GROUPS.flatMap((group) => group.exams);
 const MOCK_EXAM_NAV = [
   { id: "diagnostic", label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
   ...PRACTICE_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("실전 모의고사 ", "실전 "), exams: [exam] })),
@@ -53,6 +52,7 @@ const state = {
   academyStyles: new Set(ACADEMY_STYLES.map((item) => item.id)),
   count: 20,
   difficulty: "actual",
+  curriculumBookId: CURRICULUM[0]?.id || "book-01",
   curriculumStage: "type",
   order: "exam",
   includeSolution: true,
@@ -382,7 +382,14 @@ function studyReferenceLabel(references = []) {
 }
 
 function renderCurriculum() {
-  $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
+  const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
+    `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
+  ).join("")}</nav>`;
+  const stageTabs = `<div class="curriculum-inline-stages" aria-label="교재 학습 단계 선택">${TEXTBOOK_STAGES.map((stage) =>
+    `<button type="button" data-curriculum-stage="${stage.id}" class="${stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
+  ).join("")}</div>`;
+  const activeBookMarkup = [activeBook].map((book) => {
     const sourceFolder = book.id.replace("-", "");
     const units = book.units.map((unit, unitIndex) => {
       const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
@@ -443,6 +450,16 @@ function renderCurriculum() {
       <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
+  $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;
+
+  $("curriculumTree").querySelectorAll("button[data-curriculum-book]").forEach((button) => button.addEventListener("click", () => {
+    state.curriculumBookId = button.dataset.curriculumBook;
+    hideTypePreview();
+    renderCurriculum();
+  }));
+  $("curriculumTree").querySelectorAll("button[data-curriculum-stage]").forEach((button) => button.addEventListener("click", () => {
+    setCurriculumStage(button.dataset.curriculumStage);
+  }));
 
   $("curriculumTree").querySelectorAll("input[data-curriculum-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.curriculum.add(input.dataset.curriculumKey);
@@ -457,7 +474,9 @@ function renderCurriculum() {
 }
 
 function groupedTypes() {
-  const matchesStyle = (item) => academyStyleIdsForType(item).some((id) => state.academyStyles.has(id));
+  // 원본과 생성 경로가 모두 확정된 유형만 선택 목록에 노출한다. 미연결 분류
+  // 자리는 데이터에 보존하되, 실제 문제처럼 회색 행으로 보여 주지 않는다.
+  const matchesStyle = (item) => isSelectableType(item) && academyStyleIdsForType(item).some((id) => state.academyStyles.has(id));
   return DOMAINS.map((domain) => ({
     domain,
     middles: [...new Set(TYPES.filter((item) => item.domain === domain.id && matchesStyle(item)).map((item) => item.middle))].map((middle) => ({
@@ -485,7 +504,7 @@ function academyStyleLabels(target) {
 
 function renderAcademyStyleFilters() {
   $("academyStyleFilters").innerHTML = ACADEMY_STYLES.map((style) => {
-    const count = TYPES.filter((item) => academyStyleIdsForType(item).includes(style.id)).length;
+    const count = TYPES.filter((item) => isSelectableType(item) && academyStyleIdsForType(item).includes(style.id)).length;
     return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${style.label}</span><em>${count}</em></label>`;
   }).join("");
   $("academyStyleFilters").querySelectorAll("input[data-academy-style]").forEach((input) => input.addEventListener("change", () => {
@@ -498,6 +517,26 @@ function renderAcademyStyleFilters() {
     renderTypeTree();
     updateSummary();
   }));
+}
+
+function setCurriculumStage(stageId) {
+  if (!TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) return;
+  state.curriculumStage = stageId;
+  $("curriculumStageChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.stage === stageId);
+  });
+  for (const key of [...state.selected.curriculum]) {
+    const [bookId, indexText, typeId] = key.split(":");
+    const book = CURRICULUM.find((item) => item.id === bookId);
+    const unit = book?.units[Number(indexText)];
+    if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, stageId)) {
+      state.selected.curriculum.delete(key);
+    }
+  }
+  typePreviewCache.clear();
+  hideTypePreview();
+  renderCurriculum();
+  updateSummary();
 }
 
 function renderTypeTree() {
@@ -3280,7 +3319,7 @@ function watermarkMarkup() {
 function renderWorksheet() {
   const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
-  $("questionGrid").innerHTML = state.questions.map((question, index) => {
+  const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
     return `<article class="question-card" data-question-index="${index}">
       <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
@@ -3304,7 +3343,12 @@ function renderWorksheet() {
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
-  }).join("");
+  });
+  const pages = [];
+  for (let index = 0; index < questionCards.length; index += 2) {
+    pages.push(`<section class="question-page" aria-label="${Math.floor(index / 2) + 1}쪽">${questionCards.slice(index, index + 2).join("")}</section>`);
+  }
+  $("questionGrid").innerHTML = pages.join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   bindQuestionEditor();
@@ -3348,19 +3392,7 @@ function initControls() {
     typePreviewCache.clear();
   }));
   $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
-    state.curriculumStage = button.dataset.stage;
-    $("curriculumStageChoices").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
-    for (const key of [...state.selected.curriculum]) {
-      const [bookId, indexText, typeId] = key.split(":");
-      const book = CURRICULUM.find((item) => item.id === bookId);
-      const unit = book?.units[Number(indexText)];
-      if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, state.curriculumStage)) {
-        state.selected.curriculum.delete(key);
-      }
-    }
-    typePreviewCache.clear();
-    renderCurriculum();
-    updateSummary();
+    setCurriculumStage(button.dataset.stage);
   }));
   $("orderChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.order = button.dataset.order;
@@ -3399,10 +3431,9 @@ setMode("exam");
   if (!wanted) return;
   const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
-  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = `exam:${exam.id}`;
-  else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
+  if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
   else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam)) state.stage = `exam:${exam.id}`;
-  else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
+  else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
   renderStageButtons();
   renderExamList();
   let picked = 0;

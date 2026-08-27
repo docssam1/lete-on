@@ -3689,9 +3689,9 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
   "book-03": Object.freeze([
     { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: true, difficulty: 2 },
     { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
-    { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false },
-    { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
-    { number: 5, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false },
+    { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false, difficulty: 2 },
+    { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false, difficulty: 2 },
+    { number: 5, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false, difficulty: 2 },
     { number: 6, typeId: "folded-strip-length", label: "접힌 리본의 전체 길이", verified: true, difficulty: 2 },
     { number: 7, typeId: "midpoint-number-line", label: "두 수의 중간수", verified: true, difficulty: 2 },
     { number: 8, typeId: "segment-chain-distance", label: "A·B·C·D 사이의 거리", verified: true, difficulty: 2 },
