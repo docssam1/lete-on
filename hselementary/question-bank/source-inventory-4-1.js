@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 119,
+  "verifiedMappings": 128,
   "items": [
     {
       "unit": 1,
@@ -2121,13 +2121,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 5 본문",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "두 번 접은 직사각형의 각도",
+      "typeLabel": "두 번 접은 직사각형을 펼쳐 접은 선 사이의 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2139,7 +2140,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-1",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "겹친 직각삼각형에서 여러 각을 합친 크기 구하기",
+      "typeLabel": "겹친 두 직각삼각형에서 한 직각 안의 빈 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -2157,13 +2158,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-2",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "삼각형 회전과 겹친 각",
+      "typeLabel": "직각삼각형을 한 꼭짓점에서 돌린 뒤 벌어진 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2175,13 +2177,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-3",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "삼각형 접기의 각도 차",
+      "typeLabel": "삼각형을 접어 생긴 두 각의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2193,13 +2196,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 30,
       "sourcePrintedPage": 26,
-      "typeLabel": "정사각형을 접었을 때 모르는 각의 크기 구하기",
+      "typeLabel": "정사각형을 접었을 때 한 꼭짓점의 큰 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2211,13 +2215,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "겹친 직각삼각형에서 모르는 각의 크기 구하기",
+      "typeLabel": "겹친 두 직각삼각형의 바깥각으로 위쪽 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2229,13 +2234,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "두 삼각형의 바깥각",
+      "typeLabel": "두 삼각형의 비스듬한 선 사이의 큰 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2247,13 +2253,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "직각삼각형의 회전각",
+      "typeLabel": "직각삼각형의 한 꼭짓점을 고정해 돌린 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2265,7 +2272,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "삼각형 접기의 두 각 합",
+      "typeLabel": "삼각형을 접은 선과 늘인 선에서 두 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -2283,13 +2290,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "직사각형 이중 접기의 각도 합",
+      "typeLabel": "직사각형의 양쪽을 접어 생긴 두 모서리각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -2301,13 +2309,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 27,
-      "typeLabel": "직사각형을 두 번 접었을 때 모르는 각의 크기 구하기",
+      "typeLabel": "직사각형을 두 번 접어 겹친 선 사이의 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleFive",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,

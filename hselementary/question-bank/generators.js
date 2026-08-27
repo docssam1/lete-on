@@ -767,6 +767,276 @@
     const labelGap = source41Distance(given, crossLabel);
     return `<svg class="geometry-diagram source41-star-relation" viewBox="0 0 380 260" data-tip-angles="${data.tipAngles.join(",")}" data-outside-angle="${data.outsideAngle}" data-target-sum="${data.answerNumber}" data-label-gap="${labelGap.toFixed(1)}" aria-label="교차각과 꼭짓각이 표시된 오각별"><polygon points="${source41PointsText(points)}"/><text class="source41-target-label" data-target-index="1" x="${targetOne[0].toFixed(1)}" y="${targetOne[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-target-index="2" x="${targetTwo[0].toFixed(1)}" y="${targetTwo[1].toFixed(1)}">㉡</text><text class="source41-given-label source41-star-tip-given" x="${given[0].toFixed(1)}" y="${given[1].toFixed(1)}">${data.givenTip}°</text><text class="source41-given-label source41-star-cross-given" x="${crossLabel[0].toFixed(1)}" y="${crossLabel[1].toFixed(1)}">${data.outsideAngle}°</text></svg>`;
   };
+  const source41AngleFiveNormalize = angle => ((angle % 360) + 360) % 360;
+  const source41AngleFivePoint = (origin, angle, radius) => source41PointAtAngle(origin[0], origin[1], radius, source41AngleFiveNormalize(angle));
+  const source41AngleFivePointText = point => `${point[0].toFixed(1)},${point[1].toFixed(1)}`;
+  const source41AngleFiveRay = (origin, angle, length, role, className = "", rayIndex = 0, rayGroup = "main", extraAttributes = "") => {
+    const end = source41AngleFivePoint(origin, angle, length);
+    return `<line class="${className}" data-ray-role="${role}" data-ray-group="${rayGroup}" data-ray-index="${rayIndex}" data-ray-angle="${source41AngleFiveNormalize(angle).toFixed(3)}" x1="${origin[0].toFixed(1)}" y1="${origin[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}" ${extraAttributes}/>`;
+  };
+  const source41AngleFiveSectorArc = (origin, start, sector, radius, role, target = false, extraAttributes = "") => {
+    const end = source41AngleFivePoint(origin, start + sector, radius);
+    const first = source41AngleFivePoint(origin, start, radius);
+    return `<path class="source41-angle-five-arc${target ? " is-target" : ""}" data-angle-role="${role}" data-sector-start="${source41AngleFiveNormalize(start).toFixed(3)}" data-sector-angle="${sector.toFixed(3)}" ${extraAttributes} d="M${source41AngleFivePointText(first)} A${radius} ${radius} 0 ${sector > 180 ? 1 : 0} 0 ${source41AngleFivePointText(end)}"/>`;
+  };
+  const source41AngleFiveLabel = ({ origin, start, sector, radius, text, className = "source41-given-label", role, attributes = "" }) => {
+    const angle = source41AngleFiveNormalize(start + sector / 2);
+    const point = source41AngleFivePoint(origin, angle, radius);
+    return { point, text, className, role, angle, radius, attributes };
+  };
+  const source41AngleFiveLabels = labels => {
+    let minimum = Infinity;
+    for (let first = 0; first < labels.length; first += 1) {
+      for (let second = first + 1; second < labels.length; second += 1) minimum = Math.min(minimum, source41Distance(labels[first].point, labels[second].point));
+    }
+    if (labels.length > 1 && minimum < 18) throw new Error(`각도 그림의 글자 사이가 너무 가깝습니다: ${minimum.toFixed(1)}px`);
+    return {
+      minimum: labels.length > 1 ? minimum : 999,
+      markup: labels.map(label => `<text class="${label.className}" data-label-role="${label.role}" data-label-angle="${label.angle.toFixed(3)}" data-label-radius="${label.radius}" ${label.attributes} x="${label.point[0].toFixed(1)}" y="${label.point[1].toFixed(1)}">${label.text}</text>`).join("")
+    };
+  };
+  const source41AngleFiveRightMark = (origin, firstAngle, secondAngle, size = 13) => {
+    const first = source41AngleFivePoint(origin, firstAngle, size);
+    const second = source41AngleFivePoint(origin, secondAngle, size);
+    const firstDirection = source41Direction(origin, first);
+    const secondDirection = source41Direction(origin, second);
+    const corner = [origin[0] + (firstDirection[0] + secondDirection[0]) * size, origin[1] + (firstDirection[1] + secondDirection[1]) * size];
+    const firstValue = source41AngleFiveNormalize(firstAngle).toFixed(3);
+    const secondValue = source41AngleFiveNormalize(secondAngle).toFixed(3);
+    return `<path class="source41-right-angle-mark" data-right-angle="true" data-ray-a="${firstValue}" data-ray-b="${secondValue}" data-right-ray-angles="${firstValue},${secondValue}" d="M${source41AngleFivePointText(first)} L${source41AngleFivePointText(corner)} L${source41AngleFivePointText(second)}"/>`;
+  };
+  const source41AngleFiveEqualMark = (origin, start, sector, radius, index) => {
+    const point = source41AngleFivePoint(origin, start + sector / 2, radius);
+    return `<circle class="source41-equal-angle-mark" data-equal-sector="${index}" data-sector-start="${source41AngleFiveNormalize(start).toFixed(3)}" data-sector-angle="${sector.toFixed(3)}" cx="${point[0].toFixed(1)}" cy="${point[1].toFixed(1)}" r="2.8"/>`;
+  };
+  const source41AngleFiveFoldTick = (origin, angle, distance, index) => {
+    const center = source41AngleFivePoint(origin, angle, distance);
+    const first = source41AngleFivePoint(center, angle + 90, 4.5);
+    const second = source41AngleFivePoint(center, angle - 90, 4.5);
+    return `<line class="source41-fold-correspondence" data-fold-correspondence="${index}" data-fold-ray-angle="${source41AngleFiveNormalize(angle).toFixed(3)}" x1="${first[0].toFixed(1)}" y1="${first[1].toFixed(1)}" x2="${second[0].toFixed(1)}" y2="${second[1].toFixed(1)}"/>`;
+  };
+  const source41AngleFiveArrowDefinition = () => '<defs><marker id="source41-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" style="fill:#d18b08;stroke:none"/></marker></defs>';
+  const source41AngleFiveLineIntersection = (firstOrigin, firstAngle, secondOrigin, secondAngle) => {
+    const firstRadians = firstAngle * Math.PI / 180;
+    const secondRadians = secondAngle * Math.PI / 180;
+    const firstDirection = [Math.cos(firstRadians), -Math.sin(firstRadians)];
+    const secondDirection = [Math.cos(secondRadians), -Math.sin(secondRadians)];
+    const cross = firstDirection[0] * secondDirection[1] - firstDirection[1] * secondDirection[0];
+    if (Math.abs(cross) < 0.0001) throw new Error("접은 도형의 두 변이 만나지 않습니다.");
+    const between = [secondOrigin[0] - firstOrigin[0], secondOrigin[1] - firstOrigin[1]];
+    const firstScale = (between[0] * secondDirection[1] - between[1] * secondDirection[0]) / cross;
+    return [firstOrigin[0] + firstDirection[0] * firstScale, firstOrigin[1] + firstDirection[1] * firstScale];
+  };
+  const source41AngleFiveVariantClass = {
+    0: "source41-double-fold-rectangle",
+    2: "source41-rotated-right-triangle",
+    3: "source41-folded-triangle",
+    4: "source41-folded-square",
+    5: "source41-overlap-right-triangles",
+    6: "source41-slope-exterior",
+    7: "source41-right-turn",
+    9: "source41-double-side-fold",
+    10: "source41-twice-folded-rectangle"
+  };
+  const source41AngleFiveRoot = ({ variant, origin, rays, sectors, targetAngle, labels, aria, attributes = "", body = "" }) => {
+    const labelOutput = source41AngleFiveLabels(labels);
+    return `<svg class="geometry-diagram source41-angle-five source41-angle-five-v${variant} ${source41AngleFiveVariantClass[variant] || ""}" viewBox="0 0 360 250" data-source41-angle-five-variant="${variant}" data-ray-origin="${origin[0].toFixed(1)},${origin[1].toFixed(1)}" data-ray-angles="${rays.map(angle => source41AngleFiveNormalize(angle).toFixed(3)).join(",")}" data-sector-angles="${sectors.map(angle => angle.toFixed(3)).join(",")}" data-target-angle="${targetAngle}" data-label-min-gap="${labelOutput.minimum.toFixed(2)}" ${attributes} aria-label="${aria}">${body}${labelOutput.markup}</svg>`;
+  };
+  const source41AngleFiveSourceAnchors = {
+    0: { large: 128, split: 44, answer: 142 },
+    2: { a: 30, rotation: 50, answer: 110 },
+    3: { p: 24, c: 100, answer: 76 },
+    4: { t: 62, distractor: 56, answer: 146 },
+    5: { a: 45, b: 30, e: 110, answer: 125 },
+    6: { outer: 30, inner: 45, answer: 165 },
+    7: { shown: 58, answer: 32 },
+    9: { gap: 30, answer: 105 },
+    10: { gap: 25, answer: 80 }
+  };
+  const source41AngleFiveDoubleFoldSvg = data => {
+    const origin = [180, 124];
+    const rays = [0, data.large, data.large + data.split, data.large + 90];
+    const sectors = [data.large, data.split, 90 - data.split, data.answerNumber];
+    const labels = [
+      source41AngleFiveLabel({ origin, start: rays[0], sector: sectors[0], radius: 69, text: `${data.large}°`, role: "large" }),
+      source41AngleFiveLabel({ origin, start: rays[1], sector: sectors[1], radius: 45, text: `${data.split}°`, role: "split" }),
+      source41AngleFiveLabel({ origin, start: rays[3], sector: sectors[3], radius: 82, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `<rect x="52" y="26" width="256" height="194"/>${rays.map((angle, index) => source41AngleFiveRay(origin, angle, 103, `crease-${index + 1}`, "source41-fold-line", index)).join("")}${sectors.map((sector, index) => source41AngleFiveSectorArc(origin, rays[index], sector, [58, 38, 48, 70][index], ["large", "split", "right-complement", "target"][index], index === 3)).join("")}${source41AngleFiveRightMark(origin, rays[1], rays[3])}${source41AngleFiveFoldTick(origin, rays[1], 63, 1)}${source41AngleFiveFoldTick(origin, rays[2], 63, 2)}`;
+    return source41AngleFiveRoot({ variant: 0, origin, rays, sectors, targetAngle: data.answerNumber, labels, attributes: `data-large-angle="${data.large}" data-split-angle="${data.split}" data-right-sector="90"`, body, aria: "두 번 접은 직사각형의 네 실제 각" });
+  };
+  const source41AngleFiveRotatedRightTriangleSvg = data => {
+    const origin = [138, 190];
+    const hypotenuse = 112;
+    const baseLength = hypotenuse * Math.cos(data.pivotAngle * Math.PI / 180);
+    const originalBase = source41AngleFivePoint(origin, 0, baseLength);
+    const originalTop = source41AngleFivePoint(origin, data.pivotAngle, hypotenuse);
+    const turnedBase = source41AngleFivePoint(origin, data.rotation, baseLength);
+    const turnedTop = source41AngleFivePoint(origin, data.pivotAngle + data.rotation, hypotenuse);
+    const rays = [0, data.rotation, data.pivotAngle, data.pivotAngle + data.rotation];
+    const labels = [
+      source41AngleFiveLabel({ origin: originalTop, start: 180 + data.pivotAngle, sector: data.a, radius: 26, text: `${data.a}°`, role: "top-acute" }),
+      source41AngleFiveLabel({ origin, start: 0, sector: data.rotation, radius: 42, text: `${data.rotation}°`, role: "rotation" }),
+      source41AngleFiveLabel({ origin, start: 0, sector: data.answerNumber, radius: 118, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const arcEnd = source41AngleFivePoint(origin, data.rotation, 54);
+    const arcStart = source41AngleFivePoint(origin, 0, 54);
+    const body = `${source41AngleFiveArrowDefinition()}<polygon data-shape="before" points="${source41PointsText([origin, originalBase, originalTop])}"/><polygon class="source41-turned-shape" data-shape="after" points="${source41PointsText([origin, turnedBase, turnedTop])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, data.pivotAngle, hypotenuse, "original-hypotenuse", "", 2)}${source41AngleFiveRay(origin, data.rotation, baseLength, "turned-base", "source41-reflected-line", 1)}${source41AngleFiveRay(origin, data.pivotAngle + data.rotation, hypotenuse, "turned-hypotenuse", "source41-reflected-line", 3)}${source41AngleFiveRightMark(originalBase, 180, 90)}${source41AngleFiveSectorArc(originalTop, 180 + data.pivotAngle, data.a, 20, "top-acute")}${source41AngleFiveSectorArc(origin, 0, data.rotation, 32, "rotation")}${source41AngleFiveSectorArc(origin, 0, data.answerNumber, 70, "target", true)}<path class="source41-rotation-arrow" data-rotation-arrow="true" d="M${source41AngleFivePointText(arcStart)} A54 54 0 0 0 ${source41AngleFivePointText(arcEnd)}"/>`;
+    return source41AngleFiveRoot({ variant: 2, origin, rays, sectors: [data.a, data.rotation, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-top-acute="${data.a}" data-rotation="${data.rotation}" data-pivot-angle="${data.pivotAngle}"`, body, aria: "직각삼각형을 실제 각만큼 돌린 그림" });
+  };
+  const source41AngleFiveFoldedTriangleSvg = data => {
+    const origin = [180, 208];
+    const creaseAngle = 90;
+    const triangleRay = 180 - data.first;
+    const unitCOrigin = source41AngleFivePoint(origin, 0, 1);
+    const unitIntersection = source41AngleFiveLineIntersection(origin, triangleRay, unitCOrigin, data.c);
+    const unitHorizontalReach = Math.abs(unitIntersection[0] - origin[0]);
+    const unitVerticalReach = origin[1] - unitIntersection[1];
+    const horizontalRoom = 132 / Math.max(1, unitHorizontalReach);
+    const verticalRoom = 174 / Math.max(1, unitVerticalReach);
+    const baseLength = Math.min(112, horizontalRoom, verticalRoom);
+    const cOrigin = source41AngleFivePoint(origin, 0, baseLength);
+    const pOrigin = source41AngleFiveLineIntersection(origin, triangleRay, cOrigin, data.c);
+    const reflectedC = [360 - cOrigin[0], cOrigin[1]];
+    const reflectedP = [360 - pOrigin[0], pOrigin[1]];
+    const reflectedRay = 180 - triangleRay;
+    const sideLength = source41Distance(origin, pOrigin);
+    const exteriorLength = Math.min(38, 340 - cOrigin[0]);
+    const halfSecond = data.second / 2;
+    const rays = [0, triangleRay, creaseAngle, reflectedRay, 180];
+    const labels = [
+      source41AngleFiveLabel({ origin: pOrigin, start: 360 - data.first, sector: data.p, radius: 20, text: `${data.p}°`, role: "p-given", attributes: 'data-label-origin="p"' }),
+      source41AngleFiveLabel({ origin: cOrigin, start: 0, sector: data.c, radius: 23, text: `${data.c}°`, role: "c-given", attributes: 'data-label-origin="c"' }),
+      source41AngleFiveLabel({ origin, start: triangleRay, sector: data.first, radius: 38, text: "㉠", className: "source41-target-label", role: "first" }),
+      source41AngleFiveLabel({ origin, start: triangleRay, sector: data.second, radius: 64, text: "㉡", className: "source41-target-label", role: "second" })
+    ];
+    const body = `<polygon data-source-shape="original-fold-triangle" points="${source41PointsText([origin, cOrigin, pOrigin])}"/><polygon class="source41-turned-shape" data-source-shape="reflected-fold-triangle" points="${source41PointsText([origin, reflectedC, reflectedP])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, triangleRay, sideLength, "original-triangle-side", "", 1, "main", 'data-reflection-pair="one" data-reflection-role="original"')}${source41AngleFiveRay(origin, creaseAngle, 174, "fold-axis", "source41-fold-line", 2, "main", 'data-fold-axis="vertical" data-reflection-axis="90" data-reflection-pair="one" data-reflection-role="crease"')}${source41AngleFiveRay(origin, reflectedRay, sideLength, "reflected-triangle-side", "source41-reflected-line", 3, "main", 'data-reflection-pair="one" data-reflection-role="reflected"')}${source41AngleFiveRay(origin, 180, baseLength, "base-extension", "source41-extension-line", 4)}${source41AngleFiveRay(cOrigin, 0, exteriorLength, "c-angle-extension", "source41-extension-line", 5, "helper")}${source41AngleFiveSectorArc(pOrigin, 360 - data.first, data.p, 15, "p-given")}${source41AngleFiveSectorArc(cOrigin, 0, data.c, 18, "c-given")}${source41AngleFiveSectorArc(origin, triangleRay, data.first, 31, "first", true)}${source41AngleFiveSectorArc(origin, triangleRay, data.second, 56, "second", true)}${source41AngleFiveEqualMark(origin, triangleRay, halfSecond, 44, 1)}${source41AngleFiveEqualMark(origin, creaseAngle, halfSecond, 44, 2)}${source41AngleFiveFoldTick(origin, creaseAngle, 68, 1)}`;
+    return source41AngleFiveRoot({ variant: 3, origin, rays, sectors: [data.c, data.p, data.first, data.second], targetAngle: data.answerNumber, labels, attributes: `data-p="${data.p}" data-crossing-angle="${data.c}" data-first-angle="${data.first}" data-reflected-angle="${data.second}" data-target-difference="${data.answerNumber}" data-fold-axis="90"`, body, aria: "서로 다른 꼭짓점의 각과 접은 뒤 대칭인 삼각형의 각" });
+  };
+  const source41AngleFiveFoldedSquareSvg = data => {
+    const origin = [170, 132];
+    const rays = [0, data.t, 2 * data.t, 2 * data.t + 90];
+    const sectors = [data.t, data.t, 90, data.answerNumber, data.distractor];
+    const square = [[72, 32], [268, 32], [268, 228], [72, 228]];
+    const squareEdgeLength = angle => {
+      const radians = source41AngleFiveNormalize(angle) * Math.PI / 180;
+      const dx = Math.cos(radians);
+      const dy = -Math.sin(radians);
+      const horizontal = dx > 0 ? (268 - origin[0]) / dx : (72 - origin[0]) / dx;
+      const vertical = dy > 0 ? (228 - origin[1]) / dy : (32 - origin[1]) / dy;
+      return Math.min(horizontal, vertical) * 0.92;
+    };
+    const rightFold = source41AngleFivePoint(origin, rays[0], squareEdgeLength(rays[0]));
+    const leftFold = source41AngleFivePoint(origin, rays[1], squareEdgeLength(rays[1]));
+    const upperFold = source41AngleFivePoint(origin, rays[2], squareEdgeLength(rays[2]));
+    const lowerFold = source41AngleFivePoint(origin, rays[3], squareEdgeLength(rays[3]));
+    const firstFoldedPiece = [origin, rightFold, leftFold];
+    const secondFoldedPiece = [origin, upperFold, lowerFold];
+    const distractorOrigin = square[3];
+    const distractorRay = 90 - data.distractor;
+    const distractorLength = 66;
+    const distractorVertical = source41AngleFivePoint(distractorOrigin, 90, distractorLength);
+    const distractorDiagonal = source41AngleFivePoint(distractorOrigin, distractorRay, distractorLength);
+    const labels = [
+      source41AngleFiveLabel({ origin, start: rays[0], sector: data.t, radius: 45, text: `${data.t}°`, role: "fold-one" }),
+      source41AngleFiveLabel({ origin: distractorOrigin, start: distractorRay, sector: data.distractor, radius: 28, text: `${data.distractor}°`, role: "distractor" }),
+      source41AngleFiveLabel({ origin, start: rays[3], sector: data.answerNumber, radius: 84, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `<rect data-source-shape="square" x="72" y="32" width="196" height="196"/><polygon class="source41-turned-shape" data-source-shape="first-folded-square-piece" points="${source41PointsText(firstFoldedPiece)}"/><polygon class="source41-turned-shape" data-source-shape="second-folded-square-piece" points="${source41PointsText(secondFoldedPiece)}"/><polygon class="source41-turned-shape" data-source-shape="distractor-folded-corner" points="${source41PointsText([distractorOrigin, distractorVertical, distractorDiagonal])}"/>${rays.map((angle, index) => source41AngleFiveRay(origin, angle, [96, 112, 102, 108][index], ["square-edge", "first-crease", "second-crease", "square-right-edge"][index], index === 1 || index === 2 ? "source41-fold-line" : "", index, "main", index === 1 || index === 2 ? `data-fold-stage="${index}"` : "")).join("")}${source41AngleFiveRay(distractorOrigin, 90, distractorLength, "distractor-square-edge", "", 0, "helper")}${source41AngleFiveRay(distractorOrigin, distractorRay, distractorLength, "distractor-folded-edge", "source41-reflected-line", 1, "helper")}${source41AngleFiveSectorArc(distractorOrigin, distractorRay, data.distractor, 22, "distractor")}${source41AngleFiveSectorArc(origin, rays[0], data.t, 35, "fold-one")}${source41AngleFiveSectorArc(origin, rays[1], data.t, 55, "fold-two")}${source41AngleFiveSectorArc(origin, rays[2], 90, 43, "right")}${source41AngleFiveSectorArc(origin, rays[3], data.answerNumber, 72, "target", true)}${source41AngleFiveRightMark(origin, rays[2], rays[3])}${source41AngleFiveEqualMark(origin, rays[0], data.t, 26, 1)}${source41AngleFiveEqualMark(origin, rays[1], data.t, 26, 2)}${source41AngleFiveFoldTick(origin, rays[1], 72, 1)}${source41AngleFiveFoldTick(origin, rays[2], 72, 2)}`;
+    return source41AngleFiveRoot({ variant: 4, origin, rays, sectors, targetAngle: data.answerNumber, labels, attributes: `data-fold-angle="${data.t}" data-distractor-angle="${data.distractor}" data-right-sector="90" data-original-shape="square"`, body, aria: "정사각형을 접어 다른 꼭짓점의 각과 같은 두 각, 직각을 살펴 큰 각을 구하는 그림" });
+  };
+  const source41AngleFiveOverlapRightTrianglesSvg = data => {
+    const origin = [220, 210];
+    const targetRay = data.answerNumber;
+    const topRay = data.e + data.a;
+    const rays = [0, data.e, targetRay, topRay, 180];
+    const topPoint = source41AngleFivePoint(origin, topRay, 118);
+    const targetPoint = source41AngleFivePoint(origin, targetRay, 100);
+    const topFoot = [topPoint[0], origin[1]];
+    const targetFoot = [targetPoint[0], origin[1]];
+    const labels = [
+      source41AngleFiveLabel({ origin, start: data.e, sector: data.a, radius: 68, text: `${data.a}°`, role: "a" }),
+      source41AngleFiveLabel({ origin, start: targetRay, sector: data.b, radius: 42, text: `${data.b}°`, role: "b" }),
+      source41AngleFiveLabel({ origin, start: 0, sector: data.e, radius: 32, text: `${data.e}°`, role: "exterior" }),
+      source41AngleFiveLabel({ origin, start: 0, sector: targetRay, radius: 97, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `<polygon data-triangle="one" data-source-shape="top-right-triangle" points="${source41PointsText([origin, topFoot, topPoint])}"/><polygon data-triangle="two" data-source-shape="target-right-triangle" points="${source41PointsText([origin, targetFoot, targetPoint])}"/>${source41AngleFiveRay(origin, 0, 132, "baseline", "", 0)}${source41AngleFiveRay(origin, data.e, 102, "exterior-ray", "", 1)}${source41AngleFiveRay(origin, targetRay, 100, "target-ray", "source41-reflected-line", 2)}${source41AngleFiveRay(origin, topRay, 118, "upper-ray", "", 3)}${source41AngleFiveRay(origin, 180, 132, "straight-extension", "source41-extension-line", 4)}${source41AngleFiveSectorArc(origin, 0, data.e, 28, "exterior")}${source41AngleFiveSectorArc(origin, data.e, data.a, 57, "a")}${source41AngleFiveSectorArc(origin, targetRay, data.b, 34, "b")}${source41AngleFiveSectorArc(origin, topRay, data.intermediate, 48, "intermediate")}${source41AngleFiveSectorArc(origin, 0, targetRay, 85, "target", true)}${source41AngleFiveRightMark(topFoot, 0, 90)}${source41AngleFiveRightMark(targetFoot, 0, 90)}<line data-triangle-connection="top" x1="${topFoot[0].toFixed(1)}" y1="${topFoot[1]}" x2="${topPoint[0].toFixed(1)}" y2="${topPoint[1].toFixed(1)}"/><line data-triangle-connection="target" x1="${targetFoot[0].toFixed(1)}" y1="${targetFoot[1]}" x2="${targetPoint[0].toFixed(1)}" y2="${targetPoint[1].toFixed(1)}"/>`;
+    return source41AngleFiveRoot({ variant: 5, origin, rays, sectors: [data.e, data.a, data.b, data.intermediate, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-a="${data.a}" data-b="${data.b}" data-exterior="${data.e}" data-intermediate="${data.intermediate}"`, body, aria: "겹친 두 실제 직각삼각형과 위쪽 각" });
+  };
+  const source41AngleFiveSlopeExteriorSvg = data => {
+    const origin = [250, 156];
+    const baselineY = 212;
+    const rise = baselineY - origin[1];
+    const leftBase = [origin[0] - rise / Math.tan(data.outer * Math.PI / 180), baselineY];
+    const rightBase = [origin[0] - rise / Math.tan(data.inner * Math.PI / 180), baselineY];
+    const rays = [data.outer, 180 + data.outer, 180 + data.inner];
+    const labels = [
+      source41AngleFiveLabel({ origin: leftBase, start: 0, sector: data.outer, radius: 21, text: `${data.outer}°`, role: "outer" }),
+      source41AngleFiveLabel({ origin: rightBase, start: 0, sector: data.inner, radius: 57, text: `${data.inner}°`, role: "inner" }),
+      source41AngleFiveLabel({ origin, start: 180 + data.inner, sector: data.answerNumber, radius: 78, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `<polygon data-source-shape="left-slope-triangle" data-vertex-group="left" points="${source41PointsText([leftBase, [leftBase[0] + 42, baselineY], origin])}"/><polygon data-source-shape="right-slope-triangle" data-vertex-group="right" points="${source41PointsText([rightBase, [rightBase[0] + 36, baselineY], origin])}"/><line data-vertex-group="left" x1="${leftBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/><line data-vertex-group="right" x1="${rightBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/>${source41AngleFiveRay(origin, data.outer, 82, "left-slope-extension", "source41-extension-line", 0, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.outer, Math.hypot(origin[0] - leftBase[0], rise), "left-sloped-side", "", 1, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.inner, Math.hypot(origin[0] - rightBase[0], rise), "right-sloped-side", "", 2, "main", 'data-vertex-group="right"')}${source41AngleFiveSectorArc(leftBase, 0, data.outer, 22, "outer-given")}${source41AngleFiveSectorArc(rightBase, 0, data.inner, 22, "inner-given")}${source41AngleFiveSectorArc(origin, 180 + data.outer, data.gap, 38, "small-gap")}${source41AngleFiveSectorArc(origin, 180 + data.inner, data.answerNumber, 68, "target", true)}`;
+    return source41AngleFiveRoot({ variant: 6, origin, rays, sectors: [data.outer, data.inner, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-outer-angle="${data.outer}" data-inner-angle="${data.inner}" data-small-gap="${data.gap}"`, body, aria: "서로 다른 두 삼각형의 비스듬한 변과 연장선의 큰 바깥각" });
+  };
+  const source41AngleFiveRightTurnSvg = data => {
+    const origin = [142, 195];
+    const rays = [0, data.answerNumber, 90];
+    const base = source41AngleFivePoint(origin, 0, 112);
+    const top = source41AngleFivePoint(origin, 90, 112);
+    const turned = source41AngleFivePoint(origin, data.answerNumber, 112);
+    const labels = [
+      source41AngleFiveLabel({ origin, start: data.answerNumber, sector: data.shown, radius: 49, text: `${data.shown}°`, role: "shown" }),
+      source41AngleFiveLabel({ origin, start: 0, sector: data.answerNumber, radius: 80, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `${source41AngleFiveArrowDefinition()}<polygon data-shape="right-triangle" points="${source41PointsText([origin, base, top])}"/><line class="source41-reflected-line" data-ray-role="turned-side" data-ray-group="main" data-ray-index="1" data-ray-angle="${data.answerNumber.toFixed(3)}" x1="${origin[0]}" y1="${origin[1]}" x2="${turned[0].toFixed(1)}" y2="${turned[1].toFixed(1)}"/>${source41AngleFiveRay(origin, 0, 112, "base", "", 0)}${source41AngleFiveRay(origin, 90, 112, "upright", "", 2)}${source41AngleFiveSectorArc(origin, 0, data.answerNumber, 68, "target", true)}${source41AngleFiveSectorArc(origin, data.answerNumber, data.shown, 38, "shown")}${source41AngleFiveRightMark(origin, 0, 90)}<path class="source41-rotation-arrow" data-rotation-arrow="true" d="M${source41AngleFivePointText(source41AngleFivePoint(origin, 0, 102))} A102 102 0 0 0 ${source41AngleFivePointText(source41AngleFivePoint(origin, data.answerNumber, 102))}"/>`;
+    return source41AngleFiveRoot({ variant: 7, origin, rays, sectors: [data.answerNumber, data.shown], targetAngle: data.answerNumber, labels, attributes: `data-shown-angle="${data.shown}" data-right-angle="90"`, body, aria: "직각삼각형 안에서 실제로 돌린 변" });
+  };
+  const source41AngleFiveDoubleSideFoldSvg = data => {
+    const origin = [180, 208];
+    const sideOffset = 112;
+    const leftCrease = 90 + data.leftCornerAngle;
+    const rightCrease = 90 - data.rightCornerAngle;
+    const leftFoldedEdge = 2 * data.leftCornerAngle;
+    const rightFoldedEdge = 180 - 2 * data.rightCornerAngle;
+    const leftLength = sideOffset / -Math.cos(leftCrease * Math.PI / 180);
+    const rightLength = sideOffset / Math.cos(rightCrease * Math.PI / 180);
+    const leftCorner = source41AngleFivePoint(origin, leftCrease, leftLength);
+    const rightCorner = source41AngleFivePoint(origin, rightCrease, rightLength);
+    const leftCornerRay = 270 + data.leftCornerAngle;
+    const rightCornerRay = 270 - data.rightCornerAngle;
+    const leftFoldSector = 90 - data.leftCornerAngle;
+    const rightFoldSector = 90 - data.rightCornerAngle;
+    const rays = [leftCrease, rightCrease, leftFoldedEdge, rightFoldedEdge];
+    const labels = [
+      source41AngleFiveLabel({ origin: leftCorner, start: 270, sector: data.leftCornerAngle, radius: 36, text: "㉠", className: "source41-target-label", role: "left-corner" }),
+      source41AngleFiveLabel({ origin: rightCorner, start: rightCornerRay, sector: data.rightCornerAngle, radius: 36, text: "㉡", className: "source41-target-label", role: "right-corner" }),
+      source41AngleFiveLabel({ origin, start: rightFoldedEdge, sector: data.gap, radius: 39, text: `${data.gap}°`, role: "central-gap" })
+    ];
+    const body = `<rect data-source-shape="original-rectangle" x="54" y="36" width="252" height="180"/>${source41AngleFiveRay(origin, 180, 112, "original-left-edge", "source41-extension-line", 0, "original", 'data-reflection-pair="left" data-reflection-role="original"')}${source41AngleFiveRay(origin, 0, 112, "original-right-edge", "source41-extension-line", 1, "original", 'data-reflection-pair="right" data-reflection-role="original"')}${source41AngleFiveRay(origin, leftCrease, leftLength, "left-fold", "source41-fold-line", 0, "main", 'data-fold-side="left" data-reflection-pair="left" data-reflection-role="crease"')}${source41AngleFiveRay(origin, rightCrease, rightLength, "right-fold", "source41-fold-line", 1, "main", 'data-fold-side="right" data-reflection-pair="right" data-reflection-role="crease"')}${source41AngleFiveRay(origin, leftFoldedEdge, 104, "left-reflected-edge", "source41-reflected-line", 2, "main", 'data-reflection="left" data-reflection-pair="left" data-reflection-role="reflected"')}${source41AngleFiveRay(origin, rightFoldedEdge, 104, "right-reflected-edge", "source41-reflected-line", 3, "main", 'data-reflection="right" data-reflection-pair="right" data-reflection-role="reflected"')}${source41AngleFiveRay(leftCorner, 270, Math.max(34, 216 - leftCorner[1]), "left-vertical-edge", "", 0, "left")}${source41AngleFiveRay(leftCorner, leftCornerRay, leftLength, "left-corner-to-center", "", 1, "left")}${source41AngleFiveRay(rightCorner, rightCornerRay, rightLength, "right-corner-to-center", "", 0, "right")}${source41AngleFiveRay(rightCorner, 270, Math.max(34, 216 - rightCorner[1]), "right-vertical-edge", "", 1, "right")}${source41AngleFiveSectorArc(leftCorner, 270, data.leftCornerAngle, 28, "left-corner", true)}${source41AngleFiveSectorArc(rightCorner, rightCornerRay, data.rightCornerAngle, 28, "right-corner", true)}${source41AngleFiveSectorArc(origin, rightFoldedEdge, data.gap, 30, "central-gap", false, 'data-gap-role="reflected-edge-gap"')}${source41AngleFiveEqualMark(origin, leftCrease, leftFoldSector, 46, 1)}${source41AngleFiveEqualMark(origin, leftFoldedEdge, leftFoldSector, 33, 1)}${source41AngleFiveEqualMark(origin, 0, rightFoldSector, 46, 2)}${source41AngleFiveEqualMark(origin, rightCrease, rightFoldSector, 33, 2)}${source41AngleFiveFoldTick(origin, leftCrease, 66, 1)}${source41AngleFiveFoldTick(origin, rightCrease, 66, 2)}`;
+    return source41AngleFiveRoot({ variant: 9, origin, rays, sectors: [data.leftCornerAngle, data.rightCornerAngle, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-central-gap="${data.gap}" data-half-gap="${data.halfGap}" data-left-corner-angle="${data.leftCornerAngle}" data-right-corner-angle="${data.rightCornerAngle}" data-target-sum="${data.answerNumber}" data-gap-role="reflected-edge-gap"`, body, aria: "직사각형 양쪽을 접은 뒤 생긴 두 선 사이의 중앙 각과 두 모서리각" });
+  };
+  const source41AngleFiveTwiceFoldedRectangleSvg = data => {
+    const origin = [254, 164];
+    const rays = [0, data.gap, 2 * data.gap, 3 * data.gap, 4 * data.gap, 180];
+    const firstPiecePoints = [
+      origin,
+      source41AngleFivePoint(origin, rays[0], 84),
+      source41AngleFivePoint(origin, rays[2], 84),
+      source41AngleFivePoint(origin, rays[1], 56)
+    ];
+    const secondPiecePoints = [
+      origin,
+      source41AngleFivePoint(origin, rays[2], 84),
+      source41AngleFivePoint(origin, rays[4], 84),
+      source41AngleFivePoint(origin, rays[3], 56)
+    ];
+    const labels = [
+      source41AngleFiveLabel({ origin, start: 0, sector: data.gap, radius: 43, text: `${data.gap}°`, role: "shown-sector" }),
+      source41AngleFiveLabel({ origin, start: 4 * data.gap, sector: data.answerNumber, radius: 84, text: "㉠", className: "source41-target-label", role: "target" })
+    ];
+    const body = `<rect data-source-shape="rectangle" data-fold-role="original" x="38" y="34" width="164" height="174"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="one" x1="94" y1="34" x2="94" y2="208"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="two" x1="150" y1="34" x2="150" y2="208"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="one" points="${source41PointsText(firstPiecePoints)}"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="two" points="${source41PointsText(secondPiecePoints)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${firstPiecePoints[1][0].toFixed(1)}" y1="${firstPiecePoints[1][1].toFixed(1)}" x2="${firstPiecePoints[3][0].toFixed(1)}" y2="${firstPiecePoints[3][1].toFixed(1)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${secondPiecePoints[2][0].toFixed(1)}" y1="${secondPiecePoints[2][1].toFixed(1)}" x2="${secondPiecePoints[3][0].toFixed(1)}" y2="${secondPiecePoints[3][1].toFixed(1)}"/>${rays.slice(0, 5).map((angle, index) => source41AngleFiveRay(origin, angle, 84, `fold-${index + 1}`, "source41-fold-line", index, "main", `data-fold-role="folded-angle" data-fold-stage="${index + 1}"`)).join("")}${source41AngleFiveRay(origin, 180, 98, "straight-end", "", 5)}${[0, 1, 2, 3].map(index => source41AngleFiveSectorArc(origin, rays[index], data.gap, 24 + index * 8, `equal-${index + 1}`)).join("")}${source41AngleFiveSectorArc(origin, 4 * data.gap, data.answerNumber, 66, "target", true)}${[0, 1, 2, 3].map(index => source41AngleFiveEqualMark(origin, rays[index], data.gap, 17 + index * 6, index + 1)).join("")}${source41AngleFiveFoldTick(origin, rays[1], 58, 1)}${source41AngleFiveFoldTick(origin, rays[3], 58, 2)}`;
+    return source41AngleFiveRoot({ variant: 10, origin, rays, sectors: [data.gap, data.gap, data.gap, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-shown-sector="${data.gap}" data-equal-sector-count="4" data-fold-role="twice-folded-rectangle"`, body, aria: "직사각형을 두 번 접은 전후 조각과 점선에서 가운데 각을 구하는 그림" });
+  };
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -5685,6 +5955,139 @@
       const evidence = source41Evidence("seven-point-star-tip-angle-sum", payload, answer);
       const prompt = `한 꼭짓점씩 건너 이어 만든 일곱 꼭짓점의 별 모양입니다. 교차점이 아니라 별의 일곱 끝에 표시된 각을 모두 더하면 몇 도인가요?${source41StarPolygonSvg({ sideCount: 7, rotation, radiusX, radiusY })}${evidence}`;
       const solution = `별의 선을 따라가면 두 바퀴만큼 방향이 바뀝니다. 일곱 꼭짓각의 합은 7×180-2×360=1260-720=${answer}°입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41AngleFive({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("내각과 외각의 성질 활용 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 1) throw new Error("검수 대기: 예제 5-1은 150° 표시의 양끝이 분명하지 않아 원문 조건만으로 답이 하나로 정해지지 않습니다.");
+      if (variant === 8) throw new Error("검수 대기: Mission 4는 접은 선의 끝점과 포개진 선의 대응 표시가 부족해 원문 조건만으로 답이 하나로 정해지지 않습니다.");
+      const gridPick = (minimum, maximum, step = 1) => pick(rng, Array.from({ length: Math.floor((maximum - minimum) / step) + 1 }, (_, index) => minimum + index * step));
+
+      if (variant === 0) {
+        const large = gridPick([118, 112, 106][level], [136, 146, 154][level], 2);
+        const split = gridPick([34, 28, 20][level], [54, 60, 68][level], 2);
+        const answerNumber = 270 - large;
+        if (answerNumber <= 0 || answerNumber >= 180) throw new Error("두 번 접은 직사각형의 각이 알맞은 범위를 벗어났습니다.");
+        const payload = { variant, level, large, split, rightSector: 90, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[0], complexity: (level + 1) * 1000 + Math.abs(large - 128) + split };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("two-fold-rectangle-crease-angle", payload, answer);
+        const prompt = `직사각형을 두 번 접었다가 펼쳤습니다. 접은 선 사이의 한 각은 ${split}°이고, 다른 곳에는 직각이 표시되어 있습니다. 가운데의 큰 각이 ${large}°일 때 ㉠의 크기를 구하세요.${source41AngleFiveDoubleFoldSvg(payload)}${evidence}`;
+        const solution = `한 점 둘레의 각의 합은 360°입니다. 큰 각 ${large}°와 그림에 표시된 직각 90°를 빼면 ㉠입니다. 따라서 ㉠=360-${large}-90=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const a = gridPick([28, 24, 18][level], [38, 42, 48][level], 2);
+        const rotation = gridPick([44, 38, 32][level], [56, 64, 72][level], 2);
+        const pivotAngle = 90 - a;
+        const answerNumber = pivotAngle + rotation;
+        if (pivotAngle <= 0 || answerNumber >= 180) throw new Error("돌린 직각삼각형의 벌어진 각을 만들지 못했습니다.");
+        const payload = { variant, level, a, rotation, pivotAngle, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[2], complexity: (level + 1) * 1000 + rotation * 3 + a };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("rotated-right-triangle-opening", payload, answer);
+        const prompt = `직각삼각형을 한 꼭짓점에서 ${rotation}°만큼 돌렸습니다. 위쪽의 예각이 ${a}°일 때 ㉠의 크기를 구하세요.${source41AngleFiveRotatedRightTriangleSvg(payload)}${evidence}`;
+        const solution = `직각삼각형의 나머지 예각은 90-${a}=${pivotAngle}°입니다. ㉠은 이 각과 돌린 각을 이어 붙인 것이므로 ${pivotAngle}+${rotation}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const p = gridPick([18, 16, 12][level], [34, 38, 44][level], 2);
+        const difference = gridPick([64, 56, 48][level], [78, 82, 86][level], 2);
+        const c = p + difference;
+        const first = 180 - c + p;
+        const second = 2 * first - 180;
+        if (c >= 160 || second <= 0 || first <= second) throw new Error("접은 삼각형의 두 각을 만들지 못했습니다.");
+        const payload = { variant, level, p, c, first, second, answerNumber: first - second, sourceAnchor: source41AngleFiveSourceAnchors[3], complexity: (level + 1) * 1000 + difference * 4 + p };
+        const answer = String(payload.answerNumber);
+        const evidence = source41Evidence("folded-triangle-two-angle-difference", payload, answer);
+        const prompt = `삼각형을 점선으로 접었습니다. 같은 표시의 선은 접은 뒤 서로 포개집니다. ${p}°와 ${c}°를 이용하여 ㉠과 ㉡의 크기의 차를 구하세요.${source41AngleFiveFoldedTriangleSvg(payload)}${evidence}`;
+        const solution = `먼저 ㉠은 180-${c}+${p}=${first}°입니다. 접어서 포개지는 두 선의 관계를 이용하면 ㉡은 2×${first}-180=${second}°입니다. 따라서 두 각의 차는 ${first}-${second}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const t = gridPick([52, 46, 38][level], [72, 76, 82][level], 2);
+        const distractor = gridPick([44, 38, 30][level], [64, 70, 80][level], 2);
+        const answerNumber = 360 - 90 - 2 * t;
+        if (answerNumber <= 30 || answerNumber >= 200) throw new Error("접은 정사각형의 큰 각을 만들지 못했습니다.");
+        const payload = { variant, level, t, distractor, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[4], complexity: (level + 1) * 1000 + t * 3 + distractor };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("folded-square-reflex-angle", payload, answer);
+        const prompt = `정사각형을 접었습니다. 왼쪽의 다른 접힌 모서리에는 ${distractor}°가 표시되어 있고, 목표 꼭짓점에서 같은 표시가 있는 두 각 중 한 각은 ${t}°입니다. 직각 표시를 이용하여 ㉠의 크기를 구하세요.${source41AngleFiveFoldedSquareSvg(payload)}${evidence}`;
+        const solution = `왼쪽의 ${distractor}°는 다른 꼭짓점에 있는 각입니다. ㉠이 있는 점 둘레의 각의 합 360°에서 직각 90°와 같은 두 각 ${t}°를 빼면 됩니다. 따라서 ㉠=360-90-2×${t}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        let selected = null;
+        for (let attempt = 0; attempt < 600 && !selected; attempt += 1) {
+          const a = gridPick([36, 30, 24][level], [54, 60, 66][level], 2);
+          const b = gridPick([22, 18, 14][level], [38, 44, 50][level], 2);
+          const e = gridPick([100, 92, 82][level], [120, 130, 140][level], 2);
+          const intermediate = 180 - e - a;
+          const answerNumber = e + a - b;
+          if (intermediate < 12 || intermediate > 62 || answerNumber < 100 || answerNumber > 160) continue;
+          selected = { a, b, e, intermediate, answerNumber };
+        }
+        if (!selected) throw new Error("겹친 두 직각삼각형의 위쪽 각을 만들지 못했습니다.");
+        const payload = { variant, level, ...selected, sourceAnchor: source41AngleFiveSourceAnchors[5], complexity: (level + 1) * 1000 + selected.e + selected.a * 2 - selected.b };
+        const answer = String(selected.answerNumber);
+        const evidence = source41Evidence("overlapping-right-triangles-upper-angle", payload, answer);
+        const prompt = `두 직각삼각형이 겹쳐 있습니다. ${selected.a}°, ${selected.b}°, ${selected.e}°와 직각 표시를 이용하여 위쪽의 ㉠을 구하세요.${source41AngleFiveOverlapRightTrianglesSvg(payload)}${evidence}`;
+        const solution = `왼쪽 삼각형에서 남은 작은 각은 180-${selected.e}-${selected.a}=${selected.intermediate}°입니다. 위쪽의 ㉠은 ${selected.e}+${selected.a}-${selected.b}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const outer = gridPick([22, 18, 14][level], [40, 46, 52][level], 2);
+        const gap = gridPick([10, 8, 6][level], [26, 30, 34][level], 2);
+        const inner = outer + gap;
+        const answerNumber = 180 - gap;
+        const payload = { variant, level, outer, inner, gap, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[6], complexity: (level + 1) * 1000 + inner * 3 + gap };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("two-triangle-slope-exterior-angle", payload, answer);
+        const prompt = `한 점에서 기울기가 다른 두 선이 만납니다. 바깥쪽 각 ${outer}°와 안쪽 각 ${inner}°를 이용하여 큰 바깥각 ㉠을 구하세요.${source41AngleFiveSlopeExteriorSvg(payload)}${evidence}`;
+        const solution = `두 기울어진 선 사이의 작은 각은 ${inner}-${outer}=${gap}°입니다. ㉠은 이 각과 한 직선을 이루므로 180-${gap}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const shown = gridPick([46, 40, 34][level], [68, 74, 80][level], 2);
+        const answerNumber = 90 - shown;
+        if (answerNumber <= 0) throw new Error("직각삼각형의 돌린 각을 만들지 못했습니다.");
+        const payload = { variant, level, shown, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[7], complexity: (level + 1) * 1000 + shown * 3 };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("rotated-right-triangle-turn", payload, answer);
+        const prompt = `직각삼각형의 한 꼭짓점을 고정하고 한 변을 돌렸습니다. 그림의 ${shown}°와 직각 표시를 이용하여 돌린 각 ㉠을 구하세요.${source41AngleFiveRightTurnSvg(payload)}${evidence}`;
+        const solution = `직각은 90°입니다. 표시된 ${shown}°와 ㉠이 직각을 나누므로 ㉠=90-${shown}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const gap = gridPick([22, 18, 14][level], [42, 46, 52][level], 2);
+        const halfGap = gap / 2;
+        const answerNumber = 90 + halfGap;
+        const leftMinimum = Math.max([42, 38, 34][level], answerNumber - 72);
+        const leftMaximum = Math.min([58, 62, 66][level], answerNumber - 30);
+        const leftCornerAngle = gridPick(leftMinimum, leftMaximum, 2);
+        const rightCornerAngle = answerNumber - leftCornerAngle;
+        if (rightCornerAngle < 30 || rightCornerAngle > 72) throw new Error("양쪽 접기의 두 모서리각을 읽기 좋게 만들지 못했습니다.");
+        const payload = { variant, level, gap, halfGap, leftCornerAngle, rightCornerAngle, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[9], complexity: (level + 1) * 1000 + gap * 5 + Math.abs(leftCornerAngle - rightCornerAngle) };
+        const answer = String(answerNumber);
+        const evidence = source41Evidence("double-side-rectangle-fold-sum", payload, answer);
+        const prompt = `직사각형의 양쪽을 안으로 접었습니다. 아래 중앙에서 접힌 뒤 생긴 두 선 사이의 각은 ${gap}°입니다. 왼쪽 모서리의 ㉠과 오른쪽 모서리의 ㉡의 합을 구하세요.${source41AngleFiveDoubleSideFoldSvg(payload)}${evidence}`;
+        const solution = `접은 선에서는 접기 전의 선과 접힌 뒤의 선이 이루는 두 각의 크기가 같습니다. 양쪽 직각을 함께 보면 ㉠+㉡은 90°에 가운데 각의 절반을 더한 값입니다. 따라서 ㉠+㉡=90+${gap}÷2=90+${halfGap}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const gap = gridPick([20, 18, 14][level], [30, 33, 36][level], 1);
+      const answerNumber = 180 - 4 * gap;
+      if (answerNumber <= 30) throw new Error("두 번 접은 직사각형의 가운데 각을 만들지 못했습니다.");
+      const payload = { variant, level, gap, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[10], complexity: (level + 1) * 1000 + gap * 8 };
+      const answer = String(answerNumber);
+      const evidence = source41Evidence("twice-folded-rectangle-center-angle", payload, answer);
+      const prompt = `직사각형을 두 번 접었습니다. 같은 표시의 네 각이 모두 ${gap}°일 때 가운데 ㉠의 크기를 구하세요.${source41AngleFiveTwiceFoldedRectangleSvg(payload)}${evidence}`;
+      const solution = `한 직선 위의 각의 합은 180°입니다. 같은 네 각의 합은 ${gap}×4=${4 * gap}°이므로 ㉠=180-${4 * gap}=${answer}°입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
