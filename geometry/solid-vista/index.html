@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD Spatial Solids District</title>
+  <link rel="stylesheet" href="./styles.css?v=solid-1" />
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#17394d" />
+</head>
+<body>
+  <header class="topbar">
+    <a href="../world-map/" class="back" aria-label="지도로 돌아가기">&larr;</a>
+    <div><strong>GFIELD</strong><span id="districtName"></span></div>
+    <p id="playerName"></p>
+  </header>
+  <main>
+    <section class="district-heading">
+      <div><span>SPATIAL SOLIDS</span><h1 id="title"></h1><p id="subtitle"></p></div>
+      <div class="tower-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+    </section>
+    <section class="course-section">
+      <header><div><h2 id="netTitle"></h2><p id="netDescription"></p></div><strong id="sessionLabel"></strong></header>
+      <div id="levelGrid" class="level-grid"></div>
+    </section>
+    <section class="upcoming">
+      <div class="soma-shape" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div><span id="nextLabel"></span><h2 id="somaTitle"></h2><p id="somaDescription"></p></div>
+    </section>
+  </main>
+  <script type="module" src="./app.js?v=solid-1"></script>
+</body>
+</html>
