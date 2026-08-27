@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 97,
+  "verifiedMappings": 108,
   "items": [
     {
       "unit": 1,
@@ -1703,13 +1703,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "연결된 다각형에서 표시된 각들의 합 구하기",
+      "typeLabel": "네 다각형에서 표시된 모든 안쪽 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1721,13 +1722,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "삼각형 안쪽 각을 반으로 나눈 두 선 사이의 각 구하기",
+      "typeLabel": "두 꼭짓점의 각을 반으로 나눈 선 사이의 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1739,13 +1741,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-2",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "삼각형과 직각선의 각도 합",
+      "typeLabel": "높이와 반으로 나눈 각으로 두 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1757,13 +1760,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "오목다각형에서 모르는 각들의 크기 합 구하기",
+      "typeLabel": "안으로 들어간 두 꼭짓점의 작은 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1775,13 +1779,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 26,
       "sourcePrintedPage": 22,
-      "typeLabel": "여러 다각형이 연결된 도형에서 표시된 각들의 합 구하기",
+      "typeLabel": "겹쳐 그린 세 다각형에서 표시된 모든 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1793,13 +1798,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "도형 안쪽 각을 나누어 가운데 각 구하기",
+      "typeLabel": "세 꼭짓점의 각을 반으로 나눈 선 사이의 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1811,13 +1817,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "삼각형 안팎의 각도 계산",
+      "typeLabel": "두 밑각을 세 부분으로 나누어 두 꼭짓각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1829,13 +1836,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "꺾은선 도형에서 모르는 각의 크기 구하기",
+      "typeLabel": "오각형의 네 바깥각으로 남은 바깥각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1847,13 +1855,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "다각형 안팎에 표시된 각들의 합 구하기",
+      "typeLabel": "직선으로 이어진 도형에서 표시된 다섯 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1865,13 +1874,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "복합 다각형의 끝각",
+      "typeLabel": "안으로 두 번 꺾인 도형에서 남은 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1883,13 +1893,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 27,
       "sourcePrintedPage": 23,
-      "typeLabel": "교차 삼각형의 각도 합",
+      "typeLabel": "네 삼각형이 교차할 때 바깥쪽 여덟 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleThree",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
