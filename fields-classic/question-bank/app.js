@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827d";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827e";
 import { GENERATORS } from "./generators.js?v=20260827b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827b";
@@ -28,6 +28,14 @@ const MOCK_EXAM_NAV = [
   ...PRACTICE_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("실전 모의고사 ", "실전 "), exams: [exam] })),
   ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
 ];
+const academyStyleIdsByType = new Map(TYPES.map((item) => [item.id, new Set(item.academyStyleIds || [])]));
+for (const sourceQuestion of SOURCE_QUESTION_INDEX) {
+  sourceQuestion.classifications.forEach((classification) => {
+    const styleIds = academyStyleIdsByType.get(classification.detailedTypeId) || new Set();
+    classification.academyStyleIds.forEach((styleId) => styleIds.add(styleId));
+    academyStyleIdsByType.set(classification.detailedTypeId, styleIds);
+  });
+}
 const stageIds = new Set([...AGE_STAGES.map((item) => item.id), ...MOCK_EXAM_NAV.map((item) => item.id)]);
 
 function requestedStage() {
@@ -61,13 +69,14 @@ function activeDifficulty() {
   return state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
 }
 
-function withProblemContext(problem, item, reference) {
+function withProblemContext(problem, item, reference, sourceClassification = null) {
   const studyStage = state.mode === "curriculum" ? activeTextbookStage() : null;
+  const classification = sourceClassification || questionClassificationForType(item.id);
   return {
     ...problem,
     type: item,
     reference,
-    classification: questionClassificationForType(item.id),
+    classification,
     representativeConcept: representativeConceptForType(item.id),
     studyStage,
     conceptGuide: studyStage?.id === "concept" ? textbookGuideForType(item.id) : ""
@@ -442,7 +451,7 @@ function renderCurriculum() {
 }
 
 function groupedTypes() {
-  const matchesStyle = (item) => item.academyStyleIds?.some((id) => state.academyStyles.has(id));
+  const matchesStyle = (item) => academyStyleIdsForType(item).some((id) => state.academyStyles.has(id));
   return DOMAINS.map((domain) => ({
     domain,
     middles: [...new Set(TYPES.filter((item) => item.domain === domain.id && matchesStyle(item)).map((item) => item.middle))].map((middle) => ({
@@ -452,15 +461,25 @@ function groupedTypes() {
   })).filter((group) => group.middles.length);
 }
 
-function academyStyleLabels(item) {
-  return (item?.academyStyleIds || [])
+function academyStyleIdsForType(item) {
+  return [...(academyStyleIdsByType.get(item?.id) || new Set(item?.academyStyleIds || []))];
+}
+
+function academyStyleIdsFor(target) {
+  if (target?.classification?.academyStyleIds) return target.classification.academyStyleIds;
+  if (target?.academyStyleIds) return target.academyStyleIds;
+  return academyStyleIdsForType(target);
+}
+
+function academyStyleLabels(target) {
+  return academyStyleIdsFor(target)
     .map((id) => ACADEMY_STYLES.find((style) => style.id === id)?.label)
     .filter(Boolean);
 }
 
 function renderAcademyStyleFilters() {
   $("academyStyleFilters").innerHTML = ACADEMY_STYLES.map((style) => {
-    const count = TYPES.filter((item) => item.academyStyleIds?.includes(style.id)).length;
+    const count = TYPES.filter((item) => academyStyleIdsForType(item).includes(style.id)).length;
     return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${style.label}</span><em>${count}</em></label>`;
   }).join("");
   $("academyStyleFilters").querySelectorAll("input[data-academy-style]").forEach((input) => input.addEventListener("change", () => {
@@ -468,7 +487,7 @@ function renderAcademyStyleFilters() {
     else state.academyStyles.delete(input.dataset.academyStyle);
     for (const typeId of [...state.selected.type]) {
       const item = typeById(typeId);
-      if (!item?.academyStyleIds?.some((id) => state.academyStyles.has(id))) state.selected.type.delete(typeId);
+      if (!academyStyleIdsForType(item).some((id) => state.academyStyles.has(id))) state.selected.type.delete(typeId);
     }
     renderTypeTree();
     updateSummary();
@@ -495,7 +514,11 @@ function renderTypeTree() {
 }
 
 function selectedReferences() {
-  if (state.mode === "type") return [...state.selected.type].map((typeId) => ({ typeId, reference: `${typeById(typeId)?.label || "유형"} 기준` }));
+  if (state.mode === "type") return [...state.selected.type].map((typeId) => ({
+    typeId,
+    reference: `${typeById(typeId)?.label || "유형"} 기준`,
+    classification: questionClassificationForType(typeId, { academyStyleIds: academyStyleIdsForType(typeById(typeId)) })
+  }));
   if (state.mode === "curriculum") {
     const result = [];
     for (const key of state.selected.curriculum) {
@@ -505,7 +528,11 @@ function selectedReferences() {
       if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book, unit)) {
         const stage = activeTextbookStage();
         const sourceNumbers = studyReferenceLabel(typeStageReferences(unit, typeId, stage.id));
-        result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
+        result.push({
+          typeId,
+          reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}`,
+          classification: questionClassificationForType(typeId)
+        });
       }
     }
     for (const key of state.selected.unitTest) {
@@ -520,7 +547,8 @@ function selectedReferences() {
           typeId: question.typeId,
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
-          fixedSeed: `unit-test:${book.id}:${number}`
+          fixedSeed: `unit-test:${book.id}:${number}`,
+          classification: question.classification
         });
       }
     }
@@ -533,7 +561,8 @@ function selectedReferences() {
         result.push({
           typeId: sourceQuestion.typeId,
           reference: `${exam.label} ${sourceQuestion.number}번`,
-          fixedSeed: sourceQuestion.fixedSeed || null
+          fixedSeed: sourceQuestion.fixedSeed || null,
+          classification: sourceQuestion.classification
         });
       }
     }
@@ -657,7 +686,7 @@ function geometryWorksheetSolution(problem) {
   }
 }
 
-function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null) {
+function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null, sourceClassification = null) {
   const worksheet = globalThis.GW_GEN;
   const info = worksheet?.typeInfo(item.worksheetCode);
   if (!worksheet || !info) return null;
@@ -701,12 +730,12 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
     solution: geometryWorksheetSolution(made),
     responseKind: made.type === "VP" ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-    }, item, reference),
+    }, item, reference, sourceClassification),
     generationDifficulty: intensity
   };
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
@@ -718,11 +747,11 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
       const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return { ...withProblemContext(generated, item, reference), generationDifficulty: difficulty };
+      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
-    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride);
+    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride, sourceClassification);
   }
   return null;
 }
@@ -745,7 +774,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -786,7 +815,7 @@ function replaceQuestion(index) {
   const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
   let replacement = null;
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty);
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification);
     if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
       replacement = candidate;
       break;
@@ -3250,7 +3279,7 @@ function renderWorksheet() {
         <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
-      <div class="question-style-tags">${academyStyleLabels(question.type).map((label) => `<span>${label}</span>`).join("")}</div>
+      <div class="question-style-tags">${academyStyleLabels(question).map((label) => `<span>${label}</span>`).join("")}</div>
       ${question.representativeConcept ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
@@ -3278,7 +3307,7 @@ function openAnswers() {
     // 보고 판단하지 않아도 되게.
     const answerPicture = answerVisualMarkup(question);
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question.type).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }
