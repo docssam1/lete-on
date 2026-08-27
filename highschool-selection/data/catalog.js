@@ -136,7 +136,7 @@
       title: "돌파 중2-2 입반 대비 1회",
       track: "중2-2 입반",
       curriculumVersion: "2022-revised",
-      scopeLabel: "중1-1~중2-1 연립일차방정식까지 · 30문항",
+      scopeLabel: "중1-1~중2-1 전 범위(일차함수까지) · 30문항",
       questionCount: 30,
       pageCount: null,
       sourcePageCount: null,
@@ -150,7 +150,7 @@
       releaseStatus: "blocked",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "기존 2024년 원본은 그대로 보존합니다. 새 시험은 실제 돌파 원본 문항만 사용하되, 현재 범위인 중1-1부터 중2-1 연립일차방정식까지에 해당하는 문항만 고릅니다. 일차함수와 중2-2 문항은 이 회차에서 빼고, 부족한 자리는 같은 범위의 다른 돌파 원본 시험지에서 채운 뒤 다시 검수합니다."
+      note: "모든 원본 문항은 문항 DB에 보존합니다. 대표 중간반 시험은 중1-1부터 중2-1 일차함수까지를 기준으로 구성합니다. 원본 시험지마다 실제 마지막 단원이 다르므로 전 범위형과 중간 단원 종료형을 따로 표시하고, 범위 밖 문항은 삭제하지 않고 해당 시험 구성에서만 제외합니다."
     },
     {
       id: "dp-common1-entry-202405",

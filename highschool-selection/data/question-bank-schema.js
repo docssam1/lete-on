@@ -92,24 +92,14 @@
         targets: [
           { id: "middle-entry", scopeKey: "elementary-cumulative", state: "observed", label: "중1 입학", difficultyPlan: "기준 중심 · 올림 유형은 선별" },
           {
-            id: "middle-linear-function-transfer",
+            id: "middle2-2-transfer",
             scopeKey: "middle1-1-to-linear-function",
             scopeKind: "terminal-unit",
             terminalUnit: { course: "중2-1", unit: "일차함수" },
-            usage: "question-bank-only",
-            state: "user-confirmed",
-            label: "일차함수까지 편입",
-            difficultyPlan: "기준 우선 · 일차함수 누적 연결과 올림 유형으로 변별"
-          },
-          {
-            id: "middle2-2-transfer",
-            scopeKey: "middle1-1-to-middle2-1-systems",
-            scopeKind: "terminal-unit",
-            terminalUnit: { course: "중2-1", unit: "연립일차방정식" },
             state: "scope-reassembly-required",
             label: "중2-2 입반 대비",
             recommendedExamId: "dp-middle2-2-transfer",
-            difficultyPlan: "범위 안의 돌파 원본만 사용 · 기준 우선 · 올림 유형으로 변별"
+            difficultyPlan: "전 범위형 원본을 우선 사용 · 중간 단원 종료형은 부족한 유형 보완에만 사용 · 기준 우선 · 올림 유형으로 변별"
           },
           { id: "common1-entry", scopeKey: "middle2-1-to-middle3-2", state: "scope-reassembly-required", label: "공통수학1 입학", recommendedExamId: "dp-common1-entry-202405", difficultyPlan: "범위 안의 돌파 원본만 사용 · 원본 회차의 난도 배열 유지" },
           { id: "director-transfer", scopeKey: "target-class-confirmation", state: "observed", label: "원장반·상위 편입", difficultyPlan: "올림 우선 · 조건 결합·그래프·경계 전수 확인 강화" }

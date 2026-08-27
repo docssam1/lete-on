@@ -187,7 +187,8 @@
         { label: "예비중1 성적표 사례", value: "공통수학1 기본 · 30문항 · 60점 컷", state: "observed", sourceIds: [] },
         { label: "공개 범위 사례", value: "공통수학1 기본 전범위", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
         { label: "공개 규격 사례", value: "30문항 · 150분 · 20문항 기준", state: "verified", sourceIds: ["DP-ENTRY-MIRROR"] },
-        { label: "중2-2 입반 준비 범위", value: "중1-1~중2-1 연립일차방정식까지", state: "verified", sourceIds: ["DP-TIMETABLE-OFFICIAL-2026-09"] },
+        { label: "중간반 대표 준비 범위", value: "중1-1~중2-1 전 범위(일차함수까지)", state: "confirmed", sourceIds: [] },
+        { label: "원본 시험지 범위", value: "전 범위형과 중간 단원 종료형을 시험지별로 따로 기록", state: "confirmed", sourceIds: [] },
         { label: "공통수학1 입반 준비 범위", value: "중2-1~중3-2", state: "verified", sourceIds: ["DP-TIMETABLE-OFFICIAL-2026-09"] },
         { label: "실출제 경향", value: "후반 변별형·조건 분기·그래프/조합 결합", state: "observed", sourceIds: [] }
       ],

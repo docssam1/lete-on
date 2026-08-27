@@ -52,7 +52,11 @@ test("다른 시험형의 검수 전 후보는 기본 문항 목록에 나오지
 });
 
 test("돌파 시험 대상이 정해지면 범위 밖 원본 문항을 구성 후보에서 뺀다", () => {
-  const outside = catalogModule.createCatalog(database());
+  const outside = catalogModule.createCatalog(database({
+    semester: "중2-2",
+    unit: "도형의 닮음",
+    typeLabel: "닮음비로 길이 구하기"
+  }));
   assert.equal(outside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 0);
 
   const inside = catalogModule.createCatalog(database({

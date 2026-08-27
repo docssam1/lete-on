@@ -55,6 +55,12 @@ function audit(database) {
     if (rows.some(row => !row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId)) issues.push(`paper_link:${paper.paperId}`);
     const numbers = rows.map(row => row.number).sort((a, b) => a - b);
     if (numbers.some((number, index) => number !== index + 1)) issues.push(`paper_numbers:${paper.paperId}`);
+    if (paper.coverage) {
+      if (!["full_range", "mid_unit_cutoff", "mixed_range"].includes(paper.coverage.coverageKind)) issues.push(`paper_coverage_kind:${paper.paperId}`);
+      if (!paper.coverage.declaredScopeLabel || !paper.coverage.observedTerminal
+        || !paper.coverage.observedTerminal.semester || !paper.coverage.observedTerminal.unit) issues.push(`paper_coverage_terminal:${paper.paperId}`);
+      if (paper.coverage.status !== "verified" || !(paper.coverage.evidence || []).length) issues.push(`paper_coverage_evidence:${paper.paperId}`);
+    }
   });
   const rebuiltTypes = dbCore.rebuildTypeCatalog(database.questions);
   if (JSON.stringify(rebuiltTypes) !== JSON.stringify(database.typeCatalog)) issues.push("type_catalog");

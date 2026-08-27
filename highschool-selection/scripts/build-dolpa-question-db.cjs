@@ -127,8 +127,9 @@ function rebuildTypeCatalog(questions) {
   return Array.from(map.values()).map(type => ({ ...type, questionIds: type.questionIds.sort() })).sort((a, b) => a.typeId.localeCompare(b.typeId));
 }
 
-function rebuildPapers(questions, ledger) {
+function rebuildPapers(questions, ledger, existing) {
   const sourceById = new Map(ledger.sources.map(source => [source.sourceId, source]));
+  const oldPapersById = new Map(((existing && existing.papers) || []).map(paper => [paper.paperId, paper]));
   const map = new Map();
   questions.forEach(question => {
     if (!map.has(question.paperId)) {
@@ -147,7 +148,15 @@ function rebuildPapers(questions, ledger) {
     if (paper.sourceId !== question.sourceId) throw new Error(`시험지에 원본이 둘 이상 연결됐습니다: ${question.paperId}`);
     paper.questionIds.push(question.questionId);
   });
-  return Array.from(map.values()).map(paper => ({ ...paper, questionCount: paper.questionIds.length, questionIds: paper.questionIds.sort() }))
+  return Array.from(map.values()).map(paper => {
+    const old = oldPapersById.get(paper.paperId);
+    return {
+      ...paper,
+      ...(old && old.coverage ? { coverage: old.coverage } : {}),
+      questionCount: paper.questionIds.length,
+      questionIds: paper.questionIds.sort()
+    };
+  })
     .sort((a, b) => a.paperId.localeCompare(b.paperId));
 }
 
@@ -188,7 +197,7 @@ function buildDatabase(ledger, existing, ledgerSha256) {
     typeCatalog: [],
     questions
   };
-  database.papers = rebuildPapers(questions, ledger);
+  database.papers = rebuildPapers(questions, ledger, existing);
   database.typeCatalog = rebuildTypeCatalog(questions);
   database.summary = summarize(database);
   return database;

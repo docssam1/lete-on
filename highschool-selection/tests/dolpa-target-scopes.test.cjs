@@ -8,11 +8,11 @@ function question(semester, unit, sourceRelation = "original") {
   return { semester, minorUnit: unit, sourceRelation };
 }
 
-test("중2-2 입반 대비는 중2-1 연립일차방정식까지만 원본 문항을 받는다", () => {
+test("중2-2 중간반 대표 대비는 중2-1 일차함수까지 원본 문항을 받는다", () => {
   const id = "dp-middle2-2-transfer";
   assert.equal(scopes.evaluateQuestion(id, question("중1-2", "기본도형")).eligible, true);
   assert.equal(scopes.evaluateQuestion(id, question("중2-1", "연립일차방정식의 활용")).eligible, true);
-  assert.equal(scopes.evaluateQuestion(id, question("중2-1", "일차함수")).eligible, false);
+  assert.equal(scopes.evaluateQuestion(id, question("중2-1", "일차함수")).eligible, true);
   assert.equal(scopes.evaluateQuestion(id, question("중2-2", "도형의 닮음")).eligible, false);
   assert.equal(scopes.evaluateQuestion(id, question("중등 심화", "경우의 수")).eligible, false);
 });

@@ -29,12 +29,12 @@ test("구성표는 원본을 지우지 않고 시험 범위 안팎을 따로 기
   const result = assembly.build(database, plan);
   const middle = result.targets.find(target => target.targetId === "dp-middle2-2-transfer");
   const common = result.targets.find(target => target.targetId === "dp-common1-entry-202405");
-  assert.deepEqual(middle.includedQuestionIds, ["q1"]);
-  assert.deepEqual(middle.excluded.map(item => item.questionId), ["q2"]);
+  assert.deepEqual(middle.includedQuestionIds, ["q1", "q2"]);
+  assert.deepEqual(middle.excluded.map(item => item.questionId), []);
   assert.deepEqual(common.includedQuestionIds, ["q3"]);
   assert.deepEqual(common.excluded.map(item => item.questionId), ["q4", "q5"]);
   assert.equal(middle.selectedCount, 0);
-  assert.equal(middle.reserveCount, 1);
+  assert.equal(middle.reserveCount, 2);
   assert.equal(middle.assemblyStatus, "waiting_for_original_items");
   assert.equal(database.questions.length, 5);
 });

@@ -72,12 +72,12 @@
       id: "DP:middle-transfer",
       programCode: "DP",
       trackId: "middle-transfer",
-      scopeKey: "middle1-1-to-middle2-1-systems",
-      scopeLabel: "중1-1~중2-1 연립일차방정식까지",
+      scopeKey: "middle1-1-to-linear-function",
+      scopeLabel: "중1-1~중2-1 전 범위(일차함수까지)",
       scopeKind: "terminal-unit",
-      terminalUnit: { course: "중2-1", unit: "연립일차방정식" },
-      evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:DP-TIMETABLE-OFFICIAL-2026-09"]
+      terminalUnit: { course: "중2-1", unit: "일차함수" },
+      evidenceStatus: "observed",
+      evidenceRefs: ["USER:DP-MIDDLE-CLASS-SCOPE-2026-08-27"]
     },
     {
       id: "DP:common-math-entry",

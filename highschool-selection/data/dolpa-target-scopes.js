@@ -6,10 +6,10 @@
       id: "dp-middle2-2-transfer",
       programId: "DP",
       title: "돌파 중2-2 입반 대비",
-      scopeLabel: "중1-1~중2-1 연립일차방정식까지",
+      scopeLabel: "중1-1~중2-1 전 범위(일차함수까지)",
       expectedQuestionCount: 30,
-      evidenceStatus: "verified",
-      evidenceRefs: Object.freeze(["PUBLIC:DP-TIMETABLE-2026-09"])
+      evidenceStatus: "user-confirmed",
+      evidenceRefs: Object.freeze(["USER:DP-MIDDLE-CLASS-SCOPE-2026-08-27"])
     }),
     Object.freeze({
       id: "dp-common1-entry-202405",
@@ -43,9 +43,6 @@
     const parts = semesterParts(semester);
     if (parts.length !== 1 || !new Set(["중1-1", "중1-2", "중2-1"]).has(parts[0])) {
       return result(false, "중1-1~중2-1 범위 밖");
-    }
-    if (parts[0] === "중2-1" && /일차함수/.test(unit)) {
-      return result(false, "연립일차방정식 뒤 단원");
     }
     return result(true, "시험 범위 안의 원본 문항");
   }
