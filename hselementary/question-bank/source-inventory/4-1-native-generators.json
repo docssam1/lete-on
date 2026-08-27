@@ -152,6 +152,17 @@
     { "sourceItemId": "4-1-u3-e2-mission-3", "generatorKey": "source41MultiplicationTwo", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u3-e2-mission-4", "generatorKey": "source41MultiplicationTwo", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u3-e2-mission-5", "generatorKey": "source41MultiplicationTwo", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u3-e2-mission-6", "generatorKey": "source41MultiplicationTwo", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u3-e2-mission-6", "generatorKey": "source41MultiplicationTwo", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-exploration", "generatorKey": "source41DivisionThree", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-example-3-1", "generatorKey": "source41DivisionThree", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-example-3-2", "generatorKey": "source41DivisionThree", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-example-3-3", "generatorKey": "source41DivisionThree", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-example-3-4", "generatorKey": "source41DivisionThree", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-1", "generatorKey": "source41DivisionThree", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-2", "generatorKey": "source41DivisionThree", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-3", "generatorKey": "source41DivisionThree", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-4", "generatorKey": "source41DivisionThree", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-5", "generatorKey": "source41DivisionThree", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u3-e3-mission-6", "generatorKey": "source41DivisionThree", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

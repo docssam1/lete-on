@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 160,
+  "verifiedMappings": 171,
   "items": [
     {
       "unit": 1,
@@ -2957,10 +2957,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "총이익으로 실제 판매 수량 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2975,10 +2976,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "양쪽 나무 수로 도로 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -2993,10 +2995,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "포장 판매와 낱개 판매 금액 합산",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3011,10 +3014,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "서로 다른 기계의 생산량 나누기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3029,10 +3033,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "판매 금액의 변화로 가격을 올린 날 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3047,10 +3052,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "부족한 나눗셈의 최소 보충량",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3065,10 +3071,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "독서 속도에 따른 완료일 차이",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3083,10 +3090,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "회전 속도로 횟수 차이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3101,10 +3109,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "공전 주기의 몫과 남은 날",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3119,10 +3128,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "차이 조건으로 세 봉지 무게 나누기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3137,10 +3147,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "열차 길이와 속력으로 통과 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionThree",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,

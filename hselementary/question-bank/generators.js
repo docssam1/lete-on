@@ -1179,6 +1179,19 @@
     9: { cards: [1, 3, 4, 7, 8], maximumFactors: [741, 83], maximumProduct: 61503, minimumFactors: [378, 14], minimumProduct: 5292, answer: 56211 },
     10: { digitSum: 19, lastThreeDigitProduct: 24, multiplier: 79, candidates: [7138, 7183, 7318, 7381, 7813, 7831, 8146, 8164, 8416, 8461, 8614, 8641, 9226, 9262, 9622], maximumNumber: 9622, answer: 760138 }
   };
+  const source41DivisionThreeSourceAnchors = {
+    0: { totalItems: 600, totalPurchaseCost: 528000, profitPerSoldItem: 220, actualProfit: 108900, answer: 21, rejectedPencilAnswer: 501 },
+    1: { spacingMeters: 12, totalTreesBothSides: 216, answerMeters: 1284 },
+    2: { itemsPerBasket: 38, baskets: 25, discarded: 13, itemsPerBox: 15, boxPrice: 11000, loosePrice: 1000, answer: 689000 },
+    3: { cupsPerHour: 950, boxesPerDay: 912, hoursPerDay: 24, answer: 25 },
+    4: { month: "6월", daysInMonth: 30, oldPrices: [350, 540], newPrices: [370, 580], totalPaid: 28020, answerDay: 9, handwrittenAnswer: null },
+    5: { sheets: 881, students: 27, answer: 10 },
+    6: { firstPages: 416, firstRate: 18, secondPages: 408, targetPages: 576, answerName: "인성이", answerDays: 2 },
+    7: { firstTurns: 608, firstSeconds: 76, secondTurns: 637, secondSeconds: 49, targetSeconds: 138, answer: 690 },
+    8: { firstWeeks: 98, firstExtraDays: 1, firstDays: 687, secondDays: 88, answerOrbits: 7, answerRemainderDays: 71 },
+    9: { totalGrams: 6100, multiplier: 3, extraGrams: 50, answer: 450, rejectedPencilAnswer: 4250 },
+    10: { firstLength: 108, firstSpeed: 43, firstTime: 23, tunnelLength: 881, secondLength: 111, secondSpeed: 32, answerSeconds: 31 }
+  };
   const source41DigitSum = value => [...String(value).replace(/\D/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
   const source41CardRow = cards => `<div class="source41-card-row" role="img" aria-label="수 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card">${card}</span>`).join("")}</div>`;
   const source41CardProductExtremes = (cards, leftLength) => {
@@ -6972,6 +6985,237 @@
       const prompt = `네 자리 자연수의 각 자리 숫자의 합은 ${digitSum}이고, 천의 자리 숫자를 제외한 세 자리 숫자의 곱은 ${lastThreeDigitProduct}입니다. 조건을 만족하는 네 자리 자연수에 ${multiplier}을 곱한 값 중 가장 큰 값을 구하세요.${evidence}`;
       const solution = `조건을 만족하는 수를 큰 수부터 확인하면 가장 큰 수는 ${format(maximumNumber)} 하나입니다. 양수 ${multiplier}을 곱하므로 가장 큰 곱은 ${format(maximumNumber)}×${multiplier}=${format(answer)}입니다.`;
       return result(prompt, answer, solution);
+    },
+    source41DivisionThree({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("나눗셈 알아보기 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const sourceAnchor = source41DivisionThreeSourceAnchors[variant];
+      const complexityBase = (level + 1) * 1000000;
+
+      if (variant === 0) {
+        let totalItems = 0; let unitCost = 0; let profitPerSoldItem = 0; let discarded = 0;
+        let totalPurchaseCost = 0; let salePrice = 0; let sold = 0; let actualProfit = 0; let candidates = [];
+        for (let attempt = 0; attempt < 300; attempt += 1) {
+          totalItems = int(rng, 48 + level * 24, 96 + level * 54) * 10;
+          unitCost = int(rng, 44 + level * 22, 92 + level * 45) * 10;
+          profitPerSoldItem = int(rng, 8 + level * 5, 22 + level * 10) * 10;
+          discarded = int(rng, 4 + level * 3, Math.min(30 + level * 10, totalItems - 20));
+          totalPurchaseCost = totalItems * unitCost;
+          salePrice = unitCost + profitPerSoldItem;
+          sold = totalItems - discarded;
+          actualProfit = sold * salePrice - totalPurchaseCost;
+          candidates = [];
+          for (let candidate = 0; candidate <= totalItems; candidate += 1) {
+            if ((totalItems - candidate) * salePrice - totalPurchaseCost === actualProfit) candidates.push(candidate);
+          }
+          if (actualProfit > 0 && candidates.length === 1 && candidates[0] === discarded) break;
+        }
+        if (actualProfit <= 0 || candidates.length !== 1 || candidates[0] !== discarded) throw new Error("양수 이익과 하나로 정해지는 버린 배의 수를 만들지 못했습니다.");
+        const payload = { variant, level, totalItems, unitCost, totalPurchaseCost, profitPerSoldItem, salePrice, discarded, sold, actualProfit, candidates, sourceAnchor, complexity: complexityBase + totalItems * 100 + unitCost + profitPerSoldItem };
+        const evidence = source41Evidence("discarded-items-from-net-profit", payload, discarded);
+        const prompt = `과일 가게에서 배 ${format(totalItems)}개를 한 개에 ${format(unitCost)}원에 샀습니다. 한 개를 팔 때마다 ${format(profitPerSoldItem)}원의 이익이 남도록 값을 정했습니다. 일부가 상해 팔지 못했고, 배를 판 돈에서 처음 배를 산 값을 빼니 ${format(actualProfit)}원이 남았습니다. 상한 배는 몇 개인지 구하세요.${evidence}`;
+        const solution = `배 한 개의 판매값은 ${format(unitCost)}+${format(profitPerSoldItem)}=${format(salePrice)}원입니다. 배를 판 돈은 ${format(totalPurchaseCost)}+${format(actualProfit)}=${format(totalPurchaseCost + actualProfit)}원이므로 판 배는 ${format(totalPurchaseCost + actualProfit)}÷${format(salePrice)}=${format(sold)}개입니다. 상한 배는 ${format(totalItems)}-${format(sold)}=${format(discarded)}개입니다.`;
+        return result(prompt, discarded, solution);
+      }
+
+      if (variant === 1) {
+        const spacingMeters = int(rng, 6 + level * 3, 14 + level * 6) * 2;
+        const treesPerSide = int(rng, 42 + level * 18, 84 + level * 36);
+        const totalTreesBothSides = treesPerSide * 2;
+        const intervalsPerSide = treesPerSide - 1;
+        const answerMeters = intervalsPerSide * spacingMeters;
+        const payload = { variant, level, spacingMeters, treesPerSide, totalTreesBothSides, intervalsPerSide, answerMeters, sourceAnchor, complexity: complexityBase + totalTreesBothSides * 100 + spacingMeters };
+        const evidence = source41Evidence("road-length-from-two-sided-trees", payload, answerMeters);
+        const prompt = `도로의 처음과 끝에도 나무를 심고, 도로의 양쪽에 나무를 같은 간격으로 심었습니다. 나무는 양쪽을 합하여 ${format(totalTreesBothSides)}그루이고, 이웃한 두 나무 사이의 거리는 ${format(spacingMeters)}m입니다. 도로의 길이는 몇 m인지 구하세요.${evidence}`;
+        const solution = `한쪽 나무는 ${format(totalTreesBothSides)}÷2=${format(treesPerSide)}그루입니다. 처음과 끝에도 나무가 있으므로 간격은 ${format(treesPerSide)}-1=${format(intervalsPerSide)}곳입니다. 도로의 길이는 ${format(intervalsPerSide)}×${format(spacingMeters)}=${format(answerMeters)}m입니다.`;
+        return result(prompt, answerMeters, solution);
+      }
+
+      if (variant === 2) {
+        const itemsPerBasket = int(rng, 26 + level * 8, 42 + level * 10);
+        const baskets = int(rng, 16 + level * 8, 34 + level * 12);
+        const harvest = itemsPerBasket * baskets;
+        const itemsPerBox = int(rng, 8 + level * 3, 16 + level * 4);
+        let discarded = int(rng, 5 + level * 4, Math.min(36 + level * 8, harvest - itemsPerBox - 1));
+        let sellable = harvest - discarded;
+        if (sellable % itemsPerBox === 0) {
+          discarded += 1;
+          sellable -= 1;
+        }
+        const fullBoxes = Math.floor(sellable / itemsPerBox);
+        const looseItems = sellable % itemsPerBox;
+        const boxPrice = int(rng, 7 + level * 3, 15 + level * 4) * 1000;
+        const loosePrice = int(rng, 6 + level * 2, 13 + level * 3) * 100;
+        const answer = fullBoxes * boxPrice + looseItems * loosePrice;
+        const payload = { variant, level, itemsPerBasket, baskets, harvest, discarded, sellable, itemsPerBox, fullBoxes, looseItems, boxPrice, loosePrice, answer, sourceAnchor, complexity: complexityBase + harvest * 100 + itemsPerBox * 10 + discarded };
+        const evidence = source41Evidence("boxed-and-loose-sales", payload, answer);
+        const prompt = `토마토를 한 바구니에 ${format(itemsPerBasket)}개씩 ${format(baskets)}바구니 수확했습니다. 그중 ${format(discarded)}개는 팔 수 없었습니다. 남은 토마토를 ${format(itemsPerBox)}개씩 한 상자에 담아 한 상자에 ${format(boxPrice)}원씩 팔고, 남은 것은 한 개에 ${format(loosePrice)}원씩 팔았습니다. 받은 돈은 모두 얼마인지 구하세요.${evidence}`;
+        const solution = `수확한 토마토는 ${format(itemsPerBasket)}×${format(baskets)}=${format(harvest)}개이고 팔 수 있는 토마토는 ${format(harvest)}-${format(discarded)}=${format(sellable)}개입니다. ${format(sellable)}÷${format(itemsPerBox)}=${format(fullBoxes)} 나머지 ${format(looseItems)}이므로 받은 돈은 ${format(fullBoxes)}×${format(boxPrice)}+${format(looseItems)}×${format(loosePrice)}=${format(answer)}원입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const hoursPerDay = 24;
+        const boxesPerHour = int(rng, 18 + level * 7, 42 + level * 13);
+        const cupsPerBox = int(rng, 12 + level * 5, 28 + level * 8);
+        const cupsPerHour = boxesPerHour * cupsPerBox;
+        const boxesPerDay = boxesPerHour * hoursPerDay;
+        const payload = { variant, level, cupsPerHour, boxesPerDay, hoursPerDay, boxesPerHour, cupsPerBox, sourceAnchor, complexity: complexityBase + cupsPerHour * 100 + boxesPerDay };
+        const evidence = source41Evidence("cups-per-box-from-two-machines", payload, cupsPerBox);
+        const prompt = `가 기계는 한 시간에 종이컵을 ${format(cupsPerHour)}개 만듭니다. 나 기계는 하루 ${format(hoursPerDay)}시간 동안 종이컵 상자를 ${format(boxesPerDay)}상자 만듭니다. 두 기계가 한 시간에 만드는 종이컵 수가 같을 때, 상자 한 개에는 종이컵이 몇 개씩 들어 있는지 구하세요.${evidence}`;
+        const solution = `나 기계가 한 시간에 만드는 상자는 ${format(boxesPerDay)}÷${format(hoursPerDay)}=${format(boxesPerHour)}상자입니다. 한 상자에는 ${format(cupsPerHour)}÷${format(boxesPerHour)}=${format(cupsPerBox)}개씩 들어 있습니다.`;
+        return result(prompt, cupsPerBox, solution);
+      }
+
+      if (variant === 4) {
+        const month = "6월";
+        const daysInMonth = 30;
+        const oldPrices = [int(rng, 24 + level * 6, 42 + level * 10) * 10, int(rng, 36 + level * 8, 60 + level * 12) * 10];
+        const increases = [int(rng, 1 + level, 4 + level * 2) * 10, int(rng, 2 + level, 5 + level * 2) * 10];
+        const newPrices = oldPrices.map((price, index) => price + increases[index]);
+        const oldDaily = oldPrices[0] + oldPrices[1];
+        const newDaily = newPrices[0] + newPrices[1];
+        const increaseDay = int(rng, 4 + level * 3, 12 + level * 6);
+        const totalPaid = oldDaily * (increaseDay - 1) + newDaily * (daysInMonth - increaseDay + 1);
+        const allNewTotal = newDaily * daysInMonth;
+        const dailyDifference = newDaily - oldDaily;
+        const oldPriceDays = (allNewTotal - totalPaid) / dailyDifference;
+        const candidates = [];
+        for (let day = 1; day <= daysInMonth; day += 1) if (oldDaily * (day - 1) + newDaily * (daysInMonth - day + 1) === totalPaid) candidates.push(day);
+        if (candidates.length !== 1 || candidates[0] !== increaseDay) throw new Error("가격이 오른 날이 하나로 정해지지 않습니다.");
+        const answer = `${month} ${increaseDay}일`;
+        const payload = { variant, level, month, daysInMonth, oldPrices, newPrices, oldDaily, newDaily, increaseDay, totalPaid, allNewTotal, dailyDifference, oldPriceDays, candidates, sourceAnchor, complexity: complexityBase + totalPaid + increaseDay * 100 };
+        const evidence = source41Evidence("price-increase-start-day", payload, answer);
+        const prompt = `가게에서 ${month} 한 달 동안 매일 빵과 우유를 한 개씩 샀습니다. 처음에는 빵이 ${format(oldPrices[0])}원, 우유가 ${format(oldPrices[1])}원이었고, 값을 올린 뒤에는 빵이 ${format(newPrices[0])}원, 우유가 ${format(newPrices[1])}원이었습니다. ${month}에 낸 돈은 모두 ${format(totalPaid)}원이었습니다. 값을 올린 날의 아침부터 새 값을 냈다면, 값이 오른 날은 ${month} 며칠인지 구하세요.${evidence}`;
+        const solution = `처음 하루에 낸 돈은 ${format(oldDaily)}원, 오른 뒤 하루에 낸 돈은 ${format(newDaily)}원입니다. ${daysInMonth}일 모두 오른 값으로 냈다면 ${format(newDaily)}×${daysInMonth}=${format(allNewTotal)}원입니다. 실제로 낸 돈보다 ${format(allNewTotal)}-${format(totalPaid)}=${format(allNewTotal - totalPaid)}원 많고, 하루 차이는 ${format(newDaily)}-${format(oldDaily)}=${format(dailyDifference)}원이므로 오르기 전 값으로 낸 날은 ${format(allNewTotal - totalPaid)}÷${format(dailyDifference)}=${format(oldPriceDays)}일입니다. 따라서 그다음 날인 ${month} ${increaseDay}일부터 값이 올랐습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const students = int(rng, 18 + level * 7, 36 + level * 12);
+        const quotient = int(rng, 20 + level * 12, 48 + level * 20);
+        const remainder = int(rng, 1, students - 1);
+        const sheets = students * quotient + remainder;
+        const supplement = students - remainder;
+        const candidates = [];
+        for (let addition = 0; addition <= students; addition += 1) if ((sheets + addition) % students === 0) candidates.push(addition);
+        if (candidates.length !== 1 || candidates[0] !== supplement) throw new Error("필요한 색종이 수가 하나로 정해지지 않습니다.");
+        const payload = { variant, level, sheets, students, quotient, remainder, supplement, candidates, sourceAnchor, complexity: complexityBase + sheets * 100 + students };
+        const evidence = source41Evidence("minimum-supplement-for-equal-sharing", payload, supplement);
+        const prompt = `색종이 ${format(sheets)}장을 학생 ${format(students)}명에게 남김없이 똑같이 나누어 주려고 합니다. 색종이를 적어도 몇 장 더 준비해야 하는지 구하세요.${evidence}`;
+        const solution = `${format(sheets)}÷${format(students)}=${format(quotient)} 나머지 ${format(remainder)}입니다. 다음에 나누어떨어지는 수까지는 ${format(students)}-${format(remainder)}=${format(supplement)}장이 더 필요합니다.`;
+        return result(prompt, supplement, solution);
+      }
+
+      if (variant === 6) {
+        const firstStudentName = "인성이";
+        const secondStudentName = "태희";
+        const firstRate = int(rng, 12 + level * 3, 22 + level * 5);
+        const firstCompletionDays = int(rng, 16 + level * 5, 28 + level * 7);
+        const firstPages = firstRate * (firstCompletionDays - 1) + int(rng, 1, firstRate - 1);
+        let secondRate = firstRate;
+        while (secondRate === firstRate) secondRate = int(rng, Math.max(6, firstRate - (5 + level * 2)), firstRate + 5 + level * 2);
+        const secondPages = secondRate * firstCompletionDays;
+        let targetPages = 0; let firstTargetDays = 0; let secondTargetDays = 0;
+        for (let attempt = 0; attempt < 300; attempt += 1) {
+          targetPages = int(rng, 30 + level * 12, 64 + level * 22) * Math.max(firstRate, secondRate);
+          firstTargetDays = Math.ceil(targetPages / firstRate);
+          secondTargetDays = Math.ceil(targetPages / secondRate);
+          if (firstTargetDays !== secondTargetDays) break;
+        }
+        if (firstTargetDays === secondTargetDays) throw new Error("두 학생의 새 책 완료일 차이를 만들지 못했습니다.");
+        const winner = firstTargetDays < secondTargetDays ? firstStudentName : secondStudentName;
+        const dayDifference = Math.abs(firstTargetDays - secondTargetDays);
+        const payload = { variant, level, firstStudentName, secondStudentName, firstPages, firstRate, firstCompletionDays, secondPages, secondRate, targetPages, firstTargetDays, secondTargetDays, winner, dayDifference, sourceAnchor, complexity: complexityBase + targetPages * 100 + firstCompletionDays * 10 + dayDifference };
+        const answer = `${winner} ${dayDifference}일`;
+        const evidence = source41Evidence("reading-completion-day-difference", payload, answer);
+        const prompt = `${firstStudentName}는 하루에 ${format(firstRate)}쪽씩 읽어 ${format(firstPages)}쪽인 책을 다 읽었습니다. ${secondStudentName}도 매일 같은 쪽수씩 읽어 같은 기간 동안 ${format(secondPages)}쪽을 읽었습니다. 두 학생이 각자 앞에서 읽던 하루 쪽수대로 ${format(targetPages)}쪽인 새 책을 같은 날부터 읽는다면, 누가 며칠 먼저 다 읽는지 구하세요. 첫날을 1일째로 세고, 남은 쪽을 읽은 날에 다 읽은 것으로 셉니다.${evidence}`;
+        const solution = `${firstStudentName}는 ${format(firstCompletionDays)}일째에 다 읽었으므로 ${secondStudentName}는 하루에 ${format(secondPages)}÷${format(firstCompletionDays)}=${format(secondRate)}쪽을 읽습니다. 새 책은 ${firstStudentName}가 ${format(firstTargetDays)}일, ${secondStudentName}가 ${format(secondTargetDays)}일 걸리므로 ${answer} 먼저 다 읽습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const firstRate = int(rng, 5 + level * 2, 11 + level * 3);
+        const secondRate = int(rng, firstRate + 2, firstRate + 8 + level * 3);
+        const firstSeconds = int(rng, 12 + level * 5, 28 + level * 8);
+        const secondSeconds = int(rng, 10 + level * 4, 24 + level * 7);
+        const firstTurns = firstRate * firstSeconds;
+        const secondTurns = secondRate * secondSeconds;
+        const targetSeconds = int(rng, 90 + level * 48, 180 + level * 75);
+        const firstTargetTurns = firstRate * targetSeconds;
+        const secondTargetTurns = secondRate * targetSeconds;
+        const answer = secondTargetTurns - firstTargetTurns;
+        const payload = { variant, level, firstTurns, firstSeconds, firstRate, secondTurns, secondSeconds, secondRate, targetSeconds, firstTargetTurns, secondTargetTurns, answer, sourceAnchor, complexity: complexityBase + targetSeconds * 100 + firstTurns + secondTurns };
+        const evidence = source41Evidence("rotation-count-difference", payload, answer);
+        const prompt = `가 톱니바퀴는 ${format(firstSeconds)}초 동안 ${format(firstTurns)}번 돌고, 나 톱니바퀴는 ${format(secondSeconds)}초 동안 ${format(secondTurns)}번 돕니다. 두 톱니바퀴가 ${source41FormatMinutesSeconds(targetSeconds)} 동안 돌 때, 두 톱니바퀴가 돈 횟수의 차는 몇 번인지 구하세요.${evidence}`;
+        const solution = `가는 1초에 ${format(firstRate)}번, 나는 1초에 ${format(secondRate)}번 돕니다. ${source41FormatMinutesSeconds(targetSeconds)} 동안 가는 ${format(firstTargetTurns)}번, 나는 ${format(secondTargetTurns)}번 도므로 차는 ${format(secondTargetTurns)}-${format(firstTargetTurns)}=${format(answer)}번입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        let firstWeeks = 0; let firstExtraDays = 0; let firstDays = 0; let secondDays = 0; let orbits = 0; let remainderDays = 0;
+        for (let attempt = 0; attempt < 300; attempt += 1) {
+          firstWeeks = int(rng, 52 + level * 22, 104 + level * 38);
+          firstExtraDays = int(rng, 1, 6);
+          firstDays = firstWeeks * 7 + firstExtraDays;
+          secondDays = int(rng, 48 + level * 12, 96 + level * 20);
+          orbits = Math.floor(firstDays / secondDays);
+          remainderDays = firstDays % secondDays;
+          if (orbits >= 1 && remainderDays > 0) break;
+        }
+        if (!orbits || !remainderDays) throw new Error("행성의 남은 날이 있는 나눗셈을 만들지 못했습니다.");
+        const answer = `${orbits}바퀴, ${remainderDays}일`;
+        const payload = { variant, level, firstWeeks, firstExtraDays, firstDays, secondDays, orbits, remainderDays, sourceAnchor, complexity: complexityBase + firstDays * 100 + secondDays };
+        const evidence = source41Evidence("planet-orbits-and-remainder-days", payload, answer);
+        const prompt = `가 행성이 한 바퀴 도는 데에는 ${format(firstWeeks)}주 ${format(firstExtraDays)}일이 걸립니다. 나 행성은 한 바퀴 도는 데 ${format(secondDays)}일이 걸립니다. 가 행성이 한 바퀴 도는 동안 나 행성은 몇 바퀴 돌고 며칠이 남는지 구하세요.${evidence}`;
+        const solution = `가 행성이 한 바퀴 도는 날수는 ${format(firstWeeks)}×7+${format(firstExtraDays)}=${format(firstDays)}일입니다. ${format(firstDays)}÷${format(secondDays)}=${format(orbits)} 나머지 ${format(remainderDays)}이므로 나 행성은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const multiplier = int(rng, 2 + level, 4 + level);
+        const extraGrams = int(rng, 2 + level, 8 + level * 2) * 10;
+        const firstGrams = int(rng, 18 + level * 8, 54 + level * 16) * 10;
+        const secondGrams = multiplier * firstGrams + extraGrams;
+        const thirdGrams = multiplier * secondGrams + extraGrams;
+        const totalGrams = firstGrams + secondGrams + thirdGrams;
+        const candidates = [];
+        for (let candidate = 1; candidate <= totalGrams; candidate += 1) {
+          const second = multiplier * candidate + extraGrams;
+          const third = multiplier * second + extraGrams;
+          if (candidate + second + third === totalGrams) candidates.push(candidate);
+        }
+        if (candidates.length !== 1 || candidates[0] !== firstGrams) throw new Error("첫째 설탕 봉지의 무게가 하나로 정해지지 않습니다.");
+        const payload = { variant, level, firstGrams, multiplier, extraGrams, secondGrams, thirdGrams, totalGrams, candidates, sourceAnchor, complexity: complexityBase + totalGrams * 100 + multiplier * 100 + extraGrams };
+        const evidence = source41Evidence("three-sugar-bags-from-total", payload, firstGrams);
+        const prompt = `설탕이 가, 나, 다 세 봉지에 모두 ${format(totalGrams)}g 들어 있습니다. 나 봉지는 가 봉지의 ${multiplier}배보다 ${format(extraGrams)}g 더 많고, 다 봉지는 나 봉지의 ${multiplier}배보다 ${format(extraGrams)}g 더 많습니다. 가 봉지에는 설탕이 몇 g 들어 있는지 구하세요.${evidence}`;
+        const added = extraGrams + multiplier * extraGrams + extraGrams;
+        const groupCount = 1 + multiplier + multiplier * multiplier;
+        const solution = `가 봉지를 한 묶음으로 보면 나 봉지는 ${multiplier}묶음과 ${format(extraGrams)}g, 다 봉지는 ${multiplier * multiplier}묶음과 ${format(multiplier * extraGrams + extraGrams)}g입니다. 더해진 양 ${format(added)}g을 빼면 ${format(totalGrams - added)}g이고 같은 묶음은 ${groupCount}개입니다. 따라서 가 봉지는 ${format(totalGrams - added)}÷${groupCount}=${format(firstGrams)}g입니다. 나 봉지는 ${format(secondGrams)}g, 다 봉지는 ${format(thirdGrams)}g입니다.`;
+        return result(prompt, firstGrams, solution);
+      }
+
+      let firstLength = 0; let secondLength = 0; let firstSpeed = 0; let firstTime = 0; let tunnelLength = 0; let secondSpeed = 0; let secondTime = 0;
+      for (let attempt = 0; attempt < 500; attempt += 1) {
+        firstLength = int(rng, 72 + level * 18, 130 + level * 28);
+        secondLength = int(rng, 74 + level * 18, 138 + level * 30);
+        firstSpeed = int(rng, 18 + level * 8, 36 + level * 12);
+        firstTime = int(rng, 14 + level * 5, 28 + level * 8);
+        tunnelLength = firstSpeed * firstTime - firstLength;
+        if (tunnelLength <= 0) continue;
+        const speeds = [];
+        for (let speed = 12 + level * 5; speed <= 48 + level * 15; speed += 1) if ((tunnelLength + secondLength) % speed === 0) speeds.push(speed);
+        if (!speeds.length) continue;
+        secondSpeed = pick(rng, speeds);
+        secondTime = (tunnelLength + secondLength) / secondSpeed;
+        break;
+      }
+      if (!secondTime) throw new Error("두 열차가 같은 터널을 지나는 자연수 시간을 만들지 못했습니다.");
+      const payload = { variant, level, tunnelLength, firstLength, firstSpeed, firstTime, secondLength, secondSpeed, secondTime, sourceAnchor, complexity: complexityBase + tunnelLength * 100 + firstSpeed * 10 + secondSpeed };
+      const evidence = source41Evidence("tunnel-length-and-train-passage-time", payload, secondTime);
+      const prompt = `길이가 ${format(firstLength)}m인 첫째 열차가 1초에 ${format(firstSpeed)}m씩 달려 터널을 완전히 지나는 데 ${format(firstTime)}초가 걸렸습니다. 길이가 ${format(secondLength)}m인 둘째 열차가 1초에 ${format(secondSpeed)}m씩 달릴 때, 같은 터널을 완전히 지나는 데 몇 초가 걸리는지 구하세요.${evidence}`;
+      const solution = `첫째 열차의 앞부분이 간 길이는 ${format(firstSpeed)}×${format(firstTime)}=${format(firstSpeed * firstTime)}m이고, 이는 터널 길이와 열차 길이를 더한 값입니다. 터널 길이는 ${format(firstSpeed * firstTime)}-${format(firstLength)}=${format(tunnelLength)}m입니다. 둘째 열차는 ${format(tunnelLength)}+${format(secondLength)}=${format(tunnelLength + secondLength)}m를 가야 하므로 ${format(tunnelLength + secondLength)}÷${format(secondSpeed)}=${format(secondTime)}초 걸립니다.`;
+      return result(prompt, secondTime, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
       const digitCount = 11 + level;
