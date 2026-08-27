@@ -76,7 +76,7 @@ const places = [
   { id: "mirrorManor", element: elements.mirrorManor, entrance: { x: 63, y: 48 }, href: "../games/mirror-manor/", nameKey: "mirrorManor", descriptionKey: "mirrorManorHint" },
   { id: "geoboardYard", element: elements.geoboardYard, entrance: { x: 84, y: 51 }, href: "../games/geoboard/", nameKey: "geoboardYard", descriptionKey: "geoboardYardHint" },
   { id: "crystalPlaza", element: elements.crystalPlaza, entrance: { x: 32, y: 64 }, href: "../lab/index.html", nameKey: "geometryLab", descriptionKey: "geometryLabHint" },
-  { id: "shapeGarden", element: elements.shapeGarden, entrance: { x: 53, y: 76 }, href: "../games/polyomino/", nameKey: "shapeGarden", descriptionKey: "shapeGardenHint" }
+  { id: "shapeGarden", element: elements.shapeGarden, entrance: { x: 53, y: 76 }, href: "../shape-garden/", nameKey: "shapeGarden", descriptionKey: "shapeGardenHint" }
 ];
 
 const districtPlaces = [
@@ -216,28 +216,28 @@ Object.assign(messages.ko, {
   shapeDistrict: "평면도형 거리", shapeDistrictHint: "합동·대칭·도형 이동을 배우는 길",
   spatialDistrict: "공간·입체 지구", spatialDistrictHint: "전개도·단면·공간 추론을 탐험하는 곳",
   coordinateDistrict: "좌표·변환 지구", coordinateDistrictHint: "좌표·닮음·중등 기하로 이어지는 길",
-  shapeGarden: "도형 조각 정원", shapeGardenHint: "조각을 돌려 같은 모양을 찾는 곳"
+  shapeGarden: "도형 조각 정원", shapeGardenHint: "조각을 맞추고 조건에 따라 똑같이 나누는 곳"
 });
 Object.assign(messages.zh, {
   viewRoadmap: "学习路线", roadmapEyebrow: "即将开放的几何世界", roadmapNote: "从基础到中学内容将依次开放。", roadmapStatus: "计划扩展", roadmapClose: "关闭路线图",
   shapeDistrict: "平面图形街", shapeDistrictHint: "学习全等、对称与图形变换",
   spatialDistrict: "空间立体区", spatialDistrictHint: "探索展开图、截面与空间推理",
   coordinateDistrict: "坐标变换区", coordinateDistrictHint: "通往坐标、相似与中学几何",
-  shapeGarden: "图形拼片花园", shapeGardenHint: "旋转拼片，寻找相同图形"
+  shapeGarden: "图形拼片花园", shapeGardenHint: "拼合图形并按条件等分"
 });
 Object.assign(messages.ja, {
   viewRoadmap: "学習ロードマップ", roadmapEyebrow: "これから開く図形の世界", roadmapNote: "基礎から中学内容まで順番に広がります。", roadmapStatus: "拡張予定", roadmapClose: "ロードマップを閉じる",
   shapeDistrict: "平面図形ストリート", shapeDistrictHint: "合同・対称・図形の移動を学ぶ道",
   spatialDistrict: "空間・立体エリア", spatialDistrictHint: "展開図・断面・空間推理を探究する場所",
   coordinateDistrict: "座標・変換エリア", coordinateDistrictHint: "座標・相似・中学幾何へ続く道",
-  shapeGarden: "図形ピースの庭", shapeGardenHint: "ピースを回して同じ形を見つける場所"
+  shapeGarden: "図形ピースの庭", shapeGardenHint: "ピースを合わせ、条件にそって分ける場所"
 });
 Object.assign(messages.en, {
   viewRoadmap: "Learning roadmap", roadmapEyebrow: "Geometry worlds opening next", roadmapNote: "The path will grow from foundations through middle-school geometry.", roadmapStatus: "Planned expansion", roadmapClose: "Close roadmap",
   shapeDistrict: "Plane Shapes Street", shapeDistrictHint: "A path through congruence, symmetry, and transformations",
   spatialDistrict: "Spatial Solids District", spatialDistrictHint: "Explore nets, sections, and spatial reasoning",
   coordinateDistrict: "Coordinates District", coordinateDistrictHint: "Continue into coordinates, similarity, and middle-school geometry",
-  shapeGarden: "Shape Garden", shapeGardenHint: "Rotate pieces and find matching shapes"
+  shapeGarden: "Shape Garden", shapeGardenHint: "Match pieces and partition shapes by rules"
 });
 
 function readStoredProfile() {
