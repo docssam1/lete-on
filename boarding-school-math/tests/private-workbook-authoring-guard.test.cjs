@@ -196,6 +196,42 @@ const SYNTHETIC_NSA_FRACTION_QUOTIENT_CASES = Object.freeze(Array.from({ length:
   });
 }));
 
+// Fixture-only 6.NS.B facts exercise each limited calculation family without
+// reproducing any private workbook prompt, answer set, or worked example.
+const SYNTHETIC_NSB_OPERATION_CASES = Object.freeze([
+  ["decimal-operation", "add", "0.41", "0.7"],
+  ["decimal-operation", "add", "1.2", "0.08"],
+  ["decimal-operation", "subtract", "5.6", "0.35"],
+  ["decimal-operation", "subtract", "7.03", "1.7"],
+  ["decimal-operation", "multiply", "2.4", "0.5"],
+  ["decimal-operation", "multiply", "1.25", "0.8"],
+  ["decimal-operation", "divide", "1.8", "0.6"],
+  ["decimal-operation", "divide", "3.75", "0.5"],
+  ["greatest-common-factor", 84, 60],
+  ["greatest-common-factor", 72, 54],
+  ["greatest-common-factor", 90, 75],
+  ["least-common-multiple", 8, 12],
+  ["least-common-multiple", 7, 9],
+  ["least-common-multiple", 5, 11],
+  ["decimal-operation", "add", "4.567", "0.123"],
+  ["decimal-operation", "subtract", "9.4", "2.789"],
+  ["decimal-operation", "multiply", "3.25", "0.4"],
+  ["decimal-operation", "divide", "0.875", "0.25"],
+  ["greatest-common-factor", 96, 80],
+  ["greatest-common-factor", 99, 66],
+  ["least-common-multiple", 10, 12],
+  ["least-common-multiple", 7, 8]
+].map(function (entry) {
+  return Object.freeze(entry[0] === "decimal-operation"
+    ? { kind: entry[0], operation: entry[1], left: entry[2], right: entry[3] }
+    : { kind: entry[0], left: entry[1], right: entry[2] });
+}));
+
+const SYNTHETIC_NSB_WORKED_EXAMPLES = Object.freeze([
+  Object.freeze({ kind: "decimal-operation", operation: "add", left: "6.4", right: "0.05" }),
+  Object.freeze({ kind: "least-common-multiple", left: 6, right: 10 })
+]);
+
 function independentlySubstitutionTruth(check) {
   const matchingCandidates = check.candidateSet.filter(function (candidate) {
     return BigInt(candidate) + BigInt(check.addend) === BigInt(check.total);
@@ -255,6 +291,67 @@ function independentlyNsaPositiveProperFractionQuotient(check) {
   return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
 }
 
+function independentlyNsbParseDecimal(value) {
+  assert.match(value, /^(?:0|[1-9][0-9]{0,5})(?:\.[0-9]+)?$/u);
+  const parts = value.split(".");
+  const fractional = parts[1] || "";
+  assert(fractional.length <= 8);
+  return Object.freeze({ coefficient: BigInt(`${parts[0]}${fractional}`), scale: fractional.length });
+}
+
+function independentlyNsbFormatDecimal(coefficient, scale) {
+  assert(coefficient >= 0n && Number.isInteger(scale) && scale >= 0 && scale <= 8);
+  if (coefficient === 0n) return "0";
+  let normalizedCoefficient = coefficient;
+  let normalizedScale = scale;
+  while (normalizedScale > 0 && normalizedCoefficient % 10n === 0n) {
+    normalizedCoefficient /= 10n;
+    normalizedScale -= 1;
+  }
+  const digits = String(normalizedCoefficient).padStart(normalizedScale + 1, "0");
+  return normalizedScale === 0 ? digits : `${digits.slice(0, -normalizedScale)}.${digits.slice(-normalizedScale)}`;
+}
+
+function independentlyNsbDecimalAnswer(check) {
+  const left = independentlyNsbParseDecimal(check.left);
+  const right = independentlyNsbParseDecimal(check.right);
+  if (check.operation === "add" || check.operation === "subtract") {
+    const scale = Math.max(left.scale, right.scale);
+    const leftCoefficient = left.coefficient * (10n ** BigInt(scale - left.scale));
+    const rightCoefficient = right.coefficient * (10n ** BigInt(scale - right.scale));
+    assert(check.operation !== "subtract" || leftCoefficient >= rightCoefficient);
+    return independentlyNsbFormatDecimal(check.operation === "add" ? leftCoefficient + rightCoefficient : leftCoefficient - rightCoefficient, scale);
+  }
+  if (check.operation === "multiply") return independentlyNsbFormatDecimal(left.coefficient * right.coefficient, left.scale + right.scale);
+  assert.equal(check.operation, "divide");
+  assert(right.coefficient > 0n);
+  const numerator = left.coefficient * (10n ** BigInt(right.scale));
+  const denominator = (10n ** BigInt(left.scale)) * right.coefficient;
+  let whole = numerator / denominator;
+  let remainder = numerator % denominator;
+  let fractional = "";
+  while (remainder !== 0n && fractional.length < 8) {
+    remainder *= 10n;
+    fractional += String(remainder / denominator);
+    remainder %= denominator;
+  }
+  assert.equal(remainder, 0n);
+  const coefficient = BigInt(`${whole}${fractional}`);
+  return independentlyNsbFormatDecimal(coefficient, fractional.length);
+}
+
+function independentlyNsbOperationAnswer(check) {
+  if (check.kind === "decimal-operation") return independentlyNsbDecimalAnswer(check);
+  const smaller = Math.min(check.left, check.right);
+  let divisor = 1;
+  for (let candidate = 1; candidate <= smaller; candidate += 1) {
+    if (check.left % candidate === 0 && check.right % candidate === 0) divisor = candidate;
+  }
+  if (check.kind === "greatest-common-factor") return String(divisor);
+  assert.equal(check.kind, "least-common-multiple");
+  return String((check.left * check.right) / divisor);
+}
+
 function syntheticKoreanObjectParticle(value) {
   return [0, 1, 3, 6, 7, 8].includes(value % 10) ? "을" : "를";
 }
@@ -311,6 +408,51 @@ function syntheticNsaWorkedExample() {
   );
 }
 
+function syntheticNsbOperationPrompt(check) {
+  if (check.kind === "decimal-operation") {
+    const symbol = Object.freeze({ add: "+", subtract: "-", multiply: "×", divide: "÷" })[check.operation];
+    const display = `${check.left} ${symbol} ${check.right}`;
+    return localText(
+      `다음 소수 계산을 하세요: ${display}.`,
+      `Calculate the decimal operation: ${display}.`,
+      `计算小数运算：${display}。`
+    );
+  }
+  if (check.kind === "greatest-common-factor") {
+    return localText(
+      `다음 두 수의 최대공약수를 구하세요: ${check.left}, ${check.right}.`,
+      `Find the greatest common factor of ${check.left} and ${check.right}.`,
+      `求 ${check.left} 和 ${check.right} 的最大公因数。`
+    );
+  }
+  return localText(
+    `다음 두 수의 최소공배수를 구하세요: ${check.left}, ${check.right}.`,
+    `Find the least common multiple of ${check.left} and ${check.right}.`,
+    `求 ${check.left} 和 ${check.right} 的最小公倍数。`
+  );
+}
+
+function syntheticNsbWorkedExample(check) {
+  const expected = independentlyNsbOperationAnswer(check);
+  if (check.kind === "decimal-operation") {
+    const symbol = Object.freeze({ add: "+", subtract: "-", multiply: "×", divide: "÷" })[check.operation];
+    const display = `${check.left} ${symbol} ${check.right} = ${expected}`;
+    return localText(`예시: ${display}.`, `Worked example: ${display}.`, `示例：${display}。`);
+  }
+  if (check.kind === "greatest-common-factor") {
+    return localText(
+      `예시: ${check.left}와 ${check.right}의 최대공약수는 ${expected}.`,
+      `Worked example: The greatest common factor of ${check.left} and ${check.right} is ${expected}.`,
+      `示例：${check.left} 和 ${check.right} 的最大公因数是 ${expected}。`
+    );
+  }
+  return localText(
+    `예시: ${check.left}와 ${check.right}의 최소공배수는 ${expected}.`,
+    `Worked example: The least common multiple of ${check.left} and ${check.right} is ${expected}.`,
+    `示例：${check.left} 和 ${check.right} 的最小公倍数是 ${expected}。`
+  );
+}
+
 function syntheticEebWorkedExample(fact) {
   return localText(
     `예시: x = ${fact.candidate}${syntheticKoreanObjectParticle(fact.candidate)} x + ${fact.addend} = ${fact.total}에 대입하면 ${fact.candidate} + ${fact.addend} = ${fact.total}이므로 등식이 성립한다.`,
@@ -359,6 +501,18 @@ function syntheticNsaStandardsEvidence() {
   };
 }
 
+function syntheticNsbStandardsEvidence() {
+  return {
+    state: "partial-decimal-gcf-lcm-exact-calculation-locked-v1",
+    autoEvidenceIds: [
+      validator.NSB_DECIMAL_OPERATION_EVIDENCE_ID,
+      validator.NSB_GREATEST_COMMON_FACTOR_EVIDENCE_ID,
+      validator.NSB_LEAST_COMMON_MULTIPLE_EVIDENCE_ID
+    ],
+    lockedEvidenceByLocale: Object.assign({}, validator.NSB_LOCKED_EVIDENCE_BY_LOCALE)
+  };
+}
+
 function syntheticEebObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.EEB_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
@@ -380,6 +534,10 @@ function syntheticRpaObservationText(resource) {
 
 function syntheticNsaObservationText(resource) {
   return Object.assign({}, validator.NSA_TEACHER_OBSERVATION_BY_PROFILE[`${resource.resourceType}:${resource.levelId}`]);
+}
+
+function syntheticNsbObservationText(resource) {
+  return Object.assign({}, validator.NSB_TEACHER_OBSERVATION_BY_PROFILE[`${resource.resourceType}:${resource.levelId}`]);
 }
 
 function syntheticEebStaticText(group, key) {
@@ -469,6 +627,7 @@ function localBinding(resource) {
 function syntheticWorkbookPack(unitId, options) {
   const selectedUnitId = unitId || "ccss-6-ns-a";
   const nsaV2Contract = selectedUnitId === "ccss-6-ns-a" && options && options.nsaV2 === true;
+  const nsbV1Contract = selectedUnitId === "ccss-6-ns-b" && options && options.nsbV1 === true;
   const plan = resourcePlans.buildUnitPlan(selectedUnitId);
   const selectedUnit = registry.units.find(function (unit) { return unit.unitId === selectedUnitId; });
   assert(selectedUnit);
@@ -509,6 +668,9 @@ function syntheticWorkbookPack(unitId, options) {
         const nsaCheck = !isTeaching && nsaV2Contract
           ? SYNTHETIC_NSA_FRACTION_QUOTIENT_CASES[responseComponents.length]
           : null;
+        const nsbCheck = !isTeaching && nsbV1Contract
+          ? SYNTHETIC_NSB_OPERATION_CASES[responseComponents.length]
+          : null;
         const rpaContextKind = rpaCheck
           ? ["count-per-count", "count-per-measure", "measure-per-count", "measure-per-measure"][responseComponents.length % 4]
           : null;
@@ -524,14 +686,20 @@ function syntheticWorkbookPack(unitId, options) {
         const rpaTeachingBlock = isTeaching && selectedUnitId === "ccss-6-rp-a";
         const nsaWorkedExample = isTeaching && planComponent.componentType === "worked-example" && nsaV2Contract;
         const nsaTeachingBlock = isTeaching && nsaV2Contract;
+        const nsbWorkedExample = isTeaching && planComponent.componentType === "worked-example" && nsbV1Contract
+          ? SYNTHETIC_NSB_WORKED_EXAMPLES[workedExampleNumber++]
+          : null;
+        const nsbTeachingBlock = isTeaching && nsbV1Contract;
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-a" || eeaPair);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-b" || eebCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-c" || eecCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-g-a" || ggaCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-rp-a" || rpaCheck);
         assert(isTeaching || !nsaV2Contract || nsaCheck);
+        assert(isTeaching || !nsbV1Contract || nsbCheck);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-a" || eeaWorkedExample);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-b" || eebWorkedExample);
+        assert(planComponent.componentType !== "worked-example" || !nsbV1Contract || nsbWorkedExample);
         const componentId = `cmp-dft-s${String(sectionIndex + 1).padStart(2, "0")}c${String(componentNumber).padStart(3, "0")}`;
         const component = {
           componentId,
@@ -544,8 +712,12 @@ function syntheticWorkbookPack(unitId, options) {
                 ? syntheticEebWorkedExample(eebWorkedExample)
                 : nsaWorkedExample
                   ? syntheticNsaWorkedExample()
+                  : nsbWorkedExample
+                    ? syntheticNsbWorkedExample(nsbWorkedExample)
                   : nsaTeachingBlock
                     ? localText("분수 나눗셈 개념", "Fraction division concept", "分数除法概念")
+                    : nsbTeachingBlock
+                      ? localText("소수와 약수·배수 개념", "Decimal and factor-multiple concepts", "小数与因数倍数概念")
                 : eeaConceptSummary
                   ? localText("지수 표기 개요", "Exponent notation overview", "指数记法概览")
                   : eebConceptSummary
@@ -567,6 +739,8 @@ function syntheticWorkbookPack(unitId, options) {
                       ? syntheticRpaUnitRatePrompt()
                       : nsaCheck
                         ? syntheticNsaFractionQuotientPrompt(nsaCheck)
+                        : nsbCheck
+                          ? syntheticNsbOperationPrompt(nsbCheck)
                     : localText("수를 구하세요.", "Find the number.", "求这个数。"),
           responseMode: isTeaching ? null : selectedUnitId === "ccss-6-ee-b" ? "truth-value-exact" : "numeric-exact",
           teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`,
@@ -604,6 +778,10 @@ function syntheticWorkbookPack(unitId, options) {
               divisorDenominator: nsaCheck.divisorDenominator,
               orientation: "dividend-divided-by-divisor"
             }
+          } : nsbCheck ? {
+            nsbOperationSituation: Object.assign({}, nsbCheck)
+          } : nsbWorkedExample ? {
+            nsbOperationSituation: Object.assign({}, nsbWorkedExample)
           } : {})
         };
         if (!isTeaching) responseComponents.push({ component, resource });
@@ -642,6 +820,7 @@ function syntheticWorkbookPack(unitId, options) {
         const ggaCheck = selectedUnitId === "ccss-6-g-a" ? SYNTHETIC_GGA_TRIANGLE_CASES[responseComponents.indexOf(entry)] : null;
         const rpaCheck = selectedUnitId === "ccss-6-rp-a" ? SYNTHETIC_RPA_UNIT_RATE_CASES[responseComponents.indexOf(entry)] : null;
         const nsaCheck = nsaV2Contract ? SYNTHETIC_NSA_FRACTION_QUOTIENT_CASES[responseComponents.indexOf(entry)] : null;
+        const nsbCheck = nsbV1Contract ? SYNTHETIC_NSB_OPERATION_CASES[responseComponents.indexOf(entry)] : null;
         const ggaEvaluationMode = ggaCheck
           ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
           : null;
@@ -651,12 +830,15 @@ function syntheticWorkbookPack(unitId, options) {
         const nsaEvaluationMode = nsaCheck
           ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
           : null;
+        const nsbEvaluationMode = nsbCheck
+          ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
+          : null;
         return {
           referenceId: entry.component.teacherReferenceId,
           componentId: entry.component.componentId,
           responseMode: eebCheck ? "truth-value-exact" : "numeric-exact",
-          ...(ggaEvaluationMode ? { evaluationMode: ggaEvaluationMode } : rpaEvaluationMode ? { evaluationMode: rpaEvaluationMode } : nsaEvaluationMode ? { evaluationMode: nsaEvaluationMode } : {}),
-          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : ggaCheck ? independentlyRightTriangleArea(ggaCheck) : rpaCheck ? independentlyPositiveWholeInputExactUnitRateMagnitude(rpaCheck) : nsaCheck ? independentlyNsaPositiveProperFractionQuotient(nsaCheck) : "1",
+          ...(ggaEvaluationMode ? { evaluationMode: ggaEvaluationMode } : rpaEvaluationMode ? { evaluationMode: rpaEvaluationMode } : nsaEvaluationMode ? { evaluationMode: nsaEvaluationMode } : nsbEvaluationMode ? { evaluationMode: nsbEvaluationMode } : {}),
+          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : ggaCheck ? independentlyRightTriangleArea(ggaCheck) : rpaCheck ? independentlyPositiveWholeInputExactUnitRateMagnitude(rpaCheck) : nsaCheck ? independentlyNsaPositiveProperFractionQuotient(nsaCheck) : nsbCheck ? independentlyNsbOperationAnswer(nsbCheck) : "1",
           solutionByLocale: localText("교사용 풀이", "Teacher solution", "教师解析"),
           uniquenessProofByLocale: localText("교사용 검산", "Teacher check", "教师检验"),
           arithmeticCheck: eeaPair
@@ -671,6 +853,8 @@ function syntheticWorkbookPack(unitId, options) {
                     ? Object.assign({}, rpaCheck)
                     : nsaCheck
                       ? Object.assign({}, nsaCheck)
+                      : nsbCheck
+                        ? Object.assign({}, nsbCheck)
                   : { kind: "whole-quotient", total: 1, groups: 1 }
         };
       });
@@ -693,16 +877,18 @@ function syntheticWorkbookPack(unitId, options) {
       answerReferences
     };
   });
-  if (["ccss-6-rp-a", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(selectedUnitId) || nsaV2Contract) {
+  if (["ccss-6-rp-a", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(selectedUnitId) || nsaV2Contract || nsbV1Contract) {
     teacherArtifacts.filter(function (artifact) {
       return artifact.resourceBinding.resourceType === "lesson-plan" || artifact.resourceBinding.resourceType === "assignment-builder";
     }).forEach(function (artifact, index) {
       artifact.components.push({
-        componentId: `tcmp-dft-${nsaV2Contract ? "nsa" : selectedUnitId === "ccss-6-rp-a" ? "rpa" : selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : selectedUnitId === "ccss-6-ee-c" ? "eec" : "gga"}-observation-${index + 1}`,
+        componentId: `tcmp-dft-${nsaV2Contract ? "nsa" : nsbV1Contract ? "nsb" : selectedUnitId === "ccss-6-rp-a" ? "rpa" : selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : selectedUnitId === "ccss-6-ee-c" ? "eec" : "gga"}-observation-${index + 1}`,
         componentType: "teacher-observation-rubric",
         sequence: artifact.components.length + 1,
         contentByLocale: nsaV2Contract
           ? syntheticNsaObservationText(artifact.resourceBinding)
+          : nsbV1Contract
+            ? syntheticNsbObservationText(artifact.resourceBinding)
           : selectedUnitId === "ccss-6-rp-a"
           ? syntheticRpaObservationText(artifact.resourceBinding)
           : selectedUnitId === "ccss-6-ee-b"
@@ -735,7 +921,7 @@ function syntheticWorkbookPack(unitId, options) {
         autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
         lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
       }
-    } : nsaV2Contract ? { standardsEvidence: syntheticNsaStandardsEvidence() } : selectedUnitId === "ccss-6-rp-a" ? { standardsEvidence: syntheticRpaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : selectedUnitId === "ccss-6-g-a" ? { standardsEvidence: syntheticGgaStandardsEvidence() } : {}),
+    } : nsaV2Contract ? { standardsEvidence: syntheticNsaStandardsEvidence() } : nsbV1Contract ? { standardsEvidence: syntheticNsbStandardsEvidence() } : selectedUnitId === "ccss-6-rp-a" ? { standardsEvidence: syntheticRpaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : selectedUnitId === "ccss-6-g-a" ? { standardsEvidence: syntheticGgaStandardsEvidence() } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: selectedUnitId === "ccss-6-ee-b"
@@ -2927,4 +3113,143 @@ test("Grade 6 6.NS.A v2 locks exact supplied proper-fraction quotient evidence w
   assert.throws(function () {
     validator.validatePack(missingObservationPack, "synthetic-nsa-missing-observation.json");
   }, /NSA_TEACHER_OBSERVATION_INCOMPLETE/);
+});
+
+test("Grade 6 6.NS.B v1 locks decimal, GCF, and LCM calculation evidence without upgrading legacy drafts", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-ns-b" };
+  const evidence = syntheticNsbStandardsEvidence();
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-nsb-evidence");
+  });
+  [
+    Object.assign({}, evidence, { state: "plan-complete" }),
+    Object.assign({}, evidence, { autoEvidenceIds: [validator.NSB_DECIMAL_OPERATION_EVIDENCE_ID] }),
+    Object.assign({}, evidence, { autoEvidenceIds: ["6.NS.B.2-full-mastery"] }),
+    Object.assign({}, evidence, { lockedEvidenceByLocale: Object.assign({}, evidence.lockedEvidenceByLocale, { en: "Decimal calculation only." }) })
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateStandardsEvidence(candidate, policy, unit, "synthetic-nsb-evidence-invalid");
+    }, /STANDARDS_EVIDENCE_INVALID/);
+  });
+  assert.match(validator.NSB_LOCKED_EVIDENCE_BY_LOCALE.en, /not a full-mastery, placement, or promotion decision/u);
+  assert.match(validator.NSB_LOCKED_EVIDENCE_BY_LOCALE.en, /6\.NS\.B\.2/u);
+  assert.match(validator.NSB_LOCKED_EVIDENCE_BY_LOCALE.en, /6\.NS\.B\.3/u);
+  assert.match(validator.NSB_LOCKED_EVIDENCE_BY_LOCALE.en, /6\.NS\.B\.4/u);
+  assert.doesNotMatch(JSON.stringify(validator.NSB_LOCKED_EVIDENCE_BY_LOCALE), /6\.NS\.B\.[015-9]/u);
+  assert.match(validator.NSB_TEACHER_OBSERVATION_BY_PROFILE["assignment-builder:advanced"].en, /6\.NS\.B\.4/u);
+
+  SYNTHETIC_NSB_OPERATION_CASES.forEach(function (check) {
+    assert.equal(
+      validator.canonicalAnswer(Object.assign({}, check), "synthetic-nsb-canonical"),
+      independentlyNsbOperationAnswer(check)
+    );
+  });
+  [
+    { kind: "decimal-operation", operation: "divide", left: "1", right: "3" },
+    { kind: "decimal-operation", operation: "subtract", left: "0.1", right: "0.2" },
+    { kind: "greatest-common-factor", left: 0, right: 24 },
+    { kind: "least-common-multiple", left: 12, right: 13 }
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateNsbOperationSituation(candidate, "synthetic-nsb-invalid");
+    }, /NSB_OPERATION_SITUATION_INVALID/);
+  });
+
+  const legacyPack = syntheticWorkbookPack("ccss-6-ns-b");
+  assert.equal(legacyPack.standardsEvidence, undefined);
+  assert.doesNotThrow(function () {
+    validator.validatePack(legacyPack, "synthetic-nsb-r1-legacy.json");
+  });
+  assert.equal(legacyPack.verification.releaseState, "not-eligible");
+
+  const pack = syntheticWorkbookPack("ccss-6-ns-b", { nsbV1: true });
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-nsb-v1-pack.json");
+  });
+  const answerReferences = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  assert.equal(answerReferences.length, 22);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "automatic-evidence"; }).length, 14);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "teacher-review-only"; }).length, 8);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && validator.NSB_SUPPORTED_CHECK_KINDS.has(answerReference.arithmeticCheck.kind);
+  }));
+
+  const genericContractPack = JSON.parse(JSON.stringify(pack));
+  const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  genericReference.arithmeticCheck = { kind: "whole-quotient", total: 1, groups: 1 };
+  genericReference.expectedResponse = "1";
+  assert.throws(function () {
+    validator.validatePack(genericContractPack, "synthetic-nsb-generic-contract.json");
+  }, /NSB_RESPONSE_CONTRACT_INVALID/);
+
+  const mismatchedSituationPack = JSON.parse(JSON.stringify(pack));
+  const mismatchedSituation = mismatchedSituationPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  mismatchedSituation.nsbOperationSituation.left = "0.42";
+  assert.throws(function () {
+    validator.validatePack(mismatchedSituationPack, "synthetic-nsb-situation-mismatch.json");
+  }, /NSB_OPERATION_SITUATION_MISMATCH/);
+
+  const changedPromptPack = JSON.parse(JSON.stringify(pack));
+  changedPromptPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  }).contentByLocale.en += " Again.";
+  assert.throws(function () {
+    validator.validatePack(changedPromptPack, "synthetic-nsb-prompt.json");
+  }, /NSB_OPERATION_PROMPT_INVALID/);
+
+  const duplicateFactPack = JSON.parse(JSON.stringify(pack));
+  const duplicateReference = duplicateFactPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[1];
+  duplicateReference.arithmeticCheck = Object.assign({}, SYNTHETIC_NSB_OPERATION_CASES[0]);
+  duplicateReference.expectedResponse = independentlyNsbOperationAnswer(duplicateReference.arithmeticCheck);
+  const duplicateComponent = duplicateFactPack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  })[1];
+  duplicateComponent.nsbOperationSituation = Object.assign({}, duplicateReference.arithmeticCheck);
+  duplicateComponent.contentByLocale = syntheticNsbOperationPrompt(duplicateReference.arithmeticCheck);
+  assert.throws(function () {
+    validator.validatePack(duplicateFactPack, "synthetic-nsb-duplicate-fact.json");
+  }, /NSB_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const advancedAutomaticPack = JSON.parse(JSON.stringify(pack));
+  const advancedComponentIds = new Set(advancedAutomaticPack.studentSections.filter(function (section) {
+    return section.resourceBinding.levelId === "advanced";
+  }).flatMap(function (section) {
+    return section.components.filter(function (component) { return component.responseMode !== null; }).map(function (component) { return component.componentId; });
+  }));
+  advancedAutomaticPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (answerReference) {
+    return advancedComponentIds.has(answerReference.componentId);
+  }).evaluationMode = "automatic-evidence";
+  assert.throws(function () {
+    validator.validatePack(advancedAutomaticPack, "synthetic-nsb-advanced-automatic.json");
+  }, /NSB_DIFFICULTY_CONTRACT_INCOMPLETE/);
+
+  const workedExampleLeakPack = JSON.parse(JSON.stringify(pack));
+  const workedExample = workedExampleLeakPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentType === "worked-example";
+  });
+  workedExample.nsbOperationSituation = Object.assign({}, SYNTHETIC_NSB_OPERATION_CASES[0]);
+  workedExample.contentByLocale = syntheticNsbWorkedExample(workedExample.nsbOperationSituation);
+  assert.throws(function () {
+    validator.validatePack(workedExampleLeakPack, "synthetic-nsb-worked-example-leak.json");
+  }, /NSB_WORKED_EXAMPLE_ANSWER_LEAK/);
+
+  const nonResponseLeakPack = JSON.parse(JSON.stringify(pack));
+  nonResponseLeakPack.frontMatter.titleByLocale.en = "Example 1.";
+  assert.throws(function () {
+    validator.validatePack(nonResponseLeakPack, "synthetic-nsb-nonresponse-leak.json");
+  }, /NSB_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+
+  const missingObservationPack = JSON.parse(JSON.stringify(pack));
+  const missingObservation = missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  });
+  missingObservation.components = missingObservation.components.filter(function (component) {
+    return component.componentType !== "teacher-observation-rubric";
+  });
+  assert.throws(function () {
+    validator.validatePack(missingObservationPack, "synthetic-nsb-missing-observation.json");
+  }, /NSB_TEACHER_OBSERVATION_INCOMPLETE/);
 });

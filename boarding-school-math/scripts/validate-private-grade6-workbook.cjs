@@ -61,6 +61,33 @@ const RPA_UNIT_CATALOG = Object.freeze({
   liter: "measure", meter: "measure", kilogram: "measure", kilometer: "measure", hour: "measure", minute: "measure", second: "measure", milliliter: "measure"
 });
 const RPA_UNIT_RATE_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
+const NSB_DECIMAL_OPERATION_EVIDENCE_ID = "6.NS.B.3-canonical-nonnegative-decimal-add-subtract-multiply-terminating-divide";
+const NSB_GREATEST_COMMON_FACTOR_EVIDENCE_ID = "6.NS.B.4-whole-number-greatest-common-factor-1-100";
+const NSB_LEAST_COMMON_MULTIPLE_EVIDENCE_ID = "6.NS.B.4-whole-number-least-common-multiple-1-12";
+const NSB_SUPPORTED_CHECK_KINDS = new Set(["decimal-operation", "greatest-common-factor", "least-common-multiple"]);
+const NSB_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
+const NSB_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
+  ko: "자동 근거는 6.NS.B.3에서 제한된 음이 아닌 소수의 덧셈·뺄셈·곱셈과 유한소수 몫 나눗셈의 정확한 값, 그리고 6.NS.B.4에서 1–100 정수 쌍의 최대공약수와 1–12 정수 쌍의 최소공배수를 구하는 제한된 계산뿐이다. 6.NS.B.2의 여러 자리 수 나눗셈과 표준 알고리즘, 6.NS.B.3의 표준 알고리즘과 풀이 설명, 6.NS.B.4의 분배법칙 표현과 실제 적용은 교사 관찰로 남긴다. 이것은 완전 숙달, 배치 또는 승급 결정이 아니다.",
+  en: "The automatic evidence is limited to exact values for bounded nonnegative decimal addition, subtraction, multiplication, and terminating-quotient division in 6.NS.B.3, plus bounded greatest-common-factor calculation for whole-number pairs from 1 to 100 and least-common-multiple calculation for whole-number pairs from 1 to 12 in 6.NS.B.4. Multi-digit division and standard algorithms in 6.NS.B.2, standard algorithms and explanation in 6.NS.B.3, and distributive-property expression and real-world application in 6.NS.B.4 remain teacher-observation work. It is not a full-mastery, placement, or promotion decision.",
+  "zh-Hans": "自动证据仅限于 6.NS.B.3 中受限的非负小数加、减、乘以及商为有限小数的除法的精确值，并限于 6.NS.B.4 中 1–100 整数对的最大公因数和 1–12 整数对的最小公倍数计算。6.NS.B.2 的多位数除法和标准算法、6.NS.B.3 的标准算法与说明，以及 6.NS.B.4 的分配律表达和实际应用仍由教师观察。这不是完全掌握、分班或年级晋升决定。"
+});
+const NSB_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
+  "lesson-plan:core": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.NS.B.2의 여러 자리 수 나눗셈 절차를 설명하고, 6.NS.B.3에서 소수점 자릿값을 추적하여 표준 알고리즘의 계산을 검토하며, 6.NS.B.4에서 공약수와 공배수의 관계를 말로 설명하는지를 기록한다. 이 기록은 완전 숙달, 배치 또는 승급 판정이 아니다.",
+    en: "Teacher observation only: record whether the learner explains a multi-digit division procedure in 6.NS.B.2, tracks decimal place value to check standard-algorithm work in 6.NS.B.3, and explains the relationship of common factors and common multiples in 6.NS.B.4. This record is not a full-mastery, placement, or promotion decision.",
+    "zh-Hans": "仅限教师观察：记录学生是否能说明 6.NS.B.2 的多位数除法步骤，在 6.NS.B.3 中追踪小数位值并核对标准算法计算，以及在 6.NS.B.4 中用语言说明公因数与公倍数的关系。该记录不用于完全掌握、分班或年级晋升判定。"
+  }),
+  "assignment-builder:core": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.NS.B.3의 소수 연산에서 자릿값과 계산 절차를 설명하고, 6.NS.B.4의 최대공약수와 최소공배수를 검토하는 방법을 말로 나타내는지를 기록한다.",
+    en: "Teacher observation only: record whether the learner explains place value and a calculation procedure for decimal operations in 6.NS.B.3 and expresses how to check greatest common factors and least common multiples in 6.NS.B.4.",
+    "zh-Hans": "仅限教师观察：记录学生是否能说明 6.NS.B.3 小数运算中的位值和计算步骤，并用语言表达如何核对 6.NS.B.4 的最大公因数和最小公倍数。"
+  }),
+  "assignment-builder:advanced": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.NS.B.2와 6.NS.B.3의 여러 단계 계산을 설명·검토하고, 6.NS.B.4에서 공약수를 이용한 분배법칙 표현과 실제 상황의 적용을 정당화하는지를 기록한다.",
+    en: "Teacher observation only: record whether the learner explains and checks multi-step calculations in 6.NS.B.2 and 6.NS.B.3 and justifies a distributive-property expression using a common factor and an application in context in 6.NS.B.4.",
+    "zh-Hans": "仅限教师观察：记录学生是否能说明并核对 6.NS.B.2 和 6.NS.B.3 的多步骤计算，以及在 6.NS.B.4 中论证使用公因数的分配律表达和情境应用。"
+  })
+});
 const NSA_FRACTION_QUOTIENT_EVIDENCE_ID = "6.NS.A.1-fixed-dividend-divisor-supplied-positive-proper-fractions-exact-reduced-quotient";
 const NSA_FRACTION_QUOTIENT_CHECK_KIND = "positive-proper-fraction-dividend-divisor-exact-reduced-quotient";
 const NSA_FRACTION_DIVISION_SITUATION_KIND = "fixed-dividend-divisor-supplied-positive-proper-fractions-v2";
@@ -252,7 +279,7 @@ const BINDING_KEYS = new Set([
   "resourceType", "bindingState"
 ]);
 const STUDENT_COMPONENT_KEYS = new Set([
-  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram", "rateSituation", "fractionDivisionSituation"
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram", "rateSituation", "fractionDivisionSituation", "nsbOperationSituation"
 ]);
 const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
 const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
@@ -790,6 +817,33 @@ function validateVerification(verification, reference) {
 }
 
 function validateStandardsEvidence(evidence, policy, unit, reference) {
+  if (unit.unitId === "ccss-6-ns-b") {
+    // A missing policy identifies an older generic draft. It stays
+    // draft-only; the constrained v1 evidence contract applies only when it
+    // is declared and must not silently upgrade old work.
+    if (evidence === undefined) return;
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-decimal-gcf-lcm-exact-calculation-locked-v1", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    const requiredAutomaticEvidence = new Set([
+      NSB_DECIMAL_OPERATION_EVIDENCE_ID,
+      NSB_GREATEST_COMMON_FACTOR_EVIDENCE_ID,
+      NSB_LEAST_COMMON_MULTIPLE_EVIDENCE_ID
+    ]);
+    assert(
+      evidence.autoEvidenceIds.length === requiredAutomaticEvidence.size &&
+        new Set(evidence.autoEvidenceIds).size === requiredAutomaticEvidence.size &&
+        evidence.autoEvidenceIds.every(function (evidenceId) { return typeof evidenceId === "string" && requiredAutomaticEvidence.has(evidenceId); }),
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    policy.included.forEach(function (locale) {
+      assert(evidence.lockedEvidenceByLocale[locale] === NSB_LOCKED_EVIDENCE_BY_LOCALE[locale], "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
   if (unit.unitId === "ccss-6-ns-a") {
     // A missing policy identifies an older generic r1 draft. It remains a
     // draft-only format; the stricter v2 contract applies only when declared.
@@ -1040,7 +1094,30 @@ function validateNsaFractionDivisionSituation(situation, reference) {
   );
 }
 
-function validateStudentComponent(component, policy, reference, unitId, nsaV2Contract) {
+function validateNsbOperationSituation(situation, reference) {
+  assertRecord(situation, "NSB_OPERATION_SITUATION_INVALID", reference);
+  const kind = ownDataValue(situation, "kind", "NSB_OPERATION_SITUATION_INVALID", reference);
+  assert(NSB_SUPPORTED_CHECK_KINDS.has(kind), "NSB_OPERATION_SITUATION_INVALID", reference);
+  try {
+    canonicalAnswer(situation, reference);
+  } catch (error) {
+    if (error instanceof ValidationError) fail("NSB_OPERATION_SITUATION_INVALID", reference);
+    throw error;
+  }
+}
+
+function nsbOperationFactFingerprint(check, reference) {
+  validateNsbOperationSituation(check, reference);
+  if (check.kind === "decimal-operation") {
+    const operands = [check.left, check.right];
+    if (["add", "multiply"].includes(check.operation)) operands.sort();
+    return `${check.kind}|${check.operation}|${operands[0]}|${operands[1]}`;
+  }
+  const operands = [check.left, check.right].sort(function (left, right) { return left - right; });
+  return `${check.kind}|${operands[0]}|${operands[1]}`;
+}
+
+function validateStudentComponent(component, policy, reference, unitId, nsaV2Contract, nsbV1Contract) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
   assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
   assert(Number.isInteger(component.sequence) && component.sequence > 0 && component.sequence <= 100, "STUDENT_COMPONENT_INVALID", reference);
@@ -1052,6 +1129,11 @@ function validateStudentComponent(component, policy, reference, unitId, nsaV2Con
     assert(component.geometryDiagram === undefined, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
     assert(component.rateSituation === undefined, "RPA_RATE_SITUATION_INVALID", reference);
     assert(component.fractionDivisionSituation === undefined, "NSA_FRACTION_DIVISION_SITUATION_INVALID", reference);
+    if (unitId === "ccss-6-ns-b" && nsbV1Contract && component.componentType === "worked-example") {
+      validateNsbOperationSituation(component.nsbOperationSituation, reference);
+    } else {
+      assert(component.nsbOperationSituation === undefined, "NSB_OPERATION_SITUATION_INVALID", reference);
+    }
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -1069,10 +1151,12 @@ function validateStudentComponent(component, policy, reference, unitId, nsaV2Con
     else assert(component.rateSituation === undefined, "RPA_RATE_SITUATION_INVALID", reference);
     if (unitId === "ccss-6-ns-a" && nsaV2Contract) validateNsaFractionDivisionSituation(component.fractionDivisionSituation, reference);
     else assert(component.fractionDivisionSituation === undefined, "NSA_FRACTION_DIVISION_SITUATION_INVALID", reference);
+    if (unitId === "ccss-6-ns-b" && nsbV1Contract) validateNsbOperationSituation(component.nsbOperationSituation, reference);
+    else assert(component.nsbOperationSituation === undefined, "NSB_OPERATION_SITUATION_INVALID", reference);
   }
 }
 
-function validateStudentSection(section, plan, policy, seenSectionIds, seenComponentIds, expectedResources, nsaV2Contract) {
+function validateStudentSection(section, plan, policy, seenSectionIds, seenComponentIds, expectedResources, nsaV2Contract, nsbV1Contract) {
   const reference = localReference(section && section.sectionId, "student-section");
   assertOnlyKeys(section, SECTION_KEYS, "STUDENT_SECTION_INVALID", reference);
   assertStudentNeutralId(section.sectionId, "sct-dft-", "STUDENT_SECTION_INVALID", reference);
@@ -1087,7 +1171,7 @@ function validateStudentSection(section, plan, policy, seenSectionIds, seenCompo
   assertPlannedComponentCounts(section.components, resource, reference);
   const sequences = [];
   section.components.forEach(function (component) {
-    validateStudentComponent(component, policy, localReference(component && component.componentId, reference), resource.unitId, nsaV2Contract);
+    validateStudentComponent(component, policy, localReference(component && component.componentId, reference), resource.unitId, nsaV2Contract, nsbV1Contract);
     assert(!seenComponentIds.has(component.componentId), "DUPLICATE_STUDENT_COMPONENT", component.componentId);
     seenComponentIds.add(component.componentId);
     sequences.push(component.sequence);
@@ -1665,6 +1749,85 @@ function validateNsaFractionQuotientPrompt(component, check, reference) {
   });
 }
 
+function nsbDecimalOperationSymbol(operation, reference) {
+  const symbol = Object.freeze({ add: "+", subtract: "-", multiply: "×", divide: "÷" })[operation];
+  assert(symbol, "NSB_OPERATION_PROMPT_INVALID", reference);
+  return symbol;
+}
+
+function nsbOperationPromptTemplates(check, reference) {
+  validateNsbOperationSituation(check, reference);
+  if (check.kind === "decimal-operation") {
+    const display = `${check.left} ${nsbDecimalOperationSymbol(check.operation, reference)} ${check.right}`;
+    return Object.freeze({
+      ko: `다음 소수 계산을 하세요: ${display}.`,
+      en: `Calculate the decimal operation: ${display}.`,
+      "zh-Hans": `计算小数运算：${display}。`
+    });
+  }
+  if (check.kind === "greatest-common-factor") {
+    return Object.freeze({
+      ko: `다음 두 수의 최대공약수를 구하세요: ${check.left}, ${check.right}.`,
+      en: `Find the greatest common factor of ${check.left} and ${check.right}.`,
+      "zh-Hans": `求 ${check.left} 和 ${check.right} 的最大公因数。`
+    });
+  }
+  assert(check.kind === "least-common-multiple", "NSB_OPERATION_PROMPT_INVALID", reference);
+  return Object.freeze({
+    ko: `다음 두 수의 최소공배수를 구하세요: ${check.left}, ${check.right}.`,
+    en: `Find the least common multiple of ${check.left} and ${check.right}.`,
+    "zh-Hans": `求 ${check.left} 和 ${check.right} 的最小公倍数。`
+  });
+}
+
+function nsbWorkedExampleTemplates(check, reference) {
+  const expected = canonicalAnswer(check, reference);
+  if (check.kind === "decimal-operation") {
+    const display = `${check.left} ${nsbDecimalOperationSymbol(check.operation, reference)} ${check.right} = ${expected}`;
+    return Object.freeze({
+      ko: `예시: ${display}.`,
+      en: `Worked example: ${display}.`,
+      "zh-Hans": `示例：${display}。`
+    });
+  }
+  if (check.kind === "greatest-common-factor") {
+    return Object.freeze({
+      ko: `예시: ${check.left}와 ${check.right}의 최대공약수는 ${expected}.`,
+      en: `Worked example: The greatest common factor of ${check.left} and ${check.right} is ${expected}.`,
+      "zh-Hans": `示例：${check.left} 和 ${check.right} 的最大公因数是 ${expected}。`
+    });
+  }
+  assert(check.kind === "least-common-multiple", "NSB_WORKED_EXAMPLE_INVALID", reference);
+  return Object.freeze({
+    ko: `예시: ${check.left}와 ${check.right}의 최소공배수는 ${expected}.`,
+    en: `Worked example: The least common multiple of ${check.left} and ${check.right} is ${expected}.`,
+    "zh-Hans": `示例：${check.left} 和 ${check.right} 的最小公倍数是 ${expected}。`
+  });
+}
+
+function validateNsbOperationPrompt(component, check, reference) {
+  const situation = component.component.nsbOperationSituation;
+  validateNsbOperationSituation(situation, reference);
+  assert(nsbOperationFactFingerprint(situation, reference) === nsbOperationFactFingerprint(check, reference), "NSB_OPERATION_SITUATION_MISMATCH", reference);
+  const templates = nsbOperationPromptTemplates(check, reference);
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    assert(entry[1] === templates[entry[0]], "NSB_OPERATION_PROMPT_INVALID", reference);
+  });
+}
+
+function validateNsbWorkedExampleContent(component, reference) {
+  const check = component.nsbOperationSituation;
+  validateNsbOperationSituation(check, reference);
+  const templates = nsbWorkedExampleTemplates(check, reference);
+  Object.entries(component.contentByLocale).forEach(function (entry) {
+    assert(entry[1] === templates[entry[0]], "NSB_WORKED_EXAMPLE_INVALID", reference);
+  });
+  return Object.freeze({
+    factFingerprint: nsbOperationFactFingerprint(check, reference),
+    expectedResponse: canonicalAnswer(check, reference)
+  });
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -1984,6 +2147,71 @@ function validateNsaAutomaticEvidence(answerReferences, componentMap, unit, nsaV
     else teacherReviewOnlyCount += 1;
   });
   assert(automaticEvidenceCount === 14 && teacherReviewOnlyCount === 8, "NSA_DIFFICULTY_CONTRACT_INCOMPLETE", reference);
+}
+
+function nsbAutomaticEvidenceCategory(check, reference) {
+  validateNsbOperationSituation(check, reference);
+  return check.kind === "decimal-operation" ? `decimal:${check.operation}` : check.kind;
+}
+
+function validateNsbAutomaticEvidence(answerReferences, componentMap, unit, nsbV1Contract, reference) {
+  if (unit.unitId !== "ccss-6-ns-b" || !nsbV1Contract) return;
+  assert(answerReferences.length === 22, "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && NSB_SUPPORTED_CHECK_KINDS.has(answerReference.arithmeticCheck.kind);
+  }), "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const factFingerprints = new Set();
+  const expectedResponses = new Set();
+  const automaticCounts = new Map([
+    ["decimal:add", 0], ["decimal:subtract", 0], ["decimal:multiply", 0], ["decimal:divide", 0],
+    ["greatest-common-factor", 0], ["least-common-multiple", 0]
+  ]);
+  const teacherReviewCounts = new Map([
+    ["decimal:add", 0], ["decimal:subtract", 0], ["decimal:multiply", 0], ["decimal:divide", 0],
+    ["greatest-common-factor", 0], ["least-common-multiple", 0]
+  ]);
+  let automaticEvidenceCount = 0;
+  let teacherReviewOnlyCount = 0;
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const factFingerprint = nsbOperationFactFingerprint(check, answerReference.referenceId);
+    assert(!factFingerprints.has(factFingerprint), "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    factFingerprints.add(factFingerprint);
+    const expected = canonicalAnswer(check, answerReference.referenceId);
+    assert(answerReference.expectedResponse === expected && !expectedResponses.has(expected), "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    expectedResponses.add(expected);
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    validateNsbOperationPrompt(component, check, answerReference.referenceId);
+    const expectedEvaluationMode = component.section.resourceBinding.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence";
+    assert(answerReference.evaluationMode === expectedEvaluationMode, "NSB_DIFFICULTY_CONTRACT_INCOMPLETE", answerReference.referenceId);
+    const counts = expectedEvaluationMode === "automatic-evidence" ? automaticCounts : teacherReviewCounts;
+    const category = nsbAutomaticEvidenceCategory(check, answerReference.referenceId);
+    counts.set(category, counts.get(category) + 1);
+    if (expectedEvaluationMode === "automatic-evidence") automaticEvidenceCount += 1;
+    else teacherReviewOnlyCount += 1;
+  });
+  assert(automaticEvidenceCount === 14 && teacherReviewOnlyCount === 8, "NSB_DIFFICULTY_CONTRACT_INCOMPLETE", reference);
+  const requiredAutomaticCounts = Object.freeze({
+    "decimal:add": 2,
+    "decimal:subtract": 2,
+    "decimal:multiply": 2,
+    "decimal:divide": 2,
+    "greatest-common-factor": 3,
+    "least-common-multiple": 3
+  });
+  const requiredTeacherReviewCounts = Object.freeze({
+    "decimal:add": 1,
+    "decimal:subtract": 1,
+    "decimal:multiply": 1,
+    "decimal:divide": 1,
+    "greatest-common-factor": 2,
+    "least-common-multiple": 2
+  });
+  Object.entries(requiredAutomaticCounts).forEach(function (entry) {
+    assert(automaticCounts.get(entry[0]) === entry[1], "NSB_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+    assert(teacherReviewCounts.get(entry[0]) === requiredTeacherReviewCounts[entry[0]], "NSB_DIFFICULTY_CONTRACT_INCOMPLETE", reference);
+  });
 }
 
 function escapeRegExpLiteral(value) {
@@ -2475,7 +2703,59 @@ function validateNsaStudentVisibleSeparation(pack, sections, answerReferences, u
   });
 }
 
-function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds, nsaV2Contract) {
+function assertNsbNonWorkedStudentTextHasNoNumericNotation(content, reference) {
+  const normalized = String(content).normalize("NFKC");
+  // The only numeric notation allowed outside a response prompt in this
+  // narrow contract is a separately parsed worked example. This prevents a
+  // title, overview, or concept block from becoming an alternate response
+  // disclosure channel.
+  assert(!/[\p{N}]/u.test(normalized), "NSB_NONRESPONSE_NUMERIC_NOT_ALLOWED", reference);
+}
+
+function validateNsbStudentVisibleSeparation(pack, sections, answerReferences, unit, nsbV1Contract, reference) {
+  if (unit.unitId !== "ccss-6-ns-b" || !nsbV1Contract) return;
+  const expectedResponses = new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; }));
+  const responseFacts = new Set(answerReferences.map(function (answerReference) {
+    return nsbOperationFactFingerprint(answerReference.arithmeticCheck, answerReference.referenceId);
+  }));
+  const nonResponseFields = [];
+  [pack.frontMatter, pack.closingMatter].forEach(function (group) {
+    Object.values(group).forEach(function (localizedText) {
+      Object.entries(localizedText).forEach(function (entry) {
+        assertNsbNonWorkedStudentTextHasNoNumericNotation(entry[1], reference);
+        nonResponseFields.push(Object.freeze({ content: entry[1], reference }));
+      });
+    });
+  });
+  sections.forEach(function (entry) {
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
+      assertNsbNonWorkedStudentTextHasNoNumericNotation(localeEntry[1], entry.section.sectionId);
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+    });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      if (component.componentType === "worked-example") {
+        const workedExample = validateNsbWorkedExampleContent(component, component.componentId);
+        assert(!responseFacts.has(workedExample.factFingerprint) && !expectedResponses.has(workedExample.expectedResponse), "NSB_WORKED_EXAMPLE_ANSWER_LEAK", component.componentId);
+      } else {
+        Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+          assertNsbNonWorkedStudentTextHasNoNumericNotation(localeEntry[1], component.componentId);
+        });
+      }
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+      });
+    });
+  });
+  nonResponseFields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    expectedResponses.forEach(function (expectedResponse) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsRpaLocalizedAnswerEquivalent(field.content, expectedResponse), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
+function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds, nsaV2Contract, nsbV1Contract) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
   assertId(answerReference.referenceId, "ref-dft-", "ANSWER_REFERENCE_INVALID", reference);
@@ -2491,6 +2771,8 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   requireLocales(answerReference.uniquenessProofByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
   if (artifact.resourceBinding.unitId === "ccss-6-ns-a" && nsaV2Contract) {
     assert(NSA_FRACTION_QUOTIENT_EVALUATION_MODES.has(answerReference.evaluationMode), "NSA_RESPONSE_CONTRACT_INVALID", reference);
+  } else if (artifact.resourceBinding.unitId === "ccss-6-ns-b" && nsbV1Contract) {
+    assert(NSB_EVALUATION_MODES.has(answerReference.evaluationMode), "NSB_RESPONSE_CONTRACT_INVALID", reference);
   } else if (artifact.resourceBinding.unitId === "ccss-6-g-a") {
     assert(GGA_EVALUATION_MODES.has(answerReference.evaluationMode), "GGA_RESPONSE_CONTRACT_INVALID", reference);
   } else if (artifact.resourceBinding.unitId === "ccss-6-rp-a") {
@@ -2522,10 +2804,14 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (artifact.resourceBinding.unitId === "ccss-6-ns-a" && nsaV2Contract) {
     assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === NSA_FRACTION_QUOTIENT_CHECK_KIND, "NSA_RESPONSE_CONTRACT_INVALID", reference);
   }
+  if (artifact.resourceBinding.unitId === "ccss-6-ns-b" && nsbV1Contract) {
+    assert(answerReference.responseMode === "numeric-exact" && NSB_SUPPORTED_CHECK_KINDS.has(answerReference.arithmeticCheck.kind), "NSB_RESPONSE_CONTRACT_INVALID", reference);
+  }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient") validateDirectVariationWholeTableCoefficientPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === NSA_FRACTION_QUOTIENT_CHECK_KIND) validateNsaFractionQuotientPrompt(component, answerReference.arithmeticCheck, reference);
+  if (artifact.resourceBinding.unitId === "ccss-6-ns-b" && nsbV1Contract) validateNsbOperationPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND) validateGgaRightTriangleAreaPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
@@ -2533,7 +2819,7 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   return component;
 }
 
-function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expectedResources, nsaV2Contract) {
+function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expectedResources, nsaV2Contract, nsbV1Contract) {
   const reference = localReference(artifact && artifact.artifactId, "teacher-artifact");
   assertOnlyKeys(artifact, ARTIFACT_KEYS, "TEACHER_ARTIFACT_INVALID", reference);
   assertId(artifact.artifactId, "art-dft-", "TEACHER_ARTIFACT_INVALID", reference);
@@ -2551,7 +2837,8 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   assert(observationComponents.every(function () {
     return (
       ["ccss-6-rp-a", "ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(resource.unitId) ||
-      (resource.unitId === "ccss-6-ns-a" && nsaV2Contract)
+      (resource.unitId === "ccss-6-ns-a" && nsaV2Contract) ||
+      (resource.unitId === "ccss-6-ns-b" && nsbV1Contract)
     ) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
@@ -2715,6 +3002,30 @@ function validateNsaTeacherObservationEvidence(artifacts, unit, policy, nsaV2Con
   });
 }
 
+function validateNsbTeacherObservationEvidence(artifacts, unit, policy, nsbV1Contract, reference) {
+  if (unit.unitId !== "ccss-6-ns-b" || !nsbV1Contract) return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "NSB_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "NSB_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = NSB_TEACHER_OBSERVATION_BY_PROFILE[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "NSB_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      assert(policy.included.includes(entry[0]) && entry[1] === exactContent[entry[0]], "NSB_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
+  });
+}
+
 function validateAssessmentPlaceholders(placeholders, plan, reference) {
   assertDenseArray(placeholders, "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
   const expected = plan.resourcesByAudience.student.filter(function (resource) {
@@ -2828,6 +3139,7 @@ function validatePack(pack, fileName) {
   const unit = standardUnit(pack, reference);
   validateStandardsEvidence(pack.standardsEvidence, pack.localePolicy, unit, reference);
   const nsaV2Contract = unit.unitId === "ccss-6-ns-a" && pack.standardsEvidence !== undefined;
+  const nsbV1Contract = unit.unitId === "ccss-6-ns-b" && pack.standardsEvidence !== undefined;
   const plan = resourcePlans.buildUnitPlan(unit.unitId);
   assert(pack.resourcePlanId === plan.planId && pack.cadenceProfileId === resourcePlans.GRADE6_CADENCE.cadenceProfileId, "WORKBOOK_PLAN_BINDING_INVALID", reference);
   validateRightsDraft(pack.rightsDraft, reference);
@@ -2841,7 +3153,7 @@ function validatePack(pack, fileName) {
   const seenComponentIds = new Set();
   const seenStudentResources = new Set();
   const sections = pack.studentSections.map(function (section) {
-    const result = validateStudentSection(section, plan, pack.localePolicy, seenSectionIds, seenComponentIds, expectedStudent, nsaV2Contract);
+    const result = validateStudentSection(section, plan, pack.localePolicy, seenSectionIds, seenComponentIds, expectedStudent, nsaV2Contract, nsbV1Contract);
     assert(!seenStudentResources.has(result.resource.resourcePlanItemId), "DUPLICATE_STUDENT_RESOURCE", result.section.sectionId);
     seenStudentResources.add(result.resource.resourcePlanItemId);
     return result;
@@ -2852,7 +3164,7 @@ function validatePack(pack, fileName) {
   const seenArtifactIds = new Set();
   const seenTeacherResources = new Set();
   const artifacts = pack.teacherArtifacts.map(function (artifact) {
-    const result = validateTeacherArtifact(artifact, plan, pack.localePolicy, seenArtifactIds, expectedTeacher, nsaV2Contract);
+    const result = validateTeacherArtifact(artifact, plan, pack.localePolicy, seenArtifactIds, expectedTeacher, nsaV2Contract, nsbV1Contract);
     assert(!seenTeacherResources.has(result.resource.resourcePlanItemId), "DUPLICATE_TEACHER_RESOURCE", result.artifact.artifactId);
     seenTeacherResources.add(result.resource.resourcePlanItemId);
     return result;
@@ -2865,6 +3177,7 @@ function validatePack(pack, fileName) {
   validateGgaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateRpaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateNsaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, nsaV2Contract, reference);
+  validateNsbTeacherObservationEvidence(artifacts, unit, pack.localePolicy, nsbV1Contract, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -2876,7 +3189,7 @@ function validatePack(pack, fileName) {
   const answerReferences = [];
   artifacts.forEach(function (entry) {
     entry.artifact.answerReferences.forEach(function (answerReference) {
-      const component = validateAnswerReference(answerReference, componentMap, pack.localePolicy, entry.artifact, seenReferenceIds, nsaV2Contract);
+      const component = validateAnswerReference(answerReference, componentMap, pack.localePolicy, entry.artifact, seenReferenceIds, nsaV2Contract, nsbV1Contract);
       assert(component.component.teacherReferenceId === answerReference.referenceId, "ANSWER_REFERENCE_LINK_MISMATCH", answerReference.referenceId);
       assert(!referencedComponents.has(answerReference.componentId), "DUPLICATE_COMPONENT_ANSWER_REFERENCE", answerReference.referenceId);
       referencedComponents.add(answerReference.componentId);
@@ -2890,12 +3203,14 @@ function validatePack(pack, fileName) {
   validateGgaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateRpaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateNsaAutomaticEvidence(answerReferences, componentMap, unit, nsaV2Contract, reference);
+  validateNsbAutomaticEvidence(answerReferences, componentMap, unit, nsbV1Contract, reference);
   validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateGgaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateRpaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateNsaStudentVisibleSeparation(pack, sections, answerReferences, unit, nsaV2Contract, reference);
+  validateNsbStudentVisibleSeparation(pack, sections, answerReferences, unit, nsbV1Contract, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -3099,6 +3414,13 @@ module.exports = Object.freeze({
   NSA_FRACTION_DIVISION_SITUATION_KIND,
   NSA_FRACTION_QUOTIENT_EVALUATION_MODES,
   NSA_TEACHER_OBSERVATION_BY_PROFILE,
+  NSB_LOCKED_EVIDENCE_BY_LOCALE,
+  NSB_DECIMAL_OPERATION_EVIDENCE_ID,
+  NSB_GREATEST_COMMON_FACTOR_EVIDENCE_ID,
+  NSB_LEAST_COMMON_MULTIPLE_EVIDENCE_ID,
+  NSB_SUPPORTED_CHECK_KINDS,
+  NSB_EVALUATION_MODES,
+  NSB_TEACHER_OBSERVATION_BY_PROFILE,
   RPA_LOCKED_EVIDENCE_BY_LOCALE,
   RPA_UNIT_RATE_EVIDENCE_ID,
   RPA_UNIT_RATE_CHECK_KIND,
@@ -3118,8 +3440,10 @@ module.exports = Object.freeze({
   validateGgaGeometryDiagram,
   validateRpaRateSituation,
   validateNsaFractionDivisionSituation,
+  validateNsbOperationSituation,
   validateGgaRightTriangleAreaPrompt,
   validateNsaFractionQuotientPrompt,
+  validateNsbOperationPrompt,
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
   canonicalAnswer,
@@ -3130,6 +3454,7 @@ module.exports = Object.freeze({
   validateGgaAutomaticEvidence,
   validateRpaAutomaticEvidence,
   validateNsaAutomaticEvidence,
+  validateNsbAutomaticEvidence,
   validatePositiveWholeEqualitySubstitutionTruthPrompt,
   validateEeaWorkedExampleContent,
   validateEebWorkedExampleContent,
@@ -3142,9 +3467,11 @@ module.exports = Object.freeze({
   validateGgaStudentVisibleSeparation,
   validateRpaStudentVisibleSeparation,
   validateNsaStudentVisibleSeparation,
+  validateNsbStudentVisibleSeparation,
   validateGgaTeacherObservationEvidence,
   validateRpaTeacherObservationEvidence,
   validateNsaTeacherObservationEvidence,
+  validateNsbTeacherObservationEvidence,
   containsEebTruthResponseLabel,
   assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse,
   assertEeaNonWorkedStudentTextHasNoNumericNotation,
