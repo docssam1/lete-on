@@ -281,6 +281,11 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .weak-list { display: flex; flex-wrap: wrap; gap: 7px; }
 .weak-list span { padding: 8px 10px; border-radius: 8px; background: #fff2e8; color: var(--accent-dark); font-size: 12px; }
+.source-type-list { display: grid; grid-template-columns: 1fr; align-content: start; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.weak-list.source-type-list .source-type-item { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 3px 8px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.weak-list.source-type-list .source-type-item b { grid-row: 1 / span 2; color: var(--accent-dark); font-size: 12px; line-height: 1.5; }
+.weak-list.source-type-list .source-type-item span { min-width: 0; padding: 0; border-radius: 0; background: transparent; color: var(--ink); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.weak-list.source-type-list .source-type-item small { grid-column: 2; color: var(--muted); font-size: 10px; line-height: 1.35; }
 .curriculum-panel { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr); gap: 28px; align-items: end; }
 .curriculum-panel h2, .practice-layout h2 { margin: 0 0 8px; font-family: Georgia, "Noto Serif KR", serif; font-size: 30px; font-weight: 500; letter-spacing: -.03em; }
 .curriculum-panel p { margin: 0; color: var(--muted); font-size: 13px; }

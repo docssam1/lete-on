@@ -21,7 +21,8 @@ test("practice bank keeps SH middle cumulative taxonomy inside a multi-track sel
   assert.equal(pageSource.includes("academy-mode"), true);
   assert.equal(pageSource.includes("academy-target"), true);
   assert.equal(pageSource.includes("Scorecard Blueprint"), true);
-  assert.equal(pageSource.includes("Type Blueprint"), true);
+  assert.equal(pageSource.includes("원본 문제 유형"), true);
+  assert.equal(pageSource.includes("dp-original-question-types.js"), true);
 });
 
 test("academy profiles select report axes and type priorities without publishing source material", () => {
