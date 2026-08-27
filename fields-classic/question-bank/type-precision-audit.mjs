@@ -71,6 +71,26 @@ for (const typeId of book05MultiplicationTypes) {
 assert(new Set(book05MultiplicationTypes.map((typeId) => typeById(typeId).generator)).size === book05MultiplicationTypes.length,
   "book 5 multiplication structures share a generator");
 
+const precisionBookTypeCounts = new Map([
+  ["book-05", 38],
+  ["book-06", 62],
+  ["book-07", 72],
+  ["book-08", 51],
+  ["book-09", 63],
+  ["book-10", 52]
+]);
+for (const [bookId, expectedCount] of precisionBookTypeCounts) {
+  const book = CURRICULUM.find((item) => item.id === bookId);
+  const typeIds = book.units.flatMap((unit) => unit.typeIds);
+  const routeKeys = typeIds.map((typeId) => {
+    const type = typeById(typeId);
+    return `${type.generator || type.worksheetCode}:${JSON.stringify(type.worksheetOptions || {})}`;
+  });
+  assert(typeIds.length === expectedCount, `${bookId}: expected ${expectedCount} exact types, found ${typeIds.length}`);
+  assert(new Set(typeIds).size === typeIds.length, `${bookId}: a type is repeated across units`);
+  assert(new Set(routeKeys).size === routeKeys.length, `${bookId}: structurally different types share one generation route`);
+}
+
 const unverifiedMultiplicationCryptarithm = typeById("multiplicative-symbol-equation");
 assert(unverifiedMultiplicationCryptarithm, "multiplication-symbol placeholder missing");
 assert(!unverifiedMultiplicationCryptarithm.generator && !unverifiedMultiplicationCryptarithm.sourceMatched, "unverified multiplication cryptarithm was opened without source evidence");
