@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'boarding-school-math/**'
       - 'fields-classic/**'
       - 'hselementary/**'
       - 'geometry/**'
@@ -39,6 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Stage sites and landing menu
         run: |
+          mkdir -p _site/boarding-school-math
           mkdir -p _site/fields-classic
           mkdir -p _site/hselementary
           mkdir -p _site/geometry
@@ -51,6 +53,7 @@ jobs:
           mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
+          cp -R boarding-school-math/. _site/boarding-school-math/
           cp -R fields-classic/. _site/fields-classic/
           cp -R hselementary/. _site/hselementary/
           cp -R geometry/. _site/geometry/
