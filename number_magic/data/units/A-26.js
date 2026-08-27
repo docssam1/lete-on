@@ -15,6 +15,14 @@ window.NM_UNITS['A-26'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'999에 1을 더하면 1000. 옛 우리말로 1000은 뭐라고 불렀을까요?',
+        en:'Add 1 to 999 and you get 1,000. What did old Korean call a thousand?',
+        zh:'999加1就是1000。古时候的韩语管一千叫什么？' },
+      history:{ ko:'즈믄이라고 했어요. 100은 온, 1000은 즈믄이었죠. 아주 여러 번을 뜻하는 골백번의 골도 굉장히 큰 수를 가리키던 옛말이에요. 지금은 한자에서 온 백, 천에 밀려 거의 쓰이지 않지만, 999에 1을 더해 딱 떨어지는 1000을 만드는 마법은 그때나 지금이나 똑같습니다.',
+        en:'They called it jeumeun. A hundred was on, a thousand was jeumeun, and the gol in golbaekbeon — meaning countless times — once named a huge number of its own. Sino-Korean baek and cheon have almost pushed those words out, but the trick of adding 1 to 999 to land on a clean 1,000 is the same now as it was then.',
+        zh:'叫做jeumeun（즈믄）。一百是on（온），一千是jeumeun，而表示无数次的golbaekbeon里的gol，从前也是一个很大的数的名字。如今它们几乎被汉字词的百、千取代了，但给999加上1、凑成整整1000的魔法，古今都一样。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 999 = 1000 - 1', en:'1) 999 = 1000 − 1', zh:'① 999 = 1000 - 1' },

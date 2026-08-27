@@ -1,0 +1,105 @@
+@import url("./prototypes/home-v2.css");
+
+.site-footer a { color: inherit; text-underline-offset: 3px; }
+.role-tabs button { min-height: 44px; }
+
+.goal-grade-control {
+  margin-top: 28px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: auto minmax(120px, .55fr) 1fr;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 14px;
+  background: rgba(255,255,255,.07);
+}
+.goal-grade-control label { font-size: .7rem; font-weight: 850; }
+.goal-grade-control select {
+  min-height: 44px;
+  padding: 8px 34px 8px 12px;
+  color: #0b1d2e;
+  border: 1px solid rgba(255,255,255,.45);
+  border-radius: 10px;
+  background: white;
+  font-size: .78rem;
+  font-weight: 800;
+}
+.goal-grade-control span { color: rgba(255,255,255,.7); font-size: .67rem; line-height: 1.45; }
+
+.goal-start-flow {
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  list-style: none;
+}
+.goal-start-flow li {
+  min-height: 72px;
+  padding: 11px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 11px;
+  background: rgba(255,255,255,.055);
+}
+.goal-detail { scroll-margin-top: 82px; }
+.goal-start-flow b, .goal-start-flow small { display: block; }
+.goal-start-flow b { color: #73efae; font-size: .61rem; letter-spacing: .06em; }
+.goal-start-flow small { margin-top: 6px; color: rgba(255,255,255,.76); font-size: .64rem; line-height: 1.4; }
+
+.button-original { color: #0b1d2e; border-color: #f4c94f; background: #f4c94f; }
+.button-original[hidden] { display: none; }
+.goal-status-note {
+  margin-top: 16px !important;
+  padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  background: rgba(0,0,0,.12);
+}
+.goal-status-note:empty { display: none; }
+
+.omr-roadmap {
+  margin-top: 18px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #d8d3c8;
+  border-radius: 18px;
+  background: rgba(255,255,255,.48);
+}
+.omr-roadmap div { min-height: 76px; padding: 12px; border-radius: 12px; background: #fffdf8; }
+.omr-roadmap span, .omr-roadmap strong, .omr-roadmap small { display: block; }
+.omr-roadmap span { color: #4975ef; font-size: .62rem; font-weight: 900; }
+.omr-roadmap strong { margin-top: 6px; font-size: .78rem; }
+.omr-roadmap small { margin-top: 4px; color: #65717c; font-size: .64rem; line-height: 1.45; }
+.omr-roadmap > i { color: #4975ef; font-style: normal; font-weight: 900; }
+.diagnostic-link { margin: 18px 0 0; }
+
+@media (max-width: 720px) {
+  .goal-list {
+    margin-inline: -14px;
+    padding: 0 14px 10px;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  .goal-button { min-width: min(78vw, 285px); flex: 0 0 auto; scroll-snap-align: center; }
+  .goal-grade-control { grid-template-columns: 1fr 1fr; }
+  .goal-grade-control span { grid-column: 1 / -1; }
+  .goal-start-flow { grid-template-columns: 1fr; }
+  .goal-start-flow li { min-height: 0; }
+  .omr-roadmap { grid-template-columns: 1fr; }
+  .omr-roadmap > i { text-align: center; transform: rotate(90deg); }
+}
+
+@media (max-width: 360px) {
+  .site-header { gap: 8px; }
+  .brand { min-width: 0; }
+  .brand span:last-child { white-space: nowrap; }
+  .login-link { padding-inline: 8px; }
+  .goal-grade-control { grid-template-columns: 1fr; }
+  .goal-grade-control span { grid-column: auto; }
+}

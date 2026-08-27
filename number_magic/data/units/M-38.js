@@ -21,6 +21,14 @@ window.NM_UNITS['M-38'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'곱셈을 덧셈으로 바꿀 수 있다면 얼마나 편할까요? 로그가 바로 그 일을 해요.',
+        en:'What if multiplication could be turned into addition? That is exactly what a logarithm does.',
+        zh:'如果乘法能变成加法该多方便？对数做的正是这件事。' },
+      history:{ ko:'네이피어(1550~1617)는 곱셈과 나눗셈의 번거로움을 덜려고 로그를 만들었어요. 오늘날에는 계산기로 곱하니 로그표를 쓸 일은 없지만, 로그 자체는 자연과학·사회과학까지 퍼져 지금도 계속 넓어지고 있어요.',
+        en:'John Napier (1550-1617) created logarithms to take the drudgery out of multiplying and dividing. Nobody reaches for a log table today, but the idea itself spread into the natural and social sciences and keeps widening.',
+        zh:'纳皮尔(1550-1617)创造对数，是为了免去乘除的繁琐。今天没人再查对数表了，但对数这个概念本身扩展到了自然科学与社会科学，至今仍在延伸。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 로그의 덧셈 = 진수의 곱셈',en:'1) Adding logs = multiplying arguments',zh:'① 对数相加=真数相乘'},

@@ -27,9 +27,18 @@ Every content record also declares:
 
 The Common Core standards are not treated as a national promotion cut score. Each adopting school must version and own its thresholds.
 
+## Public entry points
+
+- `index.html` is the goal-first product home: school mathematics, Singapore mastery, Math Kangaroo, SASMO, and AMC 8 lead to distinct explanations and grade choices.
+- `catalog.html` preserves the previous data-driven curriculum, unit, cadence, and student/teacher resource-plan viewer.
+- `diagnostic.html` is the public Grade 6 placement-blueprint viewer: it explains the 42 locked slots, coverage balance, release gates, and teacher/student/parent flows without publishing prompts, answers, learner records, or a placement decision.
+- `competition/official-original-links.js` records verified organizer-hosted English-original entry URLs. The first release supports SASMO Grade 1–8 where an exact organizer page has been verified; K2 stays visibly locked rather than being guessed from a Grade 1 paper.
+
+Official contest problems are not translated. UI guidance and independently authored GFIELD materials may be localized, but an official original opens in English on the organizer's site. GFIELD does not fetch, proxy, cache, embed, or store a contest-paper copy in the public repository.
+
 ## Publication rule
 
-Only `owned_original` and `permissive_reviewed` material can enter a public build, and only after rights and bilingual metadata review. Licensed, noncommercial, permission-required, or unclear-provenance source material remains locked or private. A repository or dataset code license is not assumed to grant rights to every underlying textbook image or problem.
+Only `owned_original` and `permissive_reviewed` material can enter a public build, and only after rights and metadata review. Licensed, noncommercial, permission-required, or unclear-provenance source material remains locked or private. An organizer-hosted official-original URL may be published as metadata when its host, year/grade coverage, language, and verification date are recorded; that does not authorize a local copy. A repository or dataset code license is not assumed to grant rights to every underlying textbook image or problem.
 
 ## Run checks
 

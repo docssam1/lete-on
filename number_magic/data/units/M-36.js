@@ -21,6 +21,14 @@ window.NM_UNITS['M-36'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'2의 1/2제곱은 왜 √2일까요? 지수 자리에 분수가 들어가면 무슨 뜻일까요?',
+        en:'Why is 2 to the power 1/2 equal to √2? What does a fraction in the exponent even mean?',
+        zh:'2的1/2次方为什么等于√2？指数位置放分数是什么意思？' },
+      history:{ ko:'16세기 후반, 항해술과 천문학은 자릿수가 어마어마한 수를 곱하고 나누어야 했어요. 계산은 전부 손으로 했으니 그 일은 차라리 고통에 가까웠죠. 지수와 로그는 그 고통을 덜려는 아주 현실적인 이유에서 태어났어요.',
+        en:'In the late 1500s, navigation and astronomy demanded multiplying and dividing numbers with enormous numbers of digits — all by hand. It was closer to suffering than to arithmetic. Exponents and logarithms were born from the very practical wish to make that pain go away.',
+        zh:'16世纪后期，航海和天文学需要对位数极多的数做乘除，而且全靠手算，那与其说是计算不如说是折磨。指数和对数正是为减轻这种痛苦而诞生的。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 근호 지수를 분수 지수로',en:'1) A root\'s index becomes a fraction exponent',zh:'① 把根号的指数写成分数指数'},

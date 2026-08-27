@@ -18,6 +18,14 @@ window.NM_UNITS['N-01'] = {
       zh:'和努米一起数数吧！点一点——一、二、三！' } },
 
   discover:{
+    story:{
+      hook:{ ko:'아직 숫자가 없던 아주 먼 옛날, 양치기는 양이 다 돌아왔는지 어떻게 알았을까요?',
+        en:'Long ago, before numbers existed, how did a shepherd know all the sheep had come home?',
+        zh:'在还没有数字的远古，牧羊人怎么知道羊都回来了呢？' },
+      history:{ ko:'양 한 마리가 나갈 때마다 조약돌 하나를 주머니에 넣었어요. 저녁에 돌아온 양마다 조약돌을 하나씩 꺼내고, 돌이 남으면 그만큼 안 돌아온 거죠. 숫자를 몰라도 하나씩 짝지으면 셀 수 있어요. 지금도 선생님이 현장학습에서 아이들을 하나하나 짚으며 세는 것과 똑같은 방법이랍니다.',
+        en:'For every sheep that left, the shepherd dropped one pebble in a pouch. At dusk he took one pebble out for each returning sheep — leftover pebbles meant missing sheep. Pair things up one to one and you can count without knowing a single number. It is exactly what a teacher does today, tapping each child on a field trip.',
+        zh:'每出去一只羊，牧羊人就往袋里放一颗小石子。傍晚每回来一只羊就取出一颗，剩下的石子就是没回来的羊。一一对应，不认识数字也能数清。今天老师在郊游时一个一个点人数，用的正是同一个办法。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 하나씩 짚어요',en:'1) Touch one by one',zh:'① 一个一个点'},

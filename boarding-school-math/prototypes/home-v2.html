@@ -3,42 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="미국 K–8 영역별 진단부터 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8까지 연결하는 비수익 보딩스쿨 수학 프로그램">
-  <title>GFIELD Boarding School Math</title>
-  <link rel="stylesheet" href="./home.css">
+  <meta name="description" content="GFIELD Boarding School Math 제품 방향과 첫 화면 반응형 설계 프로토타입">
+  <title>GFIELD Math — Home v2 Prototype</title>
+  <link rel="stylesheet" href="./home-v2.css">
 </head>
 <body>
   <a class="skip-link" href="#main">본문으로 바로가기</a>
 
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="GFIELD Math home">
+    <a class="brand" href="#top" aria-label="GFIELD Math prototype home">
       <span class="brand-mark" aria-hidden="true">G</span>
       <span>GFIELD <strong>MATH</strong></span>
     </a>
-    <nav class="desktop-nav" aria-label="주요 탐색">
+    <nav class="desktop-nav" aria-label="프로토타입 탐색">
       <a href="#goals">목표 선택</a>
       <a href="#system">학습 시스템</a>
       <a href="#map">K–8 실력 지도</a>
       <a href="#roles">역할별 화면</a>
     </nav>
     <div class="header-actions">
-      <span class="prototype-badge">비수익 교육</span>
-      <a class="login-link" href="./catalog.html">커리큘럼 상세</a>
+      <span class="prototype-badge">설계 프로토타입</span>
+      <a class="login-link" href="#roles">교사용 데모</a>
     </div>
   </header>
 
-  <main id="main" tabindex="-1">
+  <main id="main">
     <section class="hero shell" id="top">
       <div class="hero-copy-block">
         <p class="eyebrow">K–8 BOARDING SCHOOL MATHEMATICS</p>
         <h1>수학 실력은<br><span>학년 하나로</span><br>보이지 않습니다.</h1>
         <p class="hero-lede">미국 K–8 영역별 실력을 진단하고, 싱가포르식 깊은 숙달과 Math Kangaroo·SASMO·AMC 8 목표를 하나의 검증 가능한 성장 경로로 연결합니다.</p>
         <div class="hero-actions" aria-label="주요 시작 경로">
-          <a class="button button-primary" href="./diagnostic.html">진단 설계 보기 <span aria-hidden="true">→</span></a>
+          <a class="button button-primary" href="#diagnostic">진단 시작 <span aria-hidden="true">→</span></a>
           <a class="button button-secondary" href="#goals">목표 경시 찾기</a>
-          <a class="text-link" href="#roles">학생·교사 화면 보기 <span aria-hidden="true">↗</span></a>
+          <a class="text-link" href="#roles">교사용 데모 보기 <span aria-hidden="true">↗</span></a>
         </div>
-        <p class="hero-note"><strong>12문항</strong>은 빠른 스크리너 · <strong>36–60문항</strong>은 전체 배치 진단 설계 기준 · 현재 실제 문항은 검수 전 잠금</p>
+        <p class="hero-note"><strong>12문항</strong>은 빠른 스크리너 · <strong>36–60문항</strong>은 전체 배치 진단 설계 기준</p>
       </div>
 
       <aside class="evidence-card" aria-label="샘플 학생 분석 화면">
@@ -58,34 +58,34 @@
 
         <div class="domain-bars">
           <div class="domain-row">
-            <div class="domain-label"><span>비와 비례</span><small>보완 필요 · 샘플 8문항</small></div>
-            <div class="bar" role="progressbar" aria-label="비와 비례 샘플 지표" aria-valuemin="0" aria-valuemax="100" aria-valuenow="58"><i style="--value:58%"></i></div><strong>58</strong>
+            <div class="domain-label"><span>비와 비례</span><small>보완 필요 · 8문항</small></div>
+            <div class="bar"><i style="--value:58%"></i></div><strong>58</strong>
           </div>
           <div class="domain-row">
-            <div class="domain-label"><span>수 체계</span><small>학교 핵심 · 샘플 9문항</small></div>
-            <div class="bar" role="progressbar" aria-label="수 체계 샘플 지표" aria-valuemin="0" aria-valuemax="100" aria-valuenow="72"><i style="--value:72%"></i></div><strong>72</strong>
+            <div class="domain-label"><span>수 체계</span><small>학교 핵심 · 9문항</small></div>
+            <div class="bar"><i style="--value:72%"></i></div><strong>72</strong>
           </div>
           <div class="domain-row">
-            <div class="domain-label"><span>식과 방정식</span><small>근거 부족 · 샘플 7문항</small></div>
-            <div class="bar" role="progressbar" aria-label="식과 방정식 샘플 지표" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><i style="--value:64%"></i></div><strong>64</strong>
+            <div class="domain-label"><span>식과 방정식</span><small>근거 부족 · 7문항</small></div>
+            <div class="bar"><i style="--value:64%"></i></div><strong>64</strong>
           </div>
           <div class="domain-row">
-            <div class="domain-label"><span>기하</span><small>경시 강점 · 샘플 10문항</small></div>
-            <div class="bar" role="progressbar" aria-label="기하 샘플 지표" aria-valuemin="0" aria-valuemax="100" aria-valuenow="86"><i class="challenge-bar" style="--value:86%"></i></div><strong>86</strong>
+            <div class="domain-label"><span>기하</span><small>경시 강점 · 10문항</small></div>
+            <div class="bar"><i class="challenge-bar" style="--value:86%"></i></div><strong>86</strong>
           </div>
           <div class="domain-row">
-            <div class="domain-label"><span>통계와 확률</span><small>깊은 숙달 · 샘플 8문항</small></div>
-            <div class="bar" role="progressbar" aria-label="통계와 확률 샘플 지표" aria-valuemin="0" aria-valuemax="100" aria-valuenow="77"><i class="mastery-bar" style="--value:77%"></i></div><strong>77</strong>
+            <div class="domain-label"><span>통계와 확률</span><small>깊은 숙달 · 8문항</small></div>
+            <div class="bar"><i class="mastery-bar" style="--value:77%"></i></div><strong>77</strong>
           </div>
         </div>
 
         <div class="next-task">
           <div>
-            <p class="micro-label">NEXT LESSON · SAMPLE WEEK 03 / 12</p>
+            <p class="micro-label">NEXT LESSON · WEEK 03 / 12</p>
             <strong>비례식 전에, 비를 모델로 다시 보기</strong>
             <span>Concept model → guided set → SASMO transfer</span>
           </div>
-          <div class="week-ring" aria-label="12주 중 3주 샘플 진행"><span>3</span><small>/12</small></div>
+          <div class="week-ring" aria-label="12주 중 3주 진행"><span>3</span><small>/12</small></div>
         </div>
       </aside>
     </section>
@@ -104,58 +104,45 @@
           <p class="eyebrow">CHOOSE THE OUTCOME</p>
           <h2>먼저 학년이 아니라<br>목표를 선택합니다.</h2>
         </div>
-        <p>학교 과정, 학습법, 대회는 서로 다른 종류입니다. 목표와 학년을 고르면 공식 형식, 원문 진입, 필요한 진단 경로가 정확히 좁혀집니다.</p>
+        <p>학교 과정, 학습법, 대회는 서로 다른 종류입니다. 하나를 고르면 필요한 학년·영역·진단이 뒤에서 자동으로 좁혀집니다.</p>
       </div>
 
       <div class="goal-layout">
-        <div class="goal-list" role="tablist" aria-label="수학 학습 목표" aria-orientation="vertical">
-          <button class="goal-button" id="goal-tab-school" type="button" role="tab" aria-controls="goal-detail" aria-selected="false" tabindex="-1" data-goal="school">
+        <div class="goal-list" role="tablist" aria-label="수학 학습 목표">
+          <button class="goal-button" type="button" role="tab" aria-selected="false" data-goal="school">
             <span class="goal-index">01</span><span><strong>학교 수학·승급 상담</strong><small>미국 K–8 · 학년 × 영역 진단</small></span><span aria-hidden="true">→</span>
           </button>
-          <button class="goal-button" id="goal-tab-singapore" type="button" role="tab" aria-controls="goal-detail" aria-selected="false" tabindex="-1" data-goal="singapore">
+          <button class="goal-button" type="button" role="tab" aria-selected="false" data-goal="singapore">
             <span class="goal-index">02</span><span><strong>싱가포르식 깊은 숙달</strong><small>모델 메서드 · 성찰 · 비정형 확장</small></span><span aria-hidden="true">→</span>
           </button>
-          <button class="goal-button" id="goal-tab-kangaroo" type="button" role="tab" aria-controls="goal-detail" aria-selected="false" tabindex="-1" data-goal="kangaroo">
+          <button class="goal-button" type="button" role="tab" aria-selected="false" data-goal="kangaroo">
             <span class="goal-index">03</span><span><strong>Math Kangaroo</strong><small>G1–8 · 공식 두 학년 밴드</small></span><span aria-hidden="true">→</span>
           </button>
-          <button class="goal-button" id="goal-tab-sasmo" type="button" role="tab" aria-controls="goal-detail" aria-selected="true" tabindex="0" data-goal="sasmo">
+          <button class="goal-button" type="button" role="tab" aria-selected="true" data-goal="sasmo">
             <span class="goal-index">04</span><span><strong>SASMO</strong><small>K2·G1–8 · 학년별 시험지</small></span><span aria-hidden="true">→</span>
           </button>
-          <button class="goal-button" id="goal-tab-amc" type="button" role="tab" aria-controls="goal-detail" aria-selected="false" tabindex="-1" data-goal="amc">
+          <button class="goal-button" type="button" role="tab" aria-selected="false" data-goal="amc">
             <span class="goal-index">05</span><span><strong>AMC 8</strong><small>공식 G8 이하 · GFIELD 권장 G6–8</small></span><span aria-hidden="true">→</span>
           </button>
         </div>
 
-        <article class="goal-detail" id="goal-detail" role="tabpanel" aria-labelledby="goal-tab-sasmo" tabindex="0" aria-live="polite">
+        <article class="goal-detail" id="goal-detail" role="tabpanel" aria-live="polite">
           <div class="goal-detail-top">
             <span class="type-pill" id="goal-type">대회 목표</span>
-            <span class="verified-pill" id="goal-verified">공식 정보 확인일 불러오는 중</span>
+            <span class="verified-pill" id="goal-verified">공식 정보 · 2026-08-27 확인</span>
           </div>
-
-          <div class="goal-grade-control">
-            <label for="goal-grade-select">준비 학년</label>
-            <select id="goal-grade-select" aria-describedby="goal-grade-note"></select>
-            <span id="goal-grade-note">미국 Grade 6 기준</span>
-          </div>
-
           <h3 id="goal-title">SASMO Grade 6 준비</h3>
           <p id="goal-summary">싱가포르식 숙달과 SASMO는 같지 않습니다. 학년별 공식 형식을 확인한 뒤 학교 수학의 선수개념과 비정형 추론을 함께 준비합니다.</p>
-
-          <div class="goal-detail-actions">
-            <a class="button button-light" id="goal-primary" href="#diagnostic">준비 진단 구조 보기</a>
-            <a class="button button-original" id="goal-original" href="https://form.simcc.org/2019-sasmo-year-paper/" target="_blank" rel="noopener noreferrer">공식 영어 원문 열기 ↗</a>
-            <a class="official-link" id="goal-source" href="https://sasmo.simcc.org/" target="_blank" rel="noopener noreferrer">공식 정보 확인 ↗</a>
-          </div>
-          <p class="goal-status-note" id="goal-status-note"></p>
-
           <dl class="goal-facts">
             <div><dt>참가 범위</dt><dd id="goal-eligibility">K2, G1–12 · 학년별 다른 시험지</dd></div>
             <div><dt>공식 형식</dt><dd id="goal-format">G1–12: 90분 · 25문항</dd></div>
-            <div><dt>GFIELD 경로</dt><dd id="goal-route">학년 확인 → 공식 원문 → 결과 기록 → 영역 분석 → 맞춤 수업</dd></div>
+            <div><dt>GFIELD 경로</dt><dd id="goal-route">학년 확인 → 준비 진단 → 유형 훈련 → 시간제한 모의 → 오답 복기</dd></div>
           </dl>
-
-          <ol class="goal-start-flow" id="goal-start-flow" aria-label="선택 목표 시작 순서"></ol>
-          <p class="rights-note" id="goal-rights-note"><span aria-hidden="true">ⓘ</span> 공식 원문은 주최기관 사이트에서 영어로 열립니다. GFIELD는 원문을 복제하거나 번역하지 않습니다.</p>
+          <div class="goal-detail-actions">
+            <a class="button button-light" id="goal-primary" href="#diagnostic">Grade 6 준비 진단 설계</a>
+            <a class="official-link" id="goal-source" href="https://sasmo.simcc.org/" target="_blank" rel="noreferrer">공식 정보 확인 ↗</a>
+          </div>
+          <p class="rights-note"><span aria-hidden="true">ⓘ</span> GFIELD 자체 제작·검수 문항은 직접 제공하고, 공식 기출은 허가된 비공개 제공 또는 주최기관 링크로 연결합니다.</p>
         </article>
       </div>
     </section>
@@ -173,7 +160,7 @@
           <li><span>01</span><strong>진단</strong><p>목적별 청사진으로 현재 근거 수집</p></li>
           <li><span>02</span><strong>지도</strong><p>학년 × 영역 × 스킬 위치와 오류 분류</p></li>
           <li><span>03</span><strong>학습</strong><p>개념·모델·연습·워크북·수업</p></li>
-          <li><span>04</span><strong>도전</strong><p>공식 원문·비정형 문제·제한시간 전이</p></li>
+          <li><span>04</span><strong>도전</strong><p>다른 표현, 비정형 문제, 제한시간 전이</p></li>
           <li><span>05</span><strong>재검증</strong><p>7일 뒤 유지 확인과 교사 코멘트</p></li>
         </ol>
       </div>
@@ -201,14 +188,6 @@
           <span class="status-chip planned">문항·UI 검수 필요</span>
         </article>
       </div>
-      <p class="diagnostic-link"><a class="text-link" href="./diagnostic.html">Grade 6 교사·학생·보호자용 진단 설계 보드 보기 <span aria-hidden="true">↗</span></a></p>
-      <aside class="omr-roadmap" aria-label="공식 대회 원문과 GFIELD 분석 연결 상태">
-        <div><span>01</span><strong>공식 영어 원문</strong><small>주최기관에서 바로 열기</small></div>
-        <i aria-hidden="true">→</i>
-        <div><span>02</span><strong>GFIELD OMR</strong><small>문항 번호별 응답 기록 · 다음 구현</small></div>
-        <i aria-hidden="true">→</i>
-        <div><span>03</span><strong>영역·전략 분석</strong><small>채점 계약 검수 후 공개</small></div>
-      </aside>
     </section>
 
     <section class="section map-section" id="map">
@@ -218,15 +197,15 @@
             <p class="eyebrow">K–8 SKILL MAP</p>
             <h2>학년을 고르면<br>영역이 펼쳐집니다.</h2>
           </div>
-          <p>현재 94개 클러스터 앵커를 실제 실력 근거가 보이는 지도에 연결하는 설계입니다. 아래 상태와 점수는 화면 구조를 설명하는 샘플입니다.</p>
+          <p>현재 94개 클러스터 앵커를 실제 실력 근거가 보이는 지도에 연결하는 설계입니다. 아래 상태는 화면 구조를 설명하는 샘플입니다.</p>
         </div>
         <div class="grade-tabs" id="grade-tabs" role="tablist" aria-label="미국 학년 선택"></div>
-        <div class="skill-map-card" id="skill-map-panel" role="tabpanel" aria-live="polite">
+        <div class="skill-map-card">
           <div class="skill-map-head">
-            <div><span class="grade-orbit" id="selected-grade">G6</span><div><p class="micro-label">SAMPLE · ENROLLED GRADE</p><h3 id="grade-title">Grade 6 영역별 근거</h3></div></div>
+            <div><span class="grade-orbit" id="selected-grade">G6</span><div><p class="micro-label">ENROLLED GRADE</p><h3 id="grade-title">Grade 6 영역별 근거</h3></div></div>
             <div class="map-legend"><span><i class="needs"></i> 보완</span><span><i class="ready"></i> 학교 핵심</span><span><i class="deep"></i> 깊은 숙달</span><span><i class="not-assessed"></i> 미진단</span></div>
           </div>
-          <div class="skill-rows" id="skill-rows"></div>
+          <div class="skill-rows" id="skill-rows" aria-live="polite"></div>
           <p class="map-footnote" id="map-footnote">Grade 6 · 5개 영역 · 10개 클러스터 앵커</p>
         </div>
       </div>
@@ -241,18 +220,23 @@
         <p>역할 토글은 권한이 아닙니다. 로그인 뒤에는 학생, 교사, 학부모가 서로 다른 홈과 정보 범위를 가져야 합니다.</p>
       </div>
       <div class="role-tabs" role="tablist" aria-label="역할별 제품 미리보기">
-        <button id="role-tab-student" type="button" role="tab" aria-controls="role-preview" aria-selected="true" tabindex="0" data-role-preview="student">학생용</button>
-        <button id="role-tab-teacher" type="button" role="tab" aria-controls="role-preview" aria-selected="false" tabindex="-1" data-role-preview="teacher">교사용</button>
-        <button id="role-tab-parent" type="button" role="tab" aria-controls="role-preview" aria-selected="false" tabindex="-1" data-role-preview="parent">학부모용</button>
+        <button type="button" role="tab" aria-selected="true" data-role-preview="student">학생용</button>
+        <button type="button" role="tab" aria-selected="false" data-role-preview="teacher">교사용</button>
+        <button type="button" role="tab" aria-selected="false" data-role-preview="parent">학부모용</button>
       </div>
-      <article class="role-preview" id="role-preview" role="tabpanel" aria-labelledby="role-tab-student" tabindex="0" aria-live="polite">
+      <article class="role-preview" id="role-preview" role="tabpanel" aria-live="polite">
         <div class="role-copy">
           <p class="micro-label" id="role-eyebrow">STUDENT · TODAY</p>
           <h3 id="role-title">오늘 해야 할 한 가지가 먼저 보입니다.</h3>
           <p id="role-description">현재 위치와 목표를 연결해 다음 수업, 연습, 유지 확인을 한 화면에 보여줍니다.</p>
           <ul id="role-nav"><li>오늘</li><li>내 스킬 지도</li><li>학습·재확인</li><li>경시 도전</li><li>성장 기록</li></ul>
         </div>
-        <div class="mini-product" id="mini-product"></div>
+        <div class="mini-product" id="mini-product">
+          <div class="mini-product-top"><span>오늘의 경로</span><b>32분</b></div>
+          <div class="mini-task primary-task"><small>01 · 개념</small><strong>비를 bar model로 표현하기</strong><span>12분 · Guided</span></div>
+          <div class="mini-task"><small>02 · 적용</small><strong>같은 비, 다른 표현 6문제</strong><span>10분 · Practice</span></div>
+          <div class="mini-task"><small>03 · 도전</small><strong>SASMO transfer set</strong><span>10분 · Challenge</span></div>
+        </div>
       </article>
     </section>
 
@@ -262,25 +246,23 @@
         <h2 id="availability-title">보이는 것과 되는 것을<br>같게 만듭니다.</h2>
       </div>
       <div class="availability-grid">
-        <article><span class="status-chip available">현재 기반 있음</span><strong>K–8 구조·94 앵커·대회 형식·SASMO 공식 영어 원문 외부 진입</strong></article>
-        <article><span class="status-chip planned">다음 구현</span><strong>진단/OMR·문항별 채점·영역 분석·맞춤 워크북·역할별 로그인 홈</strong></article>
-        <article><span class="status-chip locked">검수 전 잠금</span><strong>실제 진단 문항·답·해설·학생 기록·자동 승급 결정</strong></article>
+        <article><span class="status-chip available">현재 기반 있음</span><strong>K–8 구조·94 앵커·진단/리포트 계약·대회 메타데이터</strong></article>
+        <article><span class="status-chip planned">다음 구현</span><strong>진단/OMR·영역 분석·경시 진입·역할별 홈·샘플 리포트</strong></article>
+        <article><span class="status-chip locked">검수 전 잠금</span><strong>실제 문항·답·해설·학생 기록·공식 기출 번역·승급 결정</strong></article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <span>GFIELD Boarding School Math · 비수익 교육 프로젝트</span>
-    <span><a href="./catalog.html">기존 커리큘럼 상세 보기</a> · Product home v2 · 2026-08-28</span>
+    <span>GFIELD Boarding School Math</span>
+    <span>Product UX Prototype · 2026-08-27 · Not production</span>
   </footer>
 
-  <script src="./shared/program-contract.js"></script>
-  <script src="./shared/program-catalog.js"></script>
-  <script src="./curriculum/us-k8-domain-spine.js"></script>
-  <script src="./curriculum/us-k8-cluster-map.js"></script>
-  <script src="./curriculum/us-k8-content-registry.js"></script>
-  <script src="./competition/k8-competition-profiles.js"></script>
-  <script src="./competition/official-original-links.js"></script>
-  <script src="./home.js"></script>
+  <script src="../shared/program-contract.js"></script>
+  <script src="../curriculum/us-k8-domain-spine.js"></script>
+  <script src="../curriculum/us-k8-cluster-map.js"></script>
+  <script src="../curriculum/us-k8-content-registry.js"></script>
+  <script src="../competition/k8-competition-profiles.js"></script>
+  <script src="./home-v2.js"></script>
 </body>
 </html>

@@ -22,6 +22,14 @@ window.NM_UNITS['H-13'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'계산기가 없던 시절, 천문학자들은 열두 자리 수끼리 손으로 곱해야 했어요. 어떻게 버텼을까요?',
+        en:'Before calculators, astronomers multiplied twelve-digit numbers by hand. How did they survive it?',
+        zh:'没有计算器的年代，天文学家要手算十二位数相乘。他们是怎么撑过来的？' },
+      history:{ ko:'로그표를 썼어요. 곱셈을 덧셈으로 바꿔 주는 표라서, 두 수의 로그값을 찾아 더하고 다시 되돌리면 답이 나왔죠. 우리가 1000 × 1000만을 0의 개수만 세어 100억이라고 바로 아는 것도, 곱셈을 자릿수 덧셈으로 바꾸는 같은 아이디어의 초등판이에요.',
+        en:'They used log tables, which turn multiplication into addition: look up two logarithms, add them, convert back. When we count zeros to see that 1,000 × 10,000,000 is 10 billion, we are doing the elementary version of that same trade — multiplication swapped for adding place values.',
+        zh:'他们用对数表——把乘法变成加法：查出两个数的对数，相加，再换回来。我们数0就知道1000 × 1000万是100亿，正是同一个想法的小学版：把乘法换成位数相加。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 0을 다 세면 단위가 보여요',en:'1) Count every zero to see the unit',zh:'① 数完所有0就能看出单位'},

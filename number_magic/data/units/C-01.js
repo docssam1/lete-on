@@ -21,6 +21,14 @@ window.NM_UNITS['C-01'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'지구의 무게는 5,980,000,000,000,000,000,000,000 kg이에요. 0이 몇 개인지 세어 봤나요?',
+        en:'Earth weighs 5,980,000,000,000,000,000,000,000 kg. Did you count the zeros?',
+        zh:'地球的质量是5,980,000,000,000,000,000,000,000公斤。数过有几个0吗？' },
+      history:{ ko:'5.98 × 10²⁴ kg — 한 줄이면 끝이에요. 0을 하나 더 쓰거나 빠뜨리면 열 배가 틀리니, 큰 수일수록 거듭제곱으로 적는 편이 안전해요. 휴대폰 저장 용량 1TB가 10¹² 바이트인 것도 같은 표기법입니다.',
+        en:'5.98 × 10²⁴ kg — one short line. One extra or missing zero is a tenfold error, so the bigger the number the safer powers become. The 1 TB on a phone is the same notation: 10¹² bytes.',
+        zh:'5.98 × 10²⁴公斤——一行就够了。多写或漏写一个0就差十倍，数越大用乘方写越安全。手机的1TB是10¹²字节，用的也是同一套记法。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 거듭제곱이란?',en:'1) What are powers?',zh:'① 什么是幂？'},

@@ -21,6 +21,14 @@ window.NM_UNITS['M-02'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'용돈 5만 원이 있는데 빌린 돈이 3만 원이에요. 지금 내 돈은 얼마일까요?',
+        en:'You have 50,000 won of pocket money and owe 30,000 won. How much is really yours?',
+        zh:'你有5万韩元零花钱，还欠3万韩元。你实际有多少钱？' },
+      history:{ ko:'인도의 수학자들은 서기 628년 무렵 이미 재산은 +, 빚은 −로 두고 계산 규칙을 정리했어요. 음수는 어려워서 늦게 나온 게 아니라, 장사와 이자 계산이라는 아주 실용적인 필요에서 먼저 태어났어요.',
+        en:'Around 628 CE, Indian mathematicians were already writing assets as + and debts as −, with rules for combining them. Negative numbers did not arrive late because they were hard — they arrived early, out of the very practical business of trade and interest.',
+        zh:'大约公元628年，印度数学家已经把财产记作+、债务记作−，并整理出运算规则。负数出现得并不晚——它来自贸易和利息计算这种非常实际的需要。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 부호가 같으면 더하기',en:'1) Same sign — just add',zh:'① 同号就相加'},
