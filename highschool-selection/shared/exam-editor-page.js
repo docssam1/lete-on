@@ -44,6 +44,10 @@
     readinessDetail: document.getElementById("readiness-detail"),
     recent: document.getElementById("recent-drafts"),
     recentButtons: document.getElementById("recent-draft-buttons"),
+    questionPageDialog: document.getElementById("question-page-dialog"),
+    questionPageTitle: document.getElementById("question-page-title"),
+    questionPageImage: document.getElementById("question-page-image"),
+    closeQuestionPage: document.getElementById("close-question-page"),
     toast: document.getElementById("editor-toast")
   };
 
@@ -119,6 +123,19 @@
       throw error;
     }
     return data;
+  }
+
+  async function requestImage(path) {
+    if (!apiBase) throw Object.assign(new Error("운영 편집 서버가 연결되지 않았습니다."), { status: 503 });
+    const response = await fetch(apiBase + path, { credentials: "include", headers: { Accept: "image/png" } });
+    if (!response.ok) {
+      const data = await response.json().catch(function () { return {}; });
+      if (response.status === 401) loginRedirect();
+      const error = new Error(data.message || "원본 페이지를 불러오지 못했습니다.");
+      error.status = response.status;
+      throw error;
+    }
+    return response.blob();
   }
 
   function selectedPlacement() {
@@ -265,11 +282,18 @@
         const badges = make("div", "candidate-badges");
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
         badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
+        badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
         main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges);
-        const button = make("button", "ghost compact-button", "조립 전 검수");
-        button.type = "button";
-        button.disabled = true;
-        row.append(main, button);
+        const actions = make("div", "candidate-catalog-actions");
+        const preview = make("button", "ghost compact-button", candidate.pagePreviewAvailable ? "원본 페이지" : "원본 준비 중");
+        preview.type = "button";
+        preview.disabled = !candidate.pagePreviewAvailable;
+        if (candidate.pagePreviewAvailable) preview.dataset.pagePreviewId = candidate.questionId;
+        const assemble = make("button", "ghost compact-button", "조립 전 검수");
+        assemble.type = "button";
+        assemble.disabled = true;
+        actions.append(preview, assemble);
+        row.append(main, actions);
         elements.candidateList.append(row);
       });
       elements.candidateCount.textContent = `${state.candidates.length}개`;
@@ -660,6 +684,22 @@
   });
 
   elements.candidateList.addEventListener("click", async function (event) {
+    const preview = event.target.closest("[data-page-preview-id]");
+    if (preview && !preview.disabled) {
+      setBusy(preview, true, "불러오는 중");
+      try {
+        const blob = await requestImage(`/admin/question-bank/items/${encodeURIComponent(preview.dataset.pagePreviewId)}/page-preview`);
+        if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
+        elements.questionPageImage.src = URL.createObjectURL(blob);
+        elements.questionPageTitle.textContent = `${preview.dataset.pagePreviewId} 원본 페이지`;
+        elements.questionPageDialog.showModal();
+      } catch (error) {
+        setAlert(error.message, "error");
+      } finally {
+        setBusy(preview, false);
+      }
+      return;
+    }
     const button = event.target.closest("[data-candidate-id]");
     if (!button || button.disabled || !state.packet) return;
     const candidate = state.candidates.find(item => item.itemId === button.dataset.candidateId);
@@ -692,6 +732,15 @@
       renderCandidateMode();
       await searchCandidates();
     }
+  });
+
+  elements.closeQuestionPage.addEventListener("click", function () { elements.questionPageDialog.close(); });
+  elements.questionPageDialog.addEventListener("close", function () {
+    if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
+    elements.questionPageImage.removeAttribute("src");
+  });
+  elements.questionPageDialog.addEventListener("click", function (event) {
+    if (event.target === elements.questionPageDialog) elements.questionPageDialog.close();
   });
 
   elements.placementList.addEventListener("click", async function (event) {

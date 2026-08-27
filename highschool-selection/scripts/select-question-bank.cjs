@@ -54,6 +54,7 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
     typeId: question.classification.typeId,
     typeLabel: question.classification.typeLabel,
     difficulty: question.difficulty,
+    responseFormat: question.responseFormat,
     usage: question.usageProfiles.filter(usage => profileIds.has(usage.profileId) && statuses.has(usage.status))
   }));
   return {

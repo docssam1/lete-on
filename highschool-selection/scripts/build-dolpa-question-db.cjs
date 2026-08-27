@@ -161,6 +161,7 @@ function summarize(database) {
     locatorVerifiedCount: database.questions.filter(question => question.locator.status === "verified").length,
     methodVerifiedCount: database.questions.filter(question => question.method.status === "verified").length,
     difficultyVerifiedCount: database.questions.filter(question => question.difficulty.status === "verified").length,
+    responseVerifiedCount: database.questions.filter(question => question.responseFormat.status === "verified").length,
     answerVerifiedCount: database.questions.filter(question => question.answerCheck.status === "verified").length,
     variantReadyCount: database.questions.filter(question => question.variantSet.status === "verified").length,
     usageApprovedCount: database.questions.reduce((sum, question) => sum + question.usageProfiles.filter(profile => profile.status === "approved").length, 0)

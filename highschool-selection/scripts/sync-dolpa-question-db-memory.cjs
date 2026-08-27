@@ -36,6 +36,9 @@ function sync(catalog, ledger, database, paths) {
     source("dp-paper-links-v1", "돌파 대표 시험지 원본 연결", "지필드메모리/highschool-selection/question-bank/dolpa-paper-links-v1.json", paths.paperLinks),
     source("dp-review-decisions-v1", "돌파 검수 결정 기록", "지필드메모리/highschool-selection/question-bank/dolpa-review-decisions-v1.json", paths.reviewDecisions)
   ];
+  if (paths.pageAssets) {
+    sources.push(source("dp-m22-page-assets-v1", "돌파 중2-2 문항 원본 페이지 목록", "지필드메모리/highschool-selection/artifacts/question-pages/dolpa/DP-SRC-DE99B9857905/manifest.json", paths.pageAssets));
+  }
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   upsert(catalog.records, "dp.question-db.20260827", {
@@ -43,7 +46,7 @@ function sync(catalog, ledger, database, paths) {
     title: "돌파 문항 DB와 반복 방지 작업 장부",
     aliases: ["돌파 문제 DB", "돌파 유형 DB"],
     tags: ["dp", "question-bank", "classification", "work-ledger"],
-    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법·난이도·답안·유사문항은 별도 근거가 있어야 확정한다.`,
+    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
     status: "verified",
     sensitivity: "private",
     updated: "2026-08-27",
@@ -54,18 +57,27 @@ function sync(catalog, ledger, database, paths) {
       { source_id: "dp-review-decisions-v1", role: "decision", locator: "rangeReviews, sourceReviews", note: "이미 끝낸 검수를 다시 하지 않기 위한 결정 기록" }
     ]
   });
+  if (paths.pageAssets) {
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: "dp-m22-page-assets-v1",
+      role: "test",
+      locator: "assets[1:8]",
+      note: "중2-2 원본 3~10쪽 PNG의 파일명·크기·해시 확인"
+    });
+  }
   catalog.updated = "2026-08-27";
   return catalog;
 }
 
 function main(args) {
-  if (args.length !== 5) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions>");
-  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath] = args.map(value => path.resolve(value));
+  if (args.length < 5 || args.length > 6) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest]");
+  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath] = args.map(value => path.resolve(value));
   const catalog = sync(readJson(catalogPath), readJson(ledgerPath), readJson(databasePath), {
     ledger: ledgerPath,
     database: databasePath,
     paperLinks: paperLinksPath,
-    reviewDecisions: reviewDecisionsPath
+    reviewDecisions: reviewDecisionsPath,
+    pageAssets: pageAssetsPath
   });
   fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({ sources: catalog.sources.length, records: catalog.records.length })}\n`);

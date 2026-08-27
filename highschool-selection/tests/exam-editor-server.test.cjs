@@ -128,7 +128,7 @@ function academyQuestionDb() {
   const semester = "중2-1";
   const unit = "일차함수";
   const typeLabel = "두 직선의 교점 구하기";
-  return dolpaDbBuilder.buildDatabase({
+  const database = dolpaDbBuilder.buildDatabase({
     taxonomyVersion: "dolpa-kr-math-v1",
     sources: [{ sourceId: "DP-SRC-AAAAAAAAAAAA", sourceFingerprint: "a".repeat(64) }],
     questions: [{
@@ -138,6 +138,9 @@ function academyQuestionDb() {
       difficulty: { band: null, status: "pending", evidence: [] }, classificationStatus: "verified", evidence: ["paper.a"]
     }]
   }, null, "1".repeat(64));
+  database.questions[0].locator = { page: 3, slot: null, status: "verified", evidence: ["paper.a"] };
+  database.summary = dolpaDbBuilder.summarize(database);
+  return database;
 }
 
 function privateConfig() {
@@ -163,8 +166,8 @@ function privateConfig() {
   };
 }
 
-async function start(privateExamDrafts = { schemaVersion: "highselect-private-exam-drafts/v1", drafts: {} }) {
-  const app = createApp({
+async function start(privateExamDrafts = { schemaVersion: "highselect-private-exam-drafts/v1", drafts: {} }, overrides = {}) {
+  const app = createApp(Object.assign({
     sessionSecret: SECRET,
     assetSecret: `${SECRET}-asset`,
     privateConfig: privateConfig(),
@@ -174,7 +177,7 @@ async function start(privateExamDrafts = { schemaVersion: "highselect-private-ex
     privateExamDrafts,
     cookieSecure: false,
     staticRoot: path.join(__dirname, "..")
-  });
+  }, overrides));
   const server = http.createServer(app);
   await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
   return { server, base: `http://127.0.0.1:${server.address().port}` };
@@ -344,6 +347,35 @@ test("academy profile catalog is admin-only and returns safe classified Dolpa ro
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_DUAL`, { headers: { Cookie: admin.cookie } })).status, 200);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=UNKNOWN`, { headers: { Cookie: admin.cookie } })).status, 400);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD&unknown=1`, { headers: { Cookie: admin.cookie } })).status, 400);
+});
+
+test("academy source page preview is admin-only, hash-checked and never exposes its file path", async t => {
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), "academy-page-server-"));
+  const assetPath = path.join(folder, "page.png");
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=", "base64");
+  fs.writeFileSync(assetPath, png);
+  const digest = require("node:crypto").createHash("sha256").update(png).digest("hex");
+  const env = await start(undefined, {
+    loadAcademyQuestionPage(sourceId, page) {
+      if (sourceId !== "DP-SRC-AAAAAAAAAAAA" || page !== 3) return null;
+      return { assetKey: "test-page", assetRevision: `sha256:${digest}`, assetPath, mimeType: "image/png" };
+    }
+  });
+  t.after(() => { env.server.close(); fs.rmSync(folder, { recursive: true, force: true }); });
+  const pathName = "/admin/question-bank/items/DP-Q-AAAAAAAAAAAA-001/page-preview";
+  assert.equal((await fetch(env.base + pathName)).status, 401);
+  const student = await login(env.base, "일반학생", "STUDENT-EDITOR");
+  assert.equal((await fetch(env.base + pathName, { headers: { Cookie: student.cookie } })).status, 403);
+  const admin = await login(env.base);
+  const catalog = await (await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD`, { headers: { Cookie: admin.cookie } })).json();
+  assert.equal(catalog.items[0].pagePreviewAvailable, true);
+  assertNoPrivateFields(catalog);
+  const response = await fetch(env.base + pathName, { headers: { Cookie: admin.cookie } });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "image/png");
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+  assert.deepEqual(Buffer.from(await response.arrayBuffer()), png);
+  assert.equal((await fetch(env.base + pathName + "?path=x", { headers: { Cookie: admin.cookie } })).status, 400);
 });
 
 test("draft editing enforces origin, revision CAS, item versions and server-side replacement evidence", async t => {

@@ -12,6 +12,7 @@ function createCatalog(database) {
   const audit = dbAudit.audit(database);
   if (!audit.ok) throw new Error(`academy question catalog is invalid: ${audit.issues.join(", ")}`);
   const labels = new Map(dbCore.PROFILE_CATALOG.map(profile => [profile.profileId, profile.label]));
+  const questionsById = new Map(database.questions.map(question => [question.questionId, question]));
   return Object.freeze({
     profiles() {
       return dbCore.PROFILE_CATALOG.map(profile => Object.freeze({
@@ -19,6 +20,11 @@ function createCatalog(database) {
         programId: profile.programId,
         label: profile.label
       }));
+    },
+    privateLocator(questionId) {
+      const question = questionsById.get(clean(questionId));
+      if (!question || question.locator.status !== "verified" || !Number.isSafeInteger(question.locator.page)) return null;
+      return Object.freeze({ sourceId: question.sourceId, page: question.locator.page });
     },
     search(options) {
       const opts = options || {};
@@ -44,6 +50,8 @@ function createCatalog(database) {
         typeLabel: question.typeLabel,
         difficultyBand: question.difficulty.band,
         difficultyStatus: question.difficulty.status,
+        responseKind: question.responseFormat.kind,
+        responseStatus: question.responseFormat.status,
         profiles: question.usage.map(usage => Object.freeze({
           profileId: usage.profileId,
           label: labels.get(usage.profileId),

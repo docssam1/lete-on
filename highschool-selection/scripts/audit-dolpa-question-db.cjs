@@ -33,6 +33,9 @@ function audit(database) {
     if (question.classification.status === "verified" && !question.classification.evidence.length) issues.push(`classification_evidence:${question.questionId}`);
     if (question.method.status === "verified" && (!question.method.tags.length || !question.method.evidence.length)) issues.push(`method_evidence:${question.questionId}`);
     if (question.difficulty.status === "verified" && (!question.difficulty.band || !question.difficulty.evidence.length)) issues.push(`difficulty_evidence:${question.questionId}`);
+    if (question.responseFormat.status === "verified" && (!question.responseFormat.kind
+      || !Number.isSafeInteger(question.responseFormat.slotCount) || question.responseFormat.slotCount < 1
+      || !question.responseFormat.evidence.length)) issues.push(`response_evidence:${question.questionId}`);
     if (question.answerCheck.status === "verified" && !question.answerCheck.evidence.length) issues.push(`answer_evidence:${question.questionId}`);
     const expectedProfileIds = dbCore.PROFILE_CATALOG.map(profile => profile.profileId).sort();
     const actualProfileIds = (question.usageProfiles || []).map(profile => profile.profileId).sort();

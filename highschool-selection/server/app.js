@@ -26,6 +26,7 @@ const examEditorCore = require("../data/exam-editor-core.js");
 const examEditorRegistryModule = require("./exam-editor-registry.js");
 const examDraftStoreModule = require("./exam-draft-store.js");
 const academyQuestionCatalogModule = require("./academy-question-catalog.js");
+const academyQuestionAssetsModule = require("./academy-question-assets.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -308,6 +309,9 @@ function createApp(options) {
   const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
     data: opts.privateAcademyQuestionDb,
     filePath: opts.privateAcademyQuestionDbPath
+  });
+  const loadAcademyQuestionPage = opts.loadAcademyQuestionPage || academyQuestionAssetsModule.createLoader({
+    root: opts.privateAcademyQuestionAssetRoot
   });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
@@ -807,8 +811,33 @@ function createApp(options) {
       const limitText = url.searchParams.get("limit");
       const limit = limitText == null ? 100 : Number(limitText);
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 300) throw new HttpError(400, "문항 DB 검색 개수가 올바르지 않습니다.");
-      const items = catalog.search({ profileIds, query: url.searchParams.get("q"), limit });
+      const items = catalog.search({ profileIds, query: url.searchParams.get("q"), limit }).map(item => {
+        const locator = catalog.privateLocator(item.questionId);
+        const asset = locator && loadAcademyQuestionPage ? loadAcademyQuestionPage(locator.sourceId, locator.page) : null;
+        return Object.assign({}, item, { pagePreviewAvailable: Boolean(asset) });
+      });
       sendJson(response, 200, { profiles: catalog.profiles(), items, count: items.length });
+      return true;
+    }
+
+    const academyPageMatch = pathname.match(/^\/admin\/question-bank\/items\/([^/]+)\/page-preview$/);
+    if (academyPageMatch) {
+      if (request.method !== "GET" && request.method !== "HEAD") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "원본 페이지 요청에 검색 조건을 지정할 수 없습니다.");
+      const catalog = requireAcademyQuestionCatalog();
+      const questionId = decodeURIComponent(academyPageMatch[1]);
+      const locator = catalog.privateLocator(questionId);
+      const asset = locator && loadAcademyQuestionPage ? loadAcademyQuestionPage(locator.sourceId, locator.page) : null;
+      const bytes = await readVerifiedPracticeAsset(asset);
+      if (!bytes) throw new HttpError(404, "이 문항의 원본 페이지가 아직 준비되지 않았습니다.");
+      setSecurityHeaders(response);
+      response.statusCode = 200;
+      response.setHeader("Content-Type", asset.mimeType);
+      response.setHeader("Cache-Control", "private, no-store");
+      response.setHeader("Content-Disposition", "inline; filename=question-page.png");
+      if (request.method === "HEAD") response.end();
+      else response.end(bytes);
       return true;
     }
 
