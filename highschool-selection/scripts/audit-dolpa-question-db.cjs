@@ -32,6 +32,16 @@ function audit(database) {
     if (question.method.status === "verified" && (!question.method.tags.length || !question.method.evidence.length)) issues.push(`method_evidence:${question.questionId}`);
     if (question.difficulty.status === "verified" && (!question.difficulty.band || !question.difficulty.evidence.length)) issues.push(`difficulty_evidence:${question.questionId}`);
     if (question.answerCheck.status === "verified" && !question.answerCheck.evidence.length) issues.push(`answer_evidence:${question.questionId}`);
+    const expectedProfileIds = dbCore.PROFILE_CATALOG.map(profile => profile.profileId).sort();
+    const actualProfileIds = (question.usageProfiles || []).map(profile => profile.profileId).sort();
+    if (new Set(actualProfileIds).size !== actualProfileIds.length) issues.push(`duplicate_usage_profile:${question.questionId}`);
+    if (JSON.stringify(actualProfileIds) !== JSON.stringify(expectedProfileIds)) issues.push(`usage_profiles:${question.questionId}`);
+    (question.usageProfiles || []).forEach(profile => {
+      if (!dbCore.PROFILE_STATUSES.includes(profile.status)) issues.push(`usage_status:${question.questionId}:${profile.profileId}`);
+      if (["source_verified", "approved"].includes(profile.status) && !(profile.evidence || []).length) {
+        issues.push(`usage_evidence:${question.questionId}:${profile.profileId}`);
+      }
+    });
     if (question.releaseStatus !== "locked") issues.push(`release:${question.questionId}`);
   });
   database.papers.forEach(paper => {
@@ -43,6 +53,7 @@ function audit(database) {
   });
   const rebuiltTypes = dbCore.rebuildTypeCatalog(database.questions);
   if (JSON.stringify(rebuiltTypes) !== JSON.stringify(database.typeCatalog)) issues.push("type_catalog");
+  if (JSON.stringify(database.profileCatalog) !== JSON.stringify(dbCore.PROFILE_CATALOG)) issues.push("profile_catalog");
   const actual = dbCore.summarize(database);
   Object.entries(actual).forEach(([key, value]) => {
     if (Number(database.summary[key]) !== value) issues.push(`summary:${key}:${database.summary[key]}/${value}`);

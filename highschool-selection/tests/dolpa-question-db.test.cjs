@@ -37,6 +37,13 @@ test("돌파 문항 DB는 문제 원문 없이 출처·유형·후속 검수 상
   assert.equal(database.summary.typeCount, 1);
   assert.equal(database.questions[0].difficulty.status, "pending");
   assert.equal(database.questions[0].answerCheck.status, "pending");
+  assert.deepEqual(database.profileCatalog.map(profile => profile.profileId), [
+    "DP_STANDARD", "SM_STANDARD", "WM_BASIC", "WM_DUAL", "ED_CUMULATIVE", "SH_SELECTION", "DG_ADVANCED"
+  ]);
+  assert.notEqual(database.profileCatalog.find(profile => profile.profileId === "WM_BASIC").label,
+    database.profileCatalog.find(profile => profile.profileId === "WM_DUAL").label);
+  assert.equal(database.questions[0].usageProfiles.find(profile => profile.profileId === "DP_STANDARD").status, "source_verified");
+  assert.equal(database.questions[0].usageProfiles.find(profile => profile.profileId === "WM_DUAL").status, "candidate");
   assert.equal(Object.prototype.hasOwnProperty.call(database.questions[0], "prompt"), false);
   assert.equal(auditor.audit(database).ok, true);
 });
@@ -48,6 +55,7 @@ test("기존 문항의 수동 검수 결과는 다시 빌드해도 보존된다"
   first.questions[0].difficulty = { band: "상", status: "verified", evidence: ["difficulty.audit.one"] };
   const rebuilt = builder.buildDatabase(value, first, "1".repeat(64));
   assert.equal(rebuilt.questions[0].difficulty.band, "상");
+  assert.equal(rebuilt.questions[0].usageProfiles.find(profile => profile.profileId === "DP_STANDARD").status, "source_verified");
   assert.equal(auditor.audit(rebuilt).ok, true);
 });
 

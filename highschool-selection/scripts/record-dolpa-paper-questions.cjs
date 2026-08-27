@@ -54,6 +54,7 @@ function normalizeManifest(manifest, ledger) {
       responseFormat: { kind: null, status: "pending", evidence: [] },
       answerCheck: { status: "pending", evidence: [] },
       variantSet: { status: "not_started", originalId: questionId, twinIds: [], similarIds: [] },
+      usageProfiles: dbCore.initialUsageProfiles("DP_STANDARD", [evidenceId]),
       releaseStatus: "locked"
     };
   });

@@ -5,6 +5,17 @@ const fs = require("node:fs");
 const path = require("node:path");
 const ledgerCore = require("./build-dolpa-work-ledger.cjs");
 
+const PROFILE_CATALOG = Object.freeze([
+  Object.freeze({ profileId: "DP_STANDARD", programId: "DP", label: "돌파형", purpose: "과정별 입학·편입 30문항", definitionStatus: "verified" }),
+  Object.freeze({ profileId: "SM_STANDARD", programId: "SM", label: "생수형", purpose: "공통수학 누적·모의고사 변형", definitionStatus: "needs_evidence" }),
+  Object.freeze({ profileId: "WM_BASIC", programId: "WM", label: "원수학 기본형", purpose: "대수·기하 분리와 기본기·과락 확인", definitionStatus: "verified" }),
+  Object.freeze({ profileId: "WM_DUAL", programId: "WM", label: "원수학 듀얼형", purpose: "두 과정 연결과 심화 통합", definitionStatus: "needs_evidence" }),
+  Object.freeze({ profileId: "ED_CUMULATIVE", programId: "ED", label: "이든형", purpose: "학년·학기 누적과 고등선행 연결", definitionStatus: "verified" }),
+  Object.freeze({ profileId: "SH_SELECTION", programId: "SH", label: "황소형", purpose: "중등 전 범위 누적 선발", definitionStatus: "verified" }),
+  Object.freeze({ profileId: "DG_ADVANCED", programId: "DG", label: "깊은생각형", purpose: "함수·부등식·기하 연결 심화", definitionStatus: "needs_evidence" })
+]);
+const PROFILE_STATUSES = Object.freeze(["source_verified", "candidate", "approved", "excluded", "stale"]);
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
 }
@@ -15,6 +26,17 @@ function fingerprint(filePath) {
 
 function pendingEvidence() {
   return { status: "pending", evidence: [] };
+}
+
+function initialUsageProfiles(sourceProfileId, evidence) {
+  return PROFILE_CATALOG.map(profile => ({
+    profileId: profile.profileId,
+    status: profile.profileId === sourceProfileId ? "source_verified" : "candidate",
+    evidence: profile.profileId === sourceProfileId ? Array.from(new Set(evidence || [])).sort() : [],
+    reviewNote: profile.profileId === sourceProfileId
+      ? "이 시험형의 원본 문항으로 확인"
+      : "범위·난이도·문항 위치 호환성 검수 전 사용 후보"
+  }));
 }
 
 function fromLedgerQuestion(question) {
@@ -39,6 +61,7 @@ function fromLedgerQuestion(question) {
     responseFormat: { kind: null, ...pendingEvidence() },
     answerCheck: { status: "pending", evidence: [] },
     variantSet: { status: "not_started", originalId: question.questionId, twinIds: [], similarIds: [] },
+    usageProfiles: initialUsageProfiles("DP_STANDARD", question.evidence),
     releaseStatus: "locked"
   };
 }
@@ -64,6 +87,7 @@ function mergeExisting(seed, existing) {
       responseFormat: old.responseFormat,
       answerCheck: old.answerCheck,
       variantSet: old.variantSet,
+      usageProfiles: old.usageProfiles || question.usageProfiles,
       releaseStatus: "locked"
     };
   });
@@ -127,7 +151,8 @@ function summarize(database) {
     methodVerifiedCount: database.questions.filter(question => question.method.status === "verified").length,
     difficultyVerifiedCount: database.questions.filter(question => question.difficulty.status === "verified").length,
     answerVerifiedCount: database.questions.filter(question => question.answerCheck.status === "verified").length,
-    variantReadyCount: database.questions.filter(question => question.variantSet.status === "verified").length
+    variantReadyCount: database.questions.filter(question => question.variantSet.status === "verified").length,
+    usageApprovedCount: database.questions.reduce((sum, question) => sum + question.usageProfiles.filter(profile => profile.status === "approved").length, 0)
   };
 }
 
@@ -146,6 +171,7 @@ function buildDatabase(ledger, existing, ledgerSha256) {
       "기존 questionId의 출처나 유형이 달라지면 자동 덮어쓰지 않고 오류로 막는다."
     ],
     inputs: { workLedgerSha256: ledgerSha256 },
+    profileCatalog: PROFILE_CATALOG,
     papers: [],
     typeCatalog: [],
     questions
@@ -172,4 +198,14 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ fromLedgerQuestion, mergeExisting, rebuildTypeCatalog, rebuildPapers, summarize, buildDatabase });
+module.exports = Object.freeze({
+  PROFILE_CATALOG,
+  PROFILE_STATUSES,
+  initialUsageProfiles,
+  fromLedgerQuestion,
+  mergeExisting,
+  rebuildTypeCatalog,
+  rebuildPapers,
+  summarize,
+  buildDatabase
+});

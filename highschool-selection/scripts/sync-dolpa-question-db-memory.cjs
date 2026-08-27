@@ -43,7 +43,7 @@ function sync(catalog, ledger, database, paths) {
     title: "돌파 문항 DB와 반복 방지 작업 장부",
     aliases: ["돌파 문제 DB", "돌파 유형 DB"],
     tags: ["dp", "question-bank", "classification", "work-ledger"],
-    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항이 확정됐다. 풀이법·난이도·답안·유사문항은 별도 근거가 있어야 확정한다.`,
+    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법·난이도·답안·유사문항은 별도 근거가 있어야 확정한다.`,
     status: "verified",
     sensitivity: "private",
     updated: "2026-08-27",
