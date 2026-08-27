@@ -153,6 +153,7 @@ function rebuildPapers(questions, ledger, existing) {
     return {
       ...paper,
       ...(old && old.coverage ? { coverage: old.coverage } : {}),
+      ...(old && old.equivalentSources ? { equivalentSources: old.equivalentSources } : {}),
       questionCount: paper.questionIds.length,
       questionIds: paper.questionIds.sort()
     };
