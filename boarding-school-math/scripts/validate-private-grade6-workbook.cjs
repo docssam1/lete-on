@@ -40,6 +40,15 @@ const EEC_RATE_MIN = 2;
 const EEC_RATE_MAX = 12;
 const EEC_INDEPENDENT_VALUE_MAX = 18;
 const EEC_DEPENDENT_VALUE_MAX = EEC_RATE_MAX * EEC_INDEPENDENT_VALUE_MAX;
+const GGA_TRIANGLE_AREA_EVIDENCE_ID = "6.G.A.1-finite-whole-right-triangle-area-from-labeled-base-and-perpendicular-height";
+const GGA_TRIANGLE_AREA_CHECK_KIND = "right-triangle-whole-base-perpendicular-height-area";
+const GGA_GEOMETRY_DIAGRAM_KIND = "right-triangle-labeled-base-perpendicular-height-v1";
+const GGA_BASE_MIN = 4;
+const GGA_BASE_MAX = 24;
+const GGA_PERPENDICULAR_HEIGHT_MIN = 4;
+const GGA_PERPENDICULAR_HEIGHT_MAX = 24;
+const GGA_TRIANGLE_AREA_MIN = 32n;
+const GGA_TRIANGLE_AREA_MAX = 240n;
 const EEB_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
   ko: "자동 근거는 6.EE.B.5의 제한된 양의 정수 등식 대입 판정뿐이다. 6.EE.B.5의 부등식, 후보 집합 전체 판단과 설명, 6.EE.B.6, 6.EE.B.7, 6.EE.B.8은 교사 관찰이 필요한 항목으로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
   en: "The automatic evidence is limited to determining whether substituting a positive whole number makes an equality hold within 6.EE.B.5. Inequalities, whole-candidate-set evaluation and explanation in 6.EE.B.5, together with 6.EE.B.6, 6.EE.B.7, and 6.EE.B.8, remain locked for teacher observation. It is not a full mastery or promotion decision.",
@@ -82,6 +91,28 @@ const EEC_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
     ko: "그래프의 축·눈금·순서쌍과 비례형 이외 관계의 해석은 교사 관찰로 남긴다.",
     en: "Keep graph axes, scale, ordered pairs, and interpretation beyond the proportional form for teacher observation.",
     "zh-Hans": "图像的坐标轴、刻度、有序数对以及正比例形式以外关系的解读仍由教师观察。"
+  })
+});
+const GGA_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
+  ko: "자동 근거는 표시된 밑변과 그에 수직인 높이가 제한된 범위의 양의 정수인 직각삼각형의 넓이를 계산하는 것뿐이다. 6.G.A.1의 도형 구성·분해와 풀이 설명 및 실제 상황 모델링, 6.G.A.2의 분수 모서리 길이를 가진 직육면체 부피, 6.G.A.3의 좌표평면 다각형과 변 길이, 6.G.A.4의 전개도와 겉넓이는 교사 관찰로 남긴다. 이것은 완전 숙달, 과정 배치, 또는 학년 승급 결정이 아니다.",
+  en: "The automatic evidence is limited to calculating the area of a right triangle whose labeled base and perpendicular height are positive whole numbers within a finite allowed range. Composing or decomposing figures and explaining the work in 6.G.A.1, real-world modeling, fractional-edge rectangular-prism volume in 6.G.A.2, coordinate-plane polygons and side lengths in 6.G.A.3, and nets and surface area in 6.G.A.4 remain teacher-observation work. It is not a full mastery, course-placement, or grade-promotion decision.",
+  "zh-Hans": "自动证据仅限于计算直角三角形的面积，其中已标出的底和与底垂直的高均为限定范围内的正整数。6.G.A.1 中图形的拼合、分割和解题说明及实际情境建模，6.G.A.2 的分数棱长长方体体积，6.G.A.3 的坐标平面多边形和边长，以及 6.G.A.4 的展开图和表面积仍由教师观察。这不是完全掌握、课程分班或年级晋升决定。"
+});
+const GGA_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
+  "lesson-plan:core": Object.freeze({
+    ko: "학생이 밑변과 그에 수직인 높이를 식별하고, 도형을 구성하거나 분해해 넓이식을 정당화하는지를 교사 관찰로 기록한다.",
+    en: "Record through teacher observation whether the learner identifies a base and its perpendicular height and justifies an area expression by composing or decomposing a figure.",
+    "zh-Hans": "通过教师观察记录学习者是否能识别底和与底垂直的高，并通过拼合或分割图形说明面积式。"
+  }),
+  "assignment-builder:core": Object.freeze({
+    ko: "6.G.A.2의 분수 모서리 길이를 가진 직육면체를 단위입방체로 채우고 부피식을 설명하는 일은 교사 관찰로 남긴다.",
+    en: "Keep packing a rectangular prism with fractional edge lengths with unit cubes and explaining its volume expression in 6.G.A.2 for teacher observation.",
+    "zh-Hans": "6.G.A.2 中用单位立方体填充分数棱长的长方体并说明体积式，仍由教师观察。"
+  }),
+  "assignment-builder:advanced": Object.freeze({
+    ko: "6.G.A.3의 좌표평면 다각형·변 길이와 6.G.A.4의 전개도·겉넓이 해석은 교사 관찰로 남긴다.",
+    en: "Keep 6.G.A.3 coordinate-plane polygons and side lengths and 6.G.A.4 nets and surface-area interpretation for teacher observation.",
+    "zh-Hans": "6.G.A.3 的坐标平面多边形和边长，以及 6.G.A.4 的展开图和表面积解读仍由教师观察。"
   })
 });
 const EEB_STUDENT_STATIC_TEXT = Object.freeze({
@@ -159,13 +190,13 @@ const BINDING_KEYS = new Set([
   "resourceType", "bindingState"
 ]);
 const STUDENT_COMPONENT_KEYS = new Set([
-  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable"
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram"
 ]);
 const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
 const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
 const REFERENCE_KEYS = new Set([
   "referenceId", "componentId", "responseMode", "expectedResponse", "solutionByLocale", "uniquenessProofByLocale",
-  "arithmeticCheck"
+  "arithmeticCheck", "evaluationMode"
 ]);
 const PLACEHOLDER_KEYS = new Set([
   "resourcePlanItemId", "sessionId", "levelId", "testType", "resourceType", "status"
@@ -183,7 +214,9 @@ const LAYOUT_KEYS = new Set([
 ]);
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
 const RELATION_TABLE_KEYS = new Set(["form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues"]);
+const GEOMETRY_DIAGRAM_KEYS = new Set(["kind", "base", "perpendicularHeight", "heightFoot"]);
 const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact", "truth-value-exact"]);
+const GGA_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
 const ANSWER_REVEALING_TEXT = /(?:정답|답|correct\s+answer|\bans(?:wer)?|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/iu;
 const ANSWER_VALUE_LABEL = /(?:correct\s+answer|\bans(?:wer)?|정답|답|正确答案|答案|答|결과|result|结果|풀이|solution|解答)/giu;
@@ -769,6 +802,22 @@ function validateStandardsEvidence(evidence, policy, unit, reference) {
     });
     return;
   }
+  if (unit.unitId === "ccss-6-g-a") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-finite-whole-right-triangle-area-from-labeled-base-height-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(
+      evidence.autoEvidenceIds.length === 1 && evidence.autoEvidenceIds[0] === GGA_TRIANGLE_AREA_EVIDENCE_ID,
+      "STANDARDS_EVIDENCE_INVALID",
+      reference
+    );
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    policy.included.forEach(function (locale) {
+      assert(evidence.lockedEvidenceByLocale[locale] === GGA_LOCKED_EVIDENCE_BY_LOCALE[locale], "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
   assert(evidence === undefined, "STANDARDS_EVIDENCE_INVALID", reference);
 }
 
@@ -843,6 +892,21 @@ function validateEecRelationTable(table, reference) {
   validateEecTableValues(table.independentValues, table.dependentValues, reference);
 }
 
+function validateGgaGeometryDiagram(diagram, reference) {
+  assertOnlyKeys(diagram, GEOMETRY_DIAGRAM_KEYS, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
+  assert(Object.getOwnPropertyNames(diagram).length === GEOMETRY_DIAGRAM_KEYS.size, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
+  assert(
+    diagram.kind === GGA_GEOMETRY_DIAGRAM_KIND &&
+      diagram.heightFoot === "left-base-endpoint" &&
+      Number.isSafeInteger(diagram.base) && diagram.base >= GGA_BASE_MIN && diagram.base <= GGA_BASE_MAX &&
+      Number.isSafeInteger(diagram.perpendicularHeight) &&
+      diagram.perpendicularHeight >= GGA_PERPENDICULAR_HEIGHT_MIN && diagram.perpendicularHeight <= GGA_PERPENDICULAR_HEIGHT_MAX &&
+      (BigInt(diagram.base) * BigInt(diagram.perpendicularHeight)) % 2n === 0n,
+    "GGA_GEOMETRY_DIAGRAM_INVALID",
+    reference
+  );
+}
+
 function validateStudentComponent(component, policy, reference, unitId) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
   assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -852,6 +916,7 @@ function validateStudentComponent(component, policy, reference, unitId) {
   if (isTeachingBlock) {
     assert(component.responseMode === null && component.teacherReferenceId === null, "STUDENT_COMPONENT_INVALID", reference);
     assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
+    assert(component.geometryDiagram === undefined, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -863,6 +928,8 @@ function validateStudentComponent(component, policy, reference, unitId) {
     });
     if (unitId === "ccss-6-ee-c") validateEecRelationTable(component.relationTable, reference);
     else assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
+    if (unitId === "ccss-6-g-a") validateGgaGeometryDiagram(component.geometryDiagram, reference);
+    else assert(component.geometryDiagram === undefined, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
   }
 }
 
@@ -1242,6 +1309,23 @@ function canonicalDirectVariationWholeTableCoefficient(check, reference) {
   return String(check.rate);
 }
 
+function canonicalGgaRightTriangleArea(check, reference) {
+  assertExactDataKeys(check, ["kind", "base", "perpendicularHeight"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    check.kind === GGA_TRIANGLE_AREA_CHECK_KIND &&
+      Number.isSafeInteger(check.base) && check.base >= GGA_BASE_MIN && check.base <= GGA_BASE_MAX &&
+      Number.isSafeInteger(check.perpendicularHeight) &&
+      check.perpendicularHeight >= GGA_PERPENDICULAR_HEIGHT_MIN && check.perpendicularHeight <= GGA_PERPENDICULAR_HEIGHT_MAX,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  const doubledArea = BigInt(check.base) * BigInt(check.perpendicularHeight);
+  assert(doubledArea % 2n === 0n, "ARITHMETIC_CHECK_INVALID", reference);
+  const area = doubledArea / 2n;
+  assert(area >= GGA_TRIANGLE_AREA_MIN && area <= GGA_TRIANGLE_AREA_MAX, "ARITHMETIC_CHECK_INVALID", reference);
+  return String(area);
+}
+
 function countExactTextOccurrences(value, target) {
   let count = 0;
   let offset = 0;
@@ -1340,6 +1424,25 @@ function validateDirectVariationWholeTableCoefficientPrompt(component, check, re
   });
 }
 
+function validateGgaRightTriangleAreaPrompt(component, check, reference) {
+  const diagram = component.component.geometryDiagram;
+  validateGgaGeometryDiagram(diagram, reference);
+  assert(
+    diagram.base === check.base && diagram.perpendicularHeight === check.perpendicularHeight,
+    "GGA_GEOMETRY_DIAGRAM_MISMATCH",
+    reference
+  );
+  const templates = Object.freeze({
+    ko: "그림의 직각삼각형에서 밑변과 그에 수직인 높이가 표시되어 있습니다. 넓이를 제곱단위로 구하세요.",
+    en: "The diagram shows a right triangle with its base and perpendicular height labeled. Find its area in square units.",
+    "zh-Hans": "图中直角三角形的底和与底垂直的高已标出。求它的面积（平方单位）。"
+  });
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    const locale = entry[0];
+    assert(entry[1] === templates[locale], "GGA_TRIANGLE_AREA_PROMPT_INVALID", reference);
+  });
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -1362,6 +1465,7 @@ function canonicalAnswer(check, reference) {
   if (kind === "whole-number-power") return canonicalWholeNumberPower(check, reference);
   if (kind === "positive-whole-equality-substitution-truth") return canonicalPositiveWholeEqualitySubstitutionTruth(check, reference);
   if (kind === "direct-variation-whole-table-coefficient") return canonicalDirectVariationWholeTableCoefficient(check, reference);
+  if (kind === GGA_TRIANGLE_AREA_CHECK_KIND) return canonicalGgaRightTriangleArea(check, reference);
   if (kind === "whole-percent") {
     assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
     assert(positiveInteger(check.part) && positiveInteger(check.whole) && check.part <= check.whole && (100 * check.part) % check.whole === 0, "ARITHMETIC_CHECK_INVALID", reference);
@@ -1505,6 +1609,61 @@ function validateEecAutomaticEvidence(answerReferences, componentMap, unit, refe
   for (let rate = EEC_RATE_MIN; rate <= EEC_RATE_MAX; rate += 1) {
     assert(rateCounts.get(rate) === 2, "EEC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
   }
+}
+
+function validateGgaAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (unit.unitId !== "ccss-6-g-a") return;
+  assert(answerReferences.length === 22, "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND;
+  }), "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const fingerprints = new Set();
+  const expectedResponses = new Set();
+  const inputValues = new Set();
+  const bases = new Set();
+  const perpendicularHeights = new Set();
+  let automaticEvidenceCount = 0;
+  let teacherReviewOnlyCount = 0;
+  let hasSquareTriangle = false;
+  let hasNonSquareTriangle = false;
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const fingerprint = `${check.base}|${check.perpendicularHeight}`;
+    assert(!fingerprints.has(fingerprint), "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    fingerprints.add(fingerprint);
+    const expected = canonicalGgaRightTriangleArea(check, answerReference.referenceId);
+    assert(answerReference.expectedResponse === expected, "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    assert(!expectedResponses.has(expected), "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    expectedResponses.add(expected);
+    inputValues.add(String(check.base));
+    inputValues.add(String(check.perpendicularHeight));
+    bases.add(check.base);
+    perpendicularHeights.add(check.perpendicularHeight);
+    hasSquareTriangle = hasSquareTriangle || check.base === check.perpendicularHeight;
+    hasNonSquareTriangle = hasNonSquareTriangle || check.base !== check.perpendicularHeight;
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    validateGgaRightTriangleAreaPrompt(component, check, answerReference.referenceId);
+    const expectedEvaluationMode = component.section.resourceBinding.levelId === "advanced"
+      ? "teacher-review-only"
+      : "automatic-evidence";
+    assert(answerReference.evaluationMode === expectedEvaluationMode, "GGA_DIFFICULTY_CONTRACT_INCOMPLETE", answerReference.referenceId);
+    if (expectedEvaluationMode === "automatic-evidence") automaticEvidenceCount += 1;
+    else teacherReviewOnlyCount += 1;
+  });
+  expectedResponses.forEach(function (expectedResponse) {
+    assert(!inputValues.has(expectedResponse), "GGA_TRIANGLE_ANSWER_DISCLOSED", reference);
+  });
+  assert(
+    bases.size >= 7 && perpendicularHeights.size >= 6 && hasSquareTriangle && hasNonSquareTriangle,
+    "GGA_AUTOMATIC_EVIDENCE_INCOMPLETE",
+    reference
+  );
+  assert(
+    automaticEvidenceCount === 14 && teacherReviewOnlyCount === 8,
+    "GGA_DIFFICULTY_CONTRACT_INCOMPLETE",
+    reference
+  );
 }
 
 function escapeRegExpLiteral(value) {
@@ -1844,6 +2003,42 @@ function validateEecStudentVisibleSeparation(pack, sections, answerReferences, u
   });
 }
 
+function validateGgaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-g-a") return;
+  const expectedResponses = new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; }));
+  const nonResponseFields = [];
+  [
+    ["front-matter", pack.frontMatter],
+    ["closing-matter", pack.closingMatter]
+  ].forEach(function (groupEntry) {
+    Object.entries(groupEntry[1]).forEach(function (fieldEntry) {
+      Object.entries(fieldEntry[1]).forEach(function (entry) {
+        nonResponseFields.push(Object.freeze({
+          content: entry[1],
+          reference: `${reference}:${groupEntry[0]}:${fieldEntry[0]}:${entry[0]}`
+        }));
+      });
+    });
+  });
+  sections.forEach(function (entry) {
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+    });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) {
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+      });
+    });
+  });
+  nonResponseFields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    expectedResponses.forEach(function (expectedResponse) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "GGA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsEeaLocalizedAnswerWord(field.content, expectedResponse), "GGA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
@@ -1858,6 +2053,11 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   assert(nonBlankText(answerReference.expectedResponse), "ANSWER_REFERENCE_INVALID", reference);
   requireLocales(answerReference.solutionByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
   requireLocales(answerReference.uniquenessProofByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
+  if (artifact.resourceBinding.unitId === "ccss-6-g-a") {
+    assert(GGA_EVALUATION_MODES.has(answerReference.evaluationMode), "GGA_RESPONSE_CONTRACT_INVALID", reference);
+  } else {
+    assert(answerReference.evaluationMode === undefined, "ANSWER_REFERENCE_INVALID", reference);
+  }
   const expected = canonicalAnswer(answerReference.arithmeticCheck, reference);
   assert(answerReference.expectedResponse === expected, "ANSWER_REFERENCE_CALCULATION_MISMATCH", reference);
   if (answerReference.responseMode === "ratio-canonical") assert(answerReference.arithmeticCheck.kind === "ratio-canonical", "ANSWER_REFERENCE_MODE_MISMATCH", reference);
@@ -1873,9 +2073,13 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (artifact.resourceBinding.unitId === "ccss-6-ee-c") {
     assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient", "EEC_RESPONSE_CONTRACT_INVALID", reference);
   }
+  if (artifact.resourceBinding.unitId === "ccss-6-g-a") {
+    assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND, "GGA_RESPONSE_CONTRACT_INVALID", reference);
+  }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient") validateDirectVariationWholeTableCoefficientPrompt(component, answerReference.arithmeticCheck, reference);
+  if (answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND) validateGgaRightTriangleAreaPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
@@ -1898,7 +2102,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   });
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
-    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
     return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
@@ -1984,6 +2188,31 @@ function validateEecTeacherObservationEvidence(artifacts, unit, policy, referenc
     Object.entries(observations[0].contentByLocale).forEach(function (entry) {
       const locale = entry[0];
       assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "EEC_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
+  });
+}
+
+function validateGgaTeacherObservationEvidence(artifacts, unit, policy, reference) {
+  if (unit.unitId !== "ccss-6-g-a") return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "GGA_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "GGA_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = GGA_TEACHER_OBSERVATION_BY_PROFILE[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "GGA_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      const locale = entry[0];
+      assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "GGA_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
     });
   });
 }
@@ -2134,6 +2363,7 @@ function validatePack(pack, fileName) {
   validateEeaTeacherObservationEvidence(artifacts, unit, reference);
   validateEebTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateEecTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
+  validateGgaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -2156,9 +2386,11 @@ function validatePack(pack, fileName) {
   validateEebAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEecAutomaticEvidence(answerReferences, componentMap, unit, reference);
+  validateGgaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
+  validateGgaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -2349,11 +2581,20 @@ module.exports = Object.freeze({
   EEC_LOCKED_EVIDENCE_BY_LOCALE,
   EEC_TABLE_EQUATION_EVIDENCE_ID,
   EEC_TEACHER_OBSERVATION_BY_PROFILE,
+  GGA_LOCKED_EVIDENCE_BY_LOCALE,
+  GGA_TRIANGLE_AREA_EVIDENCE_ID,
+  GGA_TRIANGLE_AREA_CHECK_KIND,
+  GGA_GEOMETRY_DIAGRAM_KIND,
+  GGA_EVALUATION_MODES,
+  GGA_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_LOCKED_EVIDENCE_BY_LOCALE,
   EEB_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_STUDENT_STATIC_TEXT,
   assertResponseStudentTextSyntax,
   canonicalDirectVariationWholeTableCoefficient,
+  canonicalGgaRightTriangleArea,
+  validateGgaGeometryDiagram,
+  validateGgaRightTriangleAreaPrompt,
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
   canonicalAnswer,
@@ -2361,6 +2602,7 @@ module.exports = Object.freeze({
   validateNscAutomaticEvidence,
   validateEebAutomaticEvidence,
   validateEeaAutomaticEvidence,
+  validateGgaAutomaticEvidence,
   validatePositiveWholeEqualitySubstitutionTruthPrompt,
   validateEeaWorkedExampleContent,
   validateEebWorkedExampleContent,
@@ -2370,6 +2612,8 @@ module.exports = Object.freeze({
   assertEebExactLocalizedStudentText,
   validateEeaStudentVisibleSeparation,
   validateEeaTeacherObservationEvidence,
+  validateGgaStudentVisibleSeparation,
+  validateGgaTeacherObservationEvidence,
   containsEebTruthResponseLabel,
   assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse,
   assertEeaNonWorkedStudentTextHasNoNumericNotation,

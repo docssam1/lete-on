@@ -41,3 +41,26 @@ test("private PDF exporter binds generated page count and Letter media boxes", f
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }
 });
+
+test("private PDF exporter requires a private notice and builds a text-only footer template", function () {
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-pdf-input-"));
+  const htmlPath = path.join(temporaryRoot, "6-ee-b-ko-student.html");
+  try {
+    fs.writeFileSync(
+      htmlPath,
+      "<!doctype html><div class=\"private-watermark\">Private QA notice</div><main data-document-audience=\"student\" data-layout-target-pages=\"2\"></main>",
+      "utf8"
+    );
+    assert.deepEqual(exporter.inspectInput(htmlPath, "student"), { audience: "student", targetPages: 2, privateNotice: "Private QA notice" });
+    assert.match(exporter.privateFooterTemplate("Private QA notice"), /Private QA notice/);
+    assert.throws(function () {
+      exporter.privateFooterTemplate("<unsafe>");
+    }, /PRIVATE_PDF_EXPORT_INPUT_INVALID/);
+    fs.writeFileSync(htmlPath, "<main data-document-audience=\"student\" data-layout-target-pages=\"2\"></main>", "utf8");
+    assert.throws(function () {
+      exporter.inspectInput(htmlPath, "student");
+    }, /PRIVATE_PDF_EXPORT_INPUT_INVALID/);
+  } finally {
+    fs.rmSync(temporaryRoot, { recursive: true, force: true });
+  }
+});

@@ -157,6 +157,21 @@ const SYNTHETIC_EEC_TABLE_CASES = Object.freeze(Array.from({ length: 22 }, funct
   });
 }));
 
+// Fixture-only 6.G.A triangle facts are deliberately distinct from private
+// authoring. They exercise the public schema and independent calculation
+// contract without reproducing a private worksheet's figure dimensions.
+const SYNTHETIC_GGA_TRIANGLE_CASES = Object.freeze([
+  [4, 16], [6, 14], [8, 10], [10, 10], [12, 10], [14, 10], [16, 20], [18, 10],
+  [20, 10], [22, 10], [24, 10], [4, 18], [6, 16], [8, 14], [12, 12], [14, 12],
+  [16, 12], [18, 12], [22, 12], [24, 12], [20, 14], [18, 14]
+].map(function (entry) {
+  return Object.freeze({
+    kind: "right-triangle-whole-base-perpendicular-height-area",
+    base: entry[0],
+    perpendicularHeight: entry[1]
+  });
+}));
+
 function independentlySubstitutionTruth(check) {
   const matchingCandidates = check.candidateSet.filter(function (candidate) {
     return BigInt(candidate) + BigInt(check.addend) === BigInt(check.total);
@@ -178,6 +193,19 @@ function independentlyDirectVariationCoefficient(check) {
   return String(coefficients[0]);
 }
 
+function independentlyRightTriangleArea(check) {
+  const x1 = 0n;
+  const y1 = 0n;
+  const x2 = BigInt(check.base);
+  const y2 = 0n;
+  const x3 = 0n;
+  const y3 = BigInt(check.perpendicularHeight);
+  const twiceSignedArea = x1 * y2 + x2 * y3 + x3 * y1 - (y1 * x2 + y2 * x3 + y3 * x1);
+  const twiceArea = twiceSignedArea < 0n ? -twiceSignedArea : twiceSignedArea;
+  assert(twiceArea > 0n && twiceArea % 2n === 0n);
+  return String(twiceArea / 2n);
+}
+
 function syntheticKoreanObjectParticle(value) {
   return [0, 1, 3, 6, 7, 8].includes(value % 10) ? "을" : "를";
 }
@@ -197,6 +225,14 @@ function syntheticEecTablePrompt() {
     "표는 독립변수 x와 종속변수 y의 직접비례 관계를 나타냅니다. 방정식 y = □ × x의 계수를 구하세요.",
     "The table shows a direct-variation relationship with x as the independent variable and y as the dependent variable. Find the coefficient in y = □ × x.",
     "表格表示 x 为自变量、y 为因变量的正比例关系。求方程 y = □ × x 中的系数。"
+  );
+}
+
+function syntheticGgaTrianglePrompt() {
+  return localText(
+    "그림의 직각삼각형에서 밑변과 그에 수직인 높이가 표시되어 있습니다. 넓이를 제곱단위로 구하세요.",
+    "The diagram shows a right triangle with its base and perpendicular height labeled. Find its area in square units.",
+    "图中直角三角形的底和与底垂直的高已标出。求它的面积（平方单位）。"
   );
 }
 
@@ -224,6 +260,14 @@ function syntheticEecStandardsEvidence() {
   };
 }
 
+function syntheticGgaStandardsEvidence() {
+  return {
+    state: "partial-finite-whole-right-triangle-area-from-labeled-base-height-locked",
+    autoEvidenceIds: [validator.GGA_TRIANGLE_AREA_EVIDENCE_ID],
+    lockedEvidenceByLocale: Object.assign({}, validator.GGA_LOCKED_EVIDENCE_BY_LOCALE)
+  };
+}
+
 function syntheticEebObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.EEB_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
@@ -232,6 +276,11 @@ function syntheticEebObservationText(resource) {
 function syntheticEecObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.EEC_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
+}
+
+function syntheticGgaObservationText(resource) {
+  const profileId = `${resource.resourceType}:${resource.levelId}`;
+  return Object.assign({}, validator.GGA_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
 }
 
 function syntheticEebStaticText(group, key) {
@@ -351,6 +400,9 @@ function syntheticWorkbookPack(unitId) {
         const eecCheck = !isTeaching && selectedUnitId === "ccss-6-ee-c"
           ? SYNTHETIC_EEC_TABLE_CASES[responseComponents.length]
           : null;
+        const ggaCheck = !isTeaching && selectedUnitId === "ccss-6-g-a"
+          ? SYNTHETIC_GGA_TRIANGLE_CASES[responseComponents.length]
+          : null;
         const eeaWorkedExample = isTeaching && planComponent.componentType === "worked-example" && selectedUnitId === "ccss-6-ee-a"
           ? SYNTHETIC_EEA_WORKED_EXAMPLES[workedExampleNumber++]
           : null;
@@ -363,6 +415,7 @@ function syntheticWorkbookPack(unitId) {
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-a" || eeaPair);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-b" || eebCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-c" || eecCheck);
+        assert(isTeaching || selectedUnitId !== "ccss-6-g-a" || ggaCheck);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-a" || eeaWorkedExample);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-b" || eebWorkedExample);
         const componentId = `cmp-dft-s${String(sectionIndex + 1).padStart(2, "0")}c${String(componentNumber).padStart(3, "0")}`;
@@ -388,6 +441,8 @@ function syntheticWorkbookPack(unitId) {
                 ? syntheticEebSubstitutionPrompt(eebCheck)
                 : eecCheck
                   ? syntheticEecTablePrompt()
+                  : ggaCheck
+                    ? syntheticGgaTrianglePrompt()
                   : localText("수를 구하세요.", "Find the number.", "求这个数。"),
           responseMode: isTeaching ? null : selectedUnitId === "ccss-6-ee-b" ? "truth-value-exact" : "numeric-exact",
           teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`,
@@ -398,6 +453,13 @@ function syntheticWorkbookPack(unitId) {
               dependentSymbol: eecCheck.dependentSymbol,
               independentValues: Array.from(eecCheck.independentValues),
               dependentValues: Array.from(eecCheck.dependentValues)
+            }
+          } : ggaCheck ? {
+            geometryDiagram: {
+              kind: validator.GGA_GEOMETRY_DIAGRAM_KIND,
+              base: ggaCheck.base,
+              perpendicularHeight: ggaCheck.perpendicularHeight,
+              heightFoot: "left-base-endpoint"
             }
           } : {})
         };
@@ -434,11 +496,16 @@ function syntheticWorkbookPack(unitId) {
         const eeaPair = selectedUnitId === "ccss-6-ee-a" ? SYNTHETIC_EEA_POWER_PAIRS[responseComponents.indexOf(entry)] : null;
         const eebCheck = selectedUnitId === "ccss-6-ee-b" ? SYNTHETIC_EEB_SUBSTITUTION_CASES[responseComponents.indexOf(entry)] : null;
         const eecCheck = selectedUnitId === "ccss-6-ee-c" ? SYNTHETIC_EEC_TABLE_CASES[responseComponents.indexOf(entry)] : null;
+        const ggaCheck = selectedUnitId === "ccss-6-g-a" ? SYNTHETIC_GGA_TRIANGLE_CASES[responseComponents.indexOf(entry)] : null;
+        const ggaEvaluationMode = ggaCheck
+          ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
+          : null;
         return {
           referenceId: entry.component.teacherReferenceId,
           componentId: entry.component.componentId,
           responseMode: eebCheck ? "truth-value-exact" : "numeric-exact",
-          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : "1",
+          ...(ggaEvaluationMode ? { evaluationMode: ggaEvaluationMode } : {}),
+          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : ggaCheck ? independentlyRightTriangleArea(ggaCheck) : "1",
           solutionByLocale: localText("교사용 풀이", "Teacher solution", "教师解析"),
           uniquenessProofByLocale: localText("교사용 검산", "Teacher check", "教师检验"),
           arithmeticCheck: eeaPair
@@ -447,7 +514,9 @@ function syntheticWorkbookPack(unitId) {
               ? Object.assign({}, eebCheck, { candidateSet: Array.from(eebCheck.candidateSet) })
               : eecCheck
                 ? Object.assign({}, eecCheck, { independentValues: Array.from(eecCheck.independentValues), dependentValues: Array.from(eecCheck.dependentValues) })
-              : { kind: "whole-quotient", total: 1, groups: 1 }
+                : ggaCheck
+                  ? Object.assign({}, ggaCheck)
+                : { kind: "whole-quotient", total: 1, groups: 1 }
         };
       });
     return {
@@ -469,19 +538,21 @@ function syntheticWorkbookPack(unitId) {
       answerReferences
     };
   });
-  if (["ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c"].includes(selectedUnitId)) {
+  if (["ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(selectedUnitId)) {
     teacherArtifacts.filter(function (artifact) {
       return artifact.resourceBinding.resourceType === "lesson-plan" || artifact.resourceBinding.resourceType === "assignment-builder";
     }).forEach(function (artifact, index) {
       artifact.components.push({
-        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : "eec"}-observation-${index + 1}`,
+        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : selectedUnitId === "ccss-6-ee-c" ? "eec" : "gga"}-observation-${index + 1}`,
         componentType: "teacher-observation-rubric",
         sequence: artifact.components.length + 1,
         contentByLocale: selectedUnitId === "ccss-6-ee-b"
           ? syntheticEebObservationText(artifact.resourceBinding)
           : selectedUnitId === "ccss-6-ee-c"
             ? syntheticEecObservationText(artifact.resourceBinding)
-          : localText("교사 관찰", "Teacher observation", "教师观察")
+            : selectedUnitId === "ccss-6-g-a"
+              ? syntheticGgaObservationText(artifact.resourceBinding)
+            : localText("교사 관찰", "Teacher observation", "教师观察")
       });
     });
   }
@@ -505,7 +576,7 @@ function syntheticWorkbookPack(unitId) {
         autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
         lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
       }
-    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : {}),
+    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : selectedUnitId === "ccss-6-g-a" ? { standardsEvidence: syntheticGgaStandardsEvidence() } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: selectedUnitId === "ccss-6-ee-b"
@@ -2205,4 +2276,166 @@ test("Grade 6 6.EE.C keeps finite direct-variation table coefficient evidence ex
   assert.throws(function () {
     validator.validatePack(missingObservationPack, "synthetic-eec-missing-observation.json");
   }, /EEC_TEACHER_OBSERVATION_INCOMPLETE/);
+});
+
+test("Grade 6 6.G.A keeps labeled right-triangle area evidence partial, visible, and independently checked", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-g-a" };
+  const evidence = syntheticGgaStandardsEvidence();
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-gga-evidence");
+  });
+  [
+    Object.assign({}, evidence, { state: "plan-complete" }),
+    Object.assign({}, evidence, { autoEvidenceIds: [] }),
+    Object.assign({}, evidence, { autoEvidenceIds: ["6.G.A.1-full-mastery"] }),
+    Object.assign({}, evidence, { lockedEvidenceByLocale: Object.assign({}, evidence.lockedEvidenceByLocale, { en: "Triangle calculation only." }) })
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateStandardsEvidence(candidate, policy, unit, "synthetic-gga-evidence-invalid");
+    }, /STANDARDS_EVIDENCE_INVALID/);
+  });
+
+  SYNTHETIC_GGA_TRIANGLE_CASES.forEach(function (check) {
+    assert.equal(
+      validator.canonicalGgaRightTriangleArea(Object.assign({}, check), "synthetic-gga-canonical"),
+      independentlyRightTriangleArea(check)
+    );
+  });
+  [
+    Object.assign({}, SYNTHETIC_GGA_TRIANGLE_CASES[0], { base: 3 }),
+    Object.assign({}, SYNTHETIC_GGA_TRIANGLE_CASES[0], { perpendicularHeight: 3 }),
+    Object.assign({}, SYNTHETIC_GGA_TRIANGLE_CASES[0], { kind: "triangle-area" }),
+    Object.assign({}, SYNTHETIC_GGA_TRIANGLE_CASES[0], { svg: "<svg></svg>" })
+  ].forEach(function (check) {
+    assert.throws(function () {
+      validator.canonicalGgaRightTriangleArea(check, "synthetic-gga-invalid");
+    }, /ARITHMETIC_CHECK_INVALID/);
+  });
+  assert.throws(function () {
+    validator.validateGgaGeometryDiagram({
+      kind: validator.GGA_GEOMETRY_DIAGRAM_KIND,
+      base: SYNTHETIC_GGA_TRIANGLE_CASES[0].base,
+      perpendicularHeight: SYNTHETIC_GGA_TRIANGLE_CASES[0].perpendicularHeight,
+      heightFoot: "left-base-endpoint",
+      svg: "<svg></svg>"
+    }, "synthetic-gga-raw-svg");
+  }, /GGA_GEOMETRY_DIAGRAM_INVALID/);
+
+  const pack = syntheticWorkbookPack("ccss-6-g-a");
+  assert.doesNotThrow(function () {
+    validator.validatePack(pack, "synthetic-gga-pack.json");
+  });
+  const answerReferences = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  assert.equal(answerReferences.length, 22);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === validator.GGA_TRIANGLE_AREA_CHECK_KIND;
+  }));
+  assert.equal(new Set(answerReferences.map(function (answerReference) { return answerReference.expectedResponse; })).size, 22);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "automatic-evidence"; }).length, 14);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "teacher-review-only"; }).length, 8);
+  const responseComponents = pack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  });
+  assert.equal(responseComponents.length, 22);
+  responseComponents.forEach(function (component) {
+    assert.deepEqual(Object.keys(component.geometryDiagram).sort(), ["base", "heightFoot", "kind", "perpendicularHeight"]);
+    assert.equal(component.geometryDiagram.kind, validator.GGA_GEOMETRY_DIAGRAM_KIND);
+    assert.equal(component.geometryDiagram.heightFoot, "left-base-endpoint");
+  });
+
+  const advancedAutomaticPack = JSON.parse(JSON.stringify(pack));
+  const advancedComponentIds = new Set(advancedAutomaticPack.studentSections.filter(function (section) {
+    return section.resourceBinding.levelId === "advanced";
+  }).flatMap(function (section) {
+    return section.components.filter(function (component) { return component.responseMode !== null; }).map(function (component) { return component.componentId; });
+  }));
+  const advancedReference = advancedAutomaticPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (answerReference) {
+    return advancedComponentIds.has(answerReference.componentId);
+  });
+  advancedReference.evaluationMode = "automatic-evidence";
+  assert.throws(function () {
+    validator.validatePack(advancedAutomaticPack, "synthetic-gga-advanced-automatic.json");
+  }, /GGA_DIFFICULTY_CONTRACT_INCOMPLETE/);
+
+  const genericContractPack = JSON.parse(JSON.stringify(pack));
+  const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  genericReference.arithmeticCheck = { kind: "whole-quotient", total: 1, groups: 1 };
+  genericReference.expectedResponse = "1";
+  assert.throws(function () {
+    validator.validatePack(genericContractPack, "synthetic-gga-generic-contract.json");
+  }, /GGA_RESPONSE_CONTRACT_INVALID/);
+
+  const diagramMismatchPack = JSON.parse(JSON.stringify(pack));
+  const diagramMismatch = diagramMismatchPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  diagramMismatch.geometryDiagram.perpendicularHeight = 14;
+  assert.throws(function () {
+    validator.validatePack(diagramMismatchPack, "synthetic-gga-diagram-mismatch.json");
+  }, /GGA_GEOMETRY_DIAGRAM_MISMATCH/);
+
+  const changedPromptPack = JSON.parse(JSON.stringify(pack));
+  const changedPrompt = changedPromptPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  changedPrompt.contentByLocale.en += " Again.";
+  assert.throws(function () {
+    validator.validatePack(changedPromptPack, "synthetic-gga-prompt.json");
+  }, /GGA_TRIANGLE_AREA_PROMPT_INVALID/);
+
+  const rawSvgPack = JSON.parse(JSON.stringify(pack));
+  const rawSvgComponent = rawSvgPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  });
+  rawSvgComponent.geometryDiagram.svg = "<svg></svg>";
+  assert.throws(function () {
+    validator.validatePack(rawSvgPack, "synthetic-gga-raw-svg-pack.json");
+  }, /GGA_GEOMETRY_DIAGRAM_INVALID/);
+
+  const duplicateTrianglePack = JSON.parse(JSON.stringify(pack));
+  const duplicateComponents = duplicateTrianglePack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) {
+    return component.responseMode !== null;
+  });
+  const duplicateReferences = duplicateTrianglePack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  duplicateComponents[1].geometryDiagram = JSON.parse(JSON.stringify(duplicateComponents[0].geometryDiagram));
+  duplicateReferences[1].arithmeticCheck = JSON.parse(JSON.stringify(duplicateReferences[0].arithmeticCheck));
+  duplicateReferences[1].expectedResponse = duplicateReferences[0].expectedResponse;
+  assert.throws(function () {
+    validator.validatePack(duplicateTrianglePack, "synthetic-gga-duplicate-triangle.json");
+  }, /GGA_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const answerLeakPack = JSON.parse(JSON.stringify(pack));
+  answerLeakPack.frontMatter.titleByLocale.en = answerReferences[0].expectedResponse;
+  assert.throws(function () {
+    validator.validatePack(answerLeakPack, "synthetic-gga-student-answer-leak.json");
+  }, /GGA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const localizedLeakPack = JSON.parse(JSON.stringify(pack));
+  localizedLeakPack.frontMatter.titleByLocale.en = "Thirty-two belongs to a different example.";
+  assert.throws(function () {
+    validator.validatePack(localizedLeakPack, "synthetic-gga-spelled-answer-leak.json");
+  }, /GGA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const missingObservationPack = JSON.parse(JSON.stringify(pack));
+  const missingObservation = missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  });
+  missingObservation.components = missingObservation.components.filter(function (component) {
+    return component.componentType !== "teacher-observation-rubric";
+  });
+  assert.throws(function () {
+    validator.validatePack(missingObservationPack, "synthetic-gga-missing-observation.json");
+  }, /GGA_TEACHER_OBSERVATION_INCOMPLETE/);
+
+  const changedObservationLocalePack = JSON.parse(JSON.stringify(pack));
+  const changedObservation = changedObservationLocalePack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  }).components.find(function (component) {
+    return component.componentType === "teacher-observation-rubric";
+  });
+  changedObservation.contentByLocale.en += " Additional wording.";
+  assert.throws(function () {
+    validator.validatePack(changedObservationLocalePack, "synthetic-gga-observation-locale-parity.json");
+  }, /GGA_TEACHER_OBSERVATION_INCOMPLETE/);
 });

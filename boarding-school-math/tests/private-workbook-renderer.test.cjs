@@ -66,6 +66,9 @@ test("private renderer keeps the student model structurally free of teacher and 
   assert.match(html, /@media print[\s\S]*?\.private-watermark\s*\{[^}]*position:\s*fixed/u);
   assert.match(html, /\.private-watermark\s*\{[^}]*top:\s*-0\.34in;\s*right:\s*0\.08in;[^}]*pointer-events:\s*none;/u);
   assert.match(html, /student-safe-sentinel/);
+  assert.match(html, /<section class="section first-instruction"><h2>Practice<\/h2>/);
+  assert.doesNotMatch(html, /<section class="section page-start"><h2>Practice<\/h2>/);
+  assert.match(html, /main\[data-document-audience="student"\]\s+\.first-instruction\s*\{\s*break-inside:\s*auto;\s*page-break-inside:\s*auto;/u);
   assert.doesNotMatch(html, /teacher-(?:reference|title|component|segment|answer|solution|proof)-sentinel/);
   assert.doesNotMatch(html, /teacherReferenceId|answerReferences|expectedResponse|solutionByLocale|uniquenessProofByLocale|arithmeticCheck/);
   assert.doesNotMatch(html, /value="[^"]+"/);
@@ -122,6 +125,58 @@ test("private renderer renders a safe two-variable relation table without teache
   const teacherHtml = renderer.renderTeacherHtml(renderer.buildTeacherModel(draft, "en"), "en");
   assert.match(teacherHtml, /class="relation-table"/);
   assert.match(teacherHtml, /teacher-answer-sentinel/);
+});
+
+test("private renderer constructs a labeled right-triangle SVG only from semantic diagram fields", function () {
+  const draft = syntheticDraft();
+  draft.studentSections[0].components[0].geometryDiagram = {
+    kind: "right-triangle-labeled-base-perpendicular-height-v1",
+    base: 8,
+    perpendicularHeight: 6,
+    heightFoot: "left-base-endpoint"
+  };
+  const student = renderer.buildStudentModel(draft, "en");
+  const studentHtml = renderer.renderStudentHtml(student, "en");
+  assert.match(studentHtml, /class="geometry-diagram"/);
+  assert.match(studentHtml, /role="img"/);
+  assert.match(studentHtml, /class="right-angle-marker"/);
+  assert.match(studentHtml, />Base: 8 units</);
+  assert.match(studentHtml, />Perpendicular height</);
+  assert.match(studentHtml, />6 units</);
+  assert.doesNotMatch(studentHtml, /(?:foreignObject|<script\b|\shref=|\son[a-z]+\s*=)/iu);
+  assert.doesNotMatch(studentHtml, /teacher-(?:reference|title|component|segment|answer|solution|proof)-sentinel/);
+
+  const teacher = renderer.buildTeacherModel(draft, "en");
+  const teacherHtml = renderer.renderTeacherHtml(teacher, "en");
+  assert.match(teacherHtml, /class="geometry-diagram"/);
+  assert.match(teacherHtml, /class="right-angle-marker"/);
+  assert.match(teacherHtml, /teacher-answer-sentinel/);
+  assert.equal(renderer.geometryDiagramForModel(undefined), null);
+  [
+    {
+      kind: "right-triangle-labeled-base-perpendicular-height-v1",
+      base: 8,
+      perpendicularHeight: 6,
+      heightFoot: "left-base-endpoint",
+      svg: "<svg></svg>"
+    },
+    {
+      kind: "right-triangle-labeled-base-perpendicular-height-v1",
+      base: 3,
+      perpendicularHeight: 6,
+      heightFoot: "left-base-endpoint"
+    },
+    {
+      kind: "right-triangle-labeled-base-perpendicular-height-v1",
+      base: 5,
+      perpendicularHeight: 5,
+      heightFoot: "left-base-endpoint"
+    }
+  ].forEach(function (diagram) {
+    assert.throws(function () {
+      renderer.geometryDiagramForModel(diagram);
+    }, /PRIVATE_RENDER_GEOMETRY_DIAGRAM_INVALID/);
+  });
 });
 
 test("renderer command requires one explicit external root, unit, locale, and output root", function () {

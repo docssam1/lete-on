@@ -30,6 +30,9 @@ const COPY = Object.freeze({
     relationshipTable: "관계 표",
     independentVariable: "독립변수",
     dependentVariable: "종속변수",
+    baseLabel: "밑변",
+    perpendicularHeightLabel: "수직 높이",
+    unitLabel: "단위",
     closing: "마무리",
     teacherArtifacts: "교사용 자료",
     lessonSegments: "수업 흐름",
@@ -50,6 +53,9 @@ const COPY = Object.freeze({
     relationshipTable: "Relationship table",
     independentVariable: "Independent variable",
     dependentVariable: "Dependent variable",
+    baseLabel: "Base",
+    perpendicularHeightLabel: "Perpendicular height",
+    unitLabel: "units",
     closing: "Closing",
     teacherArtifacts: "Teacher materials",
     lessonSegments: "Lesson flow",
@@ -70,6 +76,9 @@ const COPY = Object.freeze({
     relationshipTable: "关系表",
     independentVariable: "自变量",
     dependentVariable: "因变量",
+    baseLabel: "底",
+    perpendicularHeightLabel: "垂直高",
+    unitLabel: "单位",
     closing: "结束说明",
     teacherArtifacts: "教师资料",
     lessonSegments: "课堂流程",
@@ -260,6 +269,21 @@ function relationTableForModel(table) {
   });
 }
 
+function geometryDiagramForModel(diagram) {
+  if (diagram === undefined) return null;
+  try {
+    validator.validateGgaGeometryDiagram(diagram, "renderer-geometry-diagram");
+  } catch (_error) {
+    fail("PRIVATE_RENDER_GEOMETRY_DIAGRAM_INVALID");
+  }
+  return Object.freeze({
+    kind: diagram.kind,
+    base: diagram.base,
+    perpendicularHeight: diagram.perpendicularHeight,
+    heightFoot: diagram.heightFoot
+  });
+}
+
 function buildStudentModel(draft, locale) {
   const student = Object.freeze({
     audience: "student",
@@ -278,7 +302,8 @@ function buildStudentModel(draft, locale) {
             componentType: component.componentType,
             content: localized(component.contentByLocale, locale),
             responseMode: component.responseMode,
-            relationTable: relationTableForModel(component.relationTable)
+            relationTable: relationTableForModel(component.relationTable),
+            geometryDiagram: geometryDiagramForModel(component.geometryDiagram)
           });
         })
       });
@@ -323,6 +348,7 @@ function buildTeacherModel(draft, locale) {
           return Object.freeze({
             prompt: localized(component.contentByLocale, locale),
             relationTable: relationTableForModel(component.relationTable),
+            geometryDiagram: geometryDiagramForModel(component.geometryDiagram),
             expectedResponse: reference.expectedResponse,
             solution: localized(reference.solutionByLocale, locale),
             uniqueness: localized(reference.uniquenessProofByLocale, locale)
@@ -367,12 +393,18 @@ p { margin: 6px 0; font-size: 13px; line-height: 1.65; white-space: normal; }
 .relation-table caption { margin-bottom: 5px; text-align: left; color: #475569; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .relation-table th, .relation-table td { padding: 6px 8px; border: 1px solid #bfdbfe; text-align: center; }
 .relation-table th { background: #eff6ff; color: #1e3a8a; }
+.geometry-diagram { max-width: 320px; margin: 10px auto; }
+.geometry-diagram svg { display: block; width: 100%; height: auto; }
+.geometry-diagram .triangle-shape { fill: #eff6ff; stroke: #1e3a8a; stroke-width: 2.5; }
+.geometry-diagram .dimension-line, .geometry-diagram .extension-line { fill: none; stroke: #475569; stroke-width: 1.5; }
+.geometry-diagram .right-angle-marker { fill: none; stroke: #0f172a; stroke-width: 2; }
+.geometry-diagram text { fill: #172033; font-size: 13px; font-weight: 700; }
 .reference-grid { display: grid; grid-template-columns: max-content 1fr; gap: 5px 12px; font-size: 12px; line-height: 1.55; }
 .reference-grid strong { color: #14532d; }
 footer { margin-top: 28px; padding-top: 9px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 10px; }
 .private-watermark { display: none; }
-@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } }
-@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] footer { margin-top: 5px; padding-top: 4px; font-size: 8px; } }
+@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } .geometry-diagram { max-width: 280px; } }
+@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="student"] .first-instruction { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] .geometry-diagram { max-width: 210px; margin: 3px auto; } main[data-document-audience="teacher"] .geometry-diagram text { font-size: 10px; } main[data-document-audience="teacher"] footer { margin-top: 5px; padding-top: 4px; font-size: 8px; } }
 </style>
 </head>
 <body>
@@ -394,6 +426,21 @@ function renderRelationTable(table, copy) {
   return `<table class="relation-table"><caption>${escapeHtml(copy.relationshipTable)}</caption><thead><tr><th>${escapeHtml(copy.independentVariable)} ${escapeHtml(table.independentSymbol)}</th><th>${escapeHtml(copy.dependentVariable)} ${escapeHtml(table.dependentSymbol)}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+function renderGeometryDiagram(diagram, copy, identifier) {
+  if (diagram === null) return "";
+  const safeDiagram = geometryDiagramForModel(diagram);
+  assert(
+    safeDiagram !== null &&
+      typeof identifier === "string" && /^[a-z0-9-]+$/u.test(identifier),
+    "PRIVATE_RENDER_GEOMETRY_DIAGRAM_INVALID"
+  );
+  const titleId = `geometry-${identifier}-title`;
+  const baseText = `${copy.baseLabel}: ${safeDiagram.base} ${copy.unitLabel}`;
+  const heightValueText = `${safeDiagram.perpendicularHeight} ${copy.unitLabel}`;
+  const heightText = `${copy.perpendicularHeightLabel}: ${heightValueText}`;
+  return `<figure class="geometry-diagram"><svg viewBox="0 0 410 220" role="img" aria-labelledby="${escapeHtml(titleId)}"><title id="${escapeHtml(titleId)}">${escapeHtml(`${baseText}; ${heightText}`)}</title><path class="triangle-shape" d="M 165 175 L 345 175 L 165 45 Z"></path><path class="right-angle-marker" d="M 165 160 H 180 V 175"></path><line class="extension-line" x1="165" y1="175" x2="165" y2="198"></line><line class="extension-line" x1="345" y1="175" x2="345" y2="198"></line><line class="dimension-line" x1="165" y1="194" x2="345" y2="194"></line><line class="extension-line" x1="165" y1="45" x2="137" y2="45"></line><line class="extension-line" x1="165" y1="175" x2="137" y2="175"></line><line class="dimension-line" x1="142" y1="45" x2="142" y2="175"></line><text x="255" y="214" text-anchor="middle">${escapeHtml(baseText)}</text><text x="10" y="96" text-anchor="start"><tspan x="10" dy="0">${escapeHtml(copy.perpendicularHeightLabel)}</tspan><tspan x="10" dy="17">${escapeHtml(heightValueText)}</tspan></text></svg></figure>`;
+}
+
 function renderStudentHtml(model, locale) {
   const copy = COPY[locale];
   const body = [
@@ -402,9 +449,11 @@ function renderStudentHtml(model, locale) {
       const components = section.components.map(function (component, componentIndex) {
         const response = renderStudentResponseControl(component.responseMode, copy);
         const relationTable = renderRelationTable(component.relationTable, copy);
-        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${response}</article>`;
+        const geometryDiagram = renderGeometryDiagram(component.geometryDiagram, copy, `student-${sectionIndex + 1}-${componentIndex + 1}`);
+        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${geometryDiagram}${response}</article>`;
       }).join("\n");
-      return `<section class="section page-start"><h2>${escapeHtml(section.title)}</h2>${components}</section>`;
+      const sectionClass = sectionIndex === 0 ? " first-instruction" : " page-start";
+      return `<section class="section${sectionClass}"><h2>${escapeHtml(section.title)}</h2>${components}</section>`;
     }).join("\n"),
     `<section class="section page-start closing-matter"><h2>${escapeHtml(copy.closing)}</h2>${textBlock(model.glossary)}${textBlock(model.retentionNotice)}</section>`
   ].join("\n");
@@ -431,9 +480,10 @@ function renderTeacherHtml(model, locale) {
       ? `<h3>${escapeHtml(copy.lessonSegments)}</h3>${artifact.lessonSegments.map(function (segment) { return `<article class="component teacher">${textBlock(segment.instruction)}</article>`; }).join("\n")}`
       : "";
     const references = artifact.references.length > 0
-      ? `<h3>${escapeHtml(copy.teacherReference)}</h3>${artifact.references.map(function (reference) {
+      ? `<h3>${escapeHtml(copy.teacherReference)}</h3>${artifact.references.map(function (reference, referenceIndex) {
         const relationTable = renderRelationTable(reference.relationTable, copy);
-        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}</article>`;
+        const geometryDiagram = renderGeometryDiagram(reference.geometryDiagram, copy, `teacher-${artifactIndex + 1}-${referenceIndex + 1}`);
+        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}${geometryDiagram}</article>`;
       }).join("\n")}`
       : "";
     const pageStart = artifactIndex === 0 ? "" : " page-start";
@@ -554,7 +604,9 @@ module.exports = Object.freeze({
   buildTeacherModel,
   parseArguments,
   relationTableForModel,
+  geometryDiagramForModel,
   renderRelationTable,
+  renderGeometryDiagram,
   renderStudentResponseControl,
   renderStudentHtml,
   renderTeacherHtml,

@@ -73,9 +73,15 @@ function inspectInput(inputPath, expectedAudience) {
   const source = fs.readFileSync(inputPath, "utf8");
   const audienceMatch = /<main\b[^>]*\bdata-document-audience="(student|teacher)"/iu.exec(source);
   const targetPageMatch = /<main\b[^>]*\bdata-layout-target-pages="([1-9][0-9]*)"/iu.exec(source);
-  assert(audienceMatch && targetPageMatch && !/<script\b/iu.test(source), "PRIVATE_PDF_EXPORT_INPUT_INVALID");
+  const privateNoticeMatch = /<div\b[^>]*\bclass="private-watermark"[^>]*>([^<>]+)<\/div>/iu.exec(source);
+  assert(audienceMatch && targetPageMatch && privateNoticeMatch && !/<script\b/iu.test(source), "PRIVATE_PDF_EXPORT_INPUT_INVALID");
   assert(audienceMatch[1] === expectedAudience, "PRIVATE_PDF_EXPORT_FILE_BINDING_INVALID");
-  return Object.freeze({ audience: audienceMatch[1], targetPages: Number(targetPageMatch[1]) });
+  return Object.freeze({ audience: audienceMatch[1], targetPages: Number(targetPageMatch[1]), privateNotice: privateNoticeMatch[1] });
+}
+
+function privateFooterTemplate(privateNotice) {
+  assert(typeof privateNotice === "string" && privateNotice.length > 0 && !/[<>\u0000]/u.test(privateNotice), "PRIVATE_PDF_EXPORT_INPUT_INVALID");
+  return `<div style="width:100%; padding-right:0.08in; color:#9f1239; font-family:Arial,sans-serif; font-size:7px; font-weight:800; line-height:1.1; opacity:0.72; text-align:right;">${privateNotice}</div>`;
 }
 
 function inspectGeneratedPdf(pdfPath) {
@@ -130,7 +136,16 @@ async function exportPdf(options) {
         return watermark ? getComputedStyle(watermark).display : "";
       });
       assert(printWatermark === "block", "PRIVATE_PDF_EXPORT_WATERMARK_INVALID");
-      await page.pdf({ path: temporaryPath, format: "Letter", preferCSSPageSize: true, printBackground: true });
+      await page.addStyleTag({ content: "@media print { .private-watermark { display: none !important; } }" });
+      await page.pdf({
+        path: temporaryPath,
+        format: "Letter",
+        preferCSSPageSize: true,
+        printBackground: true,
+        displayHeaderFooter: true,
+        headerTemplate: "<div></div>",
+        footerTemplate: privateFooterTemplate(input.privateNotice)
+      });
     } finally {
       await page.close();
     }
@@ -169,4 +184,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = Object.freeze({ exportPdf, inspectGeneratedPdf, inspectInput, parseArguments, parseWorkbookFileName });
+module.exports = Object.freeze({ exportPdf, inspectGeneratedPdf, inspectInput, parseArguments, parseWorkbookFileName, privateFooterTemplate });
