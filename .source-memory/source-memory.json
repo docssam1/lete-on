@@ -250,9 +250,9 @@
       "path": "geometry/games/mirror-manor/levels.js",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "675283e1908ce04956164ff2fbe0e4638b08ba6fcafd63ff0956634ddad259ef",
-      "size": 32741,
-      "mtime_ns": 1787797042165732000
+      "sha256": "b7fdfe322e99e10925a30dcd59983e75bf3163428efc7d60821ffd0ff19714f0",
+      "size": 36329,
+      "mtime_ns": 1787801116892017100
     },
     {
       "id": "geometry-mirror-selftest",
@@ -260,9 +260,9 @@
       "path": "geometry/games/mirror-manor/mirror-manor.selftest.mjs",
       "kind": "javascript",
       "sensitivity": "internal",
-      "sha256": "22b7f7c3d9c972716f910586f1231a465c11290f41bcded47952a9775fa2e666",
-      "size": 4299,
-      "mtime_ns": 1787797256398528100
+      "sha256": "c43209f357aa4e9c7548e27d762d5a7d1f156b448f5d190fbd4c562c122b72cb",
+      "size": 5426,
+      "mtime_ns": 1787801076310284800
     }
   ],
   "records": [
@@ -4361,6 +4361,42 @@
           "role": "test",
           "locator": "geometry/games/mirror-manor/mirror-manor.selftest.mjs",
           "note": "30 problem validation, locale parity, independent level-3 candidate enumeration"
+        }
+      ]
+    },
+    {
+      "id": "geometry.mirror-manor.level4.ray-c1-1-symbol",
+      "title": "Mirror Manor level 4 source-backed symbol reflection",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "mirror-manor",
+        "reflection",
+        "symbol",
+        "single-answer"
+      ],
+      "summary": "RAY plus C1-1 p.19-23 teaches writing letters and words as seen in a mirror, including Korean consonant/vowel forms and word examples. Mirror Manor level 4 adapts the handwritten response to a mobile three-choice visual selection: one horizontally mirrored source glyph, one normal reading, and one distractor. The two arrow items are an explicitly marked internal extension of the same left-right reflection rule, not source copies.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "ray-c1-1-plusbook",
+          "role": "source",
+          "locator": "PDF p.19-23",
+          "note": "Visual verification of the mirror-letter activity, examples, and teaching explanation"
+        },
+        {
+          "source_id": "geometry-mirror-levels",
+          "role": "code",
+          "locator": "geometry/games/mirror-manor/levels.js:level4Specs,validateSymbol",
+          "note": "Eight source-shaped letter/word items and two marked internal arrow extensions, one mirror choice each"
+        },
+        {
+          "source_id": "geometry-mirror-selftest",
+          "role": "test",
+          "locator": "geometry/games/mirror-manor/mirror-manor.selftest.mjs",
+          "note": "40 IDs, four locales, and exactly one mirror role per level-4 problem"
         }
       ]
     }

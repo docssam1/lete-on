@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-3";
-import { messages, text } from "./i18n.js?v=mirror-manor-3";
+} from "./levels.js?v=mirror-manor-4";
+import { messages, text } from "./i18n.js?v=mirror-manor-4";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -38,8 +38,8 @@ const TUTORIAL_KEY = "gfield-mirror-manor-tutorial-v1";
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
 
-// Levels 4-5 remain locked until their source-backed symbol and double-mirror
-// pools are verified, so an old ?level=4 link falls back to level 3 for now.
+// Level 5 remains locked until its source-backed double-mirror pool is verified,
+// so an old ?level=5 link falls back to level 4 for now.
 const highestReady = readyLevels[readyLevels.length - 1].id;
 const askedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const startLevel = levels.find((level) => level.id === askedLevel)?.ready ? askedLevel : Math.min(Math.max(1, askedLevel), highestReady);
@@ -54,6 +54,7 @@ const state = {
   usedTrayPieces: new Set(),
   solved: false,
   distanceChoice: null,
+  symbolChoice: null,
   wrong: 0,
   hints: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
@@ -143,6 +144,7 @@ function renderBoard() {
   ui.board.classList.toggle("is-paint", p.interaction === "paint-reflection");
   ui.board.classList.toggle("is-drag", p.interaction === "drag-reflection");
   ui.board.classList.toggle("is-distance", p.interaction === "distance-match");
+  ui.board.classList.toggle("is-symbol", p.interaction === "symbol-reflection");
   // The two sides are told apart visually by the silvered mirror band and the cell
   // shading; screen readers get the same information through the label instead of
   // on-board chips, which would sit on top of tappable answer cells.
@@ -161,8 +163,13 @@ function renderCells() {
   const p = problem();
   const { grid, axis } = p;
   ui.cells.classList.toggle("distance-cells", p.interaction === "distance-match");
+  ui.cells.classList.toggle("symbol-cells", p.interaction === "symbol-reflection");
   if (p.interaction === "distance-match") {
     renderDistanceNodes(p);
+    return;
+  }
+  if (p.interaction === "symbol-reflection") {
+    renderSymbolNodes(p);
     return;
   }
   const paint = p.interaction === "paint-reflection";
@@ -238,6 +245,39 @@ function renderDistanceNodes(p) {
     button.append(document.createElement("i"));
     ui.cells.append(button);
   });
+}
+
+function renderSymbolNodes(p) {
+  ui.cells.classList.add("symbol-cells");
+  const source = document.createElement("div");
+  source.className = "symbol-source";
+  source.setAttribute("aria-label", t("sourceSymbolAria", { symbol: p.sourceText }));
+  const sourceGlyph = document.createElement("span");
+  sourceGlyph.className = "symbol-glyph";
+  sourceGlyph.textContent = p.sourceText;
+  source.append(sourceGlyph);
+
+  const choices = document.createElement("div");
+  choices.className = "symbol-choices";
+  p.choices.forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "symbol-choice";
+    button.dataset.choice = choice.id;
+    button.disabled = state.solved;
+    button.setAttribute("aria-label", t("choiceSymbolAria", { number: index + 1 }));
+    if (state.symbolChoice === choice.id) button.classList.add("selected");
+    const glyph = document.createElement("span");
+    glyph.className = `symbol-glyph symbol-${choice.kind}`;
+    glyph.textContent = choice.text;
+    button.append(glyph);
+    choices.append(button);
+  });
+
+  const caption = document.createElement("p");
+  caption.className = "symbol-caption";
+  caption.textContent = t("symbolChoiceCaption");
+  ui.cells.replaceChildren(source, choices, caption);
 }
 
 function objectNode(cells, className, grid, label) {
@@ -356,6 +396,7 @@ function onCellPointerDown(event) {
 
 function onCellClick(event) {
   if (problem().interaction === "distance-match") return onDistanceClick(event);
+  if (problem().interaction === "symbol-reflection") return onSymbolClick(event);
   const node = event.target.closest(".cell");
   if (!node || problem().interaction !== "paint-reflection" || state.solved) return;
   const p = problem();
@@ -390,6 +431,19 @@ function onDistanceClick(event) {
   state.distanceChoice = cellId(cell);
   playTone("tap");
   renderDistanceNodes(p);
+  renderStatus();
+  solveProblem();
+}
+
+function onSymbolClick(event) {
+  const node = event.target.closest(".symbol-choice");
+  if (!node || state.solved) return;
+  const choice = problem().choices.find((item) => item.id === node.dataset.choice);
+  if (!choice) return;
+  if (choice.kind !== "mirror") return reportWrong("symbolChoice", node);
+  state.symbolChoice = choice.id;
+  playTone("tap");
+  renderSymbolNodes(problem());
   renderStatus();
   solveProblem();
 }
@@ -521,7 +575,8 @@ function reportWrong(verdict, node, cells) {
   playTone("wrong");
   const key = verdict === "direction" ? "wrongDirection"
     : verdict === "distance" ? "wrongDistance"
-      : verdict === "distanceChoice" ? "wrongDistanceChoice" : "wrongMiss";
+      : verdict === "distanceChoice" ? "wrongDistanceChoice"
+        : verdict === "symbolChoice" ? "wrongSymbolChoice" : "wrongMiss";
   toast(t(key));
   if (node) {
     node.classList.add("wrong");
@@ -579,12 +634,15 @@ function renderStatus() {
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
   ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint"
-    : p.interaction === "drag-reflection" ? "promptDrag" : "promptDistance");
+    : p.interaction === "drag-reflection" ? "promptDrag"
+      : p.interaction === "distance-match" ? "promptDistance" : "promptSymbol");
   ui.answerPrompt.textContent = p.interaction === "paint-reflection"
     ? t("paintProgress", { done: state.painted.size, total: p.targetCells.length })
     : p.interaction === "drag-reflection"
       ? t("dragProgress", { done: state.usedTargets.size, total: p.targets.length })
-      : t("distanceProgress", { done: state.distanceChoice ? 1 : 0 });
+      : p.interaction === "distance-match"
+        ? t("distanceProgress", { done: state.distanceChoice ? 1 : 0 })
+        : t("symbolProgress", { done: state.symbolChoice ? 1 : 0 });
   ui.next.hidden = !state.solved;
 }
 
@@ -601,6 +659,7 @@ function resetProblem() {
   state.usedTrayPieces = new Set();
   state.solved = false;
   state.distanceChoice = null;
+  state.symbolChoice = null;
   state.wrong = 0;
   state.hints = 0;
   ui.guide.classList.remove("show");
@@ -700,7 +759,8 @@ $("#hintButton").addEventListener("click", () => {
   const current = problem();
   const hintKey = current.interaction === "paint-reflection"
     ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
-    : current.interaction === "drag-reflection" ? "hintDrag" : "hintDistance";
+    : current.interaction === "drag-reflection" ? "hintDrag"
+      : current.interaction === "distance-match" ? "hintDistance" : "hintSymbol";
   cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", resetProblem);

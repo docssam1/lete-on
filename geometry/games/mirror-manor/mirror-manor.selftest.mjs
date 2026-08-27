@@ -13,10 +13,10 @@ const cellKey = (cell) => cell.join(",");
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 3, "levels 1 through 3 should be playable in this release");
+assert(readyLevels.length === 4, "levels 1 through 4 should be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
-assert(ids.length === 30 && new Set(ids).size === 30, "the 30 ready problems need unique ids");
+assert(ids.length === 40 && new Set(ids).size === 40, "the 40 ready problems need unique ids");
 
 for (const problem of levels[0].problems) {
   const targetIds = new Set(problem.targetCells.map(cellKey));
@@ -68,11 +68,24 @@ for (const problem of levels[2].problems) {
   assert(problem.choices.some((choice) => sameCell(choice, problem.targetCell)), `${problem.id} omits the answer choice`);
 }
 
+for (const problem of levels[3].problems) {
+  assert(["letter", "word", "arrow"].includes(problem.sourceKind), `${problem.id} has no supported symbol kind`);
+  assert(problem.sourceText.length > 0, `${problem.id} has no source text`);
+  assert(problem.choices.length === 3, `${problem.id} needs three choices`);
+  assert(problem.choices.filter((choice) => choice.kind === "mirror").length === 1, `${problem.id} needs one mirrored choice`);
+  assert(problem.choices.filter((choice) => choice.kind === "normal").length === 1, `${problem.id} needs one normal choice`);
+  assert(problem.choices.filter((choice) => choice.kind === "decoy").length === 1, `${problem.id} needs one decoy choice`);
+  const answer = problem.choices.find((choice) => choice.kind === "mirror");
+  assert(answer.text === problem.sourceText, `${problem.id} mirrors the wrong source text`);
+  assert(new Set(problem.choices.map((choice) => `${choice.kind}:${choice.text}`)).size === 3, `${problem.id} repeats a visual choice role`);
+}
+
 const koreanKeys = Object.keys(messages.ko).sort();
 for (const lang of LANGUAGES) {
   assert(JSON.stringify(Object.keys(messages[lang]).sort()) === JSON.stringify(koreanKeys), `${lang} locale keys differ from Korean`);
   assert(text(lang, "levelLabel", { level: 2 }).includes("2"), `${lang} level label does not interpolate`);
   assert(text(lang, "hintPaintVertical") !== text(lang, "hintPaintHorizontal"), `${lang} mirror-axis hints must differ`);
+  assert(text(lang, "promptSymbol").length > 0 && text(lang, "hintSymbol").length > 0, `${lang} symbol copy is missing`);
   assert(messages[lang].successGood === "GOOD JOB!", `${lang} success text drifted`);
 }
 
