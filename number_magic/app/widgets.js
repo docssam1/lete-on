@@ -82,20 +82,25 @@ function numpadState(screenEl, maxLen){
    두 렌더 경로의 모양이 갈라지지 않게 한다. */
 function multiBoxesHtml(vals, focus, shape){
   const box=i=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${vals[i]!==''?esc(vals[i]):'?'}</span>`;
+  /* 칸이 3개 이상이면 이동 방법을 한 줄로 안내 — 자동 이동은 정답 자릿수를 흘리므로 안 한다.
+     widgets 경로와 main.js 랩 화면(multiScreenHtml)이 같은 함수를 쓰므로 여기 두면 양쪽에 적용된다. */
+  const lg0=(window.S&&window.S.lang)||'ko';
+  const moveHint=vals.length>=3
+    ? `<span class="nm-multi-hint">${lg0==='en'?'Tap a box to move':lg0==='zh'?'点击方格切换':'칸을 눌러 옮겨요'}</span>` : '';
   if(shape==='fraction'){
-    return `<span class="nm-frac">${box(0)}<span class="nm-frac-bar"></span>${box(1)}</span>`;
+    return `<span class="nm-frac">${box(0)}<span class="nm-frac-bar"></span>${box(1)}</span>`+moveHint;
   }
   if(shape==='mixed'){
-    return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`;
+    return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`+moveHint;
   }
   /* 2×2 행렬 — 가로 나열(a, b, c, d) 대신 실제 행렬 모양으로.
      칸 순서는 행 우선(a11,a12,a21,a22)이라 문제 tex의 pmatrix와 같다. */
   if(shape==='matrix2'&&vals.length===4){
     return `<span class="nm-mat2"><span class="nm-mat2-br left"></span>`+
       `<span class="nm-mat2-grid">${box(0)}${box(1)}${box(2)}${box(3)}</span>`+
-      `<span class="nm-mat2-br right"></span></span>`;
+      `<span class="nm-mat2-br right"></span></span>`+moveHint;
   }
-  return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>');
+  return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>')+moveHint;
 }
 
 /* ── 다칸 답(배열 answer) 공용 상태 — numpad 화면에 답칸 N개, 탭으로 포커스 이동 ──
@@ -110,11 +115,7 @@ function multiPadState(screenEl, answerArr, shape){
     if(!screenEl)return;
     screenEl.classList.add('nm-multi');
     screenEl.classList.toggle('nm-multi-shape', !!shape);
-    const lg=(window.S&&window.S.lang)||'ko';
-    /* 칸이 3개 이상이면(행렬·삼차식 계수 등) 이동 방법을 명시 — 자동 이동은 답 자릿수를
-       흘리므로 하지 않는다. 눌러서 옮기는 방식임을 한 줄로 안내. */
-    const hint=n>=3?`<span class="nm-multi-hint">${lg==='en'?'Tap a box to move':lg==='zh'?'点击方格切换':'칸을 눌러 옮겨요'}</span>`:'';
-    screenEl.innerHTML=multiBoxesHtml(vals,focus,shape)+hint;
+    screenEl.innerHTML=multiBoxesHtml(vals,focus,shape);
     screenEl.querySelectorAll('.nm-ans-box').forEach(b=>{
       b.addEventListener('pointerup',e=>{e.stopPropagation();focus=+b.dataset.i;paint();});
     });
