@@ -1,0 +1,8 @@
+node_modules/
+supabase/.temp/
+
+# Assessment prompts, answers, solution drafts, and reviewer notes must never
+# enter the public repository. They live in an authenticated content store
+# after independent review; local drafting is intentionally ignored.
+private-authoring/
+private-workbook-authoring/

@@ -49,6 +49,8 @@ function audit(database) {
     });
     if (question.releaseStatus !== "locked") issues.push(`release:${question.questionId}`);
   });
+  const primarySourceIds = new Set(database.papers.map(paper => paper.sourceId));
+  const equivalentSourceIds = new Set();
   database.papers.forEach(paper => {
     if (paper.questionCount !== paper.questionIds.length) issues.push(`paper_count:${paper.paperId}`);
     const rows = paper.questionIds.map(id => questionsById.get(id));
@@ -61,6 +63,16 @@ function audit(database) {
         || !paper.coverage.observedTerminal.semester || !paper.coverage.observedTerminal.unit) issues.push(`paper_coverage_terminal:${paper.paperId}`);
       if (paper.coverage.status !== "verified" || !(paper.coverage.evidence || []).length) issues.push(`paper_coverage_evidence:${paper.paperId}`);
     }
+    (paper.equivalentSources || []).forEach(source => {
+      if (!/^DP-SRC-[0-9A-F]{12}$/.test(source.sourceId || "")) issues.push(`paper_equivalent_source_id:${paper.paperId}`);
+      if (!/^[0-9a-f]{64}$/.test(source.sourceFingerprint || "")) issues.push(`paper_equivalent_fingerprint:${paper.paperId}:${source.sourceId}`);
+      if (source.relation !== "same_question_content_revision") issues.push(`paper_equivalent_relation:${paper.paperId}:${source.sourceId}`);
+      if (!Number.isSafeInteger(source.pageCount) || source.pageCount < 1) issues.push(`paper_equivalent_pages:${paper.paperId}:${source.sourceId}`);
+      if (source.status !== "verified" || !(source.evidence || []).length) issues.push(`paper_equivalent_evidence:${paper.paperId}:${source.sourceId}`);
+      if (primarySourceIds.has(source.sourceId)) issues.push(`paper_equivalent_primary_collision:${paper.paperId}:${source.sourceId}`);
+      if (equivalentSourceIds.has(source.sourceId)) issues.push(`paper_equivalent_duplicate:${source.sourceId}`);
+      equivalentSourceIds.add(source.sourceId);
+    });
   });
   const rebuiltTypes = dbCore.rebuildTypeCatalog(database.questions);
   if (JSON.stringify(rebuiltTypes) !== JSON.stringify(database.typeCatalog)) issues.push("type_catalog");

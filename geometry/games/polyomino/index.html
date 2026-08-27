@@ -4,13 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Polyomino Garden</title>
-  <link rel="stylesheet" href="./styles.css?v=polyomino-1" />
+  <link rel="stylesheet" href="./styles.css?v=polyomino-2" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
   <meta name="theme-color" content="#376b57" />
 </head>
 <body>
+  <aside class="portrait-guard" aria-live="polite"><span aria-hidden="true">↻</span><strong id="rotateMessage"></strong></aside>
   <main class="game-shell">
     <header class="topbar">
       <a class="icon-button exit" href="../../world-map/" aria-label="Back to map">&larr;</a>
@@ -28,13 +29,15 @@
     <section class="play-area">
       <article class="target-panel">
         <header><span id="targetLabel"></span><b id="dropLabel"></b></header>
-        <button id="targetSlot" class="target-slot" type="button" aria-label="Target piece"></button>
+        <div id="targetSlot" class="target-slot" role="group" aria-label="Target piece"></div>
       </article>
       <article class="tray-panel">
         <header><span id="choicesLabel"></span><b id="trayHint"></b></header>
         <div id="pieceTray" class="piece-tray"></div>
       </article>
       <aside class="tool-panel">
+        <button id="turnButton" type="button" hidden></button>
+        <button id="flipButton" type="button" hidden></button>
         <button id="hintButton" type="button"></button>
         <button id="clearButton" type="button"></button>
       </aside>
@@ -73,7 +76,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=polyomino-1"></script>
+  <script type="module" src="./app.js?v=polyomino-2"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

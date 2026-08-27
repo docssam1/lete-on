@@ -282,9 +282,13 @@
         const row = make("article", "candidate-row is-catalog");
         const main = make("div", "candidate-main");
         const title = make("div", "candidate-title");
-        title.append(make("strong", "", candidate.typeLabel), make("code", "", `${candidate.paperId} · ${candidate.number}번`));
+        const sourceReference = candidate.number
+          ? `${candidate.sourceLabel || candidate.paperId} · ${candidate.number}번`
+          : (candidate.sourceLabel || candidate.paperId);
+        title.append(make("strong", "", candidate.typeLabel), make("code", "", sourceReference));
         const badges = make("div", "candidate-badges");
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
         badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
         badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
         const checks = candidate.reviewChecks || {};

@@ -27,7 +27,7 @@
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
 - games/mirror-manor/ - 거울 저택
 - games/geoboard/ - 점판 공작소
-- games/polyomino/ - 도형 조각 정원: 폴리오미노 퍼즐
+- games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
 
 ## 색종이 생각 놀이터
 

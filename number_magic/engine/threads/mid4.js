@@ -520,7 +520,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
         zh: `矩阵加减法只对相同位置(元素)分别运算`
       },
       tex: `${matTex(A)} ${op} ${matTex(B)} = ${BLANK_MAT}`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
     };
   }
 
@@ -535,7 +535,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
         zh: `数乘就是把每个元素都乘以同一个数`
       },
       tex: `${k} ${matTex(A)} = ${BLANK_MAT}`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
     };
   }
 
@@ -553,7 +553,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
       zh: `矩阵乘法把前者的行与后者的列逐个配对相乘再相加`
     },
     tex: `${matTex(A)} \\times ${matTex(B)} = ${BLANK_MAT}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
   };
 };
 
