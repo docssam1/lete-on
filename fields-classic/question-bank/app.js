@@ -1,8 +1,8 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827j";
-import { GENERATORS } from "./generators.js?v=20260827d";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827n";
+import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827d";
-import { book03Markup } from "./book03-renderers.js?v=20260825m";
+import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
 import { book05Markup } from "./book05-renderers.js?v=20260826c";
 import { book06Markup } from "./book06-renderers.js?v=20260826e";
@@ -28,6 +28,7 @@ const MOCK_EXAM_NAV = [
   ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
 ];
 const academyStyleIdsByType = new Map(TYPES.map((item) => [item.id, new Set(item.academyStyleIds || [])]));
+const sourceQuestionByKey = new Map(SOURCE_QUESTION_INDEX.map((item) => [item.sourceKey, item]));
 for (const sourceQuestion of SOURCE_QUESTION_INDEX) {
   sourceQuestion.classifications.forEach((classification) => {
     const styleIds = academyStyleIdsByType.get(classification.detailedTypeId) || new Set();
@@ -347,7 +348,8 @@ function isSelectableCurriculumType(item, book, unit = null, stageId = activeTex
   // 원본 교재에 이 세부 유형이 등장하는 단계와, 문제은행에서 난이도를 바꾸어
   // 생성할 수 있는 단계는 구분한다. 원본 문항 번호가 없는 단계를 가짜 번호로
   // 채우지는 않되, 검산된 생성기는 개념·유형·연습·심화 변형으로 사용할 수 있다.
-  return isReady(item) && hasBookSource(item, book, unit);
+  const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
+  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit);
 }
 
 function sourceStageLabels(unit, typeId) {
@@ -383,6 +385,7 @@ function studyReferenceLabel(references = []) {
 
 function renderCurriculum() {
   const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  if ($("goldenBellLink")) $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
   const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
     `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
   ).join("")}</nav>`;
@@ -441,13 +444,14 @@ function renderCurriculum() {
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
+        <div><strong>골든벨 레벨업</strong><span>${book.source.goldenBellStatus === "ready" ? "원본 골든벨 → 개념 이야기 → 같은 원리의 새 상황" : book.source.goldenBellStatus === "source-located" ? "비공개 원본 위치 확인 · 문항별 대조 중" : "원본 자료 보강 필요 · 임의 문항 생성 금지"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
         ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
       ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
+      <p class="book-policy">골든벨은 문제 생성과 분리한 개념 설명·원본 확인·스토리 확장 레벨업 트랙${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
   $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;
@@ -558,6 +562,19 @@ function renderTypeTree() {
   }));
 }
 
+function generationCaseForSource(sourceKind, sourceId, number) {
+  const sourceKey = `${sourceKind}:${sourceId}:q${number}`;
+  const sourceRecord = sourceQuestionByKey.get(sourceKey);
+  return Object.freeze({
+    mode: sourceRecord?.sourceFidelity === "exact-generator" ? "source" : "variant-from-source",
+    sourceKey,
+    sourceKind,
+    sourceId,
+    number,
+    sourceFidelity: sourceRecord?.sourceFidelity || "classified"
+  });
+}
+
 function selectedReferences() {
   if (state.mode === "type") return [...state.selected.type].map((typeId) => ({
     typeId,
@@ -597,7 +614,8 @@ function selectedReferences() {
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
           fixedSeed: `unit-test:${book.id}:${number}`,
-          classification: question.classification
+          classification: question.classification,
+          generationCase: generationCaseForSource("unit-test", book.id, number)
         });
       }
     }
@@ -611,7 +629,8 @@ function selectedReferences() {
           typeId: sourceQuestion.typeId,
           reference: `${exam.label} ${sourceQuestion.number}번`,
           fixedSeed: sourceQuestion.fixedSeed || null,
-          classification: sourceQuestion.classification
+          classification: sourceQuestion.classification,
+          generationCase: generationCaseForSource("exam", exam.id, sourceQuestion.number)
         });
       }
     }
@@ -786,7 +805,7 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   };
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
@@ -797,8 +816,8 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // retry 0은 기존 시드 형식 그대로 — 파이널 1회 교체본처럼 이미 고정 시드로 검수된
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
-      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty };
+      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty, sourceCase: generationCase }));
+      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty, generationCase };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
@@ -825,7 +844,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -862,6 +881,7 @@ function moveQuestion(fromIndex, toIndex) {
 function replaceQuestion(index) {
   const current = state.questions[index];
   if (!current) return;
+  if (current.generationCase?.mode === "source") return;
   const currentSignature = problemSignature(current);
   const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
   let replacement = null;
@@ -3326,7 +3346,7 @@ function renderWorksheet() {
         <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
         <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
         <button type="button" data-question-action="down" data-question-index="${index}" title="아래로 이동" aria-label="아래로 이동" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button>
-        <button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>
+        ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>`}
         <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
@@ -3371,6 +3391,7 @@ function openAnswers() {
 function initControls() {
   $("studentName").textContent = student;
   $("worksheetStudent").textContent = student;
+  $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
   $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
@@ -3421,7 +3442,7 @@ renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();
-setMode("exam");
+setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") === "type" ? "type" : "exam");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
 // 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로

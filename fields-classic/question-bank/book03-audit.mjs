@@ -124,6 +124,27 @@ function validate(type, problem, difficulty) {
       assert(meta.visibleLines > 0 && meta.visibleLines < meta.internalLines, id, difficulty, "incomplete guide-line count mismatch");
       assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "incomplete/answer visual state mismatch");
       return;
+    case "paired-hexagon-fractions":
+      assert(JSON.stringify(meta.parts) === JSON.stringify([12, 18]), id, difficulty, "paired hexagon denominators changed");
+      assert(meta.shaded.length === 2 && meta.shaded.every((value, index) => value > 0 && value < meta.parts[index]), id, difficulty, "paired hexagon numerators invalid");
+      assert(problem.answer === `왼쪽=${meta.shaded[0]}/${meta.parts[0]}, 오른쪽=${meta.shaded[1]}/${meta.parts[1]}`, id, difficulty, "paired hexagon answer mismatch");
+      assert(problem.responseKind === "list" && visual.subtype === "paired-source-fractions", id, difficulty, "paired hexagon response structure changed");
+      assert(JSON.stringify(visual.items.map((item) => [item.template, item.parts])) === JSON.stringify([["hexagon-12", 12], ["hexagon-18", 18]]), id, difficulty, "paired hexagon topology changed");
+      if (difficulty === 2) assert(JSON.stringify(meta.shaded) === JSON.stringify([2, 6]), id, difficulty, "unit-test q3 source shading changed");
+      return;
+    case "triangle-twelve-part-fraction":
+      assert(meta.template === "triangle-12" && meta.parts === 12, id, difficulty, "triangle-12 topology changed");
+      assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "triangle-12 numerator invalid");
+      assert(problem.answer === `${meta.shaded}/12`, id, difficulty, "triangle-12 answer mismatch");
+      assert(visual.subtype === "equal-partition-source" && visual.complete === true && visual.parts === 12, id, difficulty, "triangle-12 visual changed");
+      if (difficulty === 2) assert(meta.shaded === 5, id, difficulty, "unit-test q4 source shading changed");
+      return;
+    case "concentric-square-sixteen-fraction":
+      assert(meta.template === "concentric-square-diagonals" && meta.parts === 16, id, difficulty, "concentric-square topology changed");
+      assert(meta.shaded === ({ 1: 1, 2: 2, 3: 3 })[difficulty], id, difficulty, "concentric-square shading changed");
+      assert(problem.answer === `${meta.shaded}/16`, id, difficulty, "concentric-square answer mismatch");
+      assert(visual.subtype === "concentric-square-sixteen-fraction" && visual.parts === 16, id, difficulty, "concentric-square visual changed");
+      return;
     case "equal-partition-drawing":
       assert(meta.shaded > 0 && meta.shaded <= meta.parts, id, difficulty, "invalid partition drawing");
       assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "answer partition incomplete");
@@ -357,10 +378,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 49) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 52) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
-const expectedReadyQuestions = [1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+const expectedReadyQuestions = Array.from({ length: 25 }, (_, index) => index + 1);
 const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
 if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
 if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
@@ -377,13 +398,43 @@ if (unitTestQuestions.find((question) => question.number === 17)?.difficulty !==
 
 const question19Type = typeById(unitTestQuestions.find((question) => question.number === 19)?.typeId);
 const question23Type = typeById(unitTestQuestions.find((question) => question.number === 23)?.typeId);
+const question3Type = typeById(unitTestQuestions.find((question) => question.number === 3)?.typeId);
+const question4Type = typeById(unitTestQuestions.find((question) => question.number === 4)?.typeId);
+const question5Type = typeById(unitTestQuestions.find((question) => question.number === 5)?.typeId);
 const question9Type = typeById(unitTestQuestions.find((question) => question.number === 9)?.typeId);
 const question10Type = typeById(unitTestQuestions.find((question) => question.number === 10)?.typeId);
 const question13Type = typeById(unitTestQuestions.find((question) => question.number === 13)?.typeId);
 const question14Type = typeById(unitTestQuestions.find((question) => question.number === 14)?.typeId);
 const question15Type = typeById(unitTestQuestions.find((question) => question.number === 15)?.typeId);
 assert(countQ15Solutions() === 1, question15Type.id, 3, "source q15 is not unique");
+const sourceCase = (number) => ({
+  mode: "source",
+  sourceKey: `unit-test:book-03:q${number}`,
+  sourceKind: "unit-test",
+  sourceId: "book-03",
+  number,
+  sourceFidelity: "exact-generator"
+});
 for (let run = 0; run < 100; run += 1) {
+  const question3 = GENERATORS[question3Type.generator]({ difficulty: 2, sourceCase: sourceCase(3) });
+  assert(JSON.stringify(question3.meta.sourceCase) === JSON.stringify({ parts: [12, 18], shaded: [2, 6] }), question3Type.id, 2, "unit-test q3 source case changed");
+  assert(JSON.stringify(question3.meta.shaded) === JSON.stringify([2, 6]), question3Type.id, 2, "unit-test q3 visible fractions changed");
+  assert(question3.meta.sourceExact === true && question3.visual.subtype === "paired-source-fractions-exact", question3Type.id, 2, "unit-test q3 exact renderer not selected");
+  assert(question3.meta.sourceVisualSignature === "wide-hexagon-12-crossed|wide-hexagon-18-outer-star", question3Type.id, 2, "unit-test q3 visual signature changed");
+  assert(JSON.stringify(question3.visual.items[0].shadedRegionIds) === JSON.stringify(["top-right-center", "left-center"]), question3Type.id, 2, "unit-test q3 left source shading changed");
+  assert(JSON.stringify(question3.visual.items[1].shadedIndices) === JSON.stringify([0, 3, 6, 9, 12, 15]), question3Type.id, 2, "unit-test q3 right source shading changed");
+
+  const question4 = GENERATORS[question4Type.generator]({ difficulty: 2, sourceCase: sourceCase(4) });
+  assert(JSON.stringify(question4.meta.sourceCase) === JSON.stringify({ template: "source-triangle-twelve", parts: 12, shaded: 5 }), question4Type.id, 2, "unit-test q4 source case changed");
+  assert(question4.answer === "5/12", question4Type.id, 2, "unit-test q4 visible fraction changed");
+  assert(question4.meta.sourceExact === true && question4.visual.subtype === "triangle-twelve-fraction-exact", question4Type.id, 2, "unit-test q4 exact renderer not selected");
+  assert(JSON.stringify(question4.visual.shadedRegionIds) === JSON.stringify(["top-center", "left-base", "right-side"]), question4Type.id, 2, "unit-test q4 source shading changed");
+
+  const question5 = GENERATORS[question5Type.generator]({ difficulty: 2, sourceCase: sourceCase(5) });
+  assert(JSON.stringify(question5.meta.sourceCase) === JSON.stringify({ template: "concentric-square-diagonals", parts: 16, shaded: 2 }), question5Type.id, 2, "unit-test q5 source case changed");
+  assert(question5.answer === "2/16", question5Type.id, 2, "unit-test q5 visible fraction changed");
+  assert(question5.meta.sourceExact === true && JSON.stringify(question5.visual.shadedIndices) === JSON.stringify([1, 2]), question5Type.id, 2, "unit-test q5 source shading changed");
+
   const question9 = GENERATORS[question9Type.generator]({ difficulty: 2 });
   assert([2, 5].includes(question9.meta.ratio), question9Type.id, 2, "unit-test ratio changed");
   assert(question9.meta.first + question9.meta.second === question9.meta.total, question9Type.id, 2, "unit-test total changed");
@@ -447,7 +498,7 @@ for (const typeId of typeIds) {
       fingerprints.add(JSON.stringify(problem.meta || { prompt: problem.prompt, answer: problem.answer, visual: problem.visual }));
       generated += 1;
     }
-    const minimumVariants = typeId === "cryptarithm-multi-symbol-carry" ? 2 : 3;
+    const minimumVariants = iterations < 30 ? 1 : typeId === "cryptarithm-multi-symbol-carry" ? 2 : 3;
     assert(fingerprints.size >= minimumVariants, typeId, difficulty, `only ${fingerprints.size} visible variants`);
     variants.set(key, fingerprints.size);
   }

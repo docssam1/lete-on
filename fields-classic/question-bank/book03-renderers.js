@@ -398,7 +398,103 @@ function sourcePartitionMarkup(visual) {
   const dots = visual.complete ? "" : geometry.guideDots.map(([x, y]) => `<circle class="guide-dot" cx="${x}" cy="${y}" r="2.8"/>`).join("");
   const target = visual.targetParts ? `<text class="partition-target" x="236" y="92">${visual.targetParts}조각</text><text class="partition-target" x="236" y="112">으로 나누기</text>` : "";
   const showCells = visual.complete || visual.subtype === "incomplete-partition-source";
-  return `<svg class="b3-svg b3-source-partition" viewBox="0 0 ${visual.targetParts ? 310 : 220} 195" role="img" aria-label="같은 모양과 크기의 삼각형으로 나누는 도형">${showCells ? cells : ""}<polygon class="partition-outline" points="${pointsText(geometry.outline)}"/><g class="partition-lines">${lines}</g>${dots}${target}</svg>`;
+  const shapeLabel = visual.shape === "hexagon" ? "정육각형" : "정삼각형";
+  return `<svg class="b3-svg b3-source-partition" viewBox="0 0 ${visual.targetParts ? 310 : 220} 195" role="img" aria-label="같은 모양과 크기의 조각으로 나눈 ${shapeLabel}">${showCells ? cells : ""}<polygon class="partition-outline" points="${pointsText(geometry.outline)}"/><g class="partition-lines">${lines}</g>${dots}${target}</svg>`;
+}
+
+function pairedSourceFractionsMarkup(visual) {
+  const labels = ["왼쪽", "오른쪽"];
+  return `<div class="b3-paired-fractions">${visual.items.map((item, index) => `<figure>${sourcePartitionMarkup({ ...item, subtype: "equal-partition-source" })}<figcaption>${labels[index]}</figcaption><div class="b3-fraction-answer" aria-label="${labels[index]} 분수 답칸"><span></span><i></i><span></span></div></figure>`).join("")}</div>`;
+}
+
+function exactWideHexagonLeftMarkup() {
+  const vertices = [[110, 14], [204, 50], [204, 130], [110, 166], [16, 130], [16, 50]];
+  const [top, upperRight, lowerRight, bottom, lowerLeft, upperLeft] = vertices;
+  const center = [110, 90];
+  const leftCross = [64.2, 70.5];
+  const rightCross = [155.8, 70.5];
+  const polygons = [
+    [top, rightCross, center],
+    [lowerLeft, leftCross, center]
+  ].map((cell) => `<polygon class="partition-cell shade" points="${pointsText(cell)}"/>`).join("");
+  const lines = [
+    [top, bottom],
+    [top, lowerLeft],
+    [top, lowerRight],
+    [upperLeft, lowerRight],
+    [lowerLeft, upperRight],
+    [lowerLeft, lowerRight]
+  ]
+    .map(([from, to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+  return `<svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 180" role="img" aria-label="원본과 같은 납작한 정육각형 12부분 분할, 두 부분 색칠">${polygons}<polygon class="partition-outline" points="${pointsText(vertices)}"/><g class="partition-lines">${lines}</g></svg>`;
+}
+
+function exactWideHexagonRightMarkup() {
+  const vertices = [[110, 14], [204, 50], [204, 130], [110, 166], [16, 130], [16, 50]];
+  const center = [110, 90];
+  const cells = [];
+  vertices.forEach((point, index) => {
+    const next = vertices[(index + 1) % vertices.length];
+    const edgeMiddle = midpoint(point, next);
+    const inner = [center[0] + (edgeMiddle[0] - center[0]) * 0.54, center[1] + (edgeMiddle[1] - center[1]) * 0.54];
+    cells.push([point, next, inner], [point, inner, center], [next, center, inner]);
+  });
+  const shaded = new Set([0, 3, 6, 9, 12, 15]);
+  const polygons = cells.map((cell, index) => `<polygon class="partition-cell${shaded.has(index) ? " shade" : ""}" points="${pointsText(cell)}"/>`).join("");
+  const segmentIndex = new Map();
+  cells.flatMap((cell) => cell.map((point, index) => [point, cell[(index + 1) % cell.length]])).forEach((segment) => {
+    const pointKeys = segment.map((point) => point.map((value) => Number(value).toFixed(2)).join(",")).sort();
+    segmentIndex.set(pointKeys.join("|"), segment);
+  });
+  const lines = [...segmentIndex.values()]
+    .map(([from, to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+  return `<svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 180" role="img" aria-label="원본과 같은 납작한 정육각형 18부분 분할, 여섯 부분 색칠">${polygons}<polygon class="partition-outline" points="${pointsText(vertices)}"/><g class="partition-lines">${lines}</g></svg>`;
+}
+
+function pairedSourceFractionsExactMarkup() {
+  const diagrams = [exactWideHexagonLeftMarkup(), exactWideHexagonRightMarkup()];
+  const labels = ["왼쪽", "오른쪽"];
+  return `<div class="b3-paired-fractions">${diagrams.map((diagram, index) => `<figure>${diagram}<figcaption>${labels[index]}</figcaption><div class="b3-fraction-answer" aria-label="${labels[index]} 분수 답칸"><span></span><i></i><span></span></div></figure>`).join("")}</div>`;
+}
+
+function triangleTwelveFractionExactMarkup() {
+  const top = [110, 12];
+  const left = [10, 180];
+  const right = [210, 180];
+  const leftShoulder = [62, 88];
+  const rightShoulder = [158, 88];
+  const topInner = [110, 55];
+  const bottomCenter = [110, 180];
+  const rightInner = [158, 132];
+  const shaded = [
+    [topInner, leftShoulder, rightShoulder],
+    [left, leftShoulder, bottomCenter],
+    [rightShoulder, rightInner, right]
+  ];
+  const fills = shaded.map((cell) => `<polygon class="partition-cell shade" points="${pointsText(cell)}"/>`).join("");
+  const segments = [
+    [top, topInner], [topInner, leftShoulder], [topInner, rightShoulder], [leftShoulder, rightShoulder],
+    [leftShoulder, bottomCenter], [rightShoulder, bottomCenter], [rightShoulder, rightInner],
+    [rightInner, bottomCenter], [rightInner, right]
+  ];
+  const lines = segments.map(([from, to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+  return `<div class="b3-concentric-fraction"><svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 195" role="img" aria-label="원본과 같은 큰 정삼각형 12조각 분할, 넓이 다섯 조각만큼 색칠">${fills}<polygon class="partition-outline" points="${pointsText([top, left, right])}"/><g class="partition-lines">${lines}</g></svg><div class="b3-fraction-answer" aria-label="분수 답칸"><span></span><i></i><span></span></div></div>`;
+}
+
+function concentricSquareSixteenMarkup(visual) {
+  const outer = { left: 24, top: 14, right: 196, bottom: 186 };
+  const inner = { left: 67, top: 57, right: 153, bottom: 143 };
+  const center = [110, 100];
+  const cells = [
+    [[inner.left, inner.top], [inner.right, inner.top], center],
+    [[inner.right, inner.top], [inner.right, inner.bottom], center],
+    [[inner.right, inner.bottom], [inner.left, inner.bottom], center],
+    [[inner.left, inner.bottom], [inner.left, inner.top], center]
+  ];
+  const explicit = Array.isArray(visual.shadedIndices) ? new Set(visual.shadedIndices) : null;
+  const selected = (index) => explicit ? explicit.has(index) : (index - visual.rotation + cells.length) % cells.length < visual.shaded;
+  const shading = cells.map((cell, index) => `<polygon class="concentric-cell${selected(index) ? " shade" : ""}" points="${pointsText(cell)}"/>`).join("");
+  return `<div class="b3-concentric-fraction"><svg class="b3-svg b3-concentric-square" viewBox="0 0 220 200" role="img" aria-label="정사각형 안의 작은 정사각형과 두 대각선으로 나눈 16조각">${shading}<rect class="outer-square" x="${outer.left}" y="${outer.top}" width="${outer.right - outer.left}" height="${outer.bottom - outer.top}"/><rect class="inner-square" x="${inner.left}" y="${inner.top}" width="${inner.right - inner.left}" height="${inner.bottom - inner.top}"/><line x1="${outer.left}" y1="${outer.top}" x2="${outer.right}" y2="${outer.bottom}"/><line x1="${outer.right}" y1="${outer.top}" x2="${outer.left}" y2="${outer.bottom}"/></svg><div class="b3-fraction-answer" aria-label="분수 답칸"><span></span><i></i><span></span></div></div>`;
 }
 
 function fractionShapeMarkup(visual) {
@@ -587,6 +683,10 @@ export function book03Markup(visual) {
   if (visual.subtype === "fraction-shape") return fractionShapeMarkup(visual);
   if (visual.subtype === "equal-partition-source" || visual.subtype === "incomplete-partition-source") return sourcePartitionMarkup(visual);
   if (visual.subtype === "equal-fraction-source") return equalFractionSourceMarkup(visual);
+  if (visual.subtype === "paired-source-fractions") return pairedSourceFractionsMarkup(visual);
+  if (visual.subtype === "paired-source-fractions-exact") return pairedSourceFractionsExactMarkup(visual);
+  if (visual.subtype === "triangle-twelve-fraction-exact") return triangleTwelveFractionExactMarkup(visual);
+  if (visual.subtype === "concentric-square-sixteen-fraction") return concentricSquareSixteenMarkup(visual);
   if (visual.subtype === "oblique-square-area") return obliqueSquareMarkup(visual);
   if (visual.subtype === "grid-path") return gridPathMarkup(visual);
   if (visual.subtype === "number-line") return numberLineMarkup(visual);
