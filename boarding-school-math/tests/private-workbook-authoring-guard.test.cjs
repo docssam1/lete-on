@@ -3155,6 +3155,9 @@ test("Grade 6 6.NS.B v1 locks decimal, GCF, and LCM calculation evidence without
       validator.validateNsbOperationSituation(candidate, "synthetic-nsb-invalid");
     }, /NSB_OPERATION_SITUATION_INVALID/);
   });
+  assert.throws(function () {
+    validator.validateNsbOperationSituation({ kind: "decimal-operation", operation: "add", left: "8", right: "7" }, "synthetic-nsb-integer-only-decimal");
+  }, /NSB_OPERATION_SITUATION_INVALID/);
 
   const legacyPack = syntheticWorkbookPack("ccss-6-ns-b");
   assert.equal(legacyPack.standardsEvidence, undefined);
@@ -3175,6 +3178,21 @@ test("Grade 6 6.NS.B v1 locks decimal, GCF, and LCM calculation evidence without
     return answerReference.responseMode === "numeric-exact" && validator.NSB_SUPPORTED_CHECK_KINDS.has(answerReference.arithmeticCheck.kind);
   }));
 
+  const integerOnlyDecimalPack = JSON.parse(JSON.stringify(pack));
+  const integerOnlyReference = integerOnlyDecimalPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (answerReference) {
+    return answerReference.arithmeticCheck.kind === "decimal-operation";
+  });
+  integerOnlyReference.arithmeticCheck = { kind: "decimal-operation", operation: "add", left: "8", right: "7" };
+  integerOnlyReference.expectedResponse = "15";
+  const integerOnlyComponent = integerOnlyDecimalPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.componentId === integerOnlyReference.componentId;
+  });
+  integerOnlyComponent.nsbOperationSituation = Object.assign({}, integerOnlyReference.arithmeticCheck);
+  integerOnlyComponent.contentByLocale = syntheticNsbOperationPrompt(integerOnlyReference.arithmeticCheck);
+  assert.throws(function () {
+    validator.validatePack(integerOnlyDecimalPack, "synthetic-nsb-integer-only-decimal.json");
+  }, /NSB_OPERATION_SITUATION_INVALID/);
+
   const genericContractPack = JSON.parse(JSON.stringify(pack));
   const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
   genericReference.arithmeticCheck = { kind: "whole-quotient", total: 1, groups: 1 };
@@ -3190,6 +3208,21 @@ test("Grade 6 6.NS.B v1 locks decimal, GCF, and LCM calculation evidence without
   mismatchedSituation.nsbOperationSituation.left = "0.42";
   assert.throws(function () {
     validator.validatePack(mismatchedSituationPack, "synthetic-nsb-situation-mismatch.json");
+  }, /NSB_OPERATION_SITUATION_MISMATCH/);
+
+  const swappedCommutativeSituationPack = JSON.parse(JSON.stringify(pack));
+  const swappedCommutativeComponent = swappedCommutativeSituationPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null && component.nsbOperationSituation.operation === "add";
+  });
+  const originalSituation = swappedCommutativeComponent.nsbOperationSituation;
+  swappedCommutativeComponent.nsbOperationSituation = {
+    kind: originalSituation.kind,
+    operation: originalSituation.operation,
+    left: originalSituation.right,
+    right: originalSituation.left
+  };
+  assert.throws(function () {
+    validator.validatePack(swappedCommutativeSituationPack, "synthetic-nsb-swapped-commutative-situation.json");
   }, /NSB_OPERATION_SITUATION_MISMATCH/);
 
   const changedPromptPack = JSON.parse(JSON.stringify(pack));
@@ -3241,6 +3274,27 @@ test("Grade 6 6.NS.B v1 locks decimal, GCF, and LCM calculation evidence without
   assert.throws(function () {
     validator.validatePack(nonResponseLeakPack, "synthetic-nsb-nonresponse-leak.json");
   }, /NSB_NONRESPONSE_NUMERIC_NOT_ALLOWED/);
+
+  const decimalWordLeakPack = JSON.parse(JSON.stringify(pack));
+  assert(answerReferences.some(function (answerReference) { return answerReference.expectedResponse === "1.11"; }));
+  decimalWordLeakPack.frontMatter.titleByLocale.en = "One point one one.";
+  assert.throws(function () {
+    validator.validatePack(decimalWordLeakPack, "synthetic-nsb-decimal-word-leak.json");
+  }, /NSB_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const romanLeakPack = JSON.parse(JSON.stringify(pack));
+  assert(answerReferences.some(function (answerReference) { return answerReference.expectedResponse === "12"; }));
+  romanLeakPack.frontMatter.titleByLocale.en = "XII.";
+  assert.throws(function () {
+    validator.validatePack(romanLeakPack, "synthetic-nsb-roman-leak.json");
+  }, /NSB_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const benignChineseProsePack = JSON.parse(JSON.stringify(pack));
+  assert(answerReferences.some(function (answerReference) { return answerReference.expectedResponse === "1"; }));
+  benignChineseProsePack.frontMatter.titleByLocale["zh-Hans"] = "这是一个清楚的学习目标。";
+  assert.doesNotThrow(function () {
+    validator.validatePack(benignChineseProsePack, "synthetic-nsb-benign-chinese-prose.json");
+  });
 
   const missingObservationPack = JSON.parse(JSON.stringify(pack));
   const missingObservation = missingObservationPack.teacherArtifacts.find(function (artifact) {

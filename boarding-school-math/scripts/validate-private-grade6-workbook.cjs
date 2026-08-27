@@ -1100,6 +1100,11 @@ function validateNsbOperationSituation(situation, reference) {
   assert(NSB_SUPPORTED_CHECK_KINDS.has(kind), "NSB_OPERATION_SITUATION_INVALID", reference);
   try {
     canonicalAnswer(situation, reference);
+    // The narrow automatic path is specifically decimal evidence, not a
+    // generic whole-number-operation channel with a decimal label.
+    if (kind === "decimal-operation") {
+      assert(situation.left.includes(".") || situation.right.includes("."), "NSB_OPERATION_SITUATION_INVALID", reference);
+    }
   } catch (error) {
     if (error instanceof ValidationError) fail("NSB_OPERATION_SITUATION_INVALID", reference);
     throw error;
@@ -1115,6 +1120,13 @@ function nsbOperationFactFingerprint(check, reference) {
   }
   const operands = [check.left, check.right].sort(function (left, right) { return left - right; });
   return `${check.kind}|${operands[0]}|${operands[1]}`;
+}
+
+function nsbOperationSituationsExactlyMatch(left, right, reference) {
+  validateNsbOperationSituation(left, reference);
+  validateNsbOperationSituation(right, reference);
+  if (left.kind !== right.kind || left.left !== right.left || left.right !== right.right) return false;
+  return left.kind !== "decimal-operation" || left.operation === right.operation;
 }
 
 function validateStudentComponent(component, policy, reference, unitId, nsaV2Contract, nsbV1Contract) {
@@ -1808,7 +1820,9 @@ function nsbWorkedExampleTemplates(check, reference) {
 function validateNsbOperationPrompt(component, check, reference) {
   const situation = component.component.nsbOperationSituation;
   validateNsbOperationSituation(situation, reference);
-  assert(nsbOperationFactFingerprint(situation, reference) === nsbOperationFactFingerprint(check, reference), "NSB_OPERATION_SITUATION_MISMATCH", reference);
+  // Normalize commutative pairs only when detecting duplicate facts.  A
+  // response component itself must retain its exact authored operand order.
+  assert(nsbOperationSituationsExactlyMatch(situation, check, reference), "NSB_OPERATION_SITUATION_MISMATCH", reference);
   const templates = nsbOperationPromptTemplates(check, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assert(entry[1] === templates[entry[0]], "NSB_OPERATION_PROMPT_INVALID", reference);
@@ -2603,6 +2617,61 @@ function containsRpaLocalizedAnswerEquivalent(content, expectedResponse) {
     String(content).normalize("NFKC").includes(`${chinese[denominator]}分之${chinese[numerator]}`);
 }
 
+function nsbDecimalWordForms(expectedResponse, locale) {
+  const match = /^(?:0|[1-9][0-9]*)\.([0-9]+)$/u.exec(String(expectedResponse));
+  if (!match) return Object.freeze([]);
+  const whole = String(expectedResponse).split(".")[0];
+  const fractional = match[1];
+  const digitWords = Object.freeze({
+    en: Object.freeze(["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]),
+    ko: Object.freeze(["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]),
+    "zh-Hans": Object.freeze(["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"])
+  })[locale];
+  assert(digitWords, "NSB_CROSS_STUDENT_ANSWER_LEAK", "locale");
+  const wholeWords = Array.from(whole).map(function (digit) { return digitWords[Number(digit)]; });
+  const fractionalWords = Array.from(fractional).map(function (digit) { return digitWords[Number(digit)]; });
+  if (locale === "en") return Object.freeze([wholeWords.join(" ") + " point " + fractionalWords.join(" ")]);
+  const decimalPoint = locale === "ko" ? "점" : "点";
+  return Object.freeze([wholeWords.join("") + decimalPoint + fractionalWords.join("")]);
+}
+
+function containsNsbEnglishAnswerPhrase(content, phrase) {
+  const joiner = "(?:[\\s,\\-\\u2010-\\u2015\\u2212\\u2796\\uFE58\\uFE63\\uFF0D])+";
+  const expression = phrase.split(" ").map(escapeRegExpLiteral).join(joiner);
+  return new RegExp("(^|[^\\p{L}])" + expression + "(?![\\p{L}])", "iu").test(String(content).normalize("NFKC"));
+}
+
+function containsNsbChineseAnswerPhrase(content, phrase) {
+  const normalized = String(content).normalize("NFKC");
+  return new RegExp("(^|[^\\p{Script=Han}])" + escapeRegExpLiteral(phrase) + "(?![\\p{Script=Han}])", "u").test(normalized);
+}
+
+function containsNsbLocalizedAnswerEquivalent(content, expectedResponse, locale) {
+  const expected = String(expectedResponse);
+  const decimalForms = nsbDecimalWordForms(expected, locale);
+  if (decimalForms.length > 0) {
+    return decimalForms.some(function (form) {
+      if (locale === "en") return containsNsbEnglishAnswerPhrase(content, form);
+      if (locale === "ko") return String(content).normalize("NFKC").replace(/[\\s,'\\-\\u2010-\\u2015\\u2212\\u2796\\uFE58\\uFE63\\uFF0D]/gu, "").includes(form);
+      return containsNsbChineseAnswerPhrase(content, form);
+    });
+  }
+  const forms = eeaNumberWordForms(expected);
+  if (!forms) return false;
+  if (locale === "en") {
+    const roman = eeaRomanNumeral(expected);
+    return forms.english.some(function (word) { return containsEeaEnglishNumberWord(content, word); }) ||
+      (roman && roman.length >= 2 && containsEeaRomanAnswerToken(content, expected));
+  }
+  if (locale === "ko") {
+    return forms.korean.filter(function (word) { return word.length > 1; }).some(function (word) { return containsEeaKoreanNumberWord(content, word); }) ||
+      forms.koreanNative.some(function (word) { return containsEeaKoreanNumberWord(content, word); }) ||
+      forms.koreanBound.some(function (word) { return containsEeaKoreanBoundNumberWord(content, word); });
+  }
+  assert(locale === "zh-Hans", "NSB_CROSS_STUDENT_ANSWER_LEAK", "locale");
+  return forms.chinese.some(function (word) { return containsNsbChineseAnswerPhrase(content, word); });
+}
+
 function validateRpaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
   if (unit.unitId !== "ccss-6-rp-a") return;
   const fields = [];
@@ -2723,14 +2792,14 @@ function validateNsbStudentVisibleSeparation(pack, sections, answerReferences, u
     Object.values(group).forEach(function (localizedText) {
       Object.entries(localizedText).forEach(function (entry) {
         assertNsbNonWorkedStudentTextHasNoNumericNotation(entry[1], reference);
-        nonResponseFields.push(Object.freeze({ content: entry[1], reference }));
+        nonResponseFields.push(Object.freeze({ content: entry[1], locale: entry[0], reference }));
       });
     });
   });
   sections.forEach(function (entry) {
     Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) {
       assertNsbNonWorkedStudentTextHasNoNumericNotation(localeEntry[1], entry.section.sectionId);
-      nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId }));
+      nonResponseFields.push(Object.freeze({ content: localeEntry[1], locale: localeEntry[0], reference: entry.section.sectionId }));
     });
     entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
       if (component.componentType === "worked-example") {
@@ -2742,16 +2811,16 @@ function validateNsbStudentVisibleSeparation(pack, sections, answerReferences, u
         });
       }
       Object.entries(component.contentByLocale).forEach(function (localeEntry) {
-        nonResponseFields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId }));
+        nonResponseFields.push(Object.freeze({ content: localeEntry[1], locale: localeEntry[0], reference: component.componentId }));
       });
     });
   });
   nonResponseFields.forEach(function (field) {
-    const normalizedContent = normalizeForAnswerLeakScan(field.content);
-    expectedResponses.forEach(function (expectedResponse) {
-      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
-      assert(!containsRpaLocalizedAnswerEquivalent(field.content, expectedResponse), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
-    });
+      const normalizedContent = normalizeForAnswerLeakScan(field.content);
+      expectedResponses.forEach(function (expectedResponse) {
+        assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(expectedResponse)), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+        assert(!containsNsbLocalizedAnswerEquivalent(field.content, expectedResponse, field.locale), "NSB_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      });
   });
 }
 
