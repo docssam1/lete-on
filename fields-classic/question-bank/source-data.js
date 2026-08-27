@@ -370,10 +370,17 @@ export const TYPES = [
   type("digital-board-half-turn-sum", "number", "디지털 숫자", "숫자판을 반 바퀴 돌려 바로 선 수의 합", { generator: "digitalBoardHalfTurnSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-flip-addition-horizontal", "number", "디지털 숫자", "원래 수와 오른쪽으로 뒤집은 수의 가로 덧셈", { generator: "digitalFlipAdditionHorizontal", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-transform-addition", "number", "디지털 숫자", "원래 수와 반 바퀴 돌린 수의 세로 덧셈", { generator: "digitalTransformAddition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("circular-magic-line-sum", "number", "마방진", "원 모양에서 마주 보는 두 수의 합 같게 만들기", { generator: "circularMagicLineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("cross-shape-magic-sum", "number", "마방진", "십자·T자 모양의 줄 합 같게 만들기", { generator: "crossShapeMagicSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("gakuro-card-placement", "number", "가쿠로", "수 카드를 가로·세로 합에 맞게 놓기", { generator: "gakuroCardPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("gakuro-grid-sum", "number", "가쿠로", "가쿠로 칸을 줄의 합에 맞게 채우기", { generator: "gakuroGridSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("circular-magic-line-sum", "number", "원형진", "1부터 9까지로 네 줄 원형진 완성하기", { generator: "circularMagicLineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("circular-magic-seven-line-sum", "number", "원형진", "1부터 7까지로 세 줄 원형진 완성하기", { generator: "circularMagicSevenLineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("circular-magic-eleven-line-sum", "number", "원형진", "1부터 11까지로 다섯 줄 원형진 완성하기", { generator: "circularMagicElevenLineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("cross-shape-magic-sum", "number", "모양 마방진", "다섯 수 카드로 십자 마방진 완성하기", { generator: "crossShapeMagicSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("t-shape-magic-sum", "number", "모양 마방진", "다섯 수 카드로 T자 마방진 완성하기", { generator: "tShapeMagicSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-card-placement", "number", "가쿠로", "네 수 카드로 2×2 가쿠로 채우기", { generator: "gakuroCardPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-card-rectangle-placement", "number", "가쿠로", "수 카드로 3×2 가쿠로 채우기", { generator: "gakuroCardRectanglePlacement", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-card-irregular-placement", "number", "가쿠로", "수 카드로 계단 모양 가쿠로 채우기", { generator: "gakuroCardIrregularPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-grid-sum", "number", "가쿠로", "서로 다른 여섯 수로 3×2 가쿠로 채우기", { generator: "gakuroGridSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-grid-nine-sum", "number", "가쿠로", "1부터 9까지로 3×3 가쿠로 채우기", { generator: "gakuroGridNineSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("gakuro-grid-irregular-sum", "number", "가쿠로", "서로 다른 수로 계단 모양 가쿠로 채우기", { generator: "gakuroGridIrregularSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("circle-line-ring-equal-sum", "number", "수 배열과 합", "원 둘레와 지름의 수 합 같게 만들기", { generator: "circleLineRingEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digit-sum-enumeration", "number", "조건에 맞는 수", "각 자리 숫자의 합이 같은 수 모두 찾기", { generator: "digitSumEnumeration", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("three-digit-step-sequence", "pattern", "수 추리", "같은 수만큼 변하는 세 자리 수열", { generator: "threeDigitStepSequence", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
@@ -1248,10 +1255,17 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "digital-board-half-turn-sum": "숫자판 전체를 반 바퀴 돌린 뒤 똑바로 선 숫자만 골라 더합니다.",
   "digital-flip-addition-horizontal": "원래 두 자리 수를 오른쪽으로 뒤집어 읽은 수를 찾고 가로 덧셈을 완성합니다.",
   "digital-transform-addition": "원래 두 자리 수를 반 바퀴 돌려 읽은 수를 찾고 세로셈의 자리를 맞추어 더합니다.",
-  "circular-magic-line-sum": "가운데를 지나는 줄마다 양쪽 끝 두 수의 합이 같아야 합니다.",
-  "cross-shape-magic-sum": "완성된 한 줄의 합을 먼저 찾고 빈 줄의 보이는 수를 뺍니다.",
-  "gakuro-card-placement": "한 줄의 목표 합에서 보이는 수를 빼고, 쓰지 않은 수 카드 중 맞는 수를 고릅니다.",
-  "gakuro-grid-sum": "가로 합과 세로 합이 동시에 맞는 칸부터 채웁니다.",
+  "circular-magic-line-sum": "가운데 수를 정하고, 마주 보는 두 수의 합이 모두 같도록 1부터 9까지의 수를 짝지어 놓습니다.",
+  "circular-magic-seven-line-sum": "가운데 수를 정하고, 마주 보는 세 쌍의 합이 같도록 1부터 7까지의 수를 놓습니다.",
+  "circular-magic-eleven-line-sum": "가운데 수를 정하고, 마주 보는 다섯 쌍의 합이 같도록 1부터 11까지의 수를 놓습니다.",
+  "cross-shape-magic-sum": "가운데 칸을 함께 쓰는 가로줄과 세로줄의 합이 같도록 다섯 수 카드를 놓습니다.",
+  "t-shape-magic-sum": "T자의 꺾이는 칸을 함께 쓰는 두 줄의 합이 같도록 다섯 수 카드를 놓습니다.",
+  "gakuro-card-placement": "네 수 카드를 2×2 빈칸에 한 번씩 넣어 두 가로 합과 두 세로 합을 동시에 맞춥니다.",
+  "gakuro-card-rectangle-placement": "수 카드를 3×2 빈칸에 한 번씩 넣고, 가로와 세로의 합 조건을 함께 확인합니다.",
+  "gakuro-card-irregular-placement": "계단 모양에서 연결된 가로줄과 세로줄의 합을 보며 수 카드의 자리를 정합니다.",
+  "gakuro-grid-sum": "서로 다른 여섯 수로 3×2 칸을 채우며 가로 합과 세로 합을 동시에 맞춥니다.",
+  "gakuro-grid-nine-sum": "1부터 9까지를 한 번씩 써서 3×3의 세 가로 합과 세 세로 합을 모두 맞춥니다.",
+  "gakuro-grid-irregular-sum": "계단 모양의 각 줄에서 보이는 합을 이용해 서로 다른 수를 한 칸씩 정합니다.",
   "circle-line-ring-equal-sum": "둘레의 합과 가운데를 지나는 줄의 합이 같아지는지 줄마다 확인합니다.",
   "digit-sum-enumeration": "십의 자리부터 차례로 정하고, 목표 합에서 그 숫자를 뺀 값을 일의 자리에 씁니다.",
   "three-digit-step-sequence": "이웃한 두 수의 차를 자릿값별로 확인하고 같은 차를 이어갑니다.",
@@ -1888,10 +1902,19 @@ const BOOK01_UNIT02_REFS = Object.freeze({
 
 const BOOK01_UNIT03_REFS = Object.freeze({
   "circular-magic-line-sum": stageReferences({
-    concept: [problemNumbers("activity", 1, [1])], practice: [problemNumbers("practice", 1, [1, 2])]
+    concept: [problemNumbers("activity", 1, [1])]
+  }),
+  "circular-magic-seven-line-sum": stageReferences({
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "circular-magic-eleven-line-sum": stageReferences({
+    practice: [problemNumbers("practice", 1, [2])]
   }),
   "cross-shape-magic-sum": stageReferences({
-    concept: [problemNumbers("activity", 1, [2, 3, 4, 5])], practice: [problemNumbers("practice", 1, [3, 4, 5, 6])]
+    concept: [problemNumbers("activity", 1, [2, 3])], practice: [problemNumbers("practice", 1, [3, 4])]
+  }),
+  "t-shape-magic-sum": stageReferences({
+    concept: [problemNumbers("activity", 1, [4, 5])], practice: [problemNumbers("practice", 1, [5, 6])]
   }),
   "equal-line-sum-eight-cards": stageReferences({
     type: [problemNumbers("check", 1, [1, 2])], practice: [problemNumbers("practice", 1, [7, 8])]
@@ -1900,11 +1923,24 @@ const BOOK01_UNIT03_REFS = Object.freeze({
     type: [problemNumbers("check", 1, [3])], practice: [problemNumbers("practice", 1, [9])]
   }),
   "gakuro-card-placement": stageReferences({
-    concept: [problemNumbers("activity", 2, [1, 2, 3])], type: [problemNumbers("check", 2, [1, 2, 3, 4])],
-    practice: [problemNumbers("practice", 1, [10, 12, 13, 14, 15, 16, 17])], advanced: [problemNumbers("advanced", 1, [3])]
+    type: [problemNumbers("check", 2, [1])], practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "gakuro-card-rectangle-placement": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])], type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [13, 16])]
+  }),
+  "gakuro-card-irregular-placement": stageReferences({
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [10, 14, 15, 17])], advanced: [problemNumbers("advanced", 1, [3])]
   }),
   "gakuro-grid-sum": stageReferences({
-    concept: [problemNumbers("activity", 2, [4])], practice: [problemNumbers("practice", 1, [11])], advanced: [problemNumbers("advanced", 1, [4])]
+    concept: [problemNumbers("activity", 2, [4])]
+  }),
+  "gakuro-grid-nine-sum": stageReferences({
+    concept: [problemNumbers("activity", 2, [3])], practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "gakuro-grid-irregular-sum": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [4])]
   }),
   "polygon-ring-equal-sum": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
   "circle-line-ring-equal-sum": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] })
@@ -3881,8 +3917,10 @@ export const CURRICULUM = [
       "fold-punch-shape-count", "fold-hole-count"
     ], [3,4], [3,6], 4, 20, BOOK01_UNIT02_REFS),
     detailedStagedUnit("마방진과 가쿠로 퍼즐", [
-      "circular-magic-line-sum", "cross-shape-magic-sum", "equal-line-sum-eight-cards",
-      "triangle-edge-sum-six", "gakuro-card-placement", "gakuro-grid-sum",
+      "circular-magic-line-sum", "circular-magic-seven-line-sum", "circular-magic-eleven-line-sum",
+      "cross-shape-magic-sum", "t-shape-magic-sum", "equal-line-sum-eight-cards",
+      "triangle-edge-sum-six", "gakuro-card-placement", "gakuro-card-rectangle-placement",
+      "gakuro-card-irregular-placement", "gakuro-grid-sum", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum",
       "polygon-ring-equal-sum", "circle-line-ring-equal-sum"
     ], [5,4], [3,4], 4, 17, BOOK01_UNIT03_REFS),
     detailedStagedUnit("수 추리와 논리 추리", [

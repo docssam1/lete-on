@@ -90,24 +90,31 @@ const circlePoints = (count, cx, cy, radius) => Array.from({ length: count }, (_
 });
 
 function circleMagicMarkup(visual) {
-  const points = circlePoints(6, 160, 125, 92);
-  const lines = [[0,3],[1,4],[2,5]].map(([a,b]) => `<line x1="${points[a][0]}" y1="${points[a][1]}" x2="${points[b][0]}" y2="${points[b][1]}"/>`).join("");
-  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="20"/><text x="${x}" y="${y+1}">${visual.shown[index] == null ? "㉠" : visual.shown[index]}</text>`).join("");
-  return `<svg class="b1-svg b1-circle-magic" viewBox="0 0 320 255" role="img" aria-label="가운데를 지나는 세 줄의 합이 같은 원 그림">${lines}${nodes}<circle class="center" cx="160" cy="125" r="22"/><text x="160" y="126">${visual.center}</text><text class="sum" x="160" y="247">한 줄의 합 ${visual.lineSum}</text></svg>`;
+  const count = visual.shown.length;
+  const half = count / 2;
+  const points = circlePoints(count, 160, 125, 92);
+  const lines = Array.from({ length: half }, (_, index) => [index, index + half])
+    .map(([a,b]) => `<line x1="${points[a][0]}" y1="${points[a][1]}" x2="${points[b][0]}" y2="${points[b][1]}"/>`).join("");
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="20"/><text x="${x}" y="${y+1}">${visual.shown[index] == null ? "" : visual.shown[index]}</text>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  const lineSum = visual.lineSum == null ? "□" : visual.lineSum;
+  return `${cards}<svg class="b1-svg b1-circle-magic" viewBox="0 0 320 255" role="img" aria-label="가운데를 지나는 ${half}줄의 합이 같은 원형진">${lines}${nodes}<circle class="center" cx="160" cy="125" r="22"/><text x="160" y="126">${visual.center == null ? "" : visual.center}</text><text class="sum" x="160" y="247">한 줄의 합 ${lineSum}</text></svg>`;
 }
 
-function crossMagicMarkup(visual) {
-  const [top,bottom,left,right] = visual.shown;
-  const cell = (value, className) => `<span class="${className}">${value == null ? "㉠" : value}</span>`;
-  return `<div class="b1-cross-magic">${cell(top,"top")}${cell(left,"left")}${cell(visual.center,"center")}${cell(right,"right")}${cell(bottom,"bottom")}<strong>한 줄의 합 ${visual.lineSum}</strong></div>`;
+function fiveCardMagicMarkup(visual) {
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  const cells = visual.shown.map((value, index) => `<span class="p${index}">${value == null ? "" : value}</span>`).join("");
+  return `${cards}<div class="b1-five-card-magic ${visual.layout}">${cells}<strong>한 줄의 합 ${visual.lineSum == null ? "□" : visual.lineSum}</strong></div>`;
 }
 
 function sumGridMarkup(visual) {
-  const cells = visual.shown.map((value) => `<span class="${value == null ? "blank" : ""}">${value == null ? "" : value}</span>`).join("");
+  const mask = visual.mask || visual.shown.map(() => 1);
+  const cells = visual.shown.map((value, index) => `<span class="${mask[index] ? value == null ? "blank" : "" : "blocked"}">${mask[index] && value != null ? value : ""}</span>`).join("");
   const rows = visual.rowSums.map((sum) => `<b>${sum}</b>`).join("");
   const columns = visual.columnSums.map((sum) => `<b>${sum}</b>`).join("");
   const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
-  return `${cards}<div class="b1-sum-grid-wrap" style="--columns:${visual.columns};--rows:${visual.rows}"><div class="b1-sum-grid">${cells}</div><div class="b1-row-sums">${rows}</div><div class="b1-column-sums">${columns}</div><em>합</em></div>`;
+  const range = visual.rangeLabel ? `<div class="b1-number-range">${esc(visual.rangeLabel)}</div>` : "";
+  return `${cards}${range}<div class="b1-sum-grid-wrap" style="--columns:${visual.columns};--rows:${visual.rows}"><div class="b1-sum-grid">${cells}</div><div class="b1-row-sums">${rows}</div><div class="b1-column-sums">${columns}</div><em>합</em></div>`;
 }
 
 function ringLinesMarkup(visual) {
@@ -138,7 +145,7 @@ export function book01Markup(visual) {
   if (visual.subtype === "digital-orientation-board") return digitalOrientationBoardMarkup(visual);
   if (visual.subtype === "digital-related-addition") return digitalRelatedAdditionMarkup(visual);
   if (visual.subtype === "circle-magic") return circleMagicMarkup(visual);
-  if (visual.subtype === "cross-magic") return crossMagicMarkup(visual);
+  if (visual.subtype === "five-card-magic") return fiveCardMagicMarkup(visual);
   if (visual.subtype === "sum-grid") return sumGridMarkup(visual);
   if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
   if (visual.subtype === "condition-card") return conditionCardMarkup(visual);

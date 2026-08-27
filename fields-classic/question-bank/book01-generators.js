@@ -485,41 +485,74 @@ function distinctPairValues(pairSum, count) {
   return pairs;
 }
 
-function circularMagicLineSum({ difficulty = 2 }) {
-  const center = randomInt(2, 8);
-  let pairSum;
-  let pairs;
-  do {
-    pairSum = randomInt(9, difficulty === 3 ? 20 : 15);
-    pairs = distinctPairValues(pairSum, 3);
-  } while (pairs.length < 3);
-  const nodes = [pairs[0][0], pairs[1][0], pairs[2][0], pairs[0][1], pairs[1][1], pairs[2][1]];
-  const hidden = randomInt(0, 5);
-  const shown = nodes.map((value, index) => index === hidden ? null : value);
-  const answer = nodes[hidden];
+function circularMagicProblem(cardCount, difficulty) {
+  const cards = Array.from({ length: cardCount }, (_, index) => index + 1);
+  const centerChoices = [cards[0], cards[Math.floor(cardCount / 2)], cards.at(-1)];
+  const center = difficulty === 1 ? centerChoices[1] : sample(centerChoices);
+  const remaining = cards.filter((value) => value !== center);
+  const pairs = [];
+  while (remaining.length) pairs.push([remaining.shift(), remaining.pop()]);
+  const arrangedPairs = shuffle(pairs).map((pair) => Math.random() < 0.5 ? pair : [...pair].reverse());
+  const half = arrangedPairs.length;
+  const nodes = Array(half * 2).fill(null);
+  arrangedPairs.forEach(([first, second], index) => {
+    nodes[index] = first;
+    nodes[index + half] = second;
+  });
+  const lineSum = nodes[0] + center + nodes[half];
   return {
-    prompt: "가운데를 지나는 세 줄에 놓인 세 수의 합이 모두 같도록 ㉠에 알맞은 수를 쓰세요.",
-    visual: { kind: "book1", subtype: "circle-magic", center, shown, lineSum: pairSum + center },
-    answer: String(answer),
-    solution: `한 줄의 합은 ${pairSum + center}입니다. 가운데 ${center}과 맞은편 수를 빼면 ㉠은 ${answer}입니다.`,
-    meta: { family: "circle-magic", nodes, center, hidden, lineSum: pairSum + center, answer }
+    prompt: `1부터 ${cardCount}까지의 수 카드를 한 번씩 사용하여 가운데를 지나는 ${half}줄의 합이 모두 같도록 원형진을 완성하고 한 줄의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "circle-magic", cards, center: null, shown: nodes.map(() => null), lineSum: null },
+    answerVisual: { kind: "book1", subtype: "circle-magic", cards: [], center, shown: nodes, lineSum },
+    answer: `한 줄의 합 ${lineSum}`,
+    responseKind: "drawing",
+    solution: `가운데에 ${center}을 놓고 마주 보는 두 수의 합이 같도록 배치하면 한 줄의 합은 ${lineSum}입니다.`,
+    meta: { family: "circle-magic", cards, nodes, center, lineSum, lineCount: half }
+  };
+}
+
+function circularMagicLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(9, difficulty);
+}
+
+function circularMagicSevenLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(7, difficulty);
+}
+
+function circularMagicElevenLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(11, difficulty);
+}
+
+function fiveCardMagicProblem(layout, difficulty) {
+  const step = difficulty === 1 ? 1 : difficulty === 2 ? sample([1, 2]) : sample([2, 3]);
+  const start = randomInt(1, difficulty === 3 ? 5 : 3);
+  const cards = Array.from({ length: 5 }, (_, index) => start + index * step);
+  const shared = cards[2];
+  const pairs = shuffle([[cards[0], cards[4]], [cards[1], cards[3]]])
+    .map((pair) => Math.random() < 0.5 ? pair : [...pair].reverse());
+  const values = layout === "cross"
+    ? [pairs[0][0], pairs[0][1], pairs[1][0], shared, pairs[1][1]]
+    : [pairs[0][0], pairs[0][1], shared, pairs[1][0], pairs[1][1]];
+  const lines = layout === "cross" ? [[0,3,1],[2,3,4]] : [[0,1,2],[2,3,4]];
+  const lineSum = lines[0].reduce((sum, index) => sum + values[index], 0);
+  const shapeName = layout === "cross" ? "십자" : "T자";
+  return {
+    prompt: `주어진 다섯 수 카드를 한 번씩 사용하여 가로와 세로에 놓인 세 수의 합이 같도록 ${shapeName} 마방진을 완성하고 한 줄의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "five-card-magic", layout, cards, shown: values.map(() => null), lineSum: null },
+    answerVisual: { kind: "book1", subtype: "five-card-magic", layout, cards: [], shown: values, lineSum },
+    answer: `한 줄의 합 ${lineSum}`,
+    responseKind: "drawing",
+    solution: `두 줄이 함께 지나는 칸에 ${shared}을 놓고, 나머지 수를 합이 같은 두 쌍으로 나누어 놓으면 한 줄의 합은 ${lineSum}입니다.`,
+    meta: { family: "five-card-magic", layout, cards, values, lines, lineSum }
   };
 }
 
 function crossShapeMagicSum({ difficulty = 2 }) {
-  const center = randomInt(2, 9);
-  const pairSum = randomInt(8, difficulty === 3 ? 22 : 16);
-  const top = randomInt(1, pairSum - 1);
-  const left = randomInt(1, pairSum - 1);
-  const values = [top, pairSum - top, left, pairSum - left];
-  const hidden = randomInt(0, 3);
-  return {
-    prompt: "가로줄과 세로줄에 놓인 세 수의 합이 같도록 ㉠에 알맞은 수를 쓰세요.",
-    visual: { kind: "book1", subtype: "cross-magic", center, shown: values.map((value, index) => index === hidden ? null : value), lineSum: pairSum + center },
-    answer: String(values[hidden]),
-    solution: `완성된 줄의 합 ${pairSum + center}에서 가운데 ${center}과 보이는 수를 빼면 ㉠은 ${values[hidden]}입니다.`,
-    meta: { family: "cross-magic", center, values, hidden, lineSum: pairSum + center, answer: values[hidden] }
-  };
+  return fiveCardMagicProblem("cross", difficulty);
+}
+
+function tShapeMagicSum({ difficulty = 2 }) {
+  return fiveCardMagicProblem("t-shape", difficulty);
 }
 
 function gridSums(values, rows, columns) {
@@ -529,48 +562,124 @@ function gridSums(values, rows, columns) {
   };
 }
 
-function gakuroCardPlacement({ difficulty = 2 }) {
-  const values = shuffle([1,2,3,4,5,6,7,8,9]).slice(0, 4);
-  const { rowSums, columnSums } = gridSums(values, 2, 2);
-  const hiddenCount = difficulty === 1 ? 1 : difficulty === 2 ? 2 : 3;
-  const hidden = shuffle([0,1,2,3]).slice(0, hiddenCount).sort((a,b) => a-b);
-  const shown = values.map((value, index) => hidden.includes(index) ? null : value);
+function maskedGridSums(values, rows, columns, mask) {
+  const activeValue = (index) => mask[index] ? values[index] : 0;
   return {
-    prompt: "네 수 카드를 한 번씩 사용하여 가로와 세로의 합이 맞도록 빈칸을 채우세요.",
-    visual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 2, cards: [...values].sort((a,b) => a-b), shown, rowSums, columnSums },
-    answer: hidden.map((index) => values[index]).join(", "),
-    solution: `줄의 합에서 보이는 수를 빼며 채우면 빈칸은 차례로 ${hidden.map((index) => values[index]).join(", ")}입니다.`,
-    meta: { family: "gakuro-card", values, hidden, rowSums, columnSums, answerValues: hidden.map((index) => values[index]), uniqueCount: 1 }
+    rowSums: Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => activeValue(row * columns + column)).reduce((sum, value) => sum + value, 0)),
+    columnSums: Array.from({ length: columns }, (_, column) => Array.from({ length: rows }, (_, row) => activeValue(row * columns + column)).reduce((sum, value) => sum + value, 0))
   };
 }
 
-const SIX_PERMUTATIONS = [];
-eachPermutation([1,2,3,4,5,6], (values) => SIX_PERMUTATIONS.push(values));
+function countGakuroSolutions({ rows, columns, mask, shown, cards, rowSums, columnSums }, limit = 2) {
+  const values = shown.map((value, index) => mask[index] ? value : null);
+  const hidden = values.map((value, index) => mask[index] && value == null ? index : -1).filter((index) => index >= 0);
+  let count = 0;
+  const visit = (depth, remaining) => {
+    if (count >= limit) return;
+    if (depth === hidden.length) {
+      const sums = maskedGridSums(values, rows, columns, mask);
+      if (sums.rowSums.join() === rowSums.join() && sums.columnSums.join() === columnSums.join()) count += 1;
+      return;
+    }
+    const index = hidden[depth];
+    const row = Math.floor(index / columns);
+    const column = index % columns;
+    for (let cursor = 0; cursor < remaining.length; cursor += 1) {
+      const value = remaining[cursor];
+      values[index] = value;
+      const rowIndices = Array.from({ length: columns }, (_, offset) => row * columns + offset).filter((target) => mask[target]);
+      const columnIndices = Array.from({ length: rows }, (_, offset) => offset * columns + column).filter((target) => mask[target]);
+      const rowReady = rowIndices.every((target) => values[target] != null);
+      const columnReady = columnIndices.every((target) => values[target] != null);
+      const rowTotal = rowIndices.reduce((sum, target) => sum + (values[target] || 0), 0);
+      const columnTotal = columnIndices.reduce((sum, target) => sum + (values[target] || 0), 0);
+      if (rowTotal <= rowSums[row] && columnTotal <= columnSums[column]
+        && (!rowReady || rowTotal === rowSums[row]) && (!columnReady || columnTotal === columnSums[column])) {
+        visit(depth + 1, remaining.filter((_, itemIndex) => itemIndex !== cursor));
+      }
+      values[index] = null;
+      if (count >= limit) break;
+    }
+  };
+  visit(0, cards);
+  return count;
+}
+
+const GAKURO_LAYOUTS = Object.freeze({
+  square: { rows: 2, columns: 2, mask: [1,1,1,1], label: "2×2" },
+  rectangle: { rows: 3, columns: 2, mask: [1,1,1,1,1,1], label: "3×2" },
+  irregular: { rows: 3, columns: 3, mask: [1,1,0,1,1,1,0,1,1], label: "계단 모양" },
+  gridSix: { rows: 3, columns: 2, mask: [1,1,1,1,1,1], label: "3×2" },
+  gridNine: { rows: 3, columns: 3, mask: [1,1,1,1,1,1,1,1,1], label: "3×3" },
+  gridIrregular: { rows: 3, columns: 3, mask: [1,1,0,1,1,1,0,1,1], label: "계단 모양" }
+});
+
+function makeGakuroProblem(layoutId, difficulty, cardMode) {
+  const layout = GAKURO_LAYOUTS[layoutId];
+  const active = layout.mask.map((value, index) => value ? index : -1).filter((index) => index >= 0);
+  for (let attempt = 0; attempt < 160; attempt += 1) {
+    const start = randomInt(1, difficulty === 3 ? 4 : 2);
+    const pool = Array.from({ length: active.length }, (_, index) => start + index);
+    const shuffled = shuffle(pool);
+    const values = Array(layout.rows * layout.columns).fill(null);
+    active.forEach((index, order) => { values[index] = shuffled[order]; });
+    const { rowSums, columnSums } = maskedGridSums(values, layout.rows, layout.columns, layout.mask);
+    const fixedOrder = shuffle(active);
+    const initialFixed = layoutId === "square" ? 0
+      : layoutId === "gridNine" ? (difficulty === 1 ? 5 : difficulty === 2 ? 4 : 3)
+        : difficulty === 1 ? 2 : 1;
+    const fixed = fixedOrder.slice(0, initialFixed);
+    let shown = values.map((value, index) => layout.mask[index] && fixed.includes(index) ? value : null);
+    let hidden = active.filter((index) => shown[index] == null);
+    let cards = hidden.map((index) => values[index]).sort((a, b) => a - b);
+    let uniqueCount = countGakuroSolutions({ ...layout, shown, cards, rowSums, columnSums });
+    while (uniqueCount !== 1 && fixed.length < active.length - 1) {
+      fixed.push(fixedOrder[fixed.length]);
+      shown = values.map((value, index) => layout.mask[index] && fixed.includes(index) ? value : null);
+      hidden = active.filter((index) => shown[index] == null);
+      cards = hidden.map((index) => values[index]).sort((a, b) => a - b);
+      uniqueCount = countGakuroSolutions({ ...layout, shown, cards, rowSums, columnSums });
+    }
+    if (uniqueCount !== 1 || hidden.length < 2) continue;
+    const promptLead = cardMode
+      ? `주어진 수 카드를 빈칸에 한 번씩만 넣어 ${layout.label} 가쿠로를 완성하세요.`
+      : `${pool[0]}부터 ${pool.at(-1)}까지의 서로 다른 수를 한 번씩만 써서 ${layout.label} 가쿠로를 완성하세요.`;
+    const visualBase = { kind: "book1", subtype: "sum-grid", rows: layout.rows, columns: layout.columns, mask: layout.mask, rowSums, columnSums };
+    return {
+      prompt: promptLead,
+      visual: { ...visualBase, cards: cardMode ? cards : [], rangeLabel: cardMode ? "" : `${pool[0]}~${pool.at(-1)}를 한 번씩`, shown },
+      answerVisual: { ...visualBase, cards: [], rangeLabel: "", shown: values },
+      answer: "그림과 같이 채웁니다.",
+      responseKind: "drawing",
+      solution: "가로 합과 세로 합을 동시에 확인하며 한 칸씩 채우면 답의 배치가 하나로 정해집니다.",
+      meta: { family: "gakuro-layout", layoutId, values, mask: layout.mask, hidden, cards, rowSums, columnSums, uniqueCount }
+    };
+  }
+  return null;
+}
+
+function gakuroCardPlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("square", difficulty, true);
+}
+
+function gakuroCardRectanglePlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("rectangle", difficulty, true);
+}
+
+function gakuroCardIrregularPlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("irregular", difficulty, true);
+}
 
 function gakuroGridSum({ difficulty = 2 }) {
-  const values = sample(SIX_PERMUTATIONS);
-  const { rowSums, columnSums } = gridSums(values, 2, 3);
-  const order = shuffle([0,1,2,3,4,5]);
-  const clues = order.slice(0, difficulty === 1 ? 3 : difficulty === 2 ? 2 : 1);
-  const candidates = () => SIX_PERMUTATIONS.filter((candidate) => {
-    const sums = gridSums(candidate, 2, 3);
-    return sums.rowSums.join() === rowSums.join() && sums.columnSums.join() === columnSums.join()
-      && clues.every((index) => candidate[index] === values[index]);
-  });
-  while (candidates().length !== 1 && clues.length < 5) clues.push(order[clues.length]);
-  const shown = values.map((value, index) => clues.includes(index) ? value : null);
-  const hidden = values.map((_, index) => index).filter((index) => !clues.includes(index));
-  const uniqueCount = candidates().length;
-  if (uniqueCount !== 1) return null;
-  return {
-    prompt: "1부터 6까지를 한 번씩 사용하여 가로와 세로의 합이 맞도록 가쿠로 칸을 채우세요.",
-    visual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 3, cards: [1,2,3,4,5,6], shown, rowSums, columnSums },
-    answerVisual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 3, cards: [], shown: values, rowSums, columnSums },
-    answer: values.join(", "),
-    responseKind: "drawing",
-    solution: `가로 합과 세로 합을 함께 만족하는 배치는 ${values.join(", ")} 순서 하나뿐입니다.`,
-    meta: { family: "gakuro-grid", values, clues, rowSums, columnSums, hidden, uniqueCount }
-  };
+  return makeGakuroProblem("gridSix", difficulty, false);
+}
+
+function gakuroGridNineSum({ difficulty = 2 }) {
+  return makeGakuroProblem("gridNine", difficulty, false);
+}
+
+function gakuroGridIrregularSum({ difficulty = 2 }) {
+  return makeGakuroProblem("gridIrregular", difficulty, false);
 }
 
 function circleLineRingEqualSum({ difficulty = 2 }) {
@@ -780,9 +889,16 @@ export const BOOK01_GENERATORS = {
   digitalFlipAdditionHorizontal,
   digitalTransformAddition,
   circularMagicLineSum,
+  circularMagicSevenLineSum,
+  circularMagicElevenLineSum,
   crossShapeMagicSum,
+  tShapeMagicSum,
   gakuroCardPlacement,
+  gakuroCardRectanglePlacement,
+  gakuroCardIrregularPlacement,
   gakuroGridSum,
+  gakuroGridNineSum,
+  gakuroGridIrregularSum,
   circleLineRingEqualSum,
   digitSumEnumeration,
   threeDigitStepSequence,
@@ -798,5 +914,7 @@ export const BOOK01_INTERNALS = {
   isCongruentPartition,
   transformDigit,
   transformDisplay,
-  gridSums
+  gridSums,
+  maskedGridSums,
+  countGakuroSolutions
 };
