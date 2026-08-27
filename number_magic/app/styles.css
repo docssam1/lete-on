@@ -1113,3 +1113,72 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   transform:rotate(45deg)}
 .nm-story-hist{background:var(--mist);border-radius:12px;padding:10px 12px;font-size:12.5px;
   color:var(--sub);line-height:1.6;margin:0 0 14px}
+
+/* ============================================================
+   개념 계보 (§6) — 카드 배지 · 도장 화면 진화 링크 · 완주 배지
+   ============================================================ */
+.nm-lin-chip{display:inline-flex;align-items:center;justify-content:center;font-size:12px;
+  margin-left:4px;vertical-align:middle;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.nm-lin-chip.big{font-size:22px;width:38px;height:38px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.28);border-radius:50%;margin:0}
+.nm-title-lin-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 4px}
+
+.nm-evo-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:14px 0;
+  background:linear-gradient(135deg,#fff7e8,#fdeecb);border:1.5px solid var(--gold-deep);
+  border-radius:16px;padding:12px 14px;cursor:pointer;font-family:inherit;color:inherit}
+.nm-evo-card:not([data-next]){cursor:default}
+.nm-evo-card.final{background:linear-gradient(135deg,#eefaf3,#dcf3e7);border-color:var(--ok)}
+.nm-evo-card:active{transform:scale(.98)}
+.nm-evo-ico{font-size:30px;flex:none;line-height:1}
+.nm-evo-txt{flex:1;min-width:0}
+.nm-evo-txt b{display:block;font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.5}
+.nm-evo-txt small{font-size:11.5px;font-weight:700;color:var(--sub)}
+
+.nm-lin-overlay .nm-lin-card{max-width:340px}
+.nm-lin-emblem-big{font-size:52px;margin-bottom:4px;animation:stampIn .6s cubic-bezier(.3,1.4,.5,1)}
+.nm-lin-name{font-size:16px;font-weight:900;color:var(--gold-deep);margin:2px 0 8px}
+
+/* ============================================================
+   기호 도감 (§13) — 수집 모달 · 도감 화면 · 3D 플립 카드
+   ============================================================ */
+.nm-dex-sub{font-size:12.5px;color:var(--sub);margin-bottom:14px}
+.nm-dex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.nm-dex-sec-h{font-size:12.5px;font-weight:800;color:var(--sub);margin:18px 0 8px}
+
+.nm-dex-card{perspective:900px;height:118px;cursor:default}
+.nm-dex-card.collected{cursor:pointer}
+.nm-dex-card.big{height:170px;max-width:260px;margin:14px auto}
+.nm-dex-flip{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,.8,.4,1);
+  transform-style:preserve-3d}
+.nm-dex-card.flipped .nm-dex-flip{transform:rotateY(180deg)}
+.nm-dex-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:10px;text-align:center;overflow:hidden}
+.nm-dex-face.back{transform:rotateY(180deg)}
+.nm-dex-card.unknown .nm-dex-face.front,
+.nm-dex-card.silhouette .nm-dex-face.front{
+  background:repeating-linear-gradient(135deg,#e8e6e0,#e8e6e0 8px,#ddd9d0 8px,#ddd9d0 16px);
+  border:1.5px dashed #c9c4b8;color:#9a9488}
+.nm-dex-card.silhouette .nm-dex-face.front .nm-dex-sym{opacity:.45}
+.nm-dex-card.collected .nm-dex-face.front,.nm-dex-card.big .nm-dex-face.front{background:linear-gradient(150deg,#fff,#fdf7ea);
+  border:1.5px solid var(--gold-deep);box-shadow:0 8px 18px -12px rgba(201,160,99,.6)}
+/* 뒷면은 항상(수집완료 카드·모달 공용) 어두운 배경 — 앞면만 있는 실루엣/미확인 카드는
+   .back 엘리먼트 자체가 없으므로 이 규칙에 걸리지 않는다. */
+.nm-dex-face.back{background:linear-gradient(150deg,var(--blue-deep),var(--blue));
+  border:1.5px solid var(--blue-deep);color:#fff}
+.nm-dex-sym{font-size:30px;font-weight:900;color:var(--blue-deep);line-height:1}
+.nm-dex-card.big .nm-dex-sym{font-size:42px}
+.nm-dex-read{font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-dex-card.collected .nm-dex-read{color:var(--gold-deep)}
+.nm-dex-translate{font-size:12.5px;font-weight:800;line-height:1.4}
+.nm-dex-birth{font-size:10.5px;color:rgba(255,255,255,.8);line-height:1.5}
+.nm-dex-card.big .nm-dex-translate{font-size:13.5px}
+.nm-dex-card.big .nm-dex-birth{font-size:11.5px}
+
+.nm-symmodal-card{max-width:320px;text-align:center}
+.nm-symmodal-badge{font-size:13px;font-weight:900;color:var(--gold-deep);margin-bottom:10px}
+.nm-symmodal-tap{position:absolute;bottom:8px;left:0;right:0;font-size:10px;color:var(--sub);opacity:.75}
+
+@media(prefers-reduced-motion:reduce){
+  .nm-dex-flip{transition:none}
+}

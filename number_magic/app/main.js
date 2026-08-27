@@ -73,7 +73,9 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
   character:{number:3,color:'blue',bg:'plain',cape:'none'},
   character_unlocked:{}, mailbox:{opened:{}},
-  boost:{doneWeeks:{},log:[]} /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */ };}
+  boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
+  lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
+  symbolDex:{} /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -92,6 +94,9 @@ if(S.name===undefined)S.name='';
    병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
    자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
 if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+/* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
+   기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
+(function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -190,6 +195,112 @@ function cloudPushSoon(){
 }
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
+
+/* ---------- 계보(lineage) 헬퍼 (과정-로드맵.md §6, data/lineages.js) ----------
+   unit.lineage(배지 표시용, 여러 세션에 걸쳐 붙은 태그 포함)와 NM_LINEAGES.chain
+   (진화 링크/완주 판정용, §6 서술 순서만 담은 정본)은 분리돼 있다 — 카드 배지는
+   unit.lineage만 봐서 항상 뜨지만, "다음 진화"·완주 배지는 chain에 실제로 그
+   유닛이 들어있을 때만 계산한다(§6에 없는 확장을 자의적으로 chain에 넣지 않았기
+   때문에 unit.lineage 쪽이 더 넓을 수 있다 — 예: H-11·H-13·C-12). */
+function lineagesMap(){return window.NM_LINEAGES||{};}
+function unitLineageInfo(uid){
+  const u=UNITS[uid];if(!u||!u.lineage)return null;
+  for(const key of u.lineage){
+    const line=lineagesMap()[key];
+    if(line&&line.chain&&line.chain.indexOf(uid)>=0)return{key,line};
+  }
+  return null;
+}
+function lineageNextStep(uid){
+  const info=unitLineageInfo(uid);if(!info)return null;
+  const idx=info.line.chain.indexOf(uid);
+  const isLast=idx===info.line.chain.length-1;
+  return{key:info.key,line:info.line,idx,isLast,nextId:isLast?null:info.line.chain[idx+1]};
+}
+/* unitDone(=S.progress[uid].done)을 쓴다 — stepDone(uid,'stamp')이 아니다.
+   기존 코드 전체(screenRoadmap 등)가 'stamp' 스텝 완료 판정에 stepDone(uid,'stamp')을
+   쓰지만, stepStamp()는 어디서도 markStepDone(uid,'stamp')를 호출하지 않아
+   steps.stamp가 영영 true가 안 된다(전수 검색으로 확인한 기존 버그 — 이 작업
+   범위 밖이라 손대지 않고 보고만 함). 계보 완주 판정이 그 버그를 그대로 물려받으면
+   항상 미완주로 나오므로, 실제로 채워지는 .done 플래그(unitDone)로 판정한다. */
+function lineageChainDone(key){
+  const line=lineagesMap()[key];
+  return!!(line&&line.chain&&line.chain.length&&line.chain.every(uid=>unitDone(uid)));
+}
+/* 계보 완주 배지 판정 — 유닛 도장(완료) 시점에만 호출한다(결정적: 저장된
+   진행상황만 보는 순수 함수라 렌더마다 다시 불러도 같은 유닛에서는 같은 답).
+   새로 완주한 계보가 있으면 그 key를 배지로 적립하고 반환(오버레이 트리거용). */
+function checkLineageCompletion(){
+  const map=lineagesMap();
+  for(const key of Object.keys(map)){
+    if(S.lineageBadges[key])continue;
+    if(lineageChainDone(key)){S.lineageBadges[key]={earnedAt:Date.now()};save();return key;}
+  }
+  return null;
+}
+/* 한국어 "(으)로" 어미 선택 — 받침 없음 또는 종성이 ㄹ이면 '로', 그 외엔 '으로'. */
+function koEuro(word){
+  if(!word)return'로';
+  const ch=word[word.length-1];const code=ch.charCodeAt(0)-0xAC00;
+  if(code<0||code>11171)return'로';
+  const jong=code%28;
+  return(jong===0||jong===8)?'로':'으로';
+}
+/* 스토리 모드·학년별 교실 유닛 카드용 작은 문장(紋章) 배지(§6 규칙2). */
+function lineageBadgeSpan(uid){
+  const u=UNITS[uid];if(!u||!u.lineage||!u.lineage.length)return'';
+  const line=lineagesMap()[u.lineage[0]];if(!line)return'';
+  return`<span class="nm-lin-chip" title="${esc(L(line.name))}">${line.emblem}</span>`;
+}
+/* 도장 화면 "🧬 다음 진화" 카드(§6 규칙2) — 계보 chain에 없는 유닛이면 빈 문자열. */
+function lineageEvoCardHtml(uid){
+  const step=lineageNextStep(uid);if(!step)return'';
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const line=step.line;
+  if(step.isLast){
+    return`<button class="nm-evo-card final" data-lin="${step.key}">
+      <div class="nm-evo-ico">${line.emblem}</div>
+      <div class="nm-evo-txt"><b>🧬 ${ko?'이 계보의 최종 진화예요!':en?'The final evolution of this lineage!':'这是这条家族的最终进化！'}</b>
+      <small>${esc(L(line.name))}</small></div>
+    </button>`;
+  }
+  const nu=UNITS[step.nextId];if(!nu)return'';
+  const nuTitle=esc(L(nu.title));
+  const label=ko?`이 마법은 나중에 <b>${nuTitle}</b>${koEuro(L(nu.title))} 자라요`
+    :en?`This magic later grows into <b>${nuTitle}</b>`
+    :`这个魔法以后会成长为<b>${nuTitle}</b>`;
+  return`<button class="nm-evo-card" data-lin="${step.key}" data-next="${step.nextId}">
+    <div class="nm-evo-ico">${nu.icon||line.emblem}</div>
+    <div class="nm-evo-txt"><b>🧬 ${label}</b>
+    <small>${esc(L(line.name))}</small></div>
+  </button>`;
+}
+function bindLineageEvoCard(root){
+  const el=root.querySelector('.nm-evo-card[data-next]');
+  if(el)el.onclick=()=>{const uid=el.dataset.next;if(unitLocked(uid)){showGateModal();return;}S.unit=uid;S.step=null;S.sub={};S.view='unit';save();render();};
+}
+/* 계보 완주 축하 오버레이(기존 confetti 재사용) — 타이틀 화면 배지 줄과 짝. */
+function lineageBadgeOverlayHtml(key){
+  const line=lineagesMap()[key];if(!line)return'';
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return`<div class="nm-gate-overlay nm-lin-overlay" id="nmLinOverlay">
+    <div class="nm-gate-card nm-lin-card">
+      <div class="nm-lin-emblem-big">${line.emblem}</div>
+      <h3>${ko?'계보 완주! 🎉':en?'Lineage Complete! 🎉':'家族完成！🎉'}</h3>
+      <div class="nm-lin-name">${esc(L(line.name))}</div>
+      <p>${esc(L(line.tagline))}</p>
+      <button class="nm-btn full" id="nmLinOverlayClose">${ko?'좋아요!':en?'Nice!':'太棒了！'}</button>
+    </div>
+  </div>`;
+}
+function showLineageBadgeOverlay(key){
+  if($('#nmLinOverlay'))return;
+  document.body.insertAdjacentHTML('beforeend',lineageBadgeOverlayHtml(key));
+  confetti();playSfx('great-job');
+  const close=()=>{const m=$('#nmLinOverlay');if(m)m.remove();};
+  $('#nmLinOverlayClose').onclick=close;
+  $('#nmLinOverlay').addEventListener('click',e=>{if(e.target.id==='nmLinOverlay')close();});
+}
 
 /* ---------- 유틸 ---------- */
 const $=s=>document.querySelector(s);
@@ -337,6 +448,7 @@ function render(){
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
+  else if(S.view==='symboldex')screenSymbolDex();
   else screenTown();
   renderMath();
 }
@@ -551,6 +663,7 @@ function screenTown(){
     </div>
     <div class="nm-town-hud info">
       <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
+      <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
     </div>
     <div class="nm-town-hud ctrls">
@@ -569,6 +682,7 @@ function screenTown(){
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
+  const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -635,7 +749,7 @@ function screenRoadmap(){
       const cls='nm-road-stone'+(done?' done':isNext?' next':'')+(locked?' trial-locked':'');
       html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
         ${done?'⭐':locked?'🔒':''}
-        <div class="nm-road-stone-title">${L(u.title)}</div>
+        <div class="nm-road-stone-title">${L(u.title)}${lineageBadgeSpan(uid)}</div>
         ${isNext&&!locked?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
       </div>`;
     });
@@ -974,7 +1088,7 @@ function screenGradeCourse(){
         const locked=unitLocked(uid);
         bodyHtml+=`<div class="nm-gc-unit-row${locked?' trial-locked':''}" data-uid="${uid}">
           <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
-          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
+          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}${lineageBadgeSpan(uid)}</div>
           ${locked?'<span style="font-size:11px">🔒</span>':done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
         </div>`;
       });
@@ -1125,6 +1239,7 @@ function screenTitle(){
         <span class="nm-title-chip">🪙 ${S.coins}</span>
         ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
       </div>
+      ${lineageBadgeRowHtml()}
       <div class="nm-title-btns">
         <button class="nm-title-btn primary" id="ttContinue">
           <span class="nm-title-btn-ico">▶</span>
@@ -1141,12 +1256,25 @@ function screenTitle(){
           <span class="nm-title-btn-ico">🏘</span>
           <span class="nm-title-btn-txt"><b>${lk('자유 탐험','Free Exploration','自由探索')}</b></span>
         </button>
+        <button class="nm-title-btn" id="ttDex">
+          <span class="nm-title-btn-ico">📖</span>
+          <span class="nm-title-btn-txt"><b>${lk('기호 도감','Symbol Dex','符号图鉴')}</b></span>
+        </button>
       </div>
     </div>
   </div>`;
   $('#ttContinue').onclick=()=>enterContinueUnit(uid);
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttFree').onclick=()=>{ S.view='town'; save(); render(); };
+  $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
+}
+/* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
+function lineageBadgeRowHtml(){
+  const keys=Object.keys(S.lineageBadges||{});
+  if(!keys.length)return'';
+  const map=lineagesMap();
+  const chips=keys.map(k=>{const line=map[k];return line?`<span class="nm-lin-chip big" title="${esc(L(line.name))}">${line.emblem}</span>`:'';}).join('');
+  return chips?`<div class="nm-title-lin-row">${chips}</div>`:'';
 }
 /* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
    없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
@@ -1750,7 +1878,7 @@ function screenTier(){
         const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
         html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''}" data-unit="${uid}">
           <span class="nm-unit-ic">${u.icon||'✦'}</span>
-          <span class="nm-unit-name">${L(u.title)}</span>
+          <span class="nm-unit-name">${L(u.title)}${lineageBadgeSpan(uid)}</span>
           ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':''}
         </button>`;
       });
@@ -2000,6 +2128,12 @@ function conceptExpr(container, terms){
 }
 
 function stepDiscover(body,u){
+  /* 기호 도감 수집(§13 규칙4) — 이 유닛의 symbols 중 아직 못 모은 게 있으면
+     디스커버 본문보다 먼저 "새 기호 카드!" 모달을 띄운다. 이미 다 모았으면
+     (S.symbolDex에 다 있으면) uncollected가 비어 조용히 넘어간다 — 재진입 시
+     모달 생략(스펙 그대로). */
+  const uncollected=(u.symbols||[]).filter(sy=>!S.symbolDex[sy.sym]);
+  if(uncollected.length){showSymbolCardModal(uncollected,0,u);}
   const d=u.discover;
   // 두 자리 범위 토글이 있는 유닛(A-01처럼 u.ranges 있을 때)만 kind:'one'/'two'/'mix'로 걸러냄.
   // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
@@ -2037,6 +2171,103 @@ function stepDiscover(body,u){
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
+}
+
+/* ============================================================
+   기호 도감 (과정-로드맵.md §13) — 수집 모달 + 도감 화면
+   unit.symbols:[{sym,read,translate,birth}] (기존 5유닛은 한글 단일 문자열,
+   L()도 typeof string이면 그대로 문자열을 돌려주므로 symText가 둘 다 받는다).
+   ============================================================ */
+function symText(v){return typeof v==='string'?v:L(v);}
+/* "새 기호 카드!" 모달 — 앞면(기호+읽는 법) 탭하면 뒤집혀 뒷면(번역+탄생 이야기).
+   닫으면(=수집하기) S.symbolDex에 저장하고 목록의 다음 기호(있으면)를 이어서 띄운다. */
+function symbolCardModalHtml(sy){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return`<div class="nm-gate-overlay nm-symmodal-overlay" id="nmSymModal">
+    <div class="nm-gate-card nm-symmodal-card">
+      <div class="nm-symmodal-badge">✨ ${ko?'새 기호 카드!':en?'New Symbol Card!':'新符号卡！'}</div>
+      <div class="nm-dex-card big" id="nmSymFlip">
+        <div class="nm-dex-flip">
+          <div class="nm-dex-face front">
+            <div class="nm-dex-sym">${esc(sy.sym)}</div>
+            <div class="nm-dex-read">${esc(symText(sy.read))}</div>
+            <div class="nm-symmodal-tap">👆 ${ko?'탭해서 뒤집기':en?'Tap to flip':'点击翻面'}</div>
+          </div>
+          <div class="nm-dex-face back">
+            <div class="nm-dex-translate">${esc(symText(sy.translate))}</div>
+            <div class="nm-dex-birth">${esc(symText(sy.birth))}</div>
+          </div>
+        </div>
+      </div>
+      <button class="nm-btn full" id="nmSymClose">${ko?'수집하기':en?'Collect':'收藏'}</button>
+    </div>
+  </div>`;
+}
+function showSymbolCardModal(list,idx,u){
+  if(idx>=list.length)return;
+  const sy=list[idx];
+  document.body.insertAdjacentHTML('beforeend',symbolCardModalHtml(sy));
+  const flip=$('#nmSymFlip');
+  flip.onclick=()=>flip.classList.toggle('flipped');
+  $('#nmSymClose').onclick=()=>{
+    S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};save();
+    const m=$('#nmSymModal');if(m)m.remove();
+    showSymbolCardModal(list,idx+1,u);
+  };
+}
+/* §13 도감 초안의 전체 기호 목록(x·√·aⁿ·f(x)·Σ·lim·f′·∫·D·αβ) — 실제로 그 기호를
+   구현한 유닛이 아직 없어도 "아직 만나지 못한 기호" 자리로 항상 보여준다. */
+const SYMBOL_DEX_CANON=['x','√','aⁿ','f(x)','Σ','lim',"f'",'∫','D','αβ'];
+function allUnitSymbols(){
+  const out=[];
+  Object.keys(UNITS).forEach(uid=>{
+    const u=UNITS[uid];
+    (u.symbols||[]).forEach(sy=>{if(!out.some(o=>o.sym===sy.sym))out.push(Object.assign({unitId:uid},sy));});
+  });
+  return out;
+}
+function symDexCardHtml(sym,real){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const notMet=`<div class="nm-dex-card unknown"><div class="nm-dex-flip"><div class="nm-dex-face front">
+    <div class="nm-dex-sym">?</div><div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
+  </div></div></div>`;
+  if(!real)return notMet;
+  const collected=!!S.symbolDex[real.sym];
+  if(!collected)return notMet.replace('nm-dex-card unknown','nm-dex-card silhouette');
+  return`<div class="nm-dex-card collected" data-sym="${esc(real.sym)}">
+    <div class="nm-dex-flip">
+      <div class="nm-dex-face front"><div class="nm-dex-sym">${esc(real.sym)}</div><div class="nm-dex-read">${esc(symText(real.read))}</div></div>
+      <div class="nm-dex-face back"><div class="nm-dex-translate">${esc(symText(real.translate))}</div><div class="nm-dex-birth">${esc(symText(real.birth))}</div></div>
+    </div>
+  </div>`;
+}
+function bindDexCards(root){
+  root.querySelectorAll('.nm-dex-card.collected').forEach(el=>{
+    el.onclick=()=>el.classList.toggle('flipped');
+  });
+}
+function screenSymbolDex(){
+  const scr=$('#screen');
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const all=allUnitSymbols();
+  const bySym={};all.forEach(sy=>{bySym[sy.sym]=sy;});
+  const canonCards=SYMBOL_DEX_CANON.map(sym=>symDexCardHtml(sym,bySym[sym])).join('');
+  const extra=all.filter(sy=>SYMBOL_DEX_CANON.indexOf(sy.sym)<0);
+  const extraCards=extra.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  const collectedCount=Object.keys(S.symbolDex||{}).length;
+  scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
+    <div class="nm-gc-header">
+      <button class="nm-back" id="dexBack">← ${t('back')}</button>
+      <div class="nm-gc-title">📖 ${ko?'기호 도감':en?'Symbol Dex':'符号图鉴'} <small>${collectedCount}</small></div>
+    </div>
+    <div class="nm-gc-body">
+      <p class="nm-dex-sub">${ko?'배운 기호를 모아보세요. 카드를 탭하면 뒤집혀요.':en?"Collect the symbols you've learned — tap a card to flip it.":'收集你学过的符号——点击卡片可以翻面。'}</p>
+      <div class="nm-dex-grid">${canonCards}</div>
+      ${extraCards?`<div class="nm-dex-sec-h">${ko?'더 만난 기호':en?'More symbols met':'更多遇到的符号'}</div><div class="nm-dex-grid">${extraCards}</div>`:''}
+    </div>
+  </div>`;
+  $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
+  bindDexCards(scr);
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
@@ -2317,16 +2548,24 @@ function stepStamp(body,u){
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;S.progress[S.unit].touchedAt=Date.now();save();}
+  let newLineageBadge=null;
+  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+    S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
+    S.progress[S.unit].touchedAt=Date.now();save();
+    newLineageBadge=checkLineageCompletion();}
+  const evo=lineageEvoCardHtml(S.unit);
   body.innerHTML=`<div class="nm-card center stamp">
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
     <div class="nm-stamp-label">${L(s.label)}</div>
     <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
+    ${evo}
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
   confetti();playSfx("great-job");say(L(u.voice.finish));
+  bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
+  if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
 }
 
 /* ---------- 공통 UI 조각 ---------- */
