@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-28'] = {
   id:'C-28', tier:'intermediate', level:'C', order:28,
+  lineage:['ten-friends'],
   generator:'ml_x5',
   title:{ ko:'5로 나눠라', en:'Divide by 5', zh:'除以5' },
   subtitle:{ ko:'5로 나누기 = 10으로 나누고 2를 곱하기', en:'Dividing by 5 = divide by 10, then multiply by 2', zh:'除以5 = 除以10再乘2' },

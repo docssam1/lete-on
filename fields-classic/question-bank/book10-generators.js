@@ -753,6 +753,452 @@ function positiveRangeNumberDigitCountBook10({ difficulty = 2 }) {
   });
 }
 
+function unitTestProblem(number, { difficulty = 2, prompt, subtype, visual, answer, solution, meta = {} }) {
+  return book10Problem({
+    prompt,
+    subtype,
+    visual,
+    answer,
+    solution,
+    family: `book10-unit-q${String(number).padStart(2, "0")}`,
+    meta: { unitTest: true, questionNumber: number, difficulty, ...meta }
+  });
+}
+
+function consecutivePart(start, count, target = null) {
+  const values = range(start, start + count - 1);
+  return { start, end: values.at(-1), count, values, total: sum(values), ...(target === null ? {} : { target }) };
+}
+
+function formatConsecutiveParts(parts, includeTotal = true) {
+  return parts.map((part, index) => {
+    const expression = part.values.join(" + ");
+    return `(${index + 1}) ${includeTotal ? `${expression} = ${part.total}` : expression}`;
+  }).join(" / ");
+}
+
+function unitTestConsecutiveSumEvenBook10({ difficulty = 2 } = {}) {
+  const counts = difficulty === 1 ? [4, 8, 6, 10] : difficulty === 3 ? [20, 40, 12, 18] : [16, 40, 6, 10];
+  const baseStarts = [1, 1, 9, 10];
+  const starts = difficulty === 2 ? baseStarts : baseStarts.map((start, index) => start + (index === 0 ? 0 : randomInt(0, Math.min(difficulty, 1))));
+  const parts = counts.map((count, index) => consecutivePart(starts[index], count));
+  return unitTestProblem(1, {
+    difficulty,
+    prompt: `다음 네 소문항의 연속한 수들의 합을 각각 구하세요. ${parts.map((part, index) => `(${index + 1}) ${part.start}부터 ${part.end}까지`).join(" ")}`,
+    subtype: "consecutive-target",
+    visual: { target: parts.map((part) => part.total).join(" / "), slots: 6, parts },
+    answer: parts.map((part, index) => `(${index + 1}) ${part.total}`).join(", "),
+    solution: `각 소문항의 첫 수부터 한 칸씩 늘려 쓰고 더하면 ${parts.map((part) => part.total).join(", ")}이 됩니다.`,
+    meta: { difficulty, parity: "even", counts, starts, parts, resultValues: parts.map((part) => part.total) }
+  });
+}
+
+function unitTestConsecutiveSumOddBook10({ difficulty = 2 } = {}) {
+  const counts = difficulty === 1 ? [3, 5, 7, 9] : difficulty === 3 ? [17, 59, 11, 13] : [15, 59, 5, 9];
+  const baseStarts = [1, 1, 4, 4];
+  const starts = difficulty === 2 ? baseStarts : baseStarts.map((start, index) => start + (index === 0 ? 0 : randomInt(0, Math.min(difficulty, 1))));
+  const parts = counts.map((count, index) => consecutivePart(starts[index], count));
+  return unitTestProblem(2, {
+    difficulty,
+    prompt: `다음 네 소문항의 연속한 수들의 합을 각각 구하세요. ${parts.map((part, index) => `(${index + 1}) ${part.start}부터 ${part.end}까지`).join(" ")}`,
+    subtype: "consecutive-target",
+    visual: { target: parts.map((part) => part.total).join(" / "), slots: 6, parts },
+    answer: parts.map((part, index) => `(${index + 1}) ${part.total}`).join(", "),
+    solution: `각 소문항의 수를 빠짐없이 이어 쓴 뒤 더하면 ${parts.map((part) => part.total).join(", ")}이 됩니다.`,
+    meta: { difficulty, parity: "odd", counts, starts, parts, resultValues: parts.map((part) => part.total) }
+  });
+}
+
+function unitTestConsecutiveRepresentationBook10(number, definitions, difficulty = 2) {
+  const parts = definitions.map(({ start, count, target }) => consecutivePart(start, count, target));
+  return unitTestProblem(number, {
+    difficulty,
+    prompt: parts.map((part, index) => `${index + 1}번: ${part.target}을 연속한 ${part.count}개의 수의 합으로 나타내세요.`).join(" "),
+    subtype: "consecutive-target",
+    visual: { target: parts.map((part) => part.target).join(" / "), slots: Math.min(6, Math.max(...parts.map((part) => part.count))), parts },
+    answer: formatConsecutiveParts(parts),
+    solution: parts.map((part, index) => `${index + 1}번은 ${part.values.join(" + ")}로 나타낼 수 있고 합은 ${part.target}입니다.`).join(" "),
+    meta: { parts, targets: parts.map((part) => part.target), counts: parts.map((part) => part.count) }
+  });
+}
+
+function calendarBlockValues(start, size) {
+  return Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_, column) => start + row * 7 + column)).flat();
+}
+
+function unitTestCalendarBlockPairBook10({ difficulty = 2 } = {}) {
+  const size = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const start = difficulty === 1 ? 1 : difficulty === 3 ? 5 : 6;
+  const values = calendarBlockValues(start, size);
+  const alternativeStart = difficulty === 1 ? 5 : difficulty === 3 ? 13 : 8;
+  const alternativeValues = calendarBlockValues(alternativeStart, size);
+  const total = sum(values);
+  const alternativeTotal = sum(alternativeValues);
+  const alternativeMaximum = alternativeValues.at(-1);
+  return unitTestProblem(5, {
+    difficulty,
+    prompt: `달력에서 색칠한 ${size}×${size} 날짜의 합과, 합이 ${alternativeTotal}일 때 색칠한 날짜 중 가장 큰 날짜를 각각 구하세요.`,
+    subtype: "calendar-block",
+    visual: { values, size, start },
+    answer: `(1) ${total}, (2) ${alternativeMaximum}`,
+    solution: `첫 번째 합은 ${values.join(" + ")}로 ${total}입니다. 달력 블록의 날짜를 차례로 더해 ${alternativeTotal}이 되는 블록을 찾으면 가장 큰 날짜는 ${alternativeMaximum}입니다.`,
+    meta: { size, start, values, total, alternativeStart, alternativeValues, alternativeTotal, alternativeMaximum, resultValues: [total, alternativeMaximum] }
+  });
+}
+
+function unitTestTwoRegionScoreBook10({ difficulty = 2 } = {}) {
+  const values = difficulty === 1 ? { 가: 5, 나: 4 } : difficulty === 3 ? { 가: 11, 나: 7 } : { 가: 8, 나: 5 };
+  const equations = [[1, 1, values.가 + values.나], [2, 1, 2 * values.가 + values.나]];
+  return unitTestProblem(6, {
+    difficulty,
+    prompt: `가와 나의 점수가 가+나=${equations[0][2]}, 가+가+나=${equations[1][2]}일 때 나의 점수를 구하세요.`,
+    subtype: "symbol-equations",
+    visual: { equations, labels: ["가", "나"] },
+    answer: `${values.나}점`,
+    solution: `두 식을 비교하면 가 하나의 점수는 ${equations[1][2]}-${equations[0][2]}=${values.가}점입니다. 따라서 나의 점수는 ${equations[0][2]}-${values.가}=${values.나}점입니다.`,
+    meta: { values, equations, asked: "나", resultValue: values.나 }
+  });
+}
+
+function unitTestThreePairSumsBook10({ difficulty = 2 } = {}) {
+  const values = difficulty === 1 ? { A: 2, B: 5, C: 1 } : difficulty === 3 ? { A: 12, B: 20, C: 9 } : { A: 5, B: 13, C: 4 };
+  const pairSums = [values.A + values.B, values.B + values.C, values.C + values.A];
+  return unitTestProblem(7, {
+    difficulty,
+    prompt: `A+B=${pairSums[0]}, B+C=${pairSums[1]}, C+A=${pairSums[2]}일 때 C의 값을 구하세요.`,
+    subtype: "pair-sums",
+    visual: { pairSums, labels: ["A", "B", "C"] },
+    answer: String(values.C),
+    solution: `A+B와 B+C를 더한 뒤 C+A를 빼면 B 두 개의 값이 나옵니다. 그 값을 똑같이 둘로 나누면 B=${values.B}입니다. ${pairSums[1]}에서 B를 빼면 C=${values.C}입니다.`,
+    meta: { values, pairSums, resultValue: values.C }
+  });
+}
+
+function unitTestEqualShareBook10({ difficulty = 2 } = {}) {
+  const settings = difficulty === 1 ? { oldPeople: 4, added: 2, oldShare: 6, newShare: 4 } : difficulty === 3 ? { oldPeople: 15, added: 5, oldShare: 12, newShare: 9 } : { oldPeople: 9, added: 3, oldShare: 8, newShare: 6 };
+  const { oldPeople, added, oldShare, newShare } = settings;
+  const newPeople = oldPeople + added;
+  const total = oldPeople * oldShare;
+  return unitTestProblem(8, {
+    difficulty,
+    prompt: `구슬을 처음 사람들에게 한 사람당 ${oldShare}개씩 똑같이 나누어 주었습니다. ${added}명이 더 오면 한 사람당 ${newShare}개씩 받습니다. 처음 사람 수와 구슬 수를 구하세요.`,
+    subtype: "share-change",
+    visual: { oldPeople, added, newPeople, newShare },
+    answer: `${oldPeople}명, ${total}개`,
+    solution: `처음 구슬 수와 나중 구슬 수가 같으므로 처음 사람 수×${oldShare}=(처음 사람 수+${added})×${newShare}입니다. 처음 사람 수는 ${oldPeople}명이고, 구슬은 ${oldPeople}×${oldShare}=${total}개입니다.`,
+    meta: { oldPeople, added, newPeople, oldShare, newShare, total, resultValues: [oldPeople, total] }
+  });
+}
+
+function unitTestCatchUpBook10({ difficulty = 2 } = {}) {
+  const settings = difficulty === 1 ? { slowStart: 8, fastStart: 20, slowRate: 6, fastRate: 3 } : difficulty === 3 ? { slowStart: 30, fastStart: 150, slowRate: 14, fastRate: 4 } : { slowStart: 15, fastStart: 47, slowRate: 8, fastRate: 4 };
+  const { slowStart, fastStart, slowRate, fastRate } = settings;
+  const minutes = (fastStart - slowStart) / (slowRate - fastRate);
+  return unitTestProblem(9, {
+    difficulty,
+    prompt: `물통 A에는 처음 ${slowStart}L가 있고 1분마다 ${slowRate}L씩 늘어납니다. 물통 B에는 처음 ${fastStart}L가 있고 1분마다 ${fastRate}L씩 늘어날 때 두 물통의 양이 같아지는 때를 구하세요.`,
+    subtype: "catch-up-table",
+    visual: { labels: ["A", "B"], starts: [slowStart, fastStart], changes: [slowRate, fastRate], unit: "L/분" },
+    answer: `${minutes}분 후`,
+    solution: `두 물통의 처음 양 차이는 ${fastStart - slowStart}L이고 1분마다 차이가 ${slowRate - fastRate}L씩 줄어듭니다. ${fastStart - slowStart}÷${slowRate - fastRate}=${minutes}이므로 ${minutes}분 후에 같습니다.`,
+    meta: { slowStart, fastStart, slowRate, fastRate, minutes, days: minutes }
+  });
+}
+
+function unitTestTwoObjectWeightBook10({ difficulty = 2 } = {}) {
+  const values = difficulty === 1 ? [2, 3] : difficulty === 3 ? [12, 9] : [5, 7];
+  const [cube, bead] = values;
+  const equations = [[2, 3, 2 * cube + 3 * bead], [3, 2, 3 * cube + 2 * bead]];
+  return unitTestProblem(10, {
+    difficulty,
+    prompt: `큐브 2개와 구슬 3개의 무게가 ${equations[0][2]}g이고, 큐브 3개와 구슬 2개의 무게가 ${equations[1][2]}g입니다. 큐브 한 개의 무게를 구하세요.`,
+    subtype: "symbol-equations",
+    visual: { equations, labels: ["큐브", "구슬"] },
+    answer: `${cube}g`,
+    solution: `두 식을 더하고 빼어 비교하면 큐브 한 개는 ${cube}g, 구슬 한 개는 ${bead}g입니다. ${cube}×2+${bead}×3=${equations[0][2]}이고 ${cube}×3+${bead}×2=${equations[1][2]}로 두 식 모두 맞습니다.`,
+    meta: { values: [cube, bead], equations, resultValue: cube }
+  });
+}
+
+function unitTestFourObjectWeightBook10({ difficulty = 2 } = {}) {
+  const values = difficulty === 1 ? [2, 4, 1, 3] : difficulty === 3 ? [8, 15, 6, 11] : [4, 8, 2, 6];
+  const equations = [
+    [2, 1, 1, 0, 2 * values[0] + values[1] + values[2]],
+    [1, 1, 0, 3, values[0] + values[1] + 3 * values[3]],
+    [1, 0, 1, 0, values[0] + values[2]],
+    [1, 0, 2, 1, values[0] + 2 * values[2] + values[3]]
+  ];
+  return unitTestProblem(11, {
+    difficulty,
+    prompt: "같은 모양은 같은 무게입니다. 네 식을 보고 ●, ◇, ■, ★의 무게를 각각 구하세요.",
+    subtype: "four-weight-system",
+    visual: { labels: ["●", "◇", "■", "★"], equations },
+    answer: `●=${values[0]}g, ◇=${values[1]}g, ■=${values[2]}g, ★=${values[3]}g`,
+    solution: `●+■=${equations[2][4]}에서 ●와 ■을 먼저 비교하고, 네 식을 차례로 사용하면 ●=${values[0]}g, ◇=${values[1]}g, ■=${values[2]}g, ★=${values[3]}g입니다. 네 식에 각각 넣어 모두 맞는지 확인할 수 있습니다.`,
+    meta: { values, equations, labels: ["●", "◇", "■", "★"], resultValues: values }
+  });
+}
+
+function enumerateCardNumbers(cards, length, repeat = false) {
+  const output = [];
+  const visit = (chosen) => {
+    if (chosen.length === length) {
+      if (chosen[0] !== 0) output.push(Number(chosen.join("")));
+      return;
+    }
+    cards.forEach((digit) => {
+      if (!repeat && chosen.includes(digit)) return;
+      visit([...chosen, digit]);
+    });
+  };
+  visit([]);
+  return output;
+}
+
+function unitTestCardCountBook10(number, cards, length, repeat, prompt, solution, difficulty = 2) {
+  const candidates = enumerateCardNumbers(cards, length, repeat);
+  return unitTestProblem(number, {
+    difficulty,
+    prompt,
+    subtype: "digit-slots",
+    visual: { digits: cards, length, direction: "increasing" },
+    answer: `${candidates.length}개`,
+    solution,
+    meta: { cards, length, repeat, candidates, resultValue: candidates.length }
+  });
+}
+
+function unitTestCardEnumerationQ12Book10({ difficulty = 2 } = {}) {
+  const cards = difficulty === 1 ? [1, 2, 3, 4] : difficulty === 3 ? [1, 2, 3, 4, 5, 6, 7] : [1, 3, 5, 7, 9];
+  const length = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const factors = Array.from({ length }, (_, index) => cards.length - index).join("×");
+  return unitTestCardCountBook10(12, cards, length, false,
+    `${cards.join(", ")} 카드 중 ${length}장을 골라 ${length}자리 수를 만들 때 만들 수 있는 수는 모두 몇 개인가요?`,
+    `첫 자리부터 고를 수 있는 수가 ${factors}이므로 모두 ${factors}=${enumerateCardNumbers(cards, length, false).length}개입니다.`, difficulty);
+}
+
+function unitTestCardEnumerationQ13Book10({ difficulty = 2 } = {}) {
+  const cards = difficulty === 1 ? [0, 1, 2] : difficulty === 3 ? [0, 2, 4, 6, 8] : [0, 2, 5, 9];
+  const length = cards.length;
+  const factors = [cards.filter((digit) => digit !== 0).length, ...Array.from({ length: length - 1 }, (_, index) => cards.length - 1 - index)].join("×");
+  return unitTestCardCountBook10(13, cards, length, false,
+    `${cards.join(", ")} 카드를 각각 한 번씩 사용하여 ${length}자리 수를 만들 때 만들 수 있는 수는 모두 몇 개인가요?`,
+    `첫 자리에 0이 오지 않게 하면 고를 수는 ${factors}이므로 모두 ${factors}=${enumerateCardNumbers(cards, length, false).length}개입니다.`, difficulty);
+}
+
+function unitTestCardEnumerationQ14Book10({ difficulty = 2 } = {}) {
+  const cards = difficulty === 1 ? [1, 2, 3] : difficulty === 3 ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4];
+  const length = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const factors = Array.from({ length }, () => cards.length).join("×");
+  return unitTestCardCountBook10(14, cards, length, true,
+    `${cards.join(", ")} 카드로 ${length}자리 수를 만들 때 같은 카드를 다시 써도 된다면 모두 몇 개인가요?`,
+    `각 자리마다 ${cards.length}가지씩 고를 수 있으므로 ${factors}=${enumerateCardNumbers(cards, length, true).length}개입니다.`, difficulty);
+}
+
+function unitTestDecreasingListBook10({ difficulty = 2 } = {}) {
+  const cards = difficulty === 1 ? [1, 2, 3, 4] : difficulty === 3 ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
+  const length = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const candidates = permutations(cards, length).filter((digits) => digits.every((digit, index) => index === 0 || digits[index - 1] > digit))
+    .map((digits) => Number(digits.join(""))).sort((first, second) => second - first);
+  return unitTestProblem(15, {
+    difficulty,
+    prompt: `${cards[0]}부터 ${cards.at(-1)}까지의 숫자 카드 중 ${length}장을 골라 ${length}자리 수를 만들 때, 각 자리 숫자가 큰 수부터 작아지는 수를 모두 쓰세요.`,
+    subtype: "digit-slots",
+    visual: { digits: cards, length, direction: "decreasing", listMode: true },
+    answer: candidates.join(", "),
+    solution: `${length}자리의 첫 자리부터 숫자를 놓고 다음 자리에는 더 작은 숫자만 놓아 빠짐없이 쓰면 ${candidates.join(", ")}입니다. 모두 ${candidates.length}개입니다.`,
+    meta: { cards, length, direction: "decreasing", candidates, resultValues: candidates }
+  });
+}
+
+function unitTestTargetCardListBook10({ difficulty = 2 } = {}) {
+  const cards = difficulty === 1 ? range(1, 6) : difficulty === 3 ? range(1, 12) : range(1, 9);
+  const pickCount = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const target = difficulty === 1 ? 7 : difficulty === 3 ? 26 : 11;
+  const solutions = combinations(cards, pickCount).filter((chosen) => sum(chosen) === target);
+  const answerList = solutions.map((chosen) => [...chosen].sort((first, second) => second - first).join("+"));
+  return unitTestProblem(16, {
+    difficulty,
+    prompt: `1부터 ${cards.at(-1)}까지의 숫자 카드 중 ${pickCount}장을 골라 합이 ${target}이 되는 경우를 빠짐없이 쓰세요. 순서만 바뀐 것은 한 가지로 셉니다.`,
+    subtype: "target-cards",
+    visual: { cards, pickCount, target, allSolutions: true },
+    answer: answerList.join(", "),
+    solution: `${pickCount}장의 숫자를 작은 카드부터 차례로 정리해 합이 ${target}인 경우를 찾으면 ${answerList.join(", ")}입니다. 각 경우의 합을 확인하면 모두 ${target}이고 빠진 경우가 없습니다.`,
+    meta: { cards, pickCount, target, solutions, answerList, resultValues: solutions }
+  });
+}
+
+function unitTestDigitSumRankBook10({ difficulty = 2 } = {}) {
+  const target = difficulty === 1 ? 5 : difficulty === 3 ? 15 : 8;
+  const rank = difficulty === 1 ? 5 : difficulty === 3 ? 30 : 12;
+  const candidates = range(100, 999).filter((value) => sum([...String(value)].map(Number)) === target)
+    .sort((first, second) => second - first);
+  const result = candidates[rank - 1];
+  return unitTestProblem(17, {
+    difficulty,
+    prompt: `각 자리 숫자의 합이 ${target}인 세 자리 수를 큰 수부터 차례로 쓸 때 ${rank}번째 수를 구하세요.`,
+    subtype: "place-value-sum",
+    visual: { target, rank, direction: "descending" },
+    answer: String(result),
+    solution: `각 자리 숫자의 합이 ${target}이 되도록 수를 찾고 큰 수부터 정리하면 ${rank}번째 수는 ${result}입니다.`,
+    meta: { target, rank, direction: "descending", candidates, resultValue: result }
+  });
+}
+
+function unitTestDigitOccurrenceBook10({ difficulty = 2 } = {}) {
+  const from = 1;
+  const to = difficulty === 1 ? 50 : difficulty === 3 ? 500 : 130;
+  const digit = 1;
+  const result = countDigit(from, to, digit);
+  return unitTestProblem(18, {
+    difficulty,
+    prompt: `1부터 ${to}까지의 수를 모두 쓸 때 숫자 ${digit}은 모두 몇 번 나타나는지 구하세요.`,
+    subtype: "digit-range",
+    visual: { from, to, digit },
+    answer: `${result}번`,
+    solution: `자리별로 나누어 숫자 ${digit}이 나타나는 횟수를 세면 모두 ${result}번입니다.`,
+    meta: { from, to, digit, result }
+  });
+}
+
+function unitTestDigitOccurrenceWideBook10({ difficulty = 2 } = {}) {
+  const from = difficulty === 1 ? 30 : 300;
+  const to = difficulty === 1 ? 80 : difficulty === 3 ? 900 : 500;
+  const digit = 3;
+  const result = countDigit(from, to, digit);
+  return unitTestProblem(19, {
+    difficulty,
+    prompt: `${from}부터 ${to}까지의 수를 모두 쓸 때 숫자 ${digit}은 모두 몇 번 나타나는지 구하세요.`,
+    subtype: "digit-range",
+    visual: { from, to, digit },
+    answer: `${result}번`,
+    solution: `각 자리에서 숫자 ${digit}이 쓰이는 횟수를 나누어 세면 모두 ${result}번입니다.`,
+    meta: { from, to, digit, result }
+  });
+}
+
+function unitTestWrittenDigitsBook10(number, to, difficulty = 2) {
+  const from = 1;
+  const result = writtenDigits(from, to);
+  return unitTestProblem(number, {
+    difficulty,
+    prompt: `${from}부터 ${to}까지의 수를 모두 쓸 때 필요한 숫자의 개수를 구하세요.`,
+    subtype: "digit-range",
+    visual: { from, to, digit: "전체" },
+    answer: `${result}개`,
+    solution: `한 자리 수, 두 자리 수${to >= 100 ? ", 세 자리 수" : ""}를 나누어 세어 더하면 모두 ${result}개입니다.`,
+    meta: { from, to, result }
+  });
+}
+
+function lastNumberForWrittenDigitsBook10(number, target, difficulty = 2) {
+  let last = null;
+  for (let value = 1; value <= target; value += 1) {
+    if (writtenDigits(1, value) === target) { last = value; break; }
+  }
+  return unitTestProblem(number, {
+    difficulty,
+    prompt: `1부터 어떤 수까지의 수를 모두 썼더니 숫자가 모두 ${target}개였습니다. 마지막 수를 구하세요.`,
+    subtype: "digit-range",
+    visual: { from: 1, to: "?", digit: target },
+    answer: String(last),
+    solution: `1부터 9까지, 10부터 99까지, 그 다음 수를 차례로 더해 숫자 개수가 ${target}개가 되는 마지막 수를 찾으면 ${last}입니다.`,
+    meta: { target, last, resultValue: last }
+  });
+}
+
+function unitTestDoubleVerticalAdditionBook10({ difficulty = 2 } = {}) {
+  const parts = difficulty === 1
+    ? [{ addends: [34, 35, 36], total: 105 }, { addends: [45, 46, 47], total: 138 }]
+    : difficulty === 3
+      ? [{ addends: [123, 124, 125], total: 372 }, { addends: [238, 239, 240], total: 717 }]
+      : [{ addends: [67, 68, 69], total: 204 }, { addends: [39, 40, 41], total: 120 }];
+  parts.forEach((part) => {
+    const totalText = String(part.total);
+    part.blank = Number(totalText[0]);
+    part.ending = totalText.slice(1);
+  });
+  const expressions = parts.map((part) => `${part.addends.join("+")} = □${part.ending}`).join(", ");
+  return unitTestProblem(24, {
+    difficulty,
+    prompt: `${expressions}일 때 두 세로셈의 빈칸에 들어갈 숫자를 각각 쓰세요.`,
+    subtype: "vertical-addition",
+    visual: { addends: parts.flatMap((part) => part.addends.map(String)), total: parts.map((part) => part.total).join(" / "), parts },
+    answer: parts.map((part) => part.blank).join(", "),
+    solution: parts.map((part, index) => `${index + 1}번째 세로셈은 ${part.addends.join("+")}=${part.total}이므로 □${part.ending}의 빈칸은 ${part.blank}입니다.`).join(" "),
+    meta: { parts, blankValues: parts.map((part) => part.blank), resultValues: parts.map((part) => part.total) }
+  });
+}
+
+function paritySumDifference(max) {
+  let even = 0;
+  let odd = 0;
+  for (let value = 1; value <= max; value += 1) {
+    if (value % 2 === 0) even += value;
+    else odd += value;
+  }
+  return { even, odd, difference: Math.abs(even - odd) };
+}
+
+function unitTestParitySumDifferenceBook10({ difficulty = 2 } = {}) {
+  const targetDifference = difficulty === 1 ? 5 : difficulty === 3 ? 50 : 20;
+  const cases = [2 * targetDifference - 1, 2 * targetDifference].map((max) => ({ max, ...paritySumDifference(max) }));
+  return unitTestProblem(25, {
+    difficulty,
+    prompt: `1부터 ㉠까지의 수에서 짝수의 합과 홀수의 합의 차가 ${targetDifference}일 때 ㉠을 구하세요. ㉠이 홀수인 경우와 짝수인 경우를 나누어 생각하세요.`,
+    subtype: "number-strip",
+    visual: { values: [1, 2, 3, 4], step: 1, cases },
+    answer: `홀수 ${cases[0].max}, 짝수 ${cases[1].max}`,
+    solution: `㉠이 홀수이면 마지막 홀수가 하나 더 남아 차가 ${targetDifference}가 되는 수는 ${cases[0].max}입니다. ㉠이 짝수이면 마지막 짝수가 하나 더해져 차가 ${targetDifference}가 되는 수는 ${cases[1].max}입니다.`,
+    meta: { cases, targetDifference, resultValues: cases.map((item) => item.max) }
+  });
+}
+
+export const BOOK10_UNIT_TEST_GENERATORS = Object.freeze({
+  q01: unitTestConsecutiveSumEvenBook10,
+  q02: unitTestConsecutiveSumOddBook10,
+  q03: ({ difficulty = 2 } = {}) => unitTestConsecutiveRepresentationBook10(3, difficulty === 1
+    ? [{ start: 2, count: 3, target: 9 }, { start: 4, count: 4, target: 22 }]
+    : difficulty === 3
+      ? [{ start: 8, count: 10, target: 125 }, { start: 9, count: 12, target: 174 }]
+      : [{ start: 7, count: 6, target: 57 }, { start: 8, count: 8, target: 92 }], difficulty),
+  q04: ({ difficulty = 2 } = {}) => unitTestConsecutiveRepresentationBook10(4, difficulty === 1
+    ? [{ start: 1, count: 3, target: 6 }, { start: 3, count: 5, target: 25 }]
+    : difficulty === 3
+      ? [{ start: 8, count: 7, target: 77 }, { start: 8, count: 9, target: 108 }]
+      : [{ start: 9, count: 5, target: 55 }, { start: 9, count: 7, target: 84 }], difficulty),
+  q05: unitTestCalendarBlockPairBook10,
+  q06: unitTestTwoRegionScoreBook10,
+  q07: unitTestThreePairSumsBook10,
+  q08: unitTestEqualShareBook10,
+  q09: unitTestCatchUpBook10,
+  q10: unitTestTwoObjectWeightBook10,
+  q11: unitTestFourObjectWeightBook10,
+  q12: unitTestCardEnumerationQ12Book10,
+  q13: unitTestCardEnumerationQ13Book10,
+  q14: unitTestCardEnumerationQ14Book10,
+  q15: unitTestDecreasingListBook10,
+  q16: unitTestTargetCardListBook10,
+  q17: unitTestDigitSumRankBook10,
+  q18: unitTestDigitOccurrenceBook10,
+  q19: unitTestDigitOccurrenceWideBook10,
+  q20: ({ difficulty = 2 } = {}) => unitTestWrittenDigitsBook10(20, difficulty === 1 ? 20 : difficulty === 3 ? 500 : 70, difficulty),
+  q21: ({ difficulty = 2 } = {}) => unitTestWrittenDigitsBook10(21, difficulty === 1 ? 99 : difficulty === 3 ? 999 : 200, difficulty),
+  q22: ({ difficulty = 2 } = {}) => lastNumberForWrittenDigitsBook10(22, difficulty === 1 ? 31 : difficulty === 3 ? 990 : 167, difficulty),
+  q23: ({ difficulty = 2 } = {}) => lastNumberForWrittenDigitsBook10(23, difficulty === 1 ? 189 : difficulty === 3 ? 1290 : 642, difficulty),
+  q24: unitTestDoubleVerticalAdditionBook10,
+  q25: unitTestParitySumDifferenceBook10
+});
+
+export const BOOK10_UNIT_TEST_REUSED_GENERATORS = Object.freeze({
+  q09: catchUpGrowingAmountBook10,
+  q10: twoSymbolCoefficientWeightBook10,
+  q14: repeatedDigitNumberCountBook10,
+  q19: digitOccurrenceRangeBook10,
+  q20: positiveRangeNumberDigitCountBook10,
+  q21: positiveRangeNumberDigitCountBook10
+});
+
 export const BOOK10_GENERATORS = Object.freeze({
   multiMethodMultiplicationBook10,
   sameTensComplementProductBook10,

@@ -24,4 +24,5 @@ jobs:
       - name: Generate Neural2 MP3s and exact sentence timings
         env:
           GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-share-reader-audio.js

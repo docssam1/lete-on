@@ -60,10 +60,24 @@ const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
    그대로 남는다(예: "\\foo" → "foo") — 여전히 읽을 수는 있고, 옛 동작과 같다. */
 function texToPlain(tex){
   let s = String(tex==null?'':tex);
+  /* 행렬(\begin{pmatrix}...\end{pmatrix}, MD30) — 다른 치환보다 먼저 처리해야
+     내부의 \square 등이 아래 규칙들로 이어서 정상 변환된다(행 구분자 "&"를
+     공백으로, 줄바꿈 "\\\\"를 " / "로 바꿔 괄호 안에 담는다). 2026-08-25
+     고등 W11·W12 신규 유형 추가 시 원장 지시로 KaTeX를 로컬 탑재하며 함께 등록. */
+  s = s.replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, (_, inner) => {
+    const rows = inner.split('\\\\').map(r => r.trim().split('&').map(c => c.trim()).join(' '));
+    return '(' + rows.join(' / ') + ')';
+  });
   s = s.replace(/\\square/g,'□');
+  /* \sqrt{}·\overline{}는 자기 괄호를 갖는 "안쪽" 명령이라, 바깥의 \dfrac{}{}·
+     \frac{}{}보다 먼저 벗겨내야 한다 — 안 그러면 \dfrac{\square\pm\sqrt{\square}}{r}
+     처럼 분자 안에 \sqrt{}가 중첩된 경우 [^{}]*가 그 내부 중괄호에 걸려 바깥
+     \dfrac 자체가 매치되지 않고 "dfrac"이라는 글자만 그대로 남는다(근의 공식
+     (p±√q)/r 표기에서 실제로 걸렸던 잔여물 — 2026-08-25 고등 W11 검증 중 발견). */
+  s = s.replace(/\\sqrt\{([^{}]*)\}/g,'√$1');
+  s = s.replace(/\\overline\{([^{}]*)\}/g,'$1');
   s = s.replace(/\\dfrac\{([^{}]*)\}\{([^{}]*)\}/g,'$1/$2');
   s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,'$1/$2');
-  s = s.replace(/\\sqrt\{([^{}]*)\}/g,'√$1');
   s = s.replace(/\\text\{([^{}]*)\}/g,'$1');
   s = s.replace(/\\times/g,'×');
   s = s.replace(/\\div/g,'÷');
@@ -75,6 +89,29 @@ function texToPlain(tex){
   s = s.replace(/\\rightarrow/g,'→');
   s = s.replace(/\\therefore/g,'∴');
   s = s.replace(/\\gcd/g,'gcd');
+  /* 부등호·±·항등·그리스문자(2026-08-25, 고등 W11 판별식·근의공식·근과계수·
+     이차부등식 신규) — \pm는 근의 공식 (p±√q)/r 표기의 핵심이라 KaTeX
+     렌더와 이 인쇄 폴백 양쪽에서 반드시 살아 있어야 한다. */
+  s = s.replace(/\\pm/g,'±');
+  s = s.replace(/\\mp/g,'∓');
+  s = s.replace(/\\le/g,'≤');
+  s = s.replace(/\\ge/g,'≥');
+  s = s.replace(/\\ne/g,'≠');
+  s = s.replace(/\\equiv/g,'≡');
+  s = s.replace(/\\alpha/g,'α');
+  s = s.replace(/\\beta/g,'β');
+  /* 고등 W13·W14(대수·미적분Ⅰ, 2026-08-25) 신규 명령 — \sum·\int는 실제
+     기호로, \lim·\log·\sin·\cos·\tan은 그대로 읽는 이름이라 단어로,
+     \to는 "다가간다"는 뜻의 화살표로 바꾼다. 순서는 서로 겹치는 부분
+     문자열이 없어 무관하다(예: "\to"는 "\tan" 안의 부분열이 아니다). */
+  s = s.replace(/\\sum/g,'Σ');
+  s = s.replace(/\\int/g,'∫');
+  s = s.replace(/\\lim/g,'lim');
+  s = s.replace(/\\log/g,'log');
+  s = s.replace(/\\sin/g,'sin');
+  s = s.replace(/\\cos/g,'cos');
+  s = s.replace(/\\tan/g,'tan');
+  s = s.replace(/\\to/g,'→');
   s = s.replace(/\\qquad/g,'    ');
   s = s.replace(/\\quad/g,'  ');
   s = s.replace(/\\[;,!]/g,' ');
@@ -1440,6 +1477,10 @@ window.examScreen = function(container){
       if(gradeBtn) gradeBtn.addEventListener('click', ()=>{
         graded = true; gradeScore = 0;
         problems.forEach((p,i)=>{ if(matchesAnswer(userAnswers[i],p.answer)) gradeScore++; });
+        /* 유형별 정답률 추적(과정-로드맵.md §2-4) — 이 스레드+레벨을 한 세트
+           풀고 채점한 "세션 1회"로 기록한다. NM_STATS 미로딩 시(스크립트
+           누락 등) 조용히 건너뛴다 — 채점 자체는 그 어떤 경우에도 막지 않음. */
+        if(window.NM_STATS) NM_STATS.record(thread, level, gradeScore, count, cfg.boost ? {boost:true} : null);
         render();
       });
 

@@ -33,6 +33,32 @@ const PLACE_ZH  = ['个位','十位','百位','千位','万位'];
 /* ── NS1 자릿값 읽기 ── */
 NM_TGEN['ns1_placeValue'] = function(params, rng){
   params = params || {};
+
+  /* ── §4 다함식 위젯: 십진블록 읽기 (widget:'base10', mode:'read') ──
+     백판(hundred flat)·십막대(ten rod)·낱개(ones cube) 그림을 보고 수를 읽는다.
+     2·3자리를 섞어 낸다(백판 0~9개, 항상 0이 아닌 수가 되도록 재추첨). */
+  if(params.mode === 'base10'){
+    let h, tens, ones;
+    do{
+      h    = R(rng, 0, 6);
+      tens = R(rng, 0, 9);
+      ones = R(rng, 0, 9);
+    } while(h===0 && tens===0 && ones===0);
+    const n = h*100 + tens*10 + ones;
+    return {
+      prompt: {
+        ko: '십진블록이 나타내는 수는 얼마일까요?',
+        en: 'What number do the base-10 blocks show?',
+        zh: '这些十进制方块表示的数是多少？'
+      },
+      tex: `${h?h+'00 + ':''}${tens*10} + ${ones} = \\square`,
+      answer: n,
+      answerType: 'number',
+      widget: 'base10',
+      base10: { h, tens, ones, mode: 'read' }
+    };
+  }
+
   const max = params.max || 999;
 
   /* 자릿수 범위 결정 */
@@ -312,6 +338,31 @@ NM_TGEN['ad2_addCarry1d'] = function(params, rng){
 /* ── AD3 두 자리+한 자리 ── */
 NM_TGEN['ad3_add2d1d'] = function(params, rng){
   params = params || {};
+
+  /* ── §4 다함식 위젯: 십진블록 더하기 (widget:'base10', mode:'add') ──
+     항상 올림(carry)이 있는 조합만 뽑는다 — 낱개 10개가 새 십막대 하나로
+     묶이는 장면이 이 위젯의 핵심이라, 올림 없는 문제는 그림의 재미가 없다. */
+  if(params.mode === 'base10'){
+    const tens = R(rng, 1, 8);
+    const ones_a = R(rng, 1, 9);
+    let b;
+    do { b = R(rng, 1, 9); } while(ones_a + b < 10);
+    const A = tens*10 + ones_a;
+    const sum = A + b;
+    return {
+      prompt: {
+        ko: `${A} + ${b}, 십진블록을 다 더하면 얼마일까요?`,
+        en: `Add ${A} + ${b} using the base-10 blocks!`,
+        zh: `用十进制方块计算${A}+${b}等于多少？`
+      },
+      tex: `${A} + ${b} = \\square`,
+      answer: sum,
+      answerType: 'number',
+      widget: 'base10',
+      base10: { a:{tens, ones:ones_a}, b:{tens:0, ones:b}, mode:'add' }
+    };
+  }
+
   const carry      = params.carry      || false;
   const threeDigit = params.threeDigit || false;
 
@@ -402,6 +453,32 @@ NM_TGEN['ad3_add2d1d'] = function(params, rng){
 /* ── AD4 몇십·몇백 덧뺄 ── */
 NM_TGEN['ad4_addTens'] = function(params, rng){
   params = params || {};
+
+  /* ── §4 다함식 위젯: 수직선 점프 (widget:'numline') ──
+     +n씩(2,3,5,9,10,11 중 하나) 폴짝폴짝 뛰며 빈 칸을 채운다 — 두 자리 범위
+     (시작 1~40, 3~4번 점프)까지 다다르도록 잡아 유아 nl2_seq(1~20)보다 넓힌다. */
+  if(params.mode === 'numline'){
+    const step  = pick(rng, [2,3,5,9,10,11]);
+    const hops  = R(rng, 3, 4);              /* 화살표(점프) 수 — 마디는 hops+1개 */
+    const start = R(rng, 1, 40);
+    const seq = [start];
+    for(let i=1;i<=hops;i++) seq.push(seq[i-1] + step);
+    const blank = R(rng, 1, hops);           /* 첫 마디(출발점)는 항상 보여준다 */
+    const seqTex = seq.map((v,i)=> i===blank ? '\\square' : v).join('\\,\\to\\,');
+    return {
+      prompt: {
+        ko: `+${step}씩 폴짝폴짝! 빈 칸에 들어갈 수는 얼마일까요?`,
+        en: `Hop by +${step} each time! What number goes in the blank?`,
+        zh: `每次跳+${step}！空格里应该填几？`
+      },
+      tex: seqTex,
+      answer: seq[blank],
+      answerType: 'number',
+      widget: 'numline',
+      numline: { start, step, seq, blank }
+    };
+  }
+
   const unit = params.unit || 10;
 
   /* 최대 배수 (합이 unit*10 이하) */
@@ -620,6 +697,67 @@ NM_TGEN['ad8_multiAdd10'] = function(params, rng){
     nums,
     target: 10,
     pairCount
+  };
+};
+
+/* ── AD9 10 이용 덧셈(보정 전략) ──
+   §4 다함식 위젯: 전략 병렬 비교(widget:'compareSteps'). 24+10과 24+9를
+   나란히 두 열로 두고, 왼쪽(딱 10 더하기)을 풀면 오른쪽이 "10 더하고
+   1(또는 2) 빼거나 더하기"로 자동으로 이어진다.
+   mode:'compare'  → 두 열 비교 위젯
+   mode:'abstract' → 같은 전략을 steps(단계 채우기)로 암산 일반화 */
+NM_TGEN['ad9_compAdd'] = function(params, rng){
+  params = params || {};
+  const mode = params.mode || 'compare';
+
+  const tens = R(rng, 1, 8);
+  const ones = R(rng, 1, 9);
+  const a = tens*10 + ones;
+  /* delta: 10에서 살짝 모자라거나(9,8) 넘치는(11,12) 두 번째 덧셈수의 편차 */
+  const delta = pick(rng, [-2, -1, 1, 2]);
+  const b2 = 10 + delta;
+  const sumLeft  = a + 10;
+  const sumRight = a + b2;
+  const adjWord  = delta < 0 ? `${Math.abs(delta)} 빼기` : `${delta} 더하기`;
+  const adjWordEn = delta < 0 ? `subtract ${Math.abs(delta)}` : `add ${delta}`;
+  const adjWordZh = delta < 0 ? `减${Math.abs(delta)}` : `加${delta}`;
+
+  if(mode === 'abstract'){
+    return {
+      prompt: {
+        ko: `${a} + ${b2}를 암산으로! (10을 이용해요)`,
+        en: `Add ${a} + ${b2} mentally, using 10 as a helper!`,
+        zh: `用10来帮忙心算${a}+${b2}！`
+      },
+      tex: `${a} + ${b2} = \\square`,
+      answer: sumRight,
+      answerType: 'steps',
+      steps: [
+        { tex: `${a} + 10 ${delta<0?'-':'+'} ${Math.abs(delta)}`, blank: sumLeft },
+        { tex: `\\square`,                                        blank: sumRight }
+      ],
+      widget: 'steps'
+    };
+  }
+
+  return {
+    prompt: {
+      ko: `왼쪽을 먼저 풀고, 오른쪽은 "10 더하고 ${adjWord}"로 이어가요!`,
+      en: `Solve the left side, then the right follows "add 10, then ${adjWordEn}"!`,
+      zh: `先算左边，右边接着"加10再${adjWordZh}"！`
+    },
+    tex: `${a} + 10 = \\square,\\ ${a} + ${b2} = \\square`,
+    answer: [sumLeft, sumRight],
+    answerType: 'number',
+    widget: 'compareSteps',
+    compareSteps: {
+      a,
+      left:  { n: 10, steps: [ { tex: `${a} + 10`, blank: sumLeft } ] },
+      right: { n: b2, delta, steps: [
+        { tex: `${a} + 10`,               blank: sumLeft  },
+        { tex: `${sumLeft} ${delta<0?'-':'+'} ${Math.abs(delta)}`, blank: sumRight }
+      ] }
+    }
   };
 };
 

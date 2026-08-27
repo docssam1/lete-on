@@ -307,6 +307,160 @@ window.NM_ROADMAP = {
       theme:{ko:'보강 · 몰아주기 곱·어림하기·큰 수 정복',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
       units:['H-11','H-12','H-13'],
       tip:{ko:'0의 개수만 세어도 억인지 조인지 바로 알 수 있어요!',en:'Just count the zeros to know if it\'s a hundred-million or a trillion!',zh:'只要数一数0的个数，就能立刻知道是亿还是万亿！'}
+    },
+
+    /* ─────── W8 : 음수의 동굴 — 중1 정수와 유리수 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W8 음수의 동굴(중1)" 스토리 스테이지. 경시의
+       탑(CR9~CRB) 다음, 초등 트랙 끝에 이어 붙는다 — 필수 연산 관문
+       §4 "CHALLENGE 1부 ← W8 정수·유리수 사칙"과도 정합. */
+    {
+      id:'W8-1', icon:'🌋', grade:'중1',
+      edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
+      units:['M-01','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+    },
+    {
+      id:'W8-2', icon:'🎲', grade:'중1',
+      edu:{ko:'중1 부호의 규칙',en:'G7 Rules of Sign',zh:'初一符号的规则'},
+      theme:{ko:'W8-2 · 부호의 규칙 — 곱셈·나눗셈·거듭제곱·혼합',en:'W8-2 · Rules of Sign — ×÷, Powers & Mixed Ops',zh:'W8-2·符号的规则——乘除·乘方·混合运算'},
+      units:['M-04','M-05','M-06'],
+      tip:{ko:'음수 개수가 짝이면 +, 홀이면 − — 부호부터 정하고 시작해요!',en:'Even negatives = +, odd = − : decide the sign first!',zh:'负数个数为偶得正，为奇得负——先定符号！'}
+    },
+    {
+      id:'W8-3', icon:'🔁', grade:'중1',
+      edu:{ko:'중1 유리수 정복',en:'G7 Conquering Rationals',zh:'初一征服有理数'},
+      theme:{ko:'W8-3 · 유리수 정복 — 곱나눗·유한소수·순환소수',en:'W8-3 · Conquering Rationals — × ÷, Terminating & Repeating',zh:'W8-3·征服有理数——乘除·有限小数·循环小数'},
+      units:['M-07','M-08','M-09'],
+      tip:{ko:'분모 속 2와 5만 있으면 끝나는 소수, 다른 수가 숨어 있으면 영원히 반복돼요!',en:'Only 2s and 5s in the denominator? It ends. Anything else hiding? It repeats forever!',zh:'分母只有2和5就会结束，藏着别的数就会永远循环！'}
+    },
+
+    /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
+       동굴) 다음, 문자로 된 식을 다루는 첫 관문. */
+    {
+      id:'W9-1', icon:'📐', grade:'중2',
+      edu:{ko:'중2 지수와 단항식',en:'G8 Exponents & Monomials',zh:'初二指数与单项式'},
+      theme:{ko:'W9-1 · 지수와 단항식 — 지수법칙·곱나눗·동류항',en:'W9-1 · Exponents & Monomials — Laws, × ÷, Like Terms',zh:'W9-1·指数与单项式——法则·乘除·同类项'},
+      units:['M-10','M-11','M-12'],
+      tip:{ko:'큰 수를 짧게 쓰려는 게으름이 지수법칙을 만들었어요 — 곱한 횟수만 세면 끝!',en:'Laziness about writing big numbers invented the exponent laws — just count how many times you multiplied!',zh:'懒得写长数字，于是发明了指数法则——只需数一数乘了几次！'}
+    },
+    {
+      id:'W9-2', icon:'🎁', grade:'중2',
+      edu:{ko:'중2 다항식과 등식',en:'G8 Polynomials & Equations',zh:'初二多项式与等式'},
+      theme:{ko:'W9-2 · 다항식과 등식 — 전개·이항 감각',en:'W9-2 · Polynomials & Equations — Expanding & Transposing',zh:'W9-2·多项式与等式——展开·移项感'},
+      units:['M-13','M-14'],
+      tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
+    },
+
+    /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
+       인수분해 (2026-08-25) ───────────────────────────────────
+       MASTER-ROADMAP.md §3 "W10 근호의 산맥(중3)" 스토리 스테이지. */
+    {
+      id:'W10-1', icon:'🔓', grade:'중3',
+      edu:{ko:'중3 제곱근의 세계',en:'G9 World of Square Roots',zh:'初三平方根的世界'},
+      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷',zh:'W10-1·平方根的世界——值·化简·乘除'},
+      units:['M-15','M-16','M-17'],
+      tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
+    },
+    {
+      id:'W10-2', icon:'🌈', grade:'중3',
+      edu:{ko:'중3 곱셈공식과 인수분해',en:'G9 Formulas & Factoring',zh:'初三乘法公式与因式分解'},
+      theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
+      units:['M-18','M-19','M-20'],
+      tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
+    },
+
+    /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W11 공통수학1" 스토리 스테이지. "고1"
+       대신 2022 개정 과목명 "공통수학1"을 grade에 그대로 쓴다(과목명
+       준수 원칙, 작업지시). */
+    {
+      id:'W11-1', icon:'📦', grade:'공통수학1',
+      edu:{ko:'공통수학1 다항식과 나머지정리',en:'Common Math 1 Polynomials & the Remainder Theorem',zh:'公共数学1多项式与余数定理'},
+      theme:{ko:'W11-1 · 다항식과 나머지정리 — 곱셈공식 확장·항등식·인수분해 심화',en:'W11-1 · Polynomials & the Remainder Theorem — Extended Formulas, Identities, Advanced Factoring',zh:'W11-1·多项式与余数定理——乘法公式扩展·恒等式·因式分解进阶'},
+      units:['M-21','M-22','M-23','M-24','M-25'],
+      tip:{ko:'나눗셈을 다 하지 않아도 P(a)만 계산하면 나머지가 바로 나와요 — 대입 한 번의 지름길!',en:'You don\'t need long division — just compute P(a) and the remainder appears, a one-substitution shortcut!',zh:'不用做完整除法，算出P(a)余数就出来了——一次代入的捷径！'}
+    },
+    {
+      id:'W11-2', icon:'🔭', grade:'공통수학1',
+      edu:{ko:'공통수학1 이차방정식과 행렬',en:'Common Math 1 Quadratics & Matrices',zh:'公共数学1二次方程与矩阵'},
+      theme:{ko:'W11-2 · 이차방정식과 행렬 — 판별식·근과 계수·근의 공식·부등식·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
+      units:['M-26','M-27','M-28','M-29','M-30'],
+      tip:{ko:'판별식은 근을 구하기 전에 몇 개인지 미리 아는 정찰병이에요!',en:'The discriminant scouts ahead and tells you the root count before you even solve!',zh:'判别式是求根之前先知道有几个根的侦察兵！'}
+    },
+
+    /* ─────── W12 : 도형의 방정식 나라 — 공통수학2 (2026-08-25) ────
+       MASTER-ROADMAP.md §3 "W12 공통수학2" 스토리 스테이지. */
+    {
+      id:'W12-1', icon:'📏', grade:'공통수학2',
+      edu:{ko:'공통수학2 점과 직선',en:'Common Math 2 Points & Lines',zh:'公共数学2点与直线'},
+      theme:{ko:'W12-1 · 점과 직선 — 두 점 사이의 거리·중점과 내분점·직선의 방정식',en:'W12-1 · Points & Lines — Distance, Midpoints & Division Points, Line Equations',zh:'W12-1·点与直线——两点间距离·中点与内分点·直线方程'},
+      units:['M-31','M-32','M-33'],
+      tip:{ko:'두 점 사이의 거리는 결국 피타고라스 정리 — 가로·세로 차를 제곱해 더하고 제곱근을 씌워요!',en:'Distance between two points is just the Pythagorean theorem — square the differences, add, take the root!',zh:'两点间距离其实就是勾股定理——差平方后相加，再开方！'}
+    },
+    {
+      id:'W12-2', icon:'⭕', grade:'공통수학2',
+      edu:{ko:'공통수학2 직선의 관계와 원',en:'Common Math 2 Relations Between Lines & Circles',zh:'公共数学2直线的关系与圆'},
+      theme:{ko:'W12-2 · 직선의 관계와 원 — 평행·수직 조건·원의 방정식',en:'W12-2 · Relations Between Lines & Circles — Parallel/Perpendicular, Circle Equations',zh:'W12-2·直线的关系与圆——平行·垂直条件·圆的方程'},
+      units:['M-34','M-35'],
+      tip:{ko:'x항·y항을 완전제곱으로 묶으면 원의 중심과 반지름이 한눈에 보여요!',en:'Complete the square on x and y, and a circle\'s center and radius appear at a glance!',zh:'把x、y项配成完全平方，圆的中心和半径一眼就看出来！'}
+    },
+
+    /* ─────── W13 : 기호의 탑 — 대수 (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W13 대수" 스토리 스테이지. log(M-37)·
+       Σ(M-42)가 §13 기호 전환 교육 대상 — 두 유닛 모두 practice가
+       "기호 해독"으로 시작한다(계산은 discover 이후). 2022 개정
+       과목명 준수 — "고3" 표기 없음(전부 "대수"). */
+    {
+      id:'W13-1', icon:'🪜', grade:'대수',
+      edu:{ko:'대수 지수와 로그',en:'Algebra Exponents & Logarithms',zh:'代数指数与对数'},
+      theme:{ko:'W13-1 · 지수와 로그 — 유리수 지수·log의 정의와 성질',en:'W13-1 · Exponents & Logarithms — Rational Exponents, log Definition & Properties',zh:'W13-1·指数与对数——有理数指数·log的定义与性质'},
+      units:['M-36','M-37','M-38'],
+      tip:{ko:'log_a N = x는 "a를 몇 번 곱해야 N이 되는가" — 지수 사다리를 거꾸로 읽는 것뿐이에요!',en:'log_a N = x asks "how many times must a be multiplied to reach N" — just reading the exponent ladder backward!',zh:'log_a N = x问的是"a要乘几次才能得到N"——只是反过来读指数梯子而已！'}
+    },
+    {
+      id:'W13-2', icon:'📐', grade:'대수',
+      edu:{ko:'대수 삼각함수와 수열',en:'Algebra Trigonometry & Sequences',zh:'代数三角函数与数列'},
+      theme:{ko:'W13-2 · 삼각함수와 수열 — 특수각의 값·등차수열·등비수열',en:'W13-2 · Trigonometry & Sequences — Special-Angle Values, Arithmetic & Geometric Sequences',zh:'W13-2·三角函数与数列——特殊角的值·等差数列·等比数列'},
+      units:['M-39','M-40','M-41'],
+      tip:{ko:'30-60-90 삼각형의 변의 비는 1:√3:2 — 이 하나만 알면 특수각 값이 다 나와요!',en:'A 30-60-90 triangle has side ratio 1:√3:2 — know this one thing and every special-angle value follows!',zh:'30-60-90三角形的边比是1:√3:2——知道这一点，特殊角的值全都能推出来！'}
+    },
+    {
+      id:'W13-3', icon:'🌈', grade:'대수',
+      edu:{ko:'대수 Σ와 무지개 덧셈법',en:'Algebra Σ & the Rainbow-Sum Trick',zh:'代数Σ与彩虹加法法'},
+      theme:{ko:'W13-3 · Σ(시그마) — 이미 아는 마법이 새 기호 옷을 입어요',en:'W13-3 · Sigma (Σ) — Magic You Already Know, in New Symbolic Clothes',zh:'W13-3·Σ(西格玛)——早就会的魔法换上新符号的外衣'},
+      units:['M-42'],
+      tip:{ko:'Σk=n(n+1)÷2는 무지개 덧셈법 그 공식이고, Σk²=n(n+1)(2n+1)÷6은 제곱수의 합이에요 — 새로 외울 게 없어요!',en:'Σk=n(n+1)÷2 is exactly the rainbow-sum formula, and Σk²=n(n+1)(2n+1)÷6 is the sum of squares — nothing new to memorize!',zh:'Σk=n(n+1)÷2正是彩虹加法法的公式，Σk²=n(n+1)(2n+1)÷6就是平方数之和——完全不用背新东西！'}
+    },
+
+    /* ─────── W14 : 변화의 정상 — 미적분Ⅰ (2026-08-25) ─────────
+       MASTER-ROADMAP.md §3 "W14 미적분Ⅰ" 스토리 스테이지 — 로드맵의
+       마지막 월드. lim(M-43)·f′·d/dx(M-44)·∫(M-46)가 §13 기호 전환
+       교육 대상. W14-2 다음에 🔬 미적분 실험실(기존
+       fields-classic/calculus 이식, 새로 만들지 않음)을 외부 링크
+       노드로 연결한다 — MASTER-ROADMAP.md §2 "개념 실험실 원칙"·
+       작업지시 반영. */
+    {
+      id:'W14-1', icon:'🧭', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 극한과 미분',en:'Calculus Ⅰ Limits & Derivatives',zh:'微积分Ⅰ极限与导数'},
+      theme:{ko:'W14-1 · 극한과 미분 — 극한값 계산·미분계수와 도함수',en:'W14-1 · Limits & Derivatives — Evaluating Limits, Derivatives',zh:'W14-1·极限与导数——极限值计算·导数与导函数'},
+      units:['M-43','M-44'],
+      tip:{ko:'0/0 꼴이 나오면 당황하지 말고 분자를 인수분해해서 분모와 약분해요!',en:'Hit a 0/0 form? Don\'t panic — factor the numerator and cancel with the denominator!',zh:'遇到0/0型别慌——把分子因式分解后和分母约分！'}
+    },
+    {
+      id:'W14-2', icon:'📏', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 접선과 적분',en:'Calculus Ⅰ Tangent Lines & Integration',zh:'微积分Ⅰ切线与积分'},
+      theme:{ko:'W14-2 · 접선과 적분 — 접선의 방정식·다항함수의 적분',en:'W14-2 · Tangent Lines & Integration — Tangent Line Equations, Integrating Polynomials',zh:'W14-2·切线与积分——切线方程·多项式函数的积分'},
+      units:['M-45','M-46'],
+      tip:{ko:'∫는 미분의 반대 방향 — 계수를 (n+1)로 나누고 지수를 하나 늘리면 돼요!',en:'∫ reverses differentiation — divide the coefficient by (n+1) and raise the exponent by one!',zh:'∫是求导的反方向——系数除以(n+1)，指数加1就行！'}
+    },
+    {
+      id:'LAB-CALC1', icon:'🔬', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 개념 실험실',en:'Calculus Ⅰ Concept Lab',zh:'微积分Ⅰ概念实验室'},
+      theme:{ko:'🔬 미적분 실험실 — 극값·부정적분·적분조건·유사문제를 직접 조작해봐요',en:'🔬 Calculus Lab — manipulate extrema, antiderivatives, integral conditions & practice problems yourself',zh:'🔬微积分实验室——亲手操作极值·不定积分·积分条件与相似题'},
+      link:'../fields-classic/calculus/',
+      tip:{ko:'그래프를 직접 움직여 보면서 극한·접선·극값·넓이가 왜 그렇게 되는지 눈으로 확인해요(새 탭에서 열려요).',en:'Drag the graph yourself to see why limits, tangents, extrema, and area work the way they do (opens in a new tab).',zh:'亲自拖动图像，用眼睛确认极限、切线、极值和面积为什么是那样(会在新标签页打开)。'}
     }
 
   ]

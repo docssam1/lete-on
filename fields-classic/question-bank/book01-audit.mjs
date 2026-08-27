@@ -25,8 +25,8 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-assert(typeIds.length === 32, `expected 32 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 32, "duplicate type in book-01 curriculum");
+assert(typeIds.length === 41, `expected 41 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 41, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
@@ -78,9 +78,21 @@ function partitionValidity(visual, labels) {
 }
 
 function validatePartition(problem) {
-  const validity = problem.visual.options.map((option) => partitionValidity(problem.visual, option.labels));
-  assert(validity.filter(Boolean).length === 1, "partition answer is not unique");
-  assert(validity[problem.meta.correctOption - 1], "partition correct option mismatch");
+  assert(problem.visual.subtype === "partition-draw", "partition task must ask the learner to draw dividing lines");
+  assert(!problem.prompt.includes("고르세요"), "partition task incorrectly became multiple choice");
+  assert(!problem.visual.options, "partition drawing question must not include answer choices");
+  assert(!problem.visual.labels, "partition drawing question reveals the answer lines");
+  assert(problem.answerVisual?.subtype === "partition-draw", "partition drawing answer visual missing");
+  assert(problem.answerVisual.labels.join() === problem.meta.labels.join(), "partition drawing answer labels mismatch");
+  assert(partitionValidity(problem.answerVisual, problem.meta.labels), "partition drawing answer is invalid");
+  const fullCuts = new Set();
+  problem.meta.labels.forEach((label, index) => {
+    const row = Math.floor(index / problem.visual.columns);
+    const column = index % problem.visual.columns;
+    if (column < problem.visual.columns - 1 && problem.meta.labels[index + 1] !== label) fullCuts.add(`${index}:right`);
+    if (row < problem.visual.rows - 1 && problem.meta.labels[index + problem.visual.columns] !== label) fullCuts.add(`${index}:bottom`);
+  });
+  assert((problem.visual.guideCuts || []).every((cut) => fullCuts.has(cut)), "partition guide line is not part of the answer boundary");
 }
 
 function validateDigital(problem) {
@@ -92,22 +104,36 @@ function validateDigital(problem) {
     const transformed = BOOK01_INTERNALS.transformDisplay(source, problem.meta.operation);
     assert(Number(transformed.join("")) === problem.meta.result, "two-digit transform mismatch");
   } else if (family === "digital-board-sum") {
-    assert(problem.meta.results.reduce((sum, value) => sum + value, 0) === problem.meta.answer, "digital board sum mismatch");
-  } else if (family === "digital-addition") {
-    assert(problem.meta.values[0] + problem.meta.values[1] === problem.meta.answer, "digital addition mismatch");
+    const turns = { "rotate-right-quarter": 1, "rotate-left-quarter": 3, "rotate-half": 2 };
+    const upright = problem.visual.cells
+      .filter((cell) => (cell.orientation + turns[problem.meta.operation]) % 4 === 0)
+      .map((cell) => cell.digit);
+    assert(upright.join() === problem.meta.uprightDigits.join(), "digital board upright digits mismatch");
+    assert(upright.reduce((sum, value) => sum + value, 0) === problem.meta.answer, "digital board sum mismatch");
+    assert(new Set(problem.visual.cells.map((cell) => cell.digit)).size === 9, "digital board digits repeat");
+  } else if (family === "digital-related-addition") {
+    const source = String(problem.meta.source).padStart(2, "0").split("").map(Number);
+    const transformed = BOOK01_INTERNALS.transformDisplay(source, problem.meta.operation);
+    assert(Number(transformed.join("")) === problem.meta.transformed, "related digital transform mismatch");
+    assert(problem.meta.source !== problem.meta.transformed, "related digital addition repeats the same number");
+    assert(problem.meta.source + problem.meta.transformed === problem.meta.answer, "related digital addition mismatch");
+    assert(problem.visual.layout === problem.meta.layout, "related digital addition layout mismatch");
   }
 }
 
 function validateMagic(problem) {
   const { family } = problem.meta;
   if (family === "circle-magic") {
-    const { nodes, center, lineSum, hidden, answer } = problem.meta;
-    assert([[0,3],[1,4],[2,5]].every(([a,b]) => nodes[a] + center + nodes[b] === lineSum), "circle line sums mismatch");
-    assert(nodes[hidden] === answer, "circle hidden answer mismatch");
-  } else if (family === "cross-magic") {
-    const { values, center, lineSum, hidden, answer } = problem.meta;
-    assert(values[0] + center + values[1] === lineSum && values[2] + center + values[3] === lineSum, "cross line sums mismatch");
-    assert(values[hidden] === answer, "cross hidden answer mismatch");
+    const { cards, nodes, center, lineSum, lineCount } = problem.meta;
+    assert(nodes.length === lineCount * 2, "circle node count mismatch");
+    assert(Array.from({ length: lineCount }, (_, index) => nodes[index] + center + nodes[index + lineCount] === lineSum).every(Boolean), "circle line sums mismatch");
+    assert([...nodes, center].sort((a,b) => a-b).join() === [...cards].sort((a,b) => a-b).join(), "circle cards mismatch");
+    assert(problem.responseKind === "drawing" && problem.answerVisual, "circle source drawing form missing");
+  } else if (family === "five-card-magic") {
+    const { cards, values, lines, lineSum } = problem.meta;
+    assert(lines.every((line) => line.reduce((sum, index) => sum + values[index], 0) === lineSum), "five-card line sums mismatch");
+    assert([...values].sort((a,b) => a-b).join() === [...cards].sort((a,b) => a-b).join(), "five-card values mismatch");
+    assert(problem.responseKind === "drawing" && problem.answerVisual, "five-card source drawing form missing");
   } else if (family === "ring-lines") {
     const { nodes, lineSum, hidden, answer } = problem.meta;
     assert([[0,4],[1,5],[2,6],[3,7]].every(([a,b]) => nodes[a] + nodes[b] === lineSum), "ring line sums mismatch");
@@ -117,18 +143,20 @@ function validateMagic(problem) {
 
 function validateSumGrid(problem) {
   const { visual, meta } = problem;
-  const sums = BOOK01_INTERNALS.gridSums(meta.values, visual.rows, visual.columns);
+  const sums = BOOK01_INTERNALS.maskedGridSums(meta.values, visual.rows, visual.columns, meta.mask);
   assert(sums.rowSums.join() === visual.rowSums.join(), "sum-grid row sums mismatch");
   assert(sums.columnSums.join() === visual.columnSums.join(), "sum-grid column sums mismatch");
-  const candidates = permutations(visual.cards.length ? visual.cards : meta.values)
-    .filter((candidate) => {
-      const candidateSums = BOOK01_INTERNALS.gridSums(candidate, visual.rows, visual.columns);
-      return candidateSums.rowSums.join() === visual.rowSums.join()
-        && candidateSums.columnSums.join() === visual.columnSums.join()
-        && visual.shown.every((value, index) => value == null || candidate[index] === value);
-    });
-  assert(candidates.length === 1, `sum-grid answer count ${candidates.length}`);
-  assert(candidates[0].join() === meta.values.join(), "sum-grid solution mismatch");
+  const uniqueCount = BOOK01_INTERNALS.countGakuroSolutions({
+    rows: visual.rows,
+    columns: visual.columns,
+    mask: meta.mask,
+    shown: visual.shown,
+    cards: meta.cards,
+    rowSums: visual.rowSums,
+    columnSums: visual.columnSums
+  });
+  assert(uniqueCount === 1 && meta.uniqueCount === 1, `sum-grid answer count ${uniqueCount}`);
+  assert(problem.responseKind === "drawing" && problem.answerVisual, "gakuro source drawing form missing");
 }
 
 function validateEnumeration(problem) {
@@ -156,8 +184,8 @@ function validateNewProblem(typeId, problem) {
   if (family.startsWith("shape-")) validateShapeTransform(problem);
   if (family.startsWith("partition-") || family === "symbol-partition") validatePartition(problem);
   if (family.startsWith("digital-")) validateDigital(problem);
-  if (["circle-magic", "cross-magic", "ring-lines"].includes(family)) validateMagic(problem);
-  if (["gakuro-card", "gakuro-grid"].includes(family)) validateSumGrid(problem);
+  if (["circle-magic", "five-card-magic", "ring-lines"].includes(family)) validateMagic(problem);
+  if (family === "gakuro-layout") validateSumGrid(problem);
   if (family === "digit-sum-enumeration") validateEnumeration(problem);
   if (family === "three-digit-step") validateSequence(problem);
   if (family.startsWith("place-value-")) assert(problem.meta.uniqueCount === 1, `${typeId}: place-value answer not unique`);

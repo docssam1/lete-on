@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-26'] = {
   id:'C-26', tier:'intermediate', level:'C', order:26,
+  lineage:['place-magic'],
   generator:'ml_partial',
   title:{ ko:'차근차근 곱하기', en:'Step-by-Step Multiplication', zh:'逐步乘法' },
   subtitle:{ ko:'자리별로 쪼개 곱하고, 맨 마지막에 한 번만 더해요', en:'Multiply place by place, then add just once at the end', zh:'按数位拆开相乘，最后只加一次' },

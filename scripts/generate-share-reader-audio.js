@@ -12,12 +12,17 @@ const path = require('path');
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const VOICE_NAME = 'en-US-Neural2-F';
 const SPEAKING_RATE = 0.95;
-const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fgahqumaldheqettmvqg.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const STORIES_PATH = path.join(__dirname, '../reading-world/share/sophie-stories/stories.json');
 const OUT_DIR = path.join(__dirname, '../audio-generated/sophie-stories');
 
 const stories = JSON.parse(fs.readFileSync(STORIES_PATH, 'utf8'));
+
+if (!SUPABASE_KEY) {
+  console.error('❌ Set SUPABASE_SERVICE_ROLE_KEY before uploading audio.');
+  process.exit(1);
+}
 
 function request(options, body) {
   return new Promise((resolve, reject) => {

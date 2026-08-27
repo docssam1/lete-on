@@ -1,14 +1,14 @@
 import { G1_GENERATORS } from "./g1-generators.js?v=20260823m";
 import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
-import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260822e";
-import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260825b";
-import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260822e";
-import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260822f";
-import { BOOK06_GENERATORS } from "./book06-generators.js?v=20260822g";
-import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260822h";
-import { BOOK08_GENERATORS } from "./book08-generators.js?v=20260822i";
-import { BOOK09_GENERATORS } from "./book09-generators.js?v=20260822j";
-import { BOOK10_GENERATORS } from "./book10-generators.js?v=20260822k";
+import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260827d";
+import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260825n";
+import { BOOK04_GENERATORS } from "./book04-generators.js?v=20260827a";
+import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260826c";
+import { BOOK06_GENERATORS } from "./book06-generators.js?v=20260826e";
+import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260826h";
+import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js?v=20260826h";
+import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20260826h";
+import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 
 const COLORS = ["흰색", "검은색"];
@@ -1325,7 +1325,7 @@ function totalDifference({ difficulty = 2 }) {
     prompt: `${withOf(pair[0])} ${pair[1]}의 나이의 합은 ${sum}${pair[2]}이고, ${topicOf(pair[0])} ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${topicOf(pair[0])} 몇 ${pair[2]}입니까?`,
     answer: `${older}${pair[2]}`,
     solution: `합 ${sum}에서 ${objectOf(`차 ${gap}`)} 빼면 ${pair[1]} 나이의 두 배인 ${subjectOf(sum - gap)} 됩니다. ${topicOf(pair[1])} ${younger}${pair[2]}이고 ${topicOf(pair[0])} ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
-    meta: { sum, gap, older, younger }
+    meta: { difficulty, sum, gap, older, younger }
   };
 }
 
@@ -5816,6 +5816,72 @@ function foldCutShapeChoice({ difficulty = 2 }) {
   };
 }
 
+function foldCutUnfoldDrawCore({ difficulty = 2, foldCount }) {
+  const directions = foldCount === 1
+    ? [sample(["v", "h", "d1", "d2"])]
+    : sample([["v", "h"], ["h", "v"]]);
+  const stages = buildFoldStages(directions);
+  const folded = stages.at(-1).polygon;
+  const margin = difficulty === 1 ? 0.12 : difficulty === 3 ? 0.075 : 0.095;
+  const centers = placeHoles(folded, 1, margin * 1.4);
+  if (!centers.length) return foldCutUnfoldDrawCore({ difficulty, foldCount });
+  const center = centers[0];
+  const half = margin * 0.48;
+  const triangle = Math.random() < 0.5;
+  const cut = triangle
+    ? [{ x: center.x - half, y: center.y + half }, { x: center.x + half, y: center.y + half }, { x: center.x, y: center.y - half }]
+    : [{ x: center.x - half, y: center.y - half }, { x: center.x + half, y: center.y - half }, { x: center.x + half, y: center.y + half }, { x: center.x - half, y: center.y + half }];
+  if (cut.some((point) => !pointInPolygon(folded, point))) return foldCutUnfoldDrawCore({ difficulty, foldCount });
+  let unfoldedCuts = [cut];
+  for (let index = directions.length - 1; index >= 0; index -= 1) {
+    unfoldedCuts = unfoldedCuts.concat(unfoldedCuts.map((polygon) => mirrorPolygon(polygon, directions[index])));
+  }
+  const times = foldCount === 1 ? "한 번" : "두 번";
+  return {
+    prompt: `색종이를 ${times} 접은 후 칠해진 부분을 잘라냈습니다. 남은 부분을 펼쳤을 때의 모양을 모눈에 그리세요.`,
+    visual: { kind: "fold-cut-unfold-draw", stages, cut, unfoldedCuts, reveal: false },
+    answer: "그림 답안",
+    answerVisual: { kind: "fold-cut-unfold-draw", stages, cut, unfoldedCuts, reveal: true },
+    responseKind: "drawing",
+    solution: `접은 선을 거울처럼 ${times === "한 번" ? "한 번" : "두 번"} 되펼치면 잘린 부분이 ${unfoldedCuts.length}곳에 대칭으로 나타납니다.`,
+    meta: { family: "fold-cut-unfold-draw", structure: foldCount === 1 ? "one-fold" : "two-fold", foldCount, directions, cut, unfoldedCuts }
+  };
+}
+
+function foldCutUnfoldOneDraw({ difficulty = 2 }) {
+  return foldCutUnfoldDrawCore({ difficulty, foldCount: 1 });
+}
+
+function foldCutUnfoldTwoDraw({ difficulty = 2 }) {
+  return foldCutUnfoldDrawCore({ difficulty, foldCount: 2 });
+}
+
+function foldNumberGridTwoDiagonal({ difficulty = 2 }) {
+  const size = 4;
+  const firstRow = Array.from({ length: size }, () => randomInt(1, difficulty === 3 ? 15 : 9));
+  const secondRow = Array.from({ length: size }, () => randomInt(1, difficulty === 3 ? 15 : 9));
+  const grid = [firstRow, secondRow, [...firstRow], [...secondRow]];
+  const directions = sample([["d1", "d2"], ["d2", "d1"]]);
+  const groups = new Map();
+  for (let row = 0; row < size; row += 1) for (let column = 0; column < size; column += 1) {
+    const point = foldPointIn({ x: (column + 0.5) / size, y: (row + 0.5) / size }, directions);
+    const key = `${point.x.toFixed(4)}:${point.y.toFixed(4)}`;
+    if (!groups.has(key)) groups.set(key, { point, cells: [] });
+    groups.get(key).cells.push({ row, column, value: grid[row][column] });
+  }
+  const candidates = [...groups.values()].filter((group) => group.cells.length === 4);
+  if (!candidates.length) return foldNumberGridTwoDiagonal({ difficulty });
+  const chosen = sample(candidates);
+  const answer = chosen.cells.reduce((sum, cell) => sum + cell.value, 0);
+  return {
+    prompt: "수가 쓰인 색종이를 대각선으로 두 번 접어 칠해진 부분을 잘라냈습니다. 펼쳤을 때 잘려나간 부분에 있는 수들의 합을 구하세요.",
+    visual: { kind: "fold-two-diagonal-grid", grid, directions, target: chosen.point },
+    answer: String(answer),
+    solution: `두 대각선을 차례로 펼치면 ${chosen.cells.map((cell) => cell.value).join(", ")}이 함께 잘립니다. 합은 ${chosen.cells.map((cell) => cell.value).join(" + ")} = ${answer}입니다.`,
+    meta: { family: "fold-number-grid-diagonal-two", structure: "two-diagonal-folds", size, grid, directions, target: chosen.point, cutCells: chosen.cells, answer }
+  };
+}
+
 function diagonalFoldHoleCount({ difficulty = 2 }) {
   // 파이널 2회 15번: 대각선을 따라 세 번 접고 구멍 하나 → 8개.
   const folds = difficulty === 1 ? 2 : 3;
@@ -6405,8 +6471,59 @@ export const GENERATORS = {
   ...BOOK06_GENERATORS,
   ...BOOK07_GENERATORS,
   ...BOOK08_GENERATORS,
+  unitTestBook08Q01: BOOK08_UNIT_TEST_GENERATORS[1],
+  unitTestBook08Q02: BOOK08_UNIT_TEST_GENERATORS[2],
+  unitTestBook08Q03: BOOK08_UNIT_TEST_GENERATORS[3],
+  unitTestBook08Q04: BOOK08_UNIT_TEST_GENERATORS[4],
+  unitTestBook08Q05: BOOK08_UNIT_TEST_GENERATORS[5],
+  unitTestBook08Q06: BOOK08_UNIT_TEST_GENERATORS[6],
+  unitTestBook08Q07: BOOK08_UNIT_TEST_GENERATORS[7],
+  unitTestBook08Q08: BOOK08_UNIT_TEST_GENERATORS[8],
+  unitTestBook08Q09: BOOK08_UNIT_TEST_GENERATORS[9],
+  unitTestBook08Q10: BOOK08_UNIT_TEST_GENERATORS[10],
+  unitTestBook08Q11: BOOK08_UNIT_TEST_GENERATORS[11],
+  unitTestBook08Q12: BOOK08_UNIT_TEST_GENERATORS[12],
+  unitTestBook08Q13: BOOK08_UNIT_TEST_GENERATORS[13],
+  unitTestBook08Q14: BOOK08_UNIT_TEST_GENERATORS[14],
+  unitTestBook08Q15: BOOK08_UNIT_TEST_GENERATORS[15],
+  unitTestBook08Q16: BOOK08_UNIT_TEST_GENERATORS[16],
+  unitTestBook08Q17: BOOK08_UNIT_TEST_GENERATORS[17],
+  unitTestBook08Q18: BOOK08_UNIT_TEST_GENERATORS[18],
+  unitTestBook08Q19: BOOK08_UNIT_TEST_GENERATORS[19],
+  unitTestBook08Q20: BOOK08_UNIT_TEST_GENERATORS[20],
+  unitTestBook08Q21: BOOK08_UNIT_TEST_GENERATORS[21],
+  unitTestBook08Q22: BOOK08_UNIT_TEST_GENERATORS[22],
+  unitTestBook08Q23: BOOK08_UNIT_TEST_GENERATORS[23],
+  unitTestBook08Q24: BOOK08_UNIT_TEST_GENERATORS[24],
+  unitTestBook08Q25: BOOK08_UNIT_TEST_GENERATORS[25],
   ...BOOK09_GENERATORS,
+  ...BOOK09_UNIT_TEST_GENERATORS,
   ...BOOK10_GENERATORS,
+  unitTestBook10Q01: BOOK10_UNIT_TEST_GENERATORS.q01,
+  unitTestBook10Q02: BOOK10_UNIT_TEST_GENERATORS.q02,
+  unitTestBook10Q03: BOOK10_UNIT_TEST_GENERATORS.q03,
+  unitTestBook10Q04: BOOK10_UNIT_TEST_GENERATORS.q04,
+  unitTestBook10Q05: BOOK10_UNIT_TEST_GENERATORS.q05,
+  unitTestBook10Q06: BOOK10_UNIT_TEST_GENERATORS.q06,
+  unitTestBook10Q07: BOOK10_UNIT_TEST_GENERATORS.q07,
+  unitTestBook10Q08: BOOK10_UNIT_TEST_GENERATORS.q08,
+  unitTestBook10Q09: BOOK10_UNIT_TEST_GENERATORS.q09,
+  unitTestBook10Q10: BOOK10_UNIT_TEST_GENERATORS.q10,
+  unitTestBook10Q11: BOOK10_UNIT_TEST_GENERATORS.q11,
+  unitTestBook10Q12: BOOK10_UNIT_TEST_GENERATORS.q12,
+  unitTestBook10Q13: BOOK10_UNIT_TEST_GENERATORS.q13,
+  unitTestBook10Q14: BOOK10_UNIT_TEST_GENERATORS.q14,
+  unitTestBook10Q15: BOOK10_UNIT_TEST_GENERATORS.q15,
+  unitTestBook10Q16: BOOK10_UNIT_TEST_GENERATORS.q16,
+  unitTestBook10Q17: BOOK10_UNIT_TEST_GENERATORS.q17,
+  unitTestBook10Q18: BOOK10_UNIT_TEST_GENERATORS.q18,
+  unitTestBook10Q19: BOOK10_UNIT_TEST_GENERATORS.q19,
+  unitTestBook10Q20: BOOK10_UNIT_TEST_GENERATORS.q20,
+  unitTestBook10Q21: BOOK10_UNIT_TEST_GENERATORS.q21,
+  unitTestBook10Q22: BOOK10_UNIT_TEST_GENERATORS.q22,
+  unitTestBook10Q23: BOOK10_UNIT_TEST_GENERATORS.q23,
+  unitTestBook10Q24: BOOK10_UNIT_TEST_GENERATORS.q24,
+  unitTestBook10Q25: BOOK10_UNIT_TEST_GENERATORS.q25,
   equalPartitionTwo,
   equalPartitionThree,
   equalPartitionFour,
@@ -6496,6 +6613,9 @@ export const GENERATORS = {
   foldStackFind,
   foldStackOrder,
   foldCutShapeChoice,
+  foldCutUnfoldOneDraw,
+  foldCutUnfoldTwoDraw,
+  foldNumberGridTwoDiagonal,
   verticalCryptarithmShapeSum,
 
   ...G1_GENERATORS,

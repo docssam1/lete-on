@@ -6,8 +6,8 @@
 <title>수학 연습장 · Numbers of Magic</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<script defer src="vendor/katex/katex.min.js"></script>
 <style>
 /* ── 리셋 & 기본 ── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -230,6 +230,13 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/dc_mx.js"></script>
 <script src="engine/threads/el.js"></script>
 <script src="engine/threads/adv.js"></script>
+<script src="engine/threads/mid.js"></script>
+<script src="engine/threads/mid2.js"></script>
+<script src="engine/threads/mid3.js"></script>
+<script src="engine/threads/mid4.js"></script>
+<script src="engine/threads/mid5.js"></script>
+<script src="engine/threads/mid6.js"></script>
+<script src="engine/threads/mid7.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -305,6 +312,171 @@ var TOPICS = [
       {label:'몰아주기 곱', thread:'CH11', level:1, desc:'십의 자리 같음'},
       {label:'어림하기 곱셈법', thread:'CH12', level:2, desc:'세 자리 곱셈'},
       {label:'큰 수 정복', thread:'CH13', level:1, desc:'만·억·조'},
+    ]
+  },
+  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', icon:'🌋', color:'#16417C', section:'magic',
+    subs:[
+      {label:'절댓값·수직선', thread:'MD1', level:2, desc:'절댓값(실전)'},
+      {label:'정수 대소 비교', thread:'MD1', level:3, desc:'수직선 대소·거리'},
+      {label:'정수 덧셈(같은 부호)', thread:'MD2', level:1, desc:'절댓값 합'},
+      {label:'정수 덧셈(다른 부호)', thread:'MD2', level:2, desc:'절댓값 차'},
+      {label:'정수 괄호 풀기', thread:'MD2', level:3, desc:'부호 바꿔 덧셈으로'},
+      {label:'세 정수 덧뺄셈 혼합', thread:'MD2', level:4, desc:'앞에서부터 차례로'},
+      {label:'유리수 덧뺄(분모 같음)', thread:'MD3', level:1, desc:'분자만 계산'},
+      {label:'유리수 덧뺄(통분)', thread:'MD3', level:2, desc:'최소공배수로 통분'},
+      {label:'세 유리수 덧뺄 혼합', thread:'MD3', level:3, desc:'통분 후 혼합'},
+      {label:'정수 곱셈', thread:'MD4', level:1, desc:'음수 개수로 부호'},
+      {label:'정수 나눗셈', thread:'MD4', level:2, desc:'음수 개수로 부호'},
+      {label:'세 수 이상 곱셈(홀짝)', thread:'MD4', level:3, desc:'음수 개수 홀짝'},
+      {label:'곱셈·나눗셈 혼합', thread:'MD4', level:4, desc:'앞에서부터 차례로'},
+      {label:'거듭제곱 (-a)ⁿ', thread:'MD5', level:1, desc:'괄호형'},
+      {label:'거듭제곱 -aⁿ', thread:'MD5', level:2, desc:'비괄호형'},
+      {label:'거듭제곱 구분하기', thread:'MD5', level:3, desc:'괄호형·비괄호형 섞임'},
+      {label:'정수 혼합계산(괄호 없이)', thread:'MD6', level:1, desc:'곱셈 먼저'},
+      {label:'정수 혼합계산(괄호)', thread:'MD6', level:2, desc:'괄호 먼저'},
+      {label:'정수 혼합계산(나눗셈 포함)', thread:'MD6', level:3, desc:'사칙 전체 혼합'},
+      {label:'유리수 곱셈', thread:'MD7', level:1, desc:'부호·분자분모'},
+      {label:'유리수 나눗셈(역수)', thread:'MD7', level:2, desc:'역수의 곱셈'},
+      {label:'유리수 곱나눗 혼합', thread:'MD7', level:3, desc:'세 유리수 혼합'},
+      {label:'유한소수 판별(기약분수)', thread:'MD8', level:1, desc:'분모 2·5 판정'},
+      {label:'유한소수 판별(약분 필요)', thread:'MD8', level:2, desc:'약분 후 판정'},
+      {label:'순환소수→분수 (1·1자리)', thread:'MD9', level:1, desc:'비순환1·순환1'},
+      {label:'순환소수→분수 (실전)', thread:'MD9', level:4, desc:'비순환2·순환2'},
+    ]
+  },
+  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', icon:'📐', color:'#5a4a8a', section:'magic',
+    subs:[
+      {label:'지수법칙 곱셈(aᵐ×aⁿ)', thread:'MD10', level:1, desc:'지수를 더하기'},
+      {label:'거듭제곱의 거듭제곱', thread:'MD10', level:2, desc:'지수를 곱하기'},
+      {label:'지수법칙 나눗셈(aᵐ÷aⁿ)', thread:'MD10', level:3, desc:'지수를 빼기'},
+      {label:'지수법칙 혼합(실전)', thread:'MD10', level:4, desc:'밑 혼합'},
+      {label:'단항식 곱셈', thread:'MD11', level:1, desc:'계수·지수 다칸'},
+      {label:'단항식 나눗셈', thread:'MD11', level:2, desc:'계수·지수 다칸'},
+      {label:'단항식 곱나눗 혼합(실전)', thread:'MD11', level:3, desc:'세 단항식'},
+      {label:'다항식 덧뺄(일차식)', thread:'MD12', level:1, desc:'동류항 정리'},
+      {label:'다항식 덧뺄(이차식)', thread:'MD12', level:2, desc:'x²·x·상수'},
+      {label:'괄호 앞 부호 바꾸기(실전)', thread:'MD12', level:3, desc:'전부 변호'},
+      {label:'(단항식)×(다항식) 이항식', thread:'MD13', level:1, desc:'분배법칙'},
+      {label:'문자 있는 단항식으로 전개', thread:'MD13', level:2, desc:'차수 상승'},
+      {label:'삼항식 전개(실전)', thread:'MD13', level:3, desc:'세 항 분배'},
+      {label:'등식 변형(덧셈식)', thread:'MD14', level:1, desc:'이항 감각'},
+      {label:'등식 변형(뺄셈식)', thread:'MD14', level:2, desc:'이항 감각'},
+      {label:'등식 변형→풀이 완주(실전)', thread:'MD14', level:3, desc:'이항+나눗셈'},
+    ]
+  },
+  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', icon:'🌈', color:'#16417C', section:'magic',
+    subs:[
+      {label:'완전제곱수의 제곱근', thread:'MD15', level:1, desc:'√N=k'},
+      {label:'(√a)²=a', thread:'MD15', level:2, desc:'근호 제곱'},
+      {label:'√(a²)=|a|(실전)', thread:'MD15', level:3, desc:'절댓값'},
+      {label:'근호 정리(연습)', thread:'MD16', level:1, desc:'√48=4√3'},
+      {label:'근호 정리(실전)', thread:'MD16', level:2, desc:'더 큰 수'},
+      {label:'계수 있는 근호 정리', thread:'MD16', level:3, desc:'계수까지 곱함'},
+      {label:'제곱근 곱셈(정수로 떨어짐)', thread:'MD17', level:1, desc:'√a×√b'},
+      {label:'제곱근 나눗셈(정수로 떨어짐)', thread:'MD17', level:2, desc:'√a÷√b'},
+      {label:'제곱근 곱셈(근호 남음, 실전)', thread:'MD17', level:3, desc:'근호 정리 연계'},
+      {label:'분모 유리화(기본형)', thread:'MD18', level:1, desc:'1/√n'},
+      {label:'분모 유리화(계수 있음)', thread:'MD18', level:2, desc:'c/√n'},
+      {label:'분모 유리화(분모부터 정리, 실전)', thread:'MD18', level:3, desc:'근호 정리 연계'},
+      {label:'곱셈공식 (x+a)(x+b)', thread:'MD19', level:1, desc:'합과 곱'},
+      {label:'곱셈공식 (x+a)²', thread:'MD19', level:2, desc:'완전제곱식'},
+      {label:'합차공식(실전)', thread:'MD19', level:3, desc:'(x+a)(x-a)'},
+      {label:'인수분해 기초(모두 양수)', thread:'MD20', level:1, desc:'p,q 찾기'},
+      {label:'인수분해 기초(부호 섞임, 실전)', thread:'MD20', level:2, desc:'p,q 찾기'},
+    ]
+  },
+  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', icon:'📦', color:'#0f2e4f', section:'magic',
+    subs:[
+      {label:'다항식 곱셈(이항식×이항식)', thread:'MD21', level:1, desc:'전개 3다칸'},
+      {label:'다항식 나눗셈(조립제법)', thread:'MD21', level:2, desc:'몫·나머지'},
+      {label:'다항식 곱셈(이항×삼항, 실전)', thread:'MD21', level:3, desc:'전개 4다칸'},
+      {label:'곱셈공식 확장 (x+a)³', thread:'MD22', level:1, desc:'계수 3다칸'},
+      {label:'곱셈공식 확장(a 음수)', thread:'MD22', level:2, desc:'부호 포함'},
+      {label:'합·차의 세제곱 공식(실전)', thread:'MD22', level:3, desc:'x³±a³'},
+      {label:'항등식(계수 직접 비교)', thread:'MD23', level:1, desc:'a,b 찾기'},
+      {label:'항등식(전개 후 비교)', thread:'MD23', level:2, desc:'a,b 찾기'},
+      {label:'항등식(전개 후 비교, 실전)', thread:'MD23', level:3, desc:'더 큰 범위'},
+      {label:'나머지정리(이차식)', thread:'MD24', level:1, desc:'P(a) 계산'},
+      {label:'나머지정리(삼차식)', thread:'MD24', level:2, desc:'P(a) 계산'},
+      {label:'나머지정리(계수 역산, 실전)', thread:'MD24', level:3, desc:'나머지→k'},
+      {label:'인수분해 심화(합의 세제곱)', thread:'MD25', level:1, desc:'x³+a³'},
+      {label:'인수분해 심화(차의 세제곱)', thread:'MD25', level:2, desc:'x³-a³'},
+      {label:'인수분해 심화(치환, 실전)', thread:'MD25', level:3, desc:'사차식'},
+      {label:'판별식 D값', thread:'MD26', level:1, desc:'D=b²-4ac'},
+      {label:'판별식(실근 개수)', thread:'MD26', level:2, desc:'개수 판정'},
+      {label:'판별식(중근 조건, 실전)', thread:'MD26', level:3, desc:'k=±'},
+      {label:'근과 계수(a=1)', thread:'MD27', level:1, desc:'합과 곱'},
+      {label:'근과 계수(a≠1)', thread:'MD27', level:2, desc:'합과 곱'},
+      {label:'근과 계수(α²+β², 실전)', thread:'MD27', level:3, desc:'대칭식'},
+      {label:'근의 공식(a=1)', thread:'MD28', level:1, desc:'[p,q,r]'},
+      {label:'근의 공식(a≠1)', thread:'MD28', level:2, desc:'[p,q,r]'},
+      {label:'근의 공식(실전 범위)', thread:'MD28', level:3, desc:'[p,q,r]'},
+      {label:'이차부등식(인수분해된 형태)', thread:'MD29', level:1, desc:'해 구간'},
+      {label:'이차부등식(전개된 형태)', thread:'MD29', level:2, desc:'해 구간'},
+      {label:'이차부등식(x²계수≠1, 실전)', thread:'MD29', level:3, desc:'해 구간'},
+      {label:'행렬 덧셈·뺄셈', thread:'MD30', level:1, desc:'4다칸'},
+      {label:'행렬 스칼라곱', thread:'MD30', level:2, desc:'4다칸'},
+      {label:'행렬곱(실전)', thread:'MD30', level:3, desc:'4다칸'},
+    ]
+  },
+  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', icon:'📏', color:'#1b6e5b', section:'magic',
+    subs:[
+      {label:'두 점 사이의 거리(연습)', thread:'MD31', level:1, desc:'[계수,근호안]'},
+      {label:'두 점 사이의 거리(더 큰 좌표)', thread:'MD31', level:2, desc:'[계수,근호안]'},
+      {label:'두 점 사이의 거리(음수 좌표, 실전)', thread:'MD31', level:3, desc:'[계수,근호안]'},
+      {label:'중점', thread:'MD32', level:1, desc:'좌표 2다칸'},
+      {label:'내분점(m:n)', thread:'MD32', level:2, desc:'좌표 2다칸'},
+      {label:'외분점(실전)', thread:'MD32', level:3, desc:'좌표 2다칸'},
+      {label:'직선의 방정식(두 점 통과)', thread:'MD33', level:1, desc:'y=ax+b'},
+      {label:'직선의 방정식(일반형→기울기절편형)', thread:'MD33', level:2, desc:'y=ax+b'},
+      {label:'직선의 방정식(실전 범위)', thread:'MD33', level:3, desc:'y=ax+b'},
+      {label:'두 직선의 평행 조건', thread:'MD34', level:1, desc:'k 구하기'},
+      {label:'두 직선의 수직 조건', thread:'MD34', level:2, desc:'k 구하기'},
+      {label:'평행·수직 혼합(실전)', thread:'MD34', level:3, desc:'k 구하기'},
+      {label:'원의 방정식(완성형)', thread:'MD35', level:1, desc:'[중심,반지름]'},
+      {label:'원의 방정식(더 큰 범위)', thread:'MD35', level:2, desc:'[중심,반지름]'},
+      {label:'원의 방정식(공통계수, 실전)', thread:'MD35', level:3, desc:'[중심,반지름]'},
+    ]
+  },
+  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', icon:'🪜', color:'#5b3a8f', section:'magic',
+    subs:[
+      {label:'유리수 지수(표기법 익히기)', thread:'MD36', level:1, desc:'[분자,분모]'},
+      {label:'유리수 지수(약분 필요)', thread:'MD36', level:2, desc:'[분자,분모]'},
+      {label:'유리수 지수(더 큰 범위, 실전)', thread:'MD36', level:3, desc:'[분자,분모]'},
+      {label:'로그의 정의(로그값 구하기)', thread:'MD37', level:1, desc:'x=log_a N'},
+      {label:'로그의 정의(진수 구하기)', thread:'MD37', level:2, desc:'N=aˣ'},
+      {label:'로그의 정의(더 큰 범위, 실전)', thread:'MD37', level:3, desc:'x=log_a N'},
+      {label:'로그의 성질(덧셈)', thread:'MD38', level:1, desc:'logA+logB'},
+      {label:'로그의 성질(뺄셈)', thread:'MD38', level:2, desc:'logA-logB'},
+      {label:'로그의 성질(밑변환, 정수만, 실전)', thread:'MD38', level:3, desc:'정수 되는 것만'},
+      {label:'삼각비 특수각(정수·기약분수)', thread:'MD39', level:1, desc:'0°·30°·60°·90°'},
+      {label:'삼각비 특수각(근호 있는 값)', thread:'MD39', level:2, desc:'[계수,근호안,분모]'},
+      {label:'삼각비 특수각(전체 혼합, 실전)', thread:'MD39', level:3, desc:'전 14종'},
+      {label:'등차수열(일반항)', thread:'MD40', level:1, desc:'aₙ 값'},
+      {label:'등차수열(두 항→a1,d)', thread:'MD40', level:2, desc:'[a1,d]'},
+      {label:'등차수열(합, 실전)', thread:'MD40', level:3, desc:'Sₙ'},
+      {label:'등비수열(일반항)', thread:'MD41', level:1, desc:'aₙ 값'},
+      {label:'등비수열(두 항→a1,r)', thread:'MD41', level:2, desc:'[a1,r]'},
+      {label:'등비수열(합, 실전)', thread:'MD41', level:3, desc:'Sₙ'},
+      {label:'Σk(무지개 덧셈법)', thread:'MD42', level:1, desc:'n(n+1)÷2'},
+      {label:'Σk²(제곱수의 합)', thread:'MD42', level:2, desc:'n(n+1)(2n+1)÷6'},
+      {label:'Σ(pk+q) 쪼개기(실전)', thread:'MD42', level:3, desc:'pΣk+qn'},
+    ]
+  },
+  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', icon:'🧭', color:'#0d3b66', section:'magic',
+    subs:[
+      {label:'극한(대입형)', thread:'MD43', level:1, desc:'다항식 대입'},
+      {label:'극한(약분형, 0/0)', thread:'MD43', level:2, desc:'인수분해·약분'},
+      {label:'극한(더 큰 범위, 실전)', thread:'MD43', level:3, desc:'인수분해·약분'},
+      {label:'도함수(이차함수, 2다칸)', thread:'MD44', level:1, desc:"f'(x)"},
+      {label:'도함수(삼차함수, 3다칸)', thread:'MD44', level:2, desc:"f'(x)"},
+      {label:"미분계수 f'(a)(실전)", thread:'MD44', level:3, desc:'정수값'},
+      {label:'접선의 기울기', thread:'MD45', level:1, desc:"f'(x0)"},
+      {label:'접선의 방정식(2다칸)', thread:'MD45', level:2, desc:'y=mx+n'},
+      {label:'접선의 방정식(더 큰 범위, 실전)', thread:'MD45', level:3, desc:'y=mx+n'},
+      {label:'부정적분(일차식, 2다칸)', thread:'MD46', level:1, desc:'+C'},
+      {label:'부정적분(이차식, 3다칸)', thread:'MD46', level:2, desc:'+C'},
+      {label:'정적분 값(실전)', thread:'MD46', level:3, desc:'F(q)-F(p)'},
     ]
   }
 ];

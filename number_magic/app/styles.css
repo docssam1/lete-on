@@ -198,6 +198,11 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-mb-env-badge.new{background:#e0433b;color:#fff}
 .nm-mb-env-badge.done{background:#eef2fa;color:var(--sub)}
 
+/* 정체 감지→보강 루프(§2-4) — 몸풀기 카드 + 보강 세션 화면 */
+.nm-boost-card{flex:0 0 auto;overflow:visible;margin-bottom:12px;
+  border:2px solid var(--gold-deep);background:linear-gradient(180deg,#fffaf0,#fffdf7)}
+.nm-boost-card .nm-mb-section-h{margin-top:0;color:var(--gold-deep)}
+
 /* 핵심체크 */
 .nm-fill{text-align:center;font-size:24px;font-weight:800;margin:12px 0}
 .nm-open-q{font-size:16px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:14px}
@@ -570,6 +575,49 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 @keyframes obWelcomeIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
 /* ============================================================
+   타이틀 화면 — 게임처럼 모드를 고르고 들어간다 (§14, 2026-08-27 Phase 3)
+   ============================================================ */
+.nm-title{width:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:28px 20px;overflow-y:auto;
+  background:radial-gradient(1100px 600px at 50% -10%,#1c4a86,transparent 65%),
+    linear-gradient(165deg,var(--blue-deep) 0%,var(--blue) 55%,#123a6e 100%)}
+.nm-title-card{max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.nm-title-logo{margin-bottom:6px}
+.nm-title-logo-kr{
+  font-size:clamp(28px,8vw,38px);font-weight:900;letter-spacing:-.02em;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 2px 0 rgba(0,0,0,.15);
+}
+.nm-title-logo-sub{font-size:11px;font-weight:800;letter-spacing:.25em;color:rgba(255,255,255,.55);margin-top:2px}
+.nm-title-char{filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));animation:bob 3s ease-in-out infinite;margin:4px 0}
+.nm-title-hello{font-size:14px;font-weight:700;color:#fff;opacity:.92;margin-bottom:4px}
+.nm-title-stats{display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.nm-title-chip{font-size:12.5px;font-weight:800;color:#fff;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px}
+.nm-title-chip.gold{color:#4a370f;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:var(--gold-deep)}
+.nm-title-btns{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:10px}
+.nm-title-btn{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  border:1.5px solid rgba(255,255,255,.25);border-radius:18px;background:rgba(255,255,255,.08);
+  color:#fff;padding:14px 18px;cursor:pointer;transition:transform .12s,background .15s;
+  font-family:'Pretendard',sans-serif;
+}
+.nm-title-btn:active{transform:scale(.97)}
+.nm-title-btn:hover{background:rgba(255,255,255,.15)}
+.nm-title-btn-ico{font-size:24px;flex-shrink:0;width:30px;text-align:center}
+.nm-title-btn-txt{display:flex;flex-direction:column;gap:2px}
+.nm-title-btn-txt b{font-size:16px;font-weight:900}
+.nm-title-btn-txt small{font-size:11.5px;font-weight:700;opacity:.8}
+.nm-title-btn.primary{
+  border-color:var(--gold-deep);
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  color:#3a2a08;box-shadow:0 14px 28px -14px rgba(0,0,0,.5);
+}
+.nm-title-btn.primary:hover{background:linear-gradient(180deg,#fce4ab,var(--gold-deep))}
+.nm-title-btn.primary .nm-title-btn-txt small{opacity:.85}
+
+/* ============================================================
    시험 설정 — 섹션 피커
    ============================================================ */
 .nm-ex-sec-wrap{display:flex;flex-direction:column;align-items:center;padding:28px 20px;max-width:460px;margin:0 auto}
@@ -900,6 +948,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-road-gamestone-title{font-size:13px;font-weight:800;color:#6a4f10}
 .nm-road-gamestone-tip{font-size:10px;color:#8a7030;line-height:1.4;margin-top:2px}
 .nm-road-gamestone.played .nm-road-gamestone-title{color:#2d7a26}
+/* 외부 링크 스톤(🔬 개념 실험실 등) — 게임스톤과 구분되는 실험실 팔레트, 2026-08-25 */
+.nm-road-linkstone{background:linear-gradient(135deg,#eef2ff,#dce6ff);border-color:#7c93e8}
+.nm-road-linkstone .nm-road-gamestone-title{color:#2d3d8f}
+.nm-road-linkstone .nm-road-gamestone-tip{color:#4a5aa0}
 
 /* ============================================================
    Make-10 미니게임 (nm-mg-*)
@@ -1049,3 +1101,87 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-py-cell.ask{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;color:#b8860b}
 .nm-py-cell.ask.found{border-style:solid;border-color:var(--ok);background:#eafaf1;color:var(--ok);animation:tc-pop .3s ease}
 .nm-py-choices{display:flex;gap:14px;justify-content:center}
+
+/* ── 개념 스토리 훅(§13): docssam 선생님(중·고) / 누미(초·유아) + 말풍선 ── */
+.nm-story{display:flex;align-items:flex-end;gap:10px;margin:4px 0 14px}
+.nm-story-char{width:74px;height:auto;flex:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
+.nm-story-numi{font-size:44px;flex:none;line-height:1}
+.nm-story-bubble{position:relative;background:#f2f6fd;border:1.5px solid #cdddf3;border-radius:16px;
+  padding:12px 14px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.nm-story-bubble::before{content:'';position:absolute;left:-8px;bottom:16px;width:14px;height:14px;
+  background:#f2f6fd;border-left:1.5px solid #cdddf3;border-bottom:1.5px solid #cdddf3;
+  transform:rotate(45deg)}
+.nm-story-hist{background:var(--mist);border-radius:12px;padding:10px 12px;font-size:12.5px;
+  color:var(--sub);line-height:1.6;margin:0 0 14px}
+
+/* ============================================================
+   개념 계보 (§6) — 카드 배지 · 도장 화면 진화 링크 · 완주 배지
+   ============================================================ */
+.nm-lin-chip{display:inline-flex;align-items:center;justify-content:center;font-size:12px;
+  margin-left:4px;vertical-align:middle;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.nm-lin-chip.big{font-size:22px;width:38px;height:38px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.28);border-radius:50%;margin:0}
+.nm-title-lin-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 4px}
+
+.nm-evo-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:14px 0;
+  background:linear-gradient(135deg,#fff7e8,#fdeecb);border:1.5px solid var(--gold-deep);
+  border-radius:16px;padding:12px 14px;cursor:pointer;font-family:inherit;color:inherit}
+.nm-evo-card:not([data-next]){cursor:default}
+.nm-evo-card.final{background:linear-gradient(135deg,#eefaf3,#dcf3e7);border-color:var(--ok)}
+.nm-evo-card:active{transform:scale(.98)}
+.nm-evo-ico{font-size:30px;flex:none;line-height:1}
+.nm-evo-txt{flex:1;min-width:0}
+.nm-evo-txt b{display:block;font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.5}
+.nm-evo-txt small{font-size:11.5px;font-weight:700;color:var(--sub)}
+
+.nm-lin-overlay .nm-lin-card{max-width:340px}
+.nm-lin-emblem-big{font-size:52px;margin-bottom:4px;animation:stampIn .6s cubic-bezier(.3,1.4,.5,1)}
+.nm-lin-name{font-size:16px;font-weight:900;color:var(--gold-deep);margin:2px 0 8px}
+
+/* ============================================================
+   기호 도감 (§13) — 수집 모달 · 도감 화면 · 3D 플립 카드
+   ============================================================ */
+.nm-dex-sub{font-size:12.5px;color:var(--sub);margin-bottom:14px}
+.nm-dex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.nm-dex-sec-h{font-size:12.5px;font-weight:800;color:var(--sub);margin:18px 0 8px}
+
+.nm-dex-card{perspective:900px;height:118px;cursor:default}
+.nm-dex-card.collected{cursor:pointer}
+.nm-dex-card.big{height:170px;max-width:260px;margin:14px auto}
+.nm-dex-flip{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,.8,.4,1);
+  transform-style:preserve-3d}
+.nm-dex-card.flipped .nm-dex-flip{transform:rotateY(180deg)}
+.nm-dex-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:10px;text-align:center;overflow:hidden}
+.nm-dex-face.back{transform:rotateY(180deg)}
+.nm-dex-card.unknown .nm-dex-face.front,
+.nm-dex-card.silhouette .nm-dex-face.front{
+  background:repeating-linear-gradient(135deg,#e8e6e0,#e8e6e0 8px,#ddd9d0 8px,#ddd9d0 16px);
+  border:1.5px dashed #c9c4b8;color:#9a9488}
+.nm-dex-card.silhouette .nm-dex-face.front .nm-dex-sym{opacity:.45}
+.nm-dex-card.collected .nm-dex-face.front,.nm-dex-card.big .nm-dex-face.front{background:linear-gradient(150deg,#fff,#fdf7ea);
+  border:1.5px solid var(--gold-deep);box-shadow:0 8px 18px -12px rgba(201,160,99,.6)}
+/* 뒷면은 항상(수집완료 카드·모달 공용) 어두운 배경 — 앞면만 있는 실루엣/미확인 카드는
+   .back 엘리먼트 자체가 없으므로 이 규칙에 걸리지 않는다. */
+.nm-dex-face.back{background:linear-gradient(150deg,var(--blue-deep),var(--blue));
+  border:1.5px solid var(--blue-deep);color:#fff}
+.nm-dex-sym{font-size:30px;font-weight:900;color:var(--blue-deep);line-height:1}
+.nm-dex-card.big .nm-dex-sym{font-size:42px}
+.nm-dex-read{font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-dex-card.collected .nm-dex-read{color:var(--gold-deep)}
+.nm-dex-translate{font-size:12.5px;font-weight:800;line-height:1.4}
+.nm-dex-birth{font-size:10.5px;color:rgba(255,255,255,.8);line-height:1.5}
+.nm-dex-card.big .nm-dex-translate{font-size:13.5px}
+.nm-dex-card.big .nm-dex-birth{font-size:11.5px}
+
+.nm-symmodal-card{max-width:320px;text-align:center}
+.nm-symmodal-badge{font-size:13px;font-weight:900;color:var(--gold-deep);margin-bottom:10px}
+.nm-symmodal-tap{position:absolute;bottom:8px;left:0;right:0;font-size:10px;color:var(--sub);opacity:.75}
+
+@media(prefers-reduced-motion:reduce){
+  .nm-dex-flip{transition:none}
+}
+
+/* 문제 수식 두 줄 정렬 — ⟹에서 갈라 각 줄 중앙(원장 '줄 맞춰' 지시) */
+.nm-expr-line{display:block;text-align:center;line-height:1.7}

@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-2";
-import { messages, text } from "./i18n.js?v=mirror-manor-2";
+} from "./levels.js?v=mirror-manor-6";
+import { messages, text } from "./i18n.js?v=mirror-manor-6";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -38,8 +38,6 @@ const TUTORIAL_KEY = "gfield-mirror-manor-tutorial-v1";
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
 
-// Levels 3-5 exist in the data table but ship no problems yet, so a ?level=4 link
-// (or an old saved record) falls back to the highest level that is actually ready.
 const highestReady = readyLevels[readyLevels.length - 1].id;
 const askedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const startLevel = levels.find((level) => level.id === askedLevel)?.ready ? askedLevel : Math.min(Math.max(1, askedLevel), highestReady);
@@ -53,6 +51,8 @@ const state = {
   usedTargets: new Set(),
   usedTrayPieces: new Set(),
   solved: false,
+  distanceChoice: null,
+  symbolChoice: null,
   wrong: 0,
   hints: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
@@ -61,7 +61,7 @@ const state = {
 
 const ui = {
   board: $("#board"), cells: $("#cells"), pieces: $("#pieceLayer"), guides: $("#guideLayer"),
-  mirror: $("#mirrorLine"),
+  mirror: $("#mirrorLine"), mirrorSecondary: $("#mirrorLineSecondary"),
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), tray: $("#tray"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
   tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
@@ -124,6 +124,7 @@ function cubiSays(line) {
 }
 
 function toast(line) {
+  ui.toast.hidden = false;
   ui.toast.textContent = line;
   ui.toast.classList.add("show");
   clearTimeout(toast.timer);
@@ -141,14 +142,28 @@ function renderBoard() {
   ui.board.style.setProperty("--rows", grid.rows);
   ui.board.classList.toggle("is-paint", p.interaction === "paint-reflection");
   ui.board.classList.toggle("is-drag", p.interaction === "drag-reflection");
+  ui.board.classList.toggle("is-distance", p.interaction === "distance-match");
+  ui.board.classList.toggle("is-symbol", p.interaction === "symbol-reflection");
+  ui.board.classList.toggle("is-double", p.interaction === "double-mirror");
+  ui.board.classList.toggle("symbol-horizontal", p.interaction === "symbol-reflection" && axis.kind === "horizontal");
+  ui.board.classList.toggle("symbol-diagonal", p.interaction === "symbol-reflection" && axis.kind === "diagonal");
   // The two sides are told apart visually by the silvered mirror band and the cell
   // shading; screen readers get the same information through the label instead of
   // on-board chips, which would sit on top of tappable answer cells.
   ui.board.setAttribute("aria-label", `${t("boardAria")} — ${t("givenSide")} / ${t("answerSide")}`);
 
-  ui.mirror.className = `mirror-line ${axis.kind}`;
-  if (axis.kind === "vertical") ui.mirror.style.cssText = `left:${fraction(axis.at, grid.cols)};top:-2%;`;
-  else ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
+  ui.mirrorSecondary.hidden = axis.kind !== "double";
+  if (axis.kind === "double") {
+    ui.mirror.className = "mirror-line vertical";
+    ui.mirror.style.cssText = `left:${fraction(axis.verticalAt, grid.cols)};top:-2%;`;
+    ui.mirrorSecondary.className = "mirror-line horizontal";
+    ui.mirrorSecondary.style.cssText = `top:${fraction(axis.horizontalAt, grid.rows)};left:-2%;`;
+  } else {
+    ui.mirror.className = `mirror-line ${axis.kind}`;
+    if (axis.kind === "vertical") ui.mirror.style.cssText = `left:${fraction(axis.at, grid.cols)};top:-2%;`;
+    else if (axis.kind === "horizontal") ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
+    else ui.mirror.style.cssText = "left:50%;top:50%;";
+  }
 
   renderCells();
   renderPieces();
@@ -158,7 +173,18 @@ function renderBoard() {
 function renderCells() {
   const p = problem();
   const { grid, axis } = p;
-  const paint = p.interaction === "paint-reflection";
+  ui.cells.classList.toggle("distance-cells", p.interaction === "distance-match");
+  ui.cells.classList.toggle("symbol-cells", p.interaction === "symbol-reflection");
+  if (p.interaction === "distance-match") {
+    renderDistanceNodes(p);
+    return;
+  }
+  if (p.interaction === "symbol-reflection") {
+    renderSymbolNodes(p);
+    return;
+  }
+  const doubleMirror = p.interaction === "double-mirror";
+  const paint = p.interaction === "paint-reflection" || doubleMirror;
   const givenIds = paint
     ? new Set(p.sourceCells.map(cellId))
     : new Set(p.givens.flatMap((given) => given.cells.map(cellId)));
@@ -171,7 +197,10 @@ function renderCells() {
       node.className = "cell";
       node.dataset.x = x;
       node.dataset.y = y;
-      const given = isGivenSide(cell, axis);
+      const given = doubleMirror
+        ? x < axis.verticalAt && y < axis.horizontalAt
+        : isGivenSide(cell, axis);
+      if (doubleMirror && given) node.classList.add("double-source-quadrant");
       if (!given) node.classList.add("answer-side");
       if (paint && givenIds.has(cellId(cell))) node.classList.add("given");
       if (paint && state.painted.has(cellId(cell))) node.classList.add("painted");
@@ -185,6 +214,85 @@ function renderCells() {
     }
   }
   ui.cells.replaceChildren(fragment);
+}
+
+function distanceDotPosition(cell, grid) {
+  const [x, y] = cell;
+  // Triangle-grid rows are staggered slightly. The underlying coordinates remain
+  // integer grid points, so reflection and answer validation stay identical.
+  const stagger = grid.lattice === "triangle" && y % 2 ? 0.24 : 0;
+  return { left: fraction(x + .5 + stagger, grid.cols), top: fraction(y + .5, grid.rows) };
+}
+
+function renderDistanceNodes(p) {
+  ui.cells.classList.add("distance-cells");
+  const gridDots = document.createElement("span");
+  gridDots.className = "distance-grid";
+  for (let y = 0; y < p.grid.rows; y += 1) {
+    for (let x = 0; x < p.grid.cols; x += 1) {
+      const dot = document.createElement("i");
+      const position = distanceDotPosition([x, y], p.grid);
+      dot.style.left = position.left;
+      dot.style.top = position.top;
+      gridDots.append(dot);
+    }
+  }
+  const source = document.createElement("span");
+  source.className = "distance-source";
+  const sourcePosition = distanceDotPosition(p.sourceCell, p.grid);
+  source.style.left = sourcePosition.left;
+  source.style.top = sourcePosition.top;
+  source.setAttribute("aria-label", t("sourceDotAria"));
+  ui.cells.replaceChildren(gridDots, source);
+
+  p.choices.forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "distance-choice";
+    button.dataset.x = choice[0];
+    button.dataset.y = choice[1];
+    button.disabled = state.solved;
+    const position = distanceDotPosition(choice, p.grid);
+    button.style.left = position.left;
+    button.style.top = position.top;
+    button.setAttribute("aria-label", t("choiceDotAria", { number: index + 1 }));
+    if (state.distanceChoice === cellId(choice)) button.classList.add("selected");
+    button.append(document.createElement("i"));
+    ui.cells.append(button);
+  });
+}
+
+function renderSymbolNodes(p) {
+  ui.cells.classList.add("symbol-cells");
+  const source = document.createElement("div");
+  source.className = "symbol-source";
+  source.setAttribute("aria-label", t("sourceSymbolAria", { symbol: p.sourceText }));
+  const sourceGlyph = document.createElement("span");
+  sourceGlyph.className = "symbol-glyph";
+  sourceGlyph.textContent = p.sourceText;
+  source.append(sourceGlyph);
+
+  const choices = document.createElement("div");
+  choices.className = "symbol-choices";
+  p.choices.forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "symbol-choice";
+    button.dataset.choice = choice.id;
+    button.disabled = state.solved;
+    button.setAttribute("aria-label", t("choiceSymbolAria", { number: index + 1 }));
+    if (state.symbolChoice === choice.id) button.classList.add("selected");
+    const glyph = document.createElement("span");
+    glyph.className = `symbol-glyph symbol-${choice.kind}`;
+    glyph.textContent = choice.text;
+    button.append(glyph);
+    choices.append(button);
+  });
+
+  const caption = document.createElement("p");
+  caption.className = "symbol-caption";
+  caption.textContent = t("symbolChoiceCaption");
+  ui.cells.replaceChildren(source, choices, caption);
 }
 
 function objectNode(cells, className, grid, label) {
@@ -302,6 +410,9 @@ function onCellPointerDown(event) {
 }
 
 function onCellClick(event) {
+  if (problem().interaction === "distance-match") return onDistanceClick(event);
+  if (problem().interaction === "symbol-reflection") return onSymbolClick(event);
+  if (problem().interaction === "double-mirror") return onDoubleMirrorClick(event);
   const node = event.target.closest(".cell");
   if (!node || problem().interaction !== "paint-reflection" || state.solved) return;
   const p = problem();
@@ -325,6 +436,56 @@ function onCellClick(event) {
   renderCells();
   renderStatus();
   if (state.painted.size === p.targetCells.length) solveProblem();
+}
+
+function onDoubleMirrorClick(event) {
+  const node = event.target.closest(".cell");
+  if (!node || state.solved) return;
+  const p = problem();
+  const cell = [Number(node.dataset.x), Number(node.dataset.y)];
+  if (cell[0] < p.axis.verticalAt && cell[1] < p.axis.horizontalAt) return;
+  const id = cellId(cell);
+
+  if (state.painted.has(id)) {
+    state.painted.delete(id);
+    playTone("tap");
+    renderCells();
+    renderStatus();
+    return;
+  }
+
+  if (!p.targetCells.some((target) => cellId(target) === id)) return reportWrong("doubleChoice", node);
+  state.painted.add(id);
+  playTone("tap");
+  renderCells();
+  renderStatus();
+  if (state.painted.size === p.targetCells.length) solveProblem();
+}
+
+function onDistanceClick(event) {
+  const node = event.target.closest(".distance-choice");
+  if (!node || state.solved) return;
+  const cell = [Number(node.dataset.x), Number(node.dataset.y)];
+  const p = problem();
+  if (cellId(cell) !== cellId(p.targetCell)) return reportWrong("distanceChoice", node);
+  state.distanceChoice = cellId(cell);
+  playTone("tap");
+  renderDistanceNodes(p);
+  renderStatus();
+  solveProblem();
+}
+
+function onSymbolClick(event) {
+  const node = event.target.closest(".symbol-choice");
+  if (!node || state.solved) return;
+  const choice = problem().choices.find((item) => item.id === node.dataset.choice);
+  if (!choice) return;
+  if (choice.kind !== "mirror") return reportWrong("symbolChoice", node);
+  state.symbolChoice = choice.id;
+  playTone("tap");
+  renderSymbolNodes(problem());
+  renderStatus();
+  solveProblem();
 }
 
 /* ----------------------------------------------------------- level 2: drag */
@@ -452,7 +613,11 @@ function endDrag(event) {
 function reportWrong(verdict, node, cells) {
   state.wrong += 1;
   playTone("wrong");
-  const key = verdict === "direction" ? "wrongDirection" : verdict === "distance" ? "wrongDistance" : "wrongMiss";
+  const key = verdict === "direction" ? "wrongDirection"
+    : verdict === "distance" ? "wrongDistance"
+      : verdict === "distanceChoice" ? "wrongDistanceChoice"
+        : verdict === "symbolChoice" ? "wrongSymbolChoice"
+          : verdict === "doubleChoice" ? "wrongDoubleChoice" : "wrongMiss";
   toast(t(key));
   if (node) {
     node.classList.add("wrong");
@@ -468,6 +633,9 @@ function reportWrong(verdict, node, cells) {
 
 function solveProblem() {
   state.solved = true;
+  clearTimeout(toast.timer);
+  ui.toast.classList.remove("show");
+  ui.toast.hidden = true;
   rewardProblem();
   playTone("success");
   showSuccess();
@@ -509,10 +677,19 @@ function renderStatus() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint" : "promptDrag");
+  ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint"
+    : p.interaction === "drag-reflection" ? "promptDrag"
+      : p.interaction === "distance-match" ? "promptDistance"
+        : p.interaction === "double-mirror" ? "promptDouble" : "promptSymbol");
   ui.answerPrompt.textContent = p.interaction === "paint-reflection"
     ? t("paintProgress", { done: state.painted.size, total: p.targetCells.length })
-    : t("dragProgress", { done: state.usedTargets.size, total: p.targets.length });
+    : p.interaction === "drag-reflection"
+      ? t("dragProgress", { done: state.usedTargets.size, total: p.targets.length })
+      : p.interaction === "distance-match"
+        ? t("distanceProgress", { done: state.distanceChoice ? 1 : 0 })
+        : p.interaction === "double-mirror"
+          ? t("doubleProgress", { done: state.painted.size, total: p.targetCells.length })
+          : t("symbolProgress", { done: state.symbolChoice ? 1 : 0 });
   ui.next.hidden = !state.solved;
 }
 
@@ -528,6 +705,8 @@ function resetProblem() {
   state.usedTargets = new Set();
   state.usedTrayPieces = new Set();
   state.solved = false;
+  state.distanceChoice = null;
+  state.symbolChoice = null;
   state.wrong = 0;
   state.hints = 0;
   ui.guide.classList.remove("show");
@@ -627,7 +806,9 @@ $("#hintButton").addEventListener("click", () => {
   const current = problem();
   const hintKey = current.interaction === "paint-reflection"
     ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
-    : "hintDrag";
+    : current.interaction === "drag-reflection" ? "hintDrag"
+      : current.interaction === "distance-match" ? "hintDistance"
+        : current.interaction === "double-mirror" ? "hintDouble" : "hintSymbol";
   cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", resetProblem);

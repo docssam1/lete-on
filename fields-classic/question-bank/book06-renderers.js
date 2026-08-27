@@ -227,7 +227,7 @@ function sequence(visual) {
 }
 
 function bookPages(visual) {
-  return `<div class="b6-book-pages"><span>${visual.left}</span><i></i><span>${visual.right}</span></div>`;
+  return `<div class="b6-book-pages"><span>${visual.left}</span><i></i><span>${visual.right}</span>${visual.sum ? `<strong>두 쪽의 합 ${visual.sum}</strong>` : ""}</div>`;
 }
 
 function sequenceBoxes(visual) {
@@ -252,6 +252,78 @@ function operatorRow(visual) {
 
 function removablePlus(visual) {
   return `<div class="b6-removable-plus"><p>${visual.digits.map((digit, index) => `${index ? `<b data-index="${index}">+</b>` : ""}<span>${digit}</span>`).join("")}</p><strong>= ${visual.target}</strong></div>`;
+}
+
+function unitTestNumberLine(part, index) {
+  const width = 250;
+  const left = 22;
+  const right = width - 22;
+  const y = 54;
+  return `<svg viewBox="0 0 ${width} 92" role="img" aria-label="${index + 1}번 수직선"><text x="8" y="17">(${index + 1})</text><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/><circle cx="${left}" cy="${y}" r="4"/><circle cx="${right}" cy="${y}" r="4"/><circle class="target" cx="${(left + right) / 2}" cy="${y}" r="6"/><text x="${left}" y="80">${part.left}</text><text x="${right}" y="80">${part.right}</text><text class="target-label" x="${(left + right) / 2}" y="38">?</text></svg>`;
+}
+
+function unitTestVisual(visual) {
+  const row = (values) => `<div class="ut-row">${values.map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div>`;
+  switch (visual.layout) {
+    case "midpoint-pair":
+      return `<div class="b6-ut b6-ut-lines">${visual.parts.map(unitTestNumberLine).join("")}</div>`;
+    case "split-targets": {
+      const total = visual.leftIntervals + visual.rightIntervals;
+      const x = (index) => 28 + index / total * 484;
+      const ticks = Array.from({ length: total + 1 }, (_, index) => `<line x1="${x(index)}" y1="62" x2="${x(index)}" y2="84"/>`).join("");
+      const firstIndex = visual.leftTarget;
+      const secondIndex = visual.leftIntervals + visual.rightTarget;
+      return `<div class="b6-ut"><svg class="b6-ut-split" viewBox="0 0 540 125" role="img" aria-label="서로 다르게 나눈 수직선"><line x1="28" y1="73" x2="512" y2="73"/>${ticks}<circle class="target" cx="${x(firstIndex)}" cy="73" r="7"/><circle class="target" cx="${x(secondIndex)}" cy="73" r="7"/><text x="28" y="112">${visual.start}</text><text x="${x(visual.leftIntervals)}" y="112">${visual.middle}</text><text x="512" y="112">${visual.end}</text><text class="target-label" x="${x(firstIndex)}" y="43">㉠</text><text class="target-label" x="${x(secondIndex)}" y="43">㉡</text></svg></div>`;
+    }
+    case "measure-counts":
+      return `<div class="b6-ut b6-ut-measure"><p style="--count:${visual.longCount}"><b>긴 끈</b>${Array.from({ length: visual.longCount }, () => "<i></i>").join("")}</p><p style="--count:${visual.shortCount}"><b>짧은 끈</b>${Array.from({ length: visual.shortCount }, () => "<i></i>").join("")}</p><strong>두 줄의 전체 길이는 같습니다.</strong></div>`;
+    case "equal-bars":
+      return `<div class="b6-ut b6-ut-bars"><p style="--count:${visual.firstCount}"><b>㉠</b>${Array.from({ length: visual.firstCount }, () => "<i></i>").join("")}</p><p style="--count:${visual.secondCount}"><b>㉡</b>${Array.from({ length: visual.secondCount }, () => "<i></i>").join("")}</p><strong>㉠+㉡=${visual.total}cm</strong></div>`;
+    case "two-weight":
+      return `<div class="b6-ut b6-ut-weight"><div>${"○".repeat(visual.circleCount)}<b>=</b>${"□".repeat(visual.squareCount)}</div><strong>○ + □ = ${visual.total}g</strong></div>`;
+    case "symbol-chain":
+      return `<div class="b6-ut b6-ut-symbol"><p>수 카드 ${visual.cards.map((card) => `<b>${card}</b>`).join("")}</p>${visual.equations.map((equation) => `<span>${escapeHtml(equation)}</span>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
+    case "rectangle-rhombus":
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 220" role="img" aria-label="직사각형과 마름모"><rect x="45" y="45" width="210" height="125"/><polygon points="255,45 365,107.5 255,170 145,107.5"/><line class="shared" x1="255" y1="45" x2="255" y2="170"/><text x="145" y="202">${visual.width}cm</text><text x="24" y="112">?</text><text class="note" x="150" y="28">직사각형 둘레 ${visual.rectanglePerimeter}cm</text></svg></div>`;
+    case "three-shapes":
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 280" role="img" aria-label="직사각형 정삼각형 정사각형"><rect x="35" y="45" width="235" height="110"/><polygon points="270,45 365,100 270,155"/><polygon points="365,100 270,155 325,250 420,195"/><text x="150" y="182">직사각형의 긴 변 ?</text><text x="390" y="232">한 변 ${visual.side}cm</text><text class="note" x="250" y="22">전체 둘레 ${visual.perimeter}cm</text></svg></div>`;
+    case "three-squares": {
+      const largeSize = 170;
+      const middleSize = largeSize * visual.middle / visual.large;
+      const smallSize = largeSize * visual.small / visual.large;
+      const left = 38;
+      const top = 25;
+      const rightStart = left + largeSize;
+      const lowerTop = top + middleSize;
+      const shadeWidth = middleSize - smallSize;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 470 225" role="img" aria-label="크기가 다른 세 정사각형"><rect x="${left}" y="${top}" width="${largeSize}" height="${largeSize}"/><rect x="${rightStart}" y="${top}" width="${middleSize}" height="${middleSize}"/><rect x="${rightStart}" y="${lowerTop}" width="${smallSize}" height="${smallSize}"/><rect class="shade" x="${rightStart + smallSize}" y="${lowerTop}" width="${shadeWidth}" height="${smallSize}"/><text x="${left + largeSize / 2}" y="216">${visual.large}cm</text><text x="${rightStart + middleSize / 2}" y="18">${visual.middle}cm</text><text class="target-label" x="${rightStart + smallSize + shadeWidth / 2}" y="${lowerTop + smallSize / 2 + 5}">둘레 ?</text></svg></div>`;
+    }
+    case "scattered-perimeter":
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 235" role="img" aria-label="직각으로 꺾인 도형"><polygon points="45,35 215,35 215,75 365,75 365,195 155,195 155,150 45,150"/><text x="125" y="24">${visual.horizontal[0]}cm</text><text x="284" y="64">${visual.horizontal[1]}cm</text><text x="380" y="130">${visual.vertical[0]}cm</text><text x="24" y="98">${visual.vertical[1]}cm</text></svg></div>`;
+    case "square-triangle-strip":
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 270" role="img" aria-label="정사각형 두 개와 정삼각형 네 개를 붙인 도형"><rect x="155" y="85" width="90" height="90"/><rect x="245" y="85" width="90" height="90"/><polygon points="155,85 110,130 155,175"/><polygon points="335,85 380,130 335,175"/><polygon points="155,85 200,33 245,85"/><polygon points="155,175 200,227 245,175"/><text x="420" y="135">한 변 ${visual.side}cm</text></svg></div>`;
+    case "square-tiling": {
+      const unit = 38;
+      const left = 48;
+      const top = 18;
+      const large = 5 * unit;
+      const medium = 2 * unit;
+      const total = 7 * unit;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry b6-ut-square-tiling" viewBox="0 0 390 250" role="img" aria-label="크기가 다른 정사각형으로 나눈 큰 정사각형"><rect x="${left}" y="${top}" width="${large}" height="${large}"/><rect x="${left + large}" y="${top}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + medium}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/><rect class="shade" x="${left + large + unit}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/><path class="measure" d="M ${left} ${top + large + 12} Q ${left + total / 2} ${top + large + 38} ${left + total} ${top + large + 12}"/><text x="${left + total / 2}" y="242">전체 ${visual.total}cm</text><text class="target-label" x="${left + large + 1.5 * unit}" y="${top + 2.5 * medium + 5}">?</text></svg></div>`;
+    }
+    case "two-parts":
+      return `<div class="b6-ut b6-ut-parts">${visual.parts.map((part) => `<p>${escapeHtml(part)}</p>`).join("")}</div>`;
+    case "sign-multi":
+      return `<div class="b6-ut b6-ut-signs">${visual.targets.map((target, index) => `<p><b>(${index + 1})</b>${visual.values.map((value, valueIndex) => `${valueIndex ? "<i>□</i>" : ""}<span>${value}</span>`).join("")}<strong>= ${target}</strong></p>`).join("")}</div>`;
+    case "join-pair":
+      return `<div class="b6-ut b6-ut-signs">${visual.targets.map((target, index) => `<p><b>(${index + 1})</b>${visual.digits.map((value, valueIndex) => `${valueIndex ? "<i></i>" : ""}<span>${value}</span>`).join("")}<strong>= ${target}</strong></p>`).join("")}</div>`;
+    case "balance-chain":
+      return `<div class="b6-ut b6-ut-balance-chain">${visual.equations.map((equation) => `<p>${escapeHtml(equation)}</p>`).join("")}<strong>${escapeHtml(visual.target)}</strong></div>`;
+    case "fold-cut-open":
+      return `<div class="b6-ut b6-ut-fold"><span class="original"><i></i><b>처음</b></span><em>→</em><span class="folded"><i></i><b>${visual.cut}cm 잘라내기</b></span><em>→</em><span class="opened"><i></i><b>네 변 합 ${visual.openedPerimeter}cm</b></span></div>`;
+    default:
+      return row(["단원 테스트 그림"]);
+  }
 }
 
 export function book06Markup(visual) {
@@ -292,6 +364,7 @@ export function book06Markup(visual) {
     case "digit-focus": return digitFocus(visual);
     case "operator-row": return operatorRow(visual);
     case "removable-plus": return removablePlus(visual);
+    case "unit-test": return unitTestVisual(visual);
     default: return "";
   }
 }

@@ -75,8 +75,13 @@ button { cursor: pointer }
 .mission p { max-width: 58%; font-size: 14px; font-weight: 700; text-align: right }
 
 /* ---------------------------------------------------------------- play area */
-.play-area { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 10px; min-height: 0; padding: 10px 12px }
-.board-panel { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #c8d0c2; border-radius: 8px; background: #fdfcf8aa; box-shadow: 0 8px 24px #2b3d551c, inset 0 1px #fff }
+.play-area { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 112px; gap: 10px; min-height: 0; padding: 10px 12px }
+.board-panel { min-width: 0; min-height: 0; display: grid; grid-template-rows: 34px minmax(0, 1fr); overflow: hidden; border: 1px solid #c8d0c2; border-radius: 8px; background: #fdfcf8aa; box-shadow: 0 8px 24px #2b3d551c, inset 0 1px #fff }
+.board-heading { z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; padding: 7px 11px; border-bottom: 1px solid #d2d9cc; background: #fffdf5dd; color: var(--navy); font-size: 13px; font-weight: 900 }
+.board-heading b { overflow: hidden; color: #60705f; font-size: 11px; text-overflow: ellipsis; white-space: nowrap }
+.model-panel { border-color: #aebfce }
+.model-panel .board-heading { background: #edf5f9e8 }
+.build-panel { border-color: #c8b281 }
 .board-stage { display: grid; place-items: center; width: 100%; height: 100%; padding: 6px }
 
 /* The board's WIDTH is computed from a height budget, so the derived height can
@@ -95,7 +100,8 @@ button { cursor: pointer }
 
 /* --------------------------------------------------------------- pegs, band */
 .peg { fill: #8a6a3a; stroke: #f7f1e2; stroke-width: .9 }
-.peg.model { fill: #a08a64; stroke: #fffdf6; stroke-width: .7 }
+.peg.model { fill: #8a6a3a; stroke: #f7f1e2; stroke-width: .9 }
+.peg.partition-peg { fill: #1d5f75; stroke: #fff8df; stroke-width: 1.25 }
 /* Transparent fill (not `fill:none`) is what makes an SVG circle hit-testable
    while staying invisible — this is the 30px+ finger target. */
 .peg-hit { fill: transparent; cursor: pointer; outline: none }
@@ -112,19 +118,35 @@ button { cursor: pointer }
 .band-node.start { fill: #f0a92f; stroke: #7a4d05; stroke-width: 1.2 }
 .band-node.solved { fill: #2f8f5b }
 .peg-flag { fill: none; stroke: #c8261a; stroke-width: 1.8; animation: flash .3s steps(2, end) 2 }
+.partition-grid-line { stroke: #98acaa; stroke-width: .55; stroke-dasharray: 1.2 2.2; opacity: .46 }
+.partition-outline { fill: #f5d58b24; stroke: #1d5f75; stroke-width: 3.1; stroke-linejoin: round }
+.partition-line { fill: none; stroke: #e2574c; stroke-width: 3.8; stroke-linecap: round }
+.partition-line.solved { stroke: #277f58 }
+.partition-line.bad { stroke: #c8261a; stroke-width: 4.6; animation: flash .3s steps(2, end) 2 }
+.partition-start { fill: #fff3a6; stroke: #b56b19; stroke-width: 1.6; animation: partition-pulse .85s ease-in-out infinite alternate }
+.partition-face { stroke: none; opacity: .4 }
+.partition-face.sides-3 { fill: #f3a85f }
+.partition-face.sides-4 { fill: #69b7a5 }
+@keyframes partition-pulse { to { r: 8; opacity: .4 } }
 @keyframes flash { 50% { opacity: .15 } }
 
 /* ---------------------------------------------------------------- tool rail */
 .tool-panel { display: grid; align-content: start; gap: 8px; min-width: 0 }
-.model-card { margin: 0; display: grid; gap: 4px; padding: 6px; border: 1px solid #b6c0a9; border-radius: 8px; background: #fffdf5; box-shadow: 0 3px #c8cbb6 }
-.model-card figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px; font-size: 10px; font-weight: 800; color: #5d6a54 }
-.model-card figcaption b { color: var(--navy) }
-.model-board { width: 100%; aspect-ratio: 1 / 1; display: block }
-.model-face { fill: #fbf6e8; stroke: #d9cba9; stroke-width: 1 }
+.model-board { pointer-events: none; touch-action: auto }
+.model-face { fill: var(--board-wood); stroke: #c9b48a; stroke-width: 1.2 }
 .model-band .band { stroke: #2a6fa8; stroke-width: 3 }
 .model-band .band-fill { fill: #2a6fa826 }
 .model-band .band-node { fill: #1b4c78; stroke: #fff; stroke-width: 1 }
 .model-band .band-node.start { fill: #f0a92f; stroke: #7a4d05 }
+.found-slot { fill: #fffdf7; stroke: #c5d0d8; stroke-width: 1 }
+.found-slot.empty { fill: #edf2f3; stroke-dasharray: 3 2 }
+.found-shape { fill: #2f8f5b22; stroke: #2a7f8f; stroke-width: 2.2; stroke-linejoin: round }
+.found-question { fill: #82909b; font-size: 14px; font-weight: 900 }
+.count-question { fill: #2f4f74; font-size: 58px; font-weight: 900 }
+.partition-model-outline { fill: #74b8aa20; stroke: #2a6f82; stroke-width: 2.4; stroke-linejoin: round }
+.partition-model-text { fill: var(--navy); font-weight: 900 }
+.partition-model-text.text-0 { fill: #9b561e; font-size: 10px }
+.partition-model-text.text-1, .partition-model-text.text-2 { font-size: 8px }
 .tool-panel button { min-height: 46px; display: grid; place-items: center; padding: 6px; border: 1px solid #a9b6a0; border-radius: 7px; background: #f4f2e5; color: #3b4a3e; font-size: 12px; font-weight: 900; box-shadow: 0 3px #a7b39c }
 
 /* --------------------------------------------------------------------- dock */
@@ -132,6 +154,10 @@ button { cursor: pointer }
 .answer-dock p { margin: 0; font-size: 14px; font-weight: 800 }
 .shape-stats { display: flex; gap: 8px; min-width: 0; overflow: hidden }
 .shape-stats b { padding: 6px 11px; border: 1px solid #b9c4ae; border-radius: 99px; background: #fffdf5; color: var(--navy); font-size: 13px; white-space: nowrap }
+.count-choice { min-width: 58px; min-height: 42px; border: 2px solid #2a7f8f; border-radius: 7px; background: #fff; color: var(--navy); font-size: 18px; font-weight: 900 }
+.count-choice:hover, .count-choice:focus-visible { background: #e2f3f2 }
+.count-choice.wrong { border-color: #c8261a; background: #ffe9e5; animation: flash .3s steps(2, end) 2 }
+.count-choice:disabled { opacity: .55 }
 .next-button { min-height: 52px; padding: 8px 14px; border: 0; border-radius: 7px; background: #2a7f8f; color: #fff; font-weight: 900; box-shadow: 0 3px #17606d }
 
 /* ------------------------------------------------------------------- Cubi */
@@ -148,10 +174,26 @@ button { cursor: pointer }
 .dialog header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #d6dbe3; background: #fdfcf8 }
 .dialog h2 { margin: 0; color: var(--navy) }
 .dialog header button { width: 36px; height: 36px; border: 1px solid #c3ccd9; border-radius: 6px; background: #fff }
-.tutorial-card { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 12px; padding: 18px }
-.tutorial-card .cubi-sprite { width: 140px; height: 140px }
-.tutorial-card p { font-size: 19px; font-weight: 800; line-height: 1.45 }
+.tutorial-card { display: grid; grid-template-columns: 120px minmax(190px, 230px) minmax(220px, 1fr); align-items: center; gap: 16px; padding: 18px }
+.tutorial-card .cubi-sprite { width: 120px; height: 120px }
+.tutorial-copy { min-width: 0 }
+.tutorial-card p { min-height: 82px; margin: 0; font-size: 18px; font-weight: 800; line-height: 1.45 }
 .tutorial-card button, .complete-actions > * { min-height: 46px; border: 0; border-radius: 7px; background: #2f4f74; color: #fff; font-weight: 900; text-decoration: none }
+.tutorial-card button { width: 100% }
+.tutorial-demo { aspect-ratio: 1; min-width: 0; padding: 8px; border: 5px solid #9c6a37; border-radius: 8px; background: linear-gradient(145deg, #d2a262, #98602e); box-shadow: inset 0 0 0 2px #f1cc8b, 0 8px 18px #3b2a1d35 }
+.tutorial-demo svg { display: block; width: 100%; height: 100%; overflow: visible }
+.tutorial-board-face { fill: #e9c88d; stroke: #6d4526; stroke-width: 1.5 }
+.tutorial-demo-peg { fill: #f8ecd0; stroke: #6f4c2c; stroke-width: 1.4; transform-box: fill-box; transform-origin: center }
+.tutorial-demo-peg.active { animation: tutorial-peg-pulse 1.8s ease-in-out infinite; animation-delay: var(--delay, 0s) }
+.tutorial-demo-band { fill: none; stroke: #247b8c; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: tutorial-band-draw .55s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--delay, 0s) }
+.tutorial-demo-band.bad { stroke: #cf3f38; animation: tutorial-band-draw .45s ease-out forwards, tutorial-band-warn .8s .45s ease-in-out infinite }
+.tutorial-demo-fill { fill: #51a8b34a; opacity: 0; animation: tutorial-fill-in .35s ease-out forwards; animation-delay: var(--delay, 0s) }
+.tutorial-demo-tap { fill: none; stroke: #fff7c9; stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; animation: tutorial-tap 1.8s ease-out infinite; animation-delay: var(--delay, 0s) }
+@keyframes tutorial-peg-pulse { 0%, 52%, 100% { transform: scale(1) } 10%, 22% { transform: scale(1.65); fill: #fff4a9; stroke: #c88716 } }
+@keyframes tutorial-band-draw { to { stroke-dashoffset: 0 } }
+@keyframes tutorial-band-warn { 50% { opacity: .25 } }
+@keyframes tutorial-fill-in { to { opacity: 1 } }
+@keyframes tutorial-tap { 0%, 7% { opacity: 0; transform: scale(.45) } 12% { opacity: 1 } 28%, 100% { opacity: 0; transform: scale(2.3) } }
 .tutorial-dots { display: flex; gap: 6px; margin: 12px 0 }
 .tutorial-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d5d8dd }
 .tutorial-dots i.active { background: var(--brass) }
@@ -185,7 +227,9 @@ button { cursor: pointer }
   .mission { padding: 7px 11px }
   .mission h1 { font-size: 17px }
   .mission p { font-size: 12px }
-  .play-area { grid-template-columns: minmax(0, 1fr) 104px; padding: 7px }
+  .play-area { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 88px; gap: 7px; padding: 7px }
+  .board-heading { padding-inline: 7px; font-size: 11px }
+  .board-heading b { font-size: 9px }
   .tool-panel { gap: 5px }
   .tool-panel button { min-height: 42px; font-size: 11px }
   .answer-dock { grid-template-columns: 1.3fr 1fr 106px; padding-right: 90px }
@@ -198,7 +242,7 @@ button { cursor: pointer }
 
 /* Mobile landscape (the 844x390 and 740x360 targets). Everything on one screen. */
 @media (orientation: landscape) and (max-height: 560px) {
-  :root { --board-h: calc(var(--app-dvh) - 120px) }
+  :root { --board-h: calc(var(--app-dvh) - 147px) }
   .yard-shell { grid-template-rows: 40px 32px minmax(0, 1fr) 48px }
   .topbar { padding: 3px 8px }
   .topbar > * { min-height: 34px }
@@ -206,10 +250,11 @@ button { cursor: pointer }
   .mission { padding: 2px 10px }
   .mission h1 { font-size: 14px }
   .mission p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px }
-  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 7px; padding: 0 7px }
+  .play-area { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 82px; gap: 6px; padding: 0 7px }
+  .board-panel { grid-template-rows: 25px minmax(0, 1fr) }
+  .board-heading { padding: 3px 6px; font-size: 10px }
+  .board-heading b { font-size: 8px }
   .board-stage { padding: 0 }
-  .model-card { padding: 4px }
-  .model-card figcaption { font-size: 9px }
   .tool-panel { gap: 4px }
   .tool-panel button { min-height: 36px; font-size: 11px }
   .answer-dock { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 92px; padding: 2px 70px 2px 8px }
@@ -222,9 +267,12 @@ button { cursor: pointer }
   .toast { top: 46px; font-size: 11px; padding: 5px 11px }
   .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }
   .level-card { min-height: 96px }
-  .tutorial-card { grid-template-columns: 110px 1fr }
-  .tutorial-card .cubi-sprite { width: 100px; height: 100px }
-  .tutorial-card p { font-size: 15px }
+  .dialog { padding: 7px }
+  .tutorial-card { grid-template-columns: 78px minmax(150px, 185px) minmax(190px, 1fr); gap: 10px; padding: 10px }
+  .tutorial-card .cubi-sprite { width: 78px; height: 78px }
+  .tutorial-card p { min-height: 58px; font-size: 13px; line-height: 1.35 }
+  .tutorial-card button { min-height: 38px }
+  .tutorial-dots { margin: 7px 0 }
 }
 
 @media (orientation: portrait) and (max-width: 600px) {
@@ -234,16 +282,21 @@ button { cursor: pointer }
   .level-button { display: none }
   .mission { display: block }
   .mission p { max-width: none; margin-top: 3px; text-align: left }
-  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 6px; padding: 6px }
+  .play-area { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 78px; gap: 5px; padding: 6px }
+  .board-panel { grid-template-rows: 30px minmax(0, 1fr) }
+  .board-heading { padding: 5px; font-size: 10px }
   .board-stage { place-items: start center }
   .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
   .cubi-guide { position: fixed }
   .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }
-  .tutorial-card { grid-template-columns: 96px 1fr }
-  .tutorial-card .cubi-sprite { width: 90px; height: 90px }
-  .tutorial-card p { font-size: 15px }
+  .tutorial-card { grid-template-columns: 72px minmax(0, 1fr); gap: 10px }
+  .tutorial-card .cubi-sprite { width: 72px; height: 72px }
+  .tutorial-demo { grid-column: 1 / -1; width: min(210px, 58vw); justify-self: center }
+  .tutorial-card p { min-height: 0; font-size: 14px }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important }
+  .tutorial-demo-band { stroke-dashoffset: 0 }
+  .tutorial-demo-fill { opacity: 1 }
 }

@@ -12,6 +12,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['A-03'] = {
   id:'A-03', tier:'beginner', level:'A', order:3,
+  lineage:['nine-next-door'],
   generator:'add10sub',
   title:{ ko:'우선 10을 더하기', en:'Add Ten First', zh:'先加10再说' },
   subtitle:{ ko:'10에 가까운 수는 우선 10을 주고, 더 준 만큼 돌려받기', en:'Give 10 first, then take back what you overgave', zh:'先给10，多给的再拿回来' },

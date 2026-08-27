@@ -177,6 +177,158 @@ window.NM_CURRICULUM = {
           title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
           units:['H-11','H-12','H-13'] }
       ]
+    },
+
+    /* ===== MIDDLE1 · 음수의 동굴 (중1 정수와 유리수, W8) =====
+       근거: MASTER-ROADMAP.md §5(중1 W8) + 중등연산-목차.md(G03~G25 실측).
+       이 교재는 정수·유리수 사칙연산과 거듭제곱만 다룬다 — 문자와 식·
+       일차방정식·정비례반비례는 목차에 없어 다음 배치로 미룬다. */
+    {
+      id:'middle1', name:'MIDDLE1', grade:'중1', order:4,
+      title:'MIDDLE1', subtitle:{ko:'음수의 동굴 · 정수와 유리수',en:'The Cave of Negatives · Integers & Rationals',zh:'负数洞窟·整数与有理数'},
+      ageFrom:12, ageLabel:'중1',
+      color:'#16417C', accent:'#C9A063',
+      desc:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 것부터 시작해요',
+        en:'Above and below sea level, points scored and lost — it all starts with naming the two directions from 0',
+        zh:'海拔与海拔以下，得分与失分——从给0两侧的方向命名开始'},
+      levels:[
+        { id:'29', available:true,
+          title:{ko:'29 정수의 세계',en:'29 · World of Integers',zh:'29·整数的世界'},
+          units:['M-01','M-02','M-03'] },
+        { id:'30', available:true,
+          title:{ko:'30 부호의 규칙',en:'30 · Rules of Sign',zh:'30·符号的规则'},
+          units:['M-04','M-05','M-06'] },
+        { id:'31', available:true,
+          title:{ko:'31 유리수 정복',en:'31 · Conquering Rationals',zh:'31·征服有理数'},
+          units:['M-07','M-08','M-09'] }
+      ]
+    },
+
+    /* ===== MIDDLE2 · 식의 탑 (중2 식의 계산, W9) =====
+       근거: MASTER-ROADMAP.md §5(중2 W9) — 지수법칙·단항식·다항식·
+       등식 변형까지, 2022 개정 교육과정 '식의 계산' 범위의 표준 유형. */
+    {
+      id:'middle2', name:'MIDDLE2', grade:'중2', order:5,
+      title:'MIDDLE2', subtitle:{ko:'식의 탑 · 식의 계산',en:'Tower of Expressions · Expression Calculus',zh:'式之塔·式的运算'},
+      ageFrom:13, ageLabel:'중2',
+      color:'#5a4a8a', accent:'#C9A063',
+      desc:{ko:'큰 수를 짧게 쓰려는 게으름이 만든 지수법칙부터, 문자로 이루어진 식을 다루는 법까지',
+        en:'From the exponent laws born of wanting to write big numbers short, to handling expressions made of letters',
+        zh:'从懒得写长数字而诞生的指数法则，到处理由字母组成的式子'},
+      levels:[
+        { id:'32', available:true,
+          title:{ko:'32 지수와 단항식',en:'32 · Exponents & Monomials',zh:'32·指数与单项式'},
+          units:['M-10','M-11','M-12'] },
+        { id:'33', available:true,
+          title:{ko:'33 다항식과 등식',en:'33 · Polynomials & Equations',zh:'33·多项式与等式'},
+          units:['M-13','M-14'] }
+      ]
+    },
+
+    /* ===== MIDDLE3 · 근호의 산맥 (중3 제곱근·실수, 다항식의 곱셈과 인수분해, W10) =====
+       근거: MASTER-ROADMAP.md §5(중3 W10). */
+    {
+      id:'middle3', name:'MIDDLE3', grade:'중3', order:6,
+      title:'MIDDLE3', subtitle:{ko:'근호의 산맥 · 제곱근과 다항식',en:'Radical Mountains · Roots & Polynomials',zh:'根号山脉·平方根与多项式'},
+      ageFrom:14, ageLabel:'중3',
+      color:'#16417C', accent:'#7c3aed',
+      desc:{ko:'다 쓸 수 없어서 "무리수" — 제곱근을 다루는 법부터, 곱셈공식으로 완성되는 무지개 덧셈법의 마지막 걸음까지',
+        en:'Numbers you can never finish writing — "irrational." From handling square roots to the final step of the rainbow-addition lineage, completed by the multiplication formulas',
+        zh:'写不完的数——"无理数"。从处理平方根，到由乘法公式完成的彩虹加法法家族的最后一步'},
+      levels:[
+        { id:'34', available:true,
+          title:{ko:'34 제곱근의 세계',en:'34 · World of Square Roots',zh:'34·平方根的世界'},
+          units:['M-15','M-16','M-17'] },
+        { id:'35', available:true,
+          title:{ko:'35 곱셈공식과 인수분해',en:'35 · Formulas & Factoring',zh:'35·乘法公式与因式分解'},
+          units:['M-18','M-19','M-20'] }
+      ]
+    },
+
+    /* ===== HIGHMATH1 · 다항식의 탑 (공통수학1, W11) =====
+       근거: MASTER-ROADMAP.md §6(W11 공통수학1). 2022 개정 과목명
+       준수 — "고1" 표기 없음(전부 "공통수학1"). */
+    {
+      id:'highmath1', name:'HIGHMATH1', grade:'공통수학1', order:7,
+      title:'HIGHMATH1', subtitle:{ko:'다항식의 탑 · 방정식과 부등식',en:'Tower of Polynomials · Equations & Inequalities',zh:'多项式之塔·方程与不等式'},
+      ageFrom:16, ageLabel:'공통수학1',
+      color:'#0f2e4f', accent:'#e0a03c',
+      desc:{ko:'괄호 두 개를 곱하는 것부터 판별식·근의 공식·행렬까지 — 다항식을 다루는 손이 한 단계 더 정교해져요',
+        en:'From multiplying two brackets to the discriminant, the quadratic formula, and matrices — handling polynomials gets a level more precise',
+        zh:'从两括号相乘到判别式、求根公式、矩阵——处理多项式的手法更进一层'},
+      levels:[
+        { id:'36', available:true,
+          title:{ko:'36 다항식과 나머지정리',en:'36 · Polynomials & the Remainder Theorem',zh:'36·多项式与余数定理'},
+          units:['M-21','M-22','M-23','M-24','M-25'] },
+        { id:'37', available:true,
+          title:{ko:'37 이차방정식과 행렬',en:'37 · Quadratics & Matrices',zh:'37·二次方程与矩阵'},
+          units:['M-26','M-27','M-28','M-29','M-30'] }
+      ]
+    },
+
+    /* ===== HIGHMATH2 · 도형의 방정식 나라 (공통수학2, W12) =====
+       근거: MASTER-ROADMAP.md §6(W12 공통수학2). "고1" 표기 없음
+       (전부 "공통수학2"). */
+    {
+      id:'highmath2', name:'HIGHMATH2', grade:'공통수학2', order:8,
+      title:'HIGHMATH2', subtitle:{ko:'도형의 방정식 나라 · 좌표평면 위의 도형',en:'Land of Coordinate Geometry · Shapes on the Plane',zh:'图形方程之国·坐标平面上的图形'},
+      ageFrom:16, ageLabel:'공통수학2',
+      color:'#1b6e5b', accent:'#2f9e78',
+      desc:{ko:'두 점 사이의 거리부터 직선·원의 방정식까지 — 좌표평면 위의 도형을 식으로 붙잡아요',
+        en:'From the distance between two points to lines and circles — pinning down shapes on the coordinate plane with equations',
+        zh:'从两点间的距离到直线、圆的方程——用方程把坐标平面上的图形定住'},
+      levels:[
+        { id:'38', available:true,
+          title:{ko:'38 점과 직선',en:'38 · Points & Lines',zh:'38·点与直线'},
+          units:['M-31','M-32','M-33'] },
+        { id:'39', available:true,
+          title:{ko:'39 직선의 관계와 원',en:'39 · Relations Between Lines & Circles',zh:'39·直线的关系与圆'},
+          units:['M-34','M-35'] }
+      ]
+    },
+
+    /* ===== ALGEBRA · 기호의 탑 (대수, W13) =====
+       근거: MASTER-ROADMAP.md §6(W13 대수). 2022 개정 과목명 준수 —
+       "고3" 표기 없음(전부 "대수"). log(M-37)·Σ(M-42)가 여기서
+       처음 등장한다(§13 기호 전환 교육). */
+    {
+      id:'algebra', name:'ALGEBRA', grade:'대수', order:9,
+      title:'ALGEBRA', subtitle:{ko:'기호의 탑 · 지수·로그·삼각함수·수열',en:'Tower of Symbols · Exponents, Logs, Trig & Sequences',zh:'符号之塔·指数·对数·三角函数·数列'},
+      ageFrom:17, ageLabel:'대수',
+      color:'#5b3a8f', accent:'#c98a3c',
+      desc:{ko:'지수 사다리를 거꾸로 읽는 log, 이미 아는 마법에 새 옷을 입힌 Σ — 새 기호를 하나씩 만나요',
+        en:'log reads the exponent ladder backward, Σ dresses old magic in new clothes — meeting new symbols one by one',
+        zh:'反着读指数梯子的log，给旧魔法换新衣的Σ——一个个认识新符号'},
+      levels:[
+        { id:'40', available:true,
+          title:{ko:'40 지수와 로그',en:'40 · Exponents & Logarithms',zh:'40·指数与对数'},
+          units:['M-36','M-37','M-38'] },
+        { id:'41', available:true,
+          title:{ko:'41 삼각함수와 수열',en:'41 · Trigonometry & Sequences',zh:'41·三角函数与数列'},
+          units:['M-39','M-40','M-41','M-42'] }
+      ]
+    },
+
+    /* ===== CALCULUS1 · 변화의 정상 (미적분Ⅰ, W14) =====
+       근거: MASTER-ROADMAP.md §6(W14 미적분Ⅰ). 2022 개정 과목명
+       준수. lim(M-43)·f′·d/dx(M-44)·∫(M-46)가 여기서 처음 등장한다
+       (§13 기호 전환 교육 — 로드맵의 마지막 상자). */
+    {
+      id:'calculus1', name:'CALCULUS1', grade:'미적분Ⅰ', order:10,
+      title:'CALCULUS1', subtitle:{ko:'변화의 정상 · 극한·미분·적분',en:'Summit of Change · Limits, Derivatives & Integrals',zh:'变化之巅·极限·导数·积分'},
+      ageFrom:17, ageLabel:'미적분Ⅰ',
+      color:'#0d3b66', accent:'#ee964b',
+      desc:{ko:'x가 다가가는 값(lim)부터 순간의 기울기(f′)와 잘게 쪼개 다 더하기(∫)까지 — 로드맵의 마지막 봉우리',
+        en:'From the value x approaches (lim) to the instantaneous slope (f′) and adding up infinitely thin pieces (∫) — the final peak of the roadmap',
+        zh:'从x趋近的值(lim)到瞬时斜率(f′)，再到把细小碎片全部加起来(∫)——路线图的最后一座山峰'},
+      levels:[
+        { id:'42', available:true,
+          title:{ko:'42 극한과 미분',en:'42 · Limits & Derivatives',zh:'42·极限与导数'},
+          units:['M-43','M-44'] },
+        { id:'43', available:true,
+          title:{ko:'43 접선과 적분',en:'43 · Tangent Lines & Integration',zh:'43·切线与积分'},
+          units:['M-45','M-46'] }
+      ]
     }
   ],
 

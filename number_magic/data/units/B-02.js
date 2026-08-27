@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['B-02'] = {
   id:'B-02', tier:'intermediate', level:'B', order:2,
+  lineage:['halves-doubles'],
   generator:'ml1_double',
   title:{ ko:'반으로 나누기', en:'The Halving Magic', zh:'减半魔法' },
   subtitle:{ ko:'짝수를 둘로 똑같이 나눠요: n ÷ 2', en:'Split any even number in half: n ÷ 2', zh:'把偶数平均分成两份：n ÷ 2' },

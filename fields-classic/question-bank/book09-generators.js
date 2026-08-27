@@ -305,7 +305,9 @@ function cubeSolidToViewsBook9({ difficulty = 2 }) {
 }
 
 function cubeLayerViewsBook9({ difficulty = 2 }) {
-  const map = randomHeightMap(Math.max(2, difficulty));
+  let map = randomHeightMap(difficulty);
+  if (difficulty === 1) map = map.map((row) => row.map((value) => Math.min(value, 2)));
+  if (difficulty === 3 && Math.max(...map.flat()) < 4) return cubeLayerViewsBook9({ difficulty });
   const maxHeight = Math.max(...map.flat());
   const layers = Array.from({ length: maxHeight }, (_, layer) => map.map((row) => row.map((value) => value > layer ? 1 : 0)));
   const front = frontProfile(map);
@@ -787,6 +789,957 @@ function uniqueMatchingProblem(difficulty, mode) {
 
 function professionAssignmentBook9({ difficulty = 2 }) { return uniqueMatchingProblem(difficulty, "profession"); }
 function activityEnrollmentBook9({ difficulty = 2 }) { return uniqueMatchingProblem(difficulty, "activity"); }
+
+// 단원 테스트는 본문 typeId에 아직 연결하지 않고, 원본의 복수 소문항 구조를 보존한다.
+function unitTestPart({ visual, answer, solution, family, meta = {}, answerVisual = null, responseKind = "numeric" }) {
+  return {
+    visual,
+    ...(answerVisual ? { answerVisual } : {}),
+    answer: String(answer),
+    solution,
+    responseKind,
+    meta: { family, ...meta }
+  };
+}
+
+function unitTestWrapper({ typeId, prompt, parts, solution, family, difficulty, meta = {} }) {
+  const answers = parts.map((part) => String(part.answer));
+  return {
+    typeId,
+    prompt,
+    visual: parts[0]?.visual || null,
+    visuals: parts.map((part) => part.visual),
+    ...(parts.some((part) => part.answerVisual) ? { answerVisuals: parts.map((part) => part.answerVisual || null) } : {}),
+    parts,
+    answer: answers.join(" / "),
+    solution,
+    responseKind: parts.length > 1 ? "composite" : parts[0]?.responseKind || "numeric",
+    meta: { family, difficulty, partCount: parts.length, partAnswers: answers, ...meta }
+  };
+}
+
+const UNIT_SUDOKU_REGIONS = Object.freeze([
+  [0, 1, 2, 3],
+  [0, 1, 2, 3],
+  [0, 1, 2, 3],
+  [0, 1, 2, 3]
+]);
+const UNIT_SUDOKU_SOLUTION = Object.freeze([
+  [3, 1, 2, 4],
+  [1, 4, 3, 2],
+  [2, 3, 4, 1],
+  [4, 2, 1, 3]
+]);
+
+function sudokuSolutionCount(grid, regions, limit = 2) {
+  const board = grid.map((row) => [...row]);
+  let count = 0;
+  const allowed = (row, column, value) => {
+    if (board[row].includes(value)) return false;
+    if (board.some((line) => line[column] === value)) return false;
+    const region = regions[row][column];
+    return !board.some((line, rowIndex) => line.some((cell, columnIndex) => regions[rowIndex][columnIndex] === region && cell === value));
+  };
+  const search = () => {
+    if (count >= limit) return;
+    let target = null;
+    for (let row = 0; row < board.length && !target; row += 1) for (let column = 0; column < board[row].length; column += 1) {
+      if (board[row][column] === 0) target = [row, column];
+    }
+    if (!target) {
+      count += 1;
+      return;
+    }
+    const [row, column] = target;
+    for (let value = 1; value <= 4; value += 1) {
+      if (!allowed(row, column, value)) continue;
+      board[row][column] = value;
+      search();
+      board[row][column] = 0;
+      if (count >= limit) return;
+    }
+  };
+  search();
+  return count;
+}
+
+function unitTestQ01({ difficulty = 2 }) {
+  const blankCount = { 1: 4, 2: 6, 3: 8 }[difficulty] || 6;
+  const puzzle = UNIT_SUDOKU_SOLUTION.map((row) => [...row]);
+  const blankCells = [];
+  for (const index of shuffle(Array.from({ length: 16 }, (_, cell) => cell))) {
+    if (blankCells.length >= blankCount) break;
+    const row = Math.floor(index / 4);
+    const column = index % 4;
+    const previous = puzzle[row][column];
+    puzzle[row][column] = 0;
+    if (sudokuSolutionCount(puzzle, UNIT_SUDOKU_REGIONS) === 1) blankCells.push(index);
+    else puzzle[row][column] = previous;
+  }
+  if (blankCells.length !== blankCount) return unitTestQ01({ difficulty });
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "magic-grid", size: 4, shown: puzzle.flat(), regions: UNIT_SUDOKU_REGIONS, sudoku: true },
+    answer: UNIT_SUDOKU_SOLUTION.flat().join(" "),
+    solution: "가로줄, 세로줄과 굵은 선으로 나뉜 네 칸에 1, 2, 3, 4가 한 번씩만 들어가도록 채웁니다.",
+    family: "unit-q01-sudoku",
+    responseKind: "grid-fill",
+    meta: { difficulty, puzzle, solutionGrid: UNIT_SUDOKU_SOLUTION, regions: UNIT_SUDOKU_REGIONS, blankCells, blankCount, answerKind: "grid" }
+  });
+  return unitTestWrapper({
+    typeId: "book09-unit-test-q01",
+    prompt: "주어진 규칙에 맞게 빈칸에 알맞은 수를 채워 퍼즐을 완성하시오.",
+    parts: [part], solution: part.solution, family: "unit-q01-sudoku", difficulty,
+    meta: { reuseTypeId: "sudoku-four-square-region", sourceQuestion: 1 }
+  });
+}
+
+const UNIT_Q02_GROUPS = Object.freeze([
+  [0, 4, 5, 8],
+  [1, 2, 3, 6],
+  [7, 10, 11, 15],
+  [9, 12, 13, 14]
+]);
+const UNIT_Q02_SOURCE_VALUES = Object.freeze([1, 4, 3, 6, 5, 1, 2, 3, 8, 1, 7, 1, 2, 9, 3, 4]);
+
+const UNIT_Q02_VALUES = Object.freeze({
+  1: [[1, 2, 3, 6], [1, 2, 4, 5], [1, 3, 3, 5], [1, 2, 4, 5]],
+  2: [[1, 5, 1, 8], [4, 3, 6, 2], [3, 7, 1, 4], [1, 2, 9, 3]],
+  3: [[2, 4, 6, 12], [3, 5, 7, 9], [1, 5, 8, 10], [2, 4, 7, 11]]
+});
+
+function unitTestQ02({ difficulty = 2 }) {
+  const groups = UNIT_Q02_GROUPS.map((group) => [...group]);
+  const groupValues = UNIT_Q02_VALUES[difficulty] || UNIT_Q02_VALUES[2];
+  const values = Array(16).fill(0);
+  groups.forEach((group, groupIndex) => group.forEach((cell, index) => { values[cell] = groupValues[groupIndex][index]; }));
+  const target = sum(groupValues[0]);
+  const visual = { kind: "book9", subtype: "partition-choice", rows: 4, cols: 4, values, options: [{ groups }] };
+  const part = unitTestPart({
+    visual, answer: `네 조각, 각 조각의 합 ${target}`,
+    solution: `답안의 굵은 선처럼 네 조각으로 나누면 각 조각의 수의 합이 ${target}로 같습니다.`,
+    family: "unit-q02-equal-sum-partition", responseKind: "drawing",
+    answerVisual: visual,
+    meta: { difficulty, values, groups, target, sourceValues: UNIT_Q02_SOURCE_VALUES, answerKind: "layout" }
+  });
+  return unitTestWrapper({
+    typeId: "book09-unit-test-q02",
+    prompt: "준영이는 다음과 같은 도형을 점선을 따라서 크기와 모양이 같은 4개의 도형으로 나누려고 합니다. 각 도형에 들어있는 수들의 합이 같도록 나누어 보시오.",
+    parts: [part], solution: part.solution, family: "unit-q02-equal-sum-partition", difficulty,
+    meta: { reuseTypeId: "equal-sum-congruent-partition-b9", sourceQuestion: 2 }
+  });
+}
+
+const UNIT_Q03_FIGURES = Object.freeze([
+  {
+    sourceFigure: "orthogonal-five-cell-outline",
+    points: [[0, 0], [2, 0], [2, 1], [3, 1], [3, 2], [0, 2]],
+    partitionSignatures: ["orthogonal-piece", "orthogonal-piece", "orthogonal-piece", "orthogonal-piece"]
+  },
+  {
+    sourceFigure: "isosceles-trapezoid-diagonal-outline",
+    points: [[1, 0], [3, 0], [4, 3], [0, 3]],
+    partitionSignatures: ["trapezoid-piece", "trapezoid-piece", "trapezoid-piece", "trapezoid-piece"]
+  }
+]);
+
+const UNIT_Q03_FIGURES_BY_DIFFICULTY = Object.freeze({
+  1: [
+    {
+      sourceFigure: "square-outline",
+      points: [[0, 0], [2, 0], [2, 2], [0, 2]],
+      partitionSignatures: ["square-piece", "square-piece", "square-piece", "square-piece"],
+      partitionHints: ["가운데를 세로로 나누기", "나뉜 조각을 다시 가로로 나누기"]
+    },
+    {
+      sourceFigure: "rectangle-outline",
+      points: [[0, 0], [4, 0], [4, 2], [0, 2]],
+      partitionSignatures: ["rectangle-piece", "rectangle-piece", "rectangle-piece", "rectangle-piece"],
+      partitionHints: ["같은 너비로 네 부분 만들기"]
+    }
+  ],
+  2: UNIT_Q03_FIGURES,
+  3: [
+    {
+      sourceFigure: "concave-eight-vertex-outline",
+      points: [[0, 0], [3, 0], [3, 1], [4, 1], [4, 4], [1, 4], [1, 3], [0, 3]],
+      partitionSignatures: ["concave-piece", "concave-piece", "concave-piece", "concave-piece"],
+      partitionHints: ["오목한 부분의 방향을 먼저 비교하기"]
+    },
+    {
+      sourceFigure: "offset-concave-outline",
+      points: [[0, 0], [4, 0], [4, 1], [2, 1], [2, 3], [4, 3], [4, 4], [0, 4]],
+      partitionSignatures: ["offset-concave-piece", "offset-concave-piece", "offset-concave-piece", "offset-concave-piece"],
+      partitionHints: ["오목한 모서리의 위치를 서로 비교하기"]
+    }
+  ]
+});
+
+function areaVisual(points) {
+  return {
+    kind: "book9",
+    subtype: "area-grid",
+    gridWidth: Math.max(...points.map(([x]) => x)) + 1,
+    gridHeight: Math.max(...points.map(([, y]) => y)) + 1,
+    points,
+    shaded: true
+  };
+}
+
+function unitTestQ03({ difficulty = 2 }) {
+  const figures = UNIT_Q03_FIGURES_BY_DIFFICULTY[difficulty] || UNIT_Q03_FIGURES;
+  const parts = figures.map((figure, index) => {
+    const figureArea = polygonArea(figure.points);
+    const pieceArea = figureArea / 4;
+    const visual = areaVisual(figure.points);
+    if (figure.partitionHints) visual.partitionHints = figure.partitionHints;
+    const answerVisual = { ...visual, partitioned: true };
+    return unitTestPart({
+      visual, answer: `${index + 1}번 도형을 네 조각으로 분할`,
+      solution: difficulty === 2
+        ? `${index + 1}번 도형을 네 조각으로 나누고 네 조각이 서로 포개지는지 확인합니다.`
+        : `${index + 1}번 도형은 ${figure.partitionHints.join(", ")} 순서로 살펴 네 조각이 서로 포개지는지 확인합니다.`,
+      family: "unit-q03-congruent-partition", responseKind: "drawing", answerVisual,
+      meta: { difficulty, sourceFigure: figure.sourceFigure, points: figure.points, pieceCount: 4, pieceAreas: Array(4).fill(pieceArea), partitionSignatures: figure.partitionSignatures, ...(figure.partitionHints ? { partitionHints: figure.partitionHints } : {}), answerKind: "layout" }
+    });
+  });
+  return unitTestWrapper({
+    typeId: "book09-unit-test-q03",
+    prompt: "다음 도형을 크기와 모양이 같은 4조각으로 나누어 보시오.",
+    parts, solution: "각 도형의 답안처럼 점선을 따라 네 조각으로 나누고, 조각의 크기와 모양이 같은지 확인합니다.",
+    family: "unit-q03-congruent-partition", difficulty,
+    meta: { reuseTypeId: "congruent-composite-partition-b9", secondaryTypeId: "rotational-partition-four", sourceQuestion: 3 }
+  });
+}
+
+const UNIT_Q04_POINTS = Object.freeze({
+  1: [
+    [[0, 2], [3, 0], [1, 4]],
+    [[1, 0], [3, 2], [2, 4], [0, 4]]
+  ],
+  2: [
+    [[0, 2], [4, 0], [1, 4]],
+    [[1, 0], [4, 2], [3, 4], [0, 4]]
+  ],
+  3: [
+    [[0, 2], [4, 0], [1, 6]],
+    [[1, 0], [5, 2], [4, 6], [0, 6]]
+  ]
+});
+
+const UNIT_Q05_POINTS = Object.freeze({
+  1: [
+    [[0, 0], [2, 0], [2, 1], [1, 2], [0, 2]],
+    [[0, 0], [3, 0], [2, 2], [0, 2]]
+  ],
+  2: [
+    [[0, 0], [2, 0], [3, 2], [2, 2], [1, 3], [0, 2]],
+    [[0, 0], [4, 0], [2, 3], [0, 3]]
+  ],
+  3: [
+    [[0, 0], [3, 0], [4, 2], [3, 2], [2, 4], [0, 3]],
+    [[0, 0], [5, 0], [4, 4], [0, 4]]
+  ]
+});
+
+function unitAreaQuestion(question, pointsByDifficulty, typeId, family, reuseTypeId, prompt) {
+  return ({ difficulty = 2 }) => {
+    const points = pointsByDifficulty[difficulty] || pointsByDifficulty[2];
+    const parts = points.map((polygon, index) => {
+      const result = polygonArea(polygon);
+      const visual = areaVisual(polygon);
+      return unitTestPart({
+        visual, answer: `${result}cm²`,
+        solution: `모눈의 삼각형과 사각형을 나누어 세면 ${index + 1}번 색칠한 도형의 넓이는 ${result}cm²입니다.`,
+        family, meta: { difficulty, points: polygon, result, subquestion: index + 1 }
+      });
+    });
+    return unitTestWrapper({ typeId, prompt, parts, solution: parts.map((part) => part.solution).join(" "), family, difficulty, meta: { reuseTypeId, sourceQuestion: question } });
+  };
+}
+
+const unitQ04Generator = unitAreaQuestion(4, UNIT_Q04_POINTS, "book09-unit-test-q04", "unit-q04-grid-area", "shaded-composite-grid-area-b9", "한 변의 길이가 1cm인 모눈 위에 도형을 그린 것입니다. 색칠된 도형의 넓이를 각각 구하시오.");
+const unitQ05Generator = unitAreaQuestion(5, UNIT_Q05_POINTS, "book09-unit-test-q05", "unit-q05-grid-area", "shaded-composite-grid-area-b9", "한 변의 길이가 1cm인 모눈 위에 도형을 그린 것입니다. 색칠된 도형의 넓이를 각각 구하시오.");
+function unitTestQ04({ difficulty = 2 }) { return unitQ04Generator({ difficulty }); }
+function unitTestQ05({ difficulty = 2 }) { return unitQ05Generator({ difficulty }); }
+
+function unitTestQ06({ difficulty = 2 }) {
+  const outerSize = difficulty + 2;
+  const innerArea = outerSize;
+  const result = outerSize * outerSize - innerArea;
+  const points = [[0, 0], [outerSize, 0], [outerSize, outerSize - 1], [0, outerSize - 1]];
+  const visual = areaVisual(points);
+  const part = unitTestPart({
+    visual, answer: `${result}cm²`,
+    solution: `큰 정사각형의 넓이 ${outerSize}×${outerSize}에서 안쪽 도형의 넓이 ${innerArea}를 빼면 ${result}cm²입니다.`,
+    family: "unit-q06-oblique-square-area", meta: { difficulty, outerSize, outerArea: outerSize * outerSize, innerArea, points, result }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q06", prompt: "가로, 세로 한 칸의 간격이 1cm인 모눈종이에서 다음과 같이 정사각형을 그렸습니다. 색칠한 부분의 넓이를 구하시오.", parts: [part], solution: part.solution, family: "unit-q06-oblique-square-area", difficulty, meta: { reuseTypeId: "oblique-square-grid-area", sourceQuestion: 6 } });
+}
+
+function cubeFullMap(size) {
+  return Array.from({ length: size }, () => Array(size).fill(size));
+}
+
+const UNIT_Q07_MAPS = Object.freeze({
+  1: [[2, 2, 1], [2, 1, 1], [1, 1, 1]],
+  2: [[3, 3, 3, 3], [3, 3, 3, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+  3: [[4, 4, 4, 4, 3], [4, 4, 4, 3, 3], [3, 3, 3, 3, 3], [3, 3, 3, 3, 3], [3, 3, 3, 3, 3]]
+});
+
+function cubePartVisual(map) {
+  const front = frontProfile(map);
+  const side = sideProfile(map);
+  return { kind: "book9", subtype: "cube-solid-views", map, front, side };
+}
+
+function unitTestQ07({ difficulty = 2 }) {
+  const map = (UNIT_Q07_MAPS[difficulty] || UNIT_Q07_MAPS[2]).map((row) => [...row]);
+  const size = map.length;
+  const fullMap = cubeFullMap(size);
+  const total = mapTotal(map);
+  const fullTotal = size * size * size;
+  const result = fullTotal - total;
+  const part = unitTestPart({
+    visual: { ...cubePartVisual(map), fullMap, fullSize: size }, answer: `${result}개`,
+    solution: `완성된 상자는 ${size}×${size}×${size}=${fullTotal}개이고, 현재 ${total}개이므로 ${fullTotal}-${total}=${result}개가 더 필요합니다.`,
+    family: "unit-q07-cube-fill", meta: { difficulty, map, fullMap, size, total, fullTotal, result }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q07", prompt: "다음 그림은 정육면체 모양의 상자 속에 크기가 같은 상자 모양의 쌓기나무를 여러 개 채워 놓은 것입니다. 이 상자를 오른쪽 그림과 같이 완전히 채우려면 쌓기나무가 몇 개 더 필요한지 구하시오.", parts: [part], solution: part.solution, family: "unit-q07-cube-fill", difficulty, meta: { reuseTypeId: "cube-fill-rectangular-box", sourceQuestion: 7 } });
+}
+
+const UNIT_Q08_MAPS = Object.freeze({
+  1: { map: [[1, 2], [2, 3]], visible: 3 },
+  2: { map: [[2, 3, 2], [3, 4, 2], [2, 3, 2]], visible: 6 },
+  3: { map: [[3, 4, 3], [4, 5, 3], [3, 4, 3]], visible: 12 }
+});
+
+function unitTestQ08({ difficulty = 2 }) {
+  const source = UNIT_Q08_MAPS[difficulty] || UNIT_Q08_MAPS[2];
+  const map = source.map.map((row) => [...row]);
+  const total = mapTotal(map);
+  const hidden = total - source.visible;
+  const part = unitTestPart({
+    visual: cubePartVisual(map), answer: `${hidden}개`,
+    solution: `쌓기나무 전체 ${total}개에서 보이는 ${source.visible}개를 빼면 보이지 않는 쌓기나무는 ${hidden}개입니다.`,
+    family: "unit-q08-hidden-cube", meta: { difficulty, map, total, visible: source.visible, hidden }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q08", prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.", parts: [part], solution: part.solution, family: "unit-q08-hidden-cube", difficulty, meta: { reuseTypeId: "cube-hidden-count-walled", sourceQuestion: 8 } });
+}
+
+function cubeViewBounds(map) {
+  const rows = map.length;
+  const columns = map[0].length;
+  const top = map.map((row) => row.map((value) => value > 0 ? 1 : 0));
+  const front = map[0].map((_, column) => Math.max(...map.map((row) => row[column])));
+  const side = map.map((row) => Math.max(...row)).reverse();
+  const cells = [];
+  for (let row = 0; row < rows; row += 1) for (let column = 0; column < columns; column += 1) if (top[row][column]) cells.push([row, column]);
+  const current = top.map((row) => [...row]);
+  const maxHeight = Math.max(...front, ...side);
+  let minimum = Infinity;
+  let maximum = -Infinity;
+  const search = (index) => {
+    if (index === cells.length) {
+      if (!front.every((value, column) => Math.max(...current.map((row) => row[column])) === value)) return;
+      if (!side.every((value, row) => Math.max(...current[rows - 1 - row]) === value)) return;
+      const total = mapTotal(current);
+      minimum = Math.min(minimum, total);
+      maximum = Math.max(maximum, total);
+      return;
+    }
+    const [row, column] = cells[index];
+    for (let value = 1; value <= maxHeight; value += 1) {
+      current[row][column] = value;
+      search(index + 1);
+    }
+    current[row][column] = 0;
+  };
+  search(0);
+  return { top, front, side, minimum, maximum };
+}
+
+const UNIT_Q10_MAPS = Object.freeze({
+  1: [[0, 2, 0], [2, 1, 0], [1, 0, 2]],
+  2: [[0, 3, 0], [3, 1, 0], [2, 0, 3]],
+  3: [[0, 4, 0], [4, 2, 0], [2, 0, 4]]
+});
+
+function unitTestQ09({ difficulty = 2 }) {
+  const generated = cubeLayerViewsBook9({ difficulty });
+  const total = mapTotal(generated.meta.map);
+  const part = difficulty === 1
+    ? {
+        ...generated,
+        prompt: generated.prompt + ` 오른쪽 옆에서 본 층수는 ${generated.meta.side.join(", ")}입니다.`,
+        solution: `오른쪽 옆의 층수를 단서로 각 위치의 가장 높은 층을 합치면 앞은 ${generated.meta.front.join(", ")}층입니다.`,
+        meta: { ...generated.meta, disclosedSide: generated.meta.side }
+      }
+    : difficulty === 3
+      ? {
+          ...generated,
+          prompt: generated.prompt + " 두 방향의 모양을 그린 뒤 쌓기나무의 전체 개수도 구하세요.",
+          answer: `${generated.answer} / 전체 ${total}개`,
+          solution: generated.solution + ` 각 위치의 높이를 모두 더하면 전체는 ${total}개입니다.`,
+          meta: { ...generated.meta, total, askTotal: true }
+        }
+      : generated;
+  return unitTestWrapper({
+    typeId: "book09-unit-test-q09",
+    prompt: difficulty === 1
+      ? "각 층을 위에서 본 모양과 오른쪽 옆의 층수를 보고 앞에서 본 모양을 그리시오."
+      : difficulty === 3
+        ? "각 층을 위에서 본 모양을 보고 앞과 오른쪽 옆에서 본 모양을 그린 뒤, 쌓기나무의 전체 개수도 구하시오."
+        : "다음은 쌓기나무를 3층으로 쌓았을 때의 각 층의 쌓기나무를 위에서 본 모양입니다. 쌓기나무 모양을 앞에서 본 모양과 오른쪽 옆에서 본 모양을 그리시오.",
+    parts: [part], solution: part.solution, family: "unit-q09-cube-layer-views", difficulty,
+    meta: { reuseTypeId: "cube-layer-views-b9", sourceQuestion: 9 }
+  });
+}
+
+function unitTestQ10({ difficulty = 2 }) {
+  const map = (UNIT_Q10_MAPS[difficulty] || UNIT_Q10_MAPS[2]).map((row) => [...row]);
+  const bounds = cubeViewBounds(map);
+  const visual = { ...cubePartVisual(map), top: bounds.top, topNumbers: map, front: undefined, side: undefined, blankProfiles: { frontColumns: 3, sideColumns: 3, rows: Math.max(...bounds.front, ...bounds.side) } };
+  const answerVisual = { ...cubePartVisual(map), top: bounds.top, topNumbers: map, front: bounds.front, side: bounds.side };
+  const part = unitTestPart({
+    visual, answer: `최소 ${bounds.minimum}개`,
+    solution: `위·앞·오른쪽 옆에서 보이는 높이를 맞추는 가장 작은 배치를 세면 ${bounds.minimum}개입니다.`,
+    family: "unit-q10-cube-minimum", responseKind: "composite", answerVisual,
+    meta: { difficulty, map, top: bounds.top, topNumbers: map, front: bounds.front, side: bounds.side, minimum: bounds.minimum, maximum: bounds.maximum, sourceSubtasks: ["위", "앞", "오른쪽 옆", "위 칸의 개수", "최소 개수"] }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q10", prompt: "쌓기나무로 쌓은 모양을 보고 위, 앞, 오른쪽 옆에서 본 모양을 그린 후, 위에서 본 모양의 각 칸에 쌓여 있는 쌓기나무의 개수를 써넣고, 쌓기나무의 최소 개수를 구하시오.", parts: [part], solution: part.solution, family: "unit-q10-cube-minimum", difficulty, meta: { reuseTypeId: "cube-top-number-grid", secondaryTypeId: "cube-solid-to-views-b9", sourceQuestion: 10 } });
+}
+
+const UNIT_Q11_MAPS = Object.freeze({
+  1: [[[1, 1], [1, 2]], [[1, 1], [2, 1]]],
+  2: [[[1, 2], [2, 4]], [[2, 1], [3, 3]]],
+  3: [[[2, 3], [3, 5]], [[3, 2], [4, 4]]]
+});
+
+function unitTestQ11({ difficulty = 2 }) {
+  const maps = UNIT_Q11_MAPS[difficulty] || UNIT_Q11_MAPS[2];
+  const parts = maps.map((map, index) => {
+    const copied = map.map((row) => [...row]);
+    const total = mapTotal(copied);
+    const bounds = cubeViewBounds(copied);
+    return unitTestPart({
+      visual: { ...cubePartVisual(copied), givenViews: { top: bounds.top, front: bounds.front, side: bounds.side } },
+      answer: `${total}개`, solution: `${index + 1}번 모양의 칸별 높이를 더하면 ${total}개입니다.`,
+      family: "unit-q11-cube-view-count", meta: { difficulty, map: copied, total, top: bounds.top, front: bounds.front, side: bounds.side, subquestion: index + 1 }
+    });
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q11", prompt: "쌓기나무를 위, 앞, 오른쪽 옆에서 본 모양이 다음과 같을 때, 쌓기나무의 개수를 구하시오.", parts, solution: parts.map((part) => part.solution).join(" "), family: "unit-q11-cube-view-count", difficulty, meta: { reuseTypeId: "cube-three-views", sourceQuestion: 11 } });
+}
+
+const UNIT_Q12_MAPS = Object.freeze({
+  1: [[3, 3, 1], [0, 0, 3], [0, 1, 1]],
+  2: [[4, 4, 2], [0, 0, 4], [0, 2, 1]],
+  3: [[5, 5, 3], [0, 0, 5], [0, 3, 2]]
+});
+
+function unitTestQ12({ difficulty = 2 }) {
+  const map = (UNIT_Q12_MAPS[difficulty] || UNIT_Q12_MAPS[2]).map((row) => [...row]);
+  const bounds = cubeViewBounds(map);
+  const part = unitTestPart({
+    visual: { ...cubePartVisual(map), givenViews: { top: bounds.top, front: bounds.front, side: bounds.side } },
+    answer: `최대 ${bounds.maximum}개 / 최소 ${bounds.minimum}개`,
+    solution: `세 방향의 모양을 만족하는 배치 중 가장 많은 경우는 ${bounds.maximum}개, 가장 적은 경우는 ${bounds.minimum}개입니다.`,
+    family: "unit-q12-cube-view-minmax", meta: { difficulty, map, top: bounds.top, front: bounds.front, side: bounds.side, maximum: bounds.maximum, minimum: bounds.minimum }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q12", prompt: "다음은 쌓기나무를 쌓아서 만든 모양을 위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓기나무를 만드는 데 필요한 쌓기나무의 최대, 최소 개수를 구하시오.", parts: [part], solution: part.solution, family: "unit-q12-cube-view-minmax", difficulty, meta: { reuseTypeId: "cube-three-view-minmax", sourceQuestion: 12 } });
+}
+
+const UNIT_Q13_MATRICES = Object.freeze({
+  1: [
+    [[8, 1, 6], [3, 5, 7], [4, 9, 2]],
+    [[9, 2, 7], [4, 6, 8], [5, 10, 3]]
+  ],
+  2: [
+    [[10, 3, 8], [5, 7, 9], [6, 11, 4]],
+    [[9, 2, 7], [4, 6, 8], [5, 10, 3]]
+  ],
+  3: [
+    [[15, 1, 11], [5, 9, 13], [7, 17, 3]],
+    [[16, 2, 12], [6, 10, 14], [8, 18, 4]]
+  ]
+});
+
+function unitMagicPart(matrix, difficulty, subquestion) {
+  const blankCount = { 1: 3, 2: 4, 3: 5 }[difficulty] || 4;
+  const blankCells = Array.from({ length: blankCount }, (_, index) => [Math.floor(index / 3), index % 3]);
+  const shown = matrix.map((row, rowIndex) => row.map((value, columnIndex) => blankCells.some(([rowNumber, column]) => rowNumber === rowIndex && column === columnIndex) ? null : value));
+  const lineSum = sum(matrix[0]);
+  return unitTestPart({
+    visual: { kind: "book9", subtype: "magic-grid", size: 3, shown },
+    answer: `합 ${lineSum}`, solution: `${subquestion}번 마방진의 가로, 세로, 대각선 세 수의 합은 ${lineSum}입니다.`,
+    family: "unit-q13-magic-square", meta: { difficulty, subquestion, shown, blankCells, solutionGrid: matrix, lineSum, answerKind: "grid" }
+  });
+}
+
+function unitTestQ13({ difficulty = 2 }) {
+  const parts = (UNIT_Q13_MATRICES[difficulty] || UNIT_Q13_MATRICES[2]).map((matrix, index) => unitMagicPart(matrix, difficulty, index + 1));
+  return unitTestWrapper({ typeId: "book09-unit-test-q13", prompt: "다음 빈칸에 적당한 수를 넣어 가로, 세로, 대각선 방향으로 세 수의 합이 같게 만들고, 합을 구하시오.", parts, solution: parts.map((part) => part.solution).join(" "), family: "unit-q13-magic-square", difficulty, meta: { reuseTypeId: "magic-square-three-complete", sourceQuestion: 13 } });
+}
+
+function unitTestQ14({ difficulty = 2 }) {
+  const generated = magicSquareFourPairSumBook9({ difficulty });
+  const [firstColumn] = generated.meta.columns;
+  const firstIndex = generated.meta.row * 4 + firstColumn;
+  const firstValue = generated.meta.solution[generated.meta.row][firstColumn];
+  const part = difficulty === 1
+    ? {
+        ...generated,
+        visual: { ...generated.visual, shown: generated.visual.shown.map((value, index) => index === firstIndex ? firstValue : value), knownTarget: firstValue },
+        solution: `㉠=${firstValue}가 주어졌습니다. 한 줄의 합 ${generated.meta.lineSum}에서 같은 줄의 보이는 수와 ㉠을 빼면 ㉡을 구할 수 있고, 두 수의 합은 ${generated.meta.result}입니다.`,
+        meta: { ...generated.meta, revealedTarget: firstValue }
+      }
+    : difficulty === 3
+      ? { ...generated, visual: { ...generated.visual, lineSum: null }, meta: { ...generated.meta, deriveLineSum: true } }
+      : generated;
+  const prompt = difficulty === 1
+    ? `㉠에는 ${firstValue}가 들어갑니다. 빈칸을 완성하고 ㉠과 ㉡의 합을 구하시오.`
+    : difficulty === 3
+      ? "먼저 완성된 가로줄에서 한 줄의 합을 찾아 빈칸을 완성한 뒤, ㉠과 ㉡의 합을 구하시오."
+      : "다음 빈칸에 수를 넣어 가로, 세로, 대각선의 네 수의 합이 모두 같게 만들려고 합니다. ㉠, ㉡에 들어갈 두 수의 합은 얼마입니까?";
+  return unitTestWrapper({ typeId: "book09-unit-test-q14", prompt, parts: [part], solution: part.solution, family: "unit-q14-magic-four-pair", difficulty, meta: { reuseTypeId: "magic-square-four-pair-sum-b9", sourceQuestion: 14 } });
+}
+
+function unitTestQ15({ difficulty = 2 }) {
+  const generated = magicSquareSwapPairBook9({ difficulty });
+  const [firstIndex, secondIndex] = generated.meta.swapped;
+  const firstValue = generated.meta.shown[firstIndex];
+  const secondValue = generated.meta.shown[secondIndex];
+  const lineSum = sum(generated.meta.solution.slice(0, 3));
+  const part = difficulty === 1
+    ? {
+        ...generated,
+        answer: String(secondValue),
+        solution: `${firstValue}과 위치를 바꿀 수를 찾으면 ${secondValue}입니다. 두 수의 위치를 바꾸면 모든 줄의 합이 같아집니다.`,
+        meta: { ...generated.meta, knownSwapValue: firstValue, requestedValue: secondValue }
+      }
+    : difficulty === 3
+      ? {
+          ...generated,
+          answer: `${firstValue}, ${secondValue} / 한 줄 합 ${lineSum}`,
+          solution: `${firstValue}과 ${secondValue}의 위치를 바꾸면 각 줄의 합이 ${lineSum}으로 같아집니다.`,
+          meta: { ...generated.meta, requestedPair: [firstValue, secondValue], lineSum }
+        }
+      : generated;
+  const prompt = difficulty === 1
+    ? `${firstValue}과 위치를 바꾸어야 하는 수를 구하시오.`
+    : difficulty === 3
+      ? "위치를 바꿀 두 수를 모두 찾고, 바꾼 뒤 한 줄의 합도 구하시오."
+      : "다음 표에서 두 수의 위치를 바꾸면 각 가로줄과 세로줄에 놓이는 세 수의 합이 모두 같아집니다. 위치를 바꾼 두 수의 합은 얼마인지 구하시오.";
+  return unitTestWrapper({ typeId: "book09-unit-test-q15", prompt, parts: [part], solution: part.solution, family: "unit-q15-magic-swap", difficulty, meta: { reuseTypeId: "magic-square-swap-pair-b9", sourceQuestion: 15 } });
+}
+
+const UNIT_Q16_LAYOUTS = Object.freeze({
+  12: [2, 7, 3, 5, 4, 6],
+  13: [2, 7, 4, 3, 6, 5],
+  14: [3, 6, 5, 2, 7, 4],
+  15: [5, 4, 6, 2, 7, 3]
+});
+const UNIT_Q16_PROFILES = Object.freeze({
+  1: {
+    values: [1, 2, 3, 4, 5, 6],
+    targets: [9, 10, 11, 12],
+    layouts: {
+      9: [1, 5, 3, 4, 2, 6],
+      10: [1, 4, 5, 2, 3, 6],
+      11: [2, 3, 6, 1, 4, 5],
+      12: [4, 2, 6, 1, 5, 3]
+    }
+  },
+  2: { values: [2, 3, 4, 5, 6, 7], targets: [12, 13, 14, 15], layouts: UNIT_Q16_LAYOUTS },
+  3: {
+    values: [4, 5, 6, 7, 8, 9],
+    targets: [18, 19, 20, 21],
+    layouts: {
+      18: [4, 8, 6, 7, 5, 9],
+      19: [4, 7, 8, 5, 6, 9],
+      20: [5, 6, 9, 4, 7, 8],
+      21: [7, 5, 9, 4, 8, 6]
+    }
+  }
+});
+const UNIT_TRIANGLE_SIX_LINES = Object.freeze([[0, 1, 2], [2, 3, 4], [4, 5, 0]]);
+
+function unitTestQ16({ difficulty = 2 }) {
+  const profile = UNIT_Q16_PROFILES[difficulty] || UNIT_Q16_PROFILES[2];
+  const values = profile.values.slice();
+  const targets = profile.targets.slice();
+  const parts = targets.map((target) => {
+    const solution = profile.layouts[target].slice();
+    const visual = { kind: "book9", subtype: "triangle-sum", size: 6, shown: Array(6).fill(null), cards: values, lineSum: target };
+    const answerVisual = { ...visual, shown: solution, cards: [], lineSum: target };
+    return unitTestPart({
+    visual, answer: `합 ${target} 완성`, solution: `${values[0]}부터 ${values[values.length - 1]}까지를 한 번씩 넣어 세 변의 합을 ${target}로 만들면 됩니다.`,
+      family: "unit-q16-triangle-edge-sum", responseKind: "drawing", answerVisual,
+      meta: { difficulty, target, solution, lines: UNIT_TRIANGLE_SIX_LINES, values, answerKind: "layout" }
+    });
+  });
+  const prompt = difficulty === 2
+    ? "2에서 7까지의 수를 한 번씩 써넣어 한 변 위에 있는 세 수의 합이 12, 13, 14, 15가 되도록 삼각진을 완성하시오."
+    : `${values[0]}에서 ${values[values.length - 1]}까지의 수를 한 번씩 써넣어 한 변 위에 있는 세 수의 합이 ${targets.join(", ")}가 되도록 삼각형을 완성하시오.`;
+  return unitTestWrapper({ typeId: "book09-unit-test-q16", prompt, parts, solution: "네 삼각형 모두 각 변의 합 조건을 확인합니다.", family: "unit-q16-triangle-edge-sum", difficulty, meta: { reuseTypeId: "triangle-edge-sum-six", sourceQuestion: 16, values, targets } });
+}
+
+const UNIT_Q17_SOLUTION = Object.freeze([7, 8, 1, 10, 5, 2, 9, 4, 3, 6]);
+const UNIT_Q17_LINES = Object.freeze([[0, 1, 2], [2, 3, 4], [4, 5, 6], [6, 7, 8], [8, 9, 0]]);
+
+function unitTestQ17({ difficulty = 2 }) {
+  const clueCount = { 1: 8, 2: 6, 3: 4 }[difficulty] || 6;
+  const clueIndices = shuffle(Array.from({ length: 10 }, (_, index) => index)).slice(0, clueCount);
+  const shown = UNIT_Q17_SOLUTION.map((value, index) => clueIndices.includes(index) ? value : null);
+  const visual = { kind: "book9", subtype: "polygon-ring", sides: 5, shown, cards: Array.from({ length: 10 }, (_, index) => index + 1), lineSum: 16 };
+  const answerVisual = { ...visual, shown: UNIT_Q17_SOLUTION, cards: [], lineSum: 16 };
+  const part = unitTestPart({
+    visual, answer: "조건을 만족하는 배치", solution: "1부터 10까지를 한 번씩 넣고 오각형의 다섯 선을 확인하면 각 선의 합은 16입니다.",
+    family: "unit-q17-pentagon-ring", responseKind: "drawing", answerVisual,
+    meta: { difficulty, solution: UNIT_Q17_SOLUTION, lines: UNIT_Q17_LINES, clueIndices, lineSum: 16, answerKind: "layout" }
+  });
+  return unitTestWrapper({ typeId: "book09-unit-test-q17", prompt: "다음 오각진에서 빈 원 안에 1부터 10까지의 수를 한 번씩 써넣어 한 줄 위에 있는 세 수의 합이 모두 16이 되게 만드시오.", parts: [part], solution: part.solution, family: "unit-q17-pentagon-ring", difficulty, meta: { reuseTypeId: "polygon-ring-equal-sum", sourceQuestion: 17 } });
+}
+
+const UNIT_Q18_PROFILES = Object.freeze({
+  1: { values: [1, 2, 4, 5, 6], positions: [1, 2, 6, 4, 5], lineSum: 12 },
+  2: { values: [2, 4, 6, 8, 10], positions: [2, 4, 10, 6, 8], lineSum: 20 },
+  3: { values: [3, 7, 9, 13, 16], positions: [3, 7, 16, 9, 13], lineSum: 32 }
+});
+
+function unitTestQ18({ difficulty = 2 }) {
+  const profile = UNIT_Q18_PROFILES[difficulty] || UNIT_Q18_PROFILES[2];
+  const { values, positions, lineSum } = profile;
+  const [top, left, center, right, bottom] = positions;
+  const visual = { kind: "book9", subtype: "circular-magic", values, center: "?", spokes: 2 };
+  const answerVisual = { ...visual, center: positions[2] };
+  const part = unitTestPart({
+    visual, answer: String(lineSum), solution: `세로는 ${top}+${center}+${bottom}=${lineSum}, 가로는 ${left}+${center}+${right}=${lineSum}이고, 원의 둘레도 ${top}+${left}+${right}+${bottom}=${lineSum}입니다.`,
+    family: "unit-q18-circle-line-ring", answerVisual,
+    meta: { difficulty, positions, lineSum, ringSum: lineSum, values }
+  });
+  const prompt = difficulty === 2
+    ? "다음 그림의 원 안에 2에서 10까지의 짝수를 넣어 직선 위에 있는 세 수의 합과 원의 둘레에 있는 네 수의 합이 모두 같게 만드시오."
+    : `다음 그림의 수 카드 ${values.join(", ")}를 원 안에 넣어 직선 위에 있는 세 수의 합과 원의 둘레에 있는 네 수의 합이 모두 같게 만드시오.`;
+  return unitTestWrapper({ typeId: "book09-unit-test-q18", prompt, parts: [part], solution: part.solution, family: "unit-q18-circle-line-ring", difficulty, meta: { reuseTypeId: "circle-line-ring-equal-sum", sourceQuestion: 18 } });
+}
+
+const UNIT_Q19_PROFILES = Object.freeze({
+  1: {
+    labels: ["㉠", "㉡", "㉢", "㉣", "㉤"],
+    conditions: ["㉤은 ㉠보다 4cm 깁니다.", "㉣은 ㉢보다 3cm 짧습니다.", "㉢은 ㉠보다 6cm 짧습니다.", "㉠은 ㉡보다 4cm 깁니다.", "㉠의 길이는 14cm입니다."],
+    values: { "㉠": 14, "㉡": 10, "㉢": 8, "㉣": 5, "㉤": 18 },
+    inferenceSteps: 1
+  },
+  2: {
+    labels: ["㉠", "㉡", "㉢", "㉣", "㉤"],
+    conditions: ["㉤은 ㉠보다 4cm 깁니다.", "㉣은 ㉢보다 3cm 짧습니다.", "㉢은 ㉠보다 6cm 짧습니다.", "㉠은 ㉡보다 4cm 깁니다."],
+    values: { "㉠": 16, "㉡": 12, "㉢": 10, "㉣": 7, "㉤": 20 },
+    inferenceSteps: 2
+  },
+  3: {
+    labels: ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"],
+    conditions: ["㉥은 ㉠보다 4cm 깁니다.", "㉠은 ㉡보다 4cm 깁니다.", "㉢은 ㉠보다 6cm 짧습니다.", "㉣은 ㉢보다 3cm 짧습니다.", "㉤은 ㉣보다 2cm 깁니다."],
+    values: { "㉠": 30, "㉡": 26, "㉢": 24, "㉣": 21, "㉤": 23, "㉥": 34 },
+    inferenceSteps: 4
+  }
+});
+
+function unitTestQ19({ difficulty = 2 }) {
+  const profile = UNIT_Q19_PROFILES[difficulty] || UNIT_Q19_PROFILES[2];
+  const values = profile.values;
+  const one = values["㉠"];
+  const two = values["㉡"];
+  const three = values["㉢"];
+  const four = values["㉣"];
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "condition-list", conditions: profile.conditions, ...(difficulty === 3 ? { labels: profile.labels } : {}) },
+    answer: "5cm", solution: `㉠을 ${one}이라고 하면 ㉡은 ${two}, ㉢은 ${three}, ㉣은 ${four}이므로 차이는 ${two}-${four}=5cm입니다.`,
+    family: "unit-q19-measurement-chain", meta: { difficulty, values, labels: profile.labels, conditions: profile.conditions, result: 5, inferenceSteps: profile.inferenceSteps }
+  });
+  const prompt = difficulty === 3
+    ? "6개의 막대 ㉠, ㉡, ㉢, ㉣, ㉤, ㉥의 길이를 비교하였더니 다음과 같았습니다. ㉡과 ㉣은 몇 cm만큼 차이가 나는지 구하시오."
+    : "5개의 막대 ㉠, ㉡, ㉢, ㉣, ㉤의 길이를 비교하였더니 다음과 같았습니다. ㉡과 ㉣은 몇 cm만큼 차이가 나는지 구하시오.";
+  return unitTestWrapper({ typeId: "book09-unit-test-q19", prompt, parts: [part], solution: part.solution, family: "unit-q19-measurement-chain", difficulty, meta: { reuseTypeId: "measurement-order-chain", sourceQuestion: 19 } });
+}
+
+const UNIT_Q20_PROFILES = Object.freeze({
+  1: {
+    names: ["다현", "윤서", "지민", "지후", "상준"],
+    constraints: [
+      { kind: "leftOf", first: "다현", second: "상준" },
+      { kind: "rightOf", first: "다현", second: "지민" },
+      { kind: "secondRight", first: "다현", second: "윤서" }
+    ],
+    conditions: ["다현의 왼쪽에는 상준이가 앉아 있습니다.", "다현의 오른쪽에는 지민이가 앉아 있습니다.", "다현의 오른쪽에서 두 번째에는 윤서가 앉아 있습니다."]
+  },
+  2: {
+    names: ["다현", "윤서", "지민", "지후", "상준"],
+    constraints: [
+      { kind: "leftOf", first: "다현", second: "상준" },
+      { kind: "notAdjacent", first: "지후", second: "지민" },
+      { kind: "notRightOf", first: "지후", second: "윤서" }
+    ],
+    conditions: ["다현의 왼쪽에는 상준이가 앉아 있습니다.", "지후와 지민이는 이웃하여 앉지 않습니다.", "지후의 오른쪽에 앉은 사람은 윤서가 아닙니다."]
+  },
+  3: {
+    names: ["다현", "윤서", "지민", "지후", "상준", "예린"],
+    constraints: [
+      { kind: "leftOf", first: "다현", second: "상준" },
+      { kind: "notRightOf", first: "지후", second: "윤서" },
+      { kind: "rightOf", first: "다현", second: "지민" },
+      { kind: "notAdjacent", first: "윤서", second: "예린" }
+    ],
+    conditions: ["다현의 왼쪽에는 상준이가 앉아 있습니다.", "지후의 오른쪽에 앉은 사람은 윤서가 아닙니다.", "다현의 오른쪽에는 지민이가 앉아 있습니다.", "윤서와 예린이는 이웃하여 앉지 않습니다."]
+  }
+});
+
+function unitQ20ConstraintHolds(order, constraint) {
+  const rightOf = (left, right) => order[(order.indexOf(left) + 1) % order.length] === right;
+  const leftOf = (left, right) => order[(order.indexOf(left) - 1 + order.length) % order.length] === right;
+  const adjacent = (first, second) => rightOf(first, second) || rightOf(second, first);
+  if (constraint.kind === "rightOf") return rightOf(constraint.first, constraint.second);
+  if (constraint.kind === "leftOf") return leftOf(constraint.first, constraint.second);
+  if (constraint.kind === "notRightOf") return !rightOf(constraint.first, constraint.second);
+  if (constraint.kind === "notAdjacent") return !adjacent(constraint.first, constraint.second);
+  if (constraint.kind === "secondRight") return order[(order.indexOf(constraint.first) + 2) % order.length] === constraint.second;
+  return false;
+}
+
+function unitTestQ20({ difficulty = 2 }) {
+  const profile = UNIT_Q20_PROFILES[difficulty] || UNIT_Q20_PROFILES[2];
+  const names = profile.names;
+  const candidates = permutations(names.slice(1)).map((tail) => [names[0], ...tail]).filter((order) => profile.constraints.every((constraint) => unitQ20ConstraintHolds(order, constraint)));
+  const order = candidates[0];
+  const jiminIndex = order.indexOf("지민");
+  const neighbors = [order[(jiminIndex - 1 + order.length) % order.length], order[(jiminIndex + 1) % order.length]].sort();
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "condition-list", conditions: profile.conditions, circular: true, names },
+    answer: neighbors.join(", "), solution: `조건을 원탁에 배치하면 지민의 양옆에는 ${neighbors.join("와 ")}가 앉습니다.`,
+    family: "unit-q20-circular-seating", meta: { difficulty, names, conditions: profile.conditions, constraints: profile.constraints, candidates, solutionOrder: order, neighbors }
+  });
+  const prompt = difficulty === 2
+    ? "다음과 같이 다현, 윤서, 지민, 지후, 상준이가 둥근 탁자 주위에 둥글게 앉아 있습니다. 지민은 누구와 누구 사이에 앉아 있습니까?"
+    : `다음과 같이 ${names.join(", ")}가 둥근 탁자 주위에 앉아 있습니다. 지민은 누구와 누구 사이에 앉아 있습니까?`;
+  return unitTestWrapper({ typeId: "book09-unit-test-q20", prompt, parts: [part], solution: part.solution, family: "unit-q20-circular-seating", difficulty, meta: { reuseTypeId: "circular-seat-placement", sourceQuestion: 20 } });
+}
+
+const UNIT_Q21_PROFILES = Object.freeze({
+  1: {
+    order: ["고은", "승우", "주희", "샛별", "경헌", "민아"],
+    conditions: ["고은이는 승우보다 앞입니다.", "승우는 주희보다 앞입니다.", "주희는 샛별이보다 앞입니다.", "샛별이는 경헌보다 앞입니다.", "경헌은 민아보다 앞입니다."],
+    relations: [["고은", "승우"], ["승우", "주희"], ["주희", "샛별"], ["샛별", "경헌"], ["경헌", "민아"]]
+  },
+  2: {
+    order: ["고은", "승우", "주희", "샛별", "경헌", "민아"],
+    conditions: ["주희는 샛별이를 이겼습니다.", "샛별이는 경헌이를 이겼습니다.", "민아는 경헌이에게 졌습니다.", "승우는 고은이에게 졌지만 주희에게 이겼습니다."],
+    relations: [["주희", "샛별"], ["샛별", "경헌"], ["경헌", "민아"], ["고은", "승우"], ["승우", "주희"]]
+  },
+  3: {
+    order: ["고은", "승우", "주희", "샛별", "경헌", "민아", "도현"],
+    conditions: ["고은이는 승우보다 앞입니다.", "승우는 주희보다 앞입니다.", "주희는 샛별이보다 앞입니다.", "샛별이는 경헌보다 앞입니다.", "경헌은 민아보다 앞입니다.", "민아는 도현보다 앞입니다."],
+    relations: [["고은", "승우"], ["승우", "주희"], ["주희", "샛별"], ["샛별", "경헌"], ["경헌", "민아"], ["민아", "도현"]]
+  }
+});
+
+function unitTestQ21({ difficulty = 2 }) {
+  const profile = UNIT_Q21_PROFILES[difficulty] || UNIT_Q21_PROFILES[2];
+  const order = profile.order;
+  const conditions = profile.conditions;
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "condition-list", conditions, slots: order.length },
+    answer: order.map((name, index) => `${index + 1}등 ${name}`).join(", "), solution: `조건을 이어 놓으면 ${order.join(" → ")} 순서입니다.`,
+    family: "unit-q21-line-ranking", meta: { difficulty, order, conditions, relations: profile.relations, answerKind: "ordering" }
+  });
+  const prompt = difficulty === 2 ? "높이뛰기 대회를 하고 나서 친구들이 다음과 같이 말했습니다. 빈칸에 알맞은 이름을 써넣으시오." : `높이뛰기 대회에 참가한 ${order.length}명의 순서를 조건에 맞게 빈칸에 써넣으시오.`;
+  return unitTestWrapper({ typeId: "book09-unit-test-q21", prompt, parts: [part], solution: part.solution, family: "unit-q21-line-ranking", difficulty, meta: { reuseTypeId: "line-ranking-constraints-b9", sourceQuestion: 21 } });
+}
+
+const UNIT_Q22_PROFILES = Object.freeze({
+  1: {
+    names: ["A", "B", "C", "D"], items: ["축구", "야구", "농구", "배구"],
+    rows: [[0, 3], [1, 3], [0, 2], [0, 1]], knownRows: [[0, 3], [1], [0, 2], [0, 1]], totals: [3, 2, 1, 2], targetItem: 3
+  },
+  2: {
+    names: ["A", "B", "C", "D"], items: ["축구", "야구", "농구", "배구"],
+    rows: [[0, 3], [1, 3], [0, 2], [0, 1]], knownRows: [[0], [1], [0, 2], [0, 1]], totals: [3, 2, 1, 2], targetItem: 3
+  },
+  3: {
+    names: ["A", "B", "C", "D", "E"], items: ["축구", "야구", "농구", "배구", "테니스"],
+    rows: [[0, 4], [0, 1], [1, 2], [2, 3], [3, 4]], knownRows: [[0], [0, 1], [1, 2], [2, 3], [3]], totals: [2, 2, 2, 2, 2], targetItem: 4
+  }
+});
+
+function unitTestQ22({ difficulty = 2 }) {
+  const profile = UNIT_Q22_PROFILES[difficulty] || UNIT_Q22_PROFILES[2];
+  const { names, items, rows, knownRows, totals, targetItem } = profile;
+  const result = items[targetItem];
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "logic-matrix", rowLabels: names, columnLabels: items, knownRows, totals },
+    answer: result, solution: difficulty === 3
+      ? "각 열의 인원수를 세어 아직 표시되지 않은 칸을 채우면 A의 두 번째 운동은 테니스입니다."
+      : "축구는 3명, 야구는 2명, 농구는 C만 좋아하므로 A가 두 번째로 좋아하는 운동은 배구입니다.",
+    family: "unit-q22-preference-matrix", meta: { difficulty, names, items, rows, knownRows, totals, targetRow: 0, targetItem, result }
+  });
+  const prompt = difficulty === 3
+    ? "A, B, C, D, E 다섯 사람은 축구, 야구, 농구, 배구, 테니스 중 두 가지씩 좋아합니다. 표와 운동별 인원수를 보고 A가 아직 표시하지 않은 운동을 구하시오."
+    : "A, B, C, D 네 사람은 축구, 야구, 농구, 배구 중 두 가지씩 좋아합니다. 축구를 좋아하는 사람은 3명이고 야구와 배구를 좋아하는 사람은 각각 2명입니다. 농구를 좋아하는 사람은 C뿐이며, A는 축구를 좋아하고 B는 야구를 좋아하며 D는 축구와 야구를 좋아합니다. A가 두 번째로 좋아하는 운동을 구하시오.";
+  return unitTestWrapper({ typeId: "book09-unit-test-q22", prompt, parts: [part], solution: part.solution, family: "unit-q22-preference-matrix", difficulty, meta: { reuseTypeId: "preference-count-matrix-b9", sourceQuestion: 22 } });
+}
+
+const UNIT_Q23_PROFILES = Object.freeze({
+  1: {
+    teams: ["한국", "브라질", "프랑스", "독일"], solution: [1, 0, 2, 3], result: "브라질",
+    pairs: [[[3, 0], [2, 2]], [[0, 1], [1, 2]], [[3, 3], [2, 0]], [[0, 1], [3, 0]]],
+    statements: [
+      { speaker: "A", guesses: ["독일이 1위", "프랑스가 3위"] },
+      { speaker: "B", guesses: ["한국이 2위", "브라질이 3위"] },
+      { speaker: "C", guesses: ["독일이 4위", "프랑스가 1위"] },
+      { speaker: "D", guesses: ["한국이 2위", "독일이 1위"] }
+    ]
+  },
+  2: {
+    teams: ["한국", "브라질", "프랑스", "독일"], solution: [1, 0, 2, 3], result: "브라질",
+    pairs: [[[3, 0], [2, 2]], [[0, 1], [1, 2]], [[3, 3], [2, 0]]],
+    statements: [
+      { speaker: "A", guesses: ["독일이 1위", "프랑스가 3위"] },
+      { speaker: "B", guesses: ["한국이 2위", "브라질이 3위"] },
+      { speaker: "C", guesses: ["독일이 4위", "프랑스가 1위"] }
+    ]
+  },
+  3: {
+    teams: ["한국", "브라질", "프랑스", "독일", "일본"], solution: [1, 0, 2, 3, 4], result: "브라질",
+    pairs: [[[3, 0], [2, 2]], [[0, 1], [1, 2]], [[3, 3], [2, 0]], [[4, 4], [0, 2]]],
+    statements: [
+      { speaker: "A", guesses: ["독일이 1위", "프랑스가 3위"] },
+      { speaker: "B", guesses: ["한국이 2위", "브라질이 3위"] },
+      { speaker: "C", guesses: ["독일이 4위", "프랑스가 1위"] },
+      { speaker: "D", guesses: ["일본이 5위", "한국이 3위"] }
+    ]
+  }
+});
+
+function unitTestQ23({ difficulty = 2 }) {
+  const profile = UNIT_Q23_PROFILES[difficulty] || UNIT_Q23_PROFILES[2];
+  const { teams, pairs, solution, statements, result } = profile;
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "predictions", statements }, answer: result,
+    solution: `각 사람의 두 예상 중 하나만 맞도록 순위를 놓으면 ${result}이 1위입니다.`,
+    family: "unit-q23-exact-one-answer", meta: { difficulty, teams, pairs, solution, statements, targetItem: 1, result }
+  });
+  const prompt = difficulty === 3
+    ? `${teams.join(", ")} 다섯 팀의 축구 순위를 네 사람이 예상했습니다. 각 사람의 예상 중 정확히 하나만 맞을 때 우승팀을 구하시오.`
+    : difficulty === 1
+      ? "한국, 브라질, 프랑스, 독일 네 팀의 축구 순위를 네 사람이 예상했습니다. 각 사람의 예상 중 정확히 하나만 맞을 때 우승팀을 구하시오."
+      : "한국, 브라질, 프랑스, 독일 네 팀의 축구 순위를 세 사람이 예상했습니다. 각 사람의 예상 중 정확히 하나만 맞을 때 우승팀을 구하시오.";
+  return unitTestWrapper({ typeId: "book09-unit-test-q23", prompt, parts: [part], solution: part.solution, family: "unit-q23-exact-one-answer", difficulty, meta: { reuseTypeId: "exact-one-answer-assignment-b9", sourceQuestion: 23 } });
+}
+
+const UNIT_Q24_BASE_CONSTRAINTS = Object.freeze([
+  { kind: "notRank", name: "㉮", ranks: [2, 4] },
+  { kind: "notRank", name: "㉯", ranks: [3, 4] },
+  { kind: "notRank", name: "㉰", ranks: [1, 2] },
+  { kind: "after", first: "㉱", second: "㉮" },
+  { kind: "after", first: "㉱", second: "㉯" },
+  { kind: "after", first: "㉲", second: "㉯" },
+  { kind: "before", first: "㉲", second: "㉮" }
+]);
+const UNIT_Q24_PROFILES = Object.freeze({
+  1: {
+    names: ["㉮", "㉯", "㉰", "㉱", "㉲"], target: "㉮", constraints: [...UNIT_Q24_BASE_CONSTRAINTS, { kind: "rank", name: "㉮", rank: 3 }],
+    conditions: ["㉮는 2등도 4등도 아닙니다.", "㉯는 3등도 4등도 아닙니다.", "㉰는 1등도 2등도 아닙니다.", "㉱는 ㉮와 ㉯에게 졌습니다.", "㉲는 ㉯에게 졌지만 ㉮에게 이겼습니다.", "㉮는 3등입니다."]
+  },
+  2: {
+    names: ["㉮", "㉯", "㉰", "㉱", "㉲"], target: "㉮", constraints: UNIT_Q24_BASE_CONSTRAINTS,
+    conditions: ["㉮는 2등도 4등도 아닙니다.", "㉯는 3등도 4등도 아닙니다.", "㉰는 1등도 2등도 아닙니다.", "㉱는 ㉮와 ㉯에게 졌습니다.", "㉲는 ㉯에게 졌지만 ㉮에게 이겼습니다."]
+  },
+  3: {
+    names: ["㉮", "㉯", "㉰", "㉱", "㉲", "㉳"], target: "㉮", constraints: [...UNIT_Q24_BASE_CONSTRAINTS, { kind: "before", first: "㉳", second: "㉲" }],
+    conditions: ["㉮는 2등도 4등도 아닙니다.", "㉯는 3등도 4등도 아닙니다.", "㉰는 1등도 2등도 아닙니다.", "㉱는 ㉮와 ㉯에게 졌습니다.", "㉲는 ㉯에게 졌지만 ㉮에게 이겼습니다.", "㉳는 ㉲보다 앞입니다."]
+  }
+});
+
+function unitQ24ConstraintHolds(order, constraint) {
+  const position = (name) => order.indexOf(name) + 1;
+  if (constraint.kind === "notRank") return !constraint.ranks.includes(position(constraint.name));
+  if (constraint.kind === "rank") return position(constraint.name) === constraint.rank;
+  if (constraint.kind === "after") return position(constraint.first) > position(constraint.second);
+  if (constraint.kind === "before") return position(constraint.first) < position(constraint.second);
+  return false;
+}
+
+function unitTestQ24({ difficulty = 2 }) {
+  const profile = UNIT_Q24_PROFILES[difficulty] || UNIT_Q24_PROFILES[2];
+  const { names, conditions, target } = profile;
+  const position = (order, name) => order.indexOf(name) + 1;
+  const candidates = permutations(names).filter((order) => profile.constraints.every((constraint) => unitQ24ConstraintHolds(order, constraint)));
+  const targetRank = position(candidates[0], target);
+  const part = unitTestPart({
+    visual: { kind: "book9", subtype: "condition-list", conditions, slots: names.length }, answer: `${targetRank}등`,
+    solution: `조건을 모두 표시하면 ㉮의 가능한 자리는 ${targetRank}등 하나이므로 정답은 ${targetRank}등입니다.`,
+    family: "unit-q24-exclusion-ranking", meta: { difficulty, names, conditions, constraints: profile.constraints, candidates, target, result: targetRank }
+  });
+  const prompt = difficulty === 3
+    ? "여섯 명 ㉮, ㉯, ㉰, ㉱, ㉲, ㉳가 달리기를 했습니다. 다음 조건을 모두 만족할 때 ㉮는 몇 등인지 구하시오."
+    : "다섯 명 ㉮, ㉯, ㉰, ㉱, ㉲가 달리기를 했습니다. 다음 조건을 모두 만족할 때 ㉮는 몇 등인지 구하시오.";
+  return unitTestWrapper({ typeId: "book09-unit-test-q24", prompt, parts: [part], solution: part.solution, family: "unit-q24-exclusion-ranking", difficulty, meta: { reuseTypeId: "exclusion-grid-ranking-b9", sourceQuestion: 24 } });
+}
+
+const UNIT_Q25_LINES = Object.freeze([[0, 1, 2, 3], [3, 4, 5, 6], [6, 7, 8, 0]]);
+const UNIT_Q25_ALTERNATIVES = Object.freeze([
+  [1, 3, 8, 7, 2, 6, 4, 5, 9],
+  [1, 2, 9, 7, 3, 5, 4, 6, 8]
+]);
+const UNIT_Q25_PROFILES = Object.freeze({
+  1: { lineSum: 17, alternatives: [[1, 4, 9, 3, 5, 7, 2, 6, 8], [1, 4, 9, 3, 5, 7, 2, 8, 6]] },
+  2: { lineSum: 19, alternatives: UNIT_Q25_ALTERNATIVES },
+  3: { lineSum: 21, alternatives: [[3, 1, 8, 9, 2, 4, 6, 5, 7], [3, 1, 8, 9, 2, 4, 6, 7, 5]] }
+});
+
+function unitTestQ25({ difficulty = 2 }) {
+  const profile = UNIT_Q25_PROFILES[difficulty] || UNIT_Q25_PROFILES[2];
+  const solution = profile.alternatives[0].slice();
+  const visual = { kind: "book9", subtype: "triangle-sum", size: 9, shown: Array(9).fill(null), cards: [1, 2, 3, 4, 5, 6, 7, 8, 9], lineSum: profile.lineSum };
+  const answerVisual = { ...visual, shown: solution, cards: [], lineSum: profile.lineSum };
+  const part = unitTestPart({
+    visual, answer: "조건을 만족하는 배치", solution: `1부터 9까지를 한 번씩 넣어 세 변의 네 수 합을 각각 ${profile.lineSum}로 맞춥니다.`,
+    family: "unit-q25-triangle-edge-sum", responseKind: "drawing", answerVisual,
+    meta: { difficulty, solution, lines: UNIT_Q25_LINES, lineSum: profile.lineSum, values: [1, 2, 3, 4, 5, 6, 7, 8, 9], answerAlternatives: profile.alternatives, answerKind: "layout" }
+  });
+  const prompt = difficulty === 2
+    ? "다음 삼각진에 1에서 9까지의 수를 한 번씩 써넣어 한 변 위에 있는 네 수의 합이 모두 19가 되도록 삼각진을 완성하시오."
+    : `다음 삼각형에 1에서 9까지의 수를 한 번씩 써넣어 한 변 위에 있는 네 수의 합이 모두 ${profile.lineSum}이 되도록 삼각형을 완성하시오.`;
+  return unitTestWrapper({ typeId: "book09-unit-test-q25", prompt, parts: [part], solution: part.solution, family: "unit-q25-triangle-edge-sum", difficulty, meta: { reuseTypeId: "triangle-edge-sum-nine", sourceQuestion: 25, multipleValidAnswers: true } });
+}
+
+export const BOOK09_UNIT_TEST_SPECS = Object.freeze([
+  { question: 1, typeId: "book09-unit-test-q01", generator: unitTestQ01, reuseTypeId: "sudoku-four-square-region", family: "unit-q01-sudoku", partCount: 1 },
+  { question: 2, typeId: "book09-unit-test-q02", generator: unitTestQ02, reuseTypeId: "equal-sum-congruent-partition-b9", family: "unit-q02-equal-sum-partition", partCount: 1 },
+  { question: 3, typeId: "book09-unit-test-q03", generator: unitTestQ03, reuseTypeId: "congruent-composite-partition-b9", family: "unit-q03-congruent-partition", partCount: 2 },
+  { question: 4, typeId: "book09-unit-test-q04", generator: unitTestQ04, reuseTypeId: "shaded-composite-grid-area-b9", family: "unit-q04-grid-area", partCount: 2 },
+  { question: 5, typeId: "book09-unit-test-q05", generator: unitTestQ05, reuseTypeId: "shaded-composite-grid-area-b9", family: "unit-q05-grid-area", partCount: 2 },
+  { question: 6, typeId: "book09-unit-test-q06", generator: unitTestQ06, reuseTypeId: "oblique-square-grid-area", family: "unit-q06-oblique-square-area", partCount: 1 },
+  { question: 7, typeId: "book09-unit-test-q07", generator: unitTestQ07, reuseTypeId: "cube-fill-rectangular-box", family: "unit-q07-cube-fill", partCount: 1 },
+  { question: 8, typeId: "book09-unit-test-q08", generator: unitTestQ08, reuseTypeId: "cube-hidden-count-walled", family: "unit-q08-hidden-cube", partCount: 1 },
+  { question: 9, typeId: "book09-unit-test-q09", generator: unitTestQ09, reuseTypeId: "cube-layer-views-b9", family: "unit-q09-cube-layer-views", partCount: 1 },
+  { question: 10, typeId: "book09-unit-test-q10", generator: unitTestQ10, reuseTypeId: "cube-top-number-grid", family: "unit-q10-cube-minimum", partCount: 1 },
+  { question: 11, typeId: "book09-unit-test-q11", generator: unitTestQ11, reuseTypeId: "cube-three-views", family: "unit-q11-cube-view-count", partCount: 2 },
+  { question: 12, typeId: "book09-unit-test-q12", generator: unitTestQ12, reuseTypeId: "cube-three-view-minmax", family: "unit-q12-cube-view-minmax", partCount: 1 },
+  { question: 13, typeId: "book09-unit-test-q13", generator: unitTestQ13, reuseTypeId: "magic-square-three-complete", family: "unit-q13-magic-square", partCount: 2 },
+  { question: 14, typeId: "book09-unit-test-q14", generator: unitTestQ14, reuseTypeId: "magic-square-four-pair-sum-b9", family: "unit-q14-magic-four-pair", partCount: 1 },
+  { question: 15, typeId: "book09-unit-test-q15", generator: unitTestQ15, reuseTypeId: "magic-square-swap-pair-b9", family: "unit-q15-magic-swap", partCount: 1 },
+  { question: 16, typeId: "book09-unit-test-q16", generator: unitTestQ16, reuseTypeId: "triangle-edge-sum-six", family: "unit-q16-triangle-edge-sum", partCount: 4 },
+  { question: 17, typeId: "book09-unit-test-q17", generator: unitTestQ17, reuseTypeId: "polygon-ring-equal-sum", family: "unit-q17-pentagon-ring", partCount: 1 },
+  { question: 18, typeId: "book09-unit-test-q18", generator: unitTestQ18, reuseTypeId: "circle-line-ring-equal-sum", family: "unit-q18-circle-line-ring", partCount: 1 },
+  { question: 19, typeId: "book09-unit-test-q19", generator: unitTestQ19, reuseTypeId: "measurement-order-chain", family: "unit-q19-measurement-chain", partCount: 1 },
+  { question: 20, typeId: "book09-unit-test-q20", generator: unitTestQ20, reuseTypeId: "circular-seat-placement", family: "unit-q20-circular-seating", partCount: 1 },
+  { question: 21, typeId: "book09-unit-test-q21", generator: unitTestQ21, reuseTypeId: "line-ranking-constraints-b9", family: "unit-q21-line-ranking", partCount: 1 },
+  { question: 22, typeId: "book09-unit-test-q22", generator: unitTestQ22, reuseTypeId: "preference-count-matrix-b9", family: "unit-q22-preference-matrix", partCount: 1 },
+  { question: 23, typeId: "book09-unit-test-q23", generator: unitTestQ23, reuseTypeId: "exact-one-answer-assignment-b9", family: "unit-q23-exact-one-answer", partCount: 1 },
+  { question: 24, typeId: "book09-unit-test-q24", generator: unitTestQ24, reuseTypeId: "exclusion-grid-ranking-b9", family: "unit-q24-exclusion-ranking", partCount: 1 },
+  { question: 25, typeId: "book09-unit-test-q25", generator: unitTestQ25, reuseTypeId: "triangle-edge-sum-nine", family: "unit-q25-triangle-edge-sum", partCount: 1 }
+]);
+
+export const BOOK09_UNIT_TEST_GENERATORS = Object.freeze(Object.fromEntries(BOOK09_UNIT_TEST_SPECS.map((spec) => [spec.typeId, spec.generator])));
 
 export const BOOK09_GENERATORS = Object.freeze({
   latinSquareCongruentPartitionBook9,

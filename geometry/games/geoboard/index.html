@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Geoboard Studio</title>
-  <link rel="stylesheet" href="./styles.css?v=geoboard-2" />
+  <link rel="stylesheet" href="./styles.css?v=geoboard-7" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -38,7 +38,14 @@
     </section>
 
     <section class="play-area">
-      <article class="board-panel">
+      <article class="board-panel model-panel">
+        <header class="board-heading"><span id="modelLabel">만들 모양</span><b id="modelShape"></b></header>
+        <div class="board-stage">
+          <svg id="modelBoard" class="board model-board" viewBox="0 0 100 100" role="img" aria-label="Model"></svg>
+        </div>
+      </article>
+      <article class="board-panel build-panel">
+        <header class="board-heading"><span id="buildLabel">내가 만드는 모양</span></header>
         <div class="board-stage">
           <!-- One square viewBox for every level. The engine positions pegs from the
                lattice size, so a future 6x6 board needs no markup change. -->
@@ -53,10 +60,6 @@
         </div>
       </article>
       <aside id="toolPanel" class="tool-panel" aria-label="게임 도구">
-        <figure class="model-card">
-          <figcaption><span id="modelLabel">Build this</span><b id="modelShape"></b></figcaption>
-          <svg id="modelBoard" class="model-board" viewBox="0 0 100 100" role="img" aria-label="Model"></svg>
-        </figure>
         <button id="hintButton" type="button">Hint</button>
         <button id="retryButton" type="button">Clear</button>
       </aside>
@@ -74,9 +77,16 @@
     </aside>
 
     <div id="tutorial" class="dialog" hidden>
-      <section class="tutorial-card" role="dialog" aria-modal="true">
+      <section class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialText">
         <span class="cubi-sprite" aria-hidden="true"></span>
-        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
+        <div class="tutorial-demo" aria-hidden="true">
+          <svg id="tutorialBoard" viewBox="0 0 100 100">
+            <rect class="tutorial-board-face" x="2" y="2" width="96" height="96" rx="5" />
+            <g id="tutorialDemoLayer"></g>
+            <g id="tutorialPegLayer"></g>
+          </svg>
+        </div>
+        <div class="tutorial-copy"><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
       </section>
     </div>
 
@@ -98,7 +108,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=geoboard-2"></script>
+  <script type="module" src="./app.js?v=geoboard-7"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>
