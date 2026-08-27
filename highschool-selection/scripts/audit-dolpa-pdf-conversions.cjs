@@ -47,4 +47,3 @@ const summary = {
 };
 process.stdout.write(`${JSON.stringify({ summary, issues }, null, 2)}\n`);
 if (issues.length) process.exitCode = 1;
-

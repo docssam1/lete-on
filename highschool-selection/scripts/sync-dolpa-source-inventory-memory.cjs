@@ -96,4 +96,3 @@ upsert(catalog.records, record.id, record);
 catalog.updated = "2026-08-27";
 writeJson(catalogPath, catalog);
 process.stdout.write(`${JSON.stringify({ paths: 693, unique: 334, duplicates: 359, pending: queue.summary.pending || 0, completed: queue.summary.completed || 0, failed: queue.summary.failed || 0 })}\n`);
-
