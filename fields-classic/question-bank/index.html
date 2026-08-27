@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>필즈 더 클래식 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260827a" />
+  <link rel="stylesheet" href="./styles.css?v=20260827c" />
 </head>
 <body>
   <header class="app-header">
@@ -53,6 +53,7 @@
               <div><strong>대분류·중분류·세부 유형</strong><span>여러 영역과 유형을 함께 선택할 수 있습니다.</span></div>
               <button id="toggleBankTypes" type="button">전체 선택</button>
             </div>
+            <div class="academy-style-filter"><strong>출제 스타일</strong><div id="academyStyleFilters"></div></div>
             <div id="bankTypeTree" class="bank-tree"></div>
           </section>
         </div>
@@ -102,13 +103,13 @@
   <dialog id="answerDialog" class="answer-dialog">
     <div class="dialog-head"><div><span>정답과 풀이</span><h2>맞춤 문제 답안지</h2></div><button id="closeAnswer" type="button" aria-label="닫기">×</button></div>
     <div id="answerWatermark" class="watermark" aria-hidden="true"></div>
-    <table><thead><tr><th>번호</th><th>대분류</th><th>중분류</th><th>유형</th><th>정답</th><th>풀이 핵심</th></tr></thead><tbody id="answerBody"></tbody></table>
+    <table><thead><tr><th>번호</th><th>대분류</th><th>중분류</th><th>유형</th><th>스타일</th><th>정답</th><th>풀이 핵심</th></tr></thead><tbody id="answerBody"></tbody></table>
     <div class="dialog-actions"><button id="printAnswerButton" type="button">답안 인쇄</button><button id="closeAnswerBottom" class="primary" type="button">확인</button></div>
   </dialog>
 
   <script src="../../geometry/worksheet/generators.js?v=20260820b"></script>
   <script src="../../geometry/worksheet/render.js?v=20260823c"></script>
   <script src="../../geometry/worksheet/card.js?v=ws-one-1"></script>
-  <script type="module" src="./app.js?v=20260827a"></script>
+  <script type="module" src="./app.js?v=20260827c"></script>
 </body>
 </html>

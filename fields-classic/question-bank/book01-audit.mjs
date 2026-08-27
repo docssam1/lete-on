@@ -78,9 +78,21 @@ function partitionValidity(visual, labels) {
 }
 
 function validatePartition(problem) {
-  const validity = problem.visual.options.map((option) => partitionValidity(problem.visual, option.labels));
-  assert(validity.filter(Boolean).length === 1, "partition answer is not unique");
-  assert(validity[problem.meta.correctOption - 1], "partition correct option mismatch");
+  assert(problem.visual.subtype === "partition-draw", "partition task must ask the learner to draw dividing lines");
+  assert(!problem.prompt.includes("고르세요"), "partition task incorrectly became multiple choice");
+  assert(!problem.visual.options, "partition drawing question must not include answer choices");
+  assert(!problem.visual.labels, "partition drawing question reveals the answer lines");
+  assert(problem.answerVisual?.subtype === "partition-draw", "partition drawing answer visual missing");
+  assert(problem.answerVisual.labels.join() === problem.meta.labels.join(), "partition drawing answer labels mismatch");
+  assert(partitionValidity(problem.answerVisual, problem.meta.labels), "partition drawing answer is invalid");
+  const fullCuts = new Set();
+  problem.meta.labels.forEach((label, index) => {
+    const row = Math.floor(index / problem.visual.columns);
+    const column = index % problem.visual.columns;
+    if (column < problem.visual.columns - 1 && problem.meta.labels[index + 1] !== label) fullCuts.add(`${index}:right`);
+    if (row < problem.visual.rows - 1 && problem.meta.labels[index + problem.visual.columns] !== label) fullCuts.add(`${index}:bottom`);
+  });
+  assert((problem.visual.guideCuts || []).every((cut) => fullCuts.has(cut)), "partition guide line is not part of the answer boundary");
 }
 
 function validateDigital(problem) {

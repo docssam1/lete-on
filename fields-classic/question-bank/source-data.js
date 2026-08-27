@@ -19,8 +19,21 @@ export const DOMAINS = [
   { id: "geometry", label: "도형과 공간", color: "#4779b8" }
 ];
 
+// 한 세부 유형은 여러 학원·교재 스타일에서 함께 나타날 수 있다. 유형을 복제하지 않고
+// academyStyleIds에 출처 스타일을 누적해 다대다로 연결한다.
+export const ACADEMY_STYLES = [
+  { id: "fields-classic", label: "필즈 더 클래식" }
+];
+
 const type = (id, domain, middle, label, options = {}) => ({
-  id, domain, middle, label, difficulty: "actual", status: "classified", ...options
+  id,
+  domain,
+  middle,
+  label,
+  difficulty: "actual",
+  status: "classified",
+  ...options,
+  academyStyleIds: [...new Set(options.academyStyleIds || ["fields-classic"])]
 });
 
 // Geometry World의 검산된 학습지 엔진을 그대로 쓰는 유형이다. 필즈 쪽에

@@ -24,12 +24,24 @@ function shapeTransformMarkup(visual) {
   return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div></div>`;
 }
 
-function partitionChoiceMarkup(visual) {
-  const options = visual.options.map((option) => {
-    const cells = option.labels.map((label, index) => `<i class="piece-${label.toLowerCase()}">${visual.symbols ? `<b>${esc(visual.symbols[index])}</b>` : ""}</i>`).join("");
-    return `<div class="b1-partition-option"><div class="b1-partition-grid" style="--rows:${visual.rows};--columns:${visual.columns}">${cells}</div><strong>${option.option}번</strong></div>`;
+function partitionDrawMarkup(visual) {
+  const symbols = visual.symbols || Array(visual.rows * visual.columns).fill("");
+  const guideCuts = new Set(visual.guideCuts || []);
+  const cells = symbols.map((symbol, index) => {
+    const row = Math.floor(index / visual.columns);
+    const column = index % visual.columns;
+    const label = visual.labels?.[index];
+    const classes = [];
+    if (label) {
+      classes.push(`piece-${label.toLowerCase()}`);
+      if (column < visual.columns - 1 && visual.labels[index + 1] !== label) classes.push("cut-right");
+      if (row < visual.rows - 1 && visual.labels[index + visual.columns] !== label) classes.push("cut-bottom");
+    }
+    if (!visual.labels && guideCuts.has(`${index}:right`)) classes.push("guide-right");
+    if (!visual.labels && guideCuts.has(`${index}:bottom`)) classes.push("guide-bottom");
+    return `<i class="${classes.join(" ")}">${symbol ? `<b>${esc(symbol)}</b>` : ""}</i>`;
   }).join("");
-  return `<div class="b1-partition-options">${options}</div>`;
+  return `<div class="b1-partition-draw"><div class="b1-partition-grid${visual.pivot ? " has-pivot" : ""}" style="--rows:${visual.rows};--columns:${visual.columns}">${cells}</div><strong>${visual.labels ? "완성된 분할선" : "주어진 선을 이어 나누세요"}</strong></div>`;
 }
 
 const SEGMENT_PATHS = Object.freeze({
@@ -109,7 +121,7 @@ function logicCluesMarkup(visual) {
 export function book01Markup(visual) {
   if (!visual || visual.kind !== "book1") return "";
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
-  if (visual.subtype === "partition-choice") return partitionChoiceMarkup(visual);
+  if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
   if (visual.subtype === "digital-board") return digitalBoardMarkup(visual);
   if (visual.subtype === "digital-addition") return digitalAdditionMarkup(visual);

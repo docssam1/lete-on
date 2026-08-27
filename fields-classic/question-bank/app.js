@@ -1,7 +1,7 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260827a";
-import { GENERATORS } from "./generators.js?v=20260827a";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260827c";
+import { GENERATORS } from "./generators.js?v=20260827b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260822e";
+import { book01Markup } from "./book01-renderers.js?v=20260827b";
 import { book03Markup } from "./book03-renderers.js?v=20260825m";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
 import { book05Markup } from "./book05-renderers.js?v=20260826c";
@@ -42,6 +42,7 @@ const state = {
   mode: "exam",
   stage: requestedStage(),
   selected: { exam: new Set(), curriculum: new Set(), unitTest: new Set(), type: new Set() },
+  academyStyles: new Set(ACADEMY_STYLES.map((item) => item.id)),
   count: 20,
   difficulty: "actual",
   curriculumStage: "type",
@@ -372,13 +373,17 @@ function renderCurriculum() {
         const ready = isSelectableCurriculumType(item, book, unit, stage.id);
         const sourceChecked = hasBookSource(item, book, unit);
         const sourceNumbers = studyReferenceLabel(typeReferences);
+        const availableStageLabels = TEXTBOOK_STAGES
+          .filter((candidate) => typeStageReferences(unit, item.id, candidate.id).length > 0)
+          .map((candidate) => candidate.label);
+        const alternateStageLabel = availableStageLabels.length ? `${availableStageLabels.join("·")}에서 선택 가능` : "교재 원본 문항 없음";
         const sourceState = sourceNumbers
           ? `${stage.label} 원본 ${sourceNumbers}`
-          : `${stage.label} 단계 원본 문항 없음`;
+          : `${stage.label} 단계 원본 문항 없음 · ${alternateStageLabel}`;
         return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
           <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
-          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked && !sourceNumbers ? "이 단계에는 없음" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked && !sourceNumbers ? alternateStageLabel : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
       const readyCount = types.filter((item) => isSelectableCurriculumType(item, book, unit)).length;
@@ -433,12 +438,36 @@ function renderCurriculum() {
 }
 
 function groupedTypes() {
+  const matchesStyle = (item) => item.academyStyleIds?.some((id) => state.academyStyles.has(id));
   return DOMAINS.map((domain) => ({
     domain,
-    middles: [...new Set(TYPES.filter((item) => item.domain === domain.id).map((item) => item.middle))].map((middle) => ({
+    middles: [...new Set(TYPES.filter((item) => item.domain === domain.id && matchesStyle(item)).map((item) => item.middle))].map((middle) => ({
       middle,
-      types: TYPES.filter((item) => item.domain === domain.id && item.middle === middle)
+      types: TYPES.filter((item) => item.domain === domain.id && item.middle === middle && matchesStyle(item))
     }))
+  })).filter((group) => group.middles.length);
+}
+
+function academyStyleLabels(item) {
+  return (item?.academyStyleIds || [])
+    .map((id) => ACADEMY_STYLES.find((style) => style.id === id)?.label)
+    .filter(Boolean);
+}
+
+function renderAcademyStyleFilters() {
+  $("academyStyleFilters").innerHTML = ACADEMY_STYLES.map((style) => {
+    const count = TYPES.filter((item) => item.academyStyleIds?.includes(style.id)).length;
+    return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${style.label}</span><em>${count}</em></label>`;
+  }).join("");
+  $("academyStyleFilters").querySelectorAll("input[data-academy-style]").forEach((input) => input.addEventListener("change", () => {
+    if (input.checked) state.academyStyles.add(input.dataset.academyStyle);
+    else state.academyStyles.delete(input.dataset.academyStyle);
+    for (const typeId of [...state.selected.type]) {
+      const item = typeById(typeId);
+      if (!item?.academyStyleIds?.some((id) => state.academyStyles.has(id))) state.selected.type.delete(typeId);
+    }
+    renderTypeTree();
+    updateSummary();
   }));
 }
 
@@ -3217,6 +3246,7 @@ function renderWorksheet() {
         <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
+      <div class="question-style-tags">${academyStyleLabels(question.type).map((label) => `<span>${label}</span>`).join("")}</div>
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
@@ -3243,7 +3273,7 @@ function openAnswers() {
     // 보고 판단하지 않아도 되게.
     const answerPicture = answerVisualMarkup(question);
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${academyStyleLabels(question.type).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }
@@ -3309,6 +3339,7 @@ function initControls() {
 renderStageButtons();
 renderExamList();
 renderCurriculum();
+renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();

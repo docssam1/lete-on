@@ -1,10 +1,21 @@
-import { CURRICULUM, TYPES, typeById } from "./source-data.js";
+import { ACADEMY_STYLES, CURRICULUM, DOMAINS, TYPES, typeById } from "./source-data.js";
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(`TYPE_PRECISION_AUDIT_FAILED: ${message}`);
 };
 
 const curriculumTypeIds = new Set(CURRICULUM.flatMap((book) => book.units.flatMap((unit) => unit.typeIds)));
+const academyStyleIds = new Set(ACADEMY_STYLES.map((item) => item.id));
+const domainIds = new Set(DOMAINS.map((item) => item.id));
+assert(new Set(TYPES.map((item) => item.id)).size === TYPES.length, "duplicate type id");
+for (const item of TYPES) {
+  assert(domainIds.has(item.domain), `${item.id}: unknown major domain ${item.domain}`);
+  assert(typeof item.middle === "string" && item.middle.trim(), `${item.id}: middle domain missing`);
+  assert(typeof item.label === "string" && item.label.trim(), `${item.id}: detailed type label missing`);
+  assert(Array.isArray(item.academyStyleIds) && item.academyStyleIds.length, `${item.id}: academy style tag missing`);
+  assert(new Set(item.academyStyleIds).size === item.academyStyleIds.length, `${item.id}: duplicate academy style tag`);
+  assert(item.academyStyleIds.every((id) => academyStyleIds.has(id)), `${item.id}: unknown academy style tag`);
+}
 const requiredTypes = new Map([
   ["fold-cut-unfold-one-draw", "한 번 접어 자르고 펼친 모양 그리기"],
   ["fold-cut-unfold-two-draw", "두 번 접어 자르고 펼친 모양 그리기"],
