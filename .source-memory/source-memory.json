@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-27",
+  "updated": "2026-08-28",
   "sources": [
     {
       "id": "handover",
@@ -303,6 +303,86 @@
       "sha256": "43d48db16dd2dedf32d7358be10e01bf32ad3aa3854a9defcbb6a96886d71702",
       "size": 9281,
       "mtime_ns": 1787838746509000000
+    },
+    {
+      "id": "prism-d1-1-equal-partition",
+      "title": "Prism D1-1 Equal Partition",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism D1-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "33053b2ae8a162e21a307ad077091fa3b5573c03a26a9ec43001c3ac61a48cd2",
+      "size": 4400942,
+      "mtime_ns": 1581583442000000000
+    },
+    {
+      "id": "prism-e4-3-congruence",
+      "title": "Prism E4-3 Congruent Division",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism E4-3.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "dd7a56ac704693bf6cd2df6e5b7b83316ed91b38e284b24890575be3c688a014",
+      "size": 3141184,
+      "mtime_ns": 1582350082000000000
+    },
+    {
+      "id": "geometry-equal-partition-levels",
+      "title": "Geometry equal partition problem data",
+      "path": "geometry/games/equal-partition/levels.js",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "28d67274abaa1bed55c10954a98aac75ebf451428189e322e340de182bb634ef",
+      "size": 11646,
+      "mtime_ns": 1787841218644527800
+    },
+    {
+      "id": "geometry-equal-partition-selftest",
+      "title": "Geometry equal partition deterministic self-test",
+      "path": "geometry/games/equal-partition/equal-partition.selftest.mjs",
+      "kind": "code",
+      "sensitivity": "public",
+      "sha256": "d014193da205d133f84868ce54d64d9de2d246641fbbe69c06b603c06ef53428",
+      "size": 2250,
+      "mtime_ns": 1787842913005195400
+    },
+    {
+      "id": "prism-d4-1-solid-nets",
+      "title": "Prism D4-1 입체도형과 전개도",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism D4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "4df94728387dd574820e359891995aaa3afaf2fe13e98fccaa2434aa26271bf8",
+      "size": 3281757,
+      "mtime_ns": 1581392410000000000
+    },
+    {
+      "id": "prism-e4-1-cube-nets",
+      "title": "Prism E4-1 주사위와 전개도",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism E4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "db5d01614b4df283b4da87f08121ac783ca44967ab25162cb6f6e01df5968b4d",
+      "size": 3588321,
+      "mtime_ns": 1582342934000000000
+    },
+    {
+      "id": "geometry-net-observatory-levels",
+      "title": "GFIELD 전개도 전망대 50문제 생성기",
+      "path": "geometry/games/net-observatory/levels.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "c3f686f194a5ca91404b5d8eae6b5b52c59b4c7e17d7b85c498a6b66f7397ed2",
+      "size": 16526,
+      "mtime_ns": 1787845437163660100
+    },
+    {
+      "id": "geometry-net-observatory-selftest",
+      "title": "GFIELD 전개도 전망대 독립 검산",
+      "path": "geometry/games/net-observatory/net-observatory.selftest.mjs",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "eabe24587b61d64560001c7935180706d70c0ea3db3d8a28dd6ce1dc7814dc5b",
+      "size": 3075,
+      "mtime_ns": 1787845033158614000
     }
   ],
   "records": [
@@ -4511,6 +4591,92 @@
           "role": "test",
           "locator": "full deterministic test suite",
           "note": "Independent rotation/reflection checks and a separately implemented exact-cover enumerator for all 50 problems and four locales"
+        }
+      ]
+    },
+    {
+      "id": "geometry.equal-partition.prism-foundation",
+      "title": "Equal Partition Prism evidence and public levels",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "partition",
+        "prism",
+        "congruence",
+        "multi-answer"
+      ],
+      "summary": "Prism D1-1 pages 13-25 support equal-size-and-shape division, one-marker-per-region, and equal-sum constraints. Prism E4-3 pages 10-26 support congruent 2-, 3-, and 4-part division; its later similarity work is intentionally excluded. Five public levels contain 50 internally reconstructed grid problems. The validator derives connected regions from user boundaries and accepts every partition satisfying region-count, equal-area, marker, equal-sum, and congruence rules.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-27",
+      "pointers": [
+        {
+          "source_id": "prism-d1-1-equal-partition",
+          "role": "source",
+          "locator": "book p. 13-25",
+          "note": "Visually inspected; activity structure reconstructed without copying paid page layouts"
+        },
+        {
+          "source_id": "prism-e4-3-congruence",
+          "role": "source",
+          "locator": "book p. 10-26",
+          "note": "Visually inspected; congruence retained and later similarity excluded"
+        },
+        {
+          "source_id": "geometry-equal-partition-levels",
+          "role": "code",
+          "locator": "levels, regionsFromCuts, inspectPartition, findSolutions, validateLevels",
+          "note": "Fifty problems and all-valid-partition acceptance"
+        },
+        {
+          "source_id": "geometry-equal-partition-selftest",
+          "role": "test",
+          "locator": "full deterministic test suite",
+          "note": "All 50 sample partitions plus alternate valid answers"
+        }
+      ]
+    },
+    {
+      "id": "geometry.net-observatory.prism-foundation",
+      "title": "전개도 전망대 5단계 학습 근거와 검증",
+      "aliases": [
+        "전개도 전망대 근거"
+      ],
+      "tags": [
+        "geometry",
+        "cube-net",
+        "dice",
+        "regular-solid",
+        "single-answer"
+      ],
+      "summary": "프리즘의 정다면체·정육면체 전개도·주사위 면 관계를 바탕으로 5단계 50문제를 내부 재구성했다. 35개 자유 헥소미노, 11개 정육면체 전개도, 24개 적절한 회전과 정답 유일성을 자동 검산한다. 정다면체 면 관계는 내부 확장이다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-28",
+      "pointers": [
+        {
+          "source_id": "prism-d4-1-solid-nets",
+          "role": "source",
+          "locator": "교재 p.28-42 (PDF p.19-33)",
+          "note": "정다면체와 정육면체 전개도 활동을 원본 페이지 이미지로 확인"
+        },
+        {
+          "source_id": "prism-e4-1-cube-nets",
+          "role": "source",
+          "locator": "교재 p.10-29 (PDF p.7-26)",
+          "note": "주사위 전개도, 마주 보는 면, 기호 방향 활동을 원본 페이지 이미지로 확인"
+        },
+        {
+          "source_id": "geometry-net-observatory-levels",
+          "role": "code",
+          "locator": "validateLevels 및 levels 1-5",
+          "note": "5단계 50문제와 적절한 회전만 허용하는 보기 생성"
+        },
+        {
+          "source_id": "geometry-net-observatory-selftest",
+          "role": "audit",
+          "locator": "독립 헥소미노 열거와 정다면체 오일러 검산",
+          "note": "게임 계산과 별도 정규화로 35개와 11개를 재검산"
         }
       ]
     }

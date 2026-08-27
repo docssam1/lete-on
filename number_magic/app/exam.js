@@ -68,6 +68,12 @@ function texToPlain(tex){
     const rows = inner.split('\\\\').map(r => r.trim().split('&').map(c => c.trim()).join(' '));
     return '(' + rows.join(' / ') + ')';
   });
+  /* 구간별 함수(\begin{cases}...\end{cases}, MD59) — 행마다 "값 (조건)"으로
+     풀어 세미콜론으로 잇는다. 2026-08-27 심화 유형 2차 신규(MD59). */
+  s = s.replace(/\\begin\{cases\}([\s\S]*?)\\end\{cases\}/g, (_, inner) => {
+    const rows = inner.split('\\\\').map(r => r.trim().split('&').map(c => c.trim()).join(' ')).filter(Boolean);
+    return '{' + rows.join('; ') + '}';
+  });
   s = s.replace(/\\square/g,'□');
   /* \sqrt{}·\overline{}는 자기 괄호를 갖는 "안쪽" 명령이라, 바깥의 \dfrac{}{}·
      \frac{}{}보다 먼저 벗겨내야 한다 — 안 그러면 \dfrac{\square\pm\sqrt{\square}}{r}
@@ -81,9 +87,13 @@ function texToPlain(tex){
   s = s.replace(/\\text\{([^{}]*)\}/g,'$1');
   s = s.replace(/\\times/g,'×');
   s = s.replace(/\\div/g,'÷');
+  /* \cdots는 \cdot로 시작하는 문자열이라, \cdot을 먼저 치환하면 "\cdot"
+     부분만 먼저 먹혀 뒤에 "s"만 남고("×s") \cdots 규칙이 다시는 못
+     매치되는 순서 버그였다(2026-08-27, 전 스레드 잔여물 스캔 중 발견 —
+     실사용 중인 "…" 표기가 실제로 깨져 있었다). \cdots를 먼저 처리. */
+  s = s.replace(/\\cdots/g,'⋯');
   s = s.replace(/\\cdot/g,'×');
   s = s.replace(/\\bigcirc/g,'○');
-  s = s.replace(/\\cdots/g,'⋯');
   s = s.replace(/\\dots/g,'…');
   s = s.replace(/\\Rightarrow/g,'⇒');
   s = s.replace(/\\rightarrow/g,'→');
@@ -112,6 +122,17 @@ function texToPlain(tex){
   s = s.replace(/\\cos/g,'cos');
   s = s.replace(/\\tan/g,'tan');
   s = s.replace(/\\to/g,'→');
+  /* 고등 심화 2차(2026-08-27, MD54·MD57) 신규 — \pi는 원주율 기호로. */
+  s = s.replace(/\\pi/g,'π');
+  /* 전 스레드 잔여물 스캔(2026-08-27, 심화 유형 2차 검증 중 발견) —
+     \circ(각도 기호, mid6.js MD39 삼각비부터 이미 쓰였고 mid8.js
+     MD55·MD56에서 대폭 늘어남)와 \max·\min(mid.js 최대·최소 유닛,
+     이 파일과 무관하게 이미 있었음)이 치환표에 없어 "^circ"·"max"
+     처럼 백슬래시만 벗겨진 잔여물로 남아 있었다 — 전체 스레드 스캔으로
+     찾아 함께 등록. */
+  s = s.replace(/\\circ/g,'°');
+  s = s.replace(/\\max/g,'max');
+  s = s.replace(/\\min/g,'min');
   s = s.replace(/\\qquad/g,'    ');
   s = s.replace(/\\quad/g,'  ');
   s = s.replace(/\\[;,!]/g,' ');

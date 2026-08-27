@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD 똑같이 나누기</title>
+  <link rel="stylesheet" href="./styles.css?v=equal-1" />
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#315f52" />
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+</head>
+<body>
+  <aside class="portrait-guard" aria-live="polite"><span>↻</span><strong id="rotateMessage"></strong></aside>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="icon-button" href="../../shape-garden/" aria-label="도형 정원으로 나가기">←</a>
+      <div class="brand"><strong>GFIELD</strong><small id="gameName"></small></div>
+      <div class="progress"><b id="levelLabel"></b><span id="problemLabel"></span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="음소거">♪</button>
+      <button id="levelButton" class="level-button" type="button"></button>
+    </header>
+
+    <section class="mission"><div><span id="stars">*----</span><h1 id="missionTitle"></h1></div><p id="prompt"></p></section>
+
+    <section class="play-area">
+      <article class="board-panel">
+        <header><strong id="boardTitle"></strong><span id="regionStatus"></span></header>
+        <div id="boardStage" class="board-stage"></div>
+      </article>
+      <aside class="rule-panel">
+        <div id="ruleBadge" class="rule-badge"></div>
+        <ol id="ruleList"></ol>
+        <div class="tools">
+          <button id="checkButton" class="primary" type="button"></button>
+          <button id="undoButton" type="button"></button>
+          <button id="hintButton" type="button"></button>
+          <button id="clearButton" type="button"></button>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="answer-dock"><p id="feedback"></p><button id="nextButton" type="button" hidden></button></footer>
+
+    <aside id="cubiGuide" class="cubi-guide" aria-live="polite"><div id="guideBubble"></div><span class="cubi-sprite"></span></aside>
+    <div id="success" class="success" aria-hidden="true"><i></i><strong>SUCCESS!</strong></div>
+
+    <div id="tutorial" class="dialog" hidden><section class="tutorial-card" role="dialog" aria-modal="true"><span class="cubi-sprite"></span><div><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><div id="tutorialDots"></div><button id="tutorialNext" type="button"></button></div></section></div>
+    <div id="levelDialog" class="dialog" hidden><section role="dialog" aria-modal="true"><header><h2 id="levelDialogTitle"></h2><button id="closeLevels" type="button" aria-label="닫기">×</button></header><div id="levelList" class="level-list"></div></section></div>
+    <div id="completeDialog" class="dialog" hidden><section class="complete-card" role="dialog" aria-modal="true"><span class="cubi-sprite"></span><h2 id="completeTitle"></h2><p id="completeText"></p><div><button id="nextLevelButton" type="button"></button><button id="practiceButton" type="button"></button><a href="../../shape-garden/" id="gardenLink"></a></div></section></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js?v=equal-1"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

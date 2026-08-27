@@ -25,22 +25,22 @@ const zoneCopy = {
     mirrorManor: ["거울 저택", "거울과 대칭의 비밀을 관찰해요"],
     geoboardYard: ["점판 공작소", "점과 선으로 도형을 만들어요"],
     crystalPlaza: ["지오메트리 랩", "문제은행과 탐구 학습을 만나요"],
-    shapeGarden: ["도형 조각 정원", "조각을 돌려 같은 모양을 찾아요"]
+    shapeGarden: ["도형 조각 정원", "조각을 맞추고 조건에 따라 나누어요"]
   },
   zh: {
     cubeCastle: ["积木城堡", "搭建、计数并探索空间"], origamiStudio: ["折纸工坊", "折叠展开，寻找对称"],
     mirrorManor: ["镜子庄园", "观察镜像与对称"], geoboardYard: ["钉板工坊", "用点和线创造图形"],
-    crystalPlaza: ["几何实验室", "探索题库与几何活动"], shapeGarden: ["图形拼片花园", "旋转拼片，寻找相同图形"]
+    crystalPlaza: ["几何实验室", "探索题库与几何活动"], shapeGarden: ["图形拼片花园", "拼合图形并按条件等分"]
   },
   ja: {
     cubeCastle: ["つみき城", "積んで数えて空間を探検"], origamiStudio: ["おりがみ工房", "折って開いて対称を発見"],
     mirrorManor: ["鏡の館", "鏡と対称のひみつを観察"], geoboardYard: ["ジオボード工房", "点と線で図形を作ろう"],
-    crystalPlaza: ["ジオメトリーラボ", "問題と探究学習に挑戦"], shapeGarden: ["図形ピースの庭", "ピースを回して同じ形を見つけよう"]
+    crystalPlaza: ["ジオメトリーラボ", "問題と探究学習に挑戦"], shapeGarden: ["図形ピースの庭", "ピースを合わせ、条件にそって分けよう"]
   },
   en: {
     cubeCastle: ["Cube Castle", "Build, count, and explore space"], origamiStudio: ["Origami Studio", "Fold, unfold, and find symmetry"],
     mirrorManor: ["Mirror Manor", "Explore reflections and symmetry"], geoboardYard: ["Geoboard Yard", "Create shapes with points and lines"],
-    crystalPlaza: ["Geometry Lab", "Discover worksheets and challenges"], shapeGarden: ["Shape Garden", "Rotate pieces and find matching shapes"]
+    crystalPlaza: ["Geometry Lab", "Discover worksheets and challenges"], shapeGarden: ["Shape Garden", "Match pieces and partition shapes by rules"]
   }
 };
 const districtCopy = {

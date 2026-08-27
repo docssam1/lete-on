@@ -143,6 +143,31 @@ function academyQuestionDb() {
   return database;
 }
 
+function projectQuestionIndex() {
+  return {
+    schemaVersion: 1,
+    academyProfiles: [
+      { profileId: "DP_STANDARD", programId: "DP", label: "돌파형" },
+      { profileId: "WM_BASIC", programId: "WM", label: "원수학 기본형" }
+    ],
+    sourceBanks: [{ sourceBankId: "WONMATH-M21", label: "원수학 중2-1 기본반" }],
+    sourceTypes: [{
+      sourceBankId: "WONMATH-M21", sourceTypeId: "WM-U1", semester: "중1", majorUnit: "수와 연산",
+      minorUnit: "소인수분해", detailType: "소인수분해"
+    }],
+    conceptFamilies: [], overlapCandidates: [], typeRelations: [],
+    items: [{
+      itemId: "WONMATH-M21:R01-Q01", sourceBankId: "WONMATH-M21", sourceItemId: "R01-Q01", sourceTypeId: "WM-U1",
+      conceptFamilyId: null, canonicalConceptFamilyId: null, conceptStatus: "unit_only", classificationStatus: "verified_unit_only",
+      detailPrecision: "unit_only", academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
+    }],
+    summary: {
+      sourceBankCount: 1, itemCount: 1, mappedItemCount: 0, unitOnlyItemCount: 1, pendingItemCount: 0,
+      sourceTypeCount: 1, conceptFamilyCount: 0, exactMergedFamilyCount: 0, overlapCandidateCount: 0
+    }
+  };
+}
+
 function privateConfig() {
   return {
     schemaVersion: "highselect-private-config/v1",
@@ -347,6 +372,21 @@ test("academy profile catalog is admin-only and returns safe classified Dolpa ro
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_DUAL`, { headers: { Cookie: admin.cookie } })).status, 200);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=UNKNOWN`, { headers: { Cookie: admin.cookie } })).status, 400);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD&unknown=1`, { headers: { Cookie: admin.cookie } })).status, 400);
+});
+
+test("academy profile catalog prefers the project-wide index when it is connected", async t => {
+  const env = await start(undefined, { privateProjectQuestionIndex: projectQuestionIndex() });
+  t.after(() => env.server.close());
+  const admin = await login(env.base);
+  const response = await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_BASIC`, { headers: { Cookie: admin.cookie } });
+  assert.equal(response.status, 200);
+  const packet = await response.json();
+  assert.equal(packet.count, 1);
+  assert.equal(packet.items[0].questionId, "WONMATH-M21:R01-Q01");
+  assert.equal(packet.items[0].sourceLabel, "원수학 중2-1 기본반");
+  assert.equal(packet.items[0].conceptStatus, "unit_only");
+  assert.equal(packet.items[0].reviewChecks.classification, false);
+  assertNoPrivateFields(packet);
 });
 
 test("academy source page preview is admin-only, hash-checked and never exposes its file path", async t => {

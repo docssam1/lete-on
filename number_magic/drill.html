@@ -237,6 +237,7 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <script src="engine/threads/mid5.js"></script>
 <script src="engine/threads/mid6.js"></script>
 <script src="engine/threads/mid7.js"></script>
+<script src="engine/threads/mid8.js"></script>
 <script src="data/threads.js"></script>
 <script src="app/exam.js"></script>
 
@@ -342,6 +343,21 @@ var TOPICS = [
       {label:'유한소수 판별(약분 필요)', thread:'MD8', level:2, desc:'약분 후 판정'},
       {label:'순환소수→분수 (1·1자리)', thread:'MD9', level:1, desc:'비순환1·순환1'},
       {label:'순환소수→분수 (실전)', thread:'MD9', level:4, desc:'비순환2·순환2'},
+      {label:'문자식 표현(한 문자)', thread:'MD47', level:1, desc:'[계수,지수]'},
+      {label:'문자식 표현(나눗셈→분수)', thread:'MD47', level:2, desc:'[분자,분모]'},
+      {label:'문자식 표현(두 문자, 실전)', thread:'MD47', level:3, desc:'[계수,지수1,지수2]'},
+      {label:'식의 값(일차식)', thread:'MD48', level:1, desc:'대입'},
+      {label:'식의 값(이차식, 음수 대입)', thread:'MD48', level:2, desc:'대입'},
+      {label:'식의 값(문자 두 개, 실전)', thread:'MD48', level:3, desc:'대입'},
+      {label:'일차식 계산(분배법칙)', thread:'MD49', level:1, desc:'[계수,상수]'},
+      {label:'일차식 계산(동류항)', thread:'MD49', level:2, desc:'[계수,상수]'},
+      {label:'일차식 계산(분배+동류항, 실전)', thread:'MD49', level:3, desc:'[계수,상수]'},
+      {label:'일차방정식(한 단계)', thread:'MD50', level:1, desc:'ax=c'},
+      {label:'일차방정식(두 단계)', thread:'MD50', level:2, desc:'ax+b=c'},
+      {label:'일차방정식(양변에 미지수, 실전)', thread:'MD50', level:3, desc:'ax+b=cx+d'},
+      {label:'정비례 값', thread:'MD51', level:1, desc:'y=ax'},
+      {label:'반비례 값', thread:'MD51', level:2, desc:'y=a/x'},
+      {label:'정비례·반비례 혼합(실전)', thread:'MD51', level:3, desc:'혼합'},
     ]
   },
   { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', icon:'📐', color:'#5a4a8a', section:'magic',
@@ -461,6 +477,24 @@ var TOPICS = [
       {label:'Σk(무지개 덧셈법)', thread:'MD42', level:1, desc:'n(n+1)÷2'},
       {label:'Σk²(제곱수의 합)', thread:'MD42', level:2, desc:'n(n+1)(2n+1)÷6'},
       {label:'Σ(pk+q) 쪼개기(실전)', thread:'MD42', level:3, desc:'pΣk+qn'},
+      {label:'지수방정식(밑이 같음)', thread:'MD52', level:1, desc:'x'},
+      {label:'지수방정식(계수 있음)', thread:'MD52', level:2, desc:'x'},
+      {label:'지수방정식(밑 통일부터, 실전)', thread:'MD52', level:3, desc:'x'},
+      {label:'로그방정식(정의로 풀기)', thread:'MD53', level:1, desc:'x'},
+      {label:'로그방정식(덧셈 성질)', thread:'MD53', level:2, desc:'x'},
+      {label:'로그방정식(뺄셈 성질, 실전)', thread:'MD53', level:3, desc:'x'},
+      {label:'지수부등식', thread:'MD54', level:1, desc:'경계값'},
+      {label:'지수부등식(계수 있음)', thread:'MD54', level:2, desc:'경계값'},
+      {label:'로그부등식(실전)', thread:'MD54', level:3, desc:'경계값'},
+      {label:'사인법칙(30°·90°)', thread:'MD55', level:1, desc:'2R'},
+      {label:'사인법칙(45°, 근호)', thread:'MD55', level:2, desc:'[계수,근호안]'},
+      {label:'사인법칙(거꾸로, 실전)', thread:'MD55', level:3, desc:'변 a'},
+      {label:'코사인법칙(90°)', thread:'MD56', level:1, desc:'변 a'},
+      {label:'코사인법칙(60°)', thread:'MD56', level:2, desc:'변 a'},
+      {label:'코사인법칙(120°, 실전)', thread:'MD56', level:3, desc:'변 a'},
+      {label:'삼각함수 최댓값·최솟값', thread:'MD57', level:1, desc:'[최대,최소]'},
+      {label:'삼각함수 주기(sin·cos)', thread:'MD57', level:2, desc:'[분자,분모]π'},
+      {label:'삼각함수 혼합(주기+tan, 실전)', thread:'MD57', level:3, desc:'혼합'},
     ]
   },
   { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', icon:'🧭', color:'#0d3b66', section:'magic',
@@ -477,6 +511,21 @@ var TOPICS = [
       {label:'부정적분(일차식, 2다칸)', thread:'MD46', level:1, desc:'+C'},
       {label:'부정적분(이차식, 3다칸)', thread:'MD46', level:2, desc:'+C'},
       {label:'정적분 값(실전)', thread:'MD46', level:3, desc:'F(q)-F(p)'},
+      {label:'유리화형 극한(분모 근호)', thread:'MD58', level:1, desc:'정수'},
+      {label:'유리화형 극한(분자 근호)', thread:'MD58', level:2, desc:'분수'},
+      {label:'유리화형 극한(혼합, 실전)', thread:'MD58', level:3, desc:'혼합'},
+      {label:'연속조건(제곱 차 인수분해)', thread:'MD59', level:1, desc:'k'},
+      {label:'연속조건(일반 인수분해)', thread:'MD59', level:2, desc:'k'},
+      {label:'연속조건(구간별 경계, 실전)', thread:'MD59', level:3, desc:'b'},
+      {label:'극값을 갖는 x좌표', thread:'MD60', level:1, desc:'[r1,r2]'},
+      {label:'극댓값·극솟값', thread:'MD60', level:2, desc:'[극대,극소]'},
+      {label:'극값(더 큰 범위, 실전)', thread:'MD60', level:3, desc:'[극대,극소]'},
+      {label:'곡선과 x축 사이 넓이', thread:'MD61', level:1, desc:'정적분'},
+      {label:'넓이(음수 교점 포함)', thread:'MD61', level:2, desc:'정적분'},
+      {label:'넓이(더 큰 범위, 실전)', thread:'MD61', level:3, desc:'정적분'},
+      {label:'위치→속도', thread:'MD62', level:1, desc:"s'(t0)"},
+      {label:'속도→거리(0~T)', thread:'MD62', level:2, desc:'정적분'},
+      {label:'속도→거리(구간 [t1,t2], 실전)', thread:'MD62', level:3, desc:'정적분'},
     ]
   }
 ];

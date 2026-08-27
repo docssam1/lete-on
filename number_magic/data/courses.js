@@ -126,12 +126,17 @@ const COURSE_SPEC = [
     (CH-시리즈) 재료 일부(작업 지시 "이전 과정 복습 풀에는 경시의 탑 재료
     일부 포함") — CH5(순환소수 나눗셈)는 course29의 자기 재료로 등록해
     이후 과정(30·31)의 priorPool 복습 순환에도 자동으로 실린다. */
+ /* 29~31 보강(2026-08-27, 심화 유형 2차 작업지시 "중1 문자식은 과정
+    29~31 구간 보강") — 중1 문자와 식(MD47~51)을 새 과정을 만들지
+    않고 기존 세 과정에 나눠 얹는다. 세션 수는 클램프(3~5) 안에
+    그대로 들어가(3+2=5, 3+2=5, 3+1=4) 자동 병합 없이 깔끔하게
+    늘어난다. */
  {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
-   drills:['MD1','MD2','MD3','CH5'], magic:[['M-01'],['M-02'],['M-03']]},
+   drills:['MD1','MD2','MD3','CH5','MD47','MD48'], magic:[['M-01'],['M-02'],['M-03'],['M-47'],['M-48']]},
  {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
-   drills:['MD4','MD5','MD6'], magic:[['M-04'],['M-05'],['M-06']]},
+   drills:['MD4','MD5','MD6','MD49','MD50'], magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50']]},
  {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
-   drills:['MD7','MD8','MD9'], magic:[['M-07'],['M-08'],['M-09']]},
+   drills:['MD7','MD8','MD9','MD51'], magic:[['M-07'],['M-08'],['M-09'],['M-51']]},
 
  /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
     drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
@@ -175,6 +180,23 @@ const COURSE_SPEC = [
    drills:['MD43','MD44','MD42'], magic:[['M-43'],['M-44']]},
  {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
    drills:['MD45','MD46'], magic:[['M-45'],['M-46']]},
+
+ /* 44~45 신설(2026-08-27, 심화 유형 2차 작업지시 "대수·미적분Ⅰ 심화는
+    과정 40~43 세션 추가 또는 44~45 신설 — 판단해서 보고"). 40~43은
+    이미 3~4개 마법 슬롯이 차 있어 5개씩(지수·로그방정식/부등식 3종 +
+    사인·코사인법칙 2종 + 최대최소주기 1종 = 6종, 극한 심화 5종)을
+    더 얹으면 세션이 8~9개까지 불어나 자동 병합(§편성 규칙 2)이 여러
+    유닛을 한 세션에 뭉쳐버린다 — 새 과정을 만드는 쪽이 세션 수를
+    클램프(3~5) 안에 깔끔히 유지한다(44는 6→5, 사인·코사인법칙만
+    한 세션에 의도적으로 묶음. 45는 5→5, 병합 없음). course44
+    drills에 직전 재료 MD42(Σ)를, course45엔 MD46(적분)을 복습 풀에
+    얹는다(40·42가 앞 과정 마지막 재료를 얹던 것과 같은 관례). */
+ {id:44, tier:'algebra', title:{ko:'지수·로그방정식과 삼각법',en:'Exponential/Log Equations & Trigonometry',zh:'指数·对数方程与三角法'},
+   drills:['MD52','MD53','MD54','MD55','MD56','MD57','MD42'],
+   magic:[['M-52'],['M-53'],['M-54'],['M-55','M-56'],['M-57']]},
+ {id:45, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
+   drills:['MD58','MD59','MD60','MD61','MD62','MD46'],
+   magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']]},
 ];
 
 function buildCourses(NM_THREADS){

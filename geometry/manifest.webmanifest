@@ -2,7 +2,7 @@
   "id": "/geometry/",
   "name": "GFIELD Geometry World",
   "short_name": "Geometry World",
-  "description": "GFIELD Cube Town에서 쌓기나무로 공간 감각을 키우는 어린이 수학 게임",
+  "description": "쌓기나무, 색종이, 점판과 입체 탐구로 공간 감각을 키우는 GFIELD 도형 수학 세계",
   "lang": "ko",
   "start_url": "/geometry/world-map/",
   "scope": "/geometry/",
