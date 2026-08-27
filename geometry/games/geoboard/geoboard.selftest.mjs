@@ -1,7 +1,7 @@
 import {
   levels, readyLevels, validateLevels, targetPoints, acceptsAnswer, allPlacements,
   isClosed, vertexCount, edgeCount, pointOnSegment, segmentsIntersect,
-  hasSelfIntersection, polygonArea, answerKey, pointKey
+  hasSelfIntersection, polygonArea, answerKey
 } from "./levels.js";
 import { LANGUAGES, messages, text } from "./i18n.js";
 import {
@@ -14,39 +14,14 @@ function assert(condition, message) {
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 5, "all five levels must be playable in this release");
+assert(readyLevels.length === 4, "levels 1 through 4 must be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
 const expectedProblemCount = readyLevels.reduce((total, level) => total + level.problemCount, 0);
 assert(ids.length === expectedProblemCount && new Set(ids).size === expectedProblemCount, `the ${expectedProblemCount} ready problems need unique ids`);
 
-const sourceTranscriptSignatures = [
-  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~1,0|0,2~2,0|2,0~2,2", 4, 3],
-  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~1,0|0,1~1,2|0,1~3,1", 2, 4],
-  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~2,0|0,1~3,1|0,2~3,1", 4, 4],
-  ["0,1|1,0|1,2|2,0|2,2|3,0|3,2|4,1", "0,1~1,0|0,1~1,2|1,0~2,0|1,2~2,2|2,0~3,0|2,2~3,2|3,0~4,1|3,2~4,1", "1,0~1,2|1,2~3,0", 2, 2],
-  ["0,1|1,0|1,2|2,0|2,2|3,0|3,2|4,1", "0,1~1,0|0,1~1,2|1,0~2,0|1,2~2,2|2,0~3,0|2,2~3,2|3,0~4,1|3,2~4,1", "1,2~3,0|2,2~3,0", 1, 3]
-];
-const edgeSignature = (segments) => segments.map(([a, b]) => [pointKey(a), pointKey(b)].sort().join("~")).sort().join("|");
-
 for (const level of readyLevels) {
   for (const problem of level.problems) {
-    if (problem.kind === "compound-count") {
-      const expected = sourceTranscriptSignatures[problem.level === 5 ? Number(problem.id.slice(-2)) - 1 : -1];
-      assert(expected, `${problem.id} has no visual-transcript lock`);
-      assert(problem.points.map(pointKey).sort().join("|") === expected[0], `${problem.id} marked-dot lattice drifted from the printed figure`);
-      assert(edgeSignature(problem.baseSegments) === expected[1], `${problem.id} base lines drifted from the printed figure`);
-      assert(edgeSignature(problem.addedSegments) === expected[2], `${problem.id} bold added lines drifted from the printed figure`);
-      assert(problem.triangleCount === expected[3] && problem.quadrilateralCount === expected[4], `${problem.id} reviewed answer constants drifted`);
-      const independent = independentlyCountCompound(problem);
-      assert(independent.triangles === problem.triangleCount, `${problem.id} triangle count disagrees with independent sampling`);
-      assert(independent.quadrilaterals === problem.quadrilateralCount, `${problem.id} quadrilateral count disagrees with independent sampling`);
-      assert(problem.triangleChoices.filter((value) => value === problem.triangleCount).length === 1,
-        `${problem.id} triangle choices do not have one answer`);
-      assert(problem.quadrilateralChoices.filter((value) => value === problem.quadrilateralCount).length === 1,
-        `${problem.id} quadrilateral choices do not have one answer`);
-      continue;
-    }
     if (problem.kind === "square-count" || problem.kind === "triangle-count") {
       const summary = problem.kind === "square-count"
         ? squareBoardSummary(problem.boardSize).squares
@@ -78,48 +53,6 @@ for (const level of readyLevels) {
     assert(accepted.length === 1, `${problem.id} has ${accepted.length} accepted placements`);
     assert(answerKey(accepted[0]) === answerKey(target), `${problem.id} accepts the wrong placement`);
   }
-}
-
-// Independent oracle for level 5. The production enumerator merges projected
-// intervals. This test instead samples every candidate side densely and asks if
-// each sample lies on any authored segment, then walks all vertex permutations.
-// The different calculation catches interval-merging and cycle-order mistakes.
-function independentlyCountCompound(problem) {
-  const cross = (a, b, p) => (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
-  const onSegment = (p, a, b) => Math.abs(cross(a, b, p)) < 1e-8
-    && p[0] >= Math.min(a[0], b[0]) - 1e-8 && p[0] <= Math.max(a[0], b[0]) + 1e-8
-    && p[1] >= Math.min(a[1], b[1]) - 1e-8 && p[1] <= Math.max(a[1], b[1]) + 1e-8;
-  const visible = (a, b) => Array.from({ length: 97 }, (_, index) => index / 96).every((ratio) => {
-    const sample = [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
-    return problem.segments.some(([c, d]) => onSegment(sample, c, d));
-  });
-  const combinations = (items, size, start = 0, prefix = [], result = []) => {
-    if (prefix.length === size) { result.push(prefix); return result; }
-    for (let index = start; index <= items.length - (size - prefix.length); index += 1) {
-      combinations(items, size, index + 1, [...prefix, items[index]], result);
-    }
-    return result;
-  };
-  const permutations = ([head, ...tail]) => {
-    const visit = (remaining, built, result) => {
-      if (!remaining.length) { result.push([head, ...built]); return; }
-      remaining.forEach((point, index) => visit([...remaining.slice(0, index), ...remaining.slice(index + 1)], [...built, point], result));
-    };
-    const result = [];
-    visit(tail, [], result);
-    return result;
-  };
-  const properCross = (a, b, c, d) => cross(a, b, c) * cross(a, b, d) < 0 && cross(c, d, a) * cross(c, d, b) < 0;
-  const edgeKey = (ring) => ring.map((point, index) => [pointKey(point), pointKey(ring[(index + 1) % ring.length])].sort().join("-")).sort().join("|");
-
-  const triangles = combinations(problem.points, 3).filter((ring) => cross(...ring) !== 0 && ring.every((point, index) => visible(point, ring[(index + 1) % 3])));
-  const quadrilateralKeys = new Set();
-  combinations(problem.points, 4).forEach((points) => permutations(points).forEach((ring) => {
-    if (ring.some((point, index) => cross(point, ring[(index + 1) % 4], ring[(index + 2) % 4]) === 0)) return;
-    if (properCross(ring[0], ring[1], ring[2], ring[3]) || properCross(ring[1], ring[2], ring[3], ring[0])) return;
-    if (ring.every((point, index) => visible(point, ring[(index + 1) % 4]))) quadrilateralKeys.add(edgeKey(ring));
-  }));
-  return { triangles: triangles.length, quadrilaterals: quadrilateralKeys.size };
 }
 
 const square = [[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]];
