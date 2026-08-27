@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-2";
-import { messages, text } from "./i18n.js?v=mirror-manor-2";
+} from "./levels.js?v=mirror-manor-3";
+import { messages, text } from "./i18n.js?v=mirror-manor-3";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -38,8 +38,8 @@ const TUTORIAL_KEY = "gfield-mirror-manor-tutorial-v1";
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
 
-// Levels 3-5 exist in the data table but ship no problems yet, so a ?level=4 link
-// (or an old saved record) falls back to the highest level that is actually ready.
+// Levels 4-5 remain locked until their source-backed symbol and double-mirror
+// pools are verified, so an old ?level=4 link falls back to level 3 for now.
 const highestReady = readyLevels[readyLevels.length - 1].id;
 const askedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const startLevel = levels.find((level) => level.id === askedLevel)?.ready ? askedLevel : Math.min(Math.max(1, askedLevel), highestReady);
@@ -53,6 +53,7 @@ const state = {
   usedTargets: new Set(),
   usedTrayPieces: new Set(),
   solved: false,
+  distanceChoice: null,
   wrong: 0,
   hints: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
@@ -141,6 +142,7 @@ function renderBoard() {
   ui.board.style.setProperty("--rows", grid.rows);
   ui.board.classList.toggle("is-paint", p.interaction === "paint-reflection");
   ui.board.classList.toggle("is-drag", p.interaction === "drag-reflection");
+  ui.board.classList.toggle("is-distance", p.interaction === "distance-match");
   // The two sides are told apart visually by the silvered mirror band and the cell
   // shading; screen readers get the same information through the label instead of
   // on-board chips, which would sit on top of tappable answer cells.
@@ -158,6 +160,11 @@ function renderBoard() {
 function renderCells() {
   const p = problem();
   const { grid, axis } = p;
+  ui.cells.classList.toggle("distance-cells", p.interaction === "distance-match");
+  if (p.interaction === "distance-match") {
+    renderDistanceNodes(p);
+    return;
+  }
   const paint = p.interaction === "paint-reflection";
   const givenIds = paint
     ? new Set(p.sourceCells.map(cellId))
@@ -185,6 +192,52 @@ function renderCells() {
     }
   }
   ui.cells.replaceChildren(fragment);
+}
+
+function distanceDotPosition(cell, grid) {
+  const [x, y] = cell;
+  // Triangle-grid rows are staggered slightly. The underlying coordinates remain
+  // integer grid points, so reflection and answer validation stay identical.
+  const stagger = grid.lattice === "triangle" && y % 2 ? 0.24 : 0;
+  return { left: fraction(x + .5 + stagger, grid.cols), top: fraction(y + .5, grid.rows) };
+}
+
+function renderDistanceNodes(p) {
+  ui.cells.classList.add("distance-cells");
+  const gridDots = document.createElement("span");
+  gridDots.className = "distance-grid";
+  for (let y = 0; y < p.grid.rows; y += 1) {
+    for (let x = 0; x < p.grid.cols; x += 1) {
+      const dot = document.createElement("i");
+      const position = distanceDotPosition([x, y], p.grid);
+      dot.style.left = position.left;
+      dot.style.top = position.top;
+      gridDots.append(dot);
+    }
+  }
+  const source = document.createElement("span");
+  source.className = "distance-source";
+  const sourcePosition = distanceDotPosition(p.sourceCell, p.grid);
+  source.style.left = sourcePosition.left;
+  source.style.top = sourcePosition.top;
+  source.setAttribute("aria-label", t("sourceDotAria"));
+  ui.cells.replaceChildren(gridDots, source);
+
+  p.choices.forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "distance-choice";
+    button.dataset.x = choice[0];
+    button.dataset.y = choice[1];
+    button.disabled = state.solved;
+    const position = distanceDotPosition(choice, p.grid);
+    button.style.left = position.left;
+    button.style.top = position.top;
+    button.setAttribute("aria-label", t("choiceDotAria", { number: index + 1 }));
+    if (state.distanceChoice === cellId(choice)) button.classList.add("selected");
+    button.append(document.createElement("i"));
+    ui.cells.append(button);
+  });
 }
 
 function objectNode(cells, className, grid, label) {
@@ -302,6 +355,7 @@ function onCellPointerDown(event) {
 }
 
 function onCellClick(event) {
+  if (problem().interaction === "distance-match") return onDistanceClick(event);
   const node = event.target.closest(".cell");
   if (!node || problem().interaction !== "paint-reflection" || state.solved) return;
   const p = problem();
@@ -325,6 +379,19 @@ function onCellClick(event) {
   renderCells();
   renderStatus();
   if (state.painted.size === p.targetCells.length) solveProblem();
+}
+
+function onDistanceClick(event) {
+  const node = event.target.closest(".distance-choice");
+  if (!node || state.solved) return;
+  const cell = [Number(node.dataset.x), Number(node.dataset.y)];
+  const p = problem();
+  if (cellId(cell) !== cellId(p.targetCell)) return reportWrong("distanceChoice", node);
+  state.distanceChoice = cellId(cell);
+  playTone("tap");
+  renderDistanceNodes(p);
+  renderStatus();
+  solveProblem();
 }
 
 /* ----------------------------------------------------------- level 2: drag */
@@ -452,7 +519,9 @@ function endDrag(event) {
 function reportWrong(verdict, node, cells) {
   state.wrong += 1;
   playTone("wrong");
-  const key = verdict === "direction" ? "wrongDirection" : verdict === "distance" ? "wrongDistance" : "wrongMiss";
+  const key = verdict === "direction" ? "wrongDirection"
+    : verdict === "distance" ? "wrongDistance"
+      : verdict === "distanceChoice" ? "wrongDistanceChoice" : "wrongMiss";
   toast(t(key));
   if (node) {
     node.classList.add("wrong");
@@ -509,10 +578,13 @@ function renderStatus() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint" : "promptDrag");
+  ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint"
+    : p.interaction === "drag-reflection" ? "promptDrag" : "promptDistance");
   ui.answerPrompt.textContent = p.interaction === "paint-reflection"
     ? t("paintProgress", { done: state.painted.size, total: p.targetCells.length })
-    : t("dragProgress", { done: state.usedTargets.size, total: p.targets.length });
+    : p.interaction === "drag-reflection"
+      ? t("dragProgress", { done: state.usedTargets.size, total: p.targets.length })
+      : t("distanceProgress", { done: state.distanceChoice ? 1 : 0 });
   ui.next.hidden = !state.solved;
 }
 
@@ -528,6 +600,7 @@ function resetProblem() {
   state.usedTargets = new Set();
   state.usedTrayPieces = new Set();
   state.solved = false;
+  state.distanceChoice = null;
   state.wrong = 0;
   state.hints = 0;
   ui.guide.classList.remove("show");
@@ -627,7 +700,7 @@ $("#hintButton").addEventListener("click", () => {
   const current = problem();
   const hintKey = current.interaction === "paint-reflection"
     ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
-    : "hintDrag";
+    : current.interaction === "drag-reflection" ? "hintDrag" : "hintDistance";
   cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", resetProblem);

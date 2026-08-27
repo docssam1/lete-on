@@ -13,10 +13,10 @@ const cellKey = (cell) => cell.join(",");
 
 validateLevels();
 assert(levels.length === 5, "five levels must be declared");
-assert(readyLevels.length === 2, "only levels 1 and 2 may be playable in this release");
+assert(readyLevels.length === 3, "levels 1 through 3 should be playable in this release");
 
 const ids = readyLevels.flatMap((level) => level.problems.map((problem) => problem.id));
-assert(ids.length === 20 && new Set(ids).size === 20, "the 20 ready problems need unique ids");
+assert(ids.length === 30 && new Set(ids).size === 30, "the 30 ready problems need unique ids");
 
 for (const problem of levels[0].problems) {
   const targetIds = new Set(problem.targetCells.map(cellKey));
@@ -48,6 +48,24 @@ for (const problem of levels[1].problems) {
   for (const target of problem.targets) {
     assert(classifyPlacement(target.cells, problem, problem.targets) === "correct", `${problem.id} rejects a target object`);
   }
+}
+
+for (const problem of levels[2].problems) {
+  assert(problem.grid.lattice === "square" || problem.grid.lattice === "triangle", `${problem.id} has no dot-grid kind`);
+  assert(sameCell(reflectCell(problem.sourceCell, problem.axis), problem.targetCell), `${problem.id} has the wrong reflected target`);
+  assert(problem.choices.length === 3 && new Set(problem.choices.map(cellKey)).size === 3, `${problem.id} needs three distinct choices`);
+  const matches = [];
+  for (let y = 0; y < problem.grid.rows; y += 1) {
+    for (let x = 0; x < problem.grid.cols; x += 1) {
+      const candidate = [x, y];
+      if (isGivenSide(candidate, problem.axis)) continue;
+      if (mirrorDistance(candidate, problem.axis) !== mirrorDistance(problem.sourceCell, problem.axis)) continue;
+      if (parallelCoord(candidate, problem.axis) !== parallelCoord(problem.sourceCell, problem.axis)) continue;
+      matches.push(candidate);
+    }
+  }
+  assert(matches.length === 1 && sameCell(matches[0], problem.targetCell), `${problem.id} has a non-unique answer`);
+  assert(problem.choices.some((choice) => sameCell(choice, problem.targetCell)), `${problem.id} omits the answer choice`);
 }
 
 const koreanKeys = Object.keys(messages.ko).sort();
