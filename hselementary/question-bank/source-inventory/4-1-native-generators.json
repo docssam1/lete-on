@@ -78,6 +78,17 @@
     { "sourceItemId": "4-1-u2-e1-mission-3", "generatorKey": "source41AngleOne", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u2-e1-mission-4", "generatorKey": "source41AngleOne", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u2-e1-mission-5", "generatorKey": "source41AngleOne", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u2-e1-mission-6", "generatorKey": "source41AngleOne", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u2-e1-mission-6", "generatorKey": "source41AngleOne", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-exploration", "generatorKey": "source41AngleTwo", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-example-2-1", "generatorKey": "source41AngleTwo", "variant": 1, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-example-2-2", "generatorKey": "source41AngleTwo", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-example-2-3", "generatorKey": "source41AngleTwo", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-example-2-4", "generatorKey": "source41AngleTwo", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-1", "generatorKey": "source41AngleTwo", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-2", "generatorKey": "source41AngleTwo", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-3", "generatorKey": "source41AngleTwo", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-4", "generatorKey": "source41AngleTwo", "variant": 8, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-5", "generatorKey": "source41AngleTwo", "variant": 9, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u2-e2-mission-6", "generatorKey": "source41AngleTwo", "variant": 10, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

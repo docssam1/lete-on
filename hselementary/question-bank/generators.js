@@ -342,6 +342,86 @@
     const kind = fullLines ? "직선" : "반직선";
     return `<svg class="geometry-diagram source41-angle-rays" viewBox="0 0 260 176" data-ray-angles="${angles.join(",")}" data-full-lines="${fullLines ? "1" : "0"}" aria-label="한 점에서 만나는 ${angles.length}개의 ${kind}"><g>${rays}${marks}${squares}</g><circle class="source41-angle-center" cx="${cx}" cy="${cy}" r="3"/></svg>`;
   };
+  const source41NormalizeAngle = value => ((value % 360) + 360) % 360;
+  const source41PositiveAngleSpan = (from, to) => {
+    let span = to - from;
+    while (span <= 0) span += 360;
+    while (span > 360) span -= 360;
+    return span;
+  };
+  const source41AngleWebSvg = ({ angles, arcs = [], rightPairs = [], linePairs = [], endpointLabels = [], ariaLabel = "한 점에서 만나는 직선과 각" }) => {
+    const cx = 160;
+    const cy = 108;
+    const radius = 82;
+    const normalizedAngles = [...new Set(angles.map(source41NormalizeAngle))].sort((left, right) => left - right);
+    const rays = normalizedAngles.map((angle, index) => {
+      const end = source41PointAtAngle(cx, cy, radius, angle);
+      return `<line data-ray-index="${index}" data-ray-angle="${angle}" x1="${cx}" y1="${cy}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+    }).join("");
+    const arcPaths = arcs.map((arc, index) => {
+      const span = source41PositiveAngleSpan(arc.from, arc.to);
+      const arcRadius = arc.radius || 25 + index * 7;
+      const start = source41PointAtAngle(cx, cy, arcRadius, arc.from);
+      const end = source41PointAtAngle(cx, cy, arcRadius, arc.from + span);
+      const labelPoint = source41PointAtAngle(cx, cy, arc.labelRadius || arcRadius + (arc.labelOffset || 10), arc.from + span / 2);
+      const largeArc = span > 180 ? 1 : 0;
+      return `<g class="source41-angle-arc ${arc.target ? "is-target" : "is-given"}" data-arc-index="${index}" data-arc-from="${source41NormalizeAngle(arc.from)}" data-arc-span="${span}"><path d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/><text x="${(labelPoint[0] + (arc.labelDx || 0)).toFixed(1)}" y="${(labelPoint[1] + (arc.labelDy || 0)).toFixed(1)}">${arc.label}</text></g>`;
+    }).join("");
+    const rightMarks = rightPairs.map(([first, second]) => {
+      const firstPoint = source41PointAtAngle(cx, cy, 13, first);
+      const secondPoint = source41PointAtAngle(cx, cy, 13, second);
+      const corner = [firstPoint[0] + secondPoint[0] - cx, firstPoint[1] + secondPoint[1] - cy];
+      return `<path class="source41-right-angle-mark" data-right-pair="${source41NormalizeAngle(first)},${source41NormalizeAngle(second)}" d="M${firstPoint[0].toFixed(1)} ${firstPoint[1].toFixed(1)}L${corner[0].toFixed(1)} ${corner[1].toFixed(1)}L${secondPoint[0].toFixed(1)} ${secondPoint[1].toFixed(1)}"/>`;
+    }).join("");
+    const labels = endpointLabels.map(item => {
+      const point = source41PointAtAngle(cx, cy, radius + 16, item.angle);
+      return `<text class="source41-angle-endpoint" x="${point[0].toFixed(1)}" y="${point[1].toFixed(1)}">${item.label}</text>`;
+    }).join("");
+    const lineData = linePairs.map(pair => pair.map(source41NormalizeAngle).join(",")).join(";");
+    return `<svg class="geometry-diagram source41-angle-web" viewBox="0 0 320 216" data-ray-angles="${normalizedAngles.join(",")}" data-line-pairs="${lineData}" aria-label="${ariaLabel}"><g>${rays}${arcPaths}${rightMarks}${labels}</g><circle class="source41-angle-center" cx="${cx}" cy="${cy}" r="3"/></svg>`;
+  };
+  const source41RightTrianglePairSvg = (firstAcute, secondAcute) => {
+    const triangle = (offsetX, acute, label) => {
+      const complement = 90 - acute;
+      const maximumWidth = 105;
+      const maximumHeight = 84;
+      const rawWidth = maximumHeight * Math.tan(acute * Math.PI / 180);
+      const scale = rawWidth > maximumWidth ? maximumWidth / rawWidth : 1;
+      const height = maximumHeight * scale;
+      const width = rawWidth * scale;
+      const top = [offsetX + 12, 24 + (maximumHeight - height)];
+      const corner = [top[0], top[1] + height];
+      const right = [top[0] + width, corner[1]];
+      return `<g data-triangle="${label}" data-angles="${acute},${complement},90"><polygon points="${top[0].toFixed(1)},${top[1].toFixed(1)} ${corner[0].toFixed(1)},${corner[1].toFixed(1)} ${right[0].toFixed(1)},${right[1].toFixed(1)}"/><path class="source41-right-angle-mark" d="M${corner[0]} ${corner[1] - 11}L${corner[0] + 11} ${corner[1] - 11}L${corner[0] + 11} ${corner[1]}"/><text x="${top[0] + 15}" y="${top[1] + 14}">${acute}°</text><text x="${right[0] - 18}" y="${right[1] - 11}">${complement}°</text></g>`;
+    };
+    return `<svg class="geometry-diagram source41-triangle-pair" viewBox="0 0 320 150" data-first-acute="${firstAcute}" data-second-acute="${secondAcute}" aria-label="각이 표시된 두 직각삼각형">${triangle(8, firstAcute, "가")}${triangle(168, secondAcute, "나")}</svg>`;
+  };
+  const source41EquilateralFanSvg = (triangleCount, shift) => {
+    const cx = 160;
+    const cy = 28;
+    const radius = 92;
+    const total = 60 + (triangleCount - 1) * shift;
+    const firstAngle = 270 - total / 2;
+    const triangles = Array.from({ length: triangleCount }, (_, index) => {
+      const startAngle = firstAngle + index * shift;
+      const left = source41PointAtAngle(cx, cy, radius, startAngle);
+      const right = source41PointAtAngle(cx, cy, radius, startAngle + 60);
+      return `<polygon data-triangle-index="${index}" points="${cx},${cy} ${left[0].toFixed(1)},${left[1].toFixed(1)} ${right[0].toFixed(1)},${right[1].toFixed(1)}"/>`;
+    }).join("");
+    const shiftMarks = Array.from({ length: triangleCount - 1 }, (_, index) => {
+      const from = firstAngle + index * shift;
+      const to = from + shift;
+      const arcRadius = 21 + index * 8;
+      const start = source41PointAtAngle(cx, cy, arcRadius, from);
+      const end = source41PointAtAngle(cx, cy, arcRadius, to);
+      const label = source41PointAtAngle(cx, cy, arcRadius + 11, (from + to) / 2);
+      const marker = index === 0
+        ? `<text x="${label[0].toFixed(1)}" y="${label[1].toFixed(1)}">${shift}°</text>`
+        : `<circle class="source41-fan-equal-mark" cx="${label[0].toFixed(1)}" cy="${label[1].toFixed(1)}" r="2.2"/>`;
+      return `<g class="source41-fan-shift"><path d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${arcRadius} ${arcRadius} 0 0 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>${marker}</g>`;
+    }).join("");
+    return `<svg class="geometry-diagram source41-equilateral-fan" viewBox="0 0 320 150" data-triangle-count="${triangleCount}" data-shift="${shift}" data-total-angle="${total}" aria-label="한 꼭짓점에서 겹친 정삼각형 ${triangleCount}개">${triangles}${shiftMarks}<circle class="source41-angle-center" cx="${cx}" cy="${cy}" r="3"/></svg>`;
+  };
   const source41TrianglePoint = ([angleA, angleB, angleC], base = 100) => {
     const toRadians = value => value * Math.PI / 180;
     const side = base * Math.sin(toRadians(angleB)) / Math.sin(toRadians(angleC));
@@ -4489,6 +4569,359 @@
       const evidence = source41Evidence("straight-line-extra-rays-under-180", payload, answer);
       const prompt = `한 직선 위의 반대 방향 두 반직선 사이에 선분을 ${extraRayCount}개 그었습니다. 그림에서 만들 수 있는 180°보다 작은 각은 모두 몇 개인가요?${source41AngleRaySvg({ angles })}${evidence}`;
       const solution = `반직선은 모두 ${angles.length}개입니다. 두 개씩 짝 지은 각 가운데 양쪽 끝 반직선이 만든 평각 1개만 180°이고 나머지는 모두 180°보다 작습니다. 따라서 ${angles.length * (angles.length - 1) / 2}-1=${answer}개입니다.`;
+      return result(prompt, answer, solution);
+    },
+    source41AngleTwo({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("각도의 계산 원문 분기는 0부터 10까지여야 합니다.");
+      const gridPick = (minimum, maximum, step) => pick(rng, Array.from({ length: Math.floor((maximum - minimum) / step) + 1 }, (_, index) => minimum + index * step));
+      const compositeTriangleAngles = (firstAngles, secondAngles) => {
+        const values = new Set();
+        const add = value => {
+          if (value > 0 && value <= 180) values.add(value);
+        };
+        for (const first of firstAngles) {
+          for (const second of secondAngles) {
+            for (const value of [first, second, Math.abs(first - second), first + second]) {
+              add(value);
+              add(180 - value);
+            }
+          }
+        }
+        return [...values].sort((left, right) => left - right);
+      };
+
+      if (variant === 0) {
+        const candidates = [];
+        for (let firstAcute = 20; firstAcute <= 45; firstAcute += 5) {
+          for (let secondAcute = 20; secondAcute <= 70; secondAcute += 5) {
+            if (firstAcute === secondAcute || firstAcute === 90 - secondAcute) continue;
+            const firstAngles = [firstAcute, 90 - firstAcute, 90];
+            const secondAngles = [secondAcute, 90 - secondAcute, 90];
+            const possibleAngles = compositeTriangleAngles(firstAngles, secondAngles);
+            const accepted = level === 0
+              ? possibleAngles.length === 12
+              : level === 1
+                ? possibleAngles.length === 14 || possibleAngles.length === 16
+                : possibleAngles.length === 18;
+            if (accepted) candidates.push({ firstAcute, secondAcute, firstAngles, secondAngles, possibleAngles });
+          }
+        }
+        const selected = pick(rng, candidates);
+        const answer = selected.possibleAngles.map(value => `${value}°`).join(", ");
+        const payload = { variant, level, ...selected, answerCount: selected.possibleAngles.length, complexity: selected.possibleAngles.length * 100 + selected.firstAcute + selected.secondAcute };
+        const evidence = source41Evidence("paired-right-triangle-angle-list", payload, answer);
+        const prompt = `두 직각삼각형 모형을 한 꼭짓점에서 포개거나 변끼리 맞댑니다. 두 모형의 변으로 만들 수 있는 180° 이하의 서로 다른 각도를 모두 구하세요.${source41RightTrianglePairSvg(selected.firstAcute, selected.secondAcute)}${evidence}`;
+        const solution = `각 삼각형의 세 각은 각각 ${selected.firstAngles.join("°, ")}°와 ${selected.secondAngles.join("°, ")}°입니다. 한 각만 사용한 경우, 두 각을 더하거나 뺀 경우, 그 각을 180°에서 뺀 경우를 겹치지 않게 모으면 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const triangleCount = [3, 4, 5][level];
+        const maximumShift = Math.floor(120 / (triangleCount - 1));
+        const shift = int(rng, 8, Math.min(28, maximumShift));
+        const totalAngle = 60 + (triangleCount - 1) * shift;
+        const answer = String(totalAngle);
+        const payload = { variant, level, triangleCount, shift, triangleAngle: 60, totalAngle, complexity: triangleCount * 100 + shift };
+        const evidence = source41Evidence("shifted-equilateral-union-angle", payload, answer);
+        const prompt = `세 각이 모두 60°인 정삼각형 모양의 색종이 ${triangleCount}장을 한 꼭짓점이 일치하도록 겹쳤습니다. 이웃한 색종이의 같은 쪽 변은 차례로 ${shift}°씩 벌어져 있습니다. 가장 왼쪽 변과 가장 오른쪽 변이 이루는 각은 몇 도인가요?${source41EquilateralFanSvg(triangleCount, shift)}${evidence}`;
+        const solution = `첫 색종이의 꼭짓각은 60°입니다. 색종이가 한 장 늘 때마다 바깥 변이 ${shift}°씩 더 벌어지므로 60+${shift}×${triangleCount - 1}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const step = [10, 5, 1][level];
+        const leftGiven = gridPick([20, 15, 12][level], [50, 55, 58][level], step);
+        const rightGiven = gridPick([20, 15, 12][level], [50, 55, 58][level], step);
+        const upRight = 90 - rightGiven;
+        const upLeft = 180 - leftGiven;
+        const first = upLeft - upRight;
+        const second = upLeft;
+        const third = 360 - (180 - upRight);
+        const answer = `㉠ ${first}°, ㉡ ${second}°, ㉢ ${third}°`;
+        const svg = source41AngleWebSvg({
+          angles: [0, upRight, 90, upLeft, 180],
+          linePairs: [[0, 180]],
+          rightPairs: [[0, 90]],
+          arcs: [
+            { from: upLeft, to: 180, label: `${leftGiven}°`, radius: 17 },
+            { from: upRight, to: 90, label: `${rightGiven}°`, radius: 17 },
+            { from: upRight, to: upLeft, label: "㉠", radius: 34, target: true },
+            { from: 0, to: upLeft, label: "㉡", radius: 52, target: true },
+            { from: 180, to: upRight + 360, label: "㉢", radius: 73, target: true, labelOffset: 7 }
+          ],
+          ariaLabel: "직각과 평각, 한 점 둘레의 큰 각이 표시된 그림"
+        });
+        const payload = { variant, level, leftGiven, rightGiven, upLeft, upRight, targets: [first, second, third], complexity: (level + 1) * 1000 + first + second + third };
+        const evidence = source41Evidence("right-line-nested-and-reflex-angles", payload, answer);
+        const prompt = `가로선은 직선이고 세로선과 서로 수직입니다. 그림에서 ㉠, ㉡, ㉢의 크기를 각각 구하세요. ㉢은 왼쪽 가로선에서 오른쪽 위 빗선까지 아래쪽으로 돌아 잰 각입니다.${svg}${evidence}`;
+        const solution = `왼쪽 빗선과 세로선 사이는 90-${leftGiven}=${90 - leftGiven}°이고, 세로선과 오른쪽 빗선 사이는 ${rightGiven}°입니다. 따라서 ㉠=${90 - leftGiven}+${rightGiven}=${first}°, ㉡=180-${leftGiven}=${second}°, ㉢=360-(${leftGiven}+${first})=${third}°입니다. 답은 ${answer}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const candidates = [];
+        for (let firstMultiple = 3; firstMultiple <= 19; firstMultiple += 1) {
+          if (90 % (firstMultiple - 1)) continue;
+          const firstPart = 90 / (firstMultiple - 1);
+          for (let secondMultiple = 2; secondMultiple <= 18; secondMultiple += 1) {
+            if ((90 - firstPart) % secondMultiple) continue;
+            const secondPart = (90 - firstPart) / secondMultiple;
+            if (firstPart < 8 || secondPart < 8 || firstPart + secondPart >= 84) continue;
+            const product = firstMultiple * secondMultiple;
+            const accepted = level === 0 ? product <= 36 : level === 1 ? product >= 18 && product <= 100 : product >= 30;
+            if (accepted) candidates.push({ firstMultiple, secondMultiple, firstPart, secondPart, product });
+          }
+        }
+        const selected = pick(rng, candidates);
+        const firstRay = 90 - selected.firstPart;
+        const secondRay = firstRay - selected.secondPart;
+        const answerAngle = selected.firstPart + selected.secondPart;
+        const answer = String(answerAngle);
+        const svg = source41AngleWebSvg({
+          angles: [0, secondRay, firstRay, 90, 180],
+          linePairs: [[0, 180]],
+          rightPairs: [[0, 90]],
+          arcs: [
+            { from: firstRay, to: 90, label: "㉠", radius: 19, labelRadius: 42, labelDx: -16, labelDy: -5, target: true },
+            { from: secondRay, to: firstRay, label: "㉡", radius: 29, labelRadius: 56, labelDx: 17, labelDy: 7, target: true },
+            { from: secondRay, to: 90, label: "구할 각", radius: 58, labelRadius: 78, target: true }
+          ],
+          ariaLabel: "직각 안에 두 빗선이 있고 작은 두 각이 표시된 그림"
+        });
+        const payload = { variant, level, ...selected, firstRay, secondRay, answerAngle, complexity: (level + 1) * 1000 + selected.product };
+        const evidence = source41Evidence("right-angle-multiple-chain", payload, answer);
+        const prompt = `가로선과 세로선은 서로 수직입니다. 왼쪽 가로선부터 첫째 빗선까지의 각은 ㉠의 ${selected.firstMultiple}배이고, 첫째 빗선부터 오른쪽 가로선까지의 각은 ㉡의 ${selected.secondMultiple}배입니다. 세로선부터 둘째 빗선까지의 각은 몇 도인가요?${svg}${evidence}`;
+        const solution = `㉠을 한 묶음으로 보면 90°와 ㉠을 합한 각이 ${selected.firstMultiple}묶음이므로 ㉠=90÷${selected.firstMultiple - 1}=${selected.firstPart}°입니다. 첫째 빗선부터 오른쪽 가로선까지는 90-${selected.firstPart}=${90 - selected.firstPart}°이므로 ㉡=${90 - selected.firstPart}÷${selected.secondMultiple}=${selected.secondPart}°입니다. 구할 각은 ${selected.firstPart}+${selected.secondPart}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const firstGiven = gridPick(25, 55, step);
+          const secondGiven = gridPick(60, 100, step);
+          const thirdGiven = gridPick(20, 50, step);
+          const lineAngle = secondGiven + thirdGiven;
+          const firstTarget = lineAngle - firstGiven;
+          const secondTarget = 180 - lineAngle;
+          if (Math.min(firstGiven, secondGiven, thirdGiven, firstTarget, secondTarget) < 12 || firstTarget === secondTarget) continue;
+          selected = { firstGiven, secondGiven, thirdGiven, lineAngle, firstTarget, secondTarget };
+        }
+        if (!selected) throw new Error("교차한 두 직선의 각도 차 문제를 만들지 못했습니다.");
+        const answerNumber = Math.abs(selected.firstTarget - selected.secondTarget);
+        const answer = String(answerNumber);
+        const svg = source41AngleWebSvg({
+          angles: [0, selected.firstGiven, selected.lineAngle, 180, 180 + selected.secondGiven, 180 + selected.lineAngle],
+          linePairs: [[0, 180], [selected.lineAngle, 180 + selected.lineAngle]],
+          arcs: [
+            { from: 0, to: selected.firstGiven, label: `${selected.firstGiven}°`, radius: 20 },
+            { from: selected.firstGiven, to: selected.lineAngle, label: "㉠", radius: 30, target: true },
+            { from: 180, to: 180 + selected.secondGiven, label: `${selected.secondGiven}°`, radius: 29 },
+            { from: 180 + selected.secondGiven, to: 180 + selected.lineAngle, label: `${selected.thirdGiven}°`, radius: 23 },
+            { from: 180 + selected.lineAngle, to: 360, label: "㉡", radius: 35, target: true }
+          ],
+          ariaLabel: "교차한 두 직선과 두 개의 추가 선이 만드는 각"
+        });
+        const payload = { variant, level, ...selected, answerNumber, complexity: (level + 1) * 1000 + selected.firstGiven + selected.secondGiven + selected.thirdGiven };
+        const evidence = source41Evidence("two-lines-extra-rays-angle-difference", payload, answer);
+        const prompt = `가로선과 왼쪽 위에서 오른쪽 아래로 이어진 선은 각각 직선입니다. 그림에서 ㉠과 ㉡의 크기의 차를 구하세요.${svg}${evidence}`;
+        const solution = `아래쪽 직선에서 ㉡=180-${selected.secondGiven}-${selected.thirdGiven}=${selected.secondTarget}°입니다. 마주 보는 각도 ${selected.secondTarget}°이므로 위쪽 직선에서 ㉠=180-${selected.firstGiven}-${selected.secondTarget}=${selected.firstTarget}°입니다. 두 각의 차는 ${Math.max(selected.firstTarget, selected.secondTarget)}-${Math.min(selected.firstTarget, selected.secondTarget)}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const firstGiven = gridPick(70, 100, step);
+          const secondGiven = gridPick(30, 55, step);
+          const thirdGiven = gridPick(15, 35, step);
+          const oppositePart = 180 - firstGiven - secondGiven;
+          const target = firstGiven + secondGiven - thirdGiven;
+          const diagonal = firstGiven + secondGiven - 90;
+          const extraRay = diagonal - thirdGiven;
+          if (Math.min(oppositePart, target, diagonal, extraRay) < 10 || target >= 170) continue;
+          selected = { firstGiven, secondGiven, thirdGiven, oppositePart, target, diagonal, extraRay };
+        }
+        if (!selected) throw new Error("마주 보는 같은 각을 이용하는 문제를 만들지 못했습니다.");
+        const answer = String(selected.target);
+        const svg = source41AngleWebSvg({
+          angles: [selected.extraRay, selected.diagonal, 90, 90 + selected.firstGiven, 90 + selected.firstGiven + selected.secondGiven, 270],
+          linePairs: [[90, 270], [selected.diagonal, 180 + selected.diagonal]],
+          arcs: [
+            { from: 90, to: 90 + selected.firstGiven, label: `${selected.firstGiven}°`, radius: 36 },
+            { from: 90 + selected.firstGiven, to: 90 + selected.firstGiven + selected.secondGiven, label: `${selected.secondGiven}°`, radius: 25 },
+            { from: selected.extraRay, to: selected.diagonal, label: `${selected.thirdGiven}°`, radius: 19 },
+            { from: 270, to: 360 + selected.extraRay, label: "㉠", radius: 43, target: true }
+          ],
+          ariaLabel: "교차한 두 직선과 추가 선이 만드는 각"
+        });
+        const payload = { variant, level, ...selected, complexity: (level + 1) * 1000 + selected.firstGiven + selected.secondGiven + selected.thirdGiven };
+        const evidence = source41Evidence("crossed-lines-opposite-angle-target", payload, answer);
+        const prompt = `세로선과 왼쪽 아래에서 오른쪽 위로 이어진 선은 각각 직선입니다. 그림에서 ㉠의 크기를 구하세요.${svg}${evidence}`;
+        const solution = `왼쪽 직선 쪽의 남는 각은 180-${selected.firstGiven}-${selected.secondGiven}=${selected.oppositePart}°입니다. 마주 보는 각도 ${selected.oppositePart}°이므로 오른쪽 직선 쪽에서 ㉠=180-${selected.oppositePart}-${selected.thirdGiven}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const denominator = pick(rng, level === 0 ? [2, 3, 4, 5] : level === 1 ? [4, 5, 6, 9] : [5, 6, 9, 10]);
+        const possibleFirstAngles = Array.from({ length: Math.floor(130 / denominator) - Math.ceil(50 / denominator) + 1 }, (_, index) => (Math.ceil(50 / denominator) + index) * denominator).filter(value => value < 150 && value / denominator >= 8 && (180 - value) / denominator >= 8);
+        const firstLarge = pick(rng, possibleFirstAngles);
+        const secondLarge = 180 - firstLarge;
+        const firstSmall = firstLarge / denominator;
+        const secondSmall = secondLarge / denominator;
+        const boundary = secondLarge;
+        const answerNumber = firstSmall + secondSmall;
+        const answer = String(answerNumber);
+        const svg = source41AngleWebSvg({
+          angles: [0, secondSmall, boundary, boundary + firstSmall, 180],
+          linePairs: [[0, 180]],
+          arcs: [
+            { from: 0, to: secondSmall, label: "㉡", radius: 20, target: true },
+            { from: 0, to: boundary, label: "각 나", radius: 48 },
+            { from: boundary, to: boundary + firstSmall, label: "㉠", radius: 22, target: true },
+            { from: boundary, to: 180, label: "각 가", radius: 60 }
+          ],
+          ariaLabel: "평각을 두 큰 각과 두 작은 각으로 나눈 그림"
+        });
+        const payload = { variant, level, denominator, firstLarge, secondLarge, firstSmall, secondSmall, answerNumber, complexity: (level + 1) * 1000 + denominator * 10 };
+        const evidence = source41Evidence("fraction-related-angle-sum", payload, answer);
+        const prompt = `각 ㉠의 크기는 각 가의 <span class="math-fraction"><span>1</span><span>${denominator}</span></span>이고, 각 ㉡의 크기는 각 나의 <span class="math-fraction"><span>1</span><span>${denominator}</span></span>입니다. 각 가와 각 나는 한 직선 위에서 맞붙어 있습니다. ㉠과 ㉡의 크기의 합을 구하세요.${svg}${evidence}`;
+        const solution = `각 가와 각 나는 한 직선 위에 있으므로 합은 180°입니다. 두 각을 모두 ${denominator}로 나눈 값의 합은 180÷${denominator}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const lowerRay = gridPick(25, 55, step);
+          const upperRay = gridPick(105, 145, step);
+          const split = gridPick(15, 45, step);
+          const target = upperRay - lowerRay - split;
+          if (target < 12 || upperRay - lowerRay > 125) continue;
+          selected = { lowerRay, upperRay, split, target, leftGiven: 180 - lowerRay, upperGiven: upperRay };
+        }
+        if (!selected) throw new Error("교차 직선에서 나뉜 각 문제를 만들지 못했습니다.");
+        const answer = String(selected.target);
+        const splitRay = selected.lowerRay + 180 + selected.split;
+        const svg = source41AngleWebSvg({
+          angles: [0, selected.lowerRay, selected.upperRay, 180, selected.lowerRay + 180, splitRay, selected.upperRay + 180],
+          linePairs: [[0, 180], [selected.lowerRay, selected.lowerRay + 180], [selected.upperRay, selected.upperRay + 180]],
+          arcs: [
+            { from: selected.lowerRay, to: 180, label: `${selected.leftGiven}°`, radius: 50 },
+            { from: 0, to: selected.upperRay, label: `${selected.upperGiven}°`, radius: 68 },
+            { from: selected.lowerRay + 180, to: splitRay, label: `${selected.split}°`, radius: 24 },
+            { from: splitRay, to: selected.upperRay + 180, label: "가", radius: 34, target: true }
+          ],
+          ariaLabel: "세 직선과 아래쪽에서 나뉜 각"
+        });
+        const payload = { variant, level, ...selected, splitRay, complexity: (level + 1) * 1000 + selected.lowerRay + selected.upperRay + selected.split };
+        const evidence = source41Evidence("crossed-lines-split-opposite-angle", payload, answer);
+        const prompt = `가로선과 두 빗선은 각각 직선입니다. 그림에서 각 가의 크기를 구하세요.${svg}${evidence}`;
+        const solution = `위쪽 두 빗선 사이의 각은 ${selected.upperGiven}-${180 - selected.leftGiven}=${selected.upperRay - selected.lowerRay}°입니다. 아래쪽의 마주 보는 각도 같으므로 각 가는 ${selected.upperRay - selected.lowerRay}-${selected.split}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const firstGiven = gridPick(115, 155, step);
+          const secondGiven = gridPick(110, 150, step);
+          const remaining = 360 - firstGiven - secondGiven;
+          if (remaining < 40 || remaining > 120) continue;
+          const firstTarget = gridPick(15, remaining - 15, step);
+          const secondTarget = remaining - firstTarget;
+          if (secondTarget < 15) continue;
+          selected = { firstGiven, secondGiven, firstTarget, secondTarget, remaining };
+        }
+        if (!selected) throw new Error("한 점 둘레의 두 각 합 문제를 만들지 못했습니다.");
+        const answer = String(selected.remaining);
+        const firstBoundary = selected.firstGiven;
+        const secondBoundary = firstBoundary + selected.secondGiven;
+        const thirdBoundary = secondBoundary + selected.firstTarget;
+        const svg = source41AngleWebSvg({
+          angles: [0, firstBoundary, secondBoundary, thirdBoundary],
+          arcs: [
+            { from: 0, to: firstBoundary, label: `${selected.firstGiven}°`, radius: 38 },
+            { from: firstBoundary, to: secondBoundary, label: `${selected.secondGiven}°`, radius: 43 },
+            { from: secondBoundary, to: thirdBoundary, label: "㉠", radius: 28, target: true },
+            { from: thirdBoundary, to: 360, label: "㉡", radius: 33, target: true }
+          ],
+          ariaLabel: "한 점 둘레를 네 각으로 나눈 그림"
+        });
+        const payload = { variant, level, ...selected, complexity: (level + 1) * 1000 + selected.firstGiven + selected.secondGiven };
+        const evidence = source41Evidence("full-turn-two-angle-sum", payload, answer);
+        const prompt = `한 점 둘레가 네 각으로 나뉘어 있습니다. ㉠과 ㉡의 크기의 합을 구하세요.${svg}${evidence}`;
+        const solution = `한 점 둘레의 각의 합은 360°입니다. 따라서 ㉠과 ㉡의 합은 360-${selected.firstGiven}-${selected.secondGiven}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const step = [5, 2, 1][level];
+        let selected = null;
+        for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+          const largeGiven = gridPick(115, 155, step);
+          const smallGiven = gridPick(35, 75, step);
+          const firstTarget = largeGiven - smallGiven;
+          const secondTarget = 180 - smallGiven;
+          if (firstTarget < 20 || secondTarget > 150) continue;
+          selected = { largeGiven, smallGiven, firstTarget, secondTarget, difference: secondTarget - firstTarget };
+        }
+        if (!selected) throw new Error("마주 보는 같은 각의 차 문제를 만들지 못했습니다.");
+        const answer = String(selected.difference);
+        const extraRay = 180 - selected.largeGiven;
+        const firstLine = 180 - selected.smallGiven;
+        const svg = source41AngleWebSvg({
+          angles: [0, extraRay, firstLine, 180, 360 - selected.smallGiven],
+          linePairs: [[0, 180], [firstLine, 360 - selected.smallGiven]],
+          arcs: [
+            { from: extraRay, to: 180, label: `${selected.largeGiven}°`, radius: 57 },
+            { from: 360 - selected.smallGiven, to: 360, label: `${selected.smallGiven}°`, radius: 22 },
+            { from: extraRay, to: firstLine, label: "㉠", radius: 28, target: true },
+            { from: 180, to: 360 - selected.smallGiven, label: "㉡", radius: 39, target: true }
+          ],
+          ariaLabel: "교차한 두 직선과 추가 선이 만드는 두 각"
+        });
+        const payload = { variant, level, ...selected, extraRay, firstLine, complexity: (level + 1) * 1000 + selected.largeGiven + selected.smallGiven };
+        const evidence = source41Evidence("vertical-angle-two-target-difference", payload, answer);
+        const prompt = `가로선과 왼쪽 위에서 오른쪽 아래로 이어진 선은 각각 직선입니다. 그림에서 ㉠과 ㉡의 크기의 차를 구하세요.${svg}${evidence}`;
+        const solution = `㉡은 ${selected.smallGiven}°와 한 직선 위에 있으므로 180-${selected.smallGiven}=${selected.secondTarget}°입니다. ${selected.smallGiven}°와 마주 보는 각도 ${selected.smallGiven}°이므로 ㉠=${selected.largeGiven}-${selected.smallGiven}=${selected.firstTarget}°입니다. 차는 ${selected.secondTarget}-${selected.firstTarget}=${answer}°입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      const step = [5, 2, 1][level];
+      let selected = null;
+      for (let attempt = 0; attempt < 500 && !selected; attempt += 1) {
+        const largeGiven = gridPick(105, 155, step);
+        const firstTarget = gridPick(20, Math.min(75, largeGiven - 20), step);
+        const sharedPart = largeGiven - firstTarget;
+        const secondTarget = 180 - sharedPart;
+        if (Math.min(firstTarget, sharedPart, secondTarget) < 15) continue;
+        selected = { largeGiven, firstTarget, sharedPart, secondTarget, difference: Math.abs(secondTarget - firstTarget) };
+      }
+      if (!selected) throw new Error("큰 각과 평각의 차 문제를 만들지 못했습니다.");
+      const answer = String(selected.difference);
+      const firstRay = 90 - selected.firstTarget;
+      const secondRay = 450 - selected.largeGiven;
+      const oppositeFirst = firstRay + 180;
+      const oppositeSecond = secondRay - 180;
+      const svg = source41AngleWebSvg({
+        angles: [firstRay, 90, oppositeSecond, oppositeFirst, secondRay],
+        linePairs: [[firstRay, oppositeFirst], [oppositeSecond, secondRay]],
+        arcs: [
+          { from: firstRay, to: 90, label: "㉠", radius: 24, target: true },
+          { from: secondRay, to: 450, label: `${selected.largeGiven}°`, radius: 54 },
+          { from: oppositeFirst, to: secondRay, label: "㉡", radius: 31, target: true }
+        ],
+        ariaLabel: "교차한 두 직선과 세로선이 만드는 큰 각과 두 작은 각"
+      });
+      const payload = { variant, level, ...selected, firstRay, secondRay, oppositeFirst, oppositeSecond, complexity: (level + 1) * 1000 + selected.largeGiven + selected.firstTarget };
+      const evidence = source41Evidence("given-composite-vs-straight-difference", payload, answer);
+      const prompt = `왼쪽 아래에서 오른쪽 위로 이어진 선과 왼쪽 위에서 오른쪽 아래로 이어진 선은 각각 직선입니다. 세로선 위쪽부터 오른쪽 아래 선까지의 각은 ${selected.largeGiven}°입니다. ㉠과 ㉡의 크기의 차를 구하세요.${svg}${evidence}`;
+      const solution = `주어진 ${selected.largeGiven}°는 ㉠과 두 직선 사이의 공통 각을 합한 것입니다. 한 직선에서 생기는 180°는 ㉡과 같은 공통 각을 합한 것입니다. 공통 각을 빼면 두 각의 차는 180-${selected.largeGiven}=${answer}°입니다.`;
       return result(prompt, answer, solution);
     },
     largeNumberPlaceValue({ rng, level, variant = 0 }) {

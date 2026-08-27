@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 86,
+  "verifiedMappings": 97,
   "items": [
     {
       "unit": 1,
@@ -1494,13 +1494,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 2 본문",
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
-      "typeLabel": "두 삼각형을 맞댄 각 만들기",
+      "typeLabel": "두 삼각형을 맞대어 만들 수 있는 각 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1512,13 +1513,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
-      "typeLabel": "겹친 정삼각형의 전체 각",
+      "typeLabel": "겹친 정삼각형에서 전체 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1530,13 +1532,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-2",
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
-      "typeLabel": "한 점 둘레의 각도 계산",
+      "typeLabel": "직각과 한 점 둘레에서 여러 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1548,13 +1551,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-3",
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
-      "typeLabel": "직각 안의 각도 배수",
+      "typeLabel": "직각 안에서 배수 관계인 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1566,13 +1570,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-4",
       "sourcePdfPage": 24,
       "sourcePrintedPage": 20,
-      "typeLabel": "직선 교차각의 차",
+      "typeLabel": "교차한 두 직선에서 각의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1584,13 +1589,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "교차한 직선에서 마주 보는 같은 각의 크기 구하기",
+      "typeLabel": "교차한 직선에서 마주 보는 같은 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1602,13 +1608,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "분수 관계 각도의 합",
+      "typeLabel": "분수 관계인 두 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1620,13 +1627,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "교차 직선에서 모르는 각의 크기 구하기",
+      "typeLabel": "교차한 직선에서 모르는 각 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1638,13 +1646,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "겹친 둔각에서 각의 합",
+      "typeLabel": "한 점 둘레에서 두 각의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1656,13 +1665,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "마주 보는 같은 각을 이용해 두 각의 크기 차 구하기",
+      "typeLabel": "마주 보는 같은 각으로 두 각의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
@@ -1674,13 +1684,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 21,
-      "typeLabel": "주어진 큰 각을 나눈 두 각의 크기 차 구하기",
+      "typeLabel": "큰 각과 180°를 이용해 두 각의 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41AngleTwo",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 2,
