@@ -22,6 +22,14 @@ window.NM_UNITS['C-05'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'홀수만 차례로 더해 보세요. 1, 1+3, 1+3+5 … 어떤 모양이 보이나요?',
+        en:'Add up the odd numbers in order: 1, 1+3, 1+3+5 … what shape appears?',
+        zh:'按顺序把奇数加起来：1、1+3、1+3+5……看出什么形状了吗？' },
+      history:{ ko:'홀수를 차례로 더하면 언제나 정사각수가 돼요 — 1+3+5+…+(2n−1) = n². 점을 ㄱ자로 하나씩 둘러 붙여 정사각형을 키우는 그림으로 설명하면 한 번에 보여요.',
+        en:'Adding consecutive odd numbers always gives a square: 1+3+5+…+(2n−1) = n². Draw it as L-shaped layers wrapped around a growing square and you can see it at a glance.',
+        zh:'把连续的奇数相加，结果总是平方数：1+3+5+…+(2n−1)=n²。把它画成一圈圈"⌐"形围在正方形外面，一眼就能看出来。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 가우스의 발견',en:'1) Gauss\'s discovery',zh:'① 高斯的发现'},

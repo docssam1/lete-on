@@ -22,6 +22,14 @@ window.NM_UNITS['M-09'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'0.333…을 분수로 되돌릴 수 있을까요? 끝나지 않는 소수인데요.',
+        en:'Can 0.333… be turned back into a fraction, even though it never ends?',
+        zh:'0.333……写不完，还能变回分数吗？' },
+      history:{ ko:'분수를 소수로 바꾸면 끝나거나 되풀이되는 두 가지뿐이에요. 거꾸로도 참이라서, 끝나지 않고 되풀이되는 소수는 반드시 어떤 분수로 되돌아가요. 되풀이되지도 않고 끝나지도 않는 소수는 분수로 돌아갈 수 없고, 그런 수를 무리수라고 불러요.',
+        en:'A fraction becomes a decimal that either stops or repeats — only those two. The converse holds too: any repeating decimal must come back to some fraction. A decimal that neither stops nor repeats can never return to a fraction, and those numbers are called irrational.',
+        zh:'分数化成小数，只有终止和循环两种。反过来也成立：任何循环小数都一定能还原成某个分数。既不终止也不循环的小数无法还原成分数，这样的数叫无理数。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 이어붙이고 빼면 분자',en:'1) Concatenate and subtract for the numerator',zh:'① 连起来相减就是分子'},

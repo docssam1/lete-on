@@ -16,6 +16,14 @@ window.NM_UNITS['A-28'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'1부터 100까지 더하려면 99번을 더해야 해요. 짝을 지으면 몇 번이면 될까요?',
+        en:'Adding 1 to 100 one at a time takes 99 additions. How many do you need if you pair them up?',
+        zh:'从1加到100要加99次。如果两两配对，需要几次呢？' },
+      history:{ ko:'수열 문제 중 가장 오래된 것은 약 4,000년 전 이집트의 린드 파피루스에 있어요 — 곡물을 다섯 사람에게 일정한 차이로 나누는 문제였죠. 어린 가우스가 1~100의 합을 몇 초 만에 구했다는 이야기는 전해지는 일화예요.',
+        en:'The oldest known sequence problem is in the Egyptian Rhind Papyrus, about 4,000 years old — sharing grain among five people with a constant difference. The tale of young Gauss summing 1 to 100 in seconds is a story handed down, not a record.',
+        zh:'已知最古老的数列问题出现在约4000年前的埃及莱因德纸草书中——把谷物按固定差额分给五个人。年幼高斯几秒内算出1到100之和的故事，是流传下来的轶事。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 앞뒤를 짝지으면 항상 같아요', en:'1) Pairing front and back always gives the same sum', zh:'① 首尾配对，每对和相同' },

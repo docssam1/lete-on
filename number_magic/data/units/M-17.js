@@ -21,6 +21,14 @@ window.NM_UNITS['M-17'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'√2 × √3은 √6일까요? 왜 그렇게 되는지 설명할 수 있나요?',
+        en:'Is √2 × √3 equal to √6? Can you say why?',
+        zh:'√2×√3等于√6吗？你能说出为什么吗？' },
+      history:{ ko:'피타고라스 학파는 모든 길이를 분수로 나타낼 수 있다고 믿었어요. 그런데 한 변이 1인 정사각형의 대각선을 제곱하면 2가 되고, 그 길이는 어떤 분수로도 나타낼 수 없었어요. 이 비밀을 밖으로 알린 히파소스가 바다에 던져졌다는 이야기가 전해져요 — 사실인지는 아무도 몰라요.',
+        en:'The Pythagoreans believed every length could be written as a fraction. But the diagonal of a unit square squares to 2, and no fraction gives that length. Legend says Hippasus was thrown into the sea for revealing the secret — no one knows whether it really happened.',
+        zh:'毕达哥拉斯学派相信一切长度都能写成分数。可是边长为1的正方形，其对角线的平方是2，而这个长度写不成任何分数。传说希帕索斯因泄露这个秘密被投入大海——真假无人知晓。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 곱셈은 안의 수끼리 먼저',en:'1) Multiply what\'s inside first',zh:'① 相乘先合并根号内的数'},
