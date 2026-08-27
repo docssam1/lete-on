@@ -172,6 +172,17 @@ const SYNTHETIC_GGA_TRIANGLE_CASES = Object.freeze([
   });
 }));
 
+// Fixture-only 6.RP.A facts exercise the public unit-rate contract without
+// reproducing an authored scenario, prompt, unit label, or answer set.
+const SYNTHETIC_RPA_UNIT_RATE_CASES = Object.freeze([
+  [6, 3], [12, 4], [20, 5], [30, 6],
+  [4, 8], [3, 9], [8, 12], [9, 12],
+  [9, 6], [8, 6], [15, 9], [15, 12], [18, 4], [3, 12],
+  [14, 4], [10, 4], [14, 6], [6, 10], [8, 10], [10, 12], [14, 8], [16, 6]
+].map(function (entry) {
+  return Object.freeze({ kind: validator.RPA_UNIT_RATE_CHECK_KIND, numeratorQuantity: entry[0], denominatorQuantity: entry[1] });
+}));
+
 function independentlySubstitutionTruth(check) {
   const matchingCandidates = check.candidateSet.filter(function (candidate) {
     return BigInt(candidate) + BigInt(check.addend) === BigInt(check.total);
@@ -206,6 +217,20 @@ function independentlyRightTriangleArea(check) {
   return String(twiceArea / 2n);
 }
 
+function independentlyPositiveWholeInputExactUnitRateMagnitude(check) {
+  const numerator = BigInt(check.numeratorQuantity);
+  const denominator = BigInt(check.denominatorQuantity);
+  const limit = numerator < denominator ? numerator : denominator;
+  let largestCommonDivisor = 1n;
+  for (let candidate = 2n; candidate <= limit; candidate += 1n) {
+    if (numerator % candidate === 0n && denominator % candidate === 0n) largestCommonDivisor = candidate;
+  }
+  const reducedNumerator = numerator / largestCommonDivisor;
+  const reducedDenominator = denominator / largestCommonDivisor;
+  assert.equal(reducedNumerator * denominator, reducedDenominator * numerator);
+  return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
+}
+
 function syntheticKoreanObjectParticle(value) {
   return [0, 1, 3, 6, 7, 8].includes(value % 10) ? "을" : "를";
 }
@@ -233,6 +258,14 @@ function syntheticGgaTrianglePrompt() {
     "그림의 직각삼각형에서 밑변과 그에 수직인 높이가 표시되어 있습니다. 넓이를 제곱단위로 구하세요.",
     "The diagram shows a right triangle with its base and perpendicular height labeled. Find its area in square units.",
     "图中直角三角形的底和与底垂直的高已标出。求它的面积（平方单位）。"
+  );
+}
+
+function syntheticRpaUnitRatePrompt() {
+  return localText(
+    "지정된 단위율의 크기를 구하세요.",
+    "Find the magnitude of the specified unit rate.",
+    "求指定单位率的大小。"
   );
 }
 
@@ -268,6 +301,14 @@ function syntheticGgaStandardsEvidence() {
   };
 }
 
+function syntheticRpaStandardsEvidence() {
+  return {
+    state: "partial-fixed-orientation-supplied-units-positive-whole-input-quantities-exact-unit-rate-magnitude-locked",
+    autoEvidenceIds: [validator.RPA_UNIT_RATE_EVIDENCE_ID],
+    lockedEvidenceByLocale: Object.assign({}, validator.RPA_LOCKED_EVIDENCE_BY_LOCALE)
+  };
+}
+
 function syntheticEebObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.EEB_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
@@ -281,6 +322,10 @@ function syntheticEecObservationText(resource) {
 function syntheticGgaObservationText(resource) {
   const profileId = `${resource.resourceType}:${resource.levelId}`;
   return Object.assign({}, validator.GGA_TEACHER_OBSERVATION_BY_PROFILE[profileId]);
+}
+
+function syntheticRpaObservationText(resource) {
+  return Object.assign({}, validator.RPA_TEACHER_OBSERVATION_BY_PROFILE[`${resource.resourceType}:${resource.levelId}`]);
 }
 
 function syntheticEebStaticText(group, key) {
@@ -368,7 +413,7 @@ function localBinding(resource) {
 }
 
 function syntheticWorkbookPack(unitId) {
-  const selectedUnitId = unitId || "ccss-6-rp-a";
+  const selectedUnitId = unitId || "ccss-6-ns-a";
   const plan = resourcePlans.buildUnitPlan(selectedUnitId);
   const selectedUnit = registry.units.find(function (unit) { return unit.unitId === selectedUnitId; });
   assert(selectedUnit);
@@ -403,6 +448,12 @@ function syntheticWorkbookPack(unitId) {
         const ggaCheck = !isTeaching && selectedUnitId === "ccss-6-g-a"
           ? SYNTHETIC_GGA_TRIANGLE_CASES[responseComponents.length]
           : null;
+        const rpaCheck = !isTeaching && selectedUnitId === "ccss-6-rp-a"
+          ? SYNTHETIC_RPA_UNIT_RATE_CASES[responseComponents.length]
+          : null;
+        const rpaContextKind = rpaCheck
+          ? ["count-per-count", "count-per-measure", "measure-per-count", "measure-per-measure"][responseComponents.length % 4]
+          : null;
         const eeaWorkedExample = isTeaching && planComponent.componentType === "worked-example" && selectedUnitId === "ccss-6-ee-a"
           ? SYNTHETIC_EEA_WORKED_EXAMPLES[workedExampleNumber++]
           : null;
@@ -412,10 +463,12 @@ function syntheticWorkbookPack(unitId) {
         const eeaConceptSummary = isTeaching && planComponent.componentType === "concept-summary" && selectedUnitId === "ccss-6-ee-a";
         const eebConceptSummary = isTeaching && planComponent.componentType === "concept-summary" && selectedUnitId === "ccss-6-ee-b";
         const eecTeachingBlock = isTeaching && selectedUnitId === "ccss-6-ee-c";
+        const rpaTeachingBlock = isTeaching && selectedUnitId === "ccss-6-rp-a";
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-a" || eeaPair);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-b" || eebCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-ee-c" || eecCheck);
         assert(isTeaching || selectedUnitId !== "ccss-6-g-a" || ggaCheck);
+        assert(isTeaching || selectedUnitId !== "ccss-6-rp-a" || rpaCheck);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-a" || eeaWorkedExample);
         assert(planComponent.componentType !== "worked-example" || selectedUnitId !== "ccss-6-ee-b" || eebWorkedExample);
         const componentId = `cmp-dft-s${String(sectionIndex + 1).padStart(2, "0")}c${String(componentNumber).padStart(3, "0")}`;
@@ -434,6 +487,8 @@ function syntheticWorkbookPack(unitId) {
                     ? syntheticEebStaticText("conceptSummaryByProfile", syntheticEebStudentResourceProfile(resource))
                     : eecTeachingBlock
                       ? localText("표의 관계를 읽는 연습", "Read the relationship in a table", "阅读表格中的关系")
+                      : rpaTeachingBlock
+                        ? localText("단위율 읽기", "Read a unit rate", "阅读单位率")
                       : localText("개념 예시: \\frac{1}{2}", "Worked example: \\frac{1}{2}", "示例：\\frac{1}{2}" )
             : eeaPair
               ? syntheticEeaPowerPrompt(eeaPair, responseComponents.length % 2 === 0 ? "power-notation" : "repeated-factor")
@@ -443,7 +498,9 @@ function syntheticWorkbookPack(unitId) {
                   ? syntheticEecTablePrompt()
                   : ggaCheck
                     ? syntheticGgaTrianglePrompt()
-                  : localText("수를 구하세요.", "Find the number.", "求这个数。"),
+                    : rpaCheck
+                      ? syntheticRpaUnitRatePrompt()
+                    : localText("수를 구하세요.", "Find the number.", "求这个数。"),
           responseMode: isTeaching ? null : selectedUnitId === "ccss-6-ee-b" ? "truth-value-exact" : "numeric-exact",
           teacherReferenceId: isTeaching ? null : `ref-dft-r${String(componentNumber).padStart(3, "0")}`,
           ...(eecCheck ? {
@@ -460,6 +517,16 @@ function syntheticWorkbookPack(unitId) {
               base: ggaCheck.base,
               perpendicularHeight: ggaCheck.perpendicularHeight,
               heightFoot: "left-base-endpoint"
+            }
+          } : rpaCheck ? {
+            rateSituation: {
+              kind: validator.RPA_RATE_SITUATION_KIND,
+              contextKind: rpaContextKind,
+              numeratorQuantity: rpaCheck.numeratorQuantity,
+              denominatorQuantity: rpaCheck.denominatorQuantity,
+              numeratorUnitCode: rpaContextKind.startsWith("measure") ? "liter" : "notebook",
+              denominatorUnitCode: rpaContextKind.endsWith("measure") ? "minute" : "box",
+              orientation: "numerator-per-one-denominator"
             }
           } : {})
         };
@@ -497,15 +564,19 @@ function syntheticWorkbookPack(unitId) {
         const eebCheck = selectedUnitId === "ccss-6-ee-b" ? SYNTHETIC_EEB_SUBSTITUTION_CASES[responseComponents.indexOf(entry)] : null;
         const eecCheck = selectedUnitId === "ccss-6-ee-c" ? SYNTHETIC_EEC_TABLE_CASES[responseComponents.indexOf(entry)] : null;
         const ggaCheck = selectedUnitId === "ccss-6-g-a" ? SYNTHETIC_GGA_TRIANGLE_CASES[responseComponents.indexOf(entry)] : null;
+        const rpaCheck = selectedUnitId === "ccss-6-rp-a" ? SYNTHETIC_RPA_UNIT_RATE_CASES[responseComponents.indexOf(entry)] : null;
         const ggaEvaluationMode = ggaCheck
+          ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
+          : null;
+        const rpaEvaluationMode = rpaCheck
           ? entry.resource.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence"
           : null;
         return {
           referenceId: entry.component.teacherReferenceId,
           componentId: entry.component.componentId,
           responseMode: eebCheck ? "truth-value-exact" : "numeric-exact",
-          ...(ggaEvaluationMode ? { evaluationMode: ggaEvaluationMode } : {}),
-          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : ggaCheck ? independentlyRightTriangleArea(ggaCheck) : "1",
+          ...(ggaEvaluationMode ? { evaluationMode: ggaEvaluationMode } : rpaEvaluationMode ? { evaluationMode: rpaEvaluationMode } : {}),
+          expectedResponse: eeaPair ? independentlyRepeatedWholePower(eeaPair.base, eeaPair.exponent) : eebCheck ? independentlySubstitutionTruth(eebCheck) : eecCheck ? independentlyDirectVariationCoefficient(eecCheck) : ggaCheck ? independentlyRightTriangleArea(ggaCheck) : rpaCheck ? independentlyPositiveWholeInputExactUnitRateMagnitude(rpaCheck) : "1",
           solutionByLocale: localText("교사용 풀이", "Teacher solution", "教师解析"),
           uniquenessProofByLocale: localText("교사용 검산", "Teacher check", "教师检验"),
           arithmeticCheck: eeaPair
@@ -516,7 +587,9 @@ function syntheticWorkbookPack(unitId) {
                 ? Object.assign({}, eecCheck, { independentValues: Array.from(eecCheck.independentValues), dependentValues: Array.from(eecCheck.dependentValues) })
                 : ggaCheck
                   ? Object.assign({}, ggaCheck)
-                : { kind: "whole-quotient", total: 1, groups: 1 }
+                  : rpaCheck
+                    ? Object.assign({}, rpaCheck)
+                  : { kind: "whole-quotient", total: 1, groups: 1 }
         };
       });
     return {
@@ -538,15 +611,17 @@ function syntheticWorkbookPack(unitId) {
       answerReferences
     };
   });
-  if (["ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(selectedUnitId)) {
+  if (["ccss-6-rp-a", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(selectedUnitId)) {
     teacherArtifacts.filter(function (artifact) {
       return artifact.resourceBinding.resourceType === "lesson-plan" || artifact.resourceBinding.resourceType === "assignment-builder";
     }).forEach(function (artifact, index) {
       artifact.components.push({
-        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : selectedUnitId === "ccss-6-ee-c" ? "eec" : "gga"}-observation-${index + 1}`,
+        componentId: `tcmp-dft-${selectedUnitId === "ccss-6-rp-a" ? "rpa" : selectedUnitId === "ccss-6-ee-a" ? "eea" : selectedUnitId === "ccss-6-ee-b" ? "eeb" : selectedUnitId === "ccss-6-ee-c" ? "eec" : "gga"}-observation-${index + 1}`,
         componentType: "teacher-observation-rubric",
         sequence: artifact.components.length + 1,
-        contentByLocale: selectedUnitId === "ccss-6-ee-b"
+        contentByLocale: selectedUnitId === "ccss-6-rp-a"
+          ? syntheticRpaObservationText(artifact.resourceBinding)
+          : selectedUnitId === "ccss-6-ee-b"
           ? syntheticEebObservationText(artifact.resourceBinding)
           : selectedUnitId === "ccss-6-ee-c"
             ? syntheticEecObservationText(artifact.resourceBinding)
@@ -576,7 +651,7 @@ function syntheticWorkbookPack(unitId) {
         autoEvidenceIds: ["6.NS.C.6-quadrant-classification", "6.NS.C.7-signed-rational-order", "6.NS.C.8-same-axis-distance"],
         lockedEvidenceByLocale: localText("교사 관찰 잠금", "Teacher observation locked", "教师观察锁定")
       }
-    } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : selectedUnitId === "ccss-6-g-a" ? { standardsEvidence: syntheticGgaStandardsEvidence() } : {}),
+    } : selectedUnitId === "ccss-6-rp-a" ? { standardsEvidence: syntheticRpaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-a" ? { standardsEvidence: syntheticEeaStandardsEvidence() } : selectedUnitId === "ccss-6-ee-b" ? { standardsEvidence: syntheticEebStandardsEvidence() } : selectedUnitId === "ccss-6-ee-c" ? { standardsEvidence: syntheticEecStandardsEvidence() } : selectedUnitId === "ccss-6-g-a" ? { standardsEvidence: syntheticGgaStandardsEvidence() } : {}),
     deliveryState: "locked",
     localePolicy: { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] },
     frontMatter: selectedUnitId === "ccss-6-ee-b"
@@ -666,7 +741,8 @@ test("private workbook authoring requires an external JSON-only root and is neve
   assert.match(validatorSource, /PRIVATE_WORKBOOK_ROOT_INSIDE_REPOSITORY/);
   assert.match(validatorSource, /PRIVATE_WORKBOOK_ROOT_INSIDE_GIT_WORKTREE/);
   assert.match(validatorSource, /PRIVATE_WORKBOOK_PREFLIGHT_BLOCKED_IN_CI/);
-  assert.match(validatorSource, /workbook-draft\\\.json/);
+  assert.match(validatorSource, /PRIVATE_WORKBOOK_FILE_NAME/);
+  assert.match(validatorSource, /workbook-draft\(\?:-r\[1-9\]\[0-9\]\*\)\?/);
   assert.match(validatorSource, /TEACHING_COMPONENT_TYPES/);
   assert.match(publicAuditSource, /PRIVATE_WORKBOOK_AUTHORING_TRACKED/);
   assert.match(publicAuditSource, /PRIVATE_WORKBOOK_HISTORY_PRESENT/);
@@ -1912,6 +1988,26 @@ test("private workbook preflight rejects CI, non-JSON files, and a nested juncti
   }
 });
 
+test("private workbook source accepts only a canonical or nonzero revision-suffixed draft filename", function () {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-workbook-filenames-"));
+  try {
+    ["grade6-rp-a-unit-workbook-draft.json", "grade6-rp-a-unit-workbook-draft-r2.json"].forEach(function (fileName) {
+      assert.equal(validator.PRIVATE_WORKBOOK_FILE_NAME.test(fileName), true);
+      fs.writeFileSync(path.join(tempRoot, fileName), "{}", "utf8");
+    });
+    assert.deepEqual(validator.sourceFiles(tempRoot), ["grade6-rp-a-unit-workbook-draft-r2.json", "grade6-rp-a-unit-workbook-draft.json"]);
+    fs.readdirSync(tempRoot).forEach(function (fileName) { fs.rmSync(path.join(tempRoot, fileName)); });
+    ["grade6-rp-a-unit-workbook-draft-r0.json", "grade6-rp-a-unit-workbook-draft-r02.json", "grade6-rp-a-unit-workbook-draft-rx.json"].forEach(function (fileName) {
+      assert.equal(validator.PRIVATE_WORKBOOK_FILE_NAME.test(fileName), false);
+      fs.writeFileSync(path.join(tempRoot, fileName), "{}", "utf8");
+      assert.throws(function () { validator.sourceFiles(tempRoot); }, /PRIVATE_WORKBOOK_FILE_NAME_INVALID/);
+      fs.rmSync(path.join(tempRoot, fileName));
+    });
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
 test("private workbook preflight rejects an external root inside a Git-discoverable worktree", function () {
   const worktreeRoot = createTempGitRepository();
   try {
@@ -2438,4 +2534,168 @@ test("Grade 6 6.G.A keeps labeled right-triangle area evidence partial, visible,
   assert.throws(function () {
     validator.validatePack(changedObservationLocalePack, "synthetic-gga-observation-locale-parity.json");
   }, /GGA_TEACHER_OBSERVATION_INCOMPLETE/);
+});
+
+test("Grade 6 6.RP.A keeps fixed-orientation, supplied-unit exact unit-rate magnitude evidence partial and teacher locked", function () {
+  const policy = { required: ["ko", "en"], included: ["ko", "en", "zh-Hans"] };
+  const unit = { unitId: "ccss-6-rp-a" };
+  const evidence = syntheticRpaStandardsEvidence();
+  assert.doesNotThrow(function () {
+    validator.validateStandardsEvidence(evidence, policy, unit, "synthetic-rpa-evidence");
+  });
+  [
+    Object.assign({}, evidence, { state: "plan-complete" }),
+    Object.assign({}, evidence, { state: "partial-fixed-orientation-positive-whole-unit-rate-magnitude-locked" }),
+    Object.assign({}, evidence, { autoEvidenceIds: [] }),
+    Object.assign({}, evidence, { autoEvidenceIds: ["6.RP.A.2-full-mastery"] }),
+    Object.assign({}, evidence, { autoEvidenceIds: ["6.RP.A.2-fixed-orientation-positive-whole-unit-rate-magnitude"] }),
+    Object.assign({}, evidence, { lockedEvidenceByLocale: Object.assign({}, evidence.lockedEvidenceByLocale, { en: "Unit rates only." }) })
+  ].forEach(function (candidate) {
+    assert.throws(function () { validator.validateStandardsEvidence(candidate, policy, unit, "synthetic-rpa-evidence-invalid"); }, /STANDARDS_EVIDENCE_INVALID/);
+  });
+  assert.match(validator.RPA_LOCKED_EVIDENCE_BY_LOCALE.en, /positive whole input quantities/u);
+  assert.match(validator.RPA_LOCKED_EVIDENCE_BY_LOCALE.en, /may be fractional/u);
+  assert.doesNotMatch(JSON.stringify(validator.RPA_LOCKED_EVIDENCE_BY_LOCALE), /positive-whole unit rate|positive whole unit rate|6\.RP\.A\.3/u);
+  assert.doesNotMatch(JSON.stringify(validator.RPA_TEACHER_OBSERVATION_BY_PROFILE), /positive-whole unit rate|positive whole unit rate|6\.RP\.A\.[13]/u);
+
+  SYNTHETIC_RPA_UNIT_RATE_CASES.forEach(function (check) {
+    assert.equal(validator.canonicalPositiveWholeInputExactUnitRateMagnitude(Object.assign({}, check), "synthetic-rpa-canonical"), independentlyPositiveWholeInputExactUnitRateMagnitude(check));
+  });
+  const exactMagnitudeOutputs = SYNTHETIC_RPA_UNIT_RATE_CASES.map(function (check) {
+    return independentlyPositiveWholeInputExactUnitRateMagnitude(check);
+  });
+  assert.equal(exactMagnitudeOutputs.filter(function (output) { return output.includes("/"); }).length, 18);
+  assert.equal(exactMagnitudeOutputs.filter(function (output) { return !output.includes("/"); }).length, 4);
+  for (let numerator = 1; numerator <= 12; numerator += 1) {
+    for (let denominator = 1; denominator <= 12; denominator += 1) {
+      if (numerator === denominator) continue;
+      const limit = Math.min(numerator, denominator);
+      const coprime = !Array.from({ length: Math.max(0, limit - 1) }, function (_, index) { return index + 2; }).some(function (candidate) {
+        return numerator % candidate === 0 && denominator % candidate === 0;
+      });
+      if (!coprime) continue;
+      for (let multiplier = 2; multiplier <= 12; multiplier += 1) {
+        const check = { kind: validator.RPA_UNIT_RATE_CHECK_KIND, numeratorQuantity: numerator * multiplier, denominatorQuantity: denominator * multiplier };
+        assert.equal(validator.canonicalPositiveWholeInputExactUnitRateMagnitude(check, "synthetic-rpa-matrix"), independentlyPositiveWholeInputExactUnitRateMagnitude(check));
+      }
+    }
+  }
+  [
+    Object.assign({}, SYNTHETIC_RPA_UNIT_RATE_CASES[0], { numeratorQuantity: 1 }),
+    Object.assign({}, SYNTHETIC_RPA_UNIT_RATE_CASES[0], { denominatorQuantity: 145 }),
+    Object.assign({}, SYNTHETIC_RPA_UNIT_RATE_CASES[0], { kind: "whole-quotient" }),
+    Object.assign({}, SYNTHETIC_RPA_UNIT_RATE_CASES[0], { kind: "positive-whole-unit-rate" }),
+    Object.assign({}, SYNTHETIC_RPA_UNIT_RATE_CASES[0], { numeratorQuantity: 144, denominatorQuantity: 2 })
+  ].forEach(function (check) {
+    assert.throws(function () { validator.canonicalPositiveWholeInputExactUnitRateMagnitude(check, "synthetic-rpa-invalid"); }, /ARITHMETIC_CHECK_INVALID/);
+  });
+  assert.throws(function () {
+    validator.validateRpaRateSituation({
+      kind: validator.RPA_RATE_SITUATION_KIND,
+      contextKind: "count-per-measure",
+      numeratorQuantity: 6,
+      denominatorQuantity: 3,
+      numeratorUnitCode: "notebook",
+      denominatorUnitCode: "minute",
+      orientation: "denominator-per-one-numerator"
+    }, "synthetic-rpa-orientation");
+  }, /RPA_RATE_SITUATION_INVALID/);
+  assert.throws(function () {
+    validator.validateRpaRateSituation({
+      kind: "ordered-positive-whole-unit-rate-v1",
+      contextKind: "count-per-measure",
+      numeratorQuantity: 6,
+      denominatorQuantity: 3,
+      numeratorUnitCode: "notebook",
+      denominatorUnitCode: "minute",
+      orientation: "numerator-per-one-denominator"
+    }, "synthetic-rpa-legacy-situation-kind");
+  }, /RPA_RATE_SITUATION_INVALID/);
+  [
+    { numeratorUnitCode: "items", denominatorUnitCode: "minute", contextKind: "count-per-measure" },
+    { numeratorUnitCode: "liter", denominatorUnitCode: "minute", contextKind: "count-per-measure" }
+  ].forEach(function (candidate) {
+    assert.throws(function () {
+      validator.validateRpaRateSituation(Object.assign({
+        kind: validator.RPA_RATE_SITUATION_KIND,
+        numeratorQuantity: 6,
+        denominatorQuantity: 3,
+        orientation: "numerator-per-one-denominator"
+      }, candidate), "synthetic-rpa-unit-catalog");
+    }, /RPA_RATE_SITUATION_INVALID/);
+  });
+
+  const pack = syntheticWorkbookPack("ccss-6-rp-a");
+  assert.doesNotThrow(function () { validator.validatePack(pack, "synthetic-rpa-pack.json"); });
+  const answerReferences = pack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  assert.equal(answerReferences.length, 22);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "automatic-evidence"; }).length, 14);
+  assert.equal(answerReferences.filter(function (answerReference) { return answerReference.evaluationMode === "teacher-review-only"; }).length, 8);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === validator.RPA_UNIT_RATE_CHECK_KIND;
+  }));
+
+  const genericContractPack = JSON.parse(JSON.stringify(pack));
+  const genericReference = genericContractPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0];
+  genericReference.arithmeticCheck = { kind: "whole-quotient", total: 6, groups: 3 };
+  genericReference.expectedResponse = "2";
+  assert.throws(function () { validator.validatePack(genericContractPack, "synthetic-rpa-generic-contract.json"); }, /RPA_RESPONSE_CONTRACT_INVALID/);
+
+  const wrongModePack = JSON.parse(JSON.stringify(pack));
+  wrongModePack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[0].responseMode = "ratio-canonical";
+  assert.throws(function () { validator.validatePack(wrongModePack, "synthetic-rpa-wrong-mode.json"); }, /ANSWER_REFERENCE_MODE_MISMATCH|RPA_RESPONSE_CONTRACT_INVALID/);
+
+  const mismatchPack = JSON.parse(JSON.stringify(pack));
+  mismatchPack.studentSections.flatMap(function (section) { return section.components; }).find(function (component) {
+    return component.responseMode !== null;
+  }).rateSituation.denominatorQuantity = 4;
+  assert.throws(function () { validator.validatePack(mismatchPack, "synthetic-rpa-rate-situation-mismatch.json"); }, /RPA_RATE_SITUATION_MISMATCH/);
+
+  const duplicatePack = JSON.parse(JSON.stringify(pack));
+  const duplicateReferences = duplicatePack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; });
+  duplicateReferences[1].arithmeticCheck = Object.assign({}, duplicateReferences[0].arithmeticCheck);
+  duplicateReferences[1].expectedResponse = duplicateReferences[0].expectedResponse;
+  assert.throws(function () { validator.validatePack(duplicatePack, "synthetic-rpa-duplicate.json"); }, /RPA_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const mirrorPack = JSON.parse(JSON.stringify(pack));
+  const mirrorReference = mirrorPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; })[1];
+  mirrorReference.arithmeticCheck = { kind: validator.RPA_UNIT_RATE_CHECK_KIND, numeratorQuantity: 3, denominatorQuantity: 6 };
+  mirrorReference.expectedResponse = "1/2";
+  const mirrorComponent = mirrorPack.studentSections.flatMap(function (section) { return section.components; }).filter(function (component) { return component.responseMode !== null; })[1];
+  mirrorComponent.rateSituation.numeratorQuantity = 3;
+  mirrorComponent.rateSituation.denominatorQuantity = 6;
+  assert.throws(function () { validator.validatePack(mirrorPack, "synthetic-rpa-mirror.json"); }, /RPA_AUTOMATIC_EVIDENCE_INCOMPLETE/);
+
+  const advancedAutomaticPack = JSON.parse(JSON.stringify(pack));
+  const advancedComponentIds = new Set(advancedAutomaticPack.studentSections.filter(function (section) {
+    return section.resourceBinding.levelId === "advanced";
+  }).flatMap(function (section) { return section.components.filter(function (component) { return component.responseMode !== null; }).map(function (component) { return component.componentId; }); }));
+  advancedAutomaticPack.teacherArtifacts.flatMap(function (artifact) { return artifact.answerReferences; }).find(function (answerReference) {
+    return advancedComponentIds.has(answerReference.componentId);
+  }).evaluationMode = "automatic-evidence";
+  assert.throws(function () { validator.validatePack(advancedAutomaticPack, "synthetic-rpa-advanced-automatic.json"); }, /RPA_DIFFICULTY_CONTRACT_INCOMPLETE/);
+
+  const missingObservationPack = JSON.parse(JSON.stringify(pack));
+  missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  }).components = missingObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  }).components.filter(function (component) { return component.componentType !== "teacher-observation-rubric"; });
+  assert.throws(function () { validator.validatePack(missingObservationPack, "synthetic-rpa-missing-observation.json"); }, /RPA_TEACHER_OBSERVATION_INCOMPLETE/);
+
+  const legacyObservationPack = JSON.parse(JSON.stringify(pack));
+  legacyObservationPack.teacherArtifacts.find(function (artifact) {
+    return artifact.resourceBinding.resourceType === "lesson-plan";
+  }).components.find(function (component) {
+    return component.componentType === "teacher-observation-rubric";
+  }).contentByLocale.en = "Teacher observation only: record a positive-whole unit rate.";
+  assert.throws(function () { validator.validatePack(legacyObservationPack, "synthetic-rpa-legacy-observation-wording.json"); }, /RPA_TEACHER_OBSERVATION_INCOMPLETE/);
+
+  const answerLeakPack = JSON.parse(JSON.stringify(pack));
+  answerLeakPack.frontMatter.titleByLocale.en = "Two belongs to another example.";
+  assert.throws(function () { validator.validatePack(answerLeakPack, "synthetic-rpa-student-answer-leak.json"); }, /RPA_CROSS_STUDENT_ANSWER_LEAK/);
+
+  const fractionLeakPack = JSON.parse(JSON.stringify(pack));
+  fractionLeakPack.frontMatter.titleByLocale.en = "Half belongs to another example.";
+  assert.throws(function () { validator.validatePack(fractionLeakPack, "synthetic-rpa-fraction-answer-leak.json"); }, /RPA_CROSS_STUDENT_ANSWER_LEAK/);
 });

@@ -18,6 +18,7 @@ const REPOSITORY_ROOT = fs.realpathSync(path.resolve(PROJECT_ROOT, ".."));
 const LOCALES = new Set(["ko", "en", "zh-Hans"]);
 const PRIVATE_DRAFT_STATE = validator.DRAFT_STATE;
 const PRIVATE_DELIVERY_STATE = "locked";
+const PRIVATE_RENDER_DRAFT_FILE_NAME = validator.PRIVATE_WORKBOOK_FILE_NAME;
 
 const COPY = Object.freeze({
   ko: Object.freeze({
@@ -41,6 +42,7 @@ const COPY = Object.freeze({
     expectedResponse: "기대 응답",
     solution: "풀이",
     uniqueness: "유일성 검산",
+    workspace: "풀이 공간",
     truthOptions: Object.freeze({ holds: "성립", doesNotHold: "성립하지 않음" })
   }),
   en: Object.freeze({
@@ -64,6 +66,7 @@ const COPY = Object.freeze({
     expectedResponse: "Expected response",
     solution: "Solution",
     uniqueness: "Uniqueness check",
+    workspace: "Workspace",
     truthOptions: Object.freeze({ holds: "Holds", doesNotHold: "Does not hold" })
   }),
   "zh-Hans": Object.freeze({
@@ -87,6 +90,7 @@ const COPY = Object.freeze({
     expectedResponse: "预期作答",
     solution: "解析",
     uniqueness: "唯一性核验",
+    workspace: "作答空间",
     truthOptions: Object.freeze({ holds: "成立", doesNotHold: "不成立" })
   })
 });
@@ -240,16 +244,26 @@ function loadValidatedDraft(filePath) {
   return draft;
 }
 
+function draftFileEntries(privateRoot) {
+  return fs.readdirSync(privateRoot, { withFileTypes: true })
+    .filter(function (entry) { return entry.isFile() && PRIVATE_RENDER_DRAFT_FILE_NAME.test(entry.name); });
+}
+
+function selectDraftForUnit(candidates, unitId) {
+  const matches = candidates.filter(function (entry) { return entry.draft.unitId === unitId; });
+  assert(matches.length === 1, "PRIVATE_RENDER_DRAFT_NOT_FOUND");
+  return matches[0];
+}
+
 function findDraft(privateRoot, unitId) {
-  const candidates = fs.readdirSync(privateRoot, { withFileTypes: true })
-    .filter(function (entry) { return entry.isFile() && /^grade6-[a-z0-9-]+-unit-workbook-draft\.json$/u.test(entry.name); })
+  const selected = selectDraftForUnit(
+    draftFileEntries(privateRoot)
     .map(function (entry) {
       const filePath = path.join(privateRoot, entry.name);
       return Object.freeze({ filePath, draft: loadValidatedDraft(filePath) });
-    })
-    .filter(function (entry) { return entry.draft.unitId === unitId; });
-  assert(candidates.length === 1, "PRIVATE_RENDER_DRAFT_NOT_FOUND");
-  const selected = candidates[0];
+    }),
+    unitId
+  );
   assert(
     selected.draft.confidentiality === validator.CONFIDENTIALITY_MARKER &&
       selected.draft.state === PRIVATE_DRAFT_STATE &&
@@ -284,6 +298,25 @@ function geometryDiagramForModel(diagram) {
   });
 }
 
+function layoutForId(entries, id, code) {
+  const matches = entries.filter(function (entry) { return entry.id === id; });
+  assert(matches.length === 1, code);
+  const layout = matches[0];
+  assert(
+    Number.isInteger(layout.startPage) && Number.isInteger(layout.endPage) &&
+      layout.startPage >= 1 && layout.endPage >= layout.startPage && layout.endPage <= 100,
+    code
+  );
+  return Object.freeze({ startPage: layout.startPage, endPage: layout.endPage });
+}
+
+function fixedPageLayout(pageCount, startPage) {
+  assert(Number.isInteger(pageCount) && pageCount >= 0 && pageCount <= 100, "PRIVATE_RENDER_LAYOUT_INVALID");
+  assert(Number.isInteger(startPage) && startPage >= 1 && startPage <= 100, "PRIVATE_RENDER_LAYOUT_INVALID");
+  if (pageCount === 0) return null;
+  return Object.freeze({ startPage, endPage: startPage + pageCount - 1 });
+}
+
 function buildStudentModel(draft, locale) {
   const student = Object.freeze({
     audience: "student",
@@ -294,9 +327,12 @@ function buildStudentModel(draft, locale) {
     howToUse: localized(draft.frontMatter.howToUseByLocale, locale),
     glossary: localized(draft.closingMatter.glossaryByLocale, locale),
     retentionNotice: localized(draft.closingMatter.retentionNoticeByLocale, locale),
+    frontMatterLayout: fixedPageLayout(draft.layoutPlan.frontMatterPages, 1),
+    closingLayout: fixedPageLayout(draft.layoutPlan.closingPages, draft.layoutPlan.studentTargetPages - draft.layoutPlan.closingPages + 1),
     sections: draft.studentSections.map(function (section) {
       return Object.freeze({
         title: localized(section.titleByLocale, locale),
+        layout: layoutForId(draft.layoutPlan.studentSectionLayouts, section.sectionId, "PRIVATE_RENDER_STUDENT_LAYOUT_INVALID"),
         components: section.components.map(function (component) {
           return Object.freeze({
             componentType: component.componentType,
@@ -336,6 +372,7 @@ function buildTeacherModel(draft, locale) {
     artifacts: draft.teacherArtifacts.map(function (artifact) {
       return Object.freeze({
         title: localized(artifact.titleByLocale, locale),
+        layout: layoutForId(draft.layoutPlan.teacherArtifactLayouts, artifact.artifactId, "PRIVATE_RENDER_TEACHER_LAYOUT_INVALID"),
         components: artifact.components.map(function (component) {
           return Object.freeze({ componentType: component.componentType, content: localized(component.contentByLocale, locale) });
         }),
@@ -404,7 +441,7 @@ p { margin: 6px 0; font-size: 13px; line-height: 1.65; white-space: normal; }
 footer { margin-top: 28px; padding-top: 9px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 10px; }
 .private-watermark { display: none; }
 @media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } .geometry-diagram { max-width: 280px; } }
-@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="student"] .first-instruction { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] .geometry-diagram { max-width: 210px; margin: 3px auto; } main[data-document-audience="teacher"] .geometry-diagram text { font-size: 10px; } main[data-document-audience="teacher"] footer { margin-top: 5px; padding-top: 4px; font-size: 8px; } }
+@media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .layout-content-page { break-inside: auto; page-break-inside: auto; } .layout-continuation-page { min-height: 9.7in; break-inside: avoid; page-break-inside: avoid; } .layout-workspace { min-height: 9.7in; border: 1px solid #e2e8f0; border-radius: 4px; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="student"] .first-instruction { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] .geometry-diagram { max-width: 210px; margin: 3px auto; } main[data-document-audience="teacher"] .geometry-diagram text { font-size: 10px; } footer { display: none; } }
 </style>
 </head>
 <body>
@@ -441,10 +478,31 @@ function renderGeometryDiagram(diagram, copy, identifier) {
   return `<figure class="geometry-diagram"><svg viewBox="0 0 410 220" role="img" aria-labelledby="${escapeHtml(titleId)}"><title id="${escapeHtml(titleId)}">${escapeHtml(`${baseText}; ${heightText}`)}</title><path class="triangle-shape" d="M 165 175 L 345 175 L 165 45 Z"></path><path class="right-angle-marker" d="M 165 160 H 180 V 175"></path><line class="extension-line" x1="165" y1="175" x2="165" y2="198"></line><line class="extension-line" x1="345" y1="175" x2="345" y2="198"></line><line class="dimension-line" x1="165" y1="194" x2="345" y2="194"></line><line class="extension-line" x1="165" y1="45" x2="137" y2="45"></line><line class="extension-line" x1="165" y1="175" x2="137" y2="175"></line><line class="dimension-line" x1="142" y1="45" x2="142" y2="175"></line><text x="255" y="214" text-anchor="middle">${escapeHtml(baseText)}</text><text x="10" y="96" text-anchor="start"><tspan x="10" dy="0">${escapeHtml(copy.perpendicularHeightLabel)}</tspan><tspan x="10" dy="17">${escapeHtml(heightValueText)}</tspan></text></svg></figure>`;
 }
 
+function renderAllocatedPages(layout, kind, content, copy) {
+  assert(layout === null || (Number.isInteger(layout.startPage) && Number.isInteger(layout.endPage) && layout.startPage >= 1 && layout.endPage >= layout.startPage), "PRIVATE_RENDER_LAYOUT_INVALID");
+  if (layout === null) return content;
+  const pages = [];
+  for (let pageNumber = layout.startPage; pageNumber <= layout.endPage; pageNumber += 1) {
+    const firstPage = pageNumber === layout.startPage;
+    const classes = ["section", "layout-page", firstPage ? "layout-content-page" : "layout-continuation-page"];
+    if (pageNumber > 1) classes.push("page-start");
+    const pageContent = firstPage
+      ? content
+      : `<div class="layout-workspace" aria-label="${escapeHtml(copy.workspace)}"></div>`;
+    pages.push(`<section class="${classes.join(" ")}" data-layout-kind="${escapeHtml(kind)}" data-layout-page="${escapeHtml(pageNumber)}">${pageContent}</section>`);
+  }
+  return pages.join("\n");
+}
+
 function renderStudentHtml(model, locale) {
   const copy = COPY[locale];
   const body = [
-    `<section class="section front-matter"><h2>${escapeHtml(copy.learningTarget)}</h2>${textBlock(model.learningTarget)}<h2>${escapeHtml(copy.howToUse)}</h2>${textBlock(model.howToUse)}</section>`,
+    renderAllocatedPages(
+      model.frontMatterLayout,
+      "front-matter",
+      `<section class="front-matter"><h2>${escapeHtml(copy.learningTarget)}</h2>${textBlock(model.learningTarget)}<h2>${escapeHtml(copy.howToUse)}</h2>${textBlock(model.howToUse)}</section>`,
+      copy
+    ),
     model.sections.map(function (section, sectionIndex) {
       const components = section.components.map(function (component, componentIndex) {
         const response = renderStudentResponseControl(component.responseMode, copy);
@@ -452,10 +510,15 @@ function renderStudentHtml(model, locale) {
         const geometryDiagram = renderGeometryDiagram(component.geometryDiagram, copy, `student-${sectionIndex + 1}-${componentIndex + 1}`);
         return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${geometryDiagram}${response}</article>`;
       }).join("\n");
-      const sectionClass = sectionIndex === 0 ? " first-instruction" : " page-start";
-      return `<section class="section${sectionClass}"><h2>${escapeHtml(section.title)}</h2>${components}</section>`;
+      const sectionClass = sectionIndex === 0 ? "first-instruction" : "";
+      return renderAllocatedPages(section.layout, "student-section", `<section class="${sectionClass}"><h2>${escapeHtml(section.title)}</h2>${components}</section>`, copy);
     }).join("\n"),
-    `<section class="section page-start closing-matter"><h2>${escapeHtml(copy.closing)}</h2>${textBlock(model.glossary)}${textBlock(model.retentionNotice)}</section>`
+    renderAllocatedPages(
+      model.closingLayout,
+      "closing-matter",
+      `<section class="closing-matter"><h2>${escapeHtml(copy.closing)}</h2>${textBlock(model.glossary)}${textBlock(model.retentionNotice)}</section>`,
+      copy
+    )
   ].join("\n");
   const html = documentShell({ locale, title: model.title, audience: model.audience, audienceTitle: copy.studentTitle, notice: copy.privateNotice, body, targetPages: model.targetPages });
   assert(!/(?:teacherReferenceId|teacherArtifacts|answerReferences|expectedResponse|solutionByLocale|uniquenessProofByLocale|arithmeticCheck)/iu.test(html), "PRIVATE_RENDER_STUDENT_HTML_UNSAFE");
@@ -486,8 +549,7 @@ function renderTeacherHtml(model, locale) {
         return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}${geometryDiagram}</article>`;
       }).join("\n")}`
       : "";
-    const pageStart = artifactIndex === 0 ? "" : " page-start";
-    return `<section class="section${pageStart}"><h2>${escapeHtml(artifact.title)}</h2>${components}${segments}${references}</section>`;
+    return renderAllocatedPages(artifact.layout, "teacher-artifact", `<section><h2>${escapeHtml(artifact.title)}</h2>${components}${segments}${references}</section>`, copy);
   }).join("\n");
   return documentShell({
     locale,
@@ -598,19 +660,26 @@ if (require.main === module) main();
 
 module.exports = Object.freeze({
   COPY,
+  PRIVATE_RENDER_DRAFT_FILE_NAME,
   assertExternalDirectory,
   assertOutputRoot,
   buildStudentModel,
   buildTeacherModel,
+  draftFileEntries,
+  findDraft,
   parseArguments,
   relationTableForModel,
   geometryDiagramForModel,
+  fixedPageLayout,
+  layoutForId,
   renderRelationTable,
   renderGeometryDiagram,
+  renderAllocatedPages,
   renderStudentResponseControl,
   renderStudentHtml,
   renderTeacherHtml,
   renderPrivateWorkbook,
+  selectDraftForUnit,
   writeOutput,
   writeOutputPair
 });

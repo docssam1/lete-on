@@ -18,6 +18,7 @@ const resourcePlans = require("../resources/k8-resource-plan.js");
 const SCHEMA_VERSION = "gfield-private-workbook-draft-v1";
 const CONFIDENTIALITY_MARKER = "GFIELD_PRIVATE_WORKBOOK_DO_NOT_COMMIT";
 const DRAFT_STATE = "draft-pending-independent-review";
+const PRIVATE_WORKBOOK_FILE_NAME = /^grade6-[a-z0-9-]+-workbook-draft(?:-r[1-9][0-9]*)?\.json$/;
 const PRODUCTION_STATE = "local-draft-no-pdf-or-download";
 const LOCAL_BINDING_STATE = "candidate-not-public-bound";
 const EEA_POWER_EVIDENCE_ID = "6.EE.A.1-isolated-positive-whole-number-power-evaluation";
@@ -49,6 +50,39 @@ const GGA_PERPENDICULAR_HEIGHT_MIN = 4;
 const GGA_PERPENDICULAR_HEIGHT_MAX = 24;
 const GGA_TRIANGLE_AREA_MIN = 32n;
 const GGA_TRIANGLE_AREA_MAX = 240n;
+const RPA_UNIT_RATE_EVIDENCE_ID = "6.RP.A.2-fixed-orientation-supplied-units-positive-whole-input-quantities-exact-unit-rate-magnitude";
+const RPA_UNIT_RATE_CHECK_KIND = "positive-whole-input-quantities-exact-unit-rate-magnitude";
+const RPA_RATE_SITUATION_KIND = "fixed-orientation-supplied-units-positive-whole-input-quantities-v2";
+const RPA_RATE_SITUATION_CONTEXT_KINDS = new Set(["count-per-count", "count-per-measure", "measure-per-count", "measure-per-measure"]);
+const RPA_UNIT_CATALOG = Object.freeze({
+  notebook: "count", box: "count", marker: "count", pouch: "count", card: "count", packet: "count", pencil: "count", holder: "count",
+  bottle: "count", roll: "count", bag: "count", can: "count", spool: "count", crate: "count", tank: "count", "sample-tube": "count",
+  jar: "count", bin: "count", tile: "count", page: "count",
+  liter: "measure", meter: "measure", kilogram: "measure", kilometer: "measure", hour: "measure", minute: "measure", second: "measure", milliliter: "measure"
+});
+const RPA_UNIT_RATE_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
+const RPA_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
+  ko: "자동 근거는 방향과 단위가 미리 고정·제공된 6.RP.A.2 상황에서 양의 정수 입력량으로 계산한 정확한 단위율의 크기(분수일 수 있음)만 다룬다. 단위율의 의미와 단위 해석, 설명은 교사 관찰로 잠긴다. 이 근거는 완전 숙달, 배치 또는 승급 결정이 아니다.",
+  en: "The automatic evidence covers only the exact unit-rate magnitude, which may be fractional, calculated from positive whole input quantities in a 6.RP.A.2 situation with fixed orientation and supplied units. Interpreting the unit-rate meaning and units, and explanation, remain teacher locked. This evidence is not a full-mastery, placement, or promotion decision.",
+  "zh-Hans": "自动证据仅覆盖在方向固定且提供单位的 6.RP.A.2 情境中，由正整数输入量计算出的精确单位率大小（可为分数）。单位率含义和单位的解释以及说明仍锁定为教师观察。该证据不用于完全掌握、分班或升学决定。"
+});
+const RPA_TEACHER_OBSERVATION_BY_PROFILE = Object.freeze({
+  "lesson-plan:core": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.RP.A.2에서 고정된 방향과 제공된 단위를 해석하고, 양의 정수 입력량으로부터 한 단위당 정확한 단위율의 크기(분수일 수 있음)를 설명하며, 그 크기를 제공된 양과 단위에 비추어 검토하는지 기록한다. 이 기록은 6.RP.A.2에 한정되며 완전 숙달, 배치 또는 승급 판정이 아니다.",
+    en: "Teacher observation only: record whether the learner interprets the fixed orientation and supplied units in 6.RP.A.2, explains the exact per-one unit-rate magnitude from positive whole input quantities (which may be fractional), and checks that magnitude against the supplied quantities and units. This record is limited to 6.RP.A.2 and is not a full-mastery, placement, or promotion decision.",
+    "zh-Hans": "仅限教师观察：记录学生是否在 6.RP.A.2 中解释固定方向和提供的单位，说明由正整数输入量得到的每一单位的精确单位率大小（可为分数），并依据提供的数量和单位核对该大小。该记录仅限于 6.RP.A.2，不用于完全掌握、分班或升学判定。"
+  }),
+  "assignment-builder:core": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.RP.A.2에서 고정된 방향과 제공된 단위를 해석하고, 양의 정수 입력량으로부터 한 단위당 정확한 단위율의 크기(분수일 수 있음)를 설명하며, 그 크기를 제공된 양과 단위에 비추어 검토하는지 기록한다. 이 기록은 6.RP.A.2에 한정되며 완전 숙달, 배치 또는 승급 판정이 아니다.",
+    en: "Teacher observation only: record whether the learner interprets the fixed orientation and supplied units in 6.RP.A.2, explains the exact per-one unit-rate magnitude from positive whole input quantities (which may be fractional), and checks that magnitude against the supplied quantities and units. This record is limited to 6.RP.A.2 and is not a full-mastery, placement, or promotion decision.",
+    "zh-Hans": "仅限教师观察：记录学生是否在 6.RP.A.2 中解释固定方向和提供的单位，说明由正整数输入量得到的每一单位的精确单位率大小（可为分数），并依据提供的数量和单位核对该大小。该记录仅限于 6.RP.A.2，不用于完全掌握、分班或升学判定。"
+  }),
+  "assignment-builder:advanced": Object.freeze({
+    ko: "교사 관찰 전용: 학생이 6.RP.A.2에서 고정된 방향과 제공된 단위를 해석하고, 양의 정수 입력량으로부터 한 단위당 정확한 단위율의 크기(분수일 수 있음)를 설명하며, 그 크기를 제공된 양과 단위에 비추어 검토하는지 기록한다. 이 기록은 6.RP.A.2에 한정되며 완전 숙달, 배치 또는 승급 판정이 아니다.",
+    en: "Teacher observation only: record whether the learner interprets the fixed orientation and supplied units in 6.RP.A.2, explains the exact per-one unit-rate magnitude from positive whole input quantities (which may be fractional), and checks that magnitude against the supplied quantities and units. This record is limited to 6.RP.A.2 and is not a full-mastery, placement, or promotion decision.",
+    "zh-Hans": "仅限教师观察：记录学生是否在 6.RP.A.2 中解释固定方向和提供的单位，说明由正整数输入量得到的每一单位的精确单位率大小（可为分数），并依据提供的数量和单位核对该大小。该记录仅限于 6.RP.A.2，不用于完全掌握、分班或升学判定。"
+  })
+});
 const EEB_LOCKED_EVIDENCE_BY_LOCALE = Object.freeze({
   ko: "자동 근거는 6.EE.B.5의 제한된 양의 정수 등식 대입 판정뿐이다. 6.EE.B.5의 부등식, 후보 집합 전체 판단과 설명, 6.EE.B.6, 6.EE.B.7, 6.EE.B.8은 교사 관찰이 필요한 항목으로 남긴다. 이것은 완전 숙달이나 승급 결정이 아니다.",
   en: "The automatic evidence is limited to determining whether substituting a positive whole number makes an equality hold within 6.EE.B.5. Inequalities, whole-candidate-set evaluation and explanation in 6.EE.B.5, together with 6.EE.B.6, 6.EE.B.7, and 6.EE.B.8, remain locked for teacher observation. It is not a full mastery or promotion decision.",
@@ -190,7 +224,7 @@ const BINDING_KEYS = new Set([
   "resourceType", "bindingState"
 ]);
 const STUDENT_COMPONENT_KEYS = new Set([
-  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram"
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram", "rateSituation"
 ]);
 const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
 const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
@@ -215,6 +249,7 @@ const LAYOUT_KEYS = new Set([
 const LAYOUT_ENTRY_KEYS = new Set(["id", "startPage", "endPage"]);
 const RELATION_TABLE_KEYS = new Set(["form", "independentSymbol", "dependentSymbol", "independentValues", "dependentValues"]);
 const GEOMETRY_DIAGRAM_KEYS = new Set(["kind", "base", "perpendicularHeight", "heightFoot"]);
+const RATE_SITUATION_KEYS = new Set(["kind", "contextKind", "numeratorQuantity", "denominatorQuantity", "numeratorUnitCode", "denominatorUnitCode", "orientation"]);
 const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact", "truth-value-exact"]);
 const GGA_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
@@ -726,6 +761,18 @@ function validateVerification(verification, reference) {
 }
 
 function validateStandardsEvidence(evidence, policy, unit, reference) {
+  if (unit.unitId === "ccss-6-rp-a") {
+    assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
+    assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.state === "partial-fixed-orientation-supplied-units-positive-whole-input-quantities-exact-unit-rate-magnitude-locked", "STANDARDS_EVIDENCE_INVALID", reference);
+    assertDenseArray(evidence.autoEvidenceIds, "STANDARDS_EVIDENCE_INVALID", reference);
+    assert(evidence.autoEvidenceIds.length === 1 && evidence.autoEvidenceIds[0] === RPA_UNIT_RATE_EVIDENCE_ID, "STANDARDS_EVIDENCE_INVALID", reference);
+    requireLocales(evidence.lockedEvidenceByLocale, policy, "STANDARDS_EVIDENCE_INVALID", reference);
+    policy.included.forEach(function (locale) {
+      assert(evidence.lockedEvidenceByLocale[locale] === RPA_LOCKED_EVIDENCE_BY_LOCALE[locale], "STANDARDS_EVIDENCE_INVALID", reference);
+    });
+    return;
+  }
   if (unit.unitId === "ccss-6-ns-c") {
     assertRecord(evidence, "STANDARDS_EVIDENCE_INVALID", reference);
     assertOnlyKeys(evidence, STANDARDS_EVIDENCE_KEYS, "STANDARDS_EVIDENCE_INVALID", reference);
@@ -907,6 +954,29 @@ function validateGgaGeometryDiagram(diagram, reference) {
   );
 }
 
+function validateRpaRateSituation(rateSituation, reference) {
+  assertExactDataKeys(rateSituation, ["kind", "contextKind", "numeratorQuantity", "denominatorQuantity", "numeratorUnitCode", "denominatorUnitCode", "orientation"], "RPA_RATE_SITUATION_INVALID", reference);
+  const expectedDimensions = Object.freeze({
+    "count-per-count": Object.freeze(["count", "count"]),
+    "count-per-measure": Object.freeze(["count", "measure"]),
+    "measure-per-count": Object.freeze(["measure", "count"]),
+    "measure-per-measure": Object.freeze(["measure", "measure"])
+  })[rateSituation.contextKind];
+  assert(
+    rateSituation.kind === RPA_RATE_SITUATION_KIND &&
+      RPA_RATE_SITUATION_CONTEXT_KINDS.has(rateSituation.contextKind) &&
+      Number.isSafeInteger(rateSituation.numeratorQuantity) && rateSituation.numeratorQuantity >= 2 && rateSituation.numeratorQuantity <= 144 &&
+      Number.isSafeInteger(rateSituation.denominatorQuantity) && rateSituation.denominatorQuantity >= 2 && rateSituation.denominatorQuantity <= 144 &&
+      typeof rateSituation.numeratorUnitCode === "string" && Object.prototype.hasOwnProperty.call(RPA_UNIT_CATALOG, rateSituation.numeratorUnitCode) &&
+      typeof rateSituation.denominatorUnitCode === "string" && Object.prototype.hasOwnProperty.call(RPA_UNIT_CATALOG, rateSituation.denominatorUnitCode) &&
+      rateSituation.numeratorUnitCode !== rateSituation.denominatorUnitCode &&
+      expectedDimensions && RPA_UNIT_CATALOG[rateSituation.numeratorUnitCode] === expectedDimensions[0] && RPA_UNIT_CATALOG[rateSituation.denominatorUnitCode] === expectedDimensions[1] &&
+      rateSituation.orientation === "numerator-per-one-denominator",
+    "RPA_RATE_SITUATION_INVALID",
+    reference
+  );
+}
+
 function validateStudentComponent(component, policy, reference, unitId) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
   assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -917,6 +987,7 @@ function validateStudentComponent(component, policy, reference, unitId) {
     assert(component.responseMode === null && component.teacherReferenceId === null, "STUDENT_COMPONENT_INVALID", reference);
     assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
     assert(component.geometryDiagram === undefined, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
+    assert(component.rateSituation === undefined, "RPA_RATE_SITUATION_INVALID", reference);
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -930,6 +1001,8 @@ function validateStudentComponent(component, policy, reference, unitId) {
     else assert(component.relationTable === undefined, "EEC_RELATION_TABLE_INVALID", reference);
     if (unitId === "ccss-6-g-a") validateGgaGeometryDiagram(component.geometryDiagram, reference);
     else assert(component.geometryDiagram === undefined, "GGA_GEOMETRY_DIAGRAM_INVALID", reference);
+    if (unitId === "ccss-6-rp-a") validateRpaRateSituation(component.rateSituation, reference);
+    else assert(component.rateSituation === undefined, "RPA_RATE_SITUATION_INVALID", reference);
   }
 }
 
@@ -1309,6 +1382,44 @@ function canonicalDirectVariationWholeTableCoefficient(check, reference) {
   return String(check.rate);
 }
 
+function positiveWholeBigIntGcd(left, right) {
+  let a = left;
+  let b = right;
+  while (b !== 0n) {
+    const remainder = a % b;
+    a = b;
+    b = remainder;
+  }
+  return a;
+}
+
+function canonicalPositiveWholeInputExactUnitRateMagnitude(check, reference) {
+  assertExactDataKeys(check, ["kind", "numeratorQuantity", "denominatorQuantity"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    check.kind === RPA_UNIT_RATE_CHECK_KIND &&
+      Number.isSafeInteger(check.numeratorQuantity) && check.numeratorQuantity >= 2 && check.numeratorQuantity <= 144 &&
+      Number.isSafeInteger(check.denominatorQuantity) && check.denominatorQuantity >= 2 && check.denominatorQuantity <= 144,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  const numeratorQuantity = BigInt(check.numeratorQuantity);
+  const denominatorQuantity = BigInt(check.denominatorQuantity);
+  const divisor = positiveWholeBigIntGcd(numeratorQuantity, denominatorQuantity);
+  assert(divisor >= 2n && divisor <= 12n, "ARITHMETIC_CHECK_INVALID", reference);
+  const reducedNumerator = numeratorQuantity / divisor;
+  const reducedDenominator = denominatorQuantity / divisor;
+  assert(
+    reducedNumerator >= 1n && reducedNumerator <= 12n &&
+      reducedDenominator >= 1n && reducedDenominator <= 12n &&
+      reducedNumerator !== reducedDenominator &&
+      reducedNumerator * denominatorQuantity === reducedDenominator * numeratorQuantity &&
+      positiveWholeBigIntGcd(reducedNumerator, reducedDenominator) === 1n,
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  return reducedDenominator === 1n ? String(reducedNumerator) : `${reducedNumerator}/${reducedDenominator}`;
+}
+
 function canonicalGgaRightTriangleArea(check, reference) {
   assertExactDataKeys(check, ["kind", "base", "perpendicularHeight"], "ARITHMETIC_CHECK_INVALID", reference);
   assert(
@@ -1465,6 +1576,7 @@ function canonicalAnswer(check, reference) {
   if (kind === "whole-number-power") return canonicalWholeNumberPower(check, reference);
   if (kind === "positive-whole-equality-substitution-truth") return canonicalPositiveWholeEqualitySubstitutionTruth(check, reference);
   if (kind === "direct-variation-whole-table-coefficient") return canonicalDirectVariationWholeTableCoefficient(check, reference);
+  if (kind === RPA_UNIT_RATE_CHECK_KIND) return canonicalPositiveWholeInputExactUnitRateMagnitude(check, reference);
   if (kind === GGA_TRIANGLE_AREA_CHECK_KIND) return canonicalGgaRightTriangleArea(check, reference);
   if (kind === "whole-percent") {
     assertExactDataKeys(check, ["kind", "part", "whole"], "ARITHMETIC_CHECK_INVALID", reference);
@@ -1664,6 +1776,59 @@ function validateGgaAutomaticEvidence(answerReferences, componentMap, unit, refe
     "GGA_DIFFICULTY_CONTRACT_INCOMPLETE",
     reference
   );
+}
+
+function validateRpaAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (unit.unitId !== "ccss-6-rp-a") return;
+  assert(answerReferences.length === 22, "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  assert(answerReferences.every(function (answerReference) {
+    return answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === RPA_UNIT_RATE_CHECK_KIND;
+  }), "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const factFingerprints = new Set();
+  const reducedRatios = new Set();
+  const expectedResponses = new Set();
+  const mirrorFingerprints = new Set();
+  const automaticOutcomeKinds = new Map([["integer", 0], ["proper-fraction", 0], ["improper-nonwhole", 0]]);
+  let automaticEvidenceCount = 0;
+  let teacherReviewOnlyCount = 0;
+  answerReferences.forEach(function (answerReference) {
+    const check = answerReference.arithmeticCheck;
+    const factFingerprint = `${check.numeratorQuantity}|${check.denominatorQuantity}`;
+    const mirrorFingerprint = `${check.denominatorQuantity}|${check.numeratorQuantity}`;
+    assert(!factFingerprints.has(factFingerprint) && !mirrorFingerprints.has(factFingerprint), "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    factFingerprints.add(factFingerprint);
+    mirrorFingerprints.add(mirrorFingerprint);
+    const expected = canonicalPositiveWholeInputExactUnitRateMagnitude(check, answerReference.referenceId);
+    assert(answerReference.expectedResponse === expected, "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    assert(!expectedResponses.has(expected), "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    expectedResponses.add(expected);
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    validateRpaRateSituation(component.component.rateSituation, answerReference.referenceId);
+    assert(
+      component.component.rateSituation.numeratorQuantity === check.numeratorQuantity &&
+        component.component.rateSituation.denominatorQuantity === check.denominatorQuantity,
+      "RPA_RATE_SITUATION_MISMATCH",
+      answerReference.referenceId
+    );
+    const reduced = expected.includes("/") ? expected : `${expected}/1`;
+    assert(!reducedRatios.has(reduced), "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    reducedRatios.add(reduced);
+    const expectedEvaluationMode = component.section.resourceBinding.levelId === "advanced" ? "teacher-review-only" : "automatic-evidence";
+    assert(answerReference.evaluationMode === expectedEvaluationMode, "RPA_DIFFICULTY_CONTRACT_INCOMPLETE", answerReference.referenceId);
+    if (expectedEvaluationMode === "teacher-review-only") {
+      teacherReviewOnlyCount += 1;
+    } else {
+      automaticEvidenceCount += 1;
+      const [p, q] = reduced.split("/").map(function (part) { return Number(part); });
+      const outcomeKind = q === 1 ? "integer" : p < q ? "proper-fraction" : "improper-nonwhole";
+      automaticOutcomeKinds.set(outcomeKind, automaticOutcomeKinds.get(outcomeKind) + 1);
+    }
+  });
+  assert(automaticEvidenceCount === 14 && teacherReviewOnlyCount === 8, "RPA_DIFFICULTY_CONTRACT_INCOMPLETE", reference);
+  automaticOutcomeKinds.forEach(function (count) {
+    assert(count >= 4, "RPA_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  });
 }
 
 function escapeRegExpLiteral(value) {
@@ -2039,6 +2204,45 @@ function validateGgaStudentVisibleSeparation(pack, sections, answerReferences, u
   });
 }
 
+function containsRpaLocalizedAnswerEquivalent(content, expectedResponse) {
+  if (!expectedResponse.includes("/")) return containsEeaLocalizedAnswerWord(content, expectedResponse);
+  const [numerator, denominator] = expectedResponse.split("/").map(function (part) { return Number(part); });
+  const english = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+  const englishOrdinal = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"];
+  const korean = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십", "십일", "십이"];
+  const chinese = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+  const normalized = String(content).normalize("NFKC").toLocaleLowerCase("en-US");
+  const englishDenominator = denominator === 2 ? numerator === 1 ? "half" : "halves" : `${englishOrdinal[denominator]}${numerator === 1 ? "" : "s"}`;
+  const englishFraction = `${english[numerator]} ${englishDenominator}`;
+  const englishBareHalf = denominator === 2 && numerator === 1 && /(^|[^\p{L}])half(?![\p{L}])/u.test(normalized);
+  return normalized.includes(englishFraction) || englishBareHalf ||
+    String(content).normalize("NFKC").replace(/\s/gu, "").includes(`${korean[denominator]}분의${korean[numerator]}`) ||
+    String(content).normalize("NFKC").includes(`${chinese[denominator]}分之${chinese[numerator]}`);
+}
+
+function validateRpaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference) {
+  if (unit.unitId !== "ccss-6-rp-a") return;
+  const fields = [];
+  [pack.frontMatter, pack.closingMatter].forEach(function (group) {
+    Object.values(group).forEach(function (localizedText) {
+      Object.entries(localizedText).forEach(function (entry) { fields.push(Object.freeze({ content: entry[1], reference })); });
+    });
+  });
+  sections.forEach(function (entry) {
+    Object.entries(entry.section.titleByLocale).forEach(function (localeEntry) { fields.push(Object.freeze({ content: localeEntry[1], reference: entry.section.sectionId })); });
+    entry.section.components.filter(function (component) { return component.responseMode === null; }).forEach(function (component) {
+      Object.entries(component.contentByLocale).forEach(function (localeEntry) { fields.push(Object.freeze({ content: localeEntry[1], reference: component.componentId })); });
+    });
+  });
+  fields.forEach(function (field) {
+    const normalizedContent = normalizeForAnswerLeakScan(field.content);
+    answerReferences.forEach(function (answerReference) {
+      assert(!containsStandaloneExpectedResponse(normalizedContent, normalizeForAnswerLeakScan(answerReference.expectedResponse)), "RPA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+      assert(!containsRpaLocalizedAnswerEquivalent(field.content, answerReference.expectedResponse), "RPA_CROSS_STUDENT_ANSWER_LEAK", field.reference);
+    });
+  });
+}
+
 function validateAnswerReference(answerReference, componentMap, policy, artifact, seenReferenceIds) {
   const reference = localReference(answerReference && answerReference.referenceId, artifact.artifactId);
   assertOnlyKeys(answerReference, REFERENCE_KEYS, "ANSWER_REFERENCE_INVALID", reference);
@@ -2055,6 +2259,8 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   requireLocales(answerReference.uniquenessProofByLocale, policy, "ANSWER_REFERENCE_INVALID", reference);
   if (artifact.resourceBinding.unitId === "ccss-6-g-a") {
     assert(GGA_EVALUATION_MODES.has(answerReference.evaluationMode), "GGA_RESPONSE_CONTRACT_INVALID", reference);
+  } else if (artifact.resourceBinding.unitId === "ccss-6-rp-a") {
+    assert(RPA_UNIT_RATE_EVALUATION_MODES.has(answerReference.evaluationMode), "RPA_RESPONSE_CONTRACT_INVALID", reference);
   } else {
     assert(answerReference.evaluationMode === undefined, "ANSWER_REFERENCE_INVALID", reference);
   }
@@ -2075,6 +2281,9 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   }
   if (artifact.resourceBinding.unitId === "ccss-6-g-a") {
     assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND, "GGA_RESPONSE_CONTRACT_INVALID", reference);
+  }
+  if (artifact.resourceBinding.unitId === "ccss-6-rp-a") {
+    assert(answerReference.responseMode === "numeric-exact" && answerReference.arithmeticCheck.kind === RPA_UNIT_RATE_CHECK_KIND, "RPA_RESPONSE_CONTRACT_INVALID", reference);
   }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
@@ -2102,7 +2311,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   });
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
-    return ["ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
+    return ["ccss-6-rp-a", "ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(resource.unitId) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
   }), "TEACHER_COMPONENT_INVALID", reference);
   const plannedComponents = artifact.components.filter(function (component) {
     return !component || component.componentType !== NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
@@ -2213,6 +2422,30 @@ function validateGgaTeacherObservationEvidence(artifacts, unit, policy, referenc
     Object.entries(observations[0].contentByLocale).forEach(function (entry) {
       const locale = entry[0];
       assert(policy.included.includes(locale) && entry[1] === exactContent[locale], "GGA_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
+  });
+}
+
+function validateRpaTeacherObservationEvidence(artifacts, unit, policy, reference) {
+  if (unit.unitId !== "ccss-6-rp-a") return;
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "RPA_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "RPA_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = RPA_TEACHER_OBSERVATION_BY_PROFILE[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "RPA_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      assert(policy.included.includes(entry[0]) && entry[1] === exactContent[entry[0]], "RPA_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
     });
   });
 }
@@ -2364,6 +2597,7 @@ function validatePack(pack, fileName) {
   validateEebTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateEecTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateGgaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
+  validateRpaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -2387,10 +2621,12 @@ function validatePack(pack, fileName) {
   validateEeaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEecAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateGgaAutomaticEvidence(answerReferences, componentMap, unit, reference);
+  validateRpaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateGgaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
+  validateRpaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   sections.forEach(function (entry) {
     entry.section.components.forEach(function (component) {
       if (component.responseMode === null) return;
@@ -2452,7 +2688,7 @@ function sourceFiles(root) {
   const files = [];
   fs.readdirSync(root, { withFileTypes: true }).forEach(function (entry) {
     assert(entry.isFile() && !entry.isSymbolicLink(), "PRIVATE_WORKBOOK_PATH_UNSAFE", entry.name);
-    assert(/^grade6-[a-z0-9-]+-workbook-draft\.json$/.test(entry.name), "PRIVATE_WORKBOOK_FILE_NAME_INVALID", entry.name);
+    assert(PRIVATE_WORKBOOK_FILE_NAME.test(entry.name), "PRIVATE_WORKBOOK_FILE_NAME_INVALID", entry.name);
     files.push(entry.name);
   });
   assert(files.length > 0, "PRIVATE_WORKBOOK_PACKS_MISSING", "root");
@@ -2578,6 +2814,7 @@ module.exports = Object.freeze({
   SCHEMA_VERSION,
   CONFIDENTIALITY_MARKER,
   DRAFT_STATE,
+  PRIVATE_WORKBOOK_FILE_NAME,
   EEC_LOCKED_EVIDENCE_BY_LOCALE,
   EEC_TABLE_EQUATION_EVIDENCE_ID,
   EEC_TEACHER_OBSERVATION_BY_PROFILE,
@@ -2587,13 +2824,23 @@ module.exports = Object.freeze({
   GGA_GEOMETRY_DIAGRAM_KIND,
   GGA_EVALUATION_MODES,
   GGA_TEACHER_OBSERVATION_BY_PROFILE,
+  RPA_LOCKED_EVIDENCE_BY_LOCALE,
+  RPA_UNIT_RATE_EVIDENCE_ID,
+  RPA_UNIT_RATE_CHECK_KIND,
+  RPA_RATE_SITUATION_KIND,
+  RPA_RATE_SITUATION_CONTEXT_KINDS,
+  RPA_UNIT_CATALOG,
+  RPA_UNIT_RATE_EVALUATION_MODES,
+  RPA_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_LOCKED_EVIDENCE_BY_LOCALE,
   EEB_TEACHER_OBSERVATION_BY_PROFILE,
   EEB_STUDENT_STATIC_TEXT,
   assertResponseStudentTextSyntax,
   canonicalDirectVariationWholeTableCoefficient,
   canonicalGgaRightTriangleArea,
+  canonicalPositiveWholeInputExactUnitRateMagnitude,
   validateGgaGeometryDiagram,
+  validateRpaRateSituation,
   validateGgaRightTriangleAreaPrompt,
   assertStudentContentDoesNotRevealAnswer,
   assertNoDuplicateJsonKeys,
@@ -2603,6 +2850,7 @@ module.exports = Object.freeze({
   validateEebAutomaticEvidence,
   validateEeaAutomaticEvidence,
   validateGgaAutomaticEvidence,
+  validateRpaAutomaticEvidence,
   validatePositiveWholeEqualitySubstitutionTruthPrompt,
   validateEeaWorkedExampleContent,
   validateEebWorkedExampleContent,
@@ -2613,7 +2861,9 @@ module.exports = Object.freeze({
   validateEeaStudentVisibleSeparation,
   validateEeaTeacherObservationEvidence,
   validateGgaStudentVisibleSeparation,
+  validateRpaStudentVisibleSeparation,
   validateGgaTeacherObservationEvidence,
+  validateRpaTeacherObservationEvidence,
   containsEebTruthResponseLabel,
   assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse,
   assertEeaNonWorkedStudentTextHasNoNumericNotation,
@@ -2623,5 +2873,6 @@ module.exports = Object.freeze({
   containsEeaLocalizedAnswerWord,
   containsEecLocalizedAnswerEquivalent,
   validatePack,
+  sourceFiles,
   validateDirectory
 });

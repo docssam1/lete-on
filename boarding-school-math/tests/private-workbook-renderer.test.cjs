@@ -4,6 +4,7 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 
+const exporter = require("../scripts/export-private-grade6-workbook-pdf.cjs");
 const renderer = require("../scripts/render-private-grade6-workbook.cjs");
 
 function localized(ko, en, zhHans) {
@@ -23,10 +24,15 @@ function syntheticDraft(responseMode) {
       retentionNoticeByLocale: localized("복습", "Review", "复习")
     },
     layoutPlan: {
-      studentTargetPages: 3,
-      teacherTargetPages: 1
+      studentTargetPages: 8,
+      teacherTargetPages: 4,
+      frontMatterPages: 1,
+      closingPages: 1,
+      studentSectionLayouts: [{ id: "student-section-1", startPage: 2, endPage: 7 }],
+      teacherArtifactLayouts: [{ id: "teacher-artifact-1", startPage: 1, endPage: 4 }]
     },
     studentSections: [{
+      sectionId: "student-section-1",
       titleByLocale: localized("연습", "Practice", "练习"),
       components: [{
         componentId: "student-component-1",
@@ -37,6 +43,7 @@ function syntheticDraft(responseMode) {
       }]
     }],
     teacherArtifacts: [{
+      artifactId: "teacher-artifact-1",
       titleByLocale: localized("교사용", "teacher-title-sentinel", "教师用"),
       components: [{
         componentType: "solution-structure",
@@ -61,13 +68,14 @@ test("private renderer keeps the student model structurally free of teacher and 
   assert.doesNotMatch(serialized, /expectedResponse|teacherReferenceId|answerReferences|solutionByLocale|uniquenessProofByLocale/);
   const html = renderer.renderStudentHtml(student, "en");
   assert.match(html, /data-document-audience="student"/);
-  assert.match(html, /data-layout-target-pages="3"/);
+  assert.match(html, /data-layout-target-pages="8"/);
   assert.match(html, /class="private-watermark"/);
   assert.match(html, /@media print[\s\S]*?\.private-watermark\s*\{[^}]*position:\s*fixed/u);
   assert.match(html, /\.private-watermark\s*\{[^}]*top:\s*-0\.34in;\s*right:\s*0\.08in;[^}]*pointer-events:\s*none;/u);
+  assert.match(html, /@media print[\s\S]*?footer\s*\{\s*display:\s*none;\s*\}/u);
   assert.match(html, /student-safe-sentinel/);
-  assert.match(html, /<section class="section first-instruction"><h2>Practice<\/h2>/);
-  assert.doesNotMatch(html, /<section class="section page-start"><h2>Practice<\/h2>/);
+  assert.match(html, /data-layout-kind="student-section" data-layout-page="2"><section class="first-instruction"><h2>Practice<\/h2>/);
+  assert.match(html, /data-layout-kind="student-section" data-layout-page="7"><div class="layout-workspace"/);
   assert.match(html, /main\[data-document-audience="student"\]\s+\.first-instruction\s*\{\s*break-inside:\s*auto;\s*page-break-inside:\s*auto;/u);
   assert.doesNotMatch(html, /teacher-(?:reference|title|component|segment|answer|solution|proof)-sentinel/);
   assert.doesNotMatch(html, /teacherReferenceId|answerReferences|expectedResponse|solutionByLocale|uniquenessProofByLocale|arithmeticCheck/);
@@ -79,7 +87,7 @@ test("private renderer keeps teacher-only content out of student output and incl
   const teacher = renderer.buildTeacherModel(draft, "en");
   const html = renderer.renderTeacherHtml(teacher, "en");
   assert.match(html, /data-document-audience="teacher"/);
-  assert.match(html, /data-layout-target-pages="1"/);
+  assert.match(html, /data-layout-target-pages="4"/);
   assert.match(html, /class="private-watermark"/);
   assert.match(html, /@media print[\s\S]*?\.private-watermark\s*\{[^}]*position:\s*fixed/u);
   assert.match(html, /\.private-watermark\s*\{[^}]*top:\s*-0\.34in;\s*right:\s*0\.08in;[^}]*pointer-events:\s*none;/u);
@@ -95,6 +103,43 @@ test("private renderer keeps teacher-only content out of student output and incl
   ].forEach(function (sentinel) {
     assert.match(html, new RegExp(sentinel));
   });
+});
+
+test("renderer converts declared 32/12 allocations with a multi-page closing into physical Letter PDF pages", async function () {
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-pagination-"));
+  const inputRoot = path.join(temporaryRoot, "input");
+  const outputRoot = path.join(temporaryRoot, "output");
+  fs.mkdirSync(inputRoot);
+  fs.mkdirSync(outputRoot);
+  try {
+    const draft = syntheticDraft();
+    draft.layoutPlan = {
+      ...draft.layoutPlan,
+      studentTargetPages: 32,
+      teacherTargetPages: 12,
+      closingPages: 2,
+      studentSectionLayouts: [{ id: "student-section-1", startPage: 2, endPage: 30 }],
+      teacherArtifactLayouts: [{ id: "teacher-artifact-1", startPage: 1, endPage: 12 }]
+    };
+    const studentHtml = renderer.renderStudentHtml(renderer.buildStudentModel(draft, "en"), "en");
+    const teacherHtml = renderer.renderTeacherHtml(renderer.buildTeacherModel(draft, "en"), "en");
+    assert.deepEqual(Array.from(studentHtml.matchAll(/data-layout-page="(\d+)"/gu), function (match) { return Number(match[1]); }), Array.from({ length: 32 }, function (_value, index) { return index + 1; }));
+    assert.deepEqual(Array.from(teacherHtml.matchAll(/data-layout-page="(\d+)"/gu), function (match) { return Number(match[1]); }), Array.from({ length: 12 }, function (_value, index) { return index + 1; }));
+    assert.match(studentHtml, /data-layout-kind="closing-matter" data-layout-page="31"><section class="closing-matter">/);
+    assert.match(studentHtml, /data-layout-kind="closing-matter" data-layout-page="32"><div class="layout-workspace"/);
+    assert.equal((studentHtml.match(/class="section layout-page layout-continuation-page/g) || []).length, 29);
+    assert.equal((teacherHtml.match(/class="section layout-page layout-continuation-page/g) || []).length, 11);
+    fs.writeFileSync(path.join(inputRoot, "6-ee-b-en-student.html"), studentHtml, "utf8");
+    fs.writeFileSync(path.join(inputRoot, "6-ee-b-en-teacher.html"), teacherHtml, "utf8");
+    const studentPdf = await exporter.exportPdf({ inputPath: path.join(inputRoot, "6-ee-b-en-student.html"), outputPath: path.join(outputRoot, "6-ee-b-en-student.pdf") });
+    const teacherPdf = await exporter.exportPdf({ inputPath: path.join(inputRoot, "6-ee-b-en-teacher.html"), outputPath: path.join(outputRoot, "6-ee-b-en-teacher.pdf") });
+    assert.equal(studentPdf.pages, 32);
+    assert.equal(teacherPdf.pages, 12);
+    assert.equal(studentPdf.pageSize, "letter");
+    assert.equal(teacherPdf.pageSize, "letter");
+  } finally {
+    fs.rmSync(temporaryRoot, { recursive: true, force: true });
+  }
 });
 
 test("truth-value responses render two unselected student choices without answer-bearing form values", function () {
@@ -199,6 +244,54 @@ test("renderer command requires one explicit external root, unit, locale, and ou
   assert.throws(function () {
     renderer.parseArguments(["--root", privateRoot]);
   }, /PRIVATE_RENDER_COMMAND_INVALID/);
+});
+
+test("renderer accepts only validator-approved canonical or nonzero revision draft filenames", function () {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-renderer-filenames-"));
+  const originalPreflightOverride = process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT;
+  try {
+    const canonical = "grade6-rp-a-unit-workbook-draft.json";
+    const revision = "grade6-rp-a-unit-workbook-draft-r2.json";
+    fs.writeFileSync(path.join(tempRoot, canonical), "{}", "utf8");
+    fs.writeFileSync(path.join(tempRoot, revision), "{}", "utf8");
+    assert.equal(renderer.PRIVATE_RENDER_DRAFT_FILE_NAME.test(canonical), true);
+    assert.equal(renderer.PRIVATE_RENDER_DRAFT_FILE_NAME.test(revision), true);
+    assert.deepEqual(renderer.draftFileEntries(tempRoot).map(function (entry) { return entry.name; }).sort(), [revision, canonical]);
+    ["grade6-rp-a-unit-workbook-draft-r0.json", "grade6-rp-a-unit-workbook-draft-r02.json", "grade6-rp-a-unit-workbook-draft-rx.json"].forEach(function (fileName) {
+      assert.equal(renderer.PRIVATE_RENDER_DRAFT_FILE_NAME.test(fileName), false);
+    });
+    const malformedRoot = path.join(tempRoot, "malformed");
+    fs.mkdirSync(malformedRoot);
+    fs.writeFileSync(path.join(malformedRoot, "grade6-rp-a-unit-workbook-draft-r02.json"), "{}", "utf8");
+    process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT = "1";
+    assert.throws(function () {
+      renderer.renderPrivateWorkbook({
+        privateRoot: malformedRoot,
+        unitId: "ccss-6-rp-a",
+        locale: "en",
+        outputRoot: path.join(tempRoot, "output")
+      });
+    }, /PRIVATE_WORKBOOK_FILE_NAME_INVALID/);
+  } finally {
+    if (originalPreflightOverride === undefined) delete process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT;
+    else process.env.GFIELD_ALLOW_PRIVATE_WORKBOOK_PREFLIGHT = originalPreflightOverride;
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
+test("renderer fails closed when canonical and revision RPA drafts both resolve to one unit", function () {
+  const canonical = Object.freeze({
+    filePath: "grade6-rp-a-unit-workbook-draft.json",
+    draft: Object.freeze({ unitId: "ccss-6-rp-a" })
+  });
+  const revision = Object.freeze({
+    filePath: "grade6-rp-a-unit-workbook-draft-r2.json",
+    draft: Object.freeze({ unitId: "ccss-6-rp-a" })
+  });
+  assert.throws(function () {
+    renderer.selectDraftForUnit([canonical, revision], "ccss-6-rp-a");
+  }, /PRIVATE_RENDER_DRAFT_NOT_FOUND/);
+  assert.equal(renderer.selectDraftForUnit([revision], "ccss-6-rp-a"), revision);
 });
 
 test("renderer rejects output roots inside any Git-marked directory and unsafe existing path entries", function () {
