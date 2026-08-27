@@ -18,7 +18,14 @@ const requiredTypes = new Map([
   ["cube-three-view-minmax", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기"],
   ["cube-missing-view", "두 방향의 모양을 보고 나머지 방향 그리기"],
   ["cube-hidden-count-walled", "벽 모서리에서 보이지 않는 쌓기나무의 개수"],
-  ["cube-tunnel", "여러 방향으로 구멍을 뚫은 뒤 남은 개수"]
+  ["cube-tunnel", "여러 방향으로 구멍을 뚫은 뒤 남은 개수"],
+  ["multiplication-table-pattern", "가로와 세로 머리수의 곱셈표"],
+  ["product-cycle-completion", "다각형 이웃한 꼭짓점의 곱 완성"],
+  ["multiplication-matrix-products", "가로·세로의 곱으로 빈칸 찾기"],
+  ["multiplication-matrix-placement", "수 카드를 놓아 가로·세로의 곱 맞추기"],
+  ["symbol-product-pair", "두 도형의 곱과 합으로 값 찾기"],
+  ["symbol-multiplication-chain", "이어진 도형 곱셈식으로 값 찾기"],
+  ["symbol-mixed-operation-grid", "곱셈·덧셈·뺄셈이 섞인 도형식"]
 ]);
 
 for (const [typeId, expectedLabel] of requiredTypes) {
@@ -47,6 +54,22 @@ const book09 = CURRICULUM.find((book) => book.id === "book-09");
 for (const typeId of ["cube-top-number-grid", "cube-three-views", "cube-three-view-minmax", "cube-missing-view"]) {
   assert(book09.units[1].typeIds.includes(typeId), `book 9 cube unit missing ${typeId}`);
 }
+
+const book05 = CURRICULUM.find((book) => book.id === "book-05");
+const book05MultiplicationTypes = [
+  "multiplication-table-pattern",
+  "product-cycle-completion",
+  "multiplication-matrix-products",
+  "multiplication-matrix-placement",
+  "symbol-product-pair",
+  "symbol-multiplication-chain",
+  "symbol-mixed-operation-grid"
+];
+for (const typeId of book05MultiplicationTypes) {
+  assert(book05.units[2].typeIds.includes(typeId), `book 5 multiplication unit missing ${typeId}`);
+}
+assert(new Set(book05MultiplicationTypes.map((typeId) => typeById(typeId).generator)).size === book05MultiplicationTypes.length,
+  "book 5 multiplication structures share a generator");
 
 const unverifiedMultiplicationCryptarithm = typeById("multiplicative-symbol-equation");
 assert(unverifiedMultiplicationCryptarithm, "multiplication-symbol placeholder missing");
