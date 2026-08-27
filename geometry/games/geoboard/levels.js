@@ -390,28 +390,30 @@ export function enumerateCompoundShapes(points, segments) {
   return { triangles, quadrilaterals };
 }
 
-const COMPOUND_POINTS = {
-  A: [0, 0], B: [1, 0], C: [2, 0], D: [0, 1], E: [1, 1], F: [2, 1], G: [3, 1],
-  H: [0, 2], I: [1, 2], J: [2, 2], K: [1, 3], L: [2, 3], M: [3, 2]
-};
+const p = (id, x, y) => ({ id, point: [x, y] });
+const PAGE_42_POINTS = [
+  p("A", 0, 0), p("B", 1, 0), p("C", 2, 0),
+  p("D", 0, 1), p("R", 3, 1),
+  p("G", 0, 2), p("H", 1, 2), p("I", 2, 2)
+];
+const PAGE_42_BASE = [["A", "B"], ["B", "C"], ["A", "D"], ["D", "G"], ["G", "H"], ["H", "I"], ["C", "R"], ["R", "I"]];
 
-const compoundEdges = (...pairs) => pairs;
+const PAGE_50_POINTS = [
+  p("L", 0, 1),
+  p("A", 1, 0), p("B", 2, 0), p("C", 3, 0), p("R", 4, 1),
+  p("D", 1, 2), p("E", 2, 2), p("F", 3, 2)
+];
+const PAGE_50_BASE = [["L", "A"], ["L", "D"], ["A", "B"], ["B", "C"], ["C", "R"], ["R", "F"], ["D", "E"], ["E", "F"]];
 
-// The first five are an introduction set; the second five add more overlapping
-// sizes. They follow the RAY B1-2 p.38/p.46 activity structure without copying a
-// printed figure. Every intersection is an explicit point, so nothing is hidden
-// behind an unmarked crossing.
+// Visual transcription of the five printed diagrams. Coordinates, marked dots,
+// base lines and added bold lines are separate evidence. A lattice crossing that
+// has no printed dot is deliberately absent from `points` and is not a vertex.
 const level5Specs = [
-  compoundEdges("AB", "BC", "CG", "GJ", "JI", "IH", "HD", "DA", "DB", "BF", "FI", "DF"),
-  compoundEdges("AB", "BC", "CF", "FJ", "JI", "IH", "HD", "DA", "AE", "EJ", "DE", "EF"),
-  compoundEdges("BC", "CF", "FJ", "JI", "IH", "HD", "DB", "BE", "EI", "DE", "EF", "EJ"),
-  compoundEdges("BC", "CG", "GJ", "JL", "LK", "KH", "HD", "DB", "BE", "EJ", "DE", "EG", "HI", "IJ"),
-  compoundEdges("AB", "BC", "CG", "GJ", "JI", "IH", "HD", "DA", "AE", "EJ", "HE", "EC", "BE", "EF"),
-  compoundEdges("DA", "AB", "BE", "EI", "IH", "HD", "BC", "CG", "GJ", "JI", "DE", "EF", "FG", "BF", "FI"),
-  compoundEdges("AB", "BC", "CG", "GM", "MJ", "JI", "IH", "HE", "EA", "BE", "EF", "FG", "CF", "FJ", "EI"),
-  compoundEdges("BC", "CG", "GJ", "JL", "LK", "KH", "HD", "DB", "BE", "EI", "IK", "CF", "FJ", "JK", "DE", "EF", "FG"),
-  compoundEdges("AB", "BC", "CF", "FJ", "JI", "IH", "HD", "DA", "AE", "EC", "DE", "EF", "HE", "EJ"),
-  compoundEdges("BA", "AD", "DH", "HI", "IJ", "JF", "FC", "CB", "BE", "EI", "DE", "EF", "AE", "EJ", "HE", "EC")
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (1)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "B"], ["G", "C"], ["C", "I"]], expected: { triangles: 4, quadrilaterals: 3 } },
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (2)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "B"], ["D", "R"], ["D", "H"]], expected: { triangles: 2, quadrilaterals: 4 } },
+  { sourceLocator: "RAY B1-2 PDF p.38 / printed p.42 / (3)", points: PAGE_42_POINTS, base: PAGE_42_BASE, added: [["D", "C"], ["D", "R"], ["G", "R"]], expected: { triangles: 4, quadrilaterals: 4 } },
+  { sourceLocator: "RAY B1-2 PDF p.46 / printed p.50 / (1)", points: PAGE_50_POINTS, base: PAGE_50_BASE, added: [["A", "D"], ["D", "C"]], expected: { triangles: 2, quadrilaterals: 2 } },
+  { sourceLocator: "RAY B1-2 PDF p.46 / printed p.50 / (2)", points: PAGE_50_POINTS, base: PAGE_50_BASE, added: [["D", "C"], ["E", "C"]], expected: { triangles: 1, quadrilaterals: 3 } }
 ];
 
 function answerChoices(answer, index, offset) {
@@ -421,13 +423,19 @@ function answerChoices(answer, index, offset) {
   return [...values.slice(shift), ...values.slice(0, shift)];
 }
 
-function makeCompoundProblem(index, edgeNames) {
-  const usedNames = [...new Set(edgeNames.flatMap((name) => [...name]))];
-  const points = usedNames.map((name) => [...COMPOUND_POINTS[name]]);
-  const segments = edgeNames.map((name) => [[...COMPOUND_POINTS[name[0]]], [...COMPOUND_POINTS[name[1]]]]);
+function makeCompoundProblem(index, spec) {
+  const pointMap = new Map(spec.points.map(({ id, point }) => [id, point]));
+  const toSegments = (edges) => edges.map(([from, to]) => [[...pointMap.get(from)], [...pointMap.get(to)]]);
+  const points = spec.points.map(({ point }) => [...point]);
+  const baseSegments = toSegments(spec.base);
+  const addedSegments = toSegments(spec.added);
+  const segments = [...baseSegments, ...addedSegments];
   const found = enumerateCompoundShapes(points, segments);
-  const triangleCount = found.triangles.length;
-  const quadrilateralCount = found.quadrilaterals.length;
+  if (found.triangles.length !== spec.expected.triangles || found.quadrilaterals.length !== spec.expected.quadrilaterals) {
+    throw new Error(`Geoboard Studio: source transcript count drifted at ${spec.sourceLocator}.`);
+  }
+  const triangleCount = spec.expected.triangles;
+  const quadrilateralCount = spec.expected.quadrilaterals;
   return {
     id: `geoboard-l5-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
@@ -436,13 +444,16 @@ function makeCompoundProblem(index, edgeNames) {
     boardType: "compound",
     grid: { cols: 4, rows: 4 },
     points,
+    baseSegments,
+    addedSegments,
     segments,
     triangleCount,
     quadrilateralCount,
     triangleChoices: answerChoices(triangleCount, index, 0),
     quadrilateralChoices: answerChoices(quadrilateralCount, index, 1),
     shapeNameKey: "shapeCompound",
-    validation: { triangleSolutionCount: 1, quadrilateralSolutionCount: 1, convexOnly: false }
+    sourceLocator: spec.sourceLocator,
+    validation: { triangleSolutionCount: 1, quadrilateralSolutionCount: 1, convexOnly: false, visuallyTranscribed: true }
   };
 }
 
@@ -513,7 +524,7 @@ export const levelMeta = [
   { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
   { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10 },
   { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10 },
-  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 10 }
+  { id: 5, kind: "compound-count", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 5 }
 ];
 
 const pools = {
@@ -521,7 +532,7 @@ const pools = {
   2: level2Specs.map((vertices, index) => makeProblem(2, "closed", index, vertices)),
   3: level3Specs.map(([size, mode, value, choices], index) => makeCountProblem(3, "square-count", index, size, mode, value, choices)),
   4: level4Specs.map(([size, mode, value, choices], index) => makeCountProblem(4, "triangle-count", index, size, mode, value, choices)),
-  5: level5Specs.map((segments, index) => makeCompoundProblem(index, segments))
+  5: level5Specs.map((spec, index) => makeCompoundProblem(index, spec))
 };
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
@@ -641,8 +652,13 @@ function compoundGraphKey(problem) {
 function validateCompoundProblem(problem) {
   const label = problem.id;
   assert(problem.boardType === "compound", `${label} must use the compound board renderer.`);
+  assert(problem.validation?.visuallyTranscribed === true, `${label} must be transcribed from the printed diagram.`);
+  assert(/^RAY B1-2 PDF p\.(38|46) /.test(problem.sourceLocator), `${label} needs an exact private-source locator.`);
   assert(problem.points.length >= 7 && problem.points.length <= 12, `${label} needs a readable number of marked points.`);
   assert(problem.segments.length >= 10 && problem.segments.length <= 18, `${label} needs a readable number of drawn segments.`);
+  assert(problem.baseSegments.length === 8, `${label} must preserve the eight printed base segments.`);
+  assert(problem.addedSegments.length === (problem.sourceLocator.includes("p.38") ? 3 : 2), `${label} has the wrong number of added bold lines.`);
+  assert(problem.segments.length === problem.baseSegments.length + problem.addedSegments.length, `${label} base and added line groups drifted.`);
 
   const pointIds = new Set(problem.points.map(pointKey));
   assert(pointIds.size === problem.points.length, `${label} repeats a graph point.`);

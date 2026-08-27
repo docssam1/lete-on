@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-06'] = {
   id:'C-06', tier:'intermediate', level:'C', order:6,
+  lineage:['nine-next-door'],
   generator:'ml_x9',
   title:{ ko:'×9 전략 마법', en:'The ×9 Strategy Magic', zh:'×9策略魔法' },
   subtitle:{ ko:'×9는 ×10 하고 한 번 빼기! 37×9=370-37=333', en:'×9 is ×10 minus one copy! 37×9=370-37=333', zh:'×9就是×10再减一次！37×9=370-37=333' },

@@ -4,6 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 window.NM_UNITS['A-28'] = {
   id:'A-28', tier:'beginner', level:'A', order:28,
+  lineage:['rainbow-sum'],
   generator:'gaussAdd1',
   title:{ ko:'가우스 덧셈 1', en:'Gauss Addition 1', zh:'高斯加法 1' },
   subtitle:{ ko:'1부터 N까지 합은 (N×(N+1))÷2예요', en:'Sum from 1 to N equals N×(N+1)÷2', zh:'1到N的和等于N×(N+1)÷2' },

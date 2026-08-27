@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-13'] = {
   id:'C-13', tier:'intermediate', level:'C', order:13,
+  lineage:['nine-next-door'],
   generator:'ml_x11',
   title:{ ko:'×11 마법', en:'The ×11 Magic', zh:'×11魔法' },
   subtitle:{ ko:'27×11: 2와 7을 벌리고 그 사이에 2+7을 넣어요!', en:'27×11: spread 2 and 7 apart and put 2+7 in between!', zh:'27×11：把2和7分开，中间放2+7！' },

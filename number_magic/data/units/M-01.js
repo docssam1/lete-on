@@ -9,6 +9,10 @@ window.NM_UNITS['M-01'] = {
   title:{ ko:'정수 개념·수직선', en:'Integers & the Number Line', zh:'整数概念与数轴' },
   subtitle:{ ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙여요', en:'Above and below sea level, points scored and lost — naming the two directions from 0', zh:'海拔与海拔以下，得分与失分——给0两侧的方向起名字' },
   icon:'🌋',
+  symbols:[
+    { sym:'−', read:'마이너스', translate:'0을 기준으로 반대 방향이라는 걸 알려주는 부호',
+      birth:'중국 『구장산술』(약 2,000년 전)은 붉은 산가지(+)와 검은 산가지(−)로 셈했어요. 유럽에서는 오랫동안 음수를 "거짓 수"라 부르며 의심했어요.' }
+  ],
 
   practice:{
     generator:'md1_intConcept', level:'practice', count:5,

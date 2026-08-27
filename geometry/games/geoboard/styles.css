@@ -107,7 +107,9 @@ button { cursor: pointer }
 .peg-hit:focus-visible { fill: #ffd77455; stroke: var(--navy); stroke-width: 1.4 }
 
 .band { stroke: var(--band); stroke-width: 2.6; stroke-linecap: round; fill: none }
-.compound-band { stroke: #244f70; stroke-width: 3.2; stroke-linecap: round; fill: none }
+.compound-band { stroke-linecap: round; fill: none }
+.compound-band.base { stroke: #677683; stroke-width: 1.8 }
+.compound-band.added { stroke: #2a7f8f; stroke-width: 3.5 }
 .compound-band.solved { stroke: #2f8f5b }
 .band.solved { stroke: #2f8f5b }
 .band.ghost { stroke-dasharray: 4 3 }

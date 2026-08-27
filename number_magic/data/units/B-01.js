@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['B-01'] = {
   id:'B-01', tier:'intermediate', level:'B', order:1,
+  lineage:['halves-doubles'],
   generator:'ml1_double',
   title:{ ko:'두 배 마법', en:'The Doubling Magic', zh:'翻倍魔法' },
   subtitle:{ ko:'어떤 수든 두 배로! n × 2 = n + n', en:'Double any number! n × 2 = n + n', zh:'任意数翻倍！n × 2 = n + n' },

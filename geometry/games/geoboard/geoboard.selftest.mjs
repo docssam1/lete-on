@@ -20,9 +20,24 @@ const ids = readyLevels.flatMap((level) => level.problems.map((problem) => probl
 const expectedProblemCount = readyLevels.reduce((total, level) => total + level.problemCount, 0);
 assert(ids.length === expectedProblemCount && new Set(ids).size === expectedProblemCount, `the ${expectedProblemCount} ready problems need unique ids`);
 
+const sourceTranscriptSignatures = [
+  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~1,0|0,2~2,0|2,0~2,2", 4, 3],
+  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~1,0|0,1~1,2|0,1~3,1", 2, 4],
+  ["0,0|0,1|0,2|1,0|1,2|2,0|2,2|3,1", "0,0~0,1|0,0~1,0|0,1~0,2|0,2~1,2|1,0~2,0|1,2~2,2|2,0~3,1|2,2~3,1", "0,1~2,0|0,1~3,1|0,2~3,1", 4, 4],
+  ["0,1|1,0|1,2|2,0|2,2|3,0|3,2|4,1", "0,1~1,0|0,1~1,2|1,0~2,0|1,2~2,2|2,0~3,0|2,2~3,2|3,0~4,1|3,2~4,1", "1,0~1,2|1,2~3,0", 2, 2],
+  ["0,1|1,0|1,2|2,0|2,2|3,0|3,2|4,1", "0,1~1,0|0,1~1,2|1,0~2,0|1,2~2,2|2,0~3,0|2,2~3,2|3,0~4,1|3,2~4,1", "1,2~3,0|2,2~3,0", 1, 3]
+];
+const edgeSignature = (segments) => segments.map(([a, b]) => [pointKey(a), pointKey(b)].sort().join("~")).sort().join("|");
+
 for (const level of readyLevels) {
   for (const problem of level.problems) {
     if (problem.kind === "compound-count") {
+      const expected = sourceTranscriptSignatures[problem.level === 5 ? Number(problem.id.slice(-2)) - 1 : -1];
+      assert(expected, `${problem.id} has no visual-transcript lock`);
+      assert(problem.points.map(pointKey).sort().join("|") === expected[0], `${problem.id} marked-dot lattice drifted from the printed figure`);
+      assert(edgeSignature(problem.baseSegments) === expected[1], `${problem.id} base lines drifted from the printed figure`);
+      assert(edgeSignature(problem.addedSegments) === expected[2], `${problem.id} bold added lines drifted from the printed figure`);
+      assert(problem.triangleCount === expected[3] && problem.quadrilateralCount === expected[4], `${problem.id} reviewed answer constants drifted`);
       const independent = independentlyCountCompound(problem);
       assert(independent.triangles === problem.triangleCount, `${problem.id} triangle count disagrees with independent sampling`);
       assert(independent.quadrilaterals === problem.quadrilateralCount, `${problem.id} quadrilateral count disagrees with independent sampling`);

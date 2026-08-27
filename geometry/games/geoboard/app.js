@@ -249,11 +249,13 @@ function renderBoard() {
 
   ui.bands.replaceChildren();
   if (isCompoundProblem(p)) {
-    p.segments.forEach(([a, b]) => {
+    const drawSegments = (segments, className) => segments.forEach(([a, b]) => {
       const [x1, y1] = projectPoint(a, p);
       const [x2, y2] = projectPoint(b, p);
-      ui.bands.append(svgNode("line", { class: `compound-band${state.solved ? " solved" : ""}`, x1, y1, x2, y2 }));
+      ui.bands.append(svgNode("line", { class: `${className}${state.solved ? " solved" : ""}`, x1, y1, x2, y2 }));
     });
+    drawSegments(p.baseSegments, "compound-band base");
+    drawSegments(p.addedSegments, "compound-band added");
   } else drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
 
   renderHits();

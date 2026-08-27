@@ -9,6 +9,10 @@ window.NM_UNITS['M-15'] = {
   title:{ ko:'제곱근의 값', en:'Values of Square Roots', zh:'平方根的值' },
   subtitle:{ ko:'제곱해서 그 수가 되는 수를 거꾸로 찾아요', en:'Work backward to find the number whose square gives that value', zh:'反过来找出平方后等于那个数的数' },
   icon:'🌱',
+  symbols:[
+    { sym:'√', read:'루트', translate:'"제곱하기 전의 나"를 찾는 기호',
+      birth:'1525년 책에서 처음 등장했어요 — 뿌리(radix)의 r을 흘려 쓴 데서 왔다고 전해져요.' }
+  ],
 
   practice:{
     generator:'md15_sqrtValue', level:'practice', count:5,

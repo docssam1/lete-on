@@ -10,6 +10,10 @@ window.NM_UNITS['M-10'] = {
   title:{ ko:'지수법칙', en:'Laws of Exponents', zh:'指数法则' },
   subtitle:{ ko:'큰 수를 짧게 쓰려는 게으름이 만든 발명 — 곱한 횟수만 세면 끝', en:'An invention born from wanting to write big numbers short — just count how many times you multiplied', zh:'懒得写长数字，于是发明了它——只需数一数乘了几次' },
   icon:'📐',
+  symbols:[
+    { sym:'aⁿ', read:'a의 n제곱', translate:'"같은 수를 n번 곱해라"의 줄임',
+      birth:'큰 수를 짧게 쓰려는 게으름이 만든 발명이에요. 데카르트(1637)가 이 표기를 정착시켰어요.' }
+  ],
 
   practice:{
     generator:'md10_expLaw', level:'practice', count:5,
