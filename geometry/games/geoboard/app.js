@@ -24,8 +24,8 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-6";
-import { messages, text } from "./i18n.js?v=geoboard-6";
+} from "./levels.js?v=geoboard-7";
+import { messages, text } from "./i18n.js?v=geoboard-7";
 import {
   squareBoardPoints, triangularBoardPoints,
   squareDistanceSquared, triangularDistanceSquared,
@@ -68,6 +68,7 @@ const state = {
   solved: false,
   wrong: 0,
   hints: 0,
+  compoundStep: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
   lang: language
 };
@@ -87,6 +88,8 @@ const levelData = () => levels.find((level) => level.id === state.level);
 const problem = () => state.queue[state.problem];
 const isCountProblem = (candidate = problem()) => candidate?.kind === "square-count" || candidate?.kind === "triangle-count";
 const isPlacementQuestion = (candidate = problem()) => isCountProblem(candidate) && candidate.questionMode === "placements";
+const isCompoundProblem = (candidate = problem()) => candidate?.kind === "compound-count";
+const isNumberChoiceQuestion = (candidate = problem()) => isPlacementQuestion(candidate) || isCompoundProblem(candidate);
 
 /* ------------------------------------------------------------------ session */
 
@@ -156,12 +159,25 @@ const pegX = (x, grid) => stepX(grid) * (x + .5);
 const pegY = (y, grid) => stepY(grid) * (y + .5);
 
 function boardPoints(candidate) {
+  if (isCompoundProblem(candidate)) return candidate.points;
   if (candidate.boardType === "triangular") return triangularBoardPoints(candidate.boardSize);
   if (candidate.boardType === "square") return squareBoardPoints(candidate.boardSize);
   return squareBoardPoints(candidate.grid.cols);
 }
 
 function projectPoint(point, candidate) {
+  if (isCompoundProblem(candidate)) {
+    const xs = candidate.points.map(([x]) => x);
+    const ys = candidate.points.map(([, y]) => y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const scale = Math.min(74 / Math.max(1, maxX - minX), 74 / Math.max(1, maxY - minY));
+    const width = (maxX - minX) * scale;
+    const height = (maxY - minY) * scale;
+    return [(100 - width) / 2 + (point[0] - minX) * scale, (100 - height) / 2 + (point[1] - minY) * scale];
+  }
   if (candidate.boardType !== "triangular") return [pegX(point[0], candidate.grid), pegY(point[1], candidate.grid)];
   const spanX = Math.max(1, candidate.boardSize - 1);
   const spanY = Math.max(1, spanX * Math.sqrt(3) / 2);
@@ -232,7 +248,13 @@ function renderBoard() {
   });
 
   ui.bands.replaceChildren();
-  drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
+  if (isCompoundProblem(p)) {
+    p.segments.forEach(([a, b]) => {
+      const [x1, y1] = projectPoint(a, p);
+      const [x2, y2] = projectPoint(b, p);
+      ui.bands.append(svgNode("line", { class: `compound-band${state.solved ? " solved" : ""}`, x1, y1, x2, y2 }));
+    });
+  } else drawFigure(ui.bands, currentPoints(), p, { solved: state.solved });
 
   renderHits();
 }
@@ -256,7 +278,7 @@ function renderHits() {
     ? [document.activeElement.dataset.x, document.activeElement.dataset.y]
     : null;
   ui.hits.replaceChildren();
-  if (isPlacementQuestion(p)) return;
+  if (isNumberChoiceQuestion(p)) return;
   boardPoints(p).forEach(([x, y]) => {
       const used = state.path.some((point) => samePoint(point, [x, y]));
       const isStart = state.path.length > 0 && samePoint(state.path[0], [x, y]);
@@ -275,6 +297,7 @@ function renderHits() {
 
 function renderModel() {
   const p = problem();
+  if (isCompoundProblem(p)) return renderCompoundProgress(p);
   if (isCountProblem(p)) return renderFoundGallery(p);
   const grid = p.grid;
   ui.model.replaceChildren();
@@ -289,6 +312,31 @@ function renderModel() {
   drawFigure(layer, targetPoints(p), p, {});
   ui.model.append(layer);
   ui.modelShape.textContent = t(p.shapeNameKey);
+}
+
+function renderCompoundProgress(candidate) {
+  ui.model.replaceChildren();
+  ui.model.setAttribute("aria-label", t("compoundProgressAria", { step: Math.min(2, state.compoundStep + 1) }));
+  ui.model.append(svgNode("rect", { class: "model-face", x: 0, y: 0, width: 100, height: 100, rx: 4 }));
+  const rows = [
+    { key: "triangleStep", answer: candidate.triangleCount, done: state.compoundStep >= 1 || state.solved },
+    { key: "quadrilateralStep", answer: candidate.quadrilateralCount, done: state.solved }
+  ];
+  rows.forEach((row, index) => {
+    const y = 11 + index * 43;
+    const active = !state.solved && state.compoundStep === index;
+    ui.model.append(svgNode("rect", { class: `compound-step-box${active ? " active" : ""}${row.done ? " done" : ""}`, x: 8, y, width: 84, height: 34, rx: 6 }));
+    const number = svgNode("text", { class: "compound-step-number", x: 18, y: y + 21, "text-anchor": "middle" });
+    number.textContent = String(index + 1);
+    ui.model.append(number);
+    const label = svgNode("text", { class: "compound-step-label", x: 30, y: y + 21 });
+    label.textContent = t(row.key);
+    ui.model.append(label);
+    const answer = svgNode("text", { class: `compound-step-answer${row.done ? " done" : ""}`, x: 82, y: y + 22, "text-anchor": "middle" });
+    answer.textContent = row.done ? row.answer : "?";
+    ui.model.append(answer);
+  });
+  ui.modelShape.textContent = t(state.compoundStep === 0 ? "triangleStep" : "quadrilateralStep");
 }
 
 function countRepresentatives(candidate) {
@@ -464,7 +512,7 @@ function reportWrong(messageKey, marks) {
 function onPegTap(x, y) {
   if (state.solved || state.locked) return;
   const p = problem();
-  if (isPlacementQuestion(p)) return;
+  if (isNumberChoiceQuestion(p)) return;
   const target = [x, y];
   const path = state.path;
   const wanted = isCountProblem(p) ? (p.kind === "square-count" ? 4 : 3) : p.vertices.length;
@@ -582,6 +630,7 @@ function judgeCountProblem(candidate) {
 
 function judgeCountChoice(value, button) {
   const candidate = problem();
+  if (isCompoundProblem(candidate)) return judgeCompoundChoice(value, button);
   if (!isPlacementQuestion(candidate) || state.solved || state.locked) return;
   if (value === candidate.answerValue) return solveProblem();
   state.wrong += 1;
@@ -589,6 +638,30 @@ function judgeCountChoice(value, button) {
   toast(t("wrongCount"));
   button.classList.add("wrong");
   setTimeout(() => button.classList.remove("wrong"), 650);
+}
+
+function judgeCompoundChoice(value, button) {
+  const candidate = problem();
+  if (!isCompoundProblem(candidate) || state.solved || state.locked) return;
+  const expected = state.compoundStep === 0 ? candidate.triangleCount : candidate.quadrilateralCount;
+  if (value !== expected) {
+    state.wrong += 1;
+    playTone("wrong");
+    toast(t("wrongCompoundCount"));
+    button.classList.add("wrong");
+    setTimeout(() => button.classList.remove("wrong"), 650);
+    return;
+  }
+  if (state.compoundStep === 0) {
+    state.compoundStep = 1;
+    playTone("close");
+    toast(t("triangleCountCorrect"));
+    renderModel();
+    refresh();
+    ui.stats.querySelector(".count-choice")?.focus();
+    return;
+  }
+  solveProblem();
 }
 
 function clearBand() {
@@ -640,9 +713,13 @@ function renderStatus() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  $("#modelLabel").textContent = t(isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
-  $("#buildLabel").textContent = t(p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
-  if (isCountProblem(p)) {
+  $("#modelLabel").textContent = t(isCompoundProblem(p) ? "countOrderLabel" : isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
+  $("#buildLabel").textContent = t(isCompoundProblem(p) ? "compoundFigureLabel" : p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
+  $("#retryButton").hidden = isCompoundProblem(p);
+  if (isCompoundProblem(p)) {
+    ui.prompt.textContent = t(state.compoundStep === 0 ? "promptCompoundTriangles" : "promptCompoundQuadrilaterals");
+    ui.answerPrompt.textContent = t("compoundProgress", { step: state.compoundStep + 1 });
+  } else if (isCountProblem(p)) {
     if (isPlacementQuestion(p)) {
       ui.prompt.textContent = t(p.kind === "square-count" ? "promptSquareCount" : "promptEquilateralCount", { size: p.boardSize });
       ui.answerPrompt.textContent = t("chooseCountPrompt");
@@ -663,8 +740,11 @@ function renderStatus() {
   // Live corner and side counts, straight from the exported pure helpers. They are
   // the vocabulary level 3 will ask about, so the child meets the words early.
   ui.stats.replaceChildren();
-  if (isPlacementQuestion(p)) {
-    p.answerChoices.forEach((value) => {
+  if (isNumberChoiceQuestion(p)) {
+    const choices = isCompoundProblem(p)
+      ? (state.compoundStep === 0 ? p.triangleChoices : p.quadrilateralChoices)
+      : p.answerChoices;
+    choices.forEach((value) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "count-choice";
@@ -702,6 +782,7 @@ function resetProblem() {
   state.solved = false;
   state.wrong = 0;
   state.hints = 0;
+  state.compoundStep = 0;
   ui.guide.classList.remove("show");
   renderModel();
   refresh();
@@ -718,13 +799,15 @@ function nextProblem() {
 
 function showComplete() {
   $("#completeTitle").textContent = t("levelComplete", { level: state.level });
-  $("#completeText").textContent = t(isPlacementQuestion()
+  $("#completeText").textContent = t(isCompoundProblem()
+    ? "completeCompoundText"
+    : isPlacementQuestion()
     ? "completeCountText"
     : isCountProblem() ? "completeKindsText" : "completeText");
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
   $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
   ui.complete.hidden = false;
-  cubiSays(t(isCountProblem() ? "guideExploreComplete" : "guideComplete"));
+  cubiSays(t(isCountProblem() || isCompoundProblem() ? "guideExploreComplete" : "guideComplete"));
 }
 
 function renderLevelList() {
@@ -875,7 +958,8 @@ ui.hits.addEventListener("keydown", (event) => {
 $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
   const kind = problem().kind;
-  const hintKey = isPlacementQuestion() ? "hintCountAll"
+  const hintKey = isCompoundProblem() ? "hintCompound"
+    : isPlacementQuestion() ? "hintCountAll"
     : kind === "open" ? "hintOpen"
     : kind === "square-count" ? "hintSquare"
       : kind === "triangle-count" ? "hintEquilateral"
