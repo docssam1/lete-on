@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-5";
-import { messages, text } from "./i18n.js?v=mirror-manor-5";
+} from "./levels.js?v=mirror-manor-6";
+import { messages, text } from "./i18n.js?v=mirror-manor-6";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -38,8 +38,6 @@ const TUTORIAL_KEY = "gfield-mirror-manor-tutorial-v1";
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
 
-// Level 5 remains locked until its source-backed double-mirror pool is verified,
-// so an old ?level=5 link falls back to level 4 for now.
 const highestReady = readyLevels[readyLevels.length - 1].id;
 const askedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const startLevel = levels.find((level) => level.id === askedLevel)?.ready ? askedLevel : Math.min(Math.max(1, askedLevel), highestReady);
@@ -63,7 +61,7 @@ const state = {
 
 const ui = {
   board: $("#board"), cells: $("#cells"), pieces: $("#pieceLayer"), guides: $("#guideLayer"),
-  mirror: $("#mirrorLine"),
+  mirror: $("#mirrorLine"), mirrorSecondary: $("#mirrorLineSecondary"),
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), tray: $("#tray"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
   tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
@@ -126,6 +124,7 @@ function cubiSays(line) {
 }
 
 function toast(line) {
+  ui.toast.hidden = false;
   ui.toast.textContent = line;
   ui.toast.classList.add("show");
   clearTimeout(toast.timer);
@@ -145,6 +144,7 @@ function renderBoard() {
   ui.board.classList.toggle("is-drag", p.interaction === "drag-reflection");
   ui.board.classList.toggle("is-distance", p.interaction === "distance-match");
   ui.board.classList.toggle("is-symbol", p.interaction === "symbol-reflection");
+  ui.board.classList.toggle("is-double", p.interaction === "double-mirror");
   ui.board.classList.toggle("symbol-horizontal", p.interaction === "symbol-reflection" && axis.kind === "horizontal");
   ui.board.classList.toggle("symbol-diagonal", p.interaction === "symbol-reflection" && axis.kind === "diagonal");
   // The two sides are told apart visually by the silvered mirror band and the cell
@@ -152,10 +152,18 @@ function renderBoard() {
   // on-board chips, which would sit on top of tappable answer cells.
   ui.board.setAttribute("aria-label", `${t("boardAria")} — ${t("givenSide")} / ${t("answerSide")}`);
 
-  ui.mirror.className = `mirror-line ${axis.kind}`;
-  if (axis.kind === "vertical") ui.mirror.style.cssText = `left:${fraction(axis.at, grid.cols)};top:-2%;`;
-  else if (axis.kind === "horizontal") ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
-  else ui.mirror.style.cssText = "left:50%;top:50%;";
+  ui.mirrorSecondary.hidden = axis.kind !== "double";
+  if (axis.kind === "double") {
+    ui.mirror.className = "mirror-line vertical";
+    ui.mirror.style.cssText = `left:${fraction(axis.verticalAt, grid.cols)};top:-2%;`;
+    ui.mirrorSecondary.className = "mirror-line horizontal";
+    ui.mirrorSecondary.style.cssText = `top:${fraction(axis.horizontalAt, grid.rows)};left:-2%;`;
+  } else {
+    ui.mirror.className = `mirror-line ${axis.kind}`;
+    if (axis.kind === "vertical") ui.mirror.style.cssText = `left:${fraction(axis.at, grid.cols)};top:-2%;`;
+    else if (axis.kind === "horizontal") ui.mirror.style.cssText = `top:${fraction(axis.at, grid.rows)};left:-2%;`;
+    else ui.mirror.style.cssText = "left:50%;top:50%;";
+  }
 
   renderCells();
   renderPieces();
@@ -175,7 +183,8 @@ function renderCells() {
     renderSymbolNodes(p);
     return;
   }
-  const paint = p.interaction === "paint-reflection";
+  const doubleMirror = p.interaction === "double-mirror";
+  const paint = p.interaction === "paint-reflection" || doubleMirror;
   const givenIds = paint
     ? new Set(p.sourceCells.map(cellId))
     : new Set(p.givens.flatMap((given) => given.cells.map(cellId)));
@@ -188,7 +197,10 @@ function renderCells() {
       node.className = "cell";
       node.dataset.x = x;
       node.dataset.y = y;
-      const given = isGivenSide(cell, axis);
+      const given = doubleMirror
+        ? x < axis.verticalAt && y < axis.horizontalAt
+        : isGivenSide(cell, axis);
+      if (doubleMirror && given) node.classList.add("double-source-quadrant");
       if (!given) node.classList.add("answer-side");
       if (paint && givenIds.has(cellId(cell))) node.classList.add("given");
       if (paint && state.painted.has(cellId(cell))) node.classList.add("painted");
@@ -400,6 +412,7 @@ function onCellPointerDown(event) {
 function onCellClick(event) {
   if (problem().interaction === "distance-match") return onDistanceClick(event);
   if (problem().interaction === "symbol-reflection") return onSymbolClick(event);
+  if (problem().interaction === "double-mirror") return onDoubleMirrorClick(event);
   const node = event.target.closest(".cell");
   if (!node || problem().interaction !== "paint-reflection" || state.solved) return;
   const p = problem();
@@ -419,6 +432,30 @@ function onCellClick(event) {
   const verdict = classifyCell(cell, p);
   if (verdict !== "correct") return reportWrong(verdict, node);
   state.painted.add(cellId(cell));
+  playTone("tap");
+  renderCells();
+  renderStatus();
+  if (state.painted.size === p.targetCells.length) solveProblem();
+}
+
+function onDoubleMirrorClick(event) {
+  const node = event.target.closest(".cell");
+  if (!node || state.solved) return;
+  const p = problem();
+  const cell = [Number(node.dataset.x), Number(node.dataset.y)];
+  if (cell[0] < p.axis.verticalAt && cell[1] < p.axis.horizontalAt) return;
+  const id = cellId(cell);
+
+  if (state.painted.has(id)) {
+    state.painted.delete(id);
+    playTone("tap");
+    renderCells();
+    renderStatus();
+    return;
+  }
+
+  if (!p.targetCells.some((target) => cellId(target) === id)) return reportWrong("doubleChoice", node);
+  state.painted.add(id);
   playTone("tap");
   renderCells();
   renderStatus();
@@ -579,7 +616,8 @@ function reportWrong(verdict, node, cells) {
   const key = verdict === "direction" ? "wrongDirection"
     : verdict === "distance" ? "wrongDistance"
       : verdict === "distanceChoice" ? "wrongDistanceChoice"
-        : verdict === "symbolChoice" ? "wrongSymbolChoice" : "wrongMiss";
+        : verdict === "symbolChoice" ? "wrongSymbolChoice"
+          : verdict === "doubleChoice" ? "wrongDoubleChoice" : "wrongMiss";
   toast(t(key));
   if (node) {
     node.classList.add("wrong");
@@ -595,6 +633,9 @@ function reportWrong(verdict, node, cells) {
 
 function solveProblem() {
   state.solved = true;
+  clearTimeout(toast.timer);
+  ui.toast.classList.remove("show");
+  ui.toast.hidden = true;
   rewardProblem();
   playTone("success");
   showSuccess();
@@ -638,14 +679,17 @@ function renderStatus() {
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
   ui.prompt.textContent = t(p.interaction === "paint-reflection" ? "promptPaint"
     : p.interaction === "drag-reflection" ? "promptDrag"
-      : p.interaction === "distance-match" ? "promptDistance" : "promptSymbol");
+      : p.interaction === "distance-match" ? "promptDistance"
+        : p.interaction === "double-mirror" ? "promptDouble" : "promptSymbol");
   ui.answerPrompt.textContent = p.interaction === "paint-reflection"
     ? t("paintProgress", { done: state.painted.size, total: p.targetCells.length })
     : p.interaction === "drag-reflection"
       ? t("dragProgress", { done: state.usedTargets.size, total: p.targets.length })
       : p.interaction === "distance-match"
         ? t("distanceProgress", { done: state.distanceChoice ? 1 : 0 })
-        : t("symbolProgress", { done: state.symbolChoice ? 1 : 0 });
+        : p.interaction === "double-mirror"
+          ? t("doubleProgress", { done: state.painted.size, total: p.targetCells.length })
+          : t("symbolProgress", { done: state.symbolChoice ? 1 : 0 });
   ui.next.hidden = !state.solved;
 }
 
@@ -763,7 +807,8 @@ $("#hintButton").addEventListener("click", () => {
   const hintKey = current.interaction === "paint-reflection"
     ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
     : current.interaction === "drag-reflection" ? "hintDrag"
-      : current.interaction === "distance-match" ? "hintDistance" : "hintSymbol";
+      : current.interaction === "distance-match" ? "hintDistance"
+        : current.interaction === "double-mirror" ? "hintDouble" : "hintSymbol";
   cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", resetProblem);
