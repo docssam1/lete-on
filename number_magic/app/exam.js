@@ -19,6 +19,9 @@
   .nm-print-answer-key { page-break-before: always; }
   .nm-print-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
   .nm-print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* 짧은 연산만 있는 학습지는 4열로 촘촘하게(예전 그리드 학습지 밀도). 50문항을
+     2열로 뽑으면 장수가 두 배가 된다 — fillPrintGrid가 내용을 보고 붙인다. */
+  .nm-print-grid.nm-print-grid-dense { grid-template-columns: repeat(4, 1fr); }
   .nm-print-item { border: 1px solid #ccc; border-radius: 4px; padding: 10px; min-height: 48px; }
   .nm-print-item .nm-q-num { font-weight: bold; font-size: 0.8em; color: #555; }
   .nm-print-item .nm-q-tex { font-size: 1.1em; margin-top: 4px; }
@@ -450,10 +453,24 @@ function circled(n){
 /* 인쇄용 문제·정답 그리드를 채운다 — renderPrint·renderPrintMulti·(예전엔 따로
    있던) 그리드 학습지 인쇄가 전부 이거 하나만 쓴다(2026-08-28 통합). 세로셈
    가능("34+12=□" 형태, parseVert)이면 세로 알고리즘 박스로, 문장제는 문장+빈칸,
-   그 외엔 인라인 수식 — 원래 그리드 학습지 쪽만 세로셈을 그렸는데 그 CSS가
-   아예 없어 안 꾸며진 채 인쇄되고 있었다(표지 작업 중 발견). 번호는 circled()
-   원문자로 통일(이전엔 renderPrint만 "1." 평문 번호였다). */
+   그 외엔 인라인 수식. 번호는 circled() 원문자로 통일.
+
+   통합 전 두 경로의 실제 차이(재검증으로 확인, 2026-08-28):
+   그리드 학습지는 세로셈을 그렸고 그 CSS는 styles.css에 있었다 — "CSS가 없었다"는
+   기록은 틀렸다. drill.html이 styles.css를 안 읽어서 거기서만 안 꾸며졌던 것이다.
+   진짜 차이는 renderPrint가 세로셈을 아예 몰랐다는 것(늘 인라인 수식)과 열 수(2 vs 4).
+   통합 후에는 styles.css의 그 한 벌이 오히려 이름만 겹친 채 살아남아 메인 앱에서
+   세로셈을 늘려 놓았으므로 제거했다(styles.css 인쇄 절 주석 참조). */
 function fillPrintGrid(problems, problemGrid, answerGrid){
+  /* 열 수는 내용이 정한다. 통합 전에는 그리드 학습지가 4열, 드릴 인쇄가 2열로 서로
+     달랐는데, 한쪽으로 고정하면 어느 한쪽이 반드시 망가진다 — 2열로 고정하면 50문항
+     연산지가 두 배로 두꺼워지고, 4열로 고정하면 고등 긴 수식이 칸을 넘친다.
+     그래서 문장제가 하나라도 있거나 수식이 길면 2열, 짧은 연산뿐이면 4열로 간다. */
+  const longest = problems.reduce((m, p) =>
+    Math.max(m, p.word ? Infinity : String(p.tex||'').length), 0);
+  problemGrid.classList.add('nm-print-grid');
+  problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
+
   problems.forEach((p, i) => {
     const v = p.word ? null : parseVert(p.tex);
     const card = document.createElement('div');
