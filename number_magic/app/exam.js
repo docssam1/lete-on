@@ -449,6 +449,10 @@ const NM_EXAM = {
      화면(main.js)과 인쇄 개념 페이지가 같은 매핑을 쓴다. */
   resolveConceptUnit,
 
+  /* 문제 배열 생성(시드 재현 가능) — 이미 내부에 있던 함수를 노출만 한다.
+     drill.html의 서랍장 미리보기가 재사용(2026-08-28, 리디자인). 생성 로직은 그대로. */
+  buildProblems,
+
   /* ── 1. 시험 설정 화면 ── */
   renderExamSetup(container, onStart){
     /* 2026-07-13: 디딤돌 연산 실제 목차(사용자 캡처, ebook.didimdol.co.kr) 기준 교과 순서 +
