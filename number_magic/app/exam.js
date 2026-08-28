@@ -1481,6 +1481,11 @@ const NM_EXAM = {
     function render(){
       const p = problems[current];
       const pct = Math.round(((current)/count)*100);
+      /* 답이 여러 칸인 유형(분수 [분자,분모], 단항식 [계수,지수] 등)은 "8, 9"처럼
+         쉼표로 받는다 — 그런데 입력칸이 type=number라 쉼표를 아예 칠 수가 없어서
+         화면으로는 영원히 못 맞히는 상태였다(2026-08-28 발견, 99개 레벨).
+         인쇄용 그리드 학습지는 이미 이렇게 처리하고 있어 같은 방식을 맞춘다. */
+      const isMulti = Array.isArray(p.answer);
       container.innerHTML = `
 <div class="nm-exam-run">
   <div class="nm-exam-header">
@@ -1497,7 +1502,8 @@ const NM_EXAM = {
     ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="number" placeholder="답 / Answer" autocomplete="off">
+    <input id="nm-ex-ans" type="${isMulti ? 'text' : 'number'}" inputmode="${isMulti ? 'text' : 'numeric'}"
+           placeholder="${isMulti ? '예: 3, 5' : '답 / Answer'}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
   <div class="nm-exam-nav">
@@ -1519,8 +1525,15 @@ const NM_EXAM = {
     }
 
     function submitAnswer(){
-      const v = parseInt($('#nm-ex-ans', container).value);
-      if(!isNaN(v)){ answers[current] = v; }
+      const raw = $('#nm-ex-ans', container).value;
+      if(Array.isArray(problems[current].answer)){
+        /* 여러 칸 답은 문자열 그대로 둔다 — matchesAnswer가 쉼표로 갈라 비교한다.
+           parseInt를 태우면 "8, 9"가 8이 되어 항상 오답이 된다. */
+        if(String(raw).trim() !== '') answers[current] = raw;
+      } else {
+        const v = parseInt(raw);
+        if(!isNaN(v)){ answers[current] = v; }
+      }
       current++;
       if(current >= count){ finish(); }
       else { render(); }
