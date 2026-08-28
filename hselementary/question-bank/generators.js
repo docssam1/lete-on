@@ -2159,6 +2159,19 @@
     return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
   };
   const triangle42Evidence = (kind, values, expected) => `<span hidden data-triangle42-kind="${kind}" data-triangle42-values="${encodeURIComponent(JSON.stringify(values))}" data-triangle42-expected="${encodeURIComponent(String(expected))}"></span>`;
+  const triangleSquareDiagonalGridSvg = (cellWidth, cellHeight) => {
+    const width = cellWidth * 2;
+    const height = cellHeight * 2;
+    const left = (240 - width) / 2;
+    const top = (176 - height) / 2;
+    const cells = [];
+    for (let row = 0; row < 2; row += 1) for (let column = 0; column < 2; column += 1) {
+      const x = left + column * cellWidth;
+      const y = top + row * cellHeight;
+      cells.push(`<line x1="${x}" y1="${y}" x2="${x + cellWidth}" y2="${y + cellHeight}"/><line x1="${x + cellWidth}" y1="${y}" x2="${x}" y2="${y + cellHeight}"/>`);
+    }
+    return `<svg class="geometry-diagram triangle-square-diagonal-grid" viewBox="0 0 240 176" data-grid-rows="2" data-grid-columns="2" data-cell-width="${cellWidth}" data-cell-height="${cellHeight}" aria-label="두 줄 두 칸 격자의 각 칸에 두 대각선을 그린 도형"><g><rect x="${left}" y="${top}" width="${width}" height="${height}"/><line x1="${left + cellWidth}" y1="${top}" x2="${left + cellWidth}" y2="${top + height}"/><line x1="${left}" y1="${top + cellHeight}" x2="${left + width}" y2="${top + cellHeight}"/>${cells.join("")}</g></svg>`;
+  };
   const triangleFanMarkedSvg = (parts, markedIndex = -1, dotBoard = false) => {
     const left = 24;
     const right = 216;
@@ -11880,7 +11893,7 @@
       return result(`한 선분은 <strong>[□+▲] | [▲] | [▲]</strong>의 세 구간으로 나뉩니다. ▲ 두 구간은 서로 같은 길이이고, 왼쪽 [□+▲] 구간의 길이는 ${mixedFractionMarkup(left, denominator)}, 전체 선분의 길이는 ${mixedFractionMarkup(total, denominator)}입니다. 그림의 비율을 재지 말고 주어진 구간과 같은 기호의 개수를 이용하여 □의 길이를 구하세요.<div class="equation segment-equation">전체: [□+▲]+[▲]+[▲]=${mixedFractionMarkup(total, denominator)}<br>왼쪽: [□+▲]=${mixedFractionMarkup(left, denominator)}</div>${evidence}`, answer, `전체에서 왼쪽 구간을 빼면 같은 ▲ 두 구간의 합 ${mixedFractionMarkup(total - left, denominator)}입니다. ▲ 한 구간은 ${mixedFractionMarkup(triangle, denominator)}이고, 왼쪽 [□+▲]에서 ▲를 빼면 □=${mixedFractionMarkup(square, denominator)}입니다.`);
     },
     triangleCount({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       if (kind === 0) {
         const parts = int(rng, 6 + level, 8 + level * 2);
         const answer = parts * (parts + 1) / 2;
@@ -11888,10 +11901,10 @@
         return result(`한 꼭짓점에서 밑변의 모든 등분점으로 선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts)}${evidence}`, answer, `꼭짓점에서 내려간 선 ${parts + 1}개 중 두 선을 고르면 삼각형 하나가 정해집니다. ${parts}+${parts - 1}+…+1=${answer}개입니다.`);
       }
       if (kind === 1) {
-        const side = int(rng, 4 + level, 5 + level);
-        const answer = Math.floor(side * (side + 2) * (2 * side + 1) / 8);
-        const evidence = triangle42Evidence("lattice-count", [side], answer);
-        return result(`한 변을 ${side}등분한 정삼각형 격자에서 선을 따라 그릴 수 있는 크고 작은 정삼각형은 모두 몇 개입니까?${triangleLatticeSvg(side)}${evidence}`, answer, `작은 정삼각형부터 큰 정삼각형까지 위쪽과 아래쪽 방향을 빠짐없이 세면 ${answer}개입니다.`);
+        const cellSize = pick(rng, [48, 54, 60, 66]);
+        const answer = 44;
+        const evidence = triangle42Evidence("square-diagonal-grid-count", [2], answer);
+        return result(`두 줄 두 칸으로 나눈 정사각형 격자의 각 칸에 두 대각선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleSquareDiagonalGridSvg(cellSize, cellSize)}${evidence}`, answer, `작은 한 칸 안에는 작은 삼각형 4개와 큰 삼각형 4개가 있어 8개이고, 네 칸에서 32개입니다. 두 칸에 걸친 삼각형 8개와 전체에 걸친 삼각형 4개를 더하면 32+8+4=${answer}개입니다.`);
       }
       if (kind === 2) {
         const parts = int(rng, 7 + level, 9 + level * 2);

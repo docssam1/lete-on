@@ -10,6 +10,7 @@ const targetUnits = semester.units.filter(unit => ["삼각형", "소수의 덧�
 const sourceIds = new Set();
 const reviewedTriangleIds = new Set([
   "4-2-triangle-1-mission-1",
+  "4-2-triangle-1-mission-2",
   "4-2-triangle-4-mission-1"
 ]);
 
@@ -60,7 +61,7 @@ for (const unit of targetUnits) {
 }
 
 check(sourceIds.size === 88, `원문 문항 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
-check(reviewedTriangleIds.size === 2, "삼각형 공개 허용 원문은 2개여야 합니다.");
+check(reviewedTriangleIds.size === 3, "삼각형 공개 허용 원문은 3개여야 합니다.");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);

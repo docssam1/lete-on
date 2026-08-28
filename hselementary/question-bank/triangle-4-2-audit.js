@@ -12,6 +12,7 @@ const types = sourceTypes.filter(type => type.generatorKey && !type.reviewLocked
 const locked = sourceTypes.filter(type => type.reviewLocked);
 const publicSourceIds = new Set([
   "4-2-triangle-1-mission-1",
+  "4-2-triangle-1-mission-2",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -34,8 +35,60 @@ const pointCounts = (points, requiredIndex = -1) => {
   }
   return totals;
 };
+const squareDiagonalGridTriangleCount = sideCells => {
+  const points = [];
+  const pointIndex = new Map();
+  const addPoint = (x, y) => {
+    const key = `${x},${y}`;
+    if (!pointIndex.has(key)) {
+      pointIndex.set(key, points.length);
+      points.push([x, y]);
+    }
+    return pointIndex.get(key);
+  };
+  for (let y = 0; y <= sideCells * 2; y += 2) for (let x = 0; x <= sideCells * 2; x += 2) addPoint(x, y);
+  for (let y = 1; y < sideCells * 2; y += 2) for (let x = 1; x < sideCells * 2; x += 2) addPoint(x, y);
+  const edges = [];
+  const addEdge = (first, second) => edges.push([pointIndex.get(first.join(",")), pointIndex.get(second.join(","))]);
+  for (let y = 0; y <= sideCells * 2; y += 2) for (let x = 0; x < sideCells * 2; x += 2) addEdge([x, y], [x + 2, y]);
+  for (let x = 0; x <= sideCells * 2; x += 2) for (let y = 0; y < sideCells * 2; y += 2) addEdge([x, y], [x, y + 2]);
+  for (let centerY = 1; centerY < sideCells * 2; centerY += 2) for (let centerX = 1; centerX < sideCells * 2; centerX += 2) {
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) addEdge([centerX, centerY], [centerX + dx, centerY + dy]);
+  }
+  const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+  const between = (first, second, point) => point[0] >= Math.min(first[0], second[0]) && point[0] <= Math.max(first[0], second[0]) && point[1] >= Math.min(first[1], second[1]) && point[1] <= Math.max(first[1], second[1]);
+  const sideCovered = (firstIndex, secondIndex) => {
+    const first = points[firstIndex];
+    const second = points[secondIndex];
+    const adjacency = new Map();
+    for (const [a, b] of edges) {
+      if (cross(first, second, points[a]) !== 0 || cross(first, second, points[b]) !== 0 || !between(first, second, points[a]) || !between(first, second, points[b])) continue;
+      if (!adjacency.has(a)) adjacency.set(a, []);
+      if (!adjacency.has(b)) adjacency.set(b, []);
+      adjacency.get(a).push(b);
+      adjacency.get(b).push(a);
+    }
+    const visited = new Set([firstIndex]);
+    const queue = [firstIndex];
+    while (queue.length) {
+      const current = queue.shift();
+      if (current === secondIndex) return true;
+      for (const next of adjacency.get(current) || []) if (!visited.has(next)) {
+        visited.add(next);
+        queue.push(next);
+      }
+    }
+    return false;
+  };
+  let count = 0;
+  for (let a = 0; a < points.length - 2; a += 1) for (let b = a + 1; b < points.length - 1; b += 1) for (let c = b + 1; c < points.length; c += 1) {
+    if (cross(points[a], points[b], points[c]) !== 0 && sideCovered(a, b) && sideCovered(b, c) && sideCovered(c, a)) count += 1;
+  }
+  return count;
+};
 const answerFor = (kind, values) => {
   if (kind === "fan-count" || kind === "dot-fan-count") return String(values[0] * (values[0] + 1) / 2);
+  if (kind === "square-diagonal-grid-count") return String(squareDiagonalGridTriangleCount(values[0]));
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
   if (kind === "marked-fan-count") return String(values[0]);
   if (kind === "double-fan-count") return String(values[0] * (values[0] + 1) / 2 + values[1] * (values[1] + 1) / 2);
@@ -111,9 +164,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 2, `원문 일치 공개 유형 수가 2개가 아닙니다: ${types.length}`);
-check(locked.length === 42, `검수 대기 유형 수가 42개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 2, `공개 검산 구조 수가 2개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 3, `원문 일치 공개 유형 수가 3개가 아닙니다: ${types.length}`);
+check(locked.length === 41, `검수 대기 유형 수가 41개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 3, `공개 검산 구조 수가 3개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
