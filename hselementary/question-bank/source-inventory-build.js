@@ -65,7 +65,7 @@ const inventory = {
 fs.writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, 2)}\n`);
 
 const lines = [
-  "# 4-1 심화 원문 문항별 유형 목록",
+  "# 4-1 원문 문항별 유형 목록",
   "",
   "- 기준: 개념탐구 본문 1개, 번호가 붙은 예제 1개, 번호가 붙은 Mission 1개를 각각 한 유형으로 기록",
   "- 소문항은 하나의 원문 번호 안에서 분리하지 않음",

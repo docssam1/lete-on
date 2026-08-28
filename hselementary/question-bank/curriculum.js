@@ -608,7 +608,7 @@
         difficultyBand: item.difficultyBand,
         sourceTier: item.sourceTier,
         sourceVerified: item.sourceVerified,
-        sourceEvidence: `4-1 심화 PDF p.${item.sourcePdfPage} · 교재 p.${item.sourcePrintedPage} · ${item.sourceItemId}`,
+        sourceEvidence: `4-1 원문 PDF p.${item.sourcePdfPage} · 교재 p.${item.sourcePrintedPage} · ${item.sourceItemId}`,
         sourceItemId: item.sourceItemId,
         sourceItemLabel: item.sourceItemLabel,
         sourceSection: item.sourceSection,

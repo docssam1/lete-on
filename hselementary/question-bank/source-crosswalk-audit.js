@@ -21,8 +21,8 @@ function check(condition, message) {
 }
 
 check(crosswalks.reduce((sum, item) => sum + item.currentTypesTotal, 0) === 95, "기존 4-1 유형 합계는 95개여야 합니다.");
-check(crosswalks.reduce((sum, item) => sum + item.verifiedMappings, 0) === 13, "검증된 원문 매핑은 13개여야 합니다.");
-check(crosswalks.reduce((sum, item) => sum + item.unmatchedCurrentTypes.length, 0) === 82, "미매칭 기존 유형은 82개여야 합니다.");
+check(crosswalks.reduce((sum, item) => sum + item.verifiedMappings, 0) === 12, "검증된 원문 매핑은 12개여야 합니다.");
+check(crosswalks.reduce((sum, item) => sum + item.unmatchedCurrentTypes.length, 0) === 83, "미매칭 기존 유형은 83개여야 합니다.");
 
 for (const crosswalk of crosswalks) {
   check(crosswalk.status === "verified-crosswalk", `${crosswalk.units.join("-")}: 교차표가 검증 상태가 아닙니다.`);
@@ -65,7 +65,7 @@ for (const crosswalk of crosswalks) {
 }
 
 check(currentTypeIds.size === 95, `기존 유형 ID는 95개여야 하나 ${currentTypeIds.size}개입니다.`);
-check(mappedSourceIds.size === 13, `활성화 가능한 원문 유형은 13개여야 하나 ${mappedSourceIds.size}개입니다.`);
+check(mappedSourceIds.size === 12, `활성화 가능한 원문 유형은 12개여야 하나 ${mappedSourceIds.size}개입니다.`);
 
 if (failures.length) {
   console.error(`4-1 생성기-원문 교차표 감사 실패: ${failures.length}건`);
@@ -73,4 +73,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-1 생성기-원문 교차표 감사 통과: 기존 95개 중 정확 일치 13개 · 보류 82개 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`4-1 생성기-원문 교차표 감사 통과: 기존 95개 중 정확 일치 12개 · 보류 83개 · ${generatedCount.toLocaleString()}회 생성`);
