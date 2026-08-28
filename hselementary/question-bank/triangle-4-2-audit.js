@@ -13,6 +13,7 @@ const locked = sourceTypes.filter(type => type.reviewLocked);
 const publicSourceIds = new Set([
   "4-2-triangle-1-mission-1",
   "4-2-triangle-1-mission-2",
+  "4-2-triangle-1-mission-3",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -86,9 +87,60 @@ const squareDiagonalGridTriangleCount = sideCells => {
   }
   return count;
 };
+const markedTriangleLatticeCount = (side, cellKind, row, column) => {
+  const points = [];
+  const pointIndex = new Map();
+  for (let r = 0; r <= side; r += 1) for (let c = 0; c <= r; c += 1) {
+    pointIndex.set(`${r},${c}`, points.length);
+    points.push([c - r / 2, r * Math.sqrt(3) / 2]);
+  }
+  const index = (r, c) => pointIndex.get(`${r},${c}`);
+  const edges = [];
+  for (let r = 0; r < side; r += 1) for (let c = 0; c <= r; c += 1) edges.push([index(r, c), index(r + 1, c)], [index(r, c), index(r + 1, c + 1)]);
+  for (let r = 1; r <= side; r += 1) for (let c = 0; c < r; c += 1) edges.push([index(r, c), index(r, c + 1)]);
+  const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+  const between = (first, second, point) => point[0] >= Math.min(first[0], second[0]) - 1e-9 && point[0] <= Math.max(first[0], second[0]) + 1e-9 && point[1] >= Math.min(first[1], second[1]) - 1e-9 && point[1] <= Math.max(first[1], second[1]) + 1e-9;
+  const sideCovered = (firstIndex, secondIndex) => {
+    const first = points[firstIndex];
+    const second = points[secondIndex];
+    const adjacency = new Map();
+    for (const [a, b] of edges) {
+      if (Math.abs(cross(first, second, points[a])) > 1e-9 || Math.abs(cross(first, second, points[b])) > 1e-9 || !between(first, second, points[a]) || !between(first, second, points[b])) continue;
+      if (!adjacency.has(a)) adjacency.set(a, []);
+      if (!adjacency.has(b)) adjacency.set(b, []);
+      adjacency.get(a).push(b);
+      adjacency.get(b).push(a);
+    }
+    const visited = new Set([firstIndex]);
+    const queue = [firstIndex];
+    while (queue.length) {
+      const current = queue.shift();
+      if (current === secondIndex) return true;
+      for (const next of adjacency.get(current) || []) if (!visited.has(next)) {
+        visited.add(next);
+        queue.push(next);
+      }
+    }
+    return false;
+  };
+  const triangles = [];
+  for (let a = 0; a < points.length - 2; a += 1) for (let b = a + 1; b < points.length - 1; b += 1) for (let c = b + 1; c < points.length; c += 1) {
+    if (Math.abs(cross(points[a], points[b], points[c])) > 1e-9 && sideCovered(a, b) && sideCovered(b, c) && sideCovered(c, a)) triangles.push([a, b, c]);
+  }
+  const cellVertices = cellKind === "up"
+    ? [index(row - 1, column), index(row, column), index(row, column + 1)]
+    : [index(row - 1, column), index(row - 1, column + 1), index(row, column + 1)];
+  const marked = [cellVertices.reduce((sum, item) => sum + points[item][0], 0) / 3, cellVertices.reduce((sum, item) => sum + points[item][1], 0) / 3];
+  const strictlyInside = triangle => {
+    const signs = [cross(points[triangle[0]], points[triangle[1]], marked), cross(points[triangle[1]], points[triangle[2]], marked), cross(points[triangle[2]], points[triangle[0]], marked)];
+    return signs.every(value => value > 1e-9) || signs.every(value => value < -1e-9);
+  };
+  return triangles.filter(strictlyInside).length;
+};
 const answerFor = (kind, values) => {
   if (kind === "fan-count" || kind === "dot-fan-count") return String(values[0] * (values[0] + 1) / 2);
   if (kind === "square-diagonal-grid-count") return String(squareDiagonalGridTriangleCount(values[0]));
+  if (kind === "marked-triangle-lattice-count") return String(markedTriangleLatticeCount(values[0], values[1], values[2], values[3]));
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
   if (kind === "marked-fan-count") return String(values[0]);
   if (kind === "double-fan-count") return String(values[0] * (values[0] + 1) / 2 + values[1] * (values[1] + 1) / 2);
@@ -164,9 +216,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 3, `원문 일치 공개 유형 수가 3개가 아닙니다: ${types.length}`);
-check(locked.length === 41, `검수 대기 유형 수가 41개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 3, `공개 검산 구조 수가 3개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 4, `원문 일치 공개 유형 수가 4개가 아닙니다: ${types.length}`);
+check(locked.length === 40, `검수 대기 유형 수가 40개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 4, `공개 검산 구조 수가 4개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

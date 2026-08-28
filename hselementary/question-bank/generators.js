@@ -2172,6 +2172,33 @@
     }
     return `<svg class="geometry-diagram triangle-square-diagonal-grid" viewBox="0 0 240 176" data-grid-rows="2" data-grid-columns="2" data-cell-width="${cellWidth}" data-cell-height="${cellHeight}" aria-label="두 줄 두 칸 격자의 각 칸에 두 대각선을 그린 도형"><g><rect x="${left}" y="${top}" width="${width}" height="${height}"/><line x1="${left + cellWidth}" y1="${top}" x2="${left + cellWidth}" y2="${top + height}"/><line x1="${left}" y1="${top + cellHeight}" x2="${left + width}" y2="${top + cellHeight}"/>${cells.join("")}</g></svg>`;
   };
+  const triangleMarkedLatticeSvg = (side, cell) => {
+    const width = 240;
+    const top = 12;
+    const center = width / 2;
+    const unit = 36;
+    const rowHeight = unit * Math.sqrt(3) / 2;
+    const baseY = top + side * rowHeight;
+    const point = (row, column) => [center + (column - row / 2) * unit, top + row * rowHeight];
+    const horizontal = Array.from({ length: side + 1 }, (_, row) => {
+      const first = point(row, 0);
+      const last = point(row, row);
+      return `<line x1="${first[0].toFixed(1)}" y1="${first[1].toFixed(1)}" x2="${last[0].toFixed(1)}" y2="${last[1].toFixed(1)}"/>`;
+    }).join("");
+    const diagonals = Array.from({ length: side + 1 }, (_, index) => {
+      const start = point(index, 0);
+      const end = point(side, side - index);
+      const mirrorStart = point(index, index);
+      const mirrorEnd = point(side, index);
+      return `<line x1="${start[0].toFixed(1)}" y1="${start[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${baseY.toFixed(1)}"/><line x1="${mirrorStart[0].toFixed(1)}" y1="${mirrorStart[1].toFixed(1)}" x2="${mirrorEnd[0].toFixed(1)}" y2="${baseY.toFixed(1)}"/>`;
+    }).join("");
+    const vertices = cell.kind === "up"
+      ? [point(cell.row - 1, cell.column), point(cell.row, cell.column), point(cell.row, cell.column + 1)]
+      : [point(cell.row - 1, cell.column), point(cell.row - 1, cell.column + 1), point(cell.row, cell.column + 1)];
+    const markedX = vertices.reduce((sum, item) => sum + item[0], 0) / 3;
+    const markedY = vertices.reduce((sum, item) => sum + item[1], 0) / 3;
+    return `<svg class="geometry-diagram triangle-marked-lattice" viewBox="0 0 240 184" data-lattice-side="${side}" data-marked-cell="${cell.kind},${cell.row},${cell.column}" aria-label="한 변을 ${side}칸으로 나눈 정삼각형 격자 안에 검은 점이 표시된 도형"><g>${horizontal}${diagonals}<circle data-required-dot="true" cx="${markedX.toFixed(1)}" cy="${markedY.toFixed(1)}" r="5" style="fill:#111;stroke:#fff;stroke-width:1.5"/></g></svg>`;
+  };
   const triangleFanMarkedSvg = (parts, markedIndex = -1, dotBoard = false) => {
     const left = 24;
     const right = 216;
@@ -11907,11 +11934,16 @@
         return result(`두 줄 두 칸으로 나눈 정사각형 격자의 각 칸에 두 대각선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleSquareDiagonalGridSvg(cellSize, cellSize)}${evidence}`, answer, `작은 한 칸 안에는 작은 삼각형 4개와 큰 삼각형 4개가 있어 8개이고, 네 칸에서 32개입니다. 두 칸에 걸친 삼각형 8개와 전체에 걸친 삼각형 4개를 더하면 32+8+4=${answer}개입니다.`);
       }
       if (kind === 2) {
-        const parts = int(rng, 7 + level, 9 + level * 2);
-        const markedIndex = int(rng, 1, parts - 1);
-        const answer = parts;
-        const evidence = triangle42Evidence("marked-fan-count", [parts, markedIndex], answer);
-        return result(`밑변의 ●을 꼭짓점으로 포함하면서 선을 따라 그릴 수 있는 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts, markedIndex)}${evidence}`, answer, `●과 나머지 밑변 점 하나, 위 꼭짓점을 고르면 삼각형이 됩니다. ● 이외의 밑변 점이 ${parts}개이므로 답은 ${answer}개입니다.`);
+        const side = 5;
+        const cell = pick(rng, [
+          { kind: "down", row: 3, column: 0 },
+          { kind: "down", row: 3, column: 1 },
+          { kind: "down", row: 4, column: 0 },
+          { kind: "down", row: 4, column: 2 }
+        ]);
+        const answer = 8;
+        const evidence = triangle42Evidence("marked-triangle-lattice-count", [side, cell.kind, cell.row, cell.column], answer);
+        return result(`정삼각형 격자 안의 ●을 내부에 포함하면서, 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleMarkedLatticeSvg(side, cell)}${evidence}`, answer, `●이 들어 있는 작은 칸부터 시작해, ●을 둘러싸는 삼각형을 크기와 방향에 따라 빠짐없이 표시하면 모두 ${answer}개입니다. ●이 변 위에 놓인 삼각형은 없으므로 포함 여부가 하나로 정해집니다.`);
       }
       if (kind === 3) {
         const leftParts = int(rng, 4 + level, 6 + level);
