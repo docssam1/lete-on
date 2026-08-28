@@ -45,7 +45,9 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /수학 실력은\s*학년 하나로\s*보이지 않습니다/);
+  assert.match(await page.locator("h1").innerText(), /진단에서\s*AMC 12까지\s*한 학생의 길/);
+  assert.match(await page.locator(".proof-strip").innerText(), /K–12/);
+  assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8[\s\S]*AMC 10[\s\S]*AMC 12/);
   assert.equal(await page.locator(".sample-pill").textContent(), "실제 학생 데이터 아님");
   assert.equal(await page.locator("[data-goal]").count(), 5);
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
@@ -56,13 +58,13 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.equal(await original.getAttribute("target"), "_blank");
   assert.match(await original.getAttribute("rel"), /noopener/);
   assert.match(await original.getAttribute("rel"), /noreferrer/);
-  assert.equal(await original.getAttribute("data-original-record-id"), "sasmo-2019-member-portal-g2-8");
-  assert.match(await original.textContent(), /Grade 6 공식 영어 원문/);
+  assert.equal(await original.getAttribute("data-original-record-id"), "sasmo-2019-member-portal-g2-12");
+  assert.match(await original.textContent(), /Grade 6 공식 원본 접근/);
 
   await page.locator("#goal-grade-select").selectOption("1");
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 1 준비");
   assert.equal(await original.getAttribute("href"), "https://sasmo.simcc.org/courses/sasmo-past-papers-year-2025/");
-  assert.equal(await original.getAttribute("data-original-record-id"), "sasmo-2025-official-lms-g1-8");
+  assert.equal(await original.getAttribute("data-original-record-id"), "sasmo-2025-official-lms-g1-11");
 
   await page.locator("#goal-grade-select").selectOption("K2");
   assert.equal(await original.isHidden(), true);
@@ -72,6 +74,17 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.equal(await page.locator('[data-goal="kangaroo"]').getAttribute("aria-selected"), "true");
   assert.match(await page.locator("#goal-format").textContent(), /75분/);
   assert.equal(await original.isHidden(), true);
+
+  await page.locator('[data-goal="amc"]').click();
+  await page.locator("#goal-grade-select").selectOption("9");
+  assert.equal(await page.locator("#goal-title").textContent(), "AMC 10 · Grade 9 권장 경로");
+  assert.match(await page.locator("#goal-format").textContent(), /75분 · 25문항/);
+  await page.locator("#goal-grade-select").selectOption("11");
+  assert.equal(await page.locator("#goal-title").textContent(), "AMC 12 · Grade 11 권장 경로");
+  assert.match(await page.locator("#goal-eligibility").textContent(), /G12 이하/);
+
+  await page.locator('[data-path-goal="sasmo"]').click();
+  assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
 
   await page.locator('[data-goal="kangaroo"]').focus();
   await page.keyboard.press("ArrowDown");
@@ -125,7 +138,7 @@ test("legacy curriculum foundation remains available without feature regression"
 
   await page.locator('[data-locale="en"]').click();
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
-  assert.equal(await page.locator("h1").textContent(), "One growth path from school math to competition");
+  assert.equal(await page.locator("h1").textContent(), "A K–12 pathway with a verified K–8 foundation");
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -186,8 +199,15 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
         const original = document.getElementById("goal-original").getBoundingClientRect();
         return { panelTop: panel.top, originalBottom: original.bottom, viewport: window.innerHeight };
       });
-      assert.ok(pathPosition.panelTop >= 60 && pathPosition.panelTop <= 110, `goal panel top ${pathPosition.panelTop}`);
+      assert.ok(pathPosition.panelTop >= 100 && pathPosition.panelTop <= 145, `goal panel top ${pathPosition.panelTop}`);
       assert.ok(pathPosition.originalBottom <= pathPosition.viewport, `official original CTA below viewport: ${pathPosition.originalBottom}`);
+    }
+    if (width <= 768) {
+      assert.equal(await page.locator(".mobile-quick-nav").isVisible(), true);
+      const quickTargets = await page.locator(".mobile-quick-nav a").evaluateAll(function (controls) {
+        return controls.map(function (control) { return control.getBoundingClientRect().height; });
+      });
+      quickTargets.forEach(function (height) { assert.ok(height >= 40, `quick nav touch height ${height}`); });
     }
     assert.deepEqual(errors, []);
     await page.close();

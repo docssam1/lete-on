@@ -9,9 +9,9 @@
 
   const copy = {
     ko: {
-      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–8",
-      heroTitle: "학교 수학에서 경시까지, 하나의 성장 경로",
-      heroCopy: "미국 K–8 핵심과정을 중심으로 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8 준비를 연결합니다. 진단 결과는 수업·과제·워크북·승급 판단의 같은 데이터로 이어집니다.",
+      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–12 TARGET",
+      heroTitle: "K–12 전체 경로, K–8 구현 상세",
+      heroCopy: "전체 목표는 미국 K–12 학교 수학, 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8·10·12입니다. 이 상세 화면은 현재 검증된 K–8 영역·단원·자료 계획만 보여주며 G9–12 과정 지도와 실제 배정은 아직 잠금입니다.",
       viewAs: "화면 구분", student: "학생용", teacher: "교사용", chooseGrade: "미국 학년",
       pathwayEyebrow: "PROGRAM PATHWAYS", pathwaysTitle: "선택 학년의 학습 경로", programCount: "개 경로",
       domainsTitle: "이 학년의 핵심 영역", unitsTitle: "학년별 학습 단위", unitLocked: "앵커 스킬 · 검수 대기", source: "기준:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "이 역할의 자료",
@@ -23,8 +23,8 @@
       evidence: ["진단", "단원 숙달", "유지 확인", "교사 검토"]
     },
     en: {
-      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–8", heroTitle: "One growth path from school math to competition",
-      heroCopy: "US K–8 core standards connect to Singapore mastery, Math Kangaroo, SASMO, and AMC 8 preparation. Diagnosis, lessons, assignments, workbooks, and promotion decisions share one learning lineage.",
+      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–12 TARGET", heroTitle: "A K–12 pathway with a verified K–8 foundation",
+      heroCopy: "The full target connects US K–12 school math, Singapore mastery, Math Kangaroo, SASMO, and AMC 8/10/12. This detail view shows only the verified K–8 domain, unit, and resource-plan foundation; high-school course maps and assignments remain locked.",
       viewAs: "View as", student: "Student", teacher: "Teacher", chooseGrade: "US grade",
       pathwayEyebrow: "PROGRAM PATHWAYS", pathwaysTitle: "Pathways for this grade", programCount: "pathways",
       domainsTitle: "Core domains for this grade", unitsTitle: "Grade learning units", unitLocked: "Anchor skill · review pending", source: "Source:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "Resources for this role",
@@ -36,8 +36,8 @@
       evidence: ["Diagnostic", "Unit mastery", "Retention check", "Teacher review"]
     },
     "zh-Hans": {
-      eyebrow: "寄宿学校数学 · K–8", heroTitle: "从校内数学到竞赛的一体化成长路径",
-      heroCopy: "以美国 K–8 核心标准为主线，衔接新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8。诊断、课程、作业、练习册与晋级共用同一学习谱系。",
+      eyebrow: "寄宿学校数学 · K–12 目标", heroTitle: "K–12 全路径与已验证的 K–8 基础",
+      heroCopy: "整体目标衔接美国 K–12 校内数学、新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8/10/12。本页仅展示已验证的 K–8 领域、单元和资源规划；高中课程地图与实际分配仍保持锁定。",
       viewAs: "查看身份", student: "学生", teacher: "教师", chooseGrade: "美国年级",
       pathwayEyebrow: "课程路径", pathwaysTitle: "本年级学习路径", programCount: "条路径",
       domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色资源", resourcesTitle: "本角色资料",

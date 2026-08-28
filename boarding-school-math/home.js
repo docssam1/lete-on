@@ -2,7 +2,7 @@
   "use strict";
 
   const catalog = window.GFIELDMathProgramCatalog;
-  const profiles = window.GFIELDK8CompetitionProfiles;
+  const profiles = window.GFIELDK12CompetitionProfiles || window.GFIELDK8CompetitionProfiles;
   const originalLinks = window.GFIELDCompetitionOriginalLinks;
   const spine = window.GFIELDUSK8DomainSpine;
   const registry = window.GFIELDUSK8ContentRegistry;
@@ -23,10 +23,10 @@
       programId: "us-core-k8",
       type: "학교 준비 경로",
       title: function (grade) { return `${gradeName(grade)} 학교 수학`; },
-      summary: "재학 학년과 실제 실력은 다를 수 있습니다. 학년별 영역을 진단하고 선수개념, 현재 핵심, 다음 과정의 연결을 교사 검토용 근거로 남깁니다.",
-      grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8],
+      summary: "재학 학년과 실제 실력은 다를 수 있습니다. K–8은 영역별 앵커로, G9–12는 학교가 설정한 과정 순서로 선수개념·현재 핵심·다음 과정을 연결합니다.",
+      grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
-      eligibility: "미국 K–8 · 학교/주별 정책은 별도 설정",
+      eligibility: "미국 K–12 · 과정 순서와 승급 정책은 학교별 설정",
       route: "전체 진단 → 영역 지도 → 보정 수업 → 단원 숙달 → 유지 확인",
       tone: "#102b42"
     },
@@ -35,9 +35,9 @@
       type: "학습법·숙달 경로",
       title: function (grade) { return `싱가포르식 숙달 · ${gradeName(grade)}`; },
       summary: "대회명이 아닙니다. 개념과 모델로 이해하고, 충분히 연습하고, 오류를 성찰하고, 새로운 비정형 상황으로 확장한 뒤 오래 남았는지 다시 확인합니다.",
-      grades: [1, 2, 3, 4, 5, 6, 7, 8],
+      grades: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
-      eligibility: "Singapore MOE Primary 1–6 기반 · G7–8 교차표 검수 대기",
+      eligibility: "G1–8 구현 기반 · G9–12 교차표와 학교 설정은 검수 대기",
       route: "개념/모델 → 동기화 연습 → 성찰 복습 → 확장 학습 → 유지 확인",
       tone: "#17604d"
     },
@@ -46,7 +46,7 @@
       type: "대회 목표",
       title: function (grade) { return `Math Kangaroo · ${gradeName(grade)} 준비`; },
       summary: "공식 두 학년 밴드의 범위와 3·4·5점 구간을 확인하고, 현재 학년의 수학 기초 위에 시각·논리·비정형 문제와 시간 전략을 더합니다.",
-      grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8],
+      grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       route: "학년 밴드 확인 → 준비 진단 → 점수 구간별 훈련 → 공식 형식 모의",
       tone: "#9c4b30"
@@ -56,19 +56,29 @@
       type: "대회 목표",
       title: function (grade) { return `SASMO · ${gradeName(grade)} 준비`; },
       summary: "싱가포르식 숙달과 SASMO는 같지 않습니다. 학년별 공식 형식을 확인한 뒤 주최기관의 영어 원문과 학교 수학의 선수개념·비정형 추론을 함께 연결합니다.",
-      grades: ["K2", 1, 2, 3, 4, 5, 6, 7, 8],
+      grades: ["K2", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       route: "학년 확인 → 공식 영어 원문 → 결과 기록 → 영역·감점·시간 분석 → 맞춤 수업",
       tone: "#4975ef"
     },
     amc: {
       programId: "amc-8",
+      programIdForGrade: function (grade) {
+        const numericGrade = Number(grade);
+        if (numericGrade <= 8) return "amc-8";
+        if (numericGrade <= 10) return "amc-10";
+        return "amc-12";
+      },
       type: "대회 목표",
-      title: function (grade) { return `AMC 8 · ${gradeName(grade)} 준비`; },
-      summary: "공식 참가 자격과 GFIELD 준비 권장 학년을 분리합니다. 25문항을 40분 안에 해결하는 중등 수학, 비정형 추론, 페이싱을 함께 훈련합니다.",
-      grades: [6, 7, 8],
+      title: function (grade) {
+        const numericGrade = Number(grade);
+        const stage = numericGrade <= 8 ? 8 : numericGrade <= 10 ? 10 : 12;
+        return `AMC ${stage} · ${gradeName(grade)} 권장 경로`;
+      },
+      summary: "AMC 8에서 멈추지 않습니다. 선택 학년에 맞춰 AMC 8·10·12 권장 단계를 보여주되, 공식 참가 자격과 GFIELD의 권장 준비 학년을 분리합니다.",
+      grades: [6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
-      route: "자격 확인 → 학교 스킬 진단 → AMC 영역 훈련 → 40분 모의 → 전략 복기",
+      route: "공식 자격 확인 → 학교 과정 진단 → AMC 영역 훈련 → 공식 시간 모의 → 전략 복기",
       tone: "#402b70"
     }
   };
@@ -131,24 +141,36 @@
     return profiles.profiles.find(function (profile) { return profile.programId === programId; });
   }
 
+  function resolveProgramId(definition, grade) {
+    return typeof definition.programIdForGrade === "function"
+      ? definition.programIdForGrade(grade)
+      : definition.programId;
+  }
+
   function sameGrade(left, right) {
     return String(left) === String(right);
   }
 
   function profileFacts(goalId, grade) {
     const definition = goalDefinitions[goalId];
-    const profile = findProfile(definition.programId);
+    const programId = resolveProgramId(definition, grade);
+    const profile = findProfile(programId);
     if (goalId === "school") {
-      return { eligibility: definition.eligibility, format: "전체 배치 36–60문항 · 4개 이상 영역" };
+      return Number(grade) >= 9
+        ? { eligibility: definition.eligibility, format: "G9–12 과정별 진단 청사진 · 학교 course sequence 설정 후 확정" }
+        : { eligibility: definition.eligibility, format: "전체 배치 36–60문항 · 4개 이상 영역 · 교사 검토" };
     }
     if (goalId === "singapore") {
-      return { eligibility: definition.eligibility, format: "개념·기능·과정·메타인지·태도 · 재검증 포함" };
+      return {
+        eligibility: definition.eligibility,
+        format: Number(grade) >= 9 ? "G9–12 교차표·수업 자료 검수 대기" : "개념·기능·과정·메타인지·태도 · 재검증 포함"
+      };
     }
     if (goalId === "kangaroo" && profile) {
       const paperGrade = String(grade) === "K" ? 1 : Number(grade);
       const band = profile.paperBands.find(function (entry) { return entry.grades.includes(paperGrade); });
       return {
-        eligibility: String(grade) === "K" ? "K는 독립적으로 읽고 풀 수 있을 때 Grade 1 시험지" : "공식 G1–12 · 현재 제품 준비 범위 G1–8",
+        eligibility: String(grade) === "K" ? "K는 독립적으로 읽고 풀 수 있을 때 Grade 1 시험지" : "공식 G1–12 · 학년별 순위는 분리",
         format: `${profile.durationMinutes}분 · ${band.questionCount}문항 · ${band.maxScore}점 · 3/4/5점 구간 · 오답 감점 없음`
       };
     }
@@ -158,14 +180,15 @@
       });
       const penalty = format.sections[0].wrongPoints < 0 ? `Section A 오답 ${format.sections[0].wrongPoints}점` : "오답 감점 없음";
       return {
-        eligibility: "공식 K2·G1–12 · 현재 제품 준비 범위 K2·G1–8",
+        eligibility: "공식 K2·G1–12 · 학년별 다른 시험지",
         format: `${format.durationMinutes}분 · ${format.questionCount}문항 · 시작 ${format.startingPoints}점 · 최대 ${format.maxScore}점 · ${penalty}`
       };
     }
     if (goalId === "amc" && profile) {
+      const recommended = profile.gfieldPreparationGrades.map(function (value) { return `G${value}`; }).join("–");
       return {
-        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하·${profile.officialEligibility.ageExclusiveMaximum}세 미만 · GFIELD 권장 G6–8`,
-        format: `${profile.durationMinutes}분 · ${profile.questionCount}문항 · 5지선다 · 오답/무응답 0점 · 계산기 금지`
+        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하·${profile.officialEligibility.ageExclusiveMaximum}세 미만 · GFIELD 권장 ${recommended}`,
+        format: `${profile.durationMinutes}분 · ${profile.questionCount}문항 · 5지선다 · 계산기 금지`
       };
     }
     return { eligibility: "공식 정보 확인 필요", format: "형식 정보 확인 필요" };
@@ -182,9 +205,10 @@
     const anchor = document.getElementById("goal-original");
     const status = document.getElementById("goal-status-note");
     const rights = document.getElementById("goal-rights-note");
-    const matches = originalLinks.findForGrade(definition.programId, grade);
+    const programId = resolveProgramId(definition, grade);
+    const matches = originalLinks.findForGrade(programId, grade);
     const record = matches[0];
-    const program = findProgram(definition.programId);
+    const program = findProgram(programId);
 
     if (!record) {
       anchor.hidden = true;
@@ -194,10 +218,10 @@
         rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 교육과정 기준은 공식 출처로 연결하고, 진단·수업 자료는 GFIELD 자체 제작·검수 자료로 구성합니다.';
         return;
       }
-      status.textContent = definition.programId === "sasmo-k2-8"
+      status.textContent = programId === "sasmo-k2-8"
         ? `${gradeName(grade)}의 검증된 공개 영어 원문 진입은 아직 잠금 상태입니다. 공식 정보에서 제공 여부를 먼저 확인합니다.`
-        : "이 목표의 공식 원문 진입 링크는 현재 검증 대기입니다.";
-      rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공식 원문 링크가 검증되기 전에는 GFIELD가 문항을 대신 복제하거나 번역하지 않습니다.';
+        : "공식 참가·범위는 확인했지만, 이 목표의 원문 문제 제공 경로와 GFIELD 콘텐츠는 아직 검증 대기입니다.";
+      rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공식 원문 링크가 검증되기 전에는 GFIELD가 문항을 대신 복제하거나 공개하지 않습니다.';
       return;
     }
 
@@ -205,20 +229,21 @@
     anchor.hidden = false;
     anchor.href = record.organizerHostedUrl;
     anchor.dataset.originalRecordId = record.id;
-    anchor.textContent = `${yearLabel} ${gradeName(grade)} 공식 영어 원문 열기 ↗`;
+    anchor.textContent = `${yearLabel} ${gradeName(grade)} 공식 원본 접근 ↗`;
+    const coverageLabel = record.coverageLabelKo || record.coverageLabel;
     status.textContent = record.sourceKind === "organizer-lms"
-      ? `${record.coverageLabel}. 주최기관 로그인 또는 무료 등록이 필요할 수 있습니다. GFIELD OMR·자동 분석은 아직 준비 중입니다.`
-      : `${record.coverageLabel}. 주최기관 페이지에서 선택한 학년의 START를 누르세요. GFIELD OMR·자동 분석은 아직 준비 중입니다.`;
-    rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공식 원문은 주최기관 사이트에서 영어로 열립니다. GFIELD는 원문·도형·해설을 저장, 복제, 번역하지 않습니다.';
+      ? `${coverageLabel}. 주최기관 로그인 또는 무료 등록 뒤 공식 자료에 접근합니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`
+      : `${coverageLabel}. 이 버튼은 주최기관의 학년별 원본 진입 페이지를 엽니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`;
+    rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공개 화면·GitHub에는 공식 원문·도형·해설을 복제하지 않습니다. 비공개 원본 보관은 출처·해시 검수용이며 학생 배포가 아닙니다.';
   }
 
   function renderGoalFlow(goalId, hasOriginal) {
     const competition = ["kangaroo", "sasmo", "amc"].includes(goalId);
     const steps = competition
       ? [
-        ["STEP 1", "정확한 학년·공식 형식 확인"],
-        ["STEP 2", hasOriginal ? "주최기관 영어 원문 열기" : "공식 원문 경로 확인"],
-        ["STEP 3", "GFIELD OMR·분석은 검수 후 공개"]
+        ["STEP 1", "주최기관에서 참가 자격·학년 확인"],
+        ["STEP 2", hasOriginal ? "공식 원본 접근 경로 열기" : "공식 원본 제공 여부 확인"],
+        ["STEP 3", "GFIELD 결과 기록·분석은 검수 후 공개"]
       ]
       : [
         ["STEP 1", "학년·목표 범위 확인"],
@@ -255,8 +280,9 @@
     }
     populateGoalGrades(definition, grade);
 
-    const program = findProgram(definition.programId);
-    const profile = findProfile(definition.programId);
+    const programId = resolveProgramId(definition, grade);
+    const program = findProgram(programId);
+    const profile = findProfile(programId);
     const facts = profileFacts(goalId, grade);
     document.getElementById("goal-type").textContent = definition.type;
     document.getElementById("goal-title").textContent = definition.title(grade);
@@ -264,7 +290,9 @@
     document.getElementById("goal-eligibility").textContent = facts.eligibility;
     document.getElementById("goal-format").textContent = facts.format;
     document.getElementById("goal-route").textContent = definition.route;
-    document.getElementById("goal-grade-note").textContent = `${gradeName(grade)} 기준 · 대회와 학교 학년은 별도 확인`;
+    document.getElementById("goal-grade-note").textContent = goalId === "amc"
+      ? `${gradeName(grade)}의 권장 단계를 표시합니다 · 실제 참가 자격은 별도 확인`
+      : `${gradeName(grade)} 기준 · 대회와 학교 학년은 별도 확인`;
     document.getElementById("goal-verified").textContent = `공식 정보 · ${(profile && profile.lastVerified) || program.sources[0].lastVerified} 확인`;
 
     const source = document.getElementById("goal-source");
@@ -367,8 +395,13 @@
 
   document.addEventListener("click", function (event) {
     const goalButton = event.target.closest("[data-goal]");
+    const pathButton = event.target.closest("[data-path-goal]");
     const gradeButton = event.target.closest("[data-grade-tab]");
     const roleButton = event.target.closest("[data-role-preview]");
+    if (pathButton) {
+      const pathGoal = pathButton.dataset.pathGoal;
+      updateGoal(pathGoal, goalDefinitions[pathGoal].defaultGrade);
+    }
     if (goalButton) updateGoal(goalButton.dataset.goal, null, true);
     if (gradeButton) renderGradeMap(gradeButton.dataset.gradeTab);
     if (roleButton) updateRole(roleButton.dataset.rolePreview);
