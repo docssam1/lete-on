@@ -582,8 +582,204 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-04",
+    label: "4권",
+    title: "도형분할과 쌓기나무",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx",
+      pdfFile: "더클래식_1과정_4N30권_골든벨_220805.pdf",
+      verified: true,
+      note: "교사용 PPTX·47쪽 PDF의 같은 그림과 빨간 정답층을 대조하고, 답 표시를 분리할 수 있는 대표 문항만 공개"
+    },
+    lessons: [
+      {
+        id: "polyomino-family-count",
+        unit: "도형분할과 움직이기",
+        title: "붙인 정사각형의 모양을 세어요",
+        sourceLocator: "교사용 PPTX·PDF 3쪽, 활동 02",
+        sourceTypeIds: ["tetromino-family-choice"],
+        representativeConcept: "정사각형을 변끼리 붙인 뒤 돌리거나 뒤집어 같아지는 모양은 한 종류로 셈",
+        story: {
+          title: "모양 공방의 네모 조각",
+          text: "네모 조각을 변끼리 붙이면 여러 모양을 만들 수 있습니다. 돌리거나 뒤집어서 포개지는 것은 같은 모양입니다.",
+          mission: "한 칸부터 네 칸까지 서로 다른 모양이 몇 개인지 겹치지 않게 세어 보세요."
+        },
+        explanation: {
+          headline: "돌리고 뒤집어 포개지면 같은 종류입니다.",
+          steps: [
+            "정사각형은 꼭 변끼리 붙입니다.",
+            "새 모양을 돌리거나 뒤집어 이미 만든 모양과 포개 봅니다.",
+            "포개지지 않는 모양만 새 종류로 세어 표에 적습니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "polyomino-free-family-count",
+          prompt: "크기가 같은 정사각형을 변끼리 붙여 만들 수 있는 서로 다른 도형의 종류를 쓰시오.",
+          visual: { kind: "book04-polyomino-original" },
+          items: [
+            { id: "poly-1", prompt: "(1) 정사각형 1개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "poly-2", prompt: "(2) 정사각형 2개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "poly-3", prompt: "(3) 정사각형 3개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "poly-4", prompt: "(4) 정사각형 4개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "5" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "polyomino-free-family-count",
+          story: "전시 선반에는 세 칸 조각과 네 칸 조각의 서로 다른 모양을 모두 올립니다.",
+          prompt: "세 칸 조각과 네 칸 조각의 서로 다른 모양은 모두 몇 종류일까요?",
+          visual: { kind: "book04-polyomino-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "7",
+          explanation: "세 칸 조각은 2종류, 네 칸 조각은 5종류이므로 모두 2+5=7종류입니다."
+        }
+      },
+      {
+        id: "hidden-cube-count",
+        unit: "색종이 접기와 쌓기나무",
+        title: "보이지 않는 쌓기나무를 찾아요",
+        sourceLocator: "교사용 PPTX·PDF 18쪽, 쌓기나무의 개수 활동 02",
+        sourceTypeIds: ["cube-hidden-count"],
+        representativeConcept: "각 기둥의 전체 높이에서 그림에 보이는 쌓기나무를 빼 가려진 개수를 찾음",
+        story: {
+          title: "블록 도시의 숨은 방",
+          text: "앞의 블록에 가려지거나 위 블록을 받치고 있어 보이지 않는 블록이 있습니다. 보이는 블록만 세면 전체보다 작습니다.",
+          mission: "기둥마다 필요한 전체 개수를 센 뒤 보이는 개수를 빼 보세요."
+        },
+        explanation: {
+          headline: "전체 개수에서 보이는 개수를 뺍니다.",
+          steps: [
+            "가장 위 블록을 보고 그 아래에 몇 개가 받치고 있어야 하는지 셉니다.",
+            "모든 기둥의 높이를 더해 전체 개수를 구합니다.",
+            "전체 개수에서 그림에 보이는 개수를 빼 숨은 블록 수를 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "visible-cubes-subtract-from-total",
+          prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
+          visual: { kind: "book04-hidden-cubes-original" },
+          items: [
+            { id: "hidden-1", prompt: "(1) 전체 4개 중 그림에 보이는 것은 3개입니다.", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "hidden-2", prompt: "(2) 전체 9개 중 그림에 보이는 것은 7개입니다.", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "hidden-3", prompt: "(3) 전체 10개 중 그림에 보이는 것은 6개입니다.", answerMode: "input", inputMode: "numeric", answer: "4" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "visible-cubes-subtract-from-total",
+          story: "블록 창고에는 2×2×2 크기의 정육면체를 만들 블록 8개가 쌓여 있습니다.",
+          prompt: "밖에서 보이는 블록이 5개라면 보이지 않는 블록은 몇 개일까요?",
+          visual: { kind: "book04-hidden-cubes-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "3",
+          explanation: "전체 8개에서 보이는 5개를 빼면 보이지 않는 블록은 3개입니다."
+        }
+      },
+      {
+        id: "balance-substitution",
+        unit: "양팔저울과 비교하기",
+        title: "도형을 바꾸어 넣어요",
+        sourceLocator: "교사용 PPTX·PDF 31쪽, 양팔저울과 바꾸어 넣기",
+        sourceTypeIds: ["balance-unit-ratio"],
+        representativeConcept: "첫 저울에서 한 도형을 네모 몇 개와 같은지 찾고 다음 저울의 같은 도형을 네모로 바꿈",
+        sourceHold: "같은 쪽에 여러 관계가 이어져 교사용 표시만으로 원문을 확정하기 어려운 셋째 묶음은 잠금 유지",
+        story: {
+          title: "무게 연구소의 도형 상자",
+          text: "평형인 저울의 양쪽 무게는 같습니다. 한 도형을 네모로 바꾼 뒤 다음 저울에 그대로 넣으면 목표 도형의 무게를 찾을 수 있습니다.",
+          mission: "첫 저울의 관계를 다음 저울에 차례로 바꾸어 넣어 보세요."
+        },
+        explanation: {
+          headline: "먼저 한 도형을 네모로 바꾸고 다음 저울에 넣습니다.",
+          steps: [
+            "첫 저울에서 세모 한 개가 네모 몇 개와 같은지 찾습니다.",
+            "다음 저울의 세모를 같은 수의 네모로 바꿉니다.",
+            "양쪽 네모 수가 같은지 세어 답을 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "balance-shape-unit-substitution",
+          prompt: "다음 그림의 양팔저울은 모두 평형을 이루고 있습니다. 물음에 답하시오.",
+          visual: { kind: "book04-balance-original" },
+          items: [
+            { id: "balance-circle", prompt: "(1) 동그라미 1개는 네모 몇 개의 무게와 같습니까?", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "balance-empty", prompt: "(2) 두 번째 빈 접시에 네모 몇 개를 놓아야 합니까?", answerMode: "input", inputMode: "numeric", answer: "8" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "balance-shape-unit-substitution",
+          story: "보석 저울에서 별 1개는 네모 2개와 같고, 동그라미 1개는 별 1개와 네모 1개를 합한 무게와 같습니다.",
+          prompt: "동그라미 1개는 네모 몇 개의 무게와 같을까요?",
+          visual: { kind: "book04-balance-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "3",
+          explanation: "별 1개를 네모 2개로 바꾸면 동그라미는 네모 2개와 1개를 합한 3개입니다."
+        }
+      },
+      {
+        id: "cardinal-placement",
+        unit: "논리추리와 자리배치",
+        title: "동서남북으로 자리를 찾아요",
+        sourceLocator: "교사용 PPTX·PDF 42쪽, 자리배치 활동 01",
+        sourceTypeIds: ["directional-seat-placement", "directional-landmark-placement-book4"],
+        representativeConcept: "한 장소를 기준으로 동·서·남·북 위치를 차례로 표시해 빈 자리의 이름을 찾음",
+        story: {
+          title: "네 거리 마을 안내판",
+          text: "마을의 네 건물은 동서남북 조건에 맞춰 한 칸씩 놓입니다. 기준이 되는 장소를 먼저 쓰면 나머지 자리도 정해집니다.",
+          mission: "동쪽과 서쪽, 북쪽과 남쪽을 화살표 방향에 맞게 표시해 보세요."
+        },
+        explanation: {
+          headline: "기준 장소를 먼저 놓고 한 조건씩 이어 갑니다.",
+          steps: [
+            "동·서는 같은 가로줄, 남·북은 같은 세로줄에 놓습니다.",
+            "두 조건에 함께 나오는 장소를 먼저 기준 칸에 씁니다.",
+            "모든 조건을 다시 읽어 서로 겹치는 장소가 없는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "two-by-two-cardinal-placement",
+          prompt: "조건에 맞게 네 칸에 위치를 찾아 쓰고, ㉮에 들어갈 이름을 구하시오.",
+          visual: { kind: "book04-direction-original" },
+          items: [
+            {
+              id: "direction-place",
+              prompt: "(1) 마트, 서점, 은행, 학원을 놓을 때 ㉮에 있는 장소",
+              conditions: ["마트는 은행의 서쪽에 있습니다.", "서점은 은행의 북쪽에 있고, 학원의 동쪽에 있습니다."],
+              answerMode: "input",
+              answer: "학원"
+            },
+            {
+              id: "direction-home",
+              prompt: "(2) 서연, 도윤, 준서, 시우의 집을 놓을 때 ㉮에 사는 친구",
+              conditions: ["서연이네 집 남쪽에 도윤이네 집이 있습니다.", "준서네 집 동쪽에 도윤이네 집이 있고, 북쪽에는 시우네 집이 있습니다."],
+              answerMode: "input",
+              answer: "도윤"
+            }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "two-by-two-cardinal-placement",
+          story: "공원, 빵집, 도서관, 우체국이 네 거리의 네 칸에 하나씩 있습니다.",
+          prompt: "빵집은 도서관의 서쪽에 있습니다. 우체국은 도서관의 북쪽에 있고 공원의 동쪽에 있습니다. ㉮에 있는 장소는 무엇일까요?",
+          visual: { kind: "book04-direction-story" },
+          answerMode: "input",
+          answer: "공원",
+          explanation: "도서관의 서쪽은 빵집, 북쪽은 우체국입니다. 우체국의 서쪽에 있는 ㉮는 공원입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-04", "4권", "도형분할과 쌓기나무", "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx", "source-located"],
     ["book-05", "5권", "곱셈매트릭스와 삼각수", "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx", "source-located"],
     ["book-06", "6권", "논리와 수 퍼즐", "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx", "source-located"],
     ["book-07", "7권", "규칙과 달력", "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx", "source-located"],

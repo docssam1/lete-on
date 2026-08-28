@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828h";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828i";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -127,7 +127,9 @@ function book02MatrixMarkup(story = false) {
 
 function balanceBeamMarkup(left, right, heavySide) {
   const sideClass = heavySide === "left" ? "left-heavy" : heavySide === "right" ? "right-heavy" : "level";
-  return `<div class="balance-unit" role="img" aria-label="${left}와 ${right}의 양팔저울"><div class="balance-load left">${left}</div><div class="balance-load right">${right}</div><div class="balance-beam ${sideClass}"><span></span><span></span></div><div class="balance-stand"></div></div>`;
+  const accessibleLeft = String(left).replace(/<[^>]*>/g, "").trim() || "왼쪽 물체";
+  const accessibleRight = String(right).replace(/<[^>]*>/g, "").trim() || "오른쪽 물체";
+  return `<div class="balance-unit" role="img" aria-label="${accessibleLeft}와 ${accessibleRight}의 양팔저울"><div class="balance-load left">${left}</div><div class="balance-load right">${right}</div><div class="balance-beam ${sideClass}"><span></span><span></span></div><div class="balance-stand"></div></div>`;
 }
 
 function book02BalanceMarkup(story = false) {
@@ -220,6 +222,78 @@ function book03MagicMarkup(story = false) {
   return `<div class="magic-grid-set ${story ? "single" : ""}">${grids.map((cells, index) => magicGridMarkup(cells, story ? "" : `${index + 1}`)).join("")}</div>`;
 }
 
+function polyominoShapeMarkup(cells, label) {
+  const width = Math.max(...cells.map(([x]) => x)) + 1;
+  const height = Math.max(...cells.map(([, y]) => y)) + 1;
+  const blocks = cells.map(([x, y]) => `<i style="grid-column:${x + 1};grid-row:${y + 1}"></i>`).join("");
+  return `<figure class="polyomino-shape" aria-label="${label}"><div style="--shape-columns:${width};--shape-rows:${height}">${blocks}</div></figure>`;
+}
+
+function polyominoFamilyMarkup(count, shapes) {
+  return `<section class="polyomino-family"><strong>정사각형 ${count}개</strong><div>${shapes.map((shape, index) => polyominoShapeMarkup(shape, `${count}칸 모양 ${index + 1}`)).join("")}</div></section>`;
+}
+
+function book04PolyominoMarkup(story = false) {
+  const families = [
+    [1, [[[0, 0]]]],
+    [2, [[[0, 0], [1, 0]]]],
+    [3, [[[0, 0], [1, 0], [2, 0]], [[0, 0], [0, 1], [1, 1]]]],
+    [4, [
+      [[0, 0], [1, 0], [2, 0], [3, 0]],
+      [[0, 0], [1, 0], [0, 1], [1, 1]],
+      [[0, 0], [1, 0], [2, 0], [1, 1]],
+      [[0, 0], [0, 1], [0, 2], [1, 2]],
+      [[1, 0], [2, 0], [0, 1], [1, 1]]
+    ]]
+  ];
+  const visible = story ? families.slice(2) : families;
+  return `<div class="polyomino-board ${story ? "story" : ""}">${visible.map(([count, shapes]) => polyominoFamilyMarkup(count, shapes)).join("")}</div>`;
+}
+
+function cubeGlyphMarkup(x, y, size = 24) {
+  const half = size / 2;
+  const depth = size * 0.34;
+  return `<g transform="translate(${x} ${y})"><path class="cube-top" d="M0 0L${half} ${-depth}L${size} 0L${half} ${depth}Z"/><path class="cube-front" d="M0 0L${half} ${depth}V${size + depth}L0 ${size}Z"/><path class="cube-side" d="M${size} 0L${half} ${depth}V${size + depth}L${size} ${size}Z"/></g>`;
+}
+
+function cubeSceneMarkup(cubes, label) {
+  return `<figure class="cube-scene"><svg viewBox="0 0 150 118" role="img" aria-label="${label}">${cubes.map(([x, y]) => cubeGlyphMarkup(x, y)).join("")}</svg><figcaption>${label}</figcaption></figure>`;
+}
+
+function book04HiddenCubesMarkup(story = false) {
+  const scenes = story ? [
+    { label: "전체 8개 · 보이는 것 5개", cubes: [[28, 60], [52, 60], [40, 44], [64, 44], [52, 28]] }
+  ] : [
+    { label: "전체 4개 · 보이는 것 3개", cubes: [[34, 62], [58, 62], [46, 38]] },
+    { label: "전체 9개 · 보이는 것 7개", cubes: [[22, 70], [46, 70], [70, 70], [34, 54], [58, 54], [82, 54], [46, 30]] },
+    { label: "전체 10개 · 보이는 것 6개", cubes: [[18, 74], [42, 74], [66, 74], [30, 58], [54, 58], [42, 34]] }
+  ];
+  return `<div class="cube-scene-set ${story ? "single" : ""}">${scenes.map(({ cubes, label }) => cubeSceneMarkup(cubes, label)).join("")}</div>`;
+}
+
+function balanceTokensMarkup(symbol, count, className) {
+  return `<span class="balance-tokens ${className}">${Array.from({ length: count }, () => `<i>${symbol}</i>`).join("")}</span>`;
+}
+
+function book04BalanceMarkup(story = false) {
+  const square = (count) => balanceTokensMarkup("", count, "squares");
+  const triangle = (count) => balanceTokensMarkup("", count, "triangles");
+  const circle = (count) => balanceTokensMarkup("", count, "circles");
+  const star = (count) => balanceTokensMarkup("★", count, "stars");
+  if (story) return `<div class="balance-substitution single">${balanceBeamMarkup(star(1), square(2), "level")}${balanceBeamMarkup(circle(1), `${star(1)}${square(1)}`, "level")}</div>`;
+  return `<div class="balance-substitution"><section><strong>(1)</strong>${balanceBeamMarkup(`${triangle(2)}${square(2)}`, square(6), "level")}${balanceBeamMarkup(circle(1), `${triangle(1)}${square(1)}`, "level")}</section><section><strong>(2)</strong>${balanceBeamMarkup(`${triangle(2)}${square(5)}`, `${triangle(3)}${square(3)}`, "level")}${balanceBeamMarkup(triangle(4), '<span class="balance-question">?</span>', "level")}</section></div>`;
+}
+
+function directionMapMarkup(markerIndex, label) {
+  const cells = Array.from({ length: 4 }, (_, index) => `<span class="${index === markerIndex ? "target" : ""}"><i></i>${index === markerIndex ? "㉮" : ""}</span>`).join("");
+  return `<figure class="direction-map"><div class="direction-grid">${cells}<b class="north">북</b><b class="south">남</b><b class="west">서</b><b class="east">동</b></div><figcaption>${label}</figcaption></figure>`;
+}
+
+function book04DirectionMarkup(story = false) {
+  const maps = story ? [directionMapMarkup(0, "마을 건물")] : [directionMapMarkup(0, "장소"), directionMapMarkup(3, "친구의 집")];
+  return `<div class="direction-map-set ${story ? "single" : ""}">${maps.join("")}</div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "clock") return clockMarkup(visual.value);
@@ -246,6 +320,14 @@ function visualMarkup(visual) {
   if (visual.kind === "book03-cryptarithm-story") return book03CryptarithmMarkup(true);
   if (visual.kind === "book03-magic-original") return book03MagicMarkup(false);
   if (visual.kind === "book03-magic-story") return book03MagicMarkup(true);
+  if (visual.kind === "book04-polyomino-original") return book04PolyominoMarkup(false);
+  if (visual.kind === "book04-polyomino-story") return book04PolyominoMarkup(true);
+  if (visual.kind === "book04-hidden-cubes-original") return book04HiddenCubesMarkup(false);
+  if (visual.kind === "book04-hidden-cubes-story") return book04HiddenCubesMarkup(true);
+  if (visual.kind === "book04-balance-original") return book04BalanceMarkup(false);
+  if (visual.kind === "book04-balance-story") return book04BalanceMarkup(true);
+  if (visual.kind === "book04-direction-original") return book04DirectionMarkup(false);
+  if (visual.kind === "book04-direction-story") return book04DirectionMarkup(true);
   return "";
 }
 
