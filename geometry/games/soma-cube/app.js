@@ -177,10 +177,31 @@ function renderBuild() {
 }
 
 const thumbnailCache = new Map();
+const thumbnailCanvas = document.createElement("canvas");
+const thumbnailRenderer = new THREE.WebGLRenderer({canvas:thumbnailCanvas,antialias:true,alpha:true});
+const thumbnailScene = new THREE.Scene();
+const thumbnailCamera = new THREE.PerspectiveCamera(32,1.5,.1,20);
+const thumbnailContent = new THREE.Group();
+let thumbnailMaterial = null;
+thumbnailRenderer.setSize(180,120,false);
+thumbnailRenderer.setPixelRatio(1);
+thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x7d746b,2),thumbnailContent);
+const thumbnailLight = new THREE.DirectionalLight(0xffffff,2);
+thumbnailLight.position.set(4,6,5);
+thumbnailScene.add(thumbnailLight);
+
 function makeThumbnail(cells,color="#d9a365") {
   const cacheKey = `${color}:${normalize(cells).map(key).join(";")}`;
   if (thumbnailCache.has(cacheKey)) return thumbnailCache.get(cacheKey);
-  const canvas=document.createElement("canvas"); const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); renderer.setSize(180,120); renderer.setPixelRatio(1); const scene=new THREE.Scene(); const camera=new THREE.PerspectiveCamera(32,1.5,.1,20); scene.add(new THREE.HemisphereLight(0xffffff,0x7d746b,2)); const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(4,6,5);scene.add(light); const bounds=boundsOf(cells); cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshStandardMaterial({color,map:woodMap,roughness:.58}));mesh.position.copy(worldCell(cell,bounds));scene.add(mesh)}); const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1));camera.position.set(span*2.1,span*1.8,span*2.4);camera.lookAt(0,.7,0);renderer.render(scene,camera);const url=canvas.toDataURL("image/webp",.86);renderer.dispose();thumbnailCache.set(cacheKey,url);return url;
+  thumbnailContent.clear();
+  thumbnailMaterial?.dispose();
+  thumbnailMaterial=new THREE.MeshStandardMaterial({color,map:woodMap,roughness:.58});
+  const bounds=boundsOf(cells);
+  cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,thumbnailMaterial);mesh.position.copy(worldCell(cell,bounds));thumbnailContent.add(mesh)});
+  const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1));
+  thumbnailCamera.position.set(span*2.1,span*1.8,span*2.4);thumbnailCamera.lookAt(0,.7,0);
+  thumbnailRenderer.render(thumbnailScene,thumbnailCamera);
+  const url=thumbnailCanvas.toDataURL("image/webp",.86);thumbnailCache.set(cacheKey,url);return url;
 }
 
 function renderChoices() {
