@@ -227,6 +227,27 @@ for (const [lessonId, approvedAnswers] of approvedBook8Answers) {
 const requiredBook8Units = ["묶음수와 매트릭스", "복면산", "합차와 배수문제", "거꾸로 생각하기"];
 for (const unit of requiredBook8Units) if (!book8.lessons.some((lesson) => lesson.unit === unit)) fail(`book-08: missing ${unit}`);
 
+const book9 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-09");
+const approvedBook9Answers = new Map([
+  ["unit-area-and-half", ["2", "6", "1", "1"]],
+  ["cube-map-total", ["8", "10", "14"]],
+  ["magic-square-missing", ["10", "9"]],
+  ["consecutive-sum-pairing", ["21", "55", "105", "210"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook9Answers) {
+  const lesson = book9.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-09: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-09/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-09/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook9Units = ["도형의 분할과 넓이", "쌓기나무의 개수", "마방진", "연속수의 합"];
+for (const unit of requiredBook9Units) if (!book9.lessons.some((lesson) => lesson.unit === unit)) fail(`book-09: missing ${unit}`);
+
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
 const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
   const [row, column] = visual.path[visual.target.index];
@@ -364,6 +385,47 @@ const sourceReverseStarts = [
 ];
 if (sourceReverseStarts.join(",") !== "6,18,8,12") fail("book-08: source reverse chains failed");
 if (reverseChain(22, [(value) => value + 4, (value) => value - 6, (value) => value + 3, (value) => value - 8]) !== 15) fail("book-08: story reverse chain failed");
+
+function polygonArea(points) {
+  return Math.abs(points.reduce((sum, [x, y], index) => {
+    const [nextX, nextY] = points[(index + 1) % points.length];
+    return sum + x * nextY - y * nextX;
+  }, 0)) / 2;
+}
+const areaLesson = book9.lessons.find((lesson) => lesson.id === "unit-area-and-half");
+const sourceAreas = areaLesson.original.visual.panels.map(({ visual }) => polygonArea(visual.points));
+if (sourceAreas.join(",") !== "2,6,1,1" || polygonArea(areaLesson.extension.visual.points) !== 6) {
+  fail("book-09: source or story area calculation failed");
+}
+
+const cubeCount = (map) => map.flat().reduce((sum, height) => sum + height, 0);
+const cubeLesson = book9.lessons.find((lesson) => lesson.id === "cube-map-total");
+const sourceCubeTotals = cubeLesson.original.visual.panels.map(({ visual }) => cubeCount(visual.map));
+if (sourceCubeTotals.join(",") !== "8,10,14" || cubeCount(cubeLesson.extension.visual.map) !== 7) {
+  fail("book-09: source or story cube total failed");
+}
+
+function validMagicSquare(shown, answer, lineSum) {
+  const values = shown.map((value) => value === "□" ? answer : value);
+  const lines = [
+    [0,1,2], [3,4,5], [6,7,8],
+    [0,3,6], [1,4,7], [2,5,8],
+    [0,4,8], [2,4,6]
+  ];
+  return lines.every((line) => line.reduce((sum, index) => sum + values[index], 0) === lineSum);
+}
+const magicLesson = book9.lessons.find((lesson) => lesson.id === "magic-square-missing");
+if (!validMagicSquare(magicLesson.original.visual.panels[0].visual.shown, 10, 18)
+  || !validMagicSquare(magicLesson.original.visual.panels[1].visual.shown, 9, 21)
+  || !validMagicSquare(magicLesson.extension.visual.shown, 9, 15)) {
+  fail("book-09: source or story magic square failed");
+}
+
+const arithmeticSeries = (from, to) => (from + to) * (to - from + 1) / 2;
+if ([6,10,14,20].map((to) => arithmeticSeries(1, to)).join(",") !== "21,55,105,210"
+  || arithmeticSeries(1, 18) !== 171) {
+  fail("book-09: source or story consecutive sum failed");
+}
 
 function canonicalPolyomino(cells) {
   const variants = [];

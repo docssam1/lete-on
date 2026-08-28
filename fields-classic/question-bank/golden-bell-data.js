@@ -1622,8 +1622,223 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-09",
+    label: "9권",
+    title: "도형분할과 논리",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_9N30권_골든벨_230817 (1).pdf",
+      companionFile: "교사용지도서_더클래식_1과정_9N30권_도형분할과_논리(230606) (1).pdf",
+      verified: true,
+      note: "11쪽 교사용 골든벨 자료와 150쪽 지도서를 대조하고, 원문 도형과 조건만으로 독립 계산되는 대표 활동만 공개"
+    },
+    lessons: [
+      {
+        id: "unit-area-and-half",
+        unit: "도형의 분할과 넓이",
+        title: "단위넓이와 반으로 나눈 넓이를 찾아요",
+        sourceLocator: "교사용 PDF 1쪽, Q1 도형의 넓이 (1)~(2)의 네 도형",
+        sourceTypeIds: ["unit-square-area-b9", "half-rectangle-triangle-area-b9"],
+        representativeConcept: "한 칸의 넓이를 1로 보고 직사각형의 칸 수를 세거나, 대각선으로 반을 나눈 삼각형은 직사각형 넓이의 절반으로 계산함",
+        story: {
+          title: "모눈 유리 조각",
+          text: "모눈 한 칸의 넓이는 1입니다. 선을 따라 둘러싸인 부분의 넓이를 칸으로 비교합니다.",
+          mission: "직사각형은 가로와 세로의 칸 수를 곱하고, 정확히 반으로 나뉜 삼각형은 2로 나누세요."
+        },
+        explanation: {
+          headline: "단위 정사각형 몇 개와 같은지 세면 넓이가 됩니다.",
+          steps: [
+            "가로 칸 수와 세로 칸 수를 곱해 직사각형의 넓이를 구합니다.",
+            "대각선이 직사각형을 똑같이 둘로 나누면 삼각형 하나는 전체의 절반입니다.",
+            "모양을 옮겨 붙여도 넓이는 달라지지 않는지 칸 수로 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "unit-grid-area-and-diagonal-half",
+          prompt: "모눈 한 칸의 넓이가 1일 때 색칠한 도형의 넓이를 구하시오.",
+          visual: {
+            kind: "book9-set",
+            panels: [
+              { label: "(1)-가", visual: { subtype: "area-grid", gridWidth: 2, gridHeight: 1, points: [[0, 0], [2, 0], [2, 1], [0, 1]] } },
+              { label: "(1)-나", visual: { subtype: "area-grid", gridWidth: 3, gridHeight: 2, points: [[0, 0], [3, 0], [3, 2], [0, 2]] } },
+              { label: "(2)-가", visual: { subtype: "area-grid", gridWidth: 2, gridHeight: 1, points: [[0, 0], [2, 1], [0, 1]] } },
+              { label: "(2)-나", visual: { subtype: "area-grid", gridWidth: 1, gridHeight: 2, points: [[1, 0], [1, 2], [0, 2]] } }
+            ]
+          },
+          items: [
+            { id: "area-rectangle-2", prompt: "(1)-가의 넓이", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "area-rectangle-6", prompt: "(1)-나의 넓이", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "area-half-horizontal", prompt: "(2)-가의 넓이", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "area-half-vertical", prompt: "(2)-나의 넓이", answerMode: "input", inputMode: "numeric", answer: "1" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "unit-grid-area-and-diagonal-half",
+          story: "가로 4칸, 세로 3칸인 모눈 유리를 대각선으로 정확히 반으로 나누었습니다.",
+          prompt: "색칠한 삼각형의 넓이를 쓰세요.",
+          visual: { kind: "book9", subtype: "area-grid", gridWidth: 4, gridHeight: 3, points: [[0, 0], [4, 0], [0, 3]] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "6",
+          explanation: "직사각형의 넓이는 4×3=12이고 대각선으로 똑같이 나뉘므로 삼각형의 넓이는 12÷2=6입니다."
+        }
+      },
+      {
+        id: "cube-map-total",
+        unit: "쌓기나무의 개수",
+        title: "위에서 본 층수를 더해 전체 개수를 찾아요",
+        sourceLocator: "교사용 PDF 3쪽, 쌓기나무 입체와 위에서 본 층수 첫째 줄 세 모양",
+        sourceTypeIds: ["cube-top-height-total-b9", "hidden-cube-count-b9"],
+        representativeConcept: "위에서 본 각 자리에 쌓인 층수를 적고 모든 자리의 층수를 더하면 보이는 것과 보이지 않는 쌓기나무를 모두 셀 수 있음",
+        story: {
+          title: "계단 블록 창고",
+          text: "위에서 보이는 한 칸에는 쌓기나무가 한 개만 있는 것이 아니라 여러 층이 쌓여 있을 수 있습니다.",
+          mission: "각 자리에 몇 층이 쌓였는지 확인한 뒤 모든 층수를 더하세요."
+        },
+        explanation: {
+          headline: "입체를 위에서 본 자리별 높이표로 바꾸면 숨은 블록도 셀 수 있습니다.",
+          steps: [
+            "위에서 보이는 바닥 자리를 하나씩 찾습니다.",
+            "각 자리에 쌓인 쌓기나무의 높이를 적습니다.",
+            "높이표의 모든 수를 더해 전체 개수를 구합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "isometric-cube-to-top-height-total",
+          prompt: "각 쌓기나무 모양의 전체 개수를 구하시오.",
+          visual: {
+            kind: "book9-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "cube-solid-views", map: [[2, 2], [2, 2]] } },
+              { label: "(2)", visual: { subtype: "cube-solid-views", map: [[1, 4, 3, 1], [0, 0, 1, 0]] } },
+              { label: "(3)", visual: { subtype: "cube-solid-views", map: [[4, 3, 1], [3, 2, 0], [1, 0, 0]] } }
+            ]
+          },
+          items: [
+            { id: "cube-total-8", prompt: "(1) 전체 쌓기나무 수", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "cube-total-10", prompt: "(2) 전체 쌓기나무 수", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "cube-total-14", prompt: "(3) 전체 쌓기나무 수", answerMode: "input", inputMode: "numeric", answer: "14" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "isometric-cube-to-top-height-total",
+          story: "창고에 네 자리의 블록 기둥이 있고 높이는 차례로 3층, 2층, 1층, 1층입니다.",
+          prompt: "쌓기나무는 모두 몇 개인지 쓰세요.",
+          visual: { kind: "book9", subtype: "cube-solid-views", map: [[3, 2], [1, 1]] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "7",
+          explanation: "네 자리의 높이를 모두 더하면 3+2+1+1=7개입니다."
+        }
+      },
+      {
+        id: "magic-square-missing",
+        unit: "마방진",
+        title: "가로·세로·대각선의 같은 합으로 빈칸을 찾아요",
+        sourceLocator: "교사용 PDF 7쪽, Q1 마방진의 성질 첫째·둘째 표",
+        sourceTypeIds: ["magic-square-single-blank-b9"],
+        representativeConcept: "마방진의 모든 가로줄과 세로줄과 대각선의 합이 같다는 성질을 이용해 빈칸이 포함된 한 줄을 계산함",
+        story: {
+          title: "숫자 유리창",
+          text: "숫자 유리창은 어느 방향으로 세 수를 더해도 같은 합이 됩니다.",
+          mission: "빈칸이 있는 가로줄이나 세로줄에서 이미 아는 두 수를 먼저 더하세요."
+        },
+        explanation: {
+          headline: "한 줄의 합에서 보이는 두 수를 빼면 빈칸의 수가 됩니다.",
+          steps: [
+            "완성된 가로줄이나 세로줄을 더해 한 줄의 합을 확인합니다.",
+            "빈칸이 있는 줄에서 이미 적힌 수들을 더합니다.",
+            "한 줄의 합에서 그 수를 빼고 다른 방향의 합도 맞는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "three-by-three-magic-square-single-blank",
+          prompt: "가로, 세로, 대각선의 합이 모두 같을 때 빈칸에 알맞은 수를 쓰시오.",
+          visual: {
+            kind: "book9-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "magic-grid", size: 3, shown: [9, 2, 7, 4, 6, 8, 5, "□", 3], lineSum: 18 } },
+              { label: "(2)", visual: { subtype: "magic-grid", size: 3, shown: [10, 3, 8, 5, 7, "□", 6, 11, 4], lineSum: 21 } }
+            ]
+          },
+          items: [
+            { id: "magic-blank-10", prompt: "(1) 빈칸의 수", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "magic-blank-9", prompt: "(2) 빈칸의 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "three-by-three-magic-square-single-blank",
+          story: "박물관의 3×3 숫자 유리창 한 칸이 지워졌습니다. 어느 줄의 합도 15입니다.",
+          prompt: "빈칸에 들어갈 수를 쓰세요.",
+          visual: { kind: "book9", subtype: "magic-grid", size: 3, shown: [8, 1, 6, 3, 5, 7, 4, "□", 2], lineSum: 15 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "9",
+          explanation: "아래 가로줄의 합이 15이므로 4+□+2=15입니다. 빈칸은 15-6=9입니다."
+        }
+      },
+      {
+        id: "consecutive-sum-pairing",
+        unit: "연속수의 합",
+        title: "처음 수와 끝 수를 짝지어 더해요",
+        sourceLocator: "교사용 PDF 11쪽, Q1 연속수의 합 여섯 식 중 앞 네 식",
+        sourceTypeIds: ["consecutive-sum-pairing-b9"],
+        representativeConcept: "처음 수와 끝 수의 합이 같은 짝을 만들고 그 짝의 합에 짝의 개수를 곱해 연속수의 합을 구함",
+        story: {
+          title: "계단 번호의 합",
+          text: "첫 계단과 마지막 계단, 둘째 계단과 끝에서 둘째 계단을 짝지으면 같은 합이 반복됩니다.",
+          mission: "처음 수와 끝 수의 합, 수의 개수, 짝의 개수를 차례로 찾으세요."
+        },
+        explanation: {
+          headline: "양끝을 짝지으면 같은 합이 반복됩니다.",
+          steps: [
+            "처음 수와 끝 수를 더해 한 짝의 합을 구합니다.",
+            "연속수의 개수를 세고 2로 나누어 짝의 개수를 구합니다.",
+            "한 짝의 합과 짝의 개수를 곱합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "consecutive-sum-by-end-pairing",
+          prompt: "연속수의 합을 구하시오.",
+          visual: {
+            kind: "book9-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "consecutive-sum", from: 1, to: 6 } },
+              { label: "(2)", visual: { subtype: "consecutive-sum", from: 1, to: 10 } },
+              { label: "(3)", visual: { subtype: "consecutive-sum", from: 1, to: 14 } },
+              { label: "(4)", visual: { subtype: "consecutive-sum", from: 1, to: 20 } }
+            ]
+          },
+          items: [
+            { id: "sum-1-to-6", prompt: "(1) 1부터 6까지의 합", answerMode: "input", inputMode: "numeric", answer: "21" },
+            { id: "sum-1-to-10", prompt: "(2) 1부터 10까지의 합", answerMode: "input", inputMode: "numeric", answer: "55" },
+            { id: "sum-1-to-14", prompt: "(3) 1부터 14까지의 합", answerMode: "input", inputMode: "numeric", answer: "105" },
+            { id: "sum-1-to-20", prompt: "(4) 1부터 20까지의 합", answerMode: "input", inputMode: "numeric", answer: "210" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "consecutive-sum-by-end-pairing",
+          story: "전시관 계단에 1번부터 18번까지 번호가 붙어 있습니다.",
+          prompt: "모든 계단 번호의 합을 쓰세요.",
+          visual: { kind: "book9", subtype: "consecutive-sum", from: 1, to: 18 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "171",
+          explanation: "1+18=19인 짝이 9개이므로 19×9=171입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-09", "9권", "도형분할과 논리", "더클래식_1과정_9N30권_골든벨_230817 (1).pdf", "source-located"],
     ["book-10", "10권", "연속수와 따라잡기", "", "source-needed"]
   ].map(([id, label, title, file, status]) => ({
     id,
