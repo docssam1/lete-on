@@ -18,6 +18,8 @@ let responses = loadResponses(exam.id);
 let diagnosisOpen = false;
 
 $("studentName").textContent = `${student} 학생`;
+$("printStudent").textContent = `${student} 학생`;
+$("printWatermark").innerHTML = Array.from({ length: 6 }, () => `<span>${student} 학생 · GFIELD</span>`).join("");
 $("backToBank").href = `./index.html?student=${encodeURIComponent(student)}`;
 $("groupSelect").innerHTML = RESULT_EXAM_GROUPS.map((group) => `<option value="${group.id}">${group.label} · ${group.exams.length}종</option>`).join("");
 $("groupSelect").value = activeGroupId;
@@ -154,6 +156,7 @@ $("showResult").addEventListener("click", () => {
   render();
   $("diagnosisPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
+$("printResult").addEventListener("click", () => window.print());
 $("remediationCount").addEventListener("change", updateRemediationLink);
 
 updateUrl();

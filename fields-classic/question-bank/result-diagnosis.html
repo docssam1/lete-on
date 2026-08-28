@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f2f5f6" />
   <title>시험 결과 O/X 진단</title>
-  <link rel="stylesheet" href="./result-diagnosis.css?v=20260829a" />
+  <link rel="stylesheet" href="./result-diagnosis.css?v=20260829b" />
 </head>
 <body>
+  <div class="print-watermark" id="printWatermark" aria-hidden="true"></div>
   <header class="result-header">
     <a href="./index.html" id="backToBank">문제은행</a>
     <div><strong>시험 결과 진단</strong><span>GFIELD · FIELDS THE CLASSIC</span></div>
@@ -47,8 +48,8 @@
 
     <section id="diagnosisPanel" class="diagnosis-panel" hidden aria-labelledby="diagnosisTitle">
       <header class="diagnosis-summary">
-        <div><span>DIAGNOSIS</span><h2 id="diagnosisTitle"></h2><p id="diagnosisMessage"></p></div>
-        <strong id="scoreValue">0점</strong>
+        <div><span>DIAGNOSIS</span><h2 id="diagnosisTitle"></h2><p id="diagnosisMessage"></p><small id="printStudent"></small></div>
+        <div class="diagnosis-score"><strong id="scoreValue">0점</strong><button id="printResult" type="button">결과 인쇄</button></div>
       </header>
 
       <div class="diagnosis-layout">
@@ -78,6 +79,6 @@
     </section>
   </main>
 
-  <script type="module" src="./result-diagnosis.js?v=20260829a"></script>
+  <script type="module" src="./result-diagnosis.js?v=20260829b"></script>
 </body>
 </html>

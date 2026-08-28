@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { stat } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -33,10 +34,22 @@ try {
   assert.equal(await desktop.locator("#scoreValue").textContent(), "80점");
   assert.equal(await desktop.locator("#diagnosisPanel").isVisible(), true);
   assert.ok(await desktop.locator(".weak-type").count() > 0, "오답 세부 유형이 표시되지 않음");
+  assert.equal(await desktop.locator("#printResult").isVisible(), true, "결과 인쇄 버튼이 표시되지 않음");
+  assert.equal(await desktop.locator("#printStudent").textContent(), "AUDIT 학생");
+  assert.equal(await desktop.locator("#printWatermark span").count(), 6, "인쇄 워터마크 반복 수가 다름");
   const remedialHref = await desktop.locator("#remediationLink").getAttribute("href");
   assert.ok(remedialHref.includes("mode=type") && remedialHref.includes("types="), "보충 문제 링크가 유형 선택으로 연결되지 않음");
   assert.deepEqual(desktopErrors.filter((message) => !isExpectedOfflineFontError(message)), [], `브라우저 오류: ${desktopErrors.join(" | ")}`);
   await desktop.screenshot({ path: path.join(screenshotDir, "fields-result-diagnosis-desktop.png"), fullPage: true });
+  await desktop.emulateMedia({ media: "print" });
+  assert.equal(await desktop.locator(".entry-panel").evaluate((element) => getComputedStyle(element).display), "none", "인쇄에서 O/X 입력 화면이 숨겨지지 않음");
+  assert.equal(await desktop.locator(".remediation-panel").evaluate((element) => getComputedStyle(element).display), "none", "인쇄에서 보충 설정이 숨겨지지 않음");
+  assert.notEqual(await desktop.locator("#diagnosisPanel").evaluate((element) => getComputedStyle(element).display), "none", "인쇄에서 진단 결과가 숨겨짐");
+  const printPdfPath = path.join(screenshotDir, "fields-result-diagnosis-print.pdf");
+  await desktop.pdf({ path: printPdfPath, format: "A4", printBackground: true, margin: { top: "11mm", right: "11mm", bottom: "11mm", left: "11mm" } });
+  const printPdfSize = (await stat(printPdfPath)).size;
+  assert.ok(printPdfSize > 20_000, `인쇄 PDF가 비정상적으로 작음: ${printPdfSize}`);
+  await desktop.emulateMedia({ media: "screen" });
 
   await desktop.goto(new URL(remedialHref, desktop.url()).href, { waitUntil: "networkidle" });
   assert.equal(await desktop.locator("button[data-mode=type]").getAttribute("class"), "active", "유형별 탭이 열리지 않음");
@@ -71,7 +84,7 @@ try {
   assert.ok(bankOverflow.scrollWidth <= bankOverflow.clientWidth + 1, `문제은행 모바일 가로 넘침: ${JSON.stringify(bankOverflow)}`);
 
   console.log(JSON.stringify({
-    desktop: { questionCount: 25, score: 80, screenshot: path.join(screenshotDir, "fields-result-diagnosis-desktop.png") },
+    desktop: { questionCount: 25, score: 80, screenshot: path.join(screenshotDir, "fields-result-diagnosis-desktop.png"), printPdfPath, printPdfSize },
     remediation: { preselectedTypeCount },
     final: { questionCount: 20, score: 100 },
     mobile: { ...overflow, bankOverflow, screenshot: path.join(screenshotDir, "fields-result-diagnosis-mobile.png") }
