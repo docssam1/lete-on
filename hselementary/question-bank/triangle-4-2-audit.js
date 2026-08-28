@@ -1,13 +1,19 @@
 "use strict";
 
-// Independent answer and visibility audit for the 24 implemented 4-2 triangle Mission types.
+// Independent answer and source-publication audit for the reviewed 4-2 triangle types.
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2").units.find(item => item.id === "4-2-u2");
-const types = unit.subunits.flatMap(subunit => subunit.types).filter(type => type.sourceSection === "mission");
+const sourceTypes = unit.subunits.flatMap(subunit => subunit.types).filter(type => type.sourceItemId?.startsWith("4-2-triangle-"));
+const types = sourceTypes.filter(type => type.generatorKey && !type.reviewLocked);
+const locked = sourceTypes.filter(type => type.reviewLocked);
+const publicSourceIds = new Set([
+  "4-2-triangle-1-mission-1",
+  "4-2-triangle-4-mission-1"
+]);
 const failures = [];
 const seenKinds = new Set();
 const check = (condition, message) => { if (!condition) failures.push(message); };
@@ -104,12 +110,16 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
   generatedCount += 1;
 }
 
-check(types.length === 24, `세부 유형 수가 24개가 아닙니다: ${types.length}`);
-check(seenKinds.size === 24, `검산 구조 수가 24개가 아닙니다: ${seenKinds.size}`);
+check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
+check(types.length === 2, `원문 일치 공개 유형 수가 2개가 아닙니다: ${types.length}`);
+check(locked.length === 42, `검수 대기 유형 수가 42개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 2, `공개 검산 구조 수가 2개가 아닙니다: ${seenKinds.size}`);
+check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
+check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
   console.error(`4-2 삼각형 단원 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 30).join("\n"));
   process.exit(1);
 }
 
-console.log(`4-2 삼각형 Mission 감사 통과: ${types.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종`);
+console.log(`4-2 삼각형 원문 일치 공개 감사 통과: ${types.length}유형, 검수 대기 ${locked.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종`);

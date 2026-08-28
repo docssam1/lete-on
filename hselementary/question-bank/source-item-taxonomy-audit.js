@@ -8,6 +8,10 @@ const failures = [];
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
 const targetUnits = semester.units.filter(unit => ["삼각형", "소수의 덧셈과 뺄셈"].includes(unit.name));
 const sourceIds = new Set();
+const reviewedTriangleIds = new Set([
+  "4-2-triangle-1-mission-1",
+  "4-2-triangle-4-mission-1"
+]);
 
 function check(condition, message) {
   if (!condition) failures.push(message);
@@ -31,8 +35,11 @@ for (const unit of targetUnits) {
       check(Number.isInteger(type.sourcePdfPage) && Number.isInteger(type.sourcePrintedPage), `${type.id}: PDF·교재 페이지가 없습니다.`);
       check(type.sourceEvidence.includes(type.sourceItemId), `${type.id}: 근거 문구에 원문 문항 ID가 없습니다.`);
       variants.push(type.variant);
-      if (type.sourceSection === "mission") {
-        check(!type.reviewLocked, `${type.id}: 검산 완료 Mission 유형이 잠겨 있습니다.`);
+      const shouldBePublic = unit.name === "삼각형"
+        ? reviewedTriangleIds.has(type.sourceItemId)
+        : type.sourceSection === "mission";
+      if (shouldBePublic) {
+        check(!type.reviewLocked, `${type.id}: 원문 일치 검산 완료 유형이 잠겨 있습니다.`);
         const generated = window.HSE_GENERATORS.generate({
           ...type,
           semesterId: semester.id,
@@ -40,9 +47,9 @@ for (const unit of targetUnits) {
           unitName: unit.name,
           subunitName: subunit.name
         }, 0, 0, 17, type.variant);
-        check(Boolean(generated?.prompt && generated?.solution && generated?.answer !== undefined), `${type.id}: Mission 생성 결과가 완전하지 않습니다.`);
+        check(Boolean(generated?.prompt && generated?.solution && generated?.answer !== undefined), `${type.id}: 공개 생성 결과가 완전하지 않습니다.`);
       } else {
-        check(type.reviewLocked, `${type.id}: 개념탐구·예제는 독립 생성기 검수 전까지 잠겨야 합니다.`);
+        check(type.reviewLocked, `${type.id}: 원문 그림·조건 일치 검수 전까지 잠겨야 합니다.`);
       }
     }
     check(sections.exploration === 1, `${unit.name} / ${subunit.name}: 개념탐구 본문은 1유형이어야 합니다.`);
@@ -53,6 +60,7 @@ for (const unit of targetUnits) {
 }
 
 check(sourceIds.size === 88, `원문 문항 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
+check(reviewedTriangleIds.size === 2, "삼각형 공개 허용 원문은 2개여야 합니다.");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);
