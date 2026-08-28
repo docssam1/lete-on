@@ -1,2 +1,40 @@
 :root{font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;color:#17264a;background:#dce8df}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(rgba(245,248,238,.88),rgba(223,234,220,.94)),url("../assets/ui/bg-ambient.webp") center/cover fixed}.topbar{height:58px;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;padding:6px max(14px,env(safe-area-inset-right)) 6px max(14px,env(safe-area-inset-left));background:#17394d;color:#fff}.topbar .back{width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.5);border-radius:7px;color:#fff;text-decoration:none;font-size:22px}.topbar div{display:flex;align-items:baseline;gap:10px}.topbar strong{font-size:18px;letter-spacing:1.4px}.topbar span,.topbar p{margin:0;font-size:12px;font-weight:800}.topbar p{padding:7px 10px;border:1px solid rgba(255,255,255,.35);border-radius:6px}main{width:min(1240px,calc(100% - 28px));margin:auto;padding:22px 0 36px}.district-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 4px 18px;border-bottom:1px solid rgba(44,72,63,.22)}.district-heading span,.upcoming span{font-size:11px;font-weight:950;letter-spacing:1.5px;color:#3c777b}.district-heading h1{margin:4px 0;font-size:clamp(24px,3vw,38px);letter-spacing:0}.district-heading p{margin:0;font-size:14px;color:#526568}.tower-mark{position:relative;width:118px;height:86px}.tower-mark i{position:absolute;bottom:0;width:42px;border:4px solid #76502d;background:linear-gradient(#f2cd7e,#b9793d);box-shadow:inset 0 0 0 4px rgba(255,255,255,.2)}.tower-mark i:nth-child(1){left:4px;height:52px}.tower-mark i:nth-child(2){left:38px;height:78px}.tower-mark i:nth-child(3){left:72px;height:61px}.course-section{padding:21px 0}.course-section>header{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:12px}.course-section h2,.upcoming h2{margin:0;font-size:22px}.course-section p,.upcoming p{margin:4px 0 0;font-size:13px;color:#59676a}.course-section>header>strong{font-size:11px;color:#466f70}.level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.level-card{min-width:0;color:inherit;text-decoration:none;border:2px solid #9b815d;border-radius:8px;background:#fffaf0;overflow:hidden;box-shadow:0 7px 16px rgba(41,58,50,.13);transition:transform .18s,box-shadow .18s}.level-card:hover{transform:translateY(-4px);box-shadow:0 12px 22px rgba(41,58,50,.2)}.level-card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-bottom:1px solid #c8ae82;background:#ead8af}.level-card>div{position:relative;min-height:132px;padding:13px 12px 12px 48px}.level-card span{position:absolute;left:11px;top:13px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#17394d;color:#fff;font-size:13px;font-weight:950}.level-card strong{display:block;font-size:14px;line-height:1.35}.level-card p{min-height:35px;margin:4px 0 8px;font-size:11px;line-height:1.5;color:#657073}.level-card b{font-size:11px;color:#2f7f77}.upcoming{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:22px;padding:19px 24px;border-top:1px solid rgba(44,72,63,.22);border-bottom:1px solid rgba(44,72,63,.22)}.soma-shape{position:relative;height:94px}.soma-shape i{position:absolute;width:44px;height:44px;border:3px solid #734d2d;background:linear-gradient(145deg,#f1c874,#b9773d);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}.soma-shape i:nth-child(1){left:0;bottom:0}.soma-shape i:nth-child(2){left:41px;bottom:0}.soma-shape i:nth-child(3){left:82px;bottom:0}.soma-shape i:nth-child(4){left:41px;bottom:41px}.soma-shape i:nth-child(5){left:82px;bottom:41px}@media(max-width:900px){.level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.level-card:last-child{grid-column:span 2}.district-heading{align-items:flex-start}.tower-mark{transform:scale(.8);transform-origin:right top}.course-section>header{align-items:start;flex-direction:column}.upcoming{grid-template-columns:110px 1fr;padding-inline:10px}.soma-shape{transform:scale(.72);transform-origin:left center}}@media(max-width:480px){main{width:min(100% - 18px,1240px);padding-top:14px}.district-heading h1{font-size:23px}.district-heading p{font-size:12px}.tower-mark{display:none}.level-grid{gap:8px}.level-card>div{padding:10px 8px 10px 40px;min-height:124px}.level-card span{left:8px;top:9px}.level-card strong{font-size:13px}.topbar p{display:none}}
 .level-card>div{padding-left:74px}.level-card span{width:auto;min-width:52px;height:26px;padding:0 8px;border-radius:13px;font-size:10px;white-space:nowrap}@media(max-width:480px){.level-card>div{padding-left:64px}.level-card span{min-width:48px}}
+
+/* GFIELD spatial-solids exhibition v3 */
+:root{color:#17263d;background:#f4f5ef;font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif}
+body{background:#f4f5ef}
+.topbar{height:64px;grid-template-columns:44px 1fr auto;border-bottom:1px solid #c5c8c0;background:rgba(255,254,249,.97);color:#17263d;box-shadow:0 2px 10px rgba(39,53,47,.05)}
+.topbar .back{border-color:#bfc7c3;border-radius:4px;color:#17263d;background:#fff}
+.topbar strong{color:#123f72}.topbar span{color:#526568}.topbar p{border-color:#bfc7c3;border-radius:4px;background:#fff;color:#123f72}
+main{width:min(1240px,calc(100% - 36px));padding:34px 0 46px}
+.district-heading{min-height:160px;padding:0 4px 26px;border-bottom-color:#c8ccc5}
+.district-heading h1{max-width:900px;margin:7px 0 8px;font-size:40px;line-height:1.18;letter-spacing:0}
+.district-heading p{font-size:15px}
+.tower-mark i{border-width:3px;border-color:#76502d;background:#d4a35b;box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
+.course-section{padding:28px 0;border-bottom:1px solid #c8ccc5}
+.course-section>header{margin-bottom:16px}.course-section h2{font-size:24px}.course-section>header>strong{letter-spacing:.3px}
+.level-grid{gap:12px}
+.level-card{border:1px solid #c6c4b9;border-radius:4px;background:#fffefa;box-shadow:0 5px 13px rgba(47,56,51,.07)}
+.level-card:hover{transform:translateY(-3px);border-color:#557f7d;box-shadow:0 12px 24px rgba(39,52,46,.14)}
+.level-card img{border-bottom-color:#c9c4b8}
+.level-card>div{min-height:126px;padding:13px 12px 12px 68px}
+.level-card span{left:10px;border-radius:3px;background:#17394d}
+
+@media(max-width:900px){
+  main{width:calc(100% - 20px);padding-top:18px}
+  .district-heading{min-height:0;padding-bottom:18px}
+  .district-heading h1{font-size:29px}
+  .level-card:last-child{display:grid;grid-template-columns:minmax(140px,.85fr) 1.15fr;grid-template-rows:1fr}
+  .level-card:last-child img{height:100%;aspect-ratio:auto}
+}
+@media(max-width:480px){
+  .topbar{height:56px}
+  .district-heading h1{font-size:25px;line-height:1.25}
+  .level-grid{gap:8px}
+  .level-card{border-radius:3px}
+  .level-card>div{min-height:120px;padding:10px 8px 10px 58px}
+  .level-card:last-child{grid-template-columns:120px 1fr}
+  .level-card:last-child>div{padding-top:13px}
+}
+@media(prefers-reduced-motion:reduce){.level-card{transition:none}}

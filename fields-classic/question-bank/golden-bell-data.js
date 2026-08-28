@@ -582,9 +582,401 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-04",
+    label: "4권",
+    title: "도형분할과 쌓기나무",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx",
+      pdfFile: "더클래식_1과정_4N30권_골든벨_220805.pdf",
+      verified: true,
+      note: "교사용 PPTX·47쪽 PDF의 같은 그림과 빨간 정답층을 대조하고, 답 표시를 분리할 수 있는 대표 문항만 공개"
+    },
+    lessons: [
+      {
+        id: "polyomino-family-count",
+        unit: "도형분할과 움직이기",
+        title: "붙인 정사각형의 모양을 세어요",
+        sourceLocator: "교사용 PPTX·PDF 3쪽, 활동 02",
+        sourceTypeIds: ["tetromino-family-choice"],
+        representativeConcept: "정사각형을 변끼리 붙인 뒤 돌리거나 뒤집어 같아지는 모양은 한 종류로 셈",
+        story: {
+          title: "모양 공방의 네모 조각",
+          text: "네모 조각을 변끼리 붙이면 여러 모양을 만들 수 있습니다. 돌리거나 뒤집어서 포개지는 것은 같은 모양입니다.",
+          mission: "한 칸부터 네 칸까지 서로 다른 모양이 몇 개인지 겹치지 않게 세어 보세요."
+        },
+        explanation: {
+          headline: "돌리고 뒤집어 포개지면 같은 종류입니다.",
+          steps: [
+            "정사각형은 꼭 변끼리 붙입니다.",
+            "새 모양을 돌리거나 뒤집어 이미 만든 모양과 포개 봅니다.",
+            "포개지지 않는 모양만 새 종류로 세어 표에 적습니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "polyomino-free-family-count",
+          prompt: "크기가 같은 정사각형을 변끼리 붙여 만들 수 있는 서로 다른 도형의 종류를 쓰시오.",
+          visual: { kind: "book04-polyomino-original" },
+          items: [
+            { id: "poly-1", prompt: "(1) 정사각형 1개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "poly-2", prompt: "(2) 정사각형 2개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "poly-3", prompt: "(3) 정사각형 3개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "poly-4", prompt: "(4) 정사각형 4개로 만들 수 있는 도형의 종류", answerMode: "input", inputMode: "numeric", answer: "5" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "polyomino-free-family-count",
+          story: "전시 선반에는 세 칸 조각과 네 칸 조각의 서로 다른 모양을 모두 올립니다.",
+          prompt: "세 칸 조각과 네 칸 조각의 서로 다른 모양은 모두 몇 종류일까요?",
+          visual: { kind: "book04-polyomino-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "7",
+          explanation: "세 칸 조각은 2종류, 네 칸 조각은 5종류이므로 모두 2+5=7종류입니다."
+        }
+      },
+      {
+        id: "hidden-cube-count",
+        unit: "색종이 접기와 쌓기나무",
+        title: "보이지 않는 쌓기나무를 찾아요",
+        sourceLocator: "교사용 PPTX·PDF 18쪽, 쌓기나무의 개수 활동 02",
+        sourceTypeIds: ["cube-hidden-count"],
+        representativeConcept: "각 기둥의 전체 높이에서 그림에 보이는 쌓기나무를 빼 가려진 개수를 찾음",
+        story: {
+          title: "블록 도시의 숨은 방",
+          text: "앞의 블록에 가려지거나 위 블록을 받치고 있어 보이지 않는 블록이 있습니다. 보이는 블록만 세면 전체보다 작습니다.",
+          mission: "기둥마다 필요한 전체 개수를 센 뒤 보이는 개수를 빼 보세요."
+        },
+        explanation: {
+          headline: "전체 개수에서 보이는 개수를 뺍니다.",
+          steps: [
+            "가장 위 블록을 보고 그 아래에 몇 개가 받치고 있어야 하는지 셉니다.",
+            "모든 기둥의 높이를 더해 전체 개수를 구합니다.",
+            "전체 개수에서 그림에 보이는 개수를 빼 숨은 블록 수를 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "visible-cubes-subtract-from-total",
+          prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
+          visual: { kind: "book04-hidden-cubes-original" },
+          items: [
+            { id: "hidden-1", prompt: "(1) 전체 4개 중 그림에 보이는 것은 3개입니다.", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "hidden-2", prompt: "(2) 전체 9개 중 그림에 보이는 것은 7개입니다.", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "hidden-3", prompt: "(3) 전체 10개 중 그림에 보이는 것은 6개입니다.", answerMode: "input", inputMode: "numeric", answer: "4" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "visible-cubes-subtract-from-total",
+          story: "블록 창고에는 2×2×2 크기의 정육면체를 만들 블록 8개가 쌓여 있습니다.",
+          prompt: "밖에서 보이는 블록이 5개라면 보이지 않는 블록은 몇 개일까요?",
+          visual: { kind: "book04-hidden-cubes-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "3",
+          explanation: "전체 8개에서 보이는 5개를 빼면 보이지 않는 블록은 3개입니다."
+        }
+      },
+      {
+        id: "balance-substitution",
+        unit: "양팔저울과 비교하기",
+        title: "도형을 바꾸어 넣어요",
+        sourceLocator: "교사용 PPTX·PDF 31쪽, 양팔저울과 바꾸어 넣기",
+        sourceTypeIds: ["balance-unit-ratio"],
+        representativeConcept: "첫 저울에서 한 도형을 네모 몇 개와 같은지 찾고 다음 저울의 같은 도형을 네모로 바꿈",
+        sourceHold: "같은 쪽에 여러 관계가 이어져 교사용 표시만으로 원문을 확정하기 어려운 셋째 묶음은 잠금 유지",
+        story: {
+          title: "무게 연구소의 도형 상자",
+          text: "평형인 저울의 양쪽 무게는 같습니다. 한 도형을 네모로 바꾼 뒤 다음 저울에 그대로 넣으면 목표 도형의 무게를 찾을 수 있습니다.",
+          mission: "첫 저울의 관계를 다음 저울에 차례로 바꾸어 넣어 보세요."
+        },
+        explanation: {
+          headline: "먼저 한 도형을 네모로 바꾸고 다음 저울에 넣습니다.",
+          steps: [
+            "첫 저울에서 세모 한 개가 네모 몇 개와 같은지 찾습니다.",
+            "다음 저울의 세모를 같은 수의 네모로 바꿉니다.",
+            "양쪽 네모 수가 같은지 세어 답을 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "balance-shape-unit-substitution",
+          prompt: "다음 그림의 양팔저울은 모두 평형을 이루고 있습니다. 물음에 답하시오.",
+          visual: { kind: "book04-balance-original" },
+          items: [
+            { id: "balance-circle", prompt: "(1) 동그라미 1개는 네모 몇 개의 무게와 같습니까?", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "balance-empty", prompt: "(2) 두 번째 빈 접시에 네모 몇 개를 놓아야 합니까?", answerMode: "input", inputMode: "numeric", answer: "8" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "balance-shape-unit-substitution",
+          story: "보석 저울에서 별 1개는 네모 2개와 같고, 동그라미 1개는 별 1개와 네모 1개를 합한 무게와 같습니다.",
+          prompt: "동그라미 1개는 네모 몇 개의 무게와 같을까요?",
+          visual: { kind: "book04-balance-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "3",
+          explanation: "별 1개를 네모 2개로 바꾸면 동그라미는 네모 2개와 1개를 합한 3개입니다."
+        }
+      },
+      {
+        id: "cardinal-placement",
+        unit: "논리추리와 자리배치",
+        title: "동서남북으로 자리를 찾아요",
+        sourceLocator: "교사용 PPTX·PDF 42쪽, 자리배치 활동 01",
+        sourceTypeIds: ["directional-seat-placement", "directional-landmark-placement-book4"],
+        representativeConcept: "한 장소를 기준으로 동·서·남·북 위치를 차례로 표시해 빈 자리의 이름을 찾음",
+        story: {
+          title: "네 거리 마을 안내판",
+          text: "마을의 네 건물은 동서남북 조건에 맞춰 한 칸씩 놓입니다. 기준이 되는 장소를 먼저 쓰면 나머지 자리도 정해집니다.",
+          mission: "동쪽과 서쪽, 북쪽과 남쪽을 화살표 방향에 맞게 표시해 보세요."
+        },
+        explanation: {
+          headline: "기준 장소를 먼저 놓고 한 조건씩 이어 갑니다.",
+          steps: [
+            "동·서는 같은 가로줄, 남·북은 같은 세로줄에 놓습니다.",
+            "두 조건에 함께 나오는 장소를 먼저 기준 칸에 씁니다.",
+            "모든 조건을 다시 읽어 서로 겹치는 장소가 없는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "two-by-two-cardinal-placement",
+          prompt: "조건에 맞게 네 칸에 위치를 찾아 쓰고, ㉮에 들어갈 이름을 구하시오.",
+          visual: { kind: "book04-direction-original" },
+          items: [
+            {
+              id: "direction-place",
+              prompt: "(1) 마트, 서점, 은행, 학원을 놓을 때 ㉮에 있는 장소",
+              conditions: ["마트는 은행의 서쪽에 있습니다.", "서점은 은행의 북쪽에 있고, 학원의 동쪽에 있습니다."],
+              answerMode: "input",
+              answer: "학원"
+            },
+            {
+              id: "direction-home",
+              prompt: "(2) 서연, 도윤, 준서, 시우의 집을 놓을 때 ㉮에 사는 친구",
+              conditions: ["서연이네 집 남쪽에 도윤이네 집이 있습니다.", "준서네 집 동쪽에 도윤이네 집이 있고, 북쪽에는 시우네 집이 있습니다."],
+              answerMode: "input",
+              answer: "도윤"
+            }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "two-by-two-cardinal-placement",
+          story: "공원, 빵집, 도서관, 우체국이 네 거리의 네 칸에 하나씩 있습니다.",
+          prompt: "빵집은 도서관의 서쪽에 있습니다. 우체국은 도서관의 북쪽에 있고 공원의 동쪽에 있습니다. ㉮에 있는 장소는 무엇일까요?",
+          visual: { kind: "book04-direction-story" },
+          answerMode: "input",
+          answer: "공원",
+          explanation: "도서관의 서쪽은 빵집, 북쪽은 우체국입니다. 우체국의 서쪽에 있는 ㉮는 공원입니다."
+        }
+      }
+    ]
+  },
+  {
+    id: "book-05",
+    label: "5권",
+    title: "곱셈매트릭스와 삼각수",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx",
+      pdfFile: "더클래식_1과정_5N30권_골든벨_220815.pdf",
+      verified: true,
+      note: "60슬라이드 교사용 PPTX를 주차별로 시각 대조하고, 구조와 빨간 정답을 분리할 수 있는 대표 문항만 공개"
+    },
+    lessons: [
+      {
+        id: "path-number-grid",
+        unit: "수 배열표와 달력",
+        title: "길을 따라 수를 이어요",
+        sourceLocator: "교사용 PPTX 슬라이드 2, 수 배열표 활동",
+        sourceTypeIds: ["sequential-path-number-grid"],
+        representativeConcept: "화살표가 지나가는 칸을 첫 칸부터 하나씩 세어 목표 칸의 수를 찾음",
+        story: {
+          title: "숫자 마을의 세 갈래 길",
+          text: "숫자는 네모 칸을 따라 한 칸씩 커집니다. 길이 꺾이거나 빙글 돌아도 지나온 칸의 순서는 바뀌지 않습니다.",
+          mission: "화살표를 손가락으로 따라가며 물음표가 몇 번째 칸인지 세어 보세요."
+        },
+        explanation: {
+          headline: "길의 모양보다 지나온 칸의 순서가 중요합니다.",
+          steps: [
+            "숫자 1이 있는 첫 칸을 찾습니다.",
+            "화살표 방향으로 한 칸 갈 때마다 수를 1씩 크게 셉니다.",
+            "물음표 칸까지 몇 번째인지 다시 따라가 답을 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "sequential-path-number-grid",
+          prompt: "화살표를 따라 수를 차례로 쓸 때 물음표에 들어갈 수를 쓰시오.",
+          visual: {
+            kind: "book5-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[1,2],[1,1],[1,0],[2,0],[2,1],[2,2],[2,3],[3,3],[3,2],[3,1],[3,0]], values: [[1,2,3,4],[8,7,6,5],[9,10,11,12],[16,15,14,13]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 13 } } },
+              { label: "(2)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0],[1,1],[1,2],[2,2],[2,1]], values: [[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 15 } } },
+              { label: "(3)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[1,0],[2,0],[1,1],[0,2],[0,3],[1,2],[2,1],[3,0],[3,1],[2,2],[1,3],[2,3],[3,2],[3,3]], values: [[1,2,6,7],[3,5,8,13],[4,9,12,14],[10,11,15,16]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 10 } } }
+            ]
+          },
+          items: [
+            { id: "path-1", prompt: "(1) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "14" },
+            { id: "path-2", prompt: "(2) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "16" },
+            { id: "path-3", prompt: "(3) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "11" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "sequential-path-number-grid",
+          story: "숫자 기차가 5에서 출발해 소용돌이 선로를 한 칸씩 달립니다.",
+          prompt: "물음표에 들어갈 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0],[1,1],[1,2],[2,2],[2,1]], values: [[5,6,7,8],[16,17,18,9],[15,20,19,10],[14,13,12,11]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 15 } },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "20",
+          explanation: "5에서 시작해 화살표를 따라 15번 더 이동하면 수는 20이 됩니다."
+        }
+      },
+      {
+        id: "digit-card-ranked-number",
+        unit: "최단거리와 숫자 카드",
+        title: "숫자 카드로 만든 수의 차례를 찾아요",
+        sourceLocator: "교사용 PPTX 슬라이드 29, 숫자 카드 활동",
+        sourceTypeIds: ["digit-card-ranked-number"],
+        representativeConcept: "숫자 카드를 한 번씩만 골라 만든 수를 크기순으로 늘어놓고 지정한 차례의 수를 찾음",
+        sourceHold: "같은 슬라이드의 네 자리 수 여섯째 큰 수는 교사용 나열에서 더 큰 수가 누락되어 잠금 유지",
+        story: {
+          title: "숫자 카드 전시회",
+          text: "같은 카드는 한 수에 한 번만 쓸 수 있습니다. 맨 앞자리에 0이 오면 약속한 자리 수가 되지 않습니다.",
+          mission: "자리 수를 먼저 지키고, 작은 수 또는 큰 수부터 차례로 정리해 보세요."
+        },
+        explanation: {
+          headline: "가장 큰 자리의 숫자부터 비교합니다.",
+          steps: [
+            "필요한 카드 수만큼 서로 다른 카드를 고릅니다.",
+            "0은 맨 앞에 놓지 않고 약속한 자리 수를 만듭니다.",
+            "가장 큰 자리부터 비교해 작은 수 또는 큰 수 순서로 늘어놓습니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "digit-card-ranked-number",
+          prompt: "주어진 숫자 카드를 한 번씩만 사용하여 만든 수를 차례대로 늘어놓을 때 물음에 답하시오.",
+          visual: {
+            kind: "book5-set",
+            panels: [
+              { label: "작은 수부터", visual: { subtype: "digit-cards", digits: [0,6,7,8], length: 3, targetRank: 5 } }
+            ]
+          },
+          items: [
+            { id: "cards-small", prompt: "세 자리 수를 작은 수부터 늘어놓았을 때 다섯째 수", answerMode: "input", inputMode: "numeric", answer: "680" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "digit-card-ranked-number",
+          story: "카드 가게에서 2, 4, 6, 8 카드 중 세 장을 골라 진열 번호를 만듭니다.",
+          prompt: "만든 세 자리 수를 작은 수부터 늘어놓았을 때 넷째 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "digit-cards", digits: [2,4,6,8], length: 3, targetRank: 4 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "268",
+          explanation: "작은 수부터 246, 248, 264, 268이므로 넷째 수는 268입니다."
+        }
+      },
+      {
+        id: "checkerboard-product-matrix",
+        unit: "곱셈 매트릭스",
+        title: "가로와 세로의 곱으로 카드를 놓아요",
+        sourceLocator: "교사용 PPTX 슬라이드 40, 첫째 곱셈 매트릭스",
+        sourceTypeIds: ["multiplication-matrix-placement", "checkerboard-product-matrix-book5"],
+        representativeConcept: "2부터 9까지의 수 카드를 한 번씩 놓아 각 가로줄과 세로줄의 곱을 동시에 맞춤",
+        sourceHold: "같은 슬라이드의 둘째 표는 2~9를 한 번씩 쓰는 조건과 교사용 표시가 함께 성립하지 않아 잠금 유지",
+        story: {
+          title: "곱셈 타일 연구소",
+          text: "색칠된 여덟 칸에 2부터 9까지를 한 번씩 놓습니다. 가로줄과 세로줄 끝의 수는 그 줄에 놓인 두 수의 곱입니다.",
+          mission: "한 줄만 맞추지 말고 가로와 세로의 곱을 모두 확인해 보세요."
+        },
+        explanation: {
+          headline: "곱을 만들 수 있는 두 수를 찾고 교차하는 칸을 확인합니다.",
+          steps: [
+            "줄 끝의 곱을 2부터 9까지의 두 수로 가릅니다.",
+            "가로줄과 세로줄에 함께 들어가는 수를 교차 칸에 놓습니다.",
+            "2부터 9까지가 정확히 한 번씩 쓰였는지 마지막에 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "checkerboard-product-matrix",
+          prompt: "2부터 9까지의 수 카드를 한 번씩 놓아 가로와 세로의 곱을 맞출 때 ㉮, ㉯, ㉰를 구하시오.",
+          visual: { kind: "book5", subtype: "checkerboard-products", cardPool: [2,3,4,5,6,7,8,9], active: [[0,1],[0,2],[1,0],[1,3],[2,0],[2,1],[3,2],[3,3]], revealed: [[0,1],[2,0],[3,2]], cells: [["", "㉮", "", ""],["", "", "", ""],["㉯", "", "", ""],["", "", "㉰", ""]], rowProducts: [28,6,40,54], columnProducts: [15,56,36,12] },
+          items: [
+            { id: "matrix-a", prompt: "㉮에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "matrix-b", prompt: "㉯에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "5" },
+            { id: "matrix-c", prompt: "㉰에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "checkerboard-product-matrix",
+          story: "새 타일판에도 2부터 9까지의 수 카드를 한 번씩 놓습니다.",
+          prompt: "모든 가로와 세로의 곱을 맞출 때 ㉮에 들어갈 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "checkerboard-products", cardPool: [2,3,4,5,6,7,8,9], active: [[0,1],[0,2],[1,0],[1,3],[2,0],[2,1],[3,2],[3,3]], revealed: [[0,1]], cells: [["", "㉮", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""]], rowProducts: [24,18,35,24], columnProducts: [45,42,12,16] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "6",
+          explanation: "가로 24와 세로 42를 함께 만족하는 교차 칸의 수는 6입니다. 나머지 카드까지 놓으면 모든 곱이 맞습니다."
+        }
+      },
+      {
+        id: "cube-tetrahedral-growth",
+        unit: "삼각수와 사각수",
+        title: "삼각 계단의 쌓기나무를 세어요",
+        sourceLocator: "교사용 PPTX 슬라이드 59, 삼각 계단 쌓기 활동",
+        sourceTypeIds: ["cube-tetrahedral-growth"],
+        representativeConcept: "각 층의 삼각수만큼 쌓인 쌓기나무를 아래층부터 차례로 더해 전체 개수를 구함",
+        story: {
+          title: "삼각 계단 블록 무대",
+          text: "첫 층은 1개, 둘째 층은 3개, 셋째 층은 6개처럼 층마다 삼각 모양으로 블록이 늘어납니다.",
+          mission: "각 층의 개수를 따로 센 뒤 아래층까지 모두 더해 보세요."
+        },
+        explanation: {
+          headline: "층마다 1, 3, 6, 10처럼 삼각수만큼 놓입니다.",
+          steps: [
+            "맨 위층부터 각 층에 놓인 쌓기나무 수를 셉니다.",
+            "다음 층은 앞 층보다 한 줄 더 긴 삼각형입니다.",
+            "목표 층까지 각 층의 개수를 모두 더합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "cube-tetrahedral-growth",
+          prompt: "삼각 계단 모양으로 쌓기나무를 쌓을 때 물음에 답하시오.",
+          visual: { kind: "book5", subtype: "tetrahedral-stair", previewStages: [1,2,3,4], targetStages: [4,7] },
+          items: [
+            { id: "stair-four", prompt: "(1) 4단계에 필요한 쌓기나무의 수", answerMode: "input", inputMode: "numeric", answer: "20" },
+            { id: "stair-seven", prompt: "(2) 7단계에 필요한 쌓기나무의 수", answerMode: "input", inputMode: "numeric", answer: "84" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "cube-tetrahedral-growth",
+          story: "블록 무대가 같은 삼각 계단 규칙으로 5단계까지 자랐습니다.",
+          prompt: "5단계 무대에 필요한 쌓기나무는 모두 몇 개일까요?",
+          visual: { kind: "book5", subtype: "tetrahedral-stair", previewStages: [1,2,3,4,5], targetStages: [5] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "35",
+          explanation: "각 층의 1, 3, 6, 10, 15개를 더하면 35개입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-04", "4권", "도형분할과 쌓기나무", "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx", "source-located"],
-    ["book-05", "5권", "곱셈매트릭스와 삼각수", "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx", "source-located"],
     ["book-06", "6권", "논리와 수 퍼즐", "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx", "source-located"],
     ["book-07", "7권", "규칙과 달력", "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx", "source-located"],
     ["book-08", "8권", "매트릭스와 수 카드", "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx", "source-located"],

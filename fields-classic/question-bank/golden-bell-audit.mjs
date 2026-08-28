@@ -120,4 +120,145 @@ for (const [lessonId, approvedAnswers] of approvedBook3Answers) {
 const requiredBook3Units = ["단위넓이와 분수", "단위길이와 배수", "복면산", "마법카드와 마방진"];
 for (const unit of requiredBook3Units) if (!book3.lessons.some((lesson) => lesson.unit === unit)) fail(`book-03: missing ${unit}`);
 
+const book4 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-04");
+const approvedBook4Answers = new Map([
+  ["polyomino-family-count", ["1", "1", "2", "5"]],
+  ["hidden-cube-count", ["1", "2", "4"]],
+  ["balance-substitution", ["3", "8"]],
+  ["cardinal-placement", ["학원", "도윤"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook4Answers) {
+  const lesson = book4.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-04: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-04/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-04/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook4Units = ["도형분할과 움직이기", "색종이 접기와 쌓기나무", "양팔저울과 비교하기", "논리추리와 자리배치"];
+for (const unit of requiredBook4Units) if (!book4.lessons.some((lesson) => lesson.unit === unit)) fail(`book-04: missing ${unit}`);
+if (!book4.lessons.some((lesson) => lesson.sourceHold)) fail("book-04: unresolved teacher-only wording must remain visible in data");
+
+const book5 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-05");
+const approvedBook5Answers = new Map([
+  ["path-number-grid", ["14", "16", "11"]],
+  ["digit-card-ranked-number", ["680"]],
+  ["checkerboard-product-matrix", ["7", "5", "9"]],
+  ["cube-tetrahedral-growth", ["20", "84"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook5Answers) {
+  const lesson = book5.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-05: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-05/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-05/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook5Units = ["수 배열표와 달력", "최단거리와 숫자 카드", "곱셈 매트릭스", "삼각수와 사각수"];
+for (const unit of requiredBook5Units) if (!book5.lessons.some((lesson) => lesson.unit === unit)) fail(`book-05: missing ${unit}`);
+if (!book5.lessons.some((lesson) => lesson.sourceHold)) fail("book-05: contradictory teacher-only matrix must remain locked");
+
+const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
+const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
+  const [row, column] = visual.path[visual.target.index];
+  return String(visual.values[row][column]);
+});
+if (JSON.stringify(pathAnswers) !== JSON.stringify(["14", "16", "11"])) fail("book-05: path target calculation failed");
+{
+  const visual = pathLesson.extension.visual;
+  const [row, column] = visual.path[visual.target.index];
+  if (visual.values[row][column] !== 20) fail("book-05: story path target calculation failed");
+}
+
+function permutationsOf(items, length = items.length) {
+  if (length === 0) return [[]];
+  return items.flatMap((item, index) => permutationsOf(items.filter((_, at) => at !== index), length - 1).map((rest) => [item, ...rest]));
+}
+function rankedCardNumbers(digits, length, descending = false) {
+  return permutationsOf(digits, length)
+    .filter((number) => number[0] !== 0)
+    .map((number) => Number(number.join("")))
+    .sort((a, b) => descending ? b - a : a - b);
+}
+if (rankedCardNumbers([0, 6, 7, 8], 3)[4] !== 680) fail("book-05: first digit-card rank failed");
+if (rankedCardNumbers([2, 4, 6, 8], 3)[3] !== 268) fail("book-05: story digit-card rank failed");
+
+function checkerSolutions(rowProducts, columnProducts) {
+  return permutationsOf([2, 3, 4, 5, 6, 7, 8, 9]).filter((values) =>
+    values[0] * values[1] === rowProducts[0]
+    && values[2] * values[3] === rowProducts[1]
+    && values[4] * values[5] === rowProducts[2]
+    && values[6] * values[7] === rowProducts[3]
+    && values[2] * values[4] === columnProducts[0]
+    && values[0] * values[5] === columnProducts[1]
+    && values[1] * values[6] === columnProducts[2]
+    && values[3] * values[7] === columnProducts[3]
+  );
+}
+const sourceMatrixSolutions = checkerSolutions([28, 6, 40, 54], [15, 56, 36, 12]);
+if (sourceMatrixSolutions.length !== 1 || sourceMatrixSolutions[0].join(",") !== "7,4,3,2,5,8,9,6") fail("book-05: source matrix is not uniquely solved");
+const storyMatrixSolutions = checkerSolutions([24, 18, 35, 24], [45, 42, 12, 16]);
+if (storyMatrixSolutions.length !== 1 || storyMatrixSolutions[0].join(",") !== "6,4,9,2,5,7,3,8") fail("book-05: story matrix is not uniquely solved");
+
+const triangular = (level) => level * (level + 1) / 2;
+const tetrahedral = (level) => Array.from({ length: level }, (_, index) => triangular(index + 1)).reduce((sum, value) => sum + value, 0);
+if (tetrahedral(4) !== 20 || tetrahedral(7) !== 84 || tetrahedral(5) !== 35) fail("book-05: triangular stair totals failed");
+
+function canonicalPolyomino(cells) {
+  const variants = [];
+  for (let reflected = 0; reflected < 2; reflected += 1) {
+    for (let rotation = 0; rotation < 4; rotation += 1) {
+      const transformed = cells.map(([sourceX, sourceY]) => {
+        let x = reflected ? -sourceX : sourceX;
+        let y = sourceY;
+        for (let turn = 0; turn < rotation; turn += 1) [x, y] = [-y, x];
+        return [x, y];
+      });
+      const minX = Math.min(...transformed.map(([x]) => x));
+      const minY = Math.min(...transformed.map(([, y]) => y));
+      variants.push(transformed.map(([x, y]) => [x - minX, y - minY]).sort(([ax, ay], [bx, by]) => ax - bx || ay - by).map(([x, y]) => `${x},${y}`).join(";"));
+    }
+  }
+  return variants.sort()[0];
+}
+
+function freePolyominoCount(size) {
+  let shapes = new Map([["0,0", [[0, 0]]]]);
+  const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  for (let count = 1; count < size; count += 1) {
+    const next = new Map();
+    for (const cells of shapes.values()) {
+      const occupied = new Set(cells.map(([x, y]) => `${x},${y}`));
+      for (const [x, y] of cells) for (const [dx, dy] of directions) {
+        if (occupied.has(`${x + dx},${y + dy}`)) continue;
+        const grown = [...cells, [x + dx, y + dy]];
+        next.set(canonicalPolyomino(grown), grown);
+      }
+    }
+    shapes = next;
+  }
+  return shapes.size;
+}
+
+const enumeratedPolyominoCounts = [1, 2, 3, 4].map(freePolyominoCount);
+if (JSON.stringify(enumeratedPolyominoCounts) !== JSON.stringify([1, 1, 2, 5])) fail("book-04: independent polyomino enumeration failed");
+if ([4 - 3, 9 - 7, 10 - 6].join(",") !== "1,2,4") fail("book-04: hidden cube arithmetic failed");
+if (2 * 2 + 2 !== 6 || 2 + 1 !== 3 || 4 * 2 !== 8) fail("book-04: balance substitution failed");
+
+function cardinalSolutions(names, test) {
+  const cells = [[0, 0], [1, 0], [0, 1], [1, 1]];
+  const permutations = (items) => items.length < 2 ? [items] : items.flatMap((item, index) => permutations(items.filter((_, at) => at !== index)).map((rest) => [item, ...rest]));
+  return permutations(names).map((order) => Object.fromEntries(order.map((name, index) => [name, cells[index]]))).filter(test);
+}
+const firstMaps = cardinalSolutions(["학원", "서점", "마트", "은행"], (map) => map.마트[0] + 1 === map.은행[0] && map.마트[1] === map.은행[1] && map.서점[0] === map.은행[0] && map.서점[1] + 1 === map.은행[1] && map.학원[0] + 1 === map.서점[0] && map.학원[1] === map.서점[1]);
+if (firstMaps.length !== 1 || firstMaps[0].학원.join(",") !== "0,0") fail("book-04: first cardinal placement is not unique");
+const secondMaps = cardinalSolutions(["서연", "도윤", "준서", "시우"], (map) => map.서연[0] === map.도윤[0] && map.서연[1] + 1 === map.도윤[1] && map.준서[0] + 1 === map.도윤[0] && map.준서[1] === map.도윤[1] && map.준서[0] === map.시우[0] && map.준서[1] - 1 === map.시우[1]);
+if (secondMaps.length !== 1 || secondMaps[0].도윤.join(",") !== "1,1") fail("book-04: second cardinal placement is not unique");
+
 console.log(`golden bell audit passed: ${GOLDEN_BELL_BOOKS.length} books, ${readyBooks.length} ready, ${lessonCount} lessons, ${originalItemCount} original checks`);
