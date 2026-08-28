@@ -1,5 +1,6 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828n";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828p";
 import { book05Markup } from "./book05-renderers.js?v=20260828n";
+import { book06Markup } from "./book06-renderers.js?v=20260828p";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -299,6 +300,10 @@ function book05SetMarkup(visual) {
   return `<div class="gold-b5-set">${visual.panels.map((panel) => `<figure><div class="book05-visual">${book05Markup({ kind: "book5", ...panel.visual })}</div><figcaption>${panel.label}</figcaption></figure>`).join("")}</div>`;
 }
 
+function book06SetMarkup(visual) {
+  return `<div class="gold-b6-set">${visual.panels.map((panel) => `<figure><div class="book06-visual">${book06Markup({ kind: "book6", ...panel.visual })}</div><figcaption>${panel.label}</figcaption></figure>`).join("")}</div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "clock") return clockMarkup(visual.value);
@@ -335,6 +340,8 @@ function visualMarkup(visual) {
   if (visual.kind === "book04-direction-story") return book04DirectionMarkup(true);
   if (visual.kind === "book5") return `<div class="book05-visual">${book05Markup(visual)}</div>`;
   if (visual.kind === "book5-set") return book05SetMarkup(visual);
+  if (visual.kind === "book6") return `<div class="book06-visual">${book06Markup(visual)}</div>`;
+  if (visual.kind === "book6-set") return book06SetMarkup(visual);
   return "";
 }
 

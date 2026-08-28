@@ -164,6 +164,27 @@ const requiredBook5Units = ["수 배열표와 달력", "최단거리와 숫자 �
 for (const unit of requiredBook5Units) if (!book5.lessons.some((lesson) => lesson.unit === unit)) fail(`book-05: missing ${unit}`);
 if (!book5.lessons.some((lesson) => lesson.sourceHold)) fail("book-05: contradictory teacher-only matrix must remain locked");
 
+const book6 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-06");
+const approvedBook6Answers = new Map([
+  ["number-line-unit-distance", ["4", "8"]],
+  ["rectangle-missing-side", ["9", "18", "54", "45"]],
+  ["inclusive-range-count", ["11", "60", "58", "50"]],
+  ["number-and-digit-count", ["18", "44", "56", "192"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook6Answers) {
+  const lesson = book6.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-06: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-06/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-06/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook6Units = ["수직선의 분할과 비", "도형의 둘레", "연속수의 합", "수와 숫자의 개수"];
+for (const unit of requiredBook6Units) if (!book6.lessons.some((lesson) => lesson.unit === unit)) fail(`book-06: missing ${unit}`);
+
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
 const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
   const [row, column] = visual.path[visual.target.index];
@@ -209,6 +230,23 @@ if (storyMatrixSolutions.length !== 1 || storyMatrixSolutions[0].join(",") !== "
 const triangular = (level) => level * (level + 1) / 2;
 const tetrahedral = (level) => Array.from({ length: level }, (_, index) => triangular(index + 1)).reduce((sum, value) => sum + value, 0);
 if (tetrahedral(4) !== 20 || tetrahedral(7) !== 84 || tetrahedral(5) !== 35) fail("book-05: triangular stair totals failed");
+
+const unitDistance = (start, end, intervals) => (end - start) / intervals;
+if (unitDistance(15, 47, 8) !== 4 || unitDistance(39, 95, 7) !== 8 || unitDistance(12, 52, 5) !== 8) {
+  fail("book-06: number-line unit-distance calculation failed");
+}
+const missingRectangleSide = (perimeter, knownSide) => perimeter / 2 - knownSide;
+if ([missingRectangleSide(36, 9), missingRectangleSide(100, 32), missingRectangleSide(144, 18), missingRectangleSide(150, 30), missingRectangleSide(84, 17)].join(",") !== "9,18,54,45,25") {
+  fail("book-06: rectangle missing-side calculation failed");
+}
+const inclusiveRange = (start, end) => end - start + 1;
+if ([inclusiveRange(5, 15), inclusiveRange(10, 69), inclusiveRange(21, 78), inclusiveRange(47, 96), inclusiveRange(28, 73)].join(",") !== "11,60,58,50,46") {
+  fail("book-06: inclusive range calculation failed");
+}
+const writtenDigits = (start, end) => Array.from({ length: end - start + 1 }, (_, index) => String(start + index).length).reduce((sum, count) => sum + count, 0);
+if ([inclusiveRange(9, 26), inclusiveRange(14, 57), writtenDigits(12, 39), writtenDigits(1, 100), writtenDigits(1, 35)].join(",") !== "18,44,56,192,61") {
+  fail("book-06: number and written-digit count failed");
+}
 
 function canonicalPolyomino(cells) {
   const variants = [];

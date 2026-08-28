@@ -976,8 +976,226 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-06",
+    label: "6권",
+    title: "수직선·둘레·연속수",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx",
+      answerFile: "더클래식_1과정_6N30권_골든벨 답안.pptx",
+      companionFile: "더클래식_1과정_6N30권_골든벨_221208(E2용)1,2호.pptx",
+      verified: true,
+      note: "32슬라이드 전체 자료·답안 자료와 16슬라이드 1·2주차 자료를 화면별로 대조하고, 답 표시와 문항 구조를 분리할 수 있는 대표 활동만 공개"
+    },
+    lessons: [
+      {
+        id: "number-line-unit-distance",
+        unit: "수직선의 분할과 비",
+        title: "수직선 한 칸의 거리를 찾아요",
+        sourceLocator: "전체·답안 PPTX 슬라이드 3, 수직선 활동",
+        sourceTypeIds: ["number-line-unit-distance-book6"],
+        representativeConcept: "두 끝 수의 차를 똑같이 나눈 칸 수로 나누어 수직선 한 칸의 거리를 구함",
+        story: {
+          title: "정류장 사이의 같은 거리",
+          text: "출발점과 도착점 사이를 같은 길이의 구간으로 나누었습니다. 수직선의 작은 한 칸은 정류장 사이의 같은 거리를 뜻합니다.",
+          mission: "두 끝 수를 빼 전체 거리를 구한 뒤, 나눈 칸 수로 똑같이 가르세요."
+        },
+        explanation: {
+          headline: "끝 수의 차를 칸 수로 나누면 한 칸의 거리입니다.",
+          steps: [
+            "큰 끝 수에서 작은 끝 수를 빼 전체 거리를 구합니다.",
+            "눈금이 아니라 눈금 사이의 칸 수를 셉니다.",
+            "전체 거리를 칸 수로 나누어 한 칸의 거리를 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "number-line-equal-unit-distance",
+          prompt: "두 끝 수 사이를 똑같이 나누었을 때 수직선 한 칸의 거리를 쓰시오.",
+          visual: {
+            kind: "book6-set",
+            panels: [
+              { label: "(1) 8등분", visual: { subtype: "number-line", intervals: 8, labels: [15,"","","","","","","",47] } },
+              { label: "(2) 7등분", visual: { subtype: "number-line", intervals: 7, labels: [39,"","","","","","",95] } }
+            ]
+          },
+          items: [
+            { id: "line-eight", prompt: "15부터 47까지를 8등분한 한 칸의 거리", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "line-seven", prompt: "39부터 95까지를 7등분한 한 칸의 거리", answerMode: "input", inputMode: "numeric", answer: "8" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "number-line-equal-unit-distance",
+          story: "12번 정류장에서 52번 정류장까지의 길을 같은 거리로 5구간 나누었습니다.",
+          prompt: "한 구간의 거리는 얼마일까요?",
+          visual: { kind: "book6", subtype: "number-line", intervals: 5, labels: [12,"","","","",52] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "8",
+          explanation: "52-12=40이고, 40을 5구간으로 똑같이 나누면 한 구간은 8입니다."
+        }
+      },
+      {
+        id: "rectangle-missing-side",
+        unit: "도형의 둘레",
+        title: "둘레로 빠진 변을 찾아요",
+        sourceLocator: "전체·답안 PPTX 슬라이드 13, 직사각형의 한 변 활동",
+        sourceTypeIds: ["quadrilateral-perimeter"],
+        representativeConcept: "직사각형 둘레의 절반에서 알고 있는 한 변을 빼 다른 한 변의 길이를 구함",
+        story: {
+          title: "액자 공방의 빠진 길이표",
+          text: "직사각형 액자의 네 변 중 한 변의 길이표가 지워졌습니다. 마주 보는 변끼리는 길이가 같습니다.",
+          mission: "둘레를 2로 나눈 뒤, 알고 있는 한 변을 빼세요."
+        },
+        explanation: {
+          headline: "직사각형 둘레의 절반은 서로 다른 두 변의 합입니다.",
+          steps: [
+            "둘레를 2로 나누어 가로와 세로의 합을 구합니다.",
+            "그 합에서 알고 있는 한 변을 뺍니다.",
+            "찾은 두 변을 더해 2배 했을 때 처음 둘레가 되는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "rectangle-perimeter-missing-side",
+          prompt: "직사각형의 둘레와 한 변의 길이를 보고 다른 한 변의 길이를 쓰시오.",
+          visual: {
+            kind: "book6-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "rectangle", widthLabel: "?", heightLabel: "9cm", perimeterLabel: "36cm" } },
+              { label: "(2)", visual: { subtype: "rectangle", widthLabel: "32cm", heightLabel: "?", perimeterLabel: "100cm" } },
+              { label: "(3)", visual: { subtype: "rectangle", widthLabel: "18cm", heightLabel: "?", perimeterLabel: "144cm" } },
+              { label: "(4)", visual: { subtype: "rectangle", widthLabel: "?", heightLabel: "30cm", perimeterLabel: "150cm" } }
+            ]
+          },
+          items: [
+            { id: "perimeter-36", prompt: "(1) 빠진 한 변의 길이(cm)", answerMode: "input", inputMode: "numeric", answer: "9" },
+            { id: "perimeter-100", prompt: "(2) 빠진 한 변의 길이(cm)", answerMode: "input", inputMode: "numeric", answer: "18" },
+            { id: "perimeter-144", prompt: "(3) 빠진 한 변의 길이(cm)", answerMode: "input", inputMode: "numeric", answer: "54" },
+            { id: "perimeter-150", prompt: "(4) 빠진 한 변의 길이(cm)", answerMode: "input", inputMode: "numeric", answer: "45" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "rectangle-perimeter-missing-side",
+          story: "둘레가 84cm인 직사각형 사진 액자의 한 변은 17cm입니다.",
+          prompt: "다른 한 변은 몇 cm일까요?",
+          visual: { kind: "book6", subtype: "rectangle", widthLabel: "17cm", heightLabel: "?", perimeterLabel: "84cm" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "25",
+          explanation: "84÷2=42이고, 42-17=25이므로 다른 한 변은 25cm입니다."
+        }
+      },
+      {
+        id: "inclusive-range-count",
+        unit: "연속수의 합",
+        title: "처음과 끝을 넣어 수를 세어요",
+        sourceLocator: "전체·답안 PPTX 슬라이드 22, 수의 개수 활동",
+        sourceTypeIds: ["inclusive-range-count"],
+        representativeConcept: "처음 수와 끝 수를 모두 포함하므로 끝 수에서 처음 수를 뺀 뒤 1을 더함",
+        story: {
+          title: "연속 좌석의 번호표",
+          text: "첫 좌석 번호와 마지막 좌석 번호가 모두 실제 좌석에 붙어 있습니다. 두 끝 번호를 빼기만 하면 첫 좌석 하나가 빠집니다.",
+          mission: "끝 수-처음 수를 계산하고, 포함한 첫 수 한 개를 더하세요."
+        },
+        explanation: {
+          headline: "양끝을 포함한 수의 개수는 끝 수-처음 수+1입니다.",
+          steps: [
+            "큰 끝 수에서 작은 시작 수를 뺍니다.",
+            "처음 수와 끝 수를 모두 세므로 1을 더합니다.",
+            "작은 범위로 직접 세어 같은 규칙인지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "inclusive-consecutive-range-count",
+          prompt: "처음 수와 끝 수를 모두 포함할 때 수는 모두 몇 개인지 쓰시오.",
+          visual: {
+            kind: "book6-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "range-count", start: 5, end: 15, mode: "numbers" } },
+              { label: "(2)", visual: { subtype: "range-count", start: 10, end: 69, mode: "numbers" } },
+              { label: "(3)", visual: { subtype: "range-count", start: 21, end: 78, mode: "numbers" } },
+              { label: "(4)", visual: { subtype: "range-count", start: 47, end: 96, mode: "numbers" } }
+            ]
+          },
+          items: [
+            { id: "range-5-15", prompt: "(1) 5부터 15까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "11" },
+            { id: "range-10-69", prompt: "(2) 10부터 69까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "60" },
+            { id: "range-21-78", prompt: "(3) 21부터 78까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "58" },
+            { id: "range-47-96", prompt: "(4) 47부터 96까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "50" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "inclusive-consecutive-range-count",
+          story: "공연장 좌석이 28번부터 73번까지 빠짐없이 이어져 있습니다.",
+          prompt: "좌석은 모두 몇 개일까요?",
+          visual: { kind: "book6", subtype: "range-count", start: 28, end: 73, mode: "numbers" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "46",
+          explanation: "73-28+1=46이므로 좌석은 모두 46개입니다."
+        }
+      },
+      {
+        id: "number-and-digit-count",
+        unit: "수와 숫자의 개수",
+        title: "수의 개수와 쓴 숫자를 구별해요",
+        sourceLocator: "전체·답안 PPTX 슬라이드 27, 수와 숫자의 개수 활동",
+        sourceTypeIds: ["range-number-digit-count", "total-written-digits"],
+        representativeConcept: "수의 개수는 항목 수를 세고, 숫자의 개수는 각 수를 적는 데 사용한 자리 수를 모두 더함",
+        story: {
+          title: "번호표 인쇄소의 두 장부",
+          text: "한 장부에는 만든 번호표의 개수를, 다른 장부에는 번호를 쓰느라 인쇄한 숫자의 개수를 적습니다.",
+          mission: "문제가 수를 묻는지, 수를 쓰는 데 사용한 숫자를 묻는지 먼저 표시하세요."
+        },
+        explanation: {
+          headline: "수 한 개와 그 수를 적는 숫자 여러 개는 다릅니다.",
+          steps: [
+            "수의 개수는 끝 수-처음 수+1로 셉니다.",
+            "숫자의 개수는 한 자리 수, 두 자리 수, 세 자리 수를 나누어 셉니다.",
+            "각 구간의 수 개수에 자리 수를 곱해 모두 더합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "range-number-versus-written-digit-count",
+          prompt: "물음이 수의 개수인지 쓴 숫자의 개수인지 구별하여 답하시오.",
+          visual: {
+            kind: "book6-set",
+            panels: [
+              { label: "(1) 수", visual: { subtype: "range-count", start: 9, end: 26, mode: "numbers" } },
+              { label: "(2) 수", visual: { subtype: "range-count", start: 14, end: 57, mode: "numbers" } },
+              { label: "(3) 숫자", visual: { subtype: "range-count", start: 12, end: 39, mode: "digits" } },
+              { label: "(4) 숫자", visual: { subtype: "range-count", start: 1, end: 100, mode: "digits" } }
+            ]
+          },
+          items: [
+            { id: "numbers-9-26", prompt: "(1) 9부터 26까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "18" },
+            { id: "numbers-14-57", prompt: "(2) 14부터 57까지 수의 개수", answerMode: "input", inputMode: "numeric", answer: "44" },
+            { id: "digits-12-39", prompt: "(3) 12부터 39까지 쓴 숫자의 개수", answerMode: "input", inputMode: "numeric", answer: "56" },
+            { id: "digits-1-100", prompt: "(4) 1부터 100까지 쓴 숫자의 개수", answerMode: "input", inputMode: "numeric", answer: "192" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "range-number-versus-written-digit-count",
+          story: "번호표 인쇄소에서 1번부터 35번까지 번호를 빠짐없이 인쇄했습니다.",
+          prompt: "번호를 쓰는 데 숫자를 모두 몇 개 인쇄했을까요?",
+          visual: { kind: "book6", subtype: "range-count", start: 1, end: 35, mode: "digits" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "61",
+          explanation: "1부터 9까지 9개, 10부터 35까지 26×2=52개이므로 모두 61개입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-06", "6권", "논리와 수 퍼즐", "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx", "source-located"],
     ["book-07", "7권", "규칙과 달력", "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx", "source-located"],
     ["book-08", "8권", "매트릭스와 수 카드", "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx", "source-located"],
     ["book-09", "9권", "도형분할과 논리", "더클래식_1과정_9N30권_골든벨_230817 (1).pdf", "source-located"],
