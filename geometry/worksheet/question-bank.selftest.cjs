@@ -231,6 +231,7 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.deepEqual(GEN.typeInfo("HC").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("CJ").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("CP").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("PS").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typesForLevel("L0"), ["IC"]);
   assert.ok(GEN.typesForLevel("L1").includes("SQ"));
   assert.ok(GEN.typesForLevel("L2").includes("CU"));
@@ -239,6 +240,7 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.ok(GEN.typesForLevel("L2").includes("HC"));
   assert.ok(GEN.typesForLevel("L2").includes("CJ"));
   assert.ok(GEN.typesForLevel("L2").includes("CP"));
+  assert.ok(GEN.typesForLevel("L2").includes("PS"));
   assert.equal(GEN.typeSupportsLevel("SQ", "L0"), false);
   assert.equal(GEN.typeSupportsLevel("CU", "L1"), false);
 });
@@ -570,6 +572,64 @@ test("two prepared pieces make every option except one under cube rotations", ()
         const html = CARD.renderFigures(problem);
         const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
         assert.equal(viewpointMarks.length, figures.choices.length + 2);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 480);
+});
+
+test("exactly one unordered pair makes the target polycube", () => {
+  const labels = ["가", "나", "다", "라", "마"];
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      for (let seed = 1; seed <= 40; seed += 1) {
+        const problem = GEN.make(
+          "PS",
+          GEN.createRng("pair-select:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        const answer = problem.answer;
+        const candidateCount = difficulty === 1 ? 4 : 5;
+        assert.equal(figures.kind, "polycube-pair-select");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(figures.candidates.length, candidateCount);
+        assert.deepEqual(figures.labels, labels.slice(0, candidateCount));
+        assert.equal(new Set(figures.candidates.map(GEN.canonicalPolycube)).size, candidateCount);
+        assert.equal(figures.target.length, answer.pieceSize * 2);
+        assert.equal(answer.targetSize, figures.target.length);
+        assert.equal(answer.matchingPairCount, 1);
+
+        const targetForm = GEN.canonicalPolycube(figures.target);
+        const matches = [];
+        for (let left = 0; left < candidateCount; left += 1) {
+          assert.equal(figures.candidates[left].length, answer.pieceSize);
+          for (let right = left + 1; right < candidateCount; right += 1) {
+            matches.push({
+              pair: [labels[left], labels[right]],
+              indexes: [left, right],
+              canMake: independentJoinedForms(figures.candidates[left], figures.candidates[right]).has(targetForm)
+            });
+          }
+        }
+        const correct = matches.filter((entry) => entry.canMake);
+        assert.equal(correct.length, 1, stage + " D" + difficulty + " seed " + seed);
+        assert.deepEqual(answer.pairIndexes, correct[0].indexes);
+        assert.deepEqual(answer.pair, correct[0].pair);
+        assert.deepEqual(answer.pairMatches, matches.map(({ pair, canMake }) => ({ pair, canMake })));
+
+        figures.candidates.concat([figures.target]).forEach((shape) => {
+          assert.equal(GEN.isConnectedPolycube(shape), true);
+          assert.equal(GEN.auditPolycubeViewpoint(shape, figures.viewpoint).ok, true);
+        });
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, candidateCount + 1);
         checked += 1;
       }
     }

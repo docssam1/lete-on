@@ -233,7 +233,7 @@ function renderTray() {
 
 function renderViewClues() {
   ui.viewClues.replaceChildren(); const problem=currentProblem(); ui.viewClues.hidden=problem.mode!=="views"; if(problem.mode!=="views")return;
-  const views=viewsOf(problem.target); ["top","front","right"].forEach((name)=>{const cells=views[name].split(";").filter(Boolean).map((entry)=>entry.split(",").map(Number));const width=Math.max(...cells.map((cell)=>cell[0]))+1;const height=Math.max(...cells.map((cell)=>cell[1]))+1;const chip=document.createElement("span");chip.className="view-chip";chip.style.setProperty("--w",width);const set=new Set(cells.map(key));for(let row=height-1;row>=0;row-=1)for(let col=0;col<width;col+=1){const dot=document.createElement("i");dot.style.opacity=set.has(`${col},${row},undefined`)?1:0;chip.append(dot)}ui.viewClues.append(chip)});
+  const views=viewsOf(problem.target); ["top","front","right"].forEach((name)=>{const cells=views[name].split(";").filter(Boolean).map((entry)=>entry.split(",").map(Number));const width=Math.max(...cells.map((cell)=>cell[0]))+1;const height=Math.max(...cells.map((cell)=>cell[1]))+1;const chip=document.createElement("span");chip.className="view-chip";chip.style.setProperty("--w",width);const set=new Set(cells.map(key));for(let row=height-1;row>=0;row-=1)for(let col=0;col<width;col+=1){const dot=document.createElement("i");dot.style.opacity=set.has(`${col},${row}`)?1:0;chip.append(dot)}ui.viewClues.append(chip)});
 }
 
 function renderStatus() {

@@ -138,6 +138,18 @@
         '<span class="ws-join-symbol" aria-hidden="true">+</span>' + sources[1] + "</div>" +
         '<div class="ws-join-options ws-join-options-' + f.choices.length + '">' + choices + "</div>";
     }
+    if (f.kind === "polycube-pair-select") {
+      const target = figureBlock(
+        "목표 입체",
+        REN.renderIsoCoords(f.target, { viewpoint: f.viewpoint }),
+        "ws-figure-sm"
+      );
+      const candidates = f.candidates.map((piece, index) => (
+        figureBlock(f.labels[index], REN.renderIsoCoords(piece, { viewpoint: f.viewpoint }), "ws-figure-sm")
+      )).join("");
+      return '<div class="ws-pair-target">' + target + "</div>" +
+        '<div class="ws-piece-bank ws-piece-bank-' + f.candidates.length + '">' + candidates + "</div>";
+    }
     if (f.kind === "sequence") {
       const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth, { viewpoint: f.viewpoint }), "ws-figure-sm")).join("");
       return shapeHtml + '<div class="ws-seq-dots">…</div>';
@@ -186,6 +198,7 @@
     }
     if (p.type === "CJ") return answerLine("답: ______");
     if (p.type === "CP") return answerLine("답: ______");
+    if (p.type === "PS") return answerLine("답: ______, ______");
     if (p.type === "HL") {
       // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
       // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워 나온다).
@@ -267,6 +280,7 @@
       }
       case "CJ": return a.choice;
       case "CP": return a.choice + " (만들 수 없음)";
+      case "PS": return a.pair.join(", ");
       case "PN": {
         const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";
         if (a.variant === "faces") return a.faces + "면 (" + bottom + ")";
