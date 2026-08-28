@@ -250,7 +250,7 @@ function visualMarkup(visual) {
 }
 
 function renderBookTabs() {
-  $("bookTabs").innerHTML = GOLDEN_BELL_BOOKS.map((book) => `<button type="button" class="${book.id === state.bookId ? "active" : ""} ${book.status}" data-book="${book.id}">${book.label}</button>`).join("");
+  $("bookTabs").innerHTML = GOLDEN_BELL_BOOKS.map((book, index) => `<button type="button" class="${book.id === state.bookId ? "active" : ""} ${book.status}" data-book="${book.id}" ${book.id === state.bookId ? 'aria-current="page"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><strong>${book.label}</strong></button>`).join("");
   $("bookTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.bookId = button.dataset.book;
     state.lessonId = activeBook().lessons[0]?.id || null;
@@ -293,7 +293,7 @@ function renderStageSteps() {
   const progress = lessonProgress();
   $("stageSteps").innerHTML = phases.map(([id, number, label]) => {
     const complete = id === "concept" ? state.phase !== "concept" : id === "original" ? progress.original : id === "extension" || id === "complete" ? progress.extension : false;
-    return `<button type="button" class="stage-step ${state.phase === id ? "active" : ""} ${complete ? "complete" : ""}" data-phase="${id}" ${phaseAllowed(id) ? "" : "disabled"}><strong>${number}</strong><span>${label}</span></button>`;
+    return `<button type="button" class="stage-step ${state.phase === id ? "active" : ""} ${complete ? "complete" : ""}" data-phase="${id}" ${state.phase === id ? 'aria-current="step"' : ""} ${phaseAllowed(id) ? "" : "disabled"}><strong>${complete ? "✓" : number}</strong><span>${label}</span></button>`;
   }).join("");
   $("stageSteps").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setPhase(button.dataset.phase)));
 }
