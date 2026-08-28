@@ -476,6 +476,16 @@
     if (note) note.textContent = coursePathways.sequenceNotice;
   }
 
+  function courseIdForGrade(grade) {
+    const numeric = Number(grade);
+    if (!Number.isFinite(numeric) || numeric <= 5) return "elementary-foundations";
+    if (numeric <= 8) return "pre-algebra";
+    if (numeric === 9) return "algebra-1";
+    if (numeric === 10) return "geometry";
+    if (numeric === 11) return "algebra-2";
+    return "precalculus";
+  }
+
   function updateRole(roleId) {
     const role = rolePreviews[roleId];
     if (!role) return;
@@ -693,6 +703,8 @@
     const sasmoTitle = sasmo && sasmo.querySelector("strong");
     const sasmoNote = sasmo && sasmo.querySelector("small");
     const conceptNote = concept && concept.querySelector("small");
+    const mapTitle = map && map.querySelector("strong");
+    const mapNote = map && map.querySelector("small");
     if (numericGrade >= 1 && numericGrade <= 11) {
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
       sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 기출 풀기";
@@ -716,6 +728,13 @@
       concept.href = "#goals";
       conceptNote.textContent = `${gradeName(normalized)} 과정 경로 보기`;
     }
+    if (numericGrade >= 9) {
+      mapTitle.textContent = "나의 과정 지도 보기";
+      mapNote.textContent = `${coursePathways.courses.find(function (course) { return course.id === courseIdForGrade(numericGrade); }).title} · 선수개념 · 다음 과정`;
+    } else {
+      mapTitle.textContent = "학년·영역·과정 지도";
+      mapNote.textContent = numericGrade >= 6 ? "영역 · Pre-Algebra 가교 · 다음 과정" : "학년 영역 · 기초 과정 · 다음 과정";
+    }
     map.dataset.quickGrade = normalized;
   }
 
@@ -725,8 +744,15 @@
   }
   const quickMap = document.getElementById("quick-map");
   if (quickMap) quickMap.addEventListener("click", function () {
-    const grade = quickMap.dataset.quickGrade;
-    if (Number(grade) <= 8) renderGradeMap(grade);
+    const grade = quickMap.dataset.quickGrade || "6";
+    const numericGrade = Number(grade);
+    if (numericGrade >= 9) {
+      setMapView("course");
+      renderCourseDirectory(courseIdForGrade(numericGrade));
+      return;
+    }
+    setMapView("grade");
+    renderGradeMap(numericGrade === 0 ? "K" : grade);
   });
 
   buildGradeTabs();
