@@ -190,13 +190,17 @@
   async function addStudent() {
     const input = $("#newName");
     const name = input.value.trim();
+    const requestedCode = $("#newCode").value.trim();
     const studentType = $("#newType").value;
     if (!name) return;
     if (remoteMode) {
       setStatus("학생 계정을 안전하게 만드는 중…");
       try {
-        const result = await invokeAdmin({ action: "create", name, studentType });
+        const payload = { action: "create", name, studentType };
+        if (requestedCode) payload.approvalCode = requestedCode;
+        const result = await invokeAdmin(payload);
         input.value = "";
+        $("#newCode").value = "";
         showOneTimeCode(name, result.oneTimeApprovalCode);
         await loadRemote();
       } catch (error) {
@@ -206,11 +210,20 @@
       return;
     }
     if (legacy.students.includes(name)) return alert("이미 등록된 학생입니다.");
+    let normalizedCode = "";
+    if (requestedCode) {
+      normalizedCode = requestedCode.toUpperCase().replace(/[\s-]+/gu, "");
+      if (!/^GF\d{4}$/.test(normalizedCode)) return alert("승인번호는 GF- 뒤에 숫자 4자리만 입력하세요.");
+      if (Object.values(legacy.studentCode).some(value => String(value).toUpperCase() === normalizedCode)) {
+        return alert("이미 사용 중인 승인번호입니다.");
+      }
+    }
     legacy.students.push(name);
     legacy.studentType[name] = studentType;
-    legacy.studentCode[name] = legacyCode();
+    legacy.studentCode[name] = normalizedCode || legacyCode();
     legacy.access[name] = ["hyperfocus"];
     input.value = "";
+    $("#newCode").value = "";
     renderLegacy();
     dirty();
     showOneTimeCode(name, legacy.studentCode[name]);
