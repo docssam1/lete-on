@@ -62,37 +62,46 @@
       const caption = f.paint
         ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
         : "쌓기나무 모양";
-      return figureBlock(caption, REN.renderIso(f.map, f.width, f.depth, { colorFn }), "ws-figure-lg");
+      return figureBlock(caption, REN.renderIso(f.map, f.width, f.depth, { colorFn, viewpoint: f.viewpoint }), "ws-figure-lg");
     }
     if (f.kind === "iso-top") {
       // IN pyramid archetype: the textbook's bird's-eye diamond view.
-      return figureBlock("쌓기나무 모양", REN.renderIsoTop(f.map, f.width, f.depth), "ws-figure-lg");
+      return figureBlock("쌓기나무 모양", REN.renderIsoTop(f.map, f.width, f.depth, { viewpoint: f.viewpoint }), "ws-figure-lg");
     }
     if (f.kind === "iso-walled") {
       // IH only: draws the two walls behind/beneath the cubes (see
       // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
       // 있는" from the prompt.
-      return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
+      return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth, { viewpoint: f.viewpoint }), "ws-figure-lg");
     }
     if (f.kind === "iso-box") {
       // PN is a full cube; BW may be a full cube or a stepped structure.
       // Both show only the actual cubes without an enclosing wireframe.
       const full = f.paint || f.checker;
-      const opts = { checker: f.checker, cornerWhite: f.cornerWhite, noBox: full };
+      const opts = { checker: f.checker, cornerWhite: f.cornerWhite, noBox: full, viewpoint: f.viewpoint };
       const caption = f.paint
         ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
         : full ? "쌓기나무 모양" : "쌓기나무 모양 (점선 = 상자 테두리)";
       const current = figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
       if (p.type !== "FB") return current;
       const fullMap = Array.from({ length: f.depth }, () => Array(f.width).fill(f.boxH));
-      const target = figureBlock("완전히 채운 상자", REN.renderIsoBox(fullMap, f.width, f.depth, f.boxH, { noBox: true }), "ws-figure-lg");
+      const target = figureBlock("완전히 채운 상자", REN.renderIsoBox(fullMap, f.width, f.depth, f.boxH, { noBox: true, viewpoint: f.viewpoint }), "ws-figure-lg");
       return '<div class="ws-fig-row ws-fill-box-row">' + current + '<span class="ws-figure-arrow" aria-hidden="true">→</span>' + target + "</div>";
     }
     if (f.kind === "iso-holes") {
-      return figureBlock("구멍이 뚫린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
+      return figureBlock("구멍이 뚫린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels, { viewpoint: f.viewpoint }), "ws-figure-lg");
+    }
+    if (f.kind === "iso-options") {
+      const source = figureBlock("처음 모양", REN.renderIso(f.source, f.width, f.depth, { viewpoint: f.viewpoint }), "ws-figure-sm");
+      const choices = f.choices.map((map, index) => (
+        figureBlock(f.labels[index], REN.renderIso(map, f.width, f.depth, { viewpoint: f.viewpoint }), "ws-figure-sm")
+      )).join("");
+      return '<div class="ws-move-source">' + source + "</div>" +
+        '<div class="ws-move-divider" aria-hidden="true">→</div>' +
+        '<div class="ws-move-options ws-move-options-' + f.choices.length + '">' + choices + "</div>";
     }
     if (f.kind === "sequence") {
-      const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
+      const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth, { viewpoint: f.viewpoint }), "ws-figure-sm")).join("");
       return shapeHtml + '<div class="ws-seq-dots">…</div>';
     }
     return "";
@@ -130,6 +139,7 @@
       return answerLine(p.answer.variant === "faces" ? "답: 색칠된 면은 모두 ______ 면" : "답: ______ 개");
     }
     if (p.type === "BW") return answerLine("답: 흰색 ______ 개, 검은색 ______ 개");
+    if (p.type === "MV") return answerLine("답: ______");
     if (p.type === "HL") {
       // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
       // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워 나온다).
@@ -161,8 +171,11 @@
       ? '<label class="ws-omit"><input type="checkbox" class="ws-omit-box" data-omit="' + o.omit.index + '"' +
         (o.omit.checked ? " checked" : "") + " /> 빼기</label>"
       : "";
+    const identityAttrs = p.identity
+      ? ' data-question-id="' + p.identity.questionId + '" data-family-id="' + p.identity.familyId + '" data-placement-id="' + p.identity.placement.id + '"'
+      : "";
     return (
-      '<article class="ws-card' + (o.omit && o.omit.checked ? " is-omitted" : "") + '" data-type="' + p.type + '">' +
+      '<article class="ws-card' + (o.omit && o.omit.checked ? " is-omitted" : "") + '" data-type="' + p.type + '"' + identityAttrs + '>' +
       omit +
       '<div class="ws-card-head"><span class="ws-num">' + escapeHtml(numberLabel) + "</span>" +
       (mixed && p.level ? problemLevelBadgeHtml(p) : "") + "</div>" +
@@ -199,6 +212,7 @@
       case "IN": return a.hidden + "개 (전체 " + a.total + "개 − 보이는 " + a.visible + "개)";
       case "FB": return a.need + "개";
       case "CU": return a.need + "개";
+      case "MV": return a.choice;
       case "PN": {
         const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";
         if (a.variant === "faces") return a.faces + "면 (" + bottom + ")";

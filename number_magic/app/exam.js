@@ -19,6 +19,9 @@
   .nm-print-answer-key { page-break-before: always; }
   .nm-print-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
   .nm-print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* 짧은 연산만 있는 학습지는 4열로 촘촘하게(예전 그리드 학습지 밀도). 50문항을
+     2열로 뽑으면 장수가 두 배가 된다 — fillPrintGrid가 내용을 보고 붙인다. */
+  .nm-print-grid.nm-print-grid-dense { grid-template-columns: repeat(4, 1fr); }
   .nm-print-item { border: 1px solid #ccc; border-radius: 4px; padding: 10px; min-height: 48px; }
   .nm-print-item .nm-q-num { font-weight: bold; font-size: 0.8em; color: #555; }
   .nm-print-item .nm-q-tex { font-size: 1.1em; margin-top: 4px; }
@@ -35,6 +38,30 @@
   .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
   .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
   .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
+
+  /* 수 묶음(모으기·가르기) — 등식 대신 그림이 문제다. 빈 동그라미가 답 자리. */
+  .nm-print-item-bond { text-align: center; }
+  .nm-print-item-bond .nm-q-num { display: block; }
+  .nm-bond { width: 34mm; height: auto; margin: 4px auto 0; }
+  .nm-bond circle, .nm-bond line { fill: none; stroke: #000; stroke-width: 1.6; }
+  .nm-bond .nm-bond-blank { stroke-dasharray: 4 3; }
+  .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #000; }
+
+  /* ── 연령별 조판 ──────────────────────────────────────────
+     6세와 중학생에게 같은 크기로 뽑아 주지 않는다(2026-08-28 원장 지시).
+     저학년일수록 글자를 키우고 열을 줄여 한 문제에 주는 자리를 넓힌다 —
+     그래서 한 장에 담기는 문항 수도 자연히 줄어든다. */
+  .nm-print-age-young .nm-print-grid.nm-print-grid-dense { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .nm-print-age-young .nm-print-item { min-height: 22mm; padding: 12px 10px; }
+  .nm-print-age-young .nm-print-item .nm-q-num { font-size: 1em; }
+  .nm-print-age-young .nm-print-item .nm-q-tex { font-size: 1.9em; }
+  .nm-print-age-young .nm-print-vp { font-size: 1.8em; }
+  .nm-print-age-young .nm-bond { width: 40mm; }
+  .nm-print-age-young .nm-print-answer-key .nm-ak-item { font-size: 1em; }
+
+  .nm-print-age-mid .nm-print-item { min-height: 17mm; }
+  .nm-print-age-mid .nm-print-item .nm-q-tex { font-size: 1.4em; }
+  .nm-print-age-mid .nm-print-vp { font-size: 1.4em; }
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
   .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -450,19 +477,86 @@ function circled(n){
 /* 인쇄용 문제·정답 그리드를 채운다 — renderPrint·renderPrintMulti·(예전엔 따로
    있던) 그리드 학습지 인쇄가 전부 이거 하나만 쓴다(2026-08-28 통합). 세로셈
    가능("34+12=□" 형태, parseVert)이면 세로 알고리즘 박스로, 문장제는 문장+빈칸,
-   그 외엔 인라인 수식 — 원래 그리드 학습지 쪽만 세로셈을 그렸는데 그 CSS가
-   아예 없어 안 꾸며진 채 인쇄되고 있었다(표지 작업 중 발견). 번호는 circled()
-   원문자로 통일(이전엔 renderPrint만 "1." 평문 번호였다). */
-function fillPrintGrid(problems, problemGrid, answerGrid){
+   그 외엔 인라인 수식. 번호는 circled() 원문자로 통일.
+
+   통합 전 두 경로의 실제 차이(재검증으로 확인, 2026-08-28):
+   그리드 학습지는 세로셈을 그렸고 그 CSS는 styles.css에 있었다 — "CSS가 없었다"는
+   기록은 틀렸다. drill.html이 styles.css를 안 읽어서 거기서만 안 꾸며졌던 것이다.
+   진짜 차이는 renderPrint가 세로셈을 아예 몰랐다는 것(늘 인라인 수식)과 열 수(2 vs 4).
+   통합 후에는 styles.css의 그 한 벌이 오히려 이름만 겹친 채 살아남아 메인 앱에서
+   세로셈을 늘려 놓았으므로 제거했다(styles.css 인쇄 절 주석 참조). */
+/* 모으기·가르기(수 묶음, number bond)를 쓰는 스레드.
+   NS2=가르기·모으기, NS3=보수 5·10 — 둘 다 교과서가 "전체 하나 · 부분 둘" 그림으로
+   가르치는 개념이다. 생성기는 화면용으로 widget:'cubes'를 주지만 인쇄는 tex만 써
+   왔고, 그 tex는 `2 + □ = 4` 같은 등식이라 인쇄물이 그냥 한 자리 덧셈뺄셈과
+   구별이 안 됐다(2026-08-28 원장 지적). 인쇄에서는 등식 대신 묶음 그림을 그린다.
+   ※ cubes.moveTo로 판별하면 안 된다 — 덧셈·뺄셈 생성기도 그 필드를 쓴다. */
+const BOND_THREADS = { NS2:1, NS3:1 };
+
+/* 연령대 — 같은 학습지를 6세와 중학생에게 같은 크기로 뽑아 주면 안 된다는
+   원장 지시(2026-08-28). 학년 정보가 있으면 그걸 쓰고(메인 앱 학년별 경로),
+   없으면(문제은행 등) 수식 길이와 다루는 수의 크기로 추정한다.
+   young=초1~2 · mid=초3~4 · senior=초5 이상. 글자 크기와 열 수가 달라진다. */
+function printAgeBand(config, problems){
+  const g = config && config.grade;
+  if(g){
+    if(/^[12]/.test(g)) return 'young';
+    if(/^[34]/.test(g)) return 'mid';
+    return 'senior';
+  }
+  let longest = 0, maxNum = 0;
+  (problems||[]).forEach(p => {
+    if(p.word){ longest = Infinity; return; }
+    const t = String(p.tex||'');
+    longest = Math.max(longest, t.length);
+    (t.match(/\d+/g)||[]).forEach(d => { maxNum = Math.max(maxNum, +d); });
+  });
+  if(longest <= 26 && maxNum <= 20)   return 'young';
+  if(longest <= 40 && maxNum <= 1000) return 'mid';
+  return 'senior';
+}
+
+/* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
+function bondSvg(whole, known){
+  const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
+  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="수 가르기 ${esc(String(whole))}">
+  <circle cx="80" cy="24" r="21"/>${t(80,24,whole)}
+  <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
+  <circle cx="34" cy="88" r="21"/>${t(34,88,known)}
+  <circle cx="126" cy="88" r="21" class="nm-bond-blank"/>
+</svg>`;
+}
+
+function fillPrintGrid(problems, problemGrid, answerGrid, opts){
+  /* 열 수는 내용이 정한다. 통합 전에는 그리드 학습지가 4열, 드릴 인쇄가 2열로 서로
+     달랐는데, 한쪽으로 고정하면 어느 한쪽이 반드시 망가진다 — 2열로 고정하면 50문항
+     연산지가 두 배로 두꺼워지고, 4열로 고정하면 고등 긴 수식이 칸을 넘친다.
+     그래서 문장제가 하나라도 있거나 수식이 길면 2열, 짧은 연산뿐이면 4열로 간다. */
+  const longest = problems.reduce((m, p) =>
+    Math.max(m, p.word ? Infinity : String(p.tex||'').length), 0);
+  problemGrid.classList.add('nm-print-grid');
+  problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
+
+  const bond = !!(opts && opts.bond);
+
   problems.forEach((p, i) => {
-    const v = p.word ? null : parseVert(p.tex);
+    /* 수 묶음: 전체는 cubes.moveTo, 빈칸은 정답, 아는 부분은 그 나머지 */
+    const bw = bond && p.cubes && typeof p.cubes.moveTo === 'number'
+      && typeof p.answer === 'number' ? p.cubes.moveTo : null;
+    const v = (p.word || bw !== null) ? null : parseVert(p.tex);
     const card = document.createElement('div');
-    card.className = 'nm-print-item' + (v ? ' nm-print-item-vp' : '');
+    card.className = 'nm-print-item'
+      + (v ? ' nm-print-item-vp' : '')
+      + (bw !== null ? ' nm-print-item-bond' : '');
     const numEl = document.createElement('span');
     numEl.className = 'nm-q-num';
     numEl.textContent = circled(i+1);
     card.appendChild(numEl);
-    if(p.word){
+    if(bw !== null){
+      const holder = document.createElement('div');
+      holder.innerHTML = bondSvg(bw, bw - p.answer);
+      card.appendChild(holder.firstChild);
+    } else if(p.word){
       const texEl = document.createElement('div');
       texEl.className = 'nm-q-tex';
       texEl.textContent = p.word;
@@ -935,6 +1029,7 @@ const NM_EXAM = {
           showTopics({
             title: `${g.emoji} ${btn.dataset.grade==='PRE'?'':btn.dataset.grade+' — '}${g.label}`,
             subs: g.subs,
+            gradeKey: btn.dataset.grade,   /* 인쇄 조판을 연령에 맞추려고 넘긴다 */
           });
         });
       });
@@ -976,6 +1071,8 @@ const NM_EXAM = {
           label:    sub.label,
           concept:  sub.concept || '',
           wordType: wordType,
+          /* 과정별 목록은 항목마다 grade를 갖고, 학년별 목록은 화면 전체가 한 학년이다 */
+          grade:    sub.grade || opts.gradeKey || null,
         };
       }
 
@@ -1351,7 +1448,7 @@ const NM_EXAM = {
     if(old) old.remove();
 
     const sheet = document.createElement('div');
-    sheet.className = 'nm-print-sheet';
+    sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, problems);
     sheet.setAttribute('aria-hidden', 'true');
 
     const th = (window.NM_THREADS || {})[thread] || {};
@@ -1384,7 +1481,7 @@ ${conceptHtml}
 
     const problemGrid  = sheet.querySelector('#nm-print-problems');
     const answerGrid   = sheet.querySelector('#nm-print-answers');
-    fillPrintGrid(problems, problemGrid, answerGrid);
+    fillPrintGrid(problems, problemGrid, answerGrid, { bond: !!BOND_THREADS[thread] });
 
     setTimeout(() => { window.print(); }, 350);
   },
@@ -1411,7 +1508,8 @@ ${conceptHtml}
     });
 
     const sheet = document.createElement('div');
-    sheet.className = 'nm-print-sheet';
+    sheet.className = 'nm-print-sheet nm-print-age-'
+      + printAgeBand(items[0], built[0] && built[0].problems);
     sheet.setAttribute('aria-hidden', 'true');
 
     const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode,
@@ -1457,7 +1555,7 @@ ${answerSectionsHtml}`;
     built.forEach((b,i) => {
       const problemGrid = sheet.querySelector(`#nm-print-problems-${i}`);
       const answerGrid  = sheet.querySelector(`#nm-print-answers-${i}`);
-      fillPrintGrid(b.problems, problemGrid, answerGrid);
+      fillPrintGrid(b.problems, problemGrid, answerGrid, { bond: !!BOND_THREADS[b.cfg.thread] });
     });
 
     setTimeout(() => { window.print(); }, 350);
@@ -1479,7 +1577,7 @@ window.examScreen = function(container){
 
   /* ── 그리드 학습지 (11math 스타일) ── */
   function runGridExam(cfg){
-    const { thread, level, count, seed, label, concept, wordType } = cfg;
+    const { thread, level, count, seed, label, concept, wordType, grade } = cfg;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
     applyWordProblems(problems, wordType, numericSeed);
@@ -1646,7 +1744,7 @@ window.examScreen = function(container){
        세로셈까지 지원하도록 올리고(fillPrintGrid) 이 함수는 그걸 그대로
        호출하도록 합쳤다 — 표지·개념 페이지·QR 전부 자동으로 따라온다. */
     function printWorksheet(){
-      NM_EXAM.renderPrint({ thread, level, count, seed, wordType, topicName: label });
+      NM_EXAM.renderPrint({ thread, level, count, seed, wordType, topicName: label, grade });
     }
 
     render();
