@@ -61,7 +61,6 @@
       games: { 1: "copy-wood", 2: "copy-mixed", 3: "copy-color" },
       gameNote: { 1: "원목 관찰만", 2: "원목 + 컬러 섞기", 3: "컬러 색칠만" }
     },
-    { code: "CH", game: "count-heights", label: "쌓기나무 개수 세기", levels: ["L1", "L2"] },
     { code: "TV", game: "three-views", label: "여러 방향에서 본 모양", levels: ["L2", "L3"] }
   ];
 
