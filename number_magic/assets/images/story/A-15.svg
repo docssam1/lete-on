@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g stroke="#16417C" stroke-width="13" stroke-linecap="round">
+<path d="M130 120 H510"/><path d="M130 176 H510"/></g>
+<g stroke="#C9A063" stroke-width="2.5" stroke-dasharray="6 6">
+<path d="M556 120 H592"/><path d="M556 176 H592"/></g>
+<path d="M574 120 V176" stroke="#C9A063" stroke-width="2.5" marker-start="url(#b2)" marker-end="url(#b3)"/>
+<defs>
+<marker id="b2" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#C9A063"/></marker>
+<marker id="b3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#C9A063"/></marker></defs>
+<g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="320" y="58" font-size="19" fill="#4a5468">1557</text>
+<text x="320" y="240" font-size="25" fill="#0E2C57">3 + 4 = 7</text></g></svg>

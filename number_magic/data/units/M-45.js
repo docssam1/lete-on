@@ -21,6 +21,14 @@ window.NM_UNITS['M-45'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'곡선 위 한 점에서 기울기를 어떻게 잴까요? 직선이 아닌데요.',
+        en:'How do you measure slope at a single point on a curve, when it is not a straight line?',
+        zh:'曲线不是直线，怎样测量它某一点处的斜率？' },
+      history:{ ko:'페르마는 뉴턴보다 13년, 라이프니츠보다 17년 먼저 곡선의 꼭대기와 바닥을 찾는 방법을 고안했어요. 뉴턴은 흐르는 양의 변화를 유율(fluxion)이라 부르며 점 기호를 썼고, 라이프니츠는 dy/dx와 ∫를 만들었죠. 같은 개념인데 기호가 달랐고, 오늘 우리가 쓰는 쪽은 라이프니츠의 기호예요.',
+        en:'Fermat devised a way to find the tops and bottoms of curves 13 years before Newton was born and 17 before Leibniz. Newton called the rate of a flowing quantity its "fluxion" and marked it with a dot; Leibniz invented dy/dx and ∫. Same idea, different symbols — and the notation we use today is Leibniz\'s.',
+        zh:'费马比牛顿早13年、比莱布尼茨早17年就想出了求曲线极大极小的方法。牛顿把流动量的变化率称为"流数"并用点号表示，莱布尼茨则创造了dy/dx和∫。概念相同、符号不同——今天我们用的是莱布尼茨的记号。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 접선의 기울기 = 미분계수',en:'1) Tangent slope = derivative value',zh:'① 切线斜率=导数值'},

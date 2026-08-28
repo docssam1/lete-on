@@ -18,6 +18,14 @@ window.NM_UNITS['N-13'] = {
       zh:'格子上有一条路！从1开始按顺序点一点' } },
 
   discover:{
+    story:{
+      hook:{ ko:'친구 셋이 한 줄로 서서 머리에 스티커를 붙였어요. 빨강 3장 파랑 2장 중 하나씩! 맨 뒤 친구가 모르겠다고만 했는데, 맨 앞 친구가 자기 색을 알아맞혔어요. 어떻게?',
+        en:'Three friends line up, each with a sticker on their head — from 3 red and 2 blue. The one at the back says only that they do not know, yet the one in front works out their own color. How?',
+        zh:'三个小朋友排成一列，每人头上贴一张贴纸——红色3张、蓝色2张里选。最后面的只说了不知道，最前面的却猜出了自己的颜色。怎么做到的？' },
+      history:{ ko:'모르겠다는 말도 힌트예요. 앞의 두 사람이 모두 파랑이었다면 맨 뒤 친구는 자기가 빨강인 걸 바로 알았겠죠. 모른다고 했으니 파랑 둘은 아니고, 그러면 가운데 친구가 앞 사람을 보고 판단할 수 있어요. 답을 말하지 않은 것도 정보가 된답니다.',
+        en:'Not knowing is itself a clue. If the two in front were both blue, the back one would instantly know they were red. Saying nothing rules that out — and the middle one can then reason from the front. Even a non-answer carries information.',
+        zh:'说不知道本身就是线索。如果前面两人都是蓝色，最后面的人立刻就知道自己是红色。他说不知道，就排除了这种情况，中间的人便能据此推理。没说出的答案也是信息。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 십자 퍼즐의 비밀!',en:'1) The secret of the cross puzzle!',zh:'① 十字谜题的秘密！'},

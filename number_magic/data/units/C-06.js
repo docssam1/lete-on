@@ -22,6 +22,14 @@ window.NM_UNITS['C-06'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'어떤 수든 자릿수를 다 더하고, 또 더해서 한 자리로 만들어 보세요. 9의 배수는 항상 무엇이 나올까요?',
+        en:'Add up all the digits of any number, then add again until one digit is left. What always comes out for multiples of 9?',
+        zh:'把任意数的各位数字相加，再相加直到剩一位。9的倍数总会得到什么？' },
+      history:{ ko:'언제나 9예요. 9로 나눈 나머지가 자릿수 합에 그대로 남기 때문이에요. 계산기가 없던 시절 상인들은 이 성질로 장부를 검산했어요(구거법). 지금도 카드 번호와 바코드의 맨 끝 한 자리는 나머지로 확인한다는 같은 아이디어로 잘못 입력된 번호를 걸러 냅니다.',
+        en:'Always 9. The remainder mod 9 survives in the digit sum. Before calculators, merchants checked their books with this trick, called casting out nines. The last digit of a card number or barcode still uses the same idea — a remainder that catches mistyped numbers.',
+        zh:'总是9。因为除以9的余数会原样留在数位和里。没有计算器的年代，商人用这个性质核对账目（弃九法）。今天卡号和条形码的最后一位仍用同样的想法——用余数挡住输错的号码。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 9는 10보다 1 작아요',en:'1) 9 is one less than 10',zh:'① 9比10小1'},

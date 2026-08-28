@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="86" y="76" font-size="26" fill="#0E2C57">10</text>
+<text x="86" y="150" font-size="26" fill="#0E2C57">24</text>
+<text x="86" y="224" font-size="26" fill="#0E2C57">100</text>
+<text x="140" y="76" font-size="24" fill="#4a5468">=</text>
+<text x="140" y="150" font-size="24" fill="#4a5468">=</text>
+<text x="140" y="224" font-size="24" fill="#4a5468">=</text>
+<circle cx="212" cy="68" r="26" fill="#16417C"/><text x="212" y="76" font-size="21" fill="#F5D98B">3</text>
+<text x="256" y="76" font-size="24" fill="#4a5468">+</text>
+<circle cx="302" cy="68" r="26" fill="#16417C"/><text x="302" y="76" font-size="21" fill="#F5D98B">7</text>
+<circle cx="212" cy="142" r="26" fill="#16417C"/><text x="212" y="150" font-size="21" fill="#F5D98B">5</text>
+<text x="256" y="150" font-size="24" fill="#4a5468">+</text>
+<circle cx="302" cy="142" r="26" fill="#16417C"/><text x="302" y="150" font-size="21" fill="#F5D98B">19</text>
+<circle cx="212" cy="216" r="26" fill="#16417C"/><text x="212" y="224" font-size="21" fill="#F5D98B">3</text>
+<text x="256" y="224" font-size="24" fill="#4a5468">+</text>
+<circle cx="302" cy="216" r="26" fill="#16417C"/><text x="302" y="224" font-size="21" fill="#F5D98B">97</text></g>
+<rect x="382" y="56" width="212" height="168" rx="16" fill="#F1F0EC" stroke="#D9534F" stroke-width="3" stroke-dasharray="9 6"/>
+<text x="488" y="122" font-family="ui-monospace,monospace" font-size="60" font-weight="800" fill="#D9534F" text-anchor="middle">?</text>
+<text x="488" y="176" font-family="ui-monospace,monospace" font-size="17" fill="#4a5468" text-anchor="middle">4 × 10¹⁸</text>
+<text x="488" y="204" font-family="ui-monospace,monospace" font-size="26" fill="#2E9E6B" text-anchor="middle">✓</text></svg>

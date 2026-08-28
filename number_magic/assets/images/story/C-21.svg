@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<rect x="52" y="86" width="140" height="94" rx="14" fill="#16417C"/>
+<text x="122" y="128" font-size="21" fill="#F5D98B">2 / 3</text>
+<text x="122" y="162" font-size="15" fill="#FBFAF7">3 · 2</text>
+<text x="228" y="146" font-size="30" fill="#4a5468">+</text>
+<rect x="266" y="86" width="140" height="94" rx="14" fill="#0E2C57"/>
+<text x="336" y="128" font-size="21" fill="#F5D98B">3 / 4</text>
+<text x="336" y="162" font-size="15" fill="#FBFAF7">4 · 3</text>
+<text x="442" y="146" font-size="30" fill="#4a5468">=</text>
+<rect x="480" y="86" width="120" height="94" rx="14" fill="#2E9E6B"/>
+<text x="540" y="146" font-size="30" fill="#FBFAF7">5 / 7</text></g>
+<text x="320" y="228" font-family="ui-monospace,monospace" font-size="21" font-weight="700" fill="#0E2C57" text-anchor="middle">(2+3) / (3+4)</text>
+<text x="320" y="52" font-family="ui-monospace,monospace" font-size="19" fill="#D9534F" text-anchor="middle">2/3 + 3/4 ≠ 5/7</text></svg>

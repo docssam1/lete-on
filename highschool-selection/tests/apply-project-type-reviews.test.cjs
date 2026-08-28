@@ -66,3 +66,15 @@ test("위치별 배치 검수표를 후보 ID와 원본 근거에 안전하게 �
   assert.equal(output.overlapCandidates[0].review.evidence.includes("audit:batch-1"), true);
   assert.equal(output.overlapCandidates[1].review.reason, reviews.DECISION_REASONS.keep_separate);
 });
+
+test("후보 ID로 펼친 검수표는 새 유형이 추가되어 후보 순서가 바뀌어도 같은 결정을 지킨다", () => {
+  const source = index();
+  const expanded = reviews.expandBatchReviews(source, {
+    schemaVersion: 1,
+    batches: [{ reviewer: "T", reviewedAt: "2026-08-27", positions: { merge_detail: [1], keep_separate: [2] }, evidence: ["audit:stable"] }]
+  });
+  const reordered = { ...source, overlapCandidates: source.overlapCandidates.slice().reverse() };
+  const output = reviews.applyReviews(reordered, expanded);
+  assert.equal(output.overlapCandidates.find(item => item.candidateId === "OVR-1").decision, "merge_detail");
+  assert.equal(output.overlapCandidates.find(item => item.candidateId === "OVR-2").decision, "keep_separate");
+});

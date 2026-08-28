@@ -1,0 +1,208 @@
+import * as THREE from "../../vendor/three/three.module.js";
+import { OrbitControls } from "../../vendor/three/addons/controls/OrbitControls.js";
+import { foldCubeNet } from "./levels.js?v=net-1";
+
+const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };
+const vector = (value) => new THREE.Vector3(...value);
+
+function faceTexture(face) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 384;
+  const context = canvas.getContext("2d");
+  const gradient = context.createLinearGradient(0, 0, 384, 384);
+  gradient.addColorStop(0, "#fff8dd");
+  gradient.addColorStop(.42, face.color || "#e6ba72");
+  gradient.addColorStop(1, "#b97a3e");
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, 384, 384);
+  context.strokeStyle = "rgba(82,45,18,.26)";
+  context.lineWidth = 3;
+  for (let y = 42; y < 384; y += 46) {
+    context.beginPath();
+    context.moveTo(0, y);
+    context.bezierCurveTo(100, y - 12, 250, y + 12, 384, y - 4);
+    context.stroke();
+  }
+  context.strokeStyle = "#61401f";
+  context.lineWidth = 12;
+  context.strokeRect(7, 7, 370, 370);
+  context.fillStyle = "#17264a";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.font = "900 134px Arial, sans-serif";
+  context.fillText(face.label || "", 192, face.arrow ? 152 : 196);
+  if (face.arrow) {
+    context.save();
+    context.translate(192, 286);
+    context.rotate({ up: 0, right: Math.PI / 2, down: Math.PI, left: -Math.PI / 2 }[face.arrow]);
+    context.strokeStyle = "#17264a";
+    context.fillStyle = "#17264a";
+    context.lineCap = "round";
+    context.lineWidth = 20;
+    context.beginPath();
+    context.moveTo(0, 54);
+    context.lineTo(0, -48);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(0, -68);
+    context.lineTo(-34, -26);
+    context.lineTo(34, -26);
+    context.closePath();
+    context.fill();
+    context.restore();
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+}
+
+export class NetFoldViewer {
+  constructor(host) {
+    this.host = host;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(34, 1, .1, 100);
+    this.camera.position.set(0, 0, 8);
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    this.renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.shadowMap.enabled = true;
+    host.replaceChildren(this.renderer.domElement);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.enablePan = false;
+    this.controls.minDistance = 2.5;
+    this.controls.maxDistance = 9;
+    this.controls.enabled = false;
+    this.group = new THREE.Group();
+    this.scene.add(this.group);
+    this.scene.add(new THREE.HemisphereLight(0xfff7df, 0x55718c, 2.25));
+    const key = new THREE.DirectionalLight(0xffffff, 3.1);
+    key.position.set(4, 7, 8);
+    key.castShadow = true;
+    this.scene.add(key);
+    this.faces = [];
+    this.progress = 0;
+    this.resizeObserver = new ResizeObserver(() => this.resize());
+    this.resizeObserver.observe(host);
+    this.resize();
+    this.running = true;
+    this.renderLoop();
+  }
+
+  clear() {
+    this.group.traverse((node) => {
+      if (node.geometry) node.geometry.dispose();
+      if (node.material) {
+        const materials = Array.isArray(node.material) ? node.material : [node.material];
+        materials.forEach((material) => { material.map?.dispose(); material.dispose(); });
+      }
+    });
+    this.group.clear();
+    this.faces = [];
+  }
+
+  setNet(cells, faceData, targetView = null) {
+    this.clear();
+    const folded = foldCubeNet(cells);
+    if (!folded.valid) throw new Error("The viewer received an invalid cube net");
+    const byCell = new Map(faceData.map((face) => [face.cell.join(","), face]));
+    const centerX = (Math.min(...folded.cells.map(([x]) => x)) + Math.max(...folded.cells.map(([x]) => x))) / 2;
+    const centerY = (Math.min(...folded.cells.map(([, y]) => y)) + Math.max(...folded.cells.map(([, y]) => y))) / 2;
+    folded.cells.forEach((cell, index) => {
+      const data = byCell.get(cell.join(",")) || { cell, label: String(index + 1), color: "#ddb16c" };
+      const texture = faceTexture(data);
+      const material = new THREE.MeshStandardMaterial({ map: texture, roughness: .58, metalness: .02, side: THREE.DoubleSide });
+      const geometry = new THREE.PlaneGeometry(.96, .96);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.castShadow = mesh.receiveShadow = true;
+      const border = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x4f321c }));
+      mesh.add(border);
+      const startPosition = new THREE.Vector3(cell[0] - centerX, centerY - cell[1], 0);
+      const startQuaternion = new THREE.Quaternion();
+      const frame = folded.frames[index];
+      const xAxis = vector(frame.u);
+      const yAxis = vector(frame.v).negate();
+      // Texture "up" is the opposite of the net's down-axis (v). Flipping only
+      // that axis would create a reflection, which a quaternion cannot represent.
+      // Point the plane's local normal inward as well so the basis stays a proper
+      // rotation (determinant +1); DoubleSide keeps the outward surface visible.
+      const normal = vector(frame.n);
+      const matrix = new THREE.Matrix4().makeBasis(xAxis, yAxis, normal.clone().negate());
+      const finalQuaternion = new THREE.Quaternion().setFromRotationMatrix(matrix);
+      const finalPosition = normal.multiplyScalar(.505);
+      mesh.position.copy(startPosition);
+      this.group.add(mesh);
+      this.faces.push({ mesh, startPosition, startQuaternion, finalPosition, finalQuaternion, order: index });
+    });
+    const faceFrames = new Map(folded.cells.map((cell, index) => [byCell.get(cell.join(","))?.label, folded.frames[index]]));
+    const topNormal = targetView && faceFrames.get(targetView.top)?.n;
+    const frontNormal = targetView && faceFrames.get(targetView.front)?.n;
+    const rightNormal = targetView && faceFrames.get(targetView.right)?.n;
+    this.flatCamera = new THREE.Vector3(0, 0, 7.2);
+    this.flatUp = new THREE.Vector3(0, 1, 0);
+    this.foldCamera = topNormal && frontNormal && rightNormal
+      ? vector(topNormal).multiplyScalar(1.8).add(vector(frontNormal).multiplyScalar(3)).add(vector(rightNormal).multiplyScalar(2.4))
+      : new THREE.Vector3(3, 2.6, 4);
+    this.foldUp = topNormal ? vector(topNormal) : new THREE.Vector3(0, 1, 0);
+    this.progress = 0;
+    this.controls.enabled = false;
+    this.camera.position.copy(this.flatCamera);
+    this.camera.up.copy(this.flatUp);
+    this.camera.lookAt(0, 0, 0);
+    this.controls.target.set(0, 0, 0);
+    this.setProgress(0);
+  }
+
+  setProgress(progress) {
+    this.progress = clamp(progress);
+    this.faces.forEach((face) => {
+      const local = smooth(this.progress * 1.42 - face.order * .085);
+      face.mesh.position.lerpVectors(face.startPosition, face.finalPosition, local);
+      face.mesh.quaternion.slerpQuaternions(face.startQuaternion, face.finalQuaternion, local);
+    });
+    const cameraT = smooth(clamp((this.progress - .25) / .75));
+    this.camera.position.lerpVectors(this.flatCamera, this.foldCamera, cameraT);
+    this.camera.up.lerpVectors(this.flatUp, this.foldUp, cameraT).normalize();
+    this.camera.lookAt(0, 0, 0);
+    this.controls.enabled = this.progress > .98;
+  }
+
+  animateTo(target) {
+    cancelAnimationFrame(this.animationFrame);
+    const from = this.progress;
+    const start = performance.now();
+    const duration = Math.max(500, 1500 * Math.abs(target - from));
+    const step = (now) => {
+      const t = smooth((now - start) / duration);
+      this.setProgress(from + (target - from) * t);
+      if (t < 1) this.animationFrame = requestAnimationFrame(step);
+    };
+    this.animationFrame = requestAnimationFrame(step);
+  }
+
+  resize() {
+    const width = Math.max(1, this.host.clientWidth);
+    const height = Math.max(1, this.host.clientHeight);
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(width, height, false);
+  }
+
+  renderLoop() {
+    if (!this.running) return;
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+    requestAnimationFrame(() => this.renderLoop());
+  }
+
+  dispose() {
+    this.running = false;
+    this.resizeObserver.disconnect();
+    cancelAnimationFrame(this.animationFrame);
+    this.clear();
+    this.controls.dispose();
+    this.renderer.dispose();
+  }
+}

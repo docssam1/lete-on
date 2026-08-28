@@ -15,6 +15,14 @@ window.NM_UNITS['A-35'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'Ⅷ도 8, 8도 8. 같은 수인데 왜 모양이 다를까요?',
+        en:'Ⅷ is 8, and 8 is 8. Same number — so why do they look different?',
+        zh:'Ⅷ是8，8也是8。同一个数，为什么长得不一样？' },
+      history:{ ko:'수학 기호는 누가 발명했다기보다 사람들의 손버릇이 굳어진 것에 가까워요. +는 라틴어 et(그리고)를 빨리 흘려 쓰다 만들어졌고, 15세기 중엽 독일에서 인쇄술이 퍼지면서 책에 실려 널리 굳어졌어요.',
+        en:'Math symbols were less invented than settled into. The + grew out of scribbling the Latin "et" (and) in a hurry, and once printing spread through Germany in the mid-1400s, printed books fixed such shapes for everyone.',
+        zh:'数学符号与其说是被发明的，不如说是习惯固定下来的。+源自快写拉丁语"et"(和)，15世纪中叶印刷术在德国普及后，印刷书籍把这些形状固定了下来。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 기본 기호와 값을 외워요', en:'1) Memorize the basic symbols and values', zh:'① 记住基本符号和值' },

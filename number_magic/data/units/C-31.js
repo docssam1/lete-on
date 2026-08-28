@@ -21,6 +21,14 @@ window.NM_UNITS['C-31'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'낙타 17마리를 첫째 1/2, 둘째 1/3, 막내 1/9로 나누라는 유언. 이웃이 자기 낙타 한 마리를 보태 18마리로 만들자 9+6+2=17마리, 남은 한 마리는 돌려받았대요. 유언대로 나눈 게 맞을까요?',
+        en:'A will says: split 17 camels — half to the eldest, a third to the second, a ninth to the youngest. A neighbor lends one to make 18, giving 9+6+2=17, and takes their camel back. Was the will actually followed?',
+        zh:'遗嘱说：17头骆驼，老大1/2、老二1/3、老幺1/9。邻居借出一头凑成18头，分成9+6+2=17头，再把自己的牵回去。这真的照遗嘱分了吗？' },
+      history:{ ko:'아니에요. 1/2+1/3+1/9 = 17/18이라 애초에 1이 안 돼요. 처음부터 다 나눠지지 않는 유언이었고, 18로 계산하면 세 사람 모두 원래 몫보다 조금씩 더 받아요. 분수로 무언가를 나눠 가질 때는 먼저 다 더해서 1이 되는지 확인하세요.',
+        en:'No. 1/2+1/3+1/9 = 17/18, which never reaches 1 — the will could not be carried out as written. Computing with 18 quietly gives all three a little more than their true share. Whenever fractions divide something up, add them first and check they make 1.',
+        zh:'不是。1/2+1/3+1/9 = 17/18，本来就凑不满1——这份遗嘱从一开始就分不完。用18来算，三个人都悄悄多拿了一点。用分数分东西时，先把它们加起来看看是不是1。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 분자는 분자끼리, 분모는 분모끼리',en:'1) Straight across',zh:'① 分子乘分子，分母乘分母'},

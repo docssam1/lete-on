@@ -18,6 +18,14 @@ window.NM_UNITS['N-09'] = {
       zh:'亮晶晶的10元硬币！每点一枚就数10、20、30……' } },
 
   discover:{
+    story:{
+      hook:{ ko:'6을 나누어 떨어지게 하는 수를 모두 찾아 더해 볼까요? 1 + 2 + 3 = ?',
+        en:'Find every number that divides 6 evenly, then add them: 1 + 2 + 3 = ?',
+        zh:'找出所有能整除6的数，再加起来：1 + 2 + 3 = ?' },
+      history:{ ko:'자기 자신을 뺀 약수를 모두 더하면 다시 자기가 되는 수를 완전수라고 해요. 6과 28이 그런 수예요. 우리 조상들도 수에 뜻을 담아 홀수가 겹치는 날을 명절로 삼았어요 — 설(1월 1일), 삼짓날(3월 3일), 단오(5월 5일), 칠석(7월 7일), 중양절(9월 9일).',
+        en:'A number whose divisors (not counting itself) add back up to itself is called perfect: 6 and 28 are the first two. Korea gave numbers meaning too, marking holidays where an odd number doubles — Seollal (1/1), Samjinnal (3/3), Dano (5/5), Chilseok (7/7), Jungyangjeol (9/9).',
+        zh:'把一个数除本身以外的所有约数相加，又得回它自己，这样的数叫完全数：6和28就是最前面的两个。韩国也给数赋予含义，把奇数相重的日子定为节日——春节(1/1)、三巳节(3/3)、端午(5/5)、七夕(7/7)、重阳(9/9)。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 모으기가 쌓이면 탑!',en:'1) Joins stack into a tower!',zh:'① 合起来叠成塔！'},

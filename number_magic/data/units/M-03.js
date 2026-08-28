@@ -21,6 +21,14 @@ window.NM_UNITS['M-03'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'산을 시속 10 km로 올라가고 시속 30 km로 내려왔어요. 평균 속력은 20 km/h일까요?',
+        en:'You climb a hill at 10 km/h and come down at 30 km/h. Is your average speed 20 km/h?',
+        zh:'上山时速10公里，下山时速30公里。平均速度是20公里每小时吗？' },
+      history:{ ko:'아니에요, 15 km/h예요. 편도 30 km라면 올라갈 때 3시간, 내려올 때 1시간이라 60 km를 4시간에 간 셈이죠. 느린 쪽에 시간을 훨씬 오래 썼으니 그냥 더해서 2로 나눌 수 없어요. 분수를 더할 때 분모부터 맞추는 것과 똑같은 조심성이 필요합니다.',
+        en:'No — it is 15 km/h. Over 30 km each way that is 3 hours up and 1 hour down: 60 km in 4 hours. Far more time was spent at the slow speed, so you cannot just add and halve. It calls for the same care as lining up denominators before adding fractions.',
+        zh:'不是，是15公里每小时。单程30公里的话，上山3小时、下山1小时，等于4小时走了60公里。慢的那段花的时间多得多，所以不能直接相加除以2。这和加分数前先对齐分母是同样的谨慎。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 분모가 같으면 분자만',en:'1) Same denominator — just the numerators',zh:'① 分母相同就只管分子'},

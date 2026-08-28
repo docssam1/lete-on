@@ -343,6 +343,56 @@
       "sha256": "d014193da205d133f84868ce54d64d9de2d246641fbbe69c06b603c06ef53428",
       "size": 2250,
       "mtime_ns": 1787842913005195400
+    },
+    {
+      "id": "prism-d4-1-solid-nets",
+      "title": "Prism D4-1 입체도형과 전개도",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism D4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "4df94728387dd574820e359891995aaa3afaf2fe13e98fccaa2434aa26271bf8",
+      "size": 3281757,
+      "mtime_ns": 1581392410000000000
+    },
+    {
+      "id": "prism-e4-1-cube-nets",
+      "title": "Prism E4-1 주사위와 전개도",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\주요 사고력 학원\\소마 사고력 학원\\프리즘\\prism E4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "db5d01614b4df283b4da87f08121ac783ca44967ab25162cb6f6e01df5968b4d",
+      "size": 3588321,
+      "mtime_ns": 1582342934000000000
+    },
+    {
+      "id": "geometry-net-observatory-levels",
+      "title": "GFIELD 전개도 전망대 50문제 생성기",
+      "path": "geometry/games/net-observatory/levels.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "c3f686f194a5ca91404b5d8eae6b5b52c59b4c7e17d7b85c498a6b66f7397ed2",
+      "size": 16526,
+      "mtime_ns": 1787845437163660100
+    },
+    {
+      "id": "geometry-net-observatory-selftest",
+      "title": "GFIELD 전개도 전망대 독립 검산",
+      "path": "geometry/games/net-observatory/net-observatory.selftest.mjs",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "eabe24587b61d64560001c7935180706d70c0ea3db3d8a28dd6ce1dc7814dc5b",
+      "size": 3075,
+      "mtime_ns": 1787845033158614000
+    },
+    {
+      "id": "ray-kids-a4-1-soma",
+      "title": "RAY Kids A4-1 소마큐브",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\기하 규칙성 관련\\소마\\RAY\\레이키즈 A4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "8e6352e29de9c37203782a07f0b96ff628c1b5a1de45e91e73699129313d2c78",
+      "size": 23217166,
+      "mtime_ns": 1510659278000000000
     }
   ],
   "records": [
@@ -4593,6 +4643,72 @@
           "role": "test",
           "locator": "full deterministic test suite",
           "note": "All 50 sample partitions plus alternate valid answers"
+        }
+      ]
+    },
+    {
+      "id": "geometry.net-observatory.prism-foundation",
+      "title": "전개도 전망대 5단계 학습 근거와 검증",
+      "aliases": [
+        "전개도 전망대 근거"
+      ],
+      "tags": [
+        "geometry",
+        "cube-net",
+        "dice",
+        "regular-solid",
+        "single-answer"
+      ],
+      "summary": "프리즘의 정다면체·정육면체 전개도·주사위 면 관계를 바탕으로 5단계 50문제를 내부 재구성했다. 35개 자유 헥소미노, 11개 정육면체 전개도, 24개 적절한 회전과 정답 유일성을 자동 검산한다. 정다면체 면 관계는 내부 확장이다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-28",
+      "pointers": [
+        {
+          "source_id": "prism-d4-1-solid-nets",
+          "role": "source",
+          "locator": "교재 p.28-42 (PDF p.19-33)",
+          "note": "정다면체와 정육면체 전개도 활동을 원본 페이지 이미지로 확인"
+        },
+        {
+          "source_id": "prism-e4-1-cube-nets",
+          "role": "source",
+          "locator": "교재 p.10-29 (PDF p.7-26)",
+          "note": "주사위 전개도, 마주 보는 면, 기호 방향 활동을 원본 페이지 이미지로 확인"
+        },
+        {
+          "source_id": "geometry-net-observatory-levels",
+          "role": "code",
+          "locator": "validateLevels 및 levels 1-5",
+          "note": "5단계 50문제와 적절한 회전만 허용하는 보기 생성"
+        },
+        {
+          "source_id": "geometry-net-observatory-selftest",
+          "role": "audit",
+          "locator": "독립 헥소미노 열거와 정다면체 오일러 검산",
+          "note": "게임 계산과 별도 정규화로 35개와 11개를 재검산"
+        }
+      ]
+    },
+    {
+      "id": "geometry.soma-cube-workshop",
+      "title": "Soma Cube Workshop source and validation",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "soma-cube",
+        "source-backed"
+      ],
+      "summary": "RAY Kids A4-1 supports rotation equivalence, two-piece assembly, and making the same solid with different pieces. The 3x3x3 completion and seven-piece challenges are labeled as GFIELD internal extensions. The game validates 24 rotations, fillability, and distinct assemblies.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-28",
+      "pointers": [
+        {
+          "source_id": "ray-kids-a4-1-soma",
+          "role": "source",
+          "locator": "PDF p.32-48",
+          "note": "Independently checked for the direct basis of stages 1-3"
         }
       ]
     }

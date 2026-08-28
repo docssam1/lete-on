@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GFIELD Grade 6 배치 진단의 문항 범위, 채점 경로, 수업 연결 기준을 정리한 교사용 설계표">
+  <title>Grade 6 진단 설계표 · GFIELD Math</title>
+  <link rel="stylesheet" href="./diagnostic.css">
+  <link rel="stylesheet" href="./academy-ui.css">
+</head>
+<body class="academy-page page-diagnostic">
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="GFIELD Math home"><span class="brand-mark" aria-hidden="true">G</span><span>GFIELD <strong>MATH</strong></span></a>
+    <nav aria-label="주요 탐색">
+      <a href="./index.html#goals">목표 선택</a>
+      <a href="./catalog.html">커리큘럼 상세</a>
+    </nav>
+    <span class="status-chip">교사용 설계표 · 문항 준비 중</span>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero shell">
+      <p class="eyebrow">GRADE 6 · COURSE PLACEMENT BLUEPRINT</p>
+      <h1>Grade 6 배치 진단<br><span>교사용 설계표</span></h1>
+      <p class="lede">비와 비율부터 통계와 확률까지, 42개 문항 자리에 학년·영역·응답 형식·채점 경로를 배치합니다. 교사는 이 표를 기준으로 검수된 문항과 수업 계획을 연결합니다.</p>
+      <div class="hero-meta" aria-label="Grade 6 진단 설계 요약">
+        <div><strong id="item-count">42</strong><span>문항 설계 자리</span></div>
+        <div><strong id="cluster-count">10</strong><span>Grade 6 클러스터</span></div>
+        <div><strong id="domain-count">5</strong><span>교과 영역</span></div>
+        <div><strong>0</strong><span>공개 문항</span></div>
+      </div>
+    </section>
+
+    <section class="shell role-section" aria-labelledby="role-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">STUDENT &amp; TEACHER VIEWS</p>
+          <h2 id="role-heading">한 진단, 두 개의 학습 화면.</h2>
+        </div>
+        <p>학생은 배정된 평가와 다음 학습을 확인합니다. 교사는 영역별 근거와 수업 연결을 검토합니다.</p>
+      </div>
+      <div class="role-tabs" role="tablist" aria-label="진단 역할별 안내">
+        <button type="button" role="tab" id="role-teacher" aria-controls="role-panel" aria-selected="true" tabindex="0" data-role="teacher">교사 설계</button>
+        <button type="button" role="tab" id="role-student" aria-controls="role-panel" aria-selected="false" tabindex="-1" data-role="student">학생 흐름</button>
+      </div>
+      <article class="role-panel" id="role-panel" role="tabpanel" aria-labelledby="role-teacher" tabindex="0" aria-live="polite"></article>
+    </section>
+
+    <section class="shell blueprint-section" aria-labelledby="blueprint-heading">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">TEACHER BLUEPRINT</p>
+          <h2 id="blueprint-heading">42개 문항 자리를<br>교과 근거로 설계합니다.</h2>
+        </div>
+        <p>각 자리는 학년·영역·클러스터·응답 형식으로 구성됩니다. 문항이 확정되면 정답 검산과 채점 검토를 거쳐 교사 배정 자료로 연결합니다.</p>
+      </div>
+      <div class="balance-grid" aria-label="진단 설계 분포">
+        <article><p>난이도 근거</p><div id="difficulty-balance" class="balance-list"></div></article>
+        <article><p>응답 형식</p><div id="response-balance" class="balance-list"></div></article>
+        <article><p>채점 경로</p><div id="scoring-balance" class="balance-list"></div></article>
+      </div>
+      <div class="cluster-list" id="cluster-list" aria-label="Grade 6 클러스터별 설계 범위"></div>
+    </section>
+
+    <section class="shell gate-section" aria-labelledby="gate-heading">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">TEACHER REVIEW SEQUENCE</p>
+          <h2 id="gate-heading">학생 평가를 열기 전,<br>교사가 확인할 네 단계.</h2>
+        </div>
+        <p>진단 결과는 다음 수업을 정하는 근거입니다. 승급과 반 배정은 학교의 검토 절차로 확정합니다.</p>
+      </div>
+      <ol class="gates">
+        <li><span>01</span><strong>문항·그림 권리 확인</strong><p>출처와 사용 권한이 항목별로 검수되어야 합니다.</p></li>
+        <li><span>02</span><strong>정답·채점 독립 검산</strong><p>하나의 답인지, 채점 규칙이 일관적인지 별도로 확인합니다.</p></li>
+        <li><span>03</span><strong>학생별 평가 배정</strong><p>교사가 수업 목적과 준비 상태에 맞춰 평가를 배정합니다.</p></li>
+        <li><span>04</span><strong>교사 확인 후 수업 연결</strong><p>결과를 다음 수업, 보충 연습, 유지 확인 계획에 반영합니다.</p></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer shell"><span>GFIELD Boarding School Mathematics · Grade 6 blueprint v1</span><a href="./index.html">홈으로 돌아가기</a></footer>
+
+  <script src="./shared/program-contract.js"></script>
+  <script src="./curriculum/us-k8-domain-spine.js"></script>
+  <script src="./curriculum/us-k8-cluster-map.js"></script>
+  <script src="./curriculum/us-k8-content-registry.js"></script>
+  <script src="./assessment/grade6-placement-plan.js"></script>
+  <script src="./diagnostic-view.js"></script>
+</body>
+</html>

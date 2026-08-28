@@ -18,6 +18,14 @@ window.NM_UNITS['N-10'] = {
       zh:'把混在一起的东西分类！点一点放进篮子，数一数' } },
 
   discover:{
+    story:{
+      hook:{ ko:'우리 반에서 넘어진 곳을 세어 보니 교실이 제일 많았어요. 그럼 교실이 제일 위험한 곳일까요?',
+        en:'We counted where classmates tripped, and the classroom won by a lot. Does that make the classroom the most dangerous place?',
+        zh:'统计了同学们摔倒的地点，教室最多。那教室就是最危险的地方吗？' },
+      history:{ ko:'교실에서 보내는 시간이 가장 길어서예요. 수를 셀 때는 얼마나 많이 일어났나와 얼마나 자주 그곳에 있었나를 같이 봐야 해요. 어른들의 통계에도 같은 함정이 있어요 — 교통사고는 집 근처에서 가장 많이 일어나지만, 그건 집 근처를 가장 많이 다니기 때문이에요.',
+        en:'Because that is where we spend the most time. When you count, you have to look at how often you were there too, not just how many happened. Grown-up statistics fall into the same trap: most car accidents happen near home, simply because that is where people drive most.',
+        zh:'因为我们在教室待的时间最长。数数时不能只看发生了多少次，还要看在那里待了多久。大人的统计也有同样的陷阱：交通事故大多发生在家附近，只是因为人们在家附近开车最多。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 나누면 비교하기 쉬워요!',en:'1) Sorting makes comparing easy!',zh:'① 分类后更容易比较！'},

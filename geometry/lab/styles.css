@@ -625,3 +625,255 @@ html, body {
   .stage-badge { flex: 1 1 64px; }
   .type-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ---------------------------------------------------------------------
+   GFIELD worksheet studio v3
+   A teacher's workbench, not a generic dashboard: configuration stays calm
+   and compact while the paper preview is the strongest surface on screen.
+   --------------------------------------------------------------------- */
+:root {
+  --ink: #17263d;
+  --muted: #63717c;
+  --line: #ccd4d8;
+  --brand: #123f72;
+  --brand-soft: #eaf1f6;
+  --gfield: #17784b;
+  --paper: #fffefa;
+  --tint: #eef1f1;
+  --worktop: #e4e9e8;
+  --copper: #a66b32;
+}
+
+body {
+  background: #f5f6f3;
+}
+
+.lab-wrap { max-width: 1280px; }
+
+.lab-header {
+  border-bottom-color: #bfc9cb;
+  background: rgba(255, 254, 250, 0.97);
+}
+
+.lab-header-inner {
+  align-items: center;
+  min-height: 104px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.lab-title {
+  position: relative;
+  padding-left: 18px;
+  border-left: 4px solid var(--gfield);
+}
+
+.lab-title h1 {
+  margin-top: 5px;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+.lab-sub { font-size: 12px; letter-spacing: 0.6px; }
+
+.gfield-chip {
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 1.3px;
+}
+
+.lab-back,
+.btn,
+.stage-badge,
+.intensity-btn,
+.domain-btn,
+.type-card,
+.count-btn,
+.code-input {
+  border-radius: 4px;
+}
+
+.lab-back {
+  min-height: 38px;
+  border-color: #bfc9cb;
+  box-shadow: 0 2px 0 rgba(23, 38, 61, 0.05);
+}
+
+main.lab-wrap { padding-top: 28px; }
+.lab-section { padding-top: 0; }
+
+.lab-card {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.lab-card#builder > h2,
+.lab-card#builder > .section-note {
+  max-width: 700px;
+}
+
+.lab-card#builder > h2 {
+  font-size: 25px;
+  letter-spacing: 0;
+}
+
+.section-note { margin-bottom: 20px; }
+
+.builder-grid {
+  padding: 22px;
+  border: 1px solid #bdc7c9;
+  border-top: 4px solid var(--brand);
+  background: var(--worktop);
+  box-shadow: 0 18px 40px rgba(34, 51, 56, 0.09);
+}
+
+.field + .field { margin-top: 16px; }
+
+.field h3 {
+  margin-bottom: 9px;
+  color: #334858;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+}
+
+.stage-static-note { margin: -2px 0 9px; }
+
+.stage-badge,
+.intensity-btn,
+.domain-btn,
+.count-btn,
+.type-card {
+  border-color: #c3cccf;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.stage-badge { max-width: 118px; padding: 9px 5px; }
+.stage-badge.is-active,
+.intensity-btn.is-active,
+.domain-btn.is-active,
+.count-btn.is-active {
+  border-color: #0b315c;
+  background: #123f72;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 3px 8px rgba(18,63,114,.18);
+}
+
+.type-grid { gap: 6px; }
+.type-card {
+  position: relative;
+  min-height: 60px;
+  padding: 9px 11px 9px 14px;
+  overflow: hidden;
+}
+.type-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: #afbbc0;
+}
+.type-card:hover::before { background: var(--copper); }
+.type-card.is-active {
+  border-color: #315c79;
+  background: #f7fbfd;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(18,63,114,.13), 0 3px 9px rgba(28,62,82,.08);
+}
+.type-card.is-active::before {
+  width: 5px;
+  background: linear-gradient(180deg, #d6a855, #e7edf0 45%, #5e9a98 72%, #a66b32);
+}
+.type-card.is-active .type-code { color: var(--copper); }
+.type-card.is-active .type-levels { color: var(--muted); }
+
+.build-bar {
+  margin-top: 18px;
+  padding: 15px;
+  border: 1px solid #bdc7c9;
+  background: #fffefa;
+}
+.btn-primary {
+  position: relative;
+  border-color: #0b315c;
+  background: #123f72;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 4px 0 #0b315c;
+}
+.btn-primary:hover { background: #0f355f; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 0 #0b315c; }
+
+.preview-field {
+  padding: 18px;
+  border: 1px solid #b6a58e;
+  border-top: 5px solid #a66b32;
+  background-color: #fffdf7;
+  background-image:
+    linear-gradient(rgba(55, 83, 94, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(55, 83, 94, .045) 1px, transparent 1px);
+  background-size: 24px 24px;
+  box-shadow: 0 13px 30px rgba(42, 45, 38, .14);
+}
+.preview-field h3 {
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #d8d0c2;
+  color: var(--ink);
+}
+.preview-body { min-height: 330px; }
+.preview-empty {
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  border: 1px dashed #b8c2c4;
+  background: rgba(255, 255, 255, .7);
+  text-align: center;
+}
+.preview-body .ws-card {
+  border-color: #bdc7c9;
+  border-radius: 2px;
+  box-shadow: 0 5px 14px rgba(38, 56, 62, .08);
+}
+.preview-chip { border-radius: 3px; }
+
+.lab-card:not(#builder) {
+  margin-top: 24px;
+  padding: 20px 0 4px;
+  border-top: 1px solid #bdc7c9;
+}
+.lab-card:not(#builder) h2 { font-size: 17px; }
+.code-row { max-width: 940px; }
+
+.lab-footer { background: #edf0ee; }
+
+@media (min-width: 1100px) {
+  .builder-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(390px, .85fr);
+    column-gap: 24px;
+  }
+  .builder-grid .preview-field { top: 18px; }
+  .builder-grid .type-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  main.lab-wrap { padding-top: 18px; }
+  .builder-grid { padding: 14px; }
+  .lab-card#builder > h2 { font-size: 22px; }
+}
+
+@media (max-width: 560px) {
+  .lab-header-inner { min-height: 0; gap: 12px; }
+  .lab-title { padding-left: 12px; }
+  .lab-title h1 { font-size: 24px; }
+  .lab-back { align-self: flex-start; }
+  .builder-grid { margin-inline: -4px; padding: 12px; }
+  .type-card { min-height: 66px; padding-left: 11px; }
+  .preview-field { padding: 12px; }
+  .preview-body { min-height: 240px; }
+  .preview-empty { min-height: 210px; padding: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary { transition: none; }
+}

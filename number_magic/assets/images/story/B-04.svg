@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g stroke="#16417C" stroke-width="18" stroke-linecap="round">
+<path d="M226 66 L414 214"/><path d="M414 66 L226 214"/></g>
+<circle cx="520" cy="82" r="30" fill="#D9534F"/>
+<text x="520" y="94" font-family="ui-monospace,monospace" font-size="36" font-weight="800" fill="#fff" text-anchor="middle">?</text>
+<g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="320" y="262" font-size="24" fill="#0E2C57">2 × 3 = 6</text>
+<text x="118" y="94" font-size="19" fill="#4a5468">1631</text></g>
+<g fill="#C9A063"><circle cx="100" cy="150" r="8"/><circle cx="130" cy="150" r="8"/>
+<circle cx="100" cy="182" r="8"/><circle cx="130" cy="182" r="8"/>
+<circle cx="100" cy="214" r="8"/><circle cx="130" cy="214" r="8"/></g></svg>

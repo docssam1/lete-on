@@ -9,22 +9,22 @@
 
   const copy = {
     ko: {
-      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–8",
-      heroTitle: "학교 수학에서 경시까지, 하나의 성장 경로",
-      heroCopy: "미국 K–8 핵심과정을 중심으로 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8 준비를 연결합니다. 진단 결과는 수업·과제·워크북·승급 판단의 같은 데이터로 이어집니다.",
-      viewAs: "화면 구분", student: "학생용", teacher: "교사용", chooseGrade: "미국 학년",
-      pathwayEyebrow: "PROGRAM PATHWAYS", pathwaysTitle: "선택 학년의 학습 경로", programCount: "개 경로",
-      domainsTitle: "이 학년의 핵심 영역", unitsTitle: "학년별 학습 단위", unitLocked: "앵커 스킬 · 검수 대기", source: "기준:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "이 역할의 자료",
-      promotionEyebrow: "PROMOTION & PLACEMENT", promotionTitle: "승급은 근거를 모아 결정합니다",
-      promotionCopy: "공통기준이나 대회 참가조건을 임의의 ‘미국 공식 컷’으로 바꾸지 않습니다. 진단·단원 숙달·유지 확인·교사 검토를 모으고, 실제 컷은 학교가 버전별로 설정합니다.",
-      resourceLocked: "콘텐츠·다운로드는 독립 검수와 인증 서명 전까지 잠금 상태입니다.", teacherMetadataOnly: "교사용 표시는 메타데이터 미리보기이며 로그인 권한이 아닙니다.", cadenceTitle: "수업 기본안", selectedUnit: "선택 단원", grade6Cadence: "단원당 3주 · 주 2회 · 회당 75분 · 가정학습 주 2회 30분 · 학교 조정 가능", grade6Retention: "유지 확인은 최소 7일 뒤 별도 시도로 예약됩니다.", templateCadence: "수업 시간과 회차는 학교별 설정 후 확정됩니다.", plannedComponents: "계획 구성",
-      previewTitle: "기반 미리보기", previewCopy: "학생 로그인과 실제 기록은 아직 연결하지 않았습니다. 공개 데이터 노출을 막는 새 인증 저장소 전환 후 활성화합니다.",
+      eyebrow: "CURRICULUM & PROBLEM BANK · K–12 PATHWAY",
+      heroTitle: "학년별 교과와 문제은행을 한곳에서",
+      heroCopy: "미국 K–12 교과를 중심으로 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8·10·12를 연결합니다. 학년을 고르면 핵심 영역, 단원, 수업 자료 구성을 바로 확인할 수 있습니다.",
+      viewAs: "자료 보기", student: "학생용", teacher: "교사용", chooseGrade: "미국 학년",
+      pathwayEyebrow: "LEARNING PATHWAYS", pathwaysTitle: "선택 학년의 교과·경시 경로", programCount: "개 경로",
+      domainsTitle: "이 학년에서 다루는 영역", unitsTitle: "단원과 기준", unitLocked: "앵커 스킬 · 문항 준비 중", source: "기준:", audienceEyebrow: "STUDENT & TEACHER MATERIALS", resourcesTitle: "선택한 역할의 자료",
+      promotionEyebrow: "PLACEMENT EVIDENCE", promotionTitle: "진단에서 다음 수업까지, 같은 근거로 봅니다",
+      promotionCopy: "진단 결과, 단원 숙달, 유지 확인, 교사 검토를 함께 살핍니다. 학교는 이 근거를 바탕으로 반 배정과 다음 과정의 기준을 운영합니다.",
+      resourceLocked: "문항과 다운로드 자료는 검수 완료 후 학생 또는 교사 화면에 열립니다.", teacherMetadataOnly: "교사용 화면은 현재 자료 구성과 수업 흐름을 보여 줍니다.", cadenceTitle: "수업 구성", selectedUnit: "선택 단원", grade6Cadence: "단원당 3주 · 주 2회 · 회당 75분 · 가정학습 주 2회 30분", grade6Retention: "유지 확인은 단원 학습 뒤 최소 7일 후 진행합니다.", templateCadence: "수업 시간과 회차는 학교 일정에 맞춰 정합니다.", plannedComponents: "구성 항목",
+      previewTitle: "문제은행 준비 현황", previewCopy: "현재는 학년별 교과 구조와 자료 구성을 확인하는 화면입니다. 검수된 문항부터 학생·교사 계정에 순차적으로 연결합니다.",
       active: "운영", planned: "예정", locked: "잠금", core: "핵심", accelerated: "심화", competition: "경시", bridge: "연결",
       evidence: ["진단", "단원 숙달", "유지 확인", "교사 검토"]
     },
     en: {
-      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–8", heroTitle: "One growth path from school math to competition",
-      heroCopy: "US K–8 core standards connect to Singapore mastery, Math Kangaroo, SASMO, and AMC 8 preparation. Diagnosis, lessons, assignments, workbooks, and promotion decisions share one learning lineage.",
+      eyebrow: "BOARDING SCHOOL MATHEMATICS · K–12 TARGET", heroTitle: "A K–12 pathway with a verified K–8 foundation",
+      heroCopy: "The full target connects US K–12 school math, Singapore mastery, Math Kangaroo, SASMO, and AMC 8/10/12. This detail view shows only the verified K–8 domain, unit, and resource-plan foundation; high-school course maps and assignments remain locked.",
       viewAs: "View as", student: "Student", teacher: "Teacher", chooseGrade: "US grade",
       pathwayEyebrow: "PROGRAM PATHWAYS", pathwaysTitle: "Pathways for this grade", programCount: "pathways",
       domainsTitle: "Core domains for this grade", unitsTitle: "Grade learning units", unitLocked: "Anchor skill · review pending", source: "Source:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "Resources for this role",
@@ -36,8 +36,8 @@
       evidence: ["Diagnostic", "Unit mastery", "Retention check", "Teacher review"]
     },
     "zh-Hans": {
-      eyebrow: "寄宿学校数学 · K–8", heroTitle: "从校内数学到竞赛的一体化成长路径",
-      heroCopy: "以美国 K–8 核心标准为主线，衔接新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8。诊断、课程、作业、练习册与晋级共用同一学习谱系。",
+      eyebrow: "寄宿学校数学 · K–12 目标", heroTitle: "K–12 全路径与已验证的 K–8 基础",
+      heroCopy: "整体目标衔接美国 K–12 校内数学、新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8/10/12。本页仅展示已验证的 K–8 领域、单元和资源规划；高中课程地图与实际分配仍保持锁定。",
       viewAs: "查看身份", student: "学生", teacher: "教师", chooseGrade: "美国年级",
       pathwayEyebrow: "课程路径", pathwaysTitle: "本年级学习路径", programCount: "条路径",
       domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色资源", resourcesTitle: "本角色资料",
@@ -64,8 +64,13 @@
     K: "ccss-k-cc-a", 1: "ccss-1-oa-a", 2: "ccss-2-oa-a", 3: "ccss-3-oa-a", 4: "ccss-4-oa-a",
     5: "ccss-5-oa-a", 6: "ccss-6-rp-a", 7: "ccss-7-rp-a", 8: "ccss-8-ns-a"
   });
-  const state = { locale: "ko", role: "student", grade: "K", unitId: defaultUnitByGrade.K };
   const gradeValues = ["K", 1, 2, 3, 4, 5, 6, 7, 8];
+  const search = new URLSearchParams(window.location.search);
+  const requestedRole = search.get("role");
+  const requestedGrade = search.get("grade");
+  const initialRole = ["student", "teacher"].includes(requestedRole) ? requestedRole : "student";
+  const initialGrade = gradeValues.some(function (grade) { return String(grade) === String(requestedGrade); }) ? requestedGrade : "K";
+  const state = { locale: "ko", role: initialRole, grade: initialGrade, unitId: defaultUnitByGrade[initialGrade] };
   const local = function (value) { return value[state.locale] || value.en || value.ko; };
   const sameGrade = function (value) { return String(value) === String(state.grade); };
   function selectedUnit() {

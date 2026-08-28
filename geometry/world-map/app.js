@@ -80,7 +80,7 @@ const places = [
 ];
 
 const districtPlaces = [
-  { id: "spatialDistrict", nameKey: "spatialDistrict", descriptionKey: "spatialDistrictHint", roadmap: true },
+  { id: "spatialDistrict", nameKey: "spatialDistrict", descriptionKey: "spatialDistrictHint", href: "../solid-vista/", district: true },
   { id: "coordinateDistrict", nameKey: "coordinateDistrict", descriptionKey: "coordinateDistrictHint", roadmap: true }
 ];
 
@@ -958,7 +958,7 @@ window.addEventListener("geometry-zone-change", (event) => {
 window.addEventListener("geometry-district-change", (event) => {
   const place = districtPlaces.find((candidate) => candidate.id === event.detail?.id);
   if (place) showPlacePrompt(place);
-  else if (activePlace?.roadmap) hidePlacePrompt();
+  else if (activePlace?.district || activePlace?.roadmap) hidePlacePrompt();
 });
 window.addEventListener("geometry-npc-change", (event) => {
   if (event.detail?.id) showNpcPrompt(event.detail);

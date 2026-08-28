@@ -22,6 +22,14 @@ window.NM_UNITS['M-40'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'수를 일정한 간격으로 늘어놓으면 100번째 수를 하나씩 세지 않고 바로 말할 수 있어요. 어떻게요?',
+        en:'Line numbers up with a constant gap and you can name the 100th one without counting up to it. How?',
+        zh:'把数按固定间隔排好，不用一个个数就能说出第100个数。怎么做到的？' },
+      history:{ ko:'가장 오래된 수열 문제는 약 4,000년 전 이집트의 린드 파피루스에 있어요 — 곡물을 다섯 사람에게 일정한 차이로 나누는 문제였죠. 등차수열은 교과서보다 곡식 창고에서 먼저 쓰였어요.',
+        en:'The oldest sequence problem we know sits in the Egyptian Rhind Papyrus, about 4,000 years old — dividing grain among five people with a constant difference. Arithmetic sequences were used in grain stores long before textbooks.',
+        zh:'已知最古老的数列问题在约4000年前的埃及莱因德纸草书里——把谷物按固定差额分给五个人。等差数列在粮仓里的使用远早于教科书。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 일반항 aₙ=a₁+(n-1)d',en:'1) The general term aₙ=a₁+(n-1)d',zh:'① 通项公式aₙ=a₁+(n-1)d'},

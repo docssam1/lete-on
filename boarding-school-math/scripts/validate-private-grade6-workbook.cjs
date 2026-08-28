@@ -50,6 +50,50 @@ const GGA_PERPENDICULAR_HEIGHT_MIN = 4;
 const GGA_PERPENDICULAR_HEIGHT_MAX = 24;
 const GGA_TRIANGLE_AREA_MIN = 32n;
 const GGA_TRIANGLE_AREA_MAX = 240n;
+const SP_STATISTICS_DISPLAY_KIND = "finite-whole-number-list-v1";
+const SP_STATISTICS_CHECK_KINDS = new Set([
+  "statistics-observation-count",
+  "statistics-mean",
+  "statistics-median",
+  "statistics-range"
+]);
+const SP_UNIT_IDS = new Set(["ccss-6-sp-a", "ccss-6-sp-b"]);
+const SP_TEACHER_OBSERVATION_BY_UNIT_AND_PROFILE = Object.freeze({
+  "ccss-6-sp-a": Object.freeze({
+    "lesson-plan:core": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 통계적 질문이 변동성을 예상하는 이유를 설명하고, 분포의 중심·퍼짐·전체 모양을 자료의 맥락과 연결하는지를 기록한다. 이 기록은 완전 숙달, 배치 또는 승급 판정이 아니다.",
+      en: "Teacher observation only: record whether the learner explains why a statistical question anticipates variability and connects center, spread, and overall shape to the data context. This record is not a full-mastery, placement, or promotion decision.",
+      "zh-Hans": "仅限教师观察：记录学生是否能说明统计问题为何预期存在变异，并把中心、离散程度和整体形状与数据情境联系起来。该记录不用于完全掌握、分班或升学判定。"
+    }),
+    "assignment-builder:core": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 조사 대상·측정 속성·단위를 포함한 통계적 질문을 만들고 예상되는 변동성을 설명하는지를 기록한다.",
+      en: "Teacher observation only: record whether the learner writes a statistical question with a population, measured attribute, and unit, then explains the variability expected.",
+      "zh-Hans": "仅限教师观察：记录学生是否能写出包含调查对象、测量属性和单位的统计问题，并说明预期的变异。"
+    }),
+    "assignment-builder:advanced": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 두 분포의 중심·퍼짐·전체 모양을 비교하고, 관찰된 차이를 맥락에 맞게 해석하는지를 기록한다.",
+      en: "Teacher observation only: record whether the learner compares center, spread, and overall shape across two distributions and interprets the observed difference in context.",
+      "zh-Hans": "仅限教师观察：记录学生是否能比较两个分布的中心、离散程度和整体形状，并在情境中解释观察到的差异。"
+    })
+  }),
+  "ccss-6-sp-b": Object.freeze({
+    "lesson-plan:core": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 점도표·히스토그램·상자그림을 알맞게 구성하고, 중심과 변동성의 측정값을 분포 모양 및 맥락과 연결하는지를 기록한다. 이 기록은 완전 숙달, 배치 또는 승급 판정이 아니다.",
+      en: "Teacher observation only: record whether the learner constructs an appropriate dot plot, histogram, or box plot and relates measures of center and variability to distribution shape and context. This record is not a full-mastery, placement, or promotion decision.",
+      "zh-Hans": "仅限教师观察：记录学生是否能恰当地制作点图、直方图或箱线图，并把中心和变异性的度量与分布形状及情境联系起来。该记录不用于完全掌握、分班或升学判定。"
+    }),
+    "assignment-builder:core": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 관측값 수·측정 속성·단위를 명시하고, 수치 요약을 자료의 실제 질문과 연결하는지를 기록한다.",
+      en: "Teacher observation only: record whether the learner states the number of observations, measured attribute, and unit and connects numerical summaries to the real data question.",
+      "zh-Hans": "仅限教师观察：记录学生是否能说明观测值数量、测量属性和单位，并把数值概括与真实数据问题联系起来。"
+    }),
+    "assignment-builder:advanced": Object.freeze({
+      ko: "교사 관찰 전용: 학생이 극단값이나 군집이 평균·중앙값·변동성에 미치는 영향을 설명하고, 어떤 측정값이 더 적절한지 정당화하는지를 기록한다.",
+      en: "Teacher observation only: record whether the learner explains how extremes or clusters affect mean, median, and variability and justifies which measure is more appropriate.",
+      "zh-Hans": "仅限教师观察：记录学生是否能说明极端值或聚类如何影响平均数、中位数和变异性，并论证哪一种度量更合适。"
+    })
+  })
+});
 const RPA_UNIT_RATE_EVIDENCE_ID = "6.RP.A.2-fixed-orientation-supplied-units-positive-whole-input-quantities-exact-unit-rate-magnitude";
 const RPA_UNIT_RATE_CHECK_KIND = "positive-whole-input-quantities-exact-unit-rate-magnitude";
 const RPA_RATE_SITUATION_KIND = "fixed-orientation-supplied-units-positive-whole-input-quantities-v2";
@@ -279,7 +323,7 @@ const BINDING_KEYS = new Set([
   "resourceType", "bindingState"
 ]);
 const STUDENT_COMPONENT_KEYS = new Set([
-  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram", "rateSituation", "fractionDivisionSituation", "nsbOperationSituation"
+  "componentId", "componentType", "sequence", "contentByLocale", "responseMode", "teacherReferenceId", "relationTable", "geometryDiagram", "rateSituation", "fractionDivisionSituation", "nsbOperationSituation", "statisticsDisplay"
 ]);
 const TEACHER_COMPONENT_KEYS = new Set(["componentId", "componentType", "sequence", "contentByLocale"]);
 const SEGMENT_KEYS = new Set(["segmentId", "sequence", "minutes", "instructionByLocale"]);
@@ -306,6 +350,7 @@ const RELATION_TABLE_KEYS = new Set(["form", "independentSymbol", "dependentSymb
 const GEOMETRY_DIAGRAM_KEYS = new Set(["kind", "base", "perpendicularHeight", "heightFoot"]);
 const RATE_SITUATION_KEYS = new Set(["kind", "contextKind", "numeratorQuantity", "denominatorQuantity", "numeratorUnitCode", "denominatorUnitCode", "orientation"]);
 const FRACTION_DIVISION_SITUATION_KEYS = new Set(["kind", "dividendNumerator", "dividendDenominator", "divisorNumerator", "divisorDenominator", "orientation"]);
+const STATISTICS_DISPLAY_KEYS = new Set(["kind", "values"]);
 const RESPONSE_MODES = new Set(["ratio-canonical", "numeric-exact", "comparison-symbol-exact", "truth-value-exact"]);
 const GGA_EVALUATION_MODES = new Set(["automatic-evidence", "teacher-review-only"]);
 const TEACHING_COMPONENT_TYPES = new Set(["concept-summary", "worked-example"]);
@@ -1129,6 +1174,30 @@ function nsbOperationSituationsExactlyMatch(left, right, reference) {
   return left.kind !== "decimal-operation" || left.operation === right.operation;
 }
 
+function validateStatisticsValues(values, reference) {
+  assertDenseArray(values, "SP_STATISTICS_DISPLAY_INVALID", reference);
+  assert(
+    values.length >= 5 && values.length <= 15 &&
+      values.every(function (value) { return Number.isSafeInteger(value) && value >= 0 && value <= 100; }),
+    "SP_STATISTICS_DISPLAY_INVALID",
+    reference
+  );
+}
+
+function validateStatisticsDisplay(display, reference) {
+  assertExactDataKeys(display, Array.from(STATISTICS_DISPLAY_KEYS), "SP_STATISTICS_DISPLAY_INVALID", reference);
+  assert(display.kind === SP_STATISTICS_DISPLAY_KIND, "SP_STATISTICS_DISPLAY_INVALID", reference);
+  validateStatisticsValues(display.values, reference);
+}
+
+function statisticsDisplaysExactlyMatch(left, right, reference) {
+  validateStatisticsDisplay(left, reference);
+  assertExactDataKeys(right, ["kind", "values"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(SP_STATISTICS_CHECK_KINDS.has(right.kind), "ARITHMETIC_CHECK_INVALID", reference);
+  validateStatisticsValues(right.values, reference);
+  return JSON.stringify(left.values) === JSON.stringify(right.values);
+}
+
 function validateStudentComponent(component, policy, reference, unitId, nsaV2Contract, nsbV1Contract) {
   assertOnlyKeys(component, STUDENT_COMPONENT_KEYS, "STUDENT_COMPONENT_INVALID", reference);
   assertStudentNeutralId(component.componentId, "cmp-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -1146,6 +1215,7 @@ function validateStudentComponent(component, policy, reference, unitId, nsaV2Con
     } else {
       assert(component.nsbOperationSituation === undefined, "NSB_OPERATION_SITUATION_INVALID", reference);
     }
+    assert(component.statisticsDisplay === undefined, "SP_STATISTICS_DISPLAY_INVALID", reference);
   } else {
     assert(RESPONSE_MODES.has(component.responseMode), "STUDENT_COMPONENT_INVALID", reference);
     assertStudentNeutralId(component.teacherReferenceId, "ref-dft-", "STUDENT_COMPONENT_INVALID", reference);
@@ -1165,6 +1235,8 @@ function validateStudentComponent(component, policy, reference, unitId, nsaV2Con
     else assert(component.fractionDivisionSituation === undefined, "NSA_FRACTION_DIVISION_SITUATION_INVALID", reference);
     if (unitId === "ccss-6-ns-b" && nsbV1Contract) validateNsbOperationSituation(component.nsbOperationSituation, reference);
     else assert(component.nsbOperationSituation === undefined, "NSB_OPERATION_SITUATION_INVALID", reference);
+    if (SP_UNIT_IDS.has(unitId)) validateStatisticsDisplay(component.statisticsDisplay, reference);
+    else assert(component.statisticsDisplay === undefined, "SP_STATISTICS_DISPLAY_INVALID", reference);
   }
 }
 
@@ -1842,6 +1914,69 @@ function validateNsbWorkedExampleContent(component, reference) {
   });
 }
 
+function canonicalStatisticsAnswer(check, reference) {
+  assertExactDataKeys(check, ["kind", "values"], "ARITHMETIC_CHECK_INVALID", reference);
+  assert(SP_STATISTICS_CHECK_KINDS.has(check.kind), "ARITHMETIC_CHECK_INVALID", reference);
+  assertDenseArray(check.values, "ARITHMETIC_CHECK_INVALID", reference);
+  assert(
+    check.values.length >= 5 && check.values.length <= 15 &&
+      check.values.every(function (value) { return Number.isSafeInteger(value) && value >= 0 && value <= 100; }),
+    "ARITHMETIC_CHECK_INVALID",
+    reference
+  );
+  if (check.kind === "statistics-observation-count") return String(check.values.length);
+  const sorted = check.values.slice().sort(function (left, right) { return left - right; });
+  if (check.kind === "statistics-mean") {
+    return canonicalRational(
+      check.values.reduce(function (sum, value) { return sum + BigInt(value); }, 0n),
+      BigInt(check.values.length),
+      reference
+    );
+  }
+  if (check.kind === "statistics-median") {
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 1
+      ? String(sorted[middle])
+      : canonicalRational(BigInt(sorted[middle - 1] + sorted[middle]), 2n, reference);
+  }
+  return String(sorted[sorted.length - 1] - sorted[0]);
+}
+
+function statisticsPromptTemplates(kind, reference) {
+  assert(SP_STATISTICS_CHECK_KINDS.has(kind), "SP_STATISTICS_PROMPT_INVALID", reference);
+  const templates = Object.freeze({
+    "statistics-observation-count": Object.freeze({
+      ko: "표시된 자료 목록을 사용하세요. 관측값은 모두 몇 개인가요?",
+      en: "Use the displayed data list. How many observations are there?",
+      "zh-Hans": "使用显示的数据列表。共有多少个观测值？"
+    }),
+    "statistics-mean": Object.freeze({
+      ko: "표시된 자료 목록을 사용하세요. 산술평균을 구하세요.",
+      en: "Use the displayed data list. Find the arithmetic mean.",
+      "zh-Hans": "使用显示的数据列表。求算术平均数。"
+    }),
+    "statistics-median": Object.freeze({
+      ko: "표시된 자료 목록을 사용하세요. 중앙값을 구하세요.",
+      en: "Use the displayed data list. Find the median.",
+      "zh-Hans": "使用显示的数据列表。求中位数。"
+    }),
+    "statistics-range": Object.freeze({
+      ko: "표시된 자료 목록을 사용하세요. 최댓값과 최솟값의 차를 구하세요.",
+      en: "Use the displayed data list. Find the difference between the maximum and minimum.",
+      "zh-Hans": "使用显示的数据列表。求最大值与最小值之差。"
+    })
+  });
+  return templates[kind];
+}
+
+function validateStatisticsPrompt(component, check, reference) {
+  assert(statisticsDisplaysExactlyMatch(component.component.statisticsDisplay, check, reference), "SP_STATISTICS_SITUATION_MISMATCH", reference);
+  const templates = statisticsPromptTemplates(check.kind, reference);
+  Object.entries(component.component.contentByLocale).forEach(function (entry) {
+    assert(entry[1] === templates[entry[0]], "SP_STATISTICS_PROMPT_INVALID", reference);
+  });
+}
+
 function canonicalAnswer(check, reference) {
   assertRecord(check, "ARITHMETIC_CHECK_INVALID", reference);
   const kind = ownDataValue(check, "kind", "ARITHMETIC_CHECK_INVALID", reference);
@@ -1898,6 +2033,7 @@ function canonicalAnswer(check, reference) {
   if (kind === "decimal-operation") return canonicalDecimalOperation(check, reference);
   if (kind === "greatest-common-factor") return canonicalWholeGcf(check, reference);
   if (kind === "least-common-multiple") return canonicalWholeLcm(check, reference);
+  if (SP_STATISTICS_CHECK_KINDS.has(kind)) return canonicalStatisticsAnswer(check, reference);
   fail("ARITHMETIC_CHECK_INVALID", reference);
 }
 
@@ -1913,6 +2049,36 @@ function validateNscAutomaticEvidence(answerReferences, unit, reference) {
   assert(answerReferences.some(function (answerReference) {
     return answerReference.arithmeticCheck.kind === "signed-rational-operation" && answerReference.arithmeticCheck.operation === "axis-distance";
   }), "NSC_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+}
+
+function validateSpAutomaticEvidence(answerReferences, componentMap, unit, reference) {
+  if (!SP_UNIT_IDS.has(unit.unitId)) return;
+  assert(answerReferences.length === 22, "SP_AUTOMATIC_EVIDENCE_INCOMPLETE", reference);
+  const kinds = new Set();
+  const facts = new Set();
+  answerReferences.forEach(function (answerReference) {
+    assert(
+      answerReference.responseMode === "numeric-exact" && SP_STATISTICS_CHECK_KINDS.has(answerReference.arithmeticCheck.kind),
+      "SP_AUTOMATIC_EVIDENCE_INCOMPLETE",
+      answerReference.referenceId
+    );
+    const component = componentMap.get(answerReference.componentId);
+    assert(component, "SP_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    assert(
+      statisticsDisplaysExactlyMatch(component.component.statisticsDisplay, answerReference.arithmeticCheck, answerReference.referenceId),
+      "SP_STATISTICS_SITUATION_MISMATCH",
+      answerReference.referenceId
+    );
+    kinds.add(answerReference.arithmeticCheck.kind);
+    const fact = `${answerReference.arithmeticCheck.kind}|${answerReference.arithmeticCheck.values.join(",")}`;
+    assert(!facts.has(fact), "SP_AUTOMATIC_EVIDENCE_INCOMPLETE", answerReference.referenceId);
+    facts.add(fact);
+  });
+  assert(
+    Array.from(SP_STATISTICS_CHECK_KINDS).every(function (kind) { return kinds.has(kind); }),
+    "SP_AUTOMATIC_EVIDENCE_INCOMPLETE",
+    reference
+  );
 }
 
 function validateEebAutomaticEvidence(answerReferences, componentMap, unit, reference) {
@@ -2876,12 +3042,16 @@ function validateAnswerReference(answerReference, componentMap, policy, artifact
   if (artifact.resourceBinding.unitId === "ccss-6-ns-b" && nsbV1Contract) {
     assert(answerReference.responseMode === "numeric-exact" && NSB_SUPPORTED_CHECK_KINDS.has(answerReference.arithmeticCheck.kind), "NSB_RESPONSE_CONTRACT_INVALID", reference);
   }
+  if (SP_UNIT_IDS.has(artifact.resourceBinding.unitId)) {
+    assert(answerReference.responseMode === "numeric-exact" && SP_STATISTICS_CHECK_KINDS.has(answerReference.arithmeticCheck.kind), "SP_RESPONSE_CONTRACT_INVALID", reference);
+  }
   if (answerReference.arithmeticCheck.kind === "whole-number-power") validateWholeNumberPowerPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "positive-whole-equality-substitution-truth") validatePositiveWholeEqualitySubstitutionTruthPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === "direct-variation-whole-table-coefficient") validateDirectVariationWholeTableCoefficientPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === NSA_FRACTION_QUOTIENT_CHECK_KIND) validateNsaFractionQuotientPrompt(component, answerReference.arithmeticCheck, reference);
   if (artifact.resourceBinding.unitId === "ccss-6-ns-b" && nsbV1Contract) validateNsbOperationPrompt(component, answerReference.arithmeticCheck, reference);
   if (answerReference.arithmeticCheck.kind === GGA_TRIANGLE_AREA_CHECK_KIND) validateGgaRightTriangleAreaPrompt(component, answerReference.arithmeticCheck, reference);
+  if (SP_STATISTICS_CHECK_KINDS.has(answerReference.arithmeticCheck.kind)) validateStatisticsPrompt(component, answerReference.arithmeticCheck, reference);
   Object.entries(component.component.contentByLocale).forEach(function (entry) {
     assertStudentContentDoesNotRevealAnswer(entry[1], answerReference.expectedResponse, reference, entry[0]);
   });
@@ -2905,7 +3075,7 @@ function validateTeacherArtifact(artifact, plan, policy, seenArtifactIds, expect
   assert(observationComponents.length <= 1, "TEACHER_COMPONENT_INVALID", reference);
   assert(observationComponents.every(function () {
     return (
-      ["ccss-6-rp-a", "ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a"].includes(resource.unitId) ||
+      ["ccss-6-rp-a", "ccss-6-ns-c", "ccss-6-ee-a", "ccss-6-ee-b", "ccss-6-ee-c", "ccss-6-g-a", "ccss-6-sp-a", "ccss-6-sp-b"].includes(resource.unitId) ||
       (resource.unitId === "ccss-6-ns-a" && nsaV2Contract) ||
       (resource.unitId === "ccss-6-ns-b" && nsbV1Contract)
     ) && ["lesson-plan", "assignment-builder"].includes(resource.resourceType);
@@ -3095,6 +3265,31 @@ function validateNsbTeacherObservationEvidence(artifacts, unit, policy, nsbV1Con
   });
 }
 
+function validateSpTeacherObservationEvidence(artifacts, unit, policy, reference) {
+  if (!SP_UNIT_IDS.has(unit.unitId)) return;
+  const policyByProfile = SP_TEACHER_OBSERVATION_BY_UNIT_AND_PROFILE[unit.unitId];
+  const requiredArtifactProfiles = [
+    { resourceType: "lesson-plan", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "core" },
+    { resourceType: "assignment-builder", levelId: "advanced" }
+  ];
+  requiredArtifactProfiles.forEach(function (profile) {
+    const matches = artifacts.filter(function (entry) {
+      return entry.resource.resourceType === profile.resourceType && entry.resource.levelId === profile.levelId;
+    });
+    assert(matches.length === 1, "SP_TEACHER_OBSERVATION_INCOMPLETE", reference);
+    const observations = matches[0].artifact.components.filter(function (component) {
+      return component.componentType === NON_AUTOMATIC_TEACHER_OBSERVATION_COMPONENT;
+    });
+    assert(observations.length === 1, "SP_TEACHER_OBSERVATION_INCOMPLETE", matches[0].artifact.artifactId);
+    const exactContent = policyByProfile[`${profile.resourceType}:${profile.levelId}`];
+    assert(exactContent, "SP_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    Object.entries(observations[0].contentByLocale).forEach(function (entry) {
+      assert(policy.included.includes(entry[0]) && entry[1] === exactContent[entry[0]], "SP_TEACHER_OBSERVATION_INCOMPLETE", observations[0].componentId);
+    });
+  });
+}
+
 function validateAssessmentPlaceholders(placeholders, plan, reference) {
   assertDenseArray(placeholders, "ASSESSMENT_PLACEHOLDERS_INVALID", reference);
   const expected = plan.resourcesByAudience.student.filter(function (resource) {
@@ -3247,6 +3442,7 @@ function validatePack(pack, fileName) {
   validateRpaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
   validateNsaTeacherObservationEvidence(artifacts, unit, pack.localePolicy, nsaV2Contract, reference);
   validateNsbTeacherObservationEvidence(artifacts, unit, pack.localePolicy, nsbV1Contract, reference);
+  validateSpTeacherObservationEvidence(artifacts, unit, pack.localePolicy, reference);
 
   const componentMap = new Map();
   sections.forEach(function (entry) {
@@ -3273,6 +3469,7 @@ function validatePack(pack, fileName) {
   validateRpaAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateNsaAutomaticEvidence(answerReferences, componentMap, unit, nsaV2Contract, reference);
   validateNsbAutomaticEvidence(answerReferences, componentMap, unit, nsbV1Contract, reference);
+  validateSpAutomaticEvidence(answerReferences, componentMap, unit, reference);
   validateEebStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEeaStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
   validateEecStudentVisibleSeparation(pack, sections, answerReferences, unit, reference);
@@ -3477,6 +3674,9 @@ module.exports = Object.freeze({
   GGA_GEOMETRY_DIAGRAM_KIND,
   GGA_EVALUATION_MODES,
   GGA_TEACHER_OBSERVATION_BY_PROFILE,
+  SP_STATISTICS_DISPLAY_KIND,
+  SP_STATISTICS_CHECK_KINDS,
+  SP_TEACHER_OBSERVATION_BY_UNIT_AND_PROFILE,
   NSA_LOCKED_EVIDENCE_BY_LOCALE,
   NSA_FRACTION_QUOTIENT_EVIDENCE_ID,
   NSA_FRACTION_QUOTIENT_CHECK_KIND,
@@ -3506,10 +3706,12 @@ module.exports = Object.freeze({
   canonicalGgaRightTriangleArea,
   canonicalNsaPositiveProperFractionQuotient,
   canonicalPositiveWholeInputExactUnitRateMagnitude,
+  canonicalStatisticsAnswer,
   validateGgaGeometryDiagram,
   validateRpaRateSituation,
   validateNsaFractionDivisionSituation,
   validateNsbOperationSituation,
+  validateStatisticsDisplay,
   validateGgaRightTriangleAreaPrompt,
   validateNsaFractionQuotientPrompt,
   validateNsbOperationPrompt,
@@ -3524,6 +3726,7 @@ module.exports = Object.freeze({
   validateRpaAutomaticEvidence,
   validateNsaAutomaticEvidence,
   validateNsbAutomaticEvidence,
+  validateSpAutomaticEvidence,
   validatePositiveWholeEqualitySubstitutionTruthPrompt,
   validateEeaWorkedExampleContent,
   validateEebWorkedExampleContent,
@@ -3541,6 +3744,7 @@ module.exports = Object.freeze({
   validateRpaTeacherObservationEvidence,
   validateNsaTeacherObservationEvidence,
   validateNsbTeacherObservationEvidence,
+  validateSpTeacherObservationEvidence,
   containsEebTruthResponseLabel,
   assertEebNonWorkedStudentTextHasNoNumericOrTruthResponse,
   assertEeaNonWorkedStudentTextHasNoNumericNotation,

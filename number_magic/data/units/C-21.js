@@ -21,6 +21,14 @@ window.NM_UNITS['C-21'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'어제 3타수 2안타, 오늘 4타수 3안타. 이틀 평균 타율은 2/3 + 3/4을 반으로 나눈 값일까요?',
+        en:'Two hits in three at-bats yesterday, three in four today. Is the two-day average just half of 2/3 + 3/4?',
+        zh:'昨天3打数2安打，今天4打数3安打。两天的平均打击率是2/3 + 3/4的一半吗？' },
+      history:{ ko:'아니에요. 이틀 동안 타석은 3+4=7번, 안타는 2+3=5개니까 5/7이에요. 분수를 더할 때 분모끼리 분자끼리 더하면 안 되지만, 타율은 원래 그렇게 세는 수라서 다르게 계산해야 해요. 분수는 무엇을 몇 등분한 것인지 먼저 확인하는 게 언제나 첫걸음이에요.',
+        en:'No. Over the two days there were 3+4 = 7 at-bats and 2+3 = 5 hits, so the average is 5/7. You never add fractions by adding tops and bottoms — but a batting average counts that way by definition, so it needs its own arithmetic. Always start by asking what is being divided into how many parts.',
+        zh:'不是。两天一共3+4=7次打数、2+3=5次安打，所以是5/7。加分数时绝不能分子加分子、分母加分母——但打击率本来就是那样统计的，所以要另外算。先弄清楚是把什么分成了几份，永远是第一步。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 분수는 피자 조각',en:'1) Fractions are pizza slices',zh:'① 分数是披萨块'},
