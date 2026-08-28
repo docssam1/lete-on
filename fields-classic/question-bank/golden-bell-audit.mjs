@@ -185,6 +185,27 @@ for (const [lessonId, approvedAnswers] of approvedBook6Answers) {
 const requiredBook6Units = ["수직선의 분할과 비", "도형의 둘레", "연속수의 합", "수와 숫자의 개수"];
 for (const unit of requiredBook6Units) if (!book6.lessons.some((lesson) => lesson.unit === unit)) fail(`book-06: missing ${unit}`);
 
+const book7 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-07");
+const approvedBook7Answers = new Map([
+  ["elapsed-time", ["4시간 50분", "4시간 23분", "오후 1시 45분", "4시간 30분"]],
+  ["shared-polygon-matchsticks", ["21", "69"]],
+  ["closed-loop-planting", ["300", "96", "120"]],
+  ["venn-overlap-all", ["4", "3", "8", "11"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook7Answers) {
+  const lesson = book7.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-07: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-07/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-07/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook7Units = ["달력과 시계", "규칙 찾기와 수열", "가로수 심기", "대칭수와 벤다이어그램"];
+for (const unit of requiredBook7Units) if (!book7.lessons.some((lesson) => lesson.unit === unit)) fail(`book-07: missing ${unit}`);
+
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
 const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
   const [row, column] = visual.path[visual.target.index];
@@ -246,6 +267,34 @@ if ([inclusiveRange(5, 15), inclusiveRange(10, 69), inclusiveRange(21, 78), incl
 const writtenDigits = (start, end) => Array.from({ length: end - start + 1 }, (_, index) => String(start + index).length).reduce((sum, count) => sum + count, 0);
 if ([inclusiveRange(9, 26), inclusiveRange(14, 57), writtenDigits(12, 39), writtenDigits(1, 100), writtenDigits(1, 35)].join(",") !== "18,44,56,192,61") {
   fail("book-06: number and written-digit count failed");
+}
+
+const minutes = (hour, minute, afternoon = false) => (hour % 12 + (afternoon ? 12 : 0)) * 60 + minute;
+const duration = (start, end) => end - start;
+if ([
+  duration(minutes(9, 40), minutes(2, 30, true)),
+  duration(minutes(10, 53), minutes(3, 16, true)),
+  duration(minutes(5, 45), minutes(10, 15))
+].join(",") !== "290,263,270") fail("book-07: elapsed-time calculation failed");
+if (minutes(11, 10) + 155 !== minutes(1, 45, true) || minutes(8, 25) + 230 !== minutes(12, 15, true)) {
+  fail("book-07: end-time calculation failed");
+}
+const sharedPolygonMatches = (sides, count) => sides + (sides - 1) * (count - 1);
+if ([sharedPolygonMatches(3, 10), sharedPolygonMatches(3, 34), sharedPolygonMatches(4, 8)].join(",") !== "21,69,25") {
+  fail("book-07: shared-polygon matchstick calculation failed");
+}
+const closedPerimeter = (count, spacing) => count * spacing;
+if ([closedPerimeter(20, 15), closedPerimeter(8, 12), closedPerimeter(30 / 2, 8), closedPerimeter(18, 9)].join(",") !== "300,96,120,162") {
+  fail("book-07: closed-loop planting calculation failed");
+}
+const vennParts = (total, leftTotal, rightTotal) => {
+  const overlap = leftTotal + rightTotal - total;
+  return { overlap, leftOnly: leftTotal - overlap, rightOnly: rightTotal - overlap, exactlyOne: total - overlap };
+};
+const sourceVenn = vennParts(15, 7, 12);
+const storyVenn = vennParts(24, 14, 17);
+if ([sourceVenn.overlap, sourceVenn.leftOnly, sourceVenn.rightOnly, sourceVenn.exactlyOne, storyVenn.overlap].join(",") !== "4,3,8,11,7") {
+  fail("book-07: venn calculation failed");
 }
 
 function canonicalPolyomino(cells) {

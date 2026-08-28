@@ -1195,8 +1195,214 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-07",
+    label: "7권",
+    title: "달력·수열·가로수·집합",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx",
+      companionFile: "교사용지도서_더클래식_1과정_7N30권_달력과_우기기(230825).pdf",
+      verified: true,
+      note: "66슬라이드 교사용 자료와 지도서를 대조하고, 검은 지문·그림과 빨간 답 표시를 분리해 독립 계산할 수 있는 대표 활동만 공개"
+    },
+    lessons: [
+      {
+        id: "elapsed-time",
+        unit: "달력과 시계",
+        title: "시작과 끝 사이의 시간을 구해요",
+        sourceLocator: "교사용 PPTX 슬라이드 7, 시간 계산 활동",
+        sourceTypeIds: ["elapsed-time-analog-b7", "find-end-time-b7"],
+        representativeConcept: "오전·오후와 60분 받아올림을 살피며 시작 시각, 끝 시각, 걸린 시간 중 빈 값을 구함",
+        story: {
+          title: "하루 일정표의 빈칸",
+          text: "시작 시각과 끝 시각 사이에는 몇 시간이 지났는지, 또는 시작 시각에 걸린 시간을 더하면 몇 시가 되는지 찾습니다.",
+          mission: "정오를 지나는지 먼저 보고, 분이 60을 넘거나 모자라면 1시간과 바꾸세요."
+        },
+        explanation: {
+          headline: "시간과 분을 따로 계산하고 60분을 1시간으로 바꿉니다.",
+          steps: [
+            "시작 시각과 끝 시각을 같은 오전·오후 기준으로 놓습니다.",
+            "분끼리 계산하며 60분이 되면 1시간으로 받아올리거나 받아내립니다.",
+            "구한 시간을 시작 시각에 다시 더해 끝 시각이 맞는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "clock-elapsed-and-end-time",
+          prompt: "시작 시각과 끝 시각 또는 걸린 시간을 보고 물음에 답하시오.",
+          visual: {
+            kind: "book7-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "time-equation", expression: "오전 9시 40분 → 오후 2시 30분" } },
+              { label: "(2)", visual: { subtype: "time-equation", expression: "오전 10시 53분 → 오후 3시 16분" } },
+              { label: "(3)", visual: { subtype: "time-equation", expression: "오전 11시 10분 + 2시간 35분" } },
+              { label: "(4)", visual: { subtype: "time-equation", expression: "오전 5시 45분 → 오전 10시 15분" } }
+            ]
+          },
+          items: [
+            { id: "elapsed-940-230", prompt: "(1) 걸린 시간", answerMode: "input", answer: "4시간 50분" },
+            { id: "elapsed-1053-316", prompt: "(2) 걸린 시간", answerMode: "input", answer: "4시간 23분" },
+            { id: "end-1110", prompt: "(3) 끝나는 시각", answerMode: "input", answer: "오후 1시 45분" },
+            { id: "elapsed-545-1015", prompt: "(4) 걸린 시간", answerMode: "input", answer: "4시간 30분" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "clock-elapsed-and-end-time",
+          story: "체험 학습 버스가 오전 8시 25분에 출발해 3시간 50분 동안 달렸습니다.",
+          prompt: "버스가 도착한 시각을 쓰세요.",
+          visual: { kind: "book7", subtype: "time-equation", expression: "오전 8시 25분 + 3시간 50분" },
+          answerMode: "input",
+          answer: "오후 12시 15분",
+          explanation: "8시 25분에 3시간을 더하면 11시 25분이고, 50분을 더하면 오후 12시 15분입니다."
+        }
+      },
+      {
+        id: "shared-polygon-matchsticks",
+        unit: "규칙 찾기와 수열",
+        title: "맞닿은 도형의 성냥개비를 세어요",
+        sourceLocator: "교사용 PPTX 슬라이드 18, 도형에서의 등차수열 활동 12",
+        sourceTypeIds: ["shared-polygon-matchsticks-b7"],
+        representativeConcept: "첫 다각형의 변 수에서 시작해 도형을 하나 붙일 때마다 맞닿은 한 변을 제외한 변 수만큼 더함",
+        story: {
+          title: "성냥개비 도형 전시장",
+          text: "도형을 한 변씩 맞대어 이어 붙이면 맞닿은 변은 새 성냥개비가 필요하지 않습니다.",
+          mission: "첫 도형을 센 뒤 새 도형 하나를 붙일 때 몇 개가 늘어나는지 찾으세요."
+        },
+        explanation: {
+          headline: "첫 도형의 변 수와 그다음부터 늘어나는 수가 다릅니다.",
+          steps: [
+            "첫 도형에 필요한 성냥개비 수를 셉니다.",
+            "새 도형은 한 변을 함께 쓰므로 변 수보다 1개 적게 늘어납니다.",
+            "목표 개수보다 하나 적은 횟수만큼 늘어난 수를 더합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "shared-polygon-matchstick-sequence",
+          prompt: "정삼각형을 한 변씩 맞대어 이어 붙일 때 필요한 성냥개비 수를 구하시오.",
+          visual: {
+            kind: "book7-set",
+            panels: [
+              { label: "정삼각형 10개", visual: { subtype: "matchsticks", sides: 3, shown: 4, count: 10 } },
+              { label: "정삼각형 34개", visual: { subtype: "matchsticks", sides: 3, shown: 4, count: 34 } }
+            ]
+          },
+          items: [
+            { id: "triangle-ten", prompt: "(1) 정삼각형 10개에 필요한 성냥개비 수", answerMode: "input", inputMode: "numeric", answer: "21" },
+            { id: "triangle-thirty-four", prompt: "(2) 정삼각형 34개에 필요한 성냥개비 수", answerMode: "input", inputMode: "numeric", answer: "69" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "shared-polygon-matchstick-sequence",
+          story: "정사각형 방을 한 변씩 맞대어 일렬로 8개 만들려고 합니다.",
+          prompt: "필요한 성냥개비는 모두 몇 개일까요?",
+          visual: { kind: "book7", subtype: "matchsticks", sides: 4, shown: 4, count: 8 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "25",
+          explanation: "첫 정사각형은 4개이고 이후에는 3개씩 7번 늘어나므로 4+3×7=25개입니다."
+        }
+      },
+      {
+        id: "closed-loop-planting",
+        unit: "가로수 심기",
+        title: "닫힌 둘레의 간격과 개수를 연결해요",
+        sourceLocator: "교사용 PPTX 슬라이드 50, 원 모양 호수 활동 05~07",
+        sourceTypeIds: ["closed-perimeter-from-spacing-count-b7", "between-object-perimeter-b7"],
+        representativeConcept: "원처럼 닫힌 둘레에서는 물체 수와 간격 수가 같음을 이용해 둘레 또는 물체 수를 구함",
+        story: {
+          title: "호숫가 산책길",
+          text: "원 모양 길은 시작점과 끝점이 이어집니다. 그래서 나무 한 그루마다 다음 나무까지의 간격이 하나씩 생깁니다.",
+          mission: "닫힌 길에서는 물체 수와 간격 수가 같다는 것을 먼저 표시하세요."
+        },
+        explanation: {
+          headline: "닫힌 길의 둘레는 물체 수×한 간격의 길이입니다.",
+          steps: [
+            "길이 닫혀 있는지, 양끝이 따로 있는지 확인합니다.",
+            "닫힌 길에서는 물체 수와 간격 수가 같습니다.",
+            "간격 수와 한 간격의 길이를 곱해 둘레를 구합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "closed-loop-spacing-count",
+          prompt: "원 모양 호수 주위의 물체 수와 간격을 보고 호수의 둘레를 구하시오.",
+          visual: {
+            kind: "book7-set",
+            panels: [
+              { label: "(1) 나무 20그루", visual: { subtype: "perimeter-loop", spacing: 15, count: 20, perimeter: "?" } },
+              { label: "(2) 가로등 8개", visual: { subtype: "perimeter-loop", spacing: 12, count: 8, perimeter: "?" } },
+              { label: "(3) 가로등 사이 나무 2그루", visual: { subtype: "between-loop", oldCount: 15, newPerGap: 2 } }
+            ]
+          },
+          items: [
+            { id: "trees-twenty", prompt: "(1) 나무 사이가 15m일 때 호수의 둘레(m)", answerMode: "input", inputMode: "numeric", answer: "300" },
+            { id: "lamps-eight", prompt: "(2) 가로등 사이가 12m일 때 호수의 둘레(m)", answerMode: "input", inputMode: "numeric", answer: "96" },
+            { id: "trees-between-lamps", prompt: "(3) 나무 30그루가 가로등 사이마다 2그루씩 있고 가로등 사이가 8m일 때 둘레(m)", answerMode: "input", inputMode: "numeric", answer: "120" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "closed-loop-spacing-count",
+          story: "둥근 화단 둘레에 꽃나무 18그루를 9m 간격으로 심었습니다.",
+          prompt: "화단의 둘레는 몇 m일까요?",
+          visual: { kind: "book7", subtype: "perimeter-loop", spacing: 9, count: 18, perimeter: "?" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "162",
+          explanation: "닫힌 둘레에서는 나무 18그루와 간격 18곳이 같으므로 18×9=162m입니다."
+        }
+      },
+      {
+        id: "venn-overlap-all",
+        unit: "대칭수와 벤다이어그램",
+        title: "겹친 곳을 먼저 찾아요",
+        sourceLocator: "교사용 PPTX 슬라이드 63, 벤다이어그램 활동 01",
+        sourceTypeIds: ["venn-overlap-all-b7", "venn-exactly-one-b7"],
+        representativeConcept: "모두 적어도 한 조건에 속할 때 두 조건의 수를 더해 전체보다 많이 센 만큼을 겹친 수로 구함",
+        story: {
+          title: "과일 취향 조사표",
+          text: "두 과일을 모두 좋아하는 친구는 왼쪽 원과 오른쪽 원에서 한 번씩, 모두 두 번 세어집니다.",
+          mission: "두 조건의 수를 더한 뒤 전체보다 많이 센 수를 겹친 곳에 적으세요."
+        },
+        explanation: {
+          headline: "두 집합의 합에서 전체를 빼면 겹친 수가 됩니다.",
+          steps: [
+            "두 조건에 해당하는 수를 먼저 더합니다.",
+            "모두 적어도 한 조건에 속하므로 전체 수를 한 번 뺍니다.",
+            "각 조건의 수에서 겹친 수를 빼 왼쪽만, 오른쪽만을 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "two-set-all-in-union",
+          prompt: "친구 15명이 모두 사과나 포도 중 적어도 하나를 좋아합니다. 사과 7명, 포도 12명일 때 물음에 답하시오.",
+          visual: { kind: "book7", subtype: "venn", labels: ["사과", "포도"], total: 15, leftTotal: 7, rightTotal: 12, leftOnly: 3, overlap: 4, rightOnly: 8, neither: 0 },
+          items: [
+            { id: "both-fruits", prompt: "(1) 사과와 포도를 모두 좋아하는 친구 수", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "apple-only", prompt: "(2) 사과만 좋아하는 친구 수", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "grape-only", prompt: "(3) 포도만 좋아하는 친구 수", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "exactly-one-fruit", prompt: "(4) 두 과일 중 하나만 좋아하는 친구 수", answerMode: "input", inputMode: "numeric", answer: "11" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "two-set-all-in-union",
+          story: "친구 24명이 모두 고양이나 강아지 중 적어도 하나를 좋아합니다. 고양이를 좋아하는 친구는 14명, 강아지를 좋아하는 친구는 17명입니다.",
+          prompt: "두 동물을 모두 좋아하는 친구는 몇 명일까요?",
+          visual: { kind: "book7", subtype: "venn", labels: ["고양이", "강아지"], total: 24, leftTotal: 14, rightTotal: 17, leftOnly: "?", overlap: "?", rightOnly: "?", neither: 0 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "7",
+          explanation: "14+17=31명으로 전체 24명보다 7명을 더 세었으므로 두 동물을 모두 좋아하는 친구는 7명입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-07", "7권", "규칙과 달력", "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx", "source-located"],
     ["book-08", "8권", "매트릭스와 수 카드", "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx", "source-located"],
     ["book-09", "9권", "도형분할과 논리", "더클래식_1과정_9N30권_골든벨_230817 (1).pdf", "source-located"],
     ["book-10", "10권", "연속수와 따라잡기", "", "source-needed"]
