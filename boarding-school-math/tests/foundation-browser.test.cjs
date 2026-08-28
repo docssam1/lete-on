@@ -14,6 +14,11 @@ let baseUrl;
 test.before(async function () {
   server = http.createServer(function (request, response) {
     const requestPath = new URL(request.url, "http://127.0.0.1").pathname;
+    if (requestPath === "/api/grade6-local") {
+      response.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      response.end(JSON.stringify({ ok: false, message: "Static public test host" }));
+      return;
+    }
     const relative = requestPath === "/boarding-school-math/" ? "/boarding-school-math/index.html" : requestPath;
     const target = path.resolve(repoRoot, `.${relative}`);
     if (!target.startsWith(repoRoot) || !fs.existsSync(target) || !fs.statSync(target).isFile()) {
@@ -59,6 +64,7 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.match(await page.locator("#goal-format").textContent(), /90분 · 25문항/);
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo.html");
   assert.equal(await page.locator('.contest-path a[href="./sasmo.html"]').count(), 1);
+  assert.ok(await page.locator('a[href="./concept-learning.html"]').count() >= 1);
 
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
@@ -89,6 +95,18 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   await page.locator("#goal-grade-select").selectOption("11");
   assert.equal(await page.locator("#goal-title").textContent(), "AMC 12 · Grade 11 권장 경로");
   assert.match(await page.locator("#goal-eligibility").textContent(), /G12 이하/);
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "#map");
+  assert.equal(await page.locator("#goal-primary").textContent(), "고등 과정 설계 상태 보기");
+
+  await page.locator('[data-goal="school"]').click();
+  await page.locator("#goal-grade-select").selectOption("6");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./diagnostic.html");
+  await page.locator("#goal-grade-select").selectOption("5");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./catalog.html?role=student&grade=5");
+
+  await page.locator('[data-goal="singapore"]').click();
+  await page.locator("#goal-grade-select").selectOption("6");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
 
   await page.locator('[data-goal="sasmo"]').click();
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
@@ -257,22 +275,28 @@ test("legacy curriculum foundation remains available without feature regression"
   await linkedPage.close();
 });
 
-test("Grade 6 diagnostic blueprint separates role guidance from locked assessment content", async function () {
+test("Grade 6 diagnostic page explains the real flow while public hosting keeps assessment content locked", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /Grade 6 수학 실력 진단\s*무엇을 알고, 무엇을 배울지 연결합니다/);
+  assert.match(await page.locator("h1").innerText(), /42문항을 풀고,\s*5개 영역을 분석하고, 다음 학습을 처방합니다/);
   assert.equal(await page.locator("#item-count").textContent(), "42");
   assert.equal(await page.locator("#cluster-count").textContent(), "10");
   assert.equal(await page.locator("#domain-count").textContent(), "5");
-  assert.equal(await page.locator("#released-item-count").textContent(), "0");
-  assert.match(await page.locator(".status-chip").innerText(), /배포 대기 · 0\/42 공개/);
-  assert.match(await page.locator(".hero-meta").innerText(), /42\s*비공개 원고[\s\S]*0\s*배포 문항/);
-  assert.match(await page.locator(".release-note").innerText(), /로컬 독립 재검수 완료[\s\S]*인증 서명/);
+  assert.match(await page.locator(".status-chip").innerText(), /진단 · 분석 · 처방 v1/);
+  assert.match(await page.locator(".hero-meta").innerText(), /42\s*비공개 QA 문항[\s\S]*32\+10\s*자동채점 \+ 교사검토/);
+  assert.match(await page.locator(".release-note").innerText(), /42문항은 모두 독립 검수 대기[\s\S]*실제 학생 운영은 잠겨/);
+  assert.match(await page.locator(".release-note").innerText(), /10개 자체 제작 개념 레슨/);
+  assert.equal(await page.locator('a[href="./concept-learning.html"]').count() >= 1, true);
   assert.equal(await page.locator(".cluster-card").count(), 10);
+  assert.equal(await page.locator("#runtime-status-title").textContent(), "공개 안내 모드");
+  assert.equal(await page.locator("#student-start").isDisabled(), true);
+  assert.equal(await page.locator("#teacher-open").isDisabled(), true);
+  assert.equal(await page.locator("#student-workspace").isVisible(), true);
+  assert.equal(await page.locator("#teacher-workspace").isHidden(), true);
   assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-panel").innerText(), /학생은 평가 뒤에 무엇을 연습할지 확인합니다/);
+  assert.match(await page.locator("#role-panel").innerText(), /학생은 42문항을 풀고 자신의 강점과 다음 연습을 확인합니다/);
   assert.equal(await page.locator("#role-panel .role-link").getAttribute("href"), "./catalog.html?role=student&grade=6");
   assert.equal(await page.evaluate(function () {
     return window.GFIELDGrade6PlacementPlan.plan.slots.every(function (slot) {
@@ -283,18 +307,116 @@ test("Grade 6 diagnostic blueprint separates role guidance from locked assessmen
   ["qst-bnk-", "private-authoring", "privateDraft", "solutionByLocale", "rubricDraft", "scoringSpec"].forEach(function (token) {
     assert.equal(publicHtml.includes(token), false, `diagnostic leaked ${token}`);
   });
-  assert.equal(await page.locator("form").count(), 0);
-  assert.equal(await page.locator("button:not([data-role])").count(), 0);
+  assert.equal(await page.locator("#teacher-entry-form").count(), 1);
+  assert.equal(await page.locator("#student-question").innerText(), "");
+
+  await page.locator('[data-workspace-role="teacher"][role="tab"]').click();
+  assert.equal(await page.locator("#workspace-tab-teacher").getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#teacher-workspace").isVisible(), true);
+  assert.equal(await page.locator("#student-workspace").isHidden(), true);
 
   await page.locator('[data-role="teacher"]').click();
   assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-panel").innerText(), /교사는 영역별 근거를 수업 계획으로 연결합니다/);
+  assert.match(await page.locator("#role-panel").innerText(), /교사는 10개 서술 응답을 확인하고 처방 후보를 학교 검토로 넘깁니다/);
   assert.equal(await page.locator("#role-panel .role-link").getAttribute("href"), "./catalog.html?role=teacher&grade=6");
   await page.locator('[data-role="teacher"]').focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
   assert.deepEqual(errors, []);
   await page.close();
+});
+
+test("Grade 6 public concept learning provides ten deep-linked, fully solved lessons without graded assessment leakage", async function () {
+  const visualEvidence = {
+    "6.RP.A": /8권[\s\S]*12달러[\s\S]*14권[\s\S]*21달러/,
+    "6.NS.A": /3\/4 = 6\/8[\s\S]*6개/,
+    "6.NS.B": /84[\s\S]*60[\s\S]*최대공약수는 12/,
+    "6.NS.C": /-7\/4[\s\S]*-5\/3/,
+    "6.EE.A": /2³[\s\S]*8 \+ 4[\s\S]*31/,
+    "6.EE.B": /6x = 42[\s\S]*x = 7/,
+    "6.EE.C": /y = 3x \+ 2[\s\S]*23/,
+    "6.G.A": /\(0,0\)[\s\S]*\(8,4\)[\s\S]*\(4,6\)/,
+    "6.SP.A": /자료 A[\s\S]*자료 B[\s\S]*평균은 8/,
+    "6.SP.B": /2, 4, 4, 6, 9[\s\S]*9 − 2 = 7/
+  };
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = collectErrors(page);
+  const response = await page.goto(`${baseUrl}concept-learning.html?cluster=6.G.A`, { waitUntil: "networkidle" });
+  assert.equal(response.status(), 200);
+  assert.equal(await page.locator("#concept-list button").count(), 10);
+  assert.equal(await page.locator('#concept-list button[data-cluster="6.G.A"]').getAttribute("aria-current"), "page");
+  assert.match(await page.locator("#lesson h2").textContent(), /보이는 도형을 분해하고 보완해 넓이 구하기/);
+  assert.equal(await page.locator("#lesson .example-method").count(), 2);
+  assert.match(await page.locator("#lesson .example-result").innerText(), /40제곱단위[\s\S]*모두 40/);
+  assert.match(await page.locator("#lesson .checkpoint-gate").innerText(), /교사 배정 뒤 열립니다[\s\S]*자동 결정하지 않습니다/);
+  assert.equal(await page.locator("#lesson input, #lesson textarea, #lesson select").count(), 0);
+
+  for (const button of await page.locator("#concept-list button").all()) {
+    await button.click();
+    assert.equal(await page.locator("#lesson .example-method").count(), 2);
+    assert.equal(await page.locator("#lesson .math-visual").count(), 1);
+    assert.ok(await page.locator("#lesson .math-visual table, #lesson .math-visual svg[role=\"img\"], #lesson .math-visual [role=\"img\"]").count() >= 1);
+    const activeCluster = await button.getAttribute("data-cluster");
+    assert.match(await page.locator("#lesson .math-visual").innerText(), visualEvidence[activeCluster]);
+    assert.equal(await page.locator("#lesson .misconception-card").count(), 1);
+    assert.equal(await page.locator("#lesson .reflection-prompt").count(), 1);
+    assert.match(new URL(page.url()).searchParams.get("cluster"), /^6\.(?:RP|NS|EE|G|SP)\.[A-C]$/);
+  }
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.NS.B`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#lesson").innerText(), /84와 60의 최대공약수[\s\S]*최대공약수는 정확히 12/);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /126|공통 곱 42/);
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.EE.B`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#lesson").innerText(), /6x = 42[\s\S]*x = 7/);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /4x\s*-\s*7|29/);
+  const publicHtml = await page.locator("#lesson").innerHTML();
+  ["qst-bnk-", "slot-bdg-", "private-authoring", "privateDraft", "scoringSpec", "rubricDraft"].forEach(function (token) {
+    assert.equal(publicHtml.includes(token), false, `concept lesson leaked ${token}`);
+  });
+  assert.deepEqual(errors, []);
+  await page.close();
+
+  for (const width of [320, 390, 768]) {
+    const mobile = await browser.newPage({ viewport: { width, height: 844 }, isMobile: width < 600 });
+    const mobileErrors = collectErrors(mobile);
+    await mobile.goto(`${baseUrl}concept-learning.html?cluster=6.RP.A`, { waitUntil: "networkidle" });
+    for (const button of await mobile.locator("#concept-list button").all()) {
+      await button.click();
+      const dimensions = await mobile.evaluate(function () {
+        return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
+      });
+      const activeCluster = await button.getAttribute("data-cluster");
+      assert.equal(dimensions.scroll, dimensions.client, `concept learning ${activeCluster} overflow at ${width}px`);
+      const svgLabelAudit = await mobile.locator(".model-svg .svg-label").evaluateAll(function (nodes) {
+        const boxes = nodes.map(function (node) {
+          const rect = node.getBoundingClientRect();
+          return { text: node.textContent, left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, height: rect.height };
+        });
+        const overlaps = [];
+        for (let left = 0; left < boxes.length; left += 1) {
+          for (let right = left + 1; right < boxes.length; right += 1) {
+            const a = boxes[left]; const b = boxes[right];
+            if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) overlaps.push([a.text, b.text]);
+          }
+        }
+        return { minimumHeight: boxes.length ? Math.min(...boxes.map(function (box) { return box.height; })) : null, overlaps };
+      });
+      if (svgLabelAudit.minimumHeight != null) assert.ok(svgLabelAudit.minimumHeight >= 12, `${activeCluster} SVG labels unreadable at ${width}px`);
+      assert.deepEqual(svgLabelAudit.overlaps, [], `${activeCluster} SVG labels overlap at ${width}px`);
+    }
+    assert.equal(await mobile.locator(".site-header nav").isVisible(), true, `concept navigation hidden at ${width}px`);
+    const controls = await mobile.locator("#concept-list button, .lesson-nav-button, .brand, .site-header nav a, .concept-footer a").evaluateAll(function (nodes) {
+      return nodes.filter(function (node) { return !node.disabled; }).map(function (node) {
+        const rect = node.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      });
+    });
+    controls.forEach(function (size) {
+      assert.ok(size.width >= 44, `concept touch width ${size.width} at ${width}px`);
+      assert.ok(size.height >= 44, `concept touch height ${size.height} at ${width}px`);
+    });
+    assert.deepEqual(mobileErrors, []);
+    await mobile.close();
+  }
 });
 
 test("home and curriculum foundation have no mobile horizontal overflow", async function () {
