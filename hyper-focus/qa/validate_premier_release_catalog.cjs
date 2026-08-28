@@ -23,8 +23,8 @@ const expected = [
   ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
 ];
 const allowedSeriesKeys = ["key", "label", "rounds"];
-const allowedRoundKeys = ["href", "key", "label", "lockedCount", "releaseStatus", "verifiedCount", "visualGate"];
-const allowedStates = new Set(["review_pending", "locked"]);
+const allowedRoundKeys = ["answersAvailable", "href", "key", "label", "lockedCount", "releaseStatus", "verifiedCount", "videoUrl", "visualGate"];
+const allowedStates = new Set(["published", "review_pending", "locked"]);
 
 catalog.series.forEach((series, seriesIndex) => {
   const [expectedKey, roundKeyPrefix, expectedLength, expectedCounts] = expected[seriesIndex];
@@ -36,6 +36,10 @@ catalog.series.forEach((series, seriesIndex) => {
     assert(new RegExp(`^${roundKeyPrefix}-\\d{2}$`).test(round.key), `${round.key}: 안정 키 형식이 다릅니다.`);
     assert(allowedStates.has(round.releaseStatus), `${round.key}: 공개 가능한 상태 값이 아닙니다.`);
     assert.strictEqual(round.href, null, `${round.key}: 검수 전 링크는 항상 null이어야 합니다.`);
+    const isPublishedPilot = round.key === "premier-utilization-01";
+    assert.strictEqual(round.releaseStatus, isPublishedPilot ? "published" : "review_pending", `${round.key}: 운영 공개 상태가 다릅니다.`);
+    assert.strictEqual(round.videoUrl, isPublishedPilot ? "https://www.youtube.com/watch?v=iIlWZpVmdgY" : null, `${round.key}: 해설 영상 공개 계약이 다릅니다.`);
+    assert.strictEqual(round.answersAvailable, false, `${round.key}: 보호 답안 자산이 없는 회차는 정답 버튼을 열면 안 됩니다.`);
     assert.strictEqual(typeof round.visualGate, "boolean", `${round.key}: visualGate는 boolean이어야 합니다.`);
     assert.strictEqual(round.visualGate, expectedCounts[roundIndex][2], `${round.key}: 모바일·A4 시각 게이트 상태가 다릅니다.`);
     assert.deepStrictEqual([round.verifiedCount, round.lockedCount], expectedCounts[roundIndex].slice(0, 2), `${round.key}: 감사 수치가 다릅니다.`);
@@ -59,8 +63,8 @@ inspect(catalog, "catalog");
 
 const serialized = JSON.stringify(catalog).toLowerCase();
 [
-  "http://", "https://", "g:\\", ".pdf", "answer", "question", "source", "asset",
-  "010", "@", "published"
+  "http://", "g:\\", ".pdf", "answertext", "question", "source", "asset",
+  "010", "@"
 ].forEach((token) => assert(!serialized.includes(token), `공개 카탈로그에 금지된 값이 있습니다: ${token}`));
 
 const publicPremierRoot = path.resolve(root, "..", "premier");

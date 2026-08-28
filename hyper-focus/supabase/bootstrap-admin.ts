@@ -56,4 +56,4 @@ const { error: registryError } = await service.from("hf_admin_accounts").upsert(
 if (registryError) throw registryError;
 
 console.log(`Hyper Focus admin bootstrap complete: ${adminEmail} (${user.id})`);
-console.log("Next required step: sign in as DOCSSAM and complete TOTP enrollment before using admin functions.");
+console.log("Next required step: sign in as DOCSSAM through the Hyper Focus portal and verify admin access.");

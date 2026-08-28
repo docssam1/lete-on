@@ -63,7 +63,7 @@ async function testLegacyAuth() {
 
 function testStaticSecurityContracts() {
   const publicConfig = read("supabase-config.js");
-  assert.match(publicConfig, /enabled:\s*false/);
+  assert.match(publicConfig, /enabled:\s*true/);
   assert.match(publicConfig, /https:\/\/uqtkxhchtbcizzteuvsq\.supabase\.co/);
   assert.match(publicConfig, /sb_publishable_[A-Za-z0-9_-]+/);
   assert.match(publicConfig, /adminEmail:\s*"docssam1@gmail\.com"/);
@@ -73,9 +73,13 @@ function testStaticSecurityContracts() {
   const client = read("supabase-client.js");
   assert.match(client, /sessionStorage/);
   assert.match(client, /detectSessionInUrl:\s*false/);
-  assert.match(client, /allowAdminMfaSetup/);
-  assert.match(client, /adminMfaSetupClient/);
+  assert.doesNotMatch(client, /adminMfaSetupClient|allowAdminMfaSetup/);
   assert.doesNotMatch(client, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/);
+
+  const portalAuth = read("portal-auth.js");
+  assert.doesNotMatch(portalAuth, /ADMIN_DIGEST|ADMIN_PEPPER/);
+  assert.doesNotMatch(portalAuth, /auth\.mfa\.|mfa_required|mfa_enrollment_required/);
+  assert.match(portalAuth, /signInWithPassword/);
 
   const migration = read("supabase/migrations/20260823070755_initial_hyper_focus_auth.sql");
   const tables = [
@@ -130,7 +134,8 @@ function testStaticSecurityContracts() {
   assert.doesNotMatch(signedAsset, /console\.(log|error)/);
 
   const adminEdge = read("supabase/functions/admin-students/index.ts");
-  assert.match(adminEdge, /claims\?\.aal\s*!==\s*"aal2"/);
+  assert.doesNotMatch(adminEdge, /claims\?\.aal\s*!==\s*"aal2"/);
+  assert.match(adminEdge, /metadata\?\.hf_role\s*!==\s*"admin"/);
   assert.match(adminEdge, /oneTimeApprovalCode/);
   assert.match(adminEdge, /hf_login_version/);
   assert.match(adminEdge, /hf_begin_student_auth_change/);
@@ -142,8 +147,9 @@ function testStaticSecurityContracts() {
   assert.match(adminEdge, /typeof payload\.enabled !== "boolean"/);
   assert.match(
     adminEdge,
-    /const \{ data: staff, error: staffError \} = await userClient\s*\.from\("hf_admin_accounts"\)/
+    /const \{ data: staff, error: staffError \} = await service\s*\.from\("hf_admin_accounts"\)/
   );
+  assert.match(adminEdge, /issuedAtMs < authorizationChangedAtMs/);
   assert.match(adminEdge, /hf_set_student_entitlement/);
   assert.match(adminEdge, /authData\.user\.app_metadata\?\.hf_role/);
   assert.match(adminEdge, /SUPABASE_PUBLISHABLE_KEYS/);
@@ -162,12 +168,9 @@ function testStaticSecurityContracts() {
   assert.doesNotMatch(diagnosis, /p_(?:phone|approval_code)\s*:/i);
 
   const adminMfa = read("admin-mfa.html");
-  assert.match(adminMfa, /id="loginForm"/);
-  assert.match(adminMfa, /adminMfaSetupClient/);
-  assert.match(adminMfa, /client\.auth\.getUser/);
-  assert.match(adminMfa, /user\.app_metadata\?\.hf_role==='admin'/);
-  assert.match(adminMfa, /AAL2 세션을 확인했습니다/);
-  assert.match(adminMfa, /mfa\.unenroll/);
+  assert.match(adminMfa, /location\.replace\("\.\/\?login=1"\)/);
+  assert.match(adminMfa, /별도의 인증 앱 설정은 사용하지 않습니다/);
+  assert.doesNotMatch(adminMfa, /auth\.mfa|AAL2|TOTP|one-time-code/);
 
   const adminBootstrap = read("supabase/bootstrap-admin.ts");
   assert.match(adminBootstrap, /Deno\.env\.get/);
