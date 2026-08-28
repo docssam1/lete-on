@@ -425,6 +425,11 @@
     renderCatalog();
   });
   $("generateButton").addEventListener("click", buildQuestions);
+  $("mobileConfigButton").addEventListener("click", () => {
+    $("workspacePanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("compositionHeading").setAttribute("tabindex", "-1");
+    $("compositionHeading").focus({ preventScroll: true });
+  });
   $("newProblemButton").addEventListener("click", buildQuestions);
   $("backButton").addEventListener("click", () => {
     $("worksheet").hidden = true;

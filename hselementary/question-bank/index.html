@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#eef5fb">
+  <meta name="theme-color" content="#0b1d32">
   <title>LETE-ON | 황소 초등 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=bank-20260826a">
+  <link rel="stylesheet" href="./styles.css?v=bank-20260828-editorial-a">
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar bank-topbar">
+    <header class="topbar bank-topbar" aria-label="황소 초등 문제은행 머리말">
       <a class="topbar-back" href="../../index.html" aria-label="홈으로 돌아가기">← 목록</a>
       <div class="topbar-brand">
         <span class="eyebrow">LETE-ON ELEMENTARY</span>
@@ -71,9 +71,9 @@
           </section>
 
           <aside class="composition-pane" id="workspacePanel" aria-label="문제 구성 설정">
-            <header class="composition-head">
+            <header class="composition-head" id="compositionHeading">
               <span class="panel-kicker">문제 구성</span>
-              <h3>선택한 유형</h3>
+              <h3>선택 및 시험지 설정</h3>
             </header>
             <div class="selection-metrics" aria-label="선택 요약">
               <div><span>유형</span><strong id="selectedTypeSummary">0개</strong></div>
@@ -112,13 +112,16 @@
               <input id="watermarkToggle" type="checkbox" checked>
             </label>
 
-            <div class="selected-types" id="selectedTypeList"></div>
+            <div class="selected-types" id="selectedTypeList" aria-live="polite"></div>
           </aside>
         </div>
 
-        <footer class="selection-footer">
-          <div class="selection-total"><span>선택한 유형</span><strong id="selectedTypeCount">0개</strong><i></i><span>생성 문항</span><strong id="selectedQuestionCount">0문항</strong></div>
-          <button id="generateButton" class="primary-button generate-button" type="button">선택한 유형으로 문제 구성 →</button>
+        <footer class="selection-footer" aria-label="선택한 문제 구성 요약">
+          <div class="selection-total" aria-live="polite"><span>선택한 유형</span><strong id="selectedTypeCount">0개</strong><i></i><span>생성 문항</span><strong id="selectedQuestionCount">0문항</strong></div>
+          <div class="selection-actions">
+            <button id="mobileConfigButton" class="secondary-button mobile-config-button" type="button" aria-controls="workspacePanel">구성 설정</button>
+            <button id="generateButton" class="primary-button generate-button" type="button">선택한 유형으로 문제 구성 →</button>
+          </div>
         </footer>
       </section>
     </main>
@@ -160,6 +163,6 @@
   <script defer src="./generators.js?v=bank-20260826a"></script>
   <script defer src="./math-notation.js?v=bank-20260826a"></script>
   <script defer src="./identity.js?v=identity-20260824a"></script>
-  <script defer src="./app.js?v=bank-20260826a"></script>
+  <script defer src="./app.js?v=bank-20260828-editorial-a"></script>
 </body>
 </html>
