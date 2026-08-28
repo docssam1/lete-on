@@ -10,7 +10,6 @@
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
   const difficultyBandLabel = type => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(type.difficultyBand)] || "심화 기준";
-  const verbalizeType = type => `풀이 목표는 '${typeDisplayName(type).trim()}'입니다.`;
 
   function renderMathNotation(markup) {
     const template = document.createElement("template");
@@ -232,14 +231,14 @@
     const source = type.sourceItemLabel
       ? `원문 ${escapeHtml(type.sourceItemLabel)} · 교재 ${type.sourcePrintedPage}쪽`
       : `${type.grade}학년 ${type.term}학기 분류`;
-    const summary = `<div class="type-preview-summary"><b>어떤 문제인가요?</b><p>${escapeHtml(verbalizeType(type))}</p><small>${source}</small></div>`;
+    const sourceLine = `<div class="type-preview-source"><b>대표 문제</b><small>${source}</small></div>`;
     if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
-      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
+      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
-      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
     }
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
@@ -436,6 +435,9 @@
     renderCatalog();
   });
   $("generateButton").addEventListener("click", buildQuestions);
+  $("mobileSettingsButton").addEventListener("click", () => {
+    $("workspacePanel").scrollIntoView({ behavior: "auto", block: "start" });
+  });
   $("newProblemButton").addEventListener("click", buildQuestions);
   $("backButton").addEventListener("click", () => {
     $("worksheet").hidden = true;
