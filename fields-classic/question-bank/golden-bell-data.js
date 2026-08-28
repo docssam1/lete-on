@@ -779,8 +779,204 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-05",
+    label: "5권",
+    title: "곱셈매트릭스와 삼각수",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx",
+      pdfFile: "더클래식_1과정_5N30권_골든벨_220815.pdf",
+      verified: true,
+      note: "60슬라이드 교사용 PPTX를 주차별로 시각 대조하고, 구조와 빨간 정답을 분리할 수 있는 대표 문항만 공개"
+    },
+    lessons: [
+      {
+        id: "path-number-grid",
+        unit: "수 배열표와 달력",
+        title: "길을 따라 수를 이어요",
+        sourceLocator: "교사용 PPTX 슬라이드 2, 수 배열표 활동",
+        sourceTypeIds: ["sequential-path-number-grid"],
+        representativeConcept: "화살표가 지나가는 칸을 첫 칸부터 하나씩 세어 목표 칸의 수를 찾음",
+        story: {
+          title: "숫자 마을의 세 갈래 길",
+          text: "숫자는 네모 칸을 따라 한 칸씩 커집니다. 길이 꺾이거나 빙글 돌아도 지나온 칸의 순서는 바뀌지 않습니다.",
+          mission: "화살표를 손가락으로 따라가며 물음표가 몇 번째 칸인지 세어 보세요."
+        },
+        explanation: {
+          headline: "길의 모양보다 지나온 칸의 순서가 중요합니다.",
+          steps: [
+            "숫자 1이 있는 첫 칸을 찾습니다.",
+            "화살표 방향으로 한 칸 갈 때마다 수를 1씩 크게 셉니다.",
+            "물음표 칸까지 몇 번째인지 다시 따라가 답을 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "sequential-path-number-grid",
+          prompt: "화살표를 따라 수를 차례로 쓸 때 물음표에 들어갈 수를 쓰시오.",
+          visual: {
+            kind: "book5-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[1,2],[1,1],[1,0],[2,0],[2,1],[2,2],[2,3],[3,3],[3,2],[3,1],[3,0]], values: [[1,2,3,4],[8,7,6,5],[9,10,11,12],[16,15,14,13]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 13 } } },
+              { label: "(2)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0],[1,1],[1,2],[2,2],[2,1]], values: [[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 15 } } },
+              { label: "(3)", visual: { subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[1,0],[2,0],[1,1],[0,2],[0,3],[1,2],[2,1],[3,0],[3,1],[2,2],[1,3],[2,3],[3,2],[3,3]], values: [[1,2,6,7],[3,5,8,13],[4,9,12,14],[10,11,15,16]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 10 } } }
+            ]
+          },
+          items: [
+            { id: "path-1", prompt: "(1) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "14" },
+            { id: "path-2", prompt: "(2) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "16" },
+            { id: "path-3", prompt: "(3) 물음표에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "11" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "sequential-path-number-grid",
+          story: "숫자 기차가 5에서 출발해 소용돌이 선로를 한 칸씩 달립니다.",
+          prompt: "물음표에 들어갈 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "path-number-grid", rows: 4, columns: 4, path: [[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0],[1,1],[1,2],[2,2],[2,1]], values: [[5,6,7,8],[16,17,18,9],[15,20,19,10],[14,13,12,11]], clues: [0,1,2,3,4,5,6,7,8], target: { index: 15 } },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "20",
+          explanation: "5에서 시작해 화살표를 따라 15번 더 이동하면 수는 20이 됩니다."
+        }
+      },
+      {
+        id: "digit-card-ranked-number",
+        unit: "최단거리와 숫자 카드",
+        title: "숫자 카드로 만든 수의 차례를 찾아요",
+        sourceLocator: "교사용 PPTX 슬라이드 29, 숫자 카드 활동",
+        sourceTypeIds: ["digit-card-ranked-number"],
+        representativeConcept: "숫자 카드를 한 번씩만 골라 만든 수를 크기순으로 늘어놓고 지정한 차례의 수를 찾음",
+        sourceHold: "같은 슬라이드의 네 자리 수 여섯째 큰 수는 교사용 나열에서 더 큰 수가 누락되어 잠금 유지",
+        story: {
+          title: "숫자 카드 전시회",
+          text: "같은 카드는 한 수에 한 번만 쓸 수 있습니다. 맨 앞자리에 0이 오면 약속한 자리 수가 되지 않습니다.",
+          mission: "자리 수를 먼저 지키고, 작은 수 또는 큰 수부터 차례로 정리해 보세요."
+        },
+        explanation: {
+          headline: "가장 큰 자리의 숫자부터 비교합니다.",
+          steps: [
+            "필요한 카드 수만큼 서로 다른 카드를 고릅니다.",
+            "0은 맨 앞에 놓지 않고 약속한 자리 수를 만듭니다.",
+            "가장 큰 자리부터 비교해 작은 수 또는 큰 수 순서로 늘어놓습니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "digit-card-ranked-number",
+          prompt: "주어진 숫자 카드를 한 번씩만 사용하여 만든 수를 차례대로 늘어놓을 때 물음에 답하시오.",
+          visual: {
+            kind: "book5-set",
+            panels: [
+              { label: "작은 수부터", visual: { subtype: "digit-cards", digits: [0,6,7,8], length: 3, targetRank: 5 } }
+            ]
+          },
+          items: [
+            { id: "cards-small", prompt: "세 자리 수를 작은 수부터 늘어놓았을 때 다섯째 수", answerMode: "input", inputMode: "numeric", answer: "680" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "digit-card-ranked-number",
+          story: "카드 가게에서 2, 4, 6, 8 카드 중 세 장을 골라 진열 번호를 만듭니다.",
+          prompt: "만든 세 자리 수를 작은 수부터 늘어놓았을 때 넷째 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "digit-cards", digits: [2,4,6,8], length: 3, targetRank: 4 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "268",
+          explanation: "작은 수부터 246, 248, 264, 268이므로 넷째 수는 268입니다."
+        }
+      },
+      {
+        id: "checkerboard-product-matrix",
+        unit: "곱셈 매트릭스",
+        title: "가로와 세로의 곱으로 카드를 놓아요",
+        sourceLocator: "교사용 PPTX 슬라이드 40, 첫째 곱셈 매트릭스",
+        sourceTypeIds: ["multiplication-matrix-placement", "checkerboard-product-matrix-book5"],
+        representativeConcept: "2부터 9까지의 수 카드를 한 번씩 놓아 각 가로줄과 세로줄의 곱을 동시에 맞춤",
+        sourceHold: "같은 슬라이드의 둘째 표는 2~9를 한 번씩 쓰는 조건과 교사용 표시가 함께 성립하지 않아 잠금 유지",
+        story: {
+          title: "곱셈 타일 연구소",
+          text: "색칠된 여덟 칸에 2부터 9까지를 한 번씩 놓습니다. 가로줄과 세로줄 끝의 수는 그 줄에 놓인 두 수의 곱입니다.",
+          mission: "한 줄만 맞추지 말고 가로와 세로의 곱을 모두 확인해 보세요."
+        },
+        explanation: {
+          headline: "곱을 만들 수 있는 두 수를 찾고 교차하는 칸을 확인합니다.",
+          steps: [
+            "줄 끝의 곱을 2부터 9까지의 두 수로 가릅니다.",
+            "가로줄과 세로줄에 함께 들어가는 수를 교차 칸에 놓습니다.",
+            "2부터 9까지가 정확히 한 번씩 쓰였는지 마지막에 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "checkerboard-product-matrix",
+          prompt: "2부터 9까지의 수 카드를 한 번씩 놓아 가로와 세로의 곱을 맞출 때 ㉮, ㉯, ㉰를 구하시오.",
+          visual: { kind: "book5", subtype: "checkerboard-products", cardPool: [2,3,4,5,6,7,8,9], active: [[0,1],[0,2],[1,0],[1,3],[2,0],[2,1],[3,2],[3,3]], revealed: [[0,1],[2,0],[3,2]], cells: [["", "㉮", "", ""],["", "", "", ""],["㉯", "", "", ""],["", "", "㉰", ""]], rowProducts: [28,6,40,54], columnProducts: [15,56,36,12] },
+          items: [
+            { id: "matrix-a", prompt: "㉮에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "matrix-b", prompt: "㉯에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "5" },
+            { id: "matrix-c", prompt: "㉰에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "checkerboard-product-matrix",
+          story: "새 타일판에도 2부터 9까지의 수 카드를 한 번씩 놓습니다.",
+          prompt: "모든 가로와 세로의 곱을 맞출 때 ㉮에 들어갈 수를 쓰세요.",
+          visual: { kind: "book5", subtype: "checkerboard-products", cardPool: [2,3,4,5,6,7,8,9], active: [[0,1],[0,2],[1,0],[1,3],[2,0],[2,1],[3,2],[3,3]], revealed: [[0,1]], cells: [["", "㉮", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""]], rowProducts: [24,18,35,24], columnProducts: [45,42,12,16] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "6",
+          explanation: "가로 24와 세로 42를 함께 만족하는 교차 칸의 수는 6입니다. 나머지 카드까지 놓으면 모든 곱이 맞습니다."
+        }
+      },
+      {
+        id: "cube-tetrahedral-growth",
+        unit: "삼각수와 사각수",
+        title: "삼각 계단의 쌓기나무를 세어요",
+        sourceLocator: "교사용 PPTX 슬라이드 59, 삼각 계단 쌓기 활동",
+        sourceTypeIds: ["cube-tetrahedral-growth"],
+        representativeConcept: "각 층의 삼각수만큼 쌓인 쌓기나무를 아래층부터 차례로 더해 전체 개수를 구함",
+        story: {
+          title: "삼각 계단 블록 무대",
+          text: "첫 층은 1개, 둘째 층은 3개, 셋째 층은 6개처럼 층마다 삼각 모양으로 블록이 늘어납니다.",
+          mission: "각 층의 개수를 따로 센 뒤 아래층까지 모두 더해 보세요."
+        },
+        explanation: {
+          headline: "층마다 1, 3, 6, 10처럼 삼각수만큼 놓입니다.",
+          steps: [
+            "맨 위층부터 각 층에 놓인 쌓기나무 수를 셉니다.",
+            "다음 층은 앞 층보다 한 줄 더 긴 삼각형입니다.",
+            "목표 층까지 각 층의 개수를 모두 더합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "cube-tetrahedral-growth",
+          prompt: "삼각 계단 모양으로 쌓기나무를 쌓을 때 물음에 답하시오.",
+          visual: { kind: "book5", subtype: "tetrahedral-stair", previewStages: [1,2,3,4], targetStages: [4,7] },
+          items: [
+            { id: "stair-four", prompt: "(1) 4단계에 필요한 쌓기나무의 수", answerMode: "input", inputMode: "numeric", answer: "20" },
+            { id: "stair-seven", prompt: "(2) 7단계에 필요한 쌓기나무의 수", answerMode: "input", inputMode: "numeric", answer: "84" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "cube-tetrahedral-growth",
+          story: "블록 무대가 같은 삼각 계단 규칙으로 5단계까지 자랐습니다.",
+          prompt: "5단계 무대에 필요한 쌓기나무는 모두 몇 개일까요?",
+          visual: { kind: "book5", subtype: "tetrahedral-stair", previewStages: [1,2,3,4,5], targetStages: [5] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "35",
+          explanation: "각 층의 1, 3, 6, 10, 15개를 더하면 35개입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-05", "5권", "곱셈매트릭스와 삼각수", "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx", "source-located"],
     ["book-06", "6권", "논리와 수 퍼즐", "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx", "source-located"],
     ["book-07", "7권", "규칙과 달력", "더클래식_1과정_7N30권_골든벨_230112(E2용).pptx", "source-located"],
     ["book-08", "8권", "매트릭스와 수 카드", "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx", "source-located"],

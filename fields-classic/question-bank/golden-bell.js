@@ -1,4 +1,5 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828i";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828n";
+import { book05Markup } from "./book05-renderers.js?v=20260828n";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -294,6 +295,10 @@ function book04DirectionMarkup(story = false) {
   return `<div class="direction-map-set ${story ? "single" : ""}">${maps.join("")}</div>`;
 }
 
+function book05SetMarkup(visual) {
+  return `<div class="gold-b5-set">${visual.panels.map((panel) => `<figure><div class="book05-visual">${book05Markup({ kind: "book5", ...panel.visual })}</div><figcaption>${panel.label}</figcaption></figure>`).join("")}</div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "clock") return clockMarkup(visual.value);
@@ -328,6 +333,8 @@ function visualMarkup(visual) {
   if (visual.kind === "book04-balance-story") return book04BalanceMarkup(true);
   if (visual.kind === "book04-direction-original") return book04DirectionMarkup(false);
   if (visual.kind === "book04-direction-story") return book04DirectionMarkup(true);
+  if (visual.kind === "book5") return `<div class="book05-visual">${book05Markup(visual)}</div>`;
+  if (visual.kind === "book5-set") return book05SetMarkup(visual);
   return "";
 }
 

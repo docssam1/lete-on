@@ -97,7 +97,8 @@ function routeGrid(visual) {
 }
 
 function digitCards(visual) {
-  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · 작은 수부터 <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
+  const order = visual.descending ? "큰 수부터" : "작은 수부터";
+  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · ${order} <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
 }
 
 function digitCondition(visual) {
@@ -176,6 +177,32 @@ function checkerboardProducts(visual) {
     }
   }
   return `<div class="b5-checker-wrap"><div class="b5-mini-cards">${visual.cardPool.map((value) => `<i>${value}</i>`).join("")}</div><div class="b5-checker-products"><div class="cells">${cells.join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><em>곱</em></div></div>`;
+}
+
+function isoCube(x, y, level, size = 13) {
+  const px = 82 + (x - y) * size;
+  const py = 22 + (x + y) * size * 0.55 - level * size;
+  const half = size;
+  const rise = size * 0.5;
+  return `<g transform="translate(${px} ${py})"><path class="top" d="M0 0L${half} ${-rise}L${half * 2} 0L${half} ${rise}Z"/><path class="left" d="M0 0L${half} ${rise}V${rise + size}L0 ${size}Z"/><path class="right" d="M${half * 2} 0L${half} ${rise}V${rise + size}L${half * 2} ${size}Z"/></g>`;
+}
+
+function triangularStairScene(stage, hideTotal = false) {
+  const cubes = [];
+  for (let y = stage - 1; y >= 0; y -= 1) {
+    for (let x = stage - y - 1; x >= 0; x -= 1) {
+      const height = stage - x - y;
+      for (let level = 0; level < height; level += 1) cubes.push(isoCube(x, y, level));
+    }
+  }
+  const total = Array.from({ length: stage }, (_, index) => (index + 1) * (index + 2) / 2).reduce((sum, value) => sum + value, 0);
+  return `<figure><svg viewBox="0 -18 164 128" role="img" aria-label="${stage}단계 삼각 계단 쌓기나무">${cubes.join("")}</svg><figcaption>${stage}단계 <span>${hideTotal ? "몇 개?" : `${total}개`}</span></figcaption></figure>`;
+}
+
+function tetrahedralStair(visual) {
+  const targetSet = new Set(visual.targetStages);
+  const targets = visual.targetStages.map((stage) => `<b>${stage}단계 = ?</b>`).join("");
+  return `<div class="b5-tetrahedral"><div>${visual.previewStages.map((stage) => triangularStairScene(stage, targetSet.has(stage))).join("")}</div><p>${targets}</p></div>`;
 }
 
 function squarePaperGrowth(visual) {
@@ -331,6 +358,7 @@ export function book05Markup(visual) {
     case "row-major-targets": return rowMajorTargets(visual);
     case "radial-cycle": return radialCycle(visual);
     case "checkerboard-products": return checkerboardProducts(visual);
+    case "tetrahedral-stair": return tetrahedralStair(visual);
     case "square-paper-growth": return squarePaperGrowth(visual);
     case "square-row-pair": return squareRowPair(visual);
     case "border-stone-growth": return borderStoneGrowth(visual);
