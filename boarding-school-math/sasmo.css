@@ -137,6 +137,162 @@ h1 span { color: var(--blue); }
 :focus-visible { outline: 3px solid #fdba24; outline-offset: 3px; }
 @media (max-width: 920px) { .site-header nav { display: none; } .hero { min-height: 0; grid-template-columns: 1fr; gap: 32px; } .hero-action { max-width: 560px; } .section-heading { grid-template-columns: 1fr; gap: 12px; } .selector-grid, .role-panel { grid-template-columns: 1fr; } .domain-grid, .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .journey-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .journey-list li:nth-child(4), .journey-list li:nth-child(5) { min-height: 155px; } }
 @media (max-width: 620px) { .shell { width: min(100% - 28px, 1160px); } .site-header { min-height: 64px; gap: 10px; } .home-link { padding-inline: 9px; font-size: .68rem; } .hero { padding: 53px 0 58px; } .truth-strip { display: grid; grid-template-columns: 1fr; } .selector-grid { gap: 12px; } .level-selector { grid-template-columns: repeat(4, minmax(44px, 1fr)); } .official-format-grid { grid-template-columns: 1fr; } .goal-selector { grid-template-columns: 1fr; } .domain-grid, .source-grid, .coverage-list { grid-template-columns: 1fr; } .source-proof { grid-template-columns: 1fr; } .source-proof div { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.15); } .source-proof div:last-child { border-bottom: 0; } .domain-card { min-height: 0; } .journey-list { grid-template-columns: 1fr; } .journey-list li, .journey-list li:nth-child(4), .journey-list li:nth-child(5) { min-height: 0; } .journey-list li::before { margin-bottom: 12px; } .diagnostic-callout { align-items: flex-start; flex-direction: column; } .outline-link { min-width: 0; width: 100%; } .role-panel { min-height: 0; } .site-footer { align-items: flex-start; flex-direction: column; } }
-@media (max-width: 360px) { .brand { min-width: 0; font-size: .76rem; letter-spacing: .04em; } .home-link { min-height: 40px; padding: 8px; } h1 { font-size: 2.85rem; } .selector-card { padding: 19px; } }
+@media (max-width: 360px) { .brand { min-width: 0; font-size: .76rem; letter-spacing: .04em; } .home-link { min-height: 44px; padding: 8px; } h1 { font-size: 2.85rem; } .selector-card { padding: 19px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
 @media print { body { background: #fff; color: #000; } .site-header, .skip-link, .hero-action, .role-tabs { display: none; } .shell { width: 100%; } .hero, .control-section, .domains-section, .journey-section, .roles-section, .source-section { padding: 24px 0; background: #fff; break-inside: avoid; } .selector-card, .domain-card, .source-card, .role-panel, .journey-list li { box-shadow: none; border-color: #777; } .journey-list { grid-template-columns: repeat(5, 1fr); } .journey-list li { min-height: 130px; color: #000; background: #fff !important; } .journey-list li p, .journey-list li::before { color: #333; } a { text-decoration: underline; } }
+
+/* 2026-08-28 academic product refinement */
+.page-sasmo .hero {
+  min-height: 520px;
+  padding: clamp(58px, 7vw, 88px) 0 62px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(285px, .75fr);
+  gap: clamp(38px, 7vw, 92px);
+}
+.page-sasmo h1 {
+  max-width: 760px;
+  font-family: var(--academy-serif);
+  font-size: clamp(3.2rem, 6vw, 5.8rem);
+  font-weight: 560;
+  line-height: .96;
+  letter-spacing: -.055em;
+}
+.page-sasmo h1 span { color: var(--academy-burgundy); }
+.page-sasmo .lede { max-width: 680px; font-size: 1rem; line-height: 1.75; }
+.page-sasmo .truth-strip { gap: 0; border: 1px solid var(--academy-rule); border-radius: 4px; background: rgba(255, 253, 247, .62); }
+.page-sasmo .truth-strip span { padding: 10px 12px; border-right: 1px solid var(--academy-rule); }
+.page-sasmo .truth-strip span:last-child { border-right: 0; }
+.page-sasmo .hero-action {
+  min-height: 330px;
+  padding: 30px;
+  border: 1px solid #283f50;
+  border-top: 6px solid var(--academy-brass);
+  border-radius: 6px;
+  color: #fff;
+  background: var(--academy-ink);
+  box-shadow: var(--academy-shadow);
+}
+.page-sasmo .hero-action::before { display: none; }
+.page-sasmo .hero-action .micro-label { color: #cbb281; }
+.page-sasmo .hero-action strong { font-family: var(--academy-serif); font-weight: 560; }
+.page-sasmo .hero-format { border-radius: 3px; color: #f6f0e2; background: rgba(255, 255, 255, .08); }
+.page-sasmo .hero-action small { color: #b3c0c8; }
+
+.page-sasmo .control-section,
+.page-sasmo .journey-section,
+.page-sasmo .source-section { background: #e9e5dc; }
+.page-sasmo .control-section,
+.page-sasmo .domains-section,
+.page-sasmo .journey-section,
+.page-sasmo .roles-section,
+.page-sasmo .source-section { padding: clamp(66px, 7vw, 88px) 0; }
+.page-sasmo .section-heading { margin-bottom: 26px; }
+.page-sasmo .section-heading h2 { font-family: var(--academy-serif); font-size: clamp(2.25rem, 3.8vw, 3.8rem); font-weight: 560; line-height: 1.05; }
+
+.page-sasmo .selector-grid { gap: 0; border: 1px solid var(--academy-rule); }
+.page-sasmo .selector-card {
+  padding: clamp(22px, 3vw, 30px);
+  border: 0;
+  border-right: 1px solid var(--academy-rule);
+  border-radius: 0;
+  background: var(--academy-sheet);
+  box-shadow: none;
+}
+.page-sasmo .selector-card:last-child { border-right: 0; }
+.page-sasmo .step-number { border-radius: 3px; background: var(--academy-ink); }
+.page-sasmo .level-selector button,
+.page-sasmo .goal-selector button,
+.page-sasmo .official-format-grid div { border-radius: 4px; box-shadow: none; }
+.page-sasmo .level-selector button[aria-selected="true"] { border-color: var(--academy-burgundy); background: var(--academy-burgundy); box-shadow: none; }
+.page-sasmo .goal-selector button[aria-selected="true"] { border-color: var(--academy-ink); background: var(--academy-ink); }
+.page-sasmo .goal-detail { border-left-color: var(--academy-green); border-radius: 0 4px 4px 0; background: var(--academy-green-soft); }
+
+.page-sasmo .domain-grid { gap: 0; border: 1px solid var(--academy-rule); }
+.page-sasmo .domain-card {
+  min-height: 165px;
+  padding: 22px;
+  border: 0;
+  border-right: 1px solid var(--academy-rule);
+  border-bottom: 1px solid var(--academy-rule);
+  border-radius: 0;
+  background: rgba(255, 253, 247, .78);
+}
+.page-sasmo .domain-card:nth-child(3n) { border-right: 0; }
+.page-sasmo .domain-card:nth-child(n+4) { border-bottom: 0; }
+.page-sasmo .domain-card[data-domain] { border-top: 0; }
+.page-sasmo .domain-card .domain-number { margin-bottom: 15px; color: var(--academy-burgundy); }
+.page-sasmo .domain-card h3 { font-family: var(--academy-serif); font-size: 1.2rem; font-weight: 560; }
+.page-sasmo .data-note { border-radius: 4px; background: rgba(255, 253, 247, .7); }
+
+.page-sasmo .journey-list { gap: 0; border: 1px solid var(--academy-rule); }
+.page-sasmo .journey-list li,
+.page-sasmo .journey-list li:nth-child(n) {
+  min-height: 170px;
+  padding: 22px;
+  border-right: 1px solid var(--academy-rule);
+  border-radius: 0;
+  color: var(--academy-ink);
+  background: rgba(255, 253, 247, .8);
+}
+.page-sasmo .journey-list li:last-child { border-right: 0; background: var(--academy-green-soft); }
+.page-sasmo .journey-list li::before { color: var(--academy-burgundy); }
+.page-sasmo .journey-list li p { color: var(--academy-muted); }
+.page-sasmo .journey-list li h3 { font-family: var(--academy-serif); font-weight: 560; }
+.page-sasmo .diagnostic-callout { border-radius: 5px; border-color: #b9ccc2; background: var(--academy-sheet); }
+
+.page-sasmo .role-tabs button { border-radius: 4px; }
+.page-sasmo .role-tabs button[aria-selected="true"] { border-color: var(--academy-ink); background: var(--academy-ink); }
+.page-sasmo .role-panel {
+  min-height: 230px;
+  border-color: var(--academy-rule);
+  border-radius: 6px;
+  background: var(--academy-sheet);
+}
+.page-sasmo .role-panel h3 { font-family: var(--academy-serif); font-weight: 560; }
+.page-sasmo .role-features li { border-radius: 4px; border-color: var(--academy-rule); background: #faf7ef; }
+
+.page-sasmo .source-proof { border-radius: 5px; background: var(--academy-ink); }
+.page-sasmo .source-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--academy-rule); }
+.page-sasmo .source-card {
+  min-height: 280px;
+  padding: 21px;
+  border: 0;
+  border-right: 1px solid var(--academy-rule);
+  border-radius: 0;
+  background: rgba(255, 253, 247, .82);
+}
+.page-sasmo .source-card:last-child { border-right: 0; }
+.page-sasmo .source-card h3 { font-family: var(--academy-serif); font-weight: 560; }
+.page-sasmo .archive-coverage { border-radius: 5px; background: rgba(255, 253, 247, .72); }
+.page-sasmo .coverage-row { border-radius: 3px; }
+
+@media (max-width: 920px) {
+  .page-sasmo .hero { grid-template-columns: 1fr; }
+  .page-sasmo .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-sasmo .source-card:nth-child(2) { border-right: 0; }
+  .page-sasmo .source-card:nth-child(-n+2) { border-bottom: 1px solid var(--academy-rule); }
+  .page-sasmo .domain-card:nth-child(3n) { border-right: 1px solid var(--academy-rule); }
+  .page-sasmo .domain-card:nth-child(2n) { border-right: 0; }
+  .page-sasmo .domain-card:nth-child(4) { border-bottom: 1px solid var(--academy-rule); }
+  .page-sasmo .journey-list { grid-template-columns: 1fr; }
+  .page-sasmo .journey-list li,
+  .page-sasmo .journey-list li:nth-child(n) { min-height: 0; border-right: 0; border-bottom: 1px solid var(--academy-rule); }
+  .page-sasmo .journey-list li:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 620px) {
+  .page-sasmo .hero { padding-top: 46px; }
+  .page-sasmo h1 { font-size: clamp(2.8rem, 13vw, 4rem); }
+  .page-sasmo .truth-strip span { border-right: 0; border-bottom: 1px solid var(--academy-rule); }
+  .page-sasmo .truth-strip span:last-child { border-bottom: 0; }
+  .page-sasmo .selector-grid { border: 0; }
+  .page-sasmo .selector-card { border: 1px solid var(--academy-rule); }
+  .page-sasmo .selector-card:last-child { border-top: 0; }
+  .page-sasmo .domain-grid,
+  .page-sasmo .source-grid { grid-template-columns: 1fr; }
+  .page-sasmo .domain-card,
+  .page-sasmo .domain-card:nth-child(n),
+  .page-sasmo .source-card,
+  .page-sasmo .source-card:nth-child(n) { min-height: 0; border-right: 0; border-bottom: 1px solid var(--academy-rule); }
+  .page-sasmo .domain-card:last-child,
+  .page-sasmo .source-card:last-child { border-bottom: 0; }
+}

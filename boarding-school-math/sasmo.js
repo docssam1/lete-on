@@ -13,14 +13,14 @@
   const goals = Object.freeze({
     "first-attempt": Object.freeze({
       title: "첫 도전 · 형식과 기초를 먼저 확인",
-      description: "무리한 모의고사보다 영역별 시작점을 확인하고, 읽기·계산·표현의 기본 루틴을 만듭니다.",
+      description: "영역별 시작점을 확인하고, 읽기·계산·표현의 기본 루틴을 만듭니다.",
       diagnostic: "학년별 기초·표현·추론 준비 진단",
       diagnosticDescription: "6개 영역에서 시작점을 확인한 뒤, 첫 2주 수업 계획을 제안하는 구조입니다.",
       journey: ["학년·공식 안내 확인", "준비 진단", "개념·표현 보정", "짧은 시간 연습", "교사와 다음 목표 확인"]
     }),
     "skill-growth": Object.freeze({
       title: "실력 성장 · 약점을 수업으로 바꾸기",
-      description: "틀린 답만 모으지 않고, 선수개념·계산·표현·전략 중 무엇을 먼저 보정할지 정합니다.",
+      description: "선수개념·계산·표현·전략을 나누어 살피고, 먼저 보정할 순서를 정합니다.",
       diagnostic: "영역·오류 유형 준비 진단",
       diagnosticDescription: "약점 영역과 오류 유형을 분리해, 보정 수업과 재확인 순서를 정하는 구조입니다.",
       journey: ["학년·현재 목표 확인", "영역별 진단", "오류 원인 분류", "맞춤 수업·연습", "유지 확인과 목표 조정"]
@@ -43,14 +43,14 @@
 
   const roles = Object.freeze({
     student: Object.freeze({
-      kicker: "STUDENT VIEW · DEMO",
-      title: "오늘 풀 문제보다, 오늘의 다음 행동",
+      kicker: "학생용 · 오늘의 학습",
+      title: "오늘의 다음 학습을 한눈에",
       description: "학년·목표·진단 근거를 바탕으로 개념 확인, 짧은 연습, 오류 복습을 순서대로 봅니다.",
       features: ["오늘의 20~35분 학습 흐름", "영역별 준비 지도", "틀린 이유를 고르는 복습", "교사 확인 전의 다음 행동"]
     }),
     teacher: Object.freeze({
-      kicker: "TEACHER VIEW · DEMO",
-      title: "점수를 수업 그룹과 개입으로 바꿉니다.",
+      kicker: "교사용 · 근거와 배정",
+      title: "진단 근거를 수업 그룹과 배정으로 연결합니다.",
       description: "교사는 영역·오류 유형·시간 근거를 보고 보정, 핵심, 심화 그룹을 구성하고 과제를 검토합니다.",
       features: ["학년·목표별 진단 설계", "오류 유형과 선수개념 근거", "수업 그룹·과제 배정 검토", "유지 확인 후 다음 단계 승인"]
     })
