@@ -20,9 +20,11 @@ button { color:inherit; font:inherit; }
 .page-diagnostic .eyebrow { margin:0 0 10px; color:var(--green); font-size:.7rem; letter-spacing:.15em; font-weight:900; }
 .page-diagnostic h1, .page-diagnostic h2, .page-diagnostic h3 { font-family:Georgia, "Noto Serif KR", serif; font-weight:500; letter-spacing:-.045em; }
 .page-diagnostic h1, .page-diagnostic h2, .page-diagnostic h3, .page-diagnostic p { margin-top:0; }
-.page-diagnostic h1 { max-width:1000px; margin-bottom:19px; font-size:clamp(2.45rem, 5.4vw, 5rem); line-height:.99; }
+.page-diagnostic h1 { max-width:1000px; margin-bottom:19px; font-size:clamp(2.45rem, 5.4vw, 5rem); line-height:.99; word-break:keep-all; }
 .page-diagnostic h1 span { color:var(--burgundy); }
 .page-diagnostic .lede { max-width:760px; margin-bottom:30px; color:#4d5d65; font-size:1.08rem; }
+.page-diagnostic .release-note { max-width:880px; margin:-10px 0 28px; padding:14px 16px; border-left:3px solid var(--burgundy); background:rgba(255,253,248,.72); color:#4d5d65; font-size:.86rem; }
+.page-diagnostic .release-note strong { margin-right:6px; color:var(--burgundy); }
 .page-diagnostic .hero-meta { display:grid; grid-template-columns:repeat(4, 1fr); border-top:2px solid var(--ink); border-left:1px solid var(--line); background:var(--surface); }
 .page-diagnostic .hero-meta div { min-height:104px; display:flex; flex-direction:column; justify-content:center; gap:3px; padding:18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
 .page-diagnostic .hero-meta strong { font-family:Georgia, serif; font-size:2rem; line-height:1; letter-spacing:-.05em; }
@@ -41,6 +43,9 @@ button { color:inherit; font:inherit; }
 .page-diagnostic .role-panel .role-label { display:inline-block; margin-bottom:12px; color:var(--green); font-size:.7rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
 .page-diagnostic .role-panel h3 { margin-bottom:8px; font-size:1.5rem; }
 .page-diagnostic .role-panel p { max-width:760px; margin-bottom:20px; color:#4d5d65; }
+.page-diagnostic .role-panel .role-status { margin-bottom:18px; padding:10px 12px; border-left:3px solid var(--burgundy); background:#faf6ed; color:#5d4a43; font-size:.82rem; }
+.page-diagnostic .role-link { display:inline-flex; min-width:44px; min-height:44px; align-items:center; justify-content:center; margin-top:18px; padding:10px 14px; border:1px solid var(--ink); color:var(--surface); background:var(--ink); font-size:.82rem; font-weight:850; text-decoration:none; }
+.page-diagnostic .role-link:hover { background:var(--green); border-color:var(--green); }
 .page-diagnostic .role-steps { display:flex; flex-wrap:wrap; gap:0; padding:0; margin:0; list-style:none; border-top:1px solid var(--line); border-left:1px solid var(--line); }
 .page-diagnostic .role-steps li { padding:8px 11px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:#faf6ed; color:#3d4c54; font-size:.8rem; font-weight:700; }
 .page-diagnostic .blueprint-section { background:rgba(255,253,248,.73); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
@@ -71,5 +76,5 @@ button { color:inherit; font:inherit; }
 .page-diagnostic .site-footer { display:flex; justify-content:space-between; gap:16px; padding:24px 0 36px; color:#69767a; font-size:.76rem; }
 .page-diagnostic .site-footer a { font-weight:800; }
 @media (max-width:800px) { .page-diagnostic .site-header nav { display:none; } .page-diagnostic .section-heading { grid-template-columns:1fr; gap:12px; } .page-diagnostic .hero-meta, .page-diagnostic .balance-grid, .page-diagnostic .gates { grid-template-columns:repeat(2, 1fr); } .page-diagnostic .hero-meta div:nth-child(2) { border-right:0; } .page-diagnostic .cluster-list { grid-template-columns:1fr; } }
-@media (max-width:520px) { .page-diagnostic .shell, .page-diagnostic .site-header { width:min(100% - 28px, 1120px); } .page-diagnostic .site-header { min-height:62px; } .page-diagnostic .status-chip { max-width:150px; white-space:normal; text-align:right; } .page-diagnostic .hero { padding-top:50px; } .page-diagnostic .hero-meta, .page-diagnostic .balance-grid, .page-diagnostic .gates { grid-template-columns:1fr; } .page-diagnostic .hero-meta div { min-height:80px; border-right:0; } .page-diagnostic .role-section, .page-diagnostic .blueprint-section, .page-diagnostic .gate-section { padding:50px 0; } .page-diagnostic .role-panel { padding:22px; } .page-diagnostic .site-footer { flex-direction:column; } }
+@media (max-width:520px) { .page-diagnostic .shell, .page-diagnostic .site-header { width:min(100% - 28px, 1120px); } .page-diagnostic .site-header { min-height:62px; } .page-diagnostic .status-chip { max-width:150px; white-space:normal; text-align:right; } .page-diagnostic .hero { padding-top:50px; } .page-diagnostic h1 { font-size:2.15rem; line-height:1.03; } .page-diagnostic .hero-meta, .page-diagnostic .balance-grid, .page-diagnostic .gates { grid-template-columns:1fr; } .page-diagnostic .hero-meta div { min-height:80px; border-right:0; } .page-diagnostic .role-section, .page-diagnostic .blueprint-section, .page-diagnostic .gate-section { padding:50px 0; } .page-diagnostic .role-panel { padding:22px; } .page-diagnostic .site-footer { flex-direction:column; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
