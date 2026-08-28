@@ -151,6 +151,16 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator(`.domain-directory-row[data-domain-code="${selectedDomain}"]`).evaluate(function (row) { return row.open; }), true);
   assert.equal(await page.locator(`.domain-directory-row[data-domain-code="${selectedDomain}"] > summary`).evaluate(function (summary) { return document.activeElement === summary; }), true);
 
+  await page.locator('[data-map-view="course"]').click();
+  assert.equal(await page.locator("#course-directory").isVisible(), true);
+  assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개 공개/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
+  await page.locator('[data-course-id="algebra-2"]').click();
+  assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "#availability");
+  assert.match(await page.locator("#course-sequence-note").innerText(), /학교가 설정/);
+
   assert.equal(await page.locator("#goal-capabilities li").count(), 6);
   assert.match(schoolCapabilities, /진단[\s\S]*분석[\s\S]*클리닉[\s\S]*개념 학습[\s\S]*워크북[\s\S]*재확인/);
   assert.match(schoolCapabilities, /현재 공개[\s\S]*검수 잠금/);

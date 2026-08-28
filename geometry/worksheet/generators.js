@@ -543,7 +543,7 @@
   function figureViewpointCode(figures) {
     if (!figures) return null;
     if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
-    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "polycube-compose-options", "sequence"].indexOf(figures.kind) !== -1) {
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "polycube-compose-options", "polycube-pair-select", "sequence"].indexOf(figures.kind) !== -1) {
       return ISO_VIEWPOINT.code;
     }
     return null;
@@ -2214,7 +2214,122 @@
     };
   }
 
-  // 14. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 14. PS — 목표 입체를 만드는 두 조각 찾기
+  //
+  // 보기의 모든 unordered pair를 전수 합성한 뒤, 정확히 한 pair에만 속하는
+  // 목표 합동형을 고른다. 그러므로 두 기호의 순서를 바꾼 것을 별도 답으로
+  // 세지 않으면서도 정답 조각쌍은 하나로 확정된다.
+  const PAIR_SELECT_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ pieceSize: 5, candidates: 4 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ])
+  });
+
+  function pairSelectProfile(level, intensity) {
+    const stage = PAIR_SELECT_PROFILES[levelCode(level)] || PAIR_SELECT_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      pieceSize: raw.pieceSize,
+      candidates: raw.candidates,
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function polycubeSpans(cells) {
+    const normalized = normalizeCoords(cells);
+    return [0, 1, 2].map((axis) => Math.max(...normalized.map((cell) => cell[axis])) + 1);
+  }
+
+  function buildPairSelectProblem(rng, level, intensity) {
+    const profile = pairSelectProfile(level, intensity);
+    const library = COMPOSE_PIECES[profile.pieceSize] || [];
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const bank = rng.shuffle(library).slice(0, profile.candidates).map(normalizeCoords);
+      if (bank.length < profile.candidates) continue;
+      const bankViews = bank.map((piece) => visibleOrientations(piece));
+      if (bankViews.some((views) => !views.length)) continue;
+
+      const targets = new Map();
+      for (let left = 0; left < bank.length; left += 1) {
+        for (let right = left + 1; right < bank.length; right += 1) {
+          joinedFormsForPieces(bank[left], bank[right]).forEach((shape, form) => {
+            if (!targets.has(form)) targets.set(form, { shape, pairs: [] });
+            targets.get(form).pairs.push([left, right]);
+          });
+        }
+      }
+
+      const uniqueTargets = rng.shuffle(Array.from(targets.values()).filter((entry) => entry.pairs.length === 1));
+      for (let index = 0; index < Math.min(uniqueTargets.length, 500); index += 1) {
+        const entry = uniqueTargets[index];
+        const spans = polycubeSpans(entry.shape);
+        if (Math.max(...spans) > 5 || spans[0] * spans[1] * spans[2] > 30) continue;
+        const targetViews = visibleOrientations(entry.shape);
+        if (!targetViews.length) continue;
+        return {
+          profile,
+          bank: bankViews.map((views) => rng.pick(views)),
+          target: rng.pick(targetViews),
+          pairIndexes: entry.pairs[0],
+          matchingPairCount: entry.pairs.length
+        };
+      }
+    }
+    throw new Error("unable to build a unique two-piece selection problem for " + level + " D" + intensity);
+  }
+
+  function genPS(rng, level, intensity) {
+    const built = buildPairSelectProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라", "마"];
+    const pairLabels = built.pairIndexes.map((index) => labels[index]);
+    const pairMatches = [];
+    for (let left = 0; left < built.bank.length; left += 1) {
+      for (let right = left + 1; right < built.bank.length; right += 1) {
+        pairMatches.push({
+          pair: [labels[left], labels[right]],
+          canMake: piecesCanMakeShape(built.bank[left], built.bank[right], built.target)
+        });
+      }
+    }
+    return {
+      type: "PS",
+      prompt: "보기의 쌓기나무 모양 중 두 가지를 각각 한 번씩 사용하여 목표 입체를 만들려고 합니다. 필요한 두 모양의 기호를 쓰시오. 모양은 자유롭게 돌릴 수 있습니다.",
+      figures: {
+        kind: "polycube-pair-select",
+        target: built.target,
+        candidates: built.bank,
+        labels: labels.slice(0, built.bank.length)
+      },
+      answer: {
+        pair: pairLabels,
+        pairIndexes: built.pairIndexes,
+        pairMatches,
+        pieceSize: built.profile.pieceSize,
+        targetSize: built.target.length,
+        matchingPairCount: built.matchingPairCount
+      },
+      answerText: pairLabels.join(", ")
+    };
+  }
+
+  // 15. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2407,7 +2522,7 @@
     return { map, width: map[0].length, depth: map.length, shape: "stair" };
   }
 
-  // 15. BW — 흑백 교차 (정육면체 + 계단·돌출형)
+  // 16. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, level, intensity) {
     const built = checkerShapeForLevel(rng, level, intensity);
     const map = built.map;
@@ -2439,7 +2554,7 @@
     };
   }
 
-  // 16. HL — 구멍 뚫기
+  // 17. HL — 구멍 뚫기
   //
   // 한 방향에 여러 개, 여러 방향에 나눠서 — 단계·강도별 구멍 배치는 아래
   // holePlan에 모아 두었다. 구멍이 서로 교차하면 같은 칸이 두 번 빠지므로
@@ -2559,7 +2674,7 @@
     };
   }
 
-  // 17. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
+  // 18. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
   //
   // 패턴 패밀리는 buildSQShape(모양)과 sqFormula(개수) 한 쌍으로 정의된다.
   // 둘은 반드시 일치해야 하므로(.selftest.mjs가 heightmap 합과 공식을
@@ -2789,6 +2904,7 @@
     { code: "HC", label: "보이지 않는 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CP", label: "두 모양으로 만들 수 없는 입체", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "PS", label: "목표 입체를 만드는 두 조각 찾기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
     { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2866,6 +2982,7 @@
       case "HC": problem = genHC(rng, lv, it); break;
       case "CJ": problem = genCJ(rng, lv, it); break;
       case "CP": problem = genCP(rng, lv, it); break;
+      case "PS": problem = genPS(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
@@ -3188,6 +3305,9 @@
     COMPOSE_PROFILES,
     composeProfile,
     buildComposeProblem,
+    PAIR_SELECT_PROFILES,
+    pairSelectProfile,
+    buildPairSelectProblem,
     // solver
     deriveMaxArrays,
     colMaxFromFrontView,

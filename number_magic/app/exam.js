@@ -330,12 +330,25 @@ function qrSvg(text){
        + `<rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
 }
 
-/* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬). */
-function qrHeaderBlockHtml(code){
+/* 이 유형에 열어 볼 개념 설명이 실제로 있는가 — 없는 유형이 424레벨 중 115개고
+   하필 초등 전 범위다(NS·AD·SB·ML·DV·FR·DC·MX). 그런데 인쇄물은 늘 "QR을 찍으면
+   개념 설명이 열려요"라고 적어 놓아서, 초등 학습지의 QR은 "준비되지 않았어요"만
+   있는 빈 화면으로 이어졌다(2026-08-28 발견). 캡션을 사실에 맞춘다. */
+function hasConceptFor(thread, level){
+  const info = resolveConceptUnit(thread, level);
+  if(!info) return false;
+  return !!((info.unit && info.unit.discover) || info.thread.concept);
+}
+
+/* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬).
+   hasConcept를 넘기지 않으면 개념이 있다고 보지 않고 중립 문구를 쓴다. */
+function qrHeaderBlockHtml(code, hasConcept){
+  const cap = hasConcept ? 'QR을 찍으면 개념 설명이 열려요'
+                         : 'QR을 찍으면 이 학습지를 다시 만들 수 있어요';
   return `<div class="nm-print-qr-wrap">
     <span class="nm-print-qr-code">${esc(code)}</span>
     ${qrSvg(wsUrlFromCode(code))}
-    <span class="nm-print-qr-cap">QR을 찍으면 개념 설명이 열려요</span>
+    <span class="nm-print-qr-cap">${cap}</span>
   </div>`;
 }
 
@@ -397,7 +410,10 @@ function conceptBlockHtml(threadId, level){
       <p class="nm-cp-sentence">${esc(pickKo(info.thread.concept))}</p>
     </div>`;
   }
-  return `<div class="nm-cp-block"><h3 class="nm-cp-title">${esc(nm)}</h3></div>`;
+  /* 개념 내용이 아예 없으면 빈 블록을 만들지 않는다 — 예전엔 유형 이름만 적힌
+     장이 통째로 인쇄됐다(개념 없는 유형이 115레벨이라 종이 낭비가 컸다).
+     블록이 하나도 없으면 conceptPageHtml이 개념 장 자체를 만들지 않는다. */
+  return '';
 }
 
 /* items: [{thread,level}, ...] — 현재는 학습지 한 장이 스레드 하나뿐이라 늘 1개짜리
@@ -411,7 +427,7 @@ function conceptPageHtml(items, code){
     <h2 style="margin:0">Numbers of Magic — 개념 노트</h2>
     <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em;align-items:flex-start">
       <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
-      ${qrHeaderBlockHtml(code)}
+      ${qrHeaderBlockHtml(code, true)}
     </div>
   </div>
   <div class="nm-cp-body">${blocks}</div>
@@ -1486,6 +1502,10 @@ const NM_EXAM = {
          화면으로는 영원히 못 맞히는 상태였다(2026-08-28 발견, 99개 레벨).
          인쇄용 그리드 학습지는 이미 이렇게 처리하고 있어 같은 방식을 맞춘다. */
       const isMulti = Array.isArray(p.answer);
+      /* type=number를 쓰지 않는 이유: 소수점을 찍는 순간 "3."이 잘못된 수라
+         브라우저가 값을 통째로 비워 버려 숫자패드의 소수점 키가 동작하지 않는다.
+         text + inputmode=decimal이면 모바일 숫자 자판은 그대로 뜨고 값도 남는다.
+         비교는 어차피 parseFloat/matchesAnswer가 한다. */
       container.innerHTML = `
 <div class="nm-exam-run">
   <div class="nm-exam-header">
@@ -1502,7 +1522,7 @@ const NM_EXAM = {
     ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="${isMulti ? 'text' : 'number'}" inputmode="${isMulti ? 'text' : 'numeric'}"
+    <input id="nm-ex-ans" type="text" inputmode="decimal"
            placeholder="${isMulti ? '예: 3, 5' : '답 / Answer'}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
@@ -1531,7 +1551,9 @@ const NM_EXAM = {
            parseInt를 태우면 "8, 9"가 8이 되어 항상 오답이 된다. */
         if(String(raw).trim() !== '') answers[current] = raw;
       } else {
-        const v = parseInt(raw);
+        /* parseFloat — 소수 답(DC4·DC5·FR12: 6.8, 136.65 …)이 parseInt에서
+           6으로 잘려 늘 오답이 됐다. matchesAnswer도 parseFloat를 쓴다. */
+        const v = parseFloat(raw);
         if(!isNaN(v)){ answers[current] = v; }
       }
       current++;
@@ -1659,7 +1681,7 @@ ${conceptHtml}
     <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    ${qrHeaderBlockHtml(code)}
+    ${qrHeaderBlockHtml(code, hasConceptFor(thread, level))}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems"></div>
@@ -1718,7 +1740,7 @@ ${conceptHtml}
     <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${b.cfg.count}</span>
-    ${qrHeaderBlockHtml(b.code)}
+    ${qrHeaderBlockHtml(b.code, hasConceptFor(b.cfg.thread, b.cfg.level))}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems-${i}"></div>`).join('');
