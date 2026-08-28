@@ -358,6 +358,27 @@ select, .code-input, input[type="text"] {
 .ws-figure.ws-figure-sm svg.ws-iso { height: 78px; }
 .ws-seq-dots { font-size: 22px; font-weight: 900; color: #8a9a92; padding-bottom: 12px; }
 
+/* 한 개 옮기기: 처음 모양은 왼쪽, 보기는 같은 폭의 한 줄에 고정한다. 보기
+   수가 3개에서 4개로 늘어나도 A4 카드 폭을 밀어내지 않게 각 그림 폭을
+   제한하며, 화면이 좁으면 보기 묶음만 자연스럽게 두 줄로 접힌다. */
+.ws-move-source { display: flex; align-items: center; justify-content: center; }
+.ws-move-divider { align-self: center; color: #3185a0; font-size: 22px; font-weight: 900; }
+.ws-move-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(62px, 1fr));
+  align-items: end;
+  gap: 8px;
+  flex: 1 1 360px;
+  min-width: 0;
+}
+.ws-move-options .ws-figure { min-width: 0; }
+.ws-move-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 82px; }
+.ws-move-options-3 { grid-template-columns: repeat(3, minmax(72px, 1fr)); }
+
+@media (max-width: 720px) {
+  .ws-move-options { grid-template-columns: repeat(2, minmax(72px, 1fr)); }
+}
+
 .ws-answer-line {
   margin-top: 8px;
   padding-top: 6px;

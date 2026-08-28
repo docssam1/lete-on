@@ -474,6 +474,18 @@ html, body {
 .preview-body .ws-figure.ws-figure-lg svg.ws-iso { height: 165px; }
 .preview-body .ws-figure.ws-figure-sm svg.ws-iso { height: 76px; }
 .preview-body .ws-seq-dots { font-size: 21px; font-weight: 900; color: #9aa7b2; padding-bottom: 12px; }
+.preview-body .ws-move-source { display: flex; align-items: center; justify-content: center; }
+.preview-body .ws-move-divider { align-self: center; color: var(--brand); font-size: 21px; font-weight: 900; }
+.preview-body .ws-move-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(58px, 1fr));
+  align-items: end;
+  gap: 7px;
+  flex: 1 1 300px;
+  min-width: 0;
+}
+.preview-body .ws-move-options-3 { grid-template-columns: repeat(3, minmax(66px, 1fr)); }
+.preview-body .ws-move-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 76px; }
 .preview-body .ws-answer-line {
   margin-top: 8px;
   padding-top: 6px;
@@ -872,6 +884,7 @@ main.lab-wrap { padding-top: 28px; }
   .preview-field { padding: 12px; }
   .preview-body { min-height: 240px; }
   .preview-empty { min-height: 210px; padding: 20px; }
+  .preview-body .ws-move-options { grid-template-columns: repeat(2, minmax(68px, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

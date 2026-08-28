@@ -535,7 +535,7 @@
   function figureViewpointCode(figures) {
     if (!figures) return null;
     if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
-    if (["iso", "iso-walled", "iso-box", "iso-holes", "sequence"].indexOf(figures.kind) !== -1) {
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "sequence"].indexOf(figures.kind) !== -1) {
       return ISO_VIEWPOINT.code;
     }
     return null;
@@ -1476,7 +1476,118 @@
     };
   }
 
-  // 9. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 9. MV — 쌓기나무 한 개 옮기기
+  //
+  // 사용자 제공 초등팩토 1의 "한 개 옮겨 두 모양 만들기" 풀이 구조를
+  // 인쇄용 단일정답 보기 문제로 바꾼 유형이다. 모든 보기는 처음 모양과
+  // 쌓기나무 수가 같아 단순 개수 비교로 답을 고를 수 없고, 정답만 정확히
+  // 한 번의 이동으로 도달한다. 그림은 IC와 같은 시선 판독 규칙을 통과한
+  // 높이 지도만 사용한다.
+  function oneCubeMoveDistance(from, to, width, depth) {
+    let added = 0;
+    let removed = 0;
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const delta = to[z][x] - from[z][x];
+        if (delta > 0) added += delta;
+        else removed -= delta;
+      }
+    }
+    return added === removed ? added : Infinity;
+  }
+
+  function mapKey(map) {
+    return map.map((row) => row.join(",")).join(";");
+  }
+
+  function oneCubeMoveTargets(map, width, depth, maxH) {
+    const targets = [];
+    const seen = new Set();
+    for (let fromZ = 0; fromZ < depth; fromZ += 1) {
+      for (let fromX = 0; fromX < width; fromX += 1) {
+        if (map[fromZ][fromX] < 1) continue;
+        for (let toZ = 0; toZ < depth; toZ += 1) {
+          for (let toX = 0; toX < width; toX += 1) {
+            if ((fromX === toX && fromZ === toZ) || map[toZ][toX] >= maxH) continue;
+            const target = cloneMap(map);
+            target[fromZ][fromX] -= 1;
+            target[toZ][toX] += 1;
+            const key = mapKey(target);
+            if (seen.has(key) || !isCornerStaircase(target)) continue;
+            if (!auditIsoLineOfSight(target, width, depth, ISO_VIEWPOINT.code).ok) continue;
+            seen.add(key);
+            targets.push(target);
+          }
+        }
+      }
+    }
+    return targets;
+  }
+
+  function moveProblemShape(rng, level, intensity) {
+    const choiceCount = normalizeIntensity(intensity) === 1 ? 3 : 4;
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      const built = visibleCountingShape(rng, level, intensity);
+      const source = built.map;
+      const width = built.width;
+      const depth = built.depth;
+      const maxH = built.profile.maxH;
+      const oneMoves = oneCubeMoveTargets(source, width, depth, maxH);
+      if (!oneMoves.length) continue;
+
+      const twoMoves = [];
+      const seen = new Set([mapKey(source)]);
+      oneMoves.forEach((middle) => {
+        oneCubeMoveTargets(middle, width, depth, maxH).forEach((target) => {
+          const key = mapKey(target);
+          if (seen.has(key) || oneCubeMoveDistance(source, target, width, depth) !== 2) return;
+          seen.add(key);
+          twoMoves.push(target);
+        });
+      });
+      if (twoMoves.length < choiceCount - 1) continue;
+
+      const correct = rng.pick(oneMoves);
+      const distractors = rng.shuffle(twoMoves).slice(0, choiceCount - 1);
+      const choices = rng.shuffle([correct].concat(distractors));
+      const correctIndex = choices.findIndex((candidate) => mapKey(candidate) === mapKey(correct));
+      return { source, choices, correctIndex, width, depth, maxH };
+    }
+    throw new Error("unable to build a one-cube-move problem for " + level + " D" + intensity);
+  }
+
+  function genMV(rng, level, intensity) {
+    const built = moveProblemShape(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const distances = built.choices.map((map) => oneCubeMoveDistance(
+      built.source,
+      map,
+      built.width,
+      built.depth
+    ));
+    const choice = labels[built.correctIndex];
+    return {
+      type: "MV",
+      prompt: "모든 모양은 같은 방향에서 보았습니다. 처음 모양에서 쌓기나무 1개만 다른 곳으로 옮겨 만들 수 있는 모양을 고르시오.",
+      figures: {
+        kind: "iso-options",
+        source: built.source,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length),
+        width: built.width,
+        depth: built.depth
+      },
+      answer: {
+        choice,
+        choiceIndex: built.correctIndex,
+        distances,
+        sourceTotal: mapTotal(built.source)
+      },
+      answerText: choice
+    };
+  }
+
+  // 10. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2046,6 +2157,7 @@
     { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
     { code: "FB", label: "상자 채우기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4"] },
     { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "MV", label: "쌓기나무 한 개 옮기기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
     { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2118,6 +2230,7 @@
       case "IN": problem = genIN(rng, lv, it); break;
       case "FB": problem = genFB(rng, lv, it); break;
       case "CU": problem = genCU(rng, lv, it); break;
+      case "MV": problem = genMV(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
@@ -2413,6 +2526,9 @@
     viewScale,
     boxNForLevel,
     fillBoxDims,
+    oneCubeMoveDistance,
+    oneCubeMoveTargets,
+    moveProblemShape,
     // solver
     deriveMaxArrays,
     colMaxFromFrontView,

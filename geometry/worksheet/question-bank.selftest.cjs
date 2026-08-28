@@ -7,6 +7,8 @@ require("./generators.js");
 const GEN = global.GW_GEN;
 require("./render.js");
 const REN = global.GW_RENDER;
+require("./card.js");
+const CARD = global.GW_CARD;
 
 function example(overrides) {
   return Object.assign({
@@ -224,9 +226,11 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.deepEqual(GEN.typeInfo("IC").levels, ["L0", "L1", "L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("SQ").levels, ["L1", "L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("CU").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("MV").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typesForLevel("L0"), ["IC"]);
   assert.ok(GEN.typesForLevel("L1").includes("SQ"));
   assert.ok(GEN.typesForLevel("L2").includes("CU"));
+  assert.ok(GEN.typesForLevel("L2").includes("MV"));
   assert.equal(GEN.typeSupportsLevel("SQ", "L0"), false);
   assert.equal(GEN.typeSupportsLevel("CU", "L1"), false);
 });
@@ -246,4 +250,49 @@ test("Kids cube sequences begin with the visible staircase rule", () => {
       assert.ok(problem.answer.n >= 4 && problem.answer.n <= 6);
     }
   }
+});
+
+test("one-cube-move choices have one answer and preserve the explicit viewpoint", () => {
+  const labels = ["가", "나", "다", "라"];
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      for (let seed = 1; seed <= 120; seed += 1) {
+        const problem = GEN.make(
+          "MV",
+          GEN.createRng("move-one-cube:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        assert.equal(figures.kind, "iso-options");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(figures.choices.length, difficulty === 1 ? 3 : 4);
+        assert.deepEqual(figures.labels, labels.slice(0, figures.choices.length));
+        assert.equal(problem.answer.distances.filter((distance) => distance === 1).length, 1);
+        assert.equal(problem.answer.distances[problem.answer.choiceIndex], 1);
+        assert.equal(problem.answer.choice, labels[problem.answer.choiceIndex]);
+
+        [figures.source].concat(figures.choices).forEach((map) => {
+          assert.equal(GEN.mapTotal(map), problem.answer.sourceTotal);
+          const sight = GEN.auditIsoLineOfSight(
+            map,
+            figures.width,
+            figures.depth,
+            figures.viewpoint
+          );
+          assert.equal(sight.ok, true, stage + " D" + difficulty + " seed " + seed);
+          assert.deepEqual(sight.axisBlockers, []);
+          assert.deepEqual(sight.topBlockers, []);
+        });
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, figures.choices.length + 1);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 1440);
 });
