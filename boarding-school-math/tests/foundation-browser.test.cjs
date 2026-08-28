@@ -377,6 +377,8 @@ test("Grade 6 diagnostic page explains the real flow while public hosting keeps 
   assert.equal(await page.locator("#runtime-status-title").textContent(), "공개 안내 모드");
   assert.equal(await page.locator("#student-start").isDisabled(), true);
   assert.equal(await page.locator("#teacher-open").isDisabled(), true);
+  assert.equal(await page.locator("#student-start").textContent(), "공개 주소에서는 실행할 수 없음");
+  assert.equal(await page.locator("#teacher-open").textContent(), "공개 주소에서는 열 수 없음");
   assert.equal(await page.locator("#student-workspace").isVisible(), true);
   assert.equal(await page.locator("#teacher-workspace").isHidden(), true);
   assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
