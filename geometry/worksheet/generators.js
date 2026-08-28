@@ -543,7 +543,7 @@
   function figureViewpointCode(figures) {
     if (!figures) return null;
     if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
-    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "sequence"].indexOf(figures.kind) !== -1) {
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "polycube-compose-options", "sequence"].indexOf(figures.kind) !== -1) {
       return ISO_VIEWPOINT.code;
     }
     return null;
@@ -2034,7 +2034,187 @@
     };
   }
 
-  // 13. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 13. CP — 두 모양으로 만들 수 없는 입체
+  //
+  // 첫 조각의 방향을 하나로 고정하고 둘째 조각의 24회전과 두 조각의 모든
+  // 면 접촉 위치를 전수 조사한다. 전체를 함께 돌리는 경우는 첫 조각을 고정한
+  // 경우와 회전 합동이므로 이 열거로 가능한 합성 모양을 빠짐없이 얻는다.
+  const FACE_NEIGHBORS = Object.freeze([
+    Object.freeze([1, 0, 0]), Object.freeze([-1, 0, 0]),
+    Object.freeze([0, 1, 0]), Object.freeze([0, -1, 0]),
+    Object.freeze([0, 0, 1]), Object.freeze([0, 0, -1])
+  ]);
+  const JOINED_FORM_CACHE = new Map();
+
+  const COMPOSE_PIECES = Object.freeze({
+    3: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
+    ]),
+    4: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [1, 1, 0], [2, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    ]),
+    5: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [0, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0], [1, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [1, 1, 0], [2, 1, 0], [2, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1]])
+    ])
+  });
+
+  function composePiece(rng, size, excludedForm) {
+    const available = (COMPOSE_PIECES[size] || []).filter((piece) => canonicalPolycube(piece) !== excludedForm);
+    return available.length ? normalizeCoords(rng.pick(available)) : null;
+  }
+
+  function joinedFormsForPieces(first, second) {
+    const pairKey = [canonicalPolycube(first), canonicalPolycube(second)].sort().join("||");
+    if (JOINED_FORM_CACHE.has(pairKey)) return JOINED_FORM_CACHE.get(pairKey);
+    const left = normalizeCoords(first);
+    const occupied = new Set(left.map(coordKey));
+    const rawUnions = new Map();
+    orientationsOf(second).forEach((right) => {
+      left.forEach(([lx, ly, lz]) => {
+        right.forEach(([rx, ry, rz]) => {
+          FACE_NEIGHBORS.forEach(([dx, dy, dz]) => {
+            const shift = [lx + dx - rx, ly + dy - ry, lz + dz - rz];
+            const placed = right.map(([x, y, z]) => [x + shift[0], y + shift[1], z + shift[2]]);
+            if (placed.some((cell) => occupied.has(coordKey(cell)))) return;
+            const union = normalizeCoords(left.concat(placed));
+            rawUnions.set(coordsKey(union), union);
+          });
+        });
+      });
+    });
+    const forms = new Map();
+    rawUnions.forEach((union) => {
+      const form = canonicalPolycube(union);
+      if (!forms.has(form)) forms.set(form, union);
+    });
+    JOINED_FORM_CACHE.set(pairKey, forms);
+    return forms;
+  }
+
+  function piecesCanMakeShape(first, second, target) {
+    return joinedFormsForPieces(first, second).has(canonicalPolycube(target));
+  }
+
+  const COMPOSE_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ pieceSizes: [3, 3], choices: 3, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 3], choices: 4, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 4], choices: 4, sampleDims: [3, 3, 2] })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ pieceSizes: [4, 4], choices: 3, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 5], choices: 4, sampleDims: [4, 3, 2] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 3, 2] })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ pieceSizes: [5, 5], choices: 3, sampleDims: [4, 3, 2] }),
+      Object.freeze({ pieceSizes: [5, 4], choices: 4, sampleDims: [4, 3, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 3, 3] })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ pieceSizes: [5, 4], choices: 3, sampleDims: [4, 3, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 4, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 4, 3] })
+    ])
+  });
+
+  function composeProfile(level, intensity) {
+    const stage = COMPOSE_PROFILES[levelCode(level)] || COMPOSE_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      pieceSizes: raw.pieceSizes.slice(),
+      choices: raw.choices,
+      sampleDims: { width: raw.sampleDims[0], depth: raw.sampleDims[1], height: raw.sampleDims[2] },
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function buildComposeProblem(rng, level, intensity) {
+    const profile = composeProfile(level, intensity);
+    const totalSize = profile.pieceSizes[0] + profile.pieceSizes[1];
+    for (let attempt = 0; attempt < 180; attempt += 1) {
+      const first = composePiece(rng, profile.pieceSizes[0]);
+      const firstForm = first && canonicalPolycube(first);
+      const second = composePiece(rng, profile.pieceSizes[1], firstForm);
+      if (!first || !second) continue;
+      const firstViews = visibleOrientations(first);
+      const secondViews = visibleOrientations(second);
+      if (!firstViews.length || !secondViews.length) continue;
+
+      const accepted = joinedFormsForPieces(first, second);
+      const possible = [];
+      rng.shuffle(Array.from(accepted.values())).some((shape) => {
+        const views = visibleOrientations(shape);
+        if (views.length) possible.push(rng.pick(views));
+        return possible.length === profile.choices - 1;
+      });
+      if (possible.length < profile.choices - 1) continue;
+
+      const usedForms = new Set(possible.map(canonicalPolycube));
+      let impossible = null;
+      for (let tries = 0; tries < 2400 && !impossible; tries += 1) {
+        const candidate = randomConnectedSubset(rng, profile.sampleDims, totalSize);
+        if (!candidate) continue;
+        const form = canonicalPolycube(candidate);
+        if (usedForms.has(form) || accepted.has(form)) continue;
+        const views = visibleOrientations(candidate);
+        if (!views.length) continue;
+        impossible = rng.pick(views);
+      }
+      if (!impossible) continue;
+
+      const impossibleForm = canonicalPolycube(impossible);
+      const choices = rng.shuffle(possible.concat([impossible]));
+      const impossibleIndex = choices.findIndex((shape) => canonicalPolycube(shape) === impossibleForm);
+      return {
+        profile,
+        sources: [rng.pick(firstViews), rng.pick(secondViews)],
+        choices,
+        impossibleIndex,
+        acceptedCount: accepted.size
+      };
+    }
+    throw new Error("unable to build a two-piece composition problem for " + level + " D" + intensity);
+  }
+
+  function genCP(rng, level, intensity) {
+    const built = buildComposeProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const canMake = built.choices.map((shape) => piecesCanMakeShape(built.sources[0], built.sources[1], shape));
+    const choice = labels[built.impossibleIndex];
+    return {
+      type: "CP",
+      prompt: "준비된 두 모양을 각각 한 번씩 사용하여 면끼리 붙일 때 만들 수 없는 모양을 고르시오. 두 모양은 자유롭게 돌릴 수 있습니다.",
+      figures: {
+        kind: "polycube-compose-options",
+        sources: built.sources,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length)
+      },
+      answer: {
+        choice,
+        choiceIndex: built.impossibleIndex,
+        canMake,
+        pieceSizes: built.profile.pieceSizes,
+        targetSize: built.profile.pieceSizes[0] + built.profile.pieceSizes[1],
+        acceptedCount: built.acceptedCount
+      },
+      answerText: choice
+    };
+  }
+
+  // 14. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2227,7 +2407,7 @@
     return { map, width: map[0].length, depth: map.length, shape: "stair" };
   }
 
-  // 14. BW — 흑백 교차 (정육면체 + 계단·돌출형)
+  // 15. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, level, intensity) {
     const built = checkerShapeForLevel(rng, level, intensity);
     const map = built.map;
@@ -2259,7 +2439,7 @@
     };
   }
 
-  // 15. HL — 구멍 뚫기
+  // 16. HL — 구멍 뚫기
   //
   // 한 방향에 여러 개, 여러 방향에 나눠서 — 단계·강도별 구멍 배치는 아래
   // holePlan에 모아 두었다. 구멍이 서로 교차하면 같은 칸이 두 번 빠지므로
@@ -2379,7 +2559,7 @@
     };
   }
 
-  // 16. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
+  // 17. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
   //
   // 패턴 패밀리는 buildSQShape(모양)과 sqFormula(개수) 한 쌍으로 정의된다.
   // 둘은 반드시 일치해야 하므로(.selftest.mjs가 heightmap 합과 공식을
@@ -2608,6 +2788,7 @@
     { code: "CO", label: "쌓기나무 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "HC", label: "보이지 않는 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CP", label: "두 모양으로 만들 수 없는 입체", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
     { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2684,6 +2865,7 @@
       case "CO": problem = genCO(rng, lv, it); break;
       case "HC": problem = genHC(rng, lv, it); break;
       case "CJ": problem = genCJ(rng, lv, it); break;
+      case "CP": problem = genCP(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
@@ -2999,6 +3181,13 @@
     JOIN_PROFILES,
     joinProfile,
     buildJoinProblem,
+    FACE_NEIGHBORS,
+    COMPOSE_PIECES,
+    joinedFormsForPieces,
+    piecesCanMakeShape,
+    COMPOSE_PROFILES,
+    composeProfile,
+    buildComposeProblem,
     // solver
     deriveMaxArrays,
     colMaxFromFrontView,
