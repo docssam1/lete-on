@@ -9,6 +9,7 @@ test("SASMO public archive exposes only verified source-hosted links", function 
   assert.deepEqual(archive.coverage.years, [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]);
   assert.equal(archive.coverage.recordCount, 88);
   assert.equal(archive.coverage.assetCount, 144);
+  assert.equal(archive.coverage.officialLmsRecordCount, 3);
   assert.equal(archive.records.length, 88);
 
   const recordIds = new Set();
@@ -39,6 +40,17 @@ test("SASMO public archive exposes only verified source-hosted links", function 
   assert.equal(recordIds.size, 88);
   assert.equal(assetUrls.size, 144);
   assert.equal(assetUrls.has("https://files.k12mathcontests.com/sasmo_2024_primary6.pdf"), true);
+
+  assert.equal(archive.officialLmsRecords.length, 3);
+  assert.deepEqual(archive.officialLmsRecords.map(function (record) { return record.year; }), [2023, 2024, 2025]);
+  archive.officialLmsRecords.forEach(function (record) {
+    assert.equal(record.grade, 11);
+    assert.match(record.access, /login or enrollment may be required/i);
+    const source = new URL(record.url);
+    assert.equal(source.protocol, "https:");
+    assert.equal(source.hostname, "sasmo.simcc.org");
+    assert.match(source.pathname, new RegExp(`^/courses/sasmo-${record.year}-grade-11/$`));
+  });
 });
 
 test("SASMO public archive contains no private inventory or question payload", function () {
