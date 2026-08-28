@@ -21,6 +21,7 @@ assert(/\.question-page\{[^}]*break-after:page/.test(styles), "question page pri
 assert(/\.question-page\{[^}]*grid-template-columns:1fr;grid-template-rows:repeat\(2/.test(styles), "two-question vertical print layout missing");
 assert(/\.b1-five-card-magic\.t-shape:before\{right:75px\}/.test(styles), "T-magic horizontal connector protrudes past the last cell");
 assert(/\.b1-five-card-magic\.t-shape:after\{bottom:42px\}/.test(styles), "T-magic vertical connector protrudes past the last cell");
+assert(/sourceAuditBlockedStages\?\.\[item\?\.id\]\?\.includes\(stageId\)/.test(app), "source-audit-blocked textbook stages remain selectable");
 
 const diagnosticBranch = app.indexOf('if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic"');
 const practiceBranch = app.indexOf("else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam))");

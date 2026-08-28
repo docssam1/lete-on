@@ -28,18 +28,18 @@
       defaultGrade: 6,
       eligibility: "미국 K–12 · 과정 순서와 승급 정책은 학교별 설정",
       route: "전체 진단 → 영역 지도 → 보정 수업 → 단원 숙달 → 유지 확인",
-      tone: "#102b42"
+      tone: "#183246"
     },
     singapore: {
       programId: "singapore-mastery",
       type: "학습법·숙달 경로",
       title: function (grade) { return `싱가포르식 숙달 · ${gradeName(grade)}`; },
-      summary: "대회명이 아닙니다. 개념과 모델로 이해하고, 충분히 연습하고, 오류를 성찰하고, 새로운 비정형 상황으로 확장한 뒤 오래 남았는지 다시 확인합니다.",
+      summary: "개념과 모델로 이해한 뒤 충분히 연습하고, 오류를 성찰하고, 새로운 비정형 상황으로 확장한 다음 오래 남았는지 다시 확인합니다.",
       grades: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       eligibility: "G1–8 구현 기반 · G9–12 교차표와 학교 설정은 검수 대기",
       route: "개념/모델 → 동기화 연습 → 성찰 복습 → 확장 학습 → 유지 확인",
-      tone: "#17604d"
+      tone: "#245847"
     },
     kangaroo: {
       programId: "math-kangaroo-1-8",
@@ -49,17 +49,17 @@
       grades: ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       route: "학년 밴드 확인 → 준비 진단 → 점수 구간별 훈련 → 공식 형식 모의",
-      tone: "#9c4b30"
+      tone: "#773f37"
     },
     sasmo: {
       programId: "sasmo-k2-8",
       type: "대회 목표",
       title: function (grade) { return `SASMO · ${gradeName(grade)} 준비`; },
-      summary: "싱가포르식 숙달과 SASMO는 같지 않습니다. 학년별 공식 형식을 확인한 뒤 주최기관의 영어 원문과 학교 수학의 선수개념·비정형 추론을 함께 연결합니다.",
+      summary: "학년별 공식 형식을 확인한 뒤 주최기관의 영어 원문, 학교 수학의 선수개념, 비정형 추론과 시간 전략을 함께 연결합니다.",
       grades: ["K2", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       route: "학년 확인 → 공식 영어 원문 → 결과 기록 → 영역·감점·시간 분석 → 맞춤 수업",
-      tone: "#4975ef"
+      tone: "#304b72"
     },
     amc: {
       programId: "amc-8",
@@ -75,11 +75,11 @@
         const stage = numericGrade <= 8 ? 8 : numericGrade <= 10 ? 10 : 12;
         return `AMC ${stage} · ${gradeName(grade)} 권장 경로`;
       },
-      summary: "AMC 8에서 멈추지 않습니다. 선택 학년에 맞춰 AMC 8·10·12 권장 단계를 보여주되, 공식 참가 자격과 GFIELD의 권장 준비 학년을 분리합니다.",
+      summary: "선택 학년에 맞춰 AMC 8·10·12 권장 단계를 보여주고, 공식 참가 자격과 GFIELD의 권장 준비 학년을 분리해 안내합니다.",
       grades: [6, 7, 8, 9, 10, 11, 12],
       defaultGrade: 6,
       route: "공식 자격 확인 → 학교 과정 진단 → AMC 영역 훈련 → 공식 시간 모의 → 전략 복기",
-      tone: "#402b70"
+      tone: "#633a48"
     }
   };
 
@@ -391,6 +391,7 @@
     const pathButton = event.target.closest("[data-path-goal]");
     const gradeButton = event.target.closest("[data-grade-tab]");
     const roleButton = event.target.closest("[data-role-preview]");
+    const roleTarget = event.target.closest("[data-role-target]");
     if (pathButton) {
       const pathGoal = pathButton.dataset.pathGoal;
       updateGoal(pathGoal, goalDefinitions[pathGoal].defaultGrade);
@@ -398,6 +399,7 @@
     if (goalButton) updateGoal(goalButton.dataset.goal, null, true);
     if (gradeButton) renderGradeMap(gradeButton.dataset.gradeTab);
     if (roleButton) updateRole(roleButton.dataset.rolePreview);
+    if (roleTarget) updateRole(roleTarget.dataset.roleTarget);
   });
 
   document.addEventListener("keydown", function (event) {

@@ -55,7 +55,14 @@ export const TYPES = [
   type("closest-two-digit-card-sum", "number", "수 카드와 식", "두 자리 수 두 개의 합을 목표 수에 가장 가깝게 만들기", { generator: "closestTwoDigitCardSum", sourceMatched: true }),
   type("front-back-total", "logic", "순서와 비교", "앞·뒤 순서로 줄 선 전체 인원 구하기", { generator: "frontBackTotal", sourceMatched: true }),
   type("wrong-operation-correction", "logic", "과정 추론", "잘못 적용한 덧셈·뺄셈을 바르게 고치기", { generator: "wrongOperationCorrection", sourceMatched: true }),
-  type("shape-matrix-rule", "pattern", "도형 규칙", "겹친 도형과 칠한 위치의 행렬 규칙 완성", { generator: "shapeMatrixRule", sourceMatched: true }),
+  // 과거 시제품 생성기는 보존하되 원본 문항 근거가 없어 선택·인쇄에서 잠근다.
+  // 파이널 2회 9번은 구조가 다른 shape-matrix-three-features가 정본이다.
+  type("shape-matrix-rule", "pattern", "도형 규칙", "겹친 도형과 칠한 위치의 행렬 규칙 완성", {
+    generator: "shapeMatrixRule",
+    sourceMatched: false,
+    sourceAuditBlocked: true,
+    sourceAuditNote: "원본 근거 없는 과거 시제품"
+  }),
   type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기", { generator: "delayedDatePromise", sourceMatched: true }),
   type("calendar-date-weekday", "pattern", "달력과 시간", "달력에서 특정 날짜의 요일 찾기", { generator: "tornCalendarWeekday", sourceMatched: true }),
   type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기", { generator: "twoTypeUnitTotal", sourceMatched: true }),
@@ -310,11 +317,11 @@ export const TYPES = [
   // 교재 41·50쪽의 '뒤로 접은 2x2' 잘린 합. 실전 시험 검증본 fold-number-cut-sum(대각선 접기)과 이름이
   // 비슷하지만 구조가 다르다 — 합치지 말 것.
   type("fold-number-cut-sum-textbook", "geometry", "색종이 접기", "번호 색종이를 접고 자른 수의 합 (교재)", { generator: "foldNumberCutSumTextbook", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("fold-diagonal-number-sum", "geometry", "색종이 접기", "대각선 한 번 접기 숫자판의 잘린·남은 합", { generator: "foldDiagonalNumberSum", sourceMatched: true, textbookSource: "실전 1회 18번·2회 15번 유형" }),
-  type("fold-target-sum-coloring", "geometry", "색종이 접기", "목표 합이 되게 색칠할 칸 고르기", { generator: "foldTargetSumColoring", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽 역방향" }),
+  type("fold-diagonal-number-sum", "geometry", "색종이 접기", "대각선 한 번 접기 숫자판의 잘린·남은 합", { generator: "foldDiagonalNumberSum", sourceMatched: true, sourceDerived: true, textbookSource: "실전 1회 18번·2회 15번 유형" }),
+  type("fold-target-sum-coloring", "geometry", "색종이 접기", "목표 합이 되게 색칠할 칸 고르기", { generator: "foldTargetSumColoring", sourceMatched: true, sourceDerived: true, textbookSource: "더클래식 1과정 1권 41·50쪽 역방향" }),
   type("fold-punch-shape-count", "geometry", "색종이 접기", "반원·원 펀치를 펼친 모양 개수", { generator: "foldPunchShapeCount", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
-  type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
+  type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, sourceDerived: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
+  type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, sourceDerived: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-cut-shape-choice", "geometry", "색종이 접기", "접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoice", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("fold-cut-unfold-one-draw", "geometry", "색종이 접어 자르기", "한 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldOneDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 1번·연습 2번" }),
   type("fold-cut-unfold-two-draw", "geometry", "색종이 접어 자르기", "두 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldTwoDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 연습 1번" }),
@@ -398,6 +405,9 @@ export const TYPES = [
   type("equal-part-shaded-fraction", "geometry", "도형의 분할과 분수", "똑같이 나눈 도형의 색칠한 부분을 분수로 나타내기", { generator: "equalPartShadedFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 1~3, 연습 8~12" }),
   type("equal-partition-drawing", "geometry", "도형의 분할과 분수", "도형을 주어진 수만큼 똑같이 나누어 색칠하기", { generator: "equalPartitionDrawing", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 활동2 4, 연습 14~15" }),
   type("incomplete-partition-fraction", "geometry", "도형의 분할과 분수", "빠진 선을 그어 같은 조각으로 나눈 뒤 분수 구하기", { generator: "incompletePartitionFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 확인2 1~4, 연습 13·16~20" }),
+  type("paired-hexagon-fractions", "geometry", "도형의 분할과 분수", "12등분·18등분 정육각형의 두 분수", { generator: "unitTestPairedHexagonFractions", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 3번" }),
+  type("triangle-twelve-part-fraction", "geometry", "도형의 분할과 분수", "12조각 정삼각형의 색칠한 분수", { generator: "unitTestTriangleTwelveFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 4번" }),
+  type("concentric-square-sixteen-fraction", "geometry", "도형의 분할과 분수", "안팎 정사각형과 대각선의 색칠한 넓이 분수", { generator: "unitTestConcentricSquareFraction", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 5번" }),
   type("oblique-square-grid-area", "geometry", "단위넓이", "모눈 위 기울어진 정사각형의 넓이", { generator: "obliqueSquareGridArea", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
   type("folded-strip-length", "geometry", "단위길이", "모눈 위 접힌 테이프·리본의 전체 길이", { generator: "foldedStripLength", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
@@ -958,6 +968,52 @@ export const TYPES = [
   type("sudoku-four-irregular-region", "logic", "스도쿠", "1부터 4까지 굵은 불규칙 칸에 한 번씩 넣기", { generator: "sudokuFourIrregularRegion", sourceMatched: true, textbookSource: "더클래식 1과정 2권 101~104·110~111쪽" })
 ];
 
+// 세부 유형을 나누기 전에 쓰던 넓은 이름이다. 직접 문제를 생성하지 않고, 검증된
+// 현재 세부 유형을 펼쳐 보여 주는 용도로만 보존한다. 일대다 항목을 임의의 첫 생성기에
+// 연결하면 원본과 다른 문제가 나오므로 반드시 배열 전체를 정본으로 취급한다.
+export const LEGACY_TYPE_ALIASES = Object.freeze({
+  "number-table-rule": Object.freeze(["addition-table-grid", "addition-table-grid-offset", "arrow-number-grid"]),
+  "shape-equation": Object.freeze(["shape-equation-add-subtract", "symbol-relation", "vertical-cryptarithm-shape-sum"]),
+  "number-line-distance": Object.freeze(["number-line-six-points", "number-line-unit-distance-book6", "number-line-two-part-distance"]),
+  "height-order": Object.freeze(["g1-height-order-four", "g1-summer-height-order-five"]),
+  "multi-person-transfer": Object.freeze(["g1-fall-three-person-total-transfer"]),
+  "cryptarithm": Object.freeze(["two-digit-letter-cryptarithm", "diagnostic-two-digit-cryptarithm", "vertical-shape-cryptarithm-values"]),
+  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-mixed-operation-grid"]),
+  "rod-length-ratio": Object.freeze(["g1-rod-ratio-total", "rod-ratio-total-book3", "rod-comparison-total-unit-test"]),
+  "colored-triangle-difference": Object.freeze(["g1-triangle-color-difference", "g1-summer-triangular-color-difference"]),
+  "polygon-stone-rearrangement": Object.freeze(["g1-polygon-stone-rearrangement", "polygon-border-shape-conversion-b7"]),
+  "ratio-distribution": Object.freeze(["g1-ratio-distribution", "g1-summer-orange-ratio-distribution", "g1-fall-total-triple-share"]),
+  "odd-even-sum-difference": Object.freeze(["g1-odd-even-sum-difference", "unit-test-book10-q25"]),
+  "weight-order": Object.freeze(["g1-summer-five-box-weight-order", "measurement-order-chain"]),
+  "adjacent-product-pentagon": Object.freeze(["g1-summer-pentagon-adjacent-product", "g1-fall-pentagon-adjacent-products-all"]),
+  "segment-count": Object.freeze(["g1-summer-circle-point-segments"]),
+  "square-side-composition": Object.freeze(["g1-summer-square-side-composition", "g1-fall-stacked-square-side-chain"]),
+  "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "rectilinear-perimeter-book6"]),
+  "latin-square": Object.freeze(["sudoku-three-row-column", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
+  "consecutive-number-addition": Object.freeze(["consecutive-vertical-addition-b10", "g1-fall-consecutive-three-sum-completion"]),
+  "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
+  "multiplication-matrix": Object.freeze(["multiplication-table-pattern", "multiplication-matrix-products", "multiplication-matrix-placement"]),
+  "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),
+  "venn-count": Object.freeze(["set-union-count", "neither-set-count", "venn-neither-b7"]),
+  "congruent-partition": Object.freeze(["congruent-equal-sum-partition-draw", "symbol-balanced-congruent-partition", "star-congruent-partition-draw-book4"]),
+  "calendar-weekday-sum": Object.freeze(["calendar-all-weekday-sum", "calendar-same-weekday-sum", "calendar-weekday-sum-year-boundary-book5"]),
+  "custom-operation": Object.freeze(["two-custom-operations"]),
+  "operator-insertion": Object.freeze(["plus-minus-multi-target", "number-card-plus-minus"]),
+  "function-machine": Object.freeze(["two-function-machine-chain", "g1-fall-linear-input-output-table"]),
+  "fold-diagonal-unfold": Object.freeze(["three-fold-line-unfold", "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw"]),
+  "shape-transform": Object.freeze(["shape-flip-composition", "shape-quarter-half-turn", "shape-rotate-flip-grid"]),
+  "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-sum", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
+  "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-irregular-grid", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
+  "tree-planting": Object.freeze(["closed-perimeter-object-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
+  "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "calendar-date-palindrome-b7", "clock-time-palindrome-b7", "reverse-add-palindrome-b7"]),
+  "catch-up": Object.freeze(["catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10"]),
+  "number-baseball": Object.freeze(["number-baseball-b10"]),
+  "unit-area-fraction": Object.freeze(["unit-grid-area", "equal-part-shaded-fraction", "incomplete-partition-fraction", "paired-hexagon-fractions", "triangle-twelve-part-fraction", "concentric-square-sixteen-fraction"]),
+  "unit-length-multiple": Object.freeze(["aligned-rod-common-length", "g1-summer-one-three-rods", "rod-ratio-total-book3"]),
+  "magic-card": Object.freeze(["binary-weight-selection", "colored-cell-number-code", "four-cell-binary-code"]),
+  "argument-logic": Object.freeze(["truth-lie-ranking", "exact-one-ranking-predictions-b9", "exact-one-answer-assignment-b9"])
+});
+
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
 const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
 
@@ -1363,6 +1419,9 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "equal-part-shaded-fraction": "전체 조각 수를 아래에, 색칠한 조각 수를 위에 씁니다.",
   "equal-partition-drawing": "도형의 가운데와 꼭짓점을 이용해 모양과 크기가 같은 조각으로 나눕니다.",
   "incomplete-partition-fraction": "이미 그어진 선을 이어 같은 크기의 작은 조각을 모두 만든 뒤 셉니다.",
+  "paired-hexagon-fractions": "왼쪽과 오른쪽 도형을 따로 보고, 각 도형의 전체 조각 수와 색칠한 조각 수를 각각 셉니다.",
+  "triangle-twelve-part-fraction": "큰 정삼각형 안의 작은 삼각형을 빠짐없이 세어 12조각인지 먼저 확인합니다.",
+  "concentric-square-sixteen-fraction": "안쪽 정사각형은 넓이가 전체의 1/4이고, 대각선으로 나눈 작은 삼각형 한 부분은 전체의 1/16입니다.",
   "oblique-square-grid-area": "기울어진 정사각형을 둘러싼 큰 사각형에서 바깥 삼각형 넓이를 뺍니다.",
   "folded-strip-length": "접힌 길을 가로와 세로의 모눈 칸으로 나누어 모든 구간을 더합니다.",
   "midpoint-number-line": "두 끝 수를 더해 똑같이 두 수로 가르면 중간수가 됩니다.",
@@ -3689,9 +3748,9 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
   "book-03": Object.freeze([
     { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: true, difficulty: 2 },
     { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
-    { number: 3, typeId: "equal-part-shaded-fraction", label: "같은 조각으로 나타낸 분수", verified: false, difficulty: 2 },
-    { number: 4, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false, difficulty: 2 },
-    { number: 5, typeId: "incomplete-partition-fraction", label: "도형 분할과 분수", verified: false, difficulty: 2 },
+    { number: 3, typeId: "paired-hexagon-fractions", label: "두 정육각형의 색칠한 분수", verified: true, difficulty: 2, sourceFidelity: "exact-generator", sourceVisualSignature: "wide-hexagon-12-crossed|wide-hexagon-18-outer-star" },
+    { number: 4, typeId: "triangle-twelve-part-fraction", label: "12조각 정삼각형의 색칠한 분수", verified: true, difficulty: 2, sourceFidelity: "exact-generator", sourceVisualSignature: "triangle-twelve-weighted-source-regions" },
+    { number: 5, typeId: "concentric-square-sixteen-fraction", label: "안팎 정사각형과 대각선의 색칠한 넓이 분수", verified: true, difficulty: 2, sourceFidelity: "exact-generator", sourceVisualSignature: "concentric-half-square-diagonals-right-bottom" },
     { number: 6, typeId: "folded-strip-length", label: "접힌 리본의 전체 길이", verified: true, difficulty: 2 },
     { number: 7, typeId: "midpoint-number-line", label: "두 수의 중간수", verified: true, difficulty: 2 },
     { number: 8, typeId: "segment-chain-distance", label: "A·B·C·D 사이의 거리", verified: true, difficulty: 2 },
@@ -4178,7 +4237,9 @@ export const CURRICULUM = [
       unitTestQuestionCount: 25,
       unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
       unitTestQuestions: (CURRICULUM_UNIT_TEST_QUESTIONS[book.id] || []).map((entry) => classifySourceQuestion(entry)),
-      goldenBellIncluded: false,
+      goldenBellIncluded: index === 0,
+      goldenBellStatus: index === 0 ? "ready" : index < 9 ? "source-located" : "source-needed",
+      goldenBellRole: "concept-story-level-up",
       reviewIncluded: index > 0,
       reviewSourceBookId: index > 0 ? `book-${String(index).padStart(2, "0")}` : null,
       reviewSourceBookLabel: index > 0 ? `${index}권` : null,
@@ -4199,12 +4260,15 @@ const sourceQuestionRecord = (sourceKind, sourceId, sourceLabel, entry, extra = 
     sourceKind,
     sourceId,
     sourceLabel,
+    sourceLocator: extra.sourceLocator || `${sourceLabel} · ${entry.number}번`,
     number: entry.number,
     typeId: typeIds[0],
     typeIds: Object.freeze(typeIds),
     label: entry.note || entry.label || byId[typeIds[0]]?.label || "",
     difficulty: entry.difficulty,
     verified: entry.verified === true,
+    sourceFidelity: entry.sourceFidelity || "classified",
+    sourceVisualSignature: entry.sourceVisualSignature || null,
     classification: entry.classification || classifications[0],
     classifications: Object.freeze(classifications),
     ...extra
@@ -4250,6 +4314,7 @@ const textbookQuestionRecords = mergeQuestionRecords(CURRICULUM.flatMap((book) =
         },
         {
           sourceKey: `textbook:${book.id}:u${unitIndex + 1}:${stage.id}:${reference.section}:${reference.group}:q${number}`,
+          sourceLocator: `${book.label} ${unitEntry.label} · ${stage.label} · ${reference.section} ${reference.group} · ${number}번`,
           bookId: book.id,
           unitIndex,
           unitLabel: unitEntry.label,
@@ -4269,10 +4334,19 @@ const textbookQuestionRecords = mergeQuestionRecords(CURRICULUM.flatMap((book) =
 export const SOURCE_QUESTION_INDEX = Object.freeze([
   ...[...EXAMS, ...DIAGNOSTIC_EXAM_TYPES, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES]
     .flatMap((exam) => exam.questions.map((entry) => sourceQuestionRecord(
-      "exam", exam.id, exam.label, entry, { stage: exam.stage || null }
+      "exam", exam.id, exam.label, entry, {
+        stage: exam.stage || null,
+        sourcePage: typeof exam.pageFor === "function" ? exam.pageFor(entry.number) : null,
+        sourceLocator: typeof exam.pageFor === "function"
+          ? `${exam.label} · ${exam.pageFor(entry.number)}쪽 · ${entry.number}번`
+          : `${exam.label} · ${entry.number}번`
+      }
     ))),
   ...CURRICULUM.flatMap((book) => book.source.unitTestQuestions.map((entry) => sourceQuestionRecord(
-    "unit-test", book.id, `${book.label} 단원 테스트`, entry, { bookId: book.id }
+    "unit-test", book.id, `${book.label} 단원 테스트`, entry, {
+      bookId: book.id,
+      sourceLocator: `${book.label} 단원 테스트 · ${entry.number}번`
+    }
   ))),
   ...textbookQuestionRecords
 ]);

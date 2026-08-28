@@ -3,6 +3,7 @@ import {
   DIAGNOSTIC_EXAM_TYPES,
   EXAMS,
   FINAL_EXAM_TYPES,
+  LEGACY_TYPE_ALIASES,
   PRACTICE_EXAM_TYPES,
   SOURCE_QUESTION_INDEX,
   TEXTBOOK_STAGES,
@@ -169,8 +170,8 @@ for (const sourceKey of missingKeys) fail("색인 누락", sourceKey);
 for (const sourceKey of unexpectedKeys) fail("예상 밖 색인", sourceKey);
 
 const requiredRecordFields = [
-  "sourceKey", "sourceKind", "sourceId", "sourceLabel", "number", "typeId", "typeIds",
-  "label", "difficulty", "verified", "classification", "classifications"
+  "sourceKey", "sourceKind", "sourceId", "sourceLabel", "sourceLocator", "number", "typeId", "typeIds",
+  "label", "difficulty", "verified", "sourceFidelity", "classification", "classifications"
 ];
 const requiredClassificationFields = [
   "majorDomainId", "majorDomainLabel", "minorDomain", "detailedTypeId", "detailedTypeLabel",
@@ -192,6 +193,8 @@ for (const record of SOURCE_QUESTION_INDEX) {
     }
   }
   if (!sourceKinds.has(record.sourceKind)) fail("sourceKind", `${record.sourceKey}: 알 수 없는 sourceKind ${record.sourceKind}`);
+  if (!["classified", "exact-generator"].includes(record.sourceFidelity)) fail("원본 재현 수준", `${record.sourceKey}: ${record.sourceFidelity}`);
+  if (record.sourceFidelity === "exact-generator" && !record.sourceVisualSignature) fail("원본 시각 서명", `${record.sourceKey}: exact-generator인데 sourceVisualSignature가 없습니다.`);
   if (!Number.isInteger(record.number) || record.number < 1) fail("문항번호", `${record.sourceKey}: 잘못된 number ${record.number}`);
   if (!Array.isArray(record.typeIds) || record.typeIds.length === 0) fail("세부유형", `${record.sourceKey}: typeIds가 비어 있습니다.`);
   const recordTypeIds = list(record.typeIds || []);
@@ -237,10 +240,39 @@ const referencedTypeIds = new Set(expected.flatMap((record) => record.typeIds));
 const missingReferencedTypes = list([...referencedTypeIds].filter((typeId) => !typeById.has(typeId)));
 for (const typeId of missingReferencedTypes) fail("원본 참조 TYPES 누락", typeId);
 
+const unsupportedSourceMatchedTypes = list(TYPES
+  .filter((type) => type.sourceMatched && !referencedTypeIds.has(type.id) && !type.textbookSource)
+  .map((type) => type.id));
+for (const typeId of unsupportedSourceMatchedTypes) {
+  fail("원본 근거 없는 sourceMatched", `${typeId}: sourceKey 또는 textbookSource 근거가 없습니다.`);
+}
+
 const unroutedReferencedTypes = list([...referencedTypeIds].filter((typeId) => typeById.has(typeId) && !routeForType(typeId)));
 for (const typeId of unroutedReferencedTypes) fail("원본 참조 생성기 누락", typeId);
 
-const orphanUnroutedTypes = list(TYPES.filter((type) => !referencedTypeIds.has(type.id) && !routeForType(type.id)).map((type) => type.id));
+const legacyAliasIds = new Set(Object.keys(LEGACY_TYPE_ALIASES));
+for (const [legacyTypeId, targetTypeIds] of Object.entries(LEGACY_TYPE_ALIASES)) {
+  const legacyType = typeById.get(legacyTypeId);
+  if (!legacyType) {
+    fail("구형 유형", `${legacyTypeId}: TYPES에 없습니다.`);
+    continue;
+  }
+  if (routeForType(legacyTypeId)) fail("구형 유형", `${legacyTypeId}: 직접 생성 경로를 가지면 안 됩니다.`);
+  if (!Array.isArray(targetTypeIds) || targetTypeIds.length === 0) fail("구형 유형", `${legacyTypeId}: 정본 세부 유형이 비어 있습니다.`);
+  if (new Set(targetTypeIds).size !== targetTypeIds.length) fail("구형 유형", `${legacyTypeId}: 정본 세부 유형이 중복됩니다.`);
+  for (const targetTypeId of targetTypeIds) {
+    const targetType = typeById.get(targetTypeId);
+    if (!targetType) {
+      fail("구형 유형", `${legacyTypeId} -> ${targetTypeId}: TYPES에 없습니다.`);
+      continue;
+    }
+    const route = routeForType(targetTypeId);
+    if (!route?.exists) fail("구형 유형", `${legacyTypeId} -> ${targetTypeId}: 검증 가능한 생성 경로가 없습니다.`);
+    if (!referencedTypeIds.has(targetTypeId)) fail("구형 유형", `${legacyTypeId} -> ${targetTypeId}: 원본 sourceKey 근거가 없습니다.`);
+  }
+}
+
+const orphanUnroutedTypes = list(TYPES.filter((type) => !referencedTypeIds.has(type.id) && !routeForType(type.id) && !legacyAliasIds.has(type.id)).map((type) => type.id));
 for (const typeId of orphanUnroutedTypes) warn("미사용 분류 자리", typeId);
 
 const duplicateTypeIds = TYPES.filter((type, index) => TYPES.findIndex((candidate) => candidate.id === type.id) !== index).map((type) => type.id);
@@ -260,6 +292,7 @@ const summary = {
   duplicateIndexedSourceKeys: list([...indexByKey].filter(([, records]) => records.length > 1).map(([sourceKey]) => sourceKey)),
   referencedTypes: referencedTypeIds.size,
   totalTypes: TYPES.length,
+  legacyAliasGroups: Object.keys(LEGACY_TYPE_ALIASES).length,
   orphanUnroutedTypes,
   unverifiedSourceKeys: list(unverified),
   failures,
@@ -296,6 +329,12 @@ const markdownReport = () => [
   "",
   ...(summary.orphanUnroutedTypes.length ? summary.orphanUnroutedTypes.map((typeId) => `- ${typeId}`) : ["- 없음"]),
   "",
+  "## 구형 상위 유형 정본 연결",
+  "",
+  `문제를 직접 만들지 않는 예전 상위명 ${summary.legacyAliasGroups}개를 검증된 세부 유형 목록에 연결했습니다. 일대다 상위명은 임의의 한 생성기로 축약하지 않습니다.`,
+  "",
+  ...Object.entries(LEGACY_TYPE_ALIASES).map(([legacyTypeId, targetTypeIds]) => `- ${legacyTypeId} → ${targetTypeIds.join(", ")}`),
+  "",
   "## 판정",
   "",
   summary.failures.length === 0
@@ -319,6 +358,7 @@ console.log(`duplicateIndexedSourceKeys=${summary.duplicateIndexedSourceKeys.len
 for (const sourceKey of summary.duplicateIndexedSourceKeys) console.log(`  DUPLICATE ${sourceKey}`);
 console.log(`orphanUnroutedTypes=${summary.orphanUnroutedTypes.length}`);
 for (const typeId of summary.orphanUnroutedTypes) console.log(`  ORPHAN_TYPE ${typeId}`);
+console.log(`legacyAliasGroups=${summary.legacyAliasGroups}`);
 console.log(`unverifiedSourceKeys=${summary.unverifiedSourceKeys.length}`);
 for (const sourceKey of summary.unverifiedSourceKeys) console.log(`  UNVERIFIED ${sourceKey}`);
 console.log(`failures=${summary.failures.length}`);

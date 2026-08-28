@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f7f4" />
+  <title>필즈 골든벨 학습</title>
+  <link rel="stylesheet" href="./golden-bell.css?v=20260828j" />
+</head>
+<body>
+  <header class="gold-header">
+    <a id="backLink" class="back-link" href="./"><span aria-hidden="true">←</span> 문제은행</a>
+    <div class="brand"><span>FIELDS CLASSIC · COURSE 01</span><strong>골든벨 학습</strong></div>
+    <div class="student-name"><span>학습자</span><strong id="studentName">DEMO</strong></div>
+  </header>
+
+  <main class="gold-shell">
+    <section class="gold-intro">
+      <div class="intro-copy"><span>GOLDEN BELL · LEARNING INDEX</span><h1>개념을 말하고,<br />문제로 확인합니다.</h1><p>교재의 대표 개념을 짚고 골든벨과 이야기 문제로 이어갑니다.</p></div>
+      <dl aria-label="학습 진행 정보"><div><dt>현재 권</dt><dd id="currentBookLabel">1권</dd></div><div><dt>완료</dt><dd id="completedCount">0 / 4</dd></div><div><dt>진행</dt><dd id="levelState">학습 중</dd></div></dl>
+    </section>
+
+    <section class="book-index">
+      <div class="book-index-label"><span>BOOK INDEX</span><strong>교재 선택</strong></div>
+      <nav id="bookTabs" class="book-tabs" aria-label="골든벨 교재 권 선택"></nav>
+    </section>
+
+    <section class="gold-layout">
+      <aside class="lesson-pane">
+        <div class="pane-title"><span>이 권의 골든벨</span><strong id="bookTitle"></strong></div>
+        <div id="lessonList" class="lesson-list"></div>
+        <div id="bookSource" class="source-note"></div>
+      </aside>
+
+      <section class="lesson-stage" aria-live="polite">
+        <div id="stageSteps" class="stage-steps"></div>
+        <article id="lessonContent" class="lesson-content"></article>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="./golden-bell.js?v=20260828k"></script>
+</body>
+</html>
