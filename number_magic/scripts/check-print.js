@@ -7,10 +7,16 @@
 
      [FAIL] 생성 실패 · 문항 수 불일치 · 정답 수 불일치
      [FAIL] 칸 넘침(문항이 칸 밖으로 나감)
-     [FAIL] 질문 유실 — 빈칸 기호만 있고 관계식도 질문 줄도 없어 인쇄물로 못 푸는 문항
-            (실제 사례: DV6 배수판별법이 `21□`만 찍혀 몇의 배수인지 알 수 없었다)
-     [FAIL] 이중부호 — `(x - -9)`, `2 + -7 × -5` 같은 표기
-            (실제 사례: MD29·MD6)
+     [FAIL] 인쇄물만으로 풀 수 없는 문항 — 관계식이 없는데 그림·질문 줄·단계 줄도 없다.
+            판정은 데이터가 아니라 렌더 결과로 한다(인쇄 쪽이 망가져도 잡히도록).
+            (실제 사례: DV6가 `21□`만 찍혀 몇의 배수인지 알 수 없었다.
+                       FR4는 정답이 "통분 후 분자"뿐인데 인쇄물엔 분모가 없었다)
+     [FAIL] 표기 — 이중부호 `(x - -9)`, 괄호 없는 음수 `2 + -7 × -5` / `4x × -7x`
+            (실제 사례: MD29 · MD6 · MD4 · MD11)
+     [FAIL] 대분수의 분수부가 진분수가 아님 — `2 4/4` (실제 사례: FR3L2)
+     [FAIL] 빈칸 수 ≠ 정답 개수 — 빈칸 하나에 두 수를 쓰라는 문항이 된다.
+            분수 답([분자,분모])을 빈칸 하나로 받는 관례는 예외.
+            (실제 사례: MD11이 지수를 문제에 보여 주면서 정답으로도 요구했다)
      [WARN] 정답 쏠림 — 한 레벨의 정답이 거의 한 값뿐
             (실제 사례: DV6 2·5·10 레벨의 정답이 400문항 전부 0이었다.
              0만 스무 번 쓰면 만점이라 학습지가 성립하지 않았다)
@@ -97,7 +103,7 @@ function serve(){
     const r = await page.evaluate(async ({ id, lv }) => {
       const COUNT = 12;
       const res = { gen: null, cards: 0, keys: 0, overflow: 0, dblNeg: [], noAsk: [],
-                    bareNoSteps: [], impMixed: [], answers: [] };
+                    bareNoSteps: [], impMixed: [], blankMismatch: [], answers: [] };
 
       /* 1) 생성 — 정답 쏠림 검사를 위해 여러 시드로 넉넉히 */
       let probs;
@@ -113,8 +119,18 @@ function serve(){
       /* 2) 표기 검사 */
       probs.forEach(p => {
         const tx = String(p.tex || '');
-        /* 이중부호 — `(x - -9)`, `2 + -7 × -5` */
-        if(/-\s*-|\+\s*-\d/.test(tx)) res.dblNeg.push(tx.slice(0, 60));
+        /* 이중부호·괄호 없는 음수 — `(x - -9)`, `2 + -7 × -5`, `4x \times -7x`.
+           연산자 바로 뒤의 음수는 괄호로 묶어야 한다(교과 표기). */
+        if(/-\s*-|\+\s*-\d/.test(tx) || /(\\times|\\div|\\cdot)\s*-\d/.test(tx))
+          res.dblNeg.push(tx.slice(0, 60));
+        /* 빈칸 수와 정답 개수 불일치 — 빈칸 하나에 두 수를 쓰라는 문항이 된다.
+           단, 분수 답([분자,분모])을 빈칸 하나로 받는 관례는 예외로 둔다. */
+        if(Array.isArray(p.answer)){
+          const blanks = (tx.match(/\\square/g) || []).length;
+          const fracLike = /\\d?frac|\\overline/.test(tx);
+          if(blanks && p.answer.length > blanks && !fracLike)
+            res.blankMismatch.push(`${tx.slice(0, 50)} (빈칸 ${blanks} / 정답 ${p.answer.length})`);
+        }
         /* 대분수의 분수부가 진분수가 아닌 것 — `2 4/4` (실제 사례: FR3L2) */
         const re = /(\d+)\\?frac\{(\d+)\}\{(\d+)\}/g; let m;
         while((m = re.exec(tx))) if(+m[2] >= +m[3]) res.impMixed.push(tx.slice(0, 60));
@@ -167,6 +183,7 @@ function serve(){
       if(r.noAsk.length)  fails.push(`${tag} — 질문 유실(인쇄물로 풀 수 없음): ${r.noAsk[0]}`);
       if(r.impMixed.length) fails.push(`${tag} — 대분수 분수부가 진분수가 아님: ${r.impMixed[0]}`);
       if(r.bareNoSteps.length) fails.push(`${tag} — 맨 식인데 단계도 없음(답 형식 불명): ${r.bareNoSteps[0]}`);
+      if(r.blankMismatch.length) fails.push(`${tag} — 빈칸 수 ≠ 정답 개수: ${r.blankMismatch[0]}`);
       /* 정답 쏠림 — 한 값이 90% 넘으면 경고 */
       if(r.answers.length >= 50){
         const d = {}; r.answers.forEach(a => d[a] = (d[a] || 0) + 1);
