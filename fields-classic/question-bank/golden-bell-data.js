@@ -375,8 +375,214 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-03",
+    label: "3권",
+    title: "단위넓이와 복면산",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_3N30권_골든벨_220609.ppt",
+      studentFile: "더클래식_1과정_3N30권_학생용(무답)_.골든벨_.pptx",
+      verified: true,
+      note: "교사용·학생용 각 30슬라이드를 같은 위치의 그림과 빈칸으로 대조"
+    },
+    lessons: [
+      {
+        id: "six-multiple-equations",
+        unit: "단위넓이와 분수",
+        title: "6의 배수로 식을 바꿔요",
+        sourceLocator: "교사용·학생용 슬라이드 6, 6의 배수",
+        sourceTypeIds: ["constant-step-number-sequence"],
+        representativeConcept: "6을 여러 번 더하거나 6의 배수만큼 더하고 뺀 식을 6×□ 꼴로 바꿈",
+        story: {
+          title: "여섯 칸 기차의 묶음표",
+          text: "기차 한 칸에는 블록이 6개씩 들어갑니다. 블록 수를 모두 6개짜리 묶음으로 바꾸면 긴 식도 짧아집니다.",
+          mission: "6이 몇 묶음인지 세고, 더하거나 뺀 6도 묶음 수에 반영하세요."
+        },
+        explanation: {
+          headline: "모든 수를 6개짜리 묶음으로 바꿉니다.",
+          steps: [
+            "6을 더한 횟수는 그대로 6의 묶음 수가 됩니다.",
+            "6을 한 번 더하면 묶음 수에 1을 더하고, 12를 빼면 2를 뺍니다.",
+            "마지막에 양쪽 값을 계산해 같은지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "multiple-base-equivalent-equations",
+          prompt: "각 식이 성립하도록 빈칸에 알맞은 수를 쓰시오.",
+          visual: { kind: "book03-six-original" },
+          items: [
+            { id: "six-1", prompt: "6+6+6+6+60=6×□", answerMode: "input", inputMode: "numeric", answer: "14" },
+            { id: "six-2", prompt: "6×20+6=6×□", answerMode: "input", inputMode: "numeric", answer: "21" },
+            { id: "six-3", prompt: "6×28+6+6=6×□", answerMode: "input", inputMode: "numeric", answer: "30" },
+            { id: "six-4", prompt: "6+6+6+6=6×□", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "six-5", prompt: "6+6+6+6=12×□", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "six-6", prompt: "6+6+6+6=24×□", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "six-7", prompt: "12×7=6×□", answerMode: "input", inputMode: "numeric", answer: "14" },
+            { id: "six-8", prompt: "12×7=3×□", answerMode: "input", inputMode: "numeric", answer: "28" },
+            { id: "six-9", prompt: "12×7=2×□", answerMode: "input", inputMode: "numeric", answer: "42" },
+            { id: "six-10", prompt: "6×124-6=6×□", answerMode: "input", inputMode: "numeric", answer: "123" },
+            { id: "six-11", prompt: "6×79-12=6×□", answerMode: "input", inputMode: "numeric", answer: "77" },
+            { id: "six-12", prompt: "275×6-18=6×□", answerMode: "input", inputMode: "numeric", answer: "272" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "multiple-base-equivalent-equations",
+          story: "블록 8개짜리 묶음으로 식을 바꿉니다.",
+          prompt: "8×25+16=8×□일 때 빈칸에 알맞은 수를 쓰세요.",
+          visual: { kind: "book03-six-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "27",
+          explanation: "16은 8이 두 묶음이므로 25+2=27입니다."
+        }
+      },
+      {
+        id: "multiple-comparison",
+        unit: "단위길이와 배수",
+        title: "몇 배인지 찾아요",
+        sourceLocator: "교사용·학생용 슬라이드 16, 활동 01 배수",
+        sourceTypeIds: ["unit-length-multiple"],
+        representativeConcept: "큰 양 안에 작은 양이 몇 번 들어가는지 같은 길이 또는 같은 개수의 묶음으로 셈",
+        story: {
+          title: "운동장 줄과 공 묶음",
+          text: "길이나 개수가 달라도 같은 크기의 한 묶음을 기준으로 하면 몇 배인지 알 수 있습니다.",
+          mission: "큰 양을 작은 양과 같은 묶음으로 나누어 묶음 수를 세어 보세요."
+        },
+        explanation: {
+          headline: "큰 수를 작은 수로 나누면 몇 배인지 알 수 있습니다.",
+          steps: [
+            "막대는 같은 길이의 칸 수를 비교합니다.",
+            "그림은 작은 묶음이 큰 묶음 안에 몇 번 들어가는지 셉니다.",
+            "수로 확인할 때는 큰 수를 작은 수로 나눕니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "multiple-comparison-groups",
+          prompt: "그림과 식을 보고 빈칸에 알맞은 수를 쓰시오.",
+          visual: { kind: "book03-multiple-original" },
+          items: [
+            { id: "multiple-1", prompt: "B는 A의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "multiple-2", prompt: "A는 B의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "multiple-3", prompt: "42는 6의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "multiple-4", prompt: "16은 8의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "multiple-5", prompt: "16은 2의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "multiple-6", prompt: "35는 7의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "5" },
+            { id: "multiple-7", prompt: "35는 5의 몇 배입니까?", answerMode: "input", inputMode: "numeric", answer: "7" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "multiple-comparison-groups",
+          story: "리본 48cm를 6cm씩 똑같이 나눕니다.",
+          prompt: "48은 6의 몇 배인지 쓰세요.",
+          visual: { kind: "book03-multiple-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "8",
+          explanation: "48 안에는 6이 8번 들어가므로 48은 6의 8배입니다."
+        }
+      },
+      {
+        id: "basic-vertical-cryptarithm",
+        unit: "복면산",
+        title: "반복되는 도형의 수를 찾아요",
+        sourceLocator: "교사용·학생용 슬라이드 20, 활동 02",
+        sourceTypeIds: ["cryptarithm-single-double"],
+        representativeConcept: "같은 도형은 같은 숫자라는 약속으로 반복 덧셈과 받아올림을 거꾸로 풂",
+        story: {
+          title: "숫자를 숨긴 모양 계산기",
+          text: "계산기는 같은 숫자를 같은 모양으로 가립니다. 세로셈의 결과를 보면 가려진 숫자를 되찾을 수 있습니다.",
+          mission: "같은 도형이 몇 번 더해졌는지 세고, 두 자리 결과에서는 받아올림도 확인하세요."
+        },
+        explanation: {
+          headline: "같은 도형을 같은 수로 놓고 세로로 더합니다.",
+          steps: [
+            "네모가 두 번이면 같은 수를 두 번 더한 값입니다.",
+            "네모가 세 번이면 같은 수를 세 번 더합니다.",
+            "결과가 두 자리이면 십의 자리 도형도 함께 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "repeated-symbol-vertical-addition",
+          prompt: "같은 모양은 같은 숫자를 나타냅니다. 각 모양이 나타내는 수를 쓰시오.",
+          visual: { kind: "book03-cryptarithm-original" },
+          items: [
+            { id: "crypt-1-square", prompt: "(1) 네모", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "crypt-2-square", prompt: "(2) 네모", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "crypt-2-triangle", prompt: "(2) 세모", answerMode: "input", inputMode: "numeric", answer: "1" },
+            { id: "crypt-3-square", prompt: "(3) 네모", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "crypt-4-square", prompt: "(4) 네모", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "crypt-4-triangle", prompt: "(4) 세모", answerMode: "input", inputMode: "numeric", answer: "2" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "repeated-symbol-vertical-addition",
+          story: "모양 계산기에 같은 네모를 세 번 넣었더니 세모2가 나왔습니다.",
+          prompt: "네모, 세모가 나타내는 수를 차례로 쉼표로 나누어 쓰세요.",
+          visual: { kind: "book03-cryptarithm-story" },
+          answerMode: "input",
+          answer: "4,1",
+          explanation: "4+4+4=12이므로 네모는 4, 세모는 1입니다."
+        }
+      },
+      {
+        id: "magic-square-targets",
+        unit: "마법카드와 마방진",
+        title: "마방진의 합과 빈칸을 찾아요",
+        sourceLocator: "교사용·학생용 슬라이드 28, 활동 01",
+        sourceTypeIds: ["magic-square-three-target"],
+        representativeConcept: "3×3 마방진에서 가로·세로·대각선의 합이 같다는 성질로 한 줄의 합과 빈칸을 구함",
+        story: {
+          title: "아홉 칸 숫자 문의 약속",
+          text: "숫자 문의 가로, 세로, 대각선은 모두 같은 합이 되어야 열립니다.",
+          mission: "숫자가 세 개 모두 보이는 줄에서 합을 먼저 구한 뒤 빈칸이 있는 줄에 적용하세요."
+        },
+        explanation: {
+          headline: "완성된 한 줄의 합을 먼저 찾습니다.",
+          steps: [
+            "숫자 세 개가 모두 보이는 가로·세로·대각선을 찾습니다.",
+            "그 줄의 합을 다른 모든 줄의 목표로 사용합니다.",
+            "목표 합에서 이미 보이는 두 수를 빼 빈칸을 구합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "three-by-three-magic-targets",
+          prompt: "모든 줄의 합이 같도록 물음에 답하시오.",
+          visual: { kind: "book03-magic-original" },
+          items: [
+            { id: "magic-1-sum", prompt: "(1) 첫째 마방진의 한 줄의 합", answerMode: "input", inputMode: "numeric", answer: "30" },
+            { id: "magic-1-first", prompt: "(2) 첫째 마방진에서 가장 먼저 구할 수 있는 칸의 수", answerMode: "input", inputMode: "numeric", answer: ["12", "16"] },
+            { id: "magic-1-triangle", prompt: "(3) 첫째 마방진의 세모", answerMode: "input", inputMode: "numeric", answer: "18" },
+            { id: "magic-2-sum", prompt: "둘째 마방진의 합", answerMode: "input", inputMode: "numeric", answer: "45" },
+            { id: "magic-2-triangle", prompt: "둘째 마방진의 세모", answerMode: "input", inputMode: "numeric", answer: "27" },
+            { id: "magic-3-sum", prompt: "셋째 마방진의 합", answerMode: "input", inputMode: "numeric", answer: "27" },
+            { id: "magic-3-triangle", prompt: "셋째 마방진의 세모", answerMode: "input", inputMode: "numeric", answer: "5" },
+            { id: "magic-4-sum", prompt: "넷째 마방진의 합", answerMode: "input", inputMode: "numeric", answer: "21" },
+            { id: "magic-4-triangle", prompt: "넷째 마방진의 세모", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "three-by-three-magic-targets",
+          story: "새 숫자 문에서도 모든 줄의 합은 같습니다.",
+          prompt: "세모에 들어갈 수를 쓰세요.",
+          visual: { kind: "book03-magic-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "3",
+          explanation: "첫째 줄의 합은 2+7+6=15입니다. 아래줄에서 4+세모+8=15이므로 세모는 3입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-03", "3권", "분수와 입체도형", "더클래식_1과정_3N30권_학생용(무답)_.골든벨_.pptx", "source-located"],
     ["book-04", "4권", "도형분할과 쌓기나무", "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx", "source-located"],
     ["book-05", "5권", "곱셈매트릭스와 삼각수", "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx", "source-located"],
     ["book-06", "6권", "논리와 수 퍼즐", "더클래식_1과정_6N30권_골든벨_221212(E2용).pptx", "source-located"],

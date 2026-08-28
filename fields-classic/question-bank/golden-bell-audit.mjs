@@ -99,4 +99,25 @@ for (const [lessonId, approvedAnswers] of approvedBook2Answers) {
 const requiredBook2Units = ["매트릭스와 주고받기", "양팔저울", "규칙찾기와 수열", "약속과 스도쿠"];
 for (const unit of requiredBook2Units) if (!book2.lessons.some((lesson) => lesson.unit === unit)) fail(`book-02: missing ${unit}`);
 
+const book3 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-03");
+const approvedBook3Answers = new Map([
+  ["six-multiple-equations", ["14", "21", "30", "4", "2", "1", "14", "28", "42", "123", "77", "272"]],
+  ["multiple-comparison", ["4", "6", "7", "2", "8", "5", "7"]],
+  ["basic-vertical-cryptarithm", ["3", "8", "1", "2", "7", "2"]],
+  ["magic-square-targets", ["30", ["12", "16"], "18", "45", "27", "27", "5", "21", "9"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook3Answers) {
+  const lesson = book3.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-03: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-03/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-03/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook3Units = ["단위넓이와 분수", "단위길이와 배수", "복면산", "마법카드와 마방진"];
+for (const unit of requiredBook3Units) if (!book3.lessons.some((lesson) => lesson.unit === unit)) fail(`book-03: missing ${unit}`);
+
 console.log(`golden bell audit passed: ${GOLDEN_BELL_BOOKS.length} books, ${readyBooks.length} ready, ${lessonCount} lessons, ${originalItemCount} original checks`);

@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828f";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828h";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -163,6 +163,63 @@ function book02PromiseMarkup(story = false) {
   return `<div class="promise-set">${diagrams.map(promiseDiamondMarkup).join("")}</div>`;
 }
 
+function book03SixMarkup(story = false) {
+  if (story) return '<div class="equation-board single"><span>8 × 25 + 16</span><b>=</b><span>8 × <i>□</i></span></div>';
+  const equations = [
+    "6 + 6 + 6 + 6 + 60 = 6 × □",
+    "6 × 20 + 6 = 6 × □",
+    "6 × 28 + 6 + 6 = 6 × □",
+    "6 + 6 + 6 + 6 = 6 × □ = 12 × □ = 24 × □",
+    "12 × 7 = 6 × □ = 3 × □ = 2 × □",
+    "6 × 124 - 6 = 6 × □",
+    "6 × 79 - 12 = 6 × □",
+    "275 × 6 - 18 = 6 × □"
+  ];
+  return `<div class="equation-board">${equations.map((equation) => `<span>${equation.replaceAll("□", "<i>□</i>")}</span>`).join("")}</div>`;
+}
+
+function unitBarMarkup(count, label) {
+  return `<div class="unit-bar" aria-label="${label} ${count}칸"><b>${label}</b><span>${Array.from({ length: count }, () => "<i></i>").join("")}</span></div>`;
+}
+
+function dotGroupMarkup(count, label) {
+  return `<div class="dot-group" aria-label="${label} ${count}개"><b>${label}</b><span>${Array.from({ length: count }, () => "<i></i>").join("")}</span></div>`;
+}
+
+function book03MultipleMarkup(story = false) {
+  if (story) return `<div class="multiple-story"><strong>48</strong><span>${Array.from({ length: 8 }, () => "<i>6</i>").join("")}</span></div>`;
+  return `<div class="multiple-board"><div>${unitBarMarkup(1,"A")}${unitBarMarkup(4,"B")}</div><div>${dotGroupMarkup(6,"A")}${dotGroupMarkup(1,"B")}</div><div class="multiple-facts"><span>6+6+6+6+6+6+6 = 42</span><span>16은 8과 2의 배수</span><span>35는 7과 5의 배수</span></div></div>`;
+}
+
+function verticalAdditionMarkup(rows, label) {
+  const result = rows.at(-1);
+  const addends = rows.slice(0, -1);
+  return `<figure class="vertical-addition"><figcaption>${label}</figcaption><div>${addends.map((row, index) => `<span>${index === addends.length - 1 ? "<b>+</b>" : ""}${row}</span>`).join("")}<strong>${result}</strong></div></figure>`;
+}
+
+function book03CryptarithmMarkup(story = false) {
+  const panels = story
+    ? [["□", "□", "□", "△2"]]
+    : [["□", "□", "6"], ["□", "□", "△6"], ["□", "□", "□", "6"], ["□", "□", "□", "△1"]];
+  return `<div class="vertical-addition-set ${story ? "single" : ""}">${panels.map((rows, index) => verticalAdditionMarkup(rows, story ? "" : `(${index + 1})`)).join("")}</div>`;
+}
+
+function magicGridMarkup(cells, label) {
+  return `<figure class="magic-grid-wrap"><figcaption>${label}</figcaption><div class="magic-grid">${cells.map((cell) => `<span class="${cell === "△" ? "target" : ""}">${cell ?? ""}</span>`).join("")}</div></figure>`;
+}
+
+function book03MagicMarkup(story = false) {
+  const grids = story
+    ? [["2","7","6","9","5","1","4","△","8"]]
+    : [
+      [null,null,null,"6","10","14","8","△",null],
+      ["12","9",null,null,"15",null,null,"△","18"],
+      [null,null,"11","△","9",null,"7",null,"3"],
+      [null,"3","8",null,"7","△","6",null,null]
+    ];
+  return `<div class="magic-grid-set ${story ? "single" : ""}">${grids.map((cells, index) => magicGridMarkup(cells, story ? "" : `${index + 1}`)).join("")}</div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "clock") return clockMarkup(visual.value);
@@ -181,6 +238,14 @@ function visualMarkup(visual) {
   if (visual.kind === "book02-dual-pattern-story") return patternMarkup(true);
   if (visual.kind === "book02-promise-original") return book02PromiseMarkup(false);
   if (visual.kind === "book02-promise-story") return book02PromiseMarkup(true);
+  if (visual.kind === "book03-six-original") return book03SixMarkup(false);
+  if (visual.kind === "book03-six-story") return book03SixMarkup(true);
+  if (visual.kind === "book03-multiple-original") return book03MultipleMarkup(false);
+  if (visual.kind === "book03-multiple-story") return book03MultipleMarkup(true);
+  if (visual.kind === "book03-cryptarithm-original") return book03CryptarithmMarkup(false);
+  if (visual.kind === "book03-cryptarithm-story") return book03CryptarithmMarkup(true);
+  if (visual.kind === "book03-magic-original") return book03MagicMarkup(false);
+  if (visual.kind === "book03-magic-story") return book03MagicMarkup(true);
   return "";
 }
 
@@ -242,11 +307,12 @@ function choiceButtons(groupId, options) {
 }
 
 function normalizeAnswer(value) {
-  return String(value ?? "").normalize("NFC").trim();
+  return String(value ?? "").normalize("NFC").replace(/\s+/g, "").trim();
 }
 
 function answersMatch(actual, expected) {
-  return normalizeAnswer(actual) === normalizeAnswer(expected);
+  const approved = Array.isArray(expected) ? expected : [expected];
+  return approved.some((value) => normalizeAnswer(actual) === normalizeAnswer(value));
 }
 
 function hasAnswer(value) {
