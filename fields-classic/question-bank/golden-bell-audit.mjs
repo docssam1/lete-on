@@ -142,6 +142,74 @@ const requiredBook4Units = ["도형분할과 움직이기", "색종이 접기와
 for (const unit of requiredBook4Units) if (!book4.lessons.some((lesson) => lesson.unit === unit)) fail(`book-04: missing ${unit}`);
 if (!book4.lessons.some((lesson) => lesson.sourceHold)) fail("book-04: unresolved teacher-only wording must remain visible in data");
 
+const book5 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-05");
+const approvedBook5Answers = new Map([
+  ["path-number-grid", ["14", "16", "11"]],
+  ["digit-card-ranked-number", ["680"]],
+  ["checkerboard-product-matrix", ["7", "5", "9"]],
+  ["cube-tetrahedral-growth", ["20", "84"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook5Answers) {
+  const lesson = book5.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-05: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-05/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-05/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook5Units = ["수 배열표와 달력", "최단거리와 숫자 카드", "곱셈 매트릭스", "삼각수와 사각수"];
+for (const unit of requiredBook5Units) if (!book5.lessons.some((lesson) => lesson.unit === unit)) fail(`book-05: missing ${unit}`);
+if (!book5.lessons.some((lesson) => lesson.sourceHold)) fail("book-05: contradictory teacher-only matrix must remain locked");
+
+const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
+const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
+  const [row, column] = visual.path[visual.target.index];
+  return String(visual.values[row][column]);
+});
+if (JSON.stringify(pathAnswers) !== JSON.stringify(["14", "16", "11"])) fail("book-05: path target calculation failed");
+{
+  const visual = pathLesson.extension.visual;
+  const [row, column] = visual.path[visual.target.index];
+  if (visual.values[row][column] !== 20) fail("book-05: story path target calculation failed");
+}
+
+function permutationsOf(items, length = items.length) {
+  if (length === 0) return [[]];
+  return items.flatMap((item, index) => permutationsOf(items.filter((_, at) => at !== index), length - 1).map((rest) => [item, ...rest]));
+}
+function rankedCardNumbers(digits, length, descending = false) {
+  return permutationsOf(digits, length)
+    .filter((number) => number[0] !== 0)
+    .map((number) => Number(number.join("")))
+    .sort((a, b) => descending ? b - a : a - b);
+}
+if (rankedCardNumbers([0, 6, 7, 8], 3)[4] !== 680) fail("book-05: first digit-card rank failed");
+if (rankedCardNumbers([2, 4, 6, 8], 3)[3] !== 268) fail("book-05: story digit-card rank failed");
+
+function checkerSolutions(rowProducts, columnProducts) {
+  return permutationsOf([2, 3, 4, 5, 6, 7, 8, 9]).filter((values) =>
+    values[0] * values[1] === rowProducts[0]
+    && values[2] * values[3] === rowProducts[1]
+    && values[4] * values[5] === rowProducts[2]
+    && values[6] * values[7] === rowProducts[3]
+    && values[2] * values[4] === columnProducts[0]
+    && values[0] * values[5] === columnProducts[1]
+    && values[1] * values[6] === columnProducts[2]
+    && values[3] * values[7] === columnProducts[3]
+  );
+}
+const sourceMatrixSolutions = checkerSolutions([28, 6, 40, 54], [15, 56, 36, 12]);
+if (sourceMatrixSolutions.length !== 1 || sourceMatrixSolutions[0].join(",") !== "7,4,3,2,5,8,9,6") fail("book-05: source matrix is not uniquely solved");
+const storyMatrixSolutions = checkerSolutions([24, 18, 35, 24], [45, 42, 12, 16]);
+if (storyMatrixSolutions.length !== 1 || storyMatrixSolutions[0].join(",") !== "6,4,9,2,5,7,3,8") fail("book-05: story matrix is not uniquely solved");
+
+const triangular = (level) => level * (level + 1) / 2;
+const tetrahedral = (level) => Array.from({ length: level }, (_, index) => triangular(index + 1)).reduce((sum, value) => sum + value, 0);
+if (tetrahedral(4) !== 20 || tetrahedral(7) !== 84 || tetrahedral(5) !== 35) fail("book-05: triangular stair totals failed");
+
 function canonicalPolyomino(cells) {
   const variants = [];
   for (let reflected = 0; reflected < 2; reflected += 1) {
