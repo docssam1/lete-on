@@ -191,8 +191,191 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-02",
+    label: "2권",
+    title: "규칙찾기와 매트릭스",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_2N30권_골든벨_220415.ppt",
+      studentFile: "더클래식_1과정_2N30권_학생new(무답)골든벨_220415(수정).pptx",
+      verified: true,
+      note: "교사용 41슬라이드와 학생용 40슬라이드를 대응 문항으로 대조"
+    },
+    lessons: [
+      {
+        id: "addition-matrix",
+        unit: "매트릭스와 주고받기",
+        title: "가로와 세로의 합을 맞춰요",
+        sourceLocator: "교사용·학생용 슬라이드 4, 활동 01",
+        sourceTypeIds: ["shape-sum-table"],
+        representativeConcept: "같은 도형은 같은 수이며, 가로와 세로의 합을 함께 보아 도형의 수를 찾음",
+        story: {
+          title: "모양 우체국의 비밀 번호",
+          text: "모양 우체국에서는 같은 모양마다 늘 같은 수를 붙입니다. 두 모양을 더한 수를 보면 숨은 수를 찾을 수 있습니다.",
+          mission: "먼저 같은 모양끼리 더한 줄을 찾고, 이미 아는 수를 빼 보세요."
+        },
+        explanation: {
+          headline: "같은 모양 두 개의 합부터 살펴봅니다.",
+          steps: [
+            "같은 모양 두 개의 합을 두 수로 똑같이 나눕니다.",
+            "알게 된 도형의 수를 다른 줄에 넣습니다.",
+            "가로와 세로의 합을 다시 더해 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "shape-addition-matrix",
+          prompt: "같은 모양은 같은 수를 나타냅니다. 각 물음의 빈칸에 알맞은 수를 쓰시오.",
+          visual: { kind: "book02-matrix-original" },
+          items: [
+            { id: "matrix-1", prompt: "(1) 세모가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "3" },
+            { id: "matrix-2", prompt: "(2) 동그라미가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "matrix-3", prompt: "(3)-1 동그라미가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "matrix-4", prompt: "(3)-2 아래 가로줄의 합", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "matrix-5", prompt: "(4) 아래 가로줄의 합", answerMode: "input", inputMode: "numeric", answer: "16" },
+            { id: "matrix-6", prompt: "(5) 오른쪽 세로줄의 합", answerMode: "input", inputMode: "numeric", answer: "8" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "shape-addition-matrix",
+          story: "축제 배지에는 동그라미와 네모의 수가 적혀 있습니다.",
+          prompt: "동그라미와 네모의 합은 14이고, 네모 두 개의 합은 18입니다. 동그라미가 나타내는 수를 쓰세요.",
+          visual: { kind: "book02-matrix-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "5",
+          explanation: "네모 두 개가 18이므로 네모는 9입니다. 14에서 9를 빼면 동그라미는 5입니다."
+        }
+      },
+      {
+        id: "balance-order",
+        unit: "양팔저울",
+        title: "무게의 순서를 찾아요",
+        sourceLocator: "교사용·학생용 슬라이드 14, 활동 02",
+        sourceTypeIds: ["balance-order-chain"],
+        representativeConcept: "저울에서 아래로 내려간 쪽이 더 무거우며, 여러 저울의 관계를 이어 전체 순서를 정함",
+        story: {
+          title: "장난감 가게의 무게표",
+          text: "장난감마다 무게가 다르지만 저울 세 개를 보면 어느 것이 더 무거운지 알 수 있습니다.",
+          mission: "각 저울에서 더 무거운 것을 표시한 뒤 관계를 한 줄로 이어 보세요."
+        },
+        explanation: {
+          headline: "내려간 쪽이 더 무겁습니다.",
+          steps: [
+            "첫 저울에서 A와 B를 비교합니다.",
+            "둘째 저울에서 A와 C를 비교합니다.",
+            "셋째 저울로 C와 B의 순서까지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "three-object-balance-order",
+          prompt: "세 양팔저울을 보고 물음에 답하시오.",
+          visual: { kind: "book02-balance-original" },
+          items: [
+            { id: "balance-1", prompt: "(1) A보다 가벼운 것을 모두 쓰시오. 두 기호는 쉼표로 나누어 쓰시오.", answerMode: "input", answer: "B,C" },
+            { id: "balance-2", prompt: "(2) 가장 가벼운 것을 쓰시오.", answerMode: "input", answer: "B" },
+            { id: "balance-3", prompt: "(3) 무거운 것부터 차례로 쓰시오. 예: A>C>B", answerMode: "input", answer: "A>C>B" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "three-object-balance-order",
+          story: "토끼, 거북이, 다람쥐 인형을 저울에 올렸습니다.",
+          prompt: "두 저울을 보고 무거운 인형부터 차례로 쓰세요. 예: 토끼>거북이>다람쥐",
+          visual: { kind: "book02-balance-story" },
+          answerMode: "input",
+          answer: "토끼>거북이>다람쥐",
+          explanation: "첫 저울에서 토끼가 거북이보다 무겁고, 둘째 저울에서 거북이가 다람쥐보다 무겁습니다."
+        }
+      },
+      {
+        id: "dual-shape-color-pattern",
+        unit: "규칙찾기와 수열",
+        title: "모양과 색의 규칙을 함께 찾아요",
+        sourceLocator: "교사용 슬라이드 24·학생용 슬라이드 23, 활동 04 (1)",
+        sourceTypeIds: ["repeating-symbol-sequence"],
+        representativeConcept: "모양 반복과 색 반복을 따로 찾은 뒤 같은 자리에서 두 규칙을 합침",
+        story: {
+          title: "축제 전구의 두 가지 규칙",
+          text: "전구는 모양도 반복되고 색도 따로 반복됩니다. 모양만 본 다음 색만 보면 다음 전구가 보입니다.",
+          mission: "모양 규칙과 색 규칙을 각각 표시하고 마지막에 하나로 합쳐 보세요."
+        },
+        explanation: {
+          headline: "모양과 색을 한꺼번에 보지 않고 나누어 봅니다.",
+          steps: [
+            "모양은 동그라미, 마름모, 별, 하트가 반복됩니다.",
+            "검은색은 세 칸마다 나타납니다.",
+            "두 규칙이 만나는 다음 모양을 정합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "dual-shape-color-repeat",
+          prompt: "모양과 색의 규칙을 찾아 빈칸에 들어갈 모양을 쓰시오.",
+          visual: { kind: "book02-dual-pattern-original" },
+          items: [
+            { id: "pattern-1", prompt: "빈칸에 들어갈 모양", answerMode: "input", answer: "◆" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "dual-shape-color-repeat",
+          story: "무대 조명이 네 가지 모양과 세 칸마다 켜지는 색 규칙으로 이어집니다.",
+          prompt: "규칙에 따라 빈칸에 들어갈 모양을 쓰세요.",
+          visual: { kind: "book02-dual-pattern-story" },
+          answerMode: "input",
+          answer: "△",
+          explanation: "모양은 세모, 네모, 동그라미, 별이 반복되어 다음은 세모입니다. 검은색 자리가 아니므로 빈 세모 △입니다."
+        }
+      },
+      {
+        id: "diamond-number-promise",
+        unit: "약속과 스도쿠",
+        title: "네 수의 약속을 찾아요",
+        sourceLocator: "교사용 슬라이드 32·학생용 슬라이드 31, 활동 01 (1)",
+        sourceTypeIds: ["four-number-center-rule"],
+        representativeConcept: "앞의 완성된 그림에서 네 수의 계산 약속을 찾고 같은 약속으로 빈 수를 구함",
+        story: {
+          title: "보석 문의 숫자 약속",
+          text: "보석 문의 위, 아래, 왼쪽, 오른쪽 수에는 같은 약속이 숨어 있습니다. 완성된 보석부터 비교하면 약속을 찾을 수 있습니다.",
+          mission: "위의 수가 왼쪽, 아래쪽, 오른쪽 수와 어떤 관계인지 살펴보세요."
+        },
+        explanation: {
+          headline: "위의 수는 나머지 세 수를 더한 값입니다.",
+          steps: [
+            "첫 그림에서 1+3+2=6인지 확인합니다.",
+            "둘째 그림에서도 2+7+3=12인지 확인합니다.",
+            "같은 방법으로 빈칸을 구합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "diamond-three-sum-promise",
+          prompt: "앞의 그림에서 네 수의 약속을 찾아 빈칸에 알맞은 수를 쓰시오.",
+          visual: { kind: "book02-promise-original" },
+          items: [
+            { id: "promise-1", prompt: "(1) 위쪽 빈칸에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "18" },
+            { id: "promise-2", prompt: "(2) 오른쪽 빈칸에 들어갈 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "diamond-three-sum-promise",
+          story: "마지막 보석 문의 위쪽 수가 지워졌습니다.",
+          prompt: "왼쪽은 6, 아래쪽은 8, 오른쪽은 7일 때 위쪽 수를 쓰세요.",
+          visual: { kind: "book02-promise-story" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "21",
+          explanation: "6+8+7=21이므로 위쪽 수는 21입니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-02", "2권", "규칙찾기와 매트릭스", "더클래식_1과정_2N30권_골든벨_220415.ppt", "source-located"],
     ["book-03", "3권", "분수와 입체도형", "더클래식_1과정_3N30권_학생용(무답)_.골든벨_.pptx", "source-located"],
     ["book-04", "4권", "도형분할과 쌓기나무", "더클래식_1과정_4N30권_골든벨_220805(E2용).pptx", "source-located"],
     ["book-05", "5권", "곱셈매트릭스와 삼각수", "더클래식_1과정_5N30권_골든벨_221111(E2용).pptx", "source-located"],

@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828d";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828f";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -90,6 +90,79 @@ function lineDiagramMarkup(diagram) {
   return `<div class="line-diagram"><div class="line-cross">${valueCell(diagram.top,"top")}${valueCell(diagram.left,"left")}${valueCell(diagram.center,"center")}${valueCell(diagram.right,"right")}${valueCell(diagram.bottom,"bottom")}</div></div>`;
 }
 
+function matrixShape(name) {
+  const labels = { oval: "동그라미", triangle: "세모", square: "네모", diamond: "마름모" };
+  return `<i class="matrix-shape ${name}" role="img" aria-label="${labels[name] || name}"></i>`;
+}
+
+function matrixEquationMarkup(left, right, sum) {
+  return `<div class="matrix-equation">${matrixShape(left)}<b>+</b>${matrixShape(right)}<b>=</b><strong>${sum}</strong></div>`;
+}
+
+function matrixGridMarkup(grid) {
+  const cell = (shape, name) => `<span class="${name}">${shape ? matrixShape(shape) : ""}</span>`;
+  return `<div class="shape-matrix-grid">${cell(grid.topLeft,"tl")}${cell(grid.topRight,"tr")}${cell(grid.bottomLeft,"bl")}${cell(grid.bottomRight,"br")}<strong class="row-top">${grid.rowTop ?? ""}</strong><strong class="row-bottom">${grid.rowBottom ?? "?"}</strong><strong class="col-left">${grid.colLeft ?? ""}</strong><strong class="col-right">${grid.colRight ?? "?"}</strong></div>`;
+}
+
+function matrixPanelMarkup(panel) {
+  const body = panel.equations
+    ? `${panel.equations.map((row) => matrixEquationMarkup(row[0], row[1], row[2])).join("")}<div class="matrix-target">${matrixShape(panel.target)}<b>= ?</b></div>`
+    : matrixGridMarkup(panel.grid);
+  return `<figure class="matrix-panel"><figcaption>${panel.label}</figcaption>${body}</figure>`;
+}
+
+function book02MatrixMarkup(story = false) {
+  const panels = story ? [
+    { label: "", equations: [["oval", "square", 14], ["square", "square", 18]], target: "oval" }
+  ] : [
+    { label: "(1)", equations: [["oval", "oval", 4], ["oval", "triangle", 5]], target: "triangle" },
+    { label: "(2)", equations: [["oval", "square", 12], ["square", "square", 16]], target: "oval" },
+    { label: "(3)-1", grid: { topLeft: "triangle", topRight: "triangle", bottomLeft: "oval", bottomRight: null, rowTop: 18, rowBottom: null, colLeft: 15, colRight: null } },
+    { label: "(3)-2", grid: { topLeft: "triangle", topRight: "triangle", bottomLeft: "oval", bottomRight: "square", rowTop: 18, rowBottom: null, colLeft: 15, colRight: 13 } },
+    { label: "(4)", grid: { topLeft: "diamond", topRight: "diamond", bottomLeft: "square", bottomRight: "oval", rowTop: 12, rowBottom: null, colLeft: 15, colRight: 13 } },
+    { label: "(5)", grid: { topLeft: "square", topRight: "diamond", bottomLeft: "square", bottomRight: "oval", rowTop: 11, rowBottom: 13, colLeft: 16, colRight: null } }
+  ];
+  return `<div class="matrix-panel-set ${story ? "single" : ""}">${panels.map(matrixPanelMarkup).join("")}</div>`;
+}
+
+function balanceBeamMarkup(left, right, heavySide) {
+  const sideClass = heavySide === "left" ? "left-heavy" : heavySide === "right" ? "right-heavy" : "level";
+  return `<div class="balance-unit" role="img" aria-label="${left}와 ${right}의 양팔저울"><div class="balance-load left">${left}</div><div class="balance-load right">${right}</div><div class="balance-beam ${sideClass}"><span></span><span></span></div><div class="balance-stand"></div></div>`;
+}
+
+function book02BalanceMarkup(story = false) {
+  const balances = story
+    ? [["🐰", "🐢", "left"], ["🐢", "🐿️", "left"]]
+    : [["A", "B", "left"], ["C", "A", "right"], ["C", "B", "left"]];
+  return `<div class="balance-set">${balances.map((item) => balanceBeamMarkup(...item)).join("")}</div>`;
+}
+
+function patternMarkup(story = false) {
+  const symbols = story
+    ? ["△", "■", "○", "☆", "▲", "□", "○", "★", "△", "■", "●", "☆", "?"]
+    : ["○", "◆", "☆", "♡", "●", "◇", "☆", "♥", "○", "◇", "★", "♡", "○", "?"];
+  return `<div class="dual-pattern" role="img" aria-label="모양과 색이 함께 반복되는 규칙">${symbols.map((symbol, index) => `<span class="${symbol === "?" ? "pattern-blank" : ""}">${symbol === "?" ? "" : symbol}</span>${index < symbols.length - 1 ? "" : ""}`).join("")}</div>`;
+}
+
+function promiseDiamondMarkup(diagram) {
+  return `<div class="promise-diamond">${valueCell(diagram.top,"promise-top")}${valueCell(diagram.left,"promise-left")}${valueCell(diagram.right,"promise-right")}${valueCell(diagram.bottom,"promise-bottom")}</div>`;
+}
+
+function book02PromiseMarkup(story = false) {
+  const diagrams = story ? [
+    { top: 10, left: 2, right: 3, bottom: 5 },
+    { top: 15, left: 4, right: 5, bottom: 6 },
+    { top: null, left: 6, right: 7, bottom: 8 }
+  ] : [
+    { top: 6, left: 1, right: 2, bottom: 3 },
+    { top: 12, left: 2, right: 3, bottom: 7 },
+    { top: 16, left: 5, right: 7, bottom: 4 },
+    { top: null, left: 1, right: 8, bottom: 9 },
+    { top: 21, left: 10, right: null, bottom: 2 }
+  ];
+  return `<div class="promise-set">${diagrams.map(promiseDiamondMarkup).join("")}</div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "clock") return clockMarkup(visual.value);
@@ -100,6 +173,14 @@ function visualMarkup(visual) {
   if (visual.kind === "equal-line") return lineDiagramMarkup({ shape: "cross", ...visual });
   if (visual.kind === "logic-cards") return '<div class="logic-visual"><span>A</span><span>B</span><span>C</span><b>↔</b><span>서로 다른 선택</span></div>';
   if (visual.kind === "logic-food") return '<div class="logic-visual"><span>민지</span><span>서윤</span><span>도윤</span><b>↔</b><span>김밥</span><span>샌드위치</span><span>떡볶이</span></div>';
+  if (visual.kind === "book02-matrix-original") return book02MatrixMarkup(false);
+  if (visual.kind === "book02-matrix-story") return book02MatrixMarkup(true);
+  if (visual.kind === "book02-balance-original") return book02BalanceMarkup(false);
+  if (visual.kind === "book02-balance-story") return book02BalanceMarkup(true);
+  if (visual.kind === "book02-dual-pattern-original") return patternMarkup(false);
+  if (visual.kind === "book02-dual-pattern-story") return patternMarkup(true);
+  if (visual.kind === "book02-promise-original") return book02PromiseMarkup(false);
+  if (visual.kind === "book02-promise-story") return book02PromiseMarkup(true);
   return "";
 }
 
@@ -203,7 +284,7 @@ function renderExtension(lesson) {
 function renderComplete(lesson) {
   const book = activeBook();
   const nextLesson = book.lessons.find((candidate) => !isLessonComplete(candidate));
-  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : '<button type="button" class="primary-action" data-book-complete>1권 학습 완료</button>'}</section>`;
+  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
