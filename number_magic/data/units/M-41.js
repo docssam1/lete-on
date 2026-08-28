@@ -21,6 +21,14 @@ window.NM_UNITS['M-41'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'체스판 첫 칸에 쌀 1알, 다음 칸에 2알, 그다음 4알… 64칸이면 몇 알일까요?',
+        en:'One grain of rice on the first chess square, two on the next, then four… how many by the 64th?',
+        zh:'棋盘第一格放1粒米，下一格2粒，再下一格4粒……到第64格是多少粒？' },
+      history:{ ko:'전해지는 이야기 속 답은 18,446,744,073,709,551,615알이에요. 한 칸씩 두 배씩만 늘렸는데 나라의 곳간으로도 감당할 수 없는 수가 되죠. 두 배는 처음엔 느리게, 나중엔 무섭게 빨라져요.',
+        en:'In the legend the answer is 18,446,744,073,709,551,615 grains. Only doubling each square, yet no kingdom could pay it. Doubling starts slow and then turns terrifyingly fast.',
+        zh:'传说中的答案是18,446,744,073,709,551,615粒。每格只翻一倍，却是整个王国也付不起的数目。翻倍一开始很慢，随后快得吓人。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 일반항 aₙ=a₁×r^(n-1)',en:'1) The general term aₙ=a₁×r^(n-1)',zh:'① 通项公式aₙ=a₁×r^(n-1)'},

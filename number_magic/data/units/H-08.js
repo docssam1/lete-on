@@ -22,6 +22,14 @@ window.NM_UNITS['H-08'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'신전 제단의 부피를 두 배로 만들라는 명령. 사람들은 각 변을 두 배로 늘렸어요. 잘한 걸까요?',
+        en:'Ordered to double the volume of a stone altar, people doubled every edge. Did that work?',
+        zh:'神谕要把石祭坛的体积加倍，人们就把每条边都加长一倍。这样对吗？' },
+      history:{ ko:'부피가 여덟 배가 됐어요. 변이 2배면 부피는 2×2×2 = 8배니까요. 그리스 디로스 사람들이 실제로 이 실수를 했다는 이야기가 전해집니다. 부피를 딱 두 배로 만드는 변의 길이는 자와 컴퍼스만으로는 절대 그릴 수 없다는 것이, 2000년이 지난 1837년에 증명됐어요.',
+        en:'It became eight times bigger. Double the edge and the volume goes 2 × 2 × 2 = 8. The story says the people of Delos in Greece actually made this mistake. The edge that doubles a cube exactly can never be drawn with straightedge and compass alone — proved in 1837, more than two thousand years later.',
+        zh:'体积变成了八倍。边长翻倍，体积就是2 × 2 × 2 = 8倍。传说希腊提洛岛的人真的犯过这个错。而能让立方体体积正好加倍的那条边，用直尺和圆规永远画不出来——这在两千多年后的1837年才被证明。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① ★만큼 벌렸다 좁혔다',en:'1) Spread apart by ★, then close in',zh:'① 用★拉开又收回'},

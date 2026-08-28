@@ -1,21 +1,24 @@
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  if (root) root.GFIELDK8CompetitionProfiles = api;
+  if (root) {
+    root.GFIELDK12CompetitionProfiles = api;
+    root.GFIELDK8CompetitionProfiles = api;
+  }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const verified = "2026-08-26";
+  const verified = "2026-08-28";
   const source = function (authority, url, documentRevision) {
     return Object.freeze({ authority, url, documentRevision, lastVerified: verified });
   };
 
   const profiles = Object.freeze([
     Object.freeze({
-      id: "math-kangaroo-usa-k8",
+      id: "math-kangaroo-usa-k12",
       programId: "math-kangaroo-1-8",
       jurisdiction: "USA",
-      officialStudentGrades: Object.freeze([1, 2, 3, 4, 5, 6, 7, 8]),
+      officialStudentGrades: Object.freeze([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
       kindergartenMayEnterGrade1Paper: true,
       durationMinutes: 75,
       responseType: "multiple-choice",
@@ -23,7 +26,9 @@
         Object.freeze({ grades: Object.freeze([1, 2]), questionCount: 24, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 8, maxScore: 96 }),
         Object.freeze({ grades: Object.freeze([3, 4]), questionCount: 24, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 8, maxScore: 96 }),
         Object.freeze({ grades: Object.freeze([5, 6]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 }),
-        Object.freeze({ grades: Object.freeze([7, 8]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 })
+        Object.freeze({ grades: Object.freeze([7, 8]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 }),
+        Object.freeze({ grades: Object.freeze([9, 10]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 }),
+        Object.freeze({ grades: Object.freeze([11, 12]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 })
       ]),
       rankingSeparatesStudentGrades: true,
       wrongAnswerPenalty: false,
@@ -37,9 +42,9 @@
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     }),
     Object.freeze({
-      id: "sasmo-k2-8",
+      id: "sasmo-k2-12",
       programId: "sasmo-k2-8",
-      officialGradeKeys: Object.freeze(["K2", 1, 2, 3, 4, 5, 6, 7, 8]),
+      officialGradeKeys: Object.freeze(["K2", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
       gradeSpecificPapers: true,
       calculatorAllowed: false,
       formats: Object.freeze([
@@ -55,7 +60,7 @@
           maxScore: 85
         }),
         Object.freeze({
-          gradeKeys: Object.freeze([1, 2, 3, 4, 5, 6, 7, 8]),
+          gradeKeys: Object.freeze([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
           durationMinutes: 90,
           questionCount: 25,
           sections: Object.freeze([
@@ -69,6 +74,7 @@
       sources: Object.freeze([
         source("Singapore and Asian Schools Math Olympiad", "https://sasmo.simcc.org/", "current organizer page; revision date not stated")
       ]),
+      historicalFormatNote: "Official historic source coverage and paper groupings vary by year; the current G1–12 and K2 formats must not be projected backward.",
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     }),
     Object.freeze({
@@ -90,10 +96,56 @@
         "counting-probability", "estimation", "proportional-reasoning", "elementary-geometry",
         "pythagorean-theorem", "spatial-visualization", "graphs-tables", "beginning-algebra"
       ]),
+      officialScope: Object.freeze({
+        includes: Object.freeze([
+          "counting-probability", "estimation", "proportional-reasoning", "elementary-geometry",
+          "pythagorean-theorem", "spatial-visualization", "graphs-tables", "beginning-algebra"
+        ])
+      }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026-27 cycle visible"),
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "current policy page; revision date not stated"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
+      ]),
+      contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
+    }),
+    Object.freeze({
+      id: "maa-amc-10",
+      programId: "amc-10",
+      officialEligibility: Object.freeze({ gradeMaximum: 10, ageExclusiveMaximum: 17.5 }),
+      gfieldPreparationGrades: Object.freeze([9, 10]),
+      preparationBandIsOfficial: false,
+      durationMinutes: 75,
+      questionCount: 25,
+      responseType: "five-choice-multiple-choice",
+      calculatorAllowed: false,
+      officialScope: Object.freeze({
+        includes: Object.freeze(["elementary-algebra", "basic-geometry", "area-and-volume", "elementary-number-theory", "elementary-probability"]),
+        excludes: Object.freeze(["trigonometry", "advanced-algebra", "advanced-geometry"])
+      }),
+      sources: Object.freeze([
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
+      ]),
+      contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
+    }),
+    Object.freeze({
+      id: "maa-amc-12",
+      programId: "amc-12",
+      officialEligibility: Object.freeze({ gradeMaximum: 12, ageExclusiveMaximum: 19.5 }),
+      gfieldPreparationGrades: Object.freeze([11, 12]),
+      preparationBandIsOfficial: false,
+      durationMinutes: 75,
+      questionCount: 25,
+      responseType: "five-choice-multiple-choice",
+      calculatorAllowed: false,
+      officialScope: Object.freeze({
+        includes: Object.freeze(["full-high-school-mathematics", "trigonometry", "advanced-algebra", "advanced-geometry"]),
+        excludes: Object.freeze(["calculus"])
+      }),
+      sources: Object.freeze([
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     })

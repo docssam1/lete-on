@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수직선의 구멍 — 수의 마법 개념실험실</title>
+<!-- Numbers of Magic 개념실험실 5호: "수직선을 다 이으려면 어떤 수가 필요할까"(§7 훅)
+     근거 = 데데킨트의 절단(유리수에는 빈틈이 있고 실수에는 빈틈이 없다).
+     문장은 전부 자체 서술 — 외부 교재 문장 미사용. 외부 의존 0. -->
+<style>
+:root{
+  --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
+  --indigo:#2B3A67;--indigo-deep:#1B2545;--amber:#E08A2E;--amber-soft:#F6C97A;
+  --ok:#2E9E6B;--no:#D9534F;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 520px at 25% -10%,#e9ecf7,transparent 60%),var(--paper);
+  min-height:100dvh;padding:18px 14px 60px}
+.wrap{max-width:660px;margin:0 auto}
+.hero{text-align:center;padding:10px 0 16px}
+.hero h1{font-size:clamp(23px,6.2vw,31px);font-weight:900;letter-spacing:-.03em;color:var(--indigo-deep)}
+.hero p{font-size:14px;color:var(--sub);margin-top:6px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:14px 0 18px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 15px;
+  font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.tab.on{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 12px 30px -22px rgba(43,58,103,.35);display:none}
+.card.on{display:block}
+.card h2{font-size:17px;color:var(--indigo-deep);margin-bottom:12px}
+.story p{font-size:15px;line-height:1.75;margin-bottom:13px}
+.story b{color:var(--indigo-deep)}
+.legend{font-size:12.5px;color:var(--sub);background:var(--mist);border-radius:11px;padding:10px 12px;line-height:1.65}
+.big{background:linear-gradient(160deg,#f4f6fd,#fff);border:2px solid #cfd6ea;border-radius:16px;
+  padding:15px;text-align:center;font-size:15.5px;font-weight:800;color:var(--indigo-deep);line-height:1.7;margin:4px 0 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+.mini{border:1.5px solid var(--line);border-radius:14px;padding:12px;background:#fdfdfb}
+.mini b{display:block;font-size:14.5px;color:var(--amber);margin-bottom:5px}
+.mini span{font-size:13.5px;color:var(--sub);line-height:1.6}
+.btn{border:none;background:var(--indigo);color:#fff;border-radius:13px;padding:12px 20px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn.amber{background:var(--amber)}
+.btn.ghost{background:#fff;color:var(--sub);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:14px}
+canvas{width:100%;max-width:520px;height:auto;display:block;margin:0 auto;border-radius:14px;background:#fcfcfa;border:1px solid var(--line)}
+.cap{text-align:center;font-size:14.5px;font-weight:800;color:var(--indigo-deep);min-height:24px;margin-top:9px}
+.val{text-align:center;font-size:clamp(15px,4.4vw,19px);font-weight:900;color:var(--ink);
+  margin-top:6px;font-variant-numeric:tabular-nums;min-height:30px;line-height:1.6}
+.val b{color:var(--amber)}
+.speak{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;margin-bottom:12px}
+.digits{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.dg{border:1.5px solid var(--line);background:#fff;border-radius:11px;width:42px;height:44px;
+  font-size:17px;font-weight:900;color:var(--indigo-deep);cursor:pointer;font-family:inherit}
+.dg:hover{border-color:var(--amber)}
+.dg.used{opacity:.35;cursor:default}
+table.sq{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px;font-variant-numeric:tabular-nums}
+table.sq th,table.sq td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:center}
+table.sq th{color:var(--sub);font-size:12.5px;font-weight:800}
+table.sq td.lo{color:var(--ok);font-weight:800}
+table.sq td.hi{color:var(--no);font-weight:800}
+.fb{text-align:center;font-size:14.5px;font-weight:800;min-height:24px;margin-top:10px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.chip{display:inline-block;font-size:11.5px;font-weight:900;color:#fff;background:var(--amber);
+  border-radius:99px;padding:3px 9px;margin-left:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>🕳 수직선의 구멍</h1>
+    <p>분수를 아무리 촘촘히 찍어도 남는 자리가 있어요</p>
+  </header>
+
+  <nav class="tabs" aria-label="단계">
+    <button class="tab on" data-p="p1">① 질문</button>
+    <button class="tab" data-p="p2">② 확대해 보기</button>
+    <button class="tab" data-p="p3">③ 직접 좁혀 가기</button>
+    <button class="tab" data-p="p4">④ 이름 붙이기</button>
+  </nav>
+
+  <!-- ① 질문 -->
+  <section class="card on story" id="p1">
+    <h2>수직선을 빈틈없이 채울 수 있을까?</h2>
+    <button class="speak" data-say="p1">🔊 읽어 주기</button>
+    <p>수직선 위에 <b>분수를 전부</b> 찍어 본다고 해 봐요. 0과 1 사이에만 해도
+    1/2, 1/3, 2/3, 1/4, 3/4, 1/5 … 끝없이 많아요. 두 분수를 아무거나 골라도
+    그 사이에 <b>또 다른 분수</b>가 반드시 있어요. 두 수의 한가운데를 잡으면 되니까요.</p>
+    <p>그럼 이렇게 물어볼 수 있어요.
+    <b>분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까?</b></p>
+    <div class="big">한 변이 1인 정사각형을 그리고<br>
+    그 <b>대각선</b>을 수직선 위에 눕혀 보세요.<br>그 끝은 어느 분수에 닿을까요?</div>
+    <p>이 대각선의 길이는 <b>제곱하면 2가 되는 수</b>예요. 그런데 그런 수는
+    <b>어떤 분수로도 나타낼 수 없어요.</b> 분수를 전부 찍었는데도,
+    대각선의 끝자리에는 <b>아무것도 없는 거예요.</b></p>
+    <div class="legend">※ 옆 탭에서 그 자리를 직접 <b>확대</b>해 볼 수 있어요.
+    10배씩 계속 확대해도 눈금(=분수) 위에는 절대 놓이지 않고, 언제나 눈금과 눈금 <b>사이</b>에 있어요.</div>
+    <div class="row"><button class="btn" data-go="p2">그 자리를 확대해 보기 →</button></div>
+  </section>
+
+  <!-- ② 확대 -->
+  <section class="card" id="p2">
+    <h2>10배씩 확대해도 눈금 위에 없다</h2>
+    <canvas id="cv" width="760" height="330" aria-label="수직선 확대"></canvas>
+    <div class="cap" id="cap">지금 보는 구간</div>
+    <div class="val" id="val"></div>
+    <div class="row">
+      <button class="btn" id="zin">🔍 10배 확대</button>
+      <button class="btn ghost" id="zrs">처음으로</button>
+    </div>
+    <div class="legend" style="margin-top:14px">눈금은 전부 <b>분수</b>예요. 1.4는 14/10, 1.41은 141/100 …
+    확대할 때마다 구간의 폭은 <b>1/10</b>로 줄어드는데, 빨간 자리는 <b>언제나 눈금 사이</b>에 있어요.
+    구간을 아무리 좁혀도 그 안에 갇혀 있을 뿐, 눈금 위로 올라서지 않아요.</div>
+    <div class="row"><button class="btn amber" data-go="p3">직접 좁혀 보기 →</button></div>
+  </section>
+
+  <!-- ③ 좁혀 가기 -->
+  <section class="card" id="p3">
+    <h2>제곱해서 2가 되는 수를 손으로 찾기</h2>
+    <p style="font-size:14.5px;line-height:1.7;color:var(--sub);margin-bottom:6px">
+    다음 자리에 올 숫자를 눌러 보세요. 제곱했을 때 <b style="color:var(--ok)">2보다 작으면</b> 통과,
+    <b style="color:var(--no)">2보다 크면</b> 너무 큰 거예요. 계산기가 없던 시절 사람들이
+    <b>손으로 뿌리를 캐던</b> 방법(개평법)의 맛보기예요.</p>
+    <div class="val" id="cur">현재 값 : <b>1.</b></div>
+    <div class="digits" id="dgs"></div>
+    <div class="fb" id="fb"></div>
+    <table class="sq" id="tbl">
+      <thead><tr><th>시도한 수</th><th>제곱</th><th>2와 비교</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="row"><button class="btn ghost" id="rrs">다시 하기</button>
+      <button class="btn" data-go="p4">이 수에 이름 붙이기 →</button></div>
+  </section>
+
+  <!-- ④ 이름 -->
+  <section class="card story" id="p4">
+    <h2>빈틈을 메운 수의 이름</h2>
+    <button class="speak" data-say="p4">🔊 읽어 주기</button>
+    <p>1.4, 1.41, 1.414, 1.4142 … 아무리 자리를 늘려도 <b>딱 맞아떨어지지 않아요.</b>
+    끝나지도 않고, 같은 마디가 되풀이되지도 않아요. 그래서 <b>어떤 분수로도 돌아갈 수 없어요.</b></p>
+    <div class="big">분수로 나타낼 수 <b>있는</b> 수 = 유리수<br>
+    분수로 나타낼 수 <b>없는</b> 수 = <b>무리수</b><br>
+    둘을 합쳐 수직선을 빈틈없이 채운 것 = <b>실수</b></div>
+    <p><b>데데킨트</b>라는 수학자는 이 상황을 아주 간단하게 말했어요.
+    수를 크기 순서대로 늘어놓았을 때 <b>유리수에는 빈틈이 있고, 실수에는 빈틈이 전혀 없다</b>고요.
+    그리고 그 빈틈을 메우는 것이 바로 무리수라고요. 우리가 방금 확대하며 본 그 자리예요.</p>
+    <div class="two">
+      <div class="mini"><b>무리수는 "무리한 수"가 아니에요</b>
+        <span>다 적으려고 <b>무리하지 말라</b>는 뜻으로 외워도 좋아요. 끝까지 적는 건 처음부터 불가능한 일이니까요.</span></div>
+      <div class="mini"><b>√는 뿌리(root)예요</b>
+        <span>제곱해서 그 수가 되는 <b>뿌리</b>를 캐낸다는 뜻이에요. √2는 "제곱하면 2가 되는 뿌리".</span></div>
+    </div>
+    <p>피타고라스 학파는 <b>모든 길이를 분수로 나타낼 수 있다</b>고 믿었어요.
+    그런데 자기들이 아끼던 정사각형의 대각선이 그 믿음을 깨 버린 거예요.
+    이 비밀을 밖으로 알린 <b>히파소스</b>가 바다에 던져졌다는 이야기가 전해지는데,
+    사실인지는 아무도 몰라요 — <b>전해지는 이야기</b>로만 기억해 두세요.</p>
+    <div class="legend">※ 정리 한 줄 <span class="chip">기억</span><br>
+    <b>분수를 다 찍어도 수직선에는 구멍이 남는다. 그 구멍을 메운 수가 무리수이고, 다 메운 수직선이 실수다.</b></div>
+    <div class="row"><button class="btn ghost" data-go="p1">처음으로</button></div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var SQ2 = Math.sqrt(2);
+
+/* 탭 */
+function show(id){
+  var cs=document.querySelectorAll('.card'); for(var i=0;i<cs.length;i++) cs[i].classList.toggle('on', cs[i].id===id);
+  var ts=document.querySelectorAll('.tab'); for(var j=0;j<ts.length;j++) ts[j].classList.toggle('on', ts[j].getAttribute('data-p')===id);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='p2') draw();
+}
+document.addEventListener('click', function(e){
+  var t=e.target.closest('[data-p]'); if(t){ show(t.getAttribute('data-p')); return; }
+  var g=e.target.closest('[data-go]'); if(g){ show(g.getAttribute('data-go')); }
+});
+
+/* 읽어 주기 */
+var SAY={
+  p1:'수직선 위에 분수를 전부 찍어 본다고 해 봐요. 두 분수를 아무거나 골라도 그 사이에 또 다른 분수가 반드시 있어요. '+
+     '그럼 분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까요? 한 변이 1인 정사각형의 대각선을 수직선 위에 눕혀 보세요. '+
+     '그 길이는 제곱하면 2가 되는 수인데, 어떤 분수로도 나타낼 수 없어요.',
+  p4:'1.4, 1.41, 1.414 아무리 자리를 늘려도 딱 맞아떨어지지 않아요. 끝나지도 않고 되풀이되지도 않아서 어떤 분수로도 돌아갈 수 없어요. '+
+     '분수로 나타낼 수 있는 수를 유리수, 없는 수를 무리수, 둘을 합쳐 수직선을 빈틈없이 채운 것을 실수라고 해요. '+
+     '데데킨트는 유리수에는 빈틈이 있고 실수에는 빈틈이 전혀 없다고 말했어요.'
+};
+document.addEventListener('click', function(e){
+  var b=e.target.closest('.speak'); if(!b) return;
+  try{
+    var u=new SpeechSynthesisUtterance(SAY[b.getAttribute('data-say')]);
+    u.lang='ko-KR'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(err){}
+});
+
+/* ② 확대 */
+var lo=1, hi=2, step=0;
+var cv=document.getElementById('cv'), cx=cv.getContext('2d');
+function fmt(v,d){ return v.toFixed(d); }
+function draw(){
+  var W=cv.width, H=cv.height, L=58, R=W-58, y=168;
+  cx.clearRect(0,0,W,H);
+  cx.fillStyle='#fcfcfa'; cx.fillRect(0,0,W,H);
+  cx.strokeStyle='#8d97ad'; cx.lineWidth=3; cx.beginPath(); cx.moveTo(L-20,y); cx.lineTo(R+20,y); cx.stroke();
+  var dec=step+1, seg=(hi-lo)/10;
+  cx.textAlign='center';
+  for(var i=0;i<=10;i++){
+    var v=lo+seg*i, x=L+(R-L)*i/10, major=(i===0||i===10);
+    cx.strokeStyle=major?'#2B3A67':'#b8c0d2'; cx.lineWidth=major?3.5:2;
+    cx.beginPath(); cx.moveTo(x,y-(major?22:13)); cx.lineTo(x,y+(major?22:13)); cx.stroke();
+    if(major || i===5){
+      cx.font=(major?'900 25px ':'800 22px ')+'system-ui,sans-serif';
+      cx.fillStyle=major?'#1B2545':'#6b7488';
+      cx.fillText(fmt(v,dec), x, y+50);
+    }
+  }
+  var seg2=(hi-lo)/10, k=Math.floor((SQ2-lo)/seg2);
+  var xa=L+(R-L)*k/10, xb=L+(R-L)*(k+1)/10;
+  cx.fillStyle='rgba(224,138,46,.18)'; cx.fillRect(xa,y-62,xb-xa,124);
+  cx.strokeStyle='#E08A2E'; cx.lineWidth=2.5; cx.strokeRect(xa,y-62,xb-xa,124);
+  var xs=L+(R-L)*(SQ2-lo)/(hi-lo);
+  cx.strokeStyle='#D9534F'; cx.lineWidth=4;
+  cx.beginPath(); cx.moveTo(xs,y-62); cx.lineTo(xs,y+62); cx.stroke();
+  cx.fillStyle='#D9534F'; cx.beginPath(); cx.arc(xs,y,8,0,6.3); cx.fill();
+  cx.font='900 26px system-ui,sans-serif';
+  cx.fillText('여기 — 눈금이 없어요', Math.min(Math.max(xs,150),W-150), y-82);
+  cx.font='800 23px system-ui,sans-serif'; cx.fillStyle='#9a5f16';
+  cx.fillText('다음에 확대할 칸', Math.min(Math.max((xa+xb)/2,110),W-110), y+96);
+  var widths=['1','1/10','1/100','1/1000','1/10000','1/100000','1/1000000'];
+  document.getElementById('cap').textContent =
+    (step===0?'처음 구간 [1, 2]':'확대 '+step+'번') + ' — 구간의 폭 ' + widths[step];
+  var ed=step;
+  document.getElementById('val').innerHTML =
+    fmt(lo,ed)+'² = '+ (lo*lo).toFixed(Math.min(12,2*ed)) +' &lt; <b>2</b> &lt; '+
+    (hi*hi).toFixed(Math.min(12,2*ed)) +' = '+ fmt(hi,ed)+'²';
+  document.getElementById('zin').disabled = step>=6;
+}
+document.getElementById('zin').onclick=function(){
+  if(step>=6) return;
+  var seg=(hi-lo)/10, k=Math.floor((SQ2-lo)/seg);
+  lo=lo+seg*k; hi=lo+seg; step++; draw();
+};
+document.getElementById('zrs').onclick=function(){ lo=1;hi=2;step=0; draw(); };
+
+/* ③ 좁혀 가기 */
+var prefix='1', tried=[];
+function render(){
+  document.getElementById('cur').innerHTML='현재 값 : <b>'+prefix+(prefix.length>1?'':'.')+'</b>';
+  var box=document.getElementById('dgs'); box.innerHTML='';
+  for(var d=0; d<=9; d++){
+    (function(d){
+      var b=document.createElement('button'); b.className='dg'; b.textContent=d;
+      b.onclick=function(){ pick(d); };
+      box.appendChild(b);
+    })(d);
+  }
+  var tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
+  tried.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+r.v+'</td><td>'+r.sq+'</td>'+
+      (r.lt?'<td class="lo">2보다 작아요 ✓</td>':'<td class="hi">2보다 커요 ✗</td>');
+    tb.appendChild(tr);
+  });
+}
+function pick(d){
+  if(prefix.length>=7){ return; }
+  var v = prefix.length===1 ? ('1.'+d) : (prefix+''+d);
+  var num = parseFloat(v), sq = num*num;
+  var lt = sq < 2;
+  tried.push({v:v, sq:sq.toFixed(Math.max(2,2*(v.length-2))), lt:lt});
+  var fb=document.getElementById('fb');
+  if(lt){
+    prefix = v;
+    fb.className='fb ok';
+    fb.textContent = v+'² = '+sq.toFixed(Math.max(2,2*(v.length-2)))+' — 아직 2보다 작아요. 한 자리 더 캐 볼까요?';
+    if(prefix.length>=7){
+      fb.className='fb ok';
+      fb.textContent = prefix+'… 여기까지 왔어요. 그런데 아직도 2가 아니에요 — 자리를 아무리 늘려도 영원히 딱 맞지 않아요.';
+    }
+  }else{
+    fb.className='fb no';
+    fb.textContent = v+'² = '+sq.toFixed(Math.max(2,2*(v.length-2)))+' — 2를 넘었어요. 한 칸 작은 숫자를 눌러 보세요.';
+  }
+  render();
+}
+document.getElementById('rrs').onclick=function(){ prefix='1'; tried=[]; document.getElementById('fb').textContent=''; render(); };
+render();
+draw();
+})();
+</script>
+</body>
+</html>

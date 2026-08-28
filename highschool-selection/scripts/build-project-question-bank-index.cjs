@@ -170,9 +170,21 @@ function adaptHwangsoMiddle(index, curriculumReviews) {
   const items = active.map(item => {
     const review = reviewByItemId.get(item.id);
     if (review) usedReviewIds.add(item.id);
-    const reviewed = Boolean(review && review.detailPrecision === "unit_only" && review.classificationStatus === "reviewed_unit" && review.sourceUnitTypeId);
-    if (reviewed && !typesById.has(review.sourceUnitTypeId)) {
-      typesById.set(review.sourceUnitTypeId, sourceType("HWANGSO-MIDDLE", review.sourceUnitTypeId, {
+    const reviewedDetail = Boolean(review && review.detailPrecision === "verified" && review.classificationStatus === "reviewed_detail" && review.sourceUnitTypeId && review.sourceTypeId && review.detailType && review.solutionArchetype);
+    const reviewedUnit = Boolean(review && review.detailPrecision === "unit_only" && review.classificationStatus === "reviewed_unit" && review.sourceUnitTypeId);
+    if (review && review.detailPrecision === "verified" && !reviewedDetail) throw new Error(`황소 세부유형 검수표가 완전하지 않습니다: ${item.id}`);
+    const sourceTypeId = reviewedDetail ? review.sourceTypeId : reviewedUnit ? review.sourceUnitTypeId : null;
+    if (sourceTypeId && !typesById.has(sourceTypeId)) {
+      typesById.set(sourceTypeId, sourceType("HWANGSO-MIDDLE", sourceTypeId, reviewedDetail ? {
+        semester: review.semester,
+        majorUnit: review.majorUnit,
+        minorUnit: review.minorUnit,
+        detailType: review.detailType,
+        solutionArchetype: review.solutionArchetype,
+        detailPrecision: "verified",
+        status: "reviewed_detail",
+        evidence: review.evidence || []
+      } : {
         semester: review.semester,
         majorUnit: review.majorUnit,
         minorUnit: review.minorUnit,
@@ -186,18 +198,19 @@ function adaptHwangsoMiddle(index, curriculumReviews) {
       itemId: `HWANGSO-MIDDLE:${item.id}`,
       sourceBankId: "HWANGSO-MIDDLE",
       sourceItemId: item.id,
-      sourceUnitTypeId: reviewed ? review.sourceUnitTypeId : null,
-      sourceTypeId: reviewed ? review.sourceUnitTypeId : null,
-      classificationStatus: reviewed ? "reviewed_unit" : item.classificationStatus || "pending",
-      detailPrecision: reviewed ? "unit_only" : "pending",
+      sourceUnitTypeId: reviewedDetail || reviewedUnit ? review.sourceUnitTypeId : null,
+      sourceTypeId,
+      classificationStatus: reviewedDetail ? "reviewed_detail" : reviewedUnit ? "reviewed_unit" : item.classificationStatus || "pending",
+      detailPrecision: reviewedDetail ? "verified" : reviewedUnit ? "unit_only" : "pending",
       academyFits: [{ profileId: "SH_SELECTION", status: "candidate" }]
     };
   });
   const unknownReviewIds = Array.from(reviewByItemId.keys()).filter(id => !usedReviewIds.has(id));
   if (unknownReviewIds.length) throw new Error(`황소 교육과정 검수표에 활성 문항이 아닌 ID가 있습니다: ${unknownReviewIds.join(", ")}`);
-  const allUnitReviewed = items.length > 0 && items.every(item => item.detailPrecision === "unit_only");
+  const allDetailReviewed = items.length > 0 && items.every(item => item.detailPrecision === "verified");
+  const allUnitReviewed = items.length > 0 && items.every(item => ["verified", "unit_only"].includes(item.detailPrecision));
   return {
-    bank: { sourceBankId: "HWANGSO-MIDDLE", academyId: "SH", label: "황소 중등 교재 후보", itemCount: items.length, status: allUnitReviewed ? "reviewed_unit" : "classification_in_progress" },
+    bank: { sourceBankId: "HWANGSO-MIDDLE", academyId: "SH", label: "황소 중등 교재 후보", itemCount: items.length, status: allDetailReviewed ? "reviewed_detail" : allUnitReviewed ? "reviewed_unit" : "classification_in_progress" },
     types: Array.from(typesById.values()),
     items
   };

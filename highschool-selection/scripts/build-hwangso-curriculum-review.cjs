@@ -30,6 +30,7 @@ function validateSourceMap(source) {
     if (!Number.isSafeInteger(range.pageStart) || !Number.isSafeInteger(range.pageEnd) || range.pageStart < 1 || range.pageEnd < range.pageStart) issues.push(`${prefix}_pages`);
     if (!["reviewed", "pending"].includes(range.status)) issues.push(`${prefix}_status`);
     if (range.status === "reviewed" && (!clean(range.majorUnit) || !clean(range.minorUnit) || !clean(range.evidenceLocator))) issues.push(`${prefix}_classification`);
+    if (range.status === "pending" && (!clean(range.note) || !clean(range.evidenceLocator))) issues.push(`${prefix}_pending_reason`);
   });
   const sorted = ranges.slice().sort((left, right) => left.pageStart - right.pageStart || left.pageEnd - right.pageEnd);
   for (let index = 1; index < sorted.length; index += 1) {
@@ -67,7 +68,8 @@ function buildReview(index, packets) {
       minorUnit: reviewed ? clean(range.minorUnit) : null,
       classificationStatus: reviewed ? "reviewed_unit" : "pending",
       detailPrecision: reviewed ? "unit_only" : "pending",
-      evidence: reviewed ? [`${sourceMemoryId}:${clean(range.evidenceLocator)}`] : []
+      reviewReason: reviewed ? "page_range_reviewed" : clean(range.note),
+      evidence: clean(range.evidenceLocator) ? [`${sourceMemoryId}:${clean(range.evidenceLocator)}`] : []
     };
   }).sort((left, right) => left.sourceItemId.localeCompare(right.sourceItemId));
   return {
@@ -80,6 +82,7 @@ function buildReview(index, packets) {
       itemCount: reviews.length,
       unitReviewedItemCount: reviews.filter(review => review.detailPrecision === "unit_only").length,
       pendingItemCount: reviews.filter(review => review.detailPrecision === "pending").length,
+      pendingReasonCount: new Set(reviews.filter(review => review.detailPrecision === "pending").map(review => review.reviewReason)).size,
       unitTypeCount: new Set(reviews.filter(review => review.sourceUnitTypeId).map(review => review.sourceUnitTypeId)).size
     }
   };

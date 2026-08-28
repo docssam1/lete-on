@@ -96,6 +96,34 @@ test("황소 교재 문항은 검수된 단원까지만 연결하고 세부유�
   assert.deepEqual(audit.audit(index).issues, []);
 });
 
+test("황소 문항도 시각 검수된 세부유형만 공통 개념에 연결한다", () => {
+  const input = fixture();
+  input.hwangsoMiddle.items = [{ id: "SH-M1", releaseStatus: "locked", discoveryStatus: "visual_verified", classificationStatus: "pending" }];
+  input.hwangsoMiddle.rejectedCandidates = [];
+  input.hwangsoCurriculumReviews = {
+    reviews: [{
+      sourceItemId: "SH-M1",
+      sourceUnitTypeId: "SH-UNT-TEST",
+      sourceTypeId: "SH-TYP-TEST",
+      semester: "중2-1",
+      majorUnit: "함수",
+      minorUnit: "일차함수",
+      detailType: "두 직선의 교점 구하기",
+      solutionArchetype: "두 일차식을 연립하여 교점 좌표 구하기",
+      classificationStatus: "reviewed_detail",
+      detailPrecision: "verified",
+      evidence: ["source:p.3 첫째 문항"]
+    }]
+  };
+  const index = builder.buildIndex(input);
+  const item = index.items.find(candidate => candidate.sourceItemId === "SH-M1");
+  assert.equal(item.sourceUnitTypeId, "SH-UNT-TEST");
+  assert.equal(item.sourceTypeId, "SH-TYP-TEST");
+  assert.equal(item.conceptStatus, "mapped");
+  assert.ok(item.conceptFamilyId);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
 test("공통 인덱스에는 원문·정답·경로를 넣지 않고 전체 검사를 통과한다", () => {
   const index = builder.buildIndex(fixture());
   assert.deepEqual(audit.audit(index).issues, []);

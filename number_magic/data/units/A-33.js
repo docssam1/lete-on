@@ -15,6 +15,14 @@ window.NM_UNITS['A-33'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'4=2+2, 6=3+3, 8=3+5, 10=5+5. 2보다 큰 짝수는 언제나 소수 둘의 합일까요?',
+        en:'4=2+2, 6=3+3, 8=3+5, 10=5+5. Is every even number above 2 the sum of two primes?',
+        zh:'4=2+2、6=3+3、8=3+5、10=5+5。大于2的偶数，总能写成两个质数之和吗？' },
+      history:{ ko:'아무도 몰라요. 300년 전 골드바흐가 물은 뒤로 지금까지 아무도 증명하지 못했어요. 컴퓨터로 4,000,000,000,000,000,000까지 다 확인해 봤지만 전부 맞았죠 — 그래도 증명은 아니에요. 초등학생도 뜻을 아는 질문인데 세상에서 제일 똑똑한 사람들도 못 풀었답니다.',
+        en:'Nobody knows. Goldbach asked it three hundred years ago and no one has proved it since. Computers have checked every even number up to 4,000,000,000,000,000,000 and all of them worked — but checking is not proving. A question a young child can understand, and the cleverest people alive cannot answer.',
+        zh:'没人知道。三百年前哥德巴赫提出这个问题，至今无人证明。计算机已经把4,000,000,000,000,000,000以内的偶数全查过了，个个成立——但查过不等于证明。一个小学生就能听懂的问题，最聪明的人也还没解开。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 합과 차로 큰 수를 구해요', en:'1) Find the larger number from sum and difference', zh:'① 用和与差求较大数' },

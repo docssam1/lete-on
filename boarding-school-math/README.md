@@ -1,6 +1,6 @@
 # GFIELD Boarding School Math
 
-This directory is the shared K–8 boarding-school program layer for the existing GFIELD elementary and middle-school math applications. It does not replace `number_magic`, `hselementary`, `fields-classic`, or `hsmiddle`.
+This directory is the shared **K–12 target** boarding-school program layer for the existing GFIELD math applications. The verified instructional spine is currently K–8; high-school conceptual categories and the AMC 8 → 10 → 12 pathway are public metadata contracts, not released instruction. It does not replace `number_magic`, `hselementary`, `fields-classic`, or `hsmiddle`.
 
 ## Architecture decision
 
@@ -18,18 +18,29 @@ Every content record also declares:
 
 ## Current scope
 
-- US K–8 core mathematics as the academic backbone;
-- Singapore mastery/model-method enrichment;
-- Math Kangaroo grades 1–8;
-- SASMO K2–grade 8;
-- AMC 8 preparation;
+- US K–12 core mathematics as the academic backbone: 94 implemented K–8 anchors plus school-configured G9–12 conceptual categories;
+- Singapore mastery/model-method enrichment: G1–8 implemented boundary and locked G9–12 crosswalk plan;
+- Math Kangaroo grades 1–12;
+- SASMO K2–grade 12, with historical source coverage recorded separately by year;
+- separate AMC 8, AMC 10, and AMC 12 preparation contracts;
 - school-configured promotion decisions using diagnostic, mastery, retention, and teacher-review evidence.
 
 The Common Core standards are not treated as a national promotion cut score. Each adopting school must version and own its thresholds.
 
+## Public entry points
+
+- `index.html` is the goal-first product home: school mathematics, Singapore mastery, Math Kangaroo, SASMO, and the AMC 8 → 10 → 12 pathway lead to distinct explanations and grade choices.
+- `catalog.html` preserves the currently implemented K–8 data-driven curriculum, unit, cadence, and student/teacher resource-plan viewer while labeling the wider K–12 target.
+- `diagnostic.html` is the public Grade 6 placement-blueprint viewer: it explains the 42 locked slots, coverage balance, release gates, and teacher/student/parent flows without publishing prompts, answers, learner records, or a placement decision.
+- `competition/official-original-links.js` records verified organizer-hosted source-entry URLs and keeps organizer registration, official source access, and GFIELD readiness separate. SASMO historical access differs by year; K2 stays visibly locked when no historical paper entry is verified.
+
+Official contest problems are not translated. UI guidance and independently authored GFIELD materials may be localized, but an official original opens on the organizer's site. GFIELD does not fetch, proxy, cache, embed, or store a contest-paper copy in the public repository or browser build. Organizer-hosted SASMO files used for source verification are fingerprinted only in a separate private archive and are not student-delivery assets.
+
+The primary-source coverage and access audit is documented in [`docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md`](./docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md).
+
 ## Publication rule
 
-Only `owned_original` and `permissive_reviewed` material can enter a public build, and only after rights and bilingual metadata review. Licensed, noncommercial, permission-required, or unclear-provenance source material remains locked or private. A repository or dataset code license is not assumed to grant rights to every underlying textbook image or problem.
+Only `owned_original` and `permissive_reviewed` material can enter a public build, and only after rights and metadata review. Licensed, noncommercial, permission-required, or unclear-provenance source material remains locked or private. An organizer-hosted official-original URL may be published as metadata when its host, year/grade coverage, language, and verification date are recorded; that does not authorize a local copy. A repository or dataset code license is not assumed to grant rights to every underlying textbook image or problem.
 
 ## Run checks
 
@@ -39,7 +50,7 @@ npm test
 npm run audit:public
 ```
 
-The first contract tests cover K–8 scope, student/teacher separation, Korean/English labels, promotion-policy honesty, AMC eligibility labeling, and the public source-rights gate.
+The first contract tests cover the K–12 target, the implemented K–8 boundary, student/teacher separation, Korean/English labels, promotion-policy honesty, AMC 8/10/12 eligibility labeling, and the public source-rights gate.
 
 `curriculum/us-k8-cluster-map.js` maps all 94 official K–8 CCSS cluster IDs and standard-number ranges to short Korean and English GFIELD labels. The labels are paraphrases, not copied standard text. Every cluster remains locked for question release until its skill breakdown, prerequisite links, items, answers, and review evidence are complete. CCSS does not dictate GFIELD unit order, pacing, or promotion policy.
 

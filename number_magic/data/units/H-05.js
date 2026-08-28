@@ -22,6 +22,14 @@ window.NM_UNITS['H-05'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'1/3을 소수로 쓰면 0.333… 끝나지 않아요. 왜 어떤 분수는 끝나고 어떤 분수는 끝나지 않을까요?',
+        en:'Written as a decimal, 1/3 is 0.333… and never stops. Why do some fractions end and others never do?',
+        zh:'把1/3写成小数是0.333……永远写不完。为什么有的分数会终止，有的却不会？' },
+      history:{ ko:'분수를 소수로 바꾸면 반드시 끝나거나 같은 마디가 되풀이돼요 — 그 둘뿐이에요. 데데킨트는 수를 크기순으로 늘어놓았을 때 유리수에는 "빈틈"이 있고 실수에는 빈틈이 전혀 없다고 말했어요. 그 빈틈을 메우는 수가 다음에 만날 무리수예요.',
+        en:'Turn a fraction into a decimal and it must either stop or repeat a block forever — those are the only two outcomes. Dedekind put it this way: line the numbers up by size and the rationals have gaps, while the reals have none at all. The numbers that fill those gaps are the irrationals you will meet next.',
+        zh:'把分数化成小数，结果不是终止就是循环——只有这两种。戴德金说：把数按大小排好，有理数之间有"缝隙"，而实数完全没有缝隙。填补这些缝隙的，就是接下来要认识的无理数。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 9로 나누면 그대로 반복',en:'1) Divide by 9 — it just repeats',zh:'① 除以9就原样重复'},

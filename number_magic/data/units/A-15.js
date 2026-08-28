@@ -26,6 +26,14 @@ window.NM_UNITS['A-15'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'= 라는 기호는 왜 하필 나란한 선 두 개일까요?',
+        en:'Why is the equals sign two parallel lines, of all things?',
+        zh:'等号为什么偏偏是两条平行线？' },
+      history:{ ko:'1557년 영국의 레코드가 처음 쓰면서 이렇게 말했어요 — 나란한 두 선보다 더 같은 것은 없으니까. 그때 기호는 지금보다 옆으로 훨씬 길었답니다. 그 전까지는 같다는 말을 매번 글로 풀어 썼어요. 수를 풀어서 쓸 때 =로 이어 가는 것도 그 덕분이죠.',
+        en:'Robert Recorde introduced it in 1557 with a simple reason: no two things can be more equal than a pair of parallel lines. His version was much longer than ours. Before that, people wrote the word equals out in full every time. Every chain of = we write when expanding a number rests on his idea.',
+        zh:'1557年英国人雷科德第一次使用它，理由很简单——没有什么比两条平行线更相等了。他写的符号比现在长得多。在那之前，人们每次都要把相等两个字写出来。我们把数展开时用=一路连下去，靠的正是他的这个主意。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 두 수를 모두 몇십으로 올려요', en:'1) Round both numbers up', zh:'① 把两个数都凑成整十' },
