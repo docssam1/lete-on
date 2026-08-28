@@ -23,6 +23,18 @@
   .nm-print-item .nm-q-num { font-weight: bold; font-size: 0.8em; color: #555; }
   .nm-print-item .nm-q-tex { font-size: 1.1em; margin-top: 4px; }
   .nm-print-blank { display: inline-block; min-width: 40px; border-bottom: 2px solid #000; }
+  /* 세로셈(예: 34+12=□) 인쇄 박스 — "그리드 학습지" 인쇄가 이 서식을 만들면서도
+     CSS가 아예 없어(2026-08-28 발견) 실제로는 안 꾸며진 채 인쇄되고 있었다.
+     renderPrint에 통합하며 함께 채움. */
+  .nm-print-item-vp { text-align: center; }
+  .nm-print-item-vp .nm-q-num { display: block; }
+  .nm-print-vp { display: inline-flex; flex-direction: column; min-width: 2.6em; margin: 6px auto 0;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 1.15em; }
+  .nm-print-vp-top { text-align: right; padding: 0 2px 2px; }
+  .nm-print-vp-mid { display: flex; justify-content: space-between; gap: 6px; padding: 0 2px 2px; }
+  .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
+  .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
+  .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
   .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -433,6 +445,61 @@ function circled(n){
   if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
   if(n>=21&&n<=35) return String.fromCharCode(0x3250+n-20);
   return '('+n+')';
+}
+
+/* 인쇄용 문제·정답 그리드를 채운다 — renderPrint·renderPrintMulti·(예전엔 따로
+   있던) 그리드 학습지 인쇄가 전부 이거 하나만 쓴다(2026-08-28 통합). 세로셈
+   가능("34+12=□" 형태, parseVert)이면 세로 알고리즘 박스로, 문장제는 문장+빈칸,
+   그 외엔 인라인 수식 — 원래 그리드 학습지 쪽만 세로셈을 그렸는데 그 CSS가
+   아예 없어 안 꾸며진 채 인쇄되고 있었다(표지 작업 중 발견). 번호는 circled()
+   원문자로 통일(이전엔 renderPrint만 "1." 평문 번호였다). */
+function fillPrintGrid(problems, problemGrid, answerGrid){
+  problems.forEach((p, i) => {
+    const v = p.word ? null : parseVert(p.tex);
+    const card = document.createElement('div');
+    card.className = 'nm-print-item' + (v ? ' nm-print-item-vp' : '');
+    const numEl = document.createElement('span');
+    numEl.className = 'nm-q-num';
+    numEl.textContent = circled(i+1);
+    card.appendChild(numEl);
+    if(p.word){
+      const texEl = document.createElement('div');
+      texEl.className = 'nm-q-tex';
+      texEl.textContent = p.word;
+      card.appendChild(texEl);
+      const blank = document.createElement('div');
+      blank.className = 'nm-print-word-blank';
+      blank.textContent = '답: __________';
+      card.appendChild(blank);
+    } else if(v){
+      const vp = document.createElement('div');
+      vp.className = 'nm-print-vp';
+      vp.innerHTML = `<div class="nm-print-vp-top">${esc(v.a)}</div>
+<div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${esc(v.b)}</span></div>
+<div class="nm-print-vp-line"></div>
+<div class="nm-print-vp-bot">&nbsp;</div>`;
+      card.appendChild(vp);
+    } else {
+      const texEl = document.createElement('div');
+      texEl.className = 'nm-q-tex';
+      renderKaTeX(p.tex || '', texEl);
+      card.appendChild(texEl);
+    }
+    problemGrid.appendChild(card);
+
+    const ak = document.createElement('div');
+    ak.className = 'nm-ak-item';
+    ak.appendChild(document.createTextNode(`${circled(i+1)} `));
+    const akTex = ansTex(p);
+    if(akTex){
+      const akSpan = document.createElement('span');
+      renderKaTeX(akTex, akSpan);
+      ak.appendChild(akSpan);
+    } else {
+      ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+    }
+    answerGrid.appendChild(ak);
+  });
 }
 
 /* 세로셈 파싱: "a OP b = \square" 형태 */
@@ -1288,7 +1355,7 @@ const NM_EXAM = {
     sheet.setAttribute('aria-hidden', 'true');
 
     const th = (window.NM_THREADS || {})[thread] || {};
-    const thName = (th.name||{}).ko || thread;
+    const thName = config.topicName || (th.name||{}).ko || thread;
 
     const coverHtml = getCoverOn() ? coverPageHtml([config], code, count) : '';
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
@@ -1317,41 +1384,7 @@ ${conceptHtml}
 
     const problemGrid  = sheet.querySelector('#nm-print-problems');
     const answerGrid   = sheet.querySelector('#nm-print-answers');
-
-    problems.forEach((p, i) => {
-      const card = document.createElement('div');
-      card.className = 'nm-print-item';
-      const numEl  = document.createElement('div');
-      numEl.className = 'nm-q-num';
-      numEl.textContent = `${i+1}.`;
-      const texEl = document.createElement('div');
-      texEl.className  = 'nm-q-tex';
-      card.appendChild(numEl);
-      card.appendChild(texEl);
-      if(p.word){
-        texEl.textContent = p.word;
-        const blank = document.createElement('div');
-        blank.textContent = '답: __________';
-        blank.style.marginTop = '6px';
-        card.appendChild(blank);
-      } else {
-        renderKaTeX(p.tex || '', texEl);
-      }
-      problemGrid.appendChild(card);
-
-      const ak = document.createElement('div');
-      ak.className = 'nm-ak-item';
-      ak.appendChild(document.createTextNode(`${i+1}. `));
-      const akTex = ansTex(p);
-      if(akTex){
-        const akSpan = document.createElement('span');
-        renderKaTeX(akTex, akSpan);
-        ak.appendChild(akSpan);
-      } else {
-        ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-      }
-      answerGrid.appendChild(ak);
-    });
+    fillPrintGrid(problems, problemGrid, answerGrid);
 
     setTimeout(() => { window.print(); }, 350);
   },
@@ -1374,7 +1407,7 @@ ${conceptHtml}
       applyWordProblems(problems, cfg.wordType, numericSeed);
       const code = NM_EXAM.worksheetCode(cfg);
       const th = (window.NM_THREADS || {})[cfg.thread] || {};
-      return { cfg, problems, code, thName: (th.name||{}).ko || cfg.thread };
+      return { cfg, problems, code, thName: cfg.topicName || (th.name||{}).ko || cfg.thread };
     });
 
     const sheet = document.createElement('div');
@@ -1424,40 +1457,7 @@ ${answerSectionsHtml}`;
     built.forEach((b,i) => {
       const problemGrid = sheet.querySelector(`#nm-print-problems-${i}`);
       const answerGrid  = sheet.querySelector(`#nm-print-answers-${i}`);
-      b.problems.forEach((p, qi) => {
-        const card = document.createElement('div');
-        card.className = 'nm-print-item';
-        const numEl = document.createElement('div');
-        numEl.className = 'nm-q-num';
-        numEl.textContent = `${qi+1}.`;
-        const texEl = document.createElement('div');
-        texEl.className = 'nm-q-tex';
-        card.appendChild(numEl);
-        card.appendChild(texEl);
-        if(p.word){
-          texEl.textContent = p.word;
-          const blank = document.createElement('div');
-          blank.textContent = '답: __________';
-          blank.style.marginTop = '6px';
-          card.appendChild(blank);
-        } else {
-          renderKaTeX(p.tex || '', texEl);
-        }
-        problemGrid.appendChild(card);
-
-        const ak = document.createElement('div');
-        ak.className = 'nm-ak-item';
-        ak.appendChild(document.createTextNode(`${qi+1}. `));
-        const akTex = ansTex(p);
-        if(akTex){
-          const akSpan = document.createElement('span');
-          renderKaTeX(akTex, akSpan);
-          ak.appendChild(akSpan);
-        } else {
-          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-        }
-        answerGrid.appendChild(ak);
-      });
+      fillPrintGrid(b.problems, problemGrid, answerGrid);
     });
 
     setTimeout(() => { window.print(); }, 350);
@@ -1639,78 +1639,14 @@ window.examScreen = function(container){
       container.querySelector('#nm-ws-back').addEventListener('click', showSetup);
     }
 
+    /* 예전엔 여기서 표지·개념 페이지·문제 그리드를 통째로 다시 만들었다
+       (NM_EXAM.renderPrint와 거의 같은 일을 따로). 두 번째 사본이라 표지가
+       빠져 있었고, 세로셈 서식용 CSS도 이쪽에만 없어 실제 인쇄물이 안 꾸며진
+       채 나가고 있었다(2026-08-28, 표지 작업 중 발견). renderPrint 쪽을
+       세로셈까지 지원하도록 올리고(fillPrintGrid) 이 함수는 그걸 그대로
+       호출하도록 합쳤다 — 표지·개념 페이지·QR 전부 자동으로 따라온다. */
     function printWorksheet(){
-      const old = document.querySelector('.nm-print-sheet');
-      if(old) old.remove();
-      const sheet = document.createElement('div');
-      sheet.className = 'nm-print-sheet';
-      sheet.setAttribute('aria-hidden','true');
-      const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
-
-      sheet.innerHTML = `
-${conceptHtml}
-<div class="nm-print-header">
-  <h2 style="margin:0;font-size:16px">${esc(label||thread)} 연산 학습지</h2>
-  <div style="display:flex;gap:20px;margin-top:6px;font-size:12px">
-    <span>이름: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>날짜: <span style="display:inline-block;width:80px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>점수: <span style="display:inline-block;width:50px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    ${qrHeaderBlockHtml(code)}
-  </div>
-</div>
-<div class="nm-print-ws-grid" id="nm-pw-probs"></div>
-<div class="nm-print-answer-key">
-  <h3 style="margin:0 0 6px;font-size:13px">정답지 — <span style="font-family:monospace;font-size:11px">${esc(code)}</span></h3>
-  <div class="nm-print-ak-grid" id="nm-pw-aks"></div>
-</div>`;
-      document.body.appendChild(sheet);
-
-      sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
-
-      const probGrid = sheet.querySelector('#nm-pw-probs');
-      const akGrid   = sheet.querySelector('#nm-pw-aks');
-
-      problems.forEach((p,i)=>{
-        const v = p.word ? null : parseVert(p.tex);
-        const cell = document.createElement('div');
-        cell.className = 'nm-print-ws-cell';
-        if(p.word){
-          cell.className += ' nm-print-ws-wide';
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
-<div class="nm-print-word">${esc(p.word)}</div>
-<div class="nm-print-word-blank">답: __________</div>`;
-        } else if(v){
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
-<div class="nm-print-vp">
-  <div class="nm-print-vp-top">${esc(v.a)}</div>
-  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span>${esc(v.b)}</div>
-  <div class="nm-print-vp-line"></div>
-  <div class="nm-print-vp-bot">&nbsp;</div>
-</div>`;
-        } else {
-          const texEl = document.createElement('div');
-          texEl.className = 'nm-vp-tex';
-          renderKaTeX(p.tex||'', texEl);
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>`;
-          cell.appendChild(texEl);
-        }
-        probGrid.appendChild(cell);
-
-        const ak = document.createElement('div');
-        ak.className = 'nm-print-ak-item';
-        ak.appendChild(document.createTextNode(`${circled(i+1)} `));
-        const pwTex = ansTex(p);
-        if(pwTex){
-          const pwSpan = document.createElement('span');
-          renderKaTeX(pwTex, pwSpan);
-          ak.appendChild(pwSpan);
-        } else {
-          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-        }
-        akGrid.appendChild(ak);
-      });
-
-      setTimeout(()=>window.print(), 350);
+      NM_EXAM.renderPrint({ thread, level, count, seed, wordType, topicName: label });
     }
 
     render();
