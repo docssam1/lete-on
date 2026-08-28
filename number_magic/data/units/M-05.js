@@ -21,6 +21,14 @@ window.NM_UNITS['M-05'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'같은 수를 두 번 곱해서 음수를 만들 수 있을까요?',
+        en:'Can you multiply a number by itself and land on a negative?',
+        zh:'同一个数自乘两次，能得到负数吗？' },
+      history:{ ko:'실수 안에서는 불가능해요. 그래서 수학자들은 제곱하면 −1이 되는 새 수 i를 만들어 버렸어요. 처음엔 상상의 수라 놀림받았지만, 지금은 전기 신호를 다루는 공학과 3D 게임의 회전 계산(사원수)에서 매일 쓰입니다. 없는 수를 만들어 세상을 계산한 셈이죠.',
+        en:'Not among the real numbers. So mathematicians simply invented a new one, i, whose square is −1. It was mocked as an imaginary number at first; today it runs through electrical engineering and the rotation math behind 3D games, called quaternions. A number that did not exist ended up computing the real world.',
+        zh:'在实数里不可能。于是数学家干脆造了一个新数i，它的平方是−1。起初被嘲笑为虚数，如今却天天用在电气工程和3D游戏的旋转计算（四元数）中。用一个本不存在的数，算出了真实的世界。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 괄호가 있으면 밑 전체가 음수',en:'1) With brackets, the whole base is negative',zh:'① 有括号，底数整体为负'},

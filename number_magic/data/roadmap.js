@@ -384,6 +384,16 @@ window.NM_ROADMAP = {
       tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
     },
     {
+      /* 개념실험실 5호 — §7 훅 "수직선을 다 이으려면 어떤 수가 필요할까"를 그대로 구현.
+         근거: 데데킨트의 절단(유리수에는 빈틈이 있고 실수에는 없다). 제곱근 유닛 뒤,
+         무리수·실수를 배우기 직전에 둔다 — "왜 새 수가 필요한가"가 먼저다. */
+      id:'LAB-NUMLINE', icon:'🕳', grade:'중3',
+      edu:{ko:'수직선의 구멍',en:'The Hole in the Number Line',zh:'数轴上的缺口'},
+      theme:{ko:'🕳 개념 실험실 — 분수를 아무리 촘촘히 찍어도 남는 자리, 10배씩 확대해 직접 확인',en:'🕳 Concept Lab — the spot no fraction ever lands on; zoom in 10× at a time and see it',zh:'🕳概念实验室——分数再密也填不满的位置，每次放大10倍亲眼确认'},
+      link:'labs/number-line-hole.html',
+      tip:{ko:'10배 확대를 여섯 번 눌러 보세요. 구간은 100만분의 1로 좁아지는데 빨간 자리는 끝까지 눈금 사이에 있어요. 그다음 √2를 한 자리씩 직접 캐 봐요(새 탭에서 열려요).',en:'Press zoom six times: the interval shrinks to one millionth, yet the red spot stays between the ticks. Then dig out √2 one digit at a time (opens in a new tab).',zh:'连按六次放大：区间缩小到百万分之一，红点始终夹在刻度之间。然后一位一位地把√2挖出来(会在新标签页打开)。'}
+    },
+    {
       id:'W10-2', icon:'🌈', grade:'중3',
       edu:{ko:'중3 곱셈공식과 인수분해',en:'G9 Formulas & Factoring',zh:'初三乘法公式与因式分解'},
       theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},

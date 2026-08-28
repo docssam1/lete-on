@@ -19,6 +19,14 @@ window.NM_UNITS['N-07'] = {
       zh:'把十格板填满吧！再填几格就是10？' } },
 
   discover:{
+    story:{
+      hook:{ ko:'여덟, 아홉이라는 우리말 이름은 어디서 왔을까요?',
+        en:'Where do the Korean number names for eight and nine come from?',
+        zh:'韩语里八和九的名字是从哪儿来的呢？' },
+      history:{ ko:'열에서 얼마나 모자라는지를 보고 붙인 이름이라고 해요. 여덟은 열에서 둘이 모자라고, 아홉은 하나가 모자라죠. 열은 굽혔던 손가락을 모두 열었다는 뜻이고요. 우리 조상들도 수를 셀 때 10을 기준으로 삼았다는 뜻이에요 — 지금 우리가 10 짝꿍을 찾는 것과 똑같이요.',
+        en:'They seem to be named by how far they fall short of ten: eight is two short, nine is one short, and ten means all the folded fingers have opened again. Our ancestors already measured numbers against 10 — exactly what we do when we hunt for partners that fill 10.',
+        zh:'据说是按照离十还差多少来取名的：八差二，九差一，而十的意思是弯着的手指全都张开了。我们的祖先数数时就已经以10为准——和我们现在找凑十朋友是一样的。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 수는 이웃이 있어요',en:'1) Numbers have neighbors',zh:'① 数有邻居'},

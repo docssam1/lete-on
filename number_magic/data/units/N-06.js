@@ -18,6 +18,14 @@ window.NM_UNITS['N-06'] = {
       zh:'把左边和右边的圆合起来，上面是几个？点一点填满上面的圆！' } },
 
   discover:{
+    story:{
+      hook:{ ko:'8을 똑같이 둘로 가르면 얼마일까요? 그럼 8 안에 3은 몇 번 들어갈까요?',
+        en:'Split 8 evenly in two — how much is each? And how many 3s fit inside 8?',
+        zh:'把8平均分成两份是多少？那8里面能装下几个3呢？' },
+      history:{ ko:'둘로 가르면 4와 4예요. 3은 두 번 들어가고 2가 남죠. 척 보고 답하면 틀리기 쉬운 질문이라, 실제로 나눠 보는 게 제일 확실해요. 두 손에 나눠 쥐었다가 다시 모아 보면 눈으로 바로 보인답니다.',
+        en:'Two fours. And three fits twice with two left over. These are the questions where a quick guess goes wrong, so actually splitting them is the surest way. Divide them between two hands, then join them back, and you can see it.',
+        zh:'分成两份是4和4。3能装两次，还剩2。这类问题一眼猜过去很容易错，所以真的动手分一分最靠谱。分到两只手里再合起来，一眼就看明白了。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 가르기 나무',en:'1) The split tree',zh:'① 分分树'},

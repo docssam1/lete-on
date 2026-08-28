@@ -18,6 +18,14 @@ window.NM_UNITS['N-11'] = {
       zh:'数字一个一个变大，排排队！选出空格里的数' } },
 
   discover:{
+    story:{
+      hook:{ ko:'친구 41명이 동그랗게 앉아 셋째마다 한 명씩 빠지는 놀이를 해요. 끝까지 남으려면 몇 번째 자리에 앉아야 할까요?',
+        en:'Forty-one friends sit in a circle and every third one drops out. Which seat survives to the end?',
+        zh:'41个小朋友围成圈，每数到第三个就出局。想留到最后该坐第几个位子？' },
+      history:{ ko:'31번째예요. 세는 규칙이 정해져 있으면 남는 자리도 이미 정해져 있어서, 미리 한 바퀴 세어 보면 알 수 있어요. 아주 오래전부터 전해진 이야기인데, 지금은 자리를 세어 답을 찾는 놀이로 즐긴답니다.',
+        en:'Seat 31. When the counting rule is fixed, the surviving seat is fixed too — walk the circle once on paper and it appears. The story is very old; today we play it as a puzzle about counting positions.',
+        zh:'第31个。数数的规则一旦定下，留到最后的位子也就定了——在纸上走一圈就能找出来。这个故事流传已久，今天我们把它当作数位置的游戏来玩。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 수와 점은 쌍둥이!',en:'1) Numbers and dots are twins!',zh:'① 数字和点点是双胞胎！'},

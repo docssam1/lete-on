@@ -15,6 +15,14 @@ window.NM_UNITS['A-19'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'지갑에 얼마가 있었는지 모르는데, 돈을 두 배로 늘린 뒤 8000원을 내는 일을 세 번 했더니 딱 0원이 됐어요. 처음에 얼마 있었을까요?',
+        en:'You forget what was in your wallet. Three times you doubled it and then paid 8,000 won — and ended at exactly zero. How much did you start with?',
+        zh:'忘了钱包里原本有多少。做了三次先翻倍再付8000元，最后正好是0元。一开始有多少？' },
+      history:{ ko:'7000원이에요. 끝에서 거꾸로 되짚으면 한 줄로 풀려요. 마지막에 0원이 되기 직전은 8000원, 두 배 하기 전은 4000원, 그 전은 4000+8000=12000원… 이렇게요. 뺄셈을 덧셈으로 뒤집어 생각하는 것과 똑같은 마법입니다.',
+        en:'7,000 won. Walk the story backwards and it unravels in one line: before the last payment 8,000, before doubling 4,000, before that 4,000+8,000 = 12,000, and so on. It is the same magic as turning a subtraction into an addition.',
+        zh:'7000元。从结尾倒着推，一行就解开了：最后付款前是8000，翻倍前是4000，再往前是4000+8000=12000……这和把减法反过来当加法想是同一个魔法。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 뺄셈을 덧셈으로 뒤집어요', en:'1) Flip subtraction to addition', zh:'① 把减法翻转成加法' },

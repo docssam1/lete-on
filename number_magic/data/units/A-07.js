@@ -26,6 +26,14 @@ window.NM_UNITS['A-07'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'1부터 100까지 다 더하면 얼마일까요? 200년 전, 일곱 살 아이가 몇 분 만에 답했어요.',
+        en:'What is 1 + 2 + 3 + … + 100? Two hundred years ago a seven-year-old answered in minutes.',
+        zh:'1加到100是多少？两百年前，一个七岁的孩子几分钟就答出来了。' },
+      history:{ ko:'5050이에요. 그 아이는 1과 100, 2와 99, 3과 98을 짝지었어요. 어느 짝이든 합이 101이고, 짝은 모두 50개니까 101 × 50 = 5050이죠. 앞에서부터 하나씩 더하는 대신 더하기 좋은 것끼리 묶는 것 — 십의 자리끼리, 일의 자리끼리 모아 더하는 마법과 같은 생각이에요.',
+        en:'5,050. The child paired 1 with 100, 2 with 99, 3 with 98 — every pair sums to 101, and there are 50 pairs, so 101 × 50 = 5,050. Instead of adding one at a time from the front, group what adds up nicely — the same idea as adding tens with tens and ones with ones.',
+        zh:'是5050。那个孩子把1和100、2和99、3和98配成对——每一对都是101，一共50对，所以101 × 50 = 5050。与其从头一个一个加，不如把好加的凑成一组——这和十位加十位、个位加个位是同一个想法。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 수를 자리별로 나눠요', en:'1) Split each number by place', zh:'① 按数位拆分每个数' },
