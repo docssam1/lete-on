@@ -535,7 +535,7 @@
   function figureViewpointCode(figures) {
     if (!figures) return null;
     if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
-    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "polycube-options", "sequence"].indexOf(figures.kind) !== -1) {
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "sequence"].indexOf(figures.kind) !== -1) {
       return ISO_VIEWPOINT.code;
     }
     return null;
@@ -740,8 +740,9 @@
   // footprint, cubes are added only where the column behind and the column to
   // the left are already at least as high. Therefore a nearer column can never
   // cover the top of a shorter rear column in the fixed worksheet camera.
-  function visibleCountingShape(rng, level, intensity) {
+  function visibleCountingShape(rng, level, intensity, options) {
     const profile = countingProfile(level, intensity);
+    const forcedTotal = options && Number.isInteger(options.total) ? options.total : null;
     for (let attempt = 0; attempt < 500; attempt += 1) {
       const grid = rng.pick(profile.grids);
       const width = grid[0];
@@ -758,7 +759,8 @@
       const targetMin = Math.max(profile.cubes[0], minimumForRules);
       const targetMax = Math.min(profile.cubes[1], columns * profile.maxH);
       if (targetMin > targetMax) continue;
-      const target = rng.int(targetMin, targetMax);
+      if (forcedTotal !== null && !rangeContains([targetMin, targetMax], forcedTotal)) continue;
+      const target = forcedTotal === null ? rng.int(targetMin, targetMax) : forcedTotal;
 
       while (map[0][0] < profile.minPeak) map[0][0] += 1;
       let remaining = target - mapTotal(map);
@@ -1587,7 +1589,106 @@
     };
   }
 
-  // 10. CJ — 두 쌓기나무 모양 합치기
+  // 10. CO — 쌓기나무 개수 비교
+  //
+  // 초등팩토 1 자료의 가장 많은 모양 찾기, 개수가 다른 모양 찾기, 많은
+  // 순서로 쓰기를 한 유형의 세 강도로 묶는다. IC의 직접 세기용 높이 지도를
+  // 그대로 사용하므로 모든 보기는 같은 시선에서 각 기둥의 높이를 읽을 수
+  // 있다. 같은 개수를 쓰는 보기끼리도 높이 지도는 반드시 서로 다르다.
+  function countingShapeKey(shape) {
+    return shape.width + "x" + shape.depth + ":" + mapKey(shape.map);
+  }
+
+  function distinctCountingShapes(rng, level, intensity, total, count, usedKeys) {
+    const used = usedKeys || new Set();
+    const shapes = [];
+    for (let attempt = 0; attempt < 120 && shapes.length < count; attempt += 1) {
+      let built;
+      try {
+        built = visibleCountingShape(rng, level, intensity, { total });
+      } catch (error) {
+        return null;
+      }
+      const key = countingShapeKey(built);
+      if (used.has(key)) continue;
+      used.add(key);
+      shapes.push(built);
+    }
+    return shapes.length === count ? shapes : null;
+  }
+
+  function comparisonProblemShapes(rng, level, intensity) {
+    const mode = normalizeIntensity(intensity) === 1
+      ? "largest"
+      : normalizeIntensity(intensity) === 2 ? "different" : "order";
+    const profile = countingProfile(level, intensity);
+    const totals = [];
+    for (let total = profile.cubes[0]; total <= profile.cubes[1]; total += 1) totals.push(total);
+    const candidates = rng.shuffle(totals);
+    const used = new Set();
+
+    if (mode === "different") {
+      for (const commonTotal of candidates) {
+        const common = distinctCountingShapes(rng, level, intensity, commonTotal, 3, used);
+        if (!common) continue;
+        for (const oddTotal of rng.shuffle(totals.filter((total) => total !== commonTotal))) {
+          const odd = distinctCountingShapes(rng, level, intensity, oddTotal, 1, used);
+          if (odd) return { mode, shapes: common.concat(odd) };
+        }
+      }
+    } else {
+      const shapes = [];
+      for (const total of candidates) {
+        const found = distinctCountingShapes(rng, level, intensity, total, 1, used);
+        if (found) shapes.push(found[0]);
+        if (shapes.length === 3) return { mode, shapes };
+      }
+    }
+    throw new Error("unable to build a count-comparison problem for " + level + " D" + intensity);
+  }
+
+  function genCO(rng, level, intensity) {
+    const built = comparisonProblemShapes(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const shuffled = rng.shuffle(built.shapes);
+    const items = shuffled.map((shape, index) => ({
+      label: labels[index],
+      map: shape.map,
+      width: shape.width,
+      depth: shape.depth
+    }));
+    const totals = {};
+    items.forEach((item) => { totals[item.label] = mapTotal(item.map); });
+
+    let prompt;
+    let answer;
+    if (built.mode === "largest") {
+      const largest = items.reduce((best, item) => totals[item.label] > totals[best.label] ? item : best, items[0]);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 쌓기나무의 개수가 가장 많은 모양을 고르시오.";
+      answer = { mode: built.mode, choice: largest.label, choiceIndex: items.indexOf(largest), totals };
+    } else if (built.mode === "different") {
+      const frequencies = {};
+      Object.values(totals).forEach((total) => { frequencies[total] = (frequencies[total] || 0) + 1; });
+      const odd = items.find((item) => frequencies[totals[item.label]] === 1);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 네 모양 중 쌓기나무의 개수가 다른 하나를 고르시오.";
+      answer = { mode: built.mode, choice: odd.label, choiceIndex: items.indexOf(odd), totals };
+    } else {
+      const order = items.slice().sort((left, right) => totals[right.label] - totals[left.label]).map((item) => item.label);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 쌓기나무의 개수가 많은 모양부터 차례대로 기호를 쓰시오.";
+      answer = { mode: built.mode, order, totals };
+    }
+
+    const answerText = answer.mode === "order" ? answer.order.join(" → ") : answer.choice;
+    return {
+      type: "CO",
+      prompt,
+      figures: { kind: "iso-compare", items },
+      answer,
+      answerText
+    };
+  }
+
+  // 11. CJ — 두 쌓기나무 모양 합치기
   //
   // 준비된 조각과 보기 조각을 자유롭게 돌려 목표 직육면체를 완성하는 유형.
   // 회전은 정육면체의 24가지 방향만 허용하며 반사는 허용하지 않는다. 준비된
@@ -1871,7 +1972,7 @@
     };
   }
 
-  // 11. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 12. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2064,7 +2165,7 @@
     return { map, width: map[0].length, depth: map.length, shape: "stair" };
   }
 
-  // 11. BW — 흑백 교차 (정육면체 + 계단·돌출형)
+  // 13. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, level, intensity) {
     const built = checkerShapeForLevel(rng, level, intensity);
     const map = built.map;
@@ -2096,7 +2197,7 @@
     };
   }
 
-  // 12. HL — 구멍 뚫기
+  // 14. HL — 구멍 뚫기
   //
   // 한 방향에 여러 개, 여러 방향에 나눠서 — 단계·강도별 구멍 배치는 아래
   // holePlan에 모아 두었다. 구멍이 서로 교차하면 같은 칸이 두 번 빠지므로
@@ -2216,7 +2317,7 @@
     };
   }
 
-  // 13. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
+  // 15. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
   //
   // 패턴 패밀리는 buildSQShape(모양)과 sqFormula(개수) 한 쌍으로 정의된다.
   // 둘은 반드시 일치해야 하므로(.selftest.mjs가 heightmap 합과 공식을
@@ -2442,6 +2543,7 @@
     { code: "FB", label: "상자 채우기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4"] },
     { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "MV", label: "쌓기나무 한 개 옮기기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CO", label: "쌓기나무 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2516,6 +2618,7 @@
       case "FB": problem = genFB(rng, lv, it); break;
       case "CU": problem = genCU(rng, lv, it); break;
       case "MV": problem = genMV(rng, lv, it); break;
+      case "CO": problem = genCO(rng, lv, it); break;
       case "CJ": problem = genCJ(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
@@ -2815,6 +2918,8 @@
     oneCubeMoveDistance,
     oneCubeMoveTargets,
     moveProblemShape,
+    distinctCountingShapes,
+    comparisonProblemShapes,
     CUBE_ROTATIONS,
     normalizeCoords,
     orientationsOf,

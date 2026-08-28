@@ -100,6 +100,12 @@
         '<div class="ws-move-divider" aria-hidden="true">→</div>' +
         '<div class="ws-move-options ws-move-options-' + f.choices.length + '">' + choices + "</div>";
     }
+    if (f.kind === "iso-compare") {
+      const items = f.items.map((item) => (
+        figureBlock(item.label, REN.renderIso(item.map, item.width, item.depth, { viewpoint: f.viewpoint }), "ws-figure-sm")
+      )).join("");
+      return '<div class="ws-compare-options ws-compare-options-' + f.items.length + '">' + items + "</div>";
+    }
     if (f.kind === "polycube-options") {
       const targetMap = Array.from({ length: f.target.depth }, () => Array(f.target.width).fill(f.target.height));
       const source = figureBlock(
@@ -161,6 +167,9 @@
     }
     if (p.type === "BW") return answerLine("답: 흰색 ______ 개, 검은색 ______ 개");
     if (p.type === "MV") return answerLine("답: ______");
+    if (p.type === "CO") {
+      return answerLine(p.answer.mode === "order" ? "답: ______ → ______ → ______" : "답: ______");
+    }
     if (p.type === "CJ") return answerLine("답: ______");
     if (p.type === "HL") {
       // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
@@ -235,6 +244,7 @@
       case "FB": return a.need + "개";
       case "CU": return a.need + "개";
       case "MV": return a.choice;
+      case "CO": return a.mode === "order" ? a.order.join(" → ") : a.choice;
       case "CJ": return a.choice;
       case "PN": {
         const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";

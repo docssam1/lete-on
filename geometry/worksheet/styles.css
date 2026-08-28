@@ -379,6 +379,25 @@ select, .code-input, input[type="text"] {
   .ws-move-options { grid-template-columns: repeat(2, minmax(72px, 1fr)); }
 }
 
+/* 개수 비교: 모든 보기를 같은 크기의 칸에 두어 그림 크기가 답의 단서가 되지
+   않게 한다. 세 보기와 네 보기 모두 A4 카드에서는 한 줄, 좁은 화면에서는
+   두 열로 배치한다. */
+.ws-compare-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  align-items: end;
+  gap: 12px;
+  width: min(100%, 540px);
+}
+.ws-compare-options-3 { grid-template-columns: repeat(3, minmax(82px, 1fr)); }
+.ws-compare-options .ws-figure { min-width: 0; }
+.ws-compare-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 96px; }
+
+@media (max-width: 720px) {
+  .ws-compare-options,
+  .ws-compare-options-3 { grid-template-columns: repeat(2, minmax(78px, 1fr)); }
+}
+
 /* 두 모양 합치기: 위에는 식처럼 준비 조각 + ? = 목표를, 아래에는 회전 가능한
    보기 조각을 놓는다. 조각은 renderIsoCoords가 같은 등각 시선으로 그린다. */
 .ws-join-equation {
