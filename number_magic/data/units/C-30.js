@@ -21,6 +21,14 @@ window.NM_UNITS['C-30'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'알고리즘이라는 말은 원래 무엇이었을까요?',
+        en:'The word algorithm — what was it originally?',
+        zh:'algorithm（算法）这个词原本是什么？' },
+      history:{ ko:'사람 이름이었어요. 1200년쯤 전 바그다드에서 일한 수학자 알콰리즈미의 이름을 라틴어로 옮긴 게 알고리즘이 됐죠. 그가 쓴 책 제목의 한 낱말 알자브르는 대수학(algebra)이 되었고요. 그가 인도에서 배워 전한 계산법 중에 격자를 그려 곱하는 방법도 있었어요 — 지금 우리가 쓰는 그 격자입니다.',
+        en:'It was a person. Al-Khwarizmi, a mathematician working in Baghdad about 1,200 years ago, had his name rendered into Latin as Algoritmi. One word from the title of his book, al-jabr, became algebra. Among the methods he learned from India and passed on was multiplying inside a grid — the very grid we draw today.',
+        zh:'它原本是一个人。大约1200年前在巴格达工作的数学家花拉子米，名字译成拉丁语就成了Algoritmi。他书名里的一个词al-jabr，变成了代数（algebra）。他从印度学来并传下去的算法里，就有在格子里做乘法的方法——正是我们今天画的那种格子。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 격자 그리기',en:'1) Drawing the grid',zh:'① 画格子'},
