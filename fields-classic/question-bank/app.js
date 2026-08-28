@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827n";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260829a";
 import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260827d";
@@ -3391,6 +3391,7 @@ function openAnswers() {
 function initControls() {
   $("studentName").textContent = student;
   $("worksheetStudent").textContent = student;
+  if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
@@ -3468,5 +3469,29 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
   $("questionCount").value = String(picked);
   $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === picked));
   renderExamList();
+  updateSummary();
+})();
+
+// 진단 결과에서 넘어온 여러 취약 유형을 유형별 탭에 미리 체크한다.
+// 원격 링크가 오래되어도 현재 선택 가능한 유형만 남겨 검증 게이트를 우회하지 않는다.
+(function preselectTypes() {
+  const requested = [
+    ...params.getAll("type"),
+    ...(params.get("types") || "").split(",")
+  ].map((id) => id.trim()).filter(Boolean);
+  if (!requested.length) return;
+  setMode("type");
+  state.selected.type.clear();
+  requested.forEach((typeId) => {
+    const item = typeById(typeId);
+    if (item && isSelectableType(item)) state.selected.type.add(typeId);
+  });
+  const requestedCount = Number(params.get("count"));
+  if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) {
+    state.count = requestedCount;
+    $("questionCount").value = String(requestedCount);
+    $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === requestedCount));
+  }
+  renderTypeTree();
   updateSummary();
 })();

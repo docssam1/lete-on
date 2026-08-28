@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2f5f6" />
+  <title>시험 결과 O/X 진단</title>
+  <link rel="stylesheet" href="./result-diagnosis.css?v=20260829a" />
+</head>
+<body>
+  <header class="result-header">
+    <a href="./index.html" id="backToBank">문제은행</a>
+    <div><strong>시험 결과 진단</strong><span>GFIELD · FIELDS THE CLASSIC</span></div>
+    <b id="studentName"></b>
+  </header>
+
+  <main class="result-shell">
+    <section class="exam-picker" aria-labelledby="pageTitle">
+      <div class="picker-title">
+        <p>RESULT REVIEW</p>
+        <h1 id="pageTitle">푼 시험의 결과를 O/X로 입력하세요</h1>
+        <span>정답을 공개하지 않고, 승인된 문항 분류를 기준으로 취약 유형을 정리합니다.</span>
+      </div>
+      <div class="picker-controls">
+        <label>시험 종류<select id="groupSelect"></select></label>
+        <label>시험 선택<select id="examSelect"></select></label>
+      </div>
+    </section>
+
+    <section class="entry-panel">
+      <div class="exam-heading">
+        <div><span id="examStage"></span><h2 id="examTitle"></h2></div>
+        <dl>
+          <div><dt>입력</dt><dd id="answeredCount">0 / 20</dd></div>
+          <div><dt>O</dt><dd id="correctCount">0</dd></div>
+          <div><dt>X</dt><dd id="wrongCount">0</dd></div>
+        </dl>
+      </div>
+      <div class="progress"><i id="progressBar"></i></div>
+      <div id="responseGrid" class="response-grid"></div>
+      <div class="entry-actions">
+        <button id="clearAnswers" type="button">입력 지우기</button>
+        <p id="entryMessage" aria-live="polite"></p>
+        <button id="showResult" class="primary" type="button" disabled>진단 결과 보기</button>
+      </div>
+    </section>
+
+    <section id="diagnosisPanel" class="diagnosis-panel" hidden aria-labelledby="diagnosisTitle">
+      <header class="diagnosis-summary">
+        <div><span>DIAGNOSIS</span><h2 id="diagnosisTitle"></h2><p id="diagnosisMessage"></p></div>
+        <strong id="scoreValue">0점</strong>
+      </header>
+
+      <div class="diagnosis-layout">
+        <div class="diagnosis-main">
+          <section class="analysis-section">
+            <div class="section-title"><h3>영역별 결과</h3><span>대분류 기준</span></div>
+            <div id="domainAnalysis" class="domain-analysis"></div>
+          </section>
+          <section class="analysis-section">
+            <div class="section-title"><h3>취약 세부 유형</h3><span>오답 수와 해당 시험 내 오답률 순</span></div>
+            <div id="weakTypeList" class="weak-type-list"></div>
+          </section>
+          <section class="analysis-section">
+            <div class="section-title"><h3>문항별 분류</h3><span>대단원 · 소단원 · 세부 유형</span></div>
+            <div class="table-wrap"><table><thead><tr><th>문항</th><th>결과</th><th>대분류</th><th>중분류</th><th>세부 유형</th><th>난이도</th></tr></thead><tbody id="questionDetails"></tbody></table></div>
+          </section>
+        </div>
+        <aside class="remediation-panel">
+          <span>REMEDIAL SET</span>
+          <h3>취약 유형 보충 학습지</h3>
+          <p>선택한 취약 유형이 문제은행에 미리 체크됩니다.</p>
+          <div id="remediationTypes"></div>
+          <label>문제 수<select id="remediationCount"><option>10</option><option selected>20</option><option>25</option><option>30</option></select></label>
+          <a id="remediationLink" class="remediation-link" href="#">보충 문제 만들기</a>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./result-diagnosis.js?v=20260829a"></script>
+</body>
+</html>
