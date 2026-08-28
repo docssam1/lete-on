@@ -6,24 +6,35 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v8";
+const CACHE = "gfield-geo-v10";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/cube-town/",
   "/geometry/solid-vista/",
   "/geometry/solid-vista/styles.css?v=solid-1",
-  "/geometry/solid-vista/app.js?v=solid-1",
+  "/geometry/solid-vista/soma.css?v=solid-2",
+  "/geometry/solid-vista/app.js?v=solid-2",
   "/geometry/solid-vista/assets/net-level-1.webp",
   "/geometry/solid-vista/assets/net-level-2.webp",
   "/geometry/solid-vista/assets/net-level-3.webp",
   "/geometry/solid-vista/assets/net-level-4.webp",
   "/geometry/solid-vista/assets/net-level-5.webp",
+  "/geometry/solid-vista/assets/soma-level-1.webp",
+  "/geometry/solid-vista/assets/soma-level-2.webp",
+  "/geometry/solid-vista/assets/soma-level-3.webp",
+  "/geometry/solid-vista/assets/soma-level-4.webp",
+  "/geometry/solid-vista/assets/soma-level-5.webp",
   "/geometry/games/net-observatory/",
   "/geometry/games/net-observatory/styles.css?v=net-2",
   "/geometry/games/net-observatory/app.js?v=net-2",
   "/geometry/games/net-observatory/levels.js?v=net-2",
   "/geometry/games/net-observatory/i18n.js?v=net-2",
   "/geometry/games/net-observatory/fold-view.js?v=net-2",
+  "/geometry/games/soma-cube/",
+  "/geometry/games/soma-cube/styles.css?v=soma-2",
+  "/geometry/games/soma-cube/app.js?v=soma-2",
+  "/geometry/games/soma-cube/levels.js?v=soma-2",
+  "/geometry/games/soma-cube/i18n.js?v=soma-2",
   "/geometry/manifest.webmanifest",
   "/geometry/shared/viewport-fit.js?v=1",
   "/geometry/shared/problem-pool.js",

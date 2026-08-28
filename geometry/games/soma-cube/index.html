@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>GFIELD Geometry World - Soma Cube Workshop</title>
+  <link rel="stylesheet" href="./styles.css?v=soma-2" />
+  <script type="importmap">{"imports":{"three":"../../vendor/three/three.module.js","three/addons/":"../../vendor/three/addons/"}}</script>
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+  <link rel="manifest" href="../../manifest.webmanifest" />
+  <meta name="theme-color" content="#17394d" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="icon-button" href="../../solid-vista/" id="exitButton" aria-label="나가기">←</a>
+      <div class="brand"><strong>GFIELD</strong><small id="brandName">Soma Cube Workshop</small></div>
+      <div class="progress"><strong id="stageLabel">키즈 · 중</strong><span id="problemLabel">1 / 5</span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="소리">♪</button>
+      <button id="levelButton" class="level-button" type="button">단계</button>
+    </header>
+
+    <section class="mission" aria-live="polite">
+      <div><span id="stageDots" aria-hidden="true">●○○○○</span><h1 id="missionTitle"></h1></div>
+      <p id="prompt"></p>
+    </section>
+
+    <section class="comparison" id="comparison">
+      <article class="viewer-panel target-panel">
+        <header><h2 id="targetTitle"></h2><div id="viewClues" class="view-clues" hidden></div></header>
+        <div id="targetViewer" class="viewer-host"></div>
+      </article>
+      <article class="viewer-panel build-panel">
+        <header><h2 id="buildTitle"></h2><strong id="pieceStatus"></strong></header>
+        <div id="buildViewer" class="viewer-host"></div>
+        <div id="choiceGrid" class="choice-grid" hidden></div>
+      </article>
+    </section>
+
+    <footer class="workbench">
+      <section class="piece-tray" aria-labelledby="trayTitle"><strong id="trayTitle"></strong><div id="pieceTray"></div></section>
+      <nav class="tool-rail" aria-label="게임 도구">
+        <div class="rotate-tools">
+          <button type="button" data-rotate="x" title="X축 회전">↻X</button>
+          <button type="button" data-rotate="y" title="Y축 회전">↻Y</button>
+          <button type="button" data-rotate="z" title="Z축 회전">↻Z</button>
+        </div>
+        <button id="hintButton" type="button"></button>
+        <button id="clearButton" type="button"></button>
+        <button id="skipButton" type="button"></button>
+      </nav>
+    </footer>
+
+    <aside id="cubiGuide" class="cubi-guide" aria-live="polite"><div id="guideBubble" class="guide-bubble"></div><span class="cubi-sprite" aria-hidden="true"></span></aside>
+
+    <div id="tutorial" class="dialog" hidden>
+      <section class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialText">
+        <div class="tutorial-demo" aria-hidden="true"><div class="demo-piece"><i></i><i></i><i></i><i></i></div><span class="demo-arrow">↻</span><div class="demo-target"><i></i><i></i><i></i><i></i></div></div>
+        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><div class="tutorial-actions"><button id="tutorialSkip" type="button"></button><button id="tutorialNext" type="button"></button></div></div>
+        <span class="cubi-sprite tutorial-cubi" aria-hidden="true"></span>
+      </section>
+    </div>
+
+    <div id="levelDialog" class="dialog" hidden>
+      <section class="level-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <header><h2 id="dialogTitle"></h2><button id="closeLevels" type="button" aria-label="닫기">×</button></header>
+        <div id="levelList" class="level-list"></div>
+      </section>
+    </div>
+
+    <div id="completeDialog" class="dialog" hidden>
+      <section class="complete-card" role="dialog" aria-modal="true" aria-labelledby="completeTitle">
+        <span class="cubi-sprite" aria-hidden="true"></span><h2 id="completeTitle"></h2><p id="completeText"></p>
+        <div class="complete-actions"><button id="nextLevelButton" type="button"></button><button id="practiceButton" type="button"></button><a href="../../solid-vista/" id="districtLink"></a></div>
+      </section>
+    </div>
+
+    <div id="success" class="success" aria-hidden="true"><i></i><i></i><strong>SUCCESS!</strong></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <div class="portrait-guard"><div class="rotate-device" aria-hidden="true"></div><strong id="rotateMessage"></strong><a href="../../solid-vista/" id="rotateExit"></a></div>
+  <script type="module" src="./app.js?v=soma-2"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>
