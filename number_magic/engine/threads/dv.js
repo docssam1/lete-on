@@ -245,26 +245,37 @@
 
     /*
      * 3자리 수 prefix■ (ones 자리가 □) 에서 □를 구한다.
-     * prefix = R(10,99) → prefix*10+□ 가 r의 배수가 되는 가장 작은 □ 선택.
+     * prefix = R(10,99) → prefix*10+□ 가 r의 배수가 되는 □ 중 하나를 고른다.
      * rules [2,5,10]: 끝자리 규칙이므로 반드시 해법 존재.
      * rules [3,6,9]  : 자릿수 합 규칙 — 0~9 중 항상 1개 이상 존재.
+     *
+     * ★ 이 문항은 원래 유일해가 없었다(2026-08-28 인쇄 점검에서 발견).
+     *   `66□`가 2의 배수가 되는 □는 0·2·4·6·8 다섯 개인데 정답키는 하나뿐이라,
+     *   맞게 쓴 학생이 틀린 것으로 채점됐다. 게다가 0부터 훑어 "가장 작은" 것을
+     *   집었던 탓에 2·5·10 레벨은 정답이 400문항 전부 0이었다 — 0만 스무 번
+     *   쓰면 만점이었다.
+     *   그래서 묻는 것을 "가장 큰 숫자"로 바꿨다. 후보가 여럿이어도 최댓값은
+     *   하나뿐이라 유일해가 되고(채점이 공정해지고), 끝자리·자릿수 합 규칙을
+     *   쓰는 학습 목표도 그대로다. r=10만은 후보가 0뿐이라 답이 0이다.
      */
     let prefix = 10, d = 0;
     let found  = false;
     for (let attempt = 0; attempt < 30 && !found; attempt++) {
       prefix = R(rng, 10, 99);
+      const cands = [];
       for (let i = 0; i <= 9; i++) {
-        if ((prefix * 10 + i) % r === 0) { d = i; found = true; break; }
+        if ((prefix * 10 + i) % r === 0) cands.push(i);
       }
+      if (cands.length) { d = Math.max.apply(null, cands); found = true; }
     }
     /* 절대 폴백 (이론상 발생 안 함) */
     if (!found) { prefix = 10; d = 0; }
 
     return {
       prompt: {
-        ko: `□에 들어갈 숫자를 넣으면 ${r}의 배수가 돼요`,
-        en: `Fill in □ to make this number a multiple of ${r}`,
-        zh: `填入□使这个数是${r}的倍数`
+        ko: `${r}의 배수가 되도록 □에 넣을 수 있는 가장 큰 숫자는?`,
+        en: `What is the largest digit for □ that makes this a multiple of ${r}?`,
+        zh: `要使这个数是${r}的倍数，□里能填的最大数字是几？`
       },
       tex:        `${prefix}\\square`,
       answer:     d,

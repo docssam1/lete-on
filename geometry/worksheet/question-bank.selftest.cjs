@@ -227,10 +227,16 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.deepEqual(GEN.typeInfo("SQ").levels, ["L1", "L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("CU").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("MV").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("CO").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("HC").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("CJ").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typesForLevel("L0"), ["IC"]);
   assert.ok(GEN.typesForLevel("L1").includes("SQ"));
   assert.ok(GEN.typesForLevel("L2").includes("CU"));
   assert.ok(GEN.typesForLevel("L2").includes("MV"));
+  assert.ok(GEN.typesForLevel("L2").includes("CO"));
+  assert.ok(GEN.typesForLevel("L2").includes("HC"));
+  assert.ok(GEN.typesForLevel("L2").includes("CJ"));
   assert.equal(GEN.typeSupportsLevel("SQ", "L0"), false);
   assert.equal(GEN.typeSupportsLevel("CU", "L1"), false);
 });
@@ -295,4 +301,199 @@ test("one-cube-move choices have one answer and preserve the explicit viewpoint"
     }
   }
   assert.equal(checked, 1440);
+});
+
+test("count-comparison modes have one answer and directly readable views", () => {
+  const expectedModes = { 1: "largest", 2: "different", 3: "order" };
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      const profile = GEN.countingProfile(stage, difficulty);
+      for (let seed = 1; seed <= 120; seed += 1) {
+        const problem = GEN.make(
+          "CO",
+          GEN.createRng("compare-cube-counts:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        const answer = problem.answer;
+        assert.equal(figures.kind, "iso-compare");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(answer.mode, expectedModes[difficulty]);
+        assert.equal(figures.items.length, difficulty === 2 ? 4 : 3);
+        assert.match(problem.prompt, /같은 방향/);
+
+        const keys = new Set();
+        figures.items.forEach((item) => {
+          const total = GEN.mapTotal(item.map);
+          assert.equal(answer.totals[item.label], total);
+          const validation = GEN.validateCountingMap(item.map, item.width, item.depth, profile);
+          assert.equal(validation.ok, true, stage + " D" + difficulty + " seed " + seed);
+          assert.equal(validation.lineOfSight.ok, true);
+          keys.add(item.width + "x" + item.depth + ":" + item.map.map((row) => row.join(",")).join(";"));
+        });
+        assert.equal(keys.size, figures.items.length);
+
+        const totals = figures.items.map((item) => answer.totals[item.label]);
+        if (difficulty === 1) {
+          const maximum = Math.max(...totals);
+          assert.equal(totals.filter((total) => total === maximum).length, 1);
+          assert.equal(answer.totals[answer.choice], maximum);
+          assert.equal(figures.items[answer.choiceIndex].label, answer.choice);
+        } else if (difficulty === 2) {
+          const frequencies = new Map();
+          totals.forEach((total) => frequencies.set(total, (frequencies.get(total) || 0) + 1));
+          assert.deepEqual(Array.from(frequencies.values()).sort(), [1, 3]);
+          assert.equal(frequencies.get(answer.totals[answer.choice]), 1);
+          assert.equal(figures.items[answer.choiceIndex].label, answer.choice);
+        } else {
+          assert.equal(new Set(totals).size, 3);
+          const expected = figures.items.slice()
+            .sort((left, right) => answer.totals[right.label] - answer.totals[left.label])
+            .map((item) => item.label);
+          assert.deepEqual(answer.order, expected);
+        }
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, figures.items.length);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 1440);
+});
+
+function independentHiddenFromIsoView(map) {
+  const depth = map.length;
+  const width = depth ? map[0].length : 0;
+  let hidden = 0;
+  for (let z = 0; z < depth; z += 1) {
+    for (let x = 0; x < width; x += 1) {
+      for (let y = 0; y < map[z][x]; y += 1) {
+        const coveredTop = y + 1 < map[z][x];
+        const blockedX = Array.from({ length: width - x - 1 }, (_, offset) => x + offset + 1)
+          .some((nearX) => map[z][nearX] > y);
+        const blockedZ = Array.from({ length: depth - z - 1 }, (_, offset) => z + offset + 1)
+          .some((nearZ) => map[nearZ][x] > y);
+        if (coveredTop && blockedX && blockedZ) hidden += 1;
+      }
+    }
+  }
+  return hidden;
+}
+
+test("hidden-count comparisons use one fixed view and one ascending answer", () => {
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      const profile = GEN.countingProfile(stage, difficulty);
+      for (let seed = 1; seed <= 120; seed += 1) {
+        const problem = GEN.make(
+          "HC",
+          GEN.createRng("compare-hidden-counts:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        const answer = problem.answer;
+        assert.equal(figures.kind, "iso-compare");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(figures.items.length, 3);
+        assert.equal(answer.mode, difficulty === 1 ? "least" : "order");
+        assert.match(problem.prompt, /같은 방향/);
+
+        figures.items.forEach((item) => {
+          const validation = GEN.validateCountingMap(item.map, item.width, item.depth, profile);
+          assert.equal(validation.ok, true, stage + " D" + difficulty + " seed " + seed);
+          assert.equal(validation.lineOfSight.ok, true);
+          assert.equal(answer.hidden[item.label], independentHiddenFromIsoView(item.map));
+          assert.ok(answer.hidden[item.label] >= 1);
+        });
+        assert.equal(new Set(Object.values(answer.hidden)).size, 3);
+
+        const expected = figures.items.slice()
+          .sort((left, right) => answer.hidden[left.label] - answer.hidden[right.label])
+          .map((item) => item.label);
+        if (difficulty === 1) {
+          assert.equal(answer.choice, expected[0]);
+          assert.equal(figures.items[answer.choiceIndex].label, answer.choice);
+        } else {
+          assert.deepEqual(answer.order, expected);
+        }
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, 3);
+        const answerText = CARD.answerLineText(problem);
+        figures.items.forEach((item) => assert.match(answerText, new RegExp(item.label + " " + answer.hidden[item.label] + "개")));
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 1440);
+});
+
+function independentPairFits(source, candidate, dims) {
+  const targetSize = dims.width * dims.depth * dims.height;
+  if (source.length + candidate.length !== targetSize) return false;
+  const sourcePlacements = GEN.placementsInBox(source, dims);
+  const candidatePlacements = GEN.placementsInBox(candidate, dims);
+  for (const left of sourcePlacements) {
+    const occupied = new Set(left.map((cell) => cell.join(",")));
+    for (const right of candidatePlacements) {
+      if (right.every((cell) => !occupied.has(cell.join(",")))) return true;
+    }
+  }
+  return false;
+}
+
+test("two-piece join choices have one rotational packing solution and one viewpoint", () => {
+  assert.equal(GEN.CUBE_ROTATIONS.length, 24);
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      for (let seed = 1; seed <= 60; seed += 1) {
+        const problem = GEN.make(
+          "CJ",
+          GEN.createRng("join-two-pieces:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        const answer = problem.answer;
+        assert.equal(figures.kind, "polycube-options");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(figures.choices.length, difficulty === 1 ? 3 : 4);
+        assert.equal(answer.sourceSize + answer.optionSize, answer.targetSize);
+        assert.equal(answer.targetSize, figures.target.width * figures.target.depth * figures.target.height);
+        assert.equal(new Set(figures.choices.map(GEN.canonicalPolycube)).size, figures.choices.length);
+
+        const independentlyFits = figures.choices.map((piece) => independentPairFits(
+          figures.source,
+          piece,
+          figures.target
+        ));
+        assert.equal(independentlyFits.filter(Boolean).length, 1, stage + " D" + difficulty + " seed " + seed);
+        assert.equal(independentlyFits[answer.choiceIndex], true);
+        assert.deepEqual(answer.fits, independentlyFits);
+
+        [figures.source].concat(figures.choices).forEach((piece) => {
+          const sight = GEN.auditPolycubeViewpoint(piece, figures.viewpoint);
+          assert.equal(sight.ok, true);
+          assert.equal(sight.hidden.length, 0);
+        });
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, figures.choices.length + 2);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 720);
 });

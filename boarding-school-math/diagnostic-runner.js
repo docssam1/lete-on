@@ -794,7 +794,8 @@
 
   async function checkRuntime() {
     const loopbackHosts = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
-    if (!loopbackHosts.has(window.location.hostname)) {
+    const localQaOptIn = new URLSearchParams(window.location.search).get("runtime") === "local-qa";
+    if (!loopbackHosts.has(window.location.hostname) || !localQaOptIn) {
       state.runtimeAvailable = false;
       setRuntimeStatus("offline", "공개 안내 모드", "공개 주소에는 문항과 정답이 없습니다. 운영 계정 서버가 연결되기 전에는 실제 응시가 열리지 않습니다.");
       return;

@@ -101,7 +101,7 @@ test("Grade 6 local diagnostic turns a reviewed prerequisite error into domain a
         if (payload.action === "save" && Array.isArray(payload.responses) && payload.responses.length > 1) finalSaveBatchCount += 1;
       } catch (_) { /* malformed test traffic is handled by the server */ }
     });
-    const pageResponse = await page.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
+    const pageResponse = await page.goto(`${baseUrl}diagnostic.html?runtime=local-qa`, { waitUntil: "networkidle" });
     assert.equal(pageResponse.status(), 200);
     await page.locator("#student-start").waitFor({ state: "visible" });
     assert.equal(await page.locator("#student-start").isDisabled(), false);
