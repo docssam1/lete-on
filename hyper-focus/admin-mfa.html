@@ -3,126 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#102440">
-  <title>DOCSSAM 관리자 2단계 인증 | G-FIELD</title>
+  <meta name="robots" content="noindex,nofollow">
+  <title>관리자 로그인으로 이동 | G-FIELD</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 10%,#294f78,#0b1b2d 55%);color:#172033;font-family:Pretendard,"Noto Sans KR",sans-serif}.card{width:min(520px,100%);padding:28px;border:1px solid rgba(255,255,255,.3);border-radius:18px;background:#fff;box-shadow:0 28px 90px rgba(0,0,0,.3)}.eyebrow{color:#9b7728;font-size:11px;font-weight:900;letter-spacing:.16em}h1{margin:10px 0 8px;font-size:27px;letter-spacing:-.04em}p{color:#667085;font-size:13px;line-height:1.7}.qr{display:grid;place-items:center;min-height:210px;margin:18px 0;padding:14px;border:1px solid #e4e7ec;border-radius:12px;background:#f8fafc}.qr img{width:190px;height:190px}.secret{overflow-wrap:anywhere;padding:10px;border-radius:8px;background:#f1f5f9;color:#475467;font:700 11px Consolas,monospace}.form{display:flex;gap:8px;margin-top:16px}.form input{min-width:0;flex:1;height:48px;border:1px solid #cbd5df;border-radius:9px;padding:0 13px;font:800 18px Consolas,monospace;letter-spacing:.18em}.form button{height:48px;border:0;border-radius:9px;padding:0 18px;background:#102440;color:#fff;font-weight:900;cursor:pointer}.error{min-height:20px;margin-top:10px;color:#b42318;font-size:12px;font-weight:800}.warning{margin-top:18px;padding:11px;border:1px solid #fedf89;border-radius:9px;background:#fffaeb;color:#7a5d15;font-size:11px;line-height:1.65}[hidden]{display:none!important}
+    *{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:#102440;color:#fff;font-family:Pretendard,"Noto Sans KR",sans-serif}.card{width:min(460px,100%);padding:28px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.08);text-align:center}.card a{display:inline-block;margin-top:16px;padding:12px 18px;border-radius:10px;background:#fff;color:#102440;font-weight:900;text-decoration:none}
   </style>
-  <script src="./supabase-config.js"></script>
-  <script src="./supabase-client.js"></script>
+  <script>location.replace("./?login=1");</script>
 </head>
 <body>
   <main class="card">
-    <div class="eyebrow">G-FIELD ADMIN SECURITY</div>
-    <h1>관리자 2단계 인증 설정</h1>
-    <p id="guide">인증 앱에 QR 코드를 등록한 뒤 표시되는 6자리 번호를 입력하세요.</p>
-    <form class="form" id="loginForm" hidden>
-      <input id="password" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" aria-label="관리자 비밀번호">
-      <button type="submit">로그인</button>
-    </form>
-    <div class="qr" id="qr"><span>보안 설정을 확인하는 중입니다.</span></div>
-    <div class="secret" id="secret" hidden></div>
-    <form class="form" id="verifyForm" hidden>
-      <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="인증 앱 6자리 번호">
-      <button type="submit">인증 완료</button>
-    </form>
-    <div class="error" id="error" role="alert"></div>
-    <div class="warning">관리자 비밀번호에는 공개된 전화번호나 기존 승인번호를 사용하지 마세요. QR 코드와 복구 정보는 DOCSSAM 관리자 본인만 보관해야 합니다.</div>
+    <h1>관리자 로그인으로 이동합니다.</h1>
+    <p>별도의 인증 앱 설정은 사용하지 않습니다.</p>
+    <a href="./?login=1">로그인 화면 열기</a>
   </main>
-  <script>
-  (async function(){
-    const errorEl=document.getElementById('error');
-    const qrEl=document.getElementById('qr');
-    const form=document.getElementById('verifyForm');
-    const loginForm=document.getElementById('loginForm');
-    const secretEl=document.getElementById('secret');
-    const guide=document.getElementById('guide');
-    let client;
-
-    function adminEmail(){return String(window.GFieldHFSupabase?.config?.().adminEmail||'').trim().toLowerCase()}
-    function showLogin(message){
-      form.hidden=true;secretEl.hidden=true;loginForm.hidden=false;
-      qrEl.textContent='DOCSSAM 관리자 로그인 후 인증 앱을 등록합니다.';
-      guide.textContent='이 화면은 관리자 2단계 인증 전용입니다. 학생·자료 권한은 열리지 않습니다.';
-      if(message)errorEl.textContent=message;
-      document.getElementById('password').focus();
-    }
-    async function verifiedAdmin(){
-      const {data,error}=await client.auth.getUser();
-      const user=data?.user;
-      if(error||!user)return null;
-      if(String(user.email||'').toLowerCase()!==adminEmail())return null;
-      return user.app_metadata?.hf_role==='admin'?user:null;
-    }
-    async function setupMfa(){
-      const user=await verifiedAdmin();
-      if(!user){showLogin();return}
-      loginForm.hidden=true;
-      const {data:assurance}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
-      if(assurance?.currentLevel==='aal2'){
-        qrEl.innerHTML='<b>관리자 2단계 인증이 이미 확인되었습니다.</b>';
-        guide.textContent='AAL2 세션 확인이 끝났습니다. 운영 전환은 별도 검수 뒤 진행합니다.';
-        form.hidden=true;secretEl.hidden=true;return;
-      }
-      const {data:factors,error:factorError}=await client.auth.mfa.listFactors();
-      if(factorError)throw factorError;
-      const totpFactors=factors?.totp||[];
-      let factor=totpFactors.find(item=>item.status==='verified');
-      for(const staleFactor of totpFactors.filter(item=>item.status!=='verified')){
-        const {error:removeError}=await client.auth.mfa.unenroll({factorId:staleFactor.id});
-        if(removeError)throw removeError;
-      }
-      if(factor){
-        qrEl.innerHTML='<b>등록된 인증 앱의 6자리 번호를 입력하세요.</b>';
-      }else{
-        const {data:enrolled,error:enrollError}=await client.auth.mfa.enroll({factorType:'totp',friendlyName:'GFIELD DOCSSAM'});
-        if(enrollError||!enrolled)throw enrollError||new Error('인증 앱 등록 실패');
-        factor={id:enrolled.id,status:'unverified'};
-        const image=document.createElement('img');
-        image.alt='관리자 인증 앱 등록 QR 코드';
-        image.src=enrolled.totp.qr_code;
-        qrEl.replaceChildren(image);
-        secretEl.textContent='수동 입력 키: '+enrolled.totp.secret;
-        secretEl.hidden=false;
-      }
-      form.hidden=false;
-      document.getElementById('code').focus();
-      form.onsubmit=async event=>{
-        event.preventDefault();errorEl.textContent='';
-        const code=document.getElementById('code').value.trim();
-        if(!/^\d{6}$/.test(code)){errorEl.textContent='6자리 번호를 입력하세요.';return}
-        const {data:challenge,error:challengeError}=await client.auth.mfa.challenge({factorId:factor.id});
-        if(challengeError||!challenge){errorEl.textContent='인증 요청을 만들지 못했습니다.';return}
-        const {error:verifyError}=await client.auth.mfa.verify({factorId:factor.id,challengeId:challenge.id,code});
-        if(verifyError){errorEl.textContent='번호가 일치하지 않습니다. 인증 앱의 최신 번호를 입력하세요.';return}
-        qrEl.innerHTML='<b>관리자 2단계 인증이 완료되었습니다.</b>';
-        guide.textContent='AAL2 세션을 확인했습니다. 운영 전환은 별도 검수 뒤 진행합니다.';
-        form.hidden=true;secretEl.hidden=true;
-      };
-    }
-    try{
-      client=await window.GFieldHFSupabase.adminMfaSetupClient();
-      const {data:sessionData}=await client.auth.getSession();
-      if(sessionData.session)await setupMfa();else showLogin();
-      loginForm.addEventListener('submit',async event=>{
-        event.preventDefault();errorEl.textContent='';
-        const password=document.getElementById('password').value;
-        if(!password){errorEl.textContent='관리자 비밀번호를 입력하세요.';return}
-        const {data,error}=await client.auth.signInWithPassword({email:adminEmail(),password});
-        document.getElementById('password').value='';
-        if(error||!data.session){showLogin('로그인 정보를 확인하세요.');return}
-        if(!await verifiedAdmin()){
-          await client.auth.signOut({scope:'local'});
-          showLogin('DOCSSAM 관리자 계정만 사용할 수 있습니다.');return;
-        }
-        await setupMfa();
-      });
-    }catch(error){
-      console.error('Admin MFA setup failed',error);
-      qrEl.textContent='보안 설정을 불러오지 못했습니다.';
-      errorEl.textContent='잠시 후 다시 시도하거나 관리자 설정을 확인해 주세요.';
-    }
-  })();
-  </script>
 </body>
 </html>

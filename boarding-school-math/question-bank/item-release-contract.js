@@ -21,7 +21,10 @@
   const PUBLIC_ITEM_FIELDS = Object.freeze([
     "schemaVersion", "itemId", "itemVersion", "publicRevisionId", "publicPayloadSha256", "visibilityClass",
     "programId", "targetGrade", "domainId", "clusterId", "skillId", "difficulty", "responseType", "maxPoints",
-    "promptBlocks", "options", "assets", "responseUi", "rightsRecordId"
+    "assessmentBinding", "promptBlocks", "options", "assets", "responseUi", "rightsRecordId"
+  ]);
+  const ASSESSMENT_BINDING_FIELDS = Object.freeze([
+    "blueprintId", "blueprintVersion", "blueprintContractSha256", "purpose", "slotId", "unitId", "standardRange"
   ]);
   const PRIVATE_SPEC_FIELDS = Object.freeze([
     "schemaVersion", "scoringSpecId", "specVersion", "itemId", "itemVersion", "publicPayloadSha256",
@@ -45,6 +48,7 @@
   ]);
   const CRITERION_FIELDS = Object.freeze(["criterionId", "maxPoints", "levels", "requiredEvidence", "errorCodes"]);
   const LEVEL_FIELDS = Object.freeze(["points", "observableEvidenceByLocale"]);
+  const MAX_ARRAY_ENTRIES = 1000;
   const FORBIDDEN_STUDENT_KEYS = new Set([
     "answer", "answerkey", "correctoption", "iscorrect", "solution", "rubric", "tolerance",
     "acceptedalternatives", "errormapping", "privatespecsha256", "scoringspecid", "distractorrationale",
@@ -52,13 +56,28 @@
   ]);
 
   function fail(message) { throw new Error(message); }
-  function isRecord(value) { return !!value && typeof value === "object" && !Array.isArray(value); }
-  function requireRecord(value, field) { if (!isRecord(value)) fail(`${field} must be an object`); }
+  function isRecord(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  }
+  function requireRecord(value, field) {
+    if (!isRecord(value)) fail(`${field} must be a plain object`);
+    const ownKeys = Reflect.ownKeys(value);
+    if (ownKeys.some(function (key) { return typeof key !== "string"; })) fail(`${field} must not contain symbol fields`);
+    ownKeys.forEach(function (key) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, "value") || descriptor.enumerable !== true) {
+        fail(`${field}.${key} must be an enumerable data field`);
+      }
+    });
+  }
   function requireText(value, field, pattern) {
     if (typeof value !== "string" || !value || value !== value.trim()) fail(`${field} must be a non-blank trimmed string`);
     if (pattern && !pattern.test(value)) fail(`${field} is invalid`);
   }
   function assertKnownFields(value, allowed, field) {
+    requireRecord(value, field);
     const extra = Object.keys(value).filter(function (key) { return !allowed.includes(key); });
     if (extra.length) fail(`${field} has unsupported fields: ${extra.join(", ")}`);
   }
@@ -101,21 +120,52 @@
       requireText(value[locale], `${field}.${locale}`);
     });
   }
-  function assertNoStudentLeak(value, path) {
-    if (typeof value === "string" && /(?:정답|답은|correct\s+answer|answer\s+is|正确答案|答案是|(?:choose|select|pick)\s+(?:option|choice)\s+[A-Z]|(?:선택지|보기)\s*[A-Z가-힣0-9]+\s*(?:를|을)?\s*(?:고르|선택))/i.test(value)) {
+  function assertNoStudentLeak(value, path, seen) {
+    const visited = seen || new Set();
+    if (typeof value === "string" && /(?:정답|답은|correct\s+answer|answer\s+is|answers?\s*[:：-]\s*(?:option\s+|choice\s+)?[A-Z0-9]|正确答案|答案是|(?:choose|select|pick)\s+(?:option|choice)\s+[A-Z]|(?:선택지|보기)\s*[A-Z가-힣0-9]+\s*(?:를|을)?\s*(?:고르|선택))/i.test(value)) {
       fail(`${path} contains obvious answer-revealing text`);
     }
-    if (Array.isArray(value)) return value.forEach(function (entry, index) { assertNoStudentLeak(entry, `${path}[${index}]`); });
-    if (!isRecord(value)) return;
-    Object.keys(value).forEach(function (key) {
-      if (FORBIDDEN_STUDENT_KEYS.has(key.toLowerCase())) fail(`${path}.${key} is private scoring data`);
-      assertNoStudentLeak(value[key], `${path}.${key}`);
-    });
+    if (value == null || typeof value === "string" || typeof value === "boolean") return true;
+    if (typeof value === "number") {
+      if (!Number.isFinite(value)) fail(`${path} must contain finite JSON numbers only`);
+      return true;
+    }
+    if (typeof value !== "object") fail(`${path} must contain JSON-safe values only`);
+    if (visited.has(value)) fail(`${path} must not contain circular references`);
+    visited.add(value);
+    if (Array.isArray(value)) {
+      assertDenseArray(value, path);
+      value.forEach(function (entry, index) { assertNoStudentLeak(entry, `${path}[${index}]`, visited); });
+    } else {
+      requireRecord(value, path);
+      Object.keys(value).forEach(function (key) {
+        if (FORBIDDEN_STUDENT_KEYS.has(key.toLowerCase())) fail(`${path}.${key} is private scoring data`);
+        assertNoStudentLeak(value[key], `${path}.${key}`, visited);
+      });
+    }
+    visited.delete(value);
+    return true;
   }
-  function assertDenseArray(value, field) {
+  function assertDenseArray(value, field, maxLength) {
     if (!Array.isArray(value)) fail(`${field} must be an array`);
+    if (Object.getPrototypeOf(value) !== Array.prototype) fail(`${field} must be a plain array`);
+    const limit = maxLength == null ? MAX_ARRAY_ENTRIES : maxLength;
+    if (!Number.isSafeInteger(value.length) || value.length > limit) fail(`${field} cannot exceed ${limit} entries`);
+    const ownKeys = Reflect.ownKeys(value);
+    if (ownKeys.some(function (key) { return typeof key !== "string"; })) fail(`${field} must not contain symbol fields`);
+    const extra = ownKeys.filter(function (key) {
+      if (key === "length") return false;
+      if (!/^(?:0|[1-9]\d*)$/.test(key)) return true;
+      const index = Number(key);
+      return !Number.isSafeInteger(index) || index >= value.length || String(index) !== key;
+    });
+    if (extra.length) fail(`${field} contains unsupported array fields: ${extra.join(", ")}`);
     for (let index = 0; index < value.length; index += 1) {
-      if (!Object.prototype.hasOwnProperty.call(value, index)) fail(`${field} must not contain empty slots`);
+      if (!Object.prototype.hasOwnProperty.call(value, index)) fail(`${field} must not contain sparse entries`);
+      const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, "value") || descriptor.enumerable !== true) {
+        fail(`${field}[${index}] must be an enumerable data field`);
+      }
     }
   }
 
@@ -132,6 +182,20 @@
       assertKnownFields(block, ["type", "assetId"], field);
       requireText(block.assetId, `${field}.assetId`, /^ast-bnk-[a-z0-9]{16}$/);
     } else fail(`${field}.type is invalid`);
+  }
+
+  function validateAssessmentBinding(binding) {
+    requireRecord(binding, "publicItem.assessmentBinding");
+    assertKnownFields(binding, ASSESSMENT_BINDING_FIELDS, "publicItem.assessmentBinding");
+    requireText(binding.blueprintId, "publicItem.assessmentBinding.blueprintId", /^asm-bdg-[a-z0-9-]{4,64}$/);
+    if (!Number.isInteger(binding.blueprintVersion) || binding.blueprintVersion < 1) {
+      fail("publicItem.assessmentBinding.blueprintVersion must be positive");
+    }
+    requireHash(binding.blueprintContractSha256, "publicItem.assessmentBinding.blueprintContractSha256");
+    if (!ASSESSMENT_PURPOSES.includes(binding.purpose)) fail("publicItem.assessmentBinding.purpose is invalid");
+    requireText(binding.slotId, "publicItem.assessmentBinding.slotId", /^slot-bdg-[a-z0-9-]{4,64}$/);
+    requireText(binding.unitId, "publicItem.assessmentBinding.unitId", /^[a-z0-9][a-z0-9-]{2,63}$/);
+    requireText(binding.standardRange, "publicItem.assessmentBinding.standardRange", /^(?:K|[1-8])\.[A-Z]{1,4}\.[A-Z]\.\d+(?:-\d+)?$/);
   }
 
   function validatePublicItem(item) {
@@ -156,6 +220,8 @@
     if (!DIFFICULTIES.includes(item.difficulty)) fail("publicItem.difficulty is invalid");
     if (!RESPONSE_TYPES.includes(item.responseType)) fail("publicItem.responseType is invalid");
     if (!Number.isInteger(item.maxPoints) || item.maxPoints < 1 || item.maxPoints > 4) fail("publicItem.maxPoints must be 1-4");
+    if (item.visibilityClass === "authenticated-assessment") validateAssessmentBinding(item.assessmentBinding);
+    else if (item.assessmentBinding != null) fail("only authenticated-assessment items may contain assessmentBinding");
     assertDenseArray(item.promptBlocks, "publicItem.promptBlocks");
     if (!item.promptBlocks.length) fail("publicItem.promptBlocks is required");
     item.promptBlocks.forEach(validatePromptBlock);
@@ -326,7 +392,8 @@
     if (record.licenseUrl != null) requireHttpsUrl(record.licenseUrl, "rightsRecord.licenseUrl");
     if (record.permissionRecordId != null) requireText(record.permissionRecordId, "rightsRecord.permissionRecordId");
     if (record.attribution != null) requireText(record.attribution, "rightsRecord.attribution");
-    if (!Array.isArray(record.allowedScopes) || !record.allowedScopes.length) fail("rightsRecord.allowedScopes is required");
+    assertDenseArray(record.allowedScopes, "rightsRecord.allowedScopes");
+    if (!record.allowedScopes.length) fail("rightsRecord.allowedScopes is required");
     record.allowedScopes.forEach(function (scope) {
       if (!["web-public", "authenticated", "print", "translation", "derivative"].includes(scope)) fail(`rightsRecord scope is invalid: ${scope}`);
     });
@@ -466,13 +533,25 @@
   function buildLockedBlueprintCandidate(bundle, purpose) {
     const decision = evaluateStructuralEligibility(bundle);
     if (!ASSESSMENT_PURPOSES.includes(purpose)) fail("assessment purpose is invalid");
-    if (["course-placement", "competition-benchmark"].includes(purpose) && bundle.publicItem.visibilityClass !== "authenticated-assessment") {
-      fail(`${purpose} items must use authenticated-assessment visibility`);
+    if (bundle.publicItem.visibilityClass !== "authenticated-assessment") {
+      fail("student blueprint candidates must use authenticated-assessment visibility");
     }
-    if (bundle.publicItem.visibilityClass === "teacher-only") fail("teacher-only items cannot enter a student blueprint");
+    if (bundle.publicItem.visibilityClass === "authenticated-assessment" && purpose !== bundle.publicItem.assessmentBinding.purpose) {
+      fail("assessment purpose must match the signed public item binding");
+    }
+    const assessmentBinding = bundle.publicItem.assessmentBinding == null ? null : Object.freeze({
+      blueprintId: bundle.publicItem.assessmentBinding.blueprintId,
+      blueprintVersion: bundle.publicItem.assessmentBinding.blueprintVersion,
+      blueprintContractSha256: bundle.publicItem.assessmentBinding.blueprintContractSha256,
+      purpose: bundle.publicItem.assessmentBinding.purpose,
+      slotId: bundle.publicItem.assessmentBinding.slotId,
+      unitId: bundle.publicItem.assessmentBinding.unitId,
+      standardRange: bundle.publicItem.assessmentBinding.standardRange
+    });
     return Object.freeze({
       itemId: bundle.publicItem.itemId,
       purpose,
+      assessmentBinding,
       itemVersion: bundle.publicItem.itemVersion,
       publicRevisionId: bundle.publicItem.publicRevisionId,
       publicPayloadSha256: bundle.publicItem.publicPayloadSha256,
