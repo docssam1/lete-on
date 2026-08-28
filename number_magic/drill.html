@@ -3,206 +3,238 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>수학 연습장 · Numbers of Magic</title>
+<title>문제은행 · Numbers of Magic</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
 <script defer src="vendor/katex/katex.min.js"></script>
 <style>
-/* ── 리셋 & 기본 ── */
+/* ============================================================
+   토큰 — about.html·앱 본체와 통일. 리디자인-설계.md §2/§4.
+   ============================================================ */
+:root{
+  --paper:#FBFAF7; --paper-warm:#F7F5F0; --mist:#F1F0EC; --line:#E4E2DC;
+  --ink:#1A2233; --sub:#4a5468;
+  --blue:#16417C; --blue-deep:#0E2C57;
+  --gold:#C9A063; --gold-soft:#EAC996; --gold-bright:#F5D98B;
+  --ok:#2E9E6B; --no:#D9534F;
+  --shadow-1:0 1px 2px rgba(26,34,51,.05), 0 4px 14px rgba(26,34,51,.06);
+  --shadow-2:0 2px 4px rgba(26,34,51,.06), 0 10px 30px rgba(26,34,51,.09);
+  --serif:'Gowun Batang','Noto Serif SC',ui-serif,Georgia,serif;
+  --mono:ui-monospace,'SF Mono',Consolas,monospace;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;background:#f8f9fc}
+html,body{height:100%;font-family:'Pretendard',sans-serif;color:var(--ink);background:var(--paper-warm)}
+body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:36px 36px;background-attachment:fixed}
 .katex{font-size:1em}
 
-/* ── 레이아웃 ── */
-#drill-root{min-height:100vh;display:flex;flex-direction:column}
-.dr-header{
-  background:#fff;border-bottom:1px solid #e4e2dc;
-  padding:14px 20px;display:flex;align-items:center;gap:14px;
-  position:sticky;top:0;z-index:100
-}
-.dr-logo{font-weight:900;font-size:18px;color:#16417C;letter-spacing:-.02em}
-.dr-logo span{color:#EAC996}
-.dr-header-sub{font-size:13px;color:#6b7280;margin-left:4px}
-.dr-home-link{margin-left:auto;font-size:13px;color:#6b7280;text-decoration:none;
-  border:1px solid #e4e2dc;border-radius:99px;padding:6px 14px;transition:.15s}
-.dr-home-link:hover{background:#f0f0f0}
-.dr-body{flex:1;padding:24px 16px;max-width:720px;margin:0 auto;width:100%}
+/* ── 판면 ── */
+#drill-root{min-height:100vh;display:flex;flex-direction:column;max-width:1160px;margin:0 auto;position:relative}
+#drill-root::before,#drill-root::after{content:"";position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+#drill-root::before{left:0}#drill-root::after{right:0}
 
-/* ── 버튼 ── */
-.nm-btn{border:none;border-radius:12px;font-family:'Pretendard',sans-serif;
-  font-weight:700;cursor:pointer;transition:.15s;padding:12px 22px;font-size:15px}
+.dr-header{background:rgba(251,250,247,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  padding:16px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.dr-wordmark{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--ink)}
+.dr-wordmark b{color:var(--gold);font-weight:700}
+.dr-header-sub{font-size:12px;color:var(--sub);margin-left:2px}
+.dr-home-link{margin-left:auto;font-size:13px;color:var(--sub);text-decoration:none;font-weight:700;
+  transition:.15s;border-bottom:1px solid transparent}
+.dr-home-link:hover{color:var(--ink);border-color:var(--line)}
+.dr-body{flex:1;padding:40px 40px 64px;width:100%}
+@media(max-width:700px){.dr-header{padding:14px 20px}.dr-body{padding:28px 20px 48px}}
+
+/* ── 공용 버튼 ── */
+.nm-btn{border:none;border-radius:9px;font-family:'Pretendard',sans-serif;
+  font-weight:700;cursor:pointer;transition:.15s;padding:12px 22px;font-size:14.5px}
 .nm-btn:disabled{opacity:.4;cursor:not-allowed}
-.nm-btn:active:not(:disabled){transform:scale(.96)}
-.nm-btn-primary{background:#16417C;color:#fff}
-.nm-btn-primary:hover:not(:disabled){background:#1a4d93}
-.nm-btn-secondary{background:#f0f0f0;color:#1a2233}
-.nm-btn-secondary:hover:not(:disabled){background:#e4e4e4}
-.nm-btn-small{font-size:13px;padding:8px 14px;border-radius:8px}
+.nm-btn:active:not(:disabled){transform:scale(.97)}
+.nm-btn-primary{background:var(--blue-deep);color:#fff}
+.nm-btn-primary:hover:not(:disabled){background:var(--blue)}
+.nm-btn-secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.nm-btn-secondary:hover:not(:disabled){background:var(--mist)}
+.nm-btn-small{font-size:12.5px;padding:8px 14px;border-radius:7px}
 
-/* ── 홈 화면 ── */
-.dr-home-title{font-size:clamp(22px,5vw,30px);font-weight:900;color:#16417C;margin-bottom:6px}
-.dr-home-desc{font-size:14px;color:#6b7280;margin-bottom:28px}
+/* 금박 버튼(리디자인-설계.md §3-5/§4-3) */
+.gold-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 26px;border-radius:9px;font-weight:700;font-size:14.5px;color:var(--gold-bright);
+  background-image:linear-gradient(var(--ink),var(--ink)),linear-gradient(135deg,var(--gold-soft),var(--gold),var(--gold-bright));
+  background-origin:border-box;background-clip:padding-box,border-box;border:1.5px solid transparent;
+  overflow:hidden;cursor:pointer;font-family:'Pretendard',sans-serif;transition:transform .15s ease,box-shadow .2s ease}
+.gold-btn::before{content:"";position:absolute;top:0;left:-60%;width:38%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg)}
+.gold-btn:hover:not(:disabled){box-shadow:var(--shadow-2)}
+.gold-btn:hover:not(:disabled)::before{animation:sheen .9s ease forwards}
+@keyframes sheen{from{left:-60%}to{left:130%}}
+.gold-btn:active:not(:disabled){transform:translateY(1px)}
+.gold-btn:disabled{opacity:.35;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){.gold-btn:hover::before{animation:none}}
+
+/* ── 홈 — 헤더 ── */
+.dr-hero{margin-bottom:28px}
+.dr-folio{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.dr-folio-num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;color:var(--gold)}
+.dr-folio-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.dr-home-title{font-family:var(--serif);font-size:clamp(26px,4.6vw,36px);font-weight:700;color:var(--blue-deep);margin-bottom:8px}
+.dr-home-desc{font-size:14px;color:var(--sub)}
 
 /* ── 섹션 탭 ── */
-.dr-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;
-  background:#f0f0f0;border-radius:16px;padding:4px;margin-bottom:20px}
-.dr-tab{border:none;border-radius:12px;font-family:'Pretendard',sans-serif;
-  font-weight:800;font-size:15px;padding:14px 10px;cursor:pointer;
-  transition:.18s;background:transparent;color:#6b7280;text-align:center;line-height:1.3}
-.dr-tab .dr-tab-sub{font-size:11px;font-weight:600;display:block;margin-top:2px;opacity:.7}
-.dr-tab.on{background:#fff;color:#1a2233;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.dr-tab.on.school{color:#16417C}
-.dr-tab.on.magic{color:#7c3aed}
+.dr-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:28px 0 0}
+.dr-tab{border:none;background:transparent;font-family:'Pretendard',sans-serif;
+  font-weight:800;font-size:14.5px;padding:14px 4px;margin-right:28px;cursor:pointer;
+  transition:.18s;color:var(--sub);text-align:left;line-height:1.3;border-bottom:2px solid transparent}
+.dr-tab .dr-tab-sub{font-size:11px;font-weight:600;display:block;margin-top:2px;opacity:.75}
+.dr-tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.dr-tab.on.school{color:var(--blue)}
+.dr-tab.on.magic{color:var(--blue-deep)}
 
-/* ── 홈 폼 ── */
-.dr-form{background:#fff;border-radius:20px;padding:28px 24px;
-  box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px}
-.dr-form-row{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
-.dr-form-row:last-child{margin-bottom:0}
-.dr-form-label{font-size:14px;font-weight:700;color:#374151;min-width:72px;flex:none}
-.dr-select{
-  flex:1;min-width:0;border:1.5px solid #d1d5db;border-radius:10px;
-  padding:11px 14px;font-size:14px;font-family:'Pretendard',sans-serif;
-  font-weight:600;color:#1a2233;background:#fff;outline:none;
-  cursor:pointer;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;
-  transition:.15s
-}
-.dr-select:focus{border-color:#16417C;box-shadow:0 0 0 3px rgba(22,65,124,.12)}
-.dr-select option{font-weight:600}
-.dr-select optgroup{font-weight:800;color:#374151}
+/* ── 작업대(공방) — 서랍장 + 벤치 ── */
+.workshop{display:grid;grid-template-columns:300px 1fr;border:1px solid var(--line);border-radius:10px;
+  overflow:hidden;margin-top:22px;background:var(--paper)}
+@media(max-width:860px){.workshop{grid-template-columns:1fr}}
 
-/* ── 코드 행 ── */
-.dr-code-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.dr-code-input{
-  border:1.5px solid #d1d5db;border-radius:10px;padding:11px 14px;font-size:13px;
-  font-family:monospace;width:190px;outline:none;transition:.15s;color:#374151
-}
-.dr-code-input:focus{border-color:#16417C;box-shadow:0 0 0 3px rgba(22,65,124,.12)}
-.dr-code-label{font-size:12px;color:#9ca3af}
+.drawer{border-right:1px solid var(--line);display:flex;flex-direction:column;max-height:620px}
+@media(max-width:860px){.drawer{border-right:none;border-bottom:1px solid var(--line);max-height:320px}}
+.drawer-search{border:none;border-bottom:1px solid var(--line);padding:14px 16px;font-size:13.5px;
+  font-family:'Pretendard',sans-serif;outline:none;background:transparent;color:var(--ink);width:100%}
+.drawer-search::placeholder{color:var(--sub)}
+.drawer-list{overflow-y:auto;flex:1}
+.drawer-group-h{display:flex;align-items:center;gap:8px;padding:14px 16px 6px;font-size:11px;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--sub);position:sticky;top:0;background:var(--paper);z-index:1}
+.dg-count{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--gold);font-size:11px}
+.drawer-item{display:block;width:100%;text-align:left;border:none;background:transparent;
+  padding:10px 16px 10px 16px;cursor:pointer;font-family:'Pretendard',sans-serif;border-bottom:1px solid var(--mist)}
+.drawer-item:hover{background:var(--mist)}
+.drawer-item.sel{background:var(--blue-deep)}
+.drawer-item b{display:block;font-size:13px;font-weight:700;color:var(--ink)}
+.drawer-item.sel b{color:#fff}
+.drawer-item small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+.drawer-item.sel small{color:rgba(255,255,255,.68)}
+.drawer-empty{padding:32px 20px;text-align:center;color:var(--sub);font-size:13px}
 
-/* ── 시작 버튼 영역 ── */
-.dr-start-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.bench{padding:30px;background:var(--paper-warm);min-height:400px}
+@media(max-width:700px){.bench{padding:22px 18px}}
+.bench-empty{color:var(--sub);font-size:14px;padding:60px 10px;text-align:center}
+.bench-head{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--blue-deep)}
+.bench-desc{font-size:12.5px;color:var(--sub);margin-top:5px;letter-spacing:.02em;text-transform:uppercase;font-weight:700}
+
+.bench-row{margin-top:22px}
+.bench-label{font-size:12px;font-weight:800;color:var(--sub);margin-bottom:8px;letter-spacing:.02em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:none;background:var(--paper);padding:9px 15px;font-size:13px;font-weight:700;
+  font-family:'Pretendard',sans-serif;cursor:pointer;color:var(--sub);border-right:1px solid var(--line);
+  font-variant-numeric:tabular-nums}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--blue-deep);color:#fff}
+
+.bench-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:26px}
 .dr-seed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
-.dr-seed-label{font-size:12px;color:#9ca3af}
-.dr-seed-code{font-size:12px;font-family:monospace;color:#6b7280;border:1px solid #e4e2dc;
-  border-radius:6px;padding:5px 10px;background:#fafaf9;cursor:pointer;transition:.15s}
-.dr-seed-code:hover{background:#f0f0f0}
+.dr-seed-label{font-size:11px;color:var(--sub)}
+.dr-seed-code{font-size:12px;font-family:var(--mono);color:var(--sub);border:1px solid var(--line);
+  border-radius:6px;padding:5px 10px;background:var(--paper);cursor:pointer;transition:.15s}
+.dr-seed-code:hover{background:var(--mist)}
 
-/* ── 코드로 다시 풀기 ── */
-.dr-replay-section{background:#fffbeb;border:1px solid #fde68a;border-radius:14px;
-  padding:16px 20px;margin-bottom:20px}
-.dr-replay-title{font-size:13px;font-weight:700;color:#92400e;margin-bottom:10px}
+.preview-hd{display:flex;align-items:center;gap:10px;margin-top:28px;margin-bottom:12px}
+.preview-hd span{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.02em}
+.preview-dice{border:1px solid var(--line);background:var(--paper);border-radius:7px;padding:5px 11px;
+  font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s;font-family:'Pretendard',sans-serif}
+.preview-dice:hover{background:var(--mist);color:var(--ink)}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.preview-cell{border:1px solid var(--line);border-radius:8px;padding:16px 10px;background:var(--paper);
+  text-align:center;font-size:16px;min-height:60px;display:flex;align-items:center;justify-content:center}
 
-/* ── 문제 화면 (exam.js가 생성하는 .nm-exam-*) ── */
+/* ── 코드로 다시 풀기 — 학습지 티켓 ── */
+.dr-ticket{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:18px 24px;margin-top:26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;overflow:hidden}
+.dr-ticket::before,.dr-ticket::after{content:"";position:absolute;top:50%;width:18px;height:18px;
+  background:var(--paper-warm);border-radius:50%;transform:translateY(-50%)}
+.dr-ticket::before{left:-9px}.dr-ticket::after{right:-9px}
+.dr-ticket-title{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.04em;flex:none;width:100%}
+.dr-code-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1;
+  border-left:1px dashed var(--line);padding-left:16px;margin-left:2px}
+@media(max-width:520px){.dr-code-row{border-left:none;padding-left:0;margin-left:0}}
+.dr-code-input{border:1.5px solid var(--line);border-radius:8px;padding:10px 13px;font-size:12.5px;
+  font-family:var(--mono);width:180px;outline:none;transition:.15s;color:var(--ink);background:var(--paper)}
+.dr-code-input:focus{border-color:var(--blue)}
+.dr-code-label{font-size:11.5px;color:var(--sub)}
+
+/* ── 연습 화면(exam.js가 생성하는 .nm-exam-*) — 토큰만 교체 ── */
 .nm-exam-run{display:flex;flex-direction:column;gap:0}
-.nm-exam-header{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.nm-exam-progress{height:8px;background:#e4e2dc;border-radius:99px;overflow:hidden;margin-bottom:10px}
-.nm-progress-bar{height:100%;background:linear-gradient(90deg,#16417C,#3b82f6);border-radius:99px;
-  transition:width .3s ease}
-.nm-exam-info{display:flex;justify-content:space-between;align-items:center}
-.nm-q-counter{font-size:13px;font-weight:700;color:#6b7280}
-.nm-timer{font-size:14px;font-weight:800;color:#ef4444;background:#fef2f2;
-  padding:4px 10px;border-radius:99px}
+.nm-exam-header{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.nm-exam-progress{height:6px;background:var(--mist);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.nm-progress-bar{height:100%;background:var(--blue);border-radius:99px;transition:width .3s ease}
+.nm-exam-info{display:flex;justify-content:space-between;align-items:center;font-variant-numeric:tabular-nums}
+.nm-q-counter{font-size:13px;font-weight:700;color:var(--sub)}
+.nm-timer{font-size:13px;font-weight:800;color:var(--no);background:rgba(213,83,79,.1);padding:4px 10px;border-radius:99px}
 
-.nm-exam-question{
-  background:#fff;border-radius:20px;padding:40px 24px 32px;
-  text-align:center;margin-bottom:16px;
-  box-shadow:0 4px 20px rgba(0,0,0,.08);min-height:160px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center
-}
-.nm-q-tex{font-size:clamp(28px,8vw,44px);font-weight:900;letter-spacing:-.02em;color:#1a2233;
-  line-height:1.3}
+.nm-exam-question{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:40px 24px 32px;
+  text-align:center;margin-bottom:16px;min-height:160px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.nm-q-tex{font-size:clamp(26px,7vw,40px);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.3}
 .nm-q-tex .katex{font-size:1em}
-.nm-q-hint{font-size:13px;color:#9ca3af;margin-top:12px}
+.nm-q-hint{font-size:12.5px;color:var(--sub);margin-top:12px}
 
 .nm-exam-input{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:16px}
-#nm-ex-ans{
-  font-size:clamp(22px,6vw,32px);text-align:center;padding:14px 16px;
-  border:2px solid #e4e2dc;border-radius:14px;width:140px;font-family:'Pretendard',sans-serif;
-  font-weight:900;outline:none;transition:.15s;background:#fff;color:#1a2233;
-  -moz-appearance:textfield
-}
+#nm-ex-ans{font-size:clamp(20px,5.5vw,28px);text-align:center;padding:12px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:130px;font-family:'Pretendard',sans-serif;font-weight:800;outline:none;
+  transition:.15s;background:var(--paper);color:var(--ink);-moz-appearance:textfield}
 #nm-ex-ans::-webkit-outer-spin-button,#nm-ex-ans::-webkit-inner-spin-button{-webkit-appearance:none}
-#nm-ex-ans:focus{border-color:#16417C;box-shadow:0 0 0 3px rgba(22,65,124,.15)}
-#nm-ex-submit{background:#16417C;color:#fff;font-size:17px;font-weight:900;
-  border:none;border-radius:14px;padding:14px 24px;cursor:pointer;transition:.15s;
-  font-family:'Pretendard',sans-serif}
-#nm-ex-submit:hover{background:#1a4d93}
+#nm-ex-ans:focus{border-color:var(--blue)}
+#nm-ex-submit{background:var(--blue-deep);color:#fff;font-size:15px;font-weight:800;border:none;
+  border-radius:10px;padding:13px 22px;cursor:pointer;transition:.15s;font-family:'Pretendard',sans-serif}
+#nm-ex-submit:hover{background:var(--blue)}
 #nm-ex-submit:active{transform:scale(.96)}
 
 .nm-exam-nav{display:flex;justify-content:center;gap:12px}
-#nm-ex-prev,#nm-ex-skip{background:#f0f0f0;color:#374151;border:none;border-radius:10px;
-  padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;
-  font-family:'Pretendard',sans-serif;transition:.15s}
-#nm-ex-prev:hover:not(:disabled),#nm-ex-skip:hover{background:#e4e4e4}
+#nm-ex-prev,#nm-ex-skip{background:transparent;color:var(--sub);border:1px solid var(--line);border-radius:8px;
+  padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+#nm-ex-prev:hover:not(:disabled),#nm-ex-skip:hover{background:var(--mist)}
 #nm-ex-prev:disabled{opacity:.35;cursor:not-allowed}
 
-/* ── 숫자 키패드 (모바일) ── */
-.dr-numpad{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  margin-top:16px;max-width:260px;margin-left:auto;margin-right:auto
-}
-.dr-numpad-btn{
-  background:#fff;border:1px solid #e4e2dc;border-radius:12px;
-  font-size:22px;font-weight:700;padding:16px 10px;
-  cursor:pointer;transition:.1s;color:#1a2233;font-family:'Pretendard',sans-serif
-}
-.dr-numpad-btn:active{background:#eef3fb;transform:scale(.94)}
-.dr-numpad-btn.dr-np-del{background:#fef2f2;color:#ef4444;font-size:18px}
-.dr-numpad-btn.dr-np-ok{background:#16417C;color:#fff;font-size:16px;grid-column:span 2}
+/* ── 숫자 키패드 ── */
+.dr-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;
+  max-width:260px;margin-left:auto;margin-right:auto}
+.dr-numpad-btn{background:var(--paper);border:1px solid var(--line);border-radius:10px;font-size:21px;
+  font-weight:700;padding:15px 10px;cursor:pointer;transition:.1s;color:var(--ink);font-family:'Pretendard',sans-serif}
+.dr-numpad-btn:active{background:var(--mist);transform:scale(.95)}
+.dr-numpad-btn.dr-np-del{background:rgba(213,83,79,.08);color:var(--no);font-size:17px}
+.dr-numpad-btn.dr-np-ok{background:var(--blue-deep);color:#fff;font-size:15px;grid-column:span 2}
 
 /* ── 결과 화면 ── */
 .nm-exam-result{display:flex;flex-direction:column;gap:16px}
-.nm-result-score{
-  background:#fff;border-radius:20px;padding:32px 24px;text-align:center;
-  box-shadow:0 4px 20px rgba(0,0,0,.08)
-}
-.nm-result-score.nm-pass{border-top:6px solid #10b981}
-.nm-result-score.nm-fail{border-top:6px solid #f59e0b}
-.nm-score-num{font-size:clamp(40px,12vw,64px);font-weight:900;color:#1a2233;line-height:1}
-.nm-score-pct{font-size:24px;font-weight:800;color:#6b7280;margin-top:4px}
-.nm-score-label{font-size:18px;font-weight:800;margin-top:10px}
-.nm-result-score.nm-pass .nm-score-label{color:#10b981}
-.nm-result-score.nm-fail .nm-score-label{color:#f59e0b}
-.nm-score-time{font-size:14px;color:#9ca3af;margin-top:8px}
+.nm-result-score{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:30px 24px;text-align:center}
+.nm-result-score.nm-pass{border-top:3px solid var(--ok)}
+.nm-result-score.nm-fail{border-top:3px solid var(--gold)}
+.nm-score-num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(36px,10vw,56px);
+  font-weight:700;color:var(--ink);line-height:1}
+.nm-score-pct{font-size:20px;font-weight:800;color:var(--sub);margin-top:4px;font-variant-numeric:tabular-nums}
+.nm-score-label{font-size:16px;font-weight:800;margin-top:10px}
+.nm-result-score.nm-pass .nm-score-label{color:var(--ok)}
+.nm-result-score.nm-fail .nm-score-label{color:var(--gold-deep,var(--gold))}
+.nm-score-time{font-size:13px;color:var(--sub);margin-top:8px;font-variant-numeric:tabular-nums}
 
-.nm-result-perfect{font-size:18px;font-weight:700;text-align:center;padding:20px;color:#10b981}
+.nm-result-perfect{font-size:16px;font-weight:700;text-align:center;padding:18px;color:var(--ok)}
 
-.nm-result-wrongs{background:#fff;border-radius:16px;padding:20px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.nm-result-wrongs h3{font-size:15px;font-weight:800;margin-bottom:14px;color:#374151}
-.nm-result-table{width:100%;border-collapse:collapse;font-size:14px}
-.nm-result-table th{text-align:left;padding:8px 12px;font-size:12px;color:#9ca3af;
-  border-bottom:1px solid #e4e2dc;font-weight:700}
-.nm-result-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.nm-result-wrongs{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+.nm-result-wrongs h3{font-size:14px;font-weight:800;margin-bottom:14px;color:var(--ink)}
+.nm-result-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.nm-result-table th{text-align:left;padding:8px 12px;font-size:11px;color:var(--sub);
+  border-bottom:1px solid var(--line);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.nm-result-table td{padding:10px 12px;border-bottom:1px solid var(--mist);vertical-align:middle}
 .nm-rtex{min-width:120px}
-.nm-wrong-ans{color:#ef4444;font-weight:700;font-size:15px}
-.nm-correct-ans{color:#10b981;font-weight:700;font-size:15px}
+.nm-wrong-ans{color:var(--no);font-weight:700;font-size:14px}
+.nm-correct-ans{color:var(--ok);font-weight:700;font-size:14px}
 
 .nm-result-actions{display:flex;gap:10px;flex-wrap:wrap}
 .nm-result-actions .nm-btn{flex:1;min-width:120px;text-align:center}
-.nm-result-code{font-size:12px;color:#9ca3af;text-align:center}
-.nm-result-code code{font-family:monospace;background:#f0f0f0;padding:2px 8px;border-radius:4px;color:#374151}
+.nm-result-code{font-size:11.5px;color:var(--sub);text-align:center}
+.nm-result-code code{font-family:var(--mono);background:var(--mist);padding:2px 8px;border-radius:4px;color:var(--ink)}
 
-/* ── 학습지 코드 입력 영역 ── */
-.dr-replay-section{background:#fffbeb;border:1px solid #fde68a;border-radius:14px;
-  padding:16px;margin-bottom:24px}
-.dr-replay-title{font-size:14px;font-weight:700;color:#92400e;margin-bottom:10px}
-
-/* ── 반응형 ── */
-@media(max-width:500px){
-  .dr-form{padding:20px 16px}
-  .dr-form-row{gap:10px}
-  .dr-form-label{min-width:60px;font-size:13px}
-  .nm-exam-question{padding:28px 16px 24px;min-height:130px}
-  .dr-numpad{max-width:300px}
-}
-
-/* ── 인쇄 (exam.js print CSS 보완) ── */
+/* ── 인쇄(exam.js print CSS 보완) ── */
 @media print{
   body>*:not(.nm-print-sheet){display:none!important}
   .nm-print-sheet{display:block!important}
@@ -212,9 +244,9 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 <body>
 <div id="drill-root">
   <header class="dr-header">
-    <div class="dr-logo">Numbers <span>of</span> Magic</div>
-    <span class="dr-header-sub">수학 연습장</span>
-    <a href="index.html?enter=1" class="dr-home-link">🏠 마을로</a>
+    <span class="dr-wordmark">Numbers <b>of</b> Magic</span>
+    <span class="dr-header-sub">문제은행</span>
+    <a href="index.html?enter=1" class="dr-home-link">마을로</a>
   </header>
   <div class="dr-body" id="dr-body"></div>
 </div>
@@ -529,15 +561,18 @@ var TOPICS = [
     ]
   }
 ];
+var TOTAL_TOPICS = TOPICS.reduce(function(n,c){ return n + c.subs.length; }, 0);
 
 /* ── 상태 ── */
 var state = {
   view: 'home',
   section: 'school',
   topicKey: null,   // 'catId:subIdx' 형식
+  search: '',
   count: 10,
   timer: 0,
   seed: NM_RNG.newCode(),
+  previewSeed: NM_RNG.newCode(),
   lastResult: null
 };
 
@@ -590,90 +625,149 @@ function showHome(){
     if(!_kc || _kc.section !== sec){ state.topicKey = null; }
   }
 
-  var t = parseTopic(state.topicKey);
-
-  /* 섹션 탭 */
-  var tabHtml = '<div class="dr-tabs">';
-  tabHtml += '<button class="dr-tab school' + (sec==='school'?' on':'') + '" data-sec="school">';
-  tabHtml += '교과 연산<span class="dr-tab-sub">덧셈 · 뺄셈 · 곱셈 · 나눗셈</span></button>';
-  tabHtml += '<button class="dr-tab magic' + (sec==='magic'?' on':'') + '" data-sec="magic">';
-  tabHtml += 'Numbers of Magic<span class="dr-tab-sub">창의수연 · 수 감각</span></button>';
-  tabHtml += '</div>';
-
-  /* 드롭다운 옵션 — 현재 섹션 카테고리만 */
-  var topicLabel = sec === 'school' ? '연산 주제' : '전략 주제';
-  var topicOptions = '<option value="">— ' + (sec==='school'?'연산':'전략') + ' 주제 선택 —</option>';
-  TOPICS.filter(function(cat){ return cat.section === sec; }).forEach(function(cat){
-    topicOptions += '<optgroup label="' + esc(cat.icon+' '+cat.label) + '">';
-    cat.subs.forEach(function(sub, i){
-      var key = cat.id + ':' + i;
-      var sel = state.topicKey === key ? ' selected' : '';
-      topicOptions += '<option value="' + esc(key) + '"' + sel + '>' + esc(sub.label) + ' — ' + esc(sub.desc) + '</option>';
-    });
-    topicOptions += '</optgroup>';
-  });
-
-  var countOptions = [5,10,20,30].map(function(n){
-    return '<option value="'+n+'"'+(state.count===n?' selected':'')+'>'+n+'문제</option>';
-  }).join('');
-
-  var timerOptions = [{v:0,l:'타이머 없음'},{v:180,l:'3분'},{v:300,l:'5분'},{v:600,l:'10분'}].map(function(o){
-    return '<option value="'+o.v+'"'+(state.timer===o.v?' selected':'')+'>'+esc(o.l)+'</option>';
-  }).join('');
-
-  var codeVal = t ? esc(NM_EXAM.worksheetCode(getConfig())) : '';
-
   var html = '';
-  html += '<h1 class="dr-home-title">수학 연습장 📝</h1>';
-  html += '<p class="dr-home-desc">주제를 고르고 바로 연습해요 · 인쇄 학습지도 만들 수 있어요</p>';
-
-  /* 섹션 탭 */
-  html += tabHtml;
-
-  /* 메인 폼 */
-  html += '<div class="dr-form">';
-
-  html += '<div class="dr-form-row">';
-  html += '<label class="dr-form-label" for="dr-sel-topic">' + esc(topicLabel) + '</label>';
-  html += '<select class="dr-select" id="dr-sel-topic">' + topicOptions + '</select>';
+  html += '<div class="dr-hero">';
+  html += '<div class="dr-folio"><span class="dr-folio-num">' + TOTAL_TOPICS + '</span><span class="dr-folio-label">문제 유형 · ' + TOPICS.length + '개 갈래</span></div>';
+  html += '<h1 class="dr-home-title">문제은행</h1>';
+  html += '<p class="dr-home-desc">주제를 고르면 오른쪽에서 바로 문제를 확인할 수 있어요 — 풀거나, 학습지로 인쇄하세요</p>';
   html += '</div>';
 
-  html += '<div class="dr-form-row">';
-  html += '<label class="dr-form-label" for="dr-sel-count">문항 수</label>';
-  html += '<select class="dr-select" id="dr-sel-count">' + countOptions + '</select>';
+  html += '<div class="dr-tabs">';
+  html += '<button class="dr-tab school' + (sec==='school'?' on':'') + '" data-sec="school">교과 연산<span class="dr-tab-sub">덧셈 · 뺄셈 · 곱셈 · 나눗셈</span></button>';
+  html += '<button class="dr-tab magic' + (sec==='magic'?' on':'') + '" data-sec="magic">Numbers of Magic<span class="dr-tab-sub">창의수연 · 수 감각</span></button>';
   html += '</div>';
 
-  html += '<div class="dr-form-row">';
-  html += '<label class="dr-form-label" for="dr-sel-timer">타이머</label>';
-  html += '<select class="dr-select" id="dr-sel-timer">' + timerOptions + '</select>';
+  html += '<div class="workshop">';
+  html += '<div class="drawer"><input class="drawer-search" id="dr-search" placeholder="주제 검색…" value="' + esc(state.search) + '"><div class="drawer-list" id="dr-list"></div></div>';
+  html += '<div class="bench" id="dr-bench"></div>';
   html += '</div>';
 
-  /* 시작 버튼 행 */
-  var startColor = t ? t.cat.color : (sec==='magic' ? '#7c3aed' : '#16417C');
-  html += '<div class="dr-start-row">';
-  html += '<button class="nm-btn nm-btn-primary" id="dr-start-btn" style="background:'+startColor+';min-width:130px"' + (t?'':' disabled') + '>▶ 연습 시작</button>';
-  html += '<button class="nm-btn nm-btn-secondary nm-btn-small" id="dr-print-btn"' + (t?'':' disabled') + '>🖨 학습지 인쇄</button>';
-  if(t){
-    html += '<div class="dr-seed-wrap">';
-    html += '<span class="dr-seed-label">코드</span>';
-    html += '<span class="dr-seed-code" id="dr-seed-disp" title="클릭하면 새 코드">' + codeVal + '</span>';
-    html += '<button class="nm-btn nm-btn-secondary nm-btn-small" id="dr-new-seed" title="새 코드">🎲</button>';
-    html += '</div>';
-  }
-  html += '</div>';
-  html += '</div>'; /* end .dr-form */
-
-  /* 코드로 다시 풀기 */
-  html += '<div class="dr-replay-section">';
-  html += '<div class="dr-replay-title">📋 학습지 코드로 다시 풀기</div>';
+  html += '<div class="dr-ticket">';
+  html += '<div class="dr-ticket-title">학습지 코드로 다시 풀기</div>';
   html += '<div class="dr-code-row">';
   html += '<input class="dr-code-input" id="dr-code-in" placeholder="#AD2-L1x20-k3f9z" maxlength="32">';
   html += '<button class="nm-btn nm-btn-primary nm-btn-small" id="dr-code-start">시작</button>';
-  html += '<span class="dr-code-label">같은 문제를 선생님·친구와 공유</span>';
+  html += '<span class="dr-code-label">같은 문제를 선생님·친구와 공유해요</span>';
   html += '</div></div>';
 
   body.innerHTML = html;
+  renderDrawer();
+  renderBench();
   bindHome();
+}
+
+/* 서랍장(왼쪽 목록) — 섹션+검색에 따라 다시 그린다 */
+function renderDrawer(){
+  var sec = state.section || 'school';
+  var q = (state.search||'').trim().toLowerCase();
+  var list = document.getElementById('dr-list');
+  var cats = TOPICS.filter(function(c){ return c.section === sec; });
+  var html = '';
+  var shown = 0;
+
+  cats.forEach(function(cat){
+    var rows = '';
+    cat.subs.forEach(function(sub, i){
+      if(q && sub.label.toLowerCase().indexOf(q)===-1 && (sub.desc||'').toLowerCase().indexOf(q)===-1) return;
+      var key = cat.id + ':' + i;
+      var sel = state.topicKey === key ? ' sel' : '';
+      rows += '<button class="drawer-item' + sel + '" data-key="' + esc(key) + '"><b>' + esc(sub.label) + '</b><small>' + esc(sub.desc) + '</small></button>';
+      shown++;
+    });
+    if(rows){
+      html += '<div class="drawer-group"><div class="drawer-group-h">' + esc(cat.icon + ' ' + cat.label) + '<span class="dg-count">' + cat.subs.length + '</span></div>' + rows + '</div>';
+    }
+  });
+
+  if(!shown) html = '<div class="drawer-empty">검색 결과가 없어요.<br>다른 낱말로 찾아보세요.</div>';
+  list.innerHTML = html;
+
+  list.querySelectorAll('.drawer-item').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.topicKey = this.dataset.key;
+      state.seed = NM_RNG.newCode();
+      state.previewSeed = NM_RNG.newCode();
+      list.querySelectorAll('.drawer-item').forEach(function(b){ b.classList.toggle('sel', b===btn); });
+      renderBench();
+    });
+  });
+}
+
+var COUNT_OPTS = [10,20,30];
+var TIMER_OPTS = [{v:0,l:'없음'},{v:180,l:'3분'},{v:300,l:'5분'}];
+
+/* 작업대(오른쪽 상세) — 선택 주제·문항수·타이머가 바뀔 때만 다시 그린다(서랍장은 그대로) */
+function renderBench(){
+  var bench = document.getElementById('dr-bench');
+  var t = parseTopic(state.topicKey);
+
+  if(!t){
+    bench.innerHTML = '<div class="bench-empty">왼쪽에서 주제를 골라 보세요.<br>바로 여기서 실제 문제를 확인할 수 있어요.</div>';
+    return;
+  }
+
+  var html = '';
+  html += '<div class="bench-head">' + esc(t.sub.label) + '</div>';
+  html += '<div class="bench-desc">' + esc(t.cat.icon + ' ' + t.cat.label + ' · ' + t.sub.desc) + '</div>';
+
+  html += '<div class="bench-row"><div class="bench-label">문항 수</div><div class="seg" id="dr-seg-count">';
+  COUNT_OPTS.forEach(function(n){ html += '<button data-n="' + n + '" class="' + (state.count===n?'on':'') + '">' + n + '</button>'; });
+  html += '</div></div>';
+
+  html += '<div class="bench-row"><div class="bench-label">타이머</div><div class="seg" id="dr-seg-timer">';
+  TIMER_OPTS.forEach(function(o){ html += '<button data-v="' + o.v + '" class="' + (state.timer===o.v?'on':'') + '">' + esc(o.l) + '</button>'; });
+  html += '</div></div>';
+
+  html += '<div class="preview-hd"><span>미리보기</span><button class="preview-dice" id="dr-dice">🎲 다른 문제</button></div>';
+  html += '<div class="preview-grid" id="dr-preview"></div>';
+
+  html += '<div class="bench-actions">';
+  html += '<button class="gold-btn" id="dr-start-btn">▶ 연습 시작</button>';
+  html += '<button class="nm-btn nm-btn-secondary" id="dr-print-btn">🖨 학습지 인쇄</button>';
+  html += '<div class="dr-seed-wrap"><span class="dr-seed-label">코드</span><span class="dr-seed-code" id="dr-seed-disp" title="클릭하면 새 코드">' + esc(NM_EXAM.worksheetCode(getConfig())) + '</span></div>';
+  html += '</div>';
+
+  bench.innerHTML = html;
+  renderPreview();
+  bindBench();
+}
+
+function renderPreview(){
+  var t = parseTopic(state.topicKey);
+  var host = document.getElementById('dr-preview');
+  if(!t || !host) return;
+  var nSeed = NM_RNG.hashSeed(state.previewSeed);
+  var probs = NM_EXAM.buildProblems(t.sub.thread, t.sub.level, 3, nSeed);
+  host.innerHTML = probs.map(function(p){ return '<div class="preview-cell"><span data-tex="' + esc(p.tex||'') + '"></span></div>'; }).join('');
+  host.querySelectorAll('[data-tex]').forEach(function(el){
+    if(window.katex){
+      try{ katex.render(el.getAttribute('data-tex'), el, {throwOnError:false}); }catch(e){ el.textContent = el.getAttribute('data-tex'); }
+    } else {
+      el.textContent = el.getAttribute('data-tex');
+    }
+  });
+}
+
+function bindBench(){
+  var seg1 = document.getElementById('dr-seg-count');
+  if(seg1) seg1.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){ state.count = parseInt(this.dataset.n); renderBench(); });
+  });
+  var seg2 = document.getElementById('dr-seg-timer');
+  if(seg2) seg2.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){ state.timer = parseInt(this.dataset.v); renderBench(); });
+  });
+  var dice = document.getElementById('dr-dice');
+  if(dice) dice.addEventListener('click', function(){ state.previewSeed = NM_RNG.newCode(); renderPreview(); });
+
+  var seedDisp = document.getElementById('dr-seed-disp');
+  if(seedDisp) seedDisp.addEventListener('click', function(){ state.seed = NM_RNG.newCode(); renderBench(); });
+
+  var startBtn = document.getElementById('dr-start-btn');
+  if(startBtn) startBtn.addEventListener('click', function(){ var cfg = getConfig(); if(!cfg) return; showDrill(cfg); });
+
+  var printBtn = document.getElementById('dr-print-btn');
+  if(printBtn) printBtn.addEventListener('click', function(){ var cfg = getConfig(); if(!cfg) return; NM_EXAM.renderPrint(cfg); });
 }
 
 function bindHome(){
@@ -682,49 +776,15 @@ function bindHome(){
     btn.addEventListener('click', function(){
       state.section = this.dataset.sec;
       state.topicKey = null;
+      state.search = '';
       state.seed = NM_RNG.newCode();
       showHome();
     });
   });
 
-  /* 주제 드롭다운 */
-  document.getElementById('dr-sel-topic').addEventListener('change', function(){
-    state.topicKey = this.value || null;
-    state.seed = NM_RNG.newCode();
-    showHome();
-  });
-
-  /* 문항 수 드롭다운 */
-  document.getElementById('dr-sel-count').addEventListener('change', function(){
-    state.count = parseInt(this.value);
-    showHome();
-  });
-
-  /* 타이머 드롭다운 */
-  document.getElementById('dr-sel-timer').addEventListener('change', function(){
-    state.timer = parseInt(this.value);
-    showHome();
-  });
-
-  /* 새 씨드 */
-  var newSeedBtn = document.getElementById('dr-new-seed');
-  if(newSeedBtn) newSeedBtn.addEventListener('click', function(){
-    state.seed = NM_RNG.newCode(); showHome();
-  });
-  var seedDisp = document.getElementById('dr-seed-disp');
-  if(seedDisp) seedDisp.addEventListener('click', function(){
-    state.seed = NM_RNG.newCode(); showHome();
-  });
-
-  /* 시작 버튼 */
-  document.getElementById('dr-start-btn').addEventListener('click', function(){
-    var cfg = getConfig(); if(!cfg) return; showDrill(cfg);
-  });
-
-  /* 인쇄 버튼 */
-  document.getElementById('dr-print-btn').addEventListener('click', function(){
-    var cfg = getConfig(); if(!cfg) return; NM_EXAM.renderPrint(cfg);
-  });
+  /* 검색 */
+  var search = document.getElementById('dr-search');
+  search.addEventListener('input', function(){ state.search = this.value; renderDrawer(); });
 
   /* 코드로 시작 */
   document.getElementById('dr-code-start').addEventListener('click', function(){
@@ -759,7 +819,7 @@ function showDrill(cfg){
 
   /* 현재 주제 표시 */
   var topicInfo = document.createElement('span');
-  topicInfo.style.cssText = 'font-size:13px;color:#6b7280;font-weight:600';
+  topicInfo.style.cssText = 'font-size:13px;color:var(--sub);font-weight:600';
   var th = (window.NM_THREADS||{})[cfg.thread]||{};
   topicInfo.textContent = (th.name&&th.name.ko)||cfg.thread;
   backRow.appendChild(topicInfo);
@@ -896,9 +956,9 @@ function showWrongsRetry(wrongs, origCfg){
         '<div class="nm-exam-question"><div class="nm-q-tex" id="nm-ex-qtex2"></div></div>' +
         '<div class="nm-exam-input">' +
           '<input id="nm-ex-ans2" type="number" placeholder="답" autocomplete="off" ' +
-            'style="font-size:clamp(22px,6vw,32px);text-align:center;padding:14px 16px;' +
-            'border:2px solid #e4e2dc;border-radius:14px;width:140px;font-family:Pretendard,sans-serif;' +
-            'font-weight:900;outline:none;-moz-appearance:textfield">' +
+            'style="font-size:clamp(20px,5.5vw,28px);text-align:center;padding:12px 14px;' +
+            'border:1.5px solid var(--line);border-radius:10px;width:130px;font-family:Pretendard,sans-serif;' +
+            'font-weight:800;outline:none;-moz-appearance:textfield">' +
           '<button id="nm-ex-sub2" class="nm-btn nm-btn-primary" style="margin-left:12px">확인 ✓</button>' +
         '</div>' +
       '</div>';
