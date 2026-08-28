@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_41 = {
-  "version": "2026-08-28",
+  "version": "2026-08-29",
   "totals": {
     "units": 6,
     "groups": 30,
@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 250,
+  "verifiedMappings": 309,
   "items": [
     {
       "unit": 1,
@@ -3582,11 +3582,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 42,
       "typeLabel": "복면산 곱셈식 완성하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3600,11 +3602,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 42,
       "typeLabel": "곱셈 세로셈의 숨은 숫자 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3618,11 +3622,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 42,
       "typeLabel": "나눗셈 세로셈의 숨은 숫자 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3636,11 +3642,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 42,
       "typeLabel": "같은 숫자 배열의 곱셈 복원",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3654,11 +3662,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "곱셈 세로셈 빈칸 채우기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3672,11 +3682,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "뒤집힌 숫자 배열의 곱셈",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3690,11 +3702,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈의 기호 합",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3708,11 +3722,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "0과 1로 만든 곱셈식 세기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3726,11 +3742,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈 빈칸 채우기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 3,
@@ -3744,11 +3762,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 43,
       "typeLabel": "수 카드 곱셈식 모두 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -5040,10 +5060,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "분자와 분모가 일정하게 바뀌는 분수 배열의 특정 번째 분수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "advancedLinePattern",
-      "variant": 2,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 0,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -5059,10 +5079,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "번갈아 놓인 같은 간격 수 배열에서 수의 위치 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5077,10 +5098,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "대각선 순서쌍의 항과 위치",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5095,10 +5117,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "분모별 분수 묶음의 항 위치",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5113,10 +5136,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "분자와 분모가 일정하게 바뀌는 분수 배열에서 처음 1이 되는 곳 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5131,10 +5155,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여러 규칙으로 나열한 수에서 빈칸 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5149,10 +5174,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 수만큼 커지는 배열의 특정 번째 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "advancedLinePattern",
-      "variant": 0,
-      "difficultyBand": -1,
-      "sourceTier": "ability",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 6,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -5168,10 +5193,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 배씩 묶은 자연수에서 묶음과 자리 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5186,10 +5212,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 수로 일정한 증가량을 찾아 먼 번째 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5204,10 +5231,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "분자는 커지고 분모는 작아지는 분수 배열에서 빈칸 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5222,10 +5250,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "합이 일정한 분수 묶음의 특정 항",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41LinePatternOne",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5240,10 +5269,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "정사각 테두리 확장 배열의 값과 좌표",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5258,10 +5288,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "대각선 수 삼각 배열에서 행과 열의 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5276,10 +5307,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "위 두 수를 더해 만드는 삼각 배열의 먼 줄 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5294,10 +5326,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "30×30 테두리 배열의 마지막 칸",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5312,10 +5345,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "양손 손가락 왕복 배열의 수 위치",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5330,10 +5364,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "좌우 대칭 수 삼각형의 빈칸",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5348,10 +5383,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "요일 지그재그 배열의 수 위치",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5366,10 +5402,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "정사각 테두리 수 배열에서 주어진 행과 열의 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5384,10 +5421,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "연속 자연수 삼각 배열의 행 끝값",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "arrayNumberRules",
-      "variant": 1,
-      "difficultyBand": -1,
-      "sourceTier": "ability",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 8,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -5403,10 +5440,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "대각선 자연수 삼각 배열의 수 좌표",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5421,10 +5459,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "여덟 음판을 왕복해 두드릴 때 특정 번째 음 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArrayPatternTwo",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5436,13 +5475,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "같은 수만큼 커지는 배열을 첫째 수부터 특정 번째 수까지 더하기",
+      "typeLabel": "한 수를 연속한 자연수의 합으로 나타내는 방법 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5454,13 +5494,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "연속 홀수 합의 마지막 항",
+      "typeLabel": "처음 수부터 연속한 수의 합을 짝지어 계산하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "advancedArraySum",
+      "generatorKey": "source41ArraySumThree",
       "variant": 1,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -5473,13 +5513,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-2",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "홀수만큼 차이가 커지는 수 배열에서 수와 위치 찾기",
+      "typeLabel": "같은 간격으로 커지는 수의 긴 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5491,13 +5532,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "자연수를 연속한 수의 합으로 나타내는 방법 수",
+      "typeLabel": "달력의 같은 요일 날짜 합으로 특정 날짜 요일 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5509,13 +5551,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 70,
       "sourcePrintedPage": 66,
-      "typeLabel": "8열 수 배열표에서 3×3칸 합 중 가장 작은 값 찾기",
+      "typeLabel": "8열 수 배열표에서 3×3칸 합 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5527,13 +5570,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "마지막 수가 주어진 같은 간격 수 배열의 합 구하기",
+      "typeLabel": "떨어진 두 연속 자연수 구간의 합 차이",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5545,13 +5589,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "주어진 수를 연속한 자연수의 합으로 나타내는 방법 수",
+      "typeLabel": "파스칼 삼각형의 대각선 수 합",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5563,13 +5608,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "7열 수 배열표에서 2×3칸 합 중 가장 큰 값 찾기",
+      "typeLabel": "곱셈표의 크기와 전체 합으로 가로세로 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5581,13 +5627,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "평일 합으로 찾는 3주 뒤 날짜",
+      "typeLabel": "달력의 같은 요일 날짜 합으로 마지막 날 요일 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5599,13 +5646,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "홀수 증가 묶음의 특정 묶음 합",
+      "typeLabel": "연속한 짝수의 합에서 처음 수와 마지막 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5617,13 +5665,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 71,
       "sourcePrintedPage": 67,
-      "typeLabel": "가로·세로 세 칸 합의 교차칸",
+      "typeLabel": "같은 간격으로 오르는 가격의 합에서 가운데 가격 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ArraySumThree",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5638,10 +5687,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "ㄴ자에 놓인 세 수의 약속 계산에서 빈칸 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5656,10 +5706,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 가지 기호 약속 계산을 차례로 적용하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5674,10 +5725,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "두 가지 약속 계산을 차례로 적용하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5692,10 +5744,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "네 꼭짓점의 수로 가운데 값 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5710,10 +5763,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "가지처럼 연결된 수에 약속 계산 반복하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5728,10 +5782,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "나머지와 곱셈으로 정한 두 약속 계산을 차례로 적용하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5746,10 +5801,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "앞 수를 여러 번 곱한 뒤 뒤 수를 더하는 약속에서 빈 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5764,10 +5820,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 수를 두 번 곱한 뒤 수를 빼는 약속에서 빈 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5782,10 +5839,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수와 도형이 반복해 바뀌는 규칙에서 빈칸 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5797,13 +5855,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 73,
       "sourcePrintedPage": 69,
-      "typeLabel": "두 자리 수의 자릿값 변환",
+      "typeLabel": "두 자리 수에서 두 자리 숫자의 곱을 뺀 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5818,10 +5877,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "삼각형 꼭짓점의 수로 가운데 값 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41OperationRuleFour",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6042,10 +6102,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드로 만든 3 미만 소수의 합",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6060,10 +6121,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "중복 숫자 카드의 세 자리 수 개수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6078,10 +6140,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "최소·차소 소수 차의 숫자 카드",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6096,10 +6159,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "세 자리 구간의 최다 숫자 사용 횟수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6114,8 +6178,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "1부터 9999까지 특정 숫자가 쓰인 횟수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "conditionedNumberCount",
-      "variant": 1,
+      "generatorKey": "source41NumberCardSix",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false
@@ -6133,10 +6197,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "5의 배수 표기의 특정 숫자 카드 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "conditionedNumberCount",
-      "variant": 2,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 5,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
       "reviewLocked": false
     },
     {
@@ -6152,10 +6216,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "다섯 숫자 카드의 짝수 배열 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6170,10 +6235,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "가장 큰 수와 두 번째 큰 수의 차로 수 카드 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6188,10 +6254,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "제한 범위의 숫자 카드 부분배열 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6206,10 +6273,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "1부터 999까지 최소 사용 숫자·횟수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6221,13 +6289,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 77,
       "sourcePrintedPage": 73,
-      "typeLabel": "세 자리 구간의 최다 사용 숫자와 횟수",
+      "typeLabel": "세 자리 수 구간에서 가장 많이 쓰인 숫자의 횟수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41NumberCardSix",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     }
   ]
 };

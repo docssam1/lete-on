@@ -732,7 +732,13 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "복면산 곱셈식 완성하기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 0,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -745,7 +751,13 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "곱셈 세로셈의 숨은 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 1,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -758,7 +770,13 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "나눗셈 세로셈의 숨은 숫자 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 2,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -771,7 +789,13 @@
       "sourcePdfPage": 46,
       "sourcePrintedPage": 42,
       "typeLabel": "같은 숫자 배열의 곱셈 복원",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 3,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -784,7 +808,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "곱셈 세로셈 빈칸 채우기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 4,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -797,7 +827,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "뒤집힌 숫자 배열의 곱셈",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 5,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -810,7 +846,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈의 기호 합",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 6,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -823,7 +865,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "0과 1로 만든 곱셈식 세기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 7,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -836,7 +884,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "나눗셈 세로셈 빈칸 채우기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 8,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 3,
@@ -849,7 +903,13 @@
       "sourcePdfPage": 47,
       "sourcePrintedPage": 43,
       "typeLabel": "수 카드 곱셈식 모두 찾기",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "generatorKey": "source41CalculationCompletionSix",
+      "variant": 9,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,

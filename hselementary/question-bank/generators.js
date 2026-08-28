@@ -1863,6 +1863,103 @@
     return `<svg class="geometry-diagram clock-diagram" viewBox="0 0 180 180" aria-label="${hour}시 ${String(minute).padStart(2, "0")}분 시계"><circle cx="90" cy="90" r="76"/>${ticks}<line class="hour-hand" x1="90" y1="90" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}"/><line class="minute-hand" x1="90" y1="90" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}"/><circle cx="90" cy="90" r="4"/></svg>`;
   };
   const verticalOperation = (top, bottom, partials, total) => `<div class="long-operation" aria-label="세로 계산"><span>${top}</span><span>× ${bottom}</span><i></i>${partials.map(value => `<span>${value}</span>`).join("")}<i></i><strong>${total}</strong></div>`;
+  const source41CompletionSymbols = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥", "㉦", "㉧"];
+  const source41MaskAt = (value, indexes, replacement = "□") => [...String(value)]
+    .map((digit, index) => indexes.includes(index) ? replacement : digit)
+    .join("");
+  const source41CompletionMeta = values => Object.entries(values)
+    .map(([key, value]) => `data-${key}="${String(value).replace(/"/g, "&quot;")}"`)
+    .join(" ");
+  const source41DivisionTrace = (dividend, divisor) => {
+    const steps = [];
+    let carried = 0;
+    let started = false;
+    for (const digitText of String(dividend)) {
+      carried = carried * 10 + Number(digitText);
+      const quotientDigit = Math.floor(carried / divisor);
+      if (!started && quotientDigit === 0) continue;
+      started = true;
+      const product = quotientDigit * divisor;
+      const remainder = carried - product;
+      steps.push({ carried, quotientDigit, product, remainder });
+      carried = remainder;
+    }
+    return steps;
+  };
+  const source41DivisionWork = ({ divisor, dividend, quotient, divisorText = divisor, dividendText = dividend, quotientText = quotient, stepMasks = [] }) => {
+    const steps = source41DivisionTrace(dividend, divisor);
+    const rows = steps.map((step, index) => {
+      const mask = stepMasks[index] || {};
+      return `<div class="division-step"><span>${index + 1}단계</span><strong>${source41MaskAt(step.carried, mask.carried || [])}</strong><b>− ${source41MaskAt(step.product, mask.product || [])}</b><em>= ${source41MaskAt(step.remainder, mask.remainder || [])}</em></div>`;
+    }).join("");
+    return `<div class="source-division-work" aria-label="나눗셈 세로 계산"><div class="division-quotient">${quotientText}</div><div class="division-expression"><span>${divisorText}</span><strong>${dividendText}</strong></div><div class="division-steps">${rows}</div></div>`;
+  };
+  let source41SymbolMultiplicationPoolCache;
+  const source41SymbolMultiplicationPool = () => {
+    if (source41SymbolMultiplicationPoolCache) return source41SymbolMultiplicationPoolCache;
+    const groups = new Map();
+    for (let multiplicand = 306; multiplicand <= 396; multiplicand += 10) {
+      for (let multiplier = 10; multiplier <= 99; multiplier += 1) {
+        const rows = [
+          String(multiplicand),
+          String(multiplier),
+          String(multiplicand * (multiplier % 10)),
+          String(multiplicand * Math.floor(multiplier / 10)),
+          String(multiplicand * multiplier)
+        ];
+        const digitToToken = new Map();
+        let nextToken = 0;
+        const encodedRows = rows.map(row => [...row].map(digit => {
+          if (digit === "3" || digit === "6") return digit;
+          if (!digitToToken.has(digit)) digitToToken.set(digit, String.fromCharCode(65 + nextToken++));
+          return digitToToken.get(digit);
+        }).join(""));
+        if (digitToToken.size !== 6) continue;
+        const signature = encodedRows.join("|");
+        const candidates = groups.get(signature) || [];
+        candidates.push({ multiplicand, multiplier, rows, encodedRows, digitToToken });
+        groups.set(signature, candidates);
+      }
+    }
+    source41SymbolMultiplicationPoolCache = [...groups.values()]
+      .filter(candidates => candidates.length === 1)
+      .map(([candidate]) => candidate);
+    return source41SymbolMultiplicationPoolCache;
+  };
+  let source41CardMultiplicationPoolCache;
+  const source41CardMultiplicationPool = () => {
+    if (source41CardMultiplicationPoolCache) return source41CardMultiplicationPoolCache;
+    const digitSets = [];
+    const choose = (start, selected) => {
+      if (selected.length === 6) {
+        digitSets.push(selected);
+        return;
+      }
+      for (let digit = start; digit <= 9; digit += 1) choose(digit + 1, [...selected, digit]);
+    };
+    choose(1, []);
+    const pools = [];
+    for (const digits of digitSets) for (let fixedLast = 0; fixedLast <= 9; fixedLast += 1) for (let multiplier = 2; multiplier <= 9; multiplier += 1) {
+      const answers = [];
+      for (const hundreds of digits) for (const tens of digits) {
+        if (hundreds === tens) continue;
+        const multiplicand = 100 * hundreds + 10 * tens + fixedLast;
+        const product = multiplicand * multiplier;
+        const productText = String(product);
+        if (productText.length !== 4) continue;
+        const productDigits = [...productText.slice(0, 3)].map(Number);
+        const symbolicDigits = [hundreds, tens, ...productDigits];
+        if (productText[3] !== String((fixedLast * multiplier) % 10)) continue;
+        if (!productDigits.every(digit => digits.includes(digit))) continue;
+        if (new Set(symbolicDigits).size !== symbolicDigits.length) continue;
+        answers.push(Number(productText.slice(0, 3)));
+      }
+      const uniqueAnswers = [...new Set(answers)].sort((left, right) => left - right);
+      if (uniqueAnswers.length >= 2 && uniqueAnswers.length <= 5) pools.push({ digits, fixedLast, multiplier, finalDigit: (fixedLast * multiplier) % 10, answers: uniqueAnswers });
+    }
+    source41CardMultiplicationPoolCache = pools;
+    return pools;
+  };
   const gridShapeSvg = (points, size = 8, guide = "", attributes = {}) => {
     const margin = 18;
     const cell = 18;
@@ -8582,6 +8679,753 @@
       const hidden = productText[index];
       const shown = [...productText].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
       return result(`세로셈 결과의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, multiplier, [onesPartial, tensPartial], shown)}`, hidden, `${multiplicand} × ${multiplier} = ${product.toLocaleString()}이므로 □는 ${hidden}입니다.`);
+    },
+    source41LinePatternOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("일렬 수 규칙 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 0) {
+        const index = int(rng, 18 + level * 8, 40 + level * 15);
+        const numeratorStart = int(rng, 1, 4);
+        const denominatorStart = int(rng, 4, 8);
+        const numeratorStep = int(rng, 2 + level, 5 + level);
+        const denominatorStep = numeratorStep + int(rng, 1, 3);
+        const numerator = numeratorStart + (index - 1) * numeratorStep;
+        const denominator = denominatorStart + (index - 1) * denominatorStep;
+        const shown = Array.from({ length: 4 }, (_, i) => `${numeratorStart + i * numeratorStep}/${denominatorStart + i * denominatorStep}`).join(", ");
+        return result(`분수가 일정한 규칙으로 나열되어 있습니다. ${index}번째 분수를 구하세요.<div class="sequence">${shown}, …</div>`, `${numerator}/${denominator}`, `분자는 ${numeratorStep}씩, 분모는 ${denominatorStep}씩 커집니다. ${index}번째 분수는 ${numeratorStart}+${numeratorStep}×${index - 1} / ${denominatorStart}+${denominatorStep}×${index - 1} = ${numerator}/${denominator}입니다.`);
+      }
+      if (variant === 1) {
+        const firstStart = int(rng, 8, 18);
+        const secondStart = int(rng, 20, 34);
+        const step = int(rng, 5 + level, 9 + level * 2);
+        const position = int(rng, 24 + level * 10, 55 + level * 15);
+        const answer = position % 2 ? firstStart + Math.floor(position / 2) * step : secondStart + (position / 2 - 1) * step;
+        const shown = Array.from({ length: 8 }, (_, i) => i % 2 ? secondStart + Math.floor(i / 2) * step : firstStart + Math.floor(i / 2) * step).join(", ");
+        return result(`두 수열을 번갈아 놓았습니다. ${position}번째 수를 구하세요.<div class="sequence">${shown}, …</div>`, answer, `홀수 번째와 짝수 번째를 따로 보면 각각 ${step}씩 커집니다. ${position}번째 수는 ${answer}입니다.`);
+      }
+      if (variant === 2) {
+        const position = int(rng, 30 + level * 20, 90 + level * 35);
+        let diagonal = 1;
+        while (diagonal * (diagonal + 1) / 2 < position) diagonal += 1;
+        const before = diagonal * (diagonal - 1) / 2;
+        const offset = position - before;
+        const pair = [offset, diagonal + 1 - offset];
+        const askedPair = [int(rng, 3, 8 + level * 3), int(rng, 3, 8 + level * 3)];
+        const askedPosition = (askedPair[0] + askedPair[1] - 2) * (askedPair[0] + askedPair[1] - 1) / 2 + askedPair[0];
+        return result(`순서쌍을 두 수의 합이 작은 대각선부터 (1,1), (1,2), (2,1), (1,3), …의 순서로 놓았습니다. ${position}번째 순서쌍과 (${askedPair.join(", ")})의 위치를 차례로 쓰세요.`, `(${pair.join(", ")}), ${askedPosition}`, `${position}은 ${diagonal}번째 대각선의 ${offset}번째이므로 (${pair.join(", ")})입니다. (${askedPair.join(", ")})은 합이 ${askedPair[0] + askedPair[1]}인 대각선의 ${askedPair[0]}번째이므로 ${askedPosition}번째입니다.`);
+      }
+      if (variant === 3) {
+        const denominator = int(rng, 8 + level * 4, 18 + level * 8);
+        const numerator = int(rng, 1, denominator);
+        const answer = denominator * (denominator - 1) / 2 + numerator;
+        return result(`1/1, 1/2, 2/2, 1/3, 2/3, 3/3, …과 같이 분모가 같은 분수를 한 묶음으로 나열했습니다. ${numerator}/${denominator}은 몇 번째 분수인가요?`, answer, `분모가 ${denominator - 1}까지인 분수는 1+2+…+${denominator - 1}=${denominator * (denominator - 1) / 2}개입니다. 그 뒤 ${numerator}번째이므로 ${answer}번째입니다.`);
+      }
+      if (variant === 4) {
+        let numeratorStart;
+        let denominatorStart;
+        let numeratorStep;
+        let denominatorStep;
+        let index;
+        do {
+          index = int(rng, 7 + level * 3, 18 + level * 6);
+          numeratorStep = int(rng, 2, 5 + level);
+          denominatorStep = int(rng, 1, numeratorStep - 1);
+          numeratorStart = int(rng, 1, 5);
+          denominatorStart = numeratorStart + (numeratorStep - denominatorStep) * (index - 1);
+        } while (denominatorStart <= numeratorStart);
+        const shown = Array.from({ length: 5 }, (_, i) => `${numeratorStart + i * numeratorStep}/${denominatorStart + i * denominatorStep}`).join(", ");
+        return result(`분수의 분자와 분모가 각각 일정하게 커집니다. 처음으로 1과 같은 값이 되는 분수는 몇 번째인가요?<div class="sequence">${shown}, …</div>`, index, `n번째에서 분자와 분모의 차는 ${denominatorStart - numeratorStart}−${numeratorStep - denominatorStep}×(n−1)입니다. 이 값이 0이 되는 것은 ${index}번째입니다.`);
+      }
+      if (variant === 5) {
+        const arithmeticStart = int(rng, 2, 8);
+        const arithmeticStep = int(rng, 3, 7);
+        const geometricStart = int(rng, 1, 3);
+        const geometricRatio = int(rng, 2, 3);
+        const fibonacciStart = [int(rng, 1, 3), int(rng, 1, 4)];
+        const cycle = shuffle(rng, [1, 3, 6, 9]);
+        const growing = [3, 5, 9, 15, 23, 33, 45];
+        const fib = [fibonacciStart[0], fibonacciStart[1]];
+        while (fib.length < 7) fib.push(fib.at(-1) + fib.at(-2));
+        const sequences = [
+          [Array.from({ length: 7 }, (_, i) => arithmeticStart + i * arithmeticStep), 4],
+          [Array.from({ length: 7 }, (_, i) => geometricStart * geometricRatio ** i), 4],
+          [fib, 6],
+          [Array.from({ length: 9 }, (_, i) => cycle[i % cycle.length]), 7],
+          [growing, 5]
+        ];
+        const answers = sequences.map(([values, hidden]) => values[hidden]);
+        const body = sequences.map(([values, hidden], i) => `${i + 1}) ${values.map((value, index) => index === hidden ? "□" : value).join(", ")}`).join("<br>");
+        return result(`각 수열의 규칙을 찾아 빈칸에 알맞은 수를 차례로 쓰세요.<div class="sequence">${body}</div>`, answers.join(", "), `차례로 같은 수만큼 증가, 같은 수를 곱함, 앞의 두 수의 합, 반복, 홀수만큼 증가하는 규칙입니다. 답은 ${answers.join(", ")}입니다.`);
+      }
+      if (variant === 6) {
+        const start = int(rng, 2, 12);
+        const step = int(rng, 4 + level, 9 + level * 2);
+        const index = int(rng, 35 + level * 15, 80 + level * 30);
+        const answer = start + (index - 1) * step;
+        return result(`수들이 ${step}씩 커지는 규칙으로 나열되어 있습니다. ${index}번째 수를 구하세요.<div class="sequence">${Array.from({ length: 5 }, (_, i) => start + i * step).join(", ")}, …</div>`, answer, `${index}번째 수는 ${start}+${step}×${index - 1}=${answer}입니다.`);
+      }
+      if (variant === 7) {
+        const target = int(rng, 120 + level * 100, 480 + level * 260);
+        const group = Math.floor(Math.log2(target)) + 1;
+        const first = 2 ** (group - 1);
+        const position = target - first + 1;
+        return result(`자연수를 (1), (2,3), (4,5,6,7), (8부터 15)처럼 묶음의 크기를 두 배씩 늘여 묶었습니다. ${target}은 몇 번째 묶음의 몇 번째 수인가요?`, `${group}, ${position}`, `${group}번째 묶음은 ${first}부터 ${2 ** group - 1}까지입니다. ${target}은 그 묶음의 ${position}번째입니다.`);
+      }
+      if (variant === 8) {
+        const start = int(rng, 2, 9);
+        const step = int(rng, 2, 8);
+        const index = int(rng, 20 + level * 10, 45 + level * 20);
+        const second = start + step;
+        const answer = start + (index - 1) * step;
+        return result(`앞의 수에 똑같은 수를 더하여 나열했습니다. ${index}번째 수를 구하세요.<div class="sequence">${start}, ${second}, ${start + 2 * step}, ${start + 3 * step}, …</div>`, answer, `두 수의 차는 ${step}입니다. ${index}번째 수는 ${start}+${step}×${index - 1}=${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const numeratorStart = int(rng, 1, 8);
+        const denominatorStart = int(rng, 500 + level * 200, 1200 + level * 400);
+        const numeratorStep = int(rng, 2, 6);
+        const denominatorStep = -int(rng, 2, 7);
+        const index = int(rng, 60 + level * 20, 110 + level * 35);
+        const numerator = numeratorStart + (index - 1) * numeratorStep;
+        const denominator = denominatorStart + (index - 1) * denominatorStep;
+        return result(`분자는 ${numeratorStep}씩 커지고 분모는 ${Math.abs(denominatorStep)}씩 작아지는 분수 배열에서 ${index}번째 분수를 구하세요.<div class="sequence">${numeratorStart}/${denominatorStart}, ${numeratorStart + numeratorStep}/${denominatorStart + denominatorStep}, ${numeratorStart + 2 * numeratorStep}/${denominatorStart + 2 * denominatorStep}, …</div>`, `${numerator}/${denominator}`, `분자는 ${numeratorStart}+${numeratorStep}×${index - 1}=${numerator}, 분모는 ${denominatorStart}−${Math.abs(denominatorStep)}×${index - 1}=${denominator}입니다.`);
+      }
+      const position = int(rng, 50 + level * 30, 140 + level * 70);
+      let group = 1;
+      while (group * (group + 1) / 2 < position) group += 1;
+      const offset = position - group * (group - 1) / 2;
+      const numerator = group + 1 - offset;
+      const denominator = offset;
+      return result(`1/1, 2/1, 1/2, 3/1, 2/2, 1/3, …과 같이 분자와 분모의 합이 같은 분수를 한 묶음으로 나열했습니다. ${position}번째 분수를 구하세요.`, `${numerator}/${denominator}`, `${position}번째는 ${group}번째 묶음의 ${offset}번째입니다. 이 묶음에서 분자+분모=${group + 1}이므로 ${numerator}/${denominator}입니다.`);
+    },
+    source41ArrayPatternTwo({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("여러 배열의 규칙 원문 분기는 0부터 10까지여야 합니다.");
+      const squareValue = (row, column) => row >= column ? row * row - column + 1 : (column - 1) ** 2 + row;
+      const triangular = value => value * (value + 1) / 2;
+      const bounceAt = (length, position) => {
+        const cycle = [...Array.from({ length }, (_, index) => index), ...Array.from({ length: length - 2 }, (_, index) => length - 2 - index)];
+        return cycle[(position - 1) % cycle.length];
+      };
+      const arrayGrid = size => {
+        const rows = Array.from({ length: size }, (_, row) => `<tr>${Array.from({ length: size }, (_, column) => `<td>${squareValue(row + 1, column + 1)}</td>`).join("")}</tr>`).join("");
+        return `<table class="number-grid" aria-label="정사각 테두리 수 배열"><tbody>${rows}</tbody></table>`;
+      };
+      if (variant === 0) {
+        const size = int(rng, 7 + level * 2, 11 + level * 4);
+        const row = int(rng, 2, size);
+        const column = int(rng, 2, size);
+        const targetRow = int(rng, 2, size);
+        const targetColumn = int(rng, 2, size);
+        const target = squareValue(targetRow, targetColumn);
+        const diagonal = squareValue(size, size);
+        const difference = Math.abs(squareValue(row, column) - squareValue(column, row));
+        return result(`정사각형 테두리를 한 겹씩 늘리며 수를 놓았습니다. [${size},${size}], [${row},${column}]과 [${column},${row}]의 차, 수 ${target}의 위치를 차례로 구하세요.${arrayGrid(Math.min(size, 8))}`, `${diagonal}, ${difference}, [${targetRow},${targetColumn}]`, `[r,c]는 r≥c이면 r²−c+1, c>r이면 (c−1)²+r입니다. 따라서 답은 ${diagonal}, ${difference}, [${targetRow},${targetColumn}]입니다.`);
+      }
+      if (variant === 1) {
+        const row = int(rng, 8 + level * 4, 18 + level * 8);
+        const column = int(rng, 2, row - 1);
+        const answer = triangular(row) - column + 1;
+        return result(`첫째 줄에 1, 둘째 줄에 3, 2, 셋째 줄에 6, 5, 4처럼 연속한 수를 오른쪽 아래 대각선으로 배열했습니다. ${row}번째 줄의 ${column}번째 수를 구하세요.`, answer, `${row}번째 줄의 첫 수는 1+2+…+${row}=${triangular(row)}이고 오른쪽으로 갈 때 1씩 작아집니다. ${column}번째 수는 ${answer}입니다.`);
+      }
+      if (variant === 2) {
+        const row = int(rng, 8 + level * 3, 13 + level * 5);
+        const answer = 2 ** (row - 1);
+        return result(`위의 두 수를 더해 아래 수를 만드는 수 삼각형이 있습니다. 첫째 줄을 1로 할 때 ${row}번째 줄의 모든 수의 합을 구하세요.<div class="sequence">1<br>1 1<br>1 2 1<br>1 3 3 1<br>…</div>`, answer, `각 줄의 합은 1, 2, 4, 8처럼 두 배가 됩니다. ${row}번째 줄의 합은 2를 ${row - 1}번 곱한 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const size = int(rng, 12 + level * 6, 30 + level * 10);
+        const answer = squareValue(size, size);
+        return result(`가로와 세로가 각각 ${size}칸인 표에 정사각형 테두리를 한 겹씩 늘리며 수를 놓았습니다. 오른쪽 끝 맨 마지막 칸의 수를 구하세요.`, answer, `마지막 줄의 수는 ${size ** 2}부터 왼쪽에서 오른쪽으로 1씩 작아집니다. 오른쪽 끝은 ${size ** 2}−${size}+1=${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const position = int(rng, 70 + level * 40, 160 + level * 90);
+        const fingerNames = ["왼손 새끼", "왼손 약지", "왼손 가운데", "왼손 검지", "왼손 엄지", "오른손 엄지", "오른손 검지", "오른손 가운데", "오른손 약지", "오른손 새끼"];
+        const index = bounceAt(fingerNames.length, position);
+        return result(`왼손 새끼손가락부터 오른손 새끼손가락까지 차례로 센 뒤 반대 방향으로 되돌아오며 계속 셉니다. ${position}은 어느 손의 어느 손가락에서 세어지나요?`, fingerNames[index], `한 왕복은 ${2 * fingerNames.length - 2}번입니다. ${position}번째 위치는 ${fingerNames[index]}입니다.`);
+      }
+      if (variant === 5) {
+        const row = int(rng, 7 + level * 2, 11 + level * 3);
+        let values = [1];
+        for (let current = 2; current <= row; current += 1) values = [1, ...values.slice(0, -1).map((value, index) => value + values[index + 1]), 1];
+        const firstBlank = int(rng, 1, values.length - 3);
+        const secondBlank = int(rng, firstBlank + 1, values.length - 2);
+        const shown = values.map((value, index) => index === firstBlank || index === secondBlank ? "□" : value).join(" ");
+        return result(`양끝은 1이고 가운데 수는 바로 위의 두 수를 더해 만드는 수 삼각형입니다. ${row}번째 줄의 빈칸을 왼쪽부터 쓰세요.<div class="sequence">${shown}</div>`, `${values[firstBlank]}, ${values[secondBlank]}`, `바로 위의 두 수를 더해 차례로 계산하면 ${row}번째 줄은 ${values.join(", ")}입니다.`);
+      }
+      if (variant === 6) {
+        const position = int(rng, 120 + level * 80, 360 + level * 150);
+        const weekdays = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+        const index = bounceAt(weekdays.length, position);
+        return result(`일요일부터 토요일까지 수를 차례로 쓴 뒤 토요일에서 방향을 바꾸어 일요일 쪽으로 쓰는 일을 반복합니다. ${position}은 어느 요일 아래에 쓰이나요?`, weekdays[index], `요일 7개를 왕복하는 주기는 12입니다. ${position}번째 수는 ${weekdays[index]} 아래에 놓입니다.`);
+      }
+      if (variant === 7) {
+        const size = int(rng, 8 + level * 3, 18 + level * 5);
+        const row = int(rng, 2, size);
+        const column = int(rng, 2, size);
+        const answer = squareValue(row, column);
+        return result(`정사각형 테두리를 한 겹씩 늘리며 수를 놓은 배열에서 [${row},${column}]의 수를 구하세요.${arrayGrid(Math.min(size, 8))}`, answer, `${row >= column ? `${row}²−${column}+1` : `(${column}−1)²+${row}`}=${answer}입니다.`);
+      }
+      if (variant === 8) {
+        const row = int(rng, 12 + level * 7, 30 + level * 15);
+        const answer = triangular(row);
+        return result(`첫째 줄에는 1, 둘째 줄에는 2와 3, 셋째 줄에는 4, 5, 6처럼 연속한 자연수를 삼각형 모양으로 놓았습니다. ${row}번째 줄의 가장 오른쪽 수를 구하세요.`, answer, `${row}번째 줄까지 놓인 수의 개수는 1+2+…+${row}=${answer}이므로 가장 오른쪽 수는 ${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const target = int(rng, 80 + level * 60, 260 + level * 140);
+        let row = 1;
+        while (triangular(row) < target) row += 1;
+        const column = triangular(row) - target + 1;
+        return result(`각 줄에 연속한 자연수를 큰 수부터 작은 수 순서로 놓았습니다. ${target}은 몇 번째 줄의 몇 번째 위치인가요?`, `${row}, ${column}`, `${triangular(row - 1) + 1}부터 ${triangular(row)}까지가 ${row}번째 줄입니다. 큰 수부터 놓으므로 ${target}은 ${column}번째 위치입니다.`);
+      }
+      const position = int(rng, 180 + level * 100, 520 + level * 180);
+      const notes = ["도", "레", "미", "파", "솔", "라", "시", "높은 도"];
+      const index = bounceAt(notes.length, position);
+      return result(`8개의 실로폰 건반을 낮은 도부터 높은 도까지 친 뒤 반대 방향으로 되돌아오며 계속 칩니다. ${position}번째로 치는 계이름을 구하세요.`, notes[index], `8개 건반을 왕복하는 주기는 14입니다. ${position}번째 건반은 ${notes[index]}입니다.`);
+    },
+    source41ArraySumThree({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("배열된 수의 합 원문 분기는 0부터 10까지여야 합니다.");
+      const sumTo = value => value * (value + 1) / 2;
+      const consecutiveRepresentations = target => {
+        const output = [];
+        for (let start = 1; start <= target; start += 1) {
+          let sum = 0;
+          for (let end = start; end <= target; end += 1) {
+            sum += end;
+            if (sum === target) output.push([start, end]);
+            if (sum >= target) break;
+          }
+        }
+        return output;
+      };
+      const weekdays = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+      const pascalRows = count => {
+        const rows = [[1]];
+        while (rows.length < count) {
+          const previous = rows.at(-1);
+          rows.push([1, ...previous.slice(0, -1).map((value, index) => value + previous[index + 1]), 1]);
+        }
+        return rows;
+      };
+      if (variant === 0) {
+        let target;
+        let representations;
+        do {
+          target = int(rng, 45 + level * 40, 180 + level * 110);
+          representations = consecutiveRepresentations(target);
+        } while (representations.length < 2);
+        return result(`${target}을 연속한 한 개 이상의 자연수의 합으로 나타내는 방법은 모두 몇 가지인가요?`, representations.length, `${representations.map(([start, end]) => start === end ? String(start) : `${start}+…+${end}`).join(", ")}의 ${representations.length}가지입니다.`);
+      }
+      if (variant === 1) {
+        const ends = [int(rng, 20, 40), int(rng, 50, 90), int(rng, 91, 160 + level * 30)];
+        const answers = ends.map(sumTo);
+        return result(`1부터 다음 수까지의 합을 차례로 구하세요.<div class="sequence">1) ${ends[0]} &nbsp; 2) ${ends[1]} &nbsp; 3) ${ends[2]}</div>`, answers.join(", "), `처음 수와 마지막 수를 짝지어 계산하면 답은 ${answers.join(", ")}입니다.`);
+      }
+      if (variant === 2) {
+        const start = int(rng, 4, 16);
+        const step = int(rng, 3 + level, 8 + level * 2);
+        const count = int(rng, 80 + level * 40, 170 + level * 70);
+        const last = start + (count - 1) * step;
+        const answer = count * (start + last) / 2;
+        return result(`다음과 같이 같은 수만큼 커지는 수들을 모두 더한 값을 구하세요.<div class="sequence">${start}+${start + step}+${start + 2 * step}+…+${last}</div>`, answer, `항은 ${count}개이고 처음 수와 마지막 수의 합은 ${start + last}입니다. 합은 ${count}×${start + last}÷2=${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const februaryDays = 28;
+        const februaryFirst = int(rng, 0, 6);
+        const marchTarget = int(rng, 8, 24);
+        const marchFirst = (februaryFirst + februaryDays) % 7;
+        const answer = weekdays[(marchFirst + marchTarget - 1) % 7];
+        const markedWeekday = int(rng, 0, 6);
+        const markedDates = Array.from({ length: februaryDays }, (_, index) => index + 1).filter(date => (februaryFirst + date - 1) % 7 === markedWeekday);
+        return result(`2월은 28일까지 있고, 달력에서 같은 요일인 날짜 ${markedDates.join(", ")}를 표시했습니다. 표시한 날짜의 합은 ${markedDates.reduce((sum, date) => sum + date, 0)}입니다. 같은 해 3월 ${marchTarget}일은 무슨 요일인가요?`, answer, `2월은 28일이므로 3월 1일은 2월 1일과 같은 요일입니다. 달력 칸을 ${marchTarget - 1}칸 옮기면 ${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const width = 8;
+        const firstTopRow = int(rng, 1, 8 + level * 5);
+        const firstTopColumn = int(rng, 1, width - 2);
+        const secondTopRow = int(rng, firstTopRow + 3, firstTopRow + 10 + level * 4);
+        const secondTopColumn = int(rng, 1, width - 2);
+        const blockSum = (row, column) => {
+          const topLeft = (row - 1) * width + column;
+          return 9 * (topLeft + width + 1);
+        };
+        const firstSum = blockSum(firstTopRow, firstTopColumn);
+        const secondSum = blockSum(secondTopRow, secondTopColumn);
+        const answer = (secondTopRow - 1) * width + secondTopColumn;
+        return result(`1부터 차례로 한 줄에 8개씩 쓴 표에서 붙어 있는 3×3칸의 합을 구했습니다. 한 묶음의 합은 ${firstSum}, 다른 묶음의 합은 ${secondSum}입니다. 합이 ${secondSum}인 9개 수 중 가장 작은 수를 구하세요.`, answer, `3×3칸의 합은 가운데 수의 9배입니다. 가운데 수는 ${secondSum}÷9=${secondSum / 9}이고 가장 작은 수는 가운데에서 위로 8, 왼쪽으로 1을 간 ${answer}입니다.`);
+      }
+      if (variant === 5) {
+        const count = int(rng, 60 + level * 20, 120 + level * 30);
+        const firstStart = int(rng, 1, 40);
+        const gap = int(rng, 120 + level * 60, 300 + level * 100);
+        const secondStart = firstStart + gap;
+        const answer = gap * count;
+        return result(`${firstStart}부터 연속한 ${count}개 자연수의 합을 ㉠, ${secondStart}부터 연속한 ${count}개 자연수의 합을 ㉡이라 할 때 ㉡−㉠을 구하세요.`, answer, `두 묶음의 같은 위치에 있는 수끼리의 차가 모두 ${gap}이고 수가 ${count}개이므로 차는 ${gap}×${count}=${answer}입니다.`);
+      }
+      if (variant === 6) {
+        const rowCount = int(rng, 8 + level * 2, 13 + level * 3);
+        const rows = pascalRows(rowCount);
+        const diagonal = int(rng, 1, Math.min(4 + level, rowCount - 2));
+        const values = rows.slice(diagonal).map(row => row[diagonal]);
+        const take = int(rng, 4, Math.min(values.length, 7 + level));
+        const selected = values.slice(0, take);
+        const answer = selected.reduce((sum, value) => sum + value, 0);
+        return result(`양끝이 1이고 가운데 수가 위의 두 수의 합인 수 삼각형에서 한 대각선을 따라 ${selected.join(", ")}가 놓였습니다. 이 수들의 합을 구하세요.`, answer, `${selected.join("+")}=${answer}입니다.`);
+      }
+      if (variant === 7) {
+        const rows = int(rng, 6 + level * 2, 14 + level * 4);
+        const columns = int(rng, 5 + level * 2, 12 + level * 4);
+        const corner = rows * columns;
+        const total = sumTo(rows) * sumTo(columns);
+        return result(`세로줄 번호와 가로줄 번호를 곱해 표를 채웠습니다. 오른쪽 아래 수는 ${corner}이고 표의 모든 수의 합은 ${total}입니다. 가로줄 수와 세로줄 수를 작은 수부터 쓰세요.`, [rows, columns].sort((a, b) => a - b).join(", "), `오른쪽 아래 수는 가로줄 수×세로줄 수이고, 전체 합은 (1부터 가로줄 수의 합)×(1부터 세로줄 수의 합)입니다. 조건을 만족하는 수는 ${rows}, ${columns}입니다.`);
+      }
+      if (variant === 8) {
+        const monthDays = pick(rng, [28, 29, 30, 31]);
+        const firstWeekday = int(rng, 0, 6);
+        const markedWeekday = int(rng, 0, 6);
+        const dates = Array.from({ length: monthDays }, (_, index) => index + 1).filter(date => (firstWeekday + date - 1) % 7 === markedWeekday);
+        const sum = dates.reduce((total, date) => total + date, 0);
+        const answer = weekdays[(firstWeekday + monthDays - 1) % 7];
+        return result(`${monthDays}일까지 있는 달력에서 같은 요일의 날짜들을 색칠했더니 합이 ${sum}이었습니다. 색칠한 날짜는 ${dates.length}개입니다. 이달의 마지막 날은 무슨 요일인가요?`, answer, `색칠한 날짜는 ${dates.join(", ")}이고 달의 첫날부터 ${monthDays - 1}칸 이동한 마지막 날은 ${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const count = int(rng, 10 + level * 6, 24 + level * 8) * 2;
+        const first = int(rng, 4 + level * 4, 40 + level * 12) * 2;
+        const last = first + 2 * (count - 1);
+        const sum = count * (first + last) / 2;
+        return result(`${sum}을 연속한 ${count}개의 짝수의 합으로 나타냈습니다. 가장 작은 짝수와 가장 큰 짝수를 차례로 구하세요.`, `${first}, ${last}`, `가운데 두 수의 평균은 ${sum}÷${count}=${sum / count}입니다. 2씩 벌어진 ${count}개 수이므로 처음은 ${first}, 마지막은 ${last}입니다.`);
+      }
+      const count = int(rng, 15 + level * 8, 29 + level * 12) * 2 + 1;
+      const middle = int(rng, 120 + level * 50, 360 + level * 120);
+      const step = int(rng, 5, 20);
+      const total = count * middle;
+      return result(`물건 ${count}개를 한 줄로 놓았습니다. 가운데 물건에서 양끝으로 갈수록 가격이 ${step}원씩 달라지고 전체 가격의 합은 ${total}원입니다. 가운데 물건의 가격을 구하세요.`, middle, `가격은 가운데를 기준으로 같은 차이만큼 큰 값과 작은 값이 짝을 이룹니다. 평균은 가운데 가격과 같으므로 ${total}÷${count}=${middle}원입니다.`);
+    },
+    source41OperationRuleFour({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("연산의 규칙 원문 분기는 0부터 10까지여야 합니다.");
+      const table = rows => `<div class="source-rule-table">${rows.map(row => `<div>${row}</div>`).join("")}</div>`;
+      const lShape = (top, left, right, blank = false) => `<div class="source-l-shape"><span class="top">${blank ? "□" : top}</span><span>${left}</span><span>${right}</span></div>`;
+      const cornerBoard = (values, center) => `<div class="source-corner-board"><span>${values[0]}</span><span>${values[1]}</span><strong>${center}</strong><span>${values[2]}</span><span>${values[3]}</span></div>`;
+      const digitSum = value => [...String(value)].reduce((sum, digit) => sum + Number(digit), 0);
+
+      if (variant === 0) {
+        const divisor = 3;
+        const left = int(rng, 5 + level * 3, 18 + level * 6) * divisor;
+        const right = int(rng, 3 + level, 12 + level * 3);
+        const answer = left * right / divisor;
+        const examples = [[9, 2], [8, 9], [5, 9]].map(([a, b]) => lShape(a * b / 3, a, b)).join("");
+        return result(`보기의 ㄴ자 모양에서 위 수는 아래 두 수를 곱한 뒤 3으로 나눈 수입니다. 빈칸을 구하세요.<div class="source-rule-examples">${examples}</div>${lShape(answer, left, right, true)}`, answer, `${left}×${right}÷${divisor}=${answer}입니다. 문제에 제시된 나누는 수 ${divisor}를 적용했습니다.`);
+      }
+      if (variant === 1) {
+        const first = int(rng, 3 + level, 9 + level * 2);
+        const second = int(rng, 2, 8 + level);
+        const circle = (a, b) => a + b - 2;
+        const diamond = (a, b) => a + 3 * b;
+        const inner = circle(first, second);
+        const answer = diamond(inner, second + 1);
+        const examples = table(["1◎1=0", "3◎1=2", "6◎9=13", "2◇1=5", "5◇2=11", "8◇3=17"]);
+        return result(`보기에서 ◎는 두 수를 더한 뒤 2를 빼고, ◇는 앞 수에 뒤 수의 3배를 더하는 약속입니다. (${first}◎${second})◇${second + 1}을 계산하세요.${examples}`, answer, `${first}◎${second}=${inner}, ${inner}◇${second + 1}=${inner}+3×${second + 1}=${answer}입니다.`);
+      }
+      if (variant === 2) {
+        const a = int(rng, 3 + level, 9 + level * 2);
+        const b = int(rng, 3 + level, 9 + level * 2);
+        const c = int(rng, 4 + level, 10 + level * 2);
+        const square = (x, y) => (x + 1) * (y + 1);
+        const circle = (x, y) => (x - 1) * (y - 1);
+        const left = circle(a, b);
+        const right = circle(c, b + 1);
+        const answer = square(left, right);
+        const examples = table(["3□4=20", "2□7=24", "5□5=36", "3○4=6", "2○7=6", "5○5=16"]);
+        return result(`보기에서 □는 두 수에 각각 1을 더해 곱하고, ○는 각각 1을 빼서 곱하는 약속입니다. (${a}○${b})□(${c}○${b + 1})을 계산하세요.${examples}`, answer, `${a}○${b}=${left}, ${c}○${b + 1}=${right}이므로 (${left}+1)×(${right}+1)=${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const start = int(rng, 2 + level * 3, 18 + level * 5);
+        const values = [start, start + 1, start + 2, start + 3];
+        const answer = (values[0] + values[1]) * (values[2] + values[3]);
+        return result(`네 꼭짓점의 위 두 수의 합과 아래 두 수의 합을 곱해 가운데 수를 만들었습니다. 빈칸을 구하세요.<div class="source-rule-examples">${cornerBoard([1, 2, 3, 4], 21)}${cornerBoard([5, 6, 7, 8], 165)}</div>${cornerBoard(values, "□")}`, answer, `(${values[0]}+${values[1]})×(${values[2]}+${values[3]})=${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const top = [int(rng, 12, 49), int(rng, 20, 79)];
+        const second = [int(rng, 20, 89), int(rng, 20, 89)];
+        const middle = [digitSum(top[0]) + digitSum(top[1]), digitSum(second[0]) + digitSum(second[1])];
+        const answer = digitSum(middle[0]) + digitSum(middle[1]);
+        return result(`연결된 두 수의 모든 자리 숫자를 더해 아래 수를 만듭니다. 마지막 빈칸을 구하세요.<div class="source-branch-rule"><span>${top[0]}</span><span>${top[1]}</span><strong>${middle[0]}</strong><span>${second[0]}</span><span>${second[1]}</span><strong>${middle[1]}</strong><b>□</b></div>`, answer, `첫 결과는 ${digitSum(top[0])}+${digitSum(top[1])}=${middle[0]}, 둘째 결과는 ${digitSum(second[0])}+${digitSum(second[1])}=${middle[1]}입니다. 다시 자리 숫자를 더하면 ${answer}입니다.`);
+      }
+      if (variant === 5) {
+        const divisor = int(rng, 2 + level, 6 + level);
+        const left = divisor * int(rng, 2, 8) + int(rng, 0, divisor - 1);
+        const right = int(rng, 3, 9 + level * 2);
+        const remainder = left % divisor;
+        const answer = remainder + 2 * right;
+        const examples = table(["2◆2=0", "3◆2=1", "5◆4=1", "1◇1=3", "3◇2=7", "4◇2=8"]);
+        return result(`◆는 앞 수를 뒤 수로 나눈 나머지이고, ◇는 앞 수에 뒤 수의 2배를 더하는 약속입니다. (${left}◆${divisor})◇${right}을 계산하세요.${examples}`, answer, `${left}◆${divisor}=${remainder}이고 ${remainder}◇${right}=${remainder}+2×${right}=${answer}입니다.`);
+      }
+      if (variant === 6) {
+        const hidden = int(rng, 3 + level, 8 + level * 2);
+        const exponent = pick(rng, [2, 3]);
+        const inner = hidden ** exponent + exponent;
+        const answerValue = inner ** exponent + exponent;
+        const examples = table(["2☆1=3", "2☆3=11", "4☆3=67", "7☆2=51", "12☆1=13"]);
+        return result(`앞 수를 뒤 수만큼 곱한 뒤 뒤 수를 더한 값을 ☆로 나타냅니다. (□☆${exponent})☆${exponent}=${answerValue}일 때 □를 구하세요.${examples}`, hidden, `바깥 계산 전 수는 ${inner}이고 ${inner}☆${exponent}=${answerValue}입니다. ${hidden}☆${exponent}=${hidden ** exponent}+${exponent}=${inner}이므로 □=${hidden}입니다.`);
+      }
+      if (variant === 7) {
+        const hidden = int(rng, 3 + level, 12 + level * 2);
+        const middle = hidden ** 2 - 3;
+        const finalSubtract = int(rng, 4, 10);
+        const final = middle ** 2 - finalSubtract;
+        const examples = table(["2★2=2", "3★2=7", "4★2=14", "2★3=1", "3★3=6", "4★3=13"]);
+        return result(`앞 수를 두 번 곱한 뒤 뒤 수를 뺀 값을 ★로 나타냅니다. (□★3)★${finalSubtract}=${final}일 때 □를 구하세요.${examples}`, hidden, `□★3은 ${middle}이어야 하고 ${hidden}×${hidden}−3=${middle}입니다. 따라서 □=${hidden}입니다.`);
+      }
+      if (variant === 8) {
+        const top = int(rng, 4 + level * 2, 20 + level * 5);
+        const answer = top * 4 - 1;
+        return result(`원, 사각형, 삼각형 안의 수가 아래로 내려갈 때마다 4배한 뒤 1을 뺍니다. 빈칸을 구하세요.<div class="source-shape-flow"><span class="circle">1<br><b>3</b></span><span class="square">2<br><b>7</b></span><span class="triangle">${top}<br><b>□</b></span></div>`, answer, `${top}×4−1=${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const tens = int(rng, 2 + level, 8);
+        const ones = int(rng, 2, 9);
+        const number = tens * 10 + ones;
+        const answer = number - tens * ones;
+        return result(`두 자리 수에서 십의 자리 숫자와 일의 자리 숫자의 곱을 뺀 수를 답하는 놀이입니다. ${number}에 대한 답을 구하세요.${table(["12→10", "34→22", "58→18"])}`, answer, `${number}−${tens}×${ones}=${answer}입니다.`);
+      }
+      const top = int(rng, 2 + level, 8 + level);
+      const left = int(rng, 3 + level, 10 + level * 2);
+      const right = int(rng, left + 1, left + 8 + level * 2);
+      const answer = left * (top + right);
+      return result(`삼각형의 가운데 수는 왼쪽 아래 수와 위 수·오른쪽 아래 수의 합을 곱한 값입니다. 빈칸을 구하세요.<div class="source-triangle-rule"><span>${top}</span><span>${left}</span><strong>□</strong><span>${right}</span></div>`, answer, `${left}×(${top}+${right})=${answer}입니다.`);
+    },
+    source41NumberCardSix({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("조건을 만족하는 수의 개수 원문 분기는 0부터 10까지여야 합니다.");
+      const cards = values => `<div class="source-number-cards">${values.map(value => `<span>${value}</span>`).join("")}</div>`;
+      const permutations = (values, length = values.length) => {
+        const output = new Set();
+        const visit = (used, picked) => {
+          if (picked.length === length) {
+            output.add(picked.join(""));
+            return;
+          }
+          values.forEach((value, index) => {
+            if (used.has(index)) return;
+            const next = new Set(used);
+            next.add(index);
+            visit(next, [...picked, value]);
+          });
+        };
+        visit(new Set(), []);
+        return [...output];
+      };
+      const naturalNumbers = (values, length = values.length) => permutations(values, length)
+        .filter(text => text[0] !== "0")
+        .map(Number);
+      const digitCounts = (start, end) => {
+        const counts = Array(10).fill(0);
+        for (let value = start; value <= end; value += 1) for (const digit of String(value)) counts[Number(digit)] += 1;
+        return counts;
+      };
+      const extremeDifference = values => {
+        const numbers = naturalNumbers(values);
+        return Math.max(...numbers) - Math.min(...numbers);
+      };
+
+      if (variant === 0) {
+        const pool = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        const digits = [0, 1, ...pool.filter(value => value !== 0 && value !== 1).slice(0, 2)].sort((a, b) => a - b);
+        const limit = pick(rng, [2, 3]);
+        const thousandValues = permutations(digits).map(Number).filter(value => Math.floor(value / 1000) < limit);
+        const sum = thousandValues.reduce((total, value) => total + value, 0);
+        const answer = (sum / 1000).toFixed(3);
+        return result(`숫자 카드와 소수점을 한 번씩 모두 사용해 만든 소수 세 자리 수 중 ${limit}보다 작은 모든 수의 합을 구하세요.${cards([...digits, "."])}`, answer, `조건을 만족하는 수를 빠짐없이 만들면 ${thousandValues.map(value => (value / 1000).toFixed(3)).join(", ")}입니다. 합은 ${answer}입니다.`);
+      }
+      if (variant === 1) {
+        const repeated = int(rng, 1, 6);
+        const others = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => value !== repeated)).slice(0, 4);
+        const values = [repeated, repeated, ...others];
+        const numbers = [...new Set(naturalNumbers(values, 3))];
+        return result(`여섯 장의 수 카드 중 세 장을 골라 한 번씩 사용해 만들 수 있는 서로 다른 세 자리 자연수는 모두 몇 개인가요?${cards(values)}`, numbers.length, `백의 자리에 0이 오는 경우와 같은 수가 겹치는 경우를 빼고 만들면 모두 ${numbers.length}개입니다.`);
+      }
+      if (variant === 2) {
+        let known;
+        let difference;
+        let candidates;
+        let attempts = 0;
+        do {
+          known = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 3).sort((a, b) => a - b);
+          const gapFor = value => {
+            const numbers = permutations([...known, value]).map(Number).sort((a, b) => a - b);
+            return numbers[1] - numbers[0];
+          };
+          const hidden = pick(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => !known.includes(value)));
+          difference = gapFor(hidden);
+          candidates = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => !known.includes(value) && gapFor(value) === difference);
+          attempts += 1;
+        } while ((candidates.length < 2 || candidates.length > 4) && attempts < 200);
+        if (!candidates.length) throw new Error("소수 카드의 숨은 숫자 후보를 찾을 수 없습니다.");
+        const answer = candidates.join(", ");
+        return result(`서로 다른 네 숫자 카드와 소수점을 한 번씩 모두 사용해 만든 가장 작은 소수 세 자리 수와 두 번째로 작은 수의 차가 ${(difference / 1000).toFixed(3)}입니다. ★에 알맞은 숫자를 모두 구하세요.${cards([...known, "★", "."])}`, answer, `★에 0부터 9까지 넣어 두 작은 수를 전부 비교하면 조건을 만족하는 숫자는 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        let start;
+        let end;
+        let counts;
+        let max;
+        let winners;
+        do {
+          start = int(rng, 120 + level * 120, 620 + level * 60);
+          end = start + int(rng, 180 + level * 50, 360 + level * 90);
+          counts = digitCounts(start, end);
+          max = Math.max(...counts);
+          winners = counts.map((count, digit) => ({ count, digit })).filter(item => item.count === max);
+        } while (winners.length !== 1);
+        return result(`${start}부터 ${end}까지의 자연수를 쓸 때 가장 많이 쓰이는 숫자는 몇 번 쓰이나요?`, max, `각 숫자의 사용 횟수는 ${counts.map((count, digit) => `${digit}:${count}`).join(", ")}입니다. 가장 큰 횟수는 ${max}번입니다.`);
+      }
+      if (variant === 4) {
+        const end = [999, 9999, 19999][level];
+        const digit = int(rng, 1, 9);
+        const answer = digitCounts(1, end)[digit];
+        return result(`자연수 1부터 ${end.toLocaleString()}까지 차례로 쓸 때 숫자 ${digit}은 모두 몇 번 쓰이나요?`, answer, `1부터 ${end.toLocaleString()}까지 각 자리를 빠짐없이 세면 숫자 ${digit}은 ${answer}번 쓰입니다.`);
+      }
+      if (variant === 5) {
+        const target = pick(rng, [5, 0]);
+        const repeated = int(rng, 3 + level, 7 + level);
+        const end = Number(String(repeated).repeat(3));
+        let answer = 0;
+        for (let value = 5; value <= end; value += 5) answer += [...String(value)].filter(digit => Number(digit) === target).length;
+        return result(`5의 배수를 5, 10, 15, …, ${end}까지 작은 수부터 수 카드로 놓았습니다. 숫자 ${target} 카드가 모두 몇 장 필요한가요?`, answer, `5부터 ${end}까지 5씩 커지는 수를 모두 쓰고 숫자 ${target}을 세면 ${answer}장입니다.`);
+      }
+      if (variant === 6) {
+        const values = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 5);
+        if (!values.some(value => value % 2 === 0)) values[0] = 2;
+        if (!values.includes(0)) values[1] = 0;
+        const numbers = naturalNumbers(values).filter(value => value % 2 === 0);
+        return result(`다섯 장의 수 카드를 한 번씩 모두 사용해 만들 수 있는 짝수는 모두 몇 개인가요?${cards(values)}`, numbers.length, `맨 앞에 0이 올 수 없고 일의 자리에는 짝수 카드가 와야 합니다. 중복 없이 세면 ${numbers.length}개입니다.`);
+      }
+      if (variant === 7) {
+        let known;
+        let hidden;
+        let difference;
+        let candidates;
+        let attempts = 0;
+        do {
+          known = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
+          hidden = pick(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => !known.includes(value)));
+          difference = extremeDifference([...known, hidden]);
+          candidates = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => !known.includes(value) && extremeDifference([...known, value]) === difference);
+          attempts += 1;
+        } while (candidates.length !== 1 && attempts < 200);
+        if (candidates.length !== 1) throw new Error("다섯 자리 수 차이의 숨은 카드가 하나로 정해지지 않습니다.");
+        return result(`서로 다른 다섯 장의 수 카드를 한 번씩 모두 사용해 만든 가장 큰 다섯 자리 수와 가장 작은 다섯 자리 수의 차가 ${difference.toLocaleString()}입니다. ★에 알맞은 숫자를 구하세요.${cards([...known, "★"])}`, hidden, `★에 가능한 숫자를 넣어 가장 큰 수와 가장 작은 수를 비교하면 차가 ${difference.toLocaleString()}이 되는 숫자는 ${hidden} 하나뿐입니다.`);
+      }
+      if (variant === 8) {
+        const values = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+        if (!values.includes(0)) values[0] = 0;
+        const lower = int(rng, 20 + level * 20, 70 + level * 40);
+        const upper = int(rng, 260 + level * 80, 700 + level * 100);
+        const numbers = new Set();
+        for (let length = 1; length <= values.length; length += 1) naturalNumbers(values, length).forEach(value => {
+          if (value > lower && value < upper) numbers.add(value);
+        });
+        return result(`수 카드를 한 번씩만 사용해 만들 수 있는 자연수 중 ${lower}보다 크고 ${upper}보다 작은 수는 모두 몇 개인가요?${cards(values)}`, numbers.size, `한 자리 수부터 네 자리 수까지 만들고 범위에 맞는 수만 남기면 ${numbers.size}개입니다.`);
+      }
+      if (variant === 9) {
+        let end;
+        let counts;
+        let min;
+        let winners;
+        do {
+          end = int(rng, 650 + level * 200, 1200 + level * 500);
+          counts = digitCounts(1, end);
+          min = Math.min(...counts);
+          winners = counts.map((count, digit) => ({ count, digit })).filter(item => item.count === min);
+        } while (winners.length !== 1);
+        return result(`자연수 1부터 ${end}까지 차례로 쓸 때 가장 적게 쓰이는 숫자와 그 횟수를 차례로 구하세요.`, `${winners[0].digit}, ${min}`, `각 숫자의 횟수는 ${counts.map((count, digit) => `${digit}:${count}`).join(", ")}입니다. 가장 적은 것은 숫자 ${winners[0].digit}, ${min}번입니다.`);
+      }
+      let start;
+      let end;
+      let counts;
+      let max;
+      let winners;
+      do {
+        start = int(rng, 250 + level * 120, 650 + level * 80);
+        end = start + int(rng, 220 + level * 60, 420 + level * 100);
+        counts = digitCounts(start, end);
+        max = Math.max(...counts);
+        winners = counts.map((count, digit) => ({ count, digit })).filter(item => item.count === max);
+      } while (!winners.length);
+      return result(`${start}부터 ${end}까지 자연수를 쓸 때 가장 많이 쓰이는 숫자는 몇 번 쓰이나요?`, max, `각 숫자의 횟수를 세면 ${counts.map((count, digit) => `${digit}:${count}`).join(", ")}입니다. 가장 많이 쓰인 횟수는 ${max}번입니다.`);
+    },
+    source41CalculationCompletionSix({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 9) throw new Error("계산식 완성하기 원문 분기는 0부터 9까지여야 합니다.");
+      const labelAt = (value, replacements) => [...String(value)].map((digit, index) => replacements[index] || digit).join("");
+      const hiddenDigits = (value, indexes) => indexes.map(index => Number(String(value)[index]));
+      const metadata = values => `<span class="source-completion-meta" ${source41CompletionMeta(values)}></span>`;
+
+      if (variant === 0) {
+        const candidate = pick(rng, source41SymbolMultiplicationPool());
+        const tokenToSymbol = new Map(Array.from({ length: 6 }, (_, index) => [String.fromCharCode(65 + index), source41CompletionSymbols[index]]));
+        const shownRows = candidate.encodedRows.map(row => [...row].map(token => tokenToSymbol.get(token) || token).join(""));
+        const assignments = [...candidate.digitToToken.entries()]
+          .map(([digit, token]) => [tokenToSymbol.get(token), Number(digit)])
+          .sort(([left], [right]) => source41CompletionSymbols.indexOf(left) - source41CompletionSymbols.indexOf(right));
+        const answer = assignments.map(([symbol, digit]) => `${symbol}=${digit}`).join(", ");
+        const prompt = `같은 기호는 같은 숫자를 나타냅니다. ㉠부터 ㉥까지의 숫자를 각각 구하세요.${verticalOperation(shownRows[0], shownRows[1], shownRows.slice(2, 4), shownRows[4])}${metadata({ variant, a: candidate.multiplicand, b: candidate.multiplier, answer })}`;
+        return result(prompt, answer, `${candidate.multiplicand} × ${candidate.multiplier} = ${candidate.multiplicand * candidate.multiplier}입니다. 두 부분곱과 전체 곱을 차례로 맞추면 ${answer}입니다.`);
+      }
+
+      if (variant === 1) {
+        const multiplicand = int(rng, 420 + level * 70, 780 + level * 80);
+        const multiplier = int(rng, 3 + level, 8) * 10 + int(rng, 1, 9);
+        const onesPartial = multiplicand * (multiplier % 10);
+        const tensPartial = multiplicand * Math.floor(multiplier / 10);
+        const product = multiplicand * multiplier;
+        const tensIndex = Math.min(1, String(tensPartial).length - 1);
+        const totalIndex = Math.max(1, String(product).length - 2);
+        const answerDigits = [
+          ...hiddenDigits(multiplicand, [2]),
+          ...hiddenDigits(multiplier, [0]),
+          ...hiddenDigits(onesPartial, [0]),
+          ...hiddenDigits(tensPartial, [tensIndex]),
+          ...hiddenDigits(product, [totalIndex])
+        ];
+        const work = verticalOperation(
+          source41MaskAt(multiplicand, [2]),
+          source41MaskAt(multiplier, [0]),
+          [source41MaskAt(onesPartial, [0]), source41MaskAt(tensPartial, [tensIndex])],
+          source41MaskAt(product, [totalIndex])
+        );
+        return result(`세로셈의 빈칸에 들어갈 숫자를 위에서부터 차례로 쓰세요.${work}${metadata({ variant, a: multiplicand, b: multiplier, answer: answerDigits.join(",") })}`, answerDigits.join(", "), `일의 자리 부분곱은 ${onesPartial}, 십의 자리 부분곱은 ${tensPartial}이고 전체 곱은 ${product}입니다. 빈칸은 ${answerDigits.join(", ")}입니다.`);
+      }
+
+      if (variant === 2) {
+        let divisor;
+        let quotient;
+        let dividend;
+        let symbols;
+        do {
+          const divisorRanges = [[12, 28], [18, 32], [24, 36]];
+          const quotientRanges = [[22, 35], [24, 32], [22, 27]];
+          divisor = int(rng, ...divisorRanges[level]);
+          quotient = int(rng, ...quotientRanges[level]);
+          dividend = divisor * quotient;
+          symbols = [Number(String(divisor).at(-1)), Number(String(dividend)[1]), Number(String(quotient)[0])];
+        } while (String(dividend).length !== 3 || new Set(symbols).size !== 3);
+        const divisorText = labelAt(divisor, { [String(divisor).length - 1]: "㉠" });
+        const dividendText = labelAt(dividend, { 1: "㉡" });
+        const quotientText = labelAt(quotient, { 0: "㉢" });
+        const answer = `㉠=${symbols[0]}, ㉡=${symbols[1]}, ㉢=${symbols[2]}`;
+        return result(`나눗셈이 나누어떨어지고 ㉠, ㉡, ㉢은 서로 다른 숫자입니다. 각 기호의 값을 구하세요.${source41DivisionWork({ divisor, dividend, quotient, divisorText, dividendText, quotientText })}${metadata({ variant, divisor, dividend, quotient, answer })}`, answer, `${divisor} × ${quotient} = ${dividend}이므로 ${answer}입니다.`);
+      }
+
+      if (variant === 3) {
+        const configurations = level === 0 ? [[2178, 4]] : [[2178, 4], [21978, 4]];
+        const [multiplicand, multiplier] = pick(rng, configurations);
+        const digits = [...String(multiplicand)].map(Number);
+        const product = multiplicand * multiplier;
+        const symbols = source41CompletionSymbols.slice(0, digits.length);
+        const top = symbols.join("");
+        const bottom = [...symbols].reverse().join("");
+        const answer = digits.reduce((total, digit) => total * digit, 1);
+        return result(`㉠부터 ${symbols.at(-1)}까지는 서로 다른 숫자입니다. 다음 곱셈식이 맞도록 각 기호를 구한 뒤 기호가 나타내는 수를 모두 곱한 값을 구하세요.${verticalOperation(top, multiplier, [], bottom)}${metadata({ variant, a: multiplicand, b: multiplier, answer })}`, answer, `${multiplicand} × ${multiplier} = ${product}이므로 기호의 값은 ${digits.join(", ")}입니다. 모두 곱하면 ${digits.join("×")}=${answer}입니다.`);
+      }
+
+      if (variant === 4) {
+        const multiplicand = int(rng, 2300 + level * 800, 7600 + level * 600);
+        const multiplier = int(rng, 2 + level, 8) * 10 + int(rng, 1, 9);
+        const onesPartial = multiplicand * (multiplier % 10);
+        const tensPartial = multiplicand * Math.floor(multiplier / 10);
+        const product = multiplicand * multiplier;
+        const firstPartialIndexes = [1, Math.max(2, String(onesPartial).length - 2)];
+        const totalIndex = Math.max(1, String(product).length - 2);
+        const answerDigits = [
+          ...hiddenDigits(multiplicand, [0, 1]),
+          ...hiddenDigits(multiplier, [1]),
+          ...hiddenDigits(onesPartial, firstPartialIndexes),
+          ...hiddenDigits(product, [totalIndex])
+        ];
+        const work = verticalOperation(
+          source41MaskAt(multiplicand, [0, 1]),
+          source41MaskAt(multiplier, [1]),
+          [source41MaskAt(onesPartial, firstPartialIndexes), tensPartial],
+          source41MaskAt(product, [totalIndex])
+        );
+        return result(`곱셈 세로셈의 빈칸에 들어갈 숫자를 위에서부터, 왼쪽에서 오른쪽으로 쓰세요.${work}${metadata({ variant, a: multiplicand, b: multiplier, answer: answerDigits.join(",") })}`, answerDigits.join(", "), `${multiplicand} × ${multiplier} = ${product}입니다. 부분곱을 차례로 맞추면 빈칸은 ${answerDigits.join(", ")}입니다.`);
+      }
+
+      if (variant === 5) {
+        const configurations = level === 0 ? [[2178, 4]] : [[2178, 4], [21978, 4]];
+        const [multiplicand, multiplier] = pick(rng, configurations);
+        const digits = [...String(multiplicand)].map(Number);
+        const symbols = source41CompletionSymbols.slice(0, digits.length);
+        const product = multiplicand * multiplier;
+        const answer = digits.reduce((total, digit) => total * digit, 1);
+        return result(`㉠부터 ${symbols.at(-1)}까지는 서로 다른 숫자입니다. 곱의 숫자 배열이 거꾸로 되는 다음 식에서 기호의 값을 모두 곱한 수를 구하세요.${verticalOperation(symbols.join(""), multiplier, [], [...symbols].reverse().join(""))}${metadata({ variant, a: multiplicand, b: multiplier, answer })}`, answer, `${multiplicand} × ${multiplier} = ${product}이므로 기호는 차례로 ${digits.join(", ")}입니다. 모두 곱하면 ${answer}입니다.`);
+      }
+
+      if (variant === 6) {
+        const divisor = int(rng, 12 + level * 5, 38 + level * 8);
+        const quotient = int(rng, 23 + level * 7, 86);
+        const remainder = int(rng, 1, divisor - 1);
+        const dividend = divisor * quotient + remainder;
+        const requested = [Number(String(divisor)[0]), Number(String(quotient)[0]), remainder % 10];
+        const divisorText = labelAt(divisor, { 0: "㉠" });
+        const quotientText = labelAt(quotient, { 0: "㉡" });
+        const remainderText = labelAt(remainder, { [String(remainder).length - 1]: "㉢" });
+        const work = `${source41DivisionWork({ divisor, dividend, quotient, divisorText, quotientText })}<div class="division-remainder">나머지 ${remainderText}</div>`;
+        const answer = requested.reduce((sum, digit) => sum + digit, 0);
+        return result(`나눗셈 세로셈에서 ㉠+㉡+㉢의 값을 구하세요.${work}${metadata({ variant, divisor, dividend, quotient, remainder, answer })}`, answer, `${dividend} = ${divisor} × ${quotient} + ${remainder}입니다. ㉠, ㉡, ㉢은 ${requested.join(", ")}이므로 합은 ${answer}입니다.`);
+      }
+
+      if (variant === 7) {
+        const [leftDigits, rightDigits, productDigits] = [[2, 2, 3], [3, 2, 4], [4, 2, 5]][level];
+        const valuesWithOnlyZeroOne = digits => Array.from({ length: 2 ** (digits - 1) }, (_, index) => Number(`1${index.toString(2).padStart(digits - 1, "0")}`));
+        const leftValues = valuesWithOnlyZeroOne(leftDigits);
+        const rightValues = valuesWithOnlyZeroOne(rightDigits);
+        const equations = [];
+        leftValues.forEach(left => rightValues.forEach(right => {
+          const product = left * right;
+          if (String(product).length === productDigits && /^[01]+$/.test(String(product))) equations.push(`${left}×${right}=${product}`);
+        }));
+        const answer = equations.length;
+        return result(`모든 자리 숫자가 0 또는 1인 ${leftDigits}자리 수와 ${rightDigits}자리 수의 곱이 ${productDigits}자리 수이고, 곱의 모든 자리 숫자도 0 또는 1입니다. 조건을 만족하는 곱셈식은 모두 몇 개인가요?<div class="equation-boxes">${"□".repeat(leftDigits)} × ${"□".repeat(rightDigits)} = ${"□".repeat(productDigits)}</div>${metadata({ variant, leftDigits, rightDigits, productDigits, answer })}`, answer, `가능한 수를 빠짐없이 대입하면 ${equations.join(", ")}의 ${answer}개입니다.`);
+      }
+
+      if (variant === 8) {
+        let divisor;
+        let quotient;
+        let dividend;
+        let trace;
+        do {
+          divisor = int(rng, 12 + level * 7, 67 + level * 8);
+          quotient = int(rng, 123 + level * 80, 876);
+          dividend = divisor * quotient;
+          trace = source41DivisionTrace(dividend, divisor);
+        } while (String(dividend).length !== 4 || String(quotient).includes("0") || trace.length !== 3);
+        const quotientIndexes = [1];
+        const divisorIndexes = [0];
+        const dividendIndexes = [0, 1];
+        const answerDigits = [
+          ...hiddenDigits(quotient, quotientIndexes),
+          ...hiddenDigits(divisor, divisorIndexes),
+          ...hiddenDigits(dividend, dividendIndexes),
+          ...hiddenDigits(trace[0].product, [0]),
+          ...hiddenDigits(trace[1].carried, [0]),
+          ...hiddenDigits(trace[2].product, [0])
+        ];
+        const work = source41DivisionWork({
+          divisor,
+          dividend,
+          quotient,
+          divisorText: source41MaskAt(divisor, divisorIndexes),
+          dividendText: source41MaskAt(dividend, dividendIndexes),
+          quotientText: source41MaskAt(quotient, quotientIndexes),
+          stepMasks: [{ product: [0] }, { carried: [0] }, { product: [0] }]
+        });
+        return result(`나눗셈 세로셈의 빈칸에 들어갈 숫자를 위에서부터, 왼쪽에서 오른쪽으로 쓰세요.${work}${metadata({ variant, divisor, dividend, quotient, answer: answerDigits.join(",") })}`, answerDigits.join(", "), `${dividend} ÷ ${divisor} = ${quotient}입니다. 각 단계의 곱과 나머지를 확인하면 빈칸은 ${answerDigits.join(", ")}입니다.`);
+      }
+
+      const candidatePools = source41CardMultiplicationPool();
+      const minimumAnswers = Math.min(4, 2 + level);
+      const eligible = candidatePools.filter(candidate => candidate.answers.length >= minimumAnswers);
+      const selected = pick(rng, eligible.length ? eligible : candidatePools);
+      const digitText = selected.digits.join(", ");
+      const answer = selected.answers.join(", ");
+      return result(`㉠, ㉡, ㉢, ㉣, ㉤은 ${digitText} 중 서로 다른 숫자입니다. 만들 수 있는 곱셈식을 모두 찾아 세 자리 수 ㉢㉣㉤이 될 수 있는 것을 모두 쓰세요.${verticalOperation(`㉠㉡${selected.fixedLast}`, selected.multiplier, [], `㉢㉣㉤${selected.finalDigit}`)}${metadata({ variant, digits: digitText, fixedLast: selected.fixedLast, multiplier: selected.multiplier, answer })}`, answer, `조건에 맞는 두 자리 배열을 빠짐없이 대입하면 ㉢㉣㉤은 ${answer}입니다.`);
     },
     source41DivisionFive({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("나눗셈의 나머지 원문 분기는 0부터 10까지여야 합니다.");

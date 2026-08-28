@@ -16,7 +16,7 @@ for (const mapping of nativeMappings) mappingBySourceId.set(mapping.sourceItemId
 if (new Set(nativeMappings.map(item => item.sourceItemId)).size !== nativeMappings.length) throw new Error("중복된 4-1 전용 생성기 매핑이 있습니다.");
 
 const payload = {
-  version: "2026-08-28",
+  version: "2026-08-29",
   totals: inventory.totals,
   exceptions: inventory.exceptions,
   verifiedMappings: mappingBySourceId.size,
