@@ -129,7 +129,10 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
   } else {
     // 분수 부분 내림(받아내림) 있는 뺄셈
     var d   = pick(rng, [4,6]);
-    var a_n = R(rng, 1, 3);
+    /* a_n은 d-2까지만 — d=4에서 a_n=3이면 아래 b_n 범위가 [4,3]으로 비어 b_n=4가
+       나왔고, 그 결과 `2 4/4` 같은 대분수(분수부가 진분수가 아님)가 인쇄됐다.
+       2026-08-28 인쇄 점검에서 발견. */
+    var a_n = R(rng, 1, Math.min(3, d-2));
     var b_n = R(rng, a_n+1, d-1);   // b_n > a_n → 받아내림 필요
     var a_w = R(rng, 2, 5);
     var b_w = R(rng, 1, a_w-1);

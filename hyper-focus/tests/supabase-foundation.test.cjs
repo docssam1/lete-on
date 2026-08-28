@@ -54,6 +54,10 @@ async function testLegacyAuth() {
   const parsedCode = auth.parseApprovalCode("GF-ABCD-EFGH-JK23-MNPQ-RSTV");
   assert.equal(parsedCode.handle, "abcd");
   assert.equal(parsedCode.formatted, "GF-ABCD-EFGH-JK23-MNPQ-RSTV");
+  const shortCode = auth.parseApprovalCode("gf-7265");
+  assert.equal(shortCode.handle, "7265");
+  assert.equal(shortCode.format, "short");
+  assert.equal(shortCode.formatted, "GF-7265");
   assert.equal(auth.parseApprovalCode("GF-TOO-SHORT"), null);
   const password = await auth.deriveStudentPassword("테스트 학생", "GFABCDEFGHJK23MNPQRSTV");
   assert.match(password, /^[A-Za-z0-9_-]{43}Aa1!$/);
@@ -152,6 +156,9 @@ function testStaticSecurityContracts() {
   assert.match(adminEdge, /issuedAtMs < authorizationChangedAtMs/);
   assert.match(adminEdge, /hf_set_student_entitlement/);
   assert.match(adminEdge, /authData\.user\.app_metadata\?\.hf_role/);
+  assert.match(adminEdge, /requestedDigitHandle/);
+  assert.match(adminEdge, /randomDigits\(4\)/);
+  assert.match(adminEdge, /approval_code_in_use/);
   assert.match(adminEdge, /SUPABASE_PUBLISHABLE_KEYS/);
   assert.match(adminEdge, /SUPABASE_SECRET_KEYS/);
   assert.match(adminEdge, /randomChars\(16\)/);

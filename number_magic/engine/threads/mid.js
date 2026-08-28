@@ -266,16 +266,16 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const product = a * b;
     return {
       prompt: {
-        ko: `${a} × ${b}: 곱의 부호를 먼저 정하고 절댓값끼리 곱해요`,
+        ko: `${a} × ${wrapSigned(b)}: 곱의 부호를 먼저 정하고 절댓값끼리 곱해요`,
         en: `${a} × ${b}: decide the sign of the product first, then multiply the absolute values`,
         zh: `${a} × ${b}：先确定积的符号，再把绝对值相乘`
       },
-      tex: `${a} \\times ${b} = \\square`,
+      tex: `${a} \\times ${wrapSigned(b)} = \\square`,
       answer: product, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\times |${b}| = \\square`, blank: absProduct },
-        { tex: `${a} \\times ${b} = \\square`, blank: product }
+        { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: product }
       ]
     };
   }
@@ -287,16 +287,16 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const negCount = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
     return {
       prompt: {
-        ko: `${a} ÷ ${b}: 몫의 부호를 먼저 정하고 절댓값끼리 나눠요`,
+        ko: `${a} ÷ ${wrapSigned(b)}: 몫의 부호를 먼저 정하고 절댓값끼리 나눠요`,
         en: `${a} ÷ ${b}: decide the sign of the quotient first, then divide the absolute values`,
         zh: `${a} ÷ ${b}：先确定商的符号，再把绝对值相除`
       },
-      tex: `${a} \\div ${b} = \\square`,
+      tex: `${a} \\div ${wrapSigned(b)} = \\square`,
       answer: q, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\div |${b}| = \\square`, blank: Math.abs(q) },
-        { tex: `${a} \\div ${b} = \\square`, blank: q }
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q }
       ]
     };
   }
@@ -308,7 +308,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const negCount = factors.filter(f => f < 0).length;
     const absProduct = factors.reduce((p, f) => p * Math.abs(f), 1);
     const product = factors.reduce((p, f) => p * f, 1);
-    const exprTex = factors.join(' \\times ');
+    const exprTex = factors.map((f,i) => i ? wrapSigned(f) : String(f)).join(' \\times ');
     const absTex = factors.map(f => `|${f}|`).join(' \\times ');
     return {
       prompt: {
@@ -340,11 +340,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
         en: `${a} ÷ ${b} × ${c}: mixed × and ÷ — work left to right`,
         zh: `${a} ÷ ${b} × ${c}：乘除混合运算从左到右依次计算`
       },
-      tex: `${a} \\div ${b} \\times ${c} = \\square`,
+      tex: `${a} \\div ${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
-        { tex: `${a} \\div ${b} = \\square`, blank: q1 },
-        { tex: `${q1} \\times ${c} = \\square`, blank: answer }
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q1 },
+        { tex: `${q1} \\times ${wrapSigned(c)} = \\square`, blank: answer }
       ]
     };
   }
@@ -360,11 +360,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
       en: `${a} × ${b} ÷ ${c}: mixed × and ÷ — work left to right`,
       zh: `${a} × ${b} ÷ ${c}：乘除混合运算从左到右依次计算`
     },
-    tex: `${a} \\times ${b} \\div ${c} = \\square`,
+    tex: `${a} \\times ${wrapSigned(b)} \\div ${wrapSigned(c)} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
-      { tex: `${a} \\times ${b} = \\square`, blank: interim },
-      { tex: `${interim} \\div ${c} = \\square`, blank: answer }
+      { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: interim },
+      { tex: `${interim} \\div ${wrapSigned(c)} = \\square`, blank: answer }
     ]
   };
 };
@@ -457,18 +457,18 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
     const ab = a + b;
     const abc = ab * c;
     const answer = abc - d;
-    const wa = wrapSigned(a), wb = wrapSigned(b), wd = wrapSigned(d);
+    const wa = wrapSigned(a), wb = wrapSigned(b), wc = wrapSigned(c), wd = wrapSigned(d);
     return {
       prompt: {
-        ko: `(${wa}+${wb}) \\times ${c} - ${wd}: 괄호 안을 가장 먼저, 그다음 곱셈, 마지막 뺄셈`,
-        en: `(${wa}+${wb}) × ${c} - ${wd}: brackets first, then multiply, then subtract`,
-        zh: `(${wa}+${wb}) × ${c} - ${wd}：先算括号，再乘法，最后减法`
+        ko: `(${wa}+${wb}) \\times ${wc} - ${wd}: 괄호 안을 가장 먼저, 그다음 곱셈, 마지막 뺄셈`,
+        en: `(${wa}+${wb}) × ${wc} - ${wd}: brackets first, then multiply, then subtract`,
+        zh: `(${wa}+${wb}) × ${wc} - ${wd}：先算括号，再乘法，最后减法`
       },
-      tex: `(${wa} + ${wb}) \\times ${c} - ${wd} = \\square`,
+      tex: `(${wa} + ${wb}) \\times ${wc} - ${wd} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `${wa} + ${wb} = \\square \\;(\\text{괄호 먼저})`, blank: ab },
-        { tex: `${ab} \\times ${c} = \\square`, blank: abc },
+        { tex: `${ab} \\times ${wc} = \\square`, blank: abc },
         { tex: `${abc} - ${wd} = \\square`, blank: answer }
       ]
     };

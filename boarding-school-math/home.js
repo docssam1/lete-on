@@ -659,6 +659,51 @@
     searchInput.focus();
   });
 
+  function updateQuickStart(grade) {
+    const normalized = String(grade);
+    const numericGrade = Number(normalized);
+    const sasmo = document.getElementById("quick-sasmo");
+    const concept = document.getElementById("quick-concept");
+    const map = document.getElementById("quick-map");
+    const sasmoTitle = sasmo && sasmo.querySelector("strong");
+    const sasmoNote = sasmo && sasmo.querySelector("small");
+    const conceptNote = concept && concept.querySelector("small");
+    if (numericGrade >= 1 && numericGrade <= 11) {
+      sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
+      sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 기출 풀기";
+      sasmoNote.textContent = numericGrade === 11 ? "Grade 11 연도별 공식 LMS" : `Grade ${numericGrade} 연도별 문제·정답·해설`;
+    } else if (numericGrade === 0) {
+      sasmo.href = "./sasmo.html?grade=K2#past-papers";
+      sasmoTitle.textContent = "SASMO K2 자료 보기";
+      sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
+    } else {
+      sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
+      sasmoTitle.textContent = "SASMO 준비 보기";
+      sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
+    }
+    if (numericGrade === 6) {
+      concept.href = "./concept-learning.html";
+      conceptNote.textContent = "Grade 6 공개 설명·예제·확인 학습";
+    } else if (numericGrade <= 8) {
+      concept.href = `./catalog.html?role=student&grade=${encodeURIComponent(normalized)}`;
+      conceptNote.textContent = `${gradeName(normalized)} 영역·단원 구조 보기`;
+    } else {
+      concept.href = "#goals";
+      conceptNote.textContent = `${gradeName(normalized)} 과정 경로 보기`;
+    }
+    map.dataset.quickGrade = normalized;
+  }
+
+  const quickStartGrade = document.getElementById("quick-start-grade");
+  if (quickStartGrade) {
+    quickStartGrade.addEventListener("change", function (event) { updateQuickStart(event.target.value); });
+  }
+  const quickMap = document.getElementById("quick-map");
+  if (quickMap) quickMap.addEventListener("click", function () {
+    const grade = quickMap.dataset.quickGrade;
+    if (Number(grade) <= 8) renderGradeMap(grade);
+  });
+
   buildGradeTabs();
   renderDomainOverview();
   renderGradeMap(state.mapGrade);
@@ -666,4 +711,5 @@
   updateGoal(state.goalId, state.officialGradeKey);
   updateRole(state.roleId);
   renderSearch("");
+  updateQuickStart(quickStartGrade ? quickStartGrade.value : "6");
 })();

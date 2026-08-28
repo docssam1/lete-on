@@ -20,8 +20,10 @@ for (const book of GOLDEN_BELL_BOOKS) {
     lessonCount += 1;
     if (!lesson.sourceLocator || !lesson.representativeConcept) fail(`${book.id}/${lesson.id}: missing evidence or concept`);
     if (!lesson.sourceTypeIds?.length) fail(`${book.id}/${lesson.id}: missing source type connection`);
-    if (!lesson.story?.text || !lesson.story?.mission) fail(`${book.id}/${lesson.id}: missing story layer`);
-    if (!lesson.explanation?.steps?.length) fail(`${book.id}/${lesson.id}: missing concept explanation`);
+    if (!lesson.story?.title?.trim() || !lesson.story?.text?.trim() || !lesson.story?.mission?.trim()) fail(`${book.id}/${lesson.id}: missing story layer`);
+    if (!lesson.explanation?.headline?.trim() || !Array.isArray(lesson.explanation?.steps) || lesson.explanation.steps.length < 2 || lesson.explanation.steps.some((step) => !String(step).trim())) {
+      fail(`${book.id}/${lesson.id}: incomplete concept tutorial`);
+    }
     if (!lesson.original?.items?.length) fail(`${book.id}/${lesson.id}: missing original check`);
     if (!lesson.extension?.story || !lesson.extension?.answer || !lesson.extension?.explanation) fail(`${book.id}/${lesson.id}: missing story extension`);
     if (!lesson.original.structureKey || lesson.original.structureKey !== lesson.extension.structureKey) {
