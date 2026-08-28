@@ -38,6 +38,9 @@
   .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
   .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
   .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
+  /* 질문 줄 — tex만으로 물음이 성립하지 않는 유형에만 붙는다(printAskText) */
+  .nm-print-ask { font-size: 0.8em; line-height: 1.5; color: #222; margin: 2px 0 4px;
+    word-break: keep-all; }
 
   /* 수 묶음(모으기·가르기) — 등식 대신 그림이 문제다. 빈 동그라미가 답 자리. */
   .nm-print-item-bond { text-align: center; }
@@ -527,6 +530,21 @@ function bondSvg(whole, known){
 </svg>`;
 }
 
+/* 인쇄는 tex만 쓰고 prompt는 버린다 — 대부분은 `3 + 1 = □`처럼 tex만으로 문항이
+   성립하니 그게 맞다(프롬프트를 다 실으면 "3 더하기 1은 얼마일까요?"가 문항마다
+   붙어 지저분해진다). 그런데 질문이 프롬프트에만 있는 유형이 있다:
+     DV6 배수판별법  tex="21□"        — 몇의 배수인지가 프롬프트에만 있어 풀 수 없음
+     EL3 크기 비교   tex="13-3 ○ 9+11" — ○에 부등호를 넣으란 건지 값을 쓰란 건지 불명
+   판별: 빈칸 기호(□·○)가 있는데 관계식 기호가 하나도 없으면 그것만으로는 물음이
+   성립하지 않는다. 이때만 프롬프트를 질문 줄로 싣는다. 분수 계산식처럼 빈칸이 없는
+   것은 제외된다 — 그쪽 프롬프트는 통분 방법·LCM을 알려 주는 힌트라 실으면 답이 샌다. */
+function printAskText(p){
+  const tex = String(p.tex||'');
+  if(!/\\square|\\bigcirc/.test(tex)) return '';
+  if(/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tex)) return '';
+  return (p.prompt && p.prompt.ko) || '';
+}
+
 function fillPrintGrid(problems, problemGrid, answerGrid, opts){
   /* 열 수는 내용이 정한다. 통합 전에는 그리드 학습지가 4열, 드릴 인쇄가 2열로 서로
      달랐는데, 한쪽으로 고정하면 어느 한쪽이 반드시 망가진다 — 2열로 고정하면 50문항
@@ -552,6 +570,15 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     numEl.className = 'nm-q-num';
     numEl.textContent = circled(i+1);
     card.appendChild(numEl);
+
+    const ask = printAskText(p);
+    if(ask){
+      const askEl = document.createElement('div');
+      askEl.className = 'nm-print-ask';
+      askEl.textContent = ask;
+      card.appendChild(askEl);
+    }
+
     if(bw !== null){
       const holder = document.createElement('div');
       holder.innerHTML = bondSvg(bw, bw - p.answer);

@@ -26,7 +26,7 @@ function main() {
   });
   server.listen(port, host, function () {
     const address = server.address();
-    const localUrl = `http://${host}:${address.port}/diagnostic.html`;
+    const localUrl = `http://${host}:${address.port}/diagnostic.html?runtime=local-qa`;
     process.stdout.write(`PRIVATE_GRADE6_LOCAL_URL ${localUrl}\n`);
     process.stdout.write(`PRIVATE_GRADE6_TEACHER_PIN ${teacherPin}\n`);
   });

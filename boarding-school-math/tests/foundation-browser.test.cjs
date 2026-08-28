@@ -45,27 +45,33 @@ function collectErrors(page) {
   return errors;
 }
 
-test("production home exposes a truthful goal-to-official-source path", async function () {
+test("learning directory connects diagnosis, prescription, concepts, workbooks, and official pathways", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /진단에서\s*AMC 12까지,\s*한 학생의 수학 경로/);
-  assert.match(await page.locator(".proof-strip").innerText(), /K–12/);
-  assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8[\s\S]*AMC 10[\s\S]*AMC 12/);
-  assert.equal(await page.locator(".sample-pill").textContent(), "예시 화면");
-  assert.equal(await page.locator(".role-shortcut").count(), 2);
-  assert.equal(await page.locator('.role-shortcut[data-role-target="student"]').count(), 1);
-  assert.equal(await page.locator('.role-shortcut[data-role-target="teacher"]').count(), 1);
-  assert.ok(await page.locator('a[href="./catalog.html"]').count() >= 1);
-  assert.equal(await page.locator(".start-path-card").count(), 4);
+  assert.equal(await page.locator("h1").count(), 1);
+  assert.match(await page.locator("h1").innerText(), /수학 실력을 진단하고,\s*다음 학습을 처방합니다/);
+  assert.equal(await page.locator('[data-role-preview="student"]').count(), 1);
+  assert.equal(await page.locator('[data-role-preview="teacher"]').count(), 1);
+  assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
+  assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8\s*→\s*10\s*→\s*12/);
   assert.equal(await page.locator("[data-goal]").count(), 5);
-  assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
-  assert.match(await page.locator("#goal-format").textContent(), /90분 · 25문항/);
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo.html");
-  assert.equal(await page.locator('.contest-path a[href="./sasmo.html"]').count(), 1);
-  assert.ok(await page.locator('a[href="./concept-learning.html"]').count() >= 1);
+  assert.equal(await page.locator("#goal-title").textContent(), "Grade 6 학교 수학");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./diagnostic.html");
+  const schoolCapabilities = await page.locator("#goal-capabilities").innerText();
 
+  await page.locator('[data-role-preview="teacher"]').click();
+  assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
+  assert.match(await page.locator("#role-title").textContent(), /교사는[\s\S]*근거/);
+  await page.locator('.role-shortcut[data-role-target="student"]').click();
+  assert.equal(await page.locator('[data-role-preview="student"]').getAttribute("aria-selected"), "true");
+  assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
+
+  await page.locator('[data-goal="sasmo"]').click();
+  assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo.html");
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
   assert.equal(await original.getAttribute("target"), "_blank");
@@ -78,55 +84,64 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 1 준비");
   assert.equal(await original.getAttribute("href"), "https://sasmo.simcc.org/courses/sasmo-past-papers-year-2025/");
   assert.equal(await original.getAttribute("data-original-record-id"), "sasmo-2025-official-lms-g1-11");
-
   await page.locator("#goal-grade-select").selectOption("K2");
   assert.equal(await original.isHidden(), true);
-  assert.match(await page.locator("#goal-status-note").textContent(), /잠금 상태/);
+  assert.equal(await original.getAttribute("href"), null);
+  assert.equal(await original.getAttribute("target"), null);
+  assert.equal(await original.getAttribute("rel"), null);
+  assert.match(await page.locator("#goal-status-note").innerText(), /잠금/);
 
   await page.locator('[data-goal="kangaroo"]').click();
   assert.equal(await page.locator('[data-goal="kangaroo"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#goal-format").textContent(), /75분/);
+  assert.match(await page.locator("#goal-format").innerText(), /75분/);
   assert.equal(await original.isHidden(), true);
 
   await page.locator('[data-goal="amc"]').click();
   await page.locator("#goal-grade-select").selectOption("9");
   assert.equal(await page.locator("#goal-title").textContent(), "AMC 10 · Grade 9 권장 경로");
-  assert.match(await page.locator("#goal-format").textContent(), /75분 · 25문항/);
+  assert.match(await page.locator("#goal-format").innerText(), /75분 · 25문항/);
   await page.locator("#goal-grade-select").selectOption("11");
   assert.equal(await page.locator("#goal-title").textContent(), "AMC 12 · Grade 11 권장 경로");
-  assert.match(await page.locator("#goal-eligibility").textContent(), /G12 이하/);
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "#map");
-  assert.equal(await page.locator("#goal-primary").textContent(), "고등 과정 설계 상태 보기");
+  assert.match(await page.locator("#goal-eligibility").innerText(), /G12 이하/);
 
   await page.locator('[data-goal="school"]').click();
-  await page.locator("#goal-grade-select").selectOption("6");
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./diagnostic.html");
   await page.locator("#goal-grade-select").selectOption("5");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./catalog.html?role=student&grade=5");
-
   await page.locator('[data-goal="singapore"]').click();
   await page.locator("#goal-grade-select").selectOption("6");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
-
-  await page.locator('[data-goal="sasmo"]').click();
-  assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
 
   await page.locator('[data-goal="kangaroo"]').focus();
   await page.keyboard.press("ArrowDown");
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("tabindex"), "0");
 
-  await page.locator('[data-role-preview="teacher"]').click();
-  assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
-  assert.match(await page.locator("#role-title").textContent(), /수업 그룹/);
-  await page.locator('.role-shortcut[data-role-target="student"]').click();
-  assert.equal(await page.locator('[data-role-preview="student"]').getAttribute("aria-selected"), "true");
-  assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
+  await page.locator("#learning-search").fill("SASMO");
+  assert.match(await page.locator("#search-summary").innerText(), /결과/);
+  assert.equal(await page.locator('#search-results [data-search-goal="sasmo"]').count(), 1);
+  assert.match(await page.locator("#search-results").innerText(), /경로 보기/);
+  await page.locator("#learning-search").fill("Grade 6 비와 비율");
+  assert.match(await page.locator("#search-results").innerText(), /비와 비율[\s\S]*개념 공개/);
 
   await page.locator('[data-grade-tab="8"]').click();
   assert.equal(await page.locator("#selected-grade").textContent(), "G8");
   assert.equal(await page.locator("#skill-map-panel").getAttribute("aria-labelledby"), "grade-tab-8");
-  assert.equal(await page.locator("#skill-rows .skill-row").count(), 5);
+  assert.equal(await page.locator("#skill-rows .domain-directory-row").count(), 5);
+  assert.match(await page.locator("#map-footnote").innerText(), /5개 영역[\s\S]*10개 클러스터/);
+
+  await page.locator('[data-map-view="domain"]').click();
+  assert.equal(await page.locator("#domain-directory").isVisible(), true);
+  const gradeEightDomain = page.locator('[data-domain-grade="8"]').first();
+  const selectedDomain = await gradeEightDomain.getAttribute("data-domain-code");
+  await gradeEightDomain.click();
+  assert.equal(await page.locator('[data-map-view="grade"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#selected-grade").textContent(), "G8");
+  assert.equal(await page.locator(`.domain-directory-row[data-domain-code="${selectedDomain}"]`).evaluate(function (row) { return row.open; }), true);
+  assert.equal(await page.locator(`.domain-directory-row[data-domain-code="${selectedDomain}"] > summary`).evaluate(function (summary) { return document.activeElement === summary; }), true);
+
+  assert.equal(await page.locator("#goal-capabilities li").count(), 6);
+  assert.match(schoolCapabilities, /진단[\s\S]*분석[\s\S]*클리닉[\s\S]*개념 학습[\s\S]*워크북[\s\S]*재확인/);
+  assert.match(schoolCapabilities, /현재 공개[\s\S]*검수 잠금/);
 
   const missingHashTargets = await page.locator('a[href^="#"]').evaluateAll(function (anchors) {
     return anchors.map(function (anchor) { return anchor.getAttribute("href"); }).filter(function (href) {
@@ -154,6 +169,9 @@ test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe sou
   assert.equal(await page.locator("#archive-coverage-list .coverage-row").count(), 11);
   assert.equal(await page.locator("#hero-format").textContent(), "공식 형식 · 15문항 · 60분");
   assert.match(await page.locator(".official-format-grid").innerText(), /K2[\s\S]*15문항 · 60분[\s\S]*G1–G12[\s\S]*25문항 · 90분/);
+  assert.equal(await page.locator("#journey-list li").count(), 6);
+  assert.match(await page.locator("#journey-list").innerText(), /진단[\s\S]*영역·문항 분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
+  assert.match(await page.locator(".journey-heading").innerText(), /프로그램 설계[\s\S]*독립 검수/);
   assert.equal(await page.evaluate(function () {
     return window.GFIELDSASMOProgramArchitecture.validateArchitecture().valid
       && window.GFIELDSASMOProgramArchitecture.validatePublicSafety().valid
@@ -239,6 +257,8 @@ test("legacy curriculum foundation remains available without feature regression"
   assert.equal(response.status(), 200);
   assert.equal(await page.evaluate(function () { return typeof window.GFIELDGrade6RoadmapProjection; }), "object");
   assert.equal(await page.locator(".program-card").count(), 1);
+  assert.equal(await page.locator(".scope-strip").getByText("K–8 Curriculum Map", { exact: true }).count(), 1);
+  assert.equal((await page.locator(".scope-strip").innerText()).includes("K–8 Implemented"), false);
   assert.equal(await page.locator("#resource-list li").count(), 6);
   assert.equal(await page.locator("#unit-list .unit-item").count(), 9);
 
@@ -257,6 +277,8 @@ test("legacy curriculum foundation remains available without feature regression"
   await page.locator('[data-role="student"]').click();
   assert.equal(await page.locator("#resource-list").getByText("정답지", { exact: true }).count(), 0);
   assert.equal(await page.locator("#resource-list").getByText("개념 워크북", { exact: true }).count(), 1);
+  assert.equal(await page.locator("#evidence-flow span").count(), 6);
+  assert.match(await page.locator("#evidence-flow").innerText(), /진단[\s\S]*영역·문항 분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
 
   await page.locator('[data-locale="en"]').click();
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
@@ -278,6 +300,10 @@ test("legacy curriculum foundation remains available without feature regression"
 test("Grade 6 diagnostic page explains the real flow while public hosting keeps assessment content locked", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
+  let publicRuntimeRequests = 0;
+  page.on("request", function (request) {
+    if (request.url().includes("/api/grade6-local")) publicRuntimeRequests += 1;
+  });
   const response = await page.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.match(await page.locator("h1").innerText(), /42문항을 풀고,\s*5개 영역을 분석하고, 다음 학습을 처방합니다/);
@@ -288,6 +314,11 @@ test("Grade 6 diagnostic page explains the real flow while public hosting keeps 
   assert.match(await page.locator(".hero-meta").innerText(), /42\s*비공개 QA 문항[\s\S]*32\+10\s*자동채점 \+ 교사검토/);
   assert.match(await page.locator(".release-note").innerText(), /42문항은 모두 독립 검수 대기[\s\S]*실제 학생 운영은 잠겨/);
   assert.match(await page.locator(".release-note").innerText(), /10개 자체 제작 개념 레슨/);
+  assert.match(await page.locator(".release-note").innerText(), /진단[\s\S]*영역·문항 분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
+  assert.equal(await page.locator('.hero-actions [data-workspace-role="student"]').textContent(), "비공개 QA 화면 보기");
+  assert.equal(publicRuntimeRequests, 0);
+  assert.equal(await page.locator(".gates li").count(), 6);
+  assert.match(await page.locator(".gates").innerText(), /진단[\s\S]*영역·문항 분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
   assert.equal(await page.locator('a[href="./concept-learning.html"]').count() >= 1, true);
   assert.equal(await page.locator(".cluster-card").count(), 10);
   assert.equal(await page.locator("#runtime-status-title").textContent(), "공개 안내 모드");
@@ -344,6 +375,7 @@ test("Grade 6 public concept learning provides ten deep-linked, fully solved les
   const response = await page.goto(`${baseUrl}concept-learning.html?cluster=6.G.A`, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("#concept-list button").count(), 10);
+  assert.match(await page.locator(".concept-policy").innerText(), /진단[\s\S]*분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
   assert.equal(await page.locator('#concept-list button[data-cluster="6.G.A"]').getAttribute("aria-current"), "page");
   assert.match(await page.locator("#lesson h2").textContent(), /보이는 도형을 분해하고 보완해 넓이 구하기/);
   assert.equal(await page.locator("#lesson .example-method").count(), 2);
@@ -428,9 +460,18 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
     });
     assert.equal(dimensions.scroll, dimensions.client, `home overflow at ${width}px`);
-    assert.equal(await page.locator(".hero-actions .button").first().isVisible(), true);
-    const targetSizes = await page.locator(".goal-button, .grade-tabs button, .role-tabs button, .role-shortcut, .mobile-quick-nav a, .brand, .text-link, .official-link, .site-footer a").evaluateAll(function (controls) {
-      return controls.map(function (control) {
+    const firstScreenControls = await page.locator('#learning-search, [data-role-preview], .directory-quick-actions a').evaluateAll(function (controls) {
+      return controls.filter(function (control) {
+        const rect = control.getBoundingClientRect();
+        return rect.top >= 0 && rect.top < window.innerHeight;
+      }).length;
+    });
+    assert.ok(firstScreenControls >= 1, `no real directory action, search, or role choice visible at ${width}px`);
+    const targetSizes = await page.locator(".goal-button, .grade-tabs button, .role-tabs button, .map-view-tabs button, .domain-grade-link, .role-shortcut, .mobile-quick-nav a, .brand, .text-link, .official-link, .site-footer a").evaluateAll(function (controls) {
+      return controls.filter(function (control) {
+        const rect = control.getBoundingClientRect();
+        return !control.disabled && rect.width > 0 && rect.height > 0;
+      }).map(function (control) {
         const rect = control.getBoundingClientRect();
         return { width: rect.width, height: rect.height };
       });
@@ -439,24 +480,7 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       assert.ok(size.width >= 44, `touch width ${size.width} at ${width}px`);
       assert.ok(size.height >= 44, `touch height ${size.height} at ${width}px`);
     });
-    if (width === 390) {
-      const firstScreen = await page.locator(".hero-actions").evaluate(function (actions) {
-        const rect = actions.getBoundingClientRect();
-        return { top: rect.top, bottom: rect.bottom, viewport: window.innerHeight };
-      });
-      assert.ok(firstScreen.top >= 0, `hero actions begin above viewport: ${firstScreen.top}`);
-      assert.ok(firstScreen.bottom <= firstScreen.viewport, `hero actions below first screen: ${firstScreen.bottom}`);
-      await page.emulateMedia({ reducedMotion: "reduce" });
-      await page.locator('[data-goal="sasmo"]').click();
-      const pathPosition = await page.evaluate(function () {
-        const panel = document.getElementById("goal-detail").getBoundingClientRect();
-        const original = document.getElementById("goal-original").getBoundingClientRect();
-        return { panelTop: panel.top, originalBottom: original.bottom, viewport: window.innerHeight };
-      });
-      assert.ok(pathPosition.panelTop >= 100 && pathPosition.panelTop <= 145, `goal panel top ${pathPosition.panelTop}`);
-      assert.ok(pathPosition.originalBottom <= pathPosition.viewport, `official original CTA below viewport: ${pathPosition.originalBottom}`);
-    }
-    if (width <= 768) {
+    if (width <= 720) {
       assert.equal(await page.locator(".mobile-quick-nav").isVisible(), true);
       const quickTargets = await page.locator(".mobile-quick-nav a").evaluateAll(function (controls) {
         return controls.map(function (control) { return control.getBoundingClientRect().height; });

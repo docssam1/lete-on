@@ -90,7 +90,7 @@ a { color: inherit; }
 
 .page-catalog .promotion { margin: 16px 0 0; padding: clamp(28px, 5vw, 54px); border-top: 2px solid var(--burgundy); border-bottom: 1px solid var(--line); background: #ebe4d6; display: grid; grid-template-columns: .82fr 1.18fr; gap: 32px; }
 .page-catalog .promotion > p { margin: 0; color: #4a5556; line-height: 1.76; }
-.page-catalog .evidence-flow { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(21, 43, 60, .26); border-left: 1px solid rgba(21, 43, 60, .26); counter-reset: evidence; }
+.page-catalog .evidence-flow { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(21, 43, 60, .26); border-left: 1px solid rgba(21, 43, 60, .26); counter-reset: evidence; }
 .page-catalog .evidence-flow span { min-height: 64px; padding: 14px; border-right: 1px solid rgba(21, 43, 60, .26); border-bottom: 1px solid rgba(21, 43, 60, .26); font-size: .82rem; font-weight: 750; }
 .page-catalog .evidence-flow span::before { counter-increment: evidence; content: "0" counter(evidence); display: block; margin-bottom: 4px; color: var(--burgundy); font-family: Georgia, serif; font-size: 1.05rem; }
 .page-catalog .preview-note { margin: 16px 0 80px; padding: 15px 0; display: flex; gap: 12px; border-top: 1px solid #b89656; border-bottom: 1px solid #b89656; color: #6b5725; font-size: .8rem; }

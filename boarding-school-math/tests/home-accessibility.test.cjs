@@ -34,7 +34,7 @@ test.after(async function () {
   await new Promise(function (resolve) { server.close(resolve); });
 });
 
-test("home has connected landmarks, headings, tab panels, and progress labels", async function () {
+test("learning directory has connected landmarks, headings, and tab panels", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(url, { waitUntil: "networkidle" });
 
@@ -51,10 +51,7 @@ test("home has connected landmarks, headings, tab panels, and progress labels", 
       const controls = tab.getAttribute("aria-controls");
       return !tab.id || !controls || !document.getElementById(controls);
     }).map(function (tab) { return tab.id || tab.textContent.trim(); });
-    const badProgress = Array.from(document.querySelectorAll('[role="progressbar"]')).filter(function (bar) {
-      return !bar.hasAttribute("aria-label") || !bar.hasAttribute("aria-valuenow") || !bar.hasAttribute("aria-valuemin") || !bar.hasAttribute("aria-valuemax");
-    }).length;
-    return { duplicates, headings, jumps, disconnectedTabs, badProgress };
+    return { duplicates, headings, jumps, disconnectedTabs };
   });
 
   assert.deepEqual(audit.duplicates, []);
@@ -63,7 +60,6 @@ test("home has connected landmarks, headings, tab panels, and progress labels", 
   assert.equal(audit.headings.some(function (heading) { return !heading.text; }), false);
   assert.deepEqual(audit.jumps, []);
   assert.deepEqual(audit.disconnectedTabs, []);
-  assert.equal(audit.badProgress, 0);
   await page.close();
 });
 
@@ -88,16 +84,19 @@ test("skip link and every tab set work from the keyboard", async function () {
   await page.keyboard.press("End");
   assert.equal(await page.locator('[data-grade-tab="8"]').getAttribute("aria-selected"), "true");
 
-  await page.locator('[data-goal="sasmo"]').focus();
+  await page.locator('[data-map-view="grade"]').focus();
   await page.keyboard.press("Home");
-  assert.equal(await page.locator('[data-goal="school"]').getAttribute("aria-selected"), "true");
-  assert.equal(await page.locator("#goal-detail").getAttribute("aria-labelledby"), "goal-tab-school");
+  assert.equal(await page.locator('[data-map-view="grade"]').getAttribute("aria-selected"), "true");
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator('[data-map-view="domain"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#domain-directory").isVisible(), true);
   await page.close();
 });
 
 test("official source links are external, isolated, and never embedded", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator('[data-goal="sasmo"]').click();
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("target"), "_blank");
   const rel = await original.getAttribute("rel");
