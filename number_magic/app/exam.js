@@ -1041,9 +1041,8 @@ const NM_EXAM = {
     ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="number" placeholder="답 / Answer" autocomplete="off"
-           style="font-size:1.4em;width:120px;text-align:center;padding:8px">
-    <button id="nm-ex-submit" class="nm-btn nm-btn-primary" style="margin-left:8px">확인 ✓</button>
+    <input id="nm-ex-ans" type="number" placeholder="답 / Answer" autocomplete="off">
+    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
   <div class="nm-exam-nav">
     <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>← 이전</button>
