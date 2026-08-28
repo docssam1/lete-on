@@ -15,31 +15,68 @@
       title: "첫 도전 · 형식과 기초를 먼저 확인",
       description: "영역별 시작점을 확인하고, 읽기·계산·표현의 기본 루틴을 만듭니다.",
       diagnostic: "학년별 기초·표현·추론 준비 진단",
-      diagnosticDescription: "6개 영역에서 시작점을 확인한 뒤, 첫 2주 수업 계획을 제안하는 구조입니다.",
-      journey: ["학년·공식 안내 확인", "준비 진단", "개념·표현 보정", "짧은 시간 연습", "교사와 다음 목표 확인"]
+      diagnosticDescription: "6개 영역에서 시작점을 확인한 뒤, 분석·클리닉·개념 학습·맞춤 워크북·재확인 순서를 설계하는 구조입니다. 실제 진단 문항과 워크북은 검수 잠금 상태입니다.",
+      journeyDetails: [
+        "학년·목표에 맞는 시작 근거를 확인합니다.",
+        "영역과 문항 반응을 나누어 읽습니다.",
+        "읽기·계산·표현에서 먼저 고칠 지점을 정합니다.",
+        "필요한 기초 표현과 개념을 다시 연결합니다.",
+        "짧은 분량의 개인별 적용 계획을 설계합니다.",
+        "다음 학습 전 준비 상태를 다시 확인합니다."
+      ]
     }),
     "skill-growth": Object.freeze({
       title: "실력 성장 · 약점을 수업으로 바꾸기",
       description: "선수개념·계산·표현·전략을 나누어 살피고, 먼저 보정할 순서를 정합니다.",
       diagnostic: "영역·오류 유형 준비 진단",
-      diagnosticDescription: "약점 영역과 오류 유형을 분리해, 보정 수업과 재확인 순서를 정하는 구조입니다.",
-      journey: ["학년·현재 목표 확인", "영역별 진단", "오류 원인 분류", "맞춤 수업·연습", "유지 확인과 목표 조정"]
+      diagnosticDescription: "약점 영역과 오류 유형을 분리해, 클리닉·개념 학습·맞춤 워크북·재확인 순서를 설계하는 구조입니다. 실제 진단 문항과 워크북은 검수 잠금 상태입니다.",
+      journeyDetails: [
+        "현재 영역별 준비 상태를 진단합니다.",
+        "영역별 반응과 문항별 오류 유형을 분리합니다.",
+        "선수개념·계산·표현·전략의 약점을 처방합니다.",
+        "약점과 연결된 개념을 학습 순서로 제시합니다.",
+        "학습 분량과 난이도를 개인별로 조정합니다.",
+        "보정 뒤 변화와 다음 우선순위를 확인합니다."
+      ]
     }),
     "award-target": Object.freeze({
       title: "수상 목표 · 시간과 전이까지 훈련",
       description: "공식 수상 기준을 GFIELD가 보장하지 않습니다. 다만 정확도·시간·낯선 문제 전이를 분리해 훈련합니다.",
       diagnostic: "정확도·시간·전이 준비 진단",
-      diagnosticDescription: "정답률 하나가 아닌 풀이 시간, 전략 선택, 낯선 상황 전이를 함께 확인하는 구조입니다.",
-      journey: ["공식 정보와 개인 목표 확인", "정확도·시간 진단", "전략별 심화 수업", "시간 제한 연습", "교사 검토와 다음 모의 계획"]
+      diagnosticDescription: "정답률 하나가 아닌 풀이 시간, 전략 선택, 낯선 상황 전이를 함께 확인해 클리닉·개념 학습·맞춤 워크북·재확인 순서를 설계하는 구조입니다. 실제 진단 문항과 워크북은 검수 잠금 상태입니다.",
+      journeyDetails: [
+        "정확도·시간·전이의 현재 근거를 확인합니다.",
+        "영역과 문항별로 시간·전략·오류를 분석합니다.",
+        "시간 압박과 전략 선택의 병목을 보정합니다.",
+        "낯선 문제에 적용할 핵심 개념을 다룹니다.",
+        "목표 난이도와 시간 조건에 맞춰 계획합니다.",
+        "변화 근거를 확인해 다음 훈련을 조정합니다."
+      ]
     }),
     "amc-bridge": Object.freeze({
       title: "AMC 연결 · 더 긴 문제해결 가교",
       description: "SASMO 준비를 학교 수학과 AMC로 자연스럽게 잇습니다. 대회 자격과 GFIELD의 준비 권장은 별도입니다.",
       diagnostic: "전이·심화 가교 진단",
-      diagnosticDescription: "SASMO 준비에서 확인한 논리·대수·기하 전략을 상위 문제해결 학습으로 연결할 준비를 살핍니다.",
-      journey: ["현재 학년·장기 목표 확인", "전이 진단", "핵심 전략 심화", "학교 수학과 연결", "AMC 가교 계획 검토"]
+      diagnosticDescription: "SASMO 준비에서 확인한 논리·대수·기하 전략을 분석해 클리닉·개념 학습·맞춤 워크북·재확인 순서로 상위 문제해결 학습을 설계하는 구조입니다. 실제 진단 문항과 워크북은 검수 잠금 상태입니다.",
+      journeyDetails: [
+        "상위 문제해결로의 전이 준비 상태를 확인합니다.",
+        "영역과 문항별로 논리·대수·기하 전략을 분석합니다.",
+        "가교에 필요한 선수개념과 전략 약점을 보정합니다.",
+        "학교 수학과 심화 문제를 잇는 개념을 학습합니다.",
+        "전이 난이도에 맞춘 개인별 적용 계획을 설계합니다.",
+        "가교 준비와 다음 학습 경로를 다시 확인합니다."
+      ]
     })
   });
+
+  const journeySteps = Object.freeze([
+    "진단",
+    "영역·문항 분석",
+    "약점 클리닉",
+    "개념 학습",
+    "맞춤 워크북",
+    "재확인"
+  ]);
 
   const roles = Object.freeze({
     student: Object.freeze({
@@ -146,18 +183,12 @@
     const goal = goals[state.goal];
     const container = document.getElementById("journey-list");
     container.replaceChildren();
-    goal.journey.forEach(function (title, index) {
+    journeySteps.forEach(function (title, index) {
       const item = document.createElement("li");
       const heading = document.createElement("h3");
       const detail = document.createElement("p");
       heading.textContent = title;
-      detail.textContent = [
-        "대회 목표와 현재 학년을 분명히 구분합니다.",
-        "정답만이 아닌 영역별 시작 근거를 확인합니다.",
-        "필요한 선수개념과 전략을 수업으로 연결합니다.",
-        "짧고 반복 가능한 연습으로 적용합니다.",
-        "교사가 증거를 보고 다음 단계를 조정합니다."
-      ][index];
+      detail.textContent = goal.journeyDetails[index];
       item.append(heading, detail);
       container.append(item);
     });
