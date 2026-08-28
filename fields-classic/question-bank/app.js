@@ -444,14 +444,14 @@ function renderCurriculum() {
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
-        <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "원본 골든벨 → 개념 이야기 → 같은 원리의 새 상황" : book.source.goldenBellStatus === "source-located" ? "비공개 원본 위치 확인 · 문항별 대조 중" : "원본 자료 보강 필요 · 임의 문항 생성 금지"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
+        <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "개념 → 골든벨 → 이야기" : "준비 중"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
         ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
       ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨은 문제 생성과 분리한 개념 설명·원본 확인·스토리 확장 학습${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
+      <p class="book-policy">골든벨은 별도 개념 학습으로 연결${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
   $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;

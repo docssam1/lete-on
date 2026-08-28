@@ -32,7 +32,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           ]
         },
         original: {
-          title: "원본 골든벨 확인",
+          title: "골든벨",
           structureKey: "clock-turn-landing",
           prompt: "12를 가리키고 있는 시계 바늘을 다음과 같이 돌리면 어떤 수를 가리키는지 구하시오.",
           visual: { kind: "clock", value: 12 },
@@ -77,7 +77,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           ]
         },
         original: {
-          title: "원본 골든벨 확인",
+          title: "골든벨",
           structureKey: "single-fold-unfold-choice",
           prompt: "왼쪽 색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. 남은 부분을 펼쳤을 때의 그림을 고르시오.",
           visual: { kind: "fold-notch-options" },
@@ -117,7 +117,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           ]
         },
         original: {
-          title: "원본 골든벨 확인",
+          title: "골든벨",
           structureKey: "equal-line-missing-value",
           prompt: "모든 줄의 합이 같을 때, 빈 칸에 들어갈 수를 구하시오.",
           visual: {
@@ -168,7 +168,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           ]
         },
         original: {
-          title: "원본 골든벨 확인",
+          title: "골든벨",
           structureKey: "one-to-one-preference-elimination",
           prompt: "각자 하나씩을 좋아할 때, 다음 조건을 읽고 물음에 답하시오.",
           visual: { kind: "logic-cards" },

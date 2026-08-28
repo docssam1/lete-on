@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828c";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -126,7 +126,7 @@ function renderLessonList() {
   }
   $("lessonList").innerHTML = book.lessons.map((lesson, index) => {
     const complete = isLessonComplete(lesson);
-    return `<button type="button" class="lesson-button ${lesson.id === state.lessonId ? "active" : ""} ${complete ? "complete" : ""}" data-lesson="${lesson.id}"><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${lesson.title}</strong><small>${lesson.unit}</small></div><em>${complete ? "완료" : "도전"}</em></button>`;
+    return `<button type="button" class="lesson-button ${lesson.id === state.lessonId ? "active" : ""} ${complete ? "complete" : ""}" data-lesson="${lesson.id}"><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${lesson.title}</strong><small>${lesson.unit}</small></div><em>${complete ? "완료" : "학습"}</em></button>`;
   }).join("");
   $("lessonList").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.lessonId = button.dataset.lesson;
@@ -139,10 +139,10 @@ function renderLessonList() {
 
 function renderStageSteps() {
   const phases = [
-    ["concept", "1", "개념 이야기"],
-    ["original", "2", "원본 확인"],
-    ["extension", "3", "이야기 확장"],
-    ["complete", "4", "학습 완료"]
+    ["concept", "1", "개념"],
+    ["original", "2", "골든벨"],
+    ["extension", "3", "이야기"],
+    ["complete", "4", "완료"]
   ];
   const progress = lessonProgress();
   $("stageSteps").innerHTML = phases.map(([id, number, label]) => {
@@ -153,7 +153,7 @@ function renderStageSteps() {
 }
 
 function renderConcept(lesson) {
-  return `<p class="lesson-kicker">${lesson.unit} · 대표 개념</p><h2>${lesson.story.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><span class="source-locator">원본 근거: ${lesson.sourceLocator}</span><div class="story-band"><span class="story-icon">?</span><div><strong>${lesson.story.title}</strong><p>${lesson.story.text}<br>${lesson.story.mission}</p></div></div><section class="concept-box"><strong>${lesson.explanation.headline}</strong><ol>${lesson.explanation.steps.map((step) => `<li>${step}</li>`).join("")}</ol></section><button type="button" class="primary-action" data-next-phase="original">원본 골든벨 풀기</button>`;
+  return `<p class="lesson-kicker">${lesson.unit} · 대표 개념</p><h2>${lesson.story.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon">?</span><div><strong>${lesson.story.title}</strong><p>${lesson.story.text}<br>${lesson.story.mission}</p></div></div><section class="concept-box"><strong>${lesson.explanation.headline}</strong><ol>${lesson.explanation.steps.map((step) => `<li>${step}</li>`).join("")}</ol></section><button type="button" class="primary-action" data-next-phase="original">다음</button>`;
 }
 
 function choiceButtons(groupId, options) {
@@ -190,25 +190,24 @@ function answerControl(groupId, item, scope) {
 function renderOriginal(lesson) {
   const result = state.feedback?.kind === "original" ? state.feedback : null;
   const allAnswered = lesson.original.items.every((item) => hasAnswer(state.selections[item.id]));
-  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div><b class="concept-chip">원본 문장·그림·답안형식 1:1</b></div><p class="lesson-lead">${lesson.original.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div><div class="quiz-items">${lesson.original.items.map((item) => { const status = result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : ""; const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : ""; return `<section class="quiz-item ${status}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}</section>`; }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allAnswered ? "" : "disabled"}>${result?.passed ? "이야기 문제로 가기" : "원본 답 확인"}</button>`;
+  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div></div><p class="lesson-lead">${lesson.original.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div><div class="quiz-items">${lesson.original.items.map((item) => { const status = result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : ""; const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : ""; return `<section class="quiz-item ${status}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}</section>`; }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allAnswered ? "" : "disabled"}>${result?.passed ? "다음" : "확인"}</button>`;
 }
 
 function renderExtension(lesson) {
   const groupId = `${lesson.id}:extension`;
   const result = state.feedback?.kind === "extension" ? state.feedback : null;
   const selected = state.selections[groupId];
-  return `<div class="quiz-head"><div><span>${lesson.extension.title}</span><h2>${lesson.extension.story}</h2></div><b class="concept-chip">원본과 같은 구조 · 새 이야기</b></div><p class="lesson-lead">${lesson.extension.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.extension.visual)}</div><section class="quiz-item ${result ? answersMatch(selected, lesson.extension.answer) ? "correct" : "incorrect" : ""}"><strong>${lesson.extension.prompt}</strong>${answerControl(groupId, lesson.extension, "extension")}</section>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) ? "" : "disabled"}>${result?.passed ? "학습 완료 확인" : "이야기 답 확인"}</button>`;
+  return `<div class="quiz-head"><div><span>${lesson.extension.title}</span><h2>${lesson.extension.story}</h2></div></div><p class="lesson-lead">${lesson.extension.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.extension.visual)}</div><section class="quiz-item ${result ? answersMatch(selected, lesson.extension.answer) ? "correct" : "incorrect" : ""}"><strong>${lesson.extension.prompt}</strong>${answerControl(groupId, lesson.extension, "extension")}</section>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) ? "" : "disabled"}>${result?.passed ? "완료" : "확인"}</button>`;
 }
 
 function renderComplete(lesson) {
   const book = activeBook();
   const nextLesson = book.lessons.find((candidate) => !isLessonComplete(candidate));
-  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 개념 학습 완료</h2><p>원본 골든벨의 답을 모두 맞히고, 같은 원리를 새로운 이야기에서도 설명했습니다. 이 개념 학습을 마쳤습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음 개념 학습</button>` : '<button type="button" class="primary-action" data-book-complete>1권 골든벨 학습 완료</button>'}</section>`;
+  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : '<button type="button" class="primary-action" data-book-complete>1권 학습 완료</button>'}</section>`;
 }
 
 function renderPending(book) {
-  const message = book.status === "source-needed" ? "이 권은 골든벨 원본 자료를 더 확인해야 합니다. 원본 없이 비슷한 문제를 만들지 않습니다." : "원본 파일 위치는 확인했습니다. 교사용 정답과 학생용 문항을 1:1 대조한 뒤에만 학습을 엽니다.";
-  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 원본 대조 중</h2><p>${message}</p><small>${book.source.file || "원본 파일 보강 필요"}</small></section>`;
+  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있습니다.</p></section>`;
 }
 
 function bindLessonActions() {
@@ -230,7 +229,7 @@ function bindLessonActions() {
     checkButton.disabled = scope === "original"
       ? !lesson.original.items.every((item) => hasAnswer(state.selections[item.id]))
       : !hasAnswer(state.selections[`${lesson.id}:extension`]);
-    checkButton.textContent = scope === "original" ? "원본 답 확인" : "이야기 답 확인";
+    checkButton.textContent = "확인";
   }));
   $("lessonContent").querySelector('[data-check="original"]')?.addEventListener("click", () => {
     const lesson = activeLesson();
@@ -241,7 +240,7 @@ function bindLessonActions() {
     state.feedback = {
       kind: "original",
       passed,
-      message: passed ? "원본 골든벨을 모두 맞혔습니다. 이제 같은 원리를 새로운 이야기에서 사용해 봅시다." : `아직 다른 답이 있습니다. ${lesson.explanation.headline} 설명을 떠올리고 다시 ${retryVerb} 보세요.`
+      message: passed ? "잘했어요. 다음으로 가요." : `${lesson.explanation.headline} 설명을 떠올리고 다시 ${retryVerb} 보세요.`
     };
     render();
   });
@@ -283,9 +282,9 @@ function renderSummary() {
   const completed = book.lessons.filter(isLessonComplete).length;
   $("currentBookLabel").textContent = book.label;
   $("completedCount").textContent = `${completed} / ${book.lessons.length || "-"}`;
-  $("levelState").textContent = book.lessons.length && completed === book.lessons.length ? "통과" : book.lessons.length ? "도전 중" : "준비 중";
+  $("levelState").textContent = book.lessons.length && completed === book.lessons.length ? "완료" : book.lessons.length ? "학습 중" : "준비 중";
   $("bookTitle").textContent = `${book.label} · ${book.title}`;
-  $("bookSource").innerHTML = `<strong>원본 기준</strong><br>${book.source.note}<br>${book.source.file || "원본 파일 보강 필요"}`;
+  $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? "개념을 골든벨과 이야기로 익힙니다." : "준비 중입니다."}`;
 }
 
 function render() {
@@ -295,7 +294,7 @@ function render() {
   renderLessonList();
   renderSummary();
   if (book.lessons.length) renderStageSteps();
-  else $("stageSteps").innerHTML = '<div class="stage-step"><strong>-</strong><span>원본 대조 중</span></div>';
+  else $("stageSteps").innerHTML = '<div class="stage-step"><strong>-</strong><span>준비 중</span></div>';
   renderContent();
 }
 
