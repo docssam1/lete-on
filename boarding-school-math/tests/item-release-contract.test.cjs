@@ -23,6 +23,15 @@ function publicItem(overrides) {
     difficulty: "core",
     responseType: "multiple-choice",
     maxPoints: 1,
+    assessmentBinding: {
+      blueprintId: "asm-bdg-grade6-entry-plan-v1",
+      blueprintVersion: 1,
+      blueprintContractSha256: "a449bc7e0c50ff74af18fca0a648763ae1cfa0e1bdab21c13686dfb6d2547dab",
+      purpose: "course-placement",
+      slotId: "slot-bdg-g6-rp-a-03",
+      unitId: "ccss-6-rp-a",
+      standardRange: "6.RP.A.1-3"
+    },
     promptBlocks: [
       { type: "text", valueByLocale: { ko: "같은 비율을 나타내는 식을 고르세요.", en: "Choose the expression with the same ratio." } },
       { type: "math", latex: "3:5" }
@@ -141,6 +150,19 @@ test("student-safe item payload validates without carrying any scoring answer", 
   });
 });
 
+test("authenticated assessment items require one signed-payload blueprint and slot binding", function () {
+  const missing = publicItem();
+  delete missing.assessmentBinding;
+  assert.throws(function () { contract.validatePublicItem(missing); }, /assessmentBinding/);
+
+  const wrongSlot = publicItem();
+  wrongSlot.assessmentBinding.slotId = "slot-bdg-g6-rp-a-06";
+  assert.equal(contract.validatePublicItem(wrongSlot), true);
+
+  const practice = publicItem({ visibilityClass: "public-practice", assessmentBinding: null });
+  assert.equal(contract.validatePublicItem(practice), true);
+});
+
 test("nested or obvious answers, sparse payloads, mismatched lineage, and mismatched response UI stay blocked", function () {
   const leaked = publicItem();
   leaked.options[0] = Object.assign({}, leaked.options[0], { isCorrect: true });
@@ -148,9 +170,39 @@ test("nested or obvious answers, sparse payloads, mismatched lineage, and mismat
   const obvious = publicItem();
   obvious.promptBlocks[0] = { type: "text", valueByLocale: { ko: "정답은 A", en: "The correct answer is A" } };
   assert.throws(function () { contract.validatePublicItem(obvious); }, /answer-revealing text/);
-  assert.throws(function () { contract.validatePublicItem(publicItem({ promptBlocks: new Array(1) })); }, /empty slots/);
+  const colonAnswer = publicItem();
+  colonAnswer.promptBlocks[0] = { type: "text", valueByLocale: { ko: "답을 쓰세요.", en: "Answer: A" } };
+  assert.throws(function () { contract.validatePublicItem(colonAnswer); }, /answer-revealing text/);
+  assert.throws(function () { contract.validatePublicItem(publicItem({ promptBlocks: new Array(1) })); }, /sparse entries/);
   assert.throws(function () { contract.validatePublicItem(publicItem({ clusterId: "6.NS.A" })); }, /same CCSS lineage/);
   assert.throws(function () { contract.validatePublicItem(publicItem({ responseUi: { inputKind: "number" } })); }, /must match responseType/);
+});
+
+test("item inputs reject inherited, accessor, symbol, oversized, and circular structures", function () {
+  const inherited = publicItem();
+  inherited.assessmentBinding = Object.create(inherited.assessmentBinding);
+  assert.throws(function () { contract.validatePublicItem(inherited); }, /plain object/);
+
+  const accessor = publicItem();
+  const binding = Object.assign({}, accessor.assessmentBinding);
+  Object.defineProperty(binding, "slotId", {
+    enumerable: true,
+    get: function () { return "slot-bdg-g6-rp-a-03"; }
+  });
+  accessor.assessmentBinding = binding;
+  assert.throws(function () { contract.validatePublicItem(accessor); }, /enumerable data field/);
+
+  const symbolField = publicItem();
+  symbolField.assessmentBinding[Symbol("hidden")] = "value";
+  assert.throws(function () { contract.validatePublicItem(symbolField); }, /symbol fields/);
+
+  const circular = publicItem();
+  circular.assessmentBinding.loop = circular.assessmentBinding;
+  assert.throws(function () { contract.validatePublicItem(circular); }, /circular references/);
+
+  const oversized = publicItem();
+  oversized.promptBlocks = new Array(1001).fill(oversized.promptBlocks[0]);
+  assert.throws(function () { contract.validatePublicItem(oversized); }, /cannot exceed 1000 entries/);
 });
 
 test("private scoring is bound to one immutable public revision", function () {
@@ -192,7 +244,7 @@ test("rights modes and delivery scopes prevent unlicensed public or authenticate
   assert.throws(function () {
     contract.validateRightsRecord(rightsRecord(item, { allowedScopes: ["web-public", "translation"] }), item);
   }, /must allow authenticated/);
-  const practice = publicItem({ visibilityClass: "public-practice" });
+  const practice = publicItem({ visibilityClass: "public-practice", assessmentBinding: null });
   assert.throws(function () {
     contract.validateRightsRecord(rightsRecord(practice, { mode: "private_licensed" }), practice);
   }, /require a license or permission record/);
@@ -242,6 +294,8 @@ test("placement projection stays locked until an authenticated server signs the 
   const candidate = contract.buildLockedBlueprintCandidate(complete, "course-placement");
   assert.equal(candidate.reviewState, "pending-authenticated-signer-verification");
   assert.equal(candidate.purpose, "course-placement");
+  assert.deepEqual(candidate.assessmentBinding, complete.publicItem.assessmentBinding);
+  assert.equal(Object.isFrozen(candidate.assessmentBinding), true);
   assert.equal(candidate.structuralEligibility, "structurally-ready-for-authenticated-signer-verification");
   assert.notEqual(candidate.reviewState, "approved");
   assert.deepEqual({
@@ -276,8 +330,17 @@ test("placement projection stays locked until an authenticated server signs the 
   assert.deepEqual(candidate.assetRevisionBindings, []);
   assert.equal(candidate.reviewBindings.length, contract.requiredReviewTypes(complete.publicItem).length);
 
+  assert.throws(function () {
+    contract.buildLockedBlueprintCandidate(complete, "unit-screener");
+  }, /purpose must match the signed public item binding/);
+  const unitScreenerBundle = bundle();
+  unitScreenerBundle.publicItem.assessmentBinding.purpose = "unit-screener";
+  assert.throws(function () {
+    contract.buildLockedBlueprintCandidate(unitScreenerBundle, "course-placement");
+  }, /purpose must match the signed public item binding/);
+
   const practiceBundle = bundle();
-  practiceBundle.publicItem = publicItem({ visibilityClass: "public-practice" });
+  practiceBundle.publicItem = publicItem({ visibilityClass: "public-practice", assessmentBinding: null });
   practiceBundle.privateSpec = privateSpec(practiceBundle.publicItem);
   practiceBundle.rightsRecord = rightsRecord(practiceBundle.publicItem, { allowedScopes: ["web-public", "translation", "derivative"] });
   practiceBundle.reviews = contract.requiredReviewTypes(practiceBundle.publicItem).map(function (type, index) {
@@ -285,6 +348,9 @@ test("placement projection stays locked until an authenticated server signs the 
   });
   assert.throws(function () {
     contract.buildLockedBlueprintCandidate(practiceBundle, "course-placement");
+  }, /must use authenticated-assessment/);
+  assert.throws(function () {
+    contract.buildLockedBlueprintCandidate(practiceBundle, "unit-screener");
   }, /must use authenticated-assessment/);
   assert.throws(function () {
     contract.buildLockedBlueprintCandidate(practiceBundle);
@@ -299,7 +365,7 @@ test("GitHub public payload remains locked until a verified signed release manif
     contract.buildLockedGitHubPublicPracticeCandidate(bundle());
   }, /public-practice items only/);
   const practiceBundle = bundle();
-  practiceBundle.publicItem = publicItem({ visibilityClass: "public-practice" });
+  practiceBundle.publicItem = publicItem({ visibilityClass: "public-practice", assessmentBinding: null });
   practiceBundle.privateSpec = privateSpec(practiceBundle.publicItem);
   practiceBundle.rightsRecord = rightsRecord(practiceBundle.publicItem, { allowedScopes: ["web-public", "translation", "derivative"] });
   practiceBundle.reviews = contract.requiredReviewTypes(practiceBundle.publicItem).map(function (type, index) {
