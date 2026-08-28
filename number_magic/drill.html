@@ -219,7 +219,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
   font-family:'Pretendard',sans-serif;font-variant-numeric:tabular-nums}
 .dr-numpad-btn:active{background:var(--mist);transform:scale(.95)}
 .dr-numpad-btn.dr-np-del{background:rgba(213,83,79,.08);color:var(--no);font-size:16px;border-color:rgba(213,83,79,.25)}
-.dr-numpad-btn.dr-np-ok{background:var(--blue-deep);color:#fff;font-size:14px;grid-column:span 3;border-color:var(--blue-deep)}
+.dr-numpad-btn.dr-np-ok{background:var(--blue-deep);color:#fff;font-size:14px;grid-column:span 2;border-color:var(--blue-deep)}
 .dr-numpad-btn.dr-np-ok:active{background:var(--blue)}
 
 /* ── 결과 화면 — 점수·오답·액션을 하나의 세로 리듬으로 ── */
@@ -908,6 +908,7 @@ function showDrill(cfg){
   /* 쉼표 — 답이 여러 칸인 유형(분수 [분자,분모] 등)은 "8, 9"처럼 받는다.
      이 키가 없으면 모바일에서 그런 문항을 아예 입력할 수 없다(2026-08-28). */
   numpadHtml += '<button class="dr-numpad-btn" data-n="comma">,</button>';
+  numpadHtml += '<button class="dr-numpad-btn" data-n="dot">.</button>';
   numpadHtml += '<button class="dr-numpad-btn dr-np-ok" data-n="ok">확인 ✓</button>';
   numpadHtml += '</div>';
 
@@ -945,6 +946,8 @@ function activateNumpad(){
       inp.value = inp.value.slice(0, -1) || '';
     } else if(n === 'comma'){
       inp.value = (inp.value||'') + ', ';
+    } else if(n === 'dot'){
+      inp.value = (inp.value||'') + '.';
     } else if(n === 'ok'){
       var submitBtn = document.getElementById('nm-ex-submit') || document.getElementById('nm-ex-sub2');
       if(submitBtn) submitBtn.click();
@@ -996,6 +999,7 @@ function buildNumpadHTML(){
   h += '<button class="dr-numpad-btn dr-np-del" data-n="del">⌫</button>';
   h += '<button class="dr-numpad-btn" data-n="0">0</button>';
   h += '<button class="dr-numpad-btn" data-n="comma">,</button>';
+  h += '<button class="dr-numpad-btn" data-n="dot">.</button>';
   h += '<button class="dr-numpad-btn dr-np-ok" data-n="ok">확인 ✓</button>';
   return h;
 }
@@ -1031,7 +1035,7 @@ function showWrongsRetry(wrongs, origCfg){
         '</div>' +
         '<div class="nm-exam-question"><div class="nm-q-tex" id="nm-ex-qtex2"></div></div>' +
         '<div class="nm-exam-input">' +
-          '<input id="nm-ex-ans2" type="' + (Array.isArray(p.answer)?'text':'number') + '" ' +
+          '<input id="nm-ex-ans2" type="text" inputmode="decimal" ' +
             'placeholder="' + (Array.isArray(p.answer)?'예: 3, 5':'답') + '" autocomplete="off">' +
           '<button id="nm-ex-sub2" class="nm-btn nm-btn-primary">확인 ✓</button>' +
         '</div>' +
@@ -1052,7 +1056,7 @@ function showWrongsRetry(wrongs, origCfg){
       if(Array.isArray(p.answer)){
         if(String(inp.value).trim() !== '') answers[current] = inp.value;
       } else {
-        var v = parseInt(inp.value);
+        var v = parseFloat(inp.value);   /* 소수 답이 잘리지 않도록 */
         if(!isNaN(v)) answers[current] = v;
       }
       current++;

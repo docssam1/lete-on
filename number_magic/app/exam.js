@@ -1486,6 +1486,10 @@ const NM_EXAM = {
          화면으로는 영원히 못 맞히는 상태였다(2026-08-28 발견, 99개 레벨).
          인쇄용 그리드 학습지는 이미 이렇게 처리하고 있어 같은 방식을 맞춘다. */
       const isMulti = Array.isArray(p.answer);
+      /* type=number를 쓰지 않는 이유: 소수점을 찍는 순간 "3."이 잘못된 수라
+         브라우저가 값을 통째로 비워 버려 숫자패드의 소수점 키가 동작하지 않는다.
+         text + inputmode=decimal이면 모바일 숫자 자판은 그대로 뜨고 값도 남는다.
+         비교는 어차피 parseFloat/matchesAnswer가 한다. */
       container.innerHTML = `
 <div class="nm-exam-run">
   <div class="nm-exam-header">
@@ -1502,7 +1506,7 @@ const NM_EXAM = {
     ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="${isMulti ? 'text' : 'number'}" inputmode="${isMulti ? 'text' : 'numeric'}"
+    <input id="nm-ex-ans" type="text" inputmode="decimal"
            placeholder="${isMulti ? '예: 3, 5' : '답 / Answer'}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
@@ -1531,7 +1535,9 @@ const NM_EXAM = {
            parseInt를 태우면 "8, 9"가 8이 되어 항상 오답이 된다. */
         if(String(raw).trim() !== '') answers[current] = raw;
       } else {
-        const v = parseInt(raw);
+        /* parseFloat — 소수 답(DC4·DC5·FR12: 6.8, 136.65 …)이 parseInt에서
+           6으로 잘려 늘 오답이 됐다. matchesAnswer도 parseFloat를 쓴다. */
+        const v = parseFloat(raw);
         if(!isNaN(v)){ answers[current] = v; }
       }
       current++;
