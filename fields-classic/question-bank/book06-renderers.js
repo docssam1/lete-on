@@ -13,7 +13,7 @@ function numberLine(visual) {
   const ticks = Array.from({ length: visual.intervals + 1 }, (_, index) => {
     const x = left + index * step;
     const label = visual.labels?.[index];
-    return `<g class="${visual.target === index ? "target" : ""}"><line x1="${x}" y1="${y - 11}" x2="${x}" y2="${y + 11}"/><circle cx="${x}" cy="${y}" r="4"/><text x="${x}" y="${y + 34}">${label ?? ""}</text></g>`;
+    return `<g class="${visual.target === index ? "target" : ""}"><line x1="${x}" y1="${y - 11}" x2="${x}" y2="${y + 11}"/><circle cx="${x}" cy="${y}" r="4"/><text class="number-line-label" x="${x}" y="${y + 34}">${label ?? ""}</text></g>`;
   }).join("");
   return `<svg class="b6-svg b6-number-line" viewBox="0 0 ${width} 130" role="img" aria-label="수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}</svg>`;
 }
