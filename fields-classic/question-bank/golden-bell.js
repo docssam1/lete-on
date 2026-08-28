@@ -64,10 +64,10 @@ function setPhase(phase) {
 
 function clockMarkup(value) {
   const handAngle = ((value % 12) * Math.PI) / 6;
-  const handX = 100 + Math.sin(handAngle) * 53;
-  const handY = 92 - Math.cos(handAngle) * 53;
+  const handX = 100 + Math.sin(handAngle) * 34;
+  const handY = 74 - Math.cos(handAngle) * 34;
   const markerId = `clock-arrow-${value}`;
-  return `<svg class="clock-svg source-clock" viewBox="0 0 200 150" role="img" aria-label="${value}를 가리키는 시계 바늘"><defs><marker id="${markerId}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#178bc0" /></marker></defs><rect x="44" y="18" width="112" height="112" fill="#f5f6f7" /><line class="hand" x1="100" y1="92" x2="${handX.toFixed(1)}" y2="${handY.toFixed(1)}" marker-end="url(#${markerId})" /><circle cx="100" cy="92" r="10" fill="#a6a9ac" /><circle cx="100" cy="92" r="4" fill="#d9dcde" /></svg>`;
+  return `<svg class="clock-svg source-clock" viewBox="0 0 200 150" role="img" aria-label="12, 3, 6, 9가 표시되고 ${value}를 가리키는 시계 바늘"><defs><marker id="${markerId}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#178bc0" /></marker></defs><rect x="44" y="18" width="112" height="112" fill="#f5f6f7" /><text class="clock-cardinal" x="100" y="30">12</text><text class="clock-cardinal" x="144" y="74">3</text><text class="clock-cardinal" x="100" y="118">6</text><text class="clock-cardinal" x="56" y="74">9</text><line class="hand" x1="100" y1="74" x2="${handX.toFixed(1)}" y2="${handY.toFixed(1)}" marker-end="url(#${markerId})" /><circle cx="100" cy="74" r="9" fill="#a6a9ac" /><circle cx="100" cy="74" r="4" fill="#d9dcde" /></svg>`;
 }
 
 function foldNotchMarkup() {
