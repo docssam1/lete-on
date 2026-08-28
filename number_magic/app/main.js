@@ -2856,7 +2856,13 @@ function screenWorksheetHelper(wsId){
          ${(u.discover.stages||[]).slice(0,1).map(s=>`<p class="nm-wsh-sentence">${L(s.desc)}</p>`).join('')}`
       : (th.concept
           ? `<p class="nm-wsh-sentence">${esc(L(th.concept))}</p>`
-          : `<p class="nm-wsh-sentence nm-wsh-noconcept">${ko?'이 유형은 아직 개념 설명이 준비되지 않았어요.':en?'A concept note for this type is not ready yet.':'这个类型的概念说明还没准备好。'}</p>`);
+          : /* 개념 노트가 없는 유형(초등 대부분)에서 이 화면이 "준비되지 않았어요"
+               한 줄짜리 막다른 길이었다 — QR을 찍은 학부모가 아무것도 못 한다.
+               적어도 이 학습지가 무엇인지와 다시 만드는 방법은 알려 준다.
+               2026-08-28. */
+            `<p class="nm-wsh-sentence nm-wsh-noconcept">${ko?'이 유형은 아직 개념 설명이 준비되지 않았어요.':en?'A concept note for this type is not ready yet.':'这个类型的概念说明还没准备好。'}</p>
+             <p class="nm-wsh-sentence">${ko?'학습지에 인쇄된 코드를 문제은행에 넣으면 같은 문제를 다시 풀거나 인쇄할 수 있어요.':en?'Enter the code printed on the sheet in the problem bank to redo or reprint the same worksheet.':'把单子上印的代码输入题库，就能重做或重新打印同一份学习单。'}</p>
+             <a class="nm-btn full nm-wsh-bank" href="drill.html">${ko?'📚 문제은행 열기':en?'📚 Open problem bank':'📚 打开题库'}</a>`);
     const ruleBox = (u && u.discover && u.discover.rule)
       ? `<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${esc(L(u.discover.rule))}</p></div>` : '';
     const unitBtn = info.unitId

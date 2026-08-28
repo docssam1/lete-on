@@ -330,12 +330,25 @@ function qrSvg(text){
        + `<rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
 }
 
-/* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬). */
-function qrHeaderBlockHtml(code){
+/* 이 유형에 열어 볼 개념 설명이 실제로 있는가 — 없는 유형이 424레벨 중 115개고
+   하필 초등 전 범위다(NS·AD·SB·ML·DV·FR·DC·MX). 그런데 인쇄물은 늘 "QR을 찍으면
+   개념 설명이 열려요"라고 적어 놓아서, 초등 학습지의 QR은 "준비되지 않았어요"만
+   있는 빈 화면으로 이어졌다(2026-08-28 발견). 캡션을 사실에 맞춘다. */
+function hasConceptFor(thread, level){
+  const info = resolveConceptUnit(thread, level);
+  if(!info) return false;
+  return !!((info.unit && info.unit.discover) || info.thread.concept);
+}
+
+/* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬).
+   hasConcept를 넘기지 않으면 개념이 있다고 보지 않고 중립 문구를 쓴다. */
+function qrHeaderBlockHtml(code, hasConcept){
+  const cap = hasConcept ? 'QR을 찍으면 개념 설명이 열려요'
+                         : 'QR을 찍으면 이 학습지를 다시 만들 수 있어요';
   return `<div class="nm-print-qr-wrap">
     <span class="nm-print-qr-code">${esc(code)}</span>
     ${qrSvg(wsUrlFromCode(code))}
-    <span class="nm-print-qr-cap">QR을 찍으면 개념 설명이 열려요</span>
+    <span class="nm-print-qr-cap">${cap}</span>
   </div>`;
 }
 
@@ -397,7 +410,10 @@ function conceptBlockHtml(threadId, level){
       <p class="nm-cp-sentence">${esc(pickKo(info.thread.concept))}</p>
     </div>`;
   }
-  return `<div class="nm-cp-block"><h3 class="nm-cp-title">${esc(nm)}</h3></div>`;
+  /* 개념 내용이 아예 없으면 빈 블록을 만들지 않는다 — 예전엔 유형 이름만 적힌
+     장이 통째로 인쇄됐다(개념 없는 유형이 115레벨이라 종이 낭비가 컸다).
+     블록이 하나도 없으면 conceptPageHtml이 개념 장 자체를 만들지 않는다. */
+  return '';
 }
 
 /* items: [{thread,level}, ...] — 현재는 학습지 한 장이 스레드 하나뿐이라 늘 1개짜리
@@ -411,7 +427,7 @@ function conceptPageHtml(items, code){
     <h2 style="margin:0">Numbers of Magic — 개념 노트</h2>
     <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em;align-items:flex-start">
       <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
-      ${qrHeaderBlockHtml(code)}
+      ${qrHeaderBlockHtml(code, true)}
     </div>
   </div>
   <div class="nm-cp-body">${blocks}</div>
@@ -1665,7 +1681,7 @@ ${conceptHtml}
     <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    ${qrHeaderBlockHtml(code)}
+    ${qrHeaderBlockHtml(code, hasConceptFor(thread, level))}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems"></div>
@@ -1724,7 +1740,7 @@ ${conceptHtml}
     <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
     <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${b.cfg.count}</span>
-    ${qrHeaderBlockHtml(b.code)}
+    ${qrHeaderBlockHtml(b.code, hasConceptFor(b.cfg.thread, b.cfg.level))}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems-${i}"></div>`).join('');
