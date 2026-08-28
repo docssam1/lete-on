@@ -640,7 +640,7 @@
 @media(max-width:560px){.book10-visual{min-height:165px;padding:6px}.b10-methods>div{grid-template-columns:repeat(2,1fr)}.b10-number-grid{grid-template-columns:repeat(var(--cols),37px)}.b10-number-grid span{height:35px}.b10-calendar b,.b10-calendar span{height:25px}.b10-factor{gap:10px}.b10-factor>strong,.b10-target>strong{width:60px;height:60px}.b10-equations p{font-size:14px}.b10-table th,.b10-table td{min-width:61px}.b10-routes>div i{width:38px}.b10-digit-slots .slots i{width:40px}}
 @media print{.book10-visual{break-inside:avoid}.b10-methods span,.b10-factor span,.b10-calendar,.b10-number-grid,.b10-calendar-block,.b10-equations p,.b10-table,.b10-digit-slots .cards span,.b10-target-cards span,.b10-baseball{background:#fff}}
 
-/* 골든벨은 문제 선택 탭이 아니라 독립 개념 레벨업 화면으로 이동한다. */
+/* 골든벨은 문제 선택 탭이 아니라 독립 개념 학습 화면으로 이동한다. */
 .builder-tabs>a{display:inline-flex;align-items:center;justify-content:center;min-height:54px;margin-left:auto;padding:0 24px;border-left:1px solid var(--line);border-bottom:2px solid transparent;background:#fff;color:#168a67;font-size:13px;font-weight:800;text-decoration:none}
 .builder-tabs>a:hover{border-bottom-color:#168a67;background:#eef8f3}
 @media(max-width:560px){.builder-tabs{display:grid;grid-template-columns:repeat(2,1fr);padding:0 8px}.builder-tabs button,.builder-tabs>a{min-height:45px;margin-left:0;padding:0 6px;border-left:0}}
