@@ -22,6 +22,14 @@ window.NM_UNITS['H-12'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'2000년 전, 배도 비행기도 없이 지구 둘레를 알아낸 사람이 있어요. 어떻게?',
+        en:'Two thousand years ago, with no ship or plane, someone measured the whole Earth. How?',
+        zh:'两千年前，没有船也没有飞机，有人量出了地球一圈有多长。怎么做到的？' },
+      history:{ ko:'에라토스테네스는 같은 시각 두 도시에서 해의 기울기가 7.2도 차이 난다는 걸 알았어요. 7.2도는 한 바퀴 360도의 딱 50분의 1이죠. 두 도시 사이가 약 800 km니까 800 × 50 = 40,000 km. 오늘날 측정값은 약 40,075 km예요. 정확한 도구 하나 없이, 어림하고 곱한 것만으로요.',
+        en:'Eratosthenes noticed the sun stood 7.2 degrees apart at the same hour in two cities. And 7.2 degrees is exactly one fiftieth of a full 360. The cities were about 800 km apart, so 800 × 50 = 40,000 km. Today we measure about 40,075 km. No precise instrument at all — just an estimate and one multiplication.',
+        zh:'埃拉托色尼发现，同一时刻两座城市的太阳角度差7.2度。而7.2度正好是一整圈360度的五十分之一。两城相距约800公里，于是800 × 50 = 40,000公里。今天测得约40,075公里。没有任何精密仪器——只靠一次估算和一次乘法。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 가까운 수 찾고, 부호 판단',en:'1) Find a close number, judge the sign',zh:'① 找邻近数，判断正负'},

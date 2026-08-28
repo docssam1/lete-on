@@ -21,6 +21,14 @@ window.NM_UNITS['B-20'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'1미터는 누가 정했을까요? 무엇을 기준으로 삼았을까요?',
+        en:'Who decided how long one metre is — and measured against what?',
+        zh:'一米是谁定的？以什么为标准？' },
+      history:{ ko:'지구예요. 1790년 프랑스에서는 쓰이는 자가 400종이나 돼 뒤죽박죽이었어요. 그래서 북극에서 적도까지 거리의 1천만분의 1을 1 m로 정했죠. 그러면 지구 한 바퀴는 1천만 × 4 = 4천만 m, 곧 40,000 km가 돼요. 0의 개수만 세면 지구 크기가 나오는 셈이에요 — 그리고 이 값은 2000년 전 에라토스테네스가 어림으로 알아낸 수와 똑같습니다.',
+        en:'The Earth. In 1790 France had some 400 different rulers in use, and it was chaos. So one metre was set as one ten-millionth of the distance from the North Pole to the equator. That makes one trip around the Earth 10,000,000 × 4 = 40,000,000 m, or 40,000 km. Count the zeros and you have the size of the planet — the same number Eratosthenes had estimated two thousand years earlier.',
+        zh:'是地球。1790年的法国有大约400种不同的尺子，一片混乱。于是把北极到赤道距离的一千万分之一定为1米。这样绕地球一圈就是10,000,000 × 4 = 40,000,000米，也就是40,000公里。数一数0，就得到了地球的大小——而这个数，正好和两千年前埃拉托色尼估算出来的一样。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 몇십×몇십 = 구구 + 00',en:'1) Tens×tens = times table + two zeros',zh:'① 几十×几十 = 口诀 + 两个0'},

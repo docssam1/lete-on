@@ -21,6 +21,14 @@ window.NM_UNITS['B-04'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'곱하기 기호 ×는 누가 만들었을까요?',
+        en:'Who invented the multiplication sign ×?',
+        zh:'乘号×是谁发明的？' },
+      history:{ ko:'1631년 영국의 오트레드가 처음 썼어요. 그런데 왜 하필 이 모양인지는 아직도 아무도 모릅니다. 수학에도 이렇게 이유가 밝혀지지 않은 것들이 있어요. 2단은 그 알 수 없는 기호로 우리가 처음 만나는 곱셈이랍니다.',
+        en:'William Oughtred first used it in 1631 — and to this day nobody knows why he chose that shape. Even mathematics has corners where the reason was simply lost. The 2 times table is where we first meet that mysterious little cross.',
+        zh:'1631年英国人奥特雷德第一次使用它——可直到今天也没人知道他为什么选这个形状。数学里也有这样说不清来由的角落。2的乘法口诀，就是我们第一次遇见这个神秘小叉的地方。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 2단 = 두 배!', en:'1) ×2 = double!', zh:'① 乘2=加倍！' },

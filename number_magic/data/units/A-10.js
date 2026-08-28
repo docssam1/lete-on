@@ -26,6 +26,14 @@ window.NM_UNITS['A-10'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'빼기 기호 −는 어떻게 생겼을까요?',
+        en:'Where did the minus sign come from?',
+        zh:'减号−是怎么来的？' },
+      history:{ ko:'모자란다는 뜻의 라틴어 minus를 짧게 −m이라고 적던 시절이 있었어요. 여기서 m마저 빼고 작대기만 남은 게 지금의 −라고 전해집니다. 1489년 독일 책에 처음 나왔죠. 빼기 기호 자체가 빼기로 만들어진 셈이에요.',
+        en:'Scribes once shortened the Latin minus, meaning less, to −m. The story goes that even the m was dropped, leaving just the stroke we use today; it first appears in a German book in 1489. The minus sign was itself made by subtracting.',
+        zh:'拉丁语minus意思是不足，从前被简写成−m。据说后来连m也去掉了，只剩下一道横杠，就是今天的−；它最早出现在1489年的一本德文书里。减号本身就是减出来的。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 수를 둘로 나눠요', en:'1) Split the number in two', zh:'① 把数字分成两半' },
