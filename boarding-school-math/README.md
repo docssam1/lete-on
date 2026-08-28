@@ -30,13 +30,15 @@ The Common Core standards are not treated as a national promotion cut score. Eac
 ## Public entry points
 
 - `index.html` is the goal-first product home: school mathematics, Singapore mastery, Math Kangaroo, SASMO, and the AMC 8 → 10 → 12 pathway lead to distinct explanations and grade choices.
+- `sasmo.html` is the dedicated SASMO preparation entry: K2/G1–12 level and goal selection lead to a six-axis GFIELD diagnostic, role-specific workflow, and clearly separated official, third-party-index, and GFIELD-authored source states.
 - `catalog.html` preserves the currently implemented K–8 data-driven curriculum, unit, cadence, and student/teacher resource-plan viewer while labeling the wider K–12 target.
-- `diagnostic.html` is the public Grade 6 placement-blueprint viewer: it explains the 42 locked slots, coverage balance, release gates, and teacher/student/parent flows without publishing prompts, answers, learner records, or a placement decision.
+- `diagnostic.html` is the public Grade 6 placement-blueprint viewer: it explains the 42 locked slots, coverage balance, release gates, and separate teacher/student flows without publishing prompts, answers, learner records, or a placement decision.
 - `competition/official-original-links.js` records verified organizer-hosted source-entry URLs and keeps organizer registration, official source access, and GFIELD readiness separate. SASMO historical access differs by year; K2 stays visibly locked when no historical paper entry is verified.
+- `competition/sasmo-source-inventory.js` exposes only the verified aggregate and year/grade coverage of the privately catalogued K12 Math Contests reference assets. It contains no PDF URL, filename, hash, question, answer, solution, or browser delivery route; the third-party files remain private reference assets rather than GFIELD-owned publication content.
 
 Official contest problems are not translated. UI guidance and independently authored GFIELD materials may be localized, but an official original opens on the organizer's site. GFIELD does not fetch, proxy, cache, embed, or store a contest-paper copy in the public repository or browser build. Organizer-hosted SASMO files used for source verification are fingerprinted only in a separate private archive and are not student-delivery assets.
 
-The primary-source coverage and access audit is documented in [`docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md`](./docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md).
+The primary-source coverage and access audit is documented in [`docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md`](./docs/K12_COMPETITION_SOURCE_AUDIT_2026-08-28.md). The Edugain/K12 comparison and resulting SASMO product decision are recorded in [`docs/report-source.md`](./docs/report-source.md).
 
 ## Publication rule
 

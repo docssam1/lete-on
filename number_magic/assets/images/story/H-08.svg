@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g stroke="#0E2C57" stroke-width="3" fill="#16417C" fill-opacity=".85">
+<path d="M96 200 h72 v-72 h-72 z"/><path d="M96 128 l26 -26 h72 l-26 26 z" fill="#0E2C57"/>
+<path d="M168 200 l26 -26 v-72 l-26 26 z" fill="#0E2C57" fill-opacity=".6"/></g>
+<text x="238" y="166" font-family="ui-monospace,monospace" font-size="30" fill="#4a5468" text-anchor="middle">→</text>
+<g stroke="#0E2C57" stroke-width="3" fill="#C9A063" fill-opacity=".9">
+<path d="M304 232 h144 v-144 h-144 z"/><path d="M304 88 l40 -40 h144 l-40 40 z" fill="#C9A063"/>
+<path d="M448 232 l40 -40 v-144 l-40 40 z" fill="#C9A063" fill-opacity=".55"/></g>
+<g stroke="#FBFAF7" stroke-width="2" opacity=".8">
+<path d="M376 232 v-144"/><path d="M304 160 h144"/><path d="M324 68 v144"/><path d="M468 68 v144"/><path d="M344 48 l-40 40"/></g>
+<g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="132" y="256" font-size="22" fill="#16417C">1</text>
+<text x="376" y="270" font-size="22" fill="#C9A063">2</text>
+<rect x="516" y="112" width="104" height="72" rx="14" fill="#D9534F"/>
+<text x="568" y="160" font-size="32" fill="#fff">× 8</text></g></svg>

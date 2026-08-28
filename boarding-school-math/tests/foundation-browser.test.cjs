@@ -52,6 +52,8 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.equal(await page.locator("[data-goal]").count(), 5);
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
   assert.match(await page.locator("#goal-format").textContent(), /90분 · 25문항/);
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo.html");
+  assert.equal(await page.locator('.singapore-path a[href="./sasmo.html"]').count(), 1);
 
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
@@ -83,7 +85,7 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.equal(await page.locator("#goal-title").textContent(), "AMC 12 · Grade 11 권장 경로");
   assert.match(await page.locator("#goal-eligibility").textContent(), /G12 이하/);
 
-  await page.locator('[data-path-goal="sasmo"]').click();
+  await page.locator('[data-goal="sasmo"]').click();
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
 
   await page.locator('[data-goal="kangaroo"]').focus();
@@ -108,6 +110,100 @@ test("production home exposes a truthful goal-to-official-source path", async fu
   assert.deepEqual(missingHashTargets, []);
   assert.deepEqual(errors, []);
   await page.close();
+});
+
+test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe source inventory", async function () {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = collectErrors(page);
+  const response = await page.goto(`${baseUrl}sasmo.html`, { waitUntil: "networkidle" });
+  assert.equal(response.status(), 200);
+  assert.match(await page.locator("h1").innerText(), /GFIELD SASMO\s*준비 프로그램/);
+  assert.equal(await page.locator("[data-level]").count(), 13);
+  assert.equal(await page.locator("[data-goal]").count(), 4);
+  assert.equal(await page.locator("#domain-grid .domain-card").count(), 6);
+  assert.equal(await page.locator("[data-role]").count(), 2);
+  assert.equal(await page.locator("#k12-record-count").textContent(), "88");
+  assert.equal(await page.locator("#k12-asset-count").textContent(), "144");
+  assert.equal(await page.locator("#edugain-topic-count").textContent(), "158");
+  assert.equal(await page.locator("#archive-coverage-list .coverage-row").count(), 11);
+  assert.equal(await page.locator("#hero-format").textContent(), "공식 형식 · 15문항 · 60분");
+  assert.match(await page.locator(".official-format-grid").innerText(), /K2[\s\S]*15문항 · 60분[\s\S]*G1–G12[\s\S]*25문항 · 90분/);
+  assert.equal(await page.evaluate(function () {
+    return window.GFIELDSASMOProgramArchitecture.validateArchitecture().valid
+      && window.GFIELDSASMOProgramArchitecture.validatePublicSafety().valid
+      && window.GFIELDSASMOSourceInventory.validatePublicInventory().valid;
+  }), true);
+
+  await page.locator('[data-level="K2"]').focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator('[data-level="G1"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#hero-format").textContent(), "공식 형식 · 25문항 · 90분");
+  assert.equal(await page.locator("#official-sasmo-link").getAttribute("href"), "https://sasmo.simcc.org/courses/sasmo-past-papers-year-2025/");
+  await page.locator('[data-goal="amc-bridge"]').click();
+  assert.match(await page.locator("#goal-title").textContent(), /AMC 연결/);
+  await page.locator('[data-role="student"]').focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-title").textContent(), /수업 그룹/);
+  assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
+  assert.equal(await page.locator('a[href$=".pdf"], a[href*="files.k12mathcontests.com"]').count(), 0);
+  const duplicateIds = await page.locator("[id]").evaluateAll(function (elements) {
+    const counts = elements.reduce(function (result, element) {
+      result[element.id] = (result[element.id] || 0) + 1;
+      return result;
+    }, {});
+    return Object.keys(counts).filter(function (id) { return counts[id] > 1; });
+  });
+  assert.deepEqual(duplicateIds, []);
+  const missingHashTargets = await page.locator('a[href^="#"]').evaluateAll(function (anchors) {
+    return anchors.map(function (anchor) { return anchor.getAttribute("href"); }).filter(function (href) {
+      return !href || href === "#" || !document.querySelector(href);
+    });
+  });
+  assert.deepEqual(missingHashTargets, []);
+  const unsafeExternalLinks = await page.locator('a[target="_blank"]').evaluateAll(function (anchors) {
+    return anchors.filter(function (anchor) {
+      const rel = new Set((anchor.getAttribute("rel") || "").split(/\s+/));
+      return !rel.has("noopener") || !rel.has("noreferrer");
+    }).map(function (anchor) { return anchor.getAttribute("href"); });
+  });
+  assert.deepEqual(unsafeExternalLinks, []);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("dedicated SASMO page stays usable at mobile and tablet widths", async function () {
+  for (const width of [320, 390, 768]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: width < 600 });
+    const errors = collectErrors(page);
+    await page.goto(`${baseUrl}sasmo.html`, { waitUntil: "networkidle" });
+    const dimensions = await page.evaluate(function () {
+      return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
+    });
+    assert.equal(dimensions.scroll, dimensions.client, `SASMO overflow at ${width}px`);
+    const allLevelsVisible = await page.locator("#level-selector").evaluate(function (selector) {
+      const selectorRect = selector.getBoundingClientRect();
+      return Array.from(selector.querySelectorAll("button")).every(function (button) {
+        const rect = button.getBoundingClientRect();
+        return rect.left >= selectorRect.left && rect.right <= selectorRect.right
+          && rect.top >= selectorRect.top && rect.bottom <= selectorRect.bottom;
+      });
+    });
+    assert.equal(allLevelsVisible, true, `not all K2-G12 controls visible at ${width}px`);
+    assert.equal(await page.locator('[data-level="G12"]').isVisible(), true);
+    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .outline-link, .archive-coverage summary").evaluateAll(function (controls) {
+      return controls.map(function (control) {
+        const rect = control.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      });
+    });
+    targetSizes.forEach(function (size) {
+      assert.ok(size.width >= 44, `SASMO touch width ${size.width} at ${width}px`);
+      assert.ok(size.height >= 44, `SASMO touch height ${size.height} at ${width}px`);
+    });
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
 });
 
 test("legacy curriculum foundation remains available without feature regression", async function () {
@@ -166,7 +262,7 @@ test("Grade 6 diagnostic blueprint separates role guidance from locked assessmen
   assert.match(await page.locator("#role-panel").innerText(), /학생은 배정된 평가와 다음 학습만 봅니다/);
   await page.locator('[data-role="student"]').focus();
   await page.keyboard.press("ArrowRight");
-  assert.equal(await page.locator('[data-role="parent"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
   assert.deepEqual(errors, []);
   await page.close();
 });

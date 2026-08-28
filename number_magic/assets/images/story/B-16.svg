@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><path d="M60 244 q140 -150 260 -150 t260 150" fill="none" stroke="#C9A063" stroke-width="26" stroke-linecap="round"/>
+<path d="M60 244 q140 -150 260 -150 t260 150" fill="none" stroke="#F1F0EC" stroke-width="4" stroke-dasharray="16 18"/>
+<path d="M60 244 H580" stroke="#D9534F" stroke-width="5" stroke-dasharray="12 9" opacity=".85"/>
+<g stroke="#D9534F" stroke-width="7" stroke-linecap="round">
+<path d="M296 220 L344 268"/><path d="M344 220 L296 268"/></g>
+<g fill="#16417C"><circle cx="60" cy="244" r="15"/><circle cx="580" cy="244" r="15"/></g>
+<g transform="translate(320 44)">
+<path d="M-34 20 L-34 -6 L-18 8 L0 -16 L18 8 L34 -6 L34 20 Z" fill="#C9A063" stroke="#0E2C57" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="-34" cy="-12" r="5" fill="#0E2C57"/><circle cx="0" cy="-22" r="5" fill="#0E2C57"/><circle cx="34" cy="-12" r="5" fill="#0E2C57"/></g>
+<text x="320" y="168" font-family="ui-monospace,monospace" font-size="21" font-weight="800" fill="#0E2C57" text-anchor="middle">2 3 4 5 6 7 8 9</text></svg>

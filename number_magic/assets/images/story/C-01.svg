@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><circle cx="146" cy="140" r="80" fill="#16417C"/>
+<g fill="#2E9E6B" opacity=".85">
+<path d="M100 82 q34 8 26 34 t-40 22 q-20 -28 14 -56z"/>
+<path d="M164 108 q40 -14 52 16 t-30 44 q-34 -18 -22 -60z"/>
+<path d="M116 178 q30 -6 44 18 t-24 30 q-28 -16 -20 -48z"/></g>
+<g font-family="ui-monospace,monospace" font-weight="800">
+<text x="262" y="126" font-size="44" fill="#0E2C57">5.98</text>
+<text x="262" y="186" font-size="44" fill="#C9A063">×10<tspan font-size="26" dy="-18">24</tspan></text></g>
+<path d="M258 204 H600" stroke="#E4E2DC" stroke-width="2"/>
+<text x="262" y="234" font-family="ui-monospace,monospace" font-size="14" fill="#4a5468">5 980 000 000 000 000 000 000 000</text></svg>
