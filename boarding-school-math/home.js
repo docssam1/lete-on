@@ -291,9 +291,18 @@
     if (goalId === "sasmo") {
       primary.textContent = "SASMO 전용 프로그램 시작";
       primary.href = "./sasmo.html";
-    } else {
-      primary.textContent = ["school", "singapore"].includes(goalId) ? "진단·숙달 구조 보기" : "GFIELD 준비 진단 구조 보기";
+    } else if (goalId === "school" && String(grade) === "6") {
+      primary.textContent = "Grade 6 진단·분석·처방 QA 열기";
       primary.href = "./diagnostic.html";
+    } else if (goalId === "singapore" && String(grade) === "6") {
+      primary.textContent = "Grade 6 핵심 개념 학습 시작";
+      primary.href = "./concept-learning.html";
+    } else if (String(grade) === "K" || (Number.isInteger(Number(grade)) && Number(grade) <= 8)) {
+      primary.textContent = `${gradeName(grade)} 교과·문제은행 보기`;
+      primary.href = `./catalog.html?role=student&grade=${encodeURIComponent(grade)}`;
+    } else {
+      primary.textContent = "고등 과정 설계 상태 보기";
+      primary.href = "#map";
     }
 
     setOriginalLink(definition, grade);
