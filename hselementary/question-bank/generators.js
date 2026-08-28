@@ -2200,6 +2200,20 @@
     const uniqueEdges = uniquePatternEdges(edges);
     return { edges: uniqueEdges, points: patternPointsFromEdges(uniqueEdges) };
   };
+  const zigzagHexagonChainModel = count => {
+    const edges = [];
+    for (let index = 0; index < count; index += 1) {
+      const centerX = index * 1.5;
+      const centerY = index % 2 ? Math.sqrt(3) / 2 : 0;
+      const vertices = Array.from({ length: 6 }, (_, vertexIndex) => {
+        const angle = vertexIndex * Math.PI / 3;
+        return [centerX + Math.cos(angle), centerY + Math.sin(angle)];
+      });
+      vertices.forEach((point, vertexIndex) => edges.push([point, vertices[(vertexIndex + 1) % vertices.length]]));
+    }
+    const uniqueEdges = uniquePatternEdges(edges);
+    return { edges: uniqueEdges, points: patternPointsFromEdges(uniqueEdges) };
+  };
   const boxChainModel = count => {
     const project = (x, y, z) => [x + y * 0.55, -z + y * 0.38];
     const edges = [];
@@ -10126,6 +10140,12 @@
       const answer = lowCount * 50 + highCount * 100;
       const diagram = shapePatternSvg("coin-checker", [1, 2, 3, 4], coinCheckerModel, "50원과 100원 동전을 번갈아 놓은 규칙", { "data-low-value": 50, "data-high-value": 100 });
       return result(`50원짜리 동전과 100원짜리 동전을 그림처럼 번갈아 정사각형 모양으로 놓습니다. ${target}번째 도형에 놓인 동전의 금액은 모두 얼마인지 구하세요.${diagram}`, answer, `${target}번째는 ${target} × ${target} = ${target * target}개의 동전으로 이루어집니다. 50원짜리는 ${lowCount}개, 100원짜리는 ${highCount}개이므로 50 × ${lowCount} + 100 × ${highCount} = ${answer}원입니다.`);
+    },
+    source41ShapeFive({ rng, level }) {
+      const hexagonCount = int(rng, 12 + level * 3, 19 + level * 5);
+      const matchsticks = 6 + (hexagonCount - 1) * 5;
+      const diagram = shapePatternSvg("zigzag-hexagon-chain", [1, 2, 3, 4], zigzagHexagonChainModel, "지그재그로 이어 붙인 육각형의 성냥개비 규칙", { "data-source-verified": "true" });
+      return result(`성냥개비로 그림과 같이 육각형 모양을 지그재그로 이어 붙입니다. 성냥개비 ${matchsticks}개로 만들 수 있는 육각형은 모두 몇 개인지 구하세요.${diagram}`, hexagonCount, `첫 육각형에는 성냥개비 6개가 필요하고, 하나를 더 붙일 때마다 한 변을 함께 쓰므로 5개씩 늘어납니다. (${matchsticks} - 6) ÷ 5 + 1 = ${hexagonCount}개입니다.`);
     },
     conditionedNumberCount({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

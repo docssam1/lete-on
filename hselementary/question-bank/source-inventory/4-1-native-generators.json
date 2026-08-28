@@ -244,6 +244,7 @@
     { "sourceItemId": "4-1-u6-e5-mission-1", "generatorKey": "advancedShapePattern", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u6-e5-mission-4", "generatorKey": "advancedShapePattern", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u6-e5-mission-5", "generatorKey": "advancedShapePattern", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u6-e5-mission-6", "generatorKey": "advancedShapePattern", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" }
+    { "sourceItemId": "4-1-u6-e5-mission-6", "generatorKey": "advancedShapePattern", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-mission-2", "generatorKey": "source41ShapeFive", "variant": 0, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }

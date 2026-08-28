@@ -80,8 +80,8 @@ for (const type of types) {
 }
 
 check(sourceIds.size === 329, "고유 원문 ID는 329개여야 합니다.");
-check(readyCount === 249, `생성 가능 유형은 249개여야 하나 ${readyCount}개입니다.`);
-check(lockedCount === 80, `검수 대기 유형은 80개여야 하나 ${lockedCount}개입니다.`);
+check(readyCount === 250, `생성 가능 유형은 250개여야 하나 ${readyCount}개입니다.`);
+check(lockedCount === 79, `검수 대기 유형은 79개여야 하나 ${lockedCount}개입니다.`);
 
 if (failures.length) {
   console.error(`4-1 원문 기반 런타임 분류 감사 실패: ${failures.length}건`);
@@ -89,4 +89,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-1 원문 기반 런타임 분류 감사 통과: 329유형 · 생성 가능 249 · 검수 대기 80 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`4-1 원문 기반 런타임 분류 감사 통과: 329유형 · 생성 가능 250 · 검수 대기 79 · ${generatedCount.toLocaleString()}회 생성`);

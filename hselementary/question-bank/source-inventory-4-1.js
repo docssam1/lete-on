@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 249,
+  "verifiedMappings": 250,
   "items": [
     {
       "unit": 1,
@@ -5948,10 +5948,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "지그재그 육각형 모양의 성냥개비 수로 도형 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41ShapeFive",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
