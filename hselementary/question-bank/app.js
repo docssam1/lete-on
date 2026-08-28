@@ -201,21 +201,19 @@
     return previewPopover;
   }
 
+  function canShowTypePreview() {
+    return matchMedia("(min-width: 1181px) and (hover: hover) and (pointer: fine)").matches;
+  }
+
   function positionTypePreview(anchor) {
     if (!previewPopover || previewPopover.hidden || !anchor?.isConnected) return;
-    if (matchMedia("(max-width: 700px)").matches) {
-      previewPopover.style.left = "10px";
-      previewPopover.style.right = "10px";
-      previewPopover.style.top = "auto";
-      previewPopover.style.bottom = "10px";
-      return;
-    }
     const anchorRect = anchor.getBoundingClientRect();
     const popupRect = previewPopover.getBoundingClientRect();
-    let left = anchorRect.right + 12;
-    if (left + popupRect.width > innerWidth - 12) left = anchorRect.left - popupRect.width - 12;
-    left = Math.max(12, Math.min(left, innerWidth - popupRect.width - 12));
-    const top = Math.max(12, Math.min(anchorRect.top, innerHeight - popupRect.height - 12));
+    const gap = 12;
+    let left = anchorRect.right + gap;
+    if (left + popupRect.width > innerWidth - gap) left = anchorRect.left - popupRect.width - gap;
+    left = Math.max(gap, Math.min(left, innerWidth - popupRect.width - gap));
+    const top = Math.max(gap, Math.min(anchorRect.top, innerHeight - popupRect.height - gap));
     previewPopover.style.right = "auto";
     previewPopover.style.bottom = "auto";
     previewPopover.style.left = `${left}px`;
@@ -223,6 +221,10 @@
   }
 
   function showTypePreview(typeId, anchor) {
+    if (!canShowTypePreview()) {
+      hideTypePreview(true);
+      return;
+    }
     const type = typeById.get(typeId);
     if (!type) return;
     clearTimeout(previewHideTimer);
@@ -449,7 +451,10 @@
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
   $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
-  addEventListener("resize", () => positionTypePreview(previewAnchor));
+  addEventListener("resize", () => {
+    if (!canShowTypePreview()) hideTypePreview(true);
+    else positionTypePreview(previewAnchor);
+  });
   addEventListener("scroll", () => hideTypePreview(true), true);
   addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
