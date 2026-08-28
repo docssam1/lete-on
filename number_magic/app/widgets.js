@@ -82,13 +82,25 @@ function numpadState(screenEl, maxLen){
    두 렌더 경로의 모양이 갈라지지 않게 한다. */
 function multiBoxesHtml(vals, focus, shape){
   const box=i=>`<span class="nm-ans-box${i===focus?' cur':''}" data-i="${i}">${vals[i]!==''?esc(vals[i]):'?'}</span>`;
+  /* 칸이 3개 이상이면 이동 방법을 한 줄로 안내 — 자동 이동은 정답 자릿수를 흘리므로 안 한다.
+     widgets 경로와 main.js 랩 화면(multiScreenHtml)이 같은 함수를 쓰므로 여기 두면 양쪽에 적용된다. */
+  const lg0=(window.S&&window.S.lang)||'ko';
+  const moveHint=vals.length>=3
+    ? `<span class="nm-multi-hint">${lg0==='en'?'Tap a box to move':lg0==='zh'?'点击方格切换':'칸을 눌러 옮겨요'}</span>` : '';
   if(shape==='fraction'){
-    return `<span class="nm-frac">${box(0)}<span class="nm-frac-bar"></span>${box(1)}</span>`;
+    return `<span class="nm-frac">${box(0)}<span class="nm-frac-bar"></span>${box(1)}</span>`+moveHint;
   }
   if(shape==='mixed'){
-    return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`;
+    return `<span class="nm-mixed">${box(0)}<span class="nm-frac">${box(1)}<span class="nm-frac-bar"></span>${box(2)}</span></span>`+moveHint;
   }
-  return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>');
+  /* 2×2 행렬 — 가로 나열(a, b, c, d) 대신 실제 행렬 모양으로.
+     칸 순서는 행 우선(a11,a12,a21,a22)이라 문제 tex의 pmatrix와 같다. */
+  if(shape==='matrix2'&&vals.length===4){
+    return `<span class="nm-mat2"><span class="nm-mat2-br left"></span>`+
+      `<span class="nm-mat2-grid">${box(0)}${box(1)}${box(2)}${box(3)}</span>`+
+      `<span class="nm-mat2-br right"></span></span>`+moveHint;
+  }
+  return vals.map((_,i)=>box(i)).join('<span class="nm-ans-sep">,</span>')+moveHint;
 }
 
 /* ── 다칸 답(배열 answer) 공용 상태 — numpad 화면에 답칸 N개, 탭으로 포커스 이동 ──
@@ -155,6 +167,9 @@ function render(problem, container, onAnswer){
     case 'crossSum':     return renderCrossSum(problem,container,onAnswer);
     case 'sortBasket':   return renderSortBasket(problem,container,onAnswer);
     case 'tallyBuild':   return renderTallyBuild(problem,container,onAnswer);
+    case 'numline':      return renderNumline(problem,container,onAnswer);
+    case 'base10':       return renderBase10(problem,container,onAnswer);
+    case 'compareSteps': return renderCompareSteps(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1692,6 +1707,253 @@ function renderTallyBuild(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   NUMLINE  widget:'numline'  (§4 다함식 위젯 1/3, 2026-08-27 Phase 3)
+   problem.numline = {start, step, seq, blank}
+   수직선 위에 seq의 마디를 점으로 찍고, 마디 사이를 점프 아치(SVG)로 잇는다.
+   blank 위치는 '?'로 가려두고, 넘패드로 답을 입력한다.
+───────────────────────────────────────── */
+function renderNumline(problem, container, onAnswer){
+  const cfg = problem.numline || {};
+  const seq = cfg.seq || [0,0];
+  const blank = cfg.blank!=null ? cfg.blank : seq.length-1;
+  const answer = problem.answer;
+  const NS='http://www.w3.org/2000/svg';
+  const W=320, H=132, padX=26, baseY=90;
+  const minV=Math.min(...seq), maxV=Math.max(...seq);
+  const span=Math.max(1, maxV-minV);
+  const px = v => padX + (v-minV)/span*(W-padX*2);
+
+  const lang0=(window.S&&window.S.lang)||'ko';
+  const hint0 = lang0==='en' ? 'Fill in the blank!' : lang0==='zh' ? '填出空格里的数！' : '빈 칸을 채워요!';
+  const root=document.createElement('div');
+  root.className='nm-w-numline';
+  root.innerHTML=`
+    <div class="nm-nl-hint">${esc(hint0)}</div>
+    <svg class="nm-nl-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+      <line x1="${padX}" y1="${baseY}" x2="${W-padX}" y2="${baseY}" class="nm-nl-line"/>
+      <g id="nlArcs"></g>
+      <g id="nlDots"></g>
+    </svg>
+    <div class="nm-numpad-screen" id="nlScreen">&nbsp;</div>
+    <div class="nm-numpad" id="nlPad"></div>
+  `;
+  container.appendChild(root);
+
+  const arcs=root.querySelector('#nlArcs');
+  const dots=root.querySelector('#nlDots');
+
+  /* 점프 아치 먼저(점보다 아래 레이어) — 마디마다 살짝 지연시켜 순서대로 튀어나오게 */
+  for(let i=0;i<seq.length-1;i++){
+    const x1=px(seq[i]), x2=px(seq[i+1]);
+    const mx=(x1+x2)/2, my=baseY-34;
+    const path=document.createElementNS(NS,'path');
+    path.setAttribute('d',`M${x1} ${baseY} Q${mx} ${my} ${x2} ${baseY}`);
+    path.setAttribute('class','nm-nl-arc');
+    path.style.animationDelay=(i*0.28)+'s';
+    arcs.appendChild(path);
+    const stepLbl=document.createElementNS(NS,'text');
+    stepLbl.setAttribute('x',mx); stepLbl.setAttribute('y',my-6);
+    stepLbl.setAttribute('class','nm-nl-step');
+    stepLbl.style.animationDelay=(i*0.28)+'s';
+    stepLbl.textContent='+'+(seq[i+1]-seq[i]);
+    arcs.appendChild(stepLbl);
+  }
+
+  const dotEls=[];
+  seq.forEach((v,i)=>{
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('class','nm-nl-dot'+(i===blank?' nm-nl-blank':''));
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',px(v)); c.setAttribute('cy',baseY); c.setAttribute('r',7);
+    const lbl=document.createElementNS(NS,'text');
+    lbl.setAttribute('x',px(v)); lbl.setAttribute('y',baseY+22);
+    lbl.setAttribute('class','nm-nl-lbl');
+    lbl.textContent = i===blank ? '?' : v;
+    g.appendChild(c); g.appendChild(lbl);
+    dots.appendChild(g);
+    dotEls.push(g);
+  });
+
+  const screen=root.querySelector('#nlScreen');
+  const ns=numpadState(screen,4);
+  let submitted=false;
+  buildNumpad(root.querySelector('#nlPad'), val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      if(parseFloat(inp)===answer){
+        submitted=true;
+        const blankDot=dotEls[blank];
+        if(blankDot){ blankDot.querySelector('text').textContent=String(answer); blankDot.classList.add('found'); }
+        setTimeout(()=>onAnswer(answer),500);
+      } else {
+        shake(screen); ns.clear();
+      }
+      return;
+    }
+    ns.handle(val);
+  },{decimal:false,negative:false});
+}
+
+/* ─────────────────────────────────────────
+   BASE10  widget:'base10'  (§4 다함식 위젯 2/3, 2026-08-27 Phase 3)
+   problem.base10 = {h,tens,ones,mode:'read'} — 읽기(백판/십막대/낱개 → 수)
+                  = {a:{tens,ones}, b:{tens,ones}, mode:'add'} — 두 수 더하기
+───────────────────────────────────────── */
+function b10FlatHtml(){
+  const cell=4, n=10, size=cell*n;
+  let inner='';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++) inner+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}"/>`;
+  return `<svg class="nm-b10-flat" viewBox="0 0 ${size} ${size}">${inner}</svg>`;
+}
+function b10RodHtml(){
+  const cell=4, n=10;
+  let inner='';
+  for(let i=0;i<n;i++) inner+=`<rect x="0" y="${i*cell}" width="${cell}" height="${cell}"/>`;
+  return `<svg class="nm-b10-rod" viewBox="0 0 ${cell} ${cell*n}">${inner}</svg>`;
+}
+function b10CubeHtml(){
+  return `<svg class="nm-b10-cube" viewBox="0 0 4 4"><rect x="0" y="0" width="4" height="4"/></svg>`;
+}
+function b10GroupHtml(g){
+  const h=g.h||0, tens=g.tens||0, ones=g.ones||0;
+  let html='<div class="nm-b10-row">';
+  for(let i=0;i<h;i++)    html+=b10FlatHtml();
+  for(let i=0;i<tens;i++) html+=b10RodHtml();
+  for(let i=0;i<ones;i++) html+=b10CubeHtml();
+  html+='</div>';
+  return html;
+}
+function renderBase10(problem, container, onAnswer){
+  const cfg = problem.base10 || {};
+  const mode = cfg.mode || 'read';
+  const answer = problem.answer;
+  const lang=(window.S&&window.S.lang)||'ko';
+  const t3=(ko,en,zh)=>lang==='en'?en:lang==='zh'?zh:ko;
+
+  const stageHtml = mode==='add'
+    ? `<div class="nm-b10-stage nm-b10-two">
+        <div class="nm-b10-group">${b10GroupHtml(cfg.a||{})}</div>
+        <span class="nm-b10-plus">+</span>
+        <div class="nm-b10-group">${b10GroupHtml(cfg.b||{})}</div>
+      </div>`
+    : `<div class="nm-b10-stage"><div class="nm-b10-group">${b10GroupHtml(cfg)}</div></div>`;
+
+  const root=document.createElement('div');
+  root.className='nm-w-base10';
+  root.innerHTML=`
+    <div class="nm-b10-hint">${mode==='add' ? t3('두 그림을 더하면 얼마일까요?','What is the total of both groups?','两组加起来一共是多少？') : t3('그림이 나타내는 수는 얼마일까요?','What number do the blocks show?','积木表示的数是多少？')}</div>
+    ${stageHtml}
+    <div class="nm-numpad-screen" id="b10Screen">&nbsp;</div>
+    <div class="nm-numpad" id="b10Pad"></div>
+  `;
+  container.appendChild(root);
+
+  const screen=root.querySelector('#b10Screen');
+  const ns=numpadState(screen,4);
+  let submitted=false;
+  buildNumpad(root.querySelector('#b10Pad'), val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      if(parseFloat(inp)===answer){
+        submitted=true;
+        root.classList.add('nm-b10-ok');
+        setTimeout(()=>onAnswer(answer),400);
+      } else {
+        shake(screen); ns.clear();
+      }
+      return;
+    }
+    ns.handle(val);
+  },{decimal:false,negative:false});
+}
+
+/* ─────────────────────────────────────────
+   COMPARESTEPS  widget:'compareSteps'  (§4 다함식 위젯 3/3, 2026-08-27 Phase 3)
+   problem.compareSteps = {
+     a,
+     left:  { n, steps:[{tex,blank}] },                     // 예: 24+10
+     right: { n, delta, steps:[{tex,blank},{tex,blank}] }    // 예: 24+10(이어받음) → ±delta
+   }
+   왼쪽 열을 먼저 풀어야 오른쪽 열이 열리고, 오른쪽의 1단계는 왼쪽 답을 그대로
+   이어받아 보여준 뒤(입력 없이) 2단계(±delta)만 채우게 한다.
+───────────────────────────────────────── */
+function renderCompareSteps(problem, container, onAnswer){
+  const cfg = problem.compareSteps || {a:0,left:{steps:[]},right:{steps:[]}};
+  const left = cfg.left, right = cfg.right;
+  const lang=(window.S&&window.S.lang)||'ko';
+  const t3=(ko,en,zh)=>lang==='en'?en:lang==='zh'?zh:ko;
+
+  let leftDone=false, leftVal=null, rightDone=false;
+
+  const root=document.createElement('div');
+  root.className='nm-w-cmp';
+  container.appendChild(root);
+
+  function adjHint(){
+    if(right.delta==null)return '';
+    return right.delta<0
+      ? t3(`10 더하고 ${Math.abs(right.delta)} 빼기`,`Add 10, then subtract ${Math.abs(right.delta)}`,`加10再减${Math.abs(right.delta)}`)
+      : t3(`10 더하고 ${right.delta} 더하기`,`Add 10, then add ${right.delta}`,`加10再加${right.delta}`);
+  }
+
+  function paint(){
+    root.innerHTML=`
+      <div class="nm-cmp-cols">
+        <div class="nm-cmp-col nm-cmp-left${leftDone?' done':''}">
+          <div class="nm-cmp-h">${cfg.a} + ${left.n}</div>
+          <div class="nm-cmp-eq">${renderKaTeX(left.steps[0].tex+' = '+(leftDone?leftVal:'\\square'))}</div>
+          ${leftDone?'':`<div class="nm-numpad-screen" id="cmpLScreen">&nbsp;</div><div class="nm-numpad" id="cmpLPad"></div>`}
+        </div>
+        <div class="nm-cmp-arrow${leftDone?' ok':''}">${leftDone?'✓':'→'}</div>
+        <div class="nm-cmp-col nm-cmp-right${!leftDone?' locked':''}${rightDone?' done':''}">
+          <div class="nm-cmp-h">${cfg.a} + ${right.n}</div>
+          ${!leftDone
+            ? `<div class="nm-cmp-lock">🔒 ${t3('왼쪽을 먼저!','Left side first!','先算左边！')}</div>`
+            : `<div class="nm-cmp-eq nm-cmp-step0">${renderKaTeX(right.steps[0].tex+' = '+leftVal)}</div>
+               <div class="nm-cmp-hint">💡 ${esc(adjHint())}</div>
+               <div class="nm-cmp-eq">${renderKaTeX(right.steps[1].tex+' = '+(rightDone?right.steps[1].blank:'\\square'))}</div>
+               ${rightDone?'':`<div class="nm-numpad-screen" id="cmpRScreen">&nbsp;</div><div class="nm-numpad" id="cmpRPad"></div>`}`
+          }
+        </div>
+      </div>
+    `;
+    if(!leftDone){
+      const screen=root.querySelector('#cmpLScreen');
+      const ns=numpadState(screen,4);
+      buildNumpad(root.querySelector('#cmpLPad'), val=>{
+        if(val==='ok'){
+          const inp=ns.get(); if(!inp)return;
+          if(parseFloat(inp)===left.steps[0].blank){
+            leftVal=left.steps[0].blank; leftDone=true; paint();
+          } else { shake(screen); ns.clear(); }
+          return;
+        }
+        ns.handle(val);
+      },{decimal:false,negative:false});
+    } else if(!rightDone){
+      const screen=root.querySelector('#cmpRScreen');
+      const ns=numpadState(screen,4);
+      buildNumpad(root.querySelector('#cmpRPad'), val=>{
+        if(val==='ok'){
+          const inp=ns.get(); if(!inp)return;
+          if(parseFloat(inp)===right.steps[1].blank){
+            rightDone=true; paint();
+            setTimeout(()=>onAnswer(problem.answer),500);
+          } else { shake(screen); ns.clear(); }
+          return;
+        }
+        ns.handle(val);
+      },{decimal:false,negative:false});
+    }
+  }
+  paint();
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1773,6 +2035,9 @@ window.NM_WIDGETS={
   renderCrossSum,
   renderSortBasket,
   renderTallyBuild,
+  renderNumline,
+  renderBase10,
+  renderCompareSteps,
   // 다칸 답 화면 HTML — main.js의 multiScreenHtml()이 재사용(분수 모양 렌더 공유)
   multiBoxesHtml,
   // expose helpers for testing

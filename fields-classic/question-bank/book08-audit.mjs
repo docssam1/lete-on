@@ -1,5 +1,6 @@
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
+import { BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js";
 import { book08Markup } from "./book08-renderers.js";
 
 const iterations = Number(process.env.BOOK08_ITERATIONS || 1000);
@@ -233,6 +234,202 @@ function validate(problem, id, difficulty) {
   }
 }
 
+const unitProductPositions = [
+  [0, 1], [0, 2],
+  [1, 2], [1, 3],
+  [2, 0], [2, 3],
+  [3, 0], [3, 1]
+];
+
+function unitGridLineValue(line, assignment) {
+  return line.reduce((total, item) => total + assignment[item], 0);
+}
+
+function validateUnitProblem(number, problem, difficulty) {
+  const id = "book08-unit-q" + String(number).padStart(2, "0");
+  assert(problem && typeof problem === "object", id, difficulty, "문제 객체 없음");
+  assert(typeof problem.prompt === "string" && problem.prompt.length >= 12, id, difficulty, "지문 없음");
+  assert((problem.prompt.match(/\?/g) || []).length <= 1, id, difficulty, "지문 물음표 중복");
+  assert(typeof problem.answer === "string" && problem.answer.trim(), id, difficulty, "정답 없음");
+  assert(typeof problem.solution === "string" && problem.solution.length >= 12, id, difficulty, "풀이 없음");
+  assert(problem.visual?.kind === "book8", id, difficulty, "8권 시각 자료 아님");
+  assert(book08Markup(problem.visual).length > 20, id, difficulty, "렌더링 없음");
+  assert(problem.meta?.family, id, difficulty, "검산 family 없음");
+  assert(!hasWrongNumberParticle(problem.prompt + " " + problem.solution), id, difficulty, "숫자 뒤 조사 오류");
+  assert(!(problem.prompt + " " + problem.solution).includes("--"), id, difficulty, "이중 음수 표기");
+
+  const meta = problem.meta;
+  const reusedFamilies = new Set([
+    "equalize-transfer-b8",
+    "give-as-much-once-b8",
+    "fraction-given-away-b8"
+  ]);
+  if (reusedFamilies.has(meta.family)) {
+    validate(problem, id, difficulty);
+    return;
+  }
+
+  switch (meta.family) {
+    case "unit-q01-balance":
+      assert(meta.left === meta.square + 2 * meta.circle && meta.right === 2 * meta.square + meta.circle, id, difficulty, "1번 저울 식 오류");
+      assert(meta.target === meta.square + meta.circle, id, difficulty, "1번 저울 답 오류");
+      assert(problem.answer === meta.target + "g, " + meta.square + "g, " + meta.circle + "g", id, difficulty, "1번 답 형식 오류");
+      return;
+    case "unit-q02-shape-sum":
+    case "unit-q21-shape-sum": {
+      const assignment = meta.assignment;
+      const cells = problem.visual.cells;
+      const rows = cells.map((row) => unitGridLineValue(row, assignment));
+      const columns = [0, 1, 2, 3].map((columnIndex) => cells.reduce((total, row) => total + assignment[row[columnIndex]], 0));
+      assert(same(rows, meta.rowSums) && same(columns, meta.columnSums), id, difficulty, "모양 합 표 계산 오류");
+      assert(meta.targetValues.length === 1 && meta.assignmentSolutions.length >= 1, id, difficulty, "모양 합 답 유일성 오류");
+      assert(meta.hiddenColumns.every((columnIndex) => problem.visual.columnLabels[columnIndex] === "?"), id, difficulty, "숨김 세로줄 표시 오류");
+      assert(problem.answer === meta.hiddenColumns.map((columnIndex) => meta.columnSums[columnIndex]).join(", "), id, difficulty, "모양 합 답 형식 오류");
+      return;
+    }
+    case "unit-q03-product-placement": {
+      const values = meta.values;
+      const rowProducts = [0, 1, 2, 3].map((rowIndex) => values.filter((_, index) => unitProductPositions[index][0] === rowIndex).reduce((product, value) => product * value, 1));
+      const columnProducts = [0, 1, 2, 3].map((columnIndex) => values.filter((_, index) => unitProductPositions[index][1] === columnIndex).reduce((product, value) => product * value, 1));
+      assert(values.length === 8 && new Set(values).size === 8, id, difficulty, "곱셈 배치 숫자 중복");
+      assert(same(rowProducts, meta.rowProducts) && same(columnProducts, meta.columnProducts), id, difficulty, "곱셈 배치 계산 오류");
+      assert(meta.solutions.length === 1 && same(meta.solutions[0], values), id, difficulty, "곱셈 배치 답 유일성 오류");
+      assert(meta.revealed.length < 8 && problem.answer === values.join(", "), id, difficulty, "곱셈 배치 답 형식 오류");
+      return;
+    }
+    case "unit-q04-multiplicative-shapes": {
+      const values = meta.values;
+      assert(values.diamond * values.diamond === values.square, id, difficulty, "곱셈 도형 1식 오류");
+      assert(values.square * values.square === values.diamond * values.circle, id, difficulty, "곱셈 도형 2식 오류");
+      assert(values.pentagon * values.pentagon === values.triangle, id, difficulty, "곱셈 도형 3식 오류");
+      assert(values.cross * values.cross === values.square * values.triangle && values.cross === 6, id, difficulty, "곱셈 도형 답 오류");
+      assert(problem.answer === meta.shapes.cross + "=6", id, difficulty, "곱셈 도형 답 표시 오류");
+      return;
+    }
+    case "unit-q05-cyclic-shape-sums": {
+      const values = meta.values;
+      assert(same(meta.pairSums, [values.diamond + values.square, values.square + values.circle, values.circle + values.diamond]), id, difficulty, "순환 합 식 오류");
+      assert(problem.answer === "◇=" + values.diamond + ", ○=" + values.circle + ", □=" + values.square, id, difficulty, "순환 합 답 형식 오류");
+      return;
+    }
+    case "unit-q06-shape-addition": {
+      const left = 100 * meta.circle + 10 * meta.square + meta.unit;
+      const right = 100 * meta.bottomHundreds + 11 * meta.diamond;
+      const result = 100 * meta.resultHundreds + 10 * meta.circle + meta.resultUnits;
+      assert(left + right === result, id, difficulty, "도형 세로셈 계산 오류");
+      assert(meta.solutions.length === 1 && meta.solutions[0].circle === meta.circle && meta.solutions[0].square === meta.square && meta.solutions[0].diamond === meta.diamond, id, difficulty, "도형 세로셈 답 유일성 오류");
+      const expected = difficulty === 3
+        ? "○=" + meta.circle + ", □=" + meta.square + ", ◇=" + meta.diamond + ", 합=" + meta.sumOfShapes
+        : "○=" + meta.circle + ", □=" + meta.square + ", ◇=" + meta.diamond;
+      assert(meta.sumOfShapes === meta.circle + meta.square + meta.diamond && problem.answer === expected, id, difficulty, "도형 세로셈 답 형식 오류");
+      return;
+    }
+    case "unit-q07-three-addend-blank-sum": {
+      const [top, firstTens, firstUnits, secondTens, secondUnits] = meta.digits;
+      assert(top + 10 * firstTens + firstUnits + 10 * secondTens + secondUnits === meta.total, id, difficulty, "세 수 빈칸 식 오류");
+      assert(sum(meta.digits) === meta.result && problem.answer === String(meta.result), id, difficulty, "세 수 빈칸 답 오류");
+      const possibleSums = new Set();
+      for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) for (let c = 0; c <= 9; c += 1) for (let d = 1; d <= 9; d += 1) for (let e = 0; e <= 9; e += 1) {
+        if (difficulty === 1 && a !== top) continue;
+        if (a + 10 * b + c + 10 * d + e === meta.total) possibleSums.add(a + b + c + d + e);
+      }
+      assert(possibleSums.size === 1 && possibleSums.has(meta.result), id, difficulty, "세 수 빈칸 답 유일성 오류");
+      return;
+    }
+    case "unit-q08-three-addend-cryptarithm": {
+      const { diamond, plus, circle, square } = meta.values;
+      assert(new Set([diamond, plus, circle, square]).size === 4 && diamond > 0, id, difficulty, "세 수 도형 숫자 중복");
+      assert(1000 * diamond + 100 * plus + 30 * circle + 3 * square === meta.total, id, difficulty, "세 수 도형 계산 오류");
+      const expected = difficulty === 3
+        ? "◇=" + diamond + ", ✚=" + plus + ", ○=" + circle + ", □=" + square + ", 합=" + meta.shapeSum
+        : "◇=" + diamond + ", ✚=" + plus + ", ○=" + circle + ", □=" + square;
+      assert(meta.solutions.length === 1 && meta.shapeSum === diamond + plus + circle + square && problem.answer === expected, id, difficulty, "세 수 도형 답 유일성 오류");
+      return;
+    }
+    case "unit-q09-five-symbol-cryptarithm": {
+      const { circle, heart, diamond, star, square } = meta.values;
+      assert(new Set([circle, heart, diamond, star, square]).size === 5, id, difficulty, "자리 도형 숫자 중복");
+      assert(100 * circle + 10 * heart + diamond + 10 * diamond + star === 1000 * star + 100 * square + 10 * square + circle, id, difficulty, "자리 도형 계산 오류");
+      const expected = meta.ask === "circlePlusHeart" ? circle + heart : heart;
+      assert(meta.solutions.length === 1 && meta.result === expected && numericAnswer(problem) === expected, id, difficulty, "자리 도형 답 유일성 오류");
+      if (difficulty === 1) {
+        assert(meta.ask === "heart" && problem.visual.target === "♥" && problem.visual.equations.length === 2 && problem.visual.equations[1] === "○=9, ◇=8, ☆=1", id, difficulty, "자리 도형 쉬움 조건 누락");
+      } else if (difficulty === 2) {
+        assert(meta.ask === "heart" && problem.visual.target === "♥" && problem.visual.equations.length === 1, id, difficulty, "자리 도형 원본 구조 변경");
+      } else {
+        assert(meta.ask === "circlePlusHeart" && problem.visual.target === "○+♥" && problem.visual.equations.length === 2, id, difficulty, "자리 도형 어려움 추론 단계 누락");
+      }
+      return;
+    }
+    case "unit-q10-repeated-result": {
+      const left = 100 * meta.firstHundreds + 10 * meta.square + meta.circle;
+      const right = 10 * meta.circle + meta.secondUnits;
+      assert(left + right === 111 * meta.diamond, id, difficulty, "반복 결과 세로셈 오류");
+      const expected = difficulty === 3
+        ? "○=" + meta.circle + ", □=" + meta.square + ", ◇=" + meta.diamond + ", 합=" + meta.shapeSum
+        : "○=" + meta.circle + ", □=" + meta.square + ", ◇=" + meta.diamond;
+      assert(meta.solutions.length === 1 && meta.shapeSum === meta.circle + meta.square + meta.diamond && problem.answer === expected, id, difficulty, "반복 결과 답 유일성 오류");
+      return;
+    }
+    case "unit-q12-age-sum-difference":
+      assert(meta.younger + meta.older === meta.total && meta.older - meta.younger === meta.difference, id, difficulty, "나이 합차 오류");
+      assert(problem.answer === "동생 " + meta.younger + "살, 형 " + meta.older + "살", id, difficulty, "나이 답 형식 오류");
+      return;
+    case "unit-q13-table-total-difference":
+      assert(meta.second === meta.unknown + meta.difference, id, difficulty, "표 차이 오류");
+      assert(meta.first + meta.second + meta.third + meta.fourth + meta.unknown === meta.total, id, difficulty, "표 합계 오류");
+      assert(problem.answer === String(meta.unknown), id, difficulty, "표 답 오류");
+      return;
+    case "unit-q14-difference-multiple-both":
+      assert(meta.boys === meta.girls * meta.multiplier && meta.boys - meta.girls === meta.difference, id, difficulty, "배수 차이 오류");
+      assert(problem.answer === "남학생 " + meta.boys + "명, 여학생 " + meta.girls + "명", id, difficulty, "배수 차이 답 형식 오류");
+      return;
+    case "unit-q15-sum-multiple-offset-both":
+      assert(meta.larger === meta.smaller * meta.multiplier + meta.offset && meta.larger + meta.smaller === meta.total, id, difficulty, "배수 합차 오류");
+      assert(problem.answer === "작은 수 " + meta.smaller + ", 큰 수 " + meta.larger, id, difficulty, "배수 합차 답 형식 오류");
+      return;
+    case "unit-q16-reverse-three-events":
+      assert(meta.start - meta.gave + meta.received - meta.gaveAgain === meta.final && numericAnswer(problem) === meta.start, id, difficulty, "세 단계 거꾸로 계산 오류");
+      return;
+    case "unit-q20-fraction-difference-subgroup":
+      assert(meta.highGroup === meta.high * meta.unit && meta.lowGroup === meta.low * meta.unit && meta.highGroup - meta.lowGroup === meta.difference, id, difficulty, "분수 차 모둠 오류");
+      assert(numericAnswer(problem) === meta.highGroup, id, difficulty, "분수 차 모둠 답 오류");
+      return;
+    case "unit-q22-letter-pyramid": {
+      const { a, b, c, d } = meta.values;
+      const value = a + (10 * a + b) + (100 * a + 10 * b + c) + (1000 * a + 100 * b + 10 * c + d);
+      assert(value === meta.total && meta.solutions.length === 1, id, difficulty, "문자 피라미드 유일성 오류");
+      const number = 1000 * a + 100 * b + 10 * c + d;
+      const expected = difficulty === 3 ? "ABCD=" + number + ", 숫자의 합=" + meta.digitSum : String(number);
+      assert(meta.number === number && meta.digitSum === a + b + c + d && problem.answer === expected, id, difficulty, "문자 피라미드 답 오류");
+      return;
+    }
+    case "unit-q23-pair-equalize-chain":
+      assert(meta.first === meta.middle + 2 * meta.giveToB && meta.third === meta.middle - 2 * meta.giveToC && meta.first + meta.middle + meta.third === meta.total, id, difficulty, "두 번 같게 옮기기 오류");
+      assert(problem.answer === "지우 " + meta.middle + "개", id, difficulty, "두 번 같게 옮기기 답 오류");
+      return;
+    case "unit-q24-three-bag-transfer":
+      assert(meta.initial[0] === meta.afterEqual + 1 && meta.initial[1] === 2 * meta.afterEqual - 1 && meta.initial[2] === meta.afterEqual && sum(meta.initial) === meta.total, id, difficulty, "세 주머니 이동 오류");
+      assert(problem.answer === "첫째 " + meta.initial[0] + "개, 둘째 " + meta.initial[1] + "개, 셋째 " + meta.initial[2] + "개", id, difficulty, "세 주머니 답 오류");
+      return;
+    case "unit-q25-fraction-subgroups":
+      assert(meta.boys === meta.boysNumerator * meta.unit && meta.girls === meta.girlsNumerator * meta.unit, id, difficulty, "분수 모둠 수 계산 오류");
+      assert(meta.boysNumerator + meta.girlsNumerator === meta.denominator && meta.total === meta.boys + meta.girls, id, difficulty, "분수 모둠 전체 오류");
+      assert(meta.boySiblings === meta.boys * meta.boyPartNumerator / meta.boyPartDenominator && meta.girlSiblings === meta.girls * meta.girlPartNumerator / meta.girlPartDenominator && meta.result === meta.boySiblings + meta.girlSiblings, id, difficulty, "분수 모둠 부분 오류");
+      if (difficulty === 1) {
+        assert(meta.denominator === 6 && meta.boysNumerator === 4 && meta.girlsNumerator === 2 && meta.boyPartDenominator === 2 && meta.girlPartDenominator === 2, id, difficulty, "분수 모둠 쉬움 분할 오류");
+      } else if (difficulty === 2) {
+        assert(meta.denominator === 9 && meta.boysNumerator === 5 && meta.girlsNumerator === 4 && meta.boyPartNumerator === 1 && meta.boyPartDenominator === 3 && meta.girlPartNumerator === 1 && meta.girlPartDenominator === 4 && meta.unit === 6, id, difficulty, "분수 모둠 원본 구조 변경");
+      } else {
+        assert(meta.denominator === 12 && meta.boysNumerator === 7 && meta.girlsNumerator === 5 && meta.boyPartNumerator === 2 && meta.boyPartDenominator === 5 && meta.girlPartNumerator === 3 && meta.girlPartDenominator === 5, id, difficulty, "분수 모둠 어려움 분할 오류");
+      }
+      assert(numericAnswer(problem) === meta.result, id, difficulty, "분수 모둠 답 오류");
+      return;
+    default:
+      fail(id, difficulty, "검산 분기 없음: " + meta.family);
+  }
+}
+
 function numbersInReference(reference) {
   if (Array.isArray(reference.numbers)) return reference.numbers;
   return Array.from({ length: reference.to - reference.from + 1 }, (_, index) => reference.from + index);
@@ -285,4 +482,54 @@ for (const typeId of typeIds) {
   }
 }
 
-console.log(`book-08 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} generated checks`);
+const requestedUnitIterations = Number(process.env.BOOK08_UNIT_ITERATIONS || 100);
+const unitIterations = Number.isFinite(requestedUnitIterations) ? Math.max(100, requestedUnitIterations) : 100;
+const unitQuestionNumbers = Object.keys(BOOK08_UNIT_TEST_GENERATORS).map(Number).sort((first, second) => first - second);
+if (unitQuestionNumbers.length !== 25 || unitQuestionNumbers.some((number, index) => number !== index + 1)) {
+  throw new Error("book-08 unit test generator map must contain questions 1-25");
+}
+
+let unitGenerated = 0;
+const unitFingerprint = (problem) => JSON.stringify({ prompt: problem.prompt, visual: problem.visual, answer: problem.answer });
+const seededRandom = (seed) => {
+  let state = seed >>> 0;
+  return () => ((state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 4294967296);
+};
+const originalRandom = Math.random;
+for (const questionNumber of unitQuestionNumbers) {
+  const generator = BOOK08_UNIT_TEST_GENERATORS[questionNumber];
+  for (const seed of [8121, 8122, 8123]) {
+    const samples = [1, 2, 3].map((difficulty) => {
+      Math.random = seededRandom(seed);
+      return generator({ difficulty });
+    });
+    const fingerprints = samples.map(unitFingerprint);
+    if (new Set(fingerprints).size !== 3) {
+      Math.random = originalRandom;
+      throw new Error(`BOOK08_AUDIT_FAILED [book08-unit-q${String(questionNumber).padStart(2, "0")}] [difficulty=all]: deterministic difficulty fingerprint collision at seed ${seed}`);
+    }
+  }
+  Math.random = originalRandom;
+  const samples = [1, 2, 3].map((difficulty) => generator({ difficulty }));
+  samples.forEach((problem, index) => {
+    const difficulty = index + 1;
+    validateUnitProblem(questionNumber, problem, difficulty);
+    if (questionNumber === 1 && /보다\s*-\d+/.test(problem.solution || "")) {
+      throw new Error("book-08 unit q01 negative comparison wording");
+    }
+    unitGenerated += 1;
+  });
+  for (const difficulty of [1, 2, 3]) {
+    for (let index = 1; index < unitIterations; index += 1) {
+      const problem = generator({ difficulty });
+      validateUnitProblem(questionNumber, problem, difficulty);
+      if (questionNumber === 1 && /보다\s*-\d+/.test(problem.solution || "")) {
+        throw new Error("book-08 unit q01 negative comparison wording");
+      }
+      unitGenerated += 1;
+    }
+  }
+}
+Math.random = originalRandom;
+
+console.log(`book-08 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} regression checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks`);

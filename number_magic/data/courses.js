@@ -95,7 +95,7 @@ const COURSE_SPEC = [
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
    drills:['DC2','DC4','ML11'], magic:[['C-24'],['ML10']]},
  {id:19, tier:'level3', title:{ko:'약수와 배수',en:'Factors & Multiples',zh:'因数与倍数'},
-   drills:['DV7'], magic:[['C-04']]},
+   drills:['DV7'], magic:[['C-04'],['H-11']]},
  {id:20, tier:'level3', title:{ko:'이분모 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
    drills:['FR4','FR10','MX4'], magic:[['C-21'],['C-22']]},
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
@@ -105,16 +105,98 @@ const COURSE_SPEC = [
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8'], magic:[['C-05'],['C-32']]},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4'], magic:[['C-25'],['C-33']]},
+   drills:['MX3','DV8','EL4'], magic:[['C-25'],['C-33'],['H-12'],['H-13']]},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], boss:true},
 
- {id:26, tier:'challenge', title:{ko:'곱셈의 정점 (준비 중)',en:'Peak of Multiplication (coming soon)',zh:'乘法之巅（即将推出）'},
-   drills:['ML19','ML20','ML23'], magic:[], comingSoon:true},
- {id:27, tier:'challenge', title:{ko:'수의 비밀 (준비 중)',en:'Secrets of Numbers (coming soon)',zh:'数的秘密（即将推出）'},
-   drills:['DV7','DV8','MX2'], magic:[], comingSoon:true},
- {id:28, tier:'challenge', title:{ko:'제곱의 산 (준비 중)',en:'Mountain of Squares (coming soon)',zh:'平方之山（即将推出）'},
-   drills:['ML11','ML20','MX4'], magic:[], comingSoon:true},
+ /* 26~28 실배치(2026-08-25 Phase 2, 고급-목차.md §2②): 로드맵 §3의 4단원 구성 그대로.
+    각 과정 4단원 중 신규 유닛(H-01·02, H-03~06, H-07~10)이 magic, 1단계에서 이미
+    확장해 둔 기존 유닛(C-12 엑스맨 세 자리, C-15 피라미드 곱셈, C-01 제곱수 점화식)은
+    "1단계 확장 레벨들도 드릴 재료로"(작업지시)에 따라 drills로 재사용한다 — 새 id를
+    지어내지 않고 threads.js에 이미 있는 스레드만 쓴다는 기존 규칙을 그대로 지켰다. */
+ {id:26, tier:'challenge', title:{ko:'곱셈의 정점',en:'Peak of Multiplication',zh:'乘法之巅'},
+   drills:['ML8','ML18'], magic:[['H-01'],['H-02'],['C-12'],['C-15']]},
+ {id:27, tier:'challenge', title:{ko:'수의 비밀',en:'Secrets of Numbers',zh:'数的秘密'},
+   drills:['DV7','DV8','MX2'], magic:[['H-03'],['H-04'],['H-05'],['H-06']]},
+ {id:28, tier:'challenge', title:{ko:'제곱의 산',en:'Mountain of Squares',zh:'平方之山'},
+   drills:['ML11','ML20','MX4'], magic:[['H-07'],['H-08'],['H-09'],['H-10']]},
+
+ /* 29~31 실배치(2026-08-25, 중등 W8 · 중1 정수와 유리수): MASTER-ROADMAP.md
+    §8 Phase 3. drills는 그 과정에서 처음 등장하는 MD 스레드 + 경시의 탑
+    (CH-시리즈) 재료 일부(작업 지시 "이전 과정 복습 풀에는 경시의 탑 재료
+    일부 포함") — CH5(순환소수 나눗셈)는 course29의 자기 재료로 등록해
+    이후 과정(30·31)의 priorPool 복습 순환에도 자동으로 실린다. */
+ /* 29~31 보강(2026-08-27, 심화 유형 2차 작업지시 "중1 문자식은 과정
+    29~31 구간 보강") — 중1 문자와 식(MD47~51)을 새 과정을 만들지
+    않고 기존 세 과정에 나눠 얹는다. 세션 수는 클램프(3~5) 안에
+    그대로 들어가(3+2=5, 3+2=5, 3+1=4) 자동 병합 없이 깔끔하게
+    늘어난다. */
+ {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
+   drills:['MD1','MD2','MD3','CH5','MD47','MD48'], magic:[['M-01'],['M-02'],['M-03'],['M-47'],['M-48']]},
+ {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
+   drills:['MD4','MD5','MD6','MD49','MD50'], magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50']]},
+ {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
+   drills:['MD7','MD8','MD9','MD51'], magic:[['M-07'],['M-08'],['M-09'],['M-51']]},
+
+ /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
+    drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
+    — course32는 W8 마지막 재료 MD9를, course34(중3 진입부)는 중2 재료
+    MD14를 복습 풀에 얹는다(다른 과정들처럼 spec.drills에 얹으면 자기
+    재료로도 잡히고 이후 과정의 priorPool 순환에도 자동으로 실린다). */
+ {id:32, tier:'middle2', title:{ko:'지수와 단항식',en:'Exponents & Monomials',zh:'指数与单项式'},
+   drills:['MD10','MD11','MD12','MD9'], magic:[['M-10'],['M-11'],['M-12']]},
+ {id:33, tier:'middle2', title:{ko:'다항식과 등식',en:'Polynomials & Equations',zh:'多项式与等式'},
+   drills:['MD13','MD14'], magic:[['M-13'],['M-14']]},
+ {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
+   drills:['MD15','MD16','MD17','MD14'], magic:[['M-15'],['M-16'],['M-17']]},
+ {id:35, tier:'middle3', title:{ko:'곱셈공식과 인수분해',en:'Formulas & Factoring',zh:'乘法公式与因式分解'},
+   drills:['MD18','MD19','MD20'], magic:[['M-18'],['M-19'],['M-20']]},
+
+ /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.
+    course36은 W10 마지막 재료 MD20을, course38(공통수학2 진입부)은
+    W11 마지막 재료 MD30을 복습 풀에 얹는다(32~35와 같은 관례 —
+    spec.drills에 얹으면 자기 재료로도 잡히고 이후 과정의 priorPool
+    순환에도 자동으로 실린다). 2022 개정 과목명 준수 — "고1" 표기
+    없음(전부 "공통수학1"·"공통수학2"). */
+ {id:36, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
+   drills:['MD21','MD22','MD23','MD24','MD25','MD20'], magic:[['M-21'],['M-22'],['M-23'],['M-24'],['M-25']]},
+ {id:37, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
+   drills:['MD26','MD27','MD28','MD29','MD30'], magic:[['M-26'],['M-27'],['M-28'],['M-29'],['M-30']]},
+ {id:38, tier:'highmath2', title:{ko:'점과 직선',en:'Points & Lines',zh:'点与直线'},
+   drills:['MD31','MD32','MD33','MD30'], magic:[['M-31'],['M-32'],['M-33']]},
+ {id:39, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
+   drills:['MD34','MD35'], magic:[['M-34'],['M-35']]},
+
+ /* 40~43 실배치(2026-08-25, 고등 W13·W14): MASTER-ROADMAP.md §6.
+    course40(대수 진입부)은 W12 마지막 재료 MD35를, course42(미적분Ⅰ
+    진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(36·38과 같은
+    관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·
+    "미적분Ⅰ"). */
+ {id:40, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+   drills:['MD36','MD37','MD38','MD35'], magic:[['M-36'],['M-37'],['M-38']]},
+ {id:41, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
+   drills:['MD39','MD40','MD41','MD42'], magic:[['M-39'],['M-40'],['M-41'],['M-42']]},
+ {id:42, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
+   drills:['MD43','MD44','MD42'], magic:[['M-43'],['M-44']]},
+ {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
+   drills:['MD45','MD46'], magic:[['M-45'],['M-46']]},
+
+ /* 44~45 신설(2026-08-27, 심화 유형 2차 작업지시 "대수·미적분Ⅰ 심화는
+    과정 40~43 세션 추가 또는 44~45 신설 — 판단해서 보고"). 40~43은
+    이미 3~4개 마법 슬롯이 차 있어 5개씩(지수·로그방정식/부등식 3종 +
+    사인·코사인법칙 2종 + 최대최소주기 1종 = 6종, 극한 심화 5종)을
+    더 얹으면 세션이 8~9개까지 불어나 자동 병합(§편성 규칙 2)이 여러
+    유닛을 한 세션에 뭉쳐버린다 — 새 과정을 만드는 쪽이 세션 수를
+    클램프(3~5) 안에 깔끔히 유지한다(44는 6→5, 사인·코사인법칙만
+    한 세션에 의도적으로 묶음. 45는 5→5, 병합 없음). course44
+    drills에 직전 재료 MD42(Σ)를, course45엔 MD46(적분)을 복습 풀에
+    얹는다(40·42가 앞 과정 마지막 재료를 얹던 것과 같은 관례). */
+ {id:44, tier:'algebra', title:{ko:'지수·로그방정식과 삼각법',en:'Exponential/Log Equations & Trigonometry',zh:'指数·对数方程与三角法'},
+   drills:['MD52','MD53','MD54','MD55','MD56','MD57','MD42'],
+   magic:[['M-52'],['M-53'],['M-54'],['M-55','M-56'],['M-57']]},
+ {id:45, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
+   drills:['MD58','MD59','MD60','MD61','MD62','MD46'],
+   magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']]},
 ];
 
 function buildCourses(NM_THREADS){

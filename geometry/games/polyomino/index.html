@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD Polyomino Garden</title>
+  <link rel="stylesheet" href="./styles.css?v=polyomino-2" />
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#376b57" />
+</head>
+<body>
+  <aside class="portrait-guard" aria-live="polite"><span aria-hidden="true">↻</span><strong id="rotateMessage"></strong></aside>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="icon-button exit" href="../../world-map/" aria-label="Back to map">&larr;</a>
+      <div class="brand"><strong>GFIELD</strong><small id="gameSubtitle"></small></div>
+      <div class="progress"><strong id="levelLabel"></strong><span id="problemLabel"></span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="Toggle sound">🔊</button>
+      <button id="levelButton" class="level-button" type="button"></button>
+    </header>
+
+    <section class="mission">
+      <div><span id="stars" aria-hidden="true">*----</span><h1 id="missionTitle"></h1></div>
+      <p id="prompt"></p>
+    </section>
+
+    <section class="play-area">
+      <article class="target-panel">
+        <header><span id="targetLabel"></span><b id="dropLabel"></b></header>
+        <div id="targetSlot" class="target-slot" role="group" aria-label="Target piece"></div>
+      </article>
+      <article class="tray-panel">
+        <header><span id="choicesLabel"></span><b id="trayHint"></b></header>
+        <div id="pieceTray" class="piece-tray"></div>
+      </article>
+      <aside class="tool-panel">
+        <button id="turnButton" type="button" hidden></button>
+        <button id="flipButton" type="button" hidden></button>
+        <button id="hintButton" type="button"></button>
+        <button id="clearButton" type="button"></button>
+      </aside>
+    </section>
+
+    <footer class="answer-dock">
+      <p id="answerPrompt"></p>
+      <button id="nextButton" class="next-button" type="button" hidden></button>
+    </footer>
+
+    <aside id="cubiGuide" class="cubi-guide" aria-live="polite">
+      <div id="guideBubble" class="guide-bubble"></div><span class="cubi-sprite" aria-hidden="true"></span>
+    </aside>
+
+    <div id="tutorial" class="dialog" hidden>
+      <section class="tutorial-card" role="dialog" aria-modal="true">
+        <span class="cubi-sprite" aria-hidden="true"></span>
+        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button"></button></div>
+      </section>
+    </div>
+
+    <div id="levelDialog" class="dialog" hidden>
+      <section role="dialog" aria-modal="true">
+        <header><h2 id="dialogTitle"></h2><button id="closeLevels" type="button" aria-label="Close">X</button></header>
+        <div id="levelList" class="level-list"></div>
+      </section>
+    </div>
+
+    <div id="completeDialog" class="dialog" hidden>
+      <section class="complete-card" role="dialog" aria-modal="true">
+        <span class="cubi-sprite" aria-hidden="true"></span><h2 id="completeTitle"></h2><p id="completeText"></p>
+        <div class="complete-actions"><button id="nextLevelButton" type="button"></button><button id="practiceButton" type="button"></button><a id="mapLink" href="../../world-map/"></a></div>
+      </section>
+    </div>
+
+    <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js?v=polyomino-2"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

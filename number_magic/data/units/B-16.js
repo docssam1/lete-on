@@ -21,6 +21,14 @@ window.NM_UNITS['B-16'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'왕이 스승에게 물었어요. 내가 왕이니 기하학을 더 빨리 배울 방법은 없겠소?',
+        en:'A king asked his teacher: I am the king — is there no faster way to learn geometry?',
+        zh:'国王问老师：我是国王，学几何就没有更快的路吗？' },
+      history:{ ko:'스승의 대답은 이랬어요 — 나라에는 임금님만 다니는 길이 있을지 몰라도, 기하학에는 모든 사람에게 오직 한 길뿐입니다. 알렉산더 대왕과 스승 메네크무스의 이야기로도, 프톨레마이오스 왕과 유클리드의 이야기로도 전해져요. 구구단도 똑같아요. 지름길은 없지만, 한 번 지나간 길은 평생 내 것이 됩니다.',
+        en:'The teacher answered: your kingdom may have roads reserved for kings, but in geometry there is only one road, the same for everyone. The story is told of Alexander and his teacher Menaechmus, and also of King Ptolemy and Euclid. Times tables are no different. There is no shortcut — but a road you have walked once is yours for life.',
+        zh:'老师回答：您的国土上也许有只供国王走的路，但几何学只有一条路，对所有人都一样。这个故事有人说是亚历山大和老师梅内克缪斯，也有人说是托勒密王和欧几里得。乘法口诀也一样。没有捷径——但走过一遍的路，一辈子都是你的。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 구구단의 대칭',en:'1) Times table symmetry',zh:'① 乘法口诀的对称性'},

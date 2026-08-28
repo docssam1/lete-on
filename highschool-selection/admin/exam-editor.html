@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>시험지 편집 · 선발·누적 진단</title>
+  <link rel="stylesheet" href="../shared/app.css?v=20260827-editor4">
+</head>
+<body class="exam-editor-body">
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header">
+    <nav class="shell nav">
+      <a class="brand" href="./"><span class="brand-mark">SL</span><span>시험지 편집<small>EXAM ASSEMBLY</small></span></a>
+      <div class="nav-links">
+        <a class="button ghost" href="./review.html">문항 검수</a>
+        <a class="button ghost" href="./">학생 승인</a>
+        <a class="button accent" href="../library.html">시험지 서재</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="shell app-main exam-editor-page">
+    <div class="editor-page-head">
+      <div>
+        <p class="eyebrow">Verified Question Bank</p>
+        <h1>시험지 조립</h1>
+        <p>검수 완료 문항만 담고, 순서·배점·범위를 한 화면에서 조정합니다.</p>
+      </div>
+      <div class="editor-head-actions">
+        <span class="badge review" id="editor-connection">서버 확인 중</span>
+        <button class="ghost compact-button" type="button" id="change-draft" hidden>다른 초안</button>
+      </div>
+    </div>
+
+    <div class="notice" id="editor-alert" role="status" aria-live="polite">관리자 권한과 편집 저장소를 확인하고 있습니다.</div>
+
+    <section class="panel editor-start" id="editor-start" aria-labelledby="start-title">
+      <div class="editor-start-copy">
+        <p class="eyebrow">Start</p>
+        <h2 id="start-title">새 시험지를 만들거나 기존 초안을 엽니다</h2>
+        <p>범위 코드는 교육과정 경로를 줄마다 하나씩 입력합니다. 예: <code>G10/M01</code></p>
+      </div>
+      <div class="editor-start-forms">
+        <form class="editor-create-form" id="draft-create-form">
+          <div class="field-row editor-fields">
+            <div class="field"><label for="draft-mode">과정</label><select id="draft-mode" name="mode" required><option value="SH">황소 고등</option><option value="DP">돌파</option><option value="WM">원수학</option><option value="ED">이든</option><option value="DG">깊생</option><option value="SM">생수</option></select></div>
+            <div class="field"><label for="profile-id">시험 프로필</label><input id="profile-id" name="profileId" value="profile_hs_selection" maxlength="180" required></div>
+            <div class="field"><label for="target-id">대상 회차</label><input id="target-id" name="targetId" value="target_mock_r01" maxlength="180" required></div>
+            <div class="field"><label for="duration-minutes">시험 시간</label><input id="duration-minutes" name="durationMinutes" type="number" min="1" max="600" value="60" required></div>
+          </div>
+          <div class="field"><label for="initial-scope">출제 범위</label><textarea id="initial-scope" name="scopeKeys" rows="3" placeholder="G10/M01" required>G10/M01</textarea></div>
+          <button class="accent" type="submit" id="create-draft">새 초안 만들기</button>
+        </form>
+        <form class="editor-open-form" id="draft-open-form">
+          <div class="field"><label for="draft-id">기존 초안 ID</label><div class="editor-inline-field"><input id="draft-id" name="draftId" autocomplete="off" placeholder="draft_..." maxlength="180" required><button class="ghost" type="submit">열기</button></div></div>
+          <div class="recent-drafts" id="recent-drafts" hidden><span>저장된 초안</span><div id="recent-draft-buttons"></div></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="editor-workspace" hidden>
+      <div class="editor-command-bar">
+        <div class="editor-draft-identity">
+          <span class="editor-overline">현재 초안</span>
+          <strong id="draft-title">시험지</strong>
+          <span id="draft-revision">버전 1</span>
+        </div>
+        <div class="editor-command-actions">
+          <button class="ghost compact-button" id="edit-scope" type="button" aria-expanded="false">범위 수정</button>
+          <button class="ghost compact-button" id="check-readiness" type="button">최종 점검</button>
+        </div>
+      </div>
+
+      <section class="editor-scope-panel" id="scope-panel" hidden aria-labelledby="scope-title">
+        <div><strong id="scope-title">출제 범위</strong><p>이미 담긴 범위 밖 문항은 자동 삭제하지 않고 최종 점검에서 알려 줍니다.</p></div>
+        <div class="editor-scope-controls"><textarea id="scope-keys" rows="3" aria-label="출제 범위 코드"></textarea><button class="accent compact-button" id="apply-scope" type="button">적용</button></div>
+      </section>
+
+      <div class="editor-layout">
+        <section class="editor-pane candidate-pane" aria-labelledby="candidate-title">
+          <header class="editor-pane-head">
+            <div><span class="editor-overline">Question Bank</span><h2 id="candidate-title">검수 문항</h2></div>
+            <span class="editor-count" id="candidate-count">0개</span>
+          </header>
+          <div class="candidate-tools">
+            <div class="editor-segmented" id="candidate-mode" aria-label="후보 종류">
+              <button type="button" class="is-active" data-mode="new" aria-pressed="true">새 문제</button>
+              <button type="button" data-mode="catalog" aria-pressed="false">분류 문항</button>
+              <button type="button" data-mode="twin" aria-pressed="false" disabled>쌍둥이</button>
+              <button type="button" data-mode="similar" aria-pressed="false" disabled>유사</button>
+            </div>
+            <label class="field compact-field" id="candidate-scope-field"><span>검색 범위</span><select id="candidate-scope"></select></label>
+            <fieldset class="academy-profile-filters" id="academy-profile-filters" hidden>
+              <legend>시험형 선택</legend>
+              <label><input type="checkbox" value="DP_STANDARD">돌파형</label>
+              <label><input type="checkbox" value="SM_STANDARD">생수형</label>
+              <label><input type="checkbox" value="WM_BASIC">원수학 기본형</label>
+              <label><input type="checkbox" value="WM_DUAL">원수학 듀얼형</label>
+              <label><input type="checkbox" value="ED_CUMULATIVE">이든형</label>
+              <label><input type="checkbox" value="SH_SELECTION">황소형</label>
+              <label><input type="checkbox" value="DG_ADVANCED">깊은생각형</label>
+            </fieldset>
+            <form class="candidate-search" id="candidate-search-form"><label class="sr-only" for="candidate-query">문항 검색</label><input id="candidate-query" type="search" placeholder="문항 ID · 유형 · 범위 검색"><button class="ghost compact-button" type="submit">검색</button></form>
+            <p class="candidate-context" id="candidate-context">현재 범위에서 검수 완료 문항을 찾습니다.</p>
+          </div>
+          <div class="candidate-list" id="candidate-list" aria-live="polite"></div>
+          <div class="editor-empty" id="candidate-empty" hidden>조건에 맞는 검수 문항이 없습니다.</div>
+        </section>
+
+        <section class="editor-pane draft-pane" aria-labelledby="draft-pane-title">
+          <header class="editor-pane-head draft-pane-head">
+            <div><span class="editor-overline">Selected Items</span><h2 id="draft-pane-title">현재 시험지</h2></div>
+            <div class="editor-view-switch" id="view-mode" aria-label="보기 모드">
+              <button type="button" data-view="question">문제</button>
+              <button type="button" data-view="question_answer">문제·정답</button>
+              <button type="button" data-view="question_solution_answer">문제·풀이</button>
+            </div>
+          </header>
+
+          <div class="draft-controls">
+            <div class="draft-summary" aria-label="시험지 요약">
+              <span><b id="summary-items">0</b>문항</span>
+              <span><b id="summary-score">0</b>점</span>
+              <span><b id="summary-scopes">0</b>범위</span>
+              <span id="summary-difficulty">난도 -</span>
+            </div>
+            <label class="sort-control">정렬<select id="sort-mode"><option value="user">사용자 순서</option><option value="type_asc">유형 순</option><option value="difficulty_asc">난도 순</option><option value="objective_subjective">객관식 우선</option><option value="random">무작위</option></select></label>
+          </div>
+
+          <ol class="placement-list" id="placement-list" aria-live="polite"></ol>
+          <div class="editor-empty draft-empty" id="draft-empty"><strong>아직 담은 문항이 없습니다.</strong><span>왼쪽 검수 문항에서 추가하세요.</span></div>
+
+          <section class="readiness-strip" id="readiness-strip" aria-live="polite">
+            <span class="readiness-dot" aria-hidden="true"></span>
+            <div><strong id="readiness-title">최종 점검 전</strong><p id="readiness-detail">문항을 담은 뒤 최종 점검을 실행하세요.</p></div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="question-page-dialog" id="question-page-dialog" aria-labelledby="question-page-title">
+    <header><div><span class="editor-overline">Original Page</span><h2 id="question-page-title">원본 페이지</h2></div><button class="ghost compact-button" id="close-question-page" type="button">닫기</button></header>
+    <div class="question-page-stage"><img id="question-page-image" alt="선택한 문항이 있는 원본 시험지 페이지"></div>
+    <p>선택한 문항이 들어 있는 원본 페이지입니다. 답안 페이지는 표시하지 않습니다.</p>
+  </dialog>
+  <div class="editor-toast" id="editor-toast" role="status" aria-live="polite" hidden></div>
+  <footer class="footer"><div class="shell"><span>GFIELD 운영자 전용</span><span>검수 문항 메타데이터만 표시 · 원문·정답 비노출</span></div></footer>
+  <script src="../shared/runtime.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script src="../shared/exam-editor-page.js?v=20260827-editor13"></script>
+</body>
+</html>

@@ -440,9 +440,17 @@ function equalizeTransferBook8({ difficulty = 2 }) {
   const smaller = randomInt(8, difficulty === 3 ? 40 : 28);
   const larger = smaller + result * 2;
   if ([smaller, larger].includes(result)) return equalizeTransferBook8({ difficulty });
+  const prompt = difficulty === 1
+    ? `두 사람의 수 차이는 ${larger - smaller}개입니다. 많은 쪽에서 적은 쪽으로 몇 개를 옮기면 같아지나요?`
+    : difficulty === 3
+      ? `두 사람이 가진 수는 모두 ${larger + smaller}개이고, 많은 쪽은 ${larger}개입니다. 많은 쪽에서 적은 쪽으로 몇 개를 옮기면 같아지나요?`
+      : "많은 쪽에서 적은 쪽으로 몇 개를 옮기면 두 사람의 수가 같아지나요?";
+  const bars = difficulty === 3
+    ? [{ label: "가", value: larger }, { label: "나", value: "?" }]
+    : [{ label: "가", value: larger }, { label: "나", value: smaller }];
   return book8Problem({
-    prompt: "많은 쪽에서 적은 쪽으로 몇 개를 옮기면 두 사람의 수가 같아지나요?",
-    subtype: "bars", visual: { bars: [{ label: "가", value: larger }, { label: "나", value: smaller }], action: "가 → 나" },
+    prompt,
+    subtype: "bars", visual: { bars, action: "가 → 나", ...(difficulty === 1 ? { facts: [`차 ${larger - smaller}개`] } : {}), ...(difficulty === 3 ? { facts: [`합 ${larger + smaller}개`] } : {}) },
     answer: `${result}개`,
     solution: `두 수의 차는 ${larger}-${smaller}=${result * 2}개입니다. 옮긴 수의 두 배만큼 차가 줄어드므로 ${result * 2}÷2=${result}개입니다.`,
     family: "equalize-transfer-b8", meta: { larger, smaller, result }
@@ -909,6 +917,766 @@ function fractionSubgroupCountBook8({ difficulty = 2 }) {
   });
 }
 
+const UNIT_DIGITS_BOOK8 = Array.from({ length: 10 }, (_, index) => index);
+const UNIT_PRODUCT_POSITIONS_BOOK8 = [
+  [0, 1], [0, 2],
+  [1, 2], [1, 3],
+  [2, 0], [2, 3],
+  [3, 0], [3, 1]
+];
+const UNIT_SHAPE_SUM_GRIDS_BOOK8 = {
+  2: [
+    ["◇", "□", "□", "□"],
+    ["△", "□", "◇", "○"],
+    ["○", "○", "○", "○"],
+    ["○", "◇", "○", "◇"]
+  ],
+  21: [
+    ["□", "△", "○", "☆"],
+    ["○", "○", "☆", "○"],
+    ["☆", "☆", "☆", "○"],
+    ["△", "△", "△", "△"]
+  ]
+};
+
+function unitPermuteBook8(items, callback) {
+  const used = Array(items.length).fill(false);
+  const current = [];
+  const visit = (index) => {
+    if (index === items.length) {
+      callback([...current]);
+      return;
+    }
+    items.forEach((item, itemIndex) => {
+      if (used[itemIndex]) return;
+      used[itemIndex] = true;
+      current.push(item);
+      visit(index + 1);
+      current.pop();
+      used[itemIndex] = false;
+    });
+  };
+  visit(0);
+}
+
+function unitAssignmentsBook8(symbols, callback) {
+  const used = new Set();
+  const values = {};
+  const visit = (index) => {
+    if (index === symbols.length) {
+      callback({ ...values });
+      return;
+    }
+    for (let value = 1; value <= 9; value += 1) {
+      if (used.has(value)) continue;
+      used.add(value);
+      values[symbols[index]] = value;
+      visit(index + 1);
+      delete values[symbols[index]];
+      used.delete(value);
+    }
+  };
+  visit(0);
+}
+
+function unitGridLineValueBook8(line, assignment) {
+  return line.reduce((total, item) => total + assignment[item], 0);
+}
+
+function unitShapeGridSolutionsBook8(cells, rowSums, columnSums, knownColumns) {
+  const symbols = [...new Set(cells.flat())];
+  const solutions = [];
+  unitAssignmentsBook8(symbols, (assignment) => {
+    const rowsMatch = cells.every((row, rowIndex) => unitGridLineValueBook8(row, assignment) === rowSums[rowIndex]);
+    const columnsMatch = knownColumns.every((columnIndex) => (
+      cells.reduce((total, row) => total + assignment[row[columnIndex]], 0) === columnSums[columnIndex]
+    ));
+    if (rowsMatch && columnsMatch) solutions.push(assignment);
+  });
+  return solutions;
+}
+
+function unitDifficultyMaxBook8(difficulty, easy, medium, hard) {
+  return difficulty === 1 ? easy : difficulty === 3 ? hard : medium;
+}
+
+function unitRandomDistinctBook8(count, min, max) {
+  return shuffle(Array.from({ length: max - min + 1 }, (_, index) => min + index)).slice(0, count);
+}
+
+function unitBalanceThreeTargetsBook8({ difficulty = 2 } = {}) {
+  const max = unitDifficultyMaxBook8(difficulty, 8, 12, 18);
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const [square, circle] = unitRandomDistinctBook8(2, 1, max);
+    const left = square + circle + circle;
+    const right = square + square + circle;
+    const target = square + circle;
+    if (left === right || target === left || target === right) continue;
+    const hint = difficulty === 1 ? "두 저울의 차이를 먼저 비교해 보세요. " : "";
+    return book8Problem({
+      prompt: hint + "같은 모양은 같은 무게입니다. 두 저울이 수평일 때 □+○, □, ○의 무게를 각각 구하세요.",
+      subtype: "balance",
+      visual: {
+        equations: [
+          ["□", "+", "○", "+", "○", "=", left],
+          ["□", "+", "□", "+", "○", "=", right],
+          ["□", "+", "○", "=", "?"],
+          ["□", "=", "?"],
+          ["○", "=", "?"]
+        ]
+      },
+      answer: target + "g, " + square + "g, " + circle + "g",
+      solution: "첫째 식과 둘째 식을 비교하면 " + (square > circle
+        ? "□가 ○보다 " + (square - circle) + "g 무겁습니다. "
+        : "○가 □보다 " + (circle - square) + "g 무겁습니다. ")
+        + "두 식의 합은 " + (left + right) + "이고, □+○는 " + target + "g입니다. 따라서 □=" + square + "g, ○=" + circle + "g입니다.",
+      family: "unit-q01-balance",
+      meta: { difficulty, square, circle, left, right, target, result: [target, square, circle] }
+    });
+  }
+  throw new Error("unit-q01 balance generation failed");
+}
+
+function unitFourByFourShapeSumBook8({ difficulty = 2, variant = 2 } = {}) {
+  const cells = UNIT_SHAPE_SUM_GRIDS_BOOK8[variant];
+  const symbols = [...new Set(cells.flat())];
+  const max = unitDifficultyMaxBook8(difficulty, 6, 8, 9);
+  const hiddenColumns = variant === 2 ? [0] : [1, 3];
+  const knownColumns = [0, 1, 2, 3].filter((columnIndex) => !hiddenColumns.includes(columnIndex));
+  for (let attempt = 0; attempt < 600; attempt += 1) {
+    const values = unitRandomDistinctBook8(symbols.length, 1, max);
+    const assignment = Object.fromEntries(symbols.map((item, index) => [item, values[index]]));
+    const rowSums = cells.map((row) => unitGridLineValueBook8(row, assignment));
+    const columnSums = [0, 1, 2, 3].map((columnIndex) => cells.reduce((total, row) => total + assignment[row[columnIndex]], 0));
+    const solutions = unitShapeGridSolutionsBook8(cells, rowSums, columnSums, knownColumns);
+    const targetValues = [...new Set(solutions.map((solution) => hiddenColumns.map((columnIndex) => (
+      cells.reduce((total, row) => total + solution[row[columnIndex]], 0)
+    )).join(",")))];
+    if (targetValues.length !== 1) continue;
+    const target = hiddenColumns.map((columnIndex) => columnSums[columnIndex]);
+    const answer = target.join(", ");
+    const targetText = variant === 2 ? "첫째 세로줄의 합" : "둘째와 넷째 세로줄의 합";
+    const targetSentence = targetText + "은";
+    const hint = difficulty === 1 ? "가로줄과 세로줄을 차례로 살펴보세요. " : "";
+    return book8Problem({
+      prompt: hint + "같은 모양은 같은 수입니다. 표의 가로줄과 보이는 세로줄의 합을 이용하여 " + targetText + "을 구하세요.",
+      subtype: "matrix",
+      visual: {
+        operation: "+",
+        cells,
+        rowLabels: rowSums.map(String),
+        columnLabels: columnSums.map((value, index) => hiddenColumns.includes(index) ? "?" : String(value)),
+        rows: rowSums,
+        columns: columnSums
+      },
+      answer,
+      solution: symbols.map((item) => item + "=" + assignment[item]).join(", ") + "이므로 " + targetSentence + " " + answer + "입니다.",
+      family: "unit-q" + String(variant).padStart(2, "0") + "-shape-sum",
+      meta: { difficulty, variant, symbols, assignment, rowSums, columnSums, hiddenColumns, targetValues, assignmentSolutions: solutions }
+    });
+  }
+  throw new Error("unit-q" + variant + " shape grid generation failed");
+}
+
+function unitFourByFourShapeSumQ02Book8({ difficulty = 2 } = {}) {
+  return unitFourByFourShapeSumBook8({ difficulty, variant: 2 });
+}
+
+function unitFourByFourShapeSumQ21Book8({ difficulty = 2 } = {}) {
+  return unitFourByFourShapeSumBook8({ difficulty, variant: 21 });
+}
+
+function unitProductPlacementSolutionsBook8(digits, rowProducts, columnProducts, revealed, clues) {
+  const solutions = [];
+  unitPermuteBook8(digits, (values) => {
+    if (solutions.length >= 2) return;
+    const rowMatch = [0, 1, 2, 3].every((rowIndex) => (
+      values.filter((_, index) => UNIT_PRODUCT_POSITIONS_BOOK8[index][0] === rowIndex)
+        .reduce((product, value) => product * value, 1) === rowProducts[rowIndex]
+    ));
+    const columnMatch = [0, 1, 2, 3].every((columnIndex) => (
+      values.filter((_, index) => UNIT_PRODUCT_POSITIONS_BOOK8[index][1] === columnIndex)
+        .reduce((product, value) => product * value, 1) === columnProducts[columnIndex]
+    ));
+    const cluesMatch = revealed.every((index) => values[index] === clues[index]);
+    if (rowMatch && columnMatch && cluesMatch) solutions.push([...values]);
+  });
+  return solutions;
+}
+
+function unitProductPlacementCellsBook8(values, revealed) {
+  const cells = Array.from({ length: 4 }, () => Array(4).fill(""));
+  UNIT_PRODUCT_POSITIONS_BOOK8.forEach(([row, column], index) => {
+    cells[row][column] = revealed.includes(index) ? String(values[index]) : "?";
+  });
+  return cells;
+}
+
+function unitFourByFourProductPlacementBook8({ difficulty = 2 } = {}) {
+  const digits = [2, 3, 4, 5, 6, 7, 8, 9];
+  const requestedClues = difficulty === 1 ? 6 : difficulty === 3 ? 2 : 4;
+  const values = shuffle(digits);
+  const rowProducts = [0, 1, 2, 3].map((rowIndex) => (
+    values.filter((_, index) => UNIT_PRODUCT_POSITIONS_BOOK8[index][0] === rowIndex)
+      .reduce((product, value) => product * value, 1)
+  ));
+  const columnProducts = [0, 1, 2, 3].map((columnIndex) => (
+    values.filter((_, index) => UNIT_PRODUCT_POSITIONS_BOOK8[index][1] === columnIndex)
+      .reduce((product, value) => product * value, 1)
+  ));
+  let revealed = shuffle(Array.from({ length: values.length }, (_, index) => index)).slice(0, requestedClues);
+  let solutions = unitProductPlacementSolutionsBook8(digits, rowProducts, columnProducts, revealed, values);
+  const remaining = shuffle(Array.from({ length: values.length }, (_, index) => index).filter((index) => !revealed.includes(index)));
+  while (solutions.length > 1 && remaining.length && revealed.length < values.length - 1) {
+    revealed.push(remaining.shift());
+    solutions = unitProductPlacementSolutionsBook8(digits, rowProducts, columnProducts, revealed, values);
+  }
+  if (solutions.length !== 1) throw new Error("unit-q03 product placement has no unique answer");
+  const cells = unitProductPlacementCellsBook8(values, revealed);
+  return book8Problem({
+    prompt: "2부터 9까지의 수를 한 번씩 넣습니다. 가로줄과 세로줄의 곱을 보고 빈칸을 모두 채우세요.",
+    subtype: "matrix",
+    visual: { operation: "×", cells, rowLabels: rowProducts.map(String), columnLabels: columnProducts.map(String), rows: rowProducts, columns: columnProducts },
+    answer: values.join(", "),
+    solution: "가로줄의 곱과 세로줄의 곱을 차례로 맞추면 빈칸의 배열은 " + values.join(", ") + "입니다.",
+    family: "unit-q03-product-placement",
+    meta: { difficulty, values, rowProducts, columnProducts, revealed, solutions }
+  });
+}
+
+const UNIT_MULTIPLICATIVE_SHAPES_BOOK8 = [
+  { diamond: "◇", square: "□", circle: "○", pentagon: "⬟", triangle: "△", cross: "✚" },
+  { diamond: "◆", square: "■", circle: "●", pentagon: "⬢", triangle: "▲", cross: "✦" },
+  { diamond: "♢", square: "▣", circle: "◉", pentagon: "⬡", triangle: "▽", cross: "✣" }
+];
+
+function unitMultiplicativeShapeSystemBook8({ difficulty = 2 } = {}) {
+  const shapes = UNIT_MULTIPLICATIVE_SHAPES_BOOK8[difficulty - 1] || UNIT_MULTIPLICATIVE_SHAPES_BOOK8[0];
+  const values = { diamond: 2, square: 4, circle: 8, pentagon: 3, triangle: 9, cross: 6 };
+  const equations = [
+    shapes.diamond + "×" + shapes.diamond + "=" + shapes.square,
+    shapes.square + "×" + shapes.square + "=" + shapes.diamond + "×" + shapes.circle,
+    shapes.pentagon + "×" + shapes.pentagon + "=" + shapes.triangle,
+    shapes.cross + "×" + shapes.cross + "=" + shapes.square + "×" + shapes.triangle
+  ];
+  const hint = difficulty === 1 ? "같은 모양끼리 곱하는 식부터 찾아보세요. " : "";
+  return book8Problem({
+    prompt: hint + "같은 모양은 같은 수이고, 서로 다른 모양은 서로 다른 한 자리 수입니다. 식을 보고 " + shapes.cross + "가 나타내는 수를 구하세요.",
+    subtype: "symbol-equations",
+    visual: { equations, target: shapes.cross },
+    answer: shapes.cross + "=6",
+    solution: shapes.diamond + "×" + shapes.diamond + "=" + shapes.square + "에서 " + shapes.diamond + "=2, " + shapes.square + "=4입니다. " + shapes.cross + "×" + shapes.cross + "=4×9=36이므로 " + shapes.cross + "=6입니다.",
+    family: "unit-q04-multiplicative-shapes",
+    meta: { difficulty, shapes, values, result: 6 }
+  });
+}
+
+function unitCyclicShapeValuesBook8({ difficulty = 2 } = {}) {
+  const max = unitDifficultyMaxBook8(difficulty, 8, 12, 16);
+  const [diamond, circle, square] = unitRandomDistinctBook8(3, 1, max);
+  const pairSums = [diamond + square, square + circle, circle + diamond];
+  return book8Problem({
+    prompt: "같은 모양은 같은 수입니다. 세 식을 보고 ◇, ○, □가 나타내는 수를 각각 구하세요.",
+    subtype: "symbol-equations",
+    visual: {
+      equations: [
+        "◇+□=" + pairSums[0],
+        "□+○=" + pairSums[1],
+        "○+◇=" + pairSums[2]
+      ],
+      target: "◇, ○, □"
+    },
+    answer: "◇=" + diamond + ", ○=" + circle + ", □=" + square,
+    solution: "세 식을 더하면 각 모양이 두 번씩 나타납니다. 따라서 ◇+○+□=" + ((pairSums[0] + pairSums[1] + pairSums[2]) / 2) + "이고, 각 식에 대입하면 ◇=" + diamond + ", ○=" + circle + ", □=" + square + "입니다.",
+    family: "unit-q05-cyclic-shape-sums",
+    meta: { difficulty, values: { diamond, circle, square }, pairSums }
+  });
+}
+
+function unitThreeDigitAdditionSolutionsBook8({ unit, bottomHundreds, resultHundreds, resultUnits }) {
+  const solutions = [];
+  for (let circle = 1; circle <= 9; circle += 1) {
+    for (let square = 0; square <= 9; square += 1) {
+      for (let diamond = 0; diamond <= 9; diamond += 1) {
+        if (new Set([circle, square, diamond, unit, bottomHundreds, resultHundreds, resultUnits]).size !== 7) continue;
+        const left = 100 * circle + 10 * square + unit;
+        const right = 100 * bottomHundreds + 11 * diamond;
+        const result = 100 * resultHundreds + 10 * circle + resultUnits;
+        if (unit + diamond < 10 || square + diamond + 1 < 10) continue;
+        if (left + right === result) solutions.push({ circle, square, diamond });
+      }
+    }
+  }
+  return solutions;
+}
+
+function unitShapeAdditionCryptarithmBook8({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 1200; attempt += 1) {
+    const fixed = shuffle(UNIT_DIGITS_BOOK8);
+    const unit = fixed[0];
+    const bottomHundreds = fixed.find((value) => value !== unit && value !== 0);
+    const resultHundreds = fixed.find((value) => value !== unit && value !== bottomHundreds && value !== 0);
+    const resultUnits = fixed.find((value) => value !== unit && value !== bottomHundreds && value !== resultHundreds);
+    if ([unit, bottomHundreds, resultHundreds, resultUnits].some((value) => value === undefined)) continue;
+    const solutions = unitThreeDigitAdditionSolutionsBook8({ unit, bottomHundreds, resultHundreds, resultUnits });
+    if (solutions.length !== 1) continue;
+    const { circle, square, diamond } = solutions[0];
+    const sumOfShapes = circle + square + diamond;
+    const easyKnown = difficulty === 1 ? `○=${circle}입니다. ` : "";
+    const hardTarget = difficulty === 3 ? " 세 도형이 나타내는 수의 합도 구하세요." : "";
+    const answer = difficulty === 3
+      ? `○=${circle}, □=${square}, ◇=${diamond}, 합=${sumOfShapes}`
+      : `○=${circle}, □=${square}, ◇=${diamond}`;
+    return book8Problem({
+      prompt: easyKnown + "같은 도형은 같은 수입니다. 빈칸에 알맞은 수를 넣어 계산을 완성하세요." + hardTarget,
+      subtype: "vertical",
+      visual: { top: "○□" + unit, bottom: bottomHundreds + "◇◇", operator: "+", result: resultHundreds + "○" + resultUnits, note: difficulty === 1 ? `○=${circle}` : difficulty === 3 ? "○+□+◇도 구합니다." : "같은 도형은 같은 수입니다." },
+      answer,
+      solution: circle + "" + square + unit + "+" + bottomHundreds + diamond + diamond + "=" + resultHundreds + circle + resultUnits + "이므로 ○=" + circle + ", □=" + square + ", ◇=" + diamond + (difficulty === 3 ? `이고 합은 ${sumOfShapes}` : "") + "입니다.",
+      family: "unit-q06-shape-addition",
+      meta: { difficulty, unit, bottomHundreds, resultHundreds, resultUnits, circle, square, diamond, sumOfShapes, solutions }
+    });
+  }
+  throw new Error("unit-q06 shape addition generation failed");
+}
+
+function unitThreeAddendBlankSumBook8({ difficulty = 2 } = {}) {
+  const easyTop = difficulty === 1 ? randomInt(1, 9) : null;
+  const total = difficulty === 1
+    ? 199 - 9 * easyTop
+    : randomInt(difficulty === 3 ? 204 : 198, difficulty === 3 ? 207 : 203);
+  const candidates = [];
+  for (let top = 1; top <= 9; top += 1) for (let firstTens = 1; firstTens <= 9; firstTens += 1) for (let firstUnits = 0; firstUnits <= 9; firstUnits += 1) for (let secondTens = 1; secondTens <= 9; secondTens += 1) for (let secondUnits = 0; secondUnits <= 9; secondUnits += 1) {
+    if (difficulty === 1 && top !== easyTop) continue;
+    if (top + 10 * firstTens + firstUnits + 10 * secondTens + secondUnits !== total) continue;
+    candidates.push([top, firstTens, firstUnits, secondTens, secondUnits]);
+  }
+  if (!candidates.length) throw new Error("unit-q07 blank sum has no candidate");
+  const [top, firstTens, firstUnits, secondTens, secondUnits] = sample(candidates);
+    const digitSum = top + firstTens + firstUnits + secondTens + secondUnits;
+    const knownTop = difficulty === 1 ? String(top) : "□";
+    const extraCondition = difficulty === 3 ? " 일의 자리와 십의 자리에서 모두 받아올림이 생깁니다." : "";
+    return book8Problem({
+    prompt: knownTop + " + □□ + □□ = " + numberObject(total) + " 만들도록 빈칸에 수를 넣을 때, 들어가는 숫자의 합을 구하세요." + extraCondition,
+      subtype: "symbol-equations",
+      visual: { equations: [knownTop + " + □□ + □□ = " + total], target: difficulty === 1 ? "모든 숫자의 합" : "빈칸 숫자의 합", ...(difficulty === 3 ? { note: "두 자리 모두 받아올림" } : {}) },
+      answer: digitSum,
+      solution: "빈칸의 숫자는 " + top + ", " + firstTens + ", " + firstUnits + ", " + secondTens + ", " + secondUnits + "입니다. 모두 더하면 " + digitSum + "입니다.",
+      family: "unit-q07-three-addend-blank-sum",
+      meta: { difficulty, digits: [top, firstTens, firstUnits, secondTens, secondUnits], total, result: digitSum, candidateCount: candidates.length }
+    });
+}
+
+function unitQ08SolutionsBook8(total) {
+  const solutions = [];
+  for (let diamond = 1; diamond <= 9; diamond += 1) {
+    for (let plus = 0; plus <= 9; plus += 1) {
+      for (let circle = 0; circle <= 9; circle += 1) {
+        for (let square = 0; square <= 9; square += 1) {
+          if (new Set([diamond, plus, circle, square]).size !== 4) continue;
+          const value = 1000 * diamond + 100 * plus + 10 * circle + square + 20 * circle + 2 * square;
+          if (value === total) solutions.push({ diamond, plus, circle, square });
+        }
+      }
+    }
+  }
+  return solutions;
+}
+
+function unitMultiAddendShapeCryptarithmBook8({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 600; attempt += 1) {
+    const [diamond, plus, circle, square] = unitRandomDistinctBook8(4, 0, 9);
+    if (diamond === 0) continue;
+    const total = 1000 * diamond + 100 * plus + 30 * circle + 3 * square;
+    const solutions = unitQ08SolutionsBook8(total);
+    if (solutions.length !== 1) continue;
+    const shapeSum = diamond + plus + circle + square;
+    const hardTarget = difficulty === 3 ? " 네 도형이 나타내는 수의 합도 구하세요." : "";
+    const answer = difficulty === 3
+      ? `◇=${diamond}, ✚=${plus}, ○=${circle}, □=${square}, 합=${shapeSum}`
+      : `◇=${diamond}, ✚=${plus}, ○=${circle}, □=${square}`;
+    return book8Problem({
+      prompt: (difficulty === 1 ? `◇=${diamond}, ✚=${plus}입니다. ` : "") + "같은 도형은 같은 수입니다. ◇✚○□+○□+○□의 값을 구하세요." + hardTarget,
+      subtype: "symbol-equations",
+      visual: { equations: ["◇✚○□ + ○□ + ○□ = " + total, ...(difficulty === 1 ? [`◇=${diamond}, ✚=${plus}`] : [])], target: difficulty === 3 ? "네 도형과 그 합" : "◇, ✚, ○, □" },
+      answer,
+      solution: "○□가 두 번 더해지므로 전체 식은 " + total + "입니다. 각 도형을 대입하면 ◇=" + diamond + ", ✚=" + plus + ", ○=" + circle + ", □=" + square + (difficulty === 3 ? `이고 합은 ${shapeSum}` : "") + "입니다.",
+      family: "unit-q08-three-addend-cryptarithm",
+      meta: { difficulty, values: { diamond, plus, circle, square }, total, shapeSum, solutions }
+    });
+  }
+  throw new Error("unit-q08 cryptarithm generation failed");
+}
+
+function unitQ09SolutionsBook8() {
+  const solutions = [];
+  for (let circle = 1; circle <= 9; circle += 1) {
+    for (let heart = 0; heart <= 9; heart += 1) {
+      for (let diamond = 0; diamond <= 9; diamond += 1) {
+        for (let star = 1; star <= 9; star += 1) {
+          for (let square = 0; square <= 9; square += 1) {
+            if (new Set([circle, heart, diamond, star, square]).size !== 5) continue;
+            if (100 * circle + 10 * heart + diamond + 10 * diamond + star === 1000 * star + 100 * square + 10 * square + circle) {
+              solutions.push({ circle, heart, diamond, star, square });
+            }
+          }
+        }
+      }
+    }
+  }
+  return solutions;
+}
+
+function unitCarryShapeCryptarithmBook8({ difficulty = 2 } = {}) {
+  const solutions = unitQ09SolutionsBook8();
+  if (solutions.length !== 1) throw new Error("unit-q09 cryptarithm rule is not unique");
+  const { circle, heart, diamond, star, square } = solutions[0];
+  const askCombinedValue = difficulty === 3;
+  const equations = ["○♥◇ + ◇☆ = ☆□□○"];
+  if (difficulty === 1) equations.push("○=9, ◇=8, ☆=1");
+  if (askCombinedValue) equations.push("○ + ♥ = ?");
+  const result = askCombinedValue ? circle + heart : heart;
+  const target = askCombinedValue ? "○+♥" : "♥";
+  const prompt = difficulty === 1
+    ? "○=9, ◇=8, ☆=1을 알고 있습니다. 같은 도형은 같은 수이고 서로 다른 도형은 서로 다른 수입니다. ○♥◇+◇☆=☆□□○에서 ♥가 나타내는 수를 구하세요."
+    : askCombinedValue
+      ? "같은 도형은 같은 수이고 서로 다른 도형은 서로 다른 수입니다. ○♥◇+◇☆=☆□□○를 만족할 때 ○와 ♥가 나타내는 수의 합을 구하세요."
+      : "같은 도형은 같은 수이고 서로 다른 도형은 서로 다른 수입니다. ○♥◇+◇☆=☆□□○에서 ♥가 나타내는 수를 구하세요.";
+  return book8Problem({
+    prompt,
+    subtype: "symbol-equations",
+    visual: { equations, target },
+    answer: result,
+    solution: "일의 자리, 십의 자리, 백의 자리를 차례로 비교하면 ○=" + circle + ", ♥=" + heart + ", ◇=" + diamond + ", ☆=" + star + ", □=" + square + "입니다. 따라서 " + target + "=" + result + "입니다.",
+    family: "unit-q09-five-symbol-cryptarithm",
+    meta: { difficulty, values: { circle, heart, diamond, star, square }, solutions, ask: askCombinedValue ? "circlePlusHeart" : "heart", result }
+  });
+}
+
+function unitRepeatedResultSolutionsBook8(firstHundreds, secondUnits) {
+  const solutions = [];
+  for (let circle = 1; circle <= 9; circle += 1) {
+    for (let square = 0; square <= 9; square += 1) {
+      for (let diamond = 1; diamond <= 9; diamond += 1) {
+        if (new Set([firstHundreds, secondUnits, circle, square, diamond]).size !== 5) continue;
+        if (100 * firstHundreds + 10 * square + circle + 10 * circle + secondUnits === 111 * diamond) {
+          solutions.push({ circle, square, diamond });
+        }
+      }
+    }
+  }
+  return solutions;
+}
+
+function unitRepeatedResultCryptarithmBook8({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 1000; attempt += 1) {
+    const firstHundreds = randomInt(1, 9);
+    const secondUnits = randomInt(0, 9);
+    if (firstHundreds === secondUnits) continue;
+    const solutions = unitRepeatedResultSolutionsBook8(firstHundreds, secondUnits);
+    if (solutions.length !== 1) continue;
+    const { circle, square, diamond } = solutions[0];
+    const shapeSum = circle + square + diamond;
+    const answer = difficulty === 3
+      ? `○=${circle}, □=${square}, ◇=${diamond}, 합=${shapeSum}`
+      : `○=${circle}, □=${square}, ◇=${diamond}`;
+    return book8Problem({
+      prompt: (difficulty === 1 ? `◇=${diamond}입니다. ` : "") + "같은 도형은 같은 수입니다. " + firstHundreds + "□○+○" + secondUnits + "=◇◇◇를 만족하는 ○, □, ◇를 구하세요." + (difficulty === 3 ? " 세 도형의 합도 구하세요." : ""),
+      subtype: "vertical",
+      visual: { top: firstHundreds + "□○", bottom: "○" + secondUnits, operator: "+", result: "◇◇◇", note: difficulty === 1 ? `◇=${diamond}` : difficulty === 3 ? "○+□+◇도 구합니다." : "같은 도형은 같은 수입니다." },
+      answer,
+      solution: firstHundreds + square + circle + "+" + circle + secondUnits + "=" + diamond + diamond + diamond + "이므로 ○=" + circle + ", □=" + square + ", ◇=" + diamond + (difficulty === 3 ? `이고 합은 ${shapeSum}` : "") + "입니다.",
+      family: "unit-q10-repeated-result",
+      meta: { difficulty, firstHundreds, secondUnits, circle, square, diamond, shapeSum, solutions }
+    });
+  }
+  throw new Error("unit-q10 repeated result generation failed");
+}
+
+function unitAgeSumDifferenceBook8({ difficulty = 2 } = {}) {
+  const younger = randomInt(5, unitDifficultyMaxBook8(difficulty, 9, 13, 18));
+  const difference = randomInt(2, difficulty === 3 ? 8 : 5);
+  const older = younger + difference;
+  const total = younger + older;
+  return book8Problem({
+    prompt: "두 사람의 나이 합은 " + total + "살이고, 형은 동생보다 " + difference + "살 많습니다. 두 사람의 나이를 각각 구하세요.",
+    subtype: "bars",
+    visual: { bars: [{ label: "동생", units: 1 }, { label: "형", units: 1, offset: difference }], facts: ["합 " + total + "살", "차 " + difference + "살"] },
+    answer: "동생 " + younger + "살, 형 " + older + "살",
+    solution: "합에서 차를 빼면 동생 나이의 두 배입니다. (" + total + "-" + difference + ")÷2=" + younger + "살이므로 형은 " + older + "살입니다.",
+    family: "unit-q12-age-sum-difference",
+    meta: { difficulty, younger, older, difference, total }
+  });
+}
+
+function unitTableDifferenceBook8({ difficulty = 2 } = {}) {
+  const unknown = randomInt(5, unitDifficultyMaxBook8(difficulty, 10, 18, 25));
+  const difference = randomInt(2, difficulty === 3 ? 7 : 5);
+  const first = randomInt(8, 20);
+  const third = randomInt(5, 14);
+  const fourth = randomInt(7, 16);
+  const second = unknown + difference;
+  const total = first + second + third + fourth + unknown;
+  return book8Problem({
+    prompt: "다섯 명이 모은 수를 표로 나타냈습니다. B는 E보다 " + difference + "만큼 많고, 모두 합하면 " + total + "입니다. E를 구하세요.",
+    subtype: "table",
+    visual: {
+      headers: ["이름", "A", "B", "C", "D", "E", "합계"],
+      rows: [["수", String(first), "?", String(third), String(fourth), "?", String(total)]],
+      notes: ["B는 E보다 " + difference + "만큼 많습니다."]
+    },
+    answer: unknown,
+    solution: "B와 E를 합하면 " + (total - first - third - fourth) + "입니다. E+(E+" + difference + ")=" + (total - first - third - fourth) + "이므로 E=" + unknown + "입니다.",
+    family: "unit-q13-table-total-difference",
+    meta: { difficulty, first, second, third, fourth, unknown, difference, total }
+  });
+}
+
+function unitDifferenceMultipleBothBook8({ difficulty = 2 } = {}) {
+  const girls = randomInt(4, unitDifficultyMaxBook8(difficulty, 8, 12, 18));
+  const multiplier = difficulty === 1 ? 3 : difficulty === 3 ? 5 : 4;
+  const boys = girls * multiplier;
+  const difference = boys - girls;
+  return book8Problem({
+    prompt: "남학생 수는 여학생 수의 " + multiplier + "배이고, 남학생이 여학생보다 " + difference + "명 많습니다. 남학생과 여학생 수를 각각 구하세요.",
+    subtype: "bars",
+    visual: { bars: [{ label: "여학생", units: 1 }, { label: "남학생", units: multiplier }], facts: ["차 " + difference + "명"] },
+    answer: "남학생 " + boys + "명, 여학생 " + girls + "명",
+    solution: "남학생과 여학생의 차는 여학생 " + (multiplier - 1) + "명분입니다. " + difference + "÷" + (multiplier - 1) + "=" + girls + "명이므로 남학생은 " + boys + "명입니다.",
+    family: "unit-q14-difference-multiple-both",
+    meta: { difficulty, boys, girls, multiplier, difference }
+  });
+}
+
+function unitSumMultipleOffsetBothBook8({ difficulty = 2 } = {}) {
+  const smaller = randomInt(5, unitDifficultyMaxBook8(difficulty, 9, 14, 20));
+  const multiplier = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const offset = randomInt(2, difficulty === 3 ? 7 : 4);
+  const larger = smaller * multiplier + offset;
+  const total = smaller + larger;
+  return book8Problem({
+    prompt: "큰 수는 작은 수의 " + multiplier + "배보다 " + offset + "만큼 많고, 두 수의 합은 " + total + "입니다. 두 수를 각각 구하세요.",
+    subtype: "bars",
+    visual: { bars: [{ label: "작은 수", units: 1 }, { label: "큰 수", units: multiplier, offset }], facts: ["합 " + total] },
+    answer: "작은 수 " + smaller + ", 큰 수 " + larger,
+    solution: "큰 수에서 작은 수 " + multiplier + "배와 " + numberObject(offset) + " 생각하면, 합은 작은 수 " + (multiplier + 1) + "배+" + offset + "입니다. (" + total + "-" + offset + ")÷" + (multiplier + 1) + "=" + smaller + "이므로 큰 수는 " + larger + "입니다.",
+    family: "unit-q15-sum-multiple-offset-both",
+    meta: { difficulty, smaller, larger, multiplier, offset, total }
+  });
+}
+
+function unitReverseThreeEventsBook8({ difficulty = 2 } = {}) {
+  const start = randomInt(18, unitDifficultyMaxBook8(difficulty, 30, 42, 60));
+  const gave = randomInt(2, 7);
+  const received = randomInt(3, 9);
+  const gaveAgain = randomInt(2, 6);
+  const final = start - gave + received - gaveAgain;
+  return book8Problem({
+    prompt: "어떤 수에서 " + gave + "만큼 빼고 " + received + "만큼 더한 뒤 다시 " + gaveAgain + "만큼 빼었더니 최종값은 " + final + "입니다. 처음 수를 구하세요.",
+    subtype: "process",
+    visual: { start: "?", steps: ["-" + gave, "+" + received, "-" + gaveAgain], result: final },
+    answer: start,
+    solution: "마지막 수에 마지막으로 뺀 수를 더하고, 더한 수를 빼고, 처음 뺀 수를 더합니다. " + final + "+" + gaveAgain + "-" + received + "+" + gave + "=" + start + "입니다.",
+    family: "unit-q16-reverse-three-events",
+    meta: { difficulty, start, gave, received, gaveAgain, final }
+  });
+}
+
+function unitGiveAsMuchOnceBook8({ difficulty = 2 } = {}) {
+  const problem = giveAsMuchOnceBook8({ difficulty });
+  const { first, second, after } = problem.meta;
+  return {
+    ...problem,
+    prompt: difficulty === 1
+      ? "지우가 처음 " + second + "개를 가졌습니다. 민수가 지우에게 " + second + "개를 주었더니 민수에게 " + after[0] + "개가 남았습니다. 민수가 처음 가진 수를 구하세요."
+      : difficulty === 3
+        ? "민수가 지우에게 지우가 가진 만큼 주었습니다. 준 뒤 지우는 " + after[1] + "개, 민수는 " + after[0] + "개가 되었습니다. 민수가 처음 가진 수를 구하세요."
+        : "민수가 지우에게 지우가 가진 만큼 주었더니 민수에게 " + after[0] + "개가 남았습니다. 지우가 처음 가진 수가 " + second + "개일 때 민수가 처음 가진 수를 구하세요.",
+    visual: {
+      ...problem.visual,
+      people: difficulty === 3 ? [{ label: "민수(준 뒤)", value: after[0] }, { label: "지우(준 뒤)", value: after[1] }] : [{ label: "민수", value: "?" }, { label: "지우", value: second }],
+      steps: [difficulty === 1 ? `민수→지우 ${second}개` : "민수가 지우가 가진 만큼 줌"]
+    },
+    solution: "민수는 지우가 가진 " + second + "개를 주고 " + after[0] + "개가 남았으므로 처음에는 " + after[0] + "+" + second + "=" + first + "개입니다."
+  };
+}
+
+function unitFractionDifferenceSubgroupBook8({ difficulty = 2 } = {}) {
+  const denominator = difficulty === 1 ? 6 : difficulty === 3 ? 10 : 8;
+  const high = denominator - 2;
+  const low = 2;
+  const unit = randomInt(3, difficulty === 3 ? 9 : 6);
+  const highGroup = high * unit;
+  const lowGroup = low * unit;
+  const difference = highGroup - lowGroup;
+  return book8Problem({
+    prompt: "남학생은 전체의 " + high + "/" + denominator + ", 여학생은 전체의 " + low + "/" + denominator + "입니다. 남학생이 여학생보다 " + difference + "명 많을 때 남학생은 몇 명인가요?",
+    subtype: "fraction-pair",
+    visual: { denominators: [denominator, denominator], numerators: [high, low], difference },
+    answer: highGroup + "명",
+    solution: "두 모둠의 분수 차는 " + (high - low) + "/" + denominator + "입니다. 이 차가 " + difference + "명이므로 한 조각은 " + unit + "명이고, 남학생은 " + high + "×" + unit + "=" + highGroup + "명입니다.",
+    family: "unit-q20-fraction-difference-subgroup",
+    meta: { difficulty, denominator, high, low, unit, highGroup, lowGroup, difference }
+  });
+}
+
+function unitFractionGivenAwayBook8({ difficulty = 2, action = "사용" } = {}) {
+  const profile = difficulty === 1
+    ? { denominator: 4, numerator: 1, unitMin: 3, unitMax: 6 }
+    : difficulty === 3
+      ? { denominator: 8, numerator: 3, unitMin: 6, unitMax: 11 }
+      : { denominator: 6, numerator: 2, unitMin: 4, unitMax: 8 };
+  const unit = randomInt(profile.unitMin, profile.unitMax);
+  const original = profile.denominator * unit;
+  const given = profile.numerator * unit;
+  const remaining = original - given;
+  const actionText = action === "사용" ? "사용했더니" : "주었더니";
+  const easyClue = difficulty === 1 ? ` 한 조각은 ${unit}개입니다.` : "";
+  const hardAsk = difficulty === 3 ? " 사용하거나 준 수와 처음 수도 모두 구하세요." : " 처음 수를 구하세요.";
+  const answer = difficulty === 3 ? `처음 수 ${original}개, ${action === "사용" ? "사용한" : "준"} 수 ${given}개` : `${original}개`;
+  return book8Problem({
+    prompt: `전체의 ${fractionText(profile.numerator, profile.denominator)}만큼 ${actionText} ${remaining}개가 남았습니다.${easyClue}${hardAsk}`,
+    subtype: "fraction",
+    visual: { denominator: profile.denominator, numerator: profile.denominator - profile.numerator, whole: "?", label: "남은 부분", shownValue: remaining, ...(difficulty === 1 ? { unitValue: unit } : {}) },
+    answer,
+    solution: `남은 부분은 전체의 ${fractionText(profile.denominator - profile.numerator, profile.denominator)}입니다. ${remaining}÷${profile.denominator - profile.numerator}=${unit}개가 한 조각이므로 전체는 ${unit}×${profile.denominator}=${original}개이고, ${action === "사용" ? "사용한" : "준"} 수는 ${given}개입니다.`,
+    family: "fraction-given-away-b8",
+    meta: { difficulty, denominator: profile.denominator, numerator: profile.numerator, unit, original, given, remaining, result: original, action }
+  });
+}
+
+function unitFractionUsedOriginalBook8({ difficulty = 2 } = {}) {
+  return unitFractionGivenAwayBook8({ difficulty, action: "사용" });
+}
+
+function unitFractionGivenOriginalBook8({ difficulty = 2 } = {}) {
+  return unitFractionGivenAwayBook8({ difficulty, action: "나눔" });
+}
+
+function unitLetterPyramidBook8({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const [a, b, c, d] = unitRandomDistinctBook8(4, 0, 9);
+    if (a === 0) continue;
+    const total = a + (10 * a + b) + (100 * a + 10 * b + c) + (1000 * a + 100 * b + 10 * c + d);
+    const solutions = [];
+    for (let aa = 1; aa <= 9; aa += 1) {
+      for (let bb = 0; bb <= 9; bb += 1) {
+        for (let cc = 0; cc <= 9; cc += 1) {
+          for (let dd = 0; dd <= 9; dd += 1) {
+            if (new Set([aa, bb, cc, dd]).size !== 4) continue;
+            const candidate = aa + (10 * aa + bb) + (100 * aa + 10 * bb + cc) + (1000 * aa + 100 * bb + 10 * cc + dd);
+            if (candidate === total) solutions.push({ a: aa, b: bb, c: cc, d: dd });
+          }
+        }
+      }
+    }
+    if (solutions.length !== 1) continue;
+    const number = 1000 * a + 100 * b + 10 * c + d;
+    const digitSum = a + b + c + d;
+    const answer = difficulty === 3 ? `ABCD=${number}, 숫자의 합=${digitSum}` : number;
+    return book8Problem({
+      prompt: (difficulty === 1 ? `A=${a}입니다. ` : "") + "A, B, C, D는 서로 다른 숫자입니다. A+AB+ABC+ABCD=" + total + "일 때 ABCD를 구하세요." + (difficulty === 3 ? " A, B, C, D의 합도 구하세요." : ""),
+      subtype: "symbol-equations",
+      visual: { equations: ["A", "AB", "ABC", "ABCD", "A + AB + ABC + ABCD = " + total, ...(difficulty === 1 ? [`A=${a}`] : [])], target: difficulty === 3 ? "ABCD와 숫자의 합" : "ABCD" },
+      answer,
+      solution: "천의 자리부터 자리값을 비교하면 A=" + a + ", B=" + b + ", C=" + c + ", D=" + d + "입니다. 따라서 ABCD=" + number + (difficulty === 3 ? `이고 숫자의 합은 ${digitSum}` : "") + "입니다.",
+      family: "unit-q22-letter-pyramid",
+      meta: { difficulty, values: { a, b, c, d }, total, number, digitSum, solutions }
+    });
+  }
+  throw new Error("unit-q22 letter pyramid generation failed");
+}
+
+function unitPairEqualizeChainBook8({ difficulty = 2 } = {}) {
+  const giveToB = difficulty === 1 ? 1 : randomInt(1, difficulty === 3 ? 4 : 2);
+  const giveToC = difficulty === 1 ? 2 : randomInt(1, difficulty === 3 ? 5 : 3);
+  const middle = randomInt(8, unitDifficultyMaxBook8(difficulty, 14, 20, 28));
+  const first = middle + 2 * giveToB;
+  const third = middle - 2 * giveToC;
+  const total = first + middle + third;
+  return book8Problem({
+    prompt: "가가 나에게 " + giveToB + "개를 주면 가와 나의 수가 같아지고, 나가 다에게 " + giveToC + "개를 주면 나와 다의 수가 같아집니다. 가와 다의 합이 " + (first + third) + "개일 때 나의 처음 수를 구하세요.",
+    subtype: "transfer",
+    visual: { people: [{ label: "민수", value: "?" }, { label: "지우", value: "?" }, { label: "하준", value: "?" }], steps: ["민수→지우 " + giveToB + "개 후 같음", "지우→하준 " + giveToC + "개 후 같음"], total: total },
+    answer: "지우 " + middle + "개",
+    solution: "민수의 처음 수는 지우보다 " + (2 * giveToB) + "개 많고, 하준의 처음 수는 지우보다 " + (2 * giveToC) + "개 적습니다. 민수와 하준의 합은 지우의 두 배+" + (2 * giveToB - 2 * giveToC) + "이므로 지우는 " + middle + "개입니다.",
+    family: "unit-q23-pair-equalize-chain",
+    meta: { difficulty, giveToB, giveToC, first, middle, third, total }
+  });
+}
+
+function unitThreeBagTransferConditionBook8({ difficulty = 2 } = {}) {
+  const [minimum, maximum] = difficulty === 1 ? [5, 8] : difficulty === 3 ? [13, 18] : [9, 12];
+  const afterEqual = randomInt(minimum, maximum);
+  const initial = [afterEqual + 1, 2 * afterEqual - 1, afterEqual];
+  const total = sum(initial);
+  return book8Problem({
+    prompt: "세 주머니에 모두 " + total + "개가 있습니다. 가에서 나로 1개를 옮겼더니 가와 다의 수가 같아졌고, 그때 나의 수는 가와 다의 수의 합과 같았습니다. 처음 가, 나, 다의 수를 구하세요.",
+    subtype: "transfer",
+    visual: { people: [{ label: "첫째 주머니", value: "?" }, { label: "둘째 주머니", value: "?" }, { label: "셋째 주머니", value: "?" }], steps: ["첫째→둘째 1개", "옮긴 뒤 첫째=셋째", "옮긴 뒤 둘째=첫째+셋째"], total },
+    answer: "첫째 " + initial[0] + "개, 둘째 " + initial[1] + "개, 셋째 " + initial[2] + "개",
+    solution: "옮긴 뒤 첫째와 셋째는 각각 " + afterEqual + "개입니다. 둘째의 옮긴 뒤 수는 " + (2 * afterEqual) + "개이므로 처음 둘째는 1개를 빼서 " + initial[1] + "개입니다. 처음 첫째는 1개를 더해 " + initial[0] + "개입니다.",
+    family: "unit-q24-three-bag-transfer",
+    meta: { difficulty, afterEqual, initial, total }
+  });
+}
+
+function unitFractionSubgroupFromWholeBook8({ difficulty = 2 } = {}) {
+  const configuration = difficulty === 1
+    ? { denominator: 6, boysNumerator: 4, girlsNumerator: 2, boyPartNumerator: 1, boyPartDenominator: 2, girlPartNumerator: 1, girlPartDenominator: 2, unit: 3 }
+    : difficulty === 3
+      ? { denominator: 12, boysNumerator: 7, girlsNumerator: 5, boyPartNumerator: 2, boyPartDenominator: 5, girlPartNumerator: 3, girlPartDenominator: 5, unit: 5 }
+      : { denominator: 9, boysNumerator: 5, girlsNumerator: 4, boyPartNumerator: 1, boyPartDenominator: 3, girlPartNumerator: 1, girlPartDenominator: 4, unit: 6 };
+  const { denominator, boysNumerator, girlsNumerator, boyPartNumerator, boyPartDenominator, girlPartNumerator, girlPartDenominator, unit } = configuration;
+  const boys = boysNumerator * unit;
+  const girls = girlsNumerator * unit;
+  const total = boys + girls;
+  const boySiblings = boys * boyPartNumerator / boyPartDenominator;
+  const girlSiblings = girls * girlPartNumerator / girlPartDenominator;
+  const result = boySiblings + girlSiblings;
+  const boyFraction = fractionText(boysNumerator, denominator);
+  const girlFraction = fractionText(girlsNumerator, denominator);
+  const boyPart = fractionText(boyPartNumerator, boyPartDenominator);
+  const girlPart = fractionText(girlPartNumerator, girlPartDenominator);
+  return book8Problem({
+    prompt: "전체 학생 중 남학생은 " + boyFraction + ", 여학생은 " + girlFraction + "입니다. 남학생 중 " + boyPart + "에 해당하는 학생과 여학생 중 " + girlPart + "에 해당하는 학생에게 형제자매가 있을 때 형제자매가 있는 학생은 모두 몇 명인가요?",
+    subtype: "fraction-pair",
+    visual: { denominators: [denominator, denominator], numerators: [boysNumerator, girlsNumerator], totals: [boys, girls], difference: boys - girls },
+    answer: result + "명",
+    solution: "남학생은 " + boys + "명, 여학생은 " + girls + "명입니다. 남학생 중 " + boySiblings + "명(" + boyPart + "), 여학생 중 " + girlSiblings + "명(" + girlPart + ")이므로 모두 " + result + "명입니다.",
+    family: "unit-q25-fraction-subgroups",
+    meta: { difficulty, unit, denominator, boysNumerator, girlsNumerator, boyPartNumerator, boyPartDenominator, girlPartNumerator, girlPartDenominator, boys, girls, total, boySiblings, girlSiblings, result }
+  });
+}
+
+export const BOOK08_UNIT_TEST_GENERATORS = Object.freeze({
+  1: unitBalanceThreeTargetsBook8,
+  2: unitFourByFourShapeSumQ02Book8,
+  3: unitFourByFourProductPlacementBook8,
+  4: unitMultiplicativeShapeSystemBook8,
+  5: unitCyclicShapeValuesBook8,
+  6: unitShapeAdditionCryptarithmBook8,
+  7: unitThreeAddendBlankSumBook8,
+  8: unitMultiAddendShapeCryptarithmBook8,
+  9: unitCarryShapeCryptarithmBook8,
+  10: unitRepeatedResultCryptarithmBook8,
+  11: equalizeTransferBook8,
+  12: unitAgeSumDifferenceBook8,
+  13: unitTableDifferenceBook8,
+  14: unitDifferenceMultipleBothBook8,
+  15: unitSumMultipleOffsetBothBook8,
+  16: unitReverseThreeEventsBook8,
+  17: unitGiveAsMuchOnceBook8,
+  18: unitFractionUsedOriginalBook8,
+  19: unitFractionGivenOriginalBook8,
+  20: unitFractionDifferenceSubgroupBook8,
+  21: unitFourByFourShapeSumQ21Book8,
+  22: unitLetterPyramidBook8,
+  23: unitPairEqualizeChainBook8,
+  24: unitThreeBagTransferConditionBook8,
+  25: unitFractionSubgroupFromWholeBook8
+});
+
 export const BOOK08_GENERATORS = Object.freeze({
   balanceDifferenceDeductionBook8,
   overlapCircleSumBook8,
@@ -958,5 +1726,29 @@ export const BOOK08_GENERATORS = Object.freeze({
   reverseTwoContainerTransfersBook8,
   threeContainerConditionBook8,
   sequentialFractionConsumptionBook8,
-  fractionSubgroupCountBook8
+  fractionSubgroupCountBook8,
+  unitBalanceThreeTargetsBook8,
+  unitFourByFourShapeSumBook8,
+  unitFourByFourShapeSumQ02Book8,
+  unitFourByFourShapeSumQ21Book8,
+  unitFourByFourProductPlacementBook8,
+  unitMultiplicativeShapeSystemBook8,
+  unitCyclicShapeValuesBook8,
+  unitShapeAdditionCryptarithmBook8,
+  unitThreeAddendBlankSumBook8,
+  unitMultiAddendShapeCryptarithmBook8,
+  unitCarryShapeCryptarithmBook8,
+  unitRepeatedResultCryptarithmBook8,
+  unitAgeSumDifferenceBook8,
+  unitTableDifferenceBook8,
+  unitDifferenceMultipleBothBook8,
+  unitSumMultipleOffsetBothBook8,
+  unitReverseThreeEventsBook8,
+  unitGiveAsMuchOnceBook8,
+  unitFractionDifferenceSubgroupBook8,
+  unitLetterPyramidBook8,
+  unitPairEqualizeChainBook8,
+  unitThreeBagTransferConditionBook8,
+  unitFractionSubgroupFromWholeBook8,
+  BOOK08_UNIT_TEST_GENERATORS
 });

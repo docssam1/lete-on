@@ -1,7 +1,7 @@
 // 더클래식 1과정 4권 전용 생성기.
 // 원본 문제는 저장하지 않고, 문제 번호로 확인한 풀이 구조만 재현한다.
 
-import { BOOK01_GENERATORS } from "./book01-generators.js";
+import { BOOK01_GENERATORS, BOOK01_INTERNALS } from "./book01-generators.js";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -13,6 +13,11 @@ function shuffle(items) {
     [result[index], result[target]] = [result[target], result[index]];
   }
   return result;
+}
+
+function permutations(items) {
+  if (items.length < 2) return [items];
+  return items.flatMap((item, index) => permutations(items.filter((_, itemIndex) => itemIndex !== index)).map((rest) => [item, ...rest]));
 }
 
 const TETROMINOES = Object.freeze([
@@ -102,6 +107,58 @@ function tetrominoSquareComposition({ difficulty = 2 }) {
   };
 }
 
+const STAR_PARTITIONS = Object.freeze([
+  [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]],
+  [[0,1,2,4],[3,5,6,7],[8,9,10,12],[11,13,14,15]],
+  [[0,1,5,9],[2,3,7,11],[4,8,12,13],[6,10,14,15]]
+]);
+const FOREST_PARTITION = Object.freeze([
+  [[0,1],[1,1],[1,2]],
+  [[0,2],[0,3],[1,3]],
+  [[1,0],[2,0],[2,1]],
+  [[2,2],[3,1],[3,2]]
+]);
+
+function markedCongruentPartition({ rows, columns, groups, marker, markerLabel, prompt }) {
+  const activeCells = groups.flat();
+  const markerCells = groups.map((group) => sample(group));
+  const pieceSizeLabel = groups[0].length === 3 ? "세" : "네";
+  const visual = { kind: "book4", subtype: "marked-congruent-partition", rows, columns, activeCells, groups, markerCells, marker, markerLabel };
+  return {
+    prompt,
+    visual: { ...visual, reveal: false },
+    answerVisual: { ...visual, reveal: true },
+    answer: "그림 답안",
+    responseKind: "drawing",
+    solution: `각 조각이 ${pieceSizeLabel} 칸으로 이어지고 돌려서 포개었을 때 모두 같은 모양이 되도록 나눕니다. 각 조각에는 ${subjectOf(markerLabel)} 하나씩 들어갑니다.`,
+    meta: { family: "marked-congruent-partition-book4", rows, columns, activeCells, groups, markerCells, marker, answer: "drawing" }
+  };
+}
+
+function starCongruentPartitionDrawBook4() {
+  const groups = sample(STAR_PARTITIONS).map((group) => group.map((index) => [Math.floor(index / 4), index % 4]));
+  return markedCongruentPartition({
+    rows: 4,
+    columns: 4,
+    groups,
+    marker: "★",
+    markerLabel: "별",
+    prompt: "칸의 선을 따라 모양과 크기가 같은 네 조각으로 나누어 보세요. 각 조각에는 별이 하나씩 들어가야 합니다."
+  });
+}
+
+function forestCongruentPartitionDrawBook4() {
+  const groups = FOREST_PARTITION.map((group) => group.map((cell) => [...cell]));
+  return markedCongruentPartition({
+    rows: 4,
+    columns: 4,
+    groups,
+    marker: "♣",
+    markerLabel: "나무",
+    prompt: "나무가 심어진 땅을 모양과 크기가 같은 네 부분으로 나누어 집을 지으려고 합니다. 각 부분에 나무가 하나씩 들어가도록 선을 그으세요."
+  });
+}
+
 const GRID_OPERATIONS = Object.freeze({
   "rotate-right": "오른쪽으로 반의 반 바퀴 돌리기",
   "rotate-half": "반 바퀴 돌리기",
@@ -175,6 +232,105 @@ function digitalTransformArithmetic({ difficulty = 2 }) {
   };
 }
 
+const MATRIX_IDENTITY = Object.freeze([1, 0, 0, 1]);
+const BOARD_TRANSFORMS = Object.freeze({
+  "rotate-right": Object.freeze([0, -1, 1, 0]),
+  "rotate-half": Object.freeze([-1, 0, 0, -1]),
+  "mirror-left-right": Object.freeze([-1, 0, 0, 1]),
+  "mirror-top-bottom": Object.freeze([1, 0, 0, -1])
+});
+const BOARD_TRANSFORM_LABELS = Object.freeze({
+  "rotate-right": "오른쪽으로 반의 반 바퀴 돌리기",
+  "rotate-half": "반 바퀴 돌리기",
+  "mirror-left-right": "오른쪽으로 뒤집기",
+  "mirror-top-bottom": "아래로 뒤집기"
+});
+
+function multiplyMatrix(left, right) {
+  return [
+    left[0] * right[0] + left[1] * right[2],
+    left[0] * right[1] + left[1] * right[3],
+    left[2] * right[0] + left[3] * right[2],
+    left[2] * right[1] + left[3] * right[3]
+  ];
+}
+
+function transposeMatrix(matrix) {
+  return [matrix[0], matrix[2], matrix[1], matrix[3]];
+}
+
+const DIGIT_ORIENTATIONS = Object.freeze([
+  [1, 0, 0, 1], [0, -1, 1, 0], [-1, 0, 0, -1], [0, 1, -1, 0],
+  [-1, 0, 0, 1], [1, 0, 0, -1], [0, 1, 1, 0], [0, -1, -1, 0]
+]);
+
+function applyBoardOperation(grid, operation) {
+  const moved = transformGrid(grid, operation);
+  const matrix = BOARD_TRANSFORMS[operation];
+  return moved.map((row) => row.map((card) => ({ ...card, matrix: multiplyMatrix(matrix, card.matrix) })));
+}
+
+function digitalGridUprightAfterMoves({ difficulty = 2 }) {
+  const size = difficulty === 3 ? 4 : 3;
+  const operationPool = Object.keys(BOARD_TRANSFORMS);
+  const operations = difficulty === 1
+    ? [sample(operationPool)]
+    : difficulty === 2
+      ? shuffle(["mirror-left-right", "mirror-top-bottom"])
+      : [sample(operationPool), sample(operationPool), sample(operationPool)];
+  const combined = operations.reduce((matrix, operation) => multiplyMatrix(BOARD_TRANSFORMS[operation], matrix), MATRIX_IDENTITY);
+  const uprightStart = transposeMatrix(combined);
+  const cardCount = size * size;
+  const uprightCount = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
+  const uprightIndexes = new Set(shuffle(Array.from({ length: cardCount }, (_, index) => index)).slice(0, uprightCount));
+  const values = shuffle(Array.from({ length: cardCount }, (_, index) => index % 9 + 1));
+  const cards = values.map((value, index) => ({
+    value,
+    matrix: uprightIndexes.has(index)
+      ? [...uprightStart]
+      : [...sample(DIGIT_ORIENTATIONS.filter((matrix) => matrix.join() !== uprightStart.join()))]
+  }));
+  const grid = Array.from({ length: size }, (_, row) => cards.slice(row * size, (row + 1) * size));
+  const result = operations.reduce((current, operation) => applyBoardOperation(current, operation), grid);
+  const upright = result.flat().filter((card) => card.matrix.join() === MATRIX_IDENTITY.join());
+  const answer = upright.reduce((sum, card) => sum + card.value, 0);
+  return {
+    prompt: `숫자판을 ${operations.map((operation) => BOARD_TRANSFORM_LABELS[operation]).join(" 후 다시 ")} 했습니다. 움직인 뒤 똑바로 놓이는 수들의 합을 구하세요.`,
+    visual: { kind: "book4", subtype: "digital-upright-grid", grid, operations, operationLabels: operations.map((operation) => BOARD_TRANSFORM_LABELS[operation]) },
+    answer: String(answer),
+    solution: `각 숫자의 방향을 숫자판과 함께 움직이면 똑바로 놓이는 수는 ${upright.map((card) => card.value).join(", ")}입니다. 합은 ${answer}입니다.`,
+    meta: { family: "digital-upright-grid", size, grid, operations, result, uprightValues: upright.map((card) => card.value), answer }
+  };
+}
+
+function halfTurnDisplay(value) {
+  const digits = String(value).split("").map(Number);
+  const turned = BOOK01_INTERNALS.transformDisplay(digits, "rotate-half");
+  if (!turned || turned[0] === 0) return null;
+  return Number(turned.join(""));
+}
+
+const HALF_TURN_NUMBERS = Object.freeze(Array.from({ length: 90 }, (_, index) => index + 10)
+  .map((source) => ({ source, turned: halfTurnDisplay(source) }))
+  .filter((item) => item.turned != null));
+
+function digitalSelfHalfTurnCalculation({ difficulty = 2 }) {
+  const addition = sample(HALF_TURN_NUMBERS.filter((item) => item.source !== item.turned || difficulty === 1));
+  const subtraction = sample(HALF_TURN_NUMBERS.filter((item) => item.source !== item.turned));
+  const rows = [
+    { ...addition, operator: "+", result: addition.source + addition.turned },
+    { ...subtraction, operator: "−", result: Math.abs(subtraction.source - subtraction.turned) }
+  ];
+  const answer = `(1) ${rows[0].result}, (2) ${rows[1].result}`;
+  return {
+    prompt: "각 두 자리 수와 그 숫자판을 반 바퀴 돌려 읽은 수를 계산하세요.",
+    visual: { kind: "book4", subtype: "digital-self-half-turn", rows, showTurned: difficulty === 1 },
+    answer,
+    solution: `(1) ${rows[0].source} + ${rows[0].turned} = ${rows[0].result}, (2) ${Math.max(rows[1].source, rows[1].turned)} − ${Math.min(rows[1].source, rows[1].turned)} = ${rows[1].result}입니다.`,
+    meta: { family: "digital-self-half-turn", rows, answers: rows.map((row) => row.result) }
+  };
+}
+
 function foldCoordinate(row, column, size, folds) {
   let currentRow = row;
   let currentColumn = column;
@@ -192,14 +348,14 @@ function foldCoordinate(row, column, size, folds) {
   return { row: currentRow, column: currentColumn, rows, columns };
 }
 
-function foldNumberGridMulti({ difficulty = 2 }) {
+function foldNumberGridOrthogonal({ difficulty = 2, foldCount = 2 }) {
   const size = 4;
   const start = randomInt(1, difficulty === 3 ? 25 : 8);
   const values = Array.from({ length: size * size }, (_, index) => start + index);
   const grid = Array.from({ length: size }, (_, row) => values.slice(row * size, (row + 1) * size));
   const vertical = { axis: "vertical", direction: sample(["오른쪽을 왼쪽으로", "왼쪽을 오른쪽으로"]) };
   const horizontal = { axis: "horizontal", direction: sample(["아래쪽을 위쪽으로", "위쪽을 아래쪽으로"]) };
-  const folds = difficulty === 1 ? [sample([vertical, horizontal])] : shuffle([vertical, horizontal]);
+  const folds = foldCount === 1 ? [sample([vertical, horizontal])] : shuffle([vertical, horizontal]);
   const finalSize = folds.reduce((current, fold) => ({
     rows: fold.axis === "horizontal" ? current.rows / 2 : current.rows,
     columns: fold.axis === "vertical" ? current.columns / 2 : current.columns
@@ -216,8 +372,16 @@ function foldNumberGridMulti({ difficulty = 2 }) {
     visual: { kind: "book4", subtype: "fold-number-grid", grid, folds, foldedRows: finalSize.rows, foldedColumns: finalSize.columns, target },
     answer: String(answer),
     solution: `접은 선을 따라 표시한 칸을 펼치면 ${cutCells.map((cell) => cell.value).join(", ")}이 함께 잘립니다. 합은 ${cutCells.map((cell) => cell.value).join(" + ")} = ${answer}입니다.`,
-    meta: { family: "fold-number-grid", size, grid, folds, finalSize, target, cutCells, answer }
+    meta: { family: "fold-number-grid", structure: foldCount === 1 ? "one-orthogonal-fold" : "two-orthogonal-folds", size, grid, folds, finalSize, target, cutCells, answer }
   };
+}
+
+function foldNumberGridOne({ difficulty = 2 }) {
+  return foldNumberGridOrthogonal({ difficulty, foldCount: 1 });
+}
+
+function foldNumberGridTwo({ difficulty = 2 }) {
+  return foldNumberGridOrthogonal({ difficulty, foldCount: 2 });
 }
 
 function reverseStack(stack) {
@@ -276,6 +440,57 @@ function foldSurfaceTopTrace({ difficulty = 2 }) {
   };
 }
 
+const PAPER_COLORS = Object.freeze([
+  { label: "가", color: "#ef8f85" }, { label: "나", color: "#f2c66f" },
+  { label: "다", color: "#96cfa8" }, { label: "라", color: "#85bddd" },
+  { label: "마", color: "#b8a4dc" }, { label: "바", color: "#eea9c3" },
+  { label: "사", color: "#91c8c1" }, { label: "아", color: "#d7b38a" }
+]);
+
+function connectedPaperMask(size, count) {
+  const cells = [[randomInt(0, size - 1), randomInt(0, size - 1)]];
+  const keys = new Set(cells.map(([row, column]) => `${row}:${column}`));
+  for (let attempt = 0; cells.length < count && attempt < 200; attempt += 1) {
+    const [row, column] = sample(cells);
+    const [dr, dc] = sample([[1,0],[-1,0],[0,1],[0,-1]]);
+    const next = [row + dr, column + dc];
+    const key = `${next[0]}:${next[1]}`;
+    if (next[0] >= 0 && next[0] < size && next[1] >= 0 && next[1] < size && !keys.has(key)) {
+      keys.add(key);
+      cells.push(next);
+    }
+  }
+  return cells;
+}
+
+function topPaperSnapshot(layers, removed, size) {
+  return Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_, column) => {
+    const layer = layers.slice(removed).find((paper) => paper.cells.some(([cellRow, cellColumn]) => cellRow === row && cellColumn === column));
+    return layer ? { label: layer.label, color: layer.color } : null;
+  }));
+}
+
+function overlappingPaperBottom({ difficulty = 2 }) {
+  const size = 4;
+  const count = difficulty === 1 ? 5 : difficulty === 2 ? 8 : 7;
+  const papers = shuffle(PAPER_COLORS).slice(0, count);
+  const bottom = papers.at(-1);
+  const layers = papers.map((paper, index) => ({
+    ...paper,
+    cells: index === papers.length - 1
+      ? Array.from({ length: size * size }, (_, cellIndex) => [Math.floor(cellIndex / size), cellIndex % size])
+      : connectedPaperMask(size, randomInt(4, 8))
+  }));
+  const snapshots = layers.map((_, removed) => topPaperSnapshot(layers, removed, size));
+  return {
+    prompt: `크기가 같은 색종이 ${count}장이 겹쳐 있습니다. 가장 위의 색종이부터 한 장씩 빼어 본 그림을 보고 가장 밑에 있는 색종이를 구하세요.`,
+    visual: { kind: "book4", subtype: "overlapping-paper-order", size, snapshots },
+    answer: bottom.label,
+    solution: `한 장씩 뺀 그림을 끝까지 따라가면 마지막까지 남는 것은 ${bottom.label} 색종이입니다.`,
+    meta: { family: "overlapping-paper-order", size, layers, snapshots, answer: bottom.label }
+  };
+}
+
 function pairSumCardCompletion({ difficulty = 2 }) {
   const target = randomInt(difficulty === 1 ? 9 : 12, difficulty === 3 ? 24 : 18);
   const possible = [];
@@ -316,6 +531,9 @@ const hasFinal = (word) => {
   return code >= 0xac00 && code <= 0xd7a3 && (code - 0xac00) % 28 !== 0;
 };
 const topic = (word) => `${word}${hasFinal(word) ? "은" : "는"}`;
+const subjectOf = (word) => `${word}${hasFinal(word) ? "이" : "가"}`;
+const withOf = (word) => `${word}${hasFinal(word) ? "과" : "와"}`;
+const objectOf = (word) => `${word}${hasFinal(word) ? "을" : "를"}`;
 
 function measurementOrderChain({ difficulty = 2 }) {
   const count = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
@@ -335,6 +553,52 @@ function measurementOrderChain({ difficulty = 2 }) {
     solution: `${base}cm에서 차례로 ${differences.slice(0, targetIndex).join("cm, ")}cm를 더하면 ${names[targetIndex]}의 키는 ${answer}cm입니다.`,
     meta: { family: "measurement-order", names, base, differences, values, targetIndex, answer }
   };
+}
+
+const DIFFERENCE_SCENES = Object.freeze({
+  age: { unit: "살", comparison: "나이를", more: "많습니다", less: "적습니다" },
+  distance: { unit: "m", comparison: "달리기 위치를", more: "앞에 있습니다", less: "뒤에 있습니다" },
+  time: { unit: "초", comparison: "들어온 시각을", more: "늦게 들어왔습니다", less: "먼저 들어왔습니다" }
+});
+
+function measurementDifferenceChain({ difficulty = 2, sceneId: requestedSceneId = null }) {
+  const sceneId = requestedSceneId || sample(Object.keys(DIFFERENCE_SCENES));
+  const scene = DIFFERENCE_SCENES[sceneId];
+  const count = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
+  const names = shuffle(["가은", "도윤", "민서", "준호", "하은", "서윤"]).slice(0, count);
+  const increments = Array.from({ length: count - 1 }, () => randomInt(2, difficulty === 3 ? 9 : 6));
+  const offsets = [0];
+  increments.forEach((increment) => offsets.push(offsets.at(-1) + increment));
+  const rules = increments.map((difference, index) => {
+    const reverse = Math.random() < 0.5;
+    const first = reverse ? names[index] : names[index + 1];
+    const second = reverse ? names[index + 1] : names[index];
+    const relation = reverse ? "less" : "more";
+    return { first, second, difference, relation };
+  });
+  const clues = rules.map((rule) => `${topic(rule.first)} ${rule.second}보다 ${rule.difference}${scene.unit} ${scene[rule.relation]}.`);
+  const firstIndex = difficulty === 1 ? 0 : randomInt(0, count - 2);
+  const secondIndex = difficulty === 1 ? count - 1 : randomInt(firstIndex + 1, count - 1);
+  const answer = offsets[secondIndex] - offsets[firstIndex];
+  return {
+    prompt: `${count}명의 ${scene.comparison} 비교한 조건입니다. ${names[firstIndex]}와 ${names[secondIndex]}의 차이를 구하세요.`,
+    visual: { kind: "book4", subtype: "measurement-difference", clues, target: `${names[firstIndex]}와 ${names[secondIndex]}의 차이` },
+    answer: `${answer}${scene.unit}`,
+    solution: `${names[firstIndex]}에서 ${names[secondIndex]}까지의 차 ${increments.slice(firstIndex, secondIndex).join(" + ")}를 더하면 ${answer}${scene.unit}입니다.`,
+    meta: { family: "measurement-difference", sceneId, unit: scene.unit, names, increments, offsets, rules, firstIndex, secondIndex, answer }
+  };
+}
+
+function measurementAgeDifferenceBook4({ difficulty = 2 }) {
+  return measurementDifferenceChain({ difficulty, sceneId: "age" });
+}
+
+function measurementDistanceDifferenceBook4({ difficulty = 2 }) {
+  return measurementDifferenceChain({ difficulty, sceneId: "distance" });
+}
+
+function measurementTimeDifferenceBook4({ difficulty = 2 }) {
+  return measurementDifferenceChain({ difficulty, sceneId: "time" });
 }
 
 function balanceUnitRatio({ difficulty = 2 }) {
@@ -405,6 +669,42 @@ function directionalSeatPlacement({ difficulty = 2 }) {
   };
 }
 
+const LANDMARKS = Object.freeze(["학교", "도서관", "은행", "백화점", "병원", "우체국"]);
+const MAP_POSITIONS = Object.freeze([[0,0],[0,1],[1,0],[1,1]]);
+
+function mapDirection(from, to) {
+  const vertical = to[0] < from[0] ? "북" : to[0] > from[0] ? "남" : "";
+  const horizontal = to[1] < from[1] ? "서" : to[1] > from[1] ? "동" : "";
+  return `${vertical}${horizontal}쪽`;
+}
+
+function directionalLandmarkPlacementBook4({ difficulty = 2 }) {
+  const places = shuffle(LANDMARKS).slice(0, 4);
+  const targetIndex = randomInt(0, 3);
+  const anchorIndexes = shuffle([0,1,2,3].filter((index) => index !== targetIndex));
+  const shownCount = difficulty === 1 ? 3 : difficulty === 2 ? 2 : 1;
+  const shownIndexes = anchorIndexes.slice(0, shownCount);
+  const targetPlace = places[targetIndex];
+  const mainAnchor = shownIndexes[0];
+  const targetDirection = mapDirection(MAP_POSITIONS[mainAnchor], MAP_POSITIONS[targetIndex]);
+  const clues = [
+    `${topic(targetPlace)} ${places[mainAnchor]}의 ${targetDirection}에 있습니다.`
+  ];
+  shownIndexes.slice(1).forEach((index) => {
+    clues.push(`${topic(places[index])} ${places[mainAnchor]}의 ${mapDirection(MAP_POSITIONS[mainAnchor], MAP_POSITIONS[index])}에 있습니다.`);
+  });
+  const shown = places.map((place, index) => shownIndexes.includes(index) ? place : null);
+  const visual = { kind: "book4", subtype: "directional-landmark-map", places, shown, targetIndex, clues };
+  return {
+    prompt: "네 장소의 위치를 나타낸 그림입니다. 조건을 보고 ㉠에 알맞은 장소를 구하세요.",
+    visual: { ...visual, reveal: false },
+    answerVisual: { ...visual, reveal: true },
+    answer: targetPlace,
+    solution: `${objectOf(places[mainAnchor])} 기준으로 ${clues[0]} 따라서 ㉠은 ${targetPlace}입니다.`,
+    meta: { family: "directional-landmark-map-book4", places, shownIndexes, targetIndex, targetDirection, clues, mainAnchor, answer: targetPlace }
+  };
+}
+
 function circularSeatPlacement({ difficulty = 2 }) {
   const count = difficulty === 1 ? 5 : 6;
   const names = shuffle(SEAT_NAMES).slice(0, count);
@@ -434,18 +734,156 @@ function ordinalLinePlacement({ difficulty = 2 }) {
   };
 }
 
+function raceThirdPlaceBook4({ difficulty = 2 }) {
+  const names = shuffle(SEAT_NAMES).slice(0, 5);
+  const orders = permutations(names);
+  const solution = sample(orders);
+  const position = (order, name) => order.indexOf(name);
+  const rules = [];
+  for (let first = 0; first < names.length; first += 1) {
+    for (let second = first + 1; second < names.length; second += 1) {
+      const a = names[first];
+      const b = names[second];
+      const before = position(solution, a) < position(solution, b) ? a : b;
+      const after = before === a ? b : a;
+      rules.push({ kind: "before", first: before, second: after, text: `${topic(before)} ${after}보다 먼저 들어왔습니다.` });
+      if (Math.abs(position(solution, a) - position(solution, b)) === 1) {
+        rules.push({ kind: "immediate", first: before, second: after, text: `${topic(before)} ${after}의 바로 앞에 들어왔습니다.` });
+      }
+    }
+  }
+  solution.forEach((name, index) => {
+    if (index !== 2) rules.push({ kind: "position", name, position: index, text: `${name} 앞에는 ${index ? `${index}명` : "아무도"} 없습니다.` });
+  });
+  const matches = (order, rule) => {
+    if (rule.kind === "before") return position(order, rule.first) < position(order, rule.second);
+    if (rule.kind === "immediate") return position(order, rule.second) - position(order, rule.first) === 1;
+    return position(order, rule.name) === rule.position;
+  };
+  const active = [];
+  let candidates = orders;
+  const pool = shuffle(rules).sort((a, b) => Number(a.kind === "position") - Number(b.kind === "position"));
+  for (const rule of pool) {
+    active.push(rule);
+    candidates = orders.filter((order) => active.every((item) => matches(order, item)));
+    if (new Set(candidates.map((order) => order[2])).size === 1) break;
+  }
+  if (!candidates.length || new Set(candidates.map((order) => order[2])).size !== 1) return raceThirdPlaceBook4({ difficulty });
+  const answer = candidates[0][2];
+  return {
+    prompt: "다섯 명이 달리기 시합을 했습니다. 조건을 보고 세 번째로 들어온 사람을 구하세요.",
+    visual: { kind: "book4", subtype: "race-third-place", clues: active.map((rule) => rule.text) },
+    answer,
+    solution: `조건을 앞에서부터 이어 놓으면 세 번째로 들어온 사람은 ${answer}입니다.`,
+    meta: { family: "race-third-place-book4", names, rules: active, candidateOrders: candidates, answer }
+  };
+}
+
+function circularSeatBlankBook4({ difficulty = 2 }) {
+  const count = difficulty === 1 ? 5 : 6;
+  const solution = shuffle(SEAT_NAMES).slice(0, count);
+  const anchor = solution[0];
+  const targetSeat = randomInt(1, count - 1);
+  const candidates = permutations(solution.slice(1)).map((rest) => [anchor, ...rest]);
+  const indexOf = (order, name) => order.indexOf(name);
+  const rules = [];
+  solution.forEach((name, index) => {
+    const next = solution[(index + 1) % count];
+    rules.push({ kind: "clockwise", first: next, second: name, text: `${topic(next)} ${name}의 시계 방향 바로 옆에 앉아 있습니다.` });
+    const previous = solution[(index - 1 + count) % count];
+    rules.push({ kind: "between", first: previous, second: next, middle: name, text: `${previous}와 ${next} 사이에 ${subjectOf(name)} 앉아 있습니다.` });
+    if (count % 2 === 0 && index < count / 2) {
+      const opposite = solution[(index + count / 2) % count];
+      rules.push({ kind: "opposite", first: name, second: opposite, text: `${withOf(name)} ${opposite}는 마주 보고 있습니다.` });
+    }
+  });
+  const matches = (order, rule) => {
+    const first = indexOf(order, rule.first);
+    const second = indexOf(order, rule.second);
+    if (rule.kind === "clockwise") return first === (second + 1) % count;
+    if (rule.kind === "opposite") return (first + count / 2) % count === second || (second + count / 2) % count === first;
+    const middle = indexOf(order, rule.middle);
+    return new Set([(middle - 1 + count) % count, (middle + 1) % count]).has(first)
+      && new Set([(middle - 1 + count) % count, (middle + 1) % count]).has(second);
+  };
+  const active = [];
+  let remaining = candidates;
+  for (const rule of shuffle(rules)) {
+    active.push(rule);
+    remaining = candidates.filter((order) => active.every((item) => matches(order, item)));
+    if (remaining.length && new Set(remaining.map((order) => order[targetSeat])).size === 1) break;
+  }
+  if (!remaining.length || new Set(remaining.map((order) => order[targetSeat])).size !== 1) return circularSeatBlankBook4({ difficulty });
+  const answer = remaining[0][targetSeat];
+  return {
+    prompt: "친구들이 원탁에 앉아 있습니다. 조건을 보고 ㉠에 앉아 있는 사람을 구하세요.",
+    visual: { kind: "book4", subtype: "circular-seat-blank", count, clues: active.map((rule) => rule.text), anchor, targetSeat },
+    answer,
+    solution: `${anchor} 자리를 기준으로 조건을 시계 방향으로 이어 놓으면 ㉠에는 ${subjectOf(answer)} 앉습니다.`,
+    meta: { family: "circular-seat-blank-book4", count, anchor, targetSeat, rules: active, candidateOrders: remaining, answer }
+  };
+}
+
+function threeFoldCutLineBook4({ difficulty = 2 }) {
+  const folds = 3;
+  const gridRows = 2;
+  const gridColumns = 4;
+  const cutInset = sample([15, 16, 17]);
+  const repeatStarts = [0, 2];
+  return {
+    prompt: "색종이를 세 번 접은 후 표시한 두 사선을 따라 잘랐습니다. 펼쳤을 때 잘린 선의 모양을 모눈에 그리세요.",
+    visual: { kind: "book4", subtype: "three-fold-cut-line", folds, gridRows, gridColumns, cutInset, repeatStarts, reveal: false },
+    answer: "그림 답안",
+    answerVisual: { kind: "book4", subtype: "three-fold-cut-line", folds, gridRows, gridColumns, cutInset, repeatStarts, reveal: true },
+    responseKind: "drawing",
+    solution: "접은 선을 따라 차례로 펼치면 접은 색종이에 있던 두 사선이 윗줄의 왼쪽과 오른쪽에 같은 모양으로 나타납니다.",
+    meta: { family: "three-fold-cut-line-book4", folds, gridRows, gridColumns, cutInset, repeatStarts }
+  };
+}
+
+function frontBackTwoOrderTotalsBook4({ difficulty = 2 }) {
+  const between = randomInt(difficulty === 1 ? 1 : 2, difficulty === 3 ? 6 : 4);
+  const firstFront = randomInt(between + 3, difficulty === 3 ? 15 : 11);
+  const secondBack = randomInt(4, difficulty === 3 ? 12 : 9);
+  const firstBeforeSecond = firstFront + between + 1 + secondBack - 1;
+  const secondFront = firstFront - between - 1;
+  const secondBeforeFirst = secondFront + secondBack - 1;
+  const names = shuffle(SEAT_NAMES).slice(0, 2);
+  return {
+    prompt: `${topic(names[0])} 앞에서 ${firstFront}번째이고, ${topic(names[1])} 뒤에서 ${secondBack}번째입니다. 두 사람 사이에는 ${between}명이 있습니다. 두 사람이 앞선 순서가 바뀌는 두 경우의 전체 인원을 각각 구하세요.`,
+    visual: { kind: "book4", subtype: "front-back-two-orders", clues: [`(1) ${subjectOf(names[0])} ${names[1]}보다 앞에 있는 경우`, `(2) ${subjectOf(names[1])} ${names[0]}보다 앞에 있는 경우`] },
+    answer: `(1) ${firstBeforeSecond}명, (2) ${secondBeforeFirst}명`,
+    solution: `(1) ${firstFront}+${between}+1+${secondBack}-1=${firstBeforeSecond}명, (2) ${firstFront}-${between}-1+${secondBack}-1=${secondBeforeFirst}명입니다.`,
+    meta: { family: "front-back-two-orders-book4", firstFront, secondBack, between, firstBeforeSecond, secondBeforeFirst, names }
+  };
+}
+
 export const BOOK04_GENERATORS = {
   tetrominoFamilyChoice,
   tetrominoSquareComposition,
+  starCongruentPartitionDrawBook4,
+  forestCongruentPartitionDrawBook4,
   digitalGridTransform,
   digitalTransformArithmetic,
-  foldNumberGridMulti,
+  digitalGridUprightAfterMoves,
+  digitalSelfHalfTurnCalculation,
+  foldNumberGridOne,
+  foldNumberGridTwo,
   foldSurfaceTopTrace,
+  overlappingPaperBottom,
   pairSumCardCompletion,
   shapeDifferenceChain,
   measurementOrderChain,
+  measurementAgeDifferenceBook4,
+  measurementDistanceDifferenceBook4,
+  measurementTimeDifferenceBook4,
   balanceUnitRatio,
   directionalSeatPlacement,
+  directionalLandmarkPlacementBook4,
   circularSeatPlacement,
-  ordinalLinePlacement
+  ordinalLinePlacement,
+  raceThirdPlaceBook4,
+  circularSeatBlankBook4,
+  threeFoldCutLineBook4,
+  frontBackTwoOrderTotalsBook4
 };

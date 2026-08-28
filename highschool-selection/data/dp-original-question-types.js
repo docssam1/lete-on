@@ -1,0 +1,135 @@
+(function (root, factory) {
+  "use strict";
+  const api = factory();
+  root.HIGHSELECT_DP_ORIGINAL_QUESTION_TYPES = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis, function () {
+  "use strict";
+
+  const SOURCE_KIND = "돌파 원본 시험지";
+  const VERIFIED_REPLACEMENT_KIND = "검산 완료 대체 문항";
+
+  function item(number, semester, unit, label, options) {
+    const config = options || {};
+    const sourceRelation = config.sourceRelation === "replacement" ? "replacement" : "original";
+    return Object.freeze({
+      number,
+      semester,
+      unit,
+      label,
+      sourceKind: sourceRelation === "replacement" ? VERIFIED_REPLACEMENT_KIND : SOURCE_KIND,
+      sourceRelation,
+      supplement: false
+    });
+  }
+
+  const middle22 = Object.freeze([
+    item(1, "중1-2", "기본도형과 작도", "원의 중심을 찾는 작도 방법 고르기"),
+    item(2, "중1-1", "소인수분해", "연속한 수의 곱을 소인수분해하여 조건에 맞는 수 찾기"),
+    item(3, "중2-1", "일차함수", "두 일차함수의 절편과 선분의 길이비 구하기"),
+    item(4, "중2-2", "도형의 닮음", "직각삼각형 안의 정사각형 넓이 구하기"),
+    item(5, "중등 심화", "경우의 수", "세 종류를 모두 고르는 경우의 수 구하기"),
+    item(6, "중2-1", "식의 계산", "분수식이 있는 다항식 계산하기"),
+    item(7, "중2-1", "연립일차방정식의 활용", "왕복하는 배의 속력으로 물의 흐르는 속력 구하기"),
+    item(8, "중2-2", "도형의 닮음", "사다리꼴의 대각선과 평행선에서 길이비 구하기"),
+    item(9, "중2-2", "삼각형의 성질", "삼각형의 두 중선과 중점에서 선분의 길이 구하기"),
+    item(10, "중2-2", "피타고라스 정리", "여러 직각삼각형에서 선분의 길이 구하기"),
+    item(11, "중2-2", "삼각형의 성질", "삼각형의 내심과 외심을 이용하여 각의 크기 구하기"),
+    item(12, "중2-1", "일차방정식의 활용", "달력에 놓인 수에서 배수 조건 찾기"),
+    item(13, "중등 심화", "수와 식의 규칙", "분모에 규칙이 있는 수의 합을 분수로 나타내기"),
+    item(14, "중2-2", "사각형의 성질", "평행사변형의 수선을 이용하여 각의 크기 구하기"),
+    item(15, "중2-1", "연립일차방정식의 활용", "두 사람과 왕복하는 물체의 이동 거리 구하기"),
+    item(16, "중2-1", "일차함수", "직선 위의 점으로 만든 삼각형의 넓이 조건 찾기"),
+    item(17, "중2-2", "삼각형의 성질", "각의 이등분선으로 나뉜 삼각형의 넓이비 구하기"),
+    item(18, "중2-2", "도형의 닮음", "직사각형의 넓이를 반으로 나누는 선분의 길이 구하기"),
+    item(19, "중2-2", "도형의 닮음", "평행한 세 직선에서 닮음을 이용하여 길이비 구하기"),
+    item(20, "중2-2", "경우의 수와 확률", "꺼낸 것을 다시 넣지 않는 뽑기에서 이길 확률 구하기"),
+    item(21, "중1-2", "평면도형의 성질", "정사각형 둘레를 따라 움직이는 원이 지나간 부분의 넓이 구하기"),
+    item(22, "중2-2", "도형의 닮음", "평행사변형의 연장선에서 닮음을 이용하여 길이 구하기"),
+    item(23, "중2-2", "도형의 닮음", "삼각형의 삼등분점과 중점으로 만든 선분의 길이 구하기"),
+    item(24, "중2-2", "피타고라스 정리", "직각이등변삼각형 안의 정사각형 넓이 구하기"),
+    item(25, "중1-2", "기본도형", "평행선과 꺾은선에서 각의 크기 구하기"),
+    item(26, "중2-2", "피타고라스 정리", "직각삼각형의 중점과 수선을 이용하여 길이 구하기"),
+    item(27, "중2-1", "일차함수", "좌표평면의 오각형 넓이를 반으로 나누는 직선 구하기"),
+    item(28, "중2-2", "도형의 닮음", "삼각형 안의 교점에서 넓이비 구하기"),
+    item(29, "중2-1", "일차함수", "두 직선 사이의 점과 직사각형의 넓이비 구하기"),
+    item(30, "중2-1", "연립일차방정식의 활용", "자동차의 왕복과 걷는 사람의 도착 시간 구하기")
+  ]);
+
+  const common1Entry = Object.freeze([
+    item(1, "중3-2", "삼각비", "특수각의 삼각비를 이용하여 식의 참과 거짓 판단하기"),
+    item(2, "중2-1", "유리수와 순환소수", "순환소수를 분수로 나타내어 분자와 분모의 관계 구하기"),
+    item(3, "중2-1", "식의 계산", "지수법칙을 이용하여 처음 식 구하기"),
+    item(4, "중2-1", "연립일차방정식의 활용", "타고 내린 사람 수와 구간별 요금 구하기"),
+    item(5, "중2-1", "일차함수", "두 직선의 교점과 좌표축으로 만든 도형의 넓이 구하기"),
+    item(6, "중2-2", "도형의 닮음", "닮은 원뿔의 높이비와 부피비 구하기"),
+    item(7, "중2-2", "삼각형의 성질", "삼각형의 내심과 외심을 이용하여 각의 크기 구하기"),
+    item(8, "중1-2", "입체도형의 성질", "구멍을 뚫은 원기둥의 겉넓이 구하기"),
+    item(9, "중2-1", "일차함수", "직선이 좌표도형의 넓이를 나누는 조건 찾기"),
+    item(10, "중2-2", "삼각형의 성질·피타고라스 정리", "두 직각삼각형의 내접원에서 접점 사이 거리 구하기"),
+    item(11, "중2-2", "사각형의 성질", "움직이는 점과 평행사변형에서 각의 이등분선 찾기"),
+    item(12, "중2-2", "사각형의 성질", "정사각형의 중심을 지나는 두 직선으로 나뉜 넓이 구하기"),
+    item(13, "중3-2", "삼각비", "직육면체의 여러 면에서 삼각비를 이용하여 각 구하기"),
+    item(14, "중2-1", "일차부등식", "깨지는 물건의 비율과 이익률을 이용하여 최소 조건 구하기"),
+    item(15, "중3-2", "통계", "도수분포표의 평균 조건과 표준편차 구하기"),
+    item(16, "중2-2·중3-1 연계", "확률·제곱근과 실수", "주사위 눈의 곱이 어떤 수의 제곱이 될 확률 구하기"),
+    item(17, "중3-2", "원의 성질", "호의 중점과 교차하는 현을 이용하여 각의 크기 구하기"),
+    item(18, "중3-2", "통계", "자료의 값이 일정한 식으로 바뀔 때 평균과 분산 구하기"),
+    item(19, "중3-2", "원의 성질", "두 원의 접선과 접현을 이용하여 각의 크기 구하기"),
+    item(20, "중2-1", "일차함수", "움직이는 점으로 만든 두 삼각형의 넓이의 합 구하기"),
+    item(21, "중2-2·중3-2 연계", "삼각형의 중심·원의 성질", "삼각형의 내심과 외접원의 호의 중점 사이 관계 찾기"),
+    item(22, "중2-2", "피타고라스 정리", "사분원 안의 직사각형 넓이와 길의 길이 구하기"),
+    item(23, "중2-1", "식의 계산", "잘라낸 도형의 넓이를 식으로 나타내어 비교하기"),
+    item(24, "중3-1", "이차방정식", "근의 공식을 잘못 사용한 결과에서 원래 두 근의 합 구하기"),
+    item(25, "중3-1", "이차함수", "원점을 지나는 직선과 두 이차함수 그래프의 관계 구하기"),
+    item(26, "중3-1", "제곱근과 실수", "연속한 두 자연수 사이에 있는 제곱근의 개수 구하기"),
+    item(27, "중2-2", "경우의 수와 확률", "세 주사위 눈의 합에 따라 정다각형 위를 움직인 뒤 위치 구하기"),
+    item(28, "중3-1", "이차함수", "이차함수 그래프와 직선으로 만든 삼각형 넓이의 최댓값 구하기"),
+    item(29, "중2-2 연계", "도형의 닮음", "높이 제한과 장애물의 너비를 이용하여 물체가 날아간 거리 구하기", { sourceRelation: "replacement" }),
+    item(30, "중2-1", "연립일차방정식의 활용", "서로 다른 때에 출발하여 따라잡는 두 사람의 속력 구하기")
+  ]);
+
+  function paper(config) {
+    const originalCount = config.items.filter(function (entry) { return entry.sourceRelation === "original"; }).length;
+    const replacementCount = config.items.filter(function (entry) { return entry.sourceRelation === "replacement"; }).length;
+    return Object.freeze(Object.assign({}, config, { originalCount, replacementCount }));
+  }
+
+  const sets = Object.freeze({
+    "middle2-2-transfer": paper({
+      id: "DP-M22-202404",
+      title: "돌파 중2-2 편입 원본",
+      sourceKind: SOURCE_KIND,
+      items: middle22
+    }),
+    "common1-entry": paper({
+      id: "DP-CM1-202405",
+      title: "돌파 공통수학1 입학 회차",
+      sourceKind: "돌파 원본 29문항·검산 완료 대체 1문항",
+      items: common1Entry
+    })
+  });
+
+  function forTarget(targetId) {
+    return sets[String(targetId || "")] || null;
+  }
+
+  function validate() {
+    const issues = [];
+    Object.values(sets).forEach(function (set) {
+      if (set.items.length !== 30) issues.push(`${set.id}.question_count`);
+      set.items.forEach(function (entry, index) {
+        if (entry.number !== index + 1) issues.push(`${set.id}.number.${index + 1}`);
+        if (!entry.semester || !entry.unit || !entry.label) issues.push(`${set.id}.label.${index + 1}`);
+        const expectedKind = entry.sourceRelation === "replacement" ? VERIFIED_REPLACEMENT_KIND : SOURCE_KIND;
+        if (entry.sourceKind !== expectedKind || entry.supplement !== false) issues.push(`${set.id}.source.${index + 1}`);
+        if (!['original', 'replacement'].includes(entry.sourceRelation)) issues.push(`${set.id}.relation.${index + 1}`);
+        if (/고쟁이/.test(`${entry.label} ${entry.sourceKind}`)) issues.push(`${set.id}.supplement.${index + 1}`);
+      });
+      if (set.originalCount + set.replacementCount !== set.items.length) issues.push(`${set.id}.source_count`);
+    });
+    return Object.freeze(issues);
+  }
+
+  return Object.freeze({ SOURCE_KIND, VERIFIED_REPLACEMENT_KIND, sets, forTarget, validate });
+});

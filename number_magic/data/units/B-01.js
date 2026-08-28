@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['B-01'] = {
   id:'B-01', tier:'intermediate', level:'B', order:1,
+  lineage:['halves-doubles'],
   generator:'ml1_double',
   title:{ ko:'두 배 마법', en:'The Doubling Magic', zh:'翻倍魔法' },
   subtitle:{ ko:'어떤 수든 두 배로! n × 2 = n + n', en:'Double any number! n × 2 = n + n', zh:'任意数翻倍！n × 2 = n + n' },
@@ -21,6 +22,14 @@ window.NM_UNITS['B-01'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'첫날 용돈 1원, 다음 날부터 매일 두 배. 30일째 받는 돈은 얼마일까요?',
+        en:'Pocket money of 1 won on day 1, doubling every day after. How much on day 30?',
+        zh:'第一天零花钱1元，之后每天翻倍。第30天能拿到多少？' },
+      history:{ ko:'5억 3687만 원이에요. 30일 동안 받은 돈을 다 합치면 10억 원이 넘고요. 두 배는 몇 번만 반복돼도 감당이 안 될 만큼 커져요 — 옛날에는 체스판 위의 밀알 이야기로, 지금은 종이를 42번 접으면 달에 닿는다는 이야기로 전해지는 바로 그 마법이에요.',
+        en:'536,870,912 won. Add up all 30 days and it passes one billion. Doubling only a few dozen times grows past anything you can carry — the old version told it with grains of wheat on a chessboard, the modern one says folding paper 42 times reaches the Moon.',
+        zh:'5亿3687万元。把30天全部加起来超过10亿。翻倍只重复几十次就大到无法承受——古时候用棋盘上的麦粒讲这个故事，现在则说把纸对折42次就能够到月亮。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 두 배란?', en:'1) What is doubling?', zh:'① 什么是翻倍？'},

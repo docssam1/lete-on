@@ -87,19 +87,69 @@ button { cursor: pointer }
   touch-action: none;
 }
 .board-cells { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr) }
+.board.is-distance .board-cells { display: block }
+.board.is-symbol .board-cells { display: block }
 .cell { position: relative; min-width: 0; min-height: 0; padding: 0; border: 1px solid #cdbfa8; background: transparent }
 .cell.answer-side { background: #ffffff5c }
+.cell.double-source-quadrant:not(.given) { background: #2f6f9208 }
 .cell.given { background: #2f6f92; border-color: #ffffffcc; box-shadow: inset 0 0 0 2px #ffffff55 }
 .cell.painted { background: #e8823f; border-color: #fff; box-shadow: inset 0 0 0 2px #ffffff66 }
 .board.is-paint .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
+.board.is-double .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
 .board.is-drag .cell { pointer-events: none }
 .cell.wrong { animation: shake .38s ease; background: #dc5f55cc !important }
 @keyframes shake { 25% { transform: translateX(-4px) } 75% { transform: translateX(4px) } }
 
+/* Level 3 uses a real dot board. Choice buttons keep a generous touch target
+   while the small dots show the exact lattice position. */
+.distance-grid { position: absolute; inset: 0; pointer-events: none }
+.distance-grid i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #8f9d9e; transform: translate(-50%, -50%) }
+.distance-source { position: absolute; z-index: 3; width: 20px; height: 20px; border: 4px solid #2f6f92; border-radius: 50%; background: #eaf7fb; box-shadow: 0 2px 5px #22334a55; transform: translate(-50%, -50%); pointer-events: none }
+.distance-choice { position: absolute; z-index: 8; width: 44px; height: 44px; padding: 0; border: 2px solid #8e9da5; border-radius: 50%; background: #ffffff38; transform: translate(-50%, -50%); touch-action: manipulation }
+.distance-choice i { display: block; width: 13px; height: 13px; margin: auto; border: 2px solid #687983; border-radius: 50%; background: #fffdf7 }
+.distance-choice:hover, .distance-choice:focus-visible { border-color: #b05a1e; background: #ffe6a866; outline: 0 }
+.distance-choice.selected { border-color: #2a7f8f; background: #bce9ee99 }
+.distance-choice.selected i { background: #2a7f8f; border-color: #17606d }
+.distance-choice.wrong { animation: shake .38s ease; border-color: #b84238; background: #dc5f5566 }
+
+/* Level 4 adapts the source's write-the-mirror-glyph activity to a phone-safe
+   three-choice interaction. The source glyph stays on the given side; choices
+   stack on the answer side so the mirror and the reading order remain clear. */
+.symbol-cells { pointer-events: none }
+.symbol-source { position: absolute; z-index: 3; left: 24%; top: 50%; display: grid; place-items: center; width: 38%; min-height: 108px; transform: translate(-50%, -50%) }
+.symbol-source::after { content: ""; position: absolute; right: -16%; width: 24px; height: 2px; background: #2f6f92; opacity: .45 }
+.symbol-glyph { display: block; color: #243f5d; font-family: "Arial Black", Arial, "Noto Sans KR", sans-serif; font-size: 54px; font-weight: 900; line-height: 1; white-space: nowrap; -webkit-text-stroke: .7px currentColor }
+.symbol-source .symbol-glyph { text-shadow: 0 2px #ffffff, 0 4px 9px #22334a33 }
+.symbol-choices { position: absolute; inset: 0; pointer-events: none }
+.symbol-choice { position: absolute; left: 75%; z-index: 8; display: grid; place-items: center; width: 116px; height: 72px; padding: 4px 10px; border: 2px solid #9aa8b7; border-radius: 10px; background: #ffffffb8; box-shadow: 0 4px 9px #22334a1c; transform: translateX(-50%); pointer-events: auto; touch-action: manipulation }
+.symbol-choice:nth-child(1) { top: 24% }
+.symbol-choice:nth-child(2) { top: 50% }
+.symbol-choice:nth-child(3) { top: 76% }
+.symbol-choice .symbol-glyph { color: #344b62; font-size: 46px }
+.symbol-mirror { transform: scaleX(-1) }
+.board.symbol-horizontal .symbol-source { left: 50%; top: 24% }
+.board.symbol-horizontal .symbol-choice { left: auto; top: 75% }
+.board.symbol-horizontal .symbol-choice:nth-child(1) { left: 24% }
+.board.symbol-horizontal .symbol-choice:nth-child(2) { left: 50% }
+.board.symbol-horizontal .symbol-choice:nth-child(3) { left: 76% }
+.board.symbol-horizontal .symbol-mirror { transform: scaleY(-1) }
+.board.symbol-diagonal .symbol-source { left: 24%; top: 24% }
+.board.symbol-diagonal .symbol-choice { left: 76%; top: 76% }
+.board.symbol-diagonal .symbol-choice:nth-child(1) { top: 52% }
+.board.symbol-diagonal .symbol-choice:nth-child(2) { top: 68% }
+.board.symbol-diagonal .symbol-choice:nth-child(3) { top: 84% }
+.board.symbol-diagonal .symbol-mirror { transform: rotate(-90deg) scaleX(-1) }
+.symbol-choice:hover, .symbol-choice:focus-visible { border-color: #b05a1e; background: #ffe6a866; outline: 0 }
+.symbol-choice.selected { border-color: #2a7f8f; background: #bce9ee99; box-shadow: 0 0 0 3px #2a7f8f44, 0 4px 9px #22334a1c }
+.symbol-choice.wrong { animation: shake .38s ease; border-color: #b84238; background: #dc5f5566 }
+.symbol-caption { position: absolute; left: 24%; bottom: 9%; width: 38%; margin: 0; color: #66717f; font-size: 11px; font-weight: 800; line-height: 1.25; text-align: center; transform: translateX(-50%) }
+
 /* Mirror line: one bright silvered band, never a crease. */
 .mirror-line { position: absolute; z-index: 5; background: linear-gradient(90deg, #ffffffcc, var(--glass), #ffffffcc); box-shadow: 0 0 12px #7fd3e6cc; pointer-events: none; border-radius: 99px }
+.mirror-line[hidden] { display: none }
 .mirror-line.vertical { top: -2%; height: 104%; width: 6px; transform: translateX(-50%) }
 .mirror-line.horizontal { left: -2%; width: 104%; height: 6px; transform: translateY(-50%) }
+.mirror-line.diagonal { left: 50%; top: 50%; width: 142%; height: 6px; transform: translate(-50%, -50%) rotate(45deg) }
 
 /* ------------------------------------------------------------------ objects */
 .piece-layer { position: absolute; inset: 0; z-index: 4; pointer-events: none }
@@ -206,6 +256,9 @@ button { cursor: pointer }
 
 /* Mobile landscape (the 844x390 target). Everything must be on screen at once. */
 @media (orientation: landscape) and (max-height: 560px) {
+  /* Installation is offered from the map and town. It must never cover a live
+     game board on a short landscape phone. */
+  .manor-shell ~ .gf-install-banner { display: none !important }
   :root { --board-h: calc(var(--app-dvh) - 120px) }
   .manor-shell { grid-template-rows: 40px 32px minmax(0, 1fr) 48px }
   .topbar { padding: 3px 8px }
@@ -224,6 +277,11 @@ button { cursor: pointer }
   .next-button { min-height: 42px; font-size: 12px }
   .cubi-guide .cubi-sprite { width: 56px; height: 56px }
   .guide-bubble { display: none }
+  .symbol-source { min-height: 72px }
+  .symbol-glyph { font-size: 46px }
+  .symbol-choice { width: 88px; height: 54px; padding: 3px 6px; border-radius: 8px }
+  .symbol-choice .symbol-glyph { font-size: 34px }
+  .symbol-caption { bottom: 6%; font-size: 9px }
   /* Keep the feedback banner inside the mission bar so it never covers the board. */
   .toast { top: 48px; font-size: 12px; padding: 6px 12px }
   .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }

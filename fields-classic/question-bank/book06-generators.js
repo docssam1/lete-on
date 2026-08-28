@@ -1052,6 +1052,324 @@ function lastNumberFromDigitTotal({ difficulty = 2 }) {
   };
 }
 
+function unitTestMidpointPairBook6({ difficulty = 2 }) {
+  const makePart = () => {
+    const step = randomInt(2, difficulty === 3 ? 12 : 8);
+    const half = randomInt(2, difficulty === 3 ? 6 : 4);
+    const middle = randomInt(half * step + 2, difficulty === 3 ? 100 : 60);
+    return { left: middle - half * step, right: middle + half * step, middle, intervals: half * 2 };
+  };
+  const parts = [makePart(), makePart()];
+  return {
+    prompt: "두 수직선에서 양 끝 수의 중간에 있는 수를 각각 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "midpoint-pair", parts },
+    answer: `(1) ${parts[0].middle} (2) ${parts[1].middle}`,
+    solution: `각 수직선의 양 끝 수를 더해 2로 나누면 (1) ${parts[0].middle}, (2) ${parts[1].middle}입니다.`,
+    meta: { family: "unit-midpoint-pair", parts, answer: parts.map((part) => part.middle) }
+  };
+}
+
+function unitTestSplitTargetsBook6({ difficulty = 2 }) {
+  const leftIntervals = difficulty === 1 ? 6 : difficulty === 2 ? 8 : 9;
+  const rightIntervals = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
+  const leftUnit = randomInt(2, difficulty === 3 ? 9 : 6);
+  let rightUnit = randomInt(2, difficulty === 3 ? 10 : 7);
+  if (rightUnit === leftUnit) rightUnit += 1;
+  const start = randomInt(10, difficulty === 3 ? 50 : 30);
+  const middle = start + leftIntervals * leftUnit;
+  const end = middle + rightIntervals * rightUnit;
+  const leftTarget = Math.floor(leftIntervals / 2);
+  const rightTarget = rightIntervals - 1;
+  const first = start + leftTarget * leftUnit;
+  const second = middle + rightTarget * rightUnit;
+  const answer = Math.abs(second - first);
+  return {
+    prompt: `가-나는 ${leftIntervals}칸, 나-다는 ${rightIntervals}칸으로 똑같이 나누었습니다. 표시한 두 점 사이의 거리를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "split-targets", start, middle, end, leftIntervals, rightIntervals, leftTarget, rightTarget },
+    answer: String(answer),
+    solution: `가-나 한 칸은 ${leftUnit}, 나-다 한 칸은 ${rightUnit}입니다. 표시한 수는 ${first}와 ${second}이므로 거리는 ${answer}입니다.`,
+    meta: { family: "unit-split-targets", start, middle, end, leftIntervals, rightIntervals, leftUnit, rightUnit, leftTarget, rightTarget, first, second, answer }
+  };
+}
+
+function unitTestRodDifferenceRatioBook6({ difficulty = 2 }) {
+  const choices = difficulty === 1 ? [[2, 3], [3, 4]] : difficulty === 2 ? [[3, 4], [6, 9]] : [[4, 6], [6, 8], [8, 12]];
+  const [longCount, shortCount] = sample(choices);
+  const answer = longCount * shortCount / (shortCount - longCount);
+  return {
+    prompt: `같은 길이를 긴 끈으로 재면 ${longCount}번, 짧은 끈으로 재면 ${shortCount}번입니다. 긴 끈에서 짧은 끈을 잘라 낸 길이로 재면 몇 번인가요?`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "measure-counts", longCount, shortCount },
+    answer: `${answer}번`,
+    solution: `전체 길이를 ${longCount * shortCount}칸으로 보면 긴 끈은 ${shortCount}칸, 짧은 끈은 ${longCount}칸입니다. 차이는 ${shortCount - longCount}칸이므로 ${longCount * shortCount}÷${shortCount - longCount}=${answer}번입니다.`,
+    meta: { family: "unit-rod-ratio", longCount, shortCount, answer }
+  };
+}
+
+function unitTestEqualBarsBook6({ difficulty = 2 }) {
+  const [firstCount, secondCount] = sample(difficulty === 1 ? [[2, 3], [3, 4]] : difficulty === 2 ? [[3, 5], [4, 6]] : [[4, 7], [5, 8]]);
+  const unit = randomInt(2, difficulty === 3 ? 9 : 7);
+  const first = secondCount * unit;
+  const second = firstCount * unit;
+  const total = first + second;
+  return {
+    prompt: `같은 길이 안에 ㉠은 ${firstCount}개, ㉡은 ${secondCount}개가 들어갑니다. ㉠과 ㉡의 길이의 합이 ${total}cm일 때 각각의 길이를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "equal-bars", firstCount, secondCount, total },
+    answer: `㉠ ${first}cm, ㉡ ${second}cm`,
+    solution: `㉠:㉡=${secondCount}:${firstCount}입니다. 모두 ${firstCount + secondCount}묶음이 ${total}cm이므로 한 묶음은 ${unit}cm, ㉠은 ${first}cm, ㉡은 ${second}cm입니다.`,
+    meta: { family: "unit-equal-bars", firstCount, secondCount, unit, total, first, second, answer: [first, second] }
+  };
+}
+
+function unitTestTwoWeightBook6({ difficulty = 2 }) {
+  const [circleCount, squareCount] = sample(difficulty === 1 ? [[3, 2], [4, 3]] : difficulty === 2 ? [[5, 4], [4, 3]] : [[7, 5], [8, 6]]);
+  const unit = randomInt(2, difficulty === 3 ? 8 : 6);
+  const circle = squareCount * unit;
+  const square = circleCount * unit;
+  const total = circle + square;
+  return {
+    prompt: `동그라미 ${circleCount}개와 네모 ${squareCount}개의 무게가 같습니다. 두 도형 한 개씩의 무게 합이 ${total}g일 때 각각의 무게를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "two-weight", circleCount, squareCount, total },
+    answer: `○ ${circle}g, □ ${square}g`,
+    solution: `○:□=${squareCount}:${circleCount}입니다. ${squareCount + circleCount}묶음이 ${total}g이므로 ○는 ${circle}g, □는 ${square}g입니다.`,
+    meta: { family: "unit-two-weight", circleCount, squareCount, unit, total, circle, square, answer: [circle, square] }
+  };
+}
+
+function unitTestSymbolCardChainBook6() {
+  const symbols = shuffle(["◆", "■", "▲", "●", "✚"]);
+  const [diamond, square, triangle, circle, cross] = symbols;
+  const values = { [square]: 3, [diamond]: 4, [circle]: 6, [cross]: 7, [triangle]: 8 };
+  const equations = [`${diamond}${diamond}${diamond} = ${square}${square}${square}${square}`, `${triangle}${triangle}${triangle} = ${circle}${circle}${circle}${circle}`, `${diamond} + ${triangle} = ${circle}${circle}`, `${triangle} + ${circle} = ${cross}${cross}`];
+  return {
+    prompt: "3, 4, 6, 7, 8을 서로 다른 도형에 하나씩 넣을 때, 식을 보고 마지막 도형의 수를 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "symbol-chain", cards: [3, 4, 6, 7, 8], equations, target: cross },
+    answer: String(values[cross]),
+    solution: `도형 값은 차례로 ${square}=3, ${diamond}=4, ${circle}=6, ${triangle}=8, ${cross}=7입니다.`,
+    meta: { family: "unit-symbol-chain", symbols: { diamond, square, triangle, circle, cross }, values, answer: values[cross] }
+  };
+}
+
+function unitTestRectangleRhombusBook6({ difficulty = 2 }) {
+  const shared = randomInt(5, difficulty === 3 ? 18 : 12);
+  const width = randomInt(4, difficulty === 3 ? 16 : 10);
+  const rectanglePerimeter = 2 * (shared + width);
+  return {
+    prompt: `둘레가 ${rectanglePerimeter}cm인 직사각형의 한 변 ${width}cm에 마름모를 붙였습니다. 마름모의 한 변을 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "rectangle-rhombus", width, shared, rectanglePerimeter },
+    answer: `${shared}cm`,
+    solution: `직사각형의 가로와 세로의 합은 ${rectanglePerimeter / 2}cm이므로 붙인 변은 ${rectanglePerimeter / 2}-${width}=${shared}cm입니다. 마름모의 한 변도 ${shared}cm입니다.`,
+    meta: { family: "unit-rectangle-rhombus", width, shared, rectanglePerimeter, answer: shared }
+  };
+}
+
+function unitTestAttachedThreeShapesBook6({ difficulty = 2 }) {
+  const side = randomInt(3, difficulty === 3 ? 12 : 8);
+  const width = randomInt(side + 2, difficulty === 3 ? 24 : 16);
+  const perimeter = 2 * width + 5 * side;
+  return {
+    prompt: `직사각형, 정삼각형, 정사각형을 그림처럼 붙였습니다. 같은 표시의 변은 ${side}cm이고 전체 둘레는 ${perimeter}cm일 때 직사각형의 긴 변을 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "three-shapes", side, width, perimeter },
+    answer: `${width}cm`,
+    solution: `바깥에 보이는 짧은 변은 ${side}cm가 5개입니다. 긴 변 두 개는 ${perimeter}-${5 * side}=${2 * width}cm이므로 한 변은 ${width}cm입니다.`,
+    meta: { family: "unit-three-shapes", side, width, perimeter, answer: width }
+  };
+}
+
+function unitTestThreeSquaresBook6({ difficulty = 2 }) {
+  const large = randomInt(5, difficulty === 3 ? 14 : 10);
+  const middle = randomInt(Math.floor(large / 2) + 1, large - 1);
+  const small = large - middle;
+  const answer = 2 * middle;
+  return {
+    prompt: `한 변이 ${large}cm인 정사각형과 ${middle}cm인 정사각형을 붙이고 남은 자리에 작은 정사각형을 놓았습니다. 색칠한 직사각형의 둘레를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "three-squares", large, middle, small },
+    answer: `${answer}cm`,
+    solution: `작은 정사각형의 한 변은 ${large}-${middle}=${small}cm입니다. 색칠한 직사각형의 두 변은 ${middle - small}cm와 ${small}cm이므로 둘레는 ${answer}cm입니다.`,
+    meta: { family: "unit-three-squares", large, middle, small, answer }
+  };
+}
+
+function unitTestScatteredPerimeterBook6({ difficulty = 2 }) {
+  const horizontal = [randomInt(2, difficulty === 3 ? 12 : 8), randomInt(2, difficulty === 3 ? 12 : 8)];
+  const vertical = [randomInt(2, difficulty === 3 ? 11 : 7), randomInt(2, difficulty === 3 ? 11 : 7)];
+  const answer = 2 * (sum(horizontal) + sum(vertical));
+  return {
+    prompt: "직각으로 꺾인 도형에서 표시한 네 변의 길이를 이용해 둘레를 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "scattered-perimeter", horizontal, vertical },
+    answer: `${answer}cm`,
+    solution: `가로 길이의 합 ${sum(horizontal)}cm와 세로 길이의 합 ${sum(vertical)}cm가 각각 두 번씩 있으므로 둘레는 ${answer}cm입니다.`,
+    meta: { family: "unit-scattered-perimeter", horizontal, vertical, answer }
+  };
+}
+
+function unitTestSquareTriangleStripBook6({ difficulty = 2 }) {
+  const side = randomInt(2, difficulty === 3 ? 10 : 7);
+  const answer = 10 * side;
+  return {
+    prompt: `한 변이 ${side}cm인 정사각형 2개와 정삼각형 4개를 그림처럼 붙였습니다. 바깥 둘레를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "square-triangle-strip", side },
+    answer: `${answer}cm`,
+    solution: `바깥에 드러난 같은 길이의 변은 10개이므로 ${side}×10=${answer}cm입니다.`,
+    meta: { family: "unit-square-triangle-strip", side, outsideEdges: 10, answer }
+  };
+}
+
+function unitTestSquareTilingBook6({ difficulty = 2 }) {
+  const unit = randomInt(2, difficulty === 3 ? 10 : 7);
+  const answer = 4 * unit;
+  return {
+    prompt: "큰 정사각형을 크기가 다른 정사각형으로 나누었습니다. 표시한 전체 길이를 보고 색칠한 가장 작은 정사각형의 둘레를 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "square-tiling", unit, total: 7 * unit },
+    answer: `${answer}cm`,
+    solution: `전체 한 변 ${7 * unit}cm는 작은 길이 7칸이므로 한 칸은 ${unit}cm입니다. 색칠한 정사각형의 둘레는 ${unit}×4=${answer}cm입니다.`,
+    meta: { family: "unit-square-tiling", unit, total: 7 * unit, answer }
+  };
+}
+
+function unitTestRoundPairEightBook6({ difficulty = 2 }) {
+  const base = difficulty === 1 ? 10 : difficulty === 2 ? 100 : 1000;
+  const pairs = Array.from({ length: 4 }, () => {
+    const low = randomInt(Math.floor(base * 0.12), Math.floor(base * 0.46));
+    return [low, base - low];
+  });
+  const values = shuffle(pairs.flat());
+  const answer = 4 * base;
+  return expressionProblem({
+    prompt: "여덟 수를 합이 둥근 수가 되는 것끼리 짝지어 계산하세요.", expression: values.join(" + "), values, answer,
+    solution: `${base}이 되는 짝이 4쌍이므로 합은 ${answer}입니다.`, family: "unit-round-pair-eight", meta: { base, pairs }
+  });
+}
+
+function unitTestEvenOddPositionPairBook6({ difficulty = 2 }) {
+  const evenPosition = randomInt(5, difficulty === 3 ? 60 : 30);
+  const oddPosition = randomInt(5, difficulty === 3 ? 60 : 30);
+  const evenValue = evenPosition * 2;
+  const oddValue = oddPosition * 2 - 1;
+  return {
+    prompt: `${evenValue}은 몇 번째 짝수이고, ${oddValue}은 몇 번째 홀수인지 각각 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "two-parts", parts: [`(1) ${evenValue}은 몇 번째 짝수?`, `(2) ${oddValue}은 몇 번째 홀수?`] },
+    answer: `(1) ${evenPosition}번째 (2) ${oddPosition}번째`,
+    solution: `${evenValue}÷2=${evenPosition}, (${oddValue}+1)÷2=${oddPosition}이므로 각각 ${evenPosition}번째, ${oddPosition}번째입니다.`,
+    meta: { family: "unit-even-odd-pair", evenValue, oddValue, evenPosition, oddPosition, answer: [evenPosition, oddPosition] }
+  };
+}
+
+function unitTestFacingPageSumBook6({ difficulty = 2 }) {
+  const left = randomInt(difficulty === 1 ? 4 : 10, difficulty === 3 ? 70 : 45) * 2;
+  const right = left + 1;
+  const pageSum = left + right;
+  return {
+    prompt: `펼친 책의 마주 보는 두 쪽수의 합이 ${pageSum}입니다. 왼쪽 쪽수를 구하세요.`,
+    visual: { kind: "book6", subtype: "book-pages", left: "?", right: "?", sum: pageSum },
+    answer: `${left}쪽`,
+    solution: `왼쪽은 짝수, 오른쪽은 바로 다음 수입니다. ${pageSum}을 거의 반으로 나누면 ${left}와 ${right}이므로 왼쪽은 ${left}쪽입니다.`,
+    meta: { family: "unit-facing-sum", left, right, pageSum, answer: left }
+  };
+}
+
+function unitTestRangeDigitPairBook6({ difficulty = 2 }) {
+  const firstStart = randomInt(1, 7);
+  const firstEnd = randomInt(difficulty === 1 ? 18 : 30, difficulty === 3 ? 75 : 48);
+  const secondStart = randomInt(12, difficulty === 3 ? 45 : 28);
+  const secondEnd = secondStart + randomInt(difficulty === 1 ? 20 : 35, difficulty === 3 ? 100 : 70);
+  const parts = [[firstStart, firstEnd], [secondStart, secondEnd]].map(([start, end]) => ({ start, end, numberCount: end - start + 1, digitCount: countWrittenDigits(start, end) }));
+  return {
+    prompt: "각 범위에서 수의 개수와 수를 쓸 때 필요한 숫자의 개수를 모두 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "two-parts", parts: parts.map((part, index) => `(${index + 1}) ${part.start}부터 ${part.end}까지`) },
+    answer: parts.map((part, index) => `(${index + 1}) 수 ${part.numberCount}개, 숫자 ${part.digitCount}개`).join(" / "),
+    solution: parts.map((part, index) => `(${index + 1}) 수는 ${part.end}-${part.start}+1=${part.numberCount}개이고 숫자는 ${part.digitCount}개입니다.`).join(" "),
+    meta: { family: "unit-range-digit-pair", parts, answer: parts.map((part) => [part.numberCount, part.digitCount]) }
+  };
+}
+
+function makeConsecutivePart(count, start) {
+  const values = Array.from({ length: count }, (_, index) => start + index);
+  return { start, count, end: values.at(-1), answer: sum(values) };
+}
+
+function unitTestConsecutiveEvenPairBook6({ difficulty = 2 }) {
+  const parts = [makeConsecutivePart(difficulty === 1 ? 6 : 8, randomInt(1, 12)), makeConsecutivePart(difficulty === 3 ? 80 : 60, 1)];
+  return {
+    prompt: "연속한 수를 양 끝끼리 짝지어 두 합을 각각 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "two-parts", parts: parts.map((part, index) => `(${index + 1}) ${part.start}+${part.start + 1}+…+${part.end}`) },
+    answer: `(1) ${parts[0].answer} (2) ${parts[1].answer}`,
+    solution: parts.map((part, index) => `(${index + 1}) 양 끝의 합 ${part.start + part.end}이 ${part.count / 2}쌍이므로 ${part.answer}입니다.`).join(" "),
+    meta: { family: "unit-consecutive-even-pair", parts, answer: parts.map((part) => part.answer) }
+  };
+}
+
+function unitTestConsecutiveOddPairBook6({ difficulty = 2 }) {
+  const firstCount = difficulty === 1 ? 5 : 7;
+  const secondCount = difficulty === 3 ? 25 : 19;
+  const parts = [makeConsecutivePart(firstCount, randomInt(1, 10)), makeConsecutivePart(secondCount, 1)];
+  return {
+    prompt: "연속한 수의 가운데 수를 이용해 두 합을 각각 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "two-parts", parts: parts.map((part, index) => `(${index + 1}) ${part.start}+${part.start + 1}+…+${part.end}`) },
+    answer: `(1) ${parts[0].answer} (2) ${parts[1].answer}`,
+    solution: parts.map((part, index) => `(${index + 1}) 가운데 수 ${(part.start + part.end) / 2}에 ${part.count}을 곱하면 ${part.answer}입니다.`).join(" "),
+    meta: { family: "unit-consecutive-odd-pair", parts, answer: parts.map((part) => part.answer) }
+  };
+}
+
+function unitTestSignTripleBook6({ difficulty = 2 }) {
+  const low = randomInt(2, difficulty === 3 ? 7 : 5);
+  const values = [low + 6, low + 4, low + 2, low];
+  const patterns = [["+", "+", "-"], ["-", "+", "+"], ["-", "+", "-"]];
+  const evaluate = (pattern) => values.slice(1).reduce((total, value, index) => total + (pattern[index] === "+" ? value : -value), values[0]);
+  const targets = patterns.map(evaluate);
+  return {
+    prompt: "같은 네 수 사이에 + 또는 -를 넣어 세 결과를 각각 만드세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "sign-multi", values, targets },
+    answer: patterns.map((pattern, index) => `(${index + 1}) ${pattern.join(", ")}`).join(" / "),
+    solution: patterns.map((pattern, index) => `(${index + 1}) ${values.map((value, i) => `${i ? pattern[i - 1] : ""}${value}`).join("")}=${targets[index]}`).join(" / "),
+    meta: { family: "unit-sign-triple", values, patterns, targets, answer: patterns }
+  };
+}
+
+function unitTestPlusConcatenationPairBook6({ difficulty = 2 }) {
+  const start = randomInt(difficulty === 1 ? 4 : 5, difficulty === 3 ? 9 : 7);
+  const digits = Array.from({ length: 5 }, (_, index) => Math.max(1, start - index));
+  const patterns = [["+", "", "+", ""], ["+", "+", "", "+"]];
+  const targets = patterns.map((pattern) => evaluateJoinedExpression(digits, pattern).value);
+  return {
+    prompt: "수 사이에 더하기를 넣거나 수를 이어 붙여 두 식을 완성하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "join-pair", digits, targets },
+    answer: patterns.map((pattern, index) => `(${index + 1}) ${formatJoinedExpression(digits, pattern)}`).join(" / "),
+    solution: patterns.map((pattern, index) => `(${index + 1}) ${formatJoinedExpression(digits, pattern)}=${targets[index]}입니다.`).join(" "),
+    meta: { family: "unit-join-pair", digits, patterns, targets, answer: patterns }
+  };
+}
+
+function unitTestBalanceChainBook6() {
+  const shapes = shuffle(["●", "■", "◆", "★"]);
+  const [circle, square, diamond, star] = shapes;
+  const equations = [`${circle}${circle} = ${square}${square}${square}`, `${diamond} = ${circle}${square}`, `${star} = ${square}${diamond}${diamond}`];
+  return {
+    prompt: "세 양팔저울이 모두 평형입니다. 별 한 개는 네모 몇 개와 같은 무게인지 구하세요.",
+    visual: { kind: "book6", subtype: "unit-test", layout: "balance-chain", equations, target: `${star} = ${square} 몇 개?` },
+    answer: "6개",
+    solution: `${circle} 2개가 ${square} 3개이므로 ${circle}은 ${square} 1개 반입니다. ${diamond}은 ${square} 2개 반, ${star}은 ${square}+${diamond}${diamond}이므로 ${square} 6개와 같습니다.`,
+    meta: { family: "unit-balance-chain", shapes: { circle, square, diamond, star }, answer: 6 }
+  };
+}
+
+function unitTestFoldCutOpenPerimeterBook6({ difficulty = 2 }) {
+  const openedSide = randomInt(6, difficulty === 3 ? 16 : 11);
+  const cut = randomInt(1, Math.max(2, Math.floor(openedSide / 3)));
+  const openedPerimeter = openedSide * 4;
+  const foldedWidth = openedSide + cut;
+  const originalWidth = foldedWidth * 2;
+  const originalHeight = openedSide * 2;
+  const answer = 2 * (originalWidth + originalHeight);
+  return {
+    prompt: `직사각형 색종이를 가로와 세로로 반씩 접고 ${cut}cm만큼 잘라 펼쳤습니다. 펼친 정사각형의 네 변의 합이 ${openedPerimeter}cm일 때 처음 직사각형의 둘레를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "fold-cut-open", cut, openedPerimeter, openedSide },
+    answer: `${answer}cm`,
+    solution: `펼친 정사각형 한 변은 ${openedPerimeter}÷4=${openedSide}cm입니다. 자르기 전 접힌 크기는 ${foldedWidth}cm와 ${openedSide}cm이고, 처음 종이는 각각 두 배인 ${originalWidth}cm와 ${originalHeight}cm입니다. 둘레는 ${answer}cm입니다.`,
+    meta: { family: "unit-fold-cut-open", cut, openedPerimeter, openedSide, foldedWidth, originalWidth, originalHeight, answer }
+  };
+}
+
 function repeatedDigitConcatenation({ difficulty = 2 }) {
   const digit = randomInt(1, 9);
   const terms = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
@@ -1127,5 +1445,27 @@ export const BOOK06_GENERATORS = Object.freeze({
   mixedSignConcatenation,
   removePlusConcatenation,
   lastNumberFromDigitTotal,
+  unitTestMidpointPairBook6,
+  unitTestSplitTargetsBook6,
+  unitTestRodDifferenceRatioBook6,
+  unitTestEqualBarsBook6,
+  unitTestTwoWeightBook6,
+  unitTestSymbolCardChainBook6,
+  unitTestRectangleRhombusBook6,
+  unitTestAttachedThreeShapesBook6,
+  unitTestThreeSquaresBook6,
+  unitTestScatteredPerimeterBook6,
+  unitTestSquareTriangleStripBook6,
+  unitTestSquareTilingBook6,
+  unitTestRoundPairEightBook6,
+  unitTestEvenOddPositionPairBook6,
+  unitTestFacingPageSumBook6,
+  unitTestRangeDigitPairBook6,
+  unitTestConsecutiveEvenPairBook6,
+  unitTestConsecutiveOddPairBook6,
+  unitTestSignTripleBook6,
+  unitTestPlusConcatenationPairBook6,
+  unitTestBalanceChainBook6,
+  unitTestFoldCutOpenPerimeterBook6,
   repeatedDigitConcatenation
 });

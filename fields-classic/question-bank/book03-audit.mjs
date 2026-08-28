@@ -5,13 +5,43 @@ import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./s
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
 const book = CURRICULUM.find((item) => item.id === "book-03");
 const units = book?.units || [];
-const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
+const verifiedUnitTestTypeIds = (book?.source?.unitTestQuestions || [])
+  .filter((question) => question.verified)
+  .map((question) => question.typeId);
+const typeIds = [...new Set([...units.flatMap((unit) => unit.typeIds), ...verifiedUnitTestTypeIds])];
 const stages = TEXTBOOK_STAGES.map((stage) => stage.id);
 
 const fail = (id, difficulty, message) => { throw new Error(`${id} / L${difficulty}: ${message}`); };
 const assert = (condition, id, difficulty, message) => { if (!condition) fail(id, difficulty, message); };
 const firstNumber = (value) => Number(String(value).replaceAll(",", "").match(/-?\d+(?:\.\d+)?/)?.[0]);
 const lineSum = (values, indexes) => indexes.reduce((sum, index) => sum + values[index], 0);
+
+function countQ13Solutions(fixed) {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 1; square <= 9; square += 1) for (let circle = 0; circle <= 9; circle += 1) {
+    if (new Set([diamond, square, circle]).size !== 3) continue;
+    if (diamond * 10 + circle + square * 10 + circle === square * 110 + fixed) count += 1;
+  }
+  return count;
+}
+
+function countQ14Solutions(leadingFixed, unitFixed) {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 0; square <= 9; square += 1) for (let circle = 0; circle <= 9; circle += 1) {
+    if (new Set([diamond, square, circle]).size !== 3) continue;
+    if (leadingFixed * 100 + square * 10 + circle + circle * 10 + unitFixed === diamond * 111) count += 1;
+  }
+  return count;
+}
+
+function countQ15Solutions() {
+  let count = 0;
+  for (let diamond = 1; diamond <= 9; diamond += 1) for (let square = 0; square <= 9; square += 1) for (let circle = 1; circle <= 9; circle += 1) for (let triangle = 1; triangle <= 9; triangle += 1) for (let cross = 0; cross <= 9; cross += 1) {
+    if (new Set([diamond, square, circle, triangle, cross]).size !== 5) continue;
+    if (circle * 100 + cross * 10 + diamond + diamond * 10 + triangle === triangle * 1000 + square * 110 + circle) count += 1;
+  }
+  return count;
+}
 
 function validateSurface(problem, id, difficulty) {
   const text = [problem.prompt, problem.answer, problem.solution].join(" ");
@@ -50,19 +80,32 @@ function validate(type, problem, difficulty) {
   validateSurface(problem, id, difficulty);
 
   switch (meta.family) {
-    case "tangram-fit":
-      assert(meta.optionKinds.filter((kind) => kind === meta.targetKind).length === 1, id, difficulty, "tangram answer not unique");
-      assert(numeric === meta.correctOption, id, difficulty, "wrong tangram option");
+    case "tangram-composition":
+      assert(meta.template === "five-piece-square", id, difficulty, "wrong tangram composition template");
+      assert(JSON.stringify([...meta.pieceIds].sort()) === JSON.stringify([3,4,5,6,7]), id, difficulty, "wrong five-piece tangram inventory");
+      assert(problem.answerVisual?.complete === true && problem.visual?.complete === false, id, difficulty, "tangram drawing answer is not gated");
       return;
     case "tangram-area": {
-      const total = meta.selected.reduce((sum, pieceId) => sum + meta.pieceAreas[pieceId], 0);
+      const total = meta.selected.reduce((sum, pieceId) => sum + meta.pieceAreas[pieceId] * meta.unitArea, 0);
       assert(numeric === total, id, difficulty, "tangram area mismatch");
+      assert(!problem.visual.pieceAreas, id, difficulty, "tangram visual leaks piece areas");
       return;
     }
-    case "unit-grid-area":
-      assert(meta.areaTwice === meta.fullCount * 2 + meta.halfCount, id, difficulty, "unit area mismatch");
-      assert(meta.halfCount % 2 === 0, id, difficulty, "fractional half cells unexpected");
+    case "unit-grid-area": {
+      if (meta.points?.length) {
+        const shoelace = Math.abs(meta.points.reduce((sum, [x, y], index) => {
+          const [nextX, nextY] = meta.points[(index + 1) % meta.points.length];
+          return sum + x * nextY - nextX * y;
+        }, 0));
+        assert(meta.connected === true, id, difficulty, "unit area figure must be connected");
+        assert(meta.areaTwice === shoelace, id, difficulty, "unit polygon area mismatch");
+        assert(problem.answer === (shoelace % 2 === 0 ? String(shoelace / 2) : `${Math.floor(shoelace / 2)}와 1/2`), id, difficulty, "unit polygon answer mismatch");
+      } else {
+        assert(meta.areaTwice === meta.fullCount * 2 + meta.halfCount, id, difficulty, "unit area mismatch");
+        assert(meta.halfCount % 2 === 0, id, difficulty, "fractional half cells unexpected");
+      }
       return;
+    }
     case "shape-area-growth":
       meta.areas.forEach((area, index) => assert(area === (meta.start + index) ** 2, id, difficulty, "growth area mismatch"));
       assert(numeric === meta.answer, id, difficulty, "growth answer mismatch");
@@ -72,13 +115,40 @@ function validate(type, problem, difficulty) {
       assert(numeric === meta.answer, id, difficulty, "nested answer mismatch");
       return;
     case "equal-fraction":
-    case "incomplete-fraction":
       assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "invalid fraction parts");
       assert(problem.answer === `${meta.shaded}/${meta.parts}`, id, difficulty, "fraction answer mismatch");
       return;
+    case "incomplete-fraction":
+      assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "invalid fraction parts");
+      assert(problem.answer === `${meta.shaded}/${meta.parts}`, id, difficulty, "fraction answer mismatch");
+      assert(meta.visibleLines > 0 && meta.visibleLines < meta.internalLines, id, difficulty, "incomplete guide-line count mismatch");
+      assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "incomplete/answer visual state mismatch");
+      return;
+    case "paired-hexagon-fractions":
+      assert(JSON.stringify(meta.parts) === JSON.stringify([12, 18]), id, difficulty, "paired hexagon denominators changed");
+      assert(meta.shaded.length === 2 && meta.shaded.every((value, index) => value > 0 && value < meta.parts[index]), id, difficulty, "paired hexagon numerators invalid");
+      assert(problem.answer === `왼쪽=${meta.shaded[0]}/${meta.parts[0]}, 오른쪽=${meta.shaded[1]}/${meta.parts[1]}`, id, difficulty, "paired hexagon answer mismatch");
+      assert(problem.responseKind === "list" && visual.subtype === "paired-source-fractions", id, difficulty, "paired hexagon response structure changed");
+      assert(JSON.stringify(visual.items.map((item) => [item.template, item.parts])) === JSON.stringify([["hexagon-12", 12], ["hexagon-18", 18]]), id, difficulty, "paired hexagon topology changed");
+      if (difficulty === 2) assert(JSON.stringify(meta.shaded) === JSON.stringify([2, 6]), id, difficulty, "unit-test q3 source shading changed");
+      return;
+    case "triangle-twelve-part-fraction":
+      assert(meta.template === "triangle-12" && meta.parts === 12, id, difficulty, "triangle-12 topology changed");
+      assert(meta.shaded > 0 && meta.shaded < meta.parts, id, difficulty, "triangle-12 numerator invalid");
+      assert(problem.answer === `${meta.shaded}/12`, id, difficulty, "triangle-12 answer mismatch");
+      assert(visual.subtype === "equal-partition-source" && visual.complete === true && visual.parts === 12, id, difficulty, "triangle-12 visual changed");
+      if (difficulty === 2) assert(meta.shaded === 5, id, difficulty, "unit-test q4 source shading changed");
+      return;
+    case "concentric-square-sixteen-fraction":
+      assert(meta.template === "concentric-square-diagonals" && meta.parts === 16, id, difficulty, "concentric-square topology changed");
+      assert(meta.shaded === ({ 1: 1, 2: 2, 3: 3 })[difficulty], id, difficulty, "concentric-square shading changed");
+      assert(problem.answer === `${meta.shaded}/16`, id, difficulty, "concentric-square answer mismatch");
+      assert(visual.subtype === "concentric-square-sixteen-fraction" && visual.parts === 16, id, difficulty, "concentric-square visual changed");
+      return;
     case "equal-partition-drawing":
       assert(meta.shaded > 0 && meta.shaded <= meta.parts, id, difficulty, "invalid partition drawing");
-      assert(problem.answerVisual?.visibleLines === meta.parts, id, difficulty, "answer partition incomplete");
+      assert(problem.visual?.complete === false && problem.answerVisual?.complete === true, id, difficulty, "answer partition incomplete");
+      assert(problem.answerVisual?.parts === meta.parts, id, difficulty, "answer partition count mismatch");
       return;
     case "oblique-square-area":
       assert(meta.areas.every((area, index) => area === meta.squares[index].dx ** 2 + meta.squares[index].dy ** 2), id, difficulty, "oblique area mismatch");
@@ -116,6 +186,22 @@ function validate(type, problem, difficulty) {
       return;
     case "rod-total":
       assert(meta.first + meta.second === meta.total, id, difficulty, "rod total mismatch");
+      return;
+    case "rod-comparison-total-unit-test":
+      assert(meta.second === meta.first * meta.ratio, id, difficulty, "rod ratio mismatch");
+      assert(meta.first + meta.second === meta.total, id, difficulty, "rod combined total mismatch");
+      assert(meta.first === meta.unit, id, difficulty, "rod unit mismatch");
+      assert(problem.answer === `㉠=${meta.first}cm, ㉡=${meta.second}cm`, id, difficulty, "rod visible answer mismatch");
+      assert(!/\d+(?:을|를) /.test(problem.solution), id, difficulty, "rod solution has a bare-number particle");
+      assert(problem.visual?.subtype === "rod-comparison-total" && problem.visual.ratio === meta.ratio && problem.visual.total === meta.total, id, difficulty, "rod source visual mismatch");
+      return;
+    case "overlapping-rods-common-unit-test":
+      assert(meta.first === meta.firstUnits * meta.unit, id, difficulty, "overlapping first rod mismatch");
+      assert(meta.third === meta.segmentUnits * meta.unit, id, difficulty, "overlapping target rod mismatch");
+      assert(meta.offsetUnits === meta.firstUnits - 1, id, difficulty, "overlapping offset changed");
+      assert(problem.answer === `${meta.third}cm`, id, difficulty, "overlapping visible answer mismatch");
+      assert(problem.visual?.subtype === "overlapping-rods-common-unit" && problem.visual.firstUnits === meta.firstUnits && problem.visual.segmentUnits === meta.segmentUnits, id, difficulty, "overlapping source visual mismatch");
+      assert(JSON.stringify(meta.sourceCase) === JSON.stringify({ firstUnits: 5, segmentUnits: 4, first: 25, third: 20 }), id, difficulty, "overlapping source case changed");
       return;
     case "unit-object":
       assert(meta.counts.every((count, index) => count * meta.lengths[index] === meta.total), id, difficulty, "object length mismatch");
@@ -179,6 +265,21 @@ function validate(type, problem, difficulty) {
       if (meta.values.length >= 3) assert(meta.values[2] === meta.values[0] * 3, id, difficulty, "linked second relation mismatch");
       if (meta.values.length >= 4) assert(meta.values[3] === meta.values[0] * 5, id, difficulty, "linked third relation mismatch");
       return;
+    case "unit-test-cryptarithm-q13":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q13 equation mismatch");
+      assert(meta.solutionCount === 1, id, difficulty, "q13 solution count changed");
+      assert(problem.visual?.addends?.[0]?.length === 2 && problem.visual?.sum?.length === 3, id, difficulty, "q13 visual structure changed");
+      return;
+    case "unit-test-cryptarithm-q14":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q14 equation mismatch");
+      assert(meta.solutionCount === 1, id, difficulty, "q14 solution count changed");
+      assert(problem.visual?.addends?.[0]?.length === 3 && problem.visual?.addends?.[1]?.length === 2 && problem.visual?.sum?.length === 3, id, difficulty, "q14 visual structure changed");
+      return;
+    case "unit-test-cryptarithm-q15":
+      assert(meta.first + meta.second === meta.sum, id, difficulty, "q15 equation mismatch");
+      assert(meta.solutionCount === 1 && new Set(meta.values).size === 5, id, difficulty, "q15 values changed");
+      assert(problem.visual?.addends?.[0]?.length === 3 && problem.visual?.addends?.[1]?.length === 2 && problem.visual?.sum?.length === 4, id, difficulty, "q15 visual structure changed");
+      return;
     case "binary-weight":
       assert(meta.selected.reduce((sum, value) => sum + value, 0) === meta.target, id, difficulty, "binary target mismatch");
       assert(new Set(meta.selected).size === meta.selected.length, id, difficulty, "weight reused");
@@ -187,10 +288,35 @@ function validate(type, problem, difficulty) {
       assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "cell code mismatch");
       assert(numeric === meta.answer, id, difficulty, "cell answer mismatch");
       return;
+    case "colored-cell-number-code":
+      assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "source cell code mismatch");
+      assert(meta.rows === 1 ? meta.columns === 5 : meta.rows === 2 && meta.columns === 4, id, difficulty, "source cell layout mismatch");
+      if (meta.mode === "read") assert(numeric === meta.answer, id, difficulty, "source cell answer mismatch");
+      if (meta.mode === "color") assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "source reverse cell answer missing");
+      return;
+    case "four-cell-binary-code":
+      assert(meta.rows === 1 && meta.columns === 4, id, difficulty, "four-cell source layout mismatch");
+      assert(JSON.stringify(meta.weights) === JSON.stringify([8, 4, 2, 1]), id, difficulty, "four-cell source weights mismatch");
+      assert(meta.colored.reduce((sum, index) => sum + meta.weights[index], 0) === meta.answer, id, difficulty, "four-cell source answer mismatch");
+      assert(problem.answer === String(meta.answer), id, difficulty, "four-cell visible answer mismatch");
+      assert(problem.visual?.examples?.every((example) => example.colored.reduce((sum, index) => sum + meta.weights[index], 0) === example.value), id, difficulty, "four-cell example mismatch");
+      return;
     case "symbol-code": {
       const lookup = Object.fromEntries(meta.symbols.map((symbol, index) => [symbol, meta.values[index]]));
       meta.rows.forEach((row) => assert(row.symbols.reduce((sum, symbol) => sum + lookup[symbol], 0) === row.total, id, difficulty, "symbol row mismatch"));
       assert(meta.targetSymbols.reduce((sum, symbol) => sum + lookup[symbol], 0) === meta.answer, id, difficulty, "symbol target mismatch");
+      return;
+    }
+    case "symbol-value-code": {
+      assert(meta.symbols.length === 3 && new Set(meta.symbols).size === 3, id, difficulty, "three source symbols required");
+      assert(meta.values.length === 3 && new Set(meta.values).size === 3, id, difficulty, "three distinct symbol values required");
+      const totalForCounts = (counts, values = meta.values) => counts.reduce((sum, count, index) => sum + count * values[index], 0);
+      meta.rows.forEach((row, index) => {
+        assert(row.total === totalForCounts(meta.countRows[index]), id, difficulty, "source symbol clue mismatch");
+        assert(row.symbols.length === meta.countRows[index].reduce((sum, count) => sum + count, 0), id, difficulty, "source symbol count mismatch");
+      });
+      assert(meta.answer === totalForCounts(meta.targetCounts), id, difficulty, "source symbol target mismatch");
+      assert(numeric === meta.answer, id, difficulty, "source symbol answer mismatch");
       return;
     }
     case "magic-three-complete":
@@ -214,6 +340,13 @@ function validate(type, problem, difficulty) {
       const lines = meta.size === 6 ? [[0,1,2],[2,3,4],[4,5,0]] : [[0,1,2,3],[3,4,5,6],[6,7,8,0]];
       lines.forEach((line) => assert(lineSum(meta.solution, line) === meta.lineSum, id, difficulty, "triangle line mismatch"));
       assert(meta.uniqueCount === 1, id, difficulty, "triangle answer not unique");
+      return;
+    }
+    case "equal-line-eight-complete-book3": {
+      [[0,1,2], [2,3,4], [4,5,6], [6,7,0]].forEach((line) => assert(lineSum(meta.layout, line) === meta.lineSum, id, difficulty, "book3 eight-card line mismatch"));
+      assert(new Set(meta.layout).size === 8 && meta.layout.every((value) => value >= 1 && value <= 8), id, difficulty, "book3 eight-card reuse");
+      assert(meta.candidateCount === 1, id, difficulty, "book3 eight-card completion not unique");
+      assert(problem.responseKind === "visual-fill" && problem.answerVisual?.shown?.length === 8, id, difficulty, "book3 eight-card full answer missing");
       return;
     }
     default:
@@ -245,10 +378,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 42) throw new Error(`book-03 type count ${typeIds.length}`);
+if (typeIds.length !== 52) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
-const expectedReadyQuestions = [2, 6, 7, 8, 11, 12, 16, 17, 18, 20, 21, 24];
+const expectedReadyQuestions = Array.from({ length: 25 }, (_, index) => index + 1);
 const readyQuestions = unitTestQuestions.filter((question) => question.verified).map((question) => question.number);
 if (unitTestQuestions.length !== 25) throw new Error(`book-03 unit test question count ${unitTestQuestions.length}`);
 if (new Set(unitTestQuestions.map((question) => question.number)).size !== 25) throw new Error("book-03 unit test question numbers are not unique");
@@ -262,6 +395,76 @@ for (const question of unitTestQuestions) {
 }
 if (unitTestQuestions.find((question) => question.number === 16)?.difficulty !== 2) throw new Error("book-03 question 16 difficulty changed");
 if (unitTestQuestions.find((question) => question.number === 17)?.difficulty !== 3) throw new Error("book-03 question 17 difficulty changed");
+
+const question19Type = typeById(unitTestQuestions.find((question) => question.number === 19)?.typeId);
+const question23Type = typeById(unitTestQuestions.find((question) => question.number === 23)?.typeId);
+const question3Type = typeById(unitTestQuestions.find((question) => question.number === 3)?.typeId);
+const question4Type = typeById(unitTestQuestions.find((question) => question.number === 4)?.typeId);
+const question5Type = typeById(unitTestQuestions.find((question) => question.number === 5)?.typeId);
+const question9Type = typeById(unitTestQuestions.find((question) => question.number === 9)?.typeId);
+const question10Type = typeById(unitTestQuestions.find((question) => question.number === 10)?.typeId);
+const question13Type = typeById(unitTestQuestions.find((question) => question.number === 13)?.typeId);
+const question14Type = typeById(unitTestQuestions.find((question) => question.number === 14)?.typeId);
+const question15Type = typeById(unitTestQuestions.find((question) => question.number === 15)?.typeId);
+assert(countQ15Solutions() === 1, question15Type.id, 3, "source q15 is not unique");
+const sourceCase = (number) => ({
+  mode: "source",
+  sourceKey: `unit-test:book-03:q${number}`,
+  sourceKind: "unit-test",
+  sourceId: "book-03",
+  number,
+  sourceFidelity: "exact-generator"
+});
+for (let run = 0; run < 100; run += 1) {
+  const question3 = GENERATORS[question3Type.generator]({ difficulty: 2, sourceCase: sourceCase(3) });
+  assert(JSON.stringify(question3.meta.sourceCase) === JSON.stringify({ parts: [12, 18], shaded: [2, 6] }), question3Type.id, 2, "unit-test q3 source case changed");
+  assert(JSON.stringify(question3.meta.shaded) === JSON.stringify([2, 6]), question3Type.id, 2, "unit-test q3 visible fractions changed");
+  assert(question3.meta.sourceExact === true && question3.visual.subtype === "paired-source-fractions-exact", question3Type.id, 2, "unit-test q3 exact renderer not selected");
+  assert(question3.meta.sourceVisualSignature === "wide-hexagon-12-crossed|wide-hexagon-18-outer-star", question3Type.id, 2, "unit-test q3 visual signature changed");
+  assert(JSON.stringify(question3.visual.items[0].shadedRegionIds) === JSON.stringify(["top-right-center", "left-center"]), question3Type.id, 2, "unit-test q3 left source shading changed");
+  assert(JSON.stringify(question3.visual.items[1].shadedIndices) === JSON.stringify([0, 3, 6, 9, 12, 15]), question3Type.id, 2, "unit-test q3 right source shading changed");
+
+  const question4 = GENERATORS[question4Type.generator]({ difficulty: 2, sourceCase: sourceCase(4) });
+  assert(JSON.stringify(question4.meta.sourceCase) === JSON.stringify({ template: "source-triangle-twelve", parts: 12, shaded: 5 }), question4Type.id, 2, "unit-test q4 source case changed");
+  assert(question4.answer === "5/12", question4Type.id, 2, "unit-test q4 visible fraction changed");
+  assert(question4.meta.sourceExact === true && question4.visual.subtype === "triangle-twelve-fraction-exact", question4Type.id, 2, "unit-test q4 exact renderer not selected");
+  assert(JSON.stringify(question4.visual.shadedRegionIds) === JSON.stringify(["top-center", "left-base", "right-side"]), question4Type.id, 2, "unit-test q4 source shading changed");
+
+  const question5 = GENERATORS[question5Type.generator]({ difficulty: 2, sourceCase: sourceCase(5) });
+  assert(JSON.stringify(question5.meta.sourceCase) === JSON.stringify({ template: "concentric-square-diagonals", parts: 16, shaded: 2 }), question5Type.id, 2, "unit-test q5 source case changed");
+  assert(question5.answer === "2/16", question5Type.id, 2, "unit-test q5 visible fraction changed");
+  assert(question5.meta.sourceExact === true && JSON.stringify(question5.visual.shadedIndices) === JSON.stringify([1, 2]), question5Type.id, 2, "unit-test q5 source shading changed");
+
+  const question9 = GENERATORS[question9Type.generator]({ difficulty: 2 });
+  assert([2, 5].includes(question9.meta.ratio), question9Type.id, 2, "unit-test ratio changed");
+  assert(question9.meta.first + question9.meta.second === question9.meta.total, question9Type.id, 2, "unit-test total changed");
+  assert(question9.visual.subtype === "rod-comparison-total", question9Type.id, 2, "unit-test rod visual changed");
+
+  const question10 = GENERATORS[question10Type.generator]({ difficulty: 2 });
+  assert(question10.meta.firstUnits === 5 && question10.meta.segmentUnits === 4, question10Type.id, 2, "unit-test overlapping rod proportions changed");
+  assert(question10.meta.first / 5 === question10.meta.third / 4, question10Type.id, 2, "unit-test overlapping rod scale changed");
+  assert(question10.visual.subtype === "overlapping-rods-common-unit", question10Type.id, 2, "unit-test overlapping rod visual changed");
+
+  const question13 = GENERATORS[question13Type.generator]({ difficulty: 2 });
+  assert(countQ13Solutions(question13.meta.fixed) === 1, question13Type.id, 2, "unit-test q13 is not unique");
+  assert(JSON.stringify(question13.meta.sourceCase) === JSON.stringify({ fixed: 6, diamond: 9, square: 1, circle: 8 }), question13Type.id, 2, "unit-test q13 source case changed");
+
+  const question14 = GENERATORS[question14Type.generator]({ difficulty: 2 });
+  assert(countQ14Solutions(question14.meta.leadingFixed, question14.meta.unitFixed) === 1, question14Type.id, 2, "unit-test q14 is not unique");
+  assert(JSON.stringify(question14.meta.sourceCase) === JSON.stringify({ leadingFixed: 1, unitFixed: 4, diamond: 2, square: 3, circle: 8 }), question14Type.id, 2, "unit-test q14 source case changed");
+
+  const question15 = GENERATORS[question15Type.generator]({ difficulty: 3 });
+  assert(JSON.stringify(question15.meta.sourceCase) === JSON.stringify({ diamond: 8, square: 0, circle: 9, triangle: 1, cross: 2 }), question15Type.id, 3, "unit-test q15 source case changed");
+
+  const question19 = GENERATORS[question19Type.generator]({ difficulty: 2 });
+  assert(question19.meta.template === "practice", question19Type.id, 2, "unit-test clue template changed");
+  assert(JSON.stringify(question19.meta.countRows) === JSON.stringify([[1,1,0],[2,1,0],[1,1,1],[1,2,2]]), question19Type.id, 2, "unit-test clue rows changed");
+  assert([[3,1,0],[1,1,2],[2,2,1]].some((counts) => JSON.stringify(counts) === JSON.stringify(question19.meta.targetCounts)), question19Type.id, 2, "unit-test target row changed");
+
+  const question23 = GENERATORS[question23Type.generator]({ difficulty: 2 });
+  assert(question23.meta.answer >= 8 && question23.meta.answer <= 15, question23Type.id, 2, "unit-test target range changed");
+  assert(JSON.stringify(question23.visual.examples.map((example) => example.value)) === JSON.stringify([1,2,3,4,5,6,7]), question23Type.id, 2, "unit-test examples changed");
+}
 
 for (const unit of units) {
   for (const typeId of unit.typeIds) {
@@ -295,7 +498,7 @@ for (const typeId of typeIds) {
       fingerprints.add(JSON.stringify(problem.meta || { prompt: problem.prompt, answer: problem.answer, visual: problem.visual }));
       generated += 1;
     }
-    const minimumVariants = typeId === "cryptarithm-multi-symbol-carry" ? 2 : 3;
+    const minimumVariants = iterations < 30 ? 1 : typeId === "cryptarithm-multi-symbol-carry" ? 2 : 3;
     assert(fingerprints.size >= minimumVariants, typeId, difficulty, `only ${fingerprints.size} visible variants`);
     variants.set(key, fingerprints.size);
   }

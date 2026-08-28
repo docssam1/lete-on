@@ -1,6 +1,9 @@
+import "../../geometry/worksheet/generators.js";
+import "../../geometry/worksheet/render.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { book09Markup } from "./book09-renderers.js";
+import { BOOK09_UNIT_TEST_GENERATORS, BOOK09_UNIT_TEST_SPECS } from "./book09-generators.js";
 
 const iterations = Number(process.env.BOOK09_ITERATIONS || 1000);
 const book = CURRICULUM.find((item) => item.id === "book-09");
@@ -22,6 +25,138 @@ function assert(condition, id, difficulty, message) {
 const sum = (items) => items.reduce((total, value) => total + value, 0);
 const same = (first, second) => JSON.stringify(first) === JSON.stringify(second);
 const numericAnswer = (problem) => Number(String(problem.answer).match(/-?\d+(?:\.\d+)?/)?.[0]);
+
+function unitMarkup(visual) {
+  if (!visual || visual.kind !== "book9") return "";
+  try {
+    return book09Markup(visual);
+  } catch {
+    return "";
+  }
+}
+
+function unitParts(problem) {
+  return Array.isArray(problem?.parts) ? problem.parts : [];
+}
+
+function unitGroupCells(groups, cols = 4) {
+  return groups.map((group) => group.map((index) => [index % cols, Math.floor(index / cols), index]));
+}
+
+function unitMapTotal(map) {
+  return sum(map.flat());
+}
+
+function unitCubeBounds(map) {
+  const rows = map.length;
+  const columns = map[0].length;
+  const top = map.map((row) => row.map((value) => value > 0 ? 1 : 0));
+  const front = map[0].map((_, column) => Math.max(...map.map((row) => row[column])));
+  const side = map.map((row) => Math.max(...row)).reverse();
+  const cells = [];
+  for (let row = 0; row < rows; row += 1) for (let column = 0; column < columns; column += 1) if (top[row][column]) cells.push([row, column]);
+  const current = top.map((row) => [...row]);
+  const maxHeight = Math.max(...front, ...side);
+  let minimum = Infinity;
+  let maximum = -Infinity;
+  const search = (index) => {
+    if (index === cells.length) {
+      if (!front.every((value, column) => Math.max(...current.map((row) => row[column])) === value)) return;
+      if (!side.every((value, row) => Math.max(...current[rows - 1 - row]) === value)) return;
+      const total = unitMapTotal(current);
+      minimum = Math.min(minimum, total);
+      maximum = Math.max(maximum, total);
+      return;
+    }
+    const [row, column] = cells[index];
+    for (let value = 1; value <= maxHeight; value += 1) {
+      current[row][column] = value;
+      search(index + 1);
+    }
+    current[row][column] = 0;
+  };
+  search(0);
+  return { top, front, side, minimum, maximum };
+}
+
+function unitMagicLineSums(grid) {
+  const size = grid.length;
+  const rows = grid.map((row) => sum(row));
+  const columns = Array.from({ length: size }, (_, column) => sum(grid.map((row) => row[column])));
+  const diagonals = [sum(grid.map((row, index) => row[index])), sum(grid.map((row, index) => row[size - 1 - index]))];
+  return [...rows, ...columns, ...diagonals];
+}
+
+function unitMagicCompletionCount(shown, solution, limit = 2) {
+  const board = shown.map((row) => [...row]);
+  const values = [...new Set(solution.flat())];
+  const blanks = [];
+  board.forEach((row, rowIndex) => row.forEach((value, columnIndex) => { if (value === null) blanks.push([rowIndex, columnIndex]); }));
+  const available = values.filter((value) => !board.flat().includes(value));
+  let count = 0;
+  const search = (index) => {
+    if (count >= limit) return;
+    if (index === blanks.length) {
+      if (unitMagicLineSums(board).every((value) => value === unitMagicLineSums(board)[0])) count += 1;
+      return;
+    }
+    const [row, column] = blanks[index];
+    for (const value of available) {
+      if (board.flat().includes(value)) continue;
+      board[row][column] = value;
+      search(index + 1);
+      board[row][column] = null;
+      if (count >= limit) return;
+    }
+  };
+  search(0);
+  return count;
+}
+
+function unitLineSums(values, lines) {
+  return lines.map((line) => sum(line.map((index) => values[index])));
+}
+
+function unitSudokuSolutionCount(grid, regions, limit = 2) {
+  const board = grid.map((row) => [...row]);
+  let count = 0;
+  const isComplete = () => {
+    const validLine = (line) => same([...line].sort(), [1,2,3,4]);
+    const regionValues = Array.from({ length: 4 }, (_, region) => board.flatMap((row, rowIndex) => row.filter((_, column) => regions[rowIndex][column] === region)));
+    return board.every(validLine)
+      && Array.from({ length: 4 }, (_, column) => board.map((row) => row[column])).every(validLine)
+      && regionValues.every(validLine);
+  };
+  const allowed = (row, column, value) => {
+    if (board[row].includes(value) || board.some((line) => line[column] === value)) return false;
+    const region = regions[row][column];
+    return !board.some((line, rowIndex) => line.some((cell, columnIndex) => regions[rowIndex][columnIndex] === region && cell === value));
+  };
+  const search = () => {
+    if (count >= limit) return;
+    let target = null;
+    for (let row = 0; row < board.length && !target; row += 1) for (let column = 0; column < board[row].length; column += 1) {
+      if (board[row][column] === 0 || board[row][column] === null) {
+        target = [row, column];
+        break;
+      }
+    }
+    if (!target) {
+      if (isComplete()) count += 1;
+      return;
+    }
+    const [row, column] = target;
+    for (let value = 1; value <= 4; value += 1) {
+      if (!allowed(row, column, value)) continue;
+      board[row][column] = value;
+      search();
+      board[row][column] = 0;
+      if (count >= limit) return;
+    }
+  };
+  search();
+  return count;
+}
 
 function permutations(items) {
   if (items.length <= 1) return [items.slice()];
@@ -164,6 +299,87 @@ function uniqueAssignments(allowed) {
 
 function predictionSolutions(size, pairs) {
   return permutations(Array.from({ length: size }, (_, index) => index)).filter((assignment) => pairs.every((pair) => pair.filter(([item, slot]) => assignment[item] === slot).length === 1));
+}
+
+function fixedSizeCombinations(size, pick) {
+  const result = [];
+  const visit = (start, selected) => {
+    if (selected.length === pick) {
+      result.push(selected.slice());
+      return;
+    }
+    for (let value = start; value < size; value += 1) visit(value + 1, [...selected, value]);
+  };
+  visit(0, []);
+  return result;
+}
+
+function preferenceSolutions(meta) {
+  const choices = meta.knownRows.map((known) => fixedSizeCombinations(meta.items.length, 2).filter((row) => known.every((item) => row.includes(item))));
+  const counts = Array(meta.items.length).fill(0);
+  const selected = [];
+  const solutions = [];
+  const visit = (rowIndex) => {
+    if (solutions.length >= 2) return;
+    if (rowIndex === choices.length) {
+      if (same(counts, meta.totals)) solutions.push(selected.map((row) => row.slice()));
+      return;
+    }
+    for (const row of choices[rowIndex]) {
+      const nextCounts = counts.slice();
+      row.forEach((item) => { nextCounts[item] += 1; });
+      if (nextCounts.some((count, item) => count > meta.totals[item])) continue;
+      row.forEach((item) => { counts[item] += 1; });
+      selected.push(row);
+      visit(rowIndex + 1);
+      selected.pop();
+      row.forEach((item) => { counts[item] -= 1; });
+    }
+  };
+  visit(0);
+  return solutions;
+}
+
+function unitQ20ConstraintHolds(order, constraint) {
+  const rightOf = (left, right) => order[(order.indexOf(left) + 1) % order.length] === right;
+  const leftOf = (left, right) => order[(order.indexOf(left) - 1 + order.length) % order.length] === right;
+  const adjacent = (first, second) => rightOf(first, second) || rightOf(second, first);
+  if (constraint.kind === "rightOf") return rightOf(constraint.first, constraint.second);
+  if (constraint.kind === "leftOf") return leftOf(constraint.first, constraint.second);
+  if (constraint.kind === "notRightOf") return !rightOf(constraint.first, constraint.second);
+  if (constraint.kind === "notAdjacent") return !adjacent(constraint.first, constraint.second);
+  if (constraint.kind === "secondRight") return order[(order.indexOf(constraint.first) + 2) % order.length] === constraint.second;
+  return false;
+}
+
+function unitQ24ConstraintHolds(order, constraint) {
+  const position = (name) => order.indexOf(name) + 1;
+  if (constraint.kind === "notRank") return !constraint.ranks.includes(position(constraint.name));
+  if (constraint.kind === "rank") return position(constraint.name) === constraint.rank;
+  if (constraint.kind === "after") return position(constraint.first) > position(constraint.second);
+  if (constraint.kind === "before") return position(constraint.first) < position(constraint.second);
+  return false;
+}
+
+function unitDifficultyFingerprintValue(value) {
+  if (Array.isArray(value)) return value.map((item) => unitDifficultyFingerprintValue(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value).sort().filter((key) => key !== "difficulty").map((key) => [key, unitDifficultyFingerprintValue(value[key])]));
+  }
+  return value;
+}
+
+function unitDifficultyFingerprint(problem) {
+  return JSON.stringify(unitDifficultyFingerprintValue({
+    prompt: problem.prompt,
+    answer: problem.answer,
+    solution: problem.solution,
+    visual: problem.visual,
+    visuals: problem.visuals,
+    answerVisual: problem.answerVisual,
+    answerVisuals: problem.answerVisuals,
+    parts: problem.parts
+  }));
 }
 
 function validate(problem, id, difficulty) {
@@ -341,6 +557,327 @@ function validate(problem, id, difficulty) {
   }
 }
 
+function validateUnitShell(problem, spec, difficulty) {
+  const id = spec.typeId;
+  const parts = unitParts(problem);
+  assert(problem?.typeId === id, id, difficulty, "래퍼 typeId 오류");
+  assert(typeof problem?.prompt === "string" && problem.prompt.length >= 12, id, difficulty, "단원 테스트 지문 없음");
+  assert(typeof problem?.solution === "string" && problem.solution.length >= 12, id, difficulty, "단원 테스트 전체 풀이 없음");
+  assert(parts.length === spec.partCount, id, difficulty, `소문항 수 ${parts.length}/${spec.partCount}`);
+  assert(Array.isArray(problem.visuals) && problem.visuals.length === parts.length, id, difficulty, "복수 그림 배열 없음");
+  assert(same(problem.visuals, parts.map((part) => part.visual)), id, difficulty, "복수 그림 순서 불일치");
+  assert(Array.isArray(problem.meta?.partAnswers) && problem.meta.partAnswers.length === parts.length, id, difficulty, "소문항 정답 배열 없음");
+  assert(same(problem.meta.partAnswers, parts.map((part) => String(part.answer))), id, difficulty, "소문항 정답 배열 불일치");
+  assert(problem.answer === problem.meta.partAnswers.join(" / "), id, difficulty, "전체 정답 조합 오류");
+  assert(problem.meta.family === spec.family && problem.meta.difficulty === difficulty, id, difficulty, "래퍼 메타 오류");
+  assert((problem.prompt.match(/\?/g) || []).length <= 1, id, difficulty, "래퍼 지문 물음표 중복");
+  const allText = `${problem.prompt} ${problem.solution}`;
+  assert(!/(순열|퍼뮤테이션|조합|컴비네이션|제곱|은\(는\)|이\(가\)|을\(를\)|와\(과\)|과\(와\))/.test(allText), id, difficulty, "학년 부적합 표현 또는 괄호 조사");
+  assert(!/(NaN|Infinity|undefined)/.test(JSON.stringify(problem)), id, difficulty, "래퍼 잘못된 값 노출");
+  parts.forEach((part, index) => {
+    assert(part && typeof part.answer === "string" && part.answer.trim(), `${id}.part${index + 1}`, difficulty, "소문항 정답 없음");
+    assert(typeof part.solution === "string" && part.solution.length >= 12, `${id}.part${index + 1}`, difficulty, "소문항 풀이 없음");
+    assert(part.meta?.family, `${id}.part${index + 1}`, difficulty, "소문항 family 없음");
+    assert(unitMarkup(part.visual).length > 20, `${id}.part${index + 1}`, difficulty, `그림 렌더링 없음: ${part.visual?.subtype}`);
+    if (part.answerVisual) assert(unitMarkup(part.answerVisual).length > 20, `${id}.part${index + 1}`, difficulty, "답안 그림 렌더링 없음");
+    assert(!/(순열|퍼뮤테이션|조합|컴비네이션|제곱|은\(는\)|이\(가\)|을\(를\)|와\(과\)|과\(와\))/.test(`${part.answer} ${part.solution}`), `${id}.part${index + 1}`, difficulty, "소문항 학년 부적합 표현");
+    assert(!/(NaN|Infinity|undefined)/.test(JSON.stringify(part)), `${id}.part${index + 1}`, difficulty, "소문항 잘못된 값 노출");
+  });
+  if (problem.answerVisuals) {
+    assert(problem.answerVisuals.length === parts.length, id, difficulty, "답안 그림 수 불일치");
+    problem.answerVisuals.forEach((visual, index) => {
+      if (visual) assert(unitMarkup(visual).length > 20, `${id}.answer${index + 1}`, difficulty, "답안 배열 그림 렌더링 없음");
+    });
+  }
+  return parts;
+}
+
+function validateUnitTest(problem, spec, difficulty) {
+  const parts = validateUnitShell(problem, spec, difficulty);
+  const id = spec.typeId;
+  switch (spec.question) {
+    case 1: {
+      const part = parts[0];
+      const meta = part.meta;
+      const grid = meta.solutionGrid;
+      const shown = part.visual.shown;
+      assert(grid.length === 4 && grid.every((row) => row.length === 4), id, difficulty, "4×4 퍼즐 크기 오류");
+      assert(grid.flat().every((value) => Number.isInteger(value) && value >= 1 && value <= 4), id, difficulty, "퍼즐 해답 숫자 오류");
+      assert(grid.every((row) => same([...row].sort(), [1,2,3,4])), id, difficulty, "퍼즐 가로줄 오류");
+      assert(Array.from({ length: 4 }, (_, column) => grid.map((row) => row[column])).every((column) => same([...column].sort(), [1,2,3,4])), id, difficulty, "퍼즐 세로줄 오류");
+      const regions = meta.regions;
+      const regionValues = Array.from({ length: 4 }, (_, region) => grid.flatMap((row, rowIndex) => row.filter((_, column) => regions[rowIndex][column] === region)));
+      assert(regionValues.every((region) => same([...region].sort(), [1,2,3,4])), id, difficulty, "퍼즐 굵은 영역 오류");
+      assert(shown.length === 16 && shown.filter((value) => value === null || value === 0).length === meta.blankCount, id, difficulty, "퍼즐 빈칸 수 오류");
+      assert(same(shown, meta.puzzle.flat()), id, difficulty, "퍼즐 표시 배열 오류");
+      assert(unitSudokuSolutionCount(meta.puzzle, regions) === 1, id, difficulty, "퍼즐 해답 유일성 오류");
+      assert(part.answer === grid.flat().join(" "), id, difficulty, "퍼즐 해답 배열 오류");
+      return;
+    }
+    case 2: {
+      const meta = parts[0].meta;
+      const pieces = unitGroupCells(meta.groups);
+      const flat = meta.groups.flat();
+      const signatures = pieces.map((piece) => canonicalCells(piece));
+      assert(pieces.length === 4 && pieces.every((piece) => piece.length === 4 && connected(piece)), id, difficulty, "합동 분할 조각 구조 오류");
+      assert(flat.length === 16 && new Set(flat).size === 16 && flat.every((cell) => cell >= 0 && cell < 16), id, difficulty, "분할 칸 겹침·누락 오류");
+      assert(new Set(signatures).size === 1, id, difficulty, "네 조각 모양 불일치");
+      assert(pieces.every((piece) => sum(piece.map(([, , index]) => meta.values[index])) === meta.target), id, difficulty, "분할 수의 합 오류");
+      assert(meta.sourceValues.length === 16 && meta.values.length === 16, id, difficulty, "분할 수 배열 오류");
+      return;
+    }
+    case 3: {
+      assert(parts.length === 2, id, difficulty, "도형 두 소문항 누락");
+      parts.forEach((part) => {
+        const meta = part.meta;
+        assert(meta.pieceCount === 4 && meta.pieceAreas.length === 4, id, difficulty, "합동 분할 조각 수 오류");
+        assert(meta.pieceAreas.every((value) => value > 0 && value === meta.pieceAreas[0]), id, difficulty, "합동 분할 넓이 불일치");
+        assert(Math.abs(polygonArea(meta.points) - sum(meta.pieceAreas)) < 1e-9, id, difficulty, "합동 분할 전체 넓이 오류");
+        assert(meta.partitionSignatures.length === 4 && new Set(meta.partitionSignatures).size === 1, id, difficulty, "합동 분할 모양 서명 오류");
+        assert(part.answerVisual?.partitioned === true, id, difficulty, "합동 분할 답안 그림 표시 없음");
+      });
+      if (difficulty === 2) {
+        assert(parts[0].meta.sourceFigure === "orthogonal-five-cell-outline" && same(parts[0].meta.points, [[0, 0], [2, 0], [2, 1], [3, 1], [3, 2], [0, 2]]), id, difficulty, "원본 첫 도형 변경");
+        assert(parts[1].meta.sourceFigure === "isosceles-trapezoid-diagonal-outline" && same(parts[1].meta.points, [[1, 0], [3, 0], [4, 3], [0, 3]]), id, difficulty, "원본 둘째 도형 변경");
+        assert(parts.every((part) => !part.meta.partitionHints), id, difficulty, "원본 중간 난이도 단서 변경");
+      } else {
+        assert(parts.every((part) => Array.isArray(part.meta.partitionHints) && part.meta.partitionHints.length > 0), id, difficulty, "도형 난이도 단서 누락");
+        assert(new Set(parts.map((part) => part.meta.sourceFigure)).size === 2, id, difficulty, "도형 난이도 변형 중복");
+      }
+      return;
+    }
+    case 4:
+    case 5: {
+      const results = parts.map((part) => numericAnswer(part));
+      parts.forEach((part) => assert(Math.abs(polygonArea(part.meta.points) - part.meta.result) < 1e-9 && numericAnswer(part) === part.meta.result, id, difficulty, "모눈 도형 넓이 재계산 오류"));
+      if (difficulty === 2) assert(same(results, spec.question === 4 ? [5, 10] : [6, 9]), id, difficulty, "원본 중간 난이도 넓이 불일치");
+      return;
+    }
+    case 6: {
+      const meta = parts[0].meta;
+      assert(meta.outerArea === meta.outerSize * meta.outerSize && meta.innerArea === meta.outerSize, id, difficulty, "안쪽 도형 넓이 조건 오류");
+      assert(meta.result === meta.outerArea - meta.innerArea && numericAnswer(parts[0]) === meta.result, id, difficulty, "색칠 영역 넓이 오류");
+      assert(Math.abs(polygonArea(meta.points) - meta.result) < 1e-9, id, difficulty, "넓이 그림과 정답 불일치");
+      return;
+    }
+    case 7: {
+      const meta = parts[0].meta;
+      assert(meta.map.length === meta.size && meta.map.every((row) => row.length === meta.size), id, difficulty, "정육면체 현재 배열 오류");
+      assert(meta.map.flat().every((value) => Number.isInteger(value) && value >= 1 && value <= meta.size), id, difficulty, "정육면체 높이 오류");
+      assert(meta.fullMap.every((row) => row.every((value) => value === meta.size)), id, difficulty, "정육면체 완성 배열 오류");
+      assert(meta.fullTotal === meta.size ** 3 && meta.total === unitMapTotal(meta.map) && meta.result === meta.fullTotal - meta.total && numericAnswer(parts[0]) === meta.result, id, difficulty, "정육면체 채우기 개수 오류");
+      return;
+    }
+    case 8: {
+      const meta = parts[0].meta;
+      assert(meta.total === unitMapTotal(meta.map) && meta.visible > 0 && meta.visible < meta.total, id, difficulty, "보이지 않는 쌓기나무 조건 오류");
+      assert(meta.hidden === meta.total - meta.visible && numericAnswer(parts[0]) === meta.hidden, id, difficulty, "보이지 않는 쌓기나무 개수 오류");
+      return;
+    }
+    case 9: {
+      const generated = parts[0];
+      validate(generated, `${id}.part1`, difficulty);
+      assert(generated.meta.family === "cube-layer-views-b9" && Array.isArray(generated.meta.layers), id, difficulty, "층별 쌓기나무 재사용 구조 오류");
+      if (difficulty === 1) {
+        assert(generated.meta.map.length === 2 && Math.max(...generated.meta.map.flat()) <= 2 && same(generated.meta.disclosedSide, generated.meta.side), id, difficulty, "층별 쌓기나무 쉬움 단서 오류");
+      } else if (difficulty === 2) {
+        assert(generated.meta.map.length === 3 && !generated.meta.askTotal && !generated.meta.disclosedSide, id, difficulty, "층별 쌓기나무 원본 구조 변경");
+      } else {
+        assert(generated.meta.map.length === 3 && Math.max(...generated.meta.map.flat()) === 4 && generated.meta.total === unitMapTotal(generated.meta.map) && generated.answer.includes(`전체 ${generated.meta.total}개`), id, difficulty, "층별 쌓기나무 어려움 단계 오류");
+      }
+      return;
+    }
+    case 10: {
+      const meta = parts[0].meta;
+      const bounds = unitCubeBounds(meta.map);
+      assert(same(meta.top, bounds.top) && same(meta.front, bounds.front) && same(meta.side, bounds.side), id, difficulty, "세 방향 투영 오류");
+      assert(meta.minimum === bounds.minimum && meta.maximum === bounds.maximum && numericAnswer(parts[0]) === meta.minimum, id, difficulty, "쌓기나무 최소 개수 오류");
+      assert(meta.sourceSubtasks.length === 5 && parts[0].visual.blankProfiles, id, difficulty, "복합 쌓기나무 소문항 구조 누락");
+      return;
+    }
+    case 11: {
+      assert(parts.length === 2, id, difficulty, "세 방향 보기 두 소문항 누락");
+      parts.forEach((part) => {
+        const meta = part.meta;
+        const bounds = unitCubeBounds(meta.map);
+        assert(meta.total === unitMapTotal(meta.map) && same(meta.top, bounds.top) && same(meta.front, bounds.front) && same(meta.side, bounds.side), id, difficulty, "세 방향 쌓기나무 재계산 오류");
+        assert(numericAnswer(part) === meta.total, id, difficulty, "세 방향 쌓기나무 개수 오류");
+      });
+      return;
+    }
+    case 12: {
+      const meta = parts[0].meta;
+      const bounds = unitCubeBounds(meta.map);
+      assert(meta.minimum === bounds.minimum && meta.maximum === bounds.maximum, id, difficulty, "쌓기나무 최대·최소 재계산 오류");
+      assert(numericAnswer(parts[0]) === meta.maximum && parts[0].answer.includes(String(meta.minimum)), id, difficulty, "쌓기나무 최대·최소 정답 오류");
+      return;
+    }
+    case 13: {
+      assert(parts.length === 2, id, difficulty, "마방진 두 소문항 누락");
+      parts.forEach((part) => {
+        const meta = part.meta;
+        const values = meta.solutionGrid.flat();
+        const lines = unitMagicLineSums(meta.solutionGrid);
+        assert(new Set(values).size === 9 && lines.every((value) => value === meta.lineSum), id, difficulty, "마방진 행·열·대각선 오류");
+        assert(unitMagicCompletionCount(meta.shown, meta.solutionGrid) === 1 && numericAnswer(part) === meta.lineSum, id, difficulty, "마방진 빈칸 유일성 오류");
+      });
+      if (difficulty === 2) assert(same(parts.map((part) => part.meta.lineSum), [21, 18]), id, difficulty, "원본 마방진 합 불일치");
+      return;
+    }
+    case 14:
+      validate(parts[0], `${id}.part1`, difficulty);
+      if (difficulty === 1) assert(Number.isFinite(parts[0].meta.revealedTarget), id, difficulty, "4×4 마방진 쉬움 공개값 누락");
+      if (difficulty === 2) assert(!parts[0].meta.revealedTarget && !parts[0].meta.deriveLineSum && Number.isFinite(parts[0].visual.lineSum), id, difficulty, "4×4 마방진 원본 구조 변경");
+      if (difficulty === 3) assert(parts[0].meta.deriveLineSum && !parts[0].visual.lineSum, id, difficulty, "4×4 마방진 어려움 줄합 추론 누락");
+      return;
+    case 15: {
+      const part = parts[0];
+      const meta = part.meta;
+      const repairs = [];
+      for (let a = 0; a < 9; a += 1) for (let b = a + 1; b < 9; b += 1) {
+        const candidate = [...meta.shown];
+        [candidate[a], candidate[b]] = [candidate[b], candidate[a]];
+        if (rowsColumnsEqual(candidate, 3)) repairs.push([a, b]);
+      }
+      assert(repairs.length === 1 && same(repairs, meta.repairs), id, difficulty, "자리 바꿈 해 유일성 오류");
+      const values = repairs[0].map((index) => meta.shown[index]);
+      assert(sum(values) === meta.result, id, difficulty, "자리 바꿈 두 수 합 오류");
+      if (difficulty === 1) assert(meta.knownSwapValue === values[0] && meta.requestedValue === values[1] && numericAnswer(part) === values[1], id, difficulty, "자리 바꿈 쉬움 단서 오류");
+      if (difficulty === 2) assert(!meta.knownSwapValue && !meta.requestedPair && numericAnswer(part) === meta.result, id, difficulty, "자리 바꿈 원본 구조 변경");
+      if (difficulty === 3) assert(same(meta.requestedPair, values) && meta.lineSum === sum(meta.solution.slice(0, 3)) && part.answer.includes(`한 줄 합 ${meta.lineSum}`), id, difficulty, "자리 바꿈 어려움 추가 답 오류");
+      return;
+    }
+    case 16: {
+      assert(parts.length === 4, id, difficulty, "삼각형 네 소문항 누락");
+      const expected = {
+        1: { values: [1, 2, 3, 4, 5, 6], targets: [9, 10, 11, 12] },
+        2: { values: [2, 3, 4, 5, 6, 7], targets: [12, 13, 14, 15] },
+        3: { values: [4, 5, 6, 7, 8, 9], targets: [18, 19, 20, 21] }
+      }[difficulty];
+      assert(same(parts.map((part) => part.meta.values), parts.map(() => expected.values)), id, difficulty, "삼각형 카드 범위 오류");
+      assert(same(parts.map((part) => part.meta.target), expected.targets), id, difficulty, "삼각형 목표 합 범위 오류");
+      parts.forEach((part) => {
+        const meta = part.meta;
+        assert(same([...meta.values].sort((a,b) => a - b), expected.values), id, difficulty, "삼각형 카드 수 오류");
+        assert(unitLineSums(meta.solution, meta.lines).every((value) => value === meta.target), id, difficulty, "삼각형 변의 합 오류");
+        assert(part.answer.includes(String(meta.target)) && same(part.answerVisual.shown, meta.solution), id, difficulty, "삼각형 답안 배치 오류");
+      });
+      if (difficulty === 2) assert(same(parts.map((part) => part.meta.solution), [[2, 7, 3, 5, 4, 6], [2, 7, 4, 3, 6, 5], [3, 6, 5, 2, 7, 4], [5, 4, 6, 2, 7, 3]]), id, difficulty, "원본 삼각형 답안 변경");
+      return;
+    }
+    case 17: {
+      const meta = parts[0].meta;
+      assert(same([...meta.solution].sort((a,b) => a - b), [1,2,3,4,5,6,7,8,9,10]), id, difficulty, "오각형 카드 수 오류");
+      assert(unitLineSums(meta.solution, meta.lines).every((value) => value === meta.lineSum), id, difficulty, "오각형 줄의 합 오류");
+      assert(meta.clueIndices.length === ({ 1: 8, 2: 6, 3: 4 }[difficulty]), id, difficulty, "오각형 난이도 단서 수 오류");
+      return;
+    }
+    case 18: {
+      const meta = parts[0].meta;
+      const [top, left, center, right, bottom] = meta.positions;
+      const expected = {
+        1: { values: [1, 2, 4, 5, 6], positions: [1, 2, 6, 4, 5], lineSum: 12 },
+        2: { values: [2, 4, 6, 8, 10], positions: [2, 4, 10, 6, 8], lineSum: 20 },
+        3: { values: [3, 7, 9, 13, 16], positions: [3, 7, 16, 9, 13], lineSum: 32 }
+      }[difficulty];
+      assert(same(meta.values, expected.values) && same(meta.positions, expected.positions) && meta.lineSum === expected.lineSum, id, difficulty, "원형 난이도 프로필 오류");
+      assert(same([...meta.values].sort((a,b) => a - b), [...expected.values].sort((a,b) => a - b)), id, difficulty, "원형 수 카드 오류");
+      assert(top + center + bottom === meta.lineSum && left + center + right === meta.lineSum && top + left + right + bottom === meta.ringSum, id, difficulty, "원형 직선·둘레 합 오류");
+      assert(parts[0].answer === String(meta.lineSum), id, difficulty, "원형 합 정답 오류");
+      return;
+    }
+    case 19: {
+      const meta = parts[0].meta;
+      const values = meta.values;
+      if (difficulty === 3) {
+        assert(values["㉥"] - values["㉠"] === 4 && values["㉠"] - values["㉡"] === 4 && values["㉠"] - values["㉢"] === 6 && values["㉢"] - values["㉣"] === 3 && values["㉤"] - values["㉣"] === 2, id, difficulty, "막대 길이 조건 오류");
+      } else {
+        assert(values["㉤"] - values["㉠"] === 4 && values["㉠"] - values["㉡"] === 4 && values["㉠"] - values["㉢"] === 6 && values["㉢"] - values["㉣"] === 3, id, difficulty, "막대 길이 조건 오류");
+      }
+      assert(values["㉡"] - values["㉣"] === meta.result && numericAnswer(parts[0]) === 5, id, difficulty, "막대 길이 차이 오류");
+      assert(meta.conditions.length === (difficulty === 1 ? 5 : difficulty === 2 ? 4 : 5) && meta.inferenceSteps === ({ 1: 1, 2: 2, 3: 4 }[difficulty]), id, difficulty, "막대 난이도 프로필 오류");
+      if (difficulty === 2) {
+        assert(same(meta.labels, ["㉠", "㉡", "㉢", "㉣", "㉤"]) && same(meta.values, { "㉠": 16, "㉡": 12, "㉢": 10, "㉣": 7, "㉤": 20 }), id, difficulty, "원본 막대 값 변경");
+        assert(same(meta.conditions, ["㉤은 ㉠보다 4cm 깁니다.", "㉣은 ㉢보다 3cm 짧습니다.", "㉢은 ㉠보다 6cm 짧습니다.", "㉠은 ㉡보다 4cm 깁니다."]), id, difficulty, "원본 막대 조건 변경");
+      }
+      return;
+    }
+    case 20: {
+      const meta = parts[0].meta;
+      const candidates = permutations(meta.names.slice(1)).map((tail) => [meta.names[0], ...tail]).filter((order) => meta.constraints.every((constraint) => unitQ20ConstraintHolds(order, constraint)));
+      assert(candidates.length === 1 && same(candidates[0], meta.solutionOrder), id, difficulty, "원탁 배치 유일성 오류");
+      const jimin = candidates[0].indexOf("지민");
+      const neighbors = [candidates[0][(jimin - 1 + candidates[0].length) % candidates[0].length], candidates[0][(jimin + 1) % candidates[0].length]].sort();
+      assert(same(neighbors, meta.neighbors) && parts[0].answer === neighbors.join(", "), id, difficulty, "원탁 이웃 정답 오류");
+      if (difficulty === 2) {
+        assert(same(meta.names, ["다현", "윤서", "지민", "지후", "상준"]), id, difficulty, "원본 원탁 인원 변경");
+        assert(same(meta.conditions, ["다현의 왼쪽에는 상준이가 앉아 있습니다.", "지후와 지민이는 이웃하여 앉지 않습니다.", "지후의 오른쪽에 앉은 사람은 윤서가 아닙니다."]), id, difficulty, "원본 원탁 조건 변경");
+      }
+      return;
+    }
+    case 21: {
+      const meta = parts[0].meta;
+      const candidates = permutations(meta.order).filter((order) => meta.relations.every(([winner, loser]) => order.indexOf(winner) < order.indexOf(loser)));
+      assert(candidates.length === 1 && same(candidates[0], meta.order), id, difficulty, "순위 관계 유일성 오류");
+      assert(parts[0].answer === meta.order.map((name, index) => `${index + 1}등 ${name}`).join(", "), id, difficulty, "순위 정답 배열 오류");
+      assert(meta.conditions.length === ({ 1: 5, 2: 4, 3: 6 }[difficulty]) && parts[0].visual.slots === meta.order.length, id, difficulty, "순위 난이도 프로필 오류");
+      if (difficulty === 2) {
+        assert(same(meta.order, ["고은", "승우", "주희", "샛별", "경헌", "민아"]), id, difficulty, "원본 순위 인원 변경");
+        assert(same(meta.conditions, ["주희는 샛별이를 이겼습니다.", "샛별이는 경헌이를 이겼습니다.", "민아는 경헌이에게 졌습니다.", "승우는 고은이에게 졌지만 주희에게 이겼습니다."]), id, difficulty, "원본 순위 조건 변경");
+      }
+      return;
+    }
+    case 22: {
+      const meta = parts[0].meta;
+      const candidates = preferenceSolutions(meta);
+      assert(meta.rows.every((row) => row.length === 2 && row.every((item) => Number.isInteger(item) && item >= 0 && item < meta.items.length)), id, difficulty, "선호 표 행 구조 오류");
+      assert(meta.rows.flat().reduce((counts, item) => { counts[item] += 1; return counts; }, Array(meta.items.length).fill(0)).every((count, item) => count === meta.totals[item]), id, difficulty, "선호 표 열 합 오류");
+      assert(candidates.length === 1 && same(candidates[0], meta.rows), id, difficulty, "선호 표 완성 유일성 오류");
+      assert(candidates[0][meta.targetRow].includes(meta.targetItem) && meta.result === meta.items[meta.targetItem] && parts[0].answer === meta.result, id, difficulty, "선호 표 빈칸 정답 오류");
+      if (difficulty === 2) {
+        assert(same(meta.names, ["A", "B", "C", "D"]) && same(meta.items, ["축구", "야구", "농구", "배구"]), id, difficulty, "원본 선호 표 범위 변경");
+        assert(same(meta.rows, [[0,3],[1,3],[0,2],[0,1]]) && same(meta.knownRows, [[0],[1],[0,2],[0,1]]) && same(meta.totals, [3,2,1,2]), id, difficulty, "원본 선호 표 조건 변경");
+      }
+      return;
+    }
+    case 23: {
+      const meta = parts[0].meta;
+      const candidates = predictionSolutions(meta.teams.length, meta.pairs);
+      assert(candidates.length === 1 && same(candidates[0], meta.solution), id, difficulty, "예상 결과 유일성 오류");
+      assert(meta.pairs.length === meta.statements.length && meta.pairs.every((pair) => pair.length === 2), id, difficulty, "예상 결과 단서 수 오류");
+      assert(meta.solution[meta.targetItem] === 0 && meta.result === meta.teams[meta.targetItem] && parts[0].answer === meta.result, id, difficulty, "예상 결과 우승팀 오류");
+      if (difficulty === 2) {
+        assert(same(meta.teams, ["한국", "브라질", "프랑스", "독일"]) && same(meta.solution, [1,0,2,3]), id, difficulty, "원본 예상 결과 범위 변경");
+        assert(same(meta.pairs, [[[3,0],[2,2]], [[0,1],[1,2]], [[3,3],[2,0]]]), id, difficulty, "원본 예상 결과 조건 변경");
+      }
+      return;
+    }
+    case 24: {
+      const meta = parts[0].meta;
+      const position = (order, name) => order.indexOf(name) + 1;
+      const candidates = permutations(meta.names).filter((order) => meta.constraints.every((constraint) => unitQ24ConstraintHolds(order, constraint)));
+      const targetRanks = new Set(candidates.map((order) => position(order, meta.target)));
+      assert(candidates.length > 0 && targetRanks.size === 1 && [...targetRanks][0] === meta.result && numericAnswer(parts[0]) === meta.result, id, difficulty, "등수 답 유일성 오류");
+      assert(parts[0].visual.slots === meta.names.length && meta.conditions.length === ({ 1: 6, 2: 5, 3: 6 }[difficulty]), id, difficulty, "등수 난이도 프로필 오류");
+      if (difficulty === 2) {
+        assert(same(meta.names, ["㉮", "㉯", "㉰", "㉱", "㉲"]) && same(meta.conditions, ["㉮는 2등도 4등도 아닙니다.", "㉯는 3등도 4등도 아닙니다.", "㉰는 1등도 2등도 아닙니다.", "㉱는 ㉮와 ㉯에게 졌습니다.", "㉲는 ㉯에게 졌지만 ㉮에게 이겼습니다."]), id, difficulty, "원본 등수 조건 변경");
+      }
+      return;
+    }
+    case 25: {
+      const meta = parts[0].meta;
+      const valid = (layout) => same([...layout].sort((a,b) => a - b), meta.values) && unitLineSums(layout, meta.lines).every((value) => value === meta.lineSum);
+      assert(problem.meta.multipleValidAnswers === true && meta.answerAlternatives.length >= 2, id, difficulty, "복수 정답 메타 누락");
+      assert(new Set(meta.answerAlternatives.map((layout) => layout.join(","))).size === meta.answerAlternatives.length && meta.answerAlternatives.every(valid), id, difficulty, "복수 정답 배치 조건 오류");
+      assert(valid(meta.solution) && meta.answerAlternatives.some((layout) => same(layout, meta.solution)), id, difficulty, "생성된 삼각형 배치 오류");
+      if (difficulty === 2) assert(meta.lineSum === 19 && same(meta.answerAlternatives, [[1,3,8,7,2,6,4,5,9], [1,2,9,7,3,5,4,6,8]]), id, difficulty, "원본 삼각형 합·답안 변경");
+      return;
+    }
+    default:
+      fail(id, difficulty, "단원 테스트 검산 분기 없음");
+  }
+}
+
 function numbersInReference(reference) {
   if (Array.isArray(reference.numbers)) return reference.numbers;
   return Array.from({ length: reference.to - reference.from + 1 }, (_, index) => reference.from + index);
@@ -392,4 +929,43 @@ for (const typeId of book09TypeIds) {
   }
 }
 
-console.log(`book-09 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types (${book09TypeIds.length} new), ${generated.toLocaleString("en-US")} generated checks`);
+const requestedUnitIterations = Number(process.env.BOOK09_UNIT_ITERATIONS || 100);
+const unitIterations = Number.isFinite(requestedUnitIterations) ? Math.max(100, requestedUnitIterations) : 100;
+assert(BOOK09_UNIT_TEST_SPECS.length === 25, "book09-unit-tests", 0, `단원 테스트 명세 수 ${BOOK09_UNIT_TEST_SPECS.length}`);
+assert(Object.keys(BOOK09_UNIT_TEST_GENERATORS).length === 25, "book09-unit-tests", 0, `단원 테스트 생성기 수 ${Object.keys(BOOK09_UNIT_TEST_GENERATORS).length}`);
+assert(BOOK09_UNIT_TEST_SPECS.every((spec, index) => spec.question === index + 1), "book09-unit-tests", 0, "단원 테스트 번호 순서 오류");
+
+let unitGenerated = 0;
+for (const spec of BOOK09_UNIT_TEST_SPECS) {
+  const generator = BOOK09_UNIT_TEST_GENERATORS[spec.typeId];
+  assert(typeof generator === "function", spec.typeId, 0, "단원 테스트 생성기 누락");
+  for (const difficulty of [1, 2, 3]) {
+    for (let index = 0; index < unitIterations; index += 1) {
+      validateUnitTest(generator({ difficulty }), spec, difficulty);
+      unitGenerated += 1;
+    }
+  }
+}
+
+const difficultyFingerprintQuestions = Array.from({ length: 25 }, (_, index) => index + 1);
+const seededRandom = (seed) => {
+  let state = seed >>> 0;
+  return () => ((state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 4294967296);
+};
+const originalRandom = Math.random;
+let difficultyFingerprintChecks = 0;
+for (const question of difficultyFingerprintQuestions) {
+  const spec = BOOK09_UNIT_TEST_SPECS.find((candidate) => candidate.question === question);
+  for (const seed of [9121, 9122, 9123]) {
+    const fingerprints = [1, 2, 3].map((difficulty) => {
+      Math.random = seededRandom(seed);
+      return unitDifficultyFingerprint(spec.generator({ difficulty }));
+    });
+    Math.random = originalRandom;
+    assert(new Set(fingerprints).size === 3, spec.typeId, 0, `난이도 fingerprint가 1·2·3에서 구분되지 않음 (seed ${seed})`);
+    difficultyFingerprintChecks += 1;
+  }
+}
+Math.random = originalRandom;
+
+console.log(`book-09 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types (${book09TypeIds.length} new), ${generated.toLocaleString("en-US")} generated checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks, ${difficultyFingerprintChecks} difficulty fingerprints`);

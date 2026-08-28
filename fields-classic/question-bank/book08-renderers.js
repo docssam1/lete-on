@@ -26,6 +26,10 @@ function matrix(visual) {
   return `<div class="b8-matrix-wrap"><table class="b8-matrix"><thead><tr><th>${escapeHtml(visual.operation || "+")}</th>${columnLabels.map((value) => `<th>${escapeHtml(value)}</th>`).join("")}</tr></thead><tbody>${visual.cells.map((row, rowIndex) => `<tr><th>${escapeHtml(rowLabels[rowIndex])}</th>${row.map((value, columnIndex) => `<td class="${rowIndex === visual.targetRow && columnIndex === visual.targetColumn ? "target" : ""}">${escapeHtml(value)}</td>`).join("")}</tr>`).join("")}</tbody></table>${visual.rowLabels ? `<small>가로값: ${visual.rowLabels.map((label, index) => `${label}=${visual.rows[index]}`).join(" · ")}<br>세로값: ${visual.columnLabels.map((label, index) => `${label}=${visual.columns[index]}`).join(" · ")}</small>` : ""}</div>`;
 }
 
+function sumMatrix(visual) {
+  return `<div class="b8-sum-matrix" role="img" aria-label="가로와 세로의 합을 맞추는 3 곱하기 3 덧셈 매트릭스"><div class="cells">${visual.cells.flat().map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div><div class="rows">${visual.rowTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${escapeHtml(value)}</b>`).join("")}</div><div class="columns">${visual.columnTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${escapeHtml(value)}</b>`).join("")}</div></div>`;
+}
+
 function operationGrid(visual) {
   return `<div class="b8-operation-grid">${visual.rows.map((row) => `<p>${row.map((value) => box(value)).join("")}</p>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
 }
@@ -92,6 +96,7 @@ export function book08Markup(visual) {
     case "overlap-circles": return overlapCircles(visual);
     case "symbol-equations": return symbolEquations(visual);
     case "matrix": return matrix(visual);
+    case "sum-matrix": return sumMatrix(visual);
     case "operation-grid": return operationGrid(visual);
     case "conditions": return conditions(visual);
     case "vertical": return vertical(visual);

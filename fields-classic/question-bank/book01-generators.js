@@ -207,59 +207,119 @@ function isCongruentPartition(rows, columns, labels, pieceCount) {
   return groups.every((group) => polyominoCanonical(group) === shape);
 }
 
-function randomBalancedLabels(cellCount, pieceCount) {
-  return shuffle(Array.from({ length: cellCount }, (_, index) => String.fromCharCode(65 + Math.floor(index / (cellCount / pieceCount)))));
+function transformPartitionLabels(labels, size, turn, mirrored) {
+  const output = Array(labels.length).fill("");
+  labels.forEach((label, index) => {
+    let row = Math.floor(index / size);
+    let column = index % size;
+    if (mirrored) column = size - 1 - column;
+    for (let count = 0; count < turn; count += 1) [row, column] = [column, size - 1 - row];
+    output[row * size + column] = label;
+  });
+  return output;
 }
 
-function partitionOptions(rows, columns, pieceCount, validLabels, symbols = null) {
-  const validity = (labels) => {
-    if (!isCongruentPartition(rows, columns, labels, pieceCount)) return false;
-    if (!symbols) return true;
-    const groups = partitionGroups(rows, columns, labels);
-    const signatures = groups.map((group) => group.map(([row, column]) => symbols[row * columns + column]).sort().join(""));
-    return signatures.every((signature) => signature === signatures[0]);
-  };
-  const invalid = [];
-  let attempts = 0;
-  while (invalid.length < 3 && attempts < 2000) {
-    const labels = randomBalancedLabels(rows * columns, pieceCount);
-    const key = labels.join("");
-    if (!validity(labels) && !invalid.some((item) => item.join("") === key)) invalid.push(labels);
-    attempts += 1;
-  }
-  const options = shuffle([{ labels: validLabels, correct: true }, ...invalid.slice(0, 3).map((labels) => ({ labels, correct: false }))])
-    .map((option, index) => ({ ...option, option: index + 1 }));
-  return { options, correctOption: options.find((option) => option.correct).option, optionValidity: options.map((option) => validity(option.labels)) };
-}
-
-function makePartition(pieceCount, withSymbols = false) {
-  const rows = pieceCount === 2 ? 3 : 4;
-  const columns = 4;
-  const validLabels = Array.from({ length: rows * columns }, (_, index) => {
+function partitionCutKeys(rows, columns, labels) {
+  const cuts = [];
+  labels.forEach((label, index) => {
     const row = Math.floor(index / columns);
     const column = index % columns;
-    if (pieceCount === 2) return column < 2 ? "A" : "B";
-    return String.fromCharCode(65 + Math.floor(row / 2) * 2 + Math.floor(column / 2));
+    if (column < columns - 1 && labels[index + 1] !== label) cuts.push(`${index}:right`);
+    if (row < rows - 1 && labels[index + columns] !== label) cuts.push(`${index}:bottom`);
   });
-  const symbolSet = ["○", "△", "□", "★"];
-  const symbols = withSymbols
-    ? validLabels.map((label, index) => symbolSet[(index % 2) + (Math.floor(index / columns) % 2) * 2])
-    : null;
-  const made = partitionOptions(rows, columns, pieceCount, validLabels, symbols);
+  return cuts;
+}
+
+function partitionGuideCuts(rows, columns, labels, pieceCount, difficulty) {
+  const centerRow = rows / 2;
+  const centerColumn = columns / 2;
+  const ranked = partitionCutKeys(rows, columns, labels).map((key) => {
+    const [rawIndex, side] = key.split(":");
+    const index = Number(rawIndex);
+    const row = Math.floor(index / columns);
+    const column = index % columns;
+    const x = side === "right" ? column + 1 : column + 0.5;
+    const y = side === "bottom" ? row + 1 : row + 0.5;
+    return { key, distance: (x - centerColumn) ** 2 + (y - centerRow) ** 2 };
+  }).sort((a, b) => a.distance - b.distance || a.key.localeCompare(b.key));
+  const near = ranked.slice(0, Math.min(ranked.length, pieceCount === 2 ? 4 : 8));
+  const revealCount = difficulty <= 1 ? 2 : 1;
+  return shuffle(near).slice(0, Math.min(revealCount, near.length)).map((item) => item.key);
+}
+
+function makePartition(pieceCount, { difficulty = 2 } = {}) {
+  const rows = 4;
+  const columns = 4;
+  const twoPieceTemplates = {
+    straight: Array.from({ length: 16 }, (_, index) => (index % 4 < 2 ? "A" : "B")),
+    step: ["A","A","B","B", "A","B","B","B", "A","A","A","B", "A","A","B","B"],
+    comb: ["A","B","B","B", "A","A","A","B", "A","B","B","B", "A","A","A","B"]
+  };
+  const fourPieceTemplates = {
+    squares: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 8) * 2 + Math.floor(index % 4 / 2))),
+    elbows: (() => {
+      const labels = Array(16).fill("");
+      [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]].forEach((cells, groupIndex) => {
+        cells.forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+      });
+      return labels;
+    })()
+  };
+  const templateNames = pieceCount === 2
+    ? (difficulty <= 1 ? ["straight", "step"] : difficulty >= 3 ? ["step", "comb"] : ["straight", "step", "comb"])
+    : (difficulty <= 1 ? ["squares"] : ["squares", "elbows"]);
+  const templateName = sample(templateNames);
+  const baseLabels = (pieceCount === 2 ? twoPieceTemplates : fourPieceTemplates)[templateName];
+  const labels = transformPartitionLabels(baseLabels, 4, Math.floor(Math.random() * 4), Math.random() < 0.5);
+  const guideCuts = partitionGuideCuts(rows, columns, labels, pieceCount, difficulty);
   return {
-    prompt: withSymbols
-      ? "네 조각의 모양과 크기가 같고, 각 조각에 네 가지 기호가 하나씩 들어가도록 나눈 보기를 고르세요."
-      : `전체를 돌려서 포개면 정확히 겹치는 ${pieceCount}조각으로 나눈 보기를 고르세요.`,
-    visual: { kind: "book1", subtype: "partition-choice", rows, columns, pieceCount, symbols, options: made.options },
-    answer: `${made.correctOption}번`,
-    solution: `${made.correctOption}번은 모든 조각이 이어져 있고, 돌리거나 뒤집으면 모양과 크기가 정확히 같습니다.${withSymbols ? " 또 각 조각에 ○, △, □, ★가 하나씩 있습니다." : ""}`,
-    meta: { family: withSymbols ? "symbol-partition" : `partition-${pieceCount}`, correctOption: made.correctOption, optionValidity: made.optionValidity }
+    prompt: `가운데 점을 중심으로 돌렸을 때 모양과 크기가 정확히 겹치는 ${pieceCount}조각이 되도록 선을 이어 나누세요.`,
+    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount, symbols: null, guideCuts, pivot: true },
+    answer: `그림과 같이 ${pieceCount}조각으로 나눕니다.`,
+    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount, symbols: null, guideCuts, labels, pivot: true },
+    solution: `주어진 선을 중심점 둘레로 ${pieceCount === 2 ? "반 바퀴" : "반의 반 바퀴씩"} 돌려 이어 그리면 ${pieceCount}조각의 모양과 크기가 같아집니다.`,
+    meta: { family: `partition-${pieceCount}`, labels, guideCuts, templateName }
   };
 }
 
-function rotationalPartitionTwo() { return makePartition(2); }
-function rotationalPartitionFour() { return makePartition(4); }
-function symbolBalancedCongruentPartition() { return makePartition(4, true); }
+function rotationalPartitionTwo(context = {}) { return makePartition(2, context); }
+function rotationalPartitionFour(context = {}) { return makePartition(4, context); }
+function symbolBalancedCongruentPartition({ difficulty = 2 } = {}) {
+  const rows = 4;
+  const columns = 4;
+  const templates = {
+    stripRows: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 4))),
+    stripColumns: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + index % 4)),
+    squares: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 8) * 2 + Math.floor(index % 4 / 2))),
+    elbows: (() => {
+      const labels = Array(16).fill("");
+      [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]].forEach((cells, groupIndex) => {
+        cells.forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+      });
+      return labels;
+    })()
+  };
+  const templateName = difficulty <= 1
+    ? shuffle(["stripRows", "stripColumns"])[0]
+    : difficulty >= 3 ? "elbows" : "squares";
+  const labels = templates[templateName];
+  const symbolSet = ["○", "△", "□", "★"];
+  const symbols = Array(rows * columns).fill("");
+  partitionGroups(rows, columns, labels).forEach((group) => {
+    shuffle(symbolSet).forEach((symbol, index) => {
+      const [row, column] = group[index];
+      symbols[row * columns + column] = symbol;
+    });
+  });
+  return {
+    prompt: "네 조각의 모양과 크기가 같고, 각 조각에 네 가지 기호가 하나씩 들어가도록 선을 그어 나누세요.",
+    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols },
+    answer: "그림과 같이 네 조각으로 나눕니다.",
+    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels },
+    solution: "각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ○, △, □, ★가 하나씩 들어 있습니다.",
+    meta: { family: "symbol-partition", labels, symbols, templateName }
+  };
+}
 
 const DIGIT_SEGMENTS = Object.freeze({
   0: "abcdef", 1: "bc", 2: "abdeg", 3: "abcdg", 4: "bcfg",
@@ -312,21 +372,21 @@ function digitalDigitTransform({ difficulty = 2 }) {
   };
 }
 
-function makeTwoDigitTransform(difficulty) {
-  const operations = difficulty === 1 ? ["mirror-top-bottom"] : ["mirror-left-right", "mirror-top-bottom", "rotate-half"];
+function makeTwoDigitTransform(difficulty, allowedOperations = null, requireChanged = difficulty > 1) {
+  const operations = allowedOperations || (difficulty === 1 ? ["mirror-top-bottom"] : ["mirror-left-right", "mirror-top-bottom", "rotate-half"]);
   for (let attempt = 0; attempt < 100; attempt += 1) {
     const operation = sample(operations);
     const pairs = validDigitPairs(operation, true);
     const source = [sample(pairs)[0], sample(pairs)[0]];
-    if (source[0] === 0) continue;
+    if (source[0] === 0 || source[0] === source[1]) continue;
     const transformed = transformDisplay(source, operation);
     if (!transformed || transformed[0] === 0) continue;
     const sourceValue = source[0] * 10 + source[1];
     const answer = transformed[0] * 10 + transformed[1];
-    if (answer === sourceValue && difficulty > 1) continue;
+    if (answer === sourceValue && requireChanged) continue;
     return { operation, source, transformed, sourceValue, answer };
   }
-  return { operation: "rotate-half", source: [6, 9], transformed: [6, 9], sourceValue: 69, answer: 69 };
+  return { operation: "rotate-half", source: [1, 9], transformed: [6, 1], sourceValue: 19, answer: 61 };
 }
 
 function digitalTwoDigitTransform({ difficulty = 2 }) {
@@ -342,35 +402,74 @@ function digitalTwoDigitTransform({ difficulty = 2 }) {
   };
 }
 
-function digitalTransformBoardSum({ difficulty = 2 }) {
-  const count = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
-  const operations = ["mirror-left-right", "mirror-top-bottom", "rotate-half"];
-  const rows = Array.from({ length: count }, () => {
-    const operation = sample(operations);
-    const [digit, result] = sample(validDigitPairs(operation, true));
-    return { digit, operation, result };
+const BOARD_TURN_LABELS = Object.freeze({
+  "rotate-right-quarter": "시계방향(오른쪽)으로 반의 반 바퀴",
+  "rotate-left-quarter": "시계 반대방향(왼쪽)으로 반의 반 바퀴",
+  "rotate-half": "반 바퀴"
+});
+
+const BOARD_TURN_STEPS = Object.freeze({
+  "rotate-right-quarter": 1,
+  "rotate-left-quarter": 3,
+  "rotate-half": 2
+});
+
+function makeDigitalOrientationBoard(operation, difficulty) {
+  const digits = shuffle([1,2,3,4,5,6,7,8,9]);
+  const turn = BOARD_TURN_STEPS[operation];
+  const uprightBeforeTurn = (4 - turn) % 4;
+  const targetCount = difficulty <= 1 ? 4 : difficulty >= 3 ? 2 : 3;
+  const targetIndices = new Set(shuffle([0,1,2,3,4,5,6,7,8]).slice(0, targetCount));
+  const cells = digits.map((digit, index) => {
+    if (targetIndices.has(index)) return { digit, orientation: uprightBeforeTurn };
+    const otherOrientations = [0,1,2,3].filter((value) => value !== uprightBeforeTurn);
+    return { digit, orientation: sample(otherOrientations) };
   });
-  const answer = rows.reduce((sum, row) => sum + row.result, 0);
+  const uprightDigits = cells.filter((cell) => (cell.orientation + turn) % 4 === 0).map((cell) => cell.digit);
+  return { operation, cells, uprightDigits, answer: uprightDigits.reduce((sum, digit) => sum + digit, 0) };
+}
+
+function makeDigitalBoardSum(operation, difficulty) {
+  const made = makeDigitalOrientationBoard(operation, difficulty);
   return {
-    prompt: "각 디지털 숫자를 화살표의 설명대로 움직였습니다. 나온 숫자를 모두 더하세요.",
-    visual: { kind: "book1", subtype: "digital-board", rows },
-    answer: String(answer),
-    solution: `움직인 뒤의 숫자는 ${rows.map((row) => row.result).join(", ")}이고, 합은 ${rows.map((row) => row.result).join(" + ")} = ${answer}입니다.`,
-    meta: { family: "digital-board-sum", results: rows.map((row) => row.result), answer }
+    prompt: `다음 숫자판을 ${BOARD_TURN_LABELS[operation]} 돌렸을 때, 똑바로 놓이는 수들의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "digital-orientation-board", cells: made.cells, operation },
+    answer: String(made.answer),
+    solution: `숫자판 전체를 ${BOARD_TURN_LABELS[operation]} 돌리면 ${made.uprightDigits.join(", ")}이 똑바로 놓입니다. 따라서 ${made.uprightDigits.join(" + ")} = ${made.answer}입니다.`,
+    meta: { family: "digital-board-sum", operation, uprightDigits: made.uprightDigits, answer: made.answer }
   };
 }
 
-function digitalTransformAddition({ difficulty = 2 }) {
-  const first = makeTwoDigitTransform(difficulty);
-  const second = makeTwoDigitTransform(difficulty);
-  const answer = first.answer + second.answer;
+function digitalTransformBoardSum({ difficulty = 2 }) {
+  const operation = sample(["rotate-right-quarter", "rotate-left-quarter"]);
+  return makeDigitalBoardSum(operation, difficulty);
+}
+
+function digitalBoardHalfTurnSum({ difficulty = 2 }) {
+  return makeDigitalBoardSum("rotate-half", difficulty);
+}
+
+function makeRelatedDigitalAddition(operation, layout, difficulty) {
+  const made = makeTwoDigitTransform(difficulty, [operation], true);
+  const answer = made.sourceValue + made.answer;
+  const transformedPhrase = operation === "mirror-left-right"
+    ? "그 수를 오른쪽으로 뒤집어 읽은 수"
+    : "그 수를 반 바퀴 돌려 읽은 수";
   return {
-    prompt: "두 디지털 수를 각각 설명대로 움직인 뒤, 새로 보이는 두 수를 더하세요.",
-    visual: { kind: "book1", subtype: "digital-addition", rows: [first, second] },
+    prompt: `다음 덧셈식은 원래 두 자리 수와 ${transformedPhrase}를 더한 것입니다. 빈칸에 알맞은 수를 구하세요.`,
+    visual: { kind: "book1", subtype: "digital-related-addition", source: made.source, operation, layout },
     answer: String(answer),
-    solution: `움직인 뒤 ${first.answer}과 ${second.answer}이므로 ${first.answer} + ${second.answer} = ${answer}입니다.`,
-    meta: { family: "digital-addition", values: [first.answer, second.answer], answer }
+    solution: `원래 수 ${made.sourceValue}을 ${OPERATION_LABELS[operation]} 읽으면 ${made.answer}입니다. 따라서 ${made.sourceValue} + ${made.answer} = ${answer}입니다.`,
+    meta: { family: "digital-related-addition", operation, layout, source: made.sourceValue, transformed: made.answer, answer }
   };
+}
+
+function digitalFlipAdditionHorizontal({ difficulty = 2 }) {
+  return makeRelatedDigitalAddition("mirror-left-right", "horizontal", difficulty);
+}
+
+function digitalTransformAddition({ difficulty = 2 }) {
+  return makeRelatedDigitalAddition("rotate-half", "vertical", difficulty);
 }
 
 function distinctPairValues(pairSum, count) {
@@ -386,41 +485,74 @@ function distinctPairValues(pairSum, count) {
   return pairs;
 }
 
-function circularMagicLineSum({ difficulty = 2 }) {
-  const center = randomInt(2, 8);
-  let pairSum;
-  let pairs;
-  do {
-    pairSum = randomInt(9, difficulty === 3 ? 20 : 15);
-    pairs = distinctPairValues(pairSum, 3);
-  } while (pairs.length < 3);
-  const nodes = [pairs[0][0], pairs[1][0], pairs[2][0], pairs[0][1], pairs[1][1], pairs[2][1]];
-  const hidden = randomInt(0, 5);
-  const shown = nodes.map((value, index) => index === hidden ? null : value);
-  const answer = nodes[hidden];
+function circularMagicProblem(cardCount, difficulty) {
+  const cards = Array.from({ length: cardCount }, (_, index) => index + 1);
+  const centerChoices = [cards[0], cards[Math.floor(cardCount / 2)], cards.at(-1)];
+  const center = difficulty === 1 ? centerChoices[1] : sample(centerChoices);
+  const remaining = cards.filter((value) => value !== center);
+  const pairs = [];
+  while (remaining.length) pairs.push([remaining.shift(), remaining.pop()]);
+  const arrangedPairs = shuffle(pairs).map((pair) => Math.random() < 0.5 ? pair : [...pair].reverse());
+  const half = arrangedPairs.length;
+  const nodes = Array(half * 2).fill(null);
+  arrangedPairs.forEach(([first, second], index) => {
+    nodes[index] = first;
+    nodes[index + half] = second;
+  });
+  const lineSum = nodes[0] + center + nodes[half];
   return {
-    prompt: "가운데를 지나는 세 줄에 놓인 세 수의 합이 모두 같도록 ㉠에 알맞은 수를 쓰세요.",
-    visual: { kind: "book1", subtype: "circle-magic", center, shown, lineSum: pairSum + center },
-    answer: String(answer),
-    solution: `한 줄의 합은 ${pairSum + center}입니다. 가운데 ${center}과 맞은편 수를 빼면 ㉠은 ${answer}입니다.`,
-    meta: { family: "circle-magic", nodes, center, hidden, lineSum: pairSum + center, answer }
+    prompt: `1부터 ${cardCount}까지의 수 카드를 한 번씩 사용하여 가운데를 지나는 ${half}줄의 합이 모두 같도록 원형진을 완성하고 한 줄의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "circle-magic", cards, center: null, shown: nodes.map(() => null), lineSum: null },
+    answerVisual: { kind: "book1", subtype: "circle-magic", cards: [], center, shown: nodes, lineSum },
+    answer: `한 줄의 합 ${lineSum}`,
+    responseKind: "drawing",
+    solution: `가운데에 ${center}을 놓고 마주 보는 두 수의 합이 같도록 배치하면 한 줄의 합은 ${lineSum}입니다.`,
+    meta: { family: "circle-magic", cards, nodes, center, lineSum, lineCount: half }
+  };
+}
+
+function circularMagicLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(9, difficulty);
+}
+
+function circularMagicSevenLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(7, difficulty);
+}
+
+function circularMagicElevenLineSum({ difficulty = 2 }) {
+  return circularMagicProblem(11, difficulty);
+}
+
+function fiveCardMagicProblem(layout, difficulty) {
+  const step = difficulty === 1 ? 1 : difficulty === 2 ? sample([1, 2]) : sample([2, 3]);
+  const start = randomInt(1, difficulty === 3 ? 5 : 3);
+  const cards = Array.from({ length: 5 }, (_, index) => start + index * step);
+  const shared = cards[2];
+  const pairs = shuffle([[cards[0], cards[4]], [cards[1], cards[3]]])
+    .map((pair) => Math.random() < 0.5 ? pair : [...pair].reverse());
+  const values = layout === "cross"
+    ? [pairs[0][0], pairs[0][1], pairs[1][0], shared, pairs[1][1]]
+    : [pairs[0][0], pairs[0][1], shared, pairs[1][0], pairs[1][1]];
+  const lines = layout === "cross" ? [[0,3,1],[2,3,4]] : [[0,1,2],[2,3,4]];
+  const lineSum = lines[0].reduce((sum, index) => sum + values[index], 0);
+  const shapeName = layout === "cross" ? "십자" : "T자";
+  return {
+    prompt: `주어진 다섯 수 카드를 한 번씩 사용하여 가로와 세로에 놓인 세 수의 합이 같도록 ${shapeName} 마방진을 완성하고 한 줄의 합을 구하세요.`,
+    visual: { kind: "book1", subtype: "five-card-magic", layout, cards, shown: values.map(() => null), lineSum: null },
+    answerVisual: { kind: "book1", subtype: "five-card-magic", layout, cards: [], shown: values, lineSum },
+    answer: `한 줄의 합 ${lineSum}`,
+    responseKind: "drawing",
+    solution: `두 줄이 함께 지나는 칸에 ${shared}을 놓고, 나머지 수를 합이 같은 두 쌍으로 나누어 놓으면 한 줄의 합은 ${lineSum}입니다.`,
+    meta: { family: "five-card-magic", layout, cards, values, lines, lineSum }
   };
 }
 
 function crossShapeMagicSum({ difficulty = 2 }) {
-  const center = randomInt(2, 9);
-  const pairSum = randomInt(8, difficulty === 3 ? 22 : 16);
-  const top = randomInt(1, pairSum - 1);
-  const left = randomInt(1, pairSum - 1);
-  const values = [top, pairSum - top, left, pairSum - left];
-  const hidden = randomInt(0, 3);
-  return {
-    prompt: "가로줄과 세로줄에 놓인 세 수의 합이 같도록 ㉠에 알맞은 수를 쓰세요.",
-    visual: { kind: "book1", subtype: "cross-magic", center, shown: values.map((value, index) => index === hidden ? null : value), lineSum: pairSum + center },
-    answer: String(values[hidden]),
-    solution: `완성된 줄의 합 ${pairSum + center}에서 가운데 ${center}과 보이는 수를 빼면 ㉠은 ${values[hidden]}입니다.`,
-    meta: { family: "cross-magic", center, values, hidden, lineSum: pairSum + center, answer: values[hidden] }
-  };
+  return fiveCardMagicProblem("cross", difficulty);
+}
+
+function tShapeMagicSum({ difficulty = 2 }) {
+  return fiveCardMagicProblem("t-shape", difficulty);
 }
 
 function gridSums(values, rows, columns) {
@@ -430,48 +562,124 @@ function gridSums(values, rows, columns) {
   };
 }
 
-function gakuroCardPlacement({ difficulty = 2 }) {
-  const values = shuffle([1,2,3,4,5,6,7,8,9]).slice(0, 4);
-  const { rowSums, columnSums } = gridSums(values, 2, 2);
-  const hiddenCount = difficulty === 1 ? 1 : difficulty === 2 ? 2 : 3;
-  const hidden = shuffle([0,1,2,3]).slice(0, hiddenCount).sort((a,b) => a-b);
-  const shown = values.map((value, index) => hidden.includes(index) ? null : value);
+function maskedGridSums(values, rows, columns, mask) {
+  const activeValue = (index) => mask[index] ? values[index] : 0;
   return {
-    prompt: "네 수 카드를 한 번씩 사용하여 가로와 세로의 합이 맞도록 빈칸을 채우세요.",
-    visual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 2, cards: [...values].sort((a,b) => a-b), shown, rowSums, columnSums },
-    answer: hidden.map((index) => values[index]).join(", "),
-    solution: `줄의 합에서 보이는 수를 빼며 채우면 빈칸은 차례로 ${hidden.map((index) => values[index]).join(", ")}입니다.`,
-    meta: { family: "gakuro-card", values, hidden, rowSums, columnSums, answerValues: hidden.map((index) => values[index]), uniqueCount: 1 }
+    rowSums: Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => activeValue(row * columns + column)).reduce((sum, value) => sum + value, 0)),
+    columnSums: Array.from({ length: columns }, (_, column) => Array.from({ length: rows }, (_, row) => activeValue(row * columns + column)).reduce((sum, value) => sum + value, 0))
   };
 }
 
-const SIX_PERMUTATIONS = [];
-eachPermutation([1,2,3,4,5,6], (values) => SIX_PERMUTATIONS.push(values));
+function countGakuroSolutions({ rows, columns, mask, shown, cards, rowSums, columnSums }, limit = 2) {
+  const values = shown.map((value, index) => mask[index] ? value : null);
+  const hidden = values.map((value, index) => mask[index] && value == null ? index : -1).filter((index) => index >= 0);
+  let count = 0;
+  const visit = (depth, remaining) => {
+    if (count >= limit) return;
+    if (depth === hidden.length) {
+      const sums = maskedGridSums(values, rows, columns, mask);
+      if (sums.rowSums.join() === rowSums.join() && sums.columnSums.join() === columnSums.join()) count += 1;
+      return;
+    }
+    const index = hidden[depth];
+    const row = Math.floor(index / columns);
+    const column = index % columns;
+    for (let cursor = 0; cursor < remaining.length; cursor += 1) {
+      const value = remaining[cursor];
+      values[index] = value;
+      const rowIndices = Array.from({ length: columns }, (_, offset) => row * columns + offset).filter((target) => mask[target]);
+      const columnIndices = Array.from({ length: rows }, (_, offset) => offset * columns + column).filter((target) => mask[target]);
+      const rowReady = rowIndices.every((target) => values[target] != null);
+      const columnReady = columnIndices.every((target) => values[target] != null);
+      const rowTotal = rowIndices.reduce((sum, target) => sum + (values[target] || 0), 0);
+      const columnTotal = columnIndices.reduce((sum, target) => sum + (values[target] || 0), 0);
+      if (rowTotal <= rowSums[row] && columnTotal <= columnSums[column]
+        && (!rowReady || rowTotal === rowSums[row]) && (!columnReady || columnTotal === columnSums[column])) {
+        visit(depth + 1, remaining.filter((_, itemIndex) => itemIndex !== cursor));
+      }
+      values[index] = null;
+      if (count >= limit) break;
+    }
+  };
+  visit(0, cards);
+  return count;
+}
+
+const GAKURO_LAYOUTS = Object.freeze({
+  square: { rows: 2, columns: 2, mask: [1,1,1,1], label: "2×2" },
+  rectangle: { rows: 3, columns: 2, mask: [1,1,1,1,1,1], label: "3×2" },
+  irregular: { rows: 3, columns: 3, mask: [1,1,0,1,1,1,0,1,1], label: "계단 모양" },
+  gridSix: { rows: 3, columns: 2, mask: [1,1,1,1,1,1], label: "3×2" },
+  gridNine: { rows: 3, columns: 3, mask: [1,1,1,1,1,1,1,1,1], label: "3×3" },
+  gridIrregular: { rows: 3, columns: 3, mask: [1,1,0,1,1,1,0,1,1], label: "계단 모양" }
+});
+
+function makeGakuroProblem(layoutId, difficulty, cardMode) {
+  const layout = GAKURO_LAYOUTS[layoutId];
+  const active = layout.mask.map((value, index) => value ? index : -1).filter((index) => index >= 0);
+  for (let attempt = 0; attempt < 160; attempt += 1) {
+    const start = randomInt(1, difficulty === 3 ? 4 : 2);
+    const pool = Array.from({ length: active.length }, (_, index) => start + index);
+    const shuffled = shuffle(pool);
+    const values = Array(layout.rows * layout.columns).fill(null);
+    active.forEach((index, order) => { values[index] = shuffled[order]; });
+    const { rowSums, columnSums } = maskedGridSums(values, layout.rows, layout.columns, layout.mask);
+    const fixedOrder = shuffle(active);
+    const initialFixed = layoutId === "square" ? 0
+      : layoutId === "gridNine" ? (difficulty === 1 ? 5 : difficulty === 2 ? 4 : 3)
+        : difficulty === 1 ? 2 : 1;
+    const fixed = fixedOrder.slice(0, initialFixed);
+    let shown = values.map((value, index) => layout.mask[index] && fixed.includes(index) ? value : null);
+    let hidden = active.filter((index) => shown[index] == null);
+    let cards = hidden.map((index) => values[index]).sort((a, b) => a - b);
+    let uniqueCount = countGakuroSolutions({ ...layout, shown, cards, rowSums, columnSums });
+    while (uniqueCount !== 1 && fixed.length < active.length - 1) {
+      fixed.push(fixedOrder[fixed.length]);
+      shown = values.map((value, index) => layout.mask[index] && fixed.includes(index) ? value : null);
+      hidden = active.filter((index) => shown[index] == null);
+      cards = hidden.map((index) => values[index]).sort((a, b) => a - b);
+      uniqueCount = countGakuroSolutions({ ...layout, shown, cards, rowSums, columnSums });
+    }
+    if (uniqueCount !== 1 || hidden.length < 2) continue;
+    const promptLead = cardMode
+      ? `주어진 수 카드를 빈칸에 한 번씩만 넣어 ${layout.label} 가쿠로를 완성하세요.`
+      : `${pool[0]}부터 ${pool.at(-1)}까지의 서로 다른 수를 한 번씩만 써서 ${layout.label} 가쿠로를 완성하세요.`;
+    const visualBase = { kind: "book1", subtype: "sum-grid", rows: layout.rows, columns: layout.columns, mask: layout.mask, rowSums, columnSums };
+    return {
+      prompt: promptLead,
+      visual: { ...visualBase, cards: cardMode ? cards : [], rangeLabel: cardMode ? "" : `${pool[0]}~${pool.at(-1)}를 한 번씩`, shown },
+      answerVisual: { ...visualBase, cards: [], rangeLabel: "", shown: values },
+      answer: "그림과 같이 채웁니다.",
+      responseKind: "drawing",
+      solution: "가로 합과 세로 합을 동시에 확인하며 한 칸씩 채우면 답의 배치가 하나로 정해집니다.",
+      meta: { family: "gakuro-layout", layoutId, values, mask: layout.mask, hidden, cards, rowSums, columnSums, uniqueCount }
+    };
+  }
+  return null;
+}
+
+function gakuroCardPlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("square", difficulty, true);
+}
+
+function gakuroCardRectanglePlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("rectangle", difficulty, true);
+}
+
+function gakuroCardIrregularPlacement({ difficulty = 2 }) {
+  return makeGakuroProblem("irregular", difficulty, true);
+}
 
 function gakuroGridSum({ difficulty = 2 }) {
-  const values = sample(SIX_PERMUTATIONS);
-  const { rowSums, columnSums } = gridSums(values, 2, 3);
-  const order = shuffle([0,1,2,3,4,5]);
-  const clues = order.slice(0, difficulty === 1 ? 3 : difficulty === 2 ? 2 : 1);
-  const candidates = () => SIX_PERMUTATIONS.filter((candidate) => {
-    const sums = gridSums(candidate, 2, 3);
-    return sums.rowSums.join() === rowSums.join() && sums.columnSums.join() === columnSums.join()
-      && clues.every((index) => candidate[index] === values[index]);
-  });
-  while (candidates().length !== 1 && clues.length < 5) clues.push(order[clues.length]);
-  const shown = values.map((value, index) => clues.includes(index) ? value : null);
-  const hidden = values.map((_, index) => index).filter((index) => !clues.includes(index));
-  const uniqueCount = candidates().length;
-  if (uniqueCount !== 1) return null;
-  return {
-    prompt: "1부터 6까지를 한 번씩 사용하여 가로와 세로의 합이 맞도록 가쿠로 칸을 채우세요.",
-    visual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 3, cards: [1,2,3,4,5,6], shown, rowSums, columnSums },
-    answerVisual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 3, cards: [], shown: values, rowSums, columnSums },
-    answer: values.join(", "),
-    responseKind: "drawing",
-    solution: `가로 합과 세로 합을 함께 만족하는 배치는 ${values.join(", ")} 순서 하나뿐입니다.`,
-    meta: { family: "gakuro-grid", values, clues, rowSums, columnSums, hidden, uniqueCount }
-  };
+  return makeGakuroProblem("gridSix", difficulty, false);
+}
+
+function gakuroGridNineSum({ difficulty = 2 }) {
+  return makeGakuroProblem("gridNine", difficulty, false);
+}
+
+function gakuroGridIrregularSum({ difficulty = 2 }) {
+  return makeGakuroProblem("gridIrregular", difficulty, false);
 }
 
 function circleLineRingEqualSum({ difficulty = 2 }) {
@@ -677,11 +885,20 @@ export const BOOK01_GENERATORS = {
   digitalDigitTransform,
   digitalTwoDigitTransform,
   digitalTransformBoardSum,
+  digitalBoardHalfTurnSum,
+  digitalFlipAdditionHorizontal,
   digitalTransformAddition,
   circularMagicLineSum,
+  circularMagicSevenLineSum,
+  circularMagicElevenLineSum,
   crossShapeMagicSum,
+  tShapeMagicSum,
   gakuroCardPlacement,
+  gakuroCardRectanglePlacement,
+  gakuroCardIrregularPlacement,
   gakuroGridSum,
+  gakuroGridNineSum,
+  gakuroGridIrregularSum,
   circleLineRingEqualSum,
   digitSumEnumeration,
   threeDigitStepSequence,
@@ -697,5 +914,7 @@ export const BOOK01_INTERNALS = {
   isCongruentPartition,
   transformDigit,
   transformDisplay,
-  gridSums
+  gridSums,
+  maskedGridSums,
+  countGakuroSolutions
 };

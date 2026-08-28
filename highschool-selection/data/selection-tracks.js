@@ -72,21 +72,30 @@
       id: "DP:middle-transfer",
       programCode: "DP",
       trackId: "middle-transfer",
-      scopeKey: "middle1-1-to-middle2-2",
-      scopeLabel: "중1-1~중2-2 누적",
+      scopeKey: "middle1-1-to-linear-function",
+      scopeLabel: "중1-1~중2-1 전 범위(일차함수까지)",
       scopeKind: "terminal-unit",
-      terminalUnit: { course: "중2-2", unit: "전 과정" },
-      evidenceStatus: "verified",
-      evidenceRefs: ["EXAM:dp-middle2-2-transfer"]
+      terminalUnit: { course: "중2-1", unit: "일차함수" },
+      evidenceStatus: "observed",
+      evidenceRefs: ["USER:DP-MIDDLE-CLASS-SCOPE-2026-08-27"]
     },
     {
       id: "DP:common-math-entry",
       programCode: "DP",
       trackId: "common-math-entry",
-      scopeKey: "common-math-1",
-      scopeLabel: "공통수학1",
+      scopeKey: "middle2-1-to-middle3-2",
+      scopeLabel: "중2-1~중3-2",
       evidenceStatus: "verified",
-      evidenceRefs: ["PUBLIC:DP-ENTRY-MIRROR"]
+      evidenceRefs: ["PUBLIC:DP-TIMETABLE-OFFICIAL-2026-09"]
+    },
+    {
+      id: "WM:middle-entry",
+      programCode: "WM",
+      trackId: "middle-entry",
+      scopeKey: "middle1-algebra-geometry-no-statistics",
+      scopeLabel: "중1 대수·기하 누적 · 통계 제외",
+      evidenceStatus: "verified",
+      evidenceRefs: ["PUBLIC:WM-M21-CHANGE-2025", "PUBLIC:WM-M21-JULY-2026"]
     },
     {
       id: "WM:common-math-entry",
@@ -143,6 +152,7 @@
     { examId: "dp-common1-entry", programCode: "DP", trackId: "common-math-entry" },
     { examId: "dp-middle2-2-transfer", programCode: "DP", trackId: "middle-transfer" },
     { examId: "dp-common1-entry-202405", programCode: "DP", trackId: "common-math-entry" },
+    { examId: "wm-middle21-basic-entry-r01", programCode: "WM", trackId: "middle-entry" },
     { examId: "wm-algebra-geometry-diagnostic", programCode: "WM", trackId: "common-math-entry" },
     { examId: "ed-middle1-entry", programCode: "ED", trackId: "middle-entry" },
     { examId: "ed-high-advance-entry", programCode: "ED", trackId: "high-advance" },
@@ -173,9 +183,9 @@
     };
   }
 
-  root.SELECTION_TRACK_CATALOG = {
+  const api = {
     schemaVersion: 1,
-    updatedAt: "2026-08-22",
+    updatedAt: "2026-08-24",
     evidenceStatuses: ["verified", "observed", "needs-review"],
     trackDefinitions,
     programTrackBindings,
@@ -184,4 +194,6 @@
     getProgramTracks,
     resolveExamTrack
   };
+  root.SELECTION_TRACK_CATALOG = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

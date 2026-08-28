@@ -12,3 +12,19 @@ reading-world/private/
 /tmp/
 __pycache__/
 *.pyc
+
+# Private high-school selection sources and local visual-review output.
+**/__pycache__/
+/highschool-selection/private/
+/highschool-selection/node_modules/
+/highschool-selection/**/private/
+/highschool-selection/**/*.pdf
+/highschool-selection/**/*.hwp
+/highschool-selection/**/*.hwpx
+/highschool-selection/**/*.xls
+/highschool-selection/**/*.xlsx
+/highschool-selection/**/hwangso-question-index*.json
+/highschool-selection/**/review-manifest.json
+/highschool-selection/**/*-review-*.jpg
+/highschool-selection/**/*-review-*.jpeg
+/highschool-selection/**/*-review-*.png

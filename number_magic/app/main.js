@@ -36,7 +36,7 @@ const I18N={
     picked:'골랐어요!', langName:'한국어',
     obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
     obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
-    obWelcome:n=>`환영해요, ${n}!` },
+    obWelcome:n=>`환영해요, ${n}!`, titleCourse:'과정' },
   en:{ appName:'Numbers of Magic', start:'Start', back:'← Back', next:'Next →',
     coins:'Numi Coins', locked:'Coming soon', enter:'Enter', mapTitle:'Magic Number Town',
     skipAsk:'Already good at this?', skipYes:'Skip ahead!', skipNo:"Let's see it",
@@ -47,7 +47,7 @@ const I18N={
     picked:'Picked!', langName:'English',
     obTitle:'Your Number Friend', obSub:'Pick a character and tell us your name!',
     obNamePh:'Enter your name', obGo:'Ta-da! Start ✨', obNeedName:'Tell us your name first!',
-    obWelcome:n=>`Welcome, ${n}!` },
+    obWelcome:n=>`Welcome, ${n}!`, titleCourse:'Course' },
   zh:{ appName:'数字魔法', start:'开始', back:'← 返回', next:'下一个 →',
     coins:'努米金币', locked:'即将推出', enter:'进入', mapTitle:'数字魔法小镇',
     skipAsk:'这部分已经会了吗？', skipYes:'直接跳过！', skipNo:'看一看',
@@ -58,7 +58,7 @@ const I18N={
     picked:'选好了！', langName:'中文',
     obTitle:'我的数字朋友', obSub:'选一个角色，告诉我你的名字！',
     obNamePh:'请输入名字', obGo:'哇！开始吧 ✨', obNeedName:'请先告诉我你的名字！',
-    obWelcome:n=>`欢迎，${n}！` }
+    obWelcome:n=>`欢迎，${n}！`, titleCourse:'课程' }
 };
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])??I18N.ko[k]??k;
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
@@ -72,7 +72,10 @@ const KEY='nm_state_v1';
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
   character:{number:3,color:'blue',bg:'plain',cape:'none'},
-  character_unlocked:{}, mailbox:{opened:{}} };}
+  character_unlocked:{}, mailbox:{opened:{}},
+  boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
+  lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
+  symbolDex:{} /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -81,6 +84,9 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
+if(!S.boost)S.boost={doneWeeks:{},log:[]};
+if(!S.boost.doneWeeks)S.boost.doneWeeks={};
+if(!S.boost.log)S.boost.log=[];
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -88,6 +94,9 @@ if(S.name===undefined)S.name='';
    병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
    자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
 if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+/* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
+   기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
+(function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -186,6 +195,112 @@ function cloudPushSoon(){
 }
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
+
+/* ---------- 계보(lineage) 헬퍼 (과정-로드맵.md §6, data/lineages.js) ----------
+   unit.lineage(배지 표시용, 여러 세션에 걸쳐 붙은 태그 포함)와 NM_LINEAGES.chain
+   (진화 링크/완주 판정용, §6 서술 순서만 담은 정본)은 분리돼 있다 — 카드 배지는
+   unit.lineage만 봐서 항상 뜨지만, "다음 진화"·완주 배지는 chain에 실제로 그
+   유닛이 들어있을 때만 계산한다(§6에 없는 확장을 자의적으로 chain에 넣지 않았기
+   때문에 unit.lineage 쪽이 더 넓을 수 있다 — 예: H-11·H-13·C-12). */
+function lineagesMap(){return window.NM_LINEAGES||{};}
+function unitLineageInfo(uid){
+  const u=UNITS[uid];if(!u||!u.lineage)return null;
+  for(const key of u.lineage){
+    const line=lineagesMap()[key];
+    if(line&&line.chain&&line.chain.indexOf(uid)>=0)return{key,line};
+  }
+  return null;
+}
+function lineageNextStep(uid){
+  const info=unitLineageInfo(uid);if(!info)return null;
+  const idx=info.line.chain.indexOf(uid);
+  const isLast=idx===info.line.chain.length-1;
+  return{key:info.key,line:info.line,idx,isLast,nextId:isLast?null:info.line.chain[idx+1]};
+}
+/* unitDone(=S.progress[uid].done)을 쓴다 — stepDone(uid,'stamp')이 아니다.
+   기존 코드 전체(screenRoadmap 등)가 'stamp' 스텝 완료 판정에 stepDone(uid,'stamp')을
+   쓰지만, stepStamp()는 어디서도 markStepDone(uid,'stamp')를 호출하지 않아
+   steps.stamp가 영영 true가 안 된다(전수 검색으로 확인한 기존 버그 — 이 작업
+   범위 밖이라 손대지 않고 보고만 함). 계보 완주 판정이 그 버그를 그대로 물려받으면
+   항상 미완주로 나오므로, 실제로 채워지는 .done 플래그(unitDone)로 판정한다. */
+function lineageChainDone(key){
+  const line=lineagesMap()[key];
+  return!!(line&&line.chain&&line.chain.length&&line.chain.every(uid=>unitDone(uid)));
+}
+/* 계보 완주 배지 판정 — 유닛 도장(완료) 시점에만 호출한다(결정적: 저장된
+   진행상황만 보는 순수 함수라 렌더마다 다시 불러도 같은 유닛에서는 같은 답).
+   새로 완주한 계보가 있으면 그 key를 배지로 적립하고 반환(오버레이 트리거용). */
+function checkLineageCompletion(){
+  const map=lineagesMap();
+  for(const key of Object.keys(map)){
+    if(S.lineageBadges[key])continue;
+    if(lineageChainDone(key)){S.lineageBadges[key]={earnedAt:Date.now()};save();return key;}
+  }
+  return null;
+}
+/* 한국어 "(으)로" 어미 선택 — 받침 없음 또는 종성이 ㄹ이면 '로', 그 외엔 '으로'. */
+function koEuro(word){
+  if(!word)return'로';
+  const ch=word[word.length-1];const code=ch.charCodeAt(0)-0xAC00;
+  if(code<0||code>11171)return'로';
+  const jong=code%28;
+  return(jong===0||jong===8)?'로':'으로';
+}
+/* 스토리 모드·학년별 교실 유닛 카드용 작은 문장(紋章) 배지(§6 규칙2). */
+function lineageBadgeSpan(uid){
+  const u=UNITS[uid];if(!u||!u.lineage||!u.lineage.length)return'';
+  const line=lineagesMap()[u.lineage[0]];if(!line)return'';
+  return`<span class="nm-lin-chip" title="${esc(L(line.name))}">${line.emblem}</span>`;
+}
+/* 도장 화면 "🧬 다음 진화" 카드(§6 규칙2) — 계보 chain에 없는 유닛이면 빈 문자열. */
+function lineageEvoCardHtml(uid){
+  const step=lineageNextStep(uid);if(!step)return'';
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const line=step.line;
+  if(step.isLast){
+    return`<button class="nm-evo-card final" data-lin="${step.key}">
+      <div class="nm-evo-ico">${line.emblem}</div>
+      <div class="nm-evo-txt"><b>🧬 ${ko?'이 계보의 최종 진화예요!':en?'The final evolution of this lineage!':'这是这条家族的最终进化！'}</b>
+      <small>${esc(L(line.name))}</small></div>
+    </button>`;
+  }
+  const nu=UNITS[step.nextId];if(!nu)return'';
+  const nuTitle=esc(L(nu.title));
+  const label=ko?`이 마법은 나중에 <b>${nuTitle}</b>${koEuro(L(nu.title))} 자라요`
+    :en?`This magic later grows into <b>${nuTitle}</b>`
+    :`这个魔法以后会成长为<b>${nuTitle}</b>`;
+  return`<button class="nm-evo-card" data-lin="${step.key}" data-next="${step.nextId}">
+    <div class="nm-evo-ico">${nu.icon||line.emblem}</div>
+    <div class="nm-evo-txt"><b>🧬 ${label}</b>
+    <small>${esc(L(line.name))}</small></div>
+  </button>`;
+}
+function bindLineageEvoCard(root){
+  const el=root.querySelector('.nm-evo-card[data-next]');
+  if(el)el.onclick=()=>{const uid=el.dataset.next;if(unitLocked(uid)){showGateModal();return;}S.unit=uid;S.step=null;S.sub={};S.view='unit';save();render();};
+}
+/* 계보 완주 축하 오버레이(기존 confetti 재사용) — 타이틀 화면 배지 줄과 짝. */
+function lineageBadgeOverlayHtml(key){
+  const line=lineagesMap()[key];if(!line)return'';
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return`<div class="nm-gate-overlay nm-lin-overlay" id="nmLinOverlay">
+    <div class="nm-gate-card nm-lin-card">
+      <div class="nm-lin-emblem-big">${line.emblem}</div>
+      <h3>${ko?'계보 완주! 🎉':en?'Lineage Complete! 🎉':'家族完成！🎉'}</h3>
+      <div class="nm-lin-name">${esc(L(line.name))}</div>
+      <p>${esc(L(line.tagline))}</p>
+      <button class="nm-btn full" id="nmLinOverlayClose">${ko?'좋아요!':en?'Nice!':'太棒了！'}</button>
+    </div>
+  </div>`;
+}
+function showLineageBadgeOverlay(key){
+  if($('#nmLinOverlay'))return;
+  document.body.insertAdjacentHTML('beforeend',lineageBadgeOverlayHtml(key));
+  confetti();playSfx('great-job');
+  const close=()=>{const m=$('#nmLinOverlay');if(m)m.remove();};
+  $('#nmLinOverlayClose').onclick=close;
+  $('#nmLinOverlay').addEventListener('click',e=>{if(e.target.id==='nmLinOverlay')close();});
+}
 
 /* ---------- 유틸 ---------- */
 const $=s=>document.querySelector(s);
@@ -309,6 +424,11 @@ function render(){
     screenWelcome();
     return;
   }
+  if(S.view==='title'){
+    app.innerHTML='<div id="screen"></div>';
+    screenTitle();
+    return;
+  }
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
@@ -323,10 +443,12 @@ function render(){
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='mailbox')screenMailbox();
+  else if(S.view==='boost')screenBoost();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
+  else if(S.view==='symboldex')screenSymbolDex();
   else screenTown();
   renderMath();
 }
@@ -541,6 +663,7 @@ function screenTown(){
     </div>
     <div class="nm-town-hud info">
       <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
+      <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
     </div>
     <div class="nm-town-hud ctrls">
@@ -559,6 +682,7 @@ function screenTown(){
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
+  const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -600,6 +724,17 @@ function screenRoadmap(){
       if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
       return;
     }
+    /* 외부 링크 노드(🔬 개념 실험실 등 — MASTER-ROADMAP.md §2) — 새 탭에서 연다.
+       기존 게임스톤과 같은 카드를 재사용하는 최소 침습 확장(2026-08-25). */
+    if(ch.link){
+      html+=`<div class="nm-road-gamestone nm-road-linkstone" data-link="${esc(ch.link)}">
+        <div class="nm-road-gamestone-icon">${ch.icon}</div>
+        <div class="nm-road-gamestone-title">${L(ch.theme)}</div>
+        ${ch.tip?`<div class="nm-road-gamestone-tip">💡 ${L(ch.tip)}</div>`:''}
+      </div>`;
+      if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+      return;
+    }
     const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
     html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
       <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
@@ -614,7 +749,7 @@ function screenRoadmap(){
       const cls='nm-road-stone'+(done?' done':isNext?' next':'')+(locked?' trial-locked':'');
       html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
         ${done?'⭐':locked?'🔒':''}
-        <div class="nm-road-stone-title">${L(u.title)}</div>
+        <div class="nm-road-stone-title">${L(u.title)}${lineageBadgeSpan(uid)}</div>
         ${isNext&&!locked?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
       </div>`;
     });
@@ -650,6 +785,10 @@ function screenRoadmap(){
       S.miniGameId=el.dataset.game;S.miniGame=null;
       S._fromRoadmap=true;S.view='minigame';save();render();
     };
+  });
+  /* 외부 링크 스톤 클릭 — 새 탭에서 연다(2026-08-25, 미적분 실험실 이식) */
+  scr.querySelectorAll('.nm-road-linkstone[data-link]').forEach(el=>{
+    el.onclick=()=>{ window.open(el.dataset.link,'_blank','noopener'); };
   });
 }
 
@@ -891,6 +1030,12 @@ function screenGradeCourse(){
     {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
     {key:'초5',label:{ko:'초5',en:'Grade 5',zh:'五年级'}},
     {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
+    {key:'중1',label:{ko:'중1',en:'Grade 7',zh:'初一'}},
+    {key:'중2',label:{ko:'중2',en:'Grade 8',zh:'初二'}},
+    {key:'중3',label:{ko:'중3',en:'Grade 9',zh:'初三'}},
+    /* 2022 개정 과목명 준수 — "고1"·"고2" 표기 없음(작업지시) */
+    {key:'공통수학1',label:{ko:'공통수학1',en:'Math 1',zh:'数学1'}},
+    {key:'공통수학2',label:{ko:'공통수학2',en:'Math 2',zh:'数学2'}},
   ];
   S._gcGrade=S._gcGrade||'초1';
 
@@ -943,7 +1088,7 @@ function screenGradeCourse(){
         const locked=unitLocked(uid);
         bodyHtml+=`<div class="nm-gc-unit-row${locked?' trial-locked':''}" data-uid="${uid}">
           <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
-          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
+          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}${lineageBadgeSpan(uid)}</div>
           ${locked?'<span style="font-size:11px">🔒</span>':done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
         </div>`;
       });
@@ -1035,6 +1180,102 @@ function mostRecentTouchedUnit(){
   });
   return best;
 }
+/* 가장 최근에 완료(도장)된 유닛 — 타이틀 화면 "최근 배지" 표시용. 없으면 null. */
+function mostRecentBadge(){
+  let best=null, bestT=-1;
+  Object.keys(S.progress||{}).forEach(uid=>{
+    const p=S.progress[uid];
+    if(p && p.done && (p.touchedAt||0) > bestT){ bestT=p.touchedAt||0; best=uid; }
+  });
+  if(!best) return null;
+  const u=UNITS[best];
+  return (u && u.stamp) ? { uid:best, label:L(u.stamp.label) } : null;
+}
+/* 타이틀 화면 "이어서 모험" 요약 한 줄 — "과정 N · 유닛제목" 형태(§14).
+   과정에 안 속한 유닛(예: 유아 레거시 유닛)은 유닛 제목만. */
+function progressSummaryLine(){
+  const uid = mostRecentTouchedUnit();
+  if(!uid) return '';
+  const u = UNITS[uid];
+  const uTitle = u ? L(u.title) : uid;
+  const cid = courseForUnit(uid);
+  if(!cid) return uTitle;
+  const num = String(cid).replace(/^C/,'');
+  return `${t('titleCourse')} ${num} · ${uTitle}`;
+}
+/* "이어서 모험" 진입 — enterRoadUnit과 같은 체험 게이트 확인을 거친다. */
+function enterContinueUnit(uid){
+  if(!uid){ S.view='town'; save(); render(); return; }
+  if(unitLocked(uid)){ showGateModal(); return; }
+  S.unit=uid; S.step=null; S.sub={}; S.tierId=null; S.view='unit'; S._fromRoadmap=false;
+  save(); render();
+}
+/* ============================================================
+   타이틀 화면 — 게임처럼 모드를 고르고 들어간다 (과정-로드맵.md §14)
+   진행 기록이 있는 프로필에서, 인트로 애니메이션 직후(about.html → ?enter=1)
+   에만 등장한다(boot()의 maybeShowTitle 참고). 선택은 기억하지 않음 —
+   매번 다시 고르는 게 의식(ritual)이라는 게 스펙의 핵심이라, 여기서 고른
+   view는 곧바로 실제 화면으로 넘어가며 저장될 뿐 'title' 자체는 저장 상태에
+   남기지 않는다.
+   ============================================================ */
+function screenTitle(){
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const uid = mostRecentTouchedUnit();
+  const summary = progressSummaryLine();
+  const badge = mostRecentBadge();
+
+  scr.innerHTML=`
+  <div class="nm-title">
+    <div class="nm-title-card">
+      <div class="nm-title-logo">
+        <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
+        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','수의 마법','数字魔法')}</div>
+      </div>
+      <div class="nm-title-char">${window.renderNumiChar?window.renderNumiChar(S.character,88):''}</div>
+      <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
+      <div class="nm-title-stats">
+        <span class="nm-title-chip">🪙 ${S.coins}</span>
+        ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
+      </div>
+      ${lineageBadgeRowHtml()}
+      <div class="nm-title-btns">
+        <button class="nm-title-btn primary" id="ttContinue">
+          <span class="nm-title-btn-ico">▶</span>
+          <span class="nm-title-btn-txt">
+            <b>${lk('이어서 모험','Continue Adventure','继续冒险')}</b>
+            ${summary?`<small>${esc(summary)}</small>`:''}
+          </span>
+        </button>
+        <button class="nm-title-btn" id="ttStory">
+          <span class="nm-title-btn-ico">🗺</span>
+          <span class="nm-title-btn-txt"><b>${lk('스토리 모드','Story Mode','故事模式')}</b></span>
+        </button>
+        <button class="nm-title-btn" id="ttFree">
+          <span class="nm-title-btn-ico">🏘</span>
+          <span class="nm-title-btn-txt"><b>${lk('자유 탐험','Free Exploration','自由探索')}</b></span>
+        </button>
+        <button class="nm-title-btn" id="ttDex">
+          <span class="nm-title-btn-ico">📖</span>
+          <span class="nm-title-btn-txt"><b>${lk('기호 도감','Symbol Dex','符号图鉴')}</b></span>
+        </button>
+      </div>
+    </div>
+  </div>`;
+  $('#ttContinue').onclick=()=>enterContinueUnit(uid);
+  $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
+  $('#ttFree').onclick=()=>{ S.view='town'; save(); render(); };
+  $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
+}
+/* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
+function lineageBadgeRowHtml(){
+  const keys=Object.keys(S.lineageBadges||{});
+  if(!keys.length)return'';
+  const map=lineagesMap();
+  const chips=keys.map(k=>{const line=map[k];return line?`<span class="nm-lin-chip big" title="${esc(L(line.name))}">${line.emblem}</span>`:'';}).join('');
+  return chips?`<div class="nm-title-lin-row">${chips}</div>`:'';
+}
 /* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
    없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
    단위 진행 기록이 없다), 가장 최근에 손댄 마법 유닛이 속한 과정으로
@@ -1074,6 +1315,144 @@ function envelopeForWeek(weekKey){
   return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
+
+/* ============================================================
+   정체 감지 → 보강 루프 (과정-로드맵.md §2-4)
+   감지: app/progress-stats.js(NM_STATS) — 유형(스레드)별 세션 정답률을
+   저장해 두고, 최근 2회 세션이 연속 60% 미만이면 그 유형을 "보강 필요"로
+   본다. 감지 자체는 저장된 기록만 보는 순수 함수라 항상 결정적이다.
+
+   삽입: "다음 과정 세션"의 실체가 이 앱에선 편지함의 주간 봉투
+   (envelopeForWeek, §10)뿐이라 — 그 봉투를 여는 순간을 "세션 시작"으로
+   본다. 보강 대상이 있으면 봉투 화면 맨 위에 "🌟 먼저 몸풀기 마법!" 카드를
+   얹는다(placements 자체를 건드리지 않고 화면에서만 앞에 붙인다 — 인쇄
+   학습지 구성은 그대로 유지). 아이가 이 카드를 눌러야만 보강 세션이
+   시작되고, 누르지 않고 그냥 아래 "이번 주 마법"으로 진행해도 막지 않는다
+   (잠금 아님, 자유 선택 원칙). 완료 결과는 S.boost.log에 남겨 부모
+   대시보드가 생기면 바로 읽을 수 있게 해 둔다(현재 이 앱엔 부모 대시보드/
+   리포트 화면이 없어 — 확인 완료 — UI 표시는 후속 과제로 남긴다).
+   ============================================================ */
+
+/* 보강 세션에 쓸 레벨 — 위 §4 다함식 시각화 위젯을 추가해 둔 스레드는
+   "가능하면 위 시각화 위젯 레벨"(작업지시) 원칙에 따라 그 레벨을 우선
+   쓴다. 그 외 스레드는 "해당 유형 낮은 레벨"(작업지시) 원칙대로 레벨 1. */
+const BOOST_VIZ_LEVEL = { NS1:4, AD3:4, AD4:3, AD9:1 };
+function boosterLevelFor(threadId){
+  return BOOST_VIZ_LEVEL[threadId] || 1;
+}
+/* 보강이 필요한 스레드 중 가장 급한 것 하나(정답률 최저) — 없으면 null. */
+function boosterPick(){
+  if(!window.NM_STATS) return null;
+  const list = NM_STATS.boostList();
+  return list.length ? list[0].thread : null;
+}
+/* 그 주에 이미 보강을 마쳤는지(완료 시에만 표시 — 카드를 보고도 안 누른
+   것은 "아직 안 함"으로 남겨 계속 부드럽게 권한다, 잠금 아님). */
+function boosterDoneThisWeek(weekKey){ return !!(S.boost.doneWeeks && S.boost.doneWeeks[weekKey]); }
+
+const BOOST_NEED = 5; /* 보강 세트 문항 수 — 정규 학습지(기본 20)보다 짧게, "몸풀기" */
+function startBooster(threadId, weekKey){
+  const level = boosterLevelFor(threadId);
+  S._boost = { threadId, level, weekKey, i:0, need:BOOST_NEED, score:0, cur:null };
+  S._boostRewarded=false;
+  S.view='boost'; save(); render();
+}
+function boostProblem(threadId, level, weekKey, i){
+  const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('boost'+weekKey+threadId+level+'i'+i));
+  const th = (window.NM_THREADS||{})[threadId];
+  const params = (th && th.levels[level-1] && th.levels[level-1].params) || {};
+  const gen = (window.NM_TGEN||{})[th && th.gen];
+  return gen ? gen(params, rng) : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+}
+function screenBoost(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const b=S._boost;
+  if(!b){ S.view='mailbox'; save(); render(); return; }
+
+  if(b.i>=b.need){
+    /* 완료 — 기록 + 살짝 보상 + 리포트용 로그 */
+    if(window.NM_STATS) NM_STATS.record(b.threadId, b.level, b.score, b.need, {boost:true});
+    S.boost.doneWeeks[b.weekKey]=true;
+    S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
+    if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
+    const already = !!S._boostRewarded;
+    if(!already){ coinAdd(6); S._boostRewarded=true; }
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
+    </div>
+    <div class="nm-step-body">
+      <div class="nm-card center">
+        <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-card-h">${lk('오늘도 한 걸음 더 튼튼해졌어요!','You just got a little stronger!','今天又变得更棒了！')}</div>
+        <div class="nm-score">${b.score} / ${b.need}</div>
+        <div class="nm-stamp-coins">🪙 +6 ${t('coins')}</div>
+        <button class="nm-btn full" id="boostToMailbox">${lk('학습지로 돌아가기','Back to worksheet','返回学习单')}</button>
+      </div>
+    </div>`;
+    save();
+    $('#boostToMailbox').onclick=()=>{ S._boost=null; S._boostRewarded=false; S.view='mailbox'; save(); render(); };
+    return;
+  }
+
+  if(!b.cur){ b.cur = boostProblem(b.threadId, b.level, b.weekKey, b.i); }
+  const cur=b.cur;
+  const useWidget = cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="boostBack">${t('back')}</button>
+    <div class="nm-unit-title">🌟 ${lk('먼저 몸풀기 마법!','Warm-up Magic First!','先来热身魔法！')}</div>
+  </div>
+  <div class="nm-step-body">
+    <div class="nm-dialog">
+      <div class="nm-prog">${dots(b.need,b.i)}</div>
+      <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+      <div class="nm-bubble">${esc(L(cur.prompt))}</div>
+      ${useWidget ? `<div id="boostWidget" class="nm-lab-widget"></div>` : `
+        <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
+        <div class="nm-numpad-screen" id="boostScreen">&nbsp;</div>
+        <div class="nm-numpad" id="boostPad"></div>`}
+    </div>
+  </div>`;
+  $('#boostBack').onclick=()=>{ S._boost=null; S.view='mailbox'; save(); render(); };
+  renderMath(scr);
+
+  function advance(correct){
+    if(correct)b.score++;
+    b.i++; b.cur=null; save();
+    setTimeout(()=>screenBoost(),correct?600:900);
+  }
+
+  if(useWidget){
+    NM_WIDGETS.render(cur,$('#boostWidget'),val=>{
+      const ok = Array.isArray(cur.answer)
+        ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
+        : +val===cur.answer;
+      if(ok)playSfx("success");
+      advance(ok);
+    });
+  } else {
+    /* widgets.js의 numpadState는 그 파일 내부 클로저라 여기선 못 쓴다 —
+       stepArena/stepCheck과 같은 방식(S.sub.inp 대신 지역 inp)으로 인라인 처리. */
+    const screen=$('#boostScreen');
+    let inp='';
+    buildNumpad($('#boostPad'),val=>{
+      if(val==='ok'){
+        if(inp==='')return;
+        const ok=parseFloat(inp)===cur.answer;
+        advance(ok);
+        return;
+      }
+      if(val==='del')inp=inp.slice(0,-1);
+      else if(val==='-')inp=applyMinusKey(inp);
+      else if(inp.replace('-','').length<6&&!(val==='.'&&inp.includes('.')))inp+=val;
+      screen.textContent=inp||' ';
+    },{decimal:!Number.isInteger(cur.answer),negative:!!cur.negative});
+  }
+}
 
 /* 목록: 이번 주(항상 표시) + 안 연 과거 봉투(최대 8주 보관, 단 firstWeek 이전은 제외 —
    신규 학생이 과거 봉투 8개를 한번에 받지 않도록, Phase 2B §10 잔여) */
@@ -1130,6 +1509,16 @@ function screenMailbox(){
       return `<div class="nm-wsh-unit-title">✨ ${esc(th?L(th.name):id)}</div>`;
     }).join('') || `<p class="nm-wsh-sentence">${lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
     const goUnit = (env.magic||[]).find(id=>UNITS[id]);
+    /* 정체 감지→보강 루프(§2-4) — 이 주의 봉투를 여는 순간이 "다음 과정 세션 시작".
+       보강 대상이 있고 이번 주에 아직 안 했다면 맨 위에 부드러운 카드를 얹는다. */
+    const boostThread = boosterDoneThisWeek(S._mbWeek) ? null : boosterPick();
+    const boostTh = boostThread && (window.NM_THREADS||{})[boostThread];
+    const boostCardHtml = boostTh ? `
+      <div class="nm-card nm-boost-card">
+        <div class="nm-mb-section-h">🌟 ${lk('먼저 몸풀기 마법!','Warm-up Magic First!','先来热身魔法！')}</div>
+        <p class="nm-wsh-sentence">${lk(`요즘 ${L(boostTh.name)}이(가) 살짝 어려웠나 봐요. 짧게 5문제만 몸풀고 시작해요!`,`${L(boostTh.name)} has been a bit tricky lately — let's warm up with 5 quick ones!`,`最近${L(boostTh.name)}好像有点难，先来热身5道题吧！`)}</p>
+        <button class="nm-btn full" id="mbBoostGo">🌟 ${lk('몸풀기 시작','Start warm-up','开始热身')}</button>
+      </div>` : '';
     const drillRows = env.placements.map(p=>{
       const th=(window.NM_THREADS||{})[p.thread];
       const code = NM_EXAM.worksheetCode({thread:p.thread, level:p.level, count:p.count, seed:p.seed});
@@ -1144,6 +1533,7 @@ function screenMailbox(){
       <div class="nm-unit-title">📬 ${esc(env.wsId)}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
+      ${boostCardHtml}
       <div class="nm-card">
         <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
         <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
@@ -1156,6 +1546,9 @@ function screenMailbox(){
       </div>
     </div>`;
     $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
+    if(boostTh){
+      $('#mbBoostGo').onclick=()=>{ const wk=S._mbWeek; startBooster(boostThread, wk); };
+    }
     if(goUnit){
       $('#mbGoUnit').onclick=()=>{
         S._mbWeek=null;
@@ -1485,7 +1878,7 @@ function screenTier(){
         const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
         html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''}" data-unit="${uid}">
           <span class="nm-unit-ic">${u.icon||'✦'}</span>
-          <span class="nm-unit-name">${L(u.title)}</span>
+          <span class="nm-unit-name">${L(u.title)}${lineageBadgeSpan(uid)}</span>
           ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':''}
         </button>`;
       });
@@ -1735,22 +2128,47 @@ function conceptExpr(container, terms){
 }
 
 function stepDiscover(body,u){
+  /* 기호 도감 수집(§13 규칙4) — 이 유닛의 symbols 중 아직 못 모은 게 있으면
+     디스커버 본문보다 먼저 "새 기호 카드!" 모달을 띄운다. 이미 다 모았으면
+     (S.symbolDex에 다 있으면) uncollected가 비어 조용히 넘어간다 — 재진입 시
+     모달 생략(스펙 그대로). */
+  const uncollected=(u.symbols||[]).filter(sy=>!S.symbolDex[sy.sym]);
+  if(uncollected.length){showSymbolCardModal(uncollected,0,u);}
   const d=u.discover;
   // 두 자리 범위 토글이 있는 유닛(A-01처럼 u.ranges 있을 때)만 kind:'one'/'two'/'mix'로 걸러냄.
   // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
   const two = S.range==='twoDigit';
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   const kid = u.tier==='basic';
+  /* 개념 스토리 훅(§7·§13): 중등·고등은 docssam 선생님 캐릭터가, 그 외는 누미가 말풍선으로 연다 */
+  const st=d.story||u.story;
+  /* 중·고 판정 — tier가 "middle*"·"high*"로 시작하는 기존 규칙에 더해
+     2022 개정 과목명을 그대로 쓰는 고등 tier(algebra·calculus1, W13·W14,
+     2026-08-25)도 명시적으로 포함한다. "고3" 같은 학년 표기 대신 과목명을
+     tier id로 쓰라는 작업지시라 접두어 규칙만으로는 안 걸린다 — 정규식을
+     넓히는 대신 새 tier를 나열해 실수로 다른 tier까지 걸리지 않게 한다. */
+  const isMidHigh=/^(middle|high)/.test(u.tier||'')||u.tier==='algebra'||u.tier==='calculus1';
+  /* 스토리 삽화(2026-08-28): assets/images/story/<유닛>.svg 가 있으면 훅 위에 얹는다.
+     유닛마다 그림이 다 있는 건 아니라 목록을 따로 들고 다니지 않고, 파일이 없으면
+     onerror 로 <figure> 째 지운다 — 새 그림을 추가할 때 코드를 고칠 필요가 없다.
+     삽화는 전부 원본 도형이고, 3개 언어 공용이라 글자 대신 숫자·수식만 쓴다. */
+  const artHtml=`<figure class="nm-story-art"><img src="assets/images/story/${u.id}.svg" alt=""
+      loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
+  const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
+      ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
+      <div class="nm-story-bubble">${L(st.hook)}</div>
+    </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    <div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+    <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
+    const headTxt=L(s.head);
     wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
-      <div class="nm-ch">${L(s.head)}</div>
+      <div class="nm-ch">${/\\/.test(headTxt)?`<span data-tex="${headTxt.replace(/"/g,'&quot;')}"></span>`:headTxt}</div>
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
     if(s.terms)conceptExpr(wrap, s.terms);
@@ -1759,6 +2177,103 @@ function stepDiscover(body,u){
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
+}
+
+/* ============================================================
+   기호 도감 (과정-로드맵.md §13) — 수집 모달 + 도감 화면
+   unit.symbols:[{sym,read,translate,birth}] (기존 5유닛은 한글 단일 문자열,
+   L()도 typeof string이면 그대로 문자열을 돌려주므로 symText가 둘 다 받는다).
+   ============================================================ */
+function symText(v){return typeof v==='string'?v:L(v);}
+/* "새 기호 카드!" 모달 — 앞면(기호+읽는 법) 탭하면 뒤집혀 뒷면(번역+탄생 이야기).
+   닫으면(=수집하기) S.symbolDex에 저장하고 목록의 다음 기호(있으면)를 이어서 띄운다. */
+function symbolCardModalHtml(sy){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  return`<div class="nm-gate-overlay nm-symmodal-overlay" id="nmSymModal">
+    <div class="nm-gate-card nm-symmodal-card">
+      <div class="nm-symmodal-badge">✨ ${ko?'새 기호 카드!':en?'New Symbol Card!':'新符号卡！'}</div>
+      <div class="nm-dex-card big" id="nmSymFlip">
+        <div class="nm-dex-flip">
+          <div class="nm-dex-face front">
+            <div class="nm-dex-sym">${esc(sy.sym)}</div>
+            <div class="nm-dex-read">${esc(symText(sy.read))}</div>
+            <div class="nm-symmodal-tap">👆 ${ko?'탭해서 뒤집기':en?'Tap to flip':'点击翻面'}</div>
+          </div>
+          <div class="nm-dex-face back">
+            <div class="nm-dex-translate">${esc(symText(sy.translate))}</div>
+            <div class="nm-dex-birth">${esc(symText(sy.birth))}</div>
+          </div>
+        </div>
+      </div>
+      <button class="nm-btn full" id="nmSymClose">${ko?'수집하기':en?'Collect':'收藏'}</button>
+    </div>
+  </div>`;
+}
+function showSymbolCardModal(list,idx,u){
+  if(idx>=list.length)return;
+  const sy=list[idx];
+  document.body.insertAdjacentHTML('beforeend',symbolCardModalHtml(sy));
+  const flip=$('#nmSymFlip');
+  flip.onclick=()=>flip.classList.toggle('flipped');
+  $('#nmSymClose').onclick=()=>{
+    S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};save();
+    const m=$('#nmSymModal');if(m)m.remove();
+    showSymbolCardModal(list,idx+1,u);
+  };
+}
+/* §13 도감 초안의 전체 기호 목록(x·√·aⁿ·f(x)·Σ·lim·f′·∫·D·αβ) — 실제로 그 기호를
+   구현한 유닛이 아직 없어도 "아직 만나지 못한 기호" 자리로 항상 보여준다. */
+const SYMBOL_DEX_CANON=['x','√','aⁿ','f(x)','Σ','lim',"f'",'∫','D','αβ'];
+function allUnitSymbols(){
+  const out=[];
+  Object.keys(UNITS).forEach(uid=>{
+    const u=UNITS[uid];
+    (u.symbols||[]).forEach(sy=>{if(!out.some(o=>o.sym===sy.sym))out.push(Object.assign({unitId:uid},sy));});
+  });
+  return out;
+}
+function symDexCardHtml(sym,real){
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const notMet=`<div class="nm-dex-card unknown"><div class="nm-dex-flip"><div class="nm-dex-face front">
+    <div class="nm-dex-sym">?</div><div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
+  </div></div></div>`;
+  if(!real)return notMet;
+  const collected=!!S.symbolDex[real.sym];
+  if(!collected)return notMet.replace('nm-dex-card unknown','nm-dex-card silhouette');
+  return`<div class="nm-dex-card collected" data-sym="${esc(real.sym)}">
+    <div class="nm-dex-flip">
+      <div class="nm-dex-face front"><div class="nm-dex-sym">${esc(real.sym)}</div><div class="nm-dex-read">${esc(symText(real.read))}</div></div>
+      <div class="nm-dex-face back"><div class="nm-dex-translate">${esc(symText(real.translate))}</div><div class="nm-dex-birth">${esc(symText(real.birth))}</div></div>
+    </div>
+  </div>`;
+}
+function bindDexCards(root){
+  root.querySelectorAll('.nm-dex-card.collected').forEach(el=>{
+    el.onclick=()=>el.classList.toggle('flipped');
+  });
+}
+function screenSymbolDex(){
+  const scr=$('#screen');
+  const ko=S.lang==='ko',en=S.lang==='en';
+  const all=allUnitSymbols();
+  const bySym={};all.forEach(sy=>{bySym[sy.sym]=sy;});
+  const canonCards=SYMBOL_DEX_CANON.map(sym=>symDexCardHtml(sym,bySym[sym])).join('');
+  const extra=all.filter(sy=>SYMBOL_DEX_CANON.indexOf(sy.sym)<0);
+  const extraCards=extra.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  const collectedCount=Object.keys(S.symbolDex||{}).length;
+  scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
+    <div class="nm-gc-header">
+      <button class="nm-back" id="dexBack">← ${t('back')}</button>
+      <div class="nm-gc-title">📖 ${ko?'기호 도감':en?'Symbol Dex':'符号图鉴'} <small>${collectedCount}</small></div>
+    </div>
+    <div class="nm-gc-body">
+      <p class="nm-dex-sub">${ko?'배운 기호를 모아보세요. 카드를 탭하면 뒤집혀요.':en?"Collect the symbols you've learned — tap a card to flip it.":'收集你学过的符号——点击卡片可以翻面。'}</p>
+      <div class="nm-dex-grid">${canonCards}</div>
+      ${extraCards?`<div class="nm-dex-sec-h">${ko?'더 만난 기호':en?'More symbols met':'更多遇到的符号'}</div><div class="nm-dex-grid">${extraCards}</div>`:''}
+    </div>
+  </div>`;
+  $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
+  bindDexCards(scr);
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
@@ -1846,12 +2361,12 @@ function stepLabWidget(body,u){
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
-  const origTex=cur.tex?`${esc(cur.tex.split('=')[0].trim())} = \\square`:'';
+  const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    ${origTex?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span><span data-tex="${origTex}"></span></div>`:''}
+    ${origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div id="labWidget" class="nm-lab-widget"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
@@ -1892,6 +2407,20 @@ function stepLabPairs(body,u){
     b.onclick=()=>pickTile(b,i,n,body,u);expr.appendChild(b);
   });
 }
+/* 문제 수식 표시: 빈칸(\square)이 이미 들어 있는 수식은 원문 그대로 —
+   구식 split('=') 규칙은 등호가 여러 개인 중·고등 수식을 첫 등호에서 잘라버린다 */
+function labDisplayTex(tex){
+  if(!tex)return '';
+  return /\\square/.test(tex) ? tex : `${tex.split('=')[0].trim()} = \\square`;
+}
+/* 긴 문제 수식은 ⟹(\Rightarrow)에서 줄을 갈라 두 줄로 중앙 정렬 —
+   좁은 화면에서 'f'(x) =' 뒤에서 어색하게 꺾이는 것 방지(원장 지시: 줄 맞춰) */
+function labExprHtml(tex){
+  const d=labDisplayTex(tex);
+  const parts=d.split(/\\;?\\Rightarrow\\;?/);
+  if(parts.length<2)return `<span data-tex="${esc(d)}"></span>`;
+  return parts.map((pt,i)=>`<span class="nm-expr-line" data-tex="${esc((i?'\\Rightarrow\\; ':'')+pt.trim())}"></span>`).join('');
+}
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
@@ -1903,7 +2432,7 @@ function stepLabNumpad(body,u){
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
+    <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
@@ -1984,7 +2513,7 @@ function nextArena(body,u,need){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
-    <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
+    <div class="nm-arena-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
   </div>`;
@@ -2033,16 +2562,24 @@ function stepStamp(body,u){
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;S.progress[S.unit].touchedAt=Date.now();save();}
+  let newLineageBadge=null;
+  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+    S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
+    S.progress[S.unit].touchedAt=Date.now();save();
+    newLineageBadge=checkLineageCompletion();}
+  const evo=lineageEvoCardHtml(S.unit);
   body.innerHTML=`<div class="nm-card center stamp">
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
     <div class="nm-stamp-label">${L(s.label)}</div>
     <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
+    ${evo}
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
   confetti();playSfx("great-job");say(L(u.voice.finish));
+  bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
+  if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
 }
 
 /* ---------- 공통 UI 조각 ---------- */
@@ -2352,9 +2889,22 @@ function screenWorksheetHelper(wsId){
   renderMath(scr);
 }
 
+/* 타이틀 화면 게이트(§14) — "인트로 애니메이션 후"를 이 앱에서는 about.html이
+   ?enter=1을 달고 돌아오는 순간으로 본다(index.html의 기존 인트로→about 흐름,
+   되돌리지 않음). 진행 기록(mostRecentTouchedUnit)이 있는 온보딩된 프로필에서만
+   S.view를 'title'로 바꾼다 — save()는 하지 않는다(타이틀은 저장 상태가 아니라
+   "이번 진입"에서만 한 번 보이는 화면이라, 새로고침해도 URL에 enter=1이 없으면
+   바로 이전 화면으로 돌아간다). 신규 설치·진행 없음은 그대로 온보딩→마을. */
+function maybeShowTitle(){
+  if(!S.onboarded) return;
+  if(!/[?&]enter=1\b/.test(location.search)) return;
+  if(!mostRecentTouchedUnit()) return;
+  S.view='title';
+}
 /* ---------- 시작 ---------- */
 function boot(){
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
+  maybeShowTitle();
   render();
   reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }

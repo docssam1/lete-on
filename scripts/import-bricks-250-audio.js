@@ -20,8 +20,7 @@ function parseArgs() {
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 async function upload(filePath, storagePath) {
   const response = await fetch(`${SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/audio/${storagePath}`, {
@@ -56,6 +55,7 @@ async function main() {
 
   console.log(`Validated ${tasks.length} publisher MP3 tracks. mode=${options.apply ? 'APPLY' : 'DRY-RUN'}`);
   if (!options.apply) return;
+  if (!SUPABASE_KEY) throw new Error('Set SUPABASE_SERVICE_ROLE_KEY before using --apply.');
   for (const task of tasks) {
     await upload(task.filePath, task.storagePath);
     console.log(`${task.storagePath}: uploaded`);

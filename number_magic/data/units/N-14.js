@@ -18,6 +18,14 @@ window.NM_UNITS['N-14'] = {
       zh:'数一数计数符号！4笔以内直接画，第5笔斜着捆一下' } },
 
   discover:{
+    story:{
+      hook:{ ko:'연필도 종이도 없던 시절, 사람들은 무엇으로 수를 셌을까요?',
+        en:'Before pencils and paper, what did people count with?',
+        zh:'还没有铅笔和纸的时候，人们用什么数数？' },
+      history:{ ko:'어디서든 처음엔 막대를 늘어놓아 세었어요. 중국은 산가지, 로마는 Ⅰ Ⅱ Ⅲ. 재미있는 건 중국이 붉은 산가지를 더하는 수, 검은 산가지를 빼는 수로 나누어 썼다는 거예요 — 지금의 +와 −를 막대 색으로 한 셈이죠.',
+        en:'Everywhere, counting began by laying out sticks: counting rods in China, Ⅰ Ⅱ Ⅲ in Rome. The neat part is that China used red rods for adding and black rods for subtracting — plus and minus, done in colour.',
+        zh:'各地最早都是摆小棍来数数：中国用算筹，罗马写Ⅰ Ⅱ Ⅲ。有趣的是中国用红色算筹表示加、黑色算筹表示减——用颜色分出了加号和减号。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 세는 것과 규칙 찾기!',en:'1) Counting and finding rules!',zh:'① 数数和找规律！'},

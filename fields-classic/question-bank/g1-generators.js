@@ -119,7 +119,7 @@ function g1FrontBackBetween({ difficulty = 2 }) {
     visual: { kind: "g1-condition-list", conditions, title: difficulty === 1 ? `${subjectParticle(names[1])} 앞에서 ${secondPosition}번째입니다.` : "앞과 뒤에서 센 순서" },
     answer: `${between}명`,
     solution: `${names[1]}는 앞에서 ${total} - ${secondFromBack} + 1 = ${secondPosition}번째입니다. ${firstPosition}번째와 ${secondPosition}번째 사이에는 ${between}명이 있습니다.`,
-    meta: { difficulty, total, firstPosition, secondPosition, firstFromBack, secondFromBack, between }
+    meta: { difficulty, total, firstPosition, secondPosition, firstFromBack, secondFromBack, between, names, conditions }
   };
 }
 

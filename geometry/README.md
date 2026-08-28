@@ -25,6 +25,10 @@
 - games/minmax/ - 최대·최소 큐브 챌린지
 - games/paper-fold/ - 색종이 접고 펼치기
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
+- games/mirror-manor/ - 거울 저택
+- games/geoboard/ - 점판 공작소
+- games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
+- games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
 
 ## 색종이 생각 놀이터
 
@@ -43,7 +47,6 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 - 점판 공작소
 - 폴리오미노 퍼즐
 - 똑같이 나누기
-- 전개도 전망대
 - 소마큐브 공방
 - 길 잇기 산책로
 

@@ -18,6 +18,14 @@ window.NM_UNITS['N-04'] = {
       zh:'计数符号是用一笔一笔数数的方法！点一点板子，做出目标数字' } },
 
   discover:{
+    story:{
+      hook:{ ko:'영어 낱말 tally(탤리)는 셈이라는 뜻인데, 원래는 무슨 뜻이었을까요?',
+        en:'The English word tally means a count — but what did it originally mean?',
+        zh:'英语单词tally是计数的意思，可它原本是什么意思呢？' },
+      history:{ ko:'눈금, 그리고 막대예요. 옛날 사람들은 가축 한 마리마다 나무 막대에 눈금을 하나씩 새겼어요. 그 막대가 곧 통장이었던 셈이죠. 철학자 러셀은 이런 말을 남겼어요 — 인류가 닭 두 마리의 2와 이틀의 2를 같은 것으로 이해하기까지 수천 년이 걸렸다. 우리가 쉽게 세는 하나, 둘, 셋 안에는 그 긴 시간이 담겨 있어요.',
+        en:'A notch, and a stick. People cut one notch into a wooden stick for each animal they owned — the stick was their bank book. The philosopher Russell put it this way: it took humanity thousands of years to see that the 2 of two chickens and the 2 of two days are the same 2. All of that time is folded into the one, two, three we count so easily.',
+        zh:'是刻痕，是木棍。古人每有一头牲畜，就在木棍上刻一道痕——那根木棍就是他们的存折。哲学家罗素说过：人类花了几千年，才明白两只鸡的2和两天的2是同一个2。我们轻松数出的一、二、三里，藏着那么长的时间。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 같은 수도 여러 모습이 있어요!',en:'1) The same number has many looks!',zh:'① 同一个数有很多种样子！'},

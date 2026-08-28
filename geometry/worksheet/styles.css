@@ -333,6 +333,15 @@ select, .code-input, input[type="text"] {
   width: 100%;
 }
 .ws-fig-row + .ws-fig-row { margin-top: 10px; }
+.ws-fill-box-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 14px;
+}
+.ws-fill-box-row .ws-figure { min-width: 0; }
+.ws-fill-box-row .ws-figure-lg svg.ws-iso { width: 100%; height: auto; max-height: 160px; }
+.ws-figure-arrow { align-self: center; color: #3185a0; font-size: 24px; font-weight: 900; }
 
 .ws-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .ws-figure figcaption { font-size: 10.5px; font-weight: 800; color: #4a5450; }
@@ -348,6 +357,82 @@ select, .code-input, input[type="text"] {
 .ws-figure.ws-figure-lg svg.ws-iso { height: 170px; }
 .ws-figure.ws-figure-sm svg.ws-iso { height: 78px; }
 .ws-seq-dots { font-size: 22px; font-weight: 900; color: #8a9a92; padding-bottom: 12px; }
+
+/* 한 개 옮기기: 처음 모양은 왼쪽, 보기는 같은 폭의 한 줄에 고정한다. 보기
+   수가 3개에서 4개로 늘어나도 A4 카드 폭을 밀어내지 않게 각 그림 폭을
+   제한하며, 화면이 좁으면 보기 묶음만 자연스럽게 두 줄로 접힌다. */
+.ws-move-source { display: flex; align-items: center; justify-content: center; }
+.ws-move-divider { align-self: center; color: #3185a0; font-size: 22px; font-weight: 900; }
+.ws-move-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(62px, 1fr));
+  align-items: end;
+  gap: 8px;
+  flex: 1 1 360px;
+  min-width: 0;
+}
+.ws-move-options .ws-figure { min-width: 0; }
+.ws-move-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 82px; }
+.ws-move-options-3 { grid-template-columns: repeat(3, minmax(72px, 1fr)); }
+
+@media (max-width: 720px) {
+  .ws-move-options { grid-template-columns: repeat(2, minmax(72px, 1fr)); }
+}
+
+/* 개수 비교: 모든 보기를 같은 크기의 칸에 두어 그림 크기가 답의 단서가 되지
+   않게 한다. 세 보기와 네 보기 모두 A4 카드에서는 한 줄, 좁은 화면에서는
+   두 열로 배치한다. */
+.ws-compare-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  align-items: end;
+  gap: 12px;
+  width: min(100%, 540px);
+}
+.ws-compare-options-3 { grid-template-columns: repeat(3, minmax(82px, 1fr)); }
+.ws-compare-options .ws-figure { min-width: 0; }
+.ws-compare-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 96px; }
+
+@media (max-width: 720px) {
+  .ws-compare-options,
+  .ws-compare-options-3 { grid-template-columns: repeat(2, minmax(78px, 1fr)); }
+}
+
+/* 두 모양 합치기: 위에는 식처럼 준비 조각 + ? = 목표를, 아래에는 회전 가능한
+   보기 조각을 놓는다. 조각은 renderIsoCoords가 같은 등각 시선으로 그린다. */
+.ws-join-equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+.ws-join-symbol { color: #3185a0; font-size: 22px; font-weight: 900; }
+.ws-join-blank {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px dashed #8fa5ad;
+  color: #3185a0;
+  font-size: 20px;
+  font-weight: 900;
+}
+.ws-join-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  align-items: end;
+  gap: 12px;
+  width: min(100%, 520px);
+  margin-top: 8px;
+}
+.ws-join-options-3 { grid-template-columns: repeat(3, minmax(78px, 1fr)); }
+.ws-join-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 88px; }
+
+@media (max-width: 720px) {
+  .ws-join-equation { gap: 7px; }
+  .ws-join-options { grid-template-columns: repeat(2, minmax(76px, 1fr)); }
+}
 
 .ws-answer-line {
   margin-top: 8px;
@@ -787,4 +872,201 @@ select, .code-input, input[type="text"] {
 @media print {
   .subject-switch { display: none !important; }
   .ws-preview { display: none !important; }
+}
+
+/* ---------------------------------------------------------------------
+   GFIELD print studio v3 — screen-only workbench treatment.
+   The A4 print rules above remain the source of truth for paper output.
+   --------------------------------------------------------------------- */
+@media screen {
+  :root {
+    --ink: #17263d;
+    --brand: #123f72;
+    --accent: #17784b;
+    --line: #c8d0d0;
+    --panel-bg: #e6eae8;
+    --card-bg: #fffefa;
+    --copper: #a66b32;
+  }
+
+  html, body { background: var(--panel-bg); }
+
+  .subject-switch {
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+    align-items: center;
+    gap: 14px;
+    padding: 8px 18px;
+    border-bottom-color: #bcc6c5;
+    background: rgba(255, 254, 250, .97);
+    box-shadow: 0 2px 10px rgba(34, 51, 56, .06);
+  }
+
+  .subject-home {
+    justify-self: start;
+    color: var(--brand);
+    font-size: 13px;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .subject-tabs { grid-column: 2; display: flex; gap: 5px; }
+  .subject-tab {
+    min-height: 38px;
+    padding: 0 16px;
+    border-radius: 4px;
+  }
+  .subject-tab.active {
+    border-color: #0d5636;
+    background: #17784b;
+    box-shadow: inset 0 1px rgba(255,255,255,.2), 0 3px 0 #0d5636;
+  }
+
+  .control-panel {
+    flex-basis: 330px;
+    width: 330px;
+    height: calc(100vh - 58px);
+    top: 58px;
+    padding: 22px 18px 32px;
+    border-right-color: #bcc6c5;
+    background: #fbfcf9;
+  }
+
+  .control-panel h1 {
+    margin: 0 0 20px;
+    padding: 2px 0 2px 13px;
+    border-left: 4px solid var(--accent);
+    letter-spacing: .8px;
+  }
+  .control-panel h1 span { font-size: 20px; letter-spacing: 0; }
+
+  .control-group {
+    margin-bottom: 0;
+    padding: 14px 0;
+    border-top: 1px solid #d6dcda;
+  }
+  .control-group h2 { color: #344858; letter-spacing: .7px; }
+
+  .type-grid { gap: 4px; }
+  .type-grid label {
+    position: relative;
+    min-height: 34px;
+    padding: 5px 5px 5px 7px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    line-height: 1.35;
+  }
+  .type-grid label:hover { border-color: #c4cdcb; background: #f1f5f2; }
+  .type-grid label:has(input:checked) {
+    border-color: #9eb7ae;
+    background: #eef6f1;
+    box-shadow: inset 3px 0 #17784b;
+  }
+
+  select, .code-input, input[type="text"],
+  .intensity-btn, .btn {
+    border-radius: 4px;
+  }
+  select, .code-input, input[type="text"] { min-height: 38px; }
+  .intensity-btn { min-height: 38px; height: auto; }
+  .intensity-btn.active {
+    border-color: #0b315c;
+    background: var(--brand);
+    box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 5px rgba(18,63,114,.16);
+  }
+  .check-line { min-height: 30px; }
+
+  .btn { min-height: 40px; height: auto; }
+  .btn-primary {
+    border-color: #0b315c;
+    background: var(--brand);
+    box-shadow: 0 3px 0 #0b315c;
+  }
+  .btn-print {
+    border-color: #8c713d;
+    background: #fff9df;
+    color: #3e321b;
+    box-shadow: 0 3px 0 rgba(125,91,31,.2);
+  }
+
+  .preview-panel { padding: 26px 28px 60px; background: #e6eae8; }
+  .ws-preview {
+    padding: 16px 18px;
+    border: 1px solid #b8a68e;
+    border-left: 1px solid #b8a68e;
+    border-top: 4px solid var(--copper);
+    border-radius: 2px;
+    background-color: #fffdf7;
+    background-image:
+      linear-gradient(rgba(55,83,94,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(55,83,94,.04) 1px,transparent 1px);
+    background-size: 24px 24px;
+    box-shadow: 0 12px 28px rgba(38,53,56,.11);
+  }
+  .ws-preview-chip { border-radius: 3px; }
+  .ws-preview-chip.active {
+    border-color: #315c79;
+    background: #f7fbfd;
+    color: var(--brand);
+    box-shadow: inset 3px 0 var(--copper);
+  }
+  .ws-page { background: #fffefa; box-shadow: 0 12px 30px rgba(35,43,38,.14); }
+}
+
+@media screen and (max-width: 900px) {
+  .subject-switch {
+    grid-template-columns: auto 1fr;
+    padding: 7px 10px;
+  }
+  .subject-tabs { grid-column: 2; justify-self: end; }
+  .subject-tab { min-height: 36px; padding: 0 10px; font-size: 12px; }
+  .subject-home { font-size: 12px; }
+
+  .app-shell { display: block; }
+  .control-panel {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 18px 14px 22px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .control-panel h1,
+  .control-group:first-of-type,
+  .control-group:nth-of-type(8),
+  .control-group:nth-of-type(9) { grid-column: 1 / -1; }
+  .control-panel h1 { margin-bottom: 8px; }
+  .control-group { min-width: 0; padding-block: 12px; }
+  .control-group:first-of-type { padding-top: 8px; }
+  .type-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .preview-panel { padding: 18px 10px 36px; }
+  .ws-preview { margin-bottom: 14px; padding: 12px; }
+  #sheetRoot { width: 100%; }
+  .ws-page {
+    width: 100%;
+    min-height: calc((100vw - 20px) * 1.4142);
+    padding: 5.5vw 5vw;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .subject-switch { display: flex; align-items: center; gap: 8px; overflow-x: auto; }
+  .subject-home { flex: 0 0 auto; }
+  .subject-tabs { flex: 0 0 auto; margin-left: auto; }
+  .subject-tab { padding-inline: 8px; }
+  .control-panel { gap: 0 9px; }
+  .type-grid { font-size: 11px; }
+  .type-grid label { min-height: 38px; }
+  .ws-preview-head { align-items: flex-start; }
+  .ws-preview-actions { gap: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-tab.active, .btn-primary, .btn-print { transition: none; }
 }

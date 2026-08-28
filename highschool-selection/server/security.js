@@ -44,6 +44,10 @@ function verifyApprovalCode(code, encoded) {
   return timingEqual(supplied, parts[2]);
 }
 
+function approvalVersion(encoded, secret) {
+  return hmac(secret, `approval\n${String(encoded || "")}`).slice(0, 24);
+}
+
 function signSession(payload, secret) {
   const body = b64url(JSON.stringify(payload));
   return `${body}.${hmac(secret, body)}`;
@@ -103,6 +107,7 @@ module.exports = {
   cleanApprovalCode,
   hashApprovalCode,
   verifyApprovalCode,
+  approvalVersion,
   signSession,
   verifySession,
   parseCookies,

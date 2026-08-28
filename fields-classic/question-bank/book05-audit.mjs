@@ -1,3 +1,5 @@
+import "../../geometry/worksheet/generators.js";
+import "../../geometry/worksheet/render.js";
 import { GENERATORS } from "./generators.js";
 import { book05Markup } from "./book05-renderers.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
@@ -6,8 +8,21 @@ const iterations = Number.parseInt(process.argv[2] || "300", 10);
 const book = CURRICULUM.find((item) => item.id === "book-05");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
+const unitTestQuestions = book?.source?.unitTestQuestions || [];
+const unitTestTypeIds = [...new Set(unitTestQuestions.map((question) => question.typeId))];
+const auditedTypeIds = [...new Set([...typeIds, ...unitTestTypeIds])];
 const stages = TEXTBOOK_STAGES.map((stage) => stage.id);
 const expectedUnitCounts = [34, 47, 36, 37];
+const expectedUnitTestTypes = [
+  "row-major-grid-two-target-sum-book5", "radial-line-cycle-two-part-book5", "calendar-weekday-list-ordinal-book5",
+  "calendar-special-date-offset-book5", "calendar-weekday-sum-year-boundary-book5", "shortest-path-rectangle",
+  "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5", "digit-card-ranked-number",
+  "two-digit-digit-sum-rank", "square-product-cycle-fill-book5", "checkerboard-product-matrix-book5",
+  "symbol-zero-one-network-book5", "symbol-cross-network-book5", "symbol-square-product-network-book5",
+  "pair-selection-count", "inverse-pair-count", "pair-selection-count", "square-paper-growth-book5",
+  "square-row-two-boundaries-book5", "calendar-ordinal-sum-infer-weekday-book5", "checkerboard-product-matrix-book5",
+  "regular-triangle-grid-count-book5", "two-digit-digit-difference-rank", "square-border-stone-growth-book5"
+];
 
 const fail = (id, difficulty, message) => { throw new Error(`${id} / L${difficulty}: ${message}`); };
 const assert = (condition, id, difficulty, message) => { if (!condition) fail(id, difficulty, message); };
@@ -68,6 +83,58 @@ function pascalRow(rowNumber) {
   return row;
 }
 
+function countUpRightWithShortcut(rows, columns, shortcut) {
+  const ways = Array.from({ length: rows }, () => Array(columns).fill(0));
+  ways[0][0] = 1;
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      if (row || column) ways[row][column] += (row ? ways[row - 1][column] : 0) + (column ? ways[row][column - 1] : 0);
+      if (row === shortcut.row && column === shortcut.column) ways[row + 1][column + 1] += ways[row][column];
+    }
+  }
+  return ways[rows - 1][columns - 1];
+}
+
+function squareCycleSolutionCount(edges) {
+  let count = 0;
+  for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) for (let d = 1; d <= 9; d += 1) {
+    if (new Set([a, b, c, d]).size !== 4) continue;
+    if (a * b === edges[0] && b * c === edges[1] && c * d === edges[2] && d * a === edges[3]) count += 1;
+  }
+  return count;
+}
+
+const checkerSolutionCache = new Map();
+function checkerSolutionCount(meta) {
+  const key = JSON.stringify([meta.active, meta.rowProducts, meta.columnProducts]);
+  if (checkerSolutionCache.has(key)) return checkerSolutionCache.get(key);
+  const cells = Array.from({ length: 4 }, () => Array(4).fill(null));
+  let count = 0;
+  function visit(index, remaining) {
+    if (count > 1) return;
+    if (index === meta.active.length) {
+      count += 1;
+      return;
+    }
+    const [row, column] = meta.active[index];
+    for (const value of remaining) {
+      cells[row][column] = value;
+      const rowPositions = meta.active.filter(([activeRow]) => activeRow === row);
+      const columnPositions = meta.active.filter(([, activeColumn]) => activeColumn === column);
+      const rowReady = rowPositions.every(([activeRow, activeColumn]) => cells[activeRow][activeColumn] != null);
+      const columnReady = columnPositions.every(([activeRow, activeColumn]) => cells[activeRow][activeColumn] != null);
+      if ((!rowReady || product(rowPositions.map(([activeRow, activeColumn]) => cells[activeRow][activeColumn])) === meta.rowProducts[row])
+        && (!columnReady || product(columnPositions.map(([activeRow, activeColumn]) => cells[activeRow][activeColumn])) === meta.columnProducts[column])) {
+        visit(index + 1, remaining.filter((candidate) => candidate !== value));
+      }
+      cells[row][column] = null;
+    }
+  }
+  visit(0, meta.cardPool);
+  checkerSolutionCache.set(key, count);
+  return count;
+}
+
 function validateSurface(problem, id, difficulty) {
   const text = [problem.prompt, problem.answer, problem.solution].join(" ");
   assert(problem.prompt?.trim(), id, difficulty, "prompt missing");
@@ -77,6 +144,7 @@ function validateSurface(problem, id, difficulty) {
   assert(!/퍼뮤테이션|컴비네이션|팩토리얼|\^/.test(text), id, difficulty, "child-facing forbidden term");
   assert(!/몇 가지인가요\?\s*몇 가지인가요/.test(text), id, difficulty, "duplicated sentence");
   if (problem.visual?.kind === "book5") assert(book05Markup(problem.visual), id, difficulty, "blank book5 visual markup");
+  if (problem.answerVisual?.kind === "book5") assert(book05Markup(problem.answerVisual), id, difficulty, "blank book5 answer visual markup");
 }
 
 function validate(type, problem, difficulty) {
@@ -242,6 +310,104 @@ function validate(type, problem, difficulty) {
       assert(meta.first === (meta.row - 1) ** 2 + 1 && meta.last === meta.row ** 2, id, difficulty, "square row boundary mismatch");
       assert(meta.answer === (meta.askFirst ? meta.first : meta.last) && numeric === meta.answer, id, difficulty, "square row answer mismatch");
       return;
+    case "row-major-two-target-sum-book5": {
+      const flat = meta.values.flat();
+      flat.forEach((value, index) => assert(value === meta.start + index, id, difficulty, "row-major sequence mismatch"));
+      assert(meta.values.length === meta.rows && meta.values.every((row) => row.length === meta.columns), id, difficulty, "row-major dimensions mismatch");
+      assert(meta.targetIndexes.length === 2 && new Set(meta.targetIndexes).size === 2, id, difficulty, "row-major targets repeat");
+      assert(sum(meta.targetIndexes.map((index) => flat[index])) === meta.answer && numeric === meta.answer, id, difficulty, "row-major target sum mismatch");
+      return;
+    }
+    case "radial-line-cycle-two-part-book5": {
+      const first = meta.start + meta.firstTarget.line + (meta.firstTarget.position - 1) * meta.lineCount;
+      const second = meta.start + meta.secondTarget.line + (meta.secondTarget.position - 1) * meta.lineCount;
+      assert(first === meta.firstAnswer, id, difficulty, "radial first answer mismatch");
+      assert(second === meta.secondNumber, id, difficulty, "radial reverse address mismatch");
+      assert(meta.firstTarget.position >= 1 && meta.secondTarget.position >= 1, id, difficulty, "radial position invalid");
+      return;
+    }
+    case "calendar-weekday-list-ordinal-book5": {
+      const dates = [];
+      for (let date = 1; date <= meta.days; date += 1) if ((meta.firstWeekday + date - 1) % 7 === meta.listWeekday) dates.push(date);
+      assert(JSON.stringify(dates) === JSON.stringify(meta.listDates), id, difficulty, "calendar weekday list mismatch");
+      assert((meta.firstWeekday + meta.ordinalDate - 1) % 7 === meta.ordinalWeekday, id, difficulty, "calendar ordinal weekday mismatch");
+      const prior = Array.from({ length: meta.ordinalDate }, (_, index) => index + 1).filter((date) => (meta.firstWeekday + date - 1) % 7 === meta.ordinalWeekday);
+      assert(prior.length === meta.ordinal, id, difficulty, "calendar ordinal count mismatch");
+      return;
+    }
+    case "calendar-special-date-offset-book5": {
+      assert(meta.targetMonth === meta.month + 1, id, difficulty, "special date must cross one month");
+      assert(meta.offset === meta.days - meta.sourceDate + meta.targetDate, id, difficulty, "special date offset mismatch");
+      assert(meta.targetWeekday === (meta.sourceWeekday + meta.offset) % 7, id, difficulty, "special date weekday mismatch");
+      return;
+    }
+    case "calendar-weekday-sum-year-boundary-book5":
+      assert(meta.pair[1] - meta.pair[0] === 7 && sum(meta.pair) === meta.pairSum, id, difficulty, "year-boundary pair mismatch");
+      assert(meta.januaryFirstWeekday === (meta.firstWeekday + 31) % 7, id, difficulty, "January first weekday mismatch");
+      assert(problem.visual.hiddenDates?.length === 2, id, difficulty, "source weekday dates are visible");
+      return;
+    case "shortest-diagonal-shortcut-book5":
+      assert(countUpRightWithShortcut(meta.rows, meta.columns, meta.shortcut) === meta.answer && numeric === meta.answer, id, difficulty, "diagonal shortest-path mismatch");
+      assert(meta.shortcut.row < meta.rows - 1 && meta.shortcut.column < meta.columns - 1, id, difficulty, "shortcut outside grid");
+      return;
+    case "square-product-cycle-fill-book5":
+      assert(meta.vertices.length === 4 && new Set(meta.vertices).size === 4, id, difficulty, "square cycle values repeat");
+      meta.edges.forEach((edge, index) => assert(edge === meta.vertices[index] * meta.vertices[(index + 1) % 4], id, difficulty, "square cycle edge mismatch"));
+      assert(squareCycleSolutionCount(meta.edges) === 1, id, difficulty, "square cycle is not unique");
+      assert(problem.responseKind === "visual-fill" && problem.answerVisual, id, difficulty, "square cycle completed answer missing");
+      return;
+    case "checkerboard-product-matrix-book5": {
+      assert(meta.active.length === 8 && new Set(meta.active.map(([row, column]) => `${row}:${column}`)).size === 8, id, difficulty, "checker active cells invalid");
+      assert(JSON.stringify([...meta.cells.flat().filter((value) => value != null)].sort((a, b) => a - b)) === JSON.stringify(meta.cardPool), id, difficulty, "checker cards mismatch");
+      assert(meta.cells.every((row, index) => product(row.filter((value) => value != null)) === meta.rowProducts[index]), id, difficulty, "checker row products mismatch");
+      assert(Array.from({ length: 4 }, (_, column) => product(meta.cells.map((row) => row[column]).filter((value) => value != null))).every((value, index) => value === meta.columnProducts[index]), id, difficulty, "checker column products mismatch");
+      assert(checkerSolutionCount(meta) === 1, id, difficulty, "checkerboard placement is not unique");
+      assert(problem.responseKind === "visual-fill" && problem.answerVisual, id, difficulty, "checker completed answer missing");
+      return;
+    }
+    case "symbol-zero-one-network-book5":
+      assert(JSON.stringify([...Object.values(meta.values)].sort((a, b) => a - b)) === JSON.stringify([0, 1, 2, 3, 4]), id, difficulty, "zero-one card pool mismatch");
+      assert(meta.values.diamond * meta.values.diamond === meta.values.plus, id, difficulty, "zero-one square relation mismatch");
+      assert(meta.values.diamond * meta.values.square === meta.values.diamond && meta.values.plus + meta.values.circle === meta.values.plus, id, difficulty, "zero-one identity relation mismatch");
+      assert(meta.values.square + meta.values.diamond === meta.values.pentagon && numeric === meta.values.pentagon, id, difficulty, "zero-one target mismatch");
+      return;
+    case "symbol-cross-network-book5":
+      assert(JSON.stringify([...Object.values(meta.values)].sort((a, b) => a - b)) === JSON.stringify([1, 2, 3, 4, 5, 9]), id, difficulty, "cross card pool mismatch");
+      assert(meta.values.circle ** 2 === meta.values.square && meta.values.circle + meta.values.diamond === meta.values.triangle, id, difficulty, "cross first relations mismatch");
+      assert(meta.values.square + meta.values.pentagon === meta.values.plus && meta.values.triangle ** 2 === meta.values.plus && numeric === meta.values.pentagon, id, difficulty, "cross target mismatch");
+      return;
+    case "symbol-square-product-network-book5":
+      assert(JSON.stringify([...Object.values(meta.values)].sort((a, b) => a - b)) === JSON.stringify([2, 3, 4, 6, 8, 9]), id, difficulty, "square-product card pool mismatch");
+      assert(meta.values.diamond ** 2 === meta.values.square, id, difficulty, "diamond-square mismatch");
+      assert(meta.values.square ** 2 === meta.values.diamond * meta.values.circle, id, difficulty, "linked product mismatch");
+      assert(meta.values.pentagon ** 2 === meta.values.triangle && meta.values.plus ** 2 === meta.values.square * meta.values.triangle && numeric === meta.values.plus, id, difficulty, "square-product target mismatch");
+      return;
+    case "square-paper-growth-book5":
+      assert(meta.answer === meta.target * meta.target && numeric === meta.answer, id, difficulty, "square paper growth mismatch");
+      return;
+    case "square-row-two-boundaries-book5":
+      assert(meta.firstAnswer === meta.firstRow ** 2, id, difficulty, "first row last mismatch");
+      assert(meta.secondAnswer === (meta.secondRow - 1) ** 2 + 1, id, difficulty, "second row first mismatch");
+      return;
+    case "calendar-ordinal-sum-infer-weekday-book5":
+      assert(meta.secondDate === meta.firstOccurrence + 7 && meta.fourthDate === meta.firstOccurrence + 21, id, difficulty, "ordinal dates mismatch");
+      assert(meta.secondDate + meta.fourthDate === meta.dateSum, id, difficulty, "ordinal date sum mismatch");
+      assert(meta.firstWeekday === (meta.weekdayIndex - (meta.firstOccurrence - 1) + 7) % 7, id, difficulty, "inferred first weekday mismatch");
+      return;
+    case "regular-triangle-grid-count-book5": {
+      let upward = 0;
+      for (let side = 1; side <= meta.order; side += 1) upward += triangular(meta.order - side + 1);
+      let downward = 0;
+      for (let side = 1; side <= Math.floor(meta.order / 2); side += 1) downward += triangular(meta.order - side * 2 + 1);
+      assert(upward === meta.upward && downward === meta.downward && upward + downward === meta.answer && numeric === meta.answer, id, difficulty, "regular triangle count mismatch");
+      return;
+    }
+    case "square-border-stone-growth-book5":
+      assert(meta.side === meta.target + 2, id, difficulty, "stone side growth mismatch");
+      assert(meta.black === 4 * (meta.side - 1) && meta.white === (meta.side - 2) ** 2, id, difficulty, "stone color count mismatch");
+      assert(meta.difference === Math.abs(meta.black - meta.white), id, difficulty, "stone difference mismatch");
+      assert(meta.moreColor === (meta.black > meta.white ? "검은색" : meta.black < meta.white ? "흰색" : "같음"), id, difficulty, "stone color winner mismatch");
+      return;
     default:
       // 2권에서 수학과 그림을 이미 독립 검산한 재사용 생성기다.
       assert(meta || type.generator, id, difficulty, "reused generator has no audit identity");
@@ -251,6 +417,13 @@ function validate(type, problem, difficulty) {
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
 if (typeIds.length !== 38) throw new Error(`book-05 type count ${typeIds.length}`);
+if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
+unitTestQuestions.forEach((question, index) => {
+  if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);
+  if (question.typeId !== expectedUnitTestTypes[index]) throw new Error(`book-05 unit test ${question.number} type ${question.typeId}, expected ${expectedUnitTestTypes[index]}`);
+  if (!question.verified) throw new Error(`book-05 unit test ${question.number} is not verified`);
+  if (!typeById(question.typeId)) throw new Error(`book-05 unit test ${question.number} unknown type ${question.typeId}`);
+});
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -283,7 +456,7 @@ units.forEach((unit, unitIndex) => {
 const variants = new Map();
 let generated = 0;
 let worksheetOnly = 0;
-for (const typeId of typeIds) {
+for (const typeId of auditedTypeIds) {
   const type = typeById(typeId);
   if (type.worksheetCode) {
     assert(type.bankApproved && type.worksheetOptions?.kind, typeId, 0, "worksheet route is not pinned to a verified family");
@@ -309,4 +482,4 @@ for (const typeId of typeIds) {
 
 assert(sourceQuestionCount === 154, "book-05", 0, `source count ${sourceQuestionCount}`);
 const minVariants = Math.min(...variants.values());
-console.log(`BOOK05_AUDIT_OK types=${typeIds.length} sourceQuestions=${sourceQuestionCount} generated=${generated} worksheetOnly=${worksheetOnly} minVariants=${minVariants}`);
+console.log(`BOOK05_AUDIT_OK bodyTypes=${typeIds.length} unitTestQuestions=${unitTestQuestions.length} auditedTypes=${auditedTypeIds.length} sourceQuestions=${sourceQuestionCount} generated=${generated} worksheetOnly=${worksheetOnly} minVariants=${minVariants}`);

@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
  * One-off transport: upload a real book PDF from reading-world/assets/library-pdf-src/
- * to Supabase Storage (bucket `library-pdfs`, public, anon-writable — same pattern
- * as the existing `library-images`/`audio` buckets) and print the resulting URL.
+ * to Supabase Storage (bucket `library-pdfs`) and print the resulting URL.
  * The PDF itself is not meant to stay in git — it lives only on the throwaway
  * branch long enough for this workflow to read it. Nothing here ships to
  * main/GitHub Pages.
@@ -12,9 +11,14 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fgahqumaldheqettmvqg.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const SRC_DIR = path.join(__dirname, '../reading-world/assets/library-pdf-src');
+
+if (!SUPABASE_KEY) {
+  console.error('❌ Set SUPABASE_SERVICE_ROLE_KEY before uploading PDFs.');
+  process.exit(1);
+}
 
 function httpRequest(options, body) {
   return new Promise((resolve, reject) => {
@@ -36,6 +40,7 @@ async function uploadFile(buf, storagePath) {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'apikey': SUPABASE_KEY,
       'Content-Type': 'application/pdf',
       'x-upsert': 'true',
     },

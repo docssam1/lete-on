@@ -72,11 +72,26 @@
     return { xMin, yMin, w: xMax - xMin, h: yMax - yMin };
   }
 
-  function wrapSvg(inner, bbox, cssClass) {
+  function wrapSvg(inner, bbox, cssClass, attributes) {
     return (
       '<svg viewBox="' + fmt(bbox.xMin) + " " + fmt(bbox.yMin) + " " + fmt(bbox.w) + " " + fmt(bbox.h) + '" ' +
-      'class="' + (cssClass || "ws-iso") + '" preserveAspectRatio="xMidYMid meet">' + inner + "</svg>"
+      'class="' + (cssClass || "ws-iso") + '" preserveAspectRatio="xMidYMid meet"' + (attributes || "") + ">" + inner + "</svg>"
     );
+  }
+
+  function viewpointCode(requested, profile) {
+    const expected = profile && profile.code;
+    const code = requested || expected;
+    if (!expected || code !== expected) throw new Error("unsupported worksheet isometric viewpoint: " + code);
+    return code;
+  }
+
+  function standardViewpointCode(requested) {
+    return viewpointCode(requested, GEN.ISO_VIEWPOINT);
+  }
+
+  function topViewpointCode(requested) {
+    return viewpointCode(requested, GEN.ISO_TOP_VIEWPOINT);
   }
 
   // Painter's algorithm, far-to-near. In THIS projection +z and +x both move
@@ -87,6 +102,7 @@
   // paints far tall columns over near cubes.
   function renderIso(map, width, depth, options) {
     options = options || {};
+    const viewpoint = standardViewpointCode(options.viewpoint);
     const u = options.u || 20;
     const colorFn = options.colorFn || (() => "grey");
     let svg = "";
@@ -100,7 +116,7 @@
       }
     }
     const height = Math.max(1, GEN.maxHeightOf(map));
-    return wrapSvg(svg, isoBBox(width, depth, height, u));
+    return wrapSvg(svg, isoBBox(width, depth, height, u), "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
   // Connected cube pieces can contain side branches or overhangs that a
@@ -109,6 +125,7 @@
   // the same worksheet cube style for mental-rotation questions.
   function renderIsoCoords(coords, options) {
     options = options || {};
+    const viewpoint = standardViewpointCode(options.viewpoint);
     const u = options.u || 20;
     const cubes = (coords || []).map((point) => point.map(Number));
     if (!cubes.length) return "";
@@ -129,7 +146,7 @@
     const width = Math.max(...cubes.map(([x]) => x)) + 1;
     const height = Math.max(...cubes.map(([, y]) => y)) + 1;
     const depth = Math.max(...cubes.map(([, , z]) => z)) + 1;
-    return wrapSvg(svg, isoBBox(width, depth, height, u), "ws-iso ws-polycube");
+    return wrapSvg(svg, isoBBox(width, depth, height, u), "ws-iso ws-polycube", ' data-viewpoint="' + viewpoint + '"');
   }
 
   // Full-footprint floor plane at y=0, spanning x:[0,width] and z:[0,depth]
@@ -162,6 +179,7 @@
   // of a cube.
   function renderIsoWalled(map, width, depth, options) {
     options = options || {};
+    const viewpoint = standardViewpointCode(options.viewpoint);
     const u = options.u || 20;
     const colorFn = options.colorFn || (() => "grey");
     const height = Math.max(1, GEN.maxHeightOf(map));
@@ -182,7 +200,7 @@
         }
       }
     }
-    return wrapSvg(svg, isoBBox(width, depth, wallH, u));
+    return wrapSvg(svg, isoBBox(width, depth, wallH, u), "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
   // Bird's-eye "diamond" view for the IN pyramid archetype — the textbook
@@ -193,6 +211,7 @@
   // (viewer still sits on the +z/+x side, just much higher).
   function renderIsoTop(map, width, depth, options) {
     options = options || {};
+    const viewpoint = topViewpointCode(options.viewpoint);
     const u = options.u || 20;
     const a = u * 0.78; // horizontal spread for both x and z (equal → diamond)
     const b = u * 0.55; // downward spread per x/z step
@@ -215,7 +234,7 @@
     const height = Math.max(1, GEN.maxHeightOf(map));
     const pad = u * 0.6;
     const bbox = { xMin: -depth * a - pad, yMin: -height * e - pad, w: (width + depth) * a + pad * 2, h: (width + depth) * b + height * e + pad * 2 };
-    return wrapSvg(svg, bbox);
+    return wrapSvg(svg, bbox, "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
   function boxWireframe(width, depth, boxH, u) {
@@ -238,6 +257,7 @@
   // the "how many more to fill the box" framing is visible at a glance.
   function renderIsoBox(map, width, depth, boxH, options) {
     options = options || {};
+    const viewpoint = standardViewpointCode(options.viewpoint);
     const u = options.u || 20;
     let colorFn = options.colorFn;
     if (!colorFn && options.checker) {
@@ -259,7 +279,7 @@
     // (FB/CU: "how many more to fill"). For a full cube (PN/BW) the outline
     // coincides with the cube edges and just muddies the drawing.
     if (!options.noBox) svg += boxWireframe(width, depth, boxH, u);
-    return wrapSvg(svg, isoBBox(width, depth, boxH, u));
+    return wrapSvg(svg, isoBBox(width, depth, boxH, u), "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
   // HL: draw a solid full box, then paint the tunnel entrances BLACK on the
@@ -276,6 +296,7 @@
 
   function renderIsoHoles(width, depth, boxH, tunnels, options) {
     options = options || {};
+    const viewpoint = standardViewpointCode(options.viewpoint);
     const u = options.u || 20;
     let svg = "";
     for (let z = 0; z < depth; z += 1) {
@@ -297,7 +318,7 @@
         svg += polygon(quadZ(t.a, t.b, depth, u), HOLE_FILL, HOLE_EDGE);
       }
     });
-    return wrapSvg(svg, isoBBox(width, depth, boxH, u));
+    return wrapSvg(svg, isoBBox(width, depth, boxH, u), "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
   // HL 층별 모눈 가이드 — 1층부터 각 층을 위에서 본 W x D 모눈으로 그리고,
@@ -348,21 +369,23 @@
   // --- 2D view grids -----------------------------------------------------
 
   // Book-style top-view grid: bold solid grid lines, height numbers centred.
-  function renderNumberGrid(grid, width, depth, cellPx) {
+  function renderNumberGrid(grid, width, depth, cellPx, options) {
     cellPx = cellPx || 34;
+    options = options || {};
     const w = width * cellPx;
     const h = depth * cellPx;
     let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-number" preserveAspectRatio="xMidYMid meet">';
     for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
-        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="#333" stroke-width="1"/>';
         const v = grid[z][x];
+        const emptyDotted = options.dottedEmpty && !v;
+        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="' + (emptyDotted ? '#aaa' : '#333') + '" stroke-width="1"' + (emptyDotted ? ' stroke-dasharray="3 2"' : '') + '/>';
         if (v) {
           s += '<text x="' + (x * cellPx + cellPx / 2) + '" y="' + (z * cellPx + cellPx / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + cellPx * 0.42 + '">' + v + "</text>";
         }
       }
     }
-    s += '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#111" stroke-width="2.5"/>';
+    if (!options.dottedEmpty) s += '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#111" stroke-width="2.5"/>';
     s += "</svg>";
     return s;
   }

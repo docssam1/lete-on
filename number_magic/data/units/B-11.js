@@ -21,6 +21,14 @@ window.NM_UNITS['B-11'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'원판 3개를 규칙대로 다른 기둥에 모두 옮기려면 몇 번 옮겨야 할까요? (한 번에 하나씩, 큰 원판을 작은 원판 위에 놓으면 안 돼요)',
+        en:'How many moves to shift 3 discs to another peg — one at a time, never a bigger disc on a smaller one?',
+        zh:'要把3个圆盘按规则全部移到另一根柱子，需要移动几次？（一次只能移一个，大盘不能压在小盘上）' },
+      history:{ ko:'7번이에요. 두 배를 세 번 한 8에서 하나 뺀 수죠. 원판이 하나 늘 때마다 횟수는 두 배보다 하나 적게 늘어나서, 4개면 15번, 5개면 31번이 돼요. 인도 사원에 원판 64개가 있다는 하노이 탑 전설에서는 1초에 한 번씩 옮겨도 약 6000억 년이 걸립니다.',
+        en:'Seven. That is three doublings, eight, minus one. Each extra disc doubles the count and takes one off: 4 discs need 15, 5 discs need 31. In the Tower of Hanoi legend the temple has 64 discs — one move per second would take about 600 billion years.',
+        zh:'7次。也就是翻三次倍得到的8再减1。每多一个圆盘，次数就翻倍再减一：4个要15次，5个要31次。汉诺塔传说里寺庙有64个圆盘，就算每秒移一次，也要约6000亿年。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 8단 = 두 배 × 두 배 × 두 배', en:'1) 8 times = double × double × double', zh:'① 8的口诀 = 翻倍×翻倍×翻倍'},

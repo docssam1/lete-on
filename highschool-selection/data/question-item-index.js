@@ -9,9 +9,9 @@
 })(typeof window !== "undefined" ? window : globalThis, function (core) {
   "use strict";
 
-  const INDEX_SCHEMA_VERSION = 1;
+  const INDEX_SCHEMA_VERSION = 2;
   const LOCATOR_KINDS = Object.freeze(["concept", "example", "mission", "exercise", "unknown"]);
-  const DISCOVERY_STATUSES = Object.freeze(["page_located", "ocr_candidate", "visual_verified"]);
+  const DISCOVERY_STATUSES = Object.freeze(["page_located", "ocr_candidate", "layout_candidate", "visual_verified"]);
   const CLASSIFICATION_STATUSES = Object.freeze(["pending", "reviewed", "approved"]);
   const ALLOWED_FIELDS = Object.freeze([
     "id", "sourceRef", "locator", "discoveryStatus", "curriculum", "classificationStatus",

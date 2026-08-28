@@ -1,14 +1,14 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260825b";
-import { GENERATORS } from "./generators.js?v=20260825b";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260829a";
+import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260822e";
-import { book03Markup } from "./book03-renderers.js?v=20260825b";
-import { book04Markup } from "./book04-renderers.js?v=20260822e";
-import { book05Markup } from "./book05-renderers.js?v=20260822f";
-import { book06Markup } from "./book06-renderers.js?v=20260822g";
+import { book01Markup } from "./book01-renderers.js?v=20260827d";
+import { book03Markup } from "./book03-renderers.js?v=20260827b";
+import { book04Markup } from "./book04-renderers.js?v=20260826b";
+import { book05Markup } from "./book05-renderers.js?v=20260829b";
+import { book06Markup } from "./book06-renderers.js?v=20260829a";
 import { book07Markup } from "./book07-renderers.js?v=20260822h";
 import { book08Markup } from "./book08-renderers.js?v=20260822i";
-import { book09Markup } from "./book09-renderers.js?v=20260822j";
+import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260822k";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 
@@ -22,12 +22,20 @@ const OUR_MOCK_EXAM_GROUPS = [
   { label: "실전 모의고사", exams: PRACTICE_EXAM_TYPES },
   { label: "파이널 모의고사", exams: FINAL_EXAM_TYPES }
 ];
-const OUR_MOCK_EXAMS = OUR_MOCK_EXAM_GROUPS.flatMap((group) => group.exams);
 const MOCK_EXAM_NAV = [
   { id: "diagnostic", label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
   ...PRACTICE_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("실전 모의고사 ", "실전 "), exams: [exam] })),
   ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
 ];
+const academyStyleIdsByType = new Map(TYPES.map((item) => [item.id, new Set(item.academyStyleIds || [])]));
+const sourceQuestionByKey = new Map(SOURCE_QUESTION_INDEX.map((item) => [item.sourceKey, item]));
+for (const sourceQuestion of SOURCE_QUESTION_INDEX) {
+  sourceQuestion.classifications.forEach((classification) => {
+    const styleIds = academyStyleIdsByType.get(classification.detailedTypeId) || new Set();
+    classification.academyStyleIds.forEach((styleId) => styleIds.add(styleId));
+    academyStyleIdsByType.set(classification.detailedTypeId, styleIds);
+  });
+}
 const stageIds = new Set([...AGE_STAGES.map((item) => item.id), ...MOCK_EXAM_NAV.map((item) => item.id)]);
 
 function requestedStage() {
@@ -42,8 +50,10 @@ const state = {
   mode: "exam",
   stage: requestedStage(),
   selected: { exam: new Set(), curriculum: new Set(), unitTest: new Set(), type: new Set() },
+  academyStyles: new Set(ACADEMY_STYLES.map((item) => item.id)),
   count: 20,
   difficulty: "actual",
+  curriculumBookId: CURRICULUM[0]?.id || "book-01",
   curriculumStage: "type",
   order: "exam",
   includeSolution: true,
@@ -60,12 +70,15 @@ function activeDifficulty() {
   return state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
 }
 
-function withProblemContext(problem, item, reference) {
+function withProblemContext(problem, item, reference, sourceClassification = null) {
   const studyStage = state.mode === "curriculum" ? activeTextbookStage() : null;
+  const classification = sourceClassification || questionClassificationForType(item.id);
   return {
     ...problem,
     type: item,
     reference,
+    classification,
+    representativeConcept: representativeConceptForType(item.id),
     studyStage,
     conceptGuide: studyStage?.id === "concept" ? textbookGuideForType(item.id) : ""
   };
@@ -184,8 +197,10 @@ function showTypePreview(anchor) {
     return;
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
+  const representativeConcept = representativeConceptForType(item.id);
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
     ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
+    ${representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
     ${learningMapPreviewMarkup(item)}
     ${problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
@@ -330,9 +345,17 @@ function typeStageReferences(unit, typeId, stageId) {
 }
 
 function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
-  const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
+  // 원본 교재에 이 세부 유형이 등장하는 단계와, 문제은행에서 난이도를 바꾸어
+  // 생성할 수 있는 단계는 구분한다. 원본 문항 번호가 없는 단계를 가짜 번호로
+  // 채우지는 않되, 검산된 생성기는 개념·유형·연습·심화 변형으로 사용할 수 있다.
   const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
-  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
+  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit);
+}
+
+function sourceStageLabels(unit, typeId) {
+  return TEXTBOOK_STAGES
+    .filter((candidate) => typeStageReferences(unit, typeId, candidate.id).length > 0)
+    .map((candidate) => candidate.label);
 }
 
 function studyReferenceLabel(references = []) {
@@ -361,7 +384,15 @@ function studyReferenceLabel(references = []) {
 }
 
 function renderCurriculum() {
-  $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
+  const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  if ($("goldenBellLink")) $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
+  const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
+    `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
+  ).join("")}</nav>`;
+  const stageTabs = `<div class="curriculum-inline-stages" aria-label="교재 학습 단계 선택">${TEXTBOOK_STAGES.map((stage) =>
+    `<button type="button" data-curriculum-stage="${stage.id}" class="${stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
+  ).join("")}</div>`;
+  const activeBookMarkup = [activeBook].map((book) => {
     const sourceFolder = book.id.replace("-", "");
     const units = book.units.map((unit, unitIndex) => {
       const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
@@ -372,13 +403,16 @@ function renderCurriculum() {
         const ready = isSelectableCurriculumType(item, book, unit, stage.id);
         const sourceChecked = hasBookSource(item, book, unit);
         const sourceNumbers = studyReferenceLabel(typeReferences);
+        const availableStageLabels = sourceStageLabels(unit, item.id);
+        const alternateStageLabel = availableStageLabels.length ? `${availableStageLabels.join("·")}에서 선택 가능` : "교재 원본 문항 없음";
+        const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item.id]?.includes(stage.id);
         const sourceState = sourceNumbers
           ? `${stage.label} 원본 ${sourceNumbers}`
-          : `${stage.label} 단계 원본 문항 없음`;
-        return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+          : `${stage.label} 단계 변형 생성 · 원본은 ${alternateStageLabel}${sourceAuditBlocked ? " · 해당 단계 원본 검토 중" : ""}`;
+        return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"} ${sourceNumbers ? "source-stage" : "derived-stage"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
           <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
-          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked && !sourceNumbers ? "이 단계에는 없음" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? sourceNumbers ? "원본형 무한 생성" : "단계 변형 생성" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
       const readyCount = types.filter((item) => isSelectableCurriculumType(item, book, unit)).length;
@@ -410,15 +444,26 @@ function renderCurriculum() {
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
+        <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "개념 → 골든벨 → 이야기" : "준비 중"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
         ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
       ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
+      <p class="book-policy">골든벨은 별도 개념 학습으로 연결${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
+  $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;
+
+  $("curriculumTree").querySelectorAll("button[data-curriculum-book]").forEach((button) => button.addEventListener("click", () => {
+    state.curriculumBookId = button.dataset.curriculumBook;
+    hideTypePreview();
+    renderCurriculum();
+  }));
+  $("curriculumTree").querySelectorAll("button[data-curriculum-stage]").forEach((button) => button.addEventListener("click", () => {
+    setCurriculumStage(button.dataset.curriculumStage);
+  }));
 
   $("curriculumTree").querySelectorAll("input[data-curriculum-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.curriculum.add(input.dataset.curriculumKey);
@@ -433,13 +478,69 @@ function renderCurriculum() {
 }
 
 function groupedTypes() {
+  // 원본과 생성 경로가 모두 확정된 유형만 선택 목록에 노출한다. 미연결 분류
+  // 자리는 데이터에 보존하되, 실제 문제처럼 회색 행으로 보여 주지 않는다.
+  const matchesStyle = (item) => isSelectableType(item) && academyStyleIdsForType(item).some((id) => state.academyStyles.has(id));
   return DOMAINS.map((domain) => ({
     domain,
-    middles: [...new Set(TYPES.filter((item) => item.domain === domain.id).map((item) => item.middle))].map((middle) => ({
+    middles: [...new Set(TYPES.filter((item) => item.domain === domain.id && matchesStyle(item)).map((item) => item.middle))].map((middle) => ({
       middle,
-      types: TYPES.filter((item) => item.domain === domain.id && item.middle === middle)
+      types: TYPES.filter((item) => item.domain === domain.id && item.middle === middle && matchesStyle(item))
     }))
+  })).filter((group) => group.middles.length);
+}
+
+function academyStyleIdsForType(item) {
+  return [...(academyStyleIdsByType.get(item?.id) || new Set(item?.academyStyleIds || []))];
+}
+
+function academyStyleIdsFor(target) {
+  if (target?.classification?.academyStyleIds) return target.classification.academyStyleIds;
+  if (target?.academyStyleIds) return target.academyStyleIds;
+  return academyStyleIdsForType(target);
+}
+
+function academyStyleLabels(target) {
+  return academyStyleIdsFor(target)
+    .map((id) => ACADEMY_STYLES.find((style) => style.id === id)?.label)
+    .filter(Boolean);
+}
+
+function renderAcademyStyleFilters() {
+  $("academyStyleFilters").innerHTML = ACADEMY_STYLES.map((style) => {
+    const count = TYPES.filter((item) => isSelectableType(item) && academyStyleIdsForType(item).includes(style.id)).length;
+    return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${style.label}</span><em>${count}</em></label>`;
+  }).join("");
+  $("academyStyleFilters").querySelectorAll("input[data-academy-style]").forEach((input) => input.addEventListener("change", () => {
+    if (input.checked) state.academyStyles.add(input.dataset.academyStyle);
+    else state.academyStyles.delete(input.dataset.academyStyle);
+    for (const typeId of [...state.selected.type]) {
+      const item = typeById(typeId);
+      if (!academyStyleIdsForType(item).some((id) => state.academyStyles.has(id))) state.selected.type.delete(typeId);
+    }
+    renderTypeTree();
+    updateSummary();
   }));
+}
+
+function setCurriculumStage(stageId) {
+  if (!TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) return;
+  state.curriculumStage = stageId;
+  $("curriculumStageChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.stage === stageId);
+  });
+  for (const key of [...state.selected.curriculum]) {
+    const [bookId, indexText, typeId] = key.split(":");
+    const book = CURRICULUM.find((item) => item.id === bookId);
+    const unit = book?.units[Number(indexText)];
+    if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, stageId)) {
+      state.selected.curriculum.delete(key);
+    }
+  }
+  typePreviewCache.clear();
+  hideTypePreview();
+  renderCurriculum();
+  updateSummary();
 }
 
 function renderTypeTree() {
@@ -461,8 +562,25 @@ function renderTypeTree() {
   }));
 }
 
+function generationCaseForSource(sourceKind, sourceId, number) {
+  const sourceKey = `${sourceKind}:${sourceId}:q${number}`;
+  const sourceRecord = sourceQuestionByKey.get(sourceKey);
+  return Object.freeze({
+    mode: sourceRecord?.sourceFidelity === "exact-generator" ? "source" : "variant-from-source",
+    sourceKey,
+    sourceKind,
+    sourceId,
+    number,
+    sourceFidelity: sourceRecord?.sourceFidelity || "classified"
+  });
+}
+
 function selectedReferences() {
-  if (state.mode === "type") return [...state.selected.type].map((typeId) => ({ typeId, reference: `${typeById(typeId)?.label || "유형"} 기준` }));
+  if (state.mode === "type") return [...state.selected.type].map((typeId) => ({
+    typeId,
+    reference: `${typeById(typeId)?.label || "유형"} 기준`,
+    classification: questionClassificationForType(typeId, { academyStyleIds: academyStyleIdsForType(typeById(typeId)) })
+  }));
   if (state.mode === "curriculum") {
     const result = [];
     for (const key of state.selected.curriculum) {
@@ -472,7 +590,15 @@ function selectedReferences() {
       if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book, unit)) {
         const stage = activeTextbookStage();
         const sourceNumbers = studyReferenceLabel(typeStageReferences(unit, typeId, stage.id));
-        result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
+        const availableStageLabels = sourceStageLabels(unit, typeId);
+        const stageReference = sourceNumbers
+          ? `${stage.label}(${sourceNumbers})`
+          : `${stage.label} 단계 변형(원본 ${availableStageLabels.join("·") || "문항 대조 전"})`;
+        result.push({
+          typeId,
+          reference: `${book.label} ${unit.label} · ${stageReference} · ${typeById(typeId)?.label || "세부 유형"}`,
+          classification: questionClassificationForType(typeId)
+        });
       }
     }
     for (const key of state.selected.unitTest) {
@@ -487,7 +613,9 @@ function selectedReferences() {
           typeId: question.typeId,
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
-          fixedSeed: `unit-test:${book.id}:${number}`
+          fixedSeed: `unit-test:${book.id}:${number}`,
+          classification: question.classification,
+          generationCase: generationCaseForSource("unit-test", book.id, number)
         });
       }
     }
@@ -500,7 +628,9 @@ function selectedReferences() {
         result.push({
           typeId: sourceQuestion.typeId,
           reference: `${exam.label} ${sourceQuestion.number}번`,
-          fixedSeed: sourceQuestion.fixedSeed || null
+          fixedSeed: sourceQuestion.fixedSeed || null,
+          classification: sourceQuestion.classification,
+          generationCase: generationCaseForSource("exam", exam.id, sourceQuestion.number)
         });
       }
     }
@@ -590,7 +720,9 @@ function geometryWorksheetSolution(problem) {
   const answer = problem.answer || {};
   switch (problem.type) {
     case "TC":
-      return `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
+      return answer.askTotal === false
+        ? "앞과 오른쪽 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다."
+        : `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
     case "VC": {
       const values = (answer.numbers || []).flat().filter((value) => value > 0);
       return `위에서 본 모양의 각 자리에 앞·옆에서 본 가장 높은 층수를 맞춰 쓰고 더합니다. ${values.join(" + ")} = ${answer.count}이므로 ${answer.count}개입니다.`;
@@ -624,11 +756,11 @@ function geometryWorksheetSolution(problem) {
   }
 }
 
-function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt) {
+function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null, sourceClassification = null) {
   const worksheet = globalThis.GW_GEN;
   const info = worksheet?.typeInfo(item.worksheetCode);
   if (!worksheet || !info) return null;
-  const intensity = activeDifficulty();
+  const intensity = difficultyOverride || activeDifficulty();
   const requestedLevel = item.worksheetLevel || info.levels[0];
   const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
   const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
@@ -648,18 +780,32 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }
   const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
   const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
-  return withProblemContext({
-    prompt: made.prompt,
+  const icPromptMode = made.type === "IC" ? item.worksheetOptions?.promptMode : null;
+  if (icPromptMode === "total" || icPromptMode === "minimum") {
+    made.answer.askFloor = false;
+    made.answer.askUpper = false;
+    made.answerText = `${made.answer.total}개`;
+  }
+  const prompt = icPromptMode === "total"
+    ? "다음은 쌓기나무를 쌓아 만든 입체 모양입니다. 사용된 쌓기나무는 모두 몇 개입니까?"
+    : icPromptMode === "minimum"
+      ? "쌓기나무로 쌓은 모양입니다. 사용된 쌓기나무는 최소 몇 개입니까?"
+      : made.prompt;
+  return {
+    ...withProblemContext({
+    prompt,
     visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
     answer: made.answerText,
     answerVisual: hasAnswerVisual ? { kind: "geometry-worksheet-answer", problem: made } : null,
     solution: geometryWorksheetSolution(made),
-    responseKind: made.type === "VP" ? "drawing" : "text",
+    responseKind: made.type === "VP" || (made.type === "TC" && made.answer.askTotal === false) ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-  }, item, reference);
+    }, item, reference, sourceClassification),
+    generationDifficulty: intensity
+  };
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
@@ -670,12 +816,12 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // retry 0은 기존 시드 형식 그대로 — 파이널 1회 교체본처럼 이미 고정 시드로 검수된
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
-      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return withProblemContext(generated, item, reference);
+      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty, sourceCase: generationCase }));
+      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty, generationCase };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
-    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt);
+    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride, sourceClassification);
   }
   return null;
 }
@@ -698,7 +844,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -714,6 +860,102 @@ function buildQuestions() {
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function syncQuestionCountControls() {
+  state.count = state.questions.length;
+  $("questionCount").value = String(state.count);
+  $("countChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.count) === state.count);
+  });
+  updateSummary();
+}
+
+function moveQuestion(fromIndex, toIndex) {
+  if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= state.questions.length || toIndex >= state.questions.length) return;
+  const [question] = state.questions.splice(fromIndex, 1);
+  state.questions.splice(toIndex, 0, question);
+  renderWorksheet();
+}
+
+function replaceQuestion(index) {
+  const current = state.questions[index];
+  if (!current) return;
+  if (current.generationCase?.mode === "source") return;
+  const currentSignature = problemSignature(current);
+  const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
+  let replacement = null;
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification);
+    if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
+      replacement = candidate;
+      break;
+    }
+  }
+  if (!replacement) {
+    window.alert("같은 유형의 새 문항을 만들지 못했습니다. 잠시 후 다시 눌러 주세요.");
+    return;
+  }
+  state.questions[index] = replacement;
+  renderWorksheet();
+}
+
+function removeQuestion(index) {
+  if (state.questions.length <= 1) {
+    window.alert("시험지에는 한 문제 이상이 필요합니다.");
+    return;
+  }
+  state.questions.splice(index, 1);
+  syncQuestionCountControls();
+  renderWorksheet();
+}
+
+function bindQuestionEditor() {
+  const grid = $("questionGrid");
+  let draggedIndex = null;
+  grid.querySelectorAll(".question-card").forEach((card) => {
+    const index = Number(card.dataset.questionIndex);
+    const handle = card.querySelector("[data-drag-handle]");
+    handle?.addEventListener("dragstart", (event) => {
+      draggedIndex = index;
+      card.classList.add("is-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", String(index));
+    });
+    handle?.addEventListener("dragend", () => {
+      draggedIndex = null;
+      card.classList.remove("is-dragging");
+      grid.querySelectorAll(".drop-target").forEach((item) => item.classList.remove("drop-target"));
+    });
+    card.addEventListener("dragover", (event) => {
+      if (draggedIndex === null || draggedIndex === index) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      card.classList.add("drop-target");
+    });
+    card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
+    card.addEventListener("drop", (event) => {
+      event.preventDefault();
+      card.classList.remove("drop-target");
+      const fromIndex = draggedIndex ?? Number(event.dataTransfer.getData("text/plain"));
+      moveQuestion(fromIndex, index);
+    });
+  });
+  grid.querySelectorAll("[data-question-action]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.questionIndex);
+    if (button.dataset.questionAction === "up") moveQuestion(index, index - 1);
+    if (button.dataset.questionAction === "down") moveQuestion(index, index + 1);
+    if (button.dataset.questionAction === "replace") replaceQuestion(index);
+    if (button.dataset.questionAction === "remove") removeQuestion(index);
+  }));
+  grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
+    const index = Number(input.dataset.questionIndex);
+    if (state.questions[index]) state.questions[index].responseValue = input.value;
+  }));
+}
+
+function escapeAttribute(value) {
+  return String(value || "").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function shapeSymbol(shape) {
@@ -2083,6 +2325,86 @@ function foldUnfoldChoiceMarkup(visual) {
   return `<div class="fold-unfold-choice-work">${stageSvg}<div class="fold-unfold-options">${optionSvg}</div></div>`;
 }
 
+function foldCutUnfoldDrawMarkup(visual) {
+  const { foldLine, foldArrow } = foldGeometryHelpers();
+  const size = 92;
+  const top = 7;
+  const polygonPoints = (polygon, shift) => polygon.map((point) => `${(shift + point.x * size).toFixed(1)},${(top + point.y * size).toFixed(1)}`).join(" ");
+  if (visual.reveal) {
+    let answer = `<rect x="7" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    for (let line = 1; line < 4; line += 1) {
+      answer += `<line x1="${7 + line * size / 4}" y1="${top}" x2="${7 + line * size / 4}" y2="${top + size}" stroke="#d6a09a" stroke-width="1" stroke-dasharray="4 3"/>`;
+      answer += `<line x1="7" y1="${top + line * size / 4}" x2="${7 + size}" y2="${top + line * size / 4}" stroke="#d6a09a" stroke-width="1" stroke-dasharray="4 3"/>`;
+    }
+    for (const cut of visual.unfoldedCuts) answer += `<polygon points="${polygonPoints(cut, 7)}" fill="#fff" stroke="#b03a5b" stroke-width="1.4"/>`;
+    return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${size + 14} ${size + 14}" role="img" aria-label="색종이를 펼친 정답 그림">${answer}</svg>`;
+  }
+
+  let shift = 7;
+  let parts = "";
+  visual.stages.forEach((stage, index) => {
+    parts += `<polygon points="${polygonPoints(stage.polygon, shift)}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    if (stage.fold) {
+      const segment = foldLine(stage.polygon, stage.fold);
+      if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(top + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(top + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      const arrow = foldArrow(stage.polygon, stage.fold);
+      if (arrow) parts += foldArrowSvg(arrow.from, arrow.to, shift, top, size);
+    } else {
+      parts += `<polygon points="${polygonPoints(visual.cut, shift)}" fill="#b03a5b"/>`;
+    }
+    if (index < visual.stages.length - 1) {
+      shift += size + 10;
+      parts += foldStepArrowSvg(shift, top + size / 2);
+      shift += 42;
+    }
+  });
+  shift += size + 10;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#7ba7bb" stroke-width="2"/>`;
+  for (let line = 1; line < 4; line += 1) {
+    parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
+    parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
+  }
+  return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
+}
+
+function foldTwoDiagonalGridMarkup(visual) {
+  const { clip } = foldGeometryHelpers();
+  const keep = {
+    d1: (point) => point.x - point.y,
+    d2: (point) => 1 - point.x - point.y
+  };
+  const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const first = clip(square, keep[visual.directions[0]]);
+  const folded = clip(first, keep[visual.directions[1]]);
+  const size = 118;
+  const top = 7;
+  const points = (polygon, shift) => polygon.map((point) => `${(shift + point.x * size).toFixed(1)},${(top + point.y * size).toFixed(1)}`).join(" ");
+  let shift = 7;
+  let parts = `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  for (let row = 0; row < 4; row += 1) for (let column = 0; column < 4; column += 1) {
+    const x = shift + column * size / 4;
+    const y = top + row * size / 4;
+    parts += `<rect x="${x}" y="${y}" width="${size / 4}" height="${size / 4}" fill="none" stroke="#d6a09a" stroke-width="1"/>`;
+    parts += `<text x="${x + size / 8}" y="${y + size / 8 + 5}" text-anchor="middle" font-size="14" font-weight="700" fill="#333">${visual.grid[row][column]}</text>`;
+  }
+  const firstLine = visual.directions[0] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
+  parts += `<line x1="${shift + firstLine[0] * size}" y1="${top + firstLine[1] * size}" x2="${shift + firstLine[2] * size}" y2="${top + firstLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
+  shift += size + 14;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<polygon points="${points(first, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
+  const secondLine = visual.directions[1] === "d1" ? [0, 0, 1, 1] : [0, 1, 1, 0];
+  parts += `<line x1="${shift + secondLine[0] * size}" y1="${top + secondLine[1] * size}" x2="${shift + secondLine[2] * size}" y2="${top + secondLine[3] * size}" stroke="#d4756c" stroke-width="2" stroke-dasharray="6 4"/>`;
+  shift += size + 14;
+  parts += foldStepArrowSvg(shift, top + size / 2);
+  shift += 42;
+  parts += `<polygon points="${points(folded, shift)}" fill="#fbdad6" stroke="#e8968f" stroke-width="2"/>`;
+  parts += `<circle cx="${shift + visual.target.x * size}" cy="${top + visual.target.y * size}" r="8" fill="#b03a5b"/>`;
+  return `<svg class="fold-two-diagonal-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="수가 쓰인 색종이를 대각선으로 두 번 접어 자르기">${parts}</svg>`;
+}
+
 function paperFoldMarkup(visual) {
   const SIZE = visual.stages.length > 3 ? 84 : 100;
   const GAP = 34;
@@ -2983,7 +3305,31 @@ function visualMarkup(visual) {
   if (visual.kind === "fold-punch") return `<div class="visual fold-punch-visual">${foldPunchMarkup(visual)}</div>`;
   if (visual.kind === "fold-stack") return `<div class="visual fold-stack-visual">${foldStackMarkup(visual)}</div>`;
   if (visual.kind === "fold-unfold-choice") return `<div class="visual fold-unfold-visual">${foldUnfoldChoiceMarkup(visual)}</div>`;
+  if (visual.kind === "fold-cut-unfold-draw") return `<div class="visual fold-unfold-visual">${foldCutUnfoldDrawMarkup(visual)}</div>`;
+  if (visual.kind === "fold-two-diagonal-grid") return `<div class="visual fold-diagonal-visual">${foldTwoDiagonalGridMarkup(visual)}</div>`;
   return "";
+}
+
+function worksheetVisualMarkup(question) {
+  if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
+  if (!Array.isArray(question.parts) || question.parts.length <= 1) return visualMarkup(question.visual);
+  return `<div class="multi-part-visuals">${question.parts.map((part, index) => {
+    const picture = visualMarkup(part.visual);
+    return `<figure><figcaption>(${index + 1})</figcaption>${part.prompt ? `<p>${part.prompt}</p>` : ""}${picture}</figure>`;
+  }).join("")}</div>`;
+}
+
+function answerVisualMarkup(question) {
+  if (Array.isArray(question.answerVisuals) && question.answerVisuals.some(Boolean)) {
+    return `<div class="multi-part-visuals answer-part-visuals">${question.answerVisuals.map((visual, index) => (
+      `<figure><figcaption>(${index + 1})</figcaption>${visual ? visualMarkup(visual) : ""}</figure>`
+    )).join("")}</div>`;
+  }
+  if (!question.answerVisual) return "";
+  if (question.answerVisual.kind === "letter-block-answer") {
+    return `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`;
+  }
+  return visualMarkup(question.answerVisual);
 }
 
 function watermarkMarkup() {
@@ -2993,20 +3339,39 @@ function watermarkMarkup() {
 function renderWorksheet() {
   const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
-  $("questionGrid").innerHTML = state.questions.map((question, index) => {
+  const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card">
+    return `<article class="question-card" data-question-index="${index}">
+      <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
+        <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
+        <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
+        <button type="button" data-question-action="down" data-question-index="${index}" title="아래로 이동" aria-label="아래로 이동" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button>
+        ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>`}
+        <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
+      </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
+      <div class="question-style-tags">${academyStyleLabels(question).map((label) => `<span>${label}</span>`).join("")}</div>
+      ${question.representativeConcept ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
       ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
-      ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
+      ${worksheetVisualMarkup(question)}
+      ${question.responseKind === "drawing"
+        ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>'
+        : question.responseKind === "visual-fill"
+          ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
+          : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
-  }).join("");
+  });
+  const pages = [];
+  for (let index = 0; index < questionCards.length; index += 2) {
+    pages.push(`<section class="question-page" aria-label="${Math.floor(index / 2) + 1}쪽">${questionCards.slice(index, index + 2).join("")}</section>`);
+  }
+  $("questionGrid").innerHTML = pages.join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
+  bindQuestionEditor();
 }
 
 function openAnswers() {
@@ -3016,13 +3381,9 @@ function openAnswers() {
     // 나머지 answerVisual은 조용히 버려져서, 도형 행렬·삼각형 위치 문항의 답안이
     // 말로만 적혀 나왔다. 그림을 그리되 글로 쓴 답도 함께 남긴다 — 채점자가 그림만
     // 보고 판단하지 않아도 되게.
-    const answerPicture = !question.answerVisual
-      ? ""
-      : question.answerVisual.kind === "letter-block-answer"
-        ? `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`
-        : visualMarkup(question.answerVisual);
+    const answerPicture = answerVisualMarkup(question);
     const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }
@@ -3030,6 +3391,8 @@ function openAnswers() {
 function initControls() {
   $("studentName").textContent = student;
   $("worksheetStudent").textContent = student;
+  if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
+  $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
   $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
@@ -3051,19 +3414,7 @@ function initControls() {
     typePreviewCache.clear();
   }));
   $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
-    state.curriculumStage = button.dataset.stage;
-    $("curriculumStageChoices").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
-    for (const key of [...state.selected.curriculum]) {
-      const [bookId, indexText, typeId] = key.split(":");
-      const book = CURRICULUM.find((item) => item.id === bookId);
-      const unit = book?.units[Number(indexText)];
-      if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, state.curriculumStage)) {
-        state.selected.curriculum.delete(key);
-      }
-    }
-    typePreviewCache.clear();
-    renderCurriculum();
-    updateSummary();
+    setCurriculumStage(button.dataset.stage);
   }));
   $("orderChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.order = button.dataset.order;
@@ -3088,10 +3439,11 @@ function initControls() {
 renderStageButtons();
 renderExamList();
 renderCurriculum();
+renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();
-setMode("exam");
+setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") === "type" ? "type" : "exam");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
 // 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로
@@ -3101,10 +3453,9 @@ setMode("exam");
   if (!wanted) return;
   const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
-  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = `exam:${exam.id}`;
-  else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
+  if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
   else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam)) state.stage = `exam:${exam.id}`;
-  else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
+  else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
   renderStageButtons();
   renderExamList();
   let picked = 0;
@@ -3118,5 +3469,29 @@ setMode("exam");
   $("questionCount").value = String(picked);
   $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === picked));
   renderExamList();
+  updateSummary();
+})();
+
+// 진단 결과에서 넘어온 여러 취약 유형을 유형별 탭에 미리 체크한다.
+// 원격 링크가 오래되어도 현재 선택 가능한 유형만 남겨 검증 게이트를 우회하지 않는다.
+(function preselectTypes() {
+  const requested = [
+    ...params.getAll("type"),
+    ...(params.get("types") || "").split(",")
+  ].map((id) => id.trim()).filter(Boolean);
+  if (!requested.length) return;
+  setMode("type");
+  state.selected.type.clear();
+  requested.forEach((typeId) => {
+    const item = typeById(typeId);
+    if (item && isSelectableType(item)) state.selected.type.add(typeId);
+  });
+  const requestedCount = Number(params.get("count"));
+  if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) {
+    state.count = requestedCount;
+    $("questionCount").value = String(requestedCount);
+    $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === requestedCount));
+  }
+  renderTypeTree();
   updateSummary();
 })();

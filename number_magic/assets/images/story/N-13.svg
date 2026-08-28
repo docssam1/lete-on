@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g stroke="#0E2C57" stroke-width="3" fill="none">
+<path d="M120 250 v-52"/><path d="M300 250 v-52"/><path d="M480 250 v-52"/></g>
+<circle cx="120" cy="170" r="30" fill="#FBFAF7" stroke="#0E2C57" stroke-width="3"/>
+<circle cx="300" cy="170" r="30" fill="#FBFAF7" stroke="#0E2C57" stroke-width="3"/>
+<circle cx="480" cy="170" r="30" fill="#FBFAF7" stroke="#0E2C57" stroke-width="3"/>
+<circle cx="120" cy="108" r="22" fill="#D9534F"/>
+<circle cx="300" cy="108" r="22" fill="#16417C"/>
+<circle cx="480" cy="108" r="22" fill="#F1F0EC" stroke="#C9A063" stroke-width="3" stroke-dasharray="6 5"/>
+<text x="480" y="117" font-family="ui-monospace,monospace" font-size="26" font-weight="800" fill="#C9A063" text-anchor="middle">?</text>
+<g stroke="#C9A063" stroke-width="2.5" fill="none" stroke-linecap="round">
+<path d="M446 170 H340" marker-end="url(#ar)"/><path d="M266 170 H160" marker-end="url(#ar)"/></g>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0 L10 5 L0 10 z" fill="#C9A063"/></marker></defs>
+<g font-family="ui-monospace,monospace" font-size="17" fill="#4a5468" text-anchor="middle">
+<text x="120" y="42">3</text><text x="300" y="42">2</text></g>
+<circle cx="96" cy="36" r="9" fill="#D9534F"/><circle cx="144" cy="36" r="9" fill="#D9534F"/>
+<circle cx="276" cy="36" r="9" fill="#16417C"/><circle cx="324" cy="36" r="9" fill="#16417C"/></svg>

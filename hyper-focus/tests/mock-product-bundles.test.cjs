@@ -84,7 +84,9 @@ assert.doesNotMatch(
 assert.match(initialMigration, /slug text not null unique/);
 assert.match(initialMigration, /unique\(series, round_no\)/);
 
-assert.match(adminEdge, /claims\?\.aal !== "aal2"/);
+assert.doesNotMatch(adminEdge, /claims\?\.aal !== "aal2"/);
+assert.match(adminEdge, /await service\s*\.from\("hf_admin_accounts"\)/);
+assert.match(adminEdge, /issuedAtMs < authorizationChangedAtMs/);
 assert.match(adminEdge, /const MOCK_BUNDLE_ACTION_FIELDS = new Set\(\["action", "studentId", "bundleKey", "enabled"\]\)/);
 assert.match(adminEdge, /Object\.keys\(payload\)\.some\(key => !MOCK_BUNDLE_ACTION_FIELDS\.has\(key\)\)/);
 assert.match(adminEdge, /if \(action === "set_mock_bundle"\)/);

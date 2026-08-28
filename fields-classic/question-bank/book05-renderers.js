@@ -37,10 +37,12 @@ function fingerBounce(visual) {
 
 function calendarTable(calendar, targetDate = null, targetWeekday = null) {
   const hiddenDates = new Set(calendar.hiddenDates || []);
+  const visibleDates = calendar.visibleDates ? new Set(calendar.visibleDates) : null;
   return `<div class="b5-calendar"><strong>${calendar.month}월</strong><div class="weekdays">${["일", "월", "화", "수", "목", "금", "토"].map((day) => `<b>${day}</b>`).join("")}</div><div class="dates">${calendar.cells.map((date, index) => {
-    const target = date === targetDate || (targetWeekday !== null && index % 7 === targetWeekday && date);
+    const target = (targetDate != null && date === targetDate) || (Number.isInteger(targetWeekday) && index % 7 === targetWeekday && date);
     const hidden = hiddenDates.has(date);
-    return `<span class="${target || hidden ? "target" : ""}">${hidden ? "?" : date || ""}</span>`;
+    const label = hidden ? "?" : visibleDates && date && !visibleDates.has(date) ? "" : date || "";
+    return `<span class="${target || hidden ? "target" : ""}">${label}</span>`;
   }).join("")}</div></div>`;
 }
 
@@ -58,6 +60,8 @@ function routeGrid(visual) {
   const width = inset * 2 + (visual.columns - 1) * cell;
   const height = inset * 2 + (visual.rows - 1) * cell;
   const blocked = new Set(visual.blocked || []);
+  const startPoint = visual.start || [0, 0];
+  const endPoint = visual.end || [visual.rows - 1, visual.columns - 1];
   const lines = [];
   for (let row = 0; row < visual.rows; row += 1) {
     for (let column = 0; column < visual.columns; column += 1) {
@@ -72,15 +76,20 @@ function routeGrid(visual) {
       }
     }
   }
+  for (const edge of visual.diagonalEdges || []) {
+    const from = point(edge.from, cell, inset);
+    const to = point(edge.to, cell, inset);
+    lines.push(`<line class="shortcut" x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}"/>`);
+  }
   const dots = [];
   for (let row = 0; row < visual.rows; row += 1) {
     for (let column = 0; column < visual.columns; column += 1) {
       const location = point([row, column], cell, inset);
       const key = `${row}:${column}`;
-      const start = row === 0 && column === 0;
-      const end = row === visual.rows - 1 && column === visual.columns - 1;
+      const start = row === startPoint[0] && column === startPoint[1];
+      const end = row === endPoint[0] && column === endPoint[1];
       const waypoint = visual.waypoint?.row === row && visual.waypoint?.column === column;
-      const label = start ? "출" : end ? "도" : waypoint ? "★" : blocked.has(key) ? "×" : "";
+      const label = start ? visual.startLabel || "출" : end ? visual.endLabel || "도" : waypoint ? "★" : blocked.has(key) ? "×" : "";
       dots.push(`<g class="${blocked.has(key) ? "blocked" : waypoint ? "waypoint" : start || end ? "endpoint" : ""}"><circle cx="${location.x}" cy="${location.y}" r="9"/><text x="${location.x}" y="${location.y + 3}">${label}</text></g>`);
     }
   }
@@ -88,7 +97,8 @@ function routeGrid(visual) {
 }
 
 function digitCards(visual) {
-  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · 작은 수부터 <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
+  const order = visual.descending ? "큰 수부터" : "작은 수부터";
+  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · ${order} <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
 }
 
 function digitCondition(visual) {
@@ -119,9 +129,99 @@ function productCycle(visual) {
     const y = (from.y + to.y) / 2;
     return `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}"/><text class="edge" x="${x}" y="${y + 4}">${visual.edges[index]}</text>`;
   }).join("");
-  const visible = new Set(visual.visibleVertices);
+  const visible = new Set(visual.visibleVertices || []);
   const vertices = locations.map((location, index) => `<g class="${index === visual.targetIndex ? "target" : ""}"><circle cx="${location.x}" cy="${location.y}" r="18"/><text x="${location.x}" y="${location.y + 5}">${index === visual.targetIndex ? "?" : visible.has(index) ? visual.vertices[index] : ""}</text></g>`).join("");
   return `<svg class="b5-product-cycle" viewBox="0 0 220 220" role="img" aria-label="이웃한 두 수의 곱">${edges}${vertices}</svg>`;
+}
+
+function rowMajorTargets(visual) {
+  return `<div class="b5-row-major" style="--columns:${visual.columns}">${visual.values.flat().map((value, index) => {
+    const target = visual.targetIndexes.includes(index);
+    const shown = visual.clueIndexes.includes(index);
+    return `<span class="${target ? "target" : shown ? "clue" : ""}">${target ? "?" : shown ? value : ""}</span>`;
+  }).join("")}</div>`;
+}
+
+function radialCycle(visual) {
+  const center = 125;
+  const rays = visual.lineCount;
+  const maxPosition = Math.min(visual.previewPositions, 6);
+  const lines = [];
+  const labels = [];
+  for (let line = 0; line < rays; line += 1) {
+    const angle = -Math.PI / 2 + line * Math.PI * 2 / rays;
+    const endX = center + Math.cos(angle) * 105;
+    const endY = center + Math.sin(angle) * 105;
+    lines.push(`<line x1="${center}" y1="${center}" x2="${endX}" y2="${endY}"/>`);
+    for (let position = 1; position <= maxPosition; position += 1) {
+      const radius = 20 + position * 13;
+      const x = center + Math.cos(angle) * radius;
+      const y = center + Math.sin(angle) * radius;
+      const target = line === visual.firstTarget.line && position === visual.firstTarget.position;
+      const value = visual.start + line + (position - 1) * rays;
+      labels.push(`<g class="${target ? "target" : ""}"><circle cx="${x}" cy="${y}" r="9"/><text x="${x}" y="${y + 3}">${target ? "?" : value}</text></g>`);
+    }
+    labels.push(`<text class="ray-label" x="${center + Math.cos(angle) * 117}" y="${center + Math.sin(angle) * 117 + 3}">${line + 1}</text>`);
+  }
+  return `<svg class="b5-radial-cycle" viewBox="0 0 250 250" role="img" aria-label="다섯 줄에 번갈아 놓은 수">${lines.join("")}${labels.join("")}</svg>`;
+}
+
+function checkerboardProducts(visual) {
+  const active = new Set(visual.active.map(([row, column]) => `${row}:${column}`));
+  const revealed = new Set((visual.revealed || []).map(([row, column]) => `${row}:${column}`));
+  const cells = [];
+  for (let row = 0; row < 4; row += 1) {
+    for (let column = 0; column < 4; column += 1) {
+      const key = `${row}:${column}`;
+      cells.push(`<span class="${active.has(key) ? "active" : "empty"}">${active.has(key) && revealed.has(key) ? visual.cells[row][column] : ""}</span>`);
+    }
+  }
+  return `<div class="b5-checker-wrap"><div class="b5-mini-cards">${visual.cardPool.map((value) => `<i>${value}</i>`).join("")}</div><div class="b5-checker-products"><div class="cells">${cells.join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><em>곱</em></div></div>`;
+}
+
+function triangularStairScene(stage, hideTotal = false) {
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.buildTriangularStairShape || !geometry?.triangularStairTotal || !renderer?.renderIso) {
+    throw new Error("Geometry worksheet cube data is required for the triangular stair visual.");
+  }
+  const map = geometry.buildTriangularStairShape(stage);
+  const total = geometry.triangularStairTotal(stage);
+  if (geometry.mapTotal(map) !== total) throw new Error(`Triangular stair total mismatch at stage ${stage}.`);
+  const svg = renderer.renderIso(map, stage, stage, { u: 14 })
+    .replace('class="ws-iso"', `class="ws-iso b5-geometry-cubes" role="img" aria-label="${stage}단계 삼각 계단 쌓기나무" data-geometry-kind="triangular-stair" data-stage="${stage}" data-total="${total}"`);
+  return `<figure>${svg}<figcaption>${stage}단계 <span>${hideTotal ? "몇 개?" : `${total}개`}</span></figcaption></figure>`;
+}
+
+function tetrahedralStair(visual) {
+  const targetSet = new Set(visual.targetStages);
+  const targets = visual.targetStages.map((stage) => `<b>${stage}단계 = ?</b>`).join("");
+  return `<div class="b5-tetrahedral"><div>${visual.previewStages.map((stage) => triangularStairScene(stage, targetSet.has(stage))).join("")}</div><p>${targets}</p></div>`;
+}
+
+function squarePaperGrowth(visual) {
+  return `<div class="b5-square-paper-growth">${visual.previewStages.map((stage) => `<div><span style="--order:${stage}">${Array.from({ length: stage * stage }, () => "<i></i>").join("")}</span><b>&lt;${stage}&gt;</b></div>`).join("")}<strong>… &lt;${visual.target}&gt;</strong></div>`;
+}
+
+function squareRowPair(visual) {
+  let next = 1;
+  const rows = [];
+  for (let row = 1; row <= 4; row += 1) {
+    rows.push(`<div>${Array.from({ length: row * 2 - 1 }, () => `<span>${next++}</span>`).join("")}</div>`);
+  }
+  return `<div class="b5-number-rows square">${rows.join("")}<strong>… ${visual.firstRow}번째 줄의 마지막 수 · ${visual.secondRow}번째 줄의 첫 수</strong></div>`;
+}
+
+function borderStoneGrowth(visual) {
+  return `<div class="b5-border-growth">${visual.previewStages.map((stage) => {
+    const side = stage + 2;
+    return `<div><span style="--side:${side}">${Array.from({ length: side * side }, (_, index) => {
+      const row = Math.floor(index / side);
+      const column = index % side;
+      const border = row === 0 || column === 0 || row === side - 1 || column === side - 1;
+      return `<i class="${border ? "black" : "white"}"></i>`;
+    }).join("")}</span><b>&lt;${stage}&gt;</b></div>`;
+  }).join("")}<strong>… &lt;${visual.target}&gt;</strong></div>`;
 }
 
 function productMatrix(visual) {
@@ -139,7 +239,7 @@ function productMatrix(visual) {
 }
 
 function symbolEquations(visual) {
-  return `<div class="b5-symbol-equations">${visual.equations.map((equation) => `<p>${escapeHtml(equation)}</p>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
+  return `<div class="b5-symbol-equations">${visual.cardPool ? `<div class="b5-mini-cards">${visual.cardPool.map((value) => `<i>${value}</i>`).join("")}</div>` : ""}${visual.equations.map((equation) => `<p>${escapeHtml(equation)}</p>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
 }
 
 function peopleCircle(visual) {
@@ -188,20 +288,25 @@ function triangleCount(visual) {
   }
   const side = 220;
   const height = Math.sqrt(3) * side / 2;
+  const step = side / order;
+  const rowHeight = height / order;
   const lines = [];
+  const latticePoint = (row, column) => ({ x: 120 - row * step / 2 + column * step, y: 15 + row * rowHeight });
   for (let row = 0; row <= order; row += 1) {
-    const y = 15 + row * height / order;
-    const left = 120 - (row * side / order) / 2;
-    const right = 120 + (row * side / order) / 2;
-    lines.push(`<line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>`);
+    for (let column = 0; column < row; column += 1) {
+      const from = latticePoint(row, column);
+      const to = latticePoint(row, column + 1);
+      lines.push(`<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}"/>`);
+    }
   }
-  for (let index = 0; index <= order; index += 1) {
-    const baseX = 10 + index * side / order;
-    lines.push(`<line x1="120" y1="15" x2="${baseX}" y2="${15 + height}"/>`);
-  }
-  for (let index = 0; index <= order; index += 1) {
-    const baseX = 230 - index * side / order;
-    lines.push(`<line x1="120" y1="15" x2="${baseX}" y2="${15 + height}"/>`);
+  for (let row = 0; row < order; row += 1) {
+    for (let column = 0; column <= row; column += 1) {
+      const from = latticePoint(row, column);
+      const downLeft = latticePoint(row + 1, column);
+      const downRight = latticePoint(row + 1, column + 1);
+      lines.push(`<line x1="${from.x}" y1="${from.y}" x2="${downLeft.x}" y2="${downLeft.y}"/>`);
+      lines.push(`<line x1="${from.x}" y1="${from.y}" x2="${downRight.x}" y2="${downRight.y}"/>`);
+    }
   }
   return `<svg class="b5-triangle-count" viewBox="0 0 240 ${height + 30}">${lines.join("")}</svg>`;
 }
@@ -244,6 +349,13 @@ export function book05Markup(visual) {
     case "triangle-count": return triangleCount(visual);
     case "square-count": return squareCount(visual);
     case "number-rows": return numberRows(visual);
+    case "row-major-targets": return rowMajorTargets(visual);
+    case "radial-cycle": return radialCycle(visual);
+    case "checkerboard-products": return checkerboardProducts(visual);
+    case "tetrahedral-stair": return tetrahedralStair(visual);
+    case "square-paper-growth": return squarePaperGrowth(visual);
+    case "square-row-pair": return squareRowPair(visual);
+    case "border-stone-growth": return borderStoneGrowth(visual);
     default: return "";
   }
 }

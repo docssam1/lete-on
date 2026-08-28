@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
  * One-off transport: upload the local reading-world/assets/images/library/**
- * illustration files to Supabase Storage (bucket `library-images`, public,
- * anon-writable — same pattern as the existing `audio` bucket) and print the
+ * illustration files to Supabase Storage (bucket `library-images`) and print the
  * resulting public URLs. This script's own source is fine to keep in git;
  * the image files it uploads are NOT meant to stay in git — they live only
  * on this throwaway branch long enough for this workflow to read them, then
@@ -13,9 +12,14 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fgahqumaldheqettmvqg.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const SRC_DIR = path.join(__dirname, '../reading-world/assets/images/library');
+
+if (!SUPABASE_KEY) {
+  console.error('❌ Set SUPABASE_SERVICE_ROLE_KEY before uploading images.');
+  process.exit(1);
+}
 
 function httpRequest(options, body) {
   return new Promise((resolve, reject) => {
@@ -37,6 +41,7 @@ async function uploadFile(buf, storagePath) {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'apikey': SUPABASE_KEY,
       'Content-Type': 'image/jpeg',
       'x-upsert': 'true',
     },

@@ -14,6 +14,7 @@ const elements = {
   mirrorManor: $("#mirrorManor"),
   geoboardYard: $("#geoboardYard"),
   crystalPlaza: $("#crystalPlaza"),
+  shapeGarden: $("#shapeGarden"),
   walkers: $("#walkers"),
   mapStage: $(".map-stage"),
   guide: $("#mapGuide"),
@@ -74,12 +75,12 @@ const places = [
   { id: "origamiStudio", element: elements.origami, entrance: { x: 47, y: 49 }, href: "../origami-studio/", nameKey: "origamiStudio", descriptionKey: "origamiStudioHint" },
   { id: "mirrorManor", element: elements.mirrorManor, entrance: { x: 63, y: 48 }, href: "../games/mirror-manor/", nameKey: "mirrorManor", descriptionKey: "mirrorManorHint" },
   { id: "geoboardYard", element: elements.geoboardYard, entrance: { x: 84, y: 51 }, href: "../games/geoboard/", nameKey: "geoboardYard", descriptionKey: "geoboardYardHint" },
-  { id: "crystalPlaza", element: elements.crystalPlaza, entrance: { x: 32, y: 64 }, href: "../lab/index.html", nameKey: "geometryLab", descriptionKey: "geometryLabHint" }
+  { id: "crystalPlaza", element: elements.crystalPlaza, entrance: { x: 32, y: 64 }, href: "../lab/index.html", nameKey: "geometryLab", descriptionKey: "geometryLabHint" },
+  { id: "shapeGarden", element: elements.shapeGarden, entrance: { x: 53, y: 76 }, href: "../shape-garden/", nameKey: "shapeGarden", descriptionKey: "shapeGardenHint" }
 ];
 
 const districtPlaces = [
-  { id: "shapeDistrict", nameKey: "shapeDistrict", descriptionKey: "shapeDistrictHint", roadmap: true },
-  { id: "spatialDistrict", nameKey: "spatialDistrict", descriptionKey: "spatialDistrictHint", roadmap: true },
+  { id: "spatialDistrict", nameKey: "spatialDistrict", descriptionKey: "spatialDistrictHint", href: "../solid-vista/", district: true },
   { id: "coordinateDistrict", nameKey: "coordinateDistrict", descriptionKey: "coordinateDistrictHint", roadmap: true }
 ];
 
@@ -214,25 +215,29 @@ Object.assign(messages.ko, {
   viewRoadmap: "학습 로드맵", roadmapEyebrow: "앞으로 열릴 도형 세계", roadmapNote: "기초부터 중등까지 차례로 확장됩니다.", roadmapStatus: "확장 예정", roadmapClose: "로드맵 닫기",
   shapeDistrict: "평면도형 거리", shapeDistrictHint: "합동·대칭·도형 이동을 배우는 길",
   spatialDistrict: "공간·입체 지구", spatialDistrictHint: "전개도·단면·공간 추론을 탐험하는 곳",
-  coordinateDistrict: "좌표·변환 지구", coordinateDistrictHint: "좌표·닮음·중등 기하로 이어지는 길"
+  coordinateDistrict: "좌표·변환 지구", coordinateDistrictHint: "좌표·닮음·중등 기하로 이어지는 길",
+  shapeGarden: "도형 조각 정원", shapeGardenHint: "조각을 맞추고 조건에 따라 똑같이 나누는 곳"
 });
 Object.assign(messages.zh, {
   viewRoadmap: "学习路线", roadmapEyebrow: "即将开放的几何世界", roadmapNote: "从基础到中学内容将依次开放。", roadmapStatus: "计划扩展", roadmapClose: "关闭路线图",
   shapeDistrict: "平面图形街", shapeDistrictHint: "学习全等、对称与图形变换",
   spatialDistrict: "空间立体区", spatialDistrictHint: "探索展开图、截面与空间推理",
-  coordinateDistrict: "坐标变换区", coordinateDistrictHint: "通往坐标、相似与中学几何"
+  coordinateDistrict: "坐标变换区", coordinateDistrictHint: "通往坐标、相似与中学几何",
+  shapeGarden: "图形拼片花园", shapeGardenHint: "拼合图形并按条件等分"
 });
 Object.assign(messages.ja, {
   viewRoadmap: "学習ロードマップ", roadmapEyebrow: "これから開く図形の世界", roadmapNote: "基礎から中学内容まで順番に広がります。", roadmapStatus: "拡張予定", roadmapClose: "ロードマップを閉じる",
   shapeDistrict: "平面図形ストリート", shapeDistrictHint: "合同・対称・図形の移動を学ぶ道",
   spatialDistrict: "空間・立体エリア", spatialDistrictHint: "展開図・断面・空間推理を探究する場所",
-  coordinateDistrict: "座標・変換エリア", coordinateDistrictHint: "座標・相似・中学幾何へ続く道"
+  coordinateDistrict: "座標・変換エリア", coordinateDistrictHint: "座標・相似・中学幾何へ続く道",
+  shapeGarden: "図形ピースの庭", shapeGardenHint: "ピースを合わせ、条件にそって分ける場所"
 });
 Object.assign(messages.en, {
   viewRoadmap: "Learning roadmap", roadmapEyebrow: "Geometry worlds opening next", roadmapNote: "The path will grow from foundations through middle-school geometry.", roadmapStatus: "Planned expansion", roadmapClose: "Close roadmap",
   shapeDistrict: "Plane Shapes Street", shapeDistrictHint: "A path through congruence, symmetry, and transformations",
   spatialDistrict: "Spatial Solids District", spatialDistrictHint: "Explore nets, sections, and spatial reasoning",
-  coordinateDistrict: "Coordinates District", coordinateDistrictHint: "Continue into coordinates, similarity, and middle-school geometry"
+  coordinateDistrict: "Coordinates District", coordinateDistrictHint: "Continue into coordinates, similarity, and middle-school geometry",
+  shapeGarden: "Shape Garden", shapeGardenHint: "Match pieces and partition shapes by rules"
 });
 
 function readStoredProfile() {
@@ -953,7 +958,7 @@ window.addEventListener("geometry-zone-change", (event) => {
 window.addEventListener("geometry-district-change", (event) => {
   const place = districtPlaces.find((candidate) => candidate.id === event.detail?.id);
   if (place) showPlacePrompt(place);
-  else if (activePlace?.roadmap) hidePlacePrompt();
+  else if (activePlace?.district || activePlace?.roadmap) hidePlacePrompt();
 });
 window.addEventListener("geometry-npc-change", (event) => {
   if (event.detail?.id) showNpcPrompt(event.detail);

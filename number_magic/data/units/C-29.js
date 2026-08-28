@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-29'] = {
   id:'C-29', tier:'intermediate', level:'C', order:29,
+  lineage:['ten-friends'],
   generator:'ml_x25',
   title:{ ko:'25로 나눠라', en:'Divide by 25', zh:'除以25' },
   subtitle:{ ko:'25로 나누기 = 100으로 나누고 4를 곱하기', en:'Dividing by 25 = divide by 100, then multiply by 4', zh:'除以25 = 除以100再乘4' },

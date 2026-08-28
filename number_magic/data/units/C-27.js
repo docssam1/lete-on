@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['C-27'] = {
   id:'C-27', tier:'intermediate', level:'C', order:27,
+  lineage:['nine-next-door'],
   generator:'ml_end9',
   title:{ ko:'9로 끝나는 수의 곱', en:'Ending-in-9 Products', zh:'尾数为9的乘法' },
   subtitle:{ ko:'1 크게 만들어 곱하고, 더 곱한 만큼 한 번 빼요', en:'Round up by 1, multiply, then subtract the extra once', zh:'凑成大1的数再乘，最后减掉多乘的部分' },

@@ -5,6 +5,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['B-02'] = {
   id:'B-02', tier:'intermediate', level:'B', order:2,
+  lineage:['halves-doubles'],
   generator:'ml1_double',
   title:{ ko:'반으로 나누기', en:'The Halving Magic', zh:'减半魔法' },
   subtitle:{ ko:'짝수를 둘로 똑같이 나눠요: n ÷ 2', en:'Split any even number in half: n ÷ 2', zh:'把偶数平均分成两份：n ÷ 2' },
@@ -21,6 +22,14 @@ window.NM_UNITS['B-02'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'A4 용지는 297 mm × 210 mm예요. 왜 300 × 200처럼 딱 떨어지게 안 만들었을까요?',
+        en:'A4 paper is 297 mm × 210 mm. Why not a tidy 300 × 200?',
+        zh:'A4纸是297毫米×210毫米。为什么不做成整齐的300×200呢？' },
+      history:{ ko:'반으로 잘라도 모양이 그대로이게 하려고요. 297 × 210을 반으로 자르면 210 × 148.5인데, 가로세로 비가 둘 다 약 1.414로 똑같아요. 그래서 A4를 반 자르면 A5, 또 반 자르면 A6 — 모양이 끝까지 안 변하고 종이도 한 조각 안 버려집니다. 300 × 200이었다면 자를 때마다 모양이 뭉툭해져서 잘라 버려야 했을 거예요.',
+        en:'So that halving it keeps the same shape. Cut 297 × 210 in half and you get 210 × 148.5 — both have a side ratio of about 1.414. Halve an A4 and you get A5, halve again for A6, and the shape never changes and no scrap is wasted. With 300 × 200 the shape would go stubby at every cut, and the excess would have to be trimmed off.',
+        zh:'为了对折之后形状不变。把297 × 210对折得到210 × 148.5——两者的长宽比都约为1.414。A4对折是A5，再对折是A6，形状始终不变，也不浪费一条边角。若是300 × 200，每切一次形状就变得更方钝，多出来的部分只能裁掉。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 반이란?', en:'1) What is halving?', zh:'① 什么是减半？'},

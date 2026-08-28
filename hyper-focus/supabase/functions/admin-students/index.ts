@@ -420,17 +420,22 @@ Deno.serve(async request => {
     authError || !authData.user || authData.user.is_anonymous
     || metadata?.hf_role !== "admin"
     || authData.user.app_metadata?.hf_role !== "admin"
-    || claims?.aal !== "aal2"
   ) {
-    return json(request, 403, { error: "admin_mfa_required" });
+    return json(request, 403, { error: "admin_access_required" });
   }
-  const { data: staff, error: staffError } = await userClient
+  const { data: staff, error: staffError } = await service
     .from("hf_admin_accounts")
     .select("role,account_status,authorization_changed_at")
     .eq("user_id", authData.user.id)
     .maybeSingle();
-  if (staffError || staff?.role !== "admin" || staff.account_status !== "active") {
-    return json(request, 403, { error: "admin_mfa_required" });
+  const issuedAtMs = Number(claims?.iat || 0) * 1000;
+  const authorizationChangedAtMs = Date.parse(String(staff?.authorization_changed_at || ""));
+  if (
+    staffError || staff?.role !== "admin" || staff.account_status !== "active"
+    || !Number.isFinite(issuedAtMs) || !Number.isFinite(authorizationChangedAtMs)
+    || issuedAtMs < authorizationChangedAtMs
+  ) {
+    return json(request, 403, { error: "admin_access_required" });
   }
 
   const parsedPayload = await readJsonObject(request, 16384);
