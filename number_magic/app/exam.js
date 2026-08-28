@@ -38,6 +38,10 @@
   .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
   .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
   .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
+  /* 단계 풀이 줄 — 화면이 단계마다 묻는 유형은 인쇄도 단계를 묻는다(printSteps) */
+  .nm-print-steps { margin-top: 6px; border-top: 1px dashed #bbb; padding-top: 5px; }
+  .nm-print-step { font-size: .92em; margin: 3px 0; }
+
   /* 질문 줄 — tex만으로 물음이 성립하지 않는 유형에만 붙는다(printAskText) */
   .nm-print-ask { font-size: 0.8em; line-height: 1.5; color: #222; margin: 2px 0 4px;
     word-break: keep-all; }
@@ -646,6 +650,20 @@ function bondSvg(whole, known){
    판별: 빈칸 기호(□·○)가 있는데 관계식 기호가 하나도 없으면 그것만으로는 물음이
    성립하지 않는다. 이때만 프롬프트를 질문 줄로 싣는다. 분수 계산식처럼 빈칸이 없는
    것은 제외된다 — 그쪽 프롬프트는 통분 방법·LCM을 알려 주는 힌트라 실으면 답이 샌다. */
+/* 맨 식(관계식도 빈칸도 없는 식)인데 단계 풀이를 갖는 문항 — 인쇄에서 단계를 실어야 한다.
+   예: FR4L1 `2/3 + 4/5`는 정답이 "통분한 뒤의 분자"(22)뿐이라, 인쇄물엔 분모가
+   어디에도 없어 학생이 22/15를 쓸 수가 없었다. 더 나쁜 것은 FR3L2·FR4L2로,
+   정답키가 마지막 단계인 "정수 부분"만이라 `2 1/6 - 1 2/6`의 정답지가 0이었다
+   (실제 답은 5/6). 화면은 단계마다 물어보니 성립하는데 인쇄가 그 구조를 버린 탓이다.
+   그래서 인쇄도 화면과 같이 단계를 묻는다 — 정답지는 단계별 답을 순서대로 싣는다. */
+function printSteps(p){
+  const tex = String(p.tex||'');
+  if(/\\square|\\bigcirc/.test(tex)) return null;
+  if(/=|\\equiv|\\Rightarrow/.test(tex)) return null;
+  const st = Array.isArray(p.steps) ? p.steps.filter(s => s && s.tex) : [];
+  return st.length ? st : null;
+}
+
 function printAskText(p){
   const tex = String(p.tex||'');
   if(!/\\square|\\bigcirc/.test(tex)) return '';
@@ -722,18 +740,37 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       renderKaTeX(p.tex || '', texEl);
       card.appendChild(texEl);
     }
+
+    /* 단계 풀이를 묻는 문항은 단계 줄을 함께 인쇄한다(위 printSteps 설명 참조) */
+    const steps = printSteps(p);
+    if(steps){
+      const box = document.createElement('div');
+      box.className = 'nm-print-steps';
+      steps.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'nm-print-step';
+        renderKaTeX(s.tex || '', row);
+        box.appendChild(row);
+      });
+      card.appendChild(box);
+    }
     problemGrid.appendChild(card);
 
     const ak = document.createElement('div');
     ak.className = 'nm-ak-item';
     ak.appendChild(document.createTextNode(`${circled(i+1)} `));
-    const akTex = ansTex(p);
-    if(akTex){
-      const akSpan = document.createElement('span');
-      renderKaTeX(akTex, akSpan);
-      ak.appendChild(akSpan);
+    if(steps){
+      /* 단계별 답을 순서대로 — 인쇄물이 단계를 묻고 있으므로 정답지도 그래야 한다 */
+      ak.appendChild(document.createTextNode(steps.map(s => fmtAns(s.blank)).join(' , ')));
     } else {
-      ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+      const akTex = ansTex(p);
+      if(akTex){
+        const akSpan = document.createElement('span');
+        renderKaTeX(akTex, akSpan);
+        ak.appendChild(akSpan);
+      } else {
+        ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+      }
     }
     answerGrid.appendChild(ak);
   });

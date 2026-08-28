@@ -96,7 +96,8 @@ function serve(){
   for(const t of targets){
     const r = await page.evaluate(async ({ id, lv }) => {
       const COUNT = 12;
-      const res = { gen: null, cards: 0, keys: 0, overflow: 0, dblNeg: [], noAsk: [], answers: [] };
+      const res = { gen: null, cards: 0, keys: 0, overflow: 0, dblNeg: [], noAsk: [],
+                    bareNoSteps: [], impMixed: [], answers: [] };
 
       /* 1) 생성 — 정답 쏠림 검사를 위해 여러 시드로 넉넉히 */
       let probs;
@@ -109,10 +110,21 @@ function serve(){
         ps.forEach(p => res.answers.push(JSON.stringify(p.answer)));
       }
 
-      /* 2) 표기 검사 — 이중부호 */
+      /* 2) 표기 검사 */
       probs.forEach(p => {
         const tx = String(p.tex || '');
+        /* 이중부호 — `(x - -9)`, `2 + -7 × -5` */
         if(/-\s*-|\+\s*-\d/.test(tx)) res.dblNeg.push(tx.slice(0, 60));
+        /* 대분수의 분수부가 진분수가 아닌 것 — `2 4/4` (실제 사례: FR3L2) */
+        const re = /(\d+)\\?frac\{(\d+)\}\{(\d+)\}/g; let m;
+        while((m = re.exec(tx))) if(+m[2] >= +m[3]) res.impMixed.push(tx.slice(0, 60));
+        /* 맨 식인데 단계 풀이도 없는 것 — 답 형식을 알 수 없어 인쇄물로 못 푼다
+           (실제 사례: FR4가 정답이 "통분 후 분자"뿐인데 인쇄물엔 분모가 없었다) */
+        const hasBlank0 = /\\square|\\bigcirc/.test(tx);
+        const hasRel0   = /=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tx);
+        const hasSteps0 = Array.isArray(p.steps) && p.steps.some(s => s && s.tex);
+        if(!hasBlank0 && !hasRel0 && !hasSteps0 && !p.word && !p.base10 && !p.numline)
+          res.bareNoSteps.push(tx.slice(0, 60));
       });
 
       /* 3) 인쇄 — 실제로 렌더해야 칸 넘침을 알 수 있다 */
@@ -128,14 +140,19 @@ function serve(){
 
       cards.forEach((c, i) => {
         if(c.scrollWidth > c.clientWidth + 2) res.overflow++;
-        /* 4) 질문 유실 — 빈칸은 있는데 관계식도 질문 줄도 그림도 없는 문항 */
+        /* 4) 인쇄물만 보고 풀 수 있는가 — 렌더 결과로 판정한다(데이터가 아니라).
+              관계식이 없는 문항은 그림·질문 줄·단계 줄 중 하나는 있어야 한다.
+              빈칸만 덜렁 있는 것(`21□`)도, 맨 식(`2/3 - 1/2`)도 마찬가지다 —
+              후자는 답 형식(분자만? 기약분수?)을 알 길이 없다. */
         const p = probs[i]; if(!p) return;
         const tx = String(p.tex || '');
-        const hasBlank = /\\square|\\bigcirc/.test(tx);
         const hasRel   = /=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tx);
-        const hasVisual = !!(c.querySelector('.nm-bond, .nm-b10, .nm-nl'));
+        if(hasRel) return;
+        const hasVisual = !!c.querySelector('.nm-bond, .nm-b10, .nm-nl');
         const hasAsk    = !!c.querySelector('.nm-print-ask');
-        if(hasBlank && !hasRel && !hasVisual && !hasAsk) res.noAsk.push(tx.slice(0, 60));
+        const hasSteps  = !!c.querySelector('.nm-print-steps');
+        const isWord    = !!c.querySelector('.nm-print-word-blank');
+        if(!hasVisual && !hasAsk && !hasSteps && !isWord) res.noAsk.push(tx.slice(0, 60));
       });
       return res;
     }, { id: t.id, lv: t.lv });
@@ -148,6 +165,8 @@ function serve(){
       if(r.overflow)     fails.push(`${tag} — 칸 넘침 ${r.overflow}건`);
       if(r.dblNeg.length) fails.push(`${tag} — 이중부호: ${r.dblNeg[0]}`);
       if(r.noAsk.length)  fails.push(`${tag} — 질문 유실(인쇄물로 풀 수 없음): ${r.noAsk[0]}`);
+      if(r.impMixed.length) fails.push(`${tag} — 대분수 분수부가 진분수가 아님: ${r.impMixed[0]}`);
+      if(r.bareNoSteps.length) fails.push(`${tag} — 맨 식인데 단계도 없음(답 형식 불명): ${r.bareNoSteps[0]}`);
       /* 정답 쏠림 — 한 값이 90% 넘으면 경고 */
       if(r.answers.length >= 50){
         const d = {}; r.answers.forEach(a => d[a] = (d[a] || 0) + 1);
