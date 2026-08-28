@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>GFIELD Geometry World - Soma Cube Workshop</title>
-  <link rel="stylesheet" href="./styles.css?v=soma-2" />
+  <link rel="stylesheet" href="./styles.css?v=soma-3" />
   <script type="importmap">{"imports":{"three":"../../vendor/three/three.module.js","three/addons/":"../../vendor/three/addons/"}}</script>
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="../../manifest.webmanifest" />
@@ -41,9 +41,9 @@
       <section class="piece-tray" aria-labelledby="trayTitle"><strong id="trayTitle"></strong><div id="pieceTray"></div></section>
       <nav class="tool-rail" aria-label="게임 도구">
         <div class="rotate-tools">
-          <button type="button" data-rotate="x" title="X축 회전">↻X</button>
-          <button type="button" data-rotate="y" title="Y축 회전">↻Y</button>
-          <button type="button" data-rotate="z" title="Z축 회전">↻Z</button>
+          <button type="button" data-rotate="y" title="옆으로 돌리기"><b aria-hidden="true">↔</b><span>옆으로 돌리기</span></button>
+          <button type="button" data-rotate="x" title="위로 돌리기"><b aria-hidden="true">↥</b><span>위로 돌리기</span></button>
+          <button type="button" data-rotate="z" title="뒤집기"><b aria-hidden="true">↻</b><span>뒤집기</span></button>
         </div>
         <button id="hintButton" type="button"></button>
         <button id="clearButton" type="button"></button>
@@ -79,7 +79,7 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
   <div class="portrait-guard"><div class="rotate-device" aria-hidden="true"></div><strong id="rotateMessage"></strong><a href="../../solid-vista/" id="rotateExit"></a></div>
-  <script type="module" src="./app.js?v=soma-3"></script>
+  <script type="module" src="./app.js?v=soma-4"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

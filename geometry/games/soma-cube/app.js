@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-2";
-import { getLanguage, t } from "./i18n.js?v=soma-2";
+import { getLanguage, t } from "./i18n.js?v=soma-3";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const validation = validateLevels();
@@ -43,6 +43,8 @@ function applyCopy() {
   ui.dialogTitle.textContent = t(state.lang,"levelPick"); ui.completeTitle.textContent = t(state.lang,"completeTitle"); ui.completeText.textContent = t(state.lang,"completeText");
   ui.nextLevelButton.textContent = t(state.lang,"nextLevel"); ui.practiceButton.textContent = t(state.lang,"practice"); ui.districtLink.textContent = t(state.lang,"district");
   ui.tutorialSkip.textContent = t(state.lang,"tutorialSkip"); ui.rotateMessage.textContent = t(state.lang,"rotate"); ui.rotateExit.textContent = t(state.lang,"exit");
+  const rotateActions = t(state.lang,"rotateActions");
+  document.querySelectorAll("[data-rotate]").forEach((button,index)=>{const label=rotateActions[index];button.title=label;button.setAttribute("aria-label",label);button.querySelector("span").textContent=label});
   ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×";
 }
 
@@ -108,7 +110,7 @@ const targetView=makeViewer(ui.targetViewer,false);
 const buildView=makeViewer(ui.buildViewer,true);
 
 function materialFor(id, transparent=false) {
-  return new THREE.MeshStandardMaterial({color:PIECE_BY_ID[id]?.color || 0xd8a467,map:transparent?null:woodMap,roughness:.56,metalness:.02,transparent,opacity:transparent?.2:1,depthWrite:!transparent});
+  return new THREE.MeshStandardMaterial({color:PIECE_BY_ID[id]?.color || 0xd8a467,map:woodMap,roughness:.56,metalness:.02,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
 }
 
 function boundsOf(cells) {
@@ -129,7 +131,16 @@ function addOutlineCells(group,cells,bounds) {
   cells.forEach((cell)=>{const lines=new THREE.LineSegments(edgeGeometry,edgeMaterial);lines.position.copy(worldCell(cell,bounds));group.add(lines)});
 }
 
-function clearGroup(group) { while(group.children.length){const child=group.children.pop();child.traverse?.((node)=>{if(node.material && !Array.isArray(node.material))node.material.dispose?.()})} }
+function addTargetEnvelope(group,bounds) {
+  const size=[0,1,2].map((axis)=>bounds.max[axis]-bounds.min[axis]+1+.08);
+  const geometry=new THREE.BoxGeometry(...size);
+  const shell=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:0x9dd7d4,transparent:true,opacity:.055,side:THREE.BackSide,depthWrite:false}));
+  shell.position.set(0,(bounds.min[1]+bounds.max[1])/2+.48,0);
+  const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x338f98,transparent:true,opacity:.72}));
+  edge.position.copy(shell.position); group.add(shell,edge);
+}
+
+function clearGroup(group) { while(group.children.length){const child=group.children.pop();child.traverse?.((node)=>{if(node.material && !Array.isArray(node.material))node.material.dispose?.();if(node.geometry&&node.geometry!==cubeGeometry&&node.geometry!==markerGeometry)node.geometry.dispose?.()})} }
 
 function frameViewer(viewer,cells) {
   const bounds=boundsOf(cells); const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1)); const distance=span*2.1+2.3;
@@ -140,8 +151,10 @@ function renderTarget() {
   const problem=currentProblem(); clearGroup(targetView.content); clearGroup(targetView.markers);
   const cells=problem.target || []; if(!cells.length)return; const bounds=boundsOf(cells);
   if(problem.mode==="recognize") addPiece(targetView.content,{pieceId:problem.targetPieceId,cells:problem.target},bounds,{ghost:false});
-  else {
-    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshStandardMaterial({color:0xd6b378,map:woodMap,roughness:.66,transparent:true,opacity:.72}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;targetView.content.add(mesh)});
+  else if(problem.mode==="assemble"&&problem.reference?.length) {
+    problem.reference.forEach((placement)=>addPiece(targetView.content,placement,bounds));
+  } else {
+    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshStandardMaterial({color:0xd6b378,map:woodMap,roughness:.62}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;mesh.receiveShadow=true;targetView.content.add(mesh)});
     addOutlineCells(targetView.content,cells,bounds);
   }
   frameViewer(targetView,cells);
@@ -166,7 +179,8 @@ function candidatePlacements() { return candidatesFor(state.selectedId,state.sel
 
 function renderBuild() {
   const problem=currentProblem(); clearGroup(buildView.content); clearGroup(buildView.markers); if(problem.mode==="recognize")return;
-  const bounds=boundsOf(problem.target); addOutlineCells(buildView.content,problem.target,bounds);
+  const bounds=boundsOf(problem.target);
+  if(problem.mode==="complete-cube"||problem.mode==="all-seven")addTargetEnvelope(buildView.content,bounds);
   state.placements.forEach((placement,index)=>addPiece(buildView.content,placement,bounds,{fixed:index<fixedCount(),index}));
   candidatePlacements().forEach((placement,index)=>{
     const center=placement.cells.reduce((sum,cell)=>sum.add(worldCell(cell,bounds)),new THREE.Vector3()).multiplyScalar(1/placement.cells.length);
@@ -180,10 +194,10 @@ const thumbnailCache = new Map();
 const thumbnailCanvas = document.createElement("canvas");
 const thumbnailRenderer = new THREE.WebGLRenderer({canvas:thumbnailCanvas,antialias:true,alpha:true});
 const thumbnailScene = new THREE.Scene();
-const thumbnailCamera = new THREE.PerspectiveCamera(32,1.5,.1,20);
+const thumbnailCamera = new THREE.PerspectiveCamera(32,4/3,.1,20);
 const thumbnailContent = new THREE.Group();
 let thumbnailMaterial = null;
-thumbnailRenderer.setSize(180,120,false);
+thumbnailRenderer.setSize(240,180,false);
 thumbnailRenderer.setPixelRatio(1);
 thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x7d746b,2),thumbnailContent);
 const thumbnailLight = new THREE.DirectionalLight(0xffffff,2);
@@ -199,14 +213,14 @@ function makeThumbnail(cells,color="#d9a365") {
   const bounds=boundsOf(cells);
   cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,thumbnailMaterial);mesh.position.copy(worldCell(cell,bounds));thumbnailContent.add(mesh)});
   const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1));
-  thumbnailCamera.position.set(span*2.1,span*1.8,span*2.4);thumbnailCamera.lookAt(0,.7,0);
+  thumbnailCamera.position.set(span*1.72,span*1.48,span*1.98);thumbnailCamera.lookAt(0,.62,0);
   thumbnailRenderer.render(thumbnailScene,thumbnailCamera);
   const url=thumbnailCanvas.toDataURL("image/webp",.86);thumbnailCache.set(cacheKey,url);return url;
 }
 
 function renderChoices() {
-  const problem=currentProblem(); ui.choiceGrid.replaceChildren(); ui.choiceGrid.hidden=problem.mode!=="recognize";
-  if(problem.mode!=="recognize")return;
+  const problem=currentProblem(); const recognize=problem.mode==="recognize"; ui.choiceGrid.replaceChildren(); ui.choiceGrid.hidden=!recognize; ui.buildViewer.closest(".viewer-panel").classList.toggle("choice-mode",recognize);
+  if(!recognize)return;
   ui.choiceGrid.style.gridTemplateColumns=`repeat(${problem.options.length},minmax(0,1fr))`;
   problem.options.forEach((cells,index)=>{const button=document.createElement("button");button.type="button";button.className="choice-card";button.innerHTML=`<img alt="" src="${makeThumbnail(cells)}"><span>${index+1}</span>`;button.addEventListener("click",()=>chooseOption(index,button));ui.choiceGrid.append(button)});
 }
