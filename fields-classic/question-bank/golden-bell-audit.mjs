@@ -1,4 +1,8 @@
+import "../../geometry/worksheet/generators.js";
+import "../../geometry/worksheet/render.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
+import { book05Markup } from "./book05-renderers.js";
+import { book09Markup } from "./book09-renderers.js";
 
 const fail = (message) => { throw new Error(message); };
 if (GOLDEN_BELL_BOOKS.length !== 10) fail(`expected 10 books, got ${GOLDEN_BELL_BOOKS.length}`);
@@ -315,6 +319,34 @@ if (storyMatrixSolutions.length !== 1 || storyMatrixSolutions[0].join(",") !== "
 const triangular = (level) => level * (level + 1) / 2;
 const tetrahedral = (level) => Array.from({ length: level }, (_, index) => triangular(index + 1)).reduce((sum, value) => sum + value, 0);
 if (tetrahedral(4) !== 20 || tetrahedral(7) !== 84 || tetrahedral(5) !== 35) fail("book-05: triangular stair totals failed");
+
+const cubeGeometry = globalThis.GW_GEN;
+if (!cubeGeometry?.buildTriangularStairShape || !globalThis.GW_RENDER?.renderIso) fail("geometry cube engine is unavailable");
+for (let stage = 1; stage <= 10; stage += 1) {
+  const map = cubeGeometry.buildTriangularStairShape(stage);
+  const expected = stage * (stage + 1) * (stage + 2) / 6;
+  if (cubeGeometry.mapTotal(map) !== expected || cubeGeometry.triangularStairTotal(stage) !== expected) {
+    fail(`book-05: geometry triangular stair mismatch at stage ${stage}`);
+  }
+}
+const book5CubeLesson = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-05")?.lessons.find((lesson) => lesson.id === "cube-tetrahedral-growth");
+if (!book5CubeLesson) fail("book-05: triangular stair golden bell lesson missing");
+for (const item of book5CubeLesson.original.items) {
+  const stage = Number(item.prompt.match(/(\d+)단계/)?.[1]);
+  if (!stage || Number(item.answer) !== cubeGeometry.triangularStairTotal(stage)) fail(`book-05: approved answer mismatch for ${item.id}`);
+}
+if (Number(book5CubeLesson.extension.answer) !== cubeGeometry.triangularStairTotal(book5CubeLesson.extension.visual.targetStages[0])) {
+  fail("book-05: extension answer differs from geometry data");
+}
+const cubeMarkup = book05Markup(book5CubeLesson.original.visual);
+if (!cubeMarkup.includes('data-geometry-kind="triangular-stair"') || !cubeMarkup.includes('data-total="20"')) {
+  fail("book-05: golden bell cube visual is not using geometry data");
+}
+const book09CubeLesson = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-09")?.lessons.find((lesson) => lesson.id === "cube-map-total");
+const book09CubeMarkup = book09CubeLesson?.original.visual.panels.map((panel) => book09Markup({ kind: "book9", ...panel.visual })).join("") || "";
+if (!book09CubeMarkup.includes('data-geometry-kind="height-map"')) {
+  fail("book-09: cube visual is not using geometry height-map rendering");
+}
 
 const unitDistance = (start, end, intervals) => (end - start) / intervals;
 if (unitDistance(15, 47, 8) !== 4 || unitDistance(39, 95, 7) !== 8 || unitDistance(12, 52, 5) !== 8) {

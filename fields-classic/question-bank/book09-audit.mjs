@@ -1,3 +1,5 @@
+import "../../geometry/worksheet/generators.js";
+import "../../geometry/worksheet/render.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { book09Markup } from "./book09-renderers.js";
