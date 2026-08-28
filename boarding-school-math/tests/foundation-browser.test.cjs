@@ -55,12 +55,22 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator('[data-role-preview="student"]').count(), 1);
   assert.equal(await page.locator('[data-role-preview="teacher"]').count(), 1);
   assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
+  assert.equal(await page.locator("#quick-start-grade").inputValue(), "6");
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=6#past-papers");
+  await page.locator("#quick-start-grade").selectOption("1");
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=1#past-papers");
+  assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 연도별/);
+  await page.locator("#quick-start-grade").selectOption("11");
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=11#control-heading");
+  assert.match(await page.locator("#quick-sasmo strong").textContent(), /준비 보기/);
+  await page.locator("#quick-start-grade").selectOption("6");
   assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8\s*→\s*10\s*→\s*12/);
   assert.equal(await page.locator("[data-goal]").count(), 5);
   assert.equal(await page.locator("#goal-title").textContent(), "Grade 6 학교 수학");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./diagnostic.html");
   const schoolCapabilities = await page.locator("#goal-capabilities").innerText();
 
+  await page.locator(".advanced-home-tools summary").click();
   await page.locator('[data-role-preview="teacher"]').click();
   assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
   assert.match(await page.locator("#role-title").textContent(), /교사는[\s\S]*근거/);
@@ -153,7 +163,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.close();
 });
 
-test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe source inventory", async function () {
+test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparation program", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(`${baseUrl}sasmo.html`, { waitUntil: "networkidle" });
@@ -166,8 +176,17 @@ test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe sou
   assert.equal(await page.locator("#k12-record-count").textContent(), "88");
   assert.equal(await page.locator("#k12-asset-count").textContent(), "144");
   assert.equal(await page.locator("#edugain-topic-count").textContent(), "158");
-  assert.equal(await page.locator("#archive-coverage-list .coverage-row").count(), 11);
-  assert.equal(await page.locator("#hero-format").textContent(), "공식 형식 · 15문항 · 60분");
+  await page.locator('#archive-year-list[data-ready="true"]').waitFor();
+  assert.equal(await page.locator("#archive-grade-filter").inputValue(), "6");
+  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 11);
+  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 11);
+  assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 19);
+  const gradeSixProblem = page.locator('a[href="https://files.k12mathcontests.com/sasmo_2024_primary6.pdf"]');
+  assert.equal(await gradeSixProblem.count(), 1);
+  assert.equal(await gradeSixProblem.textContent(), "문제");
+  assert.equal(await gradeSixProblem.getAttribute("target"), "_blank");
+  assert.match(await gradeSixProblem.getAttribute("rel"), /noopener/);
+  assert.match(await gradeSixProblem.getAttribute("rel"), /noreferrer/);
   assert.match(await page.locator(".official-format-grid").innerText(), /K2[\s\S]*15문항 · 60분[\s\S]*G1–G12[\s\S]*25문항 · 90분/);
   assert.equal(await page.locator("#journey-list li").count(), 6);
   assert.match(await page.locator("#journey-list").innerText(), /진단[\s\S]*영역·문항 분석[\s\S]*약점 클리닉[\s\S]*개념 학습[\s\S]*맞춤 워크북[\s\S]*재확인/);
@@ -181,7 +200,7 @@ test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe sou
   await page.locator('[data-level="K2"]').focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.locator('[data-level="G1"]').getAttribute("aria-selected"), "true");
-  assert.equal(await page.locator("#hero-format").textContent(), "공식 형식 · 25문항 · 90분");
+  assert.match(await page.locator("#level-help").textContent(), /G1/);
   assert.equal(await page.locator("#official-sasmo-link").getAttribute("href"), "https://sasmo.simcc.org/courses/sasmo-past-papers-year-2025/");
   await page.locator('[data-goal="amc-bridge"]').click();
   assert.match(await page.locator("#goal-title").textContent(), /AMC 연결/);
@@ -190,7 +209,15 @@ test("dedicated SASMO page exposes a K2-G12 student/teacher program and safe sou
   assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
   assert.match(await page.locator("#role-title").textContent(), /수업 그룹/);
   assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
-  assert.equal(await page.locator('a[href$=".pdf"], a[href*="files.k12mathcontests.com"]').count(), 0);
+  await page.locator("#archive-grade-filter").selectOption("1");
+  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 3);
+  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 3);
+  assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 4);
+  assert.match(await page.locator("#archive-summary").textContent(), /Grade 1 · 3개 연도·학년 묶음 · 원문 파일 4개/);
+  await page.locator("#archive-grade-filter").selectOption("all");
+  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 11);
+  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 88);
+  assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 144);
   const duplicateIds = await page.locator("[id]").evaluateAll(function (elements) {
     const counts = elements.reduce(function (result, element) {
       result[element.id] = (result[element.id] || 0) + 1;
@@ -235,7 +262,7 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
     });
     assert.equal(allLevelsVisible, true, `not all K2-G12 controls visible at ${width}px`);
     assert.equal(await page.locator('[data-level="G12"]').isVisible(), true);
-    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .outline-link, .archive-coverage summary, .brand, .site-footer a").evaluateAll(function (controls) {
+    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
       return controls.map(function (control) {
         const rect = control.getBoundingClientRect();
         return { width: rect.width, height: rect.height };
@@ -460,7 +487,7 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
     });
     assert.equal(dimensions.scroll, dimensions.client, `home overflow at ${width}px`);
-    const firstScreenControls = await page.locator('#learning-search, [data-role-preview], .directory-quick-actions a').evaluateAll(function (controls) {
+    const firstScreenControls = await page.locator('#quick-start-grade, .simple-action-card').evaluateAll(function (controls) {
       return controls.filter(function (control) {
         const rect = control.getBoundingClientRect();
         return rect.top >= 0 && rect.top < window.innerHeight;

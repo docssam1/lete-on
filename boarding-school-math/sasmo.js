@@ -93,8 +93,23 @@
     })
   });
 
-  const state = { level: "K2", goal: "first-attempt", role: "student" };
+  const query = new URLSearchParams(window.location.search);
+  const requestedGrade = Number(query.get("grade"));
+  const state = {
+    level: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "K2",
+    archiveGrade: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 10 ? String(requestedGrade) : "6",
+    goal: "first-attempt",
+    role: "student"
+  };
   const levels = Object.freeze(["K2", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]);
+  const archiveAssetLabels = Object.freeze({
+    p: "문제",
+    s: "해설",
+    ps: "문제+해설",
+    a: "정답",
+    pa: "문제+정답"
+  });
+  let publicArchive = null;
 
   function text(value) { return String(value || ""); }
   function levelLabel(level) {
@@ -167,9 +182,12 @@
     const format = architecture && typeof architecture.getOfficialFormat === "function"
       ? architecture.getOfficialFormat(state.level)
       : null;
-    document.getElementById("hero-format").textContent = format
-      ? `공식 형식 · ${format.questionCount}문항 · ${format.durationMinutes}분`
-      : "공식 형식 · 주최기관 확인 필요";
+    const heroFormat = document.getElementById("hero-format");
+    if (heroFormat) {
+      heroFormat.textContent = format
+        ? `공식 형식 · ${format.questionCount}문항 · ${format.durationMinutes}분`
+        : "공식 형식 · 주최기관 확인 필요";
+    }
     if (link && link.organizerHostedUrl) {
       anchor.href = link.organizerHostedUrl;
       const coverage = text(link.coverageLabelKo || link.coverageLabel);
@@ -194,38 +212,150 @@
     });
     document.getElementById("diagnostic-title").textContent = `${levelLabel(state.level)} · ${goal.diagnostic}`;
     document.getElementById("diagnostic-description").textContent = goal.diagnosticDescription;
-    document.getElementById("hero-level-label").textContent = levelLabel(state.level);
-    document.getElementById("hero-action-text").textContent = `${levelLabel(state.level)} ${goal.title.split(" · ")[0]} 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.`;
+    const heroLevel = document.getElementById("hero-level-label");
+    const heroAction = document.getElementById("hero-action-text");
+    if (heroLevel) heroLevel.textContent = levelLabel(state.level);
+    if (heroAction) heroAction.textContent = `${levelLabel(state.level)} ${goal.title.split(" · ")[0]} 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.`;
   }
   function renderSourceInventory() {
     const api = window.GFIELDSASMOSourceInventory;
     const recordCount = document.getElementById("k12-record-count");
     const assetCount = document.getElementById("k12-asset-count");
     const topicCount = document.getElementById("edugain-topic-count");
-    const coverageList = document.getElementById("archive-coverage-list");
     if (!api || !api.inventory || !api.validatePublicInventory(api.inventory).valid) {
       recordCount.textContent = "잠금";
       assetCount.textContent = "잠금";
       topicCount.textContent = "잠금";
-      coverageList.textContent = "검증된 자료 메타데이터를 불러오지 못했습니다.";
       return;
     }
     const aggregate = api.inventory.k12HistoricalAggregate;
     recordCount.textContent = String(aggregate.indexRecordCount);
     assetCount.textContent = String(aggregate.physicalPdfCount);
     topicCount.textContent = String(api.inventory.edugainComparativeAggregate.selectableDomTopicNodeCount);
-    coverageList.replaceChildren();
-    api.ARCHIVE_YEARS.forEach(function (year) {
-      const coverage = api.getHistoricalCoverage(year);
-      const row = document.createElement("div");
-      const yearLabel = document.createElement("strong");
-      const levelsLabel = document.createElement("span");
-      row.className = "coverage-row";
-      yearLabel.textContent = String(year);
-      levelsLabel.textContent = coverage.levelIds.join(" · ");
-      row.append(yearLabel, levelsLabel);
-      coverageList.append(row);
+  }
+
+  function validPublicArchive(data) {
+    if (!data || !data.coverage || !Array.isArray(data.records)) return false;
+    if (data.coverage.recordCount !== data.records.length || data.coverage.assetCount !== 144) return false;
+    return data.records.every(function (record) {
+      if (!Number.isInteger(record.year) || !Number.isInteger(record.grade) || !Array.isArray(record.assets)) return false;
+      try {
+        const sourcePage = new URL(record.sourcePageUrl);
+        if (sourcePage.protocol !== "https:" || sourcePage.hostname !== "www.k12mathcontests.com") return false;
+        return record.assets.every(function (asset) {
+          const file = new URL(asset.url);
+          return Object.prototype.hasOwnProperty.call(archiveAssetLabels, asset.type)
+            && file.protocol === "https:"
+            && file.hostname === "files.k12mathcontests.com";
+        });
+      } catch (error) {
+        return false;
+      }
     });
+  }
+
+  function renderArchiveFilter() {
+    const filter = document.getElementById("archive-grade-filter");
+    filter.replaceChildren();
+    const all = document.createElement("option");
+    all.value = "all";
+    all.textContent = "전체 학년";
+    filter.append(all);
+    for (let grade = 1; grade <= 10; grade += 1) {
+      const option = document.createElement("option");
+      option.value = String(grade);
+      option.textContent = `Grade ${grade}`;
+      filter.append(option);
+    }
+    filter.value = state.archiveGrade;
+  }
+
+  function archiveLink(asset, record) {
+    const anchor = document.createElement("a");
+    anchor.className = `archive-file-link archive-file-${asset.type}`;
+    anchor.href = asset.url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.dataset.fileType = asset.type;
+    anchor.textContent = archiveAssetLabels[asset.type];
+    anchor.setAttribute("aria-label", `${record.year} Grade ${record.grade} ${archiveAssetLabels[asset.type]} 원문 PDF, ${asset.pages}쪽`);
+    return anchor;
+  }
+
+  function renderPublicArchive() {
+    if (!publicArchive) return;
+    const list = document.getElementById("archive-year-list");
+    const summary = document.getElementById("archive-summary");
+    const status = document.getElementById("archive-status");
+    const records = publicArchive.records.filter(function (record) {
+      return state.archiveGrade === "all" || String(record.grade) === state.archiveGrade;
+    });
+    const yearGroups = records.reduce(function (groups, record) {
+      const key = String(record.year);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(record);
+      return groups;
+    }, {});
+    const assetCount = records.reduce(function (total, record) { return total + record.assets.length; }, 0);
+    const gradeLabel = state.archiveGrade === "all" ? "전체 학년" : `Grade ${state.archiveGrade}`;
+    summary.textContent = `${gradeLabel} · ${records.length}개 연도·학년 묶음 · 원문 파일 ${assetCount}개`;
+    status.textContent = records.length ? "아래에서 연도와 자료 종류를 고르세요." : "선택한 학년의 공개 링크가 없습니다.";
+    list.replaceChildren();
+    Object.keys(yearGroups).sort(function (left, right) { return Number(right) - Number(left); }).forEach(function (year) {
+      const section = document.createElement("section");
+      section.className = "archive-year-card";
+      section.dataset.archiveYear = year;
+      const header = document.createElement("header");
+      const title = document.createElement("h3");
+      const count = document.createElement("span");
+      title.textContent = year;
+      count.textContent = `${yearGroups[year].length}개 학년`;
+      header.append(title, count);
+      const rows = document.createElement("div");
+      rows.className = "archive-records";
+      yearGroups[year].forEach(function (record) {
+        const row = document.createElement("div");
+        row.className = "archive-record-row";
+        row.dataset.archiveRecord = record.id;
+        const label = document.createElement("div");
+        label.className = "archive-record-label";
+        const grade = document.createElement("strong");
+        const division = document.createElement("small");
+        grade.textContent = `Grade ${record.grade}`;
+        division.textContent = record.division.startsWith("primary") ? `Primary ${record.division.replace("primary", "")}` : `Secondary ${record.division.replace("secondary", "")}`;
+        label.append(grade, division);
+        const links = document.createElement("div");
+        links.className = "archive-file-links";
+        record.assets.forEach(function (asset) { links.append(archiveLink(asset, record)); });
+        const source = document.createElement("a");
+        source.className = "archive-record-source";
+        source.href = record.sourcePageUrl;
+        source.target = "_blank";
+        source.rel = "noopener noreferrer";
+        source.textContent = "자료 페이지 ↗";
+        row.append(label, links, source);
+        rows.append(row);
+      });
+      section.append(header, rows);
+      list.append(section);
+    });
+    list.dataset.ready = "true";
+  }
+
+  async function loadPublicArchive() {
+    const status = document.getElementById("archive-status");
+    try {
+      const response = await fetch("./competition/sasmo-k12-public-archive.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (!validPublicArchive(data)) throw new Error("invalid archive metadata");
+      publicArchive = data;
+      renderArchiveFilter();
+      renderPublicArchive();
+    } catch (error) {
+      status.textContent = "연도별 자료 목록을 불러오지 못했습니다. 아래 원본 색인에서 확인해 주세요.";
+      document.getElementById("archive-year-list").dataset.ready = "error";
+    }
   }
   function updateGoal(goalId) {
     if (!goals[goalId]) return;
@@ -294,6 +424,14 @@
       if (goal) updateGoal(goal.dataset.goal);
       if (role) updateRole(role.dataset.role);
     });
+    document.getElementById("archive-grade-filter").addEventListener("change", function (event) {
+      state.archiveGrade = event.target.value;
+      const url = new URL(window.location.href);
+      if (state.archiveGrade === "all") url.searchParams.delete("grade");
+      else url.searchParams.set("grade", state.archiveGrade);
+      window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      renderPublicArchive();
+    });
     document.addEventListener("keydown", function (event) {
       if (event.target.matches("[data-level]")) moveTab(event, "[data-level]", updateLevel, "level");
       if (event.target.matches("[data-goal]")) moveTab(event, "[data-goal]", updateGoal, "goal");
@@ -303,6 +441,7 @@
   function initialize() {
     renderDomains();
     renderSourceInventory();
+    loadPublicArchive();
     renderLevels();
     updateOfficialLink();
     updateGoal(state.goal);

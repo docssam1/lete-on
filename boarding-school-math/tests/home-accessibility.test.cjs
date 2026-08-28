@@ -73,6 +73,7 @@ test("skip link and every tab set work from the keyboard", async function () {
   assert.equal(await page.evaluate(function () { return location.hash; }), "#main");
   assert.equal(await page.locator(":focus").getAttribute("id"), "main");
 
+  await page.locator(".advanced-home-tools summary").click();
   await page.locator('[data-role-preview="student"]').focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.locator('[data-role-preview="teacher"]').getAttribute("aria-selected"), "true");
