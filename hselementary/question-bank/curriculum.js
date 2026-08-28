@@ -89,7 +89,8 @@
               sourceSection: type.sourceSection || "",
               sourcePdfPage: Number.isInteger(type.sourcePdfPage) ? type.sourcePdfPage : undefined,
               sourcePrintedPage: Number.isInteger(type.sourcePrintedPage) ? type.sourcePrintedPage : undefined,
-              reviewLocked: Boolean(type.reviewLocked)
+              reviewLocked: Boolean(type.reviewLocked),
+              reviewReason: type.reviewReason || type.reviewLockReason || ""
             }))
           };
         })
@@ -613,7 +614,8 @@
         sourceSection: item.sourceSection,
         sourcePdfPage: item.sourcePdfPage,
         sourcePrintedPage: item.sourcePrintedPage,
-        reviewLocked: item.reviewLocked
+        reviewLocked: item.reviewLocked,
+        reviewReason: item.reviewReason || item.reviewLockReason || ""
       });
     }
 

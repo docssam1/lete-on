@@ -170,7 +170,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "누적 막대와 월별 일수의 결측 구간",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "reviewLockReason": "답안에 최종 숫자 답이 확인되지 않아, 출판 원본 정답 또는 교사용 해설에서 12일을 확인할 때까지 잠금"
     },
     {
       "unit": 5,
@@ -183,7 +184,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "성별 합계 차로 반별 인원차",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "reviewLockReason": "가장 큰 차와 가장 작은 차를 보이는 반이 각각 둘이라 답이 하나로 정해지지 않음. 질문 문장 교정본과 공식 의도 확인 전 잠금"
     },
     {
       "unit": 5,
@@ -209,7 +211,8 @@
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
       "typeLabel": "점수 분포와 총 정답 수의 인원 역산",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "reviewLockReason": "답안 계산 흔적이 원문 전체 정답 수 51과 맞지 않아, 공식 정오표 또는 원답안을 확인할 때까지 잠금"
     },
     {
       "unit": 5,
@@ -287,7 +290,8 @@
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
       "typeLabel": "막대 순위·차이의 전체 인원 최솟값",
-      "sourceVerified": true
+      "sourceVerified": true,
+      "reviewLockReason": "답안 대응면이 다른 과일 문제라 산 문제의 공식 답을 확인할 수 없음. 산 문제의 공식 답안 또는 정오표 확인 전 잠금"
     },
     {
       "unit": 6,

@@ -3709,7 +3709,7 @@
     const gridCount = scaleMax / step;
     if (!Number.isInteger(gridCount) || gridCount < 1 || gridCount > 24) throw new Error("원문형 막대그래프의 격자 칸 수가 올바르지 않습니다.");
     if (values.some(value => !Number.isInteger(value / step) || value < 0 || value > scaleMax)) throw new Error("막대그래프 자료가 눈금과 맞지 않습니다.");
-    const width = Math.max(labels.length >= 6 ? 470 : 390, 84 * labels.length + 86);
+    const width = Math.max(320, 50 * labels.length + 70);
     const height = 318, left = 54, right = 18, top = 48, bottom = 76;
     const plotWidth = width - left - right, plotHeight = height - top - bottom;
     const yFor = value => top + plotHeight - plotHeight * value / scaleMax;
@@ -3729,7 +3729,7 @@
     const labelText = labels.map((label, index) => `<text class="source41-bar-label" x="${xFor(index).toFixed(2)}" y="${top + plotHeight + 27}">${label}</text>`).join("");
     const scaleData = concealStep ? "" : ` data-source41-step="${step}" data-source41-scale-max="${scaleMax}"`;
     const aria = concealStep ? `${title}. 세로 눈금 한 칸의 값을 자료에서 알아내는 그래프입니다.` : `${title}. 세로 눈금 한 칸은 ${step}${unit}입니다.`;
-    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph" data-source41-graph-kind="${kind}" data-source41-complete="${complete}" data-source41-step-known="${!concealStep}"${scaleData} data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-top="${top}" data-source41-baseline="${top + plotHeight}" data-source41-plot-height="${plotHeight}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${aria}"><text class="source41-bar-unit" x="10" y="${top - 10}">(${unit})</text>${grid}${vertical}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${labelText}<text class="source41-bar-axis-name" x="${left - 31}" y="${top + plotHeight / 2}" transform="rotate(-90 ${left - 31} ${top + plotHeight / 2})">${unit}</text><text class="source41-bar-axis-name" x="${width - right}" y="${height - 14}">${xAxis}</text></svg></figure></div>`;
+    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph" data-source41-graph-kind="${kind}" data-source41-complete="${complete}" data-source41-step-known="${!concealStep}"${scaleData} data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-top="${top}" data-source41-baseline="${top + plotHeight}" data-source41-plot-height="${plotHeight}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${aria}"><text class="source41-bar-unit" x="10" y="${top - 18}">(${unit})</text>${grid}${vertical}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${labelText}<text class="source41-bar-axis-name" x="${left - 31}" y="${top + plotHeight / 2}" transform="rotate(-90 ${left - 31} ${top + plotHeight / 2})">${unit}</text><text class="source41-bar-axis-name source41-bar-x-axis-name" x="${width - right}" y="${height - 14}">${xAxis}</text></svg></figure></div>`;
   };
   const source41HorizontalBarGraphCompletionSvg = ({ title, labels, values, visibleIndices, step, scaleMax, unit, majorTicks, complete = false }) => {
     const gridCount = scaleMax / step;
@@ -3742,7 +3742,7 @@
     const rowGrid = Array.from({ length: labels.length + 1 }, (_, index) => { const y = top + plotHeight * index / labels.length; return `<line class="source41-bar-grid source41-bar-grid-h" x1="${left}" y1="${y.toFixed(2)}" x2="${left + plotWidth}" y2="${y.toFixed(2)}"/>`; }).join("");
     const labelText = labels.map((label, index) => `<text class="source41-bar-label source41-bar-row-label" x="${left - 12}" y="${(yFor(index) + 4).toFixed(2)}">${label}</text>`).join("");
     const bars = shown.map(index => `<rect class="source41-bar-column ${complete && !visibleIndices.includes(index) ? "is-filled-in-solution" : ""}" data-source41-bar-index="${index}" data-source41-bar-value="${values[index]}" x="${left}" y="${(yFor(index) - barHeight / 2).toFixed(2)}" width="${(xFor(values[index]) - left).toFixed(2)}" height="${barHeight.toFixed(2)}"/>`).join("");
-    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph source41-horizontal-bar-graph" data-source41-graph-kind="horizontal" data-source41-complete="${complete}" data-source41-step-known="true" data-source41-step="${step}" data-source41-scale-max="${scaleMax}" data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-left="${left}" data-source41-plot-width="${plotWidth}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}. 가로 눈금 한 칸은 ${step}${unit}입니다.">${grid}${rowGrid}${labelText}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${left + plotWidth}" y2="${top + plotHeight}"/>${bars}<text class="source41-bar-unit" x="${left + plotWidth}" y="${height - 10}">(${unit})</text><text class="source41-bar-axis-name" x="${left + plotWidth}" y="${height - 30}">시간</text></svg></figure></div>`;
+    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph source41-horizontal-bar-graph" data-source41-graph-kind="horizontal" data-source41-complete="${complete}" data-source41-step-known="true" data-source41-step="${step}" data-source41-scale-max="${scaleMax}" data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-left="${left}" data-source41-plot-width="${plotWidth}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}. 가로 눈금 한 칸은 ${step}${unit}입니다.">${grid}${rowGrid}${labelText}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${left + plotWidth}" y2="${top + plotHeight}"/>${bars}<text class="source41-bar-unit source41-bar-axis-name source41-bar-x-axis-name" x="${left + plotWidth}" y="${height - 10}">시간(${unit})</text></svg></figure></div>`;
   };
   const source41BarGraphPairSvg = ({ title, labels, values, originalStep, originalScaleMax, originalHeights, originalVisible, originalMajorTicks = [0], newStep, newScaleMax, unit, majorTicks }) => {
     return `<div class="source41-bar-pair"><div>${source41BarGraphCompletionSvg({ kind: "original", title: `${title} (처음 그래프)`, labels, values: originalHeights.map(height => height * originalStep), visibleIndices: originalVisible, step: originalStep, scaleMax: originalScaleMax, unit, majorTicks: originalMajorTicks, xAxis: "항목", concealStep: true })}</div><div>${source41BarGraphCompletionSvg({ kind: "new", title: `${title} (한 칸 ${newStep}${unit}인 빈 그래프)`, labels, values, visibleIndices: [], step: newStep, scaleMax: newScaleMax, unit, majorTicks, xAxis: "항목" })}</div></div>`;
@@ -3761,6 +3761,82 @@
     if (variant === 8) { const grape = canonical ? 6 : int(rng,3,8), peach = grape, apple = grape + 1, tangerine = canonical ? 12 : int(rng,8,13), persimmon = canonical ? 1 : int(rng,1,3); return { labels:["포도","사과","귤","감","복숭아"],values:[grape,apple,tangerine,persimmon,peach], visible: level===0?[1,2,3]:level===1?[2,3]:[2] }; }
     if (variant === 9) { const second = canonical ? 24 : pick(rng,[16,24]), third=second*3/4, fourth=third+8, values=[16,second,third,fourth,22,28].map((value,index)=>canonical||[1,2,3].includes(index)?value:2*Math.max(8,int(rng,8,14))); return { labels:["1학년","2학년","3학년","4학년","5학년","6학년"], values, visible: level===0?[0,1,2,4,5]:level===1?[0,1,4,5]:[0,4,5] }; }
     const one = canonical ? 5 : pick(rng,[3,5,7]), two=one+3, three=two/2, four=canonical?6:int(rng,3,7), five=canonical?9:four+int(rng,1,Math.min(3,10-four)), six=canonical?7:four+int(rng,1,Math.min(3,10-four)); return { labels:["1","2","3","4","5","6"], values:[one,two,three,four,five,six], total:one+two+three+four+five+six, sum:one+2*two+3*three+4*four+5*five+6*six, visible: level===0?[0,3,5]:level===1?[0,5]:[0] };
+  };
+  // 개념탐구 2는 세로 막대와 묶음 막대를 원문 구조대로 따로 그린다.
+  const source41GroupedBarGraphSvg = ({ kind, title, labels, firstLabel, secondLabel, firstValues, secondValues, visibleFirst, visibleSecond, step, scaleMax, unit, majorTicks, complete = false }) => {
+    const gridCount = scaleMax / step;
+    if (!Number.isInteger(gridCount) || gridCount < 1 || gridCount > 24) throw new Error("묶음 막대그래프의 격자 칸 수가 올바르지 않습니다.");
+    const allValues = [...firstValues, ...secondValues];
+    if (allValues.some(value => !Number.isInteger(value / step) || value < 0 || value > scaleMax)) throw new Error("묶음 막대그래프 자료가 눈금과 맞지 않습니다.");
+    const width = Math.max(320, 50 * labels.length + 70), height = 330, left = 54, right = 18, top = 52, bottom = 80;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const yFor = value => top + plotHeight - plotHeight * value / scaleMax;
+    const centerFor = index => left + plotWidth * (index + .5) / labels.length;
+    const barWidth = Math.max(10, Math.min(24, plotWidth / labels.length * .26));
+    const firstShown = complete ? labels.map((_, index) => index) : visibleFirst;
+    const secondShown = complete ? labels.map((_, index) => index) : visibleSecond;
+    const grid = Array.from({ length: gridCount + 1 }, (_, index) => {
+      const value = index * step, y = yFor(value), labeled = majorTicks.includes(value);
+      return `<line class="source41-bar-grid" x1="${left}" y1="${y.toFixed(2)}" x2="${width - right}" y2="${y.toFixed(2)}"/>${labeled ? `<text class="source41-bar-tick" x="${left - 8}" y="${(y + 4).toFixed(2)}">${value}</text>` : ""}`;
+    }).join("");
+    const vertical = Array.from({ length: labels.length + 1 }, (_, index) => { const x = left + plotWidth * index / labels.length; return `<line class="source41-bar-grid source41-bar-grid-v" x1="${x.toFixed(2)}" y1="${top}" x2="${x.toFixed(2)}" y2="${top + plotHeight}"/>`; }).join("");
+    const makeBars = (series, values, shown, offset) => shown.map(index => {
+      const y = yFor(values[index]);
+      return `<rect class="source41-grouped-bar source41-grouped-${series} ${complete && !(series === "first" ? visibleFirst : visibleSecond).includes(index) ? "is-filled-in-solution" : ""}" data-source41-series="${series}" data-source41-bar-index="${index}" data-source41-bar-value="${values[index]}"${series === "second" ? ` fill="url(#source41-grouped-stripe-${kind})"` : ""} x="${(centerFor(index) + offset - barWidth / 2).toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${(top + plotHeight - y).toFixed(2)}"/>`;
+    }).join("");
+    const labelsMarkup = labels.map((label, index) => `<text class="source41-bar-label" x="${centerFor(index).toFixed(2)}" y="${top + plotHeight + 29}">${label}</text>`).join("");
+    const firstMarks = firstShown.join(","), secondMarks = secondShown.join(",");
+    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph source41-grouped-bar-graph" data-source41-graph-kind="grouped" data-source41-complete="${complete}" data-source41-step="${step}" data-source41-scale-max="${scaleMax}" data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-first="${firstMarks}" data-source41-visible-second="${secondMarks}" data-source41-top="${top}" data-source41-baseline="${top + plotHeight}" data-source41-plot-height="${plotHeight}" data-source41-plot-width="${plotWidth}" data-source41-left="${left}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}. 세로 눈금 한 칸은 ${step}${unit}입니다. ${firstLabel}과 ${secondLabel} 막대를 비교하는 그래프입니다."><defs><pattern id="source41-grouped-stripe-${kind}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#f3e5b0"/><line x1="0" y1="0" x2="0" y2="6" stroke="#8b6411" stroke-width="2"/></pattern></defs><text class="source41-bar-unit" x="10" y="${top - 18}">(${unit})</text>${grid}${vertical}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${makeBars("first", firstValues, firstShown, -barWidth / 2 - 2)}${makeBars("second", secondValues, secondShown, barWidth / 2 + 2)}${labelsMarkup}<g class="source41-grouped-legend"><rect class="source41-grouped-legend-first" x="${left}" y="16" width="12" height="12"/><text x="${left + 18}" y="27">${firstLabel}</text><rect class="source41-grouped-legend-second" x="${left + 70}" y="16" width="12" height="12" fill="url(#source41-grouped-stripe-${kind})"/><text x="${left + 88}" y="27">${secondLabel}</text></g><text class="source41-bar-axis-name" x="${left - 31}" y="${top + plotHeight / 2}" transform="rotate(-90 ${left - 31} ${top + plotHeight / 2})">${unit}</text><text class="source41-bar-axis-name source41-bar-x-axis-name" x="${width - right}" y="${height - 14}">반</text></svg></figure></div>`;
+  };
+  const source41BarGraphTwoData = ({ rng, level, variant }) => {
+    const canonical = level === 1 && rng() < .025;
+    if (variant === 0) {
+      const distances = canonical ? [1000, 700, 1200, 600] : [800 + 100 * int(rng, 0, 3), 600 + 100 * int(rng, 0, 3), 1000 + 100 * int(rng, 0, 3), 500 + 100 * int(rng, 0, 3)];
+      const per100 = canonical || level === 1 ? 2 : int(rng, 2, 5), route = [3, 1];
+      const travelMinutes = distances[0] / 100 * per100;
+      const answer = level === 0 ? distances[3] / 100 * per100 : level === 1 ? (distances[route[0]] + distances[route[1]]) / 100 * per100 : (Math.max(...distances) - Math.min(...distances)) / 100 * per100;
+      return { labels: ["찬우", "은수", "경민", "다빈"], values: distances, step: 100, scaleMax: Math.max(1400, Math.ceil((Math.max(...distances) + 100) / 100) * 100), per100, travelMinutes, route, answer };
+    }
+    if (variant === 1) {
+      const dan = canonical ? 60 : 15 * int(rng, 3, 5), cream = dan + 10, gombo = canonical ? 55 : 5 * int(rng, 8, 13), baguette = canonical ? 40 : 5 * int(rng, 6, 10);
+      const values = [gombo, cream, dan, baguette], total = values.reduce((sum, value) => sum + value, 0), pack = 3, price = canonical ? 2000 : 1000 * int(rng, 1, 3), remaining = level === 2 ? pack : 0;
+      return { labels: ["곰보빵", "크림빵", "단팥빵", "바게트"], values, total, difference: cream - dan, pack, price, remaining, step: 5, scaleMax: Math.max(75, Math.ceil((Math.max(...values) + 5) / 5) * 5), answer: (dan - remaining) / pack * price };
+    }
+    if (variant === 2) {
+      const values = canonical ? [500, 600, 400, 300] : [400 + 100 * int(rng, 0, 3), 500 + 100 * int(rng, 0, 3), 300 + 100 * int(rng, 0, 3), 200 + 100 * int(rng, 0, 3)];
+      const perDistance = canonical ? 250 : 100, perMinutes = canonical ? 5 : int(rng, 3, 6), farthest = Math.max(...values), nearest = Math.min(...values);
+      const answer = level === 0 ? farthest : level === 1 ? farthest / perDistance * perMinutes : (farthest - nearest) / perDistance * perMinutes;
+      return { labels: ["유하", "승호", "예진", "민성"], values, step: 100, scaleMax: 1000, perDistance, perMinutes, answer, farthest, nearest };
+    }
+    if (variant === 3) {
+      const groups = canonical ? [5, 3, 4, 5] : level === 0 ? [5 + int(rng, 0, 1), 3 + int(rng, 0, 1), 0, 0] : [5 + int(rng, 0, 1), 3 + int(rng, 0, 1), 4 + int(rng, 0, 1), 5 + int(rng, 0, 1)];
+      const totalHolds = groups.reduce((sum, count, index) => sum + count * (index + 1), 0);
+      const yellow = level === 0 ? 2 + int(rng, 0, 1) : 10, blue = level === 0 ? 2 + int(rng, 0, 1) : 11, green = level === 0 ? 2 + int(rng, 0, 1) : 9;
+      const pink = totalHolds - yellow - blue - green;
+      if (pink < 1 || pink > 24) return source41BarGraphTwoData({ rng, level, variant });
+      const values = [yellow, pink, blue, green];
+      return { labels: ["노랑", "분홍", "파랑", "녹색"], values, groups, totalHolds, step: 1, scaleMax: 24, answer: level === 2 ? pink + green : pink };
+    }
+    if (variant === 4) {
+      const visible = canonical ? [20, 24, 28] : [2 * int(rng, 8, 13), 2 * int(rng, 9, 14), 2 * int(rng, 10, 15)];
+      const missing = canonical ? 18 : 2 * int(rng, 7, 12), values = [...visible, missing], total = values.reduce((sum, value) => sum + value, 0), revenue = canonical ? 36000 : missing * 1000 * int(rng, 1, 3);
+      const buyCount = level === 2 ? int(rng, 4, 7) : 1;
+      return { labels: ["가", "나", "다", "라"], values, total, revenue, buyCount, step: 2, scaleMax: 30, answer: level === 0 ? missing : revenue / missing * buyCount };
+    }
+    if (variant === 5) {
+      const tteok = canonical ? 14 : 2 * int(rng, 5, 8), burger = canonical ? 20 : tteok + 2 * int(rng, 1, 3);
+      const values = canonical ? [16, 20, 14, 10] : [2 * int(rng, 6, 10), burger, tteok, 2 * int(rng, 4, 7)];
+      const total = values.reduce((sum, value) => sum + value, 0);
+      return { labels: ["만두", "햄버거", "떡볶이", "피자"], values, total, difference: values[1] - values[2], step: 2, scaleMax: Math.max(20, Math.ceil((Math.max(...values) + 2) / 2) * 2), answer: Math.max(...values) - Math.min(...values) };
+    }
+    const first = canonical ? [7, 9, 5, 10, 7] : [int(rng, 6, 8), int(rng, 8, 10), int(rng, 4, 6), int(rng, 9, 10), int(rng, 5, 7)];
+    const lastGirls = canonical ? 6 : int(rng, 4, 6);
+    const second = canonical ? [8, 7, 9, 7, 6] : [int(rng, 7, 9), int(rng, 5, 8), lastGirls + 3, int(rng, 5, 7), lastGirls];
+    const total = [...first, ...second].reduce((sum, value) => sum + value, 0);
+    const totals = first.map((value, index) => value + second[index]);
+    const smallest = Math.min(...totals), classIndex = totals.indexOf(smallest);
+    if (totals.filter(value => value === smallest).length !== 1) return source41BarGraphTwoData({ rng, level, variant });
+    return { labels: ["1반", "2반", "3반", "4반", "5반"], first, second, total, difference: second[2] - second[4], step: 1, scaleMax: 12, totals, classIndex, answer: `${classIndex + 1}반 ${smallest}명` };
   };
   const generators = {
     source41LargeNumberOne({ rng, level, variant = 0 }) {
@@ -9064,6 +9140,133 @@
         dieSolution = `2의 눈은 ${data.values[1]}번, 3의 눈은 ${data.values[2]}번입니다. 남은 횟수는 ${remainingCount}번입니다. 4·5·6의 횟수에서 더해진 ${difference5}+${difference6}번을 빼고 3으로 나누면 4의 눈은 (${remainingCount}-${difference5}-${difference6})÷3=${data.values[3]}번입니다.`;
       }
       return result(`주사위를 모두 ${data.total}번 던졌습니다. 2의 눈은 1의 눈보다 3번 더 나왔습니다. 2의 눈은 3의 눈이 나온 횟수의 2배입니다. ${hardClue}나온 눈의 수를 모두 더한 값은 ${data.sum}입니다. 그래프를 완성하세요.${graph}${evidence}`,source41BarAnswerText(data.labels,data.values,"번"),`${dieSolution}${vertical({title:"완성한 주사위 눈별 나온 횟수",step:1,scaleMax:10,majorTicks:[0,5,10],unit:"번",xAxis:"눈",complete:true})}`);
+    },
+    source41BarGraphTwo({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 6) throw new Error("막대그래프 활용 원문 분기는 0부터 6까지여야 합니다.");
+      const data = source41BarGraphTwoData({ rng, level, variant });
+      const fixed = [
+        { values: [1000, 700, 1200, 600], answer: 26 },
+        { values: [55, 70, 60, 40], total: 225, answer: 40000 },
+        { values: [500, 600, 400, 300], answer: 12 },
+        { values: [10, 13, 11, 9], groups: [5, 3, 4, 5], answer: 13 },
+        { values: [20, 24, 28, 18], total: 90, answer: 2000 },
+        { values: [16, 20, 14, 10], total: 60, answer: 10 },
+        { first: [7, 9, 5, 10, 7], second: [8, 7, 9, 7, 6], total: 75, answer: "5반 13명" }
+      ][variant];
+      const expected = variant === 3 ? (level === 2 ? `${data.values[1]}명, ${data.answer}명` : `${data.answer}명`) : data.answer;
+      const evidence = source41Evidence("4-1-u5-e2-bar-graph", { variant, level, source41Evidence: true, fixed, data }, expected);
+      // 원문마다 눈금 읽기의 기준이 달라서, 그래프 크기에서 중간값을 계산하지 않는다.
+      const sourceMajorTicks = [
+        [0, 500, 1000],
+        [0, 25, 50, 75],
+        [0, 500, 1000],
+        [0, 5, 10, 15, 20],
+        [0, 10, 20, 30],
+        [0, 10, 20]
+      ];
+      const vertical = ({ title, visible, complete = false, unit = "명", xAxis = "항목" }) => source41BarGraphCompletionSvg({ kind: `e2-v${variant}`, title, labels: data.labels, values: data.values, visibleIndices: visible, step: data.step, scaleMax: data.scaleMax, unit, majorTicks: sourceMajorTicks[variant].filter(value => value <= data.scaleMax), xAxis, complete });
+
+      if (variant === 0) {
+        const graph = vertical({ title: "집에서 학교까지의 거리", visible: [0, 1, 2, 3], unit: "m", xAxis: "이름" });
+        const speedText = `100m를 가는 데 ${data.per100}분`;
+        const prompt = level === 0
+          ? `${speedText}이 걸립니다. 다빈이가 학교까지 가는 데 걸리는 시간을 구하세요.${graph}${evidence}`
+          : level === 1
+            ? `찬우는 ${data.values[0]}m를 ${data.travelMinutes}분에 갔습니다. 모두 같은 빠르기로 걷습니다. 다빈이가 집에서 학교를 거쳐 은수의 집까지 갈 때 걸리는 시간을 구하세요.${graph}${evidence}`
+            : `${speedText}이 걸립니다. 가장 멀리 사는 학생과 가장 가까이 사는 학생이 학교까지 걸리는 시간의 차를 구하세요.${graph}${evidence}`;
+        const solution = level === 0
+          ? `다빈이의 거리는 ${data.values[3]}m입니다. ${data.values[3]}m는 100m가 ${data.values[3] / 100}묶음이므로 ${data.values[3] / 100}×${data.per100}=${data.answer}분입니다.`
+          : level === 1
+            ? `찬우는 ${data.values[0]}m를 ${data.travelMinutes}분에 가므로 100m를 ${data.per100}분에 갑니다. 다빈이 집에서 학교까지 ${data.values[3]}m, 학교에서 은수 집까지 ${data.values[1]}m이므로 모두 ${data.values[3] + data.values[1]}m입니다. 100m가 ${((data.values[3] + data.values[1]) / 100)}묶음이므로 ${data.answer}분입니다.`
+            : `가장 먼 거리는 ${Math.max(...data.values)}m, 가장 가까운 거리는 ${Math.min(...data.values)}m입니다. 거리 차는 ${Math.max(...data.values) - Math.min(...data.values)}m이고 100m가 ${(Math.max(...data.values) - Math.min(...data.values)) / 100}묶음이므로 시간 차는 ${data.answer}분입니다.`;
+        return result(prompt, data.answer, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
+      }
+      if (variant === 1) {
+        const visible = level === 0 ? [0, 1, 3] : [0, 3];
+        const graph = vertical({ title: level === 2 ? "빵별 준비한 수" : "빵별 판매한 수", visible, unit: "개", xAxis: "빵" });
+        const extra = level === 2 ? `단팥빵은 ${data.remaining}개가 남았습니다. ` : "";
+        const prompt = level === 0
+          ? `단팥빵을 ${data.values[2]}개 팔았습니다. 그림의 빈 막대를 채운 뒤, 단팥빵 ${data.pack}개에 ${data.price}원일 때 판매 금액을 구하세요.${graph}${evidence}`
+          : level === 1
+            ? `빵은 모두 ${data.total}개를 팔았습니다. 크림빵은 단팥빵보다 ${data.difference}개 더 팔았습니다. 단팥빵 ${data.pack}개에 ${data.price}원일 때 단팥빵 판매 금액을 구하세요.${graph}${evidence}`
+            : `빵은 모두 ${data.total}개를 준비했습니다. 크림빵은 단팥빵보다 ${data.difference}개 더 준비했습니다. ${extra}단팥빵 ${data.pack}개에 ${data.price}원일 때 실제로 판매한 단팥빵의 판매 금액을 구하세요.${graph}${evidence}`;
+        const sold = data.values[2] - data.remaining;
+        const solution = level === 0
+          ? `단팥빵은 ${data.values[2]}개입니다. ${data.pack}개씩 ${data.values[2] / data.pack}묶음이므로 ${data.values[2] / data.pack}×${data.price}=${data.answer}원입니다.`
+          : `빈 두 막대의 합은 ${data.total}-${data.values[0]}-${data.values[3]}=${data.values[1] + data.values[2]}개입니다. 크림빵이 ${data.difference}개 더 많으므로 단팥빵은 (${data.values[1] + data.values[2]}-${data.difference})÷2=${data.values[2]}개입니다. ${data.remaining ? `준비한 단팥빵 중 ${data.remaining}개가 남아 ${sold}개를 팔았고, ` : ""}${data.pack}개씩 ${sold / data.pack}묶음이므로 ${data.answer}원입니다.`;
+        return result(prompt, data.answer, `${solution}${vertical({ title: level === 2 ? "완성한 빵별 준비한 수" : "완성한 빵별 판매한 수", visible: [], complete: true, unit: "개", xAxis: "빵" })}`);
+      }
+      if (variant === 2) {
+        const graph = vertical({ title: "집에서 학교까지의 거리", visible: [0, 1, 2, 3], unit: "m", xAxis: "이름" });
+        const prompt = level === 0
+          ? `학교에서 가장 멀리 사는 학생의 집에서 학교까지 거리를 구하세요.${graph}${evidence}`
+          : level === 1
+            ? `${data.perDistance}m를 걷는 데 ${data.perMinutes}분이 걸립니다. 학교에서 가장 멀리 사는 학생이 학교까지 걷는 시간을 구하세요.${graph}${evidence}`
+            : `${data.perDistance}m를 걷는 데 ${data.perMinutes}분이 걸립니다. 가장 멀리 사는 학생과 가장 가까이 사는 학생이 학교까지 걷는 시간의 차를 구하세요.${graph}${evidence}`;
+        const target = level === 2 ? data.farthest - data.nearest : data.farthest;
+        const solution = level === 0
+          ? `가장 높은 막대는 ${data.farthest}m이므로 답은 ${data.answer}m입니다.`
+          : `${level === 2 ? `두 거리의 차는 ${data.farthest}-${data.nearest}=${target}m입니다.` : `가장 높은 막대는 ${data.farthest}m입니다.`} ${target}m는 ${data.perDistance}m가 ${target / data.perDistance}묶음이므로 ${target / data.perDistance}×${data.perMinutes}=${data.answer}분입니다.`;
+        return result(prompt, data.answer, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
+      }
+      if (variant === 3) {
+        const graph = vertical({ title: "색연필 색깔별 학생 수", visible: [0, 2, 3], unit: "명", xAxis: "색깔" });
+        const groupText = data.groups.map((count, index) => count ? `${index + 1}가지 색을 가진 학생 ${count}명` : "").filter(Boolean).join(", ");
+        const targetText = level === 2
+          ? "분홍색 색연필을 가진 학생 수를 먼저 구한 뒤, 분홍색을 가진 학생 수와 녹색을 가진 학생 수의 합을"
+          : "분홍색 색연필을 가진 학생 수를";
+        const prompt = `${groupText}입니다. 학생 한 명이 가진 색연필 색깔 수를 모두 더하면 ${data.totalHolds}번입니다. ${targetText} 구하세요.${graph}${evidence}`;
+        const answerText = level === 2 ? `${data.values[1]}명, ${data.answer}명` : `${data.answer}명`;
+        const solution = `색연필 색깔 수의 합 ${data.totalHolds}에서 노랑 ${data.values[0]}명, 파랑 ${data.values[2]}명, 녹색 ${data.values[3]}명을 빼면 분홍은 ${data.totalHolds}-${data.values[0]}-${data.values[2]}-${data.values[3]}=${data.values[1]}명입니다.${level === 2 ? ` 분홍과 녹색의 합은 ${data.values[1]}+${data.values[3]}=${data.answer}명입니다.` : ""}`;
+        return result(prompt, answerText, `${solution}${vertical({ title: "완성한 색연필 색깔별 학생 수", visible: [], complete: true, unit: "명", xAxis: "색깔" })}`);
+      }
+      if (variant === 4) {
+        const graph = vertical({ title: "가게별 오징어 판매 수", visible: [0, 1, 2], unit: "마리", xAxis: "가게" });
+        const prompt = level === 0
+          ? `가게 네 곳에서 오징어를 모두 ${data.total}마리 팔았습니다. 라 가게가 판 오징어 수를 구하세요.${graph}${evidence}`
+          : level === 1
+            ? `가게 네 곳에서 오징어를 모두 ${data.total}마리 팔았습니다. 라 가게의 판매 금액은 ${data.revenue}원입니다. 오징어 한 마리의 가격을 구하세요.${graph}${evidence}`
+            : `가게 네 곳에서 오징어를 모두 ${data.total}마리 팔았습니다. 라 가게의 판매 금액은 ${data.revenue}원입니다. 같은 가격으로 오징어 ${data.buyCount}마리를 사면 얼마인지 구하세요.${graph}${evidence}`;
+        const missing = data.values[3];
+        const onePrice = data.revenue / missing;
+        const priceSolution = level === 0 ? "" : level === 1
+          ? ` ${data.revenue}원을 ${missing}마리로 나누면 한 마리 가격은 ${data.answer}원입니다.`
+          : ` ${data.revenue}원을 ${missing}마리로 나누면 한 마리 가격은 ${onePrice}원이고, ${data.buyCount}마리 가격은 ${onePrice}×${data.buyCount}=${data.answer}원입니다.`;
+        return result(prompt, data.answer, `라 가게 판매 수는 ${data.total}-${data.values[0]}-${data.values[1]}-${data.values[2]}=${missing}마리입니다.${priceSolution}${vertical({ title: "완성한 가게별 오징어 판매 수", visible: [], complete: true, unit: "마리", xAxis: "가게" })}`);
+      }
+      if (variant === 5) {
+        const visible = level === 0 ? [0, 2, 3] : level === 1 ? [0, 3] : [3];
+        const graph = vertical({ title: "좋아하는 간식별 학생 수", visible, unit: "명", xAxis: "간식" });
+        const manduDifference = data.values[0] - data.values[2];
+        const manduRelation = manduDifference > 0
+          ? `만두는 떡볶이보다 ${manduDifference}명 많습니다. `
+          : manduDifference < 0
+            ? `만두는 떡볶이보다 ${-manduDifference}명 적습니다. `
+            : "만두와 떡볶이를 고른 학생 수는 같습니다. ";
+        const hard = level === 2 ? manduRelation : "";
+        const prompt = level === 0
+          ? `간식을 고른 학생은 모두 ${data.total}명입니다. 햄버거를 고른 학생 수를 채운 뒤, 가장 많은 간식과 가장 적은 간식의 학생 수 차를 구하세요.${graph}${evidence}`
+          : `간식을 고른 학생은 모두 ${data.total}명입니다. 햄버거는 떡볶이보다 ${data.difference}명 많습니다. ${hard}가려진 막대를 채워 가장 많은 간식과 가장 적은 간식의 학생 수 차를 구하세요.${graph}${evidence}`;
+        const solution = level === 0
+          ? `햄버거는 ${data.total}-${data.values[0]}-${data.values[2]}-${data.values[3]}=${data.values[1]}명입니다.`
+          : level === 1
+            ? `햄버거와 떡볶이의 합은 ${data.total}-${data.values[0]}-${data.values[3]}=${data.values[1] + data.values[2]}명입니다. 햄버거가 ${data.difference}명 더 많으므로 햄버거는 ${data.values[1]}명, 떡볶이는 ${data.values[2]}명입니다.`
+            : `햄버거는 떡볶이보다 ${data.difference}명 많고, ${manduRelation}피자를 빼고 남은 ${data.total}-${data.values[3]}=${data.total - data.values[3]}명을 세 조건에 맞춰 나누면 만두 ${data.values[0]}명, 햄버거 ${data.values[1]}명, 떡볶이 ${data.values[2]}명입니다.`;
+        return result(prompt, data.answer, `${solution} 가장 많은 수는 ${Math.max(...data.values)}명, 가장 적은 수는 ${Math.min(...data.values)}명이므로 차는 ${data.answer}명입니다.${vertical({ title: "완성한 좋아하는 간식별 학생 수", visible: [], complete: true, unit: "명", xAxis: "간식" })}`);
+      }
+      const visibleSecond = level === 0 ? [0, 1, 3, 4] : level === 1 ? [0, 1, 3] : [0, 3];
+      const graph = source41GroupedBarGraphSvg({ kind: `e2-v${variant}`, title: "반별 남녀 학생 수", labels: data.labels, firstLabel: "남자", secondLabel: "여자", firstValues: data.first, secondValues: data.second, visibleFirst: [0, 1, 2, 3, 4], visibleSecond, step: data.step, scaleMax: data.scaleMax, unit: "명", majorTicks: [0, 5, 10], complete: false });
+      const hard = level === 2 ? `2반 여학생 수는 2반 남학생 수보다 ${data.first[1] - data.second[1]}명 적습니다. ` : "";
+      const prompt = level === 0
+        ? `다섯 반의 학생 수는 모두 합해 ${data.total}명입니다. 빈 여자 막대를 채운 뒤 학생 수가 가장 적은 반과 그 반의 학생 수를 구하세요.${graph}${evidence}`
+        : `다섯 반의 학생 수는 모두 합해 ${data.total}명입니다. 3반 여학생 수는 5반 여학생 수보다 ${data.difference}명 많습니다. ${hard}빈 여자 막대를 채운 뒤 학생 수가 가장 적은 반과 그 반의 학생 수를 구하세요.${graph}${evidence}`;
+      const solution = level === 0
+        ? `보이는 학생 수를 모두 더해도 되고, 각 반의 합을 차례로 비교해도 됩니다. 빈 여자 막대는 ${data.second[2]}명입니다.`
+        : level === 1
+          ? `여자 빈 막대 두 개의 합은 ${data.total}-${data.first.reduce((sum, value) => sum + value, 0)}-${data.second[0]}-${data.second[1]}-${data.second[3]}=${data.second[2] + data.second[4]}명입니다. 3반이 5반보다 ${data.difference}명 많으므로 3반 여자는 ${data.second[2]}명, 5반 여자는 ${data.second[4]}명입니다.`
+          : `2반 여자는 ${data.first[1]}-${data.first[1] - data.second[1]}=${data.second[1]}명입니다. 남은 여자 수를 3반과 5반의 차 ${data.difference}명에 맞춰 나누면 3반 여자는 ${data.second[2]}명, 5반 여자는 ${data.second[4]}명입니다.`;
+      const complete = source41GroupedBarGraphSvg({ kind: `e2-v${variant}-solution`, title: "완성한 반별 남녀 학생 수", labels: data.labels, firstLabel: "남자", secondLabel: "여자", firstValues: data.first, secondValues: data.second, visibleFirst: [0, 1, 2, 3, 4], visibleSecond, step: data.step, scaleMax: data.scaleMax, unit: "명", majorTicks: [0, 5, 10], complete: true });
+      return result(prompt, data.answer, `${solution} 반별 학생 수는 ${data.totals.map((value, index) => `${index + 1}반 ${value}명`).join(", ")}이므로 가장 적은 반은 ${data.answer}입니다.${complete}`);
     },
     barGraphUnderstanding({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

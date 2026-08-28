@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 226,
+  "verifiedMappings": 233,
   "items": [
     {
       "unit": 1,
@@ -3960,8 +3960,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 48,
       "typeLabel": "세 기호의 뜻을 찾아 두 번 움직인 결과 고르기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 0,
       "difficultyBand": 0,
@@ -3980,8 +3980,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 48,
       "typeLabel": "90° 돌리기와 뒤집기를 여러 번 한 결과 고르기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 1,
       "difficultyBand": 0,
@@ -4000,9 +4000,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 48,
       "typeLabel": "여러 번 뒤집고 돌린 모양",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 답 그림과 독립 계산 결과가 달라 공개할 수 없습니다.",
+      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4020,9 +4020,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 48,
       "typeLabel": "잘못된 연속 이동 바로잡기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "두 서술의 이동 결과가 같아 답을 하나로 고를 수 없습니다.",
+      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4040,8 +4040,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 48,
       "typeLabel": "여러 번 움직인 별의 마지막 자리 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 4,
       "difficultyBand": 0,
@@ -4060,8 +4060,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "180° 돌리기와 뒤집기를 여러 번 한 결과 고르기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 5,
       "difficultyBand": 0,
@@ -4080,9 +4080,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "여러 번 움직인 것과 같은 한 번의 움직임 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "위쪽과 아래쪽으로 뒤집은 결과가 같아 답이 하나로 정해지지 않습니다.",
+      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4100,8 +4100,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "네 번마다 되풀이되는 도형의 30번째 모양 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 8,
       "difficultyBand": 0,
@@ -4120,8 +4120,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "연속 이동의 마지막 모양으로 처음 도형 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 9,
       "difficultyBand": 0,
@@ -4140,8 +4140,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "색칠칸을 옮긴 뒤 번호의 합 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 10,
       "difficultyBand": 0,
@@ -4160,8 +4160,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 49,
       "typeLabel": "움직인 순서가 바뀐 도형을 바르게 고치기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "ready",
+      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformTwo",
       "variant": 11,
       "difficultyBand": 0,
@@ -4218,9 +4218,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 50,
       "typeLabel": "뒤집어 잇는 띠무늬 완성",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다.",
+      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4333,9 +4333,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourcePrintedPage": 51,
       "typeLabel": "좌우 뒤집기 띠무늬의 도형 수",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다.",
+      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -4389,15 +4389,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 4 본문",
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
-      "typeLabel": "이동 뒤 남은 바둑돌 색 판별",
+      "typeLabel": "움직인 뒤 색칠한 칸에 남은 검은 바둑돌 세기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 본문의 제공 답 5개와 독립 계산 7개가 달라 공개할 수 없습니다."
+      "reviewReason": "원문 본문의 제공 답 5개와 독립 계산 7개가 달라 공개할 수 없습니다.",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4409,15 +4409,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
-      "typeLabel": "숫자 카드를 반회전한 값",
+      "typeLabel": "180° 돌린 숫자 카드와 처음 수의 차 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4429,15 +4429,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-2",
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
-      "typeLabel": "거꾸로 보인 전자시계 읽기",
+      "typeLabel": "거꾸로 본 전자시계에서 8분 뒤 시각 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "제공 답안 1시 23분과 독립 계산 10시 20분이 달라 공개할 수 없습니다."
+      "reviewReason": "제공 답안 1시 23분과 독립 계산 10시 20분이 달라 공개할 수 없습니다.",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4449,15 +4449,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
-      "typeLabel": "회전과 거울상으로 시각 복원",
+      "typeLabel": "돌린 시계와 거울 그림으로 처음 시각 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4469,15 +4469,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 4-4",
       "sourcePdfPage": 56,
       "sourcePrintedPage": 52,
-      "typeLabel": "회전한 수 카드 계산 바로잡기",
+      "typeLabel": "180° 돌린 수로 잘못 계산한 뺄셈 바로잡기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "예제 4-4의 제공 답 289와 독립 계산 279가 달라 공개할 수 없습니다."
+      "reviewReason": "예제 4-4의 제공 답 289와 독립 계산 279가 달라 공개할 수 없습니다.",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4489,15 +4489,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "반회전 수 카드의 잘못된 뺄셈",
+      "typeLabel": "여섯 자리 수를 만들고 거꾸로 돌린 수의 계산 바로잡기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4509,15 +4509,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "거꾸로 본 전자시계 시각",
+      "typeLabel": "거꾸로 매달려 본 전자시계의 시각 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4529,15 +4529,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "카드 이동 뒤 같은 표정 세기",
+      "typeLabel": "얼굴 카드를 돌리고 뒤집은 뒤 같은 모양 찾기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4549,15 +4549,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "반회전해 같은 네 자리 수 세기",
+      "typeLabel": "180° 돌려도 같은 네 자리 수 세기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4569,15 +4569,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "이동 뒤 남은 바둑돌 색 차이",
+      "typeLabel": "돌리고 뒤집은 바둑판에서 남은 두 색 바둑돌의 차 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 4,
@@ -4589,15 +4589,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 53,
-      "typeLabel": "거울 시계의 미래 시각",
+      "typeLabel": "거울에 비친 시계로 나중 시각 구하기",
       "sourceVerified": true,
-      "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
       "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "implementationStatus": "ready"
+      "implementationStatus": "ready",
+      "typeLanguageVerified": true
     },
     {
       "unit": 5,
@@ -4616,8 +4616,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4636,8 +4635,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4656,8 +4654,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4676,8 +4673,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 3,
       "difficultyBand": 1,
       "sourceTier": "advanced-contest-overlap",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4696,8 +4692,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 4,
       "difficultyBand": 1,
       "sourceTier": "advanced-contest-overlap",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4716,8 +4711,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4736,8 +4730,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4756,8 +4749,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4776,8 +4768,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4796,8 +4787,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4816,8 +4806,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 10,
       "difficultyBand": 1,
       "sourceTier": "advanced-contest-overlap",
-      "reviewLocked": false,
-      "implementationStatus": "ready"
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4829,13 +4818,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 2 본문",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "거리 막대 비와 동일 속력 이동 시간",
+      "typeLabel": "거리 막대를 읽어 같은 빠르기로 가는 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4847,8 +4837,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-1",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "누적 막대와 월별 일수로 비어 있는 기간 찾기",
+      "typeLabel": "달의 날수로 찢어진 막대 찾기",
       "sourceVerified": true,
+      "reviewLockReason": "답안에 최종 숫자 답이 확인되지 않아, 출판 원본 정답 또는 교사용 해설에서 12일을 확인할 때까지 잠금",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
@@ -4865,8 +4856,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-2",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "성별 합계 차로 반별 인원차",
+      "typeLabel": "남녀 수를 채워 반별 차 비교하기",
       "sourceVerified": true,
+      "reviewLockReason": "가장 큰 차와 가장 작은 차를 보이는 반이 각각 둘이라 답이 하나로 정해지지 않음. 질문 문장 교정본과 공식 의도 확인 전 잠금",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
@@ -4883,13 +4875,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-3",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "판매량 합계로 특정 빵 매출",
+      "typeLabel": "빵 판매량을 채워 판매 금액 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4901,8 +4894,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 2-4",
       "sourcePdfPage": 62,
       "sourcePrintedPage": 58,
-      "typeLabel": "점수별 학생 수와 총 정답 수로 인원 찾기",
+      "typeLabel": "점수별 학생 수로 두 문제 맞힌 학생 찾기",
       "sourceVerified": true,
+      "reviewLockReason": "답안 계산 흔적이 원문 전체 정답 수 51과 맞지 않아, 공식 정오표 또는 원답안을 확인할 때까지 잠금",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
@@ -4919,13 +4913,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "거리 막대와 동일 속력의 통학 시간",
+      "typeLabel": "거리 막대를 읽어 걷는 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4937,13 +4932,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "색깔별 막대와 여러 색 보유 조건으로 비어 있는 인원 찾기",
+      "typeLabel": "여러 색을 가진 학생 수로 빈 막대 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4955,13 +4951,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "전체 판매량으로 비어 있는 막대와 한 개 가격 찾기",
+      "typeLabel": "전체 판매량으로 한 마리 가격 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4973,13 +4970,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "찢어진 막대와 수의 관계로 가장 큰 값과 작은 값의 차 구하기",
+      "typeLabel": "찢어진 간식 막대를 채워 가장 큰 차 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -4991,13 +4989,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "남녀별 막대와 전체 합계로 비어 있는 반 찾기",
+      "typeLabel": "남녀 막대를 채워 가장 적은 반 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": true
+      "generatorKey": "source41BarGraphTwo",
+      "variant": 6,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "reviewLocked": false
     },
     {
       "unit": 5,
@@ -5009,8 +5008,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 63,
       "sourcePrintedPage": 59,
-      "typeLabel": "막대 순위·차이의 전체 인원 최솟값",
+      "typeLabel": "산 선택 순서로 전체 학생 수의 가장 작은 값 찾기",
       "sourceVerified": true,
+      "reviewLockReason": "답안 대응면이 다른 과일 문제라 산 문제의 공식 답을 확인할 수 없음. 산 문제의 공식 답안 또는 정오표 확인 전 잠금",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,

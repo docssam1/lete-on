@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const directory = path.join(__dirname, "source-inventory");
+const inventoryPath = path.join(directory, "4-1-source-items.json");
 const partial = JSON.parse(fs.readFileSync(path.join(directory, "4-1-source-items.partial.json"), "utf8"));
 const typeLanguage = JSON.parse(fs.readFileSync(path.join(directory, "4-1-type-language.json"), "utf8"));
 const componentNames = ["4-1-units-1-2.json", "4-1-units-3-4.json", "4-1-units-5-6.json"];
@@ -61,7 +62,7 @@ const inventory = {
   items
 };
 
-fs.writeFileSync(path.join(directory, "4-1-source-items.json"), `${JSON.stringify(inventory, null, 2)}\n`);
+fs.writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, 2)}\n`);
 
 const lines = [
   "# 4-1 심화 원문 문항별 유형 목록",
@@ -74,13 +75,23 @@ const lines = [
 ];
 
 let activeGroup = "";
+const groupsWithReviewLocks = new Set(items.filter(item => item.implementationStatus === "review-locked" || item.reviewReason || item.reviewLockReason).map(item => `${item.unit}-${item.exploration}`));
 for (const item of items) {
   const group = `${item.unit}-${item.exploration}`;
   if (group !== activeGroup) {
     activeGroup = group;
-    lines.push(`## ${item.unit}. ${item.unitName} - 개념탐구 ${item.exploration}. ${item.groupTitle}`, "", "| 원문 항목 | 유형명 | PDF | 교재 |", "| --- | --- | ---: | ---: |");
+    const header = groupsWithReviewLocks.has(group)
+      ? ["| 원문 항목 | 유형명 | 상태 | PDF | 교재 |", "| --- | --- | --- | ---: | ---: |"]
+      : ["| 원문 항목 | 유형명 | PDF | 교재 |", "| --- | --- | ---: | ---: |"];
+    lines.push(`## ${item.unit}. ${item.unitName} - 개념탐구 ${item.exploration}. ${item.groupTitle}`, "", ...header);
   }
-  lines.push(`| ${item.sourceItemLabel} | ${item.typeLabel} | ${item.sourcePdfPage} | ${item.sourcePrintedPage} |`);
+  if (groupsWithReviewLocks.has(group)) {
+    const reason = item.reviewReason || item.reviewLockReason;
+    const status = item.implementationStatus === "review-locked" || reason ? `잠금: ${reason || "검수 대기"}` : "공개";
+    lines.push(`| ${item.sourceItemLabel} | ${item.typeLabel} | ${status} | ${item.sourcePdfPage} | ${item.sourcePrintedPage} |`);
+  } else {
+    lines.push(`| ${item.sourceItemLabel} | ${item.typeLabel} | ${item.sourcePdfPage} | ${item.sourcePrintedPage} |`);
+  }
 }
 
 fs.writeFileSync(path.join(directory, "4-1-source-items.md"), `${lines.join("\n")}\n`);

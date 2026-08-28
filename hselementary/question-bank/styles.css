@@ -70,7 +70,7 @@
   display:block;
   width:auto;
   height:auto;
-  min-width:390px;
+  min-width:320px;
   max-width:none;
   background:#fff;
 }
@@ -98,6 +98,29 @@
   fill:#e0aa2c;
   stroke:#926809;
 }
+.source41-grouped-bar {
+  stroke:#1b4d6b;
+  stroke-width:1.2;
+}
+.source41-grouped-first,.source41-grouped-legend-first {
+  fill:#527f9a;
+}
+.source41-grouped-second {
+  stroke:#805d12;
+}
+.source41-grouped-bar.is-filled-in-solution {
+  fill:#e0aa2c;
+  stroke:#926809;
+}
+.source41-grouped-legend text {
+  fill:#173b54;
+  font-size:12px;
+  font-weight:800;
+}
+.source41-grouped-legend-second {
+  stroke:#805d12;
+  stroke-width:1;
+}
 .source41-bar-tick {
   fill:#173b54;
   font-size:12px;
@@ -122,6 +145,9 @@
   font-size:12px;
   font-weight:800;
 }
+.source41-bar-x-axis-name {
+  text-anchor:end;
+}
 .source41-bar-pair {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -132,13 +158,21 @@
   min-width:0;
 }
 .source41-bar-pair .source41-bar-graph svg {
-  min-width:390px;
+  min-width:320px;
+}
+.question-item:has(.source41-bar-pair),
+.solution-item:has(.source41-bar-pair) {
+  grid-column:1 / -1;
 }
 @media(max-width:520px) {
-  .source41-bar-graph svg { min-width:390px; }
-  .source41-bar-pair { grid-template-columns:1fr; }
+  .source41-bar-table-wrap { overflow-x:visible; }
+  .source41-bar-table { width:100%; min-width:0; table-layout:fixed; }
   .source41-bar-table th,
-  .source41-bar-table td { font-size:13px; }
+  .source41-bar-table td { min-width:0; padding:7px 3px; font-size:12px; overflow-wrap:anywhere; }
+  .source41-bar-graph { width:100%; min-width:0; max-width:100%; }
+  .source41-bar-graph svg,
+  .source41-bar-pair .source41-bar-graph svg { width:100%; min-width:0; max-width:100%; }
+  .source41-bar-pair { grid-template-columns:1fr; }
   .source41-bar-graph figcaption { font-size:14px; }
 }
 
@@ -1054,6 +1088,7 @@ button{
 
 @media screen and (max-width:700px){
   html,body{max-width:100%;overflow-x:hidden}.worksheet,.worksheet-toolbar,.review-layout,.review-sidebar,.review-stage{min-width:0;max-width:100%}.worksheet-toolbar>*{min-width:0}.worksheet-toolbar .preview-tabs button,.worksheet-toolbar .toolbar-actions button{min-width:0;padding-right:6px;padding-left:6px}.question-prompt,.question-item header span{overflow-wrap:anywhere}
+  .review-stage .print-page,.review-stage .question-grid,.review-stage .question-item,.review-stage .solution-list,.review-stage .solution-item,.review-stage .question-prompt,.review-stage .solution-item p{min-width:0;max-width:100%}.source41-bar-graph-scroll,.source41-bar-table-wrap{width:100%;min-width:0;max-width:100%}
   .app-shell{width:calc(100% - 14px);padding-top:8px}.bank-topbar{grid-template-columns:1fr;gap:8px}.bank-topbar .topbar-back{min-height:34px;justify-self:start}.workflow-steps{justify-content:flex-start}.workflow-steps li{padding:4px 0;font-size:11px}.workflow-steps li+li:before{margin-right:5px}.selection-head{padding:16px}.selection-head h2{font-size:18px}.semester-filter{flex-wrap:wrap;padding:10px 14px}.semester-filter .term-segments{margin-left:0}.selector-layout{grid-template-columns:1fr;min-height:0}.tree-pane{min-height:0;max-height:none;border-right:0}.tree-pane-head{padding:16px 14px 12px}.tree-tools{padding:0 14px 10px}.type-tree{padding:6px 10px 14px}.tree-branch{margin-left:20px;padding-left:10px}.tree-type{grid-template-columns:17px 24px minmax(0,1fr)}.tree-type-state{display:none}.composition-pane{position:static;padding:16px 14px}.selected-types{max-height:180px}.selection-footer{position:sticky;bottom:0;z-index:10;align-items:stretch;flex-direction:column;padding:12px;background:rgba(255,255,255,.96);box-shadow:0 -6px 18px rgba(23,50,71,.08)}.selection-total{justify-content:center}.generate-button{width:100%}.worksheet-toolbar{grid-template-columns:minmax(0,1fr);gap:8px}.worksheet-toolbar>button,.worksheet-toolbar .preview-tabs,.worksheet-toolbar .toolbar-actions{grid-column:1;width:100%}.worksheet-toolbar .preview-tabs{grid-row:auto}.toolbar-actions{justify-content:stretch}.toolbar-actions button{min-width:0;flex:1}.review-layout{display:block}.review-sidebar{border-right:0;border-bottom:1px solid var(--line)}.review-sidebar .worksheet-head{padding:16px}.review-selected{padding:12px 14px}.review-question-list{grid-template-columns:minmax(0,1fr);max-height:180px}.review-question-list a{padding:8px 10px;border-right:0}.review-stage{padding:0 9px 12px}.review-stage .print-page{padding:18px 14px}.review-stage .question-prompt{font-size:15px}.review-stage .question-item{padding:16px 0}.review-stage .question-grid{grid-template-columns:1fr}
   .type-preview-popover{max-height:58vh}.type-preview-question{padding:13px;font-size:13px}.type-preview-question>svg,.type-preview-question .bar-chart,.type-preview-question .line-chart{max-height:200px}
   .source41-card-row,.source41-piece-row{gap:6px}.source41-number-card{width:34px;height:43px;font-size:21px}.source41-piece-row span{min-width:42px;font-size:18px}

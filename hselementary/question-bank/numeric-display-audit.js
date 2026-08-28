@@ -12,7 +12,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 763) failures.push(`공개 검수 대상은 763개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 770) failures.push(`공개 검수 대상은 770개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

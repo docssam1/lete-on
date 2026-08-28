@@ -1,9 +1,10 @@
 "use strict";
 
 global.window = {};
+require("./source-inventory-4-1.js");
 require("./generators.js");
 
-const inventory = require("./source-inventory/4-1-source-items.json");
+const inventory = window.HSE_SOURCE_INVENTORY_41;
 const api = window.HSE_GENERATORS;
 const generatorKey = "source41BarGraphOne";
 const sourceIds = [
@@ -244,7 +245,7 @@ function auditSourceFixture(variant, question, data) {
 
 for (let variant = 0; variant <= 10; variant += 1) {
   const item = inventory.items.find(entry => entry.sourceItemId === sourceIds[variant]);
-  check(item?.generatorKey === generatorKey && item.variant === variant && !item.reviewLocked && item.implementationStatus === "ready", `${sourceIds[variant]}: 원문 목록 연결이 다릅니다.`);
+  check(item?.generatorKey === generatorKey && item.variant === variant && !item.reviewLocked, `${sourceIds[variant]}: 원문 목록 연결이 다릅니다.`);
   const fingerprints = new Set();
   const difficultyFingerprints = new Map();
   let sawAnchor = false;

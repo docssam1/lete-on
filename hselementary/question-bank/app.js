@@ -234,7 +234,8 @@
       : `${type.grade}학년 ${type.term}학기 분류`;
     const summary = `<div class="type-preview-summary"><b>어떤 문제인가요?</b><p>${escapeHtml(verbalizeType(type))}</p><small>${source}</small></div>`;
     if (!type.generator || type.reviewLocked) {
-      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<footer>원문 구조와 정답 검수 후 생성 가능</footer>`;
+      const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
+      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${summary}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
