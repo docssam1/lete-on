@@ -186,6 +186,22 @@ function positionTypePreview(anchor) {
   panel.style.top = `${top}px`;
 }
 
+function textbookConceptTutorialMarkup(problem, compact = false) {
+  if (problem.studyStage?.id !== "concept" || !problem.representativeConcept) return "";
+  const concept = problem.representativeConcept;
+  const steps = [
+    ["개념 찾기", concept.summary],
+    ["풀이 순서", concept.principle || problem.conceptGuide],
+    ["답 확인", "문제의 조건과 묻는 값을 다시 살펴보고 같은 원리로 답을 검산합니다."]
+  ];
+  return `<section class="textbook-concept-tutorial ${compact ? "compact" : ""}"><header><span>개념 튜토리얼</span><strong>${concept.label}</strong></header><ol>${steps.map(([label, text], index) => `<li><b>${index + 1}</b><div><strong>${label}</strong><p>${text}</p></div></li>`).join("")}</ol></section>`;
+}
+
+function textbookConceptSolutionMarkup(question) {
+  if (question.studyStage?.id !== "concept" || !state.includeSolution || !question.solution) return "";
+  return `<details class="concept-worked-solution"><summary>풀이 확인</summary><p>${escapeAttribute(question.solution).replaceAll("\n", "<br>")}</p></details>`;
+}
+
 function showTypePreview(anchor) {
   const item = typeById(anchor.dataset.previewType);
   if (!item || !isSelectableType(item)) return;
@@ -198,11 +214,12 @@ function showTypePreview(anchor) {
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   const representativeConcept = representativeConceptForType(item.id);
+  const isConceptStage = problem.studyStage?.id === "concept";
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
     ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
-    ${representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
+    ${isConceptStage ? textbookConceptTutorialMarkup(problem, true) : representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
     ${learningMapPreviewMarkup(item)}
-    ${problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
+    ${!isConceptStage && problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
   panel.hidden = false;
@@ -3337,6 +3354,7 @@ function watermarkMarkup() {
 }
 
 function renderWorksheet() {
+  hideTypePreview();
   const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
@@ -3351,10 +3369,11 @@ function renderWorksheet() {
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
       <div class="question-style-tags">${academyStyleLabels(question).map((label) => `<span>${label}</span>`).join("")}</div>
-      ${question.representativeConcept ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
+      ${question.representativeConcept && question.studyStage?.id !== "concept" ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
-      ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
+      ${textbookConceptTutorialMarkup(question)}
+      ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${worksheetVisualMarkup(question)}
       ${question.responseKind === "drawing"
@@ -3362,6 +3381,7 @@ function renderWorksheet() {
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
+      ${textbookConceptSolutionMarkup(question)}
     </article>`;
   });
   const pages = [];
