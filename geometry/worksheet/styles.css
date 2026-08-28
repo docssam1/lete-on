@@ -797,3 +797,200 @@ select, .code-input, input[type="text"] {
   .subject-switch { display: none !important; }
   .ws-preview { display: none !important; }
 }
+
+/* ---------------------------------------------------------------------
+   GFIELD print studio v3 — screen-only workbench treatment.
+   The A4 print rules above remain the source of truth for paper output.
+   --------------------------------------------------------------------- */
+@media screen {
+  :root {
+    --ink: #17263d;
+    --brand: #123f72;
+    --accent: #17784b;
+    --line: #c8d0d0;
+    --panel-bg: #e6eae8;
+    --card-bg: #fffefa;
+    --copper: #a66b32;
+  }
+
+  html, body { background: var(--panel-bg); }
+
+  .subject-switch {
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+    align-items: center;
+    gap: 14px;
+    padding: 8px 18px;
+    border-bottom-color: #bcc6c5;
+    background: rgba(255, 254, 250, .97);
+    box-shadow: 0 2px 10px rgba(34, 51, 56, .06);
+  }
+
+  .subject-home {
+    justify-self: start;
+    color: var(--brand);
+    font-size: 13px;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .subject-tabs { grid-column: 2; display: flex; gap: 5px; }
+  .subject-tab {
+    min-height: 38px;
+    padding: 0 16px;
+    border-radius: 4px;
+  }
+  .subject-tab.active {
+    border-color: #0d5636;
+    background: #17784b;
+    box-shadow: inset 0 1px rgba(255,255,255,.2), 0 3px 0 #0d5636;
+  }
+
+  .control-panel {
+    flex-basis: 330px;
+    width: 330px;
+    height: calc(100vh - 58px);
+    top: 58px;
+    padding: 22px 18px 32px;
+    border-right-color: #bcc6c5;
+    background: #fbfcf9;
+  }
+
+  .control-panel h1 {
+    margin: 0 0 20px;
+    padding: 2px 0 2px 13px;
+    border-left: 4px solid var(--accent);
+    letter-spacing: .8px;
+  }
+  .control-panel h1 span { font-size: 20px; letter-spacing: 0; }
+
+  .control-group {
+    margin-bottom: 0;
+    padding: 14px 0;
+    border-top: 1px solid #d6dcda;
+  }
+  .control-group h2 { color: #344858; letter-spacing: .7px; }
+
+  .type-grid { gap: 4px; }
+  .type-grid label {
+    position: relative;
+    min-height: 34px;
+    padding: 5px 5px 5px 7px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    line-height: 1.35;
+  }
+  .type-grid label:hover { border-color: #c4cdcb; background: #f1f5f2; }
+  .type-grid label:has(input:checked) {
+    border-color: #9eb7ae;
+    background: #eef6f1;
+    box-shadow: inset 3px 0 #17784b;
+  }
+
+  select, .code-input, input[type="text"],
+  .intensity-btn, .btn {
+    border-radius: 4px;
+  }
+  select, .code-input, input[type="text"] { min-height: 38px; }
+  .intensity-btn { min-height: 38px; height: auto; }
+  .intensity-btn.active {
+    border-color: #0b315c;
+    background: var(--brand);
+    box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 5px rgba(18,63,114,.16);
+  }
+  .check-line { min-height: 30px; }
+
+  .btn { min-height: 40px; height: auto; }
+  .btn-primary {
+    border-color: #0b315c;
+    background: var(--brand);
+    box-shadow: 0 3px 0 #0b315c;
+  }
+  .btn-print {
+    border-color: #8c713d;
+    background: #fff9df;
+    color: #3e321b;
+    box-shadow: 0 3px 0 rgba(125,91,31,.2);
+  }
+
+  .preview-panel { padding: 26px 28px 60px; background: #e6eae8; }
+  .ws-preview {
+    padding: 16px 18px;
+    border: 1px solid #b8a68e;
+    border-left: 1px solid #b8a68e;
+    border-top: 4px solid var(--copper);
+    border-radius: 2px;
+    background-color: #fffdf7;
+    background-image:
+      linear-gradient(rgba(55,83,94,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(55,83,94,.04) 1px,transparent 1px);
+    background-size: 24px 24px;
+    box-shadow: 0 12px 28px rgba(38,53,56,.11);
+  }
+  .ws-preview-chip { border-radius: 3px; }
+  .ws-preview-chip.active {
+    border-color: #315c79;
+    background: #f7fbfd;
+    color: var(--brand);
+    box-shadow: inset 3px 0 var(--copper);
+  }
+  .ws-page { background: #fffefa; box-shadow: 0 12px 30px rgba(35,43,38,.14); }
+}
+
+@media screen and (max-width: 900px) {
+  .subject-switch {
+    grid-template-columns: auto 1fr;
+    padding: 7px 10px;
+  }
+  .subject-tabs { grid-column: 2; justify-self: end; }
+  .subject-tab { min-height: 36px; padding: 0 10px; font-size: 12px; }
+  .subject-home { font-size: 12px; }
+
+  .app-shell { display: block; }
+  .control-panel {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 18px 14px 22px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .control-panel h1,
+  .control-group:first-of-type,
+  .control-group:nth-of-type(8),
+  .control-group:nth-of-type(9) { grid-column: 1 / -1; }
+  .control-panel h1 { margin-bottom: 8px; }
+  .control-group { min-width: 0; padding-block: 12px; }
+  .control-group:first-of-type { padding-top: 8px; }
+  .type-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .preview-panel { padding: 18px 10px 36px; }
+  .ws-preview { margin-bottom: 14px; padding: 12px; }
+  #sheetRoot { width: 100%; }
+  .ws-page {
+    width: 100%;
+    min-height: calc((100vw - 20px) * 1.4142);
+    padding: 5.5vw 5vw;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .subject-switch { display: flex; align-items: center; gap: 8px; overflow-x: auto; }
+  .subject-home { flex: 0 0 auto; }
+  .subject-tabs { flex: 0 0 auto; margin-left: auto; }
+  .subject-tab { padding-inline: 8px; }
+  .control-panel { gap: 0 9px; }
+  .type-grid { font-size: 11px; }
+  .type-grid label { min-height: 38px; }
+  .ws-preview-head { align-items: flex-start; }
+  .ws-preview-actions { gap: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-tab.active, .btn-primary, .btn-print { transition: none; }
+}
