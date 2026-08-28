@@ -145,6 +145,17 @@ for (const [lessonId, approvedAnswers] of approvedBook4Answers) {
 const requiredBook4Units = ["도형분할과 움직이기", "색종이 접기와 쌓기나무", "양팔저울과 비교하기", "논리추리와 자리배치"];
 for (const unit of requiredBook4Units) if (!book4.lessons.some((lesson) => lesson.unit === unit)) fail(`book-04: missing ${unit}`);
 if (!book4.lessons.some((lesson) => lesson.sourceHold)) fail("book-04: unresolved teacher-only wording must remain visible in data");
+const hiddenCubeLesson = book4.lessons.find((lesson) => lesson.id === "hidden-cube-count");
+const hiddenScenes = hiddenCubeLesson.original.visual.scenes;
+const expectedHidden = hiddenCubeLesson.original.items.map((item) => Number(item.answer));
+hiddenScenes.forEach(({ map }, index) => {
+  const hidden = globalThis.GW_GEN.countHiddenWalled(map);
+  if (hidden !== expectedHidden[index]) fail(`book-04: geometry hidden count mismatch at scene ${index + 1}`);
+});
+const hiddenStoryMap = hiddenCubeLesson.extension.visual.scenes[0].map;
+if (globalThis.GW_GEN.countHiddenWalled(hiddenStoryMap) !== Number(hiddenCubeLesson.extension.answer)) {
+  fail("book-04: story hidden count differs from geometry data");
+}
 
 const book5 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-05");
 const approvedBook5Answers = new Map([

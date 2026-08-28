@@ -316,6 +316,10 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 <script src="engine/threads/mid7.js"></script>
 <script src="engine/threads/mid8.js"></script>
 <script src="data/threads.js"></script>
+<!-- QR 생성기 — 이게 없으면 qrSvg()가 빈 문자열을 돌려줘서 학습지에 "QR을 찍으면 개념
+     설명이 열려요" 안내만 찍히고 정작 QR이 안 나온다(2026-08-28 발견). 메인 앱은
+     index.html에서 이미 싣고 있었는데 drill.html만 빠져 있었다. exam.js보다 먼저. -->
+<script src="vendor/qrcode.js"></script>
 <script src="app/exam.js"></script>
 
 <script>

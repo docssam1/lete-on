@@ -88,10 +88,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .gold-intro dt{font-size:9px}
 .gold-intro dd{margin-top:7px;font-family:var(--display);font-size:18px}
 
-.book-index{display:grid;grid-template-columns:138px minmax(0,1fr);align-items:stretch;border-bottom:1px solid #aebcba}
+.book-index{display:grid;grid-template-columns:138px minmax(0,1fr) auto;align-items:stretch;border-bottom:1px solid #aebcba}
 .book-index-label{display:grid;align-content:center;padding:16px 8px;border-right:1px solid #aebcba}
 .book-index-label span{color:var(--green);font-size:8px;font-weight:900}
 .book-index-label strong{margin-top:3px;font-size:12px}
+.print-actions{display:grid;align-content:center;gap:5px;padding:8px;border-left:1px solid #aebcba}.print-actions button{min-height:29px;padding:0 10px;border:1px solid #aebcba;border-radius:4px;background:#fff;color:var(--ink);font-size:8px;font-weight:900;white-space:nowrap}.print-actions button:hover{border-color:var(--blue);color:var(--blue)}
 .book-tabs{display:flex;gap:0;padding:0;overflow-x:auto;scrollbar-width:thin}
 .book-tabs button{display:grid;align-content:center;justify-items:start;flex:1 0 82px;min-height:70px;padding:10px 13px;border:0;border-right:1px solid #d3dcda;border-radius:0;background:transparent;color:#6e7b7f;text-align:left;transition:background var(--motion-fast) var(--ease),color var(--motion-fast) var(--ease)}
 .book-tabs button>span{font-family:var(--display);font-size:8px;font-weight:700;opacity:.6}
@@ -160,7 +161,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
   .gold-shell{width:calc(100% - 20px)}
   .gold-intro{grid-template-columns:1fr;gap:24px;padding:38px 4px 26px}
   .gold-intro dl{width:min(100%,420px)}
-  .book-index{grid-template-columns:110px minmax(0,1fr)}
+  .book-index{grid-template-columns:110px minmax(0,1fr) auto}
   .gold-layout{grid-template-columns:1fr;margin-top:20px}
   .lesson-pane{border-right:0;border-bottom:1px solid #bcc9c6}
   .lesson-list{display:flex;overflow-x:auto}
@@ -185,6 +186,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
   .gold-intro dd{font-size:15px}
   .book-index{display:block}
   .book-index-label{display:none}
+  .print-actions{grid-template-columns:1fr 1fr;border-top:1px solid #d7dfdc;border-left:0}.print-actions button{min-height:38px;font-size:9px}
   .book-tabs button{flex-basis:70px;min-height:61px;padding:8px 10px}
   .gold-layout{margin-top:12px;border-right:0;border-left:0;box-shadow:none}
   .pane-title{padding:18px 16px 15px}
@@ -266,3 +268,25 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .book10-visual .b10-digit-slots{display:grid;gap:16px;place-items:center}.book10-visual .b10-digit-slots .cards{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}.book10-visual .b10-digit-slots .cards span{display:grid;place-items:center;width:44px;height:52px;border:2px solid #4f8497;background:#fff;font-size:20px;font-weight:900;box-shadow:0 3px 0 #c6d7dd}.book10-visual .b10-digit-slots .slots{display:flex;gap:6px}.book10-visual .b10-digit-slots .slots i{width:52px;height:48px;border:2px dashed #c38b36;background:#fff7d8}
 .book10-visual .b10-baseball{max-width:100%;border-collapse:collapse;background:#fff}.book10-visual .b10-baseball th,.book10-visual .b10-baseball td{min-width:68px;height:40px;border:1px solid #7699a6;text-align:center;font-size:12px;font-weight:900}.book10-visual .b10-baseball th{background:#e8f3f5}.book10-visual .b10-baseball td:first-child{font-size:18px;letter-spacing:5px}
 @media(max-width:560px){.book10-visual{min-height:150px;padding:6px}.book10-visual .b10-pages span{width:38px;height:48px;font-size:16px}.book10-visual .b10-table th,.book10-visual .b10-table td{min-width:68px;height:40px;padding:4px;font-size:10px}.book10-visual .b10-digit-slots .cards span{width:39px;height:47px;font-size:18px}.book10-visual .b10-digit-slots .slots i{width:40px;height:44px}.book10-visual .b10-baseball th,.book10-visual .b10-baseball td{min-width:57px}}
+
+.gold-print-root{display:none}
+@media print{
+  @page{size:A4 portrait;margin:11mm}
+  html,body{background:#fff!important;color:#152f3b!important}
+  body>.gold-header,body>.gold-shell{display:none!important}
+  .gold-print-root{display:block!important}
+  .gold-print-page{position:relative;min-height:270mm;padding:7mm 8mm 10mm;background:#fff;break-inside:avoid;page-break-inside:avoid;break-after:page;page-break-after:always;overflow:hidden}
+  .gold-print-page:last-child{break-after:auto;page-break-after:auto}
+  .gold-print-page:after{content:attr(data-watermark);position:absolute;left:50%;top:50%;z-index:0;transform:translate(-50%,-50%) rotate(-24deg);color:rgba(31,100,122,.075);font-size:34px;font-weight:900;white-space:nowrap;pointer-events:none}
+  .gold-print-page>*{position:relative;z-index:1}
+  .gold-print-head{display:flex;align-items:end;justify-content:space-between;padding-bottom:4mm;border-bottom:2px solid #1f6f85}
+  .gold-print-head span{display:block;color:#18715a;font-size:8px;font-weight:900}.gold-print-head h1{margin:1mm 0 0;font-size:19px}.gold-print-head dl{display:flex;gap:5mm;margin:0;font-size:9px}.gold-print-head dt{color:#667b84}.gold-print-head dd{min-width:24mm;margin:1mm 0 0;border-bottom:1px solid #758b94;text-align:center;font-weight:900}
+  .gold-print-concept{margin:4mm 0;padding:3mm 4mm;border-left:3px solid #d2a03e;background:#fbf8ed;font-size:9px;line-height:1.6}
+  .gold-print-block{margin-top:4mm;padding-top:3mm;border-top:1px solid #cbd7da}.gold-print-block h2{margin:0 0 2mm;color:#176b91;font-size:12px}.gold-print-block>p{margin:0 0 3mm;font-size:10px;font-weight:800;line-height:1.55}
+  .gold-print-visual{display:grid;place-items:center;min-height:35mm;max-height:145mm;margin:2mm 0 4mm;padding:3mm;border:1px solid #d5e0e3;background:#fff;overflow:hidden}.gold-print-visual>*,.gold-print-visual svg{max-width:100%;max-height:132mm}.gold-print-visual .book05-visual,.gold-print-visual .book09-visual{min-height:0}
+  .gold-print-visual .polyomino-board{grid-template-columns:repeat(4,minmax(0,1fr));gap:2mm}.gold-print-visual .polyomino-board.story{grid-template-columns:repeat(2,minmax(0,1fr))}.gold-print-visual .polyomino-family{min-height:0;padding:2mm;gap:2mm}.gold-print-visual .polyomino-family>div{min-height:30mm;gap:3mm}.gold-print-visual .polyomino-shape>div{grid-template-columns:repeat(var(--shape-columns),15px);grid-template-rows:repeat(var(--shape-rows),15px)}
+  .gold-print-visual .cube-scene-set{grid-template-columns:repeat(3,minmax(0,1fr));gap:2mm}.gold-print-visual .cube-scene-set.single{grid-template-columns:minmax(45mm,70mm);justify-content:center}.gold-print-visual .cube-scene{gap:1mm;padding:2mm}.gold-print-visual .cube-scene svg{height:42mm}
+  .gold-print-visual .matrix-panel-set{grid-template-columns:repeat(3,minmax(0,1fr));gap:2mm}.gold-print-visual .matrix-panel{min-height:48mm;padding:2mm}.gold-print-visual .equation-board{grid-template-columns:repeat(2,minmax(0,1fr));gap:2mm}.gold-print-visual .equation-board>span{min-height:12mm;padding:2mm}.gold-print-visual .magic-grid-set{grid-template-columns:repeat(4,minmax(0,1fr));gap:2mm}.gold-print-visual .magic-grid{max-width:42mm}.gold-print-visual .magic-grid span{font-size:12px}
+  .gold-print-items{display:grid;gap:3mm;margin:0;padding:0;list-style:none}.gold-print-item{display:grid;grid-template-columns:minmax(0,1fr) 48mm;gap:5mm;align-items:end;padding:2mm 0;border-bottom:1px solid #dce4e6;font-size:9px;font-weight:800;line-height:1.55}.gold-print-answer{display:block;height:8mm;border-bottom:1px solid #637b86}.gold-print-options{font-weight:700;word-spacing:3mm}
+  .gold-print-story{margin-top:5mm;padding:4mm;border:1px solid #d7dfdc;background:#fbfcfb}.gold-print-story h2{color:#18715a}.gold-print-footer{position:absolute;right:8mm;bottom:4mm;color:#789099;font-size:7px;font-weight:900}
+}
