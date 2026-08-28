@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 242,
+  "verifiedMappings": 249,
   "items": [
     {
       "unit": 1,
@@ -5836,10 +5836,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "일렬 상자 모양을 늘일 때 필요한 성냥개비 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5854,10 +5855,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "50원과 100원 동전을 놓은 규칙에서 전체 금액 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5890,10 +5892,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "대각선이 있는 정사각형의 점 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5926,10 +5929,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "점으로 만든 계단 모양 정사각형의 점 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5980,10 +5984,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "줄마다 늘어나는 마름모 바둑돌 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5998,10 +6003,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "같은 상자 모양을 여러 개 만들 때 필요한 성냥개비 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -6016,10 +6022,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "가로로 이어 붙인 정사각형의 점 수로 정사각형 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "advancedShapePattern",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 6,

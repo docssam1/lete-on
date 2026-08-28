@@ -237,6 +237,13 @@
     { "sourceItemId": "4-1-u5-e2-mission-2", "generatorKey": "source41BarGraphTwo", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u5-e2-mission-3", "generatorKey": "source41BarGraphTwo", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
     { "sourceItemId": "4-1-u5-e2-mission-4", "generatorKey": "source41BarGraphTwo", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
-    { "sourceItemId": "4-1-u5-e2-mission-5", "generatorKey": "source41BarGraphTwo", "variant": 6, "difficultyBand": 1, "sourceTier": "advanced-contest-overlap" }
+    { "sourceItemId": "4-1-u5-e2-mission-5", "generatorKey": "source41BarGraphTwo", "variant": 6, "difficultyBand": 1, "sourceTier": "advanced-contest-overlap" },
+    { "sourceItemId": "4-1-u6-e5-exploration", "generatorKey": "advancedShapePattern", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-example-5-1", "generatorKey": "advancedShapePattern", "variant": 7, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-example-5-3", "generatorKey": "advancedShapePattern", "variant": 3, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-mission-1", "generatorKey": "advancedShapePattern", "variant": 4, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-mission-4", "generatorKey": "advancedShapePattern", "variant": 5, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-mission-5", "generatorKey": "advancedShapePattern", "variant": 2, "difficultyBand": 0, "sourceTier": "advanced" },
+    { "sourceItemId": "4-1-u6-e5-mission-6", "generatorKey": "advancedShapePattern", "variant": 6, "difficultyBand": 0, "sourceTier": "advanced" }
   ]
 }
