@@ -170,6 +170,9 @@
     if (p.type === "CO") {
       return answerLine(p.answer.mode === "order" ? "답: ______ → ______ → ______" : "답: ______");
     }
+    if (p.type === "HC") {
+      return answerLine(p.answer.mode === "order" ? "답: ______ → ______ → ______" : "답: ______");
+    }
     if (p.type === "CJ") return answerLine("답: ______");
     if (p.type === "HL") {
       // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
@@ -245,6 +248,11 @@
       case "CU": return a.need + "개";
       case "MV": return a.choice;
       case "CO": return a.mode === "order" ? a.order.join(" → ") : a.choice;
+      case "HC": {
+        const result = a.mode === "order" ? a.order.join(" → ") : a.choice;
+        const counts = Object.keys(a.hidden).map((label) => label + " " + a.hidden[label] + "개").join(", ");
+        return result + " (" + counts + ")";
+      }
       case "CJ": return a.choice;
       case "PN": {
         const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";

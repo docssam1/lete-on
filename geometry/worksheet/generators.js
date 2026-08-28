@@ -211,6 +211,14 @@
     return hidden;
   }
 
+  // A fixed isometric worksheet picture exposes the same three directions as
+  // the corner-wall scene: top, +x and +z. HC has no walls, but asks only what
+  // is hidden in that one printed view, so it deliberately uses this camera
+  // visibility count instead of IN's five-direction union.
+  function countHiddenFromIsoView(map) {
+    return countHiddenWalled(map);
+  }
+
   // Hidden-cube rule for IN -- 보이지 않는 개수 (벽 없음), per
   // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왼쪽/
   // 오른쪽/위 (front/back/left/right/top -- never from below, five
@@ -1688,7 +1696,61 @@
     };
   }
 
-  // 11. CJ — 두 쌓기나무 모양 합치기
+  // 11. HC — 보이지 않는 쌓기나무 개수 비교
+  //
+  // 고정된 등각 그림에서 top/+x/+z 세 면이 모두 가려진 쌓기나무를 센다.
+  // 보기 자체는 IC와 같은 직접 판독용 높이 지도이므로, 그림에 나타나지 않은
+  // 기둥이나 높이를 임의로 가정할 필요가 없다. 세 보기의 숨은 개수는 모두
+  // 달라 선택과 순서 정답이 언제나 하나로 결정된다.
+  function hiddenComparisonShapes(rng, level, intensity) {
+    const byHidden = new Map();
+    const used = new Set();
+    for (let attempt = 0; attempt < 600 && byHidden.size < 3; attempt += 1) {
+      const shape = visibleCountingShape(rng, level, intensity);
+      const key = countingShapeKey(shape);
+      if (used.has(key)) continue;
+      used.add(key);
+      const hidden = countHiddenFromIsoView(shape.map);
+      if (hidden < 1 || byHidden.has(hidden)) continue;
+      byHidden.set(hidden, shape);
+    }
+    if (byHidden.size < 3) {
+      throw new Error("unable to build a hidden-count comparison for " + level + " D" + intensity);
+    }
+    return rng.shuffle(Array.from(byHidden.entries())).slice(0, 3).map(([hidden, shape]) => ({ hidden, shape }));
+  }
+
+  function genHC(rng, level, intensity) {
+    const labels = ["가", "나", "다"];
+    const built = rng.shuffle(hiddenComparisonShapes(rng, level, intensity));
+    const items = built.map((entry, index) => ({
+      label: labels[index],
+      map: entry.shape.map,
+      width: entry.shape.width,
+      depth: entry.shape.depth
+    }));
+    const hidden = {};
+    items.forEach((item, index) => { hidden[item.label] = built[index].hidden; });
+    const order = items.slice()
+      .sort((left, right) => hidden[left.label] - hidden[right.label])
+      .map((item) => item.label);
+    const mode = normalizeIntensity(intensity) === 1 ? "least" : "order";
+    const prompt = mode === "least"
+      ? "모든 모양은 같은 방향에서 보았습니다. 그림에서 보이지 않는 쌓기나무의 개수가 가장 적은 모양을 고르시오."
+      : "모든 모양은 같은 방향에서 보았습니다. 그림에서 보이지 않는 쌓기나무의 개수가 적은 모양부터 차례대로 기호를 쓰시오.";
+    const answer = mode === "least"
+      ? { mode, choice: order[0], choiceIndex: items.findIndex((item) => item.label === order[0]), hidden }
+      : { mode, order, hidden };
+    return {
+      type: "HC",
+      prompt,
+      figures: { kind: "iso-compare", items },
+      answer,
+      answerText: mode === "least" ? answer.choice : order.join(" → ")
+    };
+  }
+
+  // 12. CJ — 두 쌓기나무 모양 합치기
   //
   // 준비된 조각과 보기 조각을 자유롭게 돌려 목표 직육면체를 완성하는 유형.
   // 회전은 정육면체의 24가지 방향만 허용하며 반사는 허용하지 않는다. 준비된
@@ -1972,7 +2034,7 @@
     };
   }
 
-  // 12. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 13. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2165,7 +2227,7 @@
     return { map, width: map[0].length, depth: map.length, shape: "stair" };
   }
 
-  // 13. BW — 흑백 교차 (정육면체 + 계단·돌출형)
+  // 14. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, level, intensity) {
     const built = checkerShapeForLevel(rng, level, intensity);
     const map = built.map;
@@ -2197,7 +2259,7 @@
     };
   }
 
-  // 14. HL — 구멍 뚫기
+  // 15. HL — 구멍 뚫기
   //
   // 한 방향에 여러 개, 여러 방향에 나눠서 — 단계·강도별 구멍 배치는 아래
   // holePlan에 모아 두었다. 구멍이 서로 교차하면 같은 칸이 두 번 빠지므로
@@ -2317,7 +2379,7 @@
     };
   }
 
-  // 15. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
+  // 16. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
   //
   // 패턴 패밀리는 buildSQShape(모양)과 sqFormula(개수) 한 쌍으로 정의된다.
   // 둘은 반드시 일치해야 하므로(.selftest.mjs가 heightmap 합과 공식을
@@ -2544,6 +2606,7 @@
     { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "MV", label: "쌓기나무 한 개 옮기기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CO", label: "쌓기나무 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "HC", label: "보이지 않는 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2619,6 +2682,7 @@
       case "CU": problem = genCU(rng, lv, it); break;
       case "MV": problem = genMV(rng, lv, it); break;
       case "CO": problem = genCO(rng, lv, it); break;
+      case "HC": problem = genHC(rng, lv, it); break;
       case "CJ": problem = genCJ(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
@@ -2863,6 +2927,7 @@
     topView,
     viewsOf,
     countHiddenWalled,
+    countHiddenFromIsoView,
     cornerStaircase,
     isCornerStaircase,
     countHiddenNoWall,
@@ -2920,6 +2985,7 @@
     moveProblemShape,
     distinctCountingShapes,
     comparisonProblemShapes,
+    hiddenComparisonShapes,
     CUBE_ROTATIONS,
     normalizeCoords,
     orientationsOf,
