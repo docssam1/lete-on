@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 215,
+  "verifiedMappings": 226,
   "items": [
     {
       "unit": 1,
@@ -4219,11 +4219,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "뒤집어 잇는 띠무늬 완성",
       "sourceVerified": true,
       "typeLanguageVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다.",
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다."
+      "reviewLocked": true
     },
     {
       "unit": 4,
@@ -4333,11 +4334,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "좌우 뒤집기 띠무늬의 도형 수",
       "sourceVerified": true,
       "typeLanguageVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다.",
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다."
+      "reviewLocked": true
     },
     {
       "unit": 4,
@@ -4451,10 +4453,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 3,
       "implementationStatus": "ready"
     },
     {
@@ -4491,10 +4493,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 5,
       "implementationStatus": "ready"
     },
     {
@@ -4511,10 +4513,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 6,
       "implementationStatus": "ready"
     },
     {
@@ -4531,10 +4533,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 7,
       "implementationStatus": "ready"
     },
     {
@@ -4551,10 +4553,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 8,
       "implementationStatus": "ready"
     },
     {
@@ -4571,10 +4573,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 9,
       "implementationStatus": "ready"
     },
     {
@@ -4591,10 +4593,10 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "source41PlaneTransformFour",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false,
-      "variant": 10,
       "implementationStatus": "ready"
     },
     {
@@ -4607,13 +4609,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 1 본문",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "표 합계와 소비량의 막대 완성",
+      "typeLabel": "표의 합계와 먹고 남은 수로 막대그래프 완성하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4625,13 +4629,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "최댓값에 맞춘 세로 눈금 수",
+      "typeLabel": "가장 큰 수에 맞게 세로 눈금 칸 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4643,13 +4649,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-2",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "눈금 단위를 바꾼 막대그래프",
+      "typeLabel": "한 칸의 크기를 바꾸어 막대그래프 다시 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4661,13 +4669,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-3",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "개수·금액 합계로 동전 막대 완성",
+      "typeLabel": "동전의 개수와 금액으로 빈 막대 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": true
+      "generatorKey": "source41BarGraphOne",
+      "variant": 3,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4679,13 +4689,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 1-4",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 56,
-      "typeLabel": "주어진 수 관계에 맞춰 마을별 학생 막대 완성하기",
+      "typeLabel": "몇 배와 몇 명 차이를 이용해 마을별 막대 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": true
+      "generatorKey": "source41BarGraphOne",
+      "variant": 4,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4697,13 +4709,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "배수·차이 조건의 요일별 운동 막대",
+      "typeLabel": "몇 배와 몇 분 차이를 이용해 운동 시간 막대 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4718,10 +4732,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "표와 막대그래프에서 비어 있는 자료 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4733,13 +4749,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "계절 막대의 눈금 단위 변환",
+      "typeLabel": "한 칸의 크기를 바꾸어 계절 막대 다시 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4751,13 +4769,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "같음·차이 조건의 과일 선호 막대",
+      "typeLabel": "같은 수와 몇 명 차이로 과일 막대 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4769,13 +4789,15 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 57,
-      "typeLabel": "분수·차이 조건의 학년별 막대",
+      "typeLabel": "4분의 3과 몇 명 차이로 학년별 막대 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41BarGraphOne",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,
@@ -4790,10 +4812,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "주사위 눈이 나온 횟수의 관계로 막대 완성하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": true
+      "generatorKey": "source41BarGraphOne",
+      "variant": 10,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,

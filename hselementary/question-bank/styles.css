@@ -18,6 +18,129 @@
   --shadow-soft:0 8px 18px rgba(17,42,70,.05);
   --radius:8px;
 }
+.source41-bar-table-wrap {
+  margin:14px 0;
+  overflow-x:auto;
+}
+.source41-bar-table-title {
+  margin:0 0 6px;
+  color:#23455c;
+  font-size:14px;
+  font-weight:900;
+}
+.source41-bar-table {
+  min-width:430px;
+  border-collapse:collapse;
+  background:#fff;
+  text-align:center;
+}
+.source41-bar-table th,
+.source41-bar-table td {
+  min-width:58px;
+  padding:8px 6px;
+  border:1px solid #7f9aab;
+  font-size:13px;
+  line-height:1.25;
+}
+.source41-bar-table th {
+  background:#eef6fa;
+  color:#173b54;
+  font-weight:900;
+}
+.source41-bar-table td {
+  color:#102e43;
+  font-weight:800;
+}
+.source41-bar-graph-scroll {
+  margin:14px 0;
+  overflow-x:auto;
+}
+.source41-bar-graph {
+  width:max-content;
+  min-width:320px;
+  margin:0;
+}
+.source41-bar-graph figcaption {
+  margin:0 0 5px;
+  color:#173b54;
+  font-size:14px;
+  font-weight:900;
+}
+.source41-bar-graph svg {
+  display:block;
+  width:auto;
+  height:auto;
+  min-width:390px;
+  max-width:none;
+  background:#fff;
+}
+.source41-bar-graph text {
+  font-family:Arial,"Malgun Gothic",sans-serif;
+}
+.source41-bar-grid {
+  stroke:#b8c8d2;
+  stroke-width:1;
+}
+.source41-bar-grid-v,
+.source41-bar-grid-h {
+  stroke:#d2dde4;
+}
+.source41-bar-axis {
+  stroke:#183e57;
+  stroke-width:1.8;
+}
+.source41-bar-column {
+  fill:#527f9a;
+  stroke:#1b4d6b;
+  stroke-width:1;
+}
+.source41-bar-column.is-filled-in-solution {
+  fill:#e0aa2c;
+  stroke:#926809;
+}
+.source41-bar-tick {
+  fill:#173b54;
+  font-size:12px;
+  font-weight:800;
+  text-anchor:end;
+}
+.source41-horizontal-bar-graph .source41-bar-tick {
+  text-anchor:middle;
+}
+.source41-bar-label {
+  fill:#173b54;
+  font-size:12px;
+  font-weight:800;
+  text-anchor:middle;
+}
+.source41-bar-row-label {
+  text-anchor:end;
+}
+.source41-bar-unit,
+.source41-bar-axis-name {
+  fill:#173b54;
+  font-size:12px;
+  font-weight:800;
+}
+.source41-bar-pair {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  margin:14px 0;
+}
+.source41-bar-pair > div {
+  min-width:0;
+}
+.source41-bar-pair .source41-bar-graph svg {
+  min-width:390px;
+}
+@media(max-width:520px) {
+  .source41-bar-graph svg { min-width:390px; }
+  .source41-bar-pair { grid-template-columns:1fr; }
+  .source41-bar-table th,
+  .source41-bar-table td { font-size:13px; }
+  .source41-bar-graph figcaption { font-size:14px; }
+}
 
 [hidden] { display:none !important; }
 
@@ -943,6 +1066,26 @@ button{
   .review-stage{padding:0!important;background:#fff!important}
   .review-layout{display:block!important;margin:0!important;border:0!important;box-shadow:none!important}
   .question-item,.solution-item{break-inside:avoid;page-break-inside:avoid}
+  .print-page:has(.source41-bar-graph) .question-grid,
+  .print-page:has(.source41-bar-table) .question-grid{grid-template-columns:1fr}
+  .print-page:has(.source41-bar-graph),
+  .print-page:has(.source41-bar-table){padding-bottom:0}
+  .print-page:has(.source41-bar-graph) .question-item header span,
+  .print-page:has(.source41-bar-table) .question-item header span,
+  .print-page:has(.source41-bar-graph) .question-item header em,
+  .print-page:has(.source41-bar-table) .question-item header em,
+  .print-page:has(.source41-bar-graph) .answer-line,
+  .print-page:has(.source41-bar-table) .answer-line{font-size:12px}
+  .print-page:has(.source41-bar-graph) .math-fraction,
+  .print-page:has(.source41-bar-table) .math-fraction{font-size:1em}
+  .print-page:has(.source41-bar-graph) .question-item,
+  .print-page:has(.source41-bar-table) .question-item{min-height:0;break-inside:avoid;page-break-inside:avoid}
+  .source41-bar-pair{grid-template-columns:1fr;gap:8px}
+  .source41-bar-graph-scroll,.source41-bar-table-wrap{overflow:visible}
+  .source41-bar-graph{width:auto;min-width:0;max-width:100%}
+  .source41-bar-graph svg,.source41-bar-pair .source41-bar-graph svg{width:auto;height:auto;min-width:0;max-width:100%}
+  .source41-bar-table{width:100%;min-width:0;table-layout:fixed}
+  .source41-bar-table th,.source41-bar-table td{min-width:0}
   .geometry-diagram.source41-number-line{width:min(350px,100%);margin-top:8px}
   .source41-skip-sequence{gap:3px;margin:8px 0;padding:6px}
   .source41-skip-sequence b,.source41-skip-sequence span{font-size:11px}

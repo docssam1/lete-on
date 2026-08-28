@@ -3703,6 +3703,65 @@
     return source41PlaneSortCells([...output.values()]);
   };
 
+  // 4-1 막대그래프 개념탐구 1은 원문의 빈 막대와 촘촘한 격자를 보존한다.
+  const source41BarTable = ({ title, labels, values, blanks = [], unit }) => `<div class="source41-bar-table-wrap"><p class="source41-bar-table-title">${title}</p><table class="source41-bar-table"><thead><tr><th>종류</th>${labels.map(label => `<th>${label}</th>`).join("")}</tr></thead><tbody><tr><th>${unit}</th>${values.map((value, index) => `<td>${blanks.includes(index) ? "□" : value}</td>`).join("")}</tr></tbody></table></div>`;
+  const source41BarGraphCompletionSvg = ({ kind, title, labels, values, visibleIndices, step, scaleMax, unit, majorTicks, xAxis, complete = false, concealStep = false }) => {
+    const gridCount = scaleMax / step;
+    if (!Number.isInteger(gridCount) || gridCount < 1 || gridCount > 24) throw new Error("원문형 막대그래프의 격자 칸 수가 올바르지 않습니다.");
+    if (values.some(value => !Number.isInteger(value / step) || value < 0 || value > scaleMax)) throw new Error("막대그래프 자료가 눈금과 맞지 않습니다.");
+    const width = Math.max(labels.length >= 6 ? 470 : 390, 84 * labels.length + 86);
+    const height = 318, left = 54, right = 18, top = 48, bottom = 76;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const yFor = value => top + plotHeight - plotHeight * value / scaleMax;
+    const xFor = index => left + plotWidth * (index + .5) / labels.length;
+    const barWidth = Math.min(48, plotWidth / labels.length * .48);
+    const shown = complete ? labels.map((_, index) => index) : visibleIndices;
+    const grid = Array.from({ length: gridCount + 1 }, (_, index) => {
+      const value = index * step, y = yFor(value), labeled = majorTicks.includes(value);
+      return `<line class="source41-bar-grid" x1="${left}" y1="${y.toFixed(2)}" x2="${width - right}" y2="${y.toFixed(2)}"/>${labeled ? `<text class="source41-bar-tick" x="${left - 8}" y="${(y + 4).toFixed(2)}">${value}</text>` : ""}`;
+    }).join("");
+    const vertical = Array.from({ length: labels.length + 1 }, (_, index) => { const x = left + plotWidth * index / labels.length; return `<line class="source41-bar-grid source41-bar-grid-v" x1="${x.toFixed(2)}" y1="${top}" x2="${x.toFixed(2)}" y2="${top + plotHeight}"/>`; }).join("");
+    const bars = shown.map(index => {
+      const y = yFor(values[index]);
+      const valueData = concealStep ? `data-source41-bar-cells="${values[index] / step}"` : `data-source41-bar-value="${values[index]}"`;
+      return `<rect class="source41-bar-column ${complete && !visibleIndices.includes(index) ? "is-filled-in-solution" : ""}" data-source41-bar-index="${index}" ${valueData} x="${(xFor(index) - barWidth / 2).toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${(top + plotHeight - y).toFixed(2)}"/>`;
+    }).join("");
+    const labelText = labels.map((label, index) => `<text class="source41-bar-label" x="${xFor(index).toFixed(2)}" y="${top + plotHeight + 27}">${label}</text>`).join("");
+    const scaleData = concealStep ? "" : ` data-source41-step="${step}" data-source41-scale-max="${scaleMax}"`;
+    const aria = concealStep ? `${title}. 세로 눈금 한 칸의 값을 자료에서 알아내는 그래프입니다.` : `${title}. 세로 눈금 한 칸은 ${step}${unit}입니다.`;
+    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph" data-source41-graph-kind="${kind}" data-source41-complete="${complete}" data-source41-step-known="${!concealStep}"${scaleData} data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-top="${top}" data-source41-baseline="${top + plotHeight}" data-source41-plot-height="${plotHeight}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${aria}"><text class="source41-bar-unit" x="10" y="${top - 10}">(${unit})</text>${grid}${vertical}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${labelText}<text class="source41-bar-axis-name" x="${left - 31}" y="${top + plotHeight / 2}" transform="rotate(-90 ${left - 31} ${top + plotHeight / 2})">${unit}</text><text class="source41-bar-axis-name" x="${width - right}" y="${height - 14}">${xAxis}</text></svg></figure></div>`;
+  };
+  const source41HorizontalBarGraphCompletionSvg = ({ title, labels, values, visibleIndices, step, scaleMax, unit, majorTicks, complete = false }) => {
+    const gridCount = scaleMax / step;
+    if (!Number.isInteger(gridCount) || gridCount < 1 || gridCount > 24 || values.some(value => !Number.isInteger(value / step) || value < 0 || value > scaleMax)) throw new Error("가로 막대그래프 자료가 올바르지 않습니다.");
+    const width = 470, height = 294, left = 74, right = 18, top = 42, bottom = 54, plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const xFor = value => left + plotWidth * value / scaleMax;
+    const yFor = index => top + plotHeight * (index + .5) / labels.length;
+    const barHeight = Math.min(28, plotHeight / labels.length * .56), shown = complete ? labels.map((_, index) => index) : visibleIndices;
+    const grid = Array.from({ length: gridCount + 1 }, (_, index) => { const value = index * step, x = xFor(value); return `<line class="source41-bar-grid" x1="${x.toFixed(2)}" y1="${top}" x2="${x.toFixed(2)}" y2="${top + plotHeight}"/>${majorTicks.includes(value) ? `<text class="source41-bar-tick" x="${x.toFixed(2)}" y="${top + plotHeight + 20}">${value}</text>` : ""}`; }).join("");
+    const rowGrid = Array.from({ length: labels.length + 1 }, (_, index) => { const y = top + plotHeight * index / labels.length; return `<line class="source41-bar-grid source41-bar-grid-h" x1="${left}" y1="${y.toFixed(2)}" x2="${left + plotWidth}" y2="${y.toFixed(2)}"/>`; }).join("");
+    const labelText = labels.map((label, index) => `<text class="source41-bar-label source41-bar-row-label" x="${left - 12}" y="${(yFor(index) + 4).toFixed(2)}">${label}</text>`).join("");
+    const bars = shown.map(index => `<rect class="source41-bar-column ${complete && !visibleIndices.includes(index) ? "is-filled-in-solution" : ""}" data-source41-bar-index="${index}" data-source41-bar-value="${values[index]}" x="${left}" y="${(yFor(index) - barHeight / 2).toFixed(2)}" width="${(xFor(values[index]) - left).toFixed(2)}" height="${barHeight.toFixed(2)}"/>`).join("");
+    return `<div class="source41-bar-graph-scroll"><figure class="source41-bar-graph source41-horizontal-bar-graph" data-source41-graph-kind="horizontal" data-source41-complete="${complete}" data-source41-step-known="true" data-source41-step="${step}" data-source41-scale-max="${scaleMax}" data-source41-grid-count="${gridCount}" data-source41-major-ticks="${majorTicks.join(",")}" data-source41-visible-indices="${visibleIndices.join(",")}" data-source41-left="${left}" data-source41-plot-width="${plotWidth}"><figcaption>${title}</figcaption><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}. 가로 눈금 한 칸은 ${step}${unit}입니다.">${grid}${rowGrid}${labelText}<line class="source41-bar-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="source41-bar-axis" x1="${left}" y1="${top + plotHeight}" x2="${left + plotWidth}" y2="${top + plotHeight}"/>${bars}<text class="source41-bar-unit" x="${left + plotWidth}" y="${height - 10}">(${unit})</text><text class="source41-bar-axis-name" x="${left + plotWidth}" y="${height - 30}">시간</text></svg></figure></div>`;
+  };
+  const source41BarGraphPairSvg = ({ title, labels, values, originalStep, originalScaleMax, originalHeights, originalVisible, originalMajorTicks = [0], newStep, newScaleMax, unit, majorTicks }) => {
+    return `<div class="source41-bar-pair"><div>${source41BarGraphCompletionSvg({ kind: "original", title: `${title} (처음 그래프)`, labels, values: originalHeights.map(height => height * originalStep), visibleIndices: originalVisible, step: originalStep, scaleMax: originalScaleMax, unit, majorTicks: originalMajorTicks, xAxis: "항목", concealStep: true })}</div><div>${source41BarGraphCompletionSvg({ kind: "new", title: `${title} (한 칸 ${newStep}${unit}인 빈 그래프)`, labels, values, visibleIndices: [], step: newStep, scaleMax: newScaleMax, unit, majorTicks, xAxis: "항목" })}</div></div>`;
+  };
+  const source41BarAnswerText = (labels, values, unit, suffix = "풀이의 완성 그래프를 확인하세요.") => `${labels.map((label, index) => `${label} ${values[index]}${unit}`).join(", ")}. ${suffix}`;
+  const source41BarGraphOneData = ({ rng, level, variant }) => {
+    const canonical = level === 1 && rng() < .025;
+    if (variant === 0) { const eaten = 5, first = canonical ? [20, 15, 25, 10] : [20 + 5 * int(rng, 0, 2), 15 + 5 * int(rng, 0, 2), 25 + 5 * int(rng, 0, 2), 10 + 5 * int(rng, 0, 2)]; return { labels: ["용우", "원영", "지안", "민규"], first, values: first.map(value => value - eaten), eaten, step: 5, scaleMax: 30, visible: level === 0 ? [0, 1, 3] : [3] }; }
+    if (variant === 1) { const step = 5, purple = canonical ? 40 : pick(rng, [40,45,50]), values = canonical ? [30,25,40,20,35] : [5*int(rng,4,7), level===2?purple-10:5*int(rng,3,6), purple, 5*int(rng,2,5), 5*int(rng,5,7)], total = values.reduce((a, b) => a + b, 0); return { labels: ["빨간색", "노란색", "보라색", "파란색", "주황색"], values, total, step, blank: level === 2 ? [1, 2] : [2] }; }
+    if (variant === 2) { const base = canonical ? 10 : pick(rng, [5, 10]), maxHeight = 90 / base, second = canonical ? 8 : int(rng,5,maxHeight), rawThird = canonical ? 4 : int(rng,3,maxHeight-2), third = rawThird === second ? rawThird - 1 : rawThird, heights = canonical ? [6, 8, 4, 5] : [int(rng,4,maxHeight-1), second, third, int(rng,4,maxHeight-1)], values = heights.map(value => value * base), newStep = 5, total = values.reduce((a, b) => a + b, 0); return { labels: ["연예인", "공무원", "과학자", "기타"], values, heights, base, newStep, total, visible: level === 2 ? [0, 1, 3] : [0, 1, 2, 3] }; }
+    if (variant === 3) { const hundred = canonical ? 2 : int(rng, 1, 4), fifty = canonical ? 7 : int(rng, Math.max(4, hundred + 1), 9), values = canonical ? [9, 2, 7, 7] : [int(rng, 6, 10), hundred, fifty, int(rng, 4, 8)]; return { labels: ["500원", "100원", "50원", "10원"], values, total: values.reduce((a,b)=>a+b,0), amount: values[0]*500+values[1]*100+values[2]*50+values[3]*10, visible: level === 0 ? [0, 1, 3] : level === 1 ? [0, 3] : [0] }; }
+    if (variant === 4) { const la = canonical ? 24 : 8 * int(rng, 1, 3), na = la * 2, ga = na * 3 / 4, gap = canonical ? 20 : 4 * int(rng, 1, 6), da = ga + gap; return { labels: ["가", "나", "다", "라"], values: [ga, na, da, la], gap, visible: level === 0 ? [3] : [] }; }
+    if (variant === 5) { const mon = canonical ? 30 : 10 * int(rng, 2, 5), tue = mon * 2, wed = mon + 20, fri = canonical ? 120 : 10 * int(rng, 8, 14), thu = canonical ? 40 : 10 * int(rng, 2, 7); return { labels: ["월", "화", "수", "목", "금"], values: [mon,tue,wed,thu,fri], visible: level === 0 ? [0,3,4] : level === 1 ? [0,4] : [0] }; }
+    if (variant === 6) { const values = canonical ? [12,11,5,13,8] : [int(rng,8,13),int(rng,8,12),int(rng,4,7),int(rng,9,14),int(rng,5,9)]; return { labels: ["동화책", "위인전", "과학책", "시집", "기타"], values, total: values.reduce((a,b)=>a+b,0), graphVisible: level === 0 ? [0,1,2,3] : level === 1 ? [0,2] : [0] }; }
+    if (variant === 7) { const base = canonical ? 6 : pick(rng, [2,4,6]), maxHeight = 48 / base, second = canonical ? 5 : int(rng,3,maxHeight), rawThird = canonical ? 7 : int(rng,3,maxHeight), third = rawThird === second ? (rawThird === maxHeight ? rawThird - 1 : rawThird + 1) : rawThird, heights = canonical ? [6,5,7,4] : [int(rng,3,maxHeight),second,third,int(rng,3,maxHeight)], values = heights.map(value=>value*base), total=values.reduce((a,b)=>a+b,0), newScaleMax = Math.min(48, Math.ceil((Math.max(...values) + 2) / 2) * 2); return { labels: ["봄", "여름", "가을", "겨울"], values, heights, base, total, newStep: 2, newScaleMax, visible: level===2?[0,1,3]:[0,1,2,3] }; }
+    if (variant === 8) { const grape = canonical ? 6 : int(rng,3,8), peach = grape, apple = grape + 1, tangerine = canonical ? 12 : int(rng,8,13), persimmon = canonical ? 1 : int(rng,1,3); return { labels:["포도","사과","귤","감","복숭아"],values:[grape,apple,tangerine,persimmon,peach], visible: level===0?[1,2,3]:level===1?[2,3]:[2] }; }
+    if (variant === 9) { const second = canonical ? 24 : pick(rng,[16,24]), third=second*3/4, fourth=third+8, values=[16,second,third,fourth,22,28].map((value,index)=>canonical||[1,2,3].includes(index)?value:2*Math.max(8,int(rng,8,14))); return { labels:["1학년","2학년","3학년","4학년","5학년","6학년"], values, visible: level===0?[0,1,2,4,5]:level===1?[0,1,4,5]:[0,4,5] }; }
+    const one = canonical ? 5 : pick(rng,[3,5,7]), two=one+3, three=two/2, four=canonical?6:int(rng,3,7), five=canonical?9:four+int(rng,1,Math.min(3,10-four)), six=canonical?7:four+int(rng,1,Math.min(3,10-four)); return { labels:["1","2","3","4","5","6"], values:[one,two,three,four,five,six], total:one+two+three+four+five+six, sum:one+2*two+3*three+4*four+5*five+6*six, visible: level===0?[0,3,5]:level===1?[0,5]:[0] };
+  };
   const generators = {
     source41LargeNumberOne({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("큰 수 원문 분기는 0부터 10까지여야 합니다.");
@@ -8886,6 +8945,125 @@
       }
       const answer = Math.abs(Number(original) - Number(rotated));
       return result(`전자 숫자 카드 ${original}을 180° 돌려서 읽은 수와 처음 수의 차를 구하세요.<div class="digital-number">${original}</div>`, answer, `180° 돌리면 카드 순서는 거꾸로 되고 6과 9가 서로 바뀌므로 ${rotated}입니다. 두 수의 차는 ${answer}입니다.`);
+    },
+    source41BarGraphOne({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("막대그래프 원문 분기는 0부터 10까지여야 합니다.");
+      const data = source41BarGraphOneData({ rng, level, variant });
+      const fixed = [
+        { values: [15,10,20,5], first: [20,15,25,10] },
+        { values: [30,25,40,20,35], total: 150, answer: 8 },
+        { values: [60,80,40,50], total: 230 },
+        { values: [9,2,7,7], total: 25, amount: 5120 },
+        { values: [36,48,56,24] }, { values: [30,60,50,40,120] },
+        { values: [12,11,5,13,8], total: 49 }, { values: [36,30,42,24], total: 132 },
+        { values: [6,7,12,1,6] }, { values: [16,24,18,26,22,28] },
+        { values: [5,8,4,6,9,7], total: 39, sum: 144 }
+      ][variant];
+      const answerUnit = variant === 0 || variant === 3 ? "개" : variant === 5 ? "분" : variant === 6 ? "권" : variant === 10 ? "번" : "명";
+      const answerTail = variant === 1 ? `세로 눈금은 ${Math.max(...data.values) / data.step}칸입니다.` : "풀이의 완성 그래프를 확인하세요.";
+      const evidence = source41Evidence("4-1-u5-e1-bar-graph", { variant, level, source41Evidence: true, fixed, data }, source41BarAnswerText(data.labels, data.values, answerUnit, answerTail));
+      const vertical = ({ title, step, scaleMax, majorTicks, visible = data.visible || [], values = data.values, complete = false, unit = "명", xAxis = "항목" }) => source41BarGraphCompletionSvg({ kind: `v${variant}`, title, labels: data.labels, values, visibleIndices: visible, step, scaleMax, unit, majorTicks, xAxis, complete });
+      if (variant === 0) {
+        const initialBlanks = level === 0 ? [2] : level === 1 ? [2,3] : [1,2,3];
+        const table = source41BarTable({ title: "처음에 가지고 있던 초콜릿 수", labels: [...data.labels, "합계"], values: [...data.first, data.first.reduce((a,b)=>a+b,0)], blanks: initialBlanks, unit: "초콜릿 수(개)" });
+        const graph = vertical({ title: "남은 초콜릿 수", step: 5, scaleMax: 30, majorTicks: [0,10,20,30], visible: data.visible, unit: "개", xAxis: "이름" });
+        const answer = source41BarAnswerText(data.labels, data.values, "개");
+        const hardClue = level === 2 ? `지안은 민규보다 처음 초콜릿이 ${data.first[2] - data.first[3]}개 더 많습니다. ` : "";
+        return result(`학생 4명이 표와 같이 초콜릿을 가지고 있었는데 각각 ${data.eaten}개씩 먹었습니다. ${hardClue}표의 빈칸과 남은 초콜릿 수 막대그래프를 완성하세요.${table}${graph}${evidence}`, answer, `민규는 그래프에서 ${data.values[3]}개 남았으므로 처음에는 ${data.values[3]}+${data.eaten}=${data.first[3]}개였습니다. 합계에서 나머지를 빼면 빈칸의 수를 차례로 찾을 수 있습니다. 남은 수는 각각 ${data.values.join(", ")}개입니다.${source41BarTable({ title: "완성한 처음 초콜릿 수", labels: [...data.labels, "합계"], values: [...data.first, data.first.reduce((a,b)=>a+b,0)], unit: "초콜릿 수(개)" })}${vertical({ title: "완성한 남은 초콜릿 수", step: 5, scaleMax: 30, majorTicks: [0,10,20,30], unit: "개", xAxis: "이름", complete: true })}`);
+      }
+      if (variant === 1) {
+        const table = source41BarTable({ title: "좋아하는 색깔", labels: [...data.labels, "합계"], values: [...data.values, data.total], blanks: data.blank, unit: "학생 수(명)" });
+        const biggest = Math.max(...data.values), answer = source41BarAnswerText(data.labels, data.values, "명", `세로 눈금은 ${biggest / data.step}칸입니다.`);
+        const extra = level === 2 ? `노란색은 보라색보다 10명 적습니다. ` : "";
+        const knownTotal = data.values.reduce((sum, value, index) => sum + (data.blank.includes(index) ? 0 : value), 0);
+        const blankSolution = level === 2
+          ? `합계에서 적혀 있는 세 수를 빼면 노란색과 보라색은 모두 ${data.total - knownTotal}명입니다. 두 수의 차가 10명이므로 노란색은 (${data.total - knownTotal}-10)÷2=${data.values[1]}명, 보라색은 ${data.values[2]}명입니다.`
+          : `합계 ${data.total}명에서 적혀 있는 학생 수 ${knownTotal}명을 빼면 보라색은 ${data.values[2]}명입니다.`;
+        return result(`${extra}다음 표를 막대그래프로 나타낼 때 세로 눈금 한 칸이 ${data.step}명을 나타내도록 하려고 합니다. 표의 빈칸을 채우고, 세로 눈금은 적어도 몇 칸 있어야 하는지 구하세요.${table}${evidence}`, answer, `${blankSolution} 가장 큰 수가 ${biggest}명이므로 ${biggest}÷${data.step}=${biggest / data.step}칸이 필요합니다.`);
+      }
+      if (variant === 2 || variant === 7) {
+        const title = variant === 2 ? "장래희망별 학생 수" : "태어난 계절별 학생 수";
+        const newScaleMax = variant === 2 ? 90 : data.newScaleMax;
+        const newMajorTicks = variant === 2 ? [0, 25, 50, 75] : [0,10,20,30,40].filter(value => value <= newScaleMax);
+        const pair = source41BarGraphPairSvg({ title, labels: data.labels, values: data.values, originalStep: data.base, originalScaleMax: variant === 2 ? 90 : 48, originalHeights: data.heights, originalVisible: data.visible, originalMajorTicks: [0], newStep: data.newStep, newScaleMax, unit: "명", majorTicks: newMajorTicks });
+        const totalText = variant === 2 ? `학생 ${data.total}명이 장래희망을 한 가지씩 골랐습니다.` : `학생은 모두 ${data.total}명입니다.`;
+        const heightGap = Math.abs(data.heights[2] - data.heights[1]);
+        const missing = level === 2 ? `처음 그래프에서 빈 항목은 앞 항목보다 ${heightGap}칸 ${data.heights[2] < data.heights[1] ? "낮습니다" : "높습니다"}. ` : "";
+        const knownStep = level === 0 ? `처음 그래프의 세로 눈금 한 칸은 ${data.base}명입니다. ` : "";
+        const task = level === 0 ? "알려진 한 칸의 크기를 이용해" : "처음 그래프의 한 칸이 몇 명인지 알아낸 뒤";
+        return result(`${totalText} ${knownStep}${missing}${task}, 한 칸이 ${data.newStep}명인 빈 그래프에 자료를 다시 그리세요.${pair}${evidence}`, source41BarAnswerText(data.labels, data.values, "명"), `처음 그래프의 막대 칸 수 합은 ${data.heights.reduce((a,b)=>a+b,0)}칸입니다. ${level === 0 ? `한 칸은 문제에서 알려 준 ${data.base}명입니다.` : `${data.total}÷${data.heights.reduce((a,b)=>a+b,0)}=${data.base}이므로 처음 한 칸은 ${data.base}명입니다.`} ${source41BarAnswerText(data.labels, data.values, "명")}${source41BarGraphCompletionSvg({ kind: `v${variant}-solution-new`, title: `완성한 ${title}`, labels: data.labels, values: data.values, visibleIndices: [], step: data.newStep, scaleMax: newScaleMax, unit: "명", majorTicks: newMajorTicks, xAxis: variant === 2 ? "장래희망" : "계절", complete: true })}`);
+      }
+      if (variant === 3) {
+        const graph = vertical({ title: "동전의 종류별 개수", step: 1, scaleMax: 10, majorTicks: [0,5,10], visible: data.visible, unit: "개", xAxis: "동전 종류" });
+        const hardGap = Math.abs(data.values[1] - data.values[2]);
+        const hardClue = level === 2 ? `${data.values[1] < data.values[2] ? "50원" : "100원"} 동전은 ${data.values[1] < data.values[2] ? "100원" : "50원"} 동전보다 ${hardGap}개 많습니다. ` : "";
+        return result(`동우가 가진 동전은 모두 ${data.total}개이고, 금액의 합은 ${data.amount}원입니다. ${hardClue}빈 막대를 채워 그래프를 완성하세요.${graph}${evidence}`, source41BarAnswerText(data.labels, data.values, "개"), `보이는 동전 수와 전체 개수, 금액의 합을 함께 맞추어 보면 500원부터 차례로 ${data.values.join(", ")}개입니다.${vertical({ title: "완성한 동전의 종류별 개수", step: 1, scaleMax: 10, majorTicks: [0,5,10], unit: "개", xAxis: "동전 종류", complete: true })}`);
+      }
+      if (variant === 4) {
+        const total = data.values.reduce((a,b)=>a+b,0), graph = vertical({ title: "마을별 초등학생 수", step: 4, scaleMax: 60, majorTicks: [0,20,40,60], visible: data.visible, unit: "명", xAxis: "마을" });
+        const easyClue = level === 0 ? `라 마을 막대는 ${data.values[3]}명까지 그려져 있습니다. ` : "";
+        const hardClue = level === 2 ? `가와 라 마을의 학생 수 차는 ${data.values[0] - data.values[3]}명입니다. ` : "";
+        const relation = level === 2 ? hardClue : "나 마을은 라 마을의 2배입니다. ";
+        const hardDifference = data.values[0] - data.values[3];
+        const groupSolution = level === 2
+          ? `가를 같은 묶음 3개로 보면 나는 4개, 라는 가보다 ${hardDifference}명 적고 다는 가보다 ${data.gap}명 많습니다. (${total}-${data.gap}+${hardDifference})÷13=${data.values[0] / 3}명이 한 묶음입니다.`
+          : `라를 같은 묶음 2개로 보면 나는 4개, 가는 3개, 다는 3개에 ${data.gap}명을 더한 수입니다. (${total}-${data.gap})÷12=${data.values[3] / 2}명이 한 묶음입니다.`;
+        return result(`${easyClue}가 마을의 초등학생 수는 나 마을의 3/4입니다. ${relation}다 마을은 가 마을보다 ${data.gap}명 많습니다. 네 마을의 초등학생 수는 모두 ${total}명입니다. 그래프를 완성하세요.${graph}${evidence}`, source41BarAnswerText(data.labels, data.values, "명"), `${groupSolution} 따라서 ${source41BarAnswerText(data.labels, data.values, "명")}${vertical({ title: "완성한 마을별 초등학생 수", step: 4, scaleMax: 60, majorTicks: [0,20,40,60], unit: "명", xAxis: "마을", complete: true })}`);
+      }
+      if (variant === 5) {
+        const total = data.values.reduce((a,b)=>a+b,0), graph = source41HorizontalBarGraphCompletionSvg({ title:"요일별 운동한 시간", labels:data.labels, values:data.values, visibleIndices:data.visible, step:10, scaleMax:160, unit:"분", majorTicks:[0,50,100,150], complete:false });
+        const hardClue = level === 2 ? `금요일은 목요일보다 ${data.values[4] - data.values[3]}분 많습니다. ` : "";
+        const thursdayFridayTotal = total - data.values[0] - data.values[1] - data.values[2];
+        const remainingSolution = level === 2
+          ? `목요일과 금요일의 합은 ${thursdayFridayTotal}분이고 차는 ${data.values[4] - data.values[3]}분이므로 목요일은 (${thursdayFridayTotal}-${data.values[4] - data.values[3]})÷2=${data.values[3]}분, 금요일은 ${data.values[4]}분입니다.`
+          : `전체에서 월·화·수·금요일을 빼면 목요일은 ${data.values[3]}분입니다.`;
+        return result(`${hardClue}화요일은 월요일의 2배, 수요일은 월요일보다 20분 많습니다. 5일 동안 운동한 시간은 모두 ${Math.floor(total/60)}시간${total%60?` ${total%60}분`:""}입니다. 그래프를 완성하세요.${graph}${evidence}`, source41BarAnswerText(data.labels,data.values,"분"), `화요일은 ${data.values[0]}×2=${data.values[1]}분, 수요일은 ${data.values[0]}+20=${data.values[2]}분입니다. ${remainingSolution}${source41HorizontalBarGraphCompletionSvg({ title:"완성한 요일별 운동한 시간", labels:data.labels, values:data.values, visibleIndices:data.visible, step:10, scaleMax:160, unit:"분", majorTicks:[0,50,100,150], complete:true })}`);
+      }
+      if (variant === 6) {
+        const table = source41BarTable({ title:"학급 문고", labels:[...data.labels,"합계"], values:[...data.values,data.total], blanks: level === 0 ? [4] : [0,2,3], unit:"책 수(권)" });
+        const graph=vertical({ title:"학급 문고", step:1, scaleMax:14, majorTicks:[0,5,10], visible:data.graphVisible, unit:"권", xAxis:"종류" });
+        const hardClue = level === 2 ? `과학책은 동화책보다 ${data.values[0] - data.values[2]}권 적습니다. ` : "";
+        const bookSolution = level === 0
+          ? `그래프에서 동화책 ${data.values[0]}권, 위인전 ${data.values[1]}권, 과학책 ${data.values[2]}권, 시집 ${data.values[3]}권을 읽고 합계에서 빼면 기타는 ${data.values[4]}권입니다.`
+          : level === 1
+            ? `표와 그래프에서 동화책 ${data.values[0]}권, 위인전 ${data.values[1]}권, 과학책 ${data.values[2]}권, 기타 ${data.values[4]}권을 읽습니다. 합계에서 이 네 수를 빼면 시집은 ${data.values[3]}권입니다.`
+            : `동화책은 그래프에서 ${data.values[0]}권입니다. 과학책은 ${data.values[0]}-${data.values[0] - data.values[2]}=${data.values[2]}권이고, 합계에서 동화책·위인전·과학책·기타를 빼면 시집은 ${data.values[3]}권입니다.`;
+        return result(`${hardClue}표와 그래프에 나뉘어 적힌 자료를 이용해 빈칸과 빈 막대를 모두 채우세요.${table}${graph}${evidence}`, source41BarAnswerText(data.labels,data.values,"권"), `${bookSolution}${source41BarTable({ title:"완성한 학급 문고",labels:[...data.labels,"합계"],values:[...data.values,data.total],unit:"책 수(권)" })}${vertical({title:"완성한 학급 문고",step:1,scaleMax:14,majorTicks:[0,5,10],unit:"권",xAxis:"종류",complete:true})}`);
+      }
+      if (variant === 8) {
+        const total=data.values.reduce((a,b)=>a+b,0), graph=vertical({title:"좋아하는 과일별 학생 수",step:1,scaleMax:14,majorTicks:[0,5,10],visible:data.visible,unit:"명",xAxis:"과일"});
+        const hardClue = level === 2 ? `사과는 감보다 ${data.values[1] - data.values[3]}명 많습니다. ` : "";
+        const fruitSolution = level === 0
+          ? `사과 막대에서 1명을 빼면 포도는 ${data.values[0]}명이고, 복숭아도 같은 ${data.values[4]}명입니다.`
+          : level === 1
+            ? `귤과 감을 뺀 나머지는 ${total - data.values[2] - data.values[3]}명입니다. 포도·복숭아·사과에서 사과의 1명을 먼저 빼고 3으로 나누면 포도는 (${total - data.values[2] - data.values[3]}-1)÷3=${data.values[0]}명입니다.`
+            : `귤을 빼고, 사과와 감의 차 ${data.values[1] - data.values[3]}명을 이용하면 같은 수 4묶음은 ${total}-${data.values[2]}-2+${data.values[1] - data.values[3]}명입니다. 한 묶음은 ${data.values[0]}명이므로 포도와 복숭아는 각각 ${data.values[0]}명입니다.`;
+        return result(`학생은 모두 ${total}명입니다. 포도와 복숭아를 좋아하는 학생 수는 같고, 사과는 포도보다 1명 많습니다. ${hardClue}그래프를 완성하세요.${graph}${evidence}`,source41BarAnswerText(data.labels,data.values,"명"),`${fruitSolution}${vertical({title:"완성한 좋아하는 과일별 학생 수",step:1,scaleMax:14,majorTicks:[0,5,10],unit:"명",xAxis:"과일",complete:true})}`);
+      }
+      if (variant === 9) {
+        const graph=vertical({title:"학년별 동생이 있는 학생 수",step:2,scaleMax:30,majorTicks:[0,10,20,30],visible:data.visible,unit:"명",xAxis:"학년"});
+        const hardClue = level === 2 ? `2~4학년 학생 수의 합은 ${data.values[1] + data.values[2] + data.values[3]}명입니다. ` : "";
+        const gradeSolution = level === 2
+          ? `2학년을 같은 묶음 4개로 보면 3학년은 3개, 4학년은 3개에 8명을 더한 수입니다. (${data.values[1] + data.values[2] + data.values[3]}-8)÷10=${data.values[1] / 4}명이 한 묶음이므로 2학년은 ${data.values[1]}명입니다.`
+          : `2학년은 그래프에서 ${data.values[1]}명입니다. 3학년은 ${data.values[1]}×3/4=${data.values[2]}명, 4학년은 ${data.values[2]}+8=${data.values[3]}명입니다.`;
+        return result(`${hardClue}3학년은 2학년의 3/4이고, 4학년은 3학년보다 8명 많습니다. 그래프를 완성하세요.${graph}${evidence}`,source41BarAnswerText(data.labels,data.values,"명"),`${gradeSolution}${vertical({title:"완성한 학년별 동생이 있는 학생 수",step:2,scaleMax:30,majorTicks:[0,10,20,30],unit:"명",xAxis:"학년",complete:true})}`);
+      }
+      const graph=vertical({title:"주사위 눈별 나온 횟수",step:1,scaleMax:10,majorTicks:[0,5,10],visible:data.visible,unit:"번",xAxis:"눈"});
+      const hardClue = level === 2 ? `6의 눈은 4의 눈보다 ${data.values[5] - data.values[3]}번 더 나왔고, 5의 눈은 4의 눈보다 ${data.values[4] - data.values[3]}번 더 나왔습니다. ` : "";
+      const oneToThreeTotal = data.values[0] + data.values[1] + data.values[2];
+      let dieSolution;
+      if (level === 0) {
+        dieSolution = `2의 눈은 ${data.values[0]}+3=${data.values[1]}번, 3의 눈은 ${data.values[1]}÷2=${data.values[2]}번입니다. 전체 횟수에서 1·2·3·4·6의 횟수를 빼면 5의 눈은 ${data.values[4]}번입니다.`;
+      } else if (level === 1) {
+        const remainingCount = data.values[3] + data.values[4];
+        const remainingSum = 4 * data.values[3] + 5 * data.values[4];
+        dieSolution = `2의 눈은 ${data.values[1]}번, 3의 눈은 ${data.values[2]}번입니다. 4와 5의 눈은 모두 ${remainingCount}번이고, 그 눈의 합은 ${remainingSum}입니다. ${remainingSum}-4×${remainingCount}=${data.values[4]}이므로 5의 눈은 ${data.values[4]}번, 4의 눈은 ${data.values[3]}번입니다.`;
+      } else {
+        const difference5 = data.values[4] - data.values[3], difference6 = data.values[5] - data.values[3];
+        const remainingCount = data.total - oneToThreeTotal;
+        dieSolution = `2의 눈은 ${data.values[1]}번, 3의 눈은 ${data.values[2]}번입니다. 남은 횟수는 ${remainingCount}번입니다. 4·5·6의 횟수에서 더해진 ${difference5}+${difference6}번을 빼고 3으로 나누면 4의 눈은 (${remainingCount}-${difference5}-${difference6})÷3=${data.values[3]}번입니다.`;
+      }
+      return result(`주사위를 모두 ${data.total}번 던졌습니다. 2의 눈은 1의 눈보다 3번 더 나왔습니다. 2의 눈은 3의 눈이 나온 횟수의 2배입니다. ${hardClue}나온 눈의 수를 모두 더한 값은 ${data.sum}입니다. 그래프를 완성하세요.${graph}${evidence}`,source41BarAnswerText(data.labels,data.values,"번"),`${dieSolution}${vertical({title:"완성한 주사위 눈별 나온 횟수",step:1,scaleMax:10,majorTicks:[0,5,10],unit:"번",xAxis:"눈",complete:true})}`);
     },
     barGraphUnderstanding({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
