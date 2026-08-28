@@ -145,9 +145,10 @@
     <section class="map-section" id="map" aria-labelledby="map-title">
       <div class="shell">
         <div class="directory-heading map-heading"><div><p class="eyebrow">03 · GRADE × DOMAIN</p><h2 id="map-title">K–8은 학년과 영역으로,<br>G9–12는 실제 과정 순서로 봅니다.</h2></div><p>학년만 보여 주지 않습니다. 선택한 학년에서 어떤 수학 영역을 배우고, 어디에 진단 근거가 있는지 한 화면에서 확인합니다.</p></div>
-        <div class="map-view-tabs" id="map-view-tabs" role="tablist" aria-label="학년 또는 영역으로 보기">
+        <div class="map-view-tabs" id="map-view-tabs" role="tablist" aria-label="학년, 영역 또는 과정으로 보기">
           <button id="map-view-grade" type="button" role="tab" aria-controls="grade-directory" aria-selected="true" tabindex="0" data-map-view="grade">학년별 보기</button>
           <button id="map-view-domain" type="button" role="tab" aria-controls="domain-directory" aria-selected="false" tabindex="-1" data-map-view="domain">영역별 보기</button>
+          <button id="map-view-course" type="button" role="tab" aria-controls="course-directory" aria-selected="false" tabindex="-1" data-map-view="course">과정별 보기</button>
         </div>
         <section id="grade-directory" role="tabpanel" aria-labelledby="map-view-grade">
           <div class="grade-tabs" id="grade-tabs" role="tablist" aria-label="미국 학년 선택"></div>
@@ -160,7 +161,13 @@
         <section id="domain-directory" role="tabpanel" aria-labelledby="map-view-domain" hidden>
           <div class="domain-overview" id="domain-overview"></div>
         </section>
-        <aside class="high-school-bridge" id="high-school-bridge" aria-labelledby="high-school-bridge-title"><div><p class="micro-label">G9–12 · SCHOOL-CONFIGURED</p><h3 id="high-school-bridge-title">G9–12는 학교의 실제 과정 순서를 사용합니다.</h3><p>Algebra, Geometry, Functions 같은 공통 범주를 쓰되, 승급과 배치는 해당 학교의 course sequence와 정책을 기준으로 확정합니다.</p></div><ul aria-label="고등 수학 공통 개념 범주"><li>Number &amp; Quantity</li><li>Algebra</li><li>Functions</li><li>Modeling</li><li>Geometry</li><li>Statistics &amp; Probability</li></ul><div class="bridge-status"><span class="status-chip planned">다음 구현</span><strong>과정별 선수개념 지도 → AMC 10 → AMC 12</strong></div></aside>
+        <section id="course-directory" role="tabpanel" aria-labelledby="map-view-course" hidden>
+          <div class="course-directory-head"><div><p class="micro-label">COURSE PATHWAY · SCHOOL-CONFIGURED</p><h3>과정명으로도 현재 위치와 다음 단계를 봅니다.</h3></div><p>Pre‑Algebra부터 Precalculus까지 과정별 선수개념·핵심 영역·다음 과정·학생/교사용 진입점을 분리합니다.</p></div>
+          <div class="course-tabs" id="course-tabs" role="tablist" aria-label="수학 과정 선택"></div>
+          <article class="course-map-card" id="course-map-panel" role="tabpanel" aria-live="polite"></article>
+          <p class="course-sequence-note" id="course-sequence-note"></p>
+        </section>
+        <aside class="high-school-bridge" id="high-school-bridge" aria-labelledby="high-school-bridge-title"><div><p class="micro-label">G9–12 · SCHOOL-CONFIGURED</p><h3 id="high-school-bridge-title">고등 과정은 과목명만으로 배정하지 않습니다.</h3><p>과정 지도에서 선수개념과 수업 자료 상태를 먼저 확인한 뒤, 학교의 실제 course sequence와 교사 근거로 배치를 검토합니다.</p></div><ul aria-label="고등 수학 공통 개념 범주"><li>Number &amp; Quantity</li><li>Algebra</li><li>Functions</li><li>Modeling</li><li>Geometry</li><li>Statistics &amp; Probability</li></ul><div class="bridge-status"><span class="status-chip planned">과정 지도 공개</span><strong>선수개념 → 현재 과정 → 다음 과정 → AMC 10·12 가교</strong></div></aside>
       </div>
     </section>
 
@@ -177,6 +184,7 @@
   <script src="./curriculum/us-k8-domain-spine.js"></script>
   <script src="./curriculum/us-k8-cluster-map.js"></script>
   <script src="./curriculum/us-k8-content-registry.js"></script>
+  <script src="./curriculum/course-pathways.js"></script>
   <script src="./competition/k8-competition-profiles.js"></script>
   <script src="./competition/official-original-links.js"></script>
   <script src="./home.js"></script>

@@ -6,8 +6,9 @@
   const originalLinks = window.GFIELDCompetitionOriginalLinks;
   const spine = window.GFIELDUSK8DomainSpine;
   const registry = window.GFIELDUSK8ContentRegistry;
+  const coursePathways = window.GFIELDMathCoursePathways;
 
-  if (!catalog || !profiles || !originalLinks || !spine || !registry) {
+  if (!catalog || !profiles || !originalLinks || !spine || !registry || !coursePathways) {
     throw new Error("GFIELD home dependencies did not load");
   }
 
@@ -16,6 +17,7 @@
     officialGradeKey: "6",
     mapGrade: "6",
     mapView: "grade",
+    courseId: "pre-algebra",
     roleId: "student"
   };
 
@@ -441,7 +443,7 @@
   }
 
   function setMapView(view) {
-    if (!["grade", "domain"].includes(view)) return;
+    if (!["grade", "domain", "course"].includes(view)) return;
     state.mapView = view;
     document.querySelectorAll("[data-map-view]").forEach(function (button) {
       const selected = button.dataset.mapView === view;
@@ -450,8 +452,28 @@
     });
     const gradeDirectory = document.getElementById("grade-directory");
     const domainDirectory = document.getElementById("domain-directory");
+    const courseDirectory = document.getElementById("course-directory");
     if (gradeDirectory) gradeDirectory.hidden = view !== "grade";
     if (domainDirectory) domainDirectory.hidden = view !== "domain";
+    if (courseDirectory) courseDirectory.hidden = view !== "course";
+  }
+
+  function renderCourseDirectory(courseId) {
+    const course = coursePathways.courses.find(function (entry) { return entry.id === courseId; }) || coursePathways.courses[0];
+    state.courseId = course.id;
+    const tabs = document.getElementById("course-tabs");
+    const panel = document.getElementById("course-map-panel");
+    if (!tabs || !panel) return;
+    tabs.innerHTML = coursePathways.courses.map(function (entry) {
+      const selected = entry.id === course.id;
+      return `<button id="course-tab-${entry.id}" type="button" role="tab" data-course-id="${entry.id}" aria-controls="course-map-panel" aria-selected="${selected}" tabindex="${selected ? "0" : "-1"}"><strong>${entry.title}</strong><small>${entry.grades}</small></button>`;
+    }).join("");
+    panel.setAttribute("aria-labelledby", `course-tab-${course.id}`);
+    panel.innerHTML = `<div class="course-map-top"><div><p class="micro-label">${course.grades} · SCHOOL-CONFIGURED</p><h3>${course.title}</h3><p>${course.summary}</p></div><span class="status-chip ${course.id === "pre-algebra" ? "public" : "metadata"}">${course.id === "pre-algebra" ? "일부 공개" : "과정 지도"}</span></div>
+      <dl class="course-facts"><div><dt>선수개념</dt><dd>${course.prerequisites}</dd></div><div><dt>핵심 영역</dt><dd>${course.focus.join(" · ")}</dd></div><div><dt>다음 과정</dt><dd>${course.next}</dd></div><div><dt>자료 상태</dt><dd>${course.availability}</dd></div></dl>
+      <div class="course-actions"><a class="unit-action" href="${course.studentHref}">학생: ${course.id === "pre-algebra" ? "개념 학습" : course.id === "elementary-foundations" ? "학년·영역 보기" : "공개 학습 상태"}<span aria-hidden="true">→</span></a><a class="unit-action course-teacher-action" href="${course.teacherHref}">교사: ${course.id === "pre-algebra" || course.id === "elementary-foundations" ? "범위·자료 상태" : "배치 원칙 확인"}<span aria-hidden="true">→</span></a></div>`;
+    const note = document.getElementById("course-sequence-note");
+    if (note) note.textContent = coursePathways.sequenceNotice;
   }
 
   function updateRole(roleId) {
@@ -587,6 +609,7 @@
     const roleTarget = event.target.closest("[data-role-target]");
     const searchResult = event.target.closest("[data-search-goal], [data-search-map-grade]");
     const mapViewButton = event.target.closest("[data-map-view]");
+    const courseButton = event.target.closest("[data-course-id]");
     const domainGradeButton = event.target.closest("[data-domain-grade]");
     if (pathButton) {
       const pathGoal = pathButton.dataset.pathGoal;
@@ -597,6 +620,7 @@
     if (roleButton) updateRole(roleButton.dataset.rolePreview);
     if (roleTarget) updateRole(roleTarget.dataset.roleTarget);
     if (mapViewButton) setMapView(mapViewButton.dataset.mapView);
+    if (courseButton) renderCourseDirectory(courseButton.dataset.courseId);
     if (domainGradeButton) {
       setMapView("grade");
       renderGradeMap(domainGradeButton.dataset.domainGrade);
@@ -630,6 +654,7 @@
     if (event.target.matches("[data-grade-tab]")) moveTabFocus(event, "[data-grade-tab]");
     if (event.target.matches("[data-role-preview]")) moveTabFocus(event, "[data-role-preview]");
     if (event.target.matches("[data-map-view]")) moveTabFocus(event, "[data-map-view]");
+    if (event.target.matches("[data-course-id]")) moveTabFocus(event, "[data-course-id]");
     if (event.key === "Escape" && event.target.id === "learning-search") {
       event.target.value = "";
       renderSearch("");
@@ -707,6 +732,7 @@
   buildGradeTabs();
   renderDomainOverview();
   renderGradeMap(state.mapGrade);
+  renderCourseDirectory(state.courseId);
   setMapView(state.mapView);
   updateGoal(state.goalId, state.officialGradeKey);
   updateRole(state.roleId);
