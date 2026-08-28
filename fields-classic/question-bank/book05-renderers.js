@@ -179,24 +179,18 @@ function checkerboardProducts(visual) {
   return `<div class="b5-checker-wrap"><div class="b5-mini-cards">${visual.cardPool.map((value) => `<i>${value}</i>`).join("")}</div><div class="b5-checker-products"><div class="cells">${cells.join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><em>곱</em></div></div>`;
 }
 
-function isoCube(x, y, level, size = 13) {
-  const px = 82 + (x - y) * size;
-  const py = 22 + (x + y) * size * 0.55 - level * size;
-  const half = size;
-  const rise = size * 0.5;
-  return `<g transform="translate(${px} ${py})"><path class="top" d="M0 0L${half} ${-rise}L${half * 2} 0L${half} ${rise}Z"/><path class="left" d="M0 0L${half} ${rise}V${rise + size}L0 ${size}Z"/><path class="right" d="M${half * 2} 0L${half} ${rise}V${rise + size}L${half * 2} ${size}Z"/></g>`;
-}
-
 function triangularStairScene(stage, hideTotal = false) {
-  const cubes = [];
-  for (let y = stage - 1; y >= 0; y -= 1) {
-    for (let x = stage - y - 1; x >= 0; x -= 1) {
-      const height = stage - x - y;
-      for (let level = 0; level < height; level += 1) cubes.push(isoCube(x, y, level));
-    }
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.buildTriangularStairShape || !geometry?.triangularStairTotal || !renderer?.renderIso) {
+    throw new Error("Geometry worksheet cube data is required for the triangular stair visual.");
   }
-  const total = Array.from({ length: stage }, (_, index) => (index + 1) * (index + 2) / 2).reduce((sum, value) => sum + value, 0);
-  return `<figure><svg viewBox="0 -18 164 128" role="img" aria-label="${stage}단계 삼각 계단 쌓기나무">${cubes.join("")}</svg><figcaption>${stage}단계 <span>${hideTotal ? "몇 개?" : `${total}개`}</span></figcaption></figure>`;
+  const map = geometry.buildTriangularStairShape(stage);
+  const total = geometry.triangularStairTotal(stage);
+  if (geometry.mapTotal(map) !== total) throw new Error(`Triangular stair total mismatch at stage ${stage}.`);
+  const svg = renderer.renderIso(map, stage, stage, { u: 14 })
+    .replace('class="ws-iso"', `class="ws-iso b5-geometry-cubes" role="img" aria-label="${stage}단계 삼각 계단 쌓기나무" data-geometry-kind="triangular-stair" data-stage="${stage}" data-total="${total}"`);
+  return `<figure>${svg}<figcaption>${stage}단계 <span>${hideTotal ? "몇 개?" : `${total}개`}</span></figcaption></figure>`;
 }
 
 function tetrahedralStair(visual) {

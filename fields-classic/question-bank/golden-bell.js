@@ -1,9 +1,9 @@
 import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828t";
-import { book05Markup } from "./book05-renderers.js?v=20260828n";
+import { book05Markup } from "./book05-renderers.js?v=20260829b";
 import { book06Markup } from "./book06-renderers.js?v=20260828p";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
 import { book08Markup } from "./book08-renderers.js?v=20260828r";
-import { book09Markup } from "./book09-renderers.js?v=20260828s";
+import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260828t";
 
 const $ = (id) => document.getElementById(id);
