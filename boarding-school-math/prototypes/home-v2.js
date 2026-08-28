@@ -86,17 +86,6 @@
         <div class="mini-task primary-task"><small>보정 그룹 · 5명</small><strong>비와 비례 선수개념</strong><span>배정 검토 →</span></div>
         <div class="mini-task"><small>핵심 그룹 · 9명</small><strong>식과 방정식 다중 표현</strong><span>유지 확인 D+7</span></div>
         <div class="mini-task"><small>심화 그룹 · 4명</small><strong>SASMO 비정형 전이</strong><span>교사용 해설 열기</span></div>`
-    },
-    parent: {
-      eyebrow: "PARENT · GROWTH REPORT",
-      title: "현재 위치와 다음 계획을 쉬운 말로 봅니다.",
-      description: "시작점, 실제 성장, 남은 빈틈, 학교·경시 목표를 답이나 내부 데이터 없이 공유 가능한 리포트로 정리합니다.",
-      nav: ["현재 위치", "이번 주 계획", "학교 준비도", "경시 준비도", "공유 리포트"],
-      panel: `
-        <div class="mini-product-top"><span>8월 성장 요약</span><b>KO · EN · 中文</b></div>
-        <div class="mini-task primary-task"><small>강점</small><strong>기하 전이 문제에서 설명력이 좋아졌습니다.</strong><span>+14 · 7월 대비</span></div>
-        <div class="mini-task"><small>보완</small><strong>비례식 전에 비의 의미를 다시 확인합니다.</strong><span>3주 계획</span></div>
-        <div class="mini-task"><small>교사 코멘트</small><strong>다음 유지 확인 후 심화 배정을 검토합니다.</strong><span>PDF 공유</span></div>`
     }
   };
 

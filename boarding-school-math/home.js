@@ -107,18 +107,6 @@
         '<div class="mini-task"><small>핵심 그룹 · 9명</small><strong>식과 방정식 다중 표현</strong><span>유지 확인 D+7</span></div>',
         '<div class="mini-task"><small>심화 그룹 · 4명</small><strong>SASMO 비정형 전이</strong><span>해설 검수 대기</span></div>'
       ].join("")
-    },
-    parent: {
-      eyebrow: "PARENT · GROWTH REPORT · SAMPLE",
-      title: "현재 위치와 다음 계획을 쉬운 말로 봅니다.",
-      description: "시작점, 실제 성장, 남은 빈틈, 학교·경시 목표를 답이나 내부 데이터 없이 공유 가능한 리포트로 정리합니다.",
-      nav: ["현재 위치", "이번 주 계획", "학교 준비도", "경시 준비도", "공유 리포트"],
-      panel: [
-        '<div class="mini-product-top"><span>샘플 8월 성장 요약</span><b>교사 검토 전</b></div>',
-        '<div class="mini-task primary-task"><small>강점</small><strong>기하 전이 문제에서 설명력이 좋아졌습니다.</strong><span>샘플 변화 +14</span></div>',
-        '<div class="mini-task"><small>보완</small><strong>비례식 전에 비의 의미를 다시 확인합니다.</strong><span>3주 계획</span></div>',
-        '<div class="mini-task"><small>교사 코멘트</small><strong>다음 유지 확인 후 심화 배정을 검토합니다.</strong><span>공유 리포트</span></div>'
-      ].join("")
     }
   };
 
@@ -300,8 +288,13 @@
     source.textContent = `${program.title.ko} 공식 정보 ↗`;
 
     const primary = document.getElementById("goal-primary");
-    primary.textContent = ["school", "singapore"].includes(goalId) ? "진단·숙달 구조 보기" : "GFIELD 준비 진단 구조 보기";
-    primary.href = "./diagnostic.html";
+    if (goalId === "sasmo") {
+      primary.textContent = "SASMO 전용 프로그램 시작";
+      primary.href = "./sasmo.html";
+    } else {
+      primary.textContent = ["school", "singapore"].includes(goalId) ? "진단·숙달 구조 보기" : "GFIELD 준비 진단 구조 보기";
+      primary.href = "./diagnostic.html";
+    }
 
     setOriginalLink(definition, grade);
     renderGoalFlow(goalId, !document.getElementById("goal-original").hidden);
