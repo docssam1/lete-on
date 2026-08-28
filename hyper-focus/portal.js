@@ -10,6 +10,7 @@
   let mfaMode = false;
   let currentCollection = null;
   let collectionViewToken = 0;
+  let modalReturnFocus = null;
   const secureExamLoader = collectionUi?.createExamLoader?.() || Object.freeze({
     load: () => Promise.reject(new Error("회차 목록 모듈을 준비하지 못했습니다.")),
     reset: () => {}
@@ -77,14 +78,26 @@
   }
 
   function showModal(modal) {
+    modalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     modal.hidden = false;
     document.body.classList.add("modal-open");
-    setTimeout(() => modal.classList.add("visible"), 10);
+    setTimeout(() => {
+      modal.classList.add("visible");
+      const focusTarget = modal.querySelector('input:not([disabled])')
+        || modal.querySelector('button:not([disabled]), a[href]');
+      focusTarget?.focus();
+    }, 10);
   }
 
   function closeModal(modal) {
     modal.classList.remove("visible");
-    setTimeout(() => { modal.hidden = true; document.body.classList.remove("modal-open"); }, 180);
+    const returnTarget = modalReturnFocus;
+    modalReturnFocus = null;
+    setTimeout(() => {
+      modal.hidden = true;
+      document.body.classList.remove("modal-open");
+      if (returnTarget?.isConnected && !returnTarget.hidden) returnTarget.focus();
+    }, 180);
   }
 
   function toast(message) {

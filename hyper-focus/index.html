@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./portal.css">
+  <link rel="stylesheet" href="./portal.css?v=hf-editorial-20260828a">
   <script src="./data.js"></script>
   <script src="./portal-data.js"></script>
   <script src="./mock/premier-release-catalog.js"></script>
@@ -19,6 +19,7 @@
   <script src="./portal-collection.js"></script>
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">본문으로 건너뛰기</a>
   <header class="site-header">
     <a class="brand" href="./" aria-label="G-FIELD Premier 홈">
       <span class="brand-mark">G</span>
@@ -31,7 +32,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="mainContent" tabindex="-1">
     <section class="public-home" id="publicHome">
       <div class="hero-shell">
         <div class="hero-copy">
@@ -196,6 +197,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="./portal.js"></script>
+  <script src="./portal.js?v=hf-editorial-20260828a"></script>
 </body>
 </html>
