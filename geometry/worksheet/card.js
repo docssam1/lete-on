@@ -100,6 +100,27 @@
         '<div class="ws-move-divider" aria-hidden="true">→</div>' +
         '<div class="ws-move-options ws-move-options-' + f.choices.length + '">' + choices + "</div>";
     }
+    if (f.kind === "polycube-options") {
+      const targetMap = Array.from({ length: f.target.depth }, () => Array(f.target.width).fill(f.target.height));
+      const source = figureBlock(
+        "준비된 모양",
+        REN.renderIsoCoords(f.source, { viewpoint: f.viewpoint }),
+        "ws-figure-sm"
+      );
+      const target = figureBlock(
+        "목표 " + f.target.width + "×" + f.target.depth + "×" + f.target.height,
+        REN.renderIsoBox(targetMap, f.target.width, f.target.depth, f.target.height, { noBox: true, viewpoint: f.viewpoint }),
+        "ws-figure-sm"
+      );
+      const choices = f.choices.map((piece, index) => (
+        figureBlock(f.labels[index], REN.renderIsoCoords(piece, { viewpoint: f.viewpoint }), "ws-figure-sm")
+      )).join("");
+      return '<div class="ws-join-equation">' + source +
+        '<span class="ws-join-symbol" aria-hidden="true">+</span>' +
+        '<span class="ws-join-blank" aria-label="나머지 모양">?</span>' +
+        '<span class="ws-join-symbol" aria-hidden="true">=</span>' + target + "</div>" +
+        '<div class="ws-join-options ws-join-options-' + f.choices.length + '">' + choices + "</div>";
+    }
     if (f.kind === "sequence") {
       const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth, { viewpoint: f.viewpoint }), "ws-figure-sm")).join("");
       return shapeHtml + '<div class="ws-seq-dots">…</div>';
@@ -140,6 +161,7 @@
     }
     if (p.type === "BW") return answerLine("답: 흰색 ______ 개, 검은색 ______ 개");
     if (p.type === "MV") return answerLine("답: ______");
+    if (p.type === "CJ") return answerLine("답: ______");
     if (p.type === "HL") {
       // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
       // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워 나온다).
@@ -213,6 +235,7 @@
       case "FB": return a.need + "개";
       case "CU": return a.need + "개";
       case "MV": return a.choice;
+      case "CJ": return a.choice;
       case "PN": {
         const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";
         if (a.variant === "faces") return a.faces + "면 (" + bottom + ")";

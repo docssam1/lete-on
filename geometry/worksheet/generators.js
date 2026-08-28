@@ -535,7 +535,7 @@
   function figureViewpointCode(figures) {
     if (!figures) return null;
     if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
-    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "sequence"].indexOf(figures.kind) !== -1) {
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "polycube-options", "sequence"].indexOf(figures.kind) !== -1) {
       return ISO_VIEWPOINT.code;
     }
     return null;
@@ -1587,7 +1587,291 @@
     };
   }
 
-  // 10. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 10. CJ — 두 쌓기나무 모양 합치기
+  //
+  // 준비된 조각과 보기 조각을 자유롭게 돌려 목표 직육면체를 완성하는 유형.
+  // 회전은 정육면체의 24가지 방향만 허용하며 반사는 허용하지 않는다. 준비된
+  // 조각이 목표 안에 놓이는 모든 배치를 전수 조사한 뒤 생기는 나머지 공간의
+  // 합동형을 모아, 보기 중 정확히 하나만 그 집합에 속하도록 만든다.
+  const rotateCoordX = ([x, y, z]) => [x, -z, y];
+  const rotateCoordY = ([x, y, z]) => [z, y, -x];
+  const rotateCoordZ = ([x, y, z]) => [-y, x, z];
+
+  function buildCubeRotations() {
+    const basis = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const signature = (matrix) => matrix.map((axis) => axis.join(",")).join("|");
+    const seen = new Map([[signature(basis), basis]]);
+    const queue = [basis];
+    while (queue.length) {
+      const current = queue.shift();
+      [rotateCoordX, rotateCoordY, rotateCoordZ].forEach((rotate) => {
+        const next = current.map(rotate);
+        const id = signature(next);
+        if (!seen.has(id)) {
+          seen.set(id, next);
+          queue.push(next);
+        }
+      });
+    }
+    return Array.from(seen.values()).map((matrix) => ([x, y, z]) => [
+      matrix[0][0] * x + matrix[1][0] * y + matrix[2][0] * z,
+      matrix[0][1] * x + matrix[1][1] * y + matrix[2][1] * z,
+      matrix[0][2] * x + matrix[1][2] * y + matrix[2][2] * z
+    ]);
+  }
+
+  const CUBE_ROTATIONS = Object.freeze(buildCubeRotations());
+
+  function compareCoord(a, b) {
+    return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+  }
+
+  function coordKey(point) {
+    return point.join(",");
+  }
+
+  function coordsKey(cells) {
+    return cells.map(coordKey).join(";");
+  }
+
+  function normalizeCoords(cells) {
+    const mins = [0, 1, 2].map((axis) => Math.min(...cells.map((cell) => cell[axis])));
+    return cells
+      .map((cell) => cell.map((value, axis) => value - mins[axis]))
+      .sort(compareCoord);
+  }
+
+  function orientationsOf(cells) {
+    const found = new Map();
+    CUBE_ROTATIONS.forEach((rotate) => {
+      const oriented = normalizeCoords(cells.map(rotate));
+      found.set(coordsKey(oriented), oriented);
+    });
+    return Array.from(found.values());
+  }
+
+  function canonicalPolycube(cells) {
+    return orientationsOf(cells).map(coordsKey).sort()[0];
+  }
+
+  function isConnectedPolycube(cells) {
+    if (!cells.length) return false;
+    const occupied = new Set(cells.map(coordKey));
+    const reached = new Set([coordKey(cells[0])]);
+    const queue = [cells[0]];
+    while (queue.length) {
+      const [x, y, z] = queue.shift();
+      [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => {
+        const next = [x + dx, y + dy, z + dz];
+        const key = coordKey(next);
+        if (occupied.has(key) && !reached.has(key)) {
+          reached.add(key);
+          queue.push(next);
+        }
+      });
+    }
+    return reached.size === occupied.size;
+  }
+
+  function boxCoords(dims) {
+    const cells = [];
+    for (let x = 0; x < dims.width; x += 1) {
+      for (let y = 0; y < dims.height; y += 1) {
+        for (let z = 0; z < dims.depth; z += 1) cells.push([x, y, z]);
+      }
+    }
+    return cells;
+  }
+
+  function placementsInBox(cells, dims) {
+    const placements = new Map();
+    orientationsOf(cells).forEach((shape) => {
+      const size = [0, 1, 2].map((axis) => Math.max(...shape.map((cell) => cell[axis])) + 1);
+      for (let x = 0; x <= dims.width - size[0]; x += 1) {
+        for (let y = 0; y <= dims.height - size[1]; y += 1) {
+          for (let z = 0; z <= dims.depth - size[2]; z += 1) {
+            const placed = shape.map(([cx, cy, cz]) => [cx + x, cy + y, cz + z]).sort(compareCoord);
+            placements.set(coordsKey(placed), placed);
+          }
+        }
+      }
+    });
+    return Array.from(placements.values());
+  }
+
+  function complementFormsForPiece(source, dims) {
+    const target = boxCoords(dims);
+    const forms = new Map();
+    placementsInBox(source, dims).forEach((placement) => {
+      const occupied = new Set(placement.map(coordKey));
+      const gap = target.filter((cell) => !occupied.has(coordKey(cell)));
+      if (!isConnectedPolycube(gap)) return;
+      const normalized = normalizeCoords(gap);
+      forms.set(canonicalPolycube(normalized), normalized);
+    });
+    return forms;
+  }
+
+  function pairCanFillBox(source, candidate, dims) {
+    return complementFormsForPiece(source, dims).has(canonicalPolycube(candidate));
+  }
+
+  // Every loose piece must reveal at least one of top/+x/+z on every cube in
+  // the standard worksheet camera. This is the coordinate-piece counterpart
+  // of IC's height-map line-of-sight guard: a cube that contributes no visible
+  // face would make the printed option underdetermined.
+  function auditPolycubeViewpoint(cells, viewpoint) {
+    const code = viewpoint || ISO_VIEWPOINT.code;
+    const normalized = normalizeCoords(cells);
+    const occupied = new Set(normalized.map(coordKey));
+    const hidden = [];
+    if (code !== ISO_VIEWPOINT.code) {
+      return { ok: false, viewpoint: code, hidden, errors: ["unknown-viewpoint"] };
+    }
+    normalized.forEach(([x, y, z]) => {
+      const visible = !occupied.has(coordKey([x, y + 1, z])) ||
+        !occupied.has(coordKey([x + 1, y, z])) ||
+        !occupied.has(coordKey([x, y, z + 1]));
+      if (!visible) hidden.push([x, y, z]);
+    });
+    return {
+      ok: hidden.length === 0,
+      viewpoint: code,
+      viewerVector: ISO_VIEWPOINT.viewerVector.slice(),
+      visibleFaces: ISO_VIEWPOINT.visibleFaces.slice(),
+      checkedCubes: normalized.length,
+      hidden,
+      errors: hidden.length ? ["fully-occluded-cube"] : []
+    };
+  }
+
+  function visibleOrientations(cells) {
+    return orientationsOf(cells).filter((shape) => auditPolycubeViewpoint(shape, ISO_VIEWPOINT.code).ok);
+  }
+
+  function randomConnectedSubset(rng, dims, size) {
+    const target = boxCoords(dims);
+    const targetKeys = new Set(target.map(coordKey));
+    const chosen = [rng.pick(target)];
+    const used = new Set(chosen.map(coordKey));
+    while (chosen.length < size) {
+      const frontier = [];
+      chosen.forEach(([x, y, z]) => {
+        [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => {
+          const cell = [x + dx, y + dy, z + dz];
+          const key = coordKey(cell);
+          if (targetKeys.has(key) && !used.has(key) && !frontier.some((item) => coordKey(item) === key)) frontier.push(cell);
+        });
+      });
+      if (!frontier.length) return null;
+      const next = rng.pick(frontier);
+      chosen.push(next);
+      used.add(coordKey(next));
+    }
+    return normalizeCoords(chosen);
+  }
+
+  const JOIN_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ dims: [2, 2, 2], sourceSize: 4, choices: 3 }),
+      Object.freeze({ dims: [2, 2, 2], sourceSize: 4, choices: 4 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 5, choices: 4 })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 5, choices: 3 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 6, choices: 4 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 7, choices: 4 })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 6, choices: 3 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 8, choices: 4 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 9, choices: 4 })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 8, choices: 3 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 9, choices: 4 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 10, choices: 4 })
+    ])
+  });
+
+  function joinProfile(level, intensity) {
+    const stage = JOIN_PROFILES[levelCode(level)] || JOIN_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      dims: { width: raw.dims[0], depth: raw.dims[1], height: raw.dims[2] },
+      sourceSize: raw.sourceSize,
+      choices: raw.choices,
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function buildJoinProblem(rng, level, intensity) {
+    const profile = joinProfile(level, intensity);
+    const targetSize = profile.dims.width * profile.dims.depth * profile.dims.height;
+    const optionSize = targetSize - profile.sourceSize;
+    for (let attempt = 0; attempt < 180; attempt += 1) {
+      const source = randomConnectedSubset(rng, profile.dims, profile.sourceSize);
+      if (!source) continue;
+      const sourceViews = visibleOrientations(source);
+      if (!sourceViews.length) continue;
+      const accepted = complementFormsForPiece(source, profile.dims);
+      const correctForms = Array.from(accepted.values()).filter((piece) => visibleOrientations(piece).length);
+      if (!correctForms.length) continue;
+      const correctForm = rng.pick(correctForms);
+      const correct = rng.pick(visibleOrientations(correctForm));
+
+      const distractors = [];
+      const usedForms = new Set([canonicalPolycube(correct)]);
+      for (let tries = 0; tries < 1600 && distractors.length < profile.choices - 1; tries += 1) {
+        const candidate = randomConnectedSubset(rng, profile.dims, optionSize);
+        if (!candidate) continue;
+        const form = canonicalPolycube(candidate);
+        if (usedForms.has(form) || accepted.has(form)) continue;
+        const views = visibleOrientations(candidate);
+        if (!views.length) continue;
+        usedForms.add(form);
+        distractors.push(rng.pick(views));
+      }
+      if (distractors.length < profile.choices - 1) continue;
+
+      const sourceView = rng.pick(sourceViews);
+      const choices = rng.shuffle([correct].concat(distractors));
+      const correctFormKey = canonicalPolycube(correct);
+      const correctIndex = choices.findIndex((piece) => canonicalPolycube(piece) === correctFormKey);
+      return { profile, source: sourceView, choices, correctIndex, acceptedForms: Array.from(accepted.keys()) };
+    }
+    throw new Error("unable to build a two-piece join problem for " + level + " D" + intensity);
+  }
+
+  function genCJ(rng, level, intensity) {
+    const built = buildJoinProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const fits = built.choices.map((piece) => pairCanFillBox(built.source, piece, built.profile.dims));
+    const choice = labels[built.correctIndex];
+    return {
+      type: "CJ",
+      prompt: "준비된 모양과 보기의 모양을 돌려서 합쳤을 때 목표 직육면체를 완성할 수 있는 나머지 모양을 고르시오.",
+      figures: {
+        kind: "polycube-options",
+        source: built.source,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length),
+        target: built.profile.dims
+      },
+      answer: {
+        choice,
+        choiceIndex: built.correctIndex,
+        fits,
+        sourceSize: built.source.length,
+        optionSize: built.choices[0].length,
+        targetSize: built.profile.dims.width * built.profile.dims.depth * built.profile.dims.height,
+        acceptedForms: built.acceptedForms
+      },
+      answerText: choice
+    };
+  }
+
+  // 11. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -2158,6 +2442,7 @@
     { code: "FB", label: "상자 채우기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4"] },
     { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "MV", label: "쌓기나무 한 개 옮기기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
     { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
@@ -2231,6 +2516,7 @@
       case "FB": problem = genFB(rng, lv, it); break;
       case "CU": problem = genCU(rng, lv, it); break;
       case "MV": problem = genMV(rng, lv, it); break;
+      case "CJ": problem = genCJ(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
@@ -2529,6 +2815,19 @@
     oneCubeMoveDistance,
     oneCubeMoveTargets,
     moveProblemShape,
+    CUBE_ROTATIONS,
+    normalizeCoords,
+    orientationsOf,
+    canonicalPolycube,
+    isConnectedPolycube,
+    boxCoords,
+    placementsInBox,
+    complementFormsForPiece,
+    pairCanFillBox,
+    auditPolycubeViewpoint,
+    JOIN_PROFILES,
+    joinProfile,
+    buildJoinProblem,
     // solver
     deriveMaxArrays,
     colMaxFromFrontView,

@@ -379,6 +379,42 @@ select, .code-input, input[type="text"] {
   .ws-move-options { grid-template-columns: repeat(2, minmax(72px, 1fr)); }
 }
 
+/* 두 모양 합치기: 위에는 식처럼 준비 조각 + ? = 목표를, 아래에는 회전 가능한
+   보기 조각을 놓는다. 조각은 renderIsoCoords가 같은 등각 시선으로 그린다. */
+.ws-join-equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+.ws-join-symbol { color: #3185a0; font-size: 22px; font-weight: 900; }
+.ws-join-blank {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px dashed #8fa5ad;
+  color: #3185a0;
+  font-size: 20px;
+  font-weight: 900;
+}
+.ws-join-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+  align-items: end;
+  gap: 12px;
+  width: min(100%, 520px);
+  margin-top: 8px;
+}
+.ws-join-options-3 { grid-template-columns: repeat(3, minmax(78px, 1fr)); }
+.ws-join-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 88px; }
+
+@media (max-width: 720px) {
+  .ws-join-equation { gap: 7px; }
+  .ws-join-options { grid-template-columns: repeat(2, minmax(76px, 1fr)); }
+}
+
 .ws-answer-line {
   margin-top: 8px;
   padding-top: 6px;
