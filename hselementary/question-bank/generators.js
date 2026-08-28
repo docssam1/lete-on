@@ -1469,6 +1469,19 @@
     9: { minimum: 750, divisor: 78, candidatesBeforeDigitSum: [790, 869, 948], digitSum: 21, answer: 948 },
     10: { total: 3627, count: 13, largest: 285, answer: 285 }
   };
+  const source41DivisionFiveSourceAnchors = {
+    0: { quotient: 20, remainder: 29, smallestDivisor: 30, answer: 629 },
+    1: { divisor: 17, values: [108, 126, 144, 162, 180, 198, 216, 234, 252, 270, 288], answer: 180 },
+    2: { cards: [1, 3, 5, 6, 8], quotient: 7, remainder: 68, expression: "635÷81=7…68" },
+    3: { correctDivisor: 23, wrongDivisor: 32, quotient: 31, remainder: 22, answer: 735 },
+    4: { added: 95, divisor: 50, remainderAfterAdding: 44, candidates: [449, 499, 549, 599, 649, 699, 749, 799, 849, 899, 949, 999], answer: 49 },
+    5: { lower: 251, upper: 299, divisor: 60, answer: 299 },
+    6: { divisor: 35, target: 500, answer: 489 },
+    7: { prefix: 9, divisor: 73, number: 948, answer: "㉠=4, ㉡=8" },
+    8: { dividend: 951, divisor: 46, quotient: 20, remainder: 31, answer: "951÷46=20…31" },
+    9: { lower: 100, upper: 999, divisor: 11, remainder: 9, answer: 82 },
+    10: { start: 32, end: 134, step: 2, divisor: 15, answer: 371 }
+  };
   const source41DigitSum = value => [...String(value).replace(/\D/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
   const source41CardRow = cards => `<div class="source41-card-row" role="img" aria-label="수 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card">${card}</span>`).join("")}</div>`;
   const source41CardProductExtremes = (cards, leftLength) => {
@@ -8555,6 +8568,383 @@
       const hidden = productText[index];
       const shown = [...productText].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
       return result(`세로셈 결과의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, multiplier, [onesPartial, tensPartial], shown)}`, hidden, `${multiplicand} × ${multiplier} = ${product.toLocaleString()}이므로 □는 ${hidden}입니다.`);
+    },
+    source41DivisionFive({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("나눗셈의 나머지 원문 분기는 0부터 10까지여야 합니다.");
+      const format = source41FormatInteger;
+      const sourceAnchor = source41DivisionFiveSourceAnchors[variant];
+      const complexityBase = (level + 1) * 1000000;
+      const structures = {
+        0: [
+          { mode: "direct-divisor", task: "given-divisor-find-dividend", conditionCount: 1 },
+          { mode: "hidden-minimum", task: "infer-smallest-divisor-then-dividend", conditionCount: 2 },
+          { mode: "divisor-range-difference", task: "find-extreme-dividends-then-difference", conditionCount: 3 }
+        ],
+        1: [
+          { mode: "guided-quotient-list", task: "compare-values-from-given-quotients", conditionCount: 1 },
+          { mode: "all-three-digit", task: "enumerate-all-three-digit-values", conditionCount: 2 },
+          { mode: "digit-sum-filter", task: "filter-by-digit-sum-then-compare", conditionCount: 3 }
+        ],
+        2: [
+          { mode: "fixed-hundreds-card", task: "place-four-cards-after-fixed-hundreds", conditionCount: 1 },
+          { mode: "all-card-layouts", task: "place-all-five-cards", conditionCount: 2 },
+          { mode: "layout-then-difference", task: "complete-division-then-find-difference", conditionCount: 3 }
+        ],
+        3: [
+          { mode: "given-correct-pair", task: "rebuild-number-and-check-wrong-division", conditionCount: 1 },
+          { mode: "swapped-relation", task: "infer-swapped-quotient-and-remainder", conditionCount: 2 },
+          { mode: "swapped-then-digit-sum", task: "infer-number-then-add-its-digits", conditionCount: 3 }
+        ],
+        4: [
+          { mode: "known-after-quotient", task: "reverse-added-number-then-find-remainder", conditionCount: 1 },
+          { mode: "common-remainder", task: "check-many-originals-for-common-remainder", conditionCount: 2 },
+          { mode: "count-and-remainder", task: "count-originals-and-find-common-remainder", conditionCount: 3 }
+        ],
+        5: [
+          { mode: "narrow-one-cycle", task: "find-one-largest-remainder-value", conditionCount: 1 },
+          { mode: "source-single-maximum", task: "find-source-range-maximum-remainder-value", conditionCount: 2 },
+          { mode: "two-cycle-larger", task: "find-all-largest-remainder-values-then-choose-larger", conditionCount: 3 }
+        ],
+        6: [
+          { mode: "two-shown-candidates", task: "compare-two-shown-nearest-candidates", conditionCount: 1 },
+          { mode: "all-three-digit-nearest", task: "enumerate-three-digit-candidates-then-compare", conditionCount: 2 },
+          { mode: "filtered-nearest", task: "filter-by-range-and-parity-then-compare", conditionCount: 3 }
+        ],
+        7: [
+          { mode: "one-blank", task: "fill-one-digit-for-largest-remainder", conditionCount: 1 },
+          { mode: "two-blanks", task: "fill-two-digits-for-largest-remainder", conditionCount: 2 },
+          { mode: "distinct-blanks-sum", task: "fill-distinct-digits-then-add-them", conditionCount: 3 }
+        ],
+        8: [
+          { mode: "shown-quotient-one-blank", task: "fill-one-dividend-digit", conditionCount: 1 },
+          { mode: "one-digit-and-quotient", task: "fill-dividend-digit-and-two-digit-quotient", conditionCount: 2 },
+          { mode: "two-blanks-relation", task: "apply-digit-relation-then-fill-dividend-and-quotient", conditionCount: 3 }
+        ],
+        9: [
+          { mode: "two-digit-count", task: "count-two-digit-values", conditionCount: 1 },
+          { mode: "three-digit-count", task: "count-all-three-digit-values", conditionCount: 2 },
+          { mode: "boundaries-and-count", task: "find-first-last-and-count-inside-range", conditionCount: 3 }
+        ],
+        10: [
+          { mode: "one-period", task: "sum-one-complete-remainder-period", conditionCount: 1 },
+          { mode: "periods-and-tail", task: "sum-complete-periods-and-leftover", conditionCount: 2 },
+          { mode: "front-full-back", task: "split-front-full-periods-and-back", conditionCount: 3 }
+        ]
+      };
+      const structure = structures[variant][level];
+      const evidence = (kind, payload, answer) => source41Evidence(kind, { variant, level, sourceAnchor, ...structure, ...payload, complexity: complexityBase + (payload.complexity || 0) }, answer);
+      const allInRange = (lower, upper, predicate) => {
+        const values = [];
+        for (let value = lower; value <= upper; value += 1) if (predicate(value)) values.push(value);
+        return values;
+      };
+
+      if (variant === 0) {
+        const configs = [
+          { quotient: 12, remainder: 17, divisorLower: 18, divisorUpper: 18 },
+          { quotient: 20, remainder: 29, divisorLower: 30, divisorUpper: 99 },
+          { quotient: 28, remainder: 37, divisorLower: 38, divisorUpper: 50 }
+        ];
+        const { quotient, remainder, divisorLower, divisorUpper } = configs[level];
+        const divisors = allInRange(divisorLower, divisorUpper, divisor => divisor > remainder);
+        const candidates = divisors.map(divisor => ({ divisor, dividend: quotient * divisor + remainder }));
+        const minimum = candidates[0];
+        const maximum = candidates.at(-1);
+        if (!minimum || !maximum || candidates.some(item => item.dividend !== quotient * item.divisor + remainder)) throw new Error("나누는 수에 따른 나누어지는 수를 모두 만들지 못했습니다.");
+        const answer = level === 2 ? maximum.dividend - minimum.dividend : minimum.dividend;
+        const payload = { quotient, remainder, divisorLower, divisorUpper, divisors, candidates, minimum, maximum, complexity: divisors.length * 20 + quotient };
+        let prompt;
+        let solution;
+        if (level === 0) {
+          prompt = `어떤 수를 ${format(divisorLower)}로 나누었더니 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}였습니다. 나누어지는 수를 구하세요.${evidence("smallest-dividend-from-hidden-divisor", payload, answer)}`;
+          solution = `나누어지는 수는 ${format(divisorLower)}×${format(quotient)}+${format(remainder)}=${format(answer)}입니다.`;
+        } else if (level === 1) {
+          prompt = `어떤 수를 두 자리 수로 나누었더니 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}였습니다. 나누어지는 수 중 가장 작은 수를 구하세요.${evidence("smallest-dividend-from-hidden-divisor", payload, answer)}`;
+          solution = `나머지는 나누는 수보다 작아야 하므로 가장 작은 나누는 수는 ${format(remainder + 1)}입니다. 따라서 가장 작은 나누어지는 수는 ${format(quotient)}×${format(remainder + 1)}+${format(remainder)}=${format(answer)}입니다.`;
+        } else {
+          prompt = `어떤 수를 ${format(divisorLower)} 이상 ${format(divisorUpper)} 이하인 수로 나누었더니 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}였습니다. 만들 수 있는 가장 큰 나누어지는 수와 가장 작은 나누어지는 수의 차를 구하세요.${evidence("smallest-dividend-from-hidden-divisor", payload, answer)}`;
+          solution = `가장 작은 수는 ${format(quotient)}×${format(divisorLower)}+${format(remainder)}=${format(minimum.dividend)}, 가장 큰 수는 ${format(quotient)}×${format(divisorUpper)}+${format(remainder)}=${format(maximum.dividend)}입니다. 두 수의 차는 ${format(maximum.dividend)}-${format(minimum.dividend)}=${format(answer)}입니다.`;
+        }
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const divisor = [13, 17, 23][level];
+        const quotientCandidates = level === 0 ? [8, 9, 10, 11, 12] : allInRange(0, divisor - 1, () => true);
+        const baseValues = quotientCandidates.map(quotient => ({ quotient, value: (divisor + 1) * quotient }))
+          .filter(item => item.value >= 100 && item.value <= 999 && Math.floor(item.value / divisor) === item.value % divisor);
+        const digitSum = level === 2 ? 9 : null;
+        const candidates = level === 2 ? baseValues.filter(item => source41DigitSum(item.value) === digitSum) : baseValues;
+        const values = candidates.map(item => item.value);
+        if (values.length < 2) throw new Error("조건을 만족하는 세 자리 수가 두 개 이상이어야 합니다.");
+        const answer = values.at(-1) - values[0];
+        const payload = { divisor, quotientCandidates, baseValues, digitSum, candidates, values, first: values[0], last: values.at(-1), complexity: quotientCandidates.length * 30 + candidates.length * 10 };
+        let prompt;
+        if (level === 0) {
+          prompt = `${format(divisor)}으로 나누었을 때 몫과 나머지가 같습니다. 몫으로 생각할 수 있는 수가 ${quotientCandidates.map(format).join(", ")}일 때, 만들 수 있는 세 자리 수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence("equal-quotient-remainder-range", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `${format(divisor)}으로 나누었을 때 몫과 나머지가 같은 세 자리 수를 모두 찾아, 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence("equal-quotient-remainder-range", payload, answer)}`;
+        } else {
+          prompt = `${format(divisor)}으로 나누었을 때 몫과 나머지가 같고, 각 자리 숫자의 합이 ${format(digitSum)}인 세 자리 수를 모두 찾아 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence("equal-quotient-remainder-range", payload, answer)}`;
+        }
+        const solution = `몫과 나머지가 같으면 수는 (${format(divisor)}+1)×몫으로 찾을 수 있습니다. 조건에 맞는 수는 ${values.map(format).join(", ")}이고, 차는 ${format(values.at(-1))}-${format(values[0])}=${format(answer)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 2) {
+        const cards = shuffle(rng, sourceAnchor.cards);
+        const quotient = sourceAnchor.quotient;
+        const remainder = sourceAnchor.remainder;
+        const arrangements = operatorPermutations(cards);
+        const matches = arrangements.map(order => ({ dividend: Number(order.slice(0, 3).join("")), divisor: Number(order.slice(3).join("")) }))
+          .filter(item => item.divisor >= 10 && Math.floor(item.dividend / item.divisor) === quotient && item.dividend % item.divisor === remainder);
+        if (matches.length !== 1) throw new Error("수 카드 나눗셈식이 하나로 정해지지 않습니다.");
+        const match = matches[0];
+        const expression = `${match.dividend}÷${match.divisor}=${quotient}…${remainder}`;
+        const difference = match.dividend - match.divisor;
+        const prefilledDigit = Number(String(match.dividend)[0]);
+        const eligibleMatches = level === 0 ? matches.filter(item => Number(String(item.dividend)[0]) === prefilledDigit) : matches;
+        if (eligibleMatches.length !== 1) throw new Error("보여 준 수 카드 조건에서도 나눗셈식이 하나여야 합니다.");
+        const answer = level === 2 ? `${expression}, 차=${difference}` : expression;
+        const payload = { cards, quotient, remainder, arrangementsChecked: arrangements.length, matches, candidates: eligibleMatches, prefilledDigit: level === 0 ? prefilledDigit : null, expression, difference, complexity: arrangements.length + (level === 2 ? 200 : level === 1 ? 100 : 20) };
+        const remainingCards = cards.filter(card => card !== prefilledDigit);
+        let prompt;
+        if (level === 0) {
+          prompt = `세 자리 수의 백의 자리에는 ${format(prefilledDigit)}을 놓았습니다. 남은 수 카드${source41CardRow(remainingCards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 ${format(prefilledDigit)}□□÷□□를 완성하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `수 카드${source41CardRow(cards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 (세 자리 수)÷(두 자리 수)를 완성하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+        } else {
+          prompt = `수 카드${source41CardRow(cards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 (세 자리 수)÷(두 자리 수)를 완성한 뒤, 나누어지는 수와 나누는 수의 차를 구하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+        }
+        const solution = `수 카드를 놓는 ${format(arrangements.length)}가지 방법을 모두 확인하면 ${expression} 한 가지가 됩니다.${level === 2 ? ` 두 수의 차는 ${format(match.dividend)}-${format(match.divisor)}=${format(difference)}입니다.` : ""} 나머지 ${format(remainder)}는 나누는 수 ${format(match.divisor)}보다 작습니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 3) {
+        const configs = [[17, 24], [23, 32], [24, 40]];
+        const [correctDivisor, wrongDivisor] = configs[level];
+        const candidates = [];
+        for (let quotient = 0; quotient < wrongDivisor; quotient += 1) {
+          for (let remainder = 0; remainder < correctDivisor; remainder += 1) {
+            const correctNumber = correctDivisor * quotient + remainder;
+            const wrongNumber = wrongDivisor * remainder + quotient;
+            if (correctNumber === wrongNumber && correctNumber > 0) candidates.push({ quotient, remainder, number: correctNumber });
+          }
+        }
+        if (candidates.length !== 1) throw new Error("뒤바뀐 몫과 나머지로 처음 수가 하나로 정해지지 않습니다.");
+        const candidate = candidates[0];
+        const digitSum = source41DigitSum(candidate.number);
+        const answer = level === 2 ? digitSum : candidate.number;
+        const payload = { correctDivisor, wrongDivisor, candidates, correctQuotient: candidate.quotient, correctRemainder: candidate.remainder, originalNumber: candidate.number, digitSum, complexity: correctDivisor * wrongDivisor + (level === 2 ? 500 : 0) };
+        let prompt;
+        if (level === 0) {
+          prompt = `어떤 수를 ${format(correctDivisor)}으로 나눈 바른 몫은 ${format(candidate.quotient)}, 나머지는 ${format(candidate.remainder)}입니다. 이 수를 잘못하여 ${format(wrongDivisor)}으로 나누면 몫이 ${format(candidate.remainder)}, 나머지가 ${format(candidate.quotient)}가 됩니다. 처음 수를 구하세요.${evidence("swapped-quotient-remainder-recovery", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `어떤 수를 ${format(correctDivisor)}으로 나누어야 하는데, 잘못하여 ${format(wrongDivisor)}으로 나누었습니다. 잘못 나눈 몫은 바르게 나눈 나머지와 같고, 잘못 나눈 나머지는 바르게 나눈 몫과 같습니다. 처음 수를 구하세요.${evidence("swapped-quotient-remainder-recovery", payload, answer)}`;
+        } else {
+          prompt = `어떤 수를 ${format(correctDivisor)}으로 나누어야 하는데, 잘못하여 ${format(wrongDivisor)}으로 나누었습니다. 잘못 나눈 몫은 바르게 나눈 나머지와 같고, 잘못 나눈 나머지는 바르게 나눈 몫과 같습니다. 처음 수를 찾은 뒤 그 수의 각 자리 숫자의 합을 구하세요.${evidence("swapped-quotient-remainder-recovery", payload, answer)}`;
+        }
+        const solution = `가능한 바른 몫과 나머지를 모두 확인하면 몫 ${format(candidate.quotient)}, 나머지 ${format(candidate.remainder)} 한 가지입니다. 처음 수는 ${format(correctDivisor)}×${format(candidate.quotient)}+${format(candidate.remainder)}=${format(candidate.number)}이고, 잘못 나눈 식도 ${format(wrongDivisor)}×${format(candidate.remainder)}+${format(candidate.quotient)}=${format(candidate.number)}로 맞습니다.${level === 2 ? ` 각 자리 숫자의 합은 ${String(candidate.number).split("").join("+")}=${format(digitSum)}입니다.` : ""}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 4) {
+        const configs = [
+          { added: 47, divisor: 30, afterRemainder: 18, afterQuotient: 12 },
+          { added: 95, divisor: 50, afterRemainder: 44, afterQuotient: null },
+          { added: 136, divisor: 72, afterRemainder: 51, afterQuotient: null }
+        ];
+        const { added, divisor, afterRemainder, afterQuotient } = configs[level];
+        const candidates = allInRange(100, 999, number => {
+          const after = number + added;
+          const quotient = Math.floor(after / divisor);
+          return (afterQuotient === null ? quotient >= 10 && quotient <= 99 : quotient === afterQuotient) && after % divisor === afterRemainder;
+        });
+        const remainders = [...new Set(candidates.map(number => number % divisor))];
+        if (!candidates.length || remainders.length !== 1) throw new Error("더하기 전 수의 나머지가 하나로 정해지지 않습니다.");
+        const answer = level === 2 ? `개수=${candidates.length}, 나머지=${remainders[0]}` : remainders[0];
+        const payload = { added, divisor, afterRemainder, afterQuotient, quotientLower: afterQuotient === null ? 10 : afterQuotient, quotientUpper: afterQuotient === null ? 99 : afterQuotient, candidates, remainders, candidateCount: candidates.length, complexity: candidates.length * 20 + divisor };
+        let prompt;
+        let solution;
+        if (level === 0) {
+          prompt = `어떤 세 자리 수에 ${format(added)}을 더한 수를 ${format(divisor)}으로 나누었더니 몫이 ${format(afterQuotient)}, 나머지가 ${format(afterRemainder)}였습니다. 더하기 전 수를 찾은 뒤, 그 수를 ${format(divisor)}으로 나눈 나머지를 구하세요.${evidence("remainder-before-adding", payload, answer)}`;
+          solution = `더한 뒤의 수는 ${format(divisor)}×${format(afterQuotient)}+${format(afterRemainder)}=${format(candidates[0] + added)}입니다. 처음 수는 ${format(candidates[0] + added)}-${format(added)}=${format(candidates[0])}이고, 이를 ${format(divisor)}으로 나눈 나머지는 ${format(answer)}입니다.`;
+        } else if (level === 1) {
+          prompt = `어떤 세 자리 수에 ${format(added)}을 더한 수를 ${format(divisor)}으로 나누었더니 몫은 두 자리 수이고 나머지는 ${format(afterRemainder)}였습니다. 더하기 전 세 자리 수를 ${format(divisor)}으로 나눈 나머지를 구하세요.${evidence("remainder-before-adding", payload, answer)}`;
+          solution = `조건에 맞는 처음 세 자리 수를 모두 확인하면 ${candidates.map(format).join(", ")}입니다. 이 수들을 ${format(divisor)}으로 나눈 나머지는 모두 ${format(answer)}입니다.`;
+        } else {
+          prompt = `어떤 세 자리 수에 ${format(added)}을 더한 수를 ${format(divisor)}으로 나누었더니 몫은 두 자리 수이고 나머지는 ${format(afterRemainder)}였습니다. 가능한 처음 세 자리 수의 개수와, 그 수들을 ${format(divisor)}으로 나눈 공통 나머지를 차례로 구하세요.${evidence("remainder-before-adding", payload, answer)}`;
+          solution = `조건에 맞는 처음 수는 ${candidates.map(format).join(", ")}로 ${format(candidates.length)}개입니다. 이 수들을 ${format(divisor)}으로 나눈 나머지는 모두 ${format(remainders[0])}이므로 ${answer}입니다.`;
+        }
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 5) {
+        const configs = [[270, 299, 60], [251, 299, 60], [300, 420, 56]];
+        const [lower, upper, divisor] = configs[level];
+        const values = allInRange(lower, upper, value => value % divisor === divisor - 1);
+        if ((level < 2 && values.length !== 1) || (level === 2 && values.length < 2)) throw new Error("범위와 난이도에 맞는 최대 나머지 수를 만들지 못했습니다.");
+        const selection = level === 2 ? "larger" : "only";
+        const answer = level === 2 ? values.at(-1) : values[0];
+        const payload = { lower, upper, divisor, values, largestRemainder: divisor - 1, selection, selected: answer, complexity: upper - lower + values.length * 100 };
+        const prompt = level === 2
+          ? `${format(lower)}부터 ${format(upper)}까지의 자연수 중 ${format(divisor)}으로 나누었을 때 나머지가 가장 큰 수를 모두 찾고, 그중 더 큰 수를 구하세요.${evidence("largest-remainder-in-range", payload, answer)}`
+          : `${format(lower)}부터 ${format(upper)}까지의 자연수 중 ${format(divisor)}으로 나누었을 때 나머지가 가장 큰 수를 구하세요.${evidence("largest-remainder-in-range", payload, answer)}`;
+        const solution = `${format(divisor)}으로 나눌 때 가장 큰 나머지는 ${format(divisor - 1)}입니다. 범위 안에서 이 나머지를 갖는 수는 ${values.map(format).join(", ")}입니다.${level === 2 ? ` 그중 더 큰 수는 ${format(answer)}입니다.` : ""}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 6) {
+        const divisor = level < 2 ? 35 : 47;
+        const target = level < 2 ? 500 : 640;
+        const searchLower = level === 2 ? 300 : 100;
+        const searchUpper = level === 2 ? 900 : 999;
+        const allCandidates = allInRange(searchLower, searchUpper, value => value % divisor === divisor - 1);
+        const filteredCandidates = level === 2 ? allCandidates.filter(value => value % 2 === 0) : allCandidates;
+        const lowerShown = filteredCandidates.filter(value => value < target).at(-1);
+        const upperShown = filteredCandidates.find(value => value > target);
+        const candidates = level === 0 ? [lowerShown, upperShown] : filteredCandidates;
+        const distances = candidates.map(value => ({ value, distance: Math.abs(value - target) }));
+        const smallestDistance = Math.min(...distances.map(item => item.distance));
+        const closest = distances.filter(item => item.distance === smallestDistance);
+        if (closest.length !== 1) throw new Error("가장 가까운 수가 동률입니다.");
+        const answer = closest[0].value;
+        const payload = { divisor, target, searchLower, searchUpper, parity: level === 2 ? "even" : "any", allCandidates, filteredCandidates, candidates, closest, smallestDistance, complexity: filteredCandidates.length * 20 + (level === 2 ? 300 : 0) };
+        let prompt;
+        if (level === 0) {
+          prompt = `${format(divisor)}으로 나누었을 때 나머지가 가장 큰 두 수 ${format(candidates[0])}, ${format(candidates[1])} 중 ${format(target)}에 더 가까운 수를 구하세요.${evidence("largest-remainder-nearest-number", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `세 자리 자연수 중 ${format(divisor)}으로 나누었을 때 나머지가 가장 큰 수를 모두 생각해 보세요. 그중 ${format(target)}에 가장 가까운 수를 구하세요.${evidence("largest-remainder-nearest-number", payload, answer)}`;
+        } else {
+          prompt = `${format(searchLower)} 이상 ${format(searchUpper)} 이하인 짝수 중 ${format(divisor)}으로 나누었을 때 나머지가 가장 큰 수를 모두 찾고, 그중 ${format(target)}에 가장 가까운 수를 구하세요.${evidence("largest-remainder-nearest-number", payload, answer)}`;
+        }
+        const solution = `${format(divisor)}으로 나눌 때 가장 큰 나머지는 ${format(divisor - 1)}입니다. 문제의 조건을 만족하는 수는 ${candidates.map(format).join(", ")}이고, ${format(target)}과의 차가 가장 작은 수는 ${format(answer)}입니다.`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 7) {
+        const divisor = level < 2 ? 73 : 67;
+        const assignments = [];
+        if (level === 0) {
+          for (let digit = 0; digit <= 9; digit += 1) {
+            const number = 940 + digit;
+            assignments.push({ digits: [digit], number, remainder: number % divisor });
+          }
+        } else {
+          for (let first = 0; first <= 9; first += 1) {
+            for (let second = 0; second <= 9; second += 1) {
+              if (level === 2 && first === second) continue;
+              const number = 900 + first * 10 + second;
+              assignments.push({ digits: [first, second], number, remainder: number % divisor });
+            }
+          }
+        }
+        const largestRemainder = Math.max(...assignments.map(item => item.remainder));
+        const winning = assignments.filter(item => item.remainder === largestRemainder);
+        if (winning.length !== 1 || largestRemainder !== divisor - 1) throw new Error("빈칸을 채운 답과 가장 큰 나머지가 하나로 정해지지 않습니다.");
+        const winner = winning[0];
+        const answer = level === 0 ? winner.digits[0] : level === 1 ? `㉠=${winner.digits[0]}, ㉡=${winner.digits[1]}` : winner.digits[0] + winner.digits[1];
+        const payload = { divisor, assignments, winning, candidates: winning.map(item => item.number), number: winner.number, digits: winner.digits, largestRemainder, distinctDigits: level === 2, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
+        let prompt;
+        if (level === 0) {
+          prompt = `세 자리 수 94□를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 □에 알맞은 숫자를 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `세 자리 수 9㉠㉡을 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 ㉠, ㉡에 알맞은 숫자를 차례로 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+        } else {
+          prompt = `세 자리 수 9㉠㉡에서 ㉠과 ㉡은 서로 다른 숫자입니다. 이 수를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 두 빈칸을 채운 뒤, ㉠과 ㉡의 합을 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+        }
+        const solution = `빈칸에 넣을 수 있는 숫자를 모두 확인하면 나머지가 가장 큰 수는 ${format(winner.number)}이고, 나머지는 ${format(largestRemainder)}입니다.${level === 0 ? ` 따라서 □는 ${format(answer)}입니다.` : level === 1 ? ` 따라서 ${answer}입니다.` : ` 두 숫자의 합은 ${format(winner.digits[0])}+${format(winner.digits[1])}=${format(answer)}입니다.`}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 8) {
+        const divisor = 46;
+        const remainder = 31;
+        const assignments = [];
+        if (level < 2) {
+          for (let digit = 0; digit <= 9; digit += 1) {
+            const number = 950 + digit;
+            assignments.push({ digits: [digit], number, quotient: Math.floor(number / divisor), remainder: number % divisor });
+          }
+        } else {
+          for (let first = 0; first <= 9; first += 1) {
+            for (let second = 0; second <= 9; second += 1) {
+              const number = 900 + first * 10 + second;
+              assignments.push({ digits: [first, second], number, quotient: Math.floor(number / divisor), remainder: number % divisor, digitSum: first + second });
+            }
+          }
+        }
+        const shownQuotient = level === 0 ? 20 : null;
+        const candidates = assignments.filter(item => item.remainder === remainder && (shownQuotient === null || item.quotient === shownQuotient) && (level < 2 || item.digitSum === 6));
+        if (candidates.length !== 1) throw new Error("나누어지는 수와 몫의 빈칸이 하나로 정해지지 않습니다.");
+        const candidate = candidates[0];
+        const expression = `${candidate.number}÷${divisor}=${candidate.quotient}…${remainder}`;
+        const answer = level === 0 ? candidate.digits[0] : expression;
+        const payload = { divisor, remainder, assignments, candidates, dividend: candidate.number, quotient: candidate.quotient, shownQuotient, digitSum: level === 2 ? 6 : null, expression, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
+        let prompt;
+        if (level === 0) {
+          prompt = `다음 나눗셈의 나누어지는 수에 있는 빈칸을 채우세요.<div class="equation expanded">95□ ÷ ${format(divisor)} = ${format(shownQuotient)} … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+        } else if (level === 1) {
+          prompt = `다음 나눗셈이 되도록 나누어지는 수의 한 자리와 두 자리 몫을 함께 채우세요.<div class="equation expanded">95□ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+        } else {
+          prompt = `세 자리 수 9㉠㉡에서 ㉠과 ㉡의 합은 ${format(6)}입니다. 다음 나눗셈이 되도록 나누어지는 수의 두 빈칸과 두 자리 몫을 함께 채우세요.<div class="equation expanded">9㉠㉡ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+        }
+        const solution = `빈칸에 넣을 수 있는 숫자를 모두 확인하면 ${expression} 한 가지입니다.${level === 0 ? ` 따라서 □는 ${format(answer)}입니다.` : ""}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 9) {
+        const configs = [[20, 99, 11, 9], [100, 999, 11, 9], [215, 987, 17, 12]];
+        const [lower, upper, divisor, remainder] = configs[level];
+        const values = allInRange(lower, upper, value => value % divisor === remainder);
+        if (!values.length) throw new Error("특정 나머지를 갖는 수가 없습니다.");
+        const first = values[0];
+        const last = values.at(-1);
+        const answer = level === 2 ? `첫 수=${first}, 끝 수=${last}, 개수=${values.length}` : values.length;
+        const payload = { lower, upper, divisor, remainder, values, first, last, boundaryAligned: lower % divisor === remainder || upper % divisor === remainder, complexity: values.length * 10 + (level === 2 ? 300 : 0) };
+        const prompt = level === 2
+          ? `${format(lower)}부터 ${format(upper)}까지의 자연수 중 ${format(divisor)}으로 나누었을 때 나머지가 ${format(remainder)}인 첫 수, 끝 수, 수의 개수를 차례로 구하세요.${evidence("count-numbers-with-remainder", payload, answer)}`
+          : `${format(lower)}부터 ${format(upper)}까지의 자연수 중 ${format(divisor)}으로 나누었을 때 나머지가 ${format(remainder)}인 수는 모두 몇 개인지 구하세요.${evidence("count-numbers-with-remainder", payload, answer)}`;
+        const solution = `조건에 맞는 첫 수는 ${format(first)}, 끝 수는 ${format(last)}입니다. ${format(divisor)}씩 늘어나는 수를 세면 모두 ${format(values.length)}개입니다.${level === 2 ? ` 따라서 ${answer}입니다.` : ""}`;
+        return result(prompt, answer, solution);
+      }
+
+      const configs = [[32, 60, 2, 15], [32, 134, 2, 15], [59, 235, 4, 17]];
+      const [start, end, step, divisor] = configs[level];
+      const values = [];
+      for (let value = start; value <= end; value += step) values.push(value);
+      const directSum = values.reduce((sum, value) => sum + value % divisor, 0);
+      const gcdLocal = (left, right) => right ? gcdLocal(right, left % right) : left;
+      const period = divisor / gcdLocal(step, divisor);
+      const oneCycle = values.slice(0, period).map(value => value % divisor);
+      const fullCycles = Math.floor(values.length / period);
+      const remaining = values.length % period;
+      let frontRemainders = [];
+      let fullCycleRemainders = oneCycle;
+      let fullCycleCount = fullCycles;
+      let tailRemainders = oneCycle.slice(0, remaining);
+      if (level === 2) {
+        const boundaryIndex = values.findIndex((value, index) => index > 0 && value % divisor === 0);
+        if (boundaryIndex <= 0) throw new Error("어려움 나머지 합에서 앞부분과 온전한 묶음을 나눌 수 없습니다.");
+        frontRemainders = values.slice(0, boundaryIndex).map(value => value % divisor);
+        const rest = values.slice(boundaryIndex);
+        fullCycleRemainders = rest.slice(0, period).map(value => value % divisor);
+        fullCycleCount = Math.floor(rest.length / period);
+        tailRemainders = rest.slice(fullCycleCount * period).map(value => value % divisor);
+      }
+      const cycleSum = frontRemainders.reduce((sum, value) => sum + value, 0)
+        + fullCycleRemainders.reduce((sum, value) => sum + value, 0) * fullCycleCount
+        + tailRemainders.reduce((sum, value) => sum + value, 0);
+      if (directSum !== cycleSum) throw new Error("나머지를 직접 더한 값과 묶어서 더한 값이 다릅니다.");
+      const answer = directSum;
+      const payload = { start, end, step, divisor, values, directSum, period, oneCycle, fullCycles, remaining, frontRemainders, fullCycleRemainders, fullCycleCount, tailRemainders, cycleSum, complexity: values.length * 10 + (level === 2 ? 500 : 0) };
+      const prompt = `${format(start)}부터 ${format(end)}까지 ${format(step)}씩 늘어나는 수들을 각각 ${format(divisor)}으로 나누었을 때의 나머지를 모두 더한 값을 구하세요.${evidence("remainder-sum-repeating-cycle", payload, answer)}`;
+      const solution = level === 0
+        ? `나머지 ${oneCycle.map(format).join(", ")}는 한 번의 온전한 묶음입니다. 모두 더하면 ${format(answer)}입니다.`
+        : level === 1
+          ? `나머지는 ${oneCycle.map(format).join(", ")}처럼 ${format(period)}개마다 되풀이됩니다. 온전한 ${format(fullCycles)}묶음과 남은 ${format(remaining)}개를 더하면 ${format(answer)}입니다. 직접 모두 더한 값도 같습니다.`
+          : `처음의 나머지 ${frontRemainders.map(format).join(", ")}를 먼저 더합니다. 그 뒤 온전한 ${format(fullCycleCount)}묶음과 마지막 나머지 ${tailRemainders.map(format).join(", ")}를 더하면 ${format(answer)}입니다. 직접 모두 더한 값도 같습니다.`;
+      return result(prompt, answer, solution);
     },
     source41PlaneTransformOne({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10 || variant === 5) throw new Error("검수 대기인 도형 이동 유형입니다.");

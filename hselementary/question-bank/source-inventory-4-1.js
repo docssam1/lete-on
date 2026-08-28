@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 233,
+  "verifiedMappings": 243,
   "items": [
     {
       "unit": 1,
@@ -3372,13 +3372,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 5 본문",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "몫과 나머지로 가려진 수 찾기",
+      "typeLabel": "나머지를 보고 가장 작은 나누어지는 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3390,13 +3391,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-1",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "몫과 나머지가 같은 수의 범위",
+      "typeLabel": "몫과 나머지가 같은 세 자리 수의 큰 수와 작은 수 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3408,7 +3410,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-2",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "수 카드로 나눗셈식 완성하기",
+      "typeLabel": "수 카드로 몫과 나머지가 정해진 나눗셈 완성하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -3426,13 +3428,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-3",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "잘못 나눈 몫과 나머지 복원",
+      "typeLabel": "잘못 나누어 뒤바뀐 몫과 나머지로 처음 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3444,13 +3447,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 5-4",
       "sourcePdfPage": 44,
       "sourcePrintedPage": 40,
-      "typeLabel": "수를 더한 뒤의 나머지로 원래 나머지 찾기",
+      "typeLabel": "어떤 수를 더한 뒤 처음 수의 나머지 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3462,13 +3466,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "주어진 범위에서 나머지 최대로",
+      "typeLabel": "주어진 범위에서 나머지가 가장 큰 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3480,13 +3485,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "최대 나머지를 갖는 가까운 수",
+      "typeLabel": "가장 큰 나머지를 가지면서 기준 수에 가장 가까운 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3498,13 +3504,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "숫자를 채워 나머지 최대로",
+      "typeLabel": "나머지가 가장 크도록 세 자리 수의 빈칸 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3516,13 +3523,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "몫과 나머지로 빈 숫자 복원",
+      "typeLabel": "나누어지는 수의 한 자리와 두 자리 몫 함께 채우기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 8,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3534,13 +3542,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "특정 나머지인 세 자리 수 세기",
+      "typeLabel": "같은 나머지를 갖는 세 자리 수의 개수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -3552,13 +3561,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 45,
       "sourcePrintedPage": 41,
-      "typeLabel": "같은 간격으로 커지는 수들을 나눈 나머지의 합 구하기",
+      "typeLabel": "일정하게 늘어나는 수들을 나눈 나머지의 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 3,
