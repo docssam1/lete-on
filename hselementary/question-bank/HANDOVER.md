@@ -5,8 +5,8 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8877/hselementary/question-bank/`
 - Total runtime types: 914 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 745 (deterministic runtime availability check)
-- Review-locked types: 169 (121 source-inventoried 4-1 items plus 48 source-complex 4-2 items)
+- Implemented types: 752 (deterministic runtime availability check)
+- Review-locked types: 162 (114 source-inventoried 4-1 items plus 48 source-complex 4-2 items)
 - Exact source-item mapping: 417 items: all 329 items in 4-1 plus 88 items in the 4-2 triangle and decimal units. Do not describe the remaining entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Completed: all six units in grades 4, 5, and 6 for both semesters
@@ -30,7 +30,7 @@
 - Grade 4-1 unit 1: 66 source items, all 66 ready; exploration groups 1 through 6 have all source-native variants
 - Grade 4-1 unit 2: 66 source items, 63 ready and 3 review-locked; angle exploration groups 1 through 4 have all source-native variants, group 5 publishes 9 and keeps 2 ambiguous items locked, and group 6 publishes 10 while keeping its contradictory Example 6-4 locked
 - Grade 4-1 unit 3: 65 source items, 44 ready and 21 review-locked; multiplication exploration groups 1 and 2 and division exploration groups 3 and 4 each have 11 source-native variants, and source example 6-4 does not exist
-- Grade 4-1 unit 4: 44 source items, 28 ready and 16 review-locked; exploration group 1 publishes 10 source-native items and keeps ambiguous Mission 1 locked, exploration group 2 publishes 8 items and locks 3 ambiguous or contradictory items, exploration group 3 publishes 9 items and locks 2 ambiguous items, plus 1 earlier exact-match generator in group 4
+- Grade 4-1 unit 4: 44 source items, 35 ready and 9 review-locked; exploration group 1 publishes 10 source-native items and keeps ambiguous Mission 1 locked, exploration group 2 publishes 8 items and locks 3 ambiguous or contradictory items, exploration group 3 publishes 9 items and locks 2 ambiguous items, and exploration group 4 publishes 8 items while locking 3 source-answer conflicts
 - Grade 4-1 unit 5: 22 source items, all generators review-locked
 - Grade 4-1 unit 6: 66 source items, 7 exact-match generators ready
 - Grade 4-2 unit 1: fraction addition and subtraction, 36 source-backed Mission types
@@ -46,9 +46,9 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates all 745 runtime-ready types at three difficulty offsets across 20 seeds. The source-native mapping has 208 items. Plane-transformation group 3 adds 9 independent source structures and keeps 2 items locked: Example 3-2 changes under two valid flip interpretations, while Mission 4 allows both 58 and 60 tiles. Its dedicated audit runs 13,500 independent generations and reverse-checks the 4-by-6 and 2-by-6 layouts, direct-drawing sequence, four-step shape cycles, base-tile recovery, transparent-tile pair classes, SVG dimensions, and visible fills.
+The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates all 752 runtime-ready types at three difficulty offsets across 20 seeds. The source-native mapping has 215 items. Plane-transformation group 3 adds 9 independent source structures and keeps 2 items locked: Example 3-2 changes under two valid flip interpretations, while Mission 4 allows both 58 and 60 tiles. Its dedicated audit runs 13,500 independent generations and reverse-checks the 4-by-6 and 2-by-6 layouts, direct-drawing sequence, four-step shape cycles, base-tile recovery, transparent-tile pair classes, SVG dimensions, and visible fills. Plane-transformation group 4 publishes 8 source structures and keeps 3 items locked because the supplied answers conflict with independent calculations. Its dedicated audit covers 72,000 distinct questions and 74,598 generated or independently recalculated cases, and reverse-checks seven-segment digits, digital-clock punctuation and leading zeroes, analog-clock hand angles, asymmetric faces, exhaustive fixed-number enumeration, and transformed stone coordinates.
 
-The full regression suite has 63 dedicated audits. The 2026-08-28 run passed all 63, including the new plane-transformation group 3 source audit, 4-1 inventory, child-readable Korean type-language, runtime taxonomy, availability, elementary-language, numeric-display, math-notation, and the existing shared audits. Separate browser QA passed all 36 desktop/mobile problem-and-solution states, all 9 A4 PDFs and their 21 physical pages, and direct URL checks for both locked types. It also confirmed zero horizontal overflow, blank SVG, broken image, or fill failure. Evidence is stored at `E:\Codex\visualizations\2026\08\28\hse-4-1-u4-e3-qa-final-luna\REPORT.md`.
+The full regression suite has 64 dedicated audits. The 2026-08-28 run passed all 64, including the new plane-transformation group 4 source audit, 4-1 inventory, child-readable Korean type-language, runtime taxonomy, availability, elementary-language, numeric-display, math-notation, and the existing shared audits. Group 4 browser QA passed all 32 desktop/mobile problem-and-solution states, all 8 A4 PDFs and their 13 physical pages, and direct URL checks for all 3 locked types. It also confirmed zero horizontal overflow, blank SVG, broken image, sparse first page, or fill failure. Evidence is stored at `E:\Codex\visualizations\2026\08\28\hse-4-1-u4-e4-qa-final-luna\REPORT.md`. The earlier group 3 evidence remains at `E:\Codex\visualizations\2026\08\28\hse-4-1-u4-e3-qa-final-luna\REPORT.md`.
 
 Plane-transformation group 1 publishes 10 of 11 source items after 15,000 independent generations. Its audit verifies rectangular grid dimensions, the complete two-color motif, transformed cell and vertex coordinates, four visually distinct choices, and rendered SVG bounds. Mission 1 remains review-locked because the finished pattern does not uniquely determine which movement was used. Separate browser QA covers 40 desktop/mobile problem-and-solution states and 10 A4 PDFs; it also guards the solution SVG render path and the compact print layout that prevents a blank first page for the six-grid drawing and polygon-slide types.
 
@@ -58,11 +58,11 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 745 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 752 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
-- Elementary explanation policy: `elementary-language-audit.js` checks all 745 public runtime types across 100 seeds per difficulty, including all 208 public 4-1 mappings
-- Numeric display policy: `numeric-display-audit.js` checks all 745 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
+- Elementary explanation policy: `elementary-language-audit.js` checks all 752 public runtime types across 100 seeds per difficulty, including all 215 public 4-1 mappings
+- Numeric display policy: `numeric-display-audit.js` checks all 752 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
 - 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 36 types and 36 distinct source structures
 - 4-2 triangle source routing, coordinate visibility, and independent answer check: `triangle-4-2-audit.js` covers 24 types and 24 distinct source structures
 - 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures

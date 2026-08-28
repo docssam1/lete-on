@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 208,
+  "verifiedMappings": 215,
   "items": [
     {
       "unit": 1,
@@ -4393,7 +4393,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문 본문의 제공 답 5개와 독립 계산 7개가 달라 공개할 수 없습니다."
     },
     {
       "unit": 4,
@@ -4408,11 +4410,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "숫자 카드를 반회전한 값",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "movementPatternTwo",
-      "variant": 2,
-      "difficultyBand": 1,
-      "sourceTier": "advanced-contest-overlap",
-      "reviewLocked": false
+      "generatorKey": "source41PlaneTransformFour",
+      "variant": 1,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": false,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4430,7 +4433,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "제공 답안 1시 23분과 독립 계산 10시 20분이 달라 공개할 수 없습니다."
     },
     {
       "unit": 4,
@@ -4445,10 +4450,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "회전과 거울상으로 시각 복원",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 3,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4466,7 +4473,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "예제 4-4의 제공 답 289와 독립 계산 279가 달라 공개할 수 없습니다."
     },
     {
       "unit": 4,
@@ -4481,10 +4490,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "반회전 수 카드의 잘못된 뺄셈",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 5,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4499,10 +4510,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "거꾸로 본 전자시계 시각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 6,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4517,10 +4530,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "카드 이동 뒤 같은 표정 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 7,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4535,10 +4550,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "반회전해 같은 네 자리 수 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 8,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4553,10 +4570,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "이동 뒤 남은 바둑돌 색 차이",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 9,
+      "implementationStatus": "ready"
     },
     {
       "unit": 4,
@@ -4571,10 +4590,12 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "거울 시계의 미래 시각",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformFour",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false,
+      "variant": 10,
+      "implementationStatus": "ready"
     },
     {
       "unit": 5,

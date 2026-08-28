@@ -283,6 +283,270 @@
     return `${source41DigitWords[digit]}${namedUnits[exponent - 4]}`;
   }).filter(Boolean).join(" ");
   const source41Evidence = (kind, payload, expected) => `<span hidden data-source41-kind="${kind}" data-source41-payload="${encodeURIComponent(JSON.stringify(payload))}" data-source41-expected="${encodeURIComponent(String(expected))}"></span>`;
+  // 개념탐구 4는 원본의 장면을 유지하되, 확인한 안전 후보 안에서만 수를 바꾼다.
+  const source41PlaneTransformFourRandom = ({ rng, level, variant = 0 }) => {
+    const publicVariants = new Set([1, 3, 5, 6, 7, 8, 9, 10]);
+    if (!publicVariants.has(variant)) throw new Error("검수 대기인 평면도형 이동 활용 유형입니다.");
+    const digitMap = { 0: 0, 1: 1, 2: 2, 5: 5, 6: 9, 8: 8, 9: 6 };
+    const segments = { 0: "abcdef", 1: "bc", 2: "abdeg", 5: "acdfg", 6: "acdefg", 8: "abcdefg", 9: "abcdfg" };
+    const segmentNames = ["a", "b", "c", "d", "e", "f", "g"];
+    const turned = value => [...String(value)].reverse().map(digit => digitMap[digit]).join("");
+    const mod = value => ((value % 360) + 360) % 360;
+    const smallAngle = (first, second) => Math.min(Math.abs(first - second), 360 - Math.abs(first - second));
+    const borrowCount = (minuend, subtrahend) => {
+      const top = String(minuend); const bottom = String(subtrahend).padStart(top.length, "0");
+      let borrow = 0, count = 0;
+      for (let index = top.length - 1; index >= 0; index -= 1) {
+        if (Number(top[index]) - borrow < Number(bottom[index])) { count += 1; borrow = 1; } else borrow = 0;
+      }
+      return count;
+    };
+    const crossesTwelve = (hour, minute, elapsed) => (hour % 12) * 60 + minute + elapsed >= 720;
+    const minuteCarry = (minute, elapsed) => minute + (elapsed % 60) >= 60;
+    const durationText = minutes => {
+      const hours = Math.floor(minutes / 60), rest = minutes % 60;
+      return [hours ? `${hours}시간` : "", rest ? `${rest}분` : ""].filter(Boolean).join(" ");
+    };
+    const keyOf = value => JSON.stringify(value);
+    const choose = values => {
+      if (!values?.length) throw new Error("안전 후보가 비어 있습니다.");
+      return values[Math.floor(rng() * values.length)];
+    };
+    const shuffleLocal = values => {
+      const output = [...values];
+      for (let index = output.length - 1; index > 0; index -= 1) {
+        const target = Math.floor(rng() * (index + 1));
+        [output[index], output[target]] = [output[target], output[index]];
+      }
+      return output;
+    };
+    const fingerprint = value => encodeURIComponent(JSON.stringify(value));
+    const evidence = (templateId, coreFingerprint, visualFingerprint, raw, expected) => source41Evidence(templateId, { templateId, coreFingerprint, visualFingerprint, raw }, expected);
+    const sevenDigit = (digit, x, y, digitIndex, empty = false) => {
+      const bars = { a: [x + 7, y + 2, 30, 5], b: [x + 38, y + 7, 5, 30], c: [x + 38, y + 43, 5, 30], d: [x + 7, y + 74, 30, 5], e: [x + 2, y + 43, 5, 30], f: [x + 2, y + 7, 5, 30], g: [x + 7, y + 38, 30, 5] };
+      const names = empty ? segmentNames : [...segments[digit]];
+      const shapes = names.map(name => {
+        const [rx, ry, width, height] = bars[name];
+        const off = empty ? " source41-e4-segment-off" : "";
+        const style = empty ? ' style="fill:#eef4f7;stroke:#7892a5;stroke-width:0.8"' : "";
+        return `<rect class="source41-e4-segment${off}" data-segment="${name}" data-lit="${!empty}" x="${rx}" y="${ry}" width="${width}" height="${height}" rx="1.5"${style}/>`;
+      }).join("");
+      return `<g data-digit-index="${digitIndex}" data-digit="${empty ? "" : digit}">${shapes}</g>`;
+    };
+    const seven = ({ kind, value = "", title, physicalTurn = false, clock = false, emptyDigits = 0 }) => {
+      const text = emptyDigits ? " ".repeat(emptyDigits) : String(value); const width = clock ? 260 : text.length * 48 + 18; let x = 10, digitIndex = 0;
+      const shapes = [...text].map(character => {
+        if (character === ":") { const dots = `<circle class="source41-e4-segment" data-segment="colon-top" cx="${x + 6}" cy="36" r="3"/><circle class="source41-e4-segment" data-segment="colon-bottom" cx="${x + 6}" cy="56" r="3"/>`; x += 17; return dots; }
+        const output = sevenDigit(character, x, 10, digitIndex, Boolean(emptyDigits)); x += 48; digitIndex += 1; return output;
+      }).join("");
+      const rotationCenterX = (width - 1) / 2, rotationCenterY = 50.25;
+      const content = physicalTurn ? `<g class="source41-e4-physical-turn" transform="rotate(180 ${rotationCenterX} ${rotationCenterY})">${shapes}</g>` : shapes;
+      const segmentFingerprint = emptyDigits ? Array.from({ length: emptyDigits }, () => "") : [...text].filter(character => character !== ":").map(character => segments[character]);
+      return `<svg class="geometry-diagram source41-e4-seven" viewBox="0 0 ${width} 104" style="width:min(${width}px,100%)" role="img" aria-label="${title}" data-source41-e4-kind="${kind}" data-seven-value="${emptyDigits ? "" : text}" data-empty-board="${Boolean(emptyDigits)}" data-physical-turn="${physicalTurn}" data-colon="${text.includes(":")}" data-segments="${fingerprint(segmentFingerprint)}"><rect x="2" y="2" width="${width - 4}" height="84" rx="6" fill="#eef7fb" stroke="#174866"/>${content}<text x="${width / 2}" y="99" text-anchor="middle" class="source41-e4-label">${title}</text></svg>`;
+    };
+    const point = (angle, radius, cx = 90, cy = 90) => [cx + radius * Math.sin(angle * Math.PI / 180), cy - radius * Math.cos(angle * Math.PI / 180)];
+    const clock = ({ kind, hourAngle, minuteAngle, title, mirror = false, rotation = 0, width = 180, tickCount = 12 }) => {
+      const ticks = Array.from({ length: tickCount }, (_, index) => {
+        const angle = index * 360 / tickCount; const outer = 73; const inner = index % (tickCount / 12) === 0 ? 64 : 68;
+        const [x1, y1] = point(angle, inner), [x2, y2] = point(angle, outer);
+        return `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"/>`;
+      }).join("");
+      const hand = (angle, length, stroke, name) => { const [x, y] = point(angle, length); return `<line data-hand="${name}" data-raw-angle="${angle}" x1="90" y1="90" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}" stroke-width="${stroke}"/>`; };
+      const frame = mirror ? `<rect class="source41-e4-mirror-frame" x="5" y="5" width="170" height="170" rx="7"/>` : "";
+      const transform = `${mirror ? "translate(180 0) scale(-1 1)" : ""} rotate(${rotation} 90 90)`;
+      const visibleHour = mirror ? mod(360 - hourAngle) : mod(hourAngle + rotation);
+      const visibleMinute = mirror ? mod(360 - minuteAngle) : mod(minuteAngle + rotation);
+      return `<svg class="geometry-diagram source41-e4-clock" viewBox="0 0 180 210" style="width:min(${width}px,100%)" role="img" aria-label="${title}" data-source41-e4-kind="${kind}" data-raw-hour-angle="${hourAngle}" data-raw-minute-angle="${minuteAngle}" data-visible-hour-angle="${visibleHour}" data-visible-minute-angle="${visibleMinute}" data-mirror="${mirror}" data-rotation="${rotation}" data-ticks="${tickCount}">${frame}<g transform="${transform}"><circle cx="90" cy="90" r="75" fill="#fff" stroke="#174866" stroke-width="3"/><g class="source41-e4-ticks" stroke="#174866" stroke-width="2">${ticks}</g>${hand(hourAngle, 42, 5, "hour")}${hand(minuteAngle, 62, 3, "minute")}<circle cx="90" cy="90" r="5" fill="#174866"/></g><text x="90" y="190" text-anchor="middle" class="source41-e4-label">${title}</text></svg>`;
+    };
+    const faceTransform = { r0: "", r90: "rotate(90 45 45)", r180: "rotate(180 45 45)", r270: "rotate(270 45 45)", f0: "translate(90 0) scale(-1 1)", f90: "rotate(90 45 45) translate(90 0) scale(-1 1)", f180: "rotate(180 45 45) translate(90 0) scale(-1 1)", f270: "rotate(270 45 45) translate(90 0) scale(-1 1)" };
+    const face = ({ kind, state, label, matched = false }) => `<svg class="geometry-diagram source41-e4-face${matched ? " source41-e4-face-solution-match" : ""}" viewBox="0 0 90 106" style="width:min(86px,100%)" role="img" aria-label="${matched ? `${label}, 풀이에서 맞는 카드` : label}" data-source41-e4-kind="${kind}" data-card-index="${label}" data-face-state="${state}"><rect x="5" y="5" width="80" height="80" rx="5" fill="${matched ? "#dff5e7" : "#fff9e5"}" stroke="${matched ? "#147a48" : "#174866"}" stroke-width="${matched ? 3 : 1}"/><g transform="${faceTransform[state]}"><circle cx="45" cy="45" r="29" fill="#fff4c9" stroke="#174866" stroke-width="2"/><circle data-feature="dot-eye" cx="31" cy="37" r="3.5" fill="#174866"/><path data-feature="wink-eye" d="M53 37 Q59 31 65 37" fill="none" stroke="#174866" stroke-width="3"/><path data-feature="smile" d="M28 58 Q36 70 48 61" fill="none" stroke="#c64d4d" stroke-width="3"/></g><text x="45" y="100" text-anchor="middle" class="source41-e4-label">${label}</text></svg>`;
+    const stones = ({ kind, board, mask, title }) => {
+      const cell = 34, margin = 18, maskSet = new Set(mask.map(([r, c]) => `${r},${c}`));
+      const lines = Array.from({ length: 5 }, (_, index) => `<line x1="${margin + index * cell}" y1="${margin}" x2="${margin + index * cell}" y2="${margin + 4 * cell}"/><line x1="${margin}" y1="${margin + index * cell}" x2="${margin + 4 * cell}" y2="${margin + index * cell}"/>`).join("");
+      const cells = Array.from({ length: 16 }, (_, index) => { const r = Math.floor(index / 4), c = index % 4, value = board[r][c], x = margin + c * cell, y = margin + r * cell; return `${maskSet.has(`${r},${c}`) ? `<rect data-mask="${r},${c}" x="${x + 2}" y="${y + 2}" width="${cell - 4}" height="${cell - 4}" fill="#dceffd"/>` : ""}${value ? `<circle data-stone="${value}" data-row="${r}" data-col="${c}" cx="${x + 17}" cy="${y + 17}" r="10" fill="${value === "B" ? "#172f45" : "#ffffff"}" stroke="#174866" stroke-width="2"/>` : ""}`; }).join("");
+      return `<svg class="geometry-diagram source41-e4-stones" viewBox="0 0 172 190" style="width:min(220px,100%)" role="img" aria-label="${title}" data-source41-e4-kind="${kind}" data-stones="${fingerprint(board)}" data-mask="${fingerprint(mask)}"><g stroke="#7892a5" stroke-width="1.2">${lines}</g>${cells}<text x="86" y="178" text-anchor="middle" class="source41-e4-label">${title}</text></svg>`;
+    };
+    const cache = window.__source41PlaneTransformFourCache || (window.__source41PlaneTransformFourCache = (() => {
+      const digits = [0, 1, 2, 5, 6, 8, 9];
+      const three = [-1, 0, 1].map(() => []);
+      digits.filter(Boolean).forEach(a => digits.forEach(b => digits.forEach(c => {
+        const original = `${a}${b}${c}`, rotated = turned(original);
+        if (rotated[0] === "0" || Number(rotated) <= Number(original)) return;
+        const difference = Number(rotated) - Number(original), digit69Count = [...original].filter(digit => digit === "6" || digit === "9").length;
+        const distinctCount = new Set(original).size, borrows = borrowCount(rotated, original);
+        const data = { original, rotated, difference, digit69Count, distinctCount, borrowCount: borrows };
+        if (distinctCount === 3 && digit69Count === 1 && borrows === 1) three[0].push(data);
+        if (digit69Count >= 1 && digit69Count <= 2 && difference >= 100 && difference <= 899) three[1].push(data);
+        if (digit69Count >= 2 && borrows >= 2 && original !== rotated) three[2].push(data);
+      })));
+
+      const clockSets = [-1, 0, 1].map(() => []);
+      for (let hour = 1; hour <= 12; hour += 1) for (let minute = 0; minute < 60; minute += 5) {
+        const hourAngle = (hour % 12) * 30 + minute * .5, minuteAngle = minute * 6, handGap = smallAngle(hourAngle, minuteAngle);
+        const data = { hour, minute, hourAngle, minuteAngle, handGap };
+        if ((minute === 0 || minute === 30) && handGap >= 40) clockSets[0].push(data);
+        if ([10, 15, 20, 25, 30, 35, 40, 45, 50].includes(minute) && handGap >= 30) clockSets[1].push(data);
+        if (minute !== 0 && minute !== 30 && handGap >= 24 && hourAngle % 30 !== 0) clockSets[2].push(data);
+      }
+
+      const enumerateCardNumbers = cards => {
+        const values = new Set();
+        const visit = (rest, output) => {
+          if (output.length === 6) { if (output[0] !== 0) values.add(Number(output.join(""))); return; }
+          rest.forEach((digit, index) => visit(rest.filter((_, next) => next !== index), [...output, digit]));
+        };
+        visit(cards, []);
+        return [...values].sort((a, b) => a - b);
+      };
+      const cardBands = [-1, 0, 1].map(() => []);
+      const buildCards = (start, left, made) => {
+        if (left) { for (let digit = start; digit < digits.length; digit += 1) buildCards(digit, left - 1, [...made, digits[digit]]); return; }
+        const counts = Object.fromEntries(digits.map(digit => [digit, made.filter(value => value === digit).length]));
+        const distinctCount = new Set(made).size, digit69Count = counts[6] + counts[9];
+        if (counts[0] !== 1 || digit69Count < 1 || distinctCount < 5 || Math.max(...Object.values(counts)) > 2) return;
+        const values = enumerateCardNumbers(made), third = values[2];
+        if (values.length < 500 || !third || String(third).endsWith("0")) return;
+        const upside = Number(turned(third));
+        if (String(upside).length !== 6 || upside <= 0 || upside > 999999) return;
+        const makeX = (lower, upper, hard = false) => {
+          const candidates = [];
+          for (let x = lower; x <= upper; x += 1) if (x < third && upside + x <= 999999 && (!hard || borrowCount(third, x) >= 2)) candidates.push(x);
+          return Uint32Array.from(candidates);
+        };
+        if (distinctCount >= 6) {
+          const xCandidates = makeX(1000, 9999);
+          if (xCandidates.length) cardBands[0].push({ cards: made, third, upside, candidateCount: values.length, distinctCount, digit69Count, xCandidates });
+        }
+        {
+          const xCandidates = makeX(4000, 19999);
+          if (xCandidates.length) cardBands[1].push({ cards: made, third, upside, candidateCount: values.length, distinctCount, digit69Count, xCandidates });
+        }
+        if (distinctCount <= 6) {
+          const xCandidates = makeX(20000, 50000, true);
+          if (xCandidates.length) cardBands[2].push({ cards: made, third, upside, candidateCount: values.length, distinctCount, digit69Count, xCandidates });
+        }
+      };
+      buildCards(0, 7, []);
+
+      const timePairs = [];
+      for (let hour = 1; hour <= 12; hour += 1) for (let minute = 0; minute < 60; minute += 1) {
+        const actual = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`, digitsOnly = actual.replace(":", "");
+        if (![...digitsOnly].every(digit => Object.prototype.hasOwnProperty.call(digitMap, digit))) continue;
+        const shownDigits = turned(digitsOnly), shownHour = Number(shownDigits.slice(0, 2)), shownMinute = Number(shownDigits.slice(2));
+        if (shownHour < 1 || shownHour > 12 || shownMinute > 59) continue;
+        timePairs.push({ actual, shown: `${shownDigits.slice(0, 2)}:${shownDigits.slice(2)}`, total: (hour % 12) * 60 + minute, hour, minute });
+      }
+      const timeScenarios = [-1, 0, 1].map(() => []);
+      timePairs.forEach(pair => {
+        [5, 10].forEach(elapsed => { if (pair.minute + elapsed < 60) timeScenarios[0].push({ ...pair, elapsed, minuteCarry: false, crossesTwelve: false }); });
+        for (let elapsed = 10; elapsed <= 25; elapsed += 5) if (pair.minute + elapsed >= 60 && !crossesTwelve(pair.hour, pair.minute, elapsed)) timeScenarios[1].push({ ...pair, elapsed, minuteCarry: true, crossesTwelve: false });
+        for (let elapsed = 25; elapsed <= 55; elapsed += 5) if (crossesTwelve(pair.hour, pair.minute, elapsed)) timeScenarios[2].push({ ...pair, elapsed, minuteCarry: pair.minute + elapsed >= 60, crossesTwelve: true });
+      });
+
+      const fixed = [];
+      for (let value = 1000; value <= 9999; value += 1) if (turned(value) === String(value)) fixed.push(value);
+      const fixedInRange = (lower, upper) => fixed.filter(value => value >= lower && value <= upper);
+      const ranges = [-1, 0, 1].map(() => []);
+      [1, 2, 5, 6, 8, 9].forEach(thousand => [0, 500].forEach(half => {
+        const lower = thousand * 1000 + half, upper = lower + 499, count = fixedInRange(lower, upper).length;
+        if (count >= 3 && count <= 4) ranges[0].push({ lower, upper });
+      }));
+      for (let lower = 1000; lower <= 9999; lower += 100) for (let width = 1000; width <= 3000; width += 100) {
+        const upper = lower + width;
+        if (upper > 9999) continue;
+        const count = fixedInRange(lower, upper).length;
+        if (count >= 5 && count <= 12) ranges[1].push({ lower, upper });
+      }
+      for (let lower = 1010; lower <= 9999; lower += 10) {
+        if (lower % 100 === 0) continue;
+        for (let width = 2500; width <= 6500; width += 10) {
+          const upper = lower + width;
+          if (upper > 9999 || upper % 100 === 0) continue;
+          const count = fixedInRange(lower, upper).length;
+          if (count >= 10 && count <= 24) ranges[2].push({ lower, upper });
+        }
+      }
+
+      const allStates = Object.keys(faceTransform);
+      const m5 = [-1, 0, 1].map(() => []);
+      const pseudo = seed => { let value = seed >>> 0; return () => ((value = (value * 1664525 + 1013904223) >>> 0) / 4294967296); };
+      const components = cells => { const left = new Set(cells.map(([r, c]) => `${r},${c}`)); let count = 0; while (left.size) { count += 1; const first = left.values().next().value.split(",").map(Number), queue = [first]; left.delete(first.join(",")); while (queue.length) { const [r, c] = queue.pop(); [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].forEach(([nr, nc]) => { const key = `${nr},${nc}`; if (left.delete(key)) queue.push([nr, nc]); }); } } return count; };
+      for (let seed = 1; seed <= 360000 && m5.some(pool => pool.length < 220); seed += 1) { const random = pseudo(seed); const board = Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => random() < .5 ? "B" : "W")); const blackTotal = board.flat().filter(value => value === "B").length; if (blackTotal < 6 || blackTotal > 10 || board.some(row => new Set(row).size < 2) || [0, 1, 2, 3].some(column => new Set(board.map(row => row[column])).size < 2)) continue; const holes = []; while (holes.length < 5) { const cell = [Math.floor(random() * 4), Math.floor(random() * 4)]; if (!holes.some(([r, c]) => r === cell[0] && c === cell[1])) holes.push(cell); } const mask = Array.from({ length: 16 }, (_, index) => [Math.floor(index / 4), index % 4]).filter(cell => !holes.some(([r, c]) => r === cell[0] && c === cell[1])); if ([0, 1, 2, 3].some(row => mask.filter(([r]) => r === row).length < 2 || mask.filter(([r]) => r === row).length > 3) || [0, 1, 2, 3].some(column => mask.filter(([, c]) => c === column).length < 2 || mask.filter(([, c]) => c === column).length > 3)) continue; const transformed = Array.from({ length: 4 }, (_, r) => Array.from({ length: 4 }, (_, c) => board[3 - c][3 - r])); const selected = mask.map(([r, c]) => transformed[r][c]); const difference = Math.abs(selected.filter(value => value === "B").length - selected.filter(value => value === "W").length); const maskComponents = components(mask), holeComponents = components(holes); const bucket = difference === 1 && maskComponents >= 2 && maskComponents <= 3 && holeComponents >= 3 ? 1 : difference === 3 && maskComponents <= 2 ? 0 : (difference === 5 || difference === 7) && maskComponents === 1 ? -1 : null; if (bucket !== null && m5[bucket + 1].length < 220) m5[bucket + 1].push({ board, mask, transformed, difference, maskComponents, holeComponents }); }
+
+      const mirrorScenarios = [-1, 0, 1].map(() => []);
+      for (let hour = 1; hour <= 12; hour += 1) {
+        [0, 30].forEach(minute => [30, 60, 90].forEach(elapsed => {
+          const hourAngle = (hour % 12) * 30 + minute * .5, minuteAngle = minute * 6, handGap = smallAngle(hourAngle, minuteAngle);
+          if (!crossesTwelve(hour, minute, elapsed) && !minuteCarry(minute, elapsed) && handGap >= 35) mirrorScenarios[0].push({ hour, minute, elapsed, hourAngle, minuteAngle, handGap, minuteCarry: false, crossesTwelve: false });
+        }));
+        [10, 20, 40, 50].forEach(minute => { for (let elapsed = 40; elapsed <= 100; elapsed += 10) {
+          const hourAngle = (hour % 12) * 30 + minute * .5, minuteAngle = minute * 6, handGap = smallAngle(hourAngle, minuteAngle);
+          if (minuteCarry(minute, elapsed) && !crossesTwelve(hour, minute, elapsed) && handGap >= 30) mirrorScenarios[1].push({ hour, minute, elapsed, hourAngle, minuteAngle, handGap, minuteCarry: true, crossesTwelve: false });
+        } });
+        for (let minute = 5; minute < 60; minute += 5) if (minute !== 30) for (let elapsed = 65; elapsed <= 145; elapsed += 5) {
+          const hourAngle = (hour % 12) * 30 + minute * .5, minuteAngle = minute * 6, handGap = smallAngle(hourAngle, minuteAngle);
+          if (crossesTwelve(hour, minute, elapsed) && handGap >= 20) mirrorScenarios[2].push({ hour, minute, elapsed, hourAngle, minuteAngle, handGap, minuteCarry: minuteCarry(minute, elapsed), crossesTwelve: true });
+        }
+      }
+
+      const counts = { three: three.map(pool => pool.length), clocks: clockSets.map(pool => pool.length), cards: cardBands.map(pool => pool.length), times: timeScenarios.map(pool => pool.length), ranges: ranges.map(pool => pool.length), stones: m5.map(pool => pool.length), mirrors: mirrorScenarios.map(pool => pool.length) };
+      if (keyOf(counts.three) !== keyOf([6, 65, 6]) || keyOf(counts.clocks) !== keyOf([19, 90, 104]) || keyOf(counts.cards) !== keyOf([31, 115, 92]) || keyOf(counts.times) !== keyOf([66, 20, 19]) || keyOf(counts.ranges) !== keyOf([12, 954, 123043]) || counts.stones.some(count => count < 200) || keyOf(counts.mirrors) !== keyOf([36, 131, 284])) throw new Error(`개념탐구 4 안전 후보 수가 설계와 다릅니다: ${keyOf(counts)}`);
+      return { three, clockSets, cardBands, timeScenarios, fixed, fixedInRange, ranges, m5, allStates, mirrorScenarios, counts };
+    })());
+
+    // Runtime generator levels are 0/1/2; DESIGN.md의 -1/0/1 안전 범위와 같은 순서다.
+    const levelIndex = Math.max(0, Math.min(2, Number(level) || 0));
+    if (variant === 1) {
+      const data = choose(cache.three[levelIndex]);
+      const raw = { original: data.original, turned: data.rotated, segmentMap: digitMap, difference: data.difference, digit69Count: data.digit69Count, distinctCount: data.distinctCount, borrowCount: data.borrowCount, candidatePoolSize: cache.counts.three[levelIndex] };
+      return result(`아래 숫자 카드를 180° 돌렸을 때 생기는 수와 처음 수의 차를 구하세요.${seven({ kind: "e4-example-4-1-card", value: data.original, title: "처음 숫자 카드" })}${evidence("seven-segment-turn-difference", `${data.original}|${data.rotated}`, `${data.original}:${data.rotated}`, raw, data.difference)}`, data.difference, `${data.original}을 실제로 180° 돌리면 ${data.rotated}입니다. ${data.rotated} - ${data.original} = ${data.difference}입니다.${seven({ kind: "e4-example-4-1-turned", value: data.original, physicalTurn: true, title: "180° 돌린 카드" })}`);
+    }
+    if (variant === 3) {
+      const data = choose(cache.clockSets[levelIndex]); const rotatedHour = mod(data.hourAngle + 270), rotatedMinute = mod(data.minuteAngle + 270);
+      const raw = { actual: { hour: data.hour, minute: data.minute }, actualAngles: [data.hourAngle, data.minuteAngle], rotatedAngles: [rotatedHour, rotatedMinute], mirrorAngles: [mod(360 - rotatedHour), mod(360 - rotatedMinute)], handGap: data.handGap, candidatePoolSize: cache.counts.clocks[levelIndex] };
+      const answer = `${data.hour}시 ${String(data.minute).padStart(2, "0")}분`;
+      return result(`오른쪽의 큰 시계는 처음 시계를 시계 방향으로 270° 돌린 모습입니다. 왼쪽 작은 시계는 그 모습을 거울에 비춘 것입니다. 처음 시각을 구하세요.<div class="source41-e4-clock-pair">${clock({ kind: "e4-example-4-3-mirror", hourAngle: rotatedHour, minuteAngle: rotatedMinute, mirror: true, width: 118, title: "왼쪽 거울 속 시계" })}${clock({ kind: "e4-example-4-3-rotated", hourAngle: rotatedHour, minuteAngle: rotatedMinute, width: 180, title: "오른쪽 큰 시계" })}</div>${evidence("rotated-clock-with-left-mirror", `${data.hour}:${data.minute}|${rotatedHour}:${rotatedMinute}`, `${rotatedHour}:${rotatedMinute}`, raw, answer)}`, answer, `큰 시계의 두 바늘을 시계 반대 방향으로 270° 되돌립니다. 처음 시각은 ${answer}입니다.${clock({ kind: "e4-example-4-3-original", hourAngle: data.hourAngle, minuteAngle: data.minuteAngle, title: "처음 시계" })}`);
+    }
+    if (variant === 5) {
+      const base = choose(cache.cardBands[levelIndex]), cards = shuffleLocal(base.cards), x = choose(base.xCandidates), P = base.upside + x, answer = base.third - x;
+      const raw = { cards, sortedCards: [...base.cards].sort((a, b) => a - b), third: base.third, upside: base.upside, x, P, candidateCount: base.candidateCount, distinctCount: base.distinctCount, digit69Count: base.digit69Count, borrowCount: borrowCount(base.third, x), cardPoolSize: cache.counts.cards[levelIndex], xCandidateCount: base.xCandidates.length };
+      return result(`숫자 카드 ${cards.join(", ")} 중 6장을 골라 만든 여섯 자리 수 중 세 번째로 작은 수를 찾습니다. 이 수를 180° 돌려 만든 수에 어떤 수를 더해 ${P.toLocaleString()}을 만들었습니다. 그 어떤 수를 처음 수에서 빼려 했을 때, 바르게 뺀 값을 구하세요.<div class="source41-e4-card-row">${cards.map((digit, index) => seven({ kind: "e4-mission-1-card", value: digit, title: `숫자 카드 ${index + 1}` })).join("")}</div>${evidence("six-of-seven-card-third-number-correction", `${[...base.cards].sort().join("")}|${cards.join("")}|${base.third}|${P}`, `${cards.join("")}|${P}`, raw, answer)}`, answer, `0으로 시작하는 수를 빼고 여섯 장을 모두 배열하면 세 번째 수는 ${base.third.toLocaleString()}입니다. 돌린 수는 ${base.upside.toLocaleString()}이므로 어떤 수는 ${P.toLocaleString()} - ${base.upside.toLocaleString()} = ${x.toLocaleString()}입니다. 따라서 ${base.third.toLocaleString()} - ${x.toLocaleString()} = ${answer.toLocaleString()}입니다.`);
+    }
+    if (variant === 6) {
+      const source = choose(cache.timeScenarios[levelIndex]), total = source.total + source.elapsed;
+      const answer = `${Math.floor((total % 720) / 60) || 12}시 ${String(total % 60).padStart(2, "0")}분`;
+      const raw = { shown: source.shown, actual: source.actual, elapsed: source.elapsed, minuteCarry: source.minuteCarry, crossesTwelve: source.crossesTwelve, candidatePoolSize: cache.counts.times[levelIndex] };
+      return result(`거꾸로 매달린 아이가 본 전자시계에는 ${source.shown}이 보였습니다. ${source.elapsed}분 뒤 내려왔을 때의 시각을 구하세요.${seven({ kind: "e4-mission-2-upside-clock", value: source.shown, clock: true, title: "아이에게 보인 전자시계" })}${evidence("leading-zero-upside-down-clock", `${source.shown}|${source.actual}|${source.elapsed}`, `${source.shown}|${source.elapsed}`, raw, answer)}`, answer, `아이에게 보인 조각을 180° 돌려 읽으면 실제 시각은 ${source.actual}입니다. ${source.elapsed}분 뒤는 ${answer}입니다.`);
+    }
+    if (variant === 7) {
+      const target = choose(cache.allStates), inverse = { r0: "f90", r90: "f0", r180: "f270", r270: "f180", f0: "r90", f90: "r0", f180: "r270", f270: "r180" };
+      const matchingState = inverse[target], count = choose(levelIndex === 0 ? [5, 6] : levelIndex === 1 ? [3, 4] : [1, 2]);
+      const nonmatching = cache.allStates.filter(state => state !== matchingState), nearState = nonmatching[(cache.allStates.indexOf(matchingState) + 1) % nonmatching.length];
+      const board = [...cache.allStates, ...Array.from({ length: count - 1 }, () => matchingState)];
+      if (levelIndex === 2) while (board.filter(state => state === nearState).length < 4) board.push(nearState);
+      while (board.length < 16) board.push(choose(nonmatching));
+      const shuffledBoard = shuffleLocal(board), answer = shuffledBoard.filter(state => state === matchingState).length;
+      const raw = { target, board: shuffledBoard, transform: "r270-after-right-flip-after-r180", matchingState, nearState, nearStateCount: shuffledBoard.filter(state => state === nearState).length, allStates: cache.allStates };
+      const problemGrid = `<div class="source41-e4-face-grid">${shuffledBoard.map((state, index) => face({ kind: "e4-mission-3-card", state, label: index + 1 })).join("")}</div>`;
+      const solutionGrid = `<div class="source41-e4-face-grid source41-e4-face-solution">${shuffledBoard.map((state, index) => face({ kind: "e4-mission-3-solution-card", state, label: index + 1, matched: state === matchingState })).join("")}</div>`;
+      return result(`점 눈, 윙크 눈, 웃는 입의 위치가 서로 다른 얼굴 카드를 180° 돌리고, 오른쪽으로 뒤집고, 다시 시계 방향으로 270° 돌립니다. 목표 얼굴과 같아지는 카드는 몇 장입니까?${problemGrid}${face({ kind: "e4-mission-3-target", state: target, label: "목표" })}${evidence("asymmetric-face-card-transform-count", `${target}|${shuffledBoard.join(",")}`, `${target}|${shuffledBoard.join(",")}`, raw, answer)}`, answer, `점 눈, 윙크 눈, 입의 위치를 모두 비교합니다. 풀이에서 초록 테두리로 표시한 카드는 ${answer}장입니다.${solutionGrid}`);
+    }
+    if (variant === 8) {
+      const data = choose(cache.ranges[levelIndex]), values = cache.fixedInRange(data.lower, data.upper);
+      const raw = { lower: data.lower, upper: data.upper, values, fixedCount: cache.fixed.length, candidatePoolSize: cache.counts.ranges[levelIndex] };
+      return result(`${data.lower.toLocaleString()}부터 ${data.upper.toLocaleString()}까지의 네 자리 수 중에서, 일곱 조각 숫자판을 180° 돌려도 같은 수가 되는 것은 모두 몇 개입니까?${seven({ kind: "e4-mission-4-empty", emptyDigits: 4, title: "빈 네 자리 조각판" })}${evidence("four-digit-seven-segment-half-turn-fixed-count", `${data.lower}|${data.upper}`, `${data.lower}:${data.upper}`, raw, values.length)}`, values.length, `해당 범위에서 조각을 180° 돌려도 같은 수는 ${values.join(", ")}입니다. 모두 ${values.length}개입니다.`);
+    }
+    if (variant === 9) {
+      const data = choose(cache.m5[levelIndex]); const blank = Array.from({ length: 4 }, () => Array(4).fill("")); const maskSet = new Set(data.mask.map(([r, c]) => `${r},${c}`)); const remaining = data.transformed.map((row, r) => row.map((value, c) => maskSet.has(`${r},${c}`) ? value : "")); const black = data.mask.map(([r, c]) => data.transformed[r][c]).filter(value => value === "B").length, white = 11 - black; const raw = { original: data.board, mask: data.mask, transformed: data.transformed, black, white, difference: data.difference, maskComponents: data.maskComponents, holeComponents: data.holeComponents, coordinateFormula: "transformed[r][c]=original[3-c][3-r]", candidatePoolSize: cache.counts.stones[levelIndex] };
+      return result(`검은 돌과 흰 돌이 놓인 4행 4열 자석판을 시계 방향으로 270° 돌리고 오른쪽으로 뒤집었습니다. 오른쪽의 색칠한 11칸에 남은 흰 돌 수와 검은 돌 수의 차를 구하세요.<div class="source41-e4-stone-pair">${stones({ kind: "e4-mission-5-original", board: data.board, mask: [], title: "처음 자석판" })}${stones({ kind: "e4-mission-5-target", board: blank, mask: data.mask, title: "색칠한 11칸" })}</div>${evidence("four-by-four-stone-board-rotation-reflection", `${keyOf(data.board)}|${keyOf(data.mask)}`, `${keyOf(data.board)}:${keyOf(data.mask)}`, raw, data.difference)}`, data.difference, `색칠한 11칸을 좌표식으로 옮겨 보면 검은 돌은 ${black}개, 흰 돌은 ${white}개입니다. 따라서 차는 ${data.difference}개입니다.${stones({ kind: "e4-mission-5-solution", board: remaining, mask: data.mask, title: "색칠한 칸에 남은 돌" })}`);
+    }
+    const data = choose(cache.mirrorScenarios[levelIndex]), total = (data.hour % 12) * 60 + data.minute + data.elapsed;
+    const answer = `${Math.floor((total % 720) / 60) || 12}시 ${String(total % 60).padStart(2, "0")}분`;
+    const visibleAngles = [mod(360 - data.hourAngle), mod(360 - data.minuteAngle)];
+    const raw = { actual: [data.hour, data.minute], actualAngles: [data.hourAngle, data.minuteAngle], visibleAngles, elapsed: data.elapsed, minuteCarry: data.minuteCarry, crossesTwelve: data.crossesTwelve, handGap: data.handGap, candidatePoolSize: cache.counts.mirrors[levelIndex] };
+    const elapsedLabel = durationText(data.elapsed);
+    return result(`왼쪽 거울에 비친 시계의 실제 시각에서 ${elapsedLabel} 뒤는 몇 시 몇 분입니까?${clock({ kind: "e4-mission-6-mirror", hourAngle: data.hourAngle, minuteAngle: data.minuteAngle, mirror: true, tickCount: 60, title: "거울에 비친 시계" })}${evidence("mirror-clock-future-time", `${data.hour}:${data.minute}|${data.elapsed}|${visibleAngles.join(":")}`, `${visibleAngles.join(":")}|${data.elapsed}`, raw, answer)}`, answer, `거울의 두 바늘을 한 번만 좌우로 되돌리면 실제 시각은 ${data.hour}시 ${String(data.minute).padStart(2, "0")}분입니다. ${elapsedLabel} 뒤는 ${answer}입니다.${clock({ kind: "e4-mission-6-actual", hourAngle: data.hourAngle, minuteAngle: data.minuteAngle, tickCount: 60, title: "실제 시계" })}`);
+  };
   const source41CircledNumbers = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫"];
   const source41AngleClass = value => value > 0 && value < 90
     ? "acute"
@@ -8928,6 +9192,9 @@
       const payload = { variant, level, corners, pairs, representatives, answer: 6 };
       const evidence = source41Evidence("count-two-transparent-corner-tile-symmetry-classes", payload, 6);
       return result(`보기와 같이 한 모서리 쪽이 색칠된 투명 타일 두 장을 겹치지 않게 빈 두 칸에 붙입니다. 완성한 모양 전체를 돌리거나 뒤집어 같으면 같은 모양으로 셉니다. 서로 다른 모양은 모두 몇 가지입니까?<div class="source41-e3-strip">${cornerTile("e3-mission-6-source", "lr", "기본 투명 타일")}${emptyPairBoard("e3-mission-6-board", "타일을 붙일 두 칸")}</div>${evidence}`, 6, `각 타일은 색칠한 모서리 방향이 4가지이므로 처음에는 4×4=16가지입니다. 완성한 전체를 돌리거나 뒤집어 같은 것끼리 묶으면 ${representatives.length}가지입니다.<div class="source41-e3-strip">${representatives.map((key, index) => cornerPair("e3-mission-6-solution", key.split(","), `${index + 1}번째 모양`)).join("")}</div>`);
+    },
+    source41PlaneTransformFour({ rng, level, variant = 0 }) {
+      return source41PlaneTransformFourRandom({ rng, level, variant });
     },
     advancedLinePattern({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
