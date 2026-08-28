@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
 const planData = require("../assessment/grade6-placement-plan.js");
 const clusterMap = require("../curriculum/us-k8-cluster-map.js");
 const registry = require("../curriculum/us-k8-content-registry.js");
@@ -11,10 +12,31 @@ function counts(rows, field) {
   }));
 }
 
+test("blueprint hash is recomputed from the ordered immutable slot contract", function () {
+  const canonicalSlots = planData.plan.slots.map(function (slot) {
+    return {
+      slotId: slot.slotId,
+      unitId: slot.unitId,
+      clusterId: slot.clusterId,
+      skillId: slot.skillId,
+      standardRange: slot.standardRange,
+      domainId: slot.domainId,
+      difficulty: slot.difficulty,
+      responseType: slot.responseType,
+      scoringMode: slot.scoringMode,
+      maxPoints: slot.maxPoints
+    };
+  });
+  const recomputed = crypto.createHash("sha256").update(JSON.stringify(canonicalSlots), "utf8").digest("hex");
+  assert.equal(recomputed, planData.plan.blueprintContractSha256);
+});
+
 test("Grade 6 placement plan uses 42 locked authenticated slots rather than a 12-item claim", function () {
   const plan = planData.plan;
   assert.equal(plan.purpose, "course-placement");
   assert.equal(plan.plannedItemCount, 42);
+  assert.equal(plan.blueprintVersion, 1);
+  assert.equal(plan.blueprintContractSha256, "a449bc7e0c50ff74af18fca0a648763ae1cfa0e1bdab21c13686dfb6d2547dab");
   assert.equal(plan.slots.length, 42);
   assert.equal(plan.deliveryRequirement, "authenticated-assessment-only");
   assert.equal(plan.presentationOrderState, "fixed-stratified-template-only-server-seeded-order-pending");

@@ -153,6 +153,13 @@ function magicGrid(visual) {
   return `<div class="b9-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => `<span class="${typeof value === "string" ? "target" : ""}">${esc(value)}</span>`).join("")}</div>${visual.lineSum ? `<strong class="b9-line-sum">한 줄의 합 ${visual.lineSum}</strong>` : ""}`;
 }
 
+function consecutiveSum(visual) {
+  const values = visual.to - visual.from <= 7
+    ? Array.from({ length: visual.to - visual.from + 1 }, (_, index) => visual.from + index)
+    : [visual.from, visual.from + 1, visual.from + 2, "…", visual.to - 1, visual.to];
+  return `<div class="b9-consecutive-sum" role="img" aria-label="${visual.from}부터 ${visual.to}까지 연속수의 합"><div>${values.map((value, index) => `<span>${esc(value)}</span>${index < values.length - 1 ? "<i>+</i>" : ""}`).join("")}</div><strong>${esc(visual.from)}부터 ${esc(visual.to)}까지</strong></div>`;
+}
+
 function triangleSum(visual) {
   const points = visual.size === 6
     ? [[170,25],[85,135],[35,230],[170,230],[305,230],[255,135]]
@@ -239,6 +246,7 @@ export function book09Markup(visual) {
     case "cube-box": return cubeBox(visual);
     case "cube-model-choice": return cubeModelChoice(visual);
     case "magic-grid": return magicGrid(visual);
+    case "consecutive-sum": return consecutiveSum(visual);
     case "triangle-sum": return triangleSum(visual);
     case "polygon-ring": return polygonRing(visual);
     case "overlap-regions": return overlapRegions(visual);

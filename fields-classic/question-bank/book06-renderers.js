@@ -242,6 +242,10 @@ function digitRange(visual) {
   return `<div class="b6-digit-range"><p>${visual.sample.map((value) => `<span>${value}</span>`).join("<i>→</i>")}</p><strong>쓴 숫자의 개수</strong></div>`;
 }
 
+function rangeCount(visual) {
+  return `<div class="b6-range-count"><p><span>${visual.start}</span><i>→</i><em>…</em><i>→</i><span>${visual.end}</span></p><strong>${escapeHtml(visual.mode === "digits" ? "쓴 숫자의 개수" : "수의 개수")}</strong></div>`;
+}
+
 function digitFocus(visual) {
   return `<div class="b6-digit-focus"><p>${visual.start}부터 ${visual.end}까지</p><span>${visual.digit}</span><strong>${visual.excluded ? "이 숫자가 없는 수" : "이 숫자가 나온 횟수"}</strong></div>`;
 }
@@ -361,6 +365,7 @@ export function book06Markup(visual) {
     case "sequence-boxes": return sequenceBoxes(visual);
     case "newspaper-pages": return newspaperPages(visual);
     case "digit-range": return digitRange(visual);
+    case "range-count": return rangeCount(visual);
     case "digit-focus": return digitFocus(visual);
     case "operator-row": return operatorRow(visual);
     case "removable-plus": return removablePlus(visual);

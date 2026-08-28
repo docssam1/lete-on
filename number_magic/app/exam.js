@@ -23,6 +23,18 @@
   .nm-print-item .nm-q-num { font-weight: bold; font-size: 0.8em; color: #555; }
   .nm-print-item .nm-q-tex { font-size: 1.1em; margin-top: 4px; }
   .nm-print-blank { display: inline-block; min-width: 40px; border-bottom: 2px solid #000; }
+  /* 세로셈(예: 34+12=□) 인쇄 박스 — "그리드 학습지" 인쇄가 이 서식을 만들면서도
+     CSS가 아예 없어(2026-08-28 발견) 실제로는 안 꾸며진 채 인쇄되고 있었다.
+     renderPrint에 통합하며 함께 채움. */
+  .nm-print-item-vp { text-align: center; }
+  .nm-print-item-vp .nm-q-num { display: block; }
+  .nm-print-vp { display: inline-flex; flex-direction: column; min-width: 2.6em; margin: 6px auto 0;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 1.15em; }
+  .nm-print-vp-top { text-align: right; padding: 0 2px 2px; }
+  .nm-print-vp-mid { display: flex; justify-content: space-between; gap: 6px; padding: 0 2px 2px; }
+  .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
+  .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
+  .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
   .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -43,6 +55,40 @@
   .nm-cp-arrow { color: #888; }
   .nm-cp-rule { background: #f4f4f4; border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-top: 6px; }
   .nm-cp-rule p { margin: 4px 0 0; }
+
+  /* 표지 — 지오메트리 랩 학습지의 A4 표지(브랜드/제목/구분선/캐릭터/이름칸/코드)와
+     같은 짜임이지만, 톤은 Numbers of Magic(종이+잉크+골드)로. 2026-08-28. */
+  .nm-print-cover { --cv-accent:#C9A063; position:relative; display:flex; flex-direction:column;
+    min-height:255mm; padding:16mm 14mm; box-sizing:border-box; background:#FBFAF7;
+    break-after:page; page-break-after:always; }
+  .nm-print-cover::after { content:""; position:absolute; inset:7mm; border:1px solid #E4E2DC; pointer-events:none; }
+  .nm-cv-brand { position:relative; display:flex; align-items:baseline; justify-content:space-between;
+    padding:0 2mm 5mm; border-bottom:2px solid #0E2C57; }
+  .nm-cv-brand span { font-size:12px; font-weight:900; letter-spacing:2px; color:var(--cv-accent); }
+  .nm-cv-brand strong { font-size:12px; font-weight:800; letter-spacing:1.6px; color:#0E2C57; }
+  .nm-cv-brand strong i { font-style:normal; color:var(--cv-accent); }
+  .nm-cv-copy { position:relative; margin:auto 0 0; text-align:center; }
+  .nm-cv-kicker { margin:0 0 6mm; font-size:12px; font-weight:900; letter-spacing:3px; color:var(--cv-accent); }
+  .nm-cv-title { margin:0; font-size:32px; line-height:1.35; font-weight:900; color:#0E2C57; word-break:keep-all; }
+  .nm-cv-rule { width:26mm; height:3px; margin:9mm auto; background:var(--cv-accent); }
+  .nm-cv-sub { margin:0; font-size:13px; line-height:1.9; color:#5c6a72; }
+  /* 캐릭터 대신 넘버스매직의 상표 모티프(1·2·4·8·16, about.html 히어로 성좌와 같은 수열)로
+     장식 — 지오메트리처럼 별도 캐릭터 스프라이트 자산이 없어도 브랜드가 드러난다. */
+  .nm-cv-marks { position:relative; display:flex; justify-content:center; gap:8mm; margin:8mm auto auto; }
+  .nm-cv-marks span { display:flex; align-items:center; justify-content:center; width:14mm; height:14mm;
+    border-radius:50%; background:#0E2C57; color:#F5D98B; border:1.2px solid var(--cv-accent);
+    font-family:monospace; font-weight:700; font-size:12px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-cv-meta { position:relative; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6mm;
+    margin:0 6mm; padding:7mm 4mm; border-top:1px solid #c9c6be; border-bottom:1px solid #c9c6be; }
+  .nm-cv-meta > div { display:grid; grid-template-columns:auto 1fr; align-items:end; gap:3mm; }
+  .nm-cv-meta span { font-size:11px; font-weight:800; color:#4a5468; white-space:nowrap; }
+  .nm-cv-meta i { font-style:normal; height:8mm; border-bottom:1px solid #1A2233; display:block; }
+  .nm-cv-meta b { font-style:normal; font-size:13px; font-weight:800; color:var(--cv-accent); justify-self:start; }
+  .nm-cv-footer { position:relative; display:flex; justify-content:space-between; margin-top:8mm;
+    padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
+  .nm-cv-footer b { color:var(--cv-accent); }
+  .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
 }
 @media screen {
   .nm-print-sheet { display: none; }
@@ -320,11 +366,140 @@ function bindConceptToggle(container){
   if(chk) chk.addEventListener('change', () => setConceptPageOn(chk.checked));
 }
 
+/* ── 표지(Cover) ─────────────────────────────────────────────
+   지오메트리 랩 학습지(geometry/worksheet)의 A4 표지와 같은 역할 — 문항
+   학습지는 아이가 받는 책 한 권이니 표지 없이 나가면 안 된다는 원장 판단
+   (2026-08-28, "쌓기나무 학습지처럼 당연히 표지도 있어야"). 기본값 켬
+   (지오메트리는 기본 꺼짐이지만, 넘버스는 마스터 로드맵에서부터 "개념+
+   제너레이터 학습지"를 표준으로 정했으므로 완전한 학습지 쪽을 기본으로). */
+const COVER_TOGGLE_KEY = 'nm_ws_cover';
+function getCoverOn(){ try{ const v = localStorage.getItem(COVER_TOGGLE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; } }
+function setCoverOn(v){ try{ localStorage.setItem(COVER_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
+function coverToggleRowHtml(){
+  return `<label class="nm-ex-concept-toggle">
+    <input type="checkbox" id="nm-ex-cover-chk" ${getCoverOn()?'checked':''}>
+    <span>📘 표지 넣기</span>
+  </label>`;
+}
+function bindCoverToggle(container){
+  const chk = container.querySelector('#nm-ex-cover-chk');
+  if(chk) chk.addEventListener('change', () => setCoverOn(chk.checked));
+}
+
+/* 스레드ID 접두어 → 갈래 아이콘·이름·색(drill.html의 TOPICS 색과 맞춤).
+   drill.html은 cfg.topicIcon/topicColor/topicLabel/topicSection을 직접 실어
+   보내므로 이건 그게 없는 호출(메인 앱 학년별 학습지 화면, 편지함 등)만을
+   위한 안전망 — 표지가 색 없이 밋밋하게 나가지 않도록. */
+const THREAD_PREFIX_THEME = {
+  AD:{icon:'＋',label:'덧셈',color:'#3b82f6'}, SB:{icon:'－',label:'뺄셈',color:'#ef4444'},
+  ML:{icon:'×',label:'곱셈',color:'#10b981'}, DV:{icon:'÷',label:'나눗셈',color:'#f59e0b'},
+  NS:{icon:'🧠',label:'수 감각',color:'#8b5cf6'}, FR:{icon:'🧠',label:'분수',color:'#8b5cf6'},
+  DC:{icon:'🧠',label:'소수',color:'#8b5cf6'}, MX:{icon:'🧠',label:'혼합',color:'#8b5cf6'},
+  CH:{icon:'🏔️',label:'경시의 탑',color:'#C9A063'}, NL:{icon:'🌱',label:'수의 나라',color:'#2E9E6B'}
+};
+function coverTheme(cfg){
+  const prefix = String((cfg||{}).thread||'').replace(/[0-9].*$/,'');
+  const fb = THREAD_PREFIX_THEME[prefix] || {icon:'✨',label:'Numbers of Magic',color:'#0E2C57'};
+  return {
+    icon:  (cfg&&cfg.topicIcon)  || fb.icon,
+    label: (cfg&&cfg.topicLabel) || fb.label,
+    color: (cfg&&cfg.topicColor) || fb.color
+  };
+}
+function coverLevelBadge(items){
+  if(items.length !== 1) return '혼합';
+  const it = items[0];
+  const th = (window.NM_THREADS||{})[it.thread] || {};
+  const lv = (th.levels||[]).find(l => l.id === it.level);
+  return (lv && lv.label && lv.label.ko) ? lv.label.ko : ('Lv.' + (it.level||1));
+}
+/* items: [{thread,level,topicName?,topicIcon?,topicColor?,topicLabel?}], code: 표지 하단 코드,
+   totalCount: 표지 발치에 적을 실제 문항 수(합계). */
+function coverPageHtml(items, code, totalCount){
+  const theme = coverTheme(items[0]);
+  const names = items.map(it => it.topicName ||
+    (((window.NM_THREADS||{})[it.thread]||{}).name||{}).ko || it.thread);
+  const title = names.length <= 2 ? names.join(' · ')
+    : names.slice(0,2).join(' · ') + ' 외 ' + (names.length-2) + '가지';
+  return `<div class="nm-print-cover" style="--cv-accent:${esc(theme.color)}">
+  <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC</strong></div>
+  <div class="nm-cv-copy">
+    <p class="nm-cv-kicker">${esc(theme.icon)} ${esc(theme.label)} 학습지</p>
+    <h1 class="nm-cv-title">${esc(title)}</h1>
+    <div class="nm-cv-rule"></div>
+    <p class="nm-cv-sub">한 장씩 풀고 날짜를 적어 두면<br>어떤 유형이 아직 어려운지 한눈에 보여요.</p>
+  </div>
+  <div class="nm-cv-marks" aria-hidden="true">${[1,2,4,8,16].map(n=>`<span>${n}</span>`).join('')}</div>
+  <div class="nm-cv-meta">
+    <div><span>이름</span><i></i></div>
+    <div><span>시작한 날</span><i></i></div>
+    <div><span>레벨</span><b>${esc(coverLevelBadge(items))}</b></div>
+  </div>
+  <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
+  <div class="nm-cv-code">${esc(code||'')}</div>
+</div>`;
+}
+
 /* 원형 번호 ①②③... */
 function circled(n){
   if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
   if(n>=21&&n<=35) return String.fromCharCode(0x3250+n-20);
   return '('+n+')';
+}
+
+/* 인쇄용 문제·정답 그리드를 채운다 — renderPrint·renderPrintMulti·(예전엔 따로
+   있던) 그리드 학습지 인쇄가 전부 이거 하나만 쓴다(2026-08-28 통합). 세로셈
+   가능("34+12=□" 형태, parseVert)이면 세로 알고리즘 박스로, 문장제는 문장+빈칸,
+   그 외엔 인라인 수식 — 원래 그리드 학습지 쪽만 세로셈을 그렸는데 그 CSS가
+   아예 없어 안 꾸며진 채 인쇄되고 있었다(표지 작업 중 발견). 번호는 circled()
+   원문자로 통일(이전엔 renderPrint만 "1." 평문 번호였다). */
+function fillPrintGrid(problems, problemGrid, answerGrid){
+  problems.forEach((p, i) => {
+    const v = p.word ? null : parseVert(p.tex);
+    const card = document.createElement('div');
+    card.className = 'nm-print-item' + (v ? ' nm-print-item-vp' : '');
+    const numEl = document.createElement('span');
+    numEl.className = 'nm-q-num';
+    numEl.textContent = circled(i+1);
+    card.appendChild(numEl);
+    if(p.word){
+      const texEl = document.createElement('div');
+      texEl.className = 'nm-q-tex';
+      texEl.textContent = p.word;
+      card.appendChild(texEl);
+      const blank = document.createElement('div');
+      blank.className = 'nm-print-word-blank';
+      blank.textContent = '답: __________';
+      card.appendChild(blank);
+    } else if(v){
+      const vp = document.createElement('div');
+      vp.className = 'nm-print-vp';
+      vp.innerHTML = `<div class="nm-print-vp-top">${esc(v.a)}</div>
+<div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${esc(v.b)}</span></div>
+<div class="nm-print-vp-line"></div>
+<div class="nm-print-vp-bot">&nbsp;</div>`;
+      card.appendChild(vp);
+    } else {
+      const texEl = document.createElement('div');
+      texEl.className = 'nm-q-tex';
+      renderKaTeX(p.tex || '', texEl);
+      card.appendChild(texEl);
+    }
+    problemGrid.appendChild(card);
+
+    const ak = document.createElement('div');
+    ak.className = 'nm-ak-item';
+    ak.appendChild(document.createTextNode(`${circled(i+1)} `));
+    const akTex = ansTex(p);
+    if(akTex){
+      const akSpan = document.createElement('span');
+      renderKaTeX(akTex, akSpan);
+      ak.appendChild(akSpan);
+    } else {
+      ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+    }
+    answerGrid.appendChild(ak);
+  });
 }
 
 /* 세로셈 파싱: "a OP b = \square" 형태 */
@@ -850,6 +1025,7 @@ const NM_EXAM = {
       ${WORD_OPTS.map(w => `<button class="nm-ex-cnt-btn${w.key===wordType?' sel':''}" data-w="${w.key}">${w.label}</button>`).join('')}
     </div>
     ${conceptToggleRowHtml()}
+    ${coverToggleRowHtml()}
     <div class="nm-ex-actions" style="margin-top:10px">
       <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
       <button id="nm-ex-print-start" class="nm-ex-btn-secondary">🖨️ 인쇄하여 풀기</button>
@@ -909,6 +1085,7 @@ const NM_EXAM = {
           previewSeed = NM_RNG.newCode(); render();
         });
         bindConceptToggle(container);
+        bindCoverToggle(container);
 
         container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
           onStart && onStart(makeConfig());
@@ -979,6 +1156,7 @@ const NM_EXAM = {
       <button id="nm-ex-new-seed" class="nm-ex-btn-ghost">🎲 새 코드</button>
     </div>
     ${conceptToggleRowHtml()}
+    ${coverToggleRowHtml()}
     <div class="nm-ex-actions">
       <button id="nm-ex-start" class="nm-ex-btn-primary">▶ 학습지 시작</button>
       <button id="nm-ex-print" class="nm-ex-btn-secondary">🖨️ 인쇄</button>
@@ -998,6 +1176,7 @@ const NM_EXAM = {
         currentSeed = NM_RNG.newCode(); refreshCode();
       });
       bindConceptToggle(container);
+      bindCoverToggle(container);
       container.querySelector('#nm-ex-start').addEventListener('click', () => {
         onStart && onStart(getConfig());
       });
@@ -1041,9 +1220,8 @@ const NM_EXAM = {
     ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="number" placeholder="답 / Answer" autocomplete="off"
-           style="font-size:1.4em;width:120px;text-align:center;padding:8px">
-    <button id="nm-ex-submit" class="nm-btn nm-btn-primary" style="margin-left:8px">확인 ✓</button>
+    <input id="nm-ex-ans" type="number" placeholder="답 / Answer" autocomplete="off">
+    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
   <div class="nm-exam-nav">
     <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>← 이전</button>
@@ -1177,11 +1355,13 @@ const NM_EXAM = {
     sheet.setAttribute('aria-hidden', 'true');
 
     const th = (window.NM_THREADS || {})[thread] || {};
-    const thName = (th.name||{}).ko || thread;
+    const thName = config.topicName || (th.name||{}).ko || thread;
 
+    const coverHtml = getCoverOn() ? coverPageHtml([config], code, count) : '';
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
 
     sheet.innerHTML = `
+${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — ${esc(thName)} 학습지</h2>
@@ -1204,41 +1384,7 @@ ${conceptHtml}
 
     const problemGrid  = sheet.querySelector('#nm-print-problems');
     const answerGrid   = sheet.querySelector('#nm-print-answers');
-
-    problems.forEach((p, i) => {
-      const card = document.createElement('div');
-      card.className = 'nm-print-item';
-      const numEl  = document.createElement('div');
-      numEl.className = 'nm-q-num';
-      numEl.textContent = `${i+1}.`;
-      const texEl = document.createElement('div');
-      texEl.className  = 'nm-q-tex';
-      card.appendChild(numEl);
-      card.appendChild(texEl);
-      if(p.word){
-        texEl.textContent = p.word;
-        const blank = document.createElement('div');
-        blank.textContent = '답: __________';
-        blank.style.marginTop = '6px';
-        card.appendChild(blank);
-      } else {
-        renderKaTeX(p.tex || '', texEl);
-      }
-      problemGrid.appendChild(card);
-
-      const ak = document.createElement('div');
-      ak.className = 'nm-ak-item';
-      ak.appendChild(document.createTextNode(`${i+1}. `));
-      const akTex = ansTex(p);
-      if(akTex){
-        const akSpan = document.createElement('span');
-        renderKaTeX(akTex, akSpan);
-        ak.appendChild(akSpan);
-      } else {
-        ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-      }
-      answerGrid.appendChild(ak);
-    });
+    fillPrintGrid(problems, problemGrid, answerGrid);
 
     setTimeout(() => { window.print(); }, 350);
   },
@@ -1261,13 +1407,15 @@ ${conceptHtml}
       applyWordProblems(problems, cfg.wordType, numericSeed);
       const code = NM_EXAM.worksheetCode(cfg);
       const th = (window.NM_THREADS || {})[cfg.thread] || {};
-      return { cfg, problems, code, thName: (th.name||{}).ko || cfg.thread };
+      return { cfg, problems, code, thName: cfg.topicName || (th.name||{}).ko || cfg.thread };
     });
 
     const sheet = document.createElement('div');
     sheet.className = 'nm-print-sheet';
     sheet.setAttribute('aria-hidden', 'true');
 
+    const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode,
+      items.reduce((sum,it) => sum + (it.count||0), 0)) : '';
     const conceptHtml = getConceptPageOn()
       ? conceptPageHtml(items.map(it => ({thread:it.thread, level:it.level})), envelopeCode)
       : '';
@@ -1291,6 +1439,7 @@ ${conceptHtml}
 </div>`).join('');
 
     sheet.innerHTML = `
+${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode||'')}</h2>
@@ -1308,40 +1457,7 @@ ${answerSectionsHtml}`;
     built.forEach((b,i) => {
       const problemGrid = sheet.querySelector(`#nm-print-problems-${i}`);
       const answerGrid  = sheet.querySelector(`#nm-print-answers-${i}`);
-      b.problems.forEach((p, qi) => {
-        const card = document.createElement('div');
-        card.className = 'nm-print-item';
-        const numEl = document.createElement('div');
-        numEl.className = 'nm-q-num';
-        numEl.textContent = `${qi+1}.`;
-        const texEl = document.createElement('div');
-        texEl.className = 'nm-q-tex';
-        card.appendChild(numEl);
-        card.appendChild(texEl);
-        if(p.word){
-          texEl.textContent = p.word;
-          const blank = document.createElement('div');
-          blank.textContent = '답: __________';
-          blank.style.marginTop = '6px';
-          card.appendChild(blank);
-        } else {
-          renderKaTeX(p.tex || '', texEl);
-        }
-        problemGrid.appendChild(card);
-
-        const ak = document.createElement('div');
-        ak.className = 'nm-ak-item';
-        ak.appendChild(document.createTextNode(`${qi+1}. `));
-        const akTex = ansTex(p);
-        if(akTex){
-          const akSpan = document.createElement('span');
-          renderKaTeX(akTex, akSpan);
-          ak.appendChild(akSpan);
-        } else {
-          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-        }
-        answerGrid.appendChild(ak);
-      });
+      fillPrintGrid(b.problems, problemGrid, answerGrid);
     });
 
     setTimeout(() => { window.print(); }, 350);
@@ -1523,78 +1639,14 @@ window.examScreen = function(container){
       container.querySelector('#nm-ws-back').addEventListener('click', showSetup);
     }
 
+    /* 예전엔 여기서 표지·개념 페이지·문제 그리드를 통째로 다시 만들었다
+       (NM_EXAM.renderPrint와 거의 같은 일을 따로). 두 번째 사본이라 표지가
+       빠져 있었고, 세로셈 서식용 CSS도 이쪽에만 없어 실제 인쇄물이 안 꾸며진
+       채 나가고 있었다(2026-08-28, 표지 작업 중 발견). renderPrint 쪽을
+       세로셈까지 지원하도록 올리고(fillPrintGrid) 이 함수는 그걸 그대로
+       호출하도록 합쳤다 — 표지·개념 페이지·QR 전부 자동으로 따라온다. */
     function printWorksheet(){
-      const old = document.querySelector('.nm-print-sheet');
-      if(old) old.remove();
-      const sheet = document.createElement('div');
-      sheet.className = 'nm-print-sheet';
-      sheet.setAttribute('aria-hidden','true');
-      const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
-
-      sheet.innerHTML = `
-${conceptHtml}
-<div class="nm-print-header">
-  <h2 style="margin:0;font-size:16px">${esc(label||thread)} 연산 학습지</h2>
-  <div style="display:flex;gap:20px;margin-top:6px;font-size:12px">
-    <span>이름: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>날짜: <span style="display:inline-block;width:80px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>점수: <span style="display:inline-block;width:50px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
-    ${qrHeaderBlockHtml(code)}
-  </div>
-</div>
-<div class="nm-print-ws-grid" id="nm-pw-probs"></div>
-<div class="nm-print-answer-key">
-  <h3 style="margin:0 0 6px;font-size:13px">정답지 — <span style="font-family:monospace;font-size:11px">${esc(code)}</span></h3>
-  <div class="nm-print-ak-grid" id="nm-pw-aks"></div>
-</div>`;
-      document.body.appendChild(sheet);
-
-      sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
-
-      const probGrid = sheet.querySelector('#nm-pw-probs');
-      const akGrid   = sheet.querySelector('#nm-pw-aks');
-
-      problems.forEach((p,i)=>{
-        const v = p.word ? null : parseVert(p.tex);
-        const cell = document.createElement('div');
-        cell.className = 'nm-print-ws-cell';
-        if(p.word){
-          cell.className += ' nm-print-ws-wide';
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
-<div class="nm-print-word">${esc(p.word)}</div>
-<div class="nm-print-word-blank">답: __________</div>`;
-        } else if(v){
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
-<div class="nm-print-vp">
-  <div class="nm-print-vp-top">${esc(v.a)}</div>
-  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span>${esc(v.b)}</div>
-  <div class="nm-print-vp-line"></div>
-  <div class="nm-print-vp-bot">&nbsp;</div>
-</div>`;
-        } else {
-          const texEl = document.createElement('div');
-          texEl.className = 'nm-vp-tex';
-          renderKaTeX(p.tex||'', texEl);
-          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>`;
-          cell.appendChild(texEl);
-        }
-        probGrid.appendChild(cell);
-
-        const ak = document.createElement('div');
-        ak.className = 'nm-print-ak-item';
-        ak.appendChild(document.createTextNode(`${circled(i+1)} `));
-        const pwTex = ansTex(p);
-        if(pwTex){
-          const pwSpan = document.createElement('span');
-          renderKaTeX(pwTex, pwSpan);
-          ak.appendChild(pwSpan);
-        } else {
-          ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
-        }
-        akGrid.appendChild(ak);
-      });
-
-      setTimeout(()=>window.print(), 350);
+      NM_EXAM.renderPrint({ thread, level, count, seed, wordType, topicName: label });
     }
 
     render();

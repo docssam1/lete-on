@@ -131,6 +131,11 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .seg button:last-child{border-right:none}
 .seg button.on{background:var(--blue-deep);color:#fff}
 
+.dr-printopts{display:flex;gap:16px;flex-wrap:wrap}
+.dr-check{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;
+  color:var(--ink);cursor:pointer;user-select:none}
+.dr-check input{width:16px;height:16px;accent-color:var(--blue-deep);cursor:pointer}
+
 .bench-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:26px}
 .dr-seed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
 .dr-seed-label{font-size:11px;color:var(--sub)}
@@ -162,77 +167,117 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .dr-code-input:focus{border-color:var(--blue)}
 .dr-code-label{font-size:11.5px;color:var(--sub)}
 
-/* ── 연습 화면(exam.js가 생성하는 .nm-exam-*) — 토큰만 교체 ── */
-.nm-exam-run{display:flex;flex-direction:column;gap:0}
-.nm-exam-header{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
-.nm-exam-progress{height:6px;background:var(--mist);border-radius:99px;overflow:hidden;margin-bottom:10px}
-.nm-progress-bar{height:100%;background:var(--blue);border-radius:99px;transition:width .3s ease}
-.nm-exam-info{display:flex;justify-content:space-between;align-items:center;font-variant-numeric:tabular-nums}
-.nm-q-counter{font-size:13px;font-weight:700;color:var(--sub)}
-.nm-timer{font-size:13px;font-weight:800;color:var(--no);background:rgba(213,83,79,.1);padding:4px 10px;border-radius:99px}
+/* ── 실행 화면 상단 바(뒤로가기+주제명) — 카드와 같은 폭으로 정렬 ── */
+.dr-run-bar{max-width:560px;margin:0 auto 16px;display:flex;align-items:center;gap:10px}
+.dr-run-topic{font-size:13px;color:var(--sub);font-weight:700}
 
-.nm-exam-question{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:40px 24px 32px;
-  text-align:center;margin-bottom:16px;min-height:160px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center}
+/* ── 연습 화면(exam.js가 생성하는 .nm-exam-*) — 흩어진 3개 박스 → 하나의 카드로 재구성 ── */
+.nm-exam-run{max-width:560px;margin:0 auto;background:var(--paper);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1)}
+.nm-exam-header{background:var(--paper-warm);border-bottom:1px solid var(--line);padding:16px 22px}
+.nm-exam-progress{height:4px;background:var(--mist);border-radius:99px;overflow:hidden;margin-bottom:12px}
+.nm-progress-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--blue));border-radius:99px;transition:width .35s ease}
+.nm-exam-info{display:flex;justify-content:space-between;align-items:baseline}
+.nm-q-counter{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14.5px;font-weight:700;color:var(--ink)}
+.nm-timer{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;font-weight:800;color:var(--no);
+  background:rgba(213,83,79,.1);padding:4px 10px;border-radius:99px}
+
+.nm-exam-question{padding:46px 26px 34px;text-align:center;position:relative}
+.nm-exam-question::before{content:"문제";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
 .nm-q-tex{font-size:clamp(26px,7vw,40px);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.3}
 .nm-q-tex .katex{font-size:1em}
-.nm-q-hint{font-size:12.5px;color:var(--sub);margin-top:12px}
+.nm-q-hint{font-size:12.5px;color:var(--sub);margin:14px auto 0;max-width:38ch}
 
-.nm-exam-input{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:16px}
-#nm-ex-ans{font-size:clamp(20px,5.5vw,28px);text-align:center;padding:12px 14px;border:1.5px solid var(--line);
-  border-radius:10px;width:130px;font-family:'Pretendard',sans-serif;font-weight:800;outline:none;
-  transition:.15s;background:var(--paper);color:var(--ink);-moz-appearance:textfield}
-#nm-ex-ans::-webkit-outer-spin-button,#nm-ex-ans::-webkit-inner-spin-button{-webkit-appearance:none}
-#nm-ex-ans:focus{border-color:var(--blue)}
-#nm-ex-submit{background:var(--blue-deep);color:#fff;font-size:15px;font-weight:800;border:none;
-  border-radius:10px;padding:13px 22px;cursor:pointer;transition:.15s;font-family:'Pretendard',sans-serif}
-#nm-ex-submit:hover{background:var(--blue)}
-#nm-ex-submit:active{transform:scale(.96)}
+.nm-exam-input{display:flex;justify-content:center;padding:0 26px 26px}
+#nm-ex-ans,#nm-ex-ans2{font-size:clamp(19px,5.5vw,25px);text-align:center;padding:12px 8px;
+  border:1.5px solid var(--line);border-right:none;border-radius:10px 0 0 10px;width:100%;max-width:170px;
+  font-family:'Pretendard',sans-serif;font-weight:800;outline:none;transition:.15s;background:var(--paper);
+  color:var(--ink);-moz-appearance:textfield}
+#nm-ex-ans::-webkit-outer-spin-button,#nm-ex-ans::-webkit-inner-spin-button,
+#nm-ex-ans2::-webkit-outer-spin-button,#nm-ex-ans2::-webkit-inner-spin-button{-webkit-appearance:none}
+#nm-ex-ans:focus,#nm-ex-ans2:focus{border-color:var(--blue)}
+#nm-ex-submit,#nm-ex-sub2{background:var(--blue-deep);color:#fff;font-size:14px;font-weight:800;
+  border:1.5px solid var(--blue-deep);border-radius:0 10px 10px 0;padding:0 20px;cursor:pointer;
+  transition:.15s;font-family:'Pretendard',sans-serif;flex:none}
+#nm-ex-submit:hover,#nm-ex-sub2:hover{background:var(--blue)}
+#nm-ex-submit:active,#nm-ex-sub2:active{transform:scale(.98)}
 
-.nm-exam-nav{display:flex;justify-content:center;gap:12px}
-#nm-ex-prev,#nm-ex-skip{background:transparent;color:var(--sub);border:1px solid var(--line);border-radius:8px;
-  padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
-#nm-ex-prev:hover:not(:disabled),#nm-ex-skip:hover{background:var(--mist)}
+.nm-exam-nav{display:flex;border-top:1px solid var(--line)}
+#nm-ex-prev,#nm-ex-skip{flex:1;background:transparent;color:var(--sub);border:none;
+  padding:13px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+#nm-ex-prev{border-right:1px solid var(--line)}
+#nm-ex-prev:hover:not(:disabled),#nm-ex-skip:hover{background:var(--mist);color:var(--ink)}
 #nm-ex-prev:disabled{opacity:.35;cursor:not-allowed}
 
-/* ── 숫자 키패드 ── */
-.dr-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;
-  max-width:260px;margin-left:auto;margin-right:auto}
-.dr-numpad-btn{background:var(--paper);border:1px solid var(--line);border-radius:10px;font-size:21px;
-  font-weight:700;padding:15px 10px;cursor:pointer;transition:.1s;color:var(--ink);font-family:'Pretendard',sans-serif}
+/* ── 숫자 키패드 — 독립 카드로, 연습 카드와 같은 폭·정렬 ── */
+.dr-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:380px;
+  margin:16px auto 0;background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow-1);padding:14px}
+.dr-numpad-btn{background:var(--paper-warm);border:1px solid var(--line);border-radius:9px;font-size:20px;
+  font-weight:700;padding:14px 10px;cursor:pointer;transition:.1s;color:var(--ink);
+  font-family:'Pretendard',sans-serif;font-variant-numeric:tabular-nums}
 .dr-numpad-btn:active{background:var(--mist);transform:scale(.95)}
-.dr-numpad-btn.dr-np-del{background:rgba(213,83,79,.08);color:var(--no);font-size:17px}
-.dr-numpad-btn.dr-np-ok{background:var(--blue-deep);color:#fff;font-size:15px;grid-column:span 2}
+.dr-numpad-btn.dr-np-del{background:rgba(213,83,79,.08);color:var(--no);font-size:16px;border-color:rgba(213,83,79,.25)}
+.dr-numpad-btn.dr-np-ok{background:var(--blue-deep);color:#fff;font-size:14px;grid-column:span 2;border-color:var(--blue-deep)}
+.dr-numpad-btn.dr-np-ok:active{background:var(--blue)}
 
-/* ── 결과 화면 ── */
-.nm-exam-result{display:flex;flex-direction:column;gap:16px}
-.nm-result-score{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:30px 24px;text-align:center}
-.nm-result-score.nm-pass{border-top:3px solid var(--ok)}
-.nm-result-score.nm-fail{border-top:3px solid var(--gold)}
-.nm-score-num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(36px,10vw,56px);
+/* ── 결과 화면 — 점수·오답·액션을 하나의 세로 리듬으로 ── */
+.nm-exam-result{display:flex;flex-direction:column;gap:16px;max-width:560px;margin:0 auto}
+.nm-result-score{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:34px 24px;text-align:center;box-shadow:var(--shadow-1);overflow:hidden}
+.nm-result-score::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.nm-result-score.nm-pass::before{background:linear-gradient(90deg,var(--ok),var(--gold))}
+.nm-result-score.nm-fail::before{background:linear-gradient(90deg,var(--gold),var(--no))}
+.nm-score-num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(38px,10vw,58px);
   font-weight:700;color:var(--ink);line-height:1}
-.nm-score-pct{font-size:20px;font-weight:800;color:var(--sub);margin-top:4px;font-variant-numeric:tabular-nums}
-.nm-score-label{font-size:16px;font-weight:800;margin-top:10px}
-.nm-result-score.nm-pass .nm-score-label{color:var(--ok)}
-.nm-result-score.nm-fail .nm-score-label{color:var(--gold-deep,var(--gold))}
-.nm-score-time{font-size:13px;color:var(--sub);margin-top:8px;font-variant-numeric:tabular-nums}
+.nm-score-pct{font-size:14.5px;font-weight:800;color:var(--sub);margin-top:6px;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.nm-score-label{display:inline-block;font-size:13.5px;font-weight:800;margin-top:14px;
+  padding:6px 18px;border-radius:99px}
+.nm-result-score.nm-pass .nm-score-label{color:var(--ok);background:rgba(46,158,107,.1)}
+.nm-result-score.nm-fail .nm-score-label{color:#9c7a3f;background:rgba(201,160,99,.14)}
+.nm-score-time{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;color:var(--sub);margin-top:12px}
 
-.nm-result-perfect{font-size:16px;font-weight:700;text-align:center;padding:18px;color:var(--ok)}
+.nm-result-perfect{font-size:15px;font-weight:700;text-align:center;padding:22px;color:var(--ok);
+  background:rgba(46,158,107,.06);border:1px solid rgba(46,158,107,.2);border-radius:14px}
 
-.nm-result-wrongs{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
-.nm-result-wrongs h3{font-size:14px;font-weight:800;margin-bottom:14px;color:var(--ink)}
+.nm-result-wrongs{background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:22px;box-shadow:var(--shadow-1)}
+.nm-result-wrongs h3{font-size:11px;font-weight:800;margin-bottom:14px;color:var(--sub);
+  text-transform:uppercase;letter-spacing:.08em}
 .nm-result-table{width:100%;border-collapse:collapse;font-size:13.5px}
-.nm-result-table th{text-align:left;padding:8px 12px;font-size:11px;color:var(--sub);
+.nm-result-table th{text-align:left;padding:8px 10px;font-size:10.5px;color:var(--sub);
   border-bottom:1px solid var(--line);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.nm-result-table td{padding:10px 12px;border-bottom:1px solid var(--mist);vertical-align:middle}
-.nm-rtex{min-width:120px}
-.nm-wrong-ans{color:var(--no);font-weight:700;font-size:14px}
-.nm-correct-ans{color:var(--ok);font-weight:700;font-size:14px}
+.nm-result-table td{padding:11px 10px;border-bottom:1px solid var(--mist);vertical-align:middle;
+  font-variant-numeric:tabular-nums}
+.nm-result-table tr:last-child td{border-bottom:none}
+.nm-rtex{min-width:110px}
+.nm-wrong-ans{color:var(--no);font-weight:700;font-size:13.5px;text-decoration:line-through;
+  text-decoration-color:rgba(213,83,79,.4)}
+.nm-correct-ans{color:var(--ok);font-weight:700;font-size:13.5px}
+
+/* 좁은 화면: 표 → 카드 리스트 (열마다 라벨을 CSS content로 붙임, 마크업 불변) */
+@media(max-width:520px){
+  .nm-result-table thead{display:none}
+  .nm-result-table,.nm-result-table tbody,.nm-result-table tr,.nm-result-table td{display:block;width:100%}
+  .nm-result-table tr{border:1px solid var(--mist);border-radius:10px;padding:14px;margin-bottom:10px}
+  .nm-result-table tr:last-child{margin-bottom:0}
+  .nm-result-table td{border:none;padding:3px 0}
+  .nm-result-table td:first-child{font-family:var(--mono);font-weight:800;color:var(--gold);font-size:11px}
+  .nm-result-table td.nm-rtex{padding:6px 0 10px;font-size:16px}
+  .nm-result-table td.nm-rtex::before{content:"문제";display:block;font-size:10px;color:var(--sub);
+    font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .nm-result-table td.nm-wrong-ans,.nm-result-table td.nm-correct-ans{display:flex;
+    justify-content:space-between;align-items:center}
+  .nm-result-table td.nm-wrong-ans::before{content:"내 답";font-size:10.5px;color:var(--sub);font-weight:700}
+  .nm-result-table td.nm-correct-ans::before{content:"정답";font-size:10.5px;color:var(--sub);font-weight:700}
+}
 
 .nm-result-actions{display:flex;gap:10px;flex-wrap:wrap}
 .nm-result-actions .nm-btn{flex:1;min-width:120px;text-align:center}
-.nm-result-code{font-size:11.5px;color:var(--sub);text-align:center}
-.nm-result-code code{font-family:var(--mono);background:var(--mist);padding:2px 8px;border-radius:4px;color:var(--ink)}
+.nm-result-code{font-size:11.5px;color:var(--sub);text-align:center;padding-top:2px}
+.nm-result-code code{font-family:var(--mono);background:var(--mist);padding:3px 9px;border-radius:5px;color:var(--ink)}
 
 /* ── 인쇄(exam.js print CSS 보완) ── */
 @media print{
@@ -601,6 +646,14 @@ function parseTopic(key){
   return sub ? {cat:cat, sub:sub} : null;
 }
 
+/* 학습지 인쇄 옵션(표지·개념 페이지) — exam.js의 getCoverOn/getConceptPageOn과
+   같은 localStorage 키를 직접 읽고 쓴다. drill.html은 자체 완결 페이지라
+   exam.js 내부 함수를 그대로 부르는 대신 값만 공유한다(키 이름 반드시 일치). */
+function getCoverPref(){ try{ var v = localStorage.getItem('nm_ws_cover'); return v===null ? true : v==='1'; }catch(e){ return true; } }
+function setCoverPref(v){ try{ localStorage.setItem('nm_ws_cover', v?'1':'0'); }catch(e){} }
+function getConceptPref(){ try{ return localStorage.getItem('nm_ws_concept_page')==='1'; }catch(e){ return false; } }
+function setConceptPref(v){ try{ localStorage.setItem('nm_ws_concept_page', v?'1':'0'); }catch(e){} }
+
 function getConfig(){
   var t = parseTopic(state.topicKey);
   if(!t) return null;
@@ -609,7 +662,14 @@ function getConfig(){
     level: t.sub.level,
     count: state.count,
     timer: state.timer,
-    seed: state.seed
+    seed: state.seed,
+    /* 표지 색·아이콘용 — exam.js의 coverPageHtml이 이 값을 우선으로 쓴다
+       (없으면 스레드ID 접두어로 자체 추정). TOPICS의 갈래 색을 그대로 표지에 낸다. */
+    topicName: t.sub.label,
+    topicIcon: t.cat.icon,
+    topicColor: t.cat.color,
+    topicLabel: t.cat.label,
+    topicSection: t.cat.section
   };
 }
 
@@ -721,9 +781,14 @@ function renderBench(){
   html += '<div class="preview-hd"><span>미리보기</span><button class="preview-dice" id="dr-dice">🎲 다른 문제</button></div>';
   html += '<div class="preview-grid" id="dr-preview"></div>';
 
+  html += '<div class="bench-row"><div class="bench-label">학습지 구성</div><div class="dr-printopts">';
+  html += '<label class="dr-check"><input type="checkbox" id="dr-opt-cover"' + (getCoverPref()?' checked':'') + '> 표지</label>';
+  html += '<label class="dr-check"><input type="checkbox" id="dr-opt-concept"' + (getConceptPref()?' checked':'') + '> 개념 페이지</label>';
+  html += '</div></div>';
+
   html += '<div class="bench-actions">';
-  html += '<button class="gold-btn" id="dr-start-btn">▶ 연습 시작</button>';
-  html += '<button class="nm-btn nm-btn-secondary" id="dr-print-btn">🖨 학습지 인쇄</button>';
+  html += '<button class="gold-btn" id="dr-print-btn">🖨 학습지 인쇄</button>';
+  html += '<button class="nm-btn nm-btn-secondary" id="dr-start-btn">▶ 화면으로 풀기</button>';
   html += '<div class="dr-seed-wrap"><span class="dr-seed-label">코드</span><span class="dr-seed-code" id="dr-seed-disp" title="클릭하면 새 코드">' + esc(NM_EXAM.worksheetCode(getConfig())) + '</span></div>';
   html += '</div>';
 
@@ -768,6 +833,11 @@ function bindBench(){
 
   var printBtn = document.getElementById('dr-print-btn');
   if(printBtn) printBtn.addEventListener('click', function(){ var cfg = getConfig(); if(!cfg) return; NM_EXAM.renderPrint(cfg); });
+
+  var coverChk = document.getElementById('dr-opt-cover');
+  if(coverChk) coverChk.addEventListener('change', function(){ setCoverPref(this.checked); });
+  var conceptChk = document.getElementById('dr-opt-concept');
+  if(conceptChk) conceptChk.addEventListener('change', function(){ setConceptPref(this.checked); });
 }
 
 function bindHome(){
@@ -808,18 +878,17 @@ function showDrill(cfg){
   wrapper.id = 'dr-drill-wrap';
   body.appendChild(wrapper);
 
-  /* 뒤로가기 버튼 */
+  /* 뒤로가기 버튼 + 현재 주제 — 아래 시험 카드와 같은 폭으로 정렬 */
   var backRow = document.createElement('div');
-  backRow.style.cssText = 'margin-bottom:14px;display:flex;align-items:center;gap:10px';
+  backRow.className = 'dr-run-bar';
   var backBtn = document.createElement('button');
   backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
   backBtn.textContent = '← 처음으로';
   backBtn.addEventListener('click', showHome);
   backRow.appendChild(backBtn);
 
-  /* 현재 주제 표시 */
   var topicInfo = document.createElement('span');
-  topicInfo.style.cssText = 'font-size:13px;color:var(--sub);font-weight:600';
+  topicInfo.className = 'dr-run-topic';
   var th = (window.NM_THREADS||{})[cfg.thread]||{};
   topicInfo.textContent = (th.name&&th.name.ko)||cfg.thread;
   backRow.appendChild(topicInfo);
@@ -883,7 +952,7 @@ function showResult(result, origCfg){
   body.innerHTML = '';
 
   var backRow = document.createElement('div');
-  backRow.style.cssText = 'margin-bottom:14px';
+  backRow.className = 'dr-run-bar';
   var backBtn = document.createElement('button');
   backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
   backBtn.textContent = '← 처음으로';
@@ -908,11 +977,8 @@ function showResult(result, origCfg){
       showWrongsRetry(opts.wrongs, origCfg);
     }
   });
-
-  /* 키패드 추가 (결과 화면에도 오답 재시험 있으므로) */
-  body.insertAdjacentHTML('beforeend', '<div class="dr-numpad" id="dr-numpad" style="display:none"></div>');
-  document.getElementById('dr-numpad').innerHTML = buildNumpadHTML();
-  activateNumpad();
+  /* 결과 화면엔 답 입력칸이 없으므로 숫자패드를 안 붙인다(예전엔 여기 붙여도 쓸 곳이 없어
+     모바일에서 아무 기능 없는 키패드만 떠 있었다 — 오답 재시험은 showWrongsRetry가 따로 붙인다) */
 }
 
 function buildNumpadHTML(){
@@ -933,7 +999,7 @@ function showWrongsRetry(wrongs, origCfg){
   var startTime = Date.now();
 
   var backRow = document.createElement('div');
-  backRow.style.cssText = 'margin-bottom:14px';
+  backRow.className = 'dr-run-bar';
   var backBtn = document.createElement('button');
   backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
   backBtn.textContent = '← 처음으로';
@@ -955,11 +1021,8 @@ function showWrongsRetry(wrongs, origCfg){
         '</div>' +
         '<div class="nm-exam-question"><div class="nm-q-tex" id="nm-ex-qtex2"></div></div>' +
         '<div class="nm-exam-input">' +
-          '<input id="nm-ex-ans2" type="number" placeholder="답" autocomplete="off" ' +
-            'style="font-size:clamp(20px,5.5vw,28px);text-align:center;padding:12px 14px;' +
-            'border:1.5px solid var(--line);border-radius:10px;width:130px;font-family:Pretendard,sans-serif;' +
-            'font-weight:800;outline:none;-moz-appearance:textfield">' +
-          '<button id="nm-ex-sub2" class="nm-btn nm-btn-primary" style="margin-left:12px">확인 ✓</button>' +
+          '<input id="nm-ex-ans2" type="number" placeholder="답" autocomplete="off">' +
+          '<button id="nm-ex-sub2" class="nm-btn nm-btn-primary">확인 ✓</button>' +
         '</div>' +
       '</div>';
 

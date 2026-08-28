@@ -77,6 +77,8 @@
   const plan = Object.freeze({
     schemaVersion: "gfield-blueprint-plan-v1",
     id: "asm-bdg-grade6-entry-plan-v1",
+    blueprintVersion: 1,
+    blueprintContractSha256: "a449bc7e0c50ff74af18fca0a648763ae1cfa0e1bdab21c13686dfb6d2547dab",
     programId: "us-core-k8",
     targetGrade: 6,
     purpose: "course-placement",

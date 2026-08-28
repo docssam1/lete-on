@@ -12,17 +12,24 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const crypto = require("crypto");
 const { spawnSync } = require("child_process");
 const placement = require("../assessment/grade6-placement-plan.js");
 const contract = require("../question-bank/item-release-contract.js");
+const delivery = require("../shared/learning-delivery-contract.js");
 
 const DRAFT_SCHEMA_VERSION = "gfield-private-authoring-draft-v1";
 const DRAFT_STATE = "draft-pending-independent-review";
 const PRIVATE_ITEM_KEYS = new Set([
   "slotId", "itemId", "clusterId", "domainId", "skillId", "standardIds", "difficulty", "responseType",
-  "publicDraft", "privateDraft", "verification", "rightsDraft"
+  "publicDraft", "privateDraft", "verification", "rightsDraft", "assetDrafts"
 ]);
-const PUBLIC_DRAFT_KEYS = new Set(["promptBlocks", "options", "responseUi"]);
+const PUBLIC_DRAFT_KEYS = new Set(["promptBlocks", "options", "assets", "responseUi"]);
+const ASSET_DRAFT_KEYS = new Set(["assetId", "sourcePath", "rightsDraft"]);
+const VERIFICATION_KEYS = new Set(["state", "reviewPending", "methods", "candidateCheck"]);
+const VERIFICATION_METHOD_KEYS = new Set(["methodId", "evidenceByLocale"]);
+const CANDIDATE_CHECK_KEYS = new Set(["kind", "totalCandidates", "validAnswerCount"]);
+const ERROR_SIGNAL_KEYS = new Set(["code", "observedValue", "errorType", "rationaleByLocale"]);
 const LOCAL_PENDING_RIGHTS_DECISIONS = new Set([
   "pending-independent-review", "draft-pending-independent-rights-review"
 ]);
@@ -82,7 +89,7 @@ function requireLocales(value, code, reference) {
   });
 }
 
-function syntheticPublicItem(item) {
+function syntheticPublicItem(item, expectedSlot) {
   const suffix = item.itemId.slice("qst-bnk-".length);
   return {
     schemaVersion: contract.SCHEMA_VERSION,
@@ -99,12 +106,45 @@ function syntheticPublicItem(item) {
     difficulty: item.difficulty,
     responseType: item.responseType,
     maxPoints: 1,
+    assessmentBinding: {
+      blueprintId: placement.plan.id,
+      blueprintVersion: placement.plan.blueprintVersion,
+      blueprintContractSha256: placement.plan.blueprintContractSha256,
+      purpose: placement.plan.purpose,
+      slotId: item.slotId,
+      unitId: expectedSlot.unitId,
+      standardRange: expectedSlot.standardRange
+    },
     promptBlocks: item.publicDraft.promptBlocks,
     options: item.publicDraft.options,
-    assets: [],
+    assets: item.publicDraft.assets,
     responseUi: item.publicDraft.responseUi,
     rightsRecordId: `rgt-bnk-${suffix}`
   };
+}
+
+function requireExactBilingualLocales(value, code, reference) {
+  assertRecord(value, code, reference);
+  assert(Object.keys(value).length === 2 && Object.keys(value).every(function (locale) {
+    return ["ko", "en"].includes(locale) && nonBlankText(value[locale]);
+  }), code, reference);
+}
+
+function validateStandardIds(item, expectedSlot, reference) {
+  assertDenseArray(item.standardIds, "STANDARD_IDS_INVALID", reference);
+  assert(item.standardIds.length > 0, "STANDARD_IDS_INVALID", reference);
+  const rangeMatch = expectedSlot.standardRange.match(/^((?:K|[1-8])\.[A-Z]{1,4}\.[A-Z]\.)(\d+)(?:-(\d+))?$/);
+  assert(!!rangeMatch, "PLAN_STANDARD_RANGE_INVALID", reference);
+  const first = Number(rangeMatch[2]);
+  const last = Number(rangeMatch[3] || rangeMatch[2]);
+  item.standardIds.forEach(function (standardId) {
+    assert(nonBlankText(standardId), "STANDARD_IDS_INVALID", reference);
+    const standardMatch = standardId.match(/^((?:K|[1-8])\.[A-Z]{1,4}\.[A-Z]\.)(\d+)(?:[a-z])?$/);
+    assert(!!standardMatch && standardMatch[1] === rangeMatch[1], "STANDARD_ID_LINEAGE_MISMATCH", reference);
+    const standardNumber = Number(standardMatch[2]);
+    assert(standardNumber >= first && standardNumber <= last, "STANDARD_ID_OUTSIDE_SLOT_RANGE", reference);
+  });
+  assert(new Set(item.standardIds).size === item.standardIds.length, "STANDARD_IDS_DUPLICATE", reference);
 }
 
 function validateAutomaticAnswer(item, publicItem, reference) {
@@ -133,12 +173,23 @@ function validateAutomaticAnswer(item, publicItem, reference) {
     rubricId: null,
     rubricVersion: null,
     rubricSha256: null,
+    errorSignals: item.privateDraft.errorSignals,
+    defaultErrorType: item.privateDraft.defaultErrorType,
     state: "in-review"
   };
   try {
     contract.validatePrivateSpec(privateSpec, publicItem);
   } catch (error) {
     fail("AUTOMATIC_SCORING_CONTRACT", reference);
+  }
+  if (item.responseType === "multiple-choice") {
+    const expectedWrongOptions = publicItem.options.map(function (option) { return option.optionId; }).filter(function (optionId) {
+      return optionId !== answer.value;
+    }).sort();
+    const mappedWrongOptions = item.privateDraft.errorSignals.map(function (signal) { return signal.observedValue; }).sort();
+    assert(expectedWrongOptions.length === mappedWrongOptions.length && expectedWrongOptions.every(function (optionId, index) {
+      return optionId === mappedWrongOptions[index];
+    }), "MC_ERROR_SIGNAL_COVERAGE_INVALID", reference);
   }
 }
 
@@ -176,11 +227,11 @@ function validateDraftCriterion(criterion, reference) {
   }
   if (criterion.errorCodes != null) {
     assertDenseArray(criterion.errorCodes, "TEACHER_RUBRIC_CRITERION_INVALID", reference);
-    assert(criterion.errorCodes.length > 0 && criterion.errorCodes.every(function (code) { return typeof code === "string" && /^[a-z][a-z0-9-]{1,63}$/.test(code); }), "TEACHER_RUBRIC_CRITERION_INVALID", reference);
+    assert(criterion.errorCodes.length > 0 && criterion.errorCodes.every(function (code) { return delivery.SCORING_ERROR_TYPES.includes(code); }), "TEACHER_RUBRIC_CRITERION_INVALID", reference);
   }
 }
 
-function validateTeacherDraft(item, reference) {
+function validateTeacherDraft(item, publicItem, reference) {
   assert(!Object.prototype.hasOwnProperty.call(item.privateDraft, "answer"), "TEACHER_ANSWER_FIELD_FORBIDDEN", reference);
   requireLocales(item.privateDraft.expectedResponseByLocale, "TEACHER_REFERENCE_MISSING", reference);
   const rubric = item.privateDraft.rubricDraft;
@@ -188,13 +239,36 @@ function validateTeacherDraft(item, reference) {
   assert(rubric.maxPoints === 1, "TEACHER_RUBRIC_NOT_MIGRATION_READY", reference);
   validatePointIncrements(rubric.allowedPointIncrements, reference);
   assert(rubric.humanReviewRequired === true && rubric.secondReviewPolicy === "boundary-and-high-stakes-required", "TEACHER_RUBRIC_NOT_MIGRATION_READY", reference);
-  if (rubric.criteria != null) {
-    assertDenseArray(rubric.criteria, "TEACHER_RUBRIC_CRITERION_INVALID", reference);
-    assert(rubric.criteria.length > 0, "TEACHER_RUBRIC_CRITERION_INVALID", reference);
-    rubric.criteria.forEach(function (criterion) { validateDraftCriterion(criterion, reference); });
-  } else {
-    requireLocales(rubric.onePointCriterionByLocale, "TEACHER_RUBRIC_NOT_MIGRATION_READY", reference);
-    requireLocales(rubric.zeroPointCriterionByLocale, "TEACHER_RUBRIC_NOT_MIGRATION_READY", reference);
+  assertDenseArray(rubric.criteria, "TEACHER_RUBRIC_CRITERION_INVALID", reference);
+  assert(rubric.criteria.length > 0, "TEACHER_RUBRIC_CRITERION_INVALID", reference);
+  rubric.criteria.forEach(function (criterion) { validateDraftCriterion(criterion, reference); });
+  const signalTypes = Array.from(new Set(item.privateDraft.errorSignals.map(function (signal) { return signal.errorType; }))).sort();
+  const rubricTypes = Array.from(new Set(rubric.criteria.flatMap(function (criterion) { return criterion.errorCodes; }))).sort();
+  assert(signalTypes.length === rubricTypes.length && signalTypes.every(function (type, index) { return type === rubricTypes[index]; }), "TEACHER_ERROR_TAXONOMY_MISMATCH", reference);
+  const suffix = item.itemId.slice("qst-bnk-".length);
+  try {
+    contract.validatePrivateSpec({
+      schemaVersion: contract.SCHEMA_VERSION,
+      scoringSpecId: `scr-bnk-${suffix}`,
+      specVersion: 1,
+      itemId: item.itemId,
+      itemVersion: 1,
+      publicPayloadSha256: publicItem.publicPayloadSha256,
+      privateSpecSha256: "1".repeat(64),
+      scoringMode: "teacher",
+      maxPoints: 1,
+      answer: null,
+      normalizationVersion: null,
+      solutionRef: `local-draft:${item.itemId}`,
+      rubricId: `rub-bnk-${suffix}`,
+      rubricVersion: 1,
+      rubricSha256: "2".repeat(64),
+      errorSignals: item.privateDraft.errorSignals,
+      defaultErrorType: item.privateDraft.defaultErrorType,
+      state: "in-review"
+    }, publicItem);
+  } catch (error) {
+    fail("TEACHER_SCORING_CONTRACT", reference);
   }
 }
 
@@ -214,13 +288,75 @@ function validateRightsDraft(rightsDraft, reference) {
   }
 }
 
+function validateSvgBytes(bytes, reference) {
+  const source = bytes.toString("utf8");
+  assert(bytes.length === Buffer.byteLength(source, "utf8") && source.length > 0, "ASSET_SVG_ENCODING_INVALID", reference);
+  assert(/^\s*(?:<\?xml[^>]*>\s*)?<svg\b/i.test(source) && /<\/svg>\s*$/i.test(source), "ASSET_SVG_ROOT_INVALID", reference);
+  assert(!/(?:<!DOCTYPE|<!ENTITY|<script\b|<foreignObject\b|<iframe\b|<object\b|<embed\b|<image\b|<style\b)/i.test(source), "ASSET_SVG_ACTIVE_CONTENT_FORBIDDEN", reference);
+  assert(!/\son[a-z]+\s*=/i.test(source), "ASSET_SVG_EVENT_HANDLER_FORBIDDEN", reference);
+  assert(!/(?:href|xlink:href)\s*=\s*["'](?!#)/i.test(source), "ASSET_SVG_EXTERNAL_REFERENCE_FORBIDDEN", reference);
+  assert(!/url\s*\(/i.test(source), "ASSET_SVG_EXTERNAL_REFERENCE_FORBIDDEN", reference);
+}
+
+function validateAssetBytes(bytes, mimeType, reference) {
+  if (mimeType === "image/svg+xml") {
+    validateSvgBytes(bytes, reference);
+    return;
+  }
+  if (mimeType === "image/png") {
+    assert(bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])), "ASSET_MAGIC_BYTES_INVALID", reference);
+    return;
+  }
+  if (mimeType === "image/webp") {
+    assert(bytes.length >= 12 && bytes.subarray(0, 4).toString("ascii") === "RIFF" && bytes.subarray(8, 12).toString("ascii") === "WEBP", "ASSET_MAGIC_BYTES_INVALID", reference);
+    return;
+  }
+  fail("ASSET_MIME_TYPE_INVALID", reference);
+}
+
+function validateAssetDrafts(item, directory, reference) {
+  const publicAssets = item.publicDraft.assets;
+  assertDenseArray(publicAssets, "PUBLIC_ASSETS_INVALID", reference);
+  const drafts = item.assetDrafts == null ? [] : item.assetDrafts;
+  assertDenseArray(drafts, "ASSET_DRAFTS_INVALID", reference);
+  assert(drafts.length === publicAssets.length, "ASSET_DRAFT_COUNT_MISMATCH", reference);
+  const publicById = new Map(publicAssets.map(function (asset) { return [asset.assetId, asset]; }));
+  assert(publicById.size === publicAssets.length, "ASSET_ID_DUPLICATE", reference);
+  const usedSourcePaths = [];
+  drafts.forEach(function (draft) {
+    assertOnlyKeys(draft, ASSET_DRAFT_KEYS, "ASSET_DRAFT_FIELDS_INVALID", reference);
+    const asset = publicById.get(draft.assetId);
+    assert(!!asset, "ASSET_DRAFT_ID_MISMATCH", reference);
+    assert(nonBlankText(draft.sourcePath) && /^assets\/ast-bnk-[a-z0-9]{16}\.(?:svg|png|webp)$/.test(draft.sourcePath), "ASSET_SOURCE_PATH_INVALID", reference);
+    const expectedExtension = { "image/svg+xml": ".svg", "image/png": ".png", "image/webp": ".webp" }[asset.mimeType];
+    assert(expectedExtension && draft.sourcePath === `assets/${asset.assetId}${expectedExtension}`, "ASSET_SOURCE_NAME_MISMATCH", reference);
+    const fullPath = path.resolve(directory, ...draft.sourcePath.split("/"));
+    const relative = path.relative(directory, fullPath);
+    assert(relative && !relative.startsWith("..") && !path.isAbsolute(relative), "ASSET_SOURCE_PATH_INVALID", reference);
+    let stat;
+    let bytes;
+    try {
+      stat = fs.lstatSync(fullPath);
+      bytes = fs.readFileSync(fullPath);
+    } catch (error) {
+      fail("ASSET_SOURCE_NOT_READABLE", reference);
+    }
+    assert(stat.isFile() && !stat.isSymbolicLink() && bytes.length > 0 && bytes.length <= 512 * 1024, "ASSET_SOURCE_FILE_INVALID", reference);
+    validateAssetBytes(bytes, asset.mimeType, reference);
+    assert(crypto.createHash("sha256").update(bytes).digest("hex") === asset.sha256, "ASSET_HASH_MISMATCH", reference);
+    validateRightsDraft(draft.rightsDraft, reference);
+    usedSourcePaths.push(draft.sourcePath);
+  });
+  assert(new Set(usedSourcePaths).size === usedSourcePaths.length, "ASSET_SOURCE_DUPLICATE", reference);
+  return usedSourcePaths;
+}
+
 function validateErrorSignal(signal, reference) {
-  if (nonBlankText(signal)) return;
-  const allowed = new Set(["code", "observedValue", "rationaleByLocale"]);
-  assertOnlyKeys(signal, allowed, "ERROR_SIGNAL_INVALID", reference);
+  assertOnlyKeys(signal, ERROR_SIGNAL_KEYS, "ERROR_SIGNAL_INVALID", reference);
   assert(typeof signal.code === "string" && /^[a-z][a-z0-9-]{1,63}$/.test(signal.code), "ERROR_SIGNAL_INVALID", reference);
   assert(nonBlankText(signal.observedValue), "ERROR_SIGNAL_INVALID", reference);
-  requireLocales(signal.rationaleByLocale, "ERROR_SIGNAL_INVALID", reference);
+  assert(delivery.SCORING_ERROR_TYPES.includes(signal.errorType), "ERROR_SIGNAL_TYPE_INVALID", reference);
+  requireExactBilingualLocales(signal.rationaleByLocale, "ERROR_SIGNAL_INVALID", reference);
 }
 
 function validateEvidenceDraft(item, reference) {
@@ -230,13 +366,44 @@ function validateEvidenceDraft(item, reference) {
   });
   assertDenseArray(privateDraft.errorSignals, "ERROR_SIGNALS_MISSING", reference);
   assert(privateDraft.errorSignals.length > 0, "ERROR_SIGNALS_INVALID", reference);
+  assert(Object.prototype.hasOwnProperty.call(privateDraft, "defaultErrorType"), "DEFAULT_ERROR_TYPE_MISSING", reference);
+  assert(delivery.SCORING_ERROR_TYPES.includes(privateDraft.defaultErrorType), "DEFAULT_ERROR_TYPE_INVALID", reference);
+  assert(privateDraft.errorSignals.some(function (signal) {
+    return signal.errorType === privateDraft.defaultErrorType;
+  }), "DEFAULT_ERROR_TYPE_NOT_REVIEWED", reference);
   privateDraft.errorSignals.forEach(function (signal) { validateErrorSignal(signal, reference); });
-  assertRecord(item.verification, "AUTHOR_VERIFICATION_MISSING", reference);
-  assert(Object.keys(item.verification).length > 0, "AUTHOR_VERIFICATION_EMPTY", reference);
-  assert(nonBlankText(item.verification.kind) || nonBlankText(item.verification.method), "AUTHOR_VERIFICATION_METHOD_MISSING", reference);
+  assert(new Set(privateDraft.errorSignals.map(function (signal) { return signal.code; })).size === privateDraft.errorSignals.length, "ERROR_SIGNAL_CODE_DUPLICATE", reference);
+  assert(new Set(privateDraft.errorSignals.map(function (signal) { return signal.observedValue; })).size === privateDraft.errorSignals.length, "ERROR_SIGNAL_OBSERVED_VALUE_DUPLICATE", reference);
+  validateVerification(item, reference);
 }
 
-function validateItem(item, expectedSlot, fileName, index) {
+function validateVerification(item, reference) {
+  const verification = item.verification;
+  assertOnlyKeys(verification, VERIFICATION_KEYS, "AUTHOR_VERIFICATION_FIELDS_INVALID", reference);
+  assert(verification.state === "author-verified-pending-independent-review" && verification.reviewPending === true, "AUTHOR_VERIFICATION_STATE_INVALID", reference);
+  assertDenseArray(verification.methods, "AUTHOR_VERIFICATION_METHODS_INVALID", reference);
+  assert(verification.methods.length >= 2 && verification.methods.length <= 4, "AUTHOR_VERIFICATION_METHODS_INVALID", reference);
+  verification.methods.forEach(function (method) {
+    assertOnlyKeys(method, VERIFICATION_METHOD_KEYS, "AUTHOR_VERIFICATION_METHOD_INVALID", reference);
+    assert(typeof method.methodId === "string" && /^[a-z][a-z0-9-]{2,63}$/.test(method.methodId), "AUTHOR_VERIFICATION_METHOD_INVALID", reference);
+    requireLocales(method.evidenceByLocale, "AUTHOR_VERIFICATION_METHOD_INVALID", reference);
+  });
+  assert(new Set(verification.methods.map(function (method) { return method.methodId; })).size === verification.methods.length, "AUTHOR_VERIFICATION_METHODS_NOT_INDEPENDENT", reference);
+  if (item.responseType === "multiple-choice") {
+    assertRecord(verification.candidateCheck, "CANDIDATE_CHECK_REQUIRED", reference);
+  }
+  if (verification.candidateCheck != null) {
+    assertOnlyKeys(verification.candidateCheck, CANDIDATE_CHECK_KEYS, "CANDIDATE_CHECK_INVALID", reference);
+    assert(verification.candidateCheck.kind === "finite-enumeration", "CANDIDATE_CHECK_INVALID", reference);
+    assert(Number.isInteger(verification.candidateCheck.totalCandidates) && verification.candidateCheck.totalCandidates > 0, "CANDIDATE_CHECK_INVALID", reference);
+    assert(verification.candidateCheck.validAnswerCount === 1, "CANDIDATE_CHECK_NOT_UNIQUE", reference);
+    if (item.responseType === "multiple-choice") {
+      assert(verification.candidateCheck.totalCandidates === item.publicDraft.options.length, "CANDIDATE_CHECK_OPTION_COUNT_MISMATCH", reference);
+    }
+  }
+}
+
+function validateItem(item, expectedSlot, fileName, index, directory, usedAssetFiles) {
   const reference = localId(item, fileName, index);
   assertOnlyKeys(item, PRIVATE_ITEM_KEYS, "DRAFT_ITEM_FIELDS_INVALID", reference);
   assert(item.slotId === expectedSlot.slotId, "SLOT_ID_INVALID", reference);
@@ -244,27 +411,26 @@ function validateItem(item, expectedSlot, fileName, index) {
   ["clusterId", "domainId", "skillId", "difficulty", "responseType"].forEach(function (field) {
     assert(item[field] === expectedSlot[field], "PLAN_LINEAGE_MISMATCH", reference);
   });
-  if (item.standardIds != null) {
-    assertDenseArray(item.standardIds, "STANDARD_IDS_INVALID", reference);
-    assert(item.standardIds.length > 0 && item.standardIds.every(nonBlankText), "STANDARD_IDS_INVALID", reference);
-  }
+  validateStandardIds(item, expectedSlot, reference);
   assertOnlyKeys(item.publicDraft, PUBLIC_DRAFT_KEYS, "PUBLIC_DRAFT_FIELDS_INVALID", reference);
   assertDenseArray(item.publicDraft.promptBlocks, "PUBLIC_PROMPT_BLOCKS_INVALID", reference);
   assert(item.publicDraft.promptBlocks.length > 0, "PUBLIC_PROMPT_BLOCKS_INVALID", reference);
   assertDenseArray(item.publicDraft.options, "PUBLIC_OPTIONS_INVALID", reference);
+  assertDenseArray(item.publicDraft.assets, "PUBLIC_ASSETS_INVALID", reference);
   assertRecord(item.publicDraft.responseUi, "PUBLIC_RESPONSE_UI_INVALID", reference);
   let publicItem;
   try {
-    publicItem = syntheticPublicItem(item);
+    publicItem = syntheticPublicItem(item, expectedSlot);
     contract.validatePublicItem(publicItem);
   } catch (error) {
     fail("PUBLIC_DELIVERY_CONTRACT", reference);
   }
+  validateAssetDrafts(item, directory, reference).forEach(function (sourcePath) { usedAssetFiles.add(sourcePath); });
 
   assertRecord(item.privateDraft, "PRIVATE_DRAFT_MISSING", reference);
   validateEvidenceDraft(item, reference);
   if (expectedSlot.scoringMode === "automatic") validateAutomaticAnswer(item, publicItem, reference);
-  else validateTeacherDraft(item, reference);
+  else validateTeacherDraft(item, publicItem, reference);
   validateRightsDraft(item.rightsDraft, reference);
 }
 
@@ -272,11 +438,34 @@ function sourceFiles(directory) {
   assert(fs.existsSync(directory), "PRIVATE_AUTHORING_DIRECTORY_MISSING", "private-authoring");
   const files = [];
   fs.readdirSync(directory, { withFileTypes: true }).forEach(function (entry) {
+    if (entry.isDirectory() && !entry.isSymbolicLink() && ["assets", "preview"].includes(entry.name)) return;
     assert(entry.isFile() && !entry.isSymbolicLink(), "UNEXPECTED_PRIVATE_AUTHORING_PATH", entry.name);
     assert(/^grade6-[a-z-]+-drafts\.cjs$/.test(entry.name), "UNEXPECTED_PRIVATE_AUTHORING_PATH", entry.name);
     files.push(entry.name);
   });
   return files.sort();
+}
+
+function previewFiles(directory) {
+  const previewDirectory = path.join(directory, "preview");
+  if (!fs.existsSync(previewDirectory)) return [];
+  const directoryStat = fs.lstatSync(previewDirectory);
+  assert(directoryStat.isDirectory() && !directoryStat.isSymbolicLink(), "PRIVATE_PREVIEW_DIRECTORY_INVALID", "preview");
+  return fs.readdirSync(previewDirectory, { withFileTypes: true }).map(function (entry) {
+    assert(entry.isFile() && !entry.isSymbolicLink() && entry.name === "student.html", "UNEXPECTED_PRIVATE_PREVIEW_PATH", entry.name);
+    return `preview/${entry.name}`;
+  });
+}
+
+function assetFiles(directory) {
+  const assetDirectory = path.join(directory, "assets");
+  if (!fs.existsSync(assetDirectory)) return [];
+  const directoryStat = fs.lstatSync(assetDirectory);
+  assert(directoryStat.isDirectory() && !directoryStat.isSymbolicLink(), "PRIVATE_ASSET_DIRECTORY_INVALID", "assets");
+  return fs.readdirSync(assetDirectory, { withFileTypes: true }).map(function (entry) {
+    assert(entry.isFile() && !entry.isSymbolicLink() && /^ast-bnk-[a-z0-9]{16}\.(?:svg|png|webp)$/.test(entry.name), "UNEXPECTED_PRIVATE_ASSET_PATH", entry.name);
+    return `assets/${entry.name}`;
+  }).sort();
 }
 
 function assertGitIgnored(directory, files) {
@@ -331,11 +520,14 @@ function loadPack(fullPath, fileName) {
 function validateDirectory(directory) {
   const resolvedDirectory = path.resolve(directory);
   const files = sourceFiles(resolvedDirectory);
+  const assets = assetFiles(resolvedDirectory);
+  const previews = previewFiles(resolvedDirectory);
   assert(files.length > 0, "PRIVATE_AUTHORING_PACKS_MISSING", "private-authoring");
-  assertGitIgnored(resolvedDirectory, files);
+  assertGitIgnored(resolvedDirectory, files.concat(assets, previews));
   const expectedBySlot = new Map(placement.plan.slots.map(function (slot) { return [slot.slotId, slot]; }));
   const seenSlots = new Set();
   const seenIds = new Set();
+  const usedAssetFiles = new Set();
   let itemCount = 0;
   files.forEach(function (fileName) {
     const pack = loadPack(path.join(resolvedDirectory, fileName), fileName);
@@ -345,7 +537,7 @@ function validateDirectory(directory) {
       assert(!seenIds.has(item && item.itemId), "DUPLICATE_ITEM_ID", reference);
       const expectedSlot = expectedBySlot.get(item && item.slotId);
       assert(expectedSlot, "UNKNOWN_SLOT", reference);
-      validateItem(item, expectedSlot, fileName, index);
+      validateItem(item, expectedSlot, fileName, index, resolvedDirectory, usedAssetFiles);
       seenSlots.add(item.slotId);
       seenIds.add(item.itemId);
       itemCount += 1;
@@ -353,7 +545,40 @@ function validateDirectory(directory) {
   });
   assert(itemCount === placement.plan.plannedItemCount, "PLANNED_ITEM_COUNT_MISMATCH", "private-authoring");
   assert(seenSlots.size === expectedBySlot.size, "GRADE6_SLOTS_INCOMPLETE", "private-authoring");
+  assert(assets.length === usedAssetFiles.size && assets.every(function (assetPath) { return usedAssetFiles.has(assetPath); }), "PRIVATE_ASSET_ORPHAN_OR_MISSING", "private-authoring");
   return Object.freeze({ fileCount: files.length, itemCount, state: DRAFT_STATE });
+}
+
+function loadStudentPreviewItems(directory) {
+  const resolvedDirectory = path.resolve(directory);
+  validateDirectory(resolvedDirectory);
+  const bySlot = new Map();
+  sourceFiles(resolvedDirectory).forEach(function (fileName) {
+    const pack = loadPack(path.join(resolvedDirectory, fileName), fileName);
+    pack.items.forEach(function (item) {
+      const assetSourceById = new Map((item.assetDrafts || []).map(function (draft) { return [draft.assetId, draft.sourcePath]; }));
+      bySlot.set(item.slotId, {
+        slotId: item.slotId,
+        itemId: item.itemId,
+        domainId: item.domainId,
+        clusterId: item.clusterId,
+        standardIds: item.standardIds.slice(),
+        difficulty: item.difficulty,
+        responseType: item.responseType,
+        promptBlocks: item.publicDraft.promptBlocks.map(function (block) { return Object.assign({}, block); }),
+        options: item.publicDraft.options.map(function (option) { return Object.assign({}, option); }),
+        assets: item.publicDraft.assets.map(function (asset) {
+          return Object.assign({}, asset, { previewSourcePath: assetSourceById.get(asset.assetId) });
+        }),
+        responseUi: Object.assign({}, item.publicDraft.responseUi)
+      });
+    });
+  });
+  return placement.plan.slots.map(function (slot) {
+    const item = bySlot.get(slot.slotId);
+    assert(!!item, "PRIVATE_PREVIEW_SLOT_MISSING", slot.slotId);
+    return JSON.parse(JSON.stringify(item));
+  });
 }
 
 function main() {
@@ -374,4 +599,15 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = Object.freeze({ DRAFT_SCHEMA_VERSION, DRAFT_STATE, validateDirectory });
+module.exports = Object.freeze({
+  DRAFT_SCHEMA_VERSION,
+  DRAFT_STATE,
+  syntheticPublicItem,
+  validateStandardIds,
+  validateAssetDrafts,
+  validateErrorSignal,
+  validateEvidenceDraft,
+  validateVerification,
+  loadStudentPreviewItems,
+  validateDirectory
+});

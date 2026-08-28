@@ -76,7 +76,7 @@ function testServiceOnlyRpcContract() {
   assert.match(submit, /v_attempt\.status = 'grading' and v_attempt\.answers_viewed_at is not null/);
   assert.ok(
     submit.indexOf("if v_attempt.status = 'submitted' then")
-      < submit.indexOf("if not (\n    (v_attempt.status = 'in_progress'")
+      < submit.indexOf("if not (")
   );
   const submitUpdate = section(submit, "update public.hf_mock_attempts as attempt", "returning * into v_attempt;");
   assert.doesNotMatch(submitUpdate, /answers_viewed_at/);

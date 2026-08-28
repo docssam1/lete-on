@@ -641,9 +641,10 @@
 @media print{.book10-visual{break-inside:avoid}.b10-methods span,.b10-factor span,.b10-calendar,.b10-number-grid,.b10-calendar-block,.b10-equations p,.b10-table,.b10-digit-slots .cards span,.b10-target-cards span,.b10-baseball{background:#fff}}
 
 /* 골든벨은 문제 선택 탭이 아니라 독립 개념 학습 화면으로 이동한다. */
-.builder-tabs>a{display:inline-flex;align-items:center;justify-content:center;min-height:54px;margin-left:auto;padding:0 24px;border-left:1px solid var(--line);border-bottom:2px solid transparent;background:#fff;color:#168a67;font-size:13px;font-weight:800;text-decoration:none}
+.builder-tabs>a{display:inline-flex;align-items:center;justify-content:center;min-height:54px;margin-left:0;padding:0 24px;border-left:1px solid var(--line);border-bottom:2px solid transparent;background:#fff;color:#168a67;font-size:13px;font-weight:800;text-decoration:none}
+.builder-tabs>a:first-of-type{margin-left:auto}
 .builder-tabs>a:hover{border-bottom-color:#168a67;background:#eef8f3}
-@media(max-width:560px){.builder-tabs{display:grid;grid-template-columns:repeat(2,1fr);padding:0 8px}.builder-tabs button,.builder-tabs>a{min-height:45px;margin-left:0;padding:0 6px;border-left:0}}
+@media(max-width:560px){.builder-tabs{display:grid;grid-template-columns:repeat(2,1fr);padding:0 8px}.builder-tabs button,.builder-tabs>a,.builder-tabs>a:first-of-type{min-height:45px;margin-left:0;padding:0 6px;border-left:0}}
 
 /* 시험지 선택은 우리 모의고사를 먼저 바로 고르고, 원본 시험은 시기별로 이어서 고른다. */
 .stage-separator{align-self:center;flex:0 0 auto;padding:0 4px 0 12px;border-left:1px solid #d9e2e8;color:#718394;font-size:10px;font-weight:900;white-space:nowrap}

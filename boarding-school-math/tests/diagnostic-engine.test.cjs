@@ -368,6 +368,34 @@ test("a low domain or prerequisite gap stays blocked even when the total score i
   assert.equal(report.lessonPriorities[0].mode, "repair");
 });
 
+test("a prerequisite gap or missed foundation item routes its cluster to repair even above the percentage floor", function () {
+  const source = blueprint(42);
+  const activePolicy = policy();
+  const prerequisiteTarget = source.items.find(function (sourceItem) {
+    return sourceItem.clusterId === "6.NS.A" && sourceItem.difficulty !== "foundation";
+  });
+  const foundationTarget = source.items.find(function (sourceItem) {
+    return sourceItem.clusterId === "6.RP.A" && sourceItem.difficulty === "foundation";
+  });
+  assert.ok(prerequisiteTarget);
+  assert.ok(foundationTarget);
+
+  const attempt = attemptFor(source, function (sourceItem) {
+    if (sourceItem.itemId === prerequisiteTarget.itemId) return { awardedPoints: 0, errorType: "prerequisite-gap" };
+    if (sourceItem.itemId === foundationTarget.itemId) return { awardedPoints: 0, errorType: "calculation-error" };
+    return { awardedPoints: sourceItem.maxPoints };
+  });
+  const report = engine.analyzeAttempt(source, attempt, activePolicy, evidenceFor(source, attempt, activePolicy));
+  const prerequisiteRoute = report.clusterPriorities.find(function (route) { return route.clusterId === "6.NS.A"; });
+  const foundationRoute = report.clusterPriorities.find(function (route) { return route.clusterId === "6.RP.A"; });
+
+  assert.ok(prerequisiteRoute.percentage >= activePolicy.promotionReview.minDomainPercent);
+  assert.equal(prerequisiteRoute.mode, "repair");
+  assert.ok(foundationRoute.percentage >= activePolicy.promotionReview.minDomainPercent);
+  assert.equal(foundationRoute.difficultyEvidence.foundation.earnedPoints < foundationRoute.difficultyEvidence.foundation.maxPoints, true);
+  assert.equal(foundationRoute.mode, "repair");
+});
+
 test("screeners and competition benchmarks cannot be mislabeled as placement reports", function () {
   ["unit-screener", "competition-benchmark"].forEach(function (purpose) {
     const count = purpose === "unit-screener" ? 12 : 24;
