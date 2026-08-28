@@ -668,14 +668,18 @@
     const sasmoTitle = sasmo && sasmo.querySelector("strong");
     const sasmoNote = sasmo && sasmo.querySelector("small");
     const conceptNote = concept && concept.querySelector("small");
-    if (numericGrade >= 1 && numericGrade <= 10) {
+    if (numericGrade >= 1 && numericGrade <= 11) {
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
-      sasmoTitle.textContent = "SASMO 기출 풀기";
-      sasmoNote.textContent = `Grade ${numericGrade} 연도별 문제·정답·해설`;
+      sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 기출 풀기";
+      sasmoNote.textContent = numericGrade === 11 ? "Grade 11 연도별 공식 LMS" : `Grade ${numericGrade} 연도별 문제·정답·해설`;
+    } else if (numericGrade === 0) {
+      sasmo.href = "./sasmo.html?grade=K2#past-papers";
+      sasmoTitle.textContent = "SASMO K2 자료 보기";
+      sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
     } else {
-      sasmo.href = numericGrade === 0 ? "./sasmo.html#control-heading" : `./sasmo.html?grade=${numericGrade}#control-heading`;
+      sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
       sasmoTitle.textContent = "SASMO 준비 보기";
-      sasmoNote.textContent = "공식 학년 정보·진단 설계";
+      sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
     }
     if (numericGrade === 6) {
       concept.href = "./concept-learning.html";

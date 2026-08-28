@@ -61,8 +61,10 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=1#past-papers");
   assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 연도별/);
   await page.locator("#quick-start-grade").selectOption("11");
-  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=11#control-heading");
-  assert.match(await page.locator("#quick-sasmo strong").textContent(), /준비 보기/);
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=11#past-papers");
+  assert.match(await page.locator("#quick-sasmo strong").textContent(), /공식 자료 보기/);
+  await page.locator("#quick-start-grade").selectOption("0");
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=K2#past-papers");
   await page.locator("#quick-start-grade").selectOption("6");
   assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8\s*→\s*10\s*→\s*12/);
   assert.equal(await page.locator("[data-goal]").count(), 5);
@@ -213,11 +215,19 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 3);
   assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 3);
   assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 4);
-  assert.match(await page.locator("#archive-summary").textContent(), /Grade 1 · 3개 연도·학년 묶음 · 원문 파일 4개/);
+  assert.match(await page.locator("#archive-summary").textContent(), /Grade 1 · 3개 연도·학년 묶음 · 연결 자료 4개/);
+  await page.locator("#archive-grade-filter").selectOption("11");
+  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 3);
+  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 3);
+  assert.equal(await page.locator("#archive-year-list .archive-file-official-lms").count(), 3);
+  assert.equal(await page.locator('a[href="https://sasmo.simcc.org/courses/sasmo-2025-grade-11/"]').count(), 2);
+  await page.locator("#archive-grade-filter").selectOption("12");
+  assert.equal(await page.locator("#archive-year-list .archive-unavailable").count(), 1);
+  assert.match(await page.locator("#archive-status").textContent(), /Grade 12.*현재 자료실에 없습니다/);
   await page.locator("#archive-grade-filter").selectOption("all");
-  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 11);
-  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 88);
-  assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 144);
+  assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 12);
+  assert.equal(await page.locator("#archive-year-list .archive-record-row").count(), 91);
+  assert.equal(await page.locator("#archive-year-list .archive-file-link").count(), 147);
   const duplicateIds = await page.locator("[id]").evaluateAll(function (elements) {
     const counts = elements.reduce(function (result, element) {
       result[element.id] = (result[element.id] || 0) + 1;

@@ -22,6 +22,7 @@
     ],
     "recordCount": 88,
     "assetCount": 144,
+    "officialLmsRecordCount": 3,
     "gradeRecordCounts": {
       "1": 3,
       "2": 10,
@@ -35,6 +36,32 @@
       "10": 8
     }
   },
+  "officialLmsRecords": [
+    {
+      "id": "sasmo-official-lms-2023-g11",
+      "year": 2023,
+      "grade": 11,
+      "label": "Grade 11 · Official LMS",
+      "url": "https://sasmo.simcc.org/courses/sasmo-2023-grade-11/",
+      "access": "Official LMS; login or enrollment may be required."
+    },
+    {
+      "id": "sasmo-official-lms-2024-g11",
+      "year": 2024,
+      "grade": 11,
+      "label": "Grade 11 · Official LMS",
+      "url": "https://sasmo.simcc.org/courses/sasmo-2024-grade-11/",
+      "access": "Official LMS; login or enrollment may be required."
+    },
+    {
+      "id": "sasmo-official-lms-2025-g11",
+      "year": 2025,
+      "grade": 11,
+      "label": "Grade 11 · Official LMS",
+      "url": "https://sasmo.simcc.org/courses/sasmo-2025-grade-11/",
+      "access": "Official LMS; login or enrollment may be required."
+    }
+  ],
   "records": [
     {
       "id": "sasmo-2024-primary1",
