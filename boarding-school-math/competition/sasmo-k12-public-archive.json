@@ -1,0 +1,1784 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": {
+    "name": "K12 Math Contests",
+    "contestUrl": "https://www.k12mathcontests.com/contest/sasmo",
+    "classification": "third-party source-hosted public files",
+    "delivery": "Links open files hosted by the source; GFIELD does not rehost these PDFs."
+  },
+  "coverage": {
+    "years": [
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "recordCount": 88,
+    "assetCount": 144,
+    "gradeRecordCounts": {
+      "1": 3,
+      "2": 10,
+      "3": 9,
+      "4": 9,
+      "5": 11,
+      "6": 11,
+      "7": 9,
+      "8": 9,
+      "9": 9,
+      "10": 8
+    }
+  },
+  "records": [
+    {
+      "id": "sasmo-2024-primary1",
+      "year": 2024,
+      "division": "primary1",
+      "grade": 1,
+      "label": "Primary 1 · Grade 1",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary1.pdf",
+          "pages": 17,
+          "bytes": 1292940
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2024-primary2",
+      "year": 2024,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary2.pdf",
+          "pages": 16,
+          "bytes": 1028514
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2024-primary3",
+      "year": 2024,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary3.pdf",
+          "pages": 15,
+          "bytes": 1011288
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2024-primary4",
+      "year": 2024,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary4.pdf",
+          "pages": 14,
+          "bytes": 975943
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2024-primary5",
+      "year": 2024,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary5.pdf",
+          "pages": 15,
+          "bytes": 1032222
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2024-primary6",
+      "year": 2024,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2024/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2024_primary6.pdf",
+          "pages": 15,
+          "bytes": 915691
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2023-primary1",
+      "year": 2023,
+      "division": "primary1",
+      "grade": 1,
+      "label": "Primary 1 · Grade 1",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2023/primary1",
+      "assets": [
+        {
+          "type": "pa",
+          "url": "https://files.k12mathcontests.com/sasmo_2023_primary1+pa.pdf",
+          "pages": 16,
+          "bytes": 746688
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2023-primary5",
+      "year": 2023,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2023/primary5",
+      "assets": [
+        {
+          "type": "pa",
+          "url": "https://files.k12mathcontests.com/sasmo_2023_primary5+pa.pdf",
+          "pages": 17,
+          "bytes": 714916
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2023-primary6",
+      "year": 2023,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2023/primary6",
+      "assets": [
+        {
+          "type": "pa",
+          "url": "https://files.k12mathcontests.com/sasmo_2023_primary6+pa.pdf",
+          "pages": 18,
+          "bytes": 725341
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-primary2",
+      "year": 2022,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/primary2",
+      "assets": [
+        {
+          "type": "a",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary2+a.pdf",
+          "pages": 2,
+          "bytes": 71088
+        },
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary2.pdf",
+          "pages": 8,
+          "bytes": 1207130
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-primary5",
+      "year": 2022,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/primary5",
+      "assets": [
+        {
+          "type": "a",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary5+a.pdf",
+          "pages": 2,
+          "bytes": 71264
+        },
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary5.pdf",
+          "pages": 7,
+          "bytes": 930128
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-primary6",
+      "year": 2022,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/primary6",
+      "assets": [
+        {
+          "type": "a",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary6+a.pdf",
+          "pages": 2,
+          "bytes": 71060
+        },
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_primary6.pdf",
+          "pages": 8,
+          "bytes": 948720
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-secondary1",
+      "year": 2022,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_secondary1.pdf",
+          "pages": 17,
+          "bytes": 1346410
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-secondary2",
+      "year": 2022,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_secondary2.pdf",
+          "pages": 17,
+          "bytes": 1337843
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-secondary3",
+      "year": 2022,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_secondary3.pdf",
+          "pages": 16,
+          "bytes": 1352848
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2022-secondary4",
+      "year": 2022,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2022/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2022_secondary4.pdf",
+          "pages": 16,
+          "bytes": 1469386
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary1",
+      "year": 2021,
+      "division": "primary1",
+      "grade": 1,
+      "label": "Primary 1 · Grade 1",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary1.pdf",
+          "pages": 16,
+          "bytes": 774342
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary1+s.pdf",
+          "pages": 6,
+          "bytes": 978069
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary2",
+      "year": 2021,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary2.pdf",
+          "pages": 8,
+          "bytes": 6331186
+        },
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary2+ps.pdf",
+          "pages": 7,
+          "bytes": 1302252
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary3",
+      "year": 2021,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary3.pdf",
+          "pages": 15,
+          "bytes": 630672
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary3+s.pdf",
+          "pages": 6,
+          "bytes": 1283932
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary4",
+      "year": 2021,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary4.pdf",
+          "pages": 15,
+          "bytes": 363646
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary4+s.pdf",
+          "pages": 7,
+          "bytes": 1530454
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary5",
+      "year": 2021,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary5",
+      "assets": [
+        {
+          "type": "a",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary5+a.pdf",
+          "pages": 2,
+          "bytes": 70579
+        },
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary5.pdf",
+          "pages": 9,
+          "bytes": 1002696
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-primary6",
+      "year": 2021,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/primary6",
+      "assets": [
+        {
+          "type": "a",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary6+a.pdf",
+          "pages": 2,
+          "bytes": 70148
+        },
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary6.pdf",
+          "pages": 15,
+          "bytes": 323926
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_primary6+s.pdf",
+          "pages": 7,
+          "bytes": 1592706
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-secondary1",
+      "year": 2021,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary1.pdf",
+          "pages": 15,
+          "bytes": 380652
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary1+s.pdf",
+          "pages": 5,
+          "bytes": 1023757
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-secondary2",
+      "year": 2021,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary2.pdf",
+          "pages": 15,
+          "bytes": 319973
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary2+s.pdf",
+          "pages": 6,
+          "bytes": 1218861
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2021-secondary3",
+      "year": 2021,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2021/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary3.pdf",
+          "pages": 15,
+          "bytes": 256103
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2021_secondary3+s.pdf",
+          "pages": 6,
+          "bytes": 1130665
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-primary2",
+      "year": 2020,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/primary2",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_primary2+ps.pdf",
+          "pages": 24,
+          "bytes": 909697
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-primary3",
+      "year": 2020,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/primary3",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_primary3+ps.pdf",
+          "pages": 22,
+          "bytes": 723472
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-primary4",
+      "year": 2020,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/primary4",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_primary4+ps.pdf",
+          "pages": 25,
+          "bytes": 477260
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-primary5",
+      "year": 2020,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/primary5",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_primary5+ps.pdf",
+          "pages": 24,
+          "bytes": 499587
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-primary6",
+      "year": 2020,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/primary6",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_primary6+ps.pdf",
+          "pages": 25,
+          "bytes": 530499
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-secondary1",
+      "year": 2020,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/secondary1",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_secondary1+ps.pdf",
+          "pages": 23,
+          "bytes": 349246
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-secondary2",
+      "year": 2020,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/secondary2",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_secondary2+ps.pdf",
+          "pages": 25,
+          "bytes": 320997
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-secondary3",
+      "year": 2020,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/secondary3",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_secondary3+ps.pdf",
+          "pages": 24,
+          "bytes": 397634
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2020-secondary4",
+      "year": 2020,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2020/secondary4",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2020_secondary4+ps.pdf",
+          "pages": 23,
+          "bytes": 299262
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-primary2",
+      "year": 2019,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary2.pdf",
+          "pages": 16,
+          "bytes": 575327
+        },
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary2+ps.pdf",
+          "pages": 9,
+          "bytes": 263387
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-primary3",
+      "year": 2019,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary3.pdf",
+          "pages": 16,
+          "bytes": 571137
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary3+s.pdf",
+          "pages": 11,
+          "bytes": 347381
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-primary4",
+      "year": 2019,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary4.pdf",
+          "pages": 16,
+          "bytes": 433477
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary4+s.pdf",
+          "pages": 10,
+          "bytes": 257782
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-primary5",
+      "year": 2019,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary5.pdf",
+          "pages": 16,
+          "bytes": 455935
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary5+s.pdf",
+          "pages": 10,
+          "bytes": 231102
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-primary6",
+      "year": 2019,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary6.pdf",
+          "pages": 16,
+          "bytes": 287540
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_primary6+s.pdf",
+          "pages": 11,
+          "bytes": 200246
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-secondary1",
+      "year": 2019,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary1.pdf",
+          "pages": 16,
+          "bytes": 371528
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary1+s.pdf",
+          "pages": 12,
+          "bytes": 296333
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-secondary2",
+      "year": 2019,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary2.pdf",
+          "pages": 16,
+          "bytes": 382737
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary2+s.pdf",
+          "pages": 12,
+          "bytes": 332661
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-secondary3",
+      "year": 2019,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary3.pdf",
+          "pages": 16,
+          "bytes": 272752
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary3+s.pdf",
+          "pages": 10,
+          "bytes": 207584
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2019-secondary4",
+      "year": 2019,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2019/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary4.pdf",
+          "pages": 16,
+          "bytes": 343219
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2019_secondary4+s.pdf",
+          "pages": 10,
+          "bytes": 187115
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-primary2",
+      "year": 2018,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary2.pdf",
+          "pages": 11,
+          "bytes": 245381
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary2+s.pdf",
+          "pages": 7,
+          "bytes": 3452949
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-primary3",
+      "year": 2018,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/primary3",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary3+ps.pdf",
+          "pages": 65,
+          "bytes": 1410000
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-primary4",
+      "year": 2018,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary4.pdf",
+          "pages": 9,
+          "bytes": 212332
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary4+s.pdf",
+          "pages": 7,
+          "bytes": 3364680
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-primary5",
+      "year": 2018,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary5.pdf",
+          "pages": 12,
+          "bytes": 254884
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary5+s.pdf",
+          "pages": 6,
+          "bytes": 3231023
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-primary6",
+      "year": 2018,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary6.pdf",
+          "pages": 10,
+          "bytes": 205594
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_primary6+s.pdf",
+          "pages": 6,
+          "bytes": 3357935
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-secondary1",
+      "year": 2018,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary1.pdf",
+          "pages": 10,
+          "bytes": 195554
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary1+s.pdf",
+          "pages": 6,
+          "bytes": 3280019
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-secondary2",
+      "year": 2018,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary2.pdf",
+          "pages": 10,
+          "bytes": 180969
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary2+s.pdf",
+          "pages": 7,
+          "bytes": 3234916
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-secondary3",
+      "year": 2018,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary3.pdf",
+          "pages": 9,
+          "bytes": 171890
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary3+s.pdf",
+          "pages": 6,
+          "bytes": 2653630
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2018-secondary4",
+      "year": 2018,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2018/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2018_secondary4.pdf",
+          "pages": 11,
+          "bytes": 187823
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-primary2",
+      "year": 2017,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary2.pdf",
+          "pages": 19,
+          "bytes": 1345834
+        },
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary2+ps.pdf",
+          "pages": 6,
+          "bytes": 2496088
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-primary3",
+      "year": 2017,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary3.pdf",
+          "pages": 19,
+          "bytes": 1183360
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary3+s.pdf",
+          "pages": 6,
+          "bytes": 1213127
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-primary4",
+      "year": 2017,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary4.pdf",
+          "pages": 19,
+          "bytes": 983534
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary4+s.pdf",
+          "pages": 5,
+          "bytes": 1926022
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-primary5",
+      "year": 2017,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary5.pdf",
+          "pages": 19,
+          "bytes": 1145635
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary5+s.pdf",
+          "pages": 6,
+          "bytes": 2728750
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-primary6",
+      "year": 2017,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary6.pdf",
+          "pages": 19,
+          "bytes": 1155227
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_primary6+s.pdf",
+          "pages": 7,
+          "bytes": 3158775
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-secondary1",
+      "year": 2017,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary1.pdf",
+          "pages": 19,
+          "bytes": 1106564
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary1+s.pdf",
+          "pages": 6,
+          "bytes": 2732277
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-secondary2",
+      "year": 2017,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary2.pdf",
+          "pages": 19,
+          "bytes": 1141296
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary2+s.pdf",
+          "pages": 6,
+          "bytes": 2728305
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-secondary3",
+      "year": 2017,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary3.pdf",
+          "pages": 19,
+          "bytes": 1133993
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary3+s.pdf",
+          "pages": 5,
+          "bytes": 1125979
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2017-secondary4",
+      "year": 2017,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2017/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary4.pdf",
+          "pages": 19,
+          "bytes": 1131509
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2017_secondary4+s.pdf",
+          "pages": 5,
+          "bytes": 1119341
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-primary2",
+      "year": 2016,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary2.pdf",
+          "pages": 10,
+          "bytes": 187660
+        },
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary2+ps.pdf",
+          "pages": 4,
+          "bytes": 1852129
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-primary3",
+      "year": 2016,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary3.pdf",
+          "pages": 10,
+          "bytes": 179830
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary3+s.pdf",
+          "pages": 6,
+          "bytes": 2211881
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-primary4",
+      "year": 2016,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary4.pdf",
+          "pages": 13,
+          "bytes": 209658
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary4+s.pdf",
+          "pages": 6,
+          "bytes": 2476173
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-primary5",
+      "year": 2016,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary5.pdf",
+          "pages": 10,
+          "bytes": 192943
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary5+s.pdf",
+          "pages": 5,
+          "bytes": 2255826
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-primary6",
+      "year": 2016,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary6.pdf",
+          "pages": 10,
+          "bytes": 190499
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_primary6+s.pdf",
+          "pages": 6,
+          "bytes": 2532122
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-secondary1",
+      "year": 2016,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary1.pdf",
+          "pages": 10,
+          "bytes": 184842
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary1+s.pdf",
+          "pages": 7,
+          "bytes": 2995521
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-secondary2",
+      "year": 2016,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary2.pdf",
+          "pages": 11,
+          "bytes": 192193
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary2+s.pdf",
+          "pages": 6,
+          "bytes": 2465345
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-secondary3",
+      "year": 2016,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary3.pdf",
+          "pages": 10,
+          "bytes": 176595
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary3+s.pdf",
+          "pages": 5,
+          "bytes": 2395412
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2016-secondary4",
+      "year": 2016,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2016/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary4.pdf",
+          "pages": 12,
+          "bytes": 240986
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2016_secondary4+s.pdf",
+          "pages": 6,
+          "bytes": 2765022
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-primary2",
+      "year": 2015,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/primary2",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_primary2+ps.pdf",
+          "pages": 19,
+          "bytes": 938547
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-primary3",
+      "year": 2015,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/primary3",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_primary3+ps.pdf",
+          "pages": 21,
+          "bytes": 983043
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-primary4",
+      "year": 2015,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/primary4",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_primary4+ps.pdf",
+          "pages": 22,
+          "bytes": 1105338
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-primary5",
+      "year": 2015,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/primary5",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_primary5+ps.pdf",
+          "pages": 29,
+          "bytes": 1039706
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-primary6",
+      "year": 2015,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/primary6",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_primary6+ps.pdf",
+          "pages": 27,
+          "bytes": 676093
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-secondary1",
+      "year": 2015,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/secondary1",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_secondary1+ps.pdf",
+          "pages": 30,
+          "bytes": 647500
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-secondary2",
+      "year": 2015,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/secondary2",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_secondary2+ps.pdf",
+          "pages": 29,
+          "bytes": 649651
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-secondary3",
+      "year": 2015,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/secondary3",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_secondary3+ps.pdf",
+          "pages": 29,
+          "bytes": 1033437
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2015-secondary4",
+      "year": 2015,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2015/secondary4",
+      "assets": [
+        {
+          "type": "ps",
+          "url": "https://files.k12mathcontests.com/sasmo_2015_secondary4+ps.pdf",
+          "pages": 30,
+          "bytes": 918564
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-primary2",
+      "year": 2014,
+      "division": "primary2",
+      "grade": 2,
+      "label": "Primary 2 · Grade 2",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/primary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary2.pdf",
+          "pages": 5,
+          "bytes": 89537
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary2+s.pdf",
+          "pages": 4,
+          "bytes": 742434
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-primary3",
+      "year": 2014,
+      "division": "primary3",
+      "grade": 3,
+      "label": "Primary 3 · Grade 3",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/primary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary3.pdf",
+          "pages": 6,
+          "bytes": 105060
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary3+s.pdf",
+          "pages": 4,
+          "bytes": 821729
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-primary4",
+      "year": 2014,
+      "division": "primary4",
+      "grade": 4,
+      "label": "Primary 4 · Grade 4",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/primary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary4.pdf",
+          "pages": 7,
+          "bytes": 113828
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary4+s.pdf",
+          "pages": 5,
+          "bytes": 973627
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-primary5",
+      "year": 2014,
+      "division": "primary5",
+      "grade": 5,
+      "label": "Primary 5 · Grade 5",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/primary5",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary5.pdf",
+          "pages": 9,
+          "bytes": 140552
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary5+s.pdf",
+          "pages": 6,
+          "bytes": 1140519
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-primary6",
+      "year": 2014,
+      "division": "primary6",
+      "grade": 6,
+      "label": "Primary 6 · Grade 6",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/primary6",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary6.pdf",
+          "pages": 9,
+          "bytes": 138514
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_primary6+s.pdf",
+          "pages": 8,
+          "bytes": 1618661
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-secondary1",
+      "year": 2014,
+      "division": "secondary1",
+      "grade": 7,
+      "label": "Secondary 1 · Grade 7",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/secondary1",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary1.pdf",
+          "pages": 9,
+          "bytes": 119365
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary1+s.pdf",
+          "pages": 9,
+          "bytes": 1776166
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-secondary2",
+      "year": 2014,
+      "division": "secondary2",
+      "grade": 8,
+      "label": "Secondary 2 · Grade 8",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/secondary2",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary2.pdf",
+          "pages": 9,
+          "bytes": 113123
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary2+s.pdf",
+          "pages": 7,
+          "bytes": 3048195
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-secondary3",
+      "year": 2014,
+      "division": "secondary3",
+      "grade": 9,
+      "label": "Secondary 3 · Grade 9",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/secondary3",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary3.pdf",
+          "pages": 9,
+          "bytes": 119372
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary3+s.pdf",
+          "pages": 7,
+          "bytes": 3291340
+        }
+      ]
+    },
+    {
+      "id": "sasmo-2014-secondary4",
+      "year": 2014,
+      "division": "secondary4",
+      "grade": 10,
+      "label": "Secondary 4 · Grade 10",
+      "sourcePageUrl": "https://www.k12mathcontests.com/download/sasmo/2014/secondary4",
+      "assets": [
+        {
+          "type": "p",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary4.pdf",
+          "pages": 9,
+          "bytes": 135488
+        },
+        {
+          "type": "s",
+          "url": "https://files.k12mathcontests.com/sasmo_2014_secondary4+s.pdf",
+          "pages": 7,
+          "bytes": 3385323
+        }
+      ]
+    }
+  ]
+}
