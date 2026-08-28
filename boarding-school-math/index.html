@@ -49,38 +49,55 @@
       <section class="directory-controls" id="roles" aria-labelledby="role-choice-title">
         <div class="directory-control-head">
           <div>
-            <p class="micro-label">01 · CHOOSE YOUR WORKSPACE</p>
-            <h2 id="role-choice-title">먼저 사용할 화면을 고르세요.</h2>
+            <p class="micro-label">01 · QUICK START</p>
+            <h2 id="role-choice-title">학년을 고르고<br>하나만 누르세요.</h2>
           </div>
-          <p>학생은 학습과 연습을, 교사는 근거와 배정 준비를 봅니다.</p>
+          <p>기출을 찾는다면 SASMO를, 현재 배울 내용을 찾는다면 개념·학년 영역을 선택합니다.</p>
         </div>
-        <div class="role-tabs directory-role-tabs" role="tablist" aria-label="사용자 화면 선택">
-          <button id="role-tab-student" type="button" role="tab" aria-controls="role-preview" aria-selected="true" tabindex="0" data-role-preview="student">학생용</button>
-          <button id="role-tab-teacher" type="button" role="tab" aria-controls="role-preview" aria-selected="false" tabindex="-1" data-role-preview="teacher">교사용</button>
+        <div class="quick-start-grade">
+          <label for="quick-start-grade">내 학년</label>
+          <select id="quick-start-grade">
+            <option value="0">Kindergarten</option>
+            <option value="1">Grade 1</option><option value="2">Grade 2</option><option value="3">Grade 3</option>
+            <option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6" selected>Grade 6</option>
+            <option value="7">Grade 7</option><option value="8">Grade 8</option><option value="9">Grade 9</option>
+            <option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option>
+          </select>
+          <span>나중에 언제든 바꿀 수 있습니다.</span>
         </div>
-        <div class="directory-quick-actions" aria-label="빠른 시작">
-          <a class="button button-primary" href="./concept-learning.html">Grade 6 공개 개념 학습 <span aria-hidden="true">→</span></a>
-          <a class="quick-path-link" href="#goals">학년·목표 경로 고르기</a>
+        <div class="simple-action-grid" aria-label="학습 시작 선택">
+          <a class="simple-action-card sasmo-action" id="quick-sasmo" href="./sasmo.html?grade=6#past-papers"><span>01</span><strong>SASMO 기출 풀기</strong><small>연도별 문제·정답·해설</small><i aria-hidden="true">→</i></a>
+          <a class="simple-action-card" id="quick-concept" href="./concept-learning.html"><span>02</span><strong>개념 배우기</strong><small>설명·예제·확인 학습</small><i aria-hidden="true">→</i></a>
+          <a class="simple-action-card" id="quick-map" href="#map"><span>03</span><strong>학년·영역 보기</strong><small>수·대수·기하·자료</small><i aria-hidden="true">↓</i></a>
         </div>
-        <article class="role-preview" id="role-preview" role="tabpanel" aria-labelledby="role-tab-student" tabindex="0" aria-live="polite">
-          <div class="role-copy">
-            <p class="micro-label" id="role-eyebrow">STUDENT · TODAY</p>
-            <h3 id="role-title">오늘 해야 할 한 가지가 먼저 보입니다.</h3>
-            <p id="role-description">현재 위치와 목표를 연결해 다음 수업, 연습, 유지 확인을 한 화면에 보여줍니다.</p>
-            <ul id="role-nav"><li>오늘</li><li>내 스킬 지도</li><li>학습·재확인</li><li>경시 도전</li><li>성장 기록</li></ul>
+        <details class="advanced-home-tools">
+          <summary>학생용·교사용 화면과 검색 보기</summary>
+          <div class="advanced-home-content">
+            <div class="role-tabs directory-role-tabs" role="tablist" aria-label="사용자 화면 선택">
+              <button id="role-tab-student" type="button" role="tab" aria-controls="role-preview" aria-selected="true" tabindex="0" data-role-preview="student">학생용</button>
+              <button id="role-tab-teacher" type="button" role="tab" aria-controls="role-preview" aria-selected="false" tabindex="-1" data-role-preview="teacher">교사용</button>
+            </div>
+            <article class="role-preview" id="role-preview" role="tabpanel" aria-labelledby="role-tab-student" tabindex="0" aria-live="polite">
+              <div class="role-copy">
+                <p class="micro-label" id="role-eyebrow">STUDENT · TODAY</p>
+                <h3 id="role-title">오늘 해야 할 한 가지가 먼저 보입니다.</h3>
+                <p id="role-description">현재 위치와 목표를 연결해 다음 수업, 연습, 유지 확인을 한 화면에 보여줍니다.</p>
+                <ul id="role-nav"><li>오늘</li><li>내 스킬 지도</li><li>학습·재확인</li><li>경시 도전</li><li>성장 기록</li></ul>
+              </div>
+              <div class="mini-product" id="mini-product"></div>
+            </article>
+            <div class="learning-search" role="search">
+              <label for="learning-search">학년·영역·과정으로 찾기</label>
+              <div class="search-row">
+                <input id="learning-search" name="q" type="search" placeholder="예: Grade 6 비와 비례, SASMO" autocomplete="off">
+                <button id="search-clear" type="reset">지우기</button>
+                <button class="button button-primary" type="button">찾기 <span aria-hidden="true">→</span></button>
+              </div>
+              <p id="search-summary">아래에서 학교 수학, 숙달, 대회를 먼저 선택해도 됩니다.</p>
+              <div id="search-results" aria-live="polite" hidden></div>
+            </div>
           </div>
-          <div class="mini-product" id="mini-product"></div>
-        </article>
-        <div class="learning-search" role="search">
-          <label for="learning-search">학년·영역·과정으로 찾기</label>
-          <div class="search-row">
-            <input id="learning-search" name="q" type="search" placeholder="예: Grade 6 비와 비례, SASMO" autocomplete="off">
-            <button id="search-clear" type="reset">지우기</button>
-            <button class="button button-primary" type="button">찾기 <span aria-hidden="true">→</span></button>
-          </div>
-          <p id="search-summary">아래에서 학교 수학, 숙달, 대회를 먼저 선택해도 됩니다.</p>
-          <div id="search-results" aria-live="polite" hidden></div>
-        </div>
+        </details>
       </section>
     </section>
 
