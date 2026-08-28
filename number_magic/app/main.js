@@ -2148,7 +2148,13 @@ function stepDiscover(body,u){
      tier id로 쓰라는 작업지시라 접두어 규칙만으로는 안 걸린다 — 정규식을
      넓히는 대신 새 tier를 나열해 실수로 다른 tier까지 걸리지 않게 한다. */
   const isMidHigh=/^(middle|high)/.test(u.tier||'')||u.tier==='algebra'||u.tier==='calculus1';
-  const storyHtml=st?`<div class="nm-story${isMidHigh?' doc':''}">
+  /* 스토리 삽화(2026-08-28): assets/images/story/<유닛>.svg 가 있으면 훅 위에 얹는다.
+     유닛마다 그림이 다 있는 건 아니라 목록을 따로 들고 다니지 않고, 파일이 없으면
+     onerror 로 <figure> 째 지운다 — 새 그림을 추가할 때 코드를 고칠 필요가 없다.
+     삽화는 전부 원본 도형이고, 3개 언어 공용이라 글자 대신 숫자·수식만 쓴다. */
+  const artHtml=`<figure class="nm-story-art"><img src="assets/images/story/${u.id}.svg" alt=""
+      loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
+  const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
     </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';

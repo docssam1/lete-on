@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g stroke="#0E2C57" stroke-width="2.5" fill="none">
+<rect x="200" y="60" width="180" height="180"/>
+<path d="M290 60 v180"/><path d="M200 150 h180"/>
+<path d="M200 60 L290 150"/><path d="M290 60 L380 150"/><path d="M200 150 L290 240"/><path d="M290 150 L380 240"/></g>
+<g font-family="ui-monospace,monospace" font-size="21" font-weight="700" fill="#16417C" text-anchor="middle">
+<text x="245" y="46">4</text><text x="335" y="46">7</text>
+<text x="398" y="112">2</text><text x="398" y="202">3</text></g>
+<g font-family="ui-monospace,monospace" font-size="19" fill="#0E2C57">
+<text x="212" y="86">0</text><text x="262" y="140">8</text>
+<text x="302" y="86">1</text><text x="352" y="140">4</text>
+<text x="212" y="176">1</text><text x="262" y="230">2</text>
+<text x="302" y="176">2</text><text x="352" y="230">1</text></g>
+<g font-family="ui-monospace,monospace" font-size="23" font-weight="800" fill="#C9A063" text-anchor="middle">
+<text x="182" y="130">1</text><text x="182" y="220">1</text><text x="245" y="264">0</text><text x="335" y="264">1</text></g>
+<text x="520" y="150" font-family="ui-monospace,monospace" font-size="21" font-weight="800" fill="#2E9E6B" text-anchor="middle">47 × 23</text>
+<text x="520" y="186" font-family="ui-monospace,monospace" font-size="25" font-weight="800" fill="#2E9E6B" text-anchor="middle">1081</text></svg>

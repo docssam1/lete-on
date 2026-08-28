@@ -1114,6 +1114,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-story-hist{background:var(--mist);border-radius:12px;padding:10px 12px;font-size:12.5px;
   color:var(--sub);line-height:1.6;margin:0 0 14px}
 
+/* 스토리 삽화 — 원본 도형 SVG(640×280). 파일이 없는 유닛은 JS가 figure를 지운다. */
+.nm-story-art{margin:2px 0 12px;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;
+  background:#F7F5F0;line-height:0}
+.nm-story-art img{display:block;width:100%;height:auto}
+@media (max-width:420px){.nm-story-art{border-radius:13px}}
+
 /* ============================================================
    개념 계보 (§6) — 카드 배지 · 도장 화면 진화 링크 · 완주 배지
    ============================================================ */
