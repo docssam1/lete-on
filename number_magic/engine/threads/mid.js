@@ -439,11 +439,11 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
         en: `${a} + ${b} × ${c}: no brackets — multiply first`,
         zh: `${a} + ${b} × ${c}：没有括号先算乘法`
       },
-      tex: `${a} + ${b} \\times ${c} = \\square`,
+      tex: `${a} + ${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
-        { tex: `${b} \\times ${c} = \\square \\;(\\text{먼저!})`, blank: bc },
-        { tex: `${a} + ${bc} = \\square`, blank: answer }
+        { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square \\;(\\text{먼저!})`, blank: bc },
+        { tex: `${a} + ${wrapSigned(bc)} = \\square`, blank: answer }
       ]
     };
   }
@@ -490,12 +490,12 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
       en: `${a} + ${b} × ${c} ÷ ${d}: do × and ÷ first (left to right), then add`,
       zh: `${a} + ${b} × ${c} ÷ ${d}：先从左到右做乘除法，再做加法`
     },
-    tex: `${a} + ${b} \\times ${c} \\div ${d} = \\square`,
+    tex: `${a} + ${wrapSigned(b)} \\times ${wrapSigned(c)} \\div ${wrapSigned(d)} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
-      { tex: `${b} \\times ${c} = \\square`, blank: bc },
-      { tex: `${bc} \\div ${d} = \\square`, blank: bcd },
-      { tex: `${a} + ${bcd} = \\square`, blank: answer }
+      { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`, blank: bc },
+      { tex: `${wrapSigned(bc)} \\div ${wrapSigned(d)} = \\square`, blank: bcd },
+      { tex: `${a} + ${wrapSigned(bcd)} = \\square`, blank: answer }
     ]
   };
 };
