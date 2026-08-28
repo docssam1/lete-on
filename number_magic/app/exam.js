@@ -42,6 +42,37 @@
   .nm-print-ask { font-size: 0.8em; line-height: 1.5; color: #222; margin: 2px 0 4px;
     word-break: keep-all; }
 
+  /* 십진블록 — 백판·십막대·낱개. 개수가 많아 줄바꿈되게 둔다(흑백, 선만). */
+  .nm-print-item-vis { text-align: center; }
+  .nm-print-item-vis .nm-q-num { display: block; }
+  .nm-b10 { display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 4px 7px; margin-top: 6px; }
+  .nm-b10-group { display: inline-flex; flex-wrap: wrap; align-items: flex-end; gap: 4mm; max-width: 60mm; }
+  .nm-b10-den { display: inline-flex; align-items: flex-end; }
+  /* 한 칸(작은 정육면체) 크기를 --u로 두고 나머지는 전부 여기서 파생시킨다 —
+     백판=10u×10u, 십막대=u×10u, 낱개=u×u. 비례를 지켜야 "십막대 열 개가 백판"이
+     그림으로 읽힌다. 저학년은 아래에서 --u를 키운다. */
+  .nm-b10 { --u: 1.5mm; --g: 1.1mm; }
+  .nm-b10-h { gap: calc(var(--u) * 1.1); }
+  .nm-b10-t { gap: var(--g); }
+  /* 낱개는 5개씩 끊어 줄바꿈 — 한 줄로 아홉 개를 늘어놓으면 세기 어렵다 */
+  .nm-b10-o { flex-wrap: wrap; gap: var(--g); width: calc(var(--u) * 5 + var(--g) * 4); }
+  .nm-b10-flat { width: calc(var(--u) * 10); height: calc(var(--u) * 10); }
+  .nm-b10-rod  { width: var(--u); height: calc(var(--u) * 10); }
+  .nm-b10-one  { width: var(--u); height: var(--u); }
+  .nm-b10 svg rect, .nm-b10 svg path { fill: none; stroke: #000; stroke-width: .9;
+    vector-effect: non-scaling-stroke; }
+  .nm-b10-op { font-size: 1.3em; font-weight: 700; align-self: center; padding: 0 2px; }
+  .nm-b10-blank { display: inline-block; width: 16mm; height: 8mm; border: 1px dashed #000; align-self: center; }
+
+  /* 수직선 점프 */
+  .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
+  .nm-nl line, .nm-nl path { fill: none; stroke: #000; stroke-width: 1.4; }
+  .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
+  .nm-nl .nm-nl-blank { fill: none; stroke: #000; stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .nm-nl text { font-family: sans-serif; font-size: 15px; font-weight: 700; fill: #000; }
+  .nm-nl .nm-nl-step { font-size: 13px; }
+
   /* 수 묶음(모으기·가르기) — 등식 대신 그림이 문제다. 빈 동그라미가 답 자리. */
   .nm-print-item-bond { text-align: center; }
   .nm-print-item-bond .nm-q-num { display: block; }
@@ -60,6 +91,8 @@
   .nm-print-age-young .nm-print-item .nm-q-tex { font-size: 1.9em; }
   .nm-print-age-young .nm-print-vp { font-size: 1.8em; }
   .nm-print-age-young .nm-bond { width: 40mm; }
+  .nm-print-age-young .nm-b10 { --u: 1.9mm; --g: 1.3mm; }
+  .nm-print-age-young .nm-nl { width: 70mm; }
   .nm-print-age-young .nm-print-answer-key .nm-ak-item { font-size: 1em; }
 
   .nm-print-age-mid .nm-print-item { min-height: 17mm; }
@@ -519,6 +552,81 @@ function printAgeBand(config, problems){
   return 'senior';
 }
 
+/* ── 십진블록(base10) · 수직선 점프(numline) 인쇄 도형 ─────────────
+   레벨 이름이 "십진블록 읽기"·"십진블록 더하기"·"수직선 점프"인데 인쇄물엔
+   `600 + 50 + 3 = □`, `61 + 9 = □` 같은 등식만 찍혀 그림이 통째로 빠져
+   있었다(2026-08-28). AD3L4는 특히 AD3L2(그냥 두 자리+한 자리)와 인쇄물이
+   구별되지 않았다. 생성기가 이미 base10·numline 페이로드를 주므로 그걸 그린다.
+   흑백 프린터를 전제로 색 없이 선만 쓴다. */
+
+/* 백판(10×10) · 십막대(1×10) · 낱개(1×1) — 격자선은 path 하나로 모아 그린다. */
+function b10FlatSvg(){
+  let d = '';
+  for(let i=1;i<=9;i++) d += `M${i} 0V10M0 ${i}H10`;
+  return `<svg class="nm-b10-flat" viewBox="0 0 10 10"><rect x="0" y="0" width="10" height="10"/><path d="${d}"/></svg>`;
+}
+function b10RodSvg(){
+  let d = '';
+  for(let i=1;i<=9;i++) d += `M0 ${i}H1`;
+  return `<svg class="nm-b10-rod" viewBox="0 0 1 10"><rect x="0" y="0" width="1" height="10"/><path d="${d}"/></svg>`;
+}
+function b10OneSvg(){
+  return `<svg class="nm-b10-one" viewBox="0 0 1 1"><rect x="0" y="0" width="1" height="1"/></svg>`;
+}
+/* 자리별로 묶어 낸다 — 백판 덩어리 · 십막대 덩어리 · 낱개 덩어리.
+   묶지 않고 죽 늘어놓으면 십막대가 서로 붙어 백판처럼 보여 개수를 셀 수 없다
+   (첫 시안에서 실제로 그랬다). 낱개는 5개씩 줄바꿈해 세기 쉽게 둔다. */
+function b10GroupHtml(h, tens, ones){
+  const den = (cls, n, svg) => {
+    if(!n) return '';
+    let s = '';
+    for(let i=0;i<n;i++) s += svg();
+    return `<span class="nm-b10-den ${cls}">${s}</span>`;
+  };
+  return `<span class="nm-b10-group">`
+    + den('nm-b10-h', h||0, b10FlatSvg)
+    + den('nm-b10-t', tens||0, b10RodSvg)
+    + den('nm-b10-o', ones||0, b10OneSvg)
+    + `</span>`;
+}
+function base10Html(b){
+  if(!b) return '';
+  if(b.mode === 'add'){
+    return `<div class="nm-b10">${b10GroupHtml(b.a.h, b.a.tens, b.a.ones)}`
+      + `<span class="nm-b10-op">+</span>${b10GroupHtml(b.b.h, b.b.tens, b.b.ones)}`
+      + `<span class="nm-b10-op">=</span><span class="nm-b10-blank"></span></div>`;
+  }
+  return `<div class="nm-b10">${b10GroupHtml(b.h, b.tens, b.ones)}`
+    + `<span class="nm-b10-op">=</span><span class="nm-b10-blank"></span></div>`;
+}
+
+/* 수직선 점프 — 마디에 눈금·수를 찍고 마디 사이를 호(arc)로 잇는다.
+   빈 마디는 네모로 비워 두고, 첫 호 위에 +step을 적어 규칙을 보인다. */
+function numlineSvg(nl){
+  if(!nl || !Array.isArray(nl.seq) || nl.seq.length < 2) return '';
+  const n = nl.seq.length;
+  const L = 14, R = 246, Y = 62;
+  const x = i => L + (R - L) * i / (n - 1);
+  let s = `<line x1="${L-10}" y1="${Y}" x2="${R+10}" y2="${Y}"/>`;
+  for(let i=0;i<n;i++){
+    const xi = x(i);
+    s += `<line x1="${xi}" y1="${Y-5}" x2="${xi}" y2="${Y+5}"/>`;
+    if(i === nl.blank){
+      s += `<rect class="nm-nl-blank" x="${xi-13}" y="${Y+10}" width="26" height="20"/>`;
+    } else {
+      s += `<text x="${xi}" y="${Y+22}" text-anchor="middle">${esc(String(nl.seq[i]))}</text>`;
+    }
+    if(i < n-1){
+      const xm = (xi + x(i+1)) / 2;
+      s += `<path class="nm-nl-hop" d="M${xi} ${Y-7} Q ${xm} ${Y-34} ${x(i+1)} ${Y-7}"/>`;
+      if(i === 0){
+        s += `<text class="nm-nl-step" x="${xm}" y="${Y-28}" text-anchor="middle">+${esc(String(nl.step))}</text>`;
+      }
+    }
+  }
+  return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="수직선 점프">${s}</svg>`;
+}
+
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
 function bondSvg(whole, known){
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
@@ -551,7 +659,8 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
      연산지가 두 배로 두꺼워지고, 4열로 고정하면 고등 긴 수식이 칸을 넘친다.
      그래서 문장제가 하나라도 있거나 수식이 길면 2열, 짧은 연산뿐이면 4열로 간다. */
   const longest = problems.reduce((m, p) =>
-    Math.max(m, p.word ? Infinity : String(p.tex||'').length), 0);
+    /* 십진블록·수직선은 그림이 넓어 좁은 칸에 못 들어간다 — 문장제와 같이 취급 */
+    Math.max(m, (p.word || p.base10 || p.numline) ? Infinity : String(p.tex||'').length), 0);
   problemGrid.classList.add('nm-print-grid');
   problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
 
@@ -565,7 +674,8 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     const card = document.createElement('div');
     card.className = 'nm-print-item'
       + (v ? ' nm-print-item-vp' : '')
-      + (bw !== null ? ' nm-print-item-bond' : '');
+      + (bw !== null ? ' nm-print-item-bond' : '')
+      + ((p.base10 || p.numline) ? ' nm-print-item-vis' : '');
     const numEl = document.createElement('span');
     numEl.className = 'nm-q-num';
     numEl.textContent = circled(i+1);
@@ -583,6 +693,12 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       const holder = document.createElement('div');
       holder.innerHTML = bondSvg(bw, bw - p.answer);
       card.appendChild(holder.firstChild);
+    } else if(p.base10 || p.numline){
+      const holder = document.createElement('div');
+      holder.innerHTML = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
+      if(holder.firstChild) card.appendChild(holder.firstChild);
+      else { const t = document.createElement('div'); t.className='nm-q-tex';
+             renderKaTeX(p.tex||'', t); card.appendChild(t); }
     } else if(p.word){
       const texEl = document.createElement('div');
       texEl.className = 'nm-q-tex';
