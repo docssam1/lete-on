@@ -15,20 +15,20 @@
   };
   const roleCopy = {
     teacher: {
-      label: "교사용 · 설계와 수업 연결",
-      title: "교사는 영역별 근거를 수업 계획으로 연결합니다.",
-      copy: "42개 문항이 Grade 6의 다섯 영역과 열 개 클러스터를 고르게 다루는지 확인하고, 진단 결과를 보충 연습과 다음 단원 계획에 연결합니다.",
-      status: "원고는 로컬 검산을 통과했지만, 학생 배정은 인증된 검토 기록과 안전한 배포 연결 뒤에만 가능합니다.",
-      steps: ["진단 범위 확인", "인증 검토 기록 확인", "학생 평가 배정", "영역별 근거 검토", "수업·유지 계획"],
+      label: "교사용 · 채점 근거와 수업 처방",
+      title: "교사는 10개 서술 응답을 확인하고 처방 후보를 학교 검토로 넘깁니다.",
+      copy: "32개 자동채점 결과와 10개 교사 검토를 결합해 다섯 영역, 열 개 클러스터, 난이도와 오류 유형을 분석합니다. 낮은 총점만 보는 대신 어떤 선수개념과 풀이 단계에서 막혔는지 확인합니다.",
+      status: "로컬 실행에서는 서버가 표시한 교사 PIN과 학생 진단 번호가 필요합니다. 운영에서는 인증된 담당 교사 범위로 대체됩니다.",
+      steps: ["학생 응답 불러오기", "서술 10문항 검토", "오류 유형 확인", "영역·클러스터 분석", "수업·유지 처방"],
       linkLabel: "Grade 6 교사용 커리큘럼 보기",
       linkHref: "./catalog.html?role=teacher&grade=6"
     },
     student: {
-      label: "학생용 · 진단과 다음 학습",
-      title: "학생은 평가 뒤에 무엇을 연습할지 확인합니다.",
-      copy: "교사가 배정한 진단을 마치면 영역별 피드백과 다음 수업·연습 순서를 확인합니다. 학생 화면은 자신의 학습 흐름에 필요한 정보만 보여 줍니다.",
-      status: "현재 평가 화면은 잠겨 있습니다. 교사 배정과 인증 연결이 완료되면 학생 계정에서 열립니다.",
-      steps: ["배정 안내", "인증된 평가 응시", "영역별 결과", "다음 수업·연습", "유지 확인"],
+      label: "학생용 · 응시와 다음 학습",
+      title: "학생은 42문항을 풀고 자신의 강점과 다음 연습을 확인합니다.",
+      copy: "문항을 한 개씩 풀고 제출하면 객관 응답 32개가 먼저 채점됩니다. 교사가 설명 응답 10개를 확인한 뒤 영역별 결과, 문항별 코멘트와 다음 수업 순서가 열립니다.",
+      status: "정답·루브릭·교사 자료는 학생 화면에 전달하지 않습니다. 공개 사이트에서는 안내만 보이며, 로컬 또는 운영 진단 서버가 연결된 경우에만 응시할 수 있습니다.",
+      steps: ["42문항 응시", "자동채점 32문항", "교사 검토 10문항", "영역·오류 분석", "다음 학습·유지 확인"],
       linkLabel: "Grade 6 학생용 커리큘럼 보기",
       linkHref: "./catalog.html?role=student&grade=6"
     }
@@ -46,8 +46,7 @@
     const maximum = Math.max.apply(null, Object.values(counts));
     host.innerHTML = Object.keys(counts).sort().map(function (key) {
       const value = counts[key];
-      const percent = Math.round((value / maximum) * 100);
-      return `<div class="balance-line"><b>${labelMap[key] || key}</b><div class="bar-track" aria-hidden="true"><i style="width:${percent}%"></i></div><small>${value}</small></div>`;
+      return `<div class="balance-line"><b>${labelMap[key] || key}</b><progress class="bar-track" max="${maximum}" value="${value}" aria-label="${labelMap[key] || key} ${value}">${value} / ${maximum}</progress><small>${value}</small></div>`;
     }).join("");
   }
   function renderRole() {

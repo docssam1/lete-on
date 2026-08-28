@@ -472,18 +472,32 @@
     if (lowDomains.length) blockers.push("domain-floor-not-met");
     if (prerequisiteGaps > policy.promotionReview.maxPrerequisiteGaps) blockers.push("prerequisite-gaps-exceed-policy");
     const status = blockers.length ? "needs-more-learning" : missingEvidence.length ? "needs-more-evidence" : "eligible-for-server-verification";
+
+    function instructionMode(percentageValue, errorCounts, difficultyEvidence) {
+      const errors = errorCounts || {};
+      const foundation = difficultyEvidence && difficultyEvidence.foundation;
+      const hasPrerequisiteGap = Number(errors["prerequisite-gap"] || 0) > 0;
+      const hasFoundationMiss = !!foundation && foundation.maxPoints > 0 && foundation.earnedPoints < foundation.maxPoints;
+      if (hasPrerequisiteGap || hasFoundationMiss || percentageValue < policy.promotionReview.minDomainPercent) return "repair";
+      return Object.keys(errors).some(function (errorType) { return Number(errors[errorType]) > 0; })
+        ? "guided-practice"
+        : "consolidate";
+    }
+
     const lessonPriorities = domains.slice().sort(function (left, right) {
       return left.percentage - right.percentage || left.domainId.localeCompare(right.domainId);
     }).map(function (domain) {
-      const mode = 100 * domain.earnedPoints / domain.maxPoints < policy.promotionReview.minDomainPercent ? "repair" :
-        Object.keys(domain.errorCounts).length ? "guided-practice" : "consolidate";
+      const mode = instructionMode(100 * domain.earnedPoints / domain.maxPoints, domain.errorCounts, null);
       return Object.freeze({ domainId: domain.domainId, mode, percentage: domain.percentage, errorCounts: Object.freeze(Object.assign({}, domain.errorCounts)) });
     });
     const clusterPriorities = clusters.slice().sort(function (left, right) {
       return left.percentage - right.percentage || left.clusterId.localeCompare(right.clusterId);
     }).map(function (cluster) {
-      const mode = 100 * cluster.earnedPoints / cluster.maxPoints < policy.promotionReview.minDomainPercent ? "repair" :
-        Object.keys(cluster.errorCounts).length ? "guided-practice" : "consolidate";
+      const mode = instructionMode(
+        100 * cluster.earnedPoints / cluster.maxPoints,
+        cluster.errorCounts,
+        cluster.difficultyEvidence
+      );
       return Object.freeze({
         unitId: cluster.unitId,
         clusterId: cluster.clusterId,
