@@ -230,6 +230,7 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.deepEqual(GEN.typeInfo("CO").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("HC").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typeInfo("CJ").levels, ["L2", "L3", "L4", "L5"]);
+  assert.deepEqual(GEN.typeInfo("CP").levels, ["L2", "L3", "L4", "L5"]);
   assert.deepEqual(GEN.typesForLevel("L0"), ["IC"]);
   assert.ok(GEN.typesForLevel("L1").includes("SQ"));
   assert.ok(GEN.typesForLevel("L2").includes("CU"));
@@ -237,6 +238,7 @@ test("source-backed lower-stage placements stay separated by problem structure",
   assert.ok(GEN.typesForLevel("L2").includes("CO"));
   assert.ok(GEN.typesForLevel("L2").includes("HC"));
   assert.ok(GEN.typesForLevel("L2").includes("CJ"));
+  assert.ok(GEN.typesForLevel("L2").includes("CP"));
   assert.equal(GEN.typeSupportsLevel("SQ", "L0"), false);
   assert.equal(GEN.typeSupportsLevel("CU", "L1"), false);
 });
@@ -496,4 +498,81 @@ test("two-piece join choices have one rotational packing solution and one viewpo
     }
   }
   assert.equal(checked, 720);
+});
+
+const independentComposeCache = new Map();
+
+function independentJoinedForms(first, second) {
+  const pairKey = [GEN.canonicalPolycube(first), GEN.canonicalPolycube(second)].sort().join("||");
+  if (independentComposeCache.has(pairKey)) return independentComposeCache.get(pairKey);
+  const left = GEN.normalizeCoords(first);
+  const occupied = new Set(left.map((cell) => cell.join(",")));
+  const raw = new Map();
+  GEN.orientationsOf(second).forEach((right) => {
+    left.forEach(([lx, ly, lz]) => {
+      right.forEach(([rx, ry, rz]) => {
+        [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => {
+          const shift = [lx + dx - rx, ly + dy - ry, lz + dz - rz];
+          const placed = right.map(([x, y, z]) => [x + shift[0], y + shift[1], z + shift[2]]);
+          if (placed.some((cell) => occupied.has(cell.join(",")))) return;
+          const union = GEN.normalizeCoords(left.concat(placed));
+          raw.set(union.map((cell) => cell.join(",")).join(";"), union);
+        });
+      });
+    });
+  });
+  const forms = new Set(Array.from(raw.values()).map(GEN.canonicalPolycube));
+  independentComposeCache.set(pairKey, forms);
+  return forms;
+}
+
+test("two prepared pieces make every option except one under cube rotations", () => {
+  Object.keys(GEN.COMPOSE_PIECES).forEach((size) => {
+    const pieces = GEN.COMPOSE_PIECES[size];
+    assert.equal(new Set(pieces.map(GEN.canonicalPolycube)).size, pieces.length);
+    pieces.forEach((piece) => assert.equal(GEN.isConnectedPolycube(piece), true));
+  });
+
+  let checked = 0;
+  for (let level = 2; level <= 5; level += 1) {
+    for (let difficulty = 1; difficulty <= 3; difficulty += 1) {
+      const stage = "L" + level;
+      for (let seed = 1; seed <= 40; seed += 1) {
+        const problem = GEN.make(
+          "CP",
+          GEN.createRng("compose-two-pieces:" + stage + ":" + difficulty + ":" + seed),
+          stage,
+          difficulty
+        );
+        const figures = problem.figures;
+        const answer = problem.answer;
+        assert.equal(figures.kind, "polycube-compose-options");
+        assert.equal(figures.viewpoint, GEN.ISO_VIEWPOINT.code);
+        assert.equal(figures.sources.length, 2);
+        assert.equal(figures.choices.length, difficulty === 1 ? 3 : 4);
+        assert.equal(figures.sources[0].length + figures.sources[1].length, answer.targetSize);
+        assert.deepEqual(figures.sources.map((piece) => piece.length), answer.pieceSizes);
+        assert.equal(new Set(figures.choices.map(GEN.canonicalPolycube)).size, figures.choices.length);
+
+        const forms = independentJoinedForms(figures.sources[0], figures.sources[1]);
+        const independentlyPossible = figures.choices.map((shape) => forms.has(GEN.canonicalPolycube(shape)));
+        assert.equal(independentlyPossible.filter((possible) => !possible).length, 1, stage + " D" + difficulty + " seed " + seed);
+        assert.equal(independentlyPossible[answer.choiceIndex], false);
+        assert.deepEqual(answer.canMake, independentlyPossible);
+        assert.equal(answer.choice, figures.labels[answer.choiceIndex]);
+
+        figures.sources.concat(figures.choices).forEach((shape) => {
+          assert.equal(GEN.isConnectedPolycube(shape), true);
+          assert.equal(GEN.auditPolycubeViewpoint(shape, figures.viewpoint).ok, true);
+        });
+        figures.choices.forEach((shape) => assert.equal(shape.length, answer.targetSize));
+
+        const html = CARD.renderFigures(problem);
+        const viewpointMarks = html.match(/data-viewpoint="iso-plus-x-plus-z-v1"/g) || [];
+        assert.equal(viewpointMarks.length, figures.choices.length + 2);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, 480);
 });
