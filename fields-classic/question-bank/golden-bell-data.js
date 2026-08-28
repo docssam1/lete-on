@@ -1402,8 +1402,227 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
+  {
+    id: "book-08",
+    label: "8권",
+    title: "매트릭스와 복면산",
+    status: "ready",
+    source: {
+      file: "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx",
+      companionFile: "교사용지도서_더클래식_1과정_8N30권_매트릭스와_복면산(230802).pdf",
+      verified: true,
+      note: "39슬라이드 교사용 자료와 지도서를 대조하고, 문제 구조와 빨간 풀이를 분리해 독립 계산한 대표 활동만 공개"
+    },
+    lessons: [
+      {
+        id: "addition-sum-matrix",
+        unit: "묶음수와 매트릭스",
+        title: "가로와 세로의 합으로 도형값을 찾아요",
+        sourceLocator: "교사용 PPTX 슬라이드 2, 덧셈 매트릭스 연습 (1)~(4)",
+        sourceTypeIds: ["addition-matrix-complete-b8"],
+        representativeConcept: "같은 도형은 같은 수임을 이용해 같은 도형만 모인 줄부터 값을 찾고 다른 줄의 합을 차례로 완성함",
+        story: {
+          title: "도형 암호판의 합",
+          text: "가로줄과 세로줄 끝의 수는 그 줄에 있는 세 도형의 합입니다.",
+          mission: "같은 도형이 여러 번 나온 줄을 먼저 찾아 도형 하나의 값을 구하세요."
+        },
+        explanation: {
+          headline: "한 종류의 도형만 있는 줄이 가장 좋은 출발점입니다.",
+          steps: [
+            "같은 도형 세 개의 합을 3으로 나누어 도형 하나의 값을 찾습니다.",
+            "알게 된 도형값을 다른 가로줄이나 세로줄에 바꾸어 넣습니다.",
+            "마지막 빈 합을 계산한 뒤 모든 줄의 합이 맞는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "three-by-three-symbol-sum-matrix",
+          prompt: "같은 도형은 같은 수를 나타냅니다. 빈칸에 알맞은 합을 쓰시오.",
+          visual: {
+            kind: "book8-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "sum-matrix", cells: [["□", "□", "□"], ["□", "△", "☆"], ["△", "◎", "◎"]], rowTotals: [24, 17, 10], columnTotals: [20, 15, "?"] } },
+              { label: "(2)", visual: { subtype: "sum-matrix", cells: [["□", "△", "☆"], ["□", "□", "△"], ["□", "◎", "△"]], rowTotals: [14, 15, 10], columnTotals: [18, "?", 11] } },
+              { label: "(3)", visual: { subtype: "sum-matrix", cells: [["☆", "△", "△"], ["□", "□", "□"], ["□", "◎", "☆"]], rowTotals: [5, 12, 10], columnTotals: [9, 11, "?"] } },
+              { label: "(4)", visual: { subtype: "sum-matrix", cells: [["△", "☆", "◎"], ["□", "△", "☆"], ["□", "□", "□"]], rowTotals: [20, 29, 36], columnTotals: [34, 29, "?"] } }
+            ]
+          },
+          items: [
+            { id: "matrix-sum-1", prompt: "(1) 빈칸의 합", answerMode: "input", inputMode: "numeric", answer: "16" },
+            { id: "matrix-sum-2", prompt: "(2) 빈칸의 합", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "matrix-sum-3", prompt: "(3) 빈칸의 합", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "matrix-sum-4", prompt: "(4) 빈칸의 합", answerMode: "input", inputMode: "numeric", answer: "22" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "three-by-three-symbol-sum-matrix",
+          story: "박물관의 도형 암호판에서 한 세로줄의 합이 지워졌습니다.",
+          prompt: "물음표 자리에 들어갈 합을 쓰세요.",
+          visual: { kind: "book8", subtype: "sum-matrix", cells: [["□", "□", "△"], ["□", "○", "☆"], ["△", "○", "○"]], rowTotals: [18, 14, 8], columnTotals: [18, "?", 11] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "11",
+          explanation: "첫째 가로줄과 첫째 세로줄에서 네모는 7, 세모는 4입니다. 셋째 가로줄에서 동그라미는 2이므로 가운데 세로줄은 7+2+2=11입니다."
+        }
+      },
+      {
+        id: "vertical-shape-cryptarithm",
+        unit: "복면산",
+        title: "세로셈의 자리값으로 도형 수를 찾아요",
+        sourceLocator: "교사용 PPTX 슬라이드 16, 복면산 연습 (1)~(4)",
+        sourceTypeIds: ["repeated-symbol-cryptarithm-b8", "multi-symbol-cryptarithm-b8"],
+        representativeConcept: "일의 자리부터 더하며 같은 도형의 값과 받아올림을 찾고 십의 자리와 백의 자리에 다시 확인함",
+        story: {
+          title: "도형 숫자 금고",
+          text: "같은 도형에는 언제나 같은 숫자가 들어갑니다. 세로셈의 각 자리에서 합과 받아올림을 맞추면 도형의 수를 찾을 수 있습니다.",
+          mission: "일의 자리부터 계산하고, 10이 넘으면 받아올림 1을 다음 자리에 표시하세요."
+        },
+        explanation: {
+          headline: "세로셈은 일의 자리부터 한 칸씩 확인합니다.",
+          steps: [
+            "일의 자리의 같은 도형을 더해 끝자리 숫자를 맞춥니다.",
+            "합이 10 이상이면 십의 자리에 받아올림 1을 더합니다.",
+            "찾은 도형값을 전체 세로셈에 넣어 결과가 정확한지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "vertical-symbol-addition-with-carry",
+          prompt: "같은 모양은 같은 숫자를 나타냅니다. 물음에 답하시오.",
+          visual: {
+            kind: "book8-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "vertical", top: "□4", bottom: "2□", operator: "+", result: "○○2" } },
+              { label: "(2)", visual: { subtype: "vertical", top: "3□", bottom: "□5", operator: "+", result: "◇◇2" } },
+              { label: "(3)", visual: { subtype: "vertical", top: "□○", bottom: "□○", operator: "+", result: "◇◇6" } },
+              { label: "(4)", visual: { subtype: "vertical", top: "7◇◇", bottom: "○5◇", operator: "+", result: "□22" } }
+            ]
+          },
+          items: [
+            { id: "cryptarithm-square-1", prompt: "(1) 네모가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "cryptarithm-square-2", prompt: "(2) 네모가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "7" },
+            { id: "cryptarithm-circle-3", prompt: "(3) 동그라미가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "cryptarithm-square-4", prompt: "(4) 네모가 나타내는 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "vertical-symbol-addition-with-carry",
+          story: "도형 숫자 금고의 마지막 세로셈에서 네모의 숫자를 찾아야 문이 열립니다.",
+          prompt: "네모가 나타내는 수를 쓰세요.",
+          visual: { kind: "book8", subtype: "vertical", top: "□8", bottom: "3□", operator: "+", result: "○○5" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "7",
+          explanation: "일의 자리에서 네모+8의 끝이 5이므로 네모는 7이고 1을 받아올립니다. 7+3+1=11이 되어 78+37=115가 맞습니다."
+        }
+      },
+      {
+        id: "equalize-transfer",
+        unit: "합차와 배수문제",
+        title: "차의 절반만큼 옮겨 같게 만들어요",
+        sourceLocator: "교사용 PPTX 슬라이드 22, 주고 받기 (1)~(3)",
+        sourceTypeIds: ["equalize-transfer-b8"],
+        representativeConcept: "두 양의 차를 구한 뒤 많은 쪽에서 적은 쪽으로 차의 절반을 옮기면 두 양이 같아짐",
+        story: {
+          title: "두 접시의 구슬",
+          text: "많은 접시에서 구슬 하나를 옮기면 많은 쪽은 1개 줄고 적은 쪽은 1개 늘어 차이는 2개 줄어듭니다.",
+          mission: "먼저 두 수의 차를 구하고 그 차를 똑같이 둘로 나누세요."
+        },
+        explanation: {
+          headline: "같게 만들기 위해 옮기는 수는 차의 절반입니다.",
+          steps: [
+            "많은 수에서 적은 수를 빼 차를 구합니다.",
+            "한 번 옮길 때 차가 2씩 줄어드므로 차를 2로 나눕니다.",
+            "옮긴 뒤 두 수가 실제로 같은지 더하고 빼서 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "equalize-by-half-difference-transfer",
+          prompt: "많은 쪽에서 적은 쪽으로 몇 개를 옮기면 두 수가 같아지는지 구하시오.",
+          visual: {
+            kind: "book8-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "transfer", people: [{ label: "가 접시", value: 10 }, { label: "나 접시", value: 6 }], steps: ["많은 쪽에서 ?개 옮기기"] } },
+              { label: "(2)", visual: { subtype: "transfer", people: [{ label: "가 접시", value: 22 }, { label: "나 접시", value: 14 }], steps: ["많은 쪽에서 ?개 옮기기"] } },
+              { label: "(3)", visual: { subtype: "transfer", people: [{ label: "가 접시", value: 35 }, { label: "나 접시", value: 17 }], steps: ["많은 쪽에서 ?개 옮기기"] } }
+            ]
+          },
+          items: [
+            { id: "equalize-10-6", prompt: "(1) 옮겨야 하는 구슬 수", answerMode: "input", inputMode: "numeric", answer: "2" },
+            { id: "equalize-22-14", prompt: "(2) 옮겨야 하는 구슬 수", answerMode: "input", inputMode: "numeric", answer: "4" },
+            { id: "equalize-35-17", prompt: "(3) 옮겨야 하는 구슬 수", answerMode: "input", inputMode: "numeric", answer: "9" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "equalize-by-half-difference-transfer",
+          story: "첫 번째 책꽂이에는 책이 28권, 두 번째 책꽂이에는 16권 있습니다.",
+          prompt: "첫 번째 책꽂이에서 두 번째 책꽂이로 몇 권을 옮기면 같아질까요?",
+          visual: { kind: "book8", subtype: "transfer", people: [{ label: "첫째 책꽂이", value: 28 }, { label: "둘째 책꽂이", value: 16 }], steps: ["첫째에서 둘째로 ?권 옮기기"] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "6",
+          explanation: "28-16=12이고 차의 절반은 6입니다. 28-6=22, 16+6=22로 같아집니다."
+        }
+      },
+      {
+        id: "reverse-operation-chain",
+        unit: "거꾸로 생각하기",
+        title: "마지막 수에서 반대 계산으로 돌아가요",
+        sourceLocator: "교사용 PPTX 슬라이드 31, 거꾸로 풀기 (1)~(4)",
+        sourceTypeIds: ["reverse-arithmetic-chain-b8", "reverse-multiply-divide-b8"],
+        representativeConcept: "마지막 결과에서 계산 순서를 뒤집고 더하기와 빼기, 곱하기와 나누기를 서로 반대로 적용해 처음 수를 찾음",
+        story: {
+          title: "수 기계의 출발점",
+          text: "수 기계는 차례대로 계산해 마지막 수를 만듭니다. 출발 수를 찾을 때는 마지막에서 시작해 계산을 반대 순서로 되돌립니다.",
+          mission: "화살표를 오른쪽에서 왼쪽으로 읽고 각 계산의 반대 계산을 적으세요."
+        },
+        explanation: {
+          headline: "계산의 순서도, 계산 방법도 모두 반대로 합니다.",
+          steps: [
+            "마지막 수에서 시작해 가장 마지막 계산부터 되돌립니다.",
+            "+는 −로, −는 +로, ×는 ÷로, ÷는 ×로 바꿉니다.",
+            "찾은 처음 수를 원래 계산 순서에 넣어 마지막 수가 나오는지 확인합니다."
+          ]
+        },
+        original: {
+          title: "골든벨",
+          structureKey: "reverse-ordered-operation-chain",
+          prompt: "물음표에서 시작해 화살표의 계산을 차례로 했습니다. 처음 수를 구하시오.",
+          visual: {
+            kind: "book8-set",
+            panels: [
+              { label: "(1)", visual: { subtype: "process", start: "?", steps: ["+6", "-2"], result: 10 } },
+              { label: "(2)", visual: { subtype: "process", start: "?", steps: ["+2", "-5", "+9", "-7"], result: 17 } },
+              { label: "(3)", visual: { subtype: "process", start: "?", steps: ["×5", "-4", "÷9"], result: 4 } },
+              { label: "(4)", visual: { subtype: "process", start: "?", steps: ["-5", "×3", "+6", "÷9"], result: 3 } }
+            ]
+          },
+          items: [
+            { id: "reverse-chain-1", prompt: "(1) 처음 수", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "reverse-chain-2", prompt: "(2) 처음 수", answerMode: "input", inputMode: "numeric", answer: "18" },
+            { id: "reverse-chain-3", prompt: "(3) 처음 수", answerMode: "input", inputMode: "numeric", answer: "8" },
+            { id: "reverse-chain-4", prompt: "(4) 처음 수", answerMode: "input", inputMode: "numeric", answer: "12" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "reverse-ordered-operation-chain",
+          story: "비밀 수 기계가 출발 수에 8을 더하고 3을 빼고 6을 더한 뒤 4를 빼서 22를 만들었습니다.",
+          prompt: "수 기계의 출발 수를 쓰세요.",
+          visual: { kind: "book8", subtype: "process", start: "?", steps: ["+8", "-3", "+6", "-4"], result: 22 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "15",
+          explanation: "22에서 거꾸로 +4, -6, +3, -8을 계산하면 15입니다. 15+8-3+6-4=22로 확인됩니다."
+        }
+      }
+    ]
+  },
   ...[
-    ["book-08", "8권", "매트릭스와 수 카드", "더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx", "source-located"],
     ["book-09", "9권", "도형분할과 논리", "더클래식_1과정_9N30권_골든벨_230817 (1).pdf", "source-located"],
     ["book-10", "10권", "연속수와 따라잡기", "", "source-needed"]
   ].map(([id, label, title, file, status]) => ({

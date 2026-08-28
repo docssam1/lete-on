@@ -206,6 +206,27 @@ for (const [lessonId, approvedAnswers] of approvedBook7Answers) {
 const requiredBook7Units = ["달력과 시계", "규칙 찾기와 수열", "가로수 심기", "대칭수와 벤다이어그램"];
 for (const unit of requiredBook7Units) if (!book7.lessons.some((lesson) => lesson.unit === unit)) fail(`book-07: missing ${unit}`);
 
+const book8 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-08");
+const approvedBook8Answers = new Map([
+  ["addition-sum-matrix", ["16", "10", "7", "22"]],
+  ["vertical-shape-cryptarithm", ["8", "7", "8", "9"]],
+  ["equalize-transfer", ["2", "4", "9"]],
+  ["reverse-operation-chain", ["6", "18", "8", "12"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook8Answers) {
+  const lesson = book8.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-08: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-08/${lessonId}: approved original answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-08/${lessonId}: source answer format changed`);
+  }
+}
+const requiredBook8Units = ["묶음수와 매트릭스", "복면산", "합차와 배수문제", "거꾸로 생각하기"];
+for (const unit of requiredBook8Units) if (!book8.lessons.some((lesson) => lesson.unit === unit)) fail(`book-08: missing ${unit}`);
+
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
 const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
   const [row, column] = visual.path[visual.target.index];
@@ -296,6 +317,53 @@ const storyVenn = vennParts(24, 14, 17);
 if ([sourceVenn.overlap, sourceVenn.leftOnly, sourceVenn.rightOnly, sourceVenn.exactlyOne, storyVenn.overlap].join(",") !== "4,3,8,11,7") {
   fail("book-07: venn calculation failed");
 }
+
+function matrixMissingTotal(visual) {
+  const symbols = [...new Set(visual.cells.flat())];
+  const solutions = [];
+  const search = (index, values) => {
+    if (index < symbols.length) {
+      for (let value = 0; value <= 15; value += 1) search(index + 1, { ...values, [symbols[index]]: value });
+      return;
+    }
+    const rowSums = visual.cells.map((row) => row.reduce((sum, symbol) => sum + values[symbol], 0));
+    const columnSums = visual.cells[0].map((_, column) => visual.cells.reduce((sum, row) => sum + values[row[column]], 0));
+    if (visual.rowTotals.some((total, row) => total !== "?" && rowSums[row] !== total)) return;
+    if (visual.columnTotals.some((total, column) => total !== "?" && columnSums[column] !== total)) return;
+    const rowTarget = visual.rowTotals.indexOf("?");
+    const columnTarget = visual.columnTotals.indexOf("?");
+    solutions.push(rowTarget >= 0 ? rowSums[rowTarget] : columnSums[columnTarget]);
+  };
+  search(0, {});
+  return [...new Set(solutions)];
+}
+const matrixLesson = book8.lessons.find((lesson) => lesson.id === "addition-sum-matrix");
+const sourceMatrixTargets = matrixLesson.original.visual.panels.map(({ visual }) => matrixMissingTotal(visual));
+if (JSON.stringify(sourceMatrixTargets) !== JSON.stringify([[16], [10], [7], [22]])) fail("book-08: source addition matrices are not uniquely solved");
+if (JSON.stringify(matrixMissingTotal(matrixLesson.extension.visual)) !== JSON.stringify([11])) fail("book-08: story addition matrix is not uniquely solved");
+
+const sourceCryptarithmTargets = [
+  Array.from({ length: 10 }, (_, square) => square).filter((square) => Array.from({ length: 10 }, (_, circle) => circle).some((circle) => 10 * square + 4 + 20 + square === 110 * circle + 2)),
+  Array.from({ length: 10 }, (_, square) => square).filter((square) => Array.from({ length: 10 }, (_, diamond) => diamond).some((diamond) => 30 + square + 10 * square + 5 === 110 * diamond + 2)),
+  Array.from({ length: 10 }, (_, circle) => circle).filter((circle) => Array.from({ length: 10 }, (_, square) => square).some((square) => Array.from({ length: 10 }, (_, diamond) => diamond).some((diamond) => square > 0 && diamond > 0 && new Set([square, circle, diamond]).size === 3 && 2 * (10 * square + circle) === 110 * diamond + 6))),
+  Array.from({ length: 10 }, (_, square) => square).filter((square) => Array.from({ length: 10 }, (_, circle) => circle).some((circle) => Array.from({ length: 10 }, (_, diamond) => diamond).some((diamond) => circle > 0 && new Set([square, circle, diamond]).size === 3 && 700 + 11 * diamond + 100 * circle + 50 + diamond === 100 * square + 22)))
+];
+if (JSON.stringify(sourceCryptarithmTargets) !== JSON.stringify([[8], [7], [8], [9]])) fail("book-08: source cryptarithms are not uniquely solved");
+if (78 + 37 !== 115) fail("book-08: story cryptarithm failed");
+
+const equalizeMove = (large, small) => (large - small) / 2;
+if ([equalizeMove(10, 6), equalizeMove(22, 14), equalizeMove(35, 17), equalizeMove(28, 16)].join(",") !== "2,4,9,6") {
+  fail("book-08: equalize transfer calculation failed");
+}
+const reverseChain = (result, reverseSteps) => reverseSteps.reduce((value, step) => step(value), result);
+const sourceReverseStarts = [
+  reverseChain(10, [(value) => value + 2, (value) => value - 6]),
+  reverseChain(17, [(value) => value + 7, (value) => value - 9, (value) => value + 5, (value) => value - 2]),
+  reverseChain(4, [(value) => value * 9, (value) => value + 4, (value) => value / 5]),
+  reverseChain(3, [(value) => value * 9, (value) => value - 6, (value) => value / 3, (value) => value + 5])
+];
+if (sourceReverseStarts.join(",") !== "6,18,8,12") fail("book-08: source reverse chains failed");
+if (reverseChain(22, [(value) => value + 4, (value) => value - 6, (value) => value + 3, (value) => value - 8]) !== 15) fail("book-08: story reverse chain failed");
 
 function canonicalPolyomino(cells) {
   const variants = [];
