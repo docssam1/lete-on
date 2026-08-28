@@ -70,7 +70,7 @@ button { color:inherit; font:inherit; }
 .page-diagnostic .cluster-meta { display:flex; flex-wrap:wrap; gap:6px; }
 .page-diagnostic .cluster-meta span { padding:3px 6px; border:1px solid #ddd4c3; color:#57636b; background:var(--surface); font-size:.68rem; }
 .page-diagnostic .gate-section { padding-bottom:84px; }
-.page-diagnostic .gates { display:grid; grid-template-columns:repeat(4, 1fr); gap:0; padding:0; margin:0; list-style:none; border-top:2px solid var(--ink); border-left:1px solid var(--ink); }
+.page-diagnostic .gates { display:grid; grid-template-columns:repeat(3, 1fr); gap:0; padding:0; margin:0; list-style:none; border-top:2px solid var(--ink); border-left:1px solid var(--ink); }
 .page-diagnostic .gates li { min-height:195px; padding:20px; color:#f7f0e4; border-right:1px solid rgba(255,255,255,.25); border-bottom:1px solid var(--ink); background:var(--navy); }
 .page-diagnostic .gates li:nth-child(even) { background:#23445b; }
 .page-diagnostic .gates span { display:block; margin-bottom:27px; color:#a8d1c0; font-family:Georgia, serif; font-size:1rem; }
