@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><path d="M150 264 V104 a170 82 0 0 1 340 0 V264 Z" fill="#F1F0EC" stroke="#4a5468" stroke-width="3"/>
+<g font-family="ui-monospace,monospace" text-anchor="middle" font-weight="800">
+<text x="320" y="116" font-size="19" fill="#4a5468">1/6 + 1/12 + 1/7 + 1/2</text>
+<text x="320" y="150" font-size="19" fill="#4a5468">+ 5 + 4</text>
+<path d="M232 168 H408" stroke="#E4E2DC" stroke-width="2.5"/>
+<text x="320" y="222" font-size="52" fill="#16417C">84</text></g>
+<g font-family="ui-monospace,monospace" font-size="16" fill="#C9A063" font-weight="700" text-anchor="middle">
+<text x="72" y="140">14/84</text><text x="72" y="170">7/84</text>
+<text x="568" y="140">12/84</text><text x="568" y="170">42/84</text></g></svg>

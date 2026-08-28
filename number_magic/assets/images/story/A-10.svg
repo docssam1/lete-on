@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<rect x="46" y="102" width="176" height="80" rx="14" fill="#F1F0EC" stroke="#E4E2DC" stroke-width="2"/>
+<text x="134" y="152" font-size="30" fill="#4a5468">minus</text>
+<rect x="270" y="102" width="112" height="80" rx="14" fill="#C9A063"/>
+<text x="326" y="154" font-size="34" fill="#0E2C57">−m</text>
+<rect x="430" y="102" width="112" height="80" rx="14" fill="#16417C"/>
+<text x="486" y="158" font-size="46" fill="#F5D98B">−</text></g>
+<path d="M143 143 H181" stroke="#D9534F" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M326 143 H347" stroke="#D9534F" stroke-width="3.5" stroke-linecap="round"/>
+<g stroke="#4a5468" stroke-width="2.5" fill="none" marker-end="url(#b1)">
+<path d="M232 142 H260"/><path d="M392 142 H420"/></g>
+<defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a5468"/></marker></defs>
+<text x="320" y="52" font-family="ui-monospace,monospace" font-size="19" fill="#4a5468" text-anchor="middle">1489</text>
+<text x="320" y="242" font-family="ui-monospace,monospace" font-size="21" font-weight="700" fill="#0E2C57" text-anchor="middle">9 − 4 = 5</text></svg>

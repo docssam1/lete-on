@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g font-family="ui-monospace,monospace" font-size="23" font-weight="800" text-anchor="middle">
+<rect x="40" y="106" width="96" height="68" rx="12" fill="#F1F0EC" stroke="#D9534F" stroke-width="3" stroke-dasharray="7 5"/>
+<text x="88" y="150" fill="#D9534F">?</text>
+<rect x="196" y="106" width="112" height="68" rx="12" fill="#16417C"/><text x="252" y="150" fill="#FBFAF7">×2</text>
+<rect x="368" y="106" width="130" height="68" rx="12" fill="#C9A063"/><text x="433" y="150" fill="#0E2C57">−8000</text>
+<rect x="546" y="106" width="60" height="68" rx="12" fill="#2E9E6B"/><text x="576" y="150" fill="#FBFAF7">0</text></g>
+<g stroke="#4a5468" stroke-width="2.5" fill="none" marker-end="url(#a4)">
+<path d="M144 140 H186"/><path d="M316 140 H358"/><path d="M506 140 H538"/></g>
+<defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a5468"/></marker></defs>
+<path d="M576 210 H88" stroke="#D9534F" stroke-width="3.5" fill="none" stroke-dasharray="9 6" marker-end="url(#a5)"/>
+<defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#D9534F"/></marker></defs>
+<text x="332" y="252" font-family="ui-monospace,monospace" font-size="19" font-weight="700" fill="#D9534F" text-anchor="middle">÷2   +8000</text>
+<text x="332" y="58" font-family="ui-monospace,monospace" font-size="17" fill="#4a5468" text-anchor="middle">×3</text></svg>
