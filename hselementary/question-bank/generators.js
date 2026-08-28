@@ -8741,6 +8741,194 @@
       const series = [{ name: "아이스크림", values: iceCream }, { name: "초콜릿", values: chocolate }];
       return result(`한 가게의 아이스크림과 초콜릿 판매량을 나타낸 꺾은선그래프입니다. 아이스크림은 한 개에 700원, 초콜릿은 한 개에 600원입니다. 9월의 아이스크림 판매 금액은 초콜릿 판매 금액보다 몇 원 더 많습니까?${lineChartSvg({ labels, series, step, unit: "개", xAxis: "월" })}`, answer, `9월 아이스크림은 ${iceCream[3]}개, 초콜릿은 ${chocolate[3]}개입니다. 판매 금액의 차는 ${iceCream[3]} × 700 - ${chocolate[3]} × 600 = ${answer.toLocaleString()}원입니다.`);
     },
+    source41PlaneTransformThree({ rng, level, variant = 0 }) {
+      const publicVariants = new Set([0, 1, 3, 4, 5, 6, 7, 9, 10]);
+      if (!publicVariants.has(variant)) throw new Error("검수 대기인 평면도형 이동 활용 유형입니다.");
+      const encode = value => encodeURIComponent(JSON.stringify(value));
+      const cellKey = cells => JSON.stringify(cells.map(([x, y]) => [x, y]).sort((left, right) => left[1] - right[1] || left[0] - right[0]));
+      const rotate = (cells, size, turns = 1) => source41PlaneRotateCells(cells, size, turns);
+      const grid = ({ kind, rows, cols, cells = [], dots = [], labels = [], title = "", blank = [], extra = "" }) => {
+        const cell = 22;
+        const margin = 20;
+        const width = cols * cell + margin * 2;
+        const height = rows * cell + 48;
+        const painted = new Set(cells.map(point => point.join(",")));
+        const empty = new Set(blank.map(point => point.join(",")));
+        const lines = Array.from({ length: cols + 1 }, (_, index) => `<line x1="${margin + index * cell}" y1="${margin}" x2="${margin + index * cell}" y2="${margin + rows * cell}"/>`).join("") + Array.from({ length: rows + 1 }, (_, index) => `<line x1="${margin}" y1="${margin + index * cell}" x2="${margin + cols * cell}" y2="${margin + index * cell}"/>`).join("");
+        const fills = [...painted].map(key => { const [x, y] = key.split(",").map(Number); return `<rect class="source41-e3-fill" x="${margin + x * cell + 2}" y="${margin + y * cell + 2}" width="${cell - 4}" height="${cell - 4}"/>`; }).join("");
+        const blanks = [...empty].map(key => { const [x, y] = key.split(",").map(Number); return `<rect class="source41-e3-blank" x="${margin + x * cell + 2}" y="${margin + y * cell + 2}" width="${cell - 4}" height="${cell - 4}"/>`; }).join("");
+        const pointMarks = dots.map(([x, y]) => `<circle class="source41-e3-dot" cx="${margin + x * cell}" cy="${margin + y * cell}" r="3.2"/>`).join("");
+        const text = labels.map(({ x, y, value }) => `<text class="source41-e3-label" x="${margin + (x + .5) * cell}" y="${margin + (y + .68) * cell}" text-anchor="middle">${value}</text>`).join("");
+        return `<svg class="geometry-diagram source41-e3-grid" viewBox="0 0 ${width} ${height}" style="width:min(${Math.max(width, 190)}px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-rows="${rows}" data-cols="${cols}" data-cells="${encode(cells)}" data-dots="${encode(dots)}" data-blank-cells="${encode(blank)}" ${extra}><g class="source41-e3-grid-lines">${lines}</g>${fills}${blanks}${pointMarks}${text}<text class="source41-e3-title" x="${width / 2}" y="${height - 10}" text-anchor="middle">${title}</text></svg>`;
+      };
+      const choiceGrid = ({ kind, choices, rows, cols, ariaLabel }) => {
+        const panels = choices.map((cells, index) => ({ cells, title: source41TransformLabels[index] }));
+        return source41PlaneSvg({ panels, rows, cols, size: Math.max(rows, cols), kind, columns: 4, ariaLabel });
+      };
+      const answerIndex = (choices, correct) => {
+        const index = choices.findIndex(choice => cellKey(choice) === cellKey(correct));
+        if (index < 0) throw new Error("정답 그림이 보기 안에 있어야 합니다.");
+        return source41TransformLabels[index];
+      };
+      const independentMaximum = (rows, cols) => {
+        let maximum = 0;
+        const limit = 1 << cols;
+        const validRows = Array.from({ length: limit }, (_, mask) => mask).filter(mask => (mask & (mask << 1)) === 0);
+        const count = mask => [...mask.toString(2)].filter(bit => bit === "1").length;
+        const walk = (row, previous, total) => {
+          if (row === rows) { maximum = Math.max(maximum, total); return; }
+          validRows.filter(mask => (mask & previous) === 0).forEach(mask => walk(row + 1, mask, total + count(mask)));
+        };
+        walk(0, 0, 0);
+        return maximum;
+      };
+      const leafCircleTile = kind => `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 110" style="width:min(150px,100%)" role="img" aria-label="대각선 두 꼭짓점을 잇는 잎 모양 타일" data-source41-e3-kind="${kind}" data-tile-art="diagonal-leaf"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><path d="M15 15 C54 15 95 56 95 95 C56 95 15 54 15 15 Z" class="source41-e3-leaf"/></svg>`;
+      const oppositeCornerTile = kind => `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 110" style="width:min(150px,100%)" role="img" aria-label="마주 보는 두 모서리에 원 조각이 있는 타일" data-source41-e3-kind="${kind}" data-tile-art="opposite-corner-sectors"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><path d="M15 15 H43 A28 28 0 0 1 15 43 Z" class="source41-e3-corner-fill"/><path d="M95 95 H67 A28 28 0 0 1 95 67 Z" class="source41-e3-corner-fill"/></svg>`;
+      const symbolTile = (kind, rotation, title) => {
+        const trianglePositions = ["top", "right", "bottom", "left"];
+        const trianglePosition = trianglePositions[((rotation / 90) % 4 + 4) % 4];
+        return `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 110" style="width:min(132px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-rotation="${rotation}" data-triangle-position="${trianglePosition}" data-symbols="circle,triangle,square,star"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><g transform="rotate(${rotation} 55 55)"><path d="M15 15 L95 95 M95 15 L15 95" fill="none" stroke="#174866" stroke-width="1.5"/><text class="source41-e3-label" x="55" y="35" text-anchor="middle">△</text><text class="source41-e3-label" x="77" y="59" text-anchor="middle">□</text><text class="source41-e3-label" x="55" y="82" text-anchor="middle">★</text><text class="source41-e3-label" x="33" y="59" text-anchor="middle">○</text></g></svg>`;
+      };
+      const diagonalTile = (kind, rotation, title) => `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 110" style="width:min(132px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-rotation="${rotation}" data-asymmetric-diagonal="true"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><g transform="rotate(${rotation} 55 55)"><path d="M55 55 L95 15 V95 H15 Z" class="source41-e3-fill"/><path d="M15 15 L55 55 L15 95" fill="none" stroke="#174866" stroke-width="2"/><path d="M55 55 L95 15 M55 55 L95 95" fill="none" stroke="#174866" stroke-width="2"/></g></svg>`;
+      const blankTile = (kind, position, title) => `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 126" style="width:min(112px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-position="${position}" data-blank-tile="true"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><text class="source41-e3-title" x="55" y="116" text-anchor="middle">${title}</text></svg>`;
+      const circleBoard = ({ kind, rows, cols, centers = [], title }) => {
+        const cell = 34; const margin = 22; const width = cols * cell + margin * 2; const height = rows * cell + 48;
+        const lines = Array.from({ length: cols + 1 }, (_, index) => `<line x1="${margin + index * cell}" y1="${margin}" x2="${margin + index * cell}" y2="${margin + rows * cell}"/>`).join("") + Array.from({ length: rows + 1 }, (_, index) => `<line x1="${margin}" y1="${margin + index * cell}" x2="${margin + cols * cell}" y2="${margin + index * cell}"/>`).join("");
+        const circles = centers.map(([x, y]) => `<circle cx="${margin + x * cell}" cy="${margin + y * cell}" r="${cell * .43}" fill="none" stroke="#2e709e" stroke-width="2.5"/>`).join("");
+        return `<svg class="geometry-diagram source41-e3-grid" viewBox="0 0 ${width} ${height}" style="width:min(${Math.max(width, 250)}px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-rows="${rows}" data-cols="${cols}" data-circle-centers="${encode(centers)}"><g class="source41-e3-grid-lines">${lines}</g>${circles}<text class="source41-e3-title" x="${width / 2}" y="${height - 10}" text-anchor="middle">${title}</text></svg>`;
+      };
+      const polyominoBoard = ({ kind, top, bottom, tiles, blank = [], title }) => {
+        const panel = 62; const mini = 15; const width = panel * 8 + 18; const height = panel * 2 + 40; const blankSet = new Set(blank.map(point => point.join(",")));
+        const draw = (key, column, row) => { const isBlank = blankSet.has(`${column},${row}`); const x = 9 + column * panel; const y = 10 + row * panel; const frame = `<rect x="${x}" y="${y}" width="${panel}" height="${panel}" fill="#f8fbfd" stroke="#9eb5c7"/>`; if (isBlank) return `<g data-panel-index="${row * 8 + column}" data-blank="true">${frame}</g>`; const cells = tiles[key].map(([cx, cy]) => `<rect class="source41-e3-fill" x="${x + 9 + cx * mini}" y="${y + 9 + cy * mini}" width="${mini -1}" height="${mini - 1}" data-shape-key="${key}"/>`).join(""); return `<g data-panel-index="${row * 8 + column}" data-shape-key="${key}">${frame}${cells}</g>`; };
+        return `<svg class="geometry-diagram source41-e3-grid" viewBox="0 0 ${width} ${height}" style="width:min(${width}px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-top="${top.join(",")}" data-bottom="${bottom.join(",")}" data-blank-panels="${encode(blank)}">${top.map((key, index) => draw(key, index, 0)).join("")}${bottom.map((key, index) => draw(key, index, 1)).join("")}<text class="source41-e3-title" x="${width / 2}" y="${height - 10}" text-anchor="middle">${title}</text></svg>`;
+      };
+      const cornerSectors = { ul: "M10 10 H90 A80 80 0 0 1 10 90 Z", ur: "M90 10 H10 A80 80 0 0 0 90 90 Z", lr: "M90 90 H10 A80 80 0 0 1 90 10 Z", ll: "M10 90 H90 A80 80 0 0 0 10 10 Z" };
+      const cornerTile = (kind, corner, title) => `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 118" style="width:min(132px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-corner="${corner}"><rect x="10" y="10" width="80" height="80" class="source41-e3-tile-frame"/><path d="${cornerSectors[corner]}" class="source41-e3-corner-fill" data-quarter-circle="${corner}"/><text class="source41-e3-title" x="50" y="110" text-anchor="middle">${title}</text></svg>`;
+      const emptyPairBoard = (kind, title) => `<svg class="geometry-diagram source41-e3-pair" viewBox="0 0 210 118" style="width:min(250px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-empty-pair="true"><rect x="15" y="10" width="80" height="80" class="source41-e3-tile-frame"/><rect x="95" y="10" width="80" height="80" class="source41-e3-tile-frame"/><line x1="95" y1="10" x2="95" y2="90" stroke="#7892a5" stroke-width="1.5" stroke-dasharray="4 3"/><text class="source41-e3-title" x="95" y="110" text-anchor="middle">${title}</text></svg>`;
+      const cornerPair = (kind, pair, title) => {
+        const one = (corner, x) => `<g transform="translate(${x} 0)" data-corner="${corner}"><rect x="10" y="10" width="80" height="80" class="source41-e3-tile-frame"/><path d="${cornerSectors[corner]}" class="source41-e3-corner-fill" data-quarter-circle="${corner}"/></g>`;
+        return `<svg class="geometry-diagram source41-e3-pair" viewBox="0 0 210 118" style="width:min(250px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-pair="${pair.join(",")}">${one(pair[0], 5)}${one(pair[1], 110)}<text class="source41-e3-title" x="105" y="110" text-anchor="middle">${title}</text></svg>`;
+      };
+      const baseTile = (kind, tileType, rotation, title) => {
+        const artwork = tileType === "curve"
+          ? `<path d="M15 15 C50 24 50 86 15 95 C34 73 34 37 15 15 Z" class="source41-e3-fill"/>`
+          : `<path d="M70 70 h25 v25 h-25 z" class="source41-e3-corner-fill"/>`;
+        return `<svg class="geometry-diagram source41-e3-tile" viewBox="0 0 110 110" style="width:min(132px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-tile-type="${tileType}" data-rotation="${rotation}"><rect x="15" y="15" width="80" height="80" class="source41-e3-tile-frame"/><g transform="rotate(${rotation} 55 55)">${artwork}</g></svg>`;
+      };
+      const largeMosaic = ({ kind, tiles, rows, cols, title }) => {
+        const unit = 58; const width = unit * cols; const height = unit * rows + 28;
+        const draw = ({ tileType, rotation }, index) => { const x = (index % cols) * unit; const y = Math.floor(index / cols) * unit; const artwork = tileType === "curve" ? `<path d="M0 0 C35 9 35 49 0 58 C19 43 19 15 0 0 Z" class="source41-e3-fill"/>` : `<path d="M40 40 h18 v18 h-18 z" class="source41-e3-corner-fill"/>`; return `<g transform="translate(${x} ${y})" data-tile-index="${index}" data-tile-type="${tileType}" data-rotation="${rotation}"><rect x="0" y="0" width="58" height="58" class="source41-e3-tile-frame"/><g transform="rotate(${rotation} 29 29)">${artwork}</g></g>`; };
+        return `<svg class="geometry-diagram source41-e3-grid" viewBox="0 0 ${width} ${height}" style="width:min(${width}px,100%)" role="img" aria-label="${title}" data-source41-e3-kind="${kind}" data-rows="${rows}" data-cols="${cols}" data-mosaic="${encode(tiles)}">${tiles.map(draw).join("")}<text class="source41-e3-title" x="${width / 2}" y="${height - 10}" text-anchor="middle">${title}</text></svg>`;
+      };
+      const matrixRows = ["#####.", "..##.#", ".#.#..", "..#.#.", "#.##..", ".#####"];
+      const matrix = source41PlaneRowsToCells(matrixRows.map(row => row.replace(/#/g, "1").replace(/\./g, "0")));
+
+      if (variant === 0 || variant === 5) {
+        const rows = variant === 0 ? 4 : 4;
+        const cols = variant === 0 ? 6 : 8;
+        const answer = independentMaximum(rows - 1, cols - 1);
+        const expected = variant === 0 ? 8 : 11;
+        if (answer !== expected) throw new Error("원문 원무늬의 최대 개수가 다릅니다.");
+        const payload = { variant, level, rows, cols, interiorRows: rows - 1, interiorCols: cols - 1, maximum: answer, tileArtwork: variant === 0 ? "diagonal-leaf" : "opposite-corner-sectors" };
+        const evidence = source41Evidence(variant === 0 ? "diagonal-leaf-tile-circle-maximum" : "opposite-corner-tile-circle-maximum-four-by-eight", payload, answer);
+        const prompt = variant === 0
+          ? `대각선 두 꼭짓점을 잇는 잎 모양 타일을 뒤집어 ${rows}행 ${cols}열로 놓았습니다. 완성할 수 있는 원은 가장 많아야 몇 개인지 구하세요.${leafCircleTile("e3-exploration-tile")}${circleBoard({ kind: "e3-exploration-board", rows, cols, title: "타일을 놓은 판" })}${evidence}`
+          : `마주 보는 두 모서리에 원 조각이 있는 타일을 돌리거나 뒤집어 ${rows}행 ${cols}열로 놓았습니다. 완성할 수 있는 원은 가장 많아야 몇 개인지 구하세요.${oppositeCornerTile("e3-mission-1-tile")}${circleBoard({ kind: "e3-mission-1-board", rows, cols, title: "타일을 놓은 판" })}${evidence}`;
+        const centers = Array.from({ length: rows - 1 }, (_, y) => Array.from({ length: cols - 1 }, (_, x) => (x + y) % 2 === 0 ? [x + 1, y + 1] : null)).flat().filter(Boolean);
+        const solution = `원 하나의 중심은 타일 사이의 꼭짓점에 생깁니다. 가로나 세로로 이웃한 꼭짓점에서는 같은 원을 따로 만들 수 없으므로 번갈아 고르면 가장 많습니다. ${answer}개입니다.${circleBoard({ kind: variant === 0 ? "e3-exploration-solution" : "e3-mission-1-solution", rows, cols, centers, title: "완성한 원의 배치" })}`;
+        return result(prompt, answer, solution);
+      }
+
+      if (variant === 1) {
+        const directions = ["top", "left", "bottom", "right"];
+        const target = 274;
+        const matches = Array.from({ length: target }, (_, index) => directions[index % 4] === "left" ? index + 1 : null).filter(Boolean);
+        if (matches.length !== 69 || matches[0] !== 2 || matches.at(-1) !== 274) throw new Error("274번째까지 왼쪽 세모 횟수가 다릅니다.");
+        const payload = { variant, level, directions, target, targetDirection: "left", positions: matches, answer: matches.length };
+        const evidence = source41Evidence("quarter-turn-pattern-count-left-triangle", payload, matches.length);
+        const shown = [0, 270, 180, 90].map((rotation, index) => symbolTile("e3-example-3-1-pattern", rotation, `${index + 1}번째 무늬`)).join("");
+        return result(`대각선으로 네 부분을 나눈 정사각형 안의 동그라미, 세모, 네모, 별이 매번 시계 반대 방향으로 90°씩 돌아갑니다. 아래 무늬를 ${target}번째까지 이어 놓을 때, 세모가 왼쪽에 있는 무늬는 모두 몇 번 나옵니까?<div class="source41-e3-strip">${shown}</div>${evidence}`, matches.length, `세모가 왼쪽에 있는 것은 2, 6, 10, …번째처럼 4번째마다 나옵니다. 2 + 4×68 = 274이므로 모두 ${matches.length}번입니다.`);
+      }
+
+      if (variant === 3) {
+        const targetCount = 125;
+        const answer = targetCount * 2;
+        const positions = Array.from({ length: 9 }, (_, index) => ["bottom", "middle", "top", "middle"][index % 4]);
+        if (answer !== 250) throw new Error("가운데 무늬의 125번째 자리가 다릅니다.");
+        const payload = { variant, level, positions, targetCount, answer, targetPosition: "middle" };
+        const evidence = source41Evidence("up-middle-down-middle-pattern-target-position", payload, answer);
+        const bar = positions.map(position => `<span class="source41-e3-height-cell is-${position}" data-position="${position}"></span>`).join("");
+        return result(`색칠한 부분이 아래, 가운데, 위, 가운데 순서로 되풀이됩니다. 가운데에 있는 색칠 무늬가 ${targetCount}번째 나올 때까지 이어 붙이면, 모두 몇 개의 조각을 붙인 것입니까?<div class="source41-e3-height-pattern" data-source41-e3-kind="e3-example-3-3-pattern" data-positions="${encode(positions)}">${bar}</div>${evidence}`, answer, `가운데 무늬는 2, 4, 6, …번째에 나옵니다. ${targetCount}번째 가운데 무늬는 2×${targetCount}=${answer}번째 조각입니다.`);
+      }
+
+      if (variant === 4) {
+        const turned = rotate(matrix, 6, 1);
+        const all = [...matrix, ...turned.map(([x, y]) => [x + 6, y]), ...matrix.map(([x, y]) => [x + 12, y])];
+        const known = [...matrix, ...turned.filter(([x]) => x < 3).map(([x, y]) => [x + 6, y])];
+        const candidates = [matrix, rotate(matrix, 6, 1), rotate(matrix, 6, 2), source41PlaneReflectCells(matrix, 6, "vertical")];
+        const givenSecond = new Set(known.filter(([x]) => x >= 6).map(([x, y]) => `${x - 6},${y}`));
+        const matches = candidates.map(candidate => {
+          const painted = new Set(candidate.map(point => point.join(",")));
+          return Array.from({ length: 18 }, (_, index) => [index % 3, Math.floor(index / 3)]).filter(([x, y]) => painted.has(`${x},${y}`) === givenSecond.has(`${x},${y}`)).length;
+        });
+        if (cellKey(rotate(matrix, 6, 1)) !== cellKey(turned) || matches[1] !== 18 || matches.filter(value => value === 18).length !== 1) throw new Error("6×6 무늬의 보이는 18칸이 한 가지 회전만 가리켜야 합니다.");
+        const payload = { variant, level, base: matrix, turned, known, all, candidateMatches: matches, answer: "완성 그림" };
+        const evidence = source41Evidence("rotate-six-by-six-pattern-three-panels", payload, "완성 그림");
+        return result(`첫 6×6 무늬를 90°씩 돌려 세 구역을 이어 붙입니다. 다음 구역에 보이는 앞 3열을 보고 남은 칸을 채우세요.${grid({ kind: "e3-example-3-4-known", rows: 6, cols: 18, cells: known, title: "주어진 무늬" })}${evidence}`, "완성 그림", `첫 무늬를 90° 돌린 모습만 다음 구역의 보이는 18칸과 모두 맞습니다. 세 번째 구역은 다시 처음 무늬와 같습니다.${grid({ kind: "e3-example-3-4-solution", rows: 6, cols: 18, cells: all, title: "완성한 6×18 무늬" })}`);
+      }
+
+      if (variant === 6) {
+        const rotations = [0, 270, 180, 90];
+        const answerDirection = "right";
+        const answerRotation = rotations[(20 - 1) % 4];
+        if (answerRotation !== 90) throw new Error("20번째 무늬 방향이 다릅니다.");
+        const answer = "처음 모양을 시계 방향으로 90° 돌린 모습";
+        const payload = { variant, level, rotations, requested: 20, answerDirection, answerRotation, answerMode: "draw" };
+        const evidence = source41Evidence("repeat-counterclockwise-quarter-turn-twentieth-tile", payload, answer);
+        const sequence = `${diagonalTile("e3-mission-2-start", 0, "1번째 모양")}${blankTile("e3-mission-2-blank", 2, "2번째")}${blankTile("e3-mission-2-blank", 3, "3번째")}${blankTile("e3-mission-2-blank", 4, "4번째")}<span class="source41-e3-ellipsis" aria-hidden="true">…</span>${blankTile("e3-mission-2-blank", 17, "17번째")}${blankTile("e3-mission-2-blank", 18, "18번째")}${blankTile("e3-mission-2-blank", 19, "19번째")}${blankTile("e3-mission-2-target", 20, "20번째")}`;
+        return result(`처음 무늬를 시계 반대 방향으로 90°씩 돌려 가로로 이어 붙입니다. 20번째 칸에 알맞은 모양을 그리세요.<div class="source41-e3-strip" data-source41-e3-kind="e3-mission-2-sequence">${sequence}</div>${evidence}`, answer, `첫 칸 뒤로 19번 돌립니다. 19를 4로 나눈 나머지는 3이므로 처음 모양을 시계 방향으로 90° 돌린 모습입니다.${diagonalTile("e3-mission-2-solution", answerRotation, "20번째 모양")}`);
+      }
+
+      if (variant === 7) {
+        const tiles = {
+          A: [[1, 0], [2, 0], [2, 1], [2, 2]], B: [[0, 0], [1, 0], [0, 1], [0, 2]], C: [[0, 0], [1, 0], [2, 0], [2, 1]],
+          D: [[0, 0], [1, 0], [2, 0], [0, 1]], E: [[2, 0], [2, 1], [1, 2], [2, 2]], F: [[0, 0], [0, 1], [0, 2], [1, 2]]
+        };
+        const top = ["A", "B", "C", "D", "A", "B", "C", "D"];
+        const bottom = ["D", "C", "E", "F", "D", "C", "E", "F"];
+        const answerTop = top.slice(5);
+        const answerBottom = bottom.slice(5);
+        if (answerTop.join("") !== "BCD" || answerBottom.join("") !== "CEF") throw new Error("두 줄 무늬의 빈칸이 다릅니다.");
+        const payload = { variant, level, tiles, top, bottom, answerTop, answerBottom };
+        const evidence = source41Evidence("two-row-four-step-polyomino-pattern", payload, "위 B-C-D, 아래 C-E-F");
+        const blanks = [[5, 0], [6, 0], [7, 0], [5, 1], [6, 1], [7, 1]];
+        return result(`각 칸의 꺾인 네 칸 모양이 네 번마다 되풀이됩니다. 앞의 다섯 칸을 보고 뒤의 빈칸 세 칸씩을 채우세요.${polyominoBoard({ kind: "e3-mission-3-pattern", top, bottom, tiles, blank: blanks, title: "2행 8열 꺾인 네 칸 무늬" })}${evidence}`, "위 B-C-D, 아래 C-E-F", `다섯 번째 모양이 첫 번째 모양과 같으므로 네 칸 주기입니다. 위쪽은 B-C-D, 아래쪽은 C-E-F입니다.${polyominoBoard({ kind: "e3-mission-3-solution", top, bottom, tiles, title: "완성한 2행 8열 무늬" })}`);
+      }
+
+      if (variant === 9) {
+        const shownTiles = [["curve", 180], ["curve", 270], ["corner", 0], ["corner", 90], ["curve", 180], ["curve", 270], ["curve", 90], ["curve", 0], ["corner", 270], ["corner", 180], ["curve", 90], ["curve", 0]].map(([tileType, rotation]) => ({ tileType, rotation }));
+        const classes = new Set(shownTiles.map(tile => tile.tileType));
+        if (classes.size !== 2) throw new Error("기본 타일은 회전 동치 두 묶음이어야 합니다.");
+        const payload = { variant, level, shownTiles, rows: 2, cols: 6, equivalenceClasses: [...classes].sort() };
+        const evidence = source41Evidence("identify-two-rotation-equivalent-base-tiles", payload, "곡선 타일과 모서리 타일");
+        return result(`큰 무늬의 각 칸은 두 가지 기본 타일을 돌려 만든 것입니다. 돌려서 같아지는 것은 같은 타일로 보고, 사용한 두 기본 타일을 그리세요.${largeMosaic({ kind: "e3-mission-5-pattern", tiles: shownTiles, rows: 2, cols: 6, title: "2행 6열로 이어진 큰 무늬" })}${evidence}`, "곡선 타일과 모서리 타일", `한 변에 붙은 잎 모양끼리 하나, 모서리에 붙은 작은 네모끼리 하나로 묶입니다. 따라서 기본 타일은 두 가지입니다.<div class="source41-e3-strip">${baseTile("e3-mission-5-solution", "curve", 0, "잎 모양 기본 타일")}${baseTile("e3-mission-5-solution", "corner", 0, "모서리 네모 기본 타일")}</div>`);
+      }
+
+      const corners = ["ul", "ur", "lr", "ll"];
+      const pairs = corners.flatMap(left => corners.map(right => [left, right]));
+      const canonical = pair => {
+        const rotate180 = corner => ({ ul: "lr", ur: "ll", lr: "ul", ll: "ur" })[corner];
+        const leftRight = corner => ({ ul: "ur", ur: "ul", lr: "ll", ll: "lr" })[corner];
+        const upDown = corner => ({ ul: "ll", ur: "lr", lr: "ur", ll: "ul" })[corner];
+        const states = [pair, [rotate180(pair[1]), rotate180(pair[0])], [leftRight(pair[1]), leftRight(pair[0])], [upDown(pair[0]), upDown(pair[1])]];
+        return states.map(state => state.join(",")).sort()[0];
+      };
+      const representatives = [...new Set(pairs.map(canonical))];
+      if (representatives.length !== 6) throw new Error("투명 타일 16방향쌍은 여섯 묶음이어야 합니다.");
+      const payload = { variant, level, corners, pairs, representatives, answer: 6 };
+      const evidence = source41Evidence("count-two-transparent-corner-tile-symmetry-classes", payload, 6);
+      return result(`보기와 같이 한 모서리 쪽이 색칠된 투명 타일 두 장을 겹치지 않게 빈 두 칸에 붙입니다. 완성한 모양 전체를 돌리거나 뒤집어 같으면 같은 모양으로 셉니다. 서로 다른 모양은 모두 몇 가지입니까?<div class="source41-e3-strip">${cornerTile("e3-mission-6-source", "lr", "기본 투명 타일")}${emptyPairBoard("e3-mission-6-board", "타일을 붙일 두 칸")}</div>${evidence}`, 6, `각 타일은 색칠한 모서리 방향이 4가지이므로 처음에는 4×4=16가지입니다. 완성한 전체를 돌리거나 뒤집어 같은 것끼리 묶으면 ${representatives.length}가지입니다.<div class="source41-e3-strip">${representatives.map((key, index) => cornerPair("e3-mission-6-solution", key.split(","), `${index + 1}번째 모양`)).join("")}</div>`);
+    },
     advancedLinePattern({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const start = int(rng, 2, 12);

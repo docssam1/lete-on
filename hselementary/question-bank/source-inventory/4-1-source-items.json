@@ -3129,7 +3129,7 @@
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "뒤집어 붙인 무늬의 원 개수 최대화",
+      "typeLabel": "대각선 잎 모양 타일로 원을 가장 많이 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3143,7 +3143,7 @@
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "반복 무늬의 특정 모양 개수",
+      "typeLabel": "90°씩 돌아가는 무늬에서 왼쪽 세모 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3171,7 +3171,7 @@
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "주기 무늬에 필요한 조각 수",
+      "typeLabel": "위아래로 오가는 무늬에서 가운데 모양이 125번 나오는 자리",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3185,7 +3185,7 @@
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "반복 타일 무늬 이어 그리기",
+      "typeLabel": "6×6 무늬를 90°씩 돌려 이어 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3199,7 +3199,7 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "원무늬 최대화와 조각 수",
+      "typeLabel": "4행 8열에 원무늬를 가장 많이 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3213,7 +3213,7 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "회전 반복의 특정 번째 무늬",
+      "typeLabel": "90°씩 돌린 무늬의 20번째 모양 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3227,7 +3227,7 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "반복 무늬의 빈칸 완성",
+      "typeLabel": "네 칸마다 되풀이되는 꺾인 네 칸 모양 이어 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3255,7 +3255,7 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "완성 무늬에서 기본 조각 찾기",
+      "typeLabel": "돌려 만든 큰 무늬에서 두 기본 모양 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },
@@ -3269,7 +3269,7 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "투명 무늬 조각을 겹쳐 만들 수 있는 모양의 수",
+      "typeLabel": "두 투명 무늬를 붙여 만들 수 있는 서로 다른 모양 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true
     },

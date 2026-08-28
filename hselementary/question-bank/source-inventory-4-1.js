@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 199,
+  "verifiedMappings": 208,
   "items": [
     {
       "unit": 1,
@@ -4178,13 +4178,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "개념탐구 3 본문",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "뒤집어 붙인 무늬의 원 개수 최대화",
+      "typeLabel": "대각선 잎 모양 타일로 원을 가장 많이 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4196,13 +4197,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-1",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "반복 무늬의 특정 모양 개수",
+      "typeLabel": "90°씩 돌아가는 무늬에서 왼쪽 세모 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4220,7 +4222,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다."
     },
     {
       "unit": 4,
@@ -4232,13 +4235,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-3",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "주기 무늬에 필요한 조각 수",
+      "typeLabel": "위아래로 오가는 무늬에서 가운데 모양이 125번 나오는 자리",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4250,13 +4254,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "예제 3-4",
       "sourcePdfPage": 54,
       "sourcePrintedPage": 50,
-      "typeLabel": "반복 타일 무늬 이어 그리기",
+      "typeLabel": "6×6 무늬를 90°씩 돌려 이어 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4268,13 +4273,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "원무늬 최대화와 조각 수",
+      "typeLabel": "4행 8열에 원무늬를 가장 많이 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4286,13 +4292,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "회전 반복의 특정 번째 무늬",
+      "typeLabel": "90°씩 돌린 무늬의 20번째 모양 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4304,13 +4311,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "반복 무늬의 빈칸 완성",
+      "typeLabel": "네 칸마다 되풀이되는 꺾인 네 칸 모양 이어 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4328,7 +4336,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다."
     },
     {
       "unit": 4,
@@ -4340,13 +4349,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "완성 무늬에서 기본 조각 찾기",
+      "typeLabel": "돌려 만든 큰 무늬에서 두 기본 모양 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
@@ -4358,13 +4368,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 51,
-      "typeLabel": "투명 무늬 조각을 겹쳐 만들 수 있는 모양의 수",
+      "typeLabel": "두 투명 무늬를 붙여 만들 수 있는 서로 다른 모양 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PlaneTransformThree",
+      "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": false
     },
     {
       "unit": 4,
