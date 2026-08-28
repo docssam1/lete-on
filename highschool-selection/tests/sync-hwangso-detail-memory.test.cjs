@@ -27,7 +27,7 @@ test("황소 세부 검수 동기화는 파일을 한 번만 등록하고 진행
   const loaded = {
     packet: { sources: [{ itemReviews: [{}, {}] }], deferred: [{}] },
     combined: { summary: { itemCount: 10, reviewedDetailItemCount: 4 } },
-    queue: { summary: { pendingDetailItemCount: 5, quarantinedItemCount: 1 } },
+    queue: { summary: { pendingDetailItemCount: 5, locatorRebuildItemCount: 2, quarantinedItemCount: 1 } },
     projectReviewed: { summary: { itemCount: 20, mappedItemCount: 8, unitOnlyItemCount: 7, pendingItemCount: 5, resolvedOverlapCount: 3, mergedAliasCount: 1 } },
     resolutions: { reviews: [{}, {}, {}] }
   };
@@ -36,7 +36,8 @@ test("황소 세부 검수 동기화는 파일을 한 번만 등록하고 진행
   assert.equal(catalog.sources.filter(source => source.id === "combined").length, 1);
   assert.equal(catalog.sources.length, 6);
   assert.match(catalog.records[0].summary, /4개는 세부유형/);
-  assert.match(catalog.records[0].summary, /재분할.*1개|1개는 대기/);
+  assert.match(catalog.records[0].summary, /다시 나눠야 하는 1개를 별도 작업/);
+  assert.match(catalog.records[0].summary, /위치를 다시 만들어야 하는 문항은 2개/);
   assert.equal(catalog.records[0].pointers.length, 3);
   assert.match(catalog.records[1].summary, /3 overlap decisions/);
   assert.equal(catalog.records[1].pointers.length, 3);

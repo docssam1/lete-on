@@ -47,6 +47,14 @@ function packet() {
   };
 }
 
+function deferredPacket(sourceItemId = "Q2") {
+  return {
+    schemaVersion: 1,
+    sources: [{ sourceMemoryId: "MEM-1", title: "황소 교재", itemReviews: [] }],
+    deferred: [{ sourceItemId, evidenceLocator: "PDF p.3, slot 1", reason: "서로 다른 두 문항이 한 영역에 묶여 위치를 다시 만들어야 함." }]
+  };
+}
+
 test("확인한 황소 문항만 세부유형으로 올리고 나머지는 기존 상태를 지킨다", () => {
   const output = builder.buildReview(curriculum(), [packet()]);
   assert.equal(output.summary.itemCount, 3);
@@ -94,4 +102,39 @@ test("검수 묶음은 원문·정답·경로 같은 위험한 필드를 받지 
 test("검수 묶음 목록이 없는 빌드 설정은 받지 않는다", () => {
   assert.throws(() => builder.loadConfig({ curriculumReviews: "curriculum.json", packets: [] }), /빌드 설정/);
   assert.throws(() => builder.loadConfig({ packets: ["packet.json"] }), /빌드 설정/);
+});
+
+test("위치를 다시 만들어야 하는 문항은 단원 분류를 보존하고 별도 상태로 기록한다", () => {
+  const output = builder.buildReview(curriculum(), [deferredPacket()]);
+  const deferred = output.reviews.find(review => review.sourceItemId === "Q2");
+  assert.equal(output.summary.deferredItemCount, 1);
+  assert.equal(deferred.detailPrecision, "unit_only");
+  assert.equal(deferred.sourceTypeId, "SH-UNT-1");
+  assert.equal(deferred.detailReviewStatus, "locator_rebuild_required");
+  assert.match(deferred.detailReviewReason, /위치를 다시/);
+  assert.equal(deferred.detailReviewEvidence, "MEM-1:PDF p.3, slot 1");
+});
+
+test("뒤 묶음에서 완전한 문항으로 확인되면 앞의 보류 기록을 해제한다", () => {
+  const output = builder.buildReview(curriculum(), [deferredPacket("Q1"), packet()]);
+  const reviewed = output.reviews.find(review => review.sourceItemId === "Q1");
+  assert.equal(reviewed.detailPrecision, "verified");
+  assert.equal(reviewed.detailReviewStatus, undefined);
+  assert.equal(output.summary.deferredItemCount, 0);
+});
+
+test("보류 기록도 원문·정답·경로 필드와 불완전한 근거를 받지 않는다", () => {
+  const unsafe = deferredPacket();
+  unsafe.deferred[0].answer = 17;
+  assert.throws(() => builder.buildReview(curriculum(), [unsafe]), /unsafe_keys/);
+
+  const noReason = deferredPacket();
+  noReason.deferred[0].reason = "";
+  assert.throws(() => builder.buildReview(curriculum(), [noReason]), /reason/);
+});
+
+test("같은 묶음에서 한 문항을 검수 완료와 위치 재작업으로 동시에 기록하지 않는다", () => {
+  const conflict = packet();
+  conflict.deferred = deferredPacket("Q1").deferred;
+  assert.throws(() => builder.buildReview(curriculum(), [conflict]), /완료와 위치 재작업/);
 });
