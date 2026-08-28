@@ -6,7 +6,7 @@
   if (!planData || !registry) throw new Error("Grade 6 diagnostic blueprint data failed to load");
 
   const plan = planData.plan;
-  const state = { role: "teacher" };
+  const state = { role: "student" };
   const labels = {
     difficulty: { foundation: "기초 근거", core: "핵심 근거", advanced: "심화 전이" },
     response: { "multiple-choice": "선택형", numeric: "수치 응답", "short-answer": "단답형", "constructed-response": "서술형" },
@@ -17,14 +17,20 @@
     teacher: {
       label: "교사용 · 설계와 수업 연결",
       title: "교사는 영역별 근거를 수업 계획으로 연결합니다.",
-      copy: "42개 문항 자리가 Grade 6의 다섯 영역과 열 개 클러스터를 고르게 다루는지 확인합니다. 검수된 문항은 진단, 보충 연습, 다음 단원 계획의 근거로 사용합니다.",
-      steps: ["배치 목적 확인", "문항·권리 검수", "인증된 평가 배정", "영역별 근거 검토", "수업·유지 확인 계획"]
+      copy: "42개 문항이 Grade 6의 다섯 영역과 열 개 클러스터를 고르게 다루는지 확인하고, 진단 결과를 보충 연습과 다음 단원 계획에 연결합니다.",
+      status: "원고는 로컬 검산을 통과했지만, 학생 배정은 인증된 검토 기록과 안전한 배포 연결 뒤에만 가능합니다.",
+      steps: ["진단 범위 확인", "인증 검토 기록 확인", "학생 평가 배정", "영역별 근거 검토", "수업·유지 계획"],
+      linkLabel: "Grade 6 교사용 커리큘럼 보기",
+      linkHref: "./catalog.html?role=teacher&grade=6"
     },
     student: {
       label: "학생용 · 진단과 다음 학습",
       title: "학생은 평가 뒤에 무엇을 연습할지 확인합니다.",
       copy: "교사가 배정한 진단을 마치면 영역별 피드백과 다음 수업·연습 순서를 확인합니다. 학생 화면은 자신의 학습 흐름에 필요한 정보만 보여 줍니다.",
-      steps: ["교사 배정 확인", "인증된 평가 응시", "나의 영역별 피드백", "다음 수업·연습", "7일 뒤 유지 확인"]
+      status: "현재 평가 화면은 잠겨 있습니다. 교사 배정과 인증 연결이 완료되면 학생 계정에서 열립니다.",
+      steps: ["배정 안내", "인증된 평가 응시", "영역별 결과", "다음 수업·연습", "유지 확인"],
+      linkLabel: "Grade 6 학생용 커리큘럼 보기",
+      linkHref: "./catalog.html?role=student&grade=6"
     }
   };
 
@@ -48,7 +54,7 @@
     const copy = roleCopy[state.role];
     const panel = document.getElementById("role-panel");
     panel.setAttribute("aria-labelledby", `role-${state.role}`);
-    panel.innerHTML = `<span class="role-label">${copy.label}</span><h3>${copy.title}</h3><p>${copy.copy}</p><ol class="role-steps">${copy.steps.map(function (step, index) { return `<li>${index + 1}. ${step}</li>`; }).join("")}</ol>`;
+    panel.innerHTML = `<span class="role-label">${copy.label}</span><h3>${copy.title}</h3><p>${copy.copy}</p><p class="role-status">${copy.status}</p><ol class="role-steps">${copy.steps.map(function (step, index) { return `<li>${index + 1}. ${step}</li>`; }).join("")}</ol><a class="role-link" href="${copy.linkHref}">${copy.linkLabel}</a>`;
     document.querySelectorAll("[data-role]").forEach(function (button) {
       const selected = button.dataset.role === state.role;
       button.setAttribute("aria-selected", String(selected));

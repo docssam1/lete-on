@@ -131,6 +131,11 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .seg button:last-child{border-right:none}
 .seg button.on{background:var(--blue-deep);color:#fff}
 
+.dr-printopts{display:flex;gap:16px;flex-wrap:wrap}
+.dr-check{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;
+  color:var(--ink);cursor:pointer;user-select:none}
+.dr-check input{width:16px;height:16px;accent-color:var(--blue-deep);cursor:pointer}
+
 .bench-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:26px}
 .dr-seed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
 .dr-seed-label{font-size:11px;color:var(--sub)}
@@ -641,6 +646,14 @@ function parseTopic(key){
   return sub ? {cat:cat, sub:sub} : null;
 }
 
+/* 학습지 인쇄 옵션(표지·개념 페이지) — exam.js의 getCoverOn/getConceptPageOn과
+   같은 localStorage 키를 직접 읽고 쓴다. drill.html은 자체 완결 페이지라
+   exam.js 내부 함수를 그대로 부르는 대신 값만 공유한다(키 이름 반드시 일치). */
+function getCoverPref(){ try{ var v = localStorage.getItem('nm_ws_cover'); return v===null ? true : v==='1'; }catch(e){ return true; } }
+function setCoverPref(v){ try{ localStorage.setItem('nm_ws_cover', v?'1':'0'); }catch(e){} }
+function getConceptPref(){ try{ return localStorage.getItem('nm_ws_concept_page')==='1'; }catch(e){ return false; } }
+function setConceptPref(v){ try{ localStorage.setItem('nm_ws_concept_page', v?'1':'0'); }catch(e){} }
+
 function getConfig(){
   var t = parseTopic(state.topicKey);
   if(!t) return null;
@@ -649,7 +662,14 @@ function getConfig(){
     level: t.sub.level,
     count: state.count,
     timer: state.timer,
-    seed: state.seed
+    seed: state.seed,
+    /* 표지 색·아이콘용 — exam.js의 coverPageHtml이 이 값을 우선으로 쓴다
+       (없으면 스레드ID 접두어로 자체 추정). TOPICS의 갈래 색을 그대로 표지에 낸다. */
+    topicName: t.sub.label,
+    topicIcon: t.cat.icon,
+    topicColor: t.cat.color,
+    topicLabel: t.cat.label,
+    topicSection: t.cat.section
   };
 }
 
@@ -761,9 +781,14 @@ function renderBench(){
   html += '<div class="preview-hd"><span>미리보기</span><button class="preview-dice" id="dr-dice">🎲 다른 문제</button></div>';
   html += '<div class="preview-grid" id="dr-preview"></div>';
 
+  html += '<div class="bench-row"><div class="bench-label">학습지 구성</div><div class="dr-printopts">';
+  html += '<label class="dr-check"><input type="checkbox" id="dr-opt-cover"' + (getCoverPref()?' checked':'') + '> 표지</label>';
+  html += '<label class="dr-check"><input type="checkbox" id="dr-opt-concept"' + (getConceptPref()?' checked':'') + '> 개념 페이지</label>';
+  html += '</div></div>';
+
   html += '<div class="bench-actions">';
-  html += '<button class="gold-btn" id="dr-start-btn">▶ 연습 시작</button>';
-  html += '<button class="nm-btn nm-btn-secondary" id="dr-print-btn">🖨 학습지 인쇄</button>';
+  html += '<button class="gold-btn" id="dr-print-btn">🖨 학습지 인쇄</button>';
+  html += '<button class="nm-btn nm-btn-secondary" id="dr-start-btn">▶ 화면으로 풀기</button>';
   html += '<div class="dr-seed-wrap"><span class="dr-seed-label">코드</span><span class="dr-seed-code" id="dr-seed-disp" title="클릭하면 새 코드">' + esc(NM_EXAM.worksheetCode(getConfig())) + '</span></div>';
   html += '</div>';
 
@@ -808,6 +833,11 @@ function bindBench(){
 
   var printBtn = document.getElementById('dr-print-btn');
   if(printBtn) printBtn.addEventListener('click', function(){ var cfg = getConfig(); if(!cfg) return; NM_EXAM.renderPrint(cfg); });
+
+  var coverChk = document.getElementById('dr-opt-cover');
+  if(coverChk) coverChk.addEventListener('change', function(){ setCoverPref(this.checked); });
+  var conceptChk = document.getElementById('dr-opt-concept');
+  if(conceptChk) conceptChk.addEventListener('change', function(){ setConceptPref(this.checked); });
 }
 
 function bindHome(){

@@ -10,13 +10,18 @@
   const RESPONSE_TYPES = Object.freeze(["multiple-choice", "numeric", "short-answer", "constructed-response"]);
   const DIFFICULTIES = Object.freeze(["foundation", "core", "advanced"]);
   const ASSESSMENT_PURPOSES = Object.freeze(["unit-screener", "course-placement", "competition-benchmark"]);
+  const SCORING_ERROR_TYPES = Object.freeze([
+    "prerequisite-gap", "concept-gap", "representation-error", "calculation-error",
+    "condition-missed", "strategy-gap", "explanation-incomplete"
+  ]);
   const RIGHTS_MODES = Object.freeze([
     "owned_original", "permissive_reviewed", "private_licensed", "noncommercial_reference",
     "permission_required", "provenance_review"
   ]);
   const REVIEW_TYPES = Object.freeze([
     "math-correctness", "age-appropriateness", "answer-uniqueness", "translation-ko", "translation-en",
-    "translation-zh-Hans", "rights", "asset-rights", "scoring-rubric", "visual-evidence"
+    "translation-zh-Hans", "rights", "asset-rights", "scoring-rubric", "visual-evidence",
+    "student-payload-safety"
   ]);
   const PUBLIC_ITEM_FIELDS = Object.freeze([
     "schemaVersion", "itemId", "itemVersion", "publicRevisionId", "publicPayloadSha256", "visibilityClass",
@@ -29,8 +34,9 @@
   const PRIVATE_SPEC_FIELDS = Object.freeze([
     "schemaVersion", "scoringSpecId", "specVersion", "itemId", "itemVersion", "publicPayloadSha256",
     "privateSpecSha256", "scoringMode", "maxPoints", "answer", "normalizationVersion", "solutionRef",
-    "rubricId", "rubricVersion", "rubricSha256", "state"
+    "rubricId", "rubricVersion", "rubricSha256", "errorSignals", "defaultErrorType", "state"
   ]);
+  const ERROR_SIGNAL_FIELDS = Object.freeze(["code", "observedValue", "errorType", "rationaleByLocale"]);
   const RIGHTS_FIELDS = Object.freeze([
     "schemaVersion", "rightsRecordId", "rightsVersion", "rightsRecordSha256", "itemId", "itemVersion", "assetId", "mode", "originType",
     "authority", "sourceTitle", "sourceUrl", "documentRevision", "sourceLocator", "licenseId", "licenseUrl",
@@ -52,7 +58,7 @@
   const FORBIDDEN_STUDENT_KEYS = new Set([
     "answer", "answerkey", "correctoption", "iscorrect", "solution", "rubric", "tolerance",
     "acceptedalternatives", "errormapping", "privatespecsha256", "scoringspecid", "distractorrationale",
-    "reviewernotes", "awardedpoints"
+    "reviewernotes", "awardedpoints", "errorsignals", "defaulterrortype", "errortype"
   ]);
 
   function fail(message) { throw new Error(message); }
@@ -146,6 +152,12 @@
     visited.delete(value);
     return true;
   }
+  function validateExactBilingualLocales(value, field) {
+    requireRecord(value, field);
+    assertKnownFields(value, ["ko", "en"], field);
+    requireText(value.ko, `${field}.ko`);
+    requireText(value.en, `${field}.en`);
+  }
   function assertDenseArray(value, field, maxLength) {
     if (!Array.isArray(value)) fail(`${field} must be an array`);
     if (Object.getPrototypeOf(value) !== Array.prototype) fail(`${field} must be a plain array`);
@@ -234,6 +246,12 @@
       validateLocales(option.labelByLocale, `${field}.labelByLocale`);
     });
     if (new Set(item.options.map(function (option) { return option.optionId; })).size !== item.options.length) fail("publicItem option ids contain duplicates");
+    ["ko", "en"].forEach(function (locale) {
+      const labels = item.options.map(function (option) {
+        return option.labelByLocale[locale].normalize("NFKC").replace(/\s+/g, " ").trim();
+      });
+      if (new Set(labels).size !== labels.length) fail(`publicItem option labels contain ${locale} duplicates`);
+    });
     if (item.responseType === "multiple-choice" && (item.options.length < 2 || item.options.length > 6)) fail("multiple-choice requires 2-6 options");
     if (item.responseType !== "multiple-choice" && item.options.length) fail("only multiple-choice may contain options");
     assertDenseArray(item.assets, "publicItem.assets");
@@ -307,6 +325,38 @@
       requireHash(spec.rubricSha256, "privateSpec.rubricSha256");
     } else if (spec.rubricId != null || spec.rubricVersion != null || spec.rubricSha256 != null) {
       fail("automatic scoring must not declare a rubric revision");
+    }
+    assertDenseArray(spec.errorSignals, "privateSpec.errorSignals");
+    if (!spec.errorSignals.length) fail("privateSpec.errorSignals is required");
+    spec.errorSignals.forEach(function (signal, index) {
+      const field = `privateSpec.errorSignals[${index}]`;
+      requireRecord(signal, field);
+      assertKnownFields(signal, ERROR_SIGNAL_FIELDS, field);
+      requireText(signal.code, `${field}.code`, /^[a-z][a-z0-9-]{1,63}$/);
+      requireText(signal.observedValue, `${field}.observedValue`);
+      if (!SCORING_ERROR_TYPES.includes(signal.errorType)) fail(`${field}.errorType is invalid`);
+      validateExactBilingualLocales(signal.rationaleByLocale, `${field}.rationaleByLocale`);
+    });
+    if (new Set(spec.errorSignals.map(function (signal) { return signal.code; })).size !== spec.errorSignals.length) {
+      fail("privateSpec.errorSignals contains duplicate codes");
+    }
+    if (new Set(spec.errorSignals.map(function (signal) { return signal.observedValue; })).size !== spec.errorSignals.length) {
+      fail("privateSpec.errorSignals contains duplicate observed values");
+    }
+    if (!SCORING_ERROR_TYPES.includes(spec.defaultErrorType)) fail("privateSpec.defaultErrorType is invalid");
+    if (!spec.errorSignals.some(function (signal) { return signal.errorType === spec.defaultErrorType; })) {
+      fail("privateSpec.defaultErrorType must be present in errorSignals");
+    }
+    if (spec.scoringMode === "automatic" && spec.answer.kind === "option-id") {
+      const expectedWrongOptionIds = item.options.filter(function (option) {
+        return option.optionId !== spec.answer.value;
+      }).map(function (option) { return option.optionId; }).sort();
+      const mappedObservedValues = spec.errorSignals.map(function (signal) { return signal.observedValue; }).sort();
+      if (expectedWrongOptionIds.length !== mappedObservedValues.length || !expectedWrongOptionIds.every(function (optionId, index) {
+        return optionId === mappedObservedValues[index];
+      })) {
+        fail("automatic multiple-choice errorSignals must map every wrong optionId exactly once and exclude the correct optionId");
+      }
     }
     requireText(spec.solutionRef, "privateSpec.solutionRef");
     if (spec.state !== "in-review") fail("privateSpec.state must remain in-review until server release");
@@ -437,10 +487,10 @@
       "age-appropriateness": "curriculum-reviewer", "translation-ko": "translator-reviewer",
       "translation-en": "translator-reviewer", "translation-zh-Hans": "translator-reviewer",
       rights: "rights-reviewer", "asset-rights": "rights-reviewer", "scoring-rubric": "scoring-reviewer",
-      "visual-evidence": "visual-reviewer"
+      "visual-evidence": "visual-reviewer", "student-payload-safety": "security-reviewer"
     };
     if (record.reviewerRole !== roleByType[record.type]) fail(`reviewerRole does not match ${record.type}`);
-    if (["math-correctness", "answer-uniqueness", "scoring-rubric"].includes(record.type) && record.reviewedPrivateHash !== privateSpec.privateSpecSha256) {
+    if (["math-correctness", "answer-uniqueness", "scoring-rubric", "student-payload-safety"].includes(record.type) && record.reviewedPrivateHash !== privateSpec.privateSpecSha256) {
       fail(`${record.type} private hash does not match`);
     }
     if (record.type === "scoring-rubric") {
@@ -459,7 +509,7 @@
   }
 
   function requiredReviewTypes(item) {
-    const required = ["math-correctness", "age-appropriateness", "answer-uniqueness", "translation-ko", "translation-en", "rights", "scoring-rubric"];
+    const required = ["math-correctness", "age-appropriateness", "answer-uniqueness", "translation-ko", "translation-en", "rights", "scoring-rubric", "student-payload-safety"];
     if (item.promptBlocks.some(function (block) { return block.type === "diagram"; })) required.push("visual-evidence", "asset-rights");
     const hasChinese = JSON.stringify(item).includes('"zh-Hans"');
     if (hasChinese) required.push("translation-zh-Hans");
@@ -511,6 +561,7 @@
       requiredSignerChecks: Object.freeze([
         "canonical-public-private-rights-rubric-review-sha256", "trusted-current-time-rights-expiry",
         "database-author-reviewer-role-and-evidence", "asset-byte-hash-and-sanitization", "answer-leakage-scan",
+        "student-payload-safety-review",
         "release-manifest-signature"
       ])
     });
@@ -606,6 +657,7 @@
     RESPONSE_TYPES,
     DIFFICULTIES,
     ASSESSMENT_PURPOSES,
+    SCORING_ERROR_TYPES,
     RIGHTS_MODES,
     REVIEW_TYPES,
     validatePublicItem,

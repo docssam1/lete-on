@@ -60,7 +60,8 @@ create table public.gfield_math_private_review_records (
   item_version integer not null,
   review_type text not null check (review_type in (
     'math-correctness', 'age-appropriateness', 'answer-uniqueness', 'translation-ko', 'translation-en',
-    'translation-zh-Hans', 'rights', 'asset-rights', 'scoring-rubric', 'visual-evidence'
+    'translation-zh-Hans', 'rights', 'asset-rights', 'scoring-rubric', 'visual-evidence',
+    'student-payload-safety'
   )),
   review_payload jsonb not null check (jsonb_typeof(review_payload) = 'object'),
   review_record_sha256 text not null check (review_record_sha256 ~ '^[a-f0-9]{64}$'),

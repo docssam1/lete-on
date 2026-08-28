@@ -43,6 +43,40 @@
   .nm-cp-arrow { color: #888; }
   .nm-cp-rule { background: #f4f4f4; border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-top: 6px; }
   .nm-cp-rule p { margin: 4px 0 0; }
+
+  /* 표지 — 지오메트리 랩 학습지의 A4 표지(브랜드/제목/구분선/캐릭터/이름칸/코드)와
+     같은 짜임이지만, 톤은 Numbers of Magic(종이+잉크+골드)로. 2026-08-28. */
+  .nm-print-cover { --cv-accent:#C9A063; position:relative; display:flex; flex-direction:column;
+    min-height:255mm; padding:16mm 14mm; box-sizing:border-box; background:#FBFAF7;
+    break-after:page; page-break-after:always; }
+  .nm-print-cover::after { content:""; position:absolute; inset:7mm; border:1px solid #E4E2DC; pointer-events:none; }
+  .nm-cv-brand { position:relative; display:flex; align-items:baseline; justify-content:space-between;
+    padding:0 2mm 5mm; border-bottom:2px solid #0E2C57; }
+  .nm-cv-brand span { font-size:12px; font-weight:900; letter-spacing:2px; color:var(--cv-accent); }
+  .nm-cv-brand strong { font-size:12px; font-weight:800; letter-spacing:1.6px; color:#0E2C57; }
+  .nm-cv-brand strong i { font-style:normal; color:var(--cv-accent); }
+  .nm-cv-copy { position:relative; margin:auto 0 0; text-align:center; }
+  .nm-cv-kicker { margin:0 0 6mm; font-size:12px; font-weight:900; letter-spacing:3px; color:var(--cv-accent); }
+  .nm-cv-title { margin:0; font-size:32px; line-height:1.35; font-weight:900; color:#0E2C57; word-break:keep-all; }
+  .nm-cv-rule { width:26mm; height:3px; margin:9mm auto; background:var(--cv-accent); }
+  .nm-cv-sub { margin:0; font-size:13px; line-height:1.9; color:#5c6a72; }
+  /* 캐릭터 대신 넘버스매직의 상표 모티프(1·2·4·8·16, about.html 히어로 성좌와 같은 수열)로
+     장식 — 지오메트리처럼 별도 캐릭터 스프라이트 자산이 없어도 브랜드가 드러난다. */
+  .nm-cv-marks { position:relative; display:flex; justify-content:center; gap:8mm; margin:8mm auto auto; }
+  .nm-cv-marks span { display:flex; align-items:center; justify-content:center; width:14mm; height:14mm;
+    border-radius:50%; background:#0E2C57; color:#F5D98B; border:1.2px solid var(--cv-accent);
+    font-family:monospace; font-weight:700; font-size:12px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-cv-meta { position:relative; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6mm;
+    margin:0 6mm; padding:7mm 4mm; border-top:1px solid #c9c6be; border-bottom:1px solid #c9c6be; }
+  .nm-cv-meta > div { display:grid; grid-template-columns:auto 1fr; align-items:end; gap:3mm; }
+  .nm-cv-meta span { font-size:11px; font-weight:800; color:#4a5468; white-space:nowrap; }
+  .nm-cv-meta i { font-style:normal; height:8mm; border-bottom:1px solid #1A2233; display:block; }
+  .nm-cv-meta b { font-style:normal; font-size:13px; font-weight:800; color:var(--cv-accent); justify-self:start; }
+  .nm-cv-footer { position:relative; display:flex; justify-content:space-between; margin-top:8mm;
+    padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
+  .nm-cv-footer b { color:var(--cv-accent); }
+  .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
 }
 @media screen {
   .nm-print-sheet { display: none; }
@@ -318,6 +352,80 @@ function conceptToggleRowHtml(){
 function bindConceptToggle(container){
   const chk = container.querySelector('#nm-ex-concept-chk');
   if(chk) chk.addEventListener('change', () => setConceptPageOn(chk.checked));
+}
+
+/* ── 표지(Cover) ─────────────────────────────────────────────
+   지오메트리 랩 학습지(geometry/worksheet)의 A4 표지와 같은 역할 — 문항
+   학습지는 아이가 받는 책 한 권이니 표지 없이 나가면 안 된다는 원장 판단
+   (2026-08-28, "쌓기나무 학습지처럼 당연히 표지도 있어야"). 기본값 켬
+   (지오메트리는 기본 꺼짐이지만, 넘버스는 마스터 로드맵에서부터 "개념+
+   제너레이터 학습지"를 표준으로 정했으므로 완전한 학습지 쪽을 기본으로). */
+const COVER_TOGGLE_KEY = 'nm_ws_cover';
+function getCoverOn(){ try{ const v = localStorage.getItem(COVER_TOGGLE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; } }
+function setCoverOn(v){ try{ localStorage.setItem(COVER_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
+function coverToggleRowHtml(){
+  return `<label class="nm-ex-concept-toggle">
+    <input type="checkbox" id="nm-ex-cover-chk" ${getCoverOn()?'checked':''}>
+    <span>📘 표지 넣기</span>
+  </label>`;
+}
+function bindCoverToggle(container){
+  const chk = container.querySelector('#nm-ex-cover-chk');
+  if(chk) chk.addEventListener('change', () => setCoverOn(chk.checked));
+}
+
+/* 스레드ID 접두어 → 갈래 아이콘·이름·색(drill.html의 TOPICS 색과 맞춤).
+   drill.html은 cfg.topicIcon/topicColor/topicLabel/topicSection을 직접 실어
+   보내므로 이건 그게 없는 호출(메인 앱 학년별 학습지 화면, 편지함 등)만을
+   위한 안전망 — 표지가 색 없이 밋밋하게 나가지 않도록. */
+const THREAD_PREFIX_THEME = {
+  AD:{icon:'＋',label:'덧셈',color:'#3b82f6'}, SB:{icon:'－',label:'뺄셈',color:'#ef4444'},
+  ML:{icon:'×',label:'곱셈',color:'#10b981'}, DV:{icon:'÷',label:'나눗셈',color:'#f59e0b'},
+  NS:{icon:'🧠',label:'수 감각',color:'#8b5cf6'}, FR:{icon:'🧠',label:'분수',color:'#8b5cf6'},
+  DC:{icon:'🧠',label:'소수',color:'#8b5cf6'}, MX:{icon:'🧠',label:'혼합',color:'#8b5cf6'},
+  CH:{icon:'🏔️',label:'경시의 탑',color:'#C9A063'}, NL:{icon:'🌱',label:'수의 나라',color:'#2E9E6B'}
+};
+function coverTheme(cfg){
+  const prefix = String((cfg||{}).thread||'').replace(/[0-9].*$/,'');
+  const fb = THREAD_PREFIX_THEME[prefix] || {icon:'✨',label:'Numbers of Magic',color:'#0E2C57'};
+  return {
+    icon:  (cfg&&cfg.topicIcon)  || fb.icon,
+    label: (cfg&&cfg.topicLabel) || fb.label,
+    color: (cfg&&cfg.topicColor) || fb.color
+  };
+}
+function coverLevelBadge(items){
+  if(items.length !== 1) return '혼합';
+  const it = items[0];
+  const th = (window.NM_THREADS||{})[it.thread] || {};
+  const lv = (th.levels||[]).find(l => l.id === it.level);
+  return (lv && lv.label && lv.label.ko) ? lv.label.ko : ('Lv.' + (it.level||1));
+}
+/* items: [{thread,level,topicName?,topicIcon?,topicColor?,topicLabel?}], code: 표지 하단 코드,
+   totalCount: 표지 발치에 적을 실제 문항 수(합계). */
+function coverPageHtml(items, code, totalCount){
+  const theme = coverTheme(items[0]);
+  const names = items.map(it => it.topicName ||
+    (((window.NM_THREADS||{})[it.thread]||{}).name||{}).ko || it.thread);
+  const title = names.length <= 2 ? names.join(' · ')
+    : names.slice(0,2).join(' · ') + ' 외 ' + (names.length-2) + '가지';
+  return `<div class="nm-print-cover" style="--cv-accent:${esc(theme.color)}">
+  <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC</strong></div>
+  <div class="nm-cv-copy">
+    <p class="nm-cv-kicker">${esc(theme.icon)} ${esc(theme.label)} 학습지</p>
+    <h1 class="nm-cv-title">${esc(title)}</h1>
+    <div class="nm-cv-rule"></div>
+    <p class="nm-cv-sub">한 장씩 풀고 날짜를 적어 두면<br>어떤 유형이 아직 어려운지 한눈에 보여요.</p>
+  </div>
+  <div class="nm-cv-marks" aria-hidden="true">${[1,2,4,8,16].map(n=>`<span>${n}</span>`).join('')}</div>
+  <div class="nm-cv-meta">
+    <div><span>이름</span><i></i></div>
+    <div><span>시작한 날</span><i></i></div>
+    <div><span>레벨</span><b>${esc(coverLevelBadge(items))}</b></div>
+  </div>
+  <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
+  <div class="nm-cv-code">${esc(code||'')}</div>
+</div>`;
 }
 
 /* 원형 번호 ①②③... */
@@ -850,6 +958,7 @@ const NM_EXAM = {
       ${WORD_OPTS.map(w => `<button class="nm-ex-cnt-btn${w.key===wordType?' sel':''}" data-w="${w.key}">${w.label}</button>`).join('')}
     </div>
     ${conceptToggleRowHtml()}
+    ${coverToggleRowHtml()}
     <div class="nm-ex-actions" style="margin-top:10px">
       <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
       <button id="nm-ex-print-start" class="nm-ex-btn-secondary">🖨️ 인쇄하여 풀기</button>
@@ -909,6 +1018,7 @@ const NM_EXAM = {
           previewSeed = NM_RNG.newCode(); render();
         });
         bindConceptToggle(container);
+        bindCoverToggle(container);
 
         container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
           onStart && onStart(makeConfig());
@@ -979,6 +1089,7 @@ const NM_EXAM = {
       <button id="nm-ex-new-seed" class="nm-ex-btn-ghost">🎲 새 코드</button>
     </div>
     ${conceptToggleRowHtml()}
+    ${coverToggleRowHtml()}
     <div class="nm-ex-actions">
       <button id="nm-ex-start" class="nm-ex-btn-primary">▶ 학습지 시작</button>
       <button id="nm-ex-print" class="nm-ex-btn-secondary">🖨️ 인쇄</button>
@@ -998,6 +1109,7 @@ const NM_EXAM = {
         currentSeed = NM_RNG.newCode(); refreshCode();
       });
       bindConceptToggle(container);
+      bindCoverToggle(container);
       container.querySelector('#nm-ex-start').addEventListener('click', () => {
         onStart && onStart(getConfig());
       });
@@ -1178,9 +1290,11 @@ const NM_EXAM = {
     const th = (window.NM_THREADS || {})[thread] || {};
     const thName = (th.name||{}).ko || thread;
 
+    const coverHtml = getCoverOn() ? coverPageHtml([config], code, count) : '';
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
 
     sheet.innerHTML = `
+${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — ${esc(thName)} 학습지</h2>
@@ -1267,6 +1381,8 @@ ${conceptHtml}
     sheet.className = 'nm-print-sheet';
     sheet.setAttribute('aria-hidden', 'true');
 
+    const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode,
+      items.reduce((sum,it) => sum + (it.count||0), 0)) : '';
     const conceptHtml = getConceptPageOn()
       ? conceptPageHtml(items.map(it => ({thread:it.thread, level:it.level})), envelopeCode)
       : '';
@@ -1290,6 +1406,7 @@ ${conceptHtml}
 </div>`).join('');
 
     sheet.innerHTML = `
+${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode||'')}</h2>

@@ -262,25 +262,37 @@ test("Grade 6 diagnostic blueprint separates role guidance from locked assessmen
   const errors = collectErrors(page);
   const response = await page.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /Grade 6 배치 진단\s*교사용 설계표/);
+  assert.match(await page.locator("h1").innerText(), /Grade 6 수학 실력 진단\s*무엇을 알고, 무엇을 배울지 연결합니다/);
   assert.equal(await page.locator("#item-count").textContent(), "42");
   assert.equal(await page.locator("#cluster-count").textContent(), "10");
   assert.equal(await page.locator("#domain-count").textContent(), "5");
+  assert.equal(await page.locator("#released-item-count").textContent(), "0");
+  assert.match(await page.locator(".status-chip").innerText(), /배포 대기 · 0\/42 공개/);
+  assert.match(await page.locator(".hero-meta").innerText(), /42\s*비공개 원고[\s\S]*0\s*배포 문항/);
+  assert.match(await page.locator(".release-note").innerText(), /로컬 독립 재검수 완료[\s\S]*인증 서명/);
   assert.equal(await page.locator(".cluster-card").count(), 10);
-  assert.match(await page.locator("#role-panel").innerText(), /교사는 영역별 근거를 수업 계획으로 연결합니다/);
+  assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-panel").innerText(), /학생은 평가 뒤에 무엇을 연습할지 확인합니다/);
+  assert.equal(await page.locator("#role-panel .role-link").getAttribute("href"), "./catalog.html?role=student&grade=6");
   assert.equal(await page.evaluate(function () {
     return window.GFIELDGrade6PlacementPlan.plan.slots.every(function (slot) {
       return slot.itemId === null && slot.itemVersion === null && slot.releaseState === "locked-awaiting-reviewed-item";
     });
   }), true);
-  assert.equal((await page.content()).includes("qst-bnk-"), false);
+  const publicHtml = await page.content();
+  ["qst-bnk-", "private-authoring", "privateDraft", "solutionByLocale", "rubricDraft", "scoringSpec"].forEach(function (token) {
+    assert.equal(publicHtml.includes(token), false, `diagnostic leaked ${token}`);
+  });
+  assert.equal(await page.locator("form").count(), 0);
+  assert.equal(await page.locator("button:not([data-role])").count(), 0);
 
-  await page.locator('[data-role="student"]').click();
-  assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-panel").innerText(), /학생은 평가 뒤에 무엇을 연습할지 확인합니다/);
-  await page.locator('[data-role="student"]').focus();
-  await page.keyboard.press("ArrowRight");
+  await page.locator('[data-role="teacher"]').click();
   assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-panel").innerText(), /교사는 영역별 근거를 수업 계획으로 연결합니다/);
+  assert.equal(await page.locator("#role-panel .role-link").getAttribute("href"), "./catalog.html?role=teacher&grade=6");
+  await page.locator('[data-role="teacher"]').focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -353,17 +365,25 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
   assert.deepEqual(errors, []);
   await page.close();
 
-  const diagnostic = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
-  const diagnosticErrors = collectErrors(diagnostic);
-  await diagnostic.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
-  const diagnosticDimensions = await diagnostic.evaluate(function () {
-    return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
-  });
-  assert.equal(diagnosticDimensions.scroll, diagnosticDimensions.client);
-  const roleTargets = await diagnostic.locator("[data-role], .brand, .site-footer a").evaluateAll(function (controls) {
-    return controls.map(function (control) { return control.getBoundingClientRect().height; });
-  });
-  roleTargets.forEach(function (height) { assert.ok(height >= 44, `diagnostic touch height ${height}`); });
-  assert.deepEqual(diagnosticErrors, []);
-  await diagnostic.close();
+  for (const width of [320, 390, 768]) {
+    const diagnostic = await browser.newPage({ viewport: { width, height: 844 }, isMobile: width < 600 });
+    const diagnosticErrors = collectErrors(diagnostic);
+    await diagnostic.goto(`${baseUrl}diagnostic.html`, { waitUntil: "networkidle" });
+    const diagnosticDimensions = await diagnostic.evaluate(function () {
+      return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
+    });
+    assert.equal(diagnosticDimensions.scroll, diagnosticDimensions.client, `diagnostic overflow at ${width}px`);
+    const roleTargets = await diagnostic.locator("[data-role], .brand, .role-link, .site-footer a").evaluateAll(function (controls) {
+      return controls.map(function (control) {
+        const rect = control.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      });
+    });
+    roleTargets.forEach(function (size) {
+      assert.ok(size.width >= 44, `diagnostic touch width ${size.width} at ${width}px`);
+      assert.ok(size.height >= 44, `diagnostic touch height ${size.height} at ${width}px`);
+    });
+    assert.deepEqual(diagnosticErrors, []);
+    await diagnostic.close();
+  }
 });
