@@ -1,9 +1,10 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828s";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828t";
 import { book05Markup } from "./book05-renderers.js?v=20260828n";
 import { book06Markup } from "./book06-renderers.js?v=20260828p";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
 import { book08Markup } from "./book08-renderers.js?v=20260828r";
 import { book09Markup } from "./book09-renderers.js?v=20260828s";
+import { book10Markup } from "./book10-renderers.js?v=20260828t";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -363,6 +364,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book8-set") return book08SetMarkup(visual);
   if (visual.kind === "book9") return `<div class="book09-visual">${book09Markup(visual)}</div>`;
   if (visual.kind === "book9-set") return book09SetMarkup(visual);
+  if (visual.kind === "book10") return `<div class="book10-visual">${book10Markup(visual)}</div>`;
   return "";
 }
 
@@ -406,9 +408,10 @@ function renderLessonList() {
 }
 
 function renderStageSteps() {
+  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : "골든벨";
   const phases = [
     ["concept", "1", "개념"],
-    ["original", "2", "골든벨"],
+    ["original", "2", sourceLabel],
     ["extension", "3", "이야기"],
     ["complete", "4", "완료"]
   ];
@@ -553,7 +556,10 @@ function renderSummary() {
   $("completedCount").textContent = `${completed} / ${book.lessons.length || "-"}`;
   $("levelState").textContent = book.lessons.length && completed === book.lessons.length ? "완료" : book.lessons.length ? "학습 중" : "준비 중";
   $("bookTitle").textContent = `${book.label} · ${book.title}`;
-  $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? "개념을 골든벨과 이야기로 익힙니다." : "준비 중입니다."}`;
+  const readyNote = book.source?.origin === "textbook-derived"
+    ? `교재 기반 학습입니다. ${book.source.note}`
+    : "개념을 골든벨과 이야기로 익힙니다.";
+  $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? readyNote : "준비 중입니다."}`;
 }
 
 function render() {

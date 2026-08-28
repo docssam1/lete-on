@@ -1838,20 +1838,194 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       }
     ]
   },
-  ...[
-    ["book-10", "10권", "연속수와 따라잡기", "", "source-needed"]
-  ].map(([id, label, title, file, status]) => ({
-    id,
-    label,
-    title,
-    status,
+  {
+    id: "book-10",
+    label: "10권",
+    title: "연속수와 따라잡기",
+    status: "ready",
     source: {
-      file,
-      verified: false,
-      note: status === "source-needed" ? "골든벨 원본 자료 보강 필요" : "비공개 원본 위치 확인 · 문항별 대조 중"
+      file: "수업용_더클래식_1과정_10N30권_연속수와_따라잡기(240216)-잠금 해제됨.pdf",
+      verified: true,
+      origin: "textbook-derived",
+      note: "별도 골든벨 원본 없음 · 10권 교재의 검증된 대표 개념으로 구성한 교재 기반 골든벨 학습"
     },
-    lessons: []
-  }))
+    lessons: [
+      {
+        id: "consecutive-page-range",
+        unit: "연속수의 합",
+        title: "연속된 쪽수의 가운데를 찾아요",
+        sourceLocator: "수업용 교재 42쪽, 연습 14번",
+        sourceTypeIds: ["consecutive-page-range-b10"],
+        representativeConcept: "연속된 수의 개수와 합을 이용해 가운데 수를 찾고 처음 수와 끝 수를 구함",
+        story: {
+          title: "책갈피 탐정",
+          text: "연속된 쪽수는 가운데를 기준으로 같은 간격만큼 작아지고 커집니다.",
+          mission: "쪽수의 합을 개수로 나눈 가운데 값에서 양쪽으로 차례로 펼쳐 보세요."
+        },
+        explanation: {
+          headline: "합을 개수로 나누면 연속된 쪽수의 가운데를 찾을 수 있습니다.",
+          steps: [
+            "여섯 쪽의 합 75를 6으로 나누면 가운데 두 쪽의 평균은 12.5입니다.",
+            "12와 13을 가운데에 놓고 양쪽으로 한 칸씩 이어 적습니다.",
+            "10, 11, 12, 13, 14, 15의 합이 75인지 다시 확인합니다."
+          ]
+        },
+        original: {
+          title: "교재 확인",
+          structureKey: "consecutive-page-range-from-count-and-total",
+          prompt: "연속된 6쪽의 쪽수 합이 75일 때 처음 쪽수와 마지막 쪽수를 쓰세요.",
+          visual: { kind: "book10", subtype: "page-strip", count: 6, total: 75 },
+          items: [
+            { id: "page-range-first", prompt: "처음 쪽수", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "page-range-last", prompt: "마지막 쪽수", answerMode: "input", inputMode: "numeric", answer: "15" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "consecutive-page-range-from-count-and-total",
+          story: "박물관에서 연속된 5개의 보관함 번호를 확인했더니 번호의 합이 85였습니다.",
+          prompt: "가장 처음 보관함 번호를 쓰세요.",
+          visual: { kind: "book10", subtype: "page-strip", count: 5, total: 85 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "15",
+          explanation: "85÷5=17이 가운데 번호입니다. 15, 16, 17, 18, 19이므로 처음 번호는 15입니다."
+        }
+      },
+      {
+        id: "catch-up-acorns",
+        unit: "따라잡기",
+        title: "처음 차이와 하루 차이로 만나는 날을 찾아요",
+        sourceLocator: "수업용 교재 61쪽, 확인 2번",
+        sourceTypeIds: ["catch-up-growing-amount-b10"],
+        representativeConcept: "처음 양의 차이가 하루마다 얼마나 줄어드는지 계산해 두 양이 같아지는 때를 구함",
+        story: {
+          title: "도토리 모으기",
+          text: "뒤에 있는 쪽이 하루마다 더 많이 모으면 처음 차이가 조금씩 줄어듭니다.",
+          mission: "처음 차이를 구한 뒤 하루에 줄어드는 차이로 나누세요."
+        },
+        explanation: {
+          headline: "처음 차이 ÷ 하루에 줄어드는 차이로 따라잡는 날을 구합니다.",
+          steps: [
+            "처음에는 50-30=20개 차이입니다.",
+            "엄마 다람쥐가 하루에 7-3=4개씩 차이를 줄입니다.",
+            "20÷4=5이므로 5일 뒤에 도토리 수가 같아집니다."
+          ]
+        },
+        original: {
+          title: "교재 확인",
+          structureKey: "catch-up-from-start-gap-and-daily-gap",
+          prompt: "두 다람쥐가 같은 수의 도토리를 가지게 되는 것은 며칠 뒤인지 쓰세요.",
+          visual: { kind: "book10", subtype: "catch-up-table", labels: ["엄마 다람쥐", "아빠 다람쥐"], starts: [30, 50], changes: [7, 3], unit: "개/일" },
+          items: [
+            { id: "catch-up-days", prompt: "같아지는 날", answerMode: "input", inputMode: "numeric", answer: "5" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "catch-up-from-start-gap-and-daily-gap",
+          story: "아라는 스티커 18장으로 시작해 하루에 6장씩, 보라는 38장으로 시작해 하루에 2장씩 모읍니다.",
+          prompt: "두 사람의 스티커 수가 같아지는 것은 며칠 뒤인지 쓰세요.",
+          visual: { kind: "book10", subtype: "catch-up-table", labels: ["아라", "보라"], starts: [18, 38], changes: [6, 2], unit: "장/일" },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "5",
+          explanation: "처음 차이는 20장이고 하루에 4장씩 줄어듭니다. 20÷4=5이므로 5일 뒤에 같습니다."
+        }
+      },
+      {
+        id: "digit-card-four-place",
+        unit: "조건에 맞는 수",
+        title: "자리마다 남은 숫자 카드 수를 세어요",
+        sourceLocator: "수업용 교재 79쪽, 활동 1번",
+        sourceTypeIds: ["digit-card-number-enumeration"],
+        representativeConcept: "서로 다른 숫자 카드를 한 번씩 놓을 때 각 자리에 놓을 수 있는 카드 수를 차례로 곱해 경우의 수를 구함",
+        story: {
+          title: "네 자리 암호 카드",
+          text: "한 자리에 카드를 놓으면 다음 자리에서 고를 수 있는 카드가 한 장씩 줄어듭니다.",
+          mission: "첫째 자리부터 남아 있는 카드가 몇 장인지 4, 3, 2, 1로 세어 보세요."
+        },
+        explanation: {
+          headline: "첫 자리를 정한 뒤 남은 카드 수를 차례로 곱합니다.",
+          steps: [
+            "천의 자리가 1이면 남은 세 자리에는 3장, 2장, 1장을 차례로 고릅니다.",
+            "3×2×1=6이므로 천의 자리가 1인 수는 6개입니다.",
+            "첫 자리도 네 카드 중에서 고르면 전체는 4×3×2×1=24개입니다."
+          ]
+        },
+        original: {
+          title: "교재 확인",
+          structureKey: "four-distinct-digit-cards-used-once",
+          prompt: "1, 3, 5, 7을 한 번씩 사용해 네 자리 수를 만듭니다.",
+          visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 },
+          items: [
+            { id: "fixed-first-digit-count", prompt: "천의 자리 숫자가 1인 수의 개수", answerMode: "input", inputMode: "numeric", answer: "6" },
+            { id: "all-four-digit-count", prompt: "만들 수 있는 네 자리 수의 개수", answerMode: "input", inputMode: "numeric", answer: "24" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "four-distinct-digit-cards-used-once",
+          story: "전시관 암호판에서 2, 4, 6, 8 카드를 한 번씩 사용해 네 자리 암호를 만듭니다.",
+          prompt: "천의 자리 숫자가 2인 암호는 모두 몇 개인지 쓰세요.",
+          visual: { kind: "book10", subtype: "digit-slots", digits: [2, 4, 6, 8], length: 4 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "6",
+          explanation: "첫 자리에 2를 놓으면 남은 세 자리는 3×2×1가지이므로 6개입니다."
+        }
+      },
+      {
+        id: "number-baseball-secret",
+        unit: "숫자 야구게임",
+        title: "스트라이크와 볼로 비밀 수를 찾아요",
+        sourceLocator: "수업용 교재 109쪽, 활동 1번",
+        sourceTypeIds: ["number-baseball-b10"],
+        representativeConcept: "숫자와 자리가 모두 맞는 스트라이크와 숫자만 맞는 볼 조건을 함께 적용해 서로 다른 세 자리 비밀 수를 찾음",
+        story: {
+          title: "비밀 금고 번호",
+          text: "S는 숫자와 자리가 모두 맞고, B는 숫자는 있지만 자리가 다르다는 뜻입니다.",
+          mission: "0B인 줄에서 없는 숫자를 먼저 지우고, 두 줄을 비교해 새로 맞은 자리를 찾으세요."
+        },
+        explanation: {
+          headline: "0B인 두 줄을 비교하면 맞는 자리와 없는 숫자를 빠르게 찾을 수 있습니다.",
+          steps: [
+            "832가 1S 0B이므로 맞지 않은 숫자는 비밀 수에 들어가지 않습니다.",
+            "832와 834를 비교하면 셋째 자리의 4가 새로 맞은 숫자임을 알 수 있습니다.",
+            "236의 1S 1B 조건까지 함께 맞추면 3은 둘째 자리, 6은 첫째 자리가 되어 비밀 수는 634입니다."
+          ]
+        },
+        original: {
+          title: "교재 확인",
+          structureKey: "three-distinct-digit-number-baseball",
+          prompt: "1부터 9까지 서로 다른 숫자로 만든 세 자리 비밀 수를 쓰세요.",
+          visual: { kind: "book10", subtype: "number-baseball", clues: [
+            { guess: [2, 3, 6], strikes: 1, balls: 1 },
+            { guess: [8, 3, 2], strikes: 1, balls: 0 },
+            { guess: [8, 3, 4], strikes: 2, balls: 0 }
+          ] },
+          items: [
+            { id: "baseball-secret", prompt: "비밀 수", answerMode: "input", inputMode: "numeric", answer: "634" }
+          ]
+        },
+        extension: {
+          title: "이야기",
+          structureKey: "three-distinct-digit-number-baseball",
+          story: "보물 상자의 비밀번호는 1부터 9까지 서로 다른 숫자로 만든 세 자리 수입니다.",
+          prompt: "세 번의 단서를 모두 만족하는 비밀번호를 쓰세요.",
+          visual: { kind: "book10", subtype: "number-baseball", clues: [
+            { guess: [5, 2, 7], strikes: 1, balls: 2 },
+            { guess: [5, 8, 2], strikes: 2, balls: 0 },
+            { guess: [1, 7, 2], strikes: 2, balls: 0 }
+          ] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "572",
+          explanation: "582에서 5와 2가 제자리이고 8은 없습니다. 172에서는 7과 2가 제자리이고 1은 없으므로 비밀번호는 572입니다."
+        }
+      }
+    ]
+  }
 ]);
 
 export const goldenBellBookById = (id) => GOLDEN_BELL_BOOKS.find((book) => book.id === id) || GOLDEN_BELL_BOOKS[0];

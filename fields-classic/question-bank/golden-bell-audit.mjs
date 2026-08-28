@@ -248,6 +248,28 @@ for (const [lessonId, approvedAnswers] of approvedBook9Answers) {
 const requiredBook9Units = ["도형의 분할과 넓이", "쌓기나무의 개수", "마방진", "연속수의 합"];
 for (const unit of requiredBook9Units) if (!book9.lessons.some((lesson) => lesson.unit === unit)) fail(`book-09: missing ${unit}`);
 
+const book10 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-10");
+const approvedBook10Answers = new Map([
+  ["consecutive-page-range", ["10", "15"]],
+  ["catch-up-acorns", ["5"]],
+  ["digit-card-four-place", ["6", "24"]],
+  ["number-baseball-secret", ["634"]]
+]);
+for (const [lessonId, approvedAnswers] of approvedBook10Answers) {
+  const lesson = book10.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`book-10: missing approved lesson ${lessonId}`);
+  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
+    fail(`book-10/${lessonId}: approved textbook answers changed`);
+  }
+  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+    fail(`book-10/${lessonId}: textbook answer format changed`);
+  }
+}
+if (book10.source.origin !== "textbook-derived") fail("book-10: textbook-derived source label is required");
+const requiredBook10Units = ["연속수의 합", "따라잡기", "조건에 맞는 수", "숫자 야구게임"];
+for (const unit of requiredBook10Units) if (!book10.lessons.some((lesson) => lesson.unit === unit)) fail(`book-10: missing ${unit}`);
+
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
 const pathAnswers = pathLesson.original.visual.panels.map(({ visual }) => {
   const [row, column] = visual.path[visual.target.index];
@@ -425,6 +447,53 @@ const arithmeticSeries = (from, to) => (from + to) * (to - from + 1) / 2;
 if ([6,10,14,20].map((to) => arithmeticSeries(1, to)).join(",") !== "21,55,105,210"
   || arithmeticSeries(1, 18) !== 171) {
   fail("book-09: source or story consecutive sum failed");
+}
+
+const consecutiveRangeFromSum = (count, total) => {
+  const start = (total / count) - (count - 1) / 2;
+  return Array.from({ length: count }, (_, index) => start + index);
+};
+const sourcePages = consecutiveRangeFromSum(6, 75);
+const storyLockers = consecutiveRangeFromSum(5, 85);
+if (sourcePages.join(",") !== "10,11,12,13,14,15" || storyLockers.join(",") !== "15,16,17,18,19") {
+  fail("book-10: consecutive page range calculation failed");
+}
+const catchUpDays = (behind, ahead, behindRate, aheadRate) => (ahead - behind) / (behindRate - aheadRate);
+if (catchUpDays(30, 50, 7, 3) !== 5 || catchUpDays(18, 38, 6, 2) !== 5) {
+  fail("book-10: catch-up calculation failed");
+}
+const permutations = (items) => items.length < 2
+  ? [items]
+  : items.flatMap((item, index) => permutations(items.filter((_, at) => at !== index)).map((rest) => [item, ...rest]));
+const sourceCardNumbers = permutations([1, 3, 5, 7]);
+const storyCardNumbers = permutations([2, 4, 6, 8]);
+if (sourceCardNumbers.length !== 24 || sourceCardNumbers.filter(([first]) => first === 1).length !== 6
+  || storyCardNumbers.filter(([first]) => first === 2).length !== 6) {
+  fail("book-10: digit-card enumeration failed");
+}
+const baseballScore = (secret, guess) => guess.reduce((score, digit, index) => {
+  if (secret[index] === digit) score.strikes += 1;
+  else if (secret.includes(digit)) score.balls += 1;
+  return score;
+}, { strikes: 0, balls: 0 });
+const baseballCandidates = (clues) => {
+  const candidates = [];
+  for (let first = 1; first <= 9; first += 1) for (let second = 1; second <= 9; second += 1) for (let third = 1; third <= 9; third += 1) {
+    const secret = [first, second, third];
+    if (new Set(secret).size !== 3) continue;
+    if (clues.every((clue) => {
+      const score = baseballScore(secret, clue.guess);
+      return score.strikes === clue.strikes && score.balls === clue.balls;
+    })) candidates.push(secret.join(""));
+  }
+  return candidates;
+};
+const baseballLesson = book10.lessons.find((lesson) => lesson.id === "number-baseball-secret");
+if (JSON.stringify(baseballCandidates(baseballLesson.original.visual.clues)) !== JSON.stringify(["634"])) {
+  fail("book-10: textbook number-baseball clue set is not uniquely solved");
+}
+if (JSON.stringify(baseballCandidates(baseballLesson.extension.visual.clues)) !== JSON.stringify(["572"])) {
+  fail("book-10: story number-baseball clue set is not uniquely solved");
 }
 
 function canonicalPolyomino(cells) {
