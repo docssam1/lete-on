@@ -8,6 +8,7 @@ const vm = require("node:vm");
 const root = path.resolve(__dirname, "..");
 const helperSource = fs.readFileSync(path.join(root, "portal-collection.js"), "utf8");
 const portalSource = fs.readFileSync(path.join(root, "portal.js"), "utf8");
+const portalCss = fs.readFileSync(path.join(root, "portal.css"), "utf8");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const diagnosisHtml = fs.readFileSync(path.join(root, "diagnosis.html"), "utf8");
 
@@ -139,11 +140,14 @@ function testStaticPortalContract() {
   const releaseIndex = indexHtml.indexOf('<script src="./mock/premier-release-catalog.js"></script>');
   const secureIndex = indexHtml.indexOf('<script src="./secure-mock.js"></script>');
   const helperIndex = indexHtml.indexOf('<script src="./portal-collection.js"></script>');
-  const portalIndex = indexHtml.indexOf('<script src="./portal.js"></script>');
+  const portalMatch = indexHtml.match(/<script src="\.\/portal\.js(?:\?[^\"]*)?"><\/script>/);
+  const portalIndex = portalMatch ? indexHtml.indexOf(portalMatch[0]) : -1;
   assert(releaseIndex > -1 && secureIndex > releaseIndex && helperIndex > secureIndex && portalIndex > helperIndex,
     "공개 카탈로그·보안 클라이언트·결합 모듈은 portal.js보다 먼저 로드해야 합니다.");
   assert.match(indexHtml, /id="collectionStatus"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(indexHtml, /id="collectionRetry"[^>]*hidden/);
+  assert.match(portalCss, /\[hidden\]\{display:none!important\}/,
+    "hidden 속성은 입력칸 등 다른 표시 규칙보다 우선해야 합니다.");
   assert.match(indexHtml, /class="campaign-showcase"[\s\S]*HYPER FOCUS REPORT/,
     "공개 홈에 하이퍼 포커스 리포트 광고가 있어야 합니다.");
   assert.match(indexHtml, /54 TYPE DIAGNOSIS[\s\S]*문항 진단 살펴보기/,
