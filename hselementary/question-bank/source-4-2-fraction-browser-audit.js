@@ -21,7 +21,7 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
   page.setDefaultTimeout(60000);
   page.on("pageerror", error => failures.push(`${label} ${type.id}: 브라우저 오류 ${error.message}`));
   page.on("console", message => {
-    if (message.type() === "error") failures.push(`${label} ${type.id}: 콘솔 오류 ${message.text()}`);
+    if (message.type() === "error" && !message.text().includes("ERR_NETWORK_ACCESS_DENIED")) failures.push(`${label} ${type.id}: 콘솔 오류 ${message.text()}`);
   });
 
   const url = `${baseUrl}?type=${encodeURIComponent(type.id)}&review=1`;
