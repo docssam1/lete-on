@@ -28,6 +28,30 @@ function source(id, title, relativePath, filePath) {
   return { id, title, path: relativePath, kind: "json", sensitivity: "private", ...fingerprint(filePath) };
 }
 
+function methodReviewInfo(pageAssetsPath, methodReviewPath) {
+  const manifest = pageAssetsPath ? readJson(pageAssetsPath) : null;
+  const packet = methodReviewPath ? readJson(methodReviewPath) : null;
+  const sourceId = packet ? packet.sourceId : manifest ? manifest.sourceId : "";
+  if (manifest && packet && manifest.sourceId !== packet.sourceId) throw new Error("원본 페이지와 풀이법 검수표의 sourceId가 다릅니다.");
+  const known = {
+    "DP-SRC-DE99B9857905": { key: "m22", label: "중2-2", tags: ["middle2-2"] },
+    "DP-SRC-D59E26A73CC1": { key: "cm1", label: "공통수학1", tags: ["common-math-1"] }
+  }[sourceId];
+  if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
+  return {
+    ...known,
+    sourceId,
+    pageSourceId: `dp-${known.key}-page-assets-v1`,
+    methodSourceId: `dp-${known.key}-method-review-v1`,
+    recordId: `dp.${known.key}.method-review.20260829`,
+    pageTitle: `돌파 ${known.label} 문항 원본 페이지 목록`,
+    methodTitle: `돌파 ${known.label} 대표 시험 풀이법 검수표`,
+    recordTitle: `돌파 ${known.label} 대표 시험 30문항 풀이 방법 검수`,
+    pageRelativePath: `지필드메모리/highschool-selection/artifacts/question-pages/dolpa/${sourceId}/manifest.json`,
+    methodRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(methodReviewPath || "")}`
+  };
+}
+
 function sync(catalog, ledger, database, paths) {
   if (ledger.schemaVersion !== 1 || database.schemaVersion !== 1) throw new Error("작업 장부 또는 문항 DB 버전을 확인해 주세요.");
   const sources = [
@@ -36,18 +60,15 @@ function sync(catalog, ledger, database, paths) {
     source("dp-paper-links-v1", "돌파 대표 시험지 원본 연결", "지필드메모리/highschool-selection/question-bank/dolpa-paper-links-v1.json", paths.paperLinks),
     source("dp-review-decisions-v1", "돌파 검수 결정 기록", "지필드메모리/highschool-selection/question-bank/dolpa-review-decisions-v1.json", paths.reviewDecisions)
   ];
-  if (paths.pageAssets) {
-    sources.push(source("dp-m22-page-assets-v1", "돌파 중2-2 문항 원본 페이지 목록", "지필드메모리/highschool-selection/artifacts/question-pages/dolpa/DP-SRC-DE99B9857905/manifest.json", paths.pageAssets));
-  }
+  const methodInfo = paths.pageAssets || paths.methodReview ? methodReviewInfo(paths.pageAssets, paths.methodReview) : null;
+  if (paths.pageAssets) sources.push(source(methodInfo.pageSourceId, methodInfo.pageTitle, methodInfo.pageRelativePath, paths.pageAssets));
   if (paths.targetSourcePlan) {
     sources.push(source("dp-target-source-plan-v1", "돌파 시험별 원본 사용 계획", "지필드메모리/highschool-selection/question-bank/dolpa-target-source-plan-v1.json", paths.targetSourcePlan));
   }
   if (paths.targetAssembly) {
     sources.push(source("dp-target-assembly-v1", "돌파 현재 범위 원본 문항 구성표", "지필드메모리/highschool-selection/question-bank/dolpa-target-assembly-v1.json", paths.targetAssembly));
   }
-  if (paths.methodReview) {
-    sources.push(source("dp-m22-method-review-v1", "돌파 중2-2 대표 시험 풀이법 검수표", "지필드메모리/highschool-selection/question-bank/dolpa-method-review-dp-m22-202404-v1.json", paths.methodReview));
-  }
+  if (paths.methodReview) sources.push(source(methodInfo.methodSourceId, methodInfo.methodTitle, methodInfo.methodRelativePath, paths.methodReview));
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   const equivalentSourceCount = (database.papers || []).reduce((sum, paper) => sum + (paper.equivalentSources || []).length, 0);
@@ -69,10 +90,10 @@ function sync(catalog, ledger, database, paths) {
   });
   if (paths.pageAssets) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
-      source_id: "dp-m22-page-assets-v1",
+      source_id: methodInfo.pageSourceId,
       role: "test",
       locator: "assets[1:8]",
-      note: "중2-2 원본 3~10쪽 PNG의 파일명·크기·해시 확인"
+      note: `${methodInfo.label} 원본 3~10쪽 PNG의 파일명·크기·해시 확인`
     });
   }
   if (paths.targetSourcePlan && paths.targetAssembly) {
@@ -85,23 +106,23 @@ function sync(catalog, ledger, database, paths) {
   }
   if (paths.methodReview) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
-      source_id: "dp-m22-method-review-v1",
+      source_id: methodInfo.methodSourceId,
       role: "decision",
       locator: "reviews[1:30]",
-      note: "중2-2 대표 시험 30문항의 풀이 구조와 방법 태그를 원본 페이지와 대조"
+      note: `${methodInfo.label} 대표 시험 30문항의 풀이 구조와 방법 태그를 원본 페이지와 대조`
     });
-    upsert(catalog.records, "dp.m22.method-review.20260829", {
-      id: "dp.m22.method-review.20260829",
-      title: "돌파 중2-2 대표 시험 30문항 풀이 방법 검수",
-      aliases: ["돌파 중2-2 풀이법"],
-      tags: ["dp", "middle2-2", "method-review", "visual-review"],
-      summary: "중2-2 대표 시험 30문항을 원본 3~10쪽에서 직접 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.",
+    upsert(catalog.records, methodInfo.recordId, {
+      id: methodInfo.recordId,
+      title: methodInfo.recordTitle,
+      aliases: [`돌파 ${methodInfo.label} 풀이법`],
+      tags: ["dp", ...methodInfo.tags, "method-review", "visual-review"],
+      summary: `${methodInfo.label} 대표 시험 30문항을 원본 3~10쪽에서 직접 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.`,
       status: "verified",
       sensitivity: "private",
       updated: "2026-08-29",
       pointers: [
-        { source_id: "dp-m22-page-assets-v1", role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
-        { source_id: "dp-m22-method-review-v1", role: "decision", locator: "reviews[1:30]", note: "풀이 구조와 방법 태그 검수 결과" }
+        { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
+        { source_id: methodInfo.methodSourceId, role: "decision", locator: "reviews[1:30]", note: "풀이 구조와 방법 태그 검수 결과" }
       ]
     });
   }
@@ -127,4 +148,4 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ sync });
+module.exports = Object.freeze({ methodReviewInfo, sync });
