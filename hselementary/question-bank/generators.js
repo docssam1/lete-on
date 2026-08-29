@@ -2538,6 +2538,17 @@
     return pairs;
   };
   const isoscelesDiamondSvg = ({ upper, lower, base }) => `<svg class="geometry-diagram isosceles-diamond" viewBox="0 0 240 170" data-upper="${upper}" data-lower="${lower}" data-base="${base}" aria-label="같은 밑변을 공유하는 두 이등변삼각형"><polygon points="42,86 120,20 198,86 120,148"/><line x1="42" y1="86" x2="198" y2="86"/><text x="70" y="48">${upper}</text><text x="70" y="128">${lower}</text><text x="116" y="102">${base}</text><g class="equal-marks"><text x="166" y="48">=</text><text x="166" y="128">=</text></g></svg>`;
+  const isoscelesConcavePerimeterSvg = base => `<svg class="geometry-diagram isosceles-concave-source" viewBox="0 0 240 176" data-base="${base}" aria-label="같은 밑변을 가진 두 이등변삼각형 사이의 색칠한 오목한 도형"><path class="source-shaded-shape" d="M38 142 L120 22 L202 142 L120 103 Z"/><line class="source-shared-base" x1="38" y1="142" x2="202" y2="142"/><text class="source-length-label" x="120" y="158">${base}cm</text><path class="source-equal-mark" d="M70 82 l8 5 M162 87 l8 -5 M76 118 l8 -5 M156 113 l8 5"/></svg>`;
+  const isoscelesStripSvg = ({ count, equalSide, base, unknown = false }) => {
+    const topY = 34;
+    const bottomY = 134;
+    const top = [[24, topY], [92, topY], [160, topY]];
+    const bottom = [[58, bottomY], [126, bottomY], [194, bottomY]];
+    const boundary = `<line x1="${top[0][0]}" y1="${topY}" x2="${top[2][0]}" y2="${topY}"/><line x1="${bottom[0][0]}" y1="${bottomY}" x2="${bottom[2][0]}" y2="${bottomY}"/><line x1="${top[0][0]}" y1="${topY}" x2="${bottom[0][0]}" y2="${bottomY}"/><line x1="${top[2][0]}" y1="${topY}" x2="${bottom[2][0]}" y2="${bottomY}"/>`;
+    const inner = `<line x1="${top[1][0]}" y1="${topY}" x2="${bottom[0][0]}" y2="${bottomY}"/><line x1="${top[1][0]}" y1="${topY}" x2="${bottom[1][0]}" y2="${bottomY}"/><line x1="${top[2][0]}" y1="${topY}" x2="${bottom[1][0]}" y2="${bottomY}"/>`;
+    const labels = unknown ? "" : `<text class="source-length-label" x="58" y="22">${base}cm</text><text class="source-length-label" x="12" y="84">${equalSide}cm</text>`;
+    return `<svg class="geometry-diagram isosceles-strip-source" viewBox="0 0 240 164" data-count="${count}" data-equal-side="${equalSide}" data-base="${base}" aria-label="이등변삼각형 ${count}개를 겹치지 않게 이어 붙인 띠 모양"><g>${boundary}${inner}</g>${labels}<text class="source-ellipsis" x="226" y="84">…</text></svg>`;
+  };
   const isoscelesChainSvg = count => `<svg class="geometry-diagram isosceles-chain" viewBox="0 0 260 150" data-count="${count}" aria-label="이등변삼각형을 이어 붙인 도형"><g>${Array.from({ length: Math.min(5, count) }, (_, index) => { const x = 18 + index * 44; return `<polygon points="${x},126 ${x + 44},126 ${x + 22},42"/>`; }).join("")}</g><text x="238" y="88">…</text></svg>`;
   const triangleRelationSvg = (kind, first = "", second = "") => {
     if (kind === "square") return `<svg class="geometry-diagram triangle-relation" viewBox="0 0 240 160" aria-label="한 변을 공유하는 정사각형과 정삼각형의 공통 꼭짓점 각"><rect x="40" y="40" width="80" height="80"/><polygon points="120,120 120,40 189.3,80"/><path class="angle-mark" d="M88 120 A32 32 0 0 1 147.7 104"/><text x="87" y="99">㉠</text><text x="120" y="137">O</text></svg>`;
@@ -12358,52 +12369,36 @@
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 각 유형입니다.");
     },
     isoscelesTriangle({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       if (kind === 0) {
-        const upper = int(rng, 8 + level * 2, 14 + level * 3);
-        const lower = int(rng, 7 + level * 2, 13 + level * 3);
-        const base = int(rng, 6, Math.min(upper * 2 - 1, lower * 2 - 1));
-        const answer = 2 * upper + 2 * lower;
-        const evidence = triangle42Evidence("isosceles-diamond-perimeter", [upper, lower, base], answer);
-        return result(`같은 밑변을 공유하는 두 이등변삼각형의 같은 두 변 길이는 각각 ${upper}cm, ${lower}cm입니다. 두 삼각형을 합친 연꼴 모양의 바깥 둘레를 구하세요.${isoscelesDiamondSvg({ upper, lower, base })}${evidence}`, answer, `공유한 밑변 ${base}cm는 바깥 둘레에 포함되지 않습니다. 바깥쪽 네 변은 ${upper}, ${upper}, ${lower}, ${lower}cm이므로 둘레는 ${answer}cm입니다.`);
-      }
-      const vertexAngles = level === 0 ? [80, 90, 100] : level === 1 ? [80, 90, 100, 110] : [70, 80, 100, 110];
-      const vertex = pick(rng, vertexAngles);
-      const baseAngle = (180 - vertex) / 2;
-      if (kind === 1) {
-        const answer = vertex - baseAngle;
-        const evidence = triangle42Evidence("isosceles-split-angle", [vertex], answer);
-        return result(`이등변삼각형 ABC에서 AB=AC이고 D는 BC 위의 점입니다. AD=BD, ∠BAC=${vertex}°일 때 ∠CAD를 구하세요.${isoscelesSplitSvg(vertex)}${evidence}`, answer, `△ABC의 밑각은 ${baseAngle}°이고 AD=BD이므로 ∠BAD도 ${baseAngle}°입니다. 따라서 ∠CAD=${vertex}-${baseAngle}=${answer}°입니다.`);
+        const base = int(rng, 8, 12);
+        const outerEqual = int(rng, base + 2, base + 8 + level * 2);
+        const innerEqual = int(rng, Math.floor(base / 2) + 2, base + 3 + level);
+        const outerPerimeter = outerEqual * 2 + base;
+        const innerPerimeter = innerEqual * 2 + base;
+        const answer = outerPerimeter + innerPerimeter - base * 2;
+        const evidence = triangle42Evidence("isosceles-concave-perimeter", [outerPerimeter, innerPerimeter, base], answer);
+        return result(`밑변의 길이가 ${base}cm인 두 이등변삼각형이 같은 밑변을 사용합니다. 큰 이등변삼각형의 둘레는 ${outerPerimeter}cm이고 안쪽 이등변삼각형의 둘레는 ${innerPerimeter}cm일 때, 색칠한 오목한 도형의 둘레를 구하세요.${isoscelesConcavePerimeterSvg(base)}${evidence}`, answer, `큰 이등변삼각형의 같은 두 변의 합은 ${outerPerimeter}-${base}=${outerPerimeter - base}cm이고, 안쪽 이등변삼각형의 같은 두 변의 합은 ${innerPerimeter}-${base}=${innerPerimeter - base}cm입니다. 색칠한 도형의 둘레는 ${outerPerimeter - base}+${innerPerimeter - base}=${answer}cm입니다.`);
       }
       if (kind === 2) {
-        const count = int(rng, 18 + level * 12, 36 + level * 18);
-        const equalSide = int(rng, 7 + level, 12 + level * 2);
-        const base = int(rng, 4, Math.min(equalSide - 1, 8 + level));
+        const count = int(rng, 15 + level * 15, 25 + level * 20);
+        const base = int(rng, 4 + level, 6 + level);
+        const equalSide = int(rng, base + 3, base + 6);
         const answer = 2 * equalSide + count * base;
-        const evidence = triangle42Evidence("isosceles-chain-perimeter", [count, equalSide, base], answer);
-        return result(`같은 이등변삼각형 ${count}개를 이웃한 도형과 같은 길이의 한 변씩 겹치게 이어 붙였습니다. 같은 두 변은 ${equalSide}cm, 밑변은 ${base}cm일 때 전체 둘레를 구하세요.${equilateralChainSvg()}${evidence}`, answer, `첫 삼각형의 둘레는 2×${equalSide}+${base}cm이고, 한 개를 더 붙일 때마다 밑변 ${base}cm만큼 둘레가 늘어납니다. 전체는 2×${equalSide}+${count}×${base}=${answer}cm입니다.`);
+        const evidence = triangle42Evidence("isosceles-strip-perimeter", [count, equalSide, base], answer);
+        return result(`같은 이등변삼각형 ${count}개를 겹치지 않게 이어 붙였습니다. 짧은 변은 ${base}cm이고 같은 두 변은 각각 ${equalSide}cm일 때, 만든 도형의 둘레를 구하세요.${isoscelesStripSvg({ count, equalSide, base })}${evidence}`, answer, `위쪽과 아래쪽의 짧은 변은 모두 ${count}개이므로 길이의 합은 ${count}×${base}=${count * base}cm입니다. 양 끝의 같은 변 두 개를 더하면 둘레는 ${count * base}+${equalSide}×2=${answer}cm입니다.`);
       }
-      if (kind === 3) {
-        const answer = vertex;
-        const evidence = triangle42Evidence("isosceles-rotation-angle", [vertex], answer);
-        return result(`꼭지각이 ${vertex}°인 이등변삼각형을 꼭짓점을 중심으로 돌려 한쪽 같은 변이 다른 쪽 같은 변과 겹치게 했습니다. 돌린 작은 각은 몇 도입니까?${isoscelesSplitSvg(vertex)}${evidence}`, answer, `겹치게 되는 두 같은 변 사이의 각이 바로 꼭지각이므로 돌린 각은 ${answer}°입니다.`);
+      if (kind === 8) {
+        const count = 8 + level * 2;
+        const shortSide = int(rng, 2 + level, 4 + level);
+        const equalSide = int(rng, shortSide + 2, shortSide + 5);
+        const sideSum = shortSide + equalSide * 2;
+        const perimeter = count * shortSide + equalSide * 2;
+        const answer = shortSide;
+        const evidence = triangle42Evidence("isosceles-strip-short-side", [count, sideSum, perimeter], answer);
+        return result(`세 변의 길이의 합이 ${sideSum}cm인 같은 이등변삼각형 ${count}개를 겹치지 않게 이어 붙였습니다. 만든 도형의 둘레가 ${perimeter}cm이고 세 변의 길이가 모두 자연수일 때, 이등변삼각형의 짧은 변의 길이를 구하세요.${isoscelesStripSvg({ count, equalSide, base: shortSide, unknown: true })}${evidence}`, answer, `짧은 변을 □cm라 하면 양 끝에 남는 같은 변 두 개의 길이 합은 ${sideSum}-□cm입니다. 따라서 ${count}×□+(${sideSum}-□)=${perimeter}이므로 ${count - 1}×□=${perimeter - sideSum}, □=${answer}cm입니다.`);
       }
-      if (kind === 4) {
-        const foldVertex = pick(rng, [60, 80, 100, 120]);
-        const foldBase = (180 - foldVertex) / 2;
-        const answer = foldBase / 2;
-        const evidence = triangle42Evidence("isosceles-fold-angle", [foldVertex], answer);
-        return result(`꼭지각이 ${foldVertex}°인 이등변삼각형에서 한 밑각을 정확히 반으로 접었습니다. 접은 선과 밑변이 이루는 작은 각을 구하세요.${isoscelesSplitSvg(foldVertex)}${evidence}`, answer, `밑각은 (180-${foldVertex})÷2=${foldBase}°입니다. 접은 선이 밑각을 반으로 나누므로 작은 각은 ${foldBase}÷2=${answer}°입니다.`);
-      }
-      const pointCount = int(rng, 8 + level, 10 + level * 2);
-      const signatures = new Set();
-      for (let a = 0; a < pointCount - 2; a += 1) for (let b = a + 1; b < pointCount - 1; b += 1) for (let c = b + 1; c < pointCount; c += 1) {
-        const steps = [[a, b], [b, c], [c, a]].map(([first, second]) => Math.min(Math.abs(first - second), pointCount - Math.abs(first - second))).sort((x, y) => x - y);
-        if (steps[0] === steps[1] || steps[1] === steps[2]) signatures.add(steps.join("-"));
-      }
-      const answer = signatures.size;
-      const evidence = triangle42Evidence("circle-isosceles-shapes", [pointCount], answer);
-      return result(`원 위에 같은 간격으로 찍은 ${pointCount}개 점 중 세 점을 골라 이등변삼각형을 만듭니다. 돌리거나 뒤집어 같은 모양은 하나로 볼 때 서로 다른 모양은 몇 가지입니까?${circlePointsSvg({ points: pointCount })}${evidence}`, answer, `세 점 사이의 원둘레 간격을 작은 순서로 비교하여 두 변의 길이가 같은 경우만 남기고, 같은 간격 묶음을 하나로 세면 ${answer}가지입니다.`);
+      throw new Error("원본 그림과 독립 검산이 끝나지 않은 이등변삼각형 유형입니다.");
     },
     equilateralTriangle({ rng, level, variant = 0 }) {
       const kind = variant % 6;

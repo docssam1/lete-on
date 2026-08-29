@@ -26,6 +26,9 @@ const publicSourceIds = new Set([
   "4-2-triangle-2-mission-5",
   "4-2-triangle-2-example-2",
   "4-2-triangle-2-example-4",
+  "4-2-triangle-3-mission-1",
+  "4-2-triangle-3-mission-3",
+  "4-2-triangle-3-example-2",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -142,6 +145,9 @@ const sourceMission5Points = [[0, 0], [3, 0], [0, 0.5], [3, 0.5], [0, 1], [3, 1]
 const sourceMission5Segments = [[0, 1], [2, 3], [4, 5], [0, 4], [6, 7], [8, 9], [1, 5], [2, 6], [2, 7], [6, 9], [7, 8], [8, 5], [9, 1]];
 const sourceMission5Totals = segmentGraphAngleCounts(sourceMission5Points, sourceMission5Segments);
 check(sourceMission5Totals.acute === 1 && sourceMission5Totals.right === 32 && sourceMission5Totals.obtuse === 2, "Mission 5 띠 도형에는 예각삼각형 1개, 직각삼각형 32개, 둔각삼각형 2개가 있어야 합니다.");
+check(36 + 22 - 10 * 2 === 38, "이등변삼각형 Mission 1 원문 색칠 도형의 둘레는 38cm여야 합니다.");
+check(50 * 6 + 10 * 2 === 320, "이등변삼각형 Mission 3 원문 띠 도형의 둘레는 320cm여야 합니다.");
+check((40 - 13) / (10 - 1) === 3, "이등변삼각형 예제 3-2 원문 짧은 변은 3cm여야 합니다.");
 const squareDiagonalGridTriangleCount = sideCells => {
   const points = [];
   const pointIndex = new Map();
@@ -391,6 +397,9 @@ const answerFor = (kind, values) => {
     const totals = segmentGraphAngleCounts(points, segments);
     return mode === "acute-obtuse-difference" ? String(Math.abs(totals.acute - totals.obtuse)) : String(totals[mode]);
   }
+  if (kind === "isosceles-concave-perimeter") return String(values[0] + values[1] - values[2] * 2);
+  if (kind === "isosceles-strip-perimeter") return String(values[0] * values[2] + values[1] * 2);
+  if (kind === "isosceles-strip-short-side") return String((values[2] - values[1]) / (values[0] - 1));
   if (kind === "isosceles-diamond-perimeter") return String(2 * values[0] + 2 * values[1]);
   if (kind === "isosceles-split-angle") return String(values[0] - (180 - values[0]) / 2);
   if (kind === "isosceles-chain-perimeter") return String(2 * values[1] + values[0] * values[2]);
@@ -443,9 +452,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 16, `원문 일치 공개 유형 수가 16개가 아닙니다: ${types.length}`);
-check(locked.length === 28, `검수 대기 유형 수가 28개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 13, `공개 검산 구조 수가 13개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 19, `원문 일치 공개 유형 수가 19개가 아닙니다: ${types.length}`);
+check(locked.length === 25, `검수 대기 유형 수가 25개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 16, `공개 검산 구조 수가 16개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

@@ -9,7 +9,7 @@ require("./curriculum.js");
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "4-2-triangle-browser-audit");
-const expectedSourceTypes = Number(process.env.HSE_EXPECTED_SOURCE_TYPES || 16);
+const expectedSourceTypes = Number(process.env.HSE_EXPECTED_SOURCE_TYPES || 19);
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
 const unit = semester.units.find(item => item.id === "4-2-u2");
 const sourceTypes = unit.subunits
