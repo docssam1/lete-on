@@ -29,7 +29,10 @@ const publicSourceIds = new Set([
   "4-2-triangle-3-mission-1",
   "4-2-triangle-3-mission-3",
   "4-2-triangle-3-example-2",
-  "4-2-triangle-4-mission-1"
+  "4-2-triangle-4-mission-1",
+  "4-2-triangle-4-mission-3",
+  "4-2-triangle-4-mission-4",
+  "4-2-triangle-4-mission-6"
 ]);
 const failures = [];
 const seenKinds = new Set();
@@ -415,6 +418,19 @@ const answerFor = (kind, values) => {
     return String(signatures.size);
   }
   if (kind === "equilateral-chain-perimeter") return String((values[1] + 2) * values[0]);
+  if (kind === "equilateral-three-equal-angle") {
+    const [givenAngle, equilateralAngle] = values;
+    const outerBaseAngle = (180 - (givenAngle - equilateralAngle)) / 2;
+    const innerBaseAngle = (180 - givenAngle) / 2;
+    return String(outerBaseAngle - innerBaseAngle);
+  }
+  if (kind === "equilateral-equal-right-angle") {
+    const [equalSide, vertical] = values;
+    if (vertical * 2 !== equalSide) return "invalid";
+    const middleAngle = 30;
+    return String((180 - (180 - middleAngle)) / 2);
+  }
+  if (kind === "equilateral-angle-trapezoid-length") return String(values[1] - values[0] * 2);
   if (kind === "square-equilateral-angle") return String(values[0] + values[1]);
   if (kind === "overlap-equilateral-angle") return String(180 - 60 - values[0]);
   if (kind === "equilateral-right-length") return String(values[0] / 3 / 2);
@@ -452,9 +468,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 19, `원문 일치 공개 유형 수가 19개가 아닙니다: ${types.length}`);
-check(locked.length === 25, `검수 대기 유형 수가 25개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 16, `공개 검산 구조 수가 16개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 22, `원문 일치 공개 유형 수가 22개가 아닙니다: ${types.length}`);
+check(locked.length === 22, `검수 대기 유형 수가 22개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 19, `공개 검산 구조 수가 19개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

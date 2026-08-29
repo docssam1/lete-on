@@ -27,7 +27,10 @@ const reviewedTriangleIds = new Set([
   "4-2-triangle-3-mission-1",
   "4-2-triangle-3-mission-3",
   "4-2-triangle-3-example-2",
-  "4-2-triangle-4-mission-1"
+  "4-2-triangle-4-mission-1",
+  "4-2-triangle-4-mission-3",
+  "4-2-triangle-4-mission-4",
+  "4-2-triangle-4-mission-6"
 ]);
 
 function check(condition, message) {
@@ -77,7 +80,7 @@ for (const unit of targetUnits) {
 }
 
 check(sourceIds.size === 88, `원문 문항 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
-check(reviewedTriangleIds.size === 19, "삼각형 공개 허용 원문은 19개여야 합니다.");
+check(reviewedTriangleIds.size === 22, "삼각형 공개 허용 원문은 22개여야 합니다.");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);

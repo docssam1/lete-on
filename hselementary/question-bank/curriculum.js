@@ -392,10 +392,10 @@
         detailed("정삼각형", "equilateralTriangle", [
           sourceItem42("정삼각형을 이어 만든 도형의 둘레", 0, "4-2-triangle-4-mission-1", 22, 27),
           sourceItem42("정삼각형과 사각형이 겹친 각", 0, "4-2-triangle-4-mission-2", 22, 27, true),
-          sourceItem42("정삼각형이 이어진 도형의 각", 1, "4-2-triangle-4-mission-3", 22, 27, true),
-          sourceItem42("정삼각형이 이어진 도형의 길이와 각", 1, "4-2-triangle-4-mission-4", 22, 27, true),
+          sourceItem42("정삼각형이 이어진 도형의 각", 1, "4-2-triangle-4-mission-3", 22, 27),
+          sourceItem42("정삼각형이 이어진 도형의 길이와 각", 1, "4-2-triangle-4-mission-4", 22, 27),
           sourceItem42("정삼각형으로 이룬 육각형의 길이", 1, "4-2-triangle-4-mission-5", 22, 27, true),
-          sourceItem42("정삼각형과 사다리꼴의 선분 길이", 1, "4-2-triangle-4-mission-6", 22, 27, true),
+          sourceItem42("정삼각형과 사다리꼴의 선분 길이", 1, "4-2-triangle-4-mission-6", 22, 27),
           sourceItem42("성냥개비를 옮겨 정삼각형 수 줄이기", 1, "4-2-triangle-4-exploration", 21, 26, true),
           sourceItem42("정삼각형과 마름모에서 각 구하기", 0, "4-2-triangle-4-example-1", 21, 26, true),
           sourceItem42("직각삼각형 속 정삼각형의 각", 0, "4-2-triangle-4-example-2", 21, 26, true),

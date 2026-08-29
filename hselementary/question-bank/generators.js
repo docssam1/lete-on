@@ -2158,6 +2158,41 @@
     }
     return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
   };
+  const equilateralThreeEqualAngleSvg = mirrored => {
+    const mx = value => mirrored ? 240 - value : value;
+    const points = { a: [52, 136], b: [84, 80], c: [139.4, 48], d: [139.4, 112] };
+    const point = key => `${mx(points[key][0]).toFixed(1)},${points[key][1]}`;
+    const label = (key, text, dx, dy) => `<text class="source-point-label" x="${(mx(points[key][0]) + (mirrored ? -dx : dx)).toFixed(1)}" y="${(points[key][1] + dy).toFixed(1)}">${text}</text>`;
+    const tick = (first, second, offset = 0) => {
+      const x = (mx(points[first][0]) + mx(points[second][0])) / 2 + offset;
+      const y = (points[first][1] + points[second][1]) / 2;
+      return `<line class="equal-mark" x1="${(x - 4).toFixed(1)}" y1="${(y - 3).toFixed(1)}" x2="${(x + 4).toFixed(1)}" y2="${(y + 3).toFixed(1)}"/>`;
+    };
+    return `<svg class="geometry-diagram equilateral-three-equal-source" viewBox="0 0 240 170" aria-label="같은 길이의 선분 세 개가 이어진 각도 도형"><polyline points="${point("a")} ${point("b")} ${point("c")} ${point("d")} ${point("a")}"/><line x1="${mx(points.a[0]).toFixed(1)}" y1="${points.a[1]}" x2="${mx(points.c[0]).toFixed(1)}" y2="${points.c[1]}"/>${tick("a", "b")}${tick("b", "c")}${tick("c", "d")}${label("a", "ㄱ", -12, 16)}${label("b", "ㄴ", -16, 2)}${label("c", "ㄷ", 10, -7)}${label("d", "ㄹ", 11, 5)}<text class="source-angle-label" x="${mx(86)}" y="91">150°</text><text class="source-angle-label" x="${mx(128)}" y="72">60°</text><text class="source-unknown-label" x="${mx(77)}" y="129">?</text></svg>`;
+  };
+  const equilateralEqualRightAngleSvg = ({ equalSide, vertical, mirrored }) => {
+    const mx = value => mirrored ? 240 - value : value;
+    const scale = 8;
+    const d = [196, 126];
+    const g = [196, 126 - vertical * scale];
+    const r = [196 - Math.sqrt(equalSide ** 2 - vertical ** 2) * scale, 126];
+    const n = [r[0] - equalSide * scale, 126];
+    const p = point => `${mx(point[0]).toFixed(1)},${point[1].toFixed(1)}`;
+    const label = (point, text, dx, dy) => `<text class="source-point-label" x="${(mx(point[0]) + (mirrored ? -dx : dx)).toFixed(1)}" y="${(point[1] + dy).toFixed(1)}">${text}</text>`;
+    const rightX = mirrored ? mx(d[0]) + 11 : mx(d[0]) - 11;
+    return `<svg class="geometry-diagram equilateral-equal-right-source" viewBox="0 0 240 164" aria-label="같은 길이 두 개와 직각이 있는 각도 도형"><polygon points="${p(n)} ${p(g)} ${p(d)}"/><line x1="${mx(r[0]).toFixed(1)}" y1="${r[1]}" x2="${mx(g[0]).toFixed(1)}" y2="${g[1]}"/><path class="right-mark" d="M${rightX.toFixed(1)} 126v-11h${mirrored ? -11 : 11}"/>${label(n, "ㄴ", -12, 17)}${label(r, "ㄹ", -4, 17)}${label(g, "ㄱ", 9, -7)}${label(d, "ㄷ", 9, 17)}<text class="source-length-label" x="${mx((n[0] + r[0]) / 2).toFixed(1)}" y="146">${equalSide}cm</text><text class="source-length-label" x="${mx((r[0] + g[0]) / 2 - 5).toFixed(1)}" y="${(r[1] + g[1]) / 2 - 5}">${equalSide}cm</text><text class="source-length-label" x="${mx(g[0] + 13).toFixed(1)}" y="${(g[1] + d[1]) / 2}">${vertical}cm</text><text class="source-unknown-label" x="${mx(n[0] + 22).toFixed(1)}" y="118">㉠</text></svg>`;
+  };
+  const equilateralAngleTrapezoidSvg = ({ side, base, target, mirrored }) => {
+    const mx = value => mirrored ? 240 - value : value;
+    const scale = 168 / base;
+    const bottomLeft = [36, 134];
+    const topLeft = [36 + side * scale / 2, 134 - side * scale * Math.sqrt(3) / 2];
+    const topRight = [topLeft[0] + target * scale, topLeft[1]];
+    const bottomRight = [204, 134];
+    const p = point => `${mx(point[0]).toFixed(1)},${point[1].toFixed(1)}`;
+    const label = (point, text, dx, dy) => `<text class="source-point-label" x="${(mx(point[0]) + (mirrored ? -dx : dx)).toFixed(1)}" y="${(point[1] + dy).toFixed(1)}">${text}</text>`;
+    return `<svg class="geometry-diagram equilateral-angle-trapezoid-source" viewBox="0 0 240 174" aria-label="각이 60도, 150도, 30도인 사다리꼴"><polygon class="source-shaded-shape" points="${p(bottomLeft)} ${p(topLeft)} ${p(topRight)} ${p(bottomRight)}"/>${label(topLeft, "ㄱ", -11, -7)}${label(topRight, "ㄴ", 10, -7)}${label(bottomLeft, "ㄷ", -12, 17)}${label(bottomRight, "ㄹ", 10, 17)}<text class="source-angle-label" x="${mx(bottomLeft[0] + 25).toFixed(1)}" y="127">60°</text><text class="source-angle-label" x="${mx(topRight[0] - 22).toFixed(1)}" y="${(topRight[1] + 24).toFixed(1)}">150°</text><text class="source-angle-label" x="${mx(bottomRight[0] - 30).toFixed(1)}" y="127">30°</text><text class="source-length-label" x="${mx((bottomLeft[0] + topLeft[0]) / 2 - 14).toFixed(1)}" y="${(bottomLeft[1] + topLeft[1]) / 2}">${side}cm</text><text class="source-length-label" x="${mx(120).toFixed(1)}" y="158">${base}cm</text><text class="source-unknown-label" x="${mx((topLeft[0] + topRight[0]) / 2).toFixed(1)}" y="${(topLeft[1] - 8).toFixed(1)}">?</text></svg>`;
+  };
   const triangle42Evidence = (kind, values, expected) => `<span hidden data-triangle42-kind="${kind}" data-triangle42-values="${encodeURIComponent(JSON.stringify(values))}" data-triangle42-expected="${encodeURIComponent(String(expected))}"></span>`;
   const triangleSquareDiagonalGridSvg = (cellWidth, cellHeight) => {
     const width = cellWidth * 2;
@@ -12401,7 +12436,7 @@
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 이등변삼각형 유형입니다.");
     },
     equilateralTriangle({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       if (kind === 0) {
         const side = int(rng, 3 + level, 5 + level);
         const count = int(rng, 12 + level * 8, 24 + level * 12);
@@ -12415,31 +12450,25 @@
         return result(`정사각형과 정삼각형이 한 변을 공유하고 있습니다. 공통 꼭짓점 O에서 두 도형의 안쪽 각을 이어 만든 ㉠의 크기를 구하세요.${triangleRelationSvg("square")}${evidence}`, answer, `정사각형의 각 90°와 정삼각형의 각 60°가 이어져 있으므로 ㉠은 90+60=${answer}°입니다.`);
       }
       if (kind === 2) {
-        const given = pick(rng, [20, 25, 35, 40, 45]);
-        const answer = 180 - 60 - given;
-        const evidence = triangle42Evidence("overlap-equilateral-angle", [given], answer);
-        return result(`한 직선 위에서 정삼각형의 한 각 60°와 ${given}°인 각, ㉠이 차례로 놓여 있습니다. ㉠의 크기를 구하세요.${triangleRelationSvg("straight", `${given}°`)}${evidence}`, answer, `직선 위의 각의 합은 180°이므로 ㉠=180-60-${given}=${answer}°입니다.`);
+        const answer = 30;
+        const evidence = triangle42Evidence("equilateral-three-equal-angle", [150, 60], answer);
+        return result(`선분 ㄱㄴ, 선분 ㄴㄷ, 선분 ㄷㄹ의 길이가 모두 같습니다. 각 ㄱㄴㄷ은 150°, 각 ㄴㄷㄹ은 60°일 때, 각 ㄷㄱㄹ의 크기를 구하세요.${equilateralThreeEqualAngleSvg(int(rng, 0, 1) === 1)}${evidence}`, answer, `삼각형 ㄴㄷㄹ은 두 변의 길이가 같고 그 사이의 각이 60°이므로 정삼각형입니다. 각 ㄱㄴㄹ은 150°-60°=90°이고 선분 ㄱㄴ과 선분 ㄴㄹ의 길이가 같으므로 각 ㄴㄱㄹ은 45°입니다. 삼각형 ㄱㄴㄷ의 두 밑각은 (180°-150°)÷2=15°이므로, 각 ㄷㄱㄹ은 45°-15°=30°입니다.`);
       }
       if (kind === 3) {
-        const side = int(rng, 4 + level, 8 + level * 2) * 2;
-        const perimeter = side * 3;
-        const answer = side / 2;
-        const evidence = triangle42Evidence("equilateral-right-length", [perimeter], answer);
-        return result(`둘레가 ${perimeter}cm인 정삼각형의 꼭짓점에서 밑변에 수선을 그어 두 직각삼각형으로 나누었습니다. 직각삼각형 하나의 짧은 밑변 길이를 구하세요.${triangleRelationSvg("right-full", `${side}cm`)}${evidence}`, answer, `정삼각형의 한 변은 ${perimeter}÷3=${side}cm입니다. 수선이 밑변을 똑같이 둘로 나누므로 짧은 밑변은 ${side}÷2=${answer}cm입니다.`);
+        const equalSide = pick(rng, [6, 8, 10].slice(0, 2 + level));
+        const vertical = equalSide / 2;
+        const answer = 15;
+        const evidence = triangle42Evidence("equilateral-equal-right-angle", [equalSide, vertical], answer);
+        return result(`다음 도형에서 선분 ㄱㄹ과 선분 ㄴㄹ의 길이는 각각 ${equalSide}cm이고, 선분 ㄱㄷ의 길이는 ${vertical}cm입니다. 각 ㉠의 크기를 구하세요.${equilateralEqualRightAngleSvg({ equalSide, vertical, mirrored: int(rng, 0, 1) === 1 })}${evidence}`, answer, `직각삼각형 ㄱㄹㄷ에서 ${vertical}cm는 ${equalSide}cm의 절반이므로 각 ㄱㄹㄷ은 30°입니다. 점 ㄴ, ㄹ, ㄷ이 한 직선 위에 있어 각 ㄴㄹㄱ은 150°이고, 삼각형 ㄴㄹㄱ은 두 변의 길이가 같은 삼각형입니다. 따라서 두 밑각은 (180°-150°)÷2=15°입니다.`);
       }
-      if (kind === 4) {
-        const side = int(rng, 4 + level, 8 + level * 2);
-        const count = int(rng, 6 + level * 3, 12 + level * 5);
-        const perimeter = (count + 2) * side;
-        const evidence = triangle42Evidence("equilateral-chain-side", [count, perimeter], side);
-        return result(`같은 정삼각형 ${count}개를 한 변씩 겹치게 이어 붙인 도형의 둘레가 ${perimeter}cm입니다. 정삼각형 한 변의 길이를 구하세요.${equilateralChainSvg()}${evidence}`, side, `바깥 둘레는 정삼각형 한 변의 ${count + 2}배입니다. 따라서 한 변은 ${perimeter}÷${count + 2}=${side}cm입니다.`);
+      if (kind === 5) {
+        const side = pick(rng, [6, 8, 10].slice(0, 2 + level));
+        const answer = int(rng, 3 + level, 6 + level * 2);
+        const base = side * 2 + answer;
+        const evidence = triangle42Evidence("equilateral-angle-trapezoid-length", [side, base], answer);
+        return result(`다음 사다리꼴에서 왼쪽 빗변은 ${side}cm, 아랫변은 ${base}cm입니다. 표시된 각이 각각 60°, 150°, 30°일 때, 선분 ㄱㄴ의 길이를 구하세요.${equilateralAngleTrapezoidSvg({ side, base, target: answer, mirrored: false })}${evidence}`, answer, `위아래 변은 평행합니다. 왼쪽 빗변 ${side}cm가 밑변 방향으로 차지하는 길이는 ${side / 2}cm이고, 오른쪽 빗변이 차지하는 길이는 ${side * 3 / 2}cm입니다. 따라서 선분 ㄱㄴ은 ${base}-${side / 2}-${side * 3 / 2}=${answer}cm입니다.`);
       }
-      const short = int(rng, 6 + level * 2, 12 + level * 3);
-      const extra = int(rng, 4 + level, 9 + level * 2);
-      const hypotenuse = short * 2;
-      const answer = hypotenuse - extra;
-      const evidence = triangle42Evidence("thirty-sixty-segment", [short, extra], answer);
-      return result(`30°인 각의 맞은편 짧은 변이 ${short}cm인 직각삼각형이 있습니다. 빗변에서 ${extra}cm를 제외한 나머지 선분의 길이를 구하세요.${triangleRelationSvg("right", `${short}cm`)}${evidence}`, answer, `30°인 각의 맞은편 변은 빗변의 절반이므로 빗변은 ${short}×2=${hypotenuse}cm입니다. ${extra}cm를 빼면 ${answer}cm입니다.`);
+      throw new Error("원본 그림과 독립 검산이 끝나지 않은 정삼각형 유형입니다.");
     },
     decimalUnderstanding({ rng, level, variant = 0 }) {
       const kind = variant % 6;
