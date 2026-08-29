@@ -55,6 +55,16 @@ test("다른 학원 후보 태그와 단원 수준 분류는 기본 선택에서
   assert.equal(selector.selectItems(index(), ["원수학 기본형"]).itemCount, 0);
 });
 
+test("후보 포함을 명시하면 학원형 후보 문항도 검수 목록에 나온다", () => {
+  const result = selector.selectItems(index(), ["황소형"], {
+    allowedStatuses: selector.CANDIDATE_ALLOWED_STATUSES,
+    allowedConceptStatuses: ["mapped", "unit_only", "pending"]
+  });
+  assert.equal(result.itemCount, 1);
+  assert.equal(result.items[0].itemId, "DOLPA:Q1");
+  assert.deepEqual(result.items[0].academyFits, [{ profileId: "SH_SELECTION", status: "candidate" }]);
+});
+
 test("관리자 검수 목록은 단원까지만 확인된 원수학 문항도 상태를 붙여 보여 준다", () => {
   const result = selector.selectItems(index(), ["WM_BASIC"], { allowedConceptStatuses: ["mapped", "unit_only"] });
   assert.equal(result.itemCount, 1);
