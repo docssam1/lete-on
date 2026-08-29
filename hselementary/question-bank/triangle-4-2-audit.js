@@ -16,6 +16,7 @@ const publicSourceIds = new Set([
   "4-2-triangle-1-mission-3",
   "4-2-triangle-1-mission-4",
   "4-2-triangle-1-mission-5",
+  "4-2-triangle-1-mission-6",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -208,6 +209,7 @@ const answerFor = (kind, values) => {
   if (kind === "marked-triangle-lattice-count") return String(markedTriangleLatticeCount(values[0], values[1], values[2], values[3]));
   if (kind === "joined-fans-count") return String(joinedFansTriangleCount(values[0], values[1]));
   if (kind === "crossing-segment-count") return String(crossingSegmentTriangleCount(values[0], values[1]));
+  if (kind === "crossed-fans-count") return String((values[0] - 1) ** 3);
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
   if (kind === "marked-fan-count") return String(values[0]);
   if (kind === "double-fan-count") return String(values[0] * (values[0] + 1) / 2 + values[1] * (values[1] + 1) / 2);
@@ -282,9 +284,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 6, `원문 일치 공개 유형 수가 6개가 아닙니다: ${types.length}`);
-check(locked.length === 38, `검수 대기 유형 수가 38개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 6, `공개 검산 구조 수가 6개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 7, `원문 일치 공개 유형 수가 7개가 아닙니다: ${types.length}`);
+check(locked.length === 37, `검수 대기 유형 수가 37개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 7, `공개 검산 구조 수가 7개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

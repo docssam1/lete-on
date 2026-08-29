@@ -2289,6 +2289,30 @@
     const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
     return `<svg class="geometry-diagram triangle-crossing-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="여러 삼각형의 선이 서로 교차하는 도형"><g>${lines}</g></svg>`;
   };
+  const triangleCrossedFansModel = (pointCount, templateIndex) => {
+    const templates = [[18, 150, 126, 18, 236, 150], [18, 150, 116, 22, 238, 150], [18, 150, 138, 20, 236, 150]];
+    const [leftX, leftY, topX, topY, rightX, rightY] = templates[templateIndex % templates.length];
+    const points = [[leftX, leftY], [topX, topY], [rightX, rightY]];
+    const leftSide = [0];
+    for (let index = 1; index < pointCount - 1; index += 1) {
+      points.push([leftX + (topX - leftX) * index / (pointCount - 1), leftY + (topY - leftY) * index / (pointCount - 1)]);
+      leftSide.push(points.length - 1);
+    }
+    leftSide.push(1);
+    const rightSide = [1];
+    for (let index = 1; index < pointCount - 1; index += 1) {
+      points.push([topX + (rightX - topX) * index / (pointCount - 1), topY + (rightY - topY) * index / (pointCount - 1)]);
+      rightSide.push(points.length - 1);
+    }
+    rightSide.push(2);
+    const unique = new Map();
+    [...rightSide.map(index => [0, index]), ...leftSide.map(index => [2, index])].forEach(segment => unique.set([...segment].sort((a, b) => a - b).join("-"), segment));
+    return { points, segments: [...unique.values()] };
+  };
+  const triangleCrossedFansSvg = model => {
+    const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-crossed-fans-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="큰 삼각형 안에서 양쪽 부채꼴 선이 겹친 도형"><g>${lines}</g></svg>`;
+  };
   const trianglePointBoardSvg = (points, requiredIndex = -1, lines = []) => {
     const minX = Math.min(...points.map(point => point[0]));
     const maxX = Math.max(...points.map(point => point[0]));
@@ -12020,10 +12044,12 @@
         const evidence = triangle42Evidence("crossing-segment-count", [templateIndex, level], answer);
         return result(`서로 겹쳐 그어진 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까? 선이 만나는 점도 삼각형의 꼭짓점으로 생각하세요.${triangleCrossingSvg(model)}${evidence}`, answer, `선이 만나는 점을 먼저 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 작은 것부터 큰 것까지 겹치지 않게 세면 모두 ${answer}개입니다.`);
       }
-      const parts = int(rng, 7 + level, 10 + level * 2);
-      const answer = parts * (parts + 1) / 2;
-      const evidence = triangle42Evidence("dot-fan-count", [parts], answer);
-      return result(`점판에서 위쪽 점과 아래쪽 점들을 잇는 선을 따라 만들 수 있는 삼각형은 모두 몇 개입니까?${triangleFanMarkedSvg(parts, -1, true)}${evidence}`, answer, `위쪽 점을 공통 꼭짓점으로 하고 아래쪽 점 두 개를 고르면 됩니다. ${parts}+${parts - 1}+…+1=${answer}개입니다.`);
+      const pointCount = 5 + level;
+      const templateIndex = int(rng, 0, 2);
+      const model = triangleCrossedFansModel(pointCount, templateIndex);
+      const answer = triangleSegmentGraphCount(model);
+      const evidence = triangle42Evidence("crossed-fans-count", [pointCount, templateIndex], answer);
+      return result(`큰 삼각형의 왼쪽 아래 꼭짓점과 오른쪽 아래 꼭짓점에서 반대쪽 변의 ${pointCount}개 점을 모두 이었습니다. 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleCrossedFansSvg(model)}${evidence}`, answer, `양쪽 부채꼴의 모든 선과 교점을 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 빠짐없이 세면 모두 ${answer}개입니다.`);
     },
     triangleAngleType({ rng, level, variant = 0 }) {
       const kind = variant % 6;
