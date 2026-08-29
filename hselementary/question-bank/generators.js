@@ -2490,6 +2490,18 @@
     const segments = [[0, 2], [0, 1], [1, 3], [4, 3], [4, 2], [5, 2], ...(level >= 0 ? [[5, 3]] : []), ...(level > 0 ? [[4, 1]] : [])];
     return { points, segments };
   };
+  const triangleIrregularSourceModel = layoutIndex => {
+    const source = {
+      points: [[0, 0], [1.5, 3], [3, 6], [3, 0], [5, 0], [4.2, 2.4], [15, 0]],
+      segments: [[0, 6], [0, 2], [2, 3], [2, 4], [1, 3], [1, 4], [1, 6], [0, 5]]
+    };
+    const transforms = [
+      ([x, y]) => [18 + x * 19, 154 - y * 22],
+      ([x, y]) => [18 + x * 18.5 + y * 0.8, 154 - y * 20],
+      ([x, y]) => [18 + x * 18 + y * 1.5, 154 - y * 22]
+    ];
+    return triangleTransformModel(source, transforms[layoutIndex % transforms.length]);
+  };
   const triangleSegmentGraphCount = ({ points, segments }) => {
     const epsilon = 1e-7;
     const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
@@ -2621,6 +2633,10 @@
   const triangleCrossingSvg = model => {
     const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
     return `<svg class="geometry-diagram triangle-crossing-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="여러 삼각형의 선이 서로 교차하는 도형"><g>${lines}</g></svg>`;
+  };
+  const triangleIrregularSourceSvg = model => {
+    const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-irregular-source" viewBox="0 0 340 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="긴 밑변과 여덟 개의 연속선이 여러 번 만나는 삼각형 도형"><g>${lines}</g></svg>`;
   };
   const triangleCrossedFansModel = (pointCount, templateIndex) => {
     const templates = [[18, 150, 126, 18, 236, 150], [18, 150, 116, 22, 238, 150], [18, 150, 138, 20, 236, 150]];
@@ -12411,6 +12427,13 @@
         const answer = triangleSegmentGraphCount(model);
         const evidence = triangle42Evidence("crossed-fans-count", [pointCount, templateIndex], answer);
         return result(`큰 삼각형의 왼쪽 아래 꼭짓점과 오른쪽 아래 꼭짓점에서 반대쪽 변의 ${pointCount}개 점을 모두 이었습니다. 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleCrossedFansSvg(model)}${evidence}`, answer, `양쪽 부채꼴의 모든 선과 교점을 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 빠짐없이 세면 모두 ${answer}개입니다.`);
+      }
+      if (kind === 6) {
+        const layoutIndex = int(rng, 0, 2);
+        const model = triangleIrregularSourceModel(layoutIndex);
+        const answer = triangleSegmentGraphCount(model);
+        const evidence = triangle42Evidence("irregular-source-segment-count", [model.points, model.segments], answer);
+        return result(`오른쪽 그림에서 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleIrregularSourceSvg(model)}${evidence}`, answer, `왼쪽 빗변 위의 갈림점을 꼭짓점으로 하는 삼각형은 21개이고, 그 점을 꼭짓점으로 하지 않는 삼각형은 19개입니다. 따라서 모두 21+19=${answer}개입니다.`);
       }
       if (kind === 8) {
         const markedIndex = int(rng, 0, 3);

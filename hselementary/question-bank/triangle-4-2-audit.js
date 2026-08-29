@@ -11,6 +11,7 @@ const sourceTypes = unit.subunits.flatMap(subunit => subunit.types).filter(type 
 const types = sourceTypes.filter(type => type.generatorKey && !type.reviewLocked);
 const locked = sourceTypes.filter(type => type.reviewLocked);
 const publicSourceIds = new Set([
+  "4-2-triangle-1-exploration",
   "4-2-triangle-1-mission-1",
   "4-2-triangle-1-mission-2",
   "4-2-triangle-1-mission-3",
@@ -469,6 +470,66 @@ const crossingSegmentTriangleCount = (templateIndex, level) => {
 check(crossingSegmentTriangleCount(0, -1) === 14, "Mission 5 쉬움 구조의 삼각형 수는 14개여야 합니다.");
 check(crossingSegmentTriangleCount(0, 0) === 24, "Mission 5 원문 고정 구조의 삼각형 수는 24개여야 합니다.");
 check(crossingSegmentTriangleCount(0, 1) === 28, "Mission 5 어려움 구조의 삼각형 수는 28개여야 합니다.");
+const irregularSourceTriangleCount = (points, segments, requiredIndex = -1, excludedIndex = -1) => {
+  const epsilon = 1e-7;
+  const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+  const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+  const vertices = points.map(point => [...point]);
+  const addVertex = point => { if (!vertices.some(existing => Math.hypot(existing[0] - point[0], existing[1] - point[1]) < epsilon)) vertices.push(point); };
+  for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+    const [a, b] = segments[first].map(index => points[index]);
+    const [c, d] = segments[second].map(index => points[index]);
+    const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+    if (Math.abs(denominator) < epsilon) continue;
+    const ab = a[0] * b[1] - a[1] * b[0];
+    const cd = c[0] * d[1] - c[1] * d[0];
+    const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+    if (within(point, a, b) && within(point, c, d)) addVertex(point);
+  }
+  const connected = (first, second) => segments.some(([startIndex, endIndex]) => {
+    const start = points[startIndex];
+    const end = points[endIndex];
+    return Math.abs(cross(start, end, first)) < epsilon && Math.abs(cross(start, end, second)) < epsilon && within(first, start, end) && within(second, start, end);
+  });
+  let count = 0;
+  for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+    const indices = [first, second, third];
+    if (requiredIndex >= 0 && !indices.includes(requiredIndex)) continue;
+    if (excludedIndex >= 0 && indices.includes(excludedIndex)) continue;
+    if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) > epsilon && connected(vertices[first], vertices[second]) && connected(vertices[second], vertices[third]) && connected(vertices[third], vertices[first])) count += 1;
+  }
+  return count;
+};
+const irregularSourceLineTripleCount = (points, segments) => {
+  const epsilon = 1e-7;
+  const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+  const intersection = (firstSegment, secondSegment) => {
+    const [a, b] = firstSegment.map(index => points[index]);
+    const [c, d] = secondSegment.map(index => points[index]);
+    const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+    if (Math.abs(denominator) < epsilon) return null;
+    const ab = a[0] * b[1] - a[1] * b[0];
+    const cd = c[0] * d[1] - c[1] * d[0];
+    const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+    return within(point, a, b) && within(point, c, d) ? point : null;
+  };
+  let count = 0;
+  for (let first = 0; first < segments.length - 2; first += 1) for (let second = first + 1; second < segments.length - 1; second += 1) for (let third = second + 1; third < segments.length; third += 1) {
+    const pointsOfTriangle = [intersection(segments[first], segments[second]), intersection(segments[second], segments[third]), intersection(segments[third], segments[first])];
+    if (pointsOfTriangle.some(point => !point)) continue;
+    if (Math.hypot(pointsOfTriangle[0][0] - pointsOfTriangle[1][0], pointsOfTriangle[0][1] - pointsOfTriangle[1][1]) < epsilon) continue;
+    if (Math.hypot(pointsOfTriangle[1][0] - pointsOfTriangle[2][0], pointsOfTriangle[1][1] - pointsOfTriangle[2][1]) < epsilon) continue;
+    if (Math.hypot(pointsOfTriangle[2][0] - pointsOfTriangle[0][0], pointsOfTriangle[2][1] - pointsOfTriangle[0][1]) < epsilon) continue;
+    count += 1;
+  }
+  return count;
+};
+const sourceExplorationPoints = [[0, 0], [1.5, 3], [3, 6], [3, 0], [5, 0], [4.2, 2.4], [15, 0]];
+const sourceExplorationSegments = [[0, 6], [0, 2], [2, 3], [2, 4], [1, 3], [1, 4], [1, 6], [0, 5]];
+check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSegments) === 40, "개념탐구 1의 인쇄선에는 삼각형이 40개여야 합니다.");
+check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSegments, 1) === 21, "개념탐구 1에서 왼쪽 빗변의 갈림점을 꼭짓점으로 하는 삼각형은 21개여야 합니다.");
+check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSegments, -1, 1) === 19, "개념탐구 1에서 왼쪽 빗변의 갈림점을 쓰지 않는 삼각형은 19개여야 합니다.");
+check(irregularSourceLineTripleCount(sourceExplorationPoints, sourceExplorationSegments) === 40, "개념탐구 1의 여덟 연속선 조합도 삼각형 40개와 일치해야 합니다.");
 const answerFor = (kind, values) => {
   if (kind === "fan-count" || kind === "dot-fan-count") return String(values[0] * (values[0] + 1) / 2);
   if (kind === "square-diagonal-grid-count") return String(squareDiagonalGridTriangleCount(values[0]));
@@ -476,6 +537,7 @@ const answerFor = (kind, values) => {
   if (kind === "joined-fans-count") return String(joinedFansTriangleCount(values[0], values[1]));
   if (kind === "crossing-segment-count") return String(crossingSegmentTriangleCount(values[0], values[1]));
   if (kind === "crossed-fans-count") return String((values[0] - 1) ** 3);
+  if (kind === "irregular-source-segment-count") return String(irregularSourceTriangleCount(values[0], values[1]));
   if (kind === "marked-square-grid-count") return String(markedSquareGridTriangleCount(values[0]));
   if (kind === "paired-line-arrays-count") return pairedLineArraysTriangleCount(...values);
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
@@ -617,9 +679,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 29, `원문 일치 공개 유형 수가 29개가 아닙니다: ${types.length}`);
-check(locked.length === 15, `검수 대기 유형 수가 15개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 26, `공개 검산 구조 수가 26개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 30, `원문 일치 공개 유형 수가 30개가 아닙니다: ${types.length}`);
+check(locked.length === 14, `검수 대기 유형 수가 14개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 27, `공개 검산 구조 수가 27개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
