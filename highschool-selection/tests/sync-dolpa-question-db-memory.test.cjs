@@ -124,6 +124,30 @@ test("2-1S 3회 시험지 검수 자료를 연립일차방정식 종료 범위 �
   assert.equal(info.recordId, "dp.m21s-r3.method-review.20260829");
 });
 
+test("중2-2S 1회 난이도 검수 자료를 원본 페이지와 같은 ID로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-difficulty-memory-m22s-r1-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const difficultyPath = path.join(root, "dolpa-difficulty-review-dp-m22s-202403-r1-v1.json");
+  fs.writeFileSync(manifestPath, JSON.stringify({ sourceId: "DP-SRC-8BB6E543C0F7" }));
+  fs.writeFileSync(difficultyPath, JSON.stringify({ sourceId: "DP-SRC-8BB6E543C0F7" }));
+  const info = methodReviewInfo(manifestPath, null, null, null, difficultyPath);
+  assert.equal(info.key, "m22s-r1");
+  assert.equal(info.difficultySourceId, "dp-m22s-r1-difficulty-review-v1");
+  assert.equal(info.pageSourceId, "dp-m22s-r1-page-assets-v1");
+});
+
+test("중2-2S 1회 분석지를 난이도 검수와 같은 원본에 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-analysis-memory-m22s-r1-"));
+  const difficultyPath = path.join(root, "difficulty.json");
+  const analysisPath = path.join(root, "analysis.json");
+  fs.writeFileSync(difficultyPath, JSON.stringify({ sourceId: "DP-SRC-8BB6E543C0F7" }));
+  fs.writeFileSync(analysisPath, JSON.stringify({ sourceId: "DP-SRC-8BB6E543C0F7" }));
+  const info = methodReviewInfo(null, null, null, null, difficultyPath, analysisPath);
+  assert.equal(info.analysisSourceId, "dp-m22s-r1-analysis-report-v1");
+  fs.writeFileSync(analysisPath, JSON.stringify({ sourceId: "DP-SRC-40CB36024FBC" }));
+  assert.throws(() => methodReviewInfo(null, null, null, null, difficultyPath, analysisPath), /sourceId가 다릅니다/);
+});
+
 test("2-1A 분류 교정표는 원본 페이지·풀이표와 같은 sourceId만 허용한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-classification-memory-m21a-"));
   const manifestPath = path.join(root, "manifest.json");

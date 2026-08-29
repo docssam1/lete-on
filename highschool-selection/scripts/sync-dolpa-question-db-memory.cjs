@@ -28,13 +28,15 @@ function source(id, title, relativePath, filePath) {
   return { id, title, path: relativePath, kind: "json", sensitivity: "private", ...fingerprint(filePath) };
 }
 
-function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReviewPath, paperReviewPath) {
+function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReviewPath, paperReviewPath, difficultyReviewPath, analysisReportPath) {
   const manifest = pageAssetsPath ? readJson(pageAssetsPath) : null;
   const packet = methodReviewPath ? readJson(methodReviewPath) : null;
   const classificationPacket = classificationReviewPath ? readJson(classificationReviewPath) : null;
   const paperPacket = paperReviewPath ? readJson(paperReviewPath) : null;
+  const difficultyPacket = difficultyReviewPath ? readJson(difficultyReviewPath) : null;
+  const analysisReport = analysisReportPath ? readJson(analysisReportPath) : null;
   const sourceIds = [manifest && manifest.sourceId, packet && packet.sourceId, classificationPacket && classificationPacket.sourceId,
-    paperPacket && paperPacket.sourceId].filter(Boolean);
+    paperPacket && paperPacket.sourceId, difficultyPacket && difficultyPacket.sourceId, analysisReport && analysisReport.sourceId].filter(Boolean);
   const sourceId = sourceIds[0] || "";
   if (new Set(sourceIds).size > 1) throw new Error("원본 페이지와 검수표의 sourceId가 다릅니다.");
   const known = {
@@ -45,7 +47,8 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-31111C2CA38E": { key: "m22-r3", label: "중2-2 3회", tags: ["middle2-2", "mixed-range"] },
     "DP-SRC-5CD3016EB886": { key: "m22s-r2", label: "중2-2S 2회", tags: ["middle2-2", "full-range"] },
     "DP-SRC-2B760BCB6E29": { key: "m22s-r3", label: "중2-2S 3회", tags: ["middle2-2", "full-range"] },
-    "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] }
+    "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
+    "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
   return {
@@ -55,6 +58,8 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     methodSourceId: `dp-${known.key}-method-review-v1`,
     classificationSourceId: `dp-${known.key}-classification-review-v1`,
     paperSourceId: `dp-${known.key}-paper-review-v1`,
+    difficultySourceId: `dp-${known.key}-difficulty-review-v1`,
+    analysisSourceId: `dp-${known.key}-analysis-report-v1`,
     recordId: `dp.${known.key}.method-review.20260829`,
     pageTitle: `돌파 ${known.label} 문항 원본 페이지 목록`,
     methodTitle: `돌파 ${known.label} 대표 시험 풀이법 검수표`,
@@ -62,7 +67,9 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     pageRelativePath: `지필드메모리/highschool-selection/artifacts/question-pages/dolpa/${sourceId}/manifest.json`,
     methodRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(methodReviewPath || "")}`,
     classificationRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(classificationReviewPath || "")}`,
-    paperRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(paperReviewPath || "")}`
+    paperRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(paperReviewPath || "")}`,
+    difficultyRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(difficultyReviewPath || "")}`,
+    analysisRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(analysisReportPath || "")}`
   };
 }
 
@@ -77,8 +84,8 @@ function sync(catalog, ledger, database, paths) {
   if (paths.typeIndex) {
     sources.push(source("dp-original-question-index-v1", "돌파 원본 문항 유형표", "지필드메모리/highschool-selection/question-bank/dolpa-original-question-index-v1.json", paths.typeIndex));
   }
-  const methodInfo = paths.pageAssets || paths.methodReview || paths.classificationReview || paths.paperReview
-    ? methodReviewInfo(paths.pageAssets, paths.methodReview, paths.classificationReview, paths.paperReview)
+  const methodInfo = paths.pageAssets || paths.methodReview || paths.classificationReview || paths.paperReview || paths.difficultyReview || paths.analysisReport
+    ? methodReviewInfo(paths.pageAssets, paths.methodReview, paths.classificationReview, paths.paperReview, paths.difficultyReview, paths.analysisReport)
     : null;
   if (paths.pageAssets) sources.push(source(methodInfo.pageSourceId, methodInfo.pageTitle, methodInfo.pageRelativePath, paths.pageAssets));
   if (paths.targetSourcePlan) {
@@ -92,6 +99,8 @@ function sync(catalog, ledger, database, paths) {
     sources.push(source(methodInfo.classificationSourceId, `돌파 ${methodInfo.label} 분류 교정표`, methodInfo.classificationRelativePath, paths.classificationReview));
   }
   if (paths.paperReview) sources.push(source(methodInfo.paperSourceId, `돌파 ${methodInfo.label} 시험지 복원 검수표`, methodInfo.paperRelativePath, paths.paperReview));
+  if (paths.difficultyReview) sources.push(source(methodInfo.difficultySourceId, `돌파 ${methodInfo.label} 난이도 검수표`, methodInfo.difficultyRelativePath, paths.difficultyReview));
+  if (paths.analysisReport) sources.push(source(methodInfo.analysisSourceId, `돌파 ${methodInfo.label} 대표 시험 분석지`, methodInfo.analysisRelativePath, paths.analysisReport));
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   const equivalentSourceCount = (database.papers || []).reduce((sum, paper) => sum + (paper.equivalentSources || []).length, 0);
@@ -179,6 +188,52 @@ function sync(catalog, ledger, database, paths) {
       note: "문항 DB를 다시 만들 때 원본 위치와 답안 형식을 복원"
     });
   }
+  if (paths.difficultyReview) {
+    const difficulty = readJson(paths.difficultyReview);
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: methodInfo.difficultySourceId,
+      role: "decision",
+      locator: "reviews[1:30]",
+      note: `${methodInfo.label} 대표 시험 30문항의 기본 적용형·복합 추론형 난이도 검수`
+    });
+    upsert(catalog.records, `dp.${methodInfo.key}.difficulty-review.20260829`, {
+      id: `dp.${methodInfo.key}.difficulty-review.20260829`,
+      title: `돌파 ${methodInfo.label} 대표 시험 30문항 난이도 검수`,
+      aliases: [`돌파 ${methodInfo.label} 난이도`],
+      tags: ["dp", ...methodInfo.tags, "difficulty-review", "visual-review"],
+      summary: `${methodInfo.label} 대표 시험 ${difficulty.reviews.length}문항을 원본 페이지에서 직접 확인해 한 핵심 개념의 직접 적용은 standard, 개념 결합·조건 분기·역추론·복합 모델링은 raised로 구분했다. 문제 원문과 정답 값은 저장하지 않았다.`,
+      status: "verified",
+      sensitivity: "private",
+      updated: "2026-08-29",
+      pointers: [
+        { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
+        { source_id: methodInfo.difficultySourceId, role: "decision", locator: "reviews[1:30]", note: "문항별 난이도와 판정 근거" }
+      ]
+    });
+  }
+  if (paths.analysisReport) {
+    const report = readJson(paths.analysisReport);
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: methodInfo.analysisSourceId,
+      role: "decision",
+      locator: "summary, charts, comments",
+      note: `${methodInfo.label} 대표 시험의 학기·영역·단원·난이도 분석`
+    });
+    upsert(catalog.records, `dp.${methodInfo.key}.analysis-report.20260829`, {
+      id: `dp.${methodInfo.key}.analysis-report.20260829`,
+      title: `돌파 ${methodInfo.label} 대표 시험 분석지`,
+      aliases: [`돌파 ${methodInfo.label} 분석`],
+      tags: ["dp", ...methodInfo.tags, "analysis-report"],
+      summary: `${report.summary.questionCount}문항을 학기·영역·단원·난이도로 집계했다. 기본 적용형 ${report.summary.standardCount}문항, 복합 추론형 ${report.summary.raisedCount}문항이며 합격선이나 개인 합격 가능성은 추정하지 않는다.`,
+      status: "verified",
+      sensitivity: "private",
+      updated: "2026-08-29",
+      pointers: [
+        { source_id: methodInfo.analysisSourceId, role: "decision", locator: "summary, charts, comments", note: "그래프 값과 학습 코멘트" },
+        { source_id: methodInfo.difficultySourceId, role: "test", locator: "reviews[1:30]", note: "문항별 난이도 검수 근거" }
+      ]
+    });
+  }
   if (paths.typeIndex) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
       source_id: "dp-original-question-index-v1",
@@ -192,11 +247,11 @@ function sync(catalog, ledger, database, paths) {
 }
 
 function main(args) {
-  if (args.length < 5 || args.length > 12) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly] [method-review] [classification-review] [paper-review] [type-index]");
+  if (args.length < 5 || args.length > 14) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly] [method-review] [classification-review] [paper-review] [type-index] [difficulty-review] [analysis-report]");
   const required = args.slice(0, 5).map(value => path.resolve(value));
   const optional = args.slice(5).map(value => value === "-" ? null : path.resolve(value));
   const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath] = required;
-  const [pageAssetsPath, targetSourcePlanPath, targetAssemblyPath, methodReviewPath, classificationReviewPath, paperReviewPath, typeIndexPath] = optional;
+  const [pageAssetsPath, targetSourcePlanPath, targetAssemblyPath, methodReviewPath, classificationReviewPath, paperReviewPath, typeIndexPath, difficultyReviewPath, analysisReportPath] = optional;
   const catalog = sync(readJson(catalogPath), readJson(ledgerPath), readJson(databasePath), {
     ledger: ledgerPath,
     database: databasePath,
@@ -208,7 +263,9 @@ function main(args) {
     methodReview: methodReviewPath,
     classificationReview: classificationReviewPath,
     paperReview: paperReviewPath,
-    typeIndex: typeIndexPath
+    typeIndex: typeIndexPath,
+    difficultyReview: difficultyReviewPath,
+    analysisReport: analysisReportPath
   });
   fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({ sources: catalog.sources.length, records: catalog.records.length })}\n`);
