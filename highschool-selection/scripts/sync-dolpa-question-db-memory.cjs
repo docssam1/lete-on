@@ -28,17 +28,20 @@ function source(id, title, relativePath, filePath) {
   return { id, title, path: relativePath, kind: "json", sensitivity: "private", ...fingerprint(filePath) };
 }
 
-function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReviewPath) {
+function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReviewPath, paperReviewPath) {
   const manifest = pageAssetsPath ? readJson(pageAssetsPath) : null;
   const packet = methodReviewPath ? readJson(methodReviewPath) : null;
   const classificationPacket = classificationReviewPath ? readJson(classificationReviewPath) : null;
-  const sourceIds = [manifest && manifest.sourceId, packet && packet.sourceId, classificationPacket && classificationPacket.sourceId].filter(Boolean);
+  const paperPacket = paperReviewPath ? readJson(paperReviewPath) : null;
+  const sourceIds = [manifest && manifest.sourceId, packet && packet.sourceId, classificationPacket && classificationPacket.sourceId,
+    paperPacket && paperPacket.sourceId].filter(Boolean);
   const sourceId = sourceIds[0] || "";
   if (new Set(sourceIds).size > 1) throw new Error("원본 페이지와 검수표의 sourceId가 다릅니다.");
   const known = {
     "DP-SRC-DE99B9857905": { key: "m22", label: "중2-2", tags: ["middle2-2"] },
     "DP-SRC-D59E26A73CC1": { key: "cm1", label: "공통수학1", tags: ["common-math-1"] },
-    "DP-SRC-A64644977758": { key: "m21a", label: "2-1A", tags: ["middle2-1", "advanced"] }
+    "DP-SRC-A64644977758": { key: "m21a", label: "2-1A", tags: ["middle2-1", "advanced"] },
+    "DP-SRC-DB47B7D84331": { key: "m21a-r2", label: "2-1A 2회", tags: ["middle2-1", "mid-unit-cutoff"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
   return {
@@ -47,13 +50,15 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     pageSourceId: `dp-${known.key}-page-assets-v1`,
     methodSourceId: `dp-${known.key}-method-review-v1`,
     classificationSourceId: `dp-${known.key}-classification-review-v1`,
+    paperSourceId: `dp-${known.key}-paper-review-v1`,
     recordId: `dp.${known.key}.method-review.20260829`,
     pageTitle: `돌파 ${known.label} 문항 원본 페이지 목록`,
     methodTitle: `돌파 ${known.label} 대표 시험 풀이법 검수표`,
     recordTitle: `돌파 ${known.label} 대표 시험 30문항 풀이 방법 검수`,
     pageRelativePath: `지필드메모리/highschool-selection/artifacts/question-pages/dolpa/${sourceId}/manifest.json`,
     methodRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(methodReviewPath || "")}`,
-    classificationRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(classificationReviewPath || "")}`
+    classificationRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(classificationReviewPath || "")}`,
+    paperRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(paperReviewPath || "")}`
   };
 }
 
@@ -65,8 +70,11 @@ function sync(catalog, ledger, database, paths) {
     source("dp-paper-links-v1", "돌파 대표 시험지 원본 연결", "지필드메모리/highschool-selection/question-bank/dolpa-paper-links-v1.json", paths.paperLinks),
     source("dp-review-decisions-v1", "돌파 검수 결정 기록", "지필드메모리/highschool-selection/question-bank/dolpa-review-decisions-v1.json", paths.reviewDecisions)
   ];
-  const methodInfo = paths.pageAssets || paths.methodReview || paths.classificationReview
-    ? methodReviewInfo(paths.pageAssets, paths.methodReview, paths.classificationReview)
+  if (paths.typeIndex) {
+    sources.push(source("dp-original-question-index-v1", "돌파 원본 문항 유형표", "지필드메모리/highschool-selection/question-bank/dolpa-original-question-index-v1.json", paths.typeIndex));
+  }
+  const methodInfo = paths.pageAssets || paths.methodReview || paths.classificationReview || paths.paperReview
+    ? methodReviewInfo(paths.pageAssets, paths.methodReview, paths.classificationReview, paths.paperReview)
     : null;
   if (paths.pageAssets) sources.push(source(methodInfo.pageSourceId, methodInfo.pageTitle, methodInfo.pageRelativePath, paths.pageAssets));
   if (paths.targetSourcePlan) {
@@ -79,6 +87,7 @@ function sync(catalog, ledger, database, paths) {
   if (paths.classificationReview) {
     sources.push(source(methodInfo.classificationSourceId, `돌파 ${methodInfo.label} 분류 교정표`, methodInfo.classificationRelativePath, paths.classificationReview));
   }
+  if (paths.paperReview) sources.push(source(methodInfo.paperSourceId, `돌파 ${methodInfo.label} 시험지 복원 검수표`, methodInfo.paperRelativePath, paths.paperReview));
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   const equivalentSourceCount = (database.papers || []).reduce((sum, paper) => sum + (paper.equivalentSources || []).length, 0);
@@ -151,13 +160,39 @@ function sync(catalog, ledger, database, paths) {
       note: "풀이 구조를 확인하면서 발견한 분류 오류를 함께 교정"
     });
   }
+  if (paths.paperReview) {
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: methodInfo.paperSourceId,
+      role: "decision",
+      locator: "coverage, questions[1:30]",
+      note: `${methodInfo.label} 시험 범위·문항 위치·답안 형식의 재생성용 검수 결과`
+    });
+    const methodRecord = catalog.records.find(record => record.id === methodInfo.recordId);
+    if (methodRecord) methodRecord.pointers.push({
+      source_id: methodInfo.paperSourceId,
+      role: "decision",
+      locator: "coverage, questions[1:30]",
+      note: "문항 DB를 다시 만들 때 원본 위치와 답안 형식을 복원"
+    });
+  }
+  if (paths.typeIndex) {
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: "dp-original-question-index-v1",
+      role: "decision",
+      locator: "papers, questions",
+      note: "검수 완료 대표 시험지의 문항별 학기·단원·세부 유형"
+    });
+  }
   catalog.updated = "2026-08-29";
   return catalog;
 }
 
 function main(args) {
-  if (args.length < 5 || args.length > 10) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly] [method-review] [classification-review]");
-  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath, targetSourcePlanPath, targetAssemblyPath, methodReviewPath, classificationReviewPath] = args.map(value => path.resolve(value));
+  if (args.length < 5 || args.length > 12) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly] [method-review] [classification-review] [paper-review] [type-index]");
+  const required = args.slice(0, 5).map(value => path.resolve(value));
+  const optional = args.slice(5).map(value => value === "-" ? null : path.resolve(value));
+  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath] = required;
+  const [pageAssetsPath, targetSourcePlanPath, targetAssemblyPath, methodReviewPath, classificationReviewPath, paperReviewPath, typeIndexPath] = optional;
   const catalog = sync(readJson(catalogPath), readJson(ledgerPath), readJson(databasePath), {
     ledger: ledgerPath,
     database: databasePath,
@@ -167,7 +202,9 @@ function main(args) {
     targetSourcePlan: targetSourcePlanPath,
     targetAssembly: targetAssemblyPath,
     methodReview: methodReviewPath,
-    classificationReview: classificationReviewPath
+    classificationReview: classificationReviewPath,
+    paperReview: paperReviewPath,
+    typeIndex: typeIndexPath
   });
   fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({ sources: catalog.sources.length, records: catalog.records.length })}\n`);

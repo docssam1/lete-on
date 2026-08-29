@@ -37,6 +37,23 @@ test("2-1A 풀이 검수 자료를 독립된 ID로 연결한다", () => {
   assert.equal(info.classificationSourceId, "dp-m21a-classification-review-v1");
 });
 
+test("2-1A 2회 시험지 검수 자료를 기존 2-1A와 다른 ID로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21a-r2-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const reviewPath = path.join(root, "dolpa-method-review-dp-m21a-202404-r2-v1.json");
+  const paperPath = path.join(root, "dolpa-paper-review-dp-m21a-202404-r2-v1.json");
+  for (const filePath of [manifestPath, reviewPath, paperPath]) {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-DB47B7D84331" }));
+  }
+  const info = methodReviewInfo(manifestPath, reviewPath, null, paperPath);
+  assert.equal(info.key, "m21a-r2");
+  assert.equal(info.label, "2-1A 2회");
+  assert.equal(info.pageSourceId, "dp-m21a-r2-page-assets-v1");
+  assert.equal(info.methodSourceId, "dp-m21a-r2-method-review-v1");
+  assert.equal(info.paperSourceId, "dp-m21a-r2-paper-review-v1");
+  assert.equal(info.recordId, "dp.m21a-r2.method-review.20260829");
+});
+
 test("2-1A 분류 교정표는 원본 페이지·풀이표와 같은 sourceId만 허용한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-classification-memory-m21a-"));
   const manifestPath = path.join(root, "manifest.json");

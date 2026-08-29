@@ -88,6 +88,7 @@ function mergeExisting(seed, existing) {
     if (!sameIdentity(question, old)) throw new Error(`기존 문항의 출처·유형이 달라졌습니다: ${question.questionId}`);
     return {
       ...question,
+      classification: old.classification,
       locator: old.locator,
       method: old.method,
       difficulty: old.difficulty,
