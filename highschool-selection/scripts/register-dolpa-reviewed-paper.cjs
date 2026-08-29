@@ -128,11 +128,22 @@ function registerSources(typeIndex, paperLinks, reviewDecisions, packet) {
   const decision = { sourceId: link.sourceId, tasks };
   const priorDecision = nextDecisions.sourceReviews.find(item => item.sourceId === decision.sourceId);
   if (priorDecision) {
-    const incompatible = link.verifiedStages.some(stage => {
-      const task = priorDecision.tasks && priorDecision.tasks[stage];
-      return !task || task.status !== "verified" || !(task.evidence || []).includes(link.evidenceRecordId);
+    priorDecision.tasks = priorDecision.tasks || {};
+    link.verifiedStages.forEach(stage => {
+      const priorTask = priorDecision.tasks[stage];
+      if (!priorTask || ["sampled", "pending", "not_started"].includes(priorTask.status)) {
+        priorDecision.tasks[stage] = {
+          ...tasks[stage],
+          evidence: Array.from(new Set([...(priorTask && priorTask.evidence || []), link.evidenceRecordId])).sort()
+        };
+        return;
+      }
+      if (priorTask.status !== "verified") throw new Error(`기존 차단 사유를 확인해 주세요: ${decision.sourceId}/${stage}`);
+      priorDecision.tasks[stage] = {
+        ...priorTask,
+        evidence: Array.from(new Set([...(priorTask.evidence || []), link.evidenceRecordId])).sort()
+      };
     });
-    if (incompatible) throw new Error(`같은 원본의 검수 결정이 다릅니다: ${decision.sourceId}`);
   }
   if (!priorDecision) nextDecisions.sourceReviews.push(decision);
   nextDecisions.sourceReviews.sort((left, right) => left.sourceId.localeCompare(right.sourceId));

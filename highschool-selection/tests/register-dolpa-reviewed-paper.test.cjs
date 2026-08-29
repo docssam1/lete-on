@@ -52,6 +52,54 @@ test("검수한 시험지를 원본 유형표와 연결표에 한 번만 등록�
   assert.deepEqual(second.typeIndex, first.typeIndex);
 });
 
+test("표본 확인 상태를 직접 검수 완료로 올리면서 기존 작업 기록을 보존한다", () => {
+  const source = { schemaVersion: 1, totalQuestionCount: 0, papers: [] };
+  const links = { schemaVersion: 1, links: [] };
+  const decisions = { schemaVersion: 1, rangeReviews: [], sourceReviews: [{
+    sourceId: packet().sourceId,
+    tasks: {
+      bodyReview: { status: "sampled", evidence: ["older-sample"], note: "일부 페이지만 확인" },
+      answerReview: { status: "sampled", evidence: ["older-sample"] },
+      pdfAudit: { status: "verified", evidence: ["pdf-audit"] }
+    }
+  }] };
+  const first = registerSources(source, links, decisions, packet());
+  const second = registerSources(first.typeIndex, first.paperLinks, first.reviewDecisions, packet());
+  const tasks = second.reviewDecisions.sourceReviews[0].tasks;
+  assert.equal(tasks.bodyReview.status, "verified");
+  assert.deepEqual(tasks.bodyReview.evidence, ["older-sample", packet().registryEvidenceRecordId].sort());
+  assert.equal(tasks.answerReview.status, "verified");
+  assert.deepEqual(tasks.answerReview.evidence, ["older-sample", packet().registryEvidenceRecordId].sort());
+  assert.deepEqual(tasks.pdfAudit, { status: "verified", evidence: ["pdf-audit"] });
+  assert.deepEqual(second.reviewDecisions, first.reviewDecisions);
+});
+
+test("이미 확정된 단계에는 새 원본 근거만 더하고 기존 설명을 보존한다", () => {
+  const source = { schemaVersion: 1, totalQuestionCount: 0, papers: [] };
+  const links = { schemaVersion: 1, links: [] };
+  const decisions = { schemaVersion: 1, rangeReviews: [], sourceReviews: [{
+    sourceId: packet().sourceId,
+    tasks: {
+      bodyReview: { status: "verified", evidence: ["older-direct-review"], note: "기존 직접 검수" }
+    }
+  }] };
+  const result = registerSources(source, links, decisions, packet());
+  const bodyReview = result.reviewDecisions.sourceReviews[0].tasks.bodyReview;
+  assert.equal(bodyReview.status, "verified");
+  assert.equal(bodyReview.note, "기존 직접 검수");
+  assert.deepEqual(bodyReview.evidence, ["older-direct-review", packet().registryEvidenceRecordId].sort());
+});
+
+test("기존 차단 상태는 자동으로 지우지 않는다", () => {
+  const source = { schemaVersion: 1, totalQuestionCount: 0, papers: [] };
+  const links = { schemaVersion: 1, links: [] };
+  const decisions = { schemaVersion: 1, rangeReviews: [], sourceReviews: [{
+    sourceId: packet().sourceId,
+    tasks: { bodyReview: { status: "blocked", evidence: ["source-mismatch"] } }
+  }] };
+  assert.throws(() => registerSources(source, links, decisions, packet()), /기존 차단 사유/);
+});
+
 test("재생성한 DB에 문항 위치와 답안 확인 상태와 실제 종료 단원을 되살린다", () => {
   const review = packet();
   const questions = review.questions.map(item => ({
