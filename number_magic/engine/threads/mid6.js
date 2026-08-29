@@ -297,14 +297,29 @@ NM_TGEN['md39_trigSpecialAngle'] = function (params, rng) {
   if (e.kind === 'int') {
     return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: c * e.val, answerType: 'number', widget: 'numpad', negative: false };
   }
+  /* 약분 정책(2026-08-29 원장): 5학년 이상은 기약분수가 정답. 고1 삼각함수도
+     마찬가지인데 예전엔 계수를 곱한 값을 그대로 냈다 — 6×sin30°의 정답키가
+     6/2였다(실제로는 정수 3). 분모까지 약분해 1이 되면 분수 꼴을 버리고
+     정수(또는 근호만) 꼴로 낸다. */
   if (e.kind === 'fracSimple') {
-    return { prompt: TRIG_PROMPT.fracSimple, tex: `${prefix}${head} = \\dfrac{\\square}{\\square}`, answer: [c * e.n, e.d], answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false };
+    const g = gcd(c * e.n, e.d);
+    const nn = (c * e.n) / g, dd = e.d / g;
+    if (dd === 1) {
+      return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: nn, answerType: 'number', widget: 'numpad', negative: false };
+    }
+    return { prompt: TRIG_PROMPT.fracSimple, tex: `${prefix}${head} = \\dfrac{\\square}{\\square}`, answer: [nn, dd], answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false };
   }
   if (e.kind === 'fracRoot') {
-    return { prompt: TRIG_PROMPT.fracRoot, tex: `${prefix}${head} = \\dfrac{\\square\\sqrt{\\square}}{\\square}`, answer: [c * e.coeff, e.rad, e.denom], answerType: 'number', widget: 'numpad', negative: false };
+    const g = gcd(c * e.coeff, e.denom);
+    const cc = (c * e.coeff) / g, dd = e.denom / g;
+    if (dd === 1) {
+      /* 분모가 사라지면 "계수√근호" 꼴 — rootOnly와 같은 모양이 된다 */
+      return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [cc, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false };
+    }
+    return { prompt: TRIG_PROMPT.fracRoot, tex: `${prefix}${head} = \\dfrac{\\square\\sqrt{\\square}}{\\square}`, answer: [cc, e.rad, dd], answerShape: 'coeffRadicalFraction', answerType: 'number', widget: 'numpad', negative: false };
   }
   /* rootOnly */
-  return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [c * e.coeff, e.rad], answerType: 'number', widget: 'numpad', negative: false };
+  return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [c * e.coeff, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false };
 };
 
 /* ── MD40 — 등차수열 ── aₙ=a₁+(n-1)d, Sₙ=n(2a₁+(n-1)d)/2. Sₙ은
