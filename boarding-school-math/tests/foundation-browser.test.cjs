@@ -214,8 +214,20 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.evaluate(function () {
     return window.GFIELDSASMOProgramArchitecture.validateArchitecture().valid
       && window.GFIELDSASMOProgramArchitecture.validatePublicSafety().valid
-      && window.GFIELDSASMOSourceInventory.validatePublicInventory().valid;
+      && window.GFIELDSASMOSourceInventory.validatePublicInventory().valid
+      && window.GFIELDSASMODiagnosticFoundation.validateFoundation().valid;
   }), true);
+  assert.equal(await page.locator("#diagnostic-year").inputValue(), "2020");
+  assert.equal(await page.locator("#diagnostic-workflow li").count(), 5);
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /K2[\s\S]*잠금/);
+  await page.locator('[data-level="G6"]').click();
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2020[\s\S]*G6[\s\S]*준비 가능/);
+  assert.match(await page.locator("#diagnostic-readiness").innerText(), /문항별 페이지[\s\S]*답안 근거[\s\S]*영역 태그/);
+  await page.locator("#diagnostic-year").selectOption("2019");
+  assert.equal(await page.locator("#diagnostic-source-link").getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
+  assert.equal(await page.locator("#diagnostic-source-link").getAttribute("target"), "_blank");
+  assert.match(await page.locator("#diagnostic-source-link").getAttribute("rel"), /noopener/);
+  assert.match(await page.locator(".evidence-rules").innerText(), /독립된 2회 풀이/);
 
   await page.locator('[data-level="K2"]').focus();
   await page.keyboard.press("ArrowRight");
@@ -290,7 +302,7 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
     });
     assert.equal(allLevelsVisible, true, `not all K2-G12 controls visible at ${width}px`);
     assert.equal(await page.locator('[data-level="G12"]').isVisible(), true);
-    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
+    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, #diagnostic-year, .evidence-source-link, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
       return controls.map(function (control) {
         const rect = control.getBoundingClientRect();
         return { width: rect.width, height: rect.height };

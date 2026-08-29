@@ -101,6 +101,7 @@
     level: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "K2",
     archiveGrade: requestedArchiveGrade === "all" ? "all" : requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? String(requestedGrade) : "6",
     goal: "first-attempt",
+    diagnosticYear: 2020,
     role: "student"
   };
   const levels = Object.freeze(["K2", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]);
@@ -235,6 +236,54 @@
     recordCount.textContent = String(aggregate.indexRecordCount);
     assetCount.textContent = String(aggregate.physicalPdfCount);
     topicCount.textContent = String(api.inventory.edugainComparativeAggregate.selectableDomTopicNodeCount);
+  }
+
+  function getDiagnosticFoundation() {
+    return window.GFIELDSASMODiagnosticFoundation || null;
+  }
+
+  function renderDiagnosticEvidence() {
+    const api = getDiagnosticFoundation();
+    const select = document.getElementById("diagnostic-year");
+    const title = document.getElementById("diagnostic-readiness-title");
+    const detail = document.getElementById("diagnostic-readiness");
+    const sourceLink = document.getElementById("diagnostic-source-link");
+    const workflow = document.getElementById("diagnostic-workflow");
+    if (!api || !api.validateFoundation || !api.validateFoundation().valid) {
+      title.textContent = "기출 진단 기준을 불러오지 못했습니다.";
+      detail.textContent = "원문과 답안 근거가 확인될 때까지 해당 진단은 잠금 상태입니다.";
+      return;
+    }
+    select.replaceChildren();
+    api.YEAR_IDS.forEach(function (year) {
+      const option = document.createElement("option");
+      option.value = String(year);
+      option.textContent = `${year} SASMO`;
+      select.append(option);
+    });
+    select.value = String(state.diagnosticYear);
+    const readiness = api.getDiagnosticReadiness(state.diagnosticYear, state.level);
+    const source = api.getYearSource(state.diagnosticYear);
+    sourceLink.href = source.sourcePageUrl;
+    if (readiness.available) {
+      title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 기출 진단 준비 가능`;
+      detail.textContent = "공식 원문·답·해설 접근 경로가 확인되었습니다. 교사용 검수에서 문항별 페이지·답안 근거·영역 태그를 기록한 뒤에만 실제 분석 결과를 생성합니다.";
+    } else {
+      title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 원문 기반 진단은 잠금`;
+      detail.textContent = "이 연도·학년에는 공식 답·해설 접근 근거를 아직 선언하지 않았습니다. 다른 학년 기출로 대체하지 않으며, 필요 시 GFIELD 자체 제작 진단을 별도 구성합니다.";
+    }
+    workflow.replaceChildren();
+    api.foundation.workflow.forEach(function (step, index) {
+      const item = document.createElement("li");
+      const number = document.createElement("span");
+      const label = document.createElement("strong");
+      const output = document.createElement("p");
+      number.textContent = `0${index + 1}`;
+      label.textContent = step.id.replace(/-/g, " ");
+      output.textContent = step.output;
+      item.append(number, label, output);
+      workflow.append(item);
+    });
   }
 
   function validPublicArchive(data) {
@@ -436,6 +485,7 @@
     renderLevels();
     updateOfficialLink();
     renderJourney();
+    renderDiagnosticEvidence();
   }
   function updateRole(roleId) {
     if (!roles[roleId]) return;
@@ -491,6 +541,10 @@
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
       renderPublicArchive();
     });
+    document.getElementById("diagnostic-year").addEventListener("change", function (event) {
+      state.diagnosticYear = Number(event.target.value);
+      renderDiagnosticEvidence();
+    });
     document.addEventListener("keydown", function (event) {
       if (event.target.matches("[data-level]")) moveTab(event, "[data-level]", updateLevel, "level");
       if (event.target.matches("[data-goal]")) moveTab(event, "[data-goal]", updateGoal, "goal");
@@ -500,6 +554,7 @@
   function initialize() {
     renderDomains();
     renderSourceInventory();
+    renderDiagnosticEvidence();
     loadPublicArchive();
     renderLevels();
     updateOfficialLink();
