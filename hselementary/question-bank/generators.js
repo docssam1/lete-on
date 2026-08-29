@@ -2437,6 +2437,14 @@
     }
     return totals;
   };
+  const obtuseAnglePairs = angles => {
+    const pairs = [];
+    for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) {
+      const sum = angles[first] + angles[second];
+      if (sum < 180 && (angles[first] > 90 || angles[second] > 90 || sum < 90)) pairs.push([angles[first], angles[second]]);
+    }
+    return pairs;
+  };
   const isoscelesDiamondSvg = ({ upper, lower, base }) => `<svg class="geometry-diagram isosceles-diamond" viewBox="0 0 240 170" data-upper="${upper}" data-lower="${lower}" data-base="${base}" aria-label="같은 밑변을 공유하는 두 이등변삼각형"><polygon points="42,86 120,20 198,86 120,148"/><line x1="42" y1="86" x2="198" y2="86"/><text x="70" y="48">${upper}</text><text x="70" y="128">${lower}</text><text x="116" y="102">${base}</text><g class="equal-marks"><text x="166" y="48">=</text><text x="166" y="128">=</text></g></svg>`;
   const isoscelesChainSvg = count => `<svg class="geometry-diagram isosceles-chain" viewBox="0 0 260 150" data-count="${count}" aria-label="이등변삼각형을 이어 붙인 도형"><g>${Array.from({ length: Math.min(5, count) }, (_, index) => { const x = 18 + index * 44; return `<polygon points="${x},126 ${x + 44},126 ${x + 22},42"/>`; }).join("")}</g><text x="238" y="88">…</text></svg>`;
   const triangleRelationSvg = (kind, first = "", second = "") => {
@@ -12188,11 +12196,16 @@
         return result(`별 모양의 다섯 꼭짓점 중 세 점을 골라 삼각형을 만듭니다. 예각삼각형과 둔각삼각형의 개수를 차례로 구하세요.${trianglePointBoardSvg(points, -1, starLines)}${evidence}`, answer, `세 점을 고르는 모든 경우를 그려 보고 가장 큰 각이 직각보다 작은지 큰지 확인하면 예각 ${totals.acute}개, 둔각 ${totals.obtuse}개입니다.`);
       }
       if (kind === 2) {
-        const angles = shuffle(rng, [15, 20, 25, 35, 40, 45, 55, 65, 70]).slice(0, 6 + level).sort((a, b) => a - b);
-        let answer = 0;
-        for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) if (angles[first] + angles[second] < 90) answer += 1;
+        const templates = [
+          [20, 30, 40, 60, 110, 130],
+          [20, 35, 40, 70, 100, 135],
+          [23, 37, 41, 68, 102, 139]
+        ];
+        const angles = templates[level];
+        const pairs = obtuseAnglePairs(angles);
+        const answer = pairs.length;
         const evidence = triangle42Evidence("obtuse-angle-pairs", angles, answer);
-        return result(`다음 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정할 때 둔각삼각형이 되는 방법은 몇 가지입니까?<div class="sequence">${angles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `고른 두 각의 합이 90°보다 작으면 나머지 한 각이 90°보다 커집니다. 조건을 만족하는 두 각의 짝을 세면 ${answer}가지입니다.`);
+        return result(`다음 여섯 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정합니다. 만들어진 삼각형이 둔각삼각형이 되는 서로 다른 방법은 모두 몇 가지입니까?<div class="sequence">${shuffle(rng, angles).map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `두 각의 합은 180°보다 작아야 합니다. 고른 각 중 하나가 90°보다 크거나, 두 각의 합이 90°보다 작아 나머지 각이 90°보다 큰 짝을 모두 세면 ${answer}가지입니다.`);
       }
       const points = pointSets[Math.min(level, pointSets.length - 1)];
       if (kind === 3) {
@@ -12236,12 +12249,11 @@
           [18, 27, 53, 64, 96, 143]
         ];
         const angles = templates[level];
-        const pairs = [];
-        for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) if (angles[first] + angles[second] < 90) pairs.push([angles[first], angles[second]]);
+        const pairs = obtuseAnglePairs(angles);
         const answer = pairs.length;
         const shownAngles = shuffle(rng, angles);
         const evidence = triangle42Evidence("obtuse-angle-pairs", angles, answer);
-        return result(`다음 여섯 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정합니다. 만들어진 삼각형이 둔각삼각형이 되는 서로 다른 방법은 모두 몇 가지입니까?<div class="sequence">${shownAngles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `고른 두 각의 합이 90°보다 작으면 나머지 한 각이 90°보다 커집니다. 두 각의 합이 90°보다 작은 짝은 ${pairs.map(pair => `${pair[0]}°와 ${pair[1]}°`).join(", ")}이므로 모두 ${answer}가지입니다.`);
+        return result(`다음 여섯 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정합니다. 만들어진 삼각형이 둔각삼각형이 되는 서로 다른 방법은 모두 몇 가지입니까?<div class="sequence">${shownAngles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `두 각의 합은 180°보다 작아야 합니다. 고른 각 중 하나가 90°보다 크거나, 두 각의 합이 90°보다 작아 나머지 각이 90°보다 큰 짝을 모두 세면 ${answer}가지입니다.`);
       }
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 각 유형입니다.");
     },
