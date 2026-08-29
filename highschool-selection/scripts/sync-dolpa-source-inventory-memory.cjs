@@ -39,6 +39,7 @@ const queuePath = path.resolve(queueArgument);
 const catalog = readJson(catalogPath);
 const inventory = readJson(inventoryPath);
 const queue = readJson(queuePath);
+const updatedDate = new Date().toISOString().slice(0, 10);
 
 if (inventory.schemaVersion !== 2 || inventory.summary.hwpPathCount !== 693
   || inventory.summary.uniqueSourceCount !== 334 || inventory.summary.duplicatePathCount !== 359) {
@@ -76,7 +77,7 @@ const record = {
   summary: `돌파 HWP 693경로를 SHA-256으로 대조해 내용이 다른 원본 334개와 중복 경로 359개로 나눴다. 고유 원본은 입반시험 213개와 모의고사 121개다. nPDF 변환은 완료 ${queue.summary.completed || 0}개, 대기 ${queue.summary.pending || 0}개, 실패 ${queue.summary.failed || 0}개이며 과정 표시는 원본 표지 검수 전까지 파일명 기준 임시 분류다.`,
   status: "verified",
   sensitivity: "private",
-  updated: "2026-08-27",
+  updated: updatedDate,
   pointers: [
     {
       source_id: inventorySource.id,
@@ -93,6 +94,6 @@ const record = {
   ]
 };
 upsert(catalog.records, record.id, record);
-catalog.updated = "2026-08-27";
+catalog.updated = updatedDate;
 writeJson(catalogPath, catalog);
 process.stdout.write(`${JSON.stringify({ paths: 693, unique: 334, duplicates: 359, pending: queue.summary.pending || 0, completed: queue.summary.completed || 0, failed: queue.summary.failed || 0 })}\n`);

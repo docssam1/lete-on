@@ -11,7 +11,7 @@ const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 test("admin exam editor exposes the full assembly workflow without embedding question content", () => {
   const html = read("admin/exam-editor.html");
   [
-    "draft-create-form", "draft-mode", "draft-open-form", "candidate-mode", "candidate-scope", "academy-profile-filters", "candidate-list",
+    "draft-create-form", "draft-mode", "draft-open-form", "candidate-mode", "candidate-scope", "academy-profile-filters", "catalog-include-candidates", "candidate-list",
     "placement-list", "sort-mode", "view-mode", "scope-panel", "check-readiness", "question-page-dialog", "question-page-image"
   ].forEach(id => assert.match(html, new RegExp(`id=["']${id}["']`)));
   assert.match(html, /새 문제/);
@@ -44,6 +44,7 @@ test("editor client uses admin-only API mutations, revision CAS, conflict reload
   assert.match(script, /mode:\s*elements\.createForm\.mode\.value/);
   assert.match(script, /new URLSearchParams\(\{ draftId: state\.packet\.draftId/);
   assert.match(script, /\/admin\/question-bank\/catalog/);
+  assert.match(script, /catalogParams\.set\("includeCandidates", "1"\)/);
   assert.match(script, /\/admin\/question-bank\/items\/\$\{encodeURIComponent\(preview\.dataset\.pagePreviewId\)\}\/page-preview/);
   assert.match(script, /URL\.createObjectURL/);
   assert.match(script, /candidate\.semester.*candidate\.majorUnit.*candidate\.minorUnit.*candidate\.typeLabel/s);

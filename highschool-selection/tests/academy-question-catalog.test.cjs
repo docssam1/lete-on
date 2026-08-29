@@ -64,10 +64,15 @@ function projectIndex() {
         itemId: "WONMATH-M21:R01-Q01", sourceBankId: "WONMATH-M21", sourceItemId: "R01-Q01", sourceTypeId: "WM-U1",
         conceptFamilyId: null, canonicalConceptFamilyId: null, conceptStatus: "unit_only", classificationStatus: "verified_unit_only", detailPrecision: "unit_only",
         academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
+      },
+      {
+        itemId: "DOLPA-ORIGINAL:DP-Q-AAAAAAAAAAAA-002", sourceBankId: "DOLPA-ORIGINAL", sourceItemId: "DP-Q-AAAAAAAAAAAA-002", sourceTypeId: "DP-T1",
+        conceptFamilyId: "CPT-1", canonicalConceptFamilyId: "CPT-1", conceptStatus: "mapped", classificationStatus: "verified", detailPrecision: "verified",
+        academyFits: [{ profileId: "WM_BASIC", status: "candidate" }]
       }
     ],
     summary: {
-      sourceBankCount: 2, itemCount: 2, mappedItemCount: 1, unitOnlyItemCount: 1, pendingItemCount: 0,
+      sourceBankCount: 2, itemCount: 3, mappedItemCount: 2, unitOnlyItemCount: 1, pendingItemCount: 0,
       sourceTypeCount: 2, conceptFamilyCount: 1, exactMergedFamilyCount: 0, overlapCandidateCount: 0
     }
   };
@@ -122,6 +127,12 @@ test("공통 문항 인덱스에서는 학원형별 원본과 단원 분류 대�
   assert.equal(wonmath[0].conceptStatus, "unit_only");
   assert.equal(wonmath[0].typeLabel, "소인수분해");
   assert.equal(wonmath[0].reviewChecks.classification, false);
+
+  const strict = catalog.search({ profileIds: ["WM_BASIC"], query: "교점" });
+  assert.equal(strict.length, 0);
+  const candidates = catalog.search({ profileIds: ["WM_BASIC"], query: "교점", includeCandidates: true });
+  assert.equal(candidates.length, 1);
+  assert.deepEqual(candidates[0].profiles, [{ profileId: "WM_BASIC", label: "원수학 기본형", status: "candidate" }]);
 });
 
 test("공통 문항 ID로도 기존 돌파 원본 페이지 위치를 안전하게 찾는다", () => {

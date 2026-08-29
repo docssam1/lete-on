@@ -111,6 +111,9 @@ function createProjectCatalog(index, options) {
       const selected = projectSelector.selectItems(index, profileIds, {
         query: searchOptions.query,
         limit: 1000,
+        allowedStatuses: searchOptions.includeCandidates
+          ? projectSelector.CANDIDATE_ALLOWED_STATUSES
+          : projectSelector.DEFAULT_ALLOWED_STATUSES,
         allowedConceptStatuses: ["mapped", "unit_only"]
       });
       return selected.items.filter(item => {

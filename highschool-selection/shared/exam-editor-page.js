@@ -24,6 +24,7 @@
     candidateScopeField: document.getElementById("candidate-scope-field"),
     candidateScope: document.getElementById("candidate-scope"),
     academyProfileFilters: document.getElementById("academy-profile-filters"),
+    catalogIncludeCandidates: document.getElementById("catalog-include-candidates"),
     candidateSearchForm: document.getElementById("candidate-search-form"),
     candidateQuery: document.getElementById("candidate-query"),
     candidateContext: document.getElementById("candidate-context"),
@@ -207,7 +208,7 @@
     const draft = packet.draft;
     if (state.profileMode !== draft.mode) {
       const defaults = new Set(defaultProfilesByMode[draft.mode] || []);
-      Array.from(elements.academyProfileFilters.querySelectorAll("input[type=checkbox]")).forEach(function (input) {
+      Array.from(elements.academyProfileFilters.querySelectorAll("input[type=checkbox][value]")).forEach(function (input) {
         input.checked = defaults.has(input.value);
       });
       state.profileMode = draft.mode;
@@ -259,10 +260,13 @@
     elements.candidateScopeField.hidden = catalogMode;
     elements.candidateQuery.placeholder = catalogMode ? "학기 · 대단원 · 소단원 · 세부 유형 검색" : "문항 ID · 유형 · 범위 검색";
     const placement = selectedPlacement();
-    const checkedProfiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.parentElement.textContent.trim());
+    const checkedProfiles = Array.from(elements.academyProfileFilters.querySelectorAll("input[value]:checked")).map(input => input.parentElement.textContent.trim());
+    const includeCandidates = elements.catalogIncludeCandidates.checked;
     elements.candidateContext.textContent = catalogMode
       ? checkedProfiles.length
-        ? `${checkedProfiles.join(" · ")}에서 원본 확인 또는 사용 승인된 문항만 표시합니다.`
+        ? includeCandidates
+          ? `${checkedProfiles.join(" · ")}에서 검수된 문항과 학원형 후보를 함께 표시합니다. 후보는 조립 전 확인이 필요합니다.`
+          : `${checkedProfiles.join(" · ")}에서 원본 확인 또는 사용 승인된 문항만 표시합니다.`
         : "시험형을 하나 이상 선택하세요."
       : state.candidateMode === "new"
       ? "현재 범위에서 검수 완료 문항을 찾습니다."
@@ -288,6 +292,7 @@
         title.append(make("strong", "", candidate.typeLabel), make("code", "", sourceReference));
         const badges = make("div", "candidate-badges");
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        if ((candidate.profiles || []).some(function (profile) { return profile.status === "candidate"; })) badges.append(candidateBadge("학원형 후보", "warning"));
         if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
         badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
         badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
@@ -520,7 +525,7 @@
     const sequence = ++state.searchSequence;
     elements.candidateList.setAttribute("aria-busy", "true");
     if (state.candidateMode === "catalog") {
-      const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input:checked")).map(input => input.value);
+      const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input[value]:checked")).map(input => input.value);
       if (!profiles.length) {
         state.candidates = [];
         renderCandidates();
@@ -529,6 +534,7 @@
         return;
       }
       const catalogParams = new URLSearchParams({ profiles: profiles.join(","), limit: "300" });
+      if (elements.catalogIncludeCandidates.checked) catalogParams.set("includeCandidates", "1");
       const catalogQuery = elements.candidateQuery.value.trim();
       if (catalogQuery) catalogParams.set("q", catalogQuery);
       try {

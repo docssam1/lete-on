@@ -58,7 +58,12 @@ function fromLedgerQuestion(question) {
       status: question.classificationStatus,
       evidence: question.evidence
     },
-    method: { tags: question.type.methodTags, status: question.type.methodReviewStatus, evidence: [] },
+    method: {
+      solutionArchetype: null,
+      tags: question.type.methodTags,
+      status: question.type.methodReviewStatus,
+      evidence: []
+    },
     difficulty: question.difficulty,
     responseFormat: { kind: null, ...pendingEvidence() },
     answerCheck: { status: "pending", evidence: [] },
@@ -83,6 +88,7 @@ function mergeExisting(seed, existing) {
     if (!sameIdentity(question, old)) throw new Error(`기존 문항의 출처·유형이 달라졌습니다: ${question.questionId}`);
     return {
       ...question,
+      classification: old.classification,
       locator: old.locator,
       method: old.method,
       difficulty: old.difficulty,
@@ -108,6 +114,9 @@ function rebuildTypeCatalog(questions) {
         majorUnit: question.classification.majorUnit,
         minorUnit: question.classification.minorUnit,
         label: question.classification.typeLabel,
+        solutionArchetype: null,
+        methodTags: [],
+        methodStatus: "pending",
         questionIds: []
       });
     }
@@ -124,7 +133,20 @@ function rebuildTypeCatalog(questions) {
     if (expected !== actual) throw new Error(`같은 유형 ID에 서로 다른 분류가 연결됐습니다: ${key}`);
     type.questionIds.push(question.questionId);
   });
-  return Array.from(map.values()).map(type => ({ ...type, questionIds: type.questionIds.sort() })).sort((a, b) => a.typeId.localeCompare(b.typeId));
+  const questionById = new Map(questions.map(question => [question.questionId, question]));
+  return Array.from(map.values()).map(type => {
+    const linked = type.questionIds.map(id => questionById.get(id));
+    const verified = linked.filter(question => question.method.status === "verified");
+    const archetypes = Array.from(new Set(verified.map(question => question.method.solutionArchetype).filter(Boolean)));
+    const allVerified = linked.length > 0 && verified.length === linked.length && archetypes.length === 1;
+    return {
+      ...type,
+      solutionArchetype: allVerified ? archetypes[0] : null,
+      methodTags: Array.from(new Set(verified.flatMap(question => question.method.tags || []))).sort(),
+      methodStatus: allVerified ? "verified" : verified.length ? "partial" : "pending",
+      questionIds: type.questionIds.sort()
+    };
+  }).sort((a, b) => a.typeId.localeCompare(b.typeId));
 }
 
 function rebuildPapers(questions, ledger, existing) {

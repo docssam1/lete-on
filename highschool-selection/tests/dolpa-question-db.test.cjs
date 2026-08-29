@@ -55,8 +55,10 @@ test("기존 문항의 수동 검수 결과는 다시 빌드해도 보존된다"
   value.questions[0].type.typeId = require("../scripts/build-dolpa-work-ledger.cjs").stableTypeId("중2-1", "일차함수", "두 직선의 교점 구하기");
   const first = builder.buildDatabase(value, null, "1".repeat(64));
   first.questions[0].difficulty = { band: "상", status: "verified", evidence: ["difficulty.audit.one"] };
+  first.questions[0].classification.evidence.push("taxonomy.domain-normalization.test");
   const rebuilt = builder.buildDatabase(value, first, "1".repeat(64));
   assert.equal(rebuilt.questions[0].difficulty.band, "상");
+  assert.deepEqual(rebuilt.questions[0].classification.evidence, ["audit.paper.a", "taxonomy.domain-normalization.test"]);
   assert.equal(rebuilt.questions[0].usageProfiles.find(profile => profile.profileId === "DP_STANDARD").status, "source_verified");
   assert.equal(auditor.audit(rebuilt).ok, true);
 });

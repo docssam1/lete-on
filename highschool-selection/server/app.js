@@ -801,7 +801,7 @@ function createApp(options) {
     if (request.method === "GET" && pathname === "/admin/question-bank/catalog") {
       requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
       const catalog = requireAcademyQuestionCatalog();
-      const allowedSearchKeys = new Set(["profiles", "target", "q", "limit"]);
+      const allowedSearchKeys = new Set(["profiles", "target", "q", "limit", "includeCandidates"]);
       for (const key of url.searchParams.keys()) {
         if (!allowedSearchKeys.has(key)) throw new HttpError(400, "문항 DB 검색 조건에 허용되지 않은 항목이 있습니다.");
       }
@@ -813,7 +813,15 @@ function createApp(options) {
       const limitText = url.searchParams.get("limit");
       const limit = limitText == null ? 100 : Number(limitText);
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 300) throw new HttpError(400, "문항 DB 검색 개수가 올바르지 않습니다.");
-      const items = catalog.search({ profileIds, targetId: url.searchParams.get("target"), query: url.searchParams.get("q"), limit }).map(item => {
+      const includeCandidatesText = url.searchParams.get("includeCandidates");
+      if (includeCandidatesText != null && !["0", "1"].includes(includeCandidatesText)) throw new HttpError(400, "후보 포함 설정을 확인해 주세요.");
+      const items = catalog.search({
+        profileIds,
+        targetId: url.searchParams.get("target"),
+        query: url.searchParams.get("q"),
+        limit,
+        includeCandidates: includeCandidatesText === "1"
+      }).map(item => {
         const locator = catalog.privateLocator(item.questionId);
         const asset = locator && loadAcademyQuestionPage ? loadAcademyQuestionPage(locator.sourceId, locator.page) : null;
         return Object.assign({}, item, { pagePreviewAvailable: Boolean(asset) });

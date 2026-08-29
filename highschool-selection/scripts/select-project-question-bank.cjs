@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const DEFAULT_ALLOWED_STATUSES = Object.freeze(["source_verified", "approved"]);
+const CANDIDATE_ALLOWED_STATUSES = Object.freeze([...DEFAULT_ALLOWED_STATUSES, "candidate"]);
 
 function clean(value) {
   return String(value == null ? "" : value).trim();
@@ -66,7 +67,7 @@ function selectItems(index, profileTokens, options) {
       majorUnit: curriculum.majorUnit || "",
       minorUnit: curriculum.minorUnit || "",
       detailType: family ? family.canonicalLabel : sourceType.detailType,
-      solutionArchetype: family ? family.solutionArchetype : (sourceType.solutionArchetype || null),
+      solutionArchetype: item.solutionArchetype || (family ? family.solutionArchetype : (sourceType.solutionArchetype || null)),
       classificationStatus: item.classificationStatus,
       detailPrecision: item.detailPrecision,
       conceptStatus: item.conceptStatus,
@@ -96,10 +97,11 @@ function main(args) {
   const index = JSON.parse(fs.readFileSync(path.resolve(args[0]), "utf8"));
   const includeIncomplete = args[2] === "--include-incomplete";
   const result = selectItems(index, args[1].split(",").map(clean).filter(Boolean), includeIncomplete ? {
+    allowedStatuses: CANDIDATE_ALLOWED_STATUSES,
     allowedConceptStatuses: ["mapped", "unit_only", "pending"]
   } : {});
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ DEFAULT_ALLOWED_STATUSES, profileByToken, buildLookups, compareItems, selectItems });
+module.exports = Object.freeze({ DEFAULT_ALLOWED_STATUSES, CANDIDATE_ALLOWED_STATUSES, profileByToken, buildLookups, compareItems, selectItems });

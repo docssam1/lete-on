@@ -31,7 +31,7 @@ function audit(database) {
     if (question.classification.majorUnit !== question.classification.domain) issues.push(`major_unit:${question.questionId}`);
     if (question.classification.minorUnit !== question.classification.unit) issues.push(`minor_unit:${question.questionId}`);
     if (question.classification.status === "verified" && !question.classification.evidence.length) issues.push(`classification_evidence:${question.questionId}`);
-    if (question.method.status === "verified" && (!question.method.tags.length || !question.method.evidence.length)) issues.push(`method_evidence:${question.questionId}`);
+    if (question.method.status === "verified" && (!question.method.solutionArchetype || !question.method.tags.length || !question.method.evidence.length)) issues.push(`method_evidence:${question.questionId}`);
     if (question.difficulty.status === "verified" && (!question.difficulty.band || !question.difficulty.evidence.length)) issues.push(`difficulty_evidence:${question.questionId}`);
     if (question.responseFormat.status === "verified" && (!question.responseFormat.kind
       || !Number.isSafeInteger(question.responseFormat.slotCount) || question.responseFormat.slotCount < 1

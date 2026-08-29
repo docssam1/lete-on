@@ -6,7 +6,7 @@ const path = require("node:path");
 const core = require("../data/question-bank-core.js");
 const itemIndex = require("../data/question-item-index.js");
 
-const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|[1-9]\d*-\([1-9]\d*\)|개념탐구 [1-9]\d*(?:-\([1-9]\d*\)(?:-[①-⑳])?)?|예제 [1-9]\d*-[1-9]\d*(?:-\([1-9]\d*\))?|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
 const MANUAL_REVIEW_RESOLUTIONS = new Set([
   "verified_manual_items",
   "verified_manual_items_replacing_candidates"
@@ -151,8 +151,8 @@ function normalizedMissionAnchors(value) {
 }
 
 function normalizedManualAnchors(value) {
-  if (!Array.isArray(value) || value.length > 12) {
-    fail("manual_items requires zero to twelve reviewed anchors");
+  if (!Array.isArray(value) || value.length > 32) {
+    fail("manual_items requires zero to thirty-two reviewed anchors");
   }
   const labels = new Set();
   const anchors = value.map((anchor, index) => {
@@ -173,7 +173,7 @@ function normalizedManualAnchors(value) {
     const layoutOrder = Number(anchor.layoutOrder);
     if (layoutOrder !== index + 1) fail("manual_items anchors must use sequential layoutOrder");
     const kind = String(anchor.kind || "");
-    if (!new Set(["concept", "example", "exercise", "unknown"]).has(kind)) {
+    if (!new Set(["concept", "example", "mission", "exercise", "unknown"]).has(kind)) {
       fail(`manual_items anchor kind is not allowed: ${kind}`);
     }
     const locator = itemIndex.createLocator({ page: 1, slot: index + 1, kind, box: anchor.box });
