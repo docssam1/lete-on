@@ -2413,6 +2413,14 @@
     }).join("");
     return `<svg class="geometry-diagram triangle-point-board" viewBox="0 0 240 150" data-points="${points.map(point => point.join(",")).join(";")}" data-required-index="${requiredIndex}" data-uniform-scale="${scale.toFixed(3)}" aria-label="같은 간격의 모눈 위에 표시한 삼각형 점판"><g>${grid}${lineMarkup}${dots}</g></svg>`;
   };
+  const trianglePlainDotBoardSvg = (columns, rows, spacing) => {
+    const width = (columns - 1) * spacing;
+    const height = (rows - 1) * spacing;
+    const left = 120 - width / 2;
+    const top = 76 - height / 2;
+    const dots = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => `<circle class="diagram-dot" cx="${left + column * spacing}" cy="${top + row * spacing}" r="4"/>`).join("")).join("");
+    return `<svg class="geometry-diagram triangle-plain-dot-board" viewBox="0 0 240 152" data-columns="${columns}" data-rows="${rows}" data-spacing="${spacing}" aria-label="가로 ${columns}개, 세로 ${rows}개 점이 같은 간격으로 놓인 점판">${dots}</svg>`;
+  };
   const triangleKindFromPoints = (first, second, third) => {
     const cross = (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
     if (Math.abs(cross) < 1e-9) return "line";
@@ -12151,7 +12159,7 @@
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 유형입니다.");
     },
     triangleAngleType({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       const source = {
         acute: [[50, 60, 70], [40, 65, 75], [55, 55, 70], [30, 70, 80], [45, 60, 75]],
         right: [[30, 60, 90], [45, 45, 90], [25, 65, 90]],
@@ -12198,10 +12206,30 @@
         const evidence = triangle42Evidence("grid-angle-difference", [points, -1, "acute-obtuse-difference"], answer);
         return result(`점판의 점 중 세 점을 골라 만든 삼각형에서 예각삼각형과 둔각삼각형의 개수 차를 구하세요.${trianglePointBoardSvg(points)}${evidence}`, answer, `예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개이므로 개수 차는 ${answer}개입니다.`);
       }
-      const requiredIndex = int(rng, 0, points.length - 1);
-      const totals = trianglePointCounts(points, requiredIndex);
-      const evidence = triangle42Evidence("required-point-obtuse", [points, requiredIndex, "obtuse"], totals.obtuse);
-      return result(`●로 표시한 점을 꼭짓점으로 포함하여 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points, requiredIndex)}${evidence}`, totals.obtuse, `●과 다른 두 점을 고른 뒤 가장 긴 변을 기준으로 각의 종류를 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
+      if (kind === 5) {
+        const requiredIndex = int(rng, 0, points.length - 1);
+        const totals = trianglePointCounts(points, requiredIndex);
+        const evidence = triangle42Evidence("required-point-obtuse", [points, requiredIndex, "obtuse"], totals.obtuse);
+        return result(`●로 표시한 점을 꼭짓점으로 포함하여 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points, requiredIndex)}${evidence}`, totals.obtuse, `●과 다른 두 점을 고른 뒤 가장 긴 변을 기준으로 각의 종류를 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
+      }
+      if (kind === 6) {
+        const columns = int(rng, 0, 1) ? 4 : 3;
+        const rows = columns === 4 ? 3 : 4;
+        const spacing = int(rng, 27, 39);
+        const boardPoints = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => [column, row])).flat();
+        const signatures = new Set();
+        for (let first = 0; first < boardPoints.length - 2; first += 1) for (let second = first + 1; second < boardPoints.length - 1; second += 1) for (let third = second + 1; third < boardPoints.length; third += 1) {
+          if (triangleKindFromPoints(boardPoints[first], boardPoints[second], boardPoints[third]) !== "obtuse") continue;
+          const squaredSides = [[first, second], [second, third], [third, first]]
+            .map(([a, b]) => (boardPoints[a][0] - boardPoints[b][0]) ** 2 + (boardPoints[a][1] - boardPoints[b][1]) ** 2)
+            .sort((a, b) => a - b);
+          signatures.add(squaredSides.join("-"));
+        }
+        const answer = signatures.size;
+        const evidence = triangle42Evidence("obtuse-dot-shape-classes", [columns, rows], answer);
+        return result(`가로 ${columns}개, 세로 ${rows}개로 같은 간격으로 놓인 점 중 세 점을 이어 둔각삼각형을 만듭니다. 돌리거나 뒤집어서 같아지는 모양은 하나로 셀 때, 서로 다른 둔각삼각형은 모두 몇 가지입니까?${trianglePlainDotBoardSvg(columns, rows, spacing)}${evidence}`, answer, `점 세 개를 이은 뒤, 세 변의 길이가 같은 모양끼리 하나로 묶습니다. 직각삼각형과 예각삼각형을 빼고 남는 서로 다른 둔각삼각형은 모두 ${answer}가지입니다.`);
+      }
+      throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 각 유형입니다.");
     },
     isoscelesTriangle({ rng, level, variant = 0 }) {
       const kind = variant % 6;
