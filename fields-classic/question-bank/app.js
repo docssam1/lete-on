@@ -3410,6 +3410,7 @@ function openAnswers() {
 
 function initControls() {
   $("studentName").textContent = student;
+  $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
