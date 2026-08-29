@@ -31,6 +31,7 @@ function adaptDolpa(database) {
     majorUnit: type.majorUnit,
     minorUnit: type.minorUnit,
     detailType: type.label,
+    solutionArchetype: type.methodStatus === "verified" ? type.solutionArchetype : "",
     evidence: type.questionIds.map(id => `dolpa:${id}`)
   }));
   const items = database.questions.map(question => ({
@@ -38,6 +39,7 @@ function adaptDolpa(database) {
     sourceBankId: "DOLPA-ORIGINAL",
     sourceItemId: question.questionId,
     sourceTypeId: question.classification.typeId,
+    solutionArchetype: question.method && question.method.status === "verified" ? question.method.solutionArchetype : null,
     classificationStatus: question.classification.status,
     detailPrecision: "verified",
     academyFits: question.usageProfiles.map(usage => ({ profileId: usage.profileId, status: usage.status }))

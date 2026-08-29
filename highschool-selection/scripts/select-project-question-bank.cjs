@@ -67,7 +67,7 @@ function selectItems(index, profileTokens, options) {
       majorUnit: curriculum.majorUnit || "",
       minorUnit: curriculum.minorUnit || "",
       detailType: family ? family.canonicalLabel : sourceType.detailType,
-      solutionArchetype: family ? family.solutionArchetype : (sourceType.solutionArchetype || null),
+      solutionArchetype: item.solutionArchetype || (family ? family.solutionArchetype : (sourceType.solutionArchetype || null)),
       classificationStatus: item.classificationStatus,
       detailPrecision: item.detailPrecision,
       conceptStatus: item.conceptStatus,

@@ -14,6 +14,7 @@ function fixture() {
       questions: [{
         questionId: "DP-Q1",
         classification: { typeId: "DP-T1", status: "verified" },
+        method: { solutionArchetype: null, status: "pending", tags: [], evidence: [] },
         usageProfiles: profileIds.map(profileId => ({ profileId, status: profileId === "DP_STANDARD" ? "source_verified" : "candidate" }))
       }]
     },
@@ -43,6 +44,22 @@ test("단원 수준 분류는 세부 유형으로 억지 병합하지 않는다"
   const wonmath = index.items.find(item => item.sourceBankId === "WONMATH-M21");
   assert.equal(wonmath.conceptStatus, "unit_only");
   assert.equal(wonmath.conceptFamilyId, null);
+});
+
+test("검수된 돌파 풀이 방법은 공용 유형에 연결하고 미검수 방법은 비워 둔다", () => {
+  const input = fixture();
+  input.dolpa.typeCatalog[0].solutionArchetype = "두 직선의 식을 연립해 교점 좌표를 구한다.";
+  input.dolpa.typeCatalog[0].methodStatus = "verified";
+  input.dolpa.questions[0].method = { solutionArchetype: "두 직선의 식을 연립해 교점 좌표를 구한다.", status: "verified", tags: ["연립"], evidence: ["review"] };
+  const reviewed = builder.buildIndex(input);
+  const dolpa = reviewed.sourceTypes.find(type => type.sourceBankId === "DOLPA-ORIGINAL");
+  assert.equal(dolpa.solutionArchetype, "두 직선의 식을 연립해 교점 좌표를 구한다.");
+  assert.equal(reviewed.items.find(item => item.sourceBankId === "DOLPA-ORIGINAL").solutionArchetype, "두 직선의 식을 연립해 교점 좌표를 구한다.");
+
+  input.dolpa.typeCatalog[0].methodStatus = "partial";
+  input.dolpa.questions[0].method = { solutionArchetype: null, status: "pending", tags: [], evidence: [] };
+  const pending = builder.buildIndex(input);
+  assert.equal(pending.sourceTypes.find(type => type.sourceBankId === "DOLPA-ORIGINAL").solutionArchetype, "");
 });
 
 test("검수된 원수학 문항은 세부 유형으로 연결하고 원래 단원 유형 ID도 보존한다", () => {

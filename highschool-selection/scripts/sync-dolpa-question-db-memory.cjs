@@ -45,6 +45,9 @@ function sync(catalog, ledger, database, paths) {
   if (paths.targetAssembly) {
     sources.push(source("dp-target-assembly-v1", "돌파 현재 범위 원본 문항 구성표", "지필드메모리/highschool-selection/question-bank/dolpa-target-assembly-v1.json", paths.targetAssembly));
   }
+  if (paths.methodReview) {
+    sources.push(source("dp-m22-method-review-v1", "돌파 중2-2 대표 시험 풀이법 검수표", "지필드메모리/highschool-selection/question-bank/dolpa-method-review-dp-m22-202404-v1.json", paths.methodReview));
+  }
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   const equivalentSourceCount = (database.papers || []).reduce((sum, paper) => sum + (paper.equivalentSources || []).length, 0);
@@ -53,10 +56,10 @@ function sync(catalog, ledger, database, paths) {
     title: "돌파 문항 DB와 반복 방지 작업 장부",
     aliases: ["돌파 문제 DB", "돌파 유형 DB"],
     tags: ["dp", "question-bank", "classification", "work-ledger"],
-    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 같은 시험의 다른 원본 파일 ${equivalentSourceCount}개는 문항을 복제하지 않고 대표 시험지에 연결했다. 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
+    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 같은 시험의 다른 원본 파일 ${equivalentSourceCount}개는 문항을 복제하지 않고 대표 시험지에 연결했다. 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 풀이 방법 ${summary.methodVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
     status: "verified",
     sensitivity: "private",
-    updated: "2026-08-27",
+    updated: "2026-08-29",
     pointers: [
       { source_id: "dp-question-db-v1", role: "audit", locator: "summary, papers, typeCatalog, questions", note: "문항 ID·유형 ID·중복·금지 필드 자동검사 통과" },
       { source_id: "dp-work-ledger-v1", role: "test", locator: "summary, sources[1:334]", note: "변환·표지·본문·답안·문항분리·유형·난이도·분석지 상태 분리" },
@@ -80,13 +83,35 @@ function sync(catalog, ledger, database, paths) {
       { source_id: "dp-target-assembly-v1", role: "audit", locator: "targets.dp-middle2-2-transfer", note: `범위 안 원본 후보 ${middle ? middle.includedCount : 0}문항, 실제 구성 ${middle ? middle.selectedCount : 0}문항, 예비 ${middle ? middle.reserveCount : 0}문항 분리` }
     );
   }
-  catalog.updated = "2026-08-27";
+  if (paths.methodReview) {
+    catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
+      source_id: "dp-m22-method-review-v1",
+      role: "decision",
+      locator: "reviews[1:30]",
+      note: "중2-2 대표 시험 30문항의 풀이 구조와 방법 태그를 원본 페이지와 대조"
+    });
+    upsert(catalog.records, "dp.m22.method-review.20260829", {
+      id: "dp.m22.method-review.20260829",
+      title: "돌파 중2-2 대표 시험 30문항 풀이 방법 검수",
+      aliases: ["돌파 중2-2 풀이법"],
+      tags: ["dp", "middle2-2", "method-review", "visual-review"],
+      summary: "중2-2 대표 시험 30문항을 원본 3~10쪽에서 직접 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.",
+      status: "verified",
+      sensitivity: "private",
+      updated: "2026-08-29",
+      pointers: [
+        { source_id: "dp-m22-page-assets-v1", role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
+        { source_id: "dp-m22-method-review-v1", role: "decision", locator: "reviews[1:30]", note: "풀이 구조와 방법 태그 검수 결과" }
+      ]
+    });
+  }
+  catalog.updated = "2026-08-29";
   return catalog;
 }
 
 function main(args) {
-  if (args.length < 5 || args.length > 8) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly]");
-  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath, targetSourcePlanPath, targetAssemblyPath] = args.map(value => path.resolve(value));
+  if (args.length < 5 || args.length > 9) throw new Error("사용법: node sync-dolpa-question-db-memory.cjs <source-memory> <ledger> <question-db> <paper-links> <review-decisions> [page-assets-manifest] [target-source-plan] [target-assembly] [method-review]");
+  const [catalogPath, ledgerPath, databasePath, paperLinksPath, reviewDecisionsPath, pageAssetsPath, targetSourcePlanPath, targetAssemblyPath, methodReviewPath] = args.map(value => path.resolve(value));
   const catalog = sync(readJson(catalogPath), readJson(ledgerPath), readJson(databasePath), {
     ledger: ledgerPath,
     database: databasePath,
@@ -94,7 +119,8 @@ function main(args) {
     reviewDecisions: reviewDecisionsPath,
     pageAssets: pageAssetsPath,
     targetSourcePlan: targetSourcePlanPath,
-    targetAssembly: targetAssemblyPath
+    targetAssembly: targetAssemblyPath,
+    methodReview: methodReviewPath
   });
   fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({ sources: catalog.sources.length, records: catalog.records.length })}\n`);
