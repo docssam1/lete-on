@@ -2226,6 +2226,29 @@
     }).join("");
     return `<svg class="geometry-diagram triangle-marked-square-grid" viewBox="0 0 240 228" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" data-marked="${model.marked.map(point => point.join(",")).join(";")}" aria-label="네 줄 네 칸 정사각형 격자에서 작은 삼각형 하나를 색칠한 도형"><g><polygon points="${marked}" style="fill:#b9c8d8;stroke:none"/>${lines}</g></svg>`;
   };
+  const triangleLayeredFanSvg = (rayCount, horizontalCount, layoutIndex) => {
+    const apex = [114 + layoutIndex * 2.4, 14 + layoutIndex % 2 * 2];
+    const left = [16 + layoutIndex % 3, 154];
+    const right = [224 - layoutIndex % 2, 154];
+    const basePoints = Array.from({ length: rayCount }, (_, index) => [left[0] + (right[0] - left[0]) * index / (rayCount - 1), left[1]]);
+    const rays = basePoints.map(point => `<line x1="${apex[0]}" y1="${apex[1]}" x2="${point[0].toFixed(1)}" y2="${point[1]}"/>`).join("");
+    const horizontals = Array.from({ length: horizontalCount - 1 }, (_, index) => {
+      const ratio = (index + 1) / horizontalCount;
+      const y = apex[1] + (left[1] - apex[1]) * ratio;
+      const startX = apex[0] + (left[0] - apex[0]) * ratio;
+      const endX = apex[0] + (right[0] - apex[0]) * ratio;
+      return `<line x1="${startX.toFixed(1)}" y1="${y.toFixed(1)}" x2="${endX.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-layered-fan-source" viewBox="0 0 240 170" data-ray-count="${rayCount}" data-horizontal-count="${horizontalCount}" data-layout-index="${layoutIndex}" aria-label="한 꼭짓점에서 밑변의 ${rayCount}개 점으로 선을 긋고 가로선 ${horizontalCount - 1}개를 더 그은 삼각형"><g><line x1="${left[0]}" y1="${left[1]}" x2="${right[0]}" y2="${right[1]}"/>${rays}${horizontals}</g></svg>`;
+  };
+  const triangleParallelFamiliesSvg = (descendingCount, ascendingCount, layoutIndex) => {
+    const distributed = (count, start, end) => Array.from({ length: count }, (_, index) => count === 1 ? (start + end) / 2 : start + (end - start) * index / (count - 1));
+    const shift = layoutIndex - 2.5;
+    const descending = distributed(descendingCount, 32 + shift, 88 + shift).map(x => `<line x1="${x.toFixed(1)}" y1="18" x2="${(x + 112).toFixed(1)}" y2="152"/>`).join("");
+    const ascending = distributed(ascendingCount, 156 - shift, 208 - shift).map(x => `<line x1="${x.toFixed(1)}" y1="18" x2="${(x - 112).toFixed(1)}" y2="152"/>`).join("");
+    return `<svg class="geometry-diagram triangle-parallel-families-source" viewBox="0 0 240 170" data-descending-count="${descendingCount}" data-ascending-count="${ascendingCount}" data-horizontal-count="2" data-layout-index="${layoutIndex}" aria-label="가로선 두 개 사이에서 내려가는 평행선 ${descendingCount}개와 올라가는 평행선 ${ascendingCount}개가 교차하는 도형"><g><line x1="12" y1="30" x2="228" y2="30"/><line x1="12" y1="140" x2="228" y2="140"/>${descending}${ascending}</g></svg>`;
+  };
+  const trianglePairedLineArraysMarkup = (rayCount, horizontalCount, descendingCount, ascendingCount, layoutIndex) => `<div class="triangle-count-pair"><figure><b>(1)</b>${triangleLayeredFanSvg(rayCount, horizontalCount, layoutIndex)}</figure><figure><b>(2)</b>${triangleParallelFamiliesSvg(descendingCount, ascendingCount, layoutIndex)}</figure></div>`;
   const triangleMarkedLatticeSvg = (side, cell) => {
     const width = 240;
     const top = 12;
@@ -12112,6 +12135,18 @@
         const answer = triangleMarkedSquareGridCount(model);
         const evidence = triangle42Evidence("marked-square-grid-count", [markedIndex], answer);
         return result(`네 줄 네 칸 정사각형 격자에서 색칠한 작은 삼각형 전체를 포함하면서, 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleMarkedSquareGridSvg(model)}${evidence}`, answer, `색칠한 삼각형의 세 꼭짓점을 모두 포함하고, 세 변이 실제 선 위에 놓이는 삼각형만 작은 것부터 큰 것까지 세면 모두 ${answer}개입니다.`);
+      }
+      if (kind === 9) {
+        const rayCount = int(rng, 6 + level, 8 + level);
+        const horizontalCount = 3;
+        const descendingCount = level < 0 ? 2 : 3;
+        const ascendingCount = level > 0 ? 3 : 2;
+        const layoutIndex = int(rng, 0, 5);
+        const fanAnswer = rayCount * (rayCount - 1) / 2 * horizontalCount;
+        const crossingAnswer = 2 * descendingCount * ascendingCount;
+        const answer = `${fanAnswer}, ${crossingAnswer}`;
+        const evidence = triangle42Evidence("paired-line-arrays-count", [rayCount, horizontalCount, descendingCount, ascendingCount], answer);
+        return result(`(1), (2) 그림에서 선을 따라 그릴 수 있는 크고 작은 삼각형은 각각 모두 몇 개입니까? 답을 (1), (2) 순서로 쓰세요.${trianglePairedLineArraysMarkup(rayCount, horizontalCount, descendingCount, ascendingCount, layoutIndex)}${evidence}`, answer, `(1)은 꼭짓점에서 내려간 ${rayCount}개 선 중 두 선을 고르는 방법이 가로선의 ${horizontalCount}단계마다 생겨 ${rayCount * (rayCount - 1) / 2}×${horizontalCount}=${fanAnswer}개입니다. (2)는 가로선 2개, 내려가는 선 ${descendingCount}개, 올라가는 선 ${ascendingCount}개에서 하나씩 고르므로 2×${descendingCount}×${ascendingCount}=${crossingAnswer}개입니다.`);
       }
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 유형입니다.");
     },
