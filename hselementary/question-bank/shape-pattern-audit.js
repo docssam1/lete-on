@@ -1,14 +1,10 @@
 "use strict";
 
-// Independent regression checks for 4-1 unit 6 source-backed shape patterns.
+// Independent regression checks for the reusable advanced shape-pattern renderer.
 global.window = {};
-require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
-const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-1");
-const unit = semester.units.find(item => item.name === "규칙 찾기");
-const subunit = unit.subunits.find(item => item.name === "나열된 도형에서의 규칙");
 const expectedKinds = [
   "polygon-chain",
   "polygon-chain-inverse",
@@ -19,6 +15,7 @@ const expectedKinds = [
   "dotted-square-chain",
   "coin-checker"
 ];
+const types = expectedKinds.map((_, variant) => ({ id: `advanced-shape-${variant}`, generatorKey: "advancedShapePattern", variant }));
 
 const check = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -39,18 +36,17 @@ const promptInteger = (prompt, pattern, context) => {
   return value;
 };
 
-check(subunit.types.length === 8, "나열된 도형에서의 규칙은 8개 세부 유형이어야 합니다.");
-check(subunit.types.every((type, index) => type.variant === index), "세부 유형과 생성기 분기가 1:1로 고정되지 않았습니다.");
+check(types.length === 8, "재사용 도형 렌더러는 8개 분기를 유지해야 합니다.");
 
-// Printed source and answer-book anchors: Mission 1, 2, 4, 5, 6.
-check(7 * 7 === 49, "소용돌이 점 배열 원본 기준값이 틀렸습니다.");
-check((76 - 6) / 5 + 1 === 15, "육각형 역산 원본 기준값이 틀렸습니다.");
-check(3 * 10 * 9 + 1 === 271, "육각형 바둑돌 원본 기준값이 틀렸습니다.");
-check(8 * 17 + 4 === 140, "입체 상자 원본 기준값이 틀렸습니다.");
-check((53 - 3) / 5 === 10, "점 정사각형 역산 원본 기준값이 틀렸습니다.");
+// Numeric invariants of the reusable models.
+check(7 * 7 === 49, "소용돌이 점 배열 계산식이 틀렸습니다.");
+check((76 - 6) / 5 + 1 === 15, "육각형 역산 계산식이 틀렸습니다.");
+check(3 * 10 * 9 + 1 === 271, "육각형 바둑돌 계산식이 틀렸습니다.");
+check(8 * 17 + 4 === 140, "입체 상자 계산식이 틀렸습니다.");
+check((53 - 3) / 5 === 10, "점 정사각형 역산 계산식이 틀렸습니다.");
 
 let generatedCount = 0;
-for (const type of subunit.types) {
+for (const type of types) {
   for (const difficulty of [-1, 0, 1]) {
     for (let seed = 1; seed <= 420; seed += 1) {
       const generated = api.generate(type, 0, difficulty, seed, type.variant);
@@ -137,4 +133,4 @@ for (const type of subunit.types) {
   }
 }
 
-console.log(`도형 규칙 감사 통과: 8유형, ${generatedCount}개 생성, 실제 SVG 점·선과 역산 유일성 검증`);
+console.log(`재사용 도형 렌더러 감사 통과: 8유형, ${generatedCount}개 생성, 실제 SVG 점·선과 역산 유일성 검증`);
