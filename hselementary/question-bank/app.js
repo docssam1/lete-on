@@ -95,7 +95,6 @@
   const typeById = new Map(types.map(type => [type.id, type]));
   let previewPopover = null;
   let previewAnchor = null;
-  let previewHideTimer = 0;
 
   const state = {
     grade: 4,
@@ -154,7 +153,7 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
+    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
@@ -193,66 +192,69 @@
     previewPopover = document.createElement("aside");
     previewPopover.id = "typePreviewPopover";
     previewPopover.className = "type-preview-popover";
-    previewPopover.setAttribute("role", "tooltip");
+    previewPopover.setAttribute("role", "region");
+    previewPopover.setAttribute("aria-label", "선택한 유형 대표 문제 미리보기");
+    previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
-    previewPopover.addEventListener("pointerenter", () => clearTimeout(previewHideTimer));
-    previewPopover.addEventListener("pointerleave", () => hideTypePreview());
-    document.body.appendChild(previewPopover);
+    previewPopover.addEventListener("click", event => {
+      if (!event.target.closest("[data-close-type-preview]")) return;
+      const anchor = previewAnchor;
+      hideTypePreview(true);
+      anchor?.focus();
+    });
+    document.querySelector(".selection-metrics").insertAdjacentElement("beforebegin", previewPopover);
     return previewPopover;
   }
 
-  function canShowTypePreview() {
-    return matchMedia("(min-width: 1181px) and (hover: hover) and (pointer: fine)").matches;
-  }
-
-  function positionTypePreview(anchor) {
-    if (!previewPopover || previewPopover.hidden || !anchor?.isConnected) return;
-    const anchorRect = anchor.getBoundingClientRect();
-    const popupRect = previewPopover.getBoundingClientRect();
-    const gap = 12;
-    let left = anchorRect.right + gap;
-    if (left + popupRect.width > innerWidth - gap) left = anchorRect.left - popupRect.width - gap;
-    left = Math.max(gap, Math.min(left, innerWidth - popupRect.width - gap));
-    const top = Math.max(gap, Math.min(anchorRect.top, innerHeight - popupRect.height - gap));
-    previewPopover.style.right = "auto";
-    previewPopover.style.bottom = "auto";
-    previewPopover.style.left = `${left}px`;
-    previewPopover.style.top = `${top}px`;
+  function placeTypePreview(anchor, popover) {
+    if (matchMedia("(max-width: 700px)").matches) {
+      anchor.insertAdjacentElement("afterend", popover);
+      return;
+    }
+    document.querySelector(".selection-metrics").insertAdjacentElement("beforebegin", popover);
   }
 
   function showTypePreview(typeId, anchor) {
-    if (!canShowTypePreview()) {
+    if (previewAnchor === anchor && previewPopover && !previewPopover.hidden) {
       hideTypePreview(true);
       return;
     }
     const type = typeById.get(typeId);
     if (!type) return;
-    clearTimeout(previewHideTimer);
     const popover = ensurePreviewPopover();
+    if (previewAnchor) {
+      previewAnchor.classList.remove("is-previewing");
+      previewAnchor.setAttribute("aria-expanded", "false");
+    }
     previewAnchor = anchor;
+    previewAnchor.classList.add("is-previewing");
+    previewAnchor.setAttribute("aria-expanded", "true");
     const source = type.sourceItemLabel
       ? `원문 ${escapeHtml(type.sourceItemLabel)} · 교재 ${type.sourcePrintedPage}쪽`
       : `${type.grade}학년 ${type.term}학기 분류`;
     const sourceLine = `<div class="type-preview-source"><b>대표 문제</b><small>${source}</small></div>`;
+    const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
-      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
-      popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header>${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
     }
+    placeTypePreview(anchor, popover);
     popover.hidden = false;
-    requestAnimationFrame(() => positionTypePreview(anchor));
+    document.body.classList.add("is-type-preview-open");
   }
 
-  function hideTypePreview(immediate = false) {
-    clearTimeout(previewHideTimer);
-    const close = () => {
-      if (previewPopover) previewPopover.hidden = true;
-      previewAnchor = null;
-    };
-    if (immediate) close(); else previewHideTimer = setTimeout(close, 100);
+  function hideTypePreview() {
+    if (previewPopover) previewPopover.hidden = true;
+    if (previewAnchor) {
+      previewAnchor.classList.remove("is-previewing");
+      previewAnchor.setAttribute("aria-expanded", "false");
+    }
+    previewAnchor = null;
+    document.body.classList.remove("is-type-preview-open");
   }
 
   function renderSummary() {
@@ -406,23 +408,19 @@
     if (state.collapsedUnits.has(unitId)) state.collapsedUnits.delete(unitId); else state.collapsedUnits.add(unitId);
     renderCatalog();
   });
-  $("typeList").addEventListener("pointerover", event => {
+  $("typeList").addEventListener("click", event => {
+    if (event.target.closest("#typePreviewPopover") || event.target.closest("input[data-type-id]")) return;
     const row = event.target.closest("[data-preview-type-id]");
-    if (!row || row.contains(event.relatedTarget)) return;
+    if (!row) return;
+    event.preventDefault();
     showTypePreview(row.dataset.previewTypeId, row);
   });
-  $("typeList").addEventListener("pointerout", event => {
+  $("typeList").addEventListener("keydown", event => {
+    if (!['Enter', ' '].includes(event.key) || event.target.matches("input[data-type-id]")) return;
     const row = event.target.closest("[data-preview-type-id]");
-    if (!row || row.contains(event.relatedTarget)) return;
-    hideTypePreview();
-  });
-  $("typeList").addEventListener("focusin", event => {
-    const row = event.target.closest("[data-preview-type-id]");
-    if (row) showTypePreview(row.dataset.previewTypeId, row);
-  });
-  $("typeList").addEventListener("focusout", event => {
-    const row = event.target.closest("[data-preview-type-id]");
-    if (row && !row.contains(event.relatedTarget)) hideTypePreview();
+    if (!row) return;
+    event.preventDefault();
+    showTypePreview(row.dataset.previewTypeId, row);
   });
   $("typeList").addEventListener("change", event => {
     const input = event.target.closest("input[data-type-id]");
@@ -451,11 +449,6 @@
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
   $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
-  addEventListener("resize", () => {
-    if (!canShowTypePreview()) hideTypePreview(true);
-    else positionTypePreview(previewAnchor);
-  });
-  addEventListener("scroll", () => hideTypePreview(true), true);
   addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
   const params = new URLSearchParams(location.search);
@@ -485,6 +478,7 @@
     refreshSegments("gradeFilter", "grade", state.grade);
     refreshSegments("termFilter", "term", state.term);
   }
+  ensurePreviewPopover();
   renderUnitOptions();
   renderCatalog();
   if (reviewType?.generator && !reviewType.reviewLocked && params.get("review") === "1") buildQuestions();
