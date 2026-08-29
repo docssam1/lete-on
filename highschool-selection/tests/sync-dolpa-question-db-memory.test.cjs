@@ -71,6 +71,23 @@ test("중2-2 3회 시험지 검수 자료를 기존 중2-2와 다른 ID로 연�
   assert.equal(info.recordId, "dp.m22-r3.method-review.20260829");
 });
 
+test("중2-2S 2회 시험지 검수 자료를 다른 중2-2 원본과 구분한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m22s-r2-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const reviewPath = path.join(root, "dolpa-method-review-dp-m22s-202404-r2-v1.json");
+  const paperPath = path.join(root, "dolpa-paper-review-dp-m22s-202404-r2-v1.json");
+  for (const filePath of [manifestPath, reviewPath, paperPath]) {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-5CD3016EB886" }));
+  }
+  const info = methodReviewInfo(manifestPath, reviewPath, null, paperPath);
+  assert.equal(info.key, "m22s-r2");
+  assert.equal(info.label, "중2-2S 2회");
+  assert.equal(info.pageSourceId, "dp-m22s-r2-page-assets-v1");
+  assert.equal(info.methodSourceId, "dp-m22s-r2-method-review-v1");
+  assert.equal(info.paperSourceId, "dp-m22s-r2-paper-review-v1");
+  assert.equal(info.recordId, "dp.m22s-r2.method-review.20260829");
+});
+
 test("2-1A 분류 교정표는 원본 페이지·풀이표와 같은 sourceId만 허용한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-classification-memory-m21a-"));
   const manifestPath = path.join(root, "manifest.json");
