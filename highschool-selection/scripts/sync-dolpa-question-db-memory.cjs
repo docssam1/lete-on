@@ -58,6 +58,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-4DD63CE397A7": { key: "m22-month2-r2", label: "중2-2 2회(둘째달 구판)", tags: ["middle2-2", "legacy", "mixed-range"] },
     "DP-SRC-4C3B6B20CEAE": { key: "m22-month3-r3", label: "중2-2 3회(셋째달 터보·심화반 구판)", tags: ["middle2-2", "legacy", "advanced", "mixed-range"] },
     "DP-SRC-56FCB4548C39": { key: "m22-month4-r4", label: "중2-2 4회(넷째달 구판)", tags: ["middle2-2", "legacy", "mixed-range"] },
+    "DP-SRC-85C1F44F1F24": { key: "m21a-202403-r1", label: "2-1A 1회(2024년 3월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
