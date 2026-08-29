@@ -1,7 +1,7 @@
 import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260829a";
 import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260827d";
+import { book01Markup } from "./book01-renderers.js?v=20260829e";
 import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
