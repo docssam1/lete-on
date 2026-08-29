@@ -164,6 +164,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
+  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 4);
+  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /Polynomial & rational functions[\s\S]*Statistics, probability & modeling/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "#availability");
   assert.match(await page.locator("#course-sequence-note").innerText(), /학교가 설정/);
 
