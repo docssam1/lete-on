@@ -279,6 +279,23 @@ function ansTex(p){
     const [w,n,d]=p.answer;
     return `${w}\\dfrac{${n}}{${d}}`;
   }
+  /* 분모의 유리화(MD18) — 답은 [근호 안 수, 분모]다. 예전엔 'fraction'으로 표시돼
+     있어 정답지가 `71/71`로 찍혔다(실제 답은 √71/71). 71/71은 1로 읽히니
+     교사가 채점할 수 없는 정답지였다. 2026-08-29. */
+  if(p.answerShape==='radicalFraction'){
+    const [rad,d]=p.answer;
+    return `\\dfrac{\\sqrt{${rad}}}{${d}}`;
+  }
+  /* 계수√근호(MD39 등) — 답은 [계수, 근호 안 수]. "3, 3"보다 3√3이 읽기 쉽다. */
+  if(p.answerShape==='coeffRadical'){
+    const [c,rad]=p.answer;
+    return `${c === 1 ? '' : c}\\sqrt{${rad}}`;
+  }
+  /* 계수√근호/분모(MD39 fracRoot) — [계수, 근호 안 수, 분모] */
+  if(p.answerShape==='coeffRadicalFraction'){
+    const [c,rad,d]=p.answer;
+    return `\\dfrac{${c === 1 ? '' : c}\\sqrt{${rad}}}{${d}}`;
+  }
   return null;
 }
 /* 정답 셀 HTML — answerShape면 KaTeX용 <span data-tex>, 아니면 기존 텍스트.
