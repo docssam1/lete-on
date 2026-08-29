@@ -13,7 +13,7 @@ const FORBIDDEN_KEYS = new Set([
   "content", "rawtext", "fulltext", "excerpt", "pageimage", "base64", "blob", "binary"
 ]);
 const PRIVATE_LOCATION_PATTERN = /(?:\b[a-z]:[\\/]|\\\\|file:\/\/|https?:\/\/|\/(?:Users|home|mnt)\/)/i;
-const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|[1-9]\d*-\([1-9]\d*\)|개념탐구 [1-9]\d*(?:-\([1-9]\d*\))?|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
 const CANONICAL_PROGRAM_MODES = Object.freeze([...core.PROGRAM_MODES].sort());
 const MANUAL_REVIEW_RESOLUTIONS = new Set([
   "verified_manual_items",
@@ -450,7 +450,7 @@ function validateManualReviews(candidate, sourceByRef, errors) {
   }
 }
 
-function audit(candidate, predecessor) {
+function audit(candidate, predecessor, locatorRebuildQueue = null) {
   const errors = [];
   const ids = new Set();
   const slots = new Set();
@@ -691,7 +691,23 @@ function audit(candidate, predecessor) {
       const predecessorQueueMatches = predecessorPendingMatches.length > 0
         ? predecessorPendingMatches
         : predecessorLayoutFallbackMatches;
-      if (predecessorQueueMatches.length !== 1) {
+      const predecessorPageItems = (predecessor.items || []).filter(item =>
+        item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+      ).sort((left, right) => left.locator.slot - right.locator.slot);
+      const expectedRejectedIds = predecessorPageItems.map(item => item.id);
+      const trustedRebuildMatches = locatorRebuildQueue &&
+        locatorRebuildQueue.sourceBankId === "HWANGSO-MIDDLE" && Array.isArray(locatorRebuildQueue.groups)
+        ? locatorRebuildQueue.groups.filter(group =>
+          group.sourceMemoryId === review.privateSourceMemoryId && group.sourceRef === review.sourceRef &&
+          group.page === review.page && group.status === "decision_pending" &&
+          Array.isArray(group.candidates) && group.candidates.length > 0
+        )
+        : [];
+      const trustedRebuild = trustedRebuildMatches.length === 1 &&
+        trustedRebuildMatches[0].candidates.every(candidateEntry =>
+          expectedRejectedIds.includes(candidateEntry.sourceItemId)
+        );
+      if (predecessorQueueMatches.length !== 1 && !trustedRebuild) {
         errors.push(`manual replacement predecessor queue mismatch: ${key}`);
       }
       const predecessorPageReviews = (predecessor.visualReviewPages || []).filter(entry =>
@@ -700,10 +716,6 @@ function audit(candidate, predecessor) {
       if (predecessorPageReviews.length > 0) {
         errors.push(`manual replacement predecessor page already reviewed: ${key}`);
       }
-      const predecessorPageItems = (predecessor.items || []).filter(item =>
-        item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
-      ).sort((left, right) => left.locator.slot - right.locator.slot);
-      const expectedRejectedIds = predecessorPageItems.map(item => item.id);
       if (JSON.stringify(review.rejectedCandidateIds) !== JSON.stringify(expectedRejectedIds)) {
         errors.push(`manual replacement predecessor registry mismatch: ${key}`);
       }
@@ -827,13 +839,15 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   const at = args.indexOf("--index");
   const predecessorAt = args.indexOf("--predecessor");
+  const rebuildQueueAt = args.indexOf("--locator-rebuild-queue");
   if (at < 0 || !args[at + 1]) {
-    process.stderr.write("Usage: node audit-private-question-index.cjs --index <index.json> [--predecessor <v1.json>]\n");
+    process.stderr.write("Usage: node audit-private-question-index.cjs --index <index.json> [--predecessor <v1.json>] [--locator-rebuild-queue <queue.json>]\n");
     process.exit(1);
   }
   const result = audit(
     readJson(path.resolve(args[at + 1])),
-    predecessorAt >= 0 && args[predecessorAt + 1] ? readJson(path.resolve(args[predecessorAt + 1])) : null
+    predecessorAt >= 0 && args[predecessorAt + 1] ? readJson(path.resolve(args[predecessorAt + 1])) : null,
+    rebuildQueueAt >= 0 && args[rebuildQueueAt + 1] ? readJson(path.resolve(args[rebuildQueueAt + 1])) : null
   );
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   if (!result.ok) process.exit(1);

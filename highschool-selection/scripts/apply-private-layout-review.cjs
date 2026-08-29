@@ -6,7 +6,7 @@ const path = require("node:path");
 const core = require("../data/question-bank-core.js");
 const itemIndex = require("../data/question-item-index.js");
 
-const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|[1-9]\d*-\([1-9]\d*\)|개념탐구 [1-9]\d*(?:-\([1-9]\d*\))?|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
 const MANUAL_REVIEW_RESOLUTIONS = new Set([
   "verified_manual_items",
   "verified_manual_items_replacing_candidates"

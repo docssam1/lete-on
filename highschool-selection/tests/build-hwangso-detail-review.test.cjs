@@ -138,3 +138,26 @@ test("같은 묶음에서 한 문항을 검수 완료와 위치 재작업으로 
   conflict.deferred = deferredPacket("Q1").deferred;
   assert.throws(() => builder.buildReview(curriculum(), [conflict]), /완료와 위치 재작업/);
 });
+
+test("새 인덱스를 함께 주면 격리된 예전 문항은 건너뛰고 활성 문항만 합친다", () => {
+  const unitReviews = curriculum();
+  const oldPacket = packet();
+  const newPacket = packet();
+  newPacket.sources[0].itemReviews[0] = {
+    ...newPacket.sources[0].itemReviews[0],
+    sourceItemId: "Q2",
+    detailType: "새 문항 유형"
+  };
+  const questionIndex = {
+    items: [
+      { id: "Q1", releaseStatus: "locked", discoveryStatus: "ocr_candidate" },
+      { id: "Q2", releaseStatus: "locked", discoveryStatus: "visual_verified" },
+      { id: "Q3", releaseStatus: "locked", discoveryStatus: "visual_verified" }
+    ],
+    rejectedCandidates: [{ id: "Q1" }]
+  };
+  const output = builder.buildReview(unitReviews, [oldPacket, newPacket], questionIndex);
+  assert.equal(output.reviews.length, 2);
+  assert.equal(output.reviews.find(review => review.sourceItemId === "Q2").detailType, "새 문항 유형");
+  assert.equal(output.reviews.some(review => review.sourceItemId === "Q1"), false);
+});

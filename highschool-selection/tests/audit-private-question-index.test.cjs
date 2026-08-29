@@ -684,6 +684,32 @@ test("private index audit proves a new replacement was eligible in its predecess
   assert.match(rejected.errors.join("\n"), /predecessor candidate already rejected/);
 });
 
+test("private index audit accepts an exact locator rebuild queue binding", () => {
+  const built = manualReplacementFixture();
+  built.predecessor.unresolvedPages = [];
+  built.predecessor.counts.unresolvedPages = 0;
+  const reviewPage = built.candidate.visualReviewPages.find(entry =>
+    entry.resolution === "verified_manual_items_replacing_candidates"
+  );
+  const queue = {
+    sourceBankId: "HWANGSO-MIDDLE",
+    groups: [{
+      sourceMemoryId: reviewPage.privateSourceMemoryId,
+      sourceRef: reviewPage.sourceRef,
+      page: reviewPage.page,
+      status: "decision_pending",
+      candidates: [{ sourceItemId: reviewPage.rejectedCandidateIds[0] }]
+    }]
+  };
+  const accepted = auditor.audit(built.candidate, built.predecessor, queue);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+
+  queue.groups[0].candidates[0].sourceItemId = "not-a-page-item";
+  const rejected = auditor.audit(built.candidate, built.predecessor, queue);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor queue mismatch/);
+});
+
 test("private index audit accepts a pending candidate-full layout predecessor fallback", () => {
   const built = manualReplacementFixture();
   built.predecessor.unresolvedPages = [];

@@ -24,6 +24,18 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
 }
 
+function activeAndRejectedIds(index) {
+  if (!index) return null;
+  const rejectedIds = new Set((index.rejectedCandidates || []).map(item => typeof item === "string" ? item : item.id));
+  const declaredActive = new Set((index.activeQuestionCandidates || []).map(item => typeof item === "string" ? item : item.id));
+  const activeIds = declaredActive.size
+    ? declaredActive
+    : new Set((index.items || []).filter(item =>
+      item.releaseStatus === "locked" && !rejectedIds.has(item.id) && item.discoveryStatus !== "rejected"
+    ).map(item => item.id));
+  return { activeIds, rejectedIds };
+}
+
 function validatePacket(packet) {
   const issues = [];
   if (!packet || packet.schemaVersion !== 1 || !Array.isArray(packet.sources)) return ["packet.shape"];
@@ -55,11 +67,19 @@ function validatePacket(packet) {
   return Array.from(new Set(issues)).sort();
 }
 
-function buildReview(curriculumReviews, packets) {
+function buildReview(curriculumReviews, packets, questionIndex = null) {
   if (!curriculumReviews || curriculumReviews.sourceBankId !== "HWANGSO-MIDDLE" || !Array.isArray(curriculumReviews.reviews)) {
     throw new Error("황소 단원 검수표를 확인해 주세요.");
   }
-  const curriculumByItemId = new Map(curriculumReviews.reviews.map(review => [review.sourceItemId, review]));
+  const itemState = activeAndRejectedIds(questionIndex);
+  const activeCurriculumReviews = itemState
+    ? curriculumReviews.reviews.filter(review => itemState.activeIds.has(review.sourceItemId))
+    : curriculumReviews.reviews;
+  const curriculumByItemId = new Map(activeCurriculumReviews.map(review => [review.sourceItemId, review]));
+  if (itemState) {
+    const missingCurriculumIds = Array.from(itemState.activeIds).filter(id => !curriculumByItemId.has(id));
+    if (missingCurriculumIds.length) throw new Error(`황소 활성 문항의 단원 검수표가 없습니다: ${missingCurriculumIds.join(", ")}`);
+  }
   const detailByItemId = new Map();
   const deferredByItemId = new Map();
 
@@ -70,6 +90,10 @@ function buildReview(curriculumReviews, packets) {
     packet.sources.forEach(source => {
       source.itemReviews.forEach(review => {
         const itemId = clean(review.sourceItemId);
+        if (itemState && !itemState.activeIds.has(itemId)) {
+          if (!itemState.rejectedIds.has(itemId)) throw new Error(`황소 세부 검수 문항이 현재 인덱스에 없습니다: ${itemId}`);
+          return;
+        }
         packetReviewIds.add(itemId);
         if (detailByItemId.has(itemId)) throw new Error(`황소 문항을 두 번 세부 검수했습니다: ${itemId}`);
         const curriculum = curriculumByItemId.get(itemId);
@@ -84,6 +108,10 @@ function buildReview(curriculumReviews, packets) {
     });
     (packet.deferred || []).forEach(deferred => {
       const itemId = clean(deferred.sourceItemId);
+      if (itemState && !itemState.activeIds.has(itemId)) {
+        if (!itemState.rejectedIds.has(itemId)) throw new Error(`황소 보류 문항이 현재 인덱스에 없습니다: ${itemId}`);
+        return;
+      }
       if (packetReviewIds.has(itemId)) throw new Error(`같은 검수 묶음에서 완료와 위치 재작업을 함께 기록할 수 없습니다: ${itemId}`);
       if (detailByItemId.has(itemId)) return;
       const curriculum = curriculumByItemId.get(itemId);
@@ -95,7 +123,7 @@ function buildReview(curriculumReviews, packets) {
     });
   });
 
-  const reviews = curriculumReviews.reviews.map(curriculum => {
+  const reviews = activeCurriculumReviews.map(curriculum => {
     const matched = detailByItemId.get(curriculum.sourceItemId);
     if (!matched) {
       const deferred = deferredByItemId.get(curriculum.sourceItemId);
@@ -149,7 +177,8 @@ function loadConfig(config) {
   }
   return {
     curriculumReviews: readJson(config.curriculumReviews),
-    packets: config.packets.map(readJson)
+    packets: config.packets.map(readJson),
+    questionIndex: clean(config.questionIndex) ? readJson(config.questionIndex) : null
   };
 }
 
@@ -157,12 +186,12 @@ function main(args) {
   if (args.length < 2) throw new Error("사용법: node build-hwangso-detail-review.cjs <설정.json> <출력.json> 또는 <단원검수표.json> <출력.json> <세부검수1.json> [세부검수2.json ...]");
   const inputs = args.length === 2
     ? loadConfig(readJson(args[0]))
-    : { curriculumReviews: readJson(args[0]), packets: args.slice(2).map(readJson) };
-  const output = buildReview(inputs.curriculumReviews, inputs.packets);
+    : { curriculumReviews: readJson(args[0]), packets: args.slice(2).map(readJson), questionIndex: null };
+  const output = buildReview(inputs.curriculumReviews, inputs.packets, inputs.questionIndex);
   fs.mkdirSync(path.dirname(path.resolve(args[1])), { recursive: true });
   fs.writeFileSync(path.resolve(args[1]), `${JSON.stringify(output, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify(output.summary)}\n`);
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, SAFE_SOURCE_KEYS, SAFE_DEFERRED_KEYS, validatePacket, buildReview, loadConfig });
+module.exports = Object.freeze({ SAFE_ITEM_REVIEW_KEYS, SAFE_SOURCE_KEYS, SAFE_DEFERRED_KEYS, activeAndRejectedIds, validatePacket, buildReview, loadConfig });
