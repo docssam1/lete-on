@@ -411,7 +411,7 @@
           sourceItem42("그림 사이의 같은 간격 구하기", 0, "4-2-decimal-1-mission-4", 26, 31),
           sourceItem42("일정하게 타는 양초의 남은 시간", 0, "4-2-decimal-1-mission-5", 26, 31),
           sourceItem42("원형 길에서 두 사람이 걸은 거리 차", 1, "4-2-decimal-1-mission-6", 26, 31),
-          sourceItem42("기준 무게의 10배 역산", 0, "4-2-decimal-1-exploration", 25, 30, true),
+          sourceItem42("기준 무게에서 10배의 몸무게 거꾸로 구하기", 0, "4-2-decimal-1-exploration", 25, 30),
           sourceItem42("복명수와 소수의 단위 환산", -1, "4-2-decimal-1-example-1", 25, 30, true),
           sourceItem42("두 소수 사이의 가장 작은·큰 소수", 0, "4-2-decimal-1-example-2", 25, 30, true),
           sourceItem42("도형을 움직인 수직선의 위치", 0, "4-2-decimal-1-example-3", 25, 30, true),

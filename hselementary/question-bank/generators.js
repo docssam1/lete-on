@@ -12717,7 +12717,7 @@
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 정삼각형 유형입니다.");
     },
     decimalUnderstanding({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       if (kind === 0) {
         const target = int(rng, 18, 27) * 100;
         const offsets = shuffle(rng, [-211, -143, -76, 39, 108, 187]).slice(0, 5 + level);
@@ -12764,14 +12764,26 @@
         const evidence = decimal42Evidence("candle-remaining-time", [initial, remaining, elapsed], answer);
         return result(`길이가 ${fixedDecimal(initial, 2)}cm인 양초에 불을 붙이고 ${elapsed}분 뒤 길이를 재었더니 ${fixedDecimal(remaining, 2)}cm였습니다. 같은 빠르기로 탈 때 남은 양초가 모두 타는 데 걸리는 시간을 구하세요.${evidence}`, answer, `${elapsed}분 동안 ${fixedDecimal(initial - remaining, 2)}cm가 타므로 1분에 ${fixedDecimal(burnPerMinute, 2)}cm씩 탑니다. 남은 시간을 계산하면 ${answer}입니다.`);
       }
-      const circumferenceKm = int(rng, 1, 2 + level);
-      const firstStride = int(rng, 390, 470);
-      const secondStride = 1000 - firstStride;
-      const steps = circumferenceKm * 1000;
-      const differenceScaled = steps * Math.abs(firstStride - secondStride);
-      const answer = plainDecimal(differenceScaled, 6);
-      const evidence = decimal42Evidence("opposite-walk-distance", [circumferenceKm, firstStride, secondStride], answer);
-      return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 서로 반대편에서 두 사람이 동시에 출발해 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${answer}km입니다.`);
+      if (kind === 5) {
+        const circumferenceKm = int(rng, 1, 2 + level);
+        const firstStride = int(rng, 390, 470);
+        const secondStride = 1000 - firstStride;
+        const steps = circumferenceKm * 1000;
+        const differenceScaled = steps * Math.abs(firstStride - secondStride);
+        const answer = plainDecimal(differenceScaled, 6);
+        const evidence = decimal42Evidence("opposite-walk-distance", [circumferenceKm, firstStride, secondStride], answer);
+        return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 서로 반대편에서 두 사람이 동시에 출발해 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${answer}km입니다.`);
+      }
+      if (kind === 6) {
+        const bonusChoices = level === 0 ? [50] : level === 1 ? [30, 50, 70] : [20, 30, 50, 70, 80];
+        const fatherWeightGrams = int(rng, 4500, 8500) * 10;
+        const bonusGrams = pick(rng, bonusChoices);
+        const objectWeightGrams = fatherWeightGrams / 10 + bonusGrams;
+        const answer = plainDecimal(fatherWeightGrams, 2);
+        const evidence = decimal42Evidence("tenfold-weight-reverse", [objectWeightGrams, bonusGrams], answer);
+        return result(`아버지 몸무게의 ${fractionMarkup(1, 10)}보다 ${bonusGrams}g 무거운 물건의 무게는 ${plainDecimal(objectWeightGrams, 3)}kg입니다. 아버지 몸무게의 10배는 몇 kg입니까?${evidence}`, answer, `물건의 무게는 ${objectWeightGrams}g입니다. 아버지 몸무게의 ${fractionMarkup(1, 10)}은 ${objectWeightGrams}-${bonusGrams}=${objectWeightGrams - bonusGrams}g입니다. 아버지의 몸무게는 ${(objectWeightGrams - bonusGrams) * 10}g=${plainDecimal(fatherWeightGrams, 3)}kg이고, 그 10배는 ${answer}kg입니다.`);
+      }
+      throw new Error("원본 조건과 독립 검산이 끝나지 않은 소수의 이해 유형입니다.");
     },
     decimalAddSubAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;

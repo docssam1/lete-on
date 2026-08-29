@@ -42,6 +42,9 @@ const reviewedTriangleIds = new Set([
   "4-2-triangle-4-example-3",
   "4-2-triangle-4-example-4"
 ]);
+const reviewedDecimalIds = new Set([
+  "4-2-decimal-1-exploration"
+]);
 
 function check(condition, message) {
   if (!condition) failures.push(message);
@@ -67,7 +70,7 @@ for (const unit of targetUnits) {
       variants.push(type.variant);
       const shouldBePublic = unit.name === "삼각형"
         ? reviewedTriangleIds.has(type.sourceItemId)
-        : type.sourceSection === "mission";
+        : type.sourceSection === "mission" || reviewedDecimalIds.has(type.sourceItemId);
       if (shouldBePublic) {
         check(!type.reviewLocked, `${type.id}: 원문 일치 검산 완료 유형이 잠겨 있습니다.`);
         const generated = window.HSE_GENERATORS.generate({
@@ -91,6 +94,7 @@ for (const unit of targetUnits) {
 
 check(sourceIds.size === 88, `원문 문항 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
 check(reviewedTriangleIds.size === 32, "삼각형 공개 허용 원문은 32개여야 합니다.");
+check(reviewedDecimalIds.size === 1, "소수 공개 허용 개념탐구는 1개여야 합니다.");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);
