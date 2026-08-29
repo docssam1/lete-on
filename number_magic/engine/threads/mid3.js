@@ -235,7 +235,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
         zh: `要去掉分母的根号，就把分子分母同乘一个相同的根号`
       },
       tex: `\\dfrac{1}{\\sqrt{${n}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
-      answer: [n, n], answerShape: 'fraction', answerType: 'number', widget: 'numpad'
+      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
     };
   }
 
@@ -249,7 +249,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
         zh: `分子有系数也一样——把分母的根号乘到分子分母上`
       },
       tex: `\\dfrac{${c}}{\\sqrt{${n}}} = \\dfrac{${c}\\sqrt{\\square}}{\\square}`,
-      answer: [n, n], answerShape: 'fraction', answerType: 'number', widget: 'numpad'
+      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
     };
   }
 
@@ -263,7 +263,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
       zh: `先化简分母的根号(√${N}=${a}√${b})，再用√${b}乘分子分母进行有理化`
     },
     tex: `\\dfrac{1}{\\sqrt{${N}}} = \\dfrac{1}{${a}\\sqrt{${b}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
-    answer: [b, a * b], answerShape: 'fraction', answerType: 'number', widget: 'numpad'
+    answer: [b, a * b], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
   };
 };
 
