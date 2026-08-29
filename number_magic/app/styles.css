@@ -1393,7 +1393,20 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 
 /* 진단하기 (nm-dg-*) */
 .nm-dg-step{font-size:11.5px;font-weight:800;color:var(--sub);text-align:center;margin-bottom:4px}
-.nm-dg-retry{font-size:12px;font-weight:800;color:var(--gold-deep);text-align:center;margin:4px 0}
+.nm-dg-ask{font-size:12.5px;font-weight:700;color:var(--sub);line-height:1.6;margin:0 0 12px;word-break:keep-all}
+.nm-dg-ages{display:flex;flex-direction:column;gap:8px;text-align:left}
+.nm-dg-age{display:flex;align-items:center;gap:11px;width:100%;padding:11px 13px;
+  border:1.5px solid var(--line);background:#fff;border-radius:14px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;text-align:left}
+.nm-dg-age:hover{background:var(--mist);border-color:var(--blue)}
+.nm-dg-age:active{transform:scale(.98)}
+.nm-dg-age:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-dg-age-ico{font-size:22px;line-height:1;flex:none}
+.nm-dg-age-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nm-dg-age-txt b{font-size:14.5px;font-weight:900;color:var(--blue-deep);word-break:keep-all}
+.nm-dg-age-txt small{font-size:11.5px;font-weight:700;color:var(--sub);word-break:keep-all}
+.nm-dg-agenote{font-size:12px;font-weight:800;color:var(--sub);margin:2px 0 6px}
+.nm-dg-again:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .nm-dg-course{font-size:19px;font-weight:900;color:var(--blue-deep);margin:4px 0 2px}
 .nm-dg-tier{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px}
 .nm-dg-free{font-size:11.5px;font-weight:700;color:var(--sub);line-height:1.55;margin:6px 0 10px;word-break:keep-all}
