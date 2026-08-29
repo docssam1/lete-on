@@ -2362,6 +2362,40 @@
     }
     return count;
   };
+  const trianglePentagramModel = rotation => {
+    const points = Array.from({ length: 5 }, (_, index) => {
+      const angle = (-90 + rotation + index * 72) * Math.PI / 180;
+      return [120 + 82 * Math.cos(angle), 98 + 82 * Math.sin(angle)];
+    });
+    return { points, segments: [[0, 2], [2, 4], [4, 1], [1, 3], [3, 0]] };
+  };
+  const triangleSegmentGraphAngleCounts = ({ points, segments }) => {
+    const epsilon = 1e-7;
+    const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+    const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+    const vertices = points.map(point => [...point]);
+    const addVertex = point => { if (!vertices.some(existing => Math.hypot(existing[0] - point[0], existing[1] - point[1]) < epsilon)) vertices.push(point); };
+    for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+      const [a, b] = segments[first].map(index => points[index]);
+      const [c, d] = segments[second].map(index => points[index]);
+      const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+      if (Math.abs(denominator) < epsilon) continue;
+      const ab = a[0] * b[1] - a[1] * b[0];
+      const cd = c[0] * d[1] - c[1] * d[0];
+      const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+      if (within(point, a, b) && within(point, c, d)) addVertex(point);
+    }
+    const liesOnSegment = (point, [first, second]) => Math.abs(cross(points[first], points[second], point)) < epsilon && within(point, points[first], points[second]);
+    const connected = (first, second) => segments.some(segment => liesOnSegment(first, segment) && liesOnSegment(second, segment));
+    const totals = { acute: 0, right: 0, obtuse: 0 };
+    for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+      if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) < epsilon || !connected(vertices[first], vertices[second]) || !connected(vertices[second], vertices[third]) || !connected(vertices[third], vertices[first])) continue;
+      const squared = [[first, second], [second, third], [third, first]].map(([a, b]) => (vertices[a][0] - vertices[b][0]) ** 2 + (vertices[a][1] - vertices[b][1]) ** 2).sort((a, b) => a - b);
+      totals[Math.abs(squared[0] + squared[1] - squared[2]) < epsilon ? "right" : squared[0] + squared[1] > squared[2] ? "acute" : "obtuse"] += 1;
+    }
+    return totals;
+  };
+  const trianglePentagramSvg = model => `<svg class="geometry-diagram triangle-pentagram-source" viewBox="0 0 240 196" data-points="${model.points.map(point => point.map(value => value.toFixed(2)).join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="다섯 선분이 서로 교차하는 별 모양"><g>${model.segments.map(([first, second]) => `<line x1="${model.points[first][0].toFixed(2)}" y1="${model.points[first][1].toFixed(2)}" x2="${model.points[second][0].toFixed(2)}" y2="${model.points[second][1].toFixed(2)}"/>`).join("")}</g></svg>`;
   const triangleCrossingSvg = model => {
     const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
     return `<svg class="geometry-diagram triangle-crossing-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="여러 삼각형의 선이 서로 교차하는 도형"><g>${lines}</g></svg>`;
@@ -12188,12 +12222,11 @@
         [[0, 0], [2, 0], [4, 0], [1, 2], [3, 2], [2, 4], [5, 3]]
       ];
       if (kind === 1) {
-        const points = pointSets[0];
-        const totals = trianglePointCounts(points);
+        const model = trianglePentagramModel(int(rng, -12, 12));
+        const totals = triangleSegmentGraphAngleCounts(model);
         const answer = `${totals.acute}, ${totals.obtuse}`;
-        const starLines = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]];
-        const evidence = triangle42Evidence("star-angle-count", [points, -1, "acute-obtuse"], answer);
-        return result(`별 모양의 다섯 꼭짓점 중 세 점을 골라 삼각형을 만듭니다. 예각삼각형과 둔각삼각형의 개수를 차례로 구하세요.${trianglePointBoardSvg(points, -1, starLines)}${evidence}`, answer, `세 점을 고르는 모든 경우를 그려 보고 가장 큰 각이 직각보다 작은지 큰지 확인하면 예각 ${totals.acute}개, 둔각 ${totals.obtuse}개입니다.`);
+        const evidence = triangle42Evidence("pentagram-angle-count", [5], answer);
+        return result(`별 모양의 선을 따라 찾을 수 있는 크고 작은 예각삼각형과 둔각삼각형은 각각 몇 개입니까? 답을 예각삼각형, 둔각삼각형 순서로 쓰세요.${trianglePentagramSvg(model)}${evidence}`, answer, `별의 바깥 꼭짓점에 있는 작은 삼각형부터 큰 삼각형까지 선을 따라 빠짐없이 분류하면 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개입니다.`);
       }
       if (kind === 2) {
         const templates = [
@@ -12241,6 +12274,13 @@
         const answer = signatures.size;
         const evidence = triangle42Evidence("obtuse-dot-shape-classes", [columns, rows], answer);
         return result(`가로 ${columns}개, 세로 ${rows}개로 같은 간격으로 놓인 점 중 세 점을 이어 둔각삼각형을 만듭니다. 돌리거나 뒤집어서 같아지는 모양은 하나로 셀 때, 서로 다른 둔각삼각형은 모두 몇 가지입니까?${trianglePlainDotBoardSvg(columns, rows, spacing)}${evidence}`, answer, `점 세 개를 이은 뒤, 세 변의 길이가 같은 모양끼리 하나로 묶습니다. 직각삼각형과 예각삼각형을 빼고 남는 서로 다른 둔각삼각형은 모두 ${answer}가지입니다.`);
+      }
+      if (kind === 8) {
+        const model = trianglePentagramModel(int(rng, -12, 12));
+        const totals = triangleSegmentGraphAngleCounts(model);
+        const answer = `${totals.acute}, ${totals.obtuse}`;
+        const evidence = triangle42Evidence("pentagram-angle-count", [5], answer);
+        return result(`다음 별 모양의 선을 따라 만들 수 있는 크고 작은 삼각형을 모두 찾습니다. 예각삼각형과 둔각삼각형의 개수를 차례로 쓰세요.${trianglePentagramSvg(model)}${evidence}`, answer, `선이 만나는 점도 꼭짓점으로 보고 작은 삼각형과 큰 삼각형을 분류하면 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개입니다.`);
       }
       if (kind === 10) {
         const templates = [

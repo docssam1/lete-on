@@ -20,7 +20,9 @@ const publicSourceIds = new Set([
   "4-2-triangle-1-example-2",
   "4-2-triangle-1-example-3",
   "4-2-triangle-2-exploration",
+  "4-2-triangle-2-mission-2",
   "4-2-triangle-2-mission-3",
+  "4-2-triangle-2-example-2",
   "4-2-triangle-2-example-4",
   "4-2-triangle-4-mission-1"
 ]);
@@ -68,6 +70,38 @@ const obtuseAnglePairCount = angles => {
 };
 check(obtuseAnglePairCount([15, 25, 45, 65, 95, 145]) === 10, "예제 2-4 원문 여섯 각에서 둔각삼각형을 만드는 방법은 10가지여야 합니다.");
 check(obtuseAnglePairCount([20, 35, 40, 70, 100, 135]) === 10, "Mission 3 원문 여섯 각에서 둔각삼각형을 만드는 방법은 10가지여야 합니다.");
+const pentagramAngleCounts = () => {
+  const epsilon = 1e-8;
+  const points = Array.from({ length: 5 }, (_, index) => {
+    const angle = (-90 + index * 72) * Math.PI / 180;
+    return [Math.cos(angle), Math.sin(angle)];
+  });
+  const segments = [[0, 2], [2, 4], [4, 1], [1, 3], [3, 0]];
+  const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+  const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+  const vertices = points.map(point => [...point]);
+  const add = point => { if (!vertices.some(existing => Math.hypot(existing[0] - point[0], existing[1] - point[1]) < epsilon)) vertices.push(point); };
+  for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+    const [a, b] = segments[first].map(index => points[index]);
+    const [c, d] = segments[second].map(index => points[index]);
+    const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+    if (Math.abs(denominator) < epsilon) continue;
+    const ab = a[0] * b[1] - a[1] * b[0];
+    const cd = c[0] * d[1] - c[1] * d[0];
+    const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+    if (within(point, a, b) && within(point, c, d)) add(point);
+  }
+  const connected = (first, second) => segments.some(([a, b]) => Math.abs(cross(points[a], points[b], first)) < epsilon && Math.abs(cross(points[a], points[b], second)) < epsilon && within(first, points[a], points[b]) && within(second, points[a], points[b]));
+  const totals = { acute: 0, right: 0, obtuse: 0 };
+  for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+    if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) < epsilon || !connected(vertices[first], vertices[second]) || !connected(vertices[second], vertices[third]) || !connected(vertices[third], vertices[first])) continue;
+    const kind = pointKind(vertices[first], vertices[second], vertices[third]);
+    totals[kind] += 1;
+  }
+  return totals;
+};
+const sourcePentagramTotals = pentagramAngleCounts();
+check(sourcePentagramTotals.acute === 5 && sourcePentagramTotals.right === 0 && sourcePentagramTotals.obtuse === 5, "별 모양에는 예각삼각형 5개와 둔각삼각형 5개가 있어야 합니다.");
 const squareDiagonalGridTriangleCount = sideCells => {
   const points = [];
   const pointIndex = new Map();
@@ -308,6 +342,10 @@ const answerFor = (kind, values) => {
     return String(obtuseAnglePairCount(values));
   }
   if (kind === "obtuse-dot-shape-classes") return String(obtuseDotShapeClassCount(values[0], values[1]));
+  if (kind === "pentagram-angle-count") {
+    const totals = pentagramAngleCounts();
+    return `${totals.acute}, ${totals.obtuse}`;
+  }
   if (kind === "isosceles-diamond-perimeter") return String(2 * values[0] + 2 * values[1]);
   if (kind === "isosceles-split-angle") return String(values[0] - (180 - values[0]) / 2);
   if (kind === "isosceles-chain-perimeter") return String(2 * values[1] + values[0] * values[2]);
@@ -359,9 +397,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 12, `원문 일치 공개 유형 수가 12개가 아닙니다: ${types.length}`);
-check(locked.length === 32, `검수 대기 유형 수가 32개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 11, `공개 검산 구조 수가 11개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 14, `원문 일치 공개 유형 수가 14개가 아닙니다: ${types.length}`);
+check(locked.length === 30, `검수 대기 유형 수가 30개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 12, `공개 검산 구조 수가 12개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

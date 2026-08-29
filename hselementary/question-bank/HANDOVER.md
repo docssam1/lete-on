@@ -5,8 +5,8 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
 - Total runtime types: 944 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 864 (deterministic runtime availability check)
-- Review-locked types: 80
+- Implemented types: 866 (deterministic runtime availability check)
+- Review-locked types: 78
 - Exact source-item mapping: 483 items: all 329 items in 4-1 plus 66 fraction, 44 triangle, and 44 decimal items in 4-2. Do not describe the remaining entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Completed: all six units in grades 4, 5, and 6 for both semesters
@@ -41,7 +41,7 @@
 - Grade 4-1 unit 5: 22 source items, 18 ready and 4 review-locked; bar-graph exploration group 1 has all 11 source-native variants, and group 2 publishes 7 source-native variants
 - Grade 4-1 unit 6: 66 source items, 63 ready and 3 review-locked; the public types use child-readable names and independent generators
 - Grade 4-2 unit 1: fraction addition and subtraction, 66 source-backed types covering every exploration prompt, example, and Mission
-- Grade 4-2 unit 2: triangles, all 44 source items mapped; 12 directly source-matched types ready and 32 locked for source-faithful rebuilding
+- Grade 4-2 unit 2: triangles, all 44 source items mapped; 14 directly source-matched types ready and 30 locked for source-faithful rebuilding
 - Grade 4-2 unit 3: decimal addition and subtraction, 24 source-backed Mission types
 - Grade 4-2 unit 4: quadrilaterals, 8 types
 - Grade 4-2 unit 5: line graphs, 2 types
@@ -53,9 +53,9 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates all 864 runtime-ready types at three difficulty offsets across 20 seeds. The 4-1 source-native mapping has 309 ready items, and the 4-2 fraction unit adds 66 ready source-native items. The 4-2 triangle source audit maps all 44 items and currently publishes twelve source-matched types; the other 32 remain locked. Exploration 2 enumerates every triple on the 4-by-3 dot board, groups rotations and reflections by the same three side lengths, and confirms nine distinct obtuse triangles. Example 2-4 and Mission 3 enumerate every valid angle pair and each confirm ten methods, including cases where one selected angle is already obtuse. Example 1-2 confirms 16 triangles containing the marked cell, and Example 1-3 independently confirms 63 and 12. Mission 4 confirms 37, Mission 5 confirms 24 rather than the handwritten 19, and Mission 6 confirms 64. The remaining completed groups retain their dedicated audits and source gates described below.
+The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates all 866 runtime-ready types at three difficulty offsets across 20 seeds. The 4-1 source-native mapping has 309 ready items, and the 4-2 fraction unit adds 66 ready source-native items. The 4-2 triangle source audit maps all 44 items and currently publishes fourteen source-matched types; the other 30 remain locked. Exploration 2 enumerates every triple on the 4-by-3 dot board, groups rotations and reflections by the same three side lengths, and confirms nine distinct obtuse triangles. Example 2-2 and Mission 2 enumerate the pentagram's five source segments and all ten intersection-based triangles, confirming five acute and five obtuse triangles. Example 2-4 and Mission 3 enumerate every valid angle pair and each confirm ten methods, including cases where one selected angle is already obtuse. Example 1-2 confirms 16 triangles containing the marked cell, and Example 1-3 independently confirms 63 and 12. Mission 4 confirms 37, Mission 5 confirms 24 rather than the handwritten 19, and Mission 6 confirms 64. The remaining completed groups retain their dedicated audits and source gates described below.
 
-The full non-browser regression suite has 70 dedicated audits, and the 2026-08-29 final run passed all 70. The twelve currently public 4-2 triangle types passed all twenty-four desktop/mobile states with three generated prompts per type; evidence is stored at `E:\Codex\visualizations\2026\08\29\hse-4-2-u2-triangle-source-public-12`. Division-remainder, bar-graph, and plane-transformation browser evidence remains in the dated visualization folders recorded by their dedicated audits.
+The full non-browser regression suite has 70 dedicated audits, and the 2026-08-29 final run passed all 70. The fourteen currently public 4-2 triangle types passed all twenty-eight desktop/mobile states with three generated prompts per type; evidence is stored at `E:\Codex\visualizations\2026\08\29\hse-4-2-u2-triangle-source-public-14`. Division-remainder, bar-graph, and plane-transformation browser evidence remains in the dated visualization folders recorded by their dedicated audits.
 
 Plane-transformation group 1 publishes 10 of 11 source items after 15,000 independent generations. Its audit verifies rectangular grid dimensions, the complete two-color motif, transformed cell and vertex coordinates, four visually distinct choices, and rendered SVG bounds. Mission 1 remains review-locked because the finished pattern does not uniquely determine which movement was used. Separate browser QA covers 40 desktop/mobile problem-and-solution states and 10 A4 PDFs; it also guards the solution SVG render path and the compact print layout that prevents a blank first page for the six-grid drawing and polygon-slide types.
 
@@ -65,13 +65,13 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 864 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 866 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
-- Elementary explanation policy: `elementary-language-audit.js` checks all 864 public runtime types across 100 seeds per difficulty, including the source-mapped public types
-- Numeric display policy: `numeric-display-audit.js` checks all 864 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
+- Elementary explanation policy: `elementary-language-audit.js` checks all 866 public runtime types across 100 seeds per difficulty, including the source-mapped public types
+- Numeric display policy: `numeric-display-audit.js` checks all 866 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
 - 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 66 types and 66 distinct source structures; `source-4-2-fraction-browser-audit.js` covers all 132 PC/mobile states
-- 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the twelve directly source-matched types to run
+- 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the fourteen directly source-matched types to run
 - 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
