@@ -5,6 +5,12 @@ const index = require("../data/question-item-index.js");
 const auditor = require("../scripts/audit-private-question-index.cjs");
 const review = require("../scripts/apply-private-layout-review.cjs");
 
+test("private index audit accepts printed concept exploration circled subpart labels", () => {
+  assert.equal(auditor.isReviewedLabel("개념탐구 2-(1)-①"), true);
+  assert.equal(auditor.isReviewedLabel("개념탐구 2-(1)-②"), true);
+  assert.equal(auditor.isReviewedLabel("개념탐구 2-(1)-정답"), false);
+});
+
 function fixture() {
   const fingerprint = "f".repeat(64);
   const sourceRef = core.createSharedBankId("source", `sha256:${fingerprint}`);

@@ -55,14 +55,16 @@ function syncCatalog(catalog, files, loaded) {
   if (!catalog || !Array.isArray(catalog.sources) || !Array.isArray(catalog.records) || !catalog.root) throw new Error("source-memory 구조를 확인해 주세요.");
   const today = new Date().toISOString().slice(0, 10);
   const packetId = path.basename(files.packet, path.extname(files.packet));
+  const combinedId = path.basename(files.combined, path.extname(files.combined));
+  const queueId = path.basename(files.queue, path.extname(files.queue));
   const projectIndexId = path.basename(files.projectIndex, path.extname(files.projectIndex));
   const projectReviewedId = path.basename(files.projectReviewed, path.extname(files.projectReviewed));
   const resolutionsId = path.basename(files.resolutions, path.extname(files.resolutions));
 
   [
     fileMeta(files.packet, catalog.root, packetTitle(files.packet)),
-    fileMeta(files.combined, catalog.root, "황소 중등 세부유형 통합 검수 v1"),
-    fileMeta(files.queue, catalog.root, "황소 중등 세부유형 남은 작업 대기열 v1"),
+    fileMeta(files.combined, catalog.root, `황소 중등 세부유형 통합 검수 v${projectVersion(files.combined)}`),
+    fileMeta(files.queue, catalog.root, `황소 중등 세부유형 남은 작업 대기열 v${projectVersion(files.queue)}`),
     fileMeta(files.projectIndex, catalog.root, `프로젝트 공통 문항 인덱스 v${projectVersion(files.projectIndex)}`),
     fileMeta(files.projectReviewed, catalog.root, `프로젝트 공통 문항 인덱스 검수본 v${projectVersion(files.projectReviewed)}`),
     fileMeta(files.resolutions, catalog.root, "프로젝트 공통 유형 후보 ID 고정 검수표")
@@ -77,9 +79,9 @@ function syncCatalog(catalog, files, loaded) {
   const locatorRebuildItemCount = Number(queueSummary.locatorRebuildItemCount || 0);
   detailRecord.summary = `원본 PDF를 직접 확인하는 세부유형 검수 파이프라인과 중복 없는 대기열을 운영 중입니다. 활성 문항 ${combinedSummary.itemCount.toLocaleString("ko-KR")}개 중 ${combinedSummary.reviewedDetailItemCount.toLocaleString("ko-KR")}개는 세부유형과 풀이 구조까지 확인했고, ${queueSummary.pendingDetailItemCount.toLocaleString("ko-KR")}개는 단원 연결 뒤 세부 검수를 기다립니다. 잘리거나 여러 문제가 섞여 위치를 다시 만들어야 하는 문항은 ${locatorRebuildItemCount.toLocaleString("ko-KR")}개이며 일반 검수 대기열과 분리했습니다. 문제 아닌 영역 또는 모호한 후보 ${queueSummary.quarantinedItemCount.toLocaleString("ko-KR")}개는 격리 상태입니다. 이번 묶음은 ${reviewedInPacket}개를 확인했고 원문 영역을 다시 나눠야 하는 ${deferredInPacket}개를 별도 작업으로 넘겼습니다.`;
   detailRecord.updated = today;
-  upsertPointer(detailRecord.pointers, { source_id: packetId, role: "audit", locator: `itemReviews 1-${reviewedInPacket}; deferred 1-${deferredInPacket}`, note: `황소수학 중2-1 원본 문항 영역 ${reviewedInPacket}개 확인, ${deferredInPacket}개 재분할 대기` });
-  upsertPointer(detailRecord.pointers, { source_id: "hwangso-middle-detail-reviews-v1", role: "decision", locator: "summary and reviews", note: `세부유형 통합 결과 ${combinedSummary.reviewedDetailItemCount.toLocaleString("ko-KR")}개` });
-  upsertPointer(detailRecord.pointers, { source_id: "hwangso-detail-work-queue-v1", role: "test", locator: "summary, sources, and locatorRebuilds", note: `일반 세부 검수 ${queueSummary.pendingDetailItemCount.toLocaleString("ko-KR")}개, 위치 재작업 ${locatorRebuildItemCount.toLocaleString("ko-KR")}개, 격리 ${queueSummary.quarantinedItemCount.toLocaleString("ko-KR")}개를 분리` });
+  upsertPointer(detailRecord.pointers, { source_id: packetId, role: "audit", locator: `itemReviews 1-${reviewedInPacket}; deferred 1-${deferredInPacket}`, note: `황소 중등 원본 문항 영역 ${reviewedInPacket}개 확인, ${deferredInPacket}개 재분할 대기` });
+  upsertPointer(detailRecord.pointers, { source_id: combinedId, role: "decision", locator: "summary and reviews", note: `세부유형 통합 결과 ${combinedSummary.reviewedDetailItemCount.toLocaleString("ko-KR")}개` });
+  upsertPointer(detailRecord.pointers, { source_id: queueId, role: "test", locator: "summary, sources, and locatorRebuilds", note: `일반 세부 검수 ${queueSummary.pendingDetailItemCount.toLocaleString("ko-KR")}개, 위치 재작업 ${locatorRebuildItemCount.toLocaleString("ko-KR")}개, 격리 ${queueSummary.quarantinedItemCount.toLocaleString("ko-KR")}개를 분리` });
 
   const projectRecord = catalog.records.find(record => record.id === PROJECT_RECORD_ID);
   if (!projectRecord) throw new Error(`공통 인덱스 기록을 찾을 수 없습니다: ${PROJECT_RECORD_ID}`);

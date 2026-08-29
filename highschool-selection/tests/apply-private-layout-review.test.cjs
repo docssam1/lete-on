@@ -386,15 +386,18 @@ test("manual item continuations reject a self-marked visual target without a bou
   }]), /review-bound starting item/);
 });
 
-test("manual item anchors reject unsafe kinds, duplicate labels, overlap, and invalid continuation pages", () => {
+test("manual item anchors accept mission kinds and reject unsafe kinds, duplicate labels, overlap, and invalid continuation pages", () => {
   const anchor = (label, order, x, kind = "exercise") => ({
     kind,
     printedLabelHint: label,
     layoutOrder: order,
     box: { x, y: 0.1, width: 0.3, height: 0.3 }
   });
-  assert.throws(() => review.normalizedManualAnchors([
+  assert.equal(review.normalizedManualAnchors([
     anchor("1", 1, 0.1, "mission")
+  ])[0].kind, "mission");
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("1", 1, 0.1, "answer")
   ]), /kind is not allowed/);
   assert.throws(() => review.normalizedManualAnchors([
     anchor("1", 1, 0.05), anchor("1", 2, 0.55)
@@ -415,15 +418,35 @@ test("manual item anchors reject unsafe kinds, duplicate labels, overlap, and in
   ]), /reviewed label grammar/);
   assert.deepEqual(
     review.normalizedManualAnchors([
-      anchor("42", 1, 0.05), anchor("개념탐구 7", 2, 0.37), anchor("예제 7-1", 3, 0.69)
+      anchor("42", 1, 0.02),
+      anchor("개념탐구 7-(1)-①", 2, 0.35),
+      anchor("예제 7-1-(2)", 3, 0.68)
     ]).map(entry => entry.printedLabelHint),
-    ["42", "개념탐구 7", "예제 7-1"]
+    ["42", "개념탐구 7-(1)-①", "예제 7-1-(2)"]
   );
   assert.equal(review.normalizedContinuations([{
     fragmentPage: 5,
     printedLabelHint: "42 (2)-(3)",
     continuationFrom: { page: 4, printedLabelHint: "42" }
   }], 5)[0].printedLabelHint, "42 (2)-(3)");
+});
+
+test("manual item anchors preserve a dense twenty-six-question worksheet page", () => {
+  const anchors = Array.from({ length: 26 }, (_, index) => ({
+    kind: "mission",
+    printedLabelHint: String(index + 1),
+    layoutOrder: index + 1,
+    box: {
+      x: 0.02 + (index % 5) * 0.19,
+      y: 0.02 + Math.floor(index / 5) * 0.16,
+      width: 0.15,
+      height: 0.12
+    }
+  }));
+  const normalized = review.normalizedManualAnchors(anchors);
+  assert.equal(normalized.length, 26);
+  assert.equal(normalized[25].printedLabelHint, "26");
+  assert.equal(normalized.every(anchor => anchor.kind === "mission"), true);
 });
 
 test("manual item and continuation labels must be disjoint in normalized and direct decisions", () => {

@@ -81,7 +81,26 @@ function buildOutputs(baseIndex, rebuildQueue, rulePackets) {
   if (!rebuildQueue || rebuildQueue.sourceBankId !== "HWANGSO-MIDDLE" || !Array.isArray(rebuildQueue.groups)) {
     fail("황소 위치 재작업 대기열을 확인해 주세요.");
   }
-  const packets = rulePackets.map(validateRulePacket);
+  const packetGroups = new Map();
+  rulePackets.map(validateRulePacket).forEach(packet => {
+    const existing = packetGroups.get(packet.sourceMemoryId);
+    if (existing && existing.title !== packet.title) {
+      fail(`같은 황소 원본의 규칙 제목이 다릅니다: ${packet.sourceMemoryId}`);
+    }
+    if (existing) existing.pageRules.push(...packet.pageRules);
+    else packetGroups.set(packet.sourceMemoryId, {
+      schemaVersion: 1,
+      sourceMemoryId: packet.sourceMemoryId,
+      title: packet.title,
+      pageRules: [...packet.pageRules]
+    });
+  });
+  const packets = Array.from(packetGroups.values())
+    .map(packet => ({
+      ...packet,
+      pageRules: [...packet.pageRules].sort((left, right) => left.page - right.page)
+    }))
+    .sort((left, right) => left.sourceMemoryId.localeCompare(right.sourceMemoryId));
   const prepared = JSON.parse(JSON.stringify(baseIndex));
   if (!Array.isArray(prepared.unresolvedPages)) prepared.unresolvedPages = [];
   const decisions = [];

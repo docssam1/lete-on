@@ -91,3 +91,40 @@ test("규칙 파일은 정답·원문·경로 같은 금지 필드를 받지 않
   value.rules.pageRules[0].anchors[0].answer = "1";
   assert.throws(() => builder.buildOutputs(value.index, value.queue, [value.rules]), /unsafe keys/);
 });
+
+test("검수 규칙 파일 순서가 달라도 같은 문항 DB를 만든다", () => {
+  const value = fixture();
+  const fingerprint = value.index.sources[0].sourceFingerprint;
+  const sourceRef = value.index.sources[0].sourceRef;
+  const secondItem = itemIndex.createItemIndexEntry({
+    id: core.createSharedBankId("question", itemIndex.createLocatorKey(fingerprint, 5, 1)),
+    sourceRef,
+    locator: { page: 5, slot: 1, kind: "example", box: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 } },
+    discoveryStatus: "layout_candidate",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: core.PROGRAM_MODES,
+    releaseStatus: "locked"
+  });
+  value.index.items.push({
+    ...secondItem,
+    privateRef: { sourceMemoryId: "source-one", printedLabelHint: "5-99" }
+  });
+  value.index.counts.questionCandidates = 2;
+  value.index.counts.activeQuestionCandidates = 2;
+  value.queue.groups.push({
+    sourceMemoryId: "source-one",
+    sourceRef,
+    page: 5,
+    candidates: [{ sourceItemId: secondItem.id }]
+  });
+  const secondRules = JSON.parse(JSON.stringify(value.rules));
+  secondRules.pageRules[0].page = 5;
+
+  const forward = builder.buildOutputs(value.index, value.queue, [value.rules, secondRules]);
+  const reversed = builder.buildOutputs(value.index, value.queue, [secondRules, value.rules]);
+  delete forward.index.generatedAt;
+  delete reversed.index.generatedAt;
+  assert.deepEqual(reversed, forward);
+});

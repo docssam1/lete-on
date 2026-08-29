@@ -13,7 +13,7 @@ const FORBIDDEN_KEYS = new Set([
   "content", "rawtext", "fulltext", "excerpt", "pageimage", "base64", "blob", "binary"
 ]);
 const PRIVATE_LOCATION_PATTERN = /(?:\b[a-z]:[\\/]|\\\\|file:\/\/|https?:\/\/|\/(?:Users|home|mnt)\/)/i;
-const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|[1-9]\d*-\([1-9]\d*\)|개념탐구 [1-9]\d*(?:-\([1-9]\d*\))?|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|[1-9]\d*-\([1-9]\d*\)|개념탐구 [1-9]\d*(?:-\([1-9]\d*\)(?:-[①-⑳])?)?|예제 [1-9]\d*-[1-9]\d*(?:-\([1-9]\d*\))?|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
 const CANONICAL_PROGRAM_MODES = Object.freeze([...core.PROGRAM_MODES].sort());
 const MANUAL_REVIEW_RESOLUTIONS = new Set([
   "verified_manual_items",
@@ -296,7 +296,7 @@ function validateManualReviews(candidate, sourceByRef, errors) {
     if (unresolvedKeys.has(key) || excludedKeys.has(key) || layoutKeys.has(key)) {
       errors.push(`manual review remains in a pending page queue: ${key}`);
     }
-    if (!Number.isSafeInteger(review.itemCount) || review.itemCount < 0 || review.itemCount > 12 ||
+    if (!Number.isSafeInteger(review.itemCount) || review.itemCount < 0 || review.itemCount > 32 ||
         !Array.isArray(review.itemIds) || review.itemIds.length !== review.itemCount ||
         new Set(review.itemIds).size !== review.itemIds.length) {
       errors.push(`manual review item registry invalid: ${key}`);
@@ -365,7 +365,7 @@ function validateManualReviews(candidate, sourceByRef, errors) {
         "sourceMemoryId", "printedLabelHint", "layoutOrder", "layoutKind",
         "discoveryConfidence", "evidenceLocator"
       ], `manual item privateRef ${item.id}`, errors);
-      if (!new Set(["concept", "example", "exercise", "unknown"]).has(item.locator.kind) || !item.locator.box) {
+      if (!new Set(["concept", "example", "exercise", "mission", "unknown"]).has(item.locator.kind) || !item.locator.box) {
         errors.push(`manual review locator invalid: ${item.id}`);
       }
       if (!item.locator.box || !(item.locator.box.width > 0) || !(item.locator.box.height > 0)) {
