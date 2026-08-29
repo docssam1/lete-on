@@ -105,6 +105,25 @@ test("중2-2S 3회 시험지 검수 자료를 피타고라스 범위 원본으�
   assert.equal(info.recordId, "dp.m22s-r3.method-review.20260829");
 });
 
+test("2-1S 3회 시험지 검수 자료를 연립일차방정식 종료 범위 원본으로 구분한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21s-r3-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const reviewPath = path.join(root, "dolpa-method-review-dp-m21s-202405-r3-v1.json");
+  const classificationPath = path.join(root, "dolpa-classification-review-dp-m21s-202405-r3-v1.json");
+  const paperPath = path.join(root, "dolpa-paper-review-dp-m21s-202405-r3-v1.json");
+  for (const filePath of [manifestPath, reviewPath, classificationPath, paperPath]) {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-40CB36024FBC" }));
+  }
+  const info = methodReviewInfo(manifestPath, reviewPath, classificationPath, paperPath);
+  assert.equal(info.key, "m21s-r3");
+  assert.equal(info.label, "2-1S 3회");
+  assert.equal(info.pageSourceId, "dp-m21s-r3-page-assets-v1");
+  assert.equal(info.methodSourceId, "dp-m21s-r3-method-review-v1");
+  assert.equal(info.classificationSourceId, "dp-m21s-r3-classification-review-v1");
+  assert.equal(info.paperSourceId, "dp-m21s-r3-paper-review-v1");
+  assert.equal(info.recordId, "dp.m21s-r3.method-review.20260829");
+});
+
 test("2-1A 분류 교정표는 원본 페이지·풀이표와 같은 sourceId만 허용한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-classification-memory-m21a-"));
   const manifestPath = path.join(root, "manifest.json");
