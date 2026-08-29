@@ -1283,7 +1283,32 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cr-seg button{flex:1;border:none;background:none;border-radius:999px;padding:8px 6px;font-size:13px;font-weight:800;
   color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
 .nm-cr-seg button.on{background:var(--blue);color:#fff;box-shadow:0 6px 14px -8px rgba(22,65,124,.7)}
+.nm-cr-seg button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .nm-cr-cadnote{font-size:12px;line-height:1.6;color:var(--sub);font-weight:600;margin-bottom:10px;word-break:keep-all}
+/* 연산 트랙만 센 주차라는 단서 — 카드 맨 위에 한 줄 */
+.nm-cr-caveat{font-size:11.5px;line-height:1.55;font-weight:700;color:#7a5a12;background:#fdf6e8;
+  border:1px solid var(--gold);border-radius:11px;padding:7px 10px;margin:0 0 9px;word-break:keep-all}
+/* 목표 기준(속도) 고르기 — 주차 카드 안의 부가 정보 */
+.nm-cr-pace{margin-bottom:10px}
+.nm-cr-pacegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.nm-cr-pacebtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-width:0;padding:7px 4px;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+  cursor:pointer;font-family:'Pretendard',sans-serif;
+  /* transition을 전체(all)로 두면 :focus-visible 테두리까지 서서히 그려져 초점이
+     늦게 보인다 — 색·그림자만 부드럽게 하고 outline은 즉시 나오게 둔다. */
+  transition:background .14s,border-color .14s,box-shadow .14s}
+.nm-cr-pacebtn b{font-size:11.5px;font-weight:800;color:var(--blue-deep);line-height:1.3;
+  text-align:center;word-break:keep-all}
+.nm-cr-pacebtn small{font-size:10px;font-weight:700;color:var(--sub);line-height:1.2;white-space:nowrap}
+.nm-cr-pacebtn:hover{background:var(--mist);border-color:var(--blue)}
+.nm-cr-pacebtn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-cr-pacebtn.on{background:var(--blue);border-color:var(--blue);box-shadow:0 6px 14px -8px rgba(22,65,124,.7)}
+.nm-cr-pacebtn.on b{color:#fff}
+.nm-cr-pacebtn.on small{color:rgba(255,255,255,.82)}
+.nm-cr-pacenote{font-size:11px;line-height:1.55;color:var(--sub);font-weight:600;margin:7px 0 0;word-break:keep-all}
+@media(prefers-reduced-motion:reduce){
+  .nm-cr-pacebtn,.nm-cr-seg button{transition:none}
+}
 .nm-cr-totals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .nm-cr-total{background:var(--mist);border-radius:13px;padding:9px 11px;display:flex;flex-direction:column;gap:3px}
 .nm-cr-total b{font-size:11px;font-weight:800;color:var(--blue-deep)}
@@ -1421,6 +1446,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 @media(max-width:480px){
   .nm-cr-node{width:min(100%,288px)}
   .nm-cr-totals{grid-template-columns:1fr}
+  .nm-cr-pacegrid{grid-template-columns:repeat(3,1fr)}
   .nm-cr-here{transform:scale(.84);transform-origin:top center}
   .nm-title-blk b{font-size:13.5px}
   .nm-title-blk small{font-size:10px}

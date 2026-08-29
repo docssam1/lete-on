@@ -75,6 +75,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   character_unlocked:{}, mailbox:{opened:{}},
   boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
   roadCadence:'w1', /* 연산 로드맵 주차 보기: 'w1'=주 1회반, 'w2'=주 2회반 */
+  roadPace:'p0', /* 연산 로드맵 목표 기준(속도) — 값은 ROAD_PACES의 key */
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{} /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
@@ -89,6 +90,10 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+/* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
+   아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
+   이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
+if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p0';
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -1240,7 +1245,35 @@ function enterContinueUnit(uid, fromCourseRoad){
      만나므로 핵심 세션을 빼고 남는 회차가 생긴다. 그 남는 회차를 창의수연
      개념 보강과 다지기에 쓴다 — "더 빨리"가 아니라 "더 확실히"가 요점이다.
      화면 어디에도 "두 배"라고 쓰지 않는다.
+
+   ★ 주차는 연산 트랙만 센 것이다. 원장이 준 GFIELD 로드맵 리포트는 교과·사고력1·
+     사고력2·연산을 나란히 놓고 연산 줄에 "연산병행"이라고 적는다. 즉 실제 학원
+     시간표에서 아이는 이 길만 걷지 않는다. 그 말을 화면에 적지 않으면 여기 숫자가
+     학부모에게 "이만큼이면 끝난다"로 읽힌다 — 그래서 카드에 한 줄로 밝혀 둔다.
    ============================================================ */
+
+/* ── 목표 기준(속도) ─────────────────────────────────────────
+   같은 연산 책 순서를 몇 년에 걸쳐 걷느냐는 목표에 따라 다르다. 원장이 준
+   GFIELD 사고력 진단 로드맵 리포트(연산 트랙)에는 동일한 책 순서를 서로 다른
+   시기에 배치한 다섯 기준이 있고, 가장 빠른 기준을 0으로 놓으면 월 오프셋이
+   0 · 3 · 7 · 12 · 17(개월)이다. 즉 가장 빠른 기준과 가장 여유 있는 기준
+   사이가 같은 내용으로 약 17개월 차이다.
+
+   ※ 리포트의 기준 이름은 바깥 학원·프로그램 이름이라 앱에 쓰지 않는다.
+     아이의 상황을 그대로 말하는 중립적인 이름으로 바꿔 적었다(원장이 학원용
+     이름으로 되돌리고 싶으면 아래 name만 고치면 된다).
+   ※ 배수는 박아 두지 않는다 — 렌더할 때 courses.js에서 잰 "연산 구간"의
+     주 1회 기간을 기준 길이로 삼아 (기준길이+오프셋)/기준길이로 만든다. */
+const ROAD_PACES=[
+ {key:'p0', off:0,  name:{ko:'빠른 선행',en:'Accelerated',zh:'快速先修'}},
+ {key:'p1', off:3,  name:{ko:'선행',en:'Ahead',zh:'先修'}},
+ {key:'p2', off:7,  name:{ko:'표준',en:'Standard',zh:'标准'}},
+ {key:'p3', off:12, name:{ko:'차근차근',en:'Steady',zh:'稳步'}},
+ {key:'p4', off:17, name:{ko:'여유 있게',en:'Relaxed',zh:'宽松'}}
+];
+/* 연산 구간의 마지막 과정 번호 — 합계 카드가 "연산 구간 과정 1~N"으로 쓰던
+   경계 그대로다. 기준 길이도 같은 구간에서 재야 화면의 숫자와 어긋나지 않는다. */
+const ROAD_OP_LAST=25;
 
 /* 등급(티어) 표시 정보 — 이름·학년대는 사람이 읽는 말로만 쓴다. */
 const ROAD_TIERS=[
@@ -1356,18 +1389,46 @@ function courseProgress(c){
 function courseWeeks(nSessions, cadence){
   return cadence==='w2' ? Math.ceil(nSessions*2/3) : nSessions;
 }
-/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫 */
-function courseExtraMeets(nSessions){
-  return Math.max(0, Math.ceil(nSessions*2/3)*2 - nSessions);
+/* ── 목표 기준 배수 ──
+   기준 길이 = 연산 구간(과정 1~ROAD_OP_LAST)의 주 1회 개월. courses.js에서
+   그때그때 재므로 세션 총합을 어디에도 박아 두지 않는다. */
+function roadPaceDef(key){ return ROAD_PACES.find(p=>p.key===key)||ROAD_PACES[0]; }
+function roadBaseMonths(){
+  let w=0;
+  roadCourseList().forEach(x=>{
+    if(x.num>ROAD_OP_LAST) return;
+    w+=courseWeeks((x.c.sessions||[]).length,'w1');
+  });
+  return w/4;
 }
-/* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함) */
-function roadTotals(from, to, cadence){
+function roadPaceMult(key){
+  const base=roadBaseMonths();
+  if(!base) return 1;
+  return (base+roadPaceDef(key).off)/base;
+}
+/* 한 과정의 주차에 목표 기준을 반영한다 — 세션 수학(위 courseWeeks)은 그대로
+   두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
+function coursePaceWeeks(nSessions, cadence, mult){
+  return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
+}
+/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫.
+   기간이 늘면 만나는 횟수도 늘어나므로 실제로 쓰는 주차에서 센다
+   (배수 1이면 예전 값과 똑같다). */
+function courseExtraMeets(nSessions, weeks){
+  const w=(weeks===undefined)?Math.ceil(nSessions*2/3):weeks;
+  return Math.max(0, w*2 - nSessions);
+}
+/* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
+   합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
+   곱해 반올림한다 — 과정마다 생기는 반올림 오차가 쌓이지 않게. */
+function roadTotals(from, to, cadence, mult){
   let sessions=0, weeks=0, courses=0;
   roadCourseList().forEach(x=>{
     if(x.num<from||x.num>to) return;
     const n=(x.c.sessions||[]).length;
     sessions+=n; weeks+=courseWeeks(n,cadence); courses++;
   });
+  weeks=Math.round(weeks*(mult||1));
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
 }
 
@@ -1484,8 +1545,10 @@ function screenCourseRoad(){
 
   function draw(keepScroll){
     const cad=S.roadCadence;
-    const opTotals=roadTotals(1,25,cad);
-    const allTotals=roadTotals(1,lastNum,cad);
+    const pace=roadPaceDef(S.roadPace).key;
+    const mult=roadPaceMult(pace);
+    const opTotals=roadTotals(1,ROAD_OP_LAST,cad,mult);
+    const allTotals=roadTotals(1,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
     const builtCount=list.filter(x=>courseBuilt(x.c)).length;
 
@@ -1517,9 +1580,12 @@ function screenCourseRoad(){
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
     html+=`<div class="nm-cr-cad">
       <div class="nm-cr-cad-h">${lk('한 과정에 걸리는 시간','How long a course takes','一个课程需要多久')}</div>
-      <div class="nm-cr-seg" role="group">
-        <button class="${cad==='w1'?'on':''}" data-cad="w1">${lk('주 1회반','Once a week','每周1次')}</button>
-        <button class="${cad==='w2'?'on':''}" data-cad="w2">${lk('주 2회반','Twice a week','每周2次')}</button>
+      <p class="nm-cr-caveat">${lk('여기 주차는 연산 트랙만 센 거예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
+           'These weeks count the arithmetic track only. Doing thinking-math and school-math alongside takes longer.',
+           '这里的周数只算运算课程。同时上思维和教材课程会更久。')}</p>
+      <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
+        <button class="${cad==='w1'?'on':''}" data-cad="w1"${cad==='w1'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 1회반','Once a week','每周1次')}</button>
+        <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
       </div>
       <p class="nm-cr-cadnote">${cad==='w2'
         ? lk('주 2회라고 두 배 빨라지지는 않아요. 한 과정에 걸리는 주차가 3분의 2로 줄고, 그동안 두 배로 만나니 남는 회차가 생겨요. 그 회차는 창의수연 개념을 더 넣고 다지는 데 써서 더 탄탄해져요.',
@@ -1528,9 +1594,22 @@ function screenCourseRoad(){
         : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
              'One session per week. Each course ends with a check session.',
              '每周前进一节课。每个课程最后是一次检查课。')}</p>
+      <div class="nm-cr-pace">
+        <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
+        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
+          ${ROAD_PACES.map(p=>{
+            const mo=roadTotals(1,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
+              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
+          }).join('')}
+        </div>
+        <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
+             'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
+             '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+      </div>
       <div class="nm-cr-totals">
         <div class="nm-cr-total">
-          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~25</small></b>
+          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
           <span>${opTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${opTotals.months}${lk('개월','mo','个月')}</span>
         </div>
         <div class="nm-cr-total">
@@ -1595,8 +1674,8 @@ function screenCourseRoad(){
       const tierDef=roadTierInfo(c.tier);
       {
         const n=(c.sessions||[]).length;
-        const wk=courseWeeks(n,cad);
-        const extra=courseExtraMeets(n);
+        const wk=coursePaceWeeks(n,cad,mult);
+        const extra=courseExtraMeets(n,wk);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -1649,6 +1728,9 @@ function screenCourseRoad(){
     body.innerHTML=html;
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
+    });
+    body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
+      el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>enterCourseNode(el.dataset.c);
