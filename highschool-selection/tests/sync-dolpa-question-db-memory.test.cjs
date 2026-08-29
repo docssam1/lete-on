@@ -254,6 +254,25 @@ test("2023년 12월 중2-2 2회 검수 자료를 표시 범위와 실제 범위�
   assert.equal(info.analysisSourceId, "dp-m22-202312-r2-analysis-report-v1");
 });
 
+test("날짜가 없는 둘째달 구판 중2-2 2회 검수 자료를 별도 혼합 원본으로 구분한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m22-month2-r2-"));
+  const pagePath = path.join(root, "manifest.json");
+  const paperPath = path.join(root, "dolpa-paper-review-dp-m22-month2-r2-v1.json");
+  const difficultyPath = path.join(root, "dolpa-difficulty-review-dp-m22-month2-r2-v1.json");
+  const analysisPath = path.join(root, "dolpa-analysis-report-dp-m22-month2-r2-v1.json");
+  [pagePath, paperPath, difficultyPath, analysisPath].forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-4DD63CE397A7" }));
+  });
+  const info = methodReviewInfo(pagePath, null, null, paperPath, difficultyPath, analysisPath);
+  assert.equal(info.key, "m22-month2-r2");
+  assert.equal(info.label, "중2-2 2회(둘째달 구판)");
+  assert.deepEqual(info.tags, ["middle2-2", "legacy", "mixed-range"]);
+  assert.equal(info.pageSourceId, "dp-m22-month2-r2-page-assets-v1");
+  assert.equal(info.paperSourceId, "dp-m22-month2-r2-paper-review-v1");
+  assert.equal(info.difficultySourceId, "dp-m22-month2-r2-difficulty-review-v1");
+  assert.equal(info.analysisSourceId, "dp-m22-month2-r2-analysis-report-v1");
+});
+
 test("2-1S 3회 시험지 검수 자료를 연립일차방정식 종료 범위 원본으로 구분한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21s-r3-"));
   const manifestPath = path.join(root, "manifest.json");
