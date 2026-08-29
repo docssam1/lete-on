@@ -100,6 +100,12 @@ test("좌표평면과 그래프는 평면도형이 아니라 함수 영역으로
   assert.equal(builder.domainFor("평면도형의 성질"), "기하");
 });
 
+test("자료·원과 부채꼴·위치 관계를 교육과정 영역에 맞게 분류한다", () => {
+  assert.equal(builder.domainFor("자료의 정리와 해석"), "확률과 통계");
+  assert.equal(builder.domainFor("원과 부채꼴"), "기하");
+  assert.equal(builder.domainFor("위치 관계"), "기하");
+});
+
 test("감사기는 근거 없는 확정 분류와 난이도를 막는다", () => {
   const value = fixtures();
   const ledger = builder.buildLedger(value.inventory, value.queue, value.typeIndex, value.paperLinks, value.reviewDecisions, value.fingerprints);
