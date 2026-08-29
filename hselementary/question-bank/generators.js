@@ -2709,6 +2709,28 @@
     const dots = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => `<circle class="diagram-dot" cx="${left + column * spacing}" cy="${top + row * spacing}" r="4"/>`).join("")).join("");
     return `<svg class="geometry-diagram triangle-plain-dot-board" viewBox="0 0 240 152" data-columns="${columns}" data-rows="${rows}" data-spacing="${spacing}" aria-label="가로 ${columns}개, 세로 ${rows}개 점이 같은 간격으로 놓인 점판">${dots}</svg>`;
   };
+  const circleIsoscelesShapeSignatures = pointCount => {
+    const signatures = new Set();
+    for (let first = 0; first < pointCount - 2; first += 1) for (let second = first + 1; second < pointCount - 1; second += 1) for (let third = second + 1; third < pointCount; third += 1) {
+      const sideSteps = [[first, second], [second, third], [third, first]]
+        .map(([a, b]) => Math.min(Math.abs(a - b), pointCount - Math.abs(a - b)))
+        .sort((a, b) => a - b);
+      if (sideSteps[0] === sideSteps[1] || sideSteps[1] === sideSteps[2]) signatures.add(sideSteps.join("-"));
+    }
+    return [...signatures].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  };
+  const triangleCirclePointBoardSvg = (pointCount, rotation = 0) => {
+    const centerX = 120;
+    const centerY = 78;
+    const radius = 57;
+    const dots = Array.from({ length: pointCount }, (_, index) => {
+      const angle = -Math.PI / 2 + (index + rotation) * Math.PI * 2 / pointCount;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      return `<circle class="diagram-dot" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-circle-point-board" viewBox="0 0 240 154" data-point-count="${pointCount}" aria-label="원 위에 같은 간격으로 놓인 점 ${pointCount}개"><circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="none"/>${dots}</svg>`;
+  };
   const triangleKindFromPoints = (first, second, third) => {
     const cross = (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
     if (Math.abs(cross) < 1e-9) return "line";
@@ -12597,6 +12619,14 @@
         const answer = 2 * equalSide + count * base;
         const evidence = triangle42Evidence("isosceles-strip-perimeter", [count, equalSide, base], answer);
         return result(`같은 이등변삼각형 ${count}개를 겹치지 않게 이어 붙였습니다. 짧은 변은 ${base}cm이고 같은 두 변은 각각 ${equalSide}cm일 때, 만든 도형의 둘레를 구하세요.${isoscelesStripSvg({ count, equalSide, base })}${evidence}`, answer, `위쪽과 아래쪽의 짧은 변은 모두 ${count}개이므로 길이의 합은 ${count}×${base}=${count * base}cm입니다. 양 끝의 같은 변 두 개를 더하면 둘레는 ${count * base}+${equalSide}×2=${answer}cm입니다.`);
+      }
+      if (kind === 5) {
+        const pointCount = pick(rng, [[7, 8], [8, 10, 11], [10, 11, 13]][level]);
+        const signatures = circleIsoscelesShapeSignatures(pointCount);
+        const answer = signatures.length;
+        const evidence = triangle42Evidence("circle-isosceles-shapes", [pointCount], answer);
+        const shapeList = signatures.map(signature => `(${signature.split("-").join(", ")})`).join(", ");
+        return result(`원 위에 점 ${pointCount}개가 같은 간격으로 놓여 있습니다. 이 중 세 점을 이어 만들 수 있는 서로 다른 이등변삼각형은 모두 몇 가지입니까? 돌리거나 뒤집어서 같아지는 모양은 한 가지로 셉니다.${triangleCirclePointBoardSvg(pointCount, int(rng, 0, pointCount - 1))}${evidence}`, answer, `두 꼭짓점 사이의 짧은 쪽 칸 수를 세 변마다 적고 작은 수부터 놓습니다. 같은 모양을 하나로 묶으면 ${shapeList}만 남으므로 모두 ${answer}가지입니다.`);
       }
       if (kind === 8) {
         const count = 8 + level * 2;

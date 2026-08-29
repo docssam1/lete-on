@@ -30,6 +30,7 @@ const publicSourceIds = new Set([
   "4-2-triangle-2-example-4",
   "4-2-triangle-3-mission-1",
   "4-2-triangle-3-mission-3",
+  "4-2-triangle-3-mission-6",
   "4-2-triangle-3-example-2",
   "4-2-triangle-4-mission-1",
   "4-2-triangle-4-mission-2",
@@ -177,6 +178,21 @@ const obtuseDotShapeClassCount = (columns, rows) => {
   }
   return signatures.size;
 };
+const circleIsoscelesShapeSignatures = pointCount => {
+  const signatures = new Set();
+  for (let first = 0; first < pointCount - 2; first += 1) for (let second = first + 1; second < pointCount - 1; second += 1) for (let third = second + 1; third < pointCount; third += 1) {
+    const sideSteps = [[first, second], [second, third], [third, first]]
+      .map(([a, b]) => Math.min(Math.abs(a - b), pointCount - Math.abs(a - b)))
+      .sort((a, b) => a - b);
+    if (sideSteps[0] === sideSteps[1] || sideSteps[1] === sideSteps[2]) signatures.add(sideSteps.join("-"));
+  }
+  return [...signatures].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+};
+check(circleIsoscelesShapeSignatures(8).join(",") === "1-1-2,2-2-4,2-3-3", "8점 원에는 서로 다른 이등변삼각형이 3가지여야 합니다.");
+check(circleIsoscelesShapeSignatures(10).join(",") === "1-1-2,2-2-4,2-4-4,3-3-4", "Mission 6 원문 10점 원에는 서로 다른 이등변삼각형이 4가지여야 합니다.");
+check(circleIsoscelesShapeSignatures(11).join(",") === "1-1-2,1-5-5,2-2-4,3-3-5,3-4-4", "11점 원에는 서로 다른 이등변삼각형이 5가지여야 합니다.");
+check(circleIsoscelesShapeSignatures(7).length === 3, "7점 원에는 서로 다른 이등변삼각형이 3가지여야 합니다.");
+check(circleIsoscelesShapeSignatures(13).length === 6, "13점 원에는 서로 다른 이등변삼각형이 6가지여야 합니다.");
 check(obtuseDotShapeClassCount(4, 3) === 9, "개념탐구 2의 4×3 점판에는 서로 다른 둔각삼각형이 9가지여야 합니다.");
 check(obtuseDotShapeClassCount(3, 4) === 9, "개념탐구 2의 회전한 점판에도 서로 다른 둔각삼각형이 9가지여야 합니다.");
 const obtuseAnglePairCount = angles => {
@@ -588,13 +604,7 @@ const answerFor = (kind, values) => {
   if (kind === "isosceles-rotation-angle") return String(values[0]);
   if (kind === "isosceles-fold-angle") return String((180 - values[0]) / 4);
   if (kind === "circle-isosceles-shapes") {
-    const count = values[0];
-    const signatures = new Set();
-    for (let a = 0; a < count - 2; a += 1) for (let b = a + 1; b < count - 1; b += 1) for (let c = b + 1; c < count; c += 1) {
-      const steps = [[a, b], [b, c], [c, a]].map(([first, second]) => Math.min(Math.abs(first - second), count - Math.abs(first - second))).sort((x, y) => x - y);
-      if (steps[0] === steps[1] || steps[1] === steps[2]) signatures.add(steps.join("-"));
-    }
-    return String(signatures.size);
+    return String(circleIsoscelesShapeSignatures(values[0]).length);
   }
   if (kind === "equilateral-chain-perimeter") return String((values[1] + 2) * values[0]);
   if (kind === "equilateral-three-equal-angle") {
@@ -687,9 +697,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 31, `원문 일치 공개 유형 수가 31개가 아닙니다: ${types.length}`);
-check(locked.length === 13, `검수 대기 유형 수가 13개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 28, `공개 검산 구조 수가 28개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 32, `원문 일치 공개 유형 수가 32개가 아닙니다: ${types.length}`);
+check(locked.length === 12, `검수 대기 유형 수가 12개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 29, `공개 검산 구조 수가 29개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
