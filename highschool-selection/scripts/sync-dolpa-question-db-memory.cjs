@@ -62,6 +62,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-77F6CCAF5851": { key: "m21s-202403-r1", label: "2-1S 1회(2024년 3월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-FBF6B2588A74": { key: "m21s-202403-r3", label: "2-1 심화 3회(2024년 3월)", tags: ["middle2-1", "advanced", "mixed-range"] },
     "DP-SRC-22CB4FA2F64E": { key: "m21s-202404-r2", label: "2-1S 2회(2024년 4월)", tags: ["middle2-1", "advanced", "mixed-range"] },
+    "DP-SRC-9A7C2856650B": { key: "m21s-202404-r4", label: "2-1 심화 4회(2024년 4월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
