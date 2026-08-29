@@ -68,6 +68,39 @@ test("private SASMO intake accepts an independently solved item only after two d
   assert.throws(function () { validator.validatePack(candidate); }, /INDEPENDENT_SOLVERS_INVALID/);
 });
 
+test("third-party source references remain intake-only and require a published solution plus an independent method", function () {
+  const reference = {
+    schemaVersion: validator.REFERENCE_SCHEMA_VERSION,
+    paper: {
+      programId: "sasmo",
+      year: 2019,
+      levelId: "G6",
+      sourceType: "third-party-public-reference",
+      sourcePageUrl: "https://www.k12mathcontests.com/download/sasmo/2019/primary6",
+      sourceFingerprintSha256: "b".repeat(64),
+      rightsState: "private-reference-only"
+    },
+    items: Array.from({ length: 25 }, function (_, index) {
+      const entry = item(2019, "G6", index);
+      entry.answerProof = {
+        answerProof: "published-solution-plus-independent",
+        publishedSolutionLocator: `solution page ${index + 1}`,
+        independentSolveMethod: "independent arithmetic or exhaustive check",
+        independentSolveConfirmed: true
+      };
+      return entry;
+    })
+  };
+  const validation = validator.validatePack(reference);
+  assert.equal(validation.deliveryState, "intake-only");
+  const manifest = validator.publicManifest(reference);
+  assert.equal(manifest.referenceOnly, true);
+  assert.equal(manifest.deliveryState, "intake-only");
+  assert.equal(JSON.stringify(manifest).includes("sourceLocator"), false);
+  reference.items[0].answerProof.independentSolveConfirmed = false;
+  assert.throws(function () { validator.validatePack(reference); }, /INDEPENDENT_SOLVE_NOT_CONFIRMED/);
+});
+
 test("private SASMO intake never makes an answer-bearing public manifest and rejects repository roots", function () {
   const manifest = validator.publicManifest(pack());
   const serialized = JSON.stringify(manifest);

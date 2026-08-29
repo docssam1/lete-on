@@ -210,7 +210,11 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     } else {
       const divs = divisorsOf(coeff);
       const c = pick(rng, divs);
-      const m = R(rng, 0, exp - 1);
+      let m = R(rng, 0, exp - 1);
+      /* c===1 && m===0 이면 "÷ 1"인 항 — 계수도 지수도 안 바뀌는 무의미한
+         단계라 지수법칙 나눗셈을 전혀 안 가르친다. exp>=2(canDiv 보장)라
+         exp-1>=1이라서 m을 1 이상으로 다시 뽑아도 항상 값이 있다. */
+      if (c === 1 && m === 0) m = R(rng, 1, exp - 1);
       coeff = coeff / c; exp = exp - m;
       terms.push({ c, m, op });
     }
