@@ -95,7 +95,12 @@ if(S.name===undefined)S.name='';
    hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
    병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
    자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
-if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+/* 2026-08-29 원장 지시 "우선 승인 없이 다 되도록 열고" — 신규 프로필도 active로
+   시작한다. 게이트 코드(TRIAL_UNITS·unitLocked·안내 모달·승인번호 입력)는 그대로
+   살려 두었으므로, 학원이 승인번호를 실제로 발급하기 시작하면 아래 'active'를
+   'trial'로 되돌리는 한 줄이면 다시 켜진다. HANDOFF §체험 게이트의 단계 설명
+   ("지금(승인 없음) → 승인번호 도입 시 체험 모드 활성화")과 같은 상태다. */
+if(!S.account)S.account={status:'active',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
@@ -1460,6 +1465,15 @@ function screenCourseRoad(){
         <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
       </div>
       <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
+      <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
+           DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
+           따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
+      <div class="nm-cr-philo">
+        ${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
+             'Conquering numbers isn\'t about speed — it\'s being able to <b>unfold</b> a hard number into ones you handle easily.',
+             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}
+        <a class="nm-philobtn nm-cr-philolink" href="about.html">✦ ${lk('철학','Philosophy','理念')}</a>
+      </div>
     </div>
     <div class="nm-cr-body" id="crBody"></div>
   </div>`;
@@ -1672,12 +1686,44 @@ function screenCourseRoad(){
    ------------------------------------------------------------
    이 앱엔 배치 진단이 없었다(유닛 안의 "진단 스킵"은 그 유닛 한 곳을
    건너뛸지 묻는 것이라 다른 물건이다). 그래서 최소한으로 만든다:
-   연산 구간을 대표하는 사다리를 낮은 칸부터 하나씩 올라가며 한 문제씩
-   묻고, 한 칸에서 두 번 틀리면 거기서 멈춰 그 과정을 시작점으로 권한다.
+   연산 구간을 대표하는 사다리에서 한 칸씩 한 문제를 묻고, "풀 수 있는
+   칸"과 "아직 못 푸는 칸"의 경계를 찾으면 거기서 멈춰 그 과정을
+   시작점으로 권한다.
    문항은 전부 기존 생성기(NM_TGEN)가 만든다 — 새 문제를 지어내지 않는다.
    결과는 권유일 뿐 어떤 과정도 잠그지 않는다.
+
+   ── 나이를 먼저 묻는다 (원장 지시: "현재 나이에 따라 연산 정도를 물어보는
+   설문이 달라야 해") ──
+   예전엔 모두가 사다리 맨 아래(AD1 · 한 자리 덧셈)에서 출발했다. 그래서
+   열 살 아이는 시시한 문제를 여덟 개 푼 뒤에야 자기 자리에 닿았고, 여섯 살
+   아이는 첫 문제부터 한 자리 덧셈을 만났다(그보다 아래가 없었다).
+   이제 나이를 먼저 고르면 그 나이의 칸에서 시작하고, 사다리 아래쪽에는
+   수의 나라(NL) 칸을 붙여 유아도 수 세기부터 시작한다.
+
+   ── 위아래로 좁혀 간다(bracketing) ──
+   맞히면 위로, 틀리면 아래로 가며 경계를 좁힌다. 아래는 절반씩 내려가고
+   위는 한 번에 최대 네 칸까지만 올라간다(아이에게 너무 큰 도약이 되지
+   않게). 이미 "푼 칸"과 "못 푼 칸"이 둘 다 생기면 그 사이를 반씩 접는다.
+   16칸 × 모든 실력 조합을 전부 돌려 보면 최대 6문제 안에 경계가 정확히
+   나온다. 한 칸에서 두 번 묻던 예전의 재시도는 없앴다 — 위아래로 좁히는
+   방식에선 같은 칸을 두 번 묻는 게 경계를 흐리고 문항 수만 늘린다.
    ============================================================ */
 const PLACEMENT_LADDER=[
+  /* 수의 나라(유아) — 아직 과정으로 갈라지지 않는 구간이라 모두 C1이 시작점.
+     이 칸들은 tex가 없고 조작 위젯으로만 답하는 문제라, 화면이 위젯을
+     그려 준다(아래 screenPlacement 참고).
+     고르는 기준은 둘이다 — 답이 정수 하나여야 하고, **틀릴 수 있어야** 한다.
+     NL6(10 짝꿍)는 tenframe 위젯이 칸을 다 채운 순간 problem.answer를 그대로
+     넘겨서 오답이 나올 수가 없다. 진단 칸으로는 못 쓰므로 뺐다(위젯 자체는
+     학습 화면에선 제 역할을 한다 — 고칠 대상이 아니다). 같은 이유로 NL7L3·
+     NL14L3(matchLine)과 NL4L3·NL12L1(dotToDot)도 뺐다.
+     tex가 있는 교과연산 칸은 예전처럼 식+숫자패드로 받으므로 이 문제와
+     무관하다(AD1의 cubes 위젯도 여기선 쓰이지 않는다). */
+  {course:'C1',  thread:'NL1', level:1},   /* 수 세기와 개수 */
+  {course:'C1',  thread:'NL4', level:1},   /* 수의 순서 */
+  {course:'C1',  thread:'NL2', level:2},   /* 모으기와 가르기 */
+  {course:'C1',  thread:'NL5', level:1},   /* 이웃 수 더하기 — 덧셈으로 건너가는 다리 */
+  /* 교과연산 */
   {course:'C1',  thread:'AD1', level:1},
   {course:'C3',  thread:'AD3', level:1},
   {course:'C4',  thread:'AD5', level:1},
@@ -1692,25 +1738,80 @@ const PLACEMENT_LADDER=[
   {course:'C19', thread:'DV7', level:1}
 ];
 const PLACEMENT_TOP='C20'; /* 사다리를 전부 통과했을 때 권하는 시작 과정 */
+const PLACEMENT_MAX_Q=6;   /* 진단은 시험이 아니다 — 문항 수를 여기서 끊는다 */
+const PLACEMENT_UP_CAP=4;  /* 맞혔을 때 한 번에 올라가는 최대 칸 수 */
+
+/* 나이 선택지. 이름·나이 문구는 지어내지 않고 이 앱이 이미 쓰는 것을
+   그대로 가져온다 — 교과연산 구간은 ROAD_TIERS의 name/band(로드맵 역 이름과
+   같은 문구)를, 유아 구간은 data/curriculum.js 수의 나라 tier의
+   ageLabel/subtitle을 쓴다. entry = 그 나이가 첫 문제로 만나는 사다리 칸. */
+const PLACEMENT_AGES=[
+  {key:'pre',   emoji:'🌱', tier:null,       entry:0},
+  {key:'g1',    emoji:'🌿', tier:'level1',   entry:4},
+  {key:'g2',    emoji:'🌳', tier:'level2',   entry:10},
+  {key:'g3',    emoji:'⛰️', tier:'level3',   entry:14},
+  {key:'adv',   emoji:'🗼', tier:'challenge',entry:15}
+];
+/* 수의 나라 구간의 이름·나이 — curriculum.js에서 읽고, 없으면 같은 문구로 적는다. */
+function placementPreLabel(){
+  const tiers=(window.NM_CURRICULUM&&window.NM_CURRICULUM.tiers)||[];
+  const nl=tiers.find(x=>x.id==='numberland');
+  const age=(nl&&nl.ageLabel)||'5~6세';
+  return {
+    name:{ko:'수의 나라',en:'Number Land',zh:'数字王国'},
+    band:{ko:age, en:'Ages 5–6', zh:'5~6岁'}
+  };
+}
+function placementAgeLabel(opt){
+  if(!opt.tier) return placementPreLabel();
+  const info=roadTierInfo(opt.tier);
+  return {name:info.name, band:info.band};
+}
 
 function startPlacement(){
-  S._diag={ run:Date.now(), i:0, attempt:0, asked:0, correct:0, failedAt:null, cur:null };
+  /* lo = 풀 수 있다고 확인된 가장 높은 칸(없으면 -1)
+     hi = 아직 못 푼다고 확인된 가장 낮은 칸(없으면 사다리 길이) */
+  S._diag={ run:Date.now(), stage:'age', age:null, entry:0,
+            lo:-1, hi:PLACEMENT_LADDER.length, at:null,
+            asked:0, correct:0, cur:null };
   S.view='placement'; save(); render();
 }
-function placementProblem(rung, i, attempt, run){
+/* 다음에 물을 칸. null이면 경계를 찾은 것 — 더 묻지 않는다. */
+function placementNext(d){
+  const N=PLACEMENT_LADDER.length;
+  if(d.hi-d.lo<=1) return null;
+  if(d.at===null) return Math.min(N-1, Math.max(0, d.entry));
+  if(d.hi===N) return Math.min(N-1, d.lo+1+Math.min(PLACEMENT_UP_CAP-1, Math.floor((N-1-d.lo)/2)));
+  if(d.lo===-1) return Math.floor(d.hi/2);
+  return Math.floor((d.lo+d.hi)/2);
+}
+/* 아직 못 넘은 첫 칸. 경계를 못 찾고 문항 수가 다 찼으면 알고 있는 것 중
+   확실히 못 푼 칸(hi)을, 그것도 없으면 다음 칸(lo+1)을 쓴다. */
+function placementBoundary(d){
+  if(d.hi-d.lo<=1) return d.hi;
+  return d.hi<PLACEMENT_LADDER.length ? d.hi : d.lo+1;
+}
+function placementProblem(rung, i, run){
   const th=(window.NM_THREADS||{})[rung.thread];
   const gen=(window.NM_TGEN||{})[th&&th.gen];
   const params=(th&&(th.levels||[]).find(l=>l.id===rung.level)||{}).params||{};
-  const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('diag'+run+rung.thread+rung.level+'i'+i+'a'+attempt));
+  const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('diag'+run+rung.thread+rung.level+'i'+i));
   return gen ? gen(params,rng)
              : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
 }
+/* 한 문제의 채점 결과를 사다리에 반영한다. */
+function placementGrade(d, rungIndex, ok){
+  d.asked++;
+  if(ok){ d.correct++; d.lo=Math.max(d.lo,rungIndex); }
+  else  { d.hi=Math.min(d.hi,rungIndex); }
+  d.at=rungIndex; d.cur=null;
+}
 function finishPlacement(){
   const d=S._diag;
-  const key=(d.failedAt!=null&&PLACEMENT_LADDER[d.failedAt])
-    ? PLACEMENT_LADDER[d.failedAt].course : PLACEMENT_TOP;
+  const b=placementBoundary(d);
+  const key=(PLACEMENT_LADDER[b]) ? PLACEMENT_LADDER[b].course : PLACEMENT_TOP;
   S.placement={ at:Date.now(), course:key, asked:d.asked, correct:d.correct,
-    cleared:(d.failedAt==null?PLACEMENT_LADDER.length:d.failedAt) };
+    age:d.age||null, cleared:b };
   save();
   return key;
 }
@@ -1722,9 +1823,46 @@ function screenPlacement(){
   const lk=(k,e,z)=>ko?k:en?e:z;
   const d=S._diag;
   if(!d){ S.view='town'; save(); render(); return; }
+  /* S._diag는 저장된다. 예전 형식(바닥부터 한 칸씩 오르던 시절)의 진행 중
+     상태로 돌아오면 새 방식에 이어 붙일 수가 없으니 처음부터 다시 시작한다. */
+  if(d.stage===undefined||typeof d.lo!=='number'||typeof d.hi!=='number'){ startPlacement(); return; }
+
+  /* ── 나이 고르기 ── */
+  if(d.stage==='age'){
+    const opts=PLACEMENT_AGES.map(o=>{
+      const lab=placementAgeLabel(o);
+      return `<button class="nm-dg-age" data-entry="${o.entry}" data-age="${o.key}">
+        <span class="nm-dg-age-ico">${o.emoji}</span>
+        <span class="nm-dg-age-txt"><b>${esc(L(lab.band))}</b><small>${esc(L(lab.name))}</small></span>
+      </button>`;}).join('');
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="dgBack">${t('back')}</button>
+      <div class="nm-unit-title">🧭 ${lk('진단하기','Level Check','水平测评')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
+      <div class="nm-card center">
+        <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-card-h">${lk('지금 몇 살이에요?','How old are you now?','现在几岁了呢？')}</div>
+        <p class="nm-dg-ask">${lk('나이에 맞는 문제부터 물어볼게요. 몇 문제만 풀면 끝나요.',
+          'We will start with questions that fit your age. Just a few questions.',
+          '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
+        <div class="nm-dg-ages">${opts}</div>
+        <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
+      </div>
+    </div>`;
+    $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
+    scr.querySelectorAll('.nm-dg-age').forEach(b=>{
+      b.onclick=()=>{ d.age=b.dataset.age; d.entry=+b.dataset.entry;
+        d.stage='q'; save(); screenPlacement(); };
+    });
+    /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
+    $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
+    return;
+  }
 
   /* ── 결과 ── */
-  if(d.failedAt!=null || d.i>=PLACEMENT_LADDER.length){
+  const nextIdx=placementNext(d);
+  if(nextIdx===null || d.asked>=PLACEMENT_MAX_Q){
     const key=finishPlacement();
     const c=(window.NM_COURSES||{})[key];
     const num=String(key).replace(/^C/,'');
@@ -1739,6 +1877,7 @@ function screenPlacement(){
         <div class="nm-card-h">${lk('여기서 시작하면 좋아요!','A good place to start!','从这里开始正合适！')}</div>
         <div class="nm-dg-course">${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</div>
         ${tierDef?`<div class="nm-dg-tier">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>`:''}
+        ${placementAgeNoteHtml(d,lk)}
         <div class="nm-score">${d.correct} / ${d.asked}</div>
         <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
         <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
@@ -1753,10 +1892,13 @@ function screenPlacement(){
   }
 
   /* ── 문항 ── */
-  const rung=PLACEMENT_LADDER[d.i];
-  if(!d.cur) d.cur=placementProblem(rung,d.i,d.attempt,d.run);
+  const rung=PLACEMENT_LADDER[nextIdx];
+  if(!d.cur) d.cur=placementProblem(rung,d.asked,d.run);
   const cur=d.cur;
   const th=(window.NM_THREADS||{})[rung.thread];
+  /* tex가 있으면 예전 그대로 식 + 넘패드. 수의 나라 문제는 tex가 없고 그림을
+     만져야 답이 나오므로 기존 위젯 렌더러(runPracticeWidget과 같은 길)를 쓴다. */
+  const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
 
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="dgBack">${t('back')}</button>
@@ -1764,32 +1906,35 @@ function screenPlacement(){
   </div>
   <div class="nm-step-body">
     <div class="nm-dialog">
-      <div class="nm-dg-step">${lk('단계','Step','阶段')} ${d.i+1} / ${PLACEMENT_LADDER.length}${th?` · ${esc(L(th.name))}`:''}</div>
-      <div class="nm-prog">${dots(PLACEMENT_LADDER.length,d.i)}</div>
+      <div class="nm-dg-step">${lk(`${d.asked+1}번째 문제`,`Question ${d.asked+1}`,`第${d.asked+1}题`)}${th?` · ${esc(L(th.name))}`:''}</div>
+      <div class="nm-prog">${dots(PLACEMENT_MAX_Q,d.asked)}</div>
       <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
       <div class="nm-bubble">${esc(L(cur.prompt))}</div>
-      ${d.attempt>0?`<div class="nm-dg-retry">${lk('한 번 더 해볼까요?','One more try?','再试一次？')}</div>`:''}
+      ${useWidget?`<div id="dgWidget" class="nm-lab-widget"></div>`:`
       <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
       <div class="nm-numpad-screen" id="dgScreen">&nbsp;</div>
-      <div class="nm-numpad" id="dgPad"></div>
+      <div class="nm-numpad" id="dgPad"></div>`}
     </div>
   </div>`;
   $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
   renderMath(scr);
 
+  const submit=ok=>{
+    placementGrade(d,nextIdx,ok);
+    save();
+    if(ok) playSfx('success');
+    setTimeout(()=>screenPlacement(), ok?520:820);
+  };
+  if(useWidget){
+    NM_WIDGETS.render(cur,$('#dgWidget'),val=>submit(+val===cur.answer));
+    return;
+  }
   const screenEl=$('#dgScreen');
   let inp='';
   buildNumpad($('#dgPad'),val=>{
     if(val==='ok'){
-      if(inp==='') return;
-      const ok=parseFloat(inp)===cur.answer;
-      d.asked++; if(ok) d.correct++;
-      if(ok){ d.i++; d.attempt=0; }
-      else if(d.attempt===0){ d.attempt=1; }
-      else { d.failedAt=d.i; }
-      d.cur=null; save();
-      if(ok) playSfx('success');
-      setTimeout(()=>screenPlacement(), ok?520:820);
+      if(inp===''||inp==='-') return;
+      submit(parseFloat(inp)===cur.answer);
       return;
     }
     if(val==='del') inp=inp.slice(0,-1);
@@ -1797,6 +1942,14 @@ function screenPlacement(){
     else if(inp.replace('-','').length<6&&!(val==='.'&&inp.includes('.'))) inp+=val;
     screenEl.textContent=inp||' ';
   },{decimal:!Number.isInteger(cur.answer), negative:!!cur.negative});
+}
+/* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴 경우엔 없음. */
+function placementAgeNoteHtml(d,lk){
+  if(!d.age||d.age==='skip')return'';
+  const opt=PLACEMENT_AGES.find(o=>o.key===d.age);
+  if(!opt)return'';
+  const lab=placementAgeLabel(opt);
+  return `<div class="nm-dg-agenote">${opt.emoji} ${lk('고른 나이','Age picked','所选年龄')} · ${esc(L(lab.band))}</div>`;
 }
 
 /* ============================================================

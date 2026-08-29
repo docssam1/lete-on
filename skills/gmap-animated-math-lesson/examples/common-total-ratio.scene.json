@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "lessonId": "gmap-original-common-total-ratio-01",
+  "title": "Common Totals with Two Ratios",
+  "language": "en",
+  "audience": "student",
+  "rights": {
+    "publication": "public",
+    "assetRights": "original",
+    "containsThirdPartyAssets": false,
+    "licenseEvidence": "GFIELD-authored concept and diagram"
+  },
+  "problem": {
+    "prompt": "Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?",
+    "responseType": "number",
+    "verifiedAnswer": 9,
+    "answerRevealBeatId": "answer-nine"
+  },
+  "scene": { "width": 960, "height": 540 },
+  "objects": [
+    { "id": "problem", "type": "problem-text", "frame": { "x": 40, "y": 24, "width": 880, "height": 82 } },
+    {
+      "id": "team-a-bar",
+      "type": "bar-model",
+      "frame": { "x": 100, "y": 150, "width": 760, "height": 70 },
+      "data": { "units": [5, 5, 5, 5], "expectedTotal": 20 }
+    },
+    { "id": "team-a-red", "type": "bar-cell", "frame": { "x": 100, "y": 150, "width": 190, "height": 70 } },
+    { "id": "team-a-blue", "type": "bar-cell-group", "frame": { "x": 290, "y": 150, "width": 570, "height": 70 } },
+    {
+      "id": "team-b-bar",
+      "type": "bar-model",
+      "frame": { "x": 100, "y": 280, "width": 760, "height": 70 },
+      "data": { "units": [4, 4, 4, 4, 4], "expectedTotal": 20 }
+    },
+    { "id": "team-b-green", "type": "bar-cell", "frame": { "x": 100, "y": 280, "width": 152, "height": 70 } },
+    { "id": "team-b-yellow", "type": "bar-cell-group", "frame": { "x": 252, "y": 280, "width": 608, "height": 70 } },
+    { "id": "equation-a", "type": "equation", "frame": { "x": 130, "y": 400, "width": 260, "height": 55 } },
+    { "id": "equation-b", "type": "equation", "frame": { "x": 420, "y": 400, "width": 260, "height": 55 } },
+    { "id": "answer", "type": "answer", "role": "answer", "frame": { "x": 700, "y": 395, "width": 160, "height": 65 } }
+  ],
+  "beats": [
+    {
+      "id": "read-problem",
+      "phase": "problem",
+      "narration": "Both teams have the same total, twenty tokens, but their ratios have different numbers of equal parts.",
+      "durationMs": 5200,
+      "targetIds": ["problem"],
+      "actions": [{ "type": "highlight", "targetIds": ["problem"] }]
+    },
+    {
+      "id": "draw-team-a",
+      "phase": "explore",
+      "narration": "Team A has four equal parts in all. Divide twenty by four, so each part is five.",
+      "durationMs": 5200,
+      "targetIds": ["team-a-bar"],
+      "actions": [{ "type": "draw", "targetIds": ["team-a-bar"] }]
+    },
+    {
+      "id": "find-red",
+      "phase": "solve",
+      "narration": "The red section is one part, so Team A has five red tokens.",
+      "durationMs": 4200,
+      "targetIds": ["team-a-red", "equation-a"],
+      "actions": [
+        { "type": "highlight", "targetIds": ["team-a-red"] },
+        { "type": "reveal", "targetIds": ["equation-a"] }
+      ]
+    },
+    {
+      "id": "draw-team-b",
+      "phase": "explore",
+      "narration": "Team B has five equal parts in all. Divide twenty by five, so each part is four.",
+      "durationMs": 5200,
+      "targetIds": ["team-b-bar"],
+      "actions": [{ "type": "draw", "targetIds": ["team-b-bar"] }]
+    },
+    {
+      "id": "find-green",
+      "phase": "solve",
+      "narration": "The green section is one part, so Team B has four green tokens.",
+      "durationMs": 4200,
+      "targetIds": ["team-b-green", "equation-b"],
+      "actions": [
+        { "type": "highlight", "targetIds": ["team-b-green"] },
+        { "type": "reveal", "targetIds": ["equation-b"] }
+      ]
+    },
+    {
+      "id": "answer-nine",
+      "phase": "answer",
+      "narration": "Add the two first-color parts: five plus four equals nine.",
+      "durationMs": 4200,
+      "targetIds": ["equation-a", "equation-b", "answer"],
+      "actions": [{ "type": "reveal-answer", "targetIds": ["answer"] }]
+    },
+    {
+      "id": "recap",
+      "phase": "recap",
+      "narration": "The totals match, but the unit sizes do not. Count the ratio parts before finding one part.",
+      "durationMs": 4800,
+      "targetIds": ["team-a-bar", "team-b-bar"],
+      "actions": [{ "type": "highlight", "targetIds": ["team-a-bar", "team-b-bar"] }]
+    }
+  ],
+  "modes": {
+    "fullPlay": { "beatIds": ["read-problem", "draw-team-a", "find-red", "draw-team-b", "find-green", "answer-nine", "recap"] },
+    "stepByStep": { "beatIds": ["read-problem", "draw-team-a", "find-red", "draw-team-b", "find-green", "answer-nine", "recap"] },
+    "finalOverview": { "visibleObjectIds": ["problem", "team-a-bar", "team-a-red", "team-b-bar", "team-b-green", "equation-a", "equation-b", "answer"] },
+    "teacherEvidence": {
+      "misconception": "Adding ratio numbers without first finding the value of one part.",
+      "prompt": "Why is one part worth five for Team A but four for Team B?"
+    }
+  },
+  "mathChecks": [
+    { "method": "unit-rate", "expression": "20/(1+3) + 20/(1+4)", "result": 9, "passed": true },
+    { "method": "enumeration", "expression": "A=(5,15), B=(4,16)", "result": 9, "passed": true }
+  ],
+  "review": {
+    "status": "approved",
+    "sourceChecked": true,
+    "mathChecked": true,
+    "uniqueAnswerChecked": true,
+    "visualChecked": true,
+    "mobileChecked": true
+  }
+}

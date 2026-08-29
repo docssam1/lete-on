@@ -7,7 +7,7 @@ require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2").units.find(item => item.id === "4-2-u3");
-const types = unit.subunits.flatMap(subunit => subunit.types);
+const types = unit.subunits.flatMap(subunit => subunit.types).filter(type => !type.reviewLocked);
 const failures = [];
 const seenKinds = new Set();
 const check = (condition, message) => { if (!condition) failures.push(message); };
@@ -25,6 +25,20 @@ const permutations = values => {
   return [...new Set(output)];
 };
 
+check(plainDecimal(7143 - 50, 1) === "709.3", "개념탐구 1 원문 답은 709.3kg이어야 합니다.");
+let sourceFourPlaceCount = 0;
+for (let value = 50081; value < 51000; value += 1) if (value % 10 !== 0) sourceFourPlaceCount += 1;
+check(sourceFourPlaceCount === 828, `개념탐구 4 원문 답은 828개여야 하나 ${sourceFourPlaceCount}개입니다.`);
+let tenfoldWeightCaseCount = 0;
+for (let fatherWeightGrams = 45000; fatherWeightGrams <= 85000; fatherWeightGrams += 10) {
+  for (const bonusGrams of [20, 30, 50, 70, 80]) {
+    const objectWeightGrams = fatherWeightGrams / 10 + bonusGrams;
+    check(Number.isInteger(objectWeightGrams), `물건 무게가 정수 g가 아닙니다: ${fatherWeightGrams}, ${bonusGrams}`);
+    check(Number(plainDecimal(objectWeightGrams - bonusGrams, 1)) === fatherWeightGrams / 100, `10배 몸무게 역산이 다릅니다: ${fatherWeightGrams}, ${bonusGrams}`);
+    tenfoldWeightCaseCount += 1;
+  }
+}
+
 const answerFor = (kind, values) => {
   if (kind === "nearest-order") {
     const [target, ...items] = values;
@@ -39,6 +53,7 @@ const answerFor = (kind, values) => {
     return `${Math.floor(minutes / 60)}시간 ${minutes % 60}분`;
   }
   if (kind === "opposite-walk-distance") return plainDecimal(values[0] * 1000 * Math.abs(values[1] - values[2]), 6);
+  if (kind === "tenfold-weight-reverse") return plainDecimal(values[0] - values[1], 1);
   if (kind === "overlap-segment") return decimal(values[0] + values[1] - values[2], 3);
   if (kind === "calculation-order") return values.map((row, index) => ({ label: labels[index], value: row.reduce((sum, value) => sum + value, 0) })).sort((a, b) => b.value - a.value).map(item => item.label).join(", ");
   if (kind === "decimal-symbol-operation") return decimal(2 * (2 * values[0] - values[1]) - values[2], 2);
@@ -100,6 +115,11 @@ const answerFor = (kind, values) => {
     check(candidates.length > 0, `교환 자리 후보가 없습니다: ${values}`);
     return decimal(Math.max(...candidates) - Math.min(...candidates), 3);
   }
+  if (kind === "exact-four-place-range-count") {
+    let count = 0;
+    for (let value = values[0] + 1; value < values[1]; value += 1) if (value % 10 !== 0) count += 1;
+    return String(count);
+  }
   return null;
 };
 
@@ -130,12 +150,12 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
   generatedCount += 1;
 }
 
-check(types.length === 24, `세부 유형 수가 24개가 아닙니다: ${types.length}`);
-check(seenKinds.size === 24, `검산 구조 수가 24개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 26, `공개 세부 유형 수가 26개가 아닙니다: ${types.length}`);
+check(seenKinds.size === 26, `검산 구조 수가 26개가 아닙니다: ${seenKinds.size}`);
 if (failures.length) {
   console.error(`4-2 소수 단원 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 40).join("\n"));
   process.exit(1);
 }
 
-console.log(`4-2 소수 단원 감사 통과: ${types.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종`);
+console.log(`4-2 소수 원문 감사 통과: ${types.length}유형, ${generatedCount}개 생성, 검산 구조 ${seenKinds.size}종, 몸무게 역산 ${tenfoldWeightCaseCount.toLocaleString()}조합`);
