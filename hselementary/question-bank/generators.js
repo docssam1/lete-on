@@ -2199,6 +2199,18 @@
     const markedY = vertices.reduce((sum, item) => sum + item[1], 0) / 3;
     return `<svg class="geometry-diagram triangle-marked-lattice" viewBox="0 0 240 184" data-lattice-side="${side}" data-marked-cell="${cell.kind},${cell.row},${cell.column}" aria-label="한 변을 ${side}칸으로 나눈 정삼각형 격자 안에 검은 점이 표시된 도형"><g>${horizontal}${diagonals}<circle data-required-dot="true" cx="${markedX.toFixed(1)}" cy="${markedY.toFixed(1)}" r="5" style="fill:#111;stroke:#fff;stroke-width:1.5"/></g></svg>`;
   };
+  const triangleJoinedFansSvg = (lowerPoints, upperPoints) => {
+    const left = [18, 150];
+    const top = [158, 18];
+    const right = [236, 150];
+    const shared = [95, 77.4];
+    const interpolate = (first, second, ratio) => [first[0] + (second[0] - first[0]) * ratio, first[1] + (second[1] - first[1]) * ratio];
+    const lower = Array.from({ length: lowerPoints }, (_, index) => interpolate(left, right, index / (lowerPoints - 1)));
+    const upper = Array.from({ length: upperPoints }, (_, index) => interpolate(top, right, index / (upperPoints - 1)));
+    const internalLower = lower.slice(1, -1).map(point => `<line x1="${shared[0]}" y1="${shared[1]}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/>`).join("");
+    const internalUpper = upper.slice(1, -1).map(point => `<line x1="${shared[0]}" y1="${shared[1]}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-joined-fans" viewBox="0 0 254 174" data-lower-points="${lowerPoints}" data-upper-points="${upperPoints}" aria-label="왼쪽 변 위 한 점에서 밑변과 오른쪽 변의 여러 점으로 선을 그은 큰 삼각형"><g><polygon points="${left.join(",")} ${top.join(",")} ${right.join(",")}"/><line x1="${shared[0]}" y1="${shared[1]}" x2="${right[0]}" y2="${right[1]}"/>${internalLower}${internalUpper}</g></svg>`;
+  };
   const triangleFanMarkedSvg = (parts, markedIndex = -1, dotBoard = false) => {
     const left = 24;
     const right = 216;
@@ -11946,11 +11958,13 @@
         return result(`정삼각형 격자 안의 ●을 내부에 포함하면서, 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleMarkedLatticeSvg(side, cell)}${evidence}`, answer, `●이 들어 있는 작은 칸부터 시작해, ●을 둘러싸는 삼각형을 크기와 방향에 따라 빠짐없이 표시하면 모두 ${answer}개입니다. ●이 변 위에 놓인 삼각형은 없으므로 포함 여부가 하나로 정해집니다.`);
       }
       if (kind === 3) {
-        const leftParts = int(rng, 4 + level, 6 + level);
-        const rightParts = int(rng, 5 + level, 7 + level);
-        const answer = leftParts * (leftParts + 1) / 2 + rightParts * (rightParts + 1) / 2;
-        const evidence = triangle42Evidence("double-fan-count", [leftParts, rightParts], answer);
-        return result(`서로 떨어진 두 부채꼴 모양에서 선을 따라 그릴 수 있는 삼각형은 모두 몇 개입니까?${triangleDoubleFanSvg(leftParts, rightParts)}${evidence}`, answer, `왼쪽은 ${leftParts * (leftParts + 1) / 2}개, 오른쪽은 ${rightParts * (rightParts + 1) / 2}개입니다. 두 모양은 선을 공유하지 않으므로 합은 ${answer}개입니다.`);
+        const lowerPoints = int(rng, 5 + level, 6 + level);
+        const upperPoints = int(rng, 6 + level, 7 + level);
+        const lowerCount = lowerPoints * (lowerPoints - 1) / 2;
+        const upperCount = upperPoints * (upperPoints - 1) / 2;
+        const answer = lowerCount + upperCount + 1;
+        const evidence = triangle42Evidence("joined-fans-count", [lowerPoints, upperPoints], answer);
+        return result(`왼쪽 변 위의 한 점에서 밑변의 ${lowerPoints}개 점과 오른쪽 변의 ${upperPoints}개 점으로 선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleJoinedFansSvg(lowerPoints, upperPoints)}${evidence}`, answer, `아래쪽 부채꼴은 ${lowerPoints - 1}+${lowerPoints - 2}+…+1=${lowerCount}개이고, 오른쪽 부채꼴은 ${upperPoints - 1}+${upperPoints - 2}+…+1=${upperCount}개입니다. 여기에 도형 전체의 가장 큰 삼각형 1개를 더하면 ${lowerCount}+${upperCount}+1=${answer}개입니다.`);
       }
       if (kind === 4) {
         const rectangleCount = int(rng, 2, 2 + level);
