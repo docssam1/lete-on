@@ -18,6 +18,7 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
     assert.match(course.studentHref, /^(\.\/|#availability$)/);
     assert.match(course.teacherHref, /^(\.\/catalog\.html\?role=teacher|#high-school-bridge$)/);
     assert.ok(course.focus.length >= 3);
+    assert.equal(course.units.length, 4);
   });
   const preAlgebra = pathways.courses.find(function (course) { return course.id === "pre-algebra"; });
   assert.equal(preAlgebra.studentHref, "./concept-learning.html");

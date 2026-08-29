@@ -63,6 +63,11 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator("#quick-start-grade").selectOption("11");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=11#past-papers");
   assert.match(await page.locator("#quick-sasmo strong").textContent(), /공식 자료 보기/);
+  assert.match(await page.locator("#quick-map").innerText(), /나의 과정 지도 보기[\s\S]*Algebra 2/);
+  await page.locator("#quick-map").click();
+  assert.equal(await page.locator('[data-map-view="course"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#course-map-panel h3").textContent(), "Algebra 2");
+  await page.locator('[data-map-view="grade"]').click();
   await page.locator("#quick-start-grade").selectOption("0");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=K2#past-papers");
   await page.locator("#quick-start-grade").selectOption("6");
@@ -153,11 +158,14 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
 
   await page.locator('[data-map-view="course"]').click();
   assert.equal(await page.locator("#course-directory").isVisible(), true);
+  await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
   assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개 공개/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
+  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 4);
+  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /Polynomial & rational functions[\s\S]*Statistics, probability & modeling/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "#availability");
   assert.match(await page.locator("#course-sequence-note").innerText(), /학교가 설정/);
 
@@ -371,6 +379,8 @@ test("Grade 6 diagnostic page explains the real flow while public hosting keeps 
   assert.equal(await page.locator("#runtime-status-title").textContent(), "공개 안내 모드");
   assert.equal(await page.locator("#student-start").isDisabled(), true);
   assert.equal(await page.locator("#teacher-open").isDisabled(), true);
+  assert.equal(await page.locator("#student-start").textContent(), "공개 주소에서는 실행할 수 없음");
+  assert.equal(await page.locator("#teacher-open").textContent(), "공개 주소에서는 열 수 없음");
   assert.equal(await page.locator("#student-workspace").isVisible(), true);
   assert.equal(await page.locator("#teacher-workspace").isHidden(), true);
   assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
