@@ -366,3 +366,68 @@ QR이 빠진다 — drill.html이 실제로 그 상태였다. 새 인쇄 진입 
   정상 동작 ④`scripts/check-print.js`·`scripts/check-answerable.js` 424건 전수 통과.
 - 기존 `subs` 항목은 문구 하나도 건드리지 않음. `engine/threads/*.js`·`data/threads.js`도
   무변동(순수 UI 노출 작업).
+
+## nl.js 유아 16개 생성기 등록 — "문장제 공백" 절이 가리킨 것과 같은 부류 (2026-08-29)
+
+`engine/threads/nl.js`(유아 5~7세, `nl1_count`~`nl14_pattern` 16종)는 `index.html`(마을
+게임)엔 로드되고 실제로 쓰이고 있었지만 `data/threads.js`(`NM_THREADS`)에 스레드로 등록된
+적이 없었다 — 위 195개 노출 작업의 대상 목록(`NM_THREADS`)에 애초에 없었다는 뜻. 그래서
+문제은행·인쇄엔 한 번도 나온 적이 없다. **생성기 코드는 전부 그대로**, 등록만 했다.
+
+- `data/threads.js`에 `NL1`~`NL16` 16개 스레드, 총 **45레벨** 추가(생성기당 1스레드 —
+  각 스레드의 `gen`은 문자열 하나뿐이라 두 생성기를 한 스레드로 묶을 수 없었다. 마을 게임
+  쪽 로드맵(`data/roadmap.js`·`curriculum.js`)의 `N-01`~`N-15` 유닛 코드가 `nl4_ladybug`와
+  `nl12_scale`을 한 유닛(N-12)으로 묶어 놓은 걸 보고 처음엔 그대로 따르려 했으나, `unit:`
+  필드 값으로 그 코드를 재사용하면 완전히 다른 레지스트리(마을 유닛 id)와 이름이 겹쳐 헷갈릴
+  거라 판단해 threads.js 스레드엔 `unit:` 필드를 아예 안 붙였다 — 이미 절반 이상의 기존
+  스레드도 그렇게 비워 둔다).
+- **카테고리**: `drill.html`의 `TOPICS`에 `preschool`(유아, 🧸, 45개) 신설, `section:'school'`
+  (섹션은 화면 탭 두 개뿐이라 세 번째를 만들면 탭 버튼·CSS까지 손대야 해서 기존 값 재사용 —
+  195개 노출 작업의 선례와 같은 판단).
+- **큰 함정 하나 — nl.js가 drill.html엔 로드되지 않고 있었다.** index.html은 63번째 줄에서
+  `engine/threads/nl.js`를 싣지만, drill.html은 스크립트 목록을 따로 관리하는데 거기엔
+  없었다. 그 상태로 검사기를 돌리면 **다 통과한다** — `generateProblem()`의 `NM_TGEN[genKey]`
+  미등록 폴백(`app/exam.js:882`)이 `a+b=□` 꼴 문제를 대신 만들어 주기 때문에, 검사기는
+  진짜 nl.js 문항이 아니라 이 가짜 문항을 검사하고 있었다(작업 중 실제로 이 함정에 걸렸다 —
+  Playwright로 미리보기를 찍어 보고서야 "97+6=?" 같은 엉뚱한 문제가 나오는 걸 발견함).
+  `<script src="engine/threads/nl.js">`를 index.html과 같은 위치(`el.js` 뒤 `adv.js` 앞)에
+  추가해 고침.
+- **인쇄 결함 — nl.js는 다른 158개 스레드와 달리 `tex`를 아예 안 준다.** 화면은 위젯(town-game
+  실습 화면)이 그리고, 문항은 `prompt` 문장 + `items`/`seq`/`rows`/`cells` 같은 원본 데이터로만
+  존재한다. `app/exam.js`의 인쇄 파이프라인(`fillPrintGrid`)은 `p.tex`를 최우선으로 읽으므로
+  손 안 대면 카드가 통째로 빈다 — 위 "학습지 인쇄·채점 전수 점검"(2026-08-28) 절이 예고한 바로
+  그 부류(화면은 위젯인데 인쇄는 tex 한 줄)의 새 사례. `nl.js` 자체는 안 건드리고 `exam.js`만
+  확장했다(이 인쇄 파이프라인은 원래도 생성기가 주는 부가 필드—`cubes`·`base10`·`numline`—를
+  읽어 그리는 방식이라 같은 패턴을 이어감):
+  - `printAskText`가 **tex가 아예 없으면** prompt 문장을 질문 줄로 싣도록 한 줄 확장(다른
+    158개 스레드는 전부 tex가 있어 이 분기를 안 탄다).
+  - prompt 문장에 숫자가 이미 다 있는 것(모으기 "4개와 2개를 모으면?", 수 기계 "3을
+    넣어요! 규칙은 +2")은 질문 줄만으로 충분해 손 안 댐. **그림이 실제로 있어야 풀리는 것**
+    (세기 장면, 몇째 찾기, 계단, 양팔저울, 수 피라미드, 십자 퍼즐, 수열 빈칸, 점 잇기, 숨은
+    규칙 추리, 탤리 읽기, 분류 장면)만 `nlVisualHtml()` 하나로 분기해 12종 소형 SVG/HTML
+    렌더러를 새로 짰다(`app/exam.js`, `bondSvg` 옆). 가르기(split)는 기존 `bondSvg`를
+    그대로 재사용했고, 모으기(join)는 빈칸이 반대쪽(위)에 오는 거울 모양이라 `bondSvgTop`을
+    새로 추가했다.
+  - 왼쪽/오른쪽에서 몇째(`gridPaint`·`storyCard` lineup)는 정답이 **0부터 세는 배열
+    인덱스**라, 칸에도 0부터 번호를 매겨 그 번호가 곧 정답이 되게 했다(직접 발명한 규칙이
+    아니라 생성기가 이미 쓰던 인덱싱을 그대로 시각화한 것). 계단은 반대로 **아래에서부터
+    1로 세는 답**이라 계단도 1부터 매겼다. 양팔저울(정답 0=왼쪽/1=오른쪽)·바구니 비교(정답
+    0=A/1=B)도 그림에 그 번호를 직접 적어 범례 문장 없이 답 형식이 분명해지게 했다.
+  - `scripts/check-print.js`의 "맨 식인데 단계 풀이도 없음" 검사(`bareNoSteps`)는 `p.tex`만
+    보고 판정해서, tex가 아예 없는 nl.js류를 전부 "답 형식 불명"으로 오판했다(1)
+    — `printAskText`와 같은 조건(`!tex && prompt.ko 있음`)을 인정하도록 한 줄 추가해 고침.
+    검사 대상 필터는 건드릴 필요가 없었다(스레드·레벨을 도는 로직이라 등록만 되면 자동으로
+    잡힌다) — 대신 판정 로직 자체가 이 새 부류를 오판하고 있었다.
+- **정답이 상수인 레벨 2개(WARN, FAIL 아님)** — `NL7L3`(수-점 매칭)·`NL14L3`(수-탤리 매칭)은
+  `matchLine` 위젯의 화면 채점용 숫자 답(`answer:N`)이 레벨당 고정값이라(요청한 매칭 개수 N),
+  검사기의 "정답 쏠림" 경고가 뜬다. 실제 상호작용(선 잇기)은 화면 위젯 몫이라 nl.js 자체
+  설계이고, 이 작업 범위 밖이라 손대지 않음.
+- **검증**: ①`node scripts/check-print.js`·`node scripts/check-answerable.js` **전체
+  469/469**(기존 424 + 신규 45) 통과, WARN 2건(위) 제외 FAIL 0 ②Playwright로 drill.html
+  구동 — 서랍장에 "🧸 유아" 그룹·45항목 확인, `NL1`(tapCount)·`NL2`(numberBond)·
+  `NL9`(storyCard)·`NL12`(crossSum)·`NL16`(seqFill) 5종 위젯을 실제로 생성→인쇄까지
+  실행해 카드 5/5·질문 줄 5/5·그림 5~10/5 확인, `pageerror` 0건(콘솔의 폰트 CDN 접속
+  실패 3건은 이 샌드박스의 외부망 차단 때문이고 이 작업 전부터 있던 것 — drill.html이
+  이미 `fonts.googleapis.com`/`cdn.jsdelivr.net`을 참조하고 있었음, 무관) ③언어 오염
+  자동 검사(threads.js concept·name·level label 전부 + drill.html의 새 45개 label·desc)
+  — 한글 필드에 한자, 영문 필드에 한글, 중문 필드에 영어 단어 0건.

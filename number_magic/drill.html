@@ -306,6 +306,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 <script src="engine/threads/fr.js"></script>
 <script src="engine/threads/dc_mx.js"></script>
 <script src="engine/threads/el.js"></script>
+<script src="engine/threads/nl.js"></script>
 <script src="engine/threads/adv.js"></script>
 <script src="engine/threads/mid.js"></script>
 <script src="engine/threads/mid2.js"></script>
@@ -469,6 +470,55 @@ var TOPICS = [
       {label:'평균으로 빠진 수 찾기', thread:'EL4', level:3, desc:'평균을 알고 빠진 수 구하기'},
       {label:'비례식 (빈 항 구하기)', thread:'EL5', level:1, desc:'a:b = c:□'},
       {label:'비례식 (외항 · 내항의 곱)', thread:'EL5', level:2, desc:'외항 · 내항 곱으로 풀기'},
+    ]
+  },
+  { id:'preschool', label:'유아', en:'Preschool', icon:'🧸', color:'#84cc16', section:'school',
+    subs:[
+      {label:'세기 (5까지)', thread:'NL1', level:1, desc:'목표만 콕콕 세기, 5까지'},
+      {label:'세기 (9까지)', thread:'NL1', level:2, desc:'목표만 콕콕 세기, 9까지'},
+      {label:'개수만큼 만들기', thread:'NL1', level:3, desc:'판을 눌러 개수 만들기'},
+      {label:'가르기 (5까지)', thread:'NL2', level:1, desc:'전체를 두 접시로 가르기'},
+      {label:'가르기 (9까지, 0 포함)', thread:'NL2', level:2, desc:'0이 들어간 가르기도 등장'},
+      {label:'모으기', thread:'NL2', level:3, desc:'두 부분을 모아 전체 구하기'},
+      {label:'무당벌레 가르기 (5까지)', thread:'NL3', level:1, desc:'날개 점 개수 가르기'},
+      {label:'무당벌레 가르기 (9까지)', thread:'NL3', level:2, desc:'비대칭 구성도 자주 등장'},
+      {label:'수열 빈칸 (쉬움)', thread:'NL4', level:1, desc:'1~10 이어 세기'},
+      {label:'수열 빈칸 (거꾸로·뛰어세기)', thread:'NL4', level:2, desc:'거꾸로 세기 · 2씩 뛰어세기'},
+      {label:'점 잇기', thread:'NL4', level:3, desc:'1부터 차례로 점을 이어 그림 완성'},
+      {label:'수 피라미드 (쉬움)', thread:'NL5', level:1, desc:'꼭대기 한 칸만 빈칸'},
+      {label:'수 피라미드 (어려움)', thread:'NL5', level:2, desc:'중간·꼭대기 빈칸'},
+      {label:'동전 뛰어세기', thread:'NL5', level:3, desc:'10원씩 뛰어세어 총액 구하기'},
+      {label:'10의 짝꿍', thread:'NL6', level:1, desc:'텐프레임으로 10 채우기'},
+      {label:'1 큰 수 · 1 작은 수', thread:'NL6', level:2, desc:'세어 보고 이웃 수 고르기'},
+      {label:'이어 세기 (쉬움)', thread:'NL7', level:1, desc:'1~10 범위 이어 세기'},
+      {label:'이어 세기 (어려움)', thread:'NL7', level:2, desc:'1~15 범위 이어 세기'},
+      {label:'수-점 매칭', thread:'NL7', level:3, desc:'숫자와 점 그림 짝짓기'},
+      {label:'몇째 찾기 (쉬움)', thread:'NL8', level:1, desc:'왼쪽에서 몇째 콕 짚기'},
+      {label:'몇째 찾기 (어려움)', thread:'NL8', level:2, desc:'왼쪽 · 오른쪽 섞어 몇째 찾기'},
+      {label:'정확히 칠하기', thread:'NL8', level:3, desc:'정해진 개수만 색칠'},
+      {label:'줄서기 (쉬움)', thread:'NL9', level:1, desc:'왼쪽에서 몇째 친구 찾기'},
+      {label:'줄서기 (어려움)', thread:'NL9', level:2, desc:'왼쪽 · 오른쪽 섞어 찾기'},
+      {label:'계단 몇째', thread:'NL9', level:3, desc:'아래에서부터 세어 계단 번호 답하기'},
+      {label:'저울 비교 (5까지)', thread:'NL10', level:1, desc:'더 무겁거나 가벼운 쪽 찾기'},
+      {label:'저울 비교 (9까지)', thread:'NL10', level:2, desc:'더 큰 범위로 비교'},
+      {label:'규칙 보임 (쉬움)', thread:'NL11', level:1, desc:'+n 규칙으로 계산'},
+      {label:'규칙 보임 (어려움)', thread:'NL11', level:2, desc:'+n · -n 규칙으로 계산'},
+      {label:'숨은 규칙 추리', thread:'NL11', level:3, desc:'예시 2개로 규칙 추리'},
+      {label:'길 잇기', thread:'NL12', level:1, desc:'격자 위 길을 순서대로 잇기'},
+      {label:'십자 퍼즐 (쉬움)', thread:'NL12', level:2, desc:'위+아래=왼쪽+오른쪽'},
+      {label:'십자 퍼즐 (어려움)', thread:'NL12', level:3, desc:'더 큰 범위로 연습'},
+      {label:'이야기 셈 (쉬움)', thread:'NL13', level:1, desc:'받거나 나눠 준 후 개수 구하기'},
+      {label:'이야기 셈 (어려움)', thread:'NL13', level:2, desc:'더 큰 범위로 연습'},
+      {label:'분류하기', thread:'NL13', level:3, desc:'종류별로 나눠 담고 세기'},
+      {label:'탤리 만들기 (쉬움)', thread:'NL14', level:1, desc:'막대를 그어 목표 수 만들기'},
+      {label:'탤리 만들기 (어려움)', thread:'NL14', level:2, desc:'9까지 목표 수 만들기'},
+      {label:'수-탤리 매칭', thread:'NL14', level:3, desc:'숫자와 탤리 그림 짝짓기'},
+      {label:'분류하고 세기 (쉬움)', thread:'NL15', level:1, desc:'섞인 것 나눠 담고 세기'},
+      {label:'분류하고 세기 (어려움)', thread:'NL15', level:2, desc:'더 큰 범위로 연습'},
+      {label:'더 많은 쪽 비교', thread:'NL15', level:3, desc:'어느 바구니가 더 많은지 찾기'},
+      {label:'탤리 읽기 (쉬움)', thread:'NL16', level:1, desc:'그어진 막대 세어 답하기'},
+      {label:'탤리 읽기 (어려움)', thread:'NL16', level:2, desc:'9까지 범위로 연습'},
+      {label:'화살표 규칙', thread:'NL16', level:3, desc:'1씩 늘거나 줄어드는 빈칸 찾기'},
     ]
   },
   { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6', section:'magic',
