@@ -23,7 +23,16 @@ function signOf(rng){ return pick(rng, [1, -1]); }
 function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ [a, b] = [b, a % b]; } return a || 1; }
 function lcm(a, b){ return Math.abs(a * b) / gcd(a, b); }
 /* 분수를 분모>0으로 정규화(부호는 분자로 몰아줌) — CH5 등 기존 관례(약분은 안 함) 유지 */
-function normFrac(n, d){ if(d < 0){ n = -n; d = -d; } return [n, d]; }
+/* 분수 답 정규화 — 부호를 분자로 몰고 기약분수로 줄인다.
+   약분 정책(2026-08-29 원장): 4학년까지는 약분하지 않은 값, 5학년부터는 기약분수가
+   정답이다. 이 파일의 MD3·MD7은 중1 과정이라 기약분수가 정답이어야 하는데
+   예전엔 부호만 정리하고 약분을 안 해 4/4·(-12)/30 같은 답이 정답키로 나갔다.
+   normFrac을 쓰는 곳은 MD3·MD7뿐이라 여기서 한 번에 처리한다. */
+function normFrac(n, d){
+  if(d < 0){ n = -n; d = -d; }
+  const g = gcd(n, d);
+  return [n / g, d / g];
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -620,12 +629,14 @@ NM_TGEN['md9_repeatToFrac'] = function (params, rng) {
   const Rpad = String(R_).padStart(m, '0');
 
   const PRconcat = P * Math.pow(10, m) + R_;
-  const numerator = PRconcat - P;
-  const denominator = Math.pow(10, k) * (Math.pow(10, m) - 1);
+  /* 기약분수로 줄여서 답한다 — 중2 과정이라 5학년 이상 약분 정책이 적용된다
+     (2026-08-29 원장 지시). 예전엔 48/90처럼 계산 직후 값이 정답키였다. */
+  const [numerator, denominator] = normFrac(PRconcat - P,
+    Math.pow(10, k) * (Math.pow(10, m) - 1));
 
   return {
     prompt: {
-      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)이에요`,
+      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)이에요 — 마지막엔 기약분수로 줄여요`,
       en: `Turn the repeating decimal into a fraction: subtract the non-repeating prefix from the concatenated number, and the denominator is 10^${k}×(10^${m}-1)`,
       zh: `把循环小数化成分数：用"前缀+循环节"连成的数减去前缀，分母是10^{${k}}×(10^{${m}}-1)`
     },

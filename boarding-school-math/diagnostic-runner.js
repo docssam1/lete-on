@@ -797,6 +797,10 @@
     const localQaOptIn = new URLSearchParams(window.location.search).get("runtime") === "local-qa";
     if (!loopbackHosts.has(window.location.hostname) || !localQaOptIn) {
       state.runtimeAvailable = false;
+      document.getElementById("student-start").disabled = true;
+      document.getElementById("student-start").textContent = "공개 주소에서는 실행할 수 없음";
+      document.getElementById("teacher-open").disabled = true;
+      document.getElementById("teacher-open").textContent = "공개 주소에서는 열 수 없음";
       setRuntimeStatus("offline", "공개 안내 모드", "공개 주소에는 문항과 정답이 없습니다. 운영 계정 서버가 연결되기 전에는 실제 응시가 열리지 않습니다.");
       return;
     }
@@ -809,10 +813,16 @@
       state.runtimeAvailable = true;
       setRuntimeStatus("ready", "비공개 QA 흐름 준비됨", "42문항 전달, 자동채점, 교사 검토, 분석·처방을 이 컴퓨터에서 검수할 수 있습니다. 42문항은 독립 승인 전이므로 실제 학생 운영은 잠겨 있습니다.");
       document.getElementById("student-start").disabled = false;
+      document.getElementById("student-start").textContent = "비공개 QA 진단 시작";
       document.getElementById("teacher-open").disabled = false;
+      document.getElementById("teacher-open").textContent = "검토할 응답 열기";
       resumeStudentUi();
     } catch (_) {
       state.runtimeAvailable = false;
+      document.getElementById("student-start").disabled = true;
+      document.getElementById("student-start").textContent = "공개 주소에서는 실행할 수 없음";
+      document.getElementById("teacher-open").disabled = true;
+      document.getElementById("teacher-open").textContent = "공개 주소에서는 열 수 없음";
       setRuntimeStatus("offline", "공개 안내 모드", "이 주소에는 문항과 정답이 없습니다. 로컬 진단 서버 또는 운영 계정 서버를 연결하면 실제 응시가 열립니다.");
     }
   }

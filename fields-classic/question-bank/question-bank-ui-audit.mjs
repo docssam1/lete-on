@@ -22,6 +22,10 @@ assert(/\.question-page\{[^}]*grid-template-columns:1fr;grid-template-rows:repea
 assert(/\.b1-five-card-magic\.t-shape:before\{right:75px\}/.test(styles), "T-magic horizontal connector protrudes past the last cell");
 assert(/\.b1-five-card-magic\.t-shape:after\{bottom:42px\}/.test(styles), "T-magic vertical connector protrudes past the last cell");
 assert(/sourceAuditBlockedStages\?\.\[item\?\.id\]\?\.includes\(stageId\)/.test(app), "source-audit-blocked textbook stages remain selectable");
+assert(/function textbookConceptTutorialMarkup/.test(app), "textbook concept tutorial renderer missing");
+assert(/class="textbook-concept-tutorial/.test(app), "textbook concept tutorial is not rendered");
+assert(/class="concept-worked-solution"/.test(app), "concept worked solution disclosure missing");
+assert(/\.textbook-concept-tutorial\{/.test(styles), "textbook concept tutorial styling missing");
 
 const diagnosticBranch = app.indexOf('if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic"');
 const practiceBranch = app.indexOf("else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam))");

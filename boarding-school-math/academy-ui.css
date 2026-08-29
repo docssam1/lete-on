@@ -97,6 +97,35 @@ body.academy-page {
 .academy-page .header-actions { gap: 8px; }
 .academy-page .prototype-badge { display: none; }
 
+.academy-page .language-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 3px;
+  border: 1px solid rgba(16, 38, 56, .18);
+  border-radius: 5px;
+  background: rgba(255, 253, 247, .62);
+}
+
+.academy-page .language-entry a {
+  min-width: 38px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 7px;
+  color: #344956;
+  border-radius: 3px;
+  font-size: .68rem;
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-decoration: none;
+}
+
+.academy-page .language-entry a:hover,
+.academy-page .language-entry a:focus-visible { color: #fff; background: var(--academy-ink); }
+
 .academy-page .role-shortcut,
 .academy-page .catalog-link,
 .academy-page .home-link {
@@ -221,6 +250,8 @@ body.academy-page {
   .academy-page .topbar { padding-inline: 14px; }
   .academy-page .brand-mark { width: 30px; height: 34px; }
   .academy-page .role-shortcut { min-height: 44px; padding-inline: 9px; font-size: .68rem; }
+  .academy-page .language-entry { order: 3; width: 100%; justify-content: center; }
+  .academy-page .header-actions { flex-wrap: wrap; justify-content: flex-end; }
 }
 
 @media (prefers-reduced-motion: reduce) {

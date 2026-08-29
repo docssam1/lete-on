@@ -40,6 +40,14 @@ const privateAuthoringPaths = [
     historyUnavailableCode: "PRIVATE_WORKBOOK_HISTORY_AUDIT_UNAVAILABLE",
     historyCode: "PRIVATE_WORKBOOK_HISTORY_PRESENT",
     message: "A workbook authoring draft is tracked in the public Git index."
+  },
+  {
+    path: "boarding-school-math/private-sasmo-authoring",
+    unavailableCode: "PRIVATE_SASMO_AUTHORING_TRACKING_AUDIT_UNAVAILABLE",
+    trackedCode: "PRIVATE_SASMO_AUTHORING_TRACKED",
+    historyUnavailableCode: "PRIVATE_SASMO_AUTHORING_HISTORY_AUDIT_UNAVAILABLE",
+    historyCode: "PRIVATE_SASMO_AUTHORING_HISTORY_PRESENT",
+    message: "A SASMO year-paper intake draft is tracked in the public Git index."
   }
 ];
 const markerSourcePathExclusions = [
