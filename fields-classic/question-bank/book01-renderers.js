@@ -34,9 +34,13 @@ function partitionDrawMarkup(visual) {
     const label = visual.labels?.[index];
     const classes = [];
     if (label) {
-      classes.push(`piece-${label.toLowerCase()}`);
-      if (column < visual.columns - 1 && visual.labels[index + 1] !== label) classes.push("cut-right");
-      if (row < visual.rows - 1 && visual.labels[index + visual.columns] !== label) classes.push("cut-bottom");
+      if (visual.showPieceFills !== false) classes.push(`piece-${label.toLowerCase()}`);
+      if (column < visual.columns - 1 && visual.labels[index + 1] !== label) {
+        classes.push(guideCuts.has(`${index}:right`) ? "guide-right" : visual.sourceGuide ? "completion-right" : "cut-right");
+      }
+      if (row < visual.rows - 1 && visual.labels[index + visual.columns] !== label) {
+        classes.push(guideCuts.has(`${index}:bottom`) ? "guide-bottom" : visual.sourceGuide ? "completion-bottom" : "cut-bottom");
+      }
     }
     if (!visual.labels && guideCuts.has(`${index}:right`)) classes.push("guide-right");
     if (!visual.labels && guideCuts.has(`${index}:bottom`)) classes.push("guide-bottom");

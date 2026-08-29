@@ -269,41 +269,64 @@ function makePartition(pieceCount, { difficulty = 2 } = {}) {
 
 function rotationalPartitionTwo(context = {}) { return makePartition(2, context); }
 function rotationalPartitionFour(context = {}) { return makePartition(4, context); }
+
+const SYMBOL_PARTITION_GUIDE_CUTS = Object.freeze(["5:right", "9:right", "5:bottom", "6:bottom"]);
+const SYMBOL_PARTITION_CANDIDATES = Object.freeze([
+  Object.freeze([39, 2248, 4880, 58368]),
+  Object.freeze([46, 785, 29696, 35008]),
+  Object.freeze([51, 204, 13056, 52224]),
+  Object.freeze([71, 3208, 4400, 57856]),
+  Object.freeze([78, 305, 29184, 35968])
+]);
+const SOURCE_SYMBOL_PARTITIONS = Object.freeze([SYMBOL_PARTITION_CANDIDATES[1], SYMBOL_PARTITION_CANDIDATES[4]]);
+
+function cellsInMask(mask) {
+  return Array.from({ length: 16 }, (_, index) => index).filter((index) => (mask & (1 << index)) !== 0);
+}
+
+function labelsForPartition(masks) {
+  const labels = Array(16).fill("");
+  masks.forEach((mask, groupIndex) => {
+    cellsInMask(mask).forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+  });
+  return labels;
+}
+
+function countSymbolPartitionSolutions(symbols) {
+  return SYMBOL_PARTITION_CANDIDATES.filter((partition) => partition.every((mask) => {
+    const values = cellsInMask(mask).map((index) => symbols[index]);
+    return new Set(values).size === 4;
+  })).length;
+}
+
 function symbolBalancedCongruentPartition({ difficulty = 2 } = {}) {
   const rows = 4;
   const columns = 4;
-  const templates = {
-    stripRows: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 4))),
-    stripColumns: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + index % 4)),
-    squares: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 8) * 2 + Math.floor(index % 4 / 2))),
-    elbows: (() => {
-      const labels = Array(16).fill("");
-      [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]].forEach((cells, groupIndex) => {
-        cells.forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+  const masks = sample(SOURCE_SYMBOL_PARTITIONS);
+  const labels = labelsForPartition(masks);
+  const symbolSet = difficulty <= 1 ? ["1", "2", "3", "4"] : ["○", "△", "□", "★"];
+  let symbols = null;
+  let uniqueCount = 0;
+  for (let retry = 0; retry < 200 && uniqueCount !== 1; retry += 1) {
+    const candidate = Array(rows * columns).fill("");
+    masks.forEach((mask) => {
+      shuffle(symbolSet).forEach((symbol, index) => {
+        candidate[cellsInMask(mask)[index]] = symbol;
       });
-      return labels;
-    })()
-  };
-  const templateName = difficulty <= 1
-    ? shuffle(["stripRows", "stripColumns"])[0]
-    : difficulty >= 3 ? "elbows" : "squares";
-  const labels = templates[templateName];
-  const symbolSet = ["○", "△", "□", "★"];
-  const symbols = Array(rows * columns).fill("");
-  partitionGroups(rows, columns, labels).forEach((group) => {
-    shuffle(symbolSet).forEach((symbol, index) => {
-      const [row, column] = group[index];
-      symbols[row * columns + column] = symbol;
     });
-  });
+    uniqueCount = countSymbolPartitionSolutions(candidate);
+    if (uniqueCount === 1) symbols = candidate;
+  }
+  if (!symbols) return null;
+  const itemLabel = difficulty <= 1 ? "1, 2, 3, 4" : "○, △, □, ★";
   return {
-    prompt: "네 조각의 모양과 크기가 같고, 각 조각에 네 가지 기호가 하나씩 들어가도록 선을 그어 나누세요.",
-    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols },
+    prompt: `각 조각에 ${itemLabel}가 하나씩 들어가도록 모양과 크기가 같은 네 조각으로 나누세요.`,
+    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, sourceGuide: true },
     answer: "그림과 같이 네 조각으로 나눕니다.",
-    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels },
-    solution: "각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ○, △, □, ★가 하나씩 들어 있습니다.",
+    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, sourceGuide: true, showPieceFills: false },
+    solution: `각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ${itemLabel}가 하나씩 들어 있습니다.`,
     responseKind: "drawing",
-    meta: { family: "symbol-partition", labels, symbols, templateName }
+    meta: { family: "symbol-partition", labels, symbols, masks, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, uniqueCount }
   };
 }
 
@@ -898,6 +921,7 @@ export const BOOK01_INTERNALS = {
   patternKey,
   transformPattern,
   isCongruentPartition,
+  countSymbolPartitionSolutions,
   transformDigit,
   transformDisplay,
   gridSums,

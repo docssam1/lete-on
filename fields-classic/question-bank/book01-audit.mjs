@@ -105,6 +105,14 @@ function validatePartition(problem) {
     return;
   }
   assert(!problem.visual.labels, "partition drawing question reveals the answer lines");
+  if (problem.meta.family === "symbol-partition") {
+    const expectedGuide = ["5:right", "9:right", "5:bottom", "6:bottom"];
+    assert(problem.visual.sourceGuide && problem.answerVisual.sourceGuide, "symbol partition source guide mode missing");
+    assert(problem.visual.guideCuts.join() === expectedGuide.join(), "symbol partition central red guide mismatch");
+    assert(problem.answerVisual.guideCuts.join() === expectedGuide.join(), "symbol partition answer guide mismatch");
+    const uniqueCount = BOOK01_INTERNALS.countSymbolPartitionSolutions(problem.meta.symbols);
+    assert(uniqueCount === 1 && problem.meta.uniqueCount === 1, `symbol partition answer count ${uniqueCount}`);
+  }
   assert(problem.answerVisual.labels.join() === problem.meta.labels.join(), "partition drawing answer labels mismatch");
   assert(partitionValidity(problem.answerVisual, problem.meta.labels), "partition drawing answer is invalid");
   const fullCuts = new Set();

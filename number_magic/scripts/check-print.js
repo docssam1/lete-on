@@ -135,11 +135,17 @@ function serve(){
         const re = /(\d+)\\?frac\{(\d+)\}\{(\d+)\}/g; let m;
         while((m = re.exec(tx))) if(+m[2] >= +m[3]) res.impMixed.push(tx.slice(0, 60));
         /* 맨 식인데 단계 풀이도 없는 것 — 답 형식을 알 수 없어 인쇄물로 못 푼다
-           (실제 사례: FR4가 정답이 "통분 후 분자"뿐인데 인쇄물엔 분모가 없었다) */
+           (실제 사례: FR4가 정답이 "통분 후 분자"뿐인데 인쇄물엔 분모가 없었다)
+           ⚠️ nl.js(수의 나라, 유아) 16개 생성기는 tex를 아예 안 준다 — 질문 전체가
+           prompt 문장에만 있고, exam.js의 printAskText가 tex가 없을 때 그 문장을
+           질문 줄로 싣는다(2026-08-29). 그 관례를 여기서도 그대로 인정하지 않으면
+           tex가 "없다"는 이유로 "답 형식 불명"이라 오판한다 — 실제로는 형식이
+           불명한 게 아니라 tex 자체가 이 유형의 계약에 없는 것뿐이다. */
         const hasBlank0 = /\\square|\\bigcirc/.test(tx);
         const hasRel0   = /=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tx);
         const hasSteps0 = Array.isArray(p.steps) && p.steps.some(s => s && s.tex);
-        if(!hasBlank0 && !hasRel0 && !hasSteps0 && !p.word && !p.base10 && !p.numline)
+        const promptOnly0 = !tx && !!(p.prompt && p.prompt.ko);
+        if(!hasBlank0 && !hasRel0 && !hasSteps0 && !p.word && !p.base10 && !p.numline && !promptOnly0)
           res.bareNoSteps.push(tx.slice(0, 60));
       });
 
