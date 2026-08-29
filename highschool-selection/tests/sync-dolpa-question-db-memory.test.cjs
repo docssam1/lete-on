@@ -105,6 +105,24 @@ test("중2-2S 3회 시험지 검수 자료를 피타고라스 범위 원본으�
   assert.equal(info.recordId, "dp.m22s-r3.method-review.20260829");
 });
 
+test("중2-2 4개월반 1회 검수 자료를 중2-1 전체 범위 원본으로 구분한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m22-4m-r1-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const paperPath = path.join(root, "dolpa-paper-review-dp-m22-202405-r1-v1.json");
+  const difficultyPath = path.join(root, "dolpa-difficulty-review-dp-m22-202405-r1-v1.json");
+  const analysisPath = path.join(root, "dolpa-analysis-report-dp-m22-202405-r1-v1.json");
+  for (const filePath of [manifestPath, paperPath, difficultyPath, analysisPath]) {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-E572F8D7C5AA" }));
+  }
+  const info = methodReviewInfo(manifestPath, null, null, paperPath, difficultyPath, analysisPath);
+  assert.equal(info.key, "m22-4m-r1");
+  assert.equal(info.label, "중2-2 4개월반 1회");
+  assert.equal(info.pageSourceId, "dp-m22-4m-r1-page-assets-v1");
+  assert.equal(info.paperSourceId, "dp-m22-4m-r1-paper-review-v1");
+  assert.equal(info.difficultySourceId, "dp-m22-4m-r1-difficulty-review-v1");
+  assert.equal(info.analysisSourceId, "dp-m22-4m-r1-analysis-report-v1");
+});
+
 test("2-1S 3회 시험지 검수 자료를 연립일차방정식 종료 범위 원본으로 구분한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21s-r3-"));
   const manifestPath = path.join(root, "manifest.json");

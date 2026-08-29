@@ -47,6 +47,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-31111C2CA38E": { key: "m22-r3", label: "중2-2 3회", tags: ["middle2-2", "mixed-range"] },
     "DP-SRC-5CD3016EB886": { key: "m22s-r2", label: "중2-2S 2회", tags: ["middle2-2", "full-range"] },
     "DP-SRC-2B760BCB6E29": { key: "m22s-r3", label: "중2-2S 3회", tags: ["middle2-2", "full-range"] },
+    "DP-SRC-E572F8D7C5AA": { key: "m22-4m-r1", label: "중2-2 4개월반 1회", tags: ["middle2-2", "four-month-course", "middle2-1-full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
