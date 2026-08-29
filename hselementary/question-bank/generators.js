@@ -3031,6 +3031,37 @@
     return `<svg class="geometry-diagram staircase-diagram" viewBox="0 0 240 ${(bottomY + 16).toFixed(0)}" data-staircase-verticals="${verticals.join(",")}" data-staircase-hidden="${hiddenIndex}" aria-label="계단 모양으로 이어진 수직 선분"><line class="original" x1="10" y1="${topY}" x2="${(x + 30).toFixed(1)}" y2="${topY}"/><line class="original" x1="10" y1="${bottomY}" x2="${(x + 30).toFixed(1)}" y2="${bottomY}"/>${segments.join("")}${labels.join("")}</svg>`;
   };
 
+  const robotRightTurnSvg = ({ firstDistance, secondDistance, moveSeconds, turnUnit, turnSeconds }) => {
+    const vertex = [126, 85];
+    const firstScale = 68 + firstDistance * 5;
+    const secondScale = 68 + secondDistance * 5;
+    const firstUnit = [0.8, -0.6];
+    const secondUnit = [0.6, 0.8];
+    const start = [vertex[0] + firstUnit[0] * firstScale, vertex[1] + firstUnit[1] * firstScale];
+    const end = [vertex[0] + secondUnit[0] * secondScale, vertex[1] + secondUnit[1] * secondScale];
+    const markSize = 14;
+    const markOne = [vertex[0] + firstUnit[0] * markSize, vertex[1] + firstUnit[1] * markSize];
+    const markTwo = [markOne[0] + secondUnit[0] * markSize, markOne[1] + secondUnit[1] * markSize];
+    const markThree = [vertex[0] + secondUnit[0] * markSize, vertex[1] + secondUnit[1] * markSize];
+    const point = values => values.map(value => value.toFixed(1)).join(",");
+    return `<svg class="geometry-diagram robot-right-turn" viewBox="0 0 280 190" data-robot-path="${firstDistance},${secondDistance},${moveSeconds},${turnUnit},${turnSeconds},90" role="img" aria-label="서로 수직인 두 선분을 따라 출발점에서 도착점으로 가는 로봇"><polyline class="robot-path" points="${point(start)} ${point(vertex)} ${point(end)}"/><polyline class="robot-right-mark" points="${point(markOne)} ${point(markTwo)} ${point(markThree)}"/><circle class="robot-point" cx="${start[0].toFixed(1)}" cy="${start[1].toFixed(1)}" r="3.5"/><circle class="robot-point" cx="${vertex[0]}" cy="${vertex[1]}" r="3.5"/><circle class="robot-point" cx="${end[0].toFixed(1)}" cy="${end[1].toFixed(1)}" r="3.5"/><text class="robot-place-label" x="${(start[0] + 8).toFixed(1)}" y="${(start[1] - 10).toFixed(1)}">출발점</text><text class="robot-place-label" x="${(end[0] + 10).toFixed(1)}" y="${(end[1] + 9).toFixed(1)}">도착점</text><text class="robot-distance-label" x="${((start[0] + vertex[0]) / 2 - 12).toFixed(1)}" y="${((start[1] + vertex[1]) / 2 - 9).toFixed(1)}">${firstDistance}m</text><text class="robot-distance-label" x="${((vertex[0] + end[0]) / 2 + 14).toFixed(1)}" y="${((vertex[1] + end[1]) / 2).toFixed(1)}">${secondDistance}m</text><text class="robot-turn-label" x="${vertex[0] - 17}" y="${vertex[1] + 24}">왼쪽 90°</text></svg>`;
+  };
+
+  const parallelTrapezoidHeightSvg = ({ top, bottom, height }) => {
+    const scale = Math.min(5, 120 / height, 260 / bottom);
+    const topWidth = top * scale;
+    const bottomWidth = bottom * scale;
+    const visualHeight = height * scale;
+    const centerX = 160;
+    const bottomY = 150;
+    const topY = bottomY - visualHeight;
+    const topLeft = centerX - topWidth / 2;
+    const topRight = centerX + topWidth / 2;
+    const bottomLeft = centerX - bottomWidth / 2;
+    const bottomRight = centerX + bottomWidth / 2;
+    return `<svg class="geometry-diagram parallel-trapezoid-height" viewBox="0 0 320 180" data-trapezoid-distance="${top},${bottom},45,45,${height}" role="img" aria-label="두 밑각이 45도이고 위아래 두 변이 평행한 사다리꼴"><polygon points="${topLeft.toFixed(1)},${topY.toFixed(1)} ${topRight.toFixed(1)},${topY.toFixed(1)} ${bottomRight.toFixed(1)},${bottomY} ${bottomLeft.toFixed(1)},${bottomY}"/><path class="trapezoid-angle-mark" d="M ${(bottomLeft + 20).toFixed(1)} ${bottomY} A 20 20 0 0 0 ${(bottomLeft + 14.1).toFixed(1)} ${(bottomY - 14.1).toFixed(1)}"/><path class="trapezoid-angle-mark" d="M ${(bottomRight - 20).toFixed(1)} ${bottomY} A 20 20 0 0 1 ${(bottomRight - 14.1).toFixed(1)} ${(bottomY - 14.1).toFixed(1)}"/><text class="trapezoid-length-label" x="${centerX}" y="${(topY - 12).toFixed(1)}">${top}cm</text><text class="trapezoid-length-label" x="${centerX}" y="${bottomY + 16}">${bottom}cm</text><text class="trapezoid-angle-label" x="${(bottomLeft + 31).toFixed(1)}" y="${bottomY - 12}">45°</text><text class="trapezoid-angle-label" x="${(bottomRight - 31).toFixed(1)}" y="${bottomY - 12}">45°</text></svg>`;
+  };
+
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
     const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
       const y = 30 + index * 38;
@@ -16394,6 +16425,25 @@
         const answer = targetRatio * unit;
         const names = ["가", "나", "다", "라", "마", "바"];
         return result(`서로 이웃한 평행선 사이 거리의 비가 위에서부터 ${parts.join(":")}이고, 가장 먼 두 평행선 사이의 거리가 ${total}cm입니다. ${names[fromIndex]}와 ${names[toIndex]} 사이의 거리를 구하세요.${parallelDistanceRatioSvg(parts, total, fromIndex, toIndex)}`, answer, `비의 합은 ${parts.join("+")}=${parts.reduce((sum, value) => sum + value, 0)}이고 한 부분은 ${total}÷${parts.reduce((sum, value) => sum + value, 0)}=${unit}cm입니다. 구하려는 구간의 비는 ${parts.slice(fromIndex, toIndex).join("+")}=${targetRatio}이므로 ${unit}×${targetRatio}=${answer}cm입니다.`);
+      }
+      if (variant === 5) {
+        const firstDistance = int(rng, 2 + level, 5 + level);
+        const secondDistance = level === 0 ? firstDistance : int(rng, 2 + level, 6 + level);
+        const moveSeconds = pick(rng, [10, 15, 20, 25]);
+        const turnUnit = pick(rng, level === 0 ? [10, 15, 30] : [5, 10, 15, 30]);
+        const turnSeconds = int(rng, 1, 3 + level);
+        const moveTime = (firstDistance + secondDistance) * moveSeconds;
+        const turnTime = 90 / turnUnit * turnSeconds;
+        const answer = moveTime + turnTime;
+        const diagram = robotRightTurnSvg({ firstDistance, secondDistance, moveSeconds, turnUnit, turnSeconds });
+        return result(`로봇이 1m 앞으로 가는 데 ${moveSeconds}초가 걸리고, 왼쪽으로 방향을 ${turnUnit}° 바꾸는 데 ${turnSeconds}초가 걸립니다. 로봇이 출발점에서 도착점까지 선분을 따라 쉬지 않고 갈 때 걸리는 시간은 몇 초인가요?${diagram}`, answer, `움직인 거리는 ${firstDistance}+${secondDistance}=${firstDistance + secondDistance}m이므로 이동 시간은 ${firstDistance + secondDistance}×${moveSeconds}=${moveTime}초입니다. 두 선분은 서로 수직이므로 왼쪽으로 90° 돕니다. 회전 시간은 90÷${turnUnit}×${turnSeconds}=${turnTime}초입니다. 모두 ${moveTime}+${turnTime}=${answer}초입니다.`);
+      }
+      if (variant === 6) {
+        const top = int(rng, 8 + level, 16 + level * 2);
+        const height = int(rng, 5 + level, 10 + level * 2);
+        const bottom = top + 2 * height;
+        const diagram = parallelTrapezoidHeightSvg({ top, bottom, height });
+        return result(`사다리꼴의 위쪽 변과 아래쪽 변은 서로 평행하고, 아래쪽의 두 각은 모두 45°입니다. 두 평행선 사이의 거리를 구하세요.${diagram}`, height, `아래쪽 변과 위쪽 변의 길이 차는 ${bottom}-${top}=${bottom - top}cm입니다. 양쪽에 생기는 길이는 같으므로 한쪽은 ${bottom - top}÷2=${height}cm입니다. 두 각이 45°이므로 이 길이는 두 평행선 사이의 거리와 같습니다. 따라서 ${height}cm입니다.`);
       }
       const segCount = 3 + level;
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));

@@ -53,6 +53,14 @@
     sourcePrintedPage: printedPage,
     reviewLocked
   });
+  const sourceItem42Ability = (label, difficultyBand, sourceItemId, pdfPage, printedPage, reviewLocked = false) => ({
+    ...sourced(label, difficultyBand, "ability", `2026 생각하는 황소 실력 4-2 PDF p.${pdfPage} · 교재 p.${printedPage} · ${sourceItemId}`),
+    sourceItemId,
+    sourceSection: sourceItemId.includes("mission") ? "mission" : sourceItemId.includes("example") ? "example" : "exploration",
+    sourcePdfPage: pdfPage,
+    sourcePrintedPage: printedPage,
+    reviewLocked
+  });
 
   const semester = (id, units) => ({
     id,
@@ -459,11 +467,13 @@
       ],
       ["사각형",
         detailed("수선과 평행선", "quadPerpParallelDistance", [
-          sourced42("수직인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
-          sourced42("평행인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
-          sourced42("비로 주어진 평행선 사이 거리", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
-          sourced42("연속한 수선으로 전체 거리 구하기", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
-          sourced42("전체 거리에서 수선의 빈 길이 구하기", 1, "4-2 심화 p.35-36 개념탐구 1·Mission")
+          sourceItem42Ability("수직인 두 직선의 쌍 세기", -1, "4-2-quad-1-exploration-1", 38, 40),
+          sourceItem42Ability("평행인 두 직선의 쌍 세기", -1, "4-2-quad-1-exploration-3", 38, 40),
+          { label: "비로 주어진 평행선 사이 거리", reviewLocked: true },
+          sourceItem42Ability("연속한 수선으로 전체 거리 구하기", 0, "4-2-quad-1-example-1-4", 38, 40),
+          sourceItem42Ability("전체 거리에서 수선의 빈 길이 구하기", 1, "4-2-quad-1-example-1-3", 38, 40),
+          sourceItem42Ability("두 선분을 가고 왼쪽으로 돈 시간", 1, "4-2-quad-1-mission-6", 39, 41),
+          sourceItem42Ability("45도 사다리꼴의 평행선 사이 거리", 0, "4-2-quad-1-example-1-2", 38, 40)
         ]),
         detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
           sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
