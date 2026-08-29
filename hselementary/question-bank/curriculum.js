@@ -481,7 +481,8 @@
         detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
           sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
           sourced42("여러 평행선의 엇각 합", 0, "4-2 심화 p.37-38 개념탐구 2·Mission"),
-          sourced42("각의 조건으로 평행한 직선 찾기", 1, "4-2 심화 p.37-38 개념탐구 2·Mission")
+          sourced42("각의 조건으로 평행한 직선 찾기", 1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
+          sourceItem42Ability("평행선 사이 두 각으로 바깥각 구하기", 0, "4-2-quad-2-example-2-1", 40, 42)
         ]),
         detailed("평행선 사이의 각도 ①", "quadAngleChainOne", [
           sourced42("한 번 꺾인 선의 끝각", -1, "4-2 심화 p.39-40 개념탐구 3·Mission"),

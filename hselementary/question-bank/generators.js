@@ -3134,6 +3134,24 @@
     return `<svg class="geometry-diagram line-name-condition" viewBox="0 0 360 250" data-role-labels="${roleOrder.map(role => roleLabels[role]).join(",")}" data-base-angle="${baseAngle}" data-diagonal-angle="${diagonalAngle}" data-unique-assignments="${uniqueCount}" role="img" aria-label="평행, 수직, 한 점에서 만나는 조건으로 다섯 직선의 이름을 정하는 그림">${segment("line-name-main", p, baseAngle, 145, "A")}${segment("line-name-main", mPoint, baseAngle, 135, "M")}${segment("line-name-main", p, normalAngle, 112, "R")}${segment("line-name-main", p, dAngle, 140, "D")}${segment("line-name-main", q, nAngle, 92, "N")}${rightMark(mPoint, baseAngle, normalAngle)}${rightMark(q, dAngle, nAngle)}<circle class="line-name-concurrent" cx="${p[0]}" cy="${p[1]}" r="3"/><text class="line-name-known" x="${(knownAnchor[0] - 18).toFixed(1)}" y="${(knownAnchor[1] - 8).toFixed(1)}">${roleLabels.A}</text>${slot("M", 1, mAnchor, [45, 32])}${slot("N", 2, nAnchor, [135, 27])}${slot("R", 3, rAnchor, [294, 28])}${slot("D", 4, dAnchor, [47, 213])}</svg>`;
   };
 
+  const parallelVExteriorSvg = ({ leftAngle, vertexAngle, rightInterior, answer }) => {
+    const topY = 54;
+    const bottomY = 164;
+    const vertex = [180, bottomY];
+    const gap = bottomY - topY;
+    const leftTop = [vertex[0] - gap / Math.tan(leftAngle * Math.PI / 180), topY];
+    const rightTop = [vertex[0] + gap / Math.tan(rightInterior * Math.PI / 180), topY];
+    const extend = (from, to, distance) => {
+      const dx = to[0] - from[0];
+      const dy = to[1] - from[1];
+      const length = Math.hypot(dx, dy);
+      return [to[0] + dx / length * distance, to[1] + dy / length * distance];
+    };
+    const leftEnd = extend(vertex, leftTop, 44);
+    const rightEnd = extend(vertex, rightTop, 44);
+    return `<svg class="geometry-diagram parallel-v-exterior" viewBox="0 0 390 205" data-parallel-v-angles="${leftAngle},${vertexAngle},${rightInterior},${answer}" role="img" aria-label="두 평행선 사이의 브이 모양 두 선과 바깥각"><line class="parallel-v-base" x1="24" y1="${topY}" x2="366" y2="${topY}"/><line class="parallel-v-base" x1="24" y1="${bottomY}" x2="366" y2="${bottomY}"/><line class="parallel-v-ray" x1="${leftEnd[0].toFixed(1)}" y1="${leftEnd[1].toFixed(1)}" x2="${vertex[0]}" y2="${vertex[1]}"/><line class="parallel-v-ray" x1="${vertex[0]}" y1="${vertex[1]}" x2="${rightEnd[0].toFixed(1)}" y2="${rightEnd[1].toFixed(1)}"/><text class="parallel-v-line-label" x="7" y="${topY + 5}">가</text><text class="parallel-v-line-label" x="7" y="${bottomY + 5}">나</text><text class="parallel-v-given" x="${(leftTop[0] - 35).toFixed(1)}" y="43">${leftAngle}°</text><text class="parallel-v-given" x="${vertex[0] - 18}" y="151">${vertexAngle}°</text><text class="parallel-v-target" x="${(rightTop[0] + 12).toFixed(1)}" y="78">㉠</text><circle cx="${leftTop[0].toFixed(1)}" cy="${leftTop[1]}" r="2.5"/><circle cx="${rightTop[0].toFixed(1)}" cy="${rightTop[1]}" r="2.5"/><circle cx="${vertex[0]}" cy="${vertex[1]}" r="2.5"/></svg>`;
+  };
+
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
     const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
       const y = 30 + index * 38;
@@ -16585,6 +16603,15 @@
       return result(`아래 그림과 같이 수직인 선분을 계속 이어 그렸습니다. 가장 먼 두 평행선 사이의 거리를 구하세요.${staircaseSvg(horizontals, verticals)}`, total, `가장 먼 두 평행선 사이의 거리는 같은 방향의 수직 구간의 길이를 모두 더한 값과 같습니다. ${verticals.join(" + ")} = ${total}cm입니다.`);
     },
     quadParallelAngleCondition({ rng, level, variant = 0 }) {
+      if (variant === 3) {
+        const step = [5, 2, 1][level];
+        const leftAngle = step * int(rng, Math.ceil(45 / step), Math.floor(75 / step));
+        const vertexAngle = step * int(rng, Math.ceil(45 / step), Math.floor((145 - leftAngle) / step));
+        const rightInterior = 180 - leftAngle - vertexAngle;
+        const answer = 180 - rightInterior;
+        const diagram = parallelVExteriorSvg({ leftAngle, vertexAngle, rightInterior, answer });
+        return result(`직선 가와 나는 서로 평행합니다. 그림에서 ㉠의 크기를 구하세요.${diagram}`, answer, `왼쪽 빗선이 직선 나와 이루는 삼각형 안쪽 각은 ${leftAngle}°입니다. 삼각형의 오른쪽 안쪽 각은 180-${leftAngle}-${vertexAngle}=${rightInterior}°입니다. ㉠과 이 각의 합은 180°이므로 ㉠=180-${rightInterior}=${answer}°입니다.`);
+      }
       if (variant === 0 || variant === 1) {
         const count = 3 + level;
         const angle = int(rng, 40, 140);

@@ -21,6 +21,8 @@ const sourceMissionOneAnswer = `㉠ ${90 - 68}°, ㉡ ${90 - 40}°`;
 if (sourceMissionOneAnswer !== "㉠ 22°, ㉡ 50°") failures.push(`Mission 1 원문 고정값은 ㉠ 22°, ㉡ 50°여야 하나 ${sourceMissionOneAnswer}입니다.`);
 const sourceMissionFourAnswer = "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다";
 if (sourceMissionFourAnswer !== "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다") failures.push(`Mission 4 원문 직선 이름 배치가 맞지 않습니다.`);
+const sourceExampleTwoOneAnswer = 65 + 67;
+if (sourceExampleTwoOneAnswer !== 132) failures.push(`예제 2-1 원문 고정값은 132°여야 하나 ${sourceExampleTwoOneAnswer}°입니다.`);
 
 const attr = (html, name) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1] || "";
 const chooseTwo = value => value * (value - 1) / 2;
@@ -102,7 +104,11 @@ for (const subunit of targetSubunits) {
             expected = type.variant === 4 ? values[hidden] : values.reduce((sum, value) => sum + value, 0);
           }
         } else if (type.generatorKey === "quadParallelAngleCondition") {
-          if (type.variant === 0 || type.variant === 1) {
+          if (type.variant === 3) {
+            const [leftAngle, vertexAngle, rightInterior, storedAnswer] = attr(generated.prompt, "data-parallel-v-angles").split(",").map(Number);
+            expected = 180 - rightInterior;
+            if (leftAngle + vertexAngle + rightInterior !== 180 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 평행선 사이 삼각형의 세 각 또는 바깥각이 맞지 않습니다.`);
+          } else if (type.variant === 0 || type.variant === 1) {
             const count = Number(attr(generated.prompt, "data-parallel-count"));
             const angle = Number(attr(generated.prompt, "data-parallel-angle"));
             expected = (count - 1) * angle;
@@ -182,10 +188,10 @@ for (const subunit of targetSubunits) {
 }
 
 if (targetSubunits[0].types.length !== 10) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
-if (targetSubunits[1].types.length !== 3) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
+if (targetSubunits[1].types.length !== 4) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
 if (targetSubunits[2].types.length !== 3) failures.push(`평행선 사이의 각도 ①: ${targetSubunits[2].types.length}유형`);
 if (targetSubunits[3].types.length !== 2) failures.push(`평행선 사이의 각도 ②: ${targetSubunits[3].types.length}유형`);
-const readyCounts = [9, 3, 3, 2, 2, 1, 3, 4];
+const readyCounts = [9, 4, 3, 2, 2, 1, 3, 4];
 targetSubunits.forEach((subunit, index) => {
   const ready = subunit.types.filter(type => !type.reviewLocked).length;
   if (ready !== readyCounts[index]) failures.push(`${subunit.name}: 공개 ${ready}유형, 예상 ${readyCounts[index]}유형`);
@@ -197,4 +203,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 사각형 개념탐구 1~8 · 공개 27개 세부 유형 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
+console.log(`4-2 사각형 개념탐구 1~8 · 공개 28개 세부 유형 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
