@@ -3076,6 +3076,28 @@
     return `<svg class="geometry-diagram growing-counterclockwise" viewBox="0 0 300 190" data-growing-turn="${startLength},${increment},${drawCount},${answer}" role="img" aria-label="길이가 늘어나는 선분을 반시계 방향으로 수직이 되게 이어 그린 처음 세 선분"><defs><marker id="counterclockwise-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs><line class="growing-first" x1="${x}" y1="${top}" x2="${x}" y2="${firstBottom.toFixed(1)}"/><line x1="${x}" y1="${firstBottom.toFixed(1)}" x2="${secondRight.toFixed(1)}" y2="${firstBottom.toFixed(1)}"/><line x1="${secondRight.toFixed(1)}" y1="${firstBottom.toFixed(1)}" x2="${secondRight.toFixed(1)}" y2="${thirdTop.toFixed(1)}"/><polyline class="growing-right-mark" points="${x},${(firstBottom - square).toFixed(1)} ${(x + square).toFixed(1)},${(firstBottom - square).toFixed(1)} ${(x + square).toFixed(1)},${firstBottom.toFixed(1)}"/><polyline class="growing-right-mark" points="${(secondRight - square).toFixed(1)},${firstBottom.toFixed(1)} ${(secondRight - square).toFixed(1)},${(firstBottom - square).toFixed(1)} ${secondRight.toFixed(1)},${(firstBottom - square).toFixed(1)}"/><path class="growing-turn-arrow" d="M ${(secondRight + 22).toFixed(1)} ${(firstBottom + 10).toFixed(1)} A 34 34 0 0 0 ${(secondRight + 4).toFixed(1)} ${(firstBottom - 29).toFixed(1)}" marker-end="url(#counterclockwise-arrow)"/><text class="growing-length-label" x="${x - 20}" y="${((top + firstBottom) / 2).toFixed(1)}">${first}cm</text><text class="growing-length-label" x="${((x + secondRight) / 2).toFixed(1)}" y="${(firstBottom + 16).toFixed(1)}">${second}cm</text><text class="growing-length-label" x="${secondRight + 22}" y="${((firstBottom + thirdTop) / 2).toFixed(1)}">${third}cm</text><text class="growing-note" x="224" y="48">계속 반시계 방향</text><text class="growing-ellipsis" x="244" y="80">···</text><text class="growing-count" x="226" y="112">수선 ${drawCount}번</text></svg>`;
   };
 
+  const perpendicularTwoUnknownSvg = ({ leftGiven, rightGiven, firstTarget, secondTarget }) => {
+    const center = [150, 96];
+    const radius = 90;
+    const pointAt = angle => {
+      const radians = angle * Math.PI / 180;
+      return [center[0] + radius * Math.cos(radians), center[1] + radius * Math.sin(radians)];
+    };
+    const leftLower = pointAt(180 - leftGiven);
+    const leftUpper = pointAt(360 - leftGiven);
+    const rightLower = pointAt(rightGiven);
+    const rightUpper = pointAt(180 + rightGiven);
+    const labelAt = (angle, distance) => {
+      const radians = angle * Math.PI / 180;
+      return [center[0] + distance * Math.cos(radians), center[1] + distance * Math.sin(radians)];
+    };
+    const leftGivenLabel = labelAt(180 - leftGiven / 2, 47);
+    const rightGivenLabel = labelAt(rightGiven / 2, 47);
+    const firstTargetLabel = labelAt((180 + rightGiven + 270) / 2, 42);
+    const secondTargetLabel = labelAt((270 + 360 - leftGiven) / 2, 42);
+    return `<svg class="geometry-diagram perpendicular-two-unknown" viewBox="0 0 300 192" data-perpendicular-angles="${leftGiven},${rightGiven},${firstTarget},${secondTarget}" role="img" aria-label="서로 수직인 가로선과 세로선 사이를 두 빗선이 지나는 각도 그림"><line class="perpendicular-base" x1="28" y1="${center[1]}" x2="272" y2="${center[1]}"/><line class="perpendicular-base" x1="${center[0]}" y1="18" x2="${center[0]}" y2="174"/><line class="perpendicular-slant" x1="${leftLower[0].toFixed(1)}" y1="${leftLower[1].toFixed(1)}" x2="${leftUpper[0].toFixed(1)}" y2="${leftUpper[1].toFixed(1)}"/><line class="perpendicular-slant" x1="${rightLower[0].toFixed(1)}" y1="${rightLower[1].toFixed(1)}" x2="${rightUpper[0].toFixed(1)}" y2="${rightUpper[1].toFixed(1)}"/><polyline class="perpendicular-right-mark" points="138,96 138,84 150,84"/><text class="perpendicular-line-label" x="18" y="${center[1] - 10}">가</text><text class="perpendicular-line-label" x="${center[0] + 15}" y="13">나</text><text class="perpendicular-given-label" x="${leftGivenLabel[0].toFixed(1)}" y="${leftGivenLabel[1].toFixed(1)}">${leftGiven}°</text><text class="perpendicular-given-label" x="${rightGivenLabel[0].toFixed(1)}" y="${rightGivenLabel[1].toFixed(1)}">${rightGiven}°</text><text class="perpendicular-target-label" x="${firstTargetLabel[0].toFixed(1)}" y="${firstTargetLabel[1].toFixed(1)}">㉠</text><text class="perpendicular-target-label" x="${secondTargetLabel[0].toFixed(1)}" y="${secondTargetLabel[1].toFixed(1)}">㉡</text><circle class="perpendicular-center" cx="${center[0]}" cy="${center[1]}" r="3"/></svg>`;
+  };
+
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
     const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
       const y = 30 + index * 38;
@@ -16475,6 +16497,17 @@
         const moveText = horizontalMoves.map((move, index) => `${index ? move.direction > 0 ? "+" : "-" : move.direction > 0 ? "" : "-"}${move.length}`).join("");
         const diagram = growingCounterclockwiseSvg({ startLength, increment, drawCount, answer });
         return result(`길이가 ${startLength}cm인 선분의 끝점에서 선분의 길이를 ${increment}cm씩 늘려 가며 반시계 방향으로 수선을 ${drawCount}번 그립니다. 처음 선분과 마지막 선분 사이의 거리는 몇 cm인가요?${diagram}`, answer, `처음 선분과 마지막 선분은 서로 평행합니다. 가로로 그은 선분의 길이를 오른쪽은 더하고 왼쪽은 빼면 ${moveText}=${horizontalPosition}입니다. 두 평행선 사이의 거리는 방향과 관계없이 ${answer}cm입니다.`);
+      }
+      if (variant === 8) {
+        const step = [5, 2, 1][level];
+        const angle = () => step * int(rng, Math.ceil(25 / step), Math.floor(70 / step));
+        const leftGiven = angle();
+        const rightGiven = angle();
+        const firstTarget = 90 - rightGiven;
+        const secondTarget = 90 - leftGiven;
+        const answer = `㉠ ${firstTarget}°, ㉡ ${secondTarget}°`;
+        const diagram = perpendicularTwoUnknownSvg({ leftGiven, rightGiven, firstTarget, secondTarget });
+        return result(`직선 가와 직선 나는 서로 수직입니다. 그림에서 ㉠과 ㉡의 크기를 각각 구하세요.${diagram}`, answer, `직각은 90°입니다. 오른쪽의 ${rightGiven}°와 ㉠을 더하면 90°이므로 ㉠=90-${rightGiven}=${firstTarget}°입니다. 왼쪽의 ${leftGiven}°와 ㉡을 더하면 90°이므로 ㉡=90-${leftGiven}=${secondTarget}°입니다.`);
       }
       const segCount = 3 + level;
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));

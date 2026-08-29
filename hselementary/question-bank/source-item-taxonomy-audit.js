@@ -54,7 +54,8 @@ const reviewedQuadrilateralIds = new Set([
   "4-2-quad-1-example-1-3",
   "4-2-quad-1-mission-6",
   "4-2-quad-1-example-1-2",
-  "4-2-quad-1-mission-3"
+  "4-2-quad-1-mission-3",
+  "4-2-quad-1-mission-1"
 ]);
 
 function check(condition, message) {
@@ -129,10 +130,10 @@ if (quadrilateralUnit) {
   check(Boolean(unmappedRatioType?.reviewLocked && !unmappedRatioType.sourceItemId), "원본과 겹치지 않는 거리의 비 유형은 잠금 상태여야 합니다.");
 }
 
-check(sourceIds.size === 95, `원문 문항 ID는 95개여야 하나 ${sourceIds.size}개입니다.`);
+check(sourceIds.size === 96, `원문 문항 ID는 96개여야 하나 ${sourceIds.size}개입니다.`);
 check(reviewedTriangleIds.size === 32, "삼각형 공개 허용 원문은 32개여야 합니다.");
 check(reviewedDecimalIds.size === 2, "소수 공개 허용 개념탐구는 2개여야 합니다.");
-check(reviewedQuadrilateralIds.size === 7, "사각형 공개 허용 원문은 7개여야 합니다.");
+check(reviewedQuadrilateralIds.size === 8, "사각형 공개 허용 원문은 8개여야 합니다.");
 
 if (failures.length) {
   console.error(`원문 문항 단위 분류 감사 실패: ${failures.length}건`);
@@ -140,4 +141,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("원문 문항 단위 분류 감사 통과: 4-2 삼각형 44유형 + 소수 44유형 + 사각형 7유형 = 95개 고유 문항");
+console.log("원문 문항 단위 분류 감사 통과: 4-2 삼각형 44유형 + 소수 44유형 + 사각형 8유형 = 96개 고유 문항");

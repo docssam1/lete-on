@@ -17,6 +17,8 @@ const sourceTrapezoidAnswer = (39 - 13) / 2;
 if (sourceTrapezoidAnswer !== 13) failures.push(`예제 1-2 원문 고정값은 13cm여야 하나 ${sourceTrapezoidAnswer}cm입니다.`);
 const sourceGrowingAnswer = Math.abs(2 - 4 + 6);
 if (sourceGrowingAnswer !== 4) failures.push(`Mission 3 원문 고정값은 4cm여야 하나 ${sourceGrowingAnswer}cm입니다.`);
+const sourceMissionOneAnswer = `㉠ ${90 - 68}°, ㉡ ${90 - 40}°`;
+if (sourceMissionOneAnswer !== "㉠ 22°, ㉡ 50°") failures.push(`Mission 1 원문 고정값은 ㉠ 22°, ㉡ 50°여야 하나 ${sourceMissionOneAnswer}입니다.`);
 
 const attr = (html, name) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1] || "";
 const chooseTwo = value => value * (value - 1) / 2;
@@ -72,6 +74,10 @@ for (const subunit of targetSubunits) {
             for (let step = 1; step <= drawCount; step += 2) horizontalPosition += (step % 4 === 1 ? 1 : -1) * (startLength + step * increment);
             expected = Math.abs(horizontalPosition);
             if (drawCount % 2 !== 0 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 마지막 선분이 처음 선분과 평행하지 않거나 저장 답이 다릅니다.`);
+          } else if (type.variant === 8) {
+            const [leftGiven, rightGiven, firstTarget, secondTarget] = attr(generated.prompt, "data-perpendicular-angles").split(",").map(Number);
+            expected = `㉠ ${90 - rightGiven}°, ㉡ ${90 - leftGiven}°`;
+            if (firstTarget !== 90 - rightGiven || secondTarget !== 90 - leftGiven) failures.push(`${type.id} / 시드 ${seed}: 수직선 사이의 두 각 자료가 맞지 않습니다.`);
           } else {
             const values = attr(generated.prompt, "data-staircase-verticals").split(",").map(Number);
             const hidden = Number(attr(generated.prompt, "data-staircase-hidden"));
@@ -157,11 +163,11 @@ for (const subunit of targetSubunits) {
   }
 }
 
-if (targetSubunits[0].types.length !== 8) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
+if (targetSubunits[0].types.length !== 9) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
 if (targetSubunits[1].types.length !== 3) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
 if (targetSubunits[2].types.length !== 3) failures.push(`평행선 사이의 각도 ①: ${targetSubunits[2].types.length}유형`);
 if (targetSubunits[3].types.length !== 2) failures.push(`평행선 사이의 각도 ②: ${targetSubunits[3].types.length}유형`);
-const readyCounts = [7, 3, 3, 2, 2, 1, 3, 4];
+const readyCounts = [8, 3, 3, 2, 2, 1, 3, 4];
 targetSubunits.forEach((subunit, index) => {
   const ready = subunit.types.filter(type => !type.reviewLocked).length;
   if (ready !== readyCounts[index]) failures.push(`${subunit.name}: 공개 ${ready}유형, 예상 ${readyCounts[index]}유형`);
