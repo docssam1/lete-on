@@ -473,7 +473,8 @@
           sourceItem42Ability("연속한 수선으로 전체 거리 구하기", 0, "4-2-quad-1-example-1-4", 38, 40),
           sourceItem42Ability("전체 거리에서 수선의 빈 길이 구하기", 1, "4-2-quad-1-example-1-3", 38, 40),
           sourceItem42Ability("두 선분을 가고 왼쪽으로 돈 시간", 1, "4-2-quad-1-mission-6", 39, 41),
-          sourceItem42Ability("45도 사다리꼴의 평행선 사이 거리", 0, "4-2-quad-1-example-1-2", 38, 40)
+          sourceItem42Ability("45도 사다리꼴의 평행선 사이 거리", 0, "4-2-quad-1-example-1-2", 38, 40),
+          sourceItem42Ability("길이를 늘려 반시계로 그은 두 선분 사이 거리", 1, "4-2-quad-1-mission-3", 39, 41)
         ]),
         detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
           sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),

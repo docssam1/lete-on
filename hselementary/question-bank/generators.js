@@ -3062,6 +3062,20 @@
     return `<svg class="geometry-diagram parallel-trapezoid-height" viewBox="0 0 320 180" data-trapezoid-distance="${top},${bottom},45,45,${height}" role="img" aria-label="두 밑각이 45도이고 위아래 두 변이 평행한 사다리꼴"><polygon points="${topLeft.toFixed(1)},${topY.toFixed(1)} ${topRight.toFixed(1)},${topY.toFixed(1)} ${bottomRight.toFixed(1)},${bottomY} ${bottomLeft.toFixed(1)},${bottomY}"/><path class="trapezoid-angle-mark" d="M ${(bottomLeft + 20).toFixed(1)} ${bottomY} A 20 20 0 0 0 ${(bottomLeft + 14.1).toFixed(1)} ${(bottomY - 14.1).toFixed(1)}"/><path class="trapezoid-angle-mark" d="M ${(bottomRight - 20).toFixed(1)} ${bottomY} A 20 20 0 0 1 ${(bottomRight - 14.1).toFixed(1)} ${(bottomY - 14.1).toFixed(1)}"/><text class="trapezoid-length-label" x="${centerX}" y="${(topY - 12).toFixed(1)}">${top}cm</text><text class="trapezoid-length-label" x="${centerX}" y="${bottomY + 16}">${bottom}cm</text><text class="trapezoid-angle-label" x="${(bottomLeft + 31).toFixed(1)}" y="${bottomY - 12}">45°</text><text class="trapezoid-angle-label" x="${(bottomRight - 31).toFixed(1)}" y="${bottomY - 12}">45°</text></svg>`;
   };
 
+  const growingCounterclockwiseSvg = ({ startLength, increment, drawCount, answer }) => {
+    const first = startLength;
+    const second = startLength + increment;
+    const third = startLength + 2 * increment;
+    const scale = Math.min(23, 76 / Math.max(first, second, third));
+    const x = 86;
+    const top = 30;
+    const firstBottom = top + first * scale;
+    const secondRight = x + second * scale;
+    const thirdTop = firstBottom - third * scale;
+    const square = 9;
+    return `<svg class="geometry-diagram growing-counterclockwise" viewBox="0 0 300 190" data-growing-turn="${startLength},${increment},${drawCount},${answer}" role="img" aria-label="길이가 늘어나는 선분을 반시계 방향으로 수직이 되게 이어 그린 처음 세 선분"><defs><marker id="counterclockwise-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs><line class="growing-first" x1="${x}" y1="${top}" x2="${x}" y2="${firstBottom.toFixed(1)}"/><line x1="${x}" y1="${firstBottom.toFixed(1)}" x2="${secondRight.toFixed(1)}" y2="${firstBottom.toFixed(1)}"/><line x1="${secondRight.toFixed(1)}" y1="${firstBottom.toFixed(1)}" x2="${secondRight.toFixed(1)}" y2="${thirdTop.toFixed(1)}"/><polyline class="growing-right-mark" points="${x},${(firstBottom - square).toFixed(1)} ${(x + square).toFixed(1)},${(firstBottom - square).toFixed(1)} ${(x + square).toFixed(1)},${firstBottom.toFixed(1)}"/><polyline class="growing-right-mark" points="${(secondRight - square).toFixed(1)},${firstBottom.toFixed(1)} ${(secondRight - square).toFixed(1)},${(firstBottom - square).toFixed(1)} ${secondRight.toFixed(1)},${(firstBottom - square).toFixed(1)}"/><path class="growing-turn-arrow" d="M ${(secondRight + 22).toFixed(1)} ${(firstBottom + 10).toFixed(1)} A 34 34 0 0 0 ${(secondRight + 4).toFixed(1)} ${(firstBottom - 29).toFixed(1)}" marker-end="url(#counterclockwise-arrow)"/><text class="growing-length-label" x="${x - 20}" y="${((top + firstBottom) / 2).toFixed(1)}">${first}cm</text><text class="growing-length-label" x="${((x + secondRight) / 2).toFixed(1)}" y="${(firstBottom + 16).toFixed(1)}">${second}cm</text><text class="growing-length-label" x="${secondRight + 22}" y="${((firstBottom + thirdTop) / 2).toFixed(1)}">${third}cm</text><text class="growing-note" x="224" y="48">계속 반시계 방향</text><text class="growing-ellipsis" x="244" y="80">···</text><text class="growing-count" x="226" y="112">수선 ${drawCount}번</text></svg>`;
+  };
+
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
     const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
       const y = 30 + index * 38;
@@ -16444,6 +16458,23 @@
         const bottom = top + 2 * height;
         const diagram = parallelTrapezoidHeightSvg({ top, bottom, height });
         return result(`사다리꼴의 위쪽 변과 아래쪽 변은 서로 평행하고, 아래쪽의 두 각은 모두 45°입니다. 두 평행선 사이의 거리를 구하세요.${diagram}`, height, `아래쪽 변과 위쪽 변의 길이 차는 ${bottom}-${top}=${bottom - top}cm입니다. 양쪽에 생기는 길이는 같으므로 한쪽은 ${bottom - top}÷2=${height}cm입니다. 두 각이 45°이므로 이 길이는 두 평행선 사이의 거리와 같습니다. 따라서 ${height}cm입니다.`);
+      }
+      if (variant === 7) {
+        const startLength = int(rng, 1, 2 + level);
+        const increment = int(rng, 1, 2 + level);
+        const drawCount = [4, 6, 8][level];
+        const horizontalMoves = [];
+        let horizontalPosition = 0;
+        for (let step = 1; step <= drawCount; step += 2) {
+          const length = startLength + step * increment;
+          const direction = step % 4 === 1 ? 1 : -1;
+          horizontalMoves.push({ length, direction });
+          horizontalPosition += direction * length;
+        }
+        const answer = Math.abs(horizontalPosition);
+        const moveText = horizontalMoves.map((move, index) => `${index ? move.direction > 0 ? "+" : "-" : move.direction > 0 ? "" : "-"}${move.length}`).join("");
+        const diagram = growingCounterclockwiseSvg({ startLength, increment, drawCount, answer });
+        return result(`길이가 ${startLength}cm인 선분의 끝점에서 선분의 길이를 ${increment}cm씩 늘려 가며 반시계 방향으로 수선을 ${drawCount}번 그립니다. 처음 선분과 마지막 선분 사이의 거리는 몇 cm인가요?${diagram}`, answer, `처음 선분과 마지막 선분은 서로 평행합니다. 가로로 그은 선분의 길이를 오른쪽은 더하고 왼쪽은 빼면 ${moveText}=${horizontalPosition}입니다. 두 평행선 사이의 거리는 방향과 관계없이 ${answer}cm입니다.`);
       }
       const segCount = 3 + level;
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));
