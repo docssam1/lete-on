@@ -50,6 +50,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-E572F8D7C5AA": { key: "m22-4m-r1", label: "중2-2 4개월반 1회", tags: ["middle2-2", "four-month-course", "middle2-1-full-range"] },
     "DP-SRC-BB2F1022D68C": { key: "m22s-202401-r3", label: "중2-2 심화 3회(2024년 1월)", tags: ["middle2-2", "advanced", "full-range"] },
     "DP-SRC-2C80CCC0CAC5": { key: "m22-202305-r1", label: "중2-2 기본 1회(2023년 5월판)", tags: ["middle2-2", "basic", "partial-range"] },
+    "DP-SRC-ADA50E87C491": { key: "m22-202401-r1", label: "중2-2 기본 1회(2024년 1월)", tags: ["middle2-2", "basic", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
