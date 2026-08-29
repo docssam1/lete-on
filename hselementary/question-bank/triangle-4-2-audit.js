@@ -12,6 +12,7 @@ const types = sourceTypes.filter(type => type.generatorKey && !type.reviewLocked
 const locked = sourceTypes.filter(type => type.reviewLocked);
 const publicSourceIds = new Set([
   "4-2-triangle-1-exploration",
+  "4-2-triangle-1-example-1",
   "4-2-triangle-1-mission-1",
   "4-2-triangle-1-mission-2",
   "4-2-triangle-1-mission-3",
@@ -530,6 +531,12 @@ check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSeg
 check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSegments, 1) === 21, "개념탐구 1에서 왼쪽 빗변의 갈림점을 꼭짓점으로 하는 삼각형은 21개여야 합니다.");
 check(irregularSourceTriangleCount(sourceExplorationPoints, sourceExplorationSegments, -1, 1) === 19, "개념탐구 1에서 왼쪽 빗변의 갈림점을 쓰지 않는 삼각형은 19개여야 합니다.");
 check(irregularSourceLineTripleCount(sourceExplorationPoints, sourceExplorationSegments) === 40, "개념탐구 1의 여덟 연속선 조합도 삼각형 40개와 일치해야 합니다.");
+const sourceStarLatticePoints = [[0, 0], [-3, 1], [-1, 1], [1, 1], [3, 1], [-2, 2], [0, 2], [2, 2], [-3, 3], [-1, 3], [1, 3], [3, 3], [-4, 4], [-2, 4], [0, 4], [2, 4], [4, 4]];
+const sourceStarLatticeSegments = [[1, 4], [5, 7], [8, 11], [12, 16], [0, 16], [2, 15], [1, 14], [8, 13], [0, 12], [3, 13], [4, 14], [11, 15]];
+check(irregularSourceTriangleCount(sourceStarLatticePoints, sourceStarLatticeSegments) === 32, "예제 1-1의 12개 인쇄선에는 삼각형이 32개여야 합니다.");
+check(irregularSourceLineTripleCount(sourceStarLatticePoints, sourceStarLatticeSegments) === 32, "예제 1-1의 12개 연속선 조합도 삼각형 32개와 일치해야 합니다.");
+check(irregularSourceTriangleCount(sourceStarLatticePoints, sourceStarLatticeSegments.filter((_, index) => index !== 7)) === 30, "예제 1-1의 왼쪽 아래 짧은 선을 빠뜨리는 회귀를 잡지 못했습니다.");
+check(irregularSourceTriangleCount(sourceStarLatticePoints, sourceStarLatticeSegments.filter((_, index) => index !== 7 && index !== 11)) === 28, "예제 1-1의 아래쪽 짧은 선 두 개를 빠뜨리는 회귀를 잡지 못했습니다.");
 const answerFor = (kind, values) => {
   if (kind === "fan-count" || kind === "dot-fan-count") return String(values[0] * (values[0] + 1) / 2);
   if (kind === "square-diagonal-grid-count") return String(squareDiagonalGridTriangleCount(values[0]));
@@ -538,6 +545,7 @@ const answerFor = (kind, values) => {
   if (kind === "crossing-segment-count") return String(crossingSegmentTriangleCount(values[0], values[1]));
   if (kind === "crossed-fans-count") return String((values[0] - 1) ** 3);
   if (kind === "irregular-source-segment-count") return String(irregularSourceTriangleCount(values[0], values[1]));
+  if (kind === "star-lattice-source-count") return String(irregularSourceTriangleCount(values[0], values[1]));
   if (kind === "marked-square-grid-count") return String(markedSquareGridTriangleCount(values[0]));
   if (kind === "paired-line-arrays-count") return pairedLineArraysTriangleCount(...values);
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
@@ -679,9 +687,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 30, `원문 일치 공개 유형 수가 30개가 아닙니다: ${types.length}`);
-check(locked.length === 14, `검수 대기 유형 수가 14개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 27, `공개 검산 구조 수가 27개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 31, `원문 일치 공개 유형 수가 31개가 아닙니다: ${types.length}`);
+check(locked.length === 13, `검수 대기 유형 수가 13개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 28, `공개 검산 구조 수가 28개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

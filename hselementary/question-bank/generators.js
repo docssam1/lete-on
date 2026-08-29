@@ -2502,6 +2502,18 @@
     ];
     return triangleTransformModel(source, transforms[layoutIndex % transforms.length]);
   };
+  const triangleStarLatticeSourceModel = layoutIndex => {
+    const source = {
+      points: [[0, 0], [-3, 1], [-1, 1], [1, 1], [3, 1], [-2, 2], [0, 2], [2, 2], [-3, 3], [-1, 3], [1, 3], [3, 3], [-4, 4], [-2, 4], [0, 4], [2, 4], [4, 4]],
+      segments: [[1, 4], [5, 7], [8, 11], [12, 16], [0, 16], [2, 15], [1, 14], [8, 13], [0, 12], [3, 13], [4, 14], [11, 15]]
+    };
+    const transforms = [
+      ([x, y]) => [132 + x * 27, 18 + y * 31],
+      ([x, y]) => [132 + x * 26 + y * 0.6, 18 + y * 30],
+      ([x, y]) => [132 + x * 28 - y * 0.5, 18 + y * 29]
+    ];
+    return triangleTransformModel(source, transforms[layoutIndex % transforms.length]);
+  };
   const triangleSegmentGraphCount = ({ points, segments }) => {
     const epsilon = 1e-7;
     const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
@@ -2637,6 +2649,10 @@
   const triangleIrregularSourceSvg = model => {
     const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
     return `<svg class="geometry-diagram triangle-irregular-source" viewBox="0 0 340 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="긴 밑변과 여덟 개의 연속선이 여러 번 만나는 삼각형 도형"><g>${lines}</g></svg>`;
+  };
+  const triangleStarLatticeSourceSvg = model => {
+    const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-star-lattice-source" viewBox="0 0 264 166" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="위아래 삼각형이 겹친 네 층 삼각 격자"><g>${lines}</g></svg>`;
   };
   const triangleCrossedFansModel = (pointCount, templateIndex) => {
     const templates = [[18, 150, 126, 18, 236, 150], [18, 150, 116, 22, 238, 150], [18, 150, 138, 20, 236, 150]];
@@ -12434,6 +12450,13 @@
         const answer = triangleSegmentGraphCount(model);
         const evidence = triangle42Evidence("irregular-source-segment-count", [model.points, model.segments], answer);
         return result(`오른쪽 그림에서 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleIrregularSourceSvg(model)}${evidence}`, answer, `왼쪽 빗변 위의 갈림점을 꼭짓점으로 하는 삼각형은 21개이고, 그 점을 꼭짓점으로 하지 않는 삼각형은 19개입니다. 따라서 모두 21+19=${answer}개입니다.`);
+      }
+      if (kind === 7) {
+        const layoutIndex = int(rng, 0, 2);
+        const model = triangleStarLatticeSourceModel(layoutIndex);
+        const answer = triangleSegmentGraphCount(model);
+        const evidence = triangle42Evidence("star-lattice-source-count", [model.points, model.segments], answer);
+        return result(`오른쪽 그림에서 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleStarLatticeSourceSvg(model)}${evidence}`, answer, `위에서부터 네 가로선을 밑변으로 삼는 삼각형을 빠짐없이 세면 차례로 7개, 6개, 9개, 10개입니다. 따라서 모두 7+6+9+10=${answer}개입니다.`);
       }
       if (kind === 8) {
         const markedIndex = int(rng, 0, 3);
