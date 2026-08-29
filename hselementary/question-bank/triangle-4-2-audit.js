@@ -20,6 +20,7 @@ const publicSourceIds = new Set([
   "4-2-triangle-1-example-2",
   "4-2-triangle-1-example-3",
   "4-2-triangle-2-exploration",
+  "4-2-triangle-2-example-4",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -56,6 +57,12 @@ const obtuseDotShapeClassCount = (columns, rows) => {
 };
 check(obtuseDotShapeClassCount(4, 3) === 9, "개념탐구 2의 4×3 점판에는 서로 다른 둔각삼각형이 9가지여야 합니다.");
 check(obtuseDotShapeClassCount(3, 4) === 9, "개념탐구 2의 회전한 점판에도 서로 다른 둔각삼각형이 9가지여야 합니다.");
+const obtuseAnglePairCount = angles => {
+  let count = 0;
+  for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) if (angles[first] + angles[second] < 90) count += 1;
+  return count;
+};
+check(obtuseAnglePairCount([15, 25, 45, 65, 95, 145]) === 4, "예제 2-4 원문 여섯 각에서 둔각삼각형을 만드는 방법은 4가지여야 합니다.");
 const squareDiagonalGridTriangleCount = sideCells => {
   const points = [];
   const pointIndex = new Map();
@@ -293,9 +300,7 @@ const answerFor = (kind, values) => {
     return String(totals[mode]);
   }
   if (kind === "obtuse-angle-pairs") {
-    let count = 0;
-    for (let first = 0; first < values.length - 1; first += 1) for (let second = first + 1; second < values.length; second += 1) if (values[first] + values[second] < 90) count += 1;
-    return String(count);
+    return String(obtuseAnglePairCount(values));
   }
   if (kind === "obtuse-dot-shape-classes") return String(obtuseDotShapeClassCount(values[0], values[1]));
   if (kind === "isosceles-diamond-perimeter") return String(2 * values[0] + 2 * values[1]);
@@ -349,9 +354,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 10, `원문 일치 공개 유형 수가 10개가 아닙니다: ${types.length}`);
-check(locked.length === 34, `검수 대기 유형 수가 34개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 10, `공개 검산 구조 수가 10개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 11, `원문 일치 공개 유형 수가 11개가 아닙니다: ${types.length}`);
+check(locked.length === 33, `검수 대기 유형 수가 33개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 11, `공개 검산 구조 수가 11개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

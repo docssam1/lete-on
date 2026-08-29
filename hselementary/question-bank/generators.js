@@ -12229,6 +12229,20 @@
         const evidence = triangle42Evidence("obtuse-dot-shape-classes", [columns, rows], answer);
         return result(`가로 ${columns}개, 세로 ${rows}개로 같은 간격으로 놓인 점 중 세 점을 이어 둔각삼각형을 만듭니다. 돌리거나 뒤집어서 같아지는 모양은 하나로 셀 때, 서로 다른 둔각삼각형은 모두 몇 가지입니까?${trianglePlainDotBoardSvg(columns, rows, spacing)}${evidence}`, answer, `점 세 개를 이은 뒤, 세 변의 길이가 같은 모양끼리 하나로 묶습니다. 직각삼각형과 예각삼각형을 빼고 남는 서로 다른 둔각삼각형은 모두 ${answer}가지입니다.`);
       }
+      if (kind === 10) {
+        const templates = [
+          [10, 20, 40, 70, 100, 140],
+          [15, 25, 45, 65, 95, 145],
+          [18, 27, 53, 64, 96, 143]
+        ];
+        const angles = templates[level];
+        const pairs = [];
+        for (let first = 0; first < angles.length - 1; first += 1) for (let second = first + 1; second < angles.length; second += 1) if (angles[first] + angles[second] < 90) pairs.push([angles[first], angles[second]]);
+        const answer = pairs.length;
+        const shownAngles = shuffle(rng, angles);
+        const evidence = triangle42Evidence("obtuse-angle-pairs", angles, answer);
+        return result(`다음 여섯 각 중 서로 다른 두 각을 골라 삼각형의 두 내각으로 정합니다. 만들어진 삼각형이 둔각삼각형이 되는 서로 다른 방법은 모두 몇 가지입니까?<div class="sequence">${shownAngles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, answer, `고른 두 각의 합이 90°보다 작으면 나머지 한 각이 90°보다 커집니다. 두 각의 합이 90°보다 작은 짝은 ${pairs.map(pair => `${pair[0]}°와 ${pair[1]}°`).join(", ")}이므로 모두 ${answer}가지입니다.`);
+      }
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 각 유형입니다.");
     },
     isoscelesTriangle({ rng, level, variant = 0 }) {
