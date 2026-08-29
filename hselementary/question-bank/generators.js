@@ -2232,15 +2232,62 @@
     };
     return `<svg class="geometry-diagram triangle-double-fan" viewBox="0 0 280 154" data-left-parts="${leftParts}" data-right-parts="${rightParts}" aria-label="나란히 놓인 두 부채꼴 모양 삼각형"><g>${fan(14, 116, leftParts, 72)}${fan(150, 116, rightParts, 208)}</g></svg>`;
   };
-  const triangleCrossRectanglesSvg = count => {
-    const width = 62;
-    const gap = 12;
-    const start = (280 - (count * width + (count - 1) * gap)) / 2;
-    const shapes = Array.from({ length: count }, (_, index) => {
-      const x = start + index * (width + gap);
-      return `<rect x="${x}" y="34" width="${width}" height="82"/><line x1="${x}" y1="34" x2="${x + width}" y2="116"/><line x1="${x + width}" y1="34" x2="${x}" y2="116"/>`;
-    }).join("");
-    return `<svg class="geometry-diagram triangle-cross-rectangles" viewBox="0 0 280 148" data-cross-count="${count}" aria-label="대각선이 교차하는 직사각형 ${count}개"><g>${shapes}</g></svg>`;
+  const triangleCrossingModel = (templateIndex, level) => {
+    const templates = [
+      { top: [210, 18], right: [236, 150], upperLeft: [72, 58], ratio: 0.64 },
+      { top: [202, 22], right: [236, 150], upperLeft: [64, 50], ratio: 0.61 },
+      { top: [216, 24], right: [238, 150], upperLeft: [86, 50], ratio: 0.66 }
+    ];
+    const source = templates[templateIndex % templates.length];
+    const left = [18, 150];
+    const top = source.top;
+    const right = source.right;
+    const upperLeft = source.upperLeft;
+    const upperMiddle = [left[0] + (top[0] - left[0]) * source.ratio, left[1] + (top[1] - left[1]) * source.ratio];
+    const lowerMiddle = [upperMiddle[0], 150];
+    const points = [left, top, right, lowerMiddle, upperLeft, upperMiddle];
+    const segments = [[0, 2], [0, 1], [1, 3], [4, 3], [4, 2], [5, 2], ...(level >= 0 ? [[5, 3]] : []), ...(level > 0 ? [[4, 1]] : [])];
+    return { points, segments };
+  };
+  const triangleSegmentGraphCount = ({ points, segments }) => {
+    const epsilon = 1e-7;
+    const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+    const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+    const intersection = ([firstIndex, secondIndex], [thirdIndex, fourthIndex]) => {
+      const first = points[firstIndex];
+      const second = points[secondIndex];
+      const third = points[thirdIndex];
+      const fourth = points[fourthIndex];
+      const denominator = (first[0] - second[0]) * (third[1] - fourth[1]) - (first[1] - second[1]) * (third[0] - fourth[0]);
+      if (Math.abs(denominator) < epsilon) return null;
+      const firstCross = first[0] * second[1] - first[1] * second[0];
+      const secondCross = third[0] * fourth[1] - third[1] * fourth[0];
+      const point = [
+        (firstCross * (third[0] - fourth[0]) - (first[0] - second[0]) * secondCross) / denominator,
+        (firstCross * (third[1] - fourth[1]) - (first[1] - second[1]) * secondCross) / denominator
+      ];
+      return within(point, first, second) && within(point, third, fourth) ? point : null;
+    };
+    const vertices = [];
+    const addVertex = point => {
+      if (!vertices.some(existing => Math.hypot(existing[0] - point[0], existing[1] - point[1]) < epsilon)) vertices.push(point);
+    };
+    points.forEach(addVertex);
+    for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+      const point = intersection(segments[first], segments[second]);
+      if (point) addVertex(point);
+    }
+    const liesOnSegment = (point, [firstIndex, secondIndex]) => Math.abs(cross(points[firstIndex], points[secondIndex], point)) < epsilon && within(point, points[firstIndex], points[secondIndex]);
+    const connected = (first, second) => segments.some(segment => liesOnSegment(first, segment) && liesOnSegment(second, segment));
+    let count = 0;
+    for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+      if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) > epsilon && connected(vertices[first], vertices[second]) && connected(vertices[second], vertices[third]) && connected(vertices[third], vertices[first])) count += 1;
+    }
+    return count;
+  };
+  const triangleCrossingSvg = model => {
+    const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-crossing-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="여러 삼각형의 선이 서로 교차하는 도형"><g>${lines}</g></svg>`;
   };
   const trianglePointBoardSvg = (points, requiredIndex = -1, lines = []) => {
     const minX = Math.min(...points.map(point => point[0]));
@@ -11967,10 +12014,11 @@
         return result(`왼쪽 변 위의 한 점에서 밑변의 ${lowerPoints}개 점과 오른쪽 변의 ${upperPoints}개 점으로 선을 그었습니다. 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleJoinedFansSvg(lowerPoints, upperPoints)}${evidence}`, answer, `아래쪽 부채꼴은 ${lowerPoints - 1}+${lowerPoints - 2}+…+1=${lowerCount}개이고, 오른쪽 부채꼴은 ${upperPoints - 1}+${upperPoints - 2}+…+1=${upperCount}개입니다. 여기에 도형 전체의 가장 큰 삼각형 1개를 더하면 ${lowerCount}+${upperCount}+1=${answer}개입니다.`);
       }
       if (kind === 4) {
-        const rectangleCount = int(rng, 2, 2 + level);
-        const answer = rectangleCount * 8;
-        const evidence = triangle42Evidence("cross-rectangle-count", [rectangleCount], answer);
-        return result(`각 직사각형에 두 대각선을 모두 그었습니다. 그어진 선을 따라 만들 수 있는 삼각형은 모두 몇 개입니까?${triangleCrossRectanglesSvg(rectangleCount)}${evidence}`, answer, `직사각형 하나에는 중심을 꼭짓점으로 하는 작은 삼각형 4개와 큰 삼각형 4개가 있어 8개입니다. ${rectangleCount}개에서는 ${rectangleCount}×8=${answer}개입니다.`);
+        const templateIndex = int(rng, 0, 2);
+        const model = triangleCrossingModel(templateIndex, level);
+        const answer = triangleSegmentGraphCount(model);
+        const evidence = triangle42Evidence("crossing-segment-count", [templateIndex, level], answer);
+        return result(`서로 겹쳐 그어진 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까? 선이 만나는 점도 삼각형의 꼭짓점으로 생각하세요.${triangleCrossingSvg(model)}${evidence}`, answer, `선이 만나는 점을 먼저 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 작은 것부터 큰 것까지 겹치지 않게 세면 모두 ${answer}개입니다.`);
       }
       const parts = int(rng, 7 + level, 10 + level * 2);
       const answer = parts * (parts + 1) / 2;

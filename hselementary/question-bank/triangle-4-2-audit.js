@@ -15,6 +15,7 @@ const publicSourceIds = new Set([
   "4-2-triangle-1-mission-2",
   "4-2-triangle-1-mission-3",
   "4-2-triangle-1-mission-4",
+  "4-2-triangle-1-mission-5",
   "4-2-triangle-4-mission-1"
 ]);
 const failures = [];
@@ -162,15 +163,54 @@ const joinedFansTriangleCount = (lowerPointCount, upperPointCount) => {
   return count;
 };
 check(joinedFansTriangleCount(6, 7) === 37, "Mission 4 원문 고정 구조의 삼각형 수는 37개여야 합니다.");
+const crossingSegmentTriangleCount = (templateIndex, level) => {
+  const templates = [
+    { top: [210, 18], right: [236, 150], upperLeft: [72, 58], ratio: 0.64 },
+    { top: [202, 22], right: [236, 150], upperLeft: [64, 50], ratio: 0.61 },
+    { top: [216, 24], right: [238, 150], upperLeft: [86, 50], ratio: 0.66 }
+  ];
+  const source = templates[templateIndex];
+  const left = [18, 150];
+  const upperMiddle = [left[0] + (source.top[0] - left[0]) * source.ratio, left[1] + (source.top[1] - left[1]) * source.ratio];
+  const points = [left, source.top, source.right, [upperMiddle[0], 150], source.upperLeft, upperMiddle];
+  const segments = [[0, 2], [0, 1], [1, 3], [4, 3], [4, 2], [5, 2], ...(level >= 0 ? [[5, 3]] : []), ...(level > 0 ? [[4, 1]] : [])];
+  const epsilon = 1e-7;
+  const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+  const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+  const vertices = points.map(point => [...point]);
+  const add = point => { if (!vertices.some(existing => Math.hypot(existing[0] - point[0], existing[1] - point[1]) < epsilon)) vertices.push(point); };
+  for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+    const [a, b] = segments[first].map(index => points[index]);
+    const [c, d] = segments[second].map(index => points[index]);
+    const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+    if (Math.abs(denominator) < epsilon) continue;
+    const ab = a[0] * b[1] - a[1] * b[0];
+    const cd = c[0] * d[1] - c[1] * d[0];
+    const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+    if (within(point, a, b) && within(point, c, d)) add(point);
+  }
+  const edge = (first, second) => segments.some(segment => {
+    const [start, end] = segment.map(index => points[index]);
+    return Math.abs(cross(start, end, first)) < epsilon && Math.abs(cross(start, end, second)) < epsilon && within(first, start, end) && within(second, start, end);
+  });
+  let count = 0;
+  for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+    if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) > epsilon && edge(vertices[first], vertices[second]) && edge(vertices[second], vertices[third]) && edge(vertices[third], vertices[first])) count += 1;
+  }
+  return count;
+};
+check(crossingSegmentTriangleCount(0, -1) === 14, "Mission 5 쉬움 구조의 삼각형 수는 14개여야 합니다.");
+check(crossingSegmentTriangleCount(0, 0) === 24, "Mission 5 원문 고정 구조의 삼각형 수는 24개여야 합니다.");
+check(crossingSegmentTriangleCount(0, 1) === 28, "Mission 5 어려움 구조의 삼각형 수는 28개여야 합니다.");
 const answerFor = (kind, values) => {
   if (kind === "fan-count" || kind === "dot-fan-count") return String(values[0] * (values[0] + 1) / 2);
   if (kind === "square-diagonal-grid-count") return String(squareDiagonalGridTriangleCount(values[0]));
   if (kind === "marked-triangle-lattice-count") return String(markedTriangleLatticeCount(values[0], values[1], values[2], values[3]));
   if (kind === "joined-fans-count") return String(joinedFansTriangleCount(values[0], values[1]));
+  if (kind === "crossing-segment-count") return String(crossingSegmentTriangleCount(values[0], values[1]));
   if (kind === "lattice-count") return String(Math.floor(values[0] * (values[0] + 2) * (2 * values[0] + 1) / 8));
   if (kind === "marked-fan-count") return String(values[0]);
   if (kind === "double-fan-count") return String(values[0] * (values[0] + 1) / 2 + values[1] * (values[1] + 1) / 2);
-  if (kind === "cross-rectangle-count") return String(values[0] * 8);
   if (kind === "angle-card-count") {
     const totals = { acute: 0, right: 0, obtuse: 0 };
     values.forEach(angles => {
@@ -242,9 +282,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 5, `원문 일치 공개 유형 수가 5개가 아닙니다: ${types.length}`);
-check(locked.length === 39, `검수 대기 유형 수가 39개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 5, `공개 검산 구조 수가 5개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 6, `원문 일치 공개 유형 수가 6개가 아닙니다: ${types.length}`);
+check(locked.length === 38, `검수 대기 유형 수가 38개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 6, `공개 검산 구조 수가 6개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
