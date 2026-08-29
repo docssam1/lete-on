@@ -2369,6 +2369,45 @@
     });
     return { points, segments: [[0, 2], [2, 4], [4, 1], [1, 3], [3, 0]] };
   };
+  const triangleTransformModel = (model, transform) => ({
+    points: model.points.map(transform),
+    segments: model.segments.map(segment => [...segment])
+  });
+  const triangleSourceGridObtuseModel = layout => {
+    const model = {
+      points: [[1, 5], [3, 1], [7, 5], [2, 3], [5, 3]],
+      segments: [[0, 1], [1, 2], [0, 2], [0, 4], [3, 2], [3, 4]]
+    };
+    if (layout === 1) return triangleTransformModel(model, ([x, y]) => [8 - x, y]);
+    if (layout === 2) return triangleTransformModel(model, ([x, y]) => [x, 6 - y]);
+    if (layout === 3) return triangleTransformModel(model, ([x, y]) => [8 - x, 6 - y]);
+    return model;
+  };
+  const triangleSourceStripModel = layout => {
+    const points = [];
+    const pointIndex = new Map();
+    const addPoint = (x, y) => {
+      const key = `${x},${y}`;
+      if (!pointIndex.has(key)) {
+        pointIndex.set(key, points.length);
+        points.push([x, y]);
+      }
+      return pointIndex.get(key);
+    };
+    const segment = (first, second) => [addPoint(...first), addPoint(...second)];
+    const segments = [
+      segment([0, 0], [3, 0]), segment([0, 0.5], [3, 0.5]), segment([0, 1], [3, 1]),
+      ...Array.from({ length: 4 }, (_, x) => segment([x, 0], [x, 1])),
+      segment([0, 0.5], [1, 0]), segment([0, 0.5], [1, 1]),
+      segment([1, 0], [2, 1]), segment([1, 1], [2, 0]),
+      segment([2, 0], [3, 1]), segment([2, 1], [3, 0])
+    ];
+    const model = { points, segments };
+    if (layout === 1) return triangleTransformModel(model, ([x, y]) => [3 - x, y]);
+    if (layout === 2) return triangleTransformModel(model, ([x, y]) => [x, 1 - y]);
+    if (layout === 3) return triangleTransformModel(model, ([x, y]) => [3 - x, 1 - y]);
+    return model;
+  };
   const triangleSegmentGraphAngleCounts = ({ points, segments }) => {
     const epsilon = 1e-7;
     const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
@@ -2396,6 +2435,25 @@
     return totals;
   };
   const trianglePentagramSvg = model => `<svg class="geometry-diagram triangle-pentagram-source" viewBox="0 0 240 196" data-points="${model.points.map(point => point.map(value => value.toFixed(2)).join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="다섯 선분이 서로 교차하는 별 모양"><g>${model.segments.map(([first, second]) => `<line x1="${model.points[first][0].toFixed(2)}" y1="${model.points[first][1].toFixed(2)}" x2="${model.points[second][0].toFixed(2)}" y2="${model.points[second][1].toFixed(2)}"/>`).join("")}</g></svg>`;
+  const triangleSourceGridObtuseSvg = model => {
+    const project = ([x, y]) => [20 + x * 25, 14 + y * 25];
+    const grid = `${Array.from({ length: 9 }, (_, x) => `<line class="source-grid-line" x1="${20 + x * 25}" y1="14" x2="${20 + x * 25}" y2="164"/>`).join("")}${Array.from({ length: 7 }, (_, y) => `<line class="source-grid-line" x1="20" y1="${14 + y * 25}" x2="220" y2="${14 + y * 25}"/>`).join("")}`;
+    const shape = model.segments.map(([first, second]) => {
+      const start = project(model.points[first]);
+      const end = project(model.points[second]);
+      return `<line class="source-shape-line" x1="${start[0]}" y1="${start[1]}" x2="${end[0]}" y2="${end[1]}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-source-obtuse-grid" viewBox="0 0 240 178" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="정사각형 모눈 위에 여섯 선분으로 만든 삼각형 도형"><g>${grid}${shape}</g></svg>`;
+  };
+  const triangleSourceStripSvg = model => {
+    const project = ([x, y]) => [15 + x * 72, 18 + y * 72];
+    const lines = model.segments.map(([first, second]) => {
+      const start = project(model.points[first]);
+      const end = project(model.points[second]);
+      return `<line x1="${start[0]}" y1="${start[1]}" x2="${end[0]}" y2="${end[1]}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-source-angle-strip" viewBox="0 0 246 108" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="정사각형 세 개를 이어 붙이고 가운데 선과 대각선을 그은 도형"><g>${lines}</g></svg>`;
+  };
   const triangleCrossingSvg = model => {
     const lines = model.segments.map(([first, second]) => `<line x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
     return `<svg class="geometry-diagram triangle-crossing-source" viewBox="0 0 254 174" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="여러 삼각형의 선이 서로 교차하는 도형"><g>${lines}</g></svg>`;
@@ -12242,15 +12300,17 @@
       }
       const points = pointSets[Math.min(level, pointSets.length - 1)];
       if (kind === 3) {
-        const totals = trianglePointCounts(points);
-        const evidence = triangle42Evidence("grid-obtuse-count", [points, -1, "obtuse"], totals.obtuse);
-        return result(`격자점 중 서로 다른 세 점을 골라 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points)}${evidence}`, totals.obtuse, `일직선인 세 점을 제외하고 각 삼각형의 가장 긴 변을 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
+        const model = triangleSourceGridObtuseModel(int(rng, 0, 3));
+        const totals = triangleSegmentGraphAngleCounts(model);
+        const evidence = triangle42Evidence("segment-angle-count", [model.points, model.segments, "obtuse"], totals.obtuse);
+        return result(`정사각형으로 만든 모눈 위의 굵은 선을 따라 그릴 수 있는 둔각삼각형은 모두 몇 개입니까? 모눈선이 아니라 굵게 그린 선만 사용하세요.${triangleSourceGridObtuseSvg(model)}${evidence}`, totals.obtuse, `굵은 선이 만나는 점을 모두 표시하고, 세 변이 굵은 선 위에 놓이는 삼각형만 찾습니다. 각 삼각형에서 가장 큰 각을 모눈의 직각과 비교하면 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개입니다.`);
       }
       if (kind === 4) {
-        const totals = trianglePointCounts(points);
+        const model = triangleSourceStripModel(int(rng, 0, 3));
+        const totals = triangleSegmentGraphAngleCounts(model);
         const answer = Math.abs(totals.acute - totals.obtuse);
-        const evidence = triangle42Evidence("grid-angle-difference", [points, -1, "acute-obtuse-difference"], answer);
-        return result(`점판의 점 중 세 점을 골라 만든 삼각형에서 예각삼각형과 둔각삼각형의 개수 차를 구하세요.${trianglePointBoardSvg(points)}${evidence}`, answer, `예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개이므로 개수 차는 ${answer}개입니다.`);
+        const evidence = triangle42Evidence("segment-angle-count", [model.points, model.segments, "acute-obtuse-difference"], answer);
+        return result(`다음 직사각형 도형에서 선을 따라 찾을 수 있는 크고 작은 예각삼각형과 둔각삼각형의 수의 차를 구하세요.${triangleSourceStripSvg(model)}${evidence}`, answer, `선이 만나는 점도 꼭짓점으로 보고 세 변이 실제 선 위에 있는 삼각형을 찾습니다. 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개이므로 개수의 차는 ${answer}개입니다.`);
       }
       if (kind === 5) {
         const requiredIndex = int(rng, 0, points.length - 1);
