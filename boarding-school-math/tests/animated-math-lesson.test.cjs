@@ -57,3 +57,13 @@ test("animated lesson CSS preserves a reduced-motion path", function () {
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /transition:\s*none\s*!important/);
 });
+
+test("GitHub skill package includes human-facing usage proof", function () {
+  const skill = path.resolve(root, "..", "skills", "gmap-animated-math-lesson");
+  const readme = fs.readFileSync(path.join(skill, "README.md"), "utf8");
+  assert.match(readme, /실제 사용 화면/);
+  assert.match(readme, /gmap-animated-lesson-demo\.mp4/);
+  ["ratio-answer.png", "geometry-step.png", "gmap-animated-lesson-demo.mp4"].forEach(function (file) {
+    assert.equal(fs.existsSync(path.join(skill, "assets", file)), true, `missing skill asset ${file}`);
+  });
+});
