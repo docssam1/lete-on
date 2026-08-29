@@ -30,9 +30,15 @@ const publicSourceIds = new Set([
   "4-2-triangle-3-mission-3",
   "4-2-triangle-3-example-2",
   "4-2-triangle-4-mission-1",
+  "4-2-triangle-4-mission-2",
   "4-2-triangle-4-mission-3",
   "4-2-triangle-4-mission-4",
-  "4-2-triangle-4-mission-6"
+  "4-2-triangle-4-mission-5",
+  "4-2-triangle-4-mission-6",
+  "4-2-triangle-4-example-1",
+  "4-2-triangle-4-example-2",
+  "4-2-triangle-4-example-3",
+  "4-2-triangle-4-example-4"
 ]);
 const failures = [];
 const seenKinds = new Set();
@@ -431,6 +437,43 @@ const answerFor = (kind, values) => {
     return String((180 - (180 - middleAngle)) / 2);
   }
   if (kind === "equilateral-angle-trapezoid-length") return String(values[1] - values[0] * 2);
+  if (kind === "equilateral-spiral-side") {
+    const [small, large] = values;
+    const difference = large - small;
+    return difference > 0 && difference % 3 === 0 ? String(difference / 3) : "invalid";
+  }
+  if (kind === "equilateral-shaded-chain-side") {
+    const [total, known] = values;
+    const difference = total - known;
+    return difference > 0 && difference % 3 === 0 ? String(known + difference / 3) : "invalid";
+  }
+  if (kind === "folded-equilateral-length-sum") {
+    const [side, total] = values;
+    const answer = total - side * 3 / 2;
+    return Number.isInteger(answer) && answer > 0 ? String(answer) : "invalid";
+  }
+  if (kind === "equilateral-square-inscribed-angle") {
+    const square = values[0];
+    const triangleSide = square * (1 + 2 / Math.sqrt(3));
+    const height = triangleSide * Math.sqrt(3) / 2;
+    const run = triangleSide / 2 - square / Math.sqrt(3);
+    return String(Math.round(Math.atan2(height, run) * 180 / Math.PI));
+  }
+  if (kind === "equilateral-three-side-angle") {
+    const [equilateralAngle, cornerAngle] = values;
+    const largeBaseAngle = (180 - (cornerAngle - equilateralAngle)) / 2;
+    const smallBaseAngle = (180 - cornerAngle) / 2;
+    return String(largeBaseAngle - smallBaseAngle);
+  }
+  if (kind === "equilateral-right-three-side-angle") {
+    const [rightAngle, givenAngle] = values;
+    const outerDiagonalAngle = rightAngle / 2;
+    const equalTriangleBaseAngle = (180 - givenAngle) / 2;
+    const smallAngle = rightAngle - equalTriangleBaseAngle;
+    const upperAngle = outerDiagonalAngle - smallAngle;
+    const lowerAngle = outerDiagonalAngle - givenAngle;
+    return String(180 - upperAngle - lowerAngle);
+  }
   if (kind === "square-equilateral-angle") return String(values[0] + values[1]);
   if (kind === "overlap-equilateral-angle") return String(180 - 60 - values[0]);
   if (kind === "equilateral-right-length") return String(values[0] / 3 / 2);
@@ -468,9 +511,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 22, `원문 일치 공개 유형 수가 22개가 아닙니다: ${types.length}`);
-check(locked.length === 22, `검수 대기 유형 수가 22개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 19, `공개 검산 구조 수가 19개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 28, `원문 일치 공개 유형 수가 28개가 아닙니다: ${types.length}`);
+check(locked.length === 16, `검수 대기 유형 수가 16개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 25, `공개 검산 구조 수가 25개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {
