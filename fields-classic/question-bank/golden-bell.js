@@ -1,9 +1,9 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260828t";
-import { book05Markup } from "./book05-renderers.js?v=20260828n";
-import { book06Markup } from "./book06-renderers.js?v=20260828p";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260829c";
+import { book05Markup } from "./book05-renderers.js?v=20260829b";
+import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
 import { book08Markup } from "./book08-renderers.js?v=20260828r";
-import { book09Markup } from "./book09-renderers.js?v=20260828s";
+import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260828t";
 
 const $ = (id) => document.getElementById(id);
@@ -256,25 +256,26 @@ function book04PolyominoMarkup(story = false) {
   return `<div class="polyomino-board ${story ? "story" : ""}">${visible.map(([count, shapes]) => polyominoFamilyMarkup(count, shapes)).join("")}</div>`;
 }
 
-function cubeGlyphMarkup(x, y, size = 24) {
-  const half = size / 2;
-  const depth = size * 0.34;
-  return `<g transform="translate(${x} ${y})"><path class="cube-top" d="M0 0L${half} ${-depth}L${size} 0L${half} ${depth}Z"/><path class="cube-front" d="M0 0L${half} ${depth}V${size + depth}L0 ${size}Z"/><path class="cube-side" d="M${size} 0L${half} ${depth}V${size + depth}L${size} ${size}Z"/></g>`;
-}
-
-function cubeSceneMarkup(cubes, label) {
-  return `<figure class="cube-scene"><svg viewBox="0 0 150 118" role="img" aria-label="${label}">${cubes.map(([x, y]) => cubeGlyphMarkup(x, y)).join("")}</svg><figcaption>${label}</figcaption></figure>`;
-}
-
-function book04HiddenCubesMarkup(story = false) {
-  const scenes = story ? [
-    { label: "전체 8개 · 보이는 것 5개", cubes: [[28, 60], [52, 60], [40, 44], [64, 44], [52, 28]] }
-  ] : [
-    { label: "전체 4개 · 보이는 것 3개", cubes: [[34, 62], [58, 62], [46, 38]] },
-    { label: "전체 9개 · 보이는 것 7개", cubes: [[22, 70], [46, 70], [70, 70], [34, 54], [58, 54], [82, 54], [46, 30]] },
-    { label: "전체 10개 · 보이는 것 6개", cubes: [[18, 74], [42, 74], [66, 74], [30, 58], [54, 58], [42, 34]] }
-  ];
-  return `<div class="cube-scene-set ${story ? "single" : ""}">${scenes.map(({ cubes, label }) => cubeSceneMarkup(cubes, label)).join("")}</div>`;
+function book04HiddenCubesMarkup(visual) {
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.mapTotal || !geometry?.countHiddenWalled || !renderer?.renderIso) {
+    throw new Error("Geometry worksheet cube data is required for hidden-cube visuals.");
+  }
+  const scenes = visual.scenes || [];
+  const markup = scenes.map(({ map }) => {
+    const depth = map.length;
+    const width = Math.max(...map.map((row) => row.length));
+    const normalized = map.map((row) => Array.from({ length: width }, (_, index) => Number(row[index] || 0)));
+    const total = geometry.mapTotal(normalized);
+    const hidden = geometry.countHiddenWalled(normalized);
+    const visible = total - hidden;
+    const label = `전체 ${total}개 · 보이는 것 ${visible}개`;
+    const svg = renderer.renderIso(normalized, width, depth, { u: 18 })
+      .replace('class="ws-iso"', `class="ws-iso book04-geometry-cubes" role="img" aria-label="${label}" data-geometry-kind="hidden-height-map" data-total="${total}" data-visible="${visible}" data-hidden="${hidden}"`);
+    return `<figure class="cube-scene">${svg}<figcaption>${label}</figcaption></figure>`;
+  }).join("");
+  return `<div class="cube-scene-set ${scenes.length === 1 ? "single" : ""}">${markup}</div>`;
 }
 
 function balanceTokensMarkup(symbol, count, className) {
@@ -348,8 +349,8 @@ function visualMarkup(visual) {
   if (visual.kind === "book03-magic-story") return book03MagicMarkup(true);
   if (visual.kind === "book04-polyomino-original") return book04PolyominoMarkup(false);
   if (visual.kind === "book04-polyomino-story") return book04PolyominoMarkup(true);
-  if (visual.kind === "book04-hidden-cubes-original") return book04HiddenCubesMarkup(false);
-  if (visual.kind === "book04-hidden-cubes-story") return book04HiddenCubesMarkup(true);
+  if (visual.kind === "book04-hidden-cubes-original") return book04HiddenCubesMarkup(visual);
+  if (visual.kind === "book04-hidden-cubes-story") return book04HiddenCubesMarkup(visual);
   if (visual.kind === "book04-balance-original") return book04BalanceMarkup(false);
   if (visual.kind === "book04-balance-story") return book04BalanceMarkup(true);
   if (visual.kind === "book04-direction-original") return book04DirectionMarkup(false);
@@ -424,7 +425,8 @@ function renderStageSteps() {
 }
 
 function renderConcept(lesson) {
-  return `<p class="lesson-kicker">${lesson.unit} · 대표 개념</p><h2>${lesson.story.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon">?</span><div><strong>${lesson.story.title}</strong><p>${lesson.story.text}<br>${lesson.story.mission}</p></div></div><section class="concept-box"><strong>${lesson.explanation.headline}</strong><ol>${lesson.explanation.steps.map((step) => `<li>${step}</li>`).join("")}</ol></section><button type="button" class="primary-action" data-next-phase="original">다음</button>`;
+  const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div><section class="concept-tutorial"><header><span>풀이 튜토리얼</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {
@@ -480,6 +482,37 @@ function renderComplete(lesson) {
 
 function renderPending(book) {
   return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있습니다.</p></section>`;
+}
+
+function printResponseMarkup(item) {
+  if (item.answerMode === "input") return '<span class="gold-print-answer" aria-label="답 쓰는 칸"></span>';
+  return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
+}
+
+function printLessonPage(lesson, lessonNumber, book) {
+  const visualHasResponseBoxes = lesson.original.visual.kind === "book03-six-original";
+  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item) => `<li class="gold-print-item"><span>${item.prompt}${item.conditions?.length ? `<br>${item.conditions.join(" · ")}` : ""}</span>${printResponseMarkup(item)}</li>`).join("");
+  const extensionItem = { ...lesson.extension, prompt: lesson.extension.prompt };
+  const header = (part) => `<header class="gold-print-head"><div><span>FIELDS CLASSIC · GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
+  const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
+  const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
+  const originalPage = `<article class="gold-print-page" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>${originalItems ? `<ol class="gold-print-items">${originalItems}</ol>` : ""}</section>${footer}</article>`;
+  const storyPage = `<article class="gold-print-page" data-watermark="${escapeAttribute(student)} · GFIELD">${header("02")}${concept}<section class="gold-print-block gold-print-story"><h2>같은 원리 문제</h2><p>${lesson.extension.story}<br>${lesson.extension.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.extension.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${lesson.extension.prompt}</span>${printResponseMarkup(extensionItem)}</li></ol></section>${footer}</article>`;
+  return originalPage + storyPage;
+}
+
+function printLessons(lessons) {
+  const book = activeBook();
+  const root = $("goldPrintRoot");
+  root.innerHTML = lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
+  root.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => window.print());
+}
+
+function clearPrintRoot() {
+  const root = $("goldPrintRoot");
+  root.innerHTML = "";
+  root.setAttribute("aria-hidden", "true");
 }
 
 function bindLessonActions() {
@@ -560,6 +593,8 @@ function renderSummary() {
     ? `교재 기반 학습입니다. ${book.source.note}`
     : "개념을 골든벨과 이야기로 익힙니다.";
   $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? readyNote : "준비 중입니다."}`;
+  $("printLessonButton").disabled = !book.lessons.length;
+  $("printBookButton").disabled = !book.lessons.length;
 }
 
 function render() {
@@ -575,4 +610,7 @@ function render() {
 
 $("studentName").textContent = student;
 $("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
+$("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
+$("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons));
+window.addEventListener("afterprint", clearPrintRoot);
 render();

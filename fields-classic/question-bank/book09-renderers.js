@@ -83,30 +83,17 @@ function areaGrid(visual) {
 }
 
 function isoMap(map, compact = false) {
-  const cubes = [];
-  const unitX = compact ? 13 : 18;
-  const unitY = compact ? 7 : 10;
-  const cubeH = compact ? 14 : 20;
-  const originX = compact ? 75 : 125;
-  const originY = compact ? 18 : 30;
-  for (let z = 0; z < map.length; z += 1) for (let x = 0; x < map[z].length; x += 1) for (let y = 0; y < map[z][x]; y += 1) cubes.push({ x, y, z });
-  cubes.sort((a,b) => (a.x + a.z + a.y) - (b.x + b.z + b.y));
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  const polygons = cubes.map(({x,y,z}) => {
-    const sx = originX + (x - z) * unitX;
-    const sy = originY + (x + z) * unitY - y * cubeH;
-    minX = Math.min(minX, sx - unitX);
-    maxX = Math.max(maxX, sx + unitX);
-    minY = Math.min(minY, sy);
-    maxY = Math.max(maxY, sy + unitY * 2 + cubeH);
-    return `<g><polygon class="top" points="${sx},${sy} ${sx + unitX},${sy + unitY} ${sx},${sy + unitY * 2} ${sx - unitX},${sy + unitY}"/><polygon class="right" points="${sx + unitX},${sy + unitY} ${sx},${sy + unitY * 2} ${sx},${sy + unitY * 2 + cubeH} ${sx + unitX},${sy + unitY + cubeH}"/><polygon class="left" points="${sx - unitX},${sy + unitY} ${sx},${sy + unitY * 2} ${sx},${sy + unitY * 2 + cubeH} ${sx - unitX},${sy + unitY + cubeH}"/></g>`;
-  }).join("");
-  const padding = compact ? 4 : 7;
-  const viewBox = `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}`;
-  return `<svg class="b9-iso" viewBox="${viewBox}" role="img" aria-label="쌓기나무 입체 모양">${polygons}</svg>`;
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.mapTotal || !renderer?.renderIso) {
+    throw new Error("Geometry worksheet cube data is required for the solid-cube visual.");
+  }
+  const depth = map.length;
+  const width = Math.max(...map.map((row) => row.length));
+  const normalized = map.map((row) => Array.from({ length: width }, (_, index) => Number(row[index] || 0)));
+  const total = geometry.mapTotal(normalized);
+  return renderer.renderIso(normalized, width, depth, { u: compact ? 13 : 18 })
+    .replace('class="ws-iso"', `class="ws-iso b9-iso" role="img" aria-label="쌓기나무 입체 모양" data-geometry-kind="height-map" data-total="${total}"`);
 }
 
 function profileBars(values, label) {

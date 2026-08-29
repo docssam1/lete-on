@@ -23,6 +23,20 @@ const { R, pick } = NM_RNG;
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }   /* 0이 아닌 부호 있는 정수 */
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }         /* "+5" / "- 5" 접속 조각 */
+
+/* 단항식 표기 — 2026-08-28 인쇄 점검에서 `1x^{3}`·`x^{1}`·`x^{0}`이 그대로
+   찍히고 음수 계수가 `\times -9x^{3}`처럼 괄호 없이 나오던 것을 정리한다.
+   계수 1은 생략, 지수 1은 x, 지수 0은 문자 없음, 음수는 괄호. */
+function monoTex(c, m, needParen){
+  let body;
+  if(m === 0)      body = String(Math.abs(c));
+  else {
+    const xs = (m === 1) ? 'x' : `x^{${m}}`;
+    body = (Math.abs(c) === 1) ? xs : `${Math.abs(c)}${xs}`;
+  }
+  if(c < 0) return needParen ? `(-${body})` : `-${body}`;
+  return body;
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -158,7 +172,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         en: `Multiply monomials: multiply the coefficients, combine the letter parts with the exponent law`,
         zh: `单项式相乘：系数乘系数，字母部分用指数法则合并`
       },
-      tex: `${c1}x^{${m}} \\times ${c2}x^{${n}} = \\square x^{${exp}}`,
+      tex: `${monoTex(c1, m, false)} \\times ${monoTex(c2, n, true)} = \\square x^{\\square}`,
       answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
     };
   }
@@ -175,7 +189,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         en: `Divide monomials: divide the coefficients, subtract exponents for the letter parts`,
         zh: `单项式相除：系数除以系数，字母部分用指数法则相减`
       },
-      tex: `${c1}x^{${m}} \\div ${c2}x^{${n}} = \\square x^{${exp}}`,
+      tex: `${monoTex(c1, m, false)} \\div ${monoTex(c2, n, true)} = \\square x^{\\square}`,
       answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
     };
   }
@@ -201,14 +215,14 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
       terms.push({ c, m, op });
     }
   }
-  const exprTex = terms.map((t, i) => i === 0 ? `${t.c}x^{${t.m}}` : ` ${t.op} ${t.c}x^{${t.m}}`).join('');
+  const exprTex = terms.map((t, i) => i === 0 ? monoTex(t.c, t.m, false) : ` ${t.op} ${monoTex(t.c, t.m, true)}`).join('');
   return {
     prompt: {
       ko: `세 단항식의 곱셈·나눗셈 혼합이에요. 앞에서부터 차례로 계산해요`,
       en: `Mixed × and ÷ of three monomials — work left to right`,
       zh: `三个单项式的乘除混合——从左到右依次计算`
     },
-    tex: `${exprTex} = \\square x^{${exp}}`,
+    tex: `${exprTex} = \\square x^{\\square}`,
     answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
   };
 };

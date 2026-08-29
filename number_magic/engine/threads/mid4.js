@@ -31,6 +31,9 @@ const { R, pick } = NM_RNG;
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
+/* 근 r의 일차 인수 표기 — (x - -9) 같은 이중부호를 (x + 9)로 낸다.
+   2026-08-28 인쇄 점검에서 MD29가 실제로 `(x - -9)(x - -8)`로 나오고 있었다. */
+function xFactor(r){ return r === 0 ? 'x' : (r < 0 ? `(x + ${Math.abs(r)})` : `(x - ${r})`); }
 function hasNeg(v){ return Array.isArray(v) ? v.some(x => x < 0) : v < 0; }
 function isPerfectSquare(n){ if (n < 0) return false; const r = Math.round(Math.sqrt(n)); return r * r === n; }
 function matTex(m){ return `\\begin{pmatrix} ${m[0][0]} & ${m[0][1]} \\\\ ${m[1][0]} & ${m[1][1]} \\end{pmatrix}`; }
@@ -467,7 +470,7 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
         en: `The product is negative only when the two factors have opposite signs — the solution lies between the two roots`,
         zh: `只有两因式符号相反时乘积才是负——解在两根之间`
       },
-      tex: `(x - ${p})(x - ${q}) ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`,
+      tex: `${xFactor(p)}${xFactor(q)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`,
       answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
     };
   }

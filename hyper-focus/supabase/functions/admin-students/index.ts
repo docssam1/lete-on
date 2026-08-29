@@ -136,12 +136,34 @@ function randomChars(length: number): string {
   return result.join("");
 }
 
+function randomDigits(length: number): string {
+  const result: string[] = [];
+  while (result.length < length) {
+    const values = new Uint8Array(Math.max(16, length - result.length));
+    crypto.getRandomValues(values);
+    for (const value of values) {
+      result.push(String(value % 10));
+      if (result.length === length) break;
+    }
+  }
+  return result.join("");
+}
+
 function formatCode(body: string): string {
+  if (body.length === 4) return `GF-${body}`;
+  if (body.length !== 20) throw new Error("invalid_approval_code_length");
   return `GF-${body.slice(0, 4)}-${body.slice(4, 8)}-${body.slice(8, 12)}-${body.slice(12, 16)}-${body.slice(16, 20)}`;
 }
 
 function normalizeCode(value: string): string {
   return value.toUpperCase().replace(/[\s-]+/gu, "");
+}
+
+function requestedDigitHandle(value: unknown): string | null {
+  const normalized = normalizeCode(String(value || ""));
+  if (!normalized) return null;
+  const body = normalized.startsWith("GF") ? normalized.slice(2) : normalized;
+  return /^\d{4}$/.test(body) ? body : null;
 }
 
 function containsControlCharacter(value: string): boolean {
@@ -215,6 +237,16 @@ async function uniqueHandle(service: SupabaseClient): Promise<string> {
     if (!data) return handle;
   }
   throw new Error("handle_generation_failed");
+}
+
+async function uniqueDigitHandle(service: SupabaseClient): Promise<string> {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const handle = randomDigits(4);
+    const { data, error } = await service.from("hf_students").select("id").eq("login_handle", handle).maybeSingle();
+    if (error) throw error;
+    if (!data) return handle;
+  }
+  throw new Error("digit_handle_generation_failed");
 }
 
 async function setStudentAuthVersion(
@@ -456,8 +488,19 @@ Deno.serve(async request => {
         || !["internal", "online"].includes(studentType)
       ) return json(request, 400, { error: "invalid_student" });
 
-      const handle = await uniqueHandle(service);
-      const body = `${handle.toUpperCase()}${randomChars(16)}`;
+      const requestedHandle = requestedDigitHandle(payload.approvalCode);
+      if (payload.approvalCode && !requestedHandle) {
+        return json(request, 400, { error: "invalid_approval_code" });
+      }
+      const handle = requestedHandle || await uniqueDigitHandle(service);
+      const { data: existingHandle, error: handleError } = await service
+        .from("hf_students")
+        .select("id")
+        .eq("login_handle", handle)
+        .maybeSingle();
+      if (handleError) throw handleError;
+      if (existingHandle) return json(request, 409, { error: "approval_code_in_use" });
+      const body = handle.toUpperCase();
       const oneTimeApprovalCode = formatCode(body);
       const email = `hf.${handle}@${EMAIL_DOMAIN}`;
       const password = await derivedPassword(name, oneTimeApprovalCode);
@@ -506,7 +549,9 @@ Deno.serve(async request => {
         .maybeSingle();
       if (error || !profile) return json(request, 404, { error: "student_not_found" });
       if (String(profile.login_handle).length !== 4) throw new Error("invalid_login_handle");
-      const body = `${String(profile.login_handle).toUpperCase()}${randomChars(16)}`;
+      const body = String(profile.login_handle).toUpperCase().match(/^\d{4}$/)
+        ? String(profile.login_handle).toUpperCase()
+        : `${String(profile.login_handle).toUpperCase()}${randomChars(16)}`;
       const oneTimeApprovalCode = formatCode(body);
       const changed = await applyStudentAuthChange(
         service,

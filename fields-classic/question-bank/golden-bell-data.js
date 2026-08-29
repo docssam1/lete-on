@@ -662,7 +662,14 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           title: "골든벨",
           structureKey: "visible-cubes-subtract-from-total",
           prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
-          visual: { kind: "book04-hidden-cubes-original" },
+          visual: {
+            kind: "book04-hidden-cubes-original",
+            scenes: [
+              { map: [[2, 1], [1, 0]] },
+              { map: [[3, 2], [2, 2]] },
+              { map: [[3, 2, 1], [2, 1, 0], [1, 0, 0]] }
+            ]
+          },
           items: [
             { id: "hidden-1", prompt: "(1) 전체 4개 중 그림에 보이는 것은 3개입니다.", answerMode: "input", inputMode: "numeric", answer: "1" },
             { id: "hidden-2", prompt: "(2) 전체 9개 중 그림에 보이는 것은 7개입니다.", answerMode: "input", inputMode: "numeric", answer: "2" },
@@ -672,13 +679,13 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         extension: {
           title: "이야기",
           structureKey: "visible-cubes-subtract-from-total",
-          story: "블록 창고에는 2×2×2 크기의 정육면체를 만들 블록 8개가 쌓여 있습니다.",
-          prompt: "밖에서 보이는 블록이 5개라면 보이지 않는 블록은 몇 개일까요?",
-          visual: { kind: "book04-hidden-cubes-story" },
+          story: "블록 창고에는 모두 9개의 블록이 쌓여 있습니다.",
+          prompt: "밖에서 보이는 블록이 6개라면 보이지 않는 블록은 몇 개일까요?",
+          visual: { kind: "book04-hidden-cubes-story", scenes: [{ map: [[3, 2, 1], [2, 1, 0], [0, 0, 0]] }] },
           answerMode: "input",
           inputMode: "numeric",
           answer: "3",
-          explanation: "전체 8개에서 보이는 5개를 빼면 보이지 않는 블록은 3개입니다."
+          explanation: "전체 9개에서 보이는 6개를 빼면 보이지 않는 블록은 3개입니다."
         }
       },
       {

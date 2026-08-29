@@ -3,7 +3,10 @@
 
   const SESSION_KEY = "gfield_hf_portal_session_v1";
   const ADMIN_NAME = "docssam";
-  const STUDENT_CODE_RE = /^GF([0-9A-HJKMNP-TV-Z]{20})$/;
+  // New student codes are short numeric codes for the small private cohort.
+  // Keep accepting the original 20-character format for existing accounts.
+  const STUDENT_SHORT_CODE_RE = /^GF([0-9]{4})$/;
+  const STUDENT_LONG_CODE_RE = /^GF([0-9A-HJKMNP-TV-Z]{20})$/;
   const STUDENT_EMAIL_DOMAIN = "auth.gfieldacademy.net";
   let remoteSession = null;
   let listenerInstalled = false;
@@ -26,11 +29,21 @@
 
   function parseApprovalCode(value) {
     const normalized = cleanCode(value);
-    const match = normalized.match(STUDENT_CODE_RE);
+    const shortMatch = normalized.match(STUDENT_SHORT_CODE_RE);
+    if (shortMatch) {
+      return {
+        normalized,
+        handle: shortMatch[1].toLowerCase(),
+        format: "short",
+        formatted: `GF-${shortMatch[1]}`
+      };
+    }
+    const match = normalized.match(STUDENT_LONG_CODE_RE);
     if (!match) return null;
     return {
       normalized,
       handle: match[1].slice(0, 4).toLowerCase(),
+      format: "long",
       formatted: `GF-${match[1].slice(0, 4)}-${match[1].slice(4, 8)}-${match[1].slice(8, 12)}-${match[1].slice(12, 16)}-${match[1].slice(16, 20)}`
     };
   }

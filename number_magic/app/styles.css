@@ -889,27 +889,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-dialog.steps-mode .nm-key{padding:4px 0;font-size:16px}
 }
 
-/* ============================================================
-   인쇄 학습지 (11math 세로셈 스타일)
-   ============================================================ */
-@media print {
-  .nm-print-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .nm-print-ws-cell{border:1px solid #bbb;border-radius:6px;padding:10px 8px 14px;
-    display:flex;flex-direction:column;align-items:center;gap:4px}
-  .nm-print-cnum{font-size:14px;font-weight:900;color:#555;align-self:flex-start}
-  .nm-print-vp{display:flex;flex-direction:column;align-items:flex-end;
-    font-size:1.15em;font-weight:700;width:100%;padding:0 6px}
-  .nm-print-vp-top{text-align:right;width:100%;line-height:1.5}
-  .nm-print-vp-mid{display:flex;align-items:center;gap:4px;width:100%;line-height:1.5}
-  .nm-print-vp-op{min-width:18px;text-align:left}
-  .nm-print-vp-line{width:100%;height:1.5px;background:#000;margin:4px 0}
-  .nm-print-vp-bot{text-align:right;width:100%;min-height:24px}
-  .nm-print-ak-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-  .nm-print-ak-item{font-size:13px;font-weight:700}
-  .nm-print-ws-wide{grid-column:span 2}
-  .nm-print-word{font-size:12.5px;line-height:1.6;text-align:left;width:100%;word-break:keep-all}
-  .nm-print-word-blank{font-size:12px;align-self:flex-end;margin-top:8px}
-}
+/* 인쇄 학습지 CSS는 이 파일에 두지 않는다 — exam.js가 주입하는 한 벌(injectPrintCSS)이
+   유일한 출처다. 예전엔 여기에도 세로셈용 한 벌(nm-print-ws / nm-print-vp 계열)이 있었는데,
+   2026-08-28 인쇄 경로를 renderPrint로 통합하면서 그 마크업을 아무도 만들지 않게 됐다.
+   그런데 클래스명이 겹치는 .nm-print-vp만 살아남아, exam.js가 선언하지 않은 width:100%가
+   그대로 먹으면서 메인 앱에서만 세로셈이 칸 전체로 늘어나 인쇄됐다(drill.html은 이 파일을
+   안 읽어 멀쩡했다). 죽은 규칙이 아니라 실제로 깨뜨리고 있었으므로 통째로 제거한다. */
 
 /* ============================================================
    학습모드 로드맵 (nm-road-*)
@@ -1199,3 +1184,8 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-mat2-br.left{border-right:none}
 .nm-mat2-br.right{border-left:none}
 .nm-multi-hint{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#9aa2b1;margin-top:6px}
+
+/* 학습지 도우미 — 개념 노트가 없는 유형에서 문제은행으로 보내는 링크(2026-08-28).
+   .nm-btn은 button 기준이라 <a>로 쓸 때 가운데 정렬·글자색만 맞춰 준다. */
+.nm-wsh-bank{display:block;text-decoration:none;text-align:center;color:#fff}
+.nm-wsh-bank:hover{color:#fff}

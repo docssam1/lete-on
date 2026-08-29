@@ -626,6 +626,7 @@
       code: ws.code,
       seed: ws.seed,
       arrange: ws.arrange,
+      questionBank: ws.questionBank,
       problems: ws.problems,
       omitted: state.omitted.slice().sort((a, b) => a - b),
       printedCount: ws.problems.length - state.omitted.length

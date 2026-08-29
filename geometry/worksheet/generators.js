@@ -32,6 +32,10 @@
 (function (global) {
   "use strict";
 
+  const QUESTION_BANK = global.GFIELD_GEOMETRY_QUESTION_BANK ||
+    (typeof module !== "undefined" && module.exports ? require("../shared/question-bank.js") : null);
+  if (!QUESTION_BANK) throw new Error("GFIELD geometry question-bank core is required");
+
   // ---------------------------------------------------------------------
   // Seeded RNG — mulberry32 PRNG seeded by an FNV-1a-ish string hash, same
   // idea as /tmp/origin-full/number_magic/engine/rng.js. Self-contained here
@@ -207,6 +211,14 @@
     return hidden;
   }
 
+  // A fixed isometric worksheet picture exposes the same three directions as
+  // the corner-wall scene: top, +x and +z. HC has no walls, but asks only what
+  // is hidden in that one printed view, so it deliberately uses this camera
+  // visibility count instead of IN's five-direction union.
+  function countHiddenFromIsoView(map) {
+    return countHiddenWalled(map);
+  }
+
   // Hidden-cube rule for IN -- 보이지 않는 개수 (벽 없음), per
   // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왼쪽/
   // 오른쪽/위 (front/back/left/right/top -- never from below, five
@@ -378,8 +390,8 @@
   // 번호(코드에 들어가는 숫자)가 밀려 과거 학습지 코드가 깨지기 때문이다.
   // ---------------------------------------------------------------------
   const LEVELS = [
-    { code: "L0", name: "킨더", age: "5-6세", available: false },
-    { code: "L1", name: "키즈", age: "6-7세", available: false },
+    { code: "L0", name: "킨더", age: "5-6세", available: true },
+    { code: "L1", name: "키즈", age: "6-7세", available: true },
     { code: "L2", name: "pre", age: "초1-2", available: true },
     { code: "L3", name: "입문", age: "초3", available: true },
     { code: "L4", name: "초급", age: "초4", available: true },
@@ -494,7 +506,7 @@
   // 밀어 준다 (근거: 필즈·1031 교재 유형×단계 매트릭스).
   // ---------------------------------------------------------------------
 
-  // TC / IC 계열: L2 2x2 h<=2 · L3 3x3 h<=3 · L4 3x3~4x3 h<=4 · L5 4x4 h<=5.
+  // TC 계열: L2 2x2 h<=2 · L3 3x3 h<=3 · L4 3x3~4x3 h<=4 · L5 4x4 h<=5.
   // 격자는 단계가 정하고, 높이는 그 단계의 상한 안에서 ●○○만 한 층 낮춘다
   // (강도의 본체는 아래 각 생성기의 "묻는 것의 가짓수"다).
   function countScale(rng, level, intensity) {
@@ -507,6 +519,294 @@
       return { width: g[0], depth: g[1], maxH: low ? 3 : 4 };
     }
     return { width: 4, depth: 4, maxH: low ? 4 : 5 };
+  }
+
+  // Shared with render.js. The worksheet camera looks from the +x, +z and
+  // +y direction, so x=0,z=0 is the far floor corner and the visible cube
+  // faces are top, +x and +z. A viewpoint change is mathematically meaningful
+  // for a stacked-cube question and therefore belongs in the figure payload.
+  const ISO_VIEWPOINT = Object.freeze({
+    code: "iso-plus-x-plus-z-v1",
+    viewerVector: Object.freeze([1, 1, 1]),
+    towardViewerAxes: Object.freeze(["+x", "+z"]),
+    visibleFaces: Object.freeze(["top", "+x", "+z"]),
+    farCorner: Object.freeze([0, 0])
+  });
+  const ISO_TOP_VIEWPOINT = Object.freeze({
+    code: "iso-top-plus-x-plus-z-v1",
+    viewerVector: Object.freeze([1, 2.2, 1]),
+    towardViewerAxes: Object.freeze(["+x", "+z"]),
+    visibleFaces: Object.freeze(["top", "+x", "+z"]),
+    farCorner: Object.freeze([0, 0])
+  });
+
+  function figureViewpointCode(figures) {
+    if (!figures) return null;
+    if (figures.kind === "iso-top") return ISO_TOP_VIEWPOINT.code;
+    if (["iso", "iso-walled", "iso-box", "iso-holes", "iso-options", "iso-compare", "polycube-options", "polycube-compose-options", "polycube-pair-select", "sequence"].indexOf(figures.kind) !== -1) {
+      return ISO_VIEWPOINT.code;
+    }
+    return null;
+  }
+
+  function attachFigureViewpoint(figures) {
+    const expected = figureViewpointCode(figures);
+    if (!expected) return figures;
+    if (figures.viewpoint && figures.viewpoint !== expected) {
+      throw new Error("figure viewpoint does not match renderer: " + figures.viewpoint + " !== " + expected);
+    }
+    figures.viewpoint = expected;
+    return figures;
+  }
+
+  // IC 전용 단계표. L0~L2는 사용자 제공 킨더·키즈·초등팩토1 자료에서 확인한
+  // 2층 이상 계단형과 한 자릿수 중심 범위를 따른다. L3~L5는 같은 읽기 규칙을
+  // 유지한 채 판, 높이, 전체 개수를 보수적으로 늘린다. 인접 범위의 겹침은
+  // 의도적이지만, 높은 단계가 한 층짜리 유아 문항으로 떨어지는 것은 막는다.
+  const COUNTING_PROFILES = Object.freeze({
+    L0: Object.freeze([
+      Object.freeze({ grids: [[2, 1], [1, 2], [2, 2]], columns: [2, 4], cubes: [3, 5], maxH: 2, minPeak: 2, minElevated: 1 }),
+      Object.freeze({ grids: [[2, 2]], columns: [3, 4], cubes: [4, 6], maxH: 2, minPeak: 2, minElevated: 1 }),
+      Object.freeze({ grids: [[2, 2]], columns: [4, 4], cubes: [6, 8], maxH: 2, minPeak: 2, minElevated: 2 })
+    ]),
+    L1: Object.freeze([
+      Object.freeze({ grids: [[2, 2]], columns: [3, 4], cubes: [5, 7], maxH: 2, minPeak: 2, minElevated: 1 }),
+      Object.freeze({ grids: [[3, 2]], columns: [4, 5], cubes: [6, 8], maxH: 2, minPeak: 2, minElevated: 2 }),
+      Object.freeze({ grids: [[3, 2]], columns: [5, 6], cubes: [8, 11], maxH: 3, minPeak: 2, minElevated: 2 })
+    ]),
+    L2: Object.freeze([
+      Object.freeze({ grids: [[3, 2]], columns: [4, 5], cubes: [6, 9], maxH: 3, minPeak: 2, minElevated: 2 }),
+      Object.freeze({ grids: [[3, 2], [3, 3]], columns: [5, 7], cubes: [8, 11], maxH: 3, minPeak: 2, minElevated: 3 }),
+      Object.freeze({ grids: [[3, 3]], columns: [6, 8], cubes: [10, 14], maxH: 3, minPeak: 3, minElevated: 3 })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ grids: [[3, 3]], columns: [6, 8], cubes: [11, 16], maxH: 3, minPeak: 3, minElevated: 3 }),
+      Object.freeze({ grids: [[3, 3], [4, 3]], columns: [7, 10], cubes: [14, 22], maxH: 4, minPeak: 3, minElevated: 4 }),
+      Object.freeze({ grids: [[4, 3]], columns: [9, 12], cubes: [18, 28], maxH: 4, minPeak: 4, minElevated: 5 })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ grids: [[4, 3]], columns: [8, 10], cubes: [18, 26], maxH: 4, minPeak: 3, minElevated: 5 }),
+      Object.freeze({ grids: [[4, 3], [4, 4]], columns: [10, 13], cubes: [24, 36], maxH: 4, minPeak: 4, minElevated: 7 }),
+      Object.freeze({ grids: [[4, 4]], columns: [12, 16], cubes: [32, 48], maxH: 4, minPeak: 4, minElevated: 9 })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ grids: [[4, 4]], columns: [11, 14], cubes: [26, 40], maxH: 4, minPeak: 4, minElevated: 8 }),
+      Object.freeze({ grids: [[4, 4]], columns: [13, 16], cubes: [36, 52], maxH: 5, minPeak: 4, minElevated: 10 }),
+      Object.freeze({ grids: [[4, 4]], columns: [14, 16], cubes: [48, 68], maxH: 5, minPeak: 5, minElevated: 12 })
+    ])
+  });
+
+  function countingProfile(level, intensity) {
+    const code = levelCode(level);
+    const stage = COUNTING_PROFILES[code] || COUNTING_PROFILES.L5;
+    const profile = stage[normalizeIntensity(intensity) - 1];
+    return {
+      code: code + "-D" + normalizeIntensity(intensity),
+      grids: profile.grids.map((grid) => grid.slice()),
+      columns: profile.columns.slice(),
+      cubes: profile.cubes.slice(),
+      maxH: profile.maxH,
+      minPeak: profile.minPeak,
+      minElevated: profile.minElevated,
+      visibility: "far-high",
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function rangeContains(range, value) {
+    return value >= range[0] && value <= range[1];
+  }
+
+  // A Ferrers footprint is anchored at the far corner: every occupied cell has
+  // every cell behind it and to its left. That lets the height map stay
+  // non-increasing toward the viewer without disconnected islands.
+  function readableFootprints(width, depth, columnRange) {
+    const results = [];
+    const rows = [];
+    function visit(z, previous, count) {
+      if (z === depth) {
+        if (rangeContains(columnRange, count)) results.push(rows.slice());
+        return;
+      }
+      const minimum = 1; // use the declared depth; no decorative empty rows
+      const maximum = z === 0 ? width : previous;
+      const start = z === 0 ? width : minimum;
+      const end = maximum;
+      for (let length = start; length <= end; length += 1) {
+        rows.push(length);
+        visit(z + 1, length, count + length);
+        rows.pop();
+      }
+    }
+    visit(0, width, 0);
+    return results;
+  }
+
+  function canRaiseVisibleColumn(map, x, z, maxH) {
+    const current = map[z][x];
+    if (current < 1 || current >= maxH) return false;
+    const next = current + 1;
+    const behind = z === 0 ? maxH : map[z - 1][x];
+    const left = x === 0 ? maxH : map[z][x - 1];
+    return next <= behind && next <= left;
+  }
+
+  function elevatedColumnCount(map) {
+    return map.reduce((sum, row) => sum + row.filter((height) => height >= 2).length, 0);
+  }
+
+  // Check the actual camera rays used by render.js, not an abstract idea of
+  // "back" and "front". Along this projection +x and +z move toward the
+  // viewer. A taller nearer neighbour hides the height band behind it, while
+  // a diagonal column at (x+k,z+k) with height h+k projects its top directly
+  // over the rear top face. Direct-count questions reject both cases.
+  function auditIsoLineOfSight(map, width, depth, viewpoint) {
+    const code = viewpoint || ISO_VIEWPOINT.code;
+    const axisBlockers = [];
+    const topBlockers = [];
+    const invalidCells = [];
+    if (code !== ISO_VIEWPOINT.code) {
+      return {
+        ok: false,
+        viewpoint: code,
+        viewerVector: ISO_VIEWPOINT.viewerVector.slice(),
+        visibleFaces: ISO_VIEWPOINT.visibleFaces.slice(),
+        checkedColumns: 0,
+        axisBlockers,
+        topBlockers,
+        invalidCells,
+        errors: ["unknown-viewpoint"]
+      };
+    }
+    let checkedColumns = 0;
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const height = map[z] && map[z][x];
+        if (!Number.isInteger(height) || height < 0) {
+          invalidCells.push([x, z]);
+          continue;
+        }
+        if (!height) continue;
+        checkedColumns += 1;
+        if (x > 0 && height > map[z][x - 1]) axisBlockers.push({ axis: "+x", near: [x, z], far: [x - 1, z] });
+        if (z > 0 && height > map[z - 1][x]) axisBlockers.push({ axis: "+z", near: [x, z], far: [x, z - 1] });
+        for (let step = 1; x + step < width && z + step < depth; step += 1) {
+          const nearHeight = map[z + step][x + step];
+          if (nearHeight >= height + step) {
+            topBlockers.push({ far: [x, z], near: [x + step, z + step], step });
+            break;
+          }
+        }
+      }
+    }
+    const errors = [];
+    if (invalidCells.length) errors.push("invalid-map");
+    if (axisBlockers.length) errors.push("axis-occlusion");
+    if (topBlockers.length) errors.push("top-occlusion");
+    return {
+      ok: errors.length === 0,
+      viewpoint: code,
+      viewerVector: ISO_VIEWPOINT.viewerVector.slice(),
+      visibleFaces: ISO_VIEWPOINT.visibleFaces.slice(),
+      checkedColumns,
+      axisBlockers,
+      topBlockers,
+      invalidCells,
+      errors
+    };
+  }
+
+  function validateCountingMap(map, width, depth, profile) {
+    const errors = [];
+    const allowedGrid = profile.grids.some((grid) => grid[0] === width && grid[1] === depth);
+    const columns = countFootprintCells(topView(map, width, depth));
+    const cubes = mapTotal(map);
+    const peak = maxHeightOf(map);
+    const elevated = elevatedColumnCount(map);
+    const lineOfSight = auditIsoLineOfSight(map, width, depth, profile.viewpoint);
+    if (!allowedGrid) errors.push("grid");
+    if (!rangeContains(profile.columns, columns)) errors.push("columns");
+    if (!rangeContains(profile.cubes, cubes)) errors.push("cubes");
+    if (peak < profile.minPeak || peak > profile.maxH) errors.push("height");
+    if (elevated < profile.minElevated) errors.push("two-story");
+    if (!map[0] || map[0][0] !== peak) errors.push("far-peak");
+    if (!isCornerStaircase(map)) errors.push("visibility");
+    if (!lineOfSight.ok) errors.push("line-of-sight");
+    return {
+      ok: errors.length === 0,
+      errors,
+      columns,
+      cubes,
+      peak,
+      elevated,
+      visibility: errors.indexOf("visibility") === -1 && lineOfSight.ok ? "all-column-tops" : "occluded",
+      lineOfSight
+    };
+  }
+
+  // Build an exact-volume plane partition. Starting from a connected far-corner
+  // footprint, cubes are added only where the column behind and the column to
+  // the left are already at least as high. Therefore a nearer column can never
+  // cover the top of a shorter rear column in the fixed worksheet camera.
+  function visibleCountingShape(rng, level, intensity, options) {
+    const profile = countingProfile(level, intensity);
+    const forcedTotal = options && Number.isInteger(options.total) ? options.total : null;
+    for (let attempt = 0; attempt < 500; attempt += 1) {
+      const grid = rng.pick(profile.grids);
+      const width = grid[0];
+      const depth = grid[1];
+      const footprints = readableFootprints(width, depth, profile.columns);
+      if (!footprints.length) continue;
+      const rows = rng.pick(footprints);
+      const map = makeEmptyMap(width, depth);
+      for (let z = 0; z < depth; z += 1) {
+        for (let x = 0; x < rows[z]; x += 1) map[z][x] = 1;
+      }
+      const columns = rows.reduce((sum, length) => sum + length, 0);
+      const minimumForRules = columns + profile.minElevated + Math.max(0, profile.minPeak - 2);
+      const targetMin = Math.max(profile.cubes[0], minimumForRules);
+      const targetMax = Math.min(profile.cubes[1], columns * profile.maxH);
+      if (targetMin > targetMax) continue;
+      if (forcedTotal !== null && !rangeContains([targetMin, targetMax], forcedTotal)) continue;
+      const target = forcedTotal === null ? rng.int(targetMin, targetMax) : forcedTotal;
+
+      while (map[0][0] < profile.minPeak) map[0][0] += 1;
+      let remaining = target - mapTotal(map);
+
+      while (remaining > 0 && elevatedColumnCount(map) < profile.minElevated) {
+        const candidates = [];
+        for (let z = 0; z < depth; z += 1) {
+          for (let x = 0; x < width; x += 1) {
+            if (map[z][x] === 1 && canRaiseVisibleColumn(map, x, z, profile.maxH)) candidates.push([x, z]);
+          }
+        }
+        if (!candidates.length) break;
+        const choice = rng.pick(candidates);
+        map[choice[1]][choice[0]] += 1;
+        remaining -= 1;
+      }
+
+      while (remaining > 0) {
+        const candidates = [];
+        for (let z = 0; z < depth; z += 1) {
+          for (let x = 0; x < width; x += 1) {
+            if (canRaiseVisibleColumn(map, x, z, profile.maxH)) candidates.push([x, z]);
+          }
+        }
+        if (!candidates.length) break;
+        // Prefer a lower column most of the time so one spire does not carry
+        // the entire difficulty; keep a little randomness for problem variety.
+        const minHeight = Math.min(...candidates.map(([x, z]) => map[z][x]));
+        const balanced = candidates.filter(([x, z]) => map[z][x] === minHeight);
+        const choice = rng.bool(0.8) ? rng.pick(balanced) : rng.pick(candidates);
+        map[choice[1]][choice[0]] += 1;
+        remaining -= 1;
+      }
+
+      const validation = validateCountingMap(map, width, depth, profile);
+      if (remaining === 0 && validation.ok) return { map, width, depth, profile, validation };
+    }
+    throw new Error("unable to build a visible count-cubes problem for " + profile.code);
   }
 
   // VC / VM / VP / IH / IN 계열: 기존 easy/mid/hard 크기를 L3/L4/L5에 그대로
@@ -887,27 +1187,32 @@
   // 강도: ●○○ 전체 개수 / ●●○ 전체 + 1층 개수 / ●●● 전체 + 1층 + 2층 이상
   // 개수. 마지막 값은 앞 두 값의 차이라 "세고 → 빼는" 두 단계가 된다.
   function genIC(rng, level, intensity) {
-    const scale = countScale(rng, level, intensity);
-    const width = scale.width;
-    const depth = scale.depth;
-    const map = randomShape(rng, width, depth, scale.maxH);
+    const shape = visibleCountingShape(rng, level, intensity);
+    const { map, width, depth } = shape;
     const i = normalizeIntensity(intensity);
     const total = mapTotal(map);
     const floor = countFootprintCells(topView(map, width, depth));
     const upper = total - floor;
     const askFloor = i >= 2;
     const askUpper = i >= 3;
-    let prompt = "쌓기나무로 쌓은 모양입니다. ① 사용된 쌓기나무는 최소 몇 개입니까?";
+    let prompt = "쌓기나무로 쌓은 모양입니다. ① 사용된 쌓기나무는 모두 몇 개입니까?";
     if (askFloor) prompt += " ② 1층에 놓인 쌓기나무는 몇 개입니까?";
     if (askUpper) prompt += " ③ 2층 이상에 놓인 쌓기나무는 몇 개입니까?";
-    if (!askFloor) prompt = "쌓기나무로 쌓은 모양입니다. 사용된 쌓기나무는 최소 몇 개입니까?";
+    if (!askFloor) prompt = "쌓기나무로 쌓은 모양입니다. 사용된 쌓기나무는 모두 몇 개입니까?";
     let answerText = askFloor ? "① " + total + "개" : total + "개";
     if (askFloor) answerText += "  ② " + floor + "개";
     if (askUpper) answerText += "  ③ " + upper + "개";
     return {
       type: "IC",
       prompt,
-      figures: { kind: "iso", map, width, depth },
+      figures: {
+        kind: "iso",
+        map,
+        width,
+        depth,
+        viewpoint: ISO_VIEWPOINT.code,
+        visibility: "all-column-tops"
+      },
       answer: { total, floor, upper, askFloor, askUpper },
       answerText
     };
@@ -1181,7 +1486,850 @@
     };
   }
 
-  // 9. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
+  // 9. MV — 쌓기나무 한 개 옮기기
+  //
+  // 사용자 제공 초등팩토 1의 "한 개 옮겨 두 모양 만들기" 풀이 구조를
+  // 인쇄용 단일정답 보기 문제로 바꾼 유형이다. 모든 보기는 처음 모양과
+  // 쌓기나무 수가 같아 단순 개수 비교로 답을 고를 수 없고, 정답만 정확히
+  // 한 번의 이동으로 도달한다. 그림은 IC와 같은 시선 판독 규칙을 통과한
+  // 높이 지도만 사용한다.
+  function oneCubeMoveDistance(from, to, width, depth) {
+    let added = 0;
+    let removed = 0;
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const delta = to[z][x] - from[z][x];
+        if (delta > 0) added += delta;
+        else removed -= delta;
+      }
+    }
+    return added === removed ? added : Infinity;
+  }
+
+  function mapKey(map) {
+    return map.map((row) => row.join(",")).join(";");
+  }
+
+  function oneCubeMoveTargets(map, width, depth, maxH) {
+    const targets = [];
+    const seen = new Set();
+    for (let fromZ = 0; fromZ < depth; fromZ += 1) {
+      for (let fromX = 0; fromX < width; fromX += 1) {
+        if (map[fromZ][fromX] < 1) continue;
+        for (let toZ = 0; toZ < depth; toZ += 1) {
+          for (let toX = 0; toX < width; toX += 1) {
+            if ((fromX === toX && fromZ === toZ) || map[toZ][toX] >= maxH) continue;
+            const target = cloneMap(map);
+            target[fromZ][fromX] -= 1;
+            target[toZ][toX] += 1;
+            const key = mapKey(target);
+            if (seen.has(key) || !isCornerStaircase(target)) continue;
+            if (!auditIsoLineOfSight(target, width, depth, ISO_VIEWPOINT.code).ok) continue;
+            seen.add(key);
+            targets.push(target);
+          }
+        }
+      }
+    }
+    return targets;
+  }
+
+  function moveProblemShape(rng, level, intensity) {
+    const choiceCount = normalizeIntensity(intensity) === 1 ? 3 : 4;
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      const built = visibleCountingShape(rng, level, intensity);
+      const source = built.map;
+      const width = built.width;
+      const depth = built.depth;
+      const maxH = built.profile.maxH;
+      const oneMoves = oneCubeMoveTargets(source, width, depth, maxH);
+      if (!oneMoves.length) continue;
+
+      const twoMoves = [];
+      const seen = new Set([mapKey(source)]);
+      oneMoves.forEach((middle) => {
+        oneCubeMoveTargets(middle, width, depth, maxH).forEach((target) => {
+          const key = mapKey(target);
+          if (seen.has(key) || oneCubeMoveDistance(source, target, width, depth) !== 2) return;
+          seen.add(key);
+          twoMoves.push(target);
+        });
+      });
+      if (twoMoves.length < choiceCount - 1) continue;
+
+      const correct = rng.pick(oneMoves);
+      const distractors = rng.shuffle(twoMoves).slice(0, choiceCount - 1);
+      const choices = rng.shuffle([correct].concat(distractors));
+      const correctIndex = choices.findIndex((candidate) => mapKey(candidate) === mapKey(correct));
+      return { source, choices, correctIndex, width, depth, maxH };
+    }
+    throw new Error("unable to build a one-cube-move problem for " + level + " D" + intensity);
+  }
+
+  function genMV(rng, level, intensity) {
+    const built = moveProblemShape(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const distances = built.choices.map((map) => oneCubeMoveDistance(
+      built.source,
+      map,
+      built.width,
+      built.depth
+    ));
+    const choice = labels[built.correctIndex];
+    return {
+      type: "MV",
+      prompt: "모든 모양은 같은 방향에서 보았습니다. 처음 모양에서 쌓기나무 1개만 다른 곳으로 옮겨 만들 수 있는 모양을 고르시오.",
+      figures: {
+        kind: "iso-options",
+        source: built.source,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length),
+        width: built.width,
+        depth: built.depth
+      },
+      answer: {
+        choice,
+        choiceIndex: built.correctIndex,
+        distances,
+        sourceTotal: mapTotal(built.source)
+      },
+      answerText: choice
+    };
+  }
+
+  // 10. CO — 쌓기나무 개수 비교
+  //
+  // 초등팩토 1 자료의 가장 많은 모양 찾기, 개수가 다른 모양 찾기, 많은
+  // 순서로 쓰기를 한 유형의 세 강도로 묶는다. IC의 직접 세기용 높이 지도를
+  // 그대로 사용하므로 모든 보기는 같은 시선에서 각 기둥의 높이를 읽을 수
+  // 있다. 같은 개수를 쓰는 보기끼리도 높이 지도는 반드시 서로 다르다.
+  function countingShapeKey(shape) {
+    return shape.width + "x" + shape.depth + ":" + mapKey(shape.map);
+  }
+
+  function distinctCountingShapes(rng, level, intensity, total, count, usedKeys) {
+    const used = usedKeys || new Set();
+    const shapes = [];
+    for (let attempt = 0; attempt < 120 && shapes.length < count; attempt += 1) {
+      let built;
+      try {
+        built = visibleCountingShape(rng, level, intensity, { total });
+      } catch (error) {
+        return null;
+      }
+      const key = countingShapeKey(built);
+      if (used.has(key)) continue;
+      used.add(key);
+      shapes.push(built);
+    }
+    return shapes.length === count ? shapes : null;
+  }
+
+  function comparisonProblemShapes(rng, level, intensity) {
+    const mode = normalizeIntensity(intensity) === 1
+      ? "largest"
+      : normalizeIntensity(intensity) === 2 ? "different" : "order";
+    const profile = countingProfile(level, intensity);
+    const totals = [];
+    for (let total = profile.cubes[0]; total <= profile.cubes[1]; total += 1) totals.push(total);
+    const candidates = rng.shuffle(totals);
+    const used = new Set();
+
+    if (mode === "different") {
+      for (const commonTotal of candidates) {
+        const common = distinctCountingShapes(rng, level, intensity, commonTotal, 3, used);
+        if (!common) continue;
+        for (const oddTotal of rng.shuffle(totals.filter((total) => total !== commonTotal))) {
+          const odd = distinctCountingShapes(rng, level, intensity, oddTotal, 1, used);
+          if (odd) return { mode, shapes: common.concat(odd) };
+        }
+      }
+    } else {
+      const shapes = [];
+      for (const total of candidates) {
+        const found = distinctCountingShapes(rng, level, intensity, total, 1, used);
+        if (found) shapes.push(found[0]);
+        if (shapes.length === 3) return { mode, shapes };
+      }
+    }
+    throw new Error("unable to build a count-comparison problem for " + level + " D" + intensity);
+  }
+
+  function genCO(rng, level, intensity) {
+    const built = comparisonProblemShapes(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const shuffled = rng.shuffle(built.shapes);
+    const items = shuffled.map((shape, index) => ({
+      label: labels[index],
+      map: shape.map,
+      width: shape.width,
+      depth: shape.depth
+    }));
+    const totals = {};
+    items.forEach((item) => { totals[item.label] = mapTotal(item.map); });
+
+    let prompt;
+    let answer;
+    if (built.mode === "largest") {
+      const largest = items.reduce((best, item) => totals[item.label] > totals[best.label] ? item : best, items[0]);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 쌓기나무의 개수가 가장 많은 모양을 고르시오.";
+      answer = { mode: built.mode, choice: largest.label, choiceIndex: items.indexOf(largest), totals };
+    } else if (built.mode === "different") {
+      const frequencies = {};
+      Object.values(totals).forEach((total) => { frequencies[total] = (frequencies[total] || 0) + 1; });
+      const odd = items.find((item) => frequencies[totals[item.label]] === 1);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 네 모양 중 쌓기나무의 개수가 다른 하나를 고르시오.";
+      answer = { mode: built.mode, choice: odd.label, choiceIndex: items.indexOf(odd), totals };
+    } else {
+      const order = items.slice().sort((left, right) => totals[right.label] - totals[left.label]).map((item) => item.label);
+      prompt = "모든 모양은 같은 방향에서 보았습니다. 쌓기나무의 개수가 많은 모양부터 차례대로 기호를 쓰시오.";
+      answer = { mode: built.mode, order, totals };
+    }
+
+    const answerText = answer.mode === "order" ? answer.order.join(" → ") : answer.choice;
+    return {
+      type: "CO",
+      prompt,
+      figures: { kind: "iso-compare", items },
+      answer,
+      answerText
+    };
+  }
+
+  // 11. HC — 보이지 않는 쌓기나무 개수 비교
+  //
+  // 고정된 등각 그림에서 top/+x/+z 세 면이 모두 가려진 쌓기나무를 센다.
+  // 보기 자체는 IC와 같은 직접 판독용 높이 지도이므로, 그림에 나타나지 않은
+  // 기둥이나 높이를 임의로 가정할 필요가 없다. 세 보기의 숨은 개수는 모두
+  // 달라 선택과 순서 정답이 언제나 하나로 결정된다.
+  function hiddenComparisonShapes(rng, level, intensity) {
+    const byHidden = new Map();
+    const used = new Set();
+    for (let attempt = 0; attempt < 600 && byHidden.size < 3; attempt += 1) {
+      const shape = visibleCountingShape(rng, level, intensity);
+      const key = countingShapeKey(shape);
+      if (used.has(key)) continue;
+      used.add(key);
+      const hidden = countHiddenFromIsoView(shape.map);
+      if (hidden < 1 || byHidden.has(hidden)) continue;
+      byHidden.set(hidden, shape);
+    }
+    if (byHidden.size < 3) {
+      throw new Error("unable to build a hidden-count comparison for " + level + " D" + intensity);
+    }
+    return rng.shuffle(Array.from(byHidden.entries())).slice(0, 3).map(([hidden, shape]) => ({ hidden, shape }));
+  }
+
+  function genHC(rng, level, intensity) {
+    const labels = ["가", "나", "다"];
+    const built = rng.shuffle(hiddenComparisonShapes(rng, level, intensity));
+    const items = built.map((entry, index) => ({
+      label: labels[index],
+      map: entry.shape.map,
+      width: entry.shape.width,
+      depth: entry.shape.depth
+    }));
+    const hidden = {};
+    items.forEach((item, index) => { hidden[item.label] = built[index].hidden; });
+    const order = items.slice()
+      .sort((left, right) => hidden[left.label] - hidden[right.label])
+      .map((item) => item.label);
+    const mode = normalizeIntensity(intensity) === 1 ? "least" : "order";
+    const prompt = mode === "least"
+      ? "모든 모양은 같은 방향에서 보았습니다. 그림에서 보이지 않는 쌓기나무의 개수가 가장 적은 모양을 고르시오."
+      : "모든 모양은 같은 방향에서 보았습니다. 그림에서 보이지 않는 쌓기나무의 개수가 적은 모양부터 차례대로 기호를 쓰시오.";
+    const answer = mode === "least"
+      ? { mode, choice: order[0], choiceIndex: items.findIndex((item) => item.label === order[0]), hidden }
+      : { mode, order, hidden };
+    return {
+      type: "HC",
+      prompt,
+      figures: { kind: "iso-compare", items },
+      answer,
+      answerText: mode === "least" ? answer.choice : order.join(" → ")
+    };
+  }
+
+  // 12. CJ — 두 쌓기나무 모양 합치기
+  //
+  // 준비된 조각과 보기 조각을 자유롭게 돌려 목표 직육면체를 완성하는 유형.
+  // 회전은 정육면체의 24가지 방향만 허용하며 반사는 허용하지 않는다. 준비된
+  // 조각이 목표 안에 놓이는 모든 배치를 전수 조사한 뒤 생기는 나머지 공간의
+  // 합동형을 모아, 보기 중 정확히 하나만 그 집합에 속하도록 만든다.
+  const rotateCoordX = ([x, y, z]) => [x, -z, y];
+  const rotateCoordY = ([x, y, z]) => [z, y, -x];
+  const rotateCoordZ = ([x, y, z]) => [-y, x, z];
+
+  function buildCubeRotations() {
+    const basis = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const signature = (matrix) => matrix.map((axis) => axis.join(",")).join("|");
+    const seen = new Map([[signature(basis), basis]]);
+    const queue = [basis];
+    while (queue.length) {
+      const current = queue.shift();
+      [rotateCoordX, rotateCoordY, rotateCoordZ].forEach((rotate) => {
+        const next = current.map(rotate);
+        const id = signature(next);
+        if (!seen.has(id)) {
+          seen.set(id, next);
+          queue.push(next);
+        }
+      });
+    }
+    return Array.from(seen.values()).map((matrix) => ([x, y, z]) => [
+      matrix[0][0] * x + matrix[1][0] * y + matrix[2][0] * z,
+      matrix[0][1] * x + matrix[1][1] * y + matrix[2][1] * z,
+      matrix[0][2] * x + matrix[1][2] * y + matrix[2][2] * z
+    ]);
+  }
+
+  const CUBE_ROTATIONS = Object.freeze(buildCubeRotations());
+
+  function compareCoord(a, b) {
+    return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+  }
+
+  function coordKey(point) {
+    return point.join(",");
+  }
+
+  function coordsKey(cells) {
+    return cells.map(coordKey).join(";");
+  }
+
+  function normalizeCoords(cells) {
+    const mins = [0, 1, 2].map((axis) => Math.min(...cells.map((cell) => cell[axis])));
+    return cells
+      .map((cell) => cell.map((value, axis) => value - mins[axis]))
+      .sort(compareCoord);
+  }
+
+  function orientationsOf(cells) {
+    const found = new Map();
+    CUBE_ROTATIONS.forEach((rotate) => {
+      const oriented = normalizeCoords(cells.map(rotate));
+      found.set(coordsKey(oriented), oriented);
+    });
+    return Array.from(found.values());
+  }
+
+  function canonicalPolycube(cells) {
+    return orientationsOf(cells).map(coordsKey).sort()[0];
+  }
+
+  function isConnectedPolycube(cells) {
+    if (!cells.length) return false;
+    const occupied = new Set(cells.map(coordKey));
+    const reached = new Set([coordKey(cells[0])]);
+    const queue = [cells[0]];
+    while (queue.length) {
+      const [x, y, z] = queue.shift();
+      [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => {
+        const next = [x + dx, y + dy, z + dz];
+        const key = coordKey(next);
+        if (occupied.has(key) && !reached.has(key)) {
+          reached.add(key);
+          queue.push(next);
+        }
+      });
+    }
+    return reached.size === occupied.size;
+  }
+
+  function boxCoords(dims) {
+    const cells = [];
+    for (let x = 0; x < dims.width; x += 1) {
+      for (let y = 0; y < dims.height; y += 1) {
+        for (let z = 0; z < dims.depth; z += 1) cells.push([x, y, z]);
+      }
+    }
+    return cells;
+  }
+
+  function placementsInBox(cells, dims) {
+    const placements = new Map();
+    orientationsOf(cells).forEach((shape) => {
+      const size = [0, 1, 2].map((axis) => Math.max(...shape.map((cell) => cell[axis])) + 1);
+      for (let x = 0; x <= dims.width - size[0]; x += 1) {
+        for (let y = 0; y <= dims.height - size[1]; y += 1) {
+          for (let z = 0; z <= dims.depth - size[2]; z += 1) {
+            const placed = shape.map(([cx, cy, cz]) => [cx + x, cy + y, cz + z]).sort(compareCoord);
+            placements.set(coordsKey(placed), placed);
+          }
+        }
+      }
+    });
+    return Array.from(placements.values());
+  }
+
+  function complementFormsForPiece(source, dims) {
+    const target = boxCoords(dims);
+    const forms = new Map();
+    placementsInBox(source, dims).forEach((placement) => {
+      const occupied = new Set(placement.map(coordKey));
+      const gap = target.filter((cell) => !occupied.has(coordKey(cell)));
+      if (!isConnectedPolycube(gap)) return;
+      const normalized = normalizeCoords(gap);
+      forms.set(canonicalPolycube(normalized), normalized);
+    });
+    return forms;
+  }
+
+  function pairCanFillBox(source, candidate, dims) {
+    return complementFormsForPiece(source, dims).has(canonicalPolycube(candidate));
+  }
+
+  // Every loose piece must reveal at least one of top/+x/+z on every cube in
+  // the standard worksheet camera. This is the coordinate-piece counterpart
+  // of IC's height-map line-of-sight guard: a cube that contributes no visible
+  // face would make the printed option underdetermined.
+  function auditPolycubeViewpoint(cells, viewpoint) {
+    const code = viewpoint || ISO_VIEWPOINT.code;
+    const normalized = normalizeCoords(cells);
+    const occupied = new Set(normalized.map(coordKey));
+    const hidden = [];
+    if (code !== ISO_VIEWPOINT.code) {
+      return { ok: false, viewpoint: code, hidden, errors: ["unknown-viewpoint"] };
+    }
+    normalized.forEach(([x, y, z]) => {
+      const visible = !occupied.has(coordKey([x, y + 1, z])) ||
+        !occupied.has(coordKey([x + 1, y, z])) ||
+        !occupied.has(coordKey([x, y, z + 1]));
+      if (!visible) hidden.push([x, y, z]);
+    });
+    return {
+      ok: hidden.length === 0,
+      viewpoint: code,
+      viewerVector: ISO_VIEWPOINT.viewerVector.slice(),
+      visibleFaces: ISO_VIEWPOINT.visibleFaces.slice(),
+      checkedCubes: normalized.length,
+      hidden,
+      errors: hidden.length ? ["fully-occluded-cube"] : []
+    };
+  }
+
+  function visibleOrientations(cells) {
+    return orientationsOf(cells).filter((shape) => auditPolycubeViewpoint(shape, ISO_VIEWPOINT.code).ok);
+  }
+
+  function randomConnectedSubset(rng, dims, size) {
+    const target = boxCoords(dims);
+    const targetKeys = new Set(target.map(coordKey));
+    const chosen = [rng.pick(target)];
+    const used = new Set(chosen.map(coordKey));
+    while (chosen.length < size) {
+      const frontier = [];
+      chosen.forEach(([x, y, z]) => {
+        [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].forEach(([dx, dy, dz]) => {
+          const cell = [x + dx, y + dy, z + dz];
+          const key = coordKey(cell);
+          if (targetKeys.has(key) && !used.has(key) && !frontier.some((item) => coordKey(item) === key)) frontier.push(cell);
+        });
+      });
+      if (!frontier.length) return null;
+      const next = rng.pick(frontier);
+      chosen.push(next);
+      used.add(coordKey(next));
+    }
+    return normalizeCoords(chosen);
+  }
+
+  const JOIN_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ dims: [2, 2, 2], sourceSize: 4, choices: 3 }),
+      Object.freeze({ dims: [2, 2, 2], sourceSize: 4, choices: 4 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 5, choices: 4 })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 5, choices: 3 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 6, choices: 4 }),
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 7, choices: 4 })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ dims: [3, 2, 2], sourceSize: 6, choices: 3 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 8, choices: 4 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 9, choices: 4 })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 8, choices: 3 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 9, choices: 4 }),
+      Object.freeze({ dims: [3, 3, 2], sourceSize: 10, choices: 4 })
+    ])
+  });
+
+  function joinProfile(level, intensity) {
+    const stage = JOIN_PROFILES[levelCode(level)] || JOIN_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      dims: { width: raw.dims[0], depth: raw.dims[1], height: raw.dims[2] },
+      sourceSize: raw.sourceSize,
+      choices: raw.choices,
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function buildJoinProblem(rng, level, intensity) {
+    const profile = joinProfile(level, intensity);
+    const targetSize = profile.dims.width * profile.dims.depth * profile.dims.height;
+    const optionSize = targetSize - profile.sourceSize;
+    for (let attempt = 0; attempt < 180; attempt += 1) {
+      const source = randomConnectedSubset(rng, profile.dims, profile.sourceSize);
+      if (!source) continue;
+      const sourceViews = visibleOrientations(source);
+      if (!sourceViews.length) continue;
+      const accepted = complementFormsForPiece(source, profile.dims);
+      const correctForms = Array.from(accepted.values()).filter((piece) => visibleOrientations(piece).length);
+      if (!correctForms.length) continue;
+      const correctForm = rng.pick(correctForms);
+      const correct = rng.pick(visibleOrientations(correctForm));
+
+      const distractors = [];
+      const usedForms = new Set([canonicalPolycube(correct)]);
+      for (let tries = 0; tries < 1600 && distractors.length < profile.choices - 1; tries += 1) {
+        const candidate = randomConnectedSubset(rng, profile.dims, optionSize);
+        if (!candidate) continue;
+        const form = canonicalPolycube(candidate);
+        if (usedForms.has(form) || accepted.has(form)) continue;
+        const views = visibleOrientations(candidate);
+        if (!views.length) continue;
+        usedForms.add(form);
+        distractors.push(rng.pick(views));
+      }
+      if (distractors.length < profile.choices - 1) continue;
+
+      const sourceView = rng.pick(sourceViews);
+      const choices = rng.shuffle([correct].concat(distractors));
+      const correctFormKey = canonicalPolycube(correct);
+      const correctIndex = choices.findIndex((piece) => canonicalPolycube(piece) === correctFormKey);
+      return { profile, source: sourceView, choices, correctIndex, acceptedForms: Array.from(accepted.keys()) };
+    }
+    throw new Error("unable to build a two-piece join problem for " + level + " D" + intensity);
+  }
+
+  function genCJ(rng, level, intensity) {
+    const built = buildJoinProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const fits = built.choices.map((piece) => pairCanFillBox(built.source, piece, built.profile.dims));
+    const choice = labels[built.correctIndex];
+    return {
+      type: "CJ",
+      prompt: "준비된 모양과 보기의 모양을 돌려서 합쳤을 때 목표 직육면체를 완성할 수 있는 나머지 모양을 고르시오.",
+      figures: {
+        kind: "polycube-options",
+        source: built.source,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length),
+        target: built.profile.dims
+      },
+      answer: {
+        choice,
+        choiceIndex: built.correctIndex,
+        fits,
+        sourceSize: built.source.length,
+        optionSize: built.choices[0].length,
+        targetSize: built.profile.dims.width * built.profile.dims.depth * built.profile.dims.height,
+        acceptedForms: built.acceptedForms
+      },
+      answerText: choice
+    };
+  }
+
+  // 13. CP — 두 모양으로 만들 수 없는 입체
+  //
+  // 첫 조각의 방향을 하나로 고정하고 둘째 조각의 24회전과 두 조각의 모든
+  // 면 접촉 위치를 전수 조사한다. 전체를 함께 돌리는 경우는 첫 조각을 고정한
+  // 경우와 회전 합동이므로 이 열거로 가능한 합성 모양을 빠짐없이 얻는다.
+  const FACE_NEIGHBORS = Object.freeze([
+    Object.freeze([1, 0, 0]), Object.freeze([-1, 0, 0]),
+    Object.freeze([0, 1, 0]), Object.freeze([0, -1, 0]),
+    Object.freeze([0, 0, 1]), Object.freeze([0, 0, -1])
+  ]);
+  const JOINED_FORM_CACHE = new Map();
+
+  const COMPOSE_PIECES = Object.freeze({
+    3: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
+    ]),
+    4: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [1, 1, 0], [2, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    ]),
+    5: Object.freeze([
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [0, 1, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0], [1, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [1, 1, 0], [2, 1, 0], [2, 2, 0]]),
+      Object.freeze([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1]])
+    ])
+  });
+
+  function composePiece(rng, size, excludedForm) {
+    const available = (COMPOSE_PIECES[size] || []).filter((piece) => canonicalPolycube(piece) !== excludedForm);
+    return available.length ? normalizeCoords(rng.pick(available)) : null;
+  }
+
+  function joinedFormsForPieces(first, second) {
+    const pairKey = [canonicalPolycube(first), canonicalPolycube(second)].sort().join("||");
+    if (JOINED_FORM_CACHE.has(pairKey)) return JOINED_FORM_CACHE.get(pairKey);
+    const left = normalizeCoords(first);
+    const occupied = new Set(left.map(coordKey));
+    const rawUnions = new Map();
+    orientationsOf(second).forEach((right) => {
+      left.forEach(([lx, ly, lz]) => {
+        right.forEach(([rx, ry, rz]) => {
+          FACE_NEIGHBORS.forEach(([dx, dy, dz]) => {
+            const shift = [lx + dx - rx, ly + dy - ry, lz + dz - rz];
+            const placed = right.map(([x, y, z]) => [x + shift[0], y + shift[1], z + shift[2]]);
+            if (placed.some((cell) => occupied.has(coordKey(cell)))) return;
+            const union = normalizeCoords(left.concat(placed));
+            rawUnions.set(coordsKey(union), union);
+          });
+        });
+      });
+    });
+    const forms = new Map();
+    rawUnions.forEach((union) => {
+      const form = canonicalPolycube(union);
+      if (!forms.has(form)) forms.set(form, union);
+    });
+    JOINED_FORM_CACHE.set(pairKey, forms);
+    return forms;
+  }
+
+  function piecesCanMakeShape(first, second, target) {
+    return joinedFormsForPieces(first, second).has(canonicalPolycube(target));
+  }
+
+  const COMPOSE_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ pieceSizes: [3, 3], choices: 3, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 3], choices: 4, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 4], choices: 4, sampleDims: [3, 3, 2] })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ pieceSizes: [4, 4], choices: 3, sampleDims: [3, 3, 2] }),
+      Object.freeze({ pieceSizes: [4, 5], choices: 4, sampleDims: [4, 3, 2] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 3, 2] })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ pieceSizes: [5, 5], choices: 3, sampleDims: [4, 3, 2] }),
+      Object.freeze({ pieceSizes: [5, 4], choices: 4, sampleDims: [4, 3, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 3, 3] })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ pieceSizes: [5, 4], choices: 3, sampleDims: [4, 3, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 4, 3] }),
+      Object.freeze({ pieceSizes: [5, 5], choices: 4, sampleDims: [4, 4, 3] })
+    ])
+  });
+
+  function composeProfile(level, intensity) {
+    const stage = COMPOSE_PROFILES[levelCode(level)] || COMPOSE_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      pieceSizes: raw.pieceSizes.slice(),
+      choices: raw.choices,
+      sampleDims: { width: raw.sampleDims[0], depth: raw.sampleDims[1], height: raw.sampleDims[2] },
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function buildComposeProblem(rng, level, intensity) {
+    const profile = composeProfile(level, intensity);
+    const totalSize = profile.pieceSizes[0] + profile.pieceSizes[1];
+    for (let attempt = 0; attempt < 180; attempt += 1) {
+      const first = composePiece(rng, profile.pieceSizes[0]);
+      const firstForm = first && canonicalPolycube(first);
+      const second = composePiece(rng, profile.pieceSizes[1], firstForm);
+      if (!first || !second) continue;
+      const firstViews = visibleOrientations(first);
+      const secondViews = visibleOrientations(second);
+      if (!firstViews.length || !secondViews.length) continue;
+
+      const accepted = joinedFormsForPieces(first, second);
+      const possible = [];
+      rng.shuffle(Array.from(accepted.values())).some((shape) => {
+        const views = visibleOrientations(shape);
+        if (views.length) possible.push(rng.pick(views));
+        return possible.length === profile.choices - 1;
+      });
+      if (possible.length < profile.choices - 1) continue;
+
+      const usedForms = new Set(possible.map(canonicalPolycube));
+      let impossible = null;
+      for (let tries = 0; tries < 2400 && !impossible; tries += 1) {
+        const candidate = randomConnectedSubset(rng, profile.sampleDims, totalSize);
+        if (!candidate) continue;
+        const form = canonicalPolycube(candidate);
+        if (usedForms.has(form) || accepted.has(form)) continue;
+        const views = visibleOrientations(candidate);
+        if (!views.length) continue;
+        impossible = rng.pick(views);
+      }
+      if (!impossible) continue;
+
+      const impossibleForm = canonicalPolycube(impossible);
+      const choices = rng.shuffle(possible.concat([impossible]));
+      const impossibleIndex = choices.findIndex((shape) => canonicalPolycube(shape) === impossibleForm);
+      return {
+        profile,
+        sources: [rng.pick(firstViews), rng.pick(secondViews)],
+        choices,
+        impossibleIndex,
+        acceptedCount: accepted.size
+      };
+    }
+    throw new Error("unable to build a two-piece composition problem for " + level + " D" + intensity);
+  }
+
+  function genCP(rng, level, intensity) {
+    const built = buildComposeProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라"];
+    const canMake = built.choices.map((shape) => piecesCanMakeShape(built.sources[0], built.sources[1], shape));
+    const choice = labels[built.impossibleIndex];
+    return {
+      type: "CP",
+      prompt: "준비된 두 모양을 각각 한 번씩 사용하여 면끼리 붙일 때 만들 수 없는 모양을 고르시오. 두 모양은 자유롭게 돌릴 수 있습니다.",
+      figures: {
+        kind: "polycube-compose-options",
+        sources: built.sources,
+        choices: built.choices,
+        labels: labels.slice(0, built.choices.length)
+      },
+      answer: {
+        choice,
+        choiceIndex: built.impossibleIndex,
+        canMake,
+        pieceSizes: built.profile.pieceSizes,
+        targetSize: built.profile.pieceSizes[0] + built.profile.pieceSizes[1],
+        acceptedCount: built.acceptedCount
+      },
+      answerText: choice
+    };
+  }
+
+  // 14. PS — 목표 입체를 만드는 두 조각 찾기
+  //
+  // 보기의 모든 unordered pair를 전수 합성한 뒤, 정확히 한 pair에만 속하는
+  // 목표 합동형을 고른다. 그러므로 두 기호의 순서를 바꾼 것을 별도 답으로
+  // 세지 않으면서도 정답 조각쌍은 하나로 확정된다.
+  const PAIR_SELECT_PROFILES = Object.freeze({
+    L2: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 })
+    ]),
+    L3: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 4, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ]),
+    L4: Object.freeze([
+      Object.freeze({ pieceSize: 4, candidates: 4 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ]),
+    L5: Object.freeze([
+      Object.freeze({ pieceSize: 5, candidates: 4 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 }),
+      Object.freeze({ pieceSize: 5, candidates: 5 })
+    ])
+  });
+
+  function pairSelectProfile(level, intensity) {
+    const stage = PAIR_SELECT_PROFILES[levelCode(level)] || PAIR_SELECT_PROFILES.L5;
+    const raw = stage[normalizeIntensity(intensity) - 1];
+    return {
+      pieceSize: raw.pieceSize,
+      candidates: raw.candidates,
+      viewpoint: ISO_VIEWPOINT.code
+    };
+  }
+
+  function polycubeSpans(cells) {
+    const normalized = normalizeCoords(cells);
+    return [0, 1, 2].map((axis) => Math.max(...normalized.map((cell) => cell[axis])) + 1);
+  }
+
+  function buildPairSelectProblem(rng, level, intensity) {
+    const profile = pairSelectProfile(level, intensity);
+    const library = COMPOSE_PIECES[profile.pieceSize] || [];
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const bank = rng.shuffle(library).slice(0, profile.candidates).map(normalizeCoords);
+      if (bank.length < profile.candidates) continue;
+      const bankViews = bank.map((piece) => visibleOrientations(piece));
+      if (bankViews.some((views) => !views.length)) continue;
+
+      const targets = new Map();
+      for (let left = 0; left < bank.length; left += 1) {
+        for (let right = left + 1; right < bank.length; right += 1) {
+          joinedFormsForPieces(bank[left], bank[right]).forEach((shape, form) => {
+            if (!targets.has(form)) targets.set(form, { shape, pairs: [] });
+            targets.get(form).pairs.push([left, right]);
+          });
+        }
+      }
+
+      const uniqueTargets = rng.shuffle(Array.from(targets.values()).filter((entry) => entry.pairs.length === 1));
+      for (let index = 0; index < Math.min(uniqueTargets.length, 500); index += 1) {
+        const entry = uniqueTargets[index];
+        const spans = polycubeSpans(entry.shape);
+        if (Math.max(...spans) > 5 || spans[0] * spans[1] * spans[2] > 30) continue;
+        const targetViews = visibleOrientations(entry.shape);
+        if (!targetViews.length) continue;
+        return {
+          profile,
+          bank: bankViews.map((views) => rng.pick(views)),
+          target: rng.pick(targetViews),
+          pairIndexes: entry.pairs[0],
+          matchingPairCount: entry.pairs.length
+        };
+      }
+    }
+    throw new Error("unable to build a unique two-piece selection problem for " + level + " D" + intensity);
+  }
+
+  function genPS(rng, level, intensity) {
+    const built = buildPairSelectProblem(rng, level, intensity);
+    const labels = ["가", "나", "다", "라", "마"];
+    const pairLabels = built.pairIndexes.map((index) => labels[index]);
+    const pairMatches = [];
+    for (let left = 0; left < built.bank.length; left += 1) {
+      for (let right = left + 1; right < built.bank.length; right += 1) {
+        pairMatches.push({
+          pair: [labels[left], labels[right]],
+          canMake: piecesCanMakeShape(built.bank[left], built.bank[right], built.target)
+        });
+      }
+    }
+    return {
+      type: "PS",
+      prompt: "보기의 쌓기나무 모양 중 두 가지를 각각 한 번씩 사용하여 목표 입체를 만들려고 합니다. 필요한 두 모양의 기호를 쓰시오. 모양은 자유롭게 돌릴 수 있습니다.",
+      figures: {
+        kind: "polycube-pair-select",
+        target: built.target,
+        candidates: built.bank,
+        labels: labels.slice(0, built.bank.length)
+      },
+      answer: {
+        pair: pairLabels,
+        pairIndexes: built.pairIndexes,
+        pairMatches,
+        pieceSize: built.profile.pieceSize,
+        targetSize: built.target.length,
+        matchingPairCount: built.matchingPairCount
+      },
+      answerText: pairLabels.join(", ")
+    };
+  }
+
+  // 15. PN — 색칠된 면·쌓기나무 (구 PN 직육면체 겉면 + 구 PF 모양 겉면 통합)
   //
   // 밑면을 칠하는지가 문제마다 다르므로, 면을 셀 때 y=0 아래쪽 면을 세는지
   // 여부를 인자로 받는다. 힙맵은 기둥이 늘 바닥부터 이어지므로 "아래에 이웃
@@ -1374,7 +2522,7 @@
     return { map, width: map[0].length, depth: map.length, shape: "stair" };
   }
 
-  // 11. BW — 흑백 교차 (정육면체 + 계단·돌출형)
+  // 16. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, level, intensity) {
     const built = checkerShapeForLevel(rng, level, intensity);
     const map = built.map;
@@ -1406,7 +2554,7 @@
     };
   }
 
-  // 12. HL — 구멍 뚫기
+  // 17. HL — 구멍 뚫기
   //
   // 한 방향에 여러 개, 여러 방향에 나눠서 — 단계·강도별 구멍 배치는 아래
   // holePlan에 모아 두었다. 구멍이 서로 교차하면 같은 칸이 두 번 빠지므로
@@ -1526,7 +2674,7 @@
     };
   }
 
-  // 13. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
+  // 18. SQ — 쌓기나무 규칙 찾기 (구 SQ 규칙 찾기 + 구 TS 삼각 계단 통합)
   //
   // 패턴 패밀리는 buildSQShape(모양)과 sqFormula(개수) 한 쌍으로 정의된다.
   // 둘은 반드시 일치해야 하므로(.selftest.mjs가 heightmap 합과 공식을
@@ -1620,7 +2768,7 @@
   // 패밀리별 최소 단계 — 평면 규칙(계단·십자·정사각형)이 입문, 입체로
   // 올라가는 규칙(사각뿔·삼각 계단·액자)이 초급, 세제곱은 중급이다.
   const SQ_FAMILIES = [
-    { kind: "stair", minLevel: 3, name: "계단" },
+    { kind: "stair", minLevel: 1, name: "계단" },
     { kind: "cross", minLevel: 3, name: "십자" },
     { kind: "tower", minLevel: 3, name: "정사각형" },
     { kind: "pyramid", minLevel: 4, name: "사각뿔" },
@@ -1637,6 +2785,7 @@
 
   function genSQ(rng, level, intensity, options) {
     const i = normalizeIntensity(intensity);
+    const stage = levelNum(level);
     const hasKind = options && Object.prototype.hasOwnProperty.call(options, "kind");
     const requestedKind = hasKind ? options.kind : null;
     const requestedFamily = hasKind ? SQ_FAMILIES.find((entry) => entry.kind === requestedKind) : null;
@@ -1664,12 +2813,20 @@
     // 난수 호출 순서까지 보존해야 같은 #GW 코드가 같은 문제를 재현한다.
     let family = !hasKind && !hasMode && !hasExcludedKinds ? rng.pick(availableFamilies) : null;
     // 강도 = 몇 번째까지 밀어붙이는가 + 어떤 방향으로 묻는가.
-    const N = i === 1 ? rng.int(4, 5) : i === 2 ? rng.int(5, 7) : rng.int(6, 9);
-    const modes = i === 1
-      ? ["nth", "which"]
-      : i === 2
-        ? ["nth", "which", "increment"]
-        : ["which", "increment", "which", "increment", "nth"];
+    const N = stage <= 1
+      ? (i === 1 ? 4 : i === 2 ? rng.int(4, 5) : rng.int(5, 6))
+      : stage === 2
+        ? (i === 1 ? rng.int(4, 5) : i === 2 ? rng.int(5, 6) : rng.int(6, 7))
+        : i === 1 ? rng.int(4, 5) : i === 2 ? rng.int(5, 7) : rng.int(6, 9);
+    const modes = stage <= 1
+      ? ["nth"]
+      : stage === 2
+        ? (i === 1 ? ["nth"] : ["nth", "which"])
+        : i === 1
+          ? ["nth", "which"]
+          : i === 2
+            ? ["nth", "which", "increment"]
+            : ["which", "increment", "which", "increment", "nth"];
     const mode = hasMode ? requestedMode : rng.pick(modes);
     if (family) {
       // 기존 무옵션 경로에서 이미 선택했다.
@@ -1737,15 +2894,21 @@
     { code: "VC", label: "바탕그림을 보고 개수 구하기", defaultOn: false, theme: "view", levels: ["L3", "L4", "L5"] },
     { code: "VM", label: "세 방향 → 최대·최소", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
     { code: "VP", label: "바탕그림을 보고 나머지 바탕그림 그리기", defaultOn: false, theme: "view", levels: ["L3", "L4", "L5"] },
-    { code: "IC", label: "쌓기나무의 개수 세기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "IC", label: "쌓기나무의 개수 세기", defaultOn: false, theme: "stack", levels: ["L0", "L1", "L2", "L3", "L4", "L5"] },
     { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
     { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
     { code: "FB", label: "상자 채우기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4"] },
-    { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
+    { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "MV", label: "쌓기나무 한 개 옮기기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CO", label: "쌓기나무 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "HC", label: "보이지 않는 개수 비교", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CJ", label: "두 쌓기나무 모양 합치기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "CP", label: "두 모양으로 만들 수 없는 입체", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "PS", label: "목표 입체를 만드는 두 조각 찾기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
     { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
     { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
     { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
-    { code: "SQ", label: "쌓기나무 규칙 찾기", defaultOn: false, theme: "rule", levels: ["L3", "L4", "L5"] }
+    { code: "SQ", label: "쌓기나무 규칙 찾기", defaultOn: false, theme: "rule", levels: ["L1", "L2", "L3", "L4", "L5"] }
   ];
 
   // 통합으로 사라진 옛 코드 — 옛 학습지 코드를 그대로 붙여 넣어도 열리도록
@@ -1814,13 +2977,25 @@
       case "IN": problem = genIN(rng, lv, it); break;
       case "FB": problem = genFB(rng, lv, it); break;
       case "CU": problem = genCU(rng, lv, it); break;
+      case "MV": problem = genMV(rng, lv, it); break;
+      case "CO": problem = genCO(rng, lv, it); break;
+      case "HC": problem = genHC(rng, lv, it); break;
+      case "CJ": problem = genCJ(rng, lv, it); break;
+      case "CP": problem = genCP(rng, lv, it); break;
+      case "PS": problem = genPS(rng, lv, it); break;
       case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
       case "SQ": problem = genSQ(rng, lv, it, options); break;
       default: throw new Error("unknown worksheet type: " + typeCode);
     }
+    attachFigureViewpoint(problem.figures);
     problem.level = lv;
+    problem.intensity = it;
+    problem.identity = QUESTION_BANK.createQuestionIdentity(problem, {
+      stage: lv,
+      difficulty: it
+    });
     return problem;
   }
 
@@ -1984,7 +3159,12 @@
         badge: arrangeBadge(level, intensity, arrange),
         types: [],
         count,
-        problems: []
+        problems: [],
+        questionBank: {
+          schemaVersion: QUESTION_BANK.SCHEMA_VERSION,
+          questionIds: [],
+          familyIds: []
+        }
       };
     }
     // 씨앗에는 배열 모드를 넣지 않는다. 유형 배정(buildAssignment)이 세 모드
@@ -2022,7 +3202,12 @@
       badge: arrangeBadge(level, intensity, arrange),
       types,
       count,
-      problems
+      problems,
+      questionBank: {
+        schemaVersion: QUESTION_BANK.SCHEMA_VERSION,
+        questionIds: problems.map((problem) => problem.identity.questionId),
+        familyIds: Array.from(new Set(problems.map((problem) => problem.identity.familyId)))
+      }
     };
   }
 
@@ -2041,6 +3226,7 @@
     topView,
     viewsOf,
     countHiddenWalled,
+    countHiddenFromIsoView,
     cornerStaircase,
     isCornerStaircase,
     countHiddenNoWall,
@@ -2081,9 +3267,47 @@
     arrangeBadge,
     fromDifficulty,
     countScale,
+    ISO_VIEWPOINT,
+    ISO_TOP_VIEWPOINT,
+    figureViewpointCode,
+    attachFigureViewpoint,
+    COUNTING_PROFILES,
+    countingProfile,
+    auditIsoLineOfSight,
+    validateCountingMap,
+    visibleCountingShape,
     viewScale,
     boxNForLevel,
     fillBoxDims,
+    oneCubeMoveDistance,
+    oneCubeMoveTargets,
+    moveProblemShape,
+    distinctCountingShapes,
+    comparisonProblemShapes,
+    hiddenComparisonShapes,
+    CUBE_ROTATIONS,
+    normalizeCoords,
+    orientationsOf,
+    canonicalPolycube,
+    isConnectedPolycube,
+    boxCoords,
+    placementsInBox,
+    complementFormsForPiece,
+    pairCanFillBox,
+    auditPolycubeViewpoint,
+    JOIN_PROFILES,
+    joinProfile,
+    buildJoinProblem,
+    FACE_NEIGHBORS,
+    COMPOSE_PIECES,
+    joinedFormsForPieces,
+    piecesCanMakeShape,
+    COMPOSE_PROFILES,
+    composeProfile,
+    buildComposeProblem,
+    PAIR_SELECT_PROFILES,
+    pairSelectProfile,
+    buildPairSelectProblem,
     // solver
     deriveMaxArrays,
     colMaxFromFrontView,
@@ -2106,6 +3330,7 @@
     typeSupportsLevel,
     typesForLevel,
     themeForTypes,
+    QUESTION_BANK,
     make,
     buildCode,
     parseCode,

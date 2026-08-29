@@ -24,10 +24,11 @@
   <div class="card">
     <div class="row">
       <input id="newName" placeholder="학생 이름">
+      <input id="newCode" inputmode="numeric" maxlength="7" placeholder="승인번호 4자리 (선택)">
       <select id="newType"><option value="internal">재원</option><option value="online">온라인</option></select>
       <button type="button" data-add-student>학생 등록·승인번호 발급</button>
     </div>
-    <div class="note" id="adminNote">기존 이름+전화번호 기록과 자동 저장 전화번호는 삭제하지 않습니다. 모든 상품 배너는 학생 서재에 보이며, 아래에서 승인한 상품만 열립니다. 원격 전환 뒤 모의고사는 활용 8회·파이널 3회·최종 4회 묶음으로 승인합니다.</div>
+    <div class="note" id="adminNote">기존 이름+전화번호 기록과 자동 저장 전화번호는 삭제하지 않습니다. 승인번호는 비워 두면 4자리 숫자를 자동 발급하고, 직접 입력하면 <strong>GF-7265</strong>처럼 지정할 수 있습니다. 모든 상품 배너는 학생 서재에 보이며, 아래에서 승인한 상품만 열립니다. 원격 전환 뒤 모의고사는 활용 8회·파이널 3회·최종 4회 묶음으로 승인합니다.</div>
   </div>
 
   <div class="card table-wrap"><table><thead><tr><th>승인번호</th><th>학생</th><th>구분·상태</th><th>문항 진단</th><th>추가 문제</th><th>모의고사 상품</th><th>VIP 라운지</th><th>문제 은행</th><th>관리</th></tr></thead><tbody id="rows"></tbody></table></div>
