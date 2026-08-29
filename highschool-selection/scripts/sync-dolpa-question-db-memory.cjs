@@ -41,7 +41,8 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-DE99B9857905": { key: "m22", label: "중2-2", tags: ["middle2-2"] },
     "DP-SRC-D59E26A73CC1": { key: "cm1", label: "공통수학1", tags: ["common-math-1"] },
     "DP-SRC-A64644977758": { key: "m21a", label: "2-1A", tags: ["middle2-1", "advanced"] },
-    "DP-SRC-DB47B7D84331": { key: "m21a-r2", label: "2-1A 2회", tags: ["middle2-1", "mid-unit-cutoff"] }
+    "DP-SRC-DB47B7D84331": { key: "m21a-r2", label: "2-1A 2회", tags: ["middle2-1", "mid-unit-cutoff"] },
+    "DP-SRC-31111C2CA38E": { key: "m22-r3", label: "중2-2 3회", tags: ["middle2-2", "mixed-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
   return {
