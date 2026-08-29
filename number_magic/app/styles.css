@@ -1247,8 +1247,31 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cr-sub{font-size:12px;color:var(--sub);font-weight:600;margin-top:3px;line-height:1.45}
 .nm-cr-body{flex:1;min-height:0;overflow-y:auto;padding:12px 14px 70px;-webkit-overflow-scrolling:touch}
 
-/* 주차 보기 + 합계 */
-.nm-cr-cad{max-width:520px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px 14px}
+/* 정복 현황 — 이 화면의 주인공 */
+.nm-cr-conq{max-width:520px;margin:0 auto 12px;border-radius:20px;padding:15px 16px 14px;
+  background:linear-gradient(165deg,var(--blue-deep),var(--blue) 70%,#16447f);
+  box-shadow:0 16px 32px -20px rgba(14,44,87,.75)}
+.nm-cr-conq-top{display:flex;align-items:baseline;gap:10px}
+.nm-cr-conq-lbl{font-size:13px;font-weight:800;color:rgba(255,255,255,.82)}
+.nm-cr-conq-num{margin-left:auto;display:flex;align-items:baseline;gap:5px}
+.nm-cr-conq-num b{font-size:34px;font-weight:900;line-height:1;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.nm-cr-conq-num i{font-style:normal;font-size:15px;font-weight:800;color:rgba(255,255,255,.65)}
+.nm-cr-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin:9px 0 7px}
+.nm-cr-bar>span{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-bright));
+  box-shadow:0 0 10px rgba(245,217,139,.6);transition:width .35s ease}
+.nm-cr-conq-sub{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);word-break:keep-all}
+.nm-cr-conq-line{font-size:12.5px;font-weight:800;color:#fff;margin-top:7px;word-break:keep-all;line-height:1.45}
+.nm-cr-conq-line.goal{color:var(--gold-bright)}
+.nm-cr-conq-line.start{color:var(--gold-bright)}
+.nm-cr-conq-all{margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);
+  font-size:11px;font-weight:800;color:rgba(255,255,255,.62)}
+
+/* 주차 보기 + 합계 — 부가 정보(주인공 아님) */
+.nm-cr-cad{max-width:520px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 13px}
+.nm-cr-cad-h{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:7px}
 .nm-cr-seg{display:flex;gap:0;background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:9px}
 .nm-cr-seg button{flex:1;border:none;background:none;border-radius:999px;padding:8px 6px;font-size:13px;font-weight:800;
   color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
@@ -1256,9 +1279,9 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cr-cadnote{font-size:12px;line-height:1.6;color:var(--sub);font-weight:600;margin-bottom:10px;word-break:keep-all}
 .nm-cr-totals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .nm-cr-total{background:var(--mist);border-radius:13px;padding:9px 11px;display:flex;flex-direction:column;gap:3px}
-.nm-cr-total b{font-size:11.5px;font-weight:800;color:var(--blue-deep)}
-.nm-cr-total b small{font-size:10px;font-weight:700;color:var(--sub);margin-left:3px}
-.nm-cr-total span{font-size:15px;font-weight:900;color:var(--ink)}
+.nm-cr-total b{font-size:11px;font-weight:800;color:var(--blue-deep)}
+.nm-cr-total b small{font-size:9.5px;font-weight:700;color:var(--sub);margin-left:3px}
+.nm-cr-total span{font-size:13px;font-weight:900;color:var(--sub)}
 .nm-cr-built{margin-top:9px;font-size:11.5px;font-weight:800;color:#2a7a52;background:#eefaf3;
   border:1px solid #cfe9dc;border-radius:11px;padding:7px 10px;word-break:keep-all}
 .nm-cr-cadfoot{font-size:10.5px;line-height:1.55;color:#9aa2b1;font-weight:600;margin-top:9px}
@@ -1267,11 +1290,27 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 
 /* 길 */
 .nm-cr-path{max-width:520px;margin:0 auto;position:relative;padding:2px 0 6px}
+/* 앞길 = 옅은 점선 레일 */
 .nm-cr-path::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;
-  background:repeating-linear-gradient(180deg,#ded4c2 0 9px,transparent 9px 17px);z-index:0}
+  background:repeating-linear-gradient(180deg,#e6ddcd 0 9px,transparent 9px 17px);z-index:0}
+/* 지나온 길 = 그 위를 덮는 금색 레일(높이는 JS가 현재 노드에서 잰다) */
+.nm-cr-rail{position:absolute;left:50%;top:0;width:5px;margin-left:-2.5px;height:0;z-index:0;
+  border-radius:99px;background:linear-gradient(180deg,var(--gold-deep),var(--gold));
+  box-shadow:0 0 12px rgba(201,160,99,.55);transition:height .35s ease}
 .nm-cr-station{position:relative;z-index:1;display:flex;flex-direction:column;gap:1px;
   background:#fff;border-left:5px solid var(--acc);border-radius:0 14px 14px 0;
   padding:9px 13px;margin:14px 0 8px;box-shadow:0 3px 10px -6px rgba(0,0,0,.3)}
+.nm-cr-station.won{background:linear-gradient(100deg,#fffaf0,#fff)}
+.nm-cr-station.ahead{opacity:.72}
+.nm-cr-strow{display:flex;align-items:center;gap:8px}
+.nm-cr-stwin{margin-left:auto;font-size:10.5px;font-weight:900;color:#7a5b10;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold));border:1px solid var(--gold-deep);
+  border-radius:999px;padding:2px 9px;white-space:nowrap}
+.nm-cr-stclimb{margin-left:auto;font-size:10.5px;font-weight:900;color:var(--sub);
+  background:var(--mist);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.nm-cr-stemb{display:inline-flex;gap:4px;margin-left:8px;vertical-align:middle}
+.nm-cr-emb{font-size:13px;line-height:1;filter:grayscale(1);opacity:.34}
+.nm-cr-emb.on{filter:none;opacity:1;text-shadow:0 1px 4px rgba(201,160,99,.7)}
 .nm-cr-stname{font-size:14.5px;font-weight:900;color:var(--blue-deep)}
 .nm-cr-stband{font-size:11.5px;font-weight:700;color:var(--sub)}
 .nm-cr-again{font-style:normal;font-size:10.5px;font-weight:800;color:var(--sub);background:var(--mist);border-radius:999px;padding:1px 8px;margin-left:4px;vertical-align:middle}
@@ -1285,19 +1324,43 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   box-shadow:0 4px 12px -8px rgba(0,0,0,.4)}
 .nm-cr-node:hover{transform:translateY(-1px);box-shadow:0 10px 20px -12px rgba(0,0,0,.45)}
 .nm-cr-node:active{transform:scale(.98)}
-.nm-cr-num{flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+.nm-cr-num{position:relative;flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:900;color:#fff;background:var(--acc)}
 .nm-cr-nbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .nm-cr-nbody b{font-size:13.5px;font-weight:800;color:var(--blue-deep);line-height:1.3;word-break:keep-all}
 .nm-cr-meta{font-size:11px;font-weight:700;color:var(--sub)}
 .nm-cr-soon{font-size:10px;font-weight:800;color:#9a7a20;background:#fff3d0;border-radius:8px;padding:1px 7px;align-self:flex-start}
 .nm-cr-state{flex:none;font-size:10.5px;font-weight:800;color:var(--sub);text-align:right;max-width:66px;line-height:1.3}
-.nm-cr-node.done{background:#f2fbf5;border-color:#a9dcbf}
-.nm-cr-node.done .nm-cr-state{color:var(--ok)}
-.nm-cr-node.doing{border-color:var(--gold)}
-.nm-cr-node.now{border-color:var(--gold-deep);background:linear-gradient(180deg,#fffaf0,#fff3dc);
-  box-shadow:0 0 0 3px rgba(234,201,150,.45),0 10px 20px -12px rgba(0,0,0,.4)}
+/* 정복한 땅 — 금색으로 채운다 */
+.nm-cr-node.done{border-color:var(--gold-deep);
+  background:linear-gradient(170deg,#fdf0d4,#f6e2ba);
+  box-shadow:0 5px 14px -9px rgba(122,91,16,.6)}
+.nm-cr-node.done .nm-cr-nbody b{color:#5c440c}
+.nm-cr-node.done .nm-cr-meta{color:#8a6b28}
+.nm-cr-node.done .nm-cr-num{background:linear-gradient(180deg,var(--gold-deep),#a9822f)}
+.nm-cr-node.done .nm-cr-state{color:#7a5b10}
+.nm-cr-flag{font-style:normal;position:absolute;top:-7px;right:-7px;font-size:12px;line-height:1}
+/* 지금 여기 — 가장 눈에 띄게 */
+.nm-cr-node.now{border-color:var(--gold-deep);background:linear-gradient(180deg,#fffdf7,#fff2d6);
+  box-shadow:0 0 0 4px rgba(234,201,150,.5),0 14px 26px -14px rgba(0,0,0,.45);
+  transform:scale(1.02)}
+.nm-cr-node.now:hover{transform:scale(1.02) translateY(-1px)}
+.nm-cr-node.now .nm-cr-nbody b{font-size:14.5px}
 .nm-cr-node.now .nm-cr-state{color:#8a6410}
+.nm-cr-node.now .nm-cr-num{background:var(--blue-deep)}
+/* 다음 목표 — 또렷하되 현재보다는 조용하게 */
+.nm-cr-node.goal{border-color:var(--gold);border-style:dashed}
+.nm-cr-node.goal .nm-cr-state{color:#8a6410}
+.nm-cr-node.doing{border-color:var(--gold)}
+/* 앞으로 갈 길 — 옅게 */
+.nm-cr-node.ahead{opacity:.62;box-shadow:none;background:#fdfcfa}
+.nm-cr-node.ahead:hover{opacity:1}
+.nm-cr-node.ahead .nm-cr-num{background:#c9c2b4}
+/* 경시의 탑 · 마무리 관문 */
+.nm-cr-node.tower .nm-cr-num{background:var(--purple)}
+.nm-cr-node.tower.ahead .nm-cr-num{background:#a98cc0}
+.nm-cr-node.boss{border-width:2.5px;border-color:var(--gold-deep)}
+.nm-cr-node.boss .nm-cr-state{color:#7a5b10}
 .nm-cr-node.trial-locked{opacity:.72}
 .nm-cr-here{position:absolute;top:-8px;display:flex;flex-direction:column;align-items:center;gap:1px;z-index:3;
   filter:drop-shadow(0 5px 9px rgba(0,0,0,.28))}

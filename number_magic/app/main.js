@@ -1366,6 +1366,54 @@ function roadTotals(from, to, cadence){
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
 }
 
+/* ── 정복 현황 ──────────────────────────────────────────────
+   이 화면은 일정표가 아니라 정복 지도다. 큰 자리는 "얼마나 정복했나"에 주고,
+   주차는 노드의 작은 부가 정보로 내린다(원장 지시, 2026-08-29).
+
+   "정복 구간" = 계산의 새싹 → 계산의 도약 → 계산의 정복 → 경시의 탑.
+   등급 키로만 정하고 과정 수는 데이터에서 센다 — 28 같은 숫자를 박지 않는다.
+   ────────────────────────────────────────────────────────── */
+const CONQUEST_TIERS=['level1','level2','level3','challenge'];
+/* 한 과정을 정복했다 = 그 과정의 마법 유닛을 전부 도장까지 마쳤다.
+   마법 유닛이 없는 과정(과정 25 마무리 관문)은 판정할 근거가 없으므로
+   정복으로 세지 않는다 — 없는 진행 상태를 지어내지 않는다. */
+function courseConquered(c){
+  const p=courseProgress(c);
+  return p.total>0 && p.done===p.total;
+}
+function conquestCount(tierKeys){
+  let done=0,total=0;
+  roadCourseList().forEach(x=>{
+    if(tierKeys && tierKeys.indexOf(x.c.tier)<0) return;
+    total++;
+    if(courseConquered(x.c)) done++;
+  });
+  return {done, total, pct: total?Math.round(done/total*100):0};
+}
+/* 다음 목표 = 현재 과정 뒤에서 아직 정복하지 않은 첫 과정. 없으면 null. */
+function nextGoalKey(curKey){
+  const l=roadCourseList();
+  const ci=l.findIndex(x=>x.key===curKey);
+  for(let i=ci+1;i<l.length;i++){ if(!courseConquered(l[i].c)) return l[i].key; }
+  return null;
+}
+/* 한 구간(역)에 걸린 문장(紋章). data/lineages.js의 chain이 그 구간의 마법
+   유닛을 포함하면 그 계보를 그 구간의 문장으로 본다. 배지 체계를 새로 만들지
+   않고 기존 S.lineageBadges(계보 완주 기록)를 그대로 읽는다. */
+function segmentEmblems(courses){
+  const units={};
+  courses.forEach(x=>courseMagicIds(x.c).forEach(id=>{ units[id]=true; }));
+  const map=lineagesMap();
+  const out=[];
+  Object.keys(map).forEach(k=>{
+    const line=map[k];
+    if(!(line.chain||[]).some(u=>units[u])) return;
+    out.push({key:k, emblem:line.emblem, name:line.name,
+      earned: !!(S.lineageBadges && S.lineageBadges[k])});
+  });
+  return out;
+}
+
 /* 과정 노드를 눌렀을 때 — 그 과정의 마법 유닛(아직 안 끝낸 것 우선)으로 들어간다.
    체험 게이트는 enterContinueUnit이 그대로 확인한다(잠긴 유닛이면 같은 안내 모달).
    마법 유닛이 하나도 없는 과정(총정리)은 이 앱에서 그 과정을 여는 길이 학습지·시험
@@ -1427,8 +1475,34 @@ function screenCourseRoad(){
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
     const builtCount=list.filter(x=>courseBuilt(x.c)).length;
 
-    /* ── 주차 보기 전환 + 합계 ── */
-    let html=`<div class="nm-cr-cad">
+    /* ── 정복 현황 (이 화면의 주인공) ── */
+    const conq=conquestCount(CONQUEST_TIERS);
+    const conqAll=conquestCount(null);
+    const conqFirst=list.filter(x=>CONQUEST_TIERS.indexOf(x.c.tier)>=0);
+    const conqLast=conqFirst.length?conqFirst[conqFirst.length-1].num:0;
+    const goalKey=nextGoalKey(curKey);
+    const goalC=goalKey?(window.NM_COURSES||{})[goalKey]:null;
+    const curC=(window.NM_COURSES||{})[curKey];
+    const fresh=!mostRecentTouchedUnit();
+    const courseLine=(key,c)=>`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
+
+    let html=`<div class="nm-cr-conq">
+      <div class="nm-cr-conq-top">
+        <span class="nm-cr-conq-lbl">${lk('정복한 과정','Courses conquered','已征服课程')}</span>
+        <span class="nm-cr-conq-num"><b>${conq.done}</b><i>/ ${conq.total}</i></span>
+      </div>
+      <div class="nm-cr-bar"><span style="width:${conq.pct}%"></span></div>
+      <div class="nm-cr-conq-sub">${lk('계산의 새싹부터 경시의 탑까지','From the first sprouts to the Tower of Challenge','从计算的新芽到竞赛之塔')} · ${lk('과정','Course','课程')} 1~${conqLast}</div>
+      ${fresh
+        ? `<div class="nm-cr-conq-line start">🚩 ${lk('과정 1에서 출발해요.','Starting at course 1.','从课程1出发。')}</div>`
+        : `<div class="nm-cr-conq-line now">📍 ${lk('지금 여기','You are here','当前位置')} — ${curC?courseLine(curKey,curC):''}</div>
+           ${goalC?`<div class="nm-cr-conq-line goal">🎯 ${lk('다음 목표','Next goal','下一个目标')} — ${courseLine(goalKey,goalC)}</div>`:''}`}
+      <div class="nm-cr-conq-all">${lk('전체 길','Whole path','整条路')} ${conqAll.done} / ${conqAll.total}</div>
+    </div>`;
+
+    /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
+    html+=`<div class="nm-cr-cad">
+      <div class="nm-cr-cad-h">${lk('한 과정에 걸리는 시간','How long a course takes','一个课程需要多久')}</div>
       <div class="nm-cr-seg" role="group">
         <button class="${cad==='w1'?'on':''}" data-cad="w1">${lk('주 1회반','Once a week','每周1次')}</button>
         <button class="${cad==='w2'?'on':''}" data-cad="w2">${lk('주 2회반','Twice a week','每周2次')}</button>
@@ -1471,22 +1545,36 @@ function screenCourseRoad(){
        않으려고 "같은 등급을 전부 모으기"가 아니라 "연속 구간"으로 끊는다.
        대수·미적분Ⅰ처럼 번호가 번갈아 나오는 등급은 역이 두 번 서고,
        두 번째부터는 '이어서'로 표시한다. */
-    html+=`<div class="nm-cr-path">`;
+    html+=`<div class="nm-cr-path"><div class="nm-cr-rail" id="crRail"></div>`;
     let ci=0, prevTier=null;
     const seenTier={};
     list.forEach(x=>{
       const c=x.c;
       if(c.tier!==prevTier){
         const tierDef=roadTierInfo(c.tier);
-        const run=[]; let k=list.indexOf(x);
-        while(k<list.length&&list[k].c.tier===c.tier){ run.push(list[k].num); k++; }
+        const run=[], runItems=[]; let k=list.indexOf(x);
+        while(k<list.length&&list[k].c.tier===c.tier){ run.push(list[k].num); runItems.push(list[k]); k++; }
         const again=!!seenTier[c.tier];
         seenTier[c.tier]=true;
         const rangeTxt = run.length>1 ? `${run[0]}~${run[run.length-1]}` : `${run[0]}`;
-        html+=`<div class="nm-cr-station" style="--acc:${tierDef.accent}">
-          <span class="nm-cr-stname">${esc(L(tierDef.name))}${again?` <em class="nm-cr-again">${lk('이어서','continued','续')}</em>`:''}</span>
+        /* 이 구간을 정복했는가 — 판정할 수 있는 과정(마법 유닛이 있는 과정)만 센다 */
+        const markable=runItems.filter(it=>courseUnitIds(it.c).length>0);
+        const segDone=markable.filter(it=>courseConquered(it.c)).length;
+        const segAll=markable.length;
+        const segState=segAll>0&&segDone===segAll?'won':segDone>0?'climbing':'ahead';
+        const embs=segmentEmblems(runItems);
+        const embHtml=embs.length?`<span class="nm-cr-stemb">${embs.map(e=>
+          `<span class="nm-cr-emb${e.earned?' on':''}" title="${esc(L(e.name))}">${e.emblem}</span>`).join('')}</span>`:'';
+        const segLabel=segAll===0?''
+          :segState==='won'?`<span class="nm-cr-stwin">🏳️ ${lk('정복함','Conquered','已征服')}</span>`
+          :segState==='climbing'?`<span class="nm-cr-stclimb">${segDone}/${segAll}</span>`:'';
+        html+=`<div class="nm-cr-station ${segState}" style="--acc:${tierDef.accent}">
+          <span class="nm-cr-strow">
+            <span class="nm-cr-stname">${esc(L(tierDef.name))}${again?` <em class="nm-cr-again">${lk('이어서','continued','续')}</em>`:''}</span>
+            ${segLabel}
+          </span>
           ${again?'':`<span class="nm-cr-stband">${esc(L(tierDef.band))}</span>`}
-          <span class="nm-cr-strange">${lk('과정','Course','课程')} ${rangeTxt}</span>
+          <span class="nm-cr-strange">${lk('과정','Course','课程')} ${rangeTxt}${embHtml}</span>
         </div>`;
         prevTier=c.tier;
       }
@@ -1498,21 +1586,29 @@ function screenCourseRoad(){
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
-        const isDone=prog.total>0&&prog.done===prog.total;
+        const isDone=courseConquered(c);
+        const isGoal=!isDone&&!isNow&&x.key===goalKey;
         const isDoing=!isDone&&prog.done>0;
         const ids=courseUnitIds(c);
         const locked=ids.length>0&&ids.every(u=>unitLocked(u));
-        const st=isDone?'done':isNow?'now':isDoing?'doing':'todo';
-        const stateLabel=isDone?`⭐ ${lk('완료','Done','完成')}`
-          :isNow?`📍 ${lk('진행 중','In progress','进行中')}`
+        const isTower=c.tier==='challenge';
+        const st=(isDone?'done':isNow?'now':isGoal?'goal':isDoing?'doing':'ahead')
+          +(isTower?' tower':'')+(c.boss?' boss':'');
+        /* 상태 말은 셋뿐이다 — 정복함 / 지금 여기 / 다음 목표.
+           나머지는 옅게 두고 굳이 "예정" 같은 시스템 말을 붙이지 않는다.
+           과정 25는 정복 판정 근거가 없으므로 마무리 관문으로만 표시한다. */
+        const stateLabel=isDone?`🏳️ ${lk('정복함','Conquered','已征服')}`
+          :isNow?`📍 ${lk('지금 여기','You are here','当前位置')}`
+          :isGoal?`🎯 ${lk('다음 목표','Next goal','下一个目标')}`
+          :c.boss?lk('마무리 관문','Final gate','最后关卡')
           :isDoing?`${prog.done}/${prog.total}`
-          :lk('예정','Upcoming','即将');
+          :'';
         html+=`<div class="nm-cr-row ${ci%2?'right':'left'}">
-          ${isNow?`<div class="nm-cr-here">${window.renderNumiChar?window.renderNumiChar(S.character,44):'🪄'}<span>${lk('현재 여기','You are here','当前位置')}</span></div>`:''}
+          ${isNow?`<div class="nm-cr-here">${window.renderNumiChar?window.renderNumiChar(S.character,44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
-            <span class="nm-cr-num">${x.num}</span>
+            <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
             <span class="nm-cr-nbody">
-              <b>${esc(L(c.title))}${c.boss?' 👑':''}</b>
+              <b>${esc(L(c.title))}${c.boss?' 👑':isTower?' 🗼':''}</b>
               <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}${cad==='w2'&&extra>0?` · ${lk('보강','Extra','加强')} ${extra}${lk('회','','次')}`:''}</span>
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
@@ -1546,6 +1642,18 @@ function screenCourseRoad(){
     body.querySelectorAll('.nm-cr-lab[data-lab]').forEach(el=>{
       el.onclick=()=>{ window.open(el.dataset.lab,'_blank','noopener'); };
     });
+
+    /* 지나온 길과 앞길을 레일 색으로 가른다 — 옅은 점선 위에 지금까지 온 만큼만
+       금색 레일을 덮는다. 길이는 현재 과정 노드의 위치에서 잰다(추정 없음). */
+    const rail=body.querySelector('#crRail');
+    const pathEl=body.querySelector('.nm-cr-path');
+    const nowRow=body.querySelector('.nm-cr-node.now');
+    if(rail&&pathEl){
+      if(nowRow){
+        const r=nowRow.getBoundingClientRect(), pr=pathEl.getBoundingClientRect();
+        rail.style.height=Math.max(0,(r.top-pr.top)+r.height/2)+'px';
+      } else rail.style.height='0px';
+    }
 
     if(keepScroll){ body.scrollTop=keep; }
     else {
