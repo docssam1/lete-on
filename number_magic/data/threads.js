@@ -130,6 +130,17 @@ AD8:{ name:{ko:'여러 수 덧셈(짝 묶기)',en:'Multi-add (pairing)',zh:'多�
   levels:[{id:1,label:{ko:'4개 수',en:'4 terms',zh:'四个数'},params:{terms:4}},
           {id:2,label:{ko:'5~6개 수',en:'5-6 terms',zh:'五六个数'},params:{terms:6}},
           {id:3,label:{ko:'두 자리 포함',en:'with 2-digit',zh:'含两位数'},params:{terms:5,twoDigit:true}}] },
+/* AD10 — 연이은 덧셈·뺄셈. 2026-08-29 신규(빈 곳 메우기). AD8은 덧셈만 내는
+   짝 묶기 전략 유형이고 MX1은 레벨1부터 곱셈이 섞이는 초5 유형이라,
+   `8-3+2` 같은 작은 수 세 항 혼합 덧뺄이 어느 스레드에도 없었다. */
+AD10:{ name:{ko:'연이은 덧셈·뺄셈',en:'Add & subtract in a row',zh:'连加连减'}, gen:'ad10_chainAddSub', prereq:['AD1','SB1'],
+  concept:{ko:'덧셈과 뺄셈이 섞여 있으면 앞에서부터 차례로 계산해요. 8−3+2는 먼저 8−3=5, 그다음 5+2=7이에요.',
+    en:'When adding and subtracting are mixed, work from left to right. For 8−3+2, first 8−3=5, then 5+2=7.',
+    zh:'加法和减法混在一起时，从前往后依次计算。8−3+2先算8−3=5，再算5+2=7。'},
+  widgets:['steps','cubes','numpad'],
+  levels:[{id:1,label:{ko:'세 수(10까지)',en:'3 numbers (to 10)',zh:'三个数(到10)'},params:{terms:3,max:10}},
+          {id:2,label:{ko:'세 수(20까지)',en:'3 numbers (to 20)',zh:'三个数(到20)'},params:{terms:3,max:20,cross:true}},
+          {id:3,label:{ko:'네 수(20까지)',en:'4 numbers (to 20)',zh:'四个数(到20)'},params:{terms:4,max:20,cross:true}}] },
 
 /* ── SB 뺄셈 ───────────────────────────── */
 SB1:{ name:{ko:'한 자리 뺄셈',en:'1-digit −',zh:'一位减法'}, gen:'sb1_sub1d', prereq:['NS2'],
@@ -365,12 +376,16 @@ FR4:{ name:{ko:'이분모 덧·뺄',en:'Unlike denominators ±',zh:'异分母加
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'진분수',en:'proper',zh:'真分数'},params:{mixed:false}},
           {id:2,label:{ko:'대분수',en:'mixed',zh:'带分数'},params:{mixed:true}}] },
-FR5:{ name:{ko:'약분·기약분수',en:'Simplifying',zh:'约分'}, gen:'fr5_simplify', prereq:['DV7'],
-  concept:{ko:'분자와 분모를 같은 수로 나누는 것이 약분이에요. 더 나눌 수 없을 때가 기약분수로, 6/8은 3/4가 돼요.',
-    en:'Dividing numerator and denominator by the same number is reducing. When no further division is possible it is in lowest terms, so 6/8 becomes 3/4.',
-    zh:'分子分母同时除以一个数就是约分。不能再约时就是最简分数，6/8约成3/4。'},
+/* 약분과 통분은 초5의 한 단원이고 방향만 반대인 같은 조작이라 한 스레드에 둔다.
+   통분 레벨은 2026-08-29 신규 — FR4가 이분모 덧뺄을 하며 속으로 통분하고 있었을 뿐
+   통분 자체를 묻는 유형이 없었다. prereq(DV7)가 최소공배수까지 이미 대 준다. */
+FR5:{ name:{ko:'약분·통분',en:'Reducing & common denominators',zh:'约分与通分'}, gen:'fr5_simplify', prereq:['DV7'],
+  concept:{ko:'분자와 분모를 같은 수로 나누는 것이 약분, 같은 수를 곱해 분모를 맞추는 것이 통분이에요. 6/8은 약분하면 3/4이고, 1/2과 1/3은 통분하면 3/6과 2/6이에요.',
+    en:'Dividing numerator and denominator by the same number is reducing; multiplying both to match denominators is finding a common denominator. 6/8 reduces to 3/4, and 1/2 and 1/3 become 3/6 and 2/6.',
+    zh:'分子分母同除以一个数是约分，同乘一个数把分母变一样是通分。6/8约分成3/4，1/2和1/3通分成3/6和2/6。'},
   widgets:['steps','numpad'],
-  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
+  levels:[{id:1,label:{ko:'약분·기약분수',en:'reduce to lowest terms',zh:'约分'},params:{}},
+          {id:2,label:{ko:'통분(최소공배수)',en:'common denominator (LCM)',zh:'通分(最小公倍数)'},params:{mode:'common'}}] },
 FR6:{ name:{ko:'분수 곱셈',en:'Fraction ×',zh:'分数乘法'}, gen:'fr6_frMul', prereq:['FR5','ML6'],
   concept:{ko:'분자는 분자끼리, 분모는 분모끼리 곱해요. 대분수가 있으면 먼저 가분수로 바꿔서 곱해요.',
     en:'Multiply numerators together and denominators together. Turn any mixed number into an improper fraction first.',
@@ -408,11 +423,14 @@ DC2:{ name:{ko:'소수 곱셈',en:'Decimal ×',zh:'小数乘法'}, gen:'dc2_decM
   widgets:['steps','decimal'],
   levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
 DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_decDiv', prereq:['DV5','DC2'],
-  concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요.',
-    en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3.',
-    zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。'},
+  concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요. 자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 몫을 소수로 이어 나눠요 — 3÷4는 0.75예요.',
+    en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3. When whole numbers do not divide evenly, carry on instead of stopping at a remainder — 3÷4 is 0.75.',
+    zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。整数相除除不尽时，不要停在余数上，把商继续写成小数——3÷4=0.75。'},
   widgets:['steps','decimal'],
-  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
+  levels:[{id:1,label:{ko:'(소수)÷(자연수)',en:'decimal ÷ whole',zh:'小数÷整数'},params:{}},
+          /* 2026-08-29 신규 — 레벨1은 몫이 늘 `0.□` 꼴이라 3÷4=0.75 같은
+             (자연수)÷(자연수)가 어디에도 없었다. */
+          {id:2,label:{ko:'몫이 소수인 (자연수)÷(자연수)',en:'whole ÷ whole, decimal quotient',zh:'整数÷整数(商是小数)'},params:{mode:'natural'}}] },
 
 /* ── MX 혼합 ───────────────────────────── */
 MX1:{ name:{ko:'사칙 혼합계산',en:'Order of operations',zh:'四则混合'}, gen:'mx1_orderOps', prereq:['ML7','DV4'],
@@ -431,12 +449,17 @@ MX2:{ name:{ko:'수열의 합',en:'Series sums',zh:'数列求和'}, gen:'mx2_ser
   levels:[{id:1,label:{ko:'1~n 합',en:'1..n',zh:'1~n'},params:{mode:'nat'}},
           {id:2,label:{ko:'홀·짝의 합',en:'odd/even',zh:'奇偶数和'},params:{mode:'oddEven'}}] },
 MX3:{ name:{ko:'비와 비율·백분율',en:'Ratio & percent',zh:'比与百分率'}, gen:'mx3_ratio', prereq:['FR8','DC2'],
-  concept:{ko:'비율은 기준에 대해 얼마인지를 나타내요. 백분율은 비율에 100을 곱한 것으로 0.25는 25%예요.',
-    en:'A ratio tells how much compared with a base amount. A percentage is that ratio times 100, so 0.25 is 25%.',
-    zh:'比率表示相对于基准量是多少。百分率是比率乘100，0.25就是25%。'},
+  concept:{ko:'비율은 기준량에 대해 비교하는 양이 얼마인지를 나타내요. 비율 = 비교하는 양 ÷ 기준량이고, 백분율은 비율에 100을 곱한 것으로 0.25는 25%예요. 비는 공약수로 나누어 가장 간단한 자연수의 비로 만들어요 — 12:18은 2:3이에요.',
+    en:'A ratio tells how much the compared amount is against the base amount: ratio = compared ÷ base. A percentage is that ratio times 100, so 0.25 is 25%. Divide both terms by a common factor to reach the simplest whole-number ratio — 12:18 becomes 2:3.',
+    zh:'比率表示比较量相对于基准量是多少：比率 = 比较量 ÷ 基准量。百分率是比率乘100，0.25就是25%。把比的两项同除以公因数就得到最简整数比——12:18化成2:3。'},
   widgets:['steps','decimal'],
+  /* 레벨 3~5는 2026-08-29 신규. 비율→백분율·할푼리만 있어서 정작 비 자체를 간단히
+     하는 것도, 비율 정의(비교하는 양 ÷ 기준량)를 양쪽에서 되짚는 것도 없었다. */
   levels:[{id:1,label:{ko:'비율→백분율',en:'to %',zh:'化百分数'},params:{mode:'toPct'}},
-          {id:2,label:{ko:'할푼리',en:'K. decimal ratio',zh:'割分厘'},params:{mode:'hpl'}}] },
+          {id:2,label:{ko:'할푼리',en:'K. decimal ratio',zh:'割分厘'},params:{mode:'hpl'}},
+          {id:3,label:{ko:'가장 간단한 자연수의 비',en:'simplest whole-number ratio',zh:'最简整数比'},params:{mode:'simpleRatio'}},
+          {id:4,label:{ko:'비교하는 양 구하기',en:'find the compared amount',zh:'求比较量'},params:{mode:'compQty'}},
+          {id:5,label:{ko:'기준량 구하기',en:'find the base amount',zh:'求基准量'},params:{mode:'baseQty'}}] },
 MX4:{ name:{ko:'제곱근',en:'Square roots',zh:'平方根'}, gen:'mx4_sqrt', prereq:['ML11'],
   concept:{ko:'제곱해서 그 수가 되는 수가 제곱근이에요. 12×12=144이므로 144의 제곱근은 12예요.',
     en:'A square root is the number that gives the value when multiplied by itself. Since 12×12=144, the square root of 144 is 12.',
@@ -692,12 +715,14 @@ EL4:{ name:{ko:'평균',en:'Average',zh:'平均数'}, gen:'el_average', prereq:[
           {id:2,label:{ko:'다섯 수의 평균',en:'average of 5',zh:'五个数的平均'},params:{mode:'find',n:5}},
           {id:3,label:{ko:'평균으로 빠진 수 찾기',en:'find the missing number',zh:'由平均数求缺失的数'},params:{mode:'missing'}}] },
 EL5:{ name:{ko:'비례식',en:'Proportions',zh:'比例式'}, gen:'el_ratio', prereq:['MX3'],
-  concept:{ko:'비례식은 겉보기엔 다른 두 비가 사실은 같다고 말해줘요. 바깥쪽 두 수를 곱한 값과 안쪽 두 수를 곱한 값은 항상 같아요.',
-    en:'A proportion says two ratios that look different are actually equal — the product of the outer two numbers always equals the product of the inner two.',
-    zh:'比例式是说两个看起来不同的比其实相等。外项之积永远等于内项之积。'},
+  concept:{ko:'비례식은 겉보기엔 다른 두 비가 사실은 같다고 말해줘요. 바깥쪽 두 수를 곱한 값과 안쪽 두 수를 곱한 값은 항상 같아요. 전체를 주어진 비로 나누는 것은 비례배분이라고 해요 — 600을 2:3으로 나누면 240과 360이에요.',
+    en:'A proportion says two ratios that look different are actually equal — the product of the outer two numbers always equals the product of the inner two. Splitting a whole by a given ratio is proportional sharing: 600 split 2:3 gives 240 and 360.',
+    zh:'比例式是说两个看起来不同的比其实相等。外项之积永远等于内项之积。把总量按给定的比分开叫按比例分配——600按2:3分开，得240和360。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'빈 항 구하기',en:'find the term',zh:'求空项'},params:{mode:'direct'}},
-          {id:2,label:{ko:'외항·내항의 곱',en:'cross products',zh:'外项内项之积'},params:{mode:'steps'}}] },
+          {id:2,label:{ko:'외항·내항의 곱',en:'cross products',zh:'外项内项之积'},params:{mode:'steps'}},
+          /* 2026-08-29 신규 — 비례식 바로 다음 단원인데 문제은행에 없었다. */
+          {id:3,label:{ko:'비례배분',en:'proportional sharing',zh:'按比例分配'},params:{mode:'distribute'}}] },
 
 /* ── CHALLENGE 신규 13종 (고급-목차.md 신규분, 2026-08-25 Phase 2) ──
    경시의 탑(과정 26~28) + 몰아주기 곱/어림하기/큰 수 정복(과정 19·24 보강)용.
