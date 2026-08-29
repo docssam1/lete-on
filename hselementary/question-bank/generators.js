@@ -2172,6 +2172,60 @@
     }
     return `<svg class="geometry-diagram triangle-square-diagonal-grid" viewBox="0 0 240 176" data-grid-rows="2" data-grid-columns="2" data-cell-width="${cellWidth}" data-cell-height="${cellHeight}" aria-label="두 줄 두 칸 격자의 각 칸에 두 대각선을 그린 도형"><g><rect x="${left}" y="${top}" width="${width}" height="${height}"/><line x1="${left + cellWidth}" y1="${top}" x2="${left + cellWidth}" y2="${top + height}"/><line x1="${left}" y1="${top + cellHeight}" x2="${left + width}" y2="${top + cellHeight}"/>${cells.join("")}</g></svg>`;
   };
+  const triangleMarkedSquareGridModel = markedIndex => {
+    const points = [];
+    for (let y = 0; y <= 4; y += 1) for (let x = 0; x <= 4; x += 1) points.push([x, y]);
+    const index = (x, y) => y * 5 + x;
+    const segments = [];
+    for (let y = 0; y <= 4; y += 1) segments.push([index(0, y), index(4, y)]);
+    for (let x = 0; x <= 4; x += 1) segments.push([index(x, 0), index(x, 4)]);
+    segments.push(
+      [index(0, 0), index(4, 4)],
+      [index(2, 0), index(0, 2)],
+      [index(2, 0), index(4, 2)],
+      [index(4, 0), index(0, 4)],
+      [index(0, 2), index(2, 4)],
+      [index(4, 2), index(2, 4)]
+    );
+    const markedCells = [
+      [[1, 1], [1, 2], [2, 2]],
+      [[3, 1], [2, 2], [3, 2]],
+      [[2, 2], [1, 3], [2, 3]],
+      [[2, 2], [2, 3], [3, 3]]
+    ];
+    return { points, segments, marked: markedCells[markedIndex % markedCells.length] };
+  };
+  const triangleMarkedSquareGridCount = model => {
+    const epsilon = 1e-9;
+    const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+    const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+    const connected = (first, second) => model.segments.some(([startIndex, endIndex]) => {
+      const start = model.points[startIndex];
+      const end = model.points[endIndex];
+      return Math.abs(cross(start, end, first)) < epsilon && Math.abs(cross(start, end, second)) < epsilon && within(first, start, end) && within(second, start, end);
+    });
+    const contains = (point, first, second, third) => {
+      const signs = [cross(first, second, point), cross(second, third, point), cross(third, first, point)];
+      return signs.every(value => value >= -epsilon) || signs.every(value => value <= epsilon);
+    };
+    let count = 0;
+    for (let first = 0; first < model.points.length - 2; first += 1) for (let second = first + 1; second < model.points.length - 1; second += 1) for (let third = second + 1; third < model.points.length; third += 1) {
+      const triangle = [model.points[first], model.points[second], model.points[third]];
+      if (Math.abs(cross(...triangle)) < epsilon || !connected(triangle[0], triangle[1]) || !connected(triangle[1], triangle[2]) || !connected(triangle[2], triangle[0])) continue;
+      if (model.marked.every(point => contains(point, ...triangle))) count += 1;
+    }
+    return count;
+  };
+  const triangleMarkedSquareGridSvg = model => {
+    const project = ([x, y]) => [24 + x * 48, 18 + y * 48];
+    const marked = model.marked.map(point => project(point).join(",")).join(" ");
+    const lines = model.segments.map(([first, second]) => {
+      const start = project(model.points[first]);
+      const end = project(model.points[second]);
+      return `<line x1="${start[0]}" y1="${start[1]}" x2="${end[0]}" y2="${end[1]}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-marked-square-grid" viewBox="0 0 240 228" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" data-marked="${model.marked.map(point => point.join(",")).join(";")}" aria-label="네 줄 네 칸 정사각형 격자에서 작은 삼각형 하나를 색칠한 도형"><g><polygon points="${marked}" style="fill:#b9c8d8;stroke:none"/>${lines}</g></svg>`;
+  };
   const triangleMarkedLatticeSvg = (side, cell) => {
     const width = 240;
     const top = 12;
@@ -12044,12 +12098,22 @@
         const evidence = triangle42Evidence("crossing-segment-count", [templateIndex, level], answer);
         return result(`서로 겹쳐 그어진 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까? 선이 만나는 점도 삼각형의 꼭짓점으로 생각하세요.${triangleCrossingSvg(model)}${evidence}`, answer, `선이 만나는 점을 먼저 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 작은 것부터 큰 것까지 겹치지 않게 세면 모두 ${answer}개입니다.`);
       }
-      const pointCount = 5 + level;
-      const templateIndex = int(rng, 0, 2);
-      const model = triangleCrossedFansModel(pointCount, templateIndex);
-      const answer = triangleSegmentGraphCount(model);
-      const evidence = triangle42Evidence("crossed-fans-count", [pointCount, templateIndex], answer);
-      return result(`큰 삼각형의 왼쪽 아래 꼭짓점과 오른쪽 아래 꼭짓점에서 반대쪽 변의 ${pointCount}개 점을 모두 이었습니다. 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleCrossedFansSvg(model)}${evidence}`, answer, `양쪽 부채꼴의 모든 선과 교점을 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 빠짐없이 세면 모두 ${answer}개입니다.`);
+      if (kind === 5) {
+        const pointCount = 5 + level;
+        const templateIndex = int(rng, 0, 2);
+        const model = triangleCrossedFansModel(pointCount, templateIndex);
+        const answer = triangleSegmentGraphCount(model);
+        const evidence = triangle42Evidence("crossed-fans-count", [pointCount, templateIndex], answer);
+        return result(`큰 삼각형의 왼쪽 아래 꼭짓점과 오른쪽 아래 꼭짓점에서 반대쪽 변의 ${pointCount}개 점을 모두 이었습니다. 선을 따라 만들 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleCrossedFansSvg(model)}${evidence}`, answer, `양쪽 부채꼴의 모든 선과 교점을 표시한 뒤, 실제로 이어진 세 선으로 둘러싸인 삼각형을 빠짐없이 세면 모두 ${answer}개입니다.`);
+      }
+      if (kind === 8) {
+        const markedIndex = int(rng, 0, 3);
+        const model = triangleMarkedSquareGridModel(markedIndex);
+        const answer = triangleMarkedSquareGridCount(model);
+        const evidence = triangle42Evidence("marked-square-grid-count", [markedIndex], answer);
+        return result(`네 줄 네 칸 정사각형 격자에서 색칠한 작은 삼각형 전체를 포함하면서, 선을 따라 그릴 수 있는 크고 작은 삼각형은 모두 몇 개입니까?${triangleMarkedSquareGridSvg(model)}${evidence}`, answer, `색칠한 삼각형의 세 꼭짓점을 모두 포함하고, 세 변이 실제 선 위에 놓이는 삼각형만 작은 것부터 큰 것까지 세면 모두 ${answer}개입니다.`);
+      }
+      throw new Error("원본 그림과 독립 검산이 끝나지 않은 삼각형 유형입니다.");
     },
     triangleAngleType({ rng, level, variant = 0 }) {
       const kind = variant % 6;
