@@ -3098,6 +3098,42 @@
     return `<svg class="geometry-diagram perpendicular-two-unknown" viewBox="0 0 300 192" data-perpendicular-angles="${leftGiven},${rightGiven},${firstTarget},${secondTarget}" role="img" aria-label="서로 수직인 가로선과 세로선 사이를 두 빗선이 지나는 각도 그림"><line class="perpendicular-base" x1="28" y1="${center[1]}" x2="272" y2="${center[1]}"/><line class="perpendicular-base" x1="${center[0]}" y1="18" x2="${center[0]}" y2="174"/><line class="perpendicular-slant" x1="${leftLower[0].toFixed(1)}" y1="${leftLower[1].toFixed(1)}" x2="${leftUpper[0].toFixed(1)}" y2="${leftUpper[1].toFixed(1)}"/><line class="perpendicular-slant" x1="${rightLower[0].toFixed(1)}" y1="${rightLower[1].toFixed(1)}" x2="${rightUpper[0].toFixed(1)}" y2="${rightUpper[1].toFixed(1)}"/><polyline class="perpendicular-right-mark" points="138,96 138,84 150,84"/><text class="perpendicular-line-label" x="18" y="${center[1] - 10}">가</text><text class="perpendicular-line-label" x="${center[0] + 15}" y="13">나</text><text class="perpendicular-given-label" x="${leftGivenLabel[0].toFixed(1)}" y="${leftGivenLabel[1].toFixed(1)}">${leftGiven}°</text><text class="perpendicular-given-label" x="${rightGivenLabel[0].toFixed(1)}" y="${rightGivenLabel[1].toFixed(1)}">${rightGiven}°</text><text class="perpendicular-target-label" x="${firstTargetLabel[0].toFixed(1)}" y="${firstTargetLabel[1].toFixed(1)}">㉠</text><text class="perpendicular-target-label" x="${secondTargetLabel[0].toFixed(1)}" y="${secondTargetLabel[1].toFixed(1)}">㉡</text><circle class="perpendicular-center" cx="${center[0]}" cy="${center[1]}" r="3"/></svg>`;
   };
 
+  const lineNameConditionSvg = ({ roleLabels, baseAngle, diagonalAngle, reveal = false, uniqueCount }) => {
+    const point = (origin, angle, distance) => {
+      const radians = angle * Math.PI / 180;
+      return [origin[0] + Math.cos(radians) * distance, origin[1] + Math.sin(radians) * distance];
+    };
+    const segment = (className, origin, angle, halfLength, role) => {
+      const start = point(origin, angle, -halfLength);
+      const end = point(origin, angle, halfLength);
+      return `<line class="${className}" data-line-role="${role}" x1="${start[0].toFixed(1)}" y1="${start[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+    };
+    const rightMark = (origin, firstAngle, secondAngle) => {
+      const first = point(origin, firstAngle, 11);
+      const corner = point(first, secondAngle, 11);
+      const second = point(origin, secondAngle, 11);
+      return `<polyline class="line-name-right-mark" points="${first[0].toFixed(1)},${first[1].toFixed(1)} ${corner[0].toFixed(1)},${corner[1].toFixed(1)} ${second[0].toFixed(1)},${second[1].toFixed(1)}"/>`;
+    };
+    const slot = (role, index, anchor, boxCenter) => {
+      const x = boxCenter[0] - 15;
+      const y = boxCenter[1] - 15;
+      return `<g class="line-name-slot" data-slot-role="${role}" data-slot-index="${index}"><line class="line-name-leader" x1="${anchor[0].toFixed(1)}" y1="${anchor[1].toFixed(1)}" x2="${boxCenter[0].toFixed(1)}" y2="${boxCenter[1].toFixed(1)}"/><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="30" height="30"/><text class="line-name-slot-number" x="${(x - 5).toFixed(1)}" y="${(y + 9).toFixed(1)}">${["①", "②", "③", "④"][index - 1]}</text><text class="line-name-slot-value" x="${boxCenter[0].toFixed(1)}" y="${(boxCenter[1] + 6).toFixed(1)}">${reveal ? roleLabels[role] : ""}</text></g>`;
+    };
+    const p = [184, 140];
+    const normalAngle = baseAngle + 90;
+    const mPoint = point(p, normalAngle, -62);
+    const dAngle = baseAngle - diagonalAngle;
+    const q = point(p, dAngle, -70);
+    const nAngle = dAngle + 90;
+    const mAnchor = point(mPoint, baseAngle, -92);
+    const nAnchor = point(q, nAngle, -77);
+    const rAnchor = point(p, normalAngle, -113);
+    const dAnchor = point(p, dAngle, -112);
+    const knownAnchor = point(p, baseAngle, -130);
+    const roleOrder = ["A", "M", "N", "R", "D"];
+    return `<svg class="geometry-diagram line-name-condition" viewBox="0 0 360 250" data-role-labels="${roleOrder.map(role => roleLabels[role]).join(",")}" data-base-angle="${baseAngle}" data-diagonal-angle="${diagonalAngle}" data-unique-assignments="${uniqueCount}" role="img" aria-label="평행, 수직, 한 점에서 만나는 조건으로 다섯 직선의 이름을 정하는 그림">${segment("line-name-main", p, baseAngle, 145, "A")}${segment("line-name-main", mPoint, baseAngle, 135, "M")}${segment("line-name-main", p, normalAngle, 112, "R")}${segment("line-name-main", p, dAngle, 140, "D")}${segment("line-name-main", q, nAngle, 92, "N")}${rightMark(mPoint, baseAngle, normalAngle)}${rightMark(q, dAngle, nAngle)}<circle class="line-name-concurrent" cx="${p[0]}" cy="${p[1]}" r="3"/><text class="line-name-known" x="${(knownAnchor[0] - 18).toFixed(1)}" y="${(knownAnchor[1] - 8).toFixed(1)}">${roleLabels.A}</text>${slot("M", 1, mAnchor, [45, 32])}${slot("N", 2, nAnchor, [135, 27])}${slot("R", 3, rAnchor, [294, 28])}${slot("D", 4, dAnchor, [47, 213])}</svg>`;
+  };
+
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
     const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
       const y = 30 + index * 38;
@@ -16508,6 +16544,32 @@
         const answer = `㉠ ${firstTarget}°, ㉡ ${secondTarget}°`;
         const diagram = perpendicularTwoUnknownSvg({ leftGiven, rightGiven, firstTarget, secondTarget });
         return result(`직선 가와 직선 나는 서로 수직입니다. 그림에서 ㉠과 ㉡의 크기를 각각 구하세요.${diagram}`, answer, `직각은 90°입니다. 오른쪽의 ${rightGiven}°와 ㉠을 더하면 90°이므로 ㉠=90-${rightGiven}=${firstTarget}°입니다. 왼쪽의 ${leftGiven}°와 ㉡을 더하면 90°이므로 ㉡=90-${leftGiven}=${secondTarget}°입니다.`);
+      }
+      if (variant === 9) {
+        const names = shuffle(rng, ["가", "나", "다", "라", "마"]);
+        const roleLabels = { A: names[0], M: names[1], N: names[2], R: names[3], D: names[4] };
+        const roles = ["M", "N", "R", "D"];
+        const permutations = values => values.length <= 1 ? [values] : values.flatMap((value, index) => permutations(values.filter((_, other) => other !== index)).map(rest => [value, ...rest]));
+        const parallel = new Set(["A:M", "M:A"]);
+        const perpendicular = new Set(["A:R", "R:A", "M:R", "R:M", "D:N", "N:D"]);
+        const concurrent = new Set(["A:D:R", "A:R:D", "D:A:R", "D:R:A", "R:A:D", "R:D:A"]);
+        const validAssignments = permutations(roles).filter(candidateRoles => {
+          const labelToRole = { [roleLabels.A]: "A" };
+          roles.forEach((role, index) => { labelToRole[roleLabels[role]] = candidateRoles[index]; });
+          const roleOf = label => labelToRole[label];
+          return perpendicular.has(`${roleOf(roleLabels.M)}:${roleOf(roleLabels.R)}`)
+            && perpendicular.has(`${roleOf(roleLabels.N)}:${roleOf(roleLabels.D)}`)
+            && parallel.has(`${roleOf(roleLabels.A)}:${roleOf(roleLabels.M)}`)
+            && concurrent.has([roleOf(roleLabels.A), roleOf(roleLabels.D), roleOf(roleLabels.R)].join(":"));
+        });
+        if (validAssignments.length !== 1 || validAssignments[0].join(",") !== roles.join(",")) throw new Error("직선 이름 조건의 정답은 하나여야 합니다.");
+        const baseAngle = pick(rng, [-6, -3, 0, 3, 6]);
+        const diagonalAngle = pick(rng, [34, 38, 42]);
+        const conditions = [`직선 ${roleLabels.M}에 대한 수선은 직선 ${roleLabels.R}입니다.`, `직선 ${roleLabels.N}와 직선 ${roleLabels.D}는 수직으로 만납니다.`, `직선 ${roleLabels.A}와 직선 ${roleLabels.M}는 만나지 않습니다.`, `직선 ${roleLabels.A}, ${roleLabels.D}, ${roleLabels.R}는 한 점에서 만납니다.`];
+        const answer = `①${roleLabels.M} ②${roleLabels.N} ③${roleLabels.R} ④${roleLabels.D}`;
+        const diagram = lineNameConditionSvg({ roleLabels, baseAngle, diagonalAngle, uniqueCount: validAssignments.length });
+        const solutionDiagram = lineNameConditionSvg({ roleLabels, baseAngle, diagonalAngle, reveal: true, uniqueCount: validAssignments.length });
+        return result(`다음 조건에 맞게 ①~④ 빈칸에 직선의 이름을 써넣으세요.<ul class="line-name-conditions">${conditions.map(condition => `<li>${condition}</li>`).join("")}</ul>${diagram}`, answer, `직선 ${roleLabels.A}와 만나지 않는 직선은 ${roleLabels.M}이므로 ①은 ${roleLabels.M}입니다. ${roleLabels.M}에 수직인 직선은 ${roleLabels.R}이므로 ③은 ${roleLabels.R}이고, ${roleLabels.A}·${roleLabels.D}·${roleLabels.R}가 한 점에서 만나므로 ④는 ${roleLabels.D}입니다. 남은 ②는 ${roleLabels.N}입니다. 가능한 이름 배치 24가지를 확인하면 조건을 모두 만족하는 배치는 1개입니다.${solutionDiagram}`);
       }
       const segCount = 3 + level;
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));
