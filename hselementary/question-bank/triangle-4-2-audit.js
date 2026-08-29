@@ -35,6 +35,7 @@ const publicSourceIds = new Set([
   "4-2-triangle-4-mission-4",
   "4-2-triangle-4-mission-5",
   "4-2-triangle-4-mission-6",
+  "4-2-triangle-4-exploration",
   "4-2-triangle-4-example-1",
   "4-2-triangle-4-example-2",
   "4-2-triangle-4-example-3",
@@ -60,6 +61,108 @@ const pointCounts = (points, requiredIndex = -1) => {
   }
   return totals;
 };
+const matchstickPointKey = point => point.join(",");
+const matchstickParsePoint = value => value.split(",").map(Number);
+const matchstickEdgeKey = (first, second) => {
+  const a = matchstickPointKey(first);
+  const b = matchstickPointKey(second);
+  return a < b ? `${a}|${b}` : `${b}|${a}`;
+};
+const matchstickDirections = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
+const matchstickRing = matchstickDirections.map(direction => direction);
+const matchstickInitialEdges = new Set();
+matchstickRing.forEach(point => matchstickInitialEdges.add(matchstickEdgeKey([0, 0], point)));
+matchstickRing.forEach((point, index) => matchstickInitialEdges.add(matchstickEdgeKey(point, matchstickRing[(index + 1) % matchstickRing.length])));
+const matchstickRotate = (point, times) => {
+  let [x, y] = point;
+  for (let index = 0; index < times; index += 1) [x, y] = [-y, x + y];
+  return [x, y];
+};
+const matchstickReflect = ([x, y]) => [x + y, -y];
+const matchstickCanonical = edges => {
+  const decoded = [...edges].map(edge => edge.split("|").map(matchstickParsePoint));
+  const forms = [];
+  for (let reflected = 0; reflected < 2; reflected += 1) for (let turn = 0; turn < 6; turn += 1) {
+    const transformed = decoded.map(([first, second]) => [
+      matchstickRotate(reflected ? matchstickReflect(first) : first, turn),
+      matchstickRotate(reflected ? matchstickReflect(second) : second, turn)
+    ]);
+    const points = transformed.flat();
+    const minX = Math.min(...points.map(point => point[0]));
+    const minY = Math.min(...points.map(point => point[1]));
+    forms.push(transformed.map(([first, second]) => matchstickEdgeKey(
+      [first[0] - minX, first[1] - minY],
+      [second[0] - minX, second[1] - minY]
+    )).sort().join(";"));
+  }
+  return forms.sort()[0];
+};
+const matchstickConnected = edges => {
+  const adjacent = new Map();
+  for (const edge of edges) {
+    const [first, second] = edge.split("|");
+    if (!adjacent.has(first)) adjacent.set(first, new Set());
+    if (!adjacent.has(second)) adjacent.set(second, new Set());
+    adjacent.get(first).add(second);
+    adjacent.get(second).add(first);
+  }
+  const start = adjacent.keys().next().value;
+  const seen = new Set([start]);
+  const pending = [start];
+  while (pending.length) for (const next of adjacent.get(pending.pop())) if (!seen.has(next)) {
+    seen.add(next);
+    pending.push(next);
+  }
+  return seen.size === adjacent.size;
+};
+const enumerateMatchstickShapes = radius => {
+  const candidateEdges = new Set();
+  for (let x = -radius; x <= radius; x += 1) for (let y = -radius; y <= radius; y += 1) {
+    for (const [dx, dy] of matchstickDirections.slice(0, 3)) {
+      const next = [x + dx, y + dy];
+      if (Math.abs(next[0]) <= radius && Math.abs(next[1]) <= radius) candidateEdges.add(matchstickEdgeKey([x, y], next));
+    }
+  }
+  const additions = [...candidateEdges].filter(edge => !matchstickInitialEdges.has(edge));
+  const triangles = [];
+  for (let x = -radius; x <= radius; x += 1) for (let y = -radius; y <= radius; y += 1) {
+    const shapes = [
+      [[x, y], [x + 1, y], [x, y + 1]],
+      [[x + 1, y], [x, y + 1], [x + 1, y + 1]]
+    ];
+    for (const points of shapes) if (points.every(point => Math.abs(point[0]) <= radius && Math.abs(point[1]) <= radius)) {
+      triangles.push(points.map((point, index) => matchstickEdgeKey(point, points[(index + 1) % 3])));
+    }
+  }
+  const initial = [...matchstickInitialEdges];
+  const classes = new Map();
+  let rawCount = 0;
+  for (let firstRemoved = 0; firstRemoved < initial.length - 1; firstRemoved += 1) for (let secondRemoved = firstRemoved + 1; secondRemoved < initial.length; secondRemoved += 1) {
+    const remaining = new Set(initial);
+    remaining.delete(initial[firstRemoved]);
+    remaining.delete(initial[secondRemoved]);
+    for (let firstAdded = 0; firstAdded < additions.length - 1; firstAdded += 1) for (let secondAdded = firstAdded + 1; secondAdded < additions.length; secondAdded += 1) {
+      const finalEdges = new Set(remaining);
+      finalEdges.add(additions[firstAdded]);
+      finalEdges.add(additions[secondAdded]);
+      if (finalEdges.size !== 12) continue;
+      const madeTriangles = triangles.filter(triangle => triangle.every(edge => finalEdges.has(edge)));
+      if (madeTriangles.length !== 5) continue;
+      const usedEdges = new Set(madeTriangles.flat());
+      if ([...finalEdges].some(edge => !usedEdges.has(edge))) continue;
+      rawCount += 1;
+      const canonical = matchstickCanonical(finalEdges);
+      if (!classes.has(canonical)) classes.set(canonical, matchstickConnected(finalEdges));
+    }
+  }
+  return { rawCount, classes: classes.size, connectedClasses: [...classes.values()].filter(Boolean).length };
+};
+const matchstickAudits = [2, 3, 4].map(enumerateMatchstickShapes);
+matchstickAudits.forEach((audit, index) => {
+  check(audit.rawCount === 48, `성냥개비 탐색 반경 ${index + 2}의 유효 배치는 48개여야 합니다.`);
+  check(audit.classes === 5, `성냥개비 탐색 반경 ${index + 2}의 서로 다른 모양은 5개여야 합니다.`);
+  check(audit.connectedClasses === 5, `성냥개비 탐색 반경 ${index + 2}의 다섯 모양은 모두 연결되어야 합니다.`);
+});
 const obtuseDotShapeClassCount = (columns, rows) => {
   const points = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => [column, row])).flat();
   const signatures = new Set();
@@ -442,6 +545,9 @@ const answerFor = (kind, values) => {
     const difference = large - small;
     return difference > 0 && difference % 3 === 0 ? String(difference / 3) : "invalid";
   }
+  if (kind === "equilateral-matchstick-shapes") {
+    return values[0] === 12 && values[1] === 2 ? String(matchstickAudits.at(-1).classes) : "invalid";
+  }
   if (kind === "equilateral-shaded-chain-side") {
     const [total, known] = values;
     const difference = total - known;
@@ -511,9 +617,9 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 28, `원문 일치 공개 유형 수가 28개가 아닙니다: ${types.length}`);
-check(locked.length === 16, `검수 대기 유형 수가 16개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 25, `공개 검산 구조 수가 25개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 29, `원문 일치 공개 유형 수가 29개가 아닙니다: ${types.length}`);
+check(locked.length === 15, `검수 대기 유형 수가 15개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 26, `공개 검산 구조 수가 26개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

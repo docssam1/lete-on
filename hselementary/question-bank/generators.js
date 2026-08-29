@@ -2158,6 +2158,32 @@
     }
     return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
   };
+  const matchstickFiveShapeEdges = [
+    "0,0|0,1;0,0|1,0;0,1|0,2;0,1|1,0;0,1|1,1;0,2|1,1;0,2|1,2;1,1|1,2;1,1|2,0;1,1|2,1;1,2|2,1;2,0|2,1",
+    "0,0|0,1;0,0|1,0;0,1|0,2;0,1|1,0;0,1|1,1;0,2|1,1;0,2|1,2;1,0|1,1;1,1|1,2;1,1|2,0;1,1|2,1;2,0|2,1",
+    "0,0|0,1;0,0|1,0;0,1|1,0;0,1|1,1;0,2|1,1;0,2|1,2;1,0|1,1;1,1|1,2;1,1|2,0;1,1|2,1;1,2|2,1;2,0|2,1",
+    "0,0|0,1;0,0|1,0;0,1|0,2;0,1|1,0;0,1|1,1;0,2|1,1;1,0|1,1;1,0|2,0;1,1|1,2;1,1|2,0;1,1|2,1;1,2|2,1",
+    "0,0|0,1;0,0|1,0;0,1|0,2;0,1|1,0;0,1|1,1;0,2|1,1;1,0|1,1;1,1|1,2;1,1|2,0;1,1|2,1;1,2|2,1;2,0|2,1"
+  ];
+  const matchstickShapeSvg = (encoded, label, sourceClass = "matchstick-result-source", showLabel = true) => {
+    const edges = encoded.split(";").map(edge => edge.split("|").map(point => point.split(",").map(Number)));
+    const rawPoints = edges.flat().map(([u, v]) => [u + v / 2, -Math.sqrt(3) * v / 2]);
+    const minX = Math.min(...rawPoints.map(point => point[0]));
+    const maxX = Math.max(...rawPoints.map(point => point[0]));
+    const minY = Math.min(...rawPoints.map(point => point[1]));
+    const maxY = Math.max(...rawPoints.map(point => point[1]));
+    const scale = Math.min(112 / Math.max(1, maxX - minX), 82 / Math.max(1, maxY - minY));
+    const point = ([u, v]) => [19 + (u + v / 2 - minX) * scale, 25 + (-Math.sqrt(3) * v / 2 - minY) * scale];
+    const lines = edges.map(([first, second]) => { const a = point(first); const b = point(second); return `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/>`; }).join("");
+    return `<svg class="${sourceClass}" viewBox="0 0 150 120" aria-label="${label}">${showLabel ? `<text x="10" y="17">${label}</text>` : ""}<g>${lines}</g></svg>`;
+  };
+  const matchstickInitialSourceSvg = () => {
+    const ring = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]];
+    const edge = (first, second) => `${first.join(",")}|${second.join(",")}`;
+    const encoded = [...ring.map(point => edge([0, 0], point)), ...ring.map((point, index) => edge(point, ring[(index + 1) % ring.length]))].join(";");
+    return matchstickShapeSvg(encoded, "성냥개비 12개로 만든 정삼각형 6개", "geometry-diagram matchstick-initial-source", false);
+  };
+  const matchstickFiveSolutions = () => `<div class="matchstick-solution-grid" aria-label="서로 다른 다섯 모양">${matchstickFiveShapeEdges.map((edges, index) => matchstickShapeSvg(edges, `${index + 1}번`)).join("")}</div>`;
   const equilateralSquareSourceSvg = () => {
     const square = 70;
     const triangleSide = square * (1 + 2 / Math.sqrt(3));
@@ -12578,6 +12604,12 @@
         const base = side * 2 + answer;
         const evidence = triangle42Evidence("equilateral-angle-trapezoid-length", [side, base], answer);
         return result(`다음 사다리꼴에서 왼쪽 빗변은 ${side}cm, 아랫변은 ${base}cm입니다. 표시된 각이 각각 60°, 150°, 30°일 때, 선분 ㄱㄴ의 길이를 구하세요.${equilateralAngleTrapezoidSvg({ side, base, target: answer, mirrored: false })}${evidence}`, answer, `위아래 변은 평행합니다. 왼쪽 빗변 ${side}cm가 밑변 방향으로 차지하는 길이는 ${side / 2}cm이고, 오른쪽 빗변이 차지하는 길이는 ${side * 3 / 2}cm입니다. 따라서 선분 ㄱㄴ은 ${base}-${side / 2}-${side * 3 / 2}=${answer}cm입니다.`);
+      }
+      if (kind === 6) {
+        const answer = 5;
+        const lead = pick(rng, ["오른쪽 그림은", "다음 그림은", "아래 그림은"]);
+        const evidence = triangle42Evidence("equilateral-matchstick-shapes", [12, 2], answer);
+        return result(`${lead} 성냥개비 12개로 크기가 같은 정삼각형 6개를 만든 것입니다. 성냥개비 2개를 옮겨 크기가 같은 정삼각형 5개를 만들 때, 서로 다른 모양은 모두 몇 가지입니까? 돌리거나 뒤집어 같은 모양은 하나로 보고, 모든 성냥개비는 삼각형의 변에 놓아야 합니다.${matchstickInitialSourceSvg()}${evidence}`, answer, `옮길 성냥개비 2개를 빠짐없이 골라 다섯 정삼각형이 되는 모양을 그립니다. 돌리거나 뒤집어서 겹치는 모양을 하나로 모으면 아래 ${answer}가지가 남습니다.${matchstickFiveSolutions()}`);
       }
       if (kind === 7) {
         const answer = 30;

@@ -396,7 +396,7 @@
           sourceItem42("정삼각형이 이어진 도형의 길이와 각", 1, "4-2-triangle-4-mission-4", 22, 27),
           sourceItem42("이어진 정삼각형의 선분 길이", 1, "4-2-triangle-4-mission-5", 22, 27),
           sourceItem42("정삼각형과 사다리꼴의 선분 길이", 1, "4-2-triangle-4-mission-6", 22, 27),
-          sourceItem42("성냥개비를 옮겨 정삼각형 수 줄이기", 1, "4-2-triangle-4-exploration", 21, 26, true),
+          sourceItem42("성냥개비 2개를 옮겨 만든 서로 다른 모양", 1, "4-2-triangle-4-exploration", 21, 26),
           sourceItem42("길이가 같은 세 변을 이용해 각 구하기", 0, "4-2-triangle-4-example-1", 21, 26),
           sourceItem42("길이가 같은 세 선분과 직각을 이용해 각 구하기", 0, "4-2-triangle-4-example-2", 21, 26),
           sourceItem42("이어 붙인 정삼각형에서 색칠된 한 변 구하기", 1, "4-2-triangle-4-example-3", 21, 26),
