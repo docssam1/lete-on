@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GFIELD SASMO 준비 프로그램: 학년·목표·영역을 정하고, 자체 진단과 수업 계획으로 연결하는 공개 안내 페이지">
+  <meta name="description" content="GFIELD SASMO 준비 프로그램: 연도별 원문 기반 진단과 자체 학습 처방을 구분해 연결하는 공개 안내 페이지">
   <title>GFIELD SASMO 준비 프로그램</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./sasmo.css">
@@ -28,10 +28,10 @@
       <div class="hero-copy">
         <p class="eyebrow">GFIELD BOARDING SCHOOL MATH · SASMO</p>
         <h1 id="page-title">GFIELD SASMO<br><span>준비 프로그램</span></h1>
-        <p class="lede">먼저 학년을 고르고 2014–2024 기출 문제·정답·해설을 연도별로 엽니다. 그다음 진단에서 영역·문항 분석, 약점 클리닉, 개념 학습, 맞춤 워크북, 재확인까지 이어지는 준비 설계를 확인합니다.</p>
+        <p class="lede">먼저 학년과 연도를 고르고 기출을 확인합니다. 답안 근거가 확인된 원문은 문항별 영역·오류 분석으로, 자체 제작 문항은 별도 GFIELD 진단으로 분리해 약점 클리닉·개념 학습·맞춤 워크북까지 연결합니다.</p>
         <div class="truth-strip" aria-label="공식 정보와 GFIELD 준비 프로그램의 구분">
           <span><b>공식</b> SASMO의 학년별 참가·시험 정보</span>
-          <span><b>GFIELD</b> 자체 진단·수업·오류 분석 설계</span>
+          <span><b>GFIELD</b> 기출 분석·진단·수업·오류 처방</span>
         </div>
       </div>
       <aside class="hero-action" aria-label="SASMO 준비 시작 안내">
@@ -40,7 +40,7 @@
         <span class="hero-format">2014–2024 · G1–G10</span>
         <p>학년을 고르면 해당 연도의 문제·정답·해설 버튼만 보여 줍니다.</p>
         <a class="primary-link academy-foil" href="#past-papers">연도별 기출 바로 보기 <span aria-hidden="true">↓</span></a>
-        <a class="hero-secondary-link" href="#control-heading">진단·클리닉 준비 설계 보기 <span aria-hidden="true">→</span></a>
+        <a class="hero-secondary-link" href="#diagnostic-evidence">기출 진단 기준 보기 <span aria-hidden="true">→</span></a>
         <small>K12 Math Contests가 제공하는 원본 파일을 새 창에서 엽니다.</small>
       </aside>
     </section>
@@ -114,10 +114,41 @@
       </div>
     </section>
 
+    <section class="diagnostic-evidence-section" id="diagnostic-evidence" aria-labelledby="diagnostic-evidence-heading">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">03 · YEAR-PAPER DIAGNOSTIC</p>
+            <h2 id="diagnostic-evidence-heading">기출을 풀었다면,<br>이제 진단과 처방으로 갑니다.</h2>
+          </div>
+          <p>2019·2020 공식 SIMCC 안내에서 G2–G10의 문제·답·해설 접근 경로를 확인했습니다. 원문을 복제하지 않고, 교사가 문항별 근거를 대조한 뒤 분석에 넣습니다.</p>
+        </div>
+        <div class="diagnostic-evidence-grid">
+          <article class="evidence-selector">
+            <p class="micro-label">OFFICIAL YEAR · SELECT</p>
+            <label for="diagnostic-year">기출 연도</label>
+            <select id="diagnostic-year" aria-describedby="diagnostic-readiness"></select>
+            <a id="diagnostic-source-link" class="evidence-source-link" href="https://form.simcc.org/2020-sasmo-past-year-paper/" target="_blank" rel="noopener noreferrer">공식 원문·답·해설 접근 ↗</a>
+          </article>
+          <article class="evidence-readiness" aria-live="polite">
+            <p class="micro-label">DIAGNOSTIC READINESS</p>
+            <strong id="diagnostic-readiness-title">진단 근거를 확인하는 중입니다.</strong>
+            <p id="diagnostic-readiness">학년·연도별 자료와 답안 근거를 확인합니다.</p>
+          </article>
+          <article class="evidence-rules">
+            <p class="micro-label">ANSWER RULE</p>
+            <strong>답이 없으면 추측으로 채점하지 않습니다.</strong>
+            <p>공식 답·해설을 먼저 대조합니다. 없으면 서로 독립된 2회 풀이가 일치해야만 내부 검수 후보가 됩니다. 끝내 불확실하면 기출 문항은 잠그고, GFIELD 자체 문항을 따로 제작합니다.</p>
+          </article>
+        </div>
+        <ol class="evidence-workflow" id="diagnostic-workflow" aria-label="SASMO 기출 진단 검수 흐름"></ol>
+      </div>
+    </section>
+
     <section class="shell domains-section" aria-labelledby="domains-heading">
       <div class="section-heading">
         <div>
-            <p class="eyebrow">03 · SIX-DOMAIN MAP</p>
+            <p class="eyebrow">04 · SIX-DOMAIN MAP</p>
             <h2 id="domains-heading">여섯 영역에서<br>준비 상태를 확인합니다.</h2>
         </div>
         <p>아래는 GFIELD가 설계한 준비 지도입니다. 공식 SASMO의 출제 범위표를 복제한 것이 아니며, 진단 결과가 쌓이면 학년·목표에 맞게 수업 우선순위를 정합니다.</p>
@@ -130,7 +161,7 @@
       <div class="shell">
         <div class="section-heading journey-heading">
           <div>
-            <p class="eyebrow">04 · LEARNING SEQUENCE</p>
+            <p class="eyebrow">05 · LEARNING SEQUENCE</p>
             <h2 id="journey-heading">진단 결과가 여섯 단계의<br>학습으로 이어집니다.</h2>
           </div>
           <p>이는 GFIELD의 프로그램 설계입니다. 공식 원문 문제는 외부 공식 출처에서 확인하며, GFIELD 진단 문항과 맞춤 워크북은 독립 검수가 끝날 때까지 공개하지 않습니다.</p>
@@ -146,7 +177,7 @@
     <section class="shell roles-section" id="roles" aria-labelledby="roles-heading">
       <div class="section-heading">
         <div>
-            <p class="eyebrow">05 · STUDENT &amp; TEACHER</p>
+            <p class="eyebrow">06 · STUDENT &amp; TEACHER</p>
             <h2 id="roles-heading">학생은 오늘의 학습을,<br>교사는 근거와 배정을 봅니다.</h2>
         </div>
         <p>아래는 두 제품 흐름의 공개 미리보기입니다. 실제 계정·학생 기록은 로그인과 권한 연결 뒤에 제공합니다.</p>
@@ -165,7 +196,7 @@
       <div class="shell">
         <div class="section-heading source-heading">
           <div>
-            <p class="eyebrow">06 · SOURCES &amp; RIGHTS</p>
+            <p class="eyebrow">07 · SOURCES &amp; RIGHTS</p>
             <h2 id="sources-heading">공식 시험 정보와 GFIELD<br>수업 자료를 따로 관리합니다.</h2>
           </div>
           <p>연도별 자료실은 K12 Math Contests의 원본 파일 주소를 그대로 열고, GFIELD는 PDF를 재호스팅하지 않습니다. Edugain은 학년→주제→활동 흐름만 비교했으며 콘텐츠는 복제하지 않았습니다.</p>
@@ -213,6 +244,7 @@
   <script src="./competition/k8-competition-profiles.js"></script>
   <script src="./competition/official-original-links.js"></script>
   <script src="./competition/sasmo-program-architecture.js"></script>
+  <script src="./competition/sasmo-diagnostic-foundation.js"></script>
   <script src="./competition/sasmo-source-inventory.js"></script>
   <script src="./sasmo.js"></script>
 </body>
