@@ -813,6 +813,18 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   word-break:keep-all;text-align:left;width:100%}
 .nm-vp-word-sm{font-size:12px;line-height:1.55}
 .nm-vp-word-ans{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+/* ── 문장제(WP 스레드) — 본문·물음·보기 ──
+   답이 보기 번호이므로 보기가 화면에도 있어야 답을 쓸 수 있다.
+   문장은 읽는 글이라 수식 칸(.nm-q-tex)과 달리 왼쪽 정렬·작은 글자다. */
+.nm-vp-wordask{font-size:13px;line-height:1.6;color:var(--ink);font-weight:700;
+  word-break:keep-all;text-align:left;width:100%}
+.nm-vp-choices{margin:2px 0 0;padding:0 0 0 2px;list-style:none;width:100%;
+  font-size:12.5px;line-height:1.55;color:var(--ink);text-align:left}
+.nm-vp-choices li{counter-increment:nmwp;margin:2px 0 0;padding-left:1.6em;text-indent:-1.6em;
+  word-break:keep-all}
+.nm-vp-choices li::before{content:counter(nmwp) ") ";font-weight:800}
+.nm-vp-wordwrap{counter-reset:nmwp}
+
 
 /* ── 학년/과정 모드 탭 · 예비중등 버튼 ── */
 .nm-ex-mode-tabs{margin-left:auto}

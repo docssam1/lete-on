@@ -188,6 +188,18 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .nm-q-tex{font-size:clamp(26px,7vw,40px);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.3}
 .nm-q-tex .katex{font-size:1em}
 .nm-q-hint{font-size:12.5px;color:var(--sub);margin:14px auto 0;max-width:38ch}
+/* ── 문장제(WP 스레드) — 화면 풀이 ──
+   수식 한 줄을 전제로 잡힌 .nm-q-tex(최대 40px)로 문장을 그리면 카드가 무너진다.
+   문장은 왼쪽 정렬·읽기 크기로 따로 그린다. 보기 번호가 곧 답이다. */
+.nm-ex-word{font-size:clamp(15px,4.2vw,18px);line-height:1.7;font-weight:600;color:var(--ink);
+  text-align:left;word-break:keep-all}
+.nm-ex-wordask{font-size:clamp(14px,4vw,17px);line-height:1.6;font-weight:800;color:var(--ink);
+  text-align:left;word-break:keep-all;margin-top:12px}
+.nm-ex-choices{counter-reset:nmwp;list-style:none;margin:10px 0 0;padding:0;text-align:left}
+.nm-ex-choices li{counter-increment:nmwp;font-size:clamp(13.5px,3.8vw,16px);line-height:1.55;
+  margin:5px 0 0;padding-left:1.7em;text-indent:-1.7em;word-break:keep-all;color:var(--ink)}
+.nm-ex-choices li::before{content:counter(nmwp) ") ";font-weight:800;color:var(--gold)}
+
 
 .nm-exam-input{display:flex;justify-content:center;padding:0 26px 26px}
 #nm-ex-ans,#nm-ex-ans2{font-size:clamp(19px,5.5vw,25px);text-align:center;padding:12px 8px;
@@ -307,6 +319,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 <script src="engine/threads/dc_mx.js"></script>
 <script src="engine/threads/el.js"></script>
 <script src="engine/threads/nl.js"></script>
+<script src="engine/threads/wp.js"></script>
 <script src="engine/threads/adv.js"></script>
 <script src="engine/threads/mid.js"></script>
 <script src="engine/threads/mid2.js"></script>
@@ -527,6 +540,16 @@ var TOPICS = [
       {label:'탤리 읽기 (쉬움)', thread:'NL16', level:1, desc:'그어진 막대 세어 답하기'},
       {label:'탤리 읽기 (어려움)', thread:'NL16', level:2, desc:'9까지 범위로 연습'},
       {label:'화살표 규칙', thread:'NL16', level:3, desc:'1씩 늘거나 줄어드는 빈칸 찾기'},
+    ]
+  },
+  { id:'wordproblem', label:'문장제', en:'Word Problems', icon:'📖', color:'#0ea5e9', section:'school',
+    subs:[
+      {label:'문제 이해 (자연수 + − ×)', thread:'WP1', level:1, desc:'주어진 것과 구하는 것 가려내기'},
+      {label:'문제 이해 (자연수 + − × ÷)', thread:'WP1', level:2, desc:'나눗셈 상황까지, 큰 수'},
+      {label:'문제 이해 (분수·소수 + −)', thread:'WP1', level:3, desc:'길이·들이·무게를 재는 상황'},
+      {label:'연산 찾기 (자연수 + − ×)', thread:'WP3', level:1, desc:'더할까 뺄까 곱할까'},
+      {label:'연산 찾기 (자연수 + − × ÷)', thread:'WP3', level:2, desc:'나누기까지 넣어 고르기'},
+      {label:'연산 찾기 (분수·소수 + −)', thread:'WP3', level:3, desc:'재는 상황에서 식 고르기'},
     ]
   },
   { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6', section:'magic',

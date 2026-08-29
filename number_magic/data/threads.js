@@ -1666,6 +1666,28 @@ NL16:{ name:{ko:'탤리 읽기와 규칙',en:'Read Tally & Patterns',zh:'读计�
   levels:[{id:1,label:{ko:'탤리 읽기(쉬움)',en:'Read the tally (easy)',zh:'读计数符号(简单)'},params:{mode:'read',level:'practice'}},
           {id:2,label:{ko:'탤리 읽기(어려움)',en:'Read the tally (hard)',zh:'读计数符号(较难)'},params:{mode:'read',level:'main'}},
           {id:3,label:{ko:'화살표 규칙',en:'Arrow pattern rule',zh:'箭头规律'},params:{mode:'arrow',level:'main'}}] },
+
+/* ── WP 문장제 (문장제-설계.md) ─────────────────────
+   상황 하나(주체·대상·n1·n2·연산·의미유형·단위)에서 두 스레드가 파생된다.
+   생성기는 engine/threads/wp.js. 의미 유형은 합병·첨가·구잔·구차 + 배수·등분·포함. */
+WP1:{ name:{ko:'문장제 — 문제 이해',en:'Word Problems — Understand',zh:'应用题 — 理解题意'},
+  gen:'wp1_understand', prereq:['AD1','SB1'],
+  concept:{ko:'문장제는 계산부터 하는 게 아니라 먼저 읽어요. 주어진 것(문제가 알려 준 수)과 구하는 것(문제가 묻는 것)을 갈라 보면 무엇을 해야 할지 보여요. "민수는 8개, 지우는 3개 가지고 있어요"는 주어진 것이고, "민수는 지우보다 몇 개 더 많을까요?"가 구하는 것이에요.',
+    en:'A word problem starts with reading, not calculating. Separate what is given (the numbers the problem tells you) from what is asked (what the problem wants). "Minsu has 8 and Jiwoo has 3" is given; "how many more does Minsu have?" is what is asked.',
+    zh:'应用题要先读，不是先算。把已知的（题目给出的数）和要求的（题目问的）分开，就能看清该做什么。"民秀有8个，智友有3个"是已知的，"民秀比智友多几个"才是要求的。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP3:{ name:{ko:'문장제 — 연산 찾기',en:'Word Problems — Choose the Operation',zh:'应用题 — 选择运算'},
+  gen:'wp3_operation', prereq:['WP1'],
+  concept:{ko:'낱말만 보고 연산을 고르면 걸려요. "더 받았어요"는 더하기지만 "~보다 몇 개 더 많을까요?"는 둘 다 \'더\'가 들어가도 빼기예요. 상황이 늘어나는지, 줄어드는지, 몇 씩 몇 묶음인지를 보고 골라요.',
+    en:'Choosing an operation by keywords alone will trip you up. "Got more" means adding, but "how many more than" is subtracting even though both say "more". Look at the situation: is it growing, shrinking, or so many in each of so many groups?',
+    zh:'只看词语选运算会上当。"又得到了"是加法，但"比…多几个"虽然也有"多"，却要用减法。要看情况：是变多、变少，还是每几个一组、共几组。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

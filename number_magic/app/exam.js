@@ -37,7 +37,22 @@
   .nm-print-vp-mid { display: flex; justify-content: space-between; gap: 6px; padding: 0 2px 2px; }
   .nm-print-vp-line { border-top: 1.5px solid #000; margin: 0 0 4px; }
   .nm-print-vp-bot { min-height: 1.3em; text-align: right; padding: 0 2px; }
+  /* 문장제 — 본문·물음·보기.
+     본문을 .nm-q-tex로 찍으면 안 된다. 저학년 학습지(nm-print-age-young)에서
+     .nm-q-tex가 1.9em이라 문장 두 줄이 한 페이지를 잡아먹는다(수식 한 줄을
+     전제로 잡힌 크기다). 문장은 읽는 글이므로 따로 크기를 준다. */
+  .nm-print-word { font-size: 1.02em; line-height: 1.6; margin-top: 4px; word-break: keep-all; }
+  .nm-print-wordask { font-size: 0.95em; line-height: 1.55; margin-top: 6px; font-weight: 700;
+    word-break: keep-all; }
+  /* 보기 — 번호를 붙여 한 줄씩. 답이 보기 번호라 번호가 곧 답이다. */
+  .nm-print-choices { margin: 5px 0 0; padding: 0; list-style: none;
+    font-size: 0.95em; line-height: 1.5; }
+  .nm-print-choices li { margin: 2px 0 0; padding-left: 1.5em; text-indent: -1.5em;
+    word-break: keep-all; }
   .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
+  .nm-print-age-young .nm-print-word { font-size: 1.15em; line-height: 1.7; }
+  .nm-print-age-young .nm-print-wordask { font-size: 1.08em; }
+  .nm-print-age-young .nm-print-choices { font-size: 1.05em; }
   /* 단계 풀이 줄 — 화면이 단계마다 묻는 유형은 인쇄도 단계를 묻는다(printSteps) */
   .nm-print-steps { margin-top: 6px; border-top: 1px dashed #bbb; padding-top: 5px; }
   .nm-print-step { font-size: .92em; margin: 3px 0; }
@@ -880,6 +895,10 @@ function printSteps(p){
 }
 
 function printAskText(p){
+  /* 문장제(p.word)는 아래 word 분기가 본문·물음·보기를 통째로 그린다. 여기서
+     prompt.ko를 또 실으면 같은 문장이 카드에 두 번 찍힌다 — WP 스레드를 붙이며
+     실제로 그렇게 나왔다(2026-08-29). */
+  if(p.word) return '';
   const tex = String(p.tex||'');
   /* tex가 아예 없는 유형 — nl.js(수의 나라, 유아) 16개 생성기가 이 경우다. 다른
      158개 스레드는 전부 tex를 주므로(가장 짧아도 "3+2=□") 이 분기를 타지 않는다.
@@ -888,6 +907,20 @@ function printAskText(p){
   if(!/\\square|\\bigcirc/.test(tex)) return '';
   if(/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tex)) return '';
   return (p.prompt && p.prompt.ko) || '';
+}
+
+/* 보기(선택지) — 문장제만 쓴다. 답이 보기 번호이므로 번호가 인쇄물에 있어야
+   학생이 답을 쓸 수 있다(답 환원 원칙: 답은 정수 또는 보기 번호). */
+function wordChoices(p){
+  if(!Array.isArray(p.choices) || !p.choices.length) return null;
+  const ul = document.createElement('ul');
+  ul.className = 'nm-print-choices';
+  p.choices.forEach((c, i) => {
+    const li = document.createElement('li');
+    li.textContent = `${i+1}) ${c}`;
+    ul.appendChild(li);
+  });
+  return ul;
 }
 
 function fillPrintGrid(problems, problemGrid, answerGrid, opts){
@@ -946,9 +979,19 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       while(holder.firstChild) card.appendChild(holder.firstChild);
     } else if(p.word){
       const texEl = document.createElement('div');
-      texEl.className = 'nm-q-tex';
+      texEl.className = 'nm-print-word';
       texEl.textContent = p.word;
       card.appendChild(texEl);
+      /* 물음이 본문과 따로 있는 문장제(WP 스레드) — 본문만 찍으면 무엇을 묻는지
+         알 수 없다. 인쇄물만 보고 풀 수 있어야 한다는 원칙 그대로. */
+      if(p.wordAsk){
+        const askEl = document.createElement('div');
+        askEl.className = 'nm-print-wordask';
+        askEl.textContent = p.wordAsk;
+        card.appendChild(askEl);
+      }
+      const ch = wordChoices(p);
+      if(ch) card.appendChild(ch);
       const blank = document.createElement('div');
       blank.className = 'nm-print-word-blank';
       blank.textContent = '답: __________';
@@ -996,7 +1039,9 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
         renderKaTeX(akTex, akSpan);
         ak.appendChild(akSpan);
       } else {
-        ak.appendChild(document.createTextNode(String(fmtAns(p.answer))));
+        /* 보기형 문장제는 번호만 찍으면 채점하는 사람이 그 번호가 무엇인지 모른다 */
+        ak.appendChild(document.createTextNode(
+          String(fmtAns(p.answer)) + (p.answerNote ? ` (${p.answerNote})` : '')));
       }
     }
     answerGrid.appendChild(ak);
@@ -1491,7 +1536,7 @@ const NM_EXAM = {
         return probs.map((p,i) => {
           let inner;
           if(p.word){
-            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(p.word)}</div>`;
+            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(p.word)}${p.wordAsk ? ' ' + esc(p.wordAsk) : ''}</div>`;
           } else {
             const v = parseVert(p.tex);
             inner = v
@@ -1729,12 +1774,16 @@ const NM_EXAM = {
     </div>
   </div>
   <div class="nm-exam-question">
-    <div class="nm-q-tex" id="nm-ex-qtex"></div>
-    ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}
+    ${p.word ? `<div class="nm-ex-word">${esc(p.word)}</div>
+    ${p.wordAsk ? `<div class="nm-ex-wordask">${esc(p.wordAsk)}</div>` : ''}
+    ${Array.isArray(p.choices) && p.choices.length
+      ? `<ol class="nm-ex-choices">${p.choices.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}`
+    : `<div class="nm-q-tex" id="nm-ex-qtex"></div>
+    ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}`}
   </div>
   <div class="nm-exam-input">
     <input id="nm-ex-ans" type="text" inputmode="decimal"
-           placeholder="${isMulti ? '예: 3, 5' : '답 / Answer'}" autocomplete="off">
+           placeholder="${isMulti ? '예: 3, 5' : (Array.isArray(p.choices) && p.choices.length ? '보기 번호' : '답 / Answer')}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
   <div class="nm-exam-nav">
@@ -1743,7 +1792,8 @@ const NM_EXAM = {
   </div>
 </div>`;
 
-      renderKaTeX((p.tex||''), $('#nm-ex-qtex', container));
+      /* 문장제는 tex가 없다 — 위에서 문장을 직접 그렸으므로 수식 칸도 없다 */
+      if(!p.word) renderKaTeX((p.tex||''), $('#nm-ex-qtex', container));
 
       const input = $('#nm-ex-ans', container);
       if(answers[current] !== null){ input.value = answers[current]; }
@@ -2032,6 +2082,9 @@ window.examScreen = function(container){
         }
         inner = `<div class="nm-vp-wordwrap">
   <div class="nm-vp-word">${esc(p.word)}</div>
+  ${p.wordAsk ? `<div class="nm-vp-wordask">${esc(p.wordAsk)}</div>` : ''}
+  ${Array.isArray(p.choices) && p.choices.length
+    ? `<ol class="nm-vp-choices">${p.choices.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
   <div class="nm-vp-word-ans">${ansRow}</div>
 </div>`;
       } else if(v){
