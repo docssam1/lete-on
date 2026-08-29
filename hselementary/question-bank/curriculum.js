@@ -450,7 +450,7 @@
           sourceItem42("자리 숫자의 비가 정해진 소수", 1, "4-2-decimal-4-mission-4", 32, 37),
           sourceItem42("수 카드로 만든 소수의 순서", 1, "4-2-decimal-4-mission-5", 32, 37),
           sourceItem42("두 자리 숫자를 바꾼 소수의 범위", 1, "4-2-decimal-4-mission-6", 32, 37),
-          sourceItem42("범위 안의 소수 네 자리 수 세기", 0, "4-2-decimal-4-exploration", 31, 36, true),
+          sourceItem42("범위 안의 소수 네 자리 수 세기", 0, "4-2-decimal-4-exploration", 31, 36),
           sourceItem42("자리값이 다른 두 수의 차로 자연수 구하기", 1, "4-2-decimal-4-example-1", 31, 36, true),
           sourceItem42("서로 다른 숫자의 소수식 최댓값", 1, "4-2-decimal-4-example-2", 31, 36, true),
           sourceItem42("수 카드로 만든 소수의 순위 차", 1, "4-2-decimal-4-example-3", 31, 36, true),

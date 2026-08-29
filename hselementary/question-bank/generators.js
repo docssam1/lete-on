@@ -12913,7 +12913,7 @@
       return result(`선영이는 30분 동안 ${fixedDecimal(firstHalfHour, 3)}km, 수정이는 1시간 동안 ${fixedDecimal(secondHour, 3)}km를 일정한 빠르기로 걷습니다. 같은 곳에서 동시에 같은 방향으로 출발한 지 ${hours}시간 뒤 두 사람 사이의 거리는 몇 km입니까?${evidence}`, answer, `선영이는 ${fixedDecimal(firstDistance, 3)}km, 수정이는 ${fixedDecimal(secondDistance, 3)}km를 걷습니다. 두 거리의 차는 ${answer}km입니다.`);
     },
     conditionedDecimal({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant;
       if (kind === 0) {
         const byDifference = new Map();
         for (let value = 102; value <= 987; value += 1) {
@@ -12971,22 +12971,39 @@
         const evidence = decimal42Evidence("decimal-card-order", cards, answer);
         return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 A.BCD 꼴의 소수를 만듭니다. 만들 수 있는 가장 큰 수와 넷째로 작은 수의 차를 구하세요.${evidence}`, answer, `가능한 배열을 작은 수부터 정리해 가장 큰 수와 넷째로 작은 수를 찾은 뒤 빼면 ${answer}입니다.`);
       }
-      const lower = int(rng, 400, 430);
-      const upperAfterSwap = int(rng, 470, 500);
-      const increase = 18;
-      const candidates = [];
-      for (let value = lower + 1; value < 1000; value += 1) {
-        const tenths = Math.floor(value / 100) % 10;
-        const hundredths = Math.floor(value / 10) % 10;
-        const thousandths = value % 10;
-        const swapped = tenths * 100 + thousandths * 10 + hundredths;
-        if (swapped < upperAfterSwap && swapped - value === increase) candidates.push(value);
+      if (kind === 5) {
+        const lower = int(rng, 400, 430);
+        const upperAfterSwap = int(rng, 470, 500);
+        const increase = 18;
+        const candidates = [];
+        for (let value = lower + 1; value < 1000; value += 1) {
+          const tenths = Math.floor(value / 100) % 10;
+          const hundredths = Math.floor(value / 10) % 10;
+          const thousandths = value % 10;
+          const swapped = tenths * 100 + thousandths * 10 + hundredths;
+          if (swapped < upperAfterSwap && swapped - value === increase) candidates.push(value);
+        }
+        if (!candidates.length) throw new Error("자리 숫자를 바꾼 소수 후보를 만들지 못했습니다.");
+        const answerScaled = Math.max(...candidates) - Math.min(...candidates);
+        const answer = fixedDecimal(answerScaled, 3);
+        const evidence = decimal42Evidence("swapped-tail-range", [lower, upperAfterSwap, increase], answer);
+        return result(`${fixedDecimal(lower, 3)}보다 큰 소수 세 자리 수가 있습니다. 이 수의 소수 둘째 자리와 셋째 자리 숫자를 바꾼 수는 ${fixedDecimal(upperAfterSwap, 3)}보다 작고 처음 수보다 ${fixedDecimal(increase, 3)}만큼 큽니다. 가능한 수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence}`, answer, `조건을 만족하는 수를 0.001씩 확인한 뒤 최댓값에서 최솟값을 빼면 ${answer}입니다.`);
       }
-      if (!candidates.length) throw new Error("자리 숫자를 바꾼 소수 후보를 만들지 못했습니다.");
-      const answerScaled = Math.max(...candidates) - Math.min(...candidates);
-      const answer = fixedDecimal(answerScaled, 3);
-      const evidence = decimal42Evidence("swapped-tail-range", [lower, upperAfterSwap, increase], answer);
-      return result(`${fixedDecimal(lower, 3)}보다 큰 소수 세 자리 수가 있습니다. 이 수의 소수 둘째 자리와 셋째 자리 숫자를 바꾼 수는 ${fixedDecimal(upperAfterSwap, 3)}보다 작고 처음 수보다 ${fixedDecimal(increase, 3)}만큼 큽니다. 가능한 수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.${evidence}`, answer, `조건을 만족하는 수를 0.001씩 확인한 뒤 최댓값에서 최솟값을 빼면 ${answer}입니다.`);
+      if (kind === 6) {
+        const whole = int(rng, 2, 8);
+        const upperTenths = level === 0 ? 1 : level === 1 ? int(rng, 1, 2) : int(rng, 2, 3);
+        const upperThousandths = upperTenths * 100;
+        const largestGap = [65, 110, 190][level];
+        const smallestGap = [40, 70, 120][level];
+        const lowerThousandths = int(rng, Math.max(1, upperThousandths - largestGap), upperThousandths - smallestGap);
+        const lowerScaled4 = whole * 10000 + lowerThousandths * 10;
+        const upperScaled4 = whole * 10000 + upperThousandths * 10;
+        let answer = 0;
+        for (let value = lowerScaled4 + 1; value < upperScaled4; value += 1) if (value % 10 !== 0) answer += 1;
+        const evidence = decimal42Evidence("exact-four-place-range-count", [lowerScaled4, upperScaled4], answer);
+        return result(`${plainDecimal(lowerScaled4, 4)}보다 크고 ${plainDecimal(upperScaled4, 4)}보다 작은 소수 네 자리 수는 모두 몇 개입니까?${evidence}`, answer, `소수 네 자리 수는 소수점 아래 넷째 자리 숫자가 0이 아닌 수입니다. ${plainDecimal(lowerScaled4, 4)}보다 큰 수부터 ${plainDecimal(upperScaled4, 4)}보다 작은 수까지 0.0001씩 확인하면서 넷째 자리 숫자가 1부터 9인 수를 세면 ${answer}개입니다.`);
+      }
+      throw new Error("원본 조건과 독립 검산이 끝나지 않은 조건에 맞는 소수 유형입니다.");
     },
     multiply({ rng, level }) {
       const r = range(level);

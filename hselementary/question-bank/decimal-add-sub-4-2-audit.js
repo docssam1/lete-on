@@ -26,6 +26,9 @@ const permutations = values => {
 };
 
 check(plainDecimal(7143 - 50, 1) === "709.3", "개념탐구 1 원문 답은 709.3kg이어야 합니다.");
+let sourceFourPlaceCount = 0;
+for (let value = 50081; value < 51000; value += 1) if (value % 10 !== 0) sourceFourPlaceCount += 1;
+check(sourceFourPlaceCount === 828, `개념탐구 4 원문 답은 828개여야 하나 ${sourceFourPlaceCount}개입니다.`);
 let tenfoldWeightCaseCount = 0;
 for (let fatherWeightGrams = 45000; fatherWeightGrams <= 85000; fatherWeightGrams += 10) {
   for (const bonusGrams of [20, 30, 50, 70, 80]) {
@@ -112,6 +115,11 @@ const answerFor = (kind, values) => {
     check(candidates.length > 0, `교환 자리 후보가 없습니다: ${values}`);
     return decimal(Math.max(...candidates) - Math.min(...candidates), 3);
   }
+  if (kind === "exact-four-place-range-count") {
+    let count = 0;
+    for (let value = values[0] + 1; value < values[1]; value += 1) if (value % 10 !== 0) count += 1;
+    return String(count);
+  }
   return null;
 };
 
@@ -142,8 +150,8 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
   generatedCount += 1;
 }
 
-check(types.length === 25, `공개 세부 유형 수가 25개가 아닙니다: ${types.length}`);
-check(seenKinds.size === 25, `검산 구조 수가 25개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 26, `공개 세부 유형 수가 26개가 아닙니다: ${types.length}`);
+check(seenKinds.size === 26, `검산 구조 수가 26개가 아닙니다: ${seenKinds.size}`);
 if (failures.length) {
   console.error(`4-2 소수 단원 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 40).join("\n"));
