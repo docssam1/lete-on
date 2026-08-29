@@ -40,3 +40,4 @@ body{background:#f4f5ef}
   .level-card:last-child{grid-template-columns:112px 1fr}
 }
 @media(prefers-reduced-motion:reduce){.studio-intro img{animation:none}}
+.level-copy .level-stage{display:block;min-height:16px;margin-bottom:5px;color:#876126;font-size:10px;font-weight:950}

@@ -1,6 +1,6 @@
 export const messages = {
   ko: {
-    brand: "전개도 전망대", level: "단계", levels: "단계 선택", bandIntro: "입문", bandBeginner: "초급", bandIntermediate: "중급", rotate: "가로로 돌려 주세요", rotateExit: "마을로 나가기", close: "닫기", next: "다음 문제",
+    brand: "전개도 전망대", level: "단계", levels: "단계 선택", worksheet: "학습지", bandIntro: "입문", bandBeginner: "초급", bandIntermediate: "중급", rotate: "가로로 돌려 주세요", rotateExit: "마을로 나가기", close: "닫기", next: "다음 문제",
     hint: "힌트", fold: "접어 보기", unfold: "펼쳐 보기", exit: "공간·입체 지구로 나가기",
     promptValidNet: "접어서 정육면체가 되는 전개도를 골라요.",
     promptFoldView: "전개도를 접었을 때 만들 수 있는 입체를 골라요.",
@@ -32,7 +32,7 @@ export const messages = {
     answerChoice: "보기 {number}", soundOn: "소리 켜짐", soundOff: "소리 꺼짐"
   },
   en: {
-    brand: "Net Observatory", level: "LEVEL", levels: "Choose Level", bandIntro: "Intro", bandBeginner: "Beginner", bandIntermediate: "Intermediate", rotate: "Rotate your device", rotateExit: "Back to Town", close: "Close", next: "Next",
+    brand: "Net Observatory", level: "LEVEL", levels: "Choose Level", worksheet: "Worksheet", bandIntro: "Intro", bandBeginner: "Beginner", bandIntermediate: "Intermediate", rotate: "Rotate your device", rotateExit: "Back to Town", close: "Close", next: "Next",
     hint: "Hint", fold: "Fold", unfold: "Unfold", exit: "Exit to the Solids District",
     promptValidNet: "Choose the net that folds into a cube.",
     promptFoldView: "Choose the cube that can be made from this net.",
@@ -64,7 +64,7 @@ export const messages = {
     answerChoice: "Choice {number}", soundOn: "Sound on", soundOff: "Sound off"
   },
   zh: {
-    brand: "展开图瞭望台", level: "级别", levels: "选择级别", bandIntro: "入门", bandBeginner: "初级", bandIntermediate: "中级", rotate: "请将设备横向旋转", rotateExit: "返回小镇", close: "关闭", next: "下一题",
+    brand: "展开图瞭望台", level: "级别", levels: "选择级别", worksheet: "练习纸", bandIntro: "入门", bandBeginner: "初级", bandIntermediate: "中级", rotate: "请将设备横向旋转", rotateExit: "返回小镇", close: "关闭", next: "下一题",
     hint: "提示", fold: "折起来", unfold: "展开", exit: "返回立体空间区",
     promptValidNet: "选出能折成正方体的展开图。", promptFoldView: "选出这个展开图能折成的正方体。",
     promptDiceOpposite: "找出骰子上与{face}相对的面。", promptDicePair: "选出互相相对的两个面。",
@@ -83,7 +83,7 @@ export const messages = {
     triangle: "三角形", square: "正方形", pentagon: "正五边形", answerChoice: "选项{number}", soundOn: "声音开启", soundOff: "声音关闭"
   },
   ja: {
-    brand: "展開図展望台", level: "レベル", levels: "レベルを選ぶ", bandIntro: "入門", bandBeginner: "初級", bandIntermediate: "中級", rotate: "端末を横向きにしてください", rotateExit: "町へ戻る", close: "閉じる", next: "次の問題",
+    brand: "展開図展望台", level: "レベル", levels: "レベルを選ぶ", worksheet: "プリント", bandIntro: "入門", bandBeginner: "初級", bandIntermediate: "中級", rotate: "端末を横向きにしてください", rotateExit: "町へ戻る", close: "閉じる", next: "次の問題",
     hint: "ヒント", fold: "折って見る", unfold: "開く", exit: "空間・立体エリアへ戻る",
     promptValidNet: "立方体になる展開図を選びましょう。", promptFoldView: "この展開図からできる立方体を選びましょう。",
     promptDiceOpposite: "サイコロで{face}の反対の面を探しましょう。", promptDicePair: "向かい合う二つの面を選びましょう。",
