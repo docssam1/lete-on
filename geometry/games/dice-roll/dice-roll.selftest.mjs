@@ -1,0 +1,21 @@
+import { strict as assert } from "node:assert";
+import { levels, orientations, startingOrientation, roll, rollMany, visibleFaces, validateLevels } from "./levels.js";
+
+assert.equal(validateLevels(), true);
+assert.equal(orientations.length, 24);
+assert.equal(levels.length, 5);
+assert.equal(levels.flatMap((level) => level.problems).length, 50);
+
+for (const direction of ["N","E","S","W"]) {
+  const inverse = { N:"S", E:"W", S:"N", W:"E" }[direction];
+  assert.deepEqual(roll(roll(startingOrientation,direction),inverse),startingOrientation);
+}
+assert.deepEqual(rollMany(startingOrientation,["N","E","S","W"]),rollMany(startingOrientation,["N","E","S","W"]));
+
+levels.flatMap((level)=>level.problems).forEach((problem)=>{
+  const final = rollMany(problem.startOrientation,problem.directions);
+  if(problem.interaction!=="route-answer") assert.deepEqual(final,problem.finalOrientation,problem.id);
+  if(problem.interaction==="face-answer") assert.equal(visibleFaces(final)[problem.faceKey],problem.answer,problem.id);
+});
+
+console.log("dice-roll: 5 levels, 50 problems, 24 orientations validated");

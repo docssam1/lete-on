@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>GFIELD 숨은 도형 탐정</title>
+  <link rel="stylesheet" href="./styles.css?v=hidden-shape-2" />
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#295e54" />
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+</head>
+<body>
+  <main class="detective-shell">
+    <header class="topbar">
+      <a class="icon-button" href="../../shape-garden/" aria-label="도형 정원으로 나가기">&larr;</a>
+      <div class="brand"><strong>GFIELD</strong><small>Shape Detective</small></div>
+      <div class="progress"><strong id="levelLabel">LEVEL 1</strong><span id="problemLabel">1 / 5</span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="소리 끄기">&#9835;</button>
+      <button id="levelButton" class="level-button" type="button">레벨</button>
+    </header>
+
+    <section class="mission">
+      <div><span id="difficultyLabel">입문</span><h1 id="missionTitle">부채꼴 삼각형</h1></div>
+      <p id="prompt">그림 속 삼각형은 모두 몇 개인가요?</p>
+    </section>
+
+    <section class="play-stage">
+      <aside class="detective-panel">
+        <div class="detective-character" role="img" aria-label="도형 탐정 캐릭터"></div>
+        <div><small>COUNTING CLUE</small><strong id="guideTitle">크고 작은 삼각형</strong><p id="guideText">밑변이 1칸짜리부터 가장 긴 것까지 차례로 세어 모두 더해 보세요.</p></div>
+        <dl><div><dt id="clueTitle">세는 기준</dt><dd id="clueValue">밑변의 길이</dd></div><div><dt>문제</dt><dd id="problemId">01</dd></div></dl>
+      </aside>
+
+      <article class="board-panel">
+        <header><div><small id="boardTag">TRIANGLE FAN</small><h2 id="boardTitle">그림 전체를 살펴봐요</h2></div><b id="answerStatus">생각 중</b></header>
+        <div id="shapeBoard" class="shape-board"></div>
+        <div id="choiceTray" class="choice-tray" aria-label="정답 선택"></div>
+        <section id="breakdown" class="breakdown" hidden><strong id="breakdownTitle">이렇게 셀 수 있어요</strong><div id="breakdownList"></div></section>
+      </article>
+    </section>
+
+    <nav class="action-bar" aria-label="게임 도구">
+      <button id="hintButton" type="button">힌트</button>
+      <button id="retryButton" type="button">다시</button>
+      <a href="../../worksheet/hidden-shape/">학습지</a>
+      <button id="nextButton" class="next-button" type="button" hidden>다음 문제</button>
+    </nav>
+
+    <div id="levelDialog" class="dialog" hidden><section role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><header><h2 id="dialogTitle">레벨 선택</h2><button id="closeLevels" type="button" aria-label="닫기">X</button></header><div id="levelList" class="level-list"></div></section></div>
+    <div id="completeDialog" class="dialog" hidden><section class="complete-card" role="dialog" aria-modal="true"><div class="detective-character"></div><h2 id="completeTitle">레벨 완료!</h2><p id="completeText">숨어 있는 도형을 기준에 따라 빠짐없이 찾았어요.</p><div class="complete-actions"><button id="nextLevelButton" type="button">다음 레벨</button><button id="practiceButton" type="button">같은 레벨 더 풀기</button><a href="../../shape-garden/">도형 정원</a></div></section></div>
+    <div id="success" class="success" aria-hidden="true"><strong>FOUND!</strong></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js?v=hidden-shape-3"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>
