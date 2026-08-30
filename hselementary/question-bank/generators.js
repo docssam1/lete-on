@@ -14246,6 +14246,128 @@
       const answer = a * x + b;
       return result(`두 수 x와 y 사이에 <b>y = ${a} × x + ${b}</b>의 대응 관계가 있습니다. x가 ${x}일 때 y를 구하세요.`, answer, `x 자리에 ${x}을 넣으면 y = ${a} × ${x} + ${b} = ${answer}입니다.`);
     },
+    mixedCalculationE3({ rng, level, variant = 0 }) {
+      const scale = level + 2;
+      const rectangleSquareSvg = ({ smallLong, smallShort, perimeter, side }) => {
+        const rows = 4;
+        const cols = 2;
+        const padding = 34;
+        const drawingSide = 240;
+        const unit = drawingSide / side;
+        const width = drawingSide + padding * 2;
+        const height = drawingSide + 92;
+        const vertical = padding + smallLong * unit;
+        const horizontals = Array.from({ length: rows - 1 }, (_, index) => padding + (index + 1) * smallShort * unit);
+        return `<svg class="geometry-diagram mixed-e3-rectangle-square" viewBox="0 0 ${width} ${height}" style="width:min(${width}px,100%)" role="img" aria-label="작은 직사각형 ${cols}열 ${rows}행, 모두 여덟 조각으로 만든 큰 정사각형. 작은 직사각형의 긴 변은 ${smallLong}cm, 짧은 변은 ${smallShort}cm, 둘레는 ${perimeter}cm입니다." data-rectangle-model="${smallLong},${smallShort},${perimeter},${side},${rows},${cols}" data-small-long="${smallLong}" data-small-short="${smallShort}" data-small-perimeter="${perimeter}" data-big-side="${side}" data-rows="${rows}" data-cols="${cols}"><rect x="${padding}" y="${padding}" width="${drawingSide}" height="${drawingSide}" fill="none" stroke="#183d56" stroke-width="2.8"/><line x1="${vertical}" y1="${padding}" x2="${vertical}" y2="${padding + drawingSide}" stroke="#52758c" stroke-width="2" stroke-dasharray="6 4"/>${horizontals.map(y => `<line x1="${padding}" y1="${y}" x2="${padding + drawingSide}" y2="${y}" stroke="#52758c" stroke-width="2" stroke-dasharray="6 4"/>`).join("")}<text x="${width / 2}" y="${height - 32}" text-anchor="middle" font-size="17" font-weight="700" fill="#183d56">작은 직사각형의 네 변의 합: ${perimeter}cm</text><text x="${width / 2}" y="${height - 10}" text-anchor="middle" font-size="15" fill="#183d56">2열 × 4행 = 8조각</text></svg>`;
+      };
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("개념탐구 3 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 0) {
+        const shoes = int(rng, 1800 * scale, 3400 * scale);
+        const extra = int(rng, 900 * scale, 1700 * scale);
+        const discount = int(rng, 500 * scale, 1100 * scale);
+        const crayons = shoes * 3 - discount;
+        const pencilCase = shoes + extra;
+        const gap = crayons - pencilCase;
+        if (gap <= 0) return generators.mixedCalculationE3({ rng, level, variant });
+        return result(`문구점에서 크레파스, 실내화, 필통을 샀습니다. 크레파스의 가격은 실내화 가격의 3배보다 ${discount.toLocaleString()}원 더 싸고, 필통의 가격보다 ${gap.toLocaleString()}원 더 비쌉니다. 필통의 가격은 실내화 가격보다 ${extra.toLocaleString()}원 더 비쌀 때 크레파스의 가격을 구하세요.<div class="equation" data-mixed-kind="e3-price" data-values="${shoes},${extra},${discount},${gap}">크레파스 = 실내화 × 3 - ${discount.toLocaleString()} = 필통 + ${gap.toLocaleString()}</div>`, crayons, `실내화를 ${shoes.toLocaleString()}원으로 놓으면 필통은 ${pencilCase.toLocaleString()}원입니다. 크레파스는 ${shoes.toLocaleString()} × 3 - ${discount.toLocaleString()} = ${crayons.toLocaleString()}원이고, 필통보다 ${gap.toLocaleString()}원 더 비싼 값과도 같습니다.`);
+      }
+      if (variant === 1) {
+        const small = int(rng, 22 * scale, 58 * scale);
+        const quotient = int(rng, 3 + level, 6 + scale * 2);
+        const remainder = int(rng, 1, small - 1);
+        const large = quotient * small + remainder;
+        const difference = large - small;
+        return result(`어떤 두 수의 차는 ${difference.toLocaleString()}입니다. 큰 수를 작은 수로 나누면 몫은 ${quotient}, 나머지는 ${remainder}입니다. 두 수의 합을 구하세요.<div class="equation" data-mixed-kind="e3-quotient-remainder" data-values="${difference},${quotient},${remainder}">큰 수 - 작은 수 = ${difference.toLocaleString()}</div>`, large + small, `작은 수를 하나씩 확인하면 작은 수는 ${small.toLocaleString()}이고 큰 수는 ${small.toLocaleString()} × ${quotient} + ${remainder} = ${large.toLocaleString()}입니다. 따라서 합은 ${large.toLocaleString()} + ${small.toLocaleString()} = ${(large + small).toLocaleString()}입니다.`);
+      }
+      if (variant === 2) {
+        const ageCases = [];
+        for (let youngerAge = 2; youngerAge <= 7; youngerAge += 1) {
+          for (let afterYears = 3; afterYears <= 15; afterYears += 1) {
+            const grandmotherAge = 3 * (youngerAge + 3 + youngerAge) + 5 * afterYears;
+            if (grandmotherAge >= 50 && grandmotherAge <= 100) ageCases.push([youngerAge, afterYears]);
+          }
+        }
+        const [younger, years] = pick(rng, ageCases);
+        const older = younger + 3;
+        const grandmother = 3 * (older + younger) + 5 * years;
+        return result(`올해 ${older}살인 지민이는 3살 어린 동생과 ${grandmother}살인 할머니와 함께 살고 있습니다. 할머니의 나이가 지민이와 동생 나이의 합의 3배가 되는 해는 몇 년 후입니까?<div class="equation expanded" data-mixed-kind="e3-age" data-values="${older},${younger},${grandmother}">할머니 나이 = (지민이 나이 + 동생 나이) × 3</div>`, years, `${years}년 후 지민이는 ${older + years}살, 동생은 ${younger + years}살이므로 두 사람의 나이 합은 ${older + younger + 2 * years}살입니다. 그 3배는 ${(older + younger + 2 * years) * 3}살이고, 그때 할머니의 나이 ${grandmother + years}살과 같으므로 ${years}년 후입니다.`);
+      }
+      if (variant === 3) {
+        const walkingSpeed = pick(rng, [80, 100, 120]);
+        const catchMinutes = int(rng, 8 + level * 2, 24 + level * 3);
+        const multiple = int(rng, 1, 3 + level);
+        const headStart = catchMinutes * multiple;
+        const bicycleSpeed = walkingSpeed * (multiple + 1);
+        return result(`형이 집을 떠난 지 ${headStart}분 후에 용준이가 자전거를 타고 형을 만나기 위해 집에서 출발했습니다. 형은 1분에 ${walkingSpeed}m씩 걷고, 용준이는 1분에 ${bicycleSpeed}m씩 갑니다. 용준이는 출발한 지 몇 분 후에 형을 만나겠습니까?<div class="equation" data-mixed-kind="e3-chase" data-values="${headStart},${walkingSpeed},${bicycleSpeed}">두 사람이 간 거리는 만날 때 같습니다.</div>`, catchMinutes, `형의 앞선 거리는 ${walkingSpeed} × ${headStart} = ${(walkingSpeed * headStart).toLocaleString()}m입니다. 1분마다 ${bicycleSpeed - walkingSpeed}m씩 가까워지므로 ${(walkingSpeed * headStart).toLocaleString()} ÷ ${bicycleSpeed - walkingSpeed} = ${catchMinutes}분 후에 만납니다.`);
+      }
+      if (variant === 4) {
+        const last = int(rng, 30 * scale, 70 * scale) * 100;
+        const current = int(rng, 42 * scale, 86 * scale) * 100;
+        const twiceSum = (last + current) * 2;
+        const younghee = int(rng, 18 * scale, 58 * scale) * 100;
+        const lessFromSum = twiceSum - younghee;
+        const junho = int(rng, 6 * scale, 18 * scale) * 100;
+        const lessFromTriple = junho * 3 - younghee;
+        if (lessFromSum <= 0 || lessFromTriple <= 0) return generators.mixedCalculationE3({ rng, level, variant });
+        return result(`진영이는 지난달 ${last.toLocaleString()}원, 이번 달 ${current.toLocaleString()}원의 용돈을 받았습니다. 영희의 이번 달 용돈은 진영이가 지난달과 이번 달에 받은 용돈의 합의 2배보다 ${lessFromSum.toLocaleString()}원 적고, 준호의 이번 달 용돈의 3배보다 ${lessFromTriple.toLocaleString()}원 적습니다. 준호의 이번 달 용돈을 구하세요.<div class="equation" data-mixed-kind="e3-allowance" data-values="${last},${current},${lessFromSum},${lessFromTriple}">영희 용돈 = (지난달 + 이번 달) × 2 - ${lessFromSum.toLocaleString()}</div>`, junho, `영희의 용돈은 (${last.toLocaleString()} + ${current.toLocaleString()}) × 2 - ${lessFromSum.toLocaleString()} = ${younghee.toLocaleString()}원입니다. 준호의 용돈을 구하면 (${younghee.toLocaleString()} + ${lessFromTriple.toLocaleString()}) ÷ 3 = ${junho.toLocaleString()}원입니다.`);
+      }
+      if (variant === 5) {
+        const number = int(rng, 3 + level, 10 + scale * 2);
+        const multiplier = int(rng, 18 * scale, 48 * scale);
+        const divisor = int(rng, 3, 9 + level);
+        const quotient = int(rng, 14 * scale, 38 * scale);
+        const dividend = divisor * quotient;
+        const subtractor = int(rng, 15 * scale, 48 * scale);
+        const difference = int(rng, 5 * scale, 18 * scale);
+        const addend = subtractor + difference;
+        const resultValue = number * multiplier + quotient - (addend - subtractor);
+        return result(`${multiplier}과 어떤 수의 곱에 ${dividend}을 ${divisor}로 나눈 몫을 더한 후 ${addend}과 ${subtractor}의 차를 뺐더니 ${resultValue.toLocaleString()}이 되었습니다. 어떤 수를 구하세요.<div class="equation" data-mixed-kind="e3-reverse-expression" data-values="${multiplier},${dividend},${divisor},${addend},${subtractor},${resultValue}">${multiplier} × □ + ${dividend} ÷ ${divisor} - (${addend} - ${subtractor}) = ${resultValue.toLocaleString()}</div>`, number, `${dividend} ÷ ${divisor} = ${quotient}, ${addend} - ${subtractor} = ${addend - subtractor}입니다. 따라서 ${multiplier} × □ = ${resultValue} - ${quotient} + ${addend - subtractor} = ${number * multiplier}이므로 □ = ${number}입니다.`);
+      }
+      if (variant === 6) {
+        const smallShort = int(rng, 3 + level, 22 + level * 2);
+        const smallLong = smallShort * 2;
+        const perimeter = 2 * (smallLong + smallShort);
+        const side = smallShort * 4;
+        const svg = rectangleSquareSvg({ smallLong, smallShort, perimeter, side });
+        return result(`다음 정사각형의 점선을 따라 잘라 같은 직사각형 8개를 만들었습니다. 작은 직사각형 한 개의 네 변의 합이 ${perimeter}cm일 때, 큰 정사각형의 한 변은 몇 cm입니까?${svg}<div class="equation" data-mixed-kind="e3-rectangle-square" data-values="${smallLong},${smallShort},${perimeter},${side},4,2">큰 정사각형 = 작은 직사각형 2열 × 4행</div>`, `${side}cm`, `작은 직사각형의 긴 변과 짧은 변의 합은 ${perimeter} ÷ 2 = ${smallLong + smallShort}cm입니다. 그림에서 긴 변은 짧은 변의 2배이므로 짧은 변은 ${smallShort}cm입니다. 큰 정사각형의 한 변은 짧은 변 4개와 같으므로 ${smallShort} × 4 = ${side}cm입니다.`);
+      }
+      if (variant === 7) {
+        const girls = int(rng, 28 * scale, 74 * scale);
+        const difference = int(rng, 6, 16 + level * 2);
+        const fifth = girls * 2 + difference;
+        const multiple = 8;
+        const less = int(rng, 20 * scale, 60 * scale);
+        const total = fifth * multiple - less;
+        return result(`소정이네 학교 전체 학생 수는 5학년 학생 수의 ${multiple}배보다 ${less}명 적고, 5학년 남학생 수는 여학생 수보다 ${difference}명 더 많습니다. 전체 학생 수가 ${total.toLocaleString()}명일 때 5학년 여학생은 몇 명입니까?<div class="equation" data-mixed-kind="e3-students" data-values="${total},${multiple},${less},${difference}">전체 = 5학년 × ${multiple} - ${less}</div>`, girls, `5학년 학생 수는 (${total.toLocaleString()} + ${less}) ÷ ${multiple} = ${fifth}명입니다. 여학생을 □명이라 하면 남학생은 □ + ${difference}명이므로 2 × □ + ${difference} = ${fifth}입니다. 따라서 여학생은 ${girls}명입니다.`);
+      }
+      if (variant === 8) {
+        const trainSpeedPerTen = pick(rng, [18, 20, 24, 25, 30]);
+        const trainBlocks = int(rng, 8 + level, 14 + level * 2);
+        const trainMinutes = trainBlocks * 10;
+        const trainKm = trainSpeedPerTen * trainBlocks;
+        const walkingKm = int(rng, 2, 6 + level);
+        const walkingSpeed = pick(rng, [20, 25, 40, 50]);
+        const walkingMinutes = walkingKm * 1000 / walkingSpeed;
+        const totalKm = trainKm + walkingKm;
+        return result(`현준이는 기차역에서 출발하여 할머니 댁에 갑니다. 기차는 10분에 ${trainSpeedPerTen}km씩 일정한 빠르기로 ${trainMinutes}분 동안 탔고, 남은 거리는 1분에 ${walkingSpeed}m씩 걸었습니다. 기차역에서 할머니 댁까지의 거리가 ${totalKm}km일 때 걸어간 시간은 몇 분입니까?<div class="equation" data-mixed-kind="e3-train-walk" data-values="${totalKm},${trainSpeedPerTen},${trainMinutes},${walkingSpeed}">기차 거리 + 걸은 거리 = 전체 거리</div>`, `${walkingMinutes}분`, `기차로 간 거리는 ${trainSpeedPerTen} × (${trainMinutes} ÷ 10) = ${trainKm}km입니다. 남은 거리는 ${totalKm} - ${trainKm} = ${walkingKm}km = ${walkingKm * 1000}m입니다. ${walkingKm * 1000} ÷ ${walkingSpeed} = ${walkingMinutes}분 걸었습니다.`);
+      }
+      if (variant === 9) {
+        const buyCount = 5;
+        const buyPrice = 750;
+        const bagCount = 3;
+        const sellPrice = 600;
+        const profitPerBag = sellPrice - buyPrice / buyCount * bagCount;
+        const bags = int(rng, 28 * scale, 74 * scale);
+        const profit = profitPerBag * bags;
+        return result(`어느 사탕 가게에서는 ${buyCount}개에 ${buyPrice}원 하는 사탕을 사 와서 1봉지에 ${bagCount}개씩 넣어 ${sellPrice}원에 팝니다. 오늘 판 사탕으로 얻은 이익이 ${profit.toLocaleString()}원이라면 오늘 판 사탕은 모두 몇 봉지입니까?<div class="equation" data-mixed-kind="e3-candy" data-values="${buyCount},${buyPrice},${bagCount},${sellPrice},${profit}">한 봉지 이익 × 봉지 수 = 전체 이익</div>`, `${bags}봉지`, `사탕 한 개의 값은 ${buyPrice} ÷ ${buyCount} = ${buyPrice / buyCount}원입니다. 한 봉지의 이익은 ${sellPrice} - ${buyPrice / buyCount} × ${bagCount} = ${profitPerBag}원입니다. ${profit.toLocaleString()} ÷ ${profitPerBag} = ${bags}봉지입니다.`);
+      }
+      const difference = pick(rng, [2, 6, 10, 14].filter(value => value < 4 * (8 + scale * 5) / 3));
+      const transfer = int(rng, 8 * scale, 20 * scale);
+      const hyunju = (4 * transfer - 3 * difference) / 2;
+      const miseon = hyunju + difference;
+      if (!Number.isInteger(hyunju) || hyunju <= transfer) return generators.mixedCalculationE3({ rng, level, variant });
+      return result(`미선이는 현주보다 구슬을 ${difference}개 더 많이 가지고 있습니다. 미선이가 현주에게 구슬을 ${transfer}개 주면 현주가 가진 구슬은 미선이가 가진 구슬의 3배가 됩니다. 처음에 미선이와 현주가 가진 구슬 수의 곱을 구하세요.<div class="equation" data-mixed-kind="e3-beads" data-values="${difference},${transfer}">현주 + ${transfer} = (미선 - ${transfer}) × 3</div>`, miseon * hyunju, `처음 현주가 가진 구슬을 □개라 하면 미선이는 □ + ${difference}개입니다. □ + ${transfer} = (□ + ${difference} - ${transfer}) × 3을 풀면 현주는 ${hyunju}개, 미선이는 ${miseon}개입니다. 곱은 ${miseon} × ${hyunju} = ${miseon * hyunju}입니다.`);
+    },
     advancedRange({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const aLow = int(rng, 11 + level * 8, 28 + level * 12);
