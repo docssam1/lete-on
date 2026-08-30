@@ -5,20 +5,30 @@ const path = require("node:path");
 const ledgerCore = require("./build-dolpa-work-ledger.cjs");
 const dbCore = require("./build-dolpa-question-db.cjs");
 
-const FORBIDDEN_KEYS = new Set(["prompt", "stem", "answer", "answerValue", "solution", "content", "rawText", "pageImage"]);
+const FORBIDDEN_KEYS = new Set(["prompt", "stem", "answer", "answervalue", "officialanswer", "independentanswer", "derivedanswer", "correctanswer", "solution", "content", "rawtext", "pageimage"]);
+
+function normalizedKey(value) {
+  return String(value || "").normalize("NFKC").toLowerCase().replace(/[^a-z0-9가-힣]/g, "");
+}
 
 function walk(value, pointer, issues) {
   if (!value || typeof value !== "object") return;
   Object.entries(value).forEach(([key, child]) => {
-    if (FORBIDDEN_KEYS.has(key)) issues.push(`forbidden:${pointer}/${key}`);
+    if (FORBIDDEN_KEYS.has(normalizedKey(key))) issues.push(`forbidden:${pointer}/${key}`);
     walk(child, `${pointer}/${key}`, issues);
   });
+}
+
+function findAnswerLeakIssues(value) {
+  const issues = [];
+  walk(value, "", issues);
+  return issues;
 }
 
 function audit(database) {
   const issues = [];
   if (database.schemaVersion !== 1) issues.push("schemaVersion");
-  walk(database, "", issues);
+  issues.push(...findAnswerLeakIssues(database));
   const questionIds = new Set();
   const questionsById = new Map();
   database.questions.forEach(question => {
@@ -37,6 +47,14 @@ function audit(database) {
       || !Number.isSafeInteger(question.responseFormat.slotCount) || question.responseFormat.slotCount < 1
       || !question.responseFormat.evidence.length)) issues.push(`response_evidence:${question.questionId}`);
     if (question.answerCheck.status === "verified" && !question.answerCheck.evidence.length) issues.push(`answer_evidence:${question.questionId}`);
+    if (question.answerCheck.status === "disputed") {
+      if (!(question.answerCheck.evidence || []).length || !String(question.answerCheck.note || "").trim()) {
+        issues.push(`answer_dispute_evidence:${question.questionId}`);
+      }
+      if (question.releaseStatus !== "locked") issues.push(`answer_dispute_release:${question.questionId}`);
+      const unsafeUsage = (question.usageProfiles || []).filter(profile => !["candidate", "excluded"].includes(profile.status));
+      if (unsafeUsage.length) issues.push(`answer_dispute_usage:${question.questionId}:${unsafeUsage.map(profile => profile.profileId).join("|")}`);
+    }
     const expectedProfileIds = dbCore.PROFILE_CATALOG.map(profile => profile.profileId).sort();
     const actualProfileIds = (question.usageProfiles || []).map(profile => profile.profileId).sort();
     if (new Set(actualProfileIds).size !== actualProfileIds.length) issues.push(`duplicate_usage_profile:${question.questionId}`);
@@ -93,4 +111,4 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ audit });
+module.exports = Object.freeze({ normalizedKey, findAnswerLeakIssues, audit });

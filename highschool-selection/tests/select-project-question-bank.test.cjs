@@ -4,6 +4,13 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const selector = require("../scripts/select-project-question-bank.cjs");
 
+function learnerFit(overall = "pass") {
+  return {
+    overall,
+    dimensions: Object.fromEntries(["language", "representations", "prerequisites", "reasoningLoad", "responseMode"].map(name => [name, overall]))
+  };
+}
+
 function index() {
   return {
     academyProfiles: [
@@ -29,6 +36,7 @@ function index() {
       {
         itemId: "DOLPA:Q1", sourceBankId: "DOLPA", sourceItemId: "Q1", sourceTypeId: "DP-T1",
         conceptFamilyId: "CPT-1", conceptStatus: "mapped",
+        answerStatus: "verified", learnerFit: learnerFit(),
         academyFits: [
           { profileId: "DP_STANDARD", status: "source_verified" },
           { profileId: "SH_SELECTION", status: "candidate" }
@@ -37,6 +45,7 @@ function index() {
       {
         itemId: "WM:Q1", sourceBankId: "WM", sourceItemId: "Q1", sourceTypeId: "WM-U1",
         conceptFamilyId: null, conceptStatus: "unit_only",
+        answerStatus: "verified", learnerFit: learnerFit(),
         academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
       }
     ]
@@ -77,4 +86,21 @@ test("관리자 검수 목록은 단원까지만 확인된 원수학 문항도 �
 test("검색은 공통 유형명과 원본 유형명을 모두 찾는다", () => {
   assert.equal(selector.selectItems(index(), ["DP"], { query: "두 직선" }).itemCount, 1);
   assert.equal(selector.selectItems(index(), ["DP"], { query: "교점 구하기" }).itemCount, 1);
+});
+
+test("공통 문항도 학습 적합성 누락·대기·실패는 검수 목록에서만 보인다", () => {
+  for (const state of ["missing", "pending", "fail"]) {
+    const value = index();
+    const target = value.items[0];
+    if (state === "missing") delete target.learnerFit;
+    else target.learnerFit = learnerFit(state);
+    assert.equal(selector.selectItems(value, ["DP_STANDARD"]).itemCount, 0, state);
+    const admin = selector.selectItems(value, ["DP_STANDARD"], {
+      allowedStatuses: selector.CANDIDATE_ALLOWED_STATUSES,
+      includeReviewCandidates: true
+    });
+    assert.equal(admin.itemCount, 1, state);
+    assert.equal(admin.items[0].releaseEligible, false, state);
+    assert.equal(admin.items[0].releaseBlockReason, "learner_fit_not_passed", state);
+  }
 });

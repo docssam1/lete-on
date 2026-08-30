@@ -35,7 +35,9 @@ function createDolpaCatalog(database) {
       if (!profileIds.length) return [];
       const query = clean(opts.query).toLocaleLowerCase("ko");
       const limit = Math.min(300, Math.max(1, Number(opts.limit) || 100));
-      const selected = selector.selectQuestions(database, profileIds);
+      const selected = selector.selectQuestions(database, profileIds, opts.includeCandidates
+        ? [...selector.DEFAULT_ALLOWED_STATUSES, "candidate"]
+        : selector.DEFAULT_ALLOWED_STATUSES);
       const targetId = clean(opts.targetId);
       if (targetId && !dolpaScopes.getTarget(targetId)) throw new Error("시험 범위를 확인해 주세요.");
       return selected.questions.filter(question => {
@@ -58,6 +60,9 @@ function createDolpaCatalog(database) {
         difficultyStatus: question.difficulty.status,
         responseKind: question.responseFormat.kind,
         responseStatus: question.responseFormat.status,
+        learnerFit: question.learnerFit,
+        releaseEligible: question.releaseEligible,
+        releaseBlockReason: question.releaseBlockReason,
         reviewChecks: Object.freeze(Object.assign({}, question.reviewChecks)),
         targetId: targetId || null,
         profiles: question.usage.map(usage => Object.freeze({
@@ -114,7 +119,8 @@ function createProjectCatalog(index, options) {
         allowedStatuses: searchOptions.includeCandidates
           ? projectSelector.CANDIDATE_ALLOWED_STATUSES
           : projectSelector.DEFAULT_ALLOWED_STATUSES,
-        allowedConceptStatuses: ["mapped", "unit_only"]
+        allowedConceptStatuses: ["mapped", "unit_only"],
+        includeReviewCandidates: searchOptions.includeCandidates === true
       });
       return selected.items.filter(item => {
         if (!targetId) return true;
@@ -143,12 +149,16 @@ function createProjectCatalog(index, options) {
           difficultyStatus: "pending",
           responseKind: null,
           responseStatus: "pending",
+          learnerFit: item.learnerFit,
+          releaseEligible: item.releaseEligible,
+          releaseBlockReason: item.releaseBlockReason,
           reviewChecks: Object.freeze({
             classification: classificationVerified,
             locator: Boolean(pageLocator),
             difficulty: false,
             response: false,
-            keyCheck: false,
+            keyCheck: item.answerStatus === "verified",
+            learnerFit: item.learnerFitPassed,
             method: false,
             variants: false,
             usageApproval: fits.some(fit => fit.status === "approved")

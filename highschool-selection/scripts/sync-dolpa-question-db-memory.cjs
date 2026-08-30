@@ -72,6 +72,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-9A7C2856650B": { key: "m21s-202404-r4", label: "2-1 심화 4회(2024년 4월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-4D46EB350F66": { key: "m21-202405-r1", label: "2-1 4개월반 1회(2024년 5월)", tags: ["middle2-1", "four-month-course", "full-range"] },
+    "DP-SRC-A7B99D6257FD": { key: "m21s-202401-r3", label: "2-1 심화 입반테스트(3)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
@@ -138,7 +139,7 @@ function sync(catalog, ledger, database, paths) {
     summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 같은 시험의 다른 원본 파일 ${equivalentSourceCount}개는 문항을 복제하지 않고 대표 시험지에 연결했다. 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 풀이 방법 ${summary.methodVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
     status: "verified",
     sensitivity: "private",
-    updated: "2026-08-29",
+    updated: methodInfo ? methodInfo.reviewedAt : "2026-08-29",
     pointers: [
       { source_id: "dp-question-db-v1", role: "audit", locator: "summary, papers, typeCatalog, questions", note: "문항 ID·유형 ID·중복·금지 필드 자동검사 통과" },
       { source_id: "dp-work-ledger-v1", role: "test", locator: "summary, sources[1:334]", note: "변환·표지·본문·답안·문항분리·유형·난이도·분석지 상태 분리" },
@@ -177,7 +178,7 @@ function sync(catalog, ledger, database, paths) {
       summary: `${methodInfo.label} 대표 시험 30문항을 원본 3~10쪽에서 직접 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
         { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
         { source_id: methodInfo.methodSourceId, role: "decision", locator: "reviews[1:30]", note: "풀이 구조와 방법 태그 검수 결과" }
@@ -230,7 +231,7 @@ function sync(catalog, ledger, database, paths) {
       summary: `${methodInfo.label} 대표 시험 ${difficulty.reviews.length}문항을 원본 페이지에서 직접 확인해 한 핵심 개념의 직접 적용은 standard, 개념 결합·조건 분기·역추론·복합 모델링은 raised로 구분했다. 문제 원문과 정답 값은 저장하지 않았다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
         { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
         { source_id: methodInfo.difficultySourceId, role: "decision", locator: "reviews[1:30]", note: "문항별 난이도와 판정 근거" }
@@ -253,7 +254,7 @@ function sync(catalog, ledger, database, paths) {
       summary: `${report.summary.questionCount}문항을 학기·영역·단원·난이도로 집계했다. 기본 적용형 ${report.summary.standardCount}문항, 복합 추론형 ${report.summary.raisedCount}문항이며 합격선이나 개인 합격 가능성은 추정하지 않는다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
         { source_id: methodInfo.analysisSourceId, role: "decision", locator: "summary, charts, comments", note: "그래프 값과 학습 코멘트" },
         { source_id: methodInfo.difficultySourceId, role: "test", locator: "reviews[1:30]", note: "문항별 난이도 검수 근거" }

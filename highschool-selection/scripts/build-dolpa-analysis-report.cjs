@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const dbAudit = require("./audit-dolpa-question-db.cjs");
 
 function countBy(items, getter) {
   const counts = new Map();
@@ -17,6 +18,8 @@ function buildReport(database, sourceId, reviewedAt) {
   const paper = database.papers.find(item => item.sourceId === sourceId);
   if (!paper) throw new Error(`문항 DB에 없는 원본입니다: ${sourceId}`);
   const questions = database.questions.filter(item => item.sourceId === sourceId).sort((a, b) => a.number - b.number);
+  const answerLeakIssues = dbAudit.findAnswerLeakIssues({ paper, questions });
+  if (answerLeakIssues.length) throw new Error(`분석 자료에 정답 값 또는 금지 필드가 있습니다: ${answerLeakIssues.join(", ")}`);
   if (questions.length !== 30) throw new Error(`대표 시험 문항 수가 30개가 아닙니다: ${sourceId}`);
   const required = ["classification", "locator", "difficulty", "responseFormat"];
   const pending = questions.flatMap(question => required.filter(key => question[key].status !== "verified").map(key => `${question.number}:${key}`));
@@ -25,6 +28,9 @@ function buildReport(database, sourceId, reviewedAt) {
   const invalidAnswers = questions.filter(question => !["verified", "disputed"].includes(question.answerCheck.status));
   if (invalidAnswers.length) {
     throw new Error(`분석 전 답안 검수가 끝나지 않았습니다: ${invalidAnswers.map(question => question.number).join(", ")}`);
+  }
+  if (!paper.sourceFingerprint || questions.some(question => !(question.locator.evidence || []).length)) {
+    throw new Error(`분석 근거 지문 또는 문항 위치 근거가 없습니다: ${sourceId}`);
   }
   const standardCount = questions.filter(question => question.difficulty.band === "standard").length;
   const raisedCount = questions.filter(question => question.difficulty.band === "raised").length;
@@ -70,7 +76,15 @@ function buildReport(database, sourceId, reviewedAt) {
       "실전에서는 기본 적용형을 먼저 정확히 확보하고, 복합도형·그래프 역추론·장문 모델링 문항은 조건을 식과 그림에 따로 표시한 뒤 풀어야 한다.",
       "이 분석은 원본 문항 구조를 설명하는 자료이며 합격선이나 개인별 합격 가능성을 추정하지 않는다."
     ],
-    evidence: questions.map(question => ({ questionId: question.questionId, page: question.locator.page, difficultyBand: question.difficulty.band }))
+    evidence: questions.map(question => ({
+      questionId: question.questionId,
+      page: question.locator.page,
+      difficultyBand: question.difficulty.band,
+      answerStatus: question.answerCheck.status,
+      answerEvidenceStatus: question.answerCheck.status === "disputed" ? "conflict" : "verified",
+      sourceFingerprint: paper.sourceFingerprint,
+      locatorEvidenceId: question.locator.evidence[0]
+    }))
   };
 }
 

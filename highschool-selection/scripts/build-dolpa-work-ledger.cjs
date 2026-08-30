@@ -12,6 +12,7 @@ const TASK_NAMES = Object.freeze([
   "questionSegmentation",
   "typeClassification",
   "difficultyReview",
+  "learnerFitReview",
   "analysisReport"
 ]);
 const TASK_STATUSES = Object.freeze(["pending", "sampled", "verified", "blocked", "not_applicable", "stale"]);

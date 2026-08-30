@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const releaseGate = require("./select-question-bank.cjs");
 
 const DEFAULT_ALLOWED_STATUSES = Object.freeze(["source_verified", "approved"]);
 const CANDIDATE_ALLOWED_STATUSES = Object.freeze([...DEFAULT_ALLOWED_STATUSES, "candidate"]);
@@ -41,6 +42,7 @@ function selectItems(index, profileTokens, options) {
   const profileIds = new Set(profiles.map(profile => profile.profileId));
   const allowedStatuses = new Set(opts.allowedStatuses || DEFAULT_ALLOWED_STATUSES);
   const allowedConceptStatuses = new Set(opts.allowedConceptStatuses || ["mapped"]);
+  const reviewInspection = opts.includeReviewCandidates === true || allowedStatuses.has("candidate");
   const query = clean(opts.query).toLocaleLowerCase("ko");
   const limit = Math.min(1000, Math.max(1, Number(opts.limit) || 300));
   const { familyById, sourceTypeByKey, sourceBankById } = buildLookups(index);
@@ -48,6 +50,10 @@ function selectItems(index, profileTokens, options) {
   const rows = (index.items || []).flatMap(item => {
     const fits = (item.academyFits || []).filter(fit => profileIds.has(fit.profileId) && allowedStatuses.has(fit.status));
     if (!fits.length || !allowedConceptStatuses.has(item.conceptStatus)) return [];
+    const answerStatus = clean(item.answerCheck && item.answerCheck.status || item.answerStatus) || "pending";
+    const learnerFit = releaseGate.normalizeLearnerFit(item.learnerFit);
+    const releaseEligible = answerStatus === "verified" && releaseGate.learnerFitPassed(learnerFit);
+    if (!releaseEligible && !reviewInspection) return [];
     const familyId = item.canonicalConceptFamilyId || item.conceptFamilyId;
     const family = familyById.get(familyId);
     const sourceType = sourceTypeByKey.get(`${item.sourceBankId}:${item.sourceTypeId}`);
@@ -71,6 +77,11 @@ function selectItems(index, profileTokens, options) {
       classificationStatus: item.classificationStatus,
       detailPrecision: item.detailPrecision,
       conceptStatus: item.conceptStatus,
+      answerStatus,
+      learnerFit,
+      learnerFitPassed: releaseGate.learnerFitPassed(learnerFit),
+      releaseEligible,
+      releaseBlockReason: !releaseGate.learnerFitPassed(learnerFit) ? "learner_fit_not_passed" : (answerStatus === "verified" ? null : "answer_check_not_verified"),
       academyFits: fits.map(fit => ({ profileId: fit.profileId, status: fit.status }))
     };
     if (query && ![

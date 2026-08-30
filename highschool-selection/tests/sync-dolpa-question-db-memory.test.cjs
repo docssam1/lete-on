@@ -110,6 +110,34 @@ test("2-1 4개월반 1회 모든 검수 패킷을 같은 중1 전체 범위 원�
   assert.equal(info.recordDate, "20260830");
 });
 
+test("2-1 심화 입반테스트 3회 실제 검수 날짜와 원본 ID를 독립 메모리 ID로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m21s-202401-r3-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m21s-202401-r3-v1.json",
+    "dolpa-classification-review-dp-m21s-202401-r3-v1.json",
+    "dolpa-paper-review-dp-m21s-202401-r3-v1.json",
+    "dolpa-difficulty-review-dp-m21s-202401-r3-v1.json",
+    "dolpa-analysis-report-dp-m21s-202401-r3-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-A7B99D6257FD", reviewedAt: "2026-08-30" }));
+  });
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m21s-202401-r3");
+  assert.equal(info.label, "2-1 심화 입반테스트(3)");
+  assert.deepEqual(info.tags, ["middle2-1", "advanced", "full-range"]);
+  assert.equal(info.pageSourceId, "dp-m21s-202401-r3-page-assets-v1");
+  assert.equal(info.methodSourceId, "dp-m21s-202401-r3-method-review-v1");
+  assert.equal(info.classificationSourceId, "dp-m21s-202401-r3-classification-review-v1");
+  assert.equal(info.paperSourceId, "dp-m21s-202401-r3-paper-review-v1");
+  assert.equal(info.difficultySourceId, "dp-m21s-202401-r3-difficulty-review-v1");
+  assert.equal(info.analysisSourceId, "dp-m21s-202401-r3-analysis-report-v1");
+  assert.equal(info.recordId, "dp.m21s-202401-r3.method-review.20260830");
+  assert.equal(info.recordDate, "20260830");
+  assert.equal(info.reviewedAt, "2026-08-30");
+});
+
 test("2-1A 2회 시험지 검수 자료를 기존 2-1A와 다른 ID로 연결한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21a-r2-"));
   const manifestPath = path.join(root, "manifest.json");
