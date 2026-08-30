@@ -73,6 +73,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-4D46EB350F66": { key: "m21-202405-r1", label: "2-1 4개월반 1회(2024년 5월)", tags: ["middle2-1", "four-month-course", "full-range"] },
     "DP-SRC-A7B99D6257FD": { key: "m21s-202401-r3", label: "2-1 심화 입반테스트(3)", tags: ["middle2-1", "advanced", "full-range"] },
+    "DP-SRC-9EAF43D00103": { key: "m21-202401-r1", label: "2-1 기본 입반테스트(1)", tags: ["middle2-1", "basic", "full-range"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);

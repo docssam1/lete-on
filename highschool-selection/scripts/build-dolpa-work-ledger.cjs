@@ -42,9 +42,9 @@ function stableQuestionId(sourceId, number) {
 function domainFor(unit) {
   const text = String(unit || "");
   if (/경우의 수|확률|통계|자료|도수|평균|분산|표준편차/.test(text)) return "확률과 통계";
-  if (/함수|좌표|그래프/.test(text)) return "함수";
-  if (/도형|삼각|사각|피타고라스|원의 성질|원과 부채꼴|부채꼴|위치 관계|평행선|삼각비|작도|입체|평면/.test(text)) return "기하";
-  if (/소인수|유리수|순환소수|제곱근|실수/.test(text)) return "수와 연산";
+  if (/함수|좌표|그래프|정비례|반비례/.test(text)) return "함수";
+  if (/도형|삼각|사각|다각형|다면체|각의 성질|시계의 각|피타고라스|원의 성질|원과 부채꼴|부채꼴|위치 관계|평행선|삼각비|작도|입체|평면/.test(text)) return "기하";
+  if (/소인수|약수|유리수|절댓값|분수의 계산|순환소수|제곱근|실수/.test(text)) return "수와 연산";
   if (/식|방정식|부등식|다항식/.test(text)) return "문자와 식";
   return "융합·기타";
 }
