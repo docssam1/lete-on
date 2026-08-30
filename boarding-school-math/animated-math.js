@@ -68,6 +68,7 @@
       const id = node.getAttribute("data-object");
       node.classList.toggle("is-visible", visible.has(id));
       node.classList.toggle("is-active", active.has(id));
+      node.setAttribute("aria-hidden", String(!visible.has(id)));
     });
   }
 
@@ -167,7 +168,7 @@
     elements.title.textContent = textOf(lesson.titleI18n);
     elements.concept.textContent = textOf(lesson.conceptI18n);
     elements.problem.textContent = textOf(lesson.problemI18n);
-    elements.scene.innerHTML = lesson.type === "bar-model" ? scenes.ratioScene(lesson) : scenes.geometryScene(lesson);
+    elements.scene.innerHTML = scenes.sceneFor(lesson);
     elements.misconception.textContent = lesson.teacherEvidence.likelyMisconception;
     elements.teacherPrompt.textContent = lesson.teacherEvidence.teachingPrompt;
     elements.teacherSuccess.textContent = lesson.teacherEvidence.successCheck;
@@ -198,6 +199,7 @@
     cancelPlayback();
     const lesson = currentLesson();
     elements.scene.querySelectorAll("[data-object]").forEach(function (node) { node.classList.add("is-visible"); node.classList.remove("is-active"); });
+    elements.scene.querySelectorAll("[data-object]").forEach(function (node) { node.setAttribute("aria-hidden", "false"); });
     stepIndex = lesson.beats.length - 1;
     updateStepList();
     elements.mode.textContent = currentUI().overview;

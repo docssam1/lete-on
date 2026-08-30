@@ -122,5 +122,29 @@
       + '<div class="ratio-answer scene-object" data-object="ratio-answer">5 + 4 = 9</div></div>';
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, geometryScene: geometryScene, ratioScene: ratioScene });
+  function fractionScene(lesson) {
+    const model = lesson.sceneModel;
+    const cells = Array.from({ length: model.wholeParts }, function (_, index) {
+      const shaded = index < model.shadedParts ? " is-shaded" : "";
+      const group = index < model.shadedParts ? '<span class="fraction-group-number">' + (index + 1) + '</span>' : "";
+      return '<div class="fraction-cell' + shaded + '"><span>1/8</span>' + group + '</div>';
+    }).join("");
+    return '<div class="fraction-division-scene" role="img" aria-label="A one-meter strip partitioned into eight equal parts; six eighths represent three-fourths">'
+      + '<div class="fraction-whole scene-object" data-object="frac-whole"><span>1 m</span></div>'
+      + '<div class="fraction-grid scene-object" data-object="frac-eighth-grid">' + cells + '</div>'
+      + '<div class="fraction-bracket scene-object" data-object="frac-three-fourths"><span>3/4 m = 6/8 m</span></div>'
+      + '<div class="fraction-groups scene-object" data-object="frac-six-groups"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>'
+      + '<div class="fraction-equation scene-object" data-object="frac-equation">3/4 ÷ 1/8 = 6/8 ÷ 1/8</div>'
+      + '<div class="fraction-check scene-object" data-object="frac-check">6 × 1/8 = 6/8 = 3/4</div>'
+      + '<div class="fraction-answer scene-object" data-object="frac-answer">6 pieces</div></div>';
+  }
+
+  function sceneFor(lesson) {
+    if (lesson.type === "bar-model") return ratioScene(lesson);
+    if (lesson.type === "fraction-strip") return fractionScene(lesson);
+    if (lesson.type === "geometry-angle") return geometryScene(lesson);
+    throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
+  }
+
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, sceneFor: sceneFor });
 });

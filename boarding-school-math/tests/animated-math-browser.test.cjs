@@ -41,12 +41,12 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
-test("ratio and geometry lessons reveal exactly the intended conceptual object", async function () {
+test("ratio, fraction, and geometry lessons reveal exactly the intended conceptual object", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.equal(await page.locator(".lesson-tab").count(), 2);
+  assert.equal(await page.locator(".lesson-tab").count(), 3);
   assert.equal(await page.locator('[data-object="ratio-answer"].is-visible').count(), 0);
   await page.locator("#next-step").click();
   assert.equal(await page.locator('[data-object="ratio-team-a-bar"].is-visible.is-active').count(), 1);
@@ -56,6 +56,16 @@ test("ratio and geometry lessons reveal exactly the intended conceptual object",
   assert.match(await page.locator("#narration-text").innerText(), /Five plus four equals nine/);
 
   await page.locator('.lesson-tab[data-lesson-index="1"]').click();
+  assert.match(await page.locator("#problem-copy").innerText(), /3\/4 m[\s\S]*1\/8 m/);
+  assert.equal(await page.locator('[data-object="frac-answer"].is-visible').count(), 0);
+  assert.equal(await page.locator('[data-object="frac-answer"]').getAttribute("aria-hidden"), "true");
+  await page.locator('.step-button[data-step-index="4"]').click();
+  assert.equal(await page.locator('[data-object="frac-six-groups"].is-visible.is-active').count(), 1);
+  await page.locator('.step-button[data-step-index="7"]').click();
+  assert.equal(await page.locator('[data-object="frac-answer"].is-visible.is-active').count(), 1);
+  assert.match(await page.locator("#narration-text").innerText(), /Six pieces/);
+
+  await page.locator('.lesson-tab[data-lesson-index="2"]').click();
   assert.match(await page.locator("#problem-copy").innerText(), /AB = AC[\s\S]*40°[\s\S]*angle B/);
   assert.equal(await page.locator('[data-object="geo-answer"].is-visible').count(), 0);
   await page.locator('.step-button[data-step-index="1"]').click();
@@ -109,7 +119,7 @@ test("A4 print state shows the complete model and hides playback chrome", async 
   const page = await browser.newPage({ viewport: { width: 794, height: 1123 } });
   const errors = collectErrors(page);
   await page.goto(`${baseUrl}?locale=en`, { waitUntil: "networkidle" });
-  await page.locator('.lesson-tab[data-lesson-index="1"]').click();
+  await page.locator('.lesson-tab[data-lesson-index="2"]').click();
   await page.emulateMedia({ media: "print" });
   const state = await page.evaluate(function () {
     const objects = Array.from(document.querySelectorAll(".scene-object"));

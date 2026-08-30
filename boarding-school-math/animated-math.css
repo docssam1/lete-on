@@ -97,6 +97,19 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .ratio-equation, .ratio-answer { display: grid; min-height: 72px; place-items: center; padding: 12px; border: 1px solid var(--line); background: #fff; font: 600 1.18rem Georgia, serif; transform: translateY(10px); }
 .ratio-answer { min-width: 122px; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.42rem; }
 
+.fraction-division-scene { display: grid; grid-template-columns: 1fr auto; gap: 14px 18px; width: 100%; align-items: center; }
+.fraction-whole { grid-column: 1 / -1; display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 3px solid var(--ink); color: var(--muted); font: 800 .78rem inherit; }
+.fraction-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); min-height: 118px; overflow: hidden; border: 3px solid var(--green-dark); background: #fff; }
+.fraction-cell { position: relative; display: grid; place-items: center; border-right: 1px solid var(--green-dark); color: var(--muted); background: #fff; font: 700 1rem Georgia, serif; }
+.fraction-cell:last-child { border-right: 0; }
+.fraction-cell.is-shaded { color: var(--ink); background: #f3c3ad; }
+.fraction-group-number { position: absolute; top: 7px; right: 7px; display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; color: #fff; background: var(--green-dark); font: 800 .65rem system-ui, sans-serif; }
+.fraction-bracket { grid-column: 1 / -1; padding: 10px 14px; border-left: 4px solid var(--coral); background: #f6f2e9; font: 700 1.08rem Georgia, serif; }
+.fraction-groups { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.fraction-groups span { display: grid; min-height: 36px; place-items: center; border: 1px solid var(--green); color: var(--green-dark); background: var(--mint); font-weight: 900; }
+.fraction-equation, .fraction-check, .fraction-answer { display: grid; min-height: 62px; place-items: center; padding: 10px 14px; border: 1px solid var(--line); background: #fff; text-align: center; font: 650 1.06rem Georgia, serif; }
+.fraction-answer { min-width: 120px; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.35rem; }
+
 .geometry-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
 .geo-line { fill: none; stroke: var(--green-dark); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset .8s ease, opacity .35s ease, stroke .25s ease, filter .25s ease; }
 .scene-object.is-visible .geo-line { stroke-dashoffset: 0; }
@@ -177,6 +190,11 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .ratio-cell { min-height: 66px; font-size: .95rem; }
   .geo-equations { grid-template-columns: 1fr 1fr; }
   .ratio-answer, .geo-answer { grid-column: 1 / -1; min-height: 58px; }
+  .fraction-division-scene { grid-template-columns: 1fr; }
+  .fraction-equation, .fraction-check, .fraction-answer { grid-column: 1; }
+  .fraction-grid { min-height: 92px; }
+  .fraction-cell { font-size: .76rem; }
+  .fraction-group-number { top: 4px; right: 4px; width: 18px; height: 18px; font-size: .56rem; }
   .lesson-controls { grid-template-columns: 1fr 1fr; }
   .control-button.primary, .control-button.overview { grid-column: span 2; }
   .step-list { grid-template-columns: 1fr; }
@@ -196,6 +214,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .problem-heading h2 { font-size: 2rem; }
   .ratio-row { grid-template-columns: 1fr; }
   .ratio-row-label { grid-template-columns: auto 1fr; align-items: baseline; }
+  .fraction-grid { min-height: 82px; }
+  .fraction-cell span:first-child { writing-mode: vertical-rl; }
   .math-stage { min-height: 410px; }
 }
 
