@@ -1957,11 +1957,11 @@ const NM_EXAM = {
     <input id="nm-ex-ans" type="text" inputmode="decimal"
            placeholder="${isMulti ? lk('예: 3, 5','e.g. 3, 5','例：3, 5')
               : (pickChoices(p) ? lk('보기 번호','Choice number','选项序号') : lk('답 / Answer','Answer','答案'))}" autocomplete="off">
-    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
+    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">${lk('확인 ✓','OK ✓','确定 ✓')}</button>
   </div>
   <div class="nm-exam-nav">
-    <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>← 이전</button>
-    <button id="nm-ex-skip" class="nm-btn nm-btn-small">건너뛰기 →</button>
+    <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>${lk('← 이전','← Back','← 上一题')}</button>
+    <button id="nm-ex-skip" class="nm-btn nm-btn-small">${lk('건너뛰기 →','Skip →','跳过 →')}</button>
   </div>
 </div>`;
 
