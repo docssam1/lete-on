@@ -79,7 +79,7 @@
     reviewLocked,
     reviewReason
   });
-  const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration !== 1) => {
+  const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 2) => {
     const pdfPage = 13 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
     return {
@@ -95,8 +95,8 @@
       ["mission-1", "한 자리 약수 모두 찾기"], ["mission-2", "기준값에 가장 가까운 배수 찾기"], ["mission-3", "여러 배수 카드를 차례로 빼고 남은 카드 세기"], ["mission-4", "나머지가 주어진 나눗셈의 나누는 수 모두 찾기"], ["mission-5", "곱셈식이 맞는 빈칸 숫자 찾기"], ["mission-6", "두 수로 나누어떨어지지 않는 수의 개수 차"]
     ]],
     ["공약수와 최대공약수", 2, [
-      ["exploration", "두 수의 공약수 모두 찾기"], ["example-2-1-1", "두 수의 공약수 모두 찾기"], ["example-2-1-2", "곱셈식으로 나타낸 두 수의 공약수 모두 찾기"], ["example-2-2", "최대공약수가 정해진 두 자리 수 모두 찾기"], ["example-2-3", "공약수 조건으로 자연수 찾기"], ["example-2-4", "최대공약수 계산과 나눗셈 조건으로 가장 작은 수 찾기"],
-      ["mission-1-1", "나눗셈을 이어 최대공약수 구하기"], ["mission-1-2", "나눗셈을 이어 최대공약수 구하기"], ["mission-1-3", "나눗셈을 이어 최대공약수 구하기"], ["mission-2", "24와 공약수가 1뿐인 수 세기"], ["mission-3", "최대공약수가 정해진 가장 큰 세 자리 수"], ["mission-4", "곱과 최대공약수로 순서 있는 두 수 쌍 세기"], ["mission-5", "남거나 부족한 나눗셈 조건으로 나누는 수 찾기"], ["mission-6", "최대공약수가 정해진 두 자리 수의 합"]
+      ["exploration", "두 수의 공약수를 직접 모두 찾기"], ["example-2-1-1", "최대공약수로 두 수의 공약수 모두 찾기"], ["example-2-1-2", "곱셈식으로 나타낸 두 수의 공약수 모두 찾기"], ["example-2-2", "최대공약수가 정해진 두 자리 수 모두 찾기"], ["example-2-3", "공약수 조건으로 자연수 찾기"], ["example-2-4", "최대공약수와 배수가 아닌 조건으로 가장 작은 수 찾기"],
+      ["mission-1-1", "두 수의 공약수 개수 세기 ①"], ["mission-1-2", "두 수의 공약수 개수 세기 ②"], ["mission-1-3", "두 수의 공약수 개수 세기 ③"], ["mission-2", "어떤 수와 공약수가 1뿐인 수 세기"], ["mission-3", "최대공약수가 정해진 가장 큰 세 자리 수"], ["mission-4", "곱과 최대공약수로 순서 있는 두 수 쌍 세기"], ["mission-5", "남거나 부족한 나눗셈 조건으로 나누는 수 찾기"], ["mission-6", "최대공약수가 정해진 두 자리 수의 합"]
     ]],
     ["공배수와 최소공배수", 3, [
       ["exploration-1", "두 수의 공배수 중 기준값에 가장 가까운 수"], ["exploration-2", "최소공배수가 정해지게 하는 수의 개수"], ["example-3-1", "세 자리 공배수 개수"], ["example-3-2", "두 최대공약수 조건으로 가장 작은 수 찾기"], ["example-3-3", "한 수의 배수이지만 다른 수의 배수가 아닌 수 세기"], ["example-3-4", "연속한 세 수의 합이 배수가 되는 묶음 세기"],
@@ -718,7 +718,7 @@
           sourceItem51("연속한 네 수 카드로 1 만들기", 1, "5-1-u1-e4-mission-6", 10, 11)
         ])
       ],
-      ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, "factorMultipleE1", items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
+      ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, `factorMultipleE${exploration}`, items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
       ["규칙과 대응", "규칙과 대응", "대응표와 대응 관계", "규칙과 대응의 활용 ①", "규칙과 대응의 활용 ②"],
       ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],
       ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],

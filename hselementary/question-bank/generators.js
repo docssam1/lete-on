@@ -18186,6 +18186,104 @@
       const hint = mode === 1 ? " 전체 개수에서 각 배수의 개수를 빼세요." : mode === 3 ? " 범위의 처음과 끝을 모두 포함하여 셉니다." : "";
       return result(`${from.toLocaleString()}부터 ${to.toLocaleString()}까지의 자연수 중 ${firstDivisor}의 배수가 아닌 수의 개수와 ${secondDivisor}의 배수가 아닌 수의 개수의 차를 구하세요.${hint}${tag("non-multiple-count-difference", [mode, from, to, firstDivisor, secondDivisor], "single-value")}`, answer, `${firstDivisor}의 배수가 아닌 수는 ${firstCount}개, ${secondDivisor}의 배수가 아닌 수는 ${secondCount}개이므로 두 개수의 차는 ${answer}입니다.`);
     },
+    factorMultipleE2({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 13) throw new Error("약수와 배수 개념탐구 2 원문 분기는 0부터 13까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e2-kind="${kind}" data-factor-multiple-e2-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const setAnswer = values => values.join(", ");
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const choose = pools => pick(rng, pools[level]);
+      const commonDivisors = (left, right) => allDivisors(gcd(left, right));
+      const hint = (easy, hard) => level === 0 ? ` ${easy}` : level === 2 ? ` ${hard}` : "";
+
+      if (variant === 0) {
+        const [left, right] = choose([[[72, 96], [84, 126], [96, 144]], [[120, 144], [72, 108], [90, 150]], [[144, 216], [180, 240], [210, 294]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수를 모두 구하세요.${hint("두 수에 모두 나누어떨어지는 수를 작은 수부터 찾아보세요.", "두 수의 최대공약수의 약수를 빠짐없이 확인하세요.")}${tag("common-divisor-set-one", [left, right], "set")}`, setAnswer(answerValues), `두 수의 최대공약수는 ${gcd(left, right)}입니다. ${gcd(left, right)}의 약수는 ${setAnswer(answerValues)}이므로 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 1) {
+        const [left, right] = choose([[[48, 72], [54, 90], [64, 96]], [[72, 108], [84, 126], [108, 180]], [[144, 240], [168, 252], [216, 324]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수를 모두 구하세요.${hint("한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요.", "최대공약수를 먼저 구하면 공약수를 빠뜨리지 않을 수 있습니다.")}${tag("common-divisor-set-two", [left, right], "set")}`, setAnswer(answerValues), `두 수의 최대공약수는 ${gcd(left, right)}입니다. 따라서 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 2) {
+        const [firstLeft, firstRight, secondLeft, secondRight] = choose([[[8, 15, 12, 20], [9, 14, 6, 28], [10, 18, 12, 20]], [[12, 15, 20, 21], [14, 18, 12, 35], [16, 15, 20, 18]], [[18, 20, 24, 25], [21, 24, 18, 35], [28, 18, 24, 35]]]);
+        const left = firstLeft * firstRight;
+        const right = secondLeft * secondRight;
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${firstLeft}×${firstRight}, ${secondLeft}×${secondRight}의 공약수를 모두 구하세요.${hint("먼저 두 곱셈을 계산하세요.", "두 곱을 계산한 뒤 최대공약수의 약수를 이용해 보세요.")}${tag("product-common-divisor-set", [firstLeft, firstRight, secondLeft, secondRight, left, right], "set")}`, setAnswer(answerValues), `${firstLeft}×${firstRight}=${left}, ${secondLeft}×${secondRight}=${right}입니다. 두 수의 최대공약수는 ${gcd(left, right)}이므로 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 3) {
+        const [base, target] = choose([[[24, 12], [30, 15], [32, 16]], [[36, 18], [40, 20], [48, 24]], [[54, 18], [60, 20], [72, 24]]]);
+        const answerValues = range(10, 99).filter(value => gcd(base, value) === target);
+        return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 두 자리 자연수 ㉠을 모두 구하세요.${hint("두 자리 수를 ${target}의 배수부터 찾아보세요.", "${base}의 약수와 배수 관계를 함께 확인하여 빠짐없이 찾으세요.")}${tag("two-digit-gcd-set", [base, target], "set")}`, setAnswer(answerValues), `조건을 만족하는 두 자리 자연수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 4) {
+        const [left, right, divisorCount] = choose([[[72, 120, 3], [108, 162, 3], [90, 135, 4]], [[72, 90, 4], [72, 120, 3], [108, 162, 3]], [[192, 288, 3], [250, 375, 3], [300, 450, 3]]]);
+        const candidates = commonDivisors(left, right).filter(value => allDivisors(value).length === divisorCount);
+        if (candidates.length !== 1) throw new Error("약수의 개수 조건을 만족하는 공약수가 하나가 아닙니다.");
+        const answer = candidates[0];
+        return result(`두 수 ${left}, ${right}의 공약수 중 약수가 ${divisorCount}개인 수를 구하세요.${hint("공약수를 먼저 모두 찾고 약수의 개수를 세어 보세요.", "공약수마다 약수의 짝을 세어 조건을 만족하는 수를 하나로 정하세요.")}${tag("unique-common-divisor-by-divisor-count", [left, right, divisorCount], "single-value")}`, answer, `두 수의 공약수는 ${setAnswer(commonDivisors(left, right))}입니다. 이 중 약수가 ${divisorCount}개인 수는 ${answer} 하나입니다.`);
+      }
+      if (variant === 5) {
+        const [base, target, forbiddenMultiple] = choose([[[180, 12, 8], [210, 15, 9], [252, 21, 15]], [[252, 21, 15], [336, 21, 15], [360, 30, 14]], [[450, 30, 8], [504, 28, 20], [600, 25, 7]]]);
+        const found = [];
+        for (let value = target + 1; value <= base * 3; value += 1) {
+          if (gcd(value, base) === target && value % forbiddenMultiple !== 0) {
+            found.push(value);
+            break;
+          }
+        }
+        if (found.length !== 1) throw new Error("가장 작은 조건 만족 수가 하나가 아닙니다.");
+        const answer = found[0];
+        return result(`두 수 ㉠, ${base}의 최대공약수는 ${target}입니다. ㉠은 ${target}보다 크고 ${forbiddenMultiple}의 배수가 아닙니다. 가장 작은 ㉠을 구하세요.${hint("${target}의 배수를 작은 수부터 확인하고 ${forbiddenMultiple}의 배수는 빼세요.", "최대공약수 조건과 배수가 아닌 조건을 함께 확인하세요.")}${tag("smallest-gcd-non-multiple", [base, target, forbiddenMultiple], "single-value")}`, answer, `${target}보다 큰 수를 작은 수부터 확인하면 최대공약수 조건을 만족하면서 ${forbiddenMultiple}의 배수가 아닌 첫 수는 ${answer}입니다. 따라서 가장 작은 ㉠은 ${answer}입니다.`);
+      }
+      if (variant === 6) {
+        const [left, right] = choose([[[18, 60], [24, 54], [30, 42]], [[18, 60], [36, 84], [48, 72]], [[72, 108], [84, 126], [90, 150]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("공약수를 모두 쓴 뒤 개수를 세세요.", "최대공약수의 약수 개수를 이용해 빠짐없이 세세요.")}${tag("common-divisor-count-one", [left, right], "single-value")}`, answerValues.length, `공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 7) {
+        const [left, right] = choose([[[42, 70], [54, 90], [66, 110]], [[90, 108], [84, 126], [108, 180]], [[144, 216], [162, 270], [180, 300]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("두 수에 모두 나누어떨어지는 수를 세세요.", "최대공약수를 구하고 그 약수의 개수를 세세요.")}${tag("common-divisor-count-two", [left, right], "single-value")}`, answerValues.length, `두 수의 공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 8) {
+        const [left, right] = choose([[[48, 72], [60, 90], [72, 96]], [[72, 120], [96, 144], [108, 180]], [[144, 240], [168, 252], [180, 300]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("공약수를 작은 수부터 쓴 뒤 세어 보세요.", "최대공약수의 약수를 빠짐없이 세어 보세요.")}${tag("common-divisor-count-three", [left, right], "single-value")}`, answerValues.length, `공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 9) {
+        const [limit, base] = choose([[[100, 12], [120, 18], [150, 20]], [[200, 24], [180, 30], [240, 36]], [[300, 60], [360, 72], [420, 84]]]);
+        const answerValues = range(1, limit - 1).filter(value => gcd(value, base) === 1);
+        return result(`${limit}보다 작은 자연수 ㉠ 중 두 수 ${base}, ㉠의 최대공약수가 1인 ㉠은 모두 몇 개인지 구하세요.${hint("${base}와 공약수가 1뿐인 수를 작은 수부터 세어 보세요.", "${base}와 공약수가 1뿐인 수를 빠짐없이 세어 보세요.")}${tag("coprime-count-under-limit", [limit, base], "single-value")}`, answerValues.length, `조건을 만족하는 자연수는 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 10) {
+        const [base, target] = choose([[[96, 16], [144, 24], [200, 25]], [[288, 48], [180, 30], [240, 40]], [[432, 48], [504, 56], [600, 75]]]);
+        const candidates = range(100, 999).filter(value => gcd(value, base) === target);
+        const answer = candidates.at(-1);
+        return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 세 자리 자연수 ㉠ 중 가장 큰 수를 구하세요.${hint("${target}의 세 자리 배수부터 찾아보세요.", "세 자리 수를 큰 수부터 확인하여 최대공약수 조건을 만족하는 첫 수를 찾으세요.")}${tag("largest-three-digit-gcd", [base, target], "single-value")}`, answer, `조건을 만족하는 세 자리 자연수 가운데 가장 큰 수는 ${answer}입니다.`);
+      }
+      if (variant === 11) {
+        const [product, target] = choose([[[100, 5], [200, 5], [400, 10]], [[100, 5], [175, 5], [900, 15]], [[1600, 20], [2500, 25], [3600, 30]]]);
+        const candidates = allDivisors(product).flatMap(a => {
+          const b = product / a;
+          return a > b && gcd(a, b) === target ? [[a, b]] : [];
+        });
+        if (candidates.length !== 1) throw new Error("곱과 최대공약수 조건을 만족하는 순서쌍이 하나가 아닙니다.");
+        const [a, b] = candidates[0];
+        return result(`두 자연수 ㉠, ㉡에서 ㉠이 ㉡보다 큽니다. 두 수의 곱은 ${product}이고 최대공약수는 ${target}입니다. 순서 있는 두 수 쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요.${hint("${product}의 약수 짝을 써 보세요.", "약수 짝마다 최대공약수를 확인하여 조건을 만족하는 쌍을 빠뜨리지 마세요.")}${tag("ordered-pair-gcd-product-count", [product, target], "single-value")}`, candidates.length, `${product}의 약수 짝을 모두 확인하면 조건을 만족하는 쌍은 (${a}, ${b}) 하나입니다. 따라서 모두 ${candidates.length}개입니다.`);
+      }
+      if (variant === 12) {
+        const [first, remainder, second, short] = choose([[[50, 2, 58, 2], [93, 3, 105, 3], [100, 4, 116, 4]], [[137, 2, 183, 6], [100, 4, 116, 4], [155, 5, 175, 5]], [[222, 6, 246, 6], [200, 8, 232, 8], [250, 10, 290, 10]]]);
+        const minimum = Math.max(remainder, short);
+        const answerValues = commonDivisors(first - remainder, second + short).filter(value => value > minimum);
+        return result(`다음 조건을 모두 만족하는 자연수 ㉠을 구하세요.<br>(1) 나누어지는 수: ${first}, 나머지: ${remainder}<br>(2) ${second}보다 ${short} 큰 수는 ㉠의 배수<br>(3) ㉠은 ${minimum}보다 큰 수${hint("첫째 조건에서는 나누어지는 수에서 나머지를 빼고, 둘째 조건에서는 두 수를 더하세요.", "두 조건에서 나누어떨어지는 수의 공약수를 모두 찾아 범위 조건을 확인하세요.")}${tag("remainder-and-short-of-multiple-set", [first, remainder, second, short], "set")}`, setAnswer(answerValues), `${first}-${remainder}=${first - remainder}, ${second}+${short}=${second + short}입니다. 두 수의 공약수 중 ${minimum}보다 큰 수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      const [base, target] = choose([[[60, 10], [72, 12], [84, 12]], [[120, 12], [96, 16], [180, 15]], [[168, 12], [210, 15], [240, 24]]]);
+      const answerValues = range(10, 99).filter(value => gcd(base, value) === target);
+      const answer = answerValues.reduce((total, value) => total + value, 0);
+      return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 조건을 만족하는 두 자리 자연수 ㉠을 모두 더한 값을 구하세요.${hint("조건을 만족하는 두 자리 수를 모두 쓴 뒤 더하세요.", "${target}의 배수 중 최대공약수 조건을 만족하는 수를 빠짐없이 찾아 더하세요.")}${tag("two-digit-gcd-set-sum", [base, target], "single-value")}`, answer, `조건을 만족하는 두 자리 자연수는 ${setAnswer(answerValues)}입니다. 모두 더하면 ${answer}입니다.`);
+    },
     factorMultipleAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const divisor = pick(rng, [7, 9, 11, 13, 17].slice(0, 3 + level));
