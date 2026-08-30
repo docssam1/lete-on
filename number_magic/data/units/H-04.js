@@ -40,7 +40,7 @@ window.NM_UNITS['H-04'] = {
         desc:{ko:'123×<b>10001</b>은 어떻게 될까요? 10001=10000+1이니까 123×10000+123=1230000+123=<b>1230123</b> — 123 사이에 <b>0이 한 칸</b> 끼어요! 곱하는 수의 자릿수가 곱해지는 수보다 하나 더 많으면 이렇게 간격이 생겨요. 123×<b>1001001</b>은 123이 <b>세 번</b> 그대로: <b>123123123</b>. 나눗셈도 거꾸로 통해요 — 123123÷1001을 하면 다시 123이 나와요!',
               en:'What about 123×<b>10001</b>? Since 10001=10000+1, that\'s 123×10000+123=1230000+123=<b>1230123</b> — a <b>zero gap</b> appears between the two 123s! When the multiplier has one more digit than the number, a gap shows up like this. And 123×<b>1001001</b> repeats 123 <b>three times</b>: <b>123123123</b>. Division works in reverse too — 123123÷1001 gives back 123!',
               zh:'那123×<b>10001</b>会怎样？因为10001=10000+1，就是123×10000+123=1230000+123=<b>1230123</b>——两个123之间出现<b>一个0</b>！当乘数的位数比原数多一位时就会出现这样的间隔。123×<b>1001001</b>会让123原样重复<b>三次</b>：<b>123123123</b>。除法反过来也成立——123123÷1001又会得到123！'},
-        mathSteps:['123×10000 = 1230000','1230000+123 = 1230123','123123 ÷ 1001 = 123 (되돌리기)'],
+        mathSteps:['123×10000 = 1230000','1230000+123 = 1230123',{ko:'123123 ÷ 1001 = 123 (되돌리기)',en:'123123 ÷ 1001 = 123 \\text{ (undo)}',zh:'123123 ÷ 1001 = 123（还原）'}],
         result:{ko:'10001을 곱하면 사이에 0이 끼고, 1001001을 곱하면 세 번 반복돼요.',en:'×10001 leaves a zero gap; ×1001001 repeats three times.',zh:'乘10001会隔一个0，乘1001001会重复三次。'},
         book:{ko:'경시의 탑에서는 나눗셈(역방향)도 절반만큼 연습해요 — 반복 패턴을 알아채면 나눗셈이 순식간에 끝나요.',
               en:'In the Tower of Challenges, we practice division (the reverse) just as much — spotting the pattern makes dividing instant.',

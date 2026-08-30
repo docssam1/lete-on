@@ -29,7 +29,7 @@ window.NM_UNITS['C-15'] = {
         desc:{ko:'44, 33, 22 같은 수는 <b>같은 숫자가 두 자리에 반복</b>돼요. 그래서 23×44는 곱을 두 번 할 필요가 없어요! <b>23×4=92 한 번만</b> 구하면, 십의 자리 몫은 92를 한 칸 민 920. 즉 23×44 = 920+92 = <b>1012</b>.',
               en:'Numbers like 44, 33, 22 have <b>the same digit in both places</b>. So 23×44 doesn\'t need two different multiplications! Find <b>23×4=92 just once</b>; the tens part is 92 shifted one place: 920. So 23×44 = 920+92 = <b>1012</b>.',
               zh:'44、33、22这类数<b>两个数位是同一个数字</b>。所以23×44不需要乘两次！只算<b>一次23×4=92</b>，十位部分就是92移一位的920。所以23×44 = 920+92 = <b>1012</b>。'},
-        mathSteps:['23 × 44','23×4 = 92 (한 번만!)','92×10 + 92 = 920+92','= 1012'],
+        mathSteps:['23 × 44',{ko:'23×4 = 92 (한 번만!)',en:'23×4 = 92 \\text{ (just once!)}',zh:'23×4 = 92（只算一次！）'},'92×10 + 92 = 920+92','= 1012'],
         result:{ko:'23×44=1012! 한 번 곱하고, 밀고, 더하면 끝.',en:'23×44=1012! Multiply once, shift, add — done.',zh:'23×44=1012！乘一次、移位、相加，完成。'},
         book:{ko:'원리: a×44 = a×4×11 = (a×4)×10 + (a×4). 반복 숫자 수는 "숫자×11"이라서 ×11 마법(C-13)의 자리이동과 똑같은 구조예요.',
               en:'Principle: a×44 = a×4×11 = (a×4)×10 + (a×4). Repeated-digit numbers are "digit×11", the same shift-and-add structure as the ×11 magic (C-13).',

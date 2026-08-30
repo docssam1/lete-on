@@ -58,7 +58,7 @@ window.NM_UNITS['C-01'] = {
         desc:{ko:'같은 수를 두 번 곱한 것을 <b>제곱수</b>라고 해요. 1²=1, 2²=4, 3²=9, 4²=16, 5²=25… 이웃한 두 제곱수의 차이는 홀수예요: 4-1=3, 9-4=5, 16-9=7, 25-16=9!',
               en:'A number multiplied by itself is called a <b>perfect square</b>. 1²=1, 2²=4, 3²=9, 4²=16, 5²=25… The difference between consecutive squares is always odd: 4-1=3, 9-4=5, 16-9=7, 25-16=9!',
               zh:'一个数乘以自身叫做<b>完全平方数</b>。1²=1，2²=4，3²=9，4²=16，5²=25……相邻平方数的差总是奇数：4-1=3，9-4=5，16-9=7，25-16=9！'},
-        mathSteps:['1²=1, 2²=4, 3²=9','차이: 3, 5, 7, 9…','연속 홀수!'],
+        mathSteps:['1²=1, 2²=4, 3²=9',{ko:'차이: 3, 5, 7, 9…',en:'\\text{differences: } 3, 5, 7, 9…',zh:'差：3, 5, 7, 9…'},{ko:'연속 홀수!',en:'\\text{consecutive odd numbers!}',zh:'连续的奇数！'}],
         result:{ko:'제곱수의 차이가 연속 홀수! 수학의 아름다운 패턴이에요.',en:'Differences between squares are consecutive odd numbers — a beautiful pattern in maths!',zh:'平方数之差是连续奇数——数学中的美丽规律！'},
         book:{ko:'고급 과정에서는 이 패턴을 공식으로 써요: ★²=(★−1)²+(★−1)+★. 옆 제곱수만 알면 못 외운 제곱수도 바로 구할 수 있어요. 1로 끝나는 수(61²=60²+60+61)도 같은 원리예요.',
               en:'The advanced course turns this pattern into a formula: n²=(n−1)²+(n−1)+n — know one neighbouring square and any square you haven\'t memorised follows instantly. Numbers ending in 1 (61²=60²+60+61) use the same idea.',

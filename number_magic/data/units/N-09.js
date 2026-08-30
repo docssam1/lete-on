@@ -33,7 +33,7 @@ window.NM_UNITS['N-09'] = {
         desc:{ko:'이웃 돌 둘을 모으면 위 돌! 동전은 10, 20, 30!',
           en:'Two neighbor stones make the top one! Coins go 10, 20, 30!',
           zh:'相邻两块合成上面那块！硬币10、20、30！'},
-        mathSteps:['바닥: 1, 2, 1','가운데: 1+2=3, 2+1=3','꼭대기: 3+3=6!'],
+        mathSteps:[{ko:'바닥: 1, 2, 1',en:'Bottom: 1, 2, 1',zh:'底层：1, 2, 1'},{ko:'가운데: 1+2=3, 2+1=3',en:'Middle: 1+2=3, 2+1=3',zh:'中层：1+2=3, 2+1=3'},{ko:'꼭대기: 3+3=6!',en:'Top: 3+3=6!',zh:'顶层：3+3=6！'}],
         result:{ko:'층층이 쌓으면 꼭대기까지!',en:'Stack up to the top!',zh:'一层层叠到塔顶！'} }
     ],
     rule:{ ko:'이웃 두 돌을 모으면 위 돌이에요!',

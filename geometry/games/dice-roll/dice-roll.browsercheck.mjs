@@ -2,13 +2,14 @@ import { strict as assert } from "node:assert";
 import { chromium } from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
 import sharp from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp/dist/index.mjs";
 
+const baseUrl = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 });
 const errors = [];
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
 page.on("pageerror", (error) => errors.push(error.message));
 
-await page.goto("http://127.0.0.1:8765/geometry/games/dice-roll/?level=3", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=3`, { waitUntil: "networkidle" });
 assert.equal(await page.locator(".route-board").count(), 1);
 assert.ok(await page.locator("#dieView .pip").count() >= 3);
 assert.equal(await page.locator("#choiceTray button").count(), 3);
@@ -72,12 +73,12 @@ for(const button of await page.locator("#choiceTray button").all()){await button
 await page.waitForFunction((before)=>document.querySelector("#problemLabel")?.textContent!==before,problemBeforeAuto);
 const problemAfterAuto=await page.locator("#problemLabel").textContent();
 
-await page.goto("http://127.0.0.1:8765/geometry/games/dice-roll/?level=5", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=5`, { waitUntil: "networkidle" });
 assert.equal(await page.locator("#targetDie .die-svg").count(), 1);
 assert.equal(await page.locator(".route-choice").count(), 3);
 
 await page.setViewportSize({ width: 390, height: 844 });
-await page.goto("http://127.0.0.1:8765/geometry/games/dice-roll/?level=3", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=3`, { waitUntil: "networkidle" });
 await page.locator('#methodSwitch button[data-method="flat"]').click();
 assert.equal(await page.locator(".flat-number-palette button").count(), 6);
 const flatMobile=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,palette:document.querySelector(".flat-number-palette").getBoundingClientRect().toJSON()}));
@@ -89,7 +90,7 @@ assert.ok(mobile.board.width <= mobile.width - 18, JSON.stringify(mobile));
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-dice-roll-mobile.png", fullPage: true });
 
 await page.emulateMedia({ reducedMotion: "reduce" });
-await page.goto("http://127.0.0.1:8765/geometry/games/dice-roll/?level=1", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=1`, { waitUntil: "networkidle" });
 await page.locator('#methodSwitch button[data-method="solid"]').click();
 const reducedDirection = await page.locator('.route-lines line[data-step="1"]').getAttribute("data-direction");
 const reducedStarted = Date.now();
@@ -100,12 +101,12 @@ assert.ok(reducedDuration < 250, `Reduced motion took ${reducedDuration}ms`);
 await page.emulateMedia({ reducedMotion: "no-preference" });
 
 await page.setViewportSize({ width: 1280, height: 900 });
-await page.goto("http://127.0.0.1:8765/geometry/solid-vista/", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/solid-vista/`, { waitUntil: "networkidle" });
 assert.equal(await page.locator("#diceLevelGrid .dice-card").count(), 5);
 assert.match(await page.locator("#diceLevelGrid .dice-card").first().textContent(), /초급/);
 assert.match(await page.locator("#diceLevelGrid .dice-card").nth(3).textContent(), /중급/);
 assert.ok(await page.locator(".level-card img").evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth === 800 && image.naturalHeight === 500)));
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-solid-vista-refresh.png", fullPage: true });
 assert.equal(errors.length, 0, errors.join("\n"));
-console.log(JSON.stringify({ level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, diceCards: 5 }, null, 2));
+console.log(JSON.stringify({ baseUrl, level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, diceCards: 5 }, null, 2));
 await browser.close();

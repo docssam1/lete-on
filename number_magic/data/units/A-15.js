@@ -38,10 +38,10 @@ window.NM_UNITS['A-15'] = {
     stages:[
       { tag:{ ko:'① 두 수를 모두 몇십으로 올려요', en:'1) Round both numbers up', zh:'① 把两个数都凑成整十' },
         head:{ ko:'87은 90보다 3 작은 수예요', en:'87 is 3 less than 90', zh:'87比90小3' },
-        desc:{ ko:'87-59처럼 받아내림이 헷갈리는 뺄셈은, 두 수를 모두 가까운 몇십으로 올려 써요. 87=90-3, 59=60-1이에요.',
-               en:'For tricky subtraction like 87-59, rewrite both numbers as the nearest ten above minus a small amount: 87=90-3, 59=60-1.',
-               zh:'像87-59这样容易搞混的减法，把两个数都写成最近的整十减去一点：87=90-3，59=60-1。' },
-        mathSteps:['87 - 59','= (90-3) - (60-1)','= 90 - 3 - 60 + 1  ← 부호 조심!','= 30 - 3 + 1','= 28'],
+        desc:{ ko:'87-59처럼 받아내림이 헷갈리는 뺄셈은, 두 수를 모두 <b>가까운 몇십으로 올려 써요</b>. 87=90-3, 59=60-1이에요.',
+               en:'For tricky subtraction like 87-59, rewrite both numbers as <b>the nearest ten above minus a small amount</b>: 87=90-3, 59=60-1.',
+               zh:'像87-59这样容易搞混的减法，把两个数都写成<b>最近的整十减去一点</b>：87=90-3，59=60-1。' },
+        mathSteps:['87 - 59','= (90-3) - (60-1)',{ko:'= 90 - 3 - 60 + 1  ← 부호 조심!',en:'= 90 - 3 - 60 + 1 ← \\text{watch the signs!}',zh:'= 90 - 3 - 60 + 1 ← 注意符号！'},'= 30 - 3 + 1','= 28'],
         result:{ ko:'빼는 수의 보정(-1)은 부호가 바뀌어 더하기가 돼요!', en:"The subtrahend's adjustment (-1) flips sign to become addition!", zh:'减数的修正(-1)符号会翻转变成加法！' },
         book:{ ko:'67-49: 67=70-3, 49=50-1 → 70-3-50+1 = 20-3+1 = 18.',
                en:'67-49: 67=70-3, 49=50-1 → 70-3-50+1 = 20-3+1 = 18.',
@@ -49,9 +49,9 @@ window.NM_UNITS['A-15'] = {
 
       { tag:{ ko:'② 몇십끼리 먼저, 보정은 나중에', en:'2) Tens first, adjustments last', zh:'② 先算整十，修正放最后' },
         head:{ ko:'몇십 - 몇십을 먼저 계산해요', en:'Calculate the tens-minus-tens first', zh:'先算整十减整十' },
-        desc:{ ko:'90-60처럼 몇십끼리는 암산하기 쉬워요. 그 다음 두 보정 값(-3과 +1)을 순서대로 적용하면 끝이에요.',
-               en:'90-60 (tens minus tens) is easy mental math. Then just apply the two adjustments (-3 and +1) in order.',
-               zh:'90-60这样整十减整十很容易心算。然后依次应用两个修正值(-3和+1)即可。' },
+        desc:{ ko:'90-60처럼 몇십끼리는 암산하기 쉬워요. 그 다음 <b>두 보정 값(-3과 +1)을 순서대로 적용하면</b> 끝이에요.',
+               en:'90-60 (tens minus tens) is easy mental math. Then just <b>apply the two adjustments (-3 and +1) in order</b>.',
+               zh:'90-60这样整十减整十很容易心算。然后<b>依次应用两个修正值(-3和+1)</b>即可。' },
         mathSteps:['47 - 39','= (50-3) - (40-1)','= 50 - 40 - 3 + 1','= 10 - 3 + 1','= 8'],
         result:{ ko:'47-39 = 50-40-3+1 = 10-3+1 = 8', en:'47-39 = 50-40-3+1 = 10-3+1 = 8', zh:'47-39 = 50-40-3+1 = 10-3+1 = 8' },
         book:null }

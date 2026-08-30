@@ -40,7 +40,7 @@ window.NM_UNITS['C-28'] = {
         desc:{ko:'60을 10명에게 나눠주면 한 명당 6개(60÷10=6)예요. 그런데 5명에게 나눠주면 <b>사람 수가 절반</b>이니까 한 명이 받는 몫은 <b>두 배</b>가 돼요: 6×2=<b>12</b>. 나누는 사람 수가 절반이 되면 몫은 그만큼 커져요 — 10=5×2니까 10으로 나눈 몫에 2를 곱하면 5로 나눈 몫이 나와요!',
               en:'Sharing 60 among 10 people gives 6 each (60÷10=6). But share it among 5 people — <b>half as many people</b> — and each share <b>doubles</b>: 6×2=<b>12</b>. Halve the number of people, and each share grows to match — since 10=5×2, doubling the ÷10 result gives the ÷5 result!',
               zh:'60分给10人，每人6个(60÷10=6)。但分给5人——<b>人数减半</b>——每人分到的就<b>翻倍</b>：6×2=<b>12</b>。分的人少一半，每份就多一倍——因为10=5×2，把除以10的结果乘2就是除以5的结果！'},
-        mathSteps:['60 ÷ 10 = 6','사람 수 절반 → 몫은 두 배','6 × 2 = 12'],
+        mathSteps:['60 ÷ 10 = 6',{ko:'사람 수 절반 → 몫은 두 배',en:'\\text{half the people → double the share}',zh:'人数减半 → 每人份翻倍'},'6 × 2 = 12'],
         result:{ko:'60÷5=12! 10으로 나눈 몫의 두 배.',en:'60÷5=12! Double what ÷10 gives you.',zh:'60÷5=12！是除以10结果的两倍。'},
         book:null },
 

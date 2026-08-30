@@ -40,7 +40,7 @@ window.NM_UNITS['M-46'] = {
         desc:{ko:'앞서 3x²을 미분하면 6x가 됐죠? ∫는 그 <b>반대 방향</b>이에요 — 6x를 적분하면 다시 3x²이 나와요. 그런데 3x²+1, 3x²+7도 미분하면 똑같이 6x가 되니, "어떤 상수인지는 알 수 없다"는 뜻으로 <b>+C</b>(적분상수)를 꼭 붙여요.',
               en:'Earlier, differentiating 3x² gave 6x. ∫ goes the <b>opposite way</b> — integrating 6x gives back 3x². But 3x²+1 and 3x²+7 also differentiate to 6x, so we always attach <b>+C</b> (the constant of integration) to say "we can\'t know which constant it was."',
               zh:'前面对3x²求导得到了6x。∫走的是<b>反方向</b>——对6x积分又得回3x²。但3x²+1和3x²+7求导后也都是6x，所以一定要加上<b>+C</b>(积分常数)，表示"不知道具体是哪个常数"。'},
-        mathSteps:['3x^2 \\xrightarrow{\\text{미분}} 6x', '6x \\xrightarrow{\\int} 3x^2+C'],
+        mathSteps:[{ko:'3x^2 \\xrightarrow{\\text{미분}} 6x',en:'3x^2 \\xrightarrow{\\text{differentiate}} 6x',zh:'3x^2 \\xrightarrow{\\text{求导}} 6x'}, '6x \\xrightarrow{\\int} 3x^2+C'],
         result:{ko:'∫는 미분의 반대 — 계수를 (n+1)로 나누고 지수를 하나 늘려요!',en:'∫ reverses differentiation — divide the coefficient by (n+1) and raise the exponent by one!',zh:'∫是求导的逆过程——系数除以(n+1)，指数加1！'},
         book:{ko:'∫axⁿdx = (a÷(n+1))xⁿ⁺¹ + C — 미분 규칙 naxⁿ⁻¹을 거꾸로 뒤집은 것뿐이에요.',
               en:'∫ax^n dx = (a÷(n+1))x^(n+1) + C — simply the differentiation rule n·a·x^(n-1) run in reverse.',

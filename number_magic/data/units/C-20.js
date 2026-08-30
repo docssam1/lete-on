@@ -50,7 +50,7 @@ window.NM_UNITS['C-20'] = {
         desc:{ko:'이제 도구가 두 개예요! <b>공약수가 보이면 줄이고(약분)</b>, <b>나누는 수가 5·25·50처럼 10·100의 조각이면 부풀려요</b>. 84÷12? 공약수가 많으니 줄이기. 340÷5? 5는 10의 절반이니 부풀리기 → 680÷10=68. 문제마다 더 빠른 길을 고르는 것이 마법사의 판단력!',
               en:'Now you have two tools! <b>See a common factor → shrink (simplify)</b>; <b>divisor like 5, 25, 50 (a fraction of 10/100) → inflate</b>. 84÷12? Plenty of common factors — shrink. 340÷5? Five is half of ten — inflate → 680÷10=68. Choosing the faster path per problem is wizard judgement!',
               zh:'现在你有两个工具！<b>看到公约数→缩小(约分)</b>；<b>除数是5、25、50这种10/100的分块→扩大</b>。84÷12？公约数多——缩小。340÷5？5是10的一半——扩大→680÷10=68。每题选更快的路，这就是魔法师的判断力！'},
-        mathSteps:['공약수 많다 → 줄이기(C-19)','나누는 수가 5·25·50 → 부풀리기','340÷5 → 680÷10 = 68'],
+        mathSteps:[{ko:'공약수 많다 → 줄이기(C-19)',en:'\\text{many common factors → shrink (C-19)}',zh:'公约数多 → 缩小(C-19)'},{ko:'나누는 수가 5·25·50 → 부풀리기',en:'\\text{divisor 5·25·50 → inflate}',zh:'除数是5·25·50 → 放大'},'340÷5 → 680÷10 = 68'],
         result:{ko:'줄이기와 부풀리기, 두 마법을 골라 써요!',en:'Shrink or inflate — pick the right magic!',zh:'缩小和扩大——挑对魔法用！'},
         book:null }
     ],

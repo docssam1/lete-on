@@ -19,9 +19,9 @@ window.NM_UNITS['A-22'] = {
     stages:[
       { tag:{ ko:'① 빼는 수를 □0 + 나머지로 쪼개요', en:'1) Split subtrahend into □0 + remainder', zh:'① 把减数拆成整十数加余数' },
         head:{ ko:'먼저 큰 부분(□0)을 빼고, 남은 수를 또 빼요', en:'Subtract the big part (□0) first, then the remainder', zh:'先减大的部分（整十数），再减余数' },
-        desc:{ ko:'74-38=? 에서 38=30+8로 쪼개요. 74-30=44, 그 다음 44-8=36. 두 번 빼면 끝!',
-               en:'74-38=? Split 38=30+8. First 74-30=44, then 44-8=36. Two subtractions done!',
-               zh:'74-38=？把38拆成30+8。先74-30=44，再44-8=36。减两次搞定！' },
+        desc:{ ko:'74-38=? 에서 <b>38=30+8로 쪼개요</b>. 74-30=44, 그 다음 44-8=36. 두 번 빼면 끝!',
+               en:'74-38=? <b>Split 38=30+8</b>. First 74-30=44, then 44-8=36. Two subtractions done!',
+               zh:'74-38=？<b>把38拆成30+8</b>。先74-30=44，再44-8=36。减两次搞定！' },
         mathSteps:['74 - 38 = □','38 = 30 + 8','74 - 30 = 44','44 - 8 = 36'],
         result:{ ko:'74-38=36 ✓', en:'74-38=36 ✓', zh:'74-38=36 ✓' },
         book:{ ko:'빼는 수를 십의 자리와 일의 자리로 쪼개면 각 단계가 간단해요.', en:'Splitting the subtrahend into tens and ones makes each step simpler.', zh:'把减数拆成十位和个位，每步就简单了。' } },

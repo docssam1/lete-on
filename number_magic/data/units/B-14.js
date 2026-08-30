@@ -37,7 +37,7 @@ window.NM_UNITS['B-14'] = {
         desc:{ko:'9단의 신기한 규칙: 결과의 <b>각 자릿수를 더하면 항상 9</b>가 나와요! 18→1+8=9, 27→2+7=9, 36→3+6=9… 이걸 알면 답을 빠르게 확인할 수 있어요!',
               en:'A magical pattern in the 9s: <b>the digits of each product always add up to 9</b>! 18→1+8=9, 27→2+7=9, 36→3+6=9… Use this to check your answers fast!',
               zh:'9的乘法有个神奇规律：每个积的<b>各位数字之和总是9</b>！18→1+8=9，27→2+7=9，36→3+6=9……用这个来快速检验答案！'},
-        mathSteps:['18: 1+8=9 ✓','27: 2+7=9 ✓','36: 3+6=9 ✓','→ 자릿수 합이 9면 9의 배수!'],
+        mathSteps:['18: 1+8=9 ✓','27: 2+7=9 ✓','36: 3+6=9 ✓',{ko:'→ 자릿수 합이 9면 9의 배수!',en:'→ \\text{digit sum 9 means a multiple of 9!}',zh:'→ 数字和是9就是9的倍数！'}],
         result:{ko:'9, 18, 27, 36, 45, 54, 63, 72, 81 — 전부 자릿수 합이 9! 틀린 답을 금방 찾을 수 있어요.', en:'9, 18, 27, 36, 45, 54, 63, 72, 81 — all digit-sums are 9! A quick way to spot wrong answers.', zh:'9、18、27、36、45、54、63、72、81——各位数字之和都是9！能快速发现错误答案。'},
         book:{ko:'9×n에서 십의 자리는 n−1, 일의 자리는 10−n. 두 자리 합은 (n−1)+(10−n)=9. 항상 성립해요!', en:'For 9×n: tens digit = n−1, units digit = 10−n. Sum = (n−1)+(10−n) = 9. Always true!', zh:'9×n的十位 = n−1，个位 = 10−n。之和 = (n−1)+(10−n) = 9。永远成立！'} },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-14'] = {
         desc:{ko:'양 손가락 10개를 펴고, <b>n번째 손가락을 내리면</b> 왼쪽 손가락 수가 십의 자리, 오른쪽 손가락 수가 일의 자리예요! 9×3이면 3번째 손가락을 내려요.',
               en:'Spread all 10 fingers, then <b>fold down the n-th finger</b>. The fingers to the left = tens digit, fingers to the right = units digit! For 9×3, fold the 3rd finger.',
               zh:'张开10根手指，<b>弯下第n根手指</b>。弯下手指左边的手指数 = 十位，右边的 = 个位！9×3就弯下第3根手指。'},
-        mathSteps:['9×3: 3번째 손가락 ↓','왼쪽 2개 → 20','오른쪽 7개 → 7','= 27 ✓'],
+        mathSteps:[{ko:'9×3: 3번째 손가락 ↓',en:'9×3: \\text{fold the 3rd finger} ↓',zh:'9×3：弯下第3根手指 ↓'},{ko:'왼쪽 2개 → 20',en:'\\text{2 fingers on the left} → 20',zh:'左边2根 → 20'},{ko:'오른쪽 7개 → 7',en:'\\text{7 on the right} → 7',zh:'右边7根 → 7'},'= 27 ✓'],
         result:{ko:'손가락만 있으면 9단은 언제든지! 도구 없이도 정확하게 계산할 수 있어요.', en:'With just your fingers you can do 9× anything! No tools needed — just your hands.', zh:'只要有手指，随时随地都能算9的乘法！不需要任何工具。'},
         book:null }
     ],

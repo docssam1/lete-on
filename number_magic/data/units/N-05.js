@@ -25,7 +25,7 @@ window.NM_UNITS['N-05'] = {
         desc:{ko:'줄에서도 계단에서도 몇째인지 세어 봐요!',
           en:'Count "which one" in lines and on stairs too!',
           zh:'排队和台阶上也数一数第几个！'},
-        mathSteps:['줄서기: 방향을 정하고 세어요','계단: 아래에서부터 세어요','답은 숫자로!'],
+        mathSteps:[{ko:'줄서기: 방향을 정하고 세어요',en:'Lining up: pick a direction and count',zh:'排队：定好方向再数'},{ko:'계단: 아래에서부터 세어요',en:'Stairs: count from the bottom',zh:'楼梯：从下往上数'},{ko:'답은 숫자로!',en:'Answer with a number!',zh:'用数字回答！'}],
         result:{ko:'생활 속 어디서나 서수를 써요!',en:'Ordinals are everywhere!',zh:'生活中到处都能用序数！'} }
     ],
     rule:{ ko:'줄서기는 방향대로, 계단은 아래에서부터 세어요!',

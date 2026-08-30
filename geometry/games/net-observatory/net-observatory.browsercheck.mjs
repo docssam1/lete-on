@@ -1,13 +1,14 @@
 import { strict as assert } from "node:assert";
 import { chromium } from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
 
+const baseUrl=(process.env.GFIELD_BASE_URL||"http://127.0.0.1:8765").replace(/\/$/,"");
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1048,height:901},deviceScaleFactor:1});
 const errors=[];
 page.on("console",(message)=>{if(message.type()==="error")errors.push(message.text());});
 page.on("pageerror",(error)=>errors.push(error.message));
 await page.addInitScript(()=>localStorage.setItem("gfield-net-observatory-tutorial-v1","done"));
-await page.goto("http://127.0.0.1:8765/geometry/games/net-observatory/?level=2",{waitUntil:"networkidle"});
+await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=2`,{waitUntil:"networkidle"});
 
 assert.equal(await page.locator(".viewer-host canvas").count(),1);
 assert.equal(await page.locator(".viewer-host").getAttribute("data-material"),"satin-enamel");
@@ -45,7 +46,7 @@ await page.waitForFunction((before)=>document.querySelector("#problemLabel")?.te
 const problemAfter=await page.locator("#problemLabel").textContent();
 
 await page.setViewportSize({width:844,height:390});
-await page.goto("http://127.0.0.1:8765/geometry/games/net-observatory/?level=4",{waitUntil:"networkidle"});
+await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=4`,{waitUntil:"networkidle"});
 const mobile=await page.evaluate(()=>({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,canvases:document.querySelectorAll("canvas").length,dock:document.querySelector(".answer-dock").getBoundingClientRect().toJSON()}));
 assert.ok(mobile.scrollWidth<=mobile.width+1,JSON.stringify(mobile));
 assert.ok(mobile.scrollHeight<=mobile.height+1,JSON.stringify(mobile));
@@ -53,5 +54,5 @@ assert.equal(mobile.canvases,4);
 assert.ok(mobile.dock.bottom<=mobile.height+1,JSON.stringify(mobile));
 await page.screenshot({path:"C:/Users/user/AppData/Local/Temp/gfield-net-observatory-mobile.png",fullPage:true});
 assert.equal(errors.length,0,errors.join("\n"));
-console.log(JSON.stringify({frame,alphaBounds,pictureChoices:3,autoAdvance:{before:problemBefore,after:problemAfter},mobile},null,2));
+console.log(JSON.stringify({baseUrl,frame,alphaBounds,pictureChoices:3,autoAdvance:{before:problemBefore,after:problemAfter},mobile},null,2));
 await browser.close();

@@ -28,7 +28,7 @@ window.NM_UNITS['B-12'] = {
         desc:{ko:'2단·4단·8단은 모두 <b>두 배 패밀리</b>예요. 2단에 ×2를 하면 4단, 4단에 ×2를 하면 8단이 나와요. 하나만 알면 나머지 둘도 바로 풀려요!',
               en:'The 2s, 4s, and 8s are all in the <b>doubling family</b>. 2s × 2 = 4s, and 4s × 2 = 8s. Know one and you can get the other two instantly!',
               zh:'2·4·8的口诀都属于<b>翻倍家族</b>。2的口诀×2=4的口诀，4的口诀×2=8的口诀。只要会一个，另外两个立刻就能算出来！'},
-        mathSteps:['2×6=12','4×6=24 (12×2)','8×6=48 (24×2)','→ 서로 두 배 관계!'],
+        mathSteps:['2×6=12','4×6=24 (12×2)','8×6=48 (24×2)',{ko:'→ 서로 두 배 관계!',en:'→ \\text{each is double the last!}',zh:'→ 互为两倍关系！'}],
         result:{ko:'6을 기준으로: 2단=12, 4단=24, 8단=48. 모두 두 배씩 이어져요!', en:'With 6 as the base: 2s=12, 4s=24, 8s=48. Each is double the previous!', zh:'以6为基础：2的口诀=12，4的口诀=24，8的口诀=48。每个都是前一个的两倍！'},
         book:{ko:'2·4·8단은 두 배 패밀리. 2×n → (×2) → 4×n → (×2) → 8×n. 이 구조를 이해하면 세 단을 한꺼번에 기억할 수 있어요.', en:'2×n → (×2) → 4×n → (×2) → 8×n. Understanding this structure lets you hold all three tables in memory at once.', zh:'2×n → (×2) → 4×n → (×2) → 8×n。理解这个结构，三个口诀就能一起记住。'} },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-12'] = {
         desc:{ko:'모든 짝수는 2단에 있어요. 4의 배수(4·8·12·16…)는 4단에도 있고, 8의 배수(8·16·24·32…)는 8단에도 있어요. 큰 수가 어느 단인지 판별해 봐요!',
               en:'Every even number is in the 2s. Multiples of 4 (4, 8, 12, 16…) are also in the 4s, and multiples of 8 (8, 16, 24, 32…) are in the 8s too. Can you sort these?',
               zh:'所有偶数都在2的口诀里。4的倍数（4·8·12·16…）也在4的口诀里，8的倍数（8·16·24·32…）也在8的口诀里。你能判断这些数吗？'},
-        mathSteps:['18: 2단○(2×9) / 4단×(4×4.5) / 8단×','24: 2단○ / 4단○(4×6) / 8단×(8×3=24) ✓','48: 2단○ / 4단○(4×12) / 8단○(8×6)'],
+        mathSteps:[{ko:'18: 2단○(2×9) / 4단×(4×4.5) / 8단×',en:'18: \\text{×2 ○ }(2×9)\\text{ / ×4 ✗ }(4×4.5)\\text{ / ×8 ✗}',zh:'18：×2○(2×9) / ×4✗(4×4.5) / ×8✗'},{ko:'24: 2단○ / 4단○(4×6) / 8단×(8×3=24) ✓',en:'24: \\text{×2 ○ / ×4 ○ }(4×6)\\text{ / ×8 }(8×3=24) ✓',zh:'24：×2○ / ×4○(4×6) / ×8(8×3=24) ✓'},{ko:'48: 2단○ / 4단○(4×12) / 8단○(8×6)',en:'48: \\text{×2 ○ / ×4 ○ }(4×12)\\text{ / ×8 ○ }(8×6)',zh:'48：×2○ / ×4○(4×12) / ×8○(8×6)'}],
         result:{ko:'48은 2단·4단·8단 모두에 있어요! 더 큰 배수일수록 더 많은 단에 속해요.', en:'48 appears in the 2s, 4s, and 8s! The larger the multiple, the more tables it belongs to.', zh:'48同时在2·4·8的口诀里！倍数越大，属于的口诀越多。'},
         book:null }
     ],

@@ -33,7 +33,7 @@ window.NM_UNITS['N-01'] = {
         desc:{ko:'🐤 하나씩 짚으며 "하나, 둘, 셋!"',
           en:'Touch one by one: "one, two, three!"',
           zh:'一个一个点："一、二、三！"'},
-        mathSteps:['🐤 하나','🐤🐤 둘','🐤🐤🐤 셋 → 모두 3!'],
+        mathSteps:[{ko:'🐤 하나',en:'🐤 one',zh:'🐤 一'},{ko:'🐤🐤 둘',en:'🐤🐤 two',zh:'🐤🐤 二'},{ko:'🐤🐤🐤 셋 → 모두 3!',en:'🐤🐤🐤 three → 3 in all!',zh:'🐤🐤🐤 三 → 一共3！'}],
         result:{ko:'마지막 수 = 모두 몇 개!',en:'Last number = how many!',zh:'最后的数＝一共几个！'} }
     ],
     rule:{ ko:'하나씩 짚어요! 마지막 수가 전체 개수예요.',

@@ -52,7 +52,7 @@ window.NM_UNITS['M-42'] = {
         desc:{ko:'Σk(k=1~n)는 무지개 덧셈법 그 공식(n(n+1)÷2)이고, Σk²(k=1~n)은 제곱수의 합 공식(n(n+1)(2n+1)÷6)이에요. <b>새로 외울 건 없어요</b> — 예전에 배운 두 마법에 Σ라는 짧은 이름표를 붙인 것뿐이에요.',
               en:'Σk from 1 to n is exactly the rainbow-sum formula (n(n+1)÷2), and Σk² from 1 to n is exactly the sum-of-squares formula (n(n+1)(2n+1)÷6). <b>Nothing new to memorize</b> — it\'s the same two tricks you already learned, just wearing the short Σ name tag.',
               zh:'Σk(k=1~n)正是彩虹加法法的公式(n(n+1)÷2)，Σk²(k=1~n)正是平方数之和的公式(n(n+1)(2n+1)÷6)。<b>不用背新东西</b>——只是给早就学过的两个魔法贴上了Σ这个简短的名牌。'},
-        mathSteps:['\\sum k \\to \\text{무지개 덧셈법}', '\\sum k^2 \\to \\text{제곱수의 합}'],
+        mathSteps:[{ko:'\\sum k \\to \\text{무지개 덧셈법}',en:'\\sum k \\to \\text{the rainbow sum}',zh:'\\sum k \\to \\text{彩虹加法法}'}, {ko:'\\sum k^2 \\to \\text{제곱수의 합}',en:'\\sum k^2 \\to \\text{sum of squares}',zh:'\\sum k^2 \\to \\text{平方数之和}'}],
         result:{ko:'Σ는 새 계산이 아니라, 이미 아는 공식에 붙는 새 이름이에요!',en:'Σ isn\'t new math — it\'s a new name for formulas you already know!',zh:'Σ不是新的计算，而是给已知公式贴上的新名字！'},
         book:{ko:'Σ(pk+q)처럼 항이 여러 조각이면 p·Σk + q·Σ1로 쪼개서 각각 계산한 뒤 더해요.',
               en:'For a term with several pieces like Σ(pk+q), split it into p·Σk + q·Σ1, compute each, then add.',

@@ -30,10 +30,10 @@ window.NM_UNITS['A-13'] = {
     stages:[
       { tag:{ ko:'① 100 하나만 떼어내요', en:'1) Set aside just one hundred', zh:'① 只拿出一个百' },
         head:{ ko:'몇백 빼기 두 자리 수, 100 하나면 충분해요', en:'Hundreds minus a two-digit number — one hundred is enough', zh:'整百减两位数，拿出一个百就够' },
-        desc:{ ko:'400-35처럼 몇백에서 두 자리 수를 뺄 땐, 100 하나를 따로 떼어내 그 안에서 35를 빼고, 남은 300에 결과를 더해요.',
-               en:'For 400-35, set aside just one hundred, subtract 35 from it, then add the result to the remaining 300.',
-               zh:'像400-35这样整百减两位数，先拿出一个100，从中减去35，再把结果加到剩下的300上。' },
-        mathSteps:['400 - 35','= 300 + 100 - 35  ← 100 하나만!','= 300 + 65','= 365'],
+        desc:{ ko:'400-35처럼 몇백에서 두 자리 수를 뺄 땐, <b>100 하나를 따로 떼어내</b> 그 안에서 35를 빼고, 남은 300에 결과를 더해요.',
+               en:'For 400-35, <b>set aside just one hundred, subtract 35 from it</b>, then add the result to the remaining 300.',
+               zh:'像400-35这样整百减两位数，<b>先拿出一个100</b>，从中减去35，再把结果加到剩下的300上。' },
+        mathSteps:['400 - 35',{ko:'= 300 + 100 - 35  ← 100 하나만!',en:'= 300 + 100 - 35 ← \\text{just one 100!}',zh:'= 300 + 100 - 35 ← 只用一个100！'},'= 300 + 65','= 365'],
         result:{ ko:'100에서 35를 빼면 65, 300+65=365예요!', en:'100 minus 35 is 65, so 300+65=365!', zh:'100减35是65，300+65=365！' },
         book:{ ko:'500-46: 500을 400+100으로 나누고, 100-46=54를 만들어 400+54=454.',
                en:'500-46: split 500 into 400+100, compute 100-46=54, then 400+54=454.',
@@ -41,9 +41,9 @@ window.NM_UNITS['A-13'] = {
 
       { tag:{ ko:'② 왜 100만 떼면 될까요?', en:'2) Why is one hundred enough?', zh:'② 为什么拿一个百就够？' },
         head:{ ko:'빼는 수가 두 자리라서 100이면 충분해요', en:'Since the subtrahend is only 2 digits, 100 covers it', zh:'因为减数只有两位数，100足够了' },
-        desc:{ ko:'빼는 수가 항상 99 이하인 두 자리 수라서, 100 하나만 떼어내도 그 안에서 충분히 뺄 수 있어요. 나머지 백의 자리는 그대로 두면 돼요.',
-               en:'Since the number being subtracted is always a 2-digit number (99 or less), one hundred is always enough to subtract from — the rest of the hundreds stay untouched.',
-               zh:'因为被减的数总是两位数（99以下），拿出一个100就够减了，其余的百位保持不变。' },
+        desc:{ ko:'빼는 수가 항상 99 이하인 두 자리 수라서, <b>100 하나만 떼어내도</b> 그 안에서 충분히 뺄 수 있어요. 나머지 백의 자리는 그대로 두면 돼요.',
+               en:'Since the number being subtracted is always a 2-digit number (99 or less), <b>one hundred is always enough to subtract from</b> — the rest of the hundreds stay untouched.',
+               zh:'因为被减的数总是两位数（99以下），<b>拿出一个100就够减了</b>，其余的百位保持不变。' },
         mathSteps:['600 - 47','= 500 + 100 - 47','= 500 + 53','= 553'],
         result:{ ko:'600-47 = 500+100-47 = 500+53 = 553', en:'600-47 = 500+100-47 = 500+53 = 553', zh:'600-47 = 500+100-47 = 500+53 = 553' },
         book:null }

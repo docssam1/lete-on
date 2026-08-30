@@ -25,7 +25,7 @@ window.NM_UNITS['N-03'] = {
         desc:{ko:'왼쪽에서부터 하나, 둘, 셋… 세어 몇째인지 찾아요!',
           en:'Count from the left: one, two, three… find which one!',
           zh:'从左边数：一、二、三……找出第几个！'},
-        mathSteps:['몇 개? → 개수를 세요','몇째? → 방향 정하고 순서로 세요'],
+        mathSteps:[{ko:'몇 개? → 개수를 세요',en:'How many? → Count them',zh:'几个？→ 数一数'},{ko:'몇째? → 방향 정하고 순서로 세요',en:'Which place? → Pick a direction, count in order',zh:'第几个？→ 先定方向再按顺序数'}],
         result:{ko:'몇 개는 "얼마나", 몇째는 "어디"!',en:'How many vs. which one!',zh:'几个是"多少"，第几个是"哪里"！'} }
     ],
     rule:{ ko:'방향을 정하고 순서대로 세어요!',

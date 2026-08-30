@@ -33,7 +33,7 @@ window.NM_UNITS['N-10'] = {
         desc:{ko:'🐶는 🐶끼리, 🐱는 🐱끼리! 나누면 세기 쉬워요.',
           en:'Dogs with dogs, cats with cats! Sorting makes counting easy.',
           zh:'🐶跟🐶一起，🐱跟🐱一起！分开就好数了。'},
-        mathSteps:['종류별로 나눠요','각 바구니를 세어요','어느 쪽이 많은지 비교!'],
+        mathSteps:[{ko:'종류별로 나눠요',en:'Sort by kind',zh:'按种类分开'},{ko:'각 바구니를 세어요',en:'Count each basket',zh:'数一数每个篮子'},{ko:'어느 쪽이 많은지 비교!',en:'Compare which has more!',zh:'比一比哪边多！'}],
         result:{ko:'나누면 비교가 쉬워요!',en:'Sorting makes comparing easy!',zh:'分类后比较容易！'} }
     ],
     rule:{ ko:'나눠 담고, 세고, 비교해요!',

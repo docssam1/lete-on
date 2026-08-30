@@ -40,7 +40,7 @@ window.NM_UNITS['H-11'] = {
         desc:{ko:'36과 34는 십의 자리가 3으로 같고, 일의 자리 6+4=10이에요! 이럴 땐 앞자리를 <b>3×4=12</b>로 바로 구하고, 뒷자리는 <b>6×4=24</b>로 이어붙이면 끝: <b>1224</b>. 일의 자리는 같고 십의 자리 합이 10인 경우(36×76)도 있어요 — 이땐 앞자리=3×7+6=27, 뒷자리=6²=36 → <b>2736</b>. 두 조건을 동시에 만족하면(55×55) 둘 다 써도 답은 같아요!',
               en:'36 and 34 share tens digit 3, and their ones digits sum to 6+4=10! Here the front is instantly <b>3×4=12</b>, and the back is <b>6×4=24</b> attached: <b>1224</b>. There\'s also the mirror case — same ones, tens summing to 10 (36×76): front=3×7+6=27, back=6²=36 → <b>2736</b>. And when both conditions hold at once (55×55), either shortcut gives the same answer!',
               zh:'36和34十位都是3，个位6+4=10！这时前面直接是<b>3×4=12</b>，后面接上<b>6×4=24</b>：<b>1224</b>。还有镜像情况——个位相同、十位和为10（36×76）：前=3×7+6=27，后=6²=36 → <b>2736</b>。两个条件同时成立时（比如55×55），用哪个捷径答案都一样！'},
-        mathSteps:['3×4=12 (앞자리)','6×4=24 (뒷자리)','1224'],
+        mathSteps:[{ko:'3×4=12 (앞자리)',en:'3×4=12 \\text{ (front part)}',zh:'3×4=12（前段）'},{ko:'6×4=24 (뒷자리)',en:'6×4=24 \\text{ (back part)}',zh:'6×4=24（后段）'},'1224'],
         result:{ko:'36×34=1224! 십의 자리×(십의 자리+1)과 일의 자리끼리의 곱만 붙이면 끝나요.',en:'36×34=1224! Just attach tens×(tens+1) to the product of the ones.',zh:'36×34=1224！只需把十位×(十位+1)接上个位之积。'},
         book:{ko:'일반형(몰아주기)이 특수형(합10) 두 가지를 모두 품고 있어요 — 특수형은 일반형의 빠른 지름길일 뿐이에요.',
               en:'The general anchor formula contains both special cases — the sum-of-10 shortcuts are just faster paths through it.',
