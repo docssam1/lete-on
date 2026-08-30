@@ -90,6 +90,18 @@
         tr("검산: 4:6과 10:15는 모두 2:3으로 같은 비입니다.", "Check: 4:6 and 10:15 both simplify to 2:3.", "检验：4:6和10:15都化简为2:3。")
       ]
     },
+    ui: {
+      titleLead: tr("비와 비율을", "Ratios, rates, and percent.", "比、比率与百分数。"),
+      titleAccent: tr("설명하고 적용하기.", "Explain. Apply. Transfer.", "理解、应用、迁移。"),
+      hero: tr("같은 비, 단위율, 부분과 전체, 퍼센트를 순서대로 연습하고 다른 문항으로 다시 확인합니다.", "Practice equivalent ratios, unit rates, part-whole reasoning, and percent, then recheck with new items.", "依次练习相等比、单位率、部分与整体、百分数，再用新题复测。"),
+      sectionOrder: ["equivalent", "rates", "applications", "recheck"],
+      sectionLabels: {
+        equivalent: tr("1 · 같은 비와 부분-전체", "1 · Equivalent ratios and part-whole", "1 · 相等比与部分整体"),
+        rates: tr("2 · 단위율과 비례값", "2 · Unit rates and proportional values", "2 · 单位率与比例值"),
+        applications: tr("3 · 퍼센트와 단위 변환", "3 · Percent and conversions", "3 · 百分数与单位换算"),
+        recheck: tr("새 문항 · 4영역 재확인", "New items · Four-strand recheck", "新题 · 四领域复测")
+      }
+    },
     workbookItems: WORKBOOK_ITEMS,
     recheckItems: RECHECK_ITEMS,
     strands: STRANDS,

@@ -104,7 +104,6 @@
       "source_records": [],
       "reason": "",
       "authoring_mode": "newly-authored",
-      "instructional_mode": "concept-guided-practice-recheck",
       "delivery_surfaces": ["interactive-student", "public-teacher-sample", "a4-print"],
       "requires_response": true,
       "contains_answer_steps": true,
@@ -135,6 +134,56 @@
         { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "The public scope notice forbids automatic mastery or promotion claims." }] },
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
         { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html", "note": "PR 137 merge ae054741 deployed with HTTP 200 assets, 12 student items, attempt-gated hints, separated teacher answers, mobile zero overflow, and locked recheck verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ns-a-public-clinic-pack",
+      "title": "GFIELD Grade 6 fraction division visual clinic workbook and recheck",
+      "work_key": "35d727394990739763833b05c1dcd6c717a38c6e61d56cfbb81f1e90f5d9d79d",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "approved",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry",
+      "claims": [
+        {
+          "id": "fraction-division-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent exact rational calculation, reverse multiplication, simplest-form negative controls, answer-visibility checks, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ns-a-clinic-pack:16-exact-answer-ledger" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ns-a-shared-shell-and-completion" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js", "note": "GFIELD-authored public 6.NS.A.1 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ns-a-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 fraction language, eight-part strip representation, fraction equivalence prerequisites, one-focus progressive reasoning, and typed exact-fraction responses fit the recorded learner stage." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:eight-parts-six-shaded-groups" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-fraction-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus before the next step." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:mobile-a4" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:a4-complete-model" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-a-clinic-pack:16-exact-answer-ledger-and-reverse-check" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:empty-input-and-first-wrong-attempt-gate" }, { "role": "test", "locator": "test:animated-math-browser:answer-beat-aria-hidden" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-a-clinic-pack:unreduced-fraction-rejected" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-toggle-hidden-and-direct-teacher-view" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js", "note": "Scope notice forbids automatic domain mastery or promotion claims." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": false, "status": "pending", "evidence": [] }
       ]
     }
   ]

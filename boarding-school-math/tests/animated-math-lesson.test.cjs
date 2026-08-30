@@ -8,9 +8,9 @@ require(path.resolve(root, "..", "geometry", "worksheet", "render.js"));
 const source = require(path.join(root, "learning", "animated-math-lessons.js"));
 const scenes = require(path.join(root, "learning", "animated-math-scene-model.js"));
 
-test("catalog contains two GFIELD-authored multilingual concept samples", function () {
-  assert.equal(source.schemaVersion, 2);
-  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "geometry-angle"]);
+test("catalog contains three GFIELD-authored multilingual concept samples", function () {
+  assert.equal(source.schemaVersion, 3);
+  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "geometry-angle"]);
   source.lessons.forEach(function (lesson) {
     assert.deepEqual(lesson.languages, ["en", "ko", "zh"]);
     assert.equal(lesson.rights.assetRights, "original");
@@ -55,7 +55,7 @@ test("answers stay hidden until their declared answer beat", function () {
   });
 });
 
-test("ratio and geometry answers are independently recomputed and unique", function () {
+test("ratio, fraction, and geometry answers are independently recomputed and unique", function () {
   const ratioSolutions = [];
   for (let a = 0; a <= 20; a += 1) {
     for (let b = 0; b <= 20; b += 1) {
@@ -63,9 +63,25 @@ test("ratio and geometry answers are independently recomputed and unique", funct
     }
   }
   assert.deepEqual(ratioSolutions, [9]);
+  const fractionSolutions = [];
+  for (let groups = 0; groups <= 16; groups += 1) {
+    if (groups * 1 / 8 === 3 / 4) fractionSolutions.push(groups);
+  }
+  assert.deepEqual(fractionSolutions, [6]);
+  assert.equal((3 / 4) / (1 / 8), 6);
   const baseAngle = (180 - 40) / 2;
   assert.equal(baseAngle, 70);
   assert.equal(40 + baseAngle + baseAngle, 180);
+});
+
+test("fraction scene is an eight-part model with six highlighted divisor-sized groups", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "fraction-strip"; });
+  assert.deepEqual(lesson.sceneModel, { wholeParts: 8, shadedParts: 6, divisorParts: 1, quotient: 6, dividend: { n: 3, d: 4 }, divisor: { n: 1, d: 8 } });
+  const markup = scenes.fractionScene(lesson);
+  assert.equal((markup.match(/class="fraction-cell/g) || []).length, 8);
+  assert.equal((markup.match(/is-shaded/g) || []).length, 6);
+  assert.match(markup, /data-object="frac-answer"/);
+  assert.equal(scenes.sceneFor(lesson), markup);
 });
 
 test("geometry is calculated from a point-segment model and shared renderer", function () {
