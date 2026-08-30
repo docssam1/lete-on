@@ -1259,6 +1259,12 @@ function totalDifferenceShareMarkup(visual) {
   return `<div class="total-difference-work">${hint}<div class="share-cubes" style="--cube-columns:${visual.total <= 20 ? 5 : 7}" aria-label="큐브 ${visual.total}개">${Array.from({ length: visual.total }, () => "<i></i>").join("")}</div>${transfer}</div>`;
 }
 
+function totalDifferenceBarsMarkup(visual) {
+  const gapPercent = Math.max(14, Math.min(34, (visual.difference / visual.total) * 100));
+  const hint = visual.showHint ? `<small>전체에서 차이 ${visual.difference}을 먼저 떼어 보세요.</small>` : "";
+  return `<div class="total-difference-bars" style="--difference-width:${gapPercent}%" role="img" aria-label="전체 ${visual.total}, 두 수의 차이 ${visual.difference}를 나타낸 막대 그림"><div class="total-difference-given"><span>전체</span><strong>${visual.total}</strong></div><div class="total-difference-row larger"><b>큰 수</b><span class="same-part">같은 부분</span><span class="difference-part">차이 ${visual.difference}</span></div><div class="total-difference-row smaller"><b>작은 수</b><span class="same-part">같은 부분</span></div>${hint}</div>`;
+}
+
 function fiveCardPyramidMarkup(visual) {
   const bottomLeft = visual.given?.index === 0 ? visual.given.value : "";
   return `<div class="five-card-pyramid-wrap"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><svg class="five-card-pyramid-svg" viewBox="0 0 360 245" role="img" aria-label="아래 세 칸과 가운데 두 칸에 수 카드를 넣는 합 피라미드"><g class="five-pyramid-links"><path d="M180 42L130 72M180 42L230 72M130 120L80 153M130 120L180 153M230 120L180 153M230 120L280 153"/></g><g class="five-pyramid-boxes"><rect x="105" y="72" width="50" height="48"/><rect x="205" y="72" width="50" height="48"/><rect x="55" y="153" width="50" height="48"/><rect x="155" y="153" width="50" height="48"/><rect x="255" y="153" width="50" height="48"/></g><text class="five-pyramid-target" x="180" y="33">${visual.target}</text>${bottomLeft === "" ? "" : `<text class="five-pyramid-given" x="80" y="184">${bottomLeft}</text>`}<text class="five-pyramid-blank" x="180" y="184">㉠</text></svg></div>`;
@@ -3226,6 +3232,7 @@ function visualMarkup(visual) {
   if (visual.kind === "five-cell-placement") return `<div class="visual five-cell-placement-visual">${fiveCellPlacementMarkup(visual)}</div>`;
   if (visual.kind === "equalize-bags") return `<div class="visual equalize-visual">${equalizeBagsMarkup(visual)}</div>`;
   if (visual.kind === "total-difference-share") return `<div class="visual total-difference-visual">${totalDifferenceShareMarkup(visual)}</div>`;
+  if (visual.kind === "total-difference-bars") return `<div class="visual total-difference-bars-visual">${totalDifferenceBarsMarkup(visual)}</div>`;
   if (visual.kind === "number-pyramid") return `<div class="visual pyramid-visual">${numberPyramidMarkup(visual)}</div>`;
   if (visual.kind === "five-card-pyramid") return `<div class="visual five-card-pyramid-visual">${fiveCardPyramidMarkup(visual)}</div>`;
   if (visual.kind === "stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${stairGridPlacementMarkup(visual)}</div>`;

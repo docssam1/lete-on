@@ -1323,6 +1323,7 @@ function totalDifference({ difficulty = 2 }) {
   const sum = older + younger;
   return {
     prompt: `${withOf(pair[0])} ${pair[1]}의 나이의 합은 ${sum}${pair[2]}이고, ${topicOf(pair[0])} ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${topicOf(pair[0])} 몇 ${pair[2]}입니까?`,
+    visual: { kind: "total-difference-bars", total: sum, difference: gap, showHint: difficulty === 1 },
     answer: `${older}${pair[2]}`,
     solution: `합 ${sum}에서 ${objectOf(`차 ${gap}`)} 빼면 ${pair[1]} 나이의 두 배인 ${subjectOf(sum - gap)} 됩니다. ${topicOf(pair[1])} ${younger}${pair[2]}이고 ${topicOf(pair[0])} ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
     meta: { difficulty, sum, gap, older, younger }
