@@ -55,6 +55,8 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 - 숨은 도형 탐정: 부채꼴·겹친 삼각형, 정사각형 모눈, 붙인 사각형, 정삼각형 모눈의 5단계와 인쇄 학습지
 
 레벨 구성, 문제 검증, 학습지 연결과 개발 순서는 `docs/12_SOURCE_BACKED_FUTURE_GAMES.md`를 따릅니다.
+새 SVG 제너레이터와 절차형 개념 설명은 `docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md`의
+원본·수학 모델·단일정답·가시성·학습자 적합성·PC/모바일/A4·negative control 관문을 통과해야 합니다.
 
 인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
 `worksheet/net-observatory/`, `worksheet/dice-roll/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.

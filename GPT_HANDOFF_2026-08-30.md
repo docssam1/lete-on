@@ -10,6 +10,7 @@
 3. `E:\Codex\AGENTS.md`
 4. 이 문서: `GPT_HANDOFF_2026-08-30.md`
 5. Geometry 설계 기준: `geometry\README.md`, `geometry\docs\00_MASTER_PLAN.md`, `geometry\docs\12_SOURCE_BACKED_FUTURE_GAMES.md`, `geometry\docs\14_STAGE_DIFFICULTY_PROFILE.md`
+6. SVG 제너레이터 필수 관문: `geometry\docs\15_EVIDENCE_GATED_SVG_WORKFLOW.md`
 
 저장소 운영 문서의 보호 규칙이 이 문서보다 우선한다. C:의 원본 자료와 기존 프로젝트는 확인 없이 이동·삭제하지 않는다. 필즈 더 클래식 원본은 읽기 전용 증거로 취급한다.
 
@@ -20,8 +21,8 @@
 - 로컬 Git 저장소: `C:\Users\user\Documents\Codex\2026-07-14\sks\.publish-lete-on`
 - 원격 저장소: `https://github.com/docssam1/lete-on`
 - 원격 기준 브랜치: `main`
-- 현재 확인된 로컬/원격 HEAD: `83c5eb41c91c4f49caf620eb7202e9fde6b4d3d1`
-- 현재 상태: `main`과 `origin/main` 일치, 작업 트리 깨끗함
+- Geometry 기능 기준 병합 커밋: `83c5eb41c91c4f49caf620eb7202e9fde6b4d3d1`
+- 현재 HEAD는 병행 작업으로 계속 바뀔 수 있으므로 아래 `git rev-parse` 명령으로 다시 확인한다.
 - 이 문서의 원격 읽기 경로: `https://github.com/docssam1/lete-on/blob/main/GPT_HANDOFF_2026-08-30.md`
 
 다음 작업자는 Git 작업 전에 반드시 저장소 위치를 다시 확인한다.
@@ -60,6 +61,10 @@ git rev-parse origin/main
 - 같은 학습 목표를 내부 문제로 변형할 때는 원문 배치와 숫자를 그대로 공개하지 않고, 문제 구조와 검증 규칙을 보존한다.
 - 게임과 학습지는 문제 데이터를 공유하되, 종이에서는 조작을 그리기·고르기·기록하기 활동으로 바꾼다.
 - 쌓기나무는 기본 구성이다. 등각 그림의 시선과 보이는 면을 문제 조건으로 함께 관리한다.
+- 새 문항·SVG·학습지·절차형 개념 설명은 `geometry/docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md`의
+  작업 계약과 관문을 따른다.
+- 절차의 순서가 학습 내용인 경우에만 `skills/concept-whiteboard-lesson/SKILL.md`를 사용하고,
+  일반 정적 문항을 불필요하게 애니메이션으로 바꾸지 않는다.
 
 ### 이번 커밋에 반영된 주요 작업
 
@@ -271,4 +276,4 @@ py -m http.server 8765
 
 ## 10. 인수인계 결론
 
-현재 확정된 마지막 상태는 원격 `main`의 `83c5eb41c91c4f49caf620eb7202e9fde6b4d3d1`이다. 주사위 게임은 5단계·50문제와 24방향 검증을 통과했고, 납작 주사위는 큰 정사각형·작은 정사각형·연결선으로 만든 5영역 구조와 부분 공개 힌트를 사용한다. 다음 작업자는 이 구조를 유지하면서 먼저 실제 Pages 배포와 전체 문제·다국어 검수를 이어간다.
+Geometry 기능 기준 커밋은 `83c5eb41c91c4f49caf620eb7202e9fde6b4d3d1`이다. 그 뒤에도 병행 작업과 문서 갱신이 이어지므로 재개할 때 현재 원격 SHA를 다시 확인한다. 주사위 게임은 5단계·50문제와 24방향 검증을 통과했고, 납작 주사위는 큰 정사각형·작은 정사각형·연결선으로 만든 5영역 구조와 부분 공개 힌트를 사용한다. 다음 작업자는 이 구조와 `15_EVIDENCE_GATED_SVG_WORKFLOW.md`의 관문을 유지하면서 먼저 실제 Pages 배포와 전체 문제·다국어 검수를 이어간다.
