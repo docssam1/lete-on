@@ -82,8 +82,6 @@
       ko:{n:'쿠키', u:'개'},   en:{n:'cookies'},              zh:{n:'饼干', u:'块'} },
     { id:'candy',   kinds:ALL, away:'eat',  groups:['bag','box'],
       ko:{n:'사탕', u:'개'},   en:{n:'candies'},              zh:{n:'糖果', u:'颗'} },
-    { id:'marble',  kinds:ALL, away:'give', groups:['box','bag','row'],
-      ko:{n:'구슬', u:'개'},   en:{n:'marbles'},              zh:{n:'弹珠', u:'颗'} },
     { id:'block',   kinds:ALL, away:'give', groups:['box','row'],
       ko:{n:'블록', u:'개'},   en:{n:'blocks'},               zh:{n:'积木', u:'块'} },
     { id:'paper',   kinds:ALL, away:'use',  groups:['bundle','bag'],
@@ -94,7 +92,11 @@
        단위(장)·away·groups가 같아 그대로 대체된다. 소재를 새로 넣을 때도
        "지금 아이가 실제로 아는 물건인가"를 먼저 볼 것. */
     { id:'card',    kinds:ALL, away:'give', groups:['bundle','box'],
-      ko:{n:'카드', u:'장'},   en:{n:'cards'},                zh:{n:'卡片', u:'张'} },
+      ko:{n:'캐릭터 카드', u:'장'}, en:{n:'character cards'},  zh:{n:'角色卡片', u:'张'} },
+    { id:'jelly',   kinds:ALL, away:'eat',  groups:['bag','box'],
+      ko:{n:'젤리', u:'개'},   en:{n:'gummies'},              zh:{n:'软糖', u:'颗'} },
+    { id:'doll',    kinds:ALL, away:'give', groups:['box'],
+      ko:{n:'인형', u:'개'},   en:{n:'dolls'},                zh:{n:'玩偶', u:'个'} },
     { id:'pencil',  kinds:ALL, away:'give', groups:['bundle','box'],
       ko:{n:'연필', u:'자루'}, en:{n:'pencils'},              zh:{n:'铅笔', u:'支'} },
     { id:'note',    kinds:ALL, away:'give', groups:['box','bundle'],
