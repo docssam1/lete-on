@@ -16,6 +16,7 @@ const L = global.window.LESSONS[id];
 if (!L) { console.error('not found: ' + id); process.exit(1); }
 const sets = [['extra', '추가 학습', L.extraLearning], ['new', '유사 지문', L.newPassage]];
 sets.forEach(([k, label, s]) => {
+  const tag = k === 'extra' ? '[추가]' : '[유사]';
   if (!s || (which !== 'both' && which !== k)) return;
   console.log(`\n===== ${id} / ${label} — ${s.title}`);
   (s.passage || []).forEach((p, i) => console.log(`  [${i + 1}] ${p}`));
@@ -29,7 +30,7 @@ sets.forEach(([k, label, s]) => {
     const shortFlag = lens[ai] === mn && lens.filter(x => x === mn).length === 1 && mx - mn >= 20 && mx >= 25 && !quoted;
     const flag = longFlag || shortFlag;
     if (onlyFlagged && !flag) return;
-    console.log(`Q${i + 1} ${longFlag ? '★' : shortFlag ? '▽' : ' '} ${q[0]} — ${q[1]}`);
+    console.log(`${tag} Q${i + 1} ${longFlag ? '★' : shortFlag ? '▽' : ' '} ${q[0]} — ${q[1]}`);
     ch.forEach((c, j) => console.log(`   ${'ABCD'[j]}${j === ai ? '*' : ' '} (${c.length}) ${c}`));
   });
 });

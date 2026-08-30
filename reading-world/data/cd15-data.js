@@ -321,7 +321,7 @@ window.CARS_D_REGISTER([
             "grow a thicker canopy than before.",
             "lose its urchins as well.",
             "be unaffected, since otters do not eat kelp.",
-            "become an urchin barren."
+            "turn into an urchin barren."
           ],
           "D",
           "Unchecked urchins strip a forest to bare rock, and otters are what checks them."
