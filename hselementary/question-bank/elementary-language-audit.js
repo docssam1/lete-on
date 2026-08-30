@@ -20,7 +20,7 @@ const prohibited = [
 
 const failures = [];
 let count = 0;
-if (types.length !== 966) failures.push(`공개 검수 대상은 966개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 980) failures.push(`공개 검수 대상은 980개여야 하나 ${types.length}개입니다.`);
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {
     const generated = api.generate(type, 0, difficulty, seed, type.variant);
