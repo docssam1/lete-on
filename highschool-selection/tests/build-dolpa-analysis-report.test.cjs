@@ -38,3 +38,12 @@ test("난이도 검수가 남은 시험은 분석지를 만들지 않는다", ()
   input.questions[0].difficulty.status = "pending";
   assert.throws(() => buildReport(input, "DP-SRC-8BB6E543C0F7", "2026-08-29"), /검수가 끝나지 않았습니다/);
 });
+
+test("정답 이견 문항은 분석을 막지 않되 최상단 경고와 잠금 상태를 남긴다", () => {
+  const input = database();
+  input.questions[26].answerCheck = { status: "disputed", note: "공식 답과 독립 계산이 일치하지 않음" };
+  const report = buildReport(input, "DP-SRC-8BB6E543C0F7", "2026-08-29");
+  assert.equal(report.summary.answerDisputeCount, 1);
+  assert.equal(report.criticalWarnings[0].number, 27);
+  assert.match(report.comments[0], /27번.*잠겨/);
+});

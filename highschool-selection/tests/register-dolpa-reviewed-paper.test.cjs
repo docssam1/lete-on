@@ -175,3 +175,23 @@ test("구형 시험지의 페이지만 확인된 위치와 혼합 범위를 추�
   review.questions.forEach(item => { item.slot = null; });
   assert.doesNotThrow(() => validatePacket(review));
 });
+
+test("이미 정답 이견으로 잠긴 문항은 시험지 재등록 때 검증 완료로 덮지 않는다", () => {
+  const review = packet();
+  const questions = review.questions.map(item => ({
+    questionId: stableQuestionId(review.sourceId, item.number), sourceId: review.sourceId, paperId: review.paperId, number: item.number,
+    locator: { page: null, slot: null, status: "pending", evidence: [] },
+    classification: { semester: item.semester, domain: "문자와 식", unit: item.unit, majorUnit: "문자와 식", minorUnit: item.unit,
+      typeId: stableTypeId(item.semester, item.unit, item.typeLabel), typeLabel: item.typeLabel, status: "verified", evidence: ["paper-audit"] },
+    method: { solutionArchetype: null, tags: [], status: "pending", evidence: [] },
+    difficulty: { band: "standard", status: "verified", evidence: ["difficulty-audit"] },
+    responseFormat: { kind: null, slotCount: null, status: "pending", evidence: [] },
+    answerCheck: item.number === 27 ? { status: "disputed", evidence: ["private-review"] } : { status: "pending", evidence: [] },
+    variantSet: { status: "not_started", originalId: stableQuestionId(review.sourceId, item.number), twinIds: [], similarIds: [] },
+    usageProfiles: [], releaseStatus: "locked"
+  }));
+  const db = { schemaVersion: 1, papers: [{ paperId: review.paperId, sourceId: review.sourceId, sourceFingerprint: review.sourceFingerprint }], questions };
+  const result = applyToDatabase(db, review);
+  assert.equal(result.questions[26].answerCheck.status, "disputed");
+  assert.equal(result.questions[25].answerCheck.status, "verified");
+});

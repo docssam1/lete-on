@@ -168,7 +168,9 @@ function applyToDatabase(database, packet) {
     question.locator = { page: review.page, slot: review.slot, status: "verified", evidence: [locatorEvidenceId] };
     const responseKind = canonicalResponseKind(review.responseFormat);
     question.responseFormat = { kind: responseKind, slotCount: review.slotCount, status: "verified", evidence: [responseEvidenceId] };
-    question.answerCheck = { status: "verified", evidence: [clean(packet.answerEvidenceId)] };
+    if (question.answerCheck.status !== "disputed") {
+      question.answerCheck = { status: "verified", evidence: [clean(packet.answerEvidenceId)] };
+    }
   });
   paper.coverage = {
     coverageKind: clean(packet.coverage.coverageKind),

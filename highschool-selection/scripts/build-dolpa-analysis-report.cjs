@@ -18,9 +18,14 @@ function buildReport(database, sourceId, reviewedAt) {
   if (!paper) throw new Error(`문항 DB에 없는 원본입니다: ${sourceId}`);
   const questions = database.questions.filter(item => item.sourceId === sourceId).sort((a, b) => a.number - b.number);
   if (questions.length !== 30) throw new Error(`대표 시험 문항 수가 30개가 아닙니다: ${sourceId}`);
-  const required = ["classification", "locator", "difficulty", "responseFormat", "answerCheck"];
+  const required = ["classification", "locator", "difficulty", "responseFormat"];
   const pending = questions.flatMap(question => required.filter(key => question[key].status !== "verified").map(key => `${question.number}:${key}`));
   if (pending.length) throw new Error(`분석 전 검수가 끝나지 않았습니다: ${pending.join(", ")}`);
+  const answerDisputes = questions.filter(question => question.answerCheck.status === "disputed");
+  const invalidAnswers = questions.filter(question => !["verified", "disputed"].includes(question.answerCheck.status));
+  if (invalidAnswers.length) {
+    throw new Error(`분석 전 답안 검수가 끝나지 않았습니다: ${invalidAnswers.map(question => question.number).join(", ")}`);
+  }
   const standardCount = questions.filter(question => question.difficulty.band === "standard").length;
   const raisedCount = questions.filter(question => question.difficulty.band === "raised").length;
   const semesters = countBy(questions, question => question.classification.semester);
@@ -40,6 +45,7 @@ function buildReport(database, sourceId, reviewedAt) {
       standardCount,
       raisedCount,
       raisedRate: Number((raisedCount / questions.length * 100).toFixed(1)),
+      answerDisputeCount: answerDisputes.length,
       dominantDomains: topDomains
     },
     charts: {
@@ -51,7 +57,14 @@ function buildReport(database, sourceId, reviewedAt) {
         { label: "복합 추론형", count: raisedCount }
       ]
     },
+    criticalWarnings: answerDisputes.map(question => ({
+      questionId: question.questionId,
+      number: question.number,
+      status: "disputed",
+      message: question.answerCheck.note || "공식 답과 독립 계산이 일치하지 않아 학생 사용이 잠겨 있다."
+    })),
     comments: [
+      ...(answerDisputes.length ? [`${answerDisputes.map(question => `${question.number}번`).join("·")}은 공식 답과 독립 계산이 일치하지 않아 학생 사용이 잠겨 있다.`] : []),
       `${scopeLabel}의 ${questions.length}문항이며, 학기별로 ${semesters.map(item => `${item.label} ${item.count}문항`).join(", ")}이 배치되어 있다.`,
       `영역은 ${topDomains.join("·")} 비중이 가장 크며, 한 핵심 개념의 직접 적용보다 개념 결합·조건 분기·역추론이 필요한 복합 추론형이 ${raisedCount}문항으로 많다.`,
       "실전에서는 기본 적용형을 먼저 정확히 확보하고, 복합도형·그래프 역추론·장문 모델링 문항은 조건을 식과 그림에 따로 표시한 뒤 풀어야 한다.",
