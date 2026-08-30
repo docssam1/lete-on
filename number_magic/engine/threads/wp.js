@@ -451,9 +451,12 @@
     const c = CAT[m.cat];
     const isLen = m.cat === 'length';
     const frac = opt.numeric === 'fraction' || (opt.numeric === 'mix' && rng() < 0.4);
-    let n1, n2, t1, t2;
+    let n1, n2, t1, t2, den = 0;   /* den — 분모. 답을 3/5처럼 **표기**로 되돌릴 때 필요하다.
+                                      0.6에서 분모를 되짚을 수는 없고, t1을 파싱하면
+                                      표기가 바뀔 때 조용히 깨진다(WP5 참조). */
     if (frac) {
       const d = pick(rng, [4, 5, 6, 8, 10]);
+      den = d;
       if (kind === '합병' || kind === '첨가') {
         let a = R(rng, 1, d - 2), b = R(rng, 1, d - 1 - a);
         /* 두 분자가 같으면 WP3 expr의 보기 `t1 − t2`와 `t2 − t1`이 같은 글자가 되어
@@ -495,7 +498,7 @@
     const A = pick(rng, NAMES);
     const u = c.unit, n = m.ko.n, uE = c.unitEul;
     const s = { range:'C', kind, op: OPS[kind], n1, n2, t1, t2, o: m, cat: m.cat, A, B: null,
-                unitKo: u.ko, frac, qty: c.qty, givens: null };
+                unitKo: u.ko, frac, den, qty: c.qty, givens: null };
 
     /* 두 값을 가르는 이름표 — 길이는 빨강/파랑, 나머지는 큰 그릇/작은 그릇 */
     const labA = isLen
@@ -1004,6 +1007,139 @@
     };
     return assemble(s, ask, choices, answer,
       { story, mode: 'box', correctText: texts[0] });
+  };
+
+  /* ============================================================
+     WP5 — 점검하기 (푼 다음에 다시 보기)
+       spot     : 바르게 푼 것 고르기      (보기 번호)
+       mean     : 이 답이 나타내는 것은?   (보기 번호)
+       estimate : 계산하기 전에 어림하기   (보기 번호)
+
+     문장제-설계.md §2 Ⅵ. 앞의 네 스레드가 "어떻게 푸는가"라면 이것은 **푼 것을
+     의심하는 훈련**이다. 아이들이 문장제에서 가장 자주 하는 두 실수가 여기 다 있다:
+     연산을 잘못 고르고도 계산이 맞아 넘어가는 것과, 답이 나온 뒤 그 수가 무엇을
+     가리키는지 모르는 것.
+
+     ⚠️ spot의 오답은 **한쪽씩만 틀리게** 만든다.
+        ② 연산은 맞는데 계산이 틀림   (계산만 확인하는 아이가 걸린다)
+        ③ 계산은 맞는데 연산이 틀림   (연산만 확인하는 아이가 걸린다 — 구차 함정)
+     둘 다 확인해야 정답이 하나로 남는다. 오답을 아무 데나 틀리게 만들면 훈련이 안 된다.
+
+     ⚠️ estimate는 **계산하지 않고** 답하게 하는 자리다. 그래서 묻는 것을 결과의
+     크기가 아니라 방향으로 잡았다 — 더하면 처음보다 커지고 빼면 작아진다는 구조다.
+     ×·÷에서 두 번째 수가 1이면 결과가 처음과 같아져 방향이 사라지므로 다시 뽑는다.
+
+     ⚠️ 레벨 C의 답은 분수·소수라 화면에 **표기**로 찍어야 한다(0.6이 아니라 3/5).
+     그래서 상황이 분모(`den`)를 들고 다닌다 — t1을 파싱해서 되짚지 않는다.
+     ============================================================ */
+  /* 답을 그 레벨의 표기로 되돌린다. A·B는 정수, C는 분수 또는 소수 한 자리. */
+  function resultText(s, r) {
+    if (s.range !== 'C') return String(r);
+    if (s.frac && s.den) return `${Math.round(r * s.den)}/${s.den}`;
+    return String(Math.round(r * 10) / 10);
+  }
+  /* 계산만 틀린 답 — 정답에서 한 눈금 어긋나게 한다(정수는 1, 분수는 분자 1,
+     소수는 0.1). 0 이하로 내려가지 않게 하고, 세 보기가 겹치지 않는지는 부르는
+     쪽에서 확인한다. */
+  function nearMiss(s, r, rng) {
+    const up = rng() < 0.5;
+    if (s.range !== 'C') { const v = up ? r + 1 : r - 1; return v > 0 ? v : r + 1; }
+    if (s.frac && s.den) {
+      const num = Math.round(r * s.den);
+      const v = up ? num + 1 : num - 1;
+      return (v > 0 ? v : num + 1) / s.den;
+    }
+    const t = Math.round(r * 10);
+    const v = up ? t + 1 : t - 1;
+    return (v > 0 ? v : t + 1) / 10;
+  }
+
+  NM_TGEN['wp5_check'] = function (params, rng) {
+    const range   = (params && params.range) || 'A';
+    const numeric = (params && params.numeric) || 'mix';
+    const mode = pick(rng, ['spot', 'mean', 'estimate']);
+
+    if (mode === 'estimate') {
+      /* ×·÷에서 두 번째 수가 1이면 결과가 처음 수와 같아 '크다/작다'가 사라진다 */
+      let s = null;
+      for (let tryN = 0; tryN < 20; tryN++) {
+        s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+        if (!((s.op === '×' || s.op === '÷') && s.n2 === 1)) break;
+      }
+      const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+      const base = numStr(s, 1);
+      const grows = s.op === '+' || s.op === '×';
+      const texts = {
+        /* 3번에 `${base}과 같습니다`라고 쓰면 안 된다 — 수 뒤의 와/과는 읽는
+           소리를 따라가서 5는 '오와', 1.6은 '육과'가 된다. 조사를 없앤다. */
+        ko: [`${base}보다 큽니다`, `${base}보다 작습니다`, '똑같습니다'],
+        en: [`greater than ${base}`, `less than ${base}`, `the same as ${base}`],
+        zh: [`比${base}大`, `比${base}小`, `和${base}一样`]
+      };
+      const { choices, answer } = buildChoices(rng, [texts.ko, texts.en, texts.zh], grows ? 0 : 1);
+      const ask = {
+        ko: `계산하지 말고 어림해 보세요. 이 문제의 답은 ${base}보다 클까요, 작을까요? 알맞은 번호를 쓰세요.`,
+        en: `Do not calculate. Estimate: is the answer greater or less than ${base}? Write the number.`,
+        zh: `先不要计算，估一估：这道题的答案比${base}大还是小？请写出序号。`
+      };
+      const note = { ko: texts.ko[grows ? 0 : 1], en: texts.en[grows ? 0 : 1], zh: texts.zh[grows ? 0 : 1] };
+      return assemble(s, ask, choices, answer,
+        { story, mode: 'estimate', correctText: note.ko, note });
+    }
+
+    if (mode === 'mean') {
+      const s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+      const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+      const rt = resultText(s, resultOf(s));
+      const t = s.targets;
+      const { choices, answer } = buildChoices(rng, [t.ko, t.en, t.zh], 0);
+      /* 한국어에서 수 뒤의 조사는 읽는 소리를 따라간다(7은 '칠은', 5는 '오는').
+         그래서 조사를 붙이지 않는 '입니다' 꼴로 적는다 — 어떤 수가 와도 맞는다. */
+      const ask = {
+        ko: `계산한 답은 ${rt}입니다. 이 답이 나타내는 것은 무엇일까요? 알맞은 번호를 쓰세요.`,
+        en: `The answer is ${rt}. What does this answer tell you? Write the number.`,
+        zh: `算出的答案是${rt}。这个答案表示的是什么？请写出序号。`
+      };
+      return assemble(s, ask, choices, answer, { story, mode: 'mean', correctText: t.ko[0] });
+    }
+
+    /* spot — 바르게 푼 것 고르기 */
+    const s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+    const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+    const a = numStr(s, 1), b = numStr(s, 2);
+    const r = resultOf(s);
+    /* ③ 계산은 맞고 연산만 틀린 식. 덧셈 상황에 −를 붙이면 음수가 나올 수 있으므로
+       (합병은 두 사람이라 n1 < n2도 된다) 큰 쪽에서 작은 쪽을 뺀 꼴로 적는다.
+       ÷ 상황도 n1 ≤ n2면 뺄셈이 음수가 되므로 그때만 +로 바꾼다. */
+    let lop, la, lb, lr;
+    if (s.op === '+') {
+      lop = '−';
+      const big = s.n1 >= s.n2, ta = big ? a : b, tb = big ? b : a;
+      la = ta; lb = tb; lr = Math.abs(s.n1 - s.n2);
+    } else if (s.op === '−') {
+      lop = '+'; la = a; lb = b; lr = s.n1 + s.n2;
+    } else if (s.op === '×') {
+      lop = '+'; la = a; lb = b; lr = s.n1 + s.n2;
+    } else {
+      if (s.n1 > s.n2) { lop = '−'; la = a; lb = b; lr = s.n1 - s.n2; }
+      else { lop = '+'; la = a; lb = b; lr = s.n1 + s.n2; }
+    }
+    const miss = nearMiss(s, r, rng);
+    const right = `${a} ${s.op} ${b} = ${resultText(s, r)}`;
+    const badCalc = `${a} ${s.op} ${b} = ${resultText(s, miss)}`;
+    const badOp   = `${la} ${lop} ${lb} = ${resultText(s, lr)}`;
+    /* 세 보기가 겹치면 정답이 둘이 되거나 보기가 두 개인 문항이 된다 */
+    if (badOp === right || badCalc === right || badOp === badCalc) {
+      return NM_TGEN['wp5_check']({ range, numeric }, rng);
+    }
+    const texts = [right, badCalc, badOp];
+    const { choices, answer } = buildChoices(rng, [texts, texts.slice(), texts.slice()], 0);
+    const ask = {
+      ko: '이 문제를 바르게 푼 것은 어느 것일까요? 연산과 계산을 모두 확인하세요. 알맞은 번호를 쓰세요.',
+      en: 'Which one solves this problem correctly? Check both the operation and the arithmetic. Write the number.',
+      zh: '哪一个把这道题做对了？运算和计算都要检查。请写出序号。'
+    };
+    return assemble(s, ask, choices, answer, { story, mode: 'spot', correctText: right });
   };
 
 })();

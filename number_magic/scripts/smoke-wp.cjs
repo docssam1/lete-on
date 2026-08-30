@@ -7,7 +7,7 @@
    choices)를 쓰므로, 그 경로가 실제 브라우저에서 그려지는지 따로 본다.
 
      · 새 프로필 온보딩부터 시작(#obName → #obGo)
-     · WP1·WP3·WP4의 아홉 레벨을 문제은행 UI에서 골라 끝까지 풀어 만점
+     · WP1·WP3·WP4·WP5의 열두 레벨을 문제은행 UI에서 골라 끝까지 풀어 만점
      · 인쇄 학습지를 실제로 렌더해 본문·물음·보기·정답지가 다 있는지 확인
      · 데스크톱 1280 · 모바일 430 양쪽, pageerror 0건, 가로 넘침 0건
      · 스크린샷을 남긴다(--out 디렉터리)
@@ -50,7 +50,7 @@ function serve() {
 }
 
 const TARGETS = [['WP1', 1], ['WP1', 2], ['WP1', 3], ['WP3', 1], ['WP3', 2], ['WP3', 3],
-                 ['WP4', 1], ['WP4', 2], ['WP4', 3]];
+                 ['WP4', 1], ['WP4', 2], ['WP4', 3], ['WP5', 1], ['WP5', 2], ['WP5', 3]];
 const fails = [];
 
 (async () => {
@@ -123,7 +123,7 @@ const fails = [];
     await page.evaluate(() => { const b = document.getElementById('__wp__'); if (b) b.remove(); });
 
     /* 인쇄 — 본문·물음·보기·정답지가 다 나오는가, 가로로 넘치지 않는가 */
-    for (const [th, lv] of [['WP1', 1], ['WP3', 3], ['WP4', 1], ['WP4', 3]]) {
+    for (const [th, lv] of [['WP1', 1], ['WP3', 3], ['WP4', 1], ['WP4', 3], ['WP5', 1], ['WP5', 3]]) {
       const r = await page.evaluate(async ({ th, lv }) => {
         document.querySelectorAll('.nm-print-sheet').forEach(e => e.remove());
         NM_EXAM.renderPrint({ thread: th, level: lv, count: 8, seed: 'wpsmoke' });

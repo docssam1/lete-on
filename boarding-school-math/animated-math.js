@@ -168,7 +168,7 @@
     elements.title.textContent = textOf(lesson.titleI18n);
     elements.concept.textContent = textOf(lesson.conceptI18n);
     elements.problem.textContent = textOf(lesson.problemI18n);
-    elements.scene.innerHTML = scenes.sceneFor(lesson);
+    elements.scene.innerHTML = scenes.sceneFor(lesson, locale);
     elements.misconception.textContent = lesson.teacherEvidence.likelyMisconception;
     elements.teacherPrompt.textContent = lesson.teacherEvidence.teachingPrompt;
     elements.teacherSuccess.textContent = lesson.teacherEvidence.successCheck;

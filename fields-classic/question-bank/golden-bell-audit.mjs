@@ -272,6 +272,70 @@ const approvedBook10Answers = new Map([
   ["digit-card-four-place", ["6", "24"]],
   ["number-baseball-secret", ["634"]]
 ]);
+const snapshotOriginal = (original) => ({
+  title: original.title,
+  structureKey: original.structureKey,
+  prompt: original.prompt,
+  visual: original.visual,
+  items: original.items.map(({ id, prompt, answerMode, inputMode, answer }) => ({ id, prompt, answerMode, inputMode, answer }))
+});
+const approvedOriginalSnapshots = new Map([
+  ["book-01/clock-turning", {
+    title: "골든벨",
+    structureKey: "clock-turn-landing",
+    prompt: "12를 가리키고 있는 시계 바늘을 다음과 같이 돌리면 어떤 수를 가리키는지 구하시오.",
+    visual: { kind: "clock", value: 12 },
+    items: [
+      { id: "one-turn", prompt: "(1) 시계 방향으로 한 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "12" },
+      { id: "half-clockwise", prompt: "(2) 시계 방향으로 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "6" },
+      { id: "half-counter", prompt: "(3) 시계 반대 방향으로 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "6" },
+      { id: "quarter-clockwise", prompt: "(4) 시계 방향으로 반의 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "3" },
+      { id: "quarter-counter", prompt: "(5) 시계 반대 방향으로 반의 반 바퀴 돌리면 어떤 수를 가리키는지 쓰시오.", answerMode: "input", inputMode: "numeric", answer: "9" }
+    ]
+  }],
+  ["book-10/consecutive-page-range", {
+    title: "교재 확인",
+    structureKey: "consecutive-page-range-from-count-and-total",
+    prompt: "연속된 6쪽의 쪽수 합이 75일 때 처음 쪽수와 마지막 쪽수를 쓰세요.",
+    visual: { kind: "book10", subtype: "page-strip", count: 6, total: 75 },
+    items: [
+      { id: "page-range-first", prompt: "처음 쪽수", answerMode: "input", inputMode: "numeric", answer: "10" },
+      { id: "page-range-last", prompt: "마지막 쪽수", answerMode: "input", inputMode: "numeric", answer: "15" }
+    ]
+  }],
+  ["book-10/catch-up-acorns", {
+    title: "교재 확인",
+    structureKey: "catch-up-from-start-gap-and-daily-gap",
+    prompt: "두 다람쥐가 같은 수의 도토리를 가지게 되는 것은 며칠 뒤인지 쓰세요.",
+    visual: { kind: "book10", subtype: "catch-up-table", labels: ["엄마 다람쥐", "아빠 다람쥐"], starts: [30, 50], changes: [7, 3], unit: "개/일" },
+    items: [
+      { id: "catch-up-days", prompt: "같아지는 날", answerMode: "input", inputMode: "numeric", answer: "5" }
+    ]
+  }],
+  ["book-10/digit-card-four-place", {
+    title: "교재 확인",
+    structureKey: "four-distinct-digit-cards-used-once",
+    prompt: "1, 3, 5, 7을 한 번씩 사용해 네 자리 수를 만듭니다.",
+    visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 },
+    items: [
+      { id: "fixed-first-digit-count", prompt: "천의 자리 숫자가 1인 수의 개수", answerMode: "input", inputMode: "numeric", answer: "6" },
+      { id: "all-four-digit-count", prompt: "만들 수 있는 네 자리 수의 개수", answerMode: "input", inputMode: "numeric", answer: "24" }
+    ]
+  }],
+  ["book-10/number-baseball-secret", {
+    title: "교재 확인",
+    structureKey: "three-distinct-digit-number-baseball",
+    prompt: "1부터 9까지 서로 다른 숫자로 만든 세 자리 비밀 수를 쓰세요.",
+    visual: { kind: "book10", subtype: "number-baseball", clues: [
+      { guess: [2, 3, 6], strikes: 1, balls: 1 },
+      { guess: [8, 3, 2], strikes: 1, balls: 0 },
+      { guess: [8, 3, 4], strikes: 2, balls: 0 }
+    ] },
+    items: [
+      { id: "baseball-secret", prompt: "비밀 수", answerMode: "input", inputMode: "numeric", answer: "634" }
+    ]
+  }]
+]);
 for (const [lessonId, approvedAnswers] of approvedBook10Answers) {
   const lesson = book10.lessons.find((candidate) => candidate.id === lessonId);
   if (!lesson) fail(`book-10: missing approved lesson ${lessonId}`);
@@ -281,6 +345,68 @@ for (const [lessonId, approvedAnswers] of approvedBook10Answers) {
   }
   if (lesson.original.items.some((item) => item.answerMode !== "input")) {
     fail(`book-10/${lessonId}: textbook answer format changed`);
+  }
+}
+for (const [lessonKey, approvedOriginal] of approvedOriginalSnapshots) {
+  const [bookId, lessonId] = lessonKey.split("/");
+  const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === bookId);
+  const lesson = book?.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`${lessonKey}: missing original snapshot target`);
+  if (JSON.stringify(snapshotOriginal(lesson.original)) !== JSON.stringify(approvedOriginal)) {
+    fail(`${lessonKey}: original problem snapshot changed`);
+  }
+}
+
+const conceptText = (lesson) => [
+  lesson.representativeConcept,
+  lesson.story.title,
+  lesson.story.text,
+  lesson.story.mission,
+  lesson.explanation.headline,
+  ...lesson.explanation.steps
+].join(" ");
+const containsToken = (text, value) => {
+  const escaped = String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<![0-9])${escaped}(?![0-9])`).test(text);
+};
+const workedConclusion = (text) => /(?:=|따라서|이므로|되므로|확인합니다)/.test(text);
+const conceptLeakChecks = new Map([
+  ["book-01/clock-turning", {
+    answers: ["12", "6", "6", "3", "9"],
+    coreValues: ["12", "6", "3", "9"],
+    required: ["2", "8", "5", "11", "네 부분"]
+  }],
+  ["book-10/consecutive-page-range", {
+    answers: ["10", "15"],
+    coreValues: ["75", "10", "15"],
+    required: ["110", "20, 21, 22, 23, 24"]
+  }],
+  ["book-10/catch-up-acorns", {
+    answers: ["5"],
+    coreValues: ["50", "30", "7", "3"],
+    required: ["24-12=12", "6-2=4", "12÷4=3"]
+  }],
+  ["book-10/digit-card-four-place", {
+    answers: ["6", "24"],
+    coreValues: ["1", "3", "5", "7"],
+    required: ["5×4×3×2×1=120", "6×5×4×3×2×1=720"]
+  }],
+  ["book-10/number-baseball-secret", {
+    answers: ["634"],
+    coreValues: ["236", "832", "834"],
+    required: ["A", "B", "C"]
+  }]
+]);
+for (const [lessonKey, check] of conceptLeakChecks) {
+  const [bookId, lessonId] = lessonKey.split("/");
+  const lesson = GOLDEN_BELL_BOOKS.find((book) => book.id === bookId)?.lessons.find((candidate) => candidate.id === lessonId);
+  if (!lesson) fail(`${lessonKey}: missing concept leak target`);
+  const text = conceptText(lesson);
+  if (check.required.some((marker) => !text.includes(marker))) fail(`${lessonKey}: revised concept example is missing`);
+  const allAnswersVisible = check.answers.every((answer) => containsToken(text, answer));
+  const visibleCoreCount = check.coreValues.filter((value) => containsToken(text, value)).length;
+  if (allAnswersVisible && visibleCoreCount >= Math.min(2, check.coreValues.length) && workedConclusion(text)) {
+    fail(`${lessonKey}: concept explanation reconstructs the original answer set`);
   }
 }
 if (book10.source.origin !== "textbook-derived") fail("book-10: textbook-derived source label is required");

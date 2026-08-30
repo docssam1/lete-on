@@ -1,3 +1,5 @@
+import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
+
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
 // id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.
 export const AGE_STAGES = [
@@ -1024,6 +1026,8 @@ const domainById = Object.fromEntries(DOMAINS.map((item) => [item.id, item]));
 export const questionClassificationForType = (typeId, options = {}) => {
   const item = byId[typeId];
   if (!item) return null;
+  const lesson = TYPE_CONCEPT_LESSONS[item.id];
+  const definition = lesson ? CONCEPT_DEFINITION_BY_ID[lesson.conceptId] : null;
   const academyStyleIds = [...new Set(options.academyStyleIds || item.academyStyleIds || [])];
   return Object.freeze({
     majorDomainId: item.domain,
@@ -1031,8 +1035,8 @@ export const questionClassificationForType = (typeId, options = {}) => {
     minorDomain: item.middle,
     detailedTypeId: item.id,
     detailedTypeLabel: item.label,
-    representativeConceptId: item.conceptId || `concept:${item.domain}:${item.middle}`,
-    representativeConceptLabel: item.conceptLabel || item.middle,
+    representativeConceptId: lesson?.conceptId || item.conceptId || `concept:${item.domain}:${item.middle}`,
+    representativeConceptLabel: definition?.label || item.conceptLabel || item.middle,
     academyStyleIds: Object.freeze(academyStyleIds)
   });
 };
@@ -1853,12 +1857,18 @@ const CONCEPT_SUMMARY_BY_DOMAIN = Object.freeze({
 export const REPRESENTATIVE_CONCEPTS = Object.freeze([...TYPES.reduce((concepts, item) => {
   const classification = questionClassificationForType(item.id);
   if (!concepts.has(classification.representativeConceptId)) {
+    const definition = CONCEPT_DEFINITION_BY_ID[classification.representativeConceptId];
+    const summary = definition?.definition
+      || item.conceptSummary
+      || CONCEPT_SUMMARY_BY_DOMAIN[item.domain]?.(item.middle)
+      || `${item.middle}의 핵심 관계를 이해하고 같은 원리를 적용합니다.`;
     concepts.set(classification.representativeConceptId, Object.freeze({
       id: classification.representativeConceptId,
       label: classification.representativeConceptLabel,
-      summary: item.conceptSummary
-        || CONCEPT_SUMMARY_BY_DOMAIN[item.domain]?.(item.middle)
-        || `${item.middle}의 핵심 관계를 이해하고 같은 원리를 적용합니다.`
+      summary,
+      definition: definition?.definition || summary,
+      invariant: definition?.invariant || "",
+      representationKinds: definition?.representationKinds || Object.freeze([])
     }));
   }
   return concepts;
@@ -1872,11 +1882,35 @@ export const representativeConceptForType = (id) => {
   const classification = questionClassificationForType(id);
   const sharedConcept = representativeConceptById[classification.representativeConceptId];
   const typeSpecificPrinciple = TEXTBOOK_CONCEPT_GUIDES[id];
+  const lesson = TYPE_CONCEPT_LESSONS[id];
+  if (lesson) {
+    const definition = CONCEPT_DEFINITION_BY_ID[lesson.conceptId];
+    return Object.freeze({
+      ...sharedConcept,
+      definition: definition.definition,
+      invariant: definition.invariant,
+      representationKinds: definition.representationKinds,
+      beats: lesson.beats,
+      misconception: lesson.misconception,
+      sourceEvidence: lesson.sourceEvidence,
+      verificationState: lesson.verificationState,
+      scope: lesson.scope,
+      sharedByDesign: lesson.sharedByDesign,
+      principle: typeSpecificPrinciple,
+      specificity: "type-specific",
+      lessonQuality: "source-backed"
+    });
+  }
   return Object.freeze({
     ...sharedConcept,
     principle: typeSpecificPrinciple
       || `${item.label} 문제에서 ${item.middle}의 관계를 찾아 말·그림·식으로 나타내고 같은 원리를 적용합니다.`,
-    specificity: typeSpecificPrinciple ? "type-specific" : "shared-middle"
+    specificity: typeSpecificPrinciple ? "type-specific" : "shared-middle",
+    beats: Object.freeze([]),
+    misconception: "",
+    sourceEvidence: Object.freeze([]),
+    verificationState: "principle-only",
+    lessonQuality: "principle-only"
   });
 };
 

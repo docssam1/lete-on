@@ -159,13 +159,107 @@
       + '<div class="gcf-answer scene-object" data-object="gcf-answer">GCF = ' + esc(model.answer) + '</div></div>';
   }
 
-  function sceneFor(lesson) {
+  function buildSignedNumberLineModel(sceneModel) {
+    const width = 760; const height = 350; const left = 58; const right = 702; const axisY = 132;
+    const tickDenominator = sceneModel.tickDenominator;
+    const minUnit = sceneModel.domain.minNumerator * tickDenominator / sceneModel.domain.denominator;
+    const maxUnit = sceneModel.domain.maxNumerator * tickDenominator / sceneModel.domain.denominator;
+    function exactUnit(value) {
+      const scaled = value.numerator * tickDenominator;
+      if (scaled % value.denominator !== 0) throw new Error("SIGNED_POINT_NOT_ON_TICK_GRID");
+      return scaled / value.denominator;
+    }
+    function xForUnit(unitValue) {
+      if (unitValue < minUnit || unitValue > maxUnit) throw new Error("SIGNED_POINT_OUTSIDE_DOMAIN");
+      return left + (unitValue - minUnit) / (maxUnit - minUnit) * (right - left);
+    }
+    const ticks = [];
+    for (let unitValue = minUnit; unitValue <= maxUnit; unitValue += 1) {
+      ticks.push({ unit: unitValue, x: xForUnit(unitValue), major: unitValue % tickDenominator === 0, label: unitValue % tickDenominator === 0 ? String(unitValue / tickDenominator) : "" });
+    }
+    const firstUnit = exactUnit(sceneModel.first); const secondUnit = exactUnit(sceneModel.second);
+    return {
+      width: width, height: height, left: left, right: right, axisY: axisY, tickDenominator: tickDenominator,
+      minUnit: minUnit, maxUnit: maxUnit, ticks: ticks,
+      zeroX: xForUnit(0), firstUnit: firstUnit, secondUnit: secondUnit,
+      firstX: xForUnit(firstUnit), secondX: xForUnit(secondUnit),
+      firstDistanceUnits: Math.abs(firstUnit), secondDistanceUnits: Math.abs(secondUnit)
+    };
+  }
+
+  function signedNumberLineScene(lesson, locale) {
+    const model = buildSignedNumberLineModel(lesson.sceneModel); const fmt = renderer().fmt;
+    const language = locale === "zh" || locale === "zh-Hans" ? "zh" : (locale === "ko" ? "ko" : "en");
+    const localized = {
+      en: { fartherLeft: "farther left", aria: "A model-derived number line from negative two to zero locates negative seven-fourths and negative five-thirds" },
+      ko: { fartherLeft: "더 왼쪽", aria: "-2부터 0까지 계산한 수직선에 -7/4과 -5/3의 위치를 표시한 모델" },
+      zh: { fartherLeft: "更靠左", aria: "在由模型计算的-2到0数轴上标出-7/4与-5/3" }
+    }[language];
+    const ticks = model.ticks.map(function (tick) {
+      const half = tick.major ? 13 : 6;
+      return '<line class="signed-tick' + (tick.major ? ' is-major' : '') + '" x1="' + fmt(tick.x) + '" y1="' + fmt(model.axisY - half) + '" x2="' + fmt(tick.x) + '" y2="' + fmt(model.axisY + half) + '"></line>'
+        + (tick.label ? textMarkup(point(tick.x, model.axisY + 31), tick.label, "signed-axis-label") : "");
+    }).join("");
+    const axis = '<g class="scene-object" data-object="signed-axis"><line class="signed-axis-line" x1="' + fmt(model.left) + '" y1="' + fmt(model.axisY) + '" x2="' + fmt(model.right) + '" y2="' + fmt(model.axisY) + '"></line>' + ticks + '<path class="signed-axis-arrow" d="M ' + fmt(model.right - 12) + ' ' + fmt(model.axisY - 8) + ' L ' + fmt(model.right) + ' ' + fmt(model.axisY) + ' L ' + fmt(model.right - 12) + ' ' + fmt(model.axisY + 8) + '"></path></g>';
+    const first = '<g class="scene-object" data-object="signed-point-a"><line class="signed-guide" x1="' + fmt(model.firstX) + '" y1="78" x2="' + fmt(model.firstX) + '" y2="' + fmt(model.axisY) + '"></line><circle class="signed-point is-a" cx="' + fmt(model.firstX) + '" cy="' + fmt(model.axisY) + '" r="9"></circle>' + textMarkup(point(model.firstX - 34, 65), 'A = ' + lesson.sceneModel.first.label, "signed-point-label") + '</g>';
+    const second = '<g class="scene-object" data-object="signed-point-b"><line class="signed-guide" x1="' + fmt(model.secondX) + '" y1="' + fmt(model.axisY) + '" x2="' + fmt(model.secondX) + '" y2="204"></line><circle class="signed-point is-b" cx="' + fmt(model.secondX) + '" cy="' + fmt(model.axisY) + '" r="9"></circle>' + textMarkup(point(model.secondX + 36, 218), 'B = ' + lesson.sceneModel.second.label, "signed-point-label") + '</g>';
+    function distanceBar(objectId, y, x, units, className) {
+      return '<g class="scene-object" data-object="' + objectId + '"><line class="signed-distance ' + className + '" x1="' + fmt(x) + '" y1="' + y + '" x2="' + fmt(model.zeroX) + '" y2="' + y + '"></line><circle class="signed-distance-end" cx="' + fmt(x) + '" cy="' + y + '" r="4"></circle><circle class="signed-distance-end" cx="' + fmt(model.zeroX) + '" cy="' + y + '" r="4"></circle>' + textMarkup(point((x + model.zeroX) / 2, y - 15), units + '/' + model.tickDenominator, "signed-distance-label") + '</g>';
+    }
+    const body = axis + first + second + distanceBar("signed-distance-a", 260, model.firstX, model.firstDistanceUnits, "is-a") + distanceBar("signed-distance-b", 305, model.secondX, model.secondDistanceUnits, "is-b");
+    const svg = renderer().wrapSvg(body, { xMin: 0, yMin: 0, w: model.width, h: model.height }, "signed-number-line-svg", ' role="img" aria-label="' + esc(localized.aria) + '"');
+    return '<div class="signed-number-line-scene">' + svg
+      + '<div class="signed-common scene-object" data-object="signed-common-units"><span>-7/4 = -21/12</span><span>-5/3 = -20/12</span></div>'
+      + '<div class="signed-order scene-object" data-object="signed-order"><span>' + esc(localized.fartherLeft) + '</span><strong>-21/12 &lt; -20/12</strong></div>'
+      + '<div class="signed-answer scene-object" data-object="signed-answer">-7/4 &lt; -5/3</div></div>';
+  }
+
+  function wholePower(base, exponent) {
+    let result = 1; for (let index = 0; index < exponent; index += 1) result *= base; return result;
+  }
+  function buildExpressionStructureModel(sceneModel) {
+    const powerResult = wholePower(sceneModel.base, sceneModel.exponent);
+    const insideResult = powerResult + sceneModel.insideAddend;
+    const productResult = sceneModel.coefficient * insideResult;
+    const answer = productResult + sceneModel.outsideAddend;
+    const distributedResult = sceneModel.coefficient * powerResult + sceneModel.coefficient * sceneModel.insideAddend + sceneModel.outsideAddend;
+    if (answer !== distributedResult) throw new Error("EXPRESSION_DISTRIBUTION_MISMATCH");
+    return Object.freeze({
+      coefficient: sceneModel.coefficient, base: sceneModel.base, exponent: sceneModel.exponent,
+      insideAddend: sceneModel.insideAddend, outsideAddend: sceneModel.outsideAddend,
+      powerResult: powerResult, insideResult: insideResult, productResult: productResult,
+      answer: answer, distributedResult: distributedResult
+    });
+  }
+  function expressionScene(lesson, locale) {
+    const model = buildExpressionStructureModel(lesson.sceneModel);
+    const language = locale === "zh" || locale === "zh-Hans" ? "zh" : (locale === "ko" ? "ko" : "en");
+    const localized = {
+      en: { aria: "Expression structure showing the ordered operations inside and outside parentheses", original: "original structure", power: "power", parentheses: "parentheses", multiply: "multiply", subtract: "subtract", check: "distribution check", answer: "value" },
+      ko: { aria: "괄호 안팎의 연산 순서를 보여 주는 식의 구조", original: "원래 식의 구조", power: "거듭제곱", parentheses: "괄호 안", multiply: "곱하기", subtract: "빼기", check: "분배법칙 검산", answer: "식의 값" },
+      zh: { aria: "展示括号内外运算顺序的式子结构", original: "原式结构", power: "幂", parentheses: "括号内", multiply: "乘法", subtract: "减法", check: "分配律检验", answer: "式子的值" }
+    }[language];
+    const sign = model.outsideAddend < 0 ? " − " + Math.abs(model.outsideAddend) : " + " + model.outsideAddend;
+    return '<div class="expression-tree-scene" role="img" aria-label="' + esc(localized.aria) + '">'
+      + '<div class="expression-original scene-object" data-object="expr-original"><span>' + esc(localized.original) + '</span><strong>' + model.coefficient + '(' + model.base + '<sup>' + model.exponent + '</sup> + ' + model.insideAddend + ')' + esc(sign) + '</strong></div>'
+      + '<div class="expression-flow" aria-hidden="true">'
+      + '<div class="expression-node scene-object" data-object="expr-power"><small>1 · ' + esc(localized.power) + '</small><strong>' + model.base + '<sup>' + model.exponent + '</sup> = ' + model.powerResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-inside"><small>2 · ' + esc(localized.parentheses) + '</small><strong>' + model.powerResult + ' + ' + model.insideAddend + ' = ' + model.insideResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-product"><small>3 · ' + esc(localized.multiply) + '</small><strong>' + model.coefficient + ' × ' + model.insideResult + ' = ' + model.productResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-subtract"><small>4 · ' + esc(localized.subtract) + '</small><strong>' + model.productResult + esc(sign) + ' = ' + model.answer + '</strong></div></div>'
+      + '<div class="expression-check scene-object" data-object="expr-distribute"><span>' + esc(localized.check) + '</span><strong>' + model.coefficient + ' × ' + model.powerResult + ' + ' + model.coefficient + ' × ' + model.insideAddend + esc(sign) + ' = ' + model.distributedResult + '</strong></div>'
+      + '<div class="expression-answer scene-object" data-object="expr-answer"><span>' + esc(localized.answer) + '</span><strong>' + model.answer + '</strong></div></div>';
+  }
+
+  function sceneFor(lesson, locale) {
     if (lesson.type === "bar-model") return ratioScene(lesson);
     if (lesson.type === "fraction-strip") return fractionScene(lesson);
     if (lesson.type === "factor-chain") return factorScene(lesson);
+    if (lesson.type === "signed-number-line") return signedNumberLineScene(lesson, locale);
+    if (lesson.type === "expression-tree") return expressionScene(lesson, locale);
     if (lesson.type === "geometry-angle") return geometryScene(lesson);
     throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, sceneFor: sceneFor });
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, sceneFor: sceneFor });
 });

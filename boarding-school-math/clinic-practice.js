@@ -197,7 +197,7 @@
 
     const row = el("div", "response-row");
     const input = el("input");
-    input.type = "text"; input.inputMode = item.responseFormat === "ratio-pair" ? "text" : "decimal";
+    input.type = "text"; input.inputMode = ["ratio-pair", "comparison-symbol", "signed-rational"].includes(item.responseFormat) ? "text" : "decimal";
     input.placeholder = c.answerPlaceholder; input.setAttribute("aria-label", String(index + 1) + " " + c.answerPlaceholder);
     input.autocomplete = "off"; input.spellcheck = false;
     const button = el("button", "", c.check); button.type = "button";
