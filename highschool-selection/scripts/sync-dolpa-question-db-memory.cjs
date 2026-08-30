@@ -8,6 +8,10 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
 }
 
+function clean(value) {
+  return String(value == null ? "" : value).trim();
+}
+
 function fingerprint(filePath) {
   const bytes = fs.readFileSync(path.resolve(filePath));
   const stat = fs.statSync(path.resolve(filePath), { bigint: true });
@@ -37,6 +41,9 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
   const analysisReport = analysisReportPath ? readJson(analysisReportPath) : null;
   const sourceIds = [manifest && manifest.sourceId, packet && packet.sourceId, classificationPacket && classificationPacket.sourceId,
     paperPacket && paperPacket.sourceId, difficultyPacket && difficultyPacket.sourceId, analysisReport && analysisReport.sourceId].filter(Boolean);
+  const reviewedAt = [packet, classificationPacket, paperPacket, difficultyPacket, analysisReport]
+    .map(item => clean(item && item.reviewedAt)).filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value)).sort().at(-1) || "2026-08-29";
+  const recordDate = reviewedAt.replaceAll("-", "");
   const sourceId = sourceIds[0] || "";
   if (new Set(sourceIds).size > 1) throw new Error("원본 페이지와 검수표의 sourceId가 다릅니다.");
   const known = {
@@ -64,19 +71,22 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-22CB4FA2F64E": { key: "m21s-202404-r2", label: "2-1S 2회(2024년 4월)", tags: ["middle2-1", "advanced", "mixed-range"] },
     "DP-SRC-9A7C2856650B": { key: "m21s-202404-r4", label: "2-1 심화 4회(2024년 4월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
+    "DP-SRC-4D46EB350F66": { key: "m21-202405-r1", label: "2-1 4개월반 1회(2024년 5월)", tags: ["middle2-1", "four-month-course", "full-range"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
   return {
     ...known,
     sourceId,
+    reviewedAt,
+    recordDate,
     pageSourceId: `dp-${known.key}-page-assets-v1`,
     methodSourceId: `dp-${known.key}-method-review-v1`,
     classificationSourceId: `dp-${known.key}-classification-review-v1`,
     paperSourceId: `dp-${known.key}-paper-review-v1`,
     difficultySourceId: `dp-${known.key}-difficulty-review-v1`,
     analysisSourceId: `dp-${known.key}-analysis-report-v1`,
-    recordId: `dp.${known.key}.method-review.20260829`,
+    recordId: `dp.${known.key}.method-review.${recordDate}`,
     pageTitle: `돌파 ${known.label} 문항 원본 페이지 목록`,
     methodTitle: `돌파 ${known.label} 대표 시험 풀이법 검수표`,
     recordTitle: `돌파 ${known.label} 대표 시험 30문항 풀이 방법 검수`,
@@ -212,8 +222,8 @@ function sync(catalog, ledger, database, paths) {
       locator: "reviews[1:30]",
       note: `${methodInfo.label} 대표 시험 30문항의 기본 적용형·복합 추론형 난이도 검수`
     });
-    upsert(catalog.records, `dp.${methodInfo.key}.difficulty-review.20260829`, {
-      id: `dp.${methodInfo.key}.difficulty-review.20260829`,
+    upsert(catalog.records, `dp.${methodInfo.key}.difficulty-review.${methodInfo.recordDate}`, {
+      id: `dp.${methodInfo.key}.difficulty-review.${methodInfo.recordDate}`,
       title: `돌파 ${methodInfo.label} 대표 시험 30문항 난이도 검수`,
       aliases: [`돌파 ${methodInfo.label} 난이도`],
       tags: ["dp", ...methodInfo.tags, "difficulty-review", "visual-review"],
@@ -235,8 +245,8 @@ function sync(catalog, ledger, database, paths) {
       locator: "summary, charts, comments",
       note: `${methodInfo.label} 대표 시험의 학기·영역·단원·난이도 분석`
     });
-    upsert(catalog.records, `dp.${methodInfo.key}.analysis-report.20260829`, {
-      id: `dp.${methodInfo.key}.analysis-report.20260829`,
+    upsert(catalog.records, `dp.${methodInfo.key}.analysis-report.${methodInfo.recordDate}`, {
+      id: `dp.${methodInfo.key}.analysis-report.${methodInfo.recordDate}`,
       title: `돌파 ${methodInfo.label} 대표 시험 분석지`,
       aliases: [`돌파 ${methodInfo.label} 분석`],
       tags: ["dp", ...methodInfo.tags, "analysis-report"],
@@ -258,7 +268,8 @@ function sync(catalog, ledger, database, paths) {
       note: "검수 완료 대표 시험지의 문항별 학기·단원·세부 유형"
     });
   }
-  catalog.updated = "2026-08-29";
+  catalog.updated = [clean(catalog.updated), clean(methodInfo && methodInfo.reviewedAt)]
+    .filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value)).sort().at(-1) || "2026-08-29";
   return catalog;
 }
 

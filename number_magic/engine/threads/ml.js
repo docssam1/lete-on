@@ -953,7 +953,14 @@ NM_TGEN['ml_x9'] = function(params, rng) {
     steps:[
       { tex:`${n} \\times 10 = \\square`,        blank:n*10   },
       { tex:`${n*10} - ${n} = \\square`,          blank:answer }
-    ]
+    ],
+    /* 개념 애니메이션용 장면 필드 (개념애니-설계.md §4-1).
+       NM_TGEN 생성기는 의미 필드를 안 내보내고 n이 tex 문자열 안에만 있어서
+       "×10 하고 n을 뺀다"를 그릴 수가 없었다. tex를 파싱하면 표기가 바뀌는
+       순간 조용히 깨지므로, 이미 계산해 둔 지역변수를 그대로 내보낸다.
+       기존 반환값(prompt·tex·answer·steps)은 건드리지 않는다 — 문항·정답·
+       인쇄 전부 불변. */
+    scene:{ archetype:'place-shift', n, shifted:n*10, back:n, result:answer, factor:9, shiftPlaces:1 }
   };
 };
 

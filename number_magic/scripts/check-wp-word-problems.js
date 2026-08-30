@@ -133,6 +133,10 @@ function verifyProblem(raw, range) {
   const uMsg = verifyCounters(p, w);
   if (uMsg) return uMsg;
 
+  /* 4b — 그릇 크기 ↔ 담긴 양 */
+  const vMsg = verifyVessel(raw, range);
+  if (vMsg) return vMsg;
+
   /* 5 — 3개 언어 */
   const lMsg = verifyLangs(p);
   if (lMsg) return lMsg;
@@ -153,6 +157,43 @@ function verifyProblem(raw, range) {
      (prompt만 세 벌이고 word가 한국어뿐이던 것이 2026-08-30에 고쳐진 자리다) */
   const pMsg = verifyPrintLangs(raw);
   if (pMsg) return pMsg;
+  return null;
+}
+
+/* ── 4b · 그릇 크기 ↔ 담긴 양 (레벨 C 합병) ─────────────────────────
+   레벨 C의 합병은 두 그릇을 "큰 그릇 / 작은 그릇"으로 부른다. 그런데 분수 갈래가
+   두 분자를 따로 뽑는 바람에 **큰 병 3/10 L · 작은 병 5/10 L** 같은 이야기가 나왔다
+   (WP1L3 · WP3L3 · WP4L3, 2026-08-31 수정). 그림으로 헤아린 아이가 바르게 생각하고도
+   틀리는 자리다.
+
+   ⚠️ 생성기 속값(w.n1·w.n2)이 아니라 **인쇄물에 찍히는 문장**을 읽는다 — 렌더가 두 수를
+   맞바꿔 넣어도 잡히도록. 세 언어를 다 본다(큰/작은 · big/small · 大/小).
+   ⚠️ 중국어 이름이 小으로 시작한다(小云·小雨) — 작은 그릇은 반드시 쉼표 뒤의 小로 잡는다.
+   길이 상황(빨간 끈·파란 끈)은 이름표가 색이라 크기를 말하지 않으므로 이 규칙 밖이다. */
+const VESSEL_RE = {
+  ko: [/큰\s+\S+?에는\s+\S+\s+([\d./]+)\s/, /작은\s+\S+?에는\s+([\d./]+)\s/],
+  en: [/big\s+\w+\s+holds\s+([\d./]+)/,      /small\s+\w+\s+holds\s+([\d./]+)/],
+  zh: [/的大[^0-9，]*?里有([\d./]+)/,         /，小[^0-9，]*?里有([\d./]+)/]
+};
+let vesselChecks = 0;
+function vesselNum(t) {
+  const m = /^(\d+)\/(\d+)$/.exec(t);
+  return m ? (+m[1]) / (+m[2]) : parseFloat(t);
+}
+function verifyVessel(raw, range) {
+  if (range !== 'C' || !raw.wp || raw.wp.kind !== '합병') return null;
+  if (/빨간|파란/.test(raw.word.ko)) return null;            /* 길이 — 색 이름표 */
+  for (const l of ['ko', 'en', 'zh']) {
+    const [reBig, reSmall] = VESSEL_RE[l];
+    const mb = reBig.exec(raw.word[l]), ms = reSmall.exec(raw.word[l]);
+    /* 못 읽으면 통과가 아니라 실패다 — 이름표를 바꿨다면 이 검사도 같이 고쳐야 한다.
+       조용히 건너뛰면 이 규칙은 영영 아무것도 못 잡는다. */
+    if (!mb || !ms) return `그릇: ${l} 본문에서 큰/작은 그릇의 양을 못 읽음 — ${raw.word[l]}`;
+    const big = vesselNum(mb[1]), small = vesselNum(ms[1]);
+    if (!(big >= small))
+      return `그릇: ${l}에서 큰 그릇(${mb[1]})이 작은 그릇(${ms[1]})보다 적게 담김 — ${raw.word[l]}`;
+  }
+  vesselChecks++;
   return null;
 }
 
@@ -398,7 +439,9 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP3', lv));
 [1, 2, 3].forEach(lv => sweep('WP4', lv));
 
-console.log(`\n검산한 문항: ${checks}건`);
+console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
+/* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */
+if (!vesselChecks) fails.push('그릇 크기 검사가 한 건도 돌지 않았다 — 표본이나 규칙이 어긋났다');
 if (fails.length) {
   console.log(`\n[FAIL] ${fails.length}건`);
   fails.forEach(f => console.log('   ' + f));
