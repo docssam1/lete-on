@@ -33,7 +33,7 @@ window.LESSONS['ws4'] = {
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [
-        'The memory palace is an ancient technique that uses vivid images placed at familiar locations to make information far easier to recall',
+        'The memory palace is a technique that places vivid images at familiar locations to aid recall',
         'Simonides of Ceos was the greatest poet in the ancient world and invented many important tools for learning',
         'The World Memory Championship is the most prestigious competition in the world for trained memory athletes',
         'The brain\'s hippocampus is the only region involved in storing and retrieving long-term memories',
@@ -55,13 +55,13 @@ window.LESSONS['ws4'] = {
 
       ['Recognizing Cause and Effect', 'What allows memory champions to memorize hundreds of random digits in only a few minutes?', [
         'They were born with an unusually large hippocampus that processes information faster than average',
-        'They have trained the method of loci until converting information into vivid location-based images becomes second nature',
+        'They have trained the method of loci until turning information into images is second nature',
         'They use a secret memorization code that compresses numbers into a short series of symbols',
         'They practice traditional memorization through repetition for many more hours than ordinary people',
       ], 'B', 'The passage explains that champions use the method of loci to give abstract information a "physical address." Extended practice of this technique — not any innate advantage — is what enables their performance.'],
 
       ['Comparing and Contrasting', 'How is the method of loci DIFFERENT from ordinary memorization by repetition?', [
-        'The method of loci uses vivid images placed at familiar spatial locations, while ordinary memorization relies on repetition without giving information a structured mental address',
+        'The method of loci places images at familiar spatial locations, while repetition gives information no such address',
         'Ordinary memorization uses the hippocampus, while the method of loci does not involve any specific brain region',
         'The method of loci works only for abstract information like numbers, while ordinary memorization works for names and events',
         'Ordinary memorization was invented in ancient Greece, while the method of loci is a modern technique developed by scientists',
@@ -70,7 +70,7 @@ window.LESSONS['ws4'] = {
       ['Making Predictions', 'If someone tried to build a memory palace using a route they had walked only once, what would MOST LIKELY happen?', [
         'The technique would work just as well, because any route is equally effective as long as the images are vivid enough',
         'The person would be unable to create any mental images at all without knowing the route well',
-        'The technique would likely be less effective, because the brain\'s spatial memory works best with routes it already knows very well',
+        'The technique would likely be less effective, because the brain\'s spatial memory works best with a well-known route',
         'The person would be disqualified from memory competitions for using an unfamiliar route',
       ], 'C', 'The passage explains that the technique works by using "a journey you already know well." A poorly known route would not provide the reliable spatial anchors the hippocampus needs to make retrieval effective.'],
 
@@ -78,12 +78,12 @@ window.LESSONS['ws4'] = {
         'to join a professional organization or club as a paid member in good standing',
         'to recall a memory by repeatedly writing the information down on paper',
         'to organize information into groups based on shared characteristics',
-        'to mentally connect one thing with another so that one triggers the memory of the other',
+        'to mentally connect one thing with another so one triggers the other',
       ], 'D', 'The passage uses "associate" to describe connecting something you want to memorize with a vivid image at a location. This matches the meaning of mentally linking two things together in option D.'],
 
       ['Drawing Conclusions and Making Inferences', 'What conclusion can you draw about why the hippocampus makes the memory palace so effective?', [
         'The hippocampus grows larger the more memory palace techniques a person uses over time',
-        'Because the hippocampus handles both navigation and memory in the same circuits, connecting information to a familiar place activates one of the brain\'s most powerful and reliable recall systems',
+        'Because the hippocampus handles both navigation and memory in the same circuits, a familiar place makes recall reliable',
         'The hippocampus is only active during sleep, which is when memory palace information is permanently stored',
         'Memory palace information stored in the hippocampus can never be forgotten, even if the person stops practicing the technique',
       ], 'B', 'The passage explains that the hippocampus "processes spatial information and personal experience in the same circuits." Anchoring facts to a familiar place activates this shared system, making retrieval more reliable.'],
@@ -111,7 +111,7 @@ window.LESSONS['ws4'] = {
 
       ['Distinguishing Between Real and Make-believe', 'Which detail from the passage could NOT happen in real life?', [
         'A scientist studying the brain activity of memory champions using imaging technology',
-        'A person who memorizes entire textbooks in a single second using a memory palace and then perfectly recalls every word forever without any further review',
+        'A person memorizes entire textbooks in one second and never reviews again',
         'A memory champion memorizing the order of a deck of shuffled cards in under five minutes',
         'A student using the method of loci to remember names and dates from a history lesson',
       ], 'B', 'Memorizing entire textbooks in one second and achieving perfect permanent recall without review is physically and neurologically impossible. Options A, C, and D all describe things that happen in real life.'],
@@ -129,7 +129,7 @@ window.LESSONS['ws4'] = {
       ['Finding Main Idea', 'What is the main idea of this passage?', [
         'Nate was embarrassed that his sister had beaten him in the school memory competition',
         'Memory competitions are the best way to find out whether a student has studied hard enough',
-        'Nate overcame his skepticism about the memory palace technique and discovered it worked far better than ordinary studying',
+        'Nate\'s doubts fell away when the memory palace worked better than studying',
         'Memorizing history requires more effort than memorizing any other school subject',
       ], 'C', 'The passage follows Nate\'s journey from doubt to success using the memory palace technique. Option C captures this central transformation accurately.'],
 
@@ -144,11 +144,11 @@ window.LESSONS['ws4'] = {
         'Nate placed vivid images at each landmark along his familiar route to school',
         'Nate closed his eyes during the exam and mentally walked his route to recall each fact',
         'Nate told Jamie that recalling the answers felt like having a personal museum in his head',
-        'Nate stared at thirty names and thirty dates in his history notes with three days to prepare',
+        'Nate stared at thirty names and thirty dates with three days to prepare',
       ], 'D', 'The passage opens with Nate staring at his notes before anything else happens. Options A, B, and C all describe events that occur later in the story.'],
 
       ['Recognizing Cause and Effect', 'What caused Nate to perform well during the history exam?', [
-        'He had mentally walked his chosen route eleven times, placing vivid impossible images at each landmark to make each fact instantly retrievable',
+        'He had mentally walked his chosen route eleven times, placing a vivid image at every landmark along it',
         'He had read his notes so many times the night before that the information was simply on the surface of his memory',
         'Jamie had given him a summary sheet of the most important names and dates to review the morning of the exam',
         'His teacher had provided easier questions than usual after telling the class to use memory techniques',
@@ -157,13 +157,13 @@ window.LESSONS['ws4'] = {
       ['Comparing and Contrasting', 'How is Nate\'s approach to studying DIFFERENT after learning the memory palace technique?', [
         'He now studies at night instead of in the morning, because the method of loci works better when used close to bedtime',
         'He now studies alone in his room instead of with his sister, because the technique requires complete silence',
-        'Instead of repeatedly reading his notes, Nate now turns each fact into a vivid image placed at a specific location on a familiar route he already knows',
+        'Instead of repeatedly reading his notes, Nate now turns each fact into a vivid image placed on a route he knows well',
         'He now writes his notes by hand three times instead of once, because writing reinforces the spatial memory the technique relies on',
       ], 'C', 'The passage contrasts Nate\'s earlier passive note-reading with his new active approach of converting facts into vivid images placed on a mental route — a fundamentally different method.'],
 
       ['Making Predictions', 'What would MOST LIKELY happen if Nate tried to use a route he had walked only once?', [
         'The technique would work just as effectively, because the vivid images are what matter, not the familiarity of the route',
-        'The technique would likely be less reliable, because the brain\'s spatial memory works best with routes that are already deeply familiar',
+        'The technique would likely be less reliable, because the brain\'s spatial memory works best with a deeply familiar route',
         'Nate would be unable to place any images at all without having walked the route at least ten times',
         'Jamie would disqualify his attempt and make him start over with a route he knew better',
       ], 'B', 'Jamie stressed using a route he knew "perfectly" — the passage implies familiarity is essential. A poorly known route would not provide the reliable spatial anchors needed for effective recall.'],
@@ -178,7 +178,7 @@ window.LESSONS['ws4'] = {
       ['Drawing Conclusions and Making Inferences', 'What conclusion can you draw from the fact that Nate assumed memory palaces were only for gifted people?', [
         'Jamie had deliberately hidden the technique from Nate because she wanted to win the school competition alone',
         'The memory palace is actually a rare skill that most people are unable to learn even with significant practice',
-        'Many people underestimate memory techniques because they assume that impressive memory feats require natural talent rather than a learnable method',
+        'Many people underestimate memory techniques because they assume impressive feats require talent rather than a learnable method',
         'Nate\'s school did not teach memory techniques, proving that the educational system fails students who need help with memorization',
       ], 'C', 'Nate\'s assumption that the technique was only for "gifted people" reflects a common belief that extraordinary memory is innate. His success shows it is a learnable method, which is the key conclusion.'],
 
@@ -191,7 +191,7 @@ window.LESSONS['ws4'] = {
 
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
         'To argue that schools should eliminate traditional exams and replace them with memory competitions',
-        'To show through Nate\'s story how the memory palace technique works and why it is more effective than ordinary memorization',
+        'To show through Nate\'s story how the memory palace technique works and why it beats plain memorization',
         'To entertain readers with a humorous story about a student who embarrasses himself in front of his sister',
         'To describe all of the historical events that Nate memorized using the memory palace technique',
       ], 'B', 'The passage uses Nate\'s experience as a vehicle to illustrate the memory palace technique in action. Option B captures this illustrative, explanatory purpose.'],
@@ -200,12 +200,12 @@ window.LESSONS['ws4'] = {
         'Nate had spent so much time in museums that he naturally organized his thoughts the same way that museum curators display art',
         'Nate was planning to donate his history notes to a real museum after the exam was over',
         'The images Nate stored were so beautiful and detailed that they looked like professional museum exhibits',
-        'The memory palace kept each stored fact in a specific, predictable place so that every piece of information could be found and retrieved immediately',
+        'The memory palace kept each fact in a specific, predictable place, so any piece of information could be retrieved at once',
       ], 'D', 'The expression compares the memory palace to a museum where exhibits stay exactly in place — emphasizing the technique\'s ability to keep information organized and instantly retrievable. Option D captures this meaning.'],
 
       ['Distinguishing Between Real and Make-believe', 'Which detail could NOT happen in real life?', [
         'A student memorizing thirty historical names and dates in three days using visualization and a familiar route',
-        'A student who, using a memory palace, perfectly memorizes every fact from every textbook ever written in a single afternoon and recalls all of them flawlessly forever without any further review',
+        'A student memorizes every fact from every textbook ever written in one afternoon and never reviews again',
         'A sibling teaching a memory technique they used to win a school competition to a struggling younger brother',
         'A teacher holding a history exam that requires students to recall names, dates, and historical events',
       ], 'B', 'Memorizing every fact from every textbook ever written in one afternoon with permanent perfect recall is physically and neurologically impossible. Options A, C, and D all describe realistic scenarios.'],

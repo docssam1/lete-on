@@ -157,8 +157,8 @@ window.LESSONS['sl15'] = {
 
       ['Comparing and Contrasting', 'How is the metal screen stage DIFFERENT from the bacteria stage?', [
         'The metal screen stage uses bacteria to catch debris, while the bacteria stage uses mechanical filters',
-        'The metal screen stage removes large visible objects, while the bacteria stage breaks down invisible organic waste',
         'The bacteria stage uses physical barriers to stop waste, while the metal screen stage uses living organisms',
+        'The metal screen stage removes large visible objects, while the bacteria stage breaks down invisible organic waste',
         'The bacteria stage happens before the metal screen stage in the order of the treatment process',
       ], 'C', 'Screens physically block large objects like plastic wrappers and bottle caps. Bacteria biologically break down organic waste too small to catch mechanically. These are fundamentally different methods targeting different types of waste.'],
 
