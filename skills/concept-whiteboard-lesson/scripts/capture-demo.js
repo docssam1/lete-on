@@ -126,6 +126,24 @@ async function focusScene(page){
                    { stdio: 'ignore' });
       fs.rmSync(path.join(OUT, '_raw'), { recursive: true, force: true });
       console.log('저장:', dst);
+
+      /* GIF — 깃허브 README에서 클릭 없이 바로 움직이게 하는 유일한 방법.
+         팔레트를 먼저 뽑아야(palettegen→paletteuse) 색 띠가 안 생긴다.
+         폭 720·12fps는 파일 크기와 가독성의 절충 — 수식이 읽혀야 하므로
+         이보다 더 줄이지 말 것. */
+      const gif = path.join(OUT, `demo-${unit.toLowerCase().replace(/-/g, '')}.gif`);
+      const pal = path.join(OUT, '_palette.png');
+      const VF  = 'fps=12,scale=720:-1:flags=lanczos';
+      execFileSync('ffmpeg', ['-y', '-i', dst, '-vf', VF + ',palettegen=stats_mode=diff', pal], { stdio: 'ignore' });
+      execFileSync('ffmpeg', ['-y', '-i', dst, '-i', pal, '-lavfi',
+                              VF + ' [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=3',
+                              '-loop', '0', gif], { stdio: 'ignore' });
+      fs.rmSync(pal, { force: true });
+      const mb = (fs.statSync(gif).size / 1048576).toFixed(2);
+      console.log('저장:', gif, `(${mb} MB)`);
+      if(fs.statSync(gif).size > 10 * 1048576){
+        console.log('⚠ 10MB 초과 — 깃허브에서 무거우니 길이를 줄이거나 fps를 낮출 것');
+      }
     } else {
       const page = await browser.newPage({ viewport: { width: 1100, height: 820 }, deviceScaleFactor: 2 });
       const errs = [];
