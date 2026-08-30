@@ -72,15 +72,16 @@ function applyClassificationReview(database, packet) {
       ])).sort()
     };
   });
+  const reviewedQuestionIds = new Set(packet.reviews.map(review => clean(review.questionId)));
   let normalizedDomainCount = 0;
-  database.questions.forEach(question => {
+  database.questions.filter(question => reviewedQuestionIds.has(question.questionId)).forEach(question => {
     const domain = ledgerCore.domainFor(question.classification.unit);
     if (question.classification.domain === domain && question.classification.majorUnit === domain) return;
     question.classification.domain = domain;
     question.classification.majorUnit = domain;
     question.classification.evidence = Array.from(new Set([
       ...(question.classification.evidence || []),
-      "taxonomy.domain-normalization.20260829"
+      `${clean(packet.reviewId)}:taxonomy-domain-normalization`
     ])).sort();
     normalizedDomainCount += 1;
   });
