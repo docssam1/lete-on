@@ -51,7 +51,7 @@ test("원본 대조 분류 교정은 유형 ID와 유형 목록을 함께 다시
   assert.equal(output.classificationReviews[0].normalizedDomainCount, 0);
 });
 
-test("좌표평면 단원은 기존 다른 시험지까지 함수 영역으로 함께 정규화한다", () => {
+test("분류 교정은 검수표에 없는 다른 시험지 문항을 바꾸지 않는다", () => {
   const input = fixture();
   input.questions.push({
     ...input.questions[0],
@@ -72,9 +72,10 @@ test("좌표평면 단원은 기존 다른 시험지까지 함수 영역으로 �
   };
   const output = applyClassificationReview(input, packet);
   const coordinate = output.questions.find(question => question.questionId === "DP-Q-OTHER-001");
-  assert.equal(coordinate.classification.domain, "함수");
-  assert.equal(coordinate.classification.majorUnit, "함수");
-  assert.equal(output.classificationReviews[0].normalizedDomainCount, 1);
+  assert.equal(coordinate.classification.domain, "기하");
+  assert.equal(coordinate.classification.majorUnit, "기하");
+  assert.deepEqual(coordinate.classification.evidence, ["old"]);
+  assert.equal(output.classificationReviews[0].normalizedDomainCount, 0);
 });
 
 test("원본과 다른 시험지의 교정표는 적용하지 않는다", () => {
