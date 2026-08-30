@@ -1347,8 +1347,21 @@ const ROAD_LABS=[
   name:{ko:'미적분은 왜 태어났나',en:'Why Calculus Was Born',zh:'微积分为何诞生'},
   desc:{ko:'변하는 것을 계산하려고 400년 전에 미적분이 생긴 이야기와 오늘의 쓰임을 봐요.',
         en:'How calculus was invented 400 years ago to measure change — and where it lives today.',
-        zh:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。'}}
+        zh:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。'}},
+ {file:'labs/root-hunter.html', icon:'🌰',
+  name:{ko:'루트 사냥꾼',en:'Root Hunter',zh:'求根猎人'},
+  desc:{ko:'√7은 몇일까? 넓이 슬라이더와 양쪽 조이기로 제곱근을 직접 사냥해요.',
+        en:'What is √7? Hunt square roots yourself with an area slider and a squeeze play.',
+        zh:'√7是多少？用面积滑块和两边夹逼，亲手猎取平方根。'}}
 ];
+
+/* 개념 노트 ↔ 실험실 연결 — 여기 등록된 유닛은 개념 노트 하단에 실험실 버튼이 뜬다.
+   실험실이 "따로 가야 있는 것"이 아니라 그 개념을 배우는 자리에서 바로 열리게. */
+const UNIT_LABS={
+  'M-15':'labs/root-hunter.html',      /* 제곱근 → 루트 사냥꾼 */
+  'M-44':'labs/why-calculus.html',     /* 미분계수 → 미적분은 왜 태어났나 */
+  'M-45':'labs/why-calculus.html',     /* 접선 → 〃 */
+};
 
 /* 과정 목록(번호순) — courses.js의 키에서 그대로 만든다. */
 function roadCourseList(){
@@ -3014,11 +3027,16 @@ function stepDiscover(body,u){
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
     </div>${histHtml}`:'';
+  /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다 */
+  const unitLab=UNIT_LABS[u.id];
+  const labBtnHtml=unitLab?`<button class="nm-btn full nm-lab-link" id="openUnitLab">🧪 ${
+    S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试'}</button>`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
     <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
-    <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+    ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+  if(unitLab){$('#openUnitLab').onclick=()=>{window.open(unitLab,'_blank','noopener');};}
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';

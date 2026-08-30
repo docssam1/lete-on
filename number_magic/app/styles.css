@@ -277,6 +277,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   text-decoration-thickness:2px;text-underline-offset:3px}
 .kid-note .nm-cdesc b{background:linear-gradient(transparent 50%,rgba(245,217,139,.9) 50% 96%,transparent 96%)}
 
+/* 개념 노트 ↔ 실험실 버튼(UNIT_LABS) — 다음 버튼과 구별되는 실험실 톤 */
+.nm-btn.nm-lab-link{background:#fff;color:#6b5334;border:2px solid #C9A063;margin-bottom:10px}
+.nm-btn.nm-lab-link:active{transform:scale(.985)}
+
 /* 수학사 네 컷 만화(data/story-comics.js) — 개념 노트에서 🏛 한 줄을 대체 */
 .nm-comic-h{font-size:12px;font-weight:800;color:#8a6d46;margin:12px 0 6px;letter-spacing:.02em}
 .nm-comic{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin:0 0 14px}
