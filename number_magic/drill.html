@@ -199,6 +199,10 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .nm-ex-choices li{counter-increment:nmwp;font-size:clamp(13.5px,3.8vw,16px);line-height:1.55;
   margin:5px 0 0;padding-left:1.7em;text-indent:-1.7em;word-break:keep-all;color:var(--ink)}
 .nm-ex-choices li::before{content:counter(nmwp) ") ";font-weight:800;color:var(--gold)}
+/* 식 틀 — 답이 '식'인 문장제(WP4). 화면에서는 빈칸에 직접 쓰지 못하고 아래 입력칸에
+   세 수를 쉼표로 치므로, 어떤 자리에 무엇이 들어가는지 크게 보여 주는 역할이다. */
+.nm-ex-word-eq{font-size:clamp(22px,6vw,30px);font-weight:800;letter-spacing:.16em;color:var(--ink);
+  text-align:center;margin:14px 0 2px;font-family:'SFMono-Regular',Consolas,monospace}
 
 
 .nm-exam-input{display:flex;justify-content:center;padding:0 26px 26px}
@@ -550,6 +554,9 @@ var TOPICS = [
       {label:'연산 찾기 (자연수 + − ×)', thread:'WP3', level:1, desc:'더할까 뺄까 곱할까'},
       {label:'연산 찾기 (자연수 + − × ÷)', thread:'WP3', level:2, desc:'나누기까지 넣어 고르기'},
       {label:'연산 찾기 (분수·소수 + −)', thread:'WP3', level:3, desc:'재는 상황에서 식 고르기'},
+      {label:'식으로 나타내기 (자연수 + − ×)', thread:'WP4', level:1, desc:'□ ○ □ = □ 채우기'},
+      {label:'식으로 나타내기 (자연수 + − × ÷)', thread:'WP4', level:2, desc:'나눗셈까지, □가 있는 식'},
+      {label:'식으로 나타내기 (분수·소수 + −)', thread:'WP4', level:3, desc:'재는 상황을 식으로 옮기기'},
     ]
   },
   { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6', section:'magic',

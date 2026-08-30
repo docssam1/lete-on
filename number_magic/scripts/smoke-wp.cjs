@@ -7,7 +7,7 @@
    choices)를 쓰므로, 그 경로가 실제 브라우저에서 그려지는지 따로 본다.
 
      · 새 프로필 온보딩부터 시작(#obName → #obGo)
-     · WP1·WP3의 여섯 레벨을 문제은행 UI에서 골라 끝까지 풀어 만점
+     · WP1·WP3·WP4의 아홉 레벨을 문제은행 UI에서 골라 끝까지 풀어 만점
      · 인쇄 학습지를 실제로 렌더해 본문·물음·보기·정답지가 다 있는지 확인
      · 데스크톱 1280 · 모바일 430 양쪽, pageerror 0건, 가로 넘침 0건
      · 스크린샷을 남긴다(--out 디렉터리)
@@ -49,7 +49,8 @@ function serve() {
   });
 }
 
-const TARGETS = [['WP1', 1], ['WP1', 2], ['WP1', 3], ['WP3', 1], ['WP3', 2], ['WP3', 3]];
+const TARGETS = [['WP1', 1], ['WP1', 2], ['WP1', 3], ['WP3', 1], ['WP3', 2], ['WP3', 3],
+                 ['WP4', 1], ['WP4', 2], ['WP4', 3]];
 const fails = [];
 
 (async () => {
@@ -122,7 +123,7 @@ const fails = [];
     await page.evaluate(() => { const b = document.getElementById('__wp__'); if (b) b.remove(); });
 
     /* 인쇄 — 본문·물음·보기·정답지가 다 나오는가, 가로로 넘치지 않는가 */
-    for (const [th, lv] of [['WP1', 1], ['WP3', 3]]) {
+    for (const [th, lv] of [['WP1', 1], ['WP3', 3], ['WP4', 1], ['WP4', 3]]) {
       const r = await page.evaluate(async ({ th, lv }) => {
         document.querySelectorAll('.nm-print-sheet').forEach(e => e.remove());
         NM_EXAM.renderPrint({ thread: th, level: lv, count: 8, seed: 'wpsmoke' });
@@ -133,7 +134,10 @@ const fails = [];
           cards: cards.length,
           words: sh.querySelectorAll('.nm-print-word').length,
           asks: sh.querySelectorAll('.nm-print-wordask').length,
+          /* 답 줄(답: ____)이거나 식 틀(□ ○ □ = □)이거나 — 문장제는 둘 중 하나를
+             반드시 그린다. 식을 쓰는 유형(WP4 fill)은 답 줄 대신 식 틀이 나온다. */
           blanks: sh.querySelectorAll('.nm-print-word-blank').length,
+          eqs: sh.querySelectorAll('.nm-print-word-eq').length,
           keys: sh.querySelectorAll('.nm-ak-item').length,
           dupAsk: sh.querySelectorAll('.nm-print-ask').length,
           overflow: cards.filter(c => c.scrollWidth > c.clientWidth + 2).length,
@@ -144,12 +148,12 @@ const fails = [];
       if (r.cards !== 8) fails.push(`${tag} — 카드 ${r.cards}/8`);
       if (r.words !== 8) fails.push(`${tag} — 본문 ${r.words}/8`);
       if (r.asks !== 8) fails.push(`${tag} — 물음 ${r.asks}/8`);
-      if (r.blanks !== 8) fails.push(`${tag} — 답 칸 ${r.blanks}/8`);
+      if (r.blanks + r.eqs !== 8) fails.push(`${tag} — 답 칸/식 틀 ${r.blanks + r.eqs}/8`);
       if (r.keys !== 8) fails.push(`${tag} — 정답지 ${r.keys}/8`);
       if (r.dupAsk) fails.push(`${tag} — 질문 줄이 중복으로 ${r.dupAsk}개 (본문과 두 번 찍힘)`);
       if (r.overflow) fails.push(`${tag} — 칸 넘침 ${r.overflow}`);
       if (r.empty) fails.push(`${tag} — 빈 카드 ${r.empty}`);
-      console.log(`  ✓ ${tag} 카드 ${r.cards} · 본문 ${r.words} · 물음 ${r.asks} · 보기칸 ${r.blanks} · 정답 ${r.keys} · 중복질문 ${r.dupAsk} · 넘침 ${r.overflow}`);
+      console.log(`  ✓ ${tag} 카드 ${r.cards} · 본문 ${r.words} · 물음 ${r.asks} · 답칸 ${r.blanks} · 식틀 ${r.eqs} · 정답 ${r.keys} · 중복질문 ${r.dupAsk} · 넘침 ${r.overflow}`);
       if (OUT) {
         await page.emulateMedia({ media: 'print' });
         await page.screenshot({ path: path.join(OUT, `wp-${th}L${lv}-${width}.png`), fullPage: true });

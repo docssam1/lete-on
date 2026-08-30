@@ -1688,6 +1688,15 @@ WP3:{ name:{ko:'문장제 — 연산 찾기',en:'Word Problems — Choose the Op
   levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
           {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
           {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP4:{ name:{ko:'문장제 — 식으로 나타내기',en:'Word Problems — Write the Equation',zh:'应用题 — 列算式'},
+  gen:'wp4_equation', prereq:['WP3'],
+  concept:{ko:'연산을 골랐으면 이제 식으로 옮겨요. 수를 문제에 나온 차례대로 넣는 것이 먼저예요 — "20개 중 8개를 주었다"는 8 − 20이 아니라 20 − 8이에요. 문제에 나온 수라고 다 쓰는 것도 아니에요(나이·층수는 식에 들어가지 않아요). 뺄셈 상황은 덧셈식으로도 쓸 수 있어요: "8개 더 많다"는 8 + □ = 20이에요.',
+    en:'Once you have chosen the operation, write it as a number sentence. Put the numbers in the order the problem gives them — "gave away 8 of the 20" is 20 - 8, not 8 - 20. And not every number in the story belongs in the sentence (an age or a floor number does not). A subtraction situation can also be written as an addition with a box: "8 more than" is 8 + [] = 20.',
+    zh:'选好运算以后，就要写成算式。先按题目给出的顺序填数——"20个里送出8个"是20−8，不是8−20。题目里的数也不是都要用（年龄、楼层不进算式）。减法的情况还可以写成带□的加法：“多8个”就是8+□=20。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;
