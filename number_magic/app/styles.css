@@ -277,6 +277,18 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   text-decoration-thickness:2px;text-underline-offset:3px}
 .kid-note .nm-cdesc b{background:linear-gradient(transparent 50%,rgba(245,217,139,.9) 50% 96%,transparent 96%)}
 
+/* 수학사 네 컷 만화(data/story-comics.js) — 개념 노트에서 🏛 한 줄을 대체 */
+.nm-comic-h{font-size:12px;font-weight:800;color:#8a6d46;margin:12px 0 6px;letter-spacing:.02em}
+.nm-comic{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin:0 0 14px}
+.nm-comic-panel{position:relative;margin:0;background:#fff;border:2px solid var(--ink);border-radius:12px;
+  overflow:hidden;box-shadow:3px 3px 0 rgba(26,34,51,.14)}
+.nm-comic-no{position:absolute;top:7px;left:7px;width:21px;height:21px;border-radius:50%;
+  background:var(--ink);color:#fff;font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+.nm-comic-art{background:#fdfaf3;border-bottom:2px solid var(--ink)}
+.nm-comic-art svg{display:block;width:100%;height:auto}
+.nm-comic-cap{font-size:12.5px;line-height:1.5;padding:8px 11px;color:var(--ink);font-weight:600}
+
 /* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
 .nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
 .nm-mstep-line{font-weight:900;color:var(--blue-deep);padding:4px 0}

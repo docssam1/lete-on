@@ -2999,10 +2999,21 @@ function stepDiscover(body,u){
      삽화는 전부 원본 도형이고, 3개 언어 공용이라 글자 대신 숫자·수식만 쓴다. */
   const artHtml=`<figure class="nm-story-art"><img src="assets/images/story/${u.id}.svg" alt=""
       loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
+  /* 수학사 네 컷 만화(data/story-comics.js) — 등록된 유닛은 🏛 한 줄 대신 만화.
+     캡션이 이야기를 다 전하므로 산문 history는 그 유닛에선 그리지 않는다. */
+  const comic=window.NM_COMICS&&NM_COMICS[u.id];
+  const histHtml=comic
+    ?`<div class="nm-comic-h">🏛 ${S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史'}</div>
+      <div class="nm-comic">${comic.panels.map((p,i)=>`<figure class="nm-comic-panel">
+        <span class="nm-comic-no">${i+1}</span>
+        <div class="nm-comic-art">${p.art}</div>
+        <figcaption class="nm-comic-cap">${L(p.text)}</figcaption>
+      </figure>`).join('')}</div>`
+    :(st&&st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:'');
   const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
-    </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';
+    </div>${histHtml}`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
     <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
