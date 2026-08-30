@@ -1,13 +1,14 @@
 import { strict as assert } from "node:assert";
 import { chromium } from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
 
+const baseUrl = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1100, height: 900 }, deviceScaleFactor: 1 });
 const errors = [];
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
 page.on("pageerror", (error) => errors.push(error.message));
 
-await page.goto("http://127.0.0.1:8765/geometry/worksheet/net-observatory/", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/worksheet/net-observatory/`, { waitUntil: "networkidle" });
 await page.locator("#levelSelect").selectOption("2");
 assert.match(await page.locator("#sheetTitle").textContent(), /그림 면 마주보기/);
 assert.equal(await page.locator(".interaction-net-opposite").count(), 3);
@@ -28,8 +29,8 @@ assert.ok(sheet.scrollHeight <= sheet.height + 1, JSON.stringify(sheet));
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-net-opposite-sheet.png", fullPage: true });
 
 await page.emulateMedia({ media: "screen" });
-await page.goto("http://127.0.0.1:8765/geometry/solid-vista/", { waitUntil: "networkidle" });
+await page.goto(`${baseUrl}/geometry/solid-vista/`, { waitUntil: "networkidle" });
 assert.match(await page.locator("#netLevelGrid .level-card").nth(1).textContent(), /그림 면 마주보기/);
 assert.equal(errors.length, 0, errors.join("\n"));
-console.log(JSON.stringify({ problems: 3, pictureChoices: 9, correctChoices: 3, sheet }, null, 2));
+console.log(JSON.stringify({ baseUrl, problems: 3, pictureChoices: 9, correctChoices: 3, sheet }, null, 2));
 await browser.close();
