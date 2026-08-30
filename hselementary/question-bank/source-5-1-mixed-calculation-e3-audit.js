@@ -13,6 +13,7 @@ const inventory = JSON.parse(fs.readFileSync(path.join(__dirname, "source-invent
 const failures = [];
 let checked = 0;
 const unit = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1")?.units.find(item => item.id === "5-1-u1");
+const unitTypes = unit?.subunits.flatMap(subunit => subunit.types) || [];
 const types = unit?.subunits.find(item => item.name === "식 세워 풀기")?.types || [];
 const e3Items = inventory.items.filter(item => item.exploration === 3);
 const sourceAnswers = [
@@ -28,6 +29,10 @@ const sourceAnswers = [
   8250 / (600 - 750 / 5 * 3),
   ((4 * 15 - 3 * 6) / 2) * (((4 * 15 - 3 * 6) / 2) + 6)
 ];
+
+if (unitTypes.length !== 45 || inventory.items.length !== 45) failures.push("5-1 1단원은 45유형이어야 합니다.");
+const e4Types = unitTypes.filter(type => type.sourceItemId.startsWith("5-1-u1-e4-"));
+if (e4Types.length !== 12 || e4Types.some(type => type.reviewLocked || api.generatorKey(type) !== "mixedCalculationE4" || !inventory.resultContracts[type.sourceItemId])) failures.push("개념탐구 4 생성기 또는 답 형식 연결이 다릅니다.");
 
 const natural = value => Number.isInteger(value) && value > 0;
 const numberAnswer = answer => Number(String(answer).replace(/[^0-9-]/g, ""));
@@ -114,7 +119,7 @@ function calculate(kind, values, prompt) {
 if (!unit || types.length !== 11 || e3Items.length !== 11) failures.push("개념탐구 3 원문·교육과정 유형은 각각 11개여야 합니다.");
 const ready = types.filter(type => !type.reviewLocked && api.generatorKey(type) === "mixedCalculationE3");
 const locked = unit ? unit.subunits.flatMap(item => item.types).filter(type => type.reviewLocked || !api.generatorKey(type)) : [];
-if (ready.length !== 11 || locked.length !== 12) failures.push(`개념탐구 3 공개 11유형·단원 잠금 12유형이어야 하나 ${ready.length}, ${locked.length}유형입니다.`);
+if (ready.length !== 11 || locked.length !== 1) failures.push(`개념탐구 3 공개 11유형·단원 잠금 1유형이어야 하나 ${ready.length}, ${locked.length}유형입니다.`);
 for (const type of types) {
   const item = e3Items.find(candidate => candidate.sourceItemId === type.sourceItemId);
   if (!item || item.implementationStatus !== "ready" || type.reviewLocked || api.generatorKey(type) !== "mixedCalculationE3") failures.push(`${type.id}: 원문 공개 상태 또는 생성기 연결이 다릅니다.`);

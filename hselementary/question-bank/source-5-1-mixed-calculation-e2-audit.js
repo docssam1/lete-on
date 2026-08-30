@@ -14,11 +14,9 @@ const failures = [];
 let checked = 0;
 const e2Ids = new Set(inventory.items.filter(item => item.exploration === 2).map(item => item.sourceItemId));
 const sourceById = new Map(inventory.items.map(item => [item.sourceItemId, item]));
-const types = window.HSE_CURRICULUM.semesters
-  .find(semester => semester.id === "5-1")
-  .units.find(unit => unit.id === "5-1-u1")
-  .subunits.find(subunit => subunit.name === "하나의 식으로 나타내기")
-  .types;
+const unit = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "5-1")?.units.find(item => item.id === "5-1-u1");
+const unitTypes = unit?.subunits.flatMap(subunit => subunit.types) || [];
+const types = unit?.subunits.find(subunit => subunit.name === "하나의 식으로 나타내기")?.types || [];
 
 const fail = (type, difficulty, seed, message) => failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${message}`);
 const isNatural = value => Number.isInteger(value) && value > 0;
@@ -29,6 +27,10 @@ const attributes = prompt => {
 };
 const integers = value => String(value).split(",").map(part => Number(part));
 const answerNumber = answer => Number(String(answer).replace(/[^0-9-]/g, ""));
+
+if (unitTypes.length !== 45 || inventory.items.length !== 45) failures.push("5-1 1단원은 45유형이어야 합니다.");
+const e4Types = unitTypes.filter(type => type.sourceItemId.startsWith("5-1-u1-e4-"));
+if (e4Types.length !== 12 || e4Types.some(type => type.reviewLocked || api.generatorKey(type) !== "mixedCalculationE4" || !inventory.resultContracts[type.sourceItemId])) failures.push("개념탐구 4 생성기 또는 답 형식 연결이 다릅니다.");
 
 function calculate(kind, values) {
   if (kind === "e2-reverse-halves") {

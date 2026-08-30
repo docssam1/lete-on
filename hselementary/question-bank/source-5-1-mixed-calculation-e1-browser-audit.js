@@ -35,8 +35,8 @@ function auditInventory() {
   for (const criterion of ["language", "representations", "prerequisites", "reasoning-load", "response-mode"]) {
     if (!String(learnerCriteria[criterion] || "").trim()) fail(`learner-fit ${criterion} 기준이 없습니다.`);
   }
-  if (inventory.items.length !== 44 || types.length !== 44) fail(`원문·교육과정 유형은 각각 44개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 32 || lockedTypes.length !== 12) fail(`공개 32개·검수 대기 12개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (inventory.items.length !== 45 || types.length !== 45) fail(`원문·교육과정 유형은 각각 45개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
+  if (readyTypes.length !== 44 || lockedTypes.length !== 1) fail(`공개 44개·검수 대기 1개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
   if (e1ReadyTypes.length !== 11) fail(`개념탐구 1의 공개 유형은 11개여야 하나 ${e1ReadyTypes.length}개입니다.`);
   const sourceIds = new Set();
   for (const type of types) {
@@ -52,13 +52,15 @@ function auditInventory() {
     const shouldLock = source.implementationStatus === "review-locked";
     if (type.reviewLocked !== shouldLock) fail(`${type.id}: 검수 대기 상태가 분류표와 다릅니다.`);
     if (shouldLock && (!type.reviewReason || api.generatorKey(type))) fail(`${type.id}: 잠금 사유가 없거나 생성기가 열려 있습니다.`);
-    const expectedGenerator = source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : source.exploration === 3 ? "mixedCalculationE3" : "";
+    const expectedGenerator = source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : source.exploration === 3 ? "mixedCalculationE3" : source.exploration === 4 ? "mixedCalculationE4" : "";
     if (!shouldLock && (!expectedGenerator || type.reviewLocked || api.generatorKey(type) !== expectedGenerator)) fail(`${type.id}: 공개 유형의 생성기 연결이 다릅니다.`);
-    if (!shouldLock && !["single-value", "ordered", "named-value"].includes(inventory.resultContracts?.[type.sourceItemId])) fail(`${type.id}: 공개 유형의 답 형식 계약이 없습니다.`);
+    if (!shouldLock && !["single-value", "ordered", "named-value", "set", "rubric"].includes(inventory.resultContracts?.[type.sourceItemId])) fail(`${type.id}: 공개 유형의 답 형식 계약이 없습니다.`);
   }
   for (const subunit of unit.subunits) {
     const variants = subunit.types.map(type => type.variant).join(",");
-    if (subunit.types.length !== 11 || variants !== "0,1,2,3,4,5,6,7,8,9,10") fail(`${subunit.name}: 개념탐구 본문·예제 4개·Mission 6개 구조가 아닙니다.`);
+    const expected = subunit.name === "혼합 계산식 만들기" ? "0,1,2,3,4,5,6,7,8,9,10,11" : "0,1,2,3,4,5,6,7,8,9,10";
+    const expectedCount = subunit.name === "혼합 계산식 만들기" ? 12 : 11;
+    if (subunit.types.length !== expectedCount || variants !== expected) fail(`${subunit.name}: 원문 본문·예제·Mission 유형 구조가 아닙니다.`);
   }
 }
 
@@ -77,7 +79,7 @@ async function inspectCatalog(browser, viewport, label) {
   await page.click('#termFilter [data-term="1"]');
   await page.selectOption("#unitFilter", "5-1-u1");
   const catalogCount = await page.locator("[data-preview-type-id]").count();
-  if (catalogCount !== 44) fail(`${label}: 목록에 44유형 대신 ${catalogCount}유형이 보입니다.`);
+  if (catalogCount !== 45) fail(`${label}: 목록에 45유형 대신 ${catalogCount}유형이 보입니다.`);
   for (const type of types) {
     const row = page.locator(`[data-preview-type-id="${type.id}"]`);
     if (await row.count() !== 1) {
@@ -198,7 +200,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 32 · 잠금 12 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 44 · 잠금 1 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);
