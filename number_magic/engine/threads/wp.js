@@ -90,8 +90,11 @@
       ko:{n:'색종이', u:'장'}, en:{n:'sheets of colored paper'}, zh:{n:'彩纸', u:'张'} },
     { id:'sticker', kinds:ALL, away:'use',  groups:['bundle','bag'],
       ko:{n:'스티커', u:'장'}, en:{n:'stickers'},             zh:{n:'贴纸', u:'张'} },
-    { id:'ddakji',  kinds:ALL, away:'give', groups:['bundle','box'],
-      ko:{n:'딱지', u:'장'},   en:{n:'paper tags'},           zh:{n:'纸牌', u:'张'} },
+    /* 딱지는 요즘 아이가 모르는 말이라 카드로 바꿨다(원장 지적, 2026-08-30).
+       단위(장)·away·groups가 같아 그대로 대체된다. 소재를 새로 넣을 때도
+       "지금 아이가 실제로 아는 물건인가"를 먼저 볼 것. */
+    { id:'card',    kinds:ALL, away:'give', groups:['bundle','box'],
+      ko:{n:'카드', u:'장'},   en:{n:'cards'},                zh:{n:'卡片', u:'张'} },
     { id:'pencil',  kinds:ALL, away:'give', groups:['bundle','box'],
       ko:{n:'연필', u:'자루'}, en:{n:'pencils'},              zh:{n:'铅笔', u:'支'} },
     { id:'note',    kinds:ALL, away:'give', groups:['box','bundle'],
