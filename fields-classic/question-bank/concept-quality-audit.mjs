@@ -23,8 +23,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
 
 assert(curriculumTypeIds.size === 442, `expected 442 unique curriculum types, got ${curriculumTypeIds.size}`);
 assert(typePlacements.length === 489, `expected 489 curriculum placements, got ${typePlacements.length}`);
-assert(CONCEPT_DEFINITIONS.length === 4, `expected four explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 4, `expected four pilot links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(CONCEPT_DEFINITIONS.length === 8, `expected eight explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 8, `expected eight pilot links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -43,6 +43,22 @@ const expectedPilot = Object.freeze({
   "person-item-logic": Object.freeze({
     conceptId: "concept:logic:one-to-one-elimination",
     placementBooks: Object.freeze(["book-01", "book-04"])
+  }),
+  "shape-mirror-direction": Object.freeze({
+    conceptId: "concept:geometry:mirror-line-reflection",
+    placementBooks: Object.freeze(["book-01", "book-04"])
+  }),
+  "fold-number-cut-sum-textbook": Object.freeze({
+    conceptId: "concept:geometry:folded-number-cut-sum",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "cross-shape-magic-sum": Object.freeze({
+    conceptId: "concept:number:cross-center-equal-sum",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "two-digit-condition": Object.freeze({
+    conceptId: "concept:number:two-digit-place-conditions",
+    placementBooks: Object.freeze(["book-01"])
   })
 });
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
@@ -114,8 +130,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 4, `expected 4 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 438, `expected 438 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 8, `expected 8 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 434, `expected 434 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

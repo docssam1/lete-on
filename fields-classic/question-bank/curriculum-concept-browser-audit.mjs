@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
 const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playwright", "index.mjs")).href);
+const { getDocument } = await import(pathToFileURL(path.join(runtimeModules, "pdfjs-dist", "legacy", "build", "pdf.mjs")).href);
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const outputDir = process.env.CONCEPT_AUDIT_OUTPUT_DIR || "";
 if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
@@ -29,6 +30,26 @@ const pilotExpectations = Object.freeze({
     "사람은 가로, 동물이나 음식은 세로에 놓아 조건을 한눈에 볼 수 있게 합니다.",
     "맞는 관계를 표시하고 같은 행과 열의 다른 가능성을 지웁니다.",
     "마지막 후보를 정한 뒤 처음부터 모든 조건에 다시 대입합니다."
+  ]),
+  "shape-mirror-direction": Object.freeze([
+    "도형과 거울 사이의 선을 기준으로 어느 쪽에 비치는지 먼저 확인합니다.",
+    "각 꼭짓점에서 거울선에 수직으로 가서 반대편 같은 거리의 점을 표시합니다.",
+    "대응하는 점을 원래 순서대로 잇고 좌우 방향이 바뀌었는지 확인합니다."
+  ]),
+  "fold-number-cut-sum-textbook": Object.freeze([
+    "접는 선과 화살표를 차례로 보고 어느 칸이 어느 쪽으로 이동하는지 표시합니다.",
+    "접힌 종이에서 자른 자리와 겹치는 원래 번호 칸을 펼치는 순서의 반대로 모두 찾습니다.",
+    "표시한 번호가 빠짐없이 잘린 칸인지 다시 확인한 뒤 그 수들만 더합니다."
+  ]),
+  "cross-shape-magic-sum": Object.freeze([
+    "가로줄과 세로줄에 모두 들어가는 가운데 칸을 먼저 표시합니다.",
+    "가운데 수를 제외하고 가로 양끝과 세로 양끝의 합이 같아지도록 수 카드를 짝지어 봅니다.",
+    "카드를 놓은 뒤 가로줄과 세로줄을 각각 더해 두 합이 같은지 확인합니다."
+  ]),
+  "two-digit-condition": Object.freeze([
+    "십의 자리 조건과 일의 자리 조건, 두 숫자의 합이나 차 조건을 따로 적습니다.",
+    "십의 자리가 0이 아닌 숫자쌍 가운데 먼저 만족하는 조건에 맞는 후보를 모두 적습니다.",
+    "남은 후보를 다른 조건에 하나씩 대입해 모두 만족하는 두 자리 수만 남깁니다."
   ])
 });
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
@@ -141,6 +162,27 @@ async function assertPrintableCards(page, typeId) {
   }
 }
 
+async function inspectPrintedPdf(pdf, typeId) {
+  const document = await getDocument({ data: new Uint8Array(pdf) }).promise;
+  try {
+    assert.equal(document.numPages, 1, `${typeId} print: two concept questions should fit on one A4 page, got ${document.numPages}`);
+    const page = await document.getPage(1);
+    const viewport = page.getViewport({ scale: 1 });
+    const content = await page.getTextContent();
+    const title = content.items.find((item) => item.str.includes("필즈 더 클래식 단원 학습지"));
+    const firstNumber = content.items.find((item) => item.str === "01");
+    const secondNumber = content.items.find((item) => item.str === "02");
+    for (const [label, item] of [["worksheet title", title], ["question 01", firstNumber], ["question 02", secondNumber]]) {
+      assert.ok(item, `${typeId} print: ${label} is missing from the rendered PDF`);
+      const y = item.transform[5];
+      assert.ok(y >= 0 && y <= viewport.height, `${typeId} print: ${label} is outside the A4 page`);
+    }
+    return document.numPages;
+  } finally {
+    await document.destroy();
+  }
+}
+
 const browser = await chromium.launch({ headless: true });
 try {
   const printPageCounts = [];
@@ -151,7 +193,7 @@ try {
     if (typeId === "shape-quarter-half-turn") {
       await assertPreview(desktop, desktopContext.pilot, expectedBeats, "hover", "desktop hover");
       await desktop.keyboard.press("Escape");
-      const principleOnly = desktop.locator('#curriculumTree [data-preview-type="shape-mirror-direction"]');
+      const principleOnly = desktop.locator('#curriculumTree [data-preview-type="shape-flip-composition"]');
       assert.equal(await principleOnly.count(), 1, "desktop: principle-only comparison type missing");
       await principleOnly.hover();
       const principlePreview = desktop.locator("#typePreview:not([hidden])");
@@ -177,8 +219,7 @@ try {
     await assertPrintableCards(desktop, typeId);
     const pdf = await desktop.pdf({ format: "A4", printBackground: true });
     if (outputDir) fs.writeFileSync(path.join(outputDir, `${typeId}.pdf`), pdf);
-    const printPages = (pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
-    assert.equal(printPages, 1, `${typeId} print: two concept questions should fit on one A4 page, got ${printPages}`);
+    const printPages = await inspectPrintedPdf(pdf, typeId);
     printPageCounts.push(printPages);
     assert.deepEqual(desktopContext.errors, [], `${typeId} desktop: browser errors ${desktopContext.errors.join(" | ")}`);
     await desktop.close();
