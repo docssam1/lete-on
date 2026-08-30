@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260829a";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260830a";
 import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
@@ -189,12 +189,13 @@ function positionTypePreview(anchor) {
 function textbookConceptTutorialMarkup(problem, compact = false) {
   if (problem.studyStage?.id !== "concept" || !problem.representativeConcept) return "";
   const concept = problem.representativeConcept;
-  const steps = [
-    ["개념 찾기", concept.summary],
-    ["풀이 순서", concept.principle || problem.conceptGuide],
-    ["답 확인", "문제의 조건과 묻는 값을 다시 살펴보고 같은 원리로 답을 검산합니다."]
-  ];
-  return `<section class="textbook-concept-tutorial ${compact ? "compact" : ""}"><header><span>개념 튜토리얼</span><strong>${concept.label}</strong></header><ol>${steps.map(([label, text], index) => `<li><b>${index + 1}</b><div><strong>${label}</strong><p>${text}</p></div></li>`).join("")}</ol></section>`;
+  const sourceBacked = concept.lessonQuality === "source-backed";
+  const steps = sourceBacked
+    ? concept.beats
+    : [{ id: "core-method", label: "핵심 방법", text: concept.principle || problem.conceptGuide }];
+  const heading = sourceBacked ? "개념 익히기" : "풀이 원리";
+  const qualityClass = sourceBacked ? "source-backed" : "principle-only";
+  return `<section class="textbook-concept-tutorial ${qualityClass} ${compact ? "compact" : ""}"><header><span>${heading}</span><strong>${concept.label}</strong></header><ol>${steps.map((step, index) => `<li data-beat-id="${step.id}"><b>${index + 1}</b><div><strong>${step.label}</strong><p>${step.text}</p></div></li>`).join("")}</ol></section>`;
 }
 
 function textbookConceptSolutionMarkup(question) {
@@ -243,6 +244,15 @@ function hideTypePreviewSoon() {
 
 function initTypePreviews() {
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+  let keyboardPreviewMode = false;
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Tab") keyboardPreviewMode = true;
+    if (event.key === "Escape") hideTypePreview();
+  }, true);
+  document.addEventListener("pointerdown", (event) => {
+    keyboardPreviewMode = false;
+    if (event.target.closest("[data-preview-type]")) hideTypePreview();
+  }, true);
   document.addEventListener("pointerover", (event) => {
     if (!canHover.matches) return;
     const anchor = event.target.closest("[data-preview-type]");
@@ -251,6 +261,15 @@ function initTypePreviews() {
   });
   document.addEventListener("pointerout", (event) => {
     if (!canHover.matches) return;
+    const anchor = event.target.closest("[data-preview-type]");
+    if (!anchor || anchor.contains(event.relatedTarget) || typePreviewPanel?.contains(event.relatedTarget)) return;
+    hideTypePreviewSoon();
+  });
+  document.addEventListener("focusin", (event) => {
+    const anchor = event.target.closest("[data-preview-type]");
+    if (anchor && keyboardPreviewMode) showTypePreview(anchor);
+  });
+  document.addEventListener("focusout", (event) => {
     const anchor = event.target.closest("[data-preview-type]");
     if (!anchor || anchor.contains(event.relatedTarget) || typePreviewPanel?.contains(event.relatedTarget)) return;
     hideTypePreviewSoon();
@@ -876,7 +895,9 @@ function buildQuestions() {
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // 인쇄 직전까지 부드러운 스크롤이 남으면 현재 스크롤 위치가 PDF에
+  // 반영되어 시험지 머리글과 첫 문항 윗부분이 잘릴 수 있다.
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function syncQuestionCountControls() {
@@ -3359,7 +3380,7 @@ function renderWorksheet() {
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card" data-question-index="${index}">
+    return `<article class="question-card" data-question-index="${index}" data-type-id="${escapeAttribute(question.type.id)}">
       <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
         <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
         <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
@@ -3447,11 +3468,15 @@ function initControls() {
   $("backToBuilder").addEventListener("click", () => { $("worksheetSection").hidden = true; $("builderPanel").hidden = false; });
   $("regenerateButton").addEventListener("click", buildQuestions);
   $("answerButton").addEventListener("click", openAnswers);
-  $("printButton").addEventListener("click", () => window.print());
+  $("printButton").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+    window.print();
+  });
   $("closeAnswer").addEventListener("click", () => $("answerDialog").close());
   $("closeAnswerBottom").addEventListener("click", () => $("answerDialog").close());
   $("printAnswerButton").addEventListener("click", () => {
     document.body.classList.add("printing-answers");
+    window.scrollTo({ top: 0, behavior: "auto" });
     window.print();
     setTimeout(() => document.body.classList.remove("printing-answers"), 400);
   });
