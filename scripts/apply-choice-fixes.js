@@ -32,10 +32,16 @@ Object.keys(byId).forEach(id => {
     const ci = 'ABCD'.indexOf(p.choice);
     const old = q[2][ci];
     if (old === p.text) { console.log(`= ${id} ${p.set} Q${p.q}${p.choice} 이미 같음`); return; }
-    const lit = JSON.stringify(old);
-    const n = src.split(lit).length - 1;
-    if (n !== 1) { console.log(`! ${id} ${p.set} Q${p.q}${p.choice} 리터럴 ${n}회 — 건너뜀: ${old}`); failed++; return; }
-    src = src.replace(lit, JSON.stringify(p.text));
+    /* 파일마다 따옴표 스타일이 다르다(rp/ws는 홑따옴표, 일부는 겹따옴표).
+       원래 쓰인 스타일을 그대로 유지해야 diff가 그 한 줄로 끝난다. */
+    const sq = t => "'" + t.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+    const cands = [[JSON.stringify(old), JSON.stringify(p.text)], [sq(old), sq(p.text)]];
+    const hit = cands.filter(([lit]) => src.split(lit).length - 1 === 1);
+    if (hit.length !== 1) {
+      const counts = cands.map(([lit]) => src.split(lit).length - 1).join('/');
+      console.log(`! ${id} ${p.set} Q${p.q}${p.choice} 리터럴 ${counts}회 — 건너뜀: ${old}`); failed++; return;
+    }
+    src = src.replace(hit[0][0], hit[0][1]);
     applied++;
   });
   fs.writeFileSync(file, src);

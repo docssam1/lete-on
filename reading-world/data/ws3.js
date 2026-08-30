@@ -34,7 +34,7 @@ window.LESSONS['ws3'] = {
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [
-        'Laughter is universal and has proven benefits for physical health, emotional wellbeing, and social connection',
+        'Laughter is universal and benefits health, mood, and social connection',
         'The difference between genuine and social laughter is the most important topic in modern psychology',
         'Hospitals have found laughter therapy to be more effective than all other forms of patient treatment',
         'The endorphins released by laughter are identical to those released during physical exercise',
@@ -62,7 +62,7 @@ window.LESSONS['ws3'] = {
       ], 'D', 'The passage states that "patients who laugh regularly heal more quickly and need less pain medication." Option D matches this stated cause-and-effect relationship directly.'],
 
       ['Comparing and Contrasting', 'How is genuine Duchenne laughter DIFFERENT from social laughter?', [
-        'Genuine laughter is involuntary and creates stronger social bonds, while social laughter is more controlled and deliberate',
+        'Genuine laughter is involuntary; social laughter is controlled and deliberate',
         'Social laughter produces more endorphins, while genuine laughter mainly helps reduce cortisol levels',
         'Genuine laughter is mainly used in hospital therapy, while social laughter is what friends share in daily life',
         'Social laughter activates the premotor brain region, while genuine laughter does not involve the brain at all',
@@ -130,7 +130,7 @@ window.LESSONS['ws3'] = {
       ['Finding Main Idea', 'What is the main idea of this passage?', [
         'Mia was embarrassed by laughter yoga and wanted to find a way to avoid attending the class',
         'Ms. Wells required her students to attend laughter club as part of a mandatory wellness unit',
-        'Mia\'s skepticism about laughter yoga changed when she experienced its real effects on her mood and health',
+        'Mia\'s doubts about laughter yoga changed once she felt its real effects',
         'Laughter can spread quickly through a group and is impossible to stop once it has started',
       ], 'C', 'The passage follows Mia\'s transformation from reluctant skeptic to enthusiastic participant, showing how experiencing laughter\'s effects changed her view. Option C captures this central arc.'],
 
@@ -152,7 +152,7 @@ window.LESSONS['ws3'] = {
         'Ms. Wells walked over and directly asked Mia to join in with the rest of the group',
         'Mia realized she was the only person not laughing and felt self-conscious about standing out',
         'Mia had been holding her breath for too long and accidentally burst out laughing',
-        'The unexpectedly high-pitched giggle from the student beside her triggered an involuntary smile she could not stop',
+        'A high-pitched giggle from the student beside her set off an involuntary smile',
       ], 'D', 'The passage says "when the boy next to her let out an unexpectedly high-pitched giggle, Mia felt the tension in her shoulders dissolve without warning." The giggle beside her is the direct cause.'],
 
       ['Comparing and Contrasting', 'How did Mia\'s attitude toward laughter club CHANGE from the beginning to the end of the passage?', [
@@ -164,7 +164,7 @@ window.LESSONS['ws3'] = {
 
       ['Making Predictions', 'What would MOST LIKELY have happened if Mia had attended laughter club only once instead of for two full months?', [
         'She still would have noticed all the long-term sleep and anxiety benefits after just one single session',
-        'She likely would not have discovered the cumulative benefits, since they only appeared after weeks of regular attendance',
+        'She likely would not have noticed benefits that appear only after weeks',
         'She would have immediately told her classmates that the club was pointless and had no health value',
         'She would have asked Ms. Wells to remove the activity from the wellness unit entirely',
       ], 'B', 'The passage reveals that Mia noticed benefits — better sleep, less anxiety — over two months of regular attendance. A single session would not have produced these cumulative effects. Option B identifies the most likely outcome.'],
@@ -180,7 +180,7 @@ window.LESSONS['ws3'] = {
         'Ms. Wells had given Mia extra points for arriving early, which motivated her consistent attendance',
         'Mia was trying to prove to her classmates that she was more committed to wellness than anyone else',
         'Mia had been appointed as the class laughter club leader and needed to arrive early to set things up',
-        'Mia had found that laughter club genuinely helped her mood and health, so she valued and looked forward to it',
+        'Mia found that laughter club genuinely helped her mood and health',
       ], 'D', 'The passage shows Mia\'s genuine transformation — she noticed real benefits including better sleep and less anxiety. Option D draws the most logical conclusion about what motivated this behavioral change.'],
 
       ['Distinguishing Between Fact and Opinion', 'Which of the following is an OPINION expressed in the passage?', [
@@ -192,13 +192,13 @@ window.LESSONS['ws3'] = {
 
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
         'To argue that all schools should make laughter yoga a required daily activity for all students',
-        'To show through Mia\'s story that activities that seem pointless can have genuine and surprising benefits',
+        'To show through Mia\'s story that a pointless-seeming activity can help',
         'To convince readers that laughter therapy is more scientifically reliable than traditional medicine',
         'To entertain readers with a purely humorous story about an embarrassing experience at school',
       ], 'B', 'The passage uses Mia\'s journey from skeptic to believer to illustrate the real value of something that initially seemed ridiculous. Option B accurately captures this illustrative purpose.'],
 
       ['Interpreting Figurative Language', 'What does the expression "laughter spread through the circle like wildfire — each person\'s sound catching the next" most likely mean?', [
-        'Laughter moved quickly and unstoppably from one person to the next, the way fire spreads from place to place',
+        'Laughter moved quickly from one person to the next, the way fire spreads',
         'The laughter club accidentally set off the school\'s fire alarm because of the loud volume of sound',
         'Each student threw a match into the center of the circle as part of the laughter yoga exercise',
         'Laughter is physically dangerous in enclosed spaces because it generates heat like a small fire',
