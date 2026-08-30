@@ -82,7 +82,7 @@ function stride(visual) {
 }
 
 function rectangle(visual) {
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 220" role="img" aria-label="직사각형"><rect x="55" y="35" width="250" height="135"/><text x="180" y="205">${escapeHtml(visual.widthLabel)}</text><text x="327" y="108">${escapeHtml(visual.heightLabel)}</text>${visual.perimeterLabel ? `<text class="note" x="180" y="24">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 220" role="img" aria-label="직사각형"><rect x="55" y="35" width="250" height="135"/><text class="measure-label" x="180" y="205">${escapeHtml(visual.widthLabel)}</text><text class="measure-label" x="327" y="108">${escapeHtml(visual.heightLabel)}</text>${visual.perimeterLabel ? `<text class="note" x="180" y="24">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
 }
 
 function equalQuadrilateral(visual) {
@@ -92,7 +92,7 @@ function equalQuadrilateral(visual) {
 
 function joinedRectangles(visual) {
   const total = visual.widths.length;
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 220" role="img" aria-label="붙인 두 직사각형"><rect x="45" y="35" width="330" height="140"/><line x1="205" y1="35" x2="205" y2="175"/><text x="125" y="205">${visual.widths[0]}cm</text><text x="290" y="205">${visual.widths[1] === "?" ? "?" : `${visual.widths[1]}cm`}</text><text x="399" y="108">${visual.height}cm</text><text class="note" x="210" y="22">둘레 ${escapeHtml(visual.perimeterLabel)}</text></svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 220" role="img" aria-label="붙인 두 직사각형"><rect x="45" y="35" width="330" height="140"/><line x1="205" y1="35" x2="205" y2="175"/><text class="measure-label" x="125" y="205">${visual.widths[0]}cm</text><text class="measure-label" x="290" y="205">${visual.widths[1] === "?" ? "?" : `${visual.widths[1]}cm`}</text><text class="measure-label" x="399" y="108">${visual.height}cm</text><text class="note" x="210" y="22">둘레 ${escapeHtml(visual.perimeterLabel)}</text></svg>`;
 }
 
 function joinedOffset(visual) {

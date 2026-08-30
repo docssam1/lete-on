@@ -1,3 +1,6 @@
+# Claude Code agent worktree scratch space (session tooling, not project content).
+/.claude/worktrees/
+
 # Private licensed-source metadata must stay out of public Git.
 reading-world/private/
 *.cars-d-private-meta.json

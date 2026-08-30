@@ -1761,6 +1761,17 @@ NM_TGEN['ml_end9'] = function(params, rng) {
    셈이었다. 이제 결과 전체(분자·분모, 약분 없이 그대로)를 answerShape:
    'fraction'으로 받는다 — steps 스캐폴드가 없는 answerType:'number'라
    다칸 답 넘패드(main.js/widgets.js)로 그대로 흘러 승격에 안전했다. */
+/* 분수 답을 기약분수로 줄인다 — 약분 정책(2026-08-29 원장): 4학년까지는 약분하지
+   않은 값, 5학년부터는 기약분수가 정답. 분수의 곱셈·나눗셈은 초5~6 과정이라
+   기약분수가 정답이어야 하는데 예전엔 6/12 같은 계산 직후 값이 정답키였다. */
+function _fracReduce(n, d){
+  if(d < 0){ n = -n; d = -d; }
+  let a = Math.abs(n), b = Math.abs(d);
+  while(b){ const t = b; b = a % b; a = t; }
+  const g = a || 1;
+  return [n / g, d / g];
+}
+
 NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
   const op   = params.op || 'mul';
   const lv   = params.level || 'main';
@@ -1773,22 +1784,22 @@ NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
 
   if (op === 'mul') {
     return {
-      prompt:{ ko:`분자는 분자끼리, 분모는 분모끼리 곱해요`,
-               en:`Multiply numerators together and denominators together`,
-               zh:`分子乘分子，分母乘分母` },
+      prompt:{ ko:`분자는 분자끼리, 분모는 분모끼리 곱한 뒤 기약분수로 줄여요`,
+               en:`Multiply numerators together and denominators together, then reduce`,
+               zh:`分子乘分子，分母乘分母，最后约成最简分数` },
       tex:`\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\square`,
-      answer:[n1 * n2, d1 * d2], answerShape:'fraction',
+      answer:_fracReduce(n1 * n2, d1 * d2), answerShape:'fraction',
       answerType:'number', widget:'numpad'
     };
   }
 
   /* div: (n1/d1) ÷ (n2/d2) = (n1/d1) × (d2/n2) */
   return {
-    prompt:{ ko:`나눗셈을 곱셈으로 바꾸고 뒤집어요`,
-             en:`Turn division into multiplication and flip the second fraction`,
-             zh:`把除法变成乘法，再把第二个分数倒过来` },
+    prompt:{ ko:`나눗셈을 곱셈으로 바꾸고 뒤집은 뒤, 기약분수로 줄여요`,
+             en:`Turn division into multiplication, flip the second fraction, then reduce`,
+             zh:`把除法变成乘法，再把第二个分数倒过来，最后约成最简分数` },
     tex:`\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\square`,
-    answer:[n1 * d2, d1 * n2], answerShape:'fraction',
+    answer:_fracReduce(n1 * d2, d1 * n2), answerShape:'fraction',
     answerType:'number', widget:'numpad'
   };
 };

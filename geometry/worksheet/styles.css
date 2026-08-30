@@ -428,10 +428,23 @@ select, .code-input, input[type="text"] {
 }
 .ws-join-options-3 { grid-template-columns: repeat(3, minmax(78px, 1fr)); }
 .ws-join-options .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 88px; }
+.ws-pair-target { display: flex; justify-content: center; width: 100%; }
+.ws-piece-bank {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(62px, 1fr));
+  align-items: end;
+  gap: 10px;
+  width: min(100%, 560px);
+  margin-top: 8px;
+}
+.ws-piece-bank-4 { grid-template-columns: repeat(4, minmax(72px, 1fr)); }
+.ws-piece-bank .ws-figure svg.ws-iso { width: 100%; height: auto; max-height: 86px; }
 
 @media (max-width: 720px) {
   .ws-join-equation { gap: 7px; }
   .ws-join-options { grid-template-columns: repeat(2, minmax(76px, 1fr)); }
+  .ws-piece-bank,
+  .ws-piece-bank-4 { grid-template-columns: repeat(2, minmax(72px, 1fr)); }
 }
 
 .ws-answer-line {

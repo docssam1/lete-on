@@ -160,6 +160,11 @@ body { background: #fdf8d8; color: var(--ink); }
 .cube-castle { left: 13.1%; top: 8.1%; width: 20.7%; height: 36.4%; }
 .origami-studio { left: 38.2%; top: 16%; width: 17.6%; height: 30.5%; }
 .shape-garden { left: 45.5%; top: 61%; width: 15%; height: 22%; }
+.path-walk { left: 34.5%; top: 66%; width: 9.5%; height: 14%; }
+.path-walk::before{content:"↱";position:absolute;left:50%;top:44%;display:grid;place-items:center;width:52%;aspect-ratio:1;transform:translate(-50%,-50%);border:4px solid #173653;border-radius:50%;background:#f4cf62;color:#28634f;font-size:clamp(20px,3vw,42px);font-weight:950;box-shadow:0 6px 0 #9b7135,0 10px 16px #17365338;transition:.2s}
+.path-walk span{position:absolute;left:50%;bottom:-5%;min-width:112px;padding:6px 8px;transform:translate(-50%,48%);border:3px solid var(--navy);border-radius:6px;background:#e9f6e9;color:var(--navy);font-size:clamp(9px,.9vw,14px);font-weight:950;line-height:1.05;opacity:0;transition:.2s;pointer-events:none}
+.path-walk:hover::before,.path-walk:focus-visible::before,.path-walk.attention::before{background:#ffe68a;filter:drop-shadow(0 0 14px #f5d562);transform:translate(-50%,-54%) scale(1.05)}
+.path-walk:hover span,.path-walk:focus-visible span,.path-walk.attention span{opacity:1;transform:translate(-50%,22%)}
 .cube-castle::before {
   content: "";
   position: absolute;
@@ -625,6 +630,7 @@ body { background: #fdf8d8; color: var(--ink); }
   .map-guide { display: none; }
   .cube-castle span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
   .origami-studio span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+  .path-walk span { min-width: 82px; padding: 4px; font-size: 8px; opacity: 1; transform: translate(-50%,26%); }
   .map-toolbar { position: fixed; top: max(7px, env(safe-area-inset-top)); right: 7px; padding: 5px; border-radius: 7px; background: rgba(255,253,231,.84); box-shadow: 0 2px 9px rgba(23,38,83,.16); transform: scale(.78); transform-origin: top right; backdrop-filter: blur(8px); }
   .walker { width: 86px; }
 }

@@ -38,10 +38,10 @@
     "zh-Hans": {
       eyebrow: "寄宿学校数学 · K–12 目标", heroTitle: "K–12 全路径与已验证的 K–8 基础",
       heroCopy: "整体目标衔接美国 K–12 校内数学、新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8/10/12。选择年级和领域后，可查看从诊断、分析、弱项辅导、概念学习、个性化练习册到再次确认的支持流程。",
-      viewAs: "查看身份", student: "学生", teacher: "教师", chooseGrade: "美国年级",
+      viewAs: "选择视图", student: "学生版", teacher: "教师版", chooseGrade: "美国年级",
       pathwayEyebrow: "课程路径", pathwaysTitle: "本年级学习路径", programCount: "条路径",
-      domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色资源", resourcesTitle: "本角色资料",
-      promotionEyebrow: "诊断 → 再次确认", promotionTitle: "从诊断到辅导、概念、练习册与再次确认",
+      domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色学习资源", resourcesTitle: "本角色的学习资源",
+      promotionEyebrow: "学习诊断 → 学情分析 → 个性化学习方案 → 成效检验", promotionTitle: "从诊断到专项补强、概念学习、练习册与成效检验",
       promotionCopy: "按领域和题目证据安排弱项辅导与概念学习，使用通过独立审核的个性化练习册练习后再次确认。晋级仍需结合教师评估与学校政策。",
       resourceLocked: "内容和下载在独立审核及认证签署完成前保持锁定。", teacherMetadataOnly: "教师显示仅为元数据预览，不构成登录或权限授予。", cadenceTitle: "默认课次安排", selectedUnit: "已选单元", grade6Cadence: "每单元 3 周 · 每周 2 次 · 每次 75 分钟 · 每周两次 30 分钟家庭学习 · 可由学校调整", grade6Retention: "保持性检查将在至少 7 天后作为独立尝试安排。", templateCadence: "课时与课次数量需由学校配置后确定。", plannedComponents: "计划组件",
       previewTitle: "基础预览", previewCopy: "学生登录与真实记录尚未连接。迁移到新的私有认证存储后才会启用。",
@@ -68,9 +68,11 @@
   const search = new URLSearchParams(window.location.search);
   const requestedRole = search.get("role");
   const requestedGrade = search.get("grade");
+  const requestedLocale = search.get("locale");
   const initialRole = ["student", "teacher"].includes(requestedRole) ? requestedRole : "student";
   const initialGrade = gradeValues.some(function (grade) { return String(grade) === String(requestedGrade); }) ? requestedGrade : "K";
-  const state = { locale: "ko", role: initialRole, grade: initialGrade, unitId: defaultUnitByGrade[initialGrade] };
+  const initialLocale = ["ko", "en", "zh-Hans"].includes(requestedLocale) ? requestedLocale : "ko";
+  const state = { locale: initialLocale, role: initialRole, grade: initialGrade, unitId: defaultUnitByGrade[initialGrade] };
   const local = function (value) { return value[state.locale] || value.en || value.ko; };
   const sameGrade = function (value) { return String(value) === String(state.grade); };
   function selectedUnit() {

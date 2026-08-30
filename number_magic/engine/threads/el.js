@@ -10,6 +10,9 @@
 
 const {R, pick, shuffle} = NM_RNG;
 
+/* 최대공약수 — EL5 비례배분이 "이미 간단한 비"를 뽑을 때 쓴다 */
+function gcdEl(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ const t = b; b = a % b; a = t; } return a || 1; }
+
 /* ── EL1 — 역연산: □×7=91, □÷6=8, 52+□=131 ──────────────────
    params.mode: 'as'(덧뺄셈) | 'md'(곱나눗셈) | 'mix'(둘 다) — 기본 'mix'
    params.max : 수 범위 상한(연산별로 다르게 스케일) */
@@ -261,6 +264,37 @@ NM_TGEN['el_average'] = function(params, rng){
    params.mode: 'direct'(단답) | 'steps'(외항내항곱 과정) */
 NM_TGEN['el_ratio'] = function(params, rng){
   const mode = params.mode || 'direct';
+
+  /* ── 비례배분 (mode:'distribute') — 2026-08-29 신규 ────────────────
+     초6. 전체를 주어진 비로 나눈다. 비례식 다음에 오는 단원이고, 우리 문제은행
+     어디에도 없었다.
+
+     tex는 두 조건을 그대로 적어 자족하게 만든다 —
+       `□ + ○ = 600 , □ : ○ = 2 : 3`
+     합과 비가 동시에 묶이면 두 수는 240·360 하나뿐이라 답이 유일하다.
+     (합을 빼고 비만 주면 2:3·4:6·240:360… 무엇이든 맞아 유일해가 깨진다.)
+     빈칸 기호를 □·○ 둘로 갈라 어느 칸이 전항이고 어느 칸이 후항인지 못 박는다
+     — EL3 크기 비교가 이미 쓰는 표기다. 답은 [□, ○] 차례. */
+  if(mode === 'distribute'){
+    const a = R(rng, 1, 7);
+    let b;
+    do { b = R(rng, 1, 8); } while(b === a || gcdEl(a, b) !== 1);   /* 이미 간단한 비로 준다 */
+    const unit  = R(rng, 2, 40);          /* 한 몫의 크기 */
+    const p1    = a * unit, p2 = b * unit;
+    const total = p1 + p2;
+
+    return {
+      prompt: {
+        ko: `${total}을(를) ${a} : ${b}로 비례배분해요 (□, ○ 차례로)`,
+        en: `Split ${total} in the ratio ${a} : ${b} — give □ then ○`,
+        zh: `把${total}按${a} : ${b}的比例分配（依次填□、○）`
+      },
+      tex: `\\square + \\bigcirc = ${total} \\;,\\;\\; \\square : \\bigcirc = ${a} : ${b}`,
+      answer:     [p1, p2],
+      answerType: 'number',
+      widget:     'numpad'
+    };
+  }
   const aMax = params.max || 12;
   const mMax = params.mMax || 9;
 

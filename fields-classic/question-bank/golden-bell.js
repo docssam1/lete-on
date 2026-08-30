@@ -1,6 +1,6 @@
 import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260829c";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
-import { book06Markup } from "./book06-renderers.js?v=20260829a";
+import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
 import { book08Markup } from "./book08-renderers.js?v=20260828r";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
@@ -425,7 +425,8 @@ function renderStageSteps() {
 }
 
 function renderConcept(lesson) {
-  return `<p class="lesson-kicker">${lesson.unit} · 대표 개념</p><h2>${lesson.story.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon">?</span><div><strong>${lesson.story.title}</strong><p>${lesson.story.text}<br>${lesson.story.mission}</p></div></div><section class="concept-box"><strong>${lesson.explanation.headline}</strong><ol>${lesson.explanation.steps.map((step) => `<li>${step}</li>`).join("")}</ol></section><button type="button" class="primary-action" data-next-phase="original">다음</button>`;
+  const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div><section class="concept-tutorial"><header><span>풀이 튜토리얼</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {

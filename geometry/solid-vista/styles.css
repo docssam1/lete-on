@@ -38,3 +38,5 @@ main{width:min(1240px,calc(100% - 36px));padding:34px 0 46px}
   .level-card:last-child>div{padding-top:13px}
 }
 @media(prefers-reduced-motion:reduce){.level-card{transition:none}}
+
+.dice-card-art{position:relative;width:100%;aspect-ratio:16/10;border-bottom:1px solid #b8c9c5;background:#eaf2ee;overflow:hidden}.dice-card-art i{position:absolute;top:29%;width:48px;height:48px;border:2px solid #174755;background:#fff}.dice-card-art i::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);border-radius:50%;background:#17353e;box-shadow:-14px -14px #17353e,14px 14px #17353e}.dice-card-art i:nth-child(1){left:16%}.dice-card-art i:nth-child(2){left:42%;opacity:.55}.dice-card-art i:nth-child(3){left:68%;opacity:.25}.dice-card-art em{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);color:#bf6540;font-size:27px;font-style:normal;font-weight:950}.dice-section .level-card{border-color:#aebfba}.dice-card-art+div{min-height:126px}

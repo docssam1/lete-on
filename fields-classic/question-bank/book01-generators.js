@@ -207,117 +207,126 @@ function isCongruentPartition(rows, columns, labels, pieceCount) {
   return groups.every((group) => polyominoCanonical(group) === shape);
 }
 
-function transformPartitionLabels(labels, size, turn, mirrored) {
-  const output = Array(labels.length).fill("");
-  labels.forEach((label, index) => {
-    let row = Math.floor(index / size);
-    let column = index % size;
-    if (mirrored) column = size - 1 - column;
-    for (let count = 0; count < turn; count += 1) [row, column] = [column, size - 1 - row];
-    output[row * size + column] = label;
-  });
-  return output;
+const ROTATIONAL_PARTITION_TEMPLATES = Object.freeze({
+  2: Object.freeze({
+    easy: Object.freeze([[0,1],[2,1],[2,2]]),
+    step: Object.freeze([[1,0],[1,1],[2,1],[2,2]]),
+    stair: Object.freeze([[0,2],[1,2],[1,1],[2,1],[2,2]]),
+    deep: Object.freeze([[1,4],[1,1],[2,1],[2,2]])
+  }),
+  4: Object.freeze({
+    diagonal: Object.freeze([[2,0],[3,2],[3,3]]),
+    bent: Object.freeze([[2,0],[3,1],[3,3]]),
+    step: Object.freeze([[2,0],[2,2],[3,2],[3,3]])
+  })
+});
+
+function rotatePartitionPoint([x, y], [centerX, centerY], quarterTurns) {
+  let nextX = x;
+  let nextY = y;
+  for (let turn = 0; turn < ((quarterTurns % 4) + 4) % 4; turn += 1) {
+    [nextX, nextY] = [centerX - (nextY - centerY), centerY + (nextX - centerX)];
+  }
+  return [nextX, nextY];
 }
 
-function partitionCutKeys(rows, columns, labels) {
-  const cuts = [];
-  labels.forEach((label, index) => {
-    const row = Math.floor(index / columns);
-    const column = index % columns;
-    if (column < columns - 1 && labels[index + 1] !== label) cuts.push(`${index}:right`);
-    if (row < rows - 1 && labels[index + columns] !== label) cuts.push(`${index}:bottom`);
-  });
-  return cuts;
-}
-
-function partitionGuideCuts(rows, columns, labels, pieceCount, difficulty) {
-  const centerRow = rows / 2;
-  const centerColumn = columns / 2;
-  const ranked = partitionCutKeys(rows, columns, labels).map((key) => {
-    const [rawIndex, side] = key.split(":");
-    const index = Number(rawIndex);
-    const row = Math.floor(index / columns);
-    const column = index % columns;
-    const x = side === "right" ? column + 1 : column + 0.5;
-    const y = side === "bottom" ? row + 1 : row + 0.5;
-    return { key, distance: (x - centerColumn) ** 2 + (y - centerRow) ** 2 };
-  }).sort((a, b) => a.distance - b.distance || a.key.localeCompare(b.key));
-  const near = ranked.slice(0, Math.min(ranked.length, pieceCount === 2 ? 4 : 8));
-  const revealCount = difficulty <= 1 ? 2 : 1;
-  return shuffle(near).slice(0, Math.min(revealCount, near.length)).map((item) => item.key);
+function transformPartitionPath(path, center, quarterTurns, reflected = false) {
+  const reflectedPath = reflected
+    ? path.map(([x, y]) => [center[0] * 2 - x, y])
+    : path;
+  return reflectedPath.map((point) => rotatePartitionPoint(point, center, quarterTurns));
 }
 
 function makePartition(pieceCount, { difficulty = 2 } = {}) {
-  const rows = 4;
-  const columns = 4;
-  const twoPieceTemplates = {
-    straight: Array.from({ length: 16 }, (_, index) => (index % 4 < 2 ? "A" : "B")),
-    step: ["A","A","B","B", "A","B","B","B", "A","A","A","B", "A","A","B","B"],
-    comb: ["A","B","B","B", "A","A","A","B", "A","B","B","B", "A","A","A","B"]
-  };
-  const fourPieceTemplates = {
-    squares: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 8) * 2 + Math.floor(index % 4 / 2))),
-    elbows: (() => {
-      const labels = Array(16).fill("");
-      [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]].forEach((cells, groupIndex) => {
-        cells.forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
-      });
-      return labels;
-    })()
-  };
+  const rows = pieceCount === 2 ? 4 : 6;
+  const columns = rows;
+  const center = [columns / 2, rows / 2];
   const templateNames = pieceCount === 2
-    ? (difficulty <= 1 ? ["straight", "step"] : difficulty >= 3 ? ["step", "comb"] : ["straight", "step", "comb"])
-    : (difficulty <= 1 ? ["squares"] : ["squares", "elbows"]);
+    ? (difficulty <= 1 ? ["easy", "step"] : difficulty >= 3 ? ["stair", "deep"] : ["step", "stair"])
+    : (difficulty <= 1 ? ["diagonal"] : difficulty >= 3 ? ["step"] : ["diagonal", "bent"]);
   const templateName = sample(templateNames);
-  const baseLabels = (pieceCount === 2 ? twoPieceTemplates : fourPieceTemplates)[templateName];
-  const labels = transformPartitionLabels(baseLabels, 4, Math.floor(Math.random() * 4), Math.random() < 0.5);
-  const guideCuts = partitionGuideCuts(rows, columns, labels, pieceCount, difficulty);
+  const guidePath = transformPartitionPath(
+    ROTATIONAL_PARTITION_TEMPLATES[pieceCount][templateName],
+    center,
+    randomInt(0, 3),
+    pieceCount === 2 && Math.random() < 0.5
+  );
+  const turnStep = 4 / pieceCount;
+  const completedPaths = Array.from({ length: pieceCount }, (_, index) =>
+    transformPartitionPath(guidePath, center, index * turnStep)
+  );
+  const operation = pieceCount === 2 ? "반 바퀴" : "반의 반 바퀴씩 3번";
   return {
-    prompt: `가운데 점을 중심으로 돌렸을 때 모양과 크기가 정확히 겹치는 ${pieceCount}조각이 되도록 선을 이어 나누세요.`,
-    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount, symbols: null, guideCuts, pivot: true },
+    prompt: `빨간 선을 가운데 점을 중심으로 ${operation} 돌린 선을 이어 그려, 모양과 크기가 같은 ${pieceCount}조각으로 나누세요.`,
+    visual: { kind: "book1", subtype: "partition-draw", mode: "rotational", board: pieceCount === 2 ? "square" : "cross", rows, columns, pieceCount, guidePath, pivot: true },
     answer: `그림과 같이 ${pieceCount}조각으로 나눕니다.`,
-    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount, symbols: null, guideCuts, labels, pivot: true },
-    solution: `주어진 선을 중심점 둘레로 ${pieceCount === 2 ? "반 바퀴" : "반의 반 바퀴씩"} 돌려 이어 그리면 ${pieceCount}조각의 모양과 크기가 같아집니다.`,
-    meta: { family: `partition-${pieceCount}`, labels, guideCuts, templateName }
+    answerVisual: { kind: "book1", subtype: "partition-draw", mode: "rotational", board: pieceCount === 2 ? "square" : "cross", rows, columns, pieceCount, guidePath, completedPaths, pivot: true },
+    solution: `빨간 시작선을 중심점 둘레로 ${operation} 정확히 돌려 그립니다. 새로 그릴 선은 ${pieceCount - 1}개이며, 완성된 각 조각은 돌리면 서로 정확히 겹칩니다.`,
+    responseKind: "drawing",
+    meta: { family: `partition-${pieceCount}`, board: pieceCount === 2 ? "square" : "cross", center, guidePath, completedPaths, templateName, turnStep, requiredAddedPaths: pieceCount - 1, uniqueCompletionCount: 1 }
   };
 }
 
 function rotationalPartitionTwo(context = {}) { return makePartition(2, context); }
 function rotationalPartitionFour(context = {}) { return makePartition(4, context); }
+
+const SYMBOL_PARTITION_GUIDE_CUTS = Object.freeze(["5:right", "9:right", "5:bottom", "6:bottom"]);
+const SYMBOL_PARTITION_CANDIDATES = Object.freeze([
+  Object.freeze([39, 2248, 4880, 58368]),
+  Object.freeze([46, 785, 29696, 35008]),
+  Object.freeze([51, 204, 13056, 52224]),
+  Object.freeze([71, 3208, 4400, 57856]),
+  Object.freeze([78, 305, 29184, 35968])
+]);
+const SOURCE_SYMBOL_PARTITIONS = Object.freeze([SYMBOL_PARTITION_CANDIDATES[1], SYMBOL_PARTITION_CANDIDATES[4]]);
+
+function cellsInMask(mask) {
+  return Array.from({ length: 16 }, (_, index) => index).filter((index) => (mask & (1 << index)) !== 0);
+}
+
+function labelsForPartition(masks) {
+  const labels = Array(16).fill("");
+  masks.forEach((mask, groupIndex) => {
+    cellsInMask(mask).forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+  });
+  return labels;
+}
+
+function countSymbolPartitionSolutions(symbols) {
+  return SYMBOL_PARTITION_CANDIDATES.filter((partition) => partition.every((mask) => {
+    const values = cellsInMask(mask).map((index) => symbols[index]);
+    return new Set(values).size === 4;
+  })).length;
+}
+
 function symbolBalancedCongruentPartition({ difficulty = 2 } = {}) {
   const rows = 4;
   const columns = 4;
-  const templates = {
-    stripRows: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 4))),
-    stripColumns: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + index % 4)),
-    squares: Array.from({ length: 16 }, (_, index) => String.fromCharCode(65 + Math.floor(index / 8) * 2 + Math.floor(index % 4 / 2))),
-    elbows: (() => {
-      const labels = Array(16).fill("");
-      [[0,4,8,9],[1,2,3,5],[6,7,11,15],[10,12,13,14]].forEach((cells, groupIndex) => {
-        cells.forEach((index) => { labels[index] = String.fromCharCode(65 + groupIndex); });
+  const masks = sample(SOURCE_SYMBOL_PARTITIONS);
+  const labels = labelsForPartition(masks);
+  const symbolSet = difficulty <= 1 ? ["1", "2", "3", "4"] : ["○", "△", "□", "★"];
+  let symbols = null;
+  let uniqueCount = 0;
+  for (let retry = 0; retry < 200 && uniqueCount !== 1; retry += 1) {
+    const candidate = Array(rows * columns).fill("");
+    masks.forEach((mask) => {
+      shuffle(symbolSet).forEach((symbol, index) => {
+        candidate[cellsInMask(mask)[index]] = symbol;
       });
-      return labels;
-    })()
-  };
-  const templateName = difficulty <= 1
-    ? shuffle(["stripRows", "stripColumns"])[0]
-    : difficulty >= 3 ? "elbows" : "squares";
-  const labels = templates[templateName];
-  const symbolSet = ["○", "△", "□", "★"];
-  const symbols = Array(rows * columns).fill("");
-  partitionGroups(rows, columns, labels).forEach((group) => {
-    shuffle(symbolSet).forEach((symbol, index) => {
-      const [row, column] = group[index];
-      symbols[row * columns + column] = symbol;
     });
-  });
+    uniqueCount = countSymbolPartitionSolutions(candidate);
+    if (uniqueCount === 1) symbols = candidate;
+  }
+  if (!symbols) return null;
+  const itemLabel = difficulty <= 1 ? "1, 2, 3, 4" : "○, △, □, ★";
   return {
-    prompt: "네 조각의 모양과 크기가 같고, 각 조각에 네 가지 기호가 하나씩 들어가도록 선을 그어 나누세요.",
-    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols },
+    prompt: `각 조각에 ${itemLabel}가 하나씩 들어가도록 모양과 크기가 같은 네 조각으로 나누세요.`,
+    visual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, sourceGuide: true },
     answer: "그림과 같이 네 조각으로 나눕니다.",
-    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels },
-    solution: "각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ○, △, □, ★가 하나씩 들어 있습니다.",
-    meta: { family: "symbol-partition", labels, symbols, templateName }
+    answerVisual: { kind: "book1", subtype: "partition-draw", rows, columns, pieceCount: 4, symbols, labels, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, sourceGuide: true, showPieceFills: false },
+    solution: `각 조각이 이어져 있고, 돌리거나 뒤집으면 정확히 겹치는지 확인합니다. 각 조각에는 ${itemLabel}가 하나씩 들어 있습니다.`,
+    responseKind: "drawing",
+    meta: { family: "symbol-partition", labels, symbols, masks, guideCuts: SYMBOL_PARTITION_GUIDE_CUTS, uniqueCount }
   };
 }
 
@@ -912,6 +921,7 @@ export const BOOK01_INTERNALS = {
   patternKey,
   transformPattern,
   isCongruentPartition,
+  countSymbolPartitionSolutions,
   transformDigit,
   transformDisplay,
   gridSums,

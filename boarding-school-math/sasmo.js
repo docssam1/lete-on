@@ -94,11 +94,14 @@
   });
 
   const query = new URLSearchParams(window.location.search);
-  const requestedGrade = Number(query.get("grade"));
+  const requestedArchiveGrade = String(query.get("grade") || "").toLowerCase();
+  const requestedGrade = Number(requestedArchiveGrade);
+  const requestedK2 = requestedArchiveGrade === "k2" || requestedArchiveGrade === "0";
   const state = {
     level: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "K2",
-    archiveGrade: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 10 ? String(requestedGrade) : "6",
+    archiveGrade: requestedArchiveGrade === "all" ? "all" : requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? String(requestedGrade) : "6",
     goal: "first-attempt",
+    diagnosticYear: 2020,
     role: "student"
   };
   const levels = Object.freeze(["K2", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]);
@@ -107,7 +110,8 @@
     s: "해설",
     ps: "문제+해설",
     a: "정답",
-    pa: "문제+정답"
+    pa: "문제+정답",
+    "official-lms": "공식 LMS"
   });
   let publicArchive = null;
 
@@ -234,10 +238,58 @@
     topicCount.textContent = String(api.inventory.edugainComparativeAggregate.selectableDomTopicNodeCount);
   }
 
+  function getDiagnosticFoundation() {
+    return window.GFIELDSASMODiagnosticFoundation || null;
+  }
+
+  function renderDiagnosticEvidence() {
+    const api = getDiagnosticFoundation();
+    const select = document.getElementById("diagnostic-year");
+    const title = document.getElementById("diagnostic-readiness-title");
+    const detail = document.getElementById("diagnostic-readiness");
+    const sourceLink = document.getElementById("diagnostic-source-link");
+    const workflow = document.getElementById("diagnostic-workflow");
+    if (!api || !api.validateFoundation || !api.validateFoundation().valid) {
+      title.textContent = "기출 진단 기준을 불러오지 못했습니다.";
+      detail.textContent = "원문과 답안 근거가 확인될 때까지 해당 진단은 잠금 상태입니다.";
+      return;
+    }
+    select.replaceChildren();
+    api.YEAR_IDS.forEach(function (year) {
+      const option = document.createElement("option");
+      option.value = String(year);
+      option.textContent = `${year} SASMO`;
+      select.append(option);
+    });
+    select.value = String(state.diagnosticYear);
+    const readiness = api.getDiagnosticReadiness(state.diagnosticYear, state.level);
+    const source = api.getYearSource(state.diagnosticYear);
+    sourceLink.href = source.sourcePageUrl;
+    if (readiness.available) {
+      title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 기출 진단 준비 가능`;
+      detail.textContent = "공식 원문·답·해설 접근 경로가 확인되었습니다. 교사용 검수에서 문항별 페이지·답안 근거·영역 태그를 기록한 뒤에만 실제 분석 결과를 생성합니다.";
+    } else {
+      title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 원문 기반 진단은 잠금`;
+      detail.textContent = "이 연도·학년에는 공식 답·해설 접근 근거를 아직 선언하지 않았습니다. 다른 학년 기출로 대체하지 않으며, 필요 시 GFIELD 자체 제작 진단을 별도 구성합니다.";
+    }
+    workflow.replaceChildren();
+    api.foundation.workflow.forEach(function (step, index) {
+      const item = document.createElement("li");
+      const number = document.createElement("span");
+      const label = document.createElement("strong");
+      const output = document.createElement("p");
+      number.textContent = `0${index + 1}`;
+      label.textContent = step.id.replace(/-/g, " ");
+      output.textContent = step.output;
+      item.append(number, label, output);
+      workflow.append(item);
+    });
+  }
+
   function validPublicArchive(data) {
-    if (!data || !data.coverage || !Array.isArray(data.records)) return false;
-    if (data.coverage.recordCount !== data.records.length || data.coverage.assetCount !== 144) return false;
-    return data.records.every(function (record) {
+    if (!data || !data.coverage || !Array.isArray(data.records) || !Array.isArray(data.officialLmsRecords)) return false;
+    if (data.coverage.recordCount !== data.records.length || data.coverage.assetCount !== 144 || data.coverage.officialLmsRecordCount !== data.officialLmsRecords.length) return false;
+    const sourceHostedRecordsAreValid = data.records.every(function (record) {
       if (!Number.isInteger(record.year) || !Number.isInteger(record.grade) || !Array.isArray(record.assets)) return false;
       try {
         const sourcePage = new URL(record.sourcePageUrl);
@@ -252,6 +304,19 @@
         return false;
       }
     });
+    const officialLmsRecordsAreValid = data.officialLmsRecords.every(function (record) {
+      try {
+        const source = new URL(record.url);
+        return record.grade === 11
+          && Number.isInteger(record.year)
+          && source.protocol === "https:"
+          && source.hostname === "sasmo.simcc.org"
+          && typeof record.access === "string";
+      } catch (error) {
+        return false;
+      }
+    });
+    return sourceHostedRecordsAreValid && officialLmsRecordsAreValid;
   }
 
   function renderArchiveFilter() {
@@ -261,7 +326,11 @@
     all.value = "all";
     all.textContent = "전체 학년";
     filter.append(all);
-    for (let grade = 1; grade <= 10; grade += 1) {
+    const kindergarten = document.createElement("option");
+    kindergarten.value = "K2";
+    kindergarten.textContent = "K2";
+    filter.append(kindergarten);
+    for (let grade = 1; grade <= 12; grade += 1) {
       const option = document.createElement("option");
       option.value = String(grade);
       option.textContent = `Grade ${grade}`;
@@ -278,8 +347,32 @@
     anchor.rel = "noopener noreferrer";
     anchor.dataset.fileType = asset.type;
     anchor.textContent = archiveAssetLabels[asset.type];
-    anchor.setAttribute("aria-label", `${record.year} Grade ${record.grade} ${archiveAssetLabels[asset.type]} 원문 PDF, ${asset.pages}쪽`);
+    const pageLabel = Number.isInteger(asset.pages) ? `, ${asset.pages}쪽` : "";
+    const accessLabel = asset.access ? `, ${asset.access}` : "";
+    anchor.setAttribute("aria-label", `${record.year} Grade ${record.grade} ${archiveAssetLabels[asset.type]}${pageLabel}${accessLabel}`);
     return anchor;
+  }
+
+  function visibleArchiveRecords() {
+    if (!publicArchive) return [];
+    const sourceHosted = publicArchive.records.map(function (record) {
+      return { ...record, sourceKind: "source-hosted-pdf", sourceLabel: "자료 페이지 ↗" };
+    });
+    const officialLms = publicArchive.officialLmsRecords.map(function (record) {
+      return {
+        id: record.id,
+        year: record.year,
+        grade: record.grade,
+        division: "Official LMS",
+        sourcePageUrl: record.url,
+        sourceKind: "official-lms",
+        sourceLabel: "공식 LMS ↗",
+        assets: [{ type: "official-lms", url: record.url, access: record.access }]
+      };
+    });
+    return sourceHosted.concat(officialLms).filter(function (record) {
+      return state.archiveGrade === "all" || String(record.grade) === state.archiveGrade;
+    });
   }
 
   function renderPublicArchive() {
@@ -287,9 +380,7 @@
     const list = document.getElementById("archive-year-list");
     const summary = document.getElementById("archive-summary");
     const status = document.getElementById("archive-status");
-    const records = publicArchive.records.filter(function (record) {
-      return state.archiveGrade === "all" || String(record.grade) === state.archiveGrade;
-    });
+    const records = visibleArchiveRecords();
     const yearGroups = records.reduce(function (groups, record) {
       const key = String(record.year);
       if (!groups[key]) groups[key] = [];
@@ -297,10 +388,25 @@
       return groups;
     }, {});
     const assetCount = records.reduce(function (total, record) { return total + record.assets.length; }, 0);
-    const gradeLabel = state.archiveGrade === "all" ? "전체 학년" : `Grade ${state.archiveGrade}`;
-    summary.textContent = `${gradeLabel} · ${records.length}개 연도·학년 묶음 · 원문 파일 ${assetCount}개`;
-    status.textContent = records.length ? "아래에서 연도와 자료 종류를 고르세요." : "선택한 학년의 공개 링크가 없습니다.";
+    const gradeLabel = state.archiveGrade === "all" ? "전체 학년" : state.archiveGrade === "K2" ? "K2" : `Grade ${state.archiveGrade}`;
+    summary.textContent = `${gradeLabel} · ${records.length}개 연도·학년 묶음 · 연결 자료 ${assetCount}개`;
+    status.textContent = records.length ? "아래에서 연도와 자료 종류를 고르세요." : `${gradeLabel}의 확인된 과거 원문 링크는 현재 자료실에 없습니다. 공식 SASMO 안내에서 제공 여부를 확인해 주세요.`;
     list.replaceChildren();
+    if (!records.length) {
+      const unavailable = document.createElement("article");
+      unavailable.className = "archive-unavailable";
+      const title = document.createElement("strong");
+      const detail = document.createElement("p");
+      const official = document.createElement("a");
+      title.textContent = `${gradeLabel} 과거 원문 미확보`;
+      detail.textContent = "확인하지 못한 기출을 다른 학년 자료로 대체하거나 임의로 만들어 넣지 않습니다.";
+      official.href = "https://sasmo.simcc.org/";
+      official.target = "_blank";
+      official.rel = "noopener noreferrer";
+      official.textContent = "SIMCC SASMO 공식 안내 ↗";
+      unavailable.append(title, detail, official);
+      list.append(unavailable);
+    }
     Object.keys(yearGroups).sort(function (left, right) { return Number(right) - Number(left); }).forEach(function (year) {
       const section = document.createElement("section");
       section.className = "archive-year-card";
@@ -322,7 +428,9 @@
         const grade = document.createElement("strong");
         const division = document.createElement("small");
         grade.textContent = `Grade ${record.grade}`;
-        division.textContent = record.division.startsWith("primary") ? `Primary ${record.division.replace("primary", "")}` : `Secondary ${record.division.replace("secondary", "")}`;
+        division.textContent = record.sourceKind === "official-lms"
+          ? "Official LMS · 로그인 또는 등록이 필요할 수 있음"
+          : record.division.startsWith("primary") ? `Primary ${record.division.replace("primary", "")}` : `Secondary ${record.division.replace("secondary", "")}`;
         label.append(grade, division);
         const links = document.createElement("div");
         links.className = "archive-file-links";
@@ -332,7 +440,7 @@
         source.href = record.sourcePageUrl;
         source.target = "_blank";
         source.rel = "noopener noreferrer";
-        source.textContent = "자료 페이지 ↗";
+        source.textContent = record.sourceLabel;
         row.append(label, links, source);
         rows.append(row);
       });
@@ -377,6 +485,7 @@
     renderLevels();
     updateOfficialLink();
     renderJourney();
+    renderDiagnosticEvidence();
   }
   function updateRole(roleId) {
     if (!roles[roleId]) return;
@@ -427,10 +536,14 @@
     document.getElementById("archive-grade-filter").addEventListener("change", function (event) {
       state.archiveGrade = event.target.value;
       const url = new URL(window.location.href);
-      if (state.archiveGrade === "all") url.searchParams.delete("grade");
+      if (state.archiveGrade === "all") url.searchParams.set("grade", "all");
       else url.searchParams.set("grade", state.archiveGrade);
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
       renderPublicArchive();
+    });
+    document.getElementById("diagnostic-year").addEventListener("change", function (event) {
+      state.diagnosticYear = Number(event.target.value);
+      renderDiagnosticEvidence();
     });
     document.addEventListener("keydown", function (event) {
       if (event.target.matches("[data-level]")) moveTab(event, "[data-level]", updateLevel, "level");
@@ -441,6 +554,7 @@
   function initialize() {
     renderDomains();
     renderSourceInventory();
+    renderDiagnosticEvidence();
     loadPublicArchive();
     renderLevels();
     updateOfficialLink();

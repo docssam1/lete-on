@@ -3,6 +3,7 @@ param(
   [Parameter(Mandatory = $true)][string]$QueuePath,
   [Parameter(Mandatory = $true)][string]$OutputRoot,
   [Parameter(Mandatory = $true)][string]$WorkRoot,
+  [string]$SourceId,
   [int]$MaxJobs = 10,
   [switch]$ListOnly,
   [switch]$RetryFailed
@@ -94,7 +95,16 @@ if (-not (Test-Path -LiteralPath $sourceRootPath -PathType Container)) { throw "
 if (-not (Test-Path -LiteralPath $queueFilePath -PathType Leaf)) { throw "변환 대기열이 없습니다." }
 
 $queue = Get-Content -Raw -Encoding UTF8 $queueFilePath | ConvertFrom-Json
-$jobs = @($queue.jobs | Where-Object { $_.status -eq "대기" -or ($RetryFailed -and $_.status -eq "변환 실패") } | Sort-Object order | Select-Object -First $MaxJobs)
+$jobs = @($queue.jobs | Where-Object {
+  ($_.status -eq "대기" -or ($RetryFailed -and $_.status -eq "변환 실패")) -and
+  (-not $SourceId -or $_.sourceId -eq $SourceId)
+} | Sort-Object order | Select-Object -First $MaxJobs)
+if ($SourceId -and $jobs.Count -eq 0) {
+  $known = @($queue.jobs | Where-Object sourceId -eq $SourceId)
+  if ($known.Count -eq 0) { throw "대기열에 sourceId가 없습니다: $SourceId" }
+  if ($known.Count -gt 1) { throw "대기열에 sourceId가 중복되었습니다: $SourceId" }
+  Write-Output "SKIP|$SourceId|$($known[0].status)"
+}
 if ($ListOnly) {
   $jobs | Select-Object order, sourceId, familyHint, courseHint, layer, inputRelativePath, outputRelativePath, status
   exit 0

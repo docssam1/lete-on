@@ -14,7 +14,7 @@
   <header class="site-header">
     <a class="brand" href="./index.html" aria-label="GFIELD Math home"><span class="brand-mark" aria-hidden="true">G</span><span>GFIELD <strong>MATH</strong></span></a>
     <nav aria-label="주요 탐색">
-      <a href="#run">진단 실행</a>
+      <a href="#run">진단 검수 흐름</a>
       <a href="./concept-learning.html">개념 학습</a>
       <a href="./index.html#goals">목표 선택</a>
       <a href="./catalog.html">커리큘럼 상세</a>
@@ -55,7 +55,7 @@
         </div>
 
         <div class="workspace-tabs" role="tablist" aria-label="비공개 QA 진단 작업 화면">
-          <button type="button" role="tab" id="workspace-tab-student" aria-controls="student-workspace" aria-selected="true" tabindex="0" data-workspace-role="student">학생 진단</button>
+          <button type="button" role="tab" id="workspace-tab-student" aria-controls="student-workspace" aria-selected="true" tabindex="0" data-workspace-role="student">학생 흐름 · QA</button>
           <button type="button" role="tab" id="workspace-tab-teacher" aria-controls="teacher-workspace" aria-selected="false" tabindex="-1" data-workspace-role="teacher">교사 검토·분석</button>
         </div>
 
@@ -63,11 +63,11 @@
           <div class="workspace-intro" id="student-intro">
             <div>
               <span class="folio">STUDENT / 01</span>
-              <h3>42문항 Grade 6 QA 진단</h3>
-              <p>비와 비례, 수 체계, 식과 방정식, 기하, 통계와 확률을 확인합니다. 답은 한 문항씩 저장되며 제출 뒤에는 10개 서술 응답의 교사 검토가 이어집니다.</p>
+              <h3>42문항 Grade 6 검수 흐름</h3>
+              <p>실제 학생 운영 전, 비와 비례·수 체계·식과 방정식·기하·통계와 확률의 분석 흐름을 점검합니다. 답 저장과 교사 검토는 비공개 QA 환경에서만 실행됩니다.</p>
             </div>
             <dl class="assessment-facts"><div><dt>권장 시간</dt><dd>55–70분</dd></div><div><dt>계산기</dt><dd>문항 지시가 없으면 사용 안 함</dd></div><div><dt>결과</dt><dd>영역·오류·다음 학습</dd></div></dl>
-            <button class="run-button" id="student-start" type="button" disabled>비공개 QA 진단 시작</button>
+            <button class="run-button" id="student-start" type="button" disabled>공개 주소에서는 실행할 수 없음</button>
           </div>
 
           <div class="assessment-runner" id="assessment-runner" hidden>
@@ -106,7 +106,7 @@
             </div>
             <label>진단 번호<input id="teacher-attempt-id" name="attemptId" autocomplete="off" required placeholder="att-bdg-…"></label>
             <label>교사 PIN<input id="teacher-pin" name="pin" type="password" autocomplete="off" autocapitalize="characters" required inputmode="text"></label>
-            <button class="run-button" id="teacher-open" type="submit" disabled>검토할 응답 열기</button>
+            <button class="run-button" id="teacher-open" type="submit" disabled>공개 주소에서는 열 수 없음</button>
           </form>
 
           <div class="teacher-review" id="teacher-review" hidden>

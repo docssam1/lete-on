@@ -244,6 +244,7 @@ function renderProblem() {
   const p = problem();
   document.documentElement.lang = state.lang;
   $("#brandName").textContent = t("brand");
+  $("#worksheetLink").textContent = t("worksheet");
   $("#levelLabel").textContent = `${t(level().bandKey)} · ${t("level")} ${state.level}`;
   $("#problemLabel").textContent = `${state.problemIndex + 1} / ${state.queue.length}`;
   $("#stars").textContent = "●".repeat(state.problemIndex + 1) + "○".repeat(state.queue.length - state.problemIndex - 1);

@@ -262,9 +262,57 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
 };
 
 /* ============================================================
-   FR5 — 약분·기약분수
+   FR5 — 약분·통분 (mode: 'reduce' 기본 · 'common' 통분)
    ============================================================ */
 NM_TGEN['fr5_simplify'] = function(params, rng){
+  var mode = (params && params.mode) || 'reduce';
+
+  /* ── 통분 (mode:'common') — 2026-08-29 신규 ───────────────────────
+     약분의 반대 방향이다: 분자·분모에 같은 수를 곱해 두 분수의 분모를
+     최소공배수로 맞춘다. FR4(이분모 덧뺄)가 속으로 이미 하던 일이지만
+     통분 자체를 묻는 유형이 없어 초5 "약분과 통분" 단원의 절반이 비어 있었다.
+
+     인쇄물은 tex 한 줄만 나가므로(HANDOFF "tex 하나로 문항이 성립하는가")
+     공통분모 L을 tex에 실어 두 개의 완결된 등식으로 만든다 —
+     `1/2 = □/6 , 1/3 = □/6`. 분모가 이미 주어져 있어 답이 유일하다.
+     (분모까지 비워 두면 6·12·18… 무엇이든 맞아 유일해가 깨진다.)
+     답은 통분한 두 분자이므로 약분 대상이 아니다 — 약분하면 통분이 풀린다. */
+  if(mode === 'common'){
+    var DEN = [2,3,4,5,6,8,9,10,12];
+    var d1 = 2, d2 = 3, L = 6, okD = false;
+    for(var t = 0; t < 80 && !okD; t++){
+      d1 = pick(rng, DEN);
+      d2 = pick(rng, DEN);
+      L  = lcm(d1, d2);
+      /* 분모가 같으면 통분할 것이 없고, 최소공배수가 너무 크면 초5 범위를 넘는다.
+         한쪽 분모가 이미 L이면(4와 12 등) 그쪽은 그대로 베껴 쓰는 빈칸이 되어
+         통분을 전혀 묻지 않는다 — 두 분수가 다 바뀌는 짝만 쓴다. */
+      if(d1 !== d2 && L <= 60 && d1 !== L && d2 !== L) okD = true;
+    }
+    if(!okD){ d1 = 2; d2 = 3; L = 6; }
+    var k1 = L / d1, k2 = L / d2;
+    /* 주어지는 분수는 기약분수로 — 6/12처럼 이미 약분되는 분수를 통분하라고
+       주면 무엇을 묻는 문항인지 흐려진다 */
+    var a1 = 1, a2 = 1;
+    for(var u = 0; u < 40; u++){ a1 = R(rng, 1, d1 - 1); if(gcd(a1, d1) === 1) break; a1 = 1; }
+    for(var v = 0; v < 40; v++){ a2 = R(rng, 1, d2 - 1); if(gcd(a2, d2) === 1) break; a2 = 1; }
+    var c1 = a1 * k1, c2 = a2 * k2;
+
+    return {
+      prompt: {
+        ko: '두 분수를 분모의 최소공배수 ' + L + '(으)로 통분해요',
+        en: 'Give both fractions the common denominator ' + L + ', the least common multiple',
+        zh: '把两个分数通分到分母的最小公倍数 ' + L
+      },
+      tex: '\\dfrac{' + a1 + '}{' + d1 + '} = \\dfrac{\\square}{' + L + '}'
+         + ' \\;,\\;\\; '
+         + '\\dfrac{' + a2 + '}{' + d2 + '} = \\dfrac{\\square}{' + L + '}',
+      answer:     [c1, c2],
+      answerType: 'number',
+      widget:     'numpad'
+    };
+  }
+
   var dOptions = [4,6,8,9,12,15,16,18,20,24];
   var d = pick(rng, dOptions);
 
