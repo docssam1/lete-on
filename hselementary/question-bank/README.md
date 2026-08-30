@@ -113,9 +113,9 @@
 - `source-4-2-quadrilateral-robot-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 6의 두 선분 이동·90도 왼쪽 회전 유형을 PC·모바일 문제/풀이에서 검수하고 SVG 두 선분의 내적이 0인지 확인
 - `source-4-2-quadrilateral-trapezoid-browser-audit.js`: 4-2 사각형 개념탐구 1 예제 1-2의 45도 사다리꼴을 PC·모바일 문제/풀이에서 검수하고 위아래 변의 평행과 양쪽 기울기를 좌표로 역산
 - `source-4-2-quadrilateral-growing-turn-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 3의 길이가 늘어나는 반시계 수선을 PC·모바일 문제/풀이에서 검수하고 방향별 가로 이동을 독립 계산
-- `source-4-2-quadrilateral-two-angles-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 1의 수직인 두 직선과 두 빗선을 PC·모바일 문제/풀이에서 검수하고 실제 SVG 좌표에서 두 주어진 각을 역산
+- `source-4-2-quadrilateral-two-angles-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 1의 수직인 두 직선과 두 빗선을 PC·모바일·A4 문제/풀이에서 검수하고 실제 SVG 좌표에서 네 각호의 방향과 두 주어진 각을 역산
 - `source-4-2-quadrilateral-line-names-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 4의 다섯 직선 이름 배치를 24가지로 전수 검사하고 PC·모바일의 SVG 좌표에서 평행·수직·한 점 교차와 네 빈칸을 역산
-- `source-4-2-quadrilateral-parallel-v-browser-audit.js`: 4-2 사각형 개념탐구 2 예제 2-1의 두 평행선 사이 브이 모양을 PC·모바일에서 검수하고 두 빗선의 실제 각도를 SVG 좌표에서 역산
+- `source-4-2-quadrilateral-parallel-v-browser-audit.js`: 4-2 사각형 개념탐구 2 예제 2-1의 두 평행선 사이 브이 모양을 PC·모바일·A4 문제/풀이에서 검수하고, 두 빗선의 실제 각도와 왼쪽 바깥각·아래 꼭짓각·오른쪽 바깥각의 각호 위치를 SVG 좌표에서 역산
 - `GEOMETRY_VALIDATION.md`: 쌓기나무·입체도형·색종이 접기의 단일정답·가시성 검수 기준
 - `app.js`: 필터, 선택, 학습지, 워터마크, 인쇄
 - `index.html`, `styles.css`: 문제은행 화면

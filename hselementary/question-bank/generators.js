@@ -1052,6 +1052,13 @@
   const source41AngleFiveNormalize = angle => ((angle % 360) + 360) % 360;
   const source41AngleFivePoint = (origin, angle, radius) => source41PointAtAngle(origin[0], origin[1], radius, source41AngleFiveNormalize(angle));
   const source41AngleFivePointText = point => `${point[0].toFixed(1)},${point[1].toFixed(1)}`;
+  const geometryAngleMarkSvg = ({ classPrefix, role, origin, start, span, value, label, target = false, arcRadius = 22, labelRadius = 42 }) => {
+    const normalizedStart = source41AngleFiveNormalize(start);
+    const arcStart = source41AngleFivePoint(origin, normalizedStart, arcRadius);
+    const arcEnd = source41AngleFivePoint(origin, normalizedStart + span, arcRadius);
+    const labelPoint = source41AngleFivePoint(origin, normalizedStart + span / 2, labelRadius);
+    return `<g class="${classPrefix}-angle-mark ${target ? "is-target" : "is-given"}" data-angle-role="${role}" data-angle-value="${value}" data-arc-center="${origin.map(item => item.toFixed(1)).join(",")}" data-arc-start="${normalizedStart}" data-arc-span="${span}" data-arc-radius="${arcRadius}" data-label-radius="${labelRadius}"><path class="${classPrefix}-angle-arc" d="M${source41AngleFivePointText(arcStart)} A${arcRadius} ${arcRadius} 0 ${span > 180 ? 1 : 0} 0 ${source41AngleFivePointText(arcEnd)}"/><text class="${target ? `${classPrefix}-target-label` : `${classPrefix}-given-label`}" data-label-role="${role}" x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${label}</text></g>`;
+  };
   const source41AngleFiveRay = (origin, angle, length, role, className = "", rayIndex = 0, rayGroup = "main", extraAttributes = "") => {
     const end = source41AngleFivePoint(origin, angle, length);
     return `<line class="${className}" data-ray-role="${role}" data-ray-group="${rayGroup}" data-ray-index="${rayIndex}" data-ray-angle="${source41AngleFiveNormalize(angle).toFixed(3)}" x1="${origin[0].toFixed(1)}" y1="${origin[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}" ${extraAttributes}/>`;
@@ -3079,23 +3086,17 @@
   const perpendicularTwoUnknownSvg = ({ leftGiven, rightGiven, firstTarget, secondTarget }) => {
     const center = [150, 96];
     const radius = 90;
-    const pointAt = angle => {
-      const radians = angle * Math.PI / 180;
-      return [center[0] + radius * Math.cos(radians), center[1] + radius * Math.sin(radians)];
-    };
-    const leftLower = pointAt(180 - leftGiven);
-    const leftUpper = pointAt(360 - leftGiven);
-    const rightLower = pointAt(rightGiven);
-    const rightUpper = pointAt(180 + rightGiven);
-    const labelAt = (angle, distance) => {
-      const radians = angle * Math.PI / 180;
-      return [center[0] + distance * Math.cos(radians), center[1] + distance * Math.sin(radians)];
-    };
-    const leftGivenLabel = labelAt(180 - leftGiven / 2, 47);
-    const rightGivenLabel = labelAt(rightGiven / 2, 47);
-    const firstTargetLabel = labelAt((180 + rightGiven + 270) / 2, 42);
-    const secondTargetLabel = labelAt((270 + 360 - leftGiven) / 2, 42);
-    return `<svg class="geometry-diagram perpendicular-two-unknown" viewBox="0 0 300 192" data-perpendicular-angles="${leftGiven},${rightGiven},${firstTarget},${secondTarget}" role="img" aria-label="서로 수직인 가로선과 세로선 사이를 두 빗선이 지나는 각도 그림"><line class="perpendicular-base" x1="28" y1="${center[1]}" x2="272" y2="${center[1]}"/><line class="perpendicular-base" x1="${center[0]}" y1="18" x2="${center[0]}" y2="174"/><line class="perpendicular-slant" x1="${leftLower[0].toFixed(1)}" y1="${leftLower[1].toFixed(1)}" x2="${leftUpper[0].toFixed(1)}" y2="${leftUpper[1].toFixed(1)}"/><line class="perpendicular-slant" x1="${rightLower[0].toFixed(1)}" y1="${rightLower[1].toFixed(1)}" x2="${rightUpper[0].toFixed(1)}" y2="${rightUpper[1].toFixed(1)}"/><polyline class="perpendicular-right-mark" points="138,96 138,84 150,84"/><text class="perpendicular-line-label" x="18" y="${center[1] - 10}">가</text><text class="perpendicular-line-label" x="${center[0] + 15}" y="13">나</text><text class="perpendicular-given-label" x="${leftGivenLabel[0].toFixed(1)}" y="${leftGivenLabel[1].toFixed(1)}">${leftGiven}°</text><text class="perpendicular-given-label" x="${rightGivenLabel[0].toFixed(1)}" y="${rightGivenLabel[1].toFixed(1)}">${rightGiven}°</text><text class="perpendicular-target-label" x="${firstTargetLabel[0].toFixed(1)}" y="${firstTargetLabel[1].toFixed(1)}">㉠</text><text class="perpendicular-target-label" x="${secondTargetLabel[0].toFixed(1)}" y="${secondTargetLabel[1].toFixed(1)}">㉡</text><circle class="perpendicular-center" cx="${center[0]}" cy="${center[1]}" r="3"/></svg>`;
+    const leftLower = source41AngleFivePoint(center, 180 + leftGiven, radius);
+    const leftUpper = source41AngleFivePoint(center, leftGiven, radius);
+    const rightLower = source41AngleFivePoint(center, 360 - rightGiven, radius);
+    const rightUpper = source41AngleFivePoint(center, 180 - rightGiven, radius);
+    const marks = [
+      geometryAngleMarkSvg({ classPrefix: "perpendicular", role: "left-given", origin: center, start: 180, span: leftGiven, value: leftGiven, label: `${leftGiven}°`, arcRadius: 20, labelRadius: 43 }),
+      geometryAngleMarkSvg({ classPrefix: "perpendicular", role: "right-given", origin: center, start: 360 - rightGiven, span: rightGiven, value: rightGiven, label: `${rightGiven}°`, arcRadius: 20, labelRadius: 43 }),
+      geometryAngleMarkSvg({ classPrefix: "perpendicular", role: "target-left", origin: center, start: 90, span: firstTarget, value: firstTarget, label: "㉠", target: true, arcRadius: 23, labelRadius: 40 }),
+      geometryAngleMarkSvg({ classPrefix: "perpendicular", role: "target-right", origin: center, start: leftGiven, span: secondTarget, value: secondTarget, label: "㉡", target: true, arcRadius: 23, labelRadius: 40 })
+    ].join("");
+    return `<svg class="geometry-diagram perpendicular-two-unknown" viewBox="0 0 300 192" data-perpendicular-angles="${leftGiven},${rightGiven},${firstTarget},${secondTarget}" role="img" aria-label="서로 수직인 직선 가와 나 사이에서 왼쪽 아래 ${leftGiven}도, 오른쪽 아래 ${rightGiven}도, 위쪽 두 각 ㉠과 ㉡을 표시한 그림"><line class="perpendicular-base" x1="28" y1="${center[1]}" x2="272" y2="${center[1]}"/><line class="perpendicular-base" x1="${center[0]}" y1="18" x2="${center[0]}" y2="174"/><line class="perpendicular-slant" x1="${leftLower[0].toFixed(1)}" y1="${leftLower[1].toFixed(1)}" x2="${leftUpper[0].toFixed(1)}" y2="${leftUpper[1].toFixed(1)}"/><line class="perpendicular-slant" x1="${rightLower[0].toFixed(1)}" y1="${rightLower[1].toFixed(1)}" x2="${rightUpper[0].toFixed(1)}" y2="${rightUpper[1].toFixed(1)}"/><polyline class="perpendicular-right-mark" points="138,96 138,84 150,84"/><text class="perpendicular-line-label" x="18" y="${center[1] - 10}">가</text><text class="perpendicular-line-label" x="${center[0] + 15}" y="13">나</text>${marks}<circle class="perpendicular-center" cx="${center[0]}" cy="${center[1]}" r="3"/></svg>`;
   };
 
   const lineNameConditionSvg = ({ roleLabels, baseAngle, diagonalAngle, reveal = false, uniqueCount }) => {
@@ -3149,7 +3150,10 @@
     };
     const leftEnd = extend(vertex, leftTop, 44);
     const rightEnd = extend(vertex, rightTop, 44);
-    return `<svg class="geometry-diagram parallel-v-exterior" viewBox="0 0 390 205" data-parallel-v-angles="${leftAngle},${vertexAngle},${rightInterior},${answer}" role="img" aria-label="두 평행선 사이의 브이 모양 두 선과 바깥각"><line class="parallel-v-base" x1="24" y1="${topY}" x2="366" y2="${topY}"/><line class="parallel-v-base" x1="24" y1="${bottomY}" x2="366" y2="${bottomY}"/><line class="parallel-v-ray" x1="${leftEnd[0].toFixed(1)}" y1="${leftEnd[1].toFixed(1)}" x2="${vertex[0]}" y2="${vertex[1]}"/><line class="parallel-v-ray" x1="${vertex[0]}" y1="${vertex[1]}" x2="${rightEnd[0].toFixed(1)}" y2="${rightEnd[1].toFixed(1)}"/><text class="parallel-v-line-label" x="7" y="${topY + 5}">가</text><text class="parallel-v-line-label" x="7" y="${bottomY + 5}">나</text><text class="parallel-v-given" x="${(leftTop[0] - 35).toFixed(1)}" y="43">${leftAngle}°</text><text class="parallel-v-given" x="${vertex[0] - 18}" y="151">${vertexAngle}°</text><text class="parallel-v-target" x="${(rightTop[0] + 12).toFixed(1)}" y="78">㉠</text><circle cx="${leftTop[0].toFixed(1)}" cy="${leftTop[1]}" r="2.5"/><circle cx="${rightTop[0].toFixed(1)}" cy="${rightTop[1]}" r="2.5"/><circle cx="${vertex[0]}" cy="${vertex[1]}" r="2.5"/></svg>`;
+    const leftMark = geometryAngleMarkSvg({ classPrefix: "parallel-v", role: "left-exterior", origin: leftTop, start: 180 - leftAngle, span: leftAngle, value: leftAngle, label: `${leftAngle}°`, arcRadius: 21, labelRadius: 39 });
+    const vertexMark = geometryAngleMarkSvg({ classPrefix: "parallel-v", role: "vertex-interior", origin: vertex, start: rightInterior, span: vertexAngle, value: vertexAngle, label: `${vertexAngle}°`, arcRadius: 23, labelRadius: 39 });
+    const targetMark = geometryAngleMarkSvg({ classPrefix: "parallel-v", role: "right-exterior", origin: rightTop, start: 180 + rightInterior, span: answer, value: answer, label: "㉠", target: true, arcRadius: 22, labelRadius: 43 });
+    return `<svg class="geometry-diagram parallel-v-exterior" viewBox="0 0 390 205" data-parallel-v-angles="${leftAngle},${vertexAngle},${rightInterior},${answer}" role="img" aria-label="두 평행선 사이의 브이 모양 두 선에서 왼쪽 위 바깥각 ${leftAngle}도, 아래 꼭짓각 ${vertexAngle}도, 오른쪽 위 바깥각 ㉠을 표시한 그림"><line class="parallel-v-base" x1="24" y1="${topY}" x2="366" y2="${topY}"/><line class="parallel-v-base" x1="24" y1="${bottomY}" x2="366" y2="${bottomY}"/><line class="parallel-v-ray" x1="${leftEnd[0].toFixed(1)}" y1="${leftEnd[1].toFixed(1)}" x2="${vertex[0]}" y2="${vertex[1]}"/><line class="parallel-v-ray" x1="${vertex[0]}" y1="${vertex[1]}" x2="${rightEnd[0].toFixed(1)}" y2="${rightEnd[1].toFixed(1)}"/><text class="parallel-v-line-label" x="7" y="${topY + 5}">가</text><text class="parallel-v-line-label" x="7" y="${bottomY + 5}">나</text>${leftMark}${vertexMark}${targetMark}<circle cx="${leftTop[0].toFixed(1)}" cy="${leftTop[1]}" r="2.5"/><circle cx="${rightTop[0].toFixed(1)}" cy="${rightTop[1]}" r="2.5"/><circle cx="${vertex[0]}" cy="${vertex[1]}" r="2.5"/></svg>`;
   };
 
   const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
