@@ -87,6 +87,12 @@ function validatePacket(packet) {
       if (!/^DP-Q-[0-9A-F]{12}-[0-9]{3}$/.test(clean(link.questionId))) {
         issues.push(`${prefix}.questionId`);
       }
+      if (!Number.isSafeInteger(link.page) || link.page < 1 || !Number.isSafeInteger(link.slot) || link.slot < 1) {
+        issues.push(`${prefix}.locator`);
+      }
+      if (!Array.isArray(link.evidence) || !link.evidence.length || link.evidence.some(value => !clean(value))) {
+        issues.push(`${prefix}.evidence`);
+      }
       sharedNumbers.add(link.number);
     });
     for (let number = 1; number <= 30; number += 1) {
@@ -112,7 +118,10 @@ function registerSources(typeIndex, paperLinks, reviewDecisions, packet) {
     primaryPaperId: clean(packet.variant.primaryPaperId),
     sharedQuestionLinks: packet.variant.sharedQuestionLinks.slice().sort((a, b) => a.number - b.number).map(link => ({
       number: link.number,
-      questionId: clean(link.questionId)
+      questionId: clean(link.questionId),
+      page: link.page,
+      slot: link.slot,
+      evidence: Array.from(new Set(link.evidence.map(clean))).sort()
     }))
   } : null;
   const paper = {
@@ -201,7 +210,10 @@ function applyToDatabase(database, packet) {
   if (isPartialVariant) {
     const packetSharedLinks = packet.variant.sharedQuestionLinks.slice().sort((a, b) => a.number - b.number).map(link => ({
       number: link.number,
-      questionId: clean(link.questionId)
+      questionId: clean(link.questionId),
+      page: link.page,
+      slot: link.slot,
+      evidence: Array.from(new Set(link.evidence.map(clean))).sort()
     }));
     if (!paper.variant || paper.variant.kind !== "partial_question_variant"
       || paper.variant.primaryPaperId !== clean(packet.variant.primaryPaperId)

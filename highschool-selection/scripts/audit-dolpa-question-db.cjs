@@ -91,6 +91,10 @@ function audit(database) {
         }
         occupiedNumbers.add(number);
         if (!questionId) issues.push(`paper_variant_shared_link:${paper.paperId}:${number}`);
+        if (!Number.isSafeInteger(link && link.page) || link.page < 1
+          || !Number.isSafeInteger(link && link.slot) || link.slot < 1 || !(link.evidence || []).length) {
+          issues.push(`paper_variant_shared_locator:${paper.paperId}:${number}`);
+        }
         const row = questionsById.get(questionId);
         if (!primary || !row || row.paperId !== primary.paperId || row.sourceId !== primary.sourceId
           || !(primary.questionIds || []).includes(questionId) || paperQuestionIds[number - 1] !== questionId) {

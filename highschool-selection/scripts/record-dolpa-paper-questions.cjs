@@ -10,7 +10,7 @@ const QUESTION_FIELDS = Object.freeze([
   "number", "semester", "unit", "typeLabel", "sourceRelation",
   "page", "slot", "responseKind", "responseSlotCount"
 ]);
-const SHARED_QUESTION_FIELDS = Object.freeze(["number", "questionId"]);
+const SHARED_QUESTION_FIELDS = Object.freeze(["number", "questionId", "page", "slot", "evidence"]);
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
@@ -108,8 +108,16 @@ function normalizeManifest(manifest, ledger, database = null) {
       if (extra.length) throw new Error(`공유 문항 연결에 허용되지 않은 필드가 있습니다: ${extra.join(",")}`);
       const number = Number(link.number);
       const questionId = String(link.questionId || "").trim();
+      const page = Number(link.page);
+      const slot = Number(link.slot);
+      const evidence = Array.isArray(link.evidence)
+        ? Array.from(new Set(link.evidence.map(value => String(value || "").trim()).filter(Boolean))).sort()
+        : [];
       if (!Number.isSafeInteger(number) || number < 1 || number > primaryPaper.questionCount || sharedNumbers.has(number)) {
         throw new Error(`공유 문항 번호를 확인해 주세요: ${number || index + 1}`);
+      }
+      if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(slot) || slot < 1 || !evidence.length) {
+        throw new Error(`공유 문항의 변형 시험지 쪽·칸·근거를 확인해 주세요: ${number}`);
       }
       if (seenQuestionNumbers.has(number)) throw new Error(`공유 문항과 교체 문항 번호가 겹칩니다: ${number}`);
       const shared = questionsById.get(questionId);
@@ -118,7 +126,7 @@ function normalizeManifest(manifest, ledger, database = null) {
         throw new Error(`공유 문항이 대표 시험지 소유 문항과 연결되지 않았습니다: ${number}`);
       }
       sharedNumbers.add(number);
-      return { number, questionId };
+      return { number, questionId, page, slot, evidence };
     }).sort((a, b) => a.number - b.number);
     for (let number = 1; number <= primaryPaper.questionCount; number += 1) {
       if (!sharedNumbers.has(number) && !seenQuestionNumbers.has(number)) {

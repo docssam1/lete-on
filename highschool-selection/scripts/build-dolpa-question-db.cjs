@@ -120,7 +120,8 @@ function validatePartialVariantPaper(paper, papersById, questionsById) {
     if (!Number.isSafeInteger(number) || number < 1 || number > paper.questionCount || occupied.has(number)
       || !questionId || !(primary.questionIds || []).includes(questionId)
       || effectiveIds[number - 1] !== questionId || !row || row.paperId !== primary.paperId
-      || row.sourceId !== primary.sourceId) fail(`shared-${number}`);
+      || row.sourceId !== primary.sourceId || !Number.isSafeInteger(link.page) || link.page < 1
+      || !Number.isSafeInteger(link.slot) || link.slot < 1 || !(link.evidence || []).length) fail(`shared-${number}`);
     occupied.add(number);
     sharedCanonicalIds.add(questionId);
   });

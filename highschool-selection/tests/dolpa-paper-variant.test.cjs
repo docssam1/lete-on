@@ -6,6 +6,7 @@ const auditor = require("../scripts/audit-dolpa-question-db.cjs");
 const builder = require("../scripts/build-dolpa-question-db.cjs");
 const ledgerCore = require("../scripts/build-dolpa-work-ledger.cjs");
 const recorder = require("../scripts/record-dolpa-paper-questions.cjs");
+const { buildReport } = require("../scripts/build-dolpa-analysis-report.cjs");
 const { exportReviewPacket } = require("../scripts/export-dolpa-paper-review.cjs");
 const {
   applyToDatabase,
@@ -67,7 +68,10 @@ function sharedQuestionLinks(primaryDatabase) {
   return primary.questionIds
     .map((questionId, index) => ({
       number: index + 1,
-      questionId: index + 1 === 20 ? primary.questionIds[5] : questionId
+      questionId: index + 1 === 20 ? primary.questionIds[5] : questionId,
+      page: 3 + Math.floor(index / 4),
+      slot: index % 4 + 1,
+      evidence: [`visual.variant.ce3f.position.${index + 1}`]
     }))
     .filter(link => !OVERRIDE_NUMBERS.has(link.number));
 }
@@ -250,4 +254,61 @@ test("부분 변형 검수표는 공유 번호와 교체 번호가 겹치면 차
     questionId: database.papers.find(paper => paper.paperId === PRIMARY_PAPER_ID).questionIds[28]
   });
   assert.throws(() => validatePacket(packet), /variant\.sharedQuestionLinks/);
+});
+
+test("부분 변형 공유 배치는 실제 쪽·칸·근거가 없으면 등록하지 않는다", () => {
+  const ledger = fullLedger(false);
+  const primary = builder.buildDatabase(ledger, null, "1".repeat(64));
+  const manifest = variantManifest(primary);
+  delete manifest.sharedQuestions[0].evidence;
+  assert.throws(() => recorder.merge(primary, ledger, manifest), /쪽·칸·근거/);
+
+  const { database } = makeVariantDatabase();
+  const packet = reviewPacket(database);
+  packet.variant.sharedQuestionLinks[0].slot = null;
+  assert.throws(() => validatePacket(packet), /variant\.sharedQuestionLinks\[0\]\.locator/);
+});
+
+test("부분 변형 분석지는 같은 canonical 문항의 두 배치를 각각 집계한다", () => {
+  const { database } = makeVariantDatabase();
+  const packet = reviewPacket(database);
+  const ready = applyToDatabase(database, packet);
+  ready.questions.forEach(question => {
+    question.difficulty = {
+      band: question.questionId.endsWith("-006") || question.questionId.endsWith("-029") ? "raised" : "standard",
+      status: "verified",
+      evidence: [`difficulty:${question.questionId}`]
+    };
+    question.responseFormat = {
+      kind: "input",
+      slotCount: 1,
+      status: "verified",
+      evidence: [`response:${question.questionId}`]
+    };
+    question.answerCheck = {
+      status: "verified",
+      evidence: [`answer:${question.questionId}`]
+    };
+  });
+  const canonicalQ6 = ready.questions.find(question => question.questionId === ledgerCore.stableQuestionId(PRIMARY_SOURCE_ID, 6));
+  canonicalQ6.answerCheck = {
+    status: "disputed",
+    evidence: ["answer:canonical-q6-conflict"],
+    note: "공식 답과 독립 계산이 일치하지 않음"
+  };
+  const report = buildReport(ready, VARIANT_SOURCE_ID, "2026-08-30");
+  assert.equal(report.summary.questionCount, 30);
+  assert.equal(report.summary.raisedCount, 3);
+  assert.equal(report.summary.answerDisputeCount, 2);
+  assert.deepEqual(report.criticalWarnings.map(item => item.number), [6, 20]);
+  const sixth = report.evidence.find(item => item.paperQuestionNumber === 6);
+  const twentieth = report.evidence.find(item => item.paperQuestionNumber === 20);
+  assert.equal(sixth.canonicalQuestionId, twentieth.canonicalQuestionId);
+  assert.equal(sixth.canonicalQuestionNumber, 6);
+  assert.equal(twentieth.canonicalQuestionNumber, 6);
+  assert.notDeepEqual([sixth.page, sixth.slot], [twentieth.page, twentieth.slot]);
+  assert.equal(sixth.placementRelation, "shared");
+  assert.equal(twentieth.placementRelation, "shared");
+  assert.equal(report.evidence.find(item => item.paperQuestionNumber === 29).placementRelation, "replacement");
+  assert.equal(report.evidence.some(item => Object.keys(item).some(key => /answerValue|officialAnswer|derivedAnswer/i.test(key))), false);
 });
