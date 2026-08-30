@@ -1,0 +1,108 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
+const { chromium } = require("playwright");
+
+const repoRoot = path.resolve(__dirname, "..", "..");
+const answers = ["20", "3:4", "14", "35", "35", "0.75", "1920", "5.25", "17", "75", "210", "35"];
+let server; let browser; let baseUrl;
+
+function contentType(file) {
+  if (file.endsWith(".html")) return "text/html; charset=utf-8";
+  if (file.endsWith(".css")) return "text/css; charset=utf-8";
+  if (file.endsWith(".js")) return "text/javascript; charset=utf-8";
+  if (file.endsWith(".svg")) return "image/svg+xml";
+  return "application/octet-stream";
+}
+function errorsFor(page) {
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  page.on("console", function (message) { if (message.type() === "error") errors.push(message.text()); });
+  return errors;
+}
+
+test.before(async function () {
+  server = http.createServer(function (request, response) {
+    const file = path.resolve(repoRoot, "." + decodeURIComponent(request.url.split("?")[0]));
+    if (!file.startsWith(repoRoot) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { response.writeHead(404); response.end("Not found"); return; }
+    response.writeHead(200, { "content-type": contentType(file) }); fs.createReadStream(file).pipe(response);
+  });
+  await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
+  baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/clinic-practice.html`;
+  browser = await chromium.launch({ headless: true });
+});
+test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
+
+test("student answers and solutions stay hidden until an authentic attempt", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 12);
+  assert.equal(await page.locator(".teacher-answer,.solution-box,.solution-toggle,.hint-box").count(), 0);
+  const first = page.locator('.problem-card[data-item-id="rp-w01"]');
+  await first.locator("input").fill("19"); await first.locator(".response-row button").click();
+  assert.equal(await first.locator(".hint-box").count(), 1);
+  assert.equal(await first.locator(".solution-box").count(), 0);
+  await first.locator(".solution-toggle").click();
+  assert.equal(await first.locator(".solution-box").count(), 1);
+  assert.match(await first.locator(".solution-box").innerText(), /20/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("accurate workbook completion unlocks the separate four-item recheck", async function () {
+  const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
+  const page = await context.newPage(); const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  for (let index = 0; index < answers.length; index += 1) {
+    const card = page.locator(".problem-card").nth(index);
+    await card.locator("input").fill(answers[index]); await card.locator(".response-row button").click();
+  }
+  assert.equal(await page.locator(".problem-card.is-correct").count(), 12);
+  assert.equal(await page.locator("#completion-card").isVisible(), true);
+  assert.equal(await page.evaluate(function () { return localStorage.getItem("gfield-clinic-workbook:6.RP.A:v1"); }), "complete-v1");
+  await page.locator("#completion-card a").click(); await page.waitForLoadState("networkidle");
+  assert.equal(new URL(page.url()).searchParams.get("mode"), "recheck");
+  assert.equal(await page.locator(".problem-card").count(), 4);
+  assert.equal(await page.locator(".teacher-answer,.solution-box").count(), 0);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test("recheck is locked before completion while teacher preview stays separate", async function () {
+  const page = await browser.newPage({ viewport: { width: 1050, height: 850 } });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=recheck&audience=student&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".lock-card").count(), 1);
+  assert.equal(await page.locator(".problem-card").count(), 0);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=teacher&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".teacher-guide").count(), 1);
+  assert.equal(await page.locator(".teacher-answer").count(), 24);
+  assert.equal(await page.locator(".response-row").count(), 0);
+  const visibleChineseSurfaces = await Promise.all([".site-header", ".clinic-hero", "#clinic-content", ".clinic-footer"].map(function (selector) { return page.locator(selector).innerText(); }));
+  assert.equal(/[가-힣]/.test(visibleChineseSurfaces.join(" ")), false);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("student clinic has no horizontal overflow on mobile and has an A4 print state", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+    const sizes = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(sizes, [width, width]);
+    const targets = await page.locator("button,select,input,.brand").evaluateAll(function (nodes) { return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) { const rect = node.getBoundingClientRect(); return [rect.width, rect.height]; }); });
+    targets.forEach(function (size) { assert.ok(size[0] >= 44); assert.ok(size[1] >= 44); });
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  await printPage.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  await printPage.emulateMedia({ media: "print" });
+  assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await printPage.locator(".response-row input").first().isVisible(), true);
+  assert.equal(await printPage.locator(".solution-box,.teacher-answer").count(), 0);
+  await printPage.close();
+});

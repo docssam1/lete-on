@@ -16,8 +16,24 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
     assert.equal(route.clusterId, clusterId);
     assert.equal(route.source, "diagnostic-reviewed-route");
     assert.equal(route.concept.url, `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`);
-    assert.equal(/student|attempt|answer|correct|solution/i.test(JSON.stringify(route)), false);
+    assert.equal(/studentId|attemptId|answerKey|correctAnswer|solutionText/i.test(JSON.stringify(route)), false);
   });
+});
+
+test("only 6.RP.A opens the reviewed workbook and completion-gated recheck", function () {
+  const before = paths.routeFor("6.RP.A", { fromDiagnostic: true, workbookCompleted: false });
+  assert.equal(before.workbook.state, "available");
+  assert.equal(before.workbook.url, "./clinic-practice.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
+  assert.equal(before.recheck.state, "locked-after-learning");
+  assert.equal(before.recheck.url, "");
+  const after = paths.routeFor("6.RP.A", { fromDiagnostic: true, workbookCompleted: true });
+  assert.equal(after.recheck.state, "available");
+  assert.equal(after.recheck.url, "./clinic-practice.html?cluster=6.RP.A&mode=recheck&audience=student&locale=ko");
+  assert.equal(paths.completionKey("6.RP.A"), "gfield-clinic-workbook:6.RP.A:v1");
+
+  const geometry = paths.routeFor("6.G.A", { workbookCompleted: true });
+  assert.equal(geometry.workbook.state, "review-pending");
+  assert.equal(geometry.recheck.state, "review-pending");
 });
 
 test("only the exact ratio-cluster match opens an animated clinic lesson", function () {

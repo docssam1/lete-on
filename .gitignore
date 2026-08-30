@@ -10,6 +10,7 @@ reading-world/private/
 # Local QA output and private source-routing notes.
 /artifacts/
 /debug.log
+/boarding-school-math/debug.log
 /.source-memory/gfield-geometry-memory-notes.md
 /.source-memory/premier-private-local.json
 /tmp/

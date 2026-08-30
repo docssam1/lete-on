@@ -92,6 +92,50 @@
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
         { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/concept-learning.html", "note": "PR 135 merge 4205460e deployed with HTTP 200 clinic script and context checks." }] }
       ]
+    },
+    {
+      "id": "grade6-rp-a-public-clinic-pack",
+      "title": "GFIELD Grade 6 ratio clinic workbook and recheck",
+      "work_key": "8a5adc42c4011a9646ed7c6034a9d3e0f0f4c6223b414a8fdd1288b1adbca057",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "approved",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "Deployment proof is added only after the Pages artifact is live.",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "concept-guided-practice-recheck",
+      "delivery_surfaces": ["interactive-student", "public-teacher-sample", "a4-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "claims": [
+        {
+          "id": "ratio-clinic-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent fixed answer ledger, adjacent-answer negative controls, student answer-visibility browser checks, and desktop-mobile-A4 render review",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js" },
+            { "role": "test", "locator": "test:grade6-rp-clinic-pack:16-independent-answers" },
+            { "role": "test", "locator": "test:clinic-practice-browser:attempt-gated-solutions" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "GFIELD-authored public content with explicit original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-rp-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 vocabulary, ratios and rates representations, multiplication and division prerequisites, three four-item sections, and typed numeric or ratio responses are appropriate." }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-rp-clinic-pack:fixed-answer-ledger" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-rp-clinic-pack:adjacent-wrong-answers" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:no-answer-before-attempt" }] },
+        { "id": "route-gating", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:completion-gated-recheck" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:teacher-preview-separate" }] },
+        { "id": "language-review", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-practice-ko-en-zh-render-review" }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-practice-desktop-mobile-a4-final" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "The public scope notice forbids automatic mastery or promotion claims." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pending", "evidence": [] }
+      ]
     }
   ]
 }
