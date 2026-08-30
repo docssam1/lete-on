@@ -305,6 +305,9 @@
     } else if (kind === '구잔') {
       const awayNounKo = away === 'eat' ? '먹은' : away === 'use' ? '쓴' : `${taker.ko}에게 준`;
       const awayNounEn = away === 'eat' ? 'ate' : away === 'use' ? 'used' : 'gave away';
+      /* did 뒤에는 원형이 와야 한다 — "did Ethan gave away"는 비문이다.
+         과거형(awayNounEn)은 평서문에, 원형(awayVerbEn)은 의문문에 쓴다. */
+      const awayVerbEn = away === 'eat' ? 'eat' : away === 'use' ? 'use' : 'give away';
       const awayNounZh = away === 'eat' ? '吃掉的' : away === 'use' ? '用掉的' : '送出的';
       s.story = {
         ko: { sents: [`${NEUN(A.ko)} ${EUL(o.ko.n)} ${koQ(o, n1)} 가지고 있었어요.`, awayKo],
@@ -326,7 +329,7 @@
       };
       s.givens = [
         { v: n1, ko:`${NGA(A.ko)} 처음에 가지고 있던 ${EUN(o.ko.n)} 몇 ${o.ko.u}일까요?`, en:`How many ${o.en.n} did ${A.en} have at first?`, zh:`${A.zh}原来有几${o.zh.u}${o.zh.n}？` },
-        { v: n2, ko:`${NGA(A.ko)} ${awayNounKo} ${EUN(o.ko.n)} 몇 ${o.ko.u}일까요?`, en:`How many ${o.en.n} did ${A.en} ${awayNounEn}?`, zh:`${awayNounZh}${o.zh.n}有几${o.zh.u}？` }
+        { v: n2, ko:`${NGA(A.ko)} ${awayNounKo} ${EUN(o.ko.n)} 몇 ${o.ko.u}일까요?`, en:`How many ${o.en.n} did ${A.en} ${awayVerbEn}?`, zh:`${awayNounZh}${o.zh.n}有几${o.zh.u}？` }
       ];
     } else if (kind === '구차') {
       s.story = {
