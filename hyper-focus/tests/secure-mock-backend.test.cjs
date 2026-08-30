@@ -182,6 +182,8 @@ function testManifestAndAssetFailClosedRules() {
   assert.doesNotMatch(edge, /QUESTION_MIMES[^\n]*application\/pdf/);
   assert.match(edge, /asSafeText\(question\.typeTitle, 160/);
   assert.match(edge, /asSafeText\(question\.assetAlt, 300/);
+  assert.match(edge, /\["500", "coin-payment-change-conditions"\]/);
+  assert.match(edge, /LEGACY_TYPE_KEY_ALIASES\.get\(storedTypeKey\) \|\| storedTypeKey/);
 }
 
 function testAnswerAndSubmissionDerivation() {

@@ -12,6 +12,9 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/;
 const QUESTION_KEY_RE = /^premier:(utilization|final|last)-(\d{2}):q(\d{2})$/;
 const TYPE_KEY_RE = /^[a-z][a-z0-9-]{1,79}$/;
+const LEGACY_TYPE_KEY_ALIASES = new Map([
+  ["500", "coin-payment-change-conditions"]
+]);
 const AREA_KEYS = new Set(["arithmetic", "spatial", "pattern", "logic", "combinatorics", "measurement"]);
 const JSON_MIME_RE = /^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i;
 const QUESTION_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -449,12 +452,18 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       || !Array.isArray(question.lockReasons) || question.lockReasons.length !== 0) {
       throw new ApiError(409, "question_locked");
     }
-    if (!AREA_KEYS.has(String(question.areaKey)) || !TYPE_KEY_RE.test(String(question.typeKey || ""))) {
-      throw new ApiError(409, "question_classification_invalid");
+    const questionDiagnostic = String(number).padStart(2, "0");
+    if (!AREA_KEYS.has(String(question.areaKey))) {
+      throw new ApiError(409, `question_${questionDiagnostic}_area_key_invalid`);
+    }
+    const storedTypeKey = String(question.typeKey || "");
+    const typeKey = LEGACY_TYPE_KEY_ALIASES.get(storedTypeKey) || storedTypeKey;
+    if (!TYPE_KEY_RE.test(typeKey)) {
+      throw new ApiError(409, `question_${questionDiagnostic}_type_key_invalid`);
     }
     const typeId = question.typeId == null ? null : Number(question.typeId);
     if (typeId != null && (!Number.isInteger(typeId) || typeId < 1 || typeId > 54)) {
-      throw new ApiError(409, "question_classification_invalid");
+      throw new ApiError(409, `question_${questionDiagnostic}_type_id_invalid`);
     }
     seenKeys.add(String(question.questionKey));
     if (assetId !== null) seenAssets.add(assetId);
@@ -465,11 +474,11 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       releaseStatus: "verified",
       lockReasons: [],
       areaKey: String(question.areaKey),
-      areaLabel: asSafeText(question.areaLabel, 100, false, "question_classification_invalid"),
-      typeKey: String(question.typeKey),
-      typeTitle: asSafeText(question.typeTitle, 160, false, "question_classification_invalid"),
+      areaLabel: asSafeText(question.areaLabel, 100, false, `question_${questionDiagnostic}_area_label_invalid`),
+      typeKey,
+      typeTitle: asSafeText(question.typeTitle, 160, false, `question_${questionDiagnostic}_type_title_invalid`),
       typeId,
-      typeCode: question.typeCode == null ? "" : asSafeText(question.typeCode, 80, false, "question_classification_invalid"),
+      typeCode: question.typeCode == null ? "" : asSafeText(question.typeCode, 80, false, `question_${questionDiagnostic}_type_code_invalid`),
       difficultyLabel: question.difficultyLabel == null ? "" : asSafeText(question.difficultyLabel, 40, false, "question_invalid"),
       prompt: question.prompt == null && deliveryMode === "page_images"
         ? `원본 시험지 ${number}번`
@@ -947,7 +956,11 @@ Deno.serve(async request => {
     }
     return json(request, 200, result);
   } catch (error) {
-    if (error instanceof ApiError) return json(request, error.status, { error: publicErrorCode(error.code) });
+    if (error instanceof ApiError) {
+      console.error("secure-mock request failed", { status: error.status, code: error.code });
+      return json(request, error.status, { error: publicErrorCode(error.code) });
+    }
+    console.error("secure-mock request failed", { status: 503, code: "unexpected_error" });
     return json(request, 503, { error: "server_not_ready" });
   }
 });
