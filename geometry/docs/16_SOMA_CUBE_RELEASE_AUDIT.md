@@ -55,7 +55,7 @@
 | `accessibility` | pass | 목표·조립판 설명, 선택지·조각·소리 버튼 이름, 키보드 힌트 조립, 초점 표시 확인 |
 | `negative-control` | pass | 2단계 `Pre`를 임시로 `입문`으로 바꾸자 단계 배열 검사가 실패했고 즉시 원복 |
 | `regression` | pass | 소마 self-test 및 Geometry 문제은행 회귀 검사 |
-| `release-readback` | pending | 원격 push 뒤 배포 SHA와 공개 URL을 다시 확인 |
+| `release-readback` | pass | 게임 반영 SHA `20a6f2acc39c434ff14e7ad75dc6194e470600e9`, Pages 실행 `33295860383`, 공개 브라우저 검사 통과 |
 
 ## 4. 실행 명령
 
@@ -67,14 +67,15 @@ node geometry/worksheet/question-bank.selftest.cjs
 
 공개 화면을 다시 검사할 때:
 
-```text
-GFIELD_BASE_URL=https://lete-on.gfieldacademy.net node geometry/games/soma-cube/soma-cube.browsercheck.mjs
+```powershell
+$env:GFIELD_BASE_URL='https://lete-on.gfieldacademy.net'
+node geometry/games/soma-cube/soma-cube.browsercheck.mjs
 ```
 
 ## 5. 상태
 
-- 작업: `in-progress`
+- 작업: `complete`
 - 근거: `verified`
-- 공개: `approved`
+- 공개: `published`
 
-`release-readback`이 통과하기 전에는 `published`로 올리지 않는다.
+공개 주소: `https://lete-on.gfieldacademy.net/geometry/games/soma-cube/?level=1`

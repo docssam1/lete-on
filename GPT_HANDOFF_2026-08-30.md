@@ -82,6 +82,15 @@ git rev-parse origin/main
 
 현재 `geometry/README.md`의 게임 목록을 실제 공개 목록의 기준으로 사용한다.
 
+### 소마큐브 공개 검증
+
+- 5단계·50문제, 정육면체 회전 24개, 일곱 조각 부피 27, 검증된 전체 큐브 해 40개를 확인했다.
+- 1단계 단일 선택과 2단계 힌트+키보드 조립, 4단계 네 언어 가로 화면, 5단계 세로 회전 안내를 실제 브라우저에서 확인했다.
+- 목표·조립 3D 캔버스의 픽셀 편차를 검사해 빈 WebGL 화면이 아님을 확인했다.
+- 공개 반영 SHA `20a6f2acc39c434ff14e7ad75dc6194e470600e9`, Pages 실행 `33295860383`에서 성공했다.
+- 공개 주소: `https://lete-on.gfieldacademy.net/geometry/games/soma-cube/?level=1`
+- 상세 관문: `geometry/docs/16_SOMA_CUBE_RELEASE_AUDIT.md`
+
 ## 3. 주사위 굴리기 확정 사양
 
 ### 게임 경로
