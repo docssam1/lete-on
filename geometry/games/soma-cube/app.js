@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-2";
-import { getLanguage, t } from "./i18n.js?v=soma-3";
+import { getLanguage, t } from "./i18n.js?v=soma-4";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const validation = validateLevels();
@@ -45,7 +45,7 @@ function applyCopy() {
   ui.tutorialSkip.textContent = t(state.lang,"tutorialSkip"); ui.rotateMessage.textContent = t(state.lang,"rotate"); ui.rotateExit.textContent = t(state.lang,"exit");
   const rotateActions = t(state.lang,"rotateActions");
   document.querySelectorAll("[data-rotate]").forEach((button,index)=>{const label=rotateActions[index];button.title=label;button.setAttribute("aria-label",label);button.querySelector("span").textContent=label});
-  ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×";
+  ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×"; ui.soundButton.setAttribute("aria-label",t(state.lang,state.sound?"soundOn":"soundOff"));
 }
 
 function showToast(message) {
@@ -187,6 +187,7 @@ function renderBuild() {
     const marker=new THREE.Mesh(markerGeometry,new THREE.MeshStandardMaterial({color:index===0?0xffd94a:0x54c7c4,emissive:0x2b7778,emissiveIntensity:.45,transparent:true,opacity:.72})); marker.position.copy(center); marker.userData={candidate:placement}; buildView.markers.add(marker);
   });
   if(state.hintPlacement){const hint=addPiece(buildView.markers,state.hintPlacement,bounds,{ghost:true});hint.traverse((node)=>{if(node.material){node.material.color.set(0xffdf51);node.material.opacity=.38}})}
+  ui.buildViewer.dataset.candidateCount=String(candidatePlacements().length);
   frameViewer(buildView,problem.target);
 }
 
@@ -222,12 +223,12 @@ function renderChoices() {
   const problem=currentProblem(); const recognize=problem.mode==="recognize"; ui.choiceGrid.replaceChildren(); ui.choiceGrid.hidden=!recognize; ui.buildViewer.closest(".viewer-panel").classList.toggle("choice-mode",recognize);
   if(!recognize)return;
   ui.choiceGrid.style.gridTemplateColumns=`repeat(${problem.options.length},minmax(0,1fr))`;
-  problem.options.forEach((cells,index)=>{const button=document.createElement("button");button.type="button";button.className="choice-card";button.innerHTML=`<img alt="" src="${makeThumbnail(cells)}"><span>${index+1}</span>`;button.addEventListener("click",()=>chooseOption(index,button));ui.choiceGrid.append(button)});
+  problem.options.forEach((cells,index)=>{const button=document.createElement("button");button.type="button";button.className="choice-card";button.setAttribute("aria-label",t(state.lang,"choiceLabel",{number:index+1}));button.innerHTML=`<img alt="" src="${makeThumbnail(cells)}"><span>${index+1}</span>`;button.addEventListener("click",()=>chooseOption(index,button));ui.choiceGrid.append(button)});
 }
 
 function renderTray() {
   const problem=currentProblem(); ui.pieceTray.replaceChildren(); const ids=problem.mode==="recognize"?[]:problem.pieceIds;
-  ids.forEach((id)=>{const piece=PIECE_BY_ID[id];const shownCells=state.selectedId===id&&state.selectedShape?state.selectedShape:piece.cells;const button=document.createElement("button");button.type="button";button.className="piece-card";button.dataset.piece=id;button.innerHTML=`<img alt="" src="${makeThumbnail(shownCells,piece.color)}"><span>${id}</span>`;const isPlaced=placedIds().has(id);button.classList.toggle("placed",isPlaced);button.classList.toggle("selected",state.selectedId===id);button.addEventListener("click",()=>selectPiece(id));ui.pieceTray.append(button)});
+  ids.forEach((id)=>{const piece=PIECE_BY_ID[id];const shownCells=state.selectedId===id&&state.selectedShape?state.selectedShape:piece.cells;const button=document.createElement("button");button.type="button";button.className="piece-card";button.dataset.piece=id;button.setAttribute("aria-label",t(state.lang,"pieceLabel",{id}));button.innerHTML=`<img alt="" src="${makeThumbnail(shownCells,piece.color)}"><span>${id}</span>`;const isPlaced=placedIds().has(id);button.classList.toggle("placed",isPlaced);button.classList.toggle("selected",state.selectedId===id);button.disabled=isPlaced;button.addEventListener("click",()=>selectPiece(id));ui.pieceTray.append(button)});
   ui.pieceStatus.textContent=problem.mode==="recognize"?"":t(state.lang,"pieces",{done:state.placements.length-fixedCount(),total:problem.pieceIds.length});
 }
 
@@ -237,7 +238,7 @@ function renderViewClues() {
 }
 
 function renderStatus() {
-  const level=currentLevel(); ui.stageLabel.textContent=`${t(state.lang,"stageNames")[state.levelIndex]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}`; ui.problemLabel.textContent=`${state.problemIndex+1} / ${state.queue.length}`; ui.stageDots.textContent="●".repeat(state.levelIndex+1)+"○".repeat(4-state.levelIndex); ui.missionTitle.textContent=t(state.lang,"levelTitles")[state.levelIndex]; ui.prompt.textContent=state.levelIndex===4&&state.firstAssemblySignature?t(state.lang,"secondWayPrompt"):t(state.lang,"prompts")[state.levelIndex];
+  const level=currentLevel(); const problem=currentProblem(); const done=state.placements.length-fixedCount(); const total=problem.mode==="recognize"?0:problem.pieceIds.length; const shell=document.querySelector(".game-shell"); shell.dataset.problemId=problem.id; shell.dataset.mode=problem.mode; shell.dataset.stage=level.stage; ui.stageLabel.textContent=`${t(state.lang,"stageNames")[state.levelIndex]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}`; ui.problemLabel.textContent=`${state.problemIndex+1} / ${state.queue.length}`; ui.stageDots.textContent="●".repeat(state.levelIndex+1)+"○".repeat(4-state.levelIndex); ui.missionTitle.textContent=t(state.lang,"levelTitles")[state.levelIndex]; ui.prompt.textContent=state.levelIndex===4&&state.firstAssemblySignature?t(state.lang,"secondWayPrompt"):t(state.lang,"prompts")[state.levelIndex]; ui.targetViewer.setAttribute("aria-label",t(state.lang,"targetViewerLabel",{count:problem.target.length})); ui.buildViewer.setAttribute("aria-label",t(state.lang,"buildViewerLabel",{done,total}));
   const recognize=currentProblem().mode==="recognize";ui.pieceTray.closest(".piece-tray").hidden=recognize;document.querySelector(".rotate-tools").hidden=recognize;ui.clearButton.hidden=recognize;ui.clearButton.disabled=recognize||state.placements.length===fixedCount(); document.querySelectorAll("[data-rotate]").forEach((button)=>button.disabled=!state.selectedId||state.solved); ui.hintButton.disabled=state.solved; ui.skipButton.textContent=t(state.lang,"skip");
   ui.clearButton.disabled ||= state.transitioning; ui.hintButton.disabled ||= state.transitioning; ui.skipButton.disabled=state.transitioning;
 }

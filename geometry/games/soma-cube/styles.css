@@ -17,4 +17,5 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 [hidden]{display:none!important}
 .cubi-guide{bottom:132px}.guide-bubble{margin-bottom:58px}
+button:focus-visible,a:focus-visible,.viewer-host:focus-visible{outline:3px solid #ffd34f;outline-offset:2px}
 @media(max-height:590px) and (orientation:landscape){.cubi-guide{display:none}.cubi-guide.show{display:flex;bottom:101px}.cubi-guide.show .guide-bubble{display:block;max-width:210px;margin-bottom:35px;font-size:10px}}

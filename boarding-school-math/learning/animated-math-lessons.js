@@ -69,6 +69,7 @@
   return Object.freeze({ schemaVersion: 2, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
+      conceptClusterId: "6.RP.A",
       eyebrow: "RATIO · VISUAL MODEL", eyebrowI18n: tr("RATIO · VISUAL MODEL", "비율 · 시각 모델", "比 · 可视化模型"),
       title: "Common totals, different unit sizes", titleI18n: tr("Common totals, different unit sizes", "전체가 같아도 한 부분은 다르다", "总数相同，每份不同"),
       concept: "Part-to-whole ratios", conceptI18n: tr("Part-to-whole ratios", "부분과 전체의 비", "部分与整体的比"),
@@ -81,6 +82,7 @@
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",
+      conceptClusterId: "competition-geometry",
       eyebrow: "GEOMETRY · ANGLE REASONING", eyebrowI18n: tr("GEOMETRY · ANGLE REASONING", "기하 · 각 추론", "几何 · 角度推理"),
       title: "Equal sides reveal equal angles", titleI18n: tr("Equal sides reveal equal angles", "같은 변에서 같은 각 찾기", "由等边找等角"),
       concept: "Isosceles triangles and angle sum", conceptI18n: tr("Isosceles triangles and angle sum", "이등변삼각형과 내각의 합", "等腰三角形与内角和"),

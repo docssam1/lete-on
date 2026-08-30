@@ -11,6 +11,7 @@
 4. 이 문서: `GPT_HANDOFF_2026-08-30.md`
 5. Geometry 설계 기준: `geometry\README.md`, `geometry\docs\00_MASTER_PLAN.md`, `geometry\docs\12_SOURCE_BACKED_FUTURE_GAMES.md`, `geometry\docs\14_STAGE_DIFFICULTY_PROFILE.md`
 6. SVG 제너레이터 필수 관문: `geometry\docs\15_EVIDENCE_GATED_SVG_WORKFLOW.md`
+7. 소마큐브 공개 검증: `geometry\docs\16_SOMA_CUBE_RELEASE_AUDIT.md`
 
 저장소 운영 문서의 보호 규칙이 이 문서보다 우선한다. C:의 원본 자료와 기존 프로젝트는 확인 없이 이동·삭제하지 않는다. 필즈 더 클래식 원본은 읽기 전용 증거로 취급한다.
 
@@ -80,6 +81,15 @@ git rev-parse origin/main
 - 관련 README·설계 문서 갱신
 
 현재 `geometry/README.md`의 게임 목록을 실제 공개 목록의 기준으로 사용한다.
+
+### 소마큐브 공개 검증
+
+- 5단계·50문제, 정육면체 회전 24개, 일곱 조각 부피 27, 검증된 전체 큐브 해 40개를 확인했다.
+- 1단계 단일 선택과 2단계 힌트+키보드 조립, 4단계 네 언어 가로 화면, 5단계 세로 회전 안내를 실제 브라우저에서 확인했다.
+- 목표·조립 3D 캔버스의 픽셀 편차를 검사해 빈 WebGL 화면이 아님을 확인했다.
+- 공개 반영 SHA `20a6f2acc39c434ff14e7ad75dc6194e470600e9`, Pages 실행 `33295860383`에서 성공했다.
+- 공개 주소: `https://lete-on.gfieldacademy.net/geometry/games/soma-cube/?level=1`
+- 상세 관문: `geometry/docs/16_SOMA_CUBE_RELEASE_AUDIT.md`
 
 ## 3. 주사위 굴리기 확정 사양
 

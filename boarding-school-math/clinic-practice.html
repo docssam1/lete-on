@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GFIELD Grade 6 비와 비율 진단 클리닉 워크북과 재확인">
+  <title>6.RP.A 클리닉 · GFIELD Math</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./clinic-practice.css">
+</head>
+<body class="academy-page page-clinic-practice">
+  <a class="skip-link" href="#clinic-content">본문으로 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="GFIELD Math home"><span class="brand-mark" aria-hidden="true">G</span><span>GFIELD <strong>MATH</strong></span></a>
+    <nav aria-label="주요 탐색">
+      <a id="nav-diagnostic" href="./diagnostic.html">진단·분석·처방</a>
+      <a id="nav-concept" href="./concept-learning.html?cluster=6.RP.A&from=diagnostic">개념 학습</a>
+      <a id="nav-animated" href="./animated-math.html?lesson=common-total-ratio&cluster=6.RP.A&locale=ko">시각 강의</a>
+    </nav>
+    <span class="status-chip" id="role-chip">학생용 · 클리닉</span>
+  </header>
+
+  <main>
+    <section class="clinic-hero shell" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow" id="hero-eyebrow">GRADE 6 · 6.RP.A CLINIC</p>
+        <h1 id="page-title"><span id="hero-title-lead">비와 비율을</span><br><span id="hero-title-accent">설명하고 적용하기.</span></h1>
+        <p id="hero-copy">같은 비, 단위율, 부분과 전체, 퍼센트를 순서대로 연습하고 다른 문항으로 다시 확인합니다.</p>
+      </div>
+      <dl class="clinic-proof" aria-label="클리닉 구성">
+        <div><dt id="proof-workbook-label">워크북</dt><dd>12</dd></div>
+        <div><dt id="proof-recheck-label">재확인</dt><dd>4</dd></div>
+        <div><dt id="proof-strands-label">핵심 영역</dt><dd>4</dd></div>
+      </dl>
+      <p class="scope-note" id="scope-note"></p>
+    </section>
+
+    <section class="clinic-toolbar" aria-label="학습 화면 설정">
+      <div class="shell clinic-toolbar-inner">
+        <div class="segmented" role="group" aria-label="사용자 화면">
+          <button type="button" data-audience="student">학생용</button>
+          <button type="button" data-audience="teacher">교사용</button>
+        </div>
+        <div class="segmented" role="group" aria-label="학습 단계">
+          <button type="button" data-mode="workbook">워크북 12</button>
+          <button type="button" data-mode="recheck">재확인 4</button>
+        </div>
+        <label class="locale-control"><span>Language</span>
+          <select id="locale-select" aria-label="언어 선택">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+            <option value="zh-Hans">简体中文</option>
+          </select>
+        </label>
+        <button class="print-button" id="print-page" type="button">인쇄 · PDF</button>
+      </div>
+    </section>
+
+    <section class="clinic-shell shell">
+      <nav class="clinic-trail" aria-label="진단 클리닉 경로">
+        <a id="trail-analysis" href="./diagnostic.html">01 분석</a><span>→</span>
+        <a id="trail-concept" href="./concept-learning.html?cluster=6.RP.A&from=diagnostic">02 개념</a><span>→</span>
+        <a id="trail-animated" href="./animated-math.html?lesson=common-total-ratio&cluster=6.RP.A&locale=ko">03 시각 강의</a><span>→</span>
+        <strong id="trail-current">04 워크북</strong><span>→</span>
+        <span id="trail-recheck">05 재확인</span>
+      </nav>
+      <div id="clinic-content" tabindex="-1" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="clinic-footer">
+    <a id="footer-back" href="./concept-learning.html?cluster=6.RP.A&from=diagnostic">6.RP.A 개념으로 돌아가기</a>
+    <span id="footer-note">GFIELD 자체 제작 · 공개 Grade 6 클리닉</span>
+  </footer>
+
+  <script src="./learning/grade6-rp-clinic-pack.js"></script>
+  <script src="./learning/clinic-paths.js"></script>
+  <script src="./clinic-practice.js"></script>
+</body>
+</html>
