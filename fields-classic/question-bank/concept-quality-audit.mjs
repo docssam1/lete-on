@@ -23,8 +23,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
 
 assert(curriculumTypeIds.size === 442, `expected 442 unique curriculum types, got ${curriculumTypeIds.size}`);
 assert(typePlacements.length === 489, `expected 489 curriculum placements, got ${typePlacements.length}`);
-assert(CONCEPT_DEFINITIONS.length === 31, `expected 31 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 35, `expected 35 Book 1-2 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(CONCEPT_DEFINITIONS.length === 47, `expected 47 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 51, `expected 51 Book 1-3 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -185,9 +185,96 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:logic:latin-row-column-region-four",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
+  }),
+  "tangram-shape-composition": Object.freeze({
+    conceptId: "concept:geometry:tangram-composition",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "unit-grid-area": Object.freeze({
+    conceptId: "concept:geometry:unit-grid-area",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03", "book-09"])
+  }),
+  "equal-part-shaded-fraction": Object.freeze({
+    conceptId: "concept:geometry:equal-parts-fraction",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "equal-partition-drawing": Object.freeze({
+    conceptId: "concept:geometry:equal-partition-construction",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "folded-strip-length": Object.freeze({
+    conceptId: "concept:geometry:folded-strip-total-length",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "midpoint-number-line": Object.freeze({
+    conceptId: "concept:number:number-line-midpoint",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "equal-interval-length": Object.freeze({
+    conceptId: "concept:geometry:equal-interval-unit-length",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "walking-step-ratio": Object.freeze({
+    conceptId: "concept:number:step-length-ratio",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "route-distance-multiple": Object.freeze({
+    conceptId: "concept:number:route-distance-multiple",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "rod-ratio-total-book3": Object.freeze({
+    conceptId: "concept:number:rod-ratio-shared-unit",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "cryptarithm-repeated-number-double": Object.freeze({
+    conceptId: "concept:number:repeated-two-digit-doubling",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "cryptarithm-fixed-digit-addition": Object.freeze({
+    conceptId: "concept:number:fixed-digit-cryptarithm",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "cryptarithm-multi-symbol-carry": Object.freeze({
+    conceptId: "concept:number:multi-symbol-carry",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "binary-weight-selection": Object.freeze({
+    conceptId: "concept:number:binary-weight-decomposition",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "colored-cell-number-code": Object.freeze({
+    conceptId: "concept:pattern:colored-cell-place-value",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03"])
+  }),
+  "magic-square-three-target": Object.freeze({
+    conceptId: "concept:number:magic-square-target",
+    sourceBookId: "book-03",
+    placementBooks: Object.freeze(["book-03", "book-09"])
   })
 });
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
+
+const lockedConceptTypeIds = new Set(CURRICULUM.flatMap((book) => book.units.flatMap((unit) =>
+  Object.entries(unit.sourceAuditBlockedStages || {})
+    .filter(([, stages]) => stages.includes("concept"))
+    .map(([typeId]) => typeId))));
+assert([...lockedConceptTypeIds].every((typeId) => !Object.hasOwn(expectedPilot, typeId)),
+  `locked concept-stage type entered expectedPilot: ${[...lockedConceptTypeIds].filter((typeId) => Object.hasOwn(expectedPilot, typeId)).join(",")}`);
 
 const forbiddenPrivateOrAnswerData = /(?:[a-z]:[\\/]|\\\\|g:\\|c:\\|\/users\/|\banswer\b|정답|seed)/i;
 for (const [typeId, expected] of Object.entries(expectedPilot)) {
@@ -258,8 +345,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 35, `expected 35 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 407, `expected 407 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 51, `expected 51 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 391, `expected 391 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

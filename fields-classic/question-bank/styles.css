@@ -451,7 +451,40 @@
   .b3-cell-code{grid-template-columns:repeat(4,45px) auto}.b3-cell-code>span{width:45px;height:48px}
   .b3-object-equation{font-size:10px}.b3-magic-grid span{width:38px;height:38px}.b3-magic-grid{grid-template-columns:repeat(var(--size),38px)}
 }
-@media print{.book03-visual{break-inside:avoid}}
+@media print{
+  .book03-visual{break-inside:avoid}
+  .question-card[data-type-id="tangram-shape-composition"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="tangram-shape-composition"] .b3-tangram-composition{max-height:210px}
+  .question-card[data-type-id="unit-grid-area"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="unit-grid-area"] .b3-unit-grid{max-height:208px}
+  .question-card[data-type-id="equal-part-shaded-fraction"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="equal-part-shaded-fraction"] .b3-source-fraction{max-height:208px}
+  .question-card[data-type-id="equal-partition-drawing"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="folded-strip-length"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="folded-strip-length"] .b3-grid-path{max-height:208px}
+  .question-card[data-type-id="midpoint-number-line"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="midpoint-number-line"] .b3-number-line{max-height:208px}
+  .question-card[data-type-id="equal-interval-length"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="equal-interval-length"] .b3-number-line{max-height:208px}
+  .question-card[data-type-id="walking-step-ratio"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="walking-step-ratio"] .b3-object-measure{max-height:208px}
+  .question-card[data-type-id="route-distance-multiple"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="route-distance-multiple"] .b3-route{max-height:208px}
+  .question-card[data-type-id="rod-ratio-total-book3"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="rod-ratio-total-book3"] .b3-rods{max-height:208px}
+  .question-card[data-type-id="cryptarithm-repeated-number-double"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="cryptarithm-repeated-number-double"] .b3-equation-chain{max-height:208px}
+  .question-card[data-type-id="cryptarithm-fixed-digit-addition"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="cryptarithm-fixed-digit-addition"] .b3-equation-chain{max-height:208px}
+  .question-card[data-type-id="cryptarithm-multi-symbol-carry"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="cryptarithm-multi-symbol-carry"] .b3-equation-chain{max-height:208px}
+  .question-card[data-type-id="binary-weight-selection"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="binary-weight-selection"] .b3-binary{max-height:208px}
+  .question-card[data-type-id="colored-cell-number-code"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="colored-cell-number-code"] .b3-cell-code{max-height:208px}
+  .question-card[data-type-id="magic-square-three-target"] .book03-visual{min-height:0;padding:6px}
+  .question-card[data-type-id="magic-square-three-target"] .b3-magic-wrap{max-height:208px}
+}
 
 /* 1과정 1권: 문제 번호로 세분화한 도형 움직이기·접기·마방진·논리 그림. */
 .book01-visual{display:grid;place-items:center;min-height:170px;padding:9px;background:#fff;overflow:hidden}

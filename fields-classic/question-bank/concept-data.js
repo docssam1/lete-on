@@ -17,6 +17,7 @@ const sourceEvidence = (bookId, bookNumber, unitLabel, group, numbers) => Object
 
 const evidence = (unitLabel, group, numbers) => sourceEvidence("book-01", 1, unitLabel, group, numbers);
 const book2Evidence = (unitLabel, group, numbers) => sourceEvidence("book-02", 2, unitLabel, group, numbers);
+const book3Evidence = (unitLabel, group, numbers) => sourceEvidence("book-03", 3, unitLabel, group, numbers);
 const sourceLesson = (conceptId, beats, misconception, evidenceItems) => Object.freeze({
   conceptId,
   scope: "global-type-id",
@@ -244,6 +245,118 @@ export const CONCEPT_DEFINITIONS = Object.freeze([
     definition: "4×4 표에서 가로줄, 세로줄, 2×2 굵은 영역을 함께 확인해 1부터 4까지의 빠진 수를 찾습니다.",
     invariant: "각 가로줄과 세로줄과 굵은 영역마다 1, 2, 3, 4가 정확히 한 번씩 들어갑니다.",
     representationKinds: Object.freeze(["four-grid", "square-regions", "candidate-elimination"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:tangram-composition",
+    label: "칠교 조각으로 도형 합성하기",
+    definition: "크기와 모양이 서로 다른 칠교 조각을 돌리거나 뒤집어 바깥선에 맞추고, 겹치거나 빈틈이 생기지 않게 하나의 도형으로 합칩니다.",
+    invariant: "각 조각의 모양과 넓이는 그대로이며 지정된 조각을 모두 사용하고 전체 도형에 빈틈과 겹침이 없습니다.",
+    representationKinds: Object.freeze(["tangram-pieces", "shape-outline", "piece-placement"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:unit-grid-area",
+    label: "단위 정사각형으로 넓이 세기",
+    definition: "도형을 같은 크기의 단위 정사각형으로 나누어 온 칸과 부분 칸을 합해 넓이를 비교합니다.",
+    invariant: "넓이는 모양의 방향이나 놓인 위치와 관계없이 들어 있는 단위 넓이의 합으로 정해집니다.",
+    representationKinds: Object.freeze(["unit-grid", "covered-cells", "area-count"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:equal-parts-fraction",
+    label: "같은 부분 중 색칠한 부분의 분수",
+    definition: "전체를 같은 크기로 나눈 뒤 색칠한 부분의 수를 세어 전체 부분 수를 분모로 하는 분수로 나타냅니다.",
+    invariant: "분모는 전체의 같은 부분 수이고 분자는 그중 색칠한 부분 수이며 두 수는 같은 단위로 셉니다.",
+    representationKinds: Object.freeze(["partitioned-shape", "shaded-parts", "fraction-label"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:equal-partition-construction",
+    label: "도형을 같은 넓이로 나누어 그리기",
+    definition: "주어진 도형 안에 경계선을 그어 넓이가 같은 부분을 만들고, 각 부분이 같은 단위로 나뉘었는지 확인합니다.",
+    invariant: "나뉜 모든 부분의 넓이가 같고 경계선은 도형 밖으로 벗어나지 않으며 전체를 빠짐없이 덮습니다.",
+    representationKinds: Object.freeze(["shape-outline", "partition-lines", "equal-regions"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:folded-strip-total-length",
+    label: "꺾인 띠의 전체 길이",
+    definition: "모눈 위에서 꺾여 보이는 띠를 구간별로 나누고, 각 가로·세로 구간의 단위 길이를 모두 더해 곧게 펼친 전체 길이를 구합니다.",
+    invariant: "띠를 접거나 꺾어도 길이는 변하지 않으며 전체 길이는 지나간 모든 구간 길이의 합입니다.",
+    representationKinds: Object.freeze(["folded-strip", "unit-lengths", "overlap-region"])
+  }),
+  Object.freeze({
+    id: "concept:number:number-line-midpoint",
+    label: "수직선의 가운데와 같은 거리",
+    definition: "두 수 사이의 가운데를 찾을 때 양 끝의 차이를 같은 간격으로 나누고 수직선에서 양쪽 거리를 비교합니다.",
+    invariant: "가운데 점은 두 끝점에서 같은 거리에 있고 양쪽 구간의 길이는 같습니다.",
+    representationKinds: Object.freeze(["number-line", "endpoint-pair", "midpoint-marker"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:equal-interval-unit-length",
+    label: "같은 간격의 길이와 칸 수",
+    definition: "두 지점 사이를 같은 간격으로 나누었을 때 전체 길이를 간격 수로 나누어 한 칸의 길이를 구합니다.",
+    invariant: "연속한 눈금 사이의 길이는 모두 같고 전체 구간은 같은 간격들의 합입니다.",
+    representationKinds: Object.freeze(["number-line", "equal-intervals", "length-total"])
+  }),
+  Object.freeze({
+    id: "concept:number:step-length-ratio",
+    label: "걸음 수와 한 걸음 길이",
+    definition: "한쪽의 한 걸음이 다른 쪽의 몇 배인지 알면, 같은 거리를 갈 때 긴 한 걸음마다 짧은 걸음이 그 배수만큼 필요합니다.",
+    invariant: "같은 거리를 걸으면 걸음 수와 한 걸음 길이의 곱이 같고, 걸음 수가 많을수록 한 걸음은 짧습니다.",
+    representationKinds: Object.freeze(["distance-strip", "step-count", "ratio-table"])
+  }),
+  Object.freeze({
+    id: "concept:number:route-distance-multiple",
+    label: "전체 거리에서 한 구간 빼기",
+    definition: "세 장소가 한 길 위에 있을 때 전체 거리에서 한쪽 구간을 빼 나머지 구간을 구하고, 두 구간을 같은 단위로 비교해 몇 배인지 찾습니다.",
+    invariant: "첫 구간과 둘째 구간의 합은 전체 거리이며 배수 비교는 같은 단위의 두 구간으로 해야 합니다.",
+    representationKinds: Object.freeze(["route-path", "equal-segments", "multiple-calculation"])
+  }),
+  Object.freeze({
+    id: "concept:number:rod-ratio-shared-unit",
+    label: "막대 칸 수와 전체 길이",
+    definition: "두 막대를 같은 길이의 칸으로 나타내어 전체 칸 수를 세고, 전체 길이를 그 칸 수로 나누어 한 칸과 각 막대의 길이를 구합니다.",
+    invariant: "모든 칸의 길이는 같고 두 막대의 칸 수 합에 한 칸 길이를 곱하면 주어진 전체 길이가 됩니다.",
+    representationKinds: Object.freeze(["length-rods", "unit-comparison", "total-length"])
+  }),
+  Object.freeze({
+    id: "concept:number:repeated-two-digit-doubling",
+    label: "같은 숫자를 반복하는 복면산",
+    definition: "같은 숫자나 도형이 여러 자리에서 반복되는 복면산은 자리값을 나누어 보고 같은 기호를 같은 숫자로 유지하며 식을 풉니다.",
+    invariant: "같은 기호는 모든 자리에서 같은 숫자이고 각 자리는 일의 자리부터 받아올림을 포함해 계산됩니다.",
+    representationKinds: Object.freeze(["cryptarithm-vertical", "place-values", "repeated-symbol"])
+  }),
+  Object.freeze({
+    id: "concept:number:fixed-digit-cryptarithm",
+    label: "고정된 숫자가 있는 세로 복면산",
+    definition: "이미 정해진 숫자와 기호를 일의 자리부터 세로로 더하며, 각 자리의 합과 받아올림을 다음 자리 조건에 연결합니다.",
+    invariant: "한 기호는 하나의 숫자만 나타내고 같은 열의 합은 결과 숫자와 받아올림을 함께 만족합니다.",
+    representationKinds: Object.freeze(["cryptarithm-vertical", "fixed-digit", "carry-chain"])
+  }),
+  Object.freeze({
+    id: "concept:number:multi-symbol-carry",
+    label: "여러 기호와 받아올림 복면산",
+    definition: "여러 기호가 있는 세로 복면산은 일의 자리에서 시작해 각 열의 합, 받아올림, 서로 다른 숫자 조건을 차례로 좁힙니다.",
+    invariant: "모든 기호값은 서로 다른 숫자 조건을 지키며 각 열의 계산과 마지막 받아올림이 동시에 맞습니다.",
+    representationKinds: Object.freeze(["cryptarithm-vertical", "multi-symbol", "carry-chain"])
+  }),
+  Object.freeze({
+    id: "concept:number:binary-weight-decomposition",
+    label: "카드의 두 배 묶음으로 수 만들기",
+    definition: "카드의 값이 앞 카드의 두 배로 커질 때 필요한 카드를 골라 각 카드의 값을 더해 목표 수를 만듭니다.",
+    invariant: "각 카드는 한 번만 사용하고 선택한 카드값의 합이 목표 수와 정확히 같아야 합니다.",
+    representationKinds: Object.freeze(["value-cards", "doubling-sequence", "target-sum"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:colored-cell-place-value",
+    label: "색칠한 칸의 자리값 더하기",
+    definition: "각 열에 정해진 자리값을 찾고 색칠된 칸의 값을 모두 더해 수를 읽거나, 목표 수가 되도록 필요한 칸을 색칠합니다.",
+    invariant: "같은 열의 칸은 같은 값을 가지며 한 열에 여러 칸이 색칠되면 그 열의 값을 색칠한 수만큼 더합니다.",
+    representationKinds: Object.freeze(["colored-grid", "place-code", "cell-pattern"])
+  }),
+  Object.freeze({
+    id: "concept:number:magic-square-target",
+    label: "3×3 마방진의 목표 합",
+    definition: "3×3 마방진은 가로, 세로, 대각선의 세 수를 더한 값이 모두 같도록 남은 수와 목표 합을 함께 확인합니다.",
+    invariant: "가로, 세로, 대각선의 모든 세 칸 줄은 같은 목표 합이며 목표 칸은 그 칸을 지나는 모든 줄의 조건을 만족합니다.",
+    representationKinds: Object.freeze(["magic-square-3", "line-sums", "missing-value"])
   })
 ]);
 
@@ -687,5 +800,165 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ],
     "가로와 세로만 맞추고 2×2 굵은 영역 안의 중복을 놓치지 않았는지 확인합니다.",
     [book2Evidence("약속과 스도쿠", 2, [2, 3])]
+  ),
+  "tangram-shape-composition": sourceLesson(
+    "concept:geometry:tangram-composition",
+    [
+      beat("read-piece-boundaries", "조각의 모양과 경계를 살펴봐요", "각 조각의 변과 꼭짓점을 보고 어느 조각이 빈 모양의 어느 부분에 맞을지 확인합니다."),
+      beat("transform-and-fit-pieces", "돌리거나 뒤집어 맞춰요", "조각의 크기는 바꾸지 않고 돌리거나 뒤집어 바깥선과 맞닿는 변을 맞춥니다."),
+      beat("check-complete-composition", "겹침과 빈틈을 확인해요", "모든 조각을 사용했는지, 서로 겹치지 않는지, 바깥선 안에 빈틈없이 들어갔는지 검산합니다.")
+    ],
+    "조각의 크기를 늘리거나 줄여 모양에 맞추거나, 빈틈과 겹침을 확인하지 않고 완성했다고 하지 않았는지 살펴봅니다.",
+    [book3Evidence("단위넓이와 분수", 1, [1, 2, 3])]
+  ),
+  "unit-grid-area": sourceLesson(
+    "concept:geometry:unit-grid-area",
+    [
+      beat("identify-unit-square", "한 단위 칸을 정해요", "격자에서 같은 크기의 정사각형 한 칸이 무엇인지 확인하고 도형 안에 들어간 칸을 표시합니다."),
+      beat("count-full-and-partial", "온 칸과 부분 칸을 나눠 세요", "온전히 들어간 칸을 먼저 세고 잘린 부분은 서로 합쳐 한 칸이 되는지 살펴봅니다."),
+      beat("compare-unit-area", "단위 넓이의 합으로 비교해요", "센 칸의 넓이를 모두 더해 도형의 넓이를 구하고 다른 도형도 같은 단위로 비교합니다.")
+    ],
+    "도형의 테두리 길이나 눈에 보이는 크기만 비교하거나 부분 칸을 임의로 한 칸으로 세지 않았는지 확인합니다.",
+    [book3Evidence("단위넓이와 분수", 1, [4, 5])]
+  ),
+  "equal-part-shaded-fraction": sourceLesson(
+    "concept:geometry:equal-parts-fraction",
+    [
+      beat("count-equal-whole", "전체를 같은 부분으로 세요", "도형 전체가 몇 개의 같은 크기 부분으로 나뉘었는지 먼저 셉니다."),
+      beat("count-shaded-parts", "색칠한 부분을 세요", "전체와 같은 단위로 색칠된 부분의 수를 세어 분자에 해당하는 수를 정합니다."),
+      beat("write-fraction-order", "전체와 색칠한 부분을 분수로 써요", "전체 부분 수를 아래에, 색칠한 부분 수를 위에 써서 분수로 나타내고 그림과 다시 대조합니다.")
+    ],
+    "색칠한 부분을 분모에 쓰거나 크기가 서로 다른 부분을 같은 한 부분으로 세지 않았는지 확인합니다.",
+    [book3Evidence("단위넓이와 분수", 2, [1, 2, 3])]
+  ),
+  "equal-partition-drawing": sourceLesson(
+    "concept:geometry:equal-partition-construction",
+    [
+      beat("read-whole-shape", "나눌 전체 모양을 확인해요", "경계선 안의 전체 도형과 몇 부분으로 나누어야 하는지 확인합니다."),
+      beat("draw-equal-regions", "같은 넓이의 경계선을 그어요", "도형 안에서 각 부분이 같은 넓이가 되도록 경계선을 긋고 한 부분의 크기를 비교합니다."),
+      beat("check-cover-and-equality", "전체를 빠짐없이 덮는지 확인해요", "선을 따라 나뉜 부분이 서로 겹치지 않고 전체를 덮으며 모든 부분의 넓이가 같은지 확인합니다.")
+    ],
+    "부분의 개수만 맞추고 넓이가 다른 부분을 만들거나 경계선을 도형 밖으로 그리지 않았는지 확인합니다.",
+    [book3Evidence("단위넓이와 분수", 2, [4])]
+  ),
+  "folded-strip-length": sourceLesson(
+    "concept:geometry:folded-strip-total-length",
+    [
+      beat("mark-strip-turns", "띠가 꺾이는 점을 표시해요", "모눈 위에서 띠의 방향이 바뀌는 점을 찾아 가로 구간과 세로 구간으로 나눕니다."),
+      beat("count-each-strip-segment", "각 구간의 칸 수를 세요", "구간마다 지나간 모눈 칸 수를 세고, 같은 자리를 다시 지나더라도 띠의 서로 다른 구간이면 각각 기록합니다."),
+      beat("sum-strip-segments", "모든 구간 길이를 더해요", "처음부터 끝까지 기록한 구간 길이를 모두 더하고 꺾인 구간을 빠뜨리지 않았는지 다시 따라갑니다.")
+    ],
+    "두 끝점 사이의 곧은 거리만 구하거나 화면에서 겹쳐 보이는 서로 다른 구간을 한 번만 세지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 1, [1, 2])]
+  ),
+  "midpoint-number-line": sourceLesson(
+    "concept:number:number-line-midpoint",
+    [
+      beat("read-endpoints", "수직선의 양 끝 수를 읽어요", "두 점의 수를 확인하고 양 끝 사이가 몇 칸인지 셉니다."),
+      beat("split-distance-equally", "차이를 같은 두 구간으로 나눠요", "큰 수와 작은 수의 차이를 구한 뒤 그 차이를 반으로 나누어 가운데까지의 거리를 찾습니다."),
+      beat("locate-midpoint", "양쪽에서 같은 거리인지 확인해요", "작은 끝 수에 가운데까지의 거리를 더하고 큰 끝 수에서 같은 거리를 빼 두 계산이 같은지 확인합니다.")
+    ],
+    "수직선에서 눈금의 위치만 보고 가운데를 정하거나 양 끝의 차이를 한 번만 나누지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 1, [3, 4])]
+  ),
+  "equal-interval-length": sourceLesson(
+    "concept:geometry:equal-interval-unit-length",
+    [
+      beat("count-intervals", "두 점 사이의 간격 수를 세요", "양 끝 점이 아니라 그 사이에 있는 같은 간격의 개수를 정확히 셉니다."),
+      beat("divide-total-length", "전체 길이를 간격 수로 나눠요", "두 점의 전체 길이를 같은 간격 수로 나누어 한 간격의 길이를 구합니다."),
+      beat("rebuild-endpoint", "간격을 반복해 끝점을 확인해요", "한 간격의 길이를 필요한 횟수만큼 더해 처음의 끝점과 다른 끝점이 맞는지 검산합니다.")
+    ],
+    "눈금의 개수와 간격의 개수를 혼동하거나 전체 길이를 간격 수가 아닌 눈금 수로 나누지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 2, [3])]
+  ),
+  "walking-step-ratio": sourceLesson(
+    "concept:number:step-length-ratio",
+    [
+      beat("match-one-long-step", "긴 한 걸음에 짧은 걸음을 맞춰요", "한 아이의 한 걸음 동안 다른 대상이 몇 걸음을 걷는지 배수 관계를 그림이나 식으로 나타냅니다."),
+      beat("repeat-step-group", "긴 걸음 수만큼 묶음을 반복해요", "짧은 걸음 묶음을 아이의 걸음 수만큼 반복해 전체 걸음 수를 구합니다."),
+      beat("verify-same-distance", "두 이동 거리가 같은지 확인해요", "긴 걸음 수와 배수를 곱한 값이 짧은 걸음 수인지 확인하고 두 쪽의 이동 거리가 같은지 검산합니다.")
+    ],
+    "걸음 수가 많은 사람이 한 걸음도 더 길다고 생각하거나 두 사람의 전체 거리가 같다는 조건을 빼먹지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 2, [1])]
+  ),
+  "route-distance-multiple": sourceLesson(
+    "concept:number:route-distance-multiple",
+    [
+      beat("order-three-places", "세 장소의 순서를 확인해요", "집과 중간 장소와 도착 장소가 한 길 위에서 어떤 순서인지 표시합니다."),
+      beat("subtract-first-route", "전체에서 첫 구간을 빼요", "집에서 도착 장소까지의 전체 거리에서 집에서 중간 장소까지의 거리를 빼 나머지 구간을 구합니다."),
+      beat("compare-route-multiple", "두 구간이 몇 배인지 비교해요", "나머지 구간을 첫 구간의 같은 단위 묶음으로 나누고 더해서 전체 거리로 돌아오는지 검산합니다.")
+    ],
+    "전체 거리를 바로 배수로 답하거나, 전체에서 첫 구간을 빼지 않고 서로 다른 구간을 비교하지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 2, [2])]
+  ),
+  "rod-ratio-total-book3": sourceLesson(
+    "concept:number:rod-ratio-shared-unit",
+    [
+      beat("count-rod-units", "두 막대의 같은 칸을 세요", "㉠과 ㉡을 이루는 같은 길이 칸의 수를 각각 세고 두 칸 수를 더합니다."),
+      beat("find-one-rod-unit", "전체 길이로 한 칸을 구해요", "두 막대의 전체 길이를 모든 칸 수로 똑같이 나누어 한 칸의 길이를 구합니다."),
+      beat("scale-each-rod", "각 막대의 길이를 구해요", "한 칸 길이에 각 막대의 칸 수를 곱하고 두 길이의 합이 주어진 전체 길이인지 확인합니다.")
+    ],
+    "서로 다른 단위의 길이를 바로 더하거나 비의 앞뒤를 바꾸어 막대 길이를 정하지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 2, [4])]
+  ),
+  "cryptarithm-repeated-number-double": sourceLesson(
+    "concept:number:repeated-two-digit-doubling",
+    [
+      beat("align-place-values", "세로셈의 자리를 맞춰요", "각 기호가 십의 자리인지 일의 자리인지 확인하고 수를 세로로 맞춥니다."),
+      beat("keep-repeated-symbol", "같은 기호는 같은 숫자로 읽어요", "여러 자리에 반복된 기호를 하나의 같은 숫자로 두고 식을 자리별로 살펴봅니다."),
+      beat("check-column-sum", "각 열의 계산을 검산해요", "일의 자리부터 계산해 결과의 각 자리와 맞는지, 필요한 받아올림이 있는지 확인합니다.")
+    ],
+    "같은 기호에 자리마다 다른 숫자를 주거나 가로로 보이는 수만 계산하고 세로 자리값을 확인하지 않았는지 살펴봅니다.",
+    [book3Evidence("복면산", 1, [1, 2])]
+  ),
+  "cryptarithm-fixed-digit-addition": sourceLesson(
+    "concept:number:fixed-digit-cryptarithm",
+    [
+      beat("use-fixed-digit", "정해진 숫자를 먼저 표시해요", "문제에서 이미 알려 준 숫자를 해당 자리에 적고 같은 기호가 반복되는 위치를 표시합니다."),
+      beat("start-from-ones-column", "일의 자리부터 더해요", "일의 자리 합을 계산하고 결과의 일의 자리와 받아올림을 확인합니다."),
+      beat("carry-to-next-column", "받아올림을 다음 자리로 이어요", "십의 자리와 그다음 자리에서 받아올림을 더해 결과와 일치하는지 끝까지 검산합니다.")
+    ],
+    "정해진 숫자를 다른 기호처럼 바꾸거나 일의 자리의 받아올림을 다음 열에 더하지 않았는지 확인합니다.",
+    [book3Evidence("복면산", 1, [3, 4])]
+  ),
+  "cryptarithm-multi-symbol-carry": sourceLesson(
+    "concept:number:multi-symbol-carry",
+    [
+      beat("list-symbol-constraints", "기호와 자리 조건을 정리해요", "기호마다 가능한 숫자를 적고 같은 기호의 반복, 서로 다른 기호의 중복 금지 조건을 표시합니다."),
+      beat("solve-from-right", "오른쪽 열부터 받아올림을 따라가요", "일의 자리부터 각 열의 합을 계산하고 결과 숫자와 다음 열로 넘어가는 받아올림을 함께 기록합니다."),
+      beat("verify-all-symbols", "모든 기호와 열을 한 번에 검산해요", "정한 숫자를 전체 세로식에 넣어 각 열의 합과 마지막 받아올림이 모두 맞는지 확인합니다.")
+    ],
+    "한 열만 맞는 숫자를 고르거나 서로 다른 기호에 같은 숫자를 주고, 받아올림을 한 열 건너뛰지 않았는지 확인합니다.",
+    [book3Evidence("복면산", 2, [1, 2, 3, 4])]
+  ),
+  "binary-weight-selection": sourceLesson(
+    "concept:number:binary-weight-decomposition",
+    [
+      beat("read-doubling-card-values", "카드값이 두 배로 커지는지 읽어요", "카드가 어떤 값에서 시작해 다음 카드마다 어떻게 커지는지 순서대로 확인합니다."),
+      beat("decompose-target", "목표 수를 카드값으로 나눠 봐요", "목표 수에서 큰 카드부터 빼 보며 남은 수가 다음 카드값으로 만들 수 있는지 확인합니다."),
+      beat("check-one-use-sum", "카드를 한 번씩 써서 합을 확인해요", "선택한 카드만 한 번씩 더해 목표 수가 되는지, 선택하지 않은 카드가 섞이지 않았는지 검산합니다.")
+    ],
+    "카드값의 두 배 규칙을 무시하고 아무 카드나 고르거나 한 카드를 두 번 사용하지 않았는지 확인합니다.",
+    [book3Evidence("마법카드와 마방진", 1, [1])]
+  ),
+  "colored-cell-number-code": sourceLesson(
+    "concept:pattern:colored-cell-place-value",
+    [
+      beat("infer-column-values", "보기에서 각 열의 값을 찾아요", "한 칸씩 색칠된 보기와 두 칸이 색칠된 보기를 비교해 오른쪽부터 각 열의 값이 어떻게 커지는지 찾습니다."),
+      beat("sum-colored-cell-values", "색칠한 칸의 값을 더해요", "색칠된 칸마다 그 열의 값을 적고 같은 열에 여러 칸이 있으면 각각 한 번씩 더합니다."),
+      beat("apply-cell-code", "수를 읽거나 필요한 칸을 색칠해요", "구한 합으로 색칠 그림의 수를 읽고, 목표 수가 주어지면 필요한 열의 값을 골라 같은 규칙으로 색칠합니다.")
+    ],
+    "색칠한 칸의 개수만 세거나 같은 열의 값을 임의로 바꾸고, 여러 칸이 있는 열의 값을 한 번만 더하지 않았는지 확인합니다.",
+    [book3Evidence("마법카드와 마방진", 1, [2, 3])]
+  ),
+  "magic-square-three-target": sourceLesson(
+    "concept:number:magic-square-target",
+    [
+      beat("read-three-cell-lines", "가로·세로·대각선 줄을 찾아요", "3×3 표에서 세 칸씩 이어지는 가로줄, 세로줄, 대각선을 빠짐없이 표시합니다."),
+      beat("use-known-line-sum", "완성된 줄에서 목표 합을 찾아요", "수가 모두 보이는 줄을 더해 공통 목표 합을 정하고 다른 줄에도 같은 값이 적용되는지 확인합니다."),
+      beat("fill-and-check-target", "남은 수를 넣고 모든 줄을 검산해요", "빈칸에 들어갈 수를 줄의 목표 합으로 좁힌 뒤 세 방향의 모든 줄이 같은 합인지 확인합니다.")
+    ],
+    "가로줄만 확인하거나 대각선을 빠뜨리고, 한 줄의 합을 목표로 정한 뒤 다른 줄에 적용하지 않았는지 확인합니다.",
+    [book3Evidence("마법카드와 마방진", 2, [3])]
   )
 });
