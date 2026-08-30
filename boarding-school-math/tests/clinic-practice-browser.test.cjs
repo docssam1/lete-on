@@ -99,6 +99,53 @@ test("6.NS.B uses exact decimal rules, independent strands, and its own completi
   await context.close();
 });
 
+test("6.NS.C keeps exact signed-number answers, teacher observation, and completion separate", async function () {
+  const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
+  const page = await context.newPage(); const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 12);
+  assert.match(await page.locator("#page-title").innerText(), /signed numbers[\s\S]*position and distance/i);
+  assert.equal(await page.locator(".teacher-answer,.solution-box,.hint-box").count(), 0);
+  const reduced = page.locator('.problem-card[data-item-id="nsc-w01"]');
+  await reduced.locator("input").fill("14/8"); await reduced.locator(".response-row button").click();
+  assert.equal(await reduced.getAttribute("class").then(function (value) { return value.includes("is-correct"); }), false);
+  const values = ["7/4", "-5/3", "9/4", "7/4", "<", "-7/4", ">", "1", "2", "4", "2", "1"];
+  for (let index = 0; index < values.length; index += 1) {
+    const card = page.locator(".problem-card").nth(index);
+    await card.locator("input").fill(values[index]); await card.locator(".response-row button").click();
+  }
+  assert.equal(await page.locator(".problem-card.is-correct").count(), 12);
+  assert.equal(await page.evaluate(function () { return localStorage.getItem("gfield-clinic-workbook:6.NS.C:v1"); }), "complete-v1");
+  await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=teacher&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".teacher-answer").count(), 24);
+  assert.equal(await page.locator(".response-row").count(), 0);
+  assert.match(await page.locator(".scope-note").innerText(), /实际描点与情境说明由教师另行观察/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test("6.EE.A keeps exact numeric evidence and teacher explanation separate", async function () {
+  const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
+  const page = await context.newPage(); const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 12);
+  assert.match(await page.locator("#page-title").innerText(), /see the structure[\s\S]*evaluate and verify/i);
+  assert.equal(await page.locator(".teacher-answer,.solution-box,.hint-box").count(), 0);
+  const values = ["32", "81", "41", "3", "8", "19", "21", "8", "3", "20", "1", "7"];
+  for (let index = 0; index < values.length; index += 1) {
+    const card = page.locator(".problem-card").nth(index);
+    await card.locator("input").fill(values[index]); await card.locator(".response-row button").click();
+  }
+  assert.equal(await page.locator(".problem-card.is-correct").count(), 12);
+  assert.equal(await page.evaluate(function () { return localStorage.getItem("gfield-clinic-workbook:6.EE.A:v1"); }), "complete-v1");
+  await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=teacher&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".teacher-answer").count(), 24);
+  assert.equal(await page.locator(".response-row").count(), 0);
+  assert.match(await page.locator(".scope-note").innerText(), /等价理由由教师另行观察/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test("accurate workbook completion unlocks the separate four-item recheck", async function () {
   const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
   const page = await context.newPage(); const errors = errorsFor(page);
@@ -147,6 +194,50 @@ test("6.NS.B student clinic has no horizontal overflow on mobile and has an A4 p
   }
   const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
   await printPage.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  await printPage.emulateMedia({ media: "print" });
+  assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await printPage.locator(".response-row input").first().isVisible(), true);
+  assert.equal(await printPage.locator(".solution-box,.teacher-answer").count(), 0);
+  await printPage.close();
+});
+
+test("6.NS.C student clinic stays operable on mobile and answer-free on A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator('.problem-card[data-item-id="nsc-w01"] input').getAttribute("inputmode"), "text");
+    assert.equal(await page.locator('.problem-card[data-item-id="nsc-w02"] input').getAttribute("inputmode"), "text");
+    assert.equal(await page.locator('.problem-card[data-item-id="nsc-w05"] input').getAttribute("inputmode"), "text");
+    const sizes = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(sizes, [width, width]);
+    const targets = await page.locator("button,select,input,.brand").evaluateAll(function (nodes) { return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) { const rect = node.getBoundingClientRect(); return [rect.width, rect.height]; }); });
+    targets.forEach(function (size) { assert.ok(size[0] >= 44); assert.ok(size[1] >= 44); });
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  await printPage.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  await printPage.emulateMedia({ media: "print" });
+  assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await printPage.locator(".response-row input").first().isVisible(), true);
+  assert.equal(await printPage.locator(".solution-box,.teacher-answer").count(), 0);
+  await printPage.close();
+});
+
+test("6.EE.A student clinic stays operable on mobile and answer-free on A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+    const sizes = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(sizes, [width, width]);
+    assert.equal(await page.locator(".teacher-answer,.solution-box").count(), 0);
+    const targets = await page.locator("button,select,input,.brand").evaluateAll(function (nodes) { return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) { const rect = node.getBoundingClientRect(); return [rect.width, rect.height]; }); });
+    targets.forEach(function (size) { assert.ok(size[0] >= 44); assert.ok(size[1] >= 44); });
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  await printPage.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
   await printPage.emulateMedia({ media: "print" });
   assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
   assert.equal(await printPage.locator(".response-row input").first().isVisible(), true);

@@ -153,12 +153,12 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
-    '</label>';
+    '</div>';
   }
 
   function renderCatalog() {
@@ -343,8 +343,27 @@
     return result;
   }
 
+  function paginateProblems(questions) {
+    const pages = [];
+    let page = [];
+    let weight = 0;
+    questions.forEach(question => {
+      const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
+      const questionWeight = graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      if (page.length && weight + questionWeight > 6) {
+        pages.push(page);
+        page = [];
+        weight = 0;
+      }
+      page.push(question);
+      weight += questionWeight;
+    });
+    if (page.length) pages.push(page);
+    return pages;
+  }
+
   function renderProblems() {
-    $("problemView").innerHTML = chunk(state.questions, 6).map((page, pageIndex) => `<section class="print-page">
+    $("problemView").innerHTML = paginateProblems(state.questions).map((page, pageIndex) => `<section class="print-page${page.length === 1 ? " print-page--single" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>

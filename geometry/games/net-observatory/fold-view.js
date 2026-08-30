@@ -1,6 +1,6 @@
 import * as THREE from "../../vendor/three/three.module.js";
 import { OrbitControls } from "../../vendor/three/addons/controls/OrbitControls.js";
-import { foldCubeNet } from "./levels.js?v=net-4";
+import { foldCubeNet } from "./levels.js?v=net-5";
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };
@@ -10,23 +10,27 @@ function faceTexture(face) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 384;
   const context = canvas.getContext("2d");
-  const gradient = context.createLinearGradient(0, 0, 384, 384);
-  gradient.addColorStop(0, "#fff8dd");
-  gradient.addColorStop(.42, face.color || "#e6ba72");
-  gradient.addColorStop(1, "#b97a3e");
-  context.fillStyle = gradient;
+  context.fillStyle = face.color || "#69b8c9";
   context.fillRect(0, 0, 384, 384);
-  context.strokeStyle = "rgba(82,45,18,.26)";
-  context.lineWidth = 3;
-  for (let y = 42; y < 384; y += 46) {
-    context.beginPath();
-    context.moveTo(0, y);
-    context.bezierCurveTo(100, y - 12, 250, y + 12, 384, y - 4);
-    context.stroke();
-  }
-  context.strokeStyle = "#61401f";
-  context.lineWidth = 12;
+  const depth = context.createLinearGradient(0, 0, 384, 384);
+  depth.addColorStop(0, "rgba(255,255,255,.82)");
+  depth.addColorStop(.28, "rgba(255,255,255,.2)");
+  depth.addColorStop(.68, "rgba(255,255,255,0)");
+  depth.addColorStop(1, "rgba(26,61,79,.3)");
+  context.fillStyle = depth;
+  context.fillRect(0, 0, 384, 384);
+  const highlight = context.createRadialGradient(104, 76, 8, 104, 76, 230);
+  highlight.addColorStop(0, "rgba(255,255,255,.58)");
+  highlight.addColorStop(.42, "rgba(255,255,255,.12)");
+  highlight.addColorStop(1, "rgba(255,255,255,0)");
+  context.fillStyle = highlight;
+  context.fillRect(0, 0, 384, 384);
+  context.strokeStyle = "#36586b";
+  context.lineWidth = 13;
   context.strokeRect(7, 7, 370, 370);
+  context.strokeStyle = "rgba(255,255,255,.65)";
+  context.lineWidth = 5;
+  context.strokeRect(15, 15, 354, 354);
   context.fillStyle = "#17264a";
   context.textAlign = "center";
   context.textBaseline = "middle";
@@ -71,6 +75,7 @@ export class NetFoldViewer {
     this.renderer.domElement.setAttribute("role","img");
     this.renderer.domElement.setAttribute("aria-label","접히는 전개도와 완성된 정육면체");
     host.replaceChildren(this.renderer.domElement);
+    host.dataset.material = "satin-enamel";
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.enablePan = false;
@@ -117,11 +122,11 @@ export class NetFoldViewer {
     folded.cells.forEach((cell, index) => {
       const data = byCell.get(cell.join(",")) || { cell, label: String(index + 1), color: "#ddb16c" };
       const texture = faceTexture(data);
-      const material = new THREE.MeshStandardMaterial({ map: texture, roughness: .58, metalness: .02, side: THREE.DoubleSide });
+      const material = new THREE.MeshPhysicalMaterial({ map: texture, roughness: .3, metalness: .01, clearcoat: .58, clearcoatRoughness: .24, side: THREE.DoubleSide });
       const geometry = new THREE.PlaneGeometry(.96, .96);
       const mesh = new THREE.Mesh(geometry, material);
       mesh.castShadow = mesh.receiveShadow = true;
-      const border = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x4f321c }));
+      const border = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x35576a, transparent: true, opacity: .72 }));
       mesh.add(border);
       const startPosition = new THREE.Vector3(cell[0] - centerX, centerY - cell[1], 0);
       const startQuaternion = new THREE.Quaternion();

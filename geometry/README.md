@@ -74,3 +74,18 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 ## 로컬 실행
 
 정적 파일 서버의 루트를 이 폴더로 설정하고 /world-map/에서 시작합니다.
+
+## 공간·입체 배포 회귀 검사
+
+전개도 전망대, 주사위 굴리기, 소마큐브 공방과 두 인쇄 학습지의 데이터·브라우저 검사를 한 번에 순차 실행합니다.
+
+```powershell
+node geometry/geometry-release.browsercheck.mjs
+```
+
+같은 검사를 실제 공개 사이트에 실행할 때는 기준 주소를 지정합니다.
+
+```powershell
+$env:GFIELD_BASE_URL='https://lete-on.gfieldacademy.net'
+node geometry/geometry-release.browsercheck.mjs
+```

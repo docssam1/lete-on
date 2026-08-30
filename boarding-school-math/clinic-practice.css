@@ -108,10 +108,17 @@ body { color:var(--ink); background:var(--paper); }
   .clinic-proof { grid-template-columns:repeat(3,22mm); }
   .clinic-shell { padding:0; }
   .intro-card { padding:4mm; grid-template-columns:1fr 1fr; break-inside:avoid; }
-  .practice-section + .practice-section { break-before:page; }
+  .teacher-guide { padding:4mm; }
+  .teacher-guide h2 { margin-bottom:3mm; font-size:15pt; }
+  .teacher-guide-grid { grid-template-columns:1fr 1fr; }
+  .teacher-guide-grid article { padding:2.5mm 3mm; }
+  .teacher-guide-grid article:last-child:nth-child(odd) { grid-column:1/-1; }
+  .teacher-guide-grid strong { margin-bottom:1mm; font-size:8.5pt; }
+  .teacher-guide-grid p { font-size:7.5pt; line-height:1.4; }
+  .practice-section { break-before:page; }
   .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
-  .problem-card { padding:4mm; break-inside:avoid; box-shadow:none; }
+  .problem-card { min-width:0; padding:4mm; break-inside:avoid; box-shadow:none; }
   .problem-prompt { min-height:18mm; font-size:10.5pt; }
   .response-row input { border:0; border-bottom:1px solid #000; background:transparent; }
-  .teacher-answer, .teacher-guide { break-inside:avoid; }
+  .teacher-answer, .teacher-guide { min-width:0; overflow-wrap:anywhere; break-inside:avoid; }
 }

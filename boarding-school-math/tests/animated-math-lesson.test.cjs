@@ -8,9 +8,9 @@ require(path.resolve(root, "..", "geometry", "worksheet", "render.js"));
 const source = require(path.join(root, "learning", "animated-math-lessons.js"));
 const scenes = require(path.join(root, "learning", "animated-math-scene-model.js"));
 
-test("catalog contains four GFIELD-authored multilingual concept samples", function () {
-  assert.equal(source.schemaVersion, 3);
-  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "geometry-angle"]);
+test("catalog contains six GFIELD-authored multilingual concept samples", function () {
+  assert.equal(source.schemaVersion, 5);
+  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "geometry-angle"]);
   source.lessons.forEach(function (lesson) {
     assert.deepEqual(lesson.languages, ["en", "ko", "zh"]);
     assert.equal(lesson.rights.assetRights, "original");
@@ -55,7 +55,7 @@ test("answers stay hidden until their declared answer beat", function () {
   });
 });
 
-test("ratio, fraction, GCF, and geometry answers are independently recomputed and unique", function () {
+test("ratio, fraction, GCF, signed-rational, and geometry answers are independently recomputed and unique", function () {
   const ratioSolutions = [];
   for (let a = 0; a <= 20; a += 1) {
     for (let b = 0; b <= 20; b += 1) {
@@ -73,9 +73,55 @@ test("ratio, fraction, GCF, and geometry answers are independently recomputed an
   for (let factor = 1; factor <= 84; factor += 1) if (84 % factor === 0 && 60 % factor === 0) common.push(factor);
   assert.deepEqual(common, [1, 2, 3, 4, 6, 12]);
   assert.equal(Math.max.apply(Math, common), 12);
+  assert.equal(-7 * 3, -21);
+  assert.equal(-5 * 4, -20);
+  assert.ok(-21 < -20);
+  assert.ok(-7 / 4 < -5 / 3);
   const baseAngle = (180 - 40) / 2;
   assert.equal(baseAngle, 70);
   assert.equal(40 + baseAngle + baseAngle, 180);
+});
+
+test("signed-rational scene positions and distances are calculated from one exact tick model", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "signed-number-line"; });
+  const model = scenes.buildSignedNumberLineModel(lesson.sceneModel);
+  assert.equal(model.tickDenominator, 12);
+  assert.equal(model.minUnit, -24);
+  assert.equal(model.maxUnit, 0);
+  assert.equal(model.ticks.length, 25);
+  assert.equal(model.firstUnit, -21);
+  assert.equal(model.secondUnit, -20);
+  assert.equal(model.firstDistanceUnits, 21);
+  assert.equal(model.secondDistanceUnits, 20);
+  assert.ok(model.firstX < model.secondX);
+  assert.ok(model.secondX < model.zeroX);
+  const expectedStep = (model.right - model.left) / 24;
+  assert.ok(Math.abs((model.secondX - model.firstX) - expectedStep) < 1e-9);
+  const markup = scenes.signedNumberLineScene(lesson);
+  assert.match(markup, /signed-number-line-svg/);
+  assert.match(markup, /data-object="signed-point-a"/);
+  assert.match(markup, /-7\/4 = -21\/12/);
+  assert.match(markup, /data-object="signed-answer">-7\/4 &lt; -5\/3/);
+  assert.match(lesson.beats.find(function (beat) { return beat.id === "signed-point-a"; }).narrationI18n.ko, /-1과 -2 사이/);
+  assert.doesNotMatch(JSON.stringify(lesson.beats), /-1과 -3\/4 사이|-1과 -2\/3 사이/);
+  assert.equal(scenes.sceneFor(lesson), markup);
+});
+
+test("expression tree is calculated from one exact nested-operation model", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "expression-tree"; });
+  const model = scenes.buildExpressionStructureModel(lesson.sceneModel);
+  assert.deepEqual({ power: model.powerResult, inside: model.insideResult, product: model.productResult, answer: model.answer, distributed: model.distributedResult }, { power: 8, inside: 12, product: 36, answer: 31, distributed: 31 });
+  assert.equal(model.coefficient * (model.powerResult + model.insideAddend) + model.outsideAddend, model.answer);
+  assert.equal(model.coefficient * model.powerResult + model.coefficient * model.insideAddend + model.outsideAddend, model.answer);
+  const markup = scenes.expressionScene(lesson, "ko");
+  assert.match(markup, /data-object="expr-original"/);
+  assert.match(markup, /data-object="expr-distribute"/);
+  assert.match(markup, /data-object="expr-answer"/);
+  assert.match(markup, /식의 값/);
+  assert.match(markup, /거듭제곱/);
+  assert.match(markup, /괄호 안/);
+  assert.doesNotMatch(markup, /POWER|PARENTHESES|MULTIPLY|SUBTRACT/);
+  assert.equal(scenes.sceneFor(lesson, "ko"), markup);
 });
 
 test("GCF scene is generated from factor arrays and an exact remainder chain", function () {
@@ -140,6 +186,7 @@ test("public shell exposes no private contest assets and keeps accessibility pat
   ["SASMO 2019", "private-sources", "question-images", "third-party demo"].forEach(function (token) { assert.equal(bundle.includes(token), false); });
   assert.match(bundle, /lesson-language/);
   assert.match(bundle, /captions-toggle/);
+  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Six ways to make reasoning visible/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /@media print/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /prefers-reduced-motion:\s*reduce/);
 });

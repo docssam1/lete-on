@@ -35,6 +35,8 @@ async function canvasEvidence(selector) {
 
 await openLevel(1);
 assert.equal(await page.locator(".game-shell").getAttribute("data-mode"), "recognize");
+assert.equal(await page.locator("#targetViewer").getAttribute("data-material"), "satin-enamel");
+assert.equal(await page.locator("#buildViewer").getAttribute("data-material"), "satin-enamel");
 const choiceCount = await page.locator(".choice-card").count();
 assert.ok(choiceCount === 2 || choiceCount === 3);
 assert.deepEqual(await page.locator(".choice-card").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("aria-label"))), Array.from({ length: choiceCount }, (_, index) => `보기 ${index + 1}`));

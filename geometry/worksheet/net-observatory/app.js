@@ -1,5 +1,5 @@
-import { levels, SOLIDS } from "../../games/net-observatory/levels.js?v=net-4";
-import { text } from "../../games/net-observatory/i18n.js?v=net-4";
+import { levels, SOLIDS } from "../../games/net-observatory/levels.js?v=net-5";
+import { text } from "../../games/net-observatory/i18n.js?v=net-5";
 
 const $=(selector)=>document.querySelector(selector),t=(key,vars={})=>text("ko",key,vars);let offset=0;
 const select=$("#levelSelect"),toggle=$("#answerToggle"),grid=$("#problemGrid");

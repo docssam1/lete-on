@@ -26,6 +26,9 @@ if (sourceExampleTwoOneAnswer !== 132) failures.push(`예제 2-1 원문 고정�
 
 const attr = (html, name) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1] || "";
 const chooseTwo = value => value * (value - 1) / 2;
+const exactConcernType = targetSubunits.flatMap(subunit => subunit.types).find(type => type.id === "4-2-u4-t2-4");
+const exactConcern = api.generate(exactConcernType, 0, 0, 297, exactConcernType.variant);
+if (attr(exactConcern.prompt, "data-parallel-v-angles") !== "54,58,68,112" || exactConcern.answer !== "112") failures.push("사용자 지적 사례 54°, 58°의 그림 자료 또는 정답 112°가 달라졌습니다.");
 
 for (const subunit of targetSubunits) {
   for (const type of subunit.types) {
@@ -82,6 +85,19 @@ for (const subunit of targetSubunits) {
             const [leftGiven, rightGiven, firstTarget, secondTarget] = attr(generated.prompt, "data-perpendicular-angles").split(",").map(Number);
             expected = `㉠ ${90 - rightGiven}°, ㉡ ${90 - leftGiven}°`;
             if (firstTarget !== 90 - rightGiven || secondTarget !== 90 - leftGiven) failures.push(`${type.id} / 시드 ${seed}: 수직선 사이의 두 각 자료가 맞지 않습니다.`);
+            const markTags = [...generated.prompt.matchAll(/<g class="perpendicular-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
+            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
+            const expectedMarks = {
+              "left-given": [leftGiven, 180, leftGiven],
+              "right-given": [rightGiven, 360 - rightGiven, rightGiven],
+              "target-left": [firstTarget, 90, firstTarget],
+              "target-right": [secondTarget, leftGiven, secondTarget]
+            };
+            if (markTags.length !== 4 || (generated.prompt.match(/class="perpendicular-angle-arc"/g) || []).length !== 4) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 네 각호가 모두 그려지지 않았습니다.`);
+            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
+              const tag = marks[role] || "";
+              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
+            });
           } else if (type.variant === 9) {
             const [aLabel, mLabel, nLabel, rLabel, dLabel] = attr(generated.prompt, "data-role-labels").split(",");
             const roles = ["M", "N", "R", "D"];
@@ -108,6 +124,18 @@ for (const subunit of targetSubunits) {
             const [leftAngle, vertexAngle, rightInterior, storedAnswer] = attr(generated.prompt, "data-parallel-v-angles").split(",").map(Number);
             expected = 180 - rightInterior;
             if (leftAngle + vertexAngle + rightInterior !== 180 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 평행선 사이 삼각형의 세 각 또는 바깥각이 맞지 않습니다.`);
+            const markTags = [...generated.prompt.matchAll(/<g class="parallel-v-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
+            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
+            const expectedMarks = {
+              "left-exterior": [leftAngle, 180 - leftAngle, leftAngle],
+              "vertex-interior": [vertexAngle, rightInterior, vertexAngle],
+              "right-exterior": [storedAnswer, 180 + rightInterior, storedAnswer]
+            };
+            if (markTags.length !== 3 || (generated.prompt.match(/class="parallel-v-angle-arc"/g) || []).length !== 3) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 세 각호가 모두 그려지지 않았습니다.`);
+            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
+              const tag = marks[role] || "";
+              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
+            });
           } else if (type.variant === 0 || type.variant === 1) {
             const count = Number(attr(generated.prompt, "data-parallel-count"));
             const angle = Number(attr(generated.prompt, "data-parallel-angle"));

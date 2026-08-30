@@ -1,10 +1,11 @@
 import { strict as assert } from "node:assert";
 import { chromium } from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
 
+const baseUrl=(process.env.GFIELD_BASE_URL||"http://127.0.0.1:8765").replace(/\/$/,"");
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=[];
 page.on("console",(message)=>{if(message.type()==="error")errors.push(message.text());});page.on("pageerror",(error)=>errors.push(error.message));
-await page.goto("http://127.0.0.1:8765/geometry/worksheet/dice-roll/",{waitUntil:"networkidle"});
+await page.goto(`${baseUrl}/geometry/worksheet/dice-roll/`,{waitUntil:"networkidle"});
 assert.equal(await page.locator(".problem").count(),2);
 assert.equal(await page.locator(".route-board .board-die").count(),2);
 assert.equal(await page.locator(".route-board .board-die").first().locator("polygon").count(),3);
@@ -22,5 +23,5 @@ assert.ok(sheet.height<=1124,JSON.stringify(sheet));
 await page.pdf({path:"C:/Users/user/AppData/Local/Temp/gfield-dice-roll-worksheet.pdf",format:"A4",printBackground:true,preferCSSPageSize:true});
 await page.emulateMedia({media:"screen"});await page.setViewportSize({width:390,height:844});await page.reload({waitUntil:"networkidle"});
 const mobile=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));assert.ok(mobile.scrollWidth<=mobile.width+1,JSON.stringify(mobile));
-await page.goto("http://127.0.0.1:8765/geometry/games/dice-roll/",{waitUntil:"networkidle"});assert.equal(await page.locator('a[href="../../worksheet/dice-roll/"]').count(),1);
-assert.equal(errors.length,0,errors.join("\n"));console.log(JSON.stringify({problems:2,sourceRoute:"4-7-8-5",sheet,mobile},null,2));await browser.close();
+await page.goto(`${baseUrl}/geometry/games/dice-roll/`,{waitUntil:"networkidle"});assert.equal(await page.locator('a[href="../../worksheet/dice-roll/"]').count(),1);
+assert.equal(errors.length,0,errors.join("\n"));console.log(JSON.stringify({baseUrl,problems:2,sourceRoute:"4-7-8-5",sheet,mobile},null,2));await browser.close();

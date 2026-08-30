@@ -1,4 +1,4 @@
-import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-4";
+import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-5";
 import { levels as diceLevels } from "../games/dice-roll/levels.js?v=dice-roll-3";
 import { levels as somaLevels } from "../games/soma-cube/levels.js?v=soma-1";
 import { readProfile } from "../shared/profile-storage.js";
@@ -44,7 +44,7 @@ netLevels.forEach((level, index) => {
   const link = document.createElement("a");
   link.className = "level-card";
   link.href = `../games/net-observatory/?level=${level.id}`;
-  link.innerHTML = `<img src="./assets/net-level-${level.id}.webp" alt="" /><div><span>${bandNames[index]}</span><strong>${level.id}. ${names[index][0]}</strong><p>${names[index][1]}</p><b>${c.start} ›</b></div>`;
+  link.innerHTML = `<img src="./assets/net-level-${level.id}.webp?v=material-2" alt="" /><div><span>${bandNames[index]}</span><strong>${level.id}. ${names[index][0]}</strong><p>${names[index][1]}</p><b>${c.start} ›</b></div>`;
   grid.append(link);
 });
 
@@ -74,5 +74,5 @@ const somaGrid = document.querySelector("#somaLevelGrid");
 somaLevels.forEach((level,index)=>{
   const names=(somaNames[lang]||somaNames.ko)[index];
   const link=document.createElement("a");link.className="level-card soma-card";link.href=`../games/soma-cube/?level=${level.id}`;
-  link.innerHTML=`<img src="./assets/soma-level-${level.id}.webp" alt="" /><div><span>${somaBands[index]}</span><strong>${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;somaGrid.append(link);
+  link.innerHTML=`<img src="./assets/soma-level-${level.id}.webp?v=material-2" alt="" /><div><span>${somaBands[index]}</span><strong>${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;somaGrid.append(link);
 });
