@@ -190,6 +190,42 @@ test("2-1 입반테스트 2 원본을 중간 단원 범위와 정답 이견 상�
   assert.equal(info.recordId, "dp.m21-202402-r2.method-review.20260830");
 });
 
+test("2-1 입반테스트 3 원본을 혼합 범위와 비공개 정답 이견 상태로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m21-202311-r3-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m21-202311-r3-v1.json",
+    "dolpa-classification-review-dp-m21-202311-r3-v1.json",
+    "dolpa-paper-review-dp-m21-202311-r3-v1.json",
+    "dolpa-difficulty-review-dp-m21-202311-r3-v1.json",
+    "dolpa-analysis-report-dp-m21-202311-r3-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({
+      sourceId: "DP-SRC-9B7A4E4FC28E",
+      paperId: "DP-M21-202311-R3",
+      reviewedAt: "2026-08-30"
+    }));
+  });
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m21-202311-r3");
+  assert.equal(info.label, "2-1 입반테스트 3(2023년 11월)");
+  assert.deepEqual(info.tags, ["middle2-1", "middle2-2", "mixed-range", "answer-dispute"]);
+  assert.equal(info.pageSourceId, "dp-m21-202311-r3-page-assets-v1");
+  assert.equal(info.methodSourceId, "dp-m21-202311-r3-method-review-v1");
+  assert.equal(info.classificationSourceId, "dp-m21-202311-r3-classification-review-v1");
+  assert.equal(info.paperSourceId, "dp-m21-202311-r3-paper-review-v1");
+  assert.equal(info.difficultySourceId, "dp-m21-202311-r3-difficulty-review-v1");
+  assert.equal(info.analysisSourceId, "dp-m21-202311-r3-analysis-report-v1");
+  assert.equal(info.recordId, "dp.m21-202311-r3.method-review.20260830");
+  assert.equal(info.recordDate, "20260830");
+  assert.equal(info.reviewedAt, "2026-08-30");
+  const serialized = JSON.stringify(info);
+  assert.equal(serialized.includes("12cm"), false);
+  assert.equal(serialized.includes("10/9"), false);
+  assert.equal(serialized.includes("C:\\\\"), false);
+});
+
 test("2-1A 2회 시험지 검수 자료를 기존 2-1A와 다른 ID로 연결한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21a-r2-"));
   const manifestPath = path.join(root, "manifest.json");

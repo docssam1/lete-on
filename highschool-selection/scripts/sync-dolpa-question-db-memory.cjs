@@ -75,6 +75,7 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-A7B99D6257FD": { key: "m21s-202401-r3", label: "2-1 심화 입반테스트(3)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-9EAF43D00103": { key: "m21-202401-r1", label: "2-1 기본 입반테스트(1)", tags: ["middle2-1", "basic", "full-range"] },
     "DP-SRC-9EAFF6679355": { key: "m21-202402-r2", label: "2-1 입반테스트 2(2024년 2월)", tags: ["middle2-1", "mid-unit-cutoff", "answer-dispute"] },
+    "DP-SRC-9B7A4E4FC28E": { key: "m21-202311-r3", label: "2-1 입반테스트 3(2023년 11월)", tags: ["middle2-1", "middle2-2", "mixed-range", "answer-dispute"] },
     "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
