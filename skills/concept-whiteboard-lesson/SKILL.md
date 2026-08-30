@@ -93,6 +93,9 @@ Two of its rules matter enough to restate here, because breaking either has cost
 - **The implementer cannot be the sole approver of its own work**, and the verifier does not receive the implementer's confidence statement.
 - **Work, evidence and release are separate axes.** Passing the gates makes an item *eligible*; it does not make it approved or published.
 
+In this repository the two are already combined for the Geometry World surface in
+[`geometry/docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md`](../../geometry/docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md) — 14 named gates, a completion-report form, and the rule that a whiteboard scene is used **only** where the order is the content, while an ordinary item SVG gets the evidence, math, observability and render gates alone. Keep that document and this skill in step; when a gate changes here, change it there.
+
 That skill also names two optional companions (`gfield-single-answer-visibility`, `iterate-until-verified`). When they are not installed, its own instruction is to **apply the equivalent determinacy, visibility and iteration gates rather than fetch them** — which is what [references/verification.md](references/verification.md) does.
 
 ## Rights
