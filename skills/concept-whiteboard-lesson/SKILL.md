@@ -36,12 +36,22 @@ The problem generator already computed the moving parts. Read them; do not resta
 
 See [references/motion-families.md](references/motion-families.md) for the eight families and which generators belong to each.
 
+## Stay inside the lesson
+
+- **Preserve what you were given.** The problem statement, its numbers, diagram labels and answer stand unless the user explicitly asks to revise them. Confirm the arithmetic and every visual relationship independently before rendering.
+- **Do not register the lesson anywhere unasked.** Adding it to a course list, a roadmap, a library index or a student record is a separate decision the user makes, not a side effect of building it.
+- **Reuse the project's existing pipeline** — renderer, voice, audio storage, reader. Do not introduce a second voice provider or a new public service without a concrete need.
+
 ## Draw, don't decorate
 
 1. **Compute every coordinate from a point/segment model.** No eyeballed numbers in the SVG. Reuse the existing renderer — in this repo that is `geometry/worksheet/render.js` (`GW_RENDER`): DOM-free string builders, `project()` for coordinates, `polygon()` over a point list, `fmt()` to bound precision. Extend it in the same style; if you add a helper, say why the existing ones did not serve.
 2. **One thing appears per beat.** This is the whiteboard rule and it is also how you get a single place to look. If two things are drawn or emphasized at once, the child does not know where to look.
 3. **Prefer `draw` over `highlight`.** Highlighting presumes the object was already there — which is the failure mode this skill exists to avoid. Reach for `highlight` only when the point genuinely is "look again at what we already built".
-4. **The last frame must stand alone.** Print has no animation. When the final state is rendered as one still image, it must explain the strategy by itself, or the worksheet is worthless.
+4. **Clear the highlight as the next beat begins.** Remove it or soften it. A stale highlight competes with the thing being drawn, and it is the most common way a lesson quietly ends up with two places to look.
+5. **The last frame must stand alone.** Print has no animation. When the final state is rendered as one still image, it must explain the strategy by itself, or the worksheet is worthless.
+6. **Show the transformation, not an animation.** A line is drawn because a teacher is connecting two quantities; an equation appears as it is spoken. Anything moving for its own sake is noise.
+
+Keep the surface calm: generous space, one accent family, a steady typographic hierarchy, a paper or board ground. No drifting shapes, no permanent looping effects, no novelty hand cursor, no marker stroke thick enough to cover the math. It should read as a lesson, not as a demo.
 
 The beat and object contracts are G·MAP's; the deltas are in [references/scene-contract.md](references/scene-contract.md).
 
@@ -53,11 +63,20 @@ Voice is a **three-tier fallback, not "browser speech"**: a pre-rendered MP3 key
 
 Voice is a toggle, never a dependency: every beat must be understandable with sound off, and beats advance on action or duration, never on audio ending. Full chain, tier-selection rules, and per-language line-breaking are in [references/narration-and-voice.md](references/narration-and-voice.md).
 
+> **Deliberate divergence from the predecessor.** `english-math-whiteboard-lesson` makes audio timing the spine — one timing source driving narration, captions, script and drawing. That is right *there*: it is an **English** lesson, so the spoken phrase is itself the content being learned. Here the medium is not the content — the mathematics is — and three things follow. Math is re-read, and a caption stays while audio passes. The lesson also ships to A4, where a timing spine means nothing. And a learner must be able to stop and think on a step, which a clock-driven spine works against. So subtitles are the spine and audio rides on top.
+
+## Give the learner the controls
+
+- play / pause, restart, **speed control**, visible captions or script, and a **reduced-motion fallback**.
+- **Replay starts from the first visual state**, not from wherever the board happened to be.
+- **Never let timing or color be the only carrier of meaning.** Anything said with motion or hue must also be readable as text or shape.
+- Keep the full equation and its answer legible on a narrow phone screen.
+
 ## Verify before calling it done
 
 Passing checks are not the bar; **checks proven capable of failing** are. Details and the negative-control method are in [references/verification.md](references/verification.md).
 
-Do not report a lesson as done until all five hold:
+Do not report a lesson as done until all six hold:
 
 - **PC · mobile · A4.** All three, every time. A defect that appears only in paged layout is normal here — an equation frame landing on the page after its story, a card splitting at the break. Screens alone will not show it.
 - **원본 구조.** The numbers drawn equal the generator's actual output, asserted across many seeds. A picture showing different numbers than the problem is a failure, not a rounding issue.

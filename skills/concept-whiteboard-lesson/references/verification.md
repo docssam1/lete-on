@@ -2,7 +2,7 @@
 
 The bar is not "the checks passed". It is **"the checks were shown capable of failing, and then passed."** This codebase has repeatedly shipped suites that could not fail: a cell-overflow check that ran with the print stylesheet inactive, a uniqueness prover that assumed the equation frame instead of reading it. Both reported green.
 
-## The five gates
+## The six gates
 
 A lesson is not done until every one of these holds.
 
@@ -37,7 +37,17 @@ Two failures from this repo, both of which passed intent-based review:
 - A digit-fill item asked for the digit making a number divisible by 2. Five digits worked; the key held one. Students who answered correctly were marked wrong.
 - An equation-writing item pinned operand order with the instruction *"write them in the order they appear"*. Enumeration found a second valid triple in **47%** of items — `4 + 7 = 11` and `7 + 4 = 11` both satisfy the frame. **Textual instructions do not bind; arithmetic does.** The fix was to pre-print one operand for commutative operators.
 
-### 5. Negative control
+### 5. Playback and controls
+
+Mechanical, but each of these has shipped broken somewhere:
+
+- **No target is highlighted early, and none is left stale.** Walk the beat list and assert every highlight is cleared or softened by the beat after it. A leftover highlight is the usual way a lesson ends up with two places to look — it will fail gate 3 without this catching it first.
+- **Replay starts from the first visual state**, not from wherever the board was left.
+- **Narration text matches what is on screen.** If the caption and the drawing disagree, the child trusts neither.
+- play / pause / restart / speed / captions all work by keyboard, and `prefers-reduced-motion` is honored.
+- Nothing is carried by timing or color alone.
+
+### 6. Negative control
 
 For each check: break the thing it guards, confirm the check fails, revert. Report what you broke and that it was caught.
 
