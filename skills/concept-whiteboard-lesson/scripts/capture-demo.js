@@ -26,8 +26,17 @@ const APP  = path.join(REPO, 'number_magic');
 const OUT  = path.resolve(__dirname, '../assets');
 const PORT = process.env.DEMO_PORT || 8841;
 
+/* ⚠ 저장소 루트를 서빙한다. number_magic/을 루트로 서빙하면 index.html의
+   `../geometry/worksheet/render.js`가 루트 밖으로 나가 404가 되고, 404는
+   pageerror를 내지 않으므로 GW_RENDER가 undefined인 채 애니메이션만 조용히
+   사라진다(실제로 그렇게 "적용 전과 똑같은 적용 후" 그림이 한 번 나왔다).
+   운영 배포도 저장소 루트가 웹 루트다(.../number_magic/). */
+
 const mode = process.argv[2] || 'before';
 const unit = process.argv[3] || 'A-05';
+/* after 모드에서 몇 번째 beat를 찍을지. beat 1은 문제만 놓인 상태라
+   README 그림으로는 약하다 — 묶는 호가 그려진 뒤가 이 스킬의 요점이다. */
+const beat = parseInt(process.argv[4] || '0', 10);
 
 function loadPlaywright(){
   for(const c of ['playwright', '/opt/node22/lib/node_modules/playwright']){
@@ -39,10 +48,10 @@ function loadPlaywright(){
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: APP, stdio: 'ignore' });
+    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: REPO, stdio: 'ignore' });
     const t0 = Date.now();
     (function ping(){
-      http.get(`http://localhost:${PORT}/index.html`, r => { r.resume(); resolve(py); })
+      http.get(`http://localhost:${PORT}/number_magic/index.html`, r => { r.resume(); resolve(py); })
         .on('error', () => {
           if(Date.now() - t0 > 8000) return reject(new Error('정적 서버 기동 실패'));
           setTimeout(ping, 150);
@@ -54,7 +63,7 @@ function serve(){
 /* 온보딩을 지나 해당 유닛의 개념(마법 노트) 화면으로 직행한다.
    S는 IIFE 안이라 밖에서 못 만지므로, S가 읽고 쓰는 localStorage를 직접 세팅하고 새로고침한다. */
 async function gotoConcept(page, uid){
-  await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil: 'networkidle' });
+  await page.goto(`http://localhost:${PORT}/number_magic/index.html?enter=1`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(800);
   if(await page.$('#obGo')){
     await page.fill('#obName', '예시');
@@ -69,6 +78,20 @@ async function gotoConcept(page, uid){
   }, uid);
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
+}
+
+/* 애니메이션은 기존 마법 노트 *아래에* 붙는다. 그대로 뷰포트를 찍으면
+   화면 밖이라 "적용 전"과 똑같은 그림이 나온다 — 실제로 그렇게 한 번
+   찍혔다. .cs-wrap으로 스크롤하고, 없으면 실패로 알린다(조용히 옛 화면을
+   내보내는 것이 이 스크립트의 최악의 실패다). */
+async function focusScene(page){
+  const el = await page.$('.cs-wrap');
+  if(!el){
+    throw new Error('.cs-wrap 없음 — 이 유닛에 개념 애니메이션이 없거나 렌더 실패');
+  }
+  await el.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+  return el;
 }
 
 (async () => {
@@ -87,7 +110,12 @@ async function gotoConcept(page, uid){
       });
       const page = await ctx.newPage();
       await gotoConcept(page, unit);
-      await page.waitForTimeout(9000);   /* beat가 도는 시간 — 실제 길이에 맞춰 조정 */
+      await focusScene(page);
+      /* 재생을 눌러야 beat가 돈다. 안 누르면 정지 화면만 녹화된다. */
+      const play = await page.$('.cs-play');
+      if(!play) throw new Error('재생 버튼(.cs-play)을 찾지 못했습니다');
+      await play.click();
+      await page.waitForTimeout(11000);   /* beat가 도는 시간 — 실제 길이에 맞춰 조정 */
       await ctx.close();                 /* close 해야 webm이 flush 된다 */
 
       const raw = fs.readdirSync(path.join(OUT, '_raw')).filter(f => f.endsWith('.webm'))[0];
@@ -108,7 +136,18 @@ async function gotoConcept(page, uid){
       const name = mode === 'after'
         ? `after-${slug}-animated.png`
         : `before-${slug}-text-only.png`;
-      await page.screenshot({ path: path.join(OUT, name) });
+      if(mode === 'after'){
+        const el = await focusScene(page);
+        for(let i = 0; i < beat; i++){
+          const next = await page.$('.cs-ctl button:last-of-type, .cs-next');
+          if(!next) throw new Error('다음 beat 버튼을 찾지 못했습니다');
+          await next.click();
+          await page.waitForTimeout(900);
+        }
+        await el.screenshot({ path: path.join(OUT, name) });   /* 장면만 잘라 찍는다 */
+      } else {
+        await page.screenshot({ path: path.join(OUT, name) });
+      }
       console.log('저장:', path.join(OUT, name));
       if(errs.length) console.log('⚠ pageerror', errs.length, '건:', errs[0]);
     }
