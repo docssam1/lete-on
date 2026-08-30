@@ -50,6 +50,7 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   const consoleErrors = [];
   const failedResources = [];
   const candidateRequests = [];
+  const catalogRequests = [];
   page.on("console", message => {
     if (message.type() === "error" && !/^Failed to load resource:/.test(message.text())) consoleErrors.push(message.text());
   });
@@ -59,6 +60,7 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   });
   page.on("request", request => {
     if (request.url().includes("/admin/exam-editor/candidates")) candidateRequests.push(request.url());
+    if (request.url().includes("/admin/question-bank/catalog")) catalogRequests.push(request.url());
   });
 
   await page.goto(`${base}/admin/exam-editor.html`);
@@ -82,6 +84,9 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   await page.locator("#candidate-list .candidate-row.is-catalog").waitFor();
   assert.match(await page.locator("#candidate-list .candidate-path").first().textContent(), /중2-1.*함수.*일차함수.*교점/);
   assert.equal(await page.locator("#candidate-list .candidate-row.is-catalog button").first().isDisabled(), true);
+  await page.locator("#catalog-include-candidates").check();
+  await page.waitForFunction(() => document.querySelector("#candidate-context")?.textContent.includes("후보를 함께"));
+  assert.ok(catalogRequests.some(url => /[?&]includeCandidates=1(?:&|$)/.test(url)));
   await page.locator('#candidate-mode [data-mode="new"]').click();
   await page.locator("#candidate-list [data-candidate-id]").first().waitFor();
 

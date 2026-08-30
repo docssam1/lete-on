@@ -20,13 +20,14 @@ function buildQueue(index, reviews) {
   const activeById = new Map(activeItems(index).map(item => [item.id, item]));
   const seen = new Set();
   const jobs = [];
+  const locatorRebuilds = [];
   reviews.reviews.forEach(review => {
     if (seen.has(review.sourceItemId)) throw new Error(`황소 검수 문항 ID가 중복됩니다: ${review.sourceItemId}`);
     seen.add(review.sourceItemId);
     const item = activeById.get(review.sourceItemId);
     if (!item) throw new Error(`황소 활성 문항을 찾을 수 없습니다: ${review.sourceItemId}`);
     if (review.detailPrecision !== "unit_only") return;
-    jobs.push({
+    const pending = {
       sourceItemId: review.sourceItemId,
       sourceMemoryId: review.sourceMemoryId,
       sourceRef: review.sourceRef,
@@ -40,10 +41,21 @@ function buildQueue(index, reviews) {
         box: item.locator && item.locator.box
       },
       status: "detail_review_pending"
-    });
+    };
+    if (review.detailReviewStatus === "locator_rebuild_required") {
+      locatorRebuilds.push({
+        ...pending,
+        status: "locator_rebuild_required",
+        reason: review.detailReviewReason,
+        evidenceLocator: review.detailReviewEvidence
+      });
+      return;
+    }
+    jobs.push(pending);
   });
   if (seen.size !== activeById.size) throw new Error("황소 세부 검수표와 활성 문항 수가 다릅니다.");
   jobs.sort((left, right) => left.sourceMemoryId.localeCompare(right.sourceMemoryId) || left.locator.page - right.locator.page || left.locator.slot - right.locator.slot || left.sourceItemId.localeCompare(right.sourceItemId));
+  locatorRebuilds.sort((left, right) => left.sourceMemoryId.localeCompare(right.sourceMemoryId) || left.locator.page - right.locator.page || left.locator.slot - right.locator.slot || left.sourceItemId.localeCompare(right.sourceItemId));
   const sources = Array.from(new Set(jobs.map(job => job.sourceMemoryId))).sort().map(sourceMemoryId => {
     const sourceJobs = jobs.filter(job => job.sourceMemoryId === sourceMemoryId);
     return {
@@ -56,12 +68,14 @@ function buildQueue(index, reviews) {
   return {
     schemaVersion: 1,
     sourceBankId: "HWANGSO-MIDDLE",
-    status: jobs.length ? "work_remaining" : "complete",
+    status: jobs.length || locatorRebuilds.length ? "work_remaining" : "complete",
     sources,
+    locatorRebuilds,
     summary: {
       activeItemCount: activeById.size,
       reviewedDetailItemCount: reviews.reviews.filter(review => review.detailPrecision === "verified").length,
       pendingDetailItemCount: jobs.length,
+      locatorRebuildItemCount: locatorRebuilds.length,
       quarantinedItemCount: reviews.reviews.filter(review => review.detailPrecision === "pending").length,
       sourceCount: sources.length,
       pageCount: new Set(jobs.map(job => `${job.sourceMemoryId}:${job.locator.page}`)).size

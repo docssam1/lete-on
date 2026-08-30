@@ -1,15 +1,18 @@
 "use strict";
 
 global.window = {};
+require("./source-inventory-4-1.js");
 require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
-const types = window.HSE_CURRICULUM.semesters
+const allTypes = window.HSE_CURRICULUM.semesters
   .flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types)));
+const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLocked);
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
+if (types.length !== 891) failures.push(`공개 검수 대상은 891개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

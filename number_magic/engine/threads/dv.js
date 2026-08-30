@@ -240,6 +240,62 @@
       };
     }
 
+    /* ---- 7의 배수 판정: 뒷자리를 떼고 그 2배를 남은 수에서 뺀다 ----
+       10a + b 가 7의 배수 ⟺ a − 2b 가 7의 배수.
+       (10a+b) − 7b = 10a − 6b = 2(5a − 3b) 이고 7과 2는 서로소이므로
+       5a−3b, 즉 −2(a−2b)+7a 의 배수 여부가 a−2b로 판정된다.
+       인쇄물은 tex 한 줄만 나가므로 원래 수 n까지 tex에 실어 자족하게 만든다
+       (HANDOFF "tex 하나로 문항이 성립하는가" 규칙). 초등 대상이라 음수가
+       나오지 않는 조합만 쓴다. */
+    if (mode === 'rule7') {
+      let n = 0, a = 0, b = 0, red = -1;
+      for (let t = 0; t < 60 && red < 0; t++) {
+        n = R(rng, 100, 999);
+        a = Math.floor(n / 10);
+        b = n % 10;
+        red = a - 2 * b;
+      }
+      if (red < 0) { n = 203; a = 20; b = 3; red = 14; }
+      return {
+        prompt: {
+          ko: `${n}의 뒷자리를 떼고, 남은 수에서 뒷자리의 2배를 빼요 — 7의 배수인지 알아보는 방법이에요`,
+          en: `Drop the last digit of ${n} and subtract twice that digit — this tests divisibility by 7`,
+          zh: `去掉${n}的末位，再从剩下的数里减去末位的2倍——这是判断7的倍数的方法`
+        },
+        tex:        `${n} \\rightarrow ${a} - 2 \\times ${b} = \\square`,
+        answer:     red,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
+    /* ---- 11의 배수 판정: 홀수번째 자리 합 − 짝수번째 자리 합 ----
+       10 ≡ −1 (mod 11) 이므로 자리마다 부호가 번갈아 붙는다. 그 교대합이
+       11의 배수(0 포함)면 원래 수도 11의 배수다. 여기서도 초등 대상이라
+       차가 음수가 되지 않는 네 자리 수만 고른다. */
+    if (mode === 'rule11') {
+      let n = 0, d = [0, 0, 0, 0], odd = 0, even = 0, diff = -1;
+      for (let t = 0; t < 60 && diff < 0; t++) {
+        n = R(rng, 1000, 9999);
+        d = String(n).split('').map(Number);
+        odd  = d[0] + d[2];   /* 첫째·셋째 자리 */
+        even = d[1] + d[3];   /* 둘째·넷째 자리 */
+        diff = odd - even;
+      }
+      if (diff < 0) { n = 8195; d = [8, 1, 9, 5]; odd = 17; even = 6; diff = 11; }
+      return {
+        prompt: {
+          ko: `${n}의 홀수번째 자리끼리, 짝수번째 자리끼리 더한 뒤 그 차를 구해요 — 11의 배수인지 알아보는 방법이에요`,
+          en: `Add the digits of ${n} in odd places and in even places, then take the difference — this tests divisibility by 11`,
+          zh: `把${n}奇数位上的数字相加、偶数位上的数字相加，再求两者之差——这是判断11的倍数的方法`
+        },
+        tex:        `${n} \\rightarrow (${d[0]}+${d[2]}) - (${d[1]}+${d[3]}) = \\square`,
+        answer:     diff,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
     const rules = (params && params.rules) || [2, 5, 10];
     const r     = pick(rng, rules);
 

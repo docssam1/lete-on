@@ -45,3 +45,18 @@ test("검수표가 활성 문항을 빠뜨리거나 ID를 중복하면 대기열
   duplicate.reviews[2].sourceItemId = "Q2";
   assert.throws(() => builder.buildQueue(index(), duplicate), /중복/);
 });
+
+test("위치 재작업 문항은 일반 세부 검수에서 빼고 별도 목록에 남긴다", () => {
+  const input = reviews();
+  Object.assign(input.reviews[1], {
+    detailReviewStatus: "locator_rebuild_required",
+    detailReviewReason: "여러 문제가 한 영역에 섞임",
+    detailReviewEvidence: "MEM-1:PDF p.3, slot 1"
+  });
+  const output = builder.buildQueue(index(), input);
+  assert.equal(output.summary.pendingDetailItemCount, 0);
+  assert.equal(output.summary.locatorRebuildItemCount, 1);
+  assert.equal(output.locatorRebuilds[0].sourceItemId, "Q2");
+  assert.equal(output.locatorRebuilds[0].status, "locator_rebuild_required");
+  assert.match(output.locatorRebuilds[0].reason, /여러 문제/);
+});

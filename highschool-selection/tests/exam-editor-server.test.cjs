@@ -370,6 +370,8 @@ test("academy profile catalog is admin-only and returns safe classified Dolpa ro
   assertNoPrivateFields(packet);
   assert.equal(JSON.stringify(packet).includes("DP-SRC"), false);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_DUAL`, { headers: { Cookie: admin.cookie } })).status, 200);
+  assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD&includeCandidates=1`, { headers: { Cookie: admin.cookie } })).status, 200);
+  assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD&includeCandidates=yes`, { headers: { Cookie: admin.cookie } })).status, 400);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=UNKNOWN`, { headers: { Cookie: admin.cookie } })).status, 400);
   assert.equal((await fetch(`${env.base}/admin/question-bank/catalog?profiles=DP_STANDARD&unknown=1`, { headers: { Cookie: admin.cookie } })).status, 400);
 });

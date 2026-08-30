@@ -501,6 +501,16 @@
   }
 
   global.GW_RENDER = {
+    // Coordinate/markup primitives, exported so other worksheet-style string
+    // builders can reuse them instead of writing their own. number_magic's
+    // concept-animation renderer (number_magic/app/concept-anim.js) builds its
+    // number scenes from fmt/polygon/wrapSvg — same DOM-free contract, same
+    // "compute the coordinates from a model" rule. Pure re-export: no drawing
+    // code below or above this line changed.
+    fmt,
+    polygon,
+    wrapSvg,
+    project,
     renderIso,
     renderIsoCoords,
     renderIsoTop,

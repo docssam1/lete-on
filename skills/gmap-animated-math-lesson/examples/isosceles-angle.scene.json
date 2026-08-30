@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "lessonId": "gmap-original-isosceles-angle-01",
+  "title": "Base Angles in an Isosceles Triangle",
+  "language": "en",
+  "audience": "student",
+  "rights": {
+    "publication": "public",
+    "assetRights": "original",
+    "containsThirdPartyAssets": false,
+    "licenseEvidence": "GFIELD-authored concept and SVG diagram"
+  },
+  "problem": {
+    "prompt": "Triangle ABC is isosceles with AB = AC. The vertex angle A is 40 degrees. Find angle B.",
+    "responseType": "angle-degrees",
+    "verifiedAnswer": 70,
+    "answerRevealBeatId": "answer-seventy"
+  },
+  "scene": { "width": 960, "height": 540 },
+  "objects": [
+    { "id": "problem", "type": "problem-text", "frame": { "x": 40, "y": 24, "width": 880, "height": 76 } },
+    { "id": "side-ab", "type": "segment", "frame": { "x": 240, "y": 130, "width": 240, "height": 270 } },
+    { "id": "side-ac", "type": "segment", "frame": { "x": 480, "y": 130, "width": 240, "height": 270 } },
+    { "id": "base-bc", "type": "segment", "frame": { "x": 240, "y": 400, "width": 480, "height": 1 } },
+    { "id": "equal-ab", "type": "equal-mark", "frame": { "x": 348, "y": 255, "width": 32, "height": 32 } },
+    { "id": "equal-ac", "type": "equal-mark", "frame": { "x": 580, "y": 255, "width": 32, "height": 32 } },
+    { "id": "angle-a", "type": "angle-arc", "frame": { "x": 440, "y": 130, "width": 80, "height": 68 } },
+    { "id": "angle-b", "type": "angle-arc", "frame": { "x": 240, "y": 346, "width": 92, "height": 54 } },
+    { "id": "angle-c", "type": "angle-arc", "frame": { "x": 628, "y": 346, "width": 92, "height": 54 } },
+    { "id": "equation-sum", "type": "equation", "frame": { "x": 130, "y": 450, "width": 340, "height": 55 } },
+    { "id": "equation-solve", "type": "equation", "frame": { "x": 490, "y": 450, "width": 250, "height": 55 } },
+    { "id": "answer", "type": "answer", "role": "answer", "frame": { "x": 760, "y": 440, "width": 150, "height": 70 } }
+  ],
+  "beats": [
+    {
+      "id": "read-problem",
+      "phase": "problem",
+      "narration": "We know the two sloping sides are equal, and the angle between them is forty degrees.",
+      "durationMs": 4700,
+      "targetIds": ["problem"],
+      "actions": [{ "type": "highlight", "targetIds": ["problem"] }]
+    },
+    {
+      "id": "draw-triangle",
+      "phase": "explore",
+      "narration": "Draw triangle ABC and mark the equal sides AB and AC.",
+      "durationMs": 4300,
+      "targetIds": ["side-ab", "side-ac", "base-bc", "equal-ab", "equal-ac"],
+      "actions": [
+        { "type": "draw", "targetIds": ["side-ab", "side-ac", "base-bc"] },
+        { "type": "reveal", "targetIds": ["equal-ab", "equal-ac"] }
+      ]
+    },
+    {
+      "id": "equal-base-angles",
+      "phase": "explore",
+      "narration": "Equal sides face equal angles, so angle B and angle C have the same measure.",
+      "durationMs": 5000,
+      "targetIds": ["equal-ab", "equal-ac", "angle-b", "angle-c"],
+      "actions": [{ "type": "highlight", "targetIds": ["angle-b", "angle-c"] }]
+    },
+    {
+      "id": "angle-sum",
+      "phase": "solve",
+      "narration": "The three interior angles add to one hundred eighty degrees. Remove the forty-degree vertex angle.",
+      "durationMs": 5200,
+      "targetIds": ["angle-a", "angle-b", "angle-c", "equation-sum"],
+      "actions": [
+        { "type": "highlight", "targetIds": ["angle-a", "angle-b", "angle-c"] },
+        { "type": "reveal", "targetIds": ["equation-sum"] }
+      ]
+    },
+    {
+      "id": "divide-two",
+      "phase": "solve",
+      "narration": "The two equal base angles share one hundred forty degrees, so divide by two.",
+      "durationMs": 4700,
+      "targetIds": ["angle-b", "angle-c", "equation-solve"],
+      "actions": [
+        { "type": "highlight", "targetIds": ["angle-b", "angle-c"] },
+        { "type": "reveal", "targetIds": ["equation-solve"] }
+      ]
+    },
+    {
+      "id": "answer-seventy",
+      "phase": "answer",
+      "narration": "Each base angle is seventy degrees, so angle B is seventy degrees.",
+      "durationMs": 4300,
+      "targetIds": ["angle-b", "answer"],
+      "actions": [{ "type": "reveal-answer", "targetIds": ["answer"] }]
+    },
+    {
+      "id": "recap",
+      "phase": "recap",
+      "narration": "Equal sides give equal opposite angles. Then the triangle angle sum finishes the calculation.",
+      "durationMs": 4800,
+      "targetIds": ["equal-ab", "equal-ac", "angle-a", "angle-b", "angle-c"],
+      "actions": [{ "type": "highlight", "targetIds": ["equal-ab", "equal-ac", "angle-a", "angle-b", "angle-c"] }]
+    }
+  ],
+  "modes": {
+    "fullPlay": { "beatIds": ["read-problem", "draw-triangle", "equal-base-angles", "angle-sum", "divide-two", "answer-seventy", "recap"] },
+    "stepByStep": { "beatIds": ["read-problem", "draw-triangle", "equal-base-angles", "angle-sum", "divide-two", "answer-seventy", "recap"] },
+    "finalOverview": { "visibleObjectIds": ["problem", "side-ab", "side-ac", "base-bc", "equal-ab", "equal-ac", "angle-a", "angle-b", "angle-c", "equation-sum", "equation-solve", "answer"] },
+    "teacherEvidence": {
+      "misconception": "Dividing 180 by two without subtracting the vertex angle first.",
+      "prompt": "Which angles are opposite the two equal sides?"
+    }
+  },
+  "mathChecks": [
+    { "method": "angle-sum", "expression": "(180-40)/2", "result": 70, "passed": true },
+    { "method": "substitution", "expression": "40+70+70", "result": 180, "passed": true }
+  ],
+  "review": {
+    "status": "approved",
+    "sourceChecked": true,
+    "mathChecked": true,
+    "uniqueAnswerChecked": true,
+    "visualChecked": true,
+    "mobileChecked": true
+  }
+}

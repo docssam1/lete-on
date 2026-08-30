@@ -1,0 +1,209 @@
+:root {
+  --paper: #f1eee6;
+  --sheet: #fffdf7;
+  --ink: #15201c;
+  --muted: #66706a;
+  --line: #cfc9bc;
+  --green: #245c4b;
+  --green-dark: #123c31;
+  --mint: #dcebe2;
+  --coral: #d8663b;
+  --gold: #e1a441;
+  --blue: #346d8a;
+  --shadow: 0 26px 70px rgba(28, 42, 35, .1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); background: var(--paper); font-family: "Pretendard", "Noto Sans", system-ui, sans-serif; }
+.page-animated-math button, .page-animated-math a { -webkit-tap-highlight-color: transparent; }
+.page-animated-math button:focus-visible, .page-animated-math a:focus-visible, .math-stage:focus-visible, .teacher-evidence summary:focus-visible { outline: 3px solid rgba(216, 102, 59, .45); outline-offset: 3px; }
+.page-animated-math .skip-link { position: fixed; top: -70px; left: 12px; z-index: 20; padding: 11px 14px; color: #fff; background: var(--ink); }
+.page-animated-math .skip-link:focus { top: 12px; }
+.page-animated-math .shell { width: min(1220px, calc(100% - 48px)); margin-inline: auto; }
+.page-animated-math .eyebrow { margin: 0 0 12px; color: var(--green); font-size: .71rem; font-weight: 900; letter-spacing: .15em; }
+
+.page-animated-math .site-header { position: relative; z-index: 4; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: 0 max(24px, calc((100vw - 1220px) / 2)); border-bottom: 1px solid rgba(21, 32, 28, .16); background: rgba(241, 238, 230, .96); }
+.page-animated-math .site-header .brand { display: inline-flex; align-items: center; min-height: 58px; }
+.page-animated-math .site-header nav { display: flex; justify-self: end; gap: 22px; }
+.page-animated-math .site-header nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-size: .79rem; font-weight: 800; text-decoration: none; }
+.page-animated-math .status-chip { padding: 7px 11px; border: 1px solid var(--green); border-radius: 999px; color: var(--green-dark); background: var(--mint); font-size: .66rem; font-weight: 900; letter-spacing: .06em; }
+
+.lesson-hero { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; align-items: end; padding-block: 84px 60px; }
+.lesson-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.4rem, 7.5vw, 7.4rem); font-weight: 500; line-height: .9; letter-spacing: -.064em; }
+.lesson-hero h1 span { color: var(--green); }
+.hero-copy { max-width: 720px; margin: 30px 0 0; color: #4d5752; font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.8; }
+.hero-proof { display: grid; align-self: stretch; border-block: 1px solid var(--ink); }
+.hero-proof p { display: grid; grid-template-columns: 100px 1fr; gap: 15px; align-items: baseline; margin: 0; padding: 18px 4px; border-bottom: 1px solid var(--line); }
+.hero-proof p:last-child { border-bottom: 0; }
+.hero-proof strong { font: 500 1.25rem Georgia, serif; }
+.hero-proof span { color: var(--muted); font-size: .78rem; }
+
+.lesson-switcher { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 30px; align-items: end; padding: 34px 0 24px; border-top: 1px solid var(--ink); }
+.lesson-switcher h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 500; letter-spacing: -.035em; }
+.lesson-tabs { display: flex; gap: 8px; }
+.lesson-tab { min-height: 48px; padding: 11px 16px; border: 1px solid var(--ink); color: var(--ink); background: transparent; font: 850 .78rem inherit; cursor: pointer; }
+.lesson-tab[aria-selected="true"] { color: #fff; border-color: var(--green-dark); background: var(--green-dark); }
+
+.lesson-shell { padding-bottom: 74px; }
+.problem-card { padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line); background: var(--sheet); box-shadow: var(--shadow); }
+.problem-heading { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.problem-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(2rem, 4.4vw, 4.2rem); font-weight: 500; line-height: 1; letter-spacing: -.045em; }
+.concept-chip { flex: 0 0 auto; padding: 8px 11px; border: 1px solid #93aea1; color: var(--green-dark); background: var(--mint); font-size: .72rem; font-weight: 850; }
+.problem-label { margin: 27px 0 8px; color: var(--coral); font-size: .69rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+.problem-copy { max-width: 930px; margin: 0; font: 500 clamp(1.18rem, 2vw, 1.5rem)/1.65 Georgia, serif; }
+
+.learning-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 22px; align-items: start; margin-top: 22px; }
+.stage-card, .steps-card { border: 1px solid var(--line); background: var(--sheet); }
+.stage-card { min-width: 0; box-shadow: var(--shadow); }
+.stage-toolbar { display: flex; justify-content: space-between; gap: 20px; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.stage-toolbar > div { display: grid; gap: 3px; }
+.stage-toolbar > .lesson-options { display: flex; align-items: end; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.mode-label { color: var(--muted); font-size: .62rem; font-weight: 900; letter-spacing: .13em; }
+.stage-toolbar strong { font-size: .83rem; }
+.compact-select { display: grid; gap: 3px; color: var(--muted); font-size: .6rem; font-weight: 900; letter-spacing: .07em; text-transform: uppercase; }
+.compact-select select { min-width: 84px; min-height: 44px; padding: 7px 9px; border: 1px solid var(--line); color: var(--ink); background: #fff; font: 800 .72rem inherit; }
+.quiet-button { min-width: 88px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--green); color: var(--green-dark); background: var(--mint); font: 850 .75rem inherit; cursor: pointer; }
+.quiet-button[aria-pressed="false"] { color: var(--muted); border-color: var(--line); background: transparent; }
+
+.math-stage { position: relative; display: grid; min-height: 470px; overflow: hidden; place-items: center; padding: 30px; background-color: #fffef9; background-image: linear-gradient(rgba(36, 92, 75, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(36, 92, 75, .055) 1px, transparent 1px); background-size: 24px 24px; }
+#scene-root { width: min(100%, 760px); }
+.scene-object { opacity: 0; transition: opacity .38s ease, transform .38s ease, filter .25s ease, background-color .25s ease, color .25s ease; }
+.scene-object.is-visible { opacity: 1; }
+.scene-object.is-active { filter: drop-shadow(0 0 9px rgba(216, 102, 59, .46)); }
+.scene-object.is-active:not(line):not(path) { color: var(--ink); }
+
+.ratio-scene { display: grid; gap: 28px; width: 100%; }
+.ratio-row { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 15px; align-items: center; }
+.ratio-row-label { display: grid; gap: 4px; color: var(--green-dark); font-size: .79rem; font-weight: 900; }
+.ratio-row-label span { color: var(--muted); font-size: .66rem; font-weight: 700; }
+.ratio-bar { display: grid; overflow: hidden; border: 2px solid var(--green-dark); }
+.ratio-bar.four { grid-template-columns: repeat(4, 1fr); }
+.ratio-bar.five { grid-template-columns: repeat(5, 1fr); }
+.ratio-cell { display: grid; min-height: 82px; place-items: center; border-right: 1px solid var(--green-dark); background: #eef4f0; font: 700 1.2rem Georgia, serif; transform: translateY(12px); transition-delay: calc(var(--order) * 85ms); }
+.ratio-cell:last-child { border-right: 0; }
+.ratio-cell.is-visible { transform: translateY(0); }
+.ratio-cell.first { background: #f3c3ad; }
+.ratio-cell.is-active { background: #f0a783; }
+.ratio-equation, .ratio-answer { display: grid; min-height: 72px; place-items: center; padding: 12px; border: 1px solid var(--line); background: #fff; font: 600 1.18rem Georgia, serif; transform: translateY(10px); }
+.ratio-answer { min-width: 122px; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.42rem; }
+
+.geometry-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
+.geo-line { fill: none; stroke: var(--green-dark); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset .8s ease, opacity .35s ease, stroke .25s ease, filter .25s ease; }
+.scene-object.is-visible .geo-line { stroke-dashoffset: 0; }
+.scene-object.is-active .geo-line, .scene-object.is-active .geo-arc, .scene-object.is-active .geo-mark { stroke: var(--coral); }
+.geo-mark { fill: none; stroke: var(--green-dark); stroke-width: 5; stroke-linecap: round; }
+.geo-arc { fill: none; stroke: var(--blue); stroke-width: 5; stroke-linecap: round; }
+.geo-label { fill: var(--ink); font: 800 22px "Noto Sans", system-ui, sans-serif; }
+.geo-angle-label { fill: var(--blue); font: 800 20px "Noto Sans", system-ui, sans-serif; }
+.geo-equations { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; margin-top: 12px; }
+.geo-equation, .geo-answer { display: grid; min-height: 60px; place-items: center; padding: 10px; border: 1px solid var(--line); background: #fff; font: 600 1.08rem Georgia, serif; transform: translateY(10px); }
+.geo-answer { min-width: 110px; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.4rem; }
+
+.narration-panel { min-height: 128px; padding: 22px 24px; border-top: 1px solid var(--line); background: #f6f2e9; }
+.step-count { color: var(--coral); font-size: .67rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.narration-panel p { max-width: 760px; margin: 9px 0 0; font-size: 1rem; line-height: 1.72; }
+.progress-track { height: 5px; background: #dbd6cc; }
+.progress-track span { display: block; width: 0; height: 100%; background: var(--coral); transition: width .3s ease; }
+.lesson-controls { display: grid; grid-template-columns: auto minmax(160px, 1fr) auto auto auto; gap: 9px; padding: 16px 18px; }
+.control-button { min-height: 48px; padding: 10px 15px; border: 1px solid var(--ink); background: transparent; font: 850 .77rem inherit; cursor: pointer; }
+.control-button.primary { color: #fff; border-color: var(--green-dark); background: var(--green-dark); }
+.control-button.overview { color: var(--green-dark); border-color: #7f9e91; background: var(--mint); }
+.control-button:disabled { cursor: not-allowed; opacity: .38; }
+
+.steps-card { position: sticky; top: 18px; max-height: calc(100vh - 36px); overflow: auto; }
+.steps-heading { padding: 22px; border-bottom: 1px solid var(--line); }
+.steps-heading h2 { margin: 0; font-family: Georgia, serif; font-size: 1.65rem; font-weight: 500; }
+.steps-heading > p:last-child { margin: 12px 0 0; color: var(--muted); font-size: .8rem; line-height: 1.58; }
+.step-list { margin: 0; padding: 0; list-style: none; }
+.step-button { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 11px; width: 100%; min-height: 64px; padding: 13px 16px; border: 0; border-bottom: 1px solid var(--line); color: var(--ink); background: transparent; text-align: left; cursor: pointer; }
+.step-button:hover { background: #f5f1e8; }
+.step-button[aria-current="step"] { color: #fff; background: var(--green-dark); }
+.step-number { font: 500 .95rem Georgia, serif; }
+.step-copy { display: grid; gap: 3px; }
+.step-copy strong { font-size: .75rem; }
+.step-copy small { color: inherit; font-size: .66rem; line-height: 1.4; opacity: .72; }
+.lesson-transcript { margin: 0; padding: 16px 20px 20px 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; line-height: 1.55; }
+.lesson-transcript li { margin: 5px 0; }
+.lesson-transcript li.is-current { color: var(--ink); font-weight: 800; }
+.captions-off .narration-panel, .captions-off .lesson-transcript { display: none; }
+
+.teacher-evidence { margin-top: 22px; border: 1px solid var(--ink); background: var(--sheet); }
+.teacher-evidence summary { min-height: 54px; padding: 17px 20px; font-size: .8rem; font-weight: 900; cursor: pointer; }
+.teacher-evidence[open] summary { color: #fff; background: var(--ink); }
+.evidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.evidence-grid section { padding: 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.evidence-grid section:nth-child(even) { border-right: 0; }
+.evidence-grid span { color: var(--green); font-size: .64rem; font-weight: 900; letter-spacing: .12em; }
+.evidence-grid p, .evidence-grid ul { margin: 10px 0 0; font-size: .86rem; line-height: 1.68; }
+.evidence-grid ul { padding-left: 20px; }
+.lesson-note { padding-bottom: 72px; }
+.lesson-note p { margin: 0; padding: 18px 20px; border-left: 4px solid var(--coral); color: #594a42; background: #f3dfd2; line-height: 1.7; }
+.page-animated-math .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 25px max(24px, calc((100vw - 1220px) / 2)); border-top: 1px solid var(--line); color: var(--muted); font-size: .76rem; }
+.page-animated-math .site-footer a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-weight: 850; }
+
+@media (max-width: 980px) {
+  .lesson-hero { grid-template-columns: 1fr; }
+  .hero-proof { max-width: 520px; }
+  .lesson-switcher { grid-template-columns: 1fr; }
+  .learning-layout { grid-template-columns: 1fr; }
+  .steps-card { position: static; max-height: none; }
+  .step-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .page-animated-math .shell { width: min(100% - 28px, 1220px); }
+  .page-animated-math .site-header { grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding-inline: 14px; }
+  .page-animated-math .site-header nav { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; gap: 4px; overflow-x: auto; border-top: 1px solid rgba(21, 32, 28, .12); }
+  .page-animated-math .site-header nav a { flex: 0 0 auto; padding: 0 9px; font-size: .73rem; }
+  .page-animated-math .status-chip { font-size: .6rem; }
+  .lesson-hero { gap: 34px; padding-block: 56px 42px; }
+  .lesson-hero h1 { font-size: clamp(2.6rem, 14vw, 4.5rem); line-height: .96; }
+  .lesson-switcher { padding-top: 28px; }
+  .lesson-tabs { display: grid; grid-template-columns: 1fr 1fr; }
+  .problem-heading { display: grid; }
+  .concept-chip { justify-self: start; }
+  .math-stage { min-height: 390px; padding: 20px 14px; }
+  .ratio-row { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
+  .ratio-cell { min-height: 66px; font-size: .95rem; }
+  .geo-equations { grid-template-columns: 1fr 1fr; }
+  .ratio-answer, .geo-answer { grid-column: 1 / -1; min-height: 58px; }
+  .lesson-controls { grid-template-columns: 1fr 1fr; }
+  .control-button.primary, .control-button.overview { grid-column: span 2; }
+  .step-list { grid-template-columns: 1fr; }
+  .evidence-grid { grid-template-columns: 1fr; }
+  .evidence-grid section, .evidence-grid section:nth-child(even) { border-right: 0; }
+  .page-animated-math .site-footer { display: grid; padding-inline: 14px; }
+}
+
+@media (max-width: 390px) {
+  .lesson-tabs { grid-template-columns: 1fr; }
+  .hero-proof p { grid-template-columns: 90px 1fr; }
+  .problem-card { padding: 24px 18px; }
+  .problem-heading h2 { font-size: 2rem; }
+  .ratio-row { grid-template-columns: 1fr; }
+  .ratio-row-label { grid-template-columns: auto 1fr; align-items: baseline; }
+  .math-stage { min-height: 410px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scene-object, .geo-line, .progress-track span { transition: none !important; }
+  .geo-line { stroke-dashoffset: 0; }
+}
+
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  body.page-animated-math { background: #fff; }
+  .page-animated-math .site-header, .lesson-hero, .lesson-switcher, .stage-toolbar, .lesson-controls, .progress-track, .steps-card, .teacher-evidence, .lesson-note, .site-footer { display: none !important; }
+  .page-animated-math .shell { width: 100%; }
+  .lesson-shell { padding: 0; }
+  .problem-card, .stage-card { box-shadow: none; break-inside: avoid; }
+  .learning-layout { display: block; margin-top: 8mm; }
+  .math-stage { min-height: 0; padding: 8mm; background: #fff; }
+  .scene-object { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+  .geo-line { stroke-dashoffset: 0 !important; transition: none !important; }
+  .narration-panel { display: block !important; min-height: 0; padding: 5mm 0 0; background: #fff; }
+  .narration-panel .step-count { display: none; }
+  .narration-panel p { margin: 0; font-size: 10pt; }
+}

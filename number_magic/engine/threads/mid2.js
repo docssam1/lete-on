@@ -173,7 +173,11 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         zh: `单项式相乘：系数乘系数，字母部分用指数法则合并`
       },
       tex: `${monoTex(c1, m, false)} \\times ${monoTex(c2, n, true)} = \\square x^{\\square}`,
-      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
+      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      /* 개념 애니메이션용 장면 필드 (개념애니-설계.md §4-1) — 계수·지수가
+         monoTex()로 만든 문자열 안에만 있어서 "두 표기를 나란히"를 그릴 수
+         없었다. tex 파싱 금지라 지역변수를 그대로 내보낸다. 기존 반환값 불변. */
+      scene: { archetype: 'notation', op: 'mul', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
     };
   }
 
@@ -190,7 +194,8 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         zh: `单项式相除：系数除以系数，字母部分用指数法则相减`
       },
       tex: `${monoTex(c1, m, false)} \\div ${monoTex(c2, n, true)} = \\square x^{\\square}`,
-      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
+      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      scene: { archetype: 'notation', op: 'div', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
     };
   }
 

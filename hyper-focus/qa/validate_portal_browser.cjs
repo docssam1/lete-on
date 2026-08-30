@@ -24,6 +24,7 @@ async function installStudentFixture(page) {
 
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
+  assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
   await page.locator("#loginName").fill(QA_STUDENT);
   await page.locator("#loginCode").fill(QA_CODE);
   await page.locator("#loginForm button[type=submit]").click();

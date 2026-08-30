@@ -130,6 +130,17 @@ AD8:{ name:{ko:'여러 수 덧셈(짝 묶기)',en:'Multi-add (pairing)',zh:'多�
   levels:[{id:1,label:{ko:'4개 수',en:'4 terms',zh:'四个数'},params:{terms:4}},
           {id:2,label:{ko:'5~6개 수',en:'5-6 terms',zh:'五六个数'},params:{terms:6}},
           {id:3,label:{ko:'두 자리 포함',en:'with 2-digit',zh:'含两位数'},params:{terms:5,twoDigit:true}}] },
+/* AD10 — 연이은 덧셈·뺄셈. 2026-08-29 신규(빈 곳 메우기). AD8은 덧셈만 내는
+   짝 묶기 전략 유형이고 MX1은 레벨1부터 곱셈이 섞이는 초5 유형이라,
+   `8-3+2` 같은 작은 수 세 항 혼합 덧뺄이 어느 스레드에도 없었다. */
+AD10:{ name:{ko:'연이은 덧셈·뺄셈',en:'Add & subtract in a row',zh:'连加连减'}, gen:'ad10_chainAddSub', prereq:['AD1','SB1'],
+  concept:{ko:'덧셈과 뺄셈이 섞여 있으면 앞에서부터 차례로 계산해요. 8−3+2는 먼저 8−3=5, 그다음 5+2=7이에요.',
+    en:'When adding and subtracting are mixed, work from left to right. For 8−3+2, first 8−3=5, then 5+2=7.',
+    zh:'加法和减法混在一起时，从前往后依次计算。8−3+2先算8−3=5，再算5+2=7。'},
+  widgets:['steps','cubes','numpad'],
+  levels:[{id:1,label:{ko:'세 수(10까지)',en:'3 numbers (to 10)',zh:'三个数(到10)'},params:{terms:3,max:10}},
+          {id:2,label:{ko:'세 수(20까지)',en:'3 numbers (to 20)',zh:'三个数(到20)'},params:{terms:3,max:20,cross:true}},
+          {id:3,label:{ko:'네 수(20까지)',en:'4 numbers (to 20)',zh:'四个数(到20)'},params:{terms:4,max:20,cross:true}}] },
 
 /* ── SB 뺄셈 ───────────────────────────── */
 SB1:{ name:{ko:'한 자리 뺄셈',en:'1-digit −',zh:'一位减法'}, gen:'sb1_sub1d', prereq:['NS2'],
@@ -313,12 +324,14 @@ DV5:{ name:{ko:'두 자리로 나누기',en:'÷2-digit',zh:'除以两位数'}, g
   levels:[{id:1,label:{ko:'2d÷2d',en:'2d÷2d',zh:'两位除两位'},params:{d:2}},
           {id:2,label:{ko:'3d÷2d',en:'3d÷2d',zh:'三位除两位'},params:{d:3}}] },
 DV6:{ name:{ko:'배수판별법',en:'Divisibility rules',zh:'整除判别'}, gen:'dv6_divisibility', prereq:['ML4'],
-  concept:{ko:'나눠 보지 않아도 배수인지 알 수 있어요. 끝자리가 짝수면 2의 배수, 0이나 5면 5의 배수, 각 자리 숫자의 합이 3의 배수면 3의 배수예요.',
-    en:'You can spot multiples without dividing. Even last digit means a multiple of 2, ending in 0 or 5 means 5, and digits summing to a multiple of 3 means 3.',
-    zh:'不用真的去除也能判断倍数。末位是偶数就是2的倍数，末位是0或5就是5的倍数，各位数字之和是3的倍数就是3的倍数。'},
+  concept:{ko:'나눠 보지 않아도 배수인지 알 수 있어요. 끝자리가 짝수면 2의 배수, 0이나 5면 5의 배수, 각 자리 숫자의 합이 3의 배수면 3의 배수예요. 7은 뒷자리를 떼고 그 2배를 남은 수에서 빼면 되고(203 → 20−6=14, 7의 배수!), 11은 홀수번째 자리의 합과 짝수번째 자리의 합의 차를 봐요(8195 → 17−6=11, 11의 배수!).',
+    en:'You can spot multiples without dividing. Even last digit means a multiple of 2, ending in 0 or 5 means 5, and digits summing to a multiple of 3 means 3. For 7, drop the last digit and subtract twice it (203 → 20−6=14, a multiple of 7!). For 11, take the difference between the odd-place and even-place digit sums (8195 → 17−6=11, a multiple of 11!).',
+    zh:'不用真的去除也能判断倍数。末位是偶数就是2的倍数，末位是0或5就是5的倍数，各位数字之和是3的倍数就是3的倍数。判断7时，去掉末位再减去它的2倍（203 → 20−6=14，是7的倍数！）；判断11时，看奇数位之和与偶数位之和的差（8195 → 17−6=11，是11的倍数！）。'},
   widgets:['missing','numpad'],
   levels:[{id:1,label:{ko:'2·5·10',en:'2,5,10',zh:'2·5·10'},params:{rules:[2,5,10]}},
-          {id:2,label:{ko:'3·6·9',en:'3,6,9',zh:'3·6·9'},params:{rules:[3,6,9]}}] },
+          {id:2,label:{ko:'3·6·9',en:'3,6,9',zh:'3·6·9'},params:{rules:[3,6,9]}},
+          {id:3,label:{ko:'7 — 뒷자리 2배 빼기',en:'7 — subtract twice the last digit',zh:'7 — 减末位的2倍'},params:{mode:'rule7'}},
+          {id:4,label:{ko:'11 — 홀·짝 자리의 차',en:'11 — odd vs even place difference',zh:'11 — 奇偶位之差'},params:{mode:'rule11'}}] },
 DV7:{ name:{ko:'약수·배수·최대공약·최소공배',en:'Factors, GCD & LCM',zh:'因数倍数'}, gen:'dv7_gcdLcm', prereq:['DV6'],
   concept:{ko:'나누어떨어지게 하는 수가 약수, 몇 배 한 수가 배수예요. 두 수의 공통 약수 중 가장 큰 것이 최대공약수예요.',
     en:'A divisor divides with no remainder, and a multiple is the number times something. The largest shared divisor is the greatest common divisor.',
@@ -363,12 +376,16 @@ FR4:{ name:{ko:'이분모 덧·뺄',en:'Unlike denominators ±',zh:'异分母加
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'진분수',en:'proper',zh:'真分数'},params:{mixed:false}},
           {id:2,label:{ko:'대분수',en:'mixed',zh:'带分数'},params:{mixed:true}}] },
-FR5:{ name:{ko:'약분·기약분수',en:'Simplifying',zh:'约分'}, gen:'fr5_simplify', prereq:['DV7'],
-  concept:{ko:'분자와 분모를 같은 수로 나누는 것이 약분이에요. 더 나눌 수 없을 때가 기약분수로, 6/8은 3/4가 돼요.',
-    en:'Dividing numerator and denominator by the same number is reducing. When no further division is possible it is in lowest terms, so 6/8 becomes 3/4.',
-    zh:'分子分母同时除以一个数就是约分。不能再约时就是最简分数，6/8约成3/4。'},
+/* 약분과 통분은 초5의 한 단원이고 방향만 반대인 같은 조작이라 한 스레드에 둔다.
+   통분 레벨은 2026-08-29 신규 — FR4가 이분모 덧뺄을 하며 속으로 통분하고 있었을 뿐
+   통분 자체를 묻는 유형이 없었다. prereq(DV7)가 최소공배수까지 이미 대 준다. */
+FR5:{ name:{ko:'약분·통분',en:'Reducing & common denominators',zh:'约分与通分'}, gen:'fr5_simplify', prereq:['DV7'],
+  concept:{ko:'분자와 분모를 같은 수로 나누는 것이 약분, 같은 수를 곱해 분모를 맞추는 것이 통분이에요. 6/8은 약분하면 3/4이고, 1/2과 1/3은 통분하면 3/6과 2/6이에요.',
+    en:'Dividing numerator and denominator by the same number is reducing; multiplying both to match denominators is finding a common denominator. 6/8 reduces to 3/4, and 1/2 and 1/3 become 3/6 and 2/6.',
+    zh:'分子分母同除以一个数是约分，同乘一个数把分母变一样是通分。6/8约分成3/4，1/2和1/3通分成3/6和2/6。'},
   widgets:['steps','numpad'],
-  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
+  levels:[{id:1,label:{ko:'약분·기약분수',en:'reduce to lowest terms',zh:'约分'},params:{}},
+          {id:2,label:{ko:'통분(최소공배수)',en:'common denominator (LCM)',zh:'通分(最小公倍数)'},params:{mode:'common'}}] },
 FR6:{ name:{ko:'분수 곱셈',en:'Fraction ×',zh:'分数乘法'}, gen:'fr6_frMul', prereq:['FR5','ML6'],
   concept:{ko:'분자는 분자끼리, 분모는 분모끼리 곱해요. 대분수가 있으면 먼저 가분수로 바꿔서 곱해요.',
     en:'Multiply numerators together and denominators together. Turn any mixed number into an improper fraction first.',
@@ -406,11 +423,14 @@ DC2:{ name:{ko:'소수 곱셈',en:'Decimal ×',zh:'小数乘法'}, gen:'dc2_decM
   widgets:['steps','decimal'],
   levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
 DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_decDiv', prereq:['DV5','DC2'],
-  concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요.',
-    en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3.',
-    zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。'},
+  concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요. 자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 몫을 소수로 이어 나눠요 — 3÷4는 0.75예요.',
+    en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3. When whole numbers do not divide evenly, carry on instead of stopping at a remainder — 3÷4 is 0.75.',
+    zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。整数相除除不尽时，不要停在余数上，把商继续写成小数——3÷4=0.75。'},
   widgets:['steps','decimal'],
-  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
+  levels:[{id:1,label:{ko:'(소수)÷(자연수)',en:'decimal ÷ whole',zh:'小数÷整数'},params:{}},
+          /* 2026-08-29 신규 — 레벨1은 몫이 늘 `0.□` 꼴이라 3÷4=0.75 같은
+             (자연수)÷(자연수)가 어디에도 없었다. */
+          {id:2,label:{ko:'몫이 소수인 (자연수)÷(자연수)',en:'whole ÷ whole, decimal quotient',zh:'整数÷整数(商是小数)'},params:{mode:'natural'}}] },
 
 /* ── MX 혼합 ───────────────────────────── */
 MX1:{ name:{ko:'사칙 혼합계산',en:'Order of operations',zh:'四则混合'}, gen:'mx1_orderOps', prereq:['ML7','DV4'],
@@ -429,12 +449,17 @@ MX2:{ name:{ko:'수열의 합',en:'Series sums',zh:'数列求和'}, gen:'mx2_ser
   levels:[{id:1,label:{ko:'1~n 합',en:'1..n',zh:'1~n'},params:{mode:'nat'}},
           {id:2,label:{ko:'홀·짝의 합',en:'odd/even',zh:'奇偶数和'},params:{mode:'oddEven'}}] },
 MX3:{ name:{ko:'비와 비율·백분율',en:'Ratio & percent',zh:'比与百分率'}, gen:'mx3_ratio', prereq:['FR8','DC2'],
-  concept:{ko:'비율은 기준에 대해 얼마인지를 나타내요. 백분율은 비율에 100을 곱한 것으로 0.25는 25%예요.',
-    en:'A ratio tells how much compared with a base amount. A percentage is that ratio times 100, so 0.25 is 25%.',
-    zh:'比率表示相对于基准量是多少。百分率是比率乘100，0.25就是25%。'},
+  concept:{ko:'비율은 기준량에 대해 비교하는 양이 얼마인지를 나타내요. 비율 = 비교하는 양 ÷ 기준량이고, 백분율은 비율에 100을 곱한 것으로 0.25는 25%예요. 비는 공약수로 나누어 가장 간단한 자연수의 비로 만들어요 — 12:18은 2:3이에요.',
+    en:'A ratio tells how much the compared amount is against the base amount: ratio = compared ÷ base. A percentage is that ratio times 100, so 0.25 is 25%. Divide both terms by a common factor to reach the simplest whole-number ratio — 12:18 becomes 2:3.',
+    zh:'比率表示比较量相对于基准量是多少：比率 = 比较量 ÷ 基准量。百分率是比率乘100，0.25就是25%。把比的两项同除以公因数就得到最简整数比——12:18化成2:3。'},
   widgets:['steps','decimal'],
+  /* 레벨 3~5는 2026-08-29 신규. 비율→백분율·할푼리만 있어서 정작 비 자체를 간단히
+     하는 것도, 비율 정의(비교하는 양 ÷ 기준량)를 양쪽에서 되짚는 것도 없었다. */
   levels:[{id:1,label:{ko:'비율→백분율',en:'to %',zh:'化百分数'},params:{mode:'toPct'}},
-          {id:2,label:{ko:'할푼리',en:'K. decimal ratio',zh:'割分厘'},params:{mode:'hpl'}}] },
+          {id:2,label:{ko:'할푼리',en:'K. decimal ratio',zh:'割分厘'},params:{mode:'hpl'}},
+          {id:3,label:{ko:'가장 간단한 자연수의 비',en:'simplest whole-number ratio',zh:'最简整数比'},params:{mode:'simpleRatio'}},
+          {id:4,label:{ko:'비교하는 양 구하기',en:'find the compared amount',zh:'求比较量'},params:{mode:'compQty'}},
+          {id:5,label:{ko:'기준량 구하기',en:'find the base amount',zh:'求基准量'},params:{mode:'baseQty'}}] },
 MX4:{ name:{ko:'제곱근',en:'Square roots',zh:'平方根'}, gen:'mx4_sqrt', prereq:['ML11'],
   concept:{ko:'제곱해서 그 수가 되는 수가 제곱근이에요. 12×12=144이므로 144의 제곱근은 12예요.',
     en:'A square root is the number that gives the value when multiplied by itself. Since 12×12=144, the square root of 144 is 12.',
@@ -690,12 +715,14 @@ EL4:{ name:{ko:'평균',en:'Average',zh:'平均数'}, gen:'el_average', prereq:[
           {id:2,label:{ko:'다섯 수의 평균',en:'average of 5',zh:'五个数的平均'},params:{mode:'find',n:5}},
           {id:3,label:{ko:'평균으로 빠진 수 찾기',en:'find the missing number',zh:'由平均数求缺失的数'},params:{mode:'missing'}}] },
 EL5:{ name:{ko:'비례식',en:'Proportions',zh:'比例式'}, gen:'el_ratio', prereq:['MX3'],
-  concept:{ko:'비례식은 겉보기엔 다른 두 비가 사실은 같다고 말해줘요. 바깥쪽 두 수를 곱한 값과 안쪽 두 수를 곱한 값은 항상 같아요.',
-    en:'A proportion says two ratios that look different are actually equal — the product of the outer two numbers always equals the product of the inner two.',
-    zh:'比例式是说两个看起来不同的比其实相等。外项之积永远等于内项之积。'},
+  concept:{ko:'비례식은 겉보기엔 다른 두 비가 사실은 같다고 말해줘요. 바깥쪽 두 수를 곱한 값과 안쪽 두 수를 곱한 값은 항상 같아요. 전체를 주어진 비로 나누는 것은 비례배분이라고 해요 — 600을 2:3으로 나누면 240과 360이에요.',
+    en:'A proportion says two ratios that look different are actually equal — the product of the outer two numbers always equals the product of the inner two. Splitting a whole by a given ratio is proportional sharing: 600 split 2:3 gives 240 and 360.',
+    zh:'比例式是说两个看起来不同的比其实相等。外项之积永远等于内项之积。把总量按给定的比分开叫按比例分配——600按2:3分开，得240和360。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'빈 항 구하기',en:'find the term',zh:'求空项'},params:{mode:'direct'}},
-          {id:2,label:{ko:'외항·내항의 곱',en:'cross products',zh:'外项内项之积'},params:{mode:'steps'}}] },
+          {id:2,label:{ko:'외항·내항의 곱',en:'cross products',zh:'外项内项之积'},params:{mode:'steps'}},
+          /* 2026-08-29 신규 — 비례식 바로 다음 단원인데 문제은행에 없었다. */
+          {id:3,label:{ko:'비례배분',en:'proportional sharing',zh:'按比例分配'},params:{mode:'distribute'}}] },
 
 /* ── CHALLENGE 신규 13종 (고급-목차.md 신규분, 2026-08-25 Phase 2) ──
    경시의 탑(과정 26~28) + 몰아주기 곱/어림하기/큰 수 정복(과정 19·24 보강)용.
@@ -1639,6 +1666,37 @@ NL16:{ name:{ko:'탤리 읽기와 규칙',en:'Read Tally & Patterns',zh:'读计�
   levels:[{id:1,label:{ko:'탤리 읽기(쉬움)',en:'Read the tally (easy)',zh:'读计数符号(简单)'},params:{mode:'read',level:'practice'}},
           {id:2,label:{ko:'탤리 읽기(어려움)',en:'Read the tally (hard)',zh:'读计数符号(较难)'},params:{mode:'read',level:'main'}},
           {id:3,label:{ko:'화살표 규칙',en:'Arrow pattern rule',zh:'箭头规律'},params:{mode:'arrow',level:'main'}}] },
+
+/* ── WP 문장제 (문장제-설계.md) ─────────────────────
+   상황 하나(주체·대상·n1·n2·연산·의미유형·단위)에서 두 스레드가 파생된다.
+   생성기는 engine/threads/wp.js. 의미 유형은 합병·첨가·구잔·구차 + 배수·등분·포함. */
+WP1:{ name:{ko:'문장제 — 문제 이해',en:'Word Problems — Understand',zh:'应用题 — 理解题意'},
+  gen:'wp1_understand', prereq:['AD1','SB1'],
+  concept:{ko:'문장제는 계산부터 하는 게 아니라 먼저 읽어요. 주어진 것(문제가 알려 준 수)과 구하는 것(문제가 묻는 것)을 갈라 보면 무엇을 해야 할지 보여요. "민수는 8개, 지우는 3개 가지고 있어요"는 주어진 것이고, "민수는 지우보다 몇 개 더 많을까요?"가 구하는 것이에요.',
+    en:'A word problem starts with reading, not calculating. Separate what is given (the numbers the problem tells you) from what is asked (what the problem wants). "Minsu has 8 and Jiwoo has 3" is given; "how many more does Minsu have?" is what is asked.',
+    zh:'应用题要先读，不是先算。把已知的（题目给出的数）和要求的（题目问的）分开，就能看清该做什么。"民秀有8个，智友有3个"是已知的，"民秀比智友多几个"才是要求的。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP3:{ name:{ko:'문장제 — 연산 찾기',en:'Word Problems — Choose the Operation',zh:'应用题 — 选择运算'},
+  gen:'wp3_operation', prereq:['WP1'],
+  concept:{ko:'낱말만 보고 연산을 고르면 걸려요. "더 받았어요"는 더하기지만 "~보다 몇 개 더 많을까요?"는 둘 다 \'더\'가 들어가도 빼기예요. 상황이 늘어나는지, 줄어드는지, 몇 씩 몇 묶음인지를 보고 골라요.',
+    en:'Choosing an operation by keywords alone will trip you up. "Got more" means adding, but "how many more than" is subtracting even though both say "more". Look at the situation: is it growing, shrinking, or so many in each of so many groups?',
+    zh:'只看词语选运算会上当。"又得到了"是加法，但"比…多几个"虽然也有"多"，却要用减法。要看情况：是变多、变少，还是每几个一组、共几组。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP4:{ name:{ko:'문장제 — 식으로 나타내기',en:'Word Problems — Write the Equation',zh:'应用题 — 列算式'},
+  gen:'wp4_equation', prereq:['WP3'],
+  concept:{ko:'연산을 골랐으면 이제 식으로 옮겨요. 수를 문제에 나온 차례대로 넣는 것이 먼저예요 — "20개 중 8개를 주었다"는 8 − 20이 아니라 20 − 8이에요. 문제에 나온 수라고 다 쓰는 것도 아니에요(나이·층수는 식에 들어가지 않아요). 뺄셈 상황은 덧셈식으로도 쓸 수 있어요: "8개 더 많다"는 8 + □ = 20이에요.',
+    en:'Once you have chosen the operation, write it as a number sentence. Put the numbers in the order the problem gives them — "gave away 8 of the 20" is 20 - 8, not 8 - 20. And not every number in the story belongs in the sentence (an age or a floor number does not). A subtraction situation can also be written as an addition with a box: "8 more than" is 8 + [] = 20.',
+    zh:'选好运算以后，就要写成算式。先按题目给出的顺序填数——"20个里送出8个"是20−8，不是8−20。题目里的数也不是都要用（年龄、楼层不进算式）。减法的情况还可以写成带□的加法：“多8个”就是8+□=20。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

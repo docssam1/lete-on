@@ -4,25 +4,28 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 global.window = {};
+require("./source-inventory-4-1.js");
 require("./curriculum.js");
 require("./generators.js");
 require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const types = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
+const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,
   unitId: unit.id,
   unitName: unit.name,
   subunitName: subunit.name
 })))));
+const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLocked);
 const read = filename => fs.readFileSync(path.join(__dirname, filename), "utf8");
 const failures = [];
 let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
+if (types.length !== 891) failures.push(`공개 검수 대상은 891개여야 하나 ${types.length}개입니다.`);
 
 const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : 0), 0);
 const notationCases = [

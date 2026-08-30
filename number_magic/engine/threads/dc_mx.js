@@ -10,6 +10,11 @@
 
 const { R, pick, shuffle } = NM_RNG;
 
+/* 모듈 공용 최대공약수·최소공배수 (MX3 비 유형에서 쓴다).
+   MX5 안에도 같은 이름의 지역 gcd가 있어 이름을 밑줄로 갈라 둔다. */
+function _gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ const t = b; b = a % b; a = t; } return a || 1; }
+function _lcm(a, b){ return (a / _gcd(a, b)) * b; }
+
 /* ── DC1 — 소수 덧·뺄 (1자리 · 2자리) ───────────────────────── */
 NM_TGEN['dc1_decAddSub'] = function(params, rng) {
   const places = params.places || 1;
@@ -181,6 +186,53 @@ NM_TGEN['dc2_decMul'] = function(params, rng) {
 
 /* ── DC3 — 소수 나눗셈 ────────────────────────────────────────── */
 NM_TGEN['dc3_decDiv'] = function(params, rng) {
+  /* ── 몫이 소수인 (자연수)÷(자연수) (mode:'natural') — 2026-08-29 신규 ──
+     초6. 3÷4=0.75 처럼 나누어떨어지지 않는 자연수 나눗셈을 나머지로 끝내지 않고
+     소수로 이어 나눈다. 이 스레드의 레벨1은 (소수)÷(자연수)라 몫이 늘 `0.□`
+     꼴이었고(확인함), 피제수가 자연수인 유형이 어디에도 없었다.
+
+     레벨1과 같은 `w.□` 표기를 쓴다 — 몫의 정수부를 tex에 실어 두면
+     "몫을 소수로 나타내라"는 지시가 없어도 인쇄물만으로 답의 꼴이 정해지고
+     (그냥 `3 ÷ 4 = □` 면 3/4 이나 "나머지 3"으로 답해도 할 말이 없다),
+     답이 정수로 떨어져 다칸 입력도 필요 없다.
+     소수 첫째 자리가 0인 몫(3÷40=0.075)은 `0.□`에 075를 쓸 수 없으니 뺀다. */
+  if ((params && params.mode) === 'natural') {
+    const DIVS = [2, 4, 5, 8, 16, 20, 25];
+    let n = 3, d = 4, w = 0, digits = 75;
+    for (let t = 0; t < 300; t++) {
+      d = pick(rng, DIVS);
+      n = R(rng, 1, 60);
+      if (n % d === 0) continue;                 /* 나누어떨어지면 몫이 소수가 아니다 */
+      const q1000 = (n * 1000) / d;
+      if (!Number.isInteger(q1000)) continue;    /* 소수 세 자리 안에서 끝나야 한다 */
+      const wc = Math.floor(q1000 / 1000);
+      if (wc > 9) continue;                      /* 정수부는 한 자리까지 */
+      const fs = String(q1000 % 1000).padStart(3, '0').replace(/0+$/, '');
+      if (!fs.length || fs[0] === '0') continue; /* 0.075 처럼 첫째 자리가 0인 것 제외 */
+      w = wc; digits = parseInt(fs, 10);
+      break;
+    }
+    /* 소수점 아래 자릿수만큼 10배 한 정수 나눗셈으로 되짚는 단계 —
+       3÷4 → 300÷4=75 → 0.75. 단계 tex에도 말이 들어가지 않게 둔다. */
+    const places = String(digits).length;
+    const scale  = Math.pow(10, places);
+    return {
+      prompt: {
+        ko: `${n} ÷ ${d}: 나누어떨어지지 않으면 몫을 소수로 나타내요`,
+        en: `${n} ÷ ${d}: when it does not divide evenly, write the quotient as a decimal`,
+        zh: `${n} ÷ ${d}：除不尽时，把商写成小数`
+      },
+      tex:        `${n} \\div ${d} = ${w}.\\square`,
+      answer:     digits,
+      answerType: 'steps',
+      widget:     'steps',
+      steps: [
+        { tex: `${n * scale} \\div ${d} = \\square`,                    blank: (n * scale) / d },
+        { tex: `${(n * scale) / d} \\div ${scale} = ${w}.\\square`,     blank: digits }
+      ]
+    };
+  }
+
   /* 전략: 소수 나눗셈 = 10배 → 정수 나눗셈 → ÷10
      quotient_t : 몫의 십분의 자리 값 (정수)  → 실제 몫 = quotient_t / 10
      divisor    : 제수 (정수)
@@ -394,6 +446,123 @@ NM_TGEN['mx2_series'] = function(params, rng) {
 /* ── MX3 — 비와 비율·백분율 ──────────────────────────────────── */
 NM_TGEN['mx3_ratio'] = function(params, rng) {
   const mode = params.mode || 'toPct';
+
+  /* ── 가장 간단한 자연수의 비 (mode:'simpleRatio') — 2026-08-29 신규 ──
+     초6. 자연수 비는 최대공약수로, 소수 비는 10·100을 곱해, 분수 비는
+     분모의 최소공배수를 곱해 자연수로 만든 뒤 약분한다.
+
+     ★ 유일해 주의 — `12 : 18 = □ : □` 는 답이 하나가 아니다. 2:3도 6:9도
+       등식을 만족하는데 정답키는 하나뿐이라, DV6가 겪었던 "맞게 쓴 학생이
+       틀린" 사고가 그대로 재현된다(HANDOFF 인쇄·채점 전수 점검 절).
+       인쇄물엔 tex만 나가고 printAskText는 관계식(=)이 있으면 붙지 않으므로
+       "가장 간단한"이라는 조건을 글로 붙일 수도 없다.
+       → 그래서 간단한 비의 한 항을 tex에 미리 보여 주고 나머지 한 항만 묻는다.
+         `12 : 18 = □ : 3` 의 답은 2뿐이다. 보여 주는 항이 원래 항보다 작으므로
+         "줄여서 나타내는 문제"임이 인쇄물만 봐도 드러나고, 소수·분수 비에서는
+         자연수로 고치는 과정이 그대로 남는다. 어느 항을 비울지는 매번 바꾼다. */
+  if (mode === 'simpleRatio') {
+    const kind = pick(rng, ['whole', 'dec', 'frac']);
+    let leftTex, rightTex, sa, sb;          /* sa:sb = 가장 간단한 자연수의 비 */
+
+    if (kind === 'whole') {
+      /* 서로소인 뼈대 sa:sb 를 먼저 잡고 공배수 g를 곱해 문제를 만든다 */
+      do { sa = R(rng, 1, 9); sb = R(rng, 1, 9); } while (sa === sb || _gcd(sa, sb) !== 1);
+      const g = R(rng, 2, 9);
+      leftTex  = String(sa * g);
+      rightTex = String(sb * g);
+    } else if (kind === 'dec') {
+      /* 소수 비 — 10을 곱해 자연수로 만든 뒤 약분한다. 예) 0.6 : 0.8 → 6:8 → 3:4 */
+      let x, y;
+      do { x = R(rng, 1, 9); y = R(rng, 1, 9); } while (x === y);
+      const g2 = _gcd(x, y);
+      sa = x / g2; sb = y / g2;
+      leftTex  = '0.' + x;
+      rightTex = '0.' + y;
+    } else {
+      /* 분수 비 — 분모의 최소공배수를 곱해 자연수로 만든다. 예) 1/2 : 1/3 → 3:2 */
+      const DEN = [2, 3, 4, 5, 6, 8];
+      let e1, e2, L;
+      do {
+        e1 = pick(rng, DEN); e2 = pick(rng, DEN); L = _lcm(e1, e2);
+      } while (e1 === e2 || L > 24);
+      const x2 = L / e1, y2 = L / e2;       /* 분자는 둘 다 1로 둔다(초6 표준형) */
+      const g3 = _gcd(x2, y2);
+      sa = x2 / g3; sb = y2 / g3;
+      leftTex  = `\\dfrac{1}{${e1}}`;
+      rightTex = `\\dfrac{1}{${e2}}`;
+    }
+
+    /* 두 항 중 하나만 비운다 — 남긴 항이 답을 하나로 못 박는다 */
+    const blankFirst = pick(rng, [true, false]);
+    const answer = blankFirst ? sa : sb;
+    const shown  = blankFirst ? sb : sa;
+    const tex = blankFirst
+      ? `${leftTex} : ${rightTex} = \\square : ${shown}`
+      : `${leftTex} : ${rightTex} = ${shown} : \\square`;
+
+    return {
+      prompt: {
+        ko: '가장 간단한 자연수의 비로 나타내요',
+        en: 'Write it as the simplest whole-number ratio',
+        zh: '化成最简单的整数比'
+      },
+      tex,
+      answer,
+      answerType: 'number',
+      widget:     'numpad'
+    };
+  }
+
+  /* ── 비교하는 양 / 기준량 구하기 (mode:'compQty' · 'baseQty') — 2026-08-29 신규 ──
+     초6. 비율 = (비교하는 양) ÷ (기준량) 이라는 정의를 양쪽에서 되짚는다.
+     MX3 L1이 비율→백분율만 다뤄 정작 두 양을 구하는 유형이 없었다.
+
+     tex를 정의식 그대로 쓰면(`□ ÷ 200 = 15%`) 말이 하나도 필요 없어서
+     3개 언어 어디서 인쇄해도 같은 문항이 된다 — printAskText가 한국어
+     프롬프트만 싣는 한계를 아예 피해 간다. 답도 하나로 정해진다. */
+  if (mode === 'compQty' || mode === 'baseQty') {
+    const PCTS = [4, 5, 8, 10, 12, 15, 20, 24, 25, 30, 35, 40, 45, 50, 60, 65, 70, 75, 80, 90];
+    let pct = 20, base = 100, cmp = 20;
+    for (let t = 0; t < 200; t++) {
+      pct  = pick(rng, PCTS);
+      base = R(rng, 2, 60) * 10;                 /* 20 ~ 600 */
+      if ((base * pct) % 100 !== 0) continue;    /* 비교하는 양이 자연수라야 한다 */
+      cmp = (base * pct) / 100;
+      if (cmp < 1 || cmp === base) continue;     /* 100%는 묻는 뜻이 없다 */
+      break;
+    }
+
+    if (mode === 'compQty') {
+      return {
+        prompt: {
+          ko: `기준량이 ${base}이고 비율이 ${pct}%일 때 비교하는 양을 구해요`,
+          en: `The base is ${base} and the ratio is ${pct}% — find the compared amount`,
+          zh: `基准量是${base}、比率是${pct}%，求比较量`
+        },
+        tex:        `\\square \\div ${base} = ${pct}\\,\\%`,
+        answer:     cmp,
+        answerType: 'steps',
+        widget:     'steps',
+        steps: [
+          { tex: `${base} \\times \\dfrac{${pct}}{100} = \\square`, blank: cmp }
+        ]
+      };
+    }
+    return {
+      prompt: {
+        ko: `비교하는 양이 ${cmp}이고 비율이 ${pct}%일 때 기준량을 구해요`,
+        en: `The compared amount is ${cmp} and the ratio is ${pct}% — find the base`,
+        zh: `比较量是${cmp}、比率是${pct}%，求基准量`
+      },
+      tex:        `${cmp} \\div \\square = ${pct}\\,\\%`,
+      answer:     base,
+      answerType: 'steps',
+      widget:     'steps',
+      steps: [
+        { tex: `${cmp} \\div \\dfrac{${pct}}{100} = \\square`, blank: base }
+      ]
+    };
+  }
 
   if (mode === 'toPct') {
     /* 분수 → 백분율 (%).  분모는 100으로 나누어 정수 %가 나오는 수만 선택 */

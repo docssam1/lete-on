@@ -173,7 +173,9 @@ function serve(){
         const hasVisual = !!c.querySelector('.nm-bond, .nm-b10, .nm-nl');
         const hasAsk    = !!c.querySelector('.nm-print-ask');
         const hasSteps  = !!c.querySelector('.nm-print-steps');
-        const isWord    = !!c.querySelector('.nm-print-word-blank');
+        /* 문장제는 답 줄(답: ____) 아니면 식 틀(□ ○ □ = □) 중 하나를 그린다 —
+           둘 중 아무것도 없으면 학생이 답을 쓸 자리가 인쇄물에 없다는 뜻이다. */
+        const isWord    = !!c.querySelector('.nm-print-word-blank, .nm-print-word-eq');
         if(!hasVisual && !hasAsk && !hasSteps && !isWord) res.noAsk.push(tx.slice(0, 60));
       });
       return res;

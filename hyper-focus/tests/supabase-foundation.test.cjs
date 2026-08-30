@@ -66,6 +66,10 @@ async function testLegacyAuth() {
 }
 
 function testStaticSecurityContracts() {
+  const portal = read("index.html");
+  assert.match(portal, /id="loginCode"[^>]*type="text"[^>]*autocomplete="one-time-code"/);
+  assert.doesNotMatch(portal, /id="loginCode"[^>]*type="password"/);
+
   const publicConfig = read("supabase-config.js");
   assert.match(publicConfig, /enabled:\s*true/);
   assert.match(publicConfig, /https:\/\/uqtkxhchtbcizzteuvsq\.supabase\.co/);
@@ -166,6 +170,8 @@ function testStaticSecurityContracts() {
   assert.doesNotMatch(adminEdge, /console\.(log|error)/);
 
   const diagnosis = read("diagnosis.html");
+  assert.match(diagnosis, /type="text"[^>]*id="authCode"[^>]*autocomplete="one-time-code"/);
+  assert.doesNotMatch(diagnosis, /type="password"[^>]*id="authCode"/);
   assert.match(diagnosis, /hf_import_legacy_diagnosis/);
   assert.match(diagnosis, /hf_submit_diagnosis/);
   assert.doesNotMatch(diagnosis, /from\('hf_diagnosis_attempts'\)\.insert/);
@@ -222,6 +228,8 @@ function testStaticSecurityContracts() {
   assert.match(viewer, /remoteExam\?new URLSearchParams\(\{exam:doc\.id\}\)/);
 
   const mockIndex = read("mock/index.html");
+  assert.match(mockIndex, /id="accessCode"[^>]*type="text"[^>]*autocomplete="one-time-code"/);
+  assert.doesNotMatch(mockIndex, /id="accessCode"[^>]*type="password"/);
   assert.doesNotMatch(mockIndex, /canAccess\(portalSession,'mock'\)/);
   assert.match(mockIndex, /if\(remoteMode\)exam=await secureMock\.loadExam\(examId\)/);
   assert.match(mockIndex, /secureMock\.saveAttempt\(\{attemptId:exam\.attemptId,marks\}\)/);

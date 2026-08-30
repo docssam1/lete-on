@@ -3,13 +3,21 @@
 ## Current State
 
 - Branch: `agent/hsmiddle-question-bank`
-- Local page: `http://127.0.0.1:8877/hselementary/question-bank/`
-- Total types: 640 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 632 (deterministic generator availability check)
-- Review-locked types: 8 source-complex quadrilateral types in 4-2
-- Pending types: 0
+- Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
+- Total runtime types: 950 across 6 semesters, 36 major units, and 174 subunits
+- Implemented types: 891 (deterministic runtime availability check)
+- Review-locked types: 59
+- Exact source-item mapping: 493 items: all 329 items in 4-1 plus 66 fraction, 44 triangle, 44 decimal, and 10 quadrilateral items in 4-2. Do not describe the remaining entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
+- Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Completed: all six units in grades 4, 5, and 6 for both semesters
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-08-29 4-2 Fraction Completion
+
+- Split all 66 source questions in the six fraction exploration groups into independent child-readable types. Each exploration prompt, example, and Mission now keeps its own source locator and generator branch.
+- Verified 69,300 generated questions with independent arithmetic, exhaustive candidate checks where needed, one-answer gates, and a minimum of 24 distinct prompts per type across 350 samples.
+- Structured fraction and mixed-number notation is used in problems and solutions. The PC/mobile sweep covered 132 states with zero horizontal overflow, clipping, or fraction overlap. Evidence: `E:\Codex\visualizations\2026\08\29\hse-4-2-u1-fraction-final-browser`.
+- Source handwritten arithmetic conflicts were not copied blindly. The audit records the independently recomputed value and keeps every unresolved source condition out of the public set.
 
 ## Required Standard
 
@@ -26,14 +34,14 @@
 
 ## Completed Generator Groups
 
-- Grade 4-1 unit 1: large numbers, 6 types
-- Grade 4-1 unit 2: angles, 6 types
-- Grade 4-1 unit 3: multiplication and division, 6 types
-- Grade 4-1 unit 4: plane transformations, 12 detailed types
-- Grade 4-1 unit 5: bar graphs, 6 detailed types
-- Grade 4-1 unit 6: finding rules, 6 types
-- Grade 4-2 unit 1: fraction addition and subtraction, 36 source-backed Mission types
-- Grade 4-2 unit 2: triangles, 24 source-backed Mission types
+- Grade 4-1 unit 1: 66 source items, all 66 ready; exploration groups 1 through 6 have all source-native variants
+- Grade 4-1 unit 2: 66 source items, 63 ready and 3 review-locked; angle exploration groups 1 through 4 have all source-native variants, group 5 publishes 9 and keeps 2 ambiguous items locked, and group 6 publishes 10 while keeping its contradictory Example 6-4 locked
+- Grade 4-1 unit 3: 65 source items, 64 ready and 1 review-locked; multiplication exploration groups 1 and 2 and division exploration groups 3 and 4 each have 11 source-native variants. Division exploration group 5 publishes 10 source-native variants and keeps Example 5-2 locked because the official answer page has no numeric answer. Calculation exploration group 6 publishes all 10 source items; source example 6-4 does not exist
+- Grade 4-1 unit 4: 44 source items, 35 ready and 9 review-locked; exploration group 1 publishes 10 source-native items and keeps ambiguous Mission 1 locked, exploration group 2 publishes 8 items and locks 3 ambiguous or contradictory items, exploration group 3 publishes 9 items and locks 2 ambiguous items, and exploration group 4 publishes 8 items while locking 3 source-answer conflicts
+- Grade 4-1 unit 5: 22 source items, 18 ready and 4 review-locked; bar-graph exploration group 1 has all 11 source-native variants, and group 2 publishes 7 source-native variants
+- Grade 4-1 unit 6: 66 source items, 63 ready and 3 review-locked; the public types use child-readable names and independent generators
+- Grade 4-2 unit 1: fraction addition and subtraction, 66 source-backed types covering every exploration prompt, example, and Mission
+- Grade 4-2 unit 2: triangles, all 44 source items mapped; 31 directly source-matched types ready and 13 locked for source-faithful rebuilding
 - Grade 4-2 unit 3: decimal addition and subtraction, 24 source-backed Mission types
 - Grade 4-2 unit 4: quadrilaterals, 8 types
 - Grade 4-2 unit 5: line graphs, 2 types
@@ -45,9 +53,11 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed its unit-specific regression coverage. A final deterministic availability sweep must generate every one of the 632 ready types at all three difficulty offsets across 20 seeds each. The math-notation audit covers every ready type across 50 seeds per difficulty. Graph audits reverse-check values against SVG coordinates; geometry audits enumerate answer candidates and enforce one visible, inferable answer. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed its unit-specific regression coverage. `runtime-availability-audit.js` generates all 891 runtime-ready types at three difficulty offsets across 20 seeds. The 4-1 source-native mapping has 309 ready items, and the 4-2 fraction unit adds 66 ready source-native items. The 4-2 triangle source audit maps all 44 items and currently publishes 32 source-matched types; the other 12 remain locked. Triangle-count Exploration 1 reconstructs the source's eight maximal printed segments and ten vertices, confirms 40 triangles by both vertex triples and supporting-line triples, and independently splits them into 21 using the left-side junction and 19 not using it. Example 1-1 reconstructs the source's four horizontal and eight diagonal maximal segments, confirms 32 triangles by both vertex triples and line triples, and guards the two short lower segments whose omission would incorrectly produce 30 or 28. Exploration 2 enumerates every triple on the 4-by-3 dot board, groups rotations and reflections by the same three side lengths, and confirms nine distinct obtuse triangles. Triangle-type Mission 1 remains locked because two independent coordinate audits construct all five proposed counts from zero through four under the printed conditions. Example 2-2 and Mission 2 enumerate the pentagram's five source segments and all ten intersection-based triangles, confirming five acute and five obtuse triangles. Example 2-4 and Mission 3 enumerate every valid angle pair and each confirm ten methods, including cases where one selected angle is already obtuse. Example 1-2 confirms 16 triangles containing the marked cell, and Example 1-3 independently confirms 63 and 12. Mission 4 confirms 37, Mission 5 confirms 24 rather than the handwritten 19, and Mission 6 confirms 64. The isosceles source set adds the 38cm concave perimeter, 320cm strip perimeter, 3cm short-side, and ten-point circle types; the circle type enumerates every triple and reduces rotations and reflections to four shapes. The equilateral source set now publishes its exploration, Missions 1-6, and Examples 4-1 through 4-4. The exploration exhaustively checks moving two of twelve matchsticks, finds 48 valid placements, and reduces them to five shapes under rotation and reflection. Mission 2 is independently 75 degrees, Mission 5 uses six exact equilateral triangles and `(large-small)/3`, Example 4-3 uses seven exact equilateral triangles, and Example 4-4 reflects the original rectangle across the fold line and confirms 15cm for the printed 8cm/27cm source rather than the handwritten 22cm. The 4-2 decimal unit now publishes 26 source-matched types. Its first exploration reverses a `one tenth plus grams` relation using integer grams, independently confirms the printed answer 709.3kg, and renders one tenth through the shared vertical-fraction component. Its fourth exploration counts only numbers whose fourth decimal digit is 1 through 9, independently confirming 828 source cases rather than including shorter decimals ending in zero. The other 18 handwritten, overlapping, or not-yet-verified examples remain locked. The 4-2 quadrilateral source mapping now assigns unique problem IDs to ten clean Exploration, Example, and Mission items. Example 1-2 preserves the printed 45-degree trapezoid and derives the 13cm source height from `(39-13)/2`; Mission 1 confirms the source answer `㉠ 22°, ㉡ 50°` by two complementary-angle calculations and checks each rendered slant angle from its SVG coordinates; Mission 3 independently confirms the printed 4cm distance by evaluating `2-4+6`; Mission 4 enumerates all 24 line-name assignments, permits exactly one, and verifies the rendered parallel, perpendicular, and three-line concurrence relations from SVG coordinates; Example 2-1 confirms the printed 132-degree exterior angle from 65+67 and verifies both rendered slants from SVG coordinates; Mission 6 independently confirms 138 seconds for the printed 3m + 3m path, 20 seconds per meter, and 2 seconds per 10-degree turn. The new SVGs are checked on desktop and mobile, including exact right-angle coordinates and direction labels. The unrelated distance-ratio item is locked instead of being presented as source-matched, while overlapping, cluttered, or duplicate source items are skipped. The remaining completed groups retain their dedicated audits and source gates described below.
 
-The full regression suite has 38 dedicated audits. The 2026-08-26 run passed the updated 4-2 fraction, triangle, decimal, quadrilateral, graph, and polygon audits and all shared notation, language, numeric-display, identity, and availability gates. In addition to answer checks, the bank rejects visible square-root/combinatorics wording that does not fit the elementary explanation policy, lower-unit zero labels such as `4cm 0mm`, raw SVG fractions, and long floating-point tails such as `31.400000000000002`.
+The full non-browser regression suite has 70 dedicated audits, and the 2026-08-29 final run passed all 70. The 31 currently public 4-2 triangle types passed all 62 desktop/mobile states with three generated prompts per type; final evidence, including direct problem and solution captures for Exploration 1 and Example 1-1, is stored at `E:\Codex\visualizations\2026\08\29\hse-4-2-triangle-public-31`. The matchstick exploration also passed direct desktop/mobile visual review after removing an overlong duplicate SVG title; final captures are stored at `E:\Codex\visualizations\2026\08\29\hse-4-2-u4-matchstick-direct-final`. Division-remainder, bar-graph, and plane-transformation browser evidence remains in the dated visualization folders recorded by their dedicated audits.
+
+Plane-transformation group 1 publishes 10 of 11 source items after 15,000 independent generations. Its audit verifies rectangular grid dimensions, the complete two-color motif, transformed cell and vertex coordinates, four visually distinct choices, and rendered SVG bounds. Mission 1 remains review-locked because the finished pattern does not uniquely determine which movement was used. Separate browser QA covers 40 desktop/mobile problem-and-solution states and 10 A4 PDFs; it also guards the solution SVG render path and the compact print layout that prevents a blank first page for the six-grid drawing and polygon-slide types.
 
 ## Implementation Notes
 
@@ -55,10 +65,13 @@ The full regression suite has 38 dedicated audits. The 2026-08-26 run passed the
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Elementary explanation policy: `elementary-language-audit.js` checks all 632 ready types across 100 seeds per difficulty
-- Numeric display policy: `numeric-display-audit.js` checks all 632 ready types across 100 seeds per difficulty
-- 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 36 types and 36 distinct source structures
-- 4-2 triangle source routing, coordinate visibility, and independent answer check: `triangle-4-2-audit.js` covers 24 types and 24 distinct source structures
+- Runtime availability policy: `runtime-availability-audit.js` checks all 891 public types across 20 seeds per difficulty
+- 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
+- 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
+- Elementary explanation policy: `elementary-language-audit.js` checks all 891 public runtime types across 100 seeds per difficulty, including the source-mapped public types
+- Numeric display policy: `numeric-display-audit.js` checks all 891 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
+- 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 66 types and 66 distinct source structures; `source-4-2-fraction-browser-audit.js` covers all 132 PC/mobile states
+- 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the 31 directly source-matched types to run
 - 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`

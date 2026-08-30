@@ -1,0 +1,34 @@
+.board-die {
+  filter: drop-shadow(0 6px 3px rgba(90, 56, 39, .3));
+}
+
+.board-die .die-face {
+  stroke-width: 3.2;
+}
+
+.board-die circle {
+  fill: #17343f;
+}
+
+.flat-five-svg {
+  display: block;
+  width: 27mm;
+  height: 27mm;
+  margin: auto;
+  overflow: visible;
+  filter: drop-shadow(0 2px 1px rgba(71, 43, 23, .18));
+}
+
+.flat-five-svg .flat-face {
+  stroke: #684521;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.flat-five-svg .flat-face.top { fill: #f8dda0; }
+.flat-five-svg .flat-face.north { fill: #ecc579; }
+.flat-five-svg .flat-face.east { fill: #bd762f; }
+.flat-five-svg .flat-face.south { fill: #cf8d3e; }
+.flat-five-svg .flat-face.west { fill: #dda653; }
+.flat-five-svg circle { fill: #17343f; }
+.flat-five-svg.blank .flat-face { fill: #fff; stroke: #52686c; }

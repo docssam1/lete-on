@@ -75,6 +75,11 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   character_unlocked:{}, mailbox:{opened:{}},
   boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
   roadCadence:'w1', /* 연산 로드맵 주차 보기: 'w1'=주 1회반, 'w2'=주 2회반 */
+  /* 연산 로드맵 목표 기준(속도) — 값은 ROAD_PACES의 key.
+     기본값을 '표준'(p2)으로 둔다: 처음 보는 사람에게 가장 빠른 기준의 주차를
+     보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
+     센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
+  roadPace:'p2',
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{} /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
@@ -89,13 +94,22 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+/* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
+   아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
+   이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
+if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
    hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
    병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
    자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
-if(!S.account)S.account=hadSave?{status:'active',code:null,checkedAt:0}:{status:'trial',code:null,checkedAt:0};
+/* 2026-08-29 원장 지시 "우선 승인 없이 다 되도록 열고" — 신규 프로필도 active로
+   시작한다. 게이트 코드(TRIAL_UNITS·unitLocked·안내 모달·승인번호 입력)는 그대로
+   살려 두었으므로, 학원이 승인번호를 실제로 발급하기 시작하면 아래 'active'를
+   'trial'로 되돌리는 한 줄이면 다시 켜진다. HANDOFF §체험 게이트의 단계 설명
+   ("지금(승인 없음) → 승인번호 도입 시 체험 모드 활성화")과 같은 상태다. */
+if(!S.account)S.account={status:'active',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
@@ -1235,7 +1249,35 @@ function enterContinueUnit(uid, fromCourseRoad){
      만나므로 핵심 세션을 빼고 남는 회차가 생긴다. 그 남는 회차를 창의수연
      개념 보강과 다지기에 쓴다 — "더 빨리"가 아니라 "더 확실히"가 요점이다.
      화면 어디에도 "두 배"라고 쓰지 않는다.
+
+   ★ 주차는 연산 트랙만 센 것이다. 원장이 준 GFIELD 로드맵 리포트는 교과·사고력1·
+     사고력2·연산을 나란히 놓고 연산 줄에 "연산병행"이라고 적는다. 즉 실제 학원
+     시간표에서 아이는 이 길만 걷지 않는다. 그 말을 화면에 적지 않으면 여기 숫자가
+     학부모에게 "이만큼이면 끝난다"로 읽힌다 — 그래서 카드에 한 줄로 밝혀 둔다.
    ============================================================ */
+
+/* ── 목표 기준(속도) ─────────────────────────────────────────
+   같은 연산 책 순서를 몇 년에 걸쳐 걷느냐는 목표에 따라 다르다. 원장이 준
+   GFIELD 사고력 진단 로드맵 리포트(연산 트랙)에는 동일한 책 순서를 서로 다른
+   시기에 배치한 다섯 기준이 있고, 가장 빠른 기준을 0으로 놓으면 월 오프셋이
+   0 · 3 · 7 · 12 · 17(개월)이다. 즉 가장 빠른 기준과 가장 여유 있는 기준
+   사이가 같은 내용으로 약 17개월 차이다.
+
+   ※ 리포트의 기준 이름은 바깥 학원·프로그램 이름이라 앱에 쓰지 않는다.
+     아이의 상황을 그대로 말하는 중립적인 이름으로 바꿔 적었다(원장이 학원용
+     이름으로 되돌리고 싶으면 아래 name만 고치면 된다).
+   ※ 배수는 박아 두지 않는다 — 렌더할 때 courses.js에서 잰 "연산 구간"의
+     주 1회 기간을 기준 길이로 삼아 (기준길이+오프셋)/기준길이로 만든다. */
+const ROAD_PACES=[
+ {key:'p0', off:0,  name:{ko:'빠른 선행',en:'Accelerated',zh:'快速先修'}},
+ {key:'p1', off:3,  name:{ko:'선행',en:'Ahead',zh:'先修'}},
+ {key:'p2', off:7,  name:{ko:'표준',en:'Standard',zh:'标准'}},
+ {key:'p3', off:12, name:{ko:'차근차근',en:'Steady',zh:'稳步'}},
+ {key:'p4', off:17, name:{ko:'여유 있게',en:'Relaxed',zh:'宽松'}}
+];
+/* 연산 구간의 마지막 과정 번호 — 합계 카드가 "연산 구간 과정 1~N"으로 쓰던
+   경계 그대로다. 기준 길이도 같은 구간에서 재야 화면의 숫자와 어긋나지 않는다. */
+const ROAD_OP_LAST=25;
 
 /* 등급(티어) 표시 정보 — 이름·학년대는 사람이 읽는 말로만 쓴다. */
 const ROAD_TIERS=[
@@ -1351,18 +1393,46 @@ function courseProgress(c){
 function courseWeeks(nSessions, cadence){
   return cadence==='w2' ? Math.ceil(nSessions*2/3) : nSessions;
 }
-/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫 */
-function courseExtraMeets(nSessions){
-  return Math.max(0, Math.ceil(nSessions*2/3)*2 - nSessions);
+/* ── 목표 기준 배수 ──
+   기준 길이 = 연산 구간(과정 1~ROAD_OP_LAST)의 주 1회 개월. courses.js에서
+   그때그때 재므로 세션 총합을 어디에도 박아 두지 않는다. */
+function roadPaceDef(key){ return ROAD_PACES.find(p=>p.key===key)||ROAD_PACES[0]; }
+function roadBaseMonths(){
+  let w=0;
+  roadCourseList().forEach(x=>{
+    if(x.num>ROAD_OP_LAST) return;
+    w+=courseWeeks((x.c.sessions||[]).length,'w1');
+  });
+  return w/4;
 }
-/* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함) */
-function roadTotals(from, to, cadence){
+function roadPaceMult(key){
+  const base=roadBaseMonths();
+  if(!base) return 1;
+  return (base+roadPaceDef(key).off)/base;
+}
+/* 한 과정의 주차에 목표 기준을 반영한다 — 세션 수학(위 courseWeeks)은 그대로
+   두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
+function coursePaceWeeks(nSessions, cadence, mult){
+  return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
+}
+/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫.
+   기간이 늘면 만나는 횟수도 늘어나므로 실제로 쓰는 주차에서 센다
+   (배수 1이면 예전 값과 똑같다). */
+function courseExtraMeets(nSessions, weeks){
+  const w=(weeks===undefined)?Math.ceil(nSessions*2/3):weeks;
+  return Math.max(0, w*2 - nSessions);
+}
+/* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
+   합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
+   곱해 반올림한다 — 과정마다 생기는 반올림 오차가 쌓이지 않게. */
+function roadTotals(from, to, cadence, mult){
   let sessions=0, weeks=0, courses=0;
   roadCourseList().forEach(x=>{
     if(x.num<from||x.num>to) return;
     const n=(x.c.sessions||[]).length;
     sessions+=n; weeks+=courseWeeks(n,cadence); courses++;
   });
+  weeks=Math.round(weeks*(mult||1));
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
 }
 
@@ -1460,6 +1530,15 @@ function screenCourseRoad(){
         <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
       </div>
       <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
+      <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
+           DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
+           따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
+      <div class="nm-cr-philo">
+        ${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
+             'Conquering numbers isn\'t about speed — it\'s being able to <b>unfold</b> a hard number into ones you handle easily.',
+             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}
+        <a class="nm-philobtn nm-cr-philolink" href="about.html">✦ ${lk('철학','Philosophy','理念')}</a>
+      </div>
     </div>
     <div class="nm-cr-body" id="crBody"></div>
   </div>`;
@@ -1470,8 +1549,10 @@ function screenCourseRoad(){
 
   function draw(keepScroll){
     const cad=S.roadCadence;
-    const opTotals=roadTotals(1,25,cad);
-    const allTotals=roadTotals(1,lastNum,cad);
+    const pace=roadPaceDef(S.roadPace).key;
+    const mult=roadPaceMult(pace);
+    const opTotals=roadTotals(1,ROAD_OP_LAST,cad,mult);
+    const allTotals=roadTotals(1,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
     const builtCount=list.filter(x=>courseBuilt(x.c)).length;
 
@@ -1503,9 +1584,12 @@ function screenCourseRoad(){
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
     html+=`<div class="nm-cr-cad">
       <div class="nm-cr-cad-h">${lk('한 과정에 걸리는 시간','How long a course takes','一个课程需要多久')}</div>
-      <div class="nm-cr-seg" role="group">
-        <button class="${cad==='w1'?'on':''}" data-cad="w1">${lk('주 1회반','Once a week','每周1次')}</button>
-        <button class="${cad==='w2'?'on':''}" data-cad="w2">${lk('주 2회반','Twice a week','每周2次')}</button>
+      <p class="nm-cr-caveat">${lk('여기 주차는 연산 트랙만 센 거예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
+           'These weeks count the arithmetic track only. Doing thinking-math and school-math alongside takes longer.',
+           '这里的周数只算运算课程。同时上思维和教材课程会更久。')}</p>
+      <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
+        <button class="${cad==='w1'?'on':''}" data-cad="w1"${cad==='w1'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 1회반','Once a week','每周1次')}</button>
+        <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
       </div>
       <p class="nm-cr-cadnote">${cad==='w2'
         ? lk('주 2회라고 두 배 빨라지지는 않아요. 한 과정에 걸리는 주차가 3분의 2로 줄고, 그동안 두 배로 만나니 남는 회차가 생겨요. 그 회차는 창의수연 개념을 더 넣고 다지는 데 써서 더 탄탄해져요.',
@@ -1514,9 +1598,22 @@ function screenCourseRoad(){
         : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
              'One session per week. Each course ends with a check session.',
              '每周前进一节课。每个课程最后是一次检查课。')}</p>
+      <div class="nm-cr-pace">
+        <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
+        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
+          ${ROAD_PACES.map(p=>{
+            const mo=roadTotals(1,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
+              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
+          }).join('')}
+        </div>
+        <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
+             'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
+             '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+      </div>
       <div class="nm-cr-totals">
         <div class="nm-cr-total">
-          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~25</small></b>
+          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
           <span>${opTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${opTotals.months}${lk('개월','mo','个月')}</span>
         </div>
         <div class="nm-cr-total">
@@ -1581,8 +1678,8 @@ function screenCourseRoad(){
       const tierDef=roadTierInfo(c.tier);
       {
         const n=(c.sessions||[]).length;
-        const wk=courseWeeks(n,cad);
-        const extra=courseExtraMeets(n);
+        const wk=coursePaceWeeks(n,cad,mult);
+        const extra=courseExtraMeets(n,wk);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -1636,6 +1733,9 @@ function screenCourseRoad(){
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
     });
+    body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
+      el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
+    });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>enterCourseNode(el.dataset.c);
     });
@@ -1672,12 +1772,44 @@ function screenCourseRoad(){
    ------------------------------------------------------------
    이 앱엔 배치 진단이 없었다(유닛 안의 "진단 스킵"은 그 유닛 한 곳을
    건너뛸지 묻는 것이라 다른 물건이다). 그래서 최소한으로 만든다:
-   연산 구간을 대표하는 사다리를 낮은 칸부터 하나씩 올라가며 한 문제씩
-   묻고, 한 칸에서 두 번 틀리면 거기서 멈춰 그 과정을 시작점으로 권한다.
+   연산 구간을 대표하는 사다리에서 한 칸씩 한 문제를 묻고, "풀 수 있는
+   칸"과 "아직 못 푸는 칸"의 경계를 찾으면 거기서 멈춰 그 과정을
+   시작점으로 권한다.
    문항은 전부 기존 생성기(NM_TGEN)가 만든다 — 새 문제를 지어내지 않는다.
    결과는 권유일 뿐 어떤 과정도 잠그지 않는다.
+
+   ── 나이를 먼저 묻는다 (원장 지시: "현재 나이에 따라 연산 정도를 물어보는
+   설문이 달라야 해") ──
+   예전엔 모두가 사다리 맨 아래(AD1 · 한 자리 덧셈)에서 출발했다. 그래서
+   열 살 아이는 시시한 문제를 여덟 개 푼 뒤에야 자기 자리에 닿았고, 여섯 살
+   아이는 첫 문제부터 한 자리 덧셈을 만났다(그보다 아래가 없었다).
+   이제 나이를 먼저 고르면 그 나이의 칸에서 시작하고, 사다리 아래쪽에는
+   수의 나라(NL) 칸을 붙여 유아도 수 세기부터 시작한다.
+
+   ── 위아래로 좁혀 간다(bracketing) ──
+   맞히면 위로, 틀리면 아래로 가며 경계를 좁힌다. 아래는 절반씩 내려가고
+   위는 한 번에 최대 네 칸까지만 올라간다(아이에게 너무 큰 도약이 되지
+   않게). 이미 "푼 칸"과 "못 푼 칸"이 둘 다 생기면 그 사이를 반씩 접는다.
+   16칸 × 모든 실력 조합을 전부 돌려 보면 최대 6문제 안에 경계가 정확히
+   나온다. 한 칸에서 두 번 묻던 예전의 재시도는 없앴다 — 위아래로 좁히는
+   방식에선 같은 칸을 두 번 묻는 게 경계를 흐리고 문항 수만 늘린다.
    ============================================================ */
 const PLACEMENT_LADDER=[
+  /* 수의 나라(유아) — 아직 과정으로 갈라지지 않는 구간이라 모두 C1이 시작점.
+     이 칸들은 tex가 없고 조작 위젯으로만 답하는 문제라, 화면이 위젯을
+     그려 준다(아래 screenPlacement 참고).
+     고르는 기준은 둘이다 — 답이 정수 하나여야 하고, **틀릴 수 있어야** 한다.
+     NL6(10 짝꿍)는 tenframe 위젯이 칸을 다 채운 순간 problem.answer를 그대로
+     넘겨서 오답이 나올 수가 없다. 진단 칸으로는 못 쓰므로 뺐다(위젯 자체는
+     학습 화면에선 제 역할을 한다 — 고칠 대상이 아니다). 같은 이유로 NL7L3·
+     NL14L3(matchLine)과 NL4L3·NL12L1(dotToDot)도 뺐다.
+     tex가 있는 교과연산 칸은 예전처럼 식+숫자패드로 받으므로 이 문제와
+     무관하다(AD1의 cubes 위젯도 여기선 쓰이지 않는다). */
+  {course:'C1',  thread:'NL1', level:1},   /* 수 세기와 개수 */
+  {course:'C1',  thread:'NL4', level:1},   /* 수의 순서 */
+  {course:'C1',  thread:'NL2', level:2},   /* 모으기와 가르기 */
+  {course:'C1',  thread:'NL5', level:1},   /* 이웃 수 더하기 — 덧셈으로 건너가는 다리 */
+  /* 교과연산 */
   {course:'C1',  thread:'AD1', level:1},
   {course:'C3',  thread:'AD3', level:1},
   {course:'C4',  thread:'AD5', level:1},
@@ -1692,25 +1824,80 @@ const PLACEMENT_LADDER=[
   {course:'C19', thread:'DV7', level:1}
 ];
 const PLACEMENT_TOP='C20'; /* 사다리를 전부 통과했을 때 권하는 시작 과정 */
+const PLACEMENT_MAX_Q=6;   /* 진단은 시험이 아니다 — 문항 수를 여기서 끊는다 */
+const PLACEMENT_UP_CAP=4;  /* 맞혔을 때 한 번에 올라가는 최대 칸 수 */
+
+/* 나이 선택지. 이름·나이 문구는 지어내지 않고 이 앱이 이미 쓰는 것을
+   그대로 가져온다 — 교과연산 구간은 ROAD_TIERS의 name/band(로드맵 역 이름과
+   같은 문구)를, 유아 구간은 data/curriculum.js 수의 나라 tier의
+   ageLabel/subtitle을 쓴다. entry = 그 나이가 첫 문제로 만나는 사다리 칸. */
+const PLACEMENT_AGES=[
+  {key:'pre',   emoji:'🌱', tier:null,       entry:0},
+  {key:'g1',    emoji:'🌿', tier:'level1',   entry:4},
+  {key:'g2',    emoji:'🌳', tier:'level2',   entry:10},
+  {key:'g3',    emoji:'⛰️', tier:'level3',   entry:14},
+  {key:'adv',   emoji:'🗼', tier:'challenge',entry:15}
+];
+/* 수의 나라 구간의 이름·나이 — curriculum.js에서 읽고, 없으면 같은 문구로 적는다. */
+function placementPreLabel(){
+  const tiers=(window.NM_CURRICULUM&&window.NM_CURRICULUM.tiers)||[];
+  const nl=tiers.find(x=>x.id==='numberland');
+  const age=(nl&&nl.ageLabel)||'5~6세';
+  return {
+    name:{ko:'수의 나라',en:'Number Land',zh:'数字王国'},
+    band:{ko:age, en:'Ages 5–6', zh:'5~6岁'}
+  };
+}
+function placementAgeLabel(opt){
+  if(!opt.tier) return placementPreLabel();
+  const info=roadTierInfo(opt.tier);
+  return {name:info.name, band:info.band};
+}
 
 function startPlacement(){
-  S._diag={ run:Date.now(), i:0, attempt:0, asked:0, correct:0, failedAt:null, cur:null };
+  /* lo = 풀 수 있다고 확인된 가장 높은 칸(없으면 -1)
+     hi = 아직 못 푼다고 확인된 가장 낮은 칸(없으면 사다리 길이) */
+  S._diag={ run:Date.now(), stage:'age', age:null, entry:0,
+            lo:-1, hi:PLACEMENT_LADDER.length, at:null,
+            asked:0, correct:0, cur:null };
   S.view='placement'; save(); render();
 }
-function placementProblem(rung, i, attempt, run){
+/* 다음에 물을 칸. null이면 경계를 찾은 것 — 더 묻지 않는다. */
+function placementNext(d){
+  const N=PLACEMENT_LADDER.length;
+  if(d.hi-d.lo<=1) return null;
+  if(d.at===null) return Math.min(N-1, Math.max(0, d.entry));
+  if(d.hi===N) return Math.min(N-1, d.lo+1+Math.min(PLACEMENT_UP_CAP-1, Math.floor((N-1-d.lo)/2)));
+  if(d.lo===-1) return Math.floor(d.hi/2);
+  return Math.floor((d.lo+d.hi)/2);
+}
+/* 아직 못 넘은 첫 칸. 경계를 못 찾고 문항 수가 다 찼으면 알고 있는 것 중
+   확실히 못 푼 칸(hi)을, 그것도 없으면 다음 칸(lo+1)을 쓴다. */
+function placementBoundary(d){
+  if(d.hi-d.lo<=1) return d.hi;
+  return d.hi<PLACEMENT_LADDER.length ? d.hi : d.lo+1;
+}
+function placementProblem(rung, i, run){
   const th=(window.NM_THREADS||{})[rung.thread];
   const gen=(window.NM_TGEN||{})[th&&th.gen];
   const params=(th&&(th.levels||[]).find(l=>l.id===rung.level)||{}).params||{};
-  const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('diag'+run+rung.thread+rung.level+'i'+i+'a'+attempt));
+  const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('diag'+run+rung.thread+rung.level+'i'+i));
   return gen ? gen(params,rng)
              : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
 }
+/* 한 문제의 채점 결과를 사다리에 반영한다. */
+function placementGrade(d, rungIndex, ok){
+  d.asked++;
+  if(ok){ d.correct++; d.lo=Math.max(d.lo,rungIndex); }
+  else  { d.hi=Math.min(d.hi,rungIndex); }
+  d.at=rungIndex; d.cur=null;
+}
 function finishPlacement(){
   const d=S._diag;
-  const key=(d.failedAt!=null&&PLACEMENT_LADDER[d.failedAt])
-    ? PLACEMENT_LADDER[d.failedAt].course : PLACEMENT_TOP;
+  const b=placementBoundary(d);
+  const key=(PLACEMENT_LADDER[b]) ? PLACEMENT_LADDER[b].course : PLACEMENT_TOP;
   S.placement={ at:Date.now(), course:key, asked:d.asked, correct:d.correct,
-    cleared:(d.failedAt==null?PLACEMENT_LADDER.length:d.failedAt) };
+    age:d.age||null, cleared:b };
   save();
   return key;
 }
@@ -1722,9 +1909,46 @@ function screenPlacement(){
   const lk=(k,e,z)=>ko?k:en?e:z;
   const d=S._diag;
   if(!d){ S.view='town'; save(); render(); return; }
+  /* S._diag는 저장된다. 예전 형식(바닥부터 한 칸씩 오르던 시절)의 진행 중
+     상태로 돌아오면 새 방식에 이어 붙일 수가 없으니 처음부터 다시 시작한다. */
+  if(d.stage===undefined||typeof d.lo!=='number'||typeof d.hi!=='number'){ startPlacement(); return; }
+
+  /* ── 나이 고르기 ── */
+  if(d.stage==='age'){
+    const opts=PLACEMENT_AGES.map(o=>{
+      const lab=placementAgeLabel(o);
+      return `<button class="nm-dg-age" data-entry="${o.entry}" data-age="${o.key}">
+        <span class="nm-dg-age-ico">${o.emoji}</span>
+        <span class="nm-dg-age-txt"><b>${esc(L(lab.band))}</b><small>${esc(L(lab.name))}</small></span>
+      </button>`;}).join('');
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="dgBack">${t('back')}</button>
+      <div class="nm-unit-title">🧭 ${lk('진단하기','Level Check','水平测评')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
+      <div class="nm-card center">
+        <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-card-h">${lk('지금 몇 살이에요?','How old are you now?','现在几岁了呢？')}</div>
+        <p class="nm-dg-ask">${lk('나이에 맞는 문제부터 물어볼게요. 몇 문제만 풀면 끝나요.',
+          'We will start with questions that fit your age. Just a few questions.',
+          '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
+        <div class="nm-dg-ages">${opts}</div>
+        <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
+      </div>
+    </div>`;
+    $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
+    scr.querySelectorAll('.nm-dg-age').forEach(b=>{
+      b.onclick=()=>{ d.age=b.dataset.age; d.entry=+b.dataset.entry;
+        d.stage='q'; save(); screenPlacement(); };
+    });
+    /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
+    $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
+    return;
+  }
 
   /* ── 결과 ── */
-  if(d.failedAt!=null || d.i>=PLACEMENT_LADDER.length){
+  const nextIdx=placementNext(d);
+  if(nextIdx===null || d.asked>=PLACEMENT_MAX_Q){
     const key=finishPlacement();
     const c=(window.NM_COURSES||{})[key];
     const num=String(key).replace(/^C/,'');
@@ -1739,6 +1963,7 @@ function screenPlacement(){
         <div class="nm-card-h">${lk('여기서 시작하면 좋아요!','A good place to start!','从这里开始正合适！')}</div>
         <div class="nm-dg-course">${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</div>
         ${tierDef?`<div class="nm-dg-tier">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>`:''}
+        ${placementAgeNoteHtml(d,lk)}
         <div class="nm-score">${d.correct} / ${d.asked}</div>
         <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
         <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
@@ -1753,10 +1978,13 @@ function screenPlacement(){
   }
 
   /* ── 문항 ── */
-  const rung=PLACEMENT_LADDER[d.i];
-  if(!d.cur) d.cur=placementProblem(rung,d.i,d.attempt,d.run);
+  const rung=PLACEMENT_LADDER[nextIdx];
+  if(!d.cur) d.cur=placementProblem(rung,d.asked,d.run);
   const cur=d.cur;
   const th=(window.NM_THREADS||{})[rung.thread];
+  /* tex가 있으면 예전 그대로 식 + 넘패드. 수의 나라 문제는 tex가 없고 그림을
+     만져야 답이 나오므로 기존 위젯 렌더러(runPracticeWidget과 같은 길)를 쓴다. */
+  const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
 
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="dgBack">${t('back')}</button>
@@ -1764,32 +1992,35 @@ function screenPlacement(){
   </div>
   <div class="nm-step-body">
     <div class="nm-dialog">
-      <div class="nm-dg-step">${lk('단계','Step','阶段')} ${d.i+1} / ${PLACEMENT_LADDER.length}${th?` · ${esc(L(th.name))}`:''}</div>
-      <div class="nm-prog">${dots(PLACEMENT_LADDER.length,d.i)}</div>
+      <div class="nm-dg-step">${lk(`${d.asked+1}번째 문제`,`Question ${d.asked+1}`,`第${d.asked+1}题`)}${th?` · ${esc(L(th.name))}`:''}</div>
+      <div class="nm-prog">${dots(PLACEMENT_MAX_Q,d.asked)}</div>
       <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
       <div class="nm-bubble">${esc(L(cur.prompt))}</div>
-      ${d.attempt>0?`<div class="nm-dg-retry">${lk('한 번 더 해볼까요?','One more try?','再试一次？')}</div>`:''}
+      ${useWidget?`<div id="dgWidget" class="nm-lab-widget"></div>`:`
       <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
       <div class="nm-numpad-screen" id="dgScreen">&nbsp;</div>
-      <div class="nm-numpad" id="dgPad"></div>
+      <div class="nm-numpad" id="dgPad"></div>`}
     </div>
   </div>`;
   $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
   renderMath(scr);
 
+  const submit=ok=>{
+    placementGrade(d,nextIdx,ok);
+    save();
+    if(ok) playSfx('success');
+    setTimeout(()=>screenPlacement(), ok?520:820);
+  };
+  if(useWidget){
+    NM_WIDGETS.render(cur,$('#dgWidget'),val=>submit(+val===cur.answer));
+    return;
+  }
   const screenEl=$('#dgScreen');
   let inp='';
   buildNumpad($('#dgPad'),val=>{
     if(val==='ok'){
-      if(inp==='') return;
-      const ok=parseFloat(inp)===cur.answer;
-      d.asked++; if(ok) d.correct++;
-      if(ok){ d.i++; d.attempt=0; }
-      else if(d.attempt===0){ d.attempt=1; }
-      else { d.failedAt=d.i; }
-      d.cur=null; save();
-      if(ok) playSfx('success');
-      setTimeout(()=>screenPlacement(), ok?520:820);
+      if(inp===''||inp==='-') return;
+      submit(parseFloat(inp)===cur.answer);
       return;
     }
     if(val==='del') inp=inp.slice(0,-1);
@@ -1797,6 +2028,14 @@ function screenPlacement(){
     else if(inp.replace('-','').length<6&&!(val==='.'&&inp.includes('.'))) inp+=val;
     screenEl.textContent=inp||' ';
   },{decimal:!Number.isInteger(cur.answer), negative:!!cur.negative});
+}
+/* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴 경우엔 없음. */
+function placementAgeNoteHtml(d,lk){
+  if(!d.age||d.age==='skip')return'';
+  const opt=PLACEMENT_AGES.find(o=>o.key===d.age);
+  if(!opt)return'';
+  const lab=placementAgeLabel(opt);
+  return `<div class="nm-dg-agenote">${opt.emoji} ${lk('고른 나이','Age picked','所选年龄')} · ${esc(L(lab.band))}</div>`;
 }
 
 /* ============================================================
@@ -2781,8 +3020,34 @@ function stepDiscover(body,u){
     else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps, kid);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
+    mountConceptScene(wrap,u,d.stages.indexOf(s));
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
+}
+
+/* 개념 애니메이션 붙이기 (개념애니-설계.md 2단계) — mathSteps 아래에 "움직이는 예"를 얹는다.
+   기존 mathSteps·result·book은 그대로 두고 덧붙이기만 한다(원칙 3: 승격이지 폐기가 아님).
+   장면의 수는 유닛 파일의 산문이 아니라 **생성기 반환값**에서만 나온다 — 매번 다른 수가
+   나오므로 "다른 수로" 버튼이 그대로 새 예가 된다. 매핑이 없는 유닛(현재 184개)은 조용히 통과. */
+function mountConceptScene(wrap,u,stageIndex){
+  if(!window.NM_SCENE||!window.NM_CANIM)return;
+  const cfg=NM_SCENE.configFor(u.id,stageIndex);
+  if(!cfg)return;
+  const host=document.createElement('div');wrap.appendChild(host);
+  try{
+    NM_CANIM.mount(host,{
+      lang:S.lang,
+      title:L(cfg.title),
+      make:()=>NM_SCENE.buildFor(u.id,stageIndex,
+        genProblem({generator:cfg.generator,params:cfg.params},(cfg.params&&cfg.params.level)||'main'),
+        L(u.title))
+    });
+  }catch(e){
+    /* 조용히 사라지면 "그림이 원래 없는 유닛"과 구별이 안 된다 — 화면에 남긴다. */
+    console.error('[concept-scene]',u.id,stageIndex,e);
+    host.className='nm-cscene-err';
+    host.textContent=(S.lang==='ko'?'개념 애니메이션을 만들지 못했어요: ':S.lang==='en'?'Could not build the concept animation: ':'无法生成概念动画：')+e.message;
+  }
 }
 
 /* ============================================================

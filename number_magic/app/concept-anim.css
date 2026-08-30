@@ -1,0 +1,107 @@
+/* ============================================================
+   개념 애니메이션 (NM_CANIM) 전용 스타일.
+   별도 파일인 이유: 인쇄 CSS(app/exam.js·print.html)와 app/styles.css를
+   건드리지 않기 위해서다. 이 파일만 지우면 기능이 통째로 빠진다.
+   ============================================================ */
+
+/* 장면을 못 만든 경우 — 조용히 사라지면 "원래 그림이 없는 유닛"과 구별이 안 된다. */
+.nm-cscene-err{
+  margin:12px 0; padding:10px 12px; border:1px dashed var(--no); border-radius:10px;
+  color:var(--no); font-size:12px; font-weight:700;
+}
+
+.cs-wrap{
+  margin:14px 0 6px; padding:12px 12px 10px;
+  border:1px solid var(--line); border-radius:14px;
+  background:linear-gradient(180deg,#fff, #FBFAF7);
+}
+.cs-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px}
+.cs-badge{font-size:13px; font-weight:900; color:var(--blue)}
+.cs-sub{font-size:12px; font-weight:700; color:var(--sub); flex:1; min-width:0}
+.cs-reroll{
+  border:1px solid var(--line); background:#fff; color:var(--sub);
+  border-radius:99px; padding:5px 11px; font-size:12px; font-weight:800; cursor:pointer;
+  font-family:inherit;
+}
+.cs-reroll:active{background:var(--mist)}
+
+/* 무대 — 폭이 좁으면 SVG가 가로로 줄고, 가로 스크롤을 만들지 않는다.
+   (모바일 430px에서 확인) */
+.cs-stage{width:100%; overflow:hidden; display:flex; justify-content:center}
+.cs-svg{
+  display:block; width:100%; height:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+}
+
+/* 등장 — 칠판처럼 하나씩 그려진다. 이미 그려진 것은 지우지 않는다. */
+.cs-obj{opacity:0; transition:opacity .32s ease, transform .42s cubic-bezier(.2,.7,.3,1)}
+.cs-obj.cs-on{opacity:1}
+/* 지금 그려지는 것 하나만 잠깐 도드라진다 — 강조가 두 곳에 걸리지 않도록
+   .cs-new는 beat마다 한 묶음(그 beat가 처음 그리는 것)에만 붙는다. */
+.cs-obj.cs-new{animation:cs-pop .5s ease}
+@keyframes cs-pop{from{opacity:0}to{opacity:1}}
+
+.cs-nar{
+  margin:8px 2px 0; min-height:2.6em; font-size:14px; font-weight:700; line-height:1.5;
+  color:var(--ink);
+}
+.cs-ctl{display:flex; align-items:center; gap:8px; margin-top:8px}
+.cs-b{
+  border:1px solid var(--line); background:#fff; color:var(--ink);
+  border-radius:10px; padding:8px 12px; font-size:13px; font-weight:800; cursor:pointer;
+  font-family:inherit; min-width:44px; min-height:38px;
+}
+.cs-b:active{background:var(--mist)}
+.cs-play{background:var(--blue); color:#fff; border-color:var(--blue)}
+.cs-dots{margin-left:auto; display:flex; gap:5px}
+.cs-dot{width:7px; height:7px; border-radius:99px; background:var(--line); display:block}
+.cs-dot.on{background:var(--blue)}
+
+.cs-transcript{
+  margin:9px 0 0 18px; padding:0; font-size:12px; line-height:1.6; color:var(--sub);
+}
+.cs-transcript li{margin:1px 0}
+.cs-transcript li.on{color:var(--ink); font-weight:800}
+
+@media (max-width:520px){
+  .cs-wrap{padding:10px 8px 8px}
+  .cs-nar{font-size:13px}
+  .cs-b{padding:8px 10px; font-size:12px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cs-obj{transition:opacity .01s linear}
+  .cs-obj.cs-new{animation:none}
+}
+
+/* ── 인쇄(A4) ──────────────────────────────────────────────
+   인쇄물에는 애니메이션이 없다. 마지막 상태(=finalOverview) 한 장이
+   그대로 설명이 되어야 하므로 모든 객체를 보이게 하고, 재생 컨트롤과
+   "다른 수로" 버튼은 뺀다. 서술은 남긴다(그림만으로 부족한 문장). */
+@media print{
+  /* 앱 껍데기 잠금 해제 — 이 앱은 화면 전용이라 html·body·#app·#screen이 모두
+     100dvh + overflow:hidden이고, 그대로 인쇄하면 **백지**가 나온다(실제로 그랬다).
+     학습지·시험 인쇄 경로(app/exam.js·print.html)를 건드리지 않으려고, 개념 장면이
+     화면에 있을 때만 붙는 html.nm-has-cscene 아래로 범위를 좁힌다. */
+  html.nm-has-cscene, html.nm-has-cscene body{
+    height:auto !important; overflow:visible !important; background:#fff !important;
+  }
+  html.nm-has-cscene #app, html.nm-has-cscene #screen{
+    height:auto !important; min-height:0 !important; overflow:visible !important; display:block !important;
+  }
+  html.nm-has-cscene .nm-step-body, html.nm-has-cscene .nm-card{
+    height:auto !important; max-height:none !important; overflow:visible !important;
+  }
+  /* 화면 전용 껍데기(단계 탭·상단바·버튼)는 종이에 의미가 없다 */
+  html.nm-has-cscene .nm-unit-bar, html.nm-has-cscene .nm-flow,
+  html.nm-has-cscene .nm-top, html.nm-has-cscene .nm-btn{display:none !important}
+
+  .cs-wrap{break-inside:avoid; page-break-inside:avoid; background:#fff; border-color:#bbb}
+  /* transition까지 꺼야 한다 — 인쇄 매체로 바뀌는 순간 opacity 0→1이 전환으로
+     흐르면 그 0.4초 동안 찍힌 종이는 흐릿하게 나온다(검사에서 0.9999가 잡혔다). */
+  .cs-obj{opacity:1 !important; transform:none !important; animation:none !important; transition:none !important}
+  .cs-ctl, .cs-reroll, .cs-nar{display:none !important}
+  .cs-svg{max-height:none}
+  .cs-transcript{color:#000; font-size:11px}
+  .cs-transcript li.on{font-weight:400}
+}

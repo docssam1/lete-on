@@ -74,5 +74,7 @@ test("nPDF 배치 변환기는 경로를 제한하고 설정과 기본 프린터
   assert.match(text, /Set-DefaultPrinter \$defaultBefore/);
   assert.match(text, /\[IO\.File\]::WriteAllBytes\(\$NpdfConfig, \$configBackup\)/);
   assert.match(text, /Move-Item -LiteralPath \$pdf\.FullName -Destination \$finalPath/);
+  assert.match(text, /\[string\]\$SourceId/);
+  assert.match(text, /\$_\.sourceId -eq \$SourceId/);
   assert.doesNotMatch(text, /Remove-Item/);
 });
