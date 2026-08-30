@@ -9747,6 +9747,7 @@
         return result(`분수가 일정한 규칙으로 나열되어 있습니다. ${index}번째 분수를 구하세요.<div class="sequence">${shown}, …</div>`, `${numerator}/${denominator}`, `분자는 ${numeratorStep}씩, 분모는 ${denominatorStep}씩 커집니다. ${index}번째 분수는 ${numeratorStart}+${numeratorStep}×${index - 1} / ${denominatorStart}+${denominatorStep}×${index - 1} = ${numerator}/${denominator}입니다.`);
       }
       if (variant === 1) {
+        const mode = level < 0 ? 1 : level > 0 ? 3 : 2;
         const firstStart = int(rng, 8, 18);
         const secondStart = int(rng, 20, 34);
         const step = int(rng, 5 + level, 9 + level * 2);
@@ -14367,6 +14368,152 @@
       const miseon = hyunju + difference;
       if (!Number.isInteger(hyunju) || hyunju <= transfer) return generators.mixedCalculationE3({ rng, level, variant });
       return result(`미선이는 현주보다 구슬을 ${difference}개 더 많이 가지고 있습니다. 미선이가 현주에게 구슬을 ${transfer}개 주면 현주가 가진 구슬은 미선이가 가진 구슬의 3배가 됩니다. 처음에 미선이와 현주가 가진 구슬 수의 곱을 구하세요.<div class="equation" data-mixed-kind="e3-beads" data-values="${difference},${transfer}">현주 + ${transfer} = (미선 - ${transfer}) × 3</div>`, miseon * hyunju, `처음 현주가 가진 구슬을 □개라 하면 미선이는 □ + ${difference}개입니다. □ + ${transfer} = (□ + ${difference} - ${transfer}) × 3을 풀면 현주는 ${hyunju}개, 미선이는 ${miseon}개입니다. 곱은 ${miseon} × ${hyunju} = ${miseon * hyunju}입니다.`);
+    },
+    mixedCalculationE4({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("개념탐구 4 원문 분기는 0부터 11까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-mixed-e4-kind="${kind}" data-mixed-e4-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      // The shared generator normalizes difficulty offsets -1/0/1 to levels 0/1/2.
+      const modeForLevel = value => value === 0 ? 1 : value === 2 ? 3 : 2;
+      const cards = values => `<span class="number-card-row" aria-label="수 카드 ${values.join(", ")}">${values.map(value => `<span class="number-card">${value}</span>`).join("")}</span>`;
+      const fourFours = ["(4 + 4) ÷ (4 + 4)", "4 ÷ 4 + 4 ÷ 4", "(4 + 4 + 4) ÷ 4", "4 + (4 - 4) × 4", "(4 × 4 + 4) ÷ 4", "4 + (4 + 4) ÷ 4", "4 + 4 - 4 ÷ 4", "4 + 4 + 4 - 4", "4 + 4 + 4 ÷ 4", "(44 - 4) ÷ 4"];
+      const maximumFourCards = values => {
+        const candidates = operatorPermutations(values).map(([first, second, third, fourth]) => {
+          const difference = first - second;
+          return difference > 0 && (difference * third) % fourth === 0 ? { order: [first, second, third, fourth], value: difference * third / fourth } : null;
+        }).filter(Boolean);
+        const maximum = Math.max(...candidates.map(candidate => candidate.value));
+        const ranking = [...new Set(candidates.map(candidate => candidate.value))].sort((left, right) => right - left);
+        return { maximum, second: ranking[1], winner: candidates.find(candidate => candidate.value === maximum), secondWinner: candidates.find(candidate => candidate.value === ranking[1]), winners: candidates };
+      };
+      const maximumTwoDigit = values => {
+        const candidates = [];
+        for (const order of operatorPermutations(values)) {
+          const [tens, ones, subtract, divisor, multiplier] = order;
+          const twoDigit = tens * 10 + ones;
+          if (twoDigit <= subtract || (twoDigit - subtract) % divisor) continue;
+          candidates.push({ order, value: (twoDigit - subtract) / divisor * multiplier });
+        }
+        const maximum = Math.max(...candidates.map(candidate => candidate.value));
+        const ranking = [...new Set(candidates.map(candidate => candidate.value))].sort((left, right) => right - left);
+        return { maximum, second: ranking[1], winner: candidates.find(candidate => candidate.value === maximum), secondWinner: candidates.find(candidate => candidate.value === ranking[1]), winners: candidates };
+      };
+      if (variant === 0) {
+        const mode = modeForLevel(level);
+        const targets = mode === 1 ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const rangeText = mode === 1 ? "1부터 5까지" : "1부터 10까지";
+        const extraCondition = mode === 3 ? " 1부터 5까지는 4를 붙여 쓰지 마세요. 6부터 10까지는 필요하면 붙여 써도 됩니다." : " 필요하면 4를 붙여 써도 됩니다.";
+        const examples = targets.map(target => `${target}. ${fourFours[target - 1]} = ${target}`).join("<br>");
+        const workspace = `<div class="four-fours-grid" aria-label="${rangeText} 식 쓰기">${targets.map(target => `<span><b>${target}</b><i aria-hidden="true"></i></span>`).join("")}</div>`;
+        return result(`4를 네 번 쓰고 +, -, ×, ÷, ( )를 사용하여 ${rangeText}의 수를 각각 만드는 식을 쓰세요.${extraCondition}${workspace} ${tag("four-fours", [mode, ...targets], "rubric")}`, `예시 답: ${targets.map(target => `${target}. ${fourFours[target - 1]} = ${target}`).join(" ; ")}`, `4를 네 번 썼는지와 각 계산 결과를 확인합니다.<br>${examples}<br>조건에 맞는 다른 식도 가능합니다.`);
+      }
+      if (variant === 1) {
+        const mode = modeForLevel(level);
+        let a = 34; let b = 6; let c = 4; let d = 16; let e = 4; let target = 14;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          b = int(rng, 3, 9 + level); c = int(rng, 2, 6 + level); e = int(rng, 2, 6);
+          const quotient = int(rng, 2, 8 + level); d = e * quotient; target = int(rng, 8, 24 + level * 4); a = target + b * c - quotient;
+          if (a > b * c && a <= 99) break;
+        }
+        const condition = mode === 1 ? " 힌트: 둘째 빈칸에는 ×가 들어갑니다." : mode === 3 ? " 계산 과정에서 나오는 수가 모두 자연수가 되게 하세요." : "";
+        return result(`등식이 성립하도록 빈칸에 +, -, ×, ÷를 한 번씩 넣으세요.${condition}<div class="equation">${a} □ ${b} □ ${c} □ ${d} □ ${e} = ${target}</div>${tag("four-operators", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} - ${b} × ${c} + ${d} ÷ ${e} = ${target}`, `${b} × ${c} = ${b * c}, ${d} ÷ ${e} = ${d / e}입니다. 따라서 ${a} - ${b * c} + ${d / e} = ${target}입니다.`);
+      }
+      if (variant === 2) {
+        const mode = modeForLevel(level);
+        let a = 9; let b = 8; let c = 12; let d = 4; let e = 22; let target = 23;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          d = pick(rng, [2, 3, 4, 5, 6]); const quotient = int(rng, 3, 10 + level); b = int(rng, 2, quotient * d - 2); c = quotient * d - b;
+          a = int(rng, 4, 14 + level * 2); e = int(rng, 2, a * quotient - 2); target = a * quotient - e;
+          if (b > 0 && c > 0 && target > 0) break;
+        }
+        const condition = mode === 1 ? " 힌트: 괄호 안 빈칸에는 +가 들어갑니다." : mode === 3 ? " 계산 과정에서 나오는 수가 모두 자연수가 되게 하세요." : "";
+        return result(`+, -, ×, ÷ 기호를 한 번씩 사용하여 등식이 성립하도록 빈칸에 알맞게 넣으세요.${condition}<div class="equation">${a} □ (${b} □ ${c}) □ ${d} □ ${e} = ${target}</div>${tag("parenthesized-four-operators", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} × (${b} + ${c}) ÷ ${d} - ${e} = ${target}`, `괄호 안은 ${b} + ${c} = ${b + c}입니다. ${a} × ${b + c} ÷ ${d} = ${a * (b + c) / d}이고, ${e}을 빼면 ${target}입니다.`);
+      }
+      if (variant === 3) {
+        const mode = modeForLevel(level);
+        if (mode === 3) {
+          const expressions = ["72 ÷ (4 × 9) × 6 ÷ 4 = 3", "72 ÷ (4 × 9 ÷ 6) ÷ 4 = 3"];
+          return result(`등식이 성립하도록 두 빈칸에 ×, ÷를 넣고, 괄호를 한 쌍 사용하세요. 계산 과정에서 나오는 수는 모두 자연수이며, 조건에 맞는 모든 식을 찾으세요.<div class="equation">72 □ 4 × 9 □ 6 ÷ 4 = 3</div>${tag("multiply-divide-parentheses", [mode, 72, 4, 9, 6, 4, 3], "rubric")}`, `예시 답: ${expressions.join(" ; ")}`, `조건에 맞는 식은 다음 두 가지입니다.<br>${expressions.join("<br>")}`);
+        }
+        let b = 4; let c = 9; let d = 6; let e = 4; let middle = 2; let target = 3; let a = 72;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          b = int(rng, 2, 6); c = int(rng, 3, 9); middle = int(rng, 2, 5 + level); e = int(rng, 2, 6); target = int(rng, 2, 7 + level); d = target * e / middle; a = b * c * middle;
+          if (Number.isInteger(d) && d > 0) break;
+        }
+        const condition = mode === 1 ? ` 힌트: 괄호는 ${b} × ${c}을 먼저 계산하도록 표시합니다.` : "";
+        return result(`등식이 성립하도록 두 빈칸에 ×, ÷를 넣고, 알맞은 곳에 괄호를 표시하세요.${condition}<div class="equation">${a} □ ${b} × ${c} □ ${d} ÷ ${e} = ${target}</div>${tag("multiply-divide-parentheses", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} ÷ (${b} × ${c}) × ${d} ÷ ${e} = ${target}`, `${b} × ${c} = ${b * c}이고 ${a} ÷ ${b * c} = ${middle}입니다. ${middle} × ${d} ÷ ${e} = ${target}입니다.`);
+      }
+      if (variant === 4) {
+        const mode = modeForLevel(level);
+        const cases = mode === 3 ? [[1, 2, 4, 7], [1, 2, 5, 8], [1, 3, 5, 7]] : [[2, 3, 6, 8], [1, 2, 3, 6], [1, 2, 4, 7], [1, 2, 5, 8], [1, 3, 5, 7]];
+        const values = pick(rng, cases);
+        const { maximum, second: secondValue, winner, secondWinner } = maximumFourCards(values);
+        const [first, secondCard, third, fourth] = winner.order;
+        const promptCondition = mode === 1 ? ` 힌트: 첫째 칸에는 ${first}을 넣으세요.` : mode === 3 ? " 가장 큰 값과 두 번째로 큰 서로 다른 자연수가 되게 하는 카드 순서를 모두 쓰세요." : "";
+        const answer = mode === 3 ? `최대: ${winner.order.join(", ")} ; 다음: ${secondWinner.order.join(", ")}` : winner.order.join(", ");
+        const solution = mode === 3 ? `가장 큰 값은 (${winner.order[0]} - ${winner.order[1]}) × ${winner.order[2]} ÷ ${winner.order[3]} = ${maximum}이고, 두 번째로 큰 값은 (${secondWinner.order[0]} - ${secondWinner.order[1]}) × ${secondWinner.order[2]} ÷ ${secondWinner.order[3]} = ${secondValue}입니다.` : `가능한 카드 배치를 모두 확인하면 (${first} - ${secondCard}) × ${third} ÷ ${fourth} = ${maximum}가 가장 큽니다.`;
+        return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 써서 계산 결과가 가장 큰 자연수가 되도록 빈칸에 넣으세요.${promptCondition}<div class="equation">(□ - □) × □ ÷ □</div>${tag("maximum-four-cards", [mode, ...values, maximum, secondValue], "ordered")}`, answer, solution);
+      }
+      if (variant === 5) {
+        const mode = modeForLevel(level);
+        const cases = [
+          { cards: [1, 3, 4, 5, 7], maximum: 60, expressions: ["(4 + 5) × 7 - 3 ÷ 1", "(4 ÷ 1 + 5) × 7 - 3"] },
+          { cards: [1, 2, 3, 4, 6], maximum: 40, expressions: ["(3 + 4) × 6 - 2 ÷ 1", "(3 ÷ 1 + 4) × 6 - 2"] },
+          { cards: [2, 3, 4, 5, 8], maximum: 62, expressions: ["(3 + 5) × 8 - 4 ÷ 2", "8 × (5 + 3) - 4 ÷ 2"] },
+          { cards: [3, 4, 5, 6, 8], maximum: 70, expressions: ["(4 + 5) × 8 - 6 ÷ 3", "8 × (5 + 4) - 6 ÷ 3"] },
+          { cards: [2, 4, 5, 7, 9], maximum: 106, expressions: ["(5 + 7) × 9 - 4 ÷ 2", "9 × (7 + 5) - 4 ÷ 2"] }
+        ];
+        const selected = pick(rng, cases);
+        const task = mode === 1 ? ` 힌트: 괄호 안에는 ${selected.expressions[0].match(/\(([^)]+)\)/)[1]}를 먼저 계산합니다.` : mode === 3 ? " 최대값을 만드는 서로 다른 식을 두 개 쓰세요." : "";
+        const answerExpressions = mode === 3 ? selected.expressions : [selected.expressions[0]];
+        const answer = `예시 답: ${answerExpressions.map(expression => `${expression} = ${selected.maximum}`).join(" ; ")}`;
+        return result(`수 카드 ${cards(shuffle(rng, selected.cards))}와 +, -, ×, ÷, ( )를 모두 한 번씩 사용하여 계산 결과가 가장 큰 자연수가 되도록 식으로 나타내세요. 계산 과정에서 자연수가 나오도록 하세요.${task}${tag("maximum-five-cards", [mode, ...selected.cards, selected.maximum], "rubric")}`, answer, `카드와 네 기호를 모두 한 번씩 썼는지 확인합니다.<br>${answerExpressions.map(expression => `${expression} = ${selected.maximum}`).join("<br>")}`);
+      }
+      if (variant === 6) {
+        const mode = modeForLevel(level);
+        const value = pick(rng, [2, 3, 4, 5, 6, 7, 8, 9]);
+        const expressions = [`(${value} - ${value}) × ${value} + ${value} ÷ ${value}`, `${value} ÷ ${value} + (${value} - ${value}) × ${value}`];
+        const hint = mode === 1 ? " 힌트: (□ - □) × □ + □ ÷ □ 꼴로 만들어 보세요." : mode === 3 ? " 서로 다른 식을 두 개 쓰세요." : "";
+        const answer = `예시 답: ${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join(" ; ")}`;
+        return result(`${value}를 다섯 번 쓰고 +, -, ×, ÷, ( )를 한 번씩 모두 사용하여 1이 되는 계산식을 만드세요.${hint}${tag("five-same-numbers", [mode, value, 1], "rubric")}`, answer, `${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join("<br>")}`);
+      }
+      if (variant === 7) {
+        const mode = modeForLevel(level);
+        const condition = mode === 1 ? " 힌트: 첫째 빈칸은 ÷ 또는 +, 둘째 빈칸은 + 또는 -입니다." : mode === 3 ? " 두 빈칸에 넣는 기호는 서로 달라야 합니다." : "";
+        return result(`등식이 성립하도록 두 빈칸에 +, -, ×, ÷ 기호를 알맞게 넣으세요.${condition}<div class="equation">85 □ 17 □ 9 × 3 - 20 = 12</div>${tag("two-operators", [mode, 85, 17, 9, 3, 20, 12], "rubric")}`, "예시 답: 85 ÷ 17 + 9 × 3 - 20 = 12", "85 ÷ 17 = 5, 9 × 3 = 27이므로 5 + 27 - 20 = 12입니다.");
+      }
+      if (variant === 8) {
+        const mode = modeForLevel(level);
+        const rows = [
+          { plain: "42 ÷ 2 + 4 × 2 - 3 = 6", answer: "42 ÷ (2 + 4 × 2 - 3) = 6" },
+          { plain: "72 - 5 × 2 + 6 ÷ 4 = 62", answer: "72 - 5 × (2 + 6) ÷ 4 = 62" },
+          { plain: "78 - 48 + 16 ÷ 2 = 46", answer: "78 - (48 + 16) ÷ 2 = 46" }
+        ].slice(0, mode);
+        return result(`다음 ${rows.length}개 식이 성립하도록 각각 한 쌍의 괄호로 묶으세요.<div class="equation">${rows.map((row, index) => `(${index + 1}) ${row.plain}`).join("<br>")}</div>${tag("three-parentheses", [mode, rows.length], "ordered")}`, rows.map((row, index) => `(${index + 1}) ${row.answer}`).join(" ; "), rows.map((row, index) => `(${index + 1}) ${row.answer}입니다.`).join("<br>"));
+      }
+      if (variant === 9) {
+        const mode = modeForLevel(level);
+        const cases = [[1, 3, 5, 7, 8], [1, 2, 3, 4, 5], [1, 2, 3, 5, 7], [1, 2, 4, 5, 9], [1, 2, 4, 7, 8]];
+        const values = pick(rng, cases);
+        const { maximum, second, winner, secondWinner } = maximumTwoDigit(values);
+        const [tens, ones, subtract, divisor, multiplier] = winner.order;
+        const condition = mode === 1 ? ` 힌트: 두 자리 수의 십의 자리에는 ${tens}을 넣으세요.` : mode === 3 ? " 가장 큰 값과 두 번째로 큰 서로 다른 자연수가 되게 하는 카드 순서를 모두 쓰세요." : "";
+        const answer = mode === 3 ? `최대: ${winner.order.join(", ")} ; 다음: ${secondWinner.order.join(", ")}` : winner.order.join(", ");
+        const solution = mode === 3 ? `가장 큰 값은 (${winner.order[0]}${winner.order[1]} - ${winner.order[2]}) ÷ ${winner.order[3]} × ${winner.order[4]} = ${maximum}이고, 두 번째로 큰 값은 (${secondWinner.order[0]}${secondWinner.order[1]} - ${secondWinner.order[2]}) ÷ ${secondWinner.order[3]} × ${secondWinner.order[4]} = ${second}입니다.` : `두 자리 수를 만드는 경우까지 모두 확인하면 (${tens}${ones} - ${subtract}) ÷ ${divisor} × ${multiplier} = ${maximum}가 가장 큽니다.`;
+        return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 사용하여 다음 계산 결과가 가장 커지도록 빈칸에 넣으세요. 앞의 두 칸에는 두 자리 수가 들어갑니다.${condition}<div class="equation">(□ □ - □) ÷ □ × □</div>${tag("maximum-two-digit", [mode, ...values, maximum, second], "ordered")}`, answer, solution);
+      }
+      if (variant === 10) {
+        const mode = modeForLevel(level);
+        const choices = mode === 1 ? [33, 65, 82] : mode === 3 ? [33, 36, 65, 69, 84, 93, 82, 42, 41] : [33, 82, 65, 42, 93];
+        const impossible = choices.filter(value => ![33, 36, 65, 69, 84, 93].includes(value)).sort((left, right) => left - right);
+        return result(`다음 식을 한 쌍의 괄호로 묶어 계산했을 때, 보기 중 계산 결과가 될 수 없는 수를 모두 찾으세요.<div class="equation">4 × 16 + 8 - 6 ÷ 2</div><div class="choice-row">[보기] ${shuffle(rng, choices).join(", ")}</div>${tag("impossible-parentheses", [mode, ...choices], "set")}`, impossible.join(", "), `괄호를 넣을 수 있는 모든 위치를 계산하면 33, 36, 65, 69, 84, 93이 나옵니다. 따라서 보기에서 만들 수 없는 수는 ${impossible.join("와 ")}입니다.`);
+      }
+      const start = pick(rng, [1, 2, 3, 4, 5, 6]);
+      const mode = modeForLevel(level);
+      const values = [start, start + 1, start + 2, start + 3];
+      const expressions = [`(${start + 3} - ${start + 1}) ÷ (${start + 2} - ${start})`, `(${start + 2} - ${start}) ÷ (${start + 3} - ${start + 1})`];
+      const hint = mode === 1 ? " 힌트: (□ - □) ÷ (□ - □) 꼴로 만들어 보세요." : mode === 3 ? " 서로 다른 식을 두 개 쓰세요." : "";
+      const answer = `예시 답: ${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join(" ; ")}`;
+      return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 모두 사용하여 계산 결과가 1이 되는 식을 만드세요. 수를 붙여 쓰지는 않습니다.${hint}${tag("four-cards-one", [mode, ...values, 1], "rubric")}`, answer, `${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join("<br>")}`);
     },
     advancedRange({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

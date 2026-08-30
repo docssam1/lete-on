@@ -28,12 +28,13 @@ const slug = value => String(value).replaceAll(/[^\p{L}\p{N}_-]+/gu, "_");
 const overlap = (a, b) => Boolean(a && b && a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1);
 
 function auditInventory() {
-  if (!unit || types.length !== 44 || inventory.items.length !== 44) fail("원문·교육과정 유형은 각각 44개여야 합니다.");
-  if (ready.length !== 32 || locked.length !== 12 || e3.length !== 11) fail(`공개 32·잠금 12·개념탐구 3 공개 11유형이 아닙니다: ${ready.length}, ${locked.length}, ${e3.length}`);
+  if (!unit || types.length !== 45 || inventory.items.length !== 45) fail("원문·교육과정 유형은 각각 45개여야 합니다.");
+  if (ready.length !== 44 || locked.length !== 1 || e3.length !== 11) fail(`공개 44·잠금 1·개념탐구 3 공개 11유형이 아닙니다: ${ready.length}, ${locked.length}, ${e3.length}`);
   for (const type of types) {
     const source = byId.get(type.sourceItemId);
     if (!source || type.label !== source.typeLabel || type.name !== source.typeLabel || type.reviewLocked !== (source.implementationStatus === "review-locked")) fail(`${type.id}: 원문 분류표 연결 또는 잠금 상태가 다릅니다.`);
     if (source?.exploration === 3 && (!api.generatorKey(type) || api.generatorKey(type) !== "mixedCalculationE3" || type.reviewLocked)) fail(`${type.id}: 개념탐구 3 생성기 연결이 다릅니다.`);
+    if (source?.exploration === 4 && (!api.generatorKey(type) || api.generatorKey(type) !== "mixedCalculationE4" || type.reviewLocked || !inventory.resultContracts[type.sourceItemId])) fail(`${type.id}: 개념탐구 4 생성기 또는 답 형식 연결이 다릅니다.`);
   }
 }
 
@@ -51,7 +52,7 @@ async function inspectCatalog(browser, viewport, label) {
   await page.click('#gradeFilter [data-grade="5"]');
   await page.click('#termFilter [data-term="1"]');
   await page.selectOption("#unitFilter", "5-1-u1");
-  if (await page.locator("[data-preview-type-id]").count() !== 44) fail(`${label}: 목록 44유형이 보이지 않습니다.`);
+  if (await page.locator("[data-preview-type-id]").count() !== 45) fail(`${label}: 목록 45유형이 보이지 않습니다.`);
   for (const type of types) {
     const row = page.locator(`[data-preview-type-id="${type.id}"]`);
     await row.scrollIntoViewIfNeeded();
@@ -137,7 +138,7 @@ async function inspectReview(browser, type, viewport, label) {
   }
   await browser.close();
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 3 브라우저·인쇄 감사 통과: 전체 44 · 공개 32/잠금 12 · E3 공개 11 · PC/모바일 ${screenshots}장 · A4 ${pdfs}개`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 3 브라우저·인쇄 감사 통과: 전체 45 · 공개 44/잠금 1 · E3 공개 11 · PC/모바일 ${screenshots}장 · A4 ${pdfs}개`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 개념탐구 3 브라우저·인쇄 감사 실패: ${error.stack || error}`);
   process.exit(1);

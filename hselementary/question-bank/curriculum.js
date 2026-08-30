@@ -62,8 +62,8 @@
     reviewLocked
   });
   const sourceItemLabel51 = sourceItemId => {
-    const exploration = sourceItemId.match(/-e(\d+)-exploration$/)?.[1];
-    if (exploration) return `개념탐구 ${exploration} 본문`;
+    const exploration = sourceItemId.match(/-e(\d+)-exploration(?:-(\d+))?$/);
+    if (exploration) return `개념탐구 ${exploration[1]} 본문${exploration[2] ? ` (${exploration[2]})` : ""}`;
     const example = sourceItemId.match(/-example-(\d+-\d+)$/)?.[1];
     if (example) return `예제 ${example}`;
     const mission = sourceItemId.match(/-mission-(\d+)$/)?.[1];
@@ -659,18 +659,19 @@
           sourceItem51("묶음 단가와 이익으로 판매한 사탕 봉지 수 구하기", 1, "5-1-u1-e3-mission-5", 8, 9),
           sourceItem51("구슬을 옮긴 뒤의 배수 관계로 처음 두 수의 곱 구하기", 1, "5-1-u1-e3-mission-6", 8, 9)
         ]),
-        detailed("혼합 계산식 만들기", "", [
-          sourceItem51("정해진 수·사칙연산·괄호 조건으로 혼합 계산식 만들기", 1, "5-1-u1-e4-exploration", 9, 10, true, "개념탐구 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("사칙연산 기호를 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-example-4-1", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("곱셈·나눗셈 기호와 괄호를 넣어 등식 만들기", 1, "5-1-u1-e4-example-4-2", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("주어진 수를 식의 빈칸에 넣어 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-3", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("수 카드와 사칙연산 및 괄호를 모두 한 번씩 써 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-4", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("같은 수 다섯 개와 사칙연산·괄호를 각각 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-mission-1", 10, 11, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("네 사칙연산 기호를 각각 한 번씩 넣어 등식 만들기", 1, "5-1-u1-e4-mission-2", 10, 11, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("괄호 한 쌍을 넣어 등식이 맞게 만들기", 1, "5-1-u1-e4-mission-3", 10, 11, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("주어진 수를 식의 빈칸에 넣어 계산 결과 가장 크게 만들기", 1, "5-1-u1-e4-mission-4", 10, 11, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("괄호 한 쌍으로 만들 수 없는 보기의 계산 결과를 모두 찾기", 1, "5-1-u1-e4-mission-5", 10, 11, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("수 카드를 한 번씩 써 계산 결과가 1인 식 만들기", 1, "5-1-u1-e4-mission-6", 10, 11, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        detailed("혼합 계산식 만들기", "mixedCalculationE4", [
+          sourceItem51("4를 네 번 써서 1부터 10까지 만들기", 1, "5-1-u1-e4-exploration-1", 9, 10),
+          sourceItem51("네 기호를 한 번씩 넣어 14 만들기", 1, "5-1-u1-e4-exploration-2", 9, 10),
+          sourceItem51("괄호가 있는 식에 네 기호 넣어 23 만들기", 1, "5-1-u1-e4-example-4-1", 9, 10),
+          sourceItem51("곱셈·나눗셈과 괄호로 3 만들기", 1, "5-1-u1-e4-example-4-2", 9, 10),
+          sourceItem51("네 수 카드로 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-3", 9, 10),
+          sourceItem51("수 카드와 네 기호로 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-4", 9, 10),
+          sourceItem51("같은 수 다섯 개와 네 기호로 1 만들기", 1, "5-1-u1-e4-mission-1", 10, 11),
+          sourceItem51("두 기호를 넣어 12 만들기", 1, "5-1-u1-e4-mission-2", 10, 11),
+          sourceItem51("세 식을 괄호로 묶어 맞게 만들기", 1, "5-1-u1-e4-mission-3", 10, 11),
+          sourceItem51("다섯 수 카드로 두 자리 수를 만들어 가장 큰 수 만들기", 1, "5-1-u1-e4-mission-4", 10, 11),
+          sourceItem51("괄호로 만들 수 없는 수 찾기", 1, "5-1-u1-e4-mission-5", 10, 11),
+          sourceItem51("연속한 네 수 카드로 1 만들기", 1, "5-1-u1-e4-mission-6", 10, 11)
         ])
       ],
       ["약수와 배수", "약수와 배수", "소인수분해 1", "소인수분해 2", "소인수분해의 활용", "공약수와 최대공약수", "공배수와 최소공배수", "배수판정법", "세 수의 최대공약수와 최소공배수", "약수의 개수", "공약수의 활용", "공배수의 활용", "최대공약수와 최소공배수의 관계"],
