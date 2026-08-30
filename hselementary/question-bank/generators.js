@@ -18073,6 +18073,119 @@
       const answer = filledRectangleCount(widths);
       return result(`그림과 같이 계단 모양으로 이어진 모눈에서 선을 따라 그릴 수 있는 크고 작은 직사각형은 모두 몇 개인지 구하세요.${staircaseGridSvg(widths)}`, answer, `위쪽 행과 아래쪽 행을 정한 뒤, 그 사이의 모든 행에 공통으로 있는 연속한 칸을 골라 직사각형을 셉니다. 빠짐없이 더하면 ${answer}개입니다.`);
     },
+    factorMultipleE1({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("약수와 배수 개념탐구 1 원문 분기는 0부터 11까지여야 합니다.");
+      const mode = level + 1;
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e1-kind="${kind}" data-factor-multiple-e1-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const setAnswer = values => values.join(", ");
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      if (variant === 0) {
+        const number = pick(rng, mode === 1 ? [12, 18, 20] : mode === 2 ? [60, 72, 84] : [120, 180, 240]);
+        const divisors = allDivisors(number);
+        const answer = divisors.length / 2;
+        const hint = mode === 1 ? ` 약수는 ${divisors.join(", ")}입니다.` : mode === 3 ? " 약수의 작은 수와 큰 수를 짝지어 빠짐없이 확인하세요." : "";
+        return result(`${number}의 약수들을 모두 곱한 값을 ${number}만 반복해서 곱한 식으로 나타낼 때, 식에 쓰이는 ${number}의 개수를 구하세요.${hint}${tag("divisor-product-pairs", [mode, number], "single-value")}`, answer, `${number}의 약수를 작은 수와 큰 수끼리 짝지으면 각 쌍의 곱은 ${number}입니다. ${divisors.length}개의 약수로 ${answer}쌍을 만들 수 있으므로 식에 쓰인 ${number}의 개수는 ${answer}개입니다.`);
+      }
+      if (variant === 1) {
+        const divisor = pick(rng, mode === 1 ? [25, 32, 40] : mode === 2 ? [37, 41, 43] : [47, 53, 59]);
+        const from = 1000;
+        const to = mode === 1 ? 5999 : 9999;
+        const first = Math.ceil(from / divisor) * divisor;
+        const last = Math.floor(to / divisor) * divisor;
+        const answer = Math.floor(to / divisor) - Math.floor((from - 1) / divisor);
+        const hint = mode === 1 ? ` 가장 작은 배수는 ${first}, 가장 큰 배수는 ${last}입니다.` : mode === 3 ? " 범위의 양 끝에 있는 수가 포함되는지도 확인하세요." : "";
+        return result(`${from.toLocaleString()} 이상 ${to.toLocaleString()} 이하인 수 중 ${divisor}의 배수는 모두 몇 개인지 구하세요.${hint}${tag("four-digit-multiple-count", [mode, from, to, divisor], "single-value")}`, answer, `${to.toLocaleString()} 이하의 ${divisor}의 배수는 ${Math.floor(to / divisor)}개이고, ${from.toLocaleString()}보다 작은 배수는 ${Math.floor((from - 1) / divisor)}개입니다. 따라서 ${answer}개입니다.`);
+      }
+      if (variant === 2) {
+        const number = pick(rng, mode === 1 ? [1001, 1365, 1729] : mode === 2 ? [2002, 2310, 2730] : [3003, 5005, 7425]);
+        const candidates = allDivisors(number).filter(value => value >= 100 && value <= 999);
+        const answer = candidates.at(-1);
+        const hint = mode === 1 ? ` ${number}의 약수 중 세 자리 수만 골라 보세요.` : mode === 3 ? " 약수 짝에서 세 자리인 큰 쪽을 비교하세요." : "";
+        return result(`${number.toLocaleString()}의 약수 중 가장 큰 세 자리 수를 구하세요.${hint}${tag("largest-three-digit-divisor", [mode, number], "single-value")}`, answer, `${number.toLocaleString()}의 세 자리 약수는 ${candidates.join(", ")}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const divisor = pick(rng, mode === 1 ? [7, 9] : mode === 2 ? [11, 13] : [17, 19]);
+        const base = pick(rng, mode === 2 && divisor === 11 ? [5496, 4832, 7164] : [int(rng, 3200, 8900)]);
+        const upper = mode === 1 ? 59 : 99;
+        const candidates = range(10, upper).filter(value => (base + value) % divisor === 0);
+        const hint = mode === 1 ? ` □는 10 이상 ${upper} 이하입니다.` : mode === 3 ? " 가능한 두 자리 수를 작은 수부터 일정한 간격으로 찾아보세요." : "";
+        return result(`${base.toLocaleString()} + □가 ${divisor}의 배수가 되도록 하는 두 자리 자연수 □는 모두 몇 개인지 구하세요.${hint}${tag("added-two-digit-multiple", [mode, base, divisor, upper], "single-value")}`, candidates.length, `조건에 맞는 두 자리 수는 ${candidates.join(", ")}이고, 모두 ${candidates.length}개입니다.`);
+      }
+      if (variant === 4) {
+        const [dividend, remainder] = pick(rng, mode === 1 ? [[100, 4], [84, 4]] : mode === 2 ? [[240, 6], [180, 6]] : [[360, 8], [420, 10]]);
+        const choices = allDivisors(dividend - remainder).filter(value => value > remainder);
+        const hint = mode === 1 ? ` 나누는 수는 ${remainder}보다 커야 합니다.` : mode === 3 ? " 나누어지는 수에서 나머지를 뺀 수의 약수를 모두 확인하세요." : "";
+        return result(`나눗셈에서 나누어지는 수는 ${dividend}, 나누는 수는 자연수 ㉠, 나머지는 ${remainder}입니다. ㉠이 될 수 있는 자연수는 모두 몇 개인지 구하세요.${hint}${tag("remainder-divisor-count", [mode, dividend, remainder], "single-value")}`, choices.length, `${dividend} - ${remainder} = ${dividend - remainder}의 약수 중 ${remainder}보다 큰 수는 ${choices.join(", ")}입니다. 따라서 ${choices.length}개입니다.`);
+      }
+      if (variant === 5) {
+        const [correctDivisor, wrongDivisor, bound] = pick(rng, mode === 1 ? [[17, 21, 150], [11, 16, 50]] : mode === 2 ? [[67, 76, 2000], [61, 68, 12000]] : [[83, 98, 9000], [63, 82, 12000]]);
+        const candidates = range(1, bound - 1).filter(number => {
+          const correctQuotient = Math.floor(number / correctDivisor);
+          const correctRemainder = number % correctDivisor;
+          return Math.floor(number / wrongDivisor) === correctRemainder && number % wrongDivisor === correctQuotient;
+        });
+        if (candidates.length !== 1) throw new Error("몫과 나머지가 바뀌는 원래 수가 하나가 아닙니다.");
+        const answer = candidates[0];
+        const hint = mode === 1 ? " 바른 몫을 ㉠, 바른 나머지를 ㉡으로 놓아 두 나눗셈식을 비교하세요." : mode === 3 ? " 두 나눗셈에서 몫과 나머지의 크기 조건도 함께 확인하세요." : "";
+        return result(`${bound.toLocaleString()}보다 작은 어떤 자연수가 있습니다. 나누는 수가 ${correctDivisor}인 나눗셈을 해야 하는데, 나누는 수가 ${wrongDivisor}인 나눗셈을 했더니 몫과 나머지가 서로 바뀌었습니다. 어떤 자연수인지 구하세요.${hint}${tag("swapped-quotient-remainder", [mode, correctDivisor, wrongDivisor, bound], "single-value")}`, answer, `두 나눗셈에서 몫과 나머지가 바뀌는 수를 조건에 맞게 확인하면 ${answer.toLocaleString()} 하나입니다. 답이 ${answer.toLocaleString()}일 때 두 나눗셈의 몫과 나머지가 서로 바뀌는지 확인할 수 있습니다.`);
+      }
+      if (variant === 6) {
+        const number = pick(rng, mode === 1 ? [2520, 7560] : mode === 2 ? [784520, 332640] : [1234800, 1663200]);
+        const answerValues = range(1, 9).filter(value => number % value === 0);
+        const hint = mode === 1 ? " 1부터 9까지 차례로 나누어 보세요." : mode === 3 ? " 2, 3, 4, 5, 6, 8, 9의 배수 조건을 함께 이용하세요." : "";
+        return result(`한 자리 자연수 중에서 ${number.toLocaleString()}의 약수가 되는 수를 모두 구하세요.${hint}${tag("one-digit-divisors", [mode, number], "set")}`, setAnswer(answerValues), `1부터 9까지 나누어떨어지는지 확인하면 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 7) {
+        const [target, divisor] = pick(rng, mode === 1 ? [[1000, 43], [2000, 37]] : mode === 2 ? [[10000, 43], [12000, 47]] : [[100000, 97], [250000, 113]]);
+        const lower = Math.floor(target / divisor) * divisor;
+        const upper = lower + divisor;
+        const answer = target - lower < upper - target ? lower : upper;
+        const hint = mode === 1 ? ` 가까운 두 배수는 ${lower.toLocaleString()}과 ${upper.toLocaleString()}입니다.` : mode === 3 ? " 기준값의 바로 앞뒤에 있는 두 배수와의 차를 비교하세요." : "";
+        return result(`${target.toLocaleString()}에 가장 가까운 ${divisor}의 배수를 구하세요.${hint}${tag("nearest-multiple", [mode, target, divisor], "single-value")}`, answer, `${lower.toLocaleString()}과의 차는 ${(target - lower).toLocaleString()}, ${upper.toLocaleString()}과의 차는 ${(upper - target).toLocaleString()}이므로 더 가까운 수는 ${answer.toLocaleString()}입니다.`);
+      }
+      if (variant === 8) {
+        const [upper, divisors] = pick(rng, mode === 1 ? [[30, [2, 3]], [40, [2, 5]]] : mode === 2 ? [[50, [2, 3, 4, 5]], [60, [2, 3, 4, 5]]] : [[100, [2, 3, 5, 7]], [120, [2, 3, 5, 7]]]);
+        const remaining = range(1, upper).filter(value => !divisors.some(divisor => value % divisor === 0));
+        const hint = mode === 1 ? " 앞에서 꺼낸 카드는 다음 단계에서 다시 세지 않습니다." : mode === 3 ? " 여러 수의 공통 배수는 한 번만 뺀 것으로 셉니다." : "";
+        return result(`1부터 ${upper}까지의 자연수가 적힌 카드가 한 장씩 있습니다. 먼저 ${divisors[0]}의 배수인 카드를 모두 꺼내고, 이어서 ${divisors.slice(1).map(value => `${value}의 배수`).join(", ")}인 카드를 차례로 모두 꺼냅니다. 남은 카드는 모두 몇 장인지 구하세요.${hint}${tag("remove-multiple-cards", [mode, upper, ...divisors], "single-value")}`, remaining.length, `어느 수의 배수도 아닌 카드는 ${remaining.join(", ")}이고, 모두 ${remaining.length}장입니다.`);
+      }
+      if (variant === 9) {
+        const [dividend, remainder] = pick(rng, mode === 1 ? [[83, 3], [101, 5]] : mode === 2 ? [[181, 6], [221, 5]] : [[421, 5], [631, 7]]);
+        const answerValues = allDivisors(dividend - remainder).filter(value => value > remainder);
+        const hint = mode === 1 ? ` ㉠은 ${remainder}보다 커야 합니다.` : mode === 3 ? " 나머지를 뺀 수의 약수 중 조건에 맞는 수를 빠짐없이 찾으세요." : "";
+        return result(`나눗셈에서 나누어지는 수는 ${dividend}, 나누는 수는 자연수 ㉠, 나머지는 ${remainder}입니다. ㉠이 될 수 있는 자연수를 모두 구하세요.${hint}${tag("remainder-divisor-set", [mode, dividend, remainder], "set")}`, setAnswer(answerValues), `${dividend} - ${remainder} = ${dividend - remainder}의 약수 중 ${remainder}보다 큰 수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 10) {
+        const cases = mode === 1
+          ? [
+              { unit: 1, leftMultiplier: 2, rightTens: 1, rightMultiplier: 9, answer: 8 },
+              { unit: 4, leftMultiplier: 5, rightTens: 3, rightMultiplier: 10, answer: 7 },
+              { unit: 7, leftMultiplier: 6, rightTens: 9, rightMultiplier: 3, answer: 4 }
+            ]
+          : mode === 2
+            ? [
+                { unit: 9, leftMultiplier: 12, rightTens: 3, rightMultiplier: 23, answer: 6 },
+                { unit: 4, leftMultiplier: 15, rightTens: 9, rightMultiplier: 10, answer: 6 },
+                { unit: 6, leftMultiplier: 16, rightTens: 3, rightMultiplier: 13, answer: 2 }
+              ]
+            : [
+                { unit: 1, leftMultiplier: 27, rightTens: 9, rightMultiplier: 9, answer: 3 },
+                { unit: 4, leftMultiplier: 13, rightTens: 3, rightMultiplier: 26, answer: 7 },
+                { unit: 9, leftMultiplier: 12, rightTens: 3, rightMultiplier: 23, answer: 6 }
+              ];
+        const selected = pick(rng, cases);
+        const answer = selected.answer;
+        const hint = mode === 1 ? " 같은 □에는 같은 숫자가 들어갑니다." : mode === 3 ? " 1부터 9까지 넣어 양쪽 곱이 같은지 확인하세요." : "";
+        return result(`다음 등식이 성립하도록 두 □에 공통으로 들어갈 숫자를 구하세요.<div class="equation">□${selected.unit} × ${selected.leftMultiplier} = ${selected.rightTens}□ × ${selected.rightMultiplier}</div>${hint}${tag("shared-blank-digit", [mode, selected.unit, selected.leftMultiplier, selected.rightTens, selected.rightMultiplier], "single-value")}`, answer, `□에 ${answer}을 넣으면 ${10 * answer + selected.unit} × ${selected.leftMultiplier} = ${10 * selected.rightTens + answer} × ${selected.rightMultiplier}로 양쪽이 같습니다. 다른 숫자는 등식을 만족하지 않습니다.`);
+      }
+      const [from, to, firstDivisor, secondDivisor] = pick(rng, mode === 1 ? [[1, 100, 2, 5], [1, 120, 3, 4]] : mode === 2 ? [[100, 200, 3, 5], [200, 400, 4, 7]] : [[1000, 5000, 7, 11], [2000, 8000, 9, 13]]);
+      const values = range(from, to);
+      const firstCount = values.filter(value => value % firstDivisor !== 0).length;
+      const secondCount = values.filter(value => value % secondDivisor !== 0).length;
+      const answer = Math.abs(firstCount - secondCount);
+      const hint = mode === 1 ? " 전체 개수에서 각 배수의 개수를 빼세요." : mode === 3 ? " 범위의 처음과 끝을 모두 포함하여 셉니다." : "";
+      return result(`${from.toLocaleString()}부터 ${to.toLocaleString()}까지의 자연수 중 ${firstDivisor}의 배수가 아닌 수의 개수와 ${secondDivisor}의 배수가 아닌 수의 개수의 차를 구하세요.${hint}${tag("non-multiple-count-difference", [mode, from, to, firstDivisor, secondDivisor], "single-value")}`, answer, `${firstDivisor}의 배수가 아닌 수는 ${firstCount}개, ${secondDivisor}의 배수가 아닌 수는 ${secondCount}개이므로 두 개수의 차는 ${answer}입니다.`);
+    },
     factorMultipleAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const divisor = pick(rng, [7, 9, 11, 13, 17].slice(0, 3 + level));
@@ -18736,18 +18849,7 @@
     [type => type.id === "4-2-u6-t2", "regularPolygonApplication"],
     [type => type.id === "4-2-u6-t3", "tessellationCover"],
     [type => type.id === "4-2-u6-t4", "shapePartitionCompose"],
-    [type => type.id === "5-1-u2-t1", "factorMultipleAdvanced"],
-    [type => type.id === "5-1-u2-t2", "primeFactorBasicAdvanced"],
-    [type => type.id === "5-1-u2-t3", "primeFactorPowerAdvanced"],
-    [type => type.id === "5-1-u2-t4", "primeFactorApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t5", "commonDivisorAdvanced"],
-    [type => type.id === "5-1-u2-t6", "commonMultipleAdvanced"],
-    [type => type.id === "5-1-u2-t7", "divisibilityRuleAdvanced"],
-    [type => type.id === "5-1-u2-t8", "threeNumberGcdLcmAdvanced"],
-    [type => type.id === "5-1-u2-t9", "divisorCountAdvanced"],
-    [type => type.id === "5-1-u2-t10", "commonDivisorApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t11", "commonMultipleApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t12", "gcdLcmRelationAdvanced"],
+    [type => type.id?.startsWith("5-1-u2-e1-"), "factorMultipleE1"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],
