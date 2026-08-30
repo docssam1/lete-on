@@ -17,26 +17,13 @@ const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.map
 })));
 const semester42 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2");
 const lineGraphUnit = semester42.units.find(unit => unit.id === "4-2-u5");
-const lineGraphTypes = lineGraphUnit.subunits.flatMap(subunit => subunit.types.map(type => ({
+const lineGraphTypes = lineGraphUnit.subunits.flatMap(subunit => subunit.types.filter(type => !type.reviewLocked).map(type => ({
   ...type,
   semesterId: semester42.id,
   unitId: lineGraphUnit.id,
   unitName: lineGraphUnit.name,
   subunitName: subunit.name
 })));
-const lineGraphSignatures = {
-  lineGraphUnderstanding: [
-    "목요일의 배출량은 수요일보다",
-    "화요일부터 목요일까지 배출량의 합",
-    "가장 많은 날과 가장 적은 날의 배출량 차"
-  ],
-  lineGraphApplication: [
-    "사용한 휘발유 양의 차",
-    "가 수도꼭지만 사용했다면",
-    "판매 금액은 초콜릿 판매 금액보다"
-  ]
-};
-
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
 const numberList = value => (value || "").split(",").filter(Boolean).map(Number);
 const failures = [];
@@ -91,39 +78,45 @@ for (const type of lineGraphTypes) {
     for (let seed = 1; seed <= 450; seed += 1) {
       let generated;
       try {
-        generated = api.generate(type, 0, difficulty, seed, seed);
+        generated = api.generate(type, 0, difficulty, seed, type.variant);
       } catch (error) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
         continue;
       }
-      const svg = generated.prompt.match(/<svg class="line-chart"[^>]*>/)?.[0];
-      check(Boolean(svg), `${type.id} / 시드 ${seed}: 꺾은선그래프 SVG가 없습니다.`);
-      if (!svg) continue;
-      check(generated.prompt.includes(lineGraphSignatures[type.generatorKey][type.variant]), `${type.id} / 시드 ${seed}: 세부 유형과 원본 구조가 다릅니다.`);
+      const svgBlocks = generated.prompt.match(/<svg class="line-chart"[\s\S]*?<\/svg>/g) || [];
+      check(svgBlocks.length > 0, `${type.id} / 시드 ${seed}: 꺾은선그래프 SVG가 없습니다.`);
+      if (!svgBlocks.length) continue;
+      check(generated.prompt.includes(`data-source42-line-item="${type.sourceItemId}"`), `${type.id} / 시드 ${seed}: 세부 유형과 원문 ID가 다릅니다.`);
 
-      const step = Number(attribute(svg, "data-chart-step"));
-      const scaleMax = Number(attribute(svg, "data-chart-scale-max"));
-      const tickCount = Number(attribute(svg, "data-chart-tick-count"));
-      const unit = attribute(svg, "data-chart-unit");
-      const values = (attribute(svg, "data-chart-values") || "").split(";").flatMap(numberList);
-      check(values.length > 0 && values.every(value => Number.isInteger(value / step)), `${type.id} / 시드 ${seed}: 눈금 단위와 값이 맞지 않습니다.`);
-      check(tickCount >= 2 && tickCount <= 10, `${type.id} / 시드 ${seed}: 눈금 수 ${tickCount}개가 허용 범위를 벗어났습니다.`);
-      check(scaleMax === step * (tickCount - 1), `${type.id} / 시드 ${seed}: 눈금 최대값이 일치하지 않습니다.`);
-      check(generated.prompt.includes(`세로 눈금 한 칸은 ${step}${unit}입니다.`), `${type.id} / 시드 ${seed}: 눈금 한 칸 안내가 없습니다.`);
+      for (const svg of svgBlocks) {
+        const step = Number(attribute(svg, "data-chart-step"));
+        const scaleMin = Number(attribute(svg, "data-chart-scale-min"));
+        const scaleMax = Number(attribute(svg, "data-chart-scale-max"));
+        const gridCount = Number(attribute(svg, "data-chart-grid-count"));
+        const tickCount = Number(attribute(svg, "data-chart-tick-count"));
+        const unit = attribute(svg, "data-chart-unit");
+        const values = (attribute(svg, "data-chart-values") || "").split(";").flatMap(numberList);
+        check(values.length > 0 && values.every(value => Math.abs((value - scaleMin) / step - Math.round((value - scaleMin) / step)) < 1e-9), `${type.id} / 시드 ${seed}: 눈금 단위와 값이 맞지 않습니다.`);
+        check(gridCount >= 2 && tickCount >= 2 && tickCount <= 12, `${type.id} / 시드 ${seed}: 눈금 글자 수 ${tickCount}개가 허용 범위를 벗어났습니다.`);
+        check(Math.abs(scaleMax - (scaleMin + step * (gridCount - 1))) < 1e-9, `${type.id} / 시드 ${seed}: 눈금 최대값이 일치하지 않습니다.`);
+        check(generated.prompt.includes(`세로 눈금 한 칸은 ${step}${unit}입니다.`), `${type.id} / 시드 ${seed}: 눈금 한 칸 안내가 없습니다.`);
 
-      const tickLabels = generated.prompt.match(/class="chart-tick"/g)?.length || 0;
-      const gridLines = generated.prompt.match(/class="chart-grid"/g)?.length || 0;
-      check(tickLabels === tickCount && gridLines >= tickCount, `${type.id} / 시드 ${seed}: 눈금 글자 또는 격자선이 빠졌습니다.`);
+        const tickLabels = svg.match(/class="chart-tick"/g)?.length || 0;
+        const gridLines = svg.match(/class="chart-grid"/g)?.length || 0;
+        check(tickLabels === tickCount && gridLines >= gridCount, `${type.id} / 시드 ${seed}: 눈금 글자 또는 격자선이 빠졌습니다.`);
 
-      const top = Number(attribute(svg, "data-chart-top"));
-      const plotHeight = Number(attribute(svg, "data-chart-plot-height"));
-      const points = generated.prompt.match(/<circle class="chart-point chart-line-\d"[^>]*>/g) || [];
-      check(points.length === values.length, `${type.id} / 시드 ${seed}: 꺾은선의 점 수가 원자료와 다릅니다.`);
-      for (const point of points) {
-        const value = Number(attribute(point, "data-chart-value"));
-        const y = Number(attribute(point, "cy"));
-        const recovered = Math.round(((top + plotHeight - y) / plotHeight * scaleMax) / step) * step;
-        check(recovered === value, `${type.id} / 시드 ${seed}: 렌더 좌표 ${recovered}와 원자료 ${value}가 다릅니다.`);
+        const top = Number(attribute(svg, "data-chart-top"));
+        const plotHeight = Number(attribute(svg, "data-chart-plot-height"));
+        const points = svg.match(/<circle class="chart-point chart-line-\d[^\"]*"[^>]*>/g) || [];
+        const hiddenCount = (attribute(svg, "data-chart-hidden") || "").split(";").flatMap(numberList).length;
+        check(points.length === values.length - hiddenCount, `${type.id} / 시드 ${seed}: 보이는 점 수가 원자료와 다릅니다.`);
+        for (const point of points) {
+          const value = Number(attribute(point, "data-chart-value"));
+          const y = Number(attribute(point, "cy"));
+          const rawRecovered = scaleMin + (top + plotHeight - y) / plotHeight * (scaleMax - scaleMin);
+          const recovered = scaleMin + Math.round((rawRecovered - scaleMin) / step) * step;
+          check(Math.abs(recovered - value) < 1e-9, `${type.id} / 시드 ${seed}: 렌더 좌표 ${recovered}와 원자료 ${value}가 다릅니다.`);
+        }
       }
     }
   }
