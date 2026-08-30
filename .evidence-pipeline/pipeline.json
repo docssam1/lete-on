@@ -65,7 +65,7 @@
       "work_key": "abbcc87025b7d16ebee4d20961a26b018926102f454e35ee7d4c78751db645d1",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "approved",
+      "release_status": "published",
       "owner": "codex-lead",
       "source_records": [],
       "reason": "",
@@ -76,7 +76,8 @@
           "verifier": "catalog validator, negative mismatch test, privacy scan, and desktop-mobile browser flow",
           "evidence": [
             { "role": "test", "locator": "test:clinic-paths:exact-route-and-privacy" },
-            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/concept-learning.html" }
           ]
         }
       ],
@@ -88,7 +89,8 @@
         { "id": "mobile-navigation", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-route-mobile-final" }] },
         { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:geometry-mismatch-fails" }] },
         { "id": "manual-route-truth", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-path-browser:manual-navigation-clears-diagnostic-source" }] },
-        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] }
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/concept-learning.html", "note": "PR 135 merge 4205460e deployed with HTTP 200 clinic script and context checks." }] }
       ]
     }
   ]
