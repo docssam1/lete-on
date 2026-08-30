@@ -1,0 +1,54 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const root = path.resolve(__dirname, "..");
+const paths = require(path.join(root, "learning", "clinic-paths.js"));
+const concepts = require(path.join(root, "learning", "grade6-concept-lessons.js"));
+const animated = require(path.join(root, "learning", "animated-math-lessons.js"));
+
+test("all reviewed Grade 6 clusters receive a private-data-free concept route", function () {
+  assert.equal(concepts.lessons.length, 10);
+  concepts.lessons.forEach(function (lesson) {
+    const clusterId = lesson.lineage.clusterId;
+    const route = paths.routeFor(clusterId, { fromDiagnostic: true });
+    assert.equal(route.clusterId, clusterId);
+    assert.equal(route.source, "diagnostic-reviewed-route");
+    assert.equal(route.concept.url, `./concept-learning.html?cluster=${encodeURIComponent(clusterId)}&from=diagnostic`);
+    assert.equal(/student|attempt|answer|correct|solution/i.test(JSON.stringify(route)), false);
+  });
+});
+
+test("only the exact ratio-cluster match opens an animated clinic lesson", function () {
+  assert.equal(paths.validateAnimatedMapping(animated.lessons), true);
+  const ratio = paths.routeFor("6.RP.A", { fromDiagnostic: true });
+  assert.equal(ratio.animated.state, "available");
+  assert.equal(ratio.animated.lessonId, "common-total-ratio");
+  assert.equal(ratio.animated.url, "./animated-math.html?lesson=common-total-ratio&cluster=6.RP.A&locale=ko");
+
+  const geometry = paths.routeFor("6.G.A", { fromDiagnostic: true });
+  assert.equal(geometry.animated.state, "review-pending");
+  assert.equal(geometry.animated.url, "");
+  assert.notEqual(animated.lessons.find(function (lesson) { return lesson.id === "isosceles-angle"; }).conceptClusterId, "6.G.A");
+});
+
+test("a false concept-to-animation mapping fails the exact-match validator", function () {
+  const badCatalog = animated.lessons.map(function (lesson) {
+    if (lesson.id !== "common-total-ratio") return lesson;
+    return Object.assign({}, lesson, { conceptClusterId: "6.G.A" });
+  });
+  assert.throws(function () { paths.validateAnimatedMapping(badCatalog); }, /cluster mismatch/);
+});
+
+test("unsupported or injected cluster identifiers are rejected", function () {
+  ["6.G.A&studentId=123", "6.MP.A", "7.RP.A", "", "../../admin.html"].forEach(function (clusterId) {
+    assert.throws(function () { paths.routeFor(clusterId, { fromDiagnostic: true }); }, /unsupported/);
+  });
+});
+
+test("diagnostic runner preserves the reviewed-route marker", function () {
+  const runner = fs.readFileSync(path.join(root, "diagnostic-runner.js"), "utf8");
+  assert.match(runner, /GFIELDClinicPaths\.conceptUrl\(route\.clusterId, true\)/);
+  assert.match(runner, /from=diagnostic/);
+});

@@ -1,42 +1,95 @@
 {
-  "schemaVersion": 1,
+  "version": 1,
   "task": {
-    "id": "boarding-concept-whiteboard-20260830",
-    "objective": "Upgrade two public G·MAP concept samples with the shared Geometry renderer and an evidence-gated lesson contract.",
-    "learnerStage": "upper-elementary-to-middle-school",
-    "authorizedScope": ["boarding-school-math/animated-math.*", "boarding-school-math/learning/animated-math-*.js", "boarding-school-math/tests/animated-math-*.test.cjs"],
-    "exclusions": ["private contest originals", "student data", "deployment", "main branch merge"],
-    "releaseAuthority": "user or curriculum lead"
+    "id": "boarding-diagnostic-clinic-20260830",
+    "title": "Boarding Grade 6 diagnostic clinic route",
+    "domain": "math",
+    "objective": "Connect Grade 6 diagnosis to exact concept learning, verified animation, locked workbook, and recheck states.",
+    "learner_stage": "US Grade 6 ages 11-12",
+    "release_authority": "user-curriculum-lead",
+    "updated": "2026-08-30",
+    "gate_set_version": "2",
+    "validator_version": "pipeline-gate-v2"
   },
-  "sourceEvidence": { "assetRights": "GFIELD-authored public samples", "externalProblemAssets": false, "renderer": "geometry/worksheet/render.js" },
-  "gates": [
-    { "id": "source-rights", "status": "passed", "evidence": "lesson rights metadata and public note" },
-    { "id": "math-unique-answer", "status": "passed", "evidence": "full integer enumeration for ratio; angle-sum and substitution for geometry" },
-    { "id": "model-derived-svg", "status": "passed", "evidence": "point and segment model plus GW_RENDER fmt and wrapSvg" },
-    { "id": "single-gaze", "status": "passed", "evidence": "one newly drawn conceptual object per beat; recap has one reinspection target" },
-    { "id": "multilingual-narration", "status": "passed", "evidence": "direct en ko zh narration with browser residue checks" },
-    { "id": "desktop-mobile-a4", "status": "passed", "evidence": "Playwright checks at desktop, 320, 390, 768 and A4 print; visual PNG inspection" },
-    { "id": "negative-controls", "status": "passed", "evidence": "answer timing, private token, captions-off, reduced-motion, and overflow tests" }
-  ],
-  "learnerFit": {
-    "placement": "upper-elementary-to-middle-school concept bridge",
-    "ratioPrerequisite": "division of whole numbers and equal-part models",
-    "geometryPrerequisite": "triangle vocabulary and 180-degree angle sum",
-    "teacherBoundary": "misconception, prompt, success check, and verification remain in teacher view"
-  },
-  "verification": {
-    "targeted": "10 passed, 0 failed",
-    "anglePlacement": "A=40 degrees and B=C=70 degrees recomputed from vectors; angle labels lie on internal bisectors; A B C labels lie outside the triangle along centroid-opposite vectors; SVG text uses centered anchors",
-    "fullBoardingSuite": "281 passed, 10 unrelated failures",
-    "unrelatedFailures": [
-      "2 number_magic adapter count expectations already drift from current origin/main data",
-      "8 private Grade 6 runtime tests require an external ignored private-authoring directory"
-    ],
-    "artifacts": [
-      ".evidence-pipeline/artifacts/desktop-geometry-stage.png",
-      ".evidence-pipeline/artifacts/mobile-ratio-answer.png",
-      ".evidence-pipeline/artifacts/a4-geometry-final.png"
-    ]
-  },
-  "status": { "work": "verified", "evidence": "passed", "release": "locked" }
+  "source_memory": "../.source-memory/source-memory.json",
+  "items": [
+    {
+      "id": "animated-math-concept-samples",
+      "title": "GFIELD-authored ratio and geometry progressive lessons",
+      "work_key": "141334c735682f33901b4504acd2ec9e390c7eb9aca184ed97f3d0c5354a8383",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": false,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "claims": [
+        {
+          "id": "single-answer-and-release",
+          "contract": "single-value",
+          "verifier": "independent enumeration, angle recomputation, browser render, and deployment proof",
+          "evidence": [
+            { "role": "answer", "locator": "test:animated-math-lesson:independent-answer-checks" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/animated-math.html" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/animated-math-lessons.js", "note": "GFIELD-authored public samples with original-rights metadata" }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-grade6-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Ratio language, bar model, division prerequisite, seven-beat reasoning load, and open concept viewing fit Grade 6." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:model-derived-geometry" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-single-gaze-v1", "note": "Each beat introduces or revisits one focal target and clears stale focus." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:desktop-mobile-a4-render-review" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:playback-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:a4-geometry-final" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:animated-math-lesson:unique-answer" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:answer-beat-lock" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:mobile-print-language-regression" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/animated-math.html" }] }
+      ]
+    },
+    {
+      "id": "grade6-diagnostic-clinic-route",
+      "title": "Reviewed diagnostic to concept and animation route",
+      "work_key": "abbcc87025b7d16ebee4d20961a26b018926102f454e35ee7d4c78751db645d1",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "approved",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "claims": [
+        {
+          "id": "exact-clinic-route",
+          "contract": "single-value",
+          "verifier": "catalog validator, negative mismatch test, privacy scan, and desktop-mobile browser flow",
+          "evidence": [
+            { "role": "test", "locator": "test:clinic-paths:exact-route-and-privacy" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-route", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-concept-lessons.js" }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:clinic-route-grade6-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Korean action labels, exact cluster representation, concept prerequisite, five-step route load, and click navigation fit Grade 6." }] },
+        { "id": "exact-mapping", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:ratio-only-exact-map" }] },
+        { "id": "privacy", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:no-student-answer-query-fields" }] },
+        { "id": "mobile-navigation", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-route-mobile-final" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:geometry-mismatch-fails" }] },
+        { "id": "manual-route-truth", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-path-browser:manual-navigation-clears-diagnostic-source" }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] }
+      ]
+    }
+  ]
 }
