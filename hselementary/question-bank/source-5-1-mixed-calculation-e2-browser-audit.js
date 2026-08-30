@@ -33,7 +33,7 @@ const rectsOverlap = (a, b) => Boolean(a && b && a.left < b.right - 1 && a.right
 function auditInventory() {
   if (!semester || !unit) return fail("5-1 1단원 자연수의 혼합 계산을 찾지 못했습니다.");
   if (inventory.items.length !== 44 || types.length !== 44) fail(`원문·교육과정 유형은 각각 44개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 21 || lockedTypes.length !== 23) fail(`단원은 공개 21개·잠금 23개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (readyTypes.length !== 32 || lockedTypes.length !== 12) fail(`단원은 공개 32개·잠금 12개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
   if (e2ReadyTypes.length !== 10 || e2LockedTypes.length !== 1) fail(`개념탐구 2는 공개 10개·잠금 1개여야 하나 ${e2ReadyTypes.length}, ${e2LockedTypes.length}개입니다.`);
   for (const type of types) {
     const source = inventoryById.get(type.sourceItemId);
@@ -200,7 +200,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 21 · 잠금 23 · 개념탐구 2 공개 10 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 32 · 잠금 12 · 개념탐구 2 공개 10 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);
