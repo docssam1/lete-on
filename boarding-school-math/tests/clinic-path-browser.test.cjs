@@ -60,7 +60,8 @@ test("ratio diagnosis opens the exact concept and animated clinic path", async f
   assert.equal(await page.locator('.lesson-tab[aria-selected="true"]').innerText(), "부분과 전체의 비");
   assert.equal(await page.locator("#clinic-context").isVisible(), true);
   assert.match(await page.locator("#clinic-context strong").innerText(), /6\.RP\.A/);
-  assert.equal(await page.locator("#clinic-context a").getAttribute("href"), "./concept-learning.html?cluster=6.RP.A&from=diagnostic");
+  assert.equal(await page.locator('#clinic-context a[href*="concept-learning.html"]').getAttribute("href"), "./concept-learning.html?cluster=6.RP.A&from=diagnostic");
+  assert.equal(await page.locator('[data-clinic-action="workbook"]').getAttribute("href"), "./clinic-practice.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -100,7 +101,8 @@ test("clinic path has no page-level overflow on 320 and 390 pixel screens", asyn
     await page.waitForLoadState("networkidle");
     const lessonSize = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
     assert.deepEqual(lessonSize, [width, width]);
-    assert.equal(await page.locator("#clinic-context a").isVisible(), true);
+    assert.equal(await page.locator('#clinic-context a[href*="concept-learning.html"]').isVisible(), true);
+    assert.equal(await page.locator('[data-clinic-action="workbook"]').isVisible(), true);
     assert.deepEqual(errors, []);
     await page.close();
   }

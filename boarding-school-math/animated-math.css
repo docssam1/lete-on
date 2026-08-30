@@ -53,6 +53,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .clinic-context strong { font:500 1.12rem Georgia,"Noto Serif KR",serif; }
 .clinic-context p { margin:2px 0 0; color:#d8e4df; font-size:.77rem; line-height:1.5; }
 .clinic-context a { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border:1px solid #a9c8bc; color:#fff; font-size:.76rem; font-weight:850; text-decoration:none; white-space:nowrap; }
+.clinic-context-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
+.clinic-context-actions a[data-clinic-action="workbook"] { color:var(--green-dark); border-color:#fff; background:#fff; }
 .problem-card { padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line); background: var(--sheet); box-shadow: var(--shadow); }
 .problem-heading { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
 .problem-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(2rem, 4.4vw, 4.2rem); font-weight: 500; line-height: 1; letter-spacing: -.045em; }
@@ -186,6 +188,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 @media (max-width: 390px) {
   .clinic-context { grid-template-columns:1fr; gap:10px; padding:16px; }
   .clinic-context a { justify-content:center; }
+  .clinic-context-actions { justify-content:stretch; }
+  .clinic-context-actions a { flex:1 1 150px; }
   .lesson-tabs { grid-template-columns: 1fr; }
   .hero-proof p { grid-template-columns: 90px 1fr; }
   .problem-card { padding: 24px 18px; }

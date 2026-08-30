@@ -197,7 +197,10 @@
   function renderClinicRoute(clusterId) {
     if (!clinicPaths) return null;
     const fromDiagnostic = cameFromDiagnostic();
-    const route = clinicPaths.routeFor(clusterId, { fromDiagnostic: fromDiagnostic });
+    let workbookCompleted = false;
+    try { workbookCompleted = window.localStorage.getItem(clinicPaths.completionKey(clusterId)) === "complete-v1"; }
+    catch (error) { workbookCompleted = false; }
+    const route = clinicPaths.routeFor(clusterId, { fromDiagnostic: fromDiagnostic, workbookCompleted: workbookCompleted });
     const section = element("section", "clinic-route");
     section.setAttribute("aria-label", "진단에서 학습과 재확인까지의 현재 경로");
 
@@ -223,10 +226,26 @@
     } else {
       animation.append(element("small", "", "이 영역은 정확한 대응 강의 검수 대기"));
     }
-    const workbook = element("li", "clinic-route-step is-locked");
-    workbook.append(element("span", "clinic-step-number", "04"), element("strong", "", "맞춤 워크북"), element("small", "", "교사 배정 후 열림"));
-    const recheck = element("li", "clinic-route-step is-locked");
-    recheck.append(element("span", "clinic-step-number", "05"), element("strong", "", "재확인"), element("small", "", "학습 완료 후 열림"));
+    const workbook = element("li", "clinic-route-step " + (route.workbook.state === "available" ? "is-ready" : "is-locked"));
+    workbook.append(element("span", "clinic-step-number", "04"), element("strong", "", "맞춤 워크북"));
+    if (route.workbook.state === "available") {
+      const workbookLink = element("a", "clinic-action-link", route.workbook.labelKo + " 시작 →");
+      workbookLink.href = route.workbook.url;
+      workbookLink.dataset.clinicAction = "workbook";
+      workbook.append(workbookLink);
+    } else {
+      workbook.append(element("small", "", "이 영역은 문항·해설 검수 대기"));
+    }
+    const recheck = element("li", "clinic-route-step " + (route.recheck.state === "available" ? "is-ready" : "is-locked"));
+    recheck.append(element("span", "clinic-step-number", "05"), element("strong", "", "재확인"));
+    if (route.recheck.state === "available") {
+      const recheckLink = element("a", "clinic-action-link", route.recheck.labelKo + " 시작 →");
+      recheckLink.href = route.recheck.url;
+      recheckLink.dataset.clinicAction = "recheck";
+      recheck.append(recheckLink);
+    } else {
+      recheck.append(element("small", "", route.recheck.state === "locked-after-learning" ? "워크북 12문항 완료 후 열림" : "문항 검수 대기"));
+    }
     steps.append(analysis, conceptStep, animation, workbook, recheck);
     section.append(steps);
     return section;
