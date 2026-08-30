@@ -50,6 +50,19 @@
   .nm-print-choices li { margin: 2px 0 0; padding-left: 1.5em; text-indent: -1.5em;
     word-break: keep-all; }
   .nm-print-word-blank { margin-top: 6px; font-size: 0.85em; }
+  /* 식 틀 — 문장제인데 답이 '식'인 유형(WP4)이 채워 넣을 자리다. 답 줄("답: ___")을
+     대신하므로 둘이 같이 나오지 않는다. 기호뿐이라 언어를 타지 않고, 손으로 크게 쓰는
+     자리라 본문보다 키우고 자간을 넓힌다. */
+  .nm-print-word-eq { margin-top: 8px; font-size: 1.5em; font-weight: 700; letter-spacing: .22em;
+    font-family: "SFMono-Regular", Consolas, monospace; }
+  /* 식 틀이 있는 칸은 장을 넘기지 않는다 — A4로 재 보니 24문항짜리에서 문제 칸이 종이
+     경계를 걸치고 **식 줄만 다음 장으로 넘어가는** 것이 실제로 나왔다(1280·430 화면에서는
+     보이지 않는다. 종이에만 있는 결함이다). 이야기와 채울 자리가 갈라지면 그 문항은 못 푼다.
+     ⚠️ 일부러 식 틀이 있는 칸에만 건다. 문장제 칸 전체에 걸면 WP1·WP3 학습지의 쪽 나눔이
+     바뀐다 — 기존 인쇄물을 건드리지 않기로 한 약속 밖이다(같은 결함이 그쪽에도 있다는 것은
+     인수인계서에 적어 둔다). */
+  .nm-print-item-eq { break-inside: avoid; page-break-inside: avoid; }
+  .nm-print-age-young .nm-print-word-eq { font-size: 1.75em; }
   .nm-print-age-young .nm-print-word { font-size: 1.15em; line-height: 1.7; }
   .nm-print-age-young .nm-print-wordask { font-size: 1.08em; }
   .nm-print-age-young .nm-print-choices { font-size: 1.05em; }
@@ -1014,6 +1027,10 @@ function nlVisualHtml(p){
    정답키가 마지막 단계인 "정수 부분"만이라 `2 1/6 - 1 2/6`의 정답지가 0이었다
    (실제 답은 5/6). 화면은 단계마다 물어보니 성립하는데 인쇄가 그 구조를 버린 탓이다.
    그래서 인쇄도 화면과 같이 단계를 묻는다 — 정답지는 단계별 답을 순서대로 싣는다. */
+/* ⚠️ 문장제(p.word)는 여기서 늘 null이 돌아간다 — 아래 fillPrintGrid의 word 분기가
+   본문·물음·보기·식 틀을 통째로 그리므로 레이아웃 주인이 하나여야 하기 때문이다.
+   그래서 **문장제가 steps에 식을 실으면 인쇄물에서 조용히 사라진다.** 문장제의 식은
+   반드시 `p.wordEqn`으로 넘길 것(WP4가 그렇게 한다). */
 function printSteps(p){
   const tex = String(p.tex||'');
   if(/\\square|\\bigcirc/.test(tex)) return null;
@@ -1121,10 +1138,21 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       }
       const ch = wordChoices(p);
       if(ch) card.appendChild(ch);
-      const blank = document.createElement('div');
-      blank.className = 'nm-print-word-blank';
-      blank.textContent = lk('답', 'Answer', '答') + ': __________';
-      card.appendChild(blank);
+      /* 답이 '식'인 문장제(WP4)는 답 줄 대신 식 틀을 그린다 — 학생이 채우는 자리가
+         곧 식이라, 그 아래 "답: ____"을 또 그리면 어디에 쓰라는 건지 흐려진다.
+         식은 기호뿐이라 세 언어가 같다(pickL이 문자열도 그대로 돌려준다). */
+      if(p.wordEqn){
+        card.classList.add('nm-print-item-eq');   /* 장 경계에서 갈라지지 않게(위 CSS) */
+        const eq = document.createElement('div');
+        eq.className = 'nm-print-word-eq';
+        eq.textContent = pickL(p.wordEqn);
+        card.appendChild(eq);
+      } else {
+        const blank = document.createElement('div');
+        blank.className = 'nm-print-word-blank';
+        blank.textContent = lk('답', 'Answer', '答') + ': __________';
+        card.appendChild(blank);
+      }
     } else if(v){
       const vp = document.createElement('div');
       vp.className = 'nm-print-vp';
@@ -1910,6 +1938,7 @@ const NM_EXAM = {
   <div class="nm-exam-question">
     ${p.word ? `<div class="nm-ex-word">${esc(pickL(p.word))}</div>
     ${pickL(p.wordAsk) ? `<div class="nm-ex-wordask">${esc(pickL(p.wordAsk))}</div>` : ''}
+    ${p.wordEqn ? `<div class="nm-ex-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
     ${pickChoices(p)
       ? `<ol class="nm-ex-choices">${pickChoices(p).map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}`
     : `<div class="nm-q-tex" id="nm-ex-qtex"></div>
@@ -2207,7 +2236,12 @@ window.examScreen = function(container){
         wide = true;
         let ansRow;
         if(mode==='online'){
-          ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
+          /* 여러 칸 답(WP4 식 완성 등)은 "20, 8, 12"처럼 쉼표로 받는다 — type=number
+             칸은 쉼표를 아예 담지 못해 화면으로는 영영 못 맞힌다(2026-08-28에 다른
+             99개 레벨에서 겪은 것과 같은 자리다. 문장제 칸만 그때 빠져 있었다). */
+          ansRow = Array.isArray(p.answer)
+            ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
+            : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
         } else if(mode==='answer'){
           ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
         } else {
@@ -2217,6 +2251,7 @@ window.examScreen = function(container){
         inner = `<div class="nm-vp-wordwrap">
   <div class="nm-vp-word">${esc(pickL(p.word))}</div>
   ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
+  ${p.wordEqn ? `<div class="nm-vp-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
   ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
   <div class="nm-vp-word-ans">${ansRow}</div>
 </div>`;

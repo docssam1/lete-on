@@ -627,7 +627,9 @@
          중국어에서 붙여 쓴다(문장 사이에 빈칸을 두지 않는 표기). */
       const opts = choices ? ' ' + choices[lang].map((c, i) => `${i + 1}) ${c}`).join('  ') : '';
       const sep = lang === 'zh' ? '' : ' ';
-      pr[lang] = meta.story[lang] + sep + ask[lang] + opts;
+      /* 식 틀(WP4 fill)은 기호뿐이라 번역이 없다. 어느 언어에서나 빈칸 앞뒤를
+         띄운다 — 중국어도 수식 둘레는 띄우는 것이 읽기 쉽다. */
+      pr[lang] = meta.story[lang] + sep + ask[lang] + opts + (meta.eqn ? ' ' + meta.eqn : '');
     });
     const p = {
       prompt: pr,
@@ -650,10 +652,17 @@
        한 문항이 정답지에서 세 줄을 먹으면 채점표로 못 쓴다. */
     /* 정답 메모도 언어를 따라간다 — 채점하는 사람이 읽는 줄이라 정답지에 그대로
        찍힌다. 보기 번호만으로는 그 번호가 무엇인지 알 수 없다(exam.js 정답지 참조). */
+    /* 식 틀 — 인쇄·화면의 문장제 분기가 본문·물음 아래에 그대로 그린다.
+       기호만 있어 세 언어가 같으므로 문자열 하나로 둔다(exam.js pickL이 받는다). */
+    if (meta.eqn) p.wordEqn = meta.eqn;
     if (choices) {
       p.choices = choices;
       p.answerNote = meta.note ||
         { ko: choices.ko[answer - 1], en: choices.en[answer - 1], zh: choices.zh[answer - 1] };
+    } else if (meta.note) {
+      /* 보기가 없어도 정답지에 식을 실어 준다 — "20, 8, 12"만 찍히면 채점하는
+         사람이 그 세 수가 어떤 식이었는지 알 수 없다(WP4 fill). */
+      p.answerNote = meta.note;
     }
     return p;
   }
@@ -819,6 +828,169 @@
         note: { ko: `${OPNAME[s.op].ko} — ${KINDNAME[okKind].ko}`,
                 en: `${OPNAME[s.op].en} — ${KINDNAME[okKind].en}`,
                 zh: `${OPNAME[s.op].zh} — ${KINDNAME[okKind].zh}` } });
+  };
+
+
+  /* ============================================================
+     WP4 — 식으로 나타내어라 (계획 수립, §2 Ⅳ)
+       fill : □ ○ □ = □ 를 채워 식을 완성       (정수 세 칸)  — 말→식 · 곱셈식
+       info : 필요한 수만 골라 만든 식은        (보기 번호)  — 적절한 정보를 찾아 식으로
+       box  : □가 있는 덧셈식·곱셈식으로 쓰면   (보기 번호)  — 그림→□식 · 수직선→□식
+
+     ⚠️ 이 스레드의 가장 큰 함정은 문제가 아니라 **정답 키**에 있다. `□ + □ = □`을
+     그대로 물으면 합병 상황에서 `4 + 7`과 `7 + 4`가 둘 다 맞는 식이 되어 유일해가
+     깨진다(교환법칙). 이 저장소는 예전에 DV6에서 유일해 없는 키를 낸 적이 있다.
+     그래서 두 갈래로 갈랐다:
+       · fill — **문제에 나온 차례**로 못 박는다. 물음에 그렇게 적혀 있고, 상황
+         생성기가 늘 n1을 먼저 말하므로(합병 "A는 n1, B는 n2" · 배수 "한 상자에 n1씩
+         n2상자" …) 차례가 데이터로 정해져 있다. n1 ≠ n2도 생성기가 이미 보장한다.
+       · info · box — 아예 **보기 번호**로 받는다. 식을 글자로 비교하지 않으니
+         교환법칙이 끼어들 자리가 없다. 레벨 C는 수가 분수·소수라 빈칸으로 받을 수
+         없으므로(답 환원 원칙: 정수 또는 보기 번호) 이 두 모드만 쓴다.
+
+     ⚠️ 구차는 여기서도 함정이다(§3-2). info의 오답에는 반드시 `t1 + t2`를,
+     box의 오답에는 `t1 + t2 = □`를 넣는다 — '몇 개 더 많은가'를 '더'만 보고
+     덧셈으로 옮기는 아이가 정확히 그 보기를 고른다. fill은 연산 기호 자리를 ○로
+     비워 두고 답에 **계산 결과까지** 넣어, 더하기로 옮긴 아이는 셋째 칸에서 걸린다.
+
+     ⚠️ 식이 인쇄물에 닿는 길은 `steps`가 아니라 `wordEqn`이다. exam.js의
+     printSteps()는 p.word가 있으면 ''을 돌려준다 — 문장제 레이아웃의 주인이 word
+     분기 하나여야 하기 때문이다. steps에 식을 실으면 화면엔 나오고 **인쇄물에서만
+     조용히 사라진다**. 그래서 word 분기가 식 틀도 직접 그린다(exam.js).
+     ============================================================ */
+  function resultOf(s) {
+    return s.op === '+' ? s.n1 + s.n2
+         : s.op === '−' ? s.n1 - s.n2
+         : s.op === '×' ? s.n1 * s.n2
+         : s.n1 / s.n2;
+  }
+  /* 식 채우기의 유일해 확인 — 후보를 **전부** 훑는다.
+     학생이 틀에 채울 수 있는 수는 본문에 나온 두 수뿐이므로, (앞 수, 뒤 수, 기호)
+     조합 4×4가지를 모두 계산해 결과가 답과 같아지는 것이 정확히 하나인지 센다.
+     교환되는 연산은 첫 수가 이미 찍혀 있으므로 앞 수가 n1로 고정된 경우만 센다.
+     ⚠️ 이 함수는 생성기와 검사기(scripts/check-wp4-unique.js) 양쪽이 같은 뜻으로
+     쓰지만, 검사기는 이 함수를 부르지 않고 따로 다시 짠다 — 여기가 틀리면 검사기도
+     같이 틀리는 것을 막기 위해서다. */
+  function uniqueFill(s, r) {
+    const pinned = s.op === '+' || s.op === '×';
+    const ev = (x, o, y) => o === '+' ? x + y : o === '−' ? x - y : o === '×' ? x * y : x / y;
+    const nums = [s.n1, s.n2];
+    let hits = 0;
+    nums.forEach(x => {
+      if (pinned && x !== s.n1) return;              /* 첫 수는 인쇄물에 이미 찍혀 있다 */
+      nums.forEach(y => {
+        ['+', '−', '×', '÷'].forEach(o => { if (ev(x, o, y) === r) hits++; });
+      });
+    });
+    return hits === 1;
+  }
+
+  /* 오답으로 붙일 '반대쪽' 연산 — 구차(−)에는 반드시 +가 붙는다 */
+  const LURE_OP = { '+':'−', '−':'+', '×':'+', '÷':'−' };
+  /* 뺄셈은 덧셈으로, 나눗셈은 곱셈으로 되짚는다(□가 있는 식) */
+  const INV_OP  = { '−':'+', '÷':'×' };
+  /* box는 되짚을 수 있는 유형에서만 낸다 — 덧셈 상황은 구하는 것이 이미 합이라
+     □를 앞에 둘 자리가 없다(`n1 + n2 = □`가 되어 되짚기가 아니다). */
+  const BOX_KINDS = { A:{ 구잔:3, 구차:3 }, B:{ 구잔:2, 구차:3, 등분:2, 포함:2 }, C:{ 구잔:3, 구차:3 } };
+  /* info는 잡음 문장이 주인공을 부르므로 사람이 나오는 네 유형에서만 낸다
+     (WP1 need와 같은 이유 — 배수·등분·포함 이야기엔 사람이 없다). */
+  const INFO_KINDS = { 합병:2, 첨가:2, 구잔:2, 구차:3 };
+
+  NM_TGEN['wp4_equation'] = function (params, rng) {
+    const range   = (params && params.range) || 'A';
+    const numeric = (params && params.numeric) || 'mix';
+    /* C는 수가 분수·소수라 빈칸(정수)으로 받을 수 없다 — fill을 뺀다 */
+    const mode = pick(rng, range === 'C' ? ['info', 'box'] : ['fill', 'info', 'box']);
+
+    if (mode === 'fill') {
+      /* ── 유일해를 지시문이 아니라 **산술**로 만든다 ──────────────────
+         처음에는 `□ ○ □ = □`을 통째로 비우고 "문제에 나온 차례대로 쓰세요"로
+         차례를 못 박았다. 그걸 기계로 세어 보니 못 박은 것이 아니었다:
+           · 합병 4와 7 → `4 + 7 = 11`도 `7 + 4 = 11`도 틀 안에서 참이다.
+             13,384개 중 **6,266개(47%)**가 이 경우였다. 7+4로 쓴 아이를 정답
+             키가 오답 처리한다 — DV6에서 겪은 것과 똑같은 자리다.
+           · 게다가 같은 수를 두 번 써서 맞는 것도 801개 있었다
+             (합병 3·6이면 `3 × 3 = 9`가 틀 안에서 참이고 결과도 9다).
+         그래서 **교환되는 연산(+·×)은 첫 수를 미리 찍어 준다**:
+             `6 ○ □ = □`  → 남은 자유도는 (두 번째 수, 결과)뿐
+         −·÷는 차례가 산술로 이미 정해져 있으므로(4−7·7÷56은 답이 안 된다)
+         세 칸을 다 비운다. 어느 쪽이든 아래 uniqueFill()이 **후보를 전부 훑어**
+         정답이 하나뿐임을 확인한 상황만 내보낸다.
+
+         ⚠️ 연산 기호 자리(○)는 비워 둔다. 채점은 수로만 하지만, 더하기로 잘못
+         옮긴 아이는 마지막 칸(결과)에서 반드시 걸린다 — 구차 함정이 여기 있다. */
+      let s = null, r = 0, ok = false;
+      for (let tryN = 0; tryN < 30 && !ok; tryN++) {
+        const kind = pickKind(rng, range, KIND_W[range]);
+        s = makeSituation(rng, { range, kind, numeric });
+        r = resultOf(s);
+        ok = uniqueFill(s, r);
+      }
+      const pinned = s.op === '+' || s.op === '×';     /* 교환되는 연산만 첫 수를 찍어 준다 */
+      const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+      const shown = `${numStr(s, 1)} ${s.op} ${numStr(s, 2)} = ${r}`;
+      const ask = pinned ? {
+        ko: '○에는 알맞은 계산 기호를, □에는 알맞은 수를 넣어 식을 완성하세요. □에 들어갈 두 수를 차례대로 쓰세요.',
+        en: 'Put the right sign in the circle and the right numbers in the boxes to finish the number sentence. Then write the two box numbers in order.',
+        zh: '在○里填上合适的运算符号，在方框里填上合适的数，完成算式。再按顺序写出两个方框里的数。'
+      } : {
+        ko: '○에는 알맞은 계산 기호를, □에는 알맞은 수를 넣어 식을 완성하세요. □에 들어갈 세 수를 차례대로 쓰세요.',
+        en: 'Put the right sign in the circle and the right numbers in the boxes to finish the number sentence. Then write the three box numbers in order.',
+        zh: '在○里填上合适的运算符号，在方框里填上合适的数，完成算式。再按顺序写出三个方框里的数。'
+      };
+      /* 식 틀은 어느 언어에서나 같은 기호다 — 번역하지 않는다(언어 혼입도 없다) */
+      return assemble(s, ask, null, pinned ? [s.n2, r] : [s.n1, s.n2, r],
+        { story, mode: 'fill',
+          eqn: pinned ? `${numStr(s, 1)} ○ □ = □` : '□ ○ □ = □',
+          correctText: shown, note: { ko: shown, en: shown, zh: shown } });
+    }
+
+    if (mode === 'info') {
+      const kind = pickKind(rng, range, INFO_KINDS);
+      const s = makeSituation(rng, { range, kind, numeric });
+      /* 문제를 푸는 데 필요 없는 수를 하나 끼운다 — 그 수를 쓴 식이 오답이 된다 */
+      const nz = pick(rng, NOISES);
+      let v = nz.v(rng), guard = 0;
+      while (guard++ < 20 && (v === s.n1 || v === s.n2)) v = nz.v(rng);
+      if (v === s.n1 || v === s.n2) v = (s.n1 > 11 ? 5 : 13);
+      /* 잡음은 본문 **끝**(물음 바로 앞)에 넣는다. WP1 need처럼 첫 문장 뒤에 끼우면
+         구잔 이야기가 "…가지고 있었어요. 3번 버스를 타요. 그중 5개를 먹었어요."가 되어
+         '그중'이 가리킬 것을 잃는다 — 잡음은 글을 흐트러뜨리되 비문을 만들면 안 된다. */
+      const noise = { pos: s.story.ko.sents.length,
+                      text: { ko: nz.ko(s.A.ko, v), en: nz.en(s.A.en, v), zh: nz.zh(s.A.zh, v) } };
+      const story = { ko: storyText(s, 'ko', noise), en: storyText(s, 'en', noise), zh: storyText(s, 'zh', noise) };
+      const a = numStr(s, 1), b = numStr(s, 2);
+      /* 오답 둘 — ①필요 없는 수를 쓴 식 ②연산을 반대로 고른 식(구차엔 덧셈) */
+      const texts = [`${a} ${s.op} ${b}`, `${a} ${s.op} ${v}`, `${a} ${LURE_OP[s.op]} ${b}`];
+      const { choices, answer } = buildChoices(rng, [texts, texts.slice(), texts.slice()], 0);
+      /* 물음을 "필요한 수만 쓴 식은?"으로 적으면 안 된다 — 연산만 틀린 오답(`a − b`)도
+         '필요한 수만' 쓴 식이라 정답이 둘이 된다. 묻는 것은 어디까지나 '문제를 푸는 식'이고,
+         쓰지 않는 수가 하나 있다는 사실만 알려 준다(적절한 정보를 찾아 식으로, §2 Ⅳ). */
+      const ask = { ko:'이 문제를 푸는 데 알맞은 식은 무엇일까요? 문제에는 쓰지 않는 수도 하나 들어 있어요. 알맞은 번호를 쓰세요.',
+                    en:'Which number sentence solves this problem? One number in the story is not used. Write the number.',
+                    zh:'哪个算式能解这道题？题目里有一个数是用不到的。请写出序号。' };
+      return assemble(s, ask, choices, answer,
+        { story, mode: 'info', noiseValue: v, correctText: texts[0] });
+    }
+
+    /* box — 뺄셈 상황을 덧셈식으로, 나눗셈 상황을 곱셈식으로 되짚어 쓴다.
+       구잔 "먹은 것 + 남은 것 = 처음 것" · 구차 "적은 쪽 + 차이 = 많은 쪽"
+       등분 "사람 수 × 한 명 몫 = 전체" · 포함 "한 상자 몫 × 상자 수 = 전체" */
+    const kind = pickKind(rng, range, BOX_KINDS[range]);
+    const s = makeSituation(rng, { range, kind, numeric });
+    const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+    const a = numStr(s, 1), b = numStr(s, 2), iv = INV_OP[s.op];
+    /* 오답 둘 — ①두 수를 뒤바꾼 식 ②되짚지 않고 그냥 두 수를 계산한 식(구차 함정) */
+    const texts = [`${b} ${iv} □ = ${a}`, `${a} ${iv} □ = ${b}`, `${a} ${iv} ${b} = □`];
+    const { choices, answer } = buildChoices(rng, [texts, texts.slice(), texts.slice()], 0);
+    const isAdd = iv === '+';
+    const ask = {
+      ko: `이 문제를 □가 있는 ${isAdd ? '덧셈식' : '곱셈식'}으로 나타내면 무엇일까요? 알맞은 번호를 쓰세요.`,
+      en: `Which ${isAdd ? 'addition' : 'multiplication'} sentence with a box fits this problem? Write the number.`,
+      zh: `哪个带□的${isAdd ? '加法' : '乘法'}算式适合这道题？请写出序号。`
+    };
+    return assemble(s, ask, choices, answer,
+      { story, mode: 'box', correctText: texts[0] });
   };
 
 })();

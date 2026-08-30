@@ -823,6 +823,9 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-vp-choices li{counter-increment:nmwp;margin:2px 0 0;padding-left:1.6em;text-indent:-1.6em;
   word-break:keep-all}
 .nm-vp-choices li::before{content:counter(nmwp) ") ";font-weight:800}
+/* 식 틀 — 답이 '식'인 문장제(WP4). 온라인 학습지 칸에서도 식 모양을 보여 준다. */
+.nm-vp-word-eq{font-size:17px;font-weight:800;letter-spacing:.14em;color:var(--ink);
+  text-align:left;width:100%;font-family:'SFMono-Regular',Consolas,monospace}
 .nm-vp-wordwrap{counter-reset:nmwp}
 
 

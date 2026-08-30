@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /* ============================================================
-   문장제(WP) 검산기 — 2026-08-29
+   문장제(WP) 검산기 — 2026-08-29 (WP4 추가 2026-08-30)
    ============================================================
-   WP1(문제 이해) · WP3(연산 찾기)는 다른 스레드와 결정적으로 다르다.
+   WP1(문제 이해) · WP3(연산 찾기) · WP4(식으로 나타내기)는 다른 스레드와
+   결정적으로 다르다.
    **정답이 수식에서 나오지 않고 문장에서 나온다.** 그래서 인쇄 검사기
    (check-print)나 화면 검사기(check-answerable)로는 아무것도 확인되지
    않는다 — 둘 다 "문항이 성립하는가"만 보고, 문장이 상황과 맞는지는 못 본다.
@@ -22,6 +23,16 @@
         WP1 target — 고른 보기가 '구하는 것'이고 오답은 전부 '주어진 것'인가
         WP1 given  — 답이 n1이나 n2 중 물은 쪽인가
         WP1 need   — 답이 잡음 수이고, 문제에 실제로 쓰이는 수와 다른가
+        WP4 fill   — 식 틀과 답이 서로 맞는가(+·×는 첫 수를 찍어 주므로 두 칸,
+                     −·÷는 세 칸), 결과가 kind→op의 계산인가, **(앞 수, 뒤 수, 기호)
+                     후보 4×4를 전부 훑어 정답이 정확히 하나인가**(교환법칙·같은 수
+                     두 번 쓰기까지 여기서 걸린다), 식 틀이 인쇄물에 있는가
+        WP4 info   — 고른 식이 t1 (연산) t2 인가, 오답에 잡음 수를 쓴 식과 연산을
+                     반대로 고른 식(구차엔 덧셈)이 둘 다 있는가, 잡음 수가 본문에 있고
+                     실제로 쓰는 수와 다른가
+        WP4 box    — 고른 식이 `t2 (되짚은 연산) □ = t1`인가, 오답에 두 수를 뒤바꾼 식과
+                     되짚지 않고 그냥 계산한 식(구차 함정)이 둘 다 있는가
+        레벨 C     — 식에 값(0.6)이 아니라 표기(3/5·0.6)가 찍히는가
      4. 수량사 일치        "사자가 3송이"를 기계가 잡는다. 한국어 문장에 나온
                            수량사가 그 대상에 못 박아 둔 수량사(개·장·자루·송이·
                            마리·권)와 같은지, 중국어 양사도 같은지 본다.
@@ -55,6 +66,9 @@ const N = parseInt(process.argv[2], 10) || 4000;
 const KIND_OP = { 합병:'+', 첨가:'+', 구잔:'−', 구차:'−', 배수:'×', 등분:'÷', 포함:'÷' };
 const RANGE_OPS = { A:['+','−','×'], B:['+','−','×','÷'], C:['+','−'] };
 const OPNAME_KO = { '+':'더하기', '−':'빼기', '×':'곱하기', '÷':'나누기' };
+/* WP4가 오답으로 붙이는 '반대쪽' 연산과, 되짚는 연산. 생성기 표와 따로 적는다. */
+const LURE = { '+':'−', '−':'+', '×':'+', '÷':'−' };
+const INV  = { '−':'+', '÷':'×' };
 
 /* 대상 → 한국어 수량사 / 중국어 양사. 생성기 표와 별개로 다시 적었다.
    여기가 생성기와 어긋나면 그건 둘 중 하나가 틀렸다는 뜻이고, 그게 이 검사의 요점이다. */
@@ -99,8 +113,12 @@ function verifyProblem(raw, range) {
   if (RANGE_OPS[range].indexOf(w.op) < 0) return `레벨 ${range}의 연산 범위에 없는 ${w.op} (${w.kind})`;
   if (w.range !== range) return `range가 ${w.range}로 어긋남`;
 
-  /* 답 환원 원칙 — 정수 또는 보기 번호 */
-  if (!Number.isInteger(p.answer)) return `답이 정수가 아님: ${p.answer}`;
+  /* 답 환원 원칙 — 정수(여러 칸이면 정수 배열) 또는 보기 번호.
+     WP4 fill이 `[n1, n2, 계산 결과]` 세 칸으로 받는다. */
+  if (Array.isArray(p.answer)) {
+    if (!p.answer.length || !p.answer.every(Number.isInteger))
+      return `답 칸에 정수가 아닌 값: ${p.answer.join(', ')}`;
+  } else if (!Number.isInteger(p.answer)) return `답이 정수가 아님: ${p.answer}`;
   if (Array.isArray(p.choices)) {
     if (p.answer < 1 || p.answer > p.choices.length) return `보기 번호 범위를 벗어남: ${p.answer}/${p.choices.length}`;
     /* 7 — 같은 보기가 두 번 나오면 정답이 둘이 된다 */
@@ -118,6 +136,15 @@ function verifyProblem(raw, range) {
   /* 5 — 3개 언어 */
   const lMsg = verifyLangs(p);
   if (lMsg) return lMsg;
+
+  /* 레벨 C 표기 — 식에는 값(0.6)이 아니라 표기(3/5·0.6)가 찍혀야 한다.
+     분수 상황에서 0.6이 새어 나오면 이 검사가 잡는다. */
+  if (range === 'C' && ['expr', 'info', 'box', 'fill'].indexOf(w.mode) >= 0) {
+    const line = (Array.isArray(p.choices) ? p.choices.join(' ') : '') + ' ' + String(p.answerNote || '');
+    if (/\d\.\d{3,}/.test(line)) return `레벨 C 식에 원값이 새어 나옴: ${line.match(/\d\.\d{3,}/)[0]}`;
+    if (Array.isArray(p.choices) && p.choices.every(c => c.indexOf(w.t1) < 0))
+      return `레벨 C 식에 표기 ${w.t1}이 없음: ${p.choices.join(' / ')}`;
+  }
 
   /* 인쇄 계약: word(본문)와 wordAsk(물음)가 둘 다 있어야 인쇄물만 보고 풀 수 있다 */
   if (!p.word || !p.wordAsk) return 'word 또는 wordAsk가 비어 있음';
@@ -204,6 +231,80 @@ function verifyAnswer(p, w, range) {
     return null;
   }
 
+  /* ── WP4 ─────────────────────────────────────────────────
+     식이 상황과 맞는가. 보는 것 세 가지:
+       ① 연산  — 식의 연산이 의미 유형에서 나온 연산인가(구차면 반드시 −)
+       ② 차례  — 두 수의 차례가 정해져 있는가. `□ + □ = □`을 그냥 물으면
+                 합병에서 `4+7`과 `7+4`가 둘 다 맞아 유일해가 깨진다. fill은
+                 "문제에 나온 차례"로 못 박으므로, 본문에서 n1이 n2보다 **먼저**
+                 나오는지를 여기서 실제로 확인한다(못 박은 규칙이 데이터와
+                 어긋나면 그게 곧 복수정답이다).
+       ③ 표기  — 레벨 C는 값(0.6)이 아니라 표기(3/5·0.6)로 찍혀야 한다.
+     ─────────────────────────────────────────────────────── */
+  if (w.mode === 'fill') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2
+            : w.op === '×' ? w.n1 * w.n2 : w.n1 / w.n2;
+    /* 교환되는 연산(+·×)은 첫 수가 인쇄물에 이미 찍혀 있다 — 그래야 `4+7`과 `7+4`가
+       둘 다 참인 자리가 없어진다. −·÷는 차례가 산술로 정해져 세 칸을 다 비운다. */
+    const pinned = w.op === '+' || w.op === '×';
+    if (!p.wordEqn) return 'fill: 식 틀(wordEqn)이 없어 인쇄물에 식 자리가 없음';
+    if (p.wordEqn.indexOf('○') < 0) return `fill: 식 틀에 연산 기호 자리가 없음 "${p.wordEqn}"`;
+    const wantEqn = pinned ? `${w.t1} ○ □ = □` : '□ ○ □ = □';
+    if (p.wordEqn !== wantEqn) return `fill: 식 틀이 "${p.wordEqn}" — ${w.op}에는 "${wantEqn}"이어야 함`;
+    const want = pinned ? [w.n2, r] : [w.n1, w.n2, r];
+    if (!Array.isArray(p.answer) || p.answer.length !== want.length
+        || p.answer.some((v, i) => v !== want[i]))
+      return `fill: 답 [${p.answer}]이 식 ${w.n1} ${w.op} ${w.n2} = ${r}의 빈칸 [${want}]과 다름`;
+    if (String(p.answerNote) !== `${w.t1} ${w.op} ${w.t2} = ${r}`)
+      return `fill: 정답지 메모가 식과 다름 "${p.answerNote}"`;
+    /* ★ 유일해 — 학생이 틀에 채울 수 있는 조합을 전부 훑는다.
+       본문에 나온 수는 두 개뿐이므로 (앞 수, 뒤 수, 기호) 4×4가지가 후보의 전부다.
+       결과가 답과 같아지는 조합이 둘 이상이면 다르게 쓴 학생도 맞는 것이므로 실패다
+       (DV6가 이 검사를 안 해서 맞게 쓴 학생을 오답 처리했다). */
+    const ev = (x, o, y) => o === '+' ? x + y : o === '−' ? x - y : o === '×' ? x * y : x / y;
+    const hits = [];
+    for (const x of [w.n1, w.n2]) {
+      if (pinned && x !== w.n1) continue;             /* 첫 수는 이미 찍혀 있다 */
+      for (const y of [w.n1, w.n2]) for (const o of ['+', '−', '×', '÷'])
+        if (ev(x, o, y) === r) hits.push(`${x} ${o} ${y}`);
+    }
+    if (hits.length !== 1) return `fill: 정답이 ${hits.length}가지 (${hits.join(' / ')}) — 유일해가 아님`;
+    /* 본문이 n1을 먼저 말하는가 — 세 칸을 다 비우는 −·÷에서 학생이 읽는 차례다 */
+    if (!pinned) {
+      const pos1 = numPos(p.word, w.n1), pos2 = numPos(p.word, w.n2);
+      if (pos1 < 0 || pos2 < 0) return `fill: 본문에서 ${w.n1}·${w.n2}를 찾지 못함`;
+      if (pos1 > pos2) return `fill: 본문은 ${w.n2}를 먼저 말하는데 답은 ${w.n1}부터라 차례가 어긋남`;
+    }
+    return null;
+  }
+
+  if (w.mode === 'info') {
+    if (w.noise == null) return 'info: 잡음 수가 기록되지 않음';
+    if (w.noise === w.n1 || w.noise === w.n2) return `info: 잡음 수 ${w.noise}가 실제로 쓰는 수와 같음`;
+    if (p.word.indexOf(String(w.noise)) < 0) return `info: 잡음 수 ${w.noise}가 본문에 없음`;
+    const right = `${w.t1} ${w.op} ${w.t2}`;
+    if (chosen !== right) return `info: 고른 식 "${chosen}"이 상황의 "${right}"와 다름`;
+    const others = p.choices.filter((_, i) => i !== p.answer - 1);
+    if (others.indexOf(`${w.t1} ${w.op} ${w.noise}`) < 0)
+      return `info: 잡음 수를 쓴 오답이 없음 (${p.choices.join(' / ')})`;
+    if (others.indexOf(`${w.t1} ${LURE[w.op]} ${w.t2}`) < 0)
+      return `info: 연산을 반대로 고른 오답이 없음 (${p.choices.join(' / ')})`;
+    return null;
+  }
+
+  if (w.mode === 'box') {
+    const iv = INV[w.op];
+    if (!iv) return `box: 되짚을 수 없는 연산 ${w.op} (${w.kind})`;
+    const right = `${w.t2} ${iv} □ = ${w.t1}`;
+    if (chosen !== right) return `box: 고른 식 "${chosen}"이 상황의 "${right}"와 다름`;
+    const others = p.choices.filter((_, i) => i !== p.answer - 1);
+    if (others.indexOf(`${w.t1} ${iv} □ = ${w.t2}`) < 0)
+      return `box: 두 수를 뒤바꾼 오답이 없음 (${p.choices.join(' / ')})`;
+    if (others.indexOf(`${w.t1} ${iv} ${w.t2} = □`) < 0)
+      return `box: 되짚지 않고 그냥 계산한 오답이 없음 (${p.choices.join(' / ')})`;
+    return null;
+  }
+
   if (w.mode === 'need') {
     if (w.noise == null) return 'need: 잡음 수가 기록되지 않음';
     if (p.answer !== w.noise) return `need: 답 ${p.answer}이 잡음 수 ${w.noise}와 다름`;
@@ -215,6 +316,12 @@ function verifyAnswer(p, w, range) {
     return null;
   }
   return `모르는 모드: ${w.mode}`;
+}
+
+/* 본문에서 그 수가 처음 나오는 자리. 12 안의 2를 2로 세지 않도록 앞뒤를 막는다. */
+function numPos(text, n) {
+  const m = new RegExp('(?<![0-9.])' + n + '(?![0-9.])').exec(text);
+  return m ? m.index : -1;
 }
 
 /* 수량사 — "박물관에 사자가 3송이"를 기계가 잡는 자리 */
@@ -289,6 +396,7 @@ function sweep(id, lv) {
 console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP1', lv));
 [1, 2, 3].forEach(lv => sweep('WP3', lv));
+[1, 2, 3].forEach(lv => sweep('WP4', lv));
 
 console.log(`\n검산한 문항: ${checks}건`);
 if (fails.length) {
