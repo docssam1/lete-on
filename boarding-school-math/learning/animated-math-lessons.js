@@ -5,144 +5,90 @@
 })(typeof window !== "undefined" ? window : globalThis, function () {
   "use strict";
 
-  const ratioBeatIds = ["ratio-read", "ratio-team-a", "ratio-red", "ratio-team-b", "ratio-green", "ratio-answer", "ratio-recap"];
-  const geometryBeatIds = ["geo-read", "geo-draw", "geo-equal", "geo-sum", "geo-divide", "geo-answer", "geo-recap"];
+  function tr(en, ko, zh) { return Object.freeze({ en: en, ko: ko, zh: zh }); }
+  function beat(id, label, phase, narration, targetIds, visibleIds, action) {
+    return Object.freeze({
+      id: id, label: label.en, labelI18n: label, phase: phase, durationMs: 3900,
+      narration: narration.en, narrationI18n: narration,
+      targetIds: Object.freeze(targetIds), visibleIds: Object.freeze(visibleIds),
+      actions: Object.freeze([{ type: action || "draw", targetIds: Object.freeze(targetIds) }])
+    });
+  }
+  function common(definition) {
+    const beatIds = definition.beats.map(function (item) { return item.id; });
+    return Object.freeze(Object.assign({
+      rights: Object.freeze({ publication: "public", assetRights: "original", containsThirdPartyAssets: false }),
+      audience: "upper-elementary-middle", languages: Object.freeze(["en", "ko", "zh"]),
+      deliveryMode: "concept-open",
+      unlockPolicy: "open-concept; worked-solutions-require-first-wrong-attempt",
+      fullPlayBeatIds: Object.freeze(beatIds), stepByStepBeatIds: Object.freeze(beatIds),
+      finalOverview: Object.freeze({ visibleObjectIds: definition.objectIds })
+    }, definition));
+  }
 
-  return Object.freeze({
-    schemaVersion: 1,
-    lessons: Object.freeze([
-      Object.freeze({
-        id: "common-total-ratio",
-        type: "bar-model",
-        eyebrow: "RATIO · VISUAL MODEL",
-        title: "Common totals, different unit sizes",
-        concept: "Part-to-whole ratios",
-        problem: "Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?",
-        verifiedAnswer: "9 tokens",
-        answerBeatId: "ratio-answer",
-        objectIds: Object.freeze([
-          "ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5", "ratio-equation-a", "ratio-equation-b", "ratio-answer"
-        ]),
-        beats: Object.freeze([
-          Object.freeze({
-            id: "ratio-read", label: "Read the structure", phase: "problem", durationMs: 5200,
-            narration: "Both teams have the same total, twenty tokens, but their ratios use different numbers of equal parts.",
-            targetIds: Object.freeze([]), visibleIds: Object.freeze([])
-          }),
-          Object.freeze({
-            id: "ratio-team-a", label: "Build Team A", phase: "explore", durationMs: 5200,
-            narration: "Team A has four equal parts in all. Divide twenty by four, so every part is worth five.",
-            targetIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4"])
-          }),
-          Object.freeze({
-            id: "ratio-red", label: "Find the red part", phase: "solve", durationMs: 4300,
-            narration: "Red is one of those four parts. One part is five, so Team A has five red tokens.",
-            targetIds: Object.freeze(["ratio-a-1", "ratio-equation-a"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-equation-a"])
-          }),
-          Object.freeze({
-            id: "ratio-team-b", label: "Build Team B", phase: "explore", durationMs: 5200,
-            narration: "Team B has five equal parts in all. Divide twenty by five, so every part is worth four.",
-            targetIds: Object.freeze(["ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-equation-a", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5"])
-          }),
-          Object.freeze({
-            id: "ratio-green", label: "Find the green part", phase: "solve", durationMs: 4300,
-            narration: "Green is one of those five parts. One part is four, so Team B has four green tokens.",
-            targetIds: Object.freeze(["ratio-b-1", "ratio-equation-b"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-equation-a", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5", "ratio-equation-b"])
-          }),
-          Object.freeze({
-            id: "ratio-answer", label: "Combine the parts", phase: "answer", durationMs: 4400,
-            narration: "Add the two first-color parts. Five plus four equals nine, so there are nine red and green tokens altogether.",
-            targetIds: Object.freeze(["ratio-equation-a", "ratio-equation-b", "ratio-answer"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-equation-a", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5", "ratio-equation-b", "ratio-answer"])
-          }),
-          Object.freeze({
-            id: "ratio-recap", label: "Explain the key idea", phase: "recap", durationMs: 4900,
-            narration: "The totals match, but the unit sizes do not. Always count the ratio parts before finding the value of one part.",
-            targetIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5"]),
-            visibleIds: Object.freeze(["ratio-a-1", "ratio-a-2", "ratio-a-3", "ratio-a-4", "ratio-equation-a", "ratio-b-1", "ratio-b-2", "ratio-b-3", "ratio-b-4", "ratio-b-5", "ratio-equation-b", "ratio-answer"])
-          })
-        ]),
-        fullPlayBeatIds: Object.freeze(ratioBeatIds),
-        stepByStepBeatIds: Object.freeze(ratioBeatIds),
-        mathChecks: Object.freeze([
-          Object.freeze({ method: "unit rate", expression: "20 ÷ 4 + 20 ÷ 5", result: 9 }),
-          Object.freeze({ method: "substitution", expression: "5 + 15 = 20; 4 + 16 = 20", result: 9 })
-        ]),
-        teacherEvidence: Object.freeze({
-          likelyMisconception: "The student adds ratio numbers without finding the value of one part.",
-          teachingPrompt: "Why is one part worth 5 for Team A but 4 for Team B?",
-          successCheck: "The student finds the total number of parts, the unit value, and the requested part in that order."
-        })
-      }),
-      Object.freeze({
-        id: "isosceles-angle",
-        type: "geometry-angle",
-        eyebrow: "GEOMETRY · ANGLE REASONING",
-        title: "Equal sides reveal equal angles",
-        concept: "Isosceles triangles and angle sum",
-        problem: "Triangle ABC is isosceles with AB = AC. The vertex angle A is 40°. Find angle B.",
-        verifiedAnswer: "70°",
-        answerBeatId: "geo-answer",
-        objectIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum", "geo-equation-divide", "geo-answer"]),
-        beats: Object.freeze([
-          Object.freeze({
-            id: "geo-read", label: "Read the givens", phase: "problem", durationMs: 4600,
-            narration: "The two sloping sides are equal, and the angle between them is forty degrees.",
-            targetIds: Object.freeze([]), visibleIds: Object.freeze([])
-          }),
-          Object.freeze({
-            id: "geo-draw", label: "Draw and mark", phase: "explore", durationMs: 4700,
-            narration: "Draw triangle ABC. Mark AB and AC with matching ticks to show that the sides are equal.",
-            targetIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a"])
-          }),
-          Object.freeze({
-            id: "geo-equal", label: "Match the base angles", phase: "explore", durationMs: 5100,
-            narration: "Equal sides face equal angles. Therefore angle B and angle C have the same measure.",
-            targetIds: Object.freeze(["geo-equal-ab", "geo-equal-ac", "geo-angle-b", "geo-angle-c"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c"])
-          }),
-          Object.freeze({
-            id: "geo-sum", label: "Use the angle sum", phase: "solve", durationMs: 5200,
-            narration: "The three interior angles total one hundred eighty degrees. Subtract the forty-degree vertex angle, leaving one hundred forty degrees.",
-            targetIds: Object.freeze(["geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum"])
-          }),
-          Object.freeze({
-            id: "geo-divide", label: "Share equally", phase: "solve", durationMs: 4600,
-            narration: "The two equal base angles share one hundred forty degrees. Divide by two to get seventy degrees each.",
-            targetIds: Object.freeze(["geo-angle-b", "geo-angle-c", "geo-equation-divide"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum", "geo-equation-divide"])
-          }),
-          Object.freeze({
-            id: "geo-answer", label: "State angle B", phase: "answer", durationMs: 4200,
-            narration: "Angle B is one of the two equal base angles, so angle B is seventy degrees.",
-            targetIds: Object.freeze(["geo-angle-b", "geo-answer"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum", "geo-equation-divide", "geo-answer"])
-          }),
-          Object.freeze({
-            id: "geo-recap", label: "Explain the chain", phase: "recap", durationMs: 4900,
-            narration: "Equal sides give equal opposite angles. Then the triangle angle sum completes the calculation.",
-            targetIds: Object.freeze(["geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c"]),
-            visibleIds: Object.freeze(["geo-side-ab", "geo-side-ac", "geo-base", "geo-equal-ab", "geo-equal-ac", "geo-angle-a", "geo-angle-b", "geo-angle-c", "geo-equation-sum", "geo-equation-divide", "geo-answer"])
-          })
-        ]),
-        fullPlayBeatIds: Object.freeze(geometryBeatIds),
-        stepByStepBeatIds: Object.freeze(geometryBeatIds),
-        mathChecks: Object.freeze([
-          Object.freeze({ method: "angle sum", expression: "(180 - 40) ÷ 2", result: 70 }),
-          Object.freeze({ method: "substitution", expression: "40 + 70 + 70", result: 180 })
-        ]),
-        teacherEvidence: Object.freeze({
-          likelyMisconception: "The student divides 180 by 2 before removing the vertex angle.",
-          teachingPrompt: "Which angles are opposite the two equal sides?",
-          successCheck: "The student identifies the equal base angles before applying the 180-degree angle sum."
-        })
-      })
-    ])
-  });
+  const ratioIds = ["ratio-team-a-bar", "ratio-red-value", "ratio-team-b-bar", "ratio-green-value", "ratio-answer"];
+  const ratioBeats = [
+    beat("ratio-read", tr("Read the structure", "구조 읽기", "读懂结构"), "problem",
+      tr("Both teams total twenty tokens, but each ratio divides twenty into a different number of equal parts.", "두 팀은 모두 스무 개이지만, 각 비율은 스무 개를 서로 다른 수의 같은 부분으로 나눕니다.", "两队都是二十枚棋子，但两个比分把二十分成了不同数量的等份。"), [], [], "inspect"),
+    beat("ratio-team-a", tr("Build Team A", "A팀 막대 만들기", "画出A队条形图"), "explore",
+      tr("Team A has four equal parts. Twenty divided by four makes each part worth five.", "A팀은 같은 부분이 네 개입니다. 이십을 사로 나누면 한 부분은 오입니다.", "A队共有四个等份。二十除以四，所以每份是五。"), ["ratio-team-a-bar"], ["ratio-team-a-bar"]),
+    beat("ratio-red", tr("Find the red part", "빨간 부분 찾기", "求红色部分"), "solve",
+      tr("Red is one part, so Team A has five red tokens.", "빨간색은 한 부분이므로 A팀의 빨간 토큰은 다섯 개입니다.", "红色占一份，所以A队有五枚红色棋子。"), ["ratio-red-value"], ["ratio-team-a-bar", "ratio-red-value"]),
+    beat("ratio-team-b", tr("Build Team B", "B팀 막대 만들기", "画出B队条形图"), "explore",
+      tr("Team B has five equal parts. Twenty divided by five makes each part worth four.", "B팀은 같은 부분이 다섯 개입니다. 이십을 오로 나누면 한 부분은 사입니다.", "B队共有五个等份。二十除以五，所以每份是四。"), ["ratio-team-b-bar"], ["ratio-team-a-bar", "ratio-red-value", "ratio-team-b-bar"]),
+    beat("ratio-green", tr("Find the green part", "초록 부분 찾기", "求绿色部分"), "solve",
+      tr("Green is one part, so Team B has four green tokens.", "초록색은 한 부분이므로 B팀의 초록 토큰은 네 개입니다.", "绿色占一份，所以B队有四枚绿色棋子。"), ["ratio-green-value"], ["ratio-team-a-bar", "ratio-red-value", "ratio-team-b-bar", "ratio-green-value"]),
+    beat("ratio-answer", tr("Combine the parts", "두 부분 합하기", "合并两部分"), "answer",
+      tr("Five plus four equals nine. There are nine red and green tokens altogether.", "오 더하기 사는 구입니다. 빨간 토큰과 초록 토큰은 모두 아홉 개입니다.", "五加四等于九。红色和绿色棋子一共有九枚。"), ["ratio-answer"], ratioIds),
+    beat("ratio-recap", tr("Explain the key idea", "핵심 설명하기", "说明关键方法"), "recap",
+      tr("Equal totals do not guarantee equal unit sizes. Count the ratio parts before finding one part.", "전체 수가 같아도 한 부분의 크기는 같지 않을 수 있습니다. 먼저 비율의 부분 수를 세세요.", "总数相同不代表每份相同。先数比分中的总份数，再求一份。"), ["ratio-team-a-bar"], ratioIds, "highlight")
+  ];
+
+  const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
+  const geometryBeats = [
+    beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
+      tr("AB equals AC, and the angle between those equal sides is forty degrees.", "AB와 AC의 길이가 같고, 두 변 사이의 각은 사십 도입니다.", "AB等于AC，两条相等边之间的夹角是四十度。"), [], [], "inspect"),
+    beat("geo-triangle", tr("Construct the triangle", "삼각형 구성하기", "构造三角形"), "explore",
+      tr("Construct the triangle from its points and segments. A forty-degree vertex angle makes a narrow, symmetric triangle.", "점과 선분으로 삼각형을 구성합니다. 꼭짓각이 사십 도이므로 폭이 좁은 대칭 삼각형이 됩니다.", "用点和线段构造三角形。顶角为四十度，因此得到较窄的对称三角形。"), ["geo-triangle"], ["geo-triangle"]),
+    beat("geo-equal-sides", tr("Mark equal sides", "같은 변 표시하기", "标记等边"), "explore",
+      tr("Matching tick marks show that AB and AC have equal length.", "같은 눈금 표시가 AB와 AC의 길이가 같다는 뜻입니다.", "相同的刻痕表示AB和AC长度相等。"), ["geo-equal-sides"], ["geo-triangle", "geo-equal-sides"]),
+    beat("geo-vertex", tr("Mark the vertex angle", "꼭짓각 표시하기", "标记顶角"), "explore",
+      tr("The angle at A is forty degrees.", "A의 각은 사십 도입니다.", "A点的角是四十度。"), ["geo-vertex-angle"], ["geo-triangle", "geo-equal-sides", "geo-vertex-angle"]),
+    beat("geo-equal", tr("Match the base angles", "밑각 같게 보기", "找出相等底角"), "explore",
+      tr("Equal sides face equal angles, so angle B equals angle C.", "같은 길이의 변과 마주 보는 각은 같으므로 각 B와 각 C가 같습니다.", "等边所对的角相等，所以角B等于角C。"), ["geo-equal-angles"], ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles"]),
+    beat("geo-sum", tr("Use the angle sum", "각의 합 사용하기", "使用内角和"), "solve",
+      tr("Subtract forty degrees from one hundred eighty degrees. The two base angles total one hundred forty degrees.", "백팔십 도에서 사십 도를 빼면 두 밑각의 합은 백사십 도입니다.", "用一百八十度减去四十度，两个底角的和是一百四十度。"), ["geo-equation-sum"], ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum"]),
+    beat("geo-divide", tr("Share equally", "같게 나누기", "平均分配"), "solve",
+      tr("The equal base angles share one hundred forty degrees, so each is seventy degrees.", "서로 같은 두 밑각이 백사십 도를 나누므로 각각 칠십 도입니다.", "两个相等的底角平分一百四十度，所以每个是七十度。"), ["geo-equation-divide"], ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide"]),
+    beat("geo-answer", tr("State angle B", "각 B 답하기", "写出角B"), "answer",
+      tr("Angle B is seventy degrees.", "각 B는 칠십 도입니다.", "所以角B等于七十度。"), ["geo-answer"], geometryIds),
+    beat("geo-recap", tr("Explain the chain", "풀이 연결하기", "回顾推理链"), "recap",
+      tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
+  ];
+
+  return Object.freeze({ schemaVersion: 2, lessons: Object.freeze([
+    common({
+      id: "common-total-ratio", type: "bar-model",
+      eyebrow: "RATIO · VISUAL MODEL", eyebrowI18n: tr("RATIO · VISUAL MODEL", "비율 · 시각 모델", "比 · 可视化模型"),
+      title: "Common totals, different unit sizes", titleI18n: tr("Common totals, different unit sizes", "전체가 같아도 한 부분은 다르다", "总数相同，每份不同"),
+      concept: "Part-to-whole ratios", conceptI18n: tr("Part-to-whole ratios", "부분과 전체의 비", "部分与整体的比"),
+      problem: "Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?",
+      problemI18n: tr("Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?", "A팀의 빨간 토큰과 파란 토큰의 비는 1:3이고, B팀의 초록 토큰과 노란 토큰의 비는 1:4입니다. 각 팀의 토큰은 20개입니다. 빨간 토큰과 초록 토큰은 모두 몇 개입니까?", "A队红色与蓝色棋子的比是1:3，B队绿色与黄色棋子的比是1:4。每队共有20枚棋子。红色和绿色棋子一共有多少枚？"),
+      verifiedAnswer: "9 tokens", answerBeatId: "ratio-answer", objectIds: Object.freeze(ratioIds), beats: Object.freeze(ratioBeats),
+      sceneModel: Object.freeze({ teamA: Object.freeze({ parts: 4, unit: 5 }), teamB: Object.freeze({ parts: 5, unit: 4 }) }),
+      mathChecks: Object.freeze([Object.freeze({ method: "unit rate", expression: "20 ÷ 4 + 20 ÷ 5", result: 9, passed: true }), Object.freeze({ method: "substitution", expression: "5 + 15 = 20; 4 + 16 = 20", result: 9, passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student adds ratio numbers without finding the value of one part.", teachingPrompt: "Why is one part worth 5 for Team A but 4 for Team B?", successCheck: "The student finds the total number of parts, the unit value, and the requested part in that order." })
+    }),
+    common({
+      id: "isosceles-angle", type: "geometry-angle",
+      eyebrow: "GEOMETRY · ANGLE REASONING", eyebrowI18n: tr("GEOMETRY · ANGLE REASONING", "기하 · 각 추론", "几何 · 角度推理"),
+      title: "Equal sides reveal equal angles", titleI18n: tr("Equal sides reveal equal angles", "같은 변에서 같은 각 찾기", "由等边找等角"),
+      concept: "Isosceles triangles and angle sum", conceptI18n: tr("Isosceles triangles and angle sum", "이등변삼각형과 내각의 합", "等腰三角形与内角和"),
+      problem: "Triangle ABC is isosceles with AB = AC. The vertex angle A is 40°. Find angle B.", problemI18n: tr("Triangle ABC is isosceles with AB = AC. The vertex angle A is 40°. Find angle B.", "삼각형 ABC는 AB = AC인 이등변삼각형입니다. 꼭짓각 A가 40°일 때 각 B를 구하세요.", "三角形ABC是等腰三角形，AB = AC。顶角A为40°，求角B。"),
+      verifiedAnswer: "70°", answerBeatId: "geo-answer", objectIds: Object.freeze(geometryIds), beats: Object.freeze(geometryBeats),
+      sceneModel: Object.freeze({ vertexAngleDeg: 40, equalSides: Object.freeze(["AB", "AC"]), targetAngle: "B" }),
+      mathChecks: Object.freeze([Object.freeze({ method: "angle sum", expression: "(180 - 40) ÷ 2", result: 70, passed: true }), Object.freeze({ method: "substitution", expression: "40 + 70 + 70", result: 180, passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student divides 180 by 2 before removing the vertex angle.", teachingPrompt: "Which angles are opposite the two equal sides?", successCheck: "The student identifies the equal base angles before applying the 180-degree angle sum." })
+    })
+  ]) });
 });

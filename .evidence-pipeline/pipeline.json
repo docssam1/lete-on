@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "task": {
+    "id": "boarding-concept-whiteboard-20260830",
+    "objective": "Upgrade two public G·MAP concept samples with the shared Geometry renderer and an evidence-gated lesson contract.",
+    "learnerStage": "upper-elementary-to-middle-school",
+    "authorizedScope": ["boarding-school-math/animated-math.*", "boarding-school-math/learning/animated-math-*.js", "boarding-school-math/tests/animated-math-*.test.cjs"],
+    "exclusions": ["private contest originals", "student data", "deployment", "main branch merge"],
+    "releaseAuthority": "user or curriculum lead"
+  },
+  "sourceEvidence": { "assetRights": "GFIELD-authored public samples", "externalProblemAssets": false, "renderer": "geometry/worksheet/render.js" },
+  "gates": [
+    { "id": "source-rights", "status": "passed", "evidence": "lesson rights metadata and public note" },
+    { "id": "math-unique-answer", "status": "passed", "evidence": "full integer enumeration for ratio; angle-sum and substitution for geometry" },
+    { "id": "model-derived-svg", "status": "passed", "evidence": "point and segment model plus GW_RENDER fmt and wrapSvg" },
+    { "id": "single-gaze", "status": "passed", "evidence": "one newly drawn conceptual object per beat; recap has one reinspection target" },
+    { "id": "multilingual-narration", "status": "passed", "evidence": "direct en ko zh narration with browser residue checks" },
+    { "id": "desktop-mobile-a4", "status": "passed", "evidence": "Playwright checks at desktop, 320, 390, 768 and A4 print; visual PNG inspection" },
+    { "id": "negative-controls", "status": "passed", "evidence": "answer timing, private token, captions-off, reduced-motion, and overflow tests" }
+  ],
+  "learnerFit": {
+    "placement": "upper-elementary-to-middle-school concept bridge",
+    "ratioPrerequisite": "division of whole numbers and equal-part models",
+    "geometryPrerequisite": "triangle vocabulary and 180-degree angle sum",
+    "teacherBoundary": "misconception, prompt, success check, and verification remain in teacher view"
+  },
+  "verification": {
+    "targeted": "10 passed, 0 failed",
+    "anglePlacement": "A=40 degrees and B=C=70 degrees recomputed from vectors; angle labels lie on internal bisectors; A B C labels lie outside the triangle along centroid-opposite vectors; SVG text uses centered anchors",
+    "fullBoardingSuite": "281 passed, 10 unrelated failures",
+    "unrelatedFailures": [
+      "2 number_magic adapter count expectations already drift from current origin/main data",
+      "8 private Grade 6 runtime tests require an external ignored private-authoring directory"
+    ],
+    "artifacts": [
+      ".evidence-pipeline/artifacts/desktop-geometry-stage.png",
+      ".evidence-pipeline/artifacts/mobile-ratio-answer.png",
+      ".evidence-pipeline/artifacts/a4-geometry-final.png"
+    ]
+  },
+  "status": { "work": "verified", "evidence": "passed", "release": "locked" }
+}
