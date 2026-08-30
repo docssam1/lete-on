@@ -1,10 +1,10 @@
 {
   "version": 1,
   "task": {
-    "id": "boarding-diagnostic-clinic-20260830",
-    "title": "Boarding Grade 6 diagnostic clinic route",
+    "id": "boarding-grade6-clinic-pipeline-20260830",
+    "title": "Boarding Grade 6 diagnostic and learning clinic pipeline",
     "domain": "math",
-    "objective": "Connect Grade 6 diagnosis to exact concept learning, verified animation, locked workbook, and recheck states.",
+    "objective": "Connect Grade 6 diagnosis to exact concept learning and verified animation, then publish one evidence-gated 6.RP.A workbook and completion-gated recheck while leaving unreviewed clusters locked.",
     "learner_stage": "US Grade 6 ages 11-12",
     "release_authority": "user-curriculum-lead",
     "updated": "2026-08-30",
@@ -99,10 +99,10 @@
       "work_key": "8a5adc42c4011a9646ed7c6034a9d3e0f0f4c6223b414a8fdd1288b1adbca057",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "approved",
+      "release_status": "published",
       "owner": "codex-lead",
       "source_records": [],
-      "reason": "Deployment proof is added only after the Pages artifact is live.",
+      "reason": "",
       "authoring_mode": "newly-authored",
       "instructional_mode": "concept-guided-practice-recheck",
       "delivery_surfaces": ["interactive-student", "public-teacher-sample", "a4-print"],
@@ -134,7 +134,7 @@
         { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-practice-desktop-mobile-a4-final" }] },
         { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "The public scope notice forbids automatic mastery or promotion claims." }] },
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
-        { "id": "deployment", "required": true, "status": "pending", "evidence": [] }
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html", "note": "PR 137 merge ae054741 deployed with HTTP 200 assets, 12 student items, attempt-gated hints, separated teacher answers, mobile zero overflow, and locked recheck verified live." }] }
       ]
     }
   ]
