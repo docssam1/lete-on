@@ -46,6 +46,13 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .lesson-tab[aria-selected="true"] { color: #fff; border-color: var(--green-dark); background: var(--green-dark); }
 
 .lesson-shell { padding-bottom: 74px; }
+.clinic-context { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center; margin-bottom:14px; padding:17px 20px; border:1px solid var(--green-dark); color:#fff; background:var(--green-dark); }
+.clinic-context[hidden] { display:none; }
+.clinic-context > div { display:grid; gap:4px; }
+.clinic-context-eyebrow { color:#a9c8bc; font-size:.63rem; font-weight:900; letter-spacing:.13em; }
+.clinic-context strong { font:500 1.12rem Georgia,"Noto Serif KR",serif; }
+.clinic-context p { margin:2px 0 0; color:#d8e4df; font-size:.77rem; line-height:1.5; }
+.clinic-context a { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border:1px solid #a9c8bc; color:#fff; font-size:.76rem; font-weight:850; text-decoration:none; white-space:nowrap; }
 .problem-card { padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line); background: var(--sheet); box-shadow: var(--shadow); }
 .problem-heading { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
 .problem-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(2rem, 4.4vw, 4.2rem); font-weight: 500; line-height: 1; letter-spacing: -.045em; }
@@ -177,6 +184,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 }
 
 @media (max-width: 390px) {
+  .clinic-context { grid-template-columns:1fr; gap:10px; padding:16px; }
+  .clinic-context a { justify-content:center; }
   .lesson-tabs { grid-template-columns: 1fr; }
   .hero-proof p { grid-template-columns: 90px 1fr; }
   .problem-card { padding: 24px 18px; }
@@ -195,7 +204,7 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 @media print {
   @page { size: A4 portrait; margin: 12mm; }
   body.page-animated-math { background: #fff; }
-  .page-animated-math .site-header, .lesson-hero, .lesson-switcher, .stage-toolbar, .lesson-controls, .progress-track, .steps-card, .teacher-evidence, .lesson-note, .site-footer { display: none !important; }
+  .page-animated-math .site-header, .lesson-hero, .lesson-switcher, .clinic-context, .stage-toolbar, .lesson-controls, .progress-track, .steps-card, .teacher-evidence, .lesson-note, .site-footer { display: none !important; }
   .page-animated-math .shell { width: 100%; }
   .lesson-shell { padding: 0; }
   .problem-card, .stage-card { box-shadow: none; break-inside: avoid; }
