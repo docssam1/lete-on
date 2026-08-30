@@ -112,6 +112,28 @@
       tr("Common denominators differ by one twelfth, and the number line independently shows the same left-to-right order.", "공통분모에서는 1/12 차이가 나고 수직선에서도 같은 좌우 순서를 독립적으로 확인합니다.", "同分母比较相差1/12，数轴也独立显示相同的左右顺序。"), ["signed-order"], signedIds, "highlight")
   ];
 
+  const expressionIds = ["expr-original", "expr-power", "expr-inside", "expr-product", "expr-subtract", "expr-distribute", "expr-answer"];
+  const expressionBeats = [
+    beat("expr-read", tr("Read the expression tree", "식의 구조 읽기", "读懂式子结构"), "problem",
+      tr("The outer subtraction contains a product, and that product contains a sum with a power.", "가장 바깥에는 뺄셈이 있고, 그 안의 곱셈은 거듭제곱이 들어 있는 합을 포함합니다.", "最外层是减法，其中的乘法又包含一个带有幂的和。"), [], [], "inspect"),
+    beat("expr-original", tr("Mark the nested structure", "겹친 구조 표시하기", "标出嵌套结构"), "explore",
+      tr("Keep the original expression visible and follow the nesting from the inside out.", "원래 식을 계속 보면서 가장 안쪽부터 바깥쪽으로 따라갑니다.", "保留原式，从最内层向外逐层计算。"), ["expr-original"], ["expr-original"]),
+    beat("expr-power", tr("Evaluate the power", "거듭제곱 계산하기", "计算幂"), "solve",
+      tr("Two cubed means two times two times two, which equals eight.", "2의 세제곱은 2 곱하기 2 곱하기 2이므로 8입니다.", "2的三次方是2乘2乘2，等于8。"), ["expr-power"], ["expr-original", "expr-power"]),
+    beat("expr-inside", tr("Finish the parentheses", "괄호 안 계산하기", "算完括号内"), "solve",
+      tr("Replace the power with eight. Eight plus four equals twelve.", "거듭제곱 자리에 8을 넣으면 괄호 안은 8 더하기 4, 즉 12입니다.", "把幂换成8，括号内8加4等于12。"), ["expr-inside"], ["expr-original", "expr-power", "expr-inside"]),
+    beat("expr-product", tr("Multiply the grouped value", "괄호의 값 곱하기", "乘括号的值"), "solve",
+      tr("Three times twelve equals thirty-six.", "3 곱하기 12는 36입니다.", "3乘12等于36。"), ["expr-product"], ["expr-original", "expr-power", "expr-inside", "expr-product"]),
+    beat("expr-subtract", tr("Complete the outer operation", "바깥 연산 마치기", "完成最外层运算"), "solve",
+      tr("Subtract five from thirty-six to get thirty-one.", "36에서 5를 빼면 31입니다.", "36减5等于31。"), ["expr-subtract"], ["expr-original", "expr-power", "expr-inside", "expr-product", "expr-subtract"]),
+    beat("expr-distribute", tr("Verify by distribution", "분배법칙으로 검산하기", "用分配律检验"), "check",
+      tr("Distribute three to both inside terms: three times eight plus three times four minus five also equals thirty-one.", "3을 괄호 안의 두 항에 모두 분배하면 3 곱하기 8 더하기 3 곱하기 4 빼기 5도 31입니다.", "把3分配到括号内两项：3乘8加3乘4减5也等于31。"), ["expr-distribute"], ["expr-original", "expr-power", "expr-inside", "expr-product", "expr-subtract", "expr-distribute"]),
+    beat("expr-answer", tr("State the value", "식의 값 말하기", "写出式子的值"), "answer",
+      tr("Both calculation paths give the unique value thirty-one.", "두 계산 방법이 모두 하나의 값 31을 줍니다.", "两种计算方法都得到唯一的值31。"), ["expr-answer"], expressionIds),
+    beat("expr-recap", tr("Explain the order", "연산 순서 설명하기", "说明运算顺序"), "recap",
+      tr("Respect the nested structure: power, parentheses, multiplication, then subtraction. Distribution independently confirms the result.", "겹친 구조에 따라 거듭제곱, 괄호, 곱셈, 뺄셈 순서로 계산하고 분배법칙으로 독립 검산합니다.", "按嵌套结构依次计算幂、括号、乘法、减法，再用分配律独立检验。"), ["expr-original"], expressionIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -134,7 +156,7 @@
       tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
   ];
 
-  return Object.freeze({ schemaVersion: 4, lessons: Object.freeze([
+  return Object.freeze({ schemaVersion: 5, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
       conceptClusterId: "6.RP.A",
@@ -184,6 +206,18 @@
       sceneModel: Object.freeze({ domain: Object.freeze({ minNumerator: -2, maxNumerator: 0, denominator: 1 }), tickDenominator: 12, first: Object.freeze({ numerator: -7, denominator: 4, label: "-7/4" }), second: Object.freeze({ numerator: -5, denominator: 3, label: "-5/3" }), commonDenominator: 12 }),
       mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "-7/4 = -21/12; -5/3 = -20/12", result: "-21/12 < -20/12", passed: true }), Object.freeze({ method: "cross multiplication", expression: "(-7)×3 = -21; (-5)×4 = -20", result: "-21 < -20", passed: true }), Object.freeze({ method: "number-line position", expression: "-7/4 lies left of -5/3", result: "-7/4 < -5/3", passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student compares 7 and 5 without accounting for denominators or the direction of negative-number order.", teachingPrompt: "Which point is farther left, and how do -21/12 and -20/12 confirm that position?", successCheck: "The student converts both fractions to twelfths, locates both points, and explains why the farther-left value is smaller." })
+    }),
+    common({
+      id: "expression-structure-order", type: "expression-tree",
+      conceptClusterId: "6.EE.A",
+      eyebrow: "EXPRESSIONS · STRUCTURE FIRST", eyebrowI18n: tr("EXPRESSIONS · STRUCTURE FIRST", "대수식 · 구조 먼저", "代数式 · 先看结构"),
+      title: "Follow the expression from the inside out", titleI18n: tr("Follow the expression from the inside out", "식의 안쪽부터 바깥쪽으로 계산한다", "从式子内部向外计算"),
+      concept: "Operation order and equivalent expressions", conceptI18n: tr("Operation order and equivalent expressions", "연산 순서와 동치식", "运算顺序与等价式"),
+      problem: "Evaluate 3(2³ + 4) - 5 and verify the value by distribution.", problemI18n: tr("Evaluate 3(2³ + 4) - 5 and verify the value by distribution.", "3(2³ + 4) - 5의 값을 구하고 분배법칙으로 검산하세요.", "计算3(2³ + 4) - 5，并用分配律检验。"),
+      verifiedAnswer: "31", answerBeatId: "expr-answer", objectIds: Object.freeze(expressionIds), beats: Object.freeze(expressionBeats),
+      sceneModel: Object.freeze({ coefficient: 3, base: 2, exponent: 3, insideAddend: 4, outsideAddend: -5 }),
+      mathChecks: Object.freeze([Object.freeze({ method: "nested operation order", expression: "2³=8; 8+4=12; 3×12=36; 36-5", result: 31, passed: true }), Object.freeze({ method: "distribution", expression: "3×8 + 3×4 - 5", result: 31, passed: true }), Object.freeze({ method: "inverse outer check", expression: "31+5=36; 36÷3=12", result: 12, passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student reads 2³ as 2×3 or distributes 3 to only one term.", teachingPrompt: "Which operation is deepest inside the structure, and which two terms receive the outside factor?", successCheck: "The student evaluates the power first, preserves the parentheses, and confirms the same value by distributing to both terms." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",

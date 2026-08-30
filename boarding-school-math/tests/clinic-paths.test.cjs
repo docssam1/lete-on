@@ -21,7 +21,7 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
 });
 
 test("reviewed clusters open workbooks with completion-gated rechecks", function () {
-  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C"].forEach(function (cluster) {
+  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -56,6 +56,10 @@ test("only exact cluster matches open reviewed animated clinic lessons", functio
   assert.equal(signedNumbers.animated.state, "available");
   assert.equal(signedNumbers.animated.lessonId, "signed-rational-number-line");
   assert.equal(signedNumbers.animated.url, "./animated-math.html?lesson=signed-rational-number-line&cluster=6.NS.C&locale=ko");
+  const expressions = paths.routeFor("6.EE.A", { fromDiagnostic: true });
+  assert.equal(expressions.animated.state, "available");
+  assert.equal(expressions.animated.lessonId, "expression-structure-order");
+  assert.equal(expressions.animated.url, "./animated-math.html?lesson=expression-structure-order&cluster=6.EE.A&locale=ko");
 
   const geometry = paths.routeFor("6.G.A", { fromDiagnostic: true });
   assert.equal(geometry.animated.state, "review-pending");

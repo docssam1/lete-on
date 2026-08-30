@@ -117,8 +117,8 @@ body { color:var(--ink); background:var(--paper); }
   .teacher-guide-grid p { font-size:7.5pt; line-height:1.4; }
   .practice-section { break-before:page; }
   .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
-  .problem-card { padding:4mm; break-inside:avoid; box-shadow:none; }
+  .problem-card { min-width:0; padding:4mm; break-inside:avoid; box-shadow:none; }
   .problem-prompt { min-height:18mm; font-size:10.5pt; }
   .response-row input { border:0; border-bottom:1px solid #000; background:transparent; }
-  .teacher-answer, .teacher-guide { break-inside:avoid; }
+  .teacher-answer, .teacher-guide { min-width:0; overflow-wrap:anywhere; break-inside:avoid; }
 }
