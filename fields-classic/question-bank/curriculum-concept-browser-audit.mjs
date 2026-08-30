@@ -214,7 +214,9 @@ async function inspectPrintedPdf(pdf, typeId) {
     const page = await document.getPage(1);
     const viewport = page.getViewport({ scale: 1 });
     const content = await page.getTextContent();
-    const title = content.items.find((item) => item.str.includes("필즈 더 클래식 단원 학습지"));
+    const normalizedText = content.items.map((item) => item.str).join("").replace(/\s+/g, "");
+    assert.ok(normalizedText.includes("필즈더클래식단원학습지"), `${typeId} print: worksheet title is missing from the rendered PDF`);
+    const title = content.items.find((item) => item.str.includes("필즈"));
     const firstNumber = content.items.find((item) => item.str === "01");
     const secondNumber = content.items.find((item) => item.str === "02");
     for (const [label, item] of [["worksheet title", title], ["question 01", firstNumber], ["question 02", secondNumber]]) {
