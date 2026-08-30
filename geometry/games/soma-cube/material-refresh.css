@@ -1,0 +1,86 @@
+/* Learning UI + skeuomorphic material refresh: cool workbook and satin pieces. */
+:root {
+  --paper: #f8fbfa;
+  --wood: #82a9ae;
+  --line: #76919a;
+}
+
+.game-shell {
+  background: linear-gradient(145deg, #eaf3f1, #f9fbfa 54%, #e2eef0);
+}
+
+.mission {
+  border-bottom-color: #c7d7d9;
+  background: rgba(250, 252, 251, .97);
+}
+
+.viewer-panel {
+  border-color: #718d96;
+  background: #f4f9f8;
+  box-shadow: inset 0 1px 0 #fff, 0 8px 20px rgba(35, 67, 76, .14);
+}
+
+.viewer-panel > header {
+  border-bottom-color: #cbd9dc;
+  background: rgba(248, 252, 251, .96);
+}
+
+.viewer-host::after {
+  background: radial-gradient(ellipse, rgba(42, 74, 82, .16), transparent 70%);
+}
+
+.viewer-panel.choice-mode .choice-grid {
+  background: linear-gradient(145deg, #f8fbfa, #e8f1f1);
+}
+
+.choice-card {
+  border-color: #89a3aa;
+  background: linear-gradient(#fff, #edf4f4);
+  box-shadow: inset 0 1px 0 #fff, 0 4px 0 rgba(57, 86, 94, .16);
+}
+
+.workbench {
+  border-top-color: #557680;
+  background: linear-gradient(180deg, #e8f1f0, #cbdcde);
+  box-shadow: inset 0 1px 0 #fff, 0 -5px 14px rgba(42, 72, 79, .12);
+}
+
+.piece-card,
+.tool-rail button {
+  border-color: #78949c;
+  background: linear-gradient(#fff, #e7f0f0);
+  box-shadow: inset 0 1px 0 #fff, 0 3px 0 rgba(47, 78, 86, .18);
+}
+
+.piece-card.selected {
+  border-color: #178693;
+  box-shadow: 0 0 0 4px rgba(23, 134, 147, .2), 0 3px 0 rgba(47, 78, 86, .16);
+}
+
+.guide-bubble,
+.tutorial-card,
+.level-dialog,
+.complete-card {
+  border-color: #718d96;
+  background: #f9fcfb;
+}
+
+.demo-piece i,
+.demo-target i {
+  border-color: #3d6874;
+  background: linear-gradient(145deg, #dff7f6 0 18%, #65c2c6 52%, #3196a3);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .75), inset -3px -4px 7px rgba(29, 90, 102, .24), 0 4px 7px rgba(35, 71, 79, .18);
+}
+
+.tutorial-dots i {
+  background: #b7c8ca;
+}
+
+.level-dialog > header {
+  border-bottom-color: #d0dcde;
+}
+
+.level-card {
+  border-color: #a8bbc0;
+  background: #fff;
+}

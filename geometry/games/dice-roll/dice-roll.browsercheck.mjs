@@ -15,10 +15,11 @@ assert.equal(await page.locator("#choiceTray button").count(), 3);
 assert.equal(await page.locator(".route-3d-host canvas").count(), 1);
 const sceneMetrics = await page.locator(".route-3d-host").evaluate((host) => ({
   dieSize: Number(host.dataset.dieSize), tileSize: Number(host.dataset.tileSize), tileRatio: Number(host.dataset.tileRatio),
-  step: Number(host.dataset.step), top: Number(host.dataset.top), rolling: host.dataset.rolling,
+  step: Number(host.dataset.step), top: Number(host.dataset.top), rolling: host.dataset.rolling, material: host.dataset.material,
   width: host.getBoundingClientRect().width, height: host.getBoundingClientRect().height
 }));
 assert.equal(sceneMetrics.dieSize, 1);
+assert.equal(sceneMetrics.material, "satin-enamel");
 assert.ok(sceneMetrics.tileRatio > 1 && sceneMetrics.tileRatio <= 1.12, JSON.stringify(sceneMetrics));
 assert.ok(sceneMetrics.width >= 300 && sceneMetrics.height >= 250, JSON.stringify(sceneMetrics));
 const canvasShot = await page.locator(".route-3d-host canvas").screenshot();
@@ -103,6 +104,8 @@ await page.goto("http://127.0.0.1:8765/geometry/solid-vista/", { waitUntil: "net
 assert.equal(await page.locator("#diceLevelGrid .dice-card").count(), 5);
 assert.match(await page.locator("#diceLevelGrid .dice-card").first().textContent(), /초급/);
 assert.match(await page.locator("#diceLevelGrid .dice-card").nth(3).textContent(), /중급/);
+assert.ok(await page.locator(".level-card img").evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth === 800 && image.naturalHeight === 500)));
+await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-solid-vista-refresh.png", fullPage: true });
 assert.equal(errors.length, 0, errors.join("\n"));
 console.log(JSON.stringify({ level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, diceCards: 5 }, null, 2));
 await browser.close();

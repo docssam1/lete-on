@@ -84,22 +84,23 @@ function awardPoints(problemId) {
 const cubeGeometry = new RoundedBoxGeometry(.92,.92,.92,4,.07);
 const markerGeometry = new THREE.SphereGeometry(.2,18,12);
 
-function woodTexture() {
+function enamelTexture() {
   const canvas=document.createElement("canvas"); canvas.width=256; canvas.height=256; const context=canvas.getContext("2d");
-  const gradient=context.createLinearGradient(0,0,256,256); gradient.addColorStop(0,"#f4d7a2"); gradient.addColorStop(.5,"#d39a5c"); gradient.addColorStop(1,"#b8733e"); context.fillStyle=gradient; context.fillRect(0,0,256,256);
-  context.globalAlpha=.16; context.strokeStyle="#704421"; for(let y=12;y<256;y+=18){context.beginPath();for(let x=0;x<=256;x+=8)context.lineTo(x,y+Math.sin(x*.045+y)*3);context.stroke()} context.globalAlpha=1;
+  const gradient=context.createLinearGradient(0,0,256,256); gradient.addColorStop(0,"#ffffff"); gradient.addColorStop(.48,"#eef6f5"); gradient.addColorStop(1,"#cbdde1"); context.fillStyle=gradient; context.fillRect(0,0,256,256);
+  context.fillStyle="rgba(44,86,99,.055)"; for(let y=9;y<256;y+=13)for(let x=9;x<256;x+=13){context.beginPath();context.arc(x+(y%2)*2, y, .65, 0, Math.PI*2);context.fill()}
   const texture=new THREE.CanvasTexture(canvas); texture.colorSpace=THREE.SRGBColorSpace; texture.wrapS=texture.wrapT=THREE.RepeatWrapping; return texture;
 }
-const woodMap=woodTexture();
+const enamelMap=enamelTexture();
 
 function makeViewer(host, interactive=false) {
-  const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf7f1e4);
+  host.dataset.material="satin-enamel";
+  const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf1f7f6);
   const camera=new THREE.PerspectiveCamera(34,1,.1,100); camera.position.set(5.2,4.8,6.4);
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,1.7)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; host.append(renderer.domElement);
   const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.enablePan=false; controls.minDistance=4; controls.maxDistance=11; controls.target.set(0,1,0); controls.enabled=true;
-  scene.add(new THREE.HemisphereLight(0xfff5dc,0x6f776f,1.8)); const sun=new THREE.DirectionalLight(0xffffff,2.1); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun);
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(4.2,.18,4.2),new THREE.MeshStandardMaterial({map:woodMap,color:0xdab174,roughness:.72})); floor.position.y=-.14; floor.receiveShadow=true; scene.add(floor);
-  const grid=new THREE.GridHelper(3,3,0x80613d,0xb39368); grid.position.y=-.04; scene.add(grid);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x9fb7bd,1.85)); const sun=new THREE.DirectionalLight(0xffffff,2.15); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun);
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(4.2,.18,4.2),new THREE.MeshPhysicalMaterial({color:0xe2eceb,roughness:.68,metalness:.01,clearcoat:.16,clearcoatRoughness:.62})); floor.position.y=-.14; floor.receiveShadow=true; scene.add(floor);
+  const grid=new THREE.GridHelper(3,3,0x597984,0x9ab0b5); grid.position.y=-.04; scene.add(grid);
   const content=new THREE.Group(); const markers=new THREE.Group(); scene.add(content,markers);
   const viewer={host,scene,camera,renderer,controls,content,markers,interactive,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2(),down:null};
   const resize=()=>{const rect=host.getBoundingClientRect(); if(!rect.width||!rect.height)return; renderer.setSize(rect.width,rect.height,false); camera.aspect=rect.width/rect.height; camera.updateProjectionMatrix()};
@@ -110,7 +111,7 @@ const targetView=makeViewer(ui.targetViewer,false);
 const buildView=makeViewer(ui.buildViewer,true);
 
 function materialFor(id, transparent=false) {
-  return new THREE.MeshStandardMaterial({color:PIECE_BY_ID[id]?.color || 0xd8a467,map:woodMap,roughness:.56,metalness:.02,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
+  return new THREE.MeshPhysicalMaterial({color:PIECE_BY_ID[id]?.color || 0x5bb8c4,map:enamelMap,roughness:.28,metalness:.01,clearcoat:.52,clearcoatRoughness:.3,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
 }
 
 function boundsOf(cells) {
@@ -154,7 +155,7 @@ function renderTarget() {
   else if(problem.mode==="assemble"&&problem.reference?.length) {
     problem.reference.forEach((placement)=>addPiece(targetView.content,placement,bounds));
   } else {
-    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshStandardMaterial({color:0xd6b378,map:woodMap,roughness:.62}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;mesh.receiveShadow=true;targetView.content.add(mesh)});
+    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshPhysicalMaterial({color:0xb8dfe2,map:enamelMap,roughness:.3,metalness:.01,clearcoat:.45,clearcoatRoughness:.34}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;mesh.receiveShadow=true;targetView.content.add(mesh)});
     addOutlineCells(targetView.content,cells,bounds);
   }
   frameViewer(targetView,cells);
@@ -200,17 +201,17 @@ const thumbnailContent = new THREE.Group();
 let thumbnailMaterial = null;
 thumbnailRenderer.setSize(240,180,false);
 thumbnailRenderer.setPixelRatio(1);
-thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x7d746b,2),thumbnailContent);
+thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x9fb7bd,2),thumbnailContent);
 const thumbnailLight = new THREE.DirectionalLight(0xffffff,2);
 thumbnailLight.position.set(4,6,5);
 thumbnailScene.add(thumbnailLight);
 
-function makeThumbnail(cells,color="#d9a365") {
+function makeThumbnail(cells,color="#5bb8c4") {
   const cacheKey = `${color}:${normalize(cells).map(key).join(";")}`;
   if (thumbnailCache.has(cacheKey)) return thumbnailCache.get(cacheKey);
   thumbnailContent.clear();
   thumbnailMaterial?.dispose();
-  thumbnailMaterial=new THREE.MeshStandardMaterial({color,map:woodMap,roughness:.58});
+  thumbnailMaterial=new THREE.MeshPhysicalMaterial({color,map:enamelMap,roughness:.3,metalness:.01,clearcoat:.48,clearcoatRoughness:.32});
   const bounds=boundsOf(cells);
   cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,thumbnailMaterial);mesh.position.copy(worldCell(cell,bounds));thumbnailContent.add(mesh)});
   const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1));

@@ -1,7 +1,7 @@
 import { levels, validateLevels, directionInfo, roll, rollMany, visibleFaces, PROGRESS_KEY } from "./levels.js?v=dice-roll-3";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { DiceRouteScene } from "./route-scene.js?v=dice-roll-2";
+import { DiceRouteScene } from "./route-scene.js?v=dice-roll-3";
 
 validateLevels();
 
@@ -85,9 +85,9 @@ function dieMaterials(svg) {
   const id = `dieMaterial${dieMaterialSequence += 1}`;
   const defs = document.createElementNS(svg.namespaceURI,"defs");
   const colors = {
-    top:[["0%","#fff3c8"],["48%","#efcf83"],["100%","#d9a650"]],
-    front:[["0%","#f0c979"],["58%","#d99d49"],["100%","#b97531"]],
-    right:[["0%","#dda552"],["55%","#bd772f"],["100%","#8f4e24"]]
+    top:[["0%","#ffffff"],["48%","#edf7f6"],["100%","#d6e6e8"]],
+    front:[["0%","#f8fbfb"],["58%","#dfecee"],["100%","#c4d8dd"]],
+    right:[["0%","#eaf3f4"],["55%","#cbdde1"],["100%","#a8c1c8"]]
   };
   Object.entries(colors).forEach(([face,stops])=>{
     const gradient=document.createElementNS(svg.namespaceURI,"linearGradient");gradient.id=`${id}-${face}`;
@@ -96,8 +96,8 @@ function dieMaterials(svg) {
   });
   const sheen=document.createElementNS(svg.namespaceURI,"linearGradient");sheen.id=`${id}-sheen`;sheen.setAttribute("x1","0");sheen.setAttribute("y1","0");sheen.setAttribute("x2","1");sheen.setAttribute("y2","1");
   [["0%","#fff",.7],["25%","#fff",.18],["48%","#fff",0],["82%","#fff",.16],["100%","#fff",0]].forEach(([offset,color,opacity])=>{const stop=document.createElementNS(svg.namespaceURI,"stop");stop.setAttribute("offset",offset);stop.setAttribute("stop-color",color);stop.setAttribute("stop-opacity",opacity);sheen.append(stop);});defs.append(sheen);
-  const grain=document.createElementNS(svg.namespaceURI,"pattern");grain.id=`${id}-grain`;grain.setAttribute("width","72");grain.setAttribute("height","18");grain.setAttribute("patternUnits","userSpaceOnUse");
-  grain.innerHTML='<path d="M-8 5 C12 1 29 8 50 4 S78 2 88 6" fill="none" stroke="#7b4a25" stroke-width="1" stroke-opacity=".16"/><path d="M-5 13 C18 8 38 16 77 11" fill="none" stroke="#fff6d4" stroke-width="1.2" stroke-opacity=".18"/>';
+  const grain=document.createElementNS(svg.namespaceURI,"pattern");grain.id=`${id}-grain`;grain.setAttribute("width","18");grain.setAttribute("height","18");grain.setAttribute("patternUnits","userSpaceOnUse");
+  grain.innerHTML='<circle cx="4" cy="5" r=".7" fill="#315c6b" fill-opacity=".08"/><circle cx="13" cy="12" r=".55" fill="#fff" fill-opacity=".42"/>';
   defs.append(grain);svg.append(defs);return {id};
 }
 

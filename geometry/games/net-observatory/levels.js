@@ -104,7 +104,7 @@ export const INVALID_CUBE_NETS = ALL_HEXOMINOES.filter((shape) => !foldCubeNet(s
 
 const labels = ["A", "B", "C", "D", "E", "F"];
 const positionMarks = ["●", "◆", "✚", "✿", "★", "◎"];
-const colors = ["#f0a94a", "#4da8c7", "#8abc61", "#e97972", "#a98ad5", "#f0d15d"];
+const colors = ["#f2b84b", "#49aeca", "#79bd68", "#ee7568", "#9d89d5", "#f2d45c"];
 
 function decorateNet(cells, seed, symbols = false) {
   const folded = foldCubeNet(cells);

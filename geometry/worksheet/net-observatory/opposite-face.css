@@ -4,8 +4,8 @@
 }
 
 .face-option {
-  border: 2px solid #61401f;
-  background: linear-gradient(145deg, #fff8dd, var(--face-color) 50%, #b97a3e);
+  border: 2px solid #526f78;
+  background: linear-gradient(145deg, #fff 0 16%, var(--face-color) 56%, color-mix(in srgb, var(--face-color), #315767 24%));
 }
 
 .face-option strong {

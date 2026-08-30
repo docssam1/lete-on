@@ -10,6 +10,7 @@ await page.addInitScript(()=>localStorage.setItem("gfield-net-observatory-tutori
 await page.goto("http://127.0.0.1:8765/geometry/games/net-observatory/?level=2",{waitUntil:"networkidle"});
 
 assert.equal(await page.locator(".viewer-host canvas").count(),1);
+assert.equal(await page.locator(".viewer-host").getAttribute("data-material"),"satin-enamel");
 assert.equal(await page.locator(".choice-cube-host canvas").count(),0);
 assert.equal(await page.locator(".face-choice").count(),3);
 assert.equal(await page.locator(".cube-view").count(),0);

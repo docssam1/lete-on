@@ -30,25 +30,17 @@ const ROTATIONS = {
   W: { axis: new THREE.Vector3(0, 0, 1), angle: Math.PI / 2 }
 };
 
-function makeWoodTexture() {
+function makeEnamelTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 256; canvas.height = 256;
   const context = canvas.getContext("2d");
   const gradient = context.createLinearGradient(0, 0, 256, 256);
-  gradient.addColorStop(0, "#fff0bd");
-  gradient.addColorStop(.48, "#dca65d");
-  gradient.addColorStop(1, "#a9632f");
+  gradient.addColorStop(0, "#ffffff");
+  gradient.addColorStop(.5, "#edf6f5");
+  gradient.addColorStop(1, "#bfd2d7");
   context.fillStyle = gradient; context.fillRect(0, 0, 256, 256);
-  context.lineCap = "round";
-  for (let index = 0; index < 22; index += 1) {
-    const y = 8 + index * 12;
-    context.beginPath();
-    context.moveTo(-20, y + Math.sin(index * 1.7) * 5);
-    context.bezierCurveTo(55, y - 8, 130, y + 9, 276, y - 2);
-    context.strokeStyle = index % 3 ? "rgba(113,61,28,.10)" : "rgba(255,247,214,.16)";
-    context.lineWidth = index % 4 === 0 ? 2 : 1;
-    context.stroke();
-  }
+  context.fillStyle = "rgba(31,72,87,.045)";
+  for (let y = 14; y < 256; y += 23) for (let x = 12 + (y % 46 ? 8 : 0); x < 256; x += 27) context.fillRect(x, y, 1.2, 1.2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
@@ -61,8 +53,8 @@ function makeArrowTexture(direction) {
   const context = canvas.getContext("2d");
   context.translate(64, 64);
   context.rotate({ E: 0, S: Math.PI / 2, W: Math.PI, N: -Math.PI / 2 }[direction]);
-  context.strokeStyle = "#a6472f";
-  context.fillStyle = "#a6472f";
+  context.strokeStyle = "#d85f50";
+  context.fillStyle = "#d85f50";
   context.lineWidth = 11;
   context.lineCap = "round";
   context.beginPath(); context.moveTo(-30, 0); context.lineTo(24, 0); context.stroke();
@@ -137,6 +129,7 @@ export class DiceRouteScene {
     host.dataset.tileSize = String(TILE_SIZE);
     host.dataset.tileRatio = String(TILE_SIZE / DIE_SIZE);
     host.dataset.rolling = "false";
+    host.dataset.material = "satin-enamel";
 
     this.tiles = new THREE.Group();
     this.arrows = new THREE.Group();
@@ -145,8 +138,8 @@ export class DiceRouteScene {
     this.die = this.makeDie();
     this.scene.add(this.die);
 
-    const ambient = new THREE.HemisphereLight(0xfff8df, 0x78919a, 2.15);
-    const key = new THREE.DirectionalLight(0xfff1c8, 4.1);
+    const ambient = new THREE.HemisphereLight(0xffffff, 0x789aa3, 2.2);
+    const key = new THREE.DirectionalLight(0xffffff, 4.1);
     key.position.set(5, 9, 7); key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024);
     key.shadow.camera.left = -8; key.shadow.camera.right = 8; key.shadow.camera.top = 8; key.shadow.camera.bottom = -8;
@@ -163,7 +156,7 @@ export class DiceRouteScene {
     const die = new THREE.Group();
     const body = new THREE.Mesh(
       new RoundedBoxGeometry(DIE_SIZE, DIE_SIZE, DIE_SIZE, 6, .085),
-      new THREE.MeshPhysicalMaterial({ map: makeWoodTexture(), roughness: .29, metalness: .02, clearcoat: .72, clearcoatRoughness: .2 })
+      new THREE.MeshPhysicalMaterial({ map: makeEnamelTexture(), roughness: .24, metalness: .01, clearcoat: .78, clearcoatRoughness: .18 })
     );
     body.castShadow = true; body.receiveShadow = true; die.add(body);
 
@@ -205,9 +198,9 @@ export class DiceRouteScene {
     const tileGeometry = new THREE.BoxGeometry(TILE_SIZE, TILE_HEIGHT, TILE_SIZE);
     const edgeGeometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(.99, TILE_HEIGHT + .006, .99));
     [...new Map(problem.path.map((cell) => [cellKey(cell), cell])).values()].forEach((cell) => {
-      const mesh = new THREE.Mesh(tileGeometry.clone(), new THREE.MeshStandardMaterial({ color: 0xf4e9cf, roughness: .72 }));
+      const mesh = new THREE.Mesh(tileGeometry.clone(), new THREE.MeshStandardMaterial({ color: 0xf0f6f5, roughness: .62 }));
       mesh.position.set(cell[1], 0, cell[0]); mesh.receiveShadow = true;
-      const edges = new THREE.LineSegments(edgeGeometry.clone(), new THREE.LineBasicMaterial({ color: 0x8a755e, transparent: true, opacity: .72 }));
+      const edges = new THREE.LineSegments(edgeGeometry.clone(), new THREE.LineBasicMaterial({ color: 0x6d8a92, transparent: true, opacity: .72 }));
       edges.position.y = .002; mesh.add(edges);
       this.tiles.add(mesh); this.tileMeshes.set(cellKey(cell), mesh);
     });
@@ -254,8 +247,8 @@ export class DiceRouteScene {
       const indices = this.problem.path.map(cellKey).reduce((all, item, index) => item === key ? [...all, index] : all, []);
       const current = indices.includes(Math.min(step, this.problem.path.length - 1));
       const passed = indices.some((index) => index < step);
-      mesh.material.color.set(current ? 0xe2b14e : passed ? 0x9fc7bd : 0xf4e9cf);
-      mesh.material.roughness = current ? .5 : .72;
+      mesh.material.color.set(current ? 0xf1c555 : passed ? 0xa8d3ca : 0xf0f6f5);
+      mesh.material.roughness = current ? .42 : .62;
     });
     this.arrows.children.forEach((arrow, index) => { arrow.material.opacity = index < step ? .34 : .92; });
   }

@@ -28,6 +28,13 @@
 .legacy-board .number-grid,.legacy-board .route-lines{inset:0}
 .route-3d-host[data-rolling="true"]{cursor:progress}
 @media(max-width:680px){.route-board{width:min(100%,360px);aspect-ratio:1.18}.route-board.is-flat{width:min(100%,330px);aspect-ratio:1}}
+
+/* Learning UI + skeuomorphic material refresh: clean satin dice, no wood grain. */
+.route-stage{background:linear-gradient(145deg,#fbfdfd,#edf5f3);border-color:#b8cbcc}
+.die-face{stroke:#35576a;stroke-width:2.5}.die-grain{opacity:.3}.pip{filter:drop-shadow(0 1px 0 rgba(255,255,255,.7)) drop-shadow(0 1.2px 1px rgba(41,75,87,.32))}.die-svg{filter:drop-shadow(0 12px 9px rgba(41,72,81,.22)) drop-shadow(0 3px 2px rgba(50,82,91,.18))}
+.position-marker{background:linear-gradient(145deg,#fff,#e5eff0 62%,#c6d8dc);border-color:#35576a;box-shadow:inset 0 2px 1px rgba(255,255,255,.9),inset -3px -4px 6px rgba(46,79,91,.18),0 6px 0 #9db5bb,0 8px 0 #35576a,0 12px 15px rgba(41,72,81,.24)}
+.position-marker::after{background:linear-gradient(#bdd0d4,#93adb4)}.position-marker i{background:#17343f;box-shadow:inset 0 1px rgba(255,255,255,.35),0 1px 1px rgba(40,72,83,.35)}
+.position-marker.flat{box-shadow:0 8px 10px rgba(41,72,81,.18)}.flat-face{stroke:#496b78}.flat-face.top{fill:#fbfdfd}.flat-face.north{fill:#eef6f5}.flat-face.east{fill:#d5e6e6}.flat-face.south{fill:#e2eeee}.flat-face.west{fill:#f2f8f7}.position-marker.flat .flat-die-map{filter:drop-shadow(0 4px 3px rgba(41,72,81,.2))}
 @media(max-width:390px){.route-board{width:100%;aspect-ratio:1.12}.route-board.is-flat{width:280px;aspect-ratio:1}}
 
 .flat-grid-surface{position:absolute;inset:0 0 50px}
