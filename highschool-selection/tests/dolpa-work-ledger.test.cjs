@@ -136,6 +136,21 @@ test("다음 작업 선택기는 이미 끝난 단계를 다시 내보내지 않
   assert.equal(rows.find(row => row.sourceId === "DP-SRC-BBBBBBBBBBBB").task, "conversion");
 });
 
+test("표본 확인으로 남은 답 검수도 다음 작업에 다시 잡힌다", () => {
+  const value = fixtures();
+  value.reviewDecisions.sourceReviews.push({
+    sourceId: "DP-SRC-AAAAAAAAAAAA",
+    tasks: {
+      answerReview: { status: "sampled", evidence: ["answer-sample"], note: "일부 문항만 확정" }
+    }
+  });
+  const ledger = builder.buildLedger(value.inventory, value.queue, value.typeIndex, value.paperLinks, value.reviewDecisions, value.fingerprints);
+  const row = planner.plan(ledger, "next", 10).find(item => item.sourceId === "DP-SRC-AAAAAAAAAAAA");
+  assert.equal(row.task, "paperReviewBundle");
+  assert.equal(row.priorStatus, "sampled");
+  assert.equal(row.tasks.includes("answerReview"), true);
+});
+
 test("한 번 본 시험지는 여러 검수 단계를 한 기록으로 저장하고 확정 상태를 낮추지 않는다", () => {
   const decisions = { schemaVersion: 1, rangeReviews: [], sourceReviews: [] };
   const manifest = {

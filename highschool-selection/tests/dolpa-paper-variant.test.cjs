@@ -215,7 +215,8 @@ test("부분 변형 검수표는 등록·DB 반영·내보내기에서 29개 배
     { schemaVersion: 1, totalQuestionCount: 0, papers: [] },
     { schemaVersion: 1, links: [] },
     { schemaVersion: 1, rangeReviews: [], sourceReviews: [] },
-    packet
+    packet,
+    database
   );
   assert.equal(registered.typeIndex.papers[0].questionCount, 30);
   assert.equal(registered.typeIndex.papers[0].questions.length, 1);
@@ -234,6 +235,47 @@ test("부분 변형 검수표는 등록·DB 반영·내보내기에서 29개 배
   assert.deepEqual(exported.variant, packet.variant);
   assert.deepEqual(exported.questions.map(question => question.number), [29]);
   assert.equal(exported.questions.length, 1);
+});
+
+test("부분 변형의 공유 canonical 문항이 DB에 없으면 답 검수를 확정하지 않는다", () => {
+  const { database } = makeVariantDatabase();
+  const packet = reviewPacket(database);
+  const missingId = packet.variant.sharedQuestionLinks[0].questionId;
+  const incompleteDatabase = structuredClone(database);
+  incompleteDatabase.questions = incompleteDatabase.questions.filter(question => question.questionId !== missingId);
+  assert.throws(() => registerSources(
+    { schemaVersion: 1, totalQuestionCount: 0, papers: [] },
+    { schemaVersion: 1, links: [] },
+    { schemaVersion: 1, rangeReviews: [], sourceReviews: [] },
+    packet,
+    incompleteDatabase
+  ), /공유 문항 답 상태를 찾을 수 없습니다/);
+});
+
+test("부분 변형의 공유 문항은 canonical DB의 답 이견을 배치별로 반영한다", () => {
+  const { database } = makeVariantDatabase();
+  database.questions.forEach(question => {
+    question.answerCheck = { status: "verified", evidence: [`answer:${question.questionId}`] };
+  });
+  const repeatedCanonical = ledgerCore.stableQuestionId(PRIMARY_SOURCE_ID, 6);
+  database.questions.find(question => question.questionId === repeatedCanonical).answerCheck = {
+    status: "disputed",
+    evidence: ["answer:canonical-conflict"],
+    note: "공식 답과 독립 검산이 일치하지 않음"
+  };
+  const packet = reviewPacket(database);
+  const registered = registerSources(
+    { schemaVersion: 1, totalQuestionCount: 0, papers: [] },
+    { schemaVersion: 1, links: [] },
+    { schemaVersion: 1, rangeReviews: [], sourceReviews: [] },
+    packet,
+    database
+  );
+  assert.equal(registered.paperLinks.links[0].verifiedStages.includes("answerReview"), false);
+  const task = registered.reviewDecisions.sourceReviews[0].tasks.answerReview;
+  assert.equal(task.status, "sampled");
+  assert.match(task.note, /확정 28문항/);
+  assert.match(task.note, /이견 2문항/);
 });
 
 test("검수표의 공유 ID가 형식상 유효해도 DB의 정확한 번호 연결과 다르면 차단한다", () => {

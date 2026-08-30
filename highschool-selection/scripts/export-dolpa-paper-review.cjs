@@ -27,7 +27,9 @@ function exportReviewPacket(database, paperId, reviewedAt, reviewDecisions = nul
         (sourceDecision.tasks && sourceDecision.tasks[stage] && sourceDecision.tasks[stage].evidence) || []), "원본 등록")
       : only(paper.evidence || [], "원본 등록");
   const paperEvidenceId = only(paper.evidence || [], "시험지 분류");
-  const answerEvidenceId = only(questions.flatMap(question => question.answerCheck.evidence || []), "답안");
+  const answerEvidenceId = paper.answerEvidenceId
+    ? String(paper.answerEvidenceId)
+    : only(questions.flatMap(question => question.answerCheck.evidence || []), "답안");
   const locatorEvidenceId = only(questions.flatMap(question => question.locator.evidence || []), "문항 위치");
   const responseEvidenceId = only(questions.flatMap(question => question.responseFormat.evidence || []), "답안 형식");
   const packet = {
@@ -54,16 +56,22 @@ function exportReviewPacket(database, paperId, reviewedAt, reviewDecisions = nul
       primaryPaperId: paper.variant.primaryPaperId,
       sharedQuestionLinks: paper.variant.sharedQuestionLinks
     } } : {}),
-    questions: questions.map(question => ({
-      number: question.number,
-      page: question.locator.page,
-      slot: question.locator.slot,
-      responseFormat: question.responseFormat.kind,
-      slotCount: question.responseFormat.slotCount,
-      semester: question.classification.semester,
-      unit: question.classification.unit,
-      typeLabel: question.classification.typeLabel
-    }))
+    questions: questions.map(question => {
+      const status = String(question.answerCheck && question.answerCheck.status || "pending");
+      const note = String(question.answerCheck && question.answerCheck.note || "").trim();
+      return {
+        number: question.number,
+        page: question.locator.page,
+        slot: question.locator.slot,
+        responseFormat: question.responseFormat.kind,
+        slotCount: question.responseFormat.slotCount,
+        semester: question.classification.semester,
+        unit: question.classification.unit,
+        typeLabel: question.classification.typeLabel,
+        ...(status !== "verified" || note ? { answerStatus: status } : {}),
+        ...(note ? { answerNote: note } : {})
+      };
+    })
   };
   validatePacket(packet);
   return packet;
