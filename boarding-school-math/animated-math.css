@@ -127,6 +127,29 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .gcf-check span { padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .gcf-answer { grid-column: 1 / -1; display: grid; min-height: 58px; place-items: center; color: #fff; background: var(--green-dark); font: 800 1.35rem Georgia, serif; }
 
+.signed-number-line-scene { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.signed-number-line-svg { grid-column: 1 / -1; display: block; width: 100%; height: auto; overflow: visible; }
+.signed-axis-line { stroke: var(--green-dark); stroke-width: 4; stroke-linecap: round; }
+.signed-axis-arrow { fill: none; stroke: var(--green-dark); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.signed-tick { stroke: #8d9892; stroke-width: 2; }
+.signed-tick.is-major { stroke: var(--green-dark); stroke-width: 4; }
+.signed-axis-label { fill: var(--ink); font: 800 18px "Noto Sans", system-ui, sans-serif; }
+.signed-guide { stroke: #8d9892; stroke-width: 2; stroke-dasharray: 5 5; }
+.signed-point { stroke: #fff; stroke-width: 4; }
+.signed-point.is-a { fill: var(--coral); }
+.signed-point.is-b { fill: var(--blue); }
+.signed-point-label { fill: var(--ink); font: 800 19px "Noto Sans", system-ui, sans-serif; }
+.signed-distance { stroke-width: 7; stroke-linecap: round; }
+.signed-distance.is-a { stroke: var(--coral); }
+.signed-distance.is-b { stroke: var(--blue); }
+.signed-distance-end { fill: var(--sheet); stroke: var(--ink); stroke-width: 2; }
+.signed-distance-label { fill: var(--ink); font: 800 17px "Noto Sans", system-ui, sans-serif; }
+.signed-common, .signed-order, .signed-answer { display: grid; min-height: 62px; place-items: center; gap: 4px; padding: 10px 14px; border: 1px solid var(--line); background: #fff; text-align: center; font: 700 1rem Georgia, serif; }
+.signed-common { grid-template-columns: 1fr 1fr; }
+.signed-order span { color: var(--muted); font: 850 .67rem system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+.signed-answer { grid-column: 1 / -1; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.35rem; }
+.scene-object.is-active .signed-axis-line, .scene-object.is-active .signed-axis-arrow, .scene-object.is-active .signed-tick { stroke: var(--coral); }
+
 .geometry-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
 .geo-line { fill: none; stroke: var(--green-dark); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset .8s ease, opacity .35s ease, stroke .25s ease, filter .25s ease; }
 .scene-object.is-visible .geo-line { stroke-dashoffset: 0; }
@@ -214,6 +237,12 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .fraction-group-number { top: 4px; right: 4px; width: 18px; height: 18px; font-size: .56rem; }
   .factor-chain-scene { grid-template-columns: 1fr; }
   .gcf-values, .gcf-common, .gcf-answer { grid-column: 1; }
+  .signed-number-line-scene { grid-template-columns: 1fr; }
+  .signed-number-line-svg, .signed-answer { grid-column: 1; }
+  .signed-common { grid-template-columns: 1fr; }
+  .signed-axis-label { font-size: 30px; }
+  .signed-point-label { font-size: 32px; }
+  .signed-distance-label { font-size: 30px; }
   .lesson-controls { grid-template-columns: 1fr 1fr; }
   .control-button.primary, .control-button.overview { grid-column: span 2; }
   .step-list { grid-template-columns: 1fr; }

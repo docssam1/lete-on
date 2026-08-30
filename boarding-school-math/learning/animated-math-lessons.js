@@ -88,6 +88,30 @@
       tr("Prime-factor matching finds twelve, and the remainder chain independently confirms the same unique greatest common factor.", "공통 소인수의 곱으로 12를 구하고, 나머지 나눗셈으로 같은 최대공약수를 독립적으로 확인했습니다.", "公有质因数的乘积得到12，余数链也独立确认同一个最大公因数。"), ["gcf-common"], gcfIds, "highlight")
   ];
 
+  const signedIds = ["signed-axis", "signed-point-a", "signed-point-b", "signed-common-units", "signed-distance-a", "signed-distance-b", "signed-order", "signed-answer"];
+  const signedBeats = [
+    beat("signed-read", tr("Read the two values", "두 수 읽기", "读取两个数"), "problem",
+      tr("Compare negative seven-fourths and negative five-thirds on the same number line.", "음의 4분의 7과 음의 3분의 5를 같은 수직선에서 비교합니다.", "在同一数轴上比较负四分之七与负三分之五。"), [], [], "inspect"),
+    beat("signed-axis", tr("Build the number line", "수직선 만들기", "建立数轴"), "explore",
+      tr("Build a number line from negative two to zero. Values increase as we move right.", "-2부터 0까지 수직선을 만들면 오른쪽으로 갈수록 값이 커집니다.", "建立从-2到0的数轴，越向右数值越大。"), ["signed-axis"], ["signed-axis"]),
+    beat("signed-point-a", tr("Place negative seven-fourths", "-7/4 표시하기", "标出-7/4"), "explore",
+      tr("Negative seven-fourths is negative one and three-fourths, so place it three fourths of a unit left of negative one.", "-7/4은 -1과 -2 사이의 값이므로 -1에서 왼쪽으로 3/4만큼 간 곳에 표시합니다.", "-7/4等于负一又四分之三，因此标在-1左侧四分之三个单位处。"), ["signed-point-a"], ["signed-axis", "signed-point-a"]),
+    beat("signed-point-b", tr("Place negative five-thirds", "-5/3 표시하기", "标出-5/3"), "explore",
+      tr("Negative five-thirds is negative one and two-thirds. It lies slightly to the right of negative seven-fourths.", "-5/3은 -1과 -2 사이에서 -1의 왼쪽으로 2/3만큼 간 값이며 -7/4보다 조금 오른쪽에 있습니다.", "-5/3等于负一又三分之二，位置比-7/4略靠右。"), ["signed-point-b"], ["signed-axis", "signed-point-a", "signed-point-b"]),
+    beat("signed-common", tr("Rename in twelfths", "12분의 몇으로 바꾸기", "化成十二分数"), "solve",
+      tr("Use twelfths: negative seven-fourths is negative twenty-one twelfths, and negative five-thirds is negative twenty twelfths.", "공통분모 12를 쓰면 -7/4은 -21/12이고 -5/3은 -20/12입니다.", "化为十二分数：-7/4是-21/12，-5/3是-20/12。"), ["signed-common-units"], ["signed-axis", "signed-point-a", "signed-point-b", "signed-common-units"]),
+    beat("signed-distance-a", tr("Measure the first distance", "첫 번째 거리 확인", "测量第一段距离"), "check",
+      tr("The distance from zero to negative seven-fourths is twenty-one twelfths.", "0에서 -7/4까지의 거리는 21/12입니다.", "从0到-7/4的距离是21/12。"), ["signed-distance-a"], ["signed-axis", "signed-point-a", "signed-point-b", "signed-common-units", "signed-distance-a"]),
+    beat("signed-distance-b", tr("Measure the second distance", "두 번째 거리 확인", "测量第二段距离"), "check",
+      tr("The distance from zero to negative five-thirds is twenty twelfths, one twelfth shorter.", "0에서 -5/3까지의 거리는 20/12로 첫 번째보다 1/12 짧습니다.", "从0到-5/3的距离是20/12，比第一段短1/12。"), ["signed-distance-b"], ["signed-axis", "signed-point-a", "signed-point-b", "signed-common-units", "signed-distance-a", "signed-distance-b"]),
+    beat("signed-order", tr("Use left-to-right order", "왼쪽과 오른쪽 비교", "按左右位置比较"), "solve",
+      tr("Negative seven-fourths is farther left, so it is the smaller number.", "-7/4이 더 왼쪽에 있으므로 더 작은 수입니다.", "-7/4更靠左，所以它是较小的数。"), ["signed-order"], ["signed-axis", "signed-point-a", "signed-point-b", "signed-common-units", "signed-distance-a", "signed-distance-b", "signed-order"]),
+    beat("signed-answer", tr("State the comparison", "비교 결과 말하기", "写出比较结果"), "answer",
+      tr("Negative seven-fourths is less than negative five-thirds.", "-7/4은 -5/3보다 작습니다.", "-7/4小于-5/3。"), ["signed-answer"], signedIds),
+    beat("signed-recap", tr("Connect both checks", "두 확인 방법 연결하기", "连接两种检验"), "recap",
+      tr("Common denominators differ by one twelfth, and the number line independently shows the same left-to-right order.", "공통분모에서는 1/12 차이가 나고 수직선에서도 같은 좌우 순서를 독립적으로 확인합니다.", "同分母比较相差1/12，数轴也独立显示相同的左右顺序。"), ["signed-order"], signedIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -110,7 +134,7 @@
       tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
   ];
 
-  return Object.freeze({ schemaVersion: 3, lessons: Object.freeze([
+  return Object.freeze({ schemaVersion: 4, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
       conceptClusterId: "6.RP.A",
@@ -148,6 +172,18 @@
       sceneModel: Object.freeze({ values: Object.freeze([84, 60]), primeFactors: Object.freeze({ 84: Object.freeze([2, 2, 3, 7]), 60: Object.freeze([2, 2, 3, 5]) }), commonFactors: Object.freeze([2, 2, 3]), euclideanChain: Object.freeze([Object.freeze({ dividend: 84, divisor: 60, quotient: 1, remainder: 24 }), Object.freeze({ dividend: 60, divisor: 24, quotient: 2, remainder: 12 }), Object.freeze({ dividend: 24, divisor: 12, quotient: 2, remainder: 0 })]), answer: 12 }),
       mathChecks: Object.freeze([Object.freeze({ method: "prime factorization", expression: "(2×2×3×7) and (2×2×3×5)", result: 12, passed: true }), Object.freeze({ method: "Euclidean algorithm", expression: "84=60×1+24; 60=24×2+12; 24=12×2", result: 12, passed: true }), Object.freeze({ method: "reverse divisibility", expression: "84÷12=7; 60÷12=5", result: 12, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student lists a common factor but does not prove it is the greatest.", teachingPrompt: "Which prime factors can be paired across both numbers, and how does the remainder chain confirm your result?", successCheck: "The student identifies 2, 2, and 3 as shared, obtains 12, and verifies that 12 divides both numbers." })
+    }),
+    common({
+      id: "signed-rational-number-line", type: "signed-number-line",
+      conceptClusterId: "6.NS.C",
+      eyebrow: "SIGNED RATIONALS · NUMBER LINE", eyebrowI18n: tr("SIGNED RATIONALS · NUMBER LINE", "음의 유리수 · 수직선", "有理数 · 数轴"),
+      title: "Position determines signed-number order", titleI18n: tr("Position determines signed-number order", "위치로 음수의 순서를 판단한다", "用位置判断负数大小"),
+      concept: "Comparing signed rational numbers", conceptI18n: tr("Comparing signed rational numbers", "음의 유리수 비교", "比较有理数"),
+      problem: "Compare -7/4 and -5/3 using < or >.", problemI18n: tr("Compare -7/4 and -5/3 using < or >.", "-7/4과 -5/3을 < 또는 >로 비교하세요.", "用<或>比较-7/4与-5/3。"),
+      verifiedAnswer: "-7/4 < -5/3", answerBeatId: "signed-answer", objectIds: Object.freeze(signedIds), beats: Object.freeze(signedBeats),
+      sceneModel: Object.freeze({ domain: Object.freeze({ minNumerator: -2, maxNumerator: 0, denominator: 1 }), tickDenominator: 12, first: Object.freeze({ numerator: -7, denominator: 4, label: "-7/4" }), second: Object.freeze({ numerator: -5, denominator: 3, label: "-5/3" }), commonDenominator: 12 }),
+      mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "-7/4 = -21/12; -5/3 = -20/12", result: "-21/12 < -20/12", passed: true }), Object.freeze({ method: "cross multiplication", expression: "(-7)×3 = -21; (-5)×4 = -20", result: "-21 < -20", passed: true }), Object.freeze({ method: "number-line position", expression: "-7/4 lies left of -5/3", result: "-7/4 < -5/3", passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student compares 7 and 5 without accounting for denominators or the direction of negative-number order.", teachingPrompt: "Which point is farther left, and how do -21/12 and -20/12 confirm that position?", successCheck: "The student converts both fractions to twelfths, locates both points, and explains why the farther-left value is smaller." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",
