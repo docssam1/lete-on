@@ -33,9 +33,9 @@ window.NM_UNITS['M-45'] = {
     stages:[
       { tag:{ko:'① 접선의 기울기 = 미분계수',en:'1) Tangent slope = derivative value',zh:'① 切线斜率=导数值'},
         head:{ko:"f(x)=x^2 \\;\\Rightarrow\\; x=3\\text{에서 접선의 기울기}=6",en:"f(x)=x^2 \\;\\Rightarrow\\; \\text{tangent slope at } x=3\\text{: }6",zh:"f(x)=x^2 \\;\\Rightarrow\\; x=3\\text{处切线斜率}=6"},
-        desc:{ko:'앞 유닛에서 배운 미분계수 f\'(x₀)는 사실 "곡선 위 그 점에서 접선이 얼마나 가파른가"였어요. f(x)=x²의 도함수는 f\'(x)=2x이니, x=3에서는 f\'(3)=6 — 그 점에 살짝 닿는 직선의 기울기가 바로 6이에요.',
-              en:'The derivative value f\'(x₀) from the previous unit was actually "how steep the tangent line is at that point on the curve." For f(x)=x², the derivative is f\'(x)=2x, so at x=3, f\'(3)=6 — the slope of the line just touching that point is exactly 6.',
-              zh:'上一单元学的导数值f\'(x₀)其实就是"曲线上该点切线有多陡"。f(x)=x²的导数是f\'(x)=2x，所以在x=3处f\'(3)=6——轻触该点的直线斜率正是6。'},
+        desc:{ko:'앞 유닛에서 배운 미분계수 f\'(x₀)는 사실 "<b>곡선 위 그 점에서 접선이 얼마나 가파른가</b>"였어요. f(x)=x²의 도함수는 f\'(x)=2x이니, x=3에서는 f\'(3)=6 — 그 점에 살짝 닿는 직선의 기울기가 바로 6이에요.',
+              en:'The derivative value f\'(x₀) from the previous unit was actually "<b>how steep the tangent line is at that point on the curve</b>." For f(x)=x², the derivative is f\'(x)=2x, so at x=3, f\'(3)=6 — the slope of the line just touching that point is exactly 6.',
+              zh:'上一单元学的导数值f\'(x₀)其实就是"<b>曲线上该点切线有多陡</b>"。f(x)=x²的导数是f\'(x)=2x，所以在x=3处f\'(3)=6——轻触该点的直线斜率正是6。'},
         mathSteps:["f'(x)=2x", "f'(3)=2\\times3", '=6'],
         result:{ko:'접선의 기울기를 구하는 건 곧 미분계수를 구하는 거예요!',en:'Finding a tangent slope is exactly finding a derivative value!',zh:'求切线斜率其实就是求导数值！'},
         book:{ko:'접선은 그 점 근처에서 곡선과 거의 겹쳐 보일 만큼 딱 맞게 스치는 직선이에요.',

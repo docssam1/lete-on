@@ -259,6 +259,24 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cresult{margin-top:12px;text-align:center;font-size:14px;font-weight:800;color:var(--ok)}
 .nm-cbook{background:#f4f7fc;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:12px;font-size:12.5px;color:#33415a;line-height:1.55}
 
+/* 개념 노트 강조 — 유닛 desc의 <b>는 134개 파일에 이미 있는데 지금까지 그냥
+   본문색 굵기라 눈에 안 띄었다. 형광펜(그라데이션 밑칠)으로 승격: <b>=핵심어,
+   <em>=주의·대비. 텍스트를 안 건드리고 CSS만으로 기존 마크업 전체가 살아난다. */
+.nm-cdesc b,.nm-cbook b,.nm-story-bubble b,.nm-story-hist b{
+  font-weight:800;color:var(--blue-deep);padding:0 .12em;border-radius:3px;
+  background:linear-gradient(transparent 58%,rgba(245,217,139,.75) 58% 94%,transparent 94%)}
+.nm-cdesc em,.nm-cbook em,.nm-story-bubble em,.nm-story-hist em{
+  font-style:normal;font-weight:800;color:#b8541f;
+  text-decoration:underline;text-decoration-color:rgba(224,104,47,.45);
+  text-decoration-thickness:2px;text-underline-offset:3px}
+/* 규칙 카드는 남색 바탕이라 노란 형광펜 대신 골드 글자+흰 밑칠 */
+.nm-rule p b{font-size:inherit;letter-spacing:0;color:var(--gold-bright);padding:0 .08em;
+  background:linear-gradient(transparent 62%,rgba(255,255,255,.18) 62% 94%,transparent 94%);border-radius:2px}
+.nm-rule p em{font-style:normal;font-weight:800;color:#ffd9c4;
+  text-decoration:underline;text-decoration-color:rgba(255,217,196,.5);
+  text-decoration-thickness:2px;text-underline-offset:3px}
+.kid-note .nm-cdesc b{background:linear-gradient(transparent 50%,rgba(245,217,139,.9) 50% 96%,transparent 96%)}
+
 /* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
 .nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
 .nm-mstep-line{font-weight:900;color:var(--blue-deep);padding:4px 0}

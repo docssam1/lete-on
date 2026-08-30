@@ -35,9 +35,9 @@ window.NM_UNITS['A-33'] = {
         book:{ ko:'a+b=S, a-b=D 라면, a=(S+D)÷2, b=(S-D)÷2. 합과 차가 같은 짝수·홀수여야 해요.', en:'If a+b=S and a-b=D, then a=(S+D)÷2 and b=(S−D)÷2.', zh:'若a+b=S，a-b=D，则a=(S+D)÷2，b=(S-D)÷2。' } },
       { tag:{ ko:'② 왜 (합+차)÷2가 큰 수일까요?', en:'2) Why does (sum+diff)÷2 equal the larger number?', zh:'② 为什么(和+差)÷2是较大数？' },
         head:{ ko:'식으로 이해해요', en:'Understand algebraically', zh:'用算式来理解' },
-        desc:{ ko:'a+b=S, a-b=D. 두 식을 더하면 2a=S+D, a=(S+D)÷2!',
-               en:'a+b=S, a−b=D. Add them: 2a=S+D, so a=(S+D)÷2!',
-               zh:'a+b=S，a-b=D。两式相加：2a=S+D，所以a=(S+D)÷2！' },
+        desc:{ ko:'a+b=S, a-b=D. <b>두 식을 더하면 2a=S+D</b>, a=(S+D)÷2!',
+               en:'a+b=S, a−b=D. <b>Add them: 2a=S+D</b>, so a=(S+D)÷2!',
+               zh:'a+b=S，a-b=D。<b>两式相加：2a=S+D</b>，所以a=(S+D)÷2！' },
         mathSteps:['a+b = S', 'a-b = D','(a+b)+(a-b) = S+D','2a = S+D → a = (S+D)÷2'],
         result:{ ko:'a = (합+차)÷2 ✓', en:'a = (sum+diff)÷2 ✓', zh:'a=(和+差)÷2 ✓' },
         book:null }

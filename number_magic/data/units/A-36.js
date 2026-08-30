@@ -27,9 +27,9 @@ window.NM_UNITS['A-36'] = {
         book:{ ko:'소수점을 기준으로 왼쪽은 정수 부분, 오른쪽은 소수 부분. 같은 자리끼리 더해요!', en:'Left of decimal = integers, right = decimal fractions. Add like places together!', zh:'小数点左边是整数部分，右边是小数部分。同位相加！' } },
       { tag:{ ko:'② 올림(받아올림)이 있을 때', en:'2) When there\'s carrying', zh:'② 有进位时' },
         head:{ ko:'소수 부분 합이 1 이상이면 올려요', en:'If the decimal sum is 1 or more, carry over', zh:'小数部分之和≥1时需要进位' },
-        desc:{ ko:'1.7+2.5=? 소수: 0.7+0.5=1.2 → 1을 올려서 정수부: 1+2+1=4. 답: 4.2!',
-               en:'1.7+2.5=? Decimal: 0.7+0.5=1.2 → carry 1 to integers: 1+2+1=4. Answer: 4.2!',
-               zh:'1.7+2.5=？小数：0.7+0.5=1.2→进1到整数：1+2+1=4。答案：4.2！' },
+        desc:{ ko:'1.7+2.5=? 소수: 0.7+0.5=1.2 → <b>1을 올려서</b> 정수부: 1+2+1=4. 답: 4.2!',
+               en:'1.7+2.5=? Decimal: 0.7+0.5=1.2 → <b>carry 1 to integers</b>: 1+2+1=4. Answer: 4.2!',
+               zh:'1.7+2.5=？小数：0.7+0.5=1.2→<b>进1到整数</b>：1+2+1=4。答案：4.2！' },
         mathSteps:['1.7 + 2.5 = □',{ko:'소수: 0.7 + 0.5 = 1.2',en:'\\text{decimal parts: } 0.7 + 0.5 = 1.2',zh:'小数部分：0.7 + 0.5 = 1.2'},{ko:'올림 1 → 정수: 1+2+1=4',en:'\\text{carry 1 → wholes: } 1+2+1=4',zh:'进1 → 整数部分：1+2+1=4'},'4 + 0.2 = 4.2'],
         result:{ ko:'1.7+2.5=4.2 ✓', en:'1.7+2.5=4.2 ✓', zh:'1.7+2.5=4.2 ✓' },
         book:null }

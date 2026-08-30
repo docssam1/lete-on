@@ -19,9 +19,9 @@ window.NM_UNITS['A-31'] = {
     stages:[
       { tag:{ ko:'① 받아내림 없는 자리부터 빼요', en:'1) Subtract borrow-free digits first', zh:'① 先减不需要借位的那位' },
         head:{ ko:'쉬운 부분 먼저, 어려운 부분 나중에', en:'Easy part first, then tackle the tricky part', zh:'先减简单的，再减复杂的' },
-        desc:{ ko:'74-36=? 일의 자리(4-6)는 받아내림 필요. 십의 자리(7-3=4)부터! 40남음. 40+4-6=38!',
-               en:'74−36=? Ones (4−6) need borrowing. Start with tens (7−3=4): 40 left. 40+4−6=38!',
-               zh:'74-36=？个位（4-6）需要借位。先算十位（7-3=4）：剩40。40+4-6=38！' },
+        desc:{ ko:'74-36=? 일의 자리(4-6)는 받아내림 필요. <b>십의 자리(7-3=4)부터</b>! 40남음. 40+4-6=38!',
+               en:'74−36=? Ones (4−6) need borrowing. <b>Start with tens (7−3=4)</b>: 40 left. 40+4−6=38!',
+               zh:'74-36=？个位（4-6）需要借位。<b>先算十位（7-3=4）</b>：剩40。40+4-6=38！' },
         mathSteps:['74 - 36 = □',{ko:'십의 자리(쉬운 부분): 70-30=40',en:'\\text{tens (the easy part): } 70-30=40',zh:'十位（容易的部分）：70-30=40'},'40 + 4 - 6 = 40 - 2 = 38'],
         result:{ ko:'74-36=38 ✓', en:'74−36=38 ✓', zh:'74-36=38 ✓' },
         book:{ ko:'어떤 자리부터 빼는 게 쉬운지 먼저 판단하고, 쉬운 쪽부터 시작해요.', en:'First judge which digit is easiest, then start there.', zh:'先判断哪位最容易减，就从那位开始。' } },

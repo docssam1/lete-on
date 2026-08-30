@@ -19,9 +19,9 @@ window.NM_UNITS['A-29'] = {
     stages:[
       { tag:{ ko:'① 부족한 만큼 더 빼요', en:'1) The deficit becomes an extra subtraction', zh:'① 差多少就多减多少' },
         head:{ ko:'A - (□0 - d) = A - □0 + d', en:'A − (□0 − d) = A − □0 + d', zh:'A−(□0-d)=A-□0+d' },
-        desc:{ ko:'53-8=? 8은 10보다 2 부족. 53-10=-이 아니라 53-10+2=45!',
-               en:'53−8=? 8 falls 2 short of 10. So 53−10+2=45!',
-               zh:'53-8=？8比10少2。所以53-10+2=45！' },
+        desc:{ ko:'53-8=? <b>8은 10보다 2 부족</b>. 53-10=-이 아니라 53-10+2=45!',
+               en:'53−8=? <b>8 falls 2 short of 10</b>. So 53−10+2=45!',
+               zh:'53-8=？<b>8比10少2</b>。所以53-10+2=45！' },
         mathSteps:['53 - 8 = □',{ko:'8 = 10 - 2  (부족한 수: 2)',en:'8 = 10 - 2 \\text{ (short by 2)}',zh:'8 = 10 - 2（还差2）'},'53 - 10 = 43','43 + 2 = 45'],
         result:{ ko:'53-8=45 ✓', en:'53−8=45 ✓', zh:'53-8=45 ✓' },
         book:{ ko:'빼는 수가 10에서 d만큼 부족하면, □0을 빼고 나서 d를 다시 더해요.', en:'If the subtrahend is d short of 10, subtract □0 then add d back.', zh:'如果减数比10少d，就先减整十数，再加回d。' } },

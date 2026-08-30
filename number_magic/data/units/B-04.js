@@ -33,9 +33,9 @@ window.NM_UNITS['B-04'] = {
     stages:[
       { tag:{ ko:'① 2단 = 두 배!', en:'1) ×2 = double!', zh:'① 乘2=加倍！' },
         head:{ ko:'2를 곱하면 항상 두 배가 돼요', en:'Multiplying by 2 always doubles the number', zh:'乘以2就是把数翻倍' },
-        desc:{ ko:'2단은 2씩 늘어나요. 2×1=2, 2×2=4, ..., 2×9=18. 항상 2씩 커지는 패턴이에요!',
-               en:'The 2s table grows by 2 each time: 2, 4, 6, 8 … up to 18.',
-               zh:'2的乘法每次增加2：2, 4, 6, 8……一直到18。' },
+        desc:{ ko:'2단은 2씩 늘어나요. 2×1=2, 2×2=4, ..., 2×9=18. <b>항상 2씩 커지는 패턴</b>이에요!',
+               en:'The 2s table <b>grows by 2 each time</b>: 2, 4, 6, 8 … up to 18.',
+               zh:'2的乘法<b>每次增加2</b>：2, 4, 6, 8……一直到18。' },
         mathSteps:['2×1=2','2×2=4 (+2)','2×3=6 (+2)','...','2×9=18'],
         result:{ ko:'2×9=18까지 모두 2씩 늘어났어요!', en:'All the way to 2×9=18 — each step adds 2!', zh:'一直到2×9=18，每步加2！' },
         book:{ ko:'2단은 두 배 패턴이에요. 2×□ = □+□로 생각하면 쉬워요!', en:'×2 means double: think 2×□ = □+□', zh:'乘以2就是翻倍：2×□=□+□' } },
@@ -51,9 +51,9 @@ window.NM_UNITS['B-04'] = {
 
       { tag:{ ko:'③ 짝수 패턴!', en:'3) Even number pattern!', zh:'③ 偶数规律！' },
         head:{ ko:'2단의 결과는 모두 짝수예요', en:'All 2s-table results are even numbers', zh:'2的乘法结果全是偶数' },
-        desc:{ ko:'2, 4, 6, 8, 10, 12, 14, 16, 18 — 모두 짝수(2의 배수)예요! 2단이면 결과가 반드시 짝수예요.',
-               en:'2, 4, 6, 8, 10, 12, 14, 16, 18 — all even! Every 2s-table result is always even.',
-               zh:'2, 4, 6, 8, 10, 12, 14, 16, 18——全是偶数！2的乘法结果一定是偶数。' },
+        desc:{ ko:'2, 4, 6, 8, 10, 12, 14, 16, 18 — <b>모두 짝수(2의 배수)</b>예요! 2단이면 결과가 반드시 짝수예요.',
+               en:'2, 4, 6, 8, 10, 12, 14, 16, 18 — all even! <b>Every 2s-table result is always even</b>.',
+               zh:'2, 4, 6, 8, 10, 12, 14, 16, 18——<b>全是偶数</b>！2的乘法结果一定是偶数。' },
         mathSteps:['2, 4, 6, 8, 10','12, 14, 16, 18',{ko:'모두 2의 배수!',en:'\\text{all multiples of 2!}',zh:'都是2的倍数！'}],
         result:{ ko:'2단 결과: 2, 4, 6, 8, 10, 12, 14, 16, 18 — 모두 짝수! ✓', en:'2s table: 2,4,6,8,10,12,14,16,18 — all even! ✓', zh:'2的乘法：2,4,6,8,10,12,14,16,18——全是偶数！✓' },
         book:null }

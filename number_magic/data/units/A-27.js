@@ -19,9 +19,9 @@ window.NM_UNITS['A-27'] = {
     stages:[
       { tag:{ ko:'① 세어서 확인해봐요', en:'1) Check by counting', zh:'① 数一数验证' },
         head:{ ko:'작은 예시로 공식을 확인해요', en:'Verify the formula with a small example', zh:'用小例子验证公式' },
-        desc:{ ko:'3부터 7까지 정수: 3, 4, 5, 6, 7 → 5개. 7-3+1=5! 공식이 맞아요.',
-               en:'Integers from 3 to 7: 3, 4, 5, 6, 7 → 5 numbers. 7−3+1=5! The formula works.',
-               zh:'从3到7的整数：3、4、5、6、7 → 5个。7-3+1=5！公式正确。' },
+        desc:{ ko:'3부터 7까지 정수: 3, 4, 5, 6, 7 → 5개. 7-3+1=5! <b>공식이 맞아요</b>.',
+               en:'Integers from 3 to 7: 3, 4, 5, 6, 7 → 5 numbers. 7−3+1=5! <b>The formula works</b>.',
+               zh:'从3到7的整数：3、4、5、6、7 → 5个。7-3+1=5！<b>公式正确</b>。' },
         mathSteps:[{ko:'3부터 7까지: 3, 4, 5, 6, 7',en:'\\text{from 3 to 7: } 3, 4, 5, 6, 7',zh:'从3到7：3, 4, 5, 6, 7'},{ko:'개수 = 7 - 3 + 1',en:'\\text{count} = 7 - 3 + 1',zh:'个数 = 7 - 3 + 1'},{ko:'= 4 + 1 = 5개',en:'= 4 + 1 = 5 \\text{ numbers}',zh:'= 4 + 1 = 5个'}],
         result:{ ko:'3~7은 5개 ✓', en:'3 to 7: 5 numbers ✓', zh:'3到7共5个 ✓' },
         book:{ ko:'"끝 - 시작 + 1" 공식은 양쪽 끝을 모두 포함해서 세기 때문이에요.', en:'"End − Start + 1" counts both endpoints, that\'s why we add 1.', zh:'"结束-开始+1"是因为两端都要计入，所以要加1。' } },

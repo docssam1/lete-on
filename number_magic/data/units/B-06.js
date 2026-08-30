@@ -25,9 +25,9 @@ window.NM_UNITS['B-06'] = {
     stages:[
       { tag:{ ko:'① 교환법칙', en:'1) Commutative Property', zh:'① 交换律' },
         head:{ ko:'곱하는 순서를 바꿔도 답이 같아요', en:'Swap the order — same answer!', zh:'交换顺序——答案相同！' },
-        desc:{ ko:'3×2와 2×3은 같아요! 배열을 옆으로 돌리면 같은 모양이 돼요. 곱셈은 순서가 달라도 결과가 같아요.',
-               en:"3×2 and 2×3 are equal! Rotate the array and it's the same shape. Multiplication order doesn't change the result.",
-               zh:'3×2和2×3相等！把阵列旋转一下形状相同。乘法顺序不影响结果。' },
+        desc:{ ko:'3×2와 2×3은 같아요! 배열을 옆으로 돌리면 같은 모양이 돼요. 곱셈은 <b>순서가 달라도 결과가 같아요</b>.',
+               en:"3×2 and 2×3 are equal! Rotate the array and it's the same shape. Multiplication <b>order doesn't change the result</b>.",
+               zh:'3×2和2×3相等！把阵列旋转一下形状相同。<b>乘法顺序不影响结果</b>。' },
         mathSteps:['3×2 = 2+2+2 = 6','2×3 = 3+3 = 6','3×2 = 2×3 ✓'],
         result:{ ko:'3×2 = 2×3 = 6 ✓', en:'3×2 = 2×3 = 6 ✓', zh:'3×2 = 2×3 = 6 ✓' },
         book:{ ko:'곱셈의 교환법칙: a×b = b×a. 더 쉬운 방향으로 계산할 수 있어요!', en:'Commutative law: a×b = b×a. Always pick the easier order!', zh:'乘法交换律：a×b=b×a。选更简单的顺序来计算！' } },
@@ -43,9 +43,9 @@ window.NM_UNITS['B-06'] = {
 
       { tag:{ ko:'③ 빠른 계산 전략', en:'3) Quick calculation strategy', zh:'③ 快速计算策略' },
         head:{ ko:'어려운 곱셈은 교환해서 더 쉽게!', en:'Swap to make hard multiplications easier!', zh:'交换让难题变简单！' },
-        desc:{ ko:'8×5는 복잡해 보여도 5×8로 교환하면? 5+5+5+5+5+5+5+5=40! 또는 8+8+8+8+8=40. 더 쉬운 쪽을 골라요.',
-               en:'8×5 looks hard, but swap to 5×8: eight 5s or five 8s — both give 40! Pick whichever is easier.',
-               zh:'8×5看起来难，交换成5×8：8个5加或5个8加——都等于40！选更容易的方式。' },
+        desc:{ ko:'8×5는 복잡해 보여도 5×8로 교환하면? 5+5+5+5+5+5+5+5=40! 또는 8+8+8+8+8=40. <b>더 쉬운 쪽을 골라요</b>.',
+               en:'8×5 looks hard, but swap to 5×8: eight 5s or five 8s — both give 40! <b>Pick whichever is easier</b>.',
+               zh:'8×5看起来难，交换成5×8：8个5加或5个8加——都等于40！<b>选更容易的方式</b>。' },
         mathSteps:['8×5 → 5×8?','8 + 8 + 8 + 8 + 8 = 40',{ko:'또는: 5+5+5+5+5+5+5+5=40',en:'\\text{or: } 5+5+5+5+5+5+5+5=40',zh:'或者：5+5+5+5+5+5+5+5=40'},'→ 5×8 = 40'],
         result:{ ko:'8×5 = 5×8 = 40 ✓', en:'8×5 = 5×8 = 40 ✓', zh:'8×5 = 5×8 = 40 ✓' },
         book:null }
