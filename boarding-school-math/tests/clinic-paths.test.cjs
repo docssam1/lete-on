@@ -20,8 +20,8 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
   });
 });
 
-test("6.RP.A and 6.NS.A open reviewed workbooks with completion-gated rechecks", function () {
-  ["6.RP.A", "6.NS.A"].forEach(function (cluster) {
+test("reviewed clusters open workbooks with completion-gated rechecks", function () {
+  ["6.RP.A", "6.NS.A", "6.NS.B"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -38,7 +38,7 @@ test("6.RP.A and 6.NS.A open reviewed workbooks with completion-gated rechecks",
   assert.equal(geometry.recheck.state, "review-pending");
 });
 
-test("only exact cluster matches open the two reviewed animated clinic lessons", function () {
+test("only exact cluster matches open reviewed animated clinic lessons", function () {
   assert.equal(paths.validateAnimatedMapping(animated.lessons), true);
   const ratio = paths.routeFor("6.RP.A", { fromDiagnostic: true });
   assert.equal(ratio.animated.state, "available");
@@ -48,6 +48,10 @@ test("only exact cluster matches open the two reviewed animated clinic lessons",
   assert.equal(fractions.animated.state, "available");
   assert.equal(fractions.animated.lessonId, "fraction-division-eighths");
   assert.equal(fractions.animated.url, "./animated-math.html?lesson=fraction-division-eighths&cluster=6.NS.A&locale=ko");
+  const computation = paths.routeFor("6.NS.B", { fromDiagnostic: true });
+  assert.equal(computation.animated.state, "available");
+  assert.equal(computation.animated.lessonId, "gcf-factor-chain");
+  assert.equal(computation.animated.url, "./animated-math.html?lesson=gcf-factor-chain&cluster=6.NS.B&locale=ko");
 
   const geometry = paths.routeFor("6.G.A", { fromDiagnostic: true });
   assert.equal(geometry.animated.state, "review-pending");

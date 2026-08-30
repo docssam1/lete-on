@@ -66,6 +66,28 @@
       tr("Fraction division asks how many divisor-sized groups fit in the dividend. Rename both quantities with the same unit, then count.", "분수 나눗셈은 나누는 분수 크기의 묶음이 나누어지는 양 안에 몇 개 들어가는지 묻습니다. 같은 단위로 바꾸고 셉니다.", "分数除法是在问被除数里包含多少个与除数同样大小的组。先化成相同单位，再数份数。"), ["frac-six-groups"], fractionIds, "highlight")
   ];
 
+  const gcfIds = ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain", "gcf-check", "gcf-answer"];
+  const gcfBeats = [
+    beat("gcf-read", tr("Read the two numbers", "두 수 읽기", "读出两个数"), "problem",
+      tr("We need the greatest factor shared by eighty-four and sixty.", "84와 60이 공통으로 가지는 약수 중 가장 큰 수를 찾습니다.", "我们要找84和60共有的最大因数。"), [], [], "inspect"),
+    beat("gcf-values", tr("Set the target", "목표 세우기", "明确目标"), "explore",
+      tr("Place the two numbers side by side so every factor must be checked against both.", "두 수를 나란히 놓고 모든 인수가 양쪽에 공통인지 확인합니다.", "把两个数并排放置，检查每个因数是否两边共有。"), ["gcf-values"], ["gcf-values"]),
+    beat("gcf-factor-84", tr("Factor eighty-four", "84 소인수분해", "分解84"), "explore",
+      tr("Eighty-four factors as two times two times three times seven.", "84는 2 곱하기 2 곱하기 3 곱하기 7입니다.", "84分解为2乘2乘3乘7。"), ["gcf-factor-84"], ["gcf-values", "gcf-factor-84"]),
+    beat("gcf-factor-60", tr("Factor sixty", "60 소인수분해", "分解60"), "explore",
+      tr("Sixty factors as two times two times three times five.", "60은 2 곱하기 2 곱하기 3 곱하기 5입니다.", "60分解为2乘2乘3乘5。"), ["gcf-factor-60"], ["gcf-values", "gcf-factor-84", "gcf-factor-60"]),
+    beat("gcf-common", tr("Match shared factors", "공통 소인수 짝짓기", "配对公有质因数"), "solve",
+      tr("Both factorizations contain two, two, and three. Seven and five are not shared.", "양쪽에 공통인 소인수는 2, 2, 3입니다. 7과 5는 공통이 아닙니다.", "两边共有的质因数是2、2、3；7和5不共有。"), ["gcf-common"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common"]),
+    beat("gcf-chain", tr("Confirm with remainders", "나머지로 다시 확인", "用余数再次确认"), "check",
+      tr("The Euclidean chain ends at twelve: eighty-four leaves twenty-four after sixty, then sixty leaves twelve after two twenty-fours.", "유클리드 나눗셈은 84=60×1+24, 60=24×2+12, 24=12×2+0으로 끝납니다.", "欧几里得除法为84=60×1+24，60=24×2+12，24=12×2+0。"), ["gcf-chain"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain"]),
+    beat("gcf-check", tr("Check both divisions", "두 나눗셈 검산", "检验两个除法"), "check",
+      tr("Twelve divides both numbers exactly: eighty-four divided by twelve is seven, and sixty divided by twelve is five.", "12는 두 수를 모두 정확히 나눕니다. 84 나누기 12는 7이고, 60 나누기 12는 5입니다.", "12能整除两个数：84除以12等于7，60除以12等于5。"), ["gcf-check"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain", "gcf-check"]),
+    beat("gcf-answer", tr("State the GCF", "최대공약수 말하기", "写出最大公因数"), "answer",
+      tr("Two times two times three is twelve, so the greatest common factor is twelve.", "2 곱하기 2 곱하기 3은 12이므로 최대공약수는 12입니다.", "2乘2乘3等于12，所以最大公因数是12。"), ["gcf-answer"], gcfIds),
+    beat("gcf-recap", tr("Explain both proofs", "두 검산 연결하기", "连接两种验证"), "recap",
+      tr("Prime-factor matching finds twelve, and the remainder chain independently confirms the same unique greatest common factor.", "공통 소인수의 곱으로 12를 구하고, 나머지 나눗셈으로 같은 최대공약수를 독립적으로 확인했습니다.", "公有质因数的乘积得到12，余数链也独立确认同一个最大公因数。"), ["gcf-common"], gcfIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -114,6 +136,18 @@
       sceneModel: Object.freeze({ wholeParts: 8, shadedParts: 6, divisorParts: 1, quotient: 6, dividend: Object.freeze({ n: 3, d: 4 }), divisor: Object.freeze({ n: 1, d: 8 }) }),
       mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "3/4 = 6/8; count 1/8 groups", result: 6, passed: true }), Object.freeze({ method: "inverse multiplication", expression: "3/4 × 8/1", result: 6, passed: true }), Object.freeze({ method: "reverse check", expression: "6 × 1/8", result: "3/4", passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student divides the numerators and denominators separately or inverts the dividend.", teachingPrompt: "How many one-eighth sections are shaded when three-fourths is renamed in eighths?", successCheck: "The student explains the quotient as the number of divisor-sized groups and verifies it by multiplication." })
+    }),
+    common({
+      id: "gcf-factor-chain", type: "factor-chain",
+      conceptClusterId: "6.NS.B",
+      eyebrow: "GCF · TWO-WAY VERIFICATION", eyebrowI18n: tr("GCF · TWO-WAY VERIFICATION", "최대공약수 · 두 가지 검산", "最大公因数 · 双重验证"),
+      title: "Match factors, then verify with remainders", titleI18n: tr("Match factors, then verify with remainders", "공통인수를 찾고 나머지로 검산하기", "配对公因数，再用余数检验"),
+      concept: "Greatest common factor", conceptI18n: tr("Greatest common factor", "최대공약수", "最大公因数"),
+      problem: "Find the greatest common factor of 84 and 60.", problemI18n: tr("Find the greatest common factor of 84 and 60.", "84와 60의 최대공약수를 구하세요.", "求84和60的最大公因数。"),
+      verifiedAnswer: "12", answerBeatId: "gcf-answer", objectIds: Object.freeze(gcfIds), beats: Object.freeze(gcfBeats),
+      sceneModel: Object.freeze({ values: Object.freeze([84, 60]), primeFactors: Object.freeze({ 84: Object.freeze([2, 2, 3, 7]), 60: Object.freeze([2, 2, 3, 5]) }), commonFactors: Object.freeze([2, 2, 3]), euclideanChain: Object.freeze([Object.freeze({ dividend: 84, divisor: 60, quotient: 1, remainder: 24 }), Object.freeze({ dividend: 60, divisor: 24, quotient: 2, remainder: 12 }), Object.freeze({ dividend: 24, divisor: 12, quotient: 2, remainder: 0 })]), answer: 12 }),
+      mathChecks: Object.freeze([Object.freeze({ method: "prime factorization", expression: "(2×2×3×7) and (2×2×3×5)", result: 12, passed: true }), Object.freeze({ method: "Euclidean algorithm", expression: "84=60×1+24; 60=24×2+12; 24=12×2", result: 12, passed: true }), Object.freeze({ method: "reverse divisibility", expression: "84÷12=7; 60÷12=5", result: 12, passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student lists a common factor but does not prove it is the greatest.", teachingPrompt: "Which prime factors can be paired across both numbers, and how does the remainder chain confirm your result?", successCheck: "The student identifies 2, 2, and 3 as shared, obtains 12, and verifies that 12 divides both numbers." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",

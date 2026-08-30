@@ -78,6 +78,27 @@ test("6.NS.A uses the shared shell, exact fraction rules, and its own completion
   await context.close();
 });
 
+test("6.NS.B uses exact decimal rules, independent strands, and its own completion key", async function () {
+  const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
+  const page = await context.newPage(); const errors = errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 12);
+  assert.match(await page.locator("#page-title").innerText(), /computation/i);
+  assert.equal(await page.locator(".teacher-answer,.solution-box,.hint-box").count(), 0);
+  const decimal = page.locator('.problem-card[data-item-id="nsb-w05"]');
+  await decimal.locator("input").fill("25.157999"); await decimal.locator(".response-row button").click();
+  assert.equal(await decimal.getAttribute("class").then(function (value) { return value.includes("is-correct"); }), false);
+  const values = ["42", "364", "125", "384", "25.158", "24.755", "9", "11.9", "12", "24", "12", "12"];
+  for (let index = 0; index < values.length; index += 1) {
+    const card = page.locator(".problem-card").nth(index);
+    await card.locator("input").fill(values[index]); await card.locator(".response-row button").click();
+  }
+  assert.equal(await page.locator(".problem-card.is-correct").count(), 12);
+  assert.equal(await page.evaluate(function () { return localStorage.getItem("gfield-clinic-workbook:6.NS.B:v1"); }), "complete-v1");
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test("accurate workbook completion unlocks the separate four-item recheck", async function () {
   const context = await browser.newContext({ viewport: { width: 1180, height: 900 } });
   const page = await context.newPage(); const errors = errorsFor(page);
@@ -113,11 +134,11 @@ test("recheck is locked before completion while teacher preview stays separate",
   await page.close();
 });
 
-test("student clinic has no horizontal overflow on mobile and has an A4 print state", async function () {
+test("6.NS.B student clinic has no horizontal overflow on mobile and has an A4 print state", async function () {
   for (const width of [320, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
     const errors = errorsFor(page);
-    await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+    await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
     const sizes = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
     assert.deepEqual(sizes, [width, width]);
     const targets = await page.locator("button,select,input,.brand").evaluateAll(function (nodes) { return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) { const rect = node.getBoundingClientRect(); return [rect.width, rect.height]; }); });
@@ -125,7 +146,7 @@ test("student clinic has no horizontal overflow on mobile and has an A4 print st
     assert.deepEqual(errors, []); await page.close();
   }
   const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
-  await printPage.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  await printPage.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
   await printPage.emulateMedia({ media: "print" });
   assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
   assert.equal(await printPage.locator(".response-row input").first().isVisible(), true);

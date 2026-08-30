@@ -139,12 +139,33 @@
       + '<div class="fraction-answer scene-object" data-object="frac-answer">6 pieces</div></div>';
   }
 
+  function factorTiles(values, sharedCount) {
+    return values.map(function (value, index) { return '<span class="factor-tile' + (index < sharedCount ? ' is-shared' : ' is-extra') + '">' + esc(value) + '</span>'; }).join("");
+  }
+  function factorScene(lesson) {
+    const model = lesson.sceneModel;
+    const first = model.values[0]; const second = model.values[1];
+    const firstFactors = model.primeFactors[first]; const secondFactors = model.primeFactors[second];
+    const chain = model.euclideanChain.map(function (step) {
+      return '<li>' + esc(step.dividend) + ' = ' + esc(step.divisor) + ' × ' + esc(step.quotient) + ' + ' + esc(step.remainder) + '</li>';
+    }).join("");
+    return '<div class="factor-chain-scene" role="img" aria-label="Prime-factor and Euclidean-algorithm models show that the greatest common factor of 84 and 60 is 12">'
+      + '<div class="gcf-values scene-object" data-object="gcf-values"><span>' + esc(first) + '</span><b>GCF</b><span>' + esc(second) + '</span></div>'
+      + '<div class="factor-row scene-object" data-object="gcf-factor-84"><strong>' + esc(first) + '</strong><div>' + factorTiles(firstFactors, model.commonFactors.length) + '</div></div>'
+      + '<div class="factor-row scene-object" data-object="gcf-factor-60"><strong>' + esc(second) + '</strong><div>' + factorTiles(secondFactors, model.commonFactors.length) + '</div></div>'
+      + '<div class="gcf-common scene-object" data-object="gcf-common"><span>shared</span>' + factorTiles(model.commonFactors, model.commonFactors.length) + '<strong>2 × 2 × 3</strong></div>'
+      + '<ol class="gcf-chain scene-object" data-object="gcf-chain">' + chain + '</ol>'
+      + '<div class="gcf-check scene-object" data-object="gcf-check"><span>' + esc(first) + ' ÷ ' + esc(model.answer) + ' = ' + esc(first / model.answer) + '</span><span>' + esc(second) + ' ÷ ' + esc(model.answer) + ' = ' + esc(second / model.answer) + '</span></div>'
+      + '<div class="gcf-answer scene-object" data-object="gcf-answer">GCF = ' + esc(model.answer) + '</div></div>';
+  }
+
   function sceneFor(lesson) {
     if (lesson.type === "bar-model") return ratioScene(lesson);
     if (lesson.type === "fraction-strip") return fractionScene(lesson);
+    if (lesson.type === "factor-chain") return factorScene(lesson);
     if (lesson.type === "geometry-angle") return geometryScene(lesson);
     throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, sceneFor: sceneFor });
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, sceneFor: sceneFor });
 });
