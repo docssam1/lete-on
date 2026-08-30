@@ -45,8 +45,8 @@ const SHORT = 25;
 const quoted = q => /fact|opinion/i.test(q[0] || '');
 
 function scan(id, label, questions) {
-  const rows = [];
-  let counted = 0, flagged = 0;
+  const rows = [], shortRows = [];
+  let counted = 0, flagged = 0, shortFlagged = 0;
   (questions || []).forEach((q, i) => {
     const ch = (q[2] || []).map(String);
     if (ch.length < 2) return;
@@ -62,15 +62,23 @@ function scan(id, label, questions) {
       const second = lens.slice().sort((a, b) => b - a)[1];
       rows.push(`    Q${i + 1} ${q[0]} — 정답 ${lens[ai]}자 vs 차순 ${second}자 (+${lens[ai] - second})`);
     }
+    /* 반대 방향도 신호다. 정답이 늘 길어서 티가 나는 것을 고치겠다고 정답만
+       깎으면 이번엔 "제일 짧은 것이 정답"이 된다 — 찍는 방법이 바뀔 뿐이다. */
+    const mn = Math.min(...lens);
+    if (lens[ai] === mn && lens.filter(x => x === mn).length === 1 && mx - mn >= 20) {
+      shortFlagged++;
+      const second = lens.slice().sort((a, b) => a - b)[1];
+      shortRows.push(`    Q${i + 1} ${q[0]} — 정답 ${lens[ai]}자 vs 차순 ${second}자 (-${second - lens[ai]}) [최단]`);
+    }
   });
-  return { id, label, counted, flagged, rows };
+  return { id, label, counted, flagged, rows, shortFlagged, shortRows };
 }
 
 function main() {
   const LESSONS = loadLessons();
   const want = process.argv.slice(2);
   const ids = want.length ? want : Object.keys(LESSONS);
-  let counted = 0, flagged = 0;
+  let counted = 0, flagged = 0, shortFlagged = 0;
 
   ids.forEach(id => {
     const L = LESSONS[id];
@@ -78,17 +86,19 @@ function main() {
     [['추가 학습', L.extraLearning], ['유사 지문', L.newPassage]].forEach(([label, set]) => {
       if (!set || !set.questions) return;
       const r = scan(id, label, set.questions);
-      counted += r.counted; flagged += r.flagged;
-      if (r.flagged) {
-        console.log(`\n${id} / ${label} — ${r.flagged}/${r.counted}`);
+      counted += r.counted; flagged += r.flagged; shortFlagged += r.shortFlagged;
+      if (r.flagged || r.shortFlagged) {
+        console.log(`\n${id} / ${label} — 최장 ${r.flagged}/${r.counted} · 최단 ${r.shortFlagged}/${r.counted}`);
         r.rows.forEach(x => console.log(x));
+        r.shortRows.forEach(x => console.log(x));
       }
     });
   });
 
   const pct = counted ? Math.round((flagged / counted) * 100) : 0;
-  console.log(`\n검사 ${counted}문항 · 정답이 유일한 최장 보기 ${flagged}문항 (${pct}%) · 우연 기대값 25%`);
-  process.exit(pct > 40 ? 1 : 0);
+  const spct = counted ? Math.round((shortFlagged / counted) * 100) : 0;
+  console.log(`\n검사 ${counted}문항 · 최장=정답 ${flagged}문항 (${pct}%) · 최단=정답 ${shortFlagged}문항 (${spct}%) · 우연 기대값 각 25%`);
+  process.exit(pct > 40 || spct > 40 ? 1 : 0);
 }
 
 main();

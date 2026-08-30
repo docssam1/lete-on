@@ -23,10 +23,13 @@ sets.forEach(([k, label, s]) => {
   (s.questions || []).forEach((q, i) => {
     const ch = (q[2] || []).map(String);
     const ai = 'ABCD'.indexOf(q[3]);
-    const lens = ch.map(c => c.length), mx = Math.max(...lens);
-    const flag = lens[ai] === mx && lens.filter(x => x === mx).length === 1 && mx >= 25 && !/fact|opinion/i.test(q[0]);
+    const lens = ch.map(c => c.length), mx = Math.max(...lens), mn = Math.min(...lens);
+    const quoted = /fact|opinion/i.test(q[0]);
+    const longFlag = lens[ai] === mx && lens.filter(x => x === mx).length === 1 && mx >= 25 && !quoted;
+    const shortFlag = lens[ai] === mn && lens.filter(x => x === mn).length === 1 && mx - mn >= 20 && mx >= 25 && !quoted;
+    const flag = longFlag || shortFlag;
     if (onlyFlagged && !flag) return;
-    console.log(`Q${i + 1} ${flag ? '★' : ' '} ${q[0]} — ${q[1]}`);
+    console.log(`Q${i + 1} ${longFlag ? '★' : shortFlag ? '▽' : ' '} ${q[0]} — ${q[1]}`);
     ch.forEach((c, j) => console.log(`   ${'ABCD'[j]}${j === ai ? '*' : ' '} (${c.length}) ${c}`));
   });
 });
