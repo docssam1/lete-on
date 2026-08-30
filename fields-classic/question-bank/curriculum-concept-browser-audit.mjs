@@ -95,8 +95,105 @@ const pilotExpectations = Object.freeze({
     "두 자리 짝수의 일의 자리에는 0, 2, 4, 6, 8만 올 수 있음을 먼저 사용합니다.",
     "일의 자리에서 십의 자리를 뺀 값이 주어진 차와 같은 숫자쌍을 찾습니다.",
     "만든 두 자리 수가 주어진 범위와 나머지 조건을 모두 만족하는지 확인합니다."
+  ]),
+  "equal-partition-two": Object.freeze([
+    "맨 위의 전체 수와 아래로 갈라지는 두 빈칸을 확인합니다.",
+    "두 빈칸에 같은 수를 넣어 더했을 때 전체가 되는 수를 찾습니다.",
+    "찾은 수를 두 번 더해 처음 전체 수가 되는지 확인합니다."
+  ]),
+  "equal-partition-four": Object.freeze([
+    "전체 수를 같은 두 수로 나누어 가운데 두 칸을 채웁니다.",
+    "가운데의 한 수를 다시 반으로 나누어 맨 아래 네 칸을 같은 수로 채웁니다.",
+    "맨 아래 같은 네 수를 모두 더해 처음 전체와 같은지 확인합니다."
+  ]),
+  "equal-partition-three": Object.freeze([
+    "전체 수에서 같은 크기의 세 갈래로 나뉘는 모양을 확인합니다.",
+    "같은 수를 세 번 더했을 때 전체가 되는 수를 찾습니다.",
+    "세 빈칸의 수가 모두 같고 합이 처음 전체인지 확인합니다."
+  ]),
+  "shape-sum-table": Object.freeze([
+    "한 종류의 도형이 반복되어 값이 바로 정해지는 가로줄이나 세로줄부터 찾습니다.",
+    "알아낸 도형값을 다른 줄의 같은 도형 자리에 바꾸어 넣어 다음 도형값을 구합니다.",
+    "구한 도형값으로 모든 가로 합과 세로 합이 표시된 수와 맞는지 확인합니다."
+  ]),
+  "equalize-transfer": Object.freeze([
+    "많이 가진 수에서 적게 가진 수를 빼 처음 차이를 구합니다.",
+    "한 개를 옮길 때 차이가 두 개 줄어드므로 처음 차이를 같은 두 수로 가릅니다.",
+    "큰 수에서는 옮긴 수를 빼고 작은 수에는 더해 두 결과가 같은지 확인합니다."
+  ]),
+  "total-difference": Object.freeze([
+    "전체 수에서 큰 수가 더 가진 차이만큼을 먼저 빼냅니다.",
+    "차이를 뺀 나머지는 두 수의 같은 부분이므로 똑같이 둘로 가릅니다.",
+    "작은 수에 차이를 더해 큰 수를 만들고 합과 차를 모두 다시 확인합니다."
+  ]),
+  "balance-order-chain": Object.freeze([
+    "각 저울에서 더 아래로 내려간 접시의 물건을 더 무겁다고 기록합니다.",
+    "서로 다른 저울에 함께 나온 물건을 기준으로 무겁고 가벼운 관계를 연결합니다.",
+    "만든 순서를 각 저울에 다시 대입해 어느 관계도 거꾸로 되지 않는지 확인합니다."
+  ]),
+  "distinct-shape-value-equation": Object.freeze([
+    "한 도형이 여러 번 더해진 식에서 그 도형 하나의 값을 먼저 구합니다.",
+    "이미 구한 도형을 수로 바꾸어 쓰고 새 도형의 값을 차례로 찾습니다.",
+    "모든 식이 맞는지와 서로 다른 도형의 값이 겹치지 않는지 함께 확인합니다."
+  ]),
+  "repeating-number-sequence": Object.freeze([
+    "수열의 처음 수가 같은 순서로 다시 나타나는 위치를 표시합니다.",
+    "되풀이되는 수들을 필요 이상 길지 않은 가장 짧은 묶음으로 정합니다.",
+    "반복마디를 처음부터 차례로 이어 빈칸 위치의 수를 찾습니다."
+  ]),
+  "repeating-symbol-sequence": Object.freeze([
+    "그림마다 모양, 색, 개수가 어떤 순서로 변하는지 각각 한 줄로 적습니다.",
+    "각 반복마디가 처음 상태로 함께 돌아오는 위치를 찾아 하나의 큰 마디로 묶습니다.",
+    "다음 위치의 모양과 색 또는 개수를 각각 찾은 뒤 한 그림으로 합칩니다."
+  ]),
+  "matchstick-shared-polygon-growth": Object.freeze([
+    "다각형 하나를 만드는 데 필요한 성냥개비 수를 빠짐없이 셉니다.",
+    "맞닿아 함께 쓰는 변을 제외하고 새 다각형에서 추가되는 변만 셉니다.",
+    "첫 모양에서 시작해 추가되는 수를 필요한 횟수만큼 더하고 작은 단계로 검산합니다."
+  ]),
+  "triangular-stone-growth": Object.freeze([
+    "해당 단계에서 위부터 각 줄에 놓인 바둑돌 수를 차례로 적습니다.",
+    "줄마다 검은 돌과 흰 돌을 구분해 각각의 개수를 모두 더합니다.",
+    "더 많은 색의 수에서 적은 색의 수를 빼고 두 색의 합이 전체와 같은지도 확인합니다."
+  ]),
+  "square-border-stone-growth": Object.freeze([
+    "단계가 커질 때 한 변에 놓이는 바둑돌 수가 어떻게 늘어나는지 확인합니다.",
+    "모서리를 한 번씩만 세어 테두리 돌 수를 구하고 안쪽 정사각형의 돌을 따로 셉니다.",
+    "테두리와 안쪽의 색별 개수를 비교하고 둘을 더해 전체 칸 수와 같은지 확인합니다."
+  ]),
+  "four-number-center-rule": Object.freeze([
+    "앞의 그림마다 바깥 네 수와 가운데 수가 어떻게 연결되는지 계산을 여러 가지로 시도합니다.",
+    "한 그림에만 맞는 계산은 지우고 모든 완성 그림에 같은 순서로 맞는 계산을 남깁니다.",
+    "정한 계산 순서에 마지막 바깥 네 수를 넣어 가운데 수를 구하고 보기에도 다시 적용합니다."
+  ]),
+  "number-grid-row-rule": Object.freeze([
+    "답이 보이는 줄에서 앞의 수들을 더하거나 빼 마지막 수가 되는 계산을 찾아봅니다.",
+    "둘 이상의 줄에 같은 계산 순서를 적용해 우연히 맞는 다른 규칙을 지웁니다.",
+    "남은 한 계산 순서를 마지막 줄에 적용해 빈칸의 수를 구하고 전체 줄을 검산합니다."
+  ]),
+  "two-digit-compose-rule": Object.freeze([
+    "그림의 순서를 읽어 앞 숫자는 십의 자리, 뒤 숫자는 일의 자리에 놓습니다.",
+    "완성된 보기에서 두 자리 수끼리 더하는지 빼는지와 계산 순서를 확인합니다.",
+    "마지막 그림의 두 자리 수를 정확히 적고 같은 계산을 한 뒤 자리별로 검산합니다."
+  ]),
+  "sudoku-three-row-column": Object.freeze([
+    "빈칸마다 들어갈 수 있는 1, 2, 3을 준비하고 같은 줄에 이미 있는 수를 지웁니다.",
+    "가로줄에서 남은 후보와 세로줄에서 남은 후보가 같은 한 수인 칸부터 채웁니다.",
+    "표를 채운 뒤 각 가로줄과 세로줄에 1, 2, 3이 한 번씩 있는지 확인합니다."
+  ]),
+  "sudoku-four-square-region": Object.freeze([
+    "빈칸마다 1, 2, 3, 4 가운데 가로줄과 세로줄에 없는 수를 남깁니다.",
+    "가로·세로 후보 가운데 같은 굵은 영역에 이미 있는 수를 지워 한 칸의 수를 정합니다.",
+    "각 가로줄, 세로줄, 2×2 굵은 영역에 1부터 4까지 한 번씩 있는지 확인합니다."
   ])
 });
+const book2PilotIds = new Set([
+  "equal-partition-two", "equal-partition-four", "equal-partition-three", "shape-sum-table",
+  "equalize-transfer", "total-difference", "balance-order-chain", "distinct-shape-value-equation",
+  "repeating-number-sequence", "repeating-symbol-sequence", "matchstick-shared-polygon-growth",
+  "triangular-stone-growth", "square-border-stone-growth", "four-number-center-rule",
+  "number-grid-row-rule", "two-digit-compose-rule", "sudoku-three-row-column", "sudoku-four-square-region"
+]);
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
 
 async function openPilot(page, typeId, label) {
@@ -106,6 +203,8 @@ async function openPilot(page, typeId, label) {
   });
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
+  const bookId = book2PilotIds.has(typeId) ? "book-02" : "book-01";
+  await page.locator(`#curriculumTree button[data-curriculum-book="${bookId}"]`).click();
   await page.locator('#curriculumStageChoices button[data-stage="concept"]').click();
   const pilot = page.locator(`#curriculumTree [data-preview-type="${typeId}"]`);
   assert.equal(await pilot.count(), 1, `${label}: ${typeId} pilot type missing`);

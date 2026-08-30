@@ -3,9 +3,9 @@
 // never scans, answers, local paths, or reproducing seeds.
 const beat = (id, label, text) => Object.freeze({ id, label, text });
 
-const evidence = (unitLabel, group, numbers) => Object.freeze({
-  source: "Fields the Classic Course 1 Book 1",
-  bookId: "book-01",
+const sourceEvidence = (bookId, bookNumber, unitLabel, group, numbers) => Object.freeze({
+  source: `Fields the Classic Course 1 Book ${bookNumber}`,
+  bookId,
   unitLabel,
   stage: "concept",
   section: "activity",
@@ -13,6 +13,18 @@ const evidence = (unitLabel, group, numbers) => Object.freeze({
   numbers: Object.freeze(numbers),
   verificationState: "source-confirmed",
   visibility: "public-safe"
+});
+
+const evidence = (unitLabel, group, numbers) => sourceEvidence("book-01", 1, unitLabel, group, numbers);
+const book2Evidence = (unitLabel, group, numbers) => sourceEvidence("book-02", 2, unitLabel, group, numbers);
+const sourceLesson = (conceptId, beats, misconception, evidenceItems) => Object.freeze({
+  conceptId,
+  scope: "global-type-id",
+  sharedByDesign: true,
+  beats: Object.freeze(beats),
+  misconception,
+  sourceEvidence: Object.freeze(evidenceItems),
+  verificationState: "source-confirmed"
 });
 
 export const CONCEPT_DEFINITIONS = Object.freeze([
@@ -106,6 +118,132 @@ export const CONCEPT_DEFINITIONS = Object.freeze([
     definition: "수열에서 이웃한 두 수의 차가 계속 같으면 그 차를 반복해 앞이나 뒤의 수를 찾을 수 있습니다.",
     invariant: "커지거나 작아지는 방향과 한 번에 변하는 양이 모든 이웃한 수 사이에서 같습니다.",
     representationKinds: Object.freeze(["number-sequence", "difference-arrows", "missing-terms"])
+  }),
+  Object.freeze({
+    id: "concept:number:equal-partition-two",
+    label: "전체를 같은 두 수로 가르기",
+    definition: "전체 수를 크기가 같은 두 부분으로 가르면 각 부분은 전체의 반이 되고 두 수를 더하면 다시 전체가 됩니다.",
+    invariant: "두 부분의 수는 서로 같고 두 부분의 합은 처음 전체 수와 같습니다.",
+    representationKinds: Object.freeze(["partition-tree", "equal-parts", "addition-check"])
+  }),
+  Object.freeze({
+    id: "concept:number:nested-halving-four",
+    label: "반으로 두 번 갈라 네 수 만들기",
+    definition: "전체를 먼저 반으로 가르고 두 반을 다시 각각 반으로 가르면 크기가 같은 네 부분을 만들 수 있습니다.",
+    invariant: "첫 가르기의 두 수가 같고, 두 번째 가르기의 네 수가 모두 같으며 네 수의 합은 처음 전체와 같습니다.",
+    representationKinds: Object.freeze(["two-level-tree", "halving-steps", "four-equal-parts"])
+  }),
+  Object.freeze({
+    id: "concept:number:equal-partition-three",
+    label: "전체를 같은 세 수로 가르기",
+    definition: "전체 수를 같은 세 부분으로 가를 때는 같은 수를 세 번 더해 전체가 되는 수를 찾습니다.",
+    invariant: "세 부분의 수는 모두 같고 그 수를 세 번 더한 값은 처음 전체와 같습니다.",
+    representationKinds: Object.freeze(["three-branch-tree", "repeated-addition", "equal-groups"])
+  }),
+  Object.freeze({
+    id: "concept:number:shape-sum-matrix-elimination",
+    label: "도형값을 이어 찾는 가로·세로 합",
+    definition: "같은 도형이 같은 수를 나타내는 표에서는 한 도형만 반복된 줄부터 값을 구하고 다른 줄로 옮겨 갑니다.",
+    invariant: "한 도형의 값은 표 전체에서 같고 각 가로줄과 세로줄의 도형값 합은 표시된 줄의 합과 일치합니다.",
+    representationKinds: Object.freeze(["shape-matrix", "row-sums", "column-sums"])
+  }),
+  Object.freeze({
+    id: "concept:number:transfer-equalization",
+    label: "옮겨서 두 수를 같게 만들기",
+    definition: "큰 쪽에서 작은 쪽으로 한 개를 옮기면 두 수의 차가 두 개 줄어드므로 처음 차이의 반만큼 옮깁니다.",
+    invariant: "옮긴 뒤 큰 쪽에서 뺀 수와 작은 쪽에 더한 수가 같고 두 결과가 정확히 일치합니다.",
+    representationKinds: Object.freeze(["two-quantities", "transfer-arrow", "difference-halving"])
+  }),
+  Object.freeze({
+    id: "concept:number:sum-difference-split",
+    label: "전체와 차이로 두 수 나누기",
+    definition: "두 수의 전체에서 차이를 먼저 떼어 내면 같은 두 몫이 남으므로 남은 수를 반으로 나누어 작은 수를 찾습니다.",
+    invariant: "구한 두 수의 합은 주어진 전체이고 큰 수에서 작은 수를 뺀 값은 주어진 차이입니다.",
+    representationKinds: Object.freeze(["bar-model", "sum-value", "difference-part"])
+  }),
+  Object.freeze({
+    id: "concept:logic:balance-transitive-order",
+    label: "여러 저울의 무게 관계 이어 보기",
+    definition: "양팔저울마다 아래로 내려간 쪽을 더 무겁다고 기록하고 서로 이어지는 비교를 한 줄의 순서로 정리합니다.",
+    invariant: "각 저울의 무거운 쪽 관계가 최종 순서와 모두 맞고 같은 물건이 한 번씩만 순서에 나타납니다.",
+    representationKinds: Object.freeze(["balance-scales", "comparison-arrows", "ordered-chain"])
+  }),
+  Object.freeze({
+    id: "concept:number:distinct-symbol-equation-chain",
+    label: "서로 다른 도형값을 식으로 이어 찾기",
+    definition: "같은 도형끼리만 있는 가장 쉬운 식에서 첫 값을 구하고 그 값을 다음 식에 차례로 바꾸어 넣습니다.",
+    invariant: "같은 도형은 언제나 같은 수이고 서로 다른 도형의 값은 서로 다르며 모든 식을 동시에 만족합니다.",
+    representationKinds: Object.freeze(["symbol-equations", "substitution-chain", "distinct-values"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:shortest-number-repeat-unit",
+    label: "가장 짧은 수 반복마디",
+    definition: "수들이 되풀이될 때 처음부터 같은 순서로 다시 나타나는 가장 짧은 수 묶음을 반복마디로 정합니다.",
+    invariant: "정한 반복마디를 계속 이어 쓰면 주어진 모든 수의 위치와 빈칸의 수가 정확히 맞습니다.",
+    representationKinds: Object.freeze(["number-strip", "repeat-brackets", "missing-position"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:multi-attribute-repeat-unit",
+    label: "모양·색·개수의 이중 반복마디",
+    definition: "그림 규칙은 모양, 색, 개수를 따로 읽은 뒤 각 반복마디가 다시 함께 시작되는 위치를 찾습니다.",
+    invariant: "고른 다음 그림은 모양 순서와 색 또는 개수 순서를 모두 동시에 만족합니다.",
+    representationKinds: Object.freeze(["symbol-strip", "color-cycle", "combined-period"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:shared-edge-linear-growth",
+    label: "맞닿은 변을 함께 쓰는 도형 성장",
+    definition: "다각형을 이어 붙이면 맞닿은 변은 새로 만들지 않으므로 첫 모양의 수에 한 개씩 붙을 때 늘어나는 수만 더합니다.",
+    invariant: "처음 모양의 성냥개비 수와 추가 모양마다 늘어나는 성냥개비 수가 전체 단계에서 일정합니다.",
+    representationKinds: Object.freeze(["joined-polygons", "shared-edge", "growth-table"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:triangular-two-color-count",
+    label: "삼각형 바둑돌을 색별로 세기",
+    definition: "삼각형으로 커지는 바둑돌은 각 줄의 길이와 색 배치를 나누어 보고 검은 돌과 흰 돌을 각각 셉니다.",
+    invariant: "두 색의 개수를 더하면 해당 단계의 전체 바둑돌 수가 되고 두 수의 차가 묻는 값과 일치합니다.",
+    representationKinds: Object.freeze(["triangular-grid", "color-layers", "count-difference"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:square-border-interior-count",
+    label: "네모 테두리와 안쪽을 나누어 세기",
+    definition: "네모 모양의 바둑돌은 겹치지 않게 테두리 네 변과 안쪽 정사각형을 나누어 색별 개수를 셉니다.",
+    invariant: "모서리는 한 번씩만 세며 테두리와 안쪽의 합은 전체 칸 수와 같아야 합니다.",
+    representationKinds: Object.freeze(["square-border", "interior-grid", "color-counts"])
+  }),
+  Object.freeze({
+    id: "concept:number:four-outer-center-operation",
+    label: "바깥 네 수와 가운데 수의 약속",
+    definition: "답이 보이는 여러 그림에서 바깥 네 수를 어느 순서로 더하고 빼 가운데 수를 만드는지 같은 계산을 찾습니다.",
+    invariant: "찾은 계산 순서를 모든 보기 그림에 적용했을 때 각 가운데 수가 빠짐없이 맞습니다.",
+    representationKinds: Object.freeze(["center-number-diagram", "outer-values", "operation-rule"])
+  }),
+  Object.freeze({
+    id: "concept:number:uniform-row-operation",
+    label: "모든 줄에 같은 계산 약속 적용하기",
+    definition: "완성된 줄의 수들을 같은 순서로 계산해 공통 규칙을 찾고 그 규칙을 빈칸이 있는 줄에도 그대로 적용합니다.",
+    invariant: "하나의 계산 순서가 주어진 모든 완성 줄을 만족하고 마지막 줄의 빈칸도 같은 규칙으로 결정됩니다.",
+    representationKinds: Object.freeze(["number-row-grid", "operation-order", "hidden-cell"])
+  }),
+  Object.freeze({
+    id: "concept:number:compose-two-digit-operation",
+    label: "숫자를 두 자리 수로 만든 뒤 계산하기",
+    definition: "두 숫자의 위아래나 좌우 순서를 확인해 두 자리 수를 먼저 만들고 정해진 덧셈이나 뺄셈을 합니다.",
+    invariant: "십의 자리와 일의 자리의 순서를 유지해 만든 두 수와 계산 결과가 같은 약속을 만족합니다.",
+    representationKinds: Object.freeze(["digit-pairs", "place-value", "arithmetic-rule"])
+  }),
+  Object.freeze({
+    id: "concept:logic:latin-row-column-three",
+    label: "1·2·3 가로세로 스도쿠",
+    definition: "3×3 표의 각 가로줄과 세로줄에 1, 2, 3이 한 번씩 들어가도록 이미 있는 수를 보고 빈칸을 좁힙니다.",
+    invariant: "각 가로줄과 세로줄에는 1, 2, 3이 중복이나 빠짐없이 정확히 한 번씩 들어갑니다.",
+    representationKinds: Object.freeze(["three-grid", "row-candidates", "column-candidates"])
+  }),
+  Object.freeze({
+    id: "concept:logic:latin-row-column-region-four",
+    label: "1~4 가로세로·굵은 칸 스도쿠",
+    definition: "4×4 표에서 가로줄, 세로줄, 2×2 굵은 영역을 함께 확인해 1부터 4까지의 빠진 수를 찾습니다.",
+    invariant: "각 가로줄과 세로줄과 굵은 영역마다 1, 2, 3, 4가 정확히 한 번씩 들어갑니다.",
+    representationKinds: Object.freeze(["four-grid", "square-regions", "candidate-elimination"])
   })
 ]);
 
@@ -369,5 +507,185 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       evidence("수 추리와 논리 추리", 1, [5])
     ]),
     verificationState: "source-confirmed"
-  })
+  }),
+  "equal-partition-two": sourceLesson(
+    "concept:number:equal-partition-two",
+    [
+      beat("read-whole-two", "전체와 두 부분을 확인해요", "맨 위의 전체 수와 아래로 갈라지는 두 빈칸을 확인합니다."),
+      beat("make-equal-halves", "같은 두 수를 찾아요", "두 빈칸에 같은 수를 넣어 더했을 때 전체가 되는 수를 찾습니다."),
+      beat("check-two-sum", "두 수를 더해 확인해요", "찾은 수를 두 번 더해 처음 전체 수가 되는지 확인합니다.")
+    ],
+    "한쪽에만 전체의 반을 쓰거나 서로 다른 두 수로 나누지 않았는지 확인합니다.",
+    [book2Evidence("매트릭스와 주고받기", 1, [1])]
+  ),
+  "equal-partition-four": sourceLesson(
+    "concept:number:nested-halving-four",
+    [
+      beat("first-halving", "먼저 반으로 갈라요", "전체 수를 같은 두 수로 나누어 가운데 두 칸을 채웁니다."),
+      beat("second-halving", "각 반을 다시 갈라요", "가운데의 한 수를 다시 반으로 나누어 맨 아래 네 칸을 같은 수로 채웁니다."),
+      beat("check-four-parts", "네 수의 합을 확인해요", "맨 아래 같은 네 수를 모두 더해 처음 전체와 같은지 확인합니다.")
+    ],
+    "전체를 한 번만 반으로 나눈 수를 맨 아래에 그대로 쓰지 않았는지 확인합니다.",
+    [book2Evidence("매트릭스와 주고받기", 1, [2])]
+  ),
+  "equal-partition-three": sourceLesson(
+    "concept:number:equal-partition-three",
+    [
+      beat("read-whole-three", "세 갈래를 확인해요", "전체 수에서 같은 크기의 세 갈래로 나뉘는 모양을 확인합니다."),
+      beat("find-repeated-addend", "세 번 더할 수를 찾아요", "같은 수를 세 번 더했을 때 전체가 되는 수를 찾습니다."),
+      beat("check-three-sum", "세 부분을 다시 더해요", "세 빈칸의 수가 모두 같고 합이 처음 전체인지 확인합니다.")
+    ],
+    "전체를 두 부분으로만 나누거나 세 빈칸에 서로 다른 수를 쓰지 않았는지 확인합니다.",
+    [book2Evidence("매트릭스와 주고받기", 1, [3])]
+  ),
+  "shape-sum-table": sourceLesson(
+    "concept:number:shape-sum-matrix-elimination",
+    [
+      beat("find-single-shape-line", "같은 도형만 있는 줄을 찾아요", "한 종류의 도형이 반복되어 값이 바로 정해지는 가로줄이나 세로줄부터 찾습니다."),
+      beat("substitute-shape-values", "찾은 값을 다른 줄에 넣어요", "알아낸 도형값을 다른 줄의 같은 도형 자리에 바꾸어 넣어 다음 도형값을 구합니다."),
+      beat("check-row-column-sums", "가로와 세로 합을 검산해요", "구한 도형값으로 모든 가로 합과 세로 합이 표시된 수와 맞는지 확인합니다.")
+    ],
+    "같은 도형에 줄마다 다른 값을 주거나 가로 합만 확인하지 않았는지 살펴봅니다.",
+    [book2Evidence("매트릭스와 주고받기", 1, [4, 5])]
+  ),
+  "equalize-transfer": sourceLesson(
+    "concept:number:transfer-equalization",
+    [
+      beat("find-starting-gap", "두 수의 차이를 구해요", "많이 가진 수에서 적게 가진 수를 빼 처음 차이를 구합니다."),
+      beat("halve-transfer-gap", "차이의 반을 옮겨요", "한 개를 옮길 때 차이가 두 개 줄어드므로 처음 차이를 같은 두 수로 가릅니다."),
+      beat("check-equal-results", "준 뒤와 받은 뒤를 비교해요", "큰 수에서는 옮긴 수를 빼고 작은 수에는 더해 두 결과가 같은지 확인합니다.")
+    ],
+    "처음 차이만큼 모두 옮겨 두 수의 크기가 서로 뒤바뀌지 않았는지 확인합니다.",
+    [book2Evidence("매트릭스와 주고받기", 2, [1, 2, 3])]
+  ),
+  "total-difference": sourceLesson(
+    "concept:number:sum-difference-split",
+    [
+      beat("separate-difference", "전체에서 차이를 떼어요", "전체 수에서 큰 수가 더 가진 차이만큼을 먼저 빼냅니다."),
+      beat("halve-equal-remainder", "남은 수를 반으로 나눠요", "차이를 뺀 나머지는 두 수의 같은 부분이므로 똑같이 둘로 가릅니다."),
+      beat("restore-larger-value", "큰 수에 차이를 붙여요", "작은 수에 차이를 더해 큰 수를 만들고 합과 차를 모두 다시 확인합니다.")
+    ],
+    "전체를 바로 반으로 나누거나 작은 수에 차이를 더하지 않고 답을 정하지 않았는지 확인합니다.",
+    [book2Evidence("매트릭스와 주고받기", 2, [4, 5])]
+  ),
+  "balance-order-chain": sourceLesson(
+    "concept:logic:balance-transitive-order",
+    [
+      beat("read-lower-pan", "내려간 접시를 찾아요", "각 저울에서 더 아래로 내려간 접시의 물건을 더 무겁다고 기록합니다."),
+      beat("link-comparisons", "같은 물건을 이어요", "서로 다른 저울에 함께 나온 물건을 기준으로 무겁고 가벼운 관계를 연결합니다."),
+      beat("verify-balance-order", "모든 저울로 순서를 확인해요", "만든 순서를 각 저울에 다시 대입해 어느 관계도 거꾸로 되지 않는지 확인합니다.")
+    ],
+    "접시의 높이를 반대로 읽거나 서로 이어지지 않은 비교를 바로 순서로 정하지 않았는지 확인합니다.",
+    [book2Evidence("양팔저울", 1, [1, 2, 3, 4])]
+  ),
+  "distinct-shape-value-equation": sourceLesson(
+    "concept:number:distinct-symbol-equation-chain",
+    [
+      beat("solve-repeated-symbol", "같은 도형 식부터 풀어요", "한 도형이 여러 번 더해진 식에서 그 도형 하나의 값을 먼저 구합니다."),
+      beat("substitute-next-symbol", "찾은 값을 다음 식에 넣어요", "이미 구한 도형을 수로 바꾸어 쓰고 새 도형의 값을 차례로 찾습니다."),
+      beat("check-distinct-values", "서로 다른 값인지 확인해요", "모든 식이 맞는지와 서로 다른 도형의 값이 겹치지 않는지 함께 확인합니다.")
+    ],
+    "그림 모양이 다른데 같은 값을 주거나 아직 모르는 도형을 먼저 계산하지 않았는지 확인합니다.",
+    [book2Evidence("양팔저울", 2, [1, 2, 3, 4])]
+  ),
+  "repeating-number-sequence": sourceLesson(
+    "concept:pattern:shortest-number-repeat-unit",
+    [
+      beat("find-cycle-restart", "처음 수가 다시 나오는 곳을 찾아요", "수열의 처음 수가 같은 순서로 다시 나타나는 위치를 표시합니다."),
+      beat("choose-shortest-number-cycle", "가장 짧은 반복마디를 묶어요", "되풀이되는 수들을 필요 이상 길지 않은 가장 짧은 묶음으로 정합니다."),
+      beat("continue-number-cycle", "빈칸까지 반복해 써요", "반복마디를 처음부터 차례로 이어 빈칸 위치의 수를 찾습니다.")
+    ],
+    "우연히 같은 수 하나만 보고 반복마디를 정하거나 묶음의 시작 위치를 바꾸지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 1, [1])]
+  ),
+  "repeating-symbol-sequence": sourceLesson(
+    "concept:pattern:multi-attribute-repeat-unit",
+    [
+      beat("separate-pattern-features", "모양·색·개수를 따로 봐요", "그림마다 모양, 색, 개수가 어떤 순서로 변하는지 각각 한 줄로 적습니다."),
+      beat("align-feature-cycles", "두 반복마디를 함께 맞춰요", "각 반복마디가 처음 상태로 함께 돌아오는 위치를 찾아 하나의 큰 마디로 묶습니다."),
+      beat("compose-next-symbol", "다음 그림을 합쳐 만들어요", "다음 위치의 모양과 색 또는 개수를 각각 찾은 뒤 한 그림으로 합칩니다.")
+    ],
+    "모양 규칙만 맞고 색이나 개수 규칙은 틀린 그림을 고르지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 1, [2, 3, 4])]
+  ),
+  "matchstick-shared-polygon-growth": sourceLesson(
+    "concept:pattern:shared-edge-linear-growth",
+    [
+      beat("count-first-polygon", "첫 모양의 성냥개비를 세어요", "다각형 하나를 만드는 데 필요한 성냥개비 수를 빠짐없이 셉니다."),
+      beat("count-added-edges", "하나 붙을 때 늘어나는 수를 찾아요", "맞닿아 함께 쓰는 변을 제외하고 새 다각형에서 추가되는 변만 셉니다."),
+      beat("extend-growth-count", "늘어나는 수를 단계만큼 더해요", "첫 모양에서 시작해 추가되는 수를 필요한 횟수만큼 더하고 작은 단계로 검산합니다.")
+    ],
+    "다각형마다 모든 변을 다시 세어 맞닿은 변을 두 번 세지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 2, [1, 2])]
+  ),
+  "triangular-stone-growth": sourceLesson(
+    "concept:pattern:triangular-two-color-count",
+    [
+      beat("read-triangle-rows", "삼각형의 줄 수를 확인해요", "해당 단계에서 위부터 각 줄에 놓인 바둑돌 수를 차례로 적습니다."),
+      beat("count-triangle-colors", "두 색을 따로 세어요", "줄마다 검은 돌과 흰 돌을 구분해 각각의 개수를 모두 더합니다."),
+      beat("compare-triangle-colors", "두 개수의 차를 구해요", "더 많은 색의 수에서 적은 색의 수를 빼고 두 색의 합이 전체와 같은지도 확인합니다.")
+    ],
+    "삼각형의 전체 수만 세고 색의 배치를 무시하거나 두 색의 차를 반대로 쓰지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 2, [3])]
+  ),
+  "square-border-stone-growth": sourceLesson(
+    "concept:pattern:square-border-interior-count",
+    [
+      beat("find-square-side", "네모의 한 변 길이를 찾아요", "단계가 커질 때 한 변에 놓이는 바둑돌 수가 어떻게 늘어나는지 확인합니다."),
+      beat("count-border-interior", "테두리와 안쪽을 나눠 세어요", "모서리를 한 번씩만 세어 테두리 돌 수를 구하고 안쪽 정사각형의 돌을 따로 셉니다."),
+      beat("compare-square-colors", "두 색의 수를 비교해요", "테두리와 안쪽의 색별 개수를 비교하고 둘을 더해 전체 칸 수와 같은지 확인합니다.")
+    ],
+    "테두리 네 변의 모서리를 두 번 세거나 안쪽 칸까지 테두리로 세지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 2, [4])]
+  ),
+  "four-number-center-rule": sourceLesson(
+    "concept:number:four-outer-center-operation",
+    [
+      beat("compare-outer-center-examples", "완성된 그림을 비교해요", "앞의 그림마다 바깥 네 수와 가운데 수가 어떻게 연결되는지 계산을 여러 가지로 시도합니다."),
+      beat("confirm-one-center-rule", "모두 맞는 약속 하나를 정해요", "한 그림에만 맞는 계산은 지우고 모든 완성 그림에 같은 순서로 맞는 계산을 남깁니다."),
+      beat("apply-center-rule", "마지막 그림에 적용해요", "정한 계산 순서에 마지막 바깥 네 수를 넣어 가운데 수를 구하고 보기에도 다시 적용합니다.")
+    ],
+    "첫 번째 그림 하나에만 맞는 계산을 약속으로 정하거나 덧셈과 뺄셈의 순서를 바꾸지 않았는지 확인합니다.",
+    [book2Evidence("약속과 스도쿠", 1, [1])]
+  ),
+  "number-grid-row-rule": sourceLesson(
+    "concept:number:uniform-row-operation",
+    [
+      beat("test-complete-rows", "완성된 줄의 계산을 찾아요", "답이 보이는 줄에서 앞의 수들을 더하거나 빼 마지막 수가 되는 계산을 찾아봅니다."),
+      beat("distinguish-row-rules", "모든 줄로 규칙을 가려요", "둘 이상의 줄에 같은 계산 순서를 적용해 우연히 맞는 다른 규칙을 지웁니다."),
+      beat("solve-hidden-row-cell", "빈 줄에도 같은 순서를 써요", "남은 한 계산 순서를 마지막 줄에 적용해 빈칸의 수를 구하고 전체 줄을 검산합니다.")
+    ],
+    "줄마다 다른 계산을 사용하거나 수의 순서를 바꿔 우연히 맞는 답을 고르지 않았는지 확인합니다.",
+    [book2Evidence("약속과 스도쿠", 1, [4, 5, 6])]
+  ),
+  "two-digit-compose-rule": sourceLesson(
+    "concept:number:compose-two-digit-operation",
+    [
+      beat("compose-place-values", "숫자로 두 자리 수를 만들어요", "그림의 순서를 읽어 앞 숫자는 십의 자리, 뒤 숫자는 일의 자리에 놓습니다."),
+      beat("identify-compose-operation", "보기의 계산 약속을 찾아요", "완성된 보기에서 두 자리 수끼리 더하는지 빼는지와 계산 순서를 확인합니다."),
+      beat("calculate-composed-numbers", "새 두 수를 계산해요", "마지막 그림의 두 자리 수를 정확히 적고 같은 계산을 한 뒤 자리별로 검산합니다.")
+    ],
+    "두 숫자를 더한 값을 두 자리 수로 잘못 읽거나 십의 자리와 일의 자리를 바꾸지 않았는지 확인합니다.",
+    [book2Evidence("약속과 스도쿠", 1, [2, 3])]
+  ),
+  "sudoku-three-row-column": sourceLesson(
+    "concept:logic:latin-row-column-three",
+    [
+      beat("list-three-candidates", "1·2·3 후보를 적어요", "빈칸마다 들어갈 수 있는 1, 2, 3을 준비하고 같은 줄에 이미 있는 수를 지웁니다."),
+      beat("use-row-column-three", "가로와 세로를 함께 봐요", "가로줄에서 남은 후보와 세로줄에서 남은 후보가 같은 한 수인 칸부터 채웁니다."),
+      beat("verify-three-grid", "모든 줄의 중복을 확인해요", "표를 채운 뒤 각 가로줄과 세로줄에 1, 2, 3이 한 번씩 있는지 확인합니다.")
+    ],
+    "가로줄만 보고 수를 넣거나 같은 세로줄에 같은 수를 두 번 쓰지 않았는지 확인합니다.",
+    [book2Evidence("약속과 스도쿠", 2, [1])]
+  ),
+  "sudoku-four-square-region": sourceLesson(
+    "concept:logic:latin-row-column-region-four",
+    [
+      beat("list-four-candidates", "1부터 4까지 후보를 적어요", "빈칸마다 1, 2, 3, 4 가운데 가로줄과 세로줄에 없는 수를 남깁니다."),
+      beat("use-square-region", "2×2 굵은 칸도 확인해요", "가로·세로 후보 가운데 같은 굵은 영역에 이미 있는 수를 지워 한 칸의 수를 정합니다."),
+      beat("verify-four-constraints", "세 가지 조건을 모두 검산해요", "각 가로줄, 세로줄, 2×2 굵은 영역에 1부터 4까지 한 번씩 있는지 확인합니다.")
+    ],
+    "가로와 세로만 맞추고 2×2 굵은 영역 안의 중복을 놓치지 않았는지 확인합니다.",
+    [book2Evidence("약속과 스도쿠", 2, [2, 3])]
+  )
 });
