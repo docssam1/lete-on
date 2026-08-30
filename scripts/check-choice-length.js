@@ -68,7 +68,8 @@ function scan(id, label, questions) {
     if (lens[ai] === mn && lens.filter(x => x === mn).length === 1 && mx - mn >= 20) {
       shortFlagged++;
       const second = lens.slice().sort((a, b) => a - b)[1];
-      shortRows.push(`    Q${i + 1} ${q[0]} — 정답 ${lens[ai]}자 vs 차순 ${second}자 (-${second - lens[ai]}) [최단]`);
+      /* 목표 길이도 같이 적는다 — 정답이 최장 -19자 이상이면 격차가 좁아 신호가 안 된다 */
+      shortRows.push(`    Q${i + 1} ${q[0]} — 정답 ${lens[ai]}자 · 차순 ${second}자 · 최장 ${mx}자 → ${mx - 19}자 이상으로 [최단]`);
     }
   });
   return { id, label, counted, flagged, rows, shortFlagged, shortRows };
