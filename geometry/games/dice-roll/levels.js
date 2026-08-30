@@ -175,10 +175,10 @@ const level5 = reverseRouteSets.map((routes, index) => {
 });
 
 export const levels = [
-  { id:1, band:"입문", title:"한 칸 굴리기", subtitle:"한 번 굴린 뒤 윗면 찾기", problems:level1 },
-  { id:2, band:"입문", title:"이어 굴리기", subtitle:"두세 칸의 면 변화 따라가기", problems:level2 },
+  { id:1, band:"초급", title:"한 칸 굴리기", subtitle:"한 번 굴린 뒤 윗면 찾기", problems:level1 },
+  { id:2, band:"초급", title:"이어 굴리기", subtitle:"두세 칸의 면 변화 따라가기", problems:level2 },
   { id:3, band:"초급", title:"시계 방향 돌기", subtitle:"시계·반시계 경로의 눈 변화", problems:level3 },
-  { id:4, band:"초급", title:"격자 길 따라가기", subtitle:"긴 경로의 앞·오른쪽 면 추적", problems:level4 },
+  { id:4, band:"중급", title:"격자 길 따라가기", subtitle:"긴 경로의 앞·오른쪽 면 추적", problems:level4 },
   { id:5, band:"중급", title:"거꾸로 경로 찾기", subtitle:"도착한 주사위를 보고 이동 추리", problems:level5 }
 ];
 

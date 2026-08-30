@@ -34,7 +34,7 @@ window.LESSONS['sl13'] = {
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [
-        'Throughout history, humans have developed increasingly advanced sanitation systems',
+        'Humans have developed increasingly advanced sanitation systems over history',
         'The Romans invented the first flush toilet ever used in any civilization',
         'Modern toilets are far superior to any sanitation system from the ancient world',
         'The Indus Valley had the most advanced toilet system ever built in history',
@@ -58,11 +58,11 @@ window.LESSONS['sl13'] = {
         'A new invention made chamber pots much more comfortable and sanitary to use',
         'Underground sewer pipes in European cities were destroyed by widespread floods',
         'Roman leaders decided that public toilets were not worthy of their great civilization',
-        'The fall of the Roman Empire led to the collapse of the organized public sanitation system',
+        'The fall of the Roman Empire collapsed the organized public sanitation system',
       ], 'D', 'The passage explains that "when the Roman Empire fell in the fifth century, much of this sanitation knowledge was lost," causing people to return to chamber pots. The fall of Rome is the direct cause.'],
 
       ['Comparing and Contrasting', 'How was the Indus Valley toilet system DIFFERENT from Roman public toilets?', [
-        'Indus Valley toilets were connected to brick drains and used waste as fertilizer, while Roman toilets were communal social spaces with underground sewers',
+        'Indus Valley toilets fed brick drains and reused waste, while Roman toilets were communal spaces',
         'Roman toilets used flush mechanisms while Indus Valley people used only simple holes in the ground',
         'Roman toilets were entirely private and enclosed, while Indus Valley toilets were always open and public',
         'Indus Valley people had almost no sanitation system, unlike the far more advanced Romans',
@@ -86,7 +86,7 @@ window.LESSONS['sl13'] = {
         'Studying sanitation proves that modern toilets are now perfect and need no further improvement',
         'Ancient people were clearly less intelligent than modern people when it came to meeting basic needs',
         'The history of toilets shows that only wealthy and powerful civilizations ever cared about hygiene',
-        'The development of sanitation reflects the health, priorities, and overall progress of a civilization',
+        'The development of sanitation reflects a civilization\'s health, priorities, and progress',
       ], 'D', 'The passage shows that sanitation innovations track with civilization\'s rise and fall — from the Indus Valley\'s sophistication to Europe\'s regression after Rome. Option D draws the right big-picture conclusion.'],
 
       ['Distinguishing Between Fact and Opinion', 'Which of the following is a FACT?', [
@@ -106,7 +106,7 @@ window.LESSONS['sl13'] = {
       ['Interpreting Figurative Language', 'What does the expression "the Roman public toilet was the heartbeat of city hygiene — when Rome fell, that heartbeat stopped for nearly a thousand years" most likely mean?', [
         'Roman doctors regularly used public toilet visits to check on the health of city residents',
         'Public toilets in ancient Rome made a steady rhythmic sound when flushed with flowing water',
-        'Roman sanitation was so central to civilization that its collapse caused hygiene to regress for centuries',
+        'Roman sanitation was so central that its collapse set hygiene back for centuries',
         'The ancient Romans believed that a healthy heart required the use of public sanitation facilities',
       ], 'C', 'The metaphor of a "heartbeat" suggests that sanitation was vital and central to Roman city life, just as a heartbeat is vital to the body. When Rome fell, that vital system stopped — and Europe\'s hygiene suffered for centuries.'],
 
@@ -114,7 +114,7 @@ window.LESSONS['sl13'] = {
         'An ancient city building underground drain pipes to carry waste out of the city',
         'A group of people losing access to modern sanitation after a major disaster strikes their city',
         'A queen having a custom flush toilet designed specifically for her use in her palace',
-        'An ancient toilet that magically transported waste to a different dimension without any pipes at all',
+        'An ancient toilet that magically moved waste to another dimension with no pipes',
       ], 'D', 'A toilet that teleports waste to another dimension is physically impossible. Options A, B, and C all describe events that have happened or could realistically happen in the real world.'],
     ],
   },
@@ -143,7 +143,7 @@ window.LESSONS['sl13'] = {
 
       ['Understanding Sequence', 'According to the passage, which event happened SECOND?', [
         'Workers discovered old clay pipes during summer construction',
-        'Mr. Park turned the discovery into a classroom lesson on sanitation history',
+        'Mr. Park turned the discovery into a lesson on sanitation history',
         'Students built models of ancient sewer systems for their class project',
         'Students presented their finished models to the rest of the class',
       ], 'B', 'The workers\' discovery happened first, then Mr. Park used it for a lesson. The model-building and presentations came after the lesson. Option B is the second event.'],
@@ -152,7 +152,7 @@ window.LESSONS['sl13'] = {
         'The school was planning to build a new bathroom wing and needed historical research data',
         'Students had submitted a petition asking to learn about the history of ancient toilets',
         'The school\'s official curriculum required a unit on ancient drain engineering every year',
-        'Workers discovered two-hundred-year-old clay pipes buried under the playground during summer construction',
+        'Workers found two-hundred-year-old clay pipes under the playground in summer',
       ], 'D', 'The passage says Mr. Park "turned the discovery into a lesson." The discovery of the old pipes is the direct cause of the sanitation history lesson.'],
 
       ['Comparing and Contrasting', 'How was the Indus Valley group\'s project DIFFERENT from the other groups\'?', [
@@ -163,7 +163,7 @@ window.LESSONS['sl13'] = {
       ], 'C', 'The passage specifically mentions that "the Indus Valley group even created a small fertilizer garden beside their model drain." No other group is described as doing this.'],
 
       ['Making Predictions', 'Based on the passage, what would MOST LIKELY happen if schools never taught students about sanitation history?', [
-        'Students might not understand why proper sanitation systems are so important for society',
+        'Students might not understand why proper sanitation matters so much for society',
         'Students would immediately begin inventing better toilet systems entirely on their own',
         'Ancient sewer systems would gradually stop working because no one was studying them',
         'Schools would eventually be forced to replace modern plumbing with chamber pots',
@@ -199,7 +199,7 @@ window.LESSONS['sl13'] = {
 
       ['Interpreting Figurative Language', 'What does the expression "like those old clay pipes buried under the playground, the history of sanitation runs beneath everything we take for granted" most likely mean?', [
         'The school playground was built directly on top of dangerous pipes that could break at any time',
-        'Sanitation history, though often hidden and unnoticed, supports modern life just as old pipes support a building',
+        'Sanitation history, though hidden, supports modern life just as old pipes support a building',
         'Students should dig up the playground floor to find more evidence of ancient sanitation technology',
         'Clay pipes are always the single most important hidden element in any building\'s construction',
       ], 'B', 'The expression compares the buried pipes — unseen but essential — to the history of sanitation, which most people never think about even though it underpins modern healthy life. Option B captures this meaning.'],
@@ -208,7 +208,7 @@ window.LESSONS['sl13'] = {
         'Construction workers discovering old clay pipes buried beneath a school playground',
         'A history teacher using a construction discovery to design a creative classroom lesson',
         'Students building models of ancient sewer systems as part of a school history project',
-        'An ancient clay pipe that automatically purified all waste into clean drinking water without any treatment',
+        'An ancient clay pipe that automatically turned all waste into clean drinking water',
       ], 'D', 'A pipe that magically purifies waste into drinking water on its own is impossible in reality. Options A, B, and C all describe things that have happened or could realistically happen.'],
     ],
   },

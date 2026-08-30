@@ -1,6 +1,6 @@
 import * as THREE from "../../vendor/three/three.module.js";
 import { OrbitControls } from "../../vendor/three/addons/controls/OrbitControls.js";
-import { foldCubeNet } from "./levels.js?v=net-1";
+import { foldCubeNet } from "./levels.js?v=net-4";
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };
@@ -68,6 +68,8 @@ export class NetFoldViewer {
     this.renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.shadowMap.enabled = true;
+    this.renderer.domElement.setAttribute("role","img");
+    this.renderer.domElement.setAttribute("aria-label","접히는 전개도와 완성된 정육면체");
     host.replaceChildren(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
@@ -110,6 +112,8 @@ export class NetFoldViewer {
     const byCell = new Map(faceData.map((face) => [face.cell.join(","), face]));
     const centerX = (Math.min(...folded.cells.map(([x]) => x)) + Math.max(...folded.cells.map(([x]) => x))) / 2;
     const centerY = (Math.min(...folded.cells.map(([, y]) => y)) + Math.max(...folded.cells.map(([, y]) => y))) / 2;
+    this.flatSpan={width:Math.max(...folded.cells.map(([x])=>x))-Math.min(...folded.cells.map(([x])=>x))+1,height:Math.max(...folded.cells.map(([,y])=>y))-Math.min(...folded.cells.map(([,y])=>y))+1};
+    this.host.dataset.netWidth=String(this.flatSpan.width);this.host.dataset.netHeight=String(this.flatSpan.height);
     folded.cells.forEach((cell, index) => {
       const data = byCell.get(cell.join(",")) || { cell, label: String(index + 1), color: "#ddb16c" };
       const texture = faceTexture(data);
@@ -140,7 +144,7 @@ export class NetFoldViewer {
     const topNormal = targetView && faceFrames.get(targetView.top)?.n;
     const frontNormal = targetView && faceFrames.get(targetView.front)?.n;
     const rightNormal = targetView && faceFrames.get(targetView.right)?.n;
-    this.flatCamera = new THREE.Vector3(0, 0, 7.2);
+    this.flatCamera = new THREE.Vector3();this.updateFlatCamera();
     this.flatUp = new THREE.Vector3(0, 1, 0);
     this.foldCamera = topNormal && frontNormal && rightNormal
       ? vector(topNormal).multiplyScalar(1.8).add(vector(frontNormal).multiplyScalar(3)).add(vector(rightNormal).multiplyScalar(2.4))
@@ -155,8 +159,18 @@ export class NetFoldViewer {
     this.setProgress(0);
   }
 
+  updateFlatCamera(){
+    if(!this.flatSpan)return;
+    const halfFov=THREE.MathUtils.degToRad(this.camera.fov/2);
+    const aspect=Math.max(.25,this.camera.aspect||1);
+    const vertical=this.flatSpan.height/(2*Math.tan(halfFov));
+    const horizontal=this.flatSpan.width/(2*Math.tan(halfFov)*aspect);
+    this.flatCamera.set(0,0,Math.max(3.8,vertical,horizontal)*1.16);
+  }
+
   setProgress(progress) {
     this.progress = clamp(progress);
+    this.host.dataset.foldProgress=this.progress.toFixed(3);
     this.faces.forEach((face) => {
       const local = smooth(this.progress * 1.42 - face.order * .085);
       face.mesh.position.lerpVectors(face.startPosition, face.finalPosition, local);
@@ -188,6 +202,7 @@ export class NetFoldViewer {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
+    if(this.flatSpan&&this.progress<.02){this.updateFlatCamera();this.camera.position.copy(this.flatCamera);this.camera.lookAt(0,0,0);}
   }
 
   renderLoop() {

@@ -30,7 +30,7 @@
       </div>
       <div class="hero-proof" aria-label="Lesson features">
         <p><strong>1 scene</strong><span>shared by every mode</span></p>
-        <p><strong>2 checks</strong><span>for every answer</span></p>
+        <p><strong>2+ checks</strong><span>for every answer</span></p>
         <p><strong>0 cloud cost</strong><span>browser voice preview</span></p>
       </div>
     </section>
@@ -38,12 +38,13 @@
     <section class="lesson-switcher shell" aria-labelledby="choose-lesson">
       <div>
         <p class="eyebrow">CHOOSE A LESSON</p>
-        <h2 id="choose-lesson">Two ways to make reasoning visible</h2>
+        <h2 id="choose-lesson">Six ways to make reasoning visible</h2>
       </div>
       <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Animated lesson samples"></div>
     </section>
 
     <section class="lesson-shell shell" aria-labelledby="lesson-title">
+      <aside class="clinic-context" id="clinic-context" hidden aria-live="polite"></aside>
       <article class="problem-card">
         <div class="problem-heading">
           <div>
@@ -63,7 +64,24 @@
               <span class="mode-label">CURRENT MODE</span>
               <strong id="mode-name">Step-by-step</strong>
             </div>
-            <button class="quiet-button" id="audio-toggle" type="button" aria-pressed="true">Voice on</button>
+            <div class="lesson-options">
+              <label class="compact-select">Language
+                <select id="lesson-language" aria-label="Lesson language">
+                  <option value="en">English</option>
+                  <option value="ko">한국어</option>
+                  <option value="zh">简体中文</option>
+                </select>
+              </label>
+              <label class="compact-select">Speed
+                <select id="lesson-speed" aria-label="Playback speed">
+                  <option value="0.8">0.8×</option>
+                  <option value="1" selected>1×</option>
+                  <option value="1.25">1.25×</option>
+                </select>
+              </label>
+              <button class="quiet-button" id="captions-toggle" type="button" aria-pressed="true">Captions on</button>
+              <button class="quiet-button" id="audio-toggle" type="button" aria-pressed="true">Voice on</button>
+            </div>
           </div>
 
           <div class="math-stage" id="lesson-stage" tabindex="0" aria-describedby="narration-text">
@@ -83,6 +101,7 @@
             <button type="button" class="control-button secondary" id="previous-step">Previous</button>
             <button type="button" class="control-button primary" id="play-lesson">Play full lesson</button>
             <button type="button" class="control-button secondary" id="next-step">Next</button>
+            <button type="button" class="control-button secondary" id="restart-lesson">Restart</button>
             <button type="button" class="control-button overview" id="show-overview">Final overview</button>
           </div>
         </section>
@@ -94,6 +113,7 @@
             <p>Choose any step. The diagram and narration will return to the same mathematical state.</p>
           </div>
           <ol class="step-list" id="step-list"></ol>
+          <ol class="lesson-transcript" id="lesson-transcript" aria-label="Lesson transcript"></ol>
         </aside>
       </div>
 
@@ -121,7 +141,7 @@
     </section>
 
     <section class="lesson-note shell">
-      <p><strong>GFIELD authored samples.</strong> These two public lessons demonstrate the G·MAP teaching system. Verified private contest items stay inside the review boundary until their source and publication status are cleared.</p>
+      <p><strong>GFIELD authored samples.</strong> These six public lessons demonstrate the G·MAP teaching system. Verified private contest items stay inside the review boundary until their source and publication status are cleared.</p>
     </section>
   </main>
 
@@ -130,7 +150,10 @@
     <a href="./concept-learning.html">Back to concept learning</a>
   </footer>
 
+  <script src="../geometry/worksheet/render.js"></script>
+  <script src="./learning/clinic-paths.js"></script>
   <script src="./learning/animated-math-lessons.js"></script>
+  <script src="./learning/animated-math-scene-model.js"></script>
   <script src="./animated-math.js"></script>
 </body>
 </html>

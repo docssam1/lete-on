@@ -34,7 +34,7 @@ window.LESSONS['sl14'] = {
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [
-        'One man\'s unusual life story and dedication turned global attention to the importance of sanitation',
+        'One man\'s unusual life story turned global attention to the importance of sanitation',
         'The toilet-shaped house in Suwon is the most creative piece of architecture in all of South Korea',
         'Museums about unusual topics are the most effective way to teach people about world issues',
         'Building houses in the shape of toilets is the best way to spread awareness about any global cause',
@@ -51,7 +51,7 @@ window.LESSONS['sl14'] = {
         'Sim was born in an outdoor toilet building next to his grandmother\'s house',
         'Sim served as the mayor of Suwon, South Korea',
         'Sim built the toilet-shaped house called Haewoojae in 2007',
-        'Sim donated Haewoojae to become the headquarters of the World Toilet Association',
+        'Sim donated Haewoojae to the World Toilet Association as its headquarters',
       ], 'D', 'The passage describes Sim\'s birth, his career as mayor, the construction of Haewoojae in 2007, and finally the donation of the house to the World Toilet Association. The donation is the last event described.'],
 
       ['Recognizing Cause and Effect', 'What caused the transparent glass walls of Haewoojae\'s bathroom to turn opaque?', [
@@ -62,7 +62,7 @@ window.LESSONS['sl14'] = {
       ], 'C', 'The passage explains that "when the lights inside the bathroom are turned on, the glass walls automatically turn opaque." The act of switching on the lights is the direct cause.'],
 
       ['Comparing and Contrasting', 'How is Haewoojae DIFFERENT from a typical house museum?', [
-        'Most house museums preserve a famous person\'s original home, while Haewoojae was designed and built specifically to be toilet-shaped and advance a cause',
+        'Most house museums preserve a famous person\'s original home, while Haewoojae was built toilet-shaped for a cause',
         'Typical house museums charge very high admission fees, while Haewoojae has always been completely free to visit',
         'Most house museums display artwork and furniture, while Haewoojae is the only curved building in the entire city of Suwon',
         'Typical house museums have no unusual architecture, while Haewoojae displays only scientific data about water treatment',
@@ -70,7 +70,7 @@ window.LESSONS['sl14'] = {
 
       ['Making Predictions', 'If Sim Jae-Duck had been embarrassed by his nickname "Mr. Toilet" and refused to use it, what would MOST LIKELY have happened?', [
         'The World Toilet Association would have elected a different leader with a more conventional name',
-        'His message about global sanitation might not have attracted as much public attention and media coverage',
+        'His message about global sanitation might not have drawn as much public attention',
         'Haewoojae would have been built in a completely different shape, perhaps like a water droplet',
         'Sim would have become mayor of a different city and focused on a completely different issue',
       ], 'B', 'The passage shows that Sim\'s unusual nickname and toilet-shaped house were key to drawing global attention. If he had hidden these, his message about sanitation would likely have been far less noticed.'],
@@ -85,7 +85,7 @@ window.LESSONS['sl14'] = {
       ['Drawing Conclusions and Making Inferences', 'What conclusion can you draw about why Sim chose to build his house in the shape of a toilet?', [
         'Sim believed that unusual architecture was the most important subject of study in modern times',
         'Sim wanted to prove that South Korean architects were capable of building in any shape they chose',
-        'Sim used the toilet shape deliberately to attract attention and make people think seriously about global sanitation',
+        'Sim used the toilet shape deliberately to make people think about global sanitation',
         'Sim needed to live in a toilet-shaped building to legally protect his rights to the title "Mr. Toilet"',
       ], 'C', 'The passage shows that Sim turned his unusual background into a tool for advocacy. Building a toilet-shaped house was a deliberate choice to make people notice and think about a topic they normally ignore.'],
 
@@ -98,7 +98,7 @@ window.LESSONS['sl14'] = {
 
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
         'To argue that every major city in the world should construct a toilet-shaped museum landmark',
-        'To introduce readers to an unusual but meaningful story about one person\'s dedication to global sanitation',
+        'To introduce readers to an unusual but meaningful story of dedication to sanitation',
         'To explain the technical engineering involved in constructing glass-walled transparent bathrooms',
         'To compare the sanitation systems of different Asian countries and evaluate which is most advanced',
       ], 'B', 'The passage centers on Sim\'s remarkable life, his creative approach to advocacy, and his lasting impact. Option B accurately reflects this purpose of introducing an inspiring and unusual story.'],
@@ -113,7 +113,7 @@ window.LESSONS['sl14'] = {
       ['Distinguishing Between Real and Make-believe', 'Which detail from the passage could NOT happen in real life?', [
         'A politician being born in an unusual outdoor building near a family home',
         'A house being deliberately built in the shape of a toilet as an architectural statement',
-        'A toilet exhibit in a museum that could speak twelve languages and answer visitors\' questions',
+        'A museum toilet exhibit that speaks twelve languages and answers visitors\' questions',
         'A foundation donating a famous building to an international non-profit organization',
       ], 'C', 'A toilet that speaks multiple languages and holds conversations with visitors is impossible in reality. Options A, B, and D all describe events that have happened or could realistically occur.'],
     ],
@@ -130,7 +130,7 @@ window.LESSONS['sl14'] = {
       ['Finding Main Idea', 'What is the main idea of this passage?', [
         'Toilet museums are the only effective way to teach students about global health issues',
         'Students should always visit museums before forming opinions about unusual-looking buildings',
-        'A field trip to an unusual museum changed the way students thought about sanitation and their own luck',
+        'A field trip to an unusual museum changed how students thought about sanitation',
         'Every school should construct a toilet-shaped building to raise awareness about global sanitation',
       ], 'C', 'The passage follows Ms. Cho\'s class from their initial laughter to a genuine understanding of the global sanitation crisis. Option C captures this transformation as the central theme.'],
 
@@ -145,12 +145,12 @@ window.LESSONS['sl14'] = {
         'Students arrived at the museum and were surprised by its toilet-shaped architecture',
         'A museum guide explained the global scale of the sanitation crisis to the class',
         'Students stood before a glowing world map showing areas without safe sanitation',
-        'Students wrote letters to pen pals in countries still improving their sanitation systems',
+        'Students wrote letters to pen pals in countries improving their sanitation',
       ], 'D', 'The letter-writing assignment happened after the field trip was over. The arrival, the guide\'s speech, and the world map display all occurred during the museum visit.'],
 
       ['Recognizing Cause and Effect', 'What caused Jimin to change his mind about toilets during the field trip?', [
         'Jimin\'s best friend convinced him that sanitation was more interesting than he had originally thought',
-        'Learning that millions of people lacked safe sanitation and that children died from related diseases moved him deeply',
+        'Learning that millions lacked safe sanitation and that children died from it moved him',
         'The museum guide spoke to Jimin personally and told him he should care more about global health',
         'Jimin had already read about the sanitation crisis in a book and was simply confirming what he knew',
       ], 'B', 'The passage shows that the statistics — children dying, billions without safe toilets — are what shocked Jimin out of his boredom. The severity of what he learned is the direct cause of his change.'],
@@ -163,7 +163,7 @@ window.LESSONS['sl14'] = {
       ], 'C', 'The passage contrasts the students\' initial laughter at the toilet-shaped building with Jimin\'s sincere, thoughtful letter at the end. Option C captures this shift from amusement to understanding.'],
 
       ['Making Predictions', 'What would MOST LIKELY have happened if Ms. Cho had not taken the class on this field trip?', [
-        'The students would probably have continued to take clean toilets and safe sanitation for granted',
+        'The students would probably have kept taking clean toilets and safe sanitation for granted',
         'The students would have learned exactly the same information from a textbook in regular class',
         'Jimin would have written letters to pen pals about a completely different global issue',
         'The students would have visited a different museum that taught the exact same important lessons',
@@ -191,7 +191,7 @@ window.LESSONS['sl14'] = {
       ], 'C', '"Most thought-provoking public building in the entire country" is a judgment that cannot be objectively measured — it is an opinion. Options A, B, and D state specific facts that can be verified from the passage.'],
 
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
-        'To show how an unusual field trip can change students\' perspective on a serious global issue',
+        'To show how an unusual field trip can change students\' view of a serious issue',
         'To explain the technical construction steps needed to build a toilet-shaped public museum',
         'To persuade all teachers to replace classroom instruction with visits to unusual museums',
         'To compare the differences between ancient and modern global sanitation systems in detail',
@@ -201,12 +201,12 @@ window.LESSONS['sl14'] = {
         'The museum walls were lined with real mirrors that showed visitors their own reflections in every room',
         'The museum guide used actual mirrors to check whether students had washed their hands properly',
         'The museum\'s glowing world map was designed to reflect the colors of different national flags',
-        'The museum presented the uncomfortable truth about global sanitation in a way that forced people to pay attention',
+        'The museum presented an uncomfortable truth about sanitation in a way people could not ignore',
       ], 'D', 'Just as a mirror shows you an honest reflection, the museum showed visitors an honest image of the world\'s sanitation crisis — something they might not want to see but could not deny once seen.'],
 
       ['Distinguishing Between Real and Make-believe', 'Which detail from the story could NOT happen in real life?', [
         'Students arriving at a museum and laughing at its unusual toilet-shaped architecture',
-        'A toilet museum exhibit that could accurately predict global sanitation conditions for the next thousand years',
+        'A toilet museum exhibit that predicts global sanitation for the next thousand years',
         'A guide explaining to students that millions of people worldwide lack access to safe toilets',
         'A student writing a sincere letter to a pen pal after learning about a global health issue',
       ], 'B', 'No exhibit can reliably predict specific global conditions for the next thousand years — that is impossible. Options A, C, and D all describe things that could realistically happen.'],
