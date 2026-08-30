@@ -23,8 +23,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
 
 assert(curriculumTypeIds.size === 442, `expected 442 unique curriculum types, got ${curriculumTypeIds.size}`);
 assert(typePlacements.length === 489, `expected 489 curriculum placements, got ${typePlacements.length}`);
-assert(CONCEPT_DEFINITIONS.length === 8, `expected eight explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 8, `expected eight pilot links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(CONCEPT_DEFINITIONS.length === 13, `expected thirteen explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 17, `expected seventeen Book 1 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -57,6 +57,42 @@ const expectedPilot = Object.freeze({
     placementBooks: Object.freeze(["book-01"])
   }),
   "two-digit-condition": Object.freeze({
+    conceptId: "concept:number:two-digit-place-conditions",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "shape-flip-composition": Object.freeze({
+    conceptId: "concept:geometry:sequential-rigid-transforms",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "digital-digit-transform": Object.freeze({
+    conceptId: "concept:pattern:seven-segment-transform",
+    placementBooks: Object.freeze(["book-01", "book-04"])
+  }),
+  "digital-two-digit-transform": Object.freeze({
+    conceptId: "concept:pattern:seven-segment-transform",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "t-shape-magic-sum": Object.freeze({
+    conceptId: "concept:number:shared-junction-equal-sum",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "gakuro-card-rectangle-placement": Object.freeze({
+    conceptId: "concept:number:row-column-sum-constraints",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "gakuro-grid-sum": Object.freeze({
+    conceptId: "concept:number:row-column-sum-constraints",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "gakuro-grid-nine-sum": Object.freeze({
+    conceptId: "concept:number:row-column-sum-constraints",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "three-digit-step-sequence": Object.freeze({
+    conceptId: "concept:pattern:constant-step-sequence",
+    placementBooks: Object.freeze(["book-01"])
+  }),
+  "two-digit-even-ones-greater-gap": Object.freeze({
     conceptId: "concept:number:two-digit-place-conditions",
     placementBooks: Object.freeze(["book-01"])
   })
@@ -130,8 +166,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 8, `expected 8 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 434, `expected 434 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 17, `expected 17 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 425, `expected 425 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

@@ -50,6 +50,51 @@ const pilotExpectations = Object.freeze({
     "십의 자리 조건과 일의 자리 조건, 두 숫자의 합이나 차 조건을 따로 적습니다.",
     "십의 자리가 0이 아닌 숫자쌍 가운데 먼저 만족하는 조건에 맞는 후보를 모두 적습니다.",
     "남은 후보를 다른 조건에 하나씩 대입해 모두 만족하는 두 자리 수만 남깁니다."
+  ]),
+  "shape-flip-composition": Object.freeze([
+    "화살표와 문장을 보고 먼저 할 뒤집기나 돌리기부터 번호를 붙입니다.",
+    "첫 움직임으로 옮겨진 각 칸을 표시해 중간 모양을 완성합니다.",
+    "중간 모양에 다음 움직임을 적용하고 칸 수와 연결이 그대로인지 확인합니다."
+  ]),
+  "digital-digit-transform": Object.freeze([
+    "처음 숫자를 이루는 위·아래·양옆·가운데 막대를 빠짐없이 확인합니다.",
+    "각 막대를 제자리 모양 그대로 주어진 방향으로 뒤집거나 돌립니다.",
+    "움직인 뒤 켜진 막대의 위치를 보고 완성된 한 자리 숫자를 찾습니다."
+  ]),
+  "digital-two-digit-transform": Object.freeze([
+    "십의 자리와 일의 자리 숫자를 이루는 막대를 각각 같은 움직임으로 옮깁니다.",
+    "좌우 뒤집기나 반 바퀴 돌리기라면 왼쪽과 오른쪽 자리의 순서도 바뀌는지 확인합니다.",
+    "움직인 숫자판을 바로 세워 왼쪽을 십의 자리, 오른쪽을 일의 자리로 읽습니다."
+  ]),
+  "t-shape-magic-sum": Object.freeze([
+    "가로줄과 세로줄에 모두 들어가는 T자의 꺾이는 칸을 표시합니다.",
+    "공통 칸을 제외한 가로 두 칸과 세로 두 칸의 합이 같도록 수 카드를 두 쌍으로 나눕니다.",
+    "카드를 놓은 뒤 가로 세 수와 세로 세 수를 각각 더해 두 합이 같은지 확인합니다."
+  ]),
+  "gakuro-card-rectangle-placement": Object.freeze([
+    "주어진 수 카드를 한 번씩만 쓰도록 사용 전 목록을 적고 놓은 카드는 지웁니다.",
+    "빈칸이 적거나 가능한 두 수가 바로 정해지는 가로줄부터 합에 맞게 채웁니다.",
+    "놓은 수가 세로 합에도 맞는지 확인하고 남은 카드를 다음 칸에 넣습니다."
+  ]),
+  "gakuro-grid-sum": Object.freeze([
+    "주어진 범위의 서로 다른 여섯 수를 적어 각 수를 한 번씩 쓸 준비를 합니다.",
+    "한 칸에 들어갈 수를 그 칸의 가로 합과 세로 합을 모두 만족하는 후보로 좁힙니다.",
+    "모든 줄의 합과 여섯 수의 중복 여부를 처음부터 다시 확인합니다."
+  ]),
+  "gakuro-grid-nine-sum": Object.freeze([
+    "주어진 서로 다른 아홉 수를 적고 격자에 놓을 때마다 사용 표시를 합니다.",
+    "이미 수가 많이 보이는 가로줄이나 세로줄에서 목표 합에 부족한 수를 먼저 찾습니다.",
+    "아홉 칸을 채운 뒤 각 수를 한 번씩 썼는지와 모든 줄의 합을 차례로 검산합니다."
+  ]),
+  "three-digit-step-sequence": Object.freeze([
+    "연달아 보이는 두 수에서 뒤 수와 앞 수의 차를 계산합니다.",
+    "다른 이웃한 수도 같은 만큼 커지거나 작아지는지 확인해 규칙을 정합니다.",
+    "앞뒤에서 같은 수만큼 더하거나 빼 빈칸의 수를 채우고 다시 차를 확인합니다."
+  ]),
+  "two-digit-even-ones-greater-gap": Object.freeze([
+    "두 자리 짝수의 일의 자리에는 0, 2, 4, 6, 8만 올 수 있음을 먼저 사용합니다.",
+    "일의 자리에서 십의 자리를 뺀 값이 주어진 차와 같은 숫자쌍을 찾습니다.",
+    "만든 두 자리 수가 주어진 범위와 나머지 조건을 모두 만족하는지 확인합니다."
   ])
 });
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
@@ -193,7 +238,7 @@ try {
     if (typeId === "shape-quarter-half-turn") {
       await assertPreview(desktop, desktopContext.pilot, expectedBeats, "hover", "desktop hover");
       await desktop.keyboard.press("Escape");
-      const principleOnly = desktop.locator('#curriculumTree [data-preview-type="shape-flip-composition"]');
+      const principleOnly = desktop.locator('#curriculumTree [data-preview-type="rotational-partition-two"]');
       assert.equal(await principleOnly.count(), 1, "desktop: principle-only comparison type missing");
       await principleOnly.hover();
       const principlePreview = desktop.locator("#typePreview:not([hidden])");

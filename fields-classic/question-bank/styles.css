@@ -793,6 +793,18 @@
   .question-card[data-type-id="circular-magic-line-sum"] .question-prompt{margin:6px 0 3px;line-height:1.45}
   .question-card[data-type-id="circular-magic-line-sum"] .book01-visual{min-height:115px;padding:0}
   .question-card[data-type-id="circular-magic-line-sum"] .book01-visual .b1-circle-magic{max-height:120px}
+  .question-card[data-type-id="gakuro-card-rectangle-placement"] .b1-sum-grid,
+  .question-card[data-type-id="gakuro-grid-sum"] .b1-sum-grid,
+  .question-card[data-type-id="gakuro-grid-nine-sum"] .b1-sum-grid{grid-template-columns:repeat(var(--columns),42px);grid-template-rows:repeat(var(--rows),42px)}
+  .question-card[data-type-id="gakuro-card-rectangle-placement"] .b1-sum-grid span,
+  .question-card[data-type-id="gakuro-grid-sum"] .b1-sum-grid span,
+  .question-card[data-type-id="gakuro-grid-nine-sum"] .b1-sum-grid span{width:42px;height:42px}
+  .question-card[data-type-id="gakuro-card-rectangle-placement"] .b1-row-sums,
+  .question-card[data-type-id="gakuro-grid-sum"] .b1-row-sums,
+  .question-card[data-type-id="gakuro-grid-nine-sum"] .b1-row-sums{grid-template-rows:repeat(var(--rows),42px)}
+  .question-card[data-type-id="gakuro-card-rectangle-placement"] .b1-column-sums,
+  .question-card[data-type-id="gakuro-grid-sum"] .b1-column-sums,
+  .question-card[data-type-id="gakuro-grid-nine-sum"] .b1-column-sums{grid-template-columns:repeat(var(--columns),42px)}
   .question-grid{display:block;padding:0;border:0;background:#fff}
   .question-page{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr));min-height:245mm;padding:11px;break-after:page;page-break-after:always}
   .question-page:last-child{break-after:auto;page-break-after:auto}
