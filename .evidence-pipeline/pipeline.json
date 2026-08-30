@@ -142,7 +142,7 @@
       "work_key": "35d727394990739763833b05c1dcd6c717a38c6e61d56cfbb81f1e90f5d9d79d",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "approved",
+      "release_status": "published",
       "owner": "codex-lead",
       "source_records": [],
       "reason": "",
@@ -163,7 +163,8 @@
             { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js" },
             { "role": "answer", "locator": "test:grade6-ns-a-clinic-pack:16-exact-answer-ledger" },
             { "role": "test", "locator": "test:clinic-practice-browser:6-ns-a-shared-shell-and-completion" },
-            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko" }
           ]
         }
       ],
@@ -183,7 +184,7 @@
         { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-toggle-hidden-and-direct-teacher-view" }] },
         { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js", "note": "Scope notice forbids automatic domain mastery or promotion claims." }] },
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
-        { "id": "deployment", "required": false, "status": "pending", "evidence": [] }
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko", "note": "PR 139 merge b811ec5e deployed with 12 student items, hidden answers, 12 teacher answers plus teaching moves, locked recheck, 8-part visual model with 6 shaded groups, answer-beat gating, and zero overflow at 390px verified live." }] }
       ]
     }
   ]
