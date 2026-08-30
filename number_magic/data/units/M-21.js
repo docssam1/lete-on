@@ -47,7 +47,7 @@ window.NM_UNITS['M-21'] = {
         desc:{ko:'맨 앞 계수 2를 그대로 내리고, 1을 곱해 다음 계수에 더해요: 2×1+5=7. 다시 7×1+(-3)=4가 나머지예요. 몫은 <b>2x+7</b>, 나머지는 <b>4</b>.',
               en:'Bring down the first coefficient 2, multiply by 1 and add to the next: 2×1+5=7. Then 7×1+(-3)=4 is the remainder. Quotient <b>2x+7</b>, remainder <b>4</b>.',
               zh:'先把最前面的系数2直接落下，乘以1加到下一个：2×1+5=7。再7×1+(-3)=4就是余数。商是<b>2x+7</b>，余数是<b>4</b>。'},
-        mathSteps:['2\\to 2\\times1+5=7', '7\\times1+(-3)=4', '\\text{몫}=2x+7,\\;\\text{나머지}=4'],
+        mathSteps:['2\\to 2\\times1+5=7', '7\\times1+(-3)=4', {ko:'\\text{몫}=2x+7,\\;\\text{나머지}=4',en:'\\text{quotient}=2x+7,\\;\\text{remainder}=4',zh:'\\text{商}=2x+7,\\;\\text{余式}=4'}],
         result:{ko:'k를 곱하고 다음 계수를 더하는 걸 반복해요!',en:'Multiply by k and add the next coefficient, again and again!',zh:'乘以k再加上下一个系数，反复进行！'},
         book:{ko:'(x-k)로 나눌 때: 몫의 계수를 왼쪽부터 차례로 만들며, 마지막에 남는 수가 나머지예요. 검산은 (x-k)×몫+나머지=원래 식.',
               en:'Dividing by (x-k): build the quotient\'s coefficients left to right; what\'s left at the end is the remainder. Check: (x-k)×quotient+remainder=original.',

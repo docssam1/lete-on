@@ -22,7 +22,7 @@ window.NM_UNITS['A-34'] = {
         desc:{ ko:'합=150, 차=30. 큰 수=(150+30)÷2=90, 작은 수=(150-30)÷2=60!',
                en:'Sum=150, diff=30. Larger=(150+30)÷2=90, Smaller=(150−30)÷2=60!',
                zh:'和=150，差=30。大数=(150+30)÷2=90，小数=(150-30)÷2=60！' },
-        mathSteps:['합=150, 차=30','큰 수 = (150+30) ÷ 2 = 180 ÷ 2 = 90','작은 수 = (150-30) ÷ 2 = 120 ÷ 2 = 60','검증: 90+60=150 ✓, 90-60=30 ✓'],
+        mathSteps:[{ko:'합=150, 차=30',en:'\\text{sum}=150, \\text{diff}=30',zh:'和=150，差=30'},{ko:'큰 수 = (150+30) ÷ 2 = 180 ÷ 2 = 90',en:'\\text{bigger number} = (150+30) ÷ 2 = 180 ÷ 2 = 90',zh:'大数 = (150+30) ÷ 2 = 180 ÷ 2 = 90'},{ko:'작은 수 = (150-30) ÷ 2 = 120 ÷ 2 = 60',en:'\\text{smaller number} = (150-30) ÷ 2 = 120 ÷ 2 = 60',zh:'小数 = (150-30) ÷ 2 = 120 ÷ 2 = 60'},{ko:'검증: 90+60=150 ✓, 90-60=30 ✓',en:'\\text{check: } 90+60=150 ✓, 90-60=30 ✓',zh:'验算：90+60=150 ✓, 90-60=30 ✓'}],
         result:{ ko:'두 수는 90과 60 ✓', en:'The two numbers are 90 and 60 ✓', zh:'两数为90和60 ✓' },
         book:{ ko:'작은 수 구하는 공식: (합-차)÷2도 기억해요. 두 공식이 항상 맞는지 검증하는 습관을 들여요!', en:'Also remember: small=(sum−diff)÷2. Always verify both formulas!', zh:'也要记住：小数=(和-差)÷2。养成验证两个公式的好习惯！' } },
       { tag:{ ko:'② 실생활 문제에 적용해요', en:'2) Apply to real-life problems', zh:'② 应用于实际问题' },
@@ -30,7 +30,7 @@ window.NM_UNITS['A-34'] = {
         desc:{ ko:'두 학생의 점수 합이 160점이고 차이가 20점이에요. 높은 점수=(160+20)÷2=90점, 낮은 점수=160-90=70점!',
                en:'Two students: scores sum to 160, differ by 20. Higher=(160+20)÷2=90, Lower=160−90=70!',
                zh:'两位学生：分数之和160分，差20分。高分=(160+20)÷2=90，低分=160-90=70！' },
-        mathSteps:['합=160, 차=20','높은 점수 = (160+20) ÷ 2 = 90','낮은 점수 = 160 - 90 = 70'],
+        mathSteps:[{ko:'합=160, 차=20',en:'\\text{sum}=160, \\text{diff}=20',zh:'和=160，差=20'},{ko:'높은 점수 = (160+20) ÷ 2 = 90',en:'\\text{higher score} = (160+20) ÷ 2 = 90',zh:'高分 = (160+20) ÷ 2 = 90'},{ko:'낮은 점수 = 160 - 90 = 70',en:'\\text{lower score} = 160 - 90 = 70',zh:'低分 = 160 - 90 = 70'}],
         result:{ ko:'90점과 70점 ✓', en:'90 and 70 points ✓', zh:'90分和70分 ✓' },
         book:null }
     ],
@@ -41,9 +41,9 @@ window.NM_UNITS['A-34'] = {
 
   check:{
     fills:[
-      { tex:'\\text{합}=150,\\text{차}=30: (150+30)\\div 2=\\square', answer:90,
+      { tex:{ko:'\\text{합}=150,\\text{차}=30: (150+30)\\div 2=\\square',en:'\\text{sum}=150,\\text{diff}=30: (150+30)\\div 2=\\square',zh:'\\text{和}=150,\\text{差}=30: (150+30)\\div 2=\\square'}, answer:90,
         hint:{ ko:'180÷2=90', en:'180÷2=90', zh:'180÷2=90' } },
-      { tex:'(150-30)\\div 2=\\square \\text{(작은 수)}', answer:60, hint:{ ko:'120÷2=60', en:'120÷2=60', zh:'120÷2=60' } }
+      { tex:{ko:'(150-30)\\div 2=\\square \\text{(작은 수)}',en:'(150-30)\\div 2=\\square \\text{(smaller number)}',zh:'(150-30)\\div 2=\\square \\text{（较小的数）}'}, answer:60, hint:{ ko:'120÷2=60', en:'120÷2=60', zh:'120÷2=60' } }
     ],
     open:{ ko:'합과 차로 두 수를 구하는 공식 두 가지를 설명하고, 왜 두 공식이 모두 옳은지 설명해봐요.', en:'Explain both formulas for finding two numbers from their sum and difference, and why both are correct.', zh:'说说用和差求两数的两个公式，并解释为什么两个公式都正确。' },
     openHint:{ ko:'큰수=(합+차)÷2: 합에 차를 더하면 큰수 2배. 작은수=(합-차)÷2: 합에서 차를 빼면 작은수 2배.', en:'Large=(sum+diff)÷2: adding diff removes the smaller. Small=(sum−diff)÷2: subtracting diff removes the larger.', zh:'大数=(和+差)÷2：和加差后较小数消去；小数=(和-差)÷2：和减差后较大数消去。' }

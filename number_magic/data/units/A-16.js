@@ -31,9 +31,9 @@ window.NM_UNITS['A-16'] = {
     stages:[
       { tag:{ ko:'① 자리마다 따로 더해요', en:'1) Add each place on its own', zh:'① 每位分别相加' },
         head:{ ko:'같은 자리 숫자끼리 각각 더해요', en:'Add digits of the same place value together', zh:'相同数位的数字各自相加' },
-        desc:{ ko:'받아올림이 헷갈릴 땐, 백의 자리끼리·십의 자리끼리·일의 자리끼리 따로 더한 다음, 그 부분합들을 마지막에 한꺼번에 더해요.',
-               en:'When carrying gets confusing, add hundreds-to-hundreds, tens-to-tens, ones-to-ones separately, then add those partial totals all at once.',
-               zh:'进位搞混时，先把百位加百位、十位加十位、个位加个位，再把这些部分和一起相加。' },
+        desc:{ ko:'받아올림이 헷갈릴 땐, <b>백의 자리끼리·십의 자리끼리·일의 자리끼리 따로 더한</b> 다음, 그 부분합들을 마지막에 한꺼번에 더해요.',
+               en:'When carrying gets confusing, <b>add hundreds-to-hundreds, tens-to-tens, ones-to-ones separately</b>, then add those partial totals all at once.',
+               zh:'进位搞混时，先把<b>百位加百位、十位加十位、个位加个位</b>，再把这些部分和一起相加。' },
         mathSteps:['325 + 248','= (300+200) + (20+40) + (5+8)','= 500 + 60 + 13','= 573'],
         result:{ ko:'자리별 부분합을 마지막에 더하면 받아올림 걱정이 줄어요!', en:'Adding place-by-place partial totals at the end reduces carrying worries!', zh:'最后再加各位部分和，进位就不容易出错！' },
         book:{ ko:'십의 자리끼리 더한 60, 일의 자리끼리 더한 13처럼 부분합을 먼저 구하고, 500+60+13=573으로 합산해요.',
@@ -42,9 +42,9 @@ window.NM_UNITS['A-16'] = {
 
       { tag:{ ko:'② 왜 자리를 밀어서 쓸까요?', en:'2) Why shift the partial sums?', zh:'② 为什么部分和要错位写？' },
         head:{ ko:'자릿값만큼 밀어서 적어요', en:'Write each partial sum shifted by its place value', zh:'按数位大小错位写' },
-        desc:{ ko:'십의 자리끼리 더한 "6"은 사실 60이에요. 그래서 자릿값만큼 밀어서(0을 붙여) 적어요. 자릿값을 정확히 지키면 답이 절대 틀리지 않아요.',
-               en:'The "6" from adding tens is really 60. So write it shifted (with a zero). Keep place values exact and the answer is always right.',
-               zh:'十位相加得的"6"其实是60，所以要错位（补0）写。数位对准，答案就不会错。' },
+        desc:{ ko:'십의 자리끼리 더한 "6"은 사실 60이에요. 그래서 자릿값만큼 밀어서(0을 붙여) 적어요. <b>자릿값을 정확히 지키면</b> 답이 절대 틀리지 않아요.',
+               en:'The "6" from adding tens is really 60. So write it shifted (with a zero). <b>Keep place values exact</b> and the answer is always right.',
+               zh:'十位相加得的"6"其实是60，所以要错位（补0）写。<b>数位对准</b>，答案就不会错。' },
         mathSteps:['412 + 356','= 700 + 60 + 8','= 768'],
         result:{ ko:'412+356 = 700+60+8 = 768', en:'412+356 = 700+60+8 = 768', zh:'412+356 = 700+60+8 = 768' },
         book:null }

@@ -37,7 +37,7 @@ window.NM_UNITS['B-08'] = {
         desc:{ko:'6단 결과의 <b>끝자리</b>를 보면 규칙이 있어요. 6, 2, 8, 4, 0이 계속 반복돼요! 이 패턴을 알면 답을 빨리 확인할 수 있어요.',
               en:'Look at the <b>ones digit</b> of each 6× answer — it cycles through 6, 2, 8, 4, 0, then repeats! Spotting the pattern helps you check answers fast.',
               zh:'看6的乘法结果的<b>个位数字</b>，有规律！6、2、8、4、0不断循环！认识这个规律能帮你快速验证答案。'},
-        mathSteps:['6×1=6','6×2=12','6×3=18','6×4=24','6×5=30 → 끝자리: 6,2,8,4,0 반복'],
+        mathSteps:['6×1=6','6×2=12','6×3=18','6×4=24',{ko:'6×5=30 → 끝자리: 6,2,8,4,0 반복',en:'6×5=30 → \\text{last digits 6,2,8,4,0 repeat}',zh:'6×5=30 → 末位6,2,8,4,0循环'}],
         result:{ko:'6단 끝자리: 6→2→8→4→0→6→2→8→4→0. 규칙적으로 반복돼요!', en:'6× ones digits: 6→2→8→4→0→6→2→8→4→0. A perfect cycle!', zh:'6的乘法个位：6→2→8→4→0→6→2→8→4→0，完美循环！'},
         book:{ko:'6단 결과의 끝자리는 6, 2, 8, 4, 0 순서로 반복돼요. 끝자리로 답이 맞는지 바로 확인할 수 있어요.', en:'6× ones digits cycle as 6, 2, 8, 4, 0. Use this cycle to spot-check any 6× answer.', zh:'6的乘法个位按6、2、8、4、0循环。可以用这个规律快速检验6的乘法答案。'} },
 

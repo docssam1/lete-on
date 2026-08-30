@@ -1347,8 +1347,21 @@ const ROAD_LABS=[
   name:{ko:'미적분은 왜 태어났나',en:'Why Calculus Was Born',zh:'微积分为何诞生'},
   desc:{ko:'변하는 것을 계산하려고 400년 전에 미적분이 생긴 이야기와 오늘의 쓰임을 봐요.',
         en:'How calculus was invented 400 years ago to measure change — and where it lives today.',
-        zh:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。'}}
+        zh:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。'}},
+ {file:'labs/root-hunter.html', icon:'🌰',
+  name:{ko:'루트 사냥꾼',en:'Root Hunter',zh:'求根猎人'},
+  desc:{ko:'√7은 몇일까? 넓이 슬라이더와 양쪽 조이기로 제곱근을 직접 사냥해요.',
+        en:'What is √7? Hunt square roots yourself with an area slider and a squeeze play.',
+        zh:'√7是多少？用面积滑块和两边夹逼，亲手猎取平方根。'}}
 ];
+
+/* 개념 노트 ↔ 실험실 연결 — 여기 등록된 유닛은 개념 노트 하단에 실험실 버튼이 뜬다.
+   실험실이 "따로 가야 있는 것"이 아니라 그 개념을 배우는 자리에서 바로 열리게. */
+const UNIT_LABS={
+  'M-15':'labs/root-hunter.html',      /* 제곱근 → 루트 사냥꾼 */
+  'M-44':'labs/why-calculus.html',     /* 미분계수 → 미적분은 왜 태어났나 */
+  'M-45':'labs/why-calculus.html',     /* 접선 → 〃 */
+};
 
 /* 과정 목록(번호순) — courses.js의 키에서 그대로 만든다. */
 function roadCourseList(){
@@ -2999,15 +3012,31 @@ function stepDiscover(body,u){
      삽화는 전부 원본 도형이고, 3개 언어 공용이라 글자 대신 숫자·수식만 쓴다. */
   const artHtml=`<figure class="nm-story-art"><img src="assets/images/story/${u.id}.svg" alt=""
       loading="lazy" onerror="this.closest('.nm-story-art').remove()"></figure>`;
+  /* 수학사 네 컷 만화(data/story-comics.js) — 등록된 유닛은 🏛 한 줄 대신 만화.
+     캡션이 이야기를 다 전하므로 산문 history는 그 유닛에선 그리지 않는다. */
+  const comic=window.NM_COMICS&&NM_COMICS[u.id];
+  const histHtml=comic
+    ?`<div class="nm-comic-h">🏛 ${S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史'}</div>
+      <div class="nm-comic">${comic.panels.map((p,i)=>`<figure class="nm-comic-panel">
+        <span class="nm-comic-no">${i+1}</span>
+        <div class="nm-comic-art">${p.art}</div>
+        <figcaption class="nm-comic-cap">${L(p.text)}</figcaption>
+      </figure>`).join('')}</div>`
+    :(st&&st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:'');
   const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
-    </div>${st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:''}`:'';
+    </div>${histHtml}`:'';
+  /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다 */
+  const unitLab=UNIT_LABS[u.id];
+  const labBtnHtml=unitLab?`<button class="nm-btn full nm-lab-link" id="openUnitLab">🧪 ${
+    S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试'}</button>`:'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
     <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
-    <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+    ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+  if(unitLab){$('#openUnitLab').onclick=()=>{window.open(unitLab,'_blank','noopener');};}
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
@@ -3150,7 +3179,10 @@ function screenSymbolDex(){
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
 function mathStepsExpr(container, steps, kid){
   const box=document.createElement('div');box.className='nm-mstep-box'+(kid?' kid':'');
-  steps.forEach((tex,i)=>{
+  steps.forEach((step,i)=>{
+    /* 항목은 문자열(언어 중립 수식) 또는 {ko,en,zh}(한국어 주석이 있던 줄).
+       2026-08-30에 372줄을 3언어화했다 — 문자열이면 그대로, 객체면 L()로 고른다. */
+    const tex=typeof step==='string'?step:L(step);
     if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
     const line=document.createElement('div');line.className='nm-mstep-line'+(kid?' kid':'');
     // 유아 노트: 한글 문장을 KaTeX 수식 폰트로 그리면 어색 → 앱 폰트 텍스트 칩으로 표시
@@ -3164,12 +3196,15 @@ function mathStepsExpr(container, steps, kid){
 function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
+  /* fill.tex는 문자열(언어 중립) 또는 {ko,en,zh} — 한글 \text 주석이 있던
+     31건을 2026-08-30에 3언어화했다(check-unit-lang.js가 지킨다). */
+  const fillTex=typeof fill.tex==='string'?fill.tex:L(fill.tex);
   const isMulti=Array.isArray(fill.answer);
   if(isMulti)ensureMultiState(fill.answer,fill.answerShape);
   const shapeCls=isMulti&&fill.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
-    <div class="nm-fill"><span data-tex="${esc(fill.tex)}"></span></div>
+    <div class="nm-fill"><span data-tex="${esc(fillTex)}"></span></div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>

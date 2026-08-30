@@ -54,7 +54,7 @@ window.NM_UNITS['B-11'] = {
         desc:{ko:'8단의 답을 쭉 적어보면 끝자리가 8→6→4→2→0 순서로 <b>반복</b>돼요! 8×5=40에서 끝자리가 0이 되고, 8×6부터 다시 8·6·4·2·0이 시작돼요.',
               en:'Write out the 8s and the last digits <b>repeat</b>: 8→6→4→2→0! At 8×5=40 (ends in 0) the cycle resets, and 8×6 starts it again.',
               zh:'写出8的口诀，个位数<b>重复</b>：8→6→4→2→0！到8×5=40（个位是0）循环重置，8×6又重新开始。'},
-        mathSteps:['8×1=8','8×2=16 (끝:6)','8×3=24 (끝:4)','8×4=32 (끝:2)','8×5=40 (끝:0) → 반복!'],
+        mathSteps:['8×1=8',{ko:'8×2=16 (끝:6)',en:'8×2=16 \\text{ (ends in 6)}',zh:'8×2=16（末位6）'},{ko:'8×3=24 (끝:4)',en:'8×3=24 \\text{ (ends in 4)}',zh:'8×3=24（末位4）'},{ko:'8×4=32 (끝:2)',en:'8×4=32 \\text{ (ends in 2)}',zh:'8×4=32（末位2）'},{ko:'8×5=40 (끝:0) → 반복!',en:'8×5=40 \\text{ (ends in 0) → repeats!}',zh:'8×5=40（末位0）→ 循环！'}],
         result:{ko:'8·6·4·2·0 패턴! 답이 이 끝자리가 아니면 다시 확인해요.', en:'8·6·4·2·0 pattern! If your answer\'s last digit isn\'t in this list, check again.', zh:'8·6·4·2·0规律！若答案个位不在其中，记得检查。'},
         book:null }
     ],

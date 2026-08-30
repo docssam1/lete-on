@@ -28,7 +28,7 @@ window.NM_UNITS['C-19'] = {
         desc:{ko:'놀라운 사실: <b>양쪽을 같은 수로 나눠도 몫은 그대로</b>예요! 84÷12에서 양쪽을 2로 나누면 42÷6, 또 2로 나누면 21÷3 = <b>7</b>. 사탕 84개를 12명이 나누나, 42개를 6명이 나누나 한 사람 몫은 똑같죠! 이렇게 <b>작은 나눗셈으로 줄여서</b> 풀어요.',
               en:'Amazing fact: <b>divide both sides by the same number and the quotient stays the same</b>! From 84÷12, halve both: 42÷6; halve again: 21÷3 = <b>7</b>. Sharing 84 sweets among 12 kids or 42 among 6 — each child gets the same! So we <b>shrink to a small division</b> and solve.',
               zh:'惊人的事实：<b>两边同除以一个数，商不变</b>！84÷12两边÷2得42÷6，再÷2得21÷3 = <b>7</b>。84颗糖分给12人，和42颗分给6人，每人分到的一样多！所以我们<b>缩成小除法</b>来解。'},
-        mathSteps:['84 ÷ 12','= 42 ÷ 6  (양쪽 ÷2)','= 21 ÷ 3  (양쪽 ÷2)','= 7'],
+        mathSteps:['84 ÷ 12',{ko:'= 42 ÷ 6  (양쪽 ÷2)',en:'= 42 ÷ 6 \\text{ (both ÷2)}',zh:'= 42 ÷ 6（两边÷2）'},{ko:'= 21 ÷ 3  (양쪽 ÷2)',en:'= 21 ÷ 3 \\text{ (both ÷2)}',zh:'= 21 ÷ 3（两边÷2）'},'= 7'],
         result:{ko:'84÷12=7! 양쪽을 똑같이 줄이면 몫 그대로.',en:'84÷12=7! Shrink both equally, the quotient survives.',zh:'84÷12=7！两边同缩，商不变。'},
         book:{ko:'원리: a÷b = (a÷k)÷(b÷k). 분수로 보면 84/12를 약분하는 것과 똑같아요 — 그래서 "약분 나눗셈"이라 불러요.',
               en:'Principle: a÷b = (a÷k)÷(b÷k). In fraction form this is exactly simplifying 84/12 — hence "simplify-first division".',
@@ -50,7 +50,7 @@ window.NM_UNITS['C-19'] = {
         desc:{ko:'익숙해지면 <b>한 번에 크게</b> 줄일 수 있어요. 72÷12에서 12가 둘 다의 약수임을 바로 보면: 72÷12 → 6÷1 = <b>6</b>. 이 "가장 크게 줄일 수 있는 수"가 <b>최대공약수(GCD)</b>예요. 구구단이 밝을수록 큰 공약수가 한눈에 보인답니다!',
               en:'With practice you can shrink <b>big in one step</b>. Seeing that 12 divides both in 72÷12: → 6÷1 = <b>6</b>. That "biggest possible shrinker" is the <b>greatest common divisor (GCD)</b>. The brighter your times tables, the faster big common factors jump out!',
               zh:'熟练后可以<b>一步大缩</b>。在72÷12中一眼看出12是公约数：→ 6÷1 = <b>6</b>。这个"能缩的最大的数"就是<b>最大公约数(GCD)</b>。口诀越熟，大公约数越容易一眼看出！'},
-        mathSteps:['72 ÷ 12','양쪽 ÷12 (최대공약수)','= 6 ÷ 1','= 6'],
+        mathSteps:['72 ÷ 12',{ko:'양쪽 ÷12 (최대공약수)',en:'\\text{both ÷12 (the GCD)}',zh:'两边÷12（最大公约数）'},'= 6 ÷ 1','= 6'],
         result:{ko:'72÷12=6! 최대공약수로 한 방에 끝.',en:'72÷12=6! One shot with the GCD.',zh:'72÷12=6！用最大公约数一步到位。'},
         book:null }
     ],

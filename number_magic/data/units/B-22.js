@@ -37,7 +37,7 @@ window.NM_UNITS['B-22'] = {
         desc:{ ko:'<b>일의 자리 숫자 × 한 자리 수의 결과가 9 이하</b>면 올림이 생기지 않아요. 21×4를 봐요: 일의 자리 1×4=4. 4는 9 이하니까 올림 없음! 20×4=80, 1×4=4, 80+4=84.',
                en:'<b>If (ones digit) × (1-digit number) ≤ 9</b>, there\'s no carrying. Look at 21×4: ones digit 1×4=4. Since 4 ≤ 9, no carrying! 20×4=80, 1×4=4, 80+4=84.',
                zh:'<b>如果个位数字×一位数 ≤ 9</b>，就不会有进位。看21×4：个位1×4=4，4≤9，无进位！20×4=80，1×4=4，80+4=84。' },
-        mathSteps:['21×4: 일×4=4 ≤9 (올림×)','= 20×4 + 1×4','= 80 + 4 = 84'],
+        mathSteps:[{ko:'21×4: 일×4=4 ≤9 (올림×)',en:'21×4: \\text{ones}×4=4 ≤9 \\text{ (no carry)}',zh:'21×4：个位×4=4 ≤9（不进位）'},'= 20×4 + 1×4','= 80 + 4 = 84'],
         result:{ ko:'일×한 자리 ≤ 9이면 올림 없이 바로 더할 수 있어요!', en:'Ones × digit ≤ 9 → add directly, no carrying!', zh:'个位×一位数 ≤ 9，直接相加，无进位！' },
         book:{ ko:'올림 없는 경우를 먼저 연습하면 분배법칙의 흐름을 익히기 좋아요. 일의 자리 결과가 한 자리 수인지 확인하는 습관을 들여요.', en:'Practising no-carrying cases first helps you master the distributive flow. Get in the habit of checking whether the ones result is a single digit.', zh:'先练习无进位的情况，有助于掌握分配律的流程。养成检查个位结果是否是一位数的习惯。' } },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-22'] = {
         desc:{ ko:'32×3을 눈으로만 풀어봐요. <b>30×3=90</b>은 바로 나오죠? 그다음 <b>2×3=6</b>. 90+6=96! 올림 없을 때는 이렇게 빠르게 암산할 수 있어요.',
                en:'Try 32×3 in your head. <b>30×3=90</b> comes right away, then <b>2×3=6</b>. 90+6=96! With no carrying you can do this almost instantly.',
                zh:'用心算来做32×3。<b>30×3=90</b>立刻就出来了，然后<b>2×3=6</b>，90+6=96！无进位的时候，暗算可以非常快。' },
-        mathSteps:['32×3','= 90 + 6','= 96 (암산)','속도가 붙어요!'],
+        mathSteps:['32×3','= 90 + 6',{ko:'= 96 (암산)',en:'= 96 \\text{ (in your head)}',zh:'= 96（心算）'},{ko:'속도가 붙어요!',en:'\\text{you get faster!}',zh:'速度会越来越快！'}],
         result:{ ko:'30×3=90, 2×3=6. 90+6=96! 암산으로 순식간에 끝났어요.', en:'30×3=90, 2×3=6. 90+6=96! Mental arithmetic in a flash.', zh:'30×3=90，2×3=6，90+6=96！暗算瞬间搞定。' },
         book:null }
     ],

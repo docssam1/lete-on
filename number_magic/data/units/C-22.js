@@ -36,7 +36,7 @@ window.NM_UNITS['C-22'] = {
         desc:{ko:'1/2 + 1/3을 분자끼리 더해 2/5라고 하면 <b>틀려요!</b> 반쪽(1/2)과 3분의 1쪽(1/3)은 <b>조각 크기가 달라서</b> 개수만 더하면 안 돼요. 사과 2개+귤 3개를 "5사과"라고 못 부르는 것과 같아요. 먼저 <b>같은 크기의 조각으로 바꿔야</b> 해요!',
               en:'Adding numerators in 1/2 + 1/3 to get 2/5 is <b>wrong!</b> A half and a third are <b>different-sized pieces</b>, so counting them together fails — like calling 2 apples + 3 oranges "5 apples". We must first <b>convert to equal-sized pieces</b>!',
               zh:'把1/2 + 1/3的分子直接相加得2/5是<b>错的！</b>半块和三分之一块<b>大小不同</b>，不能只数个数——就像2个苹果+3个橘子不能叫"5个苹果"。必须先<b>换成同样大小的块</b>！'},
-        mathSteps:['\\dfrac{1}{2} + \\dfrac{1}{3} \\neq \\dfrac{2}{5}!','\\text{조각 크기가 다르다}','\\text{→ 크기를 맞춰야 함}'],
+        mathSteps:['\\dfrac{1}{2} + \\dfrac{1}{3} \\neq \\dfrac{2}{5}!',{ko:'\\text{조각 크기가 다르다}',en:'\\text{the pieces are different sizes}',zh:'\\text{每块大小不一样}'},{ko:'\\text{→ 크기를 맞춰야 함}',en:'\\text{→ make the sizes match}',zh:'\\text{→ 要把大小对齐}'}],
         result:{ko:'분모가 다르면 먼저 크기 맞추기 — 이것이 통분이에요!',en:'Different denominators need size-matching first — that\'s finding a common denominator!',zh:'分母不同先统一大小——这就是通分！'},
         book:{ko:'검산으로 확인: 1/2=0.5, 1/3≈0.33이니 합은 0.83쯤. 2/5=0.4는 터무니없이 작죠? 크기 감각으로 잘못된 답을 걸러내요.',
               en:'Sanity check: 1/2=0.5 and 1/3≈0.33 sum to about 0.83. The wrong answer 2/5=0.4 is absurdly small — size sense filters bad answers.',
@@ -58,7 +58,7 @@ window.NM_UNITS['C-22'] = {
         desc:{ko:'어떤 이분모 분수도 3단계로: ①<b>공통 분모 정하기</b>(분모끼리 곱하면 항상 성공) ②<b>각 분수 바꾸기</b> — 분모에 곱한 수를 분자에도 똑같이 ③<b>분자끼리 더하기</b>. 예: 2/3+1/4 → 공통분모 12 → 8/12+3/12 = <b>11/12</b>. 뺄셈도 같은 3단계예요!',
               en:'Any unlike-denominator pair takes three steps: ①<b>Pick the common denominator</b> (the product always works) ②<b>Convert each fraction</b> — whatever multiplies the bottom multiplies the top ③<b>Add the numerators</b>. E.g. 2/3+1/4 → common 12 → 8/12+3/12 = <b>11/12</b>. Subtraction uses the same three steps!',
               zh:'任何异分母分数都是三步：①<b>定公分母</b>(分母相乘一定行) ②<b>转换每个分数</b>——分母乘几分子也乘几 ③<b>分子相加</b>。例：2/3+1/4→公分母12→8/12+3/12 = <b>11/12</b>。减法也是同样三步！'},
-        mathSteps:['\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{공통분모 12})','\\dfrac{2}{3}=\\dfrac{8}{12},\\; \\dfrac{1}{4}=\\dfrac{3}{12}','\\dfrac{8}{12} + \\dfrac{3}{12} = \\dfrac{11}{12}'],
+        mathSteps:[{ko:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{공통분모 12})',en:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{common denominator 12})',zh:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{公分母12})'},'\\dfrac{2}{3}=\\dfrac{8}{12},\\; \\dfrac{1}{4}=\\dfrac{3}{12}','\\dfrac{8}{12} + \\dfrac{3}{12} = \\dfrac{11}{12}'],
         result:{ko:'2/3+1/4=11/12! 맞추고, 바꾸고, 더하면 끝.',en:'2/3+1/4=11/12! Match, convert, add — done.',zh:'2/3+1/4=11/12！统一、转换、相加，完成。'},
         book:null }
     ],

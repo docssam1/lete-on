@@ -37,7 +37,7 @@ window.NM_UNITS['B-07'] = {
         desc:{ko:'3단의 결과를 각 자리 숫자끼리 더하면 <b>항상 3의 배수</b>가 나와요! 이 비밀을 알면 검산이 쉬워져요.',
               en:'Add up the digits of any 3× answer and you always get <b>a multiple of 3</b>! This trick makes checking your work easy.',
               zh:'把3的倍数的各位数字加起来，总是<b>3的倍数</b>！掌握这个秘诀，验算就变得简单了。'},
-        mathSteps:['12: 1+2=3 ✓','18: 1+8=9 ✓','27: 2+7=9 ✓','→ 3의 배수 특징!'],
+        mathSteps:['12: 1+2=3 ✓','18: 1+8=9 ✓','27: 2+7=9 ✓',{ko:'→ 3의 배수 특징!',en:'→ \\text{a multiple-of-3 pattern!}',zh:'→ 3的倍数的特点！'}],
         result:{ko:'3단의 모든 답은 자릿수 합이 3 또는 9예요. 기억해 두세요!', en:'Every answer in the 3 times table has a digit sum of 3, 6, or 9. Remember that!', zh:'3的乘法表中每个答案的数位之和都是3、6或9。记住这一点！'},
         book:{ko:'어떤 수의 각 자리 숫자 합이 3의 배수이면 그 수는 3의 배수예요. 3단 결과는 모두 이 규칙을 따릅니다.', en:'If the digit sum of a number is divisible by 3, so is the number itself. All 3× results follow this rule.', zh:'如果一个数的数位之和能被3整除，那么这个数本身也能被3整除。3的乘法表所有结果都遵循这个规律。'} },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-07'] = {
         desc:{ko:'잊었을 때는 <b>이전 답에 3을 더해요</b>. 3×4=12를 알면, 3×5는 12+3=15! 손가락으로 3씩 묶어 세는 것도 좋아요.',
               en:'If you forget, <b>add 3 to the previous answer</b>. Know 3×4=12? Then 3×5 is just 12+3=15! You can also group fingers in threes.',
               zh:'如果忘了，就<b>在上一个答案上加3</b>。知道3×4=12？那么3×5就是12+3=15！也可以用手指3个一组来数。'},
-        mathSteps:['3×4 = 3+3+3+3 = 12','3×7 = 3×6 + 3 = 18+3 = 21','이전 답에 3 더하기 전략!'],
+        mathSteps:['3×4 = 3+3+3+3 = 12','3×7 = 3×6 + 3 = 18+3 = 21',{ko:'이전 답에 3 더하기 전략!',en:'\\text{Strategy: add 3 to the previous answer!}',zh:'策略：上一个答案加3！'}],
         result:{ko:'3×6=18, 3×7=21, 3×8=24, 3×9=27 — 이전+3!', en:'3×6=18, 3×7=21, 3×8=24, 3×9=27 — previous+3!', zh:'3×6=18，3×7=21，3×8=24，3×9=27——上一个答案+3！'},
         book:null }
     ],

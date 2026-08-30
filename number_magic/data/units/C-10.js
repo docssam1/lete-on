@@ -39,7 +39,7 @@ window.NM_UNITS['C-10'] = {
         desc:{ko:'가로 23, 세로 45인 직사각형을 상상해요. 가로를 20|3, 세로를 40|5로 자르면 <b>방이 4개</b> 생겨요: 20×40, 20×5, 3×40, 3×5. 전체 넓이 = 네 방의 넓이 합. 곱셈이 <b>넓이 그림</b>으로 보이면 절대 잊어버리지 않아요!',
               en:'Picture a 23-by-45 rectangle. Cutting the width into 20|3 and the height into 40|5 makes <b>four rooms</b>: 20×40, 20×5, 3×40, 3×5. Total area = sum of the four rooms. Once you see multiplication as an <b>area picture</b>, you never forget it!',
               zh:'想象一个23×45的长方形。宽切成20|3，高切成40|5，就有<b>四个房间</b>：20×40、20×5、3×40、3×5。总面积=四个房间面积之和。把乘法看成<b>面积图</b>就永远不会忘！'},
-        mathSteps:['방1: 20×40=800','방2: 20×5=100','방3: 3×40=120','방4: 3×5=15 → 합 1035'],
+        mathSteps:[{ko:'방1: 20×40=800',en:'\\text{room 1: } 20×40=800',zh:'房间1：20×40=800'},{ko:'방2: 20×5=100',en:'\\text{room 2: } 20×5=100',zh:'房间2：20×5=100'},{ko:'방3: 3×40=120',en:'\\text{room 3: } 3×40=120',zh:'房间3：3×40=120'},{ko:'방4: 3×5=15 → 합 1035',en:'\\text{room 4: } 3×5=15 → \\text{sum } 1035',zh:'房间4：3×5=15 → 合计1035'}],
         result:{ko:'곱셈 = 넓이! 네 방을 모두 더하면 전체 넓이.',en:'Multiplication = area! Add all four rooms for the total.',zh:'乘法=面积！四个房间加起来就是总面积。'},
         book:{ko:'이 격자 그림은 세로셈의 원리이기도 해요. 세로셈의 각 줄이 사실은 격자의 방들을 묶어 계산한 거예요.',
               en:'This grid is also why column multiplication works — each row of the column method groups some of these rooms.',
