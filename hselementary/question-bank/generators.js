@@ -2061,12 +2061,13 @@
     const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
     return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.</p><svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 막대그래프" data-chart-kind="bar" data-chart-step="${step}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${values.join(",")}"${secondValues ? ` data-chart-second-values="${secondValues.join(",")}"` : ""} data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg></div>`;
   };
-  const lineChartSvg = ({ labels, series, step, unit, xAxis = "시간" }) => {
-    if (!Number.isFinite(step) || step <= 0 || labels.length < 2 || labels.length > 7 || !series.length || series.length > 2) {
+  const lineChartSvg = ({ labels, series, step, unit, xAxis = "시간", minValue = 0 }) => {
+    if (!Number.isFinite(step) || step <= 0 || !Number.isFinite(minValue) || minValue < 0 || labels.length < 2 || labels.length > 7 || !series.length || series.length > 3) {
       throw new Error("꺾은선그래프 설정이 올바르지 않습니다.");
     }
     const allValues = series.flatMap(item => item.values);
-    if (series.some(item => item.values.length !== labels.length) || allValues.some(value => !Number.isFinite(value) || value < 0 || !Number.isInteger(value / step))) {
+    const isStepAligned = value => Math.abs((value - minValue) / step - Math.round((value - minValue) / step)) < 1e-9;
+    if (series.some(item => item.values.length !== labels.length) || allValues.some(value => !Number.isFinite(value) || value < minValue || !isStepAligned(value))) {
       throw new Error("꺾은선그래프 값은 눈금 단위의 배수여야 합니다.");
     }
     const width = 250;
@@ -2077,13 +2078,13 @@
     const bottom = series.length > 1 ? 52 : 38;
     const plotWidth = width - left - right;
     const plotHeight = height - top - bottom;
-    const scaleMax = Math.max(step, Math.ceil(Math.max(...allValues) / step) * step);
-    const tickCount = scaleMax / step + 1;
-    if (tickCount > 10) throw new Error("꺾은선그래프 세로 눈금은 10개 이하여야 합니다.");
+    const scaleMax = Math.max(minValue + step, minValue + Math.ceil((Math.max(...allValues) - minValue) / step) * step);
+    const tickCount = Math.round((scaleMax - minValue) / step) + 1;
+    if (tickCount > 12) throw new Error("꺾은선그래프 세로 눈금은 12개 이하여야 합니다.");
     const xFor = index => left + plotWidth * index / (labels.length - 1);
-    const yFor = value => top + plotHeight - value / scaleMax * plotHeight;
+    const yFor = value => top + plotHeight - (value - minValue) / (scaleMax - minValue) * plotHeight;
     const horizontalGrid = Array.from({ length: tickCount }, (_, index) => {
-      const value = index * step;
+      const value = minValue + index * step;
       const y = yFor(value);
       return `<line class="chart-grid" x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}"/><text class="chart-tick" x="${left - 5}" y="${(y + 3).toFixed(1)}">${value}</text>`;
     }).join("");
@@ -2093,15 +2094,21 @@
     }).join("");
     const xLabels = labels.map((label, index) => `<text class="chart-label" x="${xFor(index).toFixed(1)}" y="${top + plotHeight + 17}">${label}</text>`).join("");
     const plottedSeries = series.map((item, seriesIndex) => {
-      const points = item.values.map((value, index) => `${xFor(index).toFixed(1)},${yFor(value).toFixed(1)}`).join(" ");
-      const markers = item.values.map((value, index) => `<circle class="chart-point chart-line-${seriesIndex}" data-chart-value="${value}" cx="${xFor(index).toFixed(1)}" cy="${yFor(value).toFixed(1)}" r="3"/>`).join("");
-      return `<polyline class="chart-line chart-line-${seriesIndex}" points="${points}"/>${markers}`;
+      const hidden = new Set(item.hidden || []);
+      const segments = item.values.slice(0, -1).map((value, index) => hidden.has(index) || hidden.has(index + 1) ? "" : `<line class="chart-line chart-line-${seriesIndex}" x1="${xFor(index).toFixed(1)}" y1="${yFor(value).toFixed(1)}" x2="${xFor(index + 1).toFixed(1)}" y2="${yFor(item.values[index + 1]).toFixed(1)}"/>`).join("");
+      const markers = item.values.map((value, index) => hidden.has(index)
+        ? `<text class="chart-question" data-chart-hidden-index="${index}" x="${xFor(index).toFixed(1)}" y="${top + plotHeight - 8}">?</text>`
+        : `<circle class="chart-point chart-line-${seriesIndex}" data-chart-value="${value}" cx="${xFor(index).toFixed(1)}" cy="${yFor(value).toFixed(1)}" r="3"/>`).join("");
+      return `${segments}${markers}`;
     }).join("");
     const legendMarkup = series.length > 1 ? `<g class="chart-legend chart-line-legend">${series.map((item, index) => {
-      const x = left + index * 96;
+      const x = left + index * 64;
       return `<line class="chart-line chart-line-${index}" x1="${x}" y1="${height - 13}" x2="${x + 16}" y2="${height - 13}"/><text x="${x + 22}" y="${height - 9}">${item.name}</text>`;
     }).join("")}</g>` : "";
-    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.</p><svg class="line-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 꺾은선그래프" data-chart-kind="line" data-chart-step="${step}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${series.map(item => item.values.join(",")).join(";")}" data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${horizontalGrid}${verticalGrid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${plottedSeries}${xLabels}<text class="chart-axis-name" x="${width - right}" y="${height - (series.length > 1 ? 30 : 8)}">${xAxis}</text>${legendMarkup}</svg></div>`;
+    const hiddenValues = series.map(item => (item.hidden || []).join(",")).join(";");
+    const baselineNote = minValue > 0 ? ` 세로축은 ${minValue}${unit}부터 시작합니다.` : "";
+    const breakMark = minValue > 0 ? `<path class="chart-axis chart-axis-break" d="M34 ${top + plotHeight - 8} l4 -4 l-4 -4 l4 -4"/>` : "";
+    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.${baselineNote}</p><svg class="line-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 꺾은선그래프" data-chart-kind="line" data-chart-step="${step}" data-chart-scale-min="${minValue}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${series.map(item => item.values.join(",")).join(";")}" data-chart-hidden="${hiddenValues}" data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${horizontalGrid}${verticalGrid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${breakMark}${plottedSeries}${xLabels}<text class="chart-axis-name" x="${width - right}" y="${height - (series.length > 1 ? 30 : 8)}">${xAxis}</text>${legendMarkup}</svg></div>`;
   };
   const triangleLatticeSvg = (side) => {
     const width = 240;
@@ -11255,64 +11262,126 @@
       return result(`오늘 판매한 빵의 수를 나타낸 막대그래프입니다. 한 개의 가격이 ${priceText}일 때 전체 판매 금액을 구하세요.${barChartSvg({ labels, values: counts, step: 5, unit: "개" })}`, answer, `${counts.map((count, index) => `${count} × ${prices[index].toLocaleString()}`).join(" + ")} = ${answer.toLocaleString()}원이므로 전체 판매 금액은 ${answer.toLocaleString()}원입니다.`);
     },
     lineGraphUnderstanding({ rng, level, variant = 0 }) {
-      const labels = ["월", "화", "수", "목", "금"];
-      const step = 5;
-      const values = [
-        int(rng, 3 + level, 4 + level),
-        int(rng, 5 + level, 6 + level),
-        int(rng, 4 + level, 5 + level),
-        int(rng, 6 + level, 7 + level),
-        int(rng, 5 + level, 7)
-      ].map(value => value * step);
-      const chart = lineChartSvg({ labels, series: [{ name: "배출량", values }], step, unit: "kg", xAxis: "요일" });
-      if (variant % 3 === 0) {
-        const answer = values[3] - values[2];
-        return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 목요일의 배출량은 수요일보다 몇 kg 더 많습니까?${chart}`, answer, `수요일은 ${values[2]}kg, 목요일은 ${values[3]}kg이므로 ${values[3]} - ${values[2]} = ${answer}kg입니다.`);
+      const sourceEvidence = (sourceItemId, values, extra = "") => `<span hidden data-source42-line-item="${sourceItemId}" data-source42-values="${values.join(",")}" ${extra}></span>`;
+      if (variant === 0) {
+        const commandSets = [
+          [7, 6, -5, 8, -11],
+          [8, -6, 9, -4, -2],
+          [11, -7, 8, -9, 2]
+        ];
+        const commands = commandSets[level];
+        const start = pick(rng, [15, 20, 25]);
+        const net = commands.reduce((sum, value) => sum + value, 0);
+        if (net !== 5) throw new Error("명령 한 차례의 물 변화량은 5mL여야 합니다.");
+        const values = Array.from({ length: 4 }, (_, index) => start + net * (index + 1));
+        const labels = ["1회", "2회", "3회", "4회"];
+        const chart = lineChartSvg({ labels, series: [{ name: "물의 양", values, hidden: [0, 1, 2, 3] }], step: 5, unit: "mL", xAxis: "되풀이" });
+        const answer = values.join(", ");
+        const commandText = commands.map(value => `${value > 0 ? "+" : ""}${value}mL`).join(" → ");
+        const commandExpression = commands.map((value, index) => index === 0 ? `${value}` : value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`).join(" ");
+        return result(`처음 그릇에 물이 ${start}mL 들어 있습니다. ${commandText}의 다섯 명령을 차례로 한 뒤, 같은 과정을 모두 4번 되풀이합니다. 각 과정이 끝날 때의 물의 양을 차례로 쓰세요.${chart}${sourceEvidence("4-2-u5-e1-exploration", values, `data-source42-net="${net}"`)}`, answer, `한 차례의 변화량은 ${commandExpression} = ${net}mL입니다. ${start}mL에서 한 차례마다 ${net}mL씩 늘어나므로 차례로 ${answer}mL입니다.`);
       }
-      if (variant % 3 === 1) {
-        const answer = values.slice(1, 4).reduce((sum, value) => sum + value, 0);
-        return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 화요일부터 목요일까지 배출량의 합은 몇 kg입니까?${chart}`, answer, `화요일부터 목요일까지의 배출량은 ${values[1]}kg, ${values[2]}kg, ${values[3]}kg입니다. 합은 ${values[1]} + ${values[2]} + ${values[3]} = ${answer}kg입니다.`);
+      if (variant === 1) {
+        const base = pick(rng, [5500, 6000, 6500]);
+        const values = [base, base + 500, base + 1000, base + 1500, base + 2000];
+        const total = values.reduce((sum, value) => sum + value, 0);
+        const hiddenIndex = 3;
+        const chart = lineChartSvg({ labels: ["8월", "9월", "10월", "11월", "12월"], series: [{ name: "저금액", values, hidden: [hiddenIndex] }], step: 500, unit: "원", xAxis: "월", minValue: base - 500 });
+        const answer = values[hiddenIndex];
+        return result(`8월부터 12월까지 저금액의 합은 ${total.toLocaleString()}원입니다. 9월의 저금액은 10월보다 적고, 11월의 저금액은 ${(answer + 500).toLocaleString()}원보다 적습니다. 그래프에서 가려진 11월의 저금액을 구하세요.${chart}${sourceEvidence("4-2-u5-e1-example-1-1", values, `data-source42-hidden="${hiddenIndex}" data-source42-total="${total}"`)}`, answer, `보이는 네 달의 합은 ${(total - answer).toLocaleString()}원입니다. 따라서 11월은 ${total.toLocaleString()} - ${(total - answer).toLocaleString()} = ${answer.toLocaleString()}원입니다.`);
       }
-      const answer = Math.max(...values) - Math.min(...values);
-      return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 배출량이 가장 많은 날과 가장 적은 날의 배출량 차는 몇 kg입니까?${chart}`, answer, `그래프에서 가장 많은 배출량은 ${Math.max(...values)}kg, 가장 적은 배출량은 ${Math.min(...values)}kg입니다. 따라서 차는 ${Math.max(...values)} - ${Math.min(...values)} = ${answer}kg입니다.`);
+      if (variant === 2) {
+        const profiles = [
+          [19, 18.5, 18, 18.5, 18, 17.5],
+          [19, 18, 17.5, 18, 17, 16.5],
+          [19.5, 18.5, 18, 18.5, 17.5, 17]
+        ];
+        const values = profiles[level];
+        const startingStickers = int(rng, 5, 8);
+        const changes = values.slice(1).map((value, index) => value < values[index] ? 2 : -1);
+        const answer = startingStickers + changes.reduce((sum, value) => sum + value, 0);
+        const minValue = Math.min(...values) - 0.5;
+        const chart = lineChartSvg({ labels: ["3월", "4월", "5월", "6월", "7월", "8월"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "월", minValue });
+        const changeExpression = changes.map(value => value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`).join(" ");
+        return result(`달리기 기록이 전달보다 0.5초 줄어든 달에는 붙임딱지 2장을 받고, 그렇지 않은 달에는 1장을 잃습니다. 3월에 ${startingStickers}장을 가지고 있었다면 8월까지 붙임딱지는 몇 장입니까?${chart}${sourceEvidence("4-2-u5-e1-example-1-2", values, `data-source42-start="${startingStickers}" data-source42-changes="${changes.join(",")}"`)}`, answer, `4월부터 기록 변화를 차례로 보면 붙임딱지 변화는 ${changes.map(value => value > 0 ? `+${value}` : value).join(", ")}장입니다. ${startingStickers} ${changeExpression} = ${answer}장이므로 답은 ${answer}장입니다.`);
+      }
+      if (variant === 3) {
+        const july = [20000, 17500, 12500];
+        const values = [15000, 13000, 16000, 15000, 14000];
+        const total = values.reduce((sum, value) => sum + value, 0);
+        const decrease = values[3] - values[4];
+        const bar = barChartSvg({ labels: ["가", "나", "다"], values: july, step: 2500, unit: "명" });
+        const line = lineChartSvg({ labels: ["5월", "6월", "7월", "8월", "9월"], series: [{ name: "나 입장객", values }], step: 1000, unit: "명", xAxis: "월", minValue: 10000 });
+        const answer = values[4];
+        return result(`왼쪽은 세 물놀이장의 7월 입장객 수이고, 오른쪽은 나 물놀이장의 5월부터 9월까지 입장객 수입니다. 나 물놀이장의 다섯 달 입장객 수의 합은 ${total.toLocaleString()}명이고, 9월은 8월보다 ${decrease.toLocaleString()}명 줄었습니다. 나 물놀이장의 9월 입장객 수를 구하세요.${bar}${line}${sourceEvidence("4-2-u5-e1-example-1-3", values, `data-source42-total="${total}" data-source42-decrease="${decrease}"`)}`, answer, `오른쪽 그래프의 9월 점은 ${answer.toLocaleString()}명을 나타냅니다. 또한 8월 ${values[3].toLocaleString()}명보다 ${decrease.toLocaleString()}명 적고, 다섯 달의 합도 ${total.toLocaleString()}명으로 조건과 같습니다.`);
+      }
+      if (variant === 4) {
+        const labels = ["1년", "2년", "3년", "4년", "5년", "6년"];
+        const series = [
+          { name: "가", values: [8000, 10000, 10000, 14000, 12000, 14000] },
+          { name: "나", values: [10000, 10000, 14000, 14000, 16000, 14000] },
+          { name: "다", values: [6000, 10000, 8000, 10000, 10000, 14000] }
+        ];
+        const counts = [0, 0, 0];
+        for (let year = 1; year < labels.length; year += 1) {
+          const increases = series.map(item => item.values[year] - item.values[year - 1]);
+          const maximum = Math.max(...increases);
+          if (increases.filter(value => value === maximum).length !== 1) throw new Error("해마다 가장 많이 늘어난 지역은 하나여야 합니다.");
+          counts[increases.indexOf(maximum)] += 1;
+        }
+        const answer = series.map((item, index) => `${item.name} ${counts[index] * 1000}만원`).join(", ");
+        const chart = lineChartSvg({ labels, series, step: 2000, unit: "상자", xAxis: "해", minValue: 4000 });
+        return result(`세 지역의 사과 생산량을 6년 동안 조사했습니다. 전해보다 생산량이 가장 많이 늘어난 지역에 해마다 1000만원을 지원합니다. 5년 동안 가, 나, 다 지역이 받은 지원금을 각각 구하세요.${chart}${sourceEvidence("4-2-u5-e1-example-1-4", series.flatMap(item => item.values), `data-source42-wins="${counts.join(",")}"`)}`, answer, `해마다 증가량을 비교하면 가장 많이 늘어난 지역은 차례로 다, 나, 가, 나, 다입니다. 따라서 가는 ${counts[0] * 1000}만원, 나는 ${counts[1] * 1000}만원, 다는 ${counts[2] * 1000}만원을 받습니다.`);
+      }
+      if (variant === 5) {
+        const values = [52, 54, 56, 60, 56, 60, 66];
+        const total = values.reduce((sum, value) => sum + value, 0);
+        const hidden = [4, 5, 6];
+        const chart = lineChartSvg({ labels: ["월", "화", "수", "목", "금", "토", "일"], series: [{ name: "배출량", values, hidden }], step: 2, unit: "kg", xAxis: "요일", minValue: 50 });
+        const answer = hidden.map(index => values[index]).join(", ");
+        return result(`한 주의 음식물 쓰레기 배출량은 모두 ${total}kg입니다. 토요일은 금요일보다 4kg 많고, 일요일은 토요일보다 6kg 많습니다. 그래프에서 가려진 금요일, 토요일, 일요일의 배출량을 차례로 구하세요.${chart}${sourceEvidence("4-2-u5-e1-mission-1", values, `data-source42-hidden="${hidden.join(",")}" data-source42-total="${total}"`)}`, answer, `월요일부터 목요일까지의 합은 ${values.slice(0, 4).reduce((sum, value) => sum + value, 0)}kg입니다. 금요일을 □kg이라 하면 □ + (□+4) + (□+10) = ${values.slice(4).reduce((sum, value) => sum + value, 0)}입니다. 따라서 금요일 ${values[4]}kg, 토요일 ${values[5]}kg, 일요일 ${values[6]}kg입니다.`);
+      }
+      if (variant === 6) {
+        const monthly = [800, 1000, 1400, 900];
+        const categories = [400, 200, 300, 500];
+        const price = 2000 + level * 500;
+        const answer = categories[1] * price;
+        const line = lineChartSvg({ labels: ["3월", "4월", "5월", "6월"], series: [{ name: "전체", values: monthly }], step: 100, unit: "개", xAxis: "월", minValue: 700 });
+        const bar = barChartSvg({ labels: ["가", "나", "다", "라"], values: categories, step: 100, unit: "개" });
+        return result(`왼쪽은 월별 장난감 전체 생산량이고, 오른쪽은 5월의 종류별 생산량입니다. 5월 생산량은 두 그래프에서 모두 ${monthly[2]}개입니다. 나 장난감 한 개의 가격이 ${price.toLocaleString()}원이고 모두 팔렸다면 판매 금액을 구하세요.${line}${bar}${sourceEvidence("4-2-u5-e1-mission-2", [...monthly, ...categories], `data-source42-price="${price}"`)}`, answer, `나 장난감은 ${categories[1]}개이고 한 개에 ${price.toLocaleString()}원이므로 ${categories[1]} × ${price.toLocaleString()} = ${answer.toLocaleString()}원입니다.`);
+      }
+      if (variant === 7) {
+        const labels = ["2013", "2014", "2015", "2016", "2017"];
+        const tourists = [400, 380, 500, 520, 420];
+        const revenue = [520, 600, 720, 680, 520];
+        const candidates = labels.map((_, index) => index).filter(index => index > 0 && tourists[index] > tourists[index - 1] && revenue[index] < revenue[index - 1]);
+        if (candidates.length !== 1) throw new Error("관광객은 늘고 관광 수입은 줄어든 해가 하나여야 합니다.");
+        const [target] = candidates;
+        const answer = revenue[target - 1] - revenue[target];
+        const visitorsChart = lineChartSvg({ labels, series: [{ name: "관광객", values: tourists }], step: 20, unit: "만 명", xAxis: "연도", minValue: 300 });
+        const revenueChart = lineChartSvg({ labels, series: [{ name: "관광 수입", values: revenue }], step: 20, unit: "만 달러", xAxis: "연도", minValue: 500 });
+        return result(`관광객은 전해보다 늘었지만 관광 수입은 줄어든 해를 찾으세요. 그해 관광 수입은 전해보다 몇 만 달러 줄었습니까?${visitorsChart}${revenueChart}${sourceEvidence("4-2-u5-e1-mission-4", [...tourists, ...revenue], `data-source42-target="${labels[target]}"`)}`, answer, `${labels[target]}년에는 관광객이 ${tourists[target - 1]}만 명에서 ${tourists[target]}만 명으로 늘었지만, 수입은 ${revenue[target - 1]}만 달러에서 ${revenue[target]}만 달러로 줄었습니다. 줄어든 금액은 ${answer}만 달러입니다.`);
+      }
+      if (variant === 8) {
+        const profiles = [
+          [25.5, 25, 25, 25.5, 24.5],
+          [26, 25, 25.5, 24.5, 25],
+          [26.5, 25.5, 26, 25, 25.5]
+        ];
+        const values = profiles[level];
+        const startHours = 2;
+        const slowerDays = values.slice(1).filter((value, index) => value > values[index]).length;
+        const answer = startHours + slowerDays;
+        const chart = lineChartSvg({ labels: ["1일", "2일", "3일", "4일", "5일"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "날짜", minValue: Math.min(...values) - 0.5 });
+        return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `기록의 초가 커진 날은 ${slowerDays}번이므로 연습 시간도 ${slowerDays}번 늘어납니다. ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
+      }
+      throw new Error("검수 대기인 꺾은선그래프의 이해 유형입니다.");
     },
     lineGraphApplication({ rng, level, variant = 0 }) {
-      if (variant % 3 === 0) {
-        const labels = ["0", "1", "2", "3", "4"];
-        const step = 100;
-        const fastRate = 200;
-        const slowRate = 100;
-        const halfHours = pick(rng, [5, 7]);
-        const elapsedText = halfHours === 5 ? "2시간 30분" : "3시간 30분";
-        const fastFuel = fastRate * halfHours / 2 / 20;
-        const slowFuel = slowRate * halfHours / 2 / 25;
-        const answer = fastFuel - slowFuel;
-        const series = [
-          { name: "가 자동차", values: labels.map((_, index) => fastRate * index) },
-          { name: "나 자동차", values: labels.map((_, index) => slowRate * index) }
-        ];
-        return result(`가 자동차와 나 자동차가 일정한 빠르기로 달린 거리를 나타낸 꺾은선그래프입니다. 가 자동차는 1L로 20km, 나 자동차는 1L로 25km를 달릴 수 있습니다. 출발한 지 ${elapsedText} 후 두 자동차가 사용한 휘발유 양의 차는 몇 L입니까?${lineChartSvg({ labels, series, step, unit: "km", xAxis: "시간(시)" })}`, answer, `그래프에서 가 자동차는 1시간에 ${fastRate}km, 나 자동차는 1시간에 ${slowRate}km를 달립니다. ${elapsedText} 동안 가 자동차는 ${fastRate * halfHours / 2}km를 달려 ${fastFuel}L, 나 자동차는 ${slowRate * halfHours / 2}km를 달려 ${slowFuel}L를 사용합니다. 차는 ${fastFuel} - ${slowFuel} = ${answer}L입니다.`);
-      }
-      if (variant % 3 === 1) {
-        const labels = ["0", "5", "10", "15"];
-        const step = 40;
-        const profile = pick(rng, [
-          { start: 320, bothDrain: 120, bDrain: 40 },
-          { start: 360, bothDrain: 160, bDrain: 40 }
-        ]);
-        const { start, bothDrain, bDrain } = profile;
-        const values = [start, start - bothDrain, start - bothDrain * 2, start - bothDrain * 2 - bDrain];
-        const aDrain = bothDrain - bDrain;
-        const firstOnlyMinutes = start / aDrain * 5;
-        return result(`물탱크에 물이 들어 있고 가, 나 두 수도꼭지를 함께 틀었습니다. 10분 뒤 가 수도꼭지를 잠그고 나 수도꼭지만 사용했을 때의 물의 양을 나타낸 꺾은선그래프입니다. 처음부터 가 수도꼭지만 사용했다면 물탱크의 물을 모두 사용하는 데 몇 분 걸립니까?${lineChartSvg({ labels, series: [{ name: "남은 물", values }], step, unit: "L", xAxis: "시간(분)" })}`, firstOnlyMinutes, `처음 5분 동안 물은 ${start}L에서 ${values[1]}L로 ${bothDrain}L 줄었습니다. 10분 뒤부터 5분 동안 나 수도꼭지만 사용하여 ${bDrain}L 줄었으므로, 가 수도꼭지는 5분에 ${aDrain}L를 사용합니다. 처음 물 ${start}L를 가 수도꼭지만 사용하면 ${start} ÷ ${aDrain} × 5 = ${firstOnlyMinutes}분 걸립니다.`);
-      }
-      const labels = ["3월", "5월", "7월", "9월", "11월"];
-      const step = 50;
-      const iceCream = [5 + level, 6 + level, 7 + level, 7 + level, 6 + level].map(value => value * step);
-      const chocolate = [6, 5 + level, 6 + level, 4 + level, 5 + level].map(value => value * step);
-      const answer = iceCream[3] * 700 - chocolate[3] * 600;
-      const series = [{ name: "아이스크림", values: iceCream }, { name: "초콜릿", values: chocolate }];
-      return result(`한 가게의 아이스크림과 초콜릿 판매량을 나타낸 꺾은선그래프입니다. 아이스크림은 한 개에 700원, 초콜릿은 한 개에 600원입니다. 9월의 아이스크림 판매 금액은 초콜릿 판매 금액보다 몇 원 더 많습니까?${lineChartSvg({ labels, series, step, unit: "개", xAxis: "월" })}`, answer, `9월 아이스크림은 ${iceCream[3]}개, 초콜릿은 ${chocolate[3]}개입니다. 판매 금액의 차는 ${iceCream[3]} × 700 - ${chocolate[3]} × 600 = ${answer.toLocaleString()}원입니다.`);
+      void rng;
+      void level;
+      void variant;
+      throw new Error("검수 대기인 꺾은선그래프의 활용 유형입니다.");
     },
     source41PlaneTransformThree({ rng, level, variant = 0 }) {
       const publicVariants = new Set([0, 1, 3, 4, 5, 6, 7, 9, 10]);
