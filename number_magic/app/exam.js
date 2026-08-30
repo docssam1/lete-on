@@ -55,12 +55,16 @@
      자리라 본문보다 키우고 자간을 넓힌다. */
   .nm-print-word-eq { margin-top: 8px; font-size: 1.5em; font-weight: 700; letter-spacing: .22em;
     font-family: "SFMono-Regular", Consolas, monospace; }
-  /* 식 틀이 있는 칸은 장을 넘기지 않는다 — A4로 재 보니 24문항짜리에서 문제 칸이 종이
-     경계를 걸치고 **식 줄만 다음 장으로 넘어가는** 것이 실제로 나왔다(1280·430 화면에서는
-     보이지 않는다. 종이에만 있는 결함이다). 이야기와 채울 자리가 갈라지면 그 문항은 못 푼다.
-     ⚠️ 일부러 식 틀이 있는 칸에만 건다. 문장제 칸 전체에 걸면 WP1·WP3 학습지의 쪽 나눔이
-     바뀐다 — 기존 인쇄물을 건드리지 않기로 한 약속 밖이다(같은 결함이 그쪽에도 있다는 것은
-     인수인계서에 적어 둔다). */
+  /* 문장제 칸은 장을 넘기지 않는다 — A4로 재 보니 24문항짜리에서 문제 칸이 종이 경계를
+     걸치고 **이야기만 남고 물음·보기·답 줄이 다음 장으로 넘어가는** 것이 실제로 나왔다
+     (1280·430 화면에서는 보이지 않는다. 종이에만 있는 결함이다). 이야기와 답할 자리가
+     갈라지면 그 문항은 못 푼다.
+     2026-08-30에는 식 틀이 있는 칸(WP4)에만 걸었다 — 문장제 전체에 걸면 WP1·WP3 학습지의
+     쪽 나눔이 바뀌기 때문이었다. 원장 승인을 받아 2026-08-31에 문장제 칸 전체로 넓혔다.
+     ⚠️ 범위는 .nm-print-item-word (= p.word가 있는 칸)뿐이다. word를 내는 생성기는
+     engine/threads/wp.js 하나뿐이라 다른 480여 레벨의 인쇄물에는 닿지 않는다 —
+     넓히기 전에 한국어 전 레벨 렌더 글자를 md5로 대조해 확인했다. */
+  .nm-print-item-word,
   .nm-print-item-eq { break-inside: avoid; page-break-inside: avoid; }
   .nm-print-age-young .nm-print-word-eq { font-size: 1.75em; }
   .nm-print-age-young .nm-print-word { font-size: 1.15em; line-height: 1.7; }
@@ -1095,6 +1099,9 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     card.className = 'nm-print-item'
       + (v ? ' nm-print-item-vp' : '')
       + (bw !== null ? ' nm-print-item-bond' : '')
+      /* 문장제 칸 — 장 경계에서 갈라지지 않게 한다(위 CSS). `word`를 내는 생성기는
+         문장제(wp.js)뿐이라 이 표시는 다른 스레드에 붙지 않는다. */
+      + (p.word ? ' nm-print-item-word' : '')
       + ((p.base10 || p.numline || nlHtml) ? ' nm-print-item-vis' : '');
     const numEl = document.createElement('span');
     numEl.className = 'nm-q-num';
