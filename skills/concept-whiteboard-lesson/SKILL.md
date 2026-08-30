@@ -76,13 +76,24 @@ Voice is a toggle, never a dependency: every beat must be understandable with so
 
 Passing checks are not the bar; **checks proven capable of failing** are. Details and the negative-control method are in [references/verification.md](references/verification.md).
 
-Do not report a lesson as done until all six hold:
+Do not report a lesson as done until all of these hold:
 
 - **PC · mobile · A4.** All three, every time. A defect that appears only in paged layout is normal here — an equation frame landing on the page after its story, a card splitting at the break. Screens alone will not show it.
 - **원본 구조.** The numbers drawn equal the generator's actual output, asserted across many seeds. A picture showing different numbers than the problem is a failure, not a rounding issue.
 - **시선.** Exactly one place to look per beat. Judge this by eye from screenshots and state the judgment per beat — no assertion detects it.
 - **단일 정답.** Where the screen asks anything, prove uniqueness by enumerating the answer space, not by asserting design intent. Textual instructions ("write them in order") do not bind; arithmetic does.
 - **Negative control.** Break each check deliberately, confirm it fails, revert. A suite that cannot fail proves nothing.
+
+## This sits inside a larger pipeline
+
+This skill covers **building and verifying one lesson**. The surrounding process — task contract, duplicate-work prevention, evidence routing, model/agent routing, release states, resumable handover — belongs to **`evidence-gated-learning-pipeline`** (`docssam1/source-to-memory`, `skill/evidence-gated-learning-pipeline`). Read its `references/math.md` before a mathematics lesson; the renderer-reuse and point-model rules in §Draw come from there.
+
+Two of its rules matter enough to restate here, because breaking either has cost this codebase real defects:
+
+- **The implementer cannot be the sole approver of its own work**, and the verifier does not receive the implementer's confidence statement.
+- **Work, evidence and release are separate axes.** Passing the gates makes an item *eligible*; it does not make it approved or published.
+
+That skill also names two optional companions (`gfield-single-answer-visibility`, `iterate-until-verified`). When they are not installed, its own instruction is to **apply the equivalent determinacy, visibility and iteration gates rather than fetch them** — which is what [references/verification.md](references/verification.md) does.
 
 ## Rights
 
