@@ -146,6 +146,18 @@
           ]
         },
         {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#negative-control",
+              "note": "임시 복사본에서 left-exterior 역할을 깨뜨리자 PC·모바일 6문항이 모두 실패"
+            }
+          ]
+        },
+        {
           "id": "regression",
           "required": true,
           "status": "pass",
@@ -292,6 +304,18 @@
               "role": "audit",
               "locator": "hselementary/question-bank/EVIDENCE_PIPELINE.md#작업-계약",
               "note": "공개 장부에는 원문·답안·비공개 절대 경로 없이 근거 ID와 검수 위치만 기록"
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#negative-control",
+              "note": "임시 복사본에서 target-left 역할을 깨뜨리자 PC·모바일 6문항이 모두 실패"
             }
           ]
         },
