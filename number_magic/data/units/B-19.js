@@ -39,7 +39,7 @@ window.NM_UNITS['B-19'] = {
         desc:{ko:'<b>20×3=60</b> (0 한 개), <b>200×3=600</b> (00 두 개), <b>2000×3=6000</b> (000 세 개). 곱하는 수에 0이 몇 개 있는지 세면 답의 0 개수를 알 수 있어요!',
               en:'<b>20×3=60</b> (one zero), <b>200×3=600</b> (two zeros), <b>2000×3=6000</b> (three zeros). Count the zeros in the big number to know how many zeros to write in the answer!',
               zh:'<b>20×3=60</b>（一个0），<b>200×3=600</b>（两个0），<b>2000×3=6000</b>（三个0）。数清大数字中0的个数，就知道答案中要写几个0！'},
-        mathSteps:['20×3=60 (0이 한 개)','200×3=600 (00이 두 개)','2000×3=6000 (000이 세 개)'],
+        mathSteps:[{ko:'20×3=60 (0이 한 개)',en:'20×3=60 \\text{ (one zero)}',zh:'20×3=60（1个0）'},{ko:'200×3=600 (00이 두 개)',en:'200×3=600 \\text{ (two zeros)}',zh:'200×3=600（2个0）'},{ko:'2000×3=6000 (000이 세 개)',en:'2000×3=6000 \\text{ (three zeros)}',zh:'2000×3=6000（3个0）'}],
         result:{ko:'0의 개수 세기: 곱하는 수의 0 개수 = 답의 추가 0 개수!',en:'Zero count: zeros in the multiplier = extra zeros in the answer!',zh:'数0的个数：乘数中0的个数=答案中额外0的个数！'},
         book:{ko:'10을 한 번 곱하면 자릿값이 한 칸, 100을 곱하면 두 칸, 1000을 곱하면 세 칸 이동해요. 이동한 칸만큼 일의 자리부터 0으로 채워져요.',
               en:'Multiplying by 10 shifts one place, by 100 shifts two places, by 1000 shifts three places. Each shift fills the vacated ones place with a zero.',

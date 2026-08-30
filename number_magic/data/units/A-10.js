@@ -41,7 +41,7 @@ window.NM_UNITS['A-10'] = {
         desc:{ ko:'80-47처럼 두 자리 수를 뺄 땐, 빼는 수(47)를 십의 자리(40)와 일의 자리(7)로 나눠서 순서대로 빼면 훨씬 쉬워요.',
                en:'When subtracting like 80-47, split the number you\'re subtracting (47) into tens (40) and ones (7), then subtract each in turn.',
                zh:'像80-47这样的减法，把要减的数(47)分成十位(40)和个位(7)，依次相减就容易多了。' },
-        mathSteps:['80 - 47','= 80 - 40 - 7  ← 십의 자리 먼저!','= 40 - 7','= 33'],
+        mathSteps:['80 - 47',{ko:'= 80 - 40 - 7  ← 십의 자리 먼저!',en:'= 80 - 40 - 7 ← \\text{tens first!}',zh:'= 80 - 40 - 7 ← 先算十位！'},'= 40 - 7','= 33'],
         result:{ ko:'십의 자리를 먼저 빼면 계산이 훨씬 간단해져요!', en:'Subtracting the tens first makes it much simpler!', zh:'先减十位，计算就简单多了！' },
         book:{ ko:'80-47: 80에서 40(4×10)을 먼저 빼서 40을 만들고, 남은 7을 빼면 33이 돼요.',
                en:'80-47: subtract 40 (4 tens) from 80 to get 40, then subtract the remaining 7 to get 33.',

@@ -554,9 +554,11 @@ function pickChoices(p){
    렌더 후 '.nm-cp-tex'에 renderKaTeX을 돌려야 한다. */
 function mathStepsHtmlPrint(steps){
   if(!steps || !steps.length) return '';
-  return `<div class="nm-cp-mathsteps">` + steps.map((tex,i) =>
-    (i ? '<div class="nm-cp-arrow">↓</div>' : '') + `<div class="nm-cp-tex" data-tex="${esc(tex)}"></div>`
-  ).join('') + `</div>`;
+  /* 항목은 문자열(언어 중립) 또는 {ko,en,zh} — main.js mathStepsExpr와 같은 계약 */
+  return `<div class="nm-cp-mathsteps">` + steps.map((step,i) => {
+    const tex = typeof step === 'string' ? step : pickL(step);
+    return (i ? '<div class="nm-cp-arrow">↓</div>' : '') + `<div class="nm-cp-tex" data-tex="${esc(tex)}"></div>`;
+  }).join('') + `</div>`;
 }
 
 /* 유형 하나(스레드+레벨)의 개념 블록 — 관련 유닛이 있으면 그 유닛의 마법 노트(제목·앞

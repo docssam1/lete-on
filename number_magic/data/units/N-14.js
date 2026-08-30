@@ -33,7 +33,7 @@ window.NM_UNITS['N-14'] = {
         desc:{ko:'묶음 5 + 낱개 3 = 8! 화살표는 1씩 커져요.',
           en:'Bundle 5 + 3 singles = 8! Arrows grow by 1.',
           zh:'一捆5加3个＝8！箭头每次加1。'},
-        mathSteps:['묶음 5 + 낱개 3 = 8','1→2→3→4→5 (+1씩!)','앞 수에 규칙을 적용!'],
+        mathSteps:[{ko:'묶음 5 + 낱개 3 = 8',en:'Bundle of 5 + 3 singles = 8',zh:'一捆5根 + 散的3根 = 8'},{ko:'1→2→3→4→5 (+1씩!)',en:'1→2→3→4→5 (+1 each!)',zh:'1→2→3→4→5（每次+1！）'},{ko:'앞 수에 규칙을 적용!',en:'Apply the rule to the last number!',zh:'把规则用在前一个数上！'}],
         result:{ko:'묶음부터 세면 빨라요!',en:'Count bundles first — faster!',zh:'先数捆，快多了！'} }
     ],
     rule:{ ko:'묶음(5)부터 세고, 화살표 규칙을 따라가요!',

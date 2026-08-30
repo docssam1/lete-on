@@ -33,7 +33,7 @@ window.NM_UNITS['A-11'] = {
         desc:{ ko:'43-8처럼 받아내림이 생기는 뺄셈은, 먼저 40이 되도록 3만 빼고, 남은 5는 잠깐 쉬었다가 마저 빼요.',
                en:'For subtraction like 43-8 that needs borrowing, first subtract just 3 to reach 40, rest a moment, then subtract the remaining 5.',
                zh:'像43-8这样需要退位的减法，先减3变成40，歇一下，再减剩下的5。' },
-        mathSteps:['43 - 8','= 43 - 3 - 5  ← 40까지만 먼저!','= 40 - 5','= 35'],
+        mathSteps:['43 - 8',{ko:'= 43 - 3 - 5  ← 40까지만 먼저!',en:'= 43 - 3 - 5 ← \\text{down to 40 first!}',zh:'= 43 - 3 - 5 ← 先减到40！'},'= 40 - 5','= 35'],
         result:{ ko:'8을 3과 5로 나눠서, 3을 먼저 빼고 40을 만든 다음 5를 빼요!', en:'Split 8 into 3 and 5 — subtract 3 first to make 40, then subtract 5!', zh:'把8分成3和5，先减3变成40，再减5！' },
         book:{ ko:'43의 일의 자리는 3이에요. 그래서 8을 3(먼저 뺄 것)과 5(나중에 뺄 것)로 나눠요. 3+5=8이 맞는지 항상 확인해요.',
                en:'The ones digit of 43 is 3. So we split 8 into 3 (subtract first) and 5 (subtract later). Always check 3+5=8.',

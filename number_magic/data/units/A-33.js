@@ -30,7 +30,7 @@ window.NM_UNITS['A-33'] = {
         desc:{ ko:'두 수의 합=18, 차=4. 큰 수=(18+4)÷2=22÷2=11. 작은 수=18-11=7!',
                en:'Two numbers: sum=18, difference=4. Larger=(18+4)÷2=22÷2=11. Smaller=18−11=7!',
                zh:'两数之和=18，差=4。较大数=(18+4)÷2=22÷2=11。较小数=18-11=7！' },
-        mathSteps:['합=18, 차=4','큰 수 = (18+4) ÷ 2 = 22 ÷ 2 = 11','작은 수 = 18 - 11 = 7','검증: 11+7=18 ✓, 11-7=4 ✓'],
+        mathSteps:[{ko:'합=18, 차=4',en:'\\text{sum}=18, \\text{diff}=4',zh:'和=18，差=4'},{ko:'큰 수 = (18+4) ÷ 2 = 22 ÷ 2 = 11',en:'\\text{bigger number} = (18+4) ÷ 2 = 22 ÷ 2 = 11',zh:'大数 = (18+4) ÷ 2 = 22 ÷ 2 = 11'},{ko:'작은 수 = 18 - 11 = 7',en:'\\text{smaller number} = 18 - 11 = 7',zh:'小数 = 18 - 11 = 7'},{ko:'검증: 11+7=18 ✓, 11-7=4 ✓',en:'\\text{check: } 11+7=18 ✓, 11-7=4 ✓',zh:'验算：11+7=18 ✓, 11-7=4 ✓'}],
         result:{ ko:'두 수는 11과 7 ✓', en:'The two numbers are 11 and 7 ✓', zh:'两数为11和7 ✓' },
         book:{ ko:'a+b=S, a-b=D 라면, a=(S+D)÷2, b=(S-D)÷2. 합과 차가 같은 짝수·홀수여야 해요.', en:'If a+b=S and a-b=D, then a=(S+D)÷2 and b=(S−D)÷2.', zh:'若a+b=S，a-b=D，则a=(S+D)÷2，b=(S-D)÷2。' } },
       { tag:{ ko:'② 왜 (합+차)÷2가 큰 수일까요?', en:'2) Why does (sum+diff)÷2 equal the larger number?', zh:'② 为什么(和+差)÷2是较大数？' },
@@ -49,9 +49,9 @@ window.NM_UNITS['A-33'] = {
 
   check:{
     fills:[
-      { tex:'\\text{합}=18,\\text{차}=4: (18+4)\\div 2=\\square', answer:11,
+      { tex:{ko:'\\text{합}=18,\\text{차}=4: (18+4)\\div 2=\\square',en:'\\text{sum}=18,\\text{diff}=4: (18+4)\\div 2=\\square',zh:'\\text{和}=18,\\text{差}=4: (18+4)\\div 2=\\square'}, answer:11,
         hint:{ ko:'22÷2=11', en:'22÷2=11', zh:'22÷2=11' } },
-      { tex:'18-11=\\square \\text{(작은 수)}', answer:7, hint:{ ko:'18-11=7', en:'18−11=7', zh:'18-11=7' } }
+      { tex:{ko:'18-11=\\square \\text{(작은 수)}',en:'18-11=\\square \\text{(smaller number)}',zh:'18-11=\\square \\text{（较小的数）}'}, answer:7, hint:{ ko:'18-11=7', en:'18−11=7', zh:'18-11=7' } }
     ],
     open:{ ko:'두 수의 합과 차를 알면 왜 각 수를 구할 수 있는지 설명해봐요.', en:'Explain why knowing the sum and difference of two numbers lets you find each one.', zh:'说说为什么知道两数之和与差就能求出每个数。' },
     openHint:{ ko:'합과 차를 더하면 큰 수가 2배가 돼요. ÷2하면 큰 수를 얻어요. 합에서 큰 수를 빼면 작은 수!', en:'Sum+difference = twice the larger. Divide by 2 to get the larger. Subtract from the sum to get the smaller!', zh:'和+差=较大数的2倍。÷2得较大数。用和减去较大数得较小数！' }

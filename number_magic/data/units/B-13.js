@@ -28,7 +28,7 @@ window.NM_UNITS['B-13'] = {
         desc:{ko:'7단은 7씩 늘어나는 수열이에요. <b>7, 14, 21, 28, 35, 42, 49, 56, 63</b> — 패턴을 찾으면 쉽게 기억할 수 있어요!',
               en:'The 7 times table is a sequence that increases by 7 each time. <b>7, 14, 21, 28, 35, 42, 49, 56, 63</b> — spot the pattern and it\'s easy to remember!',
               zh:'7的乘法是每次递增7的数列。<b>7、14、21、28、35、42、49、56、63</b>——找到规律就好记了！'},
-        mathSteps:['7×1=7','7×2=14','7×3=21','7×4=28','7×5=35','→ 7씩 증가!'],
+        mathSteps:['7×1=7','7×2=14','7×3=21','7×4=28','7×5=35',{ko:'→ 7씩 증가!',en:'→ \\text{goes up by 7!}',zh:'→ 每次加7！'}],
         result:{ko:'7단 수열: 7, 14, 21, 28, 35, 42, 49, 56, 63. 리듬감 있게 읽으면 기억에 쏙!', en:'7s: 7, 14, 21, 28, 35, 42, 49, 56, 63. Read them rhythmically to memorise!', zh:'7的乘法：7、14、21、28、35、42、49、56、63。有节奏地朗读更容易记！'},
         book:{ko:'7×1=7부터 7×9=63까지 7씩 늘어나요. 이전 답에 7을 더하면 다음 답이 나와요.', en:'From 7×1=7 to 7×9=63, each step adds 7. Add 7 to the previous answer to get the next.', zh:'从7×1=7到7×9=63，每步加7。前一个答案加7就得到下一个。'} },
 

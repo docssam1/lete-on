@@ -32,7 +32,7 @@ window.NM_UNITS['M-51'] = {
     },
     stages:[
       { tag:{ko:'① 정비례 — 비율(a)이 항상 일정해요',en:'1) Direct proportion — the ratio(a) is always constant',zh:'① 正比例——比值(a)恒定'},
-        head:{ko:'y=ax,\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=5\\text{일 때 } y=15',en:'y=ax,\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=5\\text{일 때 } y=15',zh:'y=ax,\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=5\\text{일 때 } y=15'},
+        head:{ko:'y=ax,\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=5\\text{일 때 } y=15',en:'y=ax,\\;\\text{through }(2,6) \\;\\Rightarrow\\; y=15\\text{ when } x=5',zh:'y=ax,\\;\\text{过}(2,6) \\;\\Rightarrow\\; x=5\\text{时 } y=15'},
         desc:{ko:'점(2,6)을 지나니 y÷x=6÷2=3, 그래서 a=3(비율은 항상 y÷x). x=5일 때 y=ax=3×5=<b>15</b>가 돼요.',
               en:'Since the graph passes through (2,6), y÷x=6÷2=3, so a=3 (the ratio is always y÷x). When x=5, y=ax=3×5=<b>15</b>.',
               zh:'图像过点(2,6)，y÷x=6÷2=3，所以a=3(比值永远是y÷x)。x=5时，y=ax=3×5=<b>15</b>。'},
@@ -43,7 +43,7 @@ window.NM_UNITS['M-51'] = {
               zh:'正比例的图像是过原点(0,0)的直线——x为0时，y也总是0。'} },
 
       { tag:{ko:'② 반비례 — 곱(a)이 항상 일정해요',en:'2) Inverse proportion — the product(a) is always constant',zh:'② 反比例——乘积(a)恒定'},
-        head:{ko:'y=\\dfrac{a}{x},\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=4\\text{일 때 } y=3',en:'y=\\dfrac{a}{x},\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=4\\text{일 때 } y=3',zh:'y=\\dfrac{a}{x},\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=4\\text{일 때 } y=3'},
+        head:{ko:'y=\\dfrac{a}{x},\\;(2,6)\\text{을 지남} \\;\\Rightarrow\\; x=4\\text{일 때 } y=3',en:'y=\\dfrac{a}{x},\\;\\text{through }(2,6) \\;\\Rightarrow\\; y=3\\text{ when } x=4',zh:'y=\\dfrac{a}{x},\\;\\text{过}(2,6) \\;\\Rightarrow\\; x=4\\text{时 } y=3'},
         desc:{ko:'점(2,6)을 지나니 x×y=2×6=12, 그래서 a=12(곱은 항상 x×y). x=4일 때 y=a÷x=12÷4=<b>3</b>이 돼요.',
               en:'Since the graph passes through (2,6), x×y=2×6=12, so a=12 (the product is always x×y). When x=4, y=a÷x=12÷4=<b>3</b>.',
               zh:'图像过点(2,6)，x×y=2×6=12，所以a=12(乘积永远是x×y)。x=4时，y=a÷x=12÷4=<b>3</b>。'},
@@ -60,9 +60,9 @@ window.NM_UNITS['M-51'] = {
 
   check:{
     fills:[
-      { tex:'y=ax,\\;a=4 \\;\\Rightarrow\\; x=3\\text{일 때 } y=\\square', answer:12,
+      { tex:{ko:'y=ax,\\;a=4 \\;\\Rightarrow\\; x=3\\text{일 때 } y=\\square',en:'y=ax,\\;a=4 \\;\\Rightarrow\\; y=\\square\\text{ when } x=3',zh:'y=ax,\\;a=4 \\;\\Rightarrow\\; x=3\\text{时 } y=\\square'}, answer:12,
         hint:{ ko:'4×3', en:'4×3', zh:'4×3' } },
-      { tex:'y=\\dfrac{a}{x},\\;(3,\\,4)\\text{를 지남} \\;\\Rightarrow\\; x=6\\text{일 때 } y=\\square', answer:2,
+      { tex:{ko:'y=\\dfrac{a}{x},\\;(3,\\,4)\\text{를 지남} \\;\\Rightarrow\\; x=6\\text{일 때 } y=\\square',en:'y=\\dfrac{a}{x},\\;\\text{through }(3,\\,4) \\;\\Rightarrow\\; y=\\square\\text{ when } x=6',zh:'y=\\dfrac{a}{x},\\;\\text{过}(3,\\,4) \\;\\Rightarrow\\; x=6\\text{时 } y=\\square'}, answer:2,
         hint:{ ko:'a=3×4=12, y=12÷6', en:'a=3×4=12, y=12÷6', zh:'a=3×4=12, y=12÷6' } }
     ],
     open:{ ko:'반비례 y=a/x가 점(4,3)을 지날 때 x=2일 때의 y를 구하는 과정을 설명해봐요.',

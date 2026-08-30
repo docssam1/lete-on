@@ -25,7 +25,7 @@ window.NM_UNITS['N-12'] = {
         desc:{ko:'🐞 점 6개는 1과 5, 3과 3! 여러 가지로 갈라져요.',
           en:'Six spots can split 1&5 or 3&3 — many ways!',
           zh:'🐞 6个点能分成1和5，也能3和3！'},
-        mathSteps:['점 6개 = 1+5 또는 3+3','저울: 많은 쪽이 아래로','비교해서 답해요!'],
+        mathSteps:[{ko:'점 6개 = 1+5 또는 3+3',en:'6 dots = 1+5 or 3+3',zh:'6个点 = 1+5或3+3'},{ko:'저울: 많은 쪽이 아래로',en:'Scale: the bigger side goes down',zh:'天平：多的一边往下沉'},{ko:'비교해서 답해요!',en:'Compare and answer!',zh:'比一比再回答！'}],
         result:{ko:'많은 쪽이 아래로 기울어요!',en:'The side with more tips down!',zh:'多的那边往下沉！'} }
     ],
     rule:{ ko:'저울은 많은 쪽이 아래로 기울어요!',

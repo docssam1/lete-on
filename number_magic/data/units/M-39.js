@@ -28,7 +28,7 @@ window.NM_UNITS['M-39'] = {
         desc:{ko:'한 변이 2인 정삼각형을 반으로 자르면, 빗변 2·높이 √3·밑변 1인 직각삼각형이 나와요. 30°와 마주 보는 변은 1(가장 짧은 변) → sin30°=1/2. 60°와 마주 보는 변은 √3 → sin60°=√3/2.',
               en:'Bisecting an equilateral triangle with side 2 gives a right triangle with hypotenuse 2, height √3, base 1. The side opposite 30° is 1 (shortest side) → sin30°=1/2. The side opposite 60° is √3 → sin60°=√3/2.',
               zh:'把边长为2的等边三角形对半切开，得到斜边2、高√3、底1的直角三角形。30°对边是1(最短边)→sin30°=1/2。60°对边是√3→sin60°=√3/2。'},
-        mathSteps:['\\text{변: }1,\\;\\sqrt3,\\;2', '\\sin30^\\circ=\\dfrac{1}{2}', '\\sin60^\\circ=\\dfrac{\\sqrt3}{2}'],
+        mathSteps:[{ko:'\\text{변: }1,\\;\\sqrt3,\\;2',en:'\\text{sides: }1,\\;\\sqrt3,\\;2',zh:'\\text{边：}1,\\;\\sqrt3,\\;2'}, '\\sin30^\\circ=\\dfrac{1}{2}', '\\sin60^\\circ=\\dfrac{\\sqrt3}{2}'],
         result:{ko:'30°-60°-90° 삼각형의 변의 비는 1:√3:2!',en:'A 30-60-90 triangle has side ratio 1:√3:2!',zh:'30-60-90三角形的边比是1:√3:2！'},
         book:{ko:'sin=마주보는 변÷빗변, cos=붙어 있는 변÷빗변, tan=마주보는 변÷붙어 있는 변이에요.',
               en:'sin = opposite÷hypotenuse, cos = adjacent÷hypotenuse, tan = opposite÷adjacent.',

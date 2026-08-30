@@ -37,7 +37,7 @@ window.NM_UNITS['B-01'] = {
         desc:{ko:'<b>두 배</b>는 같은 수를 두 번 더하는 것이에요. 4의 두 배는 4를 두 줄로 늘어놓은 것! 한 줄에 4개, 두 줄이면 모두 몇 개일까요?',
               en:'<b>Doubling</b> means adding the same number twice. 4 doubled = 4 in one row + 4 in another row.',
               zh:'<b>翻倍</b>就是把同一个数加两次。4翻倍 = 第一行4个 + 第二行4个。'},
-        mathSteps:['4의 두 배', '= 4 + 4', '= 8'],
+        mathSteps:[{ko:'4의 두 배',en:'\\text{double of 4}',zh:'4的两倍'}, '= 4 + 4', '= 8'],
         result:{ko:'4의 두 배는 8! 2행 배열로 시각화하면 한눈에 보여요.', en:'4 doubled is 8! A 2-row array makes it clear.', zh:'4的两倍是8！用两行排列一目了然。'},
         book:{ko:'두 배(×2)는 같은 수를 두 번 더하는 것과 같아요. n × 2 = n + n. 배열로 그리면 실수 없이 셀 수 있어요.', en:'n × 2 = n + n. Drawing arrays helps avoid mistakes.', zh:'n × 2 = n + n。画成排列图能避免数错。'} },
 

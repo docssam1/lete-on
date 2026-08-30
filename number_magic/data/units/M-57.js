@@ -33,7 +33,7 @@ window.NM_UNITS['M-57'] = {
     },
     stages:[
       { tag:{ko:'① 최댓값=a+c, 최솟값=c-a',en:'1) Max = a+c, min = c-a',zh:'① 最大值=a+c，最小值=c-a'},
-        head:{ko:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{최댓값}=4,\\;\\text{최솟값}=-2',en:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{최댓값}=4,\\;\\text{최솟값}=-2',zh:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{최댓값}=4,\\;\\text{최솟값}=-2'},
+        head:{ko:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{최댓값}=4,\\;\\text{최솟값}=-2',en:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{max}=4,\\;\\text{min}=-2',zh:'y=3\\sin(2x)+1 \\;\\Rightarrow\\; \\text{最大值}=4,\\;\\text{最小值}=-2'},
         desc:{ko:'sin값은 항상 −1과 1 사이를 오가요. 그래서 3sin(2x)는 −3과 3 사이, 여기에 +1을 더하면 <b>중심이 1인 채로 위아래 3만큼</b> 흔들려요: 최댓값 1+3=4, 최솟값 1-3=−2.',
               en:'The sine value always ranges between −1 and 1. So 3sin(2x) ranges between −3 and 3; adding 1 shifts it to <b>swing 3 above and below a center of 1</b>: max is 1+3=4, min is 1-3=−2.',
               zh:'sin值总在−1到1之间。所以3sin(2x)在−3到3之间；加上1后就变成<b>以1为中心上下摆动3</b>：最大值1+3=4，最小值1-3=−2。'},
@@ -44,7 +44,7 @@ window.NM_UNITS['M-57'] = {
               zh:'b(括号内x的系数)不影响最大最小值——b只改变周期(速度)。'} },
 
       { tag:{ko:'② 주기 = 2π÷b(sin·cos), π÷b(tan)',en:'2) Period = 2π÷b (sin/cos), π÷b (tan)',zh:'② 周期 = 2π÷b(sin·cos)，π÷b(tan)'},
-        head:{ko:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{주기}=\\pi',en:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{주기}=\\pi',zh:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{주기}=\\pi'},
+        head:{ko:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{주기}=\\pi',en:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{period}=\\pi',zh:'y=\\sin(2x) \\;\\Rightarrow\\; \\text{周期}=\\pi'},
         desc:{ko:'sin(x)는 한 바퀴 도는 데 x가 2π만큼 필요해요. 그런데 sin(2x)는 x가 <b>2배 빠르게</b> 움직이니, 원래 걸리던 시간의 절반이면 충분해요: 2π÷2=π.',
               en:'sin(x) needs x to travel 2π to complete one cycle. But sin(2x) moves <b>twice as fast</b>, so it only needs half the usual distance: 2π÷2=π.',
               zh:'sin(x)转一圈需要x走2π。而sin(2x)的x<b>快了2倍</b>，只需要原来一半的距离：2π÷2=π。'},
@@ -61,9 +61,9 @@ window.NM_UNITS['M-57'] = {
 
   check:{
     fills:[
-      { tex:'y = 4\\sin(x) + 2 \\;\\Rightarrow\\; \\text{최댓값}=\\square,\\;\\text{최솟값}=\\square', answer:[6,-2],
+      { tex:{ko:'y = 4\\sin(x) + 2 \\;\\Rightarrow\\; \\text{최댓값}=\\square,\\;\\text{최솟값}=\\square',en:'y = 4\\sin(x) + 2 \\;\\Rightarrow\\; \\text{max}=\\square,\\;\\text{min}=\\square',zh:'y = 4\\sin(x) + 2 \\;\\Rightarrow\\; \\text{最大值}=\\square,\\;\\text{最小值}=\\square'}, answer:[6,-2],
         hint:{ ko:'2+4, 2-4', en:'2+4, 2-4', zh:'2+4, 2-4' } },
-      { tex:'y = \\cos(4x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi', answer:[1,2],
+      { tex:{ko:'y = \\cos(4x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi',en:'y = \\cos(4x) \\;\\Rightarrow\\; \\text{period} = \\dfrac{\\square}{\\square}\\pi',zh:'y = \\cos(4x) \\;\\Rightarrow\\; \\text{周期} = \\dfrac{\\square}{\\square}\\pi'}, answer:[1,2],
         hint:{ ko:'2π÷4=(1/2)π', en:'2π÷4=(1/2)π', zh:'2π÷4=(1/2)π' } }
     ],
     open:{ ko:'y=tan(3x)의 주기를 sin·cos의 절반 규칙과 비교해서 설명해봐요.',

@@ -3150,7 +3150,10 @@ function screenSymbolDex(){
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
 function mathStepsExpr(container, steps, kid){
   const box=document.createElement('div');box.className='nm-mstep-box'+(kid?' kid':'');
-  steps.forEach((tex,i)=>{
+  steps.forEach((step,i)=>{
+    /* 항목은 문자열(언어 중립 수식) 또는 {ko,en,zh}(한국어 주석이 있던 줄).
+       2026-08-30에 372줄을 3언어화했다 — 문자열이면 그대로, 객체면 L()로 고른다. */
+    const tex=typeof step==='string'?step:L(step);
     if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
     const line=document.createElement('div');line.className='nm-mstep-line'+(kid?' kid':'');
     // 유아 노트: 한글 문장을 KaTeX 수식 폰트로 그리면 어색 → 앱 폰트 텍스트 칩으로 표시
@@ -3164,12 +3167,15 @@ function mathStepsExpr(container, steps, kid){
 function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
+  /* fill.tex는 문자열(언어 중립) 또는 {ko,en,zh} — 한글 \text 주석이 있던
+     31건을 2026-08-30에 3언어화했다(check-unit-lang.js가 지킨다). */
+  const fillTex=typeof fill.tex==='string'?fill.tex:L(fill.tex);
   const isMulti=Array.isArray(fill.answer);
   if(isMulti)ensureMultiState(fill.answer,fill.answerShape);
   const shapeCls=isMulti&&fill.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
-    <div class="nm-fill"><span data-tex="${esc(fill.tex)}"></span></div>
+    <div class="nm-fill"><span data-tex="${esc(fillTex)}"></span></div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
