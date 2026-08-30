@@ -7,11 +7,8 @@ const { chromium } = require("playwright");
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "4-2-line-graph-1-browser-audit");
-const readyTypeIds = Array.from({ length: 9 }, (_, index) => `4-2-u5-t1${index ? `-${index + 1}` : ""}`);
-const lockedTypeIds = [
-  "4-2-u5-t1-10",
-  ...Array.from({ length: 10 }, (_, index) => `4-2-u5-t2${index ? `-${index + 1}` : ""}`)
-];
+const readyTypeIds = Array.from({ length: 10 }, (_, index) => `4-2-u5-t1${index ? `-${index + 1}` : ""}`);
+const lockedTypeIds = [];
 const near = (actual, expected, tolerance = 0.7) => Math.abs(actual - expected) <= tolerance;
 const slug = value => value.replaceAll("-", "_");
 
@@ -23,7 +20,7 @@ const inspectCharts = async page => page.evaluate(() => {
     return bounds ? { left: bounds.left, right: bounds.right, top: bounds.top, bottom: bounds.bottom, width: bounds.width, height: bounds.height } : null;
   };
   const inside = (inner, outer, tolerance = 1.5) => Boolean(inner && outer && inner.left >= outer.left - tolerance && inner.right <= outer.right + tolerance && inner.top >= outer.top - tolerance && inner.bottom <= outer.bottom + tolerance);
-  const overlaps = (left, right) => left.left < right.right - 1 && left.right > right.left + 1 && left.top < right.bottom - 1 && left.bottom > right.top + 1;
+  const overlaps = (left, right) => Boolean(left && right && left.left < right.right - 1 && left.right > right.left + 1 && left.top < right.bottom - 1 && left.bottom > right.top + 1);
 
   return {
     documentOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -44,13 +41,26 @@ const inspectCharts = async page => page.evaluate(() => {
         const ticks = [...svg.querySelectorAll(".chart-tick")].map(node => ({ text: node.textContent, bounds: rect(node) }));
         const labels = [...svg.querySelectorAll(".chart-label")].map(node => ({ text: node.textContent, bounds: rect(node) }));
         const legendLabels = [...svg.querySelectorAll(".chart-line-legend text")].map(node => ({ text: node.textContent, bounds: rect(node) }));
+        const legendGroups = [...svg.querySelectorAll(".chart-legend-series")].map(node => rect(node));
+        const axisName = rect(svg.querySelector(".chart-axis-name"));
+        const lineWeights = [...svg.querySelectorAll(".chart-series")].map(node => node.dataset.lineWeight);
+        const horizontalGridCount = [...svg.querySelectorAll("line.chart-grid")].filter(node => node.getAttribute("y1") === node.getAttribute("y2")).length;
+        const verticalGridCount = [...svg.querySelectorAll("line.chart-grid")].filter(node => node.getAttribute("x1") === node.getAttribute("x2")).length;
+        const strokes = [...svg.querySelectorAll(".chart-line")].map(node => ({ weight: node.dataset.lineWeight, strokeWidth: Number(getComputedStyle(node).strokeWidth) }));
         const legendOverlap = legendLabels.some((entry, index) => legendLabels.slice(index + 1).some(other => overlaps(entry.bounds, other.bounds)));
+        const legendGroupOverlap = legendGroups.some((entry, index) => legendGroups.slice(index + 1).some(other => overlaps(entry, other)));
+        const axisLabelOverlap = labels.some(entry => overlaps(entry.bounds, axisName));
+        const tickOverlap = ticks.some((entry, index) => ticks.slice(index + 1).some(other => overlaps(entry.bounds, other.bounds)));
         const expectedY = value => top + plotHeight - (value - scaleMin) / (scaleMax - scaleMin) * plotHeight;
         return {
           kind,
           step,
           scaleMin,
           scaleMax,
+          gridCount: Number(svg.dataset.chartGridCount),
+          tickCount: Number(svg.dataset.chartTickCount),
+          horizontalGridCount,
+          verticalGridCount,
           values,
           visible: Boolean(svgBounds && svgBounds.width >= 180 && svgBounds.height >= 120),
           insideItem: inside(svgBounds, itemBounds),
@@ -58,7 +68,14 @@ const inspectCharts = async page => page.evaluate(() => {
           labelsInside: labels.every(entry => inside(entry.bounds, svgBounds, 3)),
           legendsInside: legendLabels.every(entry => inside(entry.bounds, svgBounds, 3)),
           legendOverlap,
+          legendGroupOverlap,
+          axisLabelOverlap,
+          tickOverlap,
+          lineWeights,
+          strokes,
           ticks: ticks.map(entry => entry.text),
+          labelTexts: labels.map(entry => entry.text),
+          axisNameText: svg.querySelector(".chart-axis-name")?.textContent || "",
           hidden,
           circleMismatch: kind === "line" ? circles.filter(circle => Math.abs(circle.cy - expectedY(circle.value)) > 0.2).length : 0
         };
@@ -82,13 +99,22 @@ const validateState = (state, label, typeId, failures) => {
     item.charts.forEach((chart, chartIndex) => {
       if (!chart.visible || !chart.insideItem) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 크기 또는 문항 영역 이탈`);
       if (!Number.isFinite(chart.step) || chart.step <= 0 || !Number.isFinite(chart.scaleMax) || chart.scaleMax <= chart.scaleMin) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 눈금 자료 오류`);
-      if (!chart.ticksInside || !chart.labelsInside || !chart.legendsInside || chart.legendOverlap) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 눈금·항목·범례 겹침 또는 잘림`);
+      if (!chart.ticksInside || !chart.labelsInside || !chart.legendsInside || chart.legendOverlap || chart.legendGroupOverlap || chart.axisLabelOverlap || chart.tickOverlap) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 눈금·항목·범례 겹침 또는 잘림`);
       if (chart.circleMismatch) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 점 좌표 ${chart.circleMismatch}개 불일치`);
       if (chart.kind === "line") {
-        const expectedTicks = Math.round((chart.scaleMax - chart.scaleMin) / chart.step) + 1;
-        if (chart.ticks.length !== expectedTicks) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 눈금 수 불일치`);
+        const expectedGridCount = Math.round((chart.scaleMax - chart.scaleMin) / chart.step) + 1;
+        if (chart.gridCount !== expectedGridCount || chart.horizontalGridCount !== expectedGridCount) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 보조 눈금선 수 불일치`);
+        if (chart.tickCount < 2 || chart.tickCount > 12 || chart.ticks.length !== chart.tickCount) failures.push(`${label} ${typeId} ${itemIndex + 1}번 ${chartIndex + 1}번째 그래프: 숫자 눈금 수 불일치`);
       }
       if (chart.hidden.some(hidden => hidden.text !== "?" || !hidden.bounds || hidden.bounds.width < 5 || hidden.bounds.height < 8)) failures.push(`${label} ${typeId} ${itemIndex + 1}번: 숨긴 값 물음표가 선명하지 않음`);
+      if (typeId === "4-2-u5-t1-10") {
+        const thick = chart.strokes.filter(line => line.weight === "thick");
+        const thin = chart.strokes.filter(line => line.weight === "thin");
+        if (chart.lineWeights.join(",") !== "thick,thin") failures.push(`${label} ${typeId} ${itemIndex + 1}번: 아이스크림 굵은선·초콜릿 얇은선 범례가 다릅니다.`);
+        if (!thick.length || !thin.length || thick.some(line => line.strokeWidth < 3) || thin.some(line => line.strokeWidth > 1.7)) failures.push(`${label} ${typeId} ${itemIndex + 1}번: 굵은선·얇은선의 실제 두께가 구별되지 않습니다.`);
+        if (chart.step !== 10 || chart.scaleMin !== 200 || chart.scaleMax !== 350 || chart.ticks.join(",") !== "200,250,300,350") failures.push(`${label} ${typeId} ${itemIndex + 1}번: 원본의 10개 단위 보조 눈금과 50개 단위 숫자 눈금이 다릅니다.`);
+        if (chart.verticalGridCount !== 4 || chart.labelTexts.join(",") !== "6,8,10,12" || chart.axisNameText !== "(월)") failures.push(`${label} ${typeId} ${itemIndex + 1}번: 원본의 월 눈금 표시가 다릅니다.`);
+      }
     });
   });
 };
@@ -122,6 +148,15 @@ const inspectReadyType = async (browser, typeId, viewport, label, failures) => {
     await page.click("#problemTab");
     await page.emulateMedia({ media: "print" });
     validateState(await inspectCharts(page), "A4", typeId, failures);
+    const singlePrintPages = await page.evaluate(() => [...document.querySelectorAll("#problemView .print-page")].filter(section => section.querySelectorAll(".question-item").length === 1).map(section => {
+      const item = section.querySelector(".question-item");
+      const prompt = item?.querySelector(".question-prompt")?.getBoundingClientRect();
+      const chart = item?.querySelector(".line-chart, .bar-chart")?.getBoundingClientRect();
+      return { marked: section.classList.contains("print-page--single"), gridDisplay: getComputedStyle(section.querySelector(".question-grid")).display, promptHeight: prompt?.height || 0, chartHeight: chart?.height || 0 };
+    }));
+    singlePrintPages.forEach(pageState => {
+      if (!pageState.marked || pageState.gridDisplay !== "block" || pageState.promptHeight < 40 || pageState.chartHeight < 120) failures.push(`A4 ${typeId}: 홀수 마지막 문항의 지문 또는 그래프가 빈 페이지로 잘립니다.`);
+    });
     const multiGraphPrint = await page.evaluate(() => [...document.querySelectorAll(".question-item")].map((item, index) => {
       const hasMultipleGraphs = item.querySelectorAll(".graph-figure").length > 1;
       const grid = item.closest(".question-grid");
@@ -196,5 +231,5 @@ const inspectLongPrint = async (browser, typeId, expectedQuestionsPerPage, failu
     console.error(failures.join("\n"));
     process.exit(1);
   }
-  console.log(`4-2 꺾은선그래프 개념탐구 1 브라우저 감사 통과: 공개 9유형 PC·모바일 문제/풀이 36화면 · A4 문제/풀이 18파일 · 12문항 A4 단일·복수 그래프 실제 장수 일치 · 잠금 11유형 직접 주소 차단 · ${outputDir}`);
+  console.log(`4-2 꺾은선그래프 개념탐구 1 브라우저 감사 통과: 공개 10유형 PC·모바일 문제/풀이 40화면 · A4 문제/풀이 20파일 · 12문항 A4 단일·복수 그래프 실제 장수 일치 · 굵은선·얇은선 범례 확인 · ${outputDir}`);
 })().catch(error => { console.error(error); process.exit(1); });

@@ -10,10 +10,12 @@ require("./generators.js");
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
 const unit = semester.units.find(item => item.id === "4-2-u5");
-const types = unit.subunits.flatMap(subunit => subunit.types);
+const subunit = unit.subunits.find(item => item.types.some(type => type.generatorKey === "lineGraphUnderstanding"));
+const types = subunit.types;
 const ready = types.filter(type => !type.reviewLocked);
 const locked = types.filter(type => type.reviewLocked);
 const inventory = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "4-2-unit-5-line-graph.json"), "utf8"));
+const sourceItems = inventory.items.filter(item => item.exploration === 1);
 const failures = [];
 let generatedCount = 0;
 
@@ -22,17 +24,17 @@ const attr = (html, name) => html.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1]
 const numbers = value => value.split(",").filter(Boolean).map(Number);
 const charts = html => html.match(/<svg class="line-chart"[^>]*>/g) || [];
 
-check(inventory.items.length === 22, `원문 문항은 22개여야 하나 ${inventory.items.length}개입니다.`);
-check(new Set(inventory.items.map(item => item.sourceItemId)).size === 22, "원문 문항 ID가 겹칩니다.");
-check(inventory.items.filter(item => item.implementationStatus === "ready").length === 9, "공개 원문 문항은 9개여야 합니다.");
-check(inventory.items.filter(item => item.implementationStatus === "review-locked").length === 11, "검수 대기 원문 문항은 11개여야 합니다.");
-check(inventory.items.filter(item => item.implementationStatus === "excluded").length === 2, "중복 제외 원문 문항은 2개여야 합니다.");
-check(types.length === 20, `런타임 유형은 중복 2개를 제외한 20개여야 하나 ${types.length}개입니다.`);
-check(ready.length === 9, `생성 가능 유형은 9개여야 하나 ${ready.length}개입니다.`);
-check(locked.length === 11, `검수 대기 유형은 11개여야 하나 ${locked.length}개입니다.`);
-check(new Set(types.map(type => type.sourceItemId)).size === 20, "런타임 원문 ID가 겹칩니다.");
+check(sourceItems.length === 11, `개념탐구 1 원문 문항은 11개여야 하나 ${sourceItems.length}개입니다.`);
+check(new Set(sourceItems.map(item => item.sourceItemId)).size === 11, "개념탐구 1 원문 문항 ID가 겹칩니다.");
+check(sourceItems.filter(item => item.implementationStatus === "ready").length === 10, "개념탐구 1 공개 원문 문항은 10개여야 합니다.");
+check(sourceItems.filter(item => item.implementationStatus === "review-locked").length === 0, "개념탐구 1에는 검수 대기 문항이 없어야 합니다.");
+check(sourceItems.filter(item => item.implementationStatus === "excluded").length === 1, "개념탐구 1 중복 제외 문항은 1개여야 합니다.");
+check(types.length === 10, `개념탐구 1 런타임 유형은 중복 1개를 제외한 10개여야 하나 ${types.length}개입니다.`);
+check(ready.length === 10, `생성 가능 유형은 10개여야 하나 ${ready.length}개입니다.`);
+check(locked.length === 0, `검수 대기 유형은 0개여야 하나 ${locked.length}개입니다.`);
+check(new Set(types.map(type => type.sourceItemId)).size === 10, "런타임 원문 ID가 겹칩니다.");
 
-for (const item of inventory.items.filter(item => item.implementationStatus !== "excluded")) {
+for (const item of sourceItems.filter(item => item.implementationStatus !== "excluded")) {
   const type = types.find(candidate => candidate.sourceItemId === item.sourceItemId);
   check(Boolean(type), `${item.sourceItemId}가 분류표에 없습니다.`);
   if (!type) continue;
@@ -69,10 +71,11 @@ for (const type of ready) {
         const step = Number(attr(svg, "data-chart-step"));
         const scaleMin = Number(attr(svg, "data-chart-scale-min"));
         const scaleMax = Number(attr(svg, "data-chart-scale-max"));
+        const gridCount = Number(attr(svg, "data-chart-grid-count"));
         const tickCount = Number(attr(svg, "data-chart-tick-count"));
         const graphValues = attr(svg, "data-chart-values").split(";").flatMap(numbers);
-        check(tickCount >= 2 && tickCount <= 12, `${type.sourceItemId}: 세로 눈금 수가 ${tickCount}개입니다.`);
-        check(Math.abs(scaleMin + step * (tickCount - 1) - scaleMax) < 1e-9, `${type.sourceItemId}: 세로축 범위와 눈금 수가 다릅니다.`);
+        check(gridCount >= 2 && tickCount >= 2 && tickCount <= 12, `${type.sourceItemId}: 세로 눈금 글자 수가 ${tickCount}개입니다.`);
+        check(Math.abs(scaleMin + step * (gridCount - 1) - scaleMax) < 1e-9, `${type.sourceItemId}: 세로축 범위와 격자 수가 다릅니다.`);
         check(graphValues.every(value => Math.abs((value - scaleMin) / step - Math.round((value - scaleMin) / step)) < 1e-9), `${type.sourceItemId}: 점이 눈금과 맞지 않습니다.`);
         check((output.prompt.match(/class="chart-tick"/g) || []).length >= tickCount, `${type.sourceItemId}: 눈금 글자가 빠졌습니다.`);
       }
@@ -112,6 +115,18 @@ for (const type of ready) {
         check(Number(output.answer) === revenue[target - 1] - revenue[target], `${type.sourceItemId}: 관광 수입 감소액이 다릅니다.`);
       } else if (type.variant === 8) {
         check(Number(output.answer) === 2 + Number(attr(evidence, "data-source42-slower-days")), `${type.sourceItemId}: 연습 시간이 다릅니다.`);
+      } else if (type.variant === 9) {
+        const xValues = numbers(attr(evidence, "data-source42-x-values"));
+        const september = numbers(attr(evidence, "data-source42-september"));
+        const prices = numbers(attr(evidence, "data-source42-prices"));
+        check(xValues.join(",") === "6,8,10,12", `${type.sourceItemId}: 실제 월 눈금이 다릅니다.`);
+        check(september.join(",") === "320,230", `${type.sourceItemId}: 9월 보간값이 다릅니다.`);
+        check(prices.join(",") === "700,600", `${type.sourceItemId}: 가격이 다릅니다.`);
+        check(Number(output.answer) === september[0] * prices[0] - september[1] * prices[1] && Number(output.answer) === 86000, `${type.sourceItemId}: 9월 판매 금액 차가 다릅니다.`);
+        check(attr(evidence, "data-source42-line-weights") === "thick,thin", `${type.sourceItemId}: 굵은선·얇은선 구분이 없습니다.`);
+        const svg = charts(output.prompt)[0] || "";
+        check(attr(svg, "data-chart-x-values") === "6,8,10,12", `${type.sourceItemId}: SVG 실제 가로 눈금이 없습니다.`);
+        check(attr(svg, "data-chart-line-weights") === "thick,thin", `${type.sourceItemId}: SVG 선 굵기 정보가 없습니다.`);
       }
     }
   }
@@ -123,4 +138,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 꺾은선그래프 원문 22문항 분류 · 공개 9 · 검수 대기 11 · 중복 제외 2 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
+console.log(`4-2 꺾은선그래프 개념탐구 1 원문 11문항 분류 · 공개 10 · 검수 대기 0 · 중복 제외 1 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);

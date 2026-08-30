@@ -363,7 +363,7 @@
   }
 
   function renderProblems() {
-    $("problemView").innerHTML = paginateProblems(state.questions).map((page, pageIndex) => `<section class="print-page">
+    $("problemView").innerHTML = paginateProblems(state.questions).map((page, pageIndex) => `<section class="print-page${page.length === 1 ? " print-page--single" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>

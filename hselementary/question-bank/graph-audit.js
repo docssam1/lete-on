@@ -92,21 +92,22 @@ for (const type of lineGraphTypes) {
         const step = Number(attribute(svg, "data-chart-step"));
         const scaleMin = Number(attribute(svg, "data-chart-scale-min"));
         const scaleMax = Number(attribute(svg, "data-chart-scale-max"));
+        const gridCount = Number(attribute(svg, "data-chart-grid-count"));
         const tickCount = Number(attribute(svg, "data-chart-tick-count"));
         const unit = attribute(svg, "data-chart-unit");
         const values = (attribute(svg, "data-chart-values") || "").split(";").flatMap(numberList);
         check(values.length > 0 && values.every(value => Math.abs((value - scaleMin) / step - Math.round((value - scaleMin) / step)) < 1e-9), `${type.id} / 시드 ${seed}: 눈금 단위와 값이 맞지 않습니다.`);
-        check(tickCount >= 2 && tickCount <= 12, `${type.id} / 시드 ${seed}: 눈금 수 ${tickCount}개가 허용 범위를 벗어났습니다.`);
-        check(Math.abs(scaleMax - (scaleMin + step * (tickCount - 1))) < 1e-9, `${type.id} / 시드 ${seed}: 눈금 최대값이 일치하지 않습니다.`);
+        check(gridCount >= 2 && tickCount >= 2 && tickCount <= 12, `${type.id} / 시드 ${seed}: 눈금 글자 수 ${tickCount}개가 허용 범위를 벗어났습니다.`);
+        check(Math.abs(scaleMax - (scaleMin + step * (gridCount - 1))) < 1e-9, `${type.id} / 시드 ${seed}: 눈금 최대값이 일치하지 않습니다.`);
         check(generated.prompt.includes(`세로 눈금 한 칸은 ${step}${unit}입니다.`), `${type.id} / 시드 ${seed}: 눈금 한 칸 안내가 없습니다.`);
 
         const tickLabels = svg.match(/class="chart-tick"/g)?.length || 0;
         const gridLines = svg.match(/class="chart-grid"/g)?.length || 0;
-        check(tickLabels === tickCount && gridLines >= tickCount, `${type.id} / 시드 ${seed}: 눈금 글자 또는 격자선이 빠졌습니다.`);
+        check(tickLabels === tickCount && gridLines >= gridCount, `${type.id} / 시드 ${seed}: 눈금 글자 또는 격자선이 빠졌습니다.`);
 
         const top = Number(attribute(svg, "data-chart-top"));
         const plotHeight = Number(attribute(svg, "data-chart-plot-height"));
-        const points = svg.match(/<circle class="chart-point chart-line-\d"[^>]*>/g) || [];
+        const points = svg.match(/<circle class="chart-point chart-line-\d[^\"]*"[^>]*>/g) || [];
         const hiddenCount = (attribute(svg, "data-chart-hidden") || "").split(";").flatMap(numberList).length;
         check(points.length === values.length - hiddenCount, `${type.id} / 시드 ${seed}: 보이는 점 수가 원자료와 다릅니다.`);
         for (const point of points) {

@@ -2061,54 +2061,80 @@
     const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
     return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.</p><svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 막대그래프" data-chart-kind="bar" data-chart-step="${step}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${values.join(",")}"${secondValues ? ` data-chart-second-values="${secondValues.join(",")}"` : ""} data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg></div>`;
   };
-  const lineChartSvg = ({ labels, series, step, unit, xAxis = "시간", minValue = 0 }) => {
-    if (!Number.isFinite(step) || step <= 0 || !Number.isFinite(minValue) || minValue < 0 || labels.length < 2 || labels.length > 7 || !series.length || series.length > 3) {
+  const lineChartSvg = ({ labels, series, step, unit, xAxis = "시간", minValue = 0, maxValue = null, xValues = null, xGridValues = null, xTickValues = null, xTickLabels = null, tickLabelEvery = null }) => {
+    if (!Array.isArray(labels) || !Array.isArray(series) || !Number.isFinite(step) || step <= 0 || !Number.isFinite(minValue) || minValue < 0 || labels.length < 2 || labels.length > 9 || !series.length || series.length > 3 || (maxValue !== null && (!Number.isFinite(maxValue) || maxValue <= minValue)) || (tickLabelEvery !== null && (!Number.isInteger(tickLabelEvery) || tickLabelEvery < 1))) {
       throw new Error("꺾은선그래프 설정이 올바르지 않습니다.");
     }
+    const hasXValues = xValues !== null && xValues !== undefined;
+    const isAscendingNumbers = values => Array.isArray(values) && values.length >= 2 && values.every(Number.isFinite) && values.every((value, index) => index === 0 || value > values[index - 1]);
+    if (hasXValues && (!isAscendingNumbers(xValues) || xValues.length !== labels.length)) {
+      throw new Error("꺾은선그래프 가로 눈금은 실제 수치 순서로 늘어나야 합니다.");
+    }
+    if ((xGridValues !== null && !isAscendingNumbers(xGridValues)) || (xTickValues !== null && !isAscendingNumbers(xTickValues)) || (xTickLabels !== null && (!Array.isArray(xTickLabels) || !xTickValues || xTickLabels.length !== xTickValues.length))) {
+      throw new Error("꺾은선그래프 보조 눈금과 숫자 눈금 설정이 올바르지 않습니다.");
+    }
+    if (!hasXValues && (xGridValues !== null || xTickValues !== null || xTickLabels !== null)) throw new Error("수치 가로축을 먼저 설정해야 합니다.");
     const allValues = series.flatMap(item => item.values);
     const isStepAligned = value => Math.abs((value - minValue) / step - Math.round((value - minValue) / step)) < 1e-9;
-    if (series.some(item => item.values.length !== labels.length) || allValues.some(value => !Number.isFinite(value) || value < minValue || !isStepAligned(value))) {
+    if (series.some(item => !Array.isArray(item.values) || item.values.length !== labels.length || !["normal", "thick", "thin"].includes(item.lineWeight || "normal")) || allValues.some(value => !Number.isFinite(value) || value < minValue || !isStepAligned(value)) || (maxValue !== null && (allValues.some(value => value > maxValue) || !isStepAligned(maxValue)))) {
       throw new Error("꺾은선그래프 값은 눈금 단위의 배수여야 합니다.");
     }
+    const xDomainValues = hasXValues ? (xGridValues || xTickValues || xValues) : null;
+    if (hasXValues && (xValues[0] < xDomainValues[0] || xValues.at(-1) > xDomainValues.at(-1))) throw new Error("자료 점이 가로축 범위를 벗어났습니다.");
+    const effectiveXGridValues = hasXValues ? (xGridValues || xTickValues || xValues) : labels.map((_, index) => index);
+    const effectiveXTickValues = hasXValues ? (xTickValues || xValues) : effectiveXGridValues;
+    const effectiveXTickLabels = hasXValues ? (xTickLabels || (xTickValues ? xTickValues.map(String) : labels)) : labels;
+    if (effectiveXGridValues.length > 21 || effectiveXTickValues.length > 12 || effectiveXTickLabels.length !== effectiveXTickValues.length) throw new Error("꺾은선그래프 가로 눈금이 너무 촘촘합니다.");
     const width = 250;
-    const height = 196;
     const left = 38;
     const right = 12;
     const top = 14;
-    const bottom = series.length > 1 ? 52 : 38;
+    const hasLegend = series.length > 1;
+    const bottom = hasLegend ? 68 : 38;
     const plotWidth = width - left - right;
+    const scaleMax = maxValue === null ? Math.max(minValue + step, minValue + Math.ceil((Math.max(...allValues) - minValue) / step) * step) : maxValue;
+    const gridCount = Math.round((scaleMax - minValue) / step) + 1;
+    if (gridCount > 28) throw new Error("꺾은선그래프 세로 눈금이 너무 촘촘합니다.");
+    let labelEvery = tickLabelEvery || 1;
+    if (tickLabelEvery === null) while (Math.ceil((gridCount - 1) / labelEvery) + 1 > 12) labelEvery += 1;
+    const labelIndexes = Array.from({ length: gridCount }, (_, index) => index).filter(index => index === gridCount - 1 || index % labelEvery === 0);
+    if (labelIndexes.length > 12) throw new Error("꺾은선그래프 눈금 숫자는 12개 이하여야 합니다.");
+    const tickCount = labelIndexes.length;
+    const height = (gridCount > 12 ? 240 : 196) + (hasLegend ? 16 : 0);
     const plotHeight = height - top - bottom;
-    const scaleMax = Math.max(minValue + step, minValue + Math.ceil((Math.max(...allValues) - minValue) / step) * step);
-    const tickCount = Math.round((scaleMax - minValue) / step) + 1;
-    if (tickCount > 12) throw new Error("꺾은선그래프 세로 눈금은 12개 이하여야 합니다.");
-    const xFor = index => left + plotWidth * index / (labels.length - 1);
+    const xForValue = value => left + plotWidth * (value - xDomainValues[0]) / (xDomainValues.at(-1) - xDomainValues[0]);
+    const xFor = index => hasXValues ? xForValue(xValues[index]) : left + plotWidth * index / (labels.length - 1);
     const yFor = value => top + plotHeight - (value - minValue) / (scaleMax - minValue) * plotHeight;
-    const horizontalGrid = Array.from({ length: tickCount }, (_, index) => {
+    const horizontalGrid = Array.from({ length: gridCount }, (_, index) => {
       const value = minValue + index * step;
       const y = yFor(value);
-      return `<line class="chart-grid" x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}"/><text class="chart-tick" x="${left - 5}" y="${(y + 3).toFixed(1)}">${value}</text>`;
+      const label = labelIndexes.includes(index) ? `<text class="chart-tick" x="${left - 5}" y="${(y + 3).toFixed(1)}">${value}</text>` : "";
+      return `<line class="chart-grid" x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}"/>${label}`;
     }).join("");
-    const verticalGrid = labels.map((_, index) => {
-      const x = xFor(index);
+    const verticalGrid = effectiveXGridValues.map((value, index) => {
+      const x = hasXValues ? xForValue(value) : xFor(index);
       return `<line class="chart-grid chart-grid-vertical" x1="${x.toFixed(1)}" y1="${top}" x2="${x.toFixed(1)}" y2="${top + plotHeight}"/>`;
     }).join("");
-    const xLabels = labels.map((label, index) => `<text class="chart-label" x="${xFor(index).toFixed(1)}" y="${top + plotHeight + 17}">${label}</text>`).join("");
+    const xLabels = effectiveXTickLabels.map((label, index) => `<text class="chart-label" x="${(hasXValues ? xForValue(effectiveXTickValues[index]) : xFor(index)).toFixed(1)}" y="${top + plotHeight + 17}">${label}</text>`).join("");
     const plottedSeries = series.map((item, seriesIndex) => {
       const hidden = new Set(item.hidden || []);
-      const segments = item.values.slice(0, -1).map((value, index) => hidden.has(index) || hidden.has(index + 1) ? "" : `<line class="chart-line chart-line-${seriesIndex}" x1="${xFor(index).toFixed(1)}" y1="${yFor(value).toFixed(1)}" x2="${xFor(index + 1).toFixed(1)}" y2="${yFor(item.values[index + 1]).toFixed(1)}"/>`).join("");
+      const lineWeight = item.lineWeight || "normal";
+      const segments = item.values.slice(0, -1).map((value, index) => hidden.has(index) || hidden.has(index + 1) ? "" : `<line class="chart-line chart-line-${seriesIndex} chart-line-weight-${lineWeight}" data-line-weight="${lineWeight}" x1="${xFor(index).toFixed(1)}" y1="${yFor(value).toFixed(1)}" x2="${xFor(index + 1).toFixed(1)}" y2="${yFor(item.values[index + 1]).toFixed(1)}"/>`).join("");
       const markers = item.values.map((value, index) => hidden.has(index)
         ? `<text class="chart-question" data-chart-hidden-index="${index}" x="${xFor(index).toFixed(1)}" y="${top + plotHeight - 8}">?</text>`
-        : `<circle class="chart-point chart-line-${seriesIndex}" data-chart-value="${value}" cx="${xFor(index).toFixed(1)}" cy="${yFor(value).toFixed(1)}" r="3"/>`).join("");
-      return `${segments}${markers}`;
+        : `<circle class="chart-point chart-line-${seriesIndex} chart-line-weight-${lineWeight}" data-chart-value="${value}" data-line-weight="${lineWeight}" cx="${xFor(index).toFixed(1)}" cy="${yFor(value).toFixed(1)}" r="3"/>`).join("");
+      return `<g class="chart-series chart-series-${seriesIndex} chart-series-weight-${lineWeight}" data-chart-series="${seriesIndex}" data-line-weight="${lineWeight}">${segments}${markers}</g>`;
     }).join("");
-    const legendMarkup = series.length > 1 ? `<g class="chart-legend chart-line-legend">${series.map((item, index) => {
-      const x = left + index * 64;
-      return `<line class="chart-line chart-line-${index}" x1="${x}" y1="${height - 13}" x2="${x + 16}" y2="${height - 13}"/><text x="${x + 22}" y="${height - 9}">${item.name}</text>`;
+    const legendMarkup = hasLegend ? `<g class="chart-legend chart-line-legend">${series.map((item, index) => {
+      const x = left + index * (plotWidth / series.length);
+      const lineWeight = item.lineWeight || "normal";
+      return `<g class="chart-legend-series chart-series-weight-${lineWeight}" data-chart-series="${index}" data-line-weight="${lineWeight}"><line class="chart-line chart-line-${index} chart-line-weight-${lineWeight}" data-line-weight="${lineWeight}" x1="${x}" y1="${height - 13}" x2="${x + 16}" y2="${height - 13}"/><text x="${x + 22}" y="${height - 9}">${item.name}</text></g>`;
     }).join("")}</g>` : "";
     const hiddenValues = series.map(item => (item.hidden || []).join(",")).join(";");
     const baselineNote = minValue > 0 ? ` 세로축은 ${minValue}${unit}부터 시작합니다.` : "";
     const breakMark = minValue > 0 ? `<path class="chart-axis chart-axis-break" d="M34 ${top + plotHeight - 8} l4 -4 l-4 -4 l4 -4"/>` : "";
-    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.${baselineNote}</p><svg class="line-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 꺾은선그래프" data-chart-kind="line" data-chart-step="${step}" data-chart-scale-min="${minValue}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${series.map(item => item.values.join(",")).join(";")}" data-chart-hidden="${hiddenValues}" data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${horizontalGrid}${verticalGrid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${breakMark}${plottedSeries}${xLabels}<text class="chart-axis-name" x="${width - right}" y="${height - (series.length > 1 ? 30 : 8)}">${xAxis}</text>${legendMarkup}</svg></div>`;
+    const axisNameY = hasLegend ? top + plotHeight + 32 : height - 8;
+    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.${baselineNote}</p><svg class="line-chart" style="--line-chart-height:${height}px" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 꺾은선그래프" data-chart-kind="line" data-chart-step="${step}" data-chart-scale-min="${minValue}" data-chart-scale-max="${scaleMax}" data-chart-grid-count="${gridCount}" data-chart-label-step="${step * labelEvery}" data-chart-tick-count="${tickCount}" data-chart-values="${series.map(item => item.values.join(",")).join(";")}" data-chart-x-values="${hasXValues ? xValues.join(",") : ""}" data-chart-x-domain="${hasXValues ? `${xDomainValues[0]},${xDomainValues.at(-1)}` : ""}" data-chart-x-grid-values="${hasXValues ? effectiveXGridValues.join(",") : ""}" data-chart-x-tick-values="${hasXValues ? effectiveXTickValues.join(",") : ""}" data-chart-line-weights="${series.map(item => item.lineWeight || "normal").join(",")}" data-chart-hidden="${hiddenValues}" data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}" data-chart-left="${left}" data-chart-plot-width="${plotWidth}"><text class="chart-unit" x="4" y="10">(${unit})</text>${horizontalGrid}${verticalGrid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${breakMark}${plottedSeries}${xLabels}<text class="chart-axis-name" x="${width - right}" y="${axisNameY}">${xAxis}</text>${legendMarkup}</svg></div>`;
   };
   const triangleLatticeSvg = (side) => {
     const width = 240;
@@ -11375,12 +11401,132 @@
         const chart = lineChartSvg({ labels: ["1일", "2일", "3일", "4일", "5일"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "날짜", minValue: Math.min(...values) - 0.5 });
         return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `기록의 초가 커진 날은 ${slowerDays}번이므로 연습 시간도 ${slowerDays}번 늘어납니다. ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
       }
+      if (variant === 9) {
+        const labels = ["6", "8", "10", "12"];
+        const xValues = [6, 8, 10, 12];
+        const iceCream = [310, 330, 310, 230];
+        const chocolate = [230, 250, 210, 310];
+        const septemberIceCream = 320;
+        const septemberChocolate = 230;
+        const prices = [700, 600];
+        const answer = septemberIceCream * prices[0] - septemberChocolate * prices[1];
+        const chart = lineChartSvg({
+          labels,
+          xValues,
+          series: [
+            { name: "아이스크림(굵은선)", values: iceCream, lineWeight: "thick" },
+            { name: "초콜릿(얇은선)", values: chocolate, lineWeight: "thin" }
+          ],
+          step: 10,
+          unit: "개",
+          xAxis: "(월)",
+          minValue: 200,
+          maxValue: 350,
+          tickLabelEvery: 5
+        });
+        if (septemberIceCream !== (iceCream[1] + iceCream[2]) / 2 || septemberChocolate !== (chocolate[1] + chocolate[2]) / 2) throw new Error("9월 판매량 보간값이 원자료와 다릅니다.");
+        return result(`아이스크림과 초콜릿의 판매량을 나타낸 꺾은선그래프입니다. 범례의 굵은선은 아이스크림, 얇은선은 초콜릿입니다. 9월은 8월과 10월의 정확한 중간입니다. 9월에 아이스크림은 한 개에 ${prices[0]}원, 초콜릿은 한 개에 ${prices[1]}원일 때 판매 금액의 차를 구하세요.${chart}${sourceEvidence("4-2-u5-e1-mission-6", [...iceCream, ...chocolate], `data-source42-x-values="${xValues.join(",")}" data-source42-september="${septemberIceCream},${septemberChocolate}" data-source42-prices="${prices.join(",")}" data-source42-answer="${answer}" data-source42-line-weights="thick,thin"`)}`, answer, `굵은선을 따라 읽으면 9월 아이스크림 판매량은 (${iceCream[1]} + ${iceCream[2]}) ÷ 2 = ${septemberIceCream}개입니다. 얇은선을 따라 읽으면 초콜릿 판매량은 (${chocolate[1]} + ${chocolate[2]}) ÷ 2 = ${septemberChocolate}개입니다. 판매 금액의 차는 ${septemberIceCream} × ${prices[0]} - ${septemberChocolate} × ${prices[1]} = ${answer.toLocaleString()}원입니다.`);
+      }
       throw new Error("검수 대기인 꺾은선그래프의 이해 유형입니다.");
     },
     lineGraphApplication({ rng, level, variant = 0 }) {
       void rng;
       void level;
-      void variant;
+      const sourceEvidence = (sourceItemId, values, extra = "") => `<span hidden data-source42-line-item="${sourceItemId}" data-source42-values="${values.join(",")}" ${extra}></span>`;
+      if (variant === 1) {
+        const xValues = [0, 20, 40, 60, 80, 100, 120, 140, 160];
+        const values = [0, 20, 0, 20, 0, 20, 0, 20, 0];
+        const targetSeconds = 150;
+        const period = 40;
+        const distance = 20;
+        const withinPeriod = targetSeconds % period;
+        const fromGa = withinPeriod <= distance ? withinPeriod : period - withinPeriod;
+        const fromNa = distance - fromGa;
+        const answer = `나, ${fromNa}m`;
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "가 지점에서 공까지의 거리", values }], step: 10, unit: "m", xAxis: "시간(초)" });
+        if (targetSeconds - withinPeriod !== 120 || fromGa !== 10 || fromNa !== 10) throw new Error("왕복 공의 위치 계산이 다릅니다.");
+        return result(`가와 나 지점 사이의 거리는 ${distance}m입니다. 공은 가에서 출발해 ${period}초마다 같은 길을 왕복합니다. 그래프를 보고 ${targetSeconds}초일 때 공이 어느 지점에서 출발했으며 그 지점에서 몇 m 떨어져 있는지 쓰세요.${chart}${sourceEvidence("4-2-u5-e2-example-2-1", values, `data-source42-x-values="${xValues.join(",")}" data-source42-period="${period}" data-source42-target="${targetSeconds}" data-source42-from-ga="${fromGa}" data-source42-from-na="${fromNa}"`)}`, answer, `${targetSeconds}초는 120초 뒤 30초가 지난 때입니다. 140초에 공은 나 지점에 도착한 뒤 되돌아옵니다. 따라서 ${targetSeconds}초에는 나 지점에서 ${fromNa}m 떨어져 있으므로 답은 ${answer}입니다.`);
+      }
+      if (variant === 2) {
+        const xValues = [2006, 2007, 2008, 2009];
+        const sales = [350, 500, 400, 200];
+        const firstPrice = 100;
+        const changes = sales.slice(1).map((value, index) => value - sales[index]);
+        const prices = [firstPrice];
+        changes.forEach(change => prices.push(prices.at(-1) + change / 10));
+        const answer = prices.at(-1);
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "TV 판매량", values: sales }], step: 50, unit: "대", xAxis: "연도", minValue: 0 });
+        if (!changes.every(change => change % 10 === 0) || answer !== 85) throw new Error("TV 가격 변화량이 원문 계산과 다릅니다.");
+        return result(`어느 전자 대리점은 한 해 TV 판매량이 늘어나면 다음 해 가격을 늘어난 양의 1/10만 원만큼 올리고, 줄어들면 줄어든 양의 1/10만 원만큼 내립니다. ${xValues[0]}년 TV 가격이 ${firstPrice}만 원일 때 ${xValues.at(-1)}년 TV 가격을 구하세요.${chart}${sourceEvidence("4-2-u5-e2-example-2-2", sales, `data-source42-x-values="${xValues.join(",")}" data-source42-first-price="${firstPrice}" data-source42-changes="${changes.join(",")}" data-source42-prices="${prices.join(",")}"`)}`, answer, `판매량 변화는 ${changes.join("대, ")}대입니다. 가격은 ${prices.join("만 원, ")}만 원이 되므로 ${xValues.at(-1)}년 가격은 ${answer}만 원입니다.`);
+      }
+      if (variant === 3) {
+        const xValues = [0, 10, 30, 50];
+        const smallTank = [0, 200, 600, 600];
+        const largeTank = [200, 200, 200, 600];
+        const sameTimes = xValues.filter((time, index) => smallTank[index] === largeTank[index]);
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "작은 수조", values: smallTank, lineWeight: "thick" }, { name: "큰 수조(작은 수조 제외)", values: largeTank, lineWeight: "thin" }], step: 100, unit: "L", xAxis: "시간(분)" });
+        if (sameTimes.join(",") !== "10,50") throw new Error("두 수조가 같은 시각이 하나로 정해지지 않습니다.");
+        return result(`큰 수조에는 처음에 ${largeTank[0]}L의 물이 있고, 작은 수조에는 물이 없습니다. 작은 수조에 물을 넣을 때 작은 수조의 물의 양은 큰 수조의 물의 양에 포함하지 않습니다. 두 수조의 물의 양이 같은 때를 모두 구하세요.${chart}${sourceEvidence("4-2-u5-e2-example-2-3", [...smallTank, ...largeTank], `data-source42-x-values="${xValues.join(",")}" data-source42-same-times="${sameTimes.join(",")}" data-source42-line-weights="thick,thin"`)}`, `${sameTimes[0]}분, ${sameTimes[1]}분`, `그래프에서 두 선이 만나는 시각은 ${sameTimes[0]}분과 ${sameTimes[1]}분입니다. 따라서 두 수조의 물의 양이 같은 때는 ${sameTimes[0]}분, ${sameTimes[1]}분입니다.`);
+      }
+      if (variant === 5) {
+        const xValues = [0, 1, 2, 3, 4];
+        const carA = [0, 120, 160, 240, 300];
+        const carB = [0, 60, 100, 200, 220];
+        const targetTime = 3.5;
+        const aDistance = 240 + (300 - 240) / 2;
+        const bDistance = 200 + (220 - 200) / 2;
+        const fuel = [aDistance / 15, bDistance / 14];
+        const answer = Math.abs(fuel[0] - fuel[1]);
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "가 자동차", values: carA, lineWeight: "thick" }, { name: "나 자동차", values: carB, lineWeight: "thin" }], step: 20, unit: "km", xAxis: "시간(시간)", tickLabelEvery: 5 });
+        if (aDistance !== 270 || bDistance !== 210 || fuel[0] !== 18 || fuel[1] !== 15 || answer !== 3) throw new Error("자동차 연료 차 계산이 다릅니다.");
+        return result(`가와 나 자동차가 달린 거리를 나타낸 그래프입니다. 가 자동차는 휘발유 1L로 15km, 나 자동차는 휘발유 1L로 14km를 달립니다. ${targetTime}시간 뒤 두 자동차가 사용한 휘발유 양의 차를 구하세요.${chart}${sourceEvidence("4-2-u5-e2-mission-2", [...carA, ...carB], `data-source42-x-values="${xValues.join(",")}" data-source42-target-time="${targetTime}" data-source42-distances="${aDistance},${bDistance}" data-source42-fuel="${fuel.join(",")}" data-source42-line-weights="thick,thin"`)}`, answer, `${targetTime}시간은 3시간과 4시간의 정확한 중간입니다. 가 자동차는 ${aDistance}km를 달려 ${aDistance} ÷ 15 = ${fuel[0]}L, 나 자동차는 ${bDistance}km를 달려 ${bDistance} ÷ 14 = ${fuel[1]}L를 사용했습니다. 따라서 차는 ${answer}L입니다.`);
+      }
+      if (variant === 6) {
+        const xValues = [0, 5, 10, 15, 20];
+        const junyoung = [0, 600, 800, 1000, 1200];
+        const brother = [0, 300, 600, 900, 1200];
+        const walkingSpeed = (junyoung[2] - junyoung[1]) / (xValues[2] - xValues[1]);
+        const walkOnlyTime = junyoung.at(-1) / walkingSpeed;
+        const answer = walkOnlyTime - xValues.at(-1);
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "준영", values: junyoung, lineWeight: "thick" }, { name: "형", values: brother, lineWeight: "thin" }], step: 100, unit: "m", xAxis: "시간(분)", tickLabelEvery: 5 });
+        if (walkingSpeed !== 40 || walkOnlyTime !== 30 || answer !== 10) throw new Error("준영의 걷기 시간 계산이 다릅니다.");
+        return result(`준영이와 형이 집에서 ${junyoung.at(-1)}m 떨어진 병원까지 간 거리를 나타낸 그래프입니다. 준영이는 처음 5분 동안 뛰고 그 뒤에는 걸었습니다. 준영이가 처음부터 걸어갔다면 형보다 몇 분 늦게 병원에 도착합니까?${chart}${sourceEvidence("4-2-u5-e2-mission-3", [...junyoung, ...brother], `data-source42-x-values="${xValues.join(",")}" data-source42-walking-speed="${walkingSpeed}" data-source42-walk-only-time="${walkOnlyTime}" data-source42-line-weights="thick,thin"`)}`, answer, `준영이의 걷는 속도는 (800 - 600) ÷ (10 - 5) = ${walkingSpeed}m/분입니다. 처음부터 걸으면 ${junyoung.at(-1)} ÷ ${walkingSpeed} = ${walkOnlyTime}분이 걸립니다. 형은 ${xValues.at(-1)}분에 도착하므로 준영이는 ${answer}분 늦습니다.`);
+      }
+      if (variant === 7) {
+        const xValues = [0, 5, 10, 15, 20, 25];
+        const netWater = [0, 120, 240, 220, 460, 440];
+        const leakPerMinute = 4;
+        const firstFaucet = (netWater[2] - netWater[0]) / 10 + leakPerMinute;
+        const secondFaucet = (netWater[4] - netWater[3]) / 5 + leakPerMinute;
+        const answer = firstFaucet * 10 + secondFaucet * 5;
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "욕조에 남은 물", values: netWater }], step: 20, unit: "L", xAxis: "시간(분)", tickLabelEvery: 5 });
+        if (firstFaucet !== 28 || secondFaucet !== 52 || answer !== 540) throw new Error("욕조 물의 양 계산이 다릅니다.");
+        return result(`욕조에는 처음부터 1분에 ${leakPerMinute}L씩 물이 새고 있습니다. 0분부터 10분까지는 첫 수도꼭지를 틀고, 10분부터 15분까지는 수도꼭지를 잠갔으며, 15분부터 20분까지는 더 센 수도꼭지를 틀었습니다. 수도꼭지에서 나온 물의 양은 모두 몇 L인지 구하세요.${chart}${sourceEvidence("4-2-u5-e2-mission-4", netWater, `data-source42-x-values="${xValues.join(",")}" data-source42-leak="${leakPerMinute}" data-source42-faucets="${firstFaucet},${secondFaucet}"`)}`, answer, `처음 10분 동안 욕조의 물은 ${netWater[2]}L 늘었으므로 첫 수도꼭지는 1분에 ${netWater[2]} ÷ 10 + ${leakPerMinute} = ${firstFaucet}L를 냈습니다. 다음 5분 동안 ${netWater[4] - netWater[3]}L 늘었으므로 센 수도꼭지는 1분에 ${netWater[4] - netWater[3]} ÷ 5 + ${leakPerMinute} = ${secondFaucet}L를 냈습니다. 따라서 ${firstFaucet} × 10 + ${secondFaucet} × 5 = ${answer}L입니다.`);
+      }
+      if (variant === 8) {
+        const xValues = [0, 8, 13];
+        const remaining = [120, 40, 0];
+        const togetherRate = (remaining[0] - remaining[1]) / 8;
+        const naRate = (remaining[1] - remaining[2]) / 5;
+        const gaRate = togetherRate - naRate;
+        const answer = remaining[0] / gaRate;
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, series: [{ name: "물탱크에 남은 물", values: remaining }], step: 20, unit: "L", xAxis: "시간(분)" });
+        if (togetherRate !== 10 || naRate !== 8 || gaRate !== 2 || answer !== 60) throw new Error("수도꼭지 사용 시간 계산이 다릅니다.");
+        return result(`물 ${remaining[0]}L가 든 물탱크에 가, 나 두 수도꼭지가 연결되어 있습니다. 처음 ${xValues[1]}분 동안은 두 수도꼭지를 함께 쓰고, 그 뒤에는 나 수도꼭지만 썼습니다. 처음부터 가 수도꼭지만 사용했다면 물을 모두 쓰는 데 몇 분 걸리는지 구하세요.${chart}${sourceEvidence("4-2-u5-e2-mission-5", remaining, `data-source42-x-values="${xValues.join(",")}" data-source42-rates="${togetherRate},${naRate},${gaRate}"`)}`, answer, `처음 ${xValues[1]}분 동안 두 수도꼭지는 1분에 ${togetherRate}L를 썼고, 나 수도꼭지는 1분에 ${naRate}L를 썼습니다. 따라서 가 수도꼭지는 1분에 ${gaRate}L를 쓰므로 ${remaining[0]} ÷ ${gaRate} = ${answer}분 걸립니다.`);
+      }
+      if (variant === 9) {
+        const xValues = [0, 7.5, 12.5, 15, 20];
+        const xGridValues = Array.from({ length: 11 }, (_, index) => index * 2.5);
+        const xTickValues = [0, 5, 10, 15, 20, 25];
+        const bCup = [100, 100, 300, 300, 300];
+        const aCup = [200, 200, 200, 200, 400];
+        const bFullAt = xValues[2];
+        const aFullAt = xValues[4];
+        const answer = (aFullAt - bFullAt) * 60;
+        const chart = lineChartSvg({ labels: xValues.map(String), xValues, xGridValues, xTickValues, series: [{ name: "B 그릇(얇은선)", values: bCup, lineWeight: "thin" }, { name: "A 그릇(굵은선)", values: aCup, lineWeight: "thick" }], step: 20, unit: "L", xAxis: "(분)", maxValue: 400, tickLabelEvery: 5 });
+        if (bFullAt !== 12.5 || aFullAt !== 20 || answer !== 450) throw new Error("두 그릇이 가득 차는 시각 차가 다릅니다.");
+        return result(`큰 통 안의 B 그릇은 7분 30초부터 물의 양이 변해 12분 30초에 가득 찹니다. A 그릇은 15분부터 물의 양이 변해 20분에 가득 찹니다. 범례의 얇은선은 B 그릇, 굵은선은 A 그릇입니다. A 그릇이 가득 찬 때는 B 그릇이 가득 찬 뒤 몇 초가 지난 때인지 구하세요.${chart}${sourceEvidence("4-2-u5-e2-mission-6", [...bCup, ...aCup], `data-source42-x-values="${xValues.join(",")}" data-source42-x-grid-values="${xGridValues.join(",")}" data-source42-x-tick-values="${xTickValues.join(",")}" data-source42-full-times="${bFullAt},${aFullAt}" data-source42-answer-seconds="${answer}" data-source42-line-weights="thin,thick"`)}`, answer, `B 그릇은 12분 30초, A 그릇은 20분에 가득 찹니다. 시간 차는 20분 - 12분 30초 = 7분 30초이고, 7분 30초 = ${answer}초입니다.`);
+      }
       throw new Error("검수 대기인 꺾은선그래프의 활용 유형입니다.");
     },
     source41PlaneTransformThree({ rng, level, variant = 0 }) {
