@@ -559,7 +559,9 @@
         const action = audience === "teacher" ? route.teacherAction : route.studentAction;
         if (action) body.append(element("p", "route-action", localized(action, "")));
         const conceptLink = element("a", "route-concept-link", audience === "teacher" ? "연결 개념 레슨 미리보기 →" : "이 개념 학습 시작 →");
-        conceptLink.href = `./concept-learning.html?cluster=${encodeURIComponent(route.clusterId)}`;
+        conceptLink.href = window.GFIELDClinicPaths
+          ? window.GFIELDClinicPaths.conceptUrl(route.clusterId, true)
+          : `./concept-learning.html?cluster=${encodeURIComponent(route.clusterId)}&from=diagnostic`;
         body.append(conceptLink);
         body.append(renderResourceSummary(route.studentResources, "학생 계획 자료"));
         if (audience === "teacher") body.append(renderResourceSummary(route.teacherResources, "교사 계획 자료"));

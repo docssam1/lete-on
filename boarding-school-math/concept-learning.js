@@ -2,6 +2,7 @@
   "use strict";
 
   const content = window.GFIELDGrade6ConceptLessons;
+  const clinicPaths = window.GFIELDClinicPaths;
   const DOMAIN_LABELS = Object.freeze({ RP: "비와 비례", NS: "수 체계", EE: "식과 방정식", G: "기하", SP: "통계와 확률" });
   const REPRESENTATION_LABELS = Object.freeze({
     "equivalent-ratio-table": "같은 비를 나타내는 표",
@@ -182,10 +183,53 @@
       : content.lessons[0].lineage.clusterId;
   }
 
-  function setClusterInUrl(clusterId) {
+  function setClusterInUrl(clusterId, preserveDiagnosticSource) {
     const url = new URL(window.location.href);
     url.searchParams.set("cluster", clusterId);
+    if (!preserveDiagnosticSource) url.searchParams.delete("from");
     window.history.replaceState({ clusterId }, "", url);
+  }
+
+  function cameFromDiagnostic() {
+    return new URLSearchParams(window.location.search).get("from") === "diagnostic";
+  }
+
+  function renderClinicRoute(clusterId) {
+    if (!clinicPaths) return null;
+    const fromDiagnostic = cameFromDiagnostic();
+    const route = clinicPaths.routeFor(clusterId, { fromDiagnostic: fromDiagnostic });
+    const section = element("section", "clinic-route");
+    section.setAttribute("aria-label", "진단에서 학습과 재확인까지의 현재 경로");
+
+    const heading = element("div", "clinic-route-heading");
+    heading.append(
+      element("p", "micro-label", fromDiagnostic ? "DIAGNOSTIC CLINIC · CONNECTED" : "LEARNING PATH"),
+      element("h3", "", fromDiagnostic ? "진단 결과에서 이 개념으로 연결되었습니다" : "이 개념의 다음 학습 경로")
+    );
+    section.append(heading);
+
+    const steps = element("ol", "clinic-route-grid");
+    const analysis = element("li", "clinic-route-step is-complete");
+    analysis.append(element("span", "clinic-step-number", "01"), element("strong", "", "분석"), element("small", "", fromDiagnostic ? "영역·유형 연결 완료" : "개념 직접 선택"));
+    const conceptStep = element("li", "clinic-route-step is-current");
+    conceptStep.append(element("span", "clinic-step-number", "02"), element("strong", "", "현재 개념"), element("small", "", clusterId));
+    const animation = element("li", "clinic-route-step " + (route.animated.state === "available" ? "is-ready" : "is-locked"));
+    animation.append(element("span", "clinic-step-number", "03"), element("strong", "", "시각 강의"));
+    if (route.animated.state === "available") {
+      const link = element("a", "clinic-action-link", route.animated.labelKo + " 보기 →");
+      link.href = route.animated.url;
+      link.dataset.clinicAction = "animated";
+      animation.append(link);
+    } else {
+      animation.append(element("small", "", "이 영역은 정확한 대응 강의 검수 대기"));
+    }
+    const workbook = element("li", "clinic-route-step is-locked");
+    workbook.append(element("span", "clinic-step-number", "04"), element("strong", "", "맞춤 워크북"), element("small", "", "교사 배정 후 열림"));
+    const recheck = element("li", "clinic-route-step is-locked");
+    recheck.append(element("span", "clinic-step-number", "05"), element("strong", "", "재확인"), element("small", "", "학습 완료 후 열림"));
+    steps.append(analysis, conceptStep, animation, workbook, recheck);
+    section.append(steps);
+    return section;
   }
 
   function renderMethod(method, index) {
@@ -200,7 +244,7 @@
   function renderLesson(clusterId, moveFocus) {
     const lesson = content.lessons.find(function (candidate) { return candidate.lineage.clusterId === clusterId; });
     if (!lesson) return;
-    setClusterInUrl(clusterId);
+    setClusterInUrl(clusterId, !moveFocus);
     document.querySelectorAll("#concept-list button").forEach(function (button) {
       const active = button.dataset.cluster === clusterId;
       button.setAttribute("aria-current", active ? "page" : "false");
@@ -213,6 +257,8 @@
     header.append(element("h2", "", lesson.titleKo));
     header.append(element("p", "lesson-standard", `클러스터 범위 ${lesson.lineage.standardRange} · 대표 개념 1개 · 범위 전체 숙달 평가는 아님`));
     host.append(header);
+    const clinicRoute = renderClinicRoute(clusterId);
+    if (clinicRoute) host.append(clinicRoute);
 
     const concept = element("section", "lesson-section concept-explanation");
     concept.append(element("span", "section-number", "01"), element("h3", "", "개념을 이해합니다"), element("p", "lesson-copy", lesson.conceptExplanationKo));
