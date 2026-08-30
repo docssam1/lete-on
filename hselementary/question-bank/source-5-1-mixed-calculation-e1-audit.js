@@ -9,7 +9,8 @@ const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "5-1").units.find(item => item.id === "5-1-u1");
 const sourceTypes = unit.subunits.flatMap(subunit => subunit.types);
 const readyTypes = sourceTypes.filter(type => type.sourceItemId.startsWith("5-1-u1-e1-"));
-const lockedTypes = sourceTypes.filter(type => !type.sourceItemId.startsWith("5-1-u1-e1-"));
+const e2ReadyTypes = sourceTypes.filter(type => type.sourceItemId.startsWith("5-1-u1-e2-") && !type.reviewLocked);
+const lockedTypes = sourceTypes.filter(type => type.reviewLocked);
 const labels = ["①", "②", "③", "④"];
 const fail = message => { throw new Error(message); };
 const check = (condition, message) => { if (!condition) fail(message); };
@@ -21,7 +22,8 @@ const groups = text => text.split(";").map(numbers);
 
 check(sourceTypes.length === 44, `5-1 1단원은 44유형이어야 하나 ${sourceTypes.length}개입니다.`);
 check(readyTypes.length === 11, `개념탐구 1 공개 유형은 11개여야 하나 ${readyTypes.length}개입니다.`);
-check(lockedTypes.length === 33 && lockedTypes.every(type => type.reviewLocked), "개념탐구 2~4의 33유형은 모두 검수 대기여야 합니다.");
+check(e2ReadyTypes.length === 10, `개념탐구 2 공개 유형은 10개여야 하나 ${e2ReadyTypes.length}개입니다.`);
+check(lockedTypes.length === 23, `단원 검수 대기 유형은 23개여야 하나 ${lockedTypes.length}개입니다.`);
 check(readyTypes.every(type => api.generatorKey(type) === "mixedCalculationE1" && !type.reviewLocked), "개념탐구 1의 생성기 또는 잠금 상태가 다릅니다.");
 
 function verify(kind, tag, generated, context) {
@@ -152,4 +154,4 @@ for (const type of readyTypes) {
   }
 }
 
-console.log(`5-1 자연수의 혼합 계산 개념탐구 1 전용 감사 통과: 원문 11유형 공개 · 33유형 잠금 · ${generatedCount.toLocaleString()}회 독립 계산·전수 열거`);
+console.log(`5-1 자연수의 혼합 계산 개념탐구 1 전용 감사 통과: 개념탐구 1 공개 11유형 · 단원 잠금 23유형 · ${generatedCount.toLocaleString()}회 독립 계산·전수 열거`);

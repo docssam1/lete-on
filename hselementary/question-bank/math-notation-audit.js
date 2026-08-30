@@ -25,7 +25,7 @@ let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
-if (types.length !== 933) failures.push(`공개 검수 대상은 933개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 943) failures.push(`공개 검수 대상은 943개여야 하나 ${types.length}개입니다.`);
 
 const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : 0), 0);
 const notationCases = [
