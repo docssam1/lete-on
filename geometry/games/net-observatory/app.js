@@ -1,6 +1,6 @@
-import { levels, validateLevels, GAME_ID, PROGRESS_KEY } from "./levels.js?v=net-2";
-import { messages, text } from "./i18n.js?v=net-2";
-import { NetFoldViewer } from "./fold-view.js?v=net-3";
+import { levels, validateLevels, GAME_ID, PROGRESS_KEY } from "./levels.js?v=net-4";
+import { messages, text } from "./i18n.js?v=net-4";
+import { NetFoldViewer } from "./fold-view.js?v=net-4";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -17,7 +17,7 @@ const SUCCESS_WORDS = ["GOOD JOB!", "GREAT JOB!", "SUCCESS!"];
 
 const requestedLevel = Number(params.get("level")) || Number(saved.level) || 1;
 const state = {
-  level: Math.min(5, Math.max(1, requestedLevel)), problemIndex: 0, queue: [], solved: false,
+  level: Math.min(levels.length, Math.max(1, requestedLevel)), problemIndex: 0, queue: [], solved: false,
   folded: false, hints: 0, wrong: 0, lang: language,
   audio: localStorage.getItem("gfield-audio-muted") !== "true", viewer: null, choiceViewers: [], autoNextTimer: null
 };
@@ -188,6 +188,22 @@ function renderFoldProblem(p) {
   });
 }
 
+function renderNetOpposite(p) {
+  const viewerHost = document.createElement("div");
+  viewerHost.className = "viewer-host opposite-viewer";
+  ui.stage.append(viewerHost);
+  state.viewer = new NetFoldViewer(viewerHost);
+  state.viewer.setNet(p.cells, p.faces);
+  ui.fold.hidden = false;
+  p.choices.forEach((choice, index) => {
+    const visual = document.createElement("span");
+    visual.className = "face-choice";
+    visual.style.setProperty("--face-color", choice.color);
+    visual.textContent = choice.label;
+    ui.choices.append(choiceButton(t("answerChoice", { number: index + 1 }), choice.id, visual));
+  });
+}
+
 function renderDice(p) {
   const card = document.createElement("div");
   card.className = "dice-stage";
@@ -233,10 +249,13 @@ function renderProblem() {
   $("#problemLabel").textContent = `${state.problemIndex + 1} / ${state.queue.length}`;
   $("#stars").textContent = "●".repeat(state.problemIndex + 1) + "○".repeat(state.queue.length - state.problemIndex - 1);
   $("#missionTitle").textContent = t(level().titleKey);
-  const vars = p.interaction === "dice-opposite" ? { face: p.face } : p.solid ? { solid: t(p.solid.nameKey) } : {};
+  const vars = p.interaction === "dice-opposite" ? { face: p.face }
+    : p.interaction === "net-opposite" ? { mark: p.query.label }
+      : p.solid ? { solid: t(p.solid.nameKey) } : {};
   ui.prompt.textContent = t(p.promptKey, vars);
   ui.answerPrompt.textContent = t("chooseAnswer");
   if (p.interaction === "choose-net") renderLevel1(p);
+  else if (p.interaction === "net-opposite") renderNetOpposite(p);
   else if (p.interaction === "fold-view" || p.interaction === "symbol-view") renderFoldProblem(p);
   else if (p.interaction.startsWith("dice")) renderDice(p);
   else renderSolid(p);
@@ -309,9 +328,13 @@ function renderLevels() {
 
 function hint() {
   state.hints += 1;
-  const key = state.level === 1 ? "hintValidNet" : state.level === 2 ? "hintFold" : state.level === 3 ? "hintDice" : state.level === 4 ? "hintSymbol" : "hintSolid";
+  const interaction = problem().interaction;
+  const key = interaction === "choose-net" ? "hintValidNet"
+    : interaction === "net-opposite" || interaction === "fold-view" ? "hintFold"
+      : interaction.startsWith("dice") ? "hintDice"
+        : interaction === "symbol-view" ? "hintSymbol" : "hintSolid";
   cubiSays(t(key));
-  if ((state.level === 2 || state.level === 4) && !state.folded) toggleFold();
+  if (["net-opposite", "fold-view", "symbol-view"].includes(interaction) && !state.folded) toggleFold();
 }
 
 function toggleFold() {

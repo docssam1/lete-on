@@ -1,7 +1,7 @@
-import { levels, validateLevels, directionInfo, roll, rollMany, visibleFaces, PROGRESS_KEY } from "./levels.js?v=dice-roll-2";
+import { levels, validateLevels, directionInfo, roll, rollMany, visibleFaces, PROGRESS_KEY } from "./levels.js?v=dice-roll-3";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { DiceRouteScene } from "./route-scene.js?v=dice-roll-1";
+import { DiceRouteScene } from "./route-scene.js?v=dice-roll-2";
 
 validateLevels();
 

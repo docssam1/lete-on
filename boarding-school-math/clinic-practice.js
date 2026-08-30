@@ -1,10 +1,9 @@
 (function () {
   "use strict";
 
-  const source = window.GFIELDGrade6RPClinicPack;
+  const registry = window.GFIELDGrade6ClinicPacks;
   const paths = window.GFIELDClinicPaths;
-  if (!source || !paths) throw new Error("CLINIC_DEPENDENCY_MISSING");
-  source.validatePack();
+  if (!registry || !paths) throw new Error("CLINIC_DEPENDENCY_MISSING");
 
   const supportedLocales = new Set(["ko", "en", "zh-Hans"]);
   const supportedModes = new Set(["workbook", "recheck"]);
@@ -19,7 +18,8 @@
     correct: new Set(),
     revealed: new Set()
   };
-  if (state.cluster !== source.pack.clusterId) throw new Error("CLINIC_CLUSTER_UNSUPPORTED");
+  const source = registry.forCluster(state.cluster);
+  source.validatePack();
 
   const COPY = {
     ko: {
@@ -108,30 +108,39 @@
     const c = copy();
     document.documentElement.lang = state.locale;
     document.title = text(source.pack.title) + " · GFIELD Math";
-    document.getElementById("hero-title-lead").textContent = c.titleLead;
-    document.getElementById("hero-title-accent").textContent = c.titleAccent;
-    document.getElementById("hero-copy").textContent = c.hero;
+    document.getElementById("hero-eyebrow").textContent = "GRADE 6 · " + state.cluster + " CLINIC";
+    document.getElementById("hero-title-lead").textContent = text(source.pack.ui.titleLead);
+    document.getElementById("hero-title-accent").textContent = text(source.pack.ui.titleAccent);
+    document.getElementById("hero-copy").textContent = text(source.pack.ui.hero);
     document.getElementById("scope-note").textContent = text(source.pack.scopeNotice);
     document.getElementById("role-chip").textContent = state.audience === "teacher" ? c.teacher : c.student;
     document.getElementById("proof-workbook-label").textContent = c.proofWorkbook;
     document.getElementById("proof-recheck-label").textContent = c.proofRecheck;
     document.getElementById("proof-strands-label").textContent = c.proofStrands;
+    document.getElementById("proof-workbook-count").textContent = source.pack.workbookItems.length;
+    document.getElementById("proof-recheck-count").textContent = source.pack.recheckItems.length;
+    document.getElementById("proof-strands-count").textContent = new Set(source.pack.recheckItems.map(function (item) { return item.strand; })).size;
     document.getElementById("print-page").textContent = c.print;
     document.getElementById("nav-diagnostic").textContent = c.navDiagnostic;
     document.getElementById("nav-concept").textContent = c.navConcept;
+    document.getElementById("nav-concept").href = paths.conceptUrl(state.cluster, true);
     document.getElementById("nav-animated").textContent = c.navAnimated;
-    document.getElementById("nav-animated").href = "./animated-math.html?lesson=common-total-ratio&cluster=6.RP.A&locale=" + (state.locale === "zh-Hans" ? "zh-Hans" : state.locale);
+    const animatedRoute = paths.routeFor(state.cluster, { fromDiagnostic: true, workbookCompleted: workbookComplete() }).animated;
+    document.getElementById("nav-animated").href = animatedRoute.url.replace(/locale=[^&]+/, "locale=" + state.locale);
     document.getElementById("trail-analysis").textContent = c.trailAnalysis;
     document.getElementById("trail-concept").textContent = c.trailConcept;
+    document.getElementById("trail-concept").href = paths.conceptUrl(state.cluster, true);
     document.getElementById("trail-animated").textContent = c.trailAnimated;
     document.getElementById("trail-animated").href = document.getElementById("nav-animated").href;
-    document.getElementById("footer-back").textContent = c.footerBack;
+    document.getElementById("footer-back").textContent = state.locale === "ko" ? state.cluster + " 개념으로 돌아가기" : (state.locale === "zh-Hans" ? "返回" + state.cluster + "概念" : "Back to the " + state.cluster + " concept");
+    document.getElementById("footer-back").href = paths.conceptUrl(state.cluster, true);
     document.getElementById("footer-note").textContent = c.footerNote;
     document.getElementById("locale-select").value = state.locale;
     document.querySelector('[data-audience="student"]').textContent = c.student.split(" · ")[0];
     document.querySelector('[data-audience="teacher"]').textContent = c.teacher.split(" · ")[0];
-    document.querySelector('[data-mode="workbook"]').textContent = c.workbook + " 12";
-    document.querySelector('[data-mode="recheck"]').textContent = c.recheck + " 4";
+    document.querySelector('[data-audience="teacher"]').hidden = state.audience !== "teacher";
+    document.querySelector('[data-mode="workbook"]').textContent = c.workbook + " " + source.pack.workbookItems.length;
+    document.querySelector('[data-mode="recheck"]').textContent = c.recheck + " " + source.pack.recheckItems.length;
     document.querySelectorAll("[data-audience]").forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.audience === state.audience)); });
     document.querySelectorAll("[data-mode]").forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode)); });
     document.getElementById("trail-current").textContent = "04 " + c.workbook;
@@ -196,6 +205,7 @@
     row.append(input, button); card.append(row, feedback);
 
     button.addEventListener("click", function () {
+      if (!input.value.trim()) { feedback.className = "feedback is-wrong"; feedback.textContent = c.answerPlaceholder; input.focus(); return; }
       const attempt = (state.attempts.get(item.id) || 0) + 1;
       state.attempts.set(item.id, attempt);
       if (source.evaluateResponse(item, input.value)) {
@@ -228,7 +238,7 @@
     const c = copy();
     const wrap = el("section", "practice-section");
     const heading = el("header", "section-heading");
-    heading.append(el("h2", "", SECTION_LABELS[section][state.locale]), el("span", "", items.length + " " + c.sectionCount));
+    heading.append(el("h2", "", text(source.pack.ui.sectionLabels[section])), el("span", "", items.length + " " + c.sectionCount));
     const grid = el("div", "problem-grid");
     items.forEach(function (item, index) { grid.append(renderProblem(item, offset + index)); });
     wrap.append(heading, grid);
@@ -249,7 +259,8 @@
 
   function renderRecheckResult(container) {
     const c = copy();
-    container.replaceChildren(el("p", "eyebrow", c.resultTitle), el("h2", "", c.allCorrect), el("p", "", c.resultBody));
+    const resultBody = state.locale === "ko" ? "이 결과는 " + state.cluster + " 전체 숙달이나 승급 판정이 아니라 네 가지 핵심 구조의 학습 확인입니다." : (state.locale === "zh-Hans" ? "本结果只检查四种核心结构，不代表" + state.cluster + "全部掌握或晋级判定。" : "This is a learning check of four core structures, not a full " + state.cluster + " mastery or promotion decision.");
+    container.replaceChildren(el("p", "eyebrow", c.resultTitle), el("h2", "", c.allCorrect), el("p", "", resultBody));
     const grid = el("div", "result-grid");
     source.pack.recheckItems.forEach(function (item) {
       const result = el("div");
@@ -262,7 +273,7 @@
   function renderLocked() {
     const c = copy();
     const card = el("section", "lock-card");
-    card.append(el("p", "eyebrow", "6.RP.A · " + c.recheck), el("h2", "", c.lockedTitle), el("p", "", c.lockedBody));
+    card.append(el("p", "eyebrow", state.cluster + " · " + c.recheck), el("h2", "", c.lockedTitle), el("p", "", c.lockedBody));
     const link = el("a", "primary-action", c.goWorkbook);
     link.href = paths.workbookUrl(state.cluster, "workbook", "student", state.locale);
     card.append(link);
@@ -277,7 +288,7 @@
     host.append(renderIntro());
     const items = state.mode === "recheck" ? source.pack.recheckItems : source.pack.workbookItems;
     let offset = 0;
-    SECTION_ORDER.forEach(function (section) {
+    source.pack.ui.sectionOrder.forEach(function (section) {
       const selected = items.filter(function (item) { return item.section === section; });
       if (!selected.length) return;
       host.append(renderSection(section, selected, offset)); offset += selected.length;

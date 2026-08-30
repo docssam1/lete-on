@@ -10,8 +10,10 @@ await page.addInitScript(()=>localStorage.setItem("gfield-net-observatory-tutori
 await page.goto("http://127.0.0.1:8765/geometry/games/net-observatory/?level=2",{waitUntil:"networkidle"});
 
 assert.equal(await page.locator(".viewer-host canvas").count(),1);
-assert.equal(await page.locator(".choice-cube-host canvas").count(),3);
+assert.equal(await page.locator(".choice-cube-host canvas").count(),0);
+assert.equal(await page.locator(".face-choice").count(),3);
 assert.equal(await page.locator(".cube-view").count(),0);
+assert.match(await page.locator("#missionTitle").textContent(),/그림 면 마주보기/);
 const frame=await page.evaluate(()=>{
   const top=document.querySelector(".topbar").getBoundingClientRect();
   const stage=document.querySelector(".stage-panel").getBoundingClientRect();
@@ -50,5 +52,5 @@ assert.equal(mobile.canvases,4);
 assert.ok(mobile.dock.bottom<=mobile.height+1,JSON.stringify(mobile));
 await page.screenshot({path:"C:/Users/user/AppData/Local/Temp/gfield-net-observatory-mobile.png",fullPage:true});
 assert.equal(errors.length,0,errors.join("\n"));
-console.log(JSON.stringify({frame,alphaBounds,choiceCanvases:3,autoAdvance:{before:problemBefore,after:problemAfter},mobile},null,2));
+console.log(JSON.stringify({frame,alphaBounds,pictureChoices:3,autoAdvance:{before:problemBefore,after:problemAfter},mobile},null,2));
 await browser.close();

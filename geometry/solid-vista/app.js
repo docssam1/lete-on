@@ -1,5 +1,5 @@
-import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-2";
-import { levels as diceLevels } from "../games/dice-roll/levels.js?v=dice-roll-1";
+import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-4";
+import { levels as diceLevels } from "../games/dice-roll/levels.js?v=dice-roll-3";
 import { levels as somaLevels } from "../games/soma-cube/levels.js?v=soma-1";
 import { readProfile } from "../shared/profile-storage.js";
 
@@ -12,10 +12,10 @@ const copy = {
   ja: { district:"空間・立体エリア",title:"展開図を折り、ピースを組んで立体の秘密を探ろう",subtitle:"平面からサイコロ、正多面体、ソーマキューブへ進みます。",net:"展開図展望台",desc:"面が折れる順番と向かい合う関係を観察します。",dice:"サイコロを転がす",diceDesc:"マス目の上を転がし、上・前・右の面の変化を追います。",session:"各段階10問 · 1回5問",sheet:"プリント",start:"スタート",soma:"ソーマキューブ工房",somaDesc:"7つのピースを回して目標の立体を完成します。" }
 };
 const levelNames = {
-  ko:[["정육면체 전개도","접히는 전개도 찾기"],["접어서 완성하기","면을 차례로 접어 보기"],["주사위 면 관계","마주 보는 면 찾기"],["기호와 방향","글자·화살표 방향 추론"],["정다면체 탐험","삼각형·오각형 면까지"]],
-  en:[["Cube Nets","Find a net that folds"],["Fold and Finish","Watch faces fold"],["Dice Faces","Find opposite faces"],["Symbols and Direction","Track arrows and letters"],["Regular Solids","Explore more face shapes"]],
-  zh:[["正方体展开图","寻找能折叠的展开图"],["折叠并完成","依次观察各面"],["骰子的面","寻找相对的面"],["符号与方向","判断箭头和文字"],["正多面体探索","探索更多面的形状"]],
-  ja:[["立方体の展開図","折れる展開図探し"],["折って完成","面を順番に観察"],["サイコロの面","向かい合う面探し"],["記号と向き","矢印と文字の向き"],["正多面体探検","いろいろな面の形"]]
+  ko:[["정육면체 전개도","접히는 전개도 찾기"],["그림 면 마주보기","색과 그림으로 반대 면 찾기"],["주사위 면 관계","마주 보는 면 찾기"],["기호와 방향","글자·화살표 방향 추론"],["정다면체 탐험","삼각형·오각형 면까지"]],
+  en:[["Cube Nets","Find a net that folds"],["Opposite Pictures","Find opposite colors and pictures"],["Dice Faces","Find opposite faces"],["Symbols and Direction","Track arrows and letters"],["Regular Solids","Explore more face shapes"]],
+  zh:[["正方体展开图","寻找能折叠的展开图"],["图案的相对面","用颜色和图案寻找相对面"],["骰子的面","寻找相对的面"],["符号与方向","判断箭头和文字"],["正多面体探索","探索更多面的形状"]],
+  ja:[["立方体の展開図","折れる展開図探し"],["絵の向かい合う面","色と絵で反対の面を探す"],["サイコロの面","向かい合う面探し"],["記号と向き","矢印と文字の向き"],["正多面体探検","いろいろな面の形"]]
 };
 const c = copy[lang] || copy.ko;
 document.documentElement.lang = lang;
@@ -55,10 +55,11 @@ const diceNames = {
   ja:[["1マス転がす","新しい上面を見つける"],["続けて転がす","2・3回の変化を追う"],["時計回り","円を回る経路を追う"],["マス目の道","見える3面を追う"],["逆向きの道","結果から経路を考える"]]
 };
 const diceGrid=document.querySelector("#diceLevelGrid");
+const diceBands={ko:["초급","초급","초급","중급","중급"],en:["Beginner","Beginner","Beginner","Intermediate","Intermediate"],zh:["初级","初级","初级","中级","中级"],ja:["初級","初級","初級","中級","中級"]}[lang]||["초급","초급","초급","중급","중급"];
 diceLevels.forEach((level,index)=>{
   const names=(diceNames[lang]||diceNames.ko)[index]; const link=document.createElement("a");
   link.className="level-card dice-card";link.href=`../games/dice-roll/?level=${level.id}`;
-  link.innerHTML=`<div class="dice-card-art" aria-hidden="true"><i></i><i></i><i></i><em>${["→","↱","↺","⇢","?"][index]}</em></div><div><span>${bandNames[index]}</span><strong>${level.id}. ${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;
+  link.innerHTML=`<div class="dice-card-art" aria-hidden="true"><i></i><i></i><i></i><em>${["→","↱","↺","⇢","?"][index]}</em></div><div><span>${diceBands[index]}</span><strong>${level.id}. ${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;
   diceGrid.append(link);
 });
 

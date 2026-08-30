@@ -1,6 +1,6 @@
 import * as THREE from "../../vendor/three/three.module.js";
 import { OrbitControls } from "../../vendor/three/addons/controls/OrbitControls.js";
-import { foldCubeNet } from "./levels.js?v=net-2";
+import { foldCubeNet } from "./levels.js?v=net-4";
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };

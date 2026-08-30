@@ -101,6 +101,8 @@ await page.emulateMedia({ reducedMotion: "no-preference" });
 await page.setViewportSize({ width: 1280, height: 900 });
 await page.goto("http://127.0.0.1:8765/geometry/solid-vista/", { waitUntil: "networkidle" });
 assert.equal(await page.locator("#diceLevelGrid .dice-card").count(), 5);
+assert.match(await page.locator("#diceLevelGrid .dice-card").first().textContent(), /초급/);
+assert.match(await page.locator("#diceLevelGrid .dice-card").nth(3).textContent(), /중급/);
 assert.equal(errors.length, 0, errors.join("\n"));
 console.log(JSON.stringify({ level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, diceCards: 5 }, null, 2));
 await browser.close();

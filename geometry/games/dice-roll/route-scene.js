@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { directionInfo, orientationKey, roll, startingOrientation } from "./levels.js?v=dice-roll-2";
+import { directionInfo, orientationKey, roll, startingOrientation } from "./levels.js?v=dice-roll-3";
 
 const DIE_SIZE = 1;
 const TILE_SIZE = 1.08;
