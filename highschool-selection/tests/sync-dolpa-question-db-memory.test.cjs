@@ -660,3 +660,42 @@ test("원본 페이지와 풀이 검수표의 sourceId가 다르면 중단한다
   fs.writeFileSync(reviewPath, JSON.stringify({ sourceId: "DP-SRC-D59E26A73CC1" }));
   assert.throws(() => methodReviewInfo(manifestPath, reviewPath), /sourceId가 다릅니다/);
 });
+
+test("2-1 입반테스트 4 대표본과 부분 교체 교사본의 직접 소유 문항 수를 구분한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21-202312-r4-"));
+  const writePacket = (name, value) => {
+    const filePath = path.join(root, name);
+    fs.writeFileSync(filePath, JSON.stringify(value));
+    return filePath;
+  };
+  const primaryManifest = writePacket("primary-pages.json", {
+    sourceId: "DP-SRC-7591B3A7C051",
+    rendering: { pageCount: 11 },
+    pages: Array.from({ length: 11 }, (_, index) => ({ page: index + 1 }))
+  });
+  const primaryMethod = writePacket("primary-method.json", {
+    sourceId: "DP-SRC-7591B3A7C051",
+    reviewedAt: "2026-08-30",
+    reviews: Array.from({ length: 30 }, (_, index) => ({ number: index + 1 }))
+  });
+  const primaryInfo = methodReviewInfo(primaryManifest, primaryMethod);
+  assert.equal(primaryInfo.key, "m21-202312-r4");
+  assert.equal(primaryInfo.reviewedQuestionCount, 30);
+  assert.equal(primaryInfo.pageCount, 11);
+
+  const variantManifest = writePacket("variant-pages.json", {
+    sourceId: "DP-SRC-CE3FA0B947D5",
+    rendering: { pageCount: 11 },
+    pages: Array.from({ length: 11 }, (_, index) => ({ page: index + 1 }))
+  });
+  const variantMethod = writePacket("variant-method.json", {
+    sourceId: "DP-SRC-CE3FA0B947D5",
+    reviewedAt: "2026-08-30",
+    reviews: [{ number: 29 }]
+  });
+  const variantInfo = methodReviewInfo(variantManifest, variantMethod);
+  assert.equal(variantInfo.key, "m21-202312-r4-ihein");
+  assert.equal(variantInfo.reviewedQuestionCount, 1);
+  assert.equal(variantInfo.pageCount, 11);
+  assert.match(variantInfo.recordTitle, /직접 소유 1문항/);
+});

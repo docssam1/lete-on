@@ -68,13 +68,64 @@ function audit(database) {
     if (question.releaseStatus !== "locked") issues.push(`release:${question.questionId}`);
   });
   const primarySourceIds = new Set(database.papers.map(paper => paper.sourceId));
+  const papersById = new Map(database.papers.map(paper => [paper.paperId, paper]));
   const equivalentSourceIds = new Set();
   database.papers.forEach(paper => {
-    if (paper.questionCount !== paper.questionIds.length) issues.push(`paper_count:${paper.paperId}`);
-    const rows = paper.questionIds.map(id => questionsById.get(id));
-    if (rows.some(row => !row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId)) issues.push(`paper_link:${paper.paperId}`);
-    const numbers = rows.map(row => row.number).sort((a, b) => a - b);
-    if (numbers.some((number, index) => number !== index + 1)) issues.push(`paper_numbers:${paper.paperId}`);
+    const paperQuestionIds = Array.isArray(paper.questionIds) ? paper.questionIds : [];
+    if (paper.questionCount !== paperQuestionIds.length) issues.push(`paper_count:${paper.paperId}`);
+    const rows = paperQuestionIds.map(id => questionsById.get(id));
+    if (paper.variant) {
+      const variant = paper.variant;
+      if (variant.kind !== "partial_question_variant") issues.push(`paper_variant_kind:${paper.paperId}`);
+      const primary = papersById.get(variant.primaryPaperId);
+      if (!primary || primary.paperId === paper.paperId || primary.variant) issues.push(`paper_variant_primary:${paper.paperId}`);
+      const shared = Array.isArray(variant.sharedQuestionLinks) ? variant.sharedQuestionLinks : [];
+      const overrideIds = Array.isArray(variant.overrideQuestionIds) ? variant.overrideQuestionIds : [];
+      const occupiedNumbers = new Set();
+      shared.forEach(link => {
+        const number = link && link.number;
+        const questionId = link && link.questionId;
+        if (!Number.isSafeInteger(number) || number < 1 || number > paper.questionCount || occupiedNumbers.has(number)) {
+          issues.push(`paper_variant_shared_number:${paper.paperId}:${number}`);
+          return;
+        }
+        occupiedNumbers.add(number);
+        if (!questionId) issues.push(`paper_variant_shared_link:${paper.paperId}:${number}`);
+        const row = questionsById.get(questionId);
+        if (!primary || !row || row.paperId !== primary.paperId || row.sourceId !== primary.sourceId
+          || !(primary.questionIds || []).includes(questionId) || paperQuestionIds[number - 1] !== questionId) {
+          issues.push(`paper_variant_shared_link:${paper.paperId}:${number}`);
+        }
+      });
+      const overrideIdSet = new Set();
+      overrideIds.forEach(questionId => {
+        if (!questionId || overrideIdSet.has(questionId) || shared.some(link => link.questionId === questionId)) {
+          issues.push(`paper_variant_override_duplicate:${paper.paperId}:${questionId}`);
+          return;
+        }
+        overrideIdSet.add(questionId);
+        const row = questionsById.get(questionId);
+        if (!row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId
+          || !Number.isSafeInteger(row.number) || row.number < 1 || row.number > paper.questionCount
+          || occupiedNumbers.has(row.number) || paperQuestionIds[row.number - 1] !== questionId) {
+          issues.push(`paper_variant_override_link:${paper.paperId}:${questionId}`);
+          return;
+        }
+        occupiedNumbers.add(row.number);
+      });
+      if (!shared.length || !overrideIds.length || occupiedNumbers.size !== paper.questionCount
+        || shared.length + overrideIds.length !== paper.questionCount) {
+        issues.push(`paper_variant_coverage:${paper.paperId}`);
+      }
+      const ownedRows = database.questions.filter(row => row.paperId === paper.paperId);
+      if (ownedRows.some(row => !overrideIdSet.has(row.questionId)) || ownedRows.length !== overrideIdSet.size) {
+        issues.push(`paper_variant_ownership:${paper.paperId}`);
+      }
+    } else {
+      if (rows.some(row => !row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId)) issues.push(`paper_link:${paper.paperId}`);
+      const numbers = rows.filter(Boolean).map(row => row.number).sort((a, b) => a - b);
+      if (numbers.some((number, index) => number !== index + 1)) issues.push(`paper_numbers:${paper.paperId}`);
+    }
     if (paper.coverage) {
       if (!["full_range", "mid_unit_cutoff", "mixed_range"].includes(paper.coverage.coverageKind)) issues.push(`paper_coverage_kind:${paper.paperId}`);
       if (!paper.coverage.declaredScopeLabel || !paper.coverage.observedTerminal

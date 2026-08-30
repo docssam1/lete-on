@@ -14,7 +14,8 @@ function exportReviewPacket(database, paperId, reviewedAt, reviewDecisions = nul
   const paper = database.papers.find(item => item.paperId === paperId);
   if (!paper || !paper.coverage) throw new Error(`검수 완료 시험지를 찾을 수 없습니다: ${paperId}`);
   const questions = database.questions.filter(item => item.paperId === paperId).sort((a, b) => a.number - b.number);
-  if (questions.length !== 30) throw new Error(`${paperId} 문항 수가 30개가 아닙니다.`);
+  const expectedOwnedCount = paper.variant ? (paper.variant.overrideQuestionIds || []).length : 30;
+  if (questions.length !== expectedOwnedCount) throw new Error(`${paperId} 직접 소유 문항 수가 연결 정보와 다릅니다.`);
   const evidenceRecordId = only(paper.coverage.evidence || [], "시험지");
   const sourceDecision = reviewDecisions && (reviewDecisions.sourceReviews || []).find(item => item.sourceId === paper.sourceId);
   const paperLink = paperLinks && (paperLinks.links || []).find(item =>
@@ -48,6 +49,11 @@ function exportReviewPacket(database, paperId, reviewedAt, reviewDecisions = nul
       observedTerminal: paper.coverage.observedTerminal,
       note: paper.coverage.note
     },
+    ...(paper.variant ? { variant: {
+      kind: paper.variant.kind,
+      primaryPaperId: paper.variant.primaryPaperId,
+      sharedQuestionLinks: paper.variant.sharedQuestionLinks
+    } } : {}),
     questions: questions.map(question => ({
       number: question.number,
       page: question.locator.page,

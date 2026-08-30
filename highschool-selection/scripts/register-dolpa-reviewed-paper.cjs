@@ -47,7 +47,14 @@ function validatePacket(packet) {
     issues.push("coverage.observedTerminal");
   }
   const questions = Array.isArray(packet.questions) ? packet.questions : [];
-  if (questions.length !== 30) issues.push("questions.length");
+  const variant = packet.variant || null;
+  const isPartialVariant = Boolean(variant);
+  if (isPartialVariant) {
+    if (variant.kind !== "partial_question_variant") issues.push("variant.kind");
+    if (!clean(variant.primaryPaperId)) issues.push("variant.primaryPaperId");
+    if (!Array.isArray(variant.sharedQuestionLinks) || !variant.sharedQuestionLinks.length) issues.push("variant.sharedQuestionLinks");
+  } else if (questions.length !== 30) issues.push("questions.length");
+  if (isPartialVariant && !questions.length) issues.push("questions.length");
   const numbers = new Set();
   const locators = new Set();
   questions.forEach((question, index) => {
@@ -71,7 +78,24 @@ function validatePacket(packet) {
     if (["single_choice", "input"].includes(canonicalKind) && question.slotCount !== 1) issues.push(`${prefix}.slotCountSingle`);
     if (["multi_select", "multi_input", "unordered_set"].includes(canonicalKind) && question.slotCount < 2) issues.push(`${prefix}.slotCountMulti`);
   });
-  for (let number = 1; number <= 30; number += 1) if (!numbers.has(number)) issues.push(`missing:${number}`);
+  if (isPartialVariant) {
+    const sharedNumbers = new Set();
+    (variant.sharedQuestionLinks || []).forEach((link, index) => {
+      const prefix = `variant.sharedQuestionLinks[${index}]`;
+      if (!Number.isSafeInteger(link.number) || link.number < 1 || link.number > 30
+        || sharedNumbers.has(link.number) || numbers.has(link.number)) issues.push(`${prefix}.number`);
+      if (!/^DP-Q-[0-9A-F]{12}-[0-9]{3}$/.test(clean(link.questionId))) {
+        issues.push(`${prefix}.questionId`);
+      }
+      sharedNumbers.add(link.number);
+    });
+    for (let number = 1; number <= 30; number += 1) {
+      if (!numbers.has(number) && !sharedNumbers.has(number)) issues.push(`missing:${number}`);
+    }
+    if (numbers.size + sharedNumbers.size !== 30) issues.push("variant.coverage");
+  } else {
+    for (let number = 1; number <= 30; number += 1) if (!numbers.has(number)) issues.push(`missing:${number}`);
+  }
   if (issues.length) throw new Error(`돌파 시험지 검수표를 확인해 주세요: ${issues.join(", ")}`);
 }
 
@@ -83,20 +107,33 @@ function registerSources(typeIndex, paperLinks, reviewDecisions, packet) {
   const nextIndex = JSON.parse(JSON.stringify(typeIndex));
   const nextLinks = JSON.parse(JSON.stringify(paperLinks));
   const nextDecisions = JSON.parse(JSON.stringify(reviewDecisions));
+  const variant = packet.variant ? {
+    kind: "partial_question_variant",
+    primaryPaperId: clean(packet.variant.primaryPaperId),
+    sharedQuestionLinks: packet.variant.sharedQuestionLinks.slice().sort((a, b) => a.number - b.number).map(link => ({
+      number: link.number,
+      questionId: clean(link.questionId)
+    }))
+  } : null;
   const paper = {
     paperId: clean(packet.paperId),
     title: clean(packet.title),
     sourceKind: "돌파 원본 시험지",
     questionCount: 30,
-    originalCount: 30,
-    replacementCount: 0,
+    originalCount: variant ? 0 : 30,
+    replacementCount: variant ? packet.questions.length : 0,
+    ...(variant ? {
+      sharedCount: variant.sharedQuestionLinks.length,
+      sharedCanonicalCount: new Set(variant.sharedQuestionLinks.map(link => link.questionId)).size,
+      variant
+    } : {}),
     questions: packet.questions.slice().sort((a, b) => a.number - b.number).map(question => ({
       number: question.number,
       semester: clean(question.semester),
       unit: clean(question.unit),
       type: clean(question.typeLabel),
       sourceKind: "돌파 원본 시험지",
-      sourceRelation: "original",
+      sourceRelation: variant ? "replacement" : "original",
       similarQuestionStatus: "만들기 전"
     }))
   };
@@ -111,7 +148,8 @@ function registerSources(typeIndex, paperLinks, reviewDecisions, packet) {
     sourceId: clean(packet.sourceId),
     evidenceStatus: "verified",
     evidenceRecordId: clean(packet.registryEvidenceRecordId),
-    verifiedStages: ["bodyReview", "answerReview", "questionSegmentation", "typeClassification"]
+    verifiedStages: ["bodyReview", "answerReview", "questionSegmentation", "typeClassification"],
+    ...(variant ? { variant } : {})
   };
   const sameSource = nextLinks.links.find(item => item.sourceId === link.sourceId);
   if (sameSource && JSON.stringify(sameSource) !== JSON.stringify(link)) throw new Error(`같은 원본의 시험지 연결이 다릅니다: ${link.sourceId}`);
@@ -123,7 +161,9 @@ function registerSources(typeIndex, paperLinks, reviewDecisions, packet) {
   const tasks = Object.fromEntries(link.verifiedStages.map(stage => [stage, {
     status: "verified",
     evidence: [clean(packet.registryEvidenceRecordId)],
-    note: "문제 본문 30문항, 답안 30개, 문항 위치와 교육과정 세부 유형을 원본 화면에서 직접 확인"
+    note: variant
+      ? `대표 시험 공유 ${variant.sharedQuestionLinks.length}문항과 교체 ${packet.questions.length}문항을 원본 화면에서 직접 확인`
+      : "문제 본문 30문항, 답안 30개, 문항 위치와 교육과정 세부 유형을 원본 화면에서 직접 확인"
   }]));
   const decision = { sourceId: link.sourceId, tasks };
   const priorDecision = nextDecisions.sourceReviews.find(item => item.sourceId === decision.sourceId);
@@ -157,8 +197,23 @@ function applyToDatabase(database, packet) {
   if (!paper || paper.sourceId !== packet.sourceId || paper.sourceFingerprint !== packet.sourceFingerprint) {
     throw new Error("시험지 검수표와 문항 DB 원본이 일치하지 않습니다.");
   }
+  const isPartialVariant = Boolean(packet.variant);
+  if (isPartialVariant) {
+    const packetSharedLinks = packet.variant.sharedQuestionLinks.slice().sort((a, b) => a.number - b.number).map(link => ({
+      number: link.number,
+      questionId: clean(link.questionId)
+    }));
+    if (!paper.variant || paper.variant.kind !== "partial_question_variant"
+      || paper.variant.primaryPaperId !== clean(packet.variant.primaryPaperId)
+      || JSON.stringify(paper.variant.sharedQuestionLinks) !== JSON.stringify(packetSharedLinks)) {
+      throw new Error("부분 교체 시험지의 공유 문항 연결이 문항 DB와 다릅니다.");
+    }
+  } else if (paper.variant) {
+    throw new Error("부분 교체 시험지는 공유 문항 연결이 있는 검수표가 필요합니다.");
+  }
   const questions = new Map(next.questions.filter(item => item.paperId === packet.paperId).map(item => [item.number, item]));
-  if (questions.size !== 30) throw new Error("시험지의 문항 수가 30개가 아닙니다.");
+  const expectedOwnedCount = isPartialVariant ? packet.questions.length : 30;
+  if (questions.size !== expectedOwnedCount) throw new Error("시험지가 직접 소유한 문항 수가 검수표와 다릅니다.");
   const locatorEvidenceId = clean(packet.locatorEvidenceId || packet.evidenceRecordId);
   const responseEvidenceId = clean(packet.responseEvidenceId || packet.evidenceRecordId);
   const paperEvidenceId = clean(packet.paperEvidenceId || packet.registryEvidenceRecordId);
