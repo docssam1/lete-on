@@ -11,6 +11,7 @@
 4. 이 문서: `GPT_HANDOFF_2026-08-30.md`
 5. Geometry 설계 기준: `geometry\README.md`, `geometry\docs\00_MASTER_PLAN.md`, `geometry\docs\12_SOURCE_BACKED_FUTURE_GAMES.md`, `geometry\docs\14_STAGE_DIFFICULTY_PROFILE.md`
 6. SVG 제너레이터 필수 관문: `geometry\docs\15_EVIDENCE_GATED_SVG_WORKFLOW.md`
+7. 소마큐브 공개 검증: `geometry\docs\16_SOMA_CUBE_RELEASE_AUDIT.md`
 
 저장소 운영 문서의 보호 규칙이 이 문서보다 우선한다. C:의 원본 자료와 기존 프로젝트는 확인 없이 이동·삭제하지 않는다. 필즈 더 클래식 원본은 읽기 전용 증거로 취급한다.
 
