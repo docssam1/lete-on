@@ -214,14 +214,52 @@
       + '<div class="signed-answer scene-object" data-object="signed-answer">-7/4 &lt; -5/3</div></div>';
   }
 
+  function wholePower(base, exponent) {
+    let result = 1; for (let index = 0; index < exponent; index += 1) result *= base; return result;
+  }
+  function buildExpressionStructureModel(sceneModel) {
+    const powerResult = wholePower(sceneModel.base, sceneModel.exponent);
+    const insideResult = powerResult + sceneModel.insideAddend;
+    const productResult = sceneModel.coefficient * insideResult;
+    const answer = productResult + sceneModel.outsideAddend;
+    const distributedResult = sceneModel.coefficient * powerResult + sceneModel.coefficient * sceneModel.insideAddend + sceneModel.outsideAddend;
+    if (answer !== distributedResult) throw new Error("EXPRESSION_DISTRIBUTION_MISMATCH");
+    return Object.freeze({
+      coefficient: sceneModel.coefficient, base: sceneModel.base, exponent: sceneModel.exponent,
+      insideAddend: sceneModel.insideAddend, outsideAddend: sceneModel.outsideAddend,
+      powerResult: powerResult, insideResult: insideResult, productResult: productResult,
+      answer: answer, distributedResult: distributedResult
+    });
+  }
+  function expressionScene(lesson, locale) {
+    const model = buildExpressionStructureModel(lesson.sceneModel);
+    const language = locale === "zh" || locale === "zh-Hans" ? "zh" : (locale === "ko" ? "ko" : "en");
+    const localized = {
+      en: { aria: "Expression structure showing the ordered operations inside and outside parentheses", original: "original structure", power: "power", parentheses: "parentheses", multiply: "multiply", subtract: "subtract", check: "distribution check", answer: "value" },
+      ko: { aria: "괄호 안팎의 연산 순서를 보여 주는 식의 구조", original: "원래 식의 구조", power: "거듭제곱", parentheses: "괄호 안", multiply: "곱하기", subtract: "빼기", check: "분배법칙 검산", answer: "식의 값" },
+      zh: { aria: "展示括号内外运算顺序的式子结构", original: "原式结构", power: "幂", parentheses: "括号内", multiply: "乘法", subtract: "减法", check: "分配律检验", answer: "式子的值" }
+    }[language];
+    const sign = model.outsideAddend < 0 ? " − " + Math.abs(model.outsideAddend) : " + " + model.outsideAddend;
+    return '<div class="expression-tree-scene" role="img" aria-label="' + esc(localized.aria) + '">'
+      + '<div class="expression-original scene-object" data-object="expr-original"><span>' + esc(localized.original) + '</span><strong>' + model.coefficient + '(' + model.base + '<sup>' + model.exponent + '</sup> + ' + model.insideAddend + ')' + esc(sign) + '</strong></div>'
+      + '<div class="expression-flow" aria-hidden="true">'
+      + '<div class="expression-node scene-object" data-object="expr-power"><small>1 · ' + esc(localized.power) + '</small><strong>' + model.base + '<sup>' + model.exponent + '</sup> = ' + model.powerResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-inside"><small>2 · ' + esc(localized.parentheses) + '</small><strong>' + model.powerResult + ' + ' + model.insideAddend + ' = ' + model.insideResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-product"><small>3 · ' + esc(localized.multiply) + '</small><strong>' + model.coefficient + ' × ' + model.insideResult + ' = ' + model.productResult + '</strong></div>'
+      + '<div class="expression-node scene-object" data-object="expr-subtract"><small>4 · ' + esc(localized.subtract) + '</small><strong>' + model.productResult + esc(sign) + ' = ' + model.answer + '</strong></div></div>'
+      + '<div class="expression-check scene-object" data-object="expr-distribute"><span>' + esc(localized.check) + '</span><strong>' + model.coefficient + ' × ' + model.powerResult + ' + ' + model.coefficient + ' × ' + model.insideAddend + esc(sign) + ' = ' + model.distributedResult + '</strong></div>'
+      + '<div class="expression-answer scene-object" data-object="expr-answer"><span>' + esc(localized.answer) + '</span><strong>' + model.answer + '</strong></div></div>';
+  }
+
   function sceneFor(lesson, locale) {
     if (lesson.type === "bar-model") return ratioScene(lesson);
     if (lesson.type === "fraction-strip") return fractionScene(lesson);
     if (lesson.type === "factor-chain") return factorScene(lesson);
     if (lesson.type === "signed-number-line") return signedNumberLineScene(lesson, locale);
+    if (lesson.type === "expression-tree") return expressionScene(lesson, locale);
     if (lesson.type === "geometry-angle") return geometryScene(lesson);
     throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, sceneFor: sceneFor });
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, sceneFor: sceneFor });
 });

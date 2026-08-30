@@ -41,12 +41,12 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
-test("ratio, fraction, GCF, signed-number, and geometry lessons reveal exactly the intended conceptual object", async function () {
+test("ratio, fraction, GCF, signed-number, expression, and geometry lessons reveal exactly the intended conceptual object", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.equal(await page.locator(".lesson-tab").count(), 5);
+  assert.equal(await page.locator(".lesson-tab").count(), 6);
   assert.equal(await page.locator('[data-object="ratio-answer"].is-visible').count(), 0);
   await page.locator("#next-step").click();
   assert.equal(await page.locator('[data-object="ratio-team-a-bar"].is-visible.is-active').count(), 1);
@@ -84,6 +84,17 @@ test("ratio, fraction, GCF, signed-number, and geometry lessons reveal exactly t
   assert.match(await page.locator("#narration-text").innerText(), /less than negative five-thirds/i);
 
   await page.locator('.lesson-tab[data-lesson-index="4"]').click();
+  assert.match(await page.locator("#problem-copy").innerText(), /3\(2³ \+ 4\) - 5/);
+  assert.equal(await page.locator('[data-object="expr-answer"].is-visible').count(), 0);
+  assert.equal(await page.locator('[data-object="expr-answer"]').getAttribute("aria-hidden"), "true");
+  assert.doesNotMatch(await page.locator(".expression-tree-scene").getAttribute("aria-label"), /31|thirty-one/i);
+  await page.locator('.step-button[data-step-index="2"]').click();
+  assert.equal(await page.locator('[data-object="expr-power"].is-visible.is-active').count(), 1);
+  await page.locator('.step-button[data-step-index="7"]').click();
+  assert.equal(await page.locator('[data-object="expr-answer"].is-visible.is-active').count(), 1);
+  assert.match(await page.locator("#narration-text").innerText(), /unique value thirty-one/i);
+
+  await page.locator('.lesson-tab[data-lesson-index="5"]').click();
   assert.match(await page.locator("#problem-copy").innerText(), /AB = AC[\s\S]*40°[\s\S]*angle B/);
   assert.equal(await page.locator('[data-object="geo-answer"].is-visible').count(), 0);
   await page.locator('.step-button[data-step-index="1"]').click();
@@ -114,6 +125,14 @@ test("direct Chinese and Korean narration changes without cross-language residue
   assert.match(await page.locator('[data-object="signed-order"]').innerText(), /更靠左/);
   assert.doesNotMatch(await page.locator('[data-object="signed-order"]').innerText(), /farther left/i);
   assert.match(await page.locator(".signed-number-line-svg").getAttribute("aria-label"), /数轴/);
+  await page.goto(`${baseUrl}?lesson=expression-structure-order&cluster=6.EE.A&locale=zh-Hans`, { waitUntil: "networkidle" });
+  await page.locator("#show-overview").click();
+  assert.match(await page.locator('[data-object="expr-answer"]').innerText(), /式子的值/);
+  assert.match(await page.locator('[data-object="expr-power"] small').innerText(), /幂/);
+  assert.match(await page.locator('[data-object="expr-inside"] small').innerText(), /括号内/);
+  assert.match(await page.locator('[data-object="expr-product"] small').innerText(), /乘法/);
+  assert.match(await page.locator('[data-object="expr-subtract"] small').innerText(), /减法/);
+  assert.doesNotMatch(await page.locator(".expression-tree-scene").innerText(), /original structure|distribution check|value|power|parentheses|multiply|subtract/i);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -199,5 +218,27 @@ test("6.NS.C number-line A4 print state shows all exact comparison objects", asy
   assert.equal(state.controls, "none");
   assert.equal(state.width, state.client);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("6.EE.A expression tree stays legible on mobile and complete on A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = collectErrors(page);
+    await page.goto(`${baseUrl}?lesson=expression-structure-order&cluster=6.EE.A&locale=ko`, { waitUntil: "networkidle" });
+    await page.locator("#show-overview").click();
+    const dimensions = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(dimensions, [width, width]);
+    const nodes = await page.locator(".expression-node strong").evaluateAll(function (items) { return items.map(function (node) { const rect = node.getBoundingClientRect(); return { height: rect.height, left: rect.left, right: rect.right }; }); });
+    nodes.forEach(function (node) { assert.ok(node.height >= 18); assert.ok(node.left >= 0 && node.right <= width); });
+    assert.equal(await page.locator('[data-object="expr-answer"]').innerText(), "식의 값\n31");
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const page = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  const errors = collectErrors(page);
+  await page.goto(`${baseUrl}?lesson=expression-structure-order&cluster=6.EE.A&locale=en`, { waitUntil: "networkidle" });
+  await page.emulateMedia({ media: "print" });
+  const state = await page.evaluate(function () { return { hidden: Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length, answer: document.querySelector('[data-object="expr-answer"]').textContent, controls: getComputedStyle(document.querySelector(".lesson-controls")).display, width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }; });
+  assert.equal(state.hidden, 0); assert.match(state.answer, /31/); assert.equal(state.controls, "none"); assert.equal(state.width, state.client); assert.deepEqual(errors, []);
   await page.close();
 });
