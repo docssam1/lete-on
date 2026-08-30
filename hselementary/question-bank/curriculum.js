@@ -61,6 +61,24 @@
     sourcePrintedPage: printedPage,
     reviewLocked
   });
+  const sourceItemLabel51 = sourceItemId => {
+    const exploration = sourceItemId.match(/-e(\d+)-exploration$/)?.[1];
+    if (exploration) return `개념탐구 ${exploration} 본문`;
+    const example = sourceItemId.match(/-example-(\d+-\d+)$/)?.[1];
+    if (example) return `예제 ${example}`;
+    const mission = sourceItemId.match(/-mission-(\d+)$/)?.[1];
+    return mission ? `Mission ${mission}` : "";
+  };
+  const sourceItem51 = (label, difficultyBand, sourceItemId, pdfPage, printedPage, reviewLocked = false, reviewReason = "") => ({
+    ...sourced(label, difficultyBand, "advanced", `5-1 심화 기준본 PDF p.${pdfPage} · 교재 p.${printedPage} · ${sourceItemId}`),
+    sourceItemId,
+    sourceItemLabel: sourceItemLabel51(sourceItemId),
+    sourceSection: sourceItemId.includes("mission") ? "mission" : sourceItemId.includes("example") ? "example" : "exploration",
+    sourcePdfPage: pdfPage,
+    sourcePrintedPage: printedPage,
+    reviewLocked,
+    reviewReason
+  });
 
   const semester = (id, units) => ({
     id,
@@ -601,7 +619,60 @@
       ]
     ]),
     semester("5-1", [
-      ["자연수의 혼합 계산", "혼합 계산의 순서", "하나의 식으로 나타내기", "식 세워 풀기", "혼합 계산식 만들기"],
+      ["자연수의 혼합 계산",
+        detailed("혼합 계산의 순서", "mixedCalculationE1", [
+          sourceItem51("혼합 계산의 순서와 하나의 식으로 나타내기", 1, "5-1-u1-e1-exploration", 3, 4),
+          sourceItem51("여러 혼합 계산의 결과를 비교하여 작은 것부터 놓기", 1, "5-1-u1-e1-example-1-1", 3, 4),
+          sourceItem51("혼합 계산식의 빈칸에 알맞은 수 구하기", 1, "5-1-u1-e1-example-1-2", 3, 4),
+          sourceItem51("두 계산 기호의 뜻을 이용해 혼합 계산하기", 1, "5-1-u1-e1-example-1-3", 3, 4),
+          sourceItem51("앞 계산의 결과를 이어 쓰는 식의 순서 찾기", 1, "5-1-u1-e1-example-1-4", 3, 4),
+          sourceItem51("괄호가 여러 개 있는 자연수 혼합 계산하기", 1, "5-1-u1-e1-mission-1", 4, 5),
+          sourceItem51("등식이 맞도록 혼합 계산식의 빈칸 구하기", 1, "5-1-u1-e1-mission-2", 4, 5),
+          sourceItem51("부등식을 만족하는 모든 자연수의 합 구하기", 1, "5-1-u1-e1-mission-3", 4, 5),
+          sourceItem51("두 가지 계산 약속을 차례로 적용하기", 1, "5-1-u1-e1-mission-4", 4, 5),
+          sourceItem51("여러 등식을 하나의 혼합 계산식으로 나타내기", 1, "5-1-u1-e1-mission-5", 4, 5),
+          sourceItem51("세 자연수의 조건을 이용해 혼합 계산식의 값 구하기", 1, "5-1-u1-e1-mission-6", 4, 5)
+        ]),
+        detailed("하나의 식으로 나타내기", "", [
+          sourceItem51("남은 수의 절반과 일정량을 연속으로 처리한 상황을 하나의 식으로 나타내기", 1, "5-1-u1-e2-exploration", 5, 6, true, "개념탐구 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("두 모둠에 물건을 나누어 주고 남은 수 구하기", 1, "5-1-u1-e2-example-2-1", 5, 6, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("두 활동을 모두 좋아하지 않는 학생 수 구하기", 1, "5-1-u1-e2-example-2-2", 5, 6, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("두 공장의 단위 생산량으로 같은 인원의 시간당 생산량 비교하기", 1, "5-1-u1-e2-example-2-3", 5, 6, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("여러 물건의 전체 무게로 배송비 구하기", 1, "5-1-u1-e2-example-2-4", 5, 6, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("여러 묶음의 물건값을 내고 거스름돈 구하기", 1, "5-1-u1-e2-mission-1", 6, 7, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("두 상자에서 일부를 버린 뒤 남은 수의 배수 관계 구하기", 1, "5-1-u1-e2-mission-2", 6, 7, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("가진 돈의 일부를 쓰고 남은 돈으로 처음 돈 구하기", 1, "5-1-u1-e2-mission-3", 6, 7, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("같은 물건을 더 담은 두 무게로 빈 바구니 무게 구하기", 1, "5-1-u1-e2-mission-4", 6, 7, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("정원과 이용 시간으로 탈것 이용료 구하기", 1, "5-1-u1-e2-mission-5", 6, 7, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("같은 색 테이프를 겹쳐 붙인 도형의 둘레 구하기", 1, "5-1-u1-e2-mission-6", 6, 7, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        ]),
+        detailed("식 세워 풀기", "", [
+          sourceItem51("세 물건의 가격 관계로 한 물건의 가격 구하기", 1, "5-1-u1-e3-exploration", 7, 8, true, "개념탐구 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("두 수의 차와 나눗셈 조건으로 두 수의 합 구하기", 1, "5-1-u1-e3-example-3-1", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("나이의 합과 배수 관계로 몇 년 후인지 구하기", 1, "5-1-u1-e3-example-3-2", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("늦게 출발한 사람이 앞사람을 만나는 시간 구하기", 1, "5-1-u1-e3-example-3-3", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("세 사람의 용돈 관계로 한 사람의 용돈 구하기", 1, "5-1-u1-e3-example-3-4", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("곱하고 나눈 수와 두 수의 차로 처음 수 구하기", 1, "5-1-u1-e3-mission-1", 8, 9, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("같은 직사각형 여덟 조각으로 만든 큰 직사각형의 변 구하기", 1, "5-1-u1-e3-mission-2", 8, 9, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("전체 학생 수와 학년·성별 관계로 학생 수 구하기", 1, "5-1-u1-e3-mission-3", 8, 9, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("기차로 이동한 뒤 남은 거리를 걷는 시간 구하기", 1, "5-1-u1-e3-mission-4", 8, 9, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("묶음 단가와 이익으로 판매한 사탕 봉지 수 구하기", 1, "5-1-u1-e3-mission-5", 8, 9, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("구슬을 옮긴 뒤의 배수 관계로 처음 두 수의 곱 구하기", 1, "5-1-u1-e3-mission-6", 8, 9, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        ]),
+        detailed("혼합 계산식 만들기", "", [
+          sourceItem51("정해진 수·사칙연산·괄호 조건으로 혼합 계산식 만들기", 1, "5-1-u1-e4-exploration", 9, 10, true, "개념탐구 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("사칙연산 기호를 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-example-4-1", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("곱셈·나눗셈 기호와 괄호를 넣어 등식 만들기", 1, "5-1-u1-e4-example-4-2", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("주어진 수를 식의 빈칸에 넣어 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-3", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("수 카드와 사칙연산 및 괄호를 모두 한 번씩 써 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-4", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
+          sourceItem51("같은 수 다섯 개와 사칙연산·괄호를 각각 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-mission-1", 10, 11, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("네 사칙연산 기호를 각각 한 번씩 넣어 등식 만들기", 1, "5-1-u1-e4-mission-2", 10, 11, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("괄호 한 쌍을 넣어 등식이 맞게 만들기", 1, "5-1-u1-e4-mission-3", 10, 11, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("주어진 수를 식의 빈칸에 넣어 계산 결과 가장 크게 만들기", 1, "5-1-u1-e4-mission-4", 10, 11, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("괄호 한 쌍으로 만들 수 없는 보기의 계산 결과를 모두 찾기", 1, "5-1-u1-e4-mission-5", 10, 11, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
+          sourceItem51("수 카드를 한 번씩 써 계산 결과가 1인 식 만들기", 1, "5-1-u1-e4-mission-6", 10, 11, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        ])
+      ],
       ["약수와 배수", "약수와 배수", "소인수분해 1", "소인수분해 2", "소인수분해의 활용", "공약수와 최대공약수", "공배수와 최소공배수", "배수판정법", "세 수의 최대공약수와 최소공배수", "약수의 개수", "공약수의 활용", "공배수의 활용", "최대공약수와 최소공배수의 관계"],
       ["규칙과 대응", "규칙과 대응", "대응표와 대응 관계", "규칙과 대응의 활용 ①", "규칙과 대응의 활용 ②"],
       ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],

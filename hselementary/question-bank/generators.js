@@ -13712,6 +13712,237 @@
       const answer = a + b * c - d;
       return result(`<div class="equation">${a} + ${b} × ${c} - ${d} = □</div>`, answer, `곱셈을 먼저 계산하면 ${b} × ${c} = ${b * c}이고, ${a} + ${b * c} - ${d} = ${answer}입니다.`);
     },
+    mixedCalculationE1({ rng, level, variant = 0 }) {
+      const labels = ["①", "②", "③", "④"];
+      if (variant === 0) {
+        const quotient = int(rng, 3, 7 + level * 2);
+        const divisor = int(rng, 3, 9 + level * 2);
+        const dividend = quotient * divisor;
+        const multiplier = int(rng, 4, 10 + level * 3);
+        const addend = int(rng, 20, 56 + level * 18);
+        const subtractor = int(rng, 4, addend - 2);
+        const inside = addend + multiplier * quotient - subtractor;
+        const outside = int(rng, 2, 6 + level);
+        const tail = int(rng, 12, 50 + level * 20);
+        const answer = int(rng, 45, 120 + level * 50);
+        const head = answer + inside * outside - tail;
+        let blank;
+        let blankFactor;
+        let blankDivisor;
+        let blankAddend;
+        let blankQuotient;
+        for (;;) {
+          blank = int(rng, 2, 11 + level * 4);
+          blankFactor = int(rng, 3, 10 + level * 3);
+          blankDivisor = int(rng, 2, 8 + level * 2);
+          blankQuotient = Math.ceil((blankFactor * blank + 3) / blankDivisor) + int(rng, 2, 6 + level * 2);
+          blankAddend = blankDivisor * blankQuotient - blankFactor * blank;
+          if (blankAddend >= 2 && blankAddend <= 32 + level * 10) break;
+        }
+        const blankTarget = int(rng, 18, 54 + level * 20);
+        const blankStart = blankTarget + blankQuotient;
+
+        const joinDivisor = int(rng, 2, 7 + level);
+        const joinQuotient = int(rng, 2, 6 + level * 2);
+        const joinDividend = joinDivisor * joinQuotient;
+        const joinMultiplier = int(rng, 2, 6 + level);
+        const joinedValue = joinQuotient * joinMultiplier;
+        const joinedOuterDivisor = int(rng, 2, 7 + level);
+        const joinedAnswer = int(rng, 3, 10 + level * 3);
+        const joinedAddend = int(rng, 2, joinedOuterDivisor * joinedAnswer - 1);
+        const joinedInnerQuotient = joinedOuterDivisor * joinedAnswer - joinedAddend;
+        const joinedOuterDividend = joinedValue * joinedInnerQuotient;
+        const combinedExpression = `(${joinedOuterDividend} ÷ (${joinDividend} ÷ ${joinDivisor} × ${joinMultiplier}) + ${joinedAddend}) ÷ ${joinedOuterDivisor}`;
+        const expression = `${head} - {${addend} + ${multiplier} × (${dividend} ÷ ${divisor}) - ${subtractor}} × ${outside} + ${tail}`;
+        const values = [
+          [head, addend, multiplier, dividend, divisor, subtractor, outside, tail],
+          [blankStart, blankAddend, blankFactor, blankDivisor, blankTarget],
+          [joinedOuterDividend, joinedAddend, joinedOuterDivisor, joinDividend, joinDivisor, joinMultiplier]
+        ].map(group => group.join(",")).join(";");
+        return result(`혼합 계산의 순서에 주의하여 세 물음에 답하세요.<div class="equation" data-mixed-kind="e1-exploration-set" data-values="${values}">(1) 다음 계산을 하세요.<br>${expression} = □<br><br>(2) □ 안에 알맞은 자연수를 구하세요.<br>${blankStart} - (${blankAddend} + ${blankFactor} × □) ÷ ${blankDivisor} = ${blankTarget}<br><br>(3) 다음 두 식을 하나의 식으로 나타내세요.<br>(${joinedOuterDividend} ÷ ${joinedValue} + ${joinedAddend}) ÷ ${joinedOuterDivisor} = ${joinedAnswer}<br>${joinDividend} ÷ ${joinDivisor} × ${joinMultiplier} = ${joinedValue}</div>`, `(1) ${answer}, (2) ${blank}, (3) ${combinedExpression} = ${joinedAnswer}`, `(1) (${dividend} ÷ ${divisor}) = ${quotient}이고 중괄호 안은 ${inside}이므로 답은 ${answer}입니다. (2) 괄호 안은 ${blankQuotient * blankDivisor}이어야 하므로 ${blankFactor} × □ = ${blankFactor * blank}, □ = ${blank}입니다. (3) 첫째 식의 ${joinedValue}를 둘째 식으로 바꾸면 ${combinedExpression} = ${joinedAnswer}입니다.`);
+      }
+      if (variant === 1) {
+        const expressions = [];
+        const usedResults = new Set();
+        while (expressions.length < 4) {
+          const quotient = int(rng, 2, 7 + level * 2);
+          const divisor = int(rng, 2, 8 + level * 2);
+          const dividend = quotient * divisor;
+          const multiplier = int(rng, 3, 11 + level * 3);
+          const addend = int(rng, 12, 42 + level * 12);
+          const tail = int(rng, 8, 36 + level * 12);
+          const value = int(rng, 32, 96 + level * 38);
+          const head = value + addend + multiplier * quotient - tail;
+          if (usedResults.has(value)) continue;
+          usedResults.add(value);
+          expressions.push({ head, addend, multiplier, dividend, divisor, tail, value });
+        }
+        const answer = expressions.map((item, index) => ({ value: item.value, label: labels[index] })).sort((left, right) => left.value - right.value).map(item => item.label).join(", ");
+        const body = expressions.map((item, index) => `${labels[index]} ${item.head} - (${item.addend} + ${item.multiplier} × ${item.dividend} ÷ ${item.divisor}) + ${item.tail}`).join("<br>");
+        const values = expressions.map(item => [item.head, item.addend, item.multiplier, item.dividend, item.divisor, item.tail].join(",")).join(";");
+        return result(`다음 계산 결과가 작은 것부터 차례로 기호를 쓰세요.<div class="equation" data-mixed-kind="e1-order-compare" data-values="${values}">${body}</div>`, answer, `각 식은 괄호 안과 곱셈·나눗셈을 먼저 계산합니다. 계산 결과를 작은 것부터 놓으면 ${answer}입니다.`);
+      }
+      if (variant === 2) {
+        let blank;
+        let factor;
+        let divisor;
+        let addend;
+        let quotient;
+        for (;;) {
+          blank = int(rng, 3, 12 + level * 5);
+          factor = int(rng, 4, 12 + level * 3);
+          divisor = int(rng, 3, 9 + level * 2);
+          quotient = Math.ceil((factor * blank + 4) / divisor) + int(rng, 2, 7 + level * 2);
+          addend = divisor * quotient - factor * blank;
+          if (addend >= 3 && addend <= 38 + level * 12) break;
+        }
+        const target = int(rng, 22, 70 + level * 30);
+        const start = target + quotient;
+        return result(`□ 안에 알맞은 자연수를 구하세요.<div class="equation" data-mixed-kind="e1-blank" data-values="${start},${addend},${factor},${divisor},${target}">${start} - (${addend} + ${factor} × □) ÷ ${divisor} = ${target}</div>`, blank, `${start} - ${target} = ${quotient}이므로 괄호 안은 ${quotient} × ${divisor} = ${quotient * divisor}입니다. ${factor} × □ = ${quotient * divisor - addend}이므로 □ = ${blank}입니다.`);
+      }
+      if (variant === 3) {
+        const first = int(rng, 5, 13 + level * 4);
+        const second = int(rng, 4, 11 + level * 3);
+        const third = int(rng, 3, 8 + level * 2);
+        const middle = first * second - first;
+        const answer = middle * third + third;
+        return result(`○와 △의 계산 약속이 다음과 같을 때, 식의 값을 구하세요.<div class="equation" data-mixed-kind="e1-symbol-two" data-values="${first},${second},${third}">가 ○ 나 = 가 × 나 - 가<br>가 △ 나 = 가 × 나 + 나<br>(${first} ○ ${second}) △ ${third} = □</div>`, answer, `${first} ○ ${second} = ${first} × ${second} - ${first} = ${middle}입니다. 따라서 ${middle} △ ${third} = ${middle} × ${third} + ${third} = ${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const left = int(rng, 7, 18 + level * 5);
+        const right = int(rng, 6, 17 + level * 5);
+        const divisor = int(rng, 2, 6 + level * 2);
+        const factor = divisor * int(rng, 2, 5 + level);
+        const subtractor = int(rng, 8, 22 + level * 7);
+        const tail = int(rng, 9, 28 + level * 8);
+        const first = left + right;
+        const second = first * factor;
+        const third = second / divisor;
+        const fourth = third - subtractor;
+        const finalValue = fourth + tail;
+        const correct = `(${left} + ${right}) × ${factor} ÷ ${divisor} - ${subtractor} + ${tail}`;
+        const decoys = [
+          `${left} + ${right} × ${factor} ÷ ${divisor} - ${subtractor} + ${tail}`,
+          `(${left} + ${right}) × (${factor} ÷ ${divisor} - ${subtractor}) + ${tail}`,
+          `(${left} + ${right}) × ${factor} ÷ ${divisor} - (${subtractor} + ${tail})`
+        ];
+        const choices = [...decoys];
+        const correctIndex = int(rng, 0, 3);
+        choices.splice(correctIndex, 0, correct);
+        const body = choices.map((choice, index) => `${labels[index]} ${choice}`).join("<br>");
+        return result(`어떤 혼합 계산식을 다음 순서로 계산하여 ${finalValue}이 되었습니다.<br>① ${left} + ${right} = ${first} ② ${first} × ${factor} = ${second} ③ ${second} ÷ ${divisor} = ${third} ④ ${third} - ${subtractor} = ${fourth} ⑤ ${fourth} + ${tail} = ${finalValue}<br>알맞은 식을 고르세요.<div class="equation" data-mixed-kind="e1-sequence-choice" data-values="${left},${right},${factor},${divisor},${subtractor},${tail}" data-correct-index="${correctIndex}">${body}</div>`, labels[correctIndex], `더하기를 먼저 하고, 곱한 뒤 나누고, 빼기와 더하기를 차례로 한 식은 ${labels[correctIndex]}입니다.`);
+      }
+      if (variant === 5) {
+        const p = int(rng, 3, 8 + level * 2);
+        const q = int(rng, 4, 10 + level * 2);
+        const inner = p * q + int(rng, 8, 25 + level * 8);
+        const outside = int(rng, 3, 7 + level);
+        const u = int(rng, 10, 25 + level * 8);
+        const v = int(rng, 2, u - 3);
+        const tail = int(rng, 2, 7 + level);
+        const desired = int(rng, 24, 90 + level * 30);
+        const base = inner - p * q + Math.ceil(((u - v) * tail + desired) / outside);
+        const one = (base - (inner - p * q)) * outside - (u - v) * tail;
+        const d = int(rng, 11, 24 + level * 8);
+        const e = int(rng, 2, d - 3);
+        const f = int(rng, 2, 5 + level);
+        const g = int(rng, 2, 4 + level);
+        const h = int(rng, 4, 13 + level * 4);
+        const b = int(rng, 5, 12 + level * 3);
+        const c = int(rng, 12, 36 + level * 9);
+        const desiredTwo = int(rng, 28, 110 + level * 35);
+        const a = Math.ceil(((d - e) * f * g - c - h + desiredTwo) / b);
+        const two = a * b + c - (d - e) * f * g + h;
+        const div = int(rng, 2, 7 + level * 2);
+        const core = int(rng, 8, 18 + level * 5);
+        const n = int(rng, 5, 13 + level * 3);
+        const m = div * core;
+        const s = int(rng, 3, core * n - 4);
+        const scale = int(rng, 2, 6 + level);
+        const v2 = int(rng, 2, 8 + level * 2);
+        const u2 = v2 * int(rng, 3, 12 + level * 4);
+        const three = (m * n / div - s) * scale + u2 / v2;
+        const b2 = int(rng, 8, 18 + level * 4);
+        const c2 = int(rng, 2, b2 - 3);
+        const d2 = int(rng, 2, 6 + level);
+        const e2 = int(rng, 2, 9 + level * 2);
+        const denominator = (b2 - c2) * d2 + e2;
+        const quotient = int(rng, 3, 12 + level * 3);
+        const a2 = denominator * quotient;
+        const g2 = int(rng, 2, 6 + level);
+        const h2 = int(rng, 3, 11 + level * 3);
+        const f2 = g2 * h2 + int(rng, 9, 28 + level * 9);
+        const four = a2 / denominator + f2 - g2 * h2;
+        const values = [
+          [base, inner, p, q, outside, u, v, tail],
+          [a, b, c, d, e, f, g, h],
+          [m, n, div, s, scale, u2, v2],
+          [a2, b2, c2, d2, e2, f2, g2, h2]
+        ].map(group => group.join(",")).join(";");
+        return result(`다음 계산을 하세요.<div class="equation" data-mixed-kind="e1-four-calculations" data-values="${values}">(1) {${base} - (${inner} - ${p} × ${q})} × ${outside} - (${u} - ${v}) × ${tail}<br>(2) ${a} × ${b} + ${c} - (${d} - ${e}) × ${f} × ${g} + ${h}<br>(3) ((${m} × ${n}) ÷ ${div} - ${s}) × ${scale} + ${u2} ÷ ${v2}<br>(4) ${a2} ÷ {(${b2} - ${c2}) × ${d2} + ${e2}} + ${f2} - ${g2} × ${h2}</div>`, `${one}, ${two}, ${three}, ${four}`, `(1)부터 (4)까지 계산 순서를 지키면 차례로 ${one}, ${two}, ${three}, ${four}입니다.`);
+      }
+      if (variant === 6) {
+        const firstDivisor = int(rng, 2, 6 + level);
+        const secondDivisor = int(rng, 3, 8 + level * 2);
+        const common = firstDivisor * secondDivisor / gcd(firstDivisor, secondDivisor);
+        const blank = common * int(rng, 2, 7 + level * 2);
+        const addend = secondDivisor * int(rng, 1, 5 + level);
+        const multiplier = int(rng, 2, 6 + level);
+        const target = blank / firstDivisor + (blank + addend) / secondDivisor * multiplier;
+        return result(`□ 안에 알맞은 자연수를 구하세요.<div class="equation" data-mixed-kind="e1-double-blank" data-values="${firstDivisor},${addend},${secondDivisor},${multiplier},${target}">□ ÷ ${firstDivisor} + (□ + ${addend}) ÷ ${secondDivisor} × ${multiplier} = ${target}</div>`, blank, `□가 ${blank}일 때 ${blank} ÷ ${firstDivisor} = ${blank / firstDivisor}, (${blank} + ${addend}) ÷ ${secondDivisor} × ${multiplier} = ${(blank + addend) / secondDivisor * multiplier}입니다. 두 값을 더하면 ${target}입니다.`);
+      }
+      if (variant === 7) {
+        const a = int(rng, 8, 18 + level * 5);
+        const b = int(rng, 7, 17 + level * 5);
+        const c = int(rng, 3, 8 + level * 2);
+        const d = int(rng, 6, 20 + level * 6);
+        const coefficient = int(rng, 3, 8 + level * 2);
+        const largest = int(rng, 3, 12 + level * 4);
+        const left = (a + b) * c - d;
+        const right = left - coefficient * largest - 1;
+        const answer = largest * (largest + 1) / 2;
+        return result(`□ 안에 들어갈 수 있는 모든 자연수의 합을 구하세요.<div class="equation" data-mixed-kind="e1-inequality" data-values="${a},${b},${c},${d},${coefficient},${right}">{(${a} + ${b}) × ${c} - ${d}} - ${coefficient} × □ > ${right}</div>`, answer, `□가 ${largest} 이하일 때만 부등식이 성립합니다. 1부터 ${largest}까지의 합은 ${largest} × ${largest + 1} ÷ 2 = ${answer}입니다.`);
+      }
+      if (variant === 8) {
+        const first = int(rng, 6, 15 + level * 4);
+        const second = int(rng, 5, 14 + level * 4);
+        const third = int(rng, 3, 9 + level * 2);
+        const middle = (first + second) * first - second;
+        const answer = middle * third + middle;
+        return result(`●와 ◆의 계산 약속이 다음과 같을 때, 식의 값을 구하세요.<div class="equation" data-mixed-kind="e1-symbol-rule" data-values="${first},${second},${third}">가 ● 나 = (가 + 나) × 가 - 나<br>가 ◆ 나 = 가 × 나 + 가<br>(${first} ● ${second}) ◆ ${third} = □</div>`, answer, `${first} ● ${second} = (${first} + ${second}) × ${first} - ${second} = ${middle}입니다. 따라서 ${middle} ◆ ${third} = ${middle} × ${third} + ${middle} = ${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const a = int(rng, 6, 16 + level * 4);
+        const b = int(rng, 4, 11 + level * 3);
+        const c = int(rng, 5, 24 + level * 7);
+        const first = a * b + c;
+        const divisor = int(rng, 2, 7 + level);
+        const answer = int(rng, 9, 32 + level * 11);
+        const addend = int(rng, 4, Math.min(18 + level * 5, answer * divisor - 1));
+        const second = answer * divisor - addend;
+        const paid = first + second;
+        const third = second + addend;
+        return result(`다음 네 식을 하나의 식으로 나타내어 계산한 값을 구하세요.<div class="equation" data-mixed-kind="e1-join-equations" data-values="${a},${b},${c},${paid},${addend},${divisor}">① ${a} × ${b} + ${c} = ${first}<br>② ${paid} - ${first} = ${second}<br>③ ${second} + ${addend} = ${third}<br>④ ${third} ÷ ${divisor} = □</div>`, answer, `하나의 식으로 나타내면 (${paid} - (${a} × ${b} + ${c}) + ${addend}) ÷ ${divisor}입니다. 계산하면 ${answer}입니다.`);
+      }
+      let selected;
+      for (let attempt = 0; attempt < 200 && !selected; attempt += 1) {
+        const first = int(rng, 2, 6 + level * 2);
+        const third = int(rng, first + 2, first + 8 + level * 3);
+        const second = int(rng, 2, 8 + level * 3);
+        const product = first * second * third;
+        const sum = first + third;
+        const candidates = [];
+        for (let candidateFirst = 1; candidateFirst < sum; candidateFirst += 1) {
+          const candidateThird = sum - candidateFirst;
+          if (candidateFirst >= candidateThird || product % (candidateFirst * candidateThird) !== 0) continue;
+          candidates.push({ first: candidateFirst, second: product / (candidateFirst * candidateThird), third: candidateThird });
+        }
+        const answer = third * third - (first + second) * second;
+        if (candidates.length === 1 && answer > 0) selected = { first, second, third, product, sum, answer };
+      }
+      const { first, second, third, product, sum, answer } = selected || { first: 3, second: 4, third: 8, product: 96, sum: 11, answer: 36 };
+      return result(`세 자연수 가, 나, 다가 다음 조건을 모두 만족할 때, 다 × 다 - (가 + 나) × 나의 값을 구하세요.<div class="equation" data-mixed-kind="e1-three-natural" data-values="${product},${sum}">가 × 나 × 다 = ${product}<br>가 + 다 = ${sum}<br>가 &lt; 다</div>`, answer, `가 + 다 = ${sum}, 가 &lt; 다인 자연수 중 가 × 다가 ${product}의 약수가 되는 경우를 모두 확인하면 가 = ${first}, 다 = ${third}일 때뿐입니다. 나 = ${product} ÷ (${first} × ${third}) = ${second}이므로 ${third} × ${third} - (${first} + ${second}) × ${second} = ${answer}입니다.`);
+    },
     mixedOrderAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const quotient = int(rng, 2, 4 + level * 2);
@@ -18086,10 +18317,6 @@
     [type => type.id === "4-2-u6-t2", "regularPolygonApplication"],
     [type => type.id === "4-2-u6-t3", "tessellationCover"],
     [type => type.id === "4-2-u6-t4", "shapePartitionCompose"],
-    [type => type.id === "5-1-u1-t1", "mixedOrderAdvanced"],
-    [type => type.id === "5-1-u1-t2", "oneExpressionAdvanced"],
-    [type => type.id === "5-1-u1-t3", "mixedWordEquationAdvanced"],
-    [type => type.id === "5-1-u1-t4", "mixedExpressionBuildAdvanced"],
     [type => type.id === "5-1-u2-t1", "factorMultipleAdvanced"],
     [type => type.id === "5-1-u2-t2", "primeFactorBasicAdvanced"],
     [type => type.id === "5-1-u2-t3", "primeFactorPowerAdvanced"],
