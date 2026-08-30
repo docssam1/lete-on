@@ -1,5 +1,6 @@
 import { strict as assert } from "node:assert";
 import { levels, orientations, startingOrientation, roll, rollMany, visibleFaces, validateLevels } from "./levels.js";
+import { auditDiceRollContent } from "./dice-roll-content-audit.mjs";
 
 assert.equal(validateLevels(), true);
 assert.equal(orientations.length, 24);
@@ -19,4 +20,12 @@ levels.flatMap((level)=>level.problems).forEach((problem)=>{
   if(problem.interaction==="face-answer") assert.equal(visibleFaces(final)[problem.faceKey],problem.answer,problem.id);
 });
 
-console.log("dice-roll: 5 levels, 50 problems, 24 orientations validated");
+const contentAudit = auditDiceRollContent();
+assert.equal(contentAudit.uniqueQuestions, 50);
+assert.equal(contentAudit.singleAnswerProblems, 50);
+
+const brokenLevels = structuredClone(levels);
+brokenLevels[0].problems[0].answer = brokenLevels[0].problems[0].answer === 6 ? 5 : 6;
+assert.throws(() => auditDiceRollContent(brokenLevels), /Dice-roll content audit failed/);
+
+console.log("dice-roll: 5 levels, 50 independent answers, 50 unique questions, 24 orientations validated");

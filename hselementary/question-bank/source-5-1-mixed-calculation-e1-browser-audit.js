@@ -36,7 +36,7 @@ function auditInventory() {
     if (!String(learnerCriteria[criterion] || "").trim()) fail(`learner-fit ${criterion} 기준이 없습니다.`);
   }
   if (inventory.items.length !== 44 || types.length !== 44) fail(`원문·교육과정 유형은 각각 44개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 21 || lockedTypes.length !== 23) fail(`공개 21개·검수 대기 23개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (readyTypes.length !== 32 || lockedTypes.length !== 12) fail(`공개 32개·검수 대기 12개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
   if (e1ReadyTypes.length !== 11) fail(`개념탐구 1의 공개 유형은 11개여야 하나 ${e1ReadyTypes.length}개입니다.`);
   const sourceIds = new Set();
   for (const type of types) {
@@ -52,7 +52,7 @@ function auditInventory() {
     const shouldLock = source.implementationStatus === "review-locked";
     if (type.reviewLocked !== shouldLock) fail(`${type.id}: 검수 대기 상태가 분류표와 다릅니다.`);
     if (shouldLock && (!type.reviewReason || api.generatorKey(type))) fail(`${type.id}: 잠금 사유가 없거나 생성기가 열려 있습니다.`);
-    const expectedGenerator = source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : "";
+    const expectedGenerator = source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : source.exploration === 3 ? "mixedCalculationE3" : "";
     if (!shouldLock && (!expectedGenerator || type.reviewLocked || api.generatorKey(type) !== expectedGenerator)) fail(`${type.id}: 공개 유형의 생성기 연결이 다릅니다.`);
     if (!shouldLock && !["single-value", "ordered", "named-value"].includes(inventory.resultContracts?.[type.sourceItemId])) fail(`${type.id}: 공개 유형의 답 형식 계약이 없습니다.`);
   }
@@ -198,7 +198,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 21 · 잠금 23 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 32 · 잠금 12 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);
