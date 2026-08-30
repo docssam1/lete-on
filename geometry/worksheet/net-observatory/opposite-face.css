@@ -1,0 +1,32 @@
+.face-options {
+  grid-template-columns: repeat(3, 1fr);
+  height: 30mm;
+}
+
+.face-option {
+  border: 2px solid #61401f;
+  background: linear-gradient(145deg, #fff8dd, var(--face-color) 50%, #b97a3e);
+}
+
+.face-option strong {
+  color: #17264a;
+  font-size: 24px;
+}
+
+.problem-grid[data-large="true"] .interaction-net-opposite .visual {
+  display: grid;
+  grid-template-columns: 62mm 1fr;
+  align-items: center;
+  gap: 5mm;
+}
+
+.problem-grid[data-large="true"] .face-options {
+  height: 48mm;
+  gap: 4mm;
+}
+
+@media (max-width: 560px) {
+  .problem-grid[data-large="true"] .interaction-net-opposite .visual {
+    display: block;
+  }
+}

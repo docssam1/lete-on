@@ -61,6 +61,17 @@ levels[0].problems.forEach((problem) => {
   assert.equal(problem.choices.filter((choice) => foldCubeNet(choice.cells).valid).length, 1, problem.id);
 });
 
+levels[1].problems.forEach((problem) => {
+  const folded = foldCubeNet(problem.cells);
+  const faceMap = new Map(problem.faces.map((face) => [face.cell.join(","), face]));
+  const framed = folded.cells.map((cell, index) => ({ ...faceMap.get(cell.join(",")), normal: folded.frames[index].n }));
+  const query = framed.find((face) => face.label === problem.query.label);
+  const opposite = framed.find((face) => face.normal.every((value, axis) => value === -query.normal[axis]));
+  const validChoices = problem.choices.filter((choice) => choice.label === opposite.label);
+  assert.equal(validChoices.length, 1, problem.id);
+  assert.equal(validChoices[0].id, problem.answer, problem.id);
+});
+
 levels[2].problems.forEach((problem) => {
   if (problem.interaction === "dice-opposite") {
     assert.equal(problem.face + problem.answer, 7, problem.id);

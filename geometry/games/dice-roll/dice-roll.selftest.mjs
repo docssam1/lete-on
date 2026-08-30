@@ -5,6 +5,7 @@ assert.equal(validateLevels(), true);
 assert.equal(orientations.length, 24);
 assert.equal(levels.length, 5);
 assert.equal(levels.flatMap((level) => level.problems).length, 50);
+assert.deepEqual(levels.map((level) => level.band), ["초급", "초급", "초급", "중급", "중급"]);
 
 for (const direction of ["N","E","S","W"]) {
   const inverse = { N:"S", E:"W", S:"N", W:"E" }[direction];
