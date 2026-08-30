@@ -13943,6 +13943,156 @@
       const { first, second, third, product, sum, answer } = selected || { first: 3, second: 4, third: 8, product: 96, sum: 11, answer: 36 };
       return result(`세 자연수 가, 나, 다가 다음 조건을 모두 만족할 때, 다 × 다 - (가 + 나) × 나의 값을 구하세요.<div class="equation" data-mixed-kind="e1-three-natural" data-values="${product},${sum}">가 × 나 × 다 = ${product}<br>가 + 다 = ${sum}<br>가 &lt; 다</div>`, answer, `가 + 다 = ${sum}, 가 &lt; 다인 자연수 중 가 × 다가 ${product}의 약수가 되는 경우를 모두 확인하면 가 = ${first}, 다 = ${third}일 때뿐입니다. 나 = ${product} ÷ (${first} × ${third}) = ${second}이므로 ${third} × ${third} - (${first} + ${second}) × ${second} = ${answer}입니다.`);
     },
+    mixedCalculationE2({ rng, level, variant = 0 }) {
+      const difficulty = level + 1;
+      const tapeStripSvg = ({ length, width, overlap, count }) => {
+        const starts = Array.from({ length: count }, (_, index) => index * (length - overlap));
+        const segments = starts.map(start => ({ start, end: start + length }));
+        const totalLength = segments.at(-1).end;
+        const token = `mixed-e2-${length}-${width}-${overlap}-${count}`;
+        const overlapWidth = Math.max(14, Math.min(38, 150 * overlap / length));
+        const pairSecondX = 320 + 150 - overlapWidth;
+        const sampleWidth = 108;
+        const sampleOverlap = Math.max(10, Math.min(30, sampleWidth * overlap / length));
+        const sampleStep = sampleWidth - sampleOverlap;
+        const sampleXs = [40, 40 + sampleStep, 40 + sampleStep * 2];
+        const sampleRects = sampleXs.map((x, index) => `<rect x="${x.toFixed(2)}" y="166" width="${sampleWidth}" height="34" fill="${index % 2 ? "#fbf3dc" : "#e3f1f8"}" fill-opacity="0.82" stroke="#183d56" stroke-width="2"/>`).join("");
+        const sampleOverlaps = sampleXs.slice(1).map(x => `<rect x="${x.toFixed(2)}" y="166" width="${sampleOverlap.toFixed(2)}" height="34" fill="url(#${token}-hatch)" stroke="#a85f00" stroke-width="1.4"/>`).join("");
+        return `<svg class="geometry-diagram mixed-e2-tape-strip" viewBox="0 0 570 245" role="img" aria-label="길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 ${overlap}cm씩 겹쳐 일직선으로 붙인 그림" data-tape-model="${length},${width},${overlap},${count},${count - 1},${totalLength}">
+          <defs><marker id="${token}-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#183d56"/></marker><pattern id="${token}-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#a85f00" stroke-width="1.4"/></pattern></defs>
+          <text class="svg-measure-text" x="40" y="24" font-size="19" font-weight="700" fill="#183d56">한 장</text>
+          <rect x="40" y="39" width="150" height="36" fill="#e3f1f8" stroke="#183d56" stroke-width="2.4"/>
+          <line x1="40" y1="96" x2="190" y2="96" stroke="#183d56" marker-start="url(#${token}-arrow)" marker-end="url(#${token}-arrow)"/>
+          <text x="115" y="120" text-anchor="middle" font-size="18" font-weight="700" fill="#183d56">길이 ${length}cm · 폭 ${width}cm</text>
+          <text class="svg-measure-text" x="320" y="24" font-size="19" font-weight="700" fill="#183d56">두 장을 겹친 모습</text>
+          <rect x="320" y="39" width="150" height="36" fill="#e3f1f8" stroke="#183d56" stroke-width="2.2"/>
+          <rect x="${pairSecondX.toFixed(2)}" y="39" width="150" height="36" fill="#fbf3dc" fill-opacity="0.84" stroke="#183d56" stroke-width="2.2"/>
+          <rect x="${pairSecondX.toFixed(2)}" y="39" width="${overlapWidth.toFixed(2)}" height="36" fill="url(#${token}-hatch)" stroke="#a85f00" stroke-width="1.5"/>
+          <line x1="${pairSecondX.toFixed(2)}" y1="96" x2="470" y2="96" stroke="#a85f00" marker-start="url(#${token}-arrow)" marker-end="url(#${token}-arrow)"/>
+          <text x="${((pairSecondX + 470) / 2).toFixed(2)}" y="120" text-anchor="middle" font-size="18" font-weight="700" fill="#8a4e00">겹친 길이 ${overlap}cm</text>
+          <text class="svg-measure-text" x="40" y="151" font-size="19" font-weight="700" fill="#183d56">같은 테이프 ${count}장</text>
+          ${sampleRects}${sampleOverlaps}
+          <text x="382" y="190" text-anchor="middle" font-size="28" font-weight="700" fill="#183d56">…</text>
+          <rect x="425" y="166" width="108" height="34" fill="#e3f1f8" stroke="#183d56" stroke-width="2"/>
+          <text x="285" y="229" text-anchor="middle" font-size="18" font-weight="700" fill="#183d56">이웃한 두 장을 ${overlap}cm씩 겹침 · 겹친 곳 ${count - 1}곳</text>
+        </svg>`;
+      };
+      if (variant === 0) {
+        const last = int(rng, 80, 180 + difficulty * 35);
+        const secondExtra = int(rng, 120, 320 + difficulty * 70);
+        const firstExtra = int(rng, 80, 240 + difficulty * 60);
+        const answer = ((last + secondExtra) * 2 + firstExtra) * 2;
+        return result(`달걀을 처음에 몇 개 가지고 있었습니다. 처음에는 남은 달걀의 절반보다 ${firstExtra}개 더 팔고, 다음에는 남은 달걀의 절반보다 ${secondExtra}개 더 팔았습니다. 마지막에 ${last}개가 남았다면 처음 달걀은 몇 개였습니까?<div class="equation" data-mixed-kind="e2-reverse-halves" data-values="${last},${secondExtra},${firstExtra}">처음 달걀 수 = ((${last} + ${secondExtra}) × 2 + ${firstExtra}) × 2</div>`, answer, `마지막 ${last}개에서 거꾸로 계산합니다. 둘째로 팔기 전에는 (${last} + ${secondExtra}) × 2 = ${(last + secondExtra) * 2}개였고, 처음에는 ((${last} + ${secondExtra}) × 2 + ${firstExtra}) × 2 = ${answer}개였습니다.`);
+      }
+      if (variant === 1) {
+        const totalPeople = int(rng, 30, 54 + difficulty * 10);
+        const boys = int(rng, 12, totalPeople - 10);
+        const girls = totalPeople - boys;
+        const girlEach = int(rng, 2, 5 + difficulty);
+        const boyEach = girlEach + int(rng, 1, 2);
+        const distributed = boys * boyEach + girls * girlEach;
+        const prepared = distributed + int(rng, 12, 58 + difficulty * 18);
+        const answer = prepared - distributed;
+        return result(`운동회에서 한 반 학생 ${totalPeople}명에게 공을 나누어 주려고 합니다. 남학생 ${boys}명에게는 한 명당 ${boyEach}개씩, 여학생에게는 한 명당 ${girlEach}개씩 나누어 줍니다. 공을 ${prepared}개 준비했다면 남는 공은 몇 개입니까?<div class="equation" data-mixed-kind="e2-distribute-balls" data-values="${prepared},${totalPeople},${boys},${boyEach},${girlEach}">${prepared} - {${boys} × ${boyEach} + (${totalPeople} - ${boys}) × ${girlEach}}</div>`, answer, `여학생은 ${totalPeople} - ${boys} = ${girls}명입니다. 나누어 준 공은 ${boys} × ${boyEach} + ${girls} × ${girlEach} = ${distributed}개이므로 ${prepared} - ${distributed} = ${answer}개 남습니다.`);
+      }
+      if (variant === 2) {
+        const total = int(rng, 42, 70 + difficulty * 12);
+        const first = int(rng, 7, Math.floor(total * 0.58));
+        const second = int(rng, 8, Math.floor(total * 0.62));
+        const overlap = int(rng, Math.max(1, first + second - total + 1), Math.min(first, second) - 1);
+        const union = first + second - overlap;
+        const answer = total - union;
+        return result(`한 반 ${total}명 중 축구를 좋아하는 학생은 ${first}명, 농구를 좋아하는 학생은 ${second}명입니다. 두 운동을 모두 좋아하는 학생은 ${overlap}명입니다. 두 운동을 모두 좋아하지 않는 학생은 몇 명입니까?<div class="equation" data-mixed-kind="e2-union" data-values="${total},${first},${second},${overlap}">${total} - (${first} + ${second} - ${overlap})</div>`, answer, `두 운동 중 하나 이상을 좋아하는 학생은 ${first} + ${second} - ${overlap} = ${union}명입니다. 따라서 두 운동을 모두 좋아하지 않는 학생은 ${total} - ${union} = ${answer}명입니다.`);
+      }
+      if (variant === 3) {
+        const firstWorkers = int(rng, 3, 8 + difficulty);
+        const firstHours = int(rng, 2, 5);
+        const firstUnit = int(rng, 10, 28 + difficulty * 4);
+        let secondUnit = int(rng, 10, 28 + difficulty * 4);
+        if (secondUnit === firstUnit) secondUnit += 1;
+        const secondWorkers = int(rng, 4, 9 + difficulty);
+        const secondHours = int(rng, 1, 3);
+        const firstBags = firstWorkers * firstHours * firstUnit;
+        const secondBags = secondWorkers * secondHours * secondUnit;
+        const compareWorkers = int(rng, 10, 22 + difficulty * 3);
+        const compareHours = int(rng, 1, 3);
+        const firstCompare = firstUnit * compareWorkers * compareHours;
+        const secondCompare = secondUnit * compareWorkers * compareHours;
+        const winner = firstCompare > secondCompare ? "가" : "나";
+        const difference = Math.abs(firstCompare - secondCompare);
+        return result(`가 공장은 ${firstWorkers}명이 ${firstHours}시간 동안 가방 ${firstBags}개를 만들었습니다. 나 공장은 ${secondWorkers}명이 ${secondHours}시간 동안 가방 ${secondBags}개를 만들었습니다. 두 공장이 각각 ${compareWorkers}명이 ${compareHours}시간 동안 만든 가방 수를 비교할 때, 더 많이 만든 공장과 몇 개 더 많은지를 쓰세요.<div class="equation" data-mixed-kind="e2-factory" data-values="${firstWorkers},${firstHours},${firstBags},${secondWorkers},${secondHours},${secondBags},${compareWorkers},${compareHours}">답: □ 공장, □개</div>`, `${winner} 공장, ${difference}개`, `가 공장은 한 명이 한 시간에 ${firstBags} ÷ (${firstWorkers} × ${firstHours}) = ${firstUnit}개를 만들고, 나 공장은 ${secondBags} ÷ (${secondWorkers} × ${secondHours}) = ${secondUnit}개를 만듭니다. 각각 ${compareWorkers}명이 ${compareHours}시간 동안 만들면 ${firstCompare}개와 ${secondCompare}개이므로 ${winner} 공장이 ${difference}개 더 많습니다.`);
+      }
+      if (variant === 4) {
+        const freeWeight = 7000;
+        const perHundred = 500;
+        const firstWeight = int(rng, 2, 5) * 100;
+        const firstCount = int(rng, 3, 7 + difficulty);
+        const secondWeight = int(rng, 1, 4) * 100;
+        const secondCount = int(rng, 3, 8 + difficulty);
+        const thirdWeight = int(rng, 5, 9) * 100;
+        const thirdCount = int(rng, 2, 5 + difficulty);
+        const fourthWeight = 1000 + int(rng, 1, 5) * 100;
+        const partialWeight = firstWeight * firstCount + secondWeight * secondCount + thirdWeight * thirdCount;
+        const fourthCount = Math.max(2, Math.ceil((freeWeight + 100 - partialWeight) / fourthWeight) + int(rng, 0, 2 + difficulty));
+        const totalWeight = partialWeight + fourthWeight * fourthCount;
+        const extraWeight = totalWeight - freeWeight;
+        const answer = extraWeight / 100 * perHundred;
+        const fourthKg = Math.floor(fourthWeight / 1000);
+        const fourthGram = fourthWeight % 1000;
+        return result(`한 개가 ${firstWeight}g인 물건 ${firstCount}개, 한 개가 ${secondWeight}g인 물건 ${secondCount}개, 한 개가 ${thirdWeight}g인 물건 ${thirdCount}개, 한 개가 ${fourthKg}kg ${fourthGram}g인 물건 ${fourthCount}개를 샀습니다. 전체 무게가 7kg까지는 배송비가 없고, 7kg을 넘으면 넘는 무게 100g마다 ${perHundred}원입니다. 배송비는 얼마입니까?<div class="equation" data-mixed-kind="e2-shipping" data-values="${firstWeight},${firstCount},${secondWeight},${secondCount},${thirdWeight},${thirdCount},${fourthWeight},${fourthCount};${freeWeight},100,${perHundred}">(${firstWeight} × ${firstCount} + ${secondWeight} × ${secondCount} + ${thirdWeight} × ${thirdCount} + ${fourthWeight} × ${fourthCount} - ${freeWeight}) ÷ 100 × ${perHundred}</div>`, `${answer}원`, `모든 무게를 g으로 바꾸면 전체 무게는 ${firstWeight} × ${firstCount} + ${secondWeight} × ${secondCount} + ${thirdWeight} × ${thirdCount} + ${fourthWeight} × ${fourthCount} = ${totalWeight}g입니다. 무료 기준보다 ${extraWeight}g 무거우므로 ${extraWeight} ÷ 100 × ${perHundred} = ${answer}원입니다.`);
+      }
+      if (variant === 5) {
+        const singlePrice = int(rng, 3, 9 + difficulty) * 100;
+        const bundleCount = int(rng, 3, 8);
+        const bundlePrice = singlePrice * bundleCount;
+        const singleCount = int(rng, 2, 7 + difficulty);
+        const bundleAmount = int(rng, 3, 8 + difficulty);
+        const cost = singlePrice * singleCount + bundlePrice / bundleCount * bundleAmount;
+        const paid = Math.ceil((cost + int(rng, 2, 9) * 100) / 1000) * 1000;
+        const answer = paid - cost;
+        return result(`한 자루에 ${singlePrice}원인 색연필을 ${singleCount}자루 사고, ${bundleCount}권에 ${bundlePrice}원인 연습장을 ${bundleAmount}권 샀습니다. ${paid}원을 냈을 때 거스름돈은 얼마입니까?<div class="equation" data-mixed-kind="e2-change" data-values="${paid},${singlePrice},${singleCount},${bundlePrice},${bundleCount},${bundleAmount}">${paid} - (${singlePrice} × ${singleCount} + ${bundlePrice} ÷ ${bundleCount} × ${bundleAmount})</div>`, `${answer}원`, `연습장 한 권의 값은 ${bundlePrice} ÷ ${bundleCount} = ${singlePrice}원입니다. 물건값은 ${singlePrice} × ${singleCount} + ${singlePrice} × ${bundleAmount} = ${cost}원이므로 거스름돈은 ${paid} - ${cost} = ${answer}원입니다.`);
+      }
+      if (variant === 6) {
+        const orangesPerBox = int(rng, 14, 30 + difficulty * 3);
+        const applesPerBox = int(rng, 8, 21 + difficulty * 2);
+        const appleBoxes = int(rng, 3, 7);
+        const apples = applesPerBox * appleBoxes;
+        const multiple = int(rng, 2, 9 + difficulty);
+        const orangesAfter = apples * multiple;
+        const orangeBoxes = Math.floor(orangesAfter / orangesPerBox) + 1;
+        const discarded = orangeBoxes * orangesPerBox - orangesAfter;
+        return result(`귤은 한 상자에 ${orangesPerBox}개씩 ${orangeBoxes}상자 있고, 그중 ${discarded}개를 버렸습니다. 사과는 한 상자에 ${applesPerBox}개씩 ${appleBoxes}상자 있습니다. 남은 귤 수는 사과 수의 몇 배입니까?<div class="equation" data-mixed-kind="e2-fruit-multiple" data-values="${orangesPerBox},${orangeBoxes},${discarded},${applesPerBox},${appleBoxes}">(${orangesPerBox} × ${orangeBoxes} - ${discarded}) ÷ (${applesPerBox} × ${appleBoxes})</div>`, `${multiple}배`, `남은 귤은 ${orangesPerBox} × ${orangeBoxes} - ${discarded} = ${orangesAfter}개이고, 사과는 ${applesPerBox} × ${appleBoxes} = ${apples}개입니다. ${orangesAfter} ÷ ${apples} = ${multiple}이므로 ${multiple}배입니다.`);
+      }
+      if (variant === 7) throw new Error("Mission 3은 원문 문장이 두 해석을 허용하므로 생성하지 않습니다.");
+      if (variant === 8) {
+        const basket = int(rng, 40, 180 + difficulty * 30);
+        const bread = int(rng, 30, 140 + difficulty * 20);
+        const initialCount = int(rng, 4, 12 + difficulty);
+        const extraCount = int(rng, 2, 8 + difficulty);
+        const light = basket + initialCount * bread;
+        const heavy = basket + (initialCount + extraCount) * bread;
+        return result(`빈 바구니에 같은 빵 ${initialCount}개를 담았더니 ${light}g이었습니다. 같은 빵을 ${extraCount}개 더 담았더니 ${heavy}g이었습니다. 빈 바구니의 무게는 몇 g입니까?<div class="equation" data-mixed-kind="e2-basket" data-values="${light},${heavy},${initialCount},${extraCount}">${heavy} - ${light} = ${extraCount}개 빵의 무게</div>`, `${basket}g`, `더 담은 빵 ${extraCount}개의 무게는 ${heavy} - ${light} = ${heavy - light}g입니다. 빵 한 개는 ${(heavy - light) / extraCount}g이므로 처음 ${initialCount}개 빵의 무게는 ${initialCount * bread}g입니다. 빈 바구니는 ${light} - ${initialCount * bread} = ${basket}g입니다.`);
+      }
+      if (variant === 9) {
+        const capacity = 4;
+        const minutes = 15;
+        const price = 2000;
+        const groups = int(rng, 3, 8 + difficulty);
+        const timeUnits = int(rng, 3, 8 + difficulty);
+        const people = groups * capacity;
+        const duration = timeUnits * minutes;
+        const answer = groups * timeUnits * price;
+        return result(`정원이 ${capacity}명인 오리배의 이용료는 ${minutes}분마다 ${price}원입니다. ${people}명이 모두 ${duration}분 동안 오리배를 탔다면 전체 이용료는 얼마입니까?<div class="equation" data-mixed-kind="e2-boat" data-values="${capacity},${minutes},${price},${people},${duration}">${people} ÷ ${capacity} × (${duration} ÷ ${minutes}) × ${price}</div>`, `${answer}원`, `${people} ÷ ${capacity} = ${groups}대가 필요하고, ${duration} ÷ ${minutes} = ${timeUnits}번의 ${minutes}분입니다. 따라서 ${groups} × ${timeUnits} × ${price} = ${answer}원입니다.`);
+      }
+      const length = int(rng, 20, 38 + difficulty * 4);
+      const width = int(rng, 3, 8 + difficulty);
+      const count = int(rng, 8, 18 + difficulty * 2);
+      const overlap = int(rng, 1, Math.min(width + 2, length - 1));
+      const totalLength = length * count - overlap * (count - 1);
+      const answer = 2 * (totalLength + width);
+      const diagram = tapeStripSvg({ length, width, overlap, count });
+      return result(`길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 한 줄로 붙입니다. 이웃한 두 테이프는 ${overlap}cm씩 겹칩니다. 붙인 테이프의 둘레는 몇 cm입니까?${diagram}<div class="equation" data-mixed-kind="e2-tape-perimeter" data-values="${length},${width},${overlap},${count},${count - 1},${totalLength}">보이는 길이 = ${length} × ${count} - ${overlap} × (${count} - 1)</div>`, `${answer}cm`, `테이프 ${count}장은 겹치는 곳이 ${count} - 1 = ${count - 1}곳입니다. 보이는 길이는 ${length} × ${count} - ${overlap} × ${count - 1} = ${totalLength}cm입니다. 따라서 둘레는 (${totalLength} + ${width}) × 2 = ${answer}cm입니다.`);
+    },
     mixedOrderAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const quotient = int(rng, 2, 4 + level * 2);
@@ -18357,6 +18507,7 @@
 
   function generatorKey(typeOrName) {
     const type = typeof typeOrName === "string" ? { name: typeOrName } : typeOrName;
+    if (type.reviewLocked) return "";
     if (type.generatorKey && generators[type.generatorKey]) return type.generatorKey;
     const scoped = scopedRules.find(([matches]) => matches(type))?.[1];
     if (scoped) return scoped;
