@@ -193,7 +193,7 @@
       "work_key": "49969741fa0e2c0b456291c50be597a0542d95b6d9ca437bc1e79a90bfd2a5a9",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "approved",
+      "release_status": "published",
       "owner": "codex-lead",
       "source_records": [],
       "reason": "",
@@ -214,7 +214,8 @@
             { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js" },
             { "role": "answer", "locator": "test:grade6-ns-b-clinic-pack:16-exact-answer-ledger" },
             { "role": "test", "locator": "test:clinic-practice-browser:6-ns-b-shared-shell-and-completion" },
-            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.B&mode=workbook&audience=student&locale=ko" }
           ]
         }
       ],
@@ -234,7 +235,7 @@
         { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-separate" }] },
         { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js", "note": "Automatic checks cover numeric outputs only; algorithm explanation, distributive justification, mastery, and promotion remain outside the automatic claim." }] },
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
-        { "id": "deployment", "required": false, "status": "pending", "evidence": [] }
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.B&mode=workbook&audience=student&locale=ko", "note": "PR 141 merge a51f7700 deployed with HTTP 200, 12 student items, zero student answer panels, hidden teacher entry, 24 separated teacher answer and teaching panels, zero mobile overflow, completion-gated recheck, and GCF answer-beat visibility verified live." }] }
       ]
     }
   ]
