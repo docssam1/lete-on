@@ -615,8 +615,11 @@
   }
 
   /* 문항 조립 — 화면(prompt 3개 언어)과 인쇄(word·wordAsk·choices)를 같이 낸다.
-     인쇄 파이프라인은 예전부터 한국어 한 벌만 찍는다(app/exam.js printAskText 주석) —
-     그래서 word 계열은 한국어 문자열이고, 3개 언어는 prompt가 지고 간다. */
+     word 계열은 예전엔 한국어 문자열이었다. 인쇄가 한국어 한 벌만 찍었기 때문인데
+     (app/exam.js), 그 전제가 2026-08-30에 없어졌다 — 인쇄도 세 언어를 찍는다.
+     그렇다고 같은 문장을 또 만들지는 않는다: prompt를 조립할 때 이미 쓴 story·ask·
+     choices 세 벌을 그대로 넘겨, 인쇄·화면이 그때그때 한 벌을 고른다.
+     ⚠️ 이 셋은 {ko,en,zh} 객체다 — 읽는 쪽은 exam.js의 pickL/pickChoices를 쓸 것. */
   function assemble(s, ask, choices, answer, meta) {
     const pr = {};
     ['ko', 'en', 'zh'].forEach(lang => {
@@ -628,8 +631,8 @@
     });
     const p = {
       prompt: pr,
-      word: meta.story.ko,
-      wordAsk: ask.ko,
+      word: meta.story,
+      wordAsk: ask,
       answer: answer,
       answerType: 'number',
       widget: 'numpad',
@@ -645,7 +648,13 @@
     };
     /* 정답지에 붙는 짧은 설명. 보기 문장이 긴 모드(same)는 연산 이름만 싣는다 —
        한 문항이 정답지에서 세 줄을 먹으면 채점표로 못 쓴다. */
-    if (choices) { p.choices = choices.ko; p.answerNote = meta.note || choices.ko[answer - 1]; }
+    /* 정답 메모도 언어를 따라간다 — 채점하는 사람이 읽는 줄이라 정답지에 그대로
+       찍힌다. 보기 번호만으로는 그 번호가 무엇인지 알 수 없다(exam.js 정답지 참조). */
+    if (choices) {
+      p.choices = choices;
+      p.answerNote = meta.note ||
+        { ko: choices.ko[answer - 1], en: choices.en[answer - 1], zh: choices.zh[answer - 1] };
+    }
     return p;
   }
 
@@ -724,6 +733,18 @@
     '÷': { ko:'나누기', en:'division', zh:'除法' }
   };
 
+  /* 의미 유형(§3-2)의 이름 — 정답지의 메모에만 쓴다. 채점하는 사람에게 "왜 이 답인가"를
+     한 낱말로 알려 주는 자리라, 학술 용어가 아니라 그 언어의 교실 말로 적는다. */
+  const KINDNAME = {
+    합병: { ko:'합병', en:'putting together', zh:'合并' },
+    첨가: { ko:'첨가', en:'adding on',        zh:'添加' },
+    구잔: { ko:'구잔', en:'taking away',      zh:'求剩' },
+    구차: { ko:'구차', en:'comparing',        zh:'求差' },
+    배수: { ko:'배수', en:'equal groups',     zh:'倍数' },
+    등분: { ko:'등분', en:'sharing equally',  zh:'等分' },
+    포함: { ko:'포함', en:'making groups',    zh:'包含除' }
+  };
+
   /* 그 레벨 안에 '연산은 같고 의미 유형은 다른' 짝이 있는가 */
   function hasPartner(range, kind) {
     return Object.keys(KIND_W[range]).some(k => k !== kind && OPS[k] === OPS[kind]);
@@ -794,7 +815,10 @@
                   en:'Which problem needs the same operation as the one above? Write the number.',
                   zh:'下面哪道题和上面用同样的运算？请写出序号。' };
     return assemble(s, ask, choices, answer,
-      { story, mode:'same', correctText: opts[0].ko, note: `${OPNAME[s.op].ko} — ${okKind}` });
+      { story, mode:'same', correctText: opts[0].ko,
+        note: { ko: `${OPNAME[s.op].ko} — ${KINDNAME[okKind].ko}`,
+                en: `${OPNAME[s.op].en} — ${KINDNAME[okKind].en}`,
+                zh: `${OPNAME[s.op].zh} — ${KINDNAME[okKind].zh}` } });
   };
 
 })();

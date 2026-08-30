@@ -76,7 +76,21 @@ const ALL_UNIT_RE = /(\d+)(개|장|자루|권|송이|마리|상자|봉지|줄|�
 const fails = [];
 let checks = 0;
 
-function verifyProblem(p, range) {
+/* word·wordAsk·choices·answerNote는 2026-08-30부터 {ko,en,zh}다(인쇄가 세 언어를
+   찍게 되면서). 이 검사기가 보는 것은 한국어 본문의 수량사·조사·의미 유형이므로,
+   들어오자마자 한국어 한 벌로 눌러 두고 아래 규칙은 예전 그대로 둔다.
+   ⚠️ 세 언어가 다 있는지·섞이지 않았는지는 verifyLangs가 prompt로 따로 본다. */
+function koView(p) {
+  const one = v => (v && typeof v === 'object' && !Array.isArray(v)) ? v.ko : v;
+  return Object.assign({}, p, {
+    word: one(p.word), wordAsk: one(p.wordAsk),
+    choices: (p.choices && !Array.isArray(p.choices)) ? p.choices.ko : p.choices,
+    answerNote: one(p.answerNote)
+  });
+}
+
+function verifyProblem(raw, range) {
+  const p = koView(raw);
   const w = p.wp;
   if (!w) return '상황 메타(wp)가 없음';
 
@@ -108,6 +122,34 @@ function verifyProblem(p, range) {
   /* 인쇄 계약: word(본문)와 wordAsk(물음)가 둘 다 있어야 인쇄물만 보고 풀 수 있다 */
   if (!p.word || !p.wordAsk) return 'word 또는 wordAsk가 비어 있음';
   if (p.prompt.ko.indexOf(p.word) !== 0) return 'prompt.ko가 본문으로 시작하지 않음';
+  /* 인쇄가 세 언어를 찍는다 — 한 언어라도 비면 그 언어의 학습지에 본문이 없다.
+     (prompt만 세 벌이고 word가 한국어뿐이던 것이 2026-08-30에 고쳐진 자리다) */
+  const pMsg = verifyPrintLangs(raw);
+  if (pMsg) return pMsg;
+  return null;
+}
+
+/* 인쇄가 실제로 읽는 필드가 세 언어를 다 갖췄는가 */
+function verifyPrintLangs(p) {
+  for (const key of ['word', 'wordAsk']) {
+    const f = p[key];
+    if (!f || typeof f !== 'object') return `${key}가 3개 언어 객체가 아님`;
+    for (const l of ['ko', 'en', 'zh']) if (!f[l]) return `${key}.${l}이 비어 있음`;
+  }
+  if (p.choices) {
+    if (Array.isArray(p.choices)) return 'choices가 3개 언어 객체가 아님';
+    for (const l of ['ko', 'en', 'zh']) {
+      const arr = p.choices[l];
+      if (!Array.isArray(arr) || !arr.length) return `choices.${l}이 비어 있음`;
+      if (arr.length !== p.choices.ko.length) return `choices.${l}의 개수가 ko와 다름`;
+    }
+    if (/[가-힣]/.test(p.choices.en.join(' '))) return `영어 보기에 한글이 섞임: ${p.choices.en.join(' / ')}`;
+    if (/[가-힣]/.test(p.choices.zh.join(' '))) return `중국어 보기에 한글이 섞임: ${p.choices.zh.join(' / ')}`;
+  }
+  if (/[가-힣]/.test(p.word.en)) return `영어 본문에 한글이 섞임: ${p.word.en.match(/[가-힣]+/)[0]}`;
+  if (/[가-힣]/.test(p.word.zh)) return `중국어 본문에 한글이 섞임: ${p.word.zh.match(/[가-힣]+/)[0]}`;
+  if (/[가-힣]/.test(p.wordAsk.en)) return `영어 물음에 한글이 섞임: ${p.wordAsk.en.match(/[가-힣]+/)[0]}`;
+  if (/[가-힣]/.test(p.wordAsk.zh)) return `중국어 물음에 한글이 섞임: ${p.wordAsk.zh.match(/[가-힣]+/)[0]}`;
   return null;
 }
 

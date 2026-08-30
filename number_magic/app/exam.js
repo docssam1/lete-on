@@ -53,6 +53,36 @@
   .nm-print-age-young .nm-print-word { font-size: 1.15em; line-height: 1.7; }
   .nm-print-age-young .nm-print-wordask { font-size: 1.08em; }
   .nm-print-age-young .nm-print-choices { font-size: 1.05em; }
+
+  /* ── 언어별 줄바꿈 ────────────────────────────────────────
+     위의 word-break:keep-all은 한국어 규칙이다 — 어절 한가운데서 끊지 말라는 뜻.
+     이 값을 그대로 세 언어에 쓰면 안 된다:
+       · 중국어는 글자 사이에 빈칸이 없어서, keep-all이면 문장 전체가 끊을 데 없는
+         한 덩어리가 되어 칸을 그냥 넘어간다(줄바꿈 자체가 금지된다).
+       · 영어는 빈칸에서는 끊기지만 긴 낱말(multiplication 등)이 좁은 칸에 걸리면
+         그대로 삐져나온다.
+     한국어 규칙은 기본값 그대로 두고(lang 속성이 없거나 ko면 예전 인쇄물과 같다),
+     영어·중국어만 여기서 덮어쓴다. lang은 renderPrint가 시트에 박는다. */
+  .nm-print-sheet[lang="zh"] .nm-print-word,
+  .nm-print-sheet[lang="zh"] .nm-print-wordask,
+  .nm-print-sheet[lang="zh"] .nm-print-choices li,
+  .nm-print-sheet[lang="zh"] .nm-print-ask,
+  .nm-print-sheet[lang="zh"] .nm-cv-title { word-break: normal; line-break: strict; overflow-wrap: anywhere; }
+  .nm-print-sheet[lang="en"] .nm-print-word,
+  .nm-print-sheet[lang="en"] .nm-print-wordask,
+  .nm-print-sheet[lang="en"] .nm-print-choices li,
+  .nm-print-sheet[lang="en"] .nm-print-ask,
+  .nm-print-sheet[lang="en"] .nm-cv-title { word-break: normal; overflow-wrap: break-word; }
+  /* 저학년 조판은 한국어 글자 너비에 맞춰 잡은 크기다(nm-print-age-young).
+     같은 문장을 영어로 쓰면 글자 수가 눈에 띄게 늘고(빈칸까지 는다), 중국어는
+     글자 수는 줄지만 한 글자가 더 넓다 — 둘 다 저학년 칸에서 줄이 하나씩 더
+     생긴다. 문장 계열만 살짝 낮춰 칸 안에 앉힌다(수식 크기는 건드리지 않는다). */
+  .nm-print-sheet[lang="en"].nm-print-age-young .nm-print-word,
+  .nm-print-sheet[lang="zh"].nm-print-age-young .nm-print-word { font-size: 1.06em; line-height: 1.6; }
+  .nm-print-sheet[lang="en"].nm-print-age-young .nm-print-wordask,
+  .nm-print-sheet[lang="zh"].nm-print-age-young .nm-print-wordask { font-size: 1em; }
+  .nm-print-sheet[lang="en"].nm-print-age-young .nm-print-choices,
+  .nm-print-sheet[lang="zh"].nm-print-age-young .nm-print-choices { font-size: .98em; }
   /* 단계 풀이 줄 — 화면이 단계마다 묻는 유형은 인쇄도 단계를 묻는다(printSteps) */
   .nm-print-steps { margin-top: 6px; border-top: 1px dashed #bbb; padding-top: 5px; }
   .nm-print-step { font-size: .92em; margin: 3px 0; }
@@ -408,8 +438,16 @@ function hasConceptFor(thread, level){
 /* 헤더에 들어가는 코드+QR+캡션 블록(문제지·정답지 공용 스타일과 별개로 우측 정렬).
    hasConcept를 넘기지 않으면 개념이 있다고 보지 않고 중립 문구를 쓴다. */
 function qrHeaderBlockHtml(code, hasConcept){
-  const cap = hasConcept ? 'QR을 찍으면 개념 설명이 열려요'
-                         : 'QR을 찍으면 이 학습지를 다시 만들 수 있어요';
+  /* 개념이 실제로 있을 때만 "개념 설명이 열려요"라고 적는다 — 없는 유형에서
+     그렇게 적어 놓아 QR이 빈 화면으로 이어졌던 결함(위 hasConceptFor 주석).
+     세 언어 모두 이 구분을 지킨다. */
+  const cap = hasConcept
+    ? lk('QR을 찍으면 개념 설명이 열려요',
+         'Scan the QR to open the lesson notes',
+         '扫描二维码，打开概念讲解')
+    : lk('QR을 찍으면 이 학습지를 다시 만들 수 있어요',
+         'Scan the QR to make this worksheet again',
+         '扫描二维码，可以重新生成这张练习卷');
   return `<div class="nm-print-qr-wrap">
     <span class="nm-print-qr-code">${esc(code)}</span>
     ${qrSvg(wsUrlFromCode(code))}
@@ -434,9 +472,66 @@ function resolveConceptUnit(threadId, level){
   return { threadId, thread:th, unitId:uid, unit:(u && u.discover) ? u : null };
 }
 
-/* 다국어 안내: exam.js는 처음부터 한글 전용이다(이름/날짜/점수 라벨, "정답지 / Answer Key" 등
-   전부 하드코딩 한국어 — S.lang을 참조하는 코드가 없다). 개념 페이지도 같은 관례를 따른다. */
-function pickKo(field){ return field ? (field.ko || field.en || '') : ''; }
+/* ── 다국어 ────────────────────────────────────────────────
+   2026-08-30까지 이 모듈은 한국어 한 벌만 냈다 — 이름/날짜/점수 라벨, "정답지 /
+   Answer Key", QR 캡션, 표지 문구가 전부 하드코딩 한국어였고 문항도 prompt.ko만
+   읽었다. 문항이 맨 수식뿐일 때는 그게 거의 드러나지 않았지만, 앱에 언어 토글이
+   있고 486레벨의 prompt가 이미 세 벌인 데다 WP 문장제는 통째로 '문장'이다.
+   중국어를 골라 둔 사람이 인쇄하면 한국어가 나오는 것은 빠진 기능이 아니라
+   틀린 동작이라, 이제 세 언어를 모두 낸다.
+
+   언어를 새로 정하지 않고 앱이 이미 쓰는 값을 그대로 탄다 — main.js의 S.lang이다.
+   다만 S를 직접 읽을 수는 없다: main.js는 파일 전체가 IIFE(`(()=>{ … })()`)라
+   S가 그 안에 갇혀 있어 다른 스크립트에서 보이지 않는다(확인함 — 브라우저에서
+   typeof S가 'undefined'다). 그래서 S가 실려 나가는 곳, 즉 main.js가 save()로
+   쓰는 저장 키를 읽는다. cycleLang()이 S.lang을 바꾸고 곧바로 save()한 다음
+   render()하므로(셋 다 main.js), 이 값은 언제나 화면에 보이는 그 언어다.
+
+   exam.js는 drill.html에서도 로드되는데 그쪽엔 main.js가 아예 없어 앱 상태도 없다.
+   그래서 두 단으로 떨어진다:
+     ① nm_state_v1의 lang — 앱이 저장해 둔 언어(메인 앱·인쇄 검사기)
+     ② 문서의 lang 속성  — 앱 상태가 없는 페이지(drill.html은 <html lang="ko">)
+   둘 다 없으면 한국어. */
+const NM_LANG_KEY = 'nm_state_v1';
+function normLang(l){ const v = String(l || '').slice(0, 2); return (v === 'en' || v === 'zh') ? v : 'ko'; }
+/* 저장본 문자열이 그대로면 다시 파싱하지 않는다 — 한 장 찍는 동안 수백 번 불린다.
+   (S에는 진도까지 들어 있어 매번 JSON.parse하면 인쇄 한 번에 그 비용을 다 문다.) */
+let _langMemo = { raw: null, val: null };
+function examLang(){
+  try{
+    const raw = localStorage.getItem(NM_LANG_KEY);
+    if(raw){
+      if(raw !== _langMemo.raw){
+        const st = JSON.parse(raw);
+        _langMemo = { raw, val: (st && st.lang) ? normLang(st.lang) : null };
+      }
+      if(_langMemo.val) return _langMemo.val;
+    }
+  }catch(e){}
+  try{
+    const d = document.documentElement.getAttribute('lang');
+    if(d) return normLang(d);
+  }catch(e){}
+  return 'ko';
+}
+/* main.js의 lk(ko,en,zh)와 같은 꼴 — 그쪽 관례를 그대로 쓴다(새 관례를 만들지 않음). */
+function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'zh' ? zh : ko; }
+/* main.js의 L(obj)와 같은 꼴 — {ko,en,zh} 필드에서 한 벌 고르기. 옛 pickKo를 대신한다.
+   문자열이 그대로 오는 경우(호출부가 실어 보낸 topicName 등 한국어 전용 값)도 받는다. */
+function pickL(field){
+  if(!field) return '';
+  if(typeof field === 'string') return field;
+  const l = examLang();
+  return field[l] || field.ko || field.en || '';
+}
+/* 보기(선택지) 한 벌 고르기 — WP 스레드는 {ko:[],en:[],zh:[]}로 주고, 옛 형태(배열)도
+   그대로 받는다. 비었으면 null(호출부가 "보기 없음"으로 다룬다). */
+function pickChoices(p){
+  const c = p && p.choices;
+  if(!c) return null;
+  const arr = Array.isArray(c) ? c : (c[examLang()] || c.ko || c.en);
+  return (Array.isArray(arr) && arr.length) ? arr : null;
+}
 
 /* 개념 페이지의 계단식 수식(mathSteps) — cellHtml과 같은 data-tex 패턴, 호출부가
    렌더 후 '.nm-cp-tex'에 renderKaTeX을 돌려야 한다. */
@@ -452,17 +547,17 @@ function mathStepsHtmlPrint(steps){
 function conceptBlockHtml(threadId, level){
   const info = resolveConceptUnit(threadId, level);
   if(!info) return '';
-  const nm = (info.thread.name && info.thread.name.ko) || threadId;
+  const nm = pickL(info.thread.name) || threadId;
   if(info.unit){
     const u = info.unit, d = u.discover;
-    const title = (u.title && u.title.ko) || nm;
+    const title = pickL(u.title) || nm;
     const stages = (d.stages||[]).slice(0,2); // 학습지 한 장 분량으로 축약 — 도입부면 충분
     const stagesHtml = stages.map(s => `<div class="nm-cp-stage">`
-        + (s.head ? `<div class="nm-cp-stage-h">${esc(pickKo(s.head))}</div>` : '')
-        + (s.desc ? `<div class="nm-cp-stage-d">${pickKo(s.desc)}</div>` : '') // desc는 <b> 등 자체 저작 HTML 포함(main.js stepDiscover와 동일하게 그대로 삽입)
+        + (s.head ? `<div class="nm-cp-stage-h">${esc(pickL(s.head))}</div>` : '')
+        + (s.desc ? `<div class="nm-cp-stage-d">${pickL(s.desc)}</div>` : '') // desc는 <b> 등 자체 저작 HTML 포함(main.js stepDiscover와 동일하게 그대로 삽입)
         + mathStepsHtmlPrint(s.mathSteps)
         + `</div>`).join('');
-    const ruleHtml = d.rule ? `<div class="nm-cp-rule"><b>마법의 규칙</b><p>${esc(pickKo(d.rule))}</p></div>` : '';
+    const ruleHtml = d.rule ? `<div class="nm-cp-rule"><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b><p>${esc(pickL(d.rule))}</p></div>` : '';
     return `<div class="nm-cp-block">
       <div class="nm-cp-badge">📓 ${esc(nm)}</div>
       <h3 class="nm-cp-title">${esc(title)}</h3>
@@ -472,7 +567,7 @@ function conceptBlockHtml(threadId, level){
   if(info.thread.concept){
     return `<div class="nm-cp-block">
       <h3 class="nm-cp-title">${esc(nm)}</h3>
-      <p class="nm-cp-sentence">${esc(pickKo(info.thread.concept))}</p>
+      <p class="nm-cp-sentence">${esc(pickL(info.thread.concept))}</p>
     </div>`;
   }
   /* 개념 내용이 아예 없으면 빈 블록을 만들지 않는다 — 예전엔 유형 이름만 적힌
@@ -489,9 +584,9 @@ function conceptPageHtml(items, code){
   if(!blocks) return '';
   return `<div class="nm-print-concept-page">
   <div class="nm-print-header">
-    <h2 style="margin:0">Numbers of Magic — 개념 노트</h2>
+    <h2 style="margin:0">Numbers of Magic — ${esc(lk('개념 노트','Lesson Notes','概念笔记'))}</h2>
     <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em;align-items:flex-start">
-      <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
+      <span>${esc(lk('이름','Name','姓名'))}: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
       ${qrHeaderBlockHtml(code, true)}
     </div>
   </div>
@@ -539,54 +634,87 @@ function bindCoverToggle(container){
    보내므로 이건 그게 없는 호출(메인 앱 학년별 학습지 화면, 편지함 등)만을
    위한 안전망 — 표지가 색 없이 밋밋하게 나가지 않도록. */
 const THREAD_PREFIX_THEME = {
-  AD:{icon:'＋',label:'덧셈',color:'#3b82f6'}, SB:{icon:'－',label:'뺄셈',color:'#ef4444'},
-  ML:{icon:'×',label:'곱셈',color:'#10b981'}, DV:{icon:'÷',label:'나눗셈',color:'#f59e0b'},
-  NS:{icon:'🧠',label:'수 감각',color:'#8b5cf6'}, FR:{icon:'🧠',label:'분수',color:'#8b5cf6'},
-  DC:{icon:'🧠',label:'소수',color:'#8b5cf6'}, MX:{icon:'🧠',label:'혼합',color:'#8b5cf6'},
-  CH:{icon:'🏔️',label:'경시의 탑',color:'#C9A063'}, NL:{icon:'🌱',label:'수의 나라',color:'#2E9E6B'}
+  AD:{icon:'＋',label:{ko:'덧셈',en:'Addition',zh:'加法'},color:'#3b82f6'},
+  SB:{icon:'－',label:{ko:'뺄셈',en:'Subtraction',zh:'减法'},color:'#ef4444'},
+  ML:{icon:'×',label:{ko:'곱셈',en:'Multiplication',zh:'乘法'},color:'#10b981'},
+  DV:{icon:'÷',label:{ko:'나눗셈',en:'Division',zh:'除法'},color:'#f59e0b'},
+  NS:{icon:'🧠',label:{ko:'수 감각',en:'Number Sense',zh:'数感'},color:'#8b5cf6'},
+  FR:{icon:'🧠',label:{ko:'분수',en:'Fractions',zh:'分数'},color:'#8b5cf6'},
+  DC:{icon:'🧠',label:{ko:'소수',en:'Decimals',zh:'小数'},color:'#8b5cf6'},
+  MX:{icon:'🧠',label:{ko:'혼합',en:'Mixed Operations',zh:'混合运算'},color:'#8b5cf6'},
+  CH:{icon:'🏔️',label:{ko:'경시의 탑',en:'Challenge Tower',zh:'竞赛之塔'},color:'#C9A063'},
+  NL:{icon:'🌱',label:{ko:'수의 나라',en:'Number Land',zh:'数字王国'},color:'#2E9E6B'}
 };
+/* "○○ 학습지" 한 줄 — 언어마다 낱말 순서가 다르고, 중국어는 사이를 띄우지 않는다
+   (wp.js가 본문과 물음을 붙여 쓰는 것과 같은 표기 원칙). */
+function worksheetTitle(name){
+  const l = examLang();
+  if(l === 'en') return `${name} Worksheet`;
+  if(l === 'zh') return `${name}练习卷`;
+  return `${name} 학습지`;
+}
+
 function coverTheme(cfg){
   const prefix = String((cfg||{}).thread||'').replace(/[0-9].*$/,'');
   const fb = THREAD_PREFIX_THEME[prefix] || {icon:'✨',label:'Numbers of Magic',color:'#0E2C57'};
   return {
     icon:  (cfg&&cfg.topicIcon)  || fb.icon,
-    label: (cfg&&cfg.topicLabel) || fb.label,
+    /* topicLabel은 drill.html이 실어 보내는 한국어 문자열일 수 있다 — pickL이 둘 다 받는다 */
+    label: pickL((cfg&&cfg.topicLabel) || fb.label),
     color: (cfg&&cfg.topicColor) || fb.color
   };
 }
 function coverLevelBadge(items){
-  if(items.length !== 1) return '혼합';
+  if(items.length !== 1) return lk('혼합','Mixed','混合');
   const it = items[0];
   const th = (window.NM_THREADS||{})[it.thread] || {};
   const lv = (th.levels||[]).find(l => l.id === it.level);
-  return (lv && lv.label && lv.label.ko) ? lv.label.ko : ('Lv.' + (it.level||1));
+  return (lv && lv.label) ? (pickL(lv.label) || ('Lv.' + (it.level||1))) : ('Lv.' + (it.level||1));
 }
 /* items: [{thread,level,topicName?,topicIcon?,topicColor?,topicLabel?}], code: 표지 하단 코드,
    totalCount: 표지 발치에 적을 실제 문항 수(합계). */
 function coverPageHtml(items, code, totalCount){
   const theme = coverTheme(items[0]);
-  const names = items.map(it => it.topicName ||
-    (((window.NM_THREADS||{})[it.thread]||{}).name||{}).ko || it.thread);
+  const names = items.map(it => pickL(it.topicName) ||
+    pickL(((window.NM_THREADS||{})[it.thread]||{}).name) || it.thread);
+  const more = names.length - 2;
   const title = names.length <= 2 ? names.join(' · ')
-    : names.slice(0,2).join(' · ') + ' 외 ' + (names.length-2) + '가지';
+    : names.slice(0,2).join(' · ') + lk(` 외 ${more}가지`, ` and ${more} more`, ` 等${more}种`);
   return `<div class="nm-print-cover" style="--cv-accent:${esc(theme.color)}">
   <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC</strong></div>
   <div class="nm-cv-copy">
-    <p class="nm-cv-kicker">${esc(theme.icon)} ${esc(theme.label)} 학습지</p>
+    <p class="nm-cv-kicker">${esc(theme.icon)} ${esc(worksheetTitle(theme.label))}</p>
     <h1 class="nm-cv-title">${esc(title)}</h1>
     <div class="nm-cv-rule"></div>
-    <p class="nm-cv-sub">한 장씩 풀고 날짜를 적어 두면<br>어떤 유형이 아직 어려운지 한눈에 보여요.</p>
+    <p class="nm-cv-sub">${lk('한 장씩 풀고 날짜를 적어 두면<br>어떤 유형이 아직 어려운지 한눈에 보여요.',
+      'Do one page at a time and write the date.<br>You will see at a glance which type is still hard.',
+      '一次做一页，把日期写上。<br>哪种题型还不熟练，一看就知道。')}</p>
   </div>
   <div class="nm-cv-marks" aria-hidden="true">${[1,2,4,8,16].map(n=>`<span>${n}</span>`).join('')}</div>
   <div class="nm-cv-meta">
-    <div><span>이름</span><i></i></div>
-    <div><span>시작한 날</span><i></i></div>
-    <div><span>레벨</span><b>${esc(coverLevelBadge(items))}</b></div>
+    <div><span>${esc(lk('이름','Name','姓名'))}</span><i></i></div>
+    <div><span>${esc(lk('시작한 날','Started','开始日期'))}</span><i></i></div>
+    <div><span>${esc(lk('레벨','Level','级别'))}</span><b>${esc(coverLevelBadge(items))}</b></div>
   </div>
   <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
   <div class="nm-cv-code">${esc(code||'')}</div>
 </div>`;
 }
+
+/* 학습지 머리글의 이름·날짜·점수 칸. 세 곳(단일 인쇄·혼합 인쇄·혼합 표지 다음
+   첫 장)이 같은 마크업을 손으로 세 번 적고 있어서, 언어를 넣으며 하나로 묶었다.
+   count가 없으면 점수 칸을 뺀다(혼합 학습지의 봉투 머리글이 그렇다). */
+function printMetaFieldsHtml(count){
+  const line = (label, w) => `<span>${esc(label)}: `
+    + `<span style="display:inline-block;width:${w}px;border-bottom:1px solid #000">&nbsp;</span></span>`;
+  return line(lk('이름','Name','姓名'), 120)
+    + '\n    ' + line(lk('날짜','Date','日期'), 100)
+    + (count == null ? '' : '\n    ' + `<span>${esc(lk('점수','Score','得分'))}: `
+        + `<span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>`);
+}
+/* 정답지 제목 — 한국어는 예전 그대로 "정답지 / Answer Key"를 지킨다(인쇄물이 바뀌지
+   않아야 한다). 영어는 겹말이 되므로 한 번만, 중국어는 그 나라 말로 적는다. */
+function answerKeyTitle(){ return lk('정답지 / Answer Key', 'Answer Key', '答案'); }
 
 /* 원형 번호 ①②③... */
 function circled(n){
@@ -709,13 +837,13 @@ function numlineSvg(nl){
       }
     }
   }
-  return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="수직선 점프">${s}</svg>`;
+  return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="${esc(lk('수직선 점프','Number line jumps','数轴跳跃'))}">${s}</svg>`;
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
 function bondSvg(whole, known){
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
-  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="수 가르기 ${esc(String(whole))}">
+  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="${esc(lk('수 가르기','Number bond (split)','数的分解'))} ${esc(String(whole))}">
   <circle cx="80" cy="24" r="21"/>${t(80,24,whole)}
   <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
   <circle cx="34" cy="88" r="21"/>${t(34,88,known)}
@@ -744,7 +872,7 @@ function nlGlyph(tok){ return ANIMAL_GLYPH[tok] || tok || '●'; }
    보이고 위 원(전체)이 빈칸이라 별도 모양이 필요하다. */
 function bondSvgTop(a, b){
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
-  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="수 모으기">
+  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="${esc(lk('수 모으기','Number bond (join)','数的合成'))}">
   <circle cx="80" cy="24" r="21" class="nm-bond-blank"/>
   <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
   <circle cx="34" cy="88" r="21"/>${t(34,88,a)}
@@ -771,7 +899,7 @@ function nlDotsSvg(pts){
   const dots = pts.map(([x,y],i) =>
     `<circle cx="${x}" cy="${y}" r="2.6"/><text x="${x}" y="${y-4}" text-anchor="middle" font-size="6">${i+1}</text>`
   ).join('');
-  return `<svg class="nm-nl-dots" viewBox="0 0 100 100" role="img" aria-label="점 잇기">${dots}</svg>`;
+  return `<svg class="nm-nl-dots" viewBox="0 0 100 100" role="img" aria-label="${esc(lk('점 잇기','Connect the dots','连点成图'))}">${dots}</svg>`;
 }
 function nlPyramidHtml(rows){
   if(!Array.isArray(rows)) return '';
@@ -837,7 +965,7 @@ function nlTallySvg(n){
     x += 5;
   });
   if(!groups.length) x = 6;
-  return `<svg class="nm-nl-tally" viewBox="0 0 ${x+2} 18" role="img" aria-label="탤리 ${esc(String(n))}">${s}</svg>`;
+  return `<svg class="nm-nl-tally" viewBox="0 0 ${x+2} 18" role="img" aria-label="${esc(lk('탤리','Tally marks','正字计数'))} ${esc(String(n))}">${s}</svg>`;
 }
 
 /* widget별 분기 — nl.js가 실제로 채우는 필드만 읽는다(값 검산·형 확인 없이
@@ -896,26 +1024,27 @@ function printSteps(p){
 
 function printAskText(p){
   /* 문장제(p.word)는 아래 word 분기가 본문·물음·보기를 통째로 그린다. 여기서
-     prompt.ko를 또 실으면 같은 문장이 카드에 두 번 찍힌다 — WP 스레드를 붙이며
+     prompt를 또 실으면 같은 문장이 카드에 두 번 찍힌다 — WP 스레드를 붙이며
      실제로 그렇게 나왔다(2026-08-29). */
   if(p.word) return '';
   const tex = String(p.tex||'');
   /* tex가 아예 없는 유형 — nl.js(수의 나라, 유아) 16개 생성기가 이 경우다. 다른
      158개 스레드는 전부 tex를 주므로(가장 짧아도 "3+2=□") 이 분기를 타지 않는다.
      문항 전체가 prompt 문장에만 있으므로 그걸 그대로 질문 줄로 싣는다. */
-  if(!tex) return (p.prompt && p.prompt.ko) || '';
+  if(!tex) return pickL(p.prompt);
   if(!/\\square|\\bigcirc/.test(tex)) return '';
   if(/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tex)) return '';
-  return (p.prompt && p.prompt.ko) || '';
+  return pickL(p.prompt);
 }
 
 /* 보기(선택지) — 문장제만 쓴다. 답이 보기 번호이므로 번호가 인쇄물에 있어야
    학생이 답을 쓸 수 있다(답 환원 원칙: 답은 정수 또는 보기 번호). */
 function wordChoices(p){
-  if(!Array.isArray(p.choices) || !p.choices.length) return null;
+  const choices = pickChoices(p);
+  if(!choices) return null;
   const ul = document.createElement('ul');
   ul.className = 'nm-print-choices';
-  p.choices.forEach((c, i) => {
+  choices.forEach((c, i) => {
     const li = document.createElement('li');
     li.textContent = `${i+1}) ${c}`;
     ul.appendChild(li);
@@ -980,21 +1109,21 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     } else if(p.word){
       const texEl = document.createElement('div');
       texEl.className = 'nm-print-word';
-      texEl.textContent = p.word;
+      texEl.textContent = pickL(p.word);
       card.appendChild(texEl);
       /* 물음이 본문과 따로 있는 문장제(WP 스레드) — 본문만 찍으면 무엇을 묻는지
          알 수 없다. 인쇄물만 보고 풀 수 있어야 한다는 원칙 그대로. */
       if(p.wordAsk){
         const askEl = document.createElement('div');
         askEl.className = 'nm-print-wordask';
-        askEl.textContent = p.wordAsk;
+        askEl.textContent = pickL(p.wordAsk);
         card.appendChild(askEl);
       }
       const ch = wordChoices(p);
       if(ch) card.appendChild(ch);
       const blank = document.createElement('div');
       blank.className = 'nm-print-word-blank';
-      blank.textContent = '답: __________';
+      blank.textContent = lk('답', 'Answer', '答') + ': __________';
       card.appendChild(blank);
     } else if(v){
       const vp = document.createElement('div');
@@ -1040,8 +1169,9 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
         ak.appendChild(akSpan);
       } else {
         /* 보기형 문장제는 번호만 찍으면 채점하는 사람이 그 번호가 무엇인지 모른다 */
+        const note = pickL(p.answerNote);
         ak.appendChild(document.createTextNode(
-          String(fmtAns(p.answer)) + (p.answerNote ? ` (${p.answerNote})` : '')));
+          String(fmtAns(p.answer)) + (note ? ` (${note})` : '')));
       }
     }
     answerGrid.appendChild(ak);
@@ -1099,7 +1229,10 @@ function applyWordProblems(problems, wordType, numericSeed){
   problems.forEach((p,i)=>{
     if(wordType==='mix' && i%3!==1) return;
     const w = wordifyProblem(p, rng);
-    if(w) p.word = w;
+    /* 이 래퍼가 만드는 문장은 한국어 조사까지 붙여 조립한 한국어 전용 글이다(위
+       kJosa 참조) — 번역본이 없으므로 ko 한 벌만 싣고, pickL이 그 한 벌로 떨어진다.
+       WP 스레드(engine/threads/wp.js)는 세 언어를 다 갖고 있어 이 경로를 안 탄다. */
+    if(w) p.word = { ko: w };
   });
   return problems;
 }
@@ -1536,7 +1669,8 @@ const NM_EXAM = {
         return probs.map((p,i) => {
           let inner;
           if(p.word){
-            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(p.word)}${p.wordAsk ? ' ' + esc(p.wordAsk) : ''}</div>`;
+            const pvAsk = pickL(p.wordAsk);
+            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(pickL(p.word))}${pvAsk ? ' ' + esc(pvAsk) : ''}</div>`;
           } else {
             const v = parseVert(p.tex);
             inner = v
@@ -1774,16 +1908,17 @@ const NM_EXAM = {
     </div>
   </div>
   <div class="nm-exam-question">
-    ${p.word ? `<div class="nm-ex-word">${esc(p.word)}</div>
-    ${p.wordAsk ? `<div class="nm-ex-wordask">${esc(p.wordAsk)}</div>` : ''}
-    ${Array.isArray(p.choices) && p.choices.length
-      ? `<ol class="nm-ex-choices">${p.choices.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}`
+    ${p.word ? `<div class="nm-ex-word">${esc(pickL(p.word))}</div>
+    ${pickL(p.wordAsk) ? `<div class="nm-ex-wordask">${esc(pickL(p.wordAsk))}</div>` : ''}
+    ${pickChoices(p)
+      ? `<ol class="nm-ex-choices">${pickChoices(p).map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}`
     : `<div class="nm-q-tex" id="nm-ex-qtex"></div>
-    ${(p.prompt && p.prompt.ko) ? `<p class="nm-q-hint">${esc(p.prompt.ko)}</p>` : ''}`}
+    ${pickL(p.prompt) ? `<p class="nm-q-hint">${esc(pickL(p.prompt))}</p>` : ''}`}
   </div>
   <div class="nm-exam-input">
     <input id="nm-ex-ans" type="text" inputmode="decimal"
-           placeholder="${isMulti ? '예: 3, 5' : (Array.isArray(p.choices) && p.choices.length ? '보기 번호' : '답 / Answer')}" autocomplete="off">
+           placeholder="${isMulti ? lk('예: 3, 5','e.g. 3, 5','例：3, 5')
+              : (pickChoices(p) ? lk('보기 번호','Choice number','选项序号') : lk('답 / Answer','Answer','答案'))}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
   </div>
   <div class="nm-exam-nav">
@@ -1926,9 +2061,11 @@ const NM_EXAM = {
     const sheet = document.createElement('div');
     sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, problems);
     sheet.setAttribute('aria-hidden', 'true');
+    /* 줄바꿈 규칙이 언어마다 다르다(인쇄 CSS의 [lang=] 절 참조) — 시트에 박아 둔다 */
+    sheet.setAttribute('lang', examLang());
 
     const th = (window.NM_THREADS || {})[thread] || {};
-    const thName = config.topicName || (th.name||{}).ko || thread;
+    const thName = pickL(config.topicName) || pickL(th.name) || thread;
 
     const coverHtml = getCoverOn() ? coverPageHtml([config], code, count) : '';
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
@@ -1937,17 +2074,15 @@ const NM_EXAM = {
 ${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
-  <h2 style="margin:0">Numbers of Magic — ${esc(thName)} 학습지</h2>
+  <h2 style="margin:0">Numbers of Magic — ${esc(worksheetTitle(thName))}</h2>
   <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
-    <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
+    ${printMetaFieldsHtml(count)}
     ${qrHeaderBlockHtml(code, hasConceptFor(thread, level))}
   </div>
 </div>
 <div class="nm-print-grid" id="nm-print-problems"></div>
 <div class="nm-print-answer-key">
-  <h3 style="margin:0 0 8px 0">정답지 / Answer Key — <span style="font-family:monospace;font-size:0.85em">${esc(code)}</span></h3>
+  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(code)}</span></h3>
   <div class="nm-ak-grid" id="nm-print-answers"></div>
 </div>`;
 
@@ -1980,13 +2115,14 @@ ${conceptHtml}
       applyWordProblems(problems, cfg.wordType, numericSeed);
       const code = NM_EXAM.worksheetCode(cfg);
       const th = (window.NM_THREADS || {})[cfg.thread] || {};
-      return { cfg, problems, code, thName: cfg.topicName || (th.name||{}).ko || cfg.thread };
+      return { cfg, problems, code, thName: pickL(cfg.topicName) || pickL(th.name) || cfg.thread };
     });
 
     const sheet = document.createElement('div');
     sheet.className = 'nm-print-sheet nm-print-age-'
       + printAgeBand(items[0], built[0] && built[0].problems);
     sheet.setAttribute('aria-hidden', 'true');
+    sheet.setAttribute('lang', examLang());
 
     const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode,
       items.reduce((sum,it) => sum + (it.count||0), 0)) : '';
@@ -1996,11 +2132,9 @@ ${conceptHtml}
 
     const sectionsHtml = built.map((b,i) => `
 <div class="nm-print-header"${i>0 ? ' style="page-break-before:always"' : ''}>
-  <h2 style="margin:0">Numbers of Magic — ${esc(b.thName)} 학습지</h2>
+  <h2 style="margin:0">Numbers of Magic — ${esc(worksheetTitle(b.thName))}</h2>
   <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
-    <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>점수: <span style="display:inline-block;width:60px;border-bottom:1px solid #000">&nbsp;</span> / ${b.cfg.count}</span>
+    ${printMetaFieldsHtml(b.cfg.count)}
     ${qrHeaderBlockHtml(b.code, hasConceptFor(b.cfg.thread, b.cfg.level))}
   </div>
 </div>
@@ -2008,7 +2142,7 @@ ${conceptHtml}
 
     const answerSectionsHtml = built.map((b,i) => `
 <div class="nm-print-answer-key">
-  <h3 style="margin:0 0 8px 0">정답지 / Answer Key — ${esc(b.thName)} <span style="font-family:monospace;font-size:0.85em">${esc(b.code)}</span></h3>
+  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — ${esc(b.thName)} <span style="font-family:monospace;font-size:0.85em">${esc(b.code)}</span></h3>
   <div class="nm-ak-grid" id="nm-print-answers-${i}"></div>
 </div>`).join('');
 
@@ -2018,8 +2152,7 @@ ${conceptHtml}
 <div class="nm-print-header">
   <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode||'')}</h2>
   <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
-    <span>이름: <span style="display:inline-block;width:120px;border-bottom:1px solid #000">&nbsp;</span></span>
-    <span>날짜: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
+    ${printMetaFieldsHtml(null)}
   </div>
 </div>
 ${sectionsHtml}
@@ -2080,11 +2213,11 @@ window.examScreen = function(container){
         } else {
           ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
         }
+        const wc = pickChoices(p), wAsk = pickL(p.wordAsk);
         inner = `<div class="nm-vp-wordwrap">
-  <div class="nm-vp-word">${esc(p.word)}</div>
-  ${p.wordAsk ? `<div class="nm-vp-wordask">${esc(p.wordAsk)}</div>` : ''}
-  ${Array.isArray(p.choices) && p.choices.length
-    ? `<ol class="nm-vp-choices">${p.choices.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
+  <div class="nm-vp-word">${esc(pickL(p.word))}</div>
+  ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
+  ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
   <div class="nm-vp-word-ans">${ansRow}</div>
 </div>`;
       } else if(v){
