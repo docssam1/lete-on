@@ -153,12 +153,12 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
-    '</label>';
+    '</div>';
   }
 
   function renderCatalog() {

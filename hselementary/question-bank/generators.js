@@ -1779,6 +1779,346 @@
   };
   const regularPolygonPoints = (sides, cx = 120, cy = 84, radius = 58) => Array.from({ length: sides }, (_, index) => polar(cx, cy, radius, index * 360 / sides));
   const pointText = point => point.map(value => value.toFixed(1)).join(",");
+  const source42PolygonEvidence = (sourceItemId, values) => `<span hidden data-source42-polygon-item="${sourceItemId}" data-source42-polygon-values="${encodeURIComponent(JSON.stringify(values))}"></span>`;
+  const source42PointAt = (origin, length, degrees) => polar(origin[0], origin[1], length, degrees);
+  const source42Direction = (from, to) => {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    const length = Math.hypot(dx, dy);
+    return [dx / length, dy / length];
+  };
+  const source42Offset = (point, direction, length) => [point[0] + direction[0] * length, point[1] + direction[1] * length];
+  const source42Arc = (vertex, firstDirection, secondDirection, radius) => {
+    const start = source42Offset(vertex, firstDirection, radius);
+    const end = source42Offset(vertex, secondDirection, radius);
+    const sweep = firstDirection[0] * secondDirection[1] - firstDirection[1] * secondDirection[0] >= 0 ? 1 : 0;
+    return `M ${pointText(start)} A ${radius} ${radius} 0 0 ${sweep} ${pointText(end)}`;
+  };
+  const source42AngleLabelPoint = (vertex, firstDirection, secondDirection, distance) => {
+    const direction = source42Direction([0, 0], [firstDirection[0] + secondDirection[0], firstDirection[1] + secondDirection[1]]);
+    return source42Offset(vertex, direction, distance);
+  };
+  const source42PolygonOutlineSvg = sides => {
+    const points = regularPolygonPoints(sides);
+    return `<svg class="geometry-diagram source42-polygon-outline" viewBox="0 0 240 168" data-source42-polygon-diagram="outline" data-polygon-sides="${sides}" aria-label="정${sides}각형"><polygon points="${points.map(pointText).join(" ")}"/></svg>`;
+  };
+  const source42PolygonExteriorSvg = ({ sides, exterior }) => {
+    const points = regularPolygonPoints(sides);
+    const vertexIndex = 1;
+    const previous = points[0];
+    const vertex = points[vertexIndex];
+    const next = points[2];
+    const extensionDirection = source42Direction(previous, vertex);
+    const nextSideDirection = source42Direction(vertex, next);
+    const extension = source42Offset(vertex, extensionDirection, 44);
+    const arc = source42Arc(vertex, extensionDirection, nextSideDirection, 19);
+    const label = source42AngleLabelPoint(vertex, extensionDirection, nextSideDirection, 31);
+    return `<svg class="geometry-diagram source42-polygon-exterior" viewBox="0 0 240 168" data-source42-polygon-diagram="exterior-angle" data-polygon-sides="${sides}" data-exterior-angle="${exterior}" data-highlight-vertex="${vertexIndex}" data-highlighted-segments="0-1;1-2;1-extension" aria-label="정${sides}각형의 바깥쪽 각 ${exterior}도"><polygon points="${points.map(pointText).join(" ")}"/><line x1="${vertex[0].toFixed(1)}" x2="${extension[0].toFixed(1)}" y1="${vertex[1].toFixed(1)}" y2="${extension[1].toFixed(1)}" stroke-dasharray="5 3"/><line x1="${vertex[0].toFixed(1)}" x2="${next[0].toFixed(1)}" y1="${vertex[1].toFixed(1)}" y2="${next[1].toFixed(1)}" style="stroke:#b45309;stroke-width:3"/><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2.5"/><text x="${label[0].toFixed(1)}" y="${label[1].toFixed(1)}">${exterior}°</text><circle cx="${vertex[0].toFixed(1)}" cy="${vertex[1].toFixed(1)}" r="3"/></svg>`;
+  };
+  const source42PolygonMeetingSvg = () => {
+    const vertex = [120, 94];
+    const edge = 34;
+    const directions = { unknownLeft: 285, unknownRight: 75, squareLower: 195, hexagonRight: 75, hexagonLeft: 195 };
+    const square = [vertex, source42PointAt(vertex, edge, directions.squareLower)];
+    square.push(source42PointAt(square[1], edge, directions.unknownLeft), source42PointAt(vertex, edge, directions.unknownLeft));
+    const hexagon = [vertex];
+    [75, 135, 195, 255, 315].forEach(direction => hexagon.push(source42PointAt(hexagon.at(-1), edge, direction)));
+    const unknownLeft = source42PointAt(vertex, 66, directions.unknownLeft);
+    const unknownRight = source42PointAt(vertex, 66, directions.unknownRight);
+    const leftDirection = source42Direction(vertex, unknownLeft);
+    const rightDirection = source42Direction(vertex, unknownRight);
+    const targetArc = source42Arc(vertex, leftDirection, rightDirection, 46);
+    const angle90 = source42AngleLabelPoint(vertex, source42Direction(vertex, square[1]), source42Direction(vertex, square[3]), 29);
+    const angle120 = source42AngleLabelPoint(vertex, source42Direction(vertex, hexagon[1]), source42Direction(vertex, hexagon.at(-1)), 33);
+    const angle150 = source42AngleLabelPoint(vertex, leftDirection, rightDirection, 35);
+    return `<svg class="geometry-diagram source42-polygon-meeting" viewBox="0 0 240 168" data-source42-polygon-diagram="square-hexagon-meeting" data-shared-vertex="${pointText(vertex)}" data-meet-angles="90,120,150" data-target-interior="150" data-boundary-directions="285,75,195" data-square-edge-directions="195,285" data-hexagon-edge-directions="75,135,195,255,315,15" aria-label="정사각형과 정육각형 사이 위쪽의 150도 각"><path d="M ${pointText(vertex)} L ${pointText(unknownLeft)} A 46 46 0 0 1 ${pointText(unknownRight)} Z" style="fill:#fff4d6;stroke:none"/><polygon points="${square.map(pointText).join(" ")}" style="fill:#e4f1fb"/><polygon points="${hexagon.map(pointText).join(" ")}" style="fill:#e8f4e8"/><line x1="${vertex[0]}" y1="${vertex[1]}" x2="${unknownLeft[0].toFixed(1)}" y2="${unknownLeft[1].toFixed(1)}"/><line x1="${vertex[0]}" y1="${vertex[1]}" x2="${unknownRight[0].toFixed(1)}" y2="${unknownRight[1].toFixed(1)}"/><path d="${targetArc}" fill="none" style="stroke:#b45309;stroke-width:2.5"/><text x="${angle90[0].toFixed(1)}" y="${angle90[1].toFixed(1)}">90°</text><text x="${angle120[0].toFixed(1)}" y="${angle120[1].toFixed(1)}">120°</text><text x="${angle150[0].toFixed(1)}" y="${angle150[1].toFixed(1)}">150°</text><circle cx="${vertex[0]}" cy="${vertex[1]}" r="3"/></svg>`;
+  };
+  const source42TurnSequenceSvg = ({ turn, segmentLength, shownSegments = 4 }) => {
+    const directions = Array.from({ length: shownSegments }, (_, index) => 90 - index * turn);
+    const points = [[24, 128]];
+    directions.forEach(direction => points.push(source42PointAt(points.at(-1), 38, direction)));
+    const lines = directions.map((_, index) => `<line x1="${points[index][0].toFixed(1)}" y1="${points[index][1].toFixed(1)}" x2="${points[index + 1][0].toFixed(1)}" y2="${points[index + 1][1].toFixed(1)}"/>`).join("");
+    const turns = directions.slice(1).map((direction, index) => {
+      const vertex = points[index + 1];
+      const before = source42Direction(points[index], vertex);
+      const after = source42Direction(vertex, points[index + 2]);
+      const extension = source42Offset(vertex, before, 17);
+      const label = source42AngleLabelPoint(vertex, before, after, 25);
+      return `<line x1="${vertex[0].toFixed(1)}" y1="${vertex[1].toFixed(1)}" x2="${extension[0].toFixed(1)}" y2="${extension[1].toFixed(1)}" stroke-dasharray="4 3"/><path d="${source42Arc(vertex, before, after, 13)}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${label[0].toFixed(1)}" y="${label[1].toFixed(1)}">${turn}°</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram source42-turn-sequence" viewBox="0 0 240 168" data-source42-polygon-diagram="equal-segment-left-turn" data-turn-angle="${turn}" data-segment-length="${segmentLength}" data-shown-segments="${shownSegments}" data-turn-directions="${directions.join(",")}" aria-label="같은 길이의 선분을 왼쪽으로 ${turn}도씩 돌려 그린 그림"><g>${lines}</g><g>${turns}</g></svg>`;
+  };
+  const source42HexagonDiagonalRelationSvg = () => {
+    const points = regularPolygonPoints(6);
+    const side = [points[0], points[1]];
+    const shortDiagonal = [points[0], points[2]];
+    const sideLabel = [154, 42];
+    const diagonalLabel = [154, 118];
+    return `<svg class="geometry-diagram source42-hexagon-diagonal" viewBox="0 0 240 168" data-source42-polygon-diagram="hexagon-side-short-diagonal" data-polygon-sides="6" data-highlighted-segments="0-1;0-2" data-side-segment="0-1" data-short-diagonal-segment="0-2" aria-label="정육각형의 한 변과 짧은 대각선"><polygon points="${points.map(pointText).join(" ")}"/><line x1="${side[0][0].toFixed(1)}" y1="${side[0][1].toFixed(1)}" x2="${side[1][0].toFixed(1)}" y2="${side[1][1].toFixed(1)}" style="stroke:#b45309;stroke-width:3.5"/><line x1="${shortDiagonal[0][0].toFixed(1)}" y1="${shortDiagonal[0][1].toFixed(1)}" x2="${shortDiagonal[1][0].toFixed(1)}" y2="${shortDiagonal[1][1].toFixed(1)}" style="stroke:#2f6f9f;stroke-width:3.5"/><text x="${sideLabel[0]}" y="${sideLabel[1]}">한 변</text><text x="${diagonalLabel[0]}" y="${diagonalLabel[1]}">짧은 대각선</text></svg>`;
+  };
+  const source42LockedPolygon = sourceItemId => {
+    throw new Error(`검수 대기: ${sourceItemId}의 원본 조건과 정답을 더 확인해야 합니다.`);
+  };
+  const source42StarTipSvg = () => {
+    const points = regularPolygonPoints(5);
+    const starOrder = [0, 2, 4, 1, 3, 0];
+    const vertex = points[0];
+    const left = source42Direction(vertex, points[3]);
+    const right = source42Direction(vertex, points[2]);
+    const arc = source42Arc(vertex, left, right, 18);
+    const label = source42AngleLabelPoint(vertex, left, right, 31);
+    return `<svg class="geometry-diagram source42-star-tip" viewBox="0 0 240 168" data-source42-polygon-diagram="pentagram-tip" data-polygon-sides="5" data-highlight-vertex="0" data-highlighted-segments="0-2;0-3" data-tip-angle="36" aria-label="정오각형 대각선으로 만든 별의 꼭짓점 각"><polygon points="${points.map(pointText).join(" ")}" style="fill:#f8fbfd"/><polyline points="${starOrder.map(index => pointText(points[index])).join(" ")}" fill="none" style="stroke:#174866;stroke-width:2.5"/><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2.5"/><text x="${label[0].toFixed(1)}" y="${label[1].toFixed(1)}">㉠</text><circle cx="${vertex[0].toFixed(1)}" cy="${vertex[1].toFixed(1)}" r="3"/></svg>`;
+  };
+  const source42RotateDirection = (direction, degrees) => {
+    const radians = degrees * Math.PI / 180;
+    return [direction[0] * Math.cos(radians) - direction[1] * Math.sin(radians), direction[0] * Math.sin(radians) + direction[1] * Math.cos(radians)];
+  };
+  const source42TrapezoidRingSvg = ({ baseAngle, turn, leg, base }) => {
+    const compactSource = base <= 1;
+    const scale = compactSource ? 60 : 22;
+    const lowerLeft = [61, 124];
+    const lowerRight = source42PointAt(lowerLeft, base * scale, 90);
+    const upperLeft = source42PointAt(lowerLeft, leg * scale, 90 - baseAngle);
+    const upperRight = source42PointAt(lowerRight, leg * scale, 270 + baseAngle);
+    const points = [lowerLeft, lowerRight, upperRight, upperLeft];
+    const leftBaseDirection = source42Direction(lowerLeft, lowerRight);
+    const leftLegDirection = source42Direction(lowerLeft, upperLeft);
+    const rightBaseDirection = source42Direction(lowerRight, lowerLeft);
+    const rightLegDirection = source42Direction(lowerRight, upperRight);
+    const baseArcRadius = compactSource ? 10 : 17;
+    const baseLabelDistance = compactSource ? 15 : 29;
+    const leftArc = source42Arc(lowerLeft, leftBaseDirection, leftLegDirection, baseArcRadius);
+    const rightArc = source42Arc(lowerRight, rightLegDirection, rightBaseDirection, baseArcRadius);
+    const leftLabel = source42AngleLabelPoint(lowerLeft, leftBaseDirection, leftLegDirection, baseLabelDistance);
+    const rightLabel = source42AngleLabelPoint(lowerRight, rightLegDirection, rightBaseDirection, baseLabelDistance);
+    const turnOrigin = [204, 98];
+    const turnFirst = source42Direction(turnOrigin, source42PointAt(turnOrigin, 34, 210));
+    const turnSecond = source42RotateDirection(turnFirst, turn);
+    const turnEndOne = source42Offset(turnOrigin, turnFirst, 26);
+    const turnEndTwo = source42Offset(turnOrigin, turnSecond, 26);
+    const turnArc = source42Arc(turnOrigin, turnFirst, turnSecond, 14);
+    const turnLabel = source42AngleLabelPoint(turnOrigin, turnFirst, turnSecond, 23);
+    return `<svg class="geometry-diagram source42-trapezoid-ring" viewBox="0 0 240 168" data-source42-polygon-diagram="isosceles-trapezoid-ring" data-base-angles="${baseAngle},${baseAngle}" data-leg-length="${leg}" data-base-length="${base}" data-turn-angle="${turn}" data-segment-directions="${90 - baseAngle},${90},${270 + baseAngle}" aria-label="밑변의 각이 ${baseAngle}도인 이등변사다리꼴"><polygon points="${points.map(pointText).join(" ")}" style="fill:#eef7fb"/><path d="${leftArc}" fill="none" style="stroke:#b45309;stroke-width:2.3"/><path d="${rightArc}" fill="none" style="stroke:#b45309;stroke-width:2.3"/><text x="${leftLabel[0].toFixed(1)}" y="${leftLabel[1].toFixed(1)}">${baseAngle}°</text><text x="${rightLabel[0].toFixed(1)}" y="${rightLabel[1].toFixed(1)}">${baseAngle}°</text><text x="${((lowerLeft[0] + upperLeft[0]) / 2 - 20).toFixed(1)}" y="${((lowerLeft[1] + upperLeft[1]) / 2).toFixed(1)}">${leg}cm</text><text x="${((lowerRight[0] + upperRight[0]) / 2 + 24).toFixed(1)}" y="${((lowerRight[1] + upperRight[1]) / 2).toFixed(1)}">${leg}cm</text><text x="${((lowerLeft[0] + lowerRight[0]) / 2 - 11).toFixed(1)}" y="${(lowerLeft[1] + 18).toFixed(1)}">${base}cm</text><line x1="${turnOrigin[0]}" y1="${turnOrigin[1]}" x2="${turnEndOne[0].toFixed(1)}" y2="${turnEndOne[1].toFixed(1)}" stroke-dasharray="4 3"/><line x1="${turnOrigin[0]}" y1="${turnOrigin[1]}" x2="${turnEndTwo[0].toFixed(1)}" y2="${turnEndTwo[1].toFixed(1)}" stroke-dasharray="4 3"/><path d="${turnArc}" fill="none" style="stroke:#2f6f9f;stroke-width:2.3"/><text x="${turnLabel[0].toFixed(1)}" y="${turnLabel[1].toFixed(1)}">${turn}°</text></svg>`;
+  };
+  const source42RegularPolygonOnEdge = (first, second, sides, turn) => {
+    const edge = Math.hypot(second[0] - first[0], second[1] - first[1]);
+    let direction = Math.atan2(second[0] - first[0], -(second[1] - first[1])) * 180 / Math.PI;
+    const points = [first, second];
+    for (let index = 1; index < sides - 1; index += 1) {
+      direction += turn * 360 / sides;
+      points.push(source42PointAt(points.at(-1), edge, direction));
+    }
+    return points;
+  };
+  const source42PolygonCentroid = points => [points.reduce((sum, point) => sum + point[0], 0) / points.length, points.reduce((sum, point) => sum + point[1], 0) / points.length];
+  const source42AttachedPolygon = (basePolygon, edgeIndex, sides) => {
+    const first = basePolygon[edgeIndex];
+    const second = basePolygon[(edgeIndex + 1) % basePolygon.length];
+    const midpoint = [(first[0] + second[0]) / 2, (first[1] + second[1]) / 2];
+    const baseCenter = source42PolygonCentroid(basePolygon);
+    const candidates = [-1, 1].map(turn => source42RegularPolygonOnEdge(first, second, sides, turn));
+    return candidates.find(candidate => {
+      const center = source42PolygonCentroid(candidate);
+      return (center[0] - midpoint[0]) * (midpoint[0] - baseCenter[0]) + (center[1] - midpoint[1]) * (midpoint[1] - baseCenter[1]) > 0;
+    });
+  };
+  const source42SoccerPatchSvg = () => {
+    const pentagon = source42RegularPolygonOnEdge([102, 54], [138, 54], 5, 1);
+    const leftHexagon = source42AttachedPolygon(pentagon, 1, 6);
+    const rightHexagon = source42AttachedPolygon(pentagon, 4, 6);
+    const polygons = [{ points: pentagon, fill: "#fff4d6", name: "정오각형" }, { points: leftHexagon, fill: "#e6f2fb", name: "정육각형" }, { points: rightHexagon, fill: "#e6f2fb", name: "정육각형" }];
+    return `<svg class="geometry-diagram source42-soccer-patch" viewBox="0 0 240 168" data-source42-polygon-diagram="pentagon-two-hexagons" data-polygon-sides="5,6,6" data-shared-edges="pentagon-1:hexagon-left;pentagon-4:hexagon-right" data-boundary-edges="13" data-side-length="4" aria-label="정오각형 한 개와 정육각형 두 개를 붙인 도형"><g>${polygons.map(polygon => `<polygon points="${polygon.points.map(pointText).join(" ")}" style="fill:${polygon.fill}" data-polygon-name="${polygon.name}"/>`).join("")}</g><text x="120" y="86" text-anchor="middle">한 변 4cm</text><text x="120" y="150" text-anchor="middle">바깥 변 13개</text></svg>`;
+  };
+  const source42PolygonChainSvg = () => {
+    const square = source42RegularPolygonOnEdge([24, 116], [54, 116], 4, -1);
+    const pentagon = source42AttachedPolygon(square, 1, 5);
+    const hexagon = source42AttachedPolygon(pentagon, 2, 6);
+    const followingSquare = source42AttachedPolygon(hexagon, 3, 4);
+    const directionDegrees = direction => Math.round((Math.atan2(direction[0], -direction[1]) * 180 / Math.PI + 360) % 360);
+    const measuredAngle = (firstDirection, secondDirection) => Math.round(Math.acos(Math.max(-1, Math.min(1, firstDirection[0] * secondDirection[0] + firstDirection[1] * secondDirection[1]))) * 180 / Math.PI);
+    const joinMarker = (firstPolygon, secondPolygon, edgeIndex, label, name) => {
+      const vertex = firstPolygon[edgeIndex];
+      const firstDirection = source42Direction(vertex, firstPolygon[(edgeIndex - 1 + firstPolygon.length) % firstPolygon.length]);
+      const secondDirection = source42Direction(vertex, secondPolygon.at(-1));
+      const actual = measuredAngle(firstDirection, secondDirection);
+      const arc = source42Arc(vertex, firstDirection, secondDirection, 15);
+      const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 28);
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: `${name}-first;${name}-second`, markup: `<g data-marked-angle="${label}" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="${name}-first;${name}-second"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">${label}°</text></g>` };
+    };
+    const interiorMarker = (() => {
+      const vertex = hexagon[4];
+      const firstDirection = source42Direction(vertex, hexagon[3]);
+      const secondDirection = source42Direction(vertex, hexagon[5]);
+      const actual = measuredAngle(firstDirection, secondDirection);
+      const arc = source42Arc(vertex, firstDirection, secondDirection, 14);
+      const text = source42AngleLabelPoint(vertex, firstDirection, secondDirection, 25);
+      return { vertex, actual, directions: [directionDegrees(firstDirection), directionDegrees(secondDirection)], segments: "hexagon-3-4;hexagon-4-5", markup: `<g data-marked-angle="120" data-marked-angle-actual="${actual}" data-marked-angle-vertex="${pointText(vertex)}" data-marked-angle-segments="hexagon-3-4;hexagon-4-5"><path d="${arc}" fill="none" style="stroke:#b45309;stroke-width:2"/><text x="${text[0].toFixed(1)}" y="${text[1].toFixed(1)}">120°</text></g>` };
+    })();
+    const marker162 = joinMarker(square, pentagon, 1, 162, "square-pentagon");
+    const marker132 = joinMarker(pentagon, hexagon, 2, 132, "pentagon-hexagon");
+    const marker150 = joinMarker(hexagon, followingSquare, 3, 150, "hexagon-square");
+    const markers = [marker162, marker150, interiorMarker, marker132];
+    if (markers.map(marker => marker.actual).join(",") !== "162,150,120,132") throw new Error("정다각형 연결 각 좌표 모델이 원문 각과 맞지 않습니다.");
+    return `<svg class="geometry-diagram source42-polygon-chain" viewBox="0 0 300 184" data-source42-polygon-diagram="square-pentagon-hexagon-chain" data-polygon-sides="4,5,6,4" data-side-length="3" data-marked-angles="162,150,120,132" data-marked-angle-vertices="${markers.map(marker => pointText(marker.vertex)).join(";")}" data-marked-angle-segments="${markers.map(marker => marker.segments).join("|")}" data-marked-angle-directions="${markers.map(marker => marker.directions.join(",")).join(";")}" data-first-50-counts="17,17,16" data-boundary-sides="151" aria-label="정사각형 정오각형 정육각형을 차례로 붙인 모양"><polygon points="${square.map(pointText).join(" ")}" style="fill:#e6f2fb"/><polygon points="${pentagon.map(pointText).join(" ")}" style="fill:#fff4d6"/><polygon points="${hexagon.map(pointText).join(" ")}" style="fill:#e8f4e8"/><polygon points="${followingSquare.map(pointText).join(" ")}" style="fill:#e6f2fb"/><g>${markers.map(marker => marker.markup).join("")}</g><text x="38" y="172">정사각형</text><text x="88" y="172">정오각형</text><text x="165" y="172">정육각형</text></svg>`;
+  };
+  const source42LineIntersection = (first, second, third, fourth) => {
+    const denominator = (first[0] - second[0]) * (third[1] - fourth[1]) - (first[1] - second[1]) * (third[0] - fourth[0]);
+    if (Math.abs(denominator) < 1e-8) throw new Error("정다각형 원본 선분이 평행하여 교점을 만들 수 없습니다.");
+    const firstCross = first[0] * second[1] - first[1] * second[0];
+    const secondCross = third[0] * fourth[1] - third[1] * fourth[0];
+    return [
+      (firstCross * (third[0] - fourth[0]) - (first[0] - second[0]) * secondCross) / denominator,
+      (firstCross * (third[1] - fourth[1]) - (first[1] - second[1]) * secondCross) / denominator
+    ];
+  };
+  const source42AngleDegrees = (firstDirection, secondDirection) => Math.acos(Math.max(-1, Math.min(1, firstDirection[0] * secondDirection[0] + firstDirection[1] * secondDirection[1]))) * 180 / Math.PI;
+  const source42DirectionDegrees = direction => (Math.atan2(direction[0], -direction[1]) * 180 / Math.PI + 360) % 360;
+  const source42Line = (first, second, className = "") => `<line x1="${first[0].toFixed(1)}" y1="${first[1].toFixed(1)}" x2="${second[0].toFixed(1)}" y2="${second[1].toFixed(1)}"${className ? ` class="${className}"` : ""}/>`;
+  const source42AngleMark = ({ vertex, first, second, label, radius = 16, distance = 28, name }) => {
+    const firstDirection = source42Direction(vertex, first);
+    const secondDirection = source42Direction(vertex, second);
+    const angle = source42AngleDegrees(firstDirection, secondDirection);
+    const labelPoint = source42AngleLabelPoint(vertex, firstDirection, secondDirection, distance);
+    return {
+      angle,
+      rays: `${source42DirectionDegrees(firstDirection).toFixed(3)},${source42DirectionDegrees(secondDirection).toFixed(3)}`,
+      markup: `<g data-angle-mark="${name}" data-angle-value="${angle.toFixed(6)}"><path d="${source42Arc(vertex, firstDirection, secondDirection, radius)}" fill="none" style="stroke:#b45309;stroke-width:2.5"/><text x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${label}</text></g>`
+    };
+  };
+  const source42RegularMeetIntersectionSvg = () => {
+    const sharedFirst = [90, 36];
+    const sharedSecond = [150, 36];
+    const pentagon = source42RegularPolygonOnEdge(sharedFirst, sharedSecond, 5, 1);
+    const hexagon = source42RegularPolygonOnEdge(sharedFirst, sharedSecond, 6, 1);
+    const q = source42LineIntersection(pentagon[4], pentagon[3], hexagon[4], hexagon[2]);
+    const mark = source42AngleMark({ vertex: q, first: pentagon[4], second: hexagon[4], label: "㉠", name: "Q-left-acute" });
+    const adjacent = 180 - mark.angle;
+    if (Math.abs(mark.angle - 66) > 1e-6 || Math.abs(adjacent - 114) > 1e-6) throw new Error("예제 2-3의 실제 교점 각이 66도와 114도가 아닙니다.");
+    return `<svg class="geometry-diagram source42-regular-meet-intersection" viewBox="0 0 240 168" data-source42-polygon-diagram="pentagon-inside-hexagon-intersection" data-polygon-sides="5,6" data-shared-edge="A-B" data-angle="66" data-adjacent-angle="114" data-angle-rays="144,210" data-marked-vertex="Q" data-marked-vertex-coordinate="${pointText(q)}" data-intersection-segments="pentagon-4-3;hexagon-4-2" aria-label="같은 윗변 아래에 겹쳐진 정육각형과 정오각형의 실제 교점 각"><polygon points="${hexagon.map(pointText).join(" ")}" style="fill:#e6f2fb"/><polygon points="${pentagon.map(pointText).join(" ")}" style="fill:#fff4d6"/>${source42Line(hexagon[4], hexagon[2])}${mark.markup}<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3"/></svg>`;
+  };
+  const source42OctagonIntersectionSvg = ({ mission = false } = {}) => {
+    const points = Array.from({ length: 8 }, (_, index) => polar(120, 84, 62, index * 45 - 22.5));
+    if (mission) {
+      const x = source42LineIntersection(points[6], points[0], points[7], points[1]);
+      const mark = source42AngleMark({ vertex: x, first: points[6], second: points[1], label: "㉠", radius: 15, name: "V6-X-V1" });
+      if (Math.abs(mark.angle - 135) > 1e-6) throw new Error("Mission 1의 좌표 각이 135도가 아닙니다.");
+      return `<svg class="geometry-diagram source42-octagon-diagonals" viewBox="0 0 240 168" data-source42-polygon-diagram="regular-octagon-two-diagonals" data-polygon-sides="8" data-angle="135" data-adjacent-angle="45" data-angle-rays="V6-X,V1-X" data-marked-vertex="X:${pointText(x)}" data-intersection-segments="V6-V0;V7-V1" aria-label="정팔각형의 두 대각선이 만나는 곳의 아래쪽 둔각"><polygon points="${points.map(pointText).join(" ")}" style="fill:#f8fbfd"/>${source42Line(points[6], points[0])}${source42Line(points[7], points[1])}${mark.markup}<circle cx="${x[0].toFixed(1)}" cy="${x[1].toFixed(1)}" r="3"/></svg>`;
+    }
+    const g = points[0], r = points[2], d = points[3], m = points[4], n = points[6];
+    const b = source42LineIntersection(g, m, n, d);
+    const mark = source42AngleMark({ vertex: b, first: g, second: d, label: "㉠", radius: 16, name: "G-B-D" });
+    const given = source42AngleMark({ vertex: d, first: n, second: g, label: "45°", radius: 12, distance: 22, name: "N-D-G" });
+    if (Math.abs(mark.angle - 112.5) > 1e-6) throw new Error("예제 2-4의 좌표 각이 112.5도가 아닙니다.");
+    if (Math.abs(given.angle - 45) > 1e-6) throw new Error("예제 2-4의 ㄷ 꼭짓점 표시각이 45도가 아닙니다.");
+    const labels = [
+      [g, "ㄱ", -13, -7], [n, "ㄴ", -15, 5], [r, "ㄹ", 8, 5],
+      [d, "ㄷ", 8, 6], [m, "ㅁ", 5, 17]
+    ].map(([point, label, dx, dy]) => `<text x="${(point[0] + dx).toFixed(1)}" y="${(point[1] + dy).toFixed(1)}">${label}</text>`).join("");
+    const sourceSegments = [source42Line(g, n), source42Line(g, r), source42Line(g, d), source42Line(g, m), source42Line(n, d), source42Line(r, m)].join("");
+    const rightToG = source42Direction(r, g), rightToM = source42Direction(r, m), rightSize = 9;
+    if (Math.abs(source42AngleDegrees(rightToG, rightToM) - 90) > 1e-6) throw new Error("예제 2-4의 ㄹ 꼭짓점 직각이 90도가 아닙니다.");
+    const rightFirst = source42Offset(r, rightToG, rightSize);
+    const rightCorner = source42Offset(rightFirst, rightToM, rightSize);
+    const rightSecond = source42Offset(r, rightToM, rightSize);
+    const rightMark = `<path d="M ${pointText(rightFirst)} L ${pointText(rightCorner)} L ${pointText(rightSecond)}" fill="none" data-right-angle="G-R-M"/>`;
+    return `<svg class="geometry-diagram source42-octagon-intersection" viewBox="0 0 240 168" data-source42-polygon-diagram="regular-octagon-intersection" data-polygon-sides="8" data-polygon-orientation="flat-top" data-angle="112.5" data-adjacent-angle="67.5" data-angle-rays="G-B,D-B" data-marked-vertex="ㅂ" data-marked-vertex-coordinate="${pointText(b)}" data-intersection-segments="G-N;G-R;G-D;G-M;N-D;R-M" data-given-angle="45" data-given-angle-rays="N-D;G-D" data-right-angle="G-R-M" aria-label="평평한 윗변의 정팔각형에서 ㄱㅁ과 ㄴㄷ의 교점 ㅂ에 표시한 각">${`<polygon points="${points.map(pointText).join(" ")}" style="fill:#f8fbfd"/>`}${sourceSegments}${rightMark}${mark.markup}${given.markup}<circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="3"/><text x="${(b[0] + 4).toFixed(1)}" y="${(b[1] + 16).toFixed(1)}">ㅂ</text>${labels}</svg>`;
+  };
+  const source42NotToScaleMeetSvg = () => {
+    const m = [120, 45], r = [120, 115];
+    const pentagon = source42RegularPolygonOnEdge(m, r, 5, 1);
+    const hexagon = source42RegularPolygonOnEdge(m, r, 6, -1);
+    const d = pentagon[2], j = hexagon[5];
+    const c = source42LineIntersection(d, j, m, r);
+    const given = source42AngleMark({ vertex: d, first: r, second: j, label: "27°", radius: 14, name: "given-R-D-C" });
+    const target = source42AngleMark({ vertex: j, first: m, second: d, label: "㉠", radius: 15, name: "M-J-D" });
+    if (Math.abs(given.angle - 26.8725668) > 1e-5 || Math.abs(target.angle - 14.8725668) > 1e-5) throw new Error("Mission 4의 실제 공유변 좌표 각이 원본 계약과 맞지 않습니다.");
+    const labels = [[d, "ㄷ"], [j, "ㅈ"], [m, "ㅁ"], [r, "ㄹ"], [c, "ㅊ"]].map(([point, label]) => `<text x="${(point[0] + (point[0] < 120 ? -12 : 6)).toFixed(1)}" y="${(point[1] + (label === "ㅈ" ? 12 : -5)).toFixed(1)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram source42-not-to-scale-meet" viewBox="0 0 240 168" data-source42-polygon-diagram="pentagon-hexagon-not-to-scale" data-polygon-sides="5,6" data-not-to-scale="true" data-given-angle="27" data-angle="15" data-adjacent-angle="165" data-coordinate-given-angle="26.8725668" data-coordinate-target-angle="14.8725668" data-angle-rays="M-J,J-D" data-marked-vertex="ㅈ" data-marked-vertex-coordinate="${pointText(j)}" data-shared-edge="ㅁ-ㄹ" data-intersection-segments="ㄷ-ㅈ;ㅁ-ㄹ" aria-label="정오각형과 정육각형의 공유변과 ㄷㅈ 선분에서 구하는 각"><polygon points="${pentagon.map(pointText).join(" ")}" style="fill:#fff4d6"/><polygon points="${hexagon.map(pointText).join(" ")}" style="fill:#e6f2fb"/>${source42Line(m, r)}${source42Line(d, j)}${given.markup}${target.markup}<circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="3"/>${labels}<text x="14" y="156" style="text-anchor:start">그림은 실제 크기와 다를 수 있습니다.</text></svg>`;
+  };
+  const source42PentagonSquareTriangleSvg = () => {
+    const d = [68, 112], s = [108, 112];
+    const square = source42RegularPolygonOnEdge(d, s, 4, 1);
+    const pentagon = source42AttachedPolygon(square, 0, 5);
+    const triangle = source42AttachedPolygon(square, 1, 3);
+    const g = pentagon[3], o = pentagon[2];
+    const m = square[2], b = triangle[2];
+    const z = source42LineIntersection(g, o, m, b);
+    const mark = source42AngleMark({ vertex: z, first: o, second: b, label: "㉠", radius: 15, name: "O-Z-B" });
+    if (Math.abs(mark.angle - 66) > 1e-6) throw new Error("Mission 5의 좌표 각이 66도가 아닙니다.");
+    const labels = [[g, "ㄱ"], [o, "ㅇ"], [d, "ㄷ"], [s, "ㅅ"], [m, "ㅁ"], [b, "ㅂ"], [z, "ㅈ"]].map(([point, label]) => `<text x="${(point[0] + (point[0] < 120 ? -10 : 5)).toFixed(1)}" y="${(point[1] - 5).toFixed(1)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram source42-pentagon-square-triangle" viewBox="0 0 240 168" data-source42-polygon-diagram="pentagon-square-triangle-extension" data-polygon-sides="5,4,3" data-angle="66" data-adjacent-angle="114" data-angle-rays="144,210" data-marked-vertex="ㅈ" data-marked-vertex-coordinate="${pointText(z)}" data-extension-segments="ㄱ-ㅇ;ㅁ-ㅂ" aria-label="정사각형에 붙인 정오각형과 정삼각형의 변을 늘여 만나는 각"><polygon points="${pentagon.map(pointText).join(" ")}" style="fill:#fff4d6"/><polygon points="${square.map(pointText).join(" ")}" style="fill:#e6f2fb"/><polygon points="${triangle.map(pointText).join(" ")}" style="fill:#e8f4e8"/>${source42Line(g, z)}${source42Line(m, z)}${mark.markup}<circle cx="${z[0].toFixed(1)}" cy="${z[1].toFixed(1)}" r="3"/>${labels}</svg>`;
+  };
+  const source42PentagonDoubleIntersectionSvg = () => {
+    const points = regularPolygonPoints(5, 120, 88, 58);
+    const b = source42LineIntersection(points[1], points[4], points[2], points[0]);
+    const s = source42LineIntersection(b, points[3], points[0], points[1]);
+    const mark = source42AngleMark({ vertex: b, first: s, second: points[0], label: "㉠", radius: 15, name: "S-B-G" });
+    if (Math.abs(mark.angle - 54) > 1e-6) throw new Error("Mission 6의 좌표 각이 54도가 아닙니다.");
+    const labels = [[points[0], "ㄱ"], [points[1], "ㄴ"], [points[2], "ㄷ"], [points[3], "ㄹ"], [points[4], "ㅁ"], [s, "ㅅ"], [b, "ㅂ"]].map(([point, label]) => `<text x="${(point[0] + (point[0] < 120 ? -11 : 5)).toFixed(1)}" y="${(point[1] - 5).toFixed(1)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram source42-pentagon-double-intersection" viewBox="0 0 240 168" data-source42-polygon-diagram="regular-pentagon-double-intersection" data-polygon-sides="5" data-angle="54" data-adjacent-angle="126" data-angle-rays="S-B,G-B" data-marked-vertex="ㅂ" data-marked-vertex-coordinate="${pointText(b)}" data-intersection-segments="N-M;D-G;S-R;G-N" aria-label="정오각형 대각선과 선분의 교점 ㅂ에서 구하는 각"><polygon points="${points.map(pointText).join(" ")}" style="fill:#f8fbfd"/>${source42Line(points[1], points[4])}${source42Line(points[2], points[0])}${source42Line(s, points[3])}${mark.markup}<circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="3"/>${labels}</svg>`;
+  };
+  const source42TessellationChoicesSvg = () => {
+    const polygon = (x, y, points, label, kind, name) => `<g data-choice-index="${label}" data-choice-name="${name}" data-point-model="${kind}"><polygon points="${points.map(([px, py]) => `${x + px},${y + py}`).join(" ")}"/><text x="${x + 22}" y="${y + 48}" text-anchor="middle">${label}</text></g>`;
+    const regular = (x, y, sides, label, name) => `<g data-choice-index="${label}" data-choice-name="${name}" data-point-model="regular-${sides}-gon"><polygon points="${regularPolygonPoints(sides, x + 22, y + 22, 17).map(pointText).join(" ")}"/><text x="${x + 22}" y="${y + 48}" text-anchor="middle">${label}</text></g>`;
+    const names = ["삼각형", "정삼각형", "직각삼각형", "이등변삼각형", "직사각형", "평행사변형", "사각형", "정오각형", "원", "정육각형", "정칠각형"];
+    return `<svg class="geometry-diagram source42-tessellation-choices" viewBox="0 0 340 150" data-source42-polygon-diagram="tessellation-choice-set" data-choice-count="11" data-choice-names="${names.join(",")}" data-verified-tile-count="8" data-tiling-choice-indexes="1,2,3,4,5,6,7,10" aria-label="평면을 빈틈없이 덮을 수 있는 도형 열한 가지"><g style="fill:#f8fbfd">${polygon(8, 12, [[3, 35], [18, 5], [42, 35]], 1, "triangle", "삼각형")}${polygon(62, 12, [[4, 35], [22, 3.823], [40, 35]], 2, "equilateral-triangle", "정삼각형")}${polygon(116, 12, [[4, 35], [4, 3], [40, 35]], 3, "right-triangle", "직각삼각형")}${polygon(170, 12, [[2, 35], [22, 8], [42, 35]], 4, "isosceles-triangle", "이등변삼각형")}${polygon(224, 12, [[4, 5], [40, 5], [40, 35], [4, 35]], 5, "rectangle", "직사각형")}${polygon(278, 12, [[8, 5], [40, 5], [34, 35], [2, 35]], 6, "parallelogram", "평행사변형")}${polygon(24, 82, [[7, 5], [40, 9], [35, 35], [2, 31]], 7, "quadrilateral", "사각형")}${regular(88, 82, 5, 8, "정오각형")}<g data-choice-index="9" data-choice-name="원" data-point-model="circle"><circle cx="164" cy="104" r="17"/><text x="164" y="130" text-anchor="middle">9</text></g>${regular(214, 82, 6, 10, "정육각형")}${regular(278, 82, 7, 11, "정칠각형")}</g></svg><div class="source42-choice-names" data-source42-choice-names="${names.join(",")}">${names.map((name, index) => `${index + 1}. ${name}`).join(" · ")}</div>`;
+  };
+  const source42AreaTilingSvg = ({ kind }) => {
+    if (kind === "trapezoid") return `<svg class="geometry-diagram source42-area-tiling" viewBox="0 0 280 168" data-source42-polygon-diagram="trapezoid-rectangle-area" data-trapezoid-bases="2,3" data-trapezoid-height="1" data-piece-area="2.5" data-target-width="10" data-target-height="3" aria-label="사다리꼴과 직사각형의 넓이"><polygon points="24,102 90,102 76,72 38,72" style="fill:#e6f2fb"/><text x="48" y="66">2cm</text><text x="48" y="118">3cm</text><text x="94" y="91">1cm</text><rect x="142" y="48" width="110" height="66" style="fill:#fff4d6"/><text x="187" y="132">10cm</text><text x="256" y="86">3cm</text></svg>`;
+    if (kind === "triangle") return `<svg class="geometry-diagram source42-area-tiling" viewBox="0 0 280 168" data-source42-polygon-diagram="right-triangle-rectangle-area" data-triangle-base="3" data-triangle-height="4" data-triangle-count="180" data-target-width="54" data-target-height="20" aria-label="직각삼각형과 직사각형의 넓이"><polygon points="26,116 92,116 92,28" style="fill:#e6f2fb"/><text x="48" y="134">3cm</text><text x="96" y="76">높이 □cm</text><rect x="150" y="52" width="104" height="54" style="fill:#fff4d6"/><text x="181" y="125">54cm</text><text x="258" y="82">20cm</text></svg>`;
+    return `<svg class="geometry-diagram source42-area-tiling" viewBox="0 0 280 168" data-source42-polygon-diagram="triangle-rectangle-count" data-triangle-base="5" data-triangle-height="4" data-target-width="30" data-target-height="12" aria-label="직각삼각형 조각과 직사각형"><polygon points="24,116 96,116 96,58" style="fill:#e6f2fb"/><text x="50" y="134">5cm</text><text x="99" y="88">4cm</text><rect x="144" y="50" width="112" height="58" style="fill:#fff4d6"/><text x="181" y="127">30cm</text><text x="260" y="81">12cm</text></svg>`;
+  };
+  const source42SquarePieceCoverSvg = () => {
+    const cell = 18, origin = [18, 52];
+    const grid = Array.from({ length: 5 }, (_, row) => Array.from({ length: 7 }, (_, col) => `<rect x="${origin[0] + col * cell}" y="${origin[1] + row * cell}" width="${cell}" height="${cell}"/>`).join("")).join("");
+    const piece = (x, y, size, label) => `<rect x="${x}" y="${y}" width="${size * 12}" height="${size * 12}" style="fill:#e6f2fb"/><text x="${x + size * 6}" y="${y + size * 12 + 14}" text-anchor="middle">${label}</text>`;
+    return `<svg class="geometry-diagram source42-square-piece-cover" viewBox="0 0 300 168" data-source42-polygon-diagram="blank-7x5-grid-with-square-pieces" data-grid-rows="5" data-grid-cols="7" data-piece-sizes="3,2,1" data-verified-piece-counts="2,4,1" aria-label="빈 7칸 5칸 모눈과 세 크기의 정사각형 조각"><g>${grid}</g>${piece(178, 42, 3, "3cm 정사각형")}${piece(228, 76, 2, "2cm 정사각형")}${piece(254, 118, 1, "1cm 정사각형")}</svg>`;
+  };
+  const source42RectanglePieceSvg = () => `<svg class="geometry-diagram source42-rectangle-piece" viewBox="0 0 280 168" data-source42-polygon-diagram="same-rectangle-pieces" data-piece-width="5" data-piece-height="4" data-piece-count="81" data-target-width="45" data-target-height="36" aria-label="같은 직사각형 조각과 큰 직사각형"><rect x="24" y="76" width="55" height="44" style="fill:#e6f2fb"/><text x="42" y="137">5cm</text><text x="84" y="100">□cm</text><rect x="136" y="42" width="108" height="86" style="fill:#fff4d6"/><text x="177" y="145">45cm</text><text x="248" y="88">36cm</text></svg>`;
+  const source42TriangleLatticeSvg = () => {
+    const unit = 30, height = unit * Math.sqrt(3) / 2, origin = [104, 30];
+    const toPoint = ([q, r]) => [origin[0] + unit * (q + r / 2), origin[1] - height * r];
+    const steps = [["E", 1, [1, 0]], ["SW", 1, [0, -1]], ["SE", 2, [1, -1]], ["SW", 1, [0, -1]], ["NW", 1, [-1, 1]], ["W", 1, [-1, 0]], ["SW", 1, [0, -1]], ["NW", 1, [-1, 1]], ["NE", 3, [0, 1]]];
+    const latticeVertices = [[0, 0]];
+    steps.forEach(([, length, [dq, dr]]) => { const previous = latticeVertices.at(-1); latticeVertices.push([previous[0] + dq * length, previous[1] + dr * length]); });
+    const vertices = latticeVertices.map(toPoint);
+    const notch = vertices[2];
+    const firstDirection = source42Direction(notch, vertices[1]);
+    const secondDirection = source42Direction(notch, vertices[3]);
+    const reflexRadius = 12;
+    const arcStart = source42Offset(notch, firstDirection, reflexRadius);
+    const arcEnd = source42Offset(notch, secondDirection, reflexRadius);
+    const reflexArc = `M ${pointText(arcStart)} A ${reflexRadius} ${reflexRadius} 0 1 0 ${pointText(arcEnd)}`;
+    const smallBisector = source42AngleLabelPoint(notch, firstDirection, secondDirection, 1);
+    const reflexLabel = source42Offset(notch, source42Direction(smallBisector, notch), 20);
+    return `<svg class="geometry-diagram source42-triangle-lattice" viewBox="0 0 240 168" data-source42-polygon-diagram="concave-triangular-lattice" data-unit-edge-cm="2" data-boundary-directions="${steps.map(([direction]) => direction).join(",")}" data-boundary-direction-lengths="${steps.map(([, length]) => length).join(",")}" data-boundary-vertices="${vertices.slice(0, -1).map(pointText).join(";")}" data-unit-triangles="12" data-perimeter-unit-edges="12" data-concave-vertex-index="2" data-concave-interior-angle="240" data-internal-grid-visible="false" data-reflex-arc-side="inside" aria-label="한 변이 2센티미터인 정삼각형 조각으로 만든 원문 오목 도형"><polygon points="${vertices.map(pointText).join(" ")}" style="fill:#f8fbfd;stroke:#174866;stroke-width:2.5"/><path d="${reflexArc}" fill="none" style="stroke:#b45309;stroke-width:2.5" data-reflex-angle="240"/><text x="${reflexLabel[0].toFixed(1)}" y="${reflexLabel[1].toFixed(1)}">㉠</text></svg>`;
+  };
+  const source42ParallelogramTilingSvg = () => `<svg class="geometry-diagram source42-parallelogram-tiling" viewBox="0 0 280 168" data-source42-polygon-diagram="trapezoid-parallelogram-area" data-small-bases="3,6" data-small-side="3" data-small-angle="60" data-target-base="36" data-target-side="9" aria-label="사다리꼴 조각과 평행사변형"><polygon points="24,116 92,116 76,68 40,68" style="fill:#e6f2fb"/><text x="52" y="62">3cm</text><text x="49" y="134">6cm</text><text x="18" y="92">3cm</text><text x="26" y="106">60°</text><polygon points="142,116 250,116 230,56 122,56" style="fill:#fff4d6"/><text x="180" y="137">36cm</text><text x="112" y="91">9cm</text></svg>`;
+  const source42RingPieceSvg = () => `<svg class="geometry-diagram source42-ring-piece" viewBox="0 0 280 168" data-source42-polygon-diagram="l-piece-ring" data-piece-area="3" data-target-outer-side="8" data-target-inner-side="4" data-target-area="48" aria-label="ㄴ자 조각과 테두리 모양"><path d="M 22 104 L 22 60 L 44 60 L 44 82 L 66 82 L 66 104 Z" style="fill:#e6f2fb"/><text x="39" y="124">넓이 3</text><path d="M 132 32 H 244 V 144 H 132 Z M 160 60 V 116 H 216 V 60 Z" fill-rule="evenodd" style="fill:#fff4d6"/><text x="176" y="53">8cm</text><text x="219" y="93">4cm</text></svg>`;
+  const source42DominoCountSvg = () => `<svg class="geometry-diagram source42-domino-count" viewBox="0 0 280 168" data-source42-polygon-diagram="eight-domino-rectangle" data-piece-cells="2x1" data-piece-count="8" data-target-rows="2" data-target-cols="8" data-distinct-tilings="34" aria-label="같은 직사각형 조각 여덟 개와 직사각형 모눈"><rect x="22" y="72" width="48" height="24" style="fill:#e6f2fb"/><line x1="46" y1="72" x2="46" y2="96"/><text x="27" y="119">2칸</text><g>${Array.from({ length: 16 }, (_, index) => { const row = Math.floor(index / 8), col = index % 8; return `<rect x="108" y="60" width="18" height="18" transform="translate(${col * 18} ${row * 18})"/>`; }).join("")}</g></svg>`;
+  const source42FiveDominoBoardSvg = () => {
+    const cell = 24;
+    const board = Array.from({ length: 10 }, (_, index) => `<rect x="110" y="54" width="${cell}" height="${cell}" transform="translate(${(index % 5) * cell} ${Math.floor(index / 5) * cell})"/>`).join("");
+    return `<svg class="geometry-diagram source42-five-domino-board" viewBox="0 0 280 168" data-source42-polygon-diagram="five-domino-2x5-board" data-rows="2" data-cols="5" data-tile="1x2" data-tile-count="5" data-exhaustive-count="8" aria-label="가로 5칸 세로 2칸 모눈과 1칸 2칸 직사각형 조각"><rect x="28" y="72" width="48" height="24" style="fill:#e6f2fb"/><line x1="52" y1="72" x2="52" y2="96"/><text x="52" y="120" text-anchor="middle">1칸, 2칸 조각</text><g>${board}</g></svg>`;
+  };
+  const source42RhombiSvg = () => {
+    const lozenge = (x, y, index) => `<g data-rhombus-index="${index}" data-triangular-cells="${index * 2},0;${index * 2 + 1},0"><polygon points="${x},${y + 34} ${x + 20},${y} ${x + 60},${y} ${x + 40},${y + 34}" style="fill:#e6f2fb"/><line x1="${x + 20}" y1="${y}" x2="${x + 40}" y2="${y + 34}"/></g>`;
+    return `<svg class="geometry-diagram source42-rhombi" viewBox="0 0 240 168" data-source42-polygon-diagram="three-congruent-rhombi" data-piece-count="3" data-unit-triangles="6" data-equivalence="rotate-reflect" aria-label="같은 마름모 조각 세 개"><g>${lozenge(24, 66, 0)}${lozenge(92, 66, 1)}${lozenge(160, 66, 2)}</g></svg>`;
+  };
+  const source42TPieceSquareSvg = () => {
+    const tPiece = (x, y, index) => `<g data-source-t-piece-index="${index}" data-cells="0,0;1,0;2,0;1,1">${[[0,0],[1,0],[2,0],[1,1]].map(([col,row]) => `<rect x="${x + col * 12}" y="${y + row * 12}" width="12" height="12" style="fill:#e6f2fb"/>`).join("")}</g>`;
+    const covers = [[0,1,2,5], [3,6,7,11], [4,8,9,12], [10,13,14,15]];
+    const colors = ["#e6f2fb", "#fff4d6", "#e8f4e8", "#f7e6f2"];
+    const cell = 18, left = 166, top = 42;
+    const fill = covers.map((cover, index) => `<g data-cover-piece="${String.fromCharCode(65 + index)}">${cover.map(value => `<rect x="${left + (value % 4) * cell}" y="${top + Math.floor(value / 4) * cell}" width="${cell}" height="${cell}" style="fill:${colors[index]};stroke:none"/>`).join("")}</g>`).join("");
+    const boundaries = covers.map((cover, index) => {
+      const set = new Set(cover);
+      const edge = (row, col, dx, dy, x1, y1, x2, y2) => { const nextRow = row + dy, nextCol = col + dx; return nextRow >= 0 && nextRow < 4 && nextCol >= 0 && nextCol < 4 && set.has(nextRow * 4 + nextCol) ? "" : `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; };
+      const piece = String.fromCharCode(65 + index);
+      return `<g data-cover-boundary="${piece}" data-t-piece-index="${index}" data-piece-boundary="${piece}">${cover.map(value => { const row = Math.floor(value / 4), col = value % 4, x = left + col * cell, y = top + row * cell; return edge(row, col, 0, -1, x, y, x + cell, y) + edge(row, col, 1, 0, x + cell, y, x + cell, y + cell) + edge(row, col, 0, 1, x + cell, y + cell, x, y + cell) + edge(row, col, -1, 0, x, y + cell, x, y); }).join("")}</g>`;
+    }).join("");
+    return `<svg class="geometry-diagram source42-t-piece-square" viewBox="0 0 280 168" data-source42-polygon-diagram="four-t-tetrominoes-square" data-piece-count="4" data-piece-cells="0,0;1,0;2,0;1,1" data-cover-cells="0,1,2,5|3,6,7,11|4,8,9,12|10,13,14,15" data-cover-count="4" data-cell-side-cm="3" data-target-rows="4" data-target-cols="4" data-square-cells="4x4" aria-label="ㅜ자 조각 네 개와 조각 경계가 표시된 4칸 4칸 정사각형"><g>${tPiece(24, 32, 0)}${tPiece(76, 32, 1)}${tPiece(24, 98, 2)}${tPiece(76, 98, 3)}</g>${fill}<g style="fill:none;stroke:#174866;stroke-width:2">${boundaries}</g><rect x="${left}" y="${top}" width="${cell * 4}" height="${cell * 4}" data-outer-boundary="4x4-square" style="fill:none;stroke:#174866;stroke-width:3"/><text x="202" y="136" text-anchor="middle">한 칸 3cm</text></svg>`;
+  };
   const polygonDiagonalSvg = (sides, mode = "fan") => {
     const points = regularPolygonPoints(sides);
     const outline = points.map(pointText).join(" ");
@@ -16646,69 +16986,164 @@
       const answer = decimal(pi * outer * outer, 2);
       return result(`계단 모양 평면도형을 오른쪽 세로선을 회전축으로 한 바퀴 돌렸습니다. 회전축에 수직인 단면 가운데 가장 큰 단면의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "stepped", a: outer, b: height, c: inner })}${circleSolidEvidence("rotate-stepped", [outer, inner, height, pi])}`, answer, `가장 큰 단면은 반지름 ${outer}cm인 원이므로 넓이는 ${pi}×${outer}²=${answer}cm²입니다.`);
     },
-    polygonDiagonals({ rng, level, variant = 0 }) {
-      const sideChoices = level === 0 ? [4, 5, 6] : level === 1 ? [5, 6, 7, 8] : [6, 7, 8, 9, 10];
-      const sides = pick(rng, sideChoices);
-      if (variant % 3 === 0) {
-        const answer = sides - 3;
-        return result('정' + sides + '각형의 한 꼭짓점에서 이웃한 꼭짓점과 자기 자신을 제외한 꼭짓점에 선분을 그었습니다. 그을 수 있는 대각선은 모두 몇 개입니까?' + polygonDiagonalSvg(sides, "fan"), answer, '한 꼭짓점은 자기 자신 1개와 이웃한 꼭짓점 2개에는 대각선을 그을 수 없습니다. 따라서 ' + sides + ' - 3 = ' + answer + '개입니다.');
+    polygonDiagonals({ variant = 0 }) {
+      const diagonalTotal = sides => sides * (sides - 3) / 2;
+
+      // 4-2 심화 p.58-59 개념탐구 1의 본문, 예제 4개, Mission 6개를 순서대로 보존합니다.
+      if (variant === 0) {
+        const sides = 10;
+        const answer = diagonalTotal(sides);
+        return result('다음 정십각형에서 그을 수 있는 대각선은 모두 몇 개인지 구하세요.' + source42PolygonOutlineSvg(sides) + source42PolygonEvidence("4-2-u6-e1-exploration", { variant, sides, diagonalTotal: answer, answer }), answer, '한 꼭짓점에서는 자기 자신과 양옆 꼭짓점 2개를 빼고 ' + (sides - 3) + '개의 대각선을 그을 수 있습니다. 꼭짓점 ' + sides + '개에서 세면 ' + sides + '×' + (sides - 3) + '=' + (sides * (sides - 3)) + '이지만 같은 대각선을 두 번 센 것이므로 2로 나누어 ' + answer + '개입니다.');
       }
-      if (variant % 3 === 1) {
-        const diagonalCount = sides * (sides - 3) / 2;
-        return result('모든 대각선을 그었더니 대각선이 ' + diagonalCount + '개인 정다각형이 있습니다. 이 다각형은 몇 각형입니까?' + polygonDiagonalSvg(sides, "all"), sides, '정' + sides + '각형에서는 한 꼭짓점마다 ' + (sides - 3) + '개의 대각선을 그을 수 있습니다. 꼭짓점마다 세면 ' + sides + ' × ' + (sides - 3) + '이고, 같은 대각선을 두 번 세었으므로 2로 나누면 ' + diagonalCount + '개입니다. 따라서 정' + sides + '각형입니다.');
+
+      if (variant === 1) {
+        const sides = 6;
+        const perimeter = 108;
+        const answer = perimeter / sides;
+        return result('다음은 어떤 정다각형에 그을 수 있는 대각선을 모두 그은 그림입니다. 이 정다각형의 모든 변의 길이의 합이 ' + perimeter + 'cm일 때, 한 변의 길이를 구하세요.' + polygonDiagonalSvg(sides, "all") + source42PolygonEvidence("4-2-u6-e1-example-1-1", { variant, sides, perimeter, answer }), answer, '그림의 꼭짓점은 ' + sides + '개이므로 정' + sides + '각형입니다. 모든 변의 길이가 같으므로 ' + perimeter + '÷' + sides + '=' + answer + 'cm입니다.');
       }
-      const other = pick(rng, sideChoices.filter(value => value !== sides));
-      const answer = Math.abs(sides * (sides - 3) / 2 - other * (other - 3) / 2);
-      return result('정' + sides + '각형과 정' + other + '각형에 그을 수 있는 모든 대각선의 개수 차를 구하세요.' + polygonDiagonalSvg(sides, "all"), answer, '정' + sides + '각형의 대각선은 ' + (sides * (sides - 3) / 2) + '개, 정' + other + '각형의 대각선은 ' + (other * (other - 3) / 2) + '개입니다. 차는 ' + answer + '개입니다.');
+
+      if (variant === 2) {
+        const exterior = 30;
+        const sides = 360 / exterior;
+        const answer = diagonalTotal(sides);
+        return result('어떤 정다각형의 한 변을 곧게 늘였을 때 생기는 바깥쪽 각의 크기가 ' + exterior + '°입니다. 이 정다각형에 그을 수 있는 대각선은 모두 몇 개인지 구하세요.' + source42PolygonExteriorSvg({ sides, exterior }) + source42PolygonEvidence("4-2-u6-e1-example-1-2", { variant, sides, exterior, diagonalTotal: answer, answer }), answer, '바깥쪽 각이 ' + exterior + '°이므로 ' + exterior + '°씩 ' + sides + '번 돌면 처음 방향으로 돌아옵니다. 따라서 정' + sides + '각형입니다. 대각선 수는 ' + sides + '×(' + sides + '-3)÷2=' + answer + '개입니다.');
+      }
+
+      if (variant === 3) {
+        const remainingInterior = 150;
+        const exterior = 180 - remainingInterior;
+        const sides = 360 / exterior;
+        const answer = diagonalTotal(sides);
+        return result('어떤 정다각형의 한 꼭짓점에 정사각형과 정육각형이 붙어 있습니다. 남은 안쪽 각의 크기가 ' + remainingInterior + '°일 때, 이 정다각형에 그을 수 있는 대각선은 모두 몇 개인지 구하세요.' + source42PolygonMeetingSvg() + source42PolygonEvidence("4-2-u6-e1-example-1-3", { variant, squareInterior: 90, hexagonInterior: 120, remainingInterior, exterior, sides, diagonalTotal: answer, answer }), answer, '정사각형의 안쪽 각은 90°, 정육각형의 안쪽 각은 120°이고 남은 각은 ' + remainingInterior + '°입니다. 이 정다각형의 바깥쪽 각은 180-' + remainingInterior + '=' + exterior + '°이므로 정' + sides + '각형입니다. 대각선 수는 ' + sides + '×(' + sides + '-3)÷2=' + answer + '개입니다.');
+      }
+
+      if (variant === 4) {
+        const smaller = 10;
+        const larger = 12;
+        const answer = '정' + smaller + '각형, 정' + larger + '각형';
+        return result('두 정다각형의 변의 수 차가 2이고, 대각선 수 차가 19입니다. 변의 수가 적은 도형부터 차례대로 두 다각형의 이름을 쓰세요.' + source42PolygonEvidence("4-2-u6-e1-example-1-4", { variant, smaller, larger, sideDifference: larger - smaller, diagonalDifference: diagonalTotal(larger) - diagonalTotal(smaller), answer }), answer, '정10각형의 대각선은 ' + diagonalTotal(smaller) + '개이고 정12각형의 대각선은 ' + diagonalTotal(larger) + '개입니다. 변의 수 차는 2, 대각선 수 차는 ' + diagonalTotal(larger) + '-' + diagonalTotal(smaller) + '=19이므로 답은 ' + answer + '입니다.');
+      }
+
+      if (variant === 5) {
+        const turn = 15;
+        const segmentLength = 3;
+        const segments = 360 / turn;
+        return result('종이 위에 길이가 ' + segmentLength + 'cm인 선분을 그리고, 그 선분의 왼쪽 끝에서 왼쪽으로 ' + turn + '°만큼 돌려 길이가 같은 선분을 계속 그립니다. 처음 출발한 점에 다시 도착하려면 선분을 몇 개 그려야 하나요?' + source42TurnSequenceSvg({ turn, segmentLength }) + source42PolygonEvidence("4-2-u6-e1-mission-1", { variant, turn, segmentLength, segments, perimeter: segments * segmentLength, answer: segments }), segments, '한 번에 ' + turn + '°씩 돌고 처음 방향으로 돌아오려면 모두 360°를 돌아야 합니다. 360÷' + turn + '=' + segments + '이므로 선분을 ' + segments + '개 그려야 합니다.');
+      }
+
+      if (variant === 6) {
+        const perimeterA = 64;
+        const perimeterB = 48;
+        const sideDifference = 2;
+        const sideLength = (perimeterA - perimeterB) / sideDifference;
+        const sidesA = perimeterA / sideLength;
+        const sidesB = perimeterB / sideLength;
+        const answer = diagonalTotal(sidesA);
+        return result('정다각형 가와 나의 한 변의 길이는 서로 같고, 변의 수 차는 ' + sideDifference + '개입니다. 가의 모든 변의 길이의 합은 ' + perimeterA + 'cm, 나의 모든 변의 길이의 합은 ' + perimeterB + 'cm입니다. 정다각형 가의 대각선 수를 구하세요.' + source42PolygonEvidence("4-2-u6-e1-mission-2", { variant, perimeterA, perimeterB, sideDifference, sideLength, sidesA, sidesB, answer }), answer, '두 둘레의 차는 ' + perimeterA + '-' + perimeterB + '=' + (perimeterA - perimeterB) + 'cm이고, 이것은 같은 길이의 변 ' + sideDifference + '개의 길이입니다. 한 변의 길이는 ' + (perimeterA - perimeterB) + '÷' + sideDifference + '=' + sideLength + 'cm입니다. 가는 정' + sidesA + '각형이므로 대각선 수는 ' + sidesA + '×(' + sidesA + '-3)÷2=' + answer + '개입니다.');
+      }
+
+      if (variant === 7) {
+        const sidePlusShortDiagonal = 75;
+        const diagonalLengthSum = sidePlusShortDiagonal * 6;
+        return result('정육각형에서 한 변의 길이와 바로 한 꼭짓점을 건너뛴 대각선 한 개의 길이의 합이 ' + sidePlusShortDiagonal + 'cm입니다. 이 정육각형에 그을 수 있는 모든 대각선의 길이의 합을 구하세요.' + source42HexagonDiagonalRelationSvg() + source42PolygonEvidence("4-2-u6-e1-mission-3", { variant, sides: 6, sidePlusShortDiagonal, diagonalMultiplier: 6, answer: diagonalLengthSum }), diagonalLengthSum, '정육각형에는 짧은 대각선이 6개, 마주 보는 꼭짓점을 이은 긴 대각선이 3개 있습니다. 긴 대각선은 한 변의 길이 2개를 이은 길이입니다. 따라서 모든 대각선의 길이의 합은 (한 변의 길이+짧은 대각선의 길이)×6=' + sidePlusShortDiagonal + '×6=' + diagonalLengthSum + 'cm입니다.');
+      }
+
+      if (variant === 8) {
+        const wireLength = 105;
+        const sides = 12;
+        const leftoverSides = 3;
+        const answer = wireLength * sides / (sides + leftoverSides);
+        return result('길이가 ' + wireLength + 'cm인 철사로 정' + sides + '각형을 만들었습니다. 남은 철사의 길이가 이 정다각형의 변 ' + leftoverSides + '개의 길이의 합과 같을 때, 정' + sides + '각형의 둘레를 구하세요. (매듭의 길이는 생각하지 않습니다.)' + source42PolygonEvidence("4-2-u6-e1-mission-4", { variant, wireLength, sides, leftoverSides, answer }), answer, '정' + sides + '각형의 둘레는 같은 길이의 변 ' + sides + '개의 길이이고, 남은 철사는 변 ' + leftoverSides + '개의 길이입니다. 철사 전체는 같은 길이의 부분 ' + (sides + leftoverSides) + '개이므로 정' + sides + '각형의 둘레는 ' + wireLength + '×' + sides + '÷' + (sides + leftoverSides) + '=' + answer + 'cm입니다.');
+      }
+
+      if (variant === 9) {
+        const smaller = 15;
+        const larger = 18;
+        const answer = '정' + smaller + '각형, 정' + larger + '각형';
+        return result('두 정다각형의 꼭짓점 수 차가 3이고, 대각선 수 차가 45입니다. 꼭짓점 수가 적은 도형부터 차례대로 두 다각형의 이름을 쓰세요.' + source42PolygonEvidence("4-2-u6-e1-mission-5", { variant, smaller, larger, vertexDifference: larger - smaller, diagonalDifference: diagonalTotal(larger) - diagonalTotal(smaller), answer }), answer, '정15각형의 대각선은 ' + diagonalTotal(smaller) + '개이고 정18각형의 대각선은 ' + diagonalTotal(larger) + '개입니다. 꼭짓점 수 차는 3, 대각선 수 차는 ' + diagonalTotal(larger) + '-' + diagonalTotal(smaller) + '=45이므로 답은 ' + answer + '입니다.');
+      }
+
+      if (variant === 10) {
+        const exterior = 40;
+        const sides = 360 / exterior;
+        const sideLength = 4;
+        const perimeter = sides * sideLength;
+        const diagonals = diagonalTotal(sides);
+        const answer = perimeter + 'cm, ' + diagonals + '개';
+        return result('한 변의 길이가 ' + sideLength + 'cm인 어떤 정다각형의 한 변과 직선이 만나서 생기는 바깥쪽 각의 크기가 ' + exterior + '°입니다. 이 정다각형의 둘레와 대각선 수를 차례대로 쓰세요.' + source42PolygonExteriorSvg({ sides, exterior }) + source42PolygonEvidence("4-2-u6-e1-mission-6", { variant, sides, exterior, sideLength, perimeter, diagonals, answer }), answer, '바깥쪽 각이 ' + exterior + '°이므로 360÷' + exterior + '=' + sides + '이어서 정' + sides + '각형입니다. 둘레는 ' + sideLength + '×' + sides + '=' + perimeter + 'cm이고, 대각선 수는 ' + sides + '×(' + sides + '-3)÷2=' + diagonals + '개입니다. 따라서 ' + answer + '입니다.');
+      }
+
+      throw new Error('정다각형과 대각선 원문 분기는 0부터 10까지만 생성할 수 있습니다.');
     },
-    regularPolygonApplication({ rng, level, variant = 0 }) {
-      const sideChoices = level === 0 ? [3, 4, 6] : level === 1 ? [3, 4, 5, 6, 8] : [3, 4, 5, 6, 8, 10];
-      const sides = pick(rng, sideChoices);
-      const exterior = 360 / sides;
-      const interior = 180 - exterior;
-      if (variant % 3 === 0) {
-        return result('한 내각의 크기가 ' + interior + '°인 정' + sides + '각형이 있습니다. 한 외각의 크기를 구하세요.' + polygonSvg(sides, Array(sides).fill("")), exterior, '한 꼭짓점에서 내각과 외각의 합은 180°이므로 180 - ' + interior + ' = ' + exterior + '°입니다.');
+    regularPolygonApplication({ variant = 0 }) {
+      if (variant === 0) {
+        const answer = 36;
+        return result('정오각형의 대각선을 모두 그린 뒤 변을 지웠더니 별 모양이 되었습니다. 그림의 ㉠의 각도를 구하세요.' + source42StarTipSvg() + source42PolygonEvidence("4-2-u6-e2-exploration", { variant, sides: 5, starTipAngle: answer, answer }), answer, '정오각형의 한 꼭짓점에서 생기는 각을 따라 별의 끝을 확인하면 ㉠은 ' + answer + '°입니다.');
       }
-      if (variant % 3 === 1) {
-        const sideLength = int(rng, 3 + level, 8 + level * 3);
-        const answer = sides * sideLength;
-        return result('한 변의 길이가 ' + sideLength + 'cm인 정' + sides + '각형의 둘레를 구하세요.' + polygonSvg(sides, Array(sides).fill("")), answer, '정' + sides + '각형은 같은 길이의 변이 ' + sides + '개이므로 ' + sideLength + ' × ' + sides + ' = ' + answer + 'cm입니다.');
+      if (variant === 1 || variant === 7) {
+        const baseAngle = variant === 1 ? 78 : 85;
+        const turn = 180 - 2 * baseAngle;
+        const answer = 360 / turn;
+        const sourceItemId = variant === 1 ? "4-2-u6-e2-example-2-1" : "4-2-u6-e2-mission-3";
+        return result('그림과 같은 이등변사다리꼴을 겹치지 않게 이어 붙여 둥근 모양을 만듭니다. 필요한 사다리꼴은 모두 몇 개인지 구하세요.' + source42TrapezoidRingSvg({ baseAngle, turn, leg: variant === 1 ? 3 : 1, base: variant === 1 ? 5 : 1 }) + source42PolygonEvidence(sourceItemId, { variant, baseAngle, turn, fullTurn: 360, answer }), answer, '이웃한 사다리꼴로 넘어갈 때 ' + turn + '°씩 방향이 바뀝니다. 360°÷' + turn + '°=' + answer + '이므로 ' + answer + '개입니다.');
       }
-      const angleCases = [
-        { angles: [90, 90, 60, 120], labels: ["90°", "90°", "60°", "□"], answer: 120 },
-        { angles: [120, 90, 60, 90], labels: ["120°", "90°", "60°", "□"], answer: 90 },
-        { angles: [120, 120, 60, 60], labels: ["120°", "120°", "60°", "□"], answer: 60 }
-      ];
-      const selected = pick(rng, angleCases.slice(0, 1 + level * 1 + 1));
-      return result('정다각형들을 한 꼭짓점에 맞대어 빈틈없이 붙였습니다. 그림의 □에 알맞은 각도를 구하세요.' + regularMeetSvg(selected.angles, selected.labels), selected.answer, '한 점 둘레의 각의 합은 360°입니다. 알려진 각의 합 ' + (360 - selected.answer) + '°을 360°에서 빼면 □는 ' + selected.answer + '°입니다.');
+      if (variant === 2) {
+        const answer = '60°, 453cm';
+        return result('한 변의 길이가 3cm인 정사각형, 정오각형, 정육각형을 차례로 반복하여 이어 붙였습니다. (1) 그림의 ㉠, ㉡의 합과 ㉢, ㉣의 합의 차를 구하세요. (2) 50번째 도형까지 붙였을 때 전체 둘레를 구하세요.' + source42PolygonChainSvg() + source42PolygonEvidence("4-2-u6-e2-example-2-2", { variant, sideLength: 3, markedAngles: [162, 150, 120, 132], firstFiftyCounts: { square: 17, pentagon: 17, hexagon: 16 }, boundarySides: 151, answers: { angleDifference: 60, perimeter: 453 }, answer }), answer, '(1) (162+150)-(120+132)=60°입니다. (2) 처음 정사각형의 바깥 변은 4개이고, 새 도형을 하나 붙일 때에는 변의 수에서 2를 뺀 만큼 바깥 변이 늘어납니다. 바깥 변은 151개이므로 151×3=453cm입니다.');
+      }
+      if (variant === 6) {
+        const answer = 52;
+        return result('축구공의 일부처럼 정오각형 한 개와 정육각형 두 개를 한 변씩 맞대어 붙였습니다. 정오각형 한 개의 둘레가 20cm일 때, 이 도형의 둘레를 구하세요.' + source42SoccerPatchSvg() + source42PolygonEvidence("4-2-u6-e2-mission-2", { variant, pentagonPerimeter: 20, sideLength: 4, boundarySides: 13, answer }), answer, '정오각형 한 변의 길이는 20÷5=4cm입니다. 바깥 변은 13개이므로 4×13=52cm입니다.');
+      }
+      if (variant === 3) {
+        const answer = 66;
+        return result('정오각형과 정육각형을 한 변이 맞닿도록 붙였습니다. 두 선분이 만나는 점에 표시된 ㉠의 크기를 구하세요.' + source42RegularMeetIntersectionSvg() + source42PolygonEvidence("4-2-u6-e2-example-2-3", { variant, polygons: [5, 6], sharedEdge: true, pentagonSideDirection: 144, hexagonDiagonalDirection: 210, adjacentAngle: 114, answer }), answer, '정오각형의 바깥쪽 각은 72°이므로 그 절반은 36°입니다. 정육각형의 바깥쪽 각은 60°이므로 그 절반은 30°입니다. 두 각을 더하면 36°+30°=66°입니다.');
+      }
+      if (variant === 4) {
+        const answer = 112.5;
+        return result('정팔각형에서 선분 ㄱㅁ과 ㄴㄷ이 만나는 점을 ㅂ이라 합니다. ∠ㄱㅂㄷ의 크기를 구하세요.' + source42OctagonIntersectionSvg() + source42PolygonEvidence("4-2-u6-e2-example-2-4", { variant, sides: 8, polygonOrientation: 'flat-top', sourceSegments: 'G-N;G-R;G-D;G-M;N-D;R-M', intersection: 'G-M;N-D', targetAngle: 112.5, adjacentAngle: 67.5, givenAngle: 45, givenAngleRays: 'N-D;G-D', rightAngle: 'G-R-M', answer }), answer, 'ㄱㄹ과 ㄹㅁ의 길이가 같고 ∠ㄱㄹㅁ=90°이므로 삼각형 ㄱㄹㅁ의 나머지 두 각은 각각 45°입니다. 정팔각형의 대각선 관계로 ∠ㄷㄱㅁ=22.5°이고, 그림에 표시된 ∠ㄱㄷㄴ은 45°입니다. 따라서 삼각형 ㄱㅂㄷ에서 ∠ㄱㅂㄷ=180°-22.5°-45°=112.5°입니다.');
+      }
+      if (variant === 5) {
+        const answer = 135;
+        return result('정팔각형에서 그림과 같이 대각선 2개를 그었습니다. 두 대각선이 만나는 점의 아래쪽 둔각 ㉠의 크기를 구하세요.' + source42OctagonIntersectionSvg({ mission: true }) + source42PolygonEvidence("4-2-u6-e2-mission-1", { variant, sides: 8, intersection: 'V6-V0;V7-V1', targetAngle: 135, adjacentAngle: 45, answer }), answer, '정팔각형의 바깥쪽 각은 360°÷8=45°입니다. 두 대각선이 만나는 곳의 작은 각도 45°이므로, 아래쪽 둔각 ㉠은 180°-45°=135°입니다.');
+      }
+      if (variant === 8) {
+        const answer = 15;
+        return result('그림은 실제 크기와 다를 수 있습니다. 정오각형과 정육각형을 한 변이 맞닿도록 붙인 그림에서 ∠ㄹㄷㅊ=27°입니다. ∠ㅁㅈㅊ의 크기를 구하세요.' + source42NotToScaleMeetSvg() + source42PolygonEvidence("4-2-u6-e2-mission-4", { variant, polygons: [5, 6], givenAngle: 27, targetAngle: 15, adjacentAngle: 165, coordinateGivenAngle: 26.8725668, coordinateTargetAngle: 14.8725668, notToScale: true, answer }), answer, '정오각형의 한 꼭짓점 안각은 108°입니다. 주어진 27°를 이용하면 교점 ㅊ에서 생기는 각은 45°이고, 맞꼭지각도 45°입니다. 정육각형의 한 꼭짓점 안각은 120°이므로 ∠ㅁㅈㅊ=180°-120°-45°=15°입니다.');
+      }
+      if (variant === 9) {
+        const answer = 66;
+        return result('정오각형, 정사각형, 정삼각형을 이어 붙였습니다. 선분 ㄱㅇ과 ㅁㅂ을 길게 늘여 만나는 점을 ㅈ이라 할 때, ∠ㅇㅈㅂ의 크기를 구하세요.' + source42PentagonSquareTriangleSvg() + source42PolygonEvidence("4-2-u6-e2-mission-5", { variant, polygons: [5, 4, 3], extensionDirections: [144, 210], targetAngle: 66, adjacentAngle: 114, answer }), answer, '정오각형과 정사각형, 정삼각형의 각을 이용해 그림의 세 각을 차례로 구하면 72°, 102°, 120°입니다. ㅈ을 포함한 사각형의 네 각의 합은 360°이므로 ∠ㅇㅈㅂ=360°-(72°+102°+120°)=66°입니다.');
+      }
+      if (variant === 10) {
+        const answer = 54;
+        return result('정오각형 ㄱㄴㄷㄹㅁ에서 두 대각선 ㄴㅁ과 ㄷㄱ이 만나는 점을 ㅂ이라 하고, 점 ㅂ을 지나는 선분 ㅅㄹ를 그었습니다. ∠ㅅㅂㄱ의 크기를 구하세요.' + source42PentagonDoubleIntersectionSvg() + source42PolygonEvidence("4-2-u6-e2-mission-6", { variant, sides: 5, intersections: ['N-M;D-G', 'B-R;G-N'], targetAngle: 54, adjacentAngle: 126, answer }), answer, '정오각형의 한 꼭짓점 안각은 108°입니다. 대각선을 따라 생기는 이등변삼각형의 밑각들을 구하면 ㅂ에서 ㅅ과 ㄱ 사이의 이웃한 각은 126°입니다. 따라서 ∠ㅅㅂㄱ=180°-126°=54°입니다.');
+      }
+      throw new Error('정다각형의 활용 원문 분기는 0부터 10까지만 생성할 수 있습니다.');
     },
-    tessellationCover({ rng, level, variant = 0 }) {
-      const rows = int(rng, 3 + level, 4 + level);
-      const cols = int(rng, 4 + level, 6 + level);
-      if (variant % 3 === 0) {
-        const side = int(rng, 2, 5 + level);
-        const answer = rows * cols;
-        return result('한 변의 길이가 ' + side + 'cm인 같은 정사각형 타일로 그림과 같은 직사각형 바닥을 빈틈없이 덮었습니다. 사용한 타일은 모두 몇 장입니까?' + tileBoardSvg({ rows, cols }), answer, '가로에 ' + cols + '장, 세로에 ' + rows + '장이므로 ' + cols + ' × ' + rows + ' = ' + answer + '장입니다.');
+    tessellationCover({ variant = 0 }) {
+      if (variant === 0) {
+        const answer = 8;
+        return result('아래 도형 중 크기가 같은 한 가지 도형 여러 개로 평면을 빈틈없이 덮을 수 있는 것은 모두 몇 가지인지 구하세요.' + source42TessellationChoicesSvg() + source42PolygonEvidence("4-2-u6-e3-exploration", { variant, choiceCount: 11, tilingChoiceIndexes: [1, 2, 3, 4, 5, 6, 7, 10], answer }), answer, '같은 도형을 돌리거나 뒤집어 이어 붙였을 때 빈틈이 생기지 않는 도형을 하나씩 확인하면 모두 8가지입니다.');
       }
-      if (variant % 3 === 1) {
-        const evenRows = rows % 2 === 0 ? rows : rows + 1;
-        const answer = Math.ceil(evenRows * cols / 2);
-        return result('같은 정사각형 타일을 그림처럼 파랑, 흰색이 번갈아 나타나도록 빈틈없이 붙였습니다. 파란색 타일은 모두 몇 장입니까?' + tileBoardSvg({ rows: evenRows, cols, highlight: "checker" }), answer, '한 줄마다 파란색 타일은 ' + Math.ceil(cols / 2) + '장과 ' + Math.floor(cols / 2) + '장이 번갈아 있습니다. 전체 ' + (evenRows * cols) + '장 중 절반이므로 파란색 타일은 ' + answer + '장입니다.');
-      }
-      const tileWidth = int(rng, 2, 4 + level);
-      const tileHeight = int(rng, 2, 3 + level);
-      const answer = rows * cols;
-      return result('가로 ' + (cols * tileWidth) + 'cm, 세로 ' + (rows * tileHeight) + 'cm인 직사각형을 가로 ' + tileWidth + 'cm, 세로 ' + tileHeight + 'cm인 같은 직사각형 타일로 덮으려고 합니다. 필요한 타일 수를 구하세요.' + tileBoardSvg({ rows, cols, highlight: "border" }), answer, '가로에는 ' + (cols * tileWidth) + ' ÷ ' + tileWidth + ' = ' + cols + '장, 세로에는 ' + (rows * tileHeight) + ' ÷ ' + tileHeight + ' = ' + rows + '장입니다. 따라서 ' + cols + ' × ' + rows + ' = ' + answer + '장입니다.');
+      if (variant === 1) return result('아래 사다리꼴 조각으로 가로 10cm, 세로 3cm인 직사각형을 빈틈없이 덮으려고 합니다. 필요한 조각 수를 구하세요.' + source42AreaTilingSvg({ kind: "trapezoid" }) + source42PolygonEvidence("4-2-u6-e3-example-3-1", { variant, trapezoidBases: [2, 3], trapezoidHeight: 1, pieceArea: 2.5, targetArea: 30, answer: 12 }), 12, '사다리꼴 한 개의 넓이는 (2+3)×1÷2=2.5cm²입니다. 직사각형의 넓이는 10×3=30cm²이므로 30÷2.5=12개입니다.');
+      if (variant === 2) return result('그림과 같은 직각삼각형 색종이 180장으로 가로 54cm, 세로 20cm인 직사각형을 빈틈없이 덮었습니다. 직각삼각형의 높이를 구하세요.' + source42AreaTilingSvg({ kind: "triangle" }) + source42PolygonEvidence("4-2-u6-e3-example-3-2", { variant, triangleBase: 3, triangleCount: 180, targetArea: 1080, triangleArea: 6, answer: 4 }), 4, '직사각형의 넓이는 54×20=1080cm²입니다. 삼각형 한 장의 넓이는 1080÷180=6cm²이므로 3×높이÷2=6, 높이는 4cm입니다.');
+      if (variant === 3) return result('한 변의 길이가 1cm, 2cm, 3cm인 정사각형 조각을 각각 적어도 한 개씩 사용하여 가로 7cm, 세로 5cm인 직사각형을 덮으려고 합니다. 조각 수를 가장 적게 할 때 필요한 조각은 모두 몇 개인지 구하세요.' + source42SquarePieceCoverSvg() + source42PolygonEvidence("4-2-u6-e3-example-3-3", { variant, targetRows: 5, targetCols: 7, squareSizes: [3, 2, 1], verifiedCounts: { size3: 2, size2: 4, size1: 1 }, answer: 7 }), 7, '큰 정사각형부터 사용하면 3cm 조각 2개, 2cm 조각 4개, 1cm 조각 1개로 빈틈없이 덮을 수 있습니다. 모두 7개입니다.');
+      if (variant === 4) return result('그림과 같은 1칸, 2칸 직사각형 조각 5개로 가로 5칸, 세로 2칸 직사각형을 덮는 서로 다른 방법은 모두 몇 가지인지 구하세요.' + source42FiveDominoBoardSvg() + source42PolygonEvidence("4-2-u6-e3-example-3-4", { variant, rows: 2, cols: 5, tile: '1x2', tileCount: 5, exhaustiveCount: 8, answer: 8 }), 8, '맨 왼쪽 두 칸을 가로 조각으로 채우는 경우와 세로 조각 두 개로 채우는 경우로 나누어 같은 방법으로 계속 세면 모두 8가지입니다.');
+      if (variant === 5) return result('밑변이 5cm, 높이가 4cm인 직각삼각형 조각으로 가로 30cm, 세로 12cm인 직사각형을 덮으려고 합니다. 필요한 조각 수를 구하세요.' + source42AreaTilingSvg({ kind: "mission-triangle" }) + source42PolygonEvidence("4-2-u6-e3-mission-1", { variant, triangleBase: 5, triangleHeight: 4, triangleArea: 10, targetArea: 360, answer: 36 }), 36, '직각삼각형 한 장의 넓이는 5×4÷2=10cm², 직사각형의 넓이는 30×12=360cm²입니다. 360÷10=36개입니다.');
+      if (variant === 6) return result('가로 5cm, 세로 □cm인 같은 직사각형 조각 81장으로 가로 45cm, 세로 36cm인 직사각형을 빈틈없이 덮었습니다. □ 안에 알맞은 수를 구하세요.' + source42RectanglePieceSvg() + source42PolygonEvidence("4-2-u6-e3-mission-2", { variant, pieceWidth: 5, pieceCount: 81, targetWidth: 45, targetHeight: 36, piecesAcross: 9, piecesDown: 9, answer: 4 }), 4, '가로에는 45÷5=9장이 놓입니다. 모두 81장이므로 세로에도 9장이고, 한 조각의 세로는 36÷9=4cm입니다.');
+      if (variant === 7) return result('한 변이 2cm인 정삼각형 모양 조각으로 오른쪽 도형을 채웠습니다. 바르게 설명한 학생을 찾으세요.<br>[민성] 한 변이 2cm인 정삼각형 모양 조각 11개로 채웠어.<br>[상희] ㉠의 각도는 240°야.<br>[종현] 오른쪽 도형의 검은색 선의 길이는 22cm야.' + source42TriangleLatticeSvg() + source42PolygonEvidence("4-2-u6-e3-mission-3", { variant, unitEdgeCm: 2, boundaryDirections: ['E', 'SW', 'SE', 'SW', 'NW', 'W', 'SW', 'NW', 'NE'], boundaryDirectionLengths: [1, 1, 2, 1, 1, 1, 1, 1, 3], unitTriangles: 12, concaveInteriorAngle: 240, perimeterCm: 24, answer: '상희' }), '상희', '정삼각형 조각은 12개이고, 바깥선의 길이는 12×2=24cm입니다. ㉠의 오목한 안쪽 각은 240°이므로 상희의 설명이 맞습니다.');
+      if (variant === 8) return result('왼쪽 사다리꼴 조각을 겹치지 않게 이어 붙여 오른쪽 평행사변형을 만들려고 합니다. 필요한 조각 수를 구하세요.' + source42ParallelogramTilingSvg() + source42PolygonEvidence("4-2-u6-e3-mission-4", { variant, smallBases: [3, 6], smallSide: 3, angle: 60, targetBase: 36, targetSide: 9, answer: 24 }), 24, '두 도형은 모두 60°인 각이 있어 높이를 같은 방법으로 비교할 수 있습니다. 큰 평행사변형의 높이는 9÷3=3배입니다. 작은 사다리꼴의 밑변의 평균은 (3+6)÷2=4.5이고, 넓이의 비는 (36×3)÷4.5=24입니다. 따라서 필요한 조각은 24개입니다.');
+      if (variant === 9) return result('넓이가 3인 ㄴ자 모양 조각으로 오른쪽 테두리 모양을 빈틈없이 덮으려고 합니다. 필요한 조각 수를 구하세요.' + source42RingPieceSvg() + source42PolygonEvidence("4-2-u6-e3-mission-5", { variant, pieceArea: 3, outerSide: 8, innerSide: 4, targetArea: 48, answer: 16 }), 16, '테두리 모양의 넓이는 8×8-4×4=48입니다. ㄴ자 조각 한 개의 넓이가 3이므로 48÷3=16개입니다.');
+      if (variant === 10) return result('그림과 같은 직사각형 조각 8장을 사용하여 큰 직사각형을 만드는 서로 다른 방법은 모두 몇 가지인지 구하세요.' + source42DominoCountSvg() + source42PolygonEvidence("4-2-u6-e3-mission-6", { variant, pieceCells: '2x1', pieceCount: 8, targetRows: 2, targetCols: 8, distinctTilings: 34, answer: 34 }), 34, '왼쪽부터 빈 칸을 채우는 방법을 가로 조각과 세로 조각으로 나누어 빠짐없이 세면 모두 34가지입니다.');
+      throw new Error('평면 덮기 원문 분기는 0부터 10까지만 생성할 수 있습니다.');
     },
-    shapePartitionCompose({ rng, level, variant = 0 }) {
-      const cases = [
-        { name: "ㄴ자 모양 조각", cells: [[0, 0], [0, 1], [1, 0]], rows: 3 + level, cols: 4 + level },
-        { name: "긴 막대 모양 조각", cells: [[0, 0], [1, 0], [2, 0]], rows: 3 + level, cols: 4 + level },
-        { name: "ㅜ자 모양 조각", cells: [[0, 0], [1, 0], [2, 0], [1, 1]], rows: 4 + Math.min(level, 1), cols: 5 + level }
-      ];
-      const selected = cases[variant % cases.length];
-      const answer = placementCount(selected.rows, selected.cols, selected.cells);
-      return result('왼쪽 ' + selected.name + '을 돌리는 것은 가능하지만 뒤집는 것은 불가능합니다. 오른쪽 ' + selected.rows + '행 ' + selected.cols + '열 모눈 안에 선을 맞추어 완전히 놓을 수 있는 서로 다른 방법은 모두 몇 가지입니까?' + piecePlacementSvg(selected), answer, '조각을 돌려 생기는 서로 다른 방향을 모두 확인하고, 각 방향에서 모눈을 벗어나지 않는 위치를 셉니다. 이 조각은 모두 ' + answer + '가지 위치에 놓을 수 있습니다.');
+    shapePartitionCompose({ variant = 0 }) {
+      if (variant === 4) return result('그림과 같이 크기가 같은 마름모 모양 조각 3개를 변끼리 이어 붙여 만들 수 있는 서로 다른 모양은 모두 몇 가지인지 구하세요. 돌리거나 뒤집었을 때 같은 모양은 한 가지로 생각합니다.' + source42RhombiSvg() + source42PolygonEvidence("4-2-u6-e4-example-4-4", { variant, rhombusCount: 3, unitTriangles: 6, equivalence: 'rotate-reflect', answer: 9 }), 9, '세 조각을 이어 붙이는 방법을 모두 확인하고, 돌리거나 뒤집어 겹치는 모양은 하나로 세면 9가지입니다.');
+      if (variant === 8) return result('한 변이 3cm인 정사각형 4개로 이루어진 ㅜ자 모양 조각 4개를 겹치지 않게 이어 붙여 정사각형을 만들었습니다. 만들어진 정사각형의 둘레를 구하세요.' + source42TPieceSquareSvg() + source42PolygonEvidence("4-2-u6-e4-mission-4", { variant, pieceCount: 4, cellsPerPiece: 4, cellSide: 3, targetRows: 4, targetCols: 4, targetSide: 12, answer: 48 }), 48, 'ㅜ자 조각 4개는 작은 정사각형 16개입니다. 4칸×4칸 정사각형이 되고 한 변의 길이는 4×3=12cm이므로 둘레는 12×4=48cm입니다.');
+      const sourceItemId = ['4-2-u6-e4-exploration', '4-2-u6-e4-example-4-1', '4-2-u6-e4-example-4-2', '4-2-u6-e4-example-4-3', '4-2-u6-e4-example-4-4', '4-2-u6-e4-mission-1', '4-2-u6-e4-mission-2', '4-2-u6-e4-mission-3', '4-2-u6-e4-mission-4', '4-2-u6-e4-mission-5', '4-2-u6-e4-mission-6'][variant];
+      return source42LockedPolygon(sourceItemId || '4-2-u6-e4-unknown');
     },
     quadPerpParallelDistance({ rng, level, variant = 0 }) {
       if (variant === 0 || variant === 1) {
