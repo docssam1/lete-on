@@ -20,28 +20,38 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
   });
 });
 
-test("only 6.RP.A opens the reviewed workbook and completion-gated recheck", function () {
-  const before = paths.routeFor("6.RP.A", { fromDiagnostic: true, workbookCompleted: false });
-  assert.equal(before.workbook.state, "available");
-  assert.equal(before.workbook.url, "./clinic-practice.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
-  assert.equal(before.recheck.state, "locked-after-learning");
-  assert.equal(before.recheck.url, "");
-  const after = paths.routeFor("6.RP.A", { fromDiagnostic: true, workbookCompleted: true });
-  assert.equal(after.recheck.state, "available");
-  assert.equal(after.recheck.url, "./clinic-practice.html?cluster=6.RP.A&mode=recheck&audience=student&locale=ko");
-  assert.equal(paths.completionKey("6.RP.A"), "gfield-clinic-workbook:6.RP.A:v1");
+test("reviewed clusters open workbooks with completion-gated rechecks", function () {
+  ["6.RP.A", "6.NS.A", "6.NS.B"].forEach(function (cluster) {
+    const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
+    assert.equal(before.workbook.state, "available");
+    assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
+    assert.equal(before.recheck.state, "locked-after-learning");
+    assert.equal(before.recheck.url, "");
+    const after = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: true });
+    assert.equal(after.recheck.state, "available");
+    assert.equal(after.recheck.url, `./clinic-practice.html?cluster=${cluster}&mode=recheck&audience=student&locale=ko`);
+    assert.equal(paths.completionKey(cluster), `gfield-clinic-workbook:${cluster}:v1`);
+  });
 
   const geometry = paths.routeFor("6.G.A", { workbookCompleted: true });
   assert.equal(geometry.workbook.state, "review-pending");
   assert.equal(geometry.recheck.state, "review-pending");
 });
 
-test("only the exact ratio-cluster match opens an animated clinic lesson", function () {
+test("only exact cluster matches open reviewed animated clinic lessons", function () {
   assert.equal(paths.validateAnimatedMapping(animated.lessons), true);
   const ratio = paths.routeFor("6.RP.A", { fromDiagnostic: true });
   assert.equal(ratio.animated.state, "available");
   assert.equal(ratio.animated.lessonId, "common-total-ratio");
   assert.equal(ratio.animated.url, "./animated-math.html?lesson=common-total-ratio&cluster=6.RP.A&locale=ko");
+  const fractions = paths.routeFor("6.NS.A", { fromDiagnostic: true });
+  assert.equal(fractions.animated.state, "available");
+  assert.equal(fractions.animated.lessonId, "fraction-division-eighths");
+  assert.equal(fractions.animated.url, "./animated-math.html?lesson=fraction-division-eighths&cluster=6.NS.A&locale=ko");
+  const computation = paths.routeFor("6.NS.B", { fromDiagnostic: true });
+  assert.equal(computation.animated.state, "available");
+  assert.equal(computation.animated.lessonId, "gcf-factor-chain");
+  assert.equal(computation.animated.url, "./animated-math.html?lesson=gcf-factor-chain&cluster=6.NS.B&locale=ko");
 
   const geometry = paths.routeFor("6.G.A", { fromDiagnostic: true });
   assert.equal(geometry.animated.state, "review-pending");

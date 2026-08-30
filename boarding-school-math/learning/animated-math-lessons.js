@@ -44,6 +44,50 @@
       tr("Equal totals do not guarantee equal unit sizes. Count the ratio parts before finding one part.", "전체 수가 같아도 한 부분의 크기는 같지 않을 수 있습니다. 먼저 비율의 부분 수를 세세요.", "总数相同不代表每份相同。先数比分中的总份数，再求一份。"), ["ratio-team-a-bar"], ratioIds, "highlight")
   ];
 
+  const fractionIds = ["frac-whole", "frac-eighth-grid", "frac-three-fourths", "frac-six-groups", "frac-equation", "frac-check", "frac-answer"];
+  const fractionBeats = [
+    beat("frac-read", tr("Read the quantities", "양 읽기", "读懂数量"), "problem",
+      tr("We have three-fourths of a meter and cut pieces that are each one-eighth of a meter.", "4분의 3미터의 끈을 8분의 1미터씩 자릅니다.", "有四分之三米的绳子，每段剪成八分之一米。"), [], [], "inspect"),
+    beat("frac-whole", tr("Draw one whole", "전체 1 그리기", "画出一个整体"), "explore",
+      tr("Draw one meter as a single strip. The strip is our whole.", "1미터를 하나의 막대로 그립니다. 이 막대가 전체 1입니다.", "把一米画成一条线段，这条线段表示整体一。"), ["frac-whole"], ["frac-whole"]),
+    beat("frac-eighths", tr("Partition into eighths", "8등분하기", "八等分"), "explore",
+      tr("Partition the whole into eight equal parts. Each small part is one-eighth meter.", "전체를 같은 크기 8칸으로 나눕니다. 한 칸은 8분의 1미터입니다.", "把整体平均分成八份，每一小份是八分之一米。"), ["frac-eighth-grid"], ["frac-whole", "frac-eighth-grid"]),
+    beat("frac-three-fourths", tr("Rename three-fourths", "4분의 3 바꾸어 보기", "改写四分之三"), "explore",
+      tr("Three-fourths covers six of the eight equal parts, so three-fourths equals six-eighths.", "4분의 3은 8칸 중 6칸이므로 8분의 6과 같습니다.", "四分之三覆盖八份中的六份，所以四分之三等于八分之六。"), ["frac-three-fourths"], ["frac-whole", "frac-eighth-grid", "frac-three-fourths"]),
+    beat("frac-count", tr("Count one-eighth groups", "8분의 1씩 세기", "数八分之一的份数"), "solve",
+      tr("Count the one-eighth pieces inside six-eighths. There are six equal groups.", "8분의 6 안에서 8분의 1짜리 조각을 세면 같은 조각이 6개입니다.", "在八分之六里数八分之一的小段，一共有六段。"), ["frac-six-groups"], ["frac-whole", "frac-eighth-grid", "frac-three-fourths", "frac-six-groups"]),
+    beat("frac-equation", tr("Write the equation", "식으로 나타내기", "写出算式"), "solve",
+      tr("The model shows three-fourths divided by one-eighth equals six.", "그림은 4분의 3 나누기 8분의 1이 6임을 보여 줍니다.", "图示说明四分之三除以八分之一等于六。"), ["frac-equation"], ["frac-whole", "frac-eighth-grid", "frac-three-fourths", "frac-six-groups", "frac-equation"]),
+    beat("frac-check", tr("Check by multiplication", "곱셈으로 검산하기", "用乘法检验"), "check",
+      tr("Check the quotient: six times one-eighth equals six-eighths, which is three-fourths.", "검산하면 6 곱하기 8분의 1은 8분의 6이고, 4분의 3과 같습니다.", "检验：六乘八分之一等于八分之六，也就是四分之三。"), ["frac-check"], ["frac-whole", "frac-eighth-grid", "frac-three-fourths", "frac-six-groups", "frac-equation", "frac-check"]),
+    beat("frac-answer", tr("State the answer", "답 말하기", "写出答案"), "answer",
+      tr("Six pieces can be cut from the rope.", "끈은 6조각으로 자를 수 있습니다.", "这根绳子可以剪成六段。"), ["frac-answer"], fractionIds),
+    beat("frac-recap", tr("Explain the meaning", "뜻 연결하기", "说明含义"), "recap",
+      tr("Fraction division asks how many divisor-sized groups fit in the dividend. Rename both quantities with the same unit, then count.", "분수 나눗셈은 나누는 분수 크기의 묶음이 나누어지는 양 안에 몇 개 들어가는지 묻습니다. 같은 단위로 바꾸고 셉니다.", "分数除法是在问被除数里包含多少个与除数同样大小的组。先化成相同单位，再数份数。"), ["frac-six-groups"], fractionIds, "highlight")
+  ];
+
+  const gcfIds = ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain", "gcf-check", "gcf-answer"];
+  const gcfBeats = [
+    beat("gcf-read", tr("Read the two numbers", "두 수 읽기", "读出两个数"), "problem",
+      tr("We need the greatest factor shared by eighty-four and sixty.", "84와 60이 공통으로 가지는 약수 중 가장 큰 수를 찾습니다.", "我们要找84和60共有的最大因数。"), [], [], "inspect"),
+    beat("gcf-values", tr("Set the target", "목표 세우기", "明确目标"), "explore",
+      tr("Place the two numbers side by side so every factor must be checked against both.", "두 수를 나란히 놓고 모든 인수가 양쪽에 공통인지 확인합니다.", "把两个数并排放置，检查每个因数是否两边共有。"), ["gcf-values"], ["gcf-values"]),
+    beat("gcf-factor-84", tr("Factor eighty-four", "84 소인수분해", "分解84"), "explore",
+      tr("Eighty-four factors as two times two times three times seven.", "84는 2 곱하기 2 곱하기 3 곱하기 7입니다.", "84分解为2乘2乘3乘7。"), ["gcf-factor-84"], ["gcf-values", "gcf-factor-84"]),
+    beat("gcf-factor-60", tr("Factor sixty", "60 소인수분해", "分解60"), "explore",
+      tr("Sixty factors as two times two times three times five.", "60은 2 곱하기 2 곱하기 3 곱하기 5입니다.", "60分解为2乘2乘3乘5。"), ["gcf-factor-60"], ["gcf-values", "gcf-factor-84", "gcf-factor-60"]),
+    beat("gcf-common", tr("Match shared factors", "공통 소인수 짝짓기", "配对公有质因数"), "solve",
+      tr("Both factorizations contain two, two, and three. Seven and five are not shared.", "양쪽에 공통인 소인수는 2, 2, 3입니다. 7과 5는 공통이 아닙니다.", "两边共有的质因数是2、2、3；7和5不共有。"), ["gcf-common"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common"]),
+    beat("gcf-chain", tr("Confirm with remainders", "나머지로 다시 확인", "用余数再次确认"), "check",
+      tr("The Euclidean chain ends at twelve: eighty-four leaves twenty-four after sixty, then sixty leaves twelve after two twenty-fours.", "유클리드 나눗셈은 84=60×1+24, 60=24×2+12, 24=12×2+0으로 끝납니다.", "欧几里得除法为84=60×1+24，60=24×2+12，24=12×2+0。"), ["gcf-chain"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain"]),
+    beat("gcf-check", tr("Check both divisions", "두 나눗셈 검산", "检验两个除法"), "check",
+      tr("Twelve divides both numbers exactly: eighty-four divided by twelve is seven, and sixty divided by twelve is five.", "12는 두 수를 모두 정확히 나눕니다. 84 나누기 12는 7이고, 60 나누기 12는 5입니다.", "12能整除两个数：84除以12等于7，60除以12等于5。"), ["gcf-check"], ["gcf-values", "gcf-factor-84", "gcf-factor-60", "gcf-common", "gcf-chain", "gcf-check"]),
+    beat("gcf-answer", tr("State the GCF", "최대공약수 말하기", "写出最大公因数"), "answer",
+      tr("Two times two times three is twelve, so the greatest common factor is twelve.", "2 곱하기 2 곱하기 3은 12이므로 최대공약수는 12입니다.", "2乘2乘3等于12，所以最大公因数是12。"), ["gcf-answer"], gcfIds),
+    beat("gcf-recap", tr("Explain both proofs", "두 검산 연결하기", "连接两种验证"), "recap",
+      tr("Prime-factor matching finds twelve, and the remainder chain independently confirms the same unique greatest common factor.", "공통 소인수의 곱으로 12를 구하고, 나머지 나눗셈으로 같은 최대공약수를 독립적으로 확인했습니다.", "公有质因数的乘积得到12，余数链也独立确认同一个最大公因数。"), ["gcf-common"], gcfIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -66,7 +110,7 @@
       tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
   ];
 
-  return Object.freeze({ schemaVersion: 2, lessons: Object.freeze([
+  return Object.freeze({ schemaVersion: 3, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
       conceptClusterId: "6.RP.A",
@@ -79,6 +123,31 @@
       sceneModel: Object.freeze({ teamA: Object.freeze({ parts: 4, unit: 5 }), teamB: Object.freeze({ parts: 5, unit: 4 }) }),
       mathChecks: Object.freeze([Object.freeze({ method: "unit rate", expression: "20 ÷ 4 + 20 ÷ 5", result: 9, passed: true }), Object.freeze({ method: "substitution", expression: "5 + 15 = 20; 4 + 16 = 20", result: 9, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student adds ratio numbers without finding the value of one part.", teachingPrompt: "Why is one part worth 5 for Team A but 4 for Team B?", successCheck: "The student finds the total number of parts, the unit value, and the requested part in that order." })
+    }),
+    common({
+      id: "fraction-division-eighths", type: "fraction-strip",
+      conceptClusterId: "6.NS.A",
+      eyebrow: "FRACTION DIVISION · VISUAL MODEL", eyebrowI18n: tr("FRACTION DIVISION · VISUAL MODEL", "분수 나눗셈 · 시각 모델", "分数除法 · 可视化模型"),
+      title: "Count equal-size fraction groups", titleI18n: tr("Count equal-size fraction groups", "같은 크기의 분수 묶음을 세기", "数相同大小的分数组"),
+      concept: "Meaning of fraction division", conceptI18n: tr("Meaning of fraction division", "분수 나눗셈의 뜻", "分数除法的意义"),
+      problem: "A rope is 3/4 m long. It is cut into pieces that are each 1/8 m long. How many pieces are made?",
+      problemI18n: tr("A rope is 3/4 m long. It is cut into pieces that are each 1/8 m long. How many pieces are made?", "3/4 m 길이의 끈을 1/8 m씩 자릅니다. 몇 조각이 됩니까?", "一根绳子长3/4米，每段剪成1/8米，可以剪成多少段？"),
+      verifiedAnswer: "6 pieces", answerBeatId: "frac-answer", objectIds: Object.freeze(fractionIds), beats: Object.freeze(fractionBeats),
+      sceneModel: Object.freeze({ wholeParts: 8, shadedParts: 6, divisorParts: 1, quotient: 6, dividend: Object.freeze({ n: 3, d: 4 }), divisor: Object.freeze({ n: 1, d: 8 }) }),
+      mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "3/4 = 6/8; count 1/8 groups", result: 6, passed: true }), Object.freeze({ method: "inverse multiplication", expression: "3/4 × 8/1", result: 6, passed: true }), Object.freeze({ method: "reverse check", expression: "6 × 1/8", result: "3/4", passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student divides the numerators and denominators separately or inverts the dividend.", teachingPrompt: "How many one-eighth sections are shaded when three-fourths is renamed in eighths?", successCheck: "The student explains the quotient as the number of divisor-sized groups and verifies it by multiplication." })
+    }),
+    common({
+      id: "gcf-factor-chain", type: "factor-chain",
+      conceptClusterId: "6.NS.B",
+      eyebrow: "GCF · TWO-WAY VERIFICATION", eyebrowI18n: tr("GCF · TWO-WAY VERIFICATION", "최대공약수 · 두 가지 검산", "最大公因数 · 双重验证"),
+      title: "Match factors, then verify with remainders", titleI18n: tr("Match factors, then verify with remainders", "공통인수를 찾고 나머지로 검산하기", "配对公因数，再用余数检验"),
+      concept: "Greatest common factor", conceptI18n: tr("Greatest common factor", "최대공약수", "最大公因数"),
+      problem: "Find the greatest common factor of 84 and 60.", problemI18n: tr("Find the greatest common factor of 84 and 60.", "84와 60의 최대공약수를 구하세요.", "求84和60的最大公因数。"),
+      verifiedAnswer: "12", answerBeatId: "gcf-answer", objectIds: Object.freeze(gcfIds), beats: Object.freeze(gcfBeats),
+      sceneModel: Object.freeze({ values: Object.freeze([84, 60]), primeFactors: Object.freeze({ 84: Object.freeze([2, 2, 3, 7]), 60: Object.freeze([2, 2, 3, 5]) }), commonFactors: Object.freeze([2, 2, 3]), euclideanChain: Object.freeze([Object.freeze({ dividend: 84, divisor: 60, quotient: 1, remainder: 24 }), Object.freeze({ dividend: 60, divisor: 24, quotient: 2, remainder: 12 }), Object.freeze({ dividend: 24, divisor: 12, quotient: 2, remainder: 0 })]), answer: 12 }),
+      mathChecks: Object.freeze([Object.freeze({ method: "prime factorization", expression: "(2×2×3×7) and (2×2×3×5)", result: 12, passed: true }), Object.freeze({ method: "Euclidean algorithm", expression: "84=60×1+24; 60=24×2+12; 24=12×2", result: 12, passed: true }), Object.freeze({ method: "reverse divisibility", expression: "84÷12=7; 60÷12=5", result: 12, passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student lists a common factor but does not prove it is the greatest.", teachingPrompt: "Which prime factors can be paired across both numbers, and how does the remainder chain confirm your result?", successCheck: "The student identifies 2, 2, and 3 as shared, obtains 12, and verifies that 12 divides both numbers." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",

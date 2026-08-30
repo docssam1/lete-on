@@ -50,6 +50,7 @@ function main() {
   const want = process.argv.slice(2);
   const ids = want.length ? want : Object.keys(LESSONS);
   let checked = 0, flagged = 0;
+  const hits = [];
 
   ids.forEach(id => {
     const L = LESSONS[id];
@@ -75,13 +76,17 @@ function main() {
            0.5~0.9로 벌어졌던 것을 기준으로 잡되 오탐을 줄이려 넉넉히 뒀다) */
         if (bi !== ai && best - scores[ai] > 0.35) {
           flagged++;
-          console.log(`\n${id}/${label} Q${i + 1} ${q[0]}`);
-          console.log(`  정답 ${q[3]} (겹침 ${scores[ai].toFixed(2)}): ${ch[ai]}`);
-          console.log(`  더 겹치는 보기 ${'ABCD'[bi]} (${best.toFixed(2)}): ${ch[bi]}`);
-          console.log(`  해설: ${String(exp).slice(0, 140)}`);
+          hits.push({ margin: best - scores[ai], id, label, i, q, ch, ai, bi, best, keyed: scores[ai], exp });
         }
       });
     });
+  });
+  hits.sort((a, b) => b.margin - a.margin).forEach(h => {
+    console.log(`\n${h.id}/${h.label} Q${h.i + 1} ${h.q[0]}  [격차 ${h.margin.toFixed(2)}]`);
+    console.log(`  문항: ${h.q[1]}`);
+    console.log(`  정답 ${h.q[3]} (${h.keyed.toFixed(2)}): ${h.ch[h.ai]}`);
+    console.log(`  더 겹침 ${'ABCD'[h.bi]} (${h.best.toFixed(2)}): ${h.ch[h.bi]}`);
+    console.log(`  해설: ${String(h.exp).slice(0, 160)}`);
   });
   console.log(`\n검사 ${checked}문항 · 정답보다 다른 보기가 해설에 더 가까운 문항 ${flagged}건 (후보)`);
 }

@@ -319,7 +319,7 @@ window.CARS_D_REGISTER([
           [
             "stop until the roads were repaired.",
             "be able to carry twice as much.",
-            "continue as before.",
+            "continue much as before.",
             "have to land instead of dropping the box."
           ],
           "C",
