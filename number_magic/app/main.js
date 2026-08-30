@@ -3020,8 +3020,34 @@ function stepDiscover(body,u){
     else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps, kid);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
+    mountConceptScene(wrap,u,d.stages.indexOf(s));
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
+}
+
+/* 개념 애니메이션 붙이기 (개념애니-설계.md 2단계) — mathSteps 아래에 "움직이는 예"를 얹는다.
+   기존 mathSteps·result·book은 그대로 두고 덧붙이기만 한다(원칙 3: 승격이지 폐기가 아님).
+   장면의 수는 유닛 파일의 산문이 아니라 **생성기 반환값**에서만 나온다 — 매번 다른 수가
+   나오므로 "다른 수로" 버튼이 그대로 새 예가 된다. 매핑이 없는 유닛(현재 184개)은 조용히 통과. */
+function mountConceptScene(wrap,u,stageIndex){
+  if(!window.NM_SCENE||!window.NM_CANIM)return;
+  const cfg=NM_SCENE.configFor(u.id,stageIndex);
+  if(!cfg)return;
+  const host=document.createElement('div');wrap.appendChild(host);
+  try{
+    NM_CANIM.mount(host,{
+      lang:S.lang,
+      title:L(cfg.title),
+      make:()=>NM_SCENE.buildFor(u.id,stageIndex,
+        genProblem({generator:cfg.generator,params:cfg.params},(cfg.params&&cfg.params.level)||'main'),
+        L(u.title))
+    });
+  }catch(e){
+    /* 조용히 사라지면 "그림이 원래 없는 유닛"과 구별이 안 된다 — 화면에 남긴다. */
+    console.error('[concept-scene]',u.id,stageIndex,e);
+    host.className='nm-cscene-err';
+    host.textContent=(S.lang==='ko'?'개념 애니메이션을 만들지 못했어요: ':S.lang==='en'?'Could not build the concept animation: ':'无法生成概念动画：')+e.message;
+  }
 }
 
 /* ============================================================
