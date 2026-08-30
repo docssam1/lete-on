@@ -82,6 +82,30 @@ function centerX(o){ return o.frame.x + o.frame.width / 2; }
 /* ── i18n 서술 ────────────────────────────────────────────── */
 function nar(ko, en, zh){ return { ko: ko, en: en, zh: zh }; }
 
+/* 한국어 조사 — 수 뒤의 와/과·를/을은 **읽는 소리**로 정해진다.
+   51은 "오십일"이라 받침이 있어 51'과', 49는 "사십구"라 49'를'.
+   숫자만 보고 '와/를'로 고정하면 "51와 49를"처럼 틀린 말이 나온다
+   (실제로 그렇게 나가고 있었다 — 2026-08-31).
+   마지막 자리로 판정한다: 1 일·3 삼·6 육·7 칠·8 팔은 받침 있음,
+   2 이·4 사·5 오·9 구는 없음. 0으로 끝나면 십(ㅂ)·백(ㄱ)은 받침이 있고
+   천·만 단위는 그 앞자리가 살아 있으면 십/백으로 읽히므로 같은 규칙을 탄다.
+   앱의 hasBatchim(wp.js)·kJosa(exam.js)와 같은 목적이지만, 저쪽은 낱말용이라
+   수의 '읽는 소리'를 못 본다. */
+function numBatchim(n){
+  const v = Math.abs(Math.round(Number(n)));
+  if(!isFinite(v)) return false;
+  const last = v % 10;
+  if(last !== 0) return [1, 3, 6, 7, 8].indexOf(last) >= 0;
+  /* 0으로 끝남 — 1000·10000처럼 천/만으로 끝나면 받침 없음(천), 있음(만).
+     그 외(10~90, 100~900 등)는 십·백으로 끝나 받침이 있다. */
+  if(v === 0) return true;                 /* 영 */
+  if(v % 10000 === 0) return true;         /* 만 */
+  if(v % 1000 === 0) return false;         /* 천 */
+  return true;                             /* 십 · 백 */
+}
+function josaWa(n){ return numBatchim(n) ? '과' : '와'; }
+function josaEul(n){ return numBatchim(n) ? '을' : '를'; }
+
 /* ============================================================
    계열 1 — 묶기 (group)
    무엇이 움직이나: nums[] 중 합이 target인 짝이 묶여 부분합으로 접힌다.
@@ -201,7 +225,7 @@ function buildGroup(src, meta){
     const a = items[p[0]], c = items[p[1]];
     b.beat({ id: 'b2.' + gi, phase: 'explore', durationMs: 1400, targetIds: [arcIds[gi]],
       actions: [{ type: 'draw', targetIds: [arcIds[gi]] }],
-      narration: nar(a + '와 ' + c + '를 이으면 ' + target + '. 짝이에요.',
+      narration: nar(a + josaWa(a) + ' ' + c + josaEul(c) + ' 이으면 ' + target + '. 짝이에요.',
                      a + ' and ' + c + ' join to make ' + target + ' — a pair.',
                      a + '和' + c + '连起来是' + target + '，是一对。') });
   });
@@ -301,7 +325,7 @@ function buildPlaceShift(src, meta){
   const b1ids = ['cap'].concat(guides.map(o => o.id), r1.map(o => o.id));
   b.beat({ id: 'b1', phase: 'problem', durationMs: 1200, targetIds: b1ids,
     actions: [{ type: 'draw', targetIds: b1ids }],
-    narration: nar(n + ' × ' + factor + '를 자릿값 칸에 놓아요.',
+    narration: nar(n + ' × ' + factor + josaEul(factor) + ' 자릿값 칸에 놓아요.',
                    'Put ' + n + ' × ' + factor + ' into place-value columns.',
                    '把 ' + n + ' × ' + factor + ' 放进数位格。') });
   const b2ids = r2.map(o => o.id).concat(arrows.map(o => o.id), ['tag.x10']);
@@ -314,7 +338,7 @@ function buildPlaceShift(src, meta){
   const b3ids = r3.map(o => o.id).concat(['minus', 'rule']);
   b.beat({ id: 'b3', phase: 'solve', durationMs: 1600, targetIds: b3ids,
     actions: [{ type: 'draw', targetIds: b3ids }],
-    narration: nar(factor + '묶음은 10묶음보다 1묶음 적어요. 그래서 ' + n + '을 한 번 빼요.',
+    narration: nar(factor + '묶음은 10묶음보다 1묶음 적어요. 그래서 ' + n + josaEul(n) + ' 한 번 빼요.',
                    factor + ' groups is one group short of ten groups — so subtract ' + n + ' once.',
                    factor + '组比10组少1组，所以减去' + n + '一次。') });
   b.beat({ id: 'b4', phase: 'answer', durationMs: 1600, targetIds: r4.map(o => o.id),
