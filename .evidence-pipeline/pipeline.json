@@ -186,6 +186,56 @@
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
         { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko", "note": "PR 139 merge b811ec5e deployed with 12 student items, hidden answers, 12 teacher answers plus teaching moves, locked recheck, 8-part visual model with 6 shaded groups, answer-beat gating, and zero overflow at 390px verified live." }] }
       ]
+    },
+    {
+      "id": "grade6-ns-b-public-clinic-pack",
+      "title": "GFIELD Grade 6 number-system computation visual clinic workbook and recheck",
+      "work_key": "49969741fa0e2c0b456291c50be597a0542d95b6d9ca437bc1e79a90bfd2a5a9",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "approved",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry",
+      "claims": [
+        {
+          "id": "number-system-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "exact BigInt rational arithmetic, reverse multiplication, exhaustive factor checks, independent Euclidean verification, answer-visibility checks, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ns-b-clinic-pack:16-exact-answer-ledger" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ns-b-shared-shell-and-completion" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js", "note": "GFIELD-authored public 6.NS.B.2-4 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ns-b-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 computation language, factor tiles and remainder-chain representations, whole-number operation prerequisites, three four-item sections, and typed exact numeric responses fit the recorded learner stage." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:gcf-factor-arrays-and-remainder-chain" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-gcf-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus before the next step." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:mobile-a4" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:grade6-ns-b-gcf-final-overview-desktop-mobile" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-b-clinic-pack:exact-ledger-reverse-and-factor-checks" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-answer-hidden" }, { "role": "test", "locator": "test:animated-math-browser:gcf-answer-beat-hidden" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-b-clinic-pack:exact-decimal-rejects-nearby-value" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-separate" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js", "note": "Automatic checks cover numeric outputs only; algorithm explanation, distributive justification, mastery, and promotion remain outside the automatic claim." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": false, "status": "pending", "evidence": [] }
+      ]
     }
   ]
 }

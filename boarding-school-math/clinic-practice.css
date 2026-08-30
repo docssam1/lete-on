@@ -108,6 +108,7 @@ body { color:var(--ink); background:var(--paper); }
   .clinic-proof { grid-template-columns:repeat(3,22mm); }
   .clinic-shell { padding:0; }
   .intro-card { padding:4mm; grid-template-columns:1fr 1fr; break-inside:avoid; }
+  .practice-section + .practice-section { break-before:page; }
   .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
   .problem-card { padding:4mm; break-inside:avoid; box-shadow:none; }
   .problem-prompt { min-height:18mm; font-size:10.5pt; }
