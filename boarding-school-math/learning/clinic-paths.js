@@ -8,12 +8,14 @@
   const ANIMATED_BY_CLUSTER = Object.freeze({
     "6.RP.A": Object.freeze({ lessonId: "common-total-ratio", labelKo: "비율 막대 시각 강의", locale: "ko" }),
     "6.NS.A": Object.freeze({ lessonId: "fraction-division-eighths", labelKo: "분수 나눗셈 시각 강의", locale: "ko" }),
-    "6.NS.B": Object.freeze({ lessonId: "gcf-factor-chain", labelKo: "최대공약수 시각 강의", locale: "ko" })
+    "6.NS.B": Object.freeze({ lessonId: "gcf-factor-chain", labelKo: "최대공약수 시각 강의", locale: "ko" }),
+    "6.NS.C": Object.freeze({ lessonId: "signed-rational-number-line", labelKo: "음의 유리수 수직선 강의", locale: "ko" })
   });
   const WORKBOOK_BY_CLUSTER = Object.freeze({
     "6.RP.A": Object.freeze({ packId: "gfield-grade6-rp-a-clinic-v1", labelKo: "비·비율 클리닉 워크북" }),
     "6.NS.A": Object.freeze({ packId: "gfield-grade6-ns-a-clinic-v1", labelKo: "분수 나눗셈 클리닉 워크북" }),
-    "6.NS.B": Object.freeze({ packId: "gfield-grade6-ns-b-clinic-v1", labelKo: "수 체계 계산 클리닉 워크북" })
+    "6.NS.B": Object.freeze({ packId: "gfield-grade6-ns-b-clinic-v1", labelKo: "수 체계 계산 클리닉 워크북" }),
+    "6.NS.C": Object.freeze({ packId: "gfield-grade6-ns-c-clinic-v1", labelKo: "음수·좌표평면 클리닉 워크북" })
   });
   const COMPLETION_PREFIX = "gfield-clinic-workbook:";
 
@@ -82,5 +84,5 @@
     return true;
   }
 
-  return Object.freeze({ schemaVersion: 3, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
+  return Object.freeze({ schemaVersion: 4, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
 });
