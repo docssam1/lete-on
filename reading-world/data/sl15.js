@@ -34,7 +34,7 @@ window.LESSONS['sl15'] = {
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [
-        'Wastewater goes through a carefully designed series of steps to become clean before being released',
+        'Wastewater goes through a designed series of steps to become clean before release',
         'Bacteria are the single most important element in making wastewater safe to release into rivers',
         'Sewage treatment plants use only chemical reactions to fully clean water from homes and factories',
         'Treating wastewater is the most expensive process in modern city management and infrastructure',
@@ -49,7 +49,7 @@ window.LESSONS['sl15'] = {
 
       ['Understanding Sequence', 'Which step happens IMMEDIATELY AFTER large objects are removed?', [
         'Chemicals are added to destroy remaining harmful bacteria',
-        'Wastewater enters settling tanks where solid particles sink to the bottom',
+        'Wastewater enters settling tanks where solid particles sink',
         'Clean water is tested and released back into rivers or the sea',
         'Air is pumped into the water to help bacteria consume organic waste',
       ], 'B', 'After large objects are removed at the entrance screens, the passage describes the water entering settling tanks next. Option B correctly identifies the immediately following step.'],
@@ -62,7 +62,7 @@ window.LESSONS['sl15'] = {
       ], 'D', 'The passage says the water is "left to sit still" and heavier particles "gradually sink to the bottom." No chemicals or machines cause this — gravity does, when water stops moving.'],
 
       ['Comparing and Contrasting', 'How is the role of bacteria DIFFERENT from the role of chemicals in the treatment process?', [
-        'Bacteria consume organic waste that machines cannot filter out, while chemicals are added later to kill remaining harmful organisms',
+        'Bacteria consume organic waste that machines cannot filter, while chemicals kill remaining organisms',
         'Chemicals are used first at the very start of treatment, while bacteria are only added in the final finishing stage',
         'Bacteria filter out large solid objects, while chemicals break down the microscopic particles bacteria miss',
         'Chemicals treat wastewater while it travels through the underground sewer pipes before it arrives at the plant',
@@ -86,7 +86,7 @@ window.LESSONS['sl15'] = {
         'Without treatment, all rivers and oceans would eventually overflow with raw wastewater',
         'Wastewater treatment is mainly important because it provides employment for environmental scientists',
         'Communities that treat wastewater are able to sell the cleaned water at higher prices',
-        'Treating wastewater protects public health and the environment by removing harmful material before water is reused',
+        'Treating wastewater protects public health and the environment before water is reused',
       ], 'D', 'The passage describes removing large debris, organic waste, harmful bacteria, and particles — all of which could damage ecosystems and human health. Option D draws the correct conclusion about the purpose of the entire process.'],
 
       ['Distinguishing Between Fact and Opinion', 'Which of the following is a FACT?', [
@@ -99,7 +99,7 @@ window.LESSONS['sl15'] = {
       ['Understanding Author\'s Purpose', 'Why did the author most likely write this passage?', [
         'To persuade readers to use less water in their homes and reduce the amount of wastewater produced',
         'To argue that the bacteria stage of treatment is more effective than chemical treatment methods',
-        'To explain in clear, sequential steps how wastewater is cleaned before being returned to the environment',
+        'To explain in clear steps how wastewater is cleaned before returning to the environment',
         'To describe the career opportunities available to people who choose to work at sewage treatment plants',
       ], 'C', 'The passage traces each step of wastewater treatment from flush to river in a logical order, clearly aiming to explain a scientific process. Option C reflects this informative and explanatory purpose.'],
 
@@ -114,7 +114,7 @@ window.LESSONS['sl15'] = {
         'Bacteria naturally consuming organic waste when oxygen is pumped into a water tank',
         'Large pieces of plastic being caught by metal screens at a water treatment facility',
         'Treated water being released through pipes back into a river after passing safety tests',
-        'A treatment plant that could instantly convert any type of contaminated liquid into pure spring water in one second',
+        'A plant that instantly turns any contaminated liquid into pure spring water',
       ], 'D', 'Instantly converting any contaminated liquid into pure spring water in one second is physically impossible with any existing or realistically possible technology. Options A, B, and C describe things that occur in real treatment plants.'],
     ],
   },
@@ -130,7 +130,7 @@ window.LESSONS['sl15'] = {
       ['Finding Main Idea', 'What is the main idea of this passage?', [
         'Mia discovered that the bacteria stage is the single most important step in water treatment',
         'Water treatment plants rely mainly on screens and chemicals to make wastewater safe again',
-        'A student\'s visit to a water treatment plant helped her understand the full journey of wastewater',
+        'A student\'s visit to a treatment plant helped her understand wastewater\'s journey',
         'Mia learned that water released into a river would eventually return to her home as tap water',
       ], 'C', 'The passage follows Mia\'s discovery of each step in the treatment process during her plant visit, culminating in a new understanding of the water cycle. Option C captures this central journey of understanding.'],
 
@@ -142,7 +142,7 @@ window.LESSONS['sl15'] = {
       ], 'B', 'The passage describes the settling tanks as a place where "cloudy water slowly became clearer as particles drifted to the bottom." Option B matches this description.'],
 
       ['Understanding Sequence', 'According to the passage, which step in the treatment process happened FIRST?', [
-        'Wastewater traveled through underground sewer pipes from homes to the treatment plant',
+        'Wastewater traveled through underground sewer pipes to the treatment plant',
         'Solid particles drifted and settled to the bottom of the large settling tanks',
         'Bacteria and oxygen were pumped into the water in the biological treatment tank',
         'Clean treated water flowed through a pipe into the river at the end of the process',
@@ -158,19 +158,19 @@ window.LESSONS['sl15'] = {
       ['Comparing and Contrasting', 'How is the metal screen stage DIFFERENT from the bacteria stage?', [
         'The metal screen stage uses bacteria to catch debris, while the bacteria stage uses mechanical filters',
         'The bacteria stage uses physical barriers to stop waste, while the metal screen stage uses living organisms',
-        'The metal screen stage removes large visible objects, while the bacteria stage breaks down invisible organic waste',
+        'The metal screen stage removes large visible objects, while bacteria break down invisible waste',
         'The bacteria stage happens before the metal screen stage in the order of the treatment process',
       ], 'C', 'Screens physically block large objects like plastic wrappers and bottle caps. Bacteria biologically break down organic waste too small to catch mechanically. These are fundamentally different methods targeting different types of waste.'],
 
       ['Making Predictions', 'What would MOST LIKELY happen if the water were released into the river immediately after the screen stage only?', [
         'The water would look completely clean because the screens would have removed all visible material',
-        'The water would still contain harmful organic waste and particles that could damage the river ecosystem',
+        'The water would still contain harmful organic waste that could damage the river ecosystem',
         'The river would naturally purify all remaining waste without any further help from the plant',
         'The oxygen already dissolved in the river would automatically activate bacteria to clean the water',
       ], 'B', 'The screens only remove large debris. Without settling tanks, bacteria, and chemical treatment, harmful organic material and tiny particles would remain in the water, posing a serious risk to the river.'],
 
       ['Finding Word Meaning in Context', 'In the passage, the word "debris" most likely means —', [
-        'pieces of waste and unwanted solid material carried along in the water',
+        'pieces of waste and unwanted solid material that are carried along in the water',
         'a type of chemical added to wastewater to speed up the cleaning process at the plant',
         'microscopic organisms that break down organic matter in biological treatment tanks',
         'a pipe or channel that directs water from one treatment stage to the next inside the plant',
@@ -208,7 +208,7 @@ window.LESSONS['sl15'] = {
         'Students visiting a sewage treatment plant and watching the different treatment stages in action',
         'Bacteria naturally consuming organic waste when oxygen is continuously pumped into water tanks',
         'Treated water being released through a large pipe back into a river after passing safety checks',
-        'A treatment plant that could instantly purify an entire city\'s wastewater in under one single second',
+        'A plant that instantly purifies an entire city\'s wastewater in under one second',
       ], 'D', 'Instantly cleaning an entire city\'s wastewater in under one second is physically impossible. Options A, B, and C all describe realistic events that occur in actual treatment plants around the world.'],
     ],
   },
