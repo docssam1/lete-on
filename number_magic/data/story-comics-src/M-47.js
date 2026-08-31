@@ -1,7 +1,7 @@
 /* M-47 — 비에트, 수 대신 문자를 쓰다 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,numi,sheep,wig,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(110)
@@ -16,7 +16,7 @@ module.exports=function(H){
     { art: svg(
         paper(30,25,140,90)
         + txt(70,75,26,C.ink,'a,b,c')
-        + stick(160,95,0.75,C.brown)),
+        + wig(160,95,0.75)),
       text: { ko:'16세기 프랑스 수학자 비에트는 수 대신 문자를 쓰는 방법을 널리 퍼뜨렸어요.',
               en:'In the 16th century, the French mathematician Viète popularized using letters instead of numbers.',
               zh:'16世纪，法国数学家韦达把用字母代替数字的方法推广开来。' } },

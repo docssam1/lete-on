@@ -1,7 +1,7 @@
 /* A-15 — 나란한 두 선, = 기호의 탄생 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,wig,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(24,20,152,80)
@@ -13,7 +13,7 @@ module.exports=function(H){
               en:'Long ago people wrote out the word "equals" in full, every single time. Was there no shorter way?',
               zh:'很久以前，人们每次都要把"相等"两个字完整写出来。难道没有更简短的写法吗？' } },
     { art: svg(
-        stick(34,80,1.1,C.blue)
+        wig(34,80,1.1)
         +paper(64,26,120,72)
         +'<line x1="86" y1="56" x2="164" y2="56" stroke="'+C.bluedeep+'" stroke-width="4"/>'
         +'<line x1="86" y1="70" x2="164" y2="70" stroke="'+C.bluedeep+'" stroke-width="4"/>'),

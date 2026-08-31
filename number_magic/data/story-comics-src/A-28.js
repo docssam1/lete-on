@@ -1,7 +1,7 @@
 /* A-28 — 4000년 전 파피루스와 가우스의 전설(가우스 덧셈 공식의 뿌리) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,boy,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(16,26,168,72)
@@ -11,7 +11,7 @@ module.exports=function(H){
               en:'The oldest known sequence problem sits on a 4,000-year-old Egyptian papyrus — sharing grain among five people.',
               zh:'已知最古老的数列问题出现在4000年前的埃及纸草书上——把谷物分给五个人。' } },
     { art: svg(
-        stick(70,90,1,C.blue)
+        boy(70,90,1)
         +bubble(140,52,42,26,110,74)
         +txt(140,58,14,C.ink,'1+2+···+100')),
       text: { ko:'그로부터 오랜 세월 뒤, 어린 가우스가 1부터 100까지의 합을 몇 초 만에 구했다는 이야기가 전해져요.',

@@ -1,16 +1,16 @@
 /* N-01 — 숫자가 없던 시절의 양치기(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,shepherd}=H;
   return { panels:[
     { art: svg(
         '<line x1="0" y1="112" x2="200" y2="112" stroke="#C9A063" stroke-width="3"/>'
         +'<rect x="18" y="62" width="6" height="50" fill="#8a6d46"/><rect x="52" y="62" width="6" height="50" fill="#8a6d46"/>'
         +'<line x1="21" y1="70" x2="55" y2="70" stroke="#8a6d46" stroke-width="4"/>'
         +sheep(95,98,1,false)
-        +stick(150,92,1.15)
-        +pouch(150,120,1)
-        +'<path d="M 138 92 Q 132 104 144 112" fill="none" stroke="#2E9E6B" stroke-width="2" stroke-dasharray="3 3" marker-end="none"/>'),
+        +shepherd(130,84,1.05)
+        +pouch(172,116,1)
+        +'<path d="M 140 96 Q 156 106 166 108" fill="none" stroke="#2E9E6B" stroke-width="2" stroke-dasharray="3 3" marker-end="none"/>'),
       text: { ko:'옛날 양치기는 숫자를 몰랐어요. 양이 한 마리 나갈 때마다 조약돌 하나를 주머니에 넣었죠.',
               en:'Long ago, a shepherd knew no numbers. Each time a sheep went out, he dropped one pebble into his pouch.',
               zh:'很久以前，牧羊人不认识数字。每出去一只羊，他就往袋子里放一颗小石子。' } },
@@ -27,10 +27,10 @@ module.exports=function(H){
         '<circle cx="170" cy="26" r="14" fill="#F5D98B"/><circle cx="164" cy="22" r="12" fill="#fdfaf3"/>'
         +'<line x1="0" y1="112" x2="200" y2="112" stroke="#C9A063" stroke-width="3"/>'
         +sheep(70,98,1,true)
-        +stick(140,92,1.15)
-        +pouch(140,120,2)
-        +'<path d="M 152 112 Q 162 100 156 92" fill="none" stroke="#D9534F" stroke-width="2" stroke-dasharray="3 3"/>'
-        +'<circle cx="158" cy="88" r="3.2" fill="#4a5468"/>'),
+        +shepherd(118,82,1.05)
+        +pouch(160,116,2)
+        +'<path d="M 160 100 Q 148 92 132 84" fill="none" stroke="#D9534F" stroke-width="2" stroke-dasharray="3 3"/>'
+        +'<circle cx="128" cy="80" r="3.2" fill="#4a5468"/>'),
       text: { ko:'저녁이 되어 양이 돌아올 때마다 조약돌을 하나씩 꺼냈어요.',
               en:'In the evening, for every sheep that came home, he took one pebble back out.',
               zh:'到了傍晚，每回来一只羊，他就取出一颗石子。' } },

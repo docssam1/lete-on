@@ -1,14 +1,14 @@
 /* M-45 — 접선을 향한 경주(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,wig,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<path d="M 20 116 Q 100 -30 180 116" fill="none" stroke="#16417C" stroke-width="3"/>'
         +'<circle cx="100" cy="43" r="4.5" fill="#D9534F"/>'
         +'<line x1="100" y1="43" x2="100" y2="20" stroke="#4a5468" stroke-width="2"/>'
         +'<polygon points="100,20 122,25 100,32" fill="#D9534F"/>'
-        +stick(38,58,1.1,'#4a5468')),
+        +wig(38,58,1.1)),
       text: { ko:'가장 먼저 페르마가 곡선의 꼭대기와 바닥을 찾는 방법을 고안했어요 — 뉴턴보다 13년이나 앞서서요!',
               en:'Fermat was first to find the tops and bottoms of curves — a full 13 years before Newton!',
               zh:'费马最早想出找曲线顶点和谷底的方法——比牛顿早了整整13年！' } },
@@ -30,7 +30,7 @@ module.exports=function(H){
         '<path d="M 20 120 Q 100 -20 180 120" fill="none" stroke="#16417C" stroke-width="3"/>'
         +'<circle cx="140" cy="66" r="4.5" fill="#D9534F"/>'
         +'<line x1="96" y1="110 " x2="184" y2="22" stroke="#D9534F" stroke-width="2.5"/>'
-        +stick(38,52,1,'#4a5468')+stick(66,52,1,'#16417C')
+        +wig(38,52,1)+wig(66,52,1)
         +'<path d="M 47 44 Q 52 40 57 44" fill="none" stroke="#2E9E6B" stroke-width="2.5" stroke-linecap="round"/>'),
       text: { ko:'두 사람은 서로 다투었지만 — 우리는 오늘 두 발명을 모두 물려받아 쓰고 있답니다!',
               en:'The two men quarrelled bitterly — yet today we happily use both of their inventions!',

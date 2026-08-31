@@ -1,11 +1,11 @@
 /* M-40 — 등차수열 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,numi,sheep,scribe,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(15,10,170,35)
-        +stick(55,95,1.1,C.blue)
+        +scribe(55,95,1.1)
         +pouch(135,95,4)
         +txt(165,60,20,C.sub,'?')
         +ground(120)),

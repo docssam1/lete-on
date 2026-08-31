@@ -1,12 +1,11 @@
 /* B-01 — 체스판과 두 배의 마법(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,king,sage,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
-        stick(40,80,1.3)
-        +'<path d="M 28 50 L 34 40 L 40 48 L 46 38 L 52 48 L 58 40 L 62 50 Z" fill="#F5D98B" stroke="#C9A063" stroke-width="2"/>'
-        +stick(160,84,1.15,'#4a5468')
+        king(40,80,1.3)
+        +sage(160,84,1.15)
         +'<g transform="translate(84,92)">'
         +'<rect x="0" y="0" width="48" height="24" fill="#fff" stroke="#1A2233" stroke-width="2"/>'
         +'<rect x="0" y="0" width="12" height="12" fill="#1A2233"/><rect x="24" y="0" width="12" height="12" fill="#1A2233"/>'
@@ -37,8 +36,7 @@ module.exports=function(H){
               en:'But doubling grows frighteningly fast. By the 64th square, all the rice in the kingdom was not enough!',
               zh:'可是翻倍越来越吓人。到第64格，全国的米加起来都不够！' } },
     { art: svg(
-        stick(50,84,1.3)
-        +'<path d="M 38 54 L 44 44 L 50 52 L 56 42 L 62 52 L 68 44 L 72 54 Z" fill="#F5D98B" stroke="#C9A063" stroke-width="2"/>'
+        king(50,84,1.3)
         +'<text x="44" y="34" text-anchor="middle" font-size="22" font-weight="800" fill="#D9534F">!</text>'
         +'<polygon points="130,116 160,56 190,116" fill="#f5f1e6" stroke="#C9A063" stroke-width="2.5"/>'
         +'<polygon points="142,92 160,56 178,92" fill="#fdf6e3"/>'

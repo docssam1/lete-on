@@ -1,7 +1,7 @@
 /* M-42 — Σ(시그마) 계산 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,numi,sheep,wig,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(10,10,180,60)
@@ -11,7 +11,7 @@ module.exports=function(H){
               en:'Writing out the sum from 1 to 100 meant lining up a long row of numbers each time.',
               zh:'要写出1加到100的算式，每次都得列出一长串数字。' } },
     { art: svg(
-        stick(60,90,1.1,C.blue)
+        wig(60,90,1.1)
         +bubble(140,50,32,20,110,75)
         +txt(140,55,24,C.ink,'S?')),
       text: { ko:'오일러는 이 긴 덧셈을 짧게 줄여 쓸 기호가 없을까 고민했어요.',

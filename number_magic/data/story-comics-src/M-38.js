@@ -1,19 +1,19 @@
 /* M-38 — 로그의 성질 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,scholar,wig,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(20,15,160,55)
         +txt(95,50,20,C.ink,'347×892')
         +txt(150,50,22,C.red,'?')
-        +stick(55,100,1.1,C.sub)
+        +scholar(55,100,1.1)
         +ground(120)),
       text: { ko:'옛날 사람들은 큰 수끼리 곱하고 나누는 계산에 오랜 시간을 쏟아야 했어요.',
               en:'Long ago, multiplying and dividing large numbers took people a very long time.',
               zh:'很久以前，人们乘除大数字要花费很长时间。' } },
     { art: svg(
-        stick(70,85,1.3,C.blue)
+        wig(70,85,1.3)
         +paper(105,25,75,75)
         +txt(142,55,14,C.ink,'1550–1617')
         +txt(142,92,26,C.gold,'log')),

@@ -1,20 +1,20 @@
 /* C-09 — 62자리 수의 50제곱근과 자릿수 예측 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sage,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(70,30,100,50)
         +'<path d="M 78 46 L 162 46 M 78 54 L 162 54 M 78 62 L 162 62 M 78 70 L 162 70" stroke="'+C.grey+'" stroke-width="2"/>'
         +txt(50,60,11,C.sub,'62')
-        +stick(30,96,1,C.blue)
+        +sage(30,96,1)
         +bubble(150,100,30,18,132,86)
         +txt(150,104,15,C.blue,'17')),
       text: { ko:'62자리나 되는 수의 50제곱근을, 그 수를 보지도 않고 17이라고 맞힌 사람이 있었어요!',
               en:'Someone named 17 as the 50th root of a 62-digit number — without ever seeing the number!',
               zh:'有人没看那个62位的数，就说出它的50次方根是17！' } },
     { art: svg(
-        stick(70,90,0.95)
+        sage(70,90,0.95)
         +numi(130,84,0.85)
         +txt(100,26,20,C.sub,'?!')),
       text: { ko:'주변 사람들이 깜짝 놀랐어요. "계산도 안 하고 어떻게 알았어요?"',

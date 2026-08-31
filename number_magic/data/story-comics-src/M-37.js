@@ -1,11 +1,11 @@
 /* M-37 — 로그의 정의: 네이피어가 1614년에 지은 새 이름표 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,astronomer,wig,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<circle cx="30" cy="22" r="2.5" fill="'+C.gold+'"/><circle cx="55" cy="15" r="2" fill="'+C.gold+'"/><circle cx="80" cy="25" r="2.5" fill="'+C.gold+'"/>'
-        +stick(45,80,1.2,C.sub)
+        +astronomer(45,80,1.2)
         +paper(95,45,85,55)
         +txt(137,68,12,C.ink,'48293')
         +txt(137,86,12,C.ink,'×57061')
@@ -23,7 +23,7 @@ module.exports=function(H){
              en:'Logarithms were a clever invention that turned that painful multiplication into much easier addition.',
              zh:'对数是个聪明的发明，把那令人头疼的乘法变成了更容易的加法。' } },
     { art: svg(
-        stick(55,85,1.2,C.blue)
+        wig(55,85,1.2)
         +paper(95,35,80,65)
         +txt(135,58,13,C.sub,'logos')
         +txt(135,76,13,C.sub,'arithmos')

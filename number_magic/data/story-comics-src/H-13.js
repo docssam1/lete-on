@@ -1,10 +1,10 @@
 /* H-13 — 로그표: 곱셈을 덧셈으로 바꾸는 오래된 요령 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,arrow,paper,bubble,txt,ground,astronomer}=H;
   return { panels:[
     { art: svg(
-        stick(60,85,1.2,C.blue)
+        astronomer(60,85,1.2)
         +paper(95,45,85,55)
         +txt(137,68,15,C.ink,'123456789012')
         +txt(137,88,15,C.ink,'×987654321098')

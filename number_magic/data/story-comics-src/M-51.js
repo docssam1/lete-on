@@ -1,7 +1,7 @@
 /* M-51 — 비례론에서 함수까지 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,greek}=H;
   return { panels:[
     { art: svg(
         ground(112)
@@ -9,7 +9,7 @@ module.exports=function(H){
         +'<rect x="112" y="62" width="18" height="50" fill="'+C.gold+'"/>'
         +txt(77,80,15,C.blue,'1')
         +txt(121,56,15,C.gold,'2')
-        +stick(35,96,0.95,C.sub)),
+        +greek(35,96,0.95)),
       text: { ko:'2,300년 전 고대 그리스 사람들은 두 길이를 나란히 놓고 "몇 배인가"부터 따졌어요 — 그게 비(比)예요.',
               en:'2,300 years ago, ancient Greeks laid two lengths side by side and asked "how many times as long?" — that was called a ratio.',
               zh:'2300年前，古希腊人把两条长度放在一起，问"是几倍"——这就是比。' } },

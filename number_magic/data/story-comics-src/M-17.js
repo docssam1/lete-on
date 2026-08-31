@@ -1,13 +1,13 @@
 /* M-17 — 히파소스와 √2의 전설 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,numi,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,numi,greek,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(58,12,84,34)
         +txt(100,36,20,C.ink,'a/b','font-style="italic" font-family="Georgia,serif"')
-        +stick(55,98,1,C.blue)
-        +stick(145,98,1,C.blue)),
+        +greek(55,98,1)
+        +greek(145,98,1)),
       text: { ko:'피타고라스 학파는 "모든 길이는 분수로 나타낼 수 있다"고 믿었어요.',
               en:'The Pythagoreans believed every length could be written as a fraction.',
               zh:'毕达哥拉斯学派相信，任何长度都能写成分数。' } },
@@ -24,7 +24,7 @@ module.exports=function(H){
               zh:'可是边长为1的正方形，其对角线(√2)写不成任何分数。' } },
     { art: svg(
         '<path d="M 0 112 Q 25 102 50 112 T 100 112 T 150 112 T 200 112" stroke="'+C.blue+'" stroke-width="3" fill="none"/>'
-        +'<g transform="rotate(25 100 60)">'+stick(100,60,1,C.grey)+'</g>'
+        +'<g transform="rotate(25 100 60)">'+greek(100,60,1)+'</g>'
         +bubble(150,38,26,16,122,55)
         +txt(150,42,15,C.red,'√2','font-family="Georgia,serif"')),
       text: { ko:'이 비밀을 밖으로 알린 히파소스가 바다에 던져졌다는 이야기가 전해져요 — 사실인지는 아무도 몰라요.',

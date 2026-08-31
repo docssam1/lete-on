@@ -1,12 +1,12 @@
 /* M-59 — 연필을 안 떼는 그림에서 엄밀한 식으로 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,txt,ground}=H;
+  const {C,svg,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         ground(120)
         +'<path d="M 60 108 Q 110 60 170 100" fill="none" stroke="'+C.blue+'" stroke-width="3"/>'
-        +stick(40,86,0.9,C.ink)
+        +wig(40,86,0.9)
         +'<circle cx="60" cy="108" r="3.5" fill="'+C.gold+'"/>'),
       text: { ko:"옛날에는 '연필을 떼지 않고 그릴 수 있으면 연속'이라는 직관적인 설명만 있었어요.",
               en:"Long ago, 'continuous' was explained only intuitively — if you could draw it without lifting your pen.",
@@ -21,7 +21,7 @@ module.exports=function(H){
               en:'But for a strange graph where just one single point had a different value, whether it was continuous stayed unclear.',
               zh:'可如果图像上只有一个点的值不一样，这种情况到底算不算连续，说法很模糊。' } },
     { art: svg(
-        stick(46,80,1.1,C.blue)
+        wig(46,80,1.1)
         +txt(140,66,17,C.ink,'lim')
         +txt(140,96,17,C.ok,'f(a)')
         +'<line x1="122" y1="80" x2="158" y2="80" stroke="'+C.ink+'" stroke-width="2"/>'),

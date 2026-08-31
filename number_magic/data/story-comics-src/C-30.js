@@ -1,7 +1,7 @@
 /* C-30 — 알고리즘이라는 이름을 가진 사람 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,numi,arrow,paper,bubble,txt,ground,scholar}=H;
   return { panels:[
     { art: svg(
         ground(120)
@@ -14,7 +14,7 @@ module.exports = function(H){
               en:'Baghdad, about 1,200 years ago. The word algorithm — what was it originally?',
               zh:'大约1200年前的巴格达。algorithm这个词原本是什么？' } },
     { art: svg(
-        stick(60,80,1.15,C.blue)
+        scholar(60,80,1.15)
         +paper(90,45,80,50)
         +txt(130,74,20,C.ink,'?')
         +arrow(130,100,130,118,C.gold,3)
@@ -27,7 +27,7 @@ module.exports = function(H){
         +txt(60,45,15,C.ink,'al-jabr')
         +arrow(94,40,120,40,C.gold,3)
         +txt(155,45,17,C.blue,'algebra')
-        +stick(60,100,1.1,C.blue)
+        +scholar(60,100,1.1)
         +'<rect x="100" y="80" width="70" height="40" rx="4" fill="'+C.mist+'" stroke="'+C.sub+'" stroke-width="2"/>'
         +'<line x1="123" y1="80" x2="123" y2="120" stroke="'+C.sub+'" stroke-width="1.5"/>'
         +'<line x1="147" y1="80" x2="147" y2="120" stroke="'+C.sub+'" stroke-width="1.5"/>'),

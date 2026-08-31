@@ -1,7 +1,7 @@
 /* M-62 — 행성의 순간 속도, 미적분의 탄생 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,arrow,txt,ground}=H;
+  const {C,svg,numi,arrow,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         ground(100)
@@ -18,7 +18,7 @@ module.exports=function(H){
         '<circle cx="100" cy="76" r="5" fill="'+C.gold+'"/>'
         +'<path d="M 60 76 A 40 32 0 1 1 140 76 A 40 32 0 1 1 60 76" fill="none" stroke="'+C.blue+'" stroke-width="2"/>'
         +'<circle cx="140" cy="76" r="5" fill="'+C.red+'"/>'
-        +stick(40,102,0.85,C.sub)),
+        +wig(40,102,0.85)),
       text: { ko:'뉴턴은 행성의 위치가 시시각각 바뀌는 걸 보며, 그 순간의 속도를 구하고 싶어 했어요.',
               en:"Watching a planet's position change moment by moment, Newton wanted to find the speed at that exact instant.",
               zh:'牛顿看着行星的位置每时每刻都在变化，很想求出那一刻的速度。' } },

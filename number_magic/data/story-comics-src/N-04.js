@@ -1,7 +1,7 @@
 /* N-04 — 눈금 막대와 통장 이야기 (기수법 놀이) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,numi,sheep,pouch,arrow,paper,bubble,txt,ground,shepherd}=H;
   const bird=(x,y)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="9" ry="7" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2"/>'
     +'<polygon points="'+(x+9)+','+y+' '+(x+16)+','+(y-2)+' '+(x+9)+','+(y+4)+'" fill="'+C.gold+'"/>'
     +'<circle cx="'+(x+3)+'" cy="'+(y-3)+'" r="1.4" fill="'+C.ink+'"/>';
@@ -12,7 +12,7 @@ module.exports=function(H){
     { art: svg(
         ground(112)
         +sheep(55,96,0.9,false)
-        +stick(122,88,1.1)
+        +shepherd(122,88,1.1)
         +'<rect x="148" y="56" width="7" height="56" rx="2" fill="'+C.brown+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
         +[0,1,2].map(i=>'<line x1="145" y1="'+(66+i*14)+'" x2="159" y2="'+(66+i*14)+'" stroke="'+C.ink+'" stroke-width="2"/>').join('')),
       text:{ ko:'옛날 사람들은 숫자를 못 썼어요. 양이 한 마리 나갈 때마다 나무 막대에 눈금 하나를 새겼죠.',

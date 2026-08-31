@@ -1,7 +1,7 @@
 /* M-14 — 저울의 균형에서 algebra까지 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,scholar,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<polygon points="100,110 84,132 116,132" fill="'+C.brown+'"/>'
@@ -34,7 +34,7 @@ module.exports=function(H){
               en:'The answer is "remove the same amount from the other side too" — only then does the balance (equation) stay true.',
               zh:'答案是"另一边也要拿掉一样多"——这样天平(等式)才能保持平衡。' } },
     { art: svg(
-        stick(45,86,1.25,C.blue)
+        scholar(45,86,1.25)
         +paper(80,32,100,80)
         +txt(130,80,17,C.ink,'al-jabr','font-style="italic" font-family="Georgia,serif"')),
       text: { ko:'9세기 수학자 알콰리즈미는 책 제목에 "al-jabr"(복원하다, 맞추다)라는 말을 썼어요.',

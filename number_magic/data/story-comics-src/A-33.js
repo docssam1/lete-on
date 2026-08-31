@@ -1,7 +1,7 @@
 /* A-33 — 골드바흐의 풀리지 않은 질문(합과 차의 뿌리) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,wig,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(14,16,172,90)
@@ -12,7 +12,7 @@ module.exports=function(H){
               en:'4=2+2, 6=3+3, 8=3+5, 10=5+5. Is every even number above 2 the sum of two primes?',
               zh:'4=2+2、6=3+3、8=3+5、10=5+5。大于2的偶数，总能写成两个质数之和吗？' } },
     { art: svg(
-        stick(60,84,1.1,C.blue)
+        wig(60,84,1.1)
         +bubble(130,50,36,24,96,74)
         +txt(130,56,18,C.ink,'?')
         +txt(100,120,13,C.sub,'300')),

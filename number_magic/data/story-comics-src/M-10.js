@@ -1,11 +1,11 @@
 /* M-10 — 데카르트, 곱한 횟수를 어깨 위로 올리다 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         [0,1,2,3,4,5,6,7].map(function(i){return txt(18+i*23,26,13,C.sub,'×2');}).join('')
-        +stick(100,92,1.2,C.blue)
+        +wig(100,92,1.2)
         +txt(140,58,20,C.ink,'😩')),
       text: { ko:'옛날엔 2를 열 번 곱한 수도 2×2×2×2×2×2×2×2×2×2라고 전부 다 써야 했어요.',
               en:'Long ago, even 2 multiplied ten times had to be spelled out in full: 2×2×2×2×2×2×2×2×2×2.',
@@ -22,7 +22,7 @@ module.exports=function(H){
               en:'Before that, every scholar had a different way to mark how many times something was multiplied.',
               zh:'在那之前，每位学者标记乘了几次的方法都各不相同。' } },
     { art: svg(
-        stick(45,92,1.2,C.blue)
+        wig(45,92,1.2)
         +paper(75,28,100,72)
         +txt(112,82,42,C.ink,'a','font-style="italic" font-family="Georgia,serif"')
         +arrow(122,64,148,48,C.gold,2)
@@ -32,7 +32,7 @@ module.exports=function(H){
               zh:'17世纪，笛卡尔提议"把乘的次数写成右上角的小数字"——记号aⁿ就这样诞生了。' } },
     { art: svg(
         txt(100,55,26,C.ink,'a³×a⁴=a⁷','font-family="Georgia,serif" font-style="italic"')
-        +stick(35,105,1.05,C.blue)
+        +wig(35,105,1.05)
         +txt(165,105,20,C.gold,'✨')),
       text: { ko:'이제 2를 100번 곱한 수도 2¹⁰⁰이라고 짧게 쓸 수 있어요 — 곱한 횟수만 세면 끝!',
               en:'Now even 2 multiplied 100 times can be written simply as 2¹⁰⁰ — just count how many times you multiplied!',

@@ -1,7 +1,7 @@
 /* M-49 — 상자 속 모든 것에 곱하기, 분배법칙의 역사 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,scholar,greek,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<rect x="70" y="40" width="80" height="45" rx="6" fill="'+C.cream+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
@@ -18,7 +18,7 @@ module.exports=function(H){
         + '<rect x="90" y="35" width="40" height="60" fill="none" stroke="'+C.gold+'" stroke-width="2.5"/>'
         + txt(60,105,14,C.sub,'b')
         + txt(110,105,14,C.sub,'c')
-        + stick(165,90,0.75,C.brown)),
+        + scholar(165,90,0.75)),
       text: { ko:'고대 바빌로니아와 이집트 사람들도 넓이를 나눠 계산할 때 이 원리를 무의식중에 썼어요.',
               en:'Ancient Babylonians and Egyptians used this same idea, without even realizing it, when splitting areas to calculate.',
               zh:'古巴比伦人和埃及人在分割面积计算时，也不自觉地用到了这个原理。' } },
@@ -26,7 +26,7 @@ module.exports=function(H){
         paper(20,20,100,100)
         + '<rect x="35" y="45" width="70" height="45" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
         + '<line x1="70" y1="45" x2="70" y2="90" stroke="'+C.ink+'" stroke-width="2"/>'
-        + stick(160,90,0.85,C.blue)),
+        + greek(160,90,0.85)),
       text: { ko:'기원전 3세기, 유클리드가 『원론』에서 이 원리를 도형으로 처음 증명했어요.',
               en:'In the 3rd century BCE, Euclid was the first to prove this principle geometrically, in his "Elements".',
               zh:'公元前3世纪，欧几里得在《几何原本》中首次用图形证明了这个原理。' } },

@@ -1,7 +1,7 @@
 /* A-10 — 빼기 기호의 탄생(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,scribe,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<rect x="34" y="24" width="132" height="92" rx="6" fill="#fdf6e3" stroke="#C9A063" stroke-width="2.5"/>'
@@ -12,7 +12,7 @@ module.exports=function(H){
               en:'Old books wrote out the Latin word minus — meaning "less" — in full.',
               zh:'从前的书要把"不足"完整写成拉丁语minus。' } },
     { art: svg(
-        stick(36,74,1.2,'#4a5468')
+        scribe(36,74,1.2)
         +'<rect x="70" y="34" width="112" height="72" rx="6" fill="#fdf6e3" stroke="#C9A063" stroke-width="2.5"/>'
         +'<text x="106" y="80" text-anchor="middle" font-size="20" font-style="italic" fill="#b0b7c3" font-family="Georgia,serif" text-decoration="line-through">minus</text>'
         +'<text x="156" y="80" text-anchor="middle" font-size="24" font-weight="700" fill="#16417C" font-family="Georgia,serif">−m</text>'),

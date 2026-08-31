@@ -1,7 +1,7 @@
 /* C-31 — 낙타 17마리와 이웃의 마법 같은 한 마리 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,arrow,paper,bubble,txt,ground,sage}=H;
   function camel(x,y,s,col){
     col=col||C.brown;
     return '<g transform="translate('+x+','+y+') scale('+s+')" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round" fill="none">'
@@ -15,7 +15,7 @@ module.exports = function(H){
         +txt(50,42,12,C.ink,'17')
         +camel(120,90,1.5)
         +camel(155,95,1.3)
-        +stick(90,55,1,C.sub)),
+        +sage(90,55,1)),
       text: { ko:'아버지가 낙타 17마리를 남기며 유언했어요: 첫째 1/2, 둘째 1/3, 막내 1/9.',
               en:'A father left 17 camels with a will: half to the eldest, a third to the second, a ninth to the youngest.',
               zh:'父亲留下17头骆驼和遗嘱：老大1/2、老二1/3、老幺1/9。' } },

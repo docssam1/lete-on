@@ -1,7 +1,7 @@
 /* M-61 — 삼각형을 채우다 뺄셈이 된 넓이 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,arrow,txt,ground}=H;
+  const {C,svg,numi,arrow,txt,ground,greek}=H;
   return { panels:[
     { art: svg(
         ground(104)
@@ -16,7 +16,7 @@ module.exports=function(H){
         +'<polygon points="42,112 158,112 100,40" fill="none" stroke="'+C.gold+'" stroke-width="2"/>'
         +'<polygon points="42,112 100,40 71,112" fill="'+C.mist+'" stroke="'+C.gold+'" stroke-width="1.5"/>'
         +'<polygon points="158,112 100,40 129,112" fill="'+C.mist+'" stroke="'+C.gold+'" stroke-width="1.5"/>'
-        +stick(30,90,0.85,C.sub)),
+        +greek(30,90,0.85)),
       text: { ko:"기원전 3세기, 아르키메데스는 그 안을 작은 삼각형으로 채우고 또 채우는 '소진법'으로 넓이에 다가갔어요.",
               en:"In the 3rd century BCE, Archimedes approached the area with 'exhaustion' — filling it with smaller and smaller triangles, over and over.",
               zh:"公元前3世纪，阿基米德用'穷竭法'逼近这块面积——不断用更小的三角形填满它。" } },

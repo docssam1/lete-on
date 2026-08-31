@@ -1,12 +1,12 @@
 /* C-21 — 타율로 만나는 분수: 2/3과 3/4은 어떻게 더할까 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,arrow,paper,bubble,txt,ground,boy}=H;
   return { panels:[
     { art: svg(
         ground(115)
         +'<polygon points="150,58 170,78 150,98 130,78" fill="none" stroke="'+C.gold+'" stroke-width="2"/>'
-        +stick(50,85,1.15,C.blue)
+        +boy(50,85,1.15)
         +'<line x1="58" y1="80" x2="80" y2="60" stroke="'+C.brown+'" stroke-width="4" stroke-linecap="round"/>'
         +'<circle cx="94" cy="48" r="5" fill="'+C.gold+'" stroke="'+C.ink+'" stroke-width="1.5"/>'
         +txt(105,40,18,C.blue,'2/3')
@@ -16,7 +16,7 @@ module.exports = function(H){
               zh:'昨天3打数2安打（2/3），今天4打数3安打（3/4）。' } },
     { art: svg(
         ground(115)
-        +stick(50,90,1.15,C.blue)
+        +boy(50,90,1.15)
         +bubble(132,50,40,24,102,78)
         +txt(132,46,12,C.ink,'2/3+3/4')
         +txt(132,62,12,C.ink,'÷2=?')),

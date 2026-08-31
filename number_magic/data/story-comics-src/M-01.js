@@ -1,7 +1,7 @@
 /* M-01 — 붉은 산가지, 검은 산가지(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         '<rect x="30" y="30" width="140" height="80" rx="6" fill="#fdf6e3" stroke="#C9A063" stroke-width="2.5"/>'
@@ -21,7 +21,7 @@ module.exports=function(H){
               en:'Black rods meant negative numbers (−). One glance at the colour told you the sign!',
               zh:'黑色的筹表示负数(−)。一看颜色就知道正负！' } },
     { art: svg(
-        stick(52,78,1.3,'#4a5468')
+        wig(52,78,1.3)
         +'<ellipse cx="134" cy="52" rx="44" ry="26" fill="#fff" stroke="#1A2233" stroke-width="2"/>'
         +'<path d="M 104 70 L 92 84 L 112 74 Z" fill="#fff" stroke="#1A2233" stroke-width="2"/>'
         +'<text x="126" y="60" text-anchor="middle" font-size="20" font-weight="800" fill="#D9534F">−5</text>'

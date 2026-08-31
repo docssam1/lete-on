@@ -1,7 +1,7 @@
 /* M-60 — 산꼭대기가 평평해지는 순간 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,arrow,txt,ground}=H;
+  const {C,svg,numi,arrow,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         ground(114)
@@ -16,13 +16,13 @@ module.exports=function(H){
         ground(118)
         +'<path d="M 60 112 Q 130 40 190 100" fill="none" stroke="'+C.sub+'" stroke-width="3"/>'
         +'<line x1="112" y1="46" x2="150" y2="46" stroke="'+C.gold+'" stroke-width="2.5" stroke-dasharray="4 3"/>'
-        +stick(34,84,1,C.sub)),
+        +wig(34,84,1)),
       text: { ko:'17세기, 미적분이 발명되기도 전에 페르마는 산꼭대기에서 곡선이 잠깐 수평이 된다는 걸 알아챘어요.',
               en:'In the 17th century — even before calculus was invented — Fermat noticed that a curve momentarily levels out at the top of a hill.',
               zh:'17世纪，在微积分被发明之前，费马就注意到曲线在山顶处会短暂变得水平。' } },
     { art: svg(
-        stick(50,70,1,C.blue)
-        +stick(78,70,1,C.gold)
+        wig(50,70,1)
+        +wig(78,70,1)
         +arrow(100,68,138,68,C.ink,2.5)
         +txt(168,76,18,C.red,"f'=0")),
       text: { ko:"훗날 뉴턴과 라이프니츠의 미적분학이 이 발견을 f'(x)=0이라는 정확한 방정식으로 다듬었어요.",

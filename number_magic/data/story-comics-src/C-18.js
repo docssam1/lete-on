@@ -1,7 +1,7 @@
 /* C-18 — ÷ 기호의 비밀과 분해 나눗셈 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,numi,arrow,paper,bubble,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         '<circle cx="100" cy="46" r="8" fill="'+C.ink+'"/>'
@@ -26,7 +26,7 @@ module.exports=function(H){
         paper(34,30,132,66)
         +txt(100,64,30,C.ink,'÷')
         +txt(100,92,14,C.gold,'1659')
-        +stick(160,96,0.85)),
+        +wig(160,96,0.85)),
       text: { ko:'1659년 스위스의 라안이 이 기호를 나눗셈 기호로 쓰기 시작했어요.',
               en:'In 1659, Switzerland\'s Johann Rahn began using this symbol for division.',
               zh:'1659年瑞士人拉恩开始用这个符号表示除法。' } },

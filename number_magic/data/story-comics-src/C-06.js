@@ -1,7 +1,7 @@
 /* C-06 — 구거법과 ×9 전략 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,merchant,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         txt(70,60,20,C.blue,'37×9')
@@ -21,7 +21,7 @@ module.exports=function(H){
               en:'3+3+3=9. Always 9! The remainder when divided by 9 survives in the digit sum.',
               zh:'3+3+3=9。总是9！因为除以9的余数会原样留在数位和里。' } },
     { art: svg(
-        stick(46,86,1.15)
+        merchant(46,86,1.15)
         +paper(84,40,80,66)
         +txt(124,66,16,C.blue,'37×9')
         +txt(124,88,16,C.gold,'333')

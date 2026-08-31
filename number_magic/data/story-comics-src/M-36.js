@@ -1,7 +1,7 @@
 /* M-36 — 거듭제곱근과 유리수 지수: 16세기의 계산 고통에서 태어난 사다리 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,astronomer,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<circle cx="35" cy="25" r="2.5" fill="'+C.gold+'"/><circle cx="55" cy="18" r="2" fill="'+C.gold+'"/><circle cx="75" cy="28" r="2.5" fill="'+C.gold+'"/>'
@@ -14,7 +14,7 @@ module.exports=function(H){
              en:'In the late 1500s, navigation and astronomy demanded multiplying and dividing numbers with huge numbers of digits.',
              zh:'16世纪后期，航海和天文学需要对位数极多的数做乘除。' } },
     { art: svg(
-        stick(85,80,1.3,C.sub)
+        astronomer(85,80,1.3)
         +paper(105,35,85,60)
         +txt(147,60,12,C.ink,'48293')
         +txt(147,78,12,C.ink,'×57061')

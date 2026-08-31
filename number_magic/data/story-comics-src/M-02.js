@@ -1,11 +1,11 @@
 /* M-02 — 상인의 장부, 재산은 +, 빚은 − */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,merchant,scholar}=H;
   return { panels:[
     { art: svg(
         ground(115)
-        + stick(50,90,1.05,C.blue)
+        + merchant(50,90,1.05)
         + pouch(90,80,3)
         + txt(90,60,20,C.ok,'+')
         + paper(120,50,50,40)
@@ -18,7 +18,7 @@ module.exports=function(H){
         + txt(100,50,22,C.ink,'628')
         + txt(70,95,26,C.ok,'+')
         + txt(130,95,26,C.red,'−')
-        + stick(165,100,0.8,C.blue)),
+        + scholar(165,100,0.8)),
       text: { ko:'서기 628년 무렵 인도 수학자들도 재산은 +, 빚은 −로 적고 계산 규칙까지 정리했어요.',
               en:'Around 628 CE, Indian mathematicians wrote wealth as + and debt as −, and worked out the rules for combining them.',
               zh:'大约公元628年，印度数学家也把财产记作+、债务记作−，并整理出运算规则。' } },
@@ -38,7 +38,7 @@ module.exports=function(H){
         + txt(60,80,24,C.ok,'+')
         + txt(100,80,24,C.ink,'=')
         + txt(140,80,24,C.red,'−')
-        + stick(100,45,0.7,C.blue)),
+        + merchant(100,45,0.7)),
       text: { ko:'그래서 부호가 같으면 더하고 다른 부호는 큰 쪽을 따르는 규칙, 상인의 장부에서 시작됐어요.',
               en:'So the rule — add same signs, follow the bigger one when signs differ — began right there in the merchant\'s ledger.',
               zh:'所以"同号相加、异号跟大的符号"这条规则，正是从商人的账本开始的。' } },

@@ -1,7 +1,7 @@
 /* M-08 — ∞ 기호와 유한소수 판별 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
   return { panels:[
     { art: svg(
         '<line x1="100" y1="30" x2="100" y2="110" stroke="'+C.grey+'" stroke-width="2"/>'
@@ -16,7 +16,7 @@ module.exports=function(H){
         paper(30,20,140,90)
         + txt(100,60,50,C.blue,'∞')
         + txt(100,98,16,C.sub,'1655')
-        + stick(160,105,0.7,C.ink)),
+        + wig(160,105,0.7)),
       text: { ko:'1655년, 수학자 월리스는 "끝이 없다"는 뜻을 담아 무한대 기호 ∞를 처음 썼어요.',
               en:'In 1655, the mathematician Wallis first used the symbol ∞ to mean "without end".',
               zh:'1655年，数学家沃利斯首次用∞符号表示"没有尽头"。' } },

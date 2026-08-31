@@ -1,7 +1,7 @@
 /* M-55 — 사인법칙 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,scholar}=H;
   return { panels:[
     { art: svg(
         '<polygon points="40,110 160,110 100,30" fill="none" stroke="'+C.blue+'" stroke-width="2.5"/>'
@@ -20,7 +20,7 @@ module.exports=function(H){
               en:'Astonishingly, that value equals the diameter of the circle surrounding the triangle.',
               zh:'令人惊讶的是，这个值正好等于围住三角形的外接圆的直径。' } },
     { art: svg(
-        stick(60,100,1.1,C.sub)
+        scholar(60,100,1.1)
         +'<circle cx="120" cy="25" r="3" fill="'+C.gold+'"/><circle cx="150" cy="40" r="3" fill="'+C.gold+'"/><circle cx="170" cy="20" r="3" fill="'+C.gold+'"/><circle cx="135" cy="55" r="3" fill="'+C.gold+'"/>'
         +'<path d="M 80 90 Q 100 70 120 90" fill="none" stroke="'+C.brown+'" stroke-width="2"/>'),
       text: { ko:'10~11세기 페르시아의 아부 알와파와 알비루니는 별의 위치를 계산하려고 이 성질을 연구했어요.',
