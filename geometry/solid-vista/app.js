@@ -1,4 +1,4 @@
-import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-5";
+import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-6";
 import { levels as diceLevels } from "../games/dice-roll/levels.js?v=dice-roll-3";
 import { levels as somaLevels } from "../games/soma-cube/levels.js?v=soma-1";
 import { readProfile } from "../shared/profile-storage.js";
@@ -12,10 +12,10 @@ const copy = {
   ja: { district:"空間・立体エリア",title:"展開図を折り、ピースを組んで立体の秘密を探ろう",subtitle:"平面からサイコロ、正多面体、ソーマキューブへ進みます。",net:"展開図展望台",desc:"面が折れる順番と向かい合う関係を観察します。",dice:"サイコロを転がす",diceDesc:"マス目の上を転がし、上・前・右の面の変化を追います。",session:"各段階10問 · 1回5問",sheet:"プリント",start:"スタート",soma:"ソーマキューブ工房",somaDesc:"7つのピースを回して目標の立体を完成します。" }
 };
 const levelNames = {
-  ko:[["정육면체 전개도","접히는 전개도 찾기"],["그림 면 마주보기","색과 그림으로 반대 면 찾기"],["주사위 면 관계","마주 보는 면 찾기"],["기호와 방향","글자·화살표 방향 추론"],["정다면체 탐험","삼각형·오각형 면까지"]],
-  en:[["Cube Nets","Find a net that folds"],["Opposite Pictures","Find opposite colors and pictures"],["Dice Faces","Find opposite faces"],["Symbols and Direction","Track arrows and letters"],["Regular Solids","Explore more face shapes"]],
-  zh:[["正方体展开图","寻找能折叠的展开图"],["图案的相对面","用颜色和图案寻找相对面"],["骰子的面","寻找相对的面"],["符号与方向","判断箭头和文字"],["正多面体探索","探索更多面的形状"]],
-  ja:[["立方体の展開図","折れる展開図探し"],["絵の向かい合う面","色と絵で反対の面を探す"],["サイコロの面","向かい合う面探し"],["記号と向き","矢印と文字の向き"],["正多面体探検","いろいろな面の形"]]
+  ko:[["그림 면 마주보기","접어 보며 반대 그림 찾기"],["정육면체 전개도","접히는 전개도 찾기"],["주사위 면 관계","마주 보는 면 찾기"],["기호와 방향","글자·화살표 방향 추론"],["정다면체 탐험","삼각형·오각형 면까지"]],
+  en:[["Opposite Pictures","Fold and find the opposite picture"],["Cube Nets","Find a net that folds"],["Dice Faces","Find opposite faces"],["Symbols and Direction","Track arrows and letters"],["Regular Solids","Explore more face shapes"]],
+  zh:[["图案的相对面","折起来寻找相对图案"],["正方体展开图","寻找能折叠的展开图"],["骰子的面","寻找相对的面"],["符号与方向","判断箭头和文字"],["正多面体探索","探索更多面的形状"]],
+  ja:[["絵の向かい合う面","折って反対の絵を探す"],["立方体の展開図","折れる展開図探し"],["サイコロの面","向かい合う面探し"],["記号と向き","矢印と文字の向き"],["正多面体探検","いろいろな面の形"]]
 };
 const c = copy[lang] || copy.ko;
 document.documentElement.lang = lang;
@@ -36,15 +36,15 @@ document.querySelector("#somaSessionLabel").textContent = c.session;
 document.querySelector("#playerName").textContent = profile.name || "GFIELD";
 const names = levelNames[lang] || levelNames.ko;
 const bandNames = {
-  ko: ["입문", "입문", "초급", "초급", "중급"], en: ["Intro", "Intro", "Beginner", "Beginner", "Intermediate"],
-  zh: ["入门", "入门", "初级", "初级", "中级"], ja: ["入門", "入門", "初級", "初級", "中級"]
-}[lang] || ["입문", "입문", "초급", "초급", "중급"];
+  ko: ["입문", "초급", "초급", "중급", "중급"], en: ["Intro", "Beginner", "Beginner", "Intermediate", "Intermediate"],
+  zh: ["入门", "初级", "初级", "中级", "中级"], ja: ["入門", "初級", "初級", "中級", "中級"]
+}[lang] || ["입문", "초급", "초급", "중급", "중급"];
 const grid = document.querySelector("#netLevelGrid");
 netLevels.forEach((level, index) => {
   const link = document.createElement("a");
   link.className = "level-card";
   link.href = `../games/net-observatory/?level=${level.id}`;
-  link.innerHTML = `<img src="./assets/net-level-${level.id}.webp?v=material-2" alt="" /><div><span>${bandNames[index]}</span><strong>${level.id}. ${names[index][0]}</strong><p>${names[index][1]}</p><b>${c.start} ›</b></div>`;
+  link.innerHTML = `<img src="./assets/net-level-${level.id}.webp?v=material-3" alt="" /><div><span>${bandNames[index]}</span><strong>${level.id}. ${names[index][0]}</strong><p>${names[index][1]}</p><b>${c.start} ›</b></div>`;
   grid.append(link);
 });
 

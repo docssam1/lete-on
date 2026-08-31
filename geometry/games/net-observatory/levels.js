@@ -173,9 +173,10 @@ export function isPossibleCubeView(faces, view, arrows = false) {
   return cubeViews(faces, arrows).some((candidate) => sameView(candidate, view, arrows));
 }
 
-function level1Problems() {
+function validNetProblems(levelNumber = 2) {
+  const teachingOrder = [5, 6, 7, 8, 9, 0, 1, 2, 3, 4];
   return Array.from({ length: 10 }, (_, index) => {
-    const answer = VALID_CUBE_NETS[index];
+    const answer = VALID_CUBE_NETS[teachingOrder[index]];
     const wrongA = INVALID_CUBE_NETS[(index * 2) % INVALID_CUBE_NETS.length];
     const wrongB = INVALID_CUBE_NETS[(index * 2 + 7) % INVALID_CUBE_NETS.length];
     const rawChoices = [answer, wrongA, wrongB];
@@ -184,21 +185,43 @@ function level1Problems() {
       .map((_, choiceIndex) => rawChoices[(choiceIndex + offset) % 3])
       .map((cells, choiceIndex) => ({ id: `c${choiceIndex}`, cells, valid: foldCubeNet(cells).valid }));
     return {
-      id: `net-l1-${String(index + 1).padStart(2, "0")}`,
+      id: `net-l${levelNumber}-${String(index + 1).padStart(2, "0")}`,
       interaction: "choose-net",
       promptKey: "promptValidNet",
-      sourceRef: "Prism D4-1, book p.30-33; internally reconstructed hexominoes",
+      reasoningSteps: 3,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 cube-net section",
       choices,
       answer: choices.find((choice) => choice.valid).id
     };
   });
 }
 
-function oppositeFaceProblems() {
+function cellDistance(cells, start, target) {
+  const occupied = new Set(cells.map((cell) => cell.join(",")));
+  const targetKey = target.join(",");
+  const queue = [[start, 0]];
+  const visited = new Set([start.join(",")]);
+  while (queue.length) {
+    const [[x, y], distance] = queue.shift();
+    if (`${x},${y}` === targetKey) return distance;
+    DIRECTIONS.forEach(({ dx, dy }) => {
+      const next = [x + dx, y + dy];
+      const key = next.join(",");
+      if (occupied.has(key) && !visited.has(key)) { visited.add(key); queue.push([next, distance + 1]); }
+    });
+  }
+  return Infinity;
+}
+
+function oppositeFaceProblems(levelNumber = 1) {
   return Array.from({ length: 10 }, (_, index) => {
     const cells = VALID_CUBE_NETS[index % VALID_CUBE_NETS.length];
     const faces = decorateNet(cells, index, false);
-    const query = faces[(index * 2 + 1) % faces.length];
+    const approachable = faces.filter((face) => {
+      const candidateOpposite = faces.find((item) => V.dot(item.frame.n, face.frame.n) === -1);
+      return cellDistance(cells, face.cell, candidateOpposite.cell) <= 3;
+    });
+    const query = approachable[index % approachable.length];
     const opposite = faces.find((face) => V.dot(face.frame.n, query.frame.n) === -1);
     const adjacent = faces.filter((face) => face !== query && face !== opposite);
     const rawChoices = [opposite, adjacent[index % adjacent.length], adjacent[(index + 2) % adjacent.length]];
@@ -206,10 +229,11 @@ function oppositeFaceProblems() {
     const choices = rawChoices.map((_, choiceIndex) => rawChoices[(choiceIndex + offset) % rawChoices.length])
       .map(({ label, color }, choiceIndex) => ({ id: `f${choiceIndex}`, label, color }));
     return {
-      id: `net-l2-${String(index + 1).padStart(2, "0")}`,
+      id: `net-l${levelNumber}-${String(index + 1).padStart(2, "0")}`,
       interaction: "net-opposite",
       promptKey: "promptNetOpposite",
-      sourceRef: "User-provided cube-net references; independently reconstructed picture-face relation",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; user-attached cube-net opposite-picture pattern",
       cells,
       faces: faces.map(({ cell, label, color }) => ({ cell, label, color })),
       query: { label: query.label, color: query.color },
@@ -227,9 +251,10 @@ function makeViewDistractors(correct, faces, arrows = false) {
   const mirrored = { ...correct, front: correct.right, right: correct.front };
   const impossible = { ...correct, right: opposite(correct.right) };
   if (arrows) {
-    mirrored.frontArrow = correct.rightArrow;
-    mirrored.rightArrow = correct.frontArrow;
+    const turnArrow = { up: "right", right: "down", down: "left", left: "up" };
+    const arrowOnly = { ...correct, topArrow: turnArrow[correct.topArrow] };
     impossible.rightArrow = correct.rightArrow;
+    return [arrowOnly, impossible];
   }
   return [mirrored, impossible];
 }
@@ -252,9 +277,10 @@ function viewProblems(level, arrows = false) {
       id: `net-l${level}-${String(index + 1).padStart(2, "0")}`,
       interaction: arrows ? "symbol-view" : "fold-view",
       promptKey: arrows ? "promptSymbolView" : "promptFoldView",
+      reasoningSteps: arrows ? 3 : 2,
       sourceRef: arrows
-        ? "Prism E4-1, book p.15-24; internally reconstructed symbols"
-        : "Prism D4-1, book p.30-41 and Prism E4-1, book p.7-14; internally reconstructed nets",
+        ? "internal-variation; user-attached symbol-direction cube-net pattern"
+        : "internal-variation; concept verified from the Prism cube-net sections",
       cells,
       faces: faces.map(({ cell, label, color, arrow }) => ({ cell, label, color, arrow })),
       choices,
@@ -282,7 +308,8 @@ function diceProblems() {
       id: `net-l3-${String(index + 1).padStart(2, "0")}`,
       interaction: "dice-opposite",
       promptKey: "promptDiceOpposite",
-      sourceRef: "Prism E4-1, book p.7-12; opposite faces total seven",
+      reasoningSteps: 1,
+      sourceRef: "internal-variation; user-attached standard-die opposite-face pattern",
       face,
       choices,
       answer: correct
@@ -299,7 +326,8 @@ function diceProblems() {
       id: `net-l3-${String(index + 6).padStart(2, "0")}`,
       interaction: "dice-pair",
       promptKey: "promptDicePair",
-      sourceRef: "Prism E4-1, book p.7-12; opposite-face relation",
+      reasoningSteps: 1,
+      sourceRef: "internal-variation; user-attached standard-die opposite-pair pattern",
       choices,
       answer: choices.findIndex(([a, b]) => DICE_OPPOSITE[a] === b)
     });
@@ -324,7 +352,8 @@ function solidProblems() {
       id: `net-l5-${String(index + 1).padStart(2, "0")}`,
       interaction: "solid-identify",
       promptKey: "promptSolidIdentify",
-      sourceRef: "Prism D4-1, book p.8-17; regular-solid face counts",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 regular-solid section",
       solid,
       choices: arranged.map(({ id, nameKey }) => ({ id, nameKey })),
       answer: solid.id
@@ -340,7 +369,8 @@ function solidProblems() {
       id: `net-l5-${String(index + 6).padStart(2, "0")}`,
       interaction: "solid-adjacent",
       promptKey: "promptSolidAdjacent",
-      sourceRef: "Prism D4-1, book p.8-17; regular-solid face relations",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 regular-solid section",
       solid,
       choices: arranged,
       answer: solid.adjacent
@@ -350,10 +380,10 @@ function solidProblems() {
 }
 
 export const levels = [
-  { id: 1, bandKey: "bandIntro", titleKey: "level1Title", subtitleKey: "level1Subtitle", ready: true, problems: level1Problems() },
-  { id: 2, bandKey: "bandIntro", titleKey: "level2Title", subtitleKey: "level2Subtitle", ready: true, problems: oppositeFaceProblems() },
+  { id: 1, bandKey: "bandIntro", titleKey: "level1Title", subtitleKey: "level1Subtitle", ready: true, problems: oppositeFaceProblems(1) },
+  { id: 2, bandKey: "bandBeginner", titleKey: "level2Title", subtitleKey: "level2Subtitle", ready: true, problems: validNetProblems(2) },
   { id: 3, bandKey: "bandBeginner", titleKey: "level3Title", subtitleKey: "level3Subtitle", ready: true, problems: diceProblems() },
-  { id: 4, bandKey: "bandBeginner", titleKey: "level4Title", subtitleKey: "level4Subtitle", ready: true, problems: viewProblems(4, true) },
+  { id: 4, bandKey: "bandIntermediate", titleKey: "level4Title", subtitleKey: "level4Subtitle", ready: true, problems: viewProblems(4, true) },
   { id: 5, bandKey: "bandIntermediate", titleKey: "level5Title", subtitleKey: "level5Subtitle", ready: true, problems: solidProblems() }
 ];
 

@@ -8,7 +8,7 @@ const errors=[];
 page.on("console",(message)=>{if(message.type()==="error")errors.push(message.text());});
 page.on("pageerror",(error)=>errors.push(error.message));
 await page.addInitScript(()=>localStorage.setItem("gfield-net-observatory-tutorial-v1","done"));
-await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=2`,{waitUntil:"networkidle"});
+await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=1`,{waitUntil:"networkidle"});
 
 assert.equal(await page.locator(".viewer-host canvas").count(),1);
 assert.equal(await page.locator(".viewer-host").getAttribute("data-material"),"satin-enamel");
@@ -16,6 +16,7 @@ assert.equal(await page.locator(".choice-cube-host canvas").count(),0);
 assert.equal(await page.locator(".face-choice").count(),3);
 assert.equal(await page.locator(".cube-view").count(),0);
 assert.match(await page.locator("#missionTitle").textContent(),/그림 면 마주보기/);
+assert.match(await page.locator("#levelLabel").textContent(),/입문/);
 const frame=await page.evaluate(()=>{
   const top=document.querySelector(".topbar").getBoundingClientRect();
   const stage=document.querySelector(".stage-panel").getBoundingClientRect();
@@ -45,6 +46,12 @@ for(const button of await page.locator(".answer-choice").all()){await button.cli
 await page.waitForFunction((before)=>document.querySelector("#problemLabel")?.textContent!==before,problemBefore);
 const problemAfter=await page.locator("#problemLabel").textContent();
 
+await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=2`,{waitUntil:"networkidle"});
+assert.equal(await page.locator(".viewer-host canvas").count(),0);
+assert.equal(await page.locator(".answer-choice .net-svg").count(),3);
+assert.match(await page.locator("#missionTitle").textContent(),/정육면체 전개도/);
+assert.match(await page.locator("#levelLabel").textContent(),/초급/);
+
 await page.setViewportSize({width:844,height:390});
 await page.goto(`${baseUrl}/geometry/games/net-observatory/?level=4`,{waitUntil:"networkidle"});
 const mobile=await page.evaluate(()=>({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,canvases:document.querySelectorAll("canvas").length,dock:document.querySelector(".answer-dock").getBoundingClientRect().toJSON()}));
@@ -53,6 +60,10 @@ assert.ok(mobile.scrollHeight<=mobile.height+1,JSON.stringify(mobile));
 assert.equal(mobile.canvases,4);
 assert.ok(mobile.dock.bottom<=mobile.height+1,JSON.stringify(mobile));
 await page.screenshot({path:"C:/Users/user/AppData/Local/Temp/gfield-net-observatory-mobile.png",fullPage:true});
+await page.setViewportSize({width:1048,height:901});
+await page.goto(`${baseUrl}/geometry/solid-vista/`,{waitUntil:"networkidle"});
+assert.match(await page.locator("#netLevelGrid .level-card").nth(0).textContent(),/입문.*그림 면 마주보기/s);
+assert.match(await page.locator("#netLevelGrid .level-card").nth(1).textContent(),/초급.*정육면체 전개도/s);
 assert.equal(errors.length,0,errors.join("\n"));
-console.log(JSON.stringify({baseUrl,frame,alphaBounds,pictureChoices:3,autoAdvance:{before:problemBefore,after:problemAfter},mobile},null,2));
+console.log(JSON.stringify({baseUrl,frame,alphaBounds,pictureChoices:3,autoAdvance:{before:problemBefore,after:problemAfter},level2Nets:3,mobile},null,2));
 await browser.close();
