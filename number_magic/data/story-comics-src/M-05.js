@@ -1,7 +1,7 @@
 /* M-05 — 없는 수를 만들어 세상을 계산하다 (i의 탄생) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,numi,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<line x1="15" y1="90" x2="185" y2="90" stroke="'+C.ink+'" stroke-width="2.5"/>'
@@ -12,7 +12,7 @@ module.exports=function(H){
               en:'Can multiplying a number by itself give a negative? Let\'s look for a number satisfying x²=−1.',
               zh:'同一个数自乘两次，能得到负数吗？我们来找一个满足x²=−1的数。' } },
     { art: svg(
-        stick(30,105,0.6,C.sub)
+        numi(30,107,0.6)
         + txt(80,50,18,C.blue,'1²=1')
         + txt(150,50,18,C.blue,'(−1)²=1')
         + txt(115,95,22,C.red,'−1')
@@ -22,7 +22,7 @@ module.exports=function(H){
               en:'1²=1, (−1)²=1 — search all you like among the real numbers, there\'s no answer.',
               zh:'1²=1，(−1)²=1——在实数范围内怎么找都没有答案。' } },
     { art: svg(
-        stick(30,100,0.6,C.sub)
+        numi(30,102,0.6)
         + bubble(115,55,46,30,115,95)
         + txt(115,50,34,C.purple,'i')
         + txt(115,80,15,C.sub,'i²=−1')),

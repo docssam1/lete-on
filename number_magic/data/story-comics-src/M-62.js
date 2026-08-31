@@ -1,7 +1,7 @@
 /* M-62 — 행성의 순간 속도, 미적분의 탄생 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(100)
@@ -9,7 +9,8 @@ module.exports=function(H){
         +'<circle cx="38" cy="98" r="5" fill="'+C.ink+'"/>'
         +'<circle cx="58" cy="98" r="5" fill="'+C.ink+'"/>'
         +'<line x1="70" y1="88" x2="150" y2="88" stroke="'+C.grey+'" stroke-width="2" stroke-dasharray="4 3"/>'
-        +txt(160,92,20,C.red,'?')),
+        +txt(160,92,20,C.red,'?')
+        +numi(178,64,0.7)),
       text: { ko:"평균 속도(전체 거리÷전체 시간)는 알아도, '바로 이 순간'의 속도는 어떻게 구할까요?",
               en:"We know average speed — total distance divided by total time — but how do we find the speed at this exact instant?",
               zh:'我们知道平均速度(总路程÷总时间)，但这一瞬间的速度该怎么求呢？' } },

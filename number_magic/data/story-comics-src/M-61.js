@@ -1,12 +1,13 @@
 /* M-61 — 삼각형을 채우다 뺄셈이 된 넓이 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(104)
         +'<path d="M 40 104 Q 100 34 160 104 Z" fill="'+C.sky+'" stroke="'+C.blue+'" stroke-width="2.5"/>'
-        +txt(100,80,22,C.red,'?')),
+        +txt(100,80,22,C.red,'?')
+        +numi(180,96,0.7)),
       text: { ko:'포물선이 볼록 솟은 부분과 x축 사이, 이 넓이는 대체 어떻게 구할 수 있을까요?',
               en:'How could anyone possibly find the area enclosed between a bulging parabola and the x-axis?',
               zh:'抛物线鼓起的部分和x轴之间，这块面积到底该怎么求呢？' } },

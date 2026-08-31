@@ -1,7 +1,7 @@
 /* C-21 — 타율로 만나는 분수: 2/3과 3/4은 어떻게 더할까 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(115)

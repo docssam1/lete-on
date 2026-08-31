@@ -1,13 +1,13 @@
 /* M-20 — 인수분해 기초: factor의 어원 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,txt}=H;
+  const {C,svg,stick,numi,arrow,paper,txt}=H;
   return { panels:[
     { art: svg(
         paper(15,15,130,90)
         +txt(80,55,26,C.ink,'FACTOR')
         +txt(80,88,14,C.brown,'(maker)')
-        +stick(175,95,0.9,C.blue)
+        +numi(175,99,0.9)
         +'<line x1="166" y1="88" x2="146" y2="78" stroke="'+C.brown+'" stroke-width="2" stroke-linecap="round"/>'),
       text: { ko:"'인수분해'를 뜻하는 영어 factor는 원래 라틴어로 '만드는 사람'이라는 뜻이었대요.",
               en:"The English word 'factor' comes from Latin for 'one who makes.'",
@@ -34,7 +34,7 @@ module.exports=function(H){
         +txt(60,60,15,C.blue,'x²+bx+c')
         +txt(140,60,15,C.ink,'(x+p)(x+q)')
         +arrow(90,45,120,45,C.gold,2)
-        +stick(100,120,0.7,C.sub)
+        +numi(100,123,0.7)
         +txt(170,30,16,C.ok,'✨')),
       text: { ko:'그래서 곱셈공식을 정확히 알수록 인수분해가 쉬워져요 — 외운 공식을 거꾸로 읽는 연습이거든요.',
               en:"So the better you know the multiplication formulas, the easier factoring gets — it's really reading a memorized formula backward.",

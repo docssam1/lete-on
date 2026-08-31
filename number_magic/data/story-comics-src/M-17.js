@@ -1,7 +1,7 @@
 /* M-17 — 히파소스와 √2의 전설 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,numi,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(58,12,84,34)
@@ -32,7 +32,7 @@ module.exports=function(H){
               zh:'传说泄露这个秘密的希帕索斯被投入大海——是真是假，无人知晓。' } },
     { art: svg(
         txt(100,64,26,C.ink,'√2×√3=√6','font-family="Georgia,serif"')
-        +stick(35,102,1,C.blue)
+        +numi(35,106,1)
         +txt(168,102,20,C.gold,'✨')),
       text: { ko:'이제 우리는 √2×√3=√6처럼, 그 시절엔 두려웠던 수들을 자유롭게 계산해요.',
               en:'Now we freely calculate with numbers once feared back then, like √2×√3=√6.',

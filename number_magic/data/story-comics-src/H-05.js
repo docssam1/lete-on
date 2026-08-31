@@ -1,10 +1,10 @@
 /* H-05 — 끝나지 않는 소수, 그리고 수직선의 빈틈 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
-        stick(50,80,1.2,C.blue)
+        numi(50,76,1.05)
         +paper(90,45,90,55)
         +txt(135,72,20,C.ink,'1÷3')
         +arrow(135,100,135,118,C.gold,3)
@@ -20,7 +20,8 @@ module.exports = function(H){
         +txt(145,45,18,C.red,'1÷3')
         +txt(145,60,15,C.red,'0.333…')
         +bubble(100,100,50,26,100,120)
-        +txt(100,105,15,C.ink,'?')),
+        +txt(100,105,15,C.ink,'?')
+        +numi(25,110,0.65)),
       text: { ko:'1÷4는 딱 끝나는데 1÷3은 왜 안 끝날까요?',
               en:'1÷4 ends cleanly — why does 1÷3 never end?',
               zh:'1÷4能除尽，为什么1÷3不行呢？' } },

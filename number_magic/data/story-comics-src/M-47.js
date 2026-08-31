@@ -5,7 +5,7 @@ module.exports=function(H){
   return { panels:[
     { art: svg(
         ground(110)
-        + stick(45,90,0.9,C.blue)
+        + numi(45,90,0.9)
         + '<circle cx="120" cy="70" r="8" fill="'+C.red+'"/>'
         + '<circle cx="140" cy="70" r="8" fill="'+C.gold+'"/>'
         + '<circle cx="160" cy="70" r="8" fill="'+C.ok+'"/>'

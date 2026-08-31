@@ -1,13 +1,13 @@
 /* C-30 — 알고리즘이라는 이름을 가진 사람 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(120)
         +'<path d="M 30 120 L 30 70 Q 30 45 55 45 Q 80 45 80 70 L 80 120" fill="none" stroke="'+C.gold+'" stroke-width="3"/>'
         +'<path d="M 120 120 L 120 70 Q 120 45 145 45 Q 170 45 170 70 L 170 120" fill="none" stroke="'+C.gold+'" stroke-width="3"/>'
-        +stick(100,95,1.1,C.blue)
+        +numi(100,90,1.0)
         +bubble(140,42,30,18,120,60)
         +txt(140,46,15,C.ink,'?')),
       text: { ko:'1200년쯤 전 바그다드. algorithm이라는 말은 원래 무엇이었을까요?',

@@ -1,13 +1,14 @@
 /* M-60 — 산꼭대기가 평평해지는 순간 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(114)
         +'<path d="M 20 108 Q 100 20 180 108" fill="none" stroke="'+C.blue+'" stroke-width="3"/>'
         +'<line x1="70" y1="30" x2="130" y2="30" stroke="'+C.grey+'" stroke-width="2" stroke-dasharray="3 3"/>'
-        +txt(100,20,20,C.red,'?')),
+        +txt(100,20,20,C.red,'?')
+        +numi(188,102,0.7)),
       text: { ko:'곡선이 가장 높이 올라간 지점의 정확한 자리를 어떻게 찾을 수 있을까요?',
               en:'How can you find the exact spot where a curve reaches its highest point?',
               zh:'怎样才能找到曲线升到最高点的确切位置呢？' } },

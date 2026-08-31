@@ -1,7 +1,7 @@
 /* M-16 — 숨은 짝을 찾는 습관, 근호까지 이어지다 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,numi,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<circle cx="46" cy="66" r="24" fill="'+C.blue+'"/>'
@@ -43,7 +43,7 @@ module.exports=function(H){
               zh:'配对的2×2=4走出根号，剩下的3还留在根号里。' } },
     { art: svg(
         txt(100,68,30,C.ink,'√48=4√3','font-family="Georgia,serif"')
-        +stick(30,105,1,C.blue)
+        +numi(30,109,1)
         +txt(172,105,20,C.gold,'✨')),
       text: { ko:'그래서 √48은 가장 간단한 꼴로 4√3이 돼요 — 숨은 짝을 찾아내는 감각은 여전히 통해요!',
               en:'So √48 simplifies to 4√3 — the instinct for spotting hidden pairs still works!',

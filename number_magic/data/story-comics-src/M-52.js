@@ -1,12 +1,12 @@
 /* M-52 — 지수방정식 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         txt(90,55,26,C.ink,'2ˣ=8')
         +txt(150,55,26,C.red,'?')
-        +stick(60,100,1.1,C.sub)),
+        +numi(60,100,1.1)),
       text: { ko:'2ˣ=8이라는 방정식을 보면, x를 어떻게 구해야 할지 막막해요.',
               en:"Looking at 2ˣ=8, it's not obvious at first how to find x.",
               zh:'看到2ˣ=8这个方程，一开始不知道该怎么求x。' } },

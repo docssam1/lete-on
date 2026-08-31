@@ -1,7 +1,7 @@
 /* M-31 — 두 점 사이의 거리: 자 대신 피타고라스 정리 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<line x1="20" y1="115" x2="20" y2="20" stroke="'+C.ink+'" stroke-width="2"/>'
@@ -27,7 +27,7 @@ module.exports=function(H){
              en:'The segment joining two points is always the hypotenuse of a right triangle formed by the horizontal and vertical changes.',
              zh:'连接两点的线段，永远是横向变化量和纵向变化量构成的直角三角形的斜边。' } },
     { art: svg(
-        stick(50,80,1.1,C.sub)
+        numi(50,84,1.1)
         +'<path d="M 90 105 L 155 105 L 155 45 Z" fill="none" stroke="'+C.blue+'" stroke-width="2.5"/>'
         +txt(122,118,13,C.gold,'a')
         +txt(162,75,13,C.gold,'b')

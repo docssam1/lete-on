@@ -1,7 +1,7 @@
 /* C-22 — 옛 수학자의 묘비: 분모가 다른 네 조각을 하나로 맞추기 */
 'use strict';
 module.exports = function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(120)
@@ -10,7 +10,7 @@ module.exports = function(H){
         +txt(100,76,13,C.sub,'1/12')
         +txt(100,94,13,C.sub,'1/7')
         +txt(100,112,13,C.sub,'1/2')
-        +stick(168,95,1.05,C.blue)),
+        +numi(168,90,0.9)),
       text: { ko:'옛 수학자의 묘비엔 나이 대신 이 분수들만 적혀 있었어요: 1/6, 1/12, 1/7, 1/2.',
               en:"An old mathematician's tomb had no age, only these fractions: 1/6, 1/12, 1/7, 1/2.",
               zh:'一位古代数学家的墓碑上没有年龄，只有这些分数：1/6、1/12、1/7、1/2。' } },
@@ -40,7 +40,7 @@ module.exports = function(H){
         ground(120)
         +'<path d="M 60 118 L 60 55 Q 60 35 100 35 Q 140 35 140 55 L 140 118 Z" fill="'+C.mist+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
         +txt(100,90,34,C.gold,'84')
-        +stick(168,95,1.05,C.blue)
+        +numi(168,90,0.9)
         +'<path d="M 178 78 L 186 86 L 198 66" fill="none" stroke="'+C.ok+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'),
       text: { ko:'남은 9/84는 5년+4년, 그러니 84가 전체 나이! 분모만 맞추면 묘비도 풀려요.',
               en:'The leftover 9/84 is 5+4 years, so 84 is the full age! Match the denominators and even a tombstone gives up its answer.',
