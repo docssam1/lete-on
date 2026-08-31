@@ -27,7 +27,7 @@ module.exports=function(H){
         +'<line x1="45" y1="40" x2="45" y2="86" stroke="'+C.ink+'" stroke-width="1.6"/>'
         +'<line x1="15" y1="62" x2="75" y2="62" stroke="'+C.ink+'" stroke-width="1.6"/>'
         +arrow(88,63,118,63,C.gold,3)
-        +txt(160,68,15,C.ink,'x²+(a+b)x+ab')),
+        +txt(150,68,13,C.ink,'x²+(a+b)x+ab')),
       text: { ko:'옛날 사람들이 넓이 그림으로 보던 것을, 지금 우리는 문자식으로 배워요.',
               en:'What people once saw through area diagrams, we now learn as algebraic formulas.',
               zh:'古人通过面积图看到的东西，我们现在用代数式来学习。' } },

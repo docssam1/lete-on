@@ -24,7 +24,7 @@ module.exports=function(H){
              zh:'数着1、2、3，每到第三个位子就出局。' } },
     { art: svg(
         ring(0,null)
-        +txt(100,26,15,C.gold,'31')),
+        +txt(136,16,14,C.gold,'31')),
       text:{ ko:'규칙대로 끝까지 세어 보면, 31번째 자리에 앉은 친구가 끝까지 남는대요!',
              en:'Count it all the way through by the rule — the friend in seat 31 is the one who stays till the end!',
              zh:'按规则一直数下去，坐在第31个位子的小朋友会留到最后！' } },

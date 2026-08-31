@@ -31,8 +31,8 @@ module.exports=function(H){
               zh:'9世纪，波斯数学家花拉子米写了一本名为《al-jabr(还原)》的书。' } },
     { art: svg(
         txt(58,60,18,C.ink,'al-jabr')
-        + arrow(90,60,130,60,C.gold,3)
-        + txt(165,60,20,C.blue,'algebra')
+        + arrow(88,60,116,60,C.gold,3)
+        + txt(155,60,18,C.blue,'algebra')
         + txt(100,105,22,C.ok,'x=4')),
       text: { ko:'오늘날의 "대수(algebra)"라는 단어는 바로 이 책 제목에서 나온 거예요.',
               en:'Today\'s word "algebra" comes directly from the title of that very book.',

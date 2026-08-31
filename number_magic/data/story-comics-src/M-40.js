@@ -39,8 +39,8 @@ module.exports=function(H){
         '<rect x="20" y="90" width="14" height="30" fill="'+C.blue+'"/>'
         +'<rect x="45" y="80" width="14" height="40" fill="'+C.blue+'"/>'
         +'<rect x="70" y="70" width="14" height="50" fill="'+C.blue+'"/>'
-        +arrow(95,90,140,90,C.gold,3)
-        +txt(168,88,13,C.ink,'aₙ=a₁+(n-1)d')
+        +arrow(80,90,112,90,C.gold,3)
+        +txt(154,88,12,C.ink,'aₙ=a₁+(n-1)d')
         +ground(120)),
       text: { ko:'오늘날 등차수열은 aₙ=a₁+(n-1)d로 쓰지만, 곡식 창고가 교과서보다 먼저였답니다.',
               en:'Today we write aₙ=a₁+(n-1)d, but the grain store used it long before any textbook.',
