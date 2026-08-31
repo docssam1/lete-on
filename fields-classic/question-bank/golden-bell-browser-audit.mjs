@@ -109,6 +109,23 @@ async function auditInteractiveTriangularStair() {
   await page.locator('.lesson-button[data-lesson="cube-tetrahedral-growth"]').click();
   const experience = page.locator(".concept-experience-stair");
   assert.equal(await experience.count(), 1, "triangular stair experience missing");
+  const typeStudy = page.locator(".type-study");
+  assert.equal(await typeStudy.count(), 1, "triangle and square type study missing");
+  assert.equal(await typeStudy.locator("[data-type-track-select]").count(), 7, "source-backed number-rule types must stay separate");
+  for (let index = 0; index < 7; index += 1) {
+    const trackButton = typeStudy.locator("[data-type-track-select]").nth(index);
+    await trackButton.click();
+    const panel = page.locator(".type-track-panel");
+    assert.ok((await panel.locator("h3").innerText()).trim(), `type track ${index + 1} label missing`);
+    assert.equal(await panel.locator(".type-track-question").count(), 1, `type track ${index + 1} check missing`);
+    await panel.locator('[data-type-track-answer][data-type-track-stage="check"]').click();
+    assert.equal(await panel.locator(".type-track-question").count(), 2, `type track ${index + 1} practice did not unlock after check`);
+    await panel.locator('[data-type-track-answer][data-type-track-stage="practice"]').click();
+    assert.match(await panel.innerText(), /답:/u, `type track ${index + 1} approved answer view missing`);
+  }
+  assert.match(await typeStudy.locator("header").first().innerText(), /7\s*\/\s*7/, "type-study completion count missing");
+  assert.equal((await typeStudy.innerText()).includes("20"), false, "type study leaked the original fourth-stage answer");
+  assert.equal((await typeStudy.innerText()).includes("84"), false, "type study leaked the original seventh-stage answer");
   assert.equal(await experience.locator(".experience-stair").getAttribute("data-stage"), "1", "triangular stair must start at the first layer");
   assert.match(await experience.locator(":scope > header").innerText(), /개념 설명/, "triangular scene must be labelled as an explanation");
   assert.equal(await experience.locator(".experience-stair [data-experience-choice]").count(), 0, "triangular explanation must not contain a quiz");
@@ -142,7 +159,7 @@ async function auditInteractiveTriangularStair() {
   assert.equal(await printedConcept.count(), 1, "triangular instructional print still missing");
   assert.equal(await printedConcept.locator("button, select, input").count(), 0, "triangular print must not contain interactive controls");
   assert.equal((await printedConcept.innerText()).includes("20개"), false, "triangular print leaked the original fourth-stage answer");
-  const fontSizes = await experience.locator(".experience-check>p, .concept-practice-card>p, .concept-practice-card .answer-choices button").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
+  const fontSizes = await page.locator(".type-track-question>p, .type-track-question .answer-choices button, .experience-check>p, .concept-practice-card>p, .concept-practice-card .answer-choices button").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
   assert.ok(fontSizes.every((size) => size >= 14), `course-1 triangular learning text is too small: ${fontSizes.join(",")}`);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   assert.equal(overflow, false, "triangular concept experience mobile overflow");

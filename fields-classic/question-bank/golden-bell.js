@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260831a";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901b";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
 import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
@@ -23,7 +23,7 @@ const state = {
   phase: "concept",
   selections: {},
   feedback: null,
-  experience: { step: 0, previousStep: 0, checkStep: 0, answer: null, checks: {}, practice: {}, feedback: null, playing: false, speed: 1, timer: null, autoplayStarted: false },
+  experience: { step: 0, previousStep: 0, checkStep: 0, answer: null, checks: {}, practice: {}, typeTrackId: null, typeTracks: {}, feedback: null, playing: false, speed: 1, timer: null, autoplayStarted: false },
   progress: loadProgress()
 };
 
@@ -49,6 +49,8 @@ function resetExperience() {
   state.experience.answer = null;
   state.experience.checks = {};
   state.experience.practice = {};
+  state.experience.typeTrackId = null;
+  state.experience.typeTracks = {};
   state.experience.feedback = null;
   state.experience.autoplayStarted = false;
 }
@@ -211,6 +213,76 @@ function conceptPracticeMarkup(experience) {
   return `<section class="concept-practice" aria-label="삼각수와 사각수 개념 연습"><header><span>개념 연습</span><strong>그림을 보고 바로 확인해요</strong></header><div>${cards}</div></section>`;
 }
 
+function oneLineCubeStairMarkup(stage) {
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.buildSQShape || !geometry?.mapTotal || !renderer?.renderIso) return "";
+  const map = geometry.buildSQShape("stair", stage);
+  const total = stage * (stage + 1) / 2;
+  if (geometry.mapTotal(map) !== total) throw new Error(`One-line cube stair total mismatch at stage ${stage}.`);
+  const svg = renderer.renderIso(map, stage, 1, { u: 20 })
+    .replace('class="ws-iso"', `class="ws-iso type-track-cube-svg" role="img" aria-label="${stage}단계 한 줄 계단 쌓기나무 ${total}개" data-geometry-kind="one-line-stair" data-stage="${stage}" data-total="${total}"`);
+  return `<div class="type-track-cube"><figure>${svg}<figcaption>${stage}단계 · 1 + 2 + 3 = ${total}개</figcaption></figure></div>`;
+}
+
+function typeTrackVisual(track) {
+  const visual = track.visual || {};
+  if (visual.kind === "triangular-rows") {
+    return `<div class="type-track-triangle" aria-label="1개, 2개, 3개를 줄마다 놓은 삼각수">${visual.rows.map((count) => `<span>${Array.from({ length: count }, () => "<i></i>").join("")}</span>`).join("")}<b>${visual.formula}</b></div>`;
+  }
+  if (visual.kind === "triangle-boundaries") {
+    return `<div class="type-track-number-rows triangle" aria-label="줄마다 하나씩 늘어나는 수 배열">${visual.rows.map((row) => `<span>${row.map((number, index) => `<i class="${index === 0 || index === row.length - 1 ? "edge" : ""}">${number}</i>`).join("")}</span>`).join("")}<b>줄의 처음과 끝을 함께 봐요</b></div>`;
+  }
+  if (visual.kind === "square-odd-rows") return `<div class="type-track-book05">${book05Markup({ kind: "book5", subtype: "odd-square", target: visual.odds.length, odds: visual.odds })}</div>`;
+  if (visual.kind === "square-array") return `<div class="type-track-book05">${book05Markup({ kind: "book5", subtype: "square-paper-growth", previewStages: visual.stages, target: visual.stages.at(-1) + 1 })}</div>`;
+  if (visual.kind === "triangle-tile-square") {
+    return `<div class="type-track-triangle-tiles" aria-label="작은 삼각형 조각 수가 1, 4, 9로 늘어나는 배열">${visual.stages.map((count, index) => `<figure><span style="--tile-side:${index + 1}">${Array.from({ length: count }, () => "<i></i>").join("")}</span><figcaption>${count}개</figcaption></figure>`).join("")}</div>`;
+  }
+  if (visual.kind === "cube-stair") return oneLineCubeStairMarkup(visual.stage);
+  if (visual.kind === "tetrahedral") return `<div class="type-track-book05">${book05Markup({ kind: "book5", subtype: "tetrahedral-stair", previewStages: [visual.stage], targetStages: [] })}</div>`;
+  return "";
+}
+
+function typeTrackRecord(id) {
+  return state.experience.typeTracks[id] || {};
+}
+
+function typeTrackComplete(record) {
+  return ["correct", "revealed"].includes(record.checkStatus) && ["correct", "revealed"].includes(record.practiceStatus);
+}
+
+function typeTrackQuestionMarkup(track, stage, record) {
+  const item = track[stage];
+  const status = record[`${stage}Status`];
+  const selected = record[`${stage}Value`];
+  const complete = ["correct", "revealed"].includes(status);
+  const feedback = status === "correct"
+    ? `맞아요. ${item.explanation}`
+    : status === "revealed"
+      ? `답: ${item.answer}. ${item.explanation}`
+      : status === "wrong"
+        ? "그림의 줄과 칸을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+        : "";
+  const title = stage === "check" ? "바로 확인" : "유형 문제";
+  return `<section class="type-track-question ${complete ? "complete" : ""}"><header><span>${title}</span>${complete ? "<b>확인</b>" : ""}</header><p>${item.prompt}</p><div class="answer-choices">${item.options.map((option) => `<button type="button" class="${selected === option ? "selected" : ""}" data-type-track-check="${track.id}" data-type-track-stage="${stage}" data-type-track-value="${option}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><div class="type-track-actions"><button type="button" class="secondary-action" data-type-track-answer="${track.id}" data-type-track-stage="${stage}" ${complete ? "disabled" : ""}>답 보기</button></div>${feedback ? `<p class="feedback ${status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</section>`;
+}
+
+function typeTracksMarkup(experience) {
+  const tracks = experience.typeTracks || [];
+  if (!tracks.length) return "";
+  const activeId = tracks.some((track) => track.id === state.experience.typeTrackId) ? state.experience.typeTrackId : tracks[0].id;
+  state.experience.typeTrackId = activeId;
+  const active = tracks.find((track) => track.id === activeId);
+  const record = typeTrackRecord(active.id);
+  const checkComplete = ["correct", "revealed"].includes(record.checkStatus);
+  const completedCount = tracks.filter((track) => typeTrackComplete(typeTrackRecord(track.id))).length;
+  const tabs = tracks.map((track) => {
+    const complete = typeTrackComplete(typeTrackRecord(track.id));
+    return `<button type="button" class="${track.id === active.id ? "active" : ""} ${complete ? "complete" : ""}" data-type-track-select="${track.id}" aria-pressed="${track.id === active.id}"><span>${track.group}</span><strong>${track.label}</strong>${complete ? "<i>✓</i>" : ""}</button>`;
+  }).join("");
+  return `<section class="type-study" aria-label="삼각수와 사각수 유형별 학습"><header><div><span>유형별 개념 지도</span><strong>그림 구조가 다르면 읽는 방법도 달라요</strong></div><b>${completedCount} / ${tracks.length} 유형 확인</b></header><nav class="type-track-tabs" aria-label="삼각수와 사각수 유형 선택">${tabs}</nav><article class="type-track-panel"><header><div><span>${active.group}</span><h3>${active.label}</h3></div><em>교재 연결 유형</em></header><p class="type-track-explanation">${active.explanation}</p>${typeTrackVisual(active)}${typeTrackQuestionMarkup(active, "check", record)}${checkComplete ? typeTrackQuestionMarkup(active, "practice", record) : ""}</article></section>`;
+}
+
 function renderTriangularStairExperience(experience) {
   const currentStep = state.experience.step;
   const beat = experience.beats[currentStep];
@@ -224,7 +296,7 @@ function renderTriangularStairExperience(experience) {
   const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
   const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 확인</button>` : "";
   const stageCheck = `<section class="experience-stage-check" aria-label="단계별 확인"><header><span>단계별 확인</span><strong>${state.experience.checkStep + 1}층을 확인해요</strong><b>${state.experience.checkStep + 1} / ${experience.beats.length}</b></header><div class="experience-check"><p>${checkBeat.check.prompt}</p><div class="answer-choices">${checkBeat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}" ${checked ? "disabled" : ""}>${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}${nextCheck}</div></section>`;
-  return `<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
+  return `${typeTracksMarkup(experience)}<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
 }
 
 function renderExperience(lesson) {
@@ -755,6 +827,33 @@ function bindLessonActions() {
   $("lessonContent").querySelector("[data-experience-speed]")?.addEventListener("change", (event) => {
     state.experience.speed = Number(event.currentTarget.value) || 1;
   });
+  $("lessonContent").querySelectorAll("[data-type-track-select]").forEach((button) => button.addEventListener("click", () => {
+    state.experience.typeTrackId = button.dataset.typeTrackSelect;
+    renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-type-track-check]").forEach((button) => button.addEventListener("click", () => {
+    const experience = activeLesson().experience;
+    const track = experience?.typeTracks?.find((item) => item.id === button.dataset.typeTrackCheck);
+    if (!track) return;
+    const stage = button.dataset.typeTrackStage;
+    const record = state.experience.typeTracks[track.id] || {};
+    const selected = button.dataset.typeTrackValue;
+    record[`${stage}Value`] = selected;
+    record[`${stage}Status`] = selected === track[stage].answer ? "correct" : "wrong";
+    state.experience.typeTracks[track.id] = record;
+    renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-type-track-answer]").forEach((button) => button.addEventListener("click", () => {
+    const experience = activeLesson().experience;
+    const track = experience?.typeTracks?.find((item) => item.id === button.dataset.typeTrackAnswer);
+    if (!track) return;
+    const stage = button.dataset.typeTrackStage;
+    const record = state.experience.typeTracks[track.id] || {};
+    record[`${stage}Value`] = track[stage].answer;
+    record[`${stage}Status`] = "revealed";
+    state.experience.typeTracks[track.id] = record;
+    renderContent();
+  }));
   $("lessonContent").querySelectorAll("[data-experience-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     state.experience.answer = button.dataset.experienceChoice;

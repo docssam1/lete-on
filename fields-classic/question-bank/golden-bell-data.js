@@ -984,6 +984,78 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           learnerStage: "필즈 더 클래식 1과정 5권",
           title: "한 층씩 삼각형 바닥을 넓혀 쌓아요",
           hint: "새 층의 바닥은 바로 전 층보다 한 줄이 더 많은 삼각형이에요. 줄마다 놓인 쌓기나무 수를 1부터 차례로 더해 보세요.",
+          typeTracks: [
+            {
+              id: "triangle-row-total",
+              group: "삼각수",
+              label: "한 줄씩 더한 삼각수",
+              sourceTypeIds: ["staircase-tile-growth"],
+              explanation: "첫째 줄 1개, 둘째 줄 2개, 셋째 줄 3개를 더하면 1, 3, 6처럼 삼각형 모양의 수가 됩니다.",
+              visual: { kind: "triangular-rows", rows: [1, 2, 3], formula: "1 + 2 + 3 = 6" },
+              check: { prompt: "1개, 2개, 3개, 4개를 줄마다 놓아 만든 다음 삼각수는 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1 + 2 + 3 + 4 = 10입니다." },
+              practice: { prompt: "삼각수 10을 만들 때, 마지막 줄에는 몇 개를 놓았나요?", options: ["3", "4", "5"], answer: "4", explanation: "1 + 2 + 3 + 4 = 10이므로 마지막 줄은 4개입니다." }
+            },
+            {
+              id: "triangle-row-boundaries",
+              group: "삼각수",
+              label: "삼각수 줄의 처음과 끝",
+              sourceTypeIds: ["triangular-row-boundary-number"],
+              explanation: "수를 1개, 2개, 3개씩 다음 줄에 이어 쓰면 각 줄의 처음과 끝이 달라집니다. 앞줄까지의 수를 더해 다음 줄의 자리를 찾습니다.",
+              visual: { kind: "triangle-boundaries", rows: [[1], [2, 3], [4, 5, 6]] },
+              check: { prompt: "1개, 2개, 3개씩 이어 쓴 뒤 다음 4번째 줄의 첫 수는 무엇인가요?", options: ["6", "7", "8"], answer: "7", explanation: "앞의 세 줄에는 1 + 2 + 3 = 6개가 있으므로 다음 줄은 7부터 시작합니다." },
+              practice: { prompt: "4번째 줄에 4개를 썼다면, 그 줄의 마지막 수는 무엇인가요?", options: ["9", "10", "11"], answer: "10", explanation: "4번째 줄은 7, 8, 9, 10이므로 마지막 수는 10입니다." }
+            },
+            {
+              id: "square-odd-rows",
+              group: "사각수",
+              label: "홀수 줄을 더한 사각수",
+              sourceTypeIds: ["square-number-odd-sum", "square-row-boundary-number"],
+              explanation: "정사각형을 한 줄씩 넓히면 새로 늘어나는 수는 1개, 3개, 5개처럼 홀수입니다. 그래서 1, 4, 9처럼 사각수가 됩니다.",
+              visual: { kind: "square-odd-rows", odds: [1, 3, 5] },
+              check: { prompt: "1 + 3 + 5 + 7을 더해 만든 정사각형에는 작은 칸이 몇 개인가요?", options: ["14", "15", "16"], answer: "16", explanation: "1 + 3 + 5 + 7 = 16이므로 4칸 × 4칸 정사각형입니다." },
+              practice: { prompt: "1, 4, 9 다음에 오는 사각수는 무엇인가요?", options: ["12", "15", "16"], answer: "16", explanation: "한 줄이 4개인 정사각형은 4 × 4 = 16칸입니다." }
+            },
+            {
+              id: "square-array-growth",
+              group: "사각수",
+              label: "정사각형 배열의 성장",
+              sourceTypeIds: ["square-tile-growth"],
+              explanation: "가로와 세로가 함께 한 칸씩 늘어나면 1칸, 2칸 × 2칸, 3칸 × 3칸처럼 1, 4, 9로 커집니다.",
+              visual: { kind: "square-array", stages: [1, 2, 3] },
+              check: { prompt: "가로와 세로가 4칸인 정사각형 배열에는 작은 칸이 몇 개인가요?", options: ["12", "14", "16"], answer: "16", explanation: "4 × 4 = 16이므로 16칸입니다." },
+              practice: { prompt: "1, 4, 9 다음에 16이 오는 까닭으로 알맞은 것은 무엇인가요?", options: ["한 변이 한 칸씩 늘어나기 때문", "매번 3만 더하기 때문", "짝수만 더하기 때문"], answer: "한 변이 한 칸씩 늘어나기 때문", explanation: "정사각형의 한 변이 1, 2, 3, 4칸으로 늘어나므로 전체 칸 수는 1, 4, 9, 16입니다." }
+            },
+            {
+              id: "triangle-tile-square-growth",
+              group: "사각수",
+              label: "삼각형 조각으로 만든 사각수",
+              sourceTypeIds: ["triangle-tile-growth"],
+              explanation: "조각은 삼각형이어도 한 변의 조각 수가 1, 2, 3으로 늘면 전체 조각 수는 1, 4, 9가 됩니다. 이 규칙은 사각수로 읽고, 모양만 보고 삼각수라고 부르지 않습니다.",
+              visual: { kind: "triangle-tile-square", stages: [1, 4, 9] },
+              check: { prompt: "한 변에 작은 삼각형 조각을 4개씩 놓으면 전체 조각 수는 몇 개인가요?", options: ["12", "14", "16"], answer: "16", explanation: "한 변의 조각 수가 4개이면 4 × 4 = 16개의 작은 삼각형 조각입니다." },
+              practice: { prompt: "1, 4, 9, 16처럼 늘어나는 이 조각 수는 무엇으로 읽는 것이 알맞은가요?", options: ["사각수", "삼각수", "홀수"], answer: "사각수", explanation: "조각이 삼각형이어도 전체 수는 1², 2², 3², 4²처럼 사각수 규칙입니다." }
+            },
+            {
+              id: "one-line-cube-stair",
+              group: "쌓기나무",
+              label: "한 줄 계단 쌓기",
+              sourceTypeIds: ["cube-triangular-wall-growth"],
+              explanation: "한 줄로 쌓는 계단은 높은 곳부터 1개, 2개, 3개처럼 한 칸씩 늘어납니다. 3단계는 1 + 2 + 3 = 6개입니다.",
+              visual: { kind: "cube-stair", stage: 3 },
+              check: { prompt: "한 줄 계단을 4단계까지 쌓으면 쌓기나무는 모두 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1 + 2 + 3 + 4 = 10개입니다." },
+              practice: { prompt: "3단계 한 줄 계단에서 가장 높은 기둥은 몇 층인가요?", options: ["2층", "3층", "4층"], answer: "3층", explanation: "3단계이므로 가장 높은 기둥은 3층입니다." }
+            },
+            {
+              id: "triangular-cube-stair",
+              group: "쌓기나무",
+              label: "삼각 계단 쌓기",
+              sourceTypeIds: ["cube-tetrahedral-growth"],
+              explanation: "삼각 계단은 한 층의 바닥부터 삼각수입니다. 1층은 1개, 2층은 3개, 3층은 6개이므로 아래층까지 모두 더해 셉니다.",
+              visual: { kind: "tetrahedral", stage: 3 },
+              check: { prompt: "3층까지 삼각 계단을 쌓으면 모두 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1층 1개 + 2층 3개 + 3층 6개 = 10개입니다." },
+              practice: { prompt: "삼각 계단의 4층 바닥은 쌓기나무 몇 개인가요?", options: ["6", "9", "10"], answer: "10", explanation: "4층 바닥은 1 + 2 + 3 + 4 = 10개인 삼각형입니다." }
+            }
+          ],
           beats: [
             { id: "layer-1", stage: 1, layerCount: 1, totalCount: 1, caption: "맨 위에 쌓기나무 1개를 놓아 1층을 만들었어요.", check: { prompt: "1층에 놓인 쌓기나무는 몇 개인가요?", options: ["1", "2", "3"], answer: "1", success: "맞아요. 1층은 1개예요. 이제 그 아래에 더 넓은 삼각형 층을 만들어요." } },
             { id: "layer-2", stage: 2, layerCount: 3, totalCount: 4, caption: "1층 아래에 3개가 삼각형 모양으로 놓여 2단계가 되었어요.", check: { prompt: "새로 놓은 2층에는 쌓기나무가 몇 개인가요?", options: ["2", "3", "4"], answer: "3", success: "맞아요. 둘째 층은 1 + 2 = 3개예요. 지금까지는 1 + 3 = 4개가 쌓였어요." } },
