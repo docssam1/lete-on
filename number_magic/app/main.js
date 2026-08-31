@@ -60,7 +60,35 @@ const I18N={
     obNamePh:'请输入名字', obGo:'哇！开始吧 ✨', obNeedName:'请先告诉我你的名字！',
     obWelcome:n=>`欢迎，${n}！`, titleCourse:'课程' }
 };
-const t=k=>(I18N[S.lang]&&I18N[S.lang][k])??I18N.ko[k]??k;
+/* ---------- 나이·진도 적응형 밴드 (적응형-타이포-말투-설계.md) ----------
+   인쇄의 printAgeBand(young/mid/senior)와 같은 3밴드를 앱 화면·말투에 확장.
+   나이 입력 없이 연산 진도(현재 과정의 티어)로 판정 — render()가 매번 갱신. */
+let NM_BAND='young';
+function computeBand(){
+  try{
+    const recent=mostRecentTouchedUnit();
+    if(recent&&/^N-/.test(recent))return 'young';       // 유아 유닛 진행 중
+    const c=(window.NM_COURSES||{})[currentCourseKey()];
+    if(c){
+      if(c.tier==='level2')return 'mid';
+      if(c.tier&&c.tier!=='level1')return 'senior';     // level3·경시의 탑
+    }
+  }catch(e){}
+  return 'young';
+}
+/* 말투 오버레이 — ko 전용. 시스템 문자열만 바꾸고 유닛 콘텐츠는 손대지 않는다.
+   young=반말·같이하자, mid=해요체(기존 I18N.ko가 이미 이 톤), senior=간결체. */
+const VOICE_BANDS={
+  young:{ tryAgain:'괜찮아! 한 번 더 해보자', correct:'딩동댕! 맞았어 🎉',
+    timeUp:'시간이 다 됐어!', stampGet:'도장 쾅! 받았어!', doneUnit:'와, 다 했다! 최고야!',
+    skipAsk:'이거 벌써 알아?', numpadHint:'숫자를 눌러서 답해 보자', submit:'됐어!' },
+  senior:{ tryAgain:'다시 시도', correct:'정답', timeUp:'시간 종료', stampGet:'도장 획득',
+    doneUnit:'유닛 완료', skipAsk:'이미 아는 내용인가요?', numpadHint:'숫자 입력' }
+};
+const t=k=>{
+  if(S.lang==='ko'){const b=VOICE_BANDS[NM_BAND];if(b&&b[k]!==undefined)return b[k];}
+  return (I18N[S.lang]&&I18N[S.lang][k])??I18N.ko[k]??k;
+};
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
@@ -428,6 +456,8 @@ function charChipHTML(){
   return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">${label}</span></button>`;
 }
 function render(){
+  NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
+  document.documentElement.dataset.nmBand=NM_BAND;
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(wsHelperId){
@@ -3747,7 +3777,7 @@ function screenExam(){
     <div class="nm-unit-title">📝 ${S.lang==='ko'?'학습지 & 시험':S.lang==='en'?'Worksheet & Exam':'学习单 & 考试'}</div>
   </div><div id="nm-exam-cnt" class="nm-step-body"></div>`;
   $('#backExam').onclick=()=>{S.view='town';save();render();};
-  window.examScreen(document.getElementById('nm-exam-cnt'));
+  window.examScreen(document.getElementById('nm-exam-cnt'), {currentCourse: currentCourseKey(), tiers: ROAD_TIERS});
 }
 
 /* ============================================================

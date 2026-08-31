@@ -1344,8 +1344,12 @@ const NM_EXAM = {
      drill.html의 서랍장 미리보기가 재사용(2026-08-28, 리디자인). 생성 로직은 그대로. */
   buildProblems,
 
+  /* 문장제 변환 노출 — drill.html 미리보기가 유형(숫자/문장제) 선택을 그대로 비추는 데 쓴다. */
+  applyWordProblems,
+
   /* ── 1. 시험 설정 화면 ── */
-  renderExamSetup(container, onStart){
+  renderExamSetup(container, onStart, opts){
+    opts = opts || {};
     /* 2026-07-13: 디딤돌 연산 실제 목차(사용자 캡처, ebook.didimdol.co.kr) 기준 교과 순서 +
        docssam만의 2단 구성 — 각 학기는 두 층으로 이뤄진다:
        ① 교과 핵심: 실제 디딤돌 책의 학습 진행 순서 그대로 (학년 배치·순서 검증됨)
@@ -1578,10 +1582,169 @@ const NM_EXAM = {
       <div class="nm-ex-sec-name">수의 마법 탐험</div>
       <div class="nm-ex-sec-desc">스레드 직접 선택</div>
     </button>
+    <button class="nm-ex-sec-card" data-sec="road">
+      <div class="nm-ex-sec-emo">🛤️</div>
+      <div class="nm-ex-sec-name">${esc(lk('연산 로드맵','Course Road','运算路线图'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('과정 순서 그대로 뽑기','Print along the course path','按课程路线打印'))}</div>
+    </button>
   </div>
 </div>`;
       container.querySelector('[data-sec="grade"]').addEventListener('click', showGradePick);
       container.querySelector('[data-sec="magic"]').addEventListener('click', showMagicForm);
+      container.querySelector('[data-sec="road"]').addEventListener('click', showRoadPick);
+    }
+
+    /* ── 연산 로드맵(과정 1~N) 피커 ──────────────────────────────
+       data/courses.js의 NM_COURSES(과정 → 세션 → 드릴/마법)를 티어별로
+       펼쳐 보여주고, 세션 하나를 그대로 학습지로 인쇄한다(NM_EXAM.renderPrintMulti
+       재사용 — 편지함 봉투 인쇄와 같은 경로). opts.currentCourse/opts.tiers는
+       main.js screenExam()이 넘겨준다(없어도 동작: 폴백 라벨·자동오픈 없음). */
+    function showRoadPick(){
+      const NM_COURSES = window.NM_COURSES || {};
+      const list = Object.keys(NM_COURSES)
+        .map(key => ({ key, c: NM_COURSES[key] }))
+        .sort((a,b) => (a.c.order||0) - (b.c.order||0));
+
+      let openCourse = (opts.currentCourse && NM_COURSES[opts.currentCourse]) ? opts.currentCourse : null;
+      let scrolledOnce = false;
+
+      function tierInfo(tierKey){
+        const found = (opts.tiers || []).find(x => x.key === tierKey);
+        if(found) return found;
+        return { key: tierKey, name: { ko: tierKey, en: tierKey, zh: tierKey }, band: { ko:'', en:'', zh:'' } };
+      }
+      /* 마법 슬롯 id는 유닛(N-06 등)이거나, 유닛이 아니라 스레드 자체가 마법인
+         경우(ML10 등)가 있다(courses.js 주석 참조) — 둘 다 받는다. */
+      function magicLabel(id){
+        const u = (window.NM_UNITS || {})[id];
+        if(u && u.title) return pickL(u.title) || id;
+        const th = (window.NM_THREADS || {})[id];
+        return th ? (pickL(th.name) || id) : id;
+      }
+      function threadLabel(t){
+        const th = (window.NM_THREADS || {})[t];
+        return th ? (pickL(th.name) || t) : t;
+      }
+
+      function sessionChipsHtml(s){
+        const items = s.test ? (s.pool||[]) : (s.drills||[]);
+        return items.map(d => `<span class="nm-ex-road-chip">${esc(threadLabel(d.t))} × ${d.n}</span>`).join('');
+      }
+
+      function sessionRowHtml(s, i, courseKey){
+        const isMagic = !s.test && s.magic && s.magic.length;
+        const nameHtml = s.test
+          ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
+          : `${esc(lk('세션','Session','课节'))} ${i+1}`;
+        const magicHtml = isMagic
+          ? `<span class="nm-ex-road-magic">✨ ${s.magic.map(magicLabel).map(esc).join(' · ')}</span>` : '';
+        return `<div class="nm-ex-road-session">
+          <div class="nm-ex-road-session-head">
+            <span class="nm-ex-road-session-name">${nameHtml}</span>
+          </div>
+          ${magicHtml}
+          <div class="nm-ex-road-chips">${sessionChipsHtml(s)}</div>
+          <button class="nm-ex-road-print-btn" data-course="${esc(courseKey)}" data-session="${i}">
+            🖨 ${esc(lk('학습지','Worksheet','学习单'))}
+          </button>
+        </div>`;
+      }
+
+      function courseRowHtml(x){
+        const c = x.c;
+        const isOpen = openCourse === x.key;
+        const isCurrent = opts.currentCourse === x.key;
+        const soon = !!c.comingSoon;
+        const sessCount = (c.sessions||[]).length;
+        return `<div class="nm-ex-road-course${isOpen?' open':''}${soon?' soon':''}" data-course-wrap="${esc(x.key)}">
+          <button class="nm-ex-road-course-row" data-course-toggle="${esc(x.key)}" ${soon?'disabled':''}>
+            <span class="nm-ex-road-course-num">${c.order}</span>
+            <span class="nm-ex-road-course-body">
+              <b>${esc(pickL(c.title))}${c.boss?' 👑':''}</b>
+              <span class="nm-ex-road-course-meta">${sessCount} ${esc(lk('세션','sessions','节'))}</span>
+            </span>
+            ${isCurrent ? `<span class="nm-ex-road-here">📍 ${esc(lk('지금 여기','You are here','当前位置'))}</span>` : ''}
+            ${soon ? `<span class="nm-ex-road-soon">🚧 ${esc(lk('준비 중','Coming soon','准备中'))}</span>` : ''}
+            ${soon ? '' : `<span class="nm-ex-road-caret">${isOpen?'▲':'▼'}</span>`}
+          </button>
+          ${(isOpen && !soon) ? `<div class="nm-ex-road-sessions">
+            ${(c.sessions||[]).map((s,i) => sessionRowHtml(s,i,x.key)).join('')}
+          </div>` : ''}
+        </div>`;
+      }
+
+      function render(){
+        let prevTier = null;
+        const seenTier = {};
+        let body = '';
+        list.forEach(x => {
+          if(x.c.tier !== prevTier){
+            const info = tierInfo(x.c.tier);
+            /* 대수·미적분Ⅰ처럼 과정 번호가 순서상 흩어져 같은 티어가 두 번
+               서는 경우(story-mode 로드맵의 "이어서"와 같은 자리, main.js
+               nm-cr-station 참조) — 두 번째부터는 밴드(학년대) 설명을 생략하고
+               "이어서"만 붙인다. 티어를 합치지 않는 이유: 과정 번호 순서를
+               흐트러뜨리면 안 되기 때문(연속 구간으로만 끊는다). */
+            const again = !!seenTier[x.c.tier];
+            seenTier[x.c.tier] = true;
+            body += `<div class="nm-ex-road-tier">
+              <div class="nm-ex-road-tier-head">
+                <span class="nm-ex-road-tier-name">${esc(pickL(info.name))}${again ? ` <em class="nm-ex-road-tier-again">${esc(lk('이어서','continued','续'))}</em>` : ''}</span>
+                ${(!again && pickL(info.band)) ? `<span class="nm-ex-road-tier-band">${esc(pickL(info.band))}</span>` : ''}
+              </div>
+              <div class="nm-ex-road-course-list">`;
+            prevTier = x.c.tier;
+          }
+          body += courseRowHtml(x);
+          const isLastOfTier = (list.indexOf(x) === list.length-1) || list[list.indexOf(x)+1].c.tier !== x.c.tier;
+          if(isLastOfTier) body += `</div></div>`;
+        });
+
+        container.innerHTML = `
+<div class="nm-ex-form-wrap nm-ex-road-wrap">
+  <div class="nm-ex-form-head">
+    <button class="nm-ex-back-btn" id="nm-ex-back-road">← ${esc(lk('뒤로','Back','返回'))}</button>
+    <span class="nm-ex-form-title">🛤️ ${esc(lk('연산 로드맵','Course Road','运算路线图'))}</span>
+  </div>
+  <div class="nm-ex-form-body nm-ex-road-body">
+    ${body || `<p class="nm-ex-label">${esc(lk('로드맵 데이터를 불러오지 못했어요.','Course data failed to load.','课程数据加载失败。'))}</p>`}
+  </div>
+</div>`;
+
+        container.querySelector('#nm-ex-back-road').addEventListener('click', showSectionPick);
+
+        container.querySelectorAll('[data-course-toggle]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const k = btn.dataset.courseToggle;
+            openCourse = (openCourse === k) ? null : k;
+            render();
+          });
+        });
+
+        container.querySelectorAll('.nm-ex-road-print-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const courseKey = btn.dataset.course;
+            const sessionIdx = parseInt(btn.dataset.session, 10);
+            const course = NM_COURSES[courseKey];
+            const session = course && course.sessions && course.sessions[sessionIdx];
+            if(!session) return;
+            const raw = session.test ? (session.pool||[]) : (session.drills||[]);
+            const items = raw.map(d => ({
+              thread: d.t, level: d.lv, count: d.n, seed: NM_RNG.newCode(),
+            }));
+            if(!items.length) return;
+            NM_EXAM.renderPrintMulti(items, `${courseKey}-S${sessionIdx+1}`);
+          });
+        });
+
+        if(!scrolledOnce && opts.currentCourse){
+          scrolledOnce = true;
+          const cur = container.querySelector(`[data-course-wrap="${opts.currentCourse}"]`);
+          if(cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'center' });
+        }
+      }
+      render();
     }
 
     /* ── 과정(영역)별 코스 구성: GRADES에서 스레드 접두사로 묶어 파생 ── */
@@ -1912,9 +2075,12 @@ const NM_EXAM = {
 
   /* ── 2. 시험 실행 (순차) ── */
   runExam(config, container, onDone){
-    const { thread, level, count, timer, seed } = config;
+    const { thread, level, count, timer, seed, wordType } = config;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
+    /* 문장제 유형 — 인쇄(renderPrint)만 적용되고 화면 풀이는 빠져 있던 것을 통일
+       (2026-08-31, 문제은행에서 문장제 선택 지원). 렌더는 아래 p.word 분기가 이미 처리. */
+    applyWordProblems(problems, wordType, numericSeed);
     const answers  = new Array(count).fill(null);
     let current    = 0;
     let startTime  = Date.now();
@@ -2213,13 +2379,13 @@ ${answerSectionsHtml}`;
 window.NM_EXAM = NM_EXAM;
 
 /* ── 전역 진입 함수 (main.js에서 호출) ── */
-window.examScreen = function(container){
+window.examScreen = function(container, opts){
   if(!container){ container = document.getElementById('nm-main') || document.body; }
   container.innerHTML = '';
 
   function showSetup(){
     container.innerHTML = '';
-    NM_EXAM.renderExamSetup(container, cfg => showExam(cfg));
+    NM_EXAM.renderExamSetup(container, cfg => showExam(cfg), opts);
   }
 
   /* ── 그리드 학습지 (11math 스타일) ── */

@@ -151,6 +151,8 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .preview-cell{border:1px solid var(--line);border-radius:8px;padding:16px 10px;background:var(--paper);
   text-align:center;font-size:16px;min-height:60px;display:flex;align-items:center;justify-content:center}
+.preview-cell.preview-word{grid-column:1/-1;text-align:left;font-size:13.5px;line-height:1.6;
+  justify-content:flex-start;word-break:keep-all}
 
 /* ── 코드로 다시 풀기 — 학습지 티켓 ── */
 .dr-ticket{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:10px;
@@ -959,6 +961,7 @@ var state = {
   search: '',
   count: 10,
   timer: 0,
+  wordType: 'none', // 'none'|'mix'|'all' — 문장제 유형 (exam.js applyWordProblems 규약 그대로)
   seed: NM_RNG.newCode(),
   previewSeed: NM_RNG.newCode(),
   lastResult: null
@@ -1005,6 +1008,7 @@ function getConfig(){
     level: t.sub.level,
     count: state.count,
     timer: state.timer,
+    wordType: state.wordType,
     seed: state.seed,
     /* 표지 색·아이콘용 — exam.js의 coverPageHtml이 이 값을 우선으로 쓴다
        (없으면 스레드ID 접두어로 자체 추정). TOPICS의 갈래 색을 그대로 표지에 낸다. */
@@ -1099,6 +1103,7 @@ function renderDrawer(){
 
 var COUNT_OPTS = [10,20,30];
 var TIMER_OPTS = [{v:0,l:function(){return dt('없음','None','无');}},{v:180,l:function(){return dt('3분','3 min','3分钟');}},{v:300,l:function(){return dt('5분','5 min','5分钟');}}];
+var WORD_OPTS = [{v:'none',l:function(){return dt('숫자 연산','Numbers','数字运算');}},{v:'mix',l:function(){return dt('문장제 섞기','Mix word problems','混合应用题');}},{v:'all',l:function(){return dt('문장제만','All word problems','全部应用题');}}];
 
 /* 작업대(오른쪽 상세) — 선택 주제·문항수·타이머가 바뀔 때만 다시 그린다(서랍장은 그대로) */
 function renderBench(){
@@ -1120,6 +1125,13 @@ function renderBench(){
 
   html += '<div class="bench-row"><div class="bench-label">' + dt('타이머','Timer','计时') + '</div><div class="seg" id="dr-seg-timer">';
   TIMER_OPTS.forEach(function(o){ html += '<button data-v="' + o.v + '" class="' + (state.timer===o.v?'on':'') + '">' + esc(typeof o.l==='function'?o.l():o.l) + '</button>'; });
+  html += '</div></div>';
+
+  /* 문장제 유형 — 어떤 연산 주제든 그 자리에서 문장제로 바꿔 뽑을 수 있다(별도 문제은행 아님).
+     생성 문장은 exam.js wordifyProblem이 만드는 한국어 문장이라, 단순 두-수 연산이 아닌
+     주제(분수 약분 등)는 자동으로 숫자식 그대로 남는다 — exam.js와 동일한 동작. */
+  html += '<div class="bench-row"><div class="bench-label">' + dt('유형','Style','题型') + '</div><div class="seg" id="dr-seg-word">';
+  WORD_OPTS.forEach(function(o){ html += '<button data-w="' + o.v + '" class="' + (state.wordType===o.v?'on':'') + '">' + esc(o.l()) + '</button>'; });
   html += '</div></div>';
 
   html += '<div class="preview-hd"><span>' + dt('미리보기','Preview','预览') + '</span><button class="preview-dice" id="dr-dice">' + dt('🎲 다른 문제','🎲 New problems','🎲 换一批') + '</button></div>';
@@ -1147,7 +1159,12 @@ function renderPreview(){
   if(!t || !host) return;
   var nSeed = NM_RNG.hashSeed(state.previewSeed);
   var probs = NM_EXAM.buildProblems(t.sub.thread, t.sub.level, 3, nSeed);
-  host.innerHTML = probs.map(function(p){ return '<div class="preview-cell"><span data-tex="' + esc(p.tex||'') + '"></span></div>'; }).join('');
+  if(state.wordType!=='none' && NM_EXAM.applyWordProblems) NM_EXAM.applyWordProblems(probs, state.wordType==='mix'?'all':state.wordType, nSeed);
+  /* 미리보기 3문항에 '섞기'를 그대로 걸면 1문항만 바뀌어 차이가 안 보인다 — 미리보기에서만 all로 보여준다 */
+  host.innerHTML = probs.map(function(p){
+    if(p.word) return '<div class="preview-cell preview-word">' + esc(p.word.ko||'') + '</div>';
+    return '<div class="preview-cell"><span data-tex="' + esc(p.tex||'') + '"></span></div>';
+  }).join('');
   host.querySelectorAll('[data-tex]').forEach(function(el){
     if(window.katex){
       try{ katex.render(el.getAttribute('data-tex'), el, {throwOnError:false}); }catch(e){ el.textContent = el.getAttribute('data-tex'); }
@@ -1165,6 +1182,10 @@ function bindBench(){
   var seg2 = document.getElementById('dr-seg-timer');
   if(seg2) seg2.querySelectorAll('button').forEach(function(b){
     b.addEventListener('click', function(){ state.timer = parseInt(this.dataset.v); renderBench(); });
+  });
+  var seg3 = document.getElementById('dr-seg-word');
+  if(seg3) seg3.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){ state.wordType = this.dataset.w; renderBench(); });
   });
   var dice = document.getElementById('dr-dice');
   if(dice) dice.addEventListener('click', function(){ state.previewSeed = NM_RNG.newCode(); renderPreview(); });

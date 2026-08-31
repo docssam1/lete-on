@@ -8,13 +8,24 @@
   --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;--gold-bright:#F5D98B;
   --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
   --ok:#2E9E6B;--no:#D9534F;--purple:#3d1a5c;
+  /* 적응형 밴드 기본값(=mid). render()가 html[data-nm-band]를 세팅하면 아래에서 재정의.
+     적응형-타이포-말투-설계.md §2 — 컴포넌트에 직접 크기를 박지 말고 토큰만 쓸 것. */
+  --nm-fs-body:15.5px; --nm-fs-num:1.15em; --nm-btn-h:46px; --nm-lh:1.7; --nm-ls:0;
 }
+/* young: 6~7세·초1 — 크게·성기게·또박또박 */
+html[data-nm-band="young"]{--nm-fs-body:17px;--nm-fs-num:1.35em;--nm-btn-h:52px;--nm-lh:1.85;--nm-ls:.01em}
+/* senior: 초3 이상 — 밀도 있게 */
+html[data-nm-band="senior"]{--nm-fs-body:14.5px;--nm-fs-num:1em;--nm-btn-h:42px;--nm-lh:1.6}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{font-family:'Pretendard',sans-serif;color:var(--ink);
   background:radial-gradient(900px 500px at 30% -10%,#eef3fb,transparent 60%),var(--paper);
   overflow:hidden}
 .katex{font-size:1em}
+/* 적응형 밴드 적용 지점 — 문제·학습 본문만. 상단 바 등 크롬은 전 연령 동일. */
+.nm-step-body{font-size:var(--nm-fs-body);line-height:var(--nm-lh);letter-spacing:var(--nm-ls)}
+.nm-step-body .katex{font-size:var(--nm-fs-num)}
+.nm-ex-word{font-size:var(--nm-fs-body);line-height:var(--nm-lh)}
 /* #app 자체는 항상 화면 전체 폭(모바일/데스크탑 공통) — 마을(지도)이 항상 꽉 차게.
    학습 화면(등급목록/유닛)만 아래 미디어쿼리에서 데스크탑 폭 기준으로 중앙 640px로 좁힘. */
 #app{width:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
@@ -703,6 +714,57 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ex-btn-ghost{padding:8px 16px;background:none;color:var(--sub);border:1px solid var(--line);border-radius:10px;
   font-size:13px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
 .nm-ex-btn-ghost:hover{background:var(--mist)}
+
+/* ============================================================
+   🛤️ 연산 로드맵 피커 (학습지 모드 3번째 섹션)
+   과정(course, 괘선 구분) → 세션(아코디언) 목록. 카드 남용 금지 — 티어는
+   괘선 헤더, 과정은 목록 행. 세션 펼침은 한 번에 하나(showRoadPick의
+   openCourse 변수). 430px에서 가로 스크롤 0(모든 값 %/gap 기반).
+   ============================================================ */
+.nm-ex-road-body{gap:0}
+.nm-ex-road-tier{margin-bottom:18px}
+.nm-ex-road-tier:last-child{margin-bottom:0}
+.nm-ex-road-tier-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+  padding-bottom:6px;margin-bottom:8px;border-bottom:2px solid var(--blue-deep)}
+.nm-ex-road-tier-name{font-size:14px;font-weight:900;color:var(--blue-deep)}
+.nm-ex-road-tier-again{font-size:10px;font-weight:700;font-style:normal;color:var(--sub)}
+.nm-ex-road-tier-band{font-size:11px;color:var(--sub)}
+.nm-ex-road-course-list{display:flex;flex-direction:column;gap:0}
+.nm-ex-road-course{border-bottom:1px solid var(--line)}
+.nm-ex-road-course:first-child{border-top:1px solid var(--line)}
+.nm-ex-road-course-row{display:flex;align-items:center;gap:10px;width:100%;
+  background:none;border:none;padding:11px 2px;cursor:pointer;text-align:left;
+  font-family:'Pretendard',sans-serif;min-width:0}
+.nm-ex-road-course-row:hover{background:var(--mist)}
+.nm-ex-road-course-row:disabled{cursor:default}
+.nm-ex-road-course-num{flex:none;width:26px;height:26px;border-radius:50%;
+  background:var(--mist);color:var(--blue-deep);font-size:12px;font-weight:900;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center}
+.nm-ex-road-course.open .nm-ex-road-course-num{background:var(--blue);color:#fff}
+.nm-ex-road-course-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nm-ex-road-course-body b{font-size:13.5px;font-weight:800;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm-ex-road-course-meta{font-size:11px;color:var(--sub)}
+.nm-ex-road-here{flex:none;font-size:10.5px;font-weight:800;color:#fff;
+  background:var(--gold-deep);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.nm-ex-road-soon{flex:none;font-size:10.5px;font-weight:800;color:var(--sub);
+  background:var(--mist);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.nm-ex-road-course.soon{opacity:.55}
+.nm-ex-road-caret{flex:none;font-size:10px;color:var(--sub)}
+.nm-ex-road-sessions{display:flex;flex-direction:column;gap:8px;padding:2px 2px 14px 36px}
+.nm-ex-road-session{background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.nm-ex-road-session-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nm-ex-road-session-name{font-size:12.5px;font-weight:800;color:var(--blue-deep)}
+.nm-ex-road-magic{display:block;font-size:11.5px;font-weight:700;color:var(--gold-deep);
+  margin-top:4px;word-break:keep-all}
+.nm-ex-road-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.nm-ex-road-chip{font-size:10.5px;font-weight:700;color:var(--sub);
+  background:#eef2fa;border-radius:8px;padding:3px 8px;white-space:nowrap}
+.nm-ex-road-print-btn{margin-top:10px;width:100%;border:none;border-radius:10px;
+  background:var(--blue-deep);color:#fff;font-size:12.5px;font-weight:800;
+  padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-print-btn:hover{background:#1a4d93}
+.nm-ex-road-print-btn:active{transform:scale(.97)}
 
 /* ============================================================
    학년 그리드 (1A ~ 6B)
