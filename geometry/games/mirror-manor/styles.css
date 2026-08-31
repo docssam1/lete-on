@@ -96,13 +96,16 @@ button { cursor: pointer }
 .cell.painted { background: #e8823f; border-color: #fff; box-shadow: inset 0 0 0 2px #ffffff66 }
 .board.is-paint .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
 .board.is-double .cell.answer-side:not(.painted):hover { background: #ffe6a866 }
-.board.is-drag .cell { pointer-events: none }
+.board.is-drag .cell { pointer-events: auto }
 .cell.wrong { animation: shake .38s ease; background: #dc5f55cc !important }
 @keyframes shake { 25% { transform: translateX(-4px) } 75% { transform: translateX(4px) } }
 
 /* Level 3 uses a real dot board. Choice buttons keep a generous touch target
    while the small dots show the exact lattice position. */
 .distance-grid { position: absolute; inset: 0; pointer-events: none }
+.distance-cells { pointer-events: auto }
+.distance-choice { pointer-events: auto }
+.distance-choice i { pointer-events: none }
 .distance-grid i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #8f9d9e; transform: translate(-50%, -50%) }
 .distance-source { position: absolute; z-index: 3; width: 20px; height: 20px; border: 4px solid #2f6f92; border-radius: 50%; background: #eaf7fb; box-shadow: 0 2px 5px #22334a55; transform: translate(-50%, -50%); pointer-events: none }
 .distance-choice { position: absolute; z-index: 8; width: 44px; height: 44px; padding: 0; border: 2px solid #8e9da5; border-radius: 50%; background: #ffffff38; transform: translate(-50%, -50%); touch-action: manipulation }
@@ -172,7 +175,7 @@ button { cursor: pointer }
 
 /* ---------------------------------------------------------------- tool rail */
 .tool-panel { display: grid; align-content: start; gap: 8px }
-.tool-panel button { min-height: 58px; display: grid; place-items: center; padding: 6px; border: 1px solid #a9b6c8; border-radius: 7px; background: #f6f2e7; color: #3b4a5e; font-size: 12px; font-weight: 900; box-shadow: 0 3px #9aa8bb }
+.tool-panel button, .tool-panel a { min-height: 58px; display: grid; place-items: center; padding: 6px; border: 1px solid #a9b6c8; border-radius: 7px; background: #f6f2e7; color: #3b4a5e; font-size: 12px; font-weight: 900; text-decoration: none; box-shadow: 0 3px #9aa8bb }
 
 /* --------------------------------------------------------------------- dock */
 .answer-dock { z-index: 8; display: grid; grid-template-columns: minmax(160px, .8fr) minmax(0, 1.6fr) 130px; gap: 10px; align-items: center; padding: 9px 118px 9px 14px; border-top: 1px solid #c3ccd9; background: #fbfaf6ee; box-shadow: 0 -5px 18px #2b3d551d }
@@ -245,7 +248,7 @@ button { cursor: pointer }
   .mission p { font-size: 12px }
   .play-area { grid-template-columns: minmax(0, 1fr) 76px; padding: 7px }
   .tool-panel { gap: 5px }
-  .tool-panel button { min-height: 48px; font-size: 11px }
+  .tool-panel button, .tool-panel a { min-height: 48px; font-size: 11px }
   .answer-dock { grid-template-columns: 1fr 1.6fr 106px; padding-right: 90px }
   .answer-dock p { font-size: 12px }
   .cubi-guide { width: 84px }
@@ -269,7 +272,7 @@ button { cursor: pointer }
   .mission p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px }
   .play-area { padding: 0 7px }
   .room-stage { padding: 0 }
-  .tool-panel button { min-height: 42px }
+  .tool-panel button, .tool-panel a { min-height: 42px }
   .answer-dock { grid-template-columns: minmax(112px, .7fr) minmax(0, 1.5fr) 92px; padding: 2px 70px 2px 8px }
   .answer-dock p { font-size: 11px; line-height: 1.25 }
   .shape-tray { min-height: 44px; flex-wrap: nowrap; gap: 5px }
@@ -300,8 +303,9 @@ button { cursor: pointer }
   .mission p { max-width: none; margin-top: 3px; text-align: left }
   .play-area { display: flex; flex-direction: column; gap: 5px; padding: 6px }
   .room-panel { flex: 1; min-height: 0 }
+  .room-stage { place-items: start center; padding-top: 8px }
   .tool-panel { grid-template-columns: repeat(2, 1fr); display: grid; gap: 6px }
-  .tool-panel button { min-height: 42px; font-size: 11px }
+  .tool-panel button, .tool-panel a { min-height: 42px; font-size: 11px }
   .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
   .cubi-guide { position: fixed }
   .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }
@@ -311,5 +315,150 @@ button { cursor: pointer }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important }
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important }
+}
+
+/* ------------------------------------------------------- material refresh 2026 */
+:root {
+  --navy: #153f48;
+  --wall: #e8f1f0;
+  --brass: #e2b63f;
+  --glass: #8ee4ee;
+  --ink: #17323a;
+  --frame: #245762;
+  --frame-dark: #123b43;
+  --enamel: #237f8e;
+  --coral: #e66f58;
+}
+
+body { background: #d7e5e5 }
+.manor-shell {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.38) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(180deg, #edf6f5 0%, #dbe9e8 58%, #d2dfdf 100%);
+}
+.topbar {
+  background: linear-gradient(180deg, #245b66 0%, #153f48 72%, #10343b 100%);
+  box-shadow: 0 3px 0 #0c2c32, 0 9px 18px rgba(20,56,63,.22), inset 0 1px rgba(255,255,255,.28);
+}
+.icon-button, .level-button {
+  border-color: rgba(191,238,241,.52);
+  background: linear-gradient(180deg, rgba(255,255,255,.17), rgba(0,0,0,.08));
+  box-shadow: inset 0 1px rgba(255,255,255,.25), 0 2px 0 rgba(5,35,40,.48);
+}
+.icon-button:active, .level-button:active { transform: translateY(1px); box-shadow: inset 0 3px 7px rgba(4,32,37,.35) }
+.mission { border-bottom-color: #a9c2c3; background: rgba(249,253,251,.9); box-shadow: inset 0 -1px rgba(255,255,255,.82) }
+.room-panel {
+  border: 1px solid #86a6a8;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.95), transparent 34%),
+    linear-gradient(145deg, rgba(225,242,241,.92), rgba(194,216,216,.88));
+  box-shadow: 0 12px 26px rgba(25,67,72,.18), inset 0 2px rgba(255,255,255,.92), inset 0 -4px 10px rgba(35,83,89,.12);
+}
+.room-stage { perspective: 900px }
+.board {
+  overflow: hidden;
+  border: 7px solid transparent;
+  border-radius: 8px;
+  background:
+    linear-gradient(155deg, rgba(252,255,254,.98), rgba(205,228,228,.94)) padding-box,
+    linear-gradient(180deg, #4b7a82, #173f47 72%, #0d3036) border-box;
+  box-shadow:
+    0 18px 28px rgba(18,58,64,.25),
+    0 6px 0 #0d343b,
+    inset 0 0 0 2px rgba(255,255,255,.65),
+    inset 0 10px 18px rgba(255,255,255,.32),
+    inset 0 -12px 18px rgba(40,91,96,.12);
+}
+.board::before {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  inset: 2px 2px 54% 2px;
+  background: linear-gradient(180deg, rgba(255,255,255,.34), transparent);
+  pointer-events: none;
+}
+.cell {
+  border-color: rgba(70,117,120,.28);
+  background: linear-gradient(155deg, rgba(255,255,255,.12), rgba(40,104,109,.035));
+}
+.cell.answer-side { background: linear-gradient(155deg, rgba(255,255,255,.46), rgba(128,197,199,.1)) }
+.cell.given, .object.given i {
+  border-color: rgba(232,255,255,.9);
+  background: linear-gradient(145deg, #4fb4c0 0%, var(--enamel) 48%, #166574 100%);
+  box-shadow: inset 0 2px rgba(255,255,255,.52), inset 0 -5px 8px rgba(8,59,68,.24), 0 2px 4px rgba(16,65,72,.18);
+}
+.cell.painted, .object.placed i {
+  border-color: rgba(255,244,234,.94);
+  background: linear-gradient(145deg, #f59a79 0%, var(--coral) 52%, #c64e42 100%);
+  box-shadow: inset 0 2px rgba(255,255,255,.5), inset 0 -5px 8px rgba(116,34,30,.2), 0 2px 4px rgba(80,35,33,.16);
+}
+.cell.hinted, .distance-choice.hinted, .symbol-choice.hinted {
+  z-index: 9;
+  outline: 4px solid #f4c84e;
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.72), 0 0 0 3px rgba(163,113,11,.24);
+}
+.cell.hint-source { box-shadow: inset 0 0 0 4px #9ce7ef, inset 0 0 0 7px rgba(16,101,111,.45) }
+.distance-source.hinted { outline: 4px solid #f4c84e; outline-offset: 4px }
+.board.hint-axis .mirror-line { box-shadow: 0 0 0 3px #f4c84e, 0 0 18px rgba(100,222,232,.95), inset 0 0 3px #fff }
+.cell.occupied { background: rgba(45,117,124,.08) }
+.mirror-line {
+  border: 1px solid rgba(255,255,255,.96);
+  background: linear-gradient(90deg, #55737c 0%, #d9fdff 20%, #fff 48%, #9eeaf1 72%, #3f6570 100%);
+  box-shadow: 0 0 0 1px rgba(39,88,96,.55), 0 0 15px rgba(100,222,232,.85), inset 0 0 3px #fff;
+}
+.mirror-line.horizontal { background: linear-gradient(180deg, #55737c 0%, #d9fdff 20%, #fff 48%, #9eeaf1 72%, #3f6570 100%) }
+.tool-panel button, .tool-panel a, .tray-piece, .next-button, .tutorial-card button, .complete-actions > * {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, #fff 0%, #e8f0ee 58%, #cddcda 100%) padding-box,
+    linear-gradient(180deg, rgba(255,255,255,.9), #79989a) border-box;
+  color: #234950;
+  box-shadow: 0 5px 10px rgba(20,64,70,.15), 0 3px 0 #8aa5a5, inset 0 1px rgba(255,255,255,.9);
+}
+.tool-panel button:active, .tool-panel a:active, .tray-piece:active, .next-button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 4px 8px rgba(25,76,81,.2), 0 1px 0 #8aa5a5;
+}
+.tray-piece.selected, .tray-piece.hinted {
+  border-color: #d59d16;
+  background: linear-gradient(180deg, #fff9d8, #f3d46d) padding-box;
+  box-shadow: 0 0 0 3px rgba(238,184,42,.3), 0 3px 0 #aa7910, inset 0 1px #fff;
+}
+.tray-piece i.on { background: linear-gradient(145deg, #f59a79, #d95e4e 68%, #b9473d); box-shadow: inset 0 2px rgba(255,255,255,.55), inset 0 -3px rgba(106,30,28,.18) }
+.next-button { background: linear-gradient(180deg, #38a5b0, #237a87 70%, #1b6570) padding-box; color: #fff; box-shadow: 0 4px 10px rgba(20,67,73,.2), 0 3px 0 #15545e, inset 0 1px rgba(255,255,255,.4) }
+.distance-choice, .symbol-choice {
+  border-color: #6f9598;
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(214,232,230,.92));
+  box-shadow: 0 6px 12px rgba(26,71,76,.16), 0 3px 0 #8aa6a7, inset 0 1px #fff;
+}
+.distance-choice:active, .symbol-choice:active { transform: translate(-50%, 2px); box-shadow: inset 0 4px 8px rgba(28,77,82,.18), 0 1px 0 #8aa6a7 }
+.answer-dock { border-top-color: #91adae; background: rgba(247,252,250,.96); box-shadow: 0 -5px 16px rgba(21,66,72,.12), inset 0 1px #fff }
+.answer-dock p.solved { color: #176b56 }
+.level-card.current { outline: 3px solid #2b8b96; outline-offset: -3px }
+.complete-actions [hidden] { display: none !important }
+
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --board-h: calc(var(--app-dvh) - 134px) }
+  .board { border-width: 5px; box-shadow: 0 9px 16px rgba(18,58,64,.22), 0 3px 0 #0d343b, inset 0 0 0 1px rgba(255,255,255,.58) }
+  .room-panel { margin-block: 3px }
+  .guide-bubble { display: block; right: 48px; bottom: 48px; width: 190px; max-height: 42px; overflow: hidden; padding: 6px 8px; font-size: 10px; line-height: 1.35 }
+}
+
+@media (orientation: portrait) and (max-width: 600px) {
+  :root { --board-h: 39vh }
+  .manor-shell { grid-template-rows: 52px 68px minmax(0, 1fr) 122px }
+  .topbar { grid-template-columns: 34px minmax(48px,1fr) auto 34px auto; gap: 5px; padding-inline: 7px }
+  .level-button { display: block; min-height: 36px; padding: 4px 7px; font-size: 10px }
+  .progress { gap: 4px; padding: 5px 6px; font-size: 10px }
+  .brand strong { font-size: 14px }
+  .answer-dock { align-content: center; min-height: 0; padding: 6px 72px 6px 7px }
+  .play-area { justify-content: center }
+  .room-panel { flex: 0 0 auto }
+  .room-stage { height: auto }
+  .tool-panel { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+  .shape-tray { min-height: 44px; flex-wrap: nowrap; overflow-x: auto }
+  .tray-piece { --tc: 13px; flex: 0 0 auto }
+  .board { border-width: 5px }
 }

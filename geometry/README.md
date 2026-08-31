@@ -25,7 +25,7 @@
 - games/minmax/ - 최대·최소 큐브 챌린지
 - games/paper-fold/ - 한 번·두 번 접어 자르기, 구멍, 숫자 색종이, 맨 위 수
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
-- games/mirror-manor/ - 거울 저택
+- games/mirror-manor/ - 거울 저택: 반쪽 칠하기·같은 거리·물건 배치·기호 반사·두 거울 5단계, 50문제
 - games/geoboard/ - 점판 공작소
 - games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
 - games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
@@ -48,7 +48,7 @@
 
 RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 않는 후속 영역을 정리했습니다.
 
-- 거울 저택
+- 거울 저택: 입문·초급·중급 5단계와 인쇄 활동지
 - 점판 공작소
 - 폴리오미노 퍼즐
 - 똑같이 나누기
@@ -60,7 +60,7 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 새 SVG 제너레이터와 절차형 개념 설명은 `docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md`의
 원본·수학 모델·단일정답·가시성·학습자 적합성·PC/모바일/A4·negative control 관문을 통과해야 합니다.
 
-인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
+인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/mirror-manor/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
 `worksheet/net-observatory/`, `worksheet/dice-roll/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
 
 ## 공통 성장 요소
@@ -99,4 +99,16 @@ node geometry/games/path-walk/path-walk-content-audit.mjs
 node geometry/games/path-walk/path-walk.selftest.mjs
 node geometry/games/path-walk/path-walk.browsercheck.mjs
 node geometry/worksheet/path-walk/path-walk-sheet.browsercheck.mjs
+```
+
+## 거울 저택 배포 회귀 검사
+
+거울 반사 50문항의 독립 정답, 보기 위치, 출처 계약, 키보드 대체 조작, 자동 진행,
+가로·세로 화면, 네 언어와 A4 활동지를 검사합니다.
+
+```powershell
+node geometry/games/mirror-manor/mirror-manor-content-audit.mjs
+node geometry/games/mirror-manor/mirror-manor.selftest.mjs
+node geometry/games/mirror-manor/mirror-manor.browsercheck.mjs
+node geometry/worksheet/mirror-manor/mirror-manor-sheet.browsercheck.mjs
 ```
