@@ -32,8 +32,8 @@ const rectsOverlap = (a, b) => Boolean(a && b && a.left < b.right - 1 && a.right
 
 function auditInventory() {
   if (!semester || !unit) return fail("5-1 1단원 자연수의 혼합 계산을 찾지 못했습니다.");
-  if (inventory.items.length !== 44 || types.length !== 44) fail(`원문·교육과정 유형은 각각 44개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 21 || lockedTypes.length !== 23) fail(`단원은 공개 21개·잠금 23개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (inventory.items.length !== 45 || types.length !== 45) fail(`원문·교육과정 유형은 각각 45개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
+  if (readyTypes.length !== 44 || lockedTypes.length !== 1) fail(`단원은 공개 44개·잠금 1개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
   if (e2ReadyTypes.length !== 10 || e2LockedTypes.length !== 1) fail(`개념탐구 2는 공개 10개·잠금 1개여야 하나 ${e2ReadyTypes.length}, ${e2LockedTypes.length}개입니다.`);
   for (const type of types) {
     const source = inventoryById.get(type.sourceItemId);
@@ -49,6 +49,7 @@ function auditInventory() {
         if (!shouldLock || api.generatorKey(type)) fail(`${type.id}: Mission 3은 잠금이고 생성기가 없어야 합니다.`);
       } else if (shouldLock || api.generatorKey(type) !== "mixedCalculationE2") fail(`${type.id}: 개념탐구 2 공개 생성기 연결이 다릅니다.`);
     }
+    if (source.exploration === 4 && (shouldLock || api.generatorKey(type) !== "mixedCalculationE4" || !inventory.resultContracts[type.sourceItemId])) fail(`${type.id}: 개념탐구 4 생성기 또는 답 형식 연결이 다릅니다.`);
   }
 }
 
@@ -66,7 +67,7 @@ async function inspectCatalog(browser, viewport, label) {
   await page.click('#gradeFilter [data-grade="5"]');
   await page.click('#termFilter [data-term="1"]');
   await page.selectOption("#unitFilter", "5-1-u1");
-  if (await page.locator("[data-preview-type-id]").count() !== 44) fail(`${label}: 목록에 44유형이 보이지 않습니다.`);
+  if (await page.locator("[data-preview-type-id]").count() !== 45) fail(`${label}: 목록에 45유형이 보이지 않습니다.`);
   for (const type of types) {
     const row = page.locator(`[data-preview-type-id="${type.id}"]`);
     if (await row.count() !== 1) {
@@ -200,7 +201,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 44유형 · 단원 공개 21 · 잠금 23 · 개념탐구 2 공개 10 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 44 · 잠금 1 · 개념탐구 2 공개 10 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 개념탐구 2 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);

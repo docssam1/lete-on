@@ -185,6 +185,86 @@ const pilotExpectations = Object.freeze({
     "빈칸마다 1, 2, 3, 4 가운데 가로줄과 세로줄에 없는 수를 남깁니다.",
     "가로·세로 후보 가운데 같은 굵은 영역에 이미 있는 수를 지워 한 칸의 수를 정합니다.",
     "각 가로줄, 세로줄, 2×2 굵은 영역에 1부터 4까지 한 번씩 있는지 확인합니다."
+  ]),
+  "tangram-shape-composition": Object.freeze([
+    "각 조각의 변과 꼭짓점을 보고 어느 조각이 빈 모양의 어느 부분에 맞을지 확인합니다.",
+    "조각의 크기는 바꾸지 않고 돌리거나 뒤집어 바깥선과 맞닿는 변을 맞춥니다.",
+    "모든 조각을 사용했는지, 서로 겹치지 않는지, 바깥선 안에 빈틈없이 들어갔는지 검산합니다."
+  ]),
+  "unit-grid-area": Object.freeze([
+    "격자에서 같은 크기의 정사각형 한 칸이 무엇인지 확인하고 도형 안에 들어간 칸을 표시합니다.",
+    "온전히 들어간 칸을 먼저 세고 잘린 부분은 서로 합쳐 한 칸이 되는지 살펴봅니다.",
+    "센 칸의 넓이를 모두 더해 도형의 넓이를 구하고 다른 도형도 같은 단위로 비교합니다."
+  ]),
+  "equal-part-shaded-fraction": Object.freeze([
+    "도형 전체가 몇 개의 같은 크기 부분으로 나뉘었는지 먼저 셉니다.",
+    "전체와 같은 단위로 색칠된 부분의 수를 세어 분자에 해당하는 수를 정합니다.",
+    "전체 부분 수를 아래에, 색칠한 부분 수를 위에 써서 분수로 나타내고 그림과 다시 대조합니다."
+  ]),
+  "equal-partition-drawing": Object.freeze([
+    "경계선 안의 전체 도형과 몇 부분으로 나누어야 하는지 확인합니다.",
+    "도형 안에서 각 부분이 같은 넓이가 되도록 경계선을 긋고 한 부분의 크기를 비교합니다.",
+    "선을 따라 나뉜 부분이 서로 겹치지 않고 전체를 덮으며 모든 부분의 넓이가 같은지 확인합니다."
+  ]),
+  "folded-strip-length": Object.freeze([
+    "모눈 위에서 띠의 방향이 바뀌는 점을 찾아 가로 구간과 세로 구간으로 나눕니다.",
+    "구간마다 지나간 모눈 칸 수를 세고, 같은 자리를 다시 지나더라도 띠의 서로 다른 구간이면 각각 기록합니다.",
+    "처음부터 끝까지 기록한 구간 길이를 모두 더하고 꺾인 구간을 빠뜨리지 않았는지 다시 따라갑니다."
+  ]),
+  "midpoint-number-line": Object.freeze([
+    "두 점의 수를 확인하고 양 끝 사이가 몇 칸인지 셉니다.",
+    "큰 수와 작은 수의 차이를 구한 뒤 그 차이를 반으로 나누어 가운데까지의 거리를 찾습니다.",
+    "작은 끝 수에 가운데까지의 거리를 더하고 큰 끝 수에서 같은 거리를 빼 두 계산이 같은지 확인합니다."
+  ]),
+  "equal-interval-length": Object.freeze([
+    "양 끝 점이 아니라 그 사이에 있는 같은 간격의 개수를 정확히 셉니다.",
+    "두 점의 전체 길이를 같은 간격 수로 나누어 한 간격의 길이를 구합니다.",
+    "한 간격의 길이를 필요한 횟수만큼 더해 처음의 끝점과 다른 끝점이 맞는지 검산합니다."
+  ]),
+  "walking-step-ratio": Object.freeze([
+    "한 아이의 한 걸음 동안 다른 대상이 몇 걸음을 걷는지 배수 관계를 그림이나 식으로 나타냅니다.",
+    "짧은 걸음 묶음을 아이의 걸음 수만큼 반복해 전체 걸음 수를 구합니다.",
+    "긴 걸음 수와 배수를 곱한 값이 짧은 걸음 수인지 확인하고 두 쪽의 이동 거리가 같은지 검산합니다."
+  ]),
+  "route-distance-multiple": Object.freeze([
+    "집과 중간 장소와 도착 장소가 한 길 위에서 어떤 순서인지 표시합니다.",
+    "집에서 도착 장소까지의 전체 거리에서 집에서 중간 장소까지의 거리를 빼 나머지 구간을 구합니다.",
+    "나머지 구간을 첫 구간의 같은 단위 묶음으로 나누고 더해서 전체 거리로 돌아오는지 검산합니다."
+  ]),
+  "rod-ratio-total-book3": Object.freeze([
+    "㉠과 ㉡을 이루는 같은 길이 칸의 수를 각각 세고 두 칸 수를 더합니다.",
+    "두 막대의 전체 길이를 모든 칸 수로 똑같이 나누어 한 칸의 길이를 구합니다.",
+    "한 칸 길이에 각 막대의 칸 수를 곱하고 두 길이의 합이 주어진 전체 길이인지 확인합니다."
+  ]),
+  "cryptarithm-repeated-number-double": Object.freeze([
+    "각 기호가 십의 자리인지 일의 자리인지 확인하고 수를 세로로 맞춥니다.",
+    "여러 자리에 반복된 기호를 하나의 같은 숫자로 두고 식을 자리별로 살펴봅니다.",
+    "일의 자리부터 계산해 결과의 각 자리와 맞는지, 필요한 받아올림이 있는지 확인합니다."
+  ]),
+  "cryptarithm-fixed-digit-addition": Object.freeze([
+    "문제에서 이미 알려 준 숫자를 해당 자리에 적고 같은 기호가 반복되는 위치를 표시합니다.",
+    "일의 자리 합을 계산하고 결과의 일의 자리와 받아올림을 확인합니다.",
+    "십의 자리와 그다음 자리에서 받아올림을 더해 결과와 일치하는지 끝까지 검산합니다."
+  ]),
+  "cryptarithm-multi-symbol-carry": Object.freeze([
+    "기호마다 가능한 숫자를 적고 같은 기호의 반복, 서로 다른 기호의 중복 금지 조건을 표시합니다.",
+    "일의 자리부터 각 열의 합을 계산하고 결과 숫자와 다음 열로 넘어가는 받아올림을 함께 기록합니다.",
+    "정한 숫자를 전체 세로식에 넣어 각 열의 합과 마지막 받아올림이 모두 맞는지 확인합니다."
+  ]),
+  "binary-weight-selection": Object.freeze([
+    "카드가 어떤 값에서 시작해 다음 카드마다 어떻게 커지는지 순서대로 확인합니다.",
+    "목표 수에서 큰 카드부터 빼 보며 남은 수가 다음 카드값으로 만들 수 있는지 확인합니다.",
+    "선택한 카드만 한 번씩 더해 목표 수가 되는지, 선택하지 않은 카드가 섞이지 않았는지 검산합니다."
+  ]),
+  "colored-cell-number-code": Object.freeze([
+    "한 칸씩 색칠된 보기와 두 칸이 색칠된 보기를 비교해 오른쪽부터 각 열의 값이 어떻게 커지는지 찾습니다.",
+    "색칠된 칸마다 그 열의 값을 적고 같은 열에 여러 칸이 있으면 각각 한 번씩 더합니다.",
+    "구한 합으로 색칠 그림의 수를 읽고, 목표 수가 주어지면 필요한 열의 값을 골라 같은 규칙으로 색칠합니다."
+  ]),
+  "magic-square-three-target": Object.freeze([
+    "3×3 표에서 세 칸씩 이어지는 가로줄, 세로줄, 대각선을 빠짐없이 표시합니다.",
+    "수가 모두 보이는 줄을 더해 공통 목표 합을 정하고 다른 줄에도 같은 값이 적용되는지 확인합니다.",
+    "빈칸에 들어갈 수를 줄의 목표 합으로 좁힌 뒤 세 방향의 모든 줄이 같은 합인지 확인합니다."
   ])
 });
 const book2PilotIds = new Set([
@@ -194,6 +274,21 @@ const book2PilotIds = new Set([
   "triangular-stone-growth", "square-border-stone-growth", "four-number-center-rule",
   "number-grid-row-rule", "two-digit-compose-rule", "sudoku-three-row-column", "sudoku-four-square-region"
 ]);
+const book3PilotIds = new Set([
+  "tangram-shape-composition", "unit-grid-area", "equal-part-shaded-fraction", "equal-partition-drawing",
+  "folded-strip-length", "midpoint-number-line", "equal-interval-length", "walking-step-ratio",
+  "route-distance-multiple", "rod-ratio-total-book3", "cryptarithm-repeated-number-double",
+  "cryptarithm-fixed-digit-addition", "cryptarithm-multi-symbol-carry", "binary-weight-selection",
+  "colored-cell-number-code", "magic-square-three-target"
+]);
+const lockedBook3TypeIds = new Set(["magic-square-three-complete"]);
+for (const typeId of lockedBook3TypeIds) {
+  assert.equal(Object.prototype.hasOwnProperty.call(pilotExpectations, typeId), false,
+    `locked Book 3 type must not be included: ${typeId}`);
+}
+for (const typeId of book3PilotIds) {
+  assert.equal(lockedBook3TypeIds.has(typeId), false, `locked Book 3 type mapped as pilot: ${typeId}`);
+}
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
 
 async function openPilot(page, typeId, label) {
@@ -203,10 +298,13 @@ async function openPilot(page, typeId, label) {
   });
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
-  const bookId = book2PilotIds.has(typeId) ? "book-02" : "book-01";
+  const bookId = book3PilotIds.has(typeId) ? "book-03"
+    : book2PilotIds.has(typeId) ? "book-02" : "book-01";
   await page.locator(`#curriculumTree button[data-curriculum-book="${bookId}"]`).click();
   await page.locator('#curriculumStageChoices button[data-stage="concept"]').click();
-  const pilot = page.locator(`#curriculumTree [data-preview-type="${typeId}"]`);
+  const pilot = page.locator(
+    `#curriculumTree label[data-preview-type="${typeId}"]:has(input[data-curriculum-key^="${bookId}:"])`
+  );
   assert.equal(await pilot.count(), 1, `${label}: ${typeId} pilot type missing`);
   if (!(await pilot.isVisible())) {
     await pilot.evaluate((element) => {

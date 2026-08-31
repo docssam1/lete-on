@@ -471,6 +471,8 @@
   addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
   const params = new URLSearchParams(location.search);
+  const requestedDifficulty = Number(params.get("difficulty"));
+  if ([-1, 0, 1].includes(requestedDifficulty)) state.difficulty = requestedDifficulty;
   const identity = identityApi.resolve({
     session: window.HSELEMENTARY_SESSION || window.GFIELD_SESSION,
     access: window.HSELEMENTARY_ACCESS,
@@ -496,6 +498,7 @@
     $("questionCountInput").value = "3";
     refreshSegments("gradeFilter", "grade", state.grade);
     refreshSegments("termFilter", "term", state.term);
+    refreshSegments("difficultyFilter", "difficulty", state.difficulty);
   }
   ensurePreviewPopover();
   renderUnitOptions();

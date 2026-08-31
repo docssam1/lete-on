@@ -9747,6 +9747,7 @@
         return result(`분수가 일정한 규칙으로 나열되어 있습니다. ${index}번째 분수를 구하세요.<div class="sequence">${shown}, …</div>`, `${numerator}/${denominator}`, `분자는 ${numeratorStep}씩, 분모는 ${denominatorStep}씩 커집니다. ${index}번째 분수는 ${numeratorStart}+${numeratorStep}×${index - 1} / ${denominatorStart}+${denominatorStep}×${index - 1} = ${numerator}/${denominator}입니다.`);
       }
       if (variant === 1) {
+        const mode = level < 0 ? 1 : level > 0 ? 3 : 2;
         const firstStart = int(rng, 8, 18);
         const secondStart = int(rng, 20, 34);
         const step = int(rng, 5 + level, 9 + level * 2);
@@ -14246,6 +14247,274 @@
       const answer = a * x + b;
       return result(`두 수 x와 y 사이에 <b>y = ${a} × x + ${b}</b>의 대응 관계가 있습니다. x가 ${x}일 때 y를 구하세요.`, answer, `x 자리에 ${x}을 넣으면 y = ${a} × ${x} + ${b} = ${answer}입니다.`);
     },
+    mixedCalculationE3({ rng, level, variant = 0 }) {
+      const scale = level + 2;
+      const rectangleSquareSvg = ({ smallLong, smallShort, perimeter, side }) => {
+        const rows = 4;
+        const cols = 2;
+        const padding = 34;
+        const drawingSide = 240;
+        const unit = drawingSide / side;
+        const width = drawingSide + padding * 2;
+        const height = drawingSide + 92;
+        const vertical = padding + smallLong * unit;
+        const horizontals = Array.from({ length: rows - 1 }, (_, index) => padding + (index + 1) * smallShort * unit);
+        return `<svg class="geometry-diagram mixed-e3-rectangle-square" viewBox="0 0 ${width} ${height}" style="width:min(${width}px,100%)" role="img" aria-label="작은 직사각형 ${cols}열 ${rows}행, 모두 여덟 조각으로 만든 큰 정사각형. 작은 직사각형의 긴 변은 ${smallLong}cm, 짧은 변은 ${smallShort}cm, 둘레는 ${perimeter}cm입니다." data-rectangle-model="${smallLong},${smallShort},${perimeter},${side},${rows},${cols}" data-small-long="${smallLong}" data-small-short="${smallShort}" data-small-perimeter="${perimeter}" data-big-side="${side}" data-rows="${rows}" data-cols="${cols}"><rect x="${padding}" y="${padding}" width="${drawingSide}" height="${drawingSide}" fill="none" stroke="#183d56" stroke-width="2.8"/><line x1="${vertical}" y1="${padding}" x2="${vertical}" y2="${padding + drawingSide}" stroke="#52758c" stroke-width="2" stroke-dasharray="6 4"/>${horizontals.map(y => `<line x1="${padding}" y1="${y}" x2="${padding + drawingSide}" y2="${y}" stroke="#52758c" stroke-width="2" stroke-dasharray="6 4"/>`).join("")}<text x="${width / 2}" y="${height - 32}" text-anchor="middle" font-size="17" font-weight="700" fill="#183d56">작은 직사각형의 네 변의 합: ${perimeter}cm</text><text x="${width / 2}" y="${height - 10}" text-anchor="middle" font-size="15" fill="#183d56">2열 × 4행 = 8조각</text></svg>`;
+      };
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("개념탐구 3 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 0) {
+        const shoes = int(rng, 1800 * scale, 3400 * scale);
+        const extra = int(rng, 900 * scale, 1700 * scale);
+        const discount = int(rng, 500 * scale, 1100 * scale);
+        const crayons = shoes * 3 - discount;
+        const pencilCase = shoes + extra;
+        const gap = crayons - pencilCase;
+        if (gap <= 0) return generators.mixedCalculationE3({ rng, level, variant });
+        return result(`문구점에서 크레파스, 실내화, 필통을 샀습니다. 크레파스의 가격은 실내화 가격의 3배보다 ${discount.toLocaleString()}원 더 싸고, 필통의 가격보다 ${gap.toLocaleString()}원 더 비쌉니다. 필통의 가격은 실내화 가격보다 ${extra.toLocaleString()}원 더 비쌀 때 크레파스의 가격을 구하세요.<div class="equation" data-mixed-kind="e3-price" data-values="${shoes},${extra},${discount},${gap}">크레파스 = 실내화 × 3 - ${discount.toLocaleString()} = 필통 + ${gap.toLocaleString()}</div>`, crayons, `실내화를 ${shoes.toLocaleString()}원으로 놓으면 필통은 ${pencilCase.toLocaleString()}원입니다. 크레파스는 ${shoes.toLocaleString()} × 3 - ${discount.toLocaleString()} = ${crayons.toLocaleString()}원이고, 필통보다 ${gap.toLocaleString()}원 더 비싼 값과도 같습니다.`);
+      }
+      if (variant === 1) {
+        const small = int(rng, 22 * scale, 58 * scale);
+        const quotient = int(rng, 3 + level, 6 + scale * 2);
+        const remainder = int(rng, 1, small - 1);
+        const large = quotient * small + remainder;
+        const difference = large - small;
+        return result(`어떤 두 수의 차는 ${difference.toLocaleString()}입니다. 큰 수를 작은 수로 나누면 몫은 ${quotient}, 나머지는 ${remainder}입니다. 두 수의 합을 구하세요.<div class="equation" data-mixed-kind="e3-quotient-remainder" data-values="${difference},${quotient},${remainder}">큰 수 - 작은 수 = ${difference.toLocaleString()}</div>`, large + small, `작은 수를 하나씩 확인하면 작은 수는 ${small.toLocaleString()}이고 큰 수는 ${small.toLocaleString()} × ${quotient} + ${remainder} = ${large.toLocaleString()}입니다. 따라서 합은 ${large.toLocaleString()} + ${small.toLocaleString()} = ${(large + small).toLocaleString()}입니다.`);
+      }
+      if (variant === 2) {
+        const ageCases = [];
+        for (let youngerAge = 2; youngerAge <= 7; youngerAge += 1) {
+          for (let afterYears = 3; afterYears <= 15; afterYears += 1) {
+            const grandmotherAge = 3 * (youngerAge + 3 + youngerAge) + 5 * afterYears;
+            if (grandmotherAge >= 50 && grandmotherAge <= 100) ageCases.push([youngerAge, afterYears]);
+          }
+        }
+        const [younger, years] = pick(rng, ageCases);
+        const older = younger + 3;
+        const grandmother = 3 * (older + younger) + 5 * years;
+        return result(`올해 ${older}살인 지민이는 3살 어린 동생과 ${grandmother}살인 할머니와 함께 살고 있습니다. 할머니의 나이가 지민이와 동생 나이의 합의 3배가 되는 해는 몇 년 후입니까?<div class="equation expanded" data-mixed-kind="e3-age" data-values="${older},${younger},${grandmother}">할머니 나이 = (지민이 나이 + 동생 나이) × 3</div>`, years, `${years}년 후 지민이는 ${older + years}살, 동생은 ${younger + years}살이므로 두 사람의 나이 합은 ${older + younger + 2 * years}살입니다. 그 3배는 ${(older + younger + 2 * years) * 3}살이고, 그때 할머니의 나이 ${grandmother + years}살과 같으므로 ${years}년 후입니다.`);
+      }
+      if (variant === 3) {
+        const walkingSpeed = pick(rng, [80, 100, 120]);
+        const catchMinutes = int(rng, 8 + level * 2, 24 + level * 3);
+        const multiple = int(rng, 1, 3 + level);
+        const headStart = catchMinutes * multiple;
+        const bicycleSpeed = walkingSpeed * (multiple + 1);
+        return result(`형이 집을 떠난 지 ${headStart}분 후에 용준이가 자전거를 타고 형을 만나기 위해 집에서 출발했습니다. 형은 1분에 ${walkingSpeed}m씩 걷고, 용준이는 1분에 ${bicycleSpeed}m씩 갑니다. 용준이는 출발한 지 몇 분 후에 형을 만나겠습니까?<div class="equation" data-mixed-kind="e3-chase" data-values="${headStart},${walkingSpeed},${bicycleSpeed}">두 사람이 간 거리는 만날 때 같습니다.</div>`, catchMinutes, `형의 앞선 거리는 ${walkingSpeed} × ${headStart} = ${(walkingSpeed * headStart).toLocaleString()}m입니다. 1분마다 ${bicycleSpeed - walkingSpeed}m씩 가까워지므로 ${(walkingSpeed * headStart).toLocaleString()} ÷ ${bicycleSpeed - walkingSpeed} = ${catchMinutes}분 후에 만납니다.`);
+      }
+      if (variant === 4) {
+        const last = int(rng, 30 * scale, 70 * scale) * 100;
+        const current = int(rng, 42 * scale, 86 * scale) * 100;
+        const twiceSum = (last + current) * 2;
+        const younghee = int(rng, 18 * scale, 58 * scale) * 100;
+        const lessFromSum = twiceSum - younghee;
+        const junho = int(rng, 6 * scale, 18 * scale) * 100;
+        const lessFromTriple = junho * 3 - younghee;
+        if (lessFromSum <= 0 || lessFromTriple <= 0) return generators.mixedCalculationE3({ rng, level, variant });
+        return result(`진영이는 지난달 ${last.toLocaleString()}원, 이번 달 ${current.toLocaleString()}원의 용돈을 받았습니다. 영희의 이번 달 용돈은 진영이가 지난달과 이번 달에 받은 용돈의 합의 2배보다 ${lessFromSum.toLocaleString()}원 적고, 준호의 이번 달 용돈의 3배보다 ${lessFromTriple.toLocaleString()}원 적습니다. 준호의 이번 달 용돈을 구하세요.<div class="equation" data-mixed-kind="e3-allowance" data-values="${last},${current},${lessFromSum},${lessFromTriple}">영희 용돈 = (지난달 + 이번 달) × 2 - ${lessFromSum.toLocaleString()}</div>`, junho, `영희의 용돈은 (${last.toLocaleString()} + ${current.toLocaleString()}) × 2 - ${lessFromSum.toLocaleString()} = ${younghee.toLocaleString()}원입니다. 준호의 용돈을 구하면 (${younghee.toLocaleString()} + ${lessFromTriple.toLocaleString()}) ÷ 3 = ${junho.toLocaleString()}원입니다.`);
+      }
+      if (variant === 5) {
+        const number = int(rng, 3 + level, 10 + scale * 2);
+        const multiplier = int(rng, 18 * scale, 48 * scale);
+        const divisor = int(rng, 3, 9 + level);
+        const quotient = int(rng, 14 * scale, 38 * scale);
+        const dividend = divisor * quotient;
+        const subtractor = int(rng, 15 * scale, 48 * scale);
+        const difference = int(rng, 5 * scale, 18 * scale);
+        const addend = subtractor + difference;
+        const resultValue = number * multiplier + quotient - (addend - subtractor);
+        return result(`${multiplier}과 어떤 수의 곱에 ${dividend}을 ${divisor}로 나눈 몫을 더한 후 ${addend}과 ${subtractor}의 차를 뺐더니 ${resultValue.toLocaleString()}이 되었습니다. 어떤 수를 구하세요.<div class="equation" data-mixed-kind="e3-reverse-expression" data-values="${multiplier},${dividend},${divisor},${addend},${subtractor},${resultValue}">${multiplier} × □ + ${dividend} ÷ ${divisor} - (${addend} - ${subtractor}) = ${resultValue.toLocaleString()}</div>`, number, `${dividend} ÷ ${divisor} = ${quotient}, ${addend} - ${subtractor} = ${addend - subtractor}입니다. 따라서 ${multiplier} × □ = ${resultValue} - ${quotient} + ${addend - subtractor} = ${number * multiplier}이므로 □ = ${number}입니다.`);
+      }
+      if (variant === 6) {
+        const smallShort = int(rng, 3 + level, 22 + level * 2);
+        const smallLong = smallShort * 2;
+        const perimeter = 2 * (smallLong + smallShort);
+        const side = smallShort * 4;
+        const svg = rectangleSquareSvg({ smallLong, smallShort, perimeter, side });
+        return result(`다음 정사각형의 점선을 따라 잘라 같은 직사각형 8개를 만들었습니다. 작은 직사각형 한 개의 네 변의 합이 ${perimeter}cm일 때, 큰 정사각형의 한 변은 몇 cm입니까?${svg}<div class="equation" data-mixed-kind="e3-rectangle-square" data-values="${smallLong},${smallShort},${perimeter},${side},4,2">큰 정사각형 = 작은 직사각형 2열 × 4행</div>`, `${side}cm`, `작은 직사각형의 긴 변과 짧은 변의 합은 ${perimeter} ÷ 2 = ${smallLong + smallShort}cm입니다. 그림에서 긴 변은 짧은 변의 2배이므로 짧은 변은 ${smallShort}cm입니다. 큰 정사각형의 한 변은 짧은 변 4개와 같으므로 ${smallShort} × 4 = ${side}cm입니다.`);
+      }
+      if (variant === 7) {
+        const girls = int(rng, 28 * scale, 74 * scale);
+        const difference = int(rng, 6, 16 + level * 2);
+        const fifth = girls * 2 + difference;
+        const multiple = 8;
+        const less = int(rng, 20 * scale, 60 * scale);
+        const total = fifth * multiple - less;
+        return result(`소정이네 학교 전체 학생 수는 5학년 학생 수의 ${multiple}배보다 ${less}명 적고, 5학년 남학생 수는 여학생 수보다 ${difference}명 더 많습니다. 전체 학생 수가 ${total.toLocaleString()}명일 때 5학년 여학생은 몇 명입니까?<div class="equation" data-mixed-kind="e3-students" data-values="${total},${multiple},${less},${difference}">전체 = 5학년 × ${multiple} - ${less}</div>`, girls, `5학년 학생 수는 (${total.toLocaleString()} + ${less}) ÷ ${multiple} = ${fifth}명입니다. 여학생을 □명이라 하면 남학생은 □ + ${difference}명이므로 2 × □ + ${difference} = ${fifth}입니다. 따라서 여학생은 ${girls}명입니다.`);
+      }
+      if (variant === 8) {
+        const trainSpeedPerTen = pick(rng, [18, 20, 24, 25, 30]);
+        const trainBlocks = int(rng, 8 + level, 14 + level * 2);
+        const trainMinutes = trainBlocks * 10;
+        const trainKm = trainSpeedPerTen * trainBlocks;
+        const walkingKm = int(rng, 2, 6 + level);
+        const walkingSpeed = pick(rng, [20, 25, 40, 50]);
+        const walkingMinutes = walkingKm * 1000 / walkingSpeed;
+        const totalKm = trainKm + walkingKm;
+        return result(`현준이는 기차역에서 출발하여 할머니 댁에 갑니다. 기차는 10분에 ${trainSpeedPerTen}km씩 일정한 빠르기로 ${trainMinutes}분 동안 탔고, 남은 거리는 1분에 ${walkingSpeed}m씩 걸었습니다. 기차역에서 할머니 댁까지의 거리가 ${totalKm}km일 때 걸어간 시간은 몇 분입니까?<div class="equation" data-mixed-kind="e3-train-walk" data-values="${totalKm},${trainSpeedPerTen},${trainMinutes},${walkingSpeed}">기차 거리 + 걸은 거리 = 전체 거리</div>`, `${walkingMinutes}분`, `기차로 간 거리는 ${trainSpeedPerTen} × (${trainMinutes} ÷ 10) = ${trainKm}km입니다. 남은 거리는 ${totalKm} - ${trainKm} = ${walkingKm}km = ${walkingKm * 1000}m입니다. ${walkingKm * 1000} ÷ ${walkingSpeed} = ${walkingMinutes}분 걸었습니다.`);
+      }
+      if (variant === 9) {
+        const buyCount = 5;
+        const buyPrice = 750;
+        const bagCount = 3;
+        const sellPrice = 600;
+        const profitPerBag = sellPrice - buyPrice / buyCount * bagCount;
+        const bags = int(rng, 28 * scale, 74 * scale);
+        const profit = profitPerBag * bags;
+        return result(`어느 사탕 가게에서는 ${buyCount}개에 ${buyPrice}원 하는 사탕을 사 와서 1봉지에 ${bagCount}개씩 넣어 ${sellPrice}원에 팝니다. 오늘 판 사탕으로 얻은 이익이 ${profit.toLocaleString()}원이라면 오늘 판 사탕은 모두 몇 봉지입니까?<div class="equation" data-mixed-kind="e3-candy" data-values="${buyCount},${buyPrice},${bagCount},${sellPrice},${profit}">한 봉지 이익 × 봉지 수 = 전체 이익</div>`, `${bags}봉지`, `사탕 한 개의 값은 ${buyPrice} ÷ ${buyCount} = ${buyPrice / buyCount}원입니다. 한 봉지의 이익은 ${sellPrice} - ${buyPrice / buyCount} × ${bagCount} = ${profitPerBag}원입니다. ${profit.toLocaleString()} ÷ ${profitPerBag} = ${bags}봉지입니다.`);
+      }
+      const difference = pick(rng, [2, 6, 10, 14].filter(value => value < 4 * (8 + scale * 5) / 3));
+      const transfer = int(rng, 8 * scale, 20 * scale);
+      const hyunju = (4 * transfer - 3 * difference) / 2;
+      const miseon = hyunju + difference;
+      if (!Number.isInteger(hyunju) || hyunju <= transfer) return generators.mixedCalculationE3({ rng, level, variant });
+      return result(`미선이는 현주보다 구슬을 ${difference}개 더 많이 가지고 있습니다. 미선이가 현주에게 구슬을 ${transfer}개 주면 현주가 가진 구슬은 미선이가 가진 구슬의 3배가 됩니다. 처음에 미선이와 현주가 가진 구슬 수의 곱을 구하세요.<div class="equation" data-mixed-kind="e3-beads" data-values="${difference},${transfer}">현주 + ${transfer} = (미선 - ${transfer}) × 3</div>`, miseon * hyunju, `처음 현주가 가진 구슬을 □개라 하면 미선이는 □ + ${difference}개입니다. □ + ${transfer} = (□ + ${difference} - ${transfer}) × 3을 풀면 현주는 ${hyunju}개, 미선이는 ${miseon}개입니다. 곱은 ${miseon} × ${hyunju} = ${miseon * hyunju}입니다.`);
+    },
+    mixedCalculationE4({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("개념탐구 4 원문 분기는 0부터 11까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-mixed-e4-kind="${kind}" data-mixed-e4-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      // The shared generator normalizes difficulty offsets -1/0/1 to levels 0/1/2.
+      const modeForLevel = value => value === 0 ? 1 : value === 2 ? 3 : 2;
+      const cards = values => `<span class="number-card-row" aria-label="수 카드 ${values.join(", ")}">${values.map(value => `<span class="number-card">${value}</span>`).join("")}</span>`;
+      const fourFours = ["(4 + 4) ÷ (4 + 4)", "4 ÷ 4 + 4 ÷ 4", "(4 + 4 + 4) ÷ 4", "4 + (4 - 4) × 4", "(4 × 4 + 4) ÷ 4", "4 + (4 + 4) ÷ 4", "4 + 4 - 4 ÷ 4", "4 + 4 + 4 - 4", "4 + 4 + 4 ÷ 4", "(44 - 4) ÷ 4"];
+      const maximumFourCards = values => {
+        const candidates = operatorPermutations(values).map(([first, second, third, fourth]) => {
+          const difference = first - second;
+          return difference > 0 && (difference * third) % fourth === 0 ? { order: [first, second, third, fourth], value: difference * third / fourth } : null;
+        }).filter(Boolean);
+        const maximum = Math.max(...candidates.map(candidate => candidate.value));
+        const ranking = [...new Set(candidates.map(candidate => candidate.value))].sort((left, right) => right - left);
+        return { maximum, second: ranking[1], winner: candidates.find(candidate => candidate.value === maximum), secondWinner: candidates.find(candidate => candidate.value === ranking[1]), winners: candidates };
+      };
+      const maximumTwoDigit = values => {
+        const candidates = [];
+        for (const order of operatorPermutations(values)) {
+          const [tens, ones, subtract, divisor, multiplier] = order;
+          const twoDigit = tens * 10 + ones;
+          if (twoDigit <= subtract || (twoDigit - subtract) % divisor) continue;
+          candidates.push({ order, value: (twoDigit - subtract) / divisor * multiplier });
+        }
+        const maximum = Math.max(...candidates.map(candidate => candidate.value));
+        const ranking = [...new Set(candidates.map(candidate => candidate.value))].sort((left, right) => right - left);
+        return { maximum, second: ranking[1], winner: candidates.find(candidate => candidate.value === maximum), secondWinner: candidates.find(candidate => candidate.value === ranking[1]), winners: candidates };
+      };
+      if (variant === 0) {
+        const mode = modeForLevel(level);
+        const targets = mode === 1 ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const rangeText = mode === 1 ? "1부터 5까지" : "1부터 10까지";
+        const extraCondition = mode === 3 ? " 1부터 5까지는 4를 붙여 쓰지 마세요. 6부터 10까지는 필요하면 붙여 써도 됩니다." : " 필요하면 4를 붙여 써도 됩니다.";
+        const examples = targets.map(target => `${target}. ${fourFours[target - 1]} = ${target}`).join("<br>");
+        const workspace = `<div class="four-fours-grid" aria-label="${rangeText} 식 쓰기">${targets.map(target => `<span><b>${target}</b><i aria-hidden="true"></i></span>`).join("")}</div>`;
+        return result(`4를 네 번 쓰고 +, -, ×, ÷, ( )를 사용하여 ${rangeText}의 수를 각각 만드는 식을 쓰세요.${extraCondition}${workspace} ${tag("four-fours", [mode, ...targets], "rubric")}`, `예시 답: ${targets.map(target => `${target}. ${fourFours[target - 1]} = ${target}`).join(" ; ")}`, `4를 네 번 썼는지와 각 계산 결과를 확인합니다.<br>${examples}<br>조건에 맞는 다른 식도 가능합니다.`);
+      }
+      if (variant === 1) {
+        const mode = modeForLevel(level);
+        let a = 34; let b = 6; let c = 4; let d = 16; let e = 4; let target = 14;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          b = int(rng, 3, 9 + level); c = int(rng, 2, 6 + level); e = int(rng, 2, 6);
+          const quotient = int(rng, 2, 8 + level); d = e * quotient; target = int(rng, 8, 24 + level * 4); a = target + b * c - quotient;
+          if (a > b * c && a <= 99) break;
+        }
+        const condition = mode === 1 ? " 힌트: 둘째 빈칸에는 ×가 들어갑니다." : mode === 3 ? " 계산 과정에서 나오는 수가 모두 자연수가 되게 하세요." : "";
+        return result(`등식이 성립하도록 빈칸에 +, -, ×, ÷를 한 번씩 넣으세요.${condition}<div class="equation">${a} □ ${b} □ ${c} □ ${d} □ ${e} = ${target}</div>${tag("four-operators", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} - ${b} × ${c} + ${d} ÷ ${e} = ${target}`, `${b} × ${c} = ${b * c}, ${d} ÷ ${e} = ${d / e}입니다. 따라서 ${a} - ${b * c} + ${d / e} = ${target}입니다.`);
+      }
+      if (variant === 2) {
+        const mode = modeForLevel(level);
+        let a = 9; let b = 8; let c = 12; let d = 4; let e = 22; let target = 23;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          d = pick(rng, [2, 3, 4, 5, 6]); const quotient = int(rng, 3, 10 + level); b = int(rng, 2, quotient * d - 2); c = quotient * d - b;
+          a = int(rng, 4, 14 + level * 2); e = int(rng, 2, a * quotient - 2); target = a * quotient - e;
+          if (b > 0 && c > 0 && target > 0) break;
+        }
+        const condition = mode === 1 ? " 힌트: 괄호 안 빈칸에는 +가 들어갑니다." : mode === 3 ? " 계산 과정에서 나오는 수가 모두 자연수가 되게 하세요." : "";
+        return result(`+, -, ×, ÷ 기호를 한 번씩 사용하여 등식이 성립하도록 빈칸에 알맞게 넣으세요.${condition}<div class="equation">${a} □ (${b} □ ${c}) □ ${d} □ ${e} = ${target}</div>${tag("parenthesized-four-operators", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} × (${b} + ${c}) ÷ ${d} - ${e} = ${target}`, `괄호 안은 ${b} + ${c} = ${b + c}입니다. ${a} × ${b + c} ÷ ${d} = ${a * (b + c) / d}이고, ${e}을 빼면 ${target}입니다.`);
+      }
+      if (variant === 3) {
+        const mode = modeForLevel(level);
+        if (mode === 3) {
+          const expressions = ["72 ÷ (4 × 9) × 6 ÷ 4 = 3", "72 ÷ (4 × 9 ÷ 6) ÷ 4 = 3"];
+          return result(`등식이 성립하도록 두 빈칸에 ×, ÷를 넣고, 괄호를 한 쌍 사용하세요. 계산 과정에서 나오는 수는 모두 자연수이며, 조건에 맞는 모든 식을 찾으세요.<div class="equation">72 □ 4 × 9 □ 6 ÷ 4 = 3</div>${tag("multiply-divide-parentheses", [mode, 72, 4, 9, 6, 4, 3], "rubric")}`, `예시 답: ${expressions.join(" ; ")}`, `조건에 맞는 식은 다음 두 가지입니다.<br>${expressions.join("<br>")}`);
+        }
+        let b = 4; let c = 9; let d = 6; let e = 4; let middle = 2; let target = 3; let a = 72;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          b = int(rng, 2, 6); c = int(rng, 3, 9); middle = int(rng, 2, 5 + level); e = int(rng, 2, 6); target = int(rng, 2, 7 + level); d = target * e / middle; a = b * c * middle;
+          if (Number.isInteger(d) && d > 0) break;
+        }
+        const condition = mode === 1 ? ` 힌트: 괄호는 ${b} × ${c}을 먼저 계산하도록 표시합니다.` : "";
+        return result(`등식이 성립하도록 두 빈칸에 ×, ÷를 넣고, 알맞은 곳에 괄호를 표시하세요.${condition}<div class="equation">${a} □ ${b} × ${c} □ ${d} ÷ ${e} = ${target}</div>${tag("multiply-divide-parentheses", [mode, a, b, c, d, e, target], "rubric")}`, `예시 답: ${a} ÷ (${b} × ${c}) × ${d} ÷ ${e} = ${target}`, `${b} × ${c} = ${b * c}이고 ${a} ÷ ${b * c} = ${middle}입니다. ${middle} × ${d} ÷ ${e} = ${target}입니다.`);
+      }
+      if (variant === 4) {
+        const mode = modeForLevel(level);
+        const cases = mode === 3 ? [[1, 2, 4, 7], [1, 2, 5, 8], [1, 3, 5, 7]] : [[2, 3, 6, 8], [1, 2, 3, 6], [1, 2, 4, 7], [1, 2, 5, 8], [1, 3, 5, 7]];
+        const values = pick(rng, cases);
+        const { maximum, second: secondValue, winner, secondWinner } = maximumFourCards(values);
+        const [first, secondCard, third, fourth] = winner.order;
+        const promptCondition = mode === 1 ? ` 힌트: 첫째 칸에는 ${first}을 넣으세요.` : mode === 3 ? " 가장 큰 값과 두 번째로 큰 서로 다른 자연수가 되게 하는 카드 순서를 모두 쓰세요." : "";
+        const answer = mode === 3 ? `최대: ${winner.order.join(", ")} ; 다음: ${secondWinner.order.join(", ")}` : winner.order.join(", ");
+        const solution = mode === 3 ? `가장 큰 값은 (${winner.order[0]} - ${winner.order[1]}) × ${winner.order[2]} ÷ ${winner.order[3]} = ${maximum}이고, 두 번째로 큰 값은 (${secondWinner.order[0]} - ${secondWinner.order[1]}) × ${secondWinner.order[2]} ÷ ${secondWinner.order[3]} = ${secondValue}입니다.` : `가능한 카드 배치를 모두 확인하면 (${first} - ${secondCard}) × ${third} ÷ ${fourth} = ${maximum}가 가장 큽니다.`;
+        return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 써서 계산 결과가 가장 큰 자연수가 되도록 빈칸에 넣으세요.${promptCondition}<div class="equation">(□ - □) × □ ÷ □</div>${tag("maximum-four-cards", [mode, ...values, maximum, secondValue], "ordered")}`, answer, solution);
+      }
+      if (variant === 5) {
+        const mode = modeForLevel(level);
+        const cases = [
+          { cards: [1, 3, 4, 5, 7], maximum: 60, expressions: ["(4 + 5) × 7 - 3 ÷ 1", "(4 ÷ 1 + 5) × 7 - 3"] },
+          { cards: [1, 2, 3, 4, 6], maximum: 40, expressions: ["(3 + 4) × 6 - 2 ÷ 1", "(3 ÷ 1 + 4) × 6 - 2"] },
+          { cards: [2, 3, 4, 5, 8], maximum: 62, expressions: ["(3 + 5) × 8 - 4 ÷ 2", "8 × (5 + 3) - 4 ÷ 2"] },
+          { cards: [3, 4, 5, 6, 8], maximum: 70, expressions: ["(4 + 5) × 8 - 6 ÷ 3", "8 × (5 + 4) - 6 ÷ 3"] },
+          { cards: [2, 4, 5, 7, 9], maximum: 106, expressions: ["(5 + 7) × 9 - 4 ÷ 2", "9 × (7 + 5) - 4 ÷ 2"] }
+        ];
+        const selected = pick(rng, cases);
+        const task = mode === 1 ? ` 힌트: 괄호 안에는 ${selected.expressions[0].match(/\(([^)]+)\)/)[1]}를 먼저 계산합니다.` : mode === 3 ? " 최대값을 만드는 서로 다른 식을 두 개 쓰세요." : "";
+        const answerExpressions = mode === 3 ? selected.expressions : [selected.expressions[0]];
+        const answer = `예시 답: ${answerExpressions.map(expression => `${expression} = ${selected.maximum}`).join(" ; ")}`;
+        return result(`수 카드 ${cards(shuffle(rng, selected.cards))}와 +, -, ×, ÷, ( )를 모두 한 번씩 사용하여 계산 결과가 가장 큰 자연수가 되도록 식으로 나타내세요. 계산 과정에서 자연수가 나오도록 하세요.${task}${tag("maximum-five-cards", [mode, ...selected.cards, selected.maximum], "rubric")}`, answer, `카드와 네 기호를 모두 한 번씩 썼는지 확인합니다.<br>${answerExpressions.map(expression => `${expression} = ${selected.maximum}`).join("<br>")}`);
+      }
+      if (variant === 6) {
+        const mode = modeForLevel(level);
+        const value = pick(rng, [2, 3, 4, 5, 6, 7, 8, 9]);
+        const expressions = [`(${value} - ${value}) × ${value} + ${value} ÷ ${value}`, `${value} ÷ ${value} + (${value} - ${value}) × ${value}`];
+        const hint = mode === 1 ? " 힌트: (□ - □) × □ + □ ÷ □ 꼴로 만들어 보세요." : mode === 3 ? " 서로 다른 식을 두 개 쓰세요." : "";
+        const answer = `예시 답: ${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join(" ; ")}`;
+        return result(`${value}를 다섯 번 쓰고 +, -, ×, ÷, ( )를 한 번씩 모두 사용하여 1이 되는 계산식을 만드세요.${hint}${tag("five-same-numbers", [mode, value, 1], "rubric")}`, answer, `${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join("<br>")}`);
+      }
+      if (variant === 7) {
+        const mode = modeForLevel(level);
+        const condition = mode === 1 ? " 힌트: 첫째 빈칸은 ÷ 또는 +, 둘째 빈칸은 + 또는 -입니다." : mode === 3 ? " 두 빈칸에 넣는 기호는 서로 달라야 합니다." : "";
+        return result(`등식이 성립하도록 두 빈칸에 +, -, ×, ÷ 기호를 알맞게 넣으세요.${condition}<div class="equation">85 □ 17 □ 9 × 3 - 20 = 12</div>${tag("two-operators", [mode, 85, 17, 9, 3, 20, 12], "rubric")}`, "예시 답: 85 ÷ 17 + 9 × 3 - 20 = 12", "85 ÷ 17 = 5, 9 × 3 = 27이므로 5 + 27 - 20 = 12입니다.");
+      }
+      if (variant === 8) {
+        const mode = modeForLevel(level);
+        const rows = [
+          { plain: "42 ÷ 2 + 4 × 2 - 3 = 6", answer: "42 ÷ (2 + 4 × 2 - 3) = 6" },
+          { plain: "72 - 5 × 2 + 6 ÷ 4 = 62", answer: "72 - 5 × (2 + 6) ÷ 4 = 62" },
+          { plain: "78 - 48 + 16 ÷ 2 = 46", answer: "78 - (48 + 16) ÷ 2 = 46" }
+        ].slice(0, mode);
+        return result(`다음 ${rows.length}개 식이 성립하도록 각각 한 쌍의 괄호로 묶으세요.<div class="equation">${rows.map((row, index) => `(${index + 1}) ${row.plain}`).join("<br>")}</div>${tag("three-parentheses", [mode, rows.length], "ordered")}`, rows.map((row, index) => `(${index + 1}) ${row.answer}`).join(" ; "), rows.map((row, index) => `(${index + 1}) ${row.answer}입니다.`).join("<br>"));
+      }
+      if (variant === 9) {
+        const mode = modeForLevel(level);
+        const cases = [[1, 3, 5, 7, 8], [1, 2, 3, 4, 5], [1, 2, 3, 5, 7], [1, 2, 4, 5, 9], [1, 2, 4, 7, 8]];
+        const values = pick(rng, cases);
+        const { maximum, second, winner, secondWinner } = maximumTwoDigit(values);
+        const [tens, ones, subtract, divisor, multiplier] = winner.order;
+        const condition = mode === 1 ? ` 힌트: 두 자리 수의 십의 자리에는 ${tens}을 넣으세요.` : mode === 3 ? " 가장 큰 값과 두 번째로 큰 서로 다른 자연수가 되게 하는 카드 순서를 모두 쓰세요." : "";
+        const answer = mode === 3 ? `최대: ${winner.order.join(", ")} ; 다음: ${secondWinner.order.join(", ")}` : winner.order.join(", ");
+        const solution = mode === 3 ? `가장 큰 값은 (${winner.order[0]}${winner.order[1]} - ${winner.order[2]}) ÷ ${winner.order[3]} × ${winner.order[4]} = ${maximum}이고, 두 번째로 큰 값은 (${secondWinner.order[0]}${secondWinner.order[1]} - ${secondWinner.order[2]}) ÷ ${secondWinner.order[3]} × ${secondWinner.order[4]} = ${second}입니다.` : `두 자리 수를 만드는 경우까지 모두 확인하면 (${tens}${ones} - ${subtract}) ÷ ${divisor} × ${multiplier} = ${maximum}가 가장 큽니다.`;
+        return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 사용하여 다음 계산 결과가 가장 커지도록 빈칸에 넣으세요. 앞의 두 칸에는 두 자리 수가 들어갑니다.${condition}<div class="equation">(□ □ - □) ÷ □ × □</div>${tag("maximum-two-digit", [mode, ...values, maximum, second], "ordered")}`, answer, solution);
+      }
+      if (variant === 10) {
+        const mode = modeForLevel(level);
+        const choices = mode === 1 ? [33, 65, 82] : mode === 3 ? [33, 36, 65, 69, 84, 93, 82, 42, 41] : [33, 82, 65, 42, 93];
+        const impossible = choices.filter(value => ![33, 36, 65, 69, 84, 93].includes(value)).sort((left, right) => left - right);
+        return result(`다음 식을 한 쌍의 괄호로 묶어 계산했을 때, 보기 중 계산 결과가 될 수 없는 수를 모두 찾으세요.<div class="equation">4 × 16 + 8 - 6 ÷ 2</div><div class="choice-row">[보기] ${shuffle(rng, choices).join(", ")}</div>${tag("impossible-parentheses", [mode, ...choices], "set")}`, impossible.join(", "), `괄호를 넣을 수 있는 모든 위치를 계산하면 33, 36, 65, 69, 84, 93이 나옵니다. 따라서 보기에서 만들 수 없는 수는 ${impossible.join("와 ")}입니다.`);
+      }
+      const start = pick(rng, [1, 2, 3, 4, 5, 6]);
+      const mode = modeForLevel(level);
+      const values = [start, start + 1, start + 2, start + 3];
+      const expressions = [`(${start + 3} - ${start + 1}) ÷ (${start + 2} - ${start})`, `(${start + 2} - ${start}) ÷ (${start + 3} - ${start + 1})`];
+      const hint = mode === 1 ? " 힌트: (□ - □) ÷ (□ - □) 꼴로 만들어 보세요." : mode === 3 ? " 서로 다른 식을 두 개 쓰세요." : "";
+      const answer = `예시 답: ${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join(" ; ")}`;
+      return result(`수 카드 ${cards(shuffle(rng, values))}를 한 번씩 모두 사용하여 계산 결과가 1이 되는 식을 만드세요. 수를 붙여 쓰지는 않습니다.${hint}${tag("four-cards-one", [mode, ...values, 1], "rubric")}`, answer, `${(mode === 3 ? expressions : [expressions[0]]).map(expression => `${expression} = 1`).join("<br>")}`);
+    },
     advancedRange({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const aLow = int(rng, 11 + level * 8, 28 + level * 12);
@@ -17804,6 +18073,217 @@
       const answer = filledRectangleCount(widths);
       return result(`그림과 같이 계단 모양으로 이어진 모눈에서 선을 따라 그릴 수 있는 크고 작은 직사각형은 모두 몇 개인지 구하세요.${staircaseGridSvg(widths)}`, answer, `위쪽 행과 아래쪽 행을 정한 뒤, 그 사이의 모든 행에 공통으로 있는 연속한 칸을 골라 직사각형을 셉니다. 빠짐없이 더하면 ${answer}개입니다.`);
     },
+    factorMultipleE1({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("약수와 배수 개념탐구 1 원문 분기는 0부터 11까지여야 합니다.");
+      const mode = level + 1;
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e1-kind="${kind}" data-factor-multiple-e1-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const setAnswer = values => values.join(", ");
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      if (variant === 0) {
+        const number = pick(rng, mode === 1 ? [12, 18, 20] : mode === 2 ? [60, 72, 84] : [120, 180, 240]);
+        const divisors = allDivisors(number);
+        const answer = divisors.length / 2;
+        const hint = mode === 1 ? ` 약수는 ${divisors.join(", ")}입니다.` : mode === 3 ? " 약수의 작은 수와 큰 수를 짝지어 빠짐없이 확인하세요." : "";
+        return result(`${number}의 약수들을 모두 곱한 값을 ${number}만 반복해서 곱한 식으로 나타낼 때, 식에 쓰이는 ${number}의 개수를 구하세요.${hint}${tag("divisor-product-pairs", [mode, number], "single-value")}`, answer, `${number}의 약수를 작은 수와 큰 수끼리 짝지으면 각 쌍의 곱은 ${number}입니다. ${divisors.length}개의 약수로 ${answer}쌍을 만들 수 있으므로 식에 쓰인 ${number}의 개수는 ${answer}개입니다.`);
+      }
+      if (variant === 1) {
+        const divisor = pick(rng, mode === 1 ? [25, 32, 40] : mode === 2 ? [37, 41, 43] : [47, 53, 59]);
+        const from = 1000;
+        const to = mode === 1 ? 5999 : 9999;
+        const first = Math.ceil(from / divisor) * divisor;
+        const last = Math.floor(to / divisor) * divisor;
+        const answer = Math.floor(to / divisor) - Math.floor((from - 1) / divisor);
+        const hint = mode === 1 ? ` 가장 작은 배수는 ${first}, 가장 큰 배수는 ${last}입니다.` : mode === 3 ? " 범위의 양 끝에 있는 수가 포함되는지도 확인하세요." : "";
+        return result(`${from.toLocaleString()} 이상 ${to.toLocaleString()} 이하인 수 중 ${divisor}의 배수는 모두 몇 개인지 구하세요.${hint}${tag("four-digit-multiple-count", [mode, from, to, divisor], "single-value")}`, answer, `${to.toLocaleString()} 이하의 ${divisor}의 배수는 ${Math.floor(to / divisor)}개이고, ${from.toLocaleString()}보다 작은 배수는 ${Math.floor((from - 1) / divisor)}개입니다. 따라서 ${answer}개입니다.`);
+      }
+      if (variant === 2) {
+        const number = pick(rng, mode === 1 ? [1001, 1365, 1729] : mode === 2 ? [2002, 2310, 2730] : [3003, 5005, 7425]);
+        const candidates = allDivisors(number).filter(value => value >= 100 && value <= 999);
+        const answer = candidates.at(-1);
+        const hint = mode === 1 ? ` ${number}의 약수 중 세 자리 수만 골라 보세요.` : mode === 3 ? " 약수 짝에서 세 자리인 큰 쪽을 비교하세요." : "";
+        return result(`${number.toLocaleString()}의 약수 중 가장 큰 세 자리 수를 구하세요.${hint}${tag("largest-three-digit-divisor", [mode, number], "single-value")}`, answer, `${number.toLocaleString()}의 세 자리 약수는 ${candidates.join(", ")}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const divisor = pick(rng, mode === 1 ? [7, 9] : mode === 2 ? [11, 13] : [17, 19]);
+        const base = pick(rng, mode === 2 && divisor === 11 ? [5496, 4832, 7164] : [int(rng, 3200, 8900)]);
+        const upper = mode === 1 ? 59 : 99;
+        const candidates = range(10, upper).filter(value => (base + value) % divisor === 0);
+        const hint = mode === 1 ? ` □는 10 이상 ${upper} 이하입니다.` : mode === 3 ? " 가능한 두 자리 수를 작은 수부터 일정한 간격으로 찾아보세요." : "";
+        return result(`${base.toLocaleString()} + □가 ${divisor}의 배수가 되도록 하는 두 자리 자연수 □는 모두 몇 개인지 구하세요.${hint}${tag("added-two-digit-multiple", [mode, base, divisor, upper], "single-value")}`, candidates.length, `조건에 맞는 두 자리 수는 ${candidates.join(", ")}이고, 모두 ${candidates.length}개입니다.`);
+      }
+      if (variant === 4) {
+        const [dividend, remainder] = pick(rng, mode === 1 ? [[100, 4], [84, 4]] : mode === 2 ? [[240, 6], [180, 6]] : [[360, 8], [420, 10]]);
+        const choices = allDivisors(dividend - remainder).filter(value => value > remainder);
+        const hint = mode === 1 ? ` 나누는 수는 ${remainder}보다 커야 합니다.` : mode === 3 ? " 나누어지는 수에서 나머지를 뺀 수의 약수를 모두 확인하세요." : "";
+        return result(`나눗셈에서 나누어지는 수는 ${dividend}, 나누는 수는 자연수 ㉠, 나머지는 ${remainder}입니다. ㉠이 될 수 있는 자연수는 모두 몇 개인지 구하세요.${hint}${tag("remainder-divisor-count", [mode, dividend, remainder], "single-value")}`, choices.length, `${dividend} - ${remainder} = ${dividend - remainder}의 약수 중 ${remainder}보다 큰 수는 ${choices.join(", ")}입니다. 따라서 ${choices.length}개입니다.`);
+      }
+      if (variant === 5) {
+        const [correctDivisor, wrongDivisor, bound] = pick(rng, mode === 1 ? [[17, 21, 150], [11, 16, 50]] : mode === 2 ? [[67, 76, 2000], [61, 68, 12000]] : [[83, 98, 9000], [63, 82, 12000]]);
+        const candidates = range(1, bound - 1).filter(number => {
+          const correctQuotient = Math.floor(number / correctDivisor);
+          const correctRemainder = number % correctDivisor;
+          return Math.floor(number / wrongDivisor) === correctRemainder && number % wrongDivisor === correctQuotient;
+        });
+        if (candidates.length !== 1) throw new Error("몫과 나머지가 바뀌는 원래 수가 하나가 아닙니다.");
+        const answer = candidates[0];
+        const hint = mode === 1 ? " 바른 몫을 ㉠, 바른 나머지를 ㉡으로 놓아 두 나눗셈식을 비교하세요." : mode === 3 ? " 두 나눗셈에서 몫과 나머지의 크기 조건도 함께 확인하세요." : "";
+        return result(`${bound.toLocaleString()}보다 작은 어떤 자연수가 있습니다. 나누는 수가 ${correctDivisor}인 나눗셈을 해야 하는데, 나누는 수가 ${wrongDivisor}인 나눗셈을 했더니 몫과 나머지가 서로 바뀌었습니다. 어떤 자연수인지 구하세요.${hint}${tag("swapped-quotient-remainder", [mode, correctDivisor, wrongDivisor, bound], "single-value")}`, answer, `두 나눗셈에서 몫과 나머지가 바뀌는 수를 조건에 맞게 확인하면 ${answer.toLocaleString()} 하나입니다. 답이 ${answer.toLocaleString()}일 때 두 나눗셈의 몫과 나머지가 서로 바뀌는지 확인할 수 있습니다.`);
+      }
+      if (variant === 6) {
+        const number = pick(rng, mode === 1 ? [2520, 7560] : mode === 2 ? [784520, 332640] : [1234800, 1663200]);
+        const answerValues = range(1, 9).filter(value => number % value === 0);
+        const hint = mode === 1 ? " 1부터 9까지 차례로 나누어 보세요." : mode === 3 ? " 2, 3, 4, 5, 6, 8, 9의 배수 조건을 함께 이용하세요." : "";
+        return result(`한 자리 자연수 중에서 ${number.toLocaleString()}의 약수가 되는 수를 모두 구하세요.${hint}${tag("one-digit-divisors", [mode, number], "set")}`, setAnswer(answerValues), `1부터 9까지 나누어떨어지는지 확인하면 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 7) {
+        const [target, divisor] = pick(rng, mode === 1 ? [[1000, 43], [2000, 37]] : mode === 2 ? [[10000, 43], [12000, 47]] : [[100000, 97], [250000, 113]]);
+        const lower = Math.floor(target / divisor) * divisor;
+        const upper = lower + divisor;
+        const answer = target - lower < upper - target ? lower : upper;
+        const hint = mode === 1 ? ` 가까운 두 배수는 ${lower.toLocaleString()}과 ${upper.toLocaleString()}입니다.` : mode === 3 ? " 기준값의 바로 앞뒤에 있는 두 배수와의 차를 비교하세요." : "";
+        return result(`${target.toLocaleString()}에 가장 가까운 ${divisor}의 배수를 구하세요.${hint}${tag("nearest-multiple", [mode, target, divisor], "single-value")}`, answer, `${lower.toLocaleString()}과의 차는 ${(target - lower).toLocaleString()}, ${upper.toLocaleString()}과의 차는 ${(upper - target).toLocaleString()}이므로 더 가까운 수는 ${answer.toLocaleString()}입니다.`);
+      }
+      if (variant === 8) {
+        const [upper, divisors] = pick(rng, mode === 1 ? [[30, [2, 3]], [40, [2, 5]]] : mode === 2 ? [[50, [2, 3, 4, 5]], [60, [2, 3, 4, 5]]] : [[100, [2, 3, 5, 7]], [120, [2, 3, 5, 7]]]);
+        const remaining = range(1, upper).filter(value => !divisors.some(divisor => value % divisor === 0));
+        const hint = mode === 1 ? " 앞에서 꺼낸 카드는 다음 단계에서 다시 세지 않습니다." : mode === 3 ? " 여러 수의 공통 배수는 한 번만 뺀 것으로 셉니다." : "";
+        return result(`1부터 ${upper}까지의 자연수가 적힌 카드가 한 장씩 있습니다. 먼저 ${divisors[0]}의 배수인 카드를 모두 꺼내고, 이어서 ${divisors.slice(1).map(value => `${value}의 배수`).join(", ")}인 카드를 차례로 모두 꺼냅니다. 남은 카드는 모두 몇 장인지 구하세요.${hint}${tag("remove-multiple-cards", [mode, upper, ...divisors], "single-value")}`, remaining.length, `어느 수의 배수도 아닌 카드는 ${remaining.join(", ")}이고, 모두 ${remaining.length}장입니다.`);
+      }
+      if (variant === 9) {
+        const [dividend, remainder] = pick(rng, mode === 1 ? [[83, 3], [101, 5]] : mode === 2 ? [[181, 6], [221, 5]] : [[421, 5], [631, 7]]);
+        const answerValues = allDivisors(dividend - remainder).filter(value => value > remainder);
+        const hint = mode === 1 ? ` ㉠은 ${remainder}보다 커야 합니다.` : mode === 3 ? " 나머지를 뺀 수의 약수 중 조건에 맞는 수를 빠짐없이 찾으세요." : "";
+        return result(`나눗셈에서 나누어지는 수는 ${dividend}, 나누는 수는 자연수 ㉠, 나머지는 ${remainder}입니다. ㉠이 될 수 있는 자연수를 모두 구하세요.${hint}${tag("remainder-divisor-set", [mode, dividend, remainder], "set")}`, setAnswer(answerValues), `${dividend} - ${remainder} = ${dividend - remainder}의 약수 중 ${remainder}보다 큰 수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 10) {
+        const cases = mode === 1
+          ? [
+              { unit: 1, leftMultiplier: 2, rightTens: 1, rightMultiplier: 9, answer: 8 },
+              { unit: 4, leftMultiplier: 5, rightTens: 3, rightMultiplier: 10, answer: 7 },
+              { unit: 7, leftMultiplier: 6, rightTens: 9, rightMultiplier: 3, answer: 4 }
+            ]
+          : mode === 2
+            ? [
+                { unit: 9, leftMultiplier: 12, rightTens: 3, rightMultiplier: 23, answer: 6 },
+                { unit: 4, leftMultiplier: 15, rightTens: 9, rightMultiplier: 10, answer: 6 },
+                { unit: 6, leftMultiplier: 16, rightTens: 3, rightMultiplier: 13, answer: 2 }
+              ]
+            : [
+                { unit: 1, leftMultiplier: 27, rightTens: 9, rightMultiplier: 9, answer: 3 },
+                { unit: 4, leftMultiplier: 13, rightTens: 3, rightMultiplier: 26, answer: 7 },
+                { unit: 9, leftMultiplier: 12, rightTens: 3, rightMultiplier: 23, answer: 6 }
+              ];
+        const selected = pick(rng, cases);
+        const answer = selected.answer;
+        const hint = mode === 1 ? " 같은 □에는 같은 숫자가 들어갑니다." : mode === 3 ? " 1부터 9까지 넣어 양쪽 곱이 같은지 확인하세요." : "";
+        return result(`다음 등식이 성립하도록 두 □에 공통으로 들어갈 숫자를 구하세요.<div class="equation">□${selected.unit} × ${selected.leftMultiplier} = ${selected.rightTens}□ × ${selected.rightMultiplier}</div>${hint}${tag("shared-blank-digit", [mode, selected.unit, selected.leftMultiplier, selected.rightTens, selected.rightMultiplier], "single-value")}`, answer, `□에 ${answer}을 넣으면 ${10 * answer + selected.unit} × ${selected.leftMultiplier} = ${10 * selected.rightTens + answer} × ${selected.rightMultiplier}로 양쪽이 같습니다. 다른 숫자는 등식을 만족하지 않습니다.`);
+      }
+      const [from, to, firstDivisor, secondDivisor] = pick(rng, mode === 1 ? [[1, 100, 2, 5], [1, 120, 3, 4]] : mode === 2 ? [[100, 200, 3, 5], [200, 400, 4, 7]] : [[1000, 5000, 7, 11], [2000, 8000, 9, 13]]);
+      const values = range(from, to);
+      const firstCount = values.filter(value => value % firstDivisor !== 0).length;
+      const secondCount = values.filter(value => value % secondDivisor !== 0).length;
+      const answer = Math.abs(firstCount - secondCount);
+      const hint = mode === 1 ? " 전체 개수에서 각 배수의 개수를 빼세요." : mode === 3 ? " 범위의 처음과 끝을 모두 포함하여 셉니다." : "";
+      return result(`${from.toLocaleString()}부터 ${to.toLocaleString()}까지의 자연수 중 ${firstDivisor}의 배수가 아닌 수의 개수와 ${secondDivisor}의 배수가 아닌 수의 개수의 차를 구하세요.${hint}${tag("non-multiple-count-difference", [mode, from, to, firstDivisor, secondDivisor], "single-value")}`, answer, `${firstDivisor}의 배수가 아닌 수는 ${firstCount}개, ${secondDivisor}의 배수가 아닌 수는 ${secondCount}개이므로 두 개수의 차는 ${answer}입니다.`);
+    },
+    factorMultipleE2({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 13) throw new Error("약수와 배수 개념탐구 2 원문 분기는 0부터 13까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e2-kind="${kind}" data-factor-multiple-e2-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const setAnswer = values => values.join(", ");
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const choose = pools => pick(rng, pools[level]);
+      const commonDivisors = (left, right) => allDivisors(gcd(left, right));
+      const hint = (easy, hard) => level === 0 ? ` ${easy}` : level === 2 ? ` ${hard}` : "";
+
+      if (variant === 0) {
+        const [left, right] = choose([[[72, 96], [84, 126], [96, 144]], [[120, 144], [72, 108], [90, 150]], [[144, 216], [180, 240], [210, 294]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수를 모두 구하세요.${hint("두 수에 모두 나누어떨어지는 수를 작은 수부터 찾아보세요.", "두 수의 최대공약수의 약수를 빠짐없이 확인하세요.")}${tag("common-divisor-set-one", [left, right], "set")}`, setAnswer(answerValues), `두 수의 최대공약수는 ${gcd(left, right)}입니다. ${gcd(left, right)}의 약수는 ${setAnswer(answerValues)}이므로 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 1) {
+        const [left, right] = choose([[[48, 72], [54, 90], [64, 96]], [[72, 108], [84, 126], [108, 180]], [[144, 240], [168, 252], [216, 324]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수를 모두 구하세요.${hint("한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요.", "최대공약수를 먼저 구하면 공약수를 빠뜨리지 않을 수 있습니다.")}${tag("common-divisor-set-two", [left, right], "set")}`, setAnswer(answerValues), `두 수의 최대공약수는 ${gcd(left, right)}입니다. 따라서 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 2) {
+        const [firstLeft, firstRight, secondLeft, secondRight] = choose([[[8, 15, 12, 20], [9, 14, 6, 28], [10, 18, 12, 20]], [[12, 15, 20, 21], [14, 18, 12, 35], [16, 15, 20, 18]], [[18, 20, 24, 25], [21, 24, 18, 35], [28, 18, 24, 35]]]);
+        const left = firstLeft * firstRight;
+        const right = secondLeft * secondRight;
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${firstLeft}×${firstRight}, ${secondLeft}×${secondRight}의 공약수를 모두 구하세요.${hint("먼저 두 곱셈을 계산하세요.", "두 곱을 계산한 뒤 최대공약수의 약수를 이용해 보세요.")}${tag("product-common-divisor-set", [firstLeft, firstRight, secondLeft, secondRight, left, right], "set")}`, setAnswer(answerValues), `${firstLeft}×${firstRight}=${left}, ${secondLeft}×${secondRight}=${right}입니다. 두 수의 최대공약수는 ${gcd(left, right)}이므로 공약수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 3) {
+        const [base, target] = choose([[[24, 12], [30, 15], [32, 16]], [[36, 18], [40, 20], [48, 24]], [[54, 18], [60, 20], [72, 24]]]);
+        const answerValues = range(10, 99).filter(value => gcd(base, value) === target);
+        return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 두 자리 자연수 ㉠을 모두 구하세요.${hint("두 자리 수를 ${target}의 배수부터 찾아보세요.", "${base}의 약수와 배수 관계를 함께 확인하여 빠짐없이 찾으세요.")}${tag("two-digit-gcd-set", [base, target], "set")}`, setAnswer(answerValues), `조건을 만족하는 두 자리 자연수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      if (variant === 4) {
+        const [left, right, divisorCount] = choose([[[72, 120, 3], [108, 162, 3], [90, 135, 4]], [[72, 90, 4], [72, 120, 3], [108, 162, 3]], [[192, 288, 3], [250, 375, 3], [300, 450, 3]]]);
+        const candidates = commonDivisors(left, right).filter(value => allDivisors(value).length === divisorCount);
+        if (candidates.length !== 1) throw new Error("약수의 개수 조건을 만족하는 공약수가 하나가 아닙니다.");
+        const answer = candidates[0];
+        return result(`두 수 ${left}, ${right}의 공약수 중 약수가 ${divisorCount}개인 수를 구하세요.${hint("공약수를 먼저 모두 찾고 약수의 개수를 세어 보세요.", "공약수마다 약수의 짝을 세어 조건을 만족하는 수를 하나로 정하세요.")}${tag("unique-common-divisor-by-divisor-count", [left, right, divisorCount], "single-value")}`, answer, `두 수의 공약수는 ${setAnswer(commonDivisors(left, right))}입니다. 이 중 약수가 ${divisorCount}개인 수는 ${answer} 하나입니다.`);
+      }
+      if (variant === 5) {
+        const [base, target, forbiddenMultiple] = choose([[[180, 12, 8], [210, 15, 9], [252, 21, 15]], [[252, 21, 15], [336, 21, 15], [360, 30, 14]], [[450, 30, 8], [504, 28, 20], [600, 25, 7]]]);
+        const found = [];
+        for (let value = target + 1; value <= base * 3; value += 1) {
+          if (gcd(value, base) === target && value % forbiddenMultiple !== 0) {
+            found.push(value);
+            break;
+          }
+        }
+        if (found.length !== 1) throw new Error("가장 작은 조건 만족 수가 하나가 아닙니다.");
+        const answer = found[0];
+        return result(`두 수 ㉠, ${base}의 최대공약수는 ${target}입니다. ㉠은 ${target}보다 크고 ${forbiddenMultiple}의 배수가 아닙니다. 가장 작은 ㉠을 구하세요.${hint("${target}의 배수를 작은 수부터 확인하고 ${forbiddenMultiple}의 배수는 빼세요.", "최대공약수 조건과 배수가 아닌 조건을 함께 확인하세요.")}${tag("smallest-gcd-non-multiple", [base, target, forbiddenMultiple], "single-value")}`, answer, `${target}보다 큰 수를 작은 수부터 확인하면 최대공약수 조건을 만족하면서 ${forbiddenMultiple}의 배수가 아닌 첫 수는 ${answer}입니다. 따라서 가장 작은 ㉠은 ${answer}입니다.`);
+      }
+      if (variant === 6) {
+        const [left, right] = choose([[[18, 60], [24, 54], [30, 42]], [[18, 60], [36, 84], [48, 72]], [[72, 108], [84, 126], [90, 150]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("공약수를 모두 쓴 뒤 개수를 세세요.", "최대공약수의 약수 개수를 이용해 빠짐없이 세세요.")}${tag("common-divisor-count-one", [left, right], "single-value")}`, answerValues.length, `공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 7) {
+        const [left, right] = choose([[[42, 70], [54, 90], [66, 110]], [[90, 108], [84, 126], [108, 180]], [[144, 216], [162, 270], [180, 300]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("두 수에 모두 나누어떨어지는 수를 세세요.", "최대공약수를 구하고 그 약수의 개수를 세세요.")}${tag("common-divisor-count-two", [left, right], "single-value")}`, answerValues.length, `두 수의 공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 8) {
+        const [left, right] = choose([[[48, 72], [60, 90], [72, 96]], [[72, 120], [96, 144], [108, 180]], [[144, 240], [168, 252], [180, 300]]]);
+        const answerValues = commonDivisors(left, right);
+        return result(`두 수 ${left}, ${right}의 공약수는 모두 몇 개인지 구하세요.${hint("공약수를 작은 수부터 쓴 뒤 세어 보세요.", "최대공약수의 약수를 빠짐없이 세어 보세요.")}${tag("common-divisor-count-three", [left, right], "single-value")}`, answerValues.length, `공약수는 ${setAnswer(answerValues)}이므로 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 9) {
+        const [limit, base] = choose([[[100, 12], [120, 18], [150, 20]], [[200, 24], [180, 30], [240, 36]], [[300, 60], [360, 72], [420, 84]]]);
+        const answerValues = range(1, limit - 1).filter(value => gcd(value, base) === 1);
+        return result(`${limit}보다 작은 자연수 ㉠ 중 두 수 ${base}, ㉠의 최대공약수가 1인 ㉠은 모두 몇 개인지 구하세요.${hint("${base}와 공약수가 1뿐인 수를 작은 수부터 세어 보세요.", "${base}와 공약수가 1뿐인 수를 빠짐없이 세어 보세요.")}${tag("coprime-count-under-limit", [limit, base], "single-value")}`, answerValues.length, `조건을 만족하는 자연수는 모두 ${answerValues.length}개입니다.`);
+      }
+      if (variant === 10) {
+        const [base, target] = choose([[[96, 16], [144, 24], [200, 25]], [[288, 48], [180, 30], [240, 40]], [[432, 48], [504, 56], [600, 75]]]);
+        const candidates = range(100, 999).filter(value => gcd(value, base) === target);
+        const answer = candidates.at(-1);
+        return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 세 자리 자연수 ㉠ 중 가장 큰 수를 구하세요.${hint("${target}의 세 자리 배수부터 찾아보세요.", "세 자리 수를 큰 수부터 확인하여 최대공약수 조건을 만족하는 첫 수를 찾으세요.")}${tag("largest-three-digit-gcd", [base, target], "single-value")}`, answer, `조건을 만족하는 세 자리 자연수 가운데 가장 큰 수는 ${answer}입니다.`);
+      }
+      if (variant === 11) {
+        const [product, target] = choose([[[100, 5], [200, 5], [400, 10]], [[100, 5], [175, 5], [900, 15]], [[1600, 20], [2500, 25], [3600, 30]]]);
+        const candidates = allDivisors(product).flatMap(a => {
+          const b = product / a;
+          return a > b && gcd(a, b) === target ? [[a, b]] : [];
+        });
+        if (candidates.length !== 1) throw new Error("곱과 최대공약수 조건을 만족하는 순서쌍이 하나가 아닙니다.");
+        const [a, b] = candidates[0];
+        return result(`두 자연수 ㉠, ㉡에서 ㉠이 ㉡보다 큽니다. 두 수의 곱은 ${product}이고 최대공약수는 ${target}입니다. 순서 있는 두 수 쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요.${hint("${product}의 약수 짝을 써 보세요.", "약수 짝마다 최대공약수를 확인하여 조건을 만족하는 쌍을 빠뜨리지 마세요.")}${tag("ordered-pair-gcd-product-count", [product, target], "single-value")}`, candidates.length, `${product}의 약수 짝을 모두 확인하면 조건을 만족하는 쌍은 (${a}, ${b}) 하나입니다. 따라서 모두 ${candidates.length}개입니다.`);
+      }
+      if (variant === 12) {
+        const [first, remainder, second, short] = choose([[[50, 2, 58, 2], [93, 3, 105, 3], [100, 4, 116, 4]], [[137, 2, 183, 6], [100, 4, 116, 4], [155, 5, 175, 5]], [[222, 6, 246, 6], [200, 8, 232, 8], [250, 10, 290, 10]]]);
+        const minimum = Math.max(remainder, short);
+        const answerValues = commonDivisors(first - remainder, second + short).filter(value => value > minimum);
+        return result(`다음 조건을 모두 만족하는 자연수 ㉠을 구하세요.<br>(1) 나누어지는 수: ${first}, 나머지: ${remainder}<br>(2) ${second}보다 ${short} 큰 수는 ㉠의 배수<br>(3) ㉠은 ${minimum}보다 큰 수${hint("첫째 조건에서는 나누어지는 수에서 나머지를 빼고, 둘째 조건에서는 두 수를 더하세요.", "두 조건에서 나누어떨어지는 수의 공약수를 모두 찾아 범위 조건을 확인하세요.")}${tag("remainder-and-short-of-multiple-set", [first, remainder, second, short], "set")}`, setAnswer(answerValues), `${first}-${remainder}=${first - remainder}, ${second}+${short}=${second + short}입니다. 두 수의 공약수 중 ${minimum}보다 큰 수는 ${setAnswer(answerValues)}입니다.`);
+      }
+      const [base, target] = choose([[[60, 10], [72, 12], [84, 12]], [[120, 12], [96, 16], [180, 15]], [[168, 12], [210, 15], [240, 24]]]);
+      const answerValues = range(10, 99).filter(value => gcd(base, value) === target);
+      const answer = answerValues.reduce((total, value) => total + value, 0);
+      return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 조건을 만족하는 두 자리 자연수 ㉠을 모두 더한 값을 구하세요.${hint("조건을 만족하는 두 자리 수를 모두 쓴 뒤 더하세요.", "${target}의 배수 중 최대공약수 조건을 만족하는 수를 빠짐없이 찾아 더하세요.")}${tag("two-digit-gcd-set-sum", [base, target], "single-value")}`, answer, `조건을 만족하는 두 자리 자연수는 ${setAnswer(answerValues)}입니다. 모두 더하면 ${answer}입니다.`);
+    },
     factorMultipleAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const divisor = pick(rng, [7, 9, 11, 13, 17].slice(0, 3 + level));
@@ -18467,18 +18947,7 @@
     [type => type.id === "4-2-u6-t2", "regularPolygonApplication"],
     [type => type.id === "4-2-u6-t3", "tessellationCover"],
     [type => type.id === "4-2-u6-t4", "shapePartitionCompose"],
-    [type => type.id === "5-1-u2-t1", "factorMultipleAdvanced"],
-    [type => type.id === "5-1-u2-t2", "primeFactorBasicAdvanced"],
-    [type => type.id === "5-1-u2-t3", "primeFactorPowerAdvanced"],
-    [type => type.id === "5-1-u2-t4", "primeFactorApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t5", "commonDivisorAdvanced"],
-    [type => type.id === "5-1-u2-t6", "commonMultipleAdvanced"],
-    [type => type.id === "5-1-u2-t7", "divisibilityRuleAdvanced"],
-    [type => type.id === "5-1-u2-t8", "threeNumberGcdLcmAdvanced"],
-    [type => type.id === "5-1-u2-t9", "divisorCountAdvanced"],
-    [type => type.id === "5-1-u2-t10", "commonDivisorApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t11", "commonMultipleApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t12", "gcdLcmRelationAdvanced"],
+    [type => type.id?.startsWith("5-1-u2-e1-"), "factorMultipleE1"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

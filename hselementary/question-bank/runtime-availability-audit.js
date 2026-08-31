@@ -21,9 +21,9 @@ const types = window.HSE_CURRICULUM.semesters.flatMap(semester =>
 const ready = types.filter(type => generatorApi.generatorKey(type) && !type.reviewLocked);
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 
-if (types.length !== 1036) failures.push(`런타임 유형은 1036개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 943) failures.push(`생성 가능 유형은 943개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 93) failures.push(`검수 대기 유형은 93개여야 하나 ${locked.length}개입니다.`);
+if (types.length !== 1121) failures.push(`런타임 유형은 1121개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 980) failures.push(`생성 가능 유형은 980개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 141) failures.push(`검수 대기 유형은 141개여야 하나 ${locked.length}개입니다.`);
 
 for (const type of ready) {
   for (const difficulty of [-1, 0, 1]) {
@@ -55,4 +55,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 1036 · 생성 가능 943 · 검수 대기 93 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 1121 · 생성 가능 980 · 검수 대기 141 · ${generatedCount.toLocaleString()}회 생성`);

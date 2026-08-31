@@ -62,11 +62,11 @@
     reviewLocked
   });
   const sourceItemLabel51 = sourceItemId => {
-    const exploration = sourceItemId.match(/-e(\d+)-exploration$/)?.[1];
-    if (exploration) return `개념탐구 ${exploration} 본문`;
-    const example = sourceItemId.match(/-example-(\d+-\d+)$/)?.[1];
+    const exploration = sourceItemId.match(/-e(\d+)-exploration(?:-(\d+))?$/);
+    if (exploration) return `개념탐구 ${exploration[1]} 본문${exploration[2] ? ` (${exploration[2]})` : ""}`;
+    const example = sourceItemId.match(/-example-(\d+(?:-\d+)*)$/)?.[1];
     if (example) return `예제 ${example}`;
-    const mission = sourceItemId.match(/-mission-(\d+)$/)?.[1];
+    const mission = sourceItemId.match(/-mission-(\d+(?:-\d+)*)$/)?.[1];
     return mission ? `Mission ${mission}` : "";
   };
   const sourceItem51 = (label, difficultyBand, sourceItemId, pdfPage, printedPage, reviewLocked = false, reviewReason = "") => ({
@@ -79,6 +79,50 @@
     reviewLocked,
     reviewReason
   });
+  const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 2) => {
+    const pdfPage = 13 + (exploration - 1) * 2;
+    const isMission = sourceItemId.includes("-mission-");
+    return {
+      ...sourceItem51(label, 1, sourceItemId, pdfPage + (isMission ? 1 : 0), pdfPage + 1 + (isMission ? 1 : 0), reviewLocked,
+        reviewLocked ? "현행 원본 구조는 확인했지만, 항목별 계산과 단일 정답 검산 전에는 공개하지 않습니다." : "현행 원본 구조와 독립 계산 검산 완료"),
+      sourceTier: "advanced"
+    };
+  };
+  const factorMultipleGroups = [
+    ["약수와 배수", 1, [
+      ["exploration-1", "모든 약수를 곱한 값과 원래 수의 관계"], ["exploration-2", "네 자리 수에서 어떤 수의 배수 개수"],
+      ["example-1-1", "가장 큰 세 자리 약수"], ["example-1-2", "합이 어떤 수의 배수가 되는 두 자리 수 개수"], ["example-1-3", "나머지가 주어진 나눗셈의 나누는 수 개수"], ["example-1-4", "잘못 나눈 몫과 나머지로 원래 수 찾기"],
+      ["mission-1", "한 자리 약수 모두 찾기"], ["mission-2", "기준값에 가장 가까운 배수 찾기"], ["mission-3", "여러 배수 카드를 차례로 빼고 남은 카드 세기"], ["mission-4", "나머지가 주어진 나눗셈의 나누는 수 모두 찾기"], ["mission-5", "곱셈식이 맞는 빈칸 숫자 찾기"], ["mission-6", "두 수로 나누어떨어지지 않는 수의 개수 차"]
+    ]],
+    ["공약수와 최대공약수", 2, [
+      ["exploration", "두 수의 공약수를 직접 모두 찾기"], ["example-2-1-1", "최대공약수로 두 수의 공약수 모두 찾기"], ["example-2-1-2", "곱셈식으로 나타낸 두 수의 공약수 모두 찾기"], ["example-2-2", "최대공약수가 정해진 두 자리 수 모두 찾기"], ["example-2-3", "공약수 조건으로 자연수 찾기"], ["example-2-4", "최대공약수와 배수가 아닌 조건으로 가장 작은 수 찾기"],
+      ["mission-1-1", "두 수의 공약수 개수 세기 ①"], ["mission-1-2", "두 수의 공약수 개수 세기 ②"], ["mission-1-3", "두 수의 공약수 개수 세기 ③"], ["mission-2", "어떤 수와 공약수가 1뿐인 수 세기"], ["mission-3", "최대공약수가 정해진 가장 큰 세 자리 수"], ["mission-4", "곱과 최대공약수로 순서 있는 두 수 쌍 세기"], ["mission-5", "남거나 부족한 나눗셈 조건으로 나누는 수 찾기"], ["mission-6", "최대공약수가 정해진 두 자리 수의 합"]
+    ]],
+    ["공배수와 최소공배수", 3, [
+      ["exploration-1", "두 수의 공배수 중 기준값에 가장 가까운 수"], ["exploration-2", "최소공배수가 정해지게 하는 수의 개수"], ["example-3-1", "세 자리 공배수 개수"], ["example-3-2", "두 최대공약수 조건으로 가장 작은 수 찾기"], ["example-3-3", "한 수의 배수이지만 다른 수의 배수가 아닌 수 세기"], ["example-3-4", "연속한 세 수의 합이 배수가 되는 묶음 세기"],
+      ["mission-1", "여러 최소공배수 값을 작은 순서로 놓기"], ["mission-2", "세 자리 공배수의 합"], ["mission-3", "한 수의 배수이지만 다른 수의 배수가 아닌 수 세기"], ["mission-4", "추가 나눗셈 조건이 있는 공배수 중 기준값에 가장 가까운 수"], ["mission-5", "최소공배수가 정해질 때 가능한 수 모두 찾기"], ["mission-6", "두 수 어느 것으로도 나누어떨어지지 않는 수 세기"]
+    ]],
+    ["배수 판정법", 4, [
+      ["exploration", "전체 금액의 빈칸 숫자로 한 개 가격 모두 찾기"], ["example-4-1", "큰 합을 9로 나눈 나머지"], ["example-4-2", "7과 0으로만 만든 75의 가장 작은 배수"], ["example-4-3", "수 카드로 만든 세 자리 12의 배수 세기"], ["example-4-4", "되풀이 숫자로 만든 여섯 자리 6의 배수 세기"],
+      ["mission-1", "목록에서 36의 배수 찾기"], ["mission-2", "수 카드로 만든 3 또는 4의 배수 세기"], ["mission-3", "네 자리 수가 9의 배수가 되는 빈칸 넣기"], ["mission-4", "되풀이 숫자로 만든 일곱 자리 12의 배수 세기"], ["mission-5", "8과 9로만 만든 수 중 열 번째로 큰 3의 배수"], ["mission-6", "덧셈 결과가 36의 배수가 되는 가장 큰 두 자리 빈칸"]
+    ]],
+    ["세 수의 최대공약수와 최소공배수", 5, [
+      ["exploration", "세 수의 최대공약수와 최소공배수"], ["example-5-1-1", "세 수의 최대공약수와 최소공배수"], ["example-5-1-2", "곱셈식으로 나타낸 세 수의 최대공약수와 최소공배수"], ["example-5-2", "같은 수를 곱한 세 수의 최소공배수로 합 찾기"], ["example-5-3", "여러 수로 나누어떨어지는 여섯 자리 수의 빈칸"], ["example-5-4", "두 수씩의 최대공약수로 세 수의 최소공배수 찾기"],
+      ["mission-1-1", "세 수의 최대공약수와 최소공배수"], ["mission-1-2", "세 수의 최대공약수와 최소공배수"], ["mission-1-3", "곱셈식으로 나타낸 세 수의 최대공약수와 최소공배수"], ["mission-2", "여러 수로 나눈 나머지가 같은 수 중 기준값에 가장 가까운 수"], ["mission-3", "세 수의 가장 작은 네 자리 공배수"], ["mission-4", "두 수로 나눈 나머지가 같은 범위 안의 수"], ["mission-5", "여러 수로 나누어떨어지는 여덟 자리 수의 빈칸"], ["mission-6", "몫과 최소공배수 조건으로 세 수 찾기"]
+    ]],
+    ["공배수의 활용", 6, [
+      ["exploration", "서로 다른 주기의 전구가 함께 꺼지는 횟수"], ["example-6-1", "두 기차가 다음에 함께 출발하는 시각"], ["example-6-2", "더하고 뺀 수가 각각 배수가 되는 가장 작은 수"], ["example-6-3", "여러 나눗셈에서 일정하게 부족한 가장 작은 수"], ["example-6-4", "여러 톱니바퀴가 처음 자리에서 다시 만나는 회전 수"],
+      ["mission-1", "여러 나머지 조건을 만족하며 기준값에 가장 가까운 수"], ["mission-2", "두 수로 나눈 나머지가 같은 고정 숫자 수의 빈칸"], ["mission-3", "10 큰 수와 10 작은 수가 각각 배수인 세 자리 수"], ["mission-4", "두 화분에 다시 함께 물 주는 요일"], ["mission-5", "톱니 수의 비와 최소공배수로 다시 맞물리는 회전 수"], ["mission-6", "세 기차가 함께 출발하는 횟수"]
+    ]],
+    ["공약수의 활용", 7, [
+      ["exploration", "부족하거나 남는 물건을 똑같이 나눌 학생 수"], ["example-7-1", "남는 개수가 다른 과일을 똑같이 나눌 학생 수"], ["example-7-2", "직사각형 둘레에 가장 넓은 간격으로 심을 나무 수"], ["example-7-3", "직사각형을 채우는 가장 큰 정사각형 타일의 한 변"], ["example-7-4", "보호재를 넣은 상자를 채우는 가장 큰 정육면체의 모서리"],
+      ["mission-1", "직선 도로에 같은 간격으로 세울 최소 표지판 수"], ["mission-2", "두 과일을 가장 많은 사람에게 똑같이 나누기"], ["mission-3", "부족하거나 남는 간식을 똑같이 나눌 학생 수"], ["mission-4", "직사각형 둘레에 같은 간격으로 세울 최소 가로등 수"], ["mission-5", "두 번째로 큰 정사각형으로 자른 조각 수"], ["mission-6", "가장 많은 같은 구성의 세트와 한 세트 가격"]
+    ]],
+    ["최대공약수와 최소공배수의 관계", 8, [
+      ["exploration", "곱과 최대공약수로 차가 가장 작은 두 수와 최소공배수 찾기"], ["example-8-1", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["example-8-2", "곱과 최소공배수로 공약수의 합 찾기"], ["example-8-3", "최대공약수·최소공배수·차로 큰 수 찾기"], ["example-8-4", "여러 최대공약수와 최소공배수 조건으로 세 수 중 하나 찾기"],
+      ["mission-1", "한 수와 최대공약수·최소공배수로 다른 수 찾기"], ["mission-2", "가장 큰 정사각형 조각과 가장 작은 정사각형 배열로 다른 변 찾기"], ["mission-3", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["mission-4", "최대공약수·최소공배수·차로 두 수 찾기"], ["mission-5", "두 쌍의 최대공약수와 최소공배수로 세 수의 합 찾기"], ["mission-6", "곱과 최대공약수·최소공배수로 세 수 찾기"]
+    ]]
+  ];
 
   const semester = (id, units) => ({
     id,
@@ -646,34 +690,35 @@
           sourceItem51("정원과 이용 시간으로 탈것 이용료 구하기", 1, "5-1-u1-e2-mission-5", 6, 7),
           sourceItem51("같은 색 테이프를 겹쳐 붙인 도형의 둘레 구하기", 1, "5-1-u1-e2-mission-6", 6, 7)
         ]),
-        detailed("식 세워 풀기", "", [
-          sourceItem51("세 물건의 가격 관계로 한 물건의 가격 구하기", 1, "5-1-u1-e3-exploration", 7, 8, true, "개념탐구 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("두 수의 차와 나눗셈 조건으로 두 수의 합 구하기", 1, "5-1-u1-e3-example-3-1", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("나이의 합과 배수 관계로 몇 년 후인지 구하기", 1, "5-1-u1-e3-example-3-2", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("늦게 출발한 사람이 앞사람을 만나는 시간 구하기", 1, "5-1-u1-e3-example-3-3", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("세 사람의 용돈 관계로 한 사람의 용돈 구하기", 1, "5-1-u1-e3-example-3-4", 7, 8, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("곱하고 나눈 수와 두 수의 차로 처음 수 구하기", 1, "5-1-u1-e3-mission-1", 8, 9, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("같은 직사각형 여덟 조각으로 만든 큰 직사각형의 변 구하기", 1, "5-1-u1-e3-mission-2", 8, 9, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("전체 학생 수와 학년·성별 관계로 학생 수 구하기", 1, "5-1-u1-e3-mission-3", 8, 9, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("기차로 이동한 뒤 남은 거리를 걷는 시간 구하기", 1, "5-1-u1-e3-mission-4", 8, 9, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("묶음 단가와 이익으로 판매한 사탕 봉지 수 구하기", 1, "5-1-u1-e3-mission-5", 8, 9, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("구슬을 옮긴 뒤의 배수 관계로 처음 두 수의 곱 구하기", 1, "5-1-u1-e3-mission-6", 8, 9, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        detailed("식 세워 풀기", "mixedCalculationE3", [
+          sourceItem51("세 물건의 가격 관계로 한 물건의 가격 구하기", 1, "5-1-u1-e3-exploration", 7, 8),
+          sourceItem51("두 수의 차와 나눗셈 조건으로 두 수의 합 구하기", 1, "5-1-u1-e3-example-3-1", 7, 8),
+          sourceItem51("나이의 합과 배수 관계로 몇 년 후인지 구하기", 1, "5-1-u1-e3-example-3-2", 7, 8),
+          sourceItem51("늦게 출발한 사람이 앞사람을 만나는 시간 구하기", 1, "5-1-u1-e3-example-3-3", 7, 8),
+          sourceItem51("세 사람의 용돈 관계로 한 사람의 용돈 구하기", 1, "5-1-u1-e3-example-3-4", 7, 8),
+          sourceItem51("곱하고 나눈 수와 두 수의 차로 처음 수 구하기", 1, "5-1-u1-e3-mission-1", 8, 9),
+          sourceItem51("같은 직사각형 여덟 조각으로 만든 큰 정사각형의 한 변 구하기", 1, "5-1-u1-e3-mission-2", 8, 9),
+          sourceItem51("전체 학생 수와 학년·성별 관계로 학생 수 구하기", 1, "5-1-u1-e3-mission-3", 8, 9),
+          sourceItem51("기차로 이동한 뒤 남은 거리를 걷는 시간 구하기", 1, "5-1-u1-e3-mission-4", 8, 9),
+          sourceItem51("묶음 단가와 이익으로 판매한 사탕 봉지 수 구하기", 1, "5-1-u1-e3-mission-5", 8, 9),
+          sourceItem51("구슬을 옮긴 뒤의 배수 관계로 처음 두 수의 곱 구하기", 1, "5-1-u1-e3-mission-6", 8, 9)
         ]),
-        detailed("혼합 계산식 만들기", "", [
-          sourceItem51("정해진 수·사칙연산·괄호 조건으로 혼합 계산식 만들기", 1, "5-1-u1-e4-exploration", 9, 10, true, "개념탐구 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("사칙연산 기호를 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-example-4-1", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("곱셈·나눗셈 기호와 괄호를 넣어 등식 만들기", 1, "5-1-u1-e4-example-4-2", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("주어진 수를 식의 빈칸에 넣어 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-3", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("수 카드와 사칙연산 및 괄호를 모두 한 번씩 써 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-4", 9, 10, true, "원문 조건과 정답 유일성 검산 전 공개하지 않습니다."),
-          sourceItem51("같은 수 다섯 개와 사칙연산·괄호를 각각 한 번씩 써 목표값 만들기", 1, "5-1-u1-e4-mission-1", 10, 11, true, "Mission 1 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("네 사칙연산 기호를 각각 한 번씩 넣어 등식 만들기", 1, "5-1-u1-e4-mission-2", 10, 11, true, "Mission 2 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("괄호 한 쌍을 넣어 등식이 맞게 만들기", 1, "5-1-u1-e4-mission-3", 10, 11, true, "Mission 3 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("주어진 수를 식의 빈칸에 넣어 계산 결과 가장 크게 만들기", 1, "5-1-u1-e4-mission-4", 10, 11, true, "Mission 4 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("괄호 한 쌍으로 만들 수 없는 보기의 계산 결과를 모두 찾기", 1, "5-1-u1-e4-mission-5", 10, 11, true, "Mission 5 원문 구조와 독립 계산 검산 전 공개하지 않습니다."),
-          sourceItem51("수 카드를 한 번씩 써 계산 결과가 1인 식 만들기", 1, "5-1-u1-e4-mission-6", 10, 11, true, "Mission 6 원문 구조와 독립 계산 검산 전 공개하지 않습니다.")
+        detailed("혼합 계산식 만들기", "mixedCalculationE4", [
+          sourceItem51("4를 네 번 써서 1부터 10까지 만들기", 1, "5-1-u1-e4-exploration-1", 9, 10),
+          sourceItem51("네 기호를 한 번씩 넣어 14 만들기", 1, "5-1-u1-e4-exploration-2", 9, 10),
+          sourceItem51("괄호가 있는 식에 네 기호 넣어 23 만들기", 1, "5-1-u1-e4-example-4-1", 9, 10),
+          sourceItem51("곱셈·나눗셈과 괄호로 3 만들기", 1, "5-1-u1-e4-example-4-2", 9, 10),
+          sourceItem51("네 수 카드로 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-3", 9, 10),
+          sourceItem51("수 카드와 네 기호로 가장 큰 자연수 만들기", 1, "5-1-u1-e4-example-4-4", 9, 10),
+          sourceItem51("같은 수 다섯 개와 네 기호로 1 만들기", 1, "5-1-u1-e4-mission-1", 10, 11),
+          sourceItem51("두 기호를 넣어 12 만들기", 1, "5-1-u1-e4-mission-2", 10, 11),
+          sourceItem51("세 식을 괄호로 묶어 맞게 만들기", 1, "5-1-u1-e4-mission-3", 10, 11),
+          sourceItem51("다섯 수 카드로 두 자리 수를 만들어 가장 큰 수 만들기", 1, "5-1-u1-e4-mission-4", 10, 11),
+          sourceItem51("괄호로 만들 수 없는 수 찾기", 1, "5-1-u1-e4-mission-5", 10, 11),
+          sourceItem51("연속한 네 수 카드로 1 만들기", 1, "5-1-u1-e4-mission-6", 10, 11)
         ])
       ],
-      ["약수와 배수", "약수와 배수", "소인수분해 1", "소인수분해 2", "소인수분해의 활용", "공약수와 최대공약수", "공배수와 최소공배수", "배수판정법", "세 수의 최대공약수와 최소공배수", "약수의 개수", "공약수의 활용", "공배수의 활용", "최대공약수와 최소공배수의 관계"],
+      ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, `factorMultipleE${exploration}`, items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
       ["규칙과 대응", "규칙과 대응", "대응표와 대응 관계", "규칙과 대응의 활용 ①", "규칙과 대응의 활용 ②"],
       ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],
       ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],
