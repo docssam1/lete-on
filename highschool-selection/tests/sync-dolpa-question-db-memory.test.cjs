@@ -164,6 +164,28 @@ test("2-1 기본 입반테스트 1회 원본을 심화반과 섞지 않고 독�
   assert.equal(info.recordId, "dp.m21-202401-r1.method-review.20260830");
 });
 
+test("1-2 과정 시작 입반테스트는 중1-1 전 범위와 상향 진단을 구분해 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m12-start-r1-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m12-start-r1-v1.json",
+    "dolpa-classification-review-dp-m12-start-r1-v1.json",
+    "dolpa-paper-review-dp-m12-start-r1-v1.json",
+    "dolpa-difficulty-review-dp-m12-start-r1-v1.json",
+    "dolpa-analysis-report-dp-m12-start-r1-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-B036C8D5C574", reviewedAt: "2026-08-31" }));
+  });
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m12-start-r1");
+  assert.equal(info.label, "1-2 입반테스트 1");
+  assert.deepEqual(info.tags, ["middle1-2", "course-start", "middle1-1-full-range", "diagnostic-extension"]);
+  assert.equal(info.pageSourceId, "dp-m12-start-r1-page-assets-v1");
+  assert.equal(info.paperSourceId, "dp-m12-start-r1-paper-review-v1");
+  assert.equal(info.recordId, "dp.m12-start-r1.method-review.20260831");
+});
+
 test("2-1 입반테스트 2 원본을 중간 단원 범위와 정답 이견 상태로 연결한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m21-202402-r2-"));
   const paths = [
@@ -188,6 +210,79 @@ test("2-1 입반테스트 2 원본을 중간 단원 범위와 정답 이견 상�
   assert.equal(info.difficultySourceId, "dp-m21-202402-r2-difficulty-review-v1");
   assert.equal(info.analysisSourceId, "dp-m21-202402-r2-analysis-report-v1");
   assert.equal(info.recordId, "dp.m21-202402-r2.method-review.20260830");
+});
+
+test("1-1 과정 시작 입반테스트는 초5~6 누적 범위와 상향 진단을 구분해 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m11-start-r1-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m11-start-r1-v1.json",
+    "dolpa-classification-review-dp-m11-start-r1-v1.json",
+    "dolpa-paper-review-dp-m11-start-r1-v1.json",
+    "dolpa-difficulty-review-dp-m11-start-r1-v1.json",
+    "dolpa-analysis-report-dp-m11-start-r1-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({
+      sourceId: "DP-SRC-B37A0CEC85EE",
+      paperId: "DP-M11-202311-R1",
+      reviewedAt: "2026-08-31"
+    }));
+  });
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m11-start-r1");
+  assert.equal(info.label, "1-1 입반테스트 1");
+  assert.deepEqual(info.tags, ["middle1-1", "course-start", "elementary5-6-cumulative", "diagnostic-extension", "answer-dispute"]);
+  assert.equal(info.pageSourceId, "dp-m11-start-r1-page-assets-v1");
+  assert.equal(info.paperSourceId, "dp-m11-start-r1-paper-review-v1");
+  assert.equal(info.recordId, "dp.m11-start-r1.method-review.20260831");
+});
+
+test("1-1 둘째 달 입반테스트는 시작반과 다른 중간 합류 키로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m11-mid-r2-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m11-mid-r2-v1.json",
+    "dolpa-classification-review-dp-m11-mid-r2-v1.json",
+    "dolpa-paper-review-dp-m11-mid-r2-v1.json",
+    "dolpa-difficulty-review-dp-m11-mid-r2-v1.json",
+    "dolpa-analysis-report-dp-m11-mid-r2-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({
+      sourceId: "DP-SRC-E5B2400549A0",
+      paperId: "DP-M11-202310-R2",
+      reviewedAt: "2026-08-31"
+    }));
+  });
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m11-mid-r2");
+  assert.equal(info.label, "1-1 입반테스트 2");
+  assert.deepEqual(info.tags, ["middle1-1", "mid-course-join", "second-month", "cumulative", "future-unit-diagnostic"]);
+  assert.equal(info.methodSourceId, "dp-m11-mid-r2-method-review-v1");
+  assert.equal(info.analysisSourceId, "dp-m11-mid-r2-analysis-report-v1");
+  assert.equal(info.recordId, "dp.m11-mid-r2.method-review.20260831");
+});
+
+test("1-1 셋째 달 터보·심화 입반테스트는 전 범위 중간 합류 키로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-all-memory-m11-mid-r3-"));
+  const paths = [
+    "page-manifest.json",
+    "dolpa-method-review-dp-m11-mid-r3-v1.json",
+    "dolpa-classification-review-dp-m11-mid-r3-v1.json",
+    "dolpa-paper-review-dp-m11-mid-r3-v1.json",
+    "dolpa-difficulty-review-dp-m11-mid-r3-v1.json",
+    "dolpa-analysis-report-dp-m11-mid-r3-v1.json"
+  ].map(name => path.join(root, name));
+  paths.forEach(filePath => fs.writeFileSync(filePath, JSON.stringify({
+    sourceId: "DP-SRC-964BCE1983C1",
+    paperId: "DP-M11-202311-R3",
+    reviewedAt: "2026-08-31"
+  })));
+  const info = methodReviewInfo(...paths);
+  assert.equal(info.key, "m11-mid-r3");
+  assert.deepEqual(info.tags, ["middle1-1", "mid-course-join", "third-month", "turbo-advanced", "full-range", "borderline-future-diagnostic"]);
+  assert.equal(info.recordId, "dp.m11-mid-r3.method-review.20260831");
 });
 
 test("2-1 입반테스트 3 원본을 혼합 범위와 비공개 정답 이견 상태로 연결한다", () => {
@@ -659,6 +754,23 @@ test("원본 페이지와 풀이 검수표의 sourceId가 다르면 중단한다
   fs.writeFileSync(manifestPath, JSON.stringify({ sourceId: "DP-SRC-DE99B9857905" }));
   fs.writeFileSync(reviewPath, JSON.stringify({ sourceId: "DP-SRC-D59E26A73CC1" }));
   assert.throws(() => methodReviewInfo(manifestPath, reviewPath), /sourceId가 다릅니다/);
+});
+
+test("둘째달 구판 2-1 입반테스트 2를 2024년판과 다른 원본으로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21-202310-r2-"));
+  const manifestPath = path.join(root, "manifest.json");
+  const methodPath = path.join(root, "method.json");
+  const paperPath = path.join(root, "paper.json");
+  const difficultyPath = path.join(root, "difficulty.json");
+  const analysisPath = path.join(root, "analysis.json");
+  [manifestPath, methodPath, paperPath, difficultyPath, analysisPath].forEach(filePath => {
+    fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-E00A54FBB8B2" }));
+  });
+  const info = methodReviewInfo(manifestPath, methodPath, null, paperPath, difficultyPath, analysisPath);
+  assert.equal(info.key, "m21-202310-r2");
+  assert.equal(info.label, "2-1 입반테스트 2(둘째달 구판)");
+  assert.deepEqual(info.tags, ["middle2-1", "legacy", "mid-course-join", "second-month", "middle1-cumulative", "mid-unit-cutoff", "answer-dispute"]);
+  assert.equal(info.pageSourceId, "dp-m21-202310-r2-page-assets-v1");
 });
 
 test("2-1 입반테스트 4 대표본과 부분 교체 교사본의 직접 소유 문항 수를 구분한다", () => {
