@@ -72,58 +72,51 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 .friend.got::before{content:'🌈 '}
 @media (prefers-reduced-motion:reduce){.numcell{transition:none}}
 </style>
+<script src="lab-lang.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>🌈 무지개 덧셈법</h1>
-    <p>1부터 10까지 다 더하라고? 무지개를 그리면 10초 만에 끝나요.</p>
+    <h1>🌈 <span data-t="title"></span></h1>
+    <p data-t="tag"></p>
   </header>
 
-  <nav class="tabs" aria-label="단계">
-    <button class="tab on" data-p="p1">① 이야기</button>
-    <button class="tab" data-p="p2">② 무지개 보기</button>
-    <button class="tab" data-p="p3">③ 직접 하기</button>
+  <nav class="tabs" aria-label="stages">
+    <button class="tab on" data-p="p1">① <span data-t="tab1"></span></button>
+    <button class="tab" data-p="p2">② <span data-t="tab2"></span></button>
+    <button class="tab" data-p="p3">③ <span data-t="tab3"></span></button>
   </nav>
 
   <!-- ① 이야기 -->
   <section class="card on story" id="p1">
-    <h2>선생님을 놀라게 한 아이</h2>
-    <button class="speak" data-say="story">🔊 읽어 주기</button>
+    <h2 data-t="s1h"></h2>
+    <button class="speak" data-say="story">🔊 <span data-t="listen"></span></button>
     <div id="storyText">
-      <p>아주 옛날 독일의 한 교실. 선생님이 말했어요. <b>"1부터 100까지 전부 더해 보렴!"</b>
-      아이들이 1 더하기 2, 더하기 3… 끙끙대는 사이, 한 아이가 몇 초 만에 손을 들었어요.
-      <b>"5050이요!"</b></p>
-      <p>그 아이의 비밀은 이거였어요. 수를 <b>앞에서 하나, 뒤에서 하나</b>씩 짝지으면 —
-      1과 100, 2와 99, 3과 98… <b>모든 짝의 합이 똑같이 101</b>! 짝이 50개니까
-      101×50=5050. 이 아이가 나중에 위대한 수학자가 된 <b>가우스</b>예요.</p>
-      <p>짝끼리 선을 이어 보면 꼭 <b>무지개</b> 같아요. 그래서 우리는 이 마법을
-      <b>무지개 덧셈법</b>이라고 불러요. 🌈</p>
-      <div class="legend">※ 어린 가우스 이야기는 옛날부터 전해 내려오는 일화예요.
-      숫자나 상황은 전하는 사람마다 조금씩 달라요 — 하지만 짝짓기 마법 자체는 진짜랍니다!</div>
+      <div data-th="story"></div>
+      <div class="legend" data-th="legend"></div>
     </div>
-    <div class="row"><button class="btn" data-go="p2">무지개 보러 가기 →</button></div>
+    <div class="row"><button class="btn" data-go="p2" data-t="toP2"></button></div>
   </section>
 
   <!-- ② 무지개 보기 -->
   <section class="card" id="p2">
-    <h2>1부터 10까지, 무지개 한 번에</h2>
+    <h2 data-t="s2h"></h2>
     <div class="stage">
       <svg id="arcSvg" viewBox="0 0 600 190" style="width:100%;display:block" aria-hidden="true"></svg>
       <div class="numrow" id="demoRow"></div>
     </div>
-    <div class="caption" id="demoCap">▶ 를 누르면 무지개가 그려져요</div>
+    <div class="caption" id="demoCap" data-t="demoInit"></div>
     <div class="formula" id="demoFormula"></div>
     <div class="row">
-      <button class="btn" id="playBtn">▶ 무지개 그리기</button>
-      <button class="speak" data-say="demo" style="margin:0">🔊 설명 듣기</button>
+      <button class="btn" id="playBtn" data-t="playBtn"></button>
+      <button class="speak" data-say="demo" style="margin:0">🔊 <span data-t="listenDemo"></span></button>
     </div>
   </section>
 
   <!-- ③ 직접 하기 -->
   <section class="card" id="p3">
-    <h2>이번엔 네 차례!</h2>
-    <div class="friends" id="friendRow" title="무지개 친구 — 이 수들을 직접 만들면 모을 수 있어요"></div>
+    <h2 data-t="s3h"></h2>
+    <div class="friends" id="friendRow"></div>
     <div class="row" style="margin:0 0 14px">
       <button class="pick on" data-n="10">1~10</button>
       <button class="pick" data-n="9">1~9</button>
@@ -139,11 +132,11 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
     </div>
     <div class="caption" id="userCap"></div>
     <div class="qline" id="userQ" style="display:none">
-      한 쌍의 합 <input id="inPair" inputmode="numeric" maxlength="4"> ×
-      쌍의 수 <input id="inCnt" inputmode="numeric" maxlength="3">
-      <span id="midTerm" style="display:none">+ 가운데 수 <input id="inMid" inputmode="numeric" maxlength="3"></span>
+      <span data-t="lblPair"></span> <input id="inPair" inputmode="numeric" maxlength="4"> ×
+      <span data-t="lblCnt"></span> <input id="inCnt" inputmode="numeric" maxlength="3">
+      <span id="midTerm" style="display:none">+ <span data-t="lblMid"></span> <input id="inMid" inputmode="numeric" maxlength="3"></span>
       = <input id="inTotal" inputmode="numeric" maxlength="5">
-      <button class="btn gold" id="checkBtn">확인</button>
+      <button class="btn gold" id="checkBtn" data-t="checkBtn"></button>
     </div>
     <div class="fb" id="userFb"></div>
   </section>
@@ -152,7 +145,64 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 <script>
 (function(){
 'use strict';
+var T=LabLang.T;
 var RAINBOW=['#E85D5D','#F09A3E','#E9C34A','#5FB876','#5B8DD9','#8B6BC7','#D96BB0'];
+
+var STR={
+  title:{ko:'무지개 덧셈법',en:'The Rainbow Sum',zh:'彩虹加法法'},
+  tag:{ko:'1부터 10까지 다 더하라고? 무지개를 그리면 10초 만에 끝나요.',
+       en:'Add every number from 1 to 10? Draw a rainbow and it takes ten seconds.',
+       zh:'要把1加到10？画个彩虹，十秒就搞定。'},
+  tab1:{ko:'이야기',en:'Story',zh:'故事'},
+  tab2:{ko:'무지개 보기',en:'See the rainbow',zh:'看彩虹'},
+  tab3:{ko:'직접 하기',en:'Try it',zh:'动手试试'},
+  listen:{ko:'읽어 주기',en:'Read aloud',zh:'朗读'},
+  listenDemo:{ko:'설명 듣기',en:'Hear the explanation',zh:'听讲解'},
+  s1h:{ko:'선생님을 놀라게 한 아이',en:'The boy who astonished his teacher',zh:'让老师吃惊的孩子'},
+  toP2:{ko:'무지개 보러 가기 →',en:'Go see the rainbow →',zh:'去看彩虹 →'},
+  s2h:{ko:'1부터 10까지, 무지개 한 번에',en:'1 to 10, in one rainbow',zh:'1到10，一道彩虹搞定'},
+  demoInit:{ko:'▶ 를 누르면 무지개가 그려져요',en:'Press ▶ and the rainbow is drawn',zh:'按▶就画出彩虹'},
+  playBtn:{ko:'▶ 무지개 그리기',en:'▶ Draw the rainbow',zh:'▶ 画彩虹'},
+  s3h:{ko:'이번엔 네 차례!',en:'Now it is your turn!',zh:'轮到你了！'},
+  lblPair:{ko:'한 쌍의 합',en:'Pair sum',zh:'每对的和'},
+  lblCnt:{ko:'쌍의 수',en:'Number of pairs',zh:'对数'},
+  lblMid:{ko:'가운데 수',en:'middle number',zh:'中间的数'},
+  checkBtn:{ko:'확인',en:'Check',zh:'确认'},
+  friendsTip:{ko:'무지개 친구 — 이 수들을 직접 만들면 모을 수 있어요',
+              en:'Rainbow friends — make these totals yourself to collect them',
+              zh:'彩虹朋友——亲手算出这些数就能收集'},
+  story:{
+    ko:'<p>아주 옛날 독일의 한 교실. 선생님이 말했어요. <b>"1부터 100까지 전부 더해 보렴!"</b> '
+      +'아이들이 1 더하기 2, 더하기 3… 끙끙대는 사이, 한 아이가 몇 초 만에 손을 들었어요. '
+      +'<b>"5050이요!"</b></p>'
+      +'<p>그 아이의 비밀은 이거였어요. 수를 <b>앞에서 하나, 뒤에서 하나</b>씩 짝지으면 — '
+      +'1과 100, 2와 99, 3과 98… <b>모든 짝의 합이 똑같이 101</b>! 짝이 50개니까 '
+      +'101×50=5050. 이 아이가 나중에 위대한 수학자가 된 <b>가우스</b>예요.</p>'
+      +'<p>짝끼리 선을 이어 보면 꼭 <b>무지개</b> 같아요. 그래서 우리는 이 마법을 '
+      +'<b>무지개 덧셈법</b>이라고 불러요. 🌈</p>',
+    en:'<p>Long ago, in a German classroom, the teacher said: <b>"Add up every number from 1 to 100!"</b> '
+      +'While the other children laboured through 1 plus 2 plus 3 …, one boy raised his hand after a few seconds. '
+      +'<b>"5050!"</b></p>'
+      +'<p>His secret was this. Pair the numbers <b>one from the front, one from the back</b> — '
+      +'1 with 100, 2 with 99, 3 with 98 … and <b>every pair adds to the same 101</b>! There are 50 pairs, '
+      +'so 101×50=5050. That boy grew up to be the great mathematician <b>Gauss</b>.</p>'
+      +'<p>Join the pairs with lines and it looks just like a <b>rainbow</b> — which is why we call this trick '
+      +'the <b>Rainbow Sum</b>. 🌈</p>',
+    zh:'<p>很久以前，德国的一间教室里，老师说：<b>"把1到100全部加起来！"</b>'
+      +'别的孩子还在1加2加3……费劲的时候，有个男孩几秒钟就举手了。<b>"5050！"</b></p>'
+      +'<p>他的秘密是：把数<b>一头一个、一尾一个</b>配成对——'
+      +'1和100、2和99、3和98……<b>每一对的和都同样是101</b>！一共50对，'
+      +'所以101×50=5050。这个男孩后来成了伟大的数学家<b>高斯</b>。</p>'
+      +'<p>把每一对用线连起来，就像一道<b>彩虹</b>。所以我们把这个魔法叫作<b>彩虹加法法</b>。🌈</p>'},
+  legend:{
+    ko:'※ 어린 가우스 이야기는 옛날부터 전해 내려오는 일화예요. 숫자나 상황은 전하는 사람마다 조금씩 '
+      +'달라요 — 하지만 짝짓기 마법 자체는 진짜랍니다!',
+    en:'※ The story of young Gauss is an anecdote passed down for centuries; the numbers and details shift '
+      +'from teller to teller — but the pairing trick itself is completely real!',
+    zh:'※ 少年高斯的故事是流传已久的轶事，数字和细节因人而异——但配对的魔法本身千真万确！'}
+};
+LabLang.fill(STR); LabLang.fillHtml(STR); LabLang.title(STR.title);
+document.getElementById('friendRow').title=T(STR.friendsTip);
 
 /* ── 탭 전환 ── */
 function show(id){
@@ -164,17 +214,13 @@ document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
 
 /* ── 읽어 주기 (Web Speech 폴백 — MP3 파이프라인 연결 전까지) ── */
-var SAY={
-  story:'아주 옛날 독일의 한 교실. 선생님이 1부터 100까지 전부 더해 보라고 했어요. 한 아이가 몇 초 만에 외쳤어요. 오천오십이요! 비밀은 짝짓기. 1과 100, 2와 99. 모든 짝의 합이 똑같이 101이에요. 짝이 50개니까 101 곱하기 50은 5050. 짝끼리 선을 이으면 무지개 같아서, 무지개 덧셈법이라고 불러요.',
-  demo:'1과 10을 이어요. 합은 11. 2와 9도 11. 3과 8도, 4와 7도, 5와 6도 전부 11이에요. 11이 5쌍이니까, 11 곱하기 5는 55!'
-};
-document.querySelectorAll('.speak').forEach(function(b){
-  b.onclick=function(){
-    if(!window.speechSynthesis)return;
-    speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(SAY[b.dataset.say]);
-    u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u);
-  };
+LabLang.speak({
+  story:{ko:'아주 옛날 독일의 한 교실. 선생님이 1부터 100까지 전부 더해 보라고 했어요. 한 아이가 몇 초 만에 외쳤어요. 오천오십이요! 비밀은 짝짓기. 1과 100, 2와 99. 모든 짝의 합이 똑같이 101이에요. 짝이 50개니까 101 곱하기 50은 5050. 짝끼리 선을 이으면 무지개 같아서, 무지개 덧셈법이라고 불러요.',
+         en:'Long ago in a German classroom, the teacher asked the children to add every number from one to one hundred. One boy called out in seconds: five thousand and fifty! The secret is pairing. One with a hundred, two with ninety-nine. Every pair adds to the same hundred and one. There are fifty pairs, so a hundred and one times fifty is five thousand and fifty. Join the pairs with lines and it looks like a rainbow.',
+         zh:'很久以前，德国的一间教室里，老师让孩子们把一到一百全部加起来。有个男孩几秒钟就喊出来：五千零五十！秘密就是配对。一和一百，二和九十九。每一对的和都是一百零一。一共五十对，所以一百零一乘五十等于五千零五十。把每一对连起来，就像一道彩虹。'},
+  demo:{ko:'1과 10을 이어요. 합은 11. 2와 9도 11. 3과 8도, 4와 7도, 5와 6도 전부 11이에요. 11이 5쌍이니까, 11 곱하기 5는 55!',
+        en:'Join one and ten. The sum is eleven. Two and nine make eleven too. So do three and eight, four and seven, five and six. Five pairs of eleven, so eleven times five is fifty-five!',
+        zh:'把一和十连起来，和是十一。二和九也是十一。三和八、四和七、五和六，全都是十一。五对十一，所以十一乘五等于五十五！'}
 });
 
 /* ── 숫자 줄 + 아치 그리기 공통 ── */
@@ -243,7 +289,9 @@ document.getElementById('playBtn').onclick=function(){
       cap.textContent=a.textContent+' + '+b.textContent+' = 11';
       i++;setTimeout(step,850);
     }else{
-      cap.textContent='전부 11! 11이 다섯 쌍이에요';
+      cap.textContent=T({ko:'전부 11! 11이 다섯 쌍이에요',
+                         en:'All elevens! Five pairs of 11',
+                         zh:'全是11！一共五对11'});
       document.getElementById('demoFormula').innerHTML='11 × 5 = <b>55</b>';
       playing=false;
     }
@@ -279,13 +327,17 @@ function setup(n){
   });
   var cap=document.getElementById('userCap');
   if(n<=20){
-    cap.textContent='합이 같아지는 두 수를 차례로 눌러 짝을 지어요 (앞에서 하나, 뒤에서 하나!)';
+    cap.textContent=T({ko:'합이 같아지는 두 수를 차례로 눌러 짝을 지어요 (앞에서 하나, 뒤에서 하나!)',
+                       en:'Tap two numbers that add to the same total (one from the front, one from the back!)',
+                       zh:'依次点两个和相同的数来配对（一头一个，一尾一个！）'});
     userCells.forEach(function(c){
       if(!c.dataset.v)return;
       c.onclick=function(){onTap(c)};
     });
   }else{
-    cap.textContent='수가 너무 많아요! 그래도 규칙은 같아요 — 짝의 합과 쌍의 수만 알면 끝';
+    cap.textContent=T({ko:'수가 너무 많아요! 그래도 규칙은 같아요 — 짝의 합과 쌍의 수만 알면 끝',
+                       en:'So many numbers! The rule is the same — you only need the pair sum and the number of pairs',
+                       zh:'数太多了！但规则一样——只要知道每对的和与对数就行'});
     [[0,6],[1,5],[2,4]].forEach(function(pr,i){
       var p=arcPath(userSvg,userRow,userCells[pr[0]],userCells[pr[1]],RAINBOW[i],i);
       arcLabel(userSvg,p,n+1,RAINBOW[i]);
@@ -306,19 +358,27 @@ function onTap(c){
     arcLabel(userSvg,p,target,RAINBOW[(arcIdx)%RAINBOW.length]);arcIdx++;
     doneCnt++;sel=null;
     var pairsNeeded=Math.floor(N/2);
-    document.getElementById('userCap').textContent=a+' + '+b+' = '+target+'  ('+doneCnt+'/'+pairsNeeded+'쌍)';
+    document.getElementById('userCap').textContent=a+' + '+b+' = '+target+'  ('+
+      T({ko:doneCnt+'/'+pairsNeeded+'쌍',en:doneCnt+'/'+pairsNeeded+' pairs',zh:doneCnt+'/'+pairsNeeded+'对'})+')';
     if(doneCnt===pairsNeeded){
       if(N%2===1){
         var mid=userCells[Math.floor(N/2)];
         mid.classList.add('mid','lit');
-        document.getElementById('userCap').textContent='가운데 '+mid.textContent+'는 짝이 없어요 — 혼자 남았네!';
+        document.getElementById('userCap').textContent=
+          T({ko:'가운데 '+mid.textContent+'는 짝이 없어요 — 혼자 남았네!',
+             en:'The middle number '+mid.textContent+' has no partner — it stands alone!',
+             zh:'中间的'+mid.textContent+'没有配对——它落单了！'});
       }else{
-        document.getElementById('userCap').textContent='무지개 완성! 이제 계산해 볼까요?';
+        document.getElementById('userCap').textContent=
+          T({ko:'무지개 완성! 이제 계산해 볼까요?',en:'Rainbow complete! Shall we do the sum?',zh:'彩虹完成！现在来算一算吧？'});
       }
       askFormula();
     }
   }else{
-    document.getElementById('userCap').textContent=a+' + '+b+' = '+(a+b)+' … 합이 '+target+'가 되는 짝을 찾아봐요!';
+    document.getElementById('userCap').textContent=
+      T({ko:a+' + '+b+' = '+(a+b)+' … 합이 '+target+'가 되는 짝을 찾아봐요!',
+         en:a+' + '+b+' = '+(a+b)+' … look for a pair that adds to '+target+'!',
+         zh:a+' + '+b+' = '+(a+b)+' ……找出和为'+target+'的一对吧！'});
     sel.classList.remove('sel');sel=null;
   }
 }
@@ -338,15 +398,22 @@ document.getElementById('checkBtn').onclick=function(){
   var fb=document.getElementById('userFb');
   if(ok){
     fb.className='fb ok';
-    var msg='🌈 정답! 1부터 '+N+'까지의 합 = '+total+' — 가우스처럼 해냈어요!';
+    var msg=T({ko:'🌈 정답! 1부터 '+N+'까지의 합 = '+total+' — 가우스처럼 해냈어요!',
+               en:'🌈 Correct! The sum from 1 to '+N+' = '+total+' — just like Gauss!',
+               zh:'🌈 正确！1到'+N+'的和 = '+total+'——像高斯一样厉害！'});
     if(FRIENDS.indexOf(total)>=0&&gotFriends.indexOf(total)<0){
       gotFriends.push(total);saveFriends(gotFriends);drawFriends();
-      msg='🎉 새 무지개 친구 '+total+'를 만났어요! '+(gotFriends.length===FRIENDS.length?'다섯 친구를 전부 모았어요! 👑':'('+gotFriends.length+'/'+FRIENDS.length+')');
+      var all=(gotFriends.length===FRIENDS.length);
+      msg=T({ko:'🎉 새 무지개 친구 '+total+'를 만났어요! '+(all?'다섯 친구를 전부 모았어요! 👑':'('+gotFriends.length+'/'+FRIENDS.length+')'),
+             en:'🎉 You met a new rainbow friend, '+total+'! '+(all?'All five friends collected! 👑':'('+gotFriends.length+'/'+FRIENDS.length+')'),
+             zh:'🎉 遇到了新的彩虹朋友'+total+'！'+(all?'五个朋友全部集齐！👑':'('+gotFriends.length+'/'+FRIENDS.length+')')});
     }
     fb.textContent=msg;
   }else{
     fb.className='fb no';
-    fb.textContent='빨간 칸을 다시 봐요. 짝의 합은 (첫 수 + 끝 수), 쌍의 수는 전체의 절반!';
+    fb.textContent=T({ko:'빨간 칸을 다시 봐요. 짝의 합은 (첫 수 + 끝 수), 쌍의 수는 전체의 절반!',
+                      en:'Check the red boxes. The pair sum is (first + last), and the number of pairs is half of them all!',
+                      zh:'再看看红色的格子。每对的和是（首数＋末数），对数是总数的一半！'});
   }
 };
 document.querySelectorAll('.pick').forEach(function(b){

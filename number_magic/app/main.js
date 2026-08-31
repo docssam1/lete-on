@@ -1358,10 +1358,24 @@ const ROAD_LABS=[
 /* 개념 노트 ↔ 실험실 연결 — 여기 등록된 유닛은 개념 노트 하단에 실험실 버튼이 뜬다.
    실험실이 "따로 가야 있는 것"이 아니라 그 개념을 배우는 자리에서 바로 열리게. */
 const UNIT_LABS={
-  'M-15':'labs/root-hunter.html',      /* 제곱근 → 루트 사냥꾼 */
-  'M-44':'labs/why-calculus.html',     /* 미분계수 → 미적분은 왜 태어났나 */
-  'M-45':'labs/why-calculus.html',     /* 접선 → 〃 */
+  'A-28':'labs/rainbow-sum.html',                                  /* 가우스 덧셈 1 */
+  'C-05':['labs/rainbow-sum.html','labs/square-friends.html'],     /* 가우스 덧셈 마법(훅이 홀수의 합) */
+  'C-01':'labs/square-friends.html',                               /* 거듭제곱 마법 */
+  'H-04':'labs/secret-1001.html',                                  /* 1001 자릿수 이동법칙 */
+  'M-15':['labs/root-hunter.html','labs/number-line-hole.html'],   /* 제곱근의 값 — 잡아 보고, 끝내 못 잡는 이유까지 */
+  'M-16':'labs/number-line-hole.html',                             /* 근호의 정리 */
+  'M-43':'labs/why-calculus.html',                                 /* 극한 */
+  'M-44':'labs/why-calculus.html',                                 /* 미분계수 */
+  'M-45':'labs/why-calculus.html',                                 /* 접선 */
+  'M-46':'labs/why-calculus.html',                                 /* 적분 */
 };
+/* 유닛에 걸린 실험실 목록 — 값이 문자열이든 배열이든 배열로 돌려준다 */
+function unitLabsFor(id){
+  const v=UNIT_LABS[id];
+  return v?(Array.isArray(v)?v:[v]):[];
+}
+/* 파일 경로로 ROAD_LABS 항목 찾기(아이콘·3언어 이름을 그대로 씀) */
+function labMetaOf(file){ return ROAD_LABS.find(l=>l.file===file)||null; }
 
 /* 과정 목록(번호순) — courses.js의 키에서 그대로 만든다. */
 function roadCourseList(){
@@ -3027,16 +3041,26 @@ function stepDiscover(body,u){
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
     </div>${histHtml}`:'';
-  /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다 */
-  const unitLab=UNIT_LABS[u.id];
-  const labBtnHtml=unitLab?`<button class="nm-btn full nm-lab-link" id="openUnitLab">🧪 ${
-    S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试'}</button>`:'';
+  /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다.
+     두 개 이상 걸린 유닛도 있어(M-15·C-05) 실험실마다 제 이름으로 버튼을 낸다. */
+  const unitLabs=unitLabsFor(u.id);
+  const labLead=S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试';
+  const labBtnHtml=unitLabs.length
+    ?`<div class="nm-lab-links"><div class="nm-lab-lead">🧪 ${labLead}</div>${
+      unitLabs.map(file=>{
+        const m=labMetaOf(file);
+        return `<button class="nm-btn full nm-lab-link" data-lab="${esc(file)}">${
+          m?`${m.icon} ${esc(L(m.name))}`:'🧪 '+labLead}</button>`;
+      }).join('')}</div>`
+    :'';
   body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
     <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
-  if(unitLab){$('#openUnitLab').onclick=()=>{window.open(unitLab,'_blank','noopener');};}
+  body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{
+    el.onclick=()=>{window.open(el.dataset.lab,'_blank','noopener');};
+  });
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
