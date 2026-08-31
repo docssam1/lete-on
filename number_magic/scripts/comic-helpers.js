@@ -76,111 +76,51 @@ function numi(x,y,s){
 }
 
 /* ══════════════════════════════════════════════════════════
-   캐릭터 로스터 (2026-08-31, 원장 지시: "막대 안 돼, 실존 인물엔 맞는 캐릭터")
-   누미와 같은 둥근 치비 스타일. 전부 원본 도형 — 특정인의 실제 얼굴을
-   묘사하지 않고 시대·역할의 복장 기호(가발·터번·토가…)로 나타낸다.
-   stick()은 사용 금지(호환용으로만 남김) — 아래 프리셋에서 고를 것.
+   캐릭터 로스터 — 그림은 assets/images/characters/<이름>.png (외주 작화, 투명 배경)
+
+   좌표 규약은 도형 시절과 그대로다: (x,y)=몸통 중심, s=배율.
+   PNG는 정사각형 캔버스에 인물이 6% 여백을 두고 가운데 놓여 있으므로,
+   한 변 CHAR_BOX(=46)로 그리면 인물 키가 0.88×46≈40이 되어
+   예전 도형 캐릭터가 차지하던 범위(머리끝 y-23 ~ 발밑 y+17)와 일치한다.
+   → 만화 380컷의 좌표를 하나도 고치지 않고 그림만 바뀐다.
+
+   stick()은 쓰지 않는다(검사기가 경고). 아래 12종에서 고를 것.
    ══════════════════════════════════════════════════════════ */
+const CHAR_BOX = 46;      /* s=1일 때 PNG 정사각형 한 변 */
+const CHAR_TOP = -26.24;  /* s=1일 때 정사각형 윗변의 y (발밑이 y+17에 오도록) */
 
-/* 치비 공통 몸통: 로브(사다리꼴)+얼굴(원)+눈·미소. 키 약 34(위 -17 ~ 아래 +17) */
-function chibiBase(robe,skin){
-  skin=skin||C.paper;
-  return '<path d="M -9 0 Q -12 16 -11 17 L 11 17 Q 12 16 9 0 Z" fill="'+robe+'" stroke="'+C.ink+'" stroke-width="1.8"/>'
-    +'<circle cx="0" cy="-7" r="10" fill="'+skin+'" stroke="'+C.ink+'" stroke-width="1.8"/>'
-    +'<circle cx="-3.5" cy="-8" r="1.4" fill="'+C.ink+'"/>'
-    +'<circle cx="3.5" cy="-8" r="1.4" fill="'+C.ink+'"/>'
-    +'<path d="M -3 -3.5 Q 0 -1 3 -3.5" fill="none" stroke="'+C.ink+'" stroke-width="1.6" stroke-linecap="round"/>';
+function charImg(name,x,y,s){
+  s = (s===undefined||s===null) ? 1 : s;
+  const S = CHAR_BOX*s;
+  return '<image href="assets/images/characters/'+name+'.png"'
+    +' x="'+(x-S/2).toFixed(2)+'" y="'+(y+CHAR_TOP*s).toFixed(2)+'"'
+    +' width="'+S.toFixed(2)+'" height="'+S.toFixed(2)+'"/>';
 }
-function wrap(x,y,s,inner){return '<g transform="translate('+x+','+y+') scale('+s+')">'+inner+'</g>';}
 
-/* 왕 — 금관 + 붉은 로브 (체스판 왕, 프톨레마이오스 왕 등 왕 배역) */
-function king(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.red)
-    +'<path d="M -8 -14 L -8 -21 L -4 -16.5 L 0 -23 L 4 -16.5 L 8 -21 L 8 -14 Z" fill="'+C.goldbright+'" stroke="'+C.ink+'" stroke-width="1.6" stroke-linejoin="round"/>');
-}
-/* 현자·스승 — 흰 수염 + 잿빛 로브 + 지팡이 (체스 현자, 유클리드 '스승' 장면 등) */
-function sage(x,y,s){
-  return wrap(x,y,s,
-    '<line x1="14" y1="-13" x2="14" y2="16" stroke="'+C.brown+'" stroke-width="2.2" stroke-linecap="round"/>'
-    +'<path d="M 14 -13 Q 14 -18 10 -17" fill="none" stroke="'+C.brown+'" stroke-width="2.2" stroke-linecap="round"/>'
-    +chibiBase(C.sub)
-    +'<path d="M -6 -3 Q 0 10 6 -3 Q 0 0 -6 -3 Z" fill="#fff" stroke="'+C.ink+'" stroke-width="1.4"/>'
-    +'<path d="M -8 -13 Q 0 -18 8 -13 L 8 -15 Q 0 -20 -8 -15 Z" fill="#fff" stroke="'+C.ink+'" stroke-width="1.2"/>');
-}
-/* 그리스 수학자 — 토가(한쪽 어깨끈) + 월계 잎 (유클리드·피타고라스·아르키메데스·히파소스) */
-function greek(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.wool)
-    +'<line x1="-8" y1="1" x2="4" y2="12" stroke="'+C.gold+'" stroke-width="2.4"/>'
-    +'<path d="M -6 -3 Q 0 8 6 -3 Q 0 -1 -6 -3 Z" fill="'+C.grey+'" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<ellipse cx="-9.5" cy="-13" rx="3.4" ry="1.7" fill="'+C.ok+'" transform="rotate(-38 -9.5 -13)"/>'
-    +'<ellipse cx="9.5" cy="-13" rx="3.4" ry="1.7" fill="'+C.ok+'" transform="rotate(38 9.5 -13)"/>');
-}
-/* 터번 학자 — 터번 + 갈색 로브 (알콰리즈미, 인도·페르시아·아랍 수학자) */
-function scholar(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.brown)
-    +'<path d="M -9.5 -12 Q -9 -22 0 -22 Q 9 -22 9.5 -12 Q 0 -17 -9.5 -12 Z" fill="'+C.gold+'" stroke="'+C.ink+'" stroke-width="1.6"/>'
-    +'<circle cx="0" cy="-19.5" r="1.8" fill="'+C.red+'"/>');
-}
-/* 가발 수학자 — 흰 곱슬 가발 + 남색 코트 + 크라바트
-   (뉴턴·라이프니츠·데카르트·오일러·네이피어·월리스·비에트·레코드·오트레드 등 근세 유럽) */
-function wig(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.blue)
-    +'<circle cx="-9" cy="-11" r="4.6" fill="#fff" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<circle cx="9" cy="-11" r="4.6" fill="#fff" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<path d="M -9.5 -10 Q -8 -20 0 -20 Q 8 -20 9.5 -10 Q 0 -16 -9.5 -10 Z" fill="#fff" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<rect x="-2.6" y="1.5" width="5.2" height="6" rx="1.4" fill="#fff" stroke="'+C.ink+'" stroke-width="1.2"/>');
-}
-/* 소년 — 앞머리 + 하늘색 옷 (어린 가우스, 학생·아이) */
-function boy(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.sky)
-    +'<path d="M -9.8 -9 Q -8 -19 0 -19 Q 8 -19 9.8 -9 Q 4 -14.5 0 -14.5 Q -4 -14.5 -9.8 -9 Z" fill="'+C.brown+'" stroke="'+C.ink+'" stroke-width="1.3"/>');
-}
-/* 소녀 — 양갈래 머리 + 보라 옷 (학생·아이) */
-function girl(x,y,s){
-  return wrap(x,y,s,
-    '<circle cx="-10.5" cy="-14" r="3.6" fill="'+C.brown+'" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<circle cx="10.5" cy="-14" r="3.6" fill="'+C.brown+'" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +chibiBase(C.purple)
-    +'<path d="M -9.8 -9 Q -8 -19 0 -19 Q 8 -19 9.8 -9 Q 4 -14.5 0 -14.5 Q -4 -14.5 -9.8 -9 Z" fill="'+C.brown+'" stroke="'+C.ink+'" stroke-width="1.3"/>');
-}
-/* 양치기 — 두건 + 갈색 옷 + 지팡이(굽은 손잡이) */
-function shepherd(x,y,s){
-  return wrap(x,y,s,
-    '<line x1="14" y1="-11" x2="14" y2="16" stroke="'+C.gold+'" stroke-width="2.2" stroke-linecap="round"/>'
-    +'<path d="M 14 -11 Q 14 -17 9 -15 Q 11 -11 14 -11" fill="none" stroke="'+C.gold+'" stroke-width="2.2" stroke-linecap="round"/>'
-    +chibiBase(C.brown)
-    +'<path d="M -10 -6 Q -12 -20 0 -20 Q 12 -20 10 -6 L 7 -7 Q 8 -16 0 -16 Q -8 -16 -7 -7 Z" fill="'+C.gold+'" stroke="'+C.ink+'" stroke-width="1.5"/>');
-}
-/* 필경사 — 납작 모자 + 깃펜 (중세 수도원·인쇄소의 기록자) */
-function scribe(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.mist)
-    +'<ellipse cx="0" cy="-16.5" rx="8.5" ry="2.6" fill="'+C.purple+'" stroke="'+C.ink+'" stroke-width="1.4"/>'
-    +'<line x1="11" y1="8" x2="17" y2="-6" stroke="'+C.ink+'" stroke-width="1.6" stroke-linecap="round"/>'
-    +'<path d="M 17 -6 Q 20 -10 16 -12 Q 15 -8 17 -6 Z" fill="'+C.goldbright+'" stroke="'+C.ink+'" stroke-width="1.2"/>');
-}
-/* 상인 — 초록 옷 + 앞치마 + 동전 주머니 (장부·이자 이야기) */
-function merchant(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.ok)
-    +'<path d="M -6 2 L 6 2 L 7 15 L -7 15 Z" fill="'+C.paper+'" stroke="'+C.ink+'" stroke-width="1.3"/>'
-    +'<circle cx="11" cy="11" r="4" fill="'+C.goldbright+'" stroke="'+C.ink+'" stroke-width="1.4"/>'
-    +'<line x1="9" y1="8.5" x2="13" y2="8.5" stroke="'+C.ink+'" stroke-width="1.2"/>');
-}
-/* 천문학자 — 남색 고깔(초승달) + 별 (항해·천문 계산 이야기) */
-function astronomer(x,y,s){
-  return wrap(x,y,s,
-    chibiBase(C.bluedeep)
-    +'<polygon points="-9,-14 9,-14 2,-27" fill="'+C.bluedeep+'" stroke="'+C.ink+'" stroke-width="1.6" stroke-linejoin="round"/>'
-    +'<path d="M 1 -22 Q 4 -20.5 3 -17.5 Q 5.4 -19.5 4 -22.5 Q 2.6 -24 1 -22 Z" fill="'+C.goldbright+'"/>'
-    +'<circle cx="13" cy="-20" r="1.3" fill="'+C.goldbright+'"/>'
-    +'<circle cx="-12" cy="-18" r="1.1" fill="'+C.goldbright+'"/>');
-}
+/* 왕·황제 배역 */
+function king(x,y,s){ return charImg('king',x,y,s); }
+/* 현자·스승·연장자 배역(수염+지팡이) */
+function sage(x,y,s){ return charImg('sage',x,y,s); }
+/* 고대 그리스 수학자 — 유클리드·피타고라스·아르키메데스·히파소스·탈레스 */
+function greek(x,y,s){ return charImg('greek',x,y,s); }
+/* 이슬람·페르시아·인도 학자 — 알콰리즈미·브라마굽타·아부 알와파·알비루니 */
+function scholar(x,y,s){ return charImg('scholar',x,y,s); }
+/* 15~19세기 유럽 수학자 — 뉴턴·라이프니츠·데카르트·오일러·네이피어 등 */
+function wig(x,y,s){ return charImg('wig',x,y,s); }
+/* 남자 아이·학생(어린 가우스 포함) */
+function boy(x,y,s){ return charImg('boy',x,y,s); }
+/* 여자 아이·학생 */
+function girl(x,y,s){ return charImg('girl',x,y,s); }
+/* 양치기 배역 */
+function shepherd(x,y,s){ return charImg('shepherd',x,y,s); }
+/* 필경사·기록자 배역(깃펜) */
+function scribe(x,y,s){ return charImg('scribe',x,y,s); }
+/* 상인 배역(앞치마+동전) */
+function merchant(x,y,s){ return charImg('merchant',x,y,s); }
+/* 천문학자·항해사 배역 */
+function astronomer(x,y,s){ return charImg('astronomer',x,y,s); }
+/* 앱 마스코트 누미 — 이름 없는 질문자·관찰자·안내자 전용 */
+function numi(x,y,s){ return charImg('numi',x,y,s); }
 
 /* 화살표 (x1,y1)→(x2,y2) */
 function arrow(x1,y1,x2,y2,col,w){
