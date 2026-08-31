@@ -12,6 +12,7 @@ page.on("console", (message) => {
   if (message.type() === "error") errors.push(message.text());
 });
 page.on("pageerror", (error) => errors.push(error.message));
+page.on("dialog", (dialog) => dialog.accept());
 await page.addInitScript(() => {
   localStorage.setItem("gfield-soma-tutorial-v1", "done");
   localStorage.setItem("gfield-sound-muted", "1");
@@ -43,12 +44,21 @@ assert.deepEqual(await page.locator(".choice-card").evaluateAll((nodes) => nodes
 assert.match(await page.locator("#targetViewer").getAttribute("aria-label"), /단위정육면체/);
 const recognitionCanvas = await canvasEvidence("#targetViewer canvas");
 await page.locator("#hintButton").click();
+assert.equal(await page.locator(".choice-card.eliminated").count(), 1);
+assert.equal(await page.locator(".choice-card.correct").count(), 0);
+await page.locator("#hintButton").click();
 const hintedChoice = page.locator(".choice-card.correct");
 assert.equal(await hintedChoice.count(), 1);
+const recognitionBefore = await page.locator("#problemLabel").textContent();
 await hintedChoice.click();
 assert.ok(await page.locator("#hintButton").isDisabled());
+await page.locator("#problemLabel").filter({ hasText: "2 / 5" }).waitFor({ timeout: 3500 });
+const recognitionAfter = await page.locator("#problemLabel").textContent();
 
 await openLevel(2);
+assert.ok(await page.locator("#tutorial").isVisible());
+await page.locator("#tutorialSkip").click();
+assert.ok(await page.locator("#tutorial").isHidden());
 assert.equal(await page.locator(".game-shell").getAttribute("data-stage"), "Pre");
 assert.equal(await page.locator(".piece-card").count(), 2);
 assert.ok((await page.locator(".piece-card").first().getAttribute("aria-label"))?.includes("소마 조각"));
@@ -56,14 +66,78 @@ const targetCanvas = await canvasEvidence("#targetViewer canvas");
 const buildCanvas = await canvasEvidence("#buildViewer canvas");
 await page.locator("#hintButton").click();
 assert.equal(await page.locator(".piece-card.hint").count(), 1);
+await page.locator("#hintButton").click();
 assert.ok(Number(await page.locator("#buildViewer").getAttribute("data-candidate-count")) > 0);
+await page.evaluate(() => document.activeElement?.blur());
 await page.keyboard.press("Enter");
 await page.locator("#pieceStatus").filter({ hasText: "1/2조각" }).waitFor();
 await page.locator("#hintButton").click();
+await page.locator("#hintButton").click();
+const assemblyBefore = await page.locator("#problemLabel").textContent();
+await page.evaluate(() => document.activeElement?.blur());
 await page.keyboard.press("Enter");
-await page.locator("#hintButton:disabled").waitFor();
-assert.match(await page.locator("#guideBubble").textContent(), /빈틈없이/);
+await page.locator("#problemLabel").filter({ hasText: "2 / 5" }).waitFor({ timeout: 3500 });
+const assemblyAfter = await page.locator("#problemLabel").textContent();
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-soma-browsercheck-desktop.png", fullPage: true });
+
+await openLevel(3);
+assert.equal(await page.locator(".piece-card").count(), 3);
+assert.equal(await page.locator(".game-shell").getAttribute("data-stage"), "입문");
+
+await page.evaluate(() => localStorage.setItem("gfield-pool-soma-cube-2", "0"));
+await page.goto(`${gameUrl(2)}&practice=1`, { waitUntil: "networkidle" });
+const secondSessionProblems = [];
+for (let index = 0; index < 5; index += 1) {
+  secondSessionProblems.push(await page.locator(".game-shell").getAttribute("data-problem-id"));
+  await page.locator("#hintButton").click();
+  assert.equal(await page.locator(".piece-card.hint").count(), 1);
+  await page.locator("#hintButton").click();
+  assert.ok(Number(await page.locator("#buildViewer").getAttribute("data-candidate-count")) > 0);
+  if (index < 4) await page.locator("#skipButton").click();
+}
+assert.deepEqual(secondSessionProblems, ["soma-l2-06", "soma-l2-07", "soma-l2-08", "soma-l2-09", "soma-l2-10"]);
+
+await page.emulateMedia({ reducedMotion: "reduce" });
+await openLevel(1);
+await page.locator("#hintButton").click();
+await page.locator("#hintButton").click();
+const reducedChoice = page.locator(".choice-card.correct");
+const reducedStarted = Date.now();
+await reducedChoice.click();
+await page.locator("#problemLabel").filter({ hasText: "2 / 5" }).waitFor({ timeout: 800 });
+const reducedAdvanceMs = Date.now() - reducedStarted;
+assert.ok(reducedAdvanceMs < 700, `Reduced-motion auto advance took ${reducedAdvanceMs}ms`);
+await openLevel(2);
+await page.locator("#hintButton").click();
+const reducedAnimations = await page.evaluate(() => ({
+  hint: getComputedStyle(document.querySelector(".piece-card.hint")).animationName,
+  tutorial: getComputedStyle(document.querySelector(".demo-piece")).animationName,
+  success: getComputedStyle(document.querySelector("#success")).animationName
+}));
+assert.deepEqual(reducedAnimations, { hint: "none", tutorial: "none", success: "none" });
+await page.emulateMedia({ reducedMotion: "no-preference" });
+
+await openLevel(5);
+const placeHintedPiece = async () => {
+  await page.locator("#hintButton").click();
+  await page.locator("#hintButton").click();
+  assert.ok(Number(await page.locator("#buildViewer").getAttribute("data-candidate-count")) > 0);
+  await page.evaluate(() => document.activeElement?.blur());
+  await page.keyboard.press("Enter");
+};
+for (let index = 0; index < 5; index += 1) await placeHintedPiece();
+await page.locator("#pieceStatus").filter({ hasText: "0/5조각" }).waitFor({ timeout: 4000 });
+assert.equal(await page.locator("#problemLabel").textContent(), "1 / 5");
+for (let index = 0; index < 5; index += 1) await placeHintedPiece();
+await page.locator("#problemLabel").filter({ hasText: "2 / 5" }).waitFor({ timeout: 3500 });
+const twoAssemblyAutoAdvance = "1 / 5 -> 2 / 5";
+
+await openLevel(5);
+for (let index = 0; index < 5; index += 1) await page.locator("#skipButton").click();
+await page.locator("#completeDialog").waitFor({ state: "visible" });
+assert.ok(await page.locator("#nextLevelButton").isHidden());
+assert.ok(await page.locator("#practiceButton").isVisible());
+await page.locator("#completeDialog").press("Escape");
 
 await page.setViewportSize({ width: 844, height: 390 });
 for (const language of ["ko", "en", "zh", "ja"]) {
@@ -101,7 +175,14 @@ console.log(JSON.stringify({
   recognitionCanvas,
   targetCanvas,
   buildCanvas,
-  levelsChecked: [1, 2, 4, 5],
+  autoAdvance: {
+    recognition: { before: recognitionBefore, after: recognitionAfter },
+    assembly: { before: assemblyBefore, after: assemblyAfter },
+    reducedMotionMs: reducedAdvanceMs
+  },
+  secondSessionProblems,
+  twoAssemblyAutoAdvance,
+  levelsChecked: [1, 2, 3, 4, 5],
   languagesChecked: ["ko", "en", "zh", "ja"],
   keyboardAssembly: "2 pieces completed with hint + Enter",
   portraitGuard: true
