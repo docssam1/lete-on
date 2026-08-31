@@ -23,7 +23,7 @@ const state = {
   phase: "concept",
   selections: {},
   feedback: null,
-  experience: { step: 0, previousStep: 0, answer: null, checks: {}, practice: {}, feedback: null, playing: false, speed: 1, timer: null },
+  experience: { step: 0, previousStep: 0, checkStep: 0, answer: null, checks: {}, practice: {}, feedback: null, playing: false, speed: 1, timer: null, autoplayStarted: false },
   progress: loadProgress()
 };
 
@@ -45,10 +45,12 @@ function resetExperience() {
   clearExperiencePlayback();
   state.experience.step = 0;
   state.experience.previousStep = 0;
+  state.experience.checkStep = 0;
   state.experience.answer = null;
   state.experience.checks = {};
   state.experience.practice = {};
   state.experience.feedback = null;
+  state.experience.autoplayStarted = false;
 }
 
 function completeOriginal() {
@@ -181,10 +183,6 @@ function experienceSummaryMarkup(experience) {
   return "";
 }
 
-function experienceStepChecked(experience, step = state.experience.step) {
-  return experience.kind !== "triangular-stair" || state.experience.checks[experience.beats[step]?.id] === true;
-}
-
 function conceptPracticeVisual(practice) {
   if (practice.kind === "triangular") {
     return `<div class="concept-practice-triangle" aria-hidden="true">${practice.rows.map((count) => `<span>${Array.from({ length: count }, () => "<i></i>").join("")}</span>`).join("")}</div>`;
@@ -218,11 +216,15 @@ function renderTriangularStairExperience(experience) {
   const beat = experience.beats[currentStep];
   const atFirst = currentStep === 0;
   const atLast = currentStep === experience.beats.length - 1;
-  const passed = experienceStepChecked(experience);
+  const checkBeat = experience.beats[state.experience.checkStep];
+  const checked = state.experience.checks[checkBeat.id] === true;
+  const checksComplete = experience.beats.every((candidate) => state.experience.checks[candidate.id] === true);
   const feedback = state.experience.feedback;
-  const progress = experience.beats.map((candidate, index) => `<i class="${state.experience.checks[candidate.id] ? "done" : index === currentStep ? "current" : ""}" aria-label="${candidate.stage}층 ${state.experience.checks[candidate.id] ? "확인 완료" : "확인 전"}">${candidate.stage}</i>`).join("");
+  const progress = experience.beats.map((candidate, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}" aria-label="${candidate.stage}층 ${index < currentStep ? "설명 완료" : "설명 중"}">${candidate.stage}</i>`).join("");
   const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
-  return `<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 체험"><header><div><span>직접 쌓아 보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="층 확인 단계">${progress}</div>${triangularStairMarkup(beat, passed)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: !passed })}<section class="experience-check"><p>${beat.check.prompt}</p><div class="answer-choices">${beat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}">${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}</section><details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${conceptPracticeMarkup(experience)}${successBurst}</section>`;
+  const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 확인</button>` : "";
+  const stageCheck = `<section class="experience-stage-check" aria-label="단계별 확인"><header><span>단계별 확인</span><strong>${state.experience.checkStep + 1}층을 확인해요</strong><b>${state.experience.checkStep + 1} / ${experience.beats.length}</b></header><div class="experience-check"><p>${checkBeat.check.prompt}</p><div class="answer-choices">${checkBeat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}" ${checked ? "disabled" : ""}>${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}${nextCheck}</div></section>`;
+  return `<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
 }
 
 function renderExperience(lesson) {
@@ -236,7 +238,6 @@ function renderExperience(lesson) {
 function updateExperienceStep(step) {
   const experience = activeLesson().experience;
   if (!experience) return;
-  if (experience.kind === "triangular-stair" && step > state.experience.step && !experienceStepChecked(experience)) return;
   clearExperiencePlayback();
   state.experience.previousStep = state.experience.step;
   state.experience.step = Math.max(0, Math.min(step, experience.beats.length - 1));
@@ -263,11 +264,6 @@ function playExperience() {
       renderContent();
       return;
     }
-    if (!experienceStepChecked(experience)) {
-      clearExperiencePlayback();
-      renderContent();
-      return;
-    }
     state.experience.previousStep = state.experience.step;
     state.experience.step += 1;
     renderContent();
@@ -275,6 +271,14 @@ function playExperience() {
   };
   renderContent();
   state.experience.timer = window.setTimeout(next, 500 / state.experience.speed);
+}
+
+function scheduleTriangularAutoplay(lesson) {
+  if (state.phase !== "concept" || lesson?.experience?.kind !== "triangular-stair" || state.experience.autoplayStarted) return;
+  state.experience.autoplayStarted = true;
+  window.setTimeout(() => {
+    if (state.phase === "concept" && activeLesson()?.id === lesson.id) playExperience();
+  }, 650);
 }
 
 function clockMarkup(value) {
@@ -733,6 +737,14 @@ function bindLessonActions() {
     const action = button.dataset.experienceAction;
     if (action === "previous") updateExperienceStep(state.experience.step - 1);
     else if (action === "next") updateExperienceStep(state.experience.step + 1);
+    else if (action === "next-check") {
+      const experience = activeLesson().experience;
+      if (!experience || experience.kind !== "triangular-stair" || state.experience.checks[experience.beats[state.experience.checkStep]?.id] !== true) return;
+      state.experience.checkStep = Math.min(state.experience.checkStep + 1, experience.beats.length - 1);
+      state.experience.answer = null;
+      state.experience.feedback = null;
+      renderContent();
+    }
     else if (action === "restart") {
       state.experience.previousStep = 0;
       state.experience.step = 0;
@@ -747,7 +759,8 @@ function bindLessonActions() {
     const experience = activeLesson().experience;
     state.experience.answer = button.dataset.experienceChoice;
     if (experience.kind === "triangular-stair") {
-      const beat = experience.beats[state.experience.step];
+      clearExperiencePlayback();
+      const beat = experience.beats[state.experience.checkStep];
       const passed = state.experience.answer === beat.check.answer;
       state.experience.checks[beat.id] = passed;
       state.experience.feedback = {
@@ -844,6 +857,7 @@ function renderContent() {
         : renderComplete(lesson);
   $("lessonContent").innerHTML = markup;
   bindLessonActions();
+  scheduleTriangularAutoplay(lesson);
 }
 
 function renderSummary() {
