@@ -1,7 +1,7 @@
 /* M-24 — 나머지정리: 대입 한 번이면 몫이 사라진다 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,arrow,txt}=H;
+  const {C,svg,arrow,numi,txt}=H;
   return { panels:[
     { art: svg(
         txt(45,40,15,C.blue,'P(x)')
@@ -17,7 +17,8 @@ module.exports=function(H){
         txt(50,60,20,C.gold,'⚡')
         +txt(130,60,30,C.ink,'÷')
         +'<line x1="112" y1="40" x2="148" y2="80" stroke="'+C.red+'" stroke-width="3" stroke-linecap="round"/>'
-        +txt(90,105,16,C.red,'?')),
+        +txt(90,105,16,C.red,'?')
+        +numi(25,100,0.65)),
       text: { ko:'그런데 더 빠른 지름길이 있대요 — 나눗셈을 아예 안 하고도 나머지를 구할 수 있을까요?',
               en:"But there's a faster shortcut, they say — can you find the remainder without dividing at all?",
               zh:'但据说有更快的捷径——能不做除法就求出余数吗？' } },

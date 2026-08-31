@@ -1,7 +1,7 @@
 /* M-22 — 곱셈공식의 확장: 세제곱 공식의 1,3,3,1 패턴 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,arrow,txt}=H;
+  const {C,svg,arrow,numi,txt}=H;
   return { panels:[
     { art: svg(
         '<rect x="30" y="20" width="50" height="50" fill="none" stroke="'+C.blue+'" stroke-width="2"/>'
@@ -20,6 +20,7 @@ module.exports=function(H){
         txt(60,50,20,C.blue,'(x+a)³')
         +txt(60,85,14,C.sub,'×3')
         +txt(150,60,30,C.gold,'?')
+        +numi(150,100,0.65)
         +arrow(90,60,130,60,C.grey,2)),
       text: { ko:'그럼 한 번 더 곱한 (x+a)³은요? 매번 괄호 세 개를 펼치긴 너무 번거로워요.',
               en:'So what about multiplying once more, (x+a)³? Expanding three brackets every time is far too tedious.',
