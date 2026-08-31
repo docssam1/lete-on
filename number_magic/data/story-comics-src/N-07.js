@@ -23,7 +23,8 @@ module.exports=function(H){
     { art: svg(
         frame(28,34,9)
         +'<rect x="136" y="26" width="16" height="16" rx="3" fill="none" stroke="'+C.red+'" stroke-width="2.5" stroke-dasharray="3 3"/>'
-        +frame(28,80,10)),
+        +txt(160,100,26,C.ok,'10')
+        +'<path d="M 30 108 L 40 118 L 58 94" fill="none" stroke="'+C.ok+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'),
       text:{ ko:'아홉은 하나가 모자라고, 열은 손가락을 접었다 다시 다 폈다는 뜻이에요.',
              en:'Nine is one short, and ten means every folded finger has opened again.',
              zh:'"九"是差一，"十"是弯着的手指全都又张开了。' } },
