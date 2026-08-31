@@ -52,7 +52,17 @@ function checkPart(file){
       /* 그림 */
       if(typeof p.art!=='string'){errs.push(n+'컷: art가 문자열이 아님');return;}
       if(!p.art.startsWith('<svg viewBox="0 0 200 140"')) errs.push(n+'컷: viewBox 0 0 200 140이 아님');
-      if(/<image|href=|<script|javascript:/i.test(p.art)) errs.push(n+'컷: 외부 참조/스크립트 금지');
+      /* 외부 참조 금지 — 단, 캐릭터 PNG(assets/images/characters/<이름>.png)만 허용.
+         스크립트·javascript:·그 밖의 href는 여전히 금지한다. */
+      if(/<script|javascript:/i.test(p.art)) errs.push(n+'컷: 스크립트 금지');
+      for(const m of p.art.matchAll(/href\s*=\s*"([^"]*)"/gi)){
+        if(!/^assets\/images\/characters\/[a-z]+\.png$/.test(m[1]))
+          errs.push(n+'컷: 허용되지 않은 외부 참조 href="'+m[1].slice(0,40)+'"');
+      }
+      for(const m of p.art.matchAll(/<image\b([^>]*)>/gi)){
+        if(!/href\s*=\s*"assets\/images\/characters\//.test(m[1]))
+          errs.push(n+'컷: <image>는 캐릭터 PNG만 허용');
+      }
       /* 태그 균형 */
       const stack=[]; let bad=false;
       for(const m of p.art.matchAll(/<(\/?)([a-zA-Z]+)([^>]*?)(\/?)>/g)){
@@ -63,7 +73,7 @@ function checkPart(file){
       }
       if(bad||stack.length) errs.push(n+'컷: SVG 태그 균형 깨짐'+(stack.length?' (미닫힘: '+stack.join(',')+')':''));
       /* 요소 밀도 */
-      const elCnt=(p.art.match(/<(rect|circle|ellipse|line|path|polygon|polyline|text|g)\b/g)||[]).length;
+      const elCnt=(p.art.match(/<(rect|circle|ellipse|line|path|polygon|polyline|text|g|image)\b/g)||[]).length;
       if(elCnt>40) errs.push(n+'컷: 요소 '+elCnt+'개 — 너무 복잡함(최대 40)');
       else if(elCnt>20) warns.push(n+'컷: 요소 '+elCnt+'개(권장 ≤15) — 뭉개지지 않는지 확인');
       /* 팔레트 */
