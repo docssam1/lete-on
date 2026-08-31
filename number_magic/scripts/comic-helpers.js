@@ -32,15 +32,22 @@ function stick(x,y,s,col){
     +'<line x1="0" y1="6" x2="-7" y2="18"/><line x1="0" y1="6" x2="7" y2="18"/></g>';
 }
 
-/* 양 — (x,y) 몸통 중심, s=배율, flip=왼쪽 보기 */
+/* 양 — (x,y) 몸통 중심, s=배율, flip=왼쪽 보기.
+   2026-08-31 다시 그림: 타원+점 머리가 양으로 안 보인다는 원장 지적 →
+   뭉게뭉게 양털 실루엣 + 귀 + 정수리 털뭉치 + 흰 눈으로 교체(크기·중심 호환) */
 function sheep(x,y,s,flip){
-  const f=flip?'scale(-1,1) translate('+(-2*x)+',0)':'';
+  /* translate(x,y)로 이미 로컬 원점이 양 중심이므로 거울은 scale(-1,1)만.
+     (예전 translate(-2x) 덧붙임은 양을 3x 위치로 날려 화면 밖으로 보냈다 — 실측으로 확인) */
+  const f=flip?'scale(-1,1)':'';
   return '<g transform="translate('+x+','+y+') scale('+s+') '+f+'">'
-    +'<ellipse cx="0" cy="0" rx="16" ry="10" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<circle cx="14" cy="-6" r="6" fill="'+C.ink+'"/>'
-    +'<circle cx="16" cy="-7" r="1.4" fill="#fff"/>'
-    +'<line x1="-8" y1="9" x2="-8" y2="16" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<line x1="6" y1="9" x2="6" y2="16" stroke="'+C.ink+'" stroke-width="2"/></g>';
+    +'<line x1="-8" y1="8" x2="-8" y2="17" stroke="'+C.ink+'" stroke-width="2.2"/>'
+    +'<line x1="6" y1="8" x2="6" y2="17" stroke="'+C.ink+'" stroke-width="2.2"/>'
+    +'<path d="M -16 0 Q -21 -6 -14 -9 Q -13 -16 -5 -13 Q 0 -18 6 -13 Q 14 -16 14 -8 Q 20 -4 15 2 Q 15 8 7 8 Q 1 13 -5 9 Q -13 11 -16 0 Z" '
+      +'fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2" stroke-linejoin="round"/>'
+    +'<ellipse cx="10.5" cy="-9.5" rx="4" ry="2.2" fill="'+C.ink+'" transform="rotate(-28 10.5 -9.5)"/>'
+    +'<ellipse cx="15.5" cy="-5" rx="6" ry="5.2" fill="'+C.ink+'"/>'
+    +'<circle cx="13.5" cy="-11" r="3.2" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="1.6"/>'
+    +'<circle cx="17.2" cy="-6.4" r="1.5" fill="#fff"/></g>';
 }
 
 /* 주머니 + 조약돌 n개 */
@@ -49,6 +56,23 @@ function pouch(x,y,n){
   for(let i=0;i<n;i++){dots+='<circle cx="'+(x-8+(i%3)*8)+'" cy="'+(y+2+Math.floor(i/3)*8)+'" r="3.2" fill="'+C.sub+'"/>';}
   return '<path d="M '+(x-15)+' '+(y-6)+' Q '+x+' '+(y-16)+' '+(x+15)+' '+(y-6)+' L '+(x+12)+' '+(y+16)+' Q '+x+' '+(y+22)+' '+(x-12)+' '+(y+16)+' Z" fill="#EAC996" stroke="'+C.ink+'" stroke-width="2"/>'
     +'<line x1="'+(x-15)+'" y1="'+(y-6)+'" x2="'+(x+15)+'" y2="'+(y-6)+'" stroke="'+C.ink+'" stroke-width="2"/>'+dots;
+}
+
+/* 누미 — 앱 마스코트(개념 노트의 마법사)를 원본 도형으로 그린 만화용 캐릭터.
+   (x,y)=몸통 중심, s=배율. 만화 속 "궁금해하는 아이·관찰자·안내자" 역할 전용 —
+   역사 인물은 stick()을 그대로 쓴다(누미가 실존 인물 행세를 하지 않도록). */
+function numi(x,y,s){
+  return '<g transform="translate('+x+','+y+') scale('+s+')">'
+    /* 몸통(방울) */
+    +'<circle cx="0" cy="2" r="12" fill="'+C.paper+'" stroke="'+C.ink+'" stroke-width="2"/>'
+    /* 고깔 모자 + 챙 + 별 */
+    +'<polygon points="-9,-8 9,-8 2,-26" fill="'+C.purple+'" stroke="'+C.ink+'" stroke-width="1.8" stroke-linejoin="round"/>'
+    +'<rect x="-12" y="-9.5" width="24" height="3.6" rx="1.8" fill="'+C.purple+'" stroke="'+C.ink+'" stroke-width="1.6"/>'
+    +'<polygon points="2,-22 3.2,-19 6.4,-19 3.8,-17 4.8,-14 2,-15.8 -0.8,-14 0.2,-17 -2.4,-19 0.8,-19" fill="'+C.goldbright+'"/>'
+    /* 눈·미소 */
+    +'<circle cx="-4" cy="0" r="1.6" fill="'+C.ink+'"/>'
+    +'<circle cx="4" cy="0" r="1.6" fill="'+C.ink+'"/>'
+    +'<path d="M -4 6 Q 0 9.5 4 6" fill="none" stroke="'+C.ink+'" stroke-width="1.8" stroke-linecap="round"/></g>';
 }
 
 /* 화살표 (x1,y1)→(x2,y2) */
@@ -83,4 +107,4 @@ function ground(y){
   return '<line x1="0" y1="'+y+'" x2="200" y2="'+y+'" stroke="'+C.gold+'" stroke-width="3"/>';
 }
 
-module.exports = { C, svg, stick, sheep, pouch, arrow, paper, bubble, txt, ground };
+module.exports = { C, svg, stick, sheep, numi, pouch, arrow, paper, bubble, txt, ground };
