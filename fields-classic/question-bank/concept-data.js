@@ -18,6 +18,7 @@ const sourceEvidence = (bookId, bookNumber, unitLabel, group, numbers) => Object
 const evidence = (unitLabel, group, numbers) => sourceEvidence("book-01", 1, unitLabel, group, numbers);
 const book2Evidence = (unitLabel, group, numbers) => sourceEvidence("book-02", 2, unitLabel, group, numbers);
 const book3Evidence = (unitLabel, group, numbers) => sourceEvidence("book-03", 3, unitLabel, group, numbers);
+const book4Evidence = (unitLabel, group, numbers) => sourceEvidence("book-04", 4, unitLabel, group, numbers);
 const sourceLesson = (conceptId, beats, misconception, evidenceItems) => Object.freeze({
   conceptId,
   scope: "global-type-id",
@@ -357,6 +358,62 @@ export const CONCEPT_DEFINITIONS = Object.freeze([
     definition: "3×3 마방진은 가로, 세로, 대각선의 세 수를 더한 값이 모두 같도록 남은 수와 목표 합을 함께 확인합니다.",
     invariant: "가로, 세로, 대각선의 모든 세 칸 줄은 같은 목표 합이며 목표 칸은 그 칸을 지나는 모든 줄의 조건을 만족합니다.",
     representationKinds: Object.freeze(["magic-square-3", "line-sums", "missing-value"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:tetromino-connectivity-fit",
+    label: "네 칸 도형의 연결과 맞추기",
+    definition: "같은 정사각형 네 개가 변으로 모두 연결된 도형인지 살펴보고, 돌려서 빈자리에 맞추거나 다른 도형과 포개어 봅니다.",
+    invariant: "네 정사각형은 변으로 이어져 있고, 도형을 돌려도 칸 수와 연결 모양은 그대로입니다.",
+    representationKinds: Object.freeze(["unit-squares", "connected-shape", "rotated-fit"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:rotational-congruent-partition",
+    label: "돌려 포개는 같은 도형 분할",
+    definition: "도형 안에 선을 직접 그어 빈틈과 겹침 없이 같은 칸 수와 같은 연결 모양의 두 조각이나 네 조각으로 나눕니다.",
+    invariant: "각 조각은 같은 칸 수와 같은 연결 모양이고, 돌리면 서로 포개지며 전체를 빈틈없이 덮습니다.",
+    representationKinds: Object.freeze(["grid-shape", "partition-lines", "rotational-overlay"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:cube-column-total-count",
+    label: "쌓기나무 기둥과 층의 전체 개수",
+    definition: "쌓기나무 그림에서 기둥마다 쌓인 층을 세고, 모든 기둥의 나무를 빠짐없이 더해 전체를 구합니다.",
+    invariant: "각 기둥의 층별 개수를 한 번씩 세며, 기둥들의 합은 그림 속 모든 쌓기나무 수와 같습니다.",
+    representationKinds: Object.freeze(["cube-solid", "column-heights", "layer-count"])
+  }),
+  Object.freeze({
+    id: "concept:geometry:cube-minimum-visible-support",
+    label: "위 큐브를 받치는 최소 쌓기나무",
+    definition: "위에 보이는 큐브를 받치려면 아래에 꼭 있어야 하는 쌓기나무만 찾아 최소 개수를 셉니다.",
+    invariant: "위 큐브마다 필요한 바로 아래 받침만 세고, 보이지 않는 곳에 마음대로 나무를 더하지 않습니다.",
+    representationKinds: Object.freeze(["cube-solid", "support-columns", "minimum-count"])
+  }),
+  Object.freeze({
+    id: "concept:pattern:triangular-stair-cumulative-growth",
+    label: "한 층씩 늘어나는 계단 쌓기",
+    definition: "쌓기나무 계단은 새 단계마다 한 층에 필요한 나무가 차례로 늘어나므로, 새로 늘어난 묶음을 이어서 셉니다.",
+    invariant: "새 단계에서 늘어나는 나무 수는 첫 묶음부터 차례로 하나씩 커지는 묶음의 합입니다.",
+    representationKinds: Object.freeze(["cube-stairs", "step-sequence", "cumulative-sum"])
+  }),
+  Object.freeze({
+    id: "concept:number:chained-difference-addition",
+    label: "방향을 맞춘 차 이어 더하기",
+    definition: "수나 양의 차이를 같은 방향으로 맞춰 한 차를 구하고, 이어지는 차들을 차례로 더해 전체 변화를 찾습니다.",
+    invariant: "모든 차의 방향이 처음과 끝의 변화를 가리키며, 이어진 차의 합은 처음과 끝의 차와 같습니다.",
+    representationKinds: Object.freeze(["difference-chain", "direction-arrows", "cumulative-total"])
+  }),
+  Object.freeze({
+    id: "concept:number:balance-equivalence-multiplicative-chain",
+    label: "저울의 같은 무게 묶음과 배수 곱하기",
+    definition: "수평 저울에서 같은 무게인 묶음을 차례로 다른 묶음으로 바꾸어 보고, 같은 묶음이 몇 배인지 이어서 곱합니다.",
+    invariant: "저울 양쪽의 무게가 같다는 약속을 지키며, 이어진 배수는 차례로 곱한 값입니다.",
+    representationKinds: Object.freeze(["balance-scales", "equivalent-groups", "multiplicative-chain"])
+  }),
+  Object.freeze({
+    id: "concept:logic:relative-direction-placement",
+    label: "기준 자리에서 방향대로 배치하기",
+    definition: "기준 자리부터 바로 위, 아래, 왼쪽, 오른쪽 자리를 차례로 배치하고 모든 조건을 다시 확인합니다.",
+    invariant: "각 자리는 기준 자리와의 방향 조건을 지키며, 모든 사람과 자리 조건이 동시에 맞습니다.",
+    representationKinds: Object.freeze(["seat-grid", "relative-directions", "constraint-check"])
   })
 ]);
 
@@ -365,21 +422,19 @@ export const CONCEPT_DEFINITION_BY_ID = Object.freeze(Object.fromEntries(
 ));
 
 export const TYPE_CONCEPT_LESSONS = Object.freeze({
-  "shape-quarter-half-turn": Object.freeze({
-    conceptId: "concept:geometry:rotation-center-turn",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
+  "shape-quarter-half-turn": sourceLesson(
+    "concept:geometry:rotation-center-turn",
+    [
       beat("rotation-center", "중심을 찾아요", "도형이 돌아가는 중심을 먼저 표시합니다."),
       beat("rotation-amount", "회전량을 정해요", "반의 반 바퀴인지 반 바퀴인지, 어느 방향으로 도는지 확인합니다."),
       beat("move-vertices", "꼭짓점을 옮겨요", "각 꼭짓점을 중심에서 같은 거리로 같은 회전량만큼 옮긴 뒤 차례로 잇습니다.")
-    ]),
-    misconception: "도형 전체를 밀거나 회전 방향을 반대로 잡지 않았는지 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("도형 움직이기", 1, [2, 3, 5, 6])
-    ]),
-    verificationState: "source-confirmed"
-  }),
+    ],
+    "도형 전체를 밀거나 회전 방향을 반대로 잡지 않았는지 확인합니다.",
+    [
+      evidence("도형 움직이기", 1, [2, 3, 5, 6]),
+      book4Evidence("도형 분할과 움직이기", 2, [1])
+    ]
+  ),
   "fold-cut-shape-choice": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
     scope: "global-type-id",
@@ -411,21 +466,19 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "person-item-logic": Object.freeze({
-    conceptId: "concept:logic:one-to-one-elimination",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
+  "person-item-logic": sourceLesson(
+    "concept:logic:one-to-one-elimination",
+    [
       beat("make-grid", "표를 만들어요", "사람은 가로, 동물이나 음식은 세로에 놓아 조건을 한눈에 볼 수 있게 합니다."),
       beat("confirm-eliminate", "확정하고 지워요", "맞는 관계를 표시하고 같은 행과 열의 다른 가능성을 지웁니다."),
       beat("check-last", "남은 한 곳을 확인해요", "마지막 후보를 정한 뒤 처음부터 모든 조건에 다시 대입합니다.")
-    ]),
-    misconception: "한 조건만 보고 바로 정하지 말고 하나씩 대응 조건과 모든 문장을 함께 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("수 추리와 논리 추리", 2, [1, 2, 3, 4])
-    ]),
-    verificationState: "source-confirmed"
-  }),
+    ],
+    "한 조건만 보고 바로 정하지 말고 하나씩 대응 조건과 모든 문장을 함께 확인합니다.",
+    [
+      evidence("수 추리와 논리 추리", 2, [1, 2, 3, 4]),
+      book4Evidence("논리추리와 자리배치", 1, [1, 2, 3, 4])
+    ]
+  ),
   "shape-mirror-direction": Object.freeze({
     conceptId: "concept:geometry:mirror-line-reflection",
     scope: "global-type-id",
@@ -501,21 +554,19 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "digital-digit-transform": Object.freeze({
-    conceptId: "concept:pattern:seven-segment-transform",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
+  "digital-digit-transform": sourceLesson(
+    "concept:pattern:seven-segment-transform",
+    [
       beat("mark-lit-segments", "켜진 막대를 표시해요", "처음 숫자를 이루는 위·아래·양옆·가운데 막대를 빠짐없이 확인합니다."),
       beat("move-segments", "막대를 함께 움직여요", "각 막대를 제자리 모양 그대로 주어진 방향으로 뒤집거나 돌립니다."),
       beat("read-new-digit", "새 막대 모양을 읽어요", "움직인 뒤 켜진 막대의 위치를 보고 완성된 한 자리 숫자를 찾습니다.")
-    ]),
-    misconception: "숫자 모양을 외워서 바꾸거나 막대 하나만 따로 움직이지 않았는지 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("도형 움직이기", 2, [1, 2])
-    ]),
-    verificationState: "source-confirmed"
-  }),
+    ],
+    "숫자 모양을 외워서 바꾸거나 막대 하나만 따로 움직이지 않았는지 확인합니다.",
+    [
+      evidence("도형 움직이기", 2, [1, 2]),
+      book4Evidence("도형 분할과 움직이기", 2, [2])
+    ]
+  ),
   "digital-two-digit-transform": Object.freeze({
     conceptId: "concept:pattern:seven-segment-transform",
     scope: "global-type-id",
@@ -960,5 +1011,155 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ],
     "가로줄만 확인하거나 대각선을 빠뜨리고, 한 줄의 합을 목표로 정한 뒤 다른 줄에 적용하지 않았는지 확인합니다.",
     [book3Evidence("마법카드와 마방진", 2, [3])]
+  ),
+  "tetromino-family-choice": sourceLesson(
+    "concept:geometry:tetromino-connectivity-fit",
+    [
+      beat("count-four-squares", "정사각형 네 개를 세어요", "같은 크기의 정사각형 네 개로 이루어진 모양인지 하나씩 세어 봅니다."),
+      beat("check-edge-connectivity", "변으로 모두 이어졌는지 봐요", "정사각형들이 꼭짓점만 닿지 않고 변으로 서로 이어지는지 확인합니다."),
+      beat("choose-disconnected-option", "변으로 모두 연결되지 않은 보기를 골라요", "네 칸이 변으로 모두 연결되지 않은 보기를 찾아 고릅니다.")
+    ],
+    "네 칸이 변으로 모두 연결된 보기를 고르지 말고, 꼭짓점만 닿거나 떨어져 있어 변 연결이 끊긴 보기를 고릅니다.",
+    [book4Evidence("도형 분할과 움직이기", 1, [1])]
+  ),
+  "tetromino-square-composition": sourceLesson(
+    "concept:geometry:tetromino-connectivity-fit",
+    [
+      beat("read-empty-square", "빈자리를 살펴봐요", "빈 모양의 칸 수와 서로 이어진 모양을 확인하고 조각의 변을 비교합니다."),
+      beat("rotate-piece-to-fit", "조각을 돌려 맞춰요", "조각의 크기와 칸 수는 바꾸지 않고 돌려 빈자리에 맞춥니다."),
+      beat("overlay-and-check", "포개어 빈틈을 확인해요", "맞춘 조각을 빈 모양과 포개어 빈틈이나 겹침이 없는지 살펴봅니다.")
+    ],
+    "조각을 늘리거나 줄여 맞추거나, 돌린 뒤 칸 수와 연결 모양을 확인하지 않았는지 살펴봅니다.",
+    [book4Evidence("도형 분할과 움직이기", 1, [2])]
+  ),
+  "rotational-partition-two": sourceLesson(
+    "concept:geometry:rotational-congruent-partition",
+    [
+      beat("read-whole-two-parts", "전체와 두 조각을 확인해요", "나눌 전체 도형과 같은 칸 수의 두 조각이 필요한지 살펴봅니다."),
+      beat("draw-two-partition-lines", "선을 그어 두 조각으로 나눠요", "도형 안에 직접 선을 그어 빈틈과 겹침 없이 같은 칸 수와 연결 모양이 되게 합니다."),
+      beat("rotate-and-overlay-two", "돌려 포개어 확인해요", "두 조각을 돌려 서로 포개지는지 보고 전체를 빠짐없이 덮는지 확인합니다.")
+    ],
+    "두 조각의 칸 수만 맞추고 연결 모양이나 빈틈과 겹침을 확인하지 않았는지 살펴봅니다.",
+    [book4Evidence("도형 분할과 움직이기", 1, [4])]
+  ),
+  "rotational-partition-four": sourceLesson(
+    "concept:geometry:rotational-congruent-partition",
+    [
+      beat("read-whole-four-parts", "전체와 네 조각을 확인해요", "나눌 전체 도형과 같은 칸 수의 네 조각이 필요한지 살펴봅니다."),
+      beat("draw-four-partition-lines", "선을 그어 네 조각으로 나눠요", "도형 안에 직접 선을 그어 네 조각이 빈틈과 겹침 없이 같은 칸 수와 연결 모양이 되게 합니다."),
+      beat("rotate-and-overlay-four", "네 조각을 돌려 포개요", "네 조각을 차례로 돌려 같은 모양인지 보고 전체 도형을 빠짐없이 덮는지 확인합니다.")
+    ],
+    "네 조각의 개수만 맞추고 칸 수, 연결 모양, 빈틈과 겹침을 함께 확인하지 않았는지 살펴봅니다.",
+    [book4Evidence("도형 분할과 움직이기", 1, [3])]
+  ),
+  "digital-grid-transform": sourceLesson(
+    "concept:geometry:sequential-rigid-transforms",
+    [
+      beat("read-whole-digit-grid", "숫자판 전체를 살펴봐요", "숫자 하나씩만 보지 않고 숫자판 전체의 칸과 자리 순서를 확인합니다."),
+      beat("apply-one-grid-transform", "전체를 한 번 움직여요", "숫자판 전체를 주어진 방향으로 회전하거나 뒤집고 움직인 뒤의 모양을 표시합니다."),
+      beat("apply-two-grid-transforms", "두 동작을 순서대로 해요", "두 동작이 있으면 첫 동작 뒤의 숫자판에 두 번째 회전이나 뒤집기를 차례로 적용합니다.")
+    ],
+    "숫자 하나만 따로 움직이거나 두 동작을 처음 숫자판에 각각 적용하고, 정해진 순서를 바꾸지 않았는지 확인합니다.",
+    [book4Evidence("도형 분할과 움직이기", 2, [3, 4, 5, 6])]
+  ),
+  "fold-cut-unfold-one-draw": sourceLesson(
+    "concept:geometry:fold-reflection-unfold",
+    [
+      beat("mark-one-fold-line", "한 번 접은 선을 찾아요", "색종이를 한 번 접은 방향과 접힌 선을 그림에서 표시합니다."),
+      beat("trace-cut-position", "접힌 쪽의 잘라낸 자리를 살펴봐요", "접힌 상태에서 잘라낸 자리가 접은 선에서 얼마나 떨어졌는지 확인합니다."),
+      beat("unfold-cut-symmetry", "잘린 모양을 대칭으로 펼쳐 그려요", "접은 동작을 거꾸로 되돌리며 잘린 모양을 접은 선 반대쪽의 같은 거리에 대칭으로 그립니다.")
+    ],
+    "그림을 접은 선 한쪽에만 남기거나 펼칠 때 같은 거리를 지키지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 1, [1])]
+  ),
+  "fold-number-grid-one": sourceLesson(
+    "concept:geometry:folded-number-cut-sum",
+    [
+      beat("mark-one-number-fold", "한 번 접은 선을 표시해요", "번호가 있는 칸을 한 번 접은 방향과 접은 선을 확인합니다."),
+      beat("find-one-fold-overlaps", "겹친 원래 칸을 찾아요", "접힌 자리에서 보이는 한 칸이 펼쳤을 때 어느 원래 칸들과 겹치는지 역순으로 찾습니다."),
+      beat("add-all-cut-original-cells", "잘린 원래 칸을 모두 더해요", "잘린 자리와 이어진 원래 칸을 빠짐없이 표시한 뒤 그 칸들의 수만 합합니다.")
+    ],
+    "접힌 뒤 보이는 한 칸만 보거나 잘리지 않은 이웃 칸을 함께 더하지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 1, [2])]
+  ),
+  "fold-number-grid-two-orthogonal": sourceLesson(
+    "concept:geometry:folded-number-cut-sum",
+    [
+      beat("mark-two-straight-folds", "가로와 세로 두 접기를 확인해요", "가로 방향과 세로 방향으로 두 번 접은 순서를 그림에서 표시합니다."),
+      beat("reverse-two-folds", "두 접기를 역순으로 펼쳐요", "마지막 접기부터 거꾸로 되돌리며 겹친 원래 칸을 가로와 세로 대칭으로 모두 찾습니다."),
+      beat("add-all-orthogonal-cut-cells", "잘린 칸의 수를 모두 더해요", "두 접기에서 찾아낸 원래 칸을 빠짐없이 모아 그 칸들의 수를 합하고 다시 그림과 맞춥니다.")
+    ],
+    "가로와 세로 접기 중 한 번만 펼치거나 접은 순서를 바꾸고, 같은 칸을 빠뜨리거나 두 번 더하지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 1, [3])]
+  ),
+  "fold-number-grid-two-diagonal": sourceLesson(
+    "concept:geometry:folded-number-cut-sum",
+    [
+      beat("mark-two-diagonal-folds", "대각선 두 접기를 확인해요", "대각선 방향으로 두 번 접은 선과 접은 순서를 그림에서 표시합니다."),
+      beat("reverse-diagonal-folds", "대각선 접기를 역순으로 펼쳐요", "마지막 접기부터 거꾸로 되돌리며 대각선의 반대쪽 같은 거리로 원래 칸을 찾습니다."),
+      beat("add-all-diagonal-cut-cells", "잘린 원래 칸을 모두 더해요", "두 대각선 접기에서 이어지는 원래 칸을 모두 표시하고 그 칸들의 수만 합합니다.")
+    ],
+    "대각선 접기를 한 번만 되돌리거나 가로세로 접기처럼 읽고, 같은 칸을 빼거나 두 번 더하지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 1, [4])]
+  ),
+  "cube-count-solid": sourceLesson(
+    "concept:geometry:cube-column-total-count",
+    [
+      beat("read-cube-columns", "쌓기나무 기둥을 찾아요", "그림의 앞과 뒤, 왼쪽과 오른쪽 기둥을 살펴보고 각 기둥의 층을 표시합니다."),
+      beat("count-each-layer", "기둥과 층을 세어요", "기둥마다 아래에서 위로 쌓인 층과 각 층의 나무를 빠짐없이 셉니다."),
+      beat("sum-whole-solid", "전체 쌓기나무를 더해요", "모든 기둥과 층에서 센 수를 한 번씩 더해 그림 속 전체를 확인합니다.")
+    ],
+    "앞에서 보이는 큐브만 세거나 같은 기둥을 두 번 세고, 뒤에 가려진 층을 빠뜨리지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 2, [1])]
+  ),
+  "cube-minimum-from-solid": sourceLesson(
+    "concept:geometry:cube-minimum-visible-support",
+    [
+      beat("mark-upper-cubes", "위에 놓인 큐브를 찾아요", "그림에서 다른 큐브 위에 놓인 큐브와 그 아래 자리를 표시합니다."),
+      beat("find-forced-support", "꼭 필요한 받침만 찾아요", "위 큐브가 떠 있지 않도록 바로 아래에 반드시 있어야 하는 받침 큐브만 찾습니다."),
+      beat("check-minimum-solid", "최소 개수인지 확인해요", "표시한 받침으로 모든 위 큐브가 안전하게 놓이는지 보고, 필요 없는 큐브는 더하지 않았는지 확인합니다.")
+    ],
+    "그림에 보이지 않는 큐브를 모두 채우거나, 위 큐브를 받치는 데 필요하지 않은 나무까지 세지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 2, [3])]
+  ),
+  "cube-step-sequence": sourceLesson(
+    "concept:pattern:triangular-stair-cumulative-growth",
+    [
+      beat("compare-step-stages", "계단 단계를 비교해요", "앞 단계와 다음 단계의 층 모양을 나란히 보고 새로 생긴 부분을 표시합니다."),
+      beat("count-growing-additions", "늘어난 묶음을 차례로 세어요", "새 단계마다 늘어나는 쌓기나무가 1부터 차례로 커지는 묶음인지 확인합니다."),
+      beat("extend-step-total", "새 단계까지 이어 세어요", "새 단계에서 늘어난 1+...+n개의 묶음을 앞 단계의 전체와 이어 더하고 작은 단계로 다시 확인합니다.")
+    ],
+    "한 단계의 전체 나무만 보고 새로 늘어난 수를 세지 않거나, 늘어나는 묶음의 순서를 바꾸지 않았는지 확인합니다.",
+    [book4Evidence("색종이 접기와 쌓기나무", 2, [2])]
+  ),
+  "shape-difference-chain": sourceLesson(
+    "concept:number:chained-difference-addition",
+    [
+      beat("set-difference-direction", "차의 방향을 맞춰요", "두 양을 비교할 때 어느 쪽에서 어느 쪽을 빼는지 화살표로 표시합니다."),
+      beat("link-differences", "이어지는 차를 연결해요", "앞 비교의 끝과 다음 비교의 시작을 맞추어 차들을 같은 방향으로 이어 놓습니다."),
+      beat("add-chain-and-check", "차를 이어 더해요", "이어 놓은 차를 차례로 더하고 처음과 끝의 전체 차와 같은지 다시 확인합니다.")
+    ],
+    "차의 앞뒤 방향을 바꾸거나 이어지지 않는 차를 더하고, 처음과 끝의 차로 검산하지 않았는지 확인합니다.",
+    [book4Evidence("양팔저울과 비교하기", 1, [1, 2, 3, 4])]
+  ),
+  "balance-unit-ratio": sourceLesson(
+    "concept:number:balance-equivalence-multiplicative-chain",
+    [
+      beat("read-level-scales", "수평 저울을 읽어요", "양팔이 수평인 저울에서 양쪽 묶음이 같은 무게라는 뜻을 확인합니다."),
+      beat("substitute-equal-groups", "같은 묶음을 차례로 바꿔요", "저울에서 같은 무게인 묶음을 다음 저울의 같은 자리 묶음으로 차례로 치환합니다."),
+      beat("multiply-unit-ratios", "배수를 이어 곱해요", "각 치환에서 몇 배가 되는지 순서대로 곱하고 마지막 저울도 수평인지 확인합니다.")
+    ],
+    "수평 저울의 양쪽이 같은 무게라는 조건을 놓치거나, 배수를 더하고 곱해야 할 관계를 바꾸지 않았는지 확인합니다.",
+    [book4Evidence("양팔저울과 비교하기", 2, [1, 2, 3, 4])]
+  ),
+  "directional-seat-placement": sourceLesson(
+    "concept:logic:relative-direction-placement",
+    [
+      beat("mark-reference-seat", "기준 자리를 먼저 정해요", "자리표에서 기준이 되는 자리를 표시하고 그 자리와 가까운 칸을 살펴봅니다."),
+      beat("place-by-direction", "방향대로 차례로 배치해요", "기준 자리부터 바로 위, 아래, 왼쪽, 오른쪽 자리를 조건에 맞게 차례로 채웁니다."),
+      beat("recheck-all-seating", "모든 조건을 다시 검산해요", "완성한 자리표를 처음부터 다시 읽어 모든 사람과 방향 조건이 맞는지 확인합니다.")
+    ],
+    "기준 자리 없이 한 사람부터 마음대로 놓거나 대각선 자리를 위·아래·왼쪽·오른쪽으로 잘못 읽고, 마지막 검산을 빠뜨리지 않았는지 확인합니다.",
+    [book4Evidence("논리추리와 자리배치", 2, [1, 2, 3, 4, 5, 6])]
   )
 });

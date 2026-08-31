@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { CURRICULUM } from "./source-data.js";
+import { TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
@@ -10,6 +12,31 @@ const { getDocument } = await import(pathToFileURL(path.join(runtimeModules, "pd
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const outputDir = process.env.CONCEPT_AUDIT_OUTPUT_DIR || "";
 if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
+const book4PilotIds = new Set([
+  "tetromino-family-choice", "tetromino-square-composition", "rotational-partition-two",
+  "rotational-partition-four", "digital-grid-transform", "fold-cut-unfold-one-draw",
+  "fold-number-grid-one", "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal",
+  "cube-count-solid", "cube-minimum-from-solid", "cube-step-sequence", "shape-difference-chain",
+  "balance-unit-ratio", "directional-seat-placement"
+]);
+const book4SharedConceptIds = new Set([
+  "shape-quarter-half-turn", "digital-digit-transform", "person-item-logic"
+]);
+const expectedBook4ConceptIds = new Set([...book4PilotIds, ...book4SharedConceptIds]);
+assert.equal(expectedBook4ConceptIds.size, 18, "Book 4 concept set must contain 15 new and 3 shared lessons");
+const book4 = CURRICULUM.find((book) => book.id === "book-04");
+assert.ok(book4, "Book 4 curriculum is missing");
+const book4CurriculumTypeIds = new Set(book4.units.flatMap((unit) => unit.typeIds));
+const book4ConceptIds = new Set([...expectedBook4ConceptIds]
+  .filter((typeId) => book4CurriculumTypeIds.has(typeId)));
+assert.deepEqual([...book4ConceptIds].sort(), [...expectedBook4ConceptIds].sort(),
+  "Book 4 concept set must contain the 15 new and 3 shared curriculum types");
+for (const typeId of book4PilotIds) {
+  const lesson = TYPE_CONCEPT_LESSONS[typeId];
+  assert.ok(lesson, `Book 4 pilot lesson is missing from concept-data.js: ${typeId}`);
+  assert.equal(lesson.beats.length, 3, `Book 4 pilot lesson must have three beats: ${typeId}`);
+}
+
 const pilotExpectations = Object.freeze({
   "shape-quarter-half-turn": Object.freeze([
     "도형이 돌아가는 중심을 먼저 표시합니다.",
@@ -265,6 +292,81 @@ const pilotExpectations = Object.freeze({
     "3×3 표에서 세 칸씩 이어지는 가로줄, 세로줄, 대각선을 빠짐없이 표시합니다.",
     "수가 모두 보이는 줄을 더해 공통 목표 합을 정하고 다른 줄에도 같은 값이 적용되는지 확인합니다.",
     "빈칸에 들어갈 수를 줄의 목표 합으로 좁힌 뒤 세 방향의 모든 줄이 같은 합인지 확인합니다."
+  ]),
+  "tetromino-family-choice": Object.freeze([
+    "같은 크기의 정사각형 네 개로 이루어진 모양인지 하나씩 세어 봅니다.",
+    "정사각형들이 꼭짓점만 닿지 않고 변으로 서로 이어지는지 확인합니다.",
+    "네 칸이 변으로 모두 연결되지 않은 보기를 찾아 고릅니다."
+  ]),
+  "tetromino-square-composition": Object.freeze([
+    "빈 모양의 칸 수와 서로 이어진 모양을 확인하고 조각의 변을 비교합니다.",
+    "조각의 크기와 칸 수는 바꾸지 않고 돌려 빈자리에 맞춥니다.",
+    "맞춘 조각을 빈 모양과 포개어 빈틈이나 겹침이 없는지 살펴봅니다."
+  ]),
+  "rotational-partition-two": Object.freeze([
+    "나눌 전체 도형과 같은 칸 수의 두 조각이 필요한지 살펴봅니다.",
+    "도형 안에 직접 선을 그어 빈틈과 겹침 없이 같은 칸 수와 연결 모양이 되게 합니다.",
+    "두 조각을 돌려 서로 포개지는지 보고 전체를 빠짐없이 덮는지 확인합니다."
+  ]),
+  "rotational-partition-four": Object.freeze([
+    "나눌 전체 도형과 같은 칸 수의 네 조각이 필요한지 살펴봅니다.",
+    "도형 안에 직접 선을 그어 네 조각이 빈틈과 겹침 없이 같은 칸 수와 연결 모양이 되게 합니다.",
+    "네 조각을 차례로 돌려 같은 모양인지 보고 전체 도형을 빠짐없이 덮는지 확인합니다."
+  ]),
+  "digital-grid-transform": Object.freeze([
+    "숫자 하나씩만 보지 않고 숫자판 전체의 칸과 자리 순서를 확인합니다.",
+    "숫자판 전체를 주어진 방향으로 회전하거나 뒤집고 움직인 뒤의 모양을 표시합니다.",
+    "두 동작이 있으면 첫 동작 뒤의 숫자판에 두 번째 회전이나 뒤집기를 차례로 적용합니다."
+  ]),
+  "fold-cut-unfold-one-draw": Object.freeze([
+    "색종이를 한 번 접은 방향과 접힌 선을 그림에서 표시합니다.",
+    "접힌 상태에서 잘라낸 자리가 접은 선에서 얼마나 떨어졌는지 확인합니다.",
+    "접은 동작을 거꾸로 되돌리며 잘린 모양을 접은 선 반대쪽의 같은 거리에 대칭으로 그립니다."
+  ]),
+  "fold-number-grid-one": Object.freeze([
+    "번호가 있는 칸을 한 번 접은 방향과 접은 선을 확인합니다.",
+    "접힌 자리에서 보이는 한 칸이 펼쳤을 때 어느 원래 칸들과 겹치는지 역순으로 찾습니다.",
+    "잘린 자리와 이어진 원래 칸을 빠짐없이 표시한 뒤 그 칸들의 수만 합합니다."
+  ]),
+  "fold-number-grid-two-orthogonal": Object.freeze([
+    "가로 방향과 세로 방향으로 두 번 접은 순서를 그림에서 표시합니다.",
+    "마지막 접기부터 거꾸로 되돌리며 겹친 원래 칸을 가로와 세로 대칭으로 모두 찾습니다.",
+    "두 접기에서 찾아낸 원래 칸을 빠짐없이 모아 그 칸들의 수를 합하고 다시 그림과 맞춥니다."
+  ]),
+  "fold-number-grid-two-diagonal": Object.freeze([
+    "대각선 방향으로 두 번 접은 선과 접은 순서를 그림에서 표시합니다.",
+    "마지막 접기부터 거꾸로 되돌리며 대각선의 반대쪽 같은 거리로 원래 칸을 찾습니다.",
+    "두 대각선 접기에서 이어지는 원래 칸을 모두 표시하고 그 칸들의 수만 합합니다."
+  ]),
+  "cube-count-solid": Object.freeze([
+    "그림의 앞과 뒤, 왼쪽과 오른쪽 기둥을 살펴보고 각 기둥의 층을 표시합니다.",
+    "기둥마다 아래에서 위로 쌓인 층과 각 층의 나무를 빠짐없이 셉니다.",
+    "모든 기둥과 층에서 센 수를 한 번씩 더해 그림 속 전체를 확인합니다."
+  ]),
+  "cube-minimum-from-solid": Object.freeze([
+    "그림에서 다른 큐브 위에 놓인 큐브와 그 아래 자리를 표시합니다.",
+    "위 큐브가 떠 있지 않도록 바로 아래에 반드시 있어야 하는 받침 큐브만 찾습니다.",
+    "표시한 받침으로 모든 위 큐브가 안전하게 놓이는지 보고, 필요 없는 큐브는 더하지 않았는지 확인합니다."
+  ]),
+  "cube-step-sequence": Object.freeze([
+    "앞 단계와 다음 단계의 층 모양을 나란히 보고 새로 생긴 부분을 표시합니다.",
+    "새 단계마다 늘어나는 쌓기나무가 1부터 차례로 커지는 묶음인지 확인합니다.",
+    "새 단계에서 늘어난 1+...+n개의 묶음을 앞 단계의 전체와 이어 더하고 작은 단계로 다시 확인합니다."
+  ]),
+  "shape-difference-chain": Object.freeze([
+    "두 양을 비교할 때 어느 쪽에서 어느 쪽을 빼는지 화살표로 표시합니다.",
+    "앞 비교의 끝과 다음 비교의 시작을 맞추어 차들을 같은 방향으로 이어 놓습니다.",
+    "이어 놓은 차를 차례로 더하고 처음과 끝의 전체 차와 같은지 다시 확인합니다."
+  ]),
+  "balance-unit-ratio": Object.freeze([
+    "양팔이 수평인 저울에서 양쪽 묶음이 같은 무게라는 뜻을 확인합니다.",
+    "저울에서 같은 무게인 묶음을 다음 저울의 같은 자리 묶음으로 차례로 치환합니다.",
+    "각 치환에서 몇 배가 되는지 순서대로 곱하고 마지막 저울도 수평인지 확인합니다."
+  ]),
+  "directional-seat-placement": Object.freeze([
+    "자리표에서 기준이 되는 자리를 표시하고 그 자리와 가까운 칸을 살펴봅니다.",
+    "기준 자리부터 바로 위, 아래, 왼쪽, 오른쪽 자리를 조건에 맞게 차례로 채웁니다.",
+    "완성한 자리표를 처음부터 다시 읽어 모든 사람과 방향 조건이 맞는지 확인합니다."
   ])
 });
 const book2PilotIds = new Set([
@@ -291,16 +393,20 @@ for (const typeId of book3PilotIds) {
 }
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
 
-async function openPilot(page, typeId, label) {
+async function openPilot(page, typeId, label, bookIdOverride = null) {
   const errors = [];
   page.on("console", (message) => {
     if (message.type() === "error" && !expectedOfflineError(message.text())) errors.push(message.text());
   });
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
-  const bookId = book3PilotIds.has(typeId) ? "book-03"
-    : book2PilotIds.has(typeId) ? "book-02" : "book-01";
-  await page.locator(`#curriculumTree button[data-curriculum-book="${bookId}"]`).click();
+  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "load" });
+  const bookId = bookIdOverride || (book4PilotIds.has(typeId) ? "book-04"
+    : book3PilotIds.has(typeId) ? "book-03"
+    : book2PilotIds.has(typeId) ? "book-02" : "book-01");
+  const bookButton = page.locator(`#curriculumTree button[data-curriculum-book="${bookId}"]`);
+  await bookButton.waitFor({ state: "attached" });
+  await bookButton.waitFor({ state: "visible" });
+  await bookButton.click();
   await page.locator('#curriculumStageChoices button[data-stage="concept"]').click();
   const pilot = page.locator(
     `#curriculumTree label[data-preview-type="${typeId}"]:has(input[data-curriculum-key^="${bookId}:"])`
@@ -428,28 +534,33 @@ async function inspectPrintedPdf(pdf, typeId) {
 }
 
 const browser = await chromium.launch({ headless: true });
+let desktopBrowserContext;
+let mobileBrowserContext;
 try {
+  desktopBrowserContext = await browser.newContext({ viewport: { width: 1440, height: 1050 } });
+  mobileBrowserContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const printPageCounts = [];
   for (const [typeId, expectedBeats] of Object.entries(pilotExpectations)) {
     console.log(`CURRICULUM_CONCEPT_BROWSER_CHECK ${typeId}`);
-    const desktop = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
-    const desktopContext = await openPilot(desktop, typeId, `desktop ${typeId}`);
+    const desktop = await desktopBrowserContext.newPage();
+    const desktopRun = await openPilot(desktop, typeId, `desktop ${typeId}`);
     if (typeId === "shape-quarter-half-turn") {
-      await assertPreview(desktop, desktopContext.pilot, expectedBeats, "hover", "desktop hover");
-      await desktop.keyboard.press("Escape");
-      const principleOnly = desktop.locator('#curriculumTree [data-preview-type="rotational-partition-two"]');
-      assert.equal(await principleOnly.count(), 1, "desktop: principle-only comparison type missing");
-      await principleOnly.hover();
-      const principlePreview = desktop.locator("#typePreview:not([hidden])");
+      await assertPreview(desktop, desktopRun.pilot, expectedBeats, "hover", "desktop hover");
+      const principlePage = await desktopBrowserContext.newPage();
+      const principleRun = await openPilot(principlePage, "sequential-path-number-grid", "desktop principle-only", "book-05");
+      await principleRun.pilot.hover();
+      const principlePreview = principlePage.locator("#typePreview:not([hidden])");
       await principlePreview.waitFor();
       assert.equal(await principlePreview.locator(".textbook-concept-tutorial.principle-only").count(), 1, "desktop: principle-only preview class missing");
       assert.equal(await principlePreview.locator(".textbook-concept-tutorial header span").innerText(), "풀이 원리", "desktop: principle-only heading changed");
       assert.equal(await principlePreview.locator(".textbook-concept-tutorial li").count(), 1, "desktop: principle-only preview should have one row");
       assert.equal(await principlePreview.locator(".textbook-concept-tutorial li strong").innerText(), "핵심 방법", "desktop: principle-only label changed");
+      assert.deepEqual(principleRun.errors, [], `desktop principle-only: browser errors ${principleRun.errors.join(" | ")}`);
+      await principlePage.close();
     }
     const previewTrigger = typeId === "shape-quarter-half-turn" ? "focus" : "hover";
-    await assertPreview(desktop, desktopContext.pilot, expectedBeats, previewTrigger, `desktop ${previewTrigger} ${typeId}`);
-    await buildPilotWorksheet(desktop, desktopContext.pilot, expectedBeats, `desktop ${typeId}`, 2);
+    await assertPreview(desktop, desktopRun.pilot, expectedBeats, previewTrigger, `desktop ${previewTrigger} ${typeId}`);
+    await buildPilotWorksheet(desktop, desktopRun.pilot, expectedBeats, `desktop ${typeId}`, 2);
     await desktop.emulateMedia({ media: "print" });
     await desktop.evaluate(() => window.scrollTo(0, 0));
     const printedTutorial = desktop.locator("#questionGrid .textbook-concept-tutorial.source-backed");
@@ -465,16 +576,18 @@ try {
     if (outputDir) fs.writeFileSync(path.join(outputDir, `${typeId}.pdf`), pdf);
     const printPages = await inspectPrintedPdf(pdf, typeId);
     printPageCounts.push(printPages);
-    assert.deepEqual(desktopContext.errors, [], `${typeId} desktop: browser errors ${desktopContext.errors.join(" | ")}`);
+    assert.deepEqual(desktopRun.errors, [], `${typeId} desktop: browser errors ${desktopRun.errors.join(" | ")}`);
     await desktop.close();
 
-    const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
-    const mobileContext = await openPilot(mobile, typeId, `mobile ${typeId}`);
-    await buildPilotWorksheet(mobile, mobileContext.pilot, expectedBeats, `mobile ${typeId}`);
-    assert.deepEqual(mobileContext.errors, [], `${typeId} mobile: browser errors ${mobileContext.errors.join(" | ")}`);
+    const mobile = await mobileBrowserContext.newPage();
+    const mobileRun = await openPilot(mobile, typeId, `mobile ${typeId}`);
+    await buildPilotWorksheet(mobile, mobileRun.pilot, expectedBeats, `mobile ${typeId}`);
+    assert.deepEqual(mobileRun.errors, [], `${typeId} mobile: browser errors ${mobileRun.errors.join(" | ")}`);
     await mobile.close();
   }
   console.log(`CURRICULUM_CONCEPT_BROWSER_OK pilots=${Object.keys(pilotExpectations).length} beats=3 printPages=${printPageCounts.join(",")} desktop-focus desktop-hover mobile`);
 } finally {
+  await mobileBrowserContext?.close();
+  await desktopBrowserContext?.close();
   await browser.close();
 }
