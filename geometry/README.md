@@ -26,7 +26,7 @@
 - games/paper-fold/ - 한 번·두 번 접어 자르기, 구멍, 숫자 색종이, 맨 위 수
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
 - games/mirror-manor/ - 거울 저택: 반쪽 칠하기·같은 거리·물건 배치·기호 반사·두 거울 5단계, 50문제
-- games/geoboard/ - 점판 공작소
+- games/geoboard/ - 점판 공작소: 열린 선·도형 재현·정사각형·정삼각형·도형 분할 5단계, 55문제
 - games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
 - games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
 - games/dice-roll/ - 주사위 굴리기: 격자 경로를 따라 윗면·앞면·오른쪽 면 변화를 추적하는 5단계, 50문제
@@ -61,7 +61,7 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 원본·수학 모델·단일정답·가시성·학습자 적합성·PC/모바일/A4·negative control 관문을 통과해야 합니다.
 
 인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/mirror-manor/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
-`worksheet/net-observatory/`, `worksheet/dice-roll/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
+`worksheet/net-observatory/`, `worksheet/dice-roll/`, `worksheet/geoboard/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
 
 ## 공통 성장 요소
 
@@ -77,7 +77,7 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 
 ## 공간·입체 배포 회귀 검사
 
-전개도 전망대, 주사위 굴리기, 소마큐브 공방과 두 인쇄 학습지의 데이터·브라우저 검사를 한 번에 순차 실행합니다. 세 게임 모두 별도 3차원 계산으로 5단계 50문제의 정답과 조립 가능성을 독립 검산합니다.
+전개도 전망대, 주사위 굴리기, 소마큐브 공방, 점판 공작소와 세 인쇄 학습지의 데이터·브라우저 검사를 한 번에 순차 실행합니다. 입체 게임은 별도 3차원 계산으로, 점판은 독립 격자·평면 분할 계산으로 정답을 다시 검산합니다.
 
 ```powershell
 node geometry/geometry-release.browsercheck.mjs
@@ -111,4 +111,16 @@ node geometry/games/mirror-manor/mirror-manor-content-audit.mjs
 node geometry/games/mirror-manor/mirror-manor.selftest.mjs
 node geometry/games/mirror-manor/mirror-manor.browsercheck.mjs
 node geometry/worksheet/mirror-manor/mirror-manor-sheet.browsercheck.mjs
+```
+
+## 점판 공작소 배포 회귀 검사
+
+점판 55문항의 독립 격자·분할 정답, 초급·중급 난이도 계약, 표시 못 조건, 자동 진행,
+화살표 키와 터치 조작, 입체 재질, 가로·세로 화면, 네 언어와 A4 활동지를 검사합니다.
+
+```powershell
+node geometry/games/geoboard/geoboard-content-audit.mjs
+node geometry/games/geoboard/geoboard.selftest.mjs
+node geometry/games/geoboard/geoboard.browsercheck.mjs
+node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
 ```
