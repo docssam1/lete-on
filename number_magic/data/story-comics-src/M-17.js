@@ -6,9 +6,8 @@ module.exports=function(H){
     { art: svg(
         paper(58,12,84,34)
         +txt(100,36,20,C.ink,'a/b','font-style="italic" font-family="Georgia,serif"')
-        +stick(40,98,0.95,C.blue)
-        +stick(100,98,0.95,C.blue)
-        +stick(160,98,0.95,C.blue)),
+        +stick(55,98,1,C.blue)
+        +stick(145,98,1,C.blue)),
       text: { ko:'피타고라스 학파는 "모든 길이는 분수로 나타낼 수 있다"고 믿었어요.',
               en:'The Pythagoreans believed every length could be written as a fraction.',
               zh:'毕达哥拉斯学派相信，任何长度都能写成分数。' } },
