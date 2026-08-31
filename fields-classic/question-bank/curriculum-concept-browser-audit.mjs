@@ -37,7 +37,29 @@ for (const typeId of book4PilotIds) {
   assert.equal(lesson.beats.length, 3, `Book 4 pilot lesson must have three beats: ${typeId}`);
 }
 
+const book5PilotExpectations = Object.freeze({
+  "sequential-path-number-grid": ["시작점과 화살표를 확인하고 수가 이어지는 길을 한 칸씩 따라갑니다.", "시작 수에서 한 칸 움직일 때마다 수의 순서도 한 번씩 바꾸어 찾는 자리에 맞춥니다.", "찾은 수의 바로 앞자리와 뒷자리도 같은 규칙으로 이어지는지 다시 확인합니다."],
+  "diagonal-fill-number-grid": ["수가 처음 놓인 칸과 대각선이 시작되는 방향을 표시합니다.", "한 대각선을 정해진 방향으로 채운 뒤 다음 대각선의 시작점으로 옮겨 같은 순서를 반복합니다.", "대각선이 끝나 다음 줄로 바뀌는 자리에서도 수가 한 칸씩 이어지는지 확인합니다."],
+  "calendar-month-position": ["달력에서 1일이 놓인 요일 칸을 먼저 표시합니다.", "같은 요일은 날짜가 7씩 차이 나므로 필요한 주만큼 아래나 위로 옮깁니다.", "그 달에서 같은 요일의 날짜를 처음부터 세어 몇 번째인지 함께 확인합니다."],
+  "calendar-cross-month-weekday": ["이번 달이 며칠까지 있는지 확인하고 기준 날짜에서 남은 날짜 수를 셉니다.", "이번 달 마지막 날 다음을 다음 달 1일로 두고 날짜와 요일을 하루씩 함께 옮깁니다.", "옮긴 전체 날짜 수를 7일 묶음과 남는 날로 나누어 도착 요일을 다시 확인합니다."],
+  "shortest-path-rectangle": ["출발점에서 도착점으로 가까워지는 가로와 세로 방향만 표시합니다.", "각 지점에 왼쪽과 아래쪽처럼 바로 앞 지점에서 오는 방법 수를 더해 적습니다.", "도착점에 모인 방법 수를 읽고 되돌아간 길이나 중복된 길이 없는지 확인합니다."],
+  "shortest-path-irregular-grid": ["막힌 선과 없는 길을 표시해 그 방향으로는 방법 수가 넘어가지 않게 합니다.", "도착점에 가까워지는 열린 길을 따라 각 지점으로 들어오는 방법 수만 더합니다.", "계산한 경로가 막힌 곳을 지나지 않는지 출발점부터 도착점까지 다시 따라갑니다."],
+  "digit-card-number-enumeration": ["0이 아닌 카드 중 하나를 맨 앞자리에 놓고 사용할 수 있는 남은 카드를 확인합니다.", "같은 맨 앞자리끼리 묶어 나머지 카드의 자리를 바꾸며 가능한 수를 차례로 적습니다.", "카드 사용 횟수와 맨 앞의 0 조건을 다시 보고 같은 수를 두 번 세지 않았는지 확인합니다."],
+  "digit-card-ranked-number": ["맨 앞자리와 카드 사용 조건을 지키며 가능한 수를 빠짐없이 적습니다.", "십의 자리나 백의 자리부터 비교하고 같으면 다음 자리를 비교해 크기순으로 세웁니다.", "작은 수부터인지 큰 수부터인지 확인한 뒤 정렬한 목록에서 정확한 번째 수를 찾습니다."],
+  "multiplication-table-pattern": ["빈칸이 속한 가로줄의 머리수와 세로줄의 머리수를 각각 찾습니다.", "찾은 가로 머리수와 세로 머리수를 곱해 만나는 칸에 적습니다.", "같은 줄의 다른 칸도 같은 머리수를 사용했는지 곱셈표 전체를 확인합니다."],
+  "product-cycle-completion": ["각 변에 적힌 곱이 어느 두 이웃한 꼭짓점에서 만들어지는지 표시합니다.", "한 꼭짓점 수를 알면 변의 곱을 그 수로 나누어 이웃 꼭짓점 수를 찾습니다.", "찾은 꼭짓점 수를 차례로 곱해 모든 변의 곱과 맞는지 한 바퀴 확인합니다."],
+  "symbol-product-pair": ["도형이 적고 같은 도형이 반복되어 값을 바로 찾기 쉬운 식부터 고릅니다.", "두 도형의 곱과 합 조건을 함께 만족하는 수의 짝을 찾습니다.", "찾은 값을 모든 식의 같은 도형에 넣고 곱과 합이 모두 맞는지 확인합니다."],
+  "symbol-multiplication-chain": ["한 도형의 값을 바로 알 수 있거나 후보가 가장 적은 식을 먼저 찾습니다.", "확정한 도형값을 그 도형이 들어 있는 다음 곱셈식에 바꾸어 넣습니다.", "마지막에 찾은 값부터 처음 식까지 되돌아가 모든 곱이 맞는지 확인합니다."],
+  "symbol-mixed-operation-grid": ["같은 도형이 반복되거나 하나만 모르는 식을 먼저 골라 도형값을 찾습니다.", "찾은 도형값을 바꾸어 넣고 곱셈을 먼저 한 뒤 덧셈과 뺄셈을 차례로 계산합니다.", "완성한 도형값이 각 가로식과 세로식의 결과를 모두 만족하는지 확인합니다."],
+  "handshake-pair-count": ["첫 사람이 자신을 뺀 다른 사람들과 한 번씩 악수하는 경우를 표시합니다.", "다음 사람은 앞에서 이미 센 악수를 빼고 아직 만나지 않은 사람과의 악수만 셉니다.", "사람마다 새로 생긴 악수 수를 차례로 더하고 같은 두 사람의 악수를 두 번 세지 않았는지 확인합니다."],
+  "pair-selection-count": ["첫 번째 대상을 정하고 그 대상과 짝이 될 수 있는 다른 대상을 모두 연결합니다.", "다음 대상으로 옮길 때 이미 만든 짝은 건너뛰고 새로운 짝만 표시합니다.", "완성한 짝 목록에서 순서만 바뀐 같은 짝이 없는지 확인하고 전체를 셉니다."],
+  "complete-graph-segment-count": ["첫 점과 나머지 점을 선분으로 한 번씩 이어 새 선분을 표시합니다.", "다음 점에서는 앞에서 이미 그린 선분을 다시 그리지 않고 남은 점만 잇습니다.", "두 점의 모든 짝이 정확히 한 선분으로 이어졌는지 살펴보고 전체 선분 수를 셉니다."],
+  "inverse-pair-count": ["2명, 3명처럼 작은 경우부터 서로 다른 두 명의 짝 수를 차례로 구합니다.", "새 사람이 들어오면 기존 사람 각각과 만드는 새로운 짝 수를 앞의 전체에 더합니다.", "짝 수가 문제의 전체와 같아지는 사람 수를 찾고 바로 앞뒤 사람 수의 짝 수도 확인합니다."],
+  "square-number-odd-sum": ["작은 정사각형 배열과 한 단계 큰 배열을 나란히 보고 새로 생긴 가장자리 묶음을 표시합니다.", "한 단계 커질 때 새로 붙는 칸 수가 1, 3, 5처럼 홀수로 늘어나는지 확인합니다.", "첫 단계부터 필요한 단계까지 새로 생긴 홀수 묶음을 모두 더해 전체 정사각형 수를 구합니다."],
+  "pascal-row-sum": ["빈칸의 왼쪽 위와 오른쪽 위에 있는 두 수를 한 쌍으로 표시합니다.", "표시한 두 수를 더해 바로 아래 칸에 쓰고 같은 방법으로 줄을 완성합니다.", "묻는 줄이 완성되면 그 줄의 수를 빠짐없이 더하고 위 줄의 규칙과 다시 맞춥니다."]
+});
 const pilotExpectations = Object.freeze({
+  ...book5PilotExpectations,
   "shape-quarter-half-turn": Object.freeze([
     "도형이 돌아가는 중심을 먼저 표시합니다.",
     "반의 반 바퀴인지 반 바퀴인지, 어느 방향으로 도는지 확인합니다.",
@@ -383,6 +405,7 @@ const book3PilotIds = new Set([
   "cryptarithm-fixed-digit-addition", "cryptarithm-multi-symbol-carry", "binary-weight-selection",
   "colored-cell-number-code", "magic-square-three-target"
 ]);
+const book5PilotIds = new Set(Object.keys(book5PilotExpectations));
 const lockedBook3TypeIds = new Set(["magic-square-three-complete"]);
 for (const typeId of lockedBook3TypeIds) {
   assert.equal(Object.prototype.hasOwnProperty.call(pilotExpectations, typeId), false,
@@ -400,7 +423,8 @@ async function openPilot(page, typeId, label, bookIdOverride = null) {
   });
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "load" });
-  const bookId = bookIdOverride || (book4PilotIds.has(typeId) ? "book-04"
+  const bookId = bookIdOverride || (book5PilotIds.has(typeId) ? "book-05"
+    : book4PilotIds.has(typeId) ? "book-04"
     : book3PilotIds.has(typeId) ? "book-03"
     : book2PilotIds.has(typeId) ? "book-02" : "book-01");
   const bookButton = page.locator(`#curriculumTree button[data-curriculum-book="${bookId}"]`);
@@ -547,7 +571,7 @@ try {
     if (typeId === "shape-quarter-half-turn") {
       await assertPreview(desktop, desktopRun.pilot, expectedBeats, "hover", "desktop hover");
       const principlePage = await desktopBrowserContext.newPage();
-      const principleRun = await openPilot(principlePage, "sequential-path-number-grid", "desktop principle-only", "book-05");
+      const principleRun = await openPilot(principlePage, "number-line-midpoint-book6", "desktop principle-only", "book-06");
       await principleRun.pilot.hover();
       const principlePreview = principlePage.locator("#typePreview:not([hidden])");
       await principlePreview.waitFor();

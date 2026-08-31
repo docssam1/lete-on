@@ -23,8 +23,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
 
 assert(curriculumTypeIds.size === 442, `expected 442 unique curriculum types, got ${curriculumTypeIds.size}`);
 assert(typePlacements.length === 489, `expected 489 curriculum placements, got ${typePlacements.length}`);
-assert(CONCEPT_DEFINITIONS.length === 55, `expected 55 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 66, `expected 66 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 85, `expected 85 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -340,6 +340,101 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:number:magic-square-target",
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03", "book-09"])
+  }),
+  "sequential-path-number-grid": Object.freeze({
+    conceptId: "concept:pattern:path-indexed-number-grid",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "diagonal-fill-number-grid": Object.freeze({
+    conceptId: "concept:pattern:path-indexed-number-grid",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "calendar-month-position": Object.freeze({
+    conceptId: "concept:pattern:calendar-seven-day-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "calendar-cross-month-weekday": Object.freeze({
+    conceptId: "concept:pattern:calendar-seven-day-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "shortest-path-rectangle": Object.freeze({
+    conceptId: "concept:logic:shortest-path-branch-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "shortest-path-irregular-grid": Object.freeze({
+    conceptId: "concept:logic:shortest-path-branch-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "digit-card-number-enumeration": Object.freeze({
+    conceptId: "concept:number:digit-card-enumerate-rank",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05", "book-10"])
+  }),
+  "digit-card-ranked-number": Object.freeze({
+    conceptId: "concept:number:digit-card-enumerate-rank",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "multiplication-table-pattern": Object.freeze({
+    conceptId: "concept:number:multiplication-head-table",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "product-cycle-completion": Object.freeze({
+    conceptId: "concept:number:adjacent-product-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-product-pair": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-multiplication-chain": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-mixed-operation-grid": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "handshake-pair-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "pair-selection-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "complete-graph-segment-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "inverse-pair-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "square-number-odd-sum": Object.freeze({
+    conceptId: "concept:pattern:figurative-number-growth",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "pascal-row-sum": Object.freeze({
+    conceptId: "concept:pattern:adjacent-sum-triangle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
   })
 });
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
@@ -359,6 +454,21 @@ const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04"
 ).sort();
 assert(JSON.stringify(actualBook04ConceptTypes) === JSON.stringify(expectedBook04ConceptTypes),
   `Book 4 concept typeStudyRefs changed: expected ${expectedBook04ConceptTypes.join(",")}, got ${actualBook04ConceptTypes.join(",")}`);
+const expectedBook05ConceptTypes = Object.freeze([
+  "sequential-path-number-grid", "diagonal-fill-number-grid", "calendar-month-position",
+  "calendar-cross-month-weekday", "shortest-path-rectangle", "shortest-path-irregular-grid",
+  "digit-card-number-enumeration", "digit-card-ranked-number", "multiplication-table-pattern",
+  "product-cycle-completion", "symbol-product-pair", "symbol-multiplication-chain",
+  "symbol-mixed-operation-grid", "handshake-pair-count", "pair-selection-count",
+  "complete-graph-segment-count", "inverse-pair-count", "square-number-odd-sum", "pascal-row-sum"
+].sort());
+const actualBook05ConceptTypes = CURRICULUM.find((book) => book.id === "book-05").units.flatMap((unit) =>
+  Object.entries(unit.typeStudyRefs || {})
+    .filter(([, references]) => references.concept?.length)
+    .map(([typeId]) => typeId)
+).sort();
+assert(JSON.stringify(actualBook05ConceptTypes) === JSON.stringify(expectedBook05ConceptTypes),
+  `Book 5 concept typeStudyRefs changed: expected ${expectedBook05ConceptTypes.join(",")}, got ${actualBook05ConceptTypes.join(",")}`);
 
 const lockedConceptTypeIds = new Set(CURRICULUM.flatMap((book) => book.units.flatMap((unit) =>
   Object.entries(unit.sourceAuditBlockedStages || {})
@@ -468,8 +578,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 66, `expected 66 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 376, `expected 376 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 85, `expected 85 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 357, `expected 357 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
