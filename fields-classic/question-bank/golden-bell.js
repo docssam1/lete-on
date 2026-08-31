@@ -23,6 +23,7 @@ const state = {
   phase: "concept",
   selections: {},
   feedback: null,
+  experience: { step: 0, previousStep: 0, answer: null, checks: {}, practice: {}, feedback: null, playing: false, speed: 1, timer: null },
   progress: loadProgress()
 };
 
@@ -33,6 +34,22 @@ function saveProgress() {
 function activeBook() { return goldenBellBookById(state.bookId); }
 function activeLesson() { return activeBook().lessons.find((lesson) => lesson.id === state.lessonId) || activeBook().lessons[0]; }
 function lessonProgress(lesson = activeLesson()) { return state.progress[state.bookId]?.[lesson?.id] || {}; }
+
+function clearExperiencePlayback() {
+  if (state.experience.timer) window.clearTimeout(state.experience.timer);
+  state.experience.timer = null;
+  state.experience.playing = false;
+}
+
+function resetExperience() {
+  clearExperiencePlayback();
+  state.experience.step = 0;
+  state.experience.previousStep = 0;
+  state.experience.answer = null;
+  state.experience.checks = {};
+  state.experience.practice = {};
+  state.experience.feedback = null;
+}
 
 function completeOriginal() {
   const lesson = activeLesson();
@@ -53,19 +70,211 @@ function completeExtension() {
 
 function isLessonComplete(lesson) { return Boolean(lessonProgress(lesson).original && lessonProgress(lesson).extension); }
 
+function conceptReady(lesson = activeLesson()) {
+  const experience = lesson?.experience;
+  if (experience?.kind !== "triangular-stair") return true;
+  const stepsComplete = experience.beats.every((beat) => state.experience.checks[beat.id] === true);
+  const practiceComplete = (experience.practice || []).every((item) => ["correct", "revealed"].includes(state.experience.practice[item.id]?.status));
+  return stepsComplete && practiceComplete;
+}
+
 function phaseAllowed(phase) {
   const progress = lessonProgress();
-  if (phase === "concept" || phase === "original") return true;
+  if (phase === "concept") return true;
+  if (phase === "original") return conceptReady();
   if (phase === "extension") return Boolean(progress.original);
   return Boolean(progress.original && progress.extension);
 }
 
 function setPhase(phase) {
   if (!phaseAllowed(phase)) return;
+  clearExperiencePlayback();
   state.phase = phase;
   state.selections = {};
   state.feedback = null;
   render();
+}
+
+function clockValueAfterQuarterTurns(start, quarterTurns) {
+  return ((start - 1 + quarterTurns * 3) % 12 + 12) % 12 + 1;
+}
+
+function clockGeometry(value, centerX = 120, centerY = 90, handLength = 46) {
+  const angle = ((value % 12) * Math.PI) / 6;
+  return {
+    angle,
+    x: centerX + Math.sin(angle) * handLength,
+    y: centerY - Math.cos(angle) * handLength,
+    rotation: (value % 12) * 30
+  };
+}
+
+function clockArcPath(start, quarterTurns, centerX = 120, centerY = 90, radius = 56) {
+  if (!quarterTurns) return "";
+  const startPoint = clockGeometry(start, centerX, centerY, radius);
+  const endPoint = clockGeometry(clockValueAfterQuarterTurns(start, quarterTurns), centerX, centerY, radius);
+  if (Math.abs(quarterTurns) === 4) return `<circle class="experience-clock-trace full" cx="${centerX}" cy="${centerY}" r="${radius}" />`;
+  const largeArc = Math.abs(quarterTurns) >= 2 ? 1 : 0;
+  const sweep = quarterTurns > 0 ? 1 : 0;
+  return `<path class="experience-clock-trace" d="M${startPoint.x.toFixed(1)} ${startPoint.y.toFixed(1)} A${radius} ${radius} 0 ${largeArc} ${sweep} ${endPoint.x.toFixed(1)} ${endPoint.y.toFixed(1)}" />`;
+}
+
+function experienceClockMarkup(experience, sceneState = state.experience) {
+  const step = Math.max(0, Math.min(sceneState.step, experience.beats.length - 1));
+  const previousStep = Math.max(0, Math.min(sceneState.previousStep, experience.beats.length - 1));
+  const beat = experience.beats[step];
+  const previous = experience.beats[previousStep] || beat;
+  const start = experience.start;
+  const current = clockValueAfterQuarterTurns(start, beat.quarterTurns);
+  const previousValue = clockValueAfterQuarterTurns(start, previous.quarterTurns);
+  const animate = step !== previousStep;
+  const fromRotation = clockGeometry(previousValue).rotation;
+  let toRotation = clockGeometry(current).rotation;
+  if (beat.quarterTurns === 4 && previous.quarterTurns === 0) toRotation = fromRotation + 360;
+  const ticks = Array.from({ length: 12 }, (_, index) => {
+    const point = clockGeometry(index + 1, 120, 90, 61);
+    const inner = clockGeometry(index + 1, 120, 90, 55);
+    return `<line x1="${inner.x.toFixed(1)}" y1="${inner.y.toFixed(1)}" x2="${point.x.toFixed(1)}" y2="${point.y.toFixed(1)}" />`;
+  }).join("");
+  const labels = [[12, 120, 30], [3, 180, 94], [6, 120, 154], [9, 60, 94]];
+  const trace = beat.action === "transform" ? clockArcPath(start, beat.quarterTurns) : "";
+  return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${current}을 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
+}
+
+function clockExperienceSummaryMarkup(experience) {
+  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> 2에서 시작해 한 바퀴는 2, 반 바퀴는 8, 반의 반 바퀴는 시계 방향 5·반대 방향 11을 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+}
+
+function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {
+  return `<div class="experience-controls" aria-label="개념 재생 제어"><button type="button" class="icon-action" data-experience-action="previous" ${atFirst ? "disabled" : ""} aria-label="이전 단계">‹</button><button type="button" class="secondary-action experience-play" data-experience-action="play">${state.experience.playing ? "멈춤" : "재생"}</button><button type="button" class="icon-action" data-experience-action="next" ${atLast || nextDisabled ? "disabled" : ""} aria-label="다음 단계">›</button><button type="button" class="secondary-action experience-restart" data-experience-action="restart">다시</button><label class="experience-speed"><span>속도</span><select data-experience-speed aria-label="재생 속도"><option value="1" ${state.experience.speed === 1 ? "selected" : ""}>보통</option><option value="2" ${state.experience.speed === 2 ? "selected" : ""}>빠르게</option></select></label></div>`;
+}
+
+function renderClockExperience(experience) {
+  const currentStep = state.experience.step;
+  const atFirst = currentStep === 0;
+  const atLast = currentStep === experience.beats.length - 1;
+  const check = experience.check;
+  const selected = state.experience.answer;
+  const feedback = state.experience.feedback;
+  return `<section class="concept-experience" aria-label="시계 바늘 체험"><header><div><span>직접 해보기</span><strong>바늘을 움직이며 자리를 확인해요</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header>${experienceClockMarkup(experience)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<section class="experience-check"><p>${check.prompt}</p><div class="answer-choices">${check.options.map((option) => `<button type="button" class="${selected === option ? "selected" : ""}" data-experience-choice="${option}">${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}</section></section>`;
+}
+
+function triangularLayerFormula(layerCount) {
+  return Array.from({ length: Math.ceil((Math.sqrt(8 * layerCount + 1) - 1) / 2) }, (_, index) => index + 1).join(" + ");
+}
+
+function triangularStairMarkup(beat, reveal) {
+  const visual = { kind: "book5", subtype: "tetrahedral-stair", previewStages: [beat.stage], targetStages: reveal ? [] : [beat.stage] };
+  const geometry = book05Markup(visual);
+  const layerFormula = triangularLayerFormula(beat.layerCount);
+  return `<div class="experience-stair" data-experience-step="${state.experience.step}" data-stage="${beat.stage}" data-layer-count="${beat.layerCount}" data-total-count="${beat.totalCount}"><div class="book05-visual experience-stair-model">${geometry}</div><div class="experience-stair-ledger"><p><strong>${beat.stage}층</strong><span>새 층의 삼각 바닥</span></p><b>${reveal ? `${layerFormula} = ${beat.layerCount}개` : `${layerFormula} = ?개`}</b>${reveal ? `<small>지금까지 쌓인 쌓기나무: ${beat.totalCount}개</small>` : ""}</div></div>`;
+}
+
+function triangularExperienceSummaryMarkup(experience) {
+  const finalBeat = experience.beats.at(-1);
+  return `<div class="gold-print-experience gold-print-triangular-experience"><p><strong>개념 순서</strong> 한 층씩 삼각형 바닥이 넓어집니다. 1층은 1개, 2층은 1 + 2 = 3개, 3층은 1 + 2 + 3 = 6개입니다. 각 층의 수를 차례로 더해 다음 단계를 구합니다.</p>${triangularStairMarkup(finalBeat, true)}</div>`;
+}
+
+function experienceSummaryMarkup(experience) {
+  if (experience.kind === "clock-turning") return clockExperienceSummaryMarkup(experience);
+  if (experience.kind === "triangular-stair") return triangularExperienceSummaryMarkup(experience);
+  return "";
+}
+
+function experienceStepChecked(experience, step = state.experience.step) {
+  return experience.kind !== "triangular-stair" || state.experience.checks[experience.beats[step]?.id] === true;
+}
+
+function conceptPracticeVisual(practice) {
+  if (practice.kind === "triangular") {
+    return `<div class="concept-practice-triangle" aria-hidden="true">${practice.rows.map((count) => `<span>${Array.from({ length: count }, () => "<i></i>").join("")}</span>`).join("")}</div>`;
+  }
+  if (practice.kind === "square") {
+    const side = Math.sqrt(practice.rows.reduce((sum, value) => sum + value, 0));
+    return `<div class="concept-practice-square" style="--practice-side:${side}" aria-hidden="true">${Array.from({ length: side * side }, () => "<i></i>").join("")}</div>`;
+  }
+  return `<div class="concept-practice-pattern" aria-hidden="true">${practice.values.map((value) => `<b>${value}</b>`).join("<i>→</i>")}</div>`;
+}
+
+function conceptPracticeMarkup(experience) {
+  if (!experience.practice?.length) return "";
+  const cards = experience.practice.map((practice, index) => {
+    const result = state.experience.practice[practice.id] || {};
+    const complete = ["correct", "revealed"].includes(result.status);
+    const feedback = result.status === "correct"
+      ? `맞아요. ${practice.explanation}`
+      : result.status === "revealed"
+        ? `답: ${practice.answer}. ${practice.explanation}`
+        : result.status === "wrong"
+          ? "그림의 줄을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+          : "";
+    return `<article class="concept-practice-card ${complete ? "complete" : ""}"><header><span>연습 ${index + 1}</span>${complete ? "<b>확인</b>" : ""}</header>${conceptPracticeVisual(practice)}<p>${practice.prompt}</p><div class="answer-choices">${practice.options.map((option) => `<button type="button" class="${result.selected === option ? "selected" : ""}" data-concept-practice-choice="${practice.id}" data-concept-practice-value="${option}">${option}</button>`).join("")}</div><div class="concept-practice-actions"><button type="button" class="secondary-action" data-concept-practice-answer="${practice.id}">답 보기</button></div>${feedback ? `<p class="feedback ${result.status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</article>`;
+  }).join("");
+  return `<section class="concept-practice" aria-label="삼각수와 사각수 개념 연습"><header><span>개념 연습</span><strong>그림을 보고 바로 확인해요</strong></header><div>${cards}</div></section>`;
+}
+
+function renderTriangularStairExperience(experience) {
+  const currentStep = state.experience.step;
+  const beat = experience.beats[currentStep];
+  const atFirst = currentStep === 0;
+  const atLast = currentStep === experience.beats.length - 1;
+  const passed = experienceStepChecked(experience);
+  const feedback = state.experience.feedback;
+  const progress = experience.beats.map((candidate, index) => `<i class="${state.experience.checks[candidate.id] ? "done" : index === currentStep ? "current" : ""}" aria-label="${candidate.stage}층 ${state.experience.checks[candidate.id] ? "확인 완료" : "확인 전"}">${candidate.stage}</i>`).join("");
+  const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
+  return `<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 체험"><header><div><span>직접 쌓아 보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="층 확인 단계">${progress}</div>${triangularStairMarkup(beat, passed)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: !passed })}<section class="experience-check"><p>${beat.check.prompt}</p><div class="answer-choices">${beat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}">${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}</section><details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${conceptPracticeMarkup(experience)}${successBurst}</section>`;
+}
+
+function renderExperience(lesson) {
+  const experience = lesson.experience;
+  if (!experience) return "";
+  if (experience.kind === "clock-turning") return renderClockExperience(experience);
+  if (experience.kind === "triangular-stair") return renderTriangularStairExperience(experience);
+  return "";
+}
+
+function updateExperienceStep(step) {
+  const experience = activeLesson().experience;
+  if (!experience) return;
+  if (experience.kind === "triangular-stair" && step > state.experience.step && !experienceStepChecked(experience)) return;
+  clearExperiencePlayback();
+  state.experience.previousStep = state.experience.step;
+  state.experience.step = Math.max(0, Math.min(step, experience.beats.length - 1));
+  renderContent();
+}
+
+function playExperience() {
+  const experience = activeLesson().experience;
+  if (!experience) return;
+  if (state.experience.playing) {
+    clearExperiencePlayback();
+    renderContent();
+    return;
+  }
+  if (state.experience.step >= experience.beats.length - 1) {
+    state.experience.previousStep = 0;
+    state.experience.step = 0;
+  }
+  state.experience.playing = true;
+  const next = () => {
+    if (!state.experience.playing) return;
+    if (state.experience.step >= experience.beats.length - 1) {
+      clearExperiencePlayback();
+      renderContent();
+      return;
+    }
+    if (!experienceStepChecked(experience)) {
+      clearExperiencePlayback();
+      renderContent();
+      return;
+    }
+    state.experience.previousStep = state.experience.step;
+    state.experience.step += 1;
+    renderContent();
+    state.experience.timer = window.setTimeout(next, 1500 / state.experience.speed);
+  };
+  renderContent();
+  state.experience.timer = window.setTimeout(next, 500 / state.experience.speed);
 }
 
 function clockMarkup(value) {
@@ -377,6 +586,7 @@ function renderBookTabs() {
     state.phase = "concept";
     state.selections = {};
     state.feedback = null;
+    resetExperience();
     const next = new URL(location.href);
     next.searchParams.set("book", state.bookId);
     history.replaceState(null, "", next);
@@ -404,6 +614,7 @@ function renderLessonList() {
     state.phase = "concept";
     state.selections = {};
     state.feedback = null;
+    resetExperience();
     render();
   }));
 }
@@ -426,7 +637,8 @@ function renderStageSteps() {
 
 function renderConcept(lesson) {
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
-  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div><section class="concept-tutorial"><header><span>풀이 튜토리얼</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
+  const experience = renderExperience(lesson);
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {
@@ -496,7 +708,7 @@ function printLessonPage(lesson, lessonNumber, book) {
   const header = (part) => `<header class="gold-print-head"><div><span>FIELDS CLASSIC · GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
-  const originalPage = `<article class="gold-print-page" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>${originalItems ? `<ol class="gold-print-items">${originalItems}</ol>` : ""}</section>${footer}</article>`;
+  const originalPage = `<article class="gold-print-page" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>${originalItems ? `<ol class="gold-print-items">${originalItems}</ol>` : ""}</section>${footer}</article>`;
   const storyPage = `<article class="gold-print-page" data-watermark="${escapeAttribute(student)} · GFIELD">${header("02")}${concept}<section class="gold-print-block gold-print-story"><h2>같은 원리 문제</h2><p>${lesson.extension.story}<br>${lesson.extension.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.extension.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${lesson.extension.prompt}</span>${printResponseMarkup(extensionItem)}</li></ol></section>${footer}</article>`;
   return originalPage + storyPage;
 }
@@ -517,6 +729,57 @@ function clearPrintRoot() {
 
 function bindLessonActions() {
   $("lessonContent").querySelector("[data-next-phase]")?.addEventListener("click", (event) => setPhase(event.currentTarget.dataset.nextPhase));
+  $("lessonContent").querySelectorAll("[data-experience-action]").forEach((button) => button.addEventListener("click", () => {
+    const action = button.dataset.experienceAction;
+    if (action === "previous") updateExperienceStep(state.experience.step - 1);
+    else if (action === "next") updateExperienceStep(state.experience.step + 1);
+    else if (action === "restart") {
+      state.experience.previousStep = 0;
+      state.experience.step = 0;
+      clearExperiencePlayback();
+      renderContent();
+    } else if (action === "play") playExperience();
+  }));
+  $("lessonContent").querySelector("[data-experience-speed]")?.addEventListener("change", (event) => {
+    state.experience.speed = Number(event.currentTarget.value) || 1;
+  });
+  $("lessonContent").querySelectorAll("[data-experience-choice]").forEach((button) => button.addEventListener("click", () => {
+    const experience = activeLesson().experience;
+    state.experience.answer = button.dataset.experienceChoice;
+    if (experience.kind === "triangular-stair") {
+      const beat = experience.beats[state.experience.step];
+      const passed = state.experience.answer === beat.check.answer;
+      state.experience.checks[beat.id] = passed;
+      state.experience.feedback = {
+        passed,
+        message: passed ? beat.check.success : "쌓기나무를 줄마다 다시 세어 보세요. 새 층은 삼각형 바닥으로 놓입니다."
+      };
+    } else {
+      state.experience.feedback = {
+        passed: state.experience.answer === experience.check.answer,
+        message: state.experience.answer === experience.check.answer ? "맞아요. 반 바퀴는 맞은편을 가리켜 8입니다." : "시계판의 맞은편을 다시 찾아보세요. 2의 맞은편은 8입니다."
+      };
+    }
+    renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-concept-practice-choice]").forEach((button) => button.addEventListener("click", () => {
+    const experience = activeLesson().experience;
+    const practice = experience?.practice?.find((item) => item.id === button.dataset.conceptPracticeChoice);
+    if (!practice) return;
+    const selected = button.dataset.conceptPracticeValue;
+    state.experience.practice[practice.id] = {
+      selected,
+      status: selected === practice.answer ? "correct" : "wrong"
+    };
+    render();
+  }));
+  $("lessonContent").querySelectorAll("[data-concept-practice-answer]").forEach((button) => button.addEventListener("click", () => {
+    const experience = activeLesson().experience;
+    const practice = experience?.practice?.find((item) => item.id === button.dataset.conceptPracticeAnswer);
+    if (!practice) return;
+    state.experience.practice[practice.id] = { selected: practice.answer, status: "revealed" };
+    render();
+  }));
   $("lessonContent").querySelectorAll("[data-choice-group]").forEach((button) => button.addEventListener("click", () => {
     state.selections[button.dataset.choiceGroup] = button.dataset.choice;
     state.feedback = null;
@@ -563,6 +826,7 @@ function bindLessonActions() {
     state.phase = "concept";
     state.selections = {};
     state.feedback = null;
+    resetExperience();
     render();
   });
 }
@@ -612,5 +876,26 @@ $("studentName").textContent = student;
 $("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons));
+window.addEventListener("keydown", (event) => {
+  const lesson = activeLesson();
+  if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair"].includes(lesson.experience.kind)) return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) return;
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    updateExperienceStep(state.experience.step - 1);
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    updateExperienceStep(state.experience.step + 1);
+  } else if (event.key === "Home") {
+    event.preventDefault();
+    updateExperienceStep(0);
+  } else if (event.key === "End") {
+    event.preventDefault();
+    updateExperienceStep(lesson.experience.beats.length - 1);
+  } else if (event.key === " ") {
+    event.preventDefault();
+    playExperience();
+  }
+});
 window.addEventListener("afterprint", clearPrintRoot);
 render();

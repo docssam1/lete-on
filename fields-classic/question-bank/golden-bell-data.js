@@ -18,6 +18,25 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 2, 활동 01",
         sourceTypeIds: ["shape-rotation-clock"],
         representativeConcept: "한 바퀴는 처음 자리, 반 바퀴는 맞은편, 반의 반 바퀴는 세 칸 이동",
+        experience: {
+          kind: "clock-turning",
+          family: "rotation",
+          learnerStage: "필즈 더 클래식 1과정 1권",
+          start: 2,
+          beats: [
+            { id: "start", action: "draw", quarterTurns: 0, result: 2, caption: "먼저 바늘을 2에 놓고 출발합니다." },
+            { id: "full-turn", action: "transform", quarterTurns: 4, result: 2, caption: "한 바퀴는 시계판을 모두 돌아 처음 자리 2로 옵니다." },
+            { id: "half-turn", action: "transform", quarterTurns: 2, result: 8, caption: "반 바퀴는 맞은편입니다. 2의 맞은편은 8입니다." },
+            { id: "quarter-turn", action: "transform", quarterTurns: 1, result: 5, caption: "반의 반 바퀴는 세 칸 이동입니다. 2에서 시계 방향으로 가면 5입니다." },
+            { id: "counter-quarter-turn", action: "transform", quarterTurns: -1, result: 11, caption: "반대 방향으로 세 칸 가면 11입니다." }
+          ],
+          check: {
+            prompt: "2를 가리키는 바늘을 시계 방향으로 반 바퀴 돌리면 어디를 가리킬까요?",
+            options: ["5", "8", "11"],
+            answer: "8"
+          },
+          finalStill: { visibleBeatIds: ["start", "full-turn", "half-turn", "quarter-turn", "counter-quarter-turn"], standsAlone: true }
+        },
         story: {
           title: "시간 박물관의 잠긴 문",
           text: "시간 박물관의 문은 시계 바늘을 정확히 돌려야 열립니다. 바늘이 어느 방향으로 얼마나 움직이는지 먼저 몸으로 따라 해 봅시다.",
@@ -952,12 +971,30 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           mission: "각 층의 개수를 따로 센 뒤 아래층까지 모두 더해 보세요."
         },
         explanation: {
-          headline: "층마다 1, 3, 6, 10처럼 삼각수만큼 놓입니다.",
+          headline: "삼각수는 1, 3, 6… / 사각수는 1, 4, 9…처럼 규칙을 만듭니다.",
           steps: [
-            "맨 위층부터 각 층에 놓인 쌓기나무 수를 셉니다.",
-            "다음 층은 앞 층보다 한 줄 더 긴 삼각형입니다.",
-            "목표 층까지 각 층의 개수를 모두 더합니다."
+            "삼각수는 1개, 1 + 2개, 1 + 2 + 3개처럼 한 줄씩 더해 만든 삼각형의 수입니다.",
+            "사각수는 1개, 1 + 3개, 1 + 3 + 5개처럼 홀수 줄을 더해 만든 정사각형의 수입니다.",
+            "삼각 계단 쌓기나무는 한 층마다 삼각수를 만들고, 그 층의 수를 아래층까지 더합니다."
           ]
+        },
+        experience: {
+          kind: "triangular-stair",
+          family: "tetrahedral-growth",
+          learnerStage: "필즈 더 클래식 1과정 5권",
+          title: "한 층씩 삼각형 바닥을 넓혀 쌓아요",
+          hint: "새 층의 바닥은 바로 전 층보다 한 줄이 더 많은 삼각형이에요. 줄마다 놓인 쌓기나무 수를 1부터 차례로 더해 보세요.",
+          beats: [
+            { id: "layer-1", stage: 1, layerCount: 1, totalCount: 1, caption: "맨 위에 쌓기나무 1개를 놓아 1층을 만들었어요.", check: { prompt: "1층에 놓인 쌓기나무는 몇 개인가요?", options: ["1", "2", "3"], answer: "1", success: "맞아요. 1층은 1개예요. 이제 그 아래에 더 넓은 삼각형 층을 만들어요." } },
+            { id: "layer-2", stage: 2, layerCount: 3, totalCount: 4, caption: "1층 아래에 3개가 삼각형 모양으로 놓여 2단계가 되었어요.", check: { prompt: "새로 놓은 2층에는 쌓기나무가 몇 개인가요?", options: ["2", "3", "4"], answer: "3", success: "맞아요. 둘째 층은 1 + 2 = 3개예요. 지금까지는 1 + 3 = 4개가 쌓였어요." } },
+            { id: "layer-3", stage: 3, layerCount: 6, totalCount: 10, caption: "이번에는 6개가 삼각형으로 넓어져 3층까지 차례로 쌓였어요.", check: { prompt: "새로 놓은 3층에는 쌓기나무가 몇 개인가요?", options: ["5", "6", "7"], answer: "6", success: "맞아요. 셋째 층은 1 + 2 + 3 = 6개예요. 1 + 3 + 6 = 10개가 되어 삼각 계단이 자라요." } }
+          ],
+          practice: [
+            { id: "triangle-row-sum", kind: "triangular", rows: [1, 2, 3], prompt: "작은 삼각형을 만들기 위해 1개, 2개, 3개씩 놓았습니다. 모두 몇 개인가요?", options: ["5", "6", "7"], answer: "6", explanation: "1 + 2 + 3 = 6이므로 세 번째 삼각수는 6입니다." },
+            { id: "square-odd-sum", kind: "square", rows: [1, 3, 5], prompt: "정사각형을 만들기 위해 1개, 3개, 5개씩 늘렸습니다. 모두 몇 개인가요?", options: ["8", "9", "10"], answer: "9", explanation: "1 + 3 + 5 = 9이므로 3칸 × 3칸 정사각형이 됩니다." },
+            { id: "square-pattern", kind: "pattern", values: [1, 4, 9], prompt: "1, 4, 9처럼 정사각형으로 늘어나는 수를 무엇이라고 하나요?", options: ["삼각수", "사각수", "짝수"], answer: "사각수", explanation: "1 = 1 × 1, 4 = 2 × 2, 9 = 3 × 3이므로 사각수입니다." }
+          ],
+          finalStill: { visibleBeatIds: ["layer-1", "layer-2", "layer-3"], standsAlone: true }
         },
         original: {
           title: "골든벨",
