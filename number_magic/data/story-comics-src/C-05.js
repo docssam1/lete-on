@@ -1,12 +1,13 @@
 /* C-05 — 홀수의 합과 가우스 덧셈 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         txt(100,30,14,C.sub,'1, 1+3, 1+3+5…')
         +'<circle cx="100" cy="70" r="8" fill="'+C.blue+'"/>'
-        +txt(150,74,16,C.ink,'?')),
+        +txt(150,74,16,C.ink,'?')
+        +numi(35,105,0.75)),
       text: { ko:'홀수만 차례로 더해 보세요. 1, 1+3, 1+3+5… 어떤 모양이 자꾸 나올까요?',
               en:'Add up the odd numbers in order: 1, 1+3, 1+3+5 … what shape keeps appearing?',
               zh:'按顺序把奇数加起来：1、1+3、1+3+5……总是出现什么形状呢？' } },

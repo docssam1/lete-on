@@ -1,12 +1,13 @@
 /* B-02 — A4 용지가 완벽하게 반으로 접히는 이유(반으로 나누기의 뿌리) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<rect x="55" y="15" width="90" height="110" fill="'+C.paper+'" stroke="'+C.gold+'" stroke-width="2.5"/>'
         +txt(100,64,15,C.ink,'297×210')
-        +txt(100,100,18,C.red,'?')),
+        +txt(100,100,18,C.red,'?')
+        +numi(26,102,0.75)),
       text: { ko:'A4 용지는 297×210mm예요. 왜 딱 떨어지는 300×200이 아닐까요?',
               en:'A4 paper is 297mm×210mm. Why not a tidy 300×200?',
               zh:'A4纸是297×210毫米。为什么不做成整齐的300×200？' } },

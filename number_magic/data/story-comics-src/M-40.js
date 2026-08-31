@@ -1,7 +1,7 @@
 /* M-40 — 등차수열 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(15,10,170,35)
@@ -29,7 +29,7 @@ module.exports=function(H){
         +'<line x1="65" y1="35" x2="65" y2="45" stroke="'+C.brown+'" stroke-width="2"/>'
         +'<line x1="80" y1="35" x2="80" y2="50" stroke="'+C.brown+'" stroke-width="2"/>'
         +'<line x1="95" y1="35" x2="95" y2="42" stroke="'+C.brown+'" stroke-width="2"/>'
-        +stick(150,100,0.9,C.sub)
+        +numi(150,100,0.9)
         +'<circle cx="172" cy="60" r="12" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
         +'<line x1="180" y1="69" x2="190" y2="80" stroke="'+C.ink+'" stroke-width="2.5"/>'),
       text: { ko:"이 문제는 '린드 파피루스'라는 아주 오래된 기록에 남아 있어요.",

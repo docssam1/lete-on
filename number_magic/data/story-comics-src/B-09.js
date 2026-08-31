@@ -1,10 +1,10 @@
 /* B-09 — 바코드 검산 숫자와 3의 배수 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
-        stick(36,92,1.15)
+        numi(36,96,1.05)
         +'<rect x="106" y="16" width="54" height="88" rx="4" fill="#fff" stroke="'+C.ink+'" stroke-width="2"/>'
         +'<path d="M 116 76 L 116 98 M 119 76 L 119 98 M 123 76 L 123 98 M 127 76 L 127 98 M 130 76 L 130 98 M 134 76 L 134 98 M 138 76 L 138 98 M 142 76 L 142 98 M 146 76 L 146 98 M 150 76 L 150 98" stroke="'+C.ink+'" stroke-width="2" fill="none"/>'
         +txt(153,60,20,C.red,'?')),
@@ -26,7 +26,7 @@ module.exports=function(H){
         +txt(52,82,16,C.red,'✕')
         +'<path d="M 102 38 L 92 70 L 106 70 L 94 102" stroke="'+C.gold+'" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
         +txt(140,52,26,C.red,'!')
-        +stick(150,92,1.1,C.sub)),
+        +numi(150,96,1.0)),
       text: { ko:'스캐너가 바코드를 잘못 읽으면 이 숫자가 딱 안 맞아요. 그래서 삑! 소리가 나는 거예요.',
               en:'If the scanner misreads a bar, this number no longer matches — and it beeps!',
               zh:'扫描仪一旦读错，这个数字就对不上，于是"哔！"地报警。' } },

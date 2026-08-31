@@ -1,11 +1,12 @@
 /* B-04 — 아무도 이유를 모르는 × 기호(2단 곱셈구구의 뿌리) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         txt(100,66,50,C.blue,'×')
-        +txt(100,104,18,C.red,'?')),
+        +txt(100,104,18,C.red,'?')
+        +numi(30,108,0.75)),
       text: { ko:'곱하기 기호 ×는 누가 만들었을까요?',
               en:'Who invented the multiplication sign ×?',
               zh:'乘号×是谁发明的？' } },

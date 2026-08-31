@@ -1,13 +1,14 @@
 /* C-06 — 구거법과 ×9 전략 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         txt(70,60,20,C.blue,'37×9')
         +arrow(70,72,70,92,C.gold,3)
         +txt(70,116,20,C.ink,'333')
-        +txt(150,90,16,C.sub,'?')),
+        +txt(150,90,16,C.sub,'?')
+        +numi(160,50,0.75)),
       text: { ko:'어떤 수든 자릿수를 다 더하고, 또 더해서 한 자리로 만들어 보세요. 9의 배수는 항상 무엇이 나올까요?',
               en:'Add up all the digits of any number, then add again until one digit is left. What always comes out for multiples of 9?',
               zh:'把任意数的各位数字相加，再相加直到剩一位。9的倍数总会得到什么？' } },

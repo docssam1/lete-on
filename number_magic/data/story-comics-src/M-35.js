@@ -1,13 +1,14 @@
 /* M-35 — 원의 방정식: 완전제곱으로 묶으면 중심·반지름이 보여요 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(30,25,140,55)
         +txt(100,58,15,C.sub,'x²+y²-4x-6y+9=0')
         +'<ellipse cx="100" cy="105" rx="35" ry="24" fill="none" stroke="'+C.grey+'" stroke-width="2.5" stroke-dasharray="4 3"/>'
-        +txt(100,110,16,C.gold,'?')),
+        +txt(100,110,16,C.gold,'?')
+        +numi(18,110,0.75)),
       text:{ ko:'x²+y²-4x-6y+9=0 같은 식이 원이라는 건 어떻게 알까요? 중심과 반지름은 어디에 있을까요?',
              en:'How do you know an equation like x²+y²-4x-6y+9=0 is a circle? Where are its center and radius?',
              zh:'像x²+y²-4x-6y+9=0这样的式子，怎么知道是个圆？中心和半径又在哪？' } },

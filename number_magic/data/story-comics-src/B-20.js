@@ -1,7 +1,7 @@
 /* B-20 — 지구가 정한 1미터, 두 0의 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(112)
@@ -9,7 +9,7 @@ module.exports=function(H){
         +'<line x1="68" y1="104" x2="82" y2="72" stroke="'+C.red+'" stroke-width="4" stroke-linecap="round"/>'
         +'<line x1="100" y1="104" x2="128" y2="46" stroke="'+C.gold+'" stroke-width="4" stroke-linecap="round"/>'
         +'<line x1="146" y1="104" x2="158" y2="78" stroke="'+C.purple+'" stroke-width="4" stroke-linecap="round"/>'
-        +stick(50,44,0.9)
+        +numi(50,40,0.8)
         +txt(140,30,13,C.sub,'?')),
       text: { ko:'1미터는 누가 정했을까요? 1790년 프랑스에는 저마다 다른 자가 400종이나 있어 뒤죽박죽이었대요.',
               en:'Who decided how long one metre is? In 1790 France had some 400 different rulers, and it was chaos.',

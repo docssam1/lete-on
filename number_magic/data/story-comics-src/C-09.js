@@ -1,7 +1,7 @@
 /* C-09 — 62자리 수의 50제곱근과 자릿수 예측 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(70,30,100,50)
@@ -15,7 +15,7 @@ module.exports=function(H){
               zh:'有人没看那个62位的数，就说出它的50次方根是17！' } },
     { art: svg(
         stick(70,90,0.95)
-        +stick(130,90,0.95,C.sub)
+        +numi(130,84,0.85)
         +txt(100,26,20,C.sub,'?!')),
       text: { ko:'주변 사람들이 깜짝 놀랐어요. "계산도 안 하고 어떻게 알았어요?"',
               en:'Everyone around was stunned: "You never even calculated it — how did you know?"',

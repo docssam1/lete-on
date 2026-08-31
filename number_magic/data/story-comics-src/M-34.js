@@ -1,13 +1,14 @@
 /* M-34 — 두 직선의 평행과 수직: 계수 안에 숨은 방향 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<line x1="30" y1="100" x2="120" y2="30" stroke="'+C.sub+'" stroke-width="2.5"/>'
         +'<line x1="90" y1="110" x2="180" y2="40" stroke="'+C.sub+'" stroke-width="2.5"/>'
         +txt(100,60,20,C.gold,'?')
-        +txt(100,90,20,C.ink,'🧭')),
+        +txt(100,90,20,C.ink,'🧭')
+        +numi(22,120,0.8)),
       text:{ ko:'두 직선이 평행한지 수직인지, 그림 없이 식만 보고도 알 수 있을까요?',
              en:'Can you tell whether two lines are parallel or perpendicular just from their equations, without drawing?',
              zh:'不画图，只看方程能判断两直线是平行还是垂直吗？' } },

@@ -1,13 +1,14 @@
 /* C-18 — ÷ 기호의 비밀과 분해 나눗셈 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<circle cx="100" cy="46" r="8" fill="'+C.ink+'"/>'
         +'<line x1="60" y1="70" x2="140" y2="70" stroke="'+C.ink+'" stroke-width="6" stroke-linecap="round"/>'
         +'<circle cx="100" cy="94" r="8" fill="'+C.ink+'"/>'
-        +txt(150,74,20,C.sub,'?')),
+        +txt(150,74,20,C.sub,'?')
+        +numi(30,100,0.8)),
       text: { ko:'나누기 기호 ÷는 가운데 선 하나에 점 두 개예요. 무엇을 그린 걸까요?',
               en:'The division sign ÷ is a bar with a dot above and below. What is it a picture of?',
               zh:'除号÷是一条线加上下两个点。它画的是什么？' } },

@@ -1,7 +1,7 @@
 /* C-01 — 지구 무게와 거듭제곱 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<circle cx="60" cy="70" r="40" fill="'+C.mist+'" stroke="'+C.blue+'" stroke-width="3"/>'
@@ -19,7 +19,7 @@ module.exports=function(H){
         +txt(150,46,11,C.red,'0')
         +arrow(150,58,120,86,C.red,2.6)
         +txt(70,110,16,C.red,'×10')
-        +stick(40,90,1.05)),
+        +numi(40,94,0.95)),
       text: { ko:'0을 하나 더 쓰거나 빠뜨리면 열 배가 틀려요. 큰 수일수록 이렇게 쓰기는 위험하답니다.',
               en:'One extra or missing zero throws the number off by ten times — risky for such a huge number.',
               zh:'多写或漏写一个0，就会差十倍——数越大，这样写就越危险。' } },

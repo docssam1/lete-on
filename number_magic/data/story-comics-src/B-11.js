@@ -1,7 +1,7 @@
 /* B-11 — 하노이의 탑과 8=2×2×2 마법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(112)
@@ -40,7 +40,7 @@ module.exports=function(H){
         +'<rect x="84" y="46" width="12" height="12" fill="'+C.gold+'"/>'
         +txt(90,132,11,C.sub,'64')
         +txt(150,50,16,C.red,'!')
-        +stick(160,90,1,C.sub)),
+        +numi(160,94,0.9)),
       text: { ko:'전설 속 인도 사원엔 원판이 64개! 1초에 한 번씩 옮겨도 약 6000억 년이 걸린대요.',
               en:'Legend says the temple has 64 discs — one move a second would still take about 600 billion years.',
               zh:'传说寺庙里有64个圆盘！就算每秒移一次，也要约6000亿年。' } },

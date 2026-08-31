@@ -1,7 +1,7 @@
 /* B-16 — 왕도 없는 지름길, 구구단 총정리 마라톤 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         ground(110)
@@ -35,7 +35,7 @@ module.exports=function(H){
         ground(114)
         +[2,3,4,5,6,7,8,9].map((n,i)=>txt(24+i*20,100,11,i%2?C.blue:C.gold,n)).join('')
         +'<polyline points="10,114 190,114" stroke="'+C.gold+'" stroke-width="3"/>'
-        +stick(184,90,0.95)),
+        +numi(180,94,0.85)),
       text: { ko:'구구단도 똑같아요. 지름길은 없지만, 한 번 지나간 길은 평생 내 것이 된답니다!',
               en:'Times tables are no different — no shortcut, but a road walked once is yours for life!',
               zh:'乘法口诀也一样。没有捷径——但走过一遍的路，一辈子都是你的！' } },

@@ -1,12 +1,12 @@
 /* M-42 — Σ(시그마) 계산 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         paper(10,10,180,60)
         +txt(100,48,15,C.ink,'1+2+3+…+100')
-        +stick(100,100,1,C.sub)),
+        +numi(100,100,1)),
       text: { ko:'1부터 100까지 더하는 식을 쓰려면 매번 숫자를 길게 늘어놓아야 했어요.',
               en:'Writing out the sum from 1 to 100 meant lining up a long row of numbers each time.',
               zh:'要写出1加到100的算式，每次都得列出一长串数字。' } },
