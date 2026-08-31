@@ -1,7 +1,7 @@
 /* N-11 — 동그랗게 앉아 세는 이야기 (수 배열·이어 세기) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   const ring=(highlightIdx,xIdx)=>{ let s=''; const n=10,cx=100,cy=66,r=40;
     for(let i=0;i<n;i++){ const a=-Math.PI/2+i*(2*Math.PI/n); const x=(cx+r*Math.cos(a)).toFixed(1), y=(cy+r*Math.sin(a)).toFixed(1);
       if(i===highlightIdx) s+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+C.goldbright+'" stroke="'+C.ink+'" stroke-width="2.4"/>';
@@ -12,7 +12,8 @@ module.exports=function(H){
   return { panels:[
     { art: svg(
         ring(null,null)
-        +txt(100,70,20,C.ink,'?')),
+        +txt(100,70,20,C.ink,'?')
+        +numi(32,120,0.55)),
       text:{ ko:'친구 41명이 동그랗게 앉아 셋째마다 한 명씩 빠지는 놀이를 해요. 누가 끝까지 남을까요?',
              en:'Forty-one friends sit in a circle, and every third one drops out. Who will survive to the end?',
              zh:'41个小朋友围成圈，每数到第三个就出局。谁能留到最后呢？' } },

@@ -1,7 +1,7 @@
 /* N-04 — 눈금 막대와 통장 이야기 (기수법 놀이) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   const bird=(x,y)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="9" ry="7" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2"/>'
     +'<polygon points="'+(x+9)+','+y+' '+(x+16)+','+(y-2)+' '+(x+9)+','+(y+4)+'" fill="'+C.gold+'"/>'
     +'<circle cx="'+(x+3)+'" cy="'+(y-3)+'" r="1.4" fill="'+C.ink+'"/>';
@@ -39,7 +39,7 @@ module.exports=function(H){
         [0,1,2,3].map(i=>'<line x1="'+(58+i*14)+'" y1="92" x2="'+(58+i*14)+'" y2="50" stroke="'+C.blue+'" stroke-width="4" stroke-linecap="round"/>').join('')
         +'<line x1="53" y1="80" x2="115" y2="55" stroke="'+C.red+'" stroke-width="4" stroke-linecap="round"/>'
         +txt(140,75,30,C.gold,'5')
-        +stick(172,95,0.9)
+        +numi(172,100,0.9)
         +ground(112)),
       text:{ ko:'그 긴 시간이 지금 우리가 탤리 막대로 척척 세는 1, 2, 3 안에 담겨 있답니다!',
              en:'All that long time is folded into the 1, 2, 3 we count so easily with tally marks today!',

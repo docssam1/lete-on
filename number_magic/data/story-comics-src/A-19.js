@@ -14,13 +14,13 @@ module.exports=function(H){
               en:'You forget what was in your wallet. Three times you doubled it, then paid 8,000 won — and ended at zero.',
               zh:'忘了钱包里原本有多少钱。做了三次：先翻倍，再付8000元——最后变成了0元。' } },
     { art: svg(
-        txt(30,50,20,C.grey,'0')
-        +arrow(48,50,90,50,C.gold,3)
-        +txt(70,38,11,C.sub,'+8000')
-        +txt(112,50,20,C.blue,'8000')
-        +arrow(134,50,172,50,C.gold,3)
-        +txt(153,38,11,C.sub,'÷2')
-        +txt(184,50,20,C.blue,'4000')),
+        txt(16,50,20,C.grey,'0')
+        +arrow(34,50,76,50,C.gold,3)
+        +txt(56,38,11,C.sub,'+8000')
+        +txt(98,50,20,C.blue,'8000')
+        +arrow(120,50,158,50,C.gold,3)
+        +txt(139,38,11,C.sub,'÷2')
+        +txt(170,50,20,C.blue,'4000')),
       text: { ko:'거꾸로 되짚어요. 끝나기 직전은 8000원, 두 배 하기 전은 4000원이었어요.',
               en:'Walk the story backwards: right before the end it was 8,000, and before doubling, 4,000.',
               zh:'倒着推：结尾之前是8000元，翻倍之前是4000元。' } },

@@ -1,7 +1,7 @@
 /* N-06 — 8을 나눠 본 이야기 (모으기와 가르기) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   const dot=(x,y,col)=>'<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="'+(col||C.sub)+'"/>';
   const hand=(cx,cy,n,col)=>{ let d=''; for(let i=0;i<n;i++){d+=dot(cx-9+(i%3)*9, cy-6+Math.floor(i/3)*11, col); }
     return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="22" ry="18" fill="#fff" stroke="'+C.ink+'" stroke-width="2.2"/>'+d; };
@@ -10,7 +10,8 @@ module.exports=function(H){
         txt(100,26,26,C.ink,'8')
         +hand(55,80,0,C.blue)
         +hand(145,80,0,C.blue)
-        +txt(100,80,20,C.gold,'?')),
+        +txt(100,80,20,C.gold,'?')
+        +numi(100,124,0.6)),
       text:{ ko:'8을 똑같이 두 손에 나누면 한 손에 몇 개씩일까요? 척 보고 답하면 자주 틀려요.',
              en:'Split 8 evenly between two hands — how many in each? A quick guess often gets this wrong.',
              zh:'把8平均分到两只手里，每只手有几个？一眼猜过去很容易猜错。' } },

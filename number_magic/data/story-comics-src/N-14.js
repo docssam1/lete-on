@@ -1,10 +1,10 @@
 /* N-14 — 산가지의 색깔 비밀 (산가지와 규칙) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
-        stick(60,92,1.1)
+        numi(60,95,1.1)
         +paper(110,30,60,50)
         +'<line x1="112" y1="32" x2="168" y2="78" stroke="'+C.red+'" stroke-width="3"/>'
         +'<line x1="168" y1="32" x2="112" y2="78" stroke="'+C.red+'" stroke-width="3"/>'

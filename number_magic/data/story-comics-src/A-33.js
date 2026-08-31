@@ -27,9 +27,9 @@ module.exports=function(H){
               en:'Computers checked every even number up to 4,000,000,000,000,000,000 — all worked. But checking isn\'t proving.',
               zh:'计算机把4,000,000,000,000,000,000以内的偶数全查了一遍，都成立——但查过不等于证明。' } },
     { art: svg(
-        txt(60,55,15,C.ink,'S=18, D=4')
-        +arrow(30,80,170,80,C.gold,3)
-        +txt(140,55,20,C.red,'(S+D)÷2')),
+        txt(100,42,14,C.ink,'S=18, D=4')
+        +arrow(30,75,170,75,C.gold,3)
+        +txt(100,108,18,C.red,'(S+D)÷2')),
       text: { ko:'초등학생도 아는 질문을 아직 못 풀었지만, 오늘처럼 합과 차를 알면 두 수를 정확히 찾아낼 수 있어요!',
               en:'The smartest minds still can\'t solve a question a child understands — but knowing a sum and difference finds two numbers exactly!',
               zh:'连最聪明的人都解不开一个小学生能懂的问题——但知道和与差，就能精确找出两个数！' } },
