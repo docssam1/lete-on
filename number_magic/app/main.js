@@ -99,7 +99,7 @@ const KEY='nm_state_v1';
    항상 값이 채워져 있어 "미설정" 여부를 구분할 수 없게 된다. */
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
-  character:{number:3,color:'blue',bg:'plain',cape:'none'},
+  character:{number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},
   character_unlocked:{}, mailbox:{opened:{}},
   boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
   roadCadence:'w1', /* 연산 로드맵 주차 보기: 'w1'=주 1회반, 'w2'=주 2회반 */
@@ -115,7 +115,8 @@ const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치
 let S=load();
 if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
-if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
+if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
+if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
 if(!S.character_unlocked)S.character_unlocked={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(!S.boost)S.boost={doneWeeks:{},log:[]};
@@ -144,6 +145,47 @@ if(!S.account)S.account={status:'active',code:null,checkedAt:0};
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
+
+/* ---------- 프로필 슬롯 3개 (원장 지시, 형제가 한 기기를 같이 쓸 수 있게) ----------
+   저장 경로(KEY='nm_state_v1')는 절대 바꾸지 않는다 — 앱은 항상 그 한 키만 읽고 쓴다.
+   슬롯은 그 위에 얹는 최소침습 백업/전환 계층일 뿐이다.
+   nm_state_slot1|2|3 = 비활성 슬롯 백업(활성 슬롯은 백업이 없고 nm_state_v1 자체가 원본),
+   nm_active_slot = 지금 nm_state_v1이 몇 번 슬롯인지(기본 1, 기존 사용자는 이 키가
+   아예 없어도 1로 취급되므로 마이그레이션이 따로 필요 없다). */
+const SLOT_COUNT=3, SLOT_ACTIVE_KEY='nm_active_slot';
+function slotKey(n){ return 'nm_state_slot'+n; }
+function activeSlot(){
+  try{ const n=parseInt(localStorage.getItem(SLOT_ACTIVE_KEY),10); return (n>=1&&n<=SLOT_COUNT)?n:1; }
+  catch(e){ return 1; }
+}
+/* 비활성 슬롯 저장본 읽기(활성 슬롯은 항상 메모리 S를 읽어야 하므로 이 함수는 안 씀).
+   깨진 JSON은 빈 슬롯 취급 — 목록 화면이 죽지 않게. */
+function readSlotState(n){
+  try{
+    const raw=localStorage.getItem(slotKey(n));
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    return (parsed && typeof parsed==='object') ? parsed : null;
+  }catch(e){ return null; }
+}
+/* 슬롯 전환: 지금 슬롯을 백업하고 대상 슬롯을 활성 자리로 승격한 뒤 새로고침.
+   메모리 S가 아니라 localStorage[KEY]를 그대로 옮긴다 — "지금 저장돼 있는 그대로"가
+   전환 절차의 정의이므로(옷장에서의 모든 변경은 이미 save()를 거쳐 KEY에 반영돼 있다). */
+function switchToSlot(target){
+  target=+target;
+  const cur=activeSlot();
+  if(!(target>=1&&target<=SLOT_COUNT)||target===cur) return;
+  try{
+    const curRaw=localStorage.getItem(KEY);
+    if(curRaw!=null) localStorage.setItem(slotKey(cur),curRaw);
+    else localStorage.removeItem(slotKey(cur));
+    const targetRaw=localStorage.getItem(slotKey(target));
+    if(targetRaw!=null) localStorage.setItem(KEY,targetRaw);
+    else localStorage.removeItem(KEY); // 빈 슬롯 → 새로고침 시 온보딩이 자연히 뜬다
+    localStorage.setItem(SLOT_ACTIVE_KEY,String(target));
+  }catch(e){}
+  location.reload();
+}
 
 /* ---------- 체험 게이트 (Phase 2B) ----------
    승인번호 없이는 각 티어의 대표 유닛만 플레이 가능. 대표 유닛 선정은
@@ -509,7 +551,8 @@ function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];
 function screenWelcome(){
   const scr=$('#screen');
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
-    bg:S.character.bg||'plain', cape:S.character.cape||'none', name:'' };
+    bg:S.character.bg||'plain', cape:S.character.cape||'none',
+    hat:S.character.hat||'none', name:'' };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   function draw(){
@@ -579,7 +622,8 @@ function screenWelcome(){
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
+      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
+      if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       save(); render();
       toast(t('obWelcome')(name),true);
     };
@@ -616,7 +660,7 @@ function screenWelcome(){
   }
 
   function finish(){
-    S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape};
+    S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape,hat:ob.hat};
     S.name = ob.name;
     S.onboarded = true;
     if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
@@ -631,17 +675,31 @@ function screenWelcome(){
    마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
    건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME ·
    우하단 집=ADVANCE · 정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
-   ============================================================ */
+
+   ── 지도 확장(원장 지시, 2026-08-31): 마을 너머가 보이게 ──
+   #townWorld를 687px→947px로 위쪽 260px 늘렸다(TOWN_WORLD_H). map.jpg 자체(1024×687)는
+   그대로 두고 새 캔버스 "바닥"에 붙인다(CSS background-position:bottom) — 그래서 기존
+   6곳의 pos는 전부 "예전 percent×687+260" 만큼 다시 계산한 값이다(비율이 아니라 옛
+   픽셀 위치를 새 전체 높이 기준 percent로 옮긴 것뿐, 지도 안에서 실제로 옮긴 건물은
+   없다). 위쪽 새 260px는 원경(산맥 실루엣 + 다리 실루엣, 전부 CSS/SVG, 이미지 파일
+   추가 없음)과 신규 스팟 2곳(_bridge·_tower)의 자리다. */
+const TOWN_WORLD_H=947;
 const TOWN_SPOTS=[
-  { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
-  { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
-  { tier:'intermediate', pos:'left:74%;top:58%;width:13%;height:16%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
-  { tier:'_closet',      pos:'left:8%;top:62%;width:15%;height:20%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
+  { tier:'numberland',   pos:'left:8%;top:36.89%;width:24%;height:20.31%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { tier:'beginner',     pos:'left:36%;top:41.24%;width:16%;height:15.96%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { tier:'advanced',     pos:'left:73%;top:44.87%;width:11%;height:10.16%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'intermediate', pos:'left:74%;top:69.53%;width:13%;height:11.61%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'_theater',     pos:'left:53%;top:41.24%;width:13%;height:15.96%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:8%;top:72.43%;width:15%;height:14.51%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} },
+  /* 마을 위쪽 원경 — 자유 선택 원칙: 잠금 없이 전부 열림(open은 screenTown()에서 처리) */
+  { tier:'_bridge', pos:'left:24%;top:7%;width:15%;height:15%',  tag:'🌉 중등 다리',
+    sub:{ko:'중등 수학으로',en:'To Middle School',zh:'通往中学'} },
+  { tier:'_tower',  pos:'left:66%;top:3%;width:13%;height:18%',  tag:'🗼 경시의 탑',
+    sub:{ko:'경시 도전',en:'Olympiad Tower',zh:'竞赛之塔'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
+const TOWN_ALWAYS_OPEN=['_closet','_bridge','_tower']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
 /* 건물 5곳을 모두 포함하는 콘텐츠 영역(bbox) 계산 — 카메라 피팅에 사용 */
 function parsePos(posStr){
@@ -667,13 +725,48 @@ function computeContentBBox(W,H,pad){
   return {x,y,w,h};
 }
 
+/* 마을 위쪽 새 260px 원경 장식 — 전부 CSS/SVG(이미지 파일 추가 없음).
+   #townSky는 townWorld 안의 고정 1024×260 상자(월드 맨 위)라 여기 안의 percent는
+   947이 아니라 260 기준이다(zones의 percent와 기준이 다르니 섞어 쓰지 말 것). */
+function townSkyDecorHTML(){
+  const cableXs=[24,40,56,72,88,104,120,136,152,168,184];
+  const cables=cableXs.map(x=>{
+    const t=(x-8)/(200-8);
+    const y=22+48*4*t*(1-t); // 완만한 포물선 — 현수교 케이블 처짐 근사
+    return `<line x1="${x}" y1="70" x2="${x}" y2="${y.toFixed(1)}" stroke="#8a725a" stroke-width="1.1" opacity=".75"/>`;
+  }).join('');
+  return `<div id="townSky">
+    <div class="sky-ridge r1"></div>
+    <div class="sky-ridge r2"></div>
+    <svg class="sky-bridge-svg" viewBox="0 0 208 90" preserveAspectRatio="xMidYMax meet">
+      <line x1="8" y1="70" x2="200" y2="70" stroke="#5a4632" stroke-width="5" stroke-linecap="round"/>
+      <rect x="26" y="14" width="7" height="58" rx="2" fill="#5a4632"/>
+      <rect x="175" y="14" width="7" height="58" rx="2" fill="#5a4632"/>
+      <path d="M8,58 Q30,10 104,22 Q178,10 200,58" fill="none" stroke="#8a725a" stroke-width="2.4"/>
+      ${cables}
+    </svg>
+    <svg class="sky-tower-svg" viewBox="0 0 60 150" preserveAspectRatio="xMidYMax meet">
+      <polygon points="21,150 39,150 33,46 27,46" fill="#5b6b8c"/>
+      <polygon points="23,46 37,46 30,16" fill="#5b6b8c"/>
+      <rect x="29" y="3" width="2" height="14" fill="#5b6b8c"/>
+      <polygon points="31,3 45,8 31,13" fill="#c0392b"/>
+      <rect x="23" y="62" width="4" height="7" fill="#3f4e6b"/>
+      <rect x="33" y="62" width="4" height="7" fill="#3f4e6b"/>
+      <rect x="23" y="84" width="4" height="7" fill="#3f4e6b"/>
+      <rect x="33" y="84" width="4" height="7" fill="#3f4e6b"/>
+      <rect x="23" y="106" width="4" height="7" fill="#3f4e6b"/>
+      <rect x="33" y="106" width="4" height="7" fill="#3f4e6b"/>
+    </svg>
+  </div>`;
+}
+
 function screenTown(){
   if(townCleanup){townCleanup();townCleanup=null;}
   const scr=$('#screen');
   let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
-    const open=sp.tier==='_theater'?false:sp.tier==='_closet'?true:tierOpen(tier);
+    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
       <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
@@ -682,9 +775,11 @@ function screenTown(){
   scr.innerHTML=`
     <div id="townVp">
       <div id="townWorld">
+        ${townSkyDecorHTML()}
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
+        <div class="ncloud d"><span class="puff" style="width:52px;height:52px;left:0;top:-6px"></span><span class="puff" style="width:38px;height:38px;left:36px;top:2px"></span><span class="num">12</span></div>
         <div id="townFountain"></div>
         ${zones}
         <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
@@ -2556,7 +2651,7 @@ function exitTier(){S.view='town';S.tierId=null;save();render();}
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
   const modal=scr.querySelector('#tmodal');
-  const W=1024,H=687;
+  const W=1024,H=TOWN_WORLD_H;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
@@ -2643,6 +2738,20 @@ function initTownWorld(scr){
         const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
           S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
         showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
+        return;
+      }
+      if(id==='_bridge'){
+        const bl=S.lang==='ko'?'🌉 중등 다리':S.lang==='en'?'🌉 Bridge to Middle School':'🌉 通往中学的桥';
+        const bd=S.lang==='ko'?'마을 너머 중등 수학으로 이어지는 길이에요. 연산 로드맵에서 계속 걸어가요!':
+          S.lang==='en'?'The path beyond town leads into middle-school math. Keep walking the course road!':'通往镇外中学数学的路。继续在运算路线图上前进吧！';
+        showTownModal(bl, bd, ()=>{S._roadFocus=null;S.view='courseroad';save();render();});
+        return;
+      }
+      if(id==='_tower'){
+        const tl=S.lang==='ko'?'🗼 경시의 탑':S.lang==='en'?'🗼 Olympiad Tower':'🗼 竞赛之塔';
+        const td=S.lang==='ko'?'저 멀리 보이는 탑, 경시 도전 구간이에요. 언제든 올라가 볼 수 있어요!':
+          S.lang==='en'?'That distant tower is the Olympiad challenge stretch — climb up any time!':'远处的高塔是竞赛挑战区，随时都能去挑战！';
+        showTownModal(tl, td, ()=>{S._roadFocus='C26';S.view='courseroad';save();render();});
         return;
       }
       const tier=tierById(id);
@@ -3609,10 +3718,12 @@ function screenCloset(){
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
   <div id="nm-idcard-slot"></div>
+  <div id="nm-slots-slot"></div>
   <div id="nm-account-slot"></div>
   <div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
+  renderSlotCards();
   renderAccountCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
@@ -3635,6 +3746,66 @@ function screenCloset(){
       }
     });
   }
+}
+
+/* ---------- 프로필 슬롯 카드 (옷장) ----------
+   "우리 집 마법사들" — 슬롯 3개 고정. 활성 슬롯은 지금 메모리의 S를 그대로 보여주고
+   (readSlotState로 다시 읽지 않음 — 방금 옷장에서 바꾼 값이 아직 저장 전일 수 있어서가
+   아니라, 활성 슬롯의 원본은 항상 S이기 때문), 나머지 두 슬롯은 백업 키를 읽는다. */
+function renderSlotCards(){
+  const slot=$('#nm-slots-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const titleTxt=ko?'🧙 우리 집 마법사들':en?'🧙 Our Wizards':'🧙 我家的魔法师';
+  const active=activeSlot();
+  let cards='';
+  for(let n=1;n<=SLOT_COUNT;n++){
+    if(n===active){
+      const nm=S.name?esc(S.name):('#'+S.character.number);
+      cards+=`<div class="nm-slot-card active">
+        <span class="nm-slot-badge">${ko?'지금':en?'Now':'当前'}</span>
+        <div class="nm-slot-fig">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-slot-name">${nm}</div>
+      </div>`;
+      continue;
+    }
+    const st=readSlotState(n);
+    const hasData = st && (st.onboarded || st.name);
+    if(hasData){
+      const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
+      const nm=st.name?esc(st.name):('#'+ch.number);
+      cards+=`<button class="nm-slot-card" data-slot="${n}" title="${ko?'전환':en?'Switch':'切换'}">
+        <span class="nm-slot-del" data-del="${n}" title="${ko?'지우기':en?'Delete':'删除'}">✕</span>
+        <div class="nm-slot-fig">${window.renderNumiChar?window.renderNumiChar(ch,56):''}</div>
+        <div class="nm-slot-name">${nm}</div>
+      </button>`;
+    } else {
+      cards+=`<button class="nm-slot-card empty" data-slot="${n}">
+        <div class="nm-slot-plus">＋</div>
+        <div class="nm-slot-name">${ko?'새 친구':en?'New Friend':'新朋友'}</div>
+      </button>`;
+    }
+  }
+  slot.innerHTML=`<div class="nm-slots-wrap">
+    <div class="nm-slots-title">${titleTxt}</div>
+    <div class="nm-slots-grid">${cards}</div>
+  </div>`;
+  slot.querySelectorAll('.nm-slot-card[data-slot]').forEach(b=>{
+    b.addEventListener('click',e=>{
+      if(e.target.closest('[data-del]')) return; // 지우기 버튼 클릭은 아래에서 따로 처리
+      switchToSlot(b.dataset.slot);
+    });
+  });
+  slot.querySelectorAll('[data-del]').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const n=+b.dataset.del;
+      const msg=ko?'이 마법사를 지울까요? 되돌릴 수 없어요.':en?'Delete this wizard? This cannot be undone.':'删除这个魔法师吗？无法恢复。';
+      if(!confirm(msg)) return;
+      try{ localStorage.removeItem(slotKey(n)); }catch(err){}
+      renderSlotCards();
+    });
+  });
 }
 
 /* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
@@ -3736,7 +3907,8 @@ function renderIdCard(){
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
+      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
+      if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       S.view='closet';
       save(); render();
       toast(t('obWelcome')(name),true);
