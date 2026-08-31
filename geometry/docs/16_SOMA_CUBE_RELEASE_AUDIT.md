@@ -8,7 +8,7 @@
 - 결과물: 기존 소마큐브 공방의 수학 모델을 유지하고 실제 화면 조작, 3D 렌더, 접근성,
   모바일 가로 화면, 공개 목록과 배포 상태를 검증한다.
 - 학습자 단계: `키즈`, `Pre`, `입문`, `초급`, `중급`
-- 같은 단계 안의 난이도: `중`, `하`, `중`, `중`, `상`
+- 같은 단계 안의 난이도: `하`, `하`, `중`, `중`, `상`
 - 학습 행동: 회전해 같은 조각 고르기, 두 조각 합성, 세 조각 합성, 일부가 채워진 큐브 완성,
   서로 다른 두 조립법 만들기
 - 선수 지식: 단위정육면체, 회전해도 같은 모양, 빈틈과 겹침 없는 합성
@@ -61,6 +61,7 @@
 
 ```text
 node geometry/games/soma-cube/soma-cube.selftest.mjs
+node geometry/games/soma-cube/soma-cube-content-audit.mjs
 node geometry/games/soma-cube/soma-cube.browsercheck.mjs
 node geometry/worksheet/question-bank.selftest.cjs
 ```

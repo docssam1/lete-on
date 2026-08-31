@@ -12,6 +12,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, dev
 await page.addInitScript(() => {
   localStorage.setItem("gfield-net-observatory-tutorial-v1", "done");
   localStorage.setItem("gfield-soma-tutorial-v1", "done");
+  localStorage.setItem("gfield-soma-controls-tutorial-v1", "done");
   localStorage.setItem("gfield-sound-muted", "1");
   localStorage.setItem("gfield-profile", JSON.stringify({ language: "ko" }));
 });

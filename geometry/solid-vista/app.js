@@ -1,6 +1,6 @@
 import { levels as netLevels } from "../games/net-observatory/levels.js?v=net-6";
 import { levels as diceLevels } from "../games/dice-roll/levels.js?v=dice-roll-3";
-import { levels as somaLevels } from "../games/soma-cube/levels.js?v=soma-1";
+import { levels as somaLevels } from "../games/soma-cube/levels.js?v=soma-3";
 import { readProfile } from "../shared/profile-storage.js";
 
 const lang = localStorage.getItem("gfield-language") || "ko";
@@ -74,5 +74,5 @@ const somaGrid = document.querySelector("#somaLevelGrid");
 somaLevels.forEach((level,index)=>{
   const names=(somaNames[lang]||somaNames.ko)[index];
   const link=document.createElement("a");link.className="level-card soma-card";link.href=`../games/soma-cube/?level=${level.id}`;
-  link.innerHTML=`<img src="./assets/soma-level-${level.id}.webp?v=material-2" alt="" /><div><span>${somaBands[index]}</span><strong>${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;somaGrid.append(link);
+  link.innerHTML=`<img src="./assets/soma-level-${level.id}.webp?v=material-3" alt="" /><div><span>${somaBands[index]}</span><strong>${names[0]}</strong><p>${names[1]}</p><b>${c.start} ›</b></div>`;somaGrid.append(link);
 });
