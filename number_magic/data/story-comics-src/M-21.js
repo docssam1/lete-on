@@ -8,6 +8,7 @@ module.exports=function(H){
         +txt(45,70,20,C.ok,'✓')
         +txt(150,45,15,C.ink,'(x+a)(x+b)')
         +txt(150,70,20,C.gold,'?')
+        +numi(150,110,0.65)
         +arrow(70,105,130,105,C.grey,2)),
       text: { ko:'단항식 하나를 다항식에 곱하는 건 이미 할 줄 알아요. 그럼 괄호 두 개를 곱하면 어떻게 될까요?',
               en:'You already know how to multiply a monomial into a polynomial. But what happens when you multiply two brackets together?',
