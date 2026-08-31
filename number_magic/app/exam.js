@@ -13,9 +13,16 @@
   const s = document.createElement('style');
   s.id = 'nm-print-style';
   s.textContent = `
+.nm-print-wm { display: none; }
 @media print {
   body > *:not(.nm-print-sheet) { display: none !important; }
   .nm-print-sheet { display: block !important; font-family: sans-serif; }
+  /* 이름 워터마크 — fixed는 인쇄에서 페이지마다 반복된다. 문제를 가리지 않게
+     아주 옅게(6%), 흑백 프린터에서도 회색 띠가 아닌 큰 글자로 남는다. */
+  .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
+    text-align: center; transform: rotate(-27deg); font-size: 46px; font-weight: 900;
+    color: #1A2233; opacity: .06; letter-spacing: .12em; pointer-events: none; z-index: 0;
+    white-space: nowrap; }
   .nm-print-answer-key { page-break-before: always; }
   .nm-print-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
   .nm-print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -533,6 +540,22 @@ function examLang(){
 }
 /* main.js의 lk(ko,en,zh)와 같은 꼴 — 그쪽 관례를 그대로 쓴다(새 관례를 만들지 않음). */
 function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'zh' ? zh : ko; }
+
+/* 학생 이름(프로필) — 인쇄 워터마크용. 앱 상태가 없는 페이지(drill.html)에서도
+   같은 저장본을 읽으므로 로그인해 쓰던 브라우저면 이름이 나온다. 없으면 빈 문자열. */
+function printStudentName(){
+  try{
+    const st=JSON.parse(localStorage.getItem(NM_LANG_KEY)||'null');
+    return (st&&typeof st.name==='string')?st.name.trim():'';
+  }catch(e){return '';}
+}
+/* 워터마크 블록 — position:fixed라 인쇄 시 모든 페이지에 반복된다.
+   이름이 없으면 앱 이름만으로도 찍는다(학습지 출처 표시). */
+function printWatermarkHtml(){
+  const nm=printStudentName();
+  const text=nm?nm+' · Numbers of Magic':'Numbers of Magic';
+  return `<div class="nm-print-wm" aria-hidden="true">${esc(text)}</div>`;
+}
 /* main.js의 L(obj)와 같은 꼴 — {ko,en,zh} 필드에서 한 벌 고르기. 옛 pickKo를 대신한다.
    문자열이 그대로 오는 경우(호출부가 실어 보낸 topicName 등 한국어 전용 값)도 받는다. */
 function pickL(field){
@@ -2275,6 +2298,7 @@ const NM_EXAM = {
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
 
     sheet.innerHTML = `
+${printWatermarkHtml()}
 ${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
@@ -2351,6 +2375,7 @@ ${conceptHtml}
 </div>`).join('');
 
     sheet.innerHTML = `
+${printWatermarkHtml()}
 ${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
