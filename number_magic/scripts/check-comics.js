@@ -21,6 +21,11 @@ function checkPart(file){
   const errs=[],warns=[];
   const id=path.basename(file,'.js');
   let out;
+  /* 원장 지시(2026-08-31): 막대 사람 금지 — 소스에 stick( 이 남아 있으면 경고 */
+  try{
+    const src=fs.readFileSync(path.resolve(file),'utf8');
+    if(/\bstick\(/.test(src)) warns.push('stick() 사용 — 막대 사람 금지, 캐릭터 프리셋(king·sage·greek·scholar·wig·boy·girl·shepherd·scribe·merchant·astronomer·numi)으로 교체할 것');
+  }catch(e){}
   try{
     delete require.cache[require.resolve(path.resolve(file))];
     const mod=require(path.resolve(file));
