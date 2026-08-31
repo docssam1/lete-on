@@ -1,7 +1,7 @@
 /* M-21 — 다항식의 곱셈과 나눗셈: 네 부분과 조립제법 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,arrow,txt}=H;
+  const {C,svg,arrow,numi,txt}=H;
   return { panels:[
     { art: svg(
         txt(45,45,13,C.sub,'m·(x+a)')

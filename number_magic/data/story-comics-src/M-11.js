@@ -1,14 +1,15 @@
 /* M-11 — 문자는 숫자를 담는 상자 */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,stick,sheep,numi,pouch,arrow,paper,bubble,txt,ground}=H;
   return { panels:[
     { art: svg(
         '<rect x="28" y="42" width="52" height="52" rx="6" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
         +txt(54,76,26,C.blue,'a','font-style="italic" font-family="Georgia,serif"')
         +'<rect x="120" y="42" width="52" height="52" rx="6" fill="'+C.wool+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
         +txt(146,76,22,C.red,'−a','font-style="italic" font-family="Georgia,serif"')
-        +txt(100,26,20,C.gold,'?')),
+        +txt(100,26,20,C.gold,'?')
+        +numi(100,116,0.7)),
       text: { ko:'a와 −a 중에 어느 쪽이 더 큰 수일까요?',
               en:'Which is larger, a or −a?',
               zh:'a和−a，哪个更大？' } },
