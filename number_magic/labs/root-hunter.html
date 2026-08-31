@@ -64,6 +64,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 .trophy.got::before{content:'🌰 '}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="lab-lang.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -122,12 +123,8 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 (function(){
 'use strict';
 
-/* ── 언어: 앱(nm_state_v1)과 같은 규약. 미설정이면 ko ── */
-var LANG='ko';
-try{var st=JSON.parse(localStorage.getItem('nm_state_v1')||'{}');
-  if(st.lang==='en'||st.lang==='zh')LANG=st.lang;}catch(e){}
-function T(o){return o[LANG]||o.ko;}
-document.documentElement.lang=LANG==='zh'?'zh-CN':LANG;
+/* 언어는 공용 레이어(labs/lab-lang.js)가 nm_state_v1에서 읽어 온다 */
+var T=LabLang.T;
 
 var STR={
   title:{ko:'루트 사냥꾼',en:'Root Hunter',zh:'求根猎人'},
@@ -146,11 +143,7 @@ var STR={
   newHunt:{ko:'🌰 새 사냥',en:'🌰 New hunt',zh:'🌰 新狩猎'},
 };
 
-/* 정적 라벨 채우기 */
-document.querySelectorAll('[data-t]').forEach(function(el){
-  var k=el.dataset.t; if(STR[k])el.textContent=T(STR[k]);
-});
-document.title=T(STR.title)+' — Numbers of Magic';
+LabLang.fill(STR); LabLang.title(STR.title);
 
 /* ── ① 이야기 본문 ── */
 var STORY={
@@ -192,19 +185,10 @@ document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
 
 /* ── 읽어 주기 ── */
-var SAY={
+LabLang.speak({
   ko:'넓이가 9인 정사각형의 한 변은 3이에요. 넓이에서 변을 거꾸로 찾는 게 제곱근이에요. 넓이가 7이면? 2는 모자라고 3은 넘쳐요. 그래서 양쪽에서 조여 가요. 2.6은 모자라고 2.7은 넘치니, 루트 7은 그 사이! 상자를 좁힐수록 루트가 잡혀요.',
   en:'A square of area nine has side three. Finding the side backwards from the area is the square root. If the area is seven, two is too small and three is too big. So we squeeze from both sides. 2.6 is too small, 2.7 is too big, so root seven is in between! The tighter the box, the closer the catch.',
   zh:'面积为9的正方形边长是3。从面积反过来找边长就是平方根。面积是7呢？2不够，3超了。所以我们从两边夹逼。2.6不够，2.7超了，根号7就在中间！夹子越紧，抓得越准。'
-};
-document.querySelectorAll('.speak').forEach(function(b){
-  b.onclick=function(){
-    if(!window.speechSynthesis)return;
-    speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(SAY[LANG]);
-    u.lang=LANG==='en'?'en-US':LANG==='zh'?'zh-CN':'ko-KR';u.rate=.95;
-    speechSynthesis.speak(u);
-  };
 });
 
 /* ══ ② 넓이로 조준: 변 슬라이더 → 넓이 명중 ══ */

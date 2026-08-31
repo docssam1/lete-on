@@ -73,106 +73,89 @@ canvas{width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border
   border-radius:99px;padding:3px 9px;margin-top:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="lab-lang.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>🍎 미적분은 왜 태어났나</h1>
-    <p>변하는 것을 계산하려고 사람들이 400년 전에 만든 도구</p>
+    <h1>🍎 <span data-t="title"></span></h1>
+    <p data-t="tag"></p>
   </header>
 
-  <nav class="tabs" aria-label="단계">
-    <button class="tab on" data-p="p1">① 왜 태어났나</button>
-    <button class="tab" data-p="p4">② 어디에 쓰이나</button>
-    <button class="tab" data-p="p2">③ 두 도구 보기</button>
-    <button class="tab" data-p="p3">④ 직접 하기</button>
+  <nav class="tabs" aria-label="stages">
+    <button class="tab on" data-p="p1">① <span data-t="tab1"></span></button>
+    <button class="tab" data-p="p4">② <span data-t="tab2"></span></button>
+    <button class="tab" data-p="p2">③ <span data-t="tab3"></span></button>
+    <button class="tab" data-p="p3">④ <span data-t="tab4"></span></button>
   </nav>
 
   <!-- ① 이야기 -->
   <section class="card on story" id="p1">
-    <h2>계산할 수 없던 것들</h2>
-    <button class="speak" data-say="story">🔊 읽어 주기</button>
-    <p>1600년대 사람들에게는 <b>답을 구할 방법이 없는 문제들</b>이 있었어요.
-    배가 지금 바다 어디쯤인지(별과 행성이 어떻게 움직이는지), 쏘아 올린 대포알이 어디에 떨어질지,
-    구불구불한 강으로 둘러싸인 땅이 얼마나 넓은지.</p>
-    <p>세 문제의 공통점은 <b>전부 "변하는 것"</b>이라는 거예요. 그때까지의 수학은
-    <b>멈춰 있는 것</b>에 강했어요 — 고정된 도형의 넓이, 정해진 수의 계산.
-    하지만 <b>계속 변하는 것</b>을 다룰 도구는 없었어요.</p>
-    <p>그 도구를 <b>뉴턴</b>이 1665~66년에 만들었어요. 흑사병으로 대학이 문을 닫아 고향에
-    머물던 시기였는데, 훗날 사람들은 그 시기를 "기적의 해"라고 불러요. 비슷한 시기에
-    <b>라이프니츠</b>도 혼자 힘으로 같은 곳에 도달했고요. 지금 우리가 쓰는 기호
-    <b>dx</b>와 <b>∫</b>는 라이프니츠가 만든 것이 살아남은 거예요.</p>
-    <div class="big">두 사람의 아이디어는 하나였어요 —<br>
-    <b>"아주 잘게 쪼개면, 곡선도 직선처럼 보이고<br>울퉁불퉁한 넓이도 직사각형으로 채울 수 있다."</b></div>
+    <h2 data-t="s1h"></h2>
+    <button class="speak" data-say="story">🔊 <span data-t="listen"></span></button>
+    <div data-th="p1body"></div>
+    <div class="big" data-th="p1big"></div>
     <div class="two">
-      <div class="mini"><b>미분 — 잘게 쪼개 "순간"을 본다</b>
-        <span>곡선을 아주 크게 확대하면 직선처럼 보여요. 그 직선의 기울기가 <b>바로 이 순간</b>의 변화 속도예요.</span></div>
-      <div class="mini"><b>적분 — 잘게 쪼개 "다 더한다"</b>
-        <span>울퉁불퉁한 넓이를 아주 얇은 직사각형으로 채워 전부 더하면 참값에 다가가요.</span></div>
+      <div class="mini" data-th="mini1"></div>
+      <div class="mini" data-th="mini2"></div>
     </div>
-    <p>그리고 놀라운 사실 하나. <b>이 둘은 서로 반대예요.</b> 속도를 알면 달린 거리를 알 수 있고,
-    거리를 알면 속도를 알 수 있어요. 이걸 <b>미적분의 기본정리</b>라고 불러요 —
-    쪼개는 일과 모으는 일이 하나로 이어진다는 뜻이에요.</p>
-    <div class="legend">※ 오늘도 미적분은 <b>변하는 것</b>이 있는 곳마다 쓰여요 — 자동차 속도계와 내비게이션,
-    일기예보, 몸속 약물 농도 계산, 게임 물리 엔진, 그리고 AI가 스스로 학습하는 방법(경사하강법)까지.
-    400년 전 문제와 지금 문제가 같은 도구를 쓰는 셈이에요.</div>
-    <div class="row"><button class="btn" data-go="p4">어디에 쓰이는지 보러 가기 →</button></div>
+    <div data-th="p1ftc"></div>
+    <div class="legend" data-th="p1legend"></div>
+    <div class="row"><button class="btn" data-go="p4" data-t="toP4"></button></div>
   </section>
 
   <!-- ② 어디에 쓰이나 (실감) -->
   <section class="card" id="p4">
-    <h2>🎢 가장 무서운 지점은 어디일까?</h2>
-    <p style="font-size:14.5px;line-height:1.7;margin-bottom:10px">손잡이를 움직여 카트를 굴려 보세요.
-    <b>가장 가파르게 떨어지는 지점</b>을 찾으면 성공! 롤러코스터가 무서운 정도가 바로
-    그 지점의 <b>기울기</b>예요 — 기울기를 구하는 것이 미분이에요.</p>
+    <h2>🎢 <span data-t="s2h"></span></h2>
+    <p style="font-size:14.5px;line-height:1.7;margin-bottom:10px" data-th="s2intro"></p>
     <canvas id="cvR" width="420" height="300"></canvas>
     <div class="slabel" id="labR"></div>
     <input class="slider" id="slR" type="range" min="0" max="240" value="20">
     <div class="val" id="valR"></div>
     <div class="fb" id="fbR"></div>
 
-    <h2 style="margin-top:26px">📱 오늘도 쓰이고 있어요</h2>
-    <p style="font-size:13.5px;color:var(--sub);margin-bottom:10px">카드를 눌러 답을 확인해요.</p>
+    <h2 style="margin-top:26px">📱 <span data-t="s2h2"></span></h2>
+    <p style="font-size:13.5px;color:var(--sub);margin-bottom:10px" data-t="s2tap"></p>
     <div class="uses" id="useList"></div>
-    <div class="row"><button class="btn" data-go="p2">그럼 어떻게 하는 걸까? →</button></div>
+    <div class="row"><button class="btn" data-go="p2" data-t="toP2"></button></div>
   </section>
 
   <!-- ③ 보기 -->
   <section class="card" id="p2">
-    <h2>미분: 두 점이 가까워지면</h2>
+    <h2 data-t="s3hA"></h2>
     <canvas id="cvA" width="420" height="300"></canvas>
-    <div class="cap" id="capA">▶ 를 누르면 두 점이 점점 가까워져요</div>
+    <div class="cap" id="capA" data-t="capAinit"></div>
     <div class="val" id="valA"></div>
-    <div class="row"><button class="btn" id="playA">▶ 접선 만들기</button></div>
+    <div class="row"><button class="btn" id="playA" data-t="playA"></button></div>
 
-    <h2 style="margin-top:26px">적분: 직사각형을 잘게 쪼개면</h2>
+    <h2 style="margin-top:26px" data-t="s3hB"></h2>
     <canvas id="cvB" width="420" height="300"></canvas>
-    <div class="cap" id="capB">▶ 를 누르면 직사각형이 얇아져요</div>
+    <div class="cap" id="capB" data-t="capBinit"></div>
     <div class="val" id="valB"></div>
     <div class="row">
-      <button class="btn" id="playB">▶ 넓이 채우기</button>
-      <button class="speak" data-say="demo" style="margin:0">🔊 설명 듣기</button>
+      <button class="btn" id="playB" data-t="playB"></button>
+      <button class="speak" data-say="demo" style="margin:0">🔊 <span data-t="listenDemo"></span></button>
     </div>
   </section>
 
-  <!-- ③ 직접 하기 -->
+  <!-- ④ 직접 하기 -->
   <section class="card" id="p3">
-    <h2>손잡이를 직접 움직여 봐요</h2>
+    <h2 data-t="s4hA"></h2>
     <canvas id="cvC" width="420" height="300"></canvas>
     <div class="slabel" id="labC"></div>
     <input class="slider" id="slC" type="range" min="0" max="40" value="34">
     <div class="val" id="valC"></div>
 
-    <h2 style="margin-top:22px">쪼갤수록 넓이는?</h2>
+    <h2 style="margin-top:22px" data-t="s4hB"></h2>
     <canvas id="cvD" width="420" height="300"></canvas>
     <div class="slabel" id="labD"></div>
     <input class="slider" id="slD" type="range" min="1" max="120" value="4">
     <div class="val" id="valD"></div>
 
     <div class="qline">
-      두 손잡이를 끝까지 밀면 기울기는 <input id="q1" inputmode="decimal" maxlength="5">,
-      넓이는 <input id="q2" inputmode="decimal" maxlength="5">
-      <button class="btn amber" id="checkBtn">확인</button>
+      <span data-t="qSlope"></span> <input id="q1" inputmode="decimal" maxlength="5">,
+      <span data-t="qArea"></span> <input id="q2" inputmode="decimal" maxlength="5">
+      <button class="btn amber" id="checkBtn" data-t="checkBtn"></button>
     </div>
     <div class="fb" id="fb"></div>
   </section>
@@ -181,10 +164,120 @@ canvas{width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border
 <script>
 (function(){
 'use strict';
+var T=LabLang.T;
 /* f(x)=x² 하나로 두 이야기를 다 한다 —
    미분: x=1에서 접선 기울기 2, 적분: [0,2] 넓이 8/3 */
 function f(x){return x*x;}
 var TRUE_SLOPE=2, TRUE_AREA=8/3;
+
+var STR={
+  title:{ko:'미적분은 왜 태어났나',en:'Why Calculus Was Born',zh:'微积分为何诞生'},
+  tag:{ko:'변하는 것을 계산하려고 사람들이 400년 전에 만든 도구',
+       en:'The tool people built 400 years ago to calculate things that change',
+       zh:'400年前人们为计算"变化"而造出的工具'},
+  tab1:{ko:'왜 태어났나',en:'Why it was born',zh:'为何诞生'},
+  tab2:{ko:'어디에 쓰이나',en:'Where it is used',zh:'用在哪里'},
+  tab3:{ko:'두 도구 보기',en:'See both tools',zh:'看两个工具'},
+  tab4:{ko:'직접 하기',en:'Try it',zh:'动手试试'},
+  listen:{ko:'읽어 주기',en:'Read aloud',zh:'朗读'},
+  listenDemo:{ko:'설명 듣기',en:'Hear the explanation',zh:'听讲解'},
+  s1h:{ko:'계산할 수 없던 것들',en:'The things nobody could calculate',zh:'当年算不出来的东西'},
+  toP4:{ko:'어디에 쓰이는지 보러 가기 →',en:'See where it is used →',zh:'去看用在哪里 →'},
+  s2h:{ko:'가장 무서운 지점은 어디일까?',en:'Where is the scariest point?',zh:'最吓人的地方在哪里？'},
+  s2h2:{ko:'오늘도 쓰이고 있어요',en:'Still in use today',zh:'今天依然在用'},
+  s2tap:{ko:'카드를 눌러 답을 확인해요.',en:'Tap a card to see the answer.',zh:'点一下卡片看答案。'},
+  toP2:{ko:'그럼 어떻게 하는 걸까? →',en:'So how does it work? →',zh:'那到底怎么做？ →'},
+  s3hA:{ko:'미분: 두 점이 가까워지면',en:'Differentiation: as two points close in',zh:'微分：当两点靠近'},
+  s3hB:{ko:'적분: 직사각형을 잘게 쪼개면',en:'Integration: as the rectangles get thin',zh:'积分：当长方形越切越细'},
+  capAinit:{ko:'▶ 를 누르면 두 점이 점점 가까워져요',en:'Press ▶ and the two points close in',zh:'按▶两点就渐渐靠近'},
+  capBinit:{ko:'▶ 를 누르면 직사각형이 얇아져요',en:'Press ▶ and the rectangles get thinner',zh:'按▶长方形就变细'},
+  playA:{ko:'▶ 접선 만들기',en:'▶ Make the tangent',zh:'▶ 做出切线'},
+  playB:{ko:'▶ 넓이 채우기',en:'▶ Fill the area',zh:'▶ 填满面积'},
+  s4hA:{ko:'손잡이를 직접 움직여 봐요',en:'Move the slider yourself',zh:'亲手拖动滑块'},
+  s4hB:{ko:'쪼갤수록 넓이는?',en:'What happens to the area as you slice?',zh:'切得越细，面积会怎样？'},
+  qSlope:{ko:'두 손잡이를 끝까지 밀면 기울기는',en:'Push both sliders to the end: the slope is',zh:'把两个滑块推到底，斜率是'},
+  qArea:{ko:'넓이는',en:'and the area is',zh:'面积是'},
+  checkBtn:{ko:'확인',en:'Check',zh:'确认'},
+
+  p1body:{
+    ko:'<p>1600년대 사람들에게는 <b>답을 구할 방법이 없는 문제들</b>이 있었어요. '
+      +'배가 지금 바다 어디쯤인지(별과 행성이 어떻게 움직이는지), 쏘아 올린 대포알이 어디에 떨어질지, '
+      +'구불구불한 강으로 둘러싸인 땅이 얼마나 넓은지.</p>'
+      +'<p>세 문제의 공통점은 <b>전부 "변하는 것"</b>이라는 거예요. 그때까지의 수학은 '
+      +'<b>멈춰 있는 것</b>에 강했어요 — 고정된 도형의 넓이, 정해진 수의 계산. '
+      +'하지만 <b>계속 변하는 것</b>을 다룰 도구는 없었어요.</p>'
+      +'<p>그 도구를 <b>뉴턴</b>이 1665~66년에 만들었어요. 흑사병으로 대학이 문을 닫아 고향에 '
+      +'머물던 시기였는데, 훗날 사람들은 그 시기를 "기적의 해"라고 불러요. 비슷한 시기에 '
+      +'<b>라이프니츠</b>도 혼자 힘으로 같은 곳에 도달했고요. 지금 우리가 쓰는 기호 '
+      +'<b>dx</b>와 <b>∫</b>는 라이프니츠가 만든 것이 살아남은 거예요.</p>',
+    en:'<p>In the 1600s there were <b>problems nobody knew how to solve</b>: where exactly a ship was at sea '
+      +'(how the stars and planets move), where a fired cannonball would land, how much land lay inside a '
+      +'winding river.</p>'
+      +'<p>What the three had in common: <b>they all involve things that change</b>. Mathematics up to then was '
+      +'strong on <b>things that stand still</b> — the area of a fixed shape, arithmetic on given numbers. '
+      +'For things that <b>keep changing</b>, there was no tool at all.</p>'
+      +'<p><b>Newton</b> built that tool in 1665–66, while plague had closed the universities and he stayed at '
+      +'his family home — a stretch later called his "year of wonders". Around the same time <b>Leibniz</b> '
+      +'reached the same place entirely on his own. The symbols we use today, <b>dx</b> and <b>∫</b>, are '
+      +'Leibniz\'s inventions that survived.</p>',
+    zh:'<p>17世纪的人面前有一些<b>当时没有办法求解的问题</b>：船此刻在海上的什么位置（星星和行星怎样运动）、'
+      +'发射出去的炮弹会落在哪里、蜿蜒的河流围起来的土地有多大。</p>'
+      +'<p>这三个问题的共同点是：<b>它们都在"变"</b>。在此之前的数学擅长处理<b>静止的东西</b>——'
+      +'固定图形的面积、给定数字的运算。可是对<b>不断变化的东西</b>，当时完全没有工具。</p>'
+      +'<p>这个工具由<b>牛顿</b>在1665~66年造了出来。当时黑死病使大学停课，他留在家乡，'
+      +'后人把那段时间称为"奇迹之年"。几乎同时，<b>莱布尼茨</b>也独自到达了同一个地方。'
+      +'我们今天用的符号<b>dx</b>和<b>∫</b>，正是莱布尼茨留下来的。</p>'},
+  p1big:{
+    ko:'두 사람의 아이디어는 하나였어요 —<br><b>"아주 잘게 쪼개면, 곡선도 직선처럼 보이고<br>'
+      +'울퉁불퉁한 넓이도 직사각형으로 채울 수 있다."</b>',
+    en:'Both men had the same single idea —<br><b>"Slice it fine enough and a curve looks straight,<br>'
+      +'and a lumpy area can be filled with rectangles."</b>',
+    zh:'两个人的想法其实是同一个——<br><b>"只要切得足够细，曲线看起来就是直线，<br>'
+      +'凹凸不平的面积也能用长方形填满。"</b>'},
+  mini1:{
+    ko:'<b>미분 — 잘게 쪼개 "순간"을 본다</b><span>곡선을 아주 크게 확대하면 직선처럼 보여요. '
+      +'그 직선의 기울기가 <b>바로 이 순간</b>의 변화 속도예요.</span>',
+    en:'<b>Differentiation — slice fine, see the instant</b><span>Zoom far enough into a curve and it looks '
+      +'straight. The slope of that line is the rate of change <b>at this very instant</b>.</span>',
+    zh:'<b>微分——切细了看"瞬间"</b><span>把曲线放得足够大，它看起来就是直线。'
+      +'那条直线的斜率，就是<b>此时此刻</b>的变化快慢。</span>'},
+  mini2:{
+    ko:'<b>적분 — 잘게 쪼개 "다 더한다"</b><span>울퉁불퉁한 넓이를 아주 얇은 직사각형으로 채워 전부 더하면 '
+      +'참값에 다가가요.</span>',
+    en:'<b>Integration — slice fine, add it all up</b><span>Fill a lumpy area with very thin rectangles, add '
+      +'them all, and the total closes in on the true value.</span>',
+    zh:'<b>积分——切细了"全加起来"</b><span>把凹凸不平的面积用很薄的长方形填满再全部相加，'
+      +'总和就逼近真实值。</span>'},
+  p1ftc:{
+    ko:'<p>그리고 놀라운 사실 하나. <b>이 둘은 서로 반대예요.</b> 속도를 알면 달린 거리를 알 수 있고, '
+      +'거리를 알면 속도를 알 수 있어요. 이걸 <b>미적분의 기본정리</b>라고 불러요 — '
+      +'쪼개는 일과 모으는 일이 하나로 이어진다는 뜻이에요.</p>',
+    en:'<p>And here is the surprise: <b>the two are opposites.</b> Know the speed and you can find the distance '
+      +'travelled; know the distance and you can find the speed. This is the <b>fundamental theorem of '
+      +'calculus</b> — slicing apart and gathering together turn out to be one and the same job.</p>',
+    zh:'<p>还有一个惊人的事实：<b>这两件事互为逆运算。</b>知道速度就能求出走过的距离，'
+      +'知道距离也能求出速度。这就是<b>微积分基本定理</b>——'
+      +'切开与合起来，其实是连成一体的一件事。</p>'},
+  p1legend:{
+    ko:'※ 오늘도 미적분은 <b>변하는 것</b>이 있는 곳마다 쓰여요 — 자동차 속도계와 내비게이션, 일기예보, '
+      +'몸속 약물 농도 계산, 게임 물리 엔진, 그리고 AI가 스스로 학습하는 방법(경사하강법)까지. '
+      +'400년 전 문제와 지금 문제가 같은 도구를 쓰는 셈이에요.',
+    en:'※ Calculus is still used wherever something <b>changes</b> — car speedometers and satnavs, weather '
+      +'forecasts, drug concentration in the body, game physics engines, and even how an AI teaches itself '
+      +'(gradient descent). A 400-year-old problem and a problem of today reach for the same tool.',
+    zh:'※ 今天，凡是有<b>变化</b>的地方都用得上微积分——汽车的速度表和导航、天气预报、'
+      +'体内药物浓度的计算、游戏物理引擎，甚至AI自我学习的方法（梯度下降）。'
+      +'400年前的问题和今天的问题，用的是同一件工具。'},
+  s2intro:{
+    ko:'손잡이를 움직여 카트를 굴려 보세요. <b>가장 가파르게 떨어지는 지점</b>을 찾으면 성공! '
+      +'롤러코스터가 무서운 정도가 바로 그 지점의 <b>기울기</b>예요 — 기울기를 구하는 것이 미분이에요.',
+    en:'Move the slider to roll the cart along. Find <b>the steepest drop</b> and you win! How scary a '
+      +'roller coaster feels at a point is exactly the <b>slope</b> there — and finding slopes is what '
+      +'differentiation does.',
+    zh:'拖动滑块让小车前进。找到<b>下降最陡的地方</b>就成功了！'
+      +'过山车在某处有多吓人，正是那一点的<b>斜率</b>——求斜率就是微分。'}
+};
+LabLang.fill(STR); LabLang.fillHtml(STR); LabLang.title(STR.title);
 
 function show(id){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===id)});
@@ -194,17 +287,13 @@ function show(id){
 document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(t.dataset.p)}});
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
 
-var SAY={
-  story:'1600년대 사람들에게는 답을 구할 방법이 없는 문제들이 있었어요. 별과 행성이 어떻게 움직이는지, 대포알이 어디에 떨어질지, 구불구불한 땅이 얼마나 넓은지. 전부 변하는 것이었어요. 뉴턴과 라이프니츠는 같은 생각에 도달했어요. 아주 잘게 쪼개면, 곡선도 직선처럼 보이고 울퉁불퉁한 넓이도 직사각형으로 채울 수 있다. 잘게 쪼개 순간을 보는 것이 미분, 잘게 쪼개 다 더하는 것이 적분이에요.',
-  demo:'두 점이 가까워지면 그 사이를 잇는 선이 접선이 돼요. 기울기는 2 더하기 h니까, h가 0에 다가가면 2가 돼요. 직사각형을 얇게 쪼개 다 더하면 넓이는 8 나누기 3, 약 2.67에 다가가요.'
-};
-document.querySelectorAll('.speak').forEach(function(b){
-  b.onclick=function(){
-    if(!window.speechSynthesis)return;
-    speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(SAY[b.dataset.say]);
-    u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u);
-  };
+LabLang.speak({
+  story:{ko:'1600년대 사람들에게는 답을 구할 방법이 없는 문제들이 있었어요. 별과 행성이 어떻게 움직이는지, 대포알이 어디에 떨어질지, 구불구불한 땅이 얼마나 넓은지. 전부 변하는 것이었어요. 뉴턴과 라이프니츠는 같은 생각에 도달했어요. 아주 잘게 쪼개면, 곡선도 직선처럼 보이고 울퉁불퉁한 넓이도 직사각형으로 채울 수 있다. 잘게 쪼개 순간을 보는 것이 미분, 잘게 쪼개 다 더하는 것이 적분이에요.',
+         en:'In the sixteen hundreds there were problems nobody knew how to solve. How the stars and planets move, where a cannonball would land, how much land lay inside a winding river. All of them involve change. Newton and Leibniz reached the same idea: slice it fine enough and a curve looks straight, and a lumpy area can be filled with rectangles. Slicing fine to see the instant is differentiation; slicing fine and adding it all up is integration.',
+         zh:'十七世纪的人面前有一些没有办法求解的问题。星星和行星怎样运动，炮弹会落在哪里，蜿蜒的河流围起的土地有多大。它们都在变化。牛顿和莱布尼茨想到了同一件事：只要切得足够细，曲线看起来就是直线，凹凸不平的面积也能用长方形填满。切细了看瞬间就是微分，切细了全加起来就是积分。'},
+  demo:{ko:'두 점이 가까워지면 그 사이를 잇는 선이 접선이 돼요. 기울기는 2 더하기 h니까, h가 0에 다가가면 2가 돼요. 직사각형을 얇게 쪼개 다 더하면 넓이는 8 나누기 3, 약 2.67에 다가가요.',
+        en:'As the two points close in, the line joining them becomes the tangent. Its slope is two plus h, so as h goes to zero the slope becomes two. Slice the rectangles thin and add them all, and the area closes in on eight thirds, about two point six seven.',
+        zh:'两点靠近时，连接它们的直线就成了切线。斜率是二加h，所以当h趋于零，斜率就是二。把长方形切薄再全部相加，面积就逼近八分之三，大约二点六七。'}
 });
 
 /* ── 좌표계: x 0~2.4, y 0~5 를 캔버스에 매핑 ── */
@@ -261,7 +350,7 @@ function drawRiemann(g,n){
   return sum;
 }
 
-/* ── ② 데모 애니메이션 ── */
+/* ── ③ 데모 애니메이션 ── */
 var gA=mk(document.getElementById('cvA')),gB=mk(document.getElementById('cvB'));
 drawSecant(gA,1);drawRiemann(gB,4);
 var busyA=false;
@@ -271,8 +360,14 @@ document.getElementById('playA').onclick=function(){
   var i=0;
   var t=setInterval(function(){
     var h=hs[i],m=drawSecant(gA,h);
-    document.getElementById('capA').textContent=h===0?'두 점이 하나가 되면 — 접선!':'두 점 사이 거리 h = '+h;
-    document.getElementById('valA').innerHTML=h===0?'기울기 = <b>2</b> (접선의 기울기)':'기울기 = 2 + '+h+' = <b>'+m.toFixed(2)+'</b>';
+    document.getElementById('capA').textContent=h===0
+      ?T({ko:'두 점이 하나가 되면 — 접선!',en:'When the two points become one — the tangent!',zh:'两点合为一点时——切线！'})
+      :T({ko:'두 점 사이 거리 h = '+h,en:'distance between the points h = '+h,zh:'两点之间的距离 h = '+h});
+    document.getElementById('valA').innerHTML=h===0
+      ?T({ko:'기울기 = <b>2</b> (접선의 기울기)',en:'slope = <b>2</b> (the tangent slope)',zh:'斜率 = <b>2</b>（切线斜率）'})
+      :T({ko:'기울기 = 2 + '+h+' = <b>'+m.toFixed(2)+'</b>',
+          en:'slope = 2 + '+h+' = <b>'+m.toFixed(2)+'</b>',
+          zh:'斜率 = 2 + '+h+' = <b>'+m.toFixed(2)+'</b>'});
     i++;if(i>=hs.length){clearInterval(t);busyA=false;}
   },700);
 };
@@ -282,14 +377,21 @@ document.getElementById('playB').onclick=function(){
   var ns=[2,4,8,16,32,64,160];var i=0;
   var t=setInterval(function(){
     var n=ns[i],s=drawRiemann(gB,n);
-    document.getElementById('capB').textContent='직사각형 '+n+'개로 채우기';
-    document.getElementById('valB').innerHTML='넓이 합 = <b>'+s.toFixed(3)+'</b>  (참값 8/3 ≈ 2.667)';
+    document.getElementById('capB').textContent=
+      T({ko:'직사각형 '+n+'개로 채우기',en:'filling with '+n+' rectangles',zh:'用'+n+'个长方形填满'});
+    document.getElementById('valB').innerHTML=
+      T({ko:'넓이 합 = <b>'+s.toFixed(3)+'</b>  (참값 8/3 ≈ 2.667)',
+         en:'area sum = <b>'+s.toFixed(3)+'</b>  (true value 8/3 ≈ 2.667)',
+         zh:'面积和 = <b>'+s.toFixed(3)+'</b>  （真值 8/3 ≈ 2.667）'});
     i++;if(i>=ns.length){clearInterval(t);busyB=false;
-      document.getElementById('capB').textContent='얇게 쪼갤수록 참값 8/3에 다가가요!';}
+      document.getElementById('capB').textContent=
+        T({ko:'얇게 쪼갤수록 참값 8/3에 다가가요!',
+           en:'The thinner the slices, the closer to the true value 8/3!',
+           zh:'切得越薄，就越逼近真值8/3！'});}
   },800);
 };
 
-/* ── ③ 직접 하기 ── */
+/* ── ④ 직접 하기 ── */
 var gC=mk(document.getElementById('cvC')),gD=mk(document.getElementById('cvD'));
 var slC=document.getElementById('slC'),slD=document.getElementById('slD');
 function hFor(v){ /* 34칸을 1 → 0.001 로그 감소, 40이면 0(접선) */
@@ -298,13 +400,20 @@ function hFor(v){ /* 34칸을 1 → 0.001 로그 감소, 40이면 0(접선) */
 }
 function paintC(){
   var h=hFor(slC.value),m=drawSecant(gC,h);
-  document.getElementById('labC').textContent=h===0?'h = 0 — 두 점이 만났어요(접선)':'두 점 사이 거리 h = '+h;
-  document.getElementById('valC').innerHTML='기울기 = <b>'+(h===0?'2.00':m.toFixed(3))+'</b>';
+  document.getElementById('labC').textContent=h===0
+    ?T({ko:'h = 0 — 두 점이 만났어요(접선)',en:'h = 0 — the two points have met (tangent)',zh:'h = 0 ——两点相遇了（切线）'})
+    :T({ko:'두 점 사이 거리 h = '+h,en:'distance between the points h = '+h,zh:'两点之间的距离 h = '+h});
+  document.getElementById('valC').innerHTML=
+    T({ko:'기울기 = ',en:'slope = ',zh:'斜率 = '})+'<b>'+(h===0?'2.00':m.toFixed(3))+'</b>';
 }
 function paintD(){
   var n=+slD.value,s=drawRiemann(gD,n);
-  document.getElementById('labD').textContent='직사각형 '+n+'개';
-  document.getElementById('valD').innerHTML='넓이 합 = <b>'+s.toFixed(3)+'</b>  (참값 ≈ 2.667)';
+  document.getElementById('labD').textContent=
+    T({ko:'직사각형 '+n+'개',en:n+' rectangles',zh:n+'个长方形'});
+  document.getElementById('valD').innerHTML=
+    T({ko:'넓이 합 = <b>'+s.toFixed(3)+'</b>  (참값 ≈ 2.667)',
+       en:'area sum = <b>'+s.toFixed(3)+'</b>  (true value ≈ 2.667)',
+       zh:'面积和 = <b>'+s.toFixed(3)+'</b>  （真值 ≈ 2.667）'});
 }
 slC.addEventListener('input',paintC);slD.addEventListener('input',paintD);
 paintC();paintD();
@@ -316,12 +425,17 @@ document.getElementById('checkBtn').onclick=function(){
   i1.className=ok1?'good':'bad';i2.className=ok2?'good':'bad';
   if(ok1&&ok2){
     fb.className='fb ok';
-    fb.textContent='🍎 정확해요! 기울기는 2, 넓이는 8/3 ≈ 2.67 — 잘게 쪼갠 끝에 딱 떨어지는 답이 나와요.';
+    fb.textContent=T({ko:'🍎 정확해요! 기울기는 2, 넓이는 8/3 ≈ 2.67 — 잘게 쪼갠 끝에 딱 떨어지는 답이 나와요.',
+                      en:'🍎 Exactly right! Slope 2, area 8/3 ≈ 2.67 — slice finely enough and an exact answer appears.',
+                      zh:'🍎 完全正确！斜率是2，面积是8/3 ≈ 2.67——切到最细，答案就恰好出来了。'});
   }else{
     fb.className='fb no';
-    fb.textContent='손잡이를 끝까지 밀고 화면의 값을 읽어 보세요(소수 둘째 자리까지).';
+    fb.textContent=T({ko:'손잡이를 끝까지 밀고 화면의 값을 읽어 보세요(소수 둘째 자리까지).',
+                      en:'Push both sliders all the way and read the values on screen (to two decimal places).',
+                      zh:'把滑块推到底，读一下屏幕上的数值（保留两位小数）。'});
   }
 };
+
 /* ── ② 어디에 쓰이나 — 롤러코스터(실감) ── */
 /* 트랙: 큰 언덕 + 작은 언덕. 기울기는 수치미분으로 구한다(미분이 하는 일 그대로) */
 function track(x){
@@ -333,19 +447,20 @@ var STEEP_X=0, STEEP_M=0;
 for(var sx=0;sx<=2.4;sx+=0.002){var m=slopeAt(sx);if(m<STEEP_M){STEEP_M=m;STEEP_X=sx;}}
 
 var gR=mk(document.getElementById('cvR'));
+var TRACK_LABEL=T({ko:'롤러코스터 트랙',en:'roller-coaster track',zh:'过山车轨道'});
 function faceFor(m){
-  if(m<STEEP_M*0.82) return ['😱','가장 무서운 구간! 급강하'];
-  if(m<-1.2) return ['😲','쌩— 내려가는 중'];
-  if(m<-0.25) return ['🙂','살살 내려가요'];
-  if(m<0.25) return ['😐','여기는 거의 수평 — 기울기 0'];
-  if(m<1.2) return ['😀','천천히 올라가요'];
-  return ['😤','영차! 가파른 오르막'];
+  if(m<STEEP_M*0.82) return ['😱',T({ko:'가장 무서운 구간! 급강하',en:'The scariest stretch! Steep drop',zh:'最吓人的一段！急速下降'})];
+  if(m<-1.2) return ['😲',T({ko:'쌩— 내려가는 중',en:'Whoosh — going down',zh:'咻——正在下降'})];
+  if(m<-0.25) return ['🙂',T({ko:'살살 내려가요',en:'A gentle descent',zh:'缓缓下降'})];
+  if(m<0.25) return ['😐',T({ko:'여기는 거의 수평 — 기울기 0',en:'Almost flat here — slope 0',zh:'这里几乎水平——斜率0'})];
+  if(m<1.2) return ['😀',T({ko:'천천히 올라가요',en:'Climbing slowly',zh:'慢慢往上爬'})];
+  return ['😤',T({ko:'영차! 가파른 오르막',en:'Heave-ho! A steep climb',zh:'加油！陡坡上行'})];
 }
 var foundSteep=false;
 function paintR(){
   var x=(+document.getElementById('slR').value)/100;
   var c=gR.c;
-  axes(gR,'롤러코스터 트랙');
+  axes(gR,TRACK_LABEL);
   /* 트랙 */
   c.strokeStyle='#2B3A67';c.lineWidth=3;c.beginPath();
   for(var i=0;i<=240;i++){var t=i/100,px=gR.X(t),py=gR.Y(track(t));i?c.lineTo(px,py):c.moveTo(px,py);}
@@ -361,48 +476,90 @@ function paintR(){
   var fc=faceFor(m);
   c.font='26px sans-serif';c.fillText(fc[0],gR.X(x),gR.Y(y)-30);
   document.getElementById('labR').textContent=fc[1];
-  document.getElementById('valR').innerHTML='이 지점의 기울기 = <b>'+m.toFixed(2)+'</b>';
+  document.getElementById('valR').innerHTML=
+    T({ko:'이 지점의 기울기 = ',en:'slope at this point = ',zh:'这一点的斜率 = '})+'<b>'+m.toFixed(2)+'</b>';
   var fb=document.getElementById('fbR');
   if(Math.abs(x-STEEP_X)<0.07){
     fb.className='fb ok';
-    fb.textContent='🎯 찾았어요! 여기가 가장 가파른 곳(기울기 '+STEEP_M.toFixed(2)+') — 롤러코스터가 가장 무서운 순간이에요.';
+    fb.textContent=T({ko:'🎯 찾았어요! 여기가 가장 가파른 곳(기울기 '+STEEP_M.toFixed(2)+') — 롤러코스터가 가장 무서운 순간이에요.',
+                      en:'🎯 Found it! This is the steepest point (slope '+STEEP_M.toFixed(2)+') — the scariest moment of the ride.',
+                      zh:'🎯 找到了！这里最陡（斜率'+STEEP_M.toFixed(2)+'）——过山车最吓人的一刻。'});
     foundSteep=true;
   }else if(Math.abs(m)<0.08){
     fb.className='fb';fb.style.color='var(--indigo)';
-    fb.textContent='⛰ 꼭대기예요 — 기울기가 0! 이 지점을 찾는 것이 "극값" 구하기예요.';
+    fb.textContent=T({ko:'⛰ 꼭대기예요 — 기울기가 0! 이 지점을 찾는 것이 "극값" 구하기예요.',
+                      en:'⛰ You are at the summit — slope 0! Finding this point is what "finding extrema" means.',
+                      zh:'⛰ 到顶了——斜率是0！找这个点就是求"极值"。'});
   }else{
     fb.className='fb';fb.style.color='var(--sub)';
-    fb.textContent=foundSteep?'':'가장 가파르게 떨어지는 지점을 찾아보세요.';
+    fb.textContent=foundSteep?'':T({ko:'가장 가파르게 떨어지는 지점을 찾아보세요.',
+                                    en:'Try to find the steepest drop.',
+                                    zh:'找一找下降最陡的地方。'});
   }
 }
 document.getElementById('slR').addEventListener('input',paintR);
 paintR();
 
 /* ── 실생활 카드 ── */
+var TAG_D={ko:'미분',en:'differentiation',zh:'微分'},
+    TAG_I={ko:'적분',en:'integration',zh:'积分'},
+    TAG_B={ko:'미분 + 적분',en:'differentiation + integration',zh:'微分＋积分'};
 var USES=[
-  ['🚗','자동차 계기판 바늘은 "지금" 속도를 어떻게 알까?',
-   '위치가 변하는 빠르기가 곧 속도예요. 거리를 시간으로 미분한 값이죠. 내비게이션의 "도착 예정 시각"도 같은 계산이에요.','미분'],
-  ['📈','뉴스에서 "증가세가 꺾였다"는 말은 무슨 뜻일까?',
-   '숫자는 계속 늘어도 <b>늘어나는 속도</b>가 줄었다는 뜻이에요. 그 속도가 바로 미분이고, 그래서 그래프가 여전히 오르는데도 "꺾였다"고 말할 수 있어요.','미분'],
-  ['💊','약은 왜 하루 세 번 먹을까?',
-   '몸속 약 농도는 시간에 따라 올랐다 내려요. 언제 가장 높은지(기울기가 0이 되는 지점)와 몸이 흡수한 총량(농도를 시간으로 다 더한 값)을 계산해 간격을 정해요.','미분 + 적분'],
-  ['🎮','게임 속 점프와 총알은 왜 자연스럽게 휠까?',
-   '물리 엔진은 1초에 60번, 매 순간의 속도를 위치에 조금씩 더해요. 잘게 쪼개 더하는 것 — 적분을 컴퓨터가 대신 하는 거예요.','적분'],
-  ['🚀','로켓은 떨어지면서 어떻게 정확히 착륙할까?',
-   '매 순간의 속도와 가속도를 계산해 역추진 힘을 조절해요. "지금 이 순간"의 값을 알아야 하니 미분이 필수예요.','미분'],
-  ['🌊','댐에 흘러든 물의 총량은 어떻게 알까?',
-   '유량계는 "지금 초당 몇 톤"만 알려줘요. 그 값을 시간에 걸쳐 모두 더하면 총량이 나와요 — 얇은 직사각형을 다 더하는 적분 그대로예요.','적분'],
-  ['🤖','AI는 어떻게 스스로 똑똑해질까?',
-   '틀린 정도를 산이라고 보고, <b>가장 빨리 내려가는 방향</b>을 미분으로 찾아 조금씩 내려가요(경사하강법). AI 학습의 심장이 미분이에요.','미분'],
-  ['🎢','롤러코스터 설계자는 무엇을 계산할까?',
-   '어느 지점이 얼마나 가파른지(기울기), 꼭대기는 어디인지(기울기 0), 얼마나 빨라질지 — 위에서 손잡이로 해 본 그 계산이에요.','미분']
+  ['🚗',{ko:'자동차 계기판 바늘은 "지금" 속도를 어떻게 알까?',
+         en:'How does a car\'s needle know your speed "right now"?',
+         zh:'汽车仪表盘的指针怎么知道"此刻"的速度？'},
+        {ko:'위치가 변하는 빠르기가 곧 속도예요. 거리를 시간으로 미분한 값이죠. 내비게이션의 "도착 예정 시각"도 같은 계산이에요.',
+         en:'Speed is how fast your position changes — distance differentiated with respect to time. A satnav\'s "estimated arrival" runs the same calculation.',
+         zh:'速度就是位置变化的快慢，也就是距离对时间求导。导航里的"预计到达时间"用的是同一套计算。'},TAG_D],
+  ['📈',{ko:'뉴스에서 "증가세가 꺾였다"는 말은 무슨 뜻일까?',
+         en:'What does the news mean by "growth has slowed"?',
+         zh:'新闻里说"增速放缓了"是什么意思？'},
+        {ko:'숫자는 계속 늘어도 <b>늘어나는 속도</b>가 줄었다는 뜻이에요. 그 속도가 바로 미분이고, 그래서 그래프가 여전히 오르는데도 "꺾였다"고 말할 수 있어요.',
+         en:'The number keeps rising, but <b>the speed of the rise</b> has dropped. That speed is the derivative — which is why a graph can still be climbing and yet have "slowed".',
+         zh:'数字还在涨，但<b>上涨的速度</b>变小了。那个速度就是导数——所以图还在上升，也可以说"放缓了"。'},TAG_D],
+  ['💊',{ko:'약은 왜 하루 세 번 먹을까?',
+         en:'Why do you take medicine three times a day?',
+         zh:'药为什么要一天吃三次？'},
+        {ko:'몸속 약 농도는 시간에 따라 올랐다 내려요. 언제 가장 높은지(기울기가 0이 되는 지점)와 몸이 흡수한 총량(농도를 시간으로 다 더한 값)을 계산해 간격을 정해요.',
+         en:'The drug\'s concentration rises and falls over time. Doctors work out when it peaks (where the slope is 0) and how much the body absorbed in total (the concentration added up over time) to set the interval.',
+         zh:'体内药物浓度随时间先升后降。医生计算它何时最高（斜率为0处）和身体吸收的总量（浓度对时间的累加），才定下服药间隔。'},TAG_B],
+  ['🎮',{ko:'게임 속 점프와 총알은 왜 자연스럽게 휠까?',
+         en:'Why do jumps and bullets curve so naturally in games?',
+         zh:'游戏里的跳跃和子弹为什么弯得那么自然？'},
+        {ko:'물리 엔진은 1초에 60번, 매 순간의 속도를 위치에 조금씩 더해요. 잘게 쪼개 더하는 것 — 적분을 컴퓨터가 대신 하는 거예요.',
+         en:'The physics engine adds the current velocity into the position sixty times a second. Slicing fine and adding up — the computer doing integration for you.',
+         zh:'物理引擎每秒60次，把当前速度一点点加到位置上。切细了再相加——就是计算机替你做积分。'},TAG_I],
+  ['🚀',{ko:'로켓은 떨어지면서 어떻게 정확히 착륙할까?',
+         en:'How does a falling rocket land so precisely?',
+         zh:'火箭一边下落，怎么还能精准着陆？'},
+        {ko:'매 순간의 속도와 가속도를 계산해 역추진 힘을 조절해요. "지금 이 순간"의 값을 알아야 하니 미분이 필수예요.',
+         en:'It computes its velocity and acceleration at every instant and trims the retro-thrust accordingly. You need the value "at this instant", so differentiation is essential.',
+         zh:'它每一刻都计算自己的速度和加速度，据此调节反推力。必须知道"此刻"的值，所以离不开微分。'},TAG_D],
+  ['🌊',{ko:'댐에 흘러든 물의 총량은 어떻게 알까?',
+         en:'How do you know the total water that flowed into a dam?',
+         zh:'流进水坝的水总量是怎么知道的？'},
+        {ko:'유량계는 "지금 초당 몇 톤"만 알려줘요. 그 값을 시간에 걸쳐 모두 더하면 총량이 나와요 — 얇은 직사각형을 다 더하는 적분 그대로예요.',
+         en:'The flow meter only reports "so many tonnes per second, right now." Add that up across time and you get the total — exactly the integration of thin rectangles.',
+         zh:'流量计只报"此刻每秒多少吨"。把这个值在时间上全部加起来就是总量——正是把薄长方形全加起来的积分。'},TAG_I],
+  ['🤖',{ko:'AI는 어떻게 스스로 똑똑해질까?',
+         en:'How does an AI get smarter on its own?',
+         zh:'AI是怎么自己变聪明的？'},
+        {ko:'틀린 정도를 산이라고 보고, <b>가장 빨리 내려가는 방향</b>을 미분으로 찾아 조금씩 내려가요(경사하강법). AI 학습의 심장이 미분이에요.',
+         en:'Treat its error as a mountain, use differentiation to find <b>the fastest way down</b>, and step down a little at a time (gradient descent). Differentiation is the heart of machine learning.',
+         zh:'把误差看成一座山，用微分找出<b>下降最快的方向</b>，一点点往下走（梯度下降）。微分就是AI学习的心脏。'},TAG_D],
+  ['🎢',{ko:'롤러코스터 설계자는 무엇을 계산할까?',
+         en:'What does a roller-coaster designer calculate?',
+         zh:'过山车设计师要算些什么？'},
+        {ko:'어느 지점이 얼마나 가파른지(기울기), 꼭대기는 어디인지(기울기 0), 얼마나 빨라질지 — 위에서 손잡이로 해 본 그 계산이에요.',
+         en:'How steep each point is (the slope), where the summits are (slope 0), how fast the cart will get — exactly the calculation you just did with the slider above.',
+         zh:'每一点有多陡（斜率）、顶点在哪里（斜率0）、会变得多快——正是你刚才用滑块做过的计算。'},TAG_D]
 ];
 var list=document.getElementById('useList');
 USES.forEach(function(u){
   var b=document.createElement('button');
   b.className='use';
-  b.innerHTML='<div class="use-q">'+u[0]+' '+u[1]+'</div>'+
-              '<div class="use-a">'+u[2]+'<br><span class="use-tag">'+u[3]+'</span></div>';
+  b.innerHTML='<div class="use-q">'+u[0]+' '+T(u[1])+'</div>'+
+              '<div class="use-a">'+T(u[2])+'<br><span class="use-tag">'+T(u[3])+'</span></div>';
   b.onclick=function(){b.classList.toggle('open');};
   list.appendChild(b);
 });
