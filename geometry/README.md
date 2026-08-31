@@ -30,7 +30,7 @@
 - games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
 - games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
 - games/dice-roll/ - 주사위 굴리기: 격자 경로를 따라 윗면·앞면·오른쪽 면 변화를 추적하는 5단계, 50문제
-- games/path-walk/ - 길 잇기 산책로: 타일 회전·갈림길·최단 경로·숨은 타일 5단계, 50문제
+- games/path-walk/ - 길 잇기 산책로: 한 길·숨은 타일·갈림길·막힌 길·최단 경로 5단계, 50문제
 - games/hidden-shape/ - 숨은 도형 탐정: 삼각형·정사각형·직사각형 세기 5단계, 50문제
 - games/equal-partition/ - 똑같이 나누기: 같은 넓이·합동·수 조건 분할 5단계, 50문제
 - games/soma-cube/ - 소마큐브 공방: 7조각 회전·2~3조각 합성·3×3×3 완성 5단계, 50문제
@@ -88,4 +88,15 @@ node geometry/geometry-release.browsercheck.mjs
 ```powershell
 $env:GFIELD_BASE_URL='https://lete-on.gfieldacademy.net'
 node geometry/geometry-release.browsercheck.mjs
+```
+
+## 길 잇기 산책로 배포 회귀 검사
+
+길 잇기 50문항의 독립 정답, 5단계 자동 진행·화면·키보드·네 언어, A4 학습지를 검사합니다.
+
+```powershell
+node geometry/games/path-walk/path-walk-content-audit.mjs
+node geometry/games/path-walk/path-walk.selftest.mjs
+node geometry/games/path-walk/path-walk.browsercheck.mjs
+node geometry/worksheet/path-walk/path-walk-sheet.browsercheck.mjs
 ```

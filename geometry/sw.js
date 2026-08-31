@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v21";
+const CACHE = "gfield-geo-v22";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/cube-town/",
@@ -42,6 +42,13 @@ const CORE = [
   "/geometry/games/dice-roll/app.js?v=dice-roll-9",
   "/geometry/games/dice-roll/levels.js?v=dice-roll-3",
   "/geometry/games/dice-roll/route-scene.js?v=dice-roll-3",
+  "/geometry/games/path-walk/",
+  "/geometry/games/path-walk/styles.css?v=path-walk-2",
+  "/geometry/games/path-walk/app.js?v=path-walk-2",
+  "/geometry/games/path-walk/levels.js?v=path-walk-2",
+  "/geometry/worksheet/path-walk/",
+  "/geometry/worksheet/path-walk/styles.css?v=path-sheet-2",
+  "/geometry/worksheet/path-walk/app.js?v=path-sheet-2",
   "/geometry/manifest.webmanifest",
   "/geometry/shared/viewport-fit.js?v=1",
   "/geometry/shared/problem-pool.js",
