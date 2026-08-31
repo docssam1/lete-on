@@ -1604,3 +1604,38 @@ story.history 보유 유닛 **95개 전부** 만화 완성(이전 6편 → 95편
 아티팩트). 스크립트로 사람처럼 스크롤한 뒤 `getComputedStyle(el).opacity`를 읽어야
 진짜 판정이 된다 — 13곳 전부 발화 확인. 드릴 미리보기는 `.katex` 텍스트를 비교해야
 하며 `[class*=preview]` 같은 거친 셀렉터는 오탐을 낸다.
+
+## 2026-08-31 야간 — 원장 지시 8건 일괄 (승인·로드맵·문장제·워터마크·적응형·소개·게임)
+
+원장이 자며 승인 없이 진행하라 지시한 배치 작업. 설계=Fable, 구현 대부분=에이전트,
+검토·검증=Fable. 전부 main에 푸시됨.
+
+- **승인번호 체계** (`승인번호-설계.md`, c9dc6d5d) — 게이트는 열린 상태 유지(잠그는
+  한 줄은 문서 §5). Supabase nm_codes에 발급용 코드 30개(NM-XXXX-XXXX, 혼동 글자
+  제외). 발급·회수·재고 SQL은 문서에. **코드값은 절대 git 금지.** 개발 검증용 코드
+  1개가 active로 남아 있음 — 게이트 켜는 날 비활성화할 것.
+- **학습지 모드 연산 로드맵** (81462016) — 학습지 섹션 3번째 카드 🛤️. NM_COURSES
+  45과정을 티어별 아코디언으로, 세션 단위 renderPrintMulti 인쇄(봉투코드 C{n}-S{m}).
+  main.js가 currentCourseKey()·ROAD_TIERS를 examScreen 옵션으로 넘긴다.
+- **문제은행 문장제** (81462016) — drill.html 벤치에 유형 세그먼트(숫자/섞기/문장제만).
+  ⚠️ runExam이 wordType을 안 받던 구멍을 메움 — 인쇄(renderPrint)와 이제 동일 동작.
+  applyWordProblems는 NM_EXAM에 노출됨(미리보기 재사용).
+- **적응형 타이포·말투** (`적응형-타이포-말투-설계.md`, 81462016) — 인쇄 printAgeBand와
+  같은 young/mid/senior 3밴드를 앱에 확장. computeBand()(진도 기반)가 render()마다
+  html[data-nm-band] 세팅 → CSS 토큰(--nm-fs-body 등). ko 전용 VOICE_BANDS 오버레이가
+  t()를 감싼다. **새 시스템 문자열을 추가하면 young/senior 두 벌도 고려할 것.**
+- **인쇄 이름 워터마크** (65623554) — 프로필 이름을 모든 인쇄 페이지에 사선 6%로.
+  fixed 요소는 인쇄에서 페이지마다 반복된다는 성질 이용. renderPrint·renderPrintMulti 둘 다.
+- **소개페이지 2차 리디자인** (6cf47ad4) — 밤하늘 canvas 성좌 히어로(8+7→10+5→15
+  파티클, reduced-motion 정적 폴백) + 5챕터(철학·사다리·숫자·친구들·입장) + 수학사
+  캐릭터 12종 필름 스트립. stat-num 구조는 check-about-stats.js와 연동 유지.
+  ⚠️ canvas는 absolute+inset만으론 300×150 고정 — width/height 100% 명시 필요(수정됨).
+- **게임 확장** (0bc580a0) — ①프로필 슬롯 3개(nm_state_slot1~3+nm_active_slot,
+  전환=백업→승격→reload — nm_state_v1 경로 무변경) ②아이템: colors12·bgs10·capes9·
+  numbers22 + 모자 6종(신규 카테고리, numi-render hatSVG) ③지도 위로 확장(687→947px):
+  원경에 중등 다리·경시의 탑 스팟(→courseroad). ⚠️ Playwright로 슬롯 검증 시
+  addInitScript가 reload마다 시드를 재주입해 전환을 되돌린다 — 마커 가드 필수.
+- **CHALLENGE(지시 2)** — 이미 9a1fc5a3(2026-08-25)에서 완전 구현돼 있었음(CH1~13·
+  adv.js·H-01~13·courses 26~28 배치). check-answerable 492레벨 전 통과 재확인만 함.
+- **레거시 프로토 6종 삭제** (35228ad5) — book/chapter/concept_proto/print/proto/
+  town_proto.html. app.html은 index 리다이렉트 스텁이라 북마크 보호용으로 유지.
