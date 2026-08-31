@@ -109,7 +109,9 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
-  symbolDex:{} /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */ };}
+  symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
+  seenR0Banner:false, /* N-15 완료 시 R0 추천 배너 — 프로필당 1회만(2차 디자인 패스) */
+  pendingR0Banner:false /* stepStamp에서 세우고 다음 마을 진입 때 소비하는 1회성 표시 플래그 */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -500,6 +502,7 @@ function charChipHTML(){
 function render(){
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
+  window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(wsHelperId){
@@ -828,6 +831,29 @@ function screenTown(){
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
+  maybeShowR0Banner(scr);
+}
+
+/* ── R0 추천 배너 — N-15(수의 나라) 최초 완주 직후 다음 마을 진입 때 1회 ──
+   stepStamp()가 S.pendingR0Banner를 세운다. 여기서 소비(끔)하고 seenR0Banner를
+   영구히 켜 프로필당 한 번만 뜨게 한다. 잠금 아님 — [나중에]로 그냥 닫아도 되고,
+   다음에 또 마을에 들어와도 다시 뜨지 않는다(추천은 1회, 강요 아님). */
+function maybeShowR0Banner(scr){
+  if(!S.pendingR0Banner)return;
+  S.pendingR0Banner=false;S.seenR0Banner=true;save();
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const wrap=document.createElement('div');
+  wrap.className='nm-r0-overlay';
+  wrap.innerHTML=`<div class="nm-r0-card">
+    <div class="nm-r0-ico">🌱</div>
+    <div class="nm-r0-title">${lk('수의 나라를 다 여행했어요!','You’ve explored all of Number Land!','你游遍了数字王国！')}</div>
+    <p class="nm-r0-body">${lk('이제 연산 첫걸음(R0)으로 떠나볼까요?','Ready to set off on First Steps (R0)?','现在要出发去计算第一步(R0)了吗？')}</p>
+    <button class="nm-r0-go" id="r0BannerGo">🌱 ${lk('연산 첫걸음 보러가기','See First Steps','看看第一步')}</button>
+    <button class="nm-r0-later" id="r0BannerLater">${lk('나중에','Later','以后再说')}</button>
+  </div>`;
+  scr.appendChild(wrap);
+  wrap.querySelector('#r0BannerGo').onclick=()=>{wrap.remove();S._roadFocusChapter='R0';S.view='roadmap';save();render();};
+  wrap.querySelector('#r0BannerLater').onclick=()=>{wrap.remove();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -881,7 +907,7 @@ function screenRoadmap(){
       return;
     }
     const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
-    html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
+    html+=`<div class="nm-road-chapter ${chapDone?'done':''}" data-chid="${esc(ch.id||'')}">
       <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
         ${ch.edu?`<span class="nm-edu-badge">${L(ch.edu)}</span>`:''}
       </div>`;
@@ -907,6 +933,14 @@ function screenRoadmap(){
 
   html+=`</div></div>`;
   scr.innerHTML=html;
+
+  /* R0 배너의 "보러가기"가 세운 챕터 포커스 — courseroad의 scrollIntoView와 같은 패턴.
+     한 번 쓰고 지운다(다음 재렌더 때 다시 스크롤 튀지 않게). */
+  if(S._roadFocusChapter){
+    const chEl=scr.querySelector(`.nm-road-chapter[data-chid="${S._roadFocusChapter}"]`);
+    if(chEl)chEl.scrollIntoView({block:'start'});
+    S._roadFocusChapter=null;
+  }
 
   $('#roadBack').onclick=()=>{S.view='town';save();render();};
 
@@ -3038,6 +3072,7 @@ function runPracticeWidget(body,u,cur,first,need){
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#pracWidget'),val=>{
     if(+val===cur.answer){
+      if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.cur=null;
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
@@ -3445,6 +3480,7 @@ function stepLabWidget(body,u){
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
+      if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
@@ -3634,7 +3670,11 @@ function stepStamp(body,u){
   let newLineageBadge=null;
   if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
     S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
-    S.progress[S.unit].touchedAt=Date.now();save();
+    S.progress[S.unit].touchedAt=Date.now();
+    /* N-15(수의 나라 마지막 유닛) 최초 완주 — R0 추천 배너를 다음 마을 진입 때 1회 띄우도록 예약.
+       잠금 아님(자유 선택 원칙) — 추천만, seenR0Banner로 프로필당 한 번만. */
+    if(S.unit==='N-15'&&!S.seenR0Banner)S.pendingR0Banner=true;
+    save();
     newLineageBadge=checkLineageCompletion();}
   const evo=lineageEvoCardHtml(S.unit);
   body.innerHTML=`<div class="nm-card center stamp">
