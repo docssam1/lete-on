@@ -1,4 +1,6 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901b";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901c";
+import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901a";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
 import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
@@ -30,6 +32,19 @@ const state = {
 
 function saveProgress() {
   localStorage.setItem(storageKey, JSON.stringify(state.progress));
+}
+
+function recordOutcome(scope, itemId, status) {
+  const lesson = activeLesson();
+  recordGoldenBellOutcome(state.progress, {
+    bookId: state.bookId,
+    lessonId: lesson.id,
+    scope,
+    itemId,
+    status,
+    typeIds: lesson.sourceTypeIds || []
+  });
+  saveProgress();
 }
 
 function activeBook() { return goldenBellBookById(state.bookId); }
@@ -77,6 +92,7 @@ function isLessonComplete(lesson) { return Boolean(lessonProgress(lesson).origin
 
 function conceptReady(lesson = activeLesson()) {
   const experience = lesson?.experience;
+  if (experience?.kind === "guided-concept") return ["correct", "revealed"].includes(state.experience.checks[`guided:${lesson.id}`]);
   if (experience?.kind !== "triangular-stair") return true;
   const stepsComplete = experience.beats.every((beat) => state.experience.checks[beat.id] === true);
   const practiceComplete = (experience.practice || []).every((item) => ["correct", "revealed"].includes(state.experience.practice[item.id]?.status));
@@ -184,6 +200,7 @@ function triangularExperienceSummaryMarkup(experience) {
 function experienceSummaryMarkup(experience) {
   if (experience.kind === "clock-turning") return clockExperienceSummaryMarkup(experience);
   if (experience.kind === "triangular-stair") return triangularExperienceSummaryMarkup(experience);
+  if (experience.kind === "guided-concept") return guidedConceptPrintSummary(experience);
   return "";
 }
 
@@ -301,11 +318,24 @@ function renderTriangularStairExperience(experience) {
   return `${typeTracksMarkup(experience)}<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
 }
 
+function renderGuidedConceptExperience(experience) {
+  const currentStep = state.experience.step;
+  const atFirst = currentStep === 0;
+  const atLast = currentStep === experience.beats.length - 1;
+  const checkKey = `guided:${activeLesson().id}`;
+  const checkStatus = state.experience.checks[checkKey];
+  const complete = ["correct", "revealed"].includes(checkStatus);
+  const progress = experience.beats.map((beat, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}">${index + 1}</i>`).join("");
+  const check = atLast ? `<section class="experience-check guided-check"><p>${experience.check.prompt}</p><div class="answer-choices">${experience.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${escapeAttribute(option)}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><button type="button" class="secondary-action guided-answer" data-experience-answer ${complete ? "disabled" : ""}>답 보기</button>${state.experience.feedback ? `<p class="feedback ${state.experience.feedback.passed ? "success" : ""}">${state.experience.feedback.message}</p>` : ""}</section>` : '<p class="guided-check-wait">마지막 장면까지 살펴보면 확인 문제가 열립니다.</p>';
+  return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${experience.beats[currentStep].caption}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
+}
+
 function renderExperience(lesson) {
   const experience = lesson.experience;
   if (!experience) return "";
   if (experience.kind === "clock-turning") return renderClockExperience(experience);
   if (experience.kind === "triangular-stair") return renderTriangularStairExperience(experience);
+  if (experience.kind === "guided-concept") return renderGuidedConceptExperience(experience);
   return "";
 }
 
@@ -787,7 +817,9 @@ function renderExtension(lesson) {
 function renderComplete(lesson) {
   const book = activeBook();
   const nextLesson = book.lessons.find((candidate) => !isLessonComplete(candidate));
-  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
+  const summary = summarizeGoldenBellLesson(lessonProgress(lesson));
+  const record = summary.total ? `<section class="learning-record"><h3>이번 학습 기록</h3><dl><div><dt>혼자 해결</dt><dd>${summary.correct}</dd></div><div><dt>답 확인</dt><dd>${summary.revealed}</dd></div><div><dt>넘어감</dt><dd>${summary.skipped}</dd></div><div><dt>다시 볼 문항</dt><dd>${summary.review}</dd></div></dl>${summary.reviewTypeIds.length ? `<a href="../prescription/?student=${encodeURIComponent(student)}&types=${encodeURIComponent(summary.reviewTypeIds.join(","))}&view=type">이 유형 다시 연습</a>` : ""}</section>` : "";
+  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
@@ -879,7 +911,11 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-experience-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     state.experience.answer = button.dataset.experienceChoice;
-    if (experience.kind === "triangular-stair") {
+    if (experience.kind === "guided-concept") {
+      const passed = state.experience.answer === experience.check.answer;
+      state.experience.checks[`guided:${activeLesson().id}`] = passed ? "correct" : "wrong";
+      state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러 확인할 수 있습니다." };
+    } else if (experience.kind === "triangular-stair") {
       clearExperiencePlayback();
       const beat = experience.beats[state.experience.checkStep];
       const passed = state.experience.answer === beat.check.answer;
@@ -894,8 +930,18 @@ function bindLessonActions() {
         message: state.experience.answer === experience.check.answer ? "맞아요. 반 바퀴는 맞은편을 가리켜 8입니다." : "시계판의 맞은편을 다시 찾아보세요. 2의 맞은편은 8입니다."
       };
     }
-    renderContent();
+    if (experience.kind === "guided-concept") render();
+    else renderContent();
   }));
+  $("lessonContent").querySelector("[data-experience-answer]")?.addEventListener("click", () => {
+    const lesson = activeLesson();
+    const experience = lesson.experience;
+    if (experience?.kind !== "guided-concept") return;
+    state.experience.answer = experience.check.answer;
+    state.experience.checks[`guided:${lesson.id}`] = "revealed";
+    state.experience.feedback = { passed: false, message: `답: ${experience.check.answer}. ${experience.check.explanation}` };
+    render();
+  });
   $("lessonContent").querySelectorAll("[data-concept-practice-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     const practice = experience?.practice?.find((item) => item.id === button.dataset.conceptPracticeChoice);
@@ -925,6 +971,7 @@ function bindLessonActions() {
     if (!item) return;
     state.selections[item.id] = approvedAnswer(item);
     state.originalAssists[item.id] = "revealed";
+    recordOutcome("original", item.id, "revealed");
     state.feedback = null;
     renderContent();
   }));
@@ -933,6 +980,7 @@ function bindLessonActions() {
     if (!item) return;
     delete state.selections[item.id];
     state.originalAssists[item.id] = "skipped";
+    recordOutcome("original", item.id, "skipped");
     state.feedback = null;
     renderContent();
   }));
@@ -956,7 +1004,12 @@ function bindLessonActions() {
     if (state.feedback?.kind === "original" && state.feedback.passed) return setPhase("extension");
     const wrongItems = lesson.original.items.filter((item) => !state.originalAssists[item.id] && !answersMatch(state.selections[item.id], item.answer));
     const passed = wrongItems.length === 0;
-    if (passed) completeOriginal();
+    if (passed) {
+      lesson.original.items.filter((item) => !state.originalAssists[item.id]).forEach((item) => recordOutcome("original", item.id, "correct"));
+      completeOriginal();
+    } else {
+      wrongItems.forEach((item) => recordOutcome("original", item.id, "wrong"));
+    }
     const retryVerb = lesson.original.items.every((item) => item.answerMode === "input") ? "써" : "골라";
     const revealedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "revealed").length;
     const skippedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "skipped").length;
@@ -975,6 +1028,7 @@ function bindLessonActions() {
     if (state.feedback?.kind === "extension" && state.feedback.passed) return setPhase("complete");
     const selected = state.selections[`${lesson.id}:extension`];
     const passed = answersMatch(selected, lesson.extension.answer);
+    recordOutcome("extension", `${lesson.id}:extension`, passed ? "correct" : "wrong");
     if (passed) completeExtension();
     state.feedback = { kind: "extension", passed, message: passed ? lesson.extension.explanation : `원본에서 배운 원리는 같습니다. ${lesson.explanation.steps[0]}` };
     render();
@@ -1038,7 +1092,7 @@ $("printLessonButton").addEventListener("click", () => printLessons([activeLesso
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons));
 window.addEventListener("keydown", (event) => {
   const lesson = activeLesson();
-  if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair"].includes(lesson.experience.kind)) return;
+  if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair", "guided-concept"].includes(lesson.experience.kind)) return;
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) return;
   if (event.key === "ArrowLeft") {
     event.preventDefault();

@@ -111,6 +111,53 @@ async function auditReducedMotionClock() {
   await page.close();
 }
 
+async function auditBookOneGuidedConcepts() {
+  const cases = [
+    { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
+    { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
+    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" }
+  ];
+
+  for (const item of cases) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=GUIDED-${item.id}&book=book-01`, { waitUntil: "networkidle" });
+    await page.locator(`.lesson-button[data-lesson="${item.id}"]`).click();
+    const experience = page.locator(`.guided-concept[data-guided-family="${item.family}"]`);
+    assert.equal(await experience.count(), 1, `${item.id}: guided concept missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: original problem must start locked`);
+    assert.equal(await experience.locator(".experience-check").count(), 0, `${item.id}: check appeared before the final scene`);
+    const next = experience.locator('[data-experience-action="next"]');
+    for (let step = 0; step < 3; step += 1) await next.click();
+    assert.equal(await experience.locator(".experience-check").count(), 1, `${item.id}: final check missing`);
+    assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: approved answer is not unique`);
+    await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();
+    assert.match(await experience.locator(".feedback").innerText(), /다시 살펴/u, `${item.id}: wrong-answer feedback missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: wrong answer unlocked the original problem`);
+    await experience.locator("[data-experience-answer]").click();
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: approved answer view missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: answer view did not unlock the original problem`);
+
+    const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({
+      text: node.textContent.trim(),
+      fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+      height: node.matches("button") ? node.getBoundingClientRect().height : null
+    })));
+    assert.ok(typography.every(({ fontSize }) => fontSize >= 14), `${item.id}: course-1 guided text is too small: ${JSON.stringify(typography)}`);
+    assert.ok(typography.filter(({ height }) => height != null).every(({ height }) => height >= 40), `${item.id}: guided touch control is too small: ${JSON.stringify(typography)}`);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    assert.equal(overflow, false, `${item.id}: mobile horizontal overflow`);
+
+    await page.evaluate(() => { window.print = () => {}; });
+    await page.locator("#printLessonButton").click();
+    await page.waitForTimeout(100);
+    const printSummary = page.locator(".guided-print-summary");
+    assert.equal(await printSummary.count(), 1, `${item.id}: guided print summary missing`);
+    assert.equal(await printSummary.locator("button, input, select").count(), 0, `${item.id}: print summary contains interactive controls`);
+    await page.close();
+  }
+  return cases.length;
+}
+
 async function auditInteractiveTriangularStair() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=TRIANGULAR-AUDIT&book=book-05`, { waitUntil: "networkidle" });
@@ -160,6 +207,8 @@ async function auditInteractiveTriangularStair() {
   for (let index = 0; index < 3; index += 1) await practiceCards.nth(index).locator("[data-concept-practice-answer]").click();
   assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, "answer-view completion did not unlock the original source problem");
   assert.equal(await practiceCards.nth(0).locator(".feedback").innerText().then((text) => text.includes("답: 6")), true, "concept answer view did not reveal the approved practice answer");
+  const fontSizes = await page.locator(".type-track-question>p, .type-track-question .answer-choices button, .experience-check>p, .concept-practice-card>p, .concept-practice-card .answer-choices button").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
+  assert.ok(fontSizes.length > 0 && fontSizes.every((size) => size >= 14), `course-1 triangular learning text is too small: ${fontSizes.join(",")}`);
   await page.locator('.stage-step[data-phase="original"]').click();
   const originalItems = page.locator("[data-original-item]");
   assert.equal(await originalItems.count(), 2, "triangular source questions must stay as two separate items");
@@ -181,6 +230,11 @@ async function auditInteractiveTriangularStair() {
   await originalCheck.click();
   assert.match(await page.locator(".feedback.success").innerText(), /답을 본 1문제, 넘어간 1문제/u, "assisted completion summary missing");
   assert.equal(await originalCheck.innerText(), "다음", "resolved source questions did not unlock the next step");
+  const originalProgress = await page.evaluate(() => JSON.parse(localStorage.getItem("fields-classic-golden-bell:TRIANGULAR-AUDIT")));
+  const savedLesson = originalProgress["book-05"]["cube-tetrahedral-growth"];
+  assert.equal(savedLesson.outcomes.original["stair-four"].status, "revealed", "answer-view outcome was not saved");
+  assert.equal(savedLesson.outcomes.original["stair-four"].wrongCount, 1, "wrong attempt history was not preserved");
+  assert.equal(savedLesson.outcomes.original["stair-seven"].status, "skipped", "skip outcome was not saved");
   const assistFontSizes = await page.locator(".quiz-item-actions button, .quiz-item-assist").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
   assert.ok(assistFontSizes.every((size) => size >= 14), `source-question assist text is too small: ${assistFontSizes.join(",")}`);
   await page.evaluate(() => { window.print = () => {}; });
@@ -190,8 +244,20 @@ async function auditInteractiveTriangularStair() {
   assert.equal(await printedConcept.count(), 1, "triangular instructional print still missing");
   assert.equal(await printedConcept.locator("button, select, input").count(), 0, "triangular print must not contain interactive controls");
   assert.equal((await printedConcept.innerText()).includes("20개"), false, "triangular print leaked the original fourth-stage answer");
-  const fontSizes = await page.locator(".type-track-question>p, .type-track-question .answer-choices button, .experience-check>p, .concept-practice-card>p, .concept-practice-card .answer-choices button").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
-  assert.ok(fontSizes.every((size) => size >= 14), `course-1 triangular learning text is too small: ${fontSizes.join(",")}`);
+  await originalCheck.click();
+  const extensionInput = page.locator('[data-input-group="cube-tetrahedral-growth:extension"]');
+  await extensionInput.fill("35");
+  const extensionCheck = page.locator('[data-check="extension"]');
+  await extensionCheck.click();
+  assert.equal(await extensionCheck.innerText(), "완료", "correct extension answer did not unlock completion");
+  await extensionCheck.click();
+  const learningRecord = page.locator(".learning-record");
+  assert.match(await learningRecord.innerText(), /혼자 해결\s*1/u, "independent completion count missing");
+  assert.match(await learningRecord.innerText(), /답 확인\s*1/u, "answer-view completion count missing");
+  assert.match(await learningRecord.innerText(), /넘어감\s*1/u, "skip completion count missing");
+  assert.match(await learningRecord.innerText(), /다시 볼 문항\s*2/u, "review count missing");
+  const reviewLink = learningRecord.locator("a");
+  assert.equal(new URL(await reviewLink.getAttribute("href"), page.url()).searchParams.get("types"), "cube-tetrahedral-growth", "review type link missing the source type id");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   assert.equal(overflow, false, "triangular concept experience mobile overflow");
   await page.close();
@@ -203,8 +269,9 @@ try {
   const geometryLabels = await auditGeometryAndPrint();
   await auditInteractiveClock();
   await auditReducedMotionClock();
+  const guidedConcepts = await auditBookOneGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }
