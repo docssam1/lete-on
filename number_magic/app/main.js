@@ -4075,8 +4075,10 @@ function screenWorksheetHelper(wsId){
    바로 이전 화면으로 돌아간다). 신규 설치·진행 없음은 그대로 온보딩→마을. */
 function maybeShowTitle(){
   if(!S.onboarded) return;
-  if(!/[?&]enter=1\b/.test(location.search)) return;
-  if(!mostRecentTouchedUnit()) return;
+  /* 재접속이면 항상 타이틀(모드 선택)부터 — enter=1·진행 기록 조건을 없앴다
+     (2026-09-01 원장 지적: 재접속인데 인트로/온보딩부터 나오면 안 된다).
+     진행이 없어도 타이틀은 안전하다(이어서 모험 → 마을로 낙하). 학습지
+     도우미(?ws=)는 render()가 이보다 먼저 분기하므로 영향 없다. */
   S.view='title';
 }
 /* ---------- 시작 ---------- */
