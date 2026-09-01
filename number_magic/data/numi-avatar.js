@@ -46,14 +46,36 @@ window.NM_AVATAR = {
     /* 은하 망토 — 무지개처럼 렌더러에서 그라디언트로 특수 처리(fg는 예비값) */
     {id:'galaxy', ko:'은하 망토',en:'Galaxy Cape',zh:'银河斗篷',fg:'#4a2a82',price:70},
   ],
-  /* 캐릭터 숫자 — 0~9 무료, 10 이상은 두 자리 수 "특별 보상"(코인으로 잠금 해제) */
+  /* 캐릭터 숫자 — 0~9 무료, 10 이상은 두 자리 수 "특별 보상"(코인 또는 과정 진도로
+     잠금 해제). course = 캐릭터-승급-설계.md §0 수정사항 표(티어→과정)의 과정 번호 —
+     currentCourseKey()의 과정 order가 이 값 이상이면 무료로 열린다(코인 구매와 별개
+     경로, 먼저 산 것은 유지). 0~9는 course 없음(항상 자유). */
   numbers:[
     {id:'0',free:true},{id:'1',free:true},{id:'2',free:true},{id:'3',free:true},
     {id:'4',free:true},{id:'5',free:true},{id:'6',free:true},{id:'7',free:true},
     {id:'8',free:true},{id:'9',free:true},
-    {id:'10',price:40},{id:'11',price:55},{id:'20',price:70},{id:'25',price:85},
-    {id:'33',price:100},{id:'42',price:105},{id:'50',price:130},{id:'64',price:140},
-    {id:'77',price:160},{id:'81',price:170},{id:'88',price:180},{id:'99',price:200},
+    {id:'10',price:40, course:10},{id:'11',price:55, course:10},
+    {id:'20',price:70, course:16},{id:'25',price:85, course:16},
+    {id:'33',price:100,course:25},{id:'42',price:105,course:25},{id:'50',price:130,course:25},
+    {id:'64',price:140,course:28},{id:'77',price:160,course:28},
+    {id:'81',price:170,course:35},{id:'88',price:180,course:35},
+    {id:'99',price:200,course:39},
+  ],
+  /* 수학 기호 캐릭터 10종 — 캐릭터-승급-설계.md §2. course = 그 기호를 배우는
+     data/courses.js의 과정 order(진도로 열림). 코인으로도 미리 살 수 있다(price).
+     그림은 numi-render.js가 PNG 우선(assets/characters/sym-<id>.png)·없으면 SVG로
+     직접 그린다(§0 수정사항). */
+  symbols:[
+    {id:'plus',    glyph:'+', ko:'더하기', en:'Plus',        zh:'加号',  course:1,  price:15},
+    {id:'equal',   glyph:'=', ko:'같다',   en:'Equals',      zh:'等号',  course:2,  price:20},
+    {id:'minus',   glyph:'−', ko:'빼기',   en:'Minus',       zh:'减号',  course:3,  price:25},
+    {id:'times',   glyph:'×', ko:'곱하기', en:'Times',       zh:'乘号',  course:5,  price:35},
+    {id:'divide',  glyph:'÷', ko:'나누기', en:'Divide',      zh:'除号',  course:8,  price:45},
+    {id:'sqrt',    glyph:'√', ko:'제곱근', en:'Square Root', zh:'平方根',course:20, price:90},
+    {id:'percent', glyph:'%', ko:'퍼센트', en:'Percent',     zh:'百分号',course:29, price:130},
+    {id:'pi',      glyph:'π', ko:'파이',   en:'Pi',          zh:'圆周率',course:34, price:150},
+    {id:'sigma',   glyph:'Σ', ko:'시그마', en:'Sigma',       zh:'西格玛',course:40, price:180},
+    {id:'infinity',glyph:'∞', ko:'무한대', en:'Infinity',    zh:'无穷大',course:42, price:190},
   ],
   /* 모자 — 캐릭터 PNG 위에 얹는 SVG 오버레이(numi-render.js의 hatSVG). 전부 원본
      도형(path/circle/polygon)만 사용, 어떤 기존 그림도 베끼지 않음. */

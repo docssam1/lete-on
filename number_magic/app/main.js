@@ -110,6 +110,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   roadPace:'p2',
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
+  seenUnlocks:{}, /* 과정 진도로 새로 연 캐릭터 토스트 재알림 방지(캐릭터-승급-설계.md §3) — {'number_42':true,'symbol_pi':true} */
   seenR0Banner:false, /* N-15 완료 시 R0 추천 배너 — 프로필당 1회만(2차 디자인 패스) */
   pendingR0Banner:false /* stepStamp에서 세우고 다음 마을 진입 때 소비하는 1회성 표시 플래그 */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
@@ -120,6 +121,7 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
 if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
 if(!S.character_unlocked)S.character_unlocked={};
+if(!S.seenUnlocks)S.seenUnlocks={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
@@ -508,9 +510,17 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+/* 캐릭터 라벨(이름 없을 때 표시) — 기호 캐릭터는 숫자 대신 글리프로. */
+function charIdLabel(ch){
+  if(ch && ch.symbol){
+    const item=(window.NM_AVATAR&&window.NM_AVATAR.symbols||[]).find(s=>s.id===ch.symbol);
+    return item ? item.glyph : ch.symbol;
+  }
+  return '#'+(ch&&ch.number!=null?ch.number:3);
+}
 function charChipHTML(){
   const mini = window.renderNumiChar ? window.renderNumiChar(S.character, 30) : '🪄';
-  const label = S.name ? esc(S.name) : ('#'+S.character.number);
+  const label = S.name ? esc(S.name) : charIdLabel(S.character);
   return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">${label}</span></button>`;
 }
 function render(){
@@ -535,6 +545,7 @@ function render(){
     screenTitle();
     return;
   }
+  syncProgressUnlocks();                                   // 과정 진도 → 캐릭터 해금(멱등, 새로 열리면 토스트)
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
@@ -2335,6 +2346,72 @@ function currentCourseKey(){
   }
   return 'C1';
 }
+/* 숫자 캐릭터 해금의 "티어" 그룹 경계 — 캐릭터-승급-설계.md §1 표 그대로
+   (level1=과정10, level2=16, level3=25, challenge=28, middle(1~3 통합)=35,
+   highmath(1~2 통합)=39가 각 그룹의 마지막 과정). numbers 항목의 course는
+   항상 이 여섯 값 중 하나(그 그룹의 대표값)라, 과정 order를 이 경계로
+   그룹핑해 "같은 그룹 이상이면 해금"으로 비교한다 — "그 티어에 도달하면"
+   (§1)은 그 티어의 *마지막 과정*이 아니라 티어 전체를 가리키므로, 예를 들어
+   level3의 첫 과정(17)만 밟아도 level3 보상(33·42·50)이 전부 열려야 한다.
+   symbols는 반대로 "배우는 과정" 그 자체가 문턱이라(§2) 이 그룹핑을 쓰지
+   않고 과정 order를 item.course와 직접 비교한다. */
+const NUMBER_TIER_GROUP_BOUNDS = [10,16,25,28,35,39];
+function numberTierGroupIdx(order){
+  for(let i=0;i<NUMBER_TIER_GROUP_BOUNDS.length;i++){
+    if(order <= NUMBER_TIER_GROUP_BOUNDS[i]) return i;
+  }
+  return NUMBER_TIER_GROUP_BOUNDS.length - 1; // 하이매쓰 이후도 최상위 그룹으로 취급
+}
+/* 과정 진도 → 캐릭터 해금(캐릭터-승급-설계.md §1·§3, §0 수정사항). 되돌아가도
+   잠기지 않는다: character_unlocked는 채우기만 하고 지우지 않는 멱등 함수라
+   현재 과정이 낮아져도(다른 유닛을 다시 만져 currentCourseKey가 내려가도) 이미
+   연 항목은 계속 unlocked로 남는다. render()마다 호출.
+   진도가 전혀 없는 완전 신규 학생(mostRecentTouchedUnit()===null)은 order=0 —
+   currentCourseKey()는 이럴 때 표시용으로 'C1'을 대신 반환하지만(§ currentCourseKey
+   주석) 그 기본값을 여기서 "과정1 도달"로 오인하면 신규 학생이 아무것도 안 했는데
+   과정1 보상(기호 plus)이 바로 열려 버린다 — 그래서 currentCourseKey()를 재사용하지
+   않고 mostRecentTouchedUnit()을 직접 봐서 진짜 진도가 있을 때만 계산한다. */
+function syncProgressUnlocks(){
+  if(!window.NM_COURSES || !window.NM_AVATAR) return;
+  const uid = mostRecentTouchedUnit();
+  const cid = uid ? courseForUnit(uid) : null;
+  const course = cid ? NM_COURSES[cid] : null;
+  const order = course ? course.order : 0;
+  if(!S.character_unlocked) S.character_unlocked = {};
+  if(!S.seenUnlocks) S.seenUnlocks = {};
+  if(order <= 0) return; // 진도 없음 — 아무것도 안 연다
+  const groupIdx = numberTierGroupIdx(order);
+  const newNumbers = [], newSymbols = [];
+  (NM_AVATAR.numbers || []).forEach(item => {
+    if(item.course == null || groupIdx < numberTierGroupIdx(item.course)) return;
+    const uk = 'number_' + item.id;
+    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newNumbers.push(item); }
+  });
+  (NM_AVATAR.symbols || []).forEach(item => {
+    if(item.course == null || order < item.course) return;
+    const uk = 'symbol_' + item.id;
+    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newSymbols.push(item); }
+  });
+  if(!newNumbers.length && !newSymbols.length) return;
+  save();
+  newNumbers.forEach(item => {
+    const sk = 'number_' + item.id;
+    if(S.seenUnlocks[sk]) return;
+    S.seenUnlocks[sk] = true;
+    toast(S.lang==='en' ? `A new number friend arrived! ${item.id} ✨`
+      : S.lang==='zh' ? `新的数字朋友来了！${item.id} ✨`
+      : `새 숫자 친구가 왔어요! ${item.id} ✨`, true);
+  });
+  newSymbols.forEach(item => {
+    const sk = 'symbol_' + item.id;
+    if(S.seenUnlocks[sk]) return;
+    S.seenUnlocks[sk] = true;
+    toast(S.lang==='en' ? `A new symbol friend arrived! ${item.glyph} ✨`
+      : S.lang==='zh' ? `新的符号朋友来了！${item.glyph} ✨`
+      : `새 기호 친구가 왔어요! ${item.glyph} ✨`, true);
+  });
+  save();
+}
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
 function primarySessionOf(course){
   if(!course || !course.sessions) return null;
@@ -3795,7 +3872,8 @@ function screenCloset(){
         // 상단 칩만 업데이트
         const chip=$('#charChipBtn');
         if(chip&&window.renderNumiChar){
-          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">#${S.character.number}</span>`;
+          const lbl=S.name?esc(S.name):charIdLabel(S.character);
+          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">${lbl}</span>`;
         }
         const ci=$('.nm-coins b');
         if(ci)ci.textContent=S.coins;
