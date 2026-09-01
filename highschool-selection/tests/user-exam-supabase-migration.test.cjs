@@ -22,6 +22,14 @@ function rlsOptimizationMigrationText() {
   return fs.readFileSync(path.join(migrationDirectory, matches[0]), "utf8");
 }
 
+function auditIndexMigrationText() {
+  const matches = fs.readdirSync(migrationDirectory).filter(function (name) {
+    return /^\d+_highselect_user_exam_assignment_audit_indexes\.sql$/.test(name);
+  });
+  assert.equal(matches.length, 1, "exactly one user exam audit index migration is required");
+  return fs.readFileSync(path.join(migrationDirectory, matches[0]), "utf8");
+}
+
 test("migration separates plans, assignments, entitlements, and compact recipes", () => {
   const sql = migrationText();
   [
@@ -108,4 +116,10 @@ test("owner policies cache the authenticated user lookup without widening access
   assert.match(sql, /owner_id = \(select auth\.uid\(\)\)/i);
   assert.match(sql, /user_id = \(select auth\.uid\(\)\)/i);
   assert.doesNotMatch(sql, /\bauth\.uid\(\)(?!\))/i);
+});
+
+test("assignment audit foreign keys have deletion-safe indexes", () => {
+  const sql = auditIndexMigrationText();
+  assert.match(sql, /create index hs_user_exam_plan_assignments_assigned_by_idx[\s\S]+assigned_by/i);
+  assert.match(sql, /create index hs_user_exam_entitlements_granted_by_idx[\s\S]+granted_by/i);
 });
