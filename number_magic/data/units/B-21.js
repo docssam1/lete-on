@@ -37,7 +37,7 @@ window.NM_UNITS['B-21'] = {
         desc:{ ko:'13개씩 4줄을 생각해봐요. <b>10개짜리 묶음 4줄</b>과 <b>3개짜리 묶음 4줄</b>로 나눠 세면 같은 결과가 나와요. 배열 모델로 직접 확인해 봐요!',
                en:'Picture 4 rows of 13. Split each row into <b>10 + 3</b>: 4 rows of 10 and 4 rows of 3. Counting them separately gives the same total!',
                zh:'想象4排，每排13个。把每排分成<b>10+3</b>：4排10个 + 4排3个，分开数和一起数结果一样！' },
-        mathSteps:['[●●●●●●●●●●][●●●]','× 4줄','= 10×4=40 / 3×4=12','→ 40+12=52'],
+        mathSteps:['[●●●●●●●●●●][●●●]',{ko:'× 4줄',en:'× \\text{4 rows}',zh:'× 4行'},'= 10×4=40 / 3×4=12','→ 40+12=52'],
         result:{ ko:'10개×4줄 = 40, 3개×4줄 = 12. 합치면 52! 어떻게 나눠도 답은 같아요.', en:'10×4=40, 3×4=12. Total = 52! The answer stays the same however you split it.', zh:'10×4=40，3×4=12，合在一起=52！不管怎么拆，结果都一样。' },
         book:{ ko:'배열(어레이) 모델: 전체 직사각형을 두 부분으로 나눠도 넓이(=곱셈의 값)는 그대로예요. 분배법칙은 곱셈에서 넓이를 쪼개는 것과 같아요.', en:'Array model: splitting a rectangle into two parts keeps the total area (= the product) unchanged. The distributive law is like splitting an area.', zh:'阵列模型：把长方形分成两部分，总面积（=乘积）不变。分配律就像把面积拆开来算。' } },
 

@@ -33,7 +33,7 @@ window.NM_UNITS['N-06'] = {
         desc:{ko:'5는 1과 4, 2와 3! 나눠도 합쳐도 5예요.',
           en:'5 is 1&4, or 2&3! Split or joined, still 5!',
           zh:'5是1和4，也是2和3！分开合起来都是5！'},
-        mathSteps:['🍬🍬🍬🍬🍬 = 5','1과 4 · 2와 3 · 5와 0','모으면 다시 5!'],
+        mathSteps:['🍬🍬🍬🍬🍬 = 5',{ko:'1과 4 · 2와 3 · 5와 0',en:'1 & 4 · 2 & 3 · 5 & 0',zh:'1和4 · 2和3 · 5和0'},{ko:'모으면 다시 5!',en:'Put together — 5 again!',zh:'合起来又是5！'}],
         result:{ko:'갈라도 모아도 전체는 그대로!',en:'Split or join — still the same!',zh:'分也好合也好，总数不变！'} }
     ],
     rule:{ ko:'가르고 모아도 전체 수는 변하지 않아요!',

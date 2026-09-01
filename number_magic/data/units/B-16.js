@@ -21,6 +21,14 @@ window.NM_UNITS['B-16'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'왕이 스승에게 물었어요. 내가 왕이니 기하학을 더 빨리 배울 방법은 없겠소?',
+        en:'A king asked his teacher: I am the king — is there no faster way to learn geometry?',
+        zh:'国王问老师：我是国王，学几何就没有更快的路吗？' },
+      history:{ ko:'스승의 대답은 이랬어요 — 나라에는 임금님만 다니는 길이 있을지 몰라도, 기하학에는 모든 사람에게 오직 한 길뿐입니다. 알렉산더 대왕과 스승 메네크무스의 이야기로도, 프톨레마이오스 왕과 유클리드의 이야기로도 전해져요. 구구단도 똑같아요. 지름길은 없지만, 한 번 지나간 길은 평생 내 것이 됩니다.',
+        en:'The teacher answered: your kingdom may have roads reserved for kings, but in geometry there is only one road, the same for everyone. The story is told of Alexander and his teacher Menaechmus, and also of King Ptolemy and Euclid. Times tables are no different. There is no shortcut — but a road you have walked once is yours for life.',
+        zh:'老师回答：您的国土上也许有只供国王走的路，但几何学只有一条路，对所有人都一样。这个故事有人说是亚历山大和老师梅内克缪斯，也有人说是托勒密王和欧几里得。乘法口诀也一样。没有捷径——但走过一遍的路，一辈子都是你的。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 구구단의 대칭',en:'1) Times table symmetry',zh:'① 乘法口诀的对称性'},
@@ -28,7 +36,7 @@ window.NM_UNITS['B-16'] = {
         desc:{ko:'3×7=21이고 7×3=21이에요. <b>순서를 바꿔도 답이 같아요</b>(교환법칙). 72개 전부 외울 필요 없이 36개만 알면 나머지는 뒤집으면 돼요!',
               en:'3×7=21 and 7×3=21. <b>Flip the order, same answer!</b> (commutative law) You only need to memorise 36 facts — the rest are just mirrors.',
               zh:'3×7=21，7×3也等于21。<b>交换顺序，答案相同！</b>（交换律）只需记住36个，其余的翻转一下就行了！'},
-        mathSteps:['전체 72개 곱','= 중복 제거하면 36개','+ 1×1~9×9 대각선 9개','→ 효율적 학습 가능!'],
+        mathSteps:[{ko:'전체 72개 곱',en:'\\text{72 products in all}',zh:'一共72个乘积'},{ko:'= 중복 제거하면 36개',en:'= \\text{36 after removing duplicates}',zh:'= 去掉重复剩36个'},{ko:'+ 1×1~9×9 대각선 9개',en:'+ \\text{9 on the diagonal } 1×1…9×9',zh:'+ 对角线1×1~9×9共9个'},{ko:'→ 효율적 학습 가능!',en:'→ \\text{much less to memorize!}',zh:'→ 学起来更省力！'}],
         result:{ko:'3×7과 7×3은 같아요! 36개만 외우면 72개가 완성돼요.',en:'3×7 = 7×3! Master 36 facts and you have all 72.',zh:'3×7=7×3！记住36个，72个口诀全部搞定。'},
         book:{ko:'곱셈에서 두 수의 순서를 바꿔도 결과가 같아요. 이것을 교환법칙이라 해요. 이 성질 덕분에 36개만 완벽하게 외우면 나머지는 자동으로 알 수 있어요.',
               en:'Swapping the order of two numbers in multiplication gives the same product. This is the commutative law. Thanks to this, mastering 36 facts gives you all 72 for free.',
@@ -39,7 +47,7 @@ window.NM_UNITS['B-16'] = {
         desc:{ko:'<b>2단</b>: 짝수만 나와요(2,4,6…). <b>5단</b>: 끝이 0 아니면 5. <b>9단</b>: 10n−n 전략! <b>7·8단</b>: 이전 결과에 7(또는 8)을 더해요.',
               en:'<b>2s</b>: only even numbers. <b>5s</b>: ends in 0 or 5. <b>9s</b>: 10n−n trick! <b>7s & 8s</b>: add 7 (or 8) to the previous answer.',
               zh:'<b>2的口诀</b>：全是偶数。<b>5的口诀</b>：结果以0或5结尾。<b>9的口诀</b>：10n−n！<b>7·8的口诀</b>：在前一个结果上加7（或8）。'},
-        mathSteps:['2단: 2,4,6,8,10,12...','5단: 5,10,15,20,25...','9단: 10n-n (예: 9×7=70-7=63)','7·8단: 이전값+7(8)'],
+        mathSteps:[{ko:'2단: 2,4,6,8,10,12...',en:'\\text{×2: } 2,4,6,8,10,12...',zh:'2的口诀：2,4,6,8,10,12...'},{ko:'5단: 5,10,15,20,25...',en:'\\text{×5: } 5,10,15,20,25...',zh:'5的口诀：5,10,15,20,25...'},{ko:'9단: 10n-n (예: 9×7=70-7=63)',en:'\\text{×9: } 10n-n \\text{ (e.g. } 9×7=70-7=63)',zh:'9的口诀：10n-n（例：9×7=70-7=63）'},{ko:'7·8단: 이전값+7(8)',en:'\\text{×7·×8: previous}+7(8)',zh:'7·8的口诀：上一个+7(8)'}],
         result:{ko:'단별 전략을 외워두면 막힐 때 바로 쓸 수 있어요!',en:'Keep these tricks in mind for when you get stuck!',zh:'记住各段的技巧，遇到困难时随时可以用！'},
         book:{ko:'각 단마다 고유한 패턴이 있어요. 2단은 짝수, 5단은 0/5로 끝, 9단은 십의 자리+일의 자리=9. 이런 패턴을 활용하면 답이 맞는지 빠르게 확인할 수 있어요.',
               en:'Each table has a unique pattern. 2s: even numbers. 5s: ends in 0 or 5. 9s: digits sum to 9. Use these patterns to verify answers quickly.',
@@ -50,7 +58,7 @@ window.NM_UNITS['B-16'] = {
         desc:{ko:'대부분의 구구단은 패턴으로 해결돼요. 하지만 <b>6×7=42, 6×8=48, 7×8=56, 7×9=63</b> 이 4개는 특별히 눈에 익혀두세요. 이것만 알면 진짜 완벽!',
               en:'Most tables have patterns, but <b>6×7=42, 6×8=48, 7×8=56, 7×9=63</b> need extra attention. Nail these four and you\'re unstoppable!',
               zh:'大多数口诀都有规律可循，但<b>6×7=42、6×8=48、7×8=56、7×9=63</b>这四个需要特别记忆。记住这四个，真的完美无缺！'},
-        mathSteps:['6×7=42 (기억!)', '6×8=48 (기억!)', '7×8=56 (기억!)', '7×9=63 (기억!)'],
+        mathSteps:[{ko:'6×7=42 (기억!)',en:'6×7=42 \\text{ (remember!)}',zh:'6×7=42（记住！）'}, {ko:'6×8=48 (기억!)',en:'6×8=48 \\text{ (remember!)}',zh:'6×8=48（记住！）'}, {ko:'7×8=56 (기억!)',en:'7×8=56 \\text{ (remember!)}',zh:'7×8=56（记住！）'}, {ko:'7×9=63 (기억!)',en:'7×9=63 \\text{ (remember!)}',zh:'7×9=63（记住！）'}],
         result:{ko:'이 4개만 특별히 외우면 2~9단 완전 정복!',en:'Commit these 4 to memory and you\'ve conquered all tables 2–9!',zh:'特别记住这4个，2~9的乘法口诀全部攻克！'},
         book:null }
     ],

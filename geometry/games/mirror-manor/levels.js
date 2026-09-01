@@ -211,11 +211,11 @@ const level1Specs = [
   // Two pictures deliberately leave one line of the board empty. A tap on an empty
   // line can only be a "방향만 틀림" mistake (right count, reflected onto the wrong
   // line), so both named mistakes are reachable in level 1, not just the distance one.
-  { axis: { kind: "vertical", at: 4 }, picture: ["##..", "###.", ".###", "...#", ".###", "###."] },
-  { axis: { kind: "vertical", at: 4 }, picture: [".##.", "####", "####", ".###", "..##", "...#"] },
-  { axis: { kind: "vertical", at: 4 }, picture: ["...#", "..##", ".###", "####", "...#", "...#"] },
-  { axis: { kind: "vertical", at: 4 }, picture: ["####", ".###", ".###", "..##", "...#", ".###"] },
-  { axis: { kind: "vertical", at: 4 }, picture: ["#.#.", "#.##", "####", "#..#", "#..#", "####"] },
+  { axis: { kind: "vertical", at: 4 }, picture: ["...#", "...#", "....", "....", "....", "...."] },
+  { axis: { kind: "vertical", at: 4 }, picture: ["..#.", "..##", "....", "....", "....", "...."] },
+  { axis: { kind: "vertical", at: 4 }, picture: [".##.", ".#..", ".#..", "....", "....", "...."] },
+  { axis: { kind: "vertical", at: 4 }, picture: ["...#", "..##", "...#", "...#", "....", "...."] },
+  { axis: { kind: "vertical", at: 4 }, picture: ["..##", ".##.", "..##", "....", "....", "...."] },
   { axis: { kind: "vertical", at: 4 }, picture: ["..##", ".##.", ".##.", "..##", "....", "..##"] },
   { axis: { kind: "vertical", at: 4 }, picture: [".#..", "###.", "####", "###.", ".#..", "...."] },
   // Horizontal mirror: the given half is 8 columns wide and 3 rows tall.
@@ -285,7 +285,7 @@ function dragProblem(index, spec) {
   }));
   const decoy = pickDecoy(targets);
   if (!decoy) throw new Error(`Mirror Manor problem ${index + 1} of level 2 has no turned-twin decoy.`);
-  const tray = [
+  const authoredTray = [
     ...targets.map((target, slot) => ({
       id: `piece-${slot}`,
       type: target.type,
@@ -294,10 +294,12 @@ function dragProblem(index, spec) {
     })),
     { id: "piece-decoy", type: decoy.type, nameKey: decoy.nameKey, shape: decoy.shape }
   ];
+  const shift = index % authoredTray.length;
+  const tray = authoredTray.slice(shift).concat(authoredTray.slice(0, shift));
   return {
-    id: `mirror-manor-l2-${String(index + 1).padStart(2, "0")}`,
+    id: `mirror-manor-l3-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
-    level: 2,
+    level: 3,
     interaction: "drag-reflection",
     grid: { ...GRID },
     axis,
@@ -334,16 +336,18 @@ function distanceProblem(index, lattice, source, distanceDecoy, directionDecoy) 
   const axis = { kind: "vertical", at: 4 };
   const grid = { cols: 8, rows: 6, lattice };
   const targetCell = reflectCell(source, axis);
+  const choices = [targetCell, distanceDecoy, directionDecoy];
+  const shift = index % choices.length;
   return {
-    id: `mirror-manor-l3-${String(index + 1).padStart(2, "0")}`,
+    id: `mirror-manor-l2-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
-    level: 3,
+    level: 2,
     interaction: "distance-match",
     grid,
     axis,
     sourceCell: source,
     targetCell,
-    choices: [targetCell, distanceDecoy, directionDecoy],
+    choices: choices.slice(shift).concat(choices.slice(0, shift)),
     validation: { solutionCount: 1, allowRotationEquivalent: false, allowReflectionEquivalent: false }
   };
 }
@@ -354,11 +358,11 @@ const level3Specs = [
   distanceProblem(2, "square", [1, 3], [5, 3], [6, 1]),
   distanceProblem(3, "square", [3, 5], [5, 5], [4, 4]),
   distanceProblem(4, "square", [0, 2], [6, 2], [7, 0]),
-  distanceProblem(5, "triangle", [3, 0], [5, 0], [4, 1]),
-  distanceProblem(6, "triangle", [2, 1], [6, 1], [5, 0]),
-  distanceProblem(7, "triangle", [1, 3], [5, 3], [6, 1]),
-  distanceProblem(8, "triangle", [3, 5], [5, 5], [4, 4]),
-  distanceProblem(9, "triangle", [0, 2], [6, 2], [7, 0])
+  distanceProblem(5, "triangle", [3, 2], [6, 2], [4, 3]),
+  distanceProblem(6, "triangle", [2, 4], [4, 4], [5, 2]),
+  distanceProblem(7, "triangle", [1, 0], [7, 0], [6, 2]),
+  distanceProblem(8, "triangle", [0, 5], [5, 5], [7, 3]),
+  distanceProblem(9, "triangle", [2, 2], [7, 2], [5, 4])
 ];
 
 /* ------------------------------------------------------------- level 4 authoring */
@@ -376,7 +380,7 @@ function symbolProblem(index, sourceKind, sourceText, decoyText, axisKind = "ver
     { id: "mirror", kind: "mirror", text: sourceText },
     { id: "decoy", kind: "decoy", text: decoyText }
   ];
-  const shift = index % choices.length;
+  const shift = (index + 1) % choices.length;
   return {
     id: `mirror-manor-l4-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
@@ -395,11 +399,11 @@ const level4Specs = [
   symbolProblem(0, "letter", "ㄱ", "ㄴ"),
   symbolProblem(1, "letter", "ㅏ", "ㅗ"),
   symbolProblem(2, "letter", "아", "오"),
-  symbolProblem(3, "letter", "움", "몸"),
+  symbolProblem(3, "letter", "롱", "봉"),
   symbolProblem(4, "word", "어머", "어모"),
   symbolProblem(5, "word", "마롱", "마봉"),
   symbolProblem(6, "word", "야옹이", "야용이"),
-  symbolProblem(7, "latin", "A", "F"),
+  symbolProblem(7, "latin", "F", "R"),
   symbolProblem(8, "arrow", "↑", "→", "horizontal"),
   symbolProblem(9, "arrow", "→", "↗", "diagonal")
 ];
@@ -450,20 +454,52 @@ const level5Specs = [
 /* ------------------------------------------------------------------- level table */
 
 export const levelMeta = [
-  { id: 1, interaction: "paint-reflection", titleKey: "level1Title", descKey: "level1Desc", color: "#3f9bb0", ready: true },
-  { id: 2, interaction: "drag-reflection", titleKey: "level2Title", descKey: "level2Desc", color: "#c9793f", ready: true },
-  { id: 3, interaction: "distance-match", titleKey: "level3Title", descKey: "level3Desc", color: "#6f8ed6", ready: true },
-  { id: 4, interaction: "symbol-reflection", titleKey: "level4Title", descKey: "level4Desc", color: "#8f76c4", ready: true },
-  { id: 5, interaction: "double-mirror", titleKey: "level5Title", descKey: "level5Desc", color: "#d4a636", ready: true }
+  { id: 1, interaction: "paint-reflection", titleKey: "level1Title", descKey: "level1Desc", difficulty: "입문", difficultyKey: "difficultyIntro", conceptDepth: 1, color: "#23899a", ready: true },
+  { id: 2, interaction: "distance-match", titleKey: "level3Title", descKey: "level3Desc", difficulty: "초급", difficultyKey: "difficultyBeginner", conceptDepth: 2, color: "#5579c6", ready: true },
+  { id: 3, interaction: "drag-reflection", titleKey: "level2Title", descKey: "level2Desc", difficulty: "초급", difficultyKey: "difficultyBeginner", conceptDepth: 3, color: "#db6b4f", ready: true },
+  { id: 4, interaction: "symbol-reflection", titleKey: "level4Title", descKey: "level4Desc", difficulty: "중급", difficultyKey: "difficultyIntermediate", conceptDepth: 4, color: "#7758a6", ready: true },
+  { id: 5, interaction: "double-mirror", titleKey: "level5Title", descKey: "level5Desc", difficulty: "중급", difficultyKey: "difficultyIntermediate", conceptDepth: 5, color: "#c79822", ready: true }
 ];
 
-const pools = {
+const sourceContracts = {
+  1: { provenanceKind: "source-backed-adaptation", sourceRef: "RAY-C1-1-pdf-p7-10-mirror-objects", answerPolicy: "exact-cell-set" },
+  2: { provenanceKind: "internal-extension", sourceRef: "RAY-C1-1-reflection-principle-distance-grid", answerPolicy: "single-choice" },
+  3: { provenanceKind: "source-backed-adaptation", sourceRef: "RAY-C1-1-pdf-p7-10-mirror-objects", answerPolicy: "unique-reflected-arrangement" },
+  4: { provenanceKind: "source-backed-adaptation", sourceRef: "RAY-C1-1-plus-book-p19-23-mirror-writing", answerPolicy: "single-choice" },
+  5: { provenanceKind: "owner-approved-internal-extension", sourceRef: "GFIELD-double-mirror-pattern-extension", answerPolicy: "exact-cell-set" }
+};
+
+function interactionCost(problem) {
+  if (problem.interaction === "paint-reflection") return problem.targetCells.length;
+  if (problem.interaction === "drag-reflection") {
+    return problem.targets.length * 4 + Math.max(...problem.targets.map((target) => target.cells.length));
+  }
+  if (problem.interaction === "distance-match") return 2 + mirrorDistance(problem.sourceCell, problem.axis);
+  if (problem.interaction === "symbol-reflection") {
+    return 3 + [...problem.sourceText].length + (problem.axis.kind === "vertical" ? 0 : 2);
+  }
+  return problem.targetCells.length;
+}
+
+const rawPools = {
   1: level1Specs.map((spec, index) => paintProblem(index, spec)),
-  2: level2Specs.map((spec, index) => dragProblem(index, spec)),
-  3: level3Specs,
+  2: level3Specs,
+  3: level2Specs.map((spec, index) => dragProblem(index, spec)),
   4: level4Specs,
   5: level5Specs
 };
+
+const pools = Object.fromEntries(Object.entries(rawPools).map(([levelId, problems]) => {
+  const contract = sourceContracts[levelId];
+  return [levelId, problems
+    .map((problem) => {
+      const extension = Number(levelId) === 4 && ["latin", "arrow"].includes(problem.sourceKind)
+        ? { provenanceKind: "internal-extension", sourceRef: "GFIELD-mirror-symbol-axis-extension" }
+        : {};
+      return { ...problem, ...contract, ...extension, reasoningSteps: interactionCost(problem) };
+    })
+    .sort((a, b) => a.reasoningSteps - b.reasoningSteps || a.id.localeCompare(b.id))];
+}));
 
 export const levels = levelMeta.map((meta) => ({ ...meta, problems: pools[meta.id] || [] }));
 
@@ -541,7 +577,8 @@ function assert(condition, message) {
 export function validateLevels() {
   assert(levels.length === 5, "must declare five levels.");
   assert(levels[0].interaction === "paint-reflection", "level 1 must be the paint activity.");
-  assert(levels[1].interaction === "drag-reflection", "level 2 must be the drag activity.");
+  assert(levels[1].interaction === "distance-match", "level 2 must be the distance activity.");
+  assert(levels[2].interaction === "drag-reflection", "level 3 must be the drag activity.");
 
   const seenIds = new Set();
 
@@ -552,6 +589,8 @@ export function validateLevels() {
       return;
     }
     assert(level.problems.length === 10, `level ${level.id} needs a pool of 10, found ${level.problems.length}.`);
+    assert(["입문", "초급", "중급"].includes(level.difficulty), `level ${level.id} has no supported difficulty.`);
+    assert(level.conceptDepth === level.id, `level ${level.id} has a broken concept progression.`);
 
     const canonical = new Map();
     level.problems.forEach((problem) => {
@@ -559,6 +598,9 @@ export function validateLevels() {
       seenIds.add(problem.id);
       assert(problem.level === level.id, `${problem.id} claims level ${problem.level}.`);
       assert(problem.interaction === level.interaction, `${problem.id} uses ${problem.interaction} on a ${level.interaction} level.`);
+      assert(Number.isInteger(problem.reasoningSteps) && problem.reasoningSteps > 0, `${problem.id} has no reasoning-step estimate.`);
+      assert(problem.provenanceKind && problem.sourceRef, `${problem.id} has no source contract.`);
+      assert(problem.answerPolicy, `${problem.id} has no answer policy.`);
       assert(SUPPORTED_AXIS_KINDS.includes(problem.axis.kind), `${problem.id} uses unsupported axis "${problem.axis.kind}".`);
       if (problem.interaction === "double-mirror") {
         assert(Number.isInteger(problem.axis.verticalAt) && problem.axis.verticalAt > 0, `${problem.id} has an invalid vertical mirror.`);
@@ -674,8 +716,14 @@ function validateDrag(problem) {
 
   const answerKeys = targets.map((target) => shapeKey(target.cells));
   const trayKeys = tray.map((piece) => shapeKey(piece.shape));
-  answerKeys.forEach((key, index) => assert(trayKeys[index] === key, `${problem.id} tray slot ${index} does not match its answer.`));
-  const decoyKey = trayKeys[trayKeys.length - 1];
+  answerKeys.forEach((key, index) => {
+    const required = answerKeys.filter((candidate) => candidate === key).length;
+    const available = trayKeys.filter((candidate) => candidate === key).length;
+    assert(available >= required, `${problem.id} tray omits answer shape ${index}.`);
+  });
+  const decoyIndex = tray.findIndex((piece) => piece.id === "piece-decoy");
+  assert(decoyIndex >= 0, `${problem.id} has no named decoy.`);
+  const decoyKey = trayKeys[decoyIndex];
   assert(!answerKeys.includes(decoyKey), `${problem.id} decoy is a real answer.`);
   assert(targets.some((target) => shapeVariants(target.cells).map(shapeKey).includes(decoyKey)), `${problem.id} decoy is not a turned version of an object.`);
 

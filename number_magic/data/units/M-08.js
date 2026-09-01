@@ -59,9 +59,9 @@ window.NM_UNITS['M-08'] = {
 
   check:{
     fills:[
-      { tex:'\\dfrac{7}{20} \\;\\Rightarrow\\; \\square\\,(1=\\text{유한},0=\\text{순환})', answer:1,
+      { tex:{ko:'\\dfrac{7}{20} \\;\\Rightarrow\\; \\square\\,(1=\\text{유한},0=\\text{순환})',en:'\\dfrac{7}{20} \\;\\Rightarrow\\; \\square\\,(1=\\text{terminating},0=\\text{repeating})',zh:'\\dfrac{7}{20} \\;\\Rightarrow\\; \\square\\,(1=\\text{有限},0=\\text{循环})'}, answer:1,
         hint:{ ko:'20=2×2×5, 소인수가 2와 5뿐!', en:'20=2×2×5, only 2s and 5s!', zh:'20=2×2×5，只有2和5！' } },
-      { tex:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{유한},0=\\text{순환})', answer:0,
+      { tex:{ko:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{유한},0=\\text{순환})',en:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{terminating},0=\\text{repeating})',zh:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{有限},0=\\text{循环})'}, answer:0,
         hint:{ ko:'12=2×2×3, 3이 숨어 있어요', en:'12=2×2×3, a 3 is hiding', zh:'12=2×2×3，藏着一个3' } }
     ],
     open:{ ko:'6/15는 유한소수일까요? 먼저 약분부터 해봐요.',

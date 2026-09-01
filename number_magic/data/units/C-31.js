@@ -47,7 +47,7 @@ window.NM_UNITS['C-31'] = {
         desc:{ko:'분수 나눗셈은 <b>뒤의 분수를 뒤집어서 곱하기</b>로 바뀌어요. 2/3 ÷ 3/4에서 3/4를 뒤집으면 4/3, 그다음 곱셈처럼: 2/3 × 4/3 = (2×4)/(3×3) = <b>8/9</b>. "나누기"가 갑자기 "곱하기"로 변신하는 게 신기하지만, 뒤집은 분수(역수)를 곱하는 것과 나누는 것은 항상 똑같은 결과를 줘요.',
               en:'Fraction division turns into <b>multiplication by the flipped second fraction</b>. For 2/3 ÷ 3/4, flip 3/4 to 4/3, then multiply as usual: 2/3 × 4/3 = (2×4)/(3×3) = <b>8/9</b>. It feels magical that "division" suddenly becomes "multiplication," but multiplying by the flipped fraction (reciprocal) always gives the same result as dividing.',
               zh:'分数除法要把后一个分数<b>翻转再相乘</b>。2/3 ÷ 3/4中，把3/4翻转成4/3，再照乘法做：2/3 × 4/3 = (2×4)/(3×3) = <b>8/9</b>。"除法"忽然变成"乘法"很神奇，但乘以翻转后的分数(倒数)和除法结果永远相同。'},
-        mathSteps:['\\dfrac{3}{4} \\;\\text{를 뒤집으면}\\; \\dfrac{4}{3}','\\dfrac{2}{3} \\times \\dfrac{4}{3}','= \\dfrac{8}{9}'],
+        mathSteps:[{ko:'\\dfrac{3}{4} \\;\\text{를 뒤집으면}\\; \\dfrac{4}{3}',en:'\\dfrac{3}{4} \\;\\text{flipped is}\\; \\dfrac{4}{3}',zh:'\\dfrac{3}{4} \\;\\text{倒过来是}\\; \\dfrac{4}{3}'},'\\dfrac{2}{3} \\times \\dfrac{4}{3}','= \\dfrac{8}{9}'],
         result:{ko:'2/3÷3/4=8/9! 뒤집어서 곱하면 끝.',en:'2/3÷3/4=8/9! Flip and multiply, done.',zh:'2/3÷3/4=8/9！翻转再乘就完成。'},
         book:{ko:'왜 뒤집을까요? 3/4로 나누는 건 "3/4가 몇 번 들어가나"를 묻는 거예요. 3/4 × 4/3 = 1이니까, 4/3을 곱하면 나눈 것을 정확히 되돌릴 수 있어요.',
               en:'Why flip? Dividing by 3/4 asks "how many 3/4s fit?" Since 3/4 × 4/3 = 1, multiplying by 4/3 exactly undoes the division.',

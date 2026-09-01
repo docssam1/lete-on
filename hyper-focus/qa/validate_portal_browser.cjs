@@ -7,7 +7,15 @@ const adminCode = String(process.env.HF_QA_ADMIN_CODE || "").trim();
 const QA_STUDENT = "포털검수";
 const QA_CODE = "GFQA2468";
 
+async function installOfflineConfig(page) {
+  await page.route("**/hyper-focus/supabase-config.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: "window.GFIELD_HF_SUPABASE_CONFIG=Object.freeze({enabled:false,features:Object.freeze({secureMockDelivery:false})});"
+  }));
+}
+
 async function installStudentFixture(page) {
+  await installOfflineConfig(page);
   await page.route("**/hyper-focus/data.js", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
     body: `window.GFIELD_HF_DATA={students:[${JSON.stringify(QA_STUDENT)}],studentCode:{${JSON.stringify(QA_STUDENT)}:${JSON.stringify(QA_CODE)}},studentType:{${JSON.stringify(QA_STUDENT)}:"internal"},access:{${JSON.stringify(QA_STUDENT)}:["hyperfocus"]}};`
@@ -16,6 +24,7 @@ async function installStudentFixture(page) {
 
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
+  assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
   await page.locator("#loginName").fill(QA_STUDENT);
   await page.locator("#loginCode").fill(QA_CODE);
   await page.locator("#loginForm button[type=submit]").click();
@@ -71,6 +80,7 @@ async function noOverflow(page, label) {
     await directAdmin.close();
 
     const admin = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+    if (!adminCode) await installOfflineConfig(admin);
     await admin.goto(`${base}/hyper-focus/`, { waitUntil: "domcontentloaded" });
     if (adminCode) {
       await admin.locator("[data-login-open]").first().click();

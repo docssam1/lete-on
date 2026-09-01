@@ -6,10 +6,10 @@ require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const types = [
-  { id: "5-1-u1-t1", name: "혼합 계산의 순서" },
-  { id: "5-1-u1-t2", name: "하나의 식으로 나타내기" },
-  { id: "5-1-u1-t3", name: "식 세워 풀기" },
-  { id: "5-1-u1-t4", name: "혼합 계산식 만들기" }
+  { id: "legacy-5-1-u1-t1", name: "혼합 계산의 순서", generatorKey: "mixedOrderAdvanced" },
+  { id: "legacy-5-1-u1-t2", name: "하나의 식으로 나타내기", generatorKey: "oneExpressionAdvanced" },
+  { id: "legacy-5-1-u1-t3", name: "식 세워 풀기", generatorKey: "mixedWordEquationAdvanced" },
+  { id: "legacy-5-1-u1-t4", name: "혼합 계산식 만들기", generatorKey: "mixedExpressionBuildAdvanced" }
 ].map(type => ({ ...type, semesterId: "5-1", unitId: "5-1-u1", unitName: "자연수의 혼합 계산" }));
 
 const attribute = (tag, name) => tag.match(new RegExp("\\b" + name + "=\"([^\"]*)\""))?.[1];

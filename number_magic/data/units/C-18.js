@@ -21,6 +21,14 @@ window.NM_UNITS['C-18'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'나누기 기호 ÷ 는 가운데 선 하나에 점 두 개예요. 무엇을 그린 걸까요?',
+        en:'The division sign ÷ is a line with a dot above and below. What is it a picture of?',
+        zh:'除号÷是一条线加上下两个点。它画的是什么？' },
+      history:{ ko:'분수라고 보는 사람이 많아요 — 점은 분자와 분모, 선은 분수선이죠. 1659년 스위스의 라안이 나눗셈 기호로 쓰기 시작했어요. 그 전 책들은 기호와 나누기라는 말을 함께 적다가 나중에 말만 지웠답니다. 나눗셈을 분수로 바꿔 푸는 마법이 기호 안에 이미 들어 있던 셈이에요.',
+        en:'Many read it as a fraction — the dots are the top and bottom numbers, the bar is the fraction line. Johann Rahn started using it for division in 1659. Older books wrote the symbol and the word divide side by side, then dropped the word. The trick of turning a division into a fraction was already hiding inside the sign.',
+        zh:'很多人把它读成一个分数——两个点是分子和分母，中间的线是分数线。1659年瑞士人拉恩开始用它表示除法。更早的书里符号和除这个字是并排写的，后来才把字去掉。把除法变成分数来算的魔法，早就藏在这个符号里了。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 나누기 쉬운 조각',en:'1) Easy-to-divide pieces',zh:'① 容易除的块'},

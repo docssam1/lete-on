@@ -49,7 +49,7 @@ window.NM_UNITS['C-35'] = {
         desc:{ko:'2×5=10, 4×25=100, 8×125=1000 — 곱셈의 쌍이었던 게, 이제는 분모를 부풀리는 열쇠가 됐어요. 분모의 소인수가 2와 5뿐이면, 언제나 10·100·1000으로 부풀려서 소수로 바꿀 수 있어요. 이것이 <b>2와 5는 친구</b> 계보의 완성이에요!',
               en:'2×5=10, 4×25=100, 8×125=1000 — the multiplication pairs are now the key to inflating denominators. If a denominator\'s only prime factors are 2 and 5, it can always be inflated to 10, 100, or 1000 and turned into a decimal. This completes the "2 and 5 are friends" lineage!',
               zh:'2×5=10，4×25=100，8×125=1000——曾经的乘法配对，现在变成了扩大分母的钥匙。只要分母的质因数只有2和5，就总能扩大成10、100或1000，变成小数。这就是"2和5是朋友"这条家族的完成！'},
-        mathSteps:['2×5=10','4×25=100','8×125=1000','\\Rightarrow 분수 = 소수'],
+        mathSteps:['2×5=10','4×25=100','8×125=1000',{ko:'\\Rightarrow 분수 = 소수',en:'\\Rightarrow \\text{fraction = decimal}',zh:'\\Rightarrow 分数 = 小数'}],
         result:{ko:'2와 5는 처음부터 끝까지 계속 친구였어요!',en:'2 and 5 were friends from beginning to end!',zh:'2和5从头到尾都是朋友！'},
         book:null }
     ],
@@ -60,9 +60,9 @@ window.NM_UNITS['C-35'] = {
 
   check:{
     fills:[
-      { tex:'\\frac{3}{4} = \\square \\; (\\times 100 \\text{ 한 값})', answer:75,
+      { tex:{ko:'\\frac{3}{4} = \\square \\; (\\times 100 \\text{ 한 값})',en:'\\frac{3}{4} = \\square \\; (\\text{after} \\times 100)',zh:'\\frac{3}{4} = \\square \\; (\\times 100\\text{后的值})'}, answer:75,
         hint:{ ko:'4×25=100. 3×25=?', en:'4×25=100. 3×25=?', zh:'4×25=100。3×25=？' } },
-      { tex:'\\frac{7}{20} = \\square \\; (\\times 100 \\text{ 한 값})', answer:35,
+      { tex:{ko:'\\frac{7}{20} = \\square \\; (\\times 100 \\text{ 한 값})',en:'\\frac{7}{20} = \\square \\; (\\text{after} \\times 100)',zh:'\\frac{7}{20} = \\square \\; (\\times 100\\text{后的值})'}, answer:35,
         hint:{ ko:'20×5=100. 7×5=?', en:'20×5=100. 7×5=?', zh:'20×5=100。7×5=？' } }
     ],
     open:{ ko:'2/25를 소수로 바꿔 봐요. 분모를 몇 배로 부풀려야 할까요?',

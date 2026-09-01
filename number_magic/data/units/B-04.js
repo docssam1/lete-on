@@ -21,13 +21,21 @@ window.NM_UNITS['B-04'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'곱하기 기호 ×는 누가 만들었을까요?',
+        en:'Who invented the multiplication sign ×?',
+        zh:'乘号×是谁发明的？' },
+      history:{ ko:'1631년 영국의 오트레드가 처음 썼어요. 그런데 왜 하필 이 모양인지는 아직도 아무도 모릅니다. 수학에도 이렇게 이유가 밝혀지지 않은 것들이 있어요. 2단은 그 알 수 없는 기호로 우리가 처음 만나는 곱셈이랍니다.',
+        en:'William Oughtred first used it in 1631 — and to this day nobody knows why he chose that shape. Even mathematics has corners where the reason was simply lost. The 2 times table is where we first meet that mysterious little cross.',
+        zh:'1631年英国人奥特雷德第一次使用它——可直到今天也没人知道他为什么选这个形状。数学里也有这样说不清来由的角落。2的乘法口诀，就是我们第一次遇见这个神秘小叉的地方。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 2단 = 두 배!', en:'1) ×2 = double!', zh:'① 乘2=加倍！' },
         head:{ ko:'2를 곱하면 항상 두 배가 돼요', en:'Multiplying by 2 always doubles the number', zh:'乘以2就是把数翻倍' },
-        desc:{ ko:'2단은 2씩 늘어나요. 2×1=2, 2×2=4, ..., 2×9=18. 항상 2씩 커지는 패턴이에요!',
-               en:'The 2s table grows by 2 each time: 2, 4, 6, 8 … up to 18.',
-               zh:'2的乘法每次增加2：2, 4, 6, 8……一直到18。' },
+        desc:{ ko:'2단은 2씩 늘어나요. 2×1=2, 2×2=4, ..., 2×9=18. <b>항상 2씩 커지는 패턴</b>이에요!',
+               en:'The 2s table <b>grows by 2 each time</b>: 2, 4, 6, 8 … up to 18.',
+               zh:'2的乘法<b>每次增加2</b>：2, 4, 6, 8……一直到18。' },
         mathSteps:['2×1=2','2×2=4 (+2)','2×3=6 (+2)','...','2×9=18'],
         result:{ ko:'2×9=18까지 모두 2씩 늘어났어요!', en:'All the way to 2×9=18 — each step adds 2!', zh:'一直到2×9=18，每步加2！' },
         book:{ ko:'2단은 두 배 패턴이에요. 2×□ = □+□로 생각하면 쉬워요!', en:'×2 means double: think 2×□ = □+□', zh:'乘以2就是翻倍：2×□=□+□' } },
@@ -37,16 +45,16 @@ window.NM_UNITS['B-04'] = {
         desc:{ ko:'2×6을 배열로 그리면 6개씩 2줄이에요. 6+6=12! 배열이 두 배를 눈으로 보여줘요.',
                en:'Draw 2×6 as an array: 2 rows of 6, so 6+6=12!',
                zh:'把2×6画成阵列：2行6个，所以6+6=12！' },
-        mathSteps:['2×6 = 6+6','= 12','배열: ●●●●●●  ×2줄'],
+        mathSteps:['2×6 = 6+6','= 12',{ko:'배열: ●●●●●●  ×2줄',en:'\\text{array: } ●●●●●● ×\\text{2 rows}',zh:'排列:●●●●●● ×2行'}],
         result:{ ko:'2×6 = 6+6 = 12 ✓', en:'2×6 = 6+6 = 12 ✓', zh:'2×6 = 6+6 = 12 ✓' },
         book:null },
 
       { tag:{ ko:'③ 짝수 패턴!', en:'3) Even number pattern!', zh:'③ 偶数规律！' },
         head:{ ko:'2단의 결과는 모두 짝수예요', en:'All 2s-table results are even numbers', zh:'2的乘法结果全是偶数' },
-        desc:{ ko:'2, 4, 6, 8, 10, 12, 14, 16, 18 — 모두 짝수(2의 배수)예요! 2단이면 결과가 반드시 짝수예요.',
-               en:'2, 4, 6, 8, 10, 12, 14, 16, 18 — all even! Every 2s-table result is always even.',
-               zh:'2, 4, 6, 8, 10, 12, 14, 16, 18——全是偶数！2的乘法结果一定是偶数。' },
-        mathSteps:['2, 4, 6, 8, 10','12, 14, 16, 18','모두 2의 배수!'],
+        desc:{ ko:'2, 4, 6, 8, 10, 12, 14, 16, 18 — <b>모두 짝수(2의 배수)</b>예요! 2단이면 결과가 반드시 짝수예요.',
+               en:'2, 4, 6, 8, 10, 12, 14, 16, 18 — all even! <b>Every 2s-table result is always even</b>.',
+               zh:'2, 4, 6, 8, 10, 12, 14, 16, 18——<b>全是偶数</b>！2的乘法结果一定是偶数。' },
+        mathSteps:['2, 4, 6, 8, 10','12, 14, 16, 18',{ko:'모두 2의 배수!',en:'\\text{all multiples of 2!}',zh:'都是2的倍数！'}],
         result:{ ko:'2단 결과: 2, 4, 6, 8, 10, 12, 14, 16, 18 — 모두 짝수! ✓', en:'2s table: 2,4,6,8,10,12,14,16,18 — all even! ✓', zh:'2的乘法：2,4,6,8,10,12,14,16,18——全是偶数！✓' },
         book:null }
     ],

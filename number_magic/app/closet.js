@@ -11,7 +11,7 @@ window.screenCloset = function(container, opts){
   const lang = opts.lang || 'ko';
   const L = (item) => item[lang] || item.ko || item.en || '';
 
-  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none'}, opts.char || {});
+  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'}, opts.char || {});
   let unlocked = Object.assign({}, opts.unlocked || {});
   let coins = +(opts.coins || 0);
   let dirty = 0;  // 소비한 코인 누적
@@ -20,6 +20,7 @@ window.screenCloset = function(container, opts){
     {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
     {key:'color', ko:'색',    en:'Color',    zh:'颜色'},
     {key:'cape',  ko:'망토',  en:'Cape',     zh:'斗篷'},
+    {key:'hat',   ko:'모자',  en:'Hat',      zh:'帽子'},
     {key:'bg',    ko:'배경',  en:'BG',       zh:'背景'},
   ];
   let activeTab = 'number';
@@ -110,7 +111,7 @@ window.screenCloset = function(container, opts){
       }
       return html;
     }
-    const typeItems = {color:'colors',bg:'bgs',cape:'capes'};
+    const typeItems = {color:'colors',bg:'bgs',cape:'capes',hat:'hats'};
     const items = av[typeItems[activeTab]] || [];
     return items.map(item=>{
       const unl = isUnlocked(activeTab, item.id);

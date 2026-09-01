@@ -13,6 +13,12 @@ window.NM_AVATAR = {
     {id:'pink',   ko:'분홍',en:'Pink',  zh:'粉',  fg:'#e91e8c',bg:'#fce4f5',price:20},
     {id:'teal',   ko:'청록',en:'Teal',  zh:'青绿',fg:'#1abc9c',bg:'#d1f2eb',price:20},
     {id:'navy',   ko:'남색',en:'Navy',  zh:'深蓝',fg:'#2c3e50',bg:'#d6e4f0',price:25},
+    {id:'lime',   ko:'라임',en:'Lime',  zh:'青柠',fg:'#8bc34a',bg:'#eef7df',price:20},
+    {id:'orange', ko:'오렌지',en:'Orange',zh:'橙色',fg:'#ff8c00',bg:'#fff0db',price:25},
+    {id:'silver', ko:'은빛',en:'Silver',zh:'银色',fg:'#95a5a6',bg:'#eef2f3',price:35},
+    /* 무지개오라 — 단색이 아니라 렌더러(numi-render.js)에서 conic-gradient로 특수
+       처리되는 유일한 색. fg는 캐릭터 그림 톤 입힘(tint)에만 쓰이는 대표색. */
+    {id:'aurora', ko:'무지개오라',en:'Aurora',zh:'极光',fg:'#a15fd6',bg:'#f5eefc',price:50},
   ],
   bgs:[
     {id:'plain',   ko:'깔끔',  en:'Plain',   zh:'简洁',free:true},
@@ -21,6 +27,10 @@ window.NM_AVATAR = {
     {id:'sparks',  ko:'반짝',  en:'Sparkle', zh:'闪耀',price:15},
     {id:'rainbow', ko:'무지개',en:'Rainbow', zh:'彩虹',price:25},
     {id:'magic',   ko:'마법',  en:'Magic',   zh:'魔法',price:40},
+    {id:'snow',    ko:'눈꽃',  en:'Snowflake',zh:'雪花',price:15},
+    {id:'bolt',    ko:'번개',  en:'Lightning',zh:'闪电',price:20},
+    {id:'notes',   ko:'음표',  en:'Music Notes',zh:'音符',price:20},
+    {id:'crownpat',ko:'왕관무늬',en:'Crown Pattern',zh:'皇冠图案',price:45},
   ],
   /* 망토 — 캐릭터 뒤에 걸치는 액세서리 (신발·무늬와 별개로 코인 잠금) */
   capes:[
@@ -31,6 +41,10 @@ window.NM_AVATAR = {
     {id:'gold',   ko:'황금 망토',en:'Gold Cape',  zh:'金斗篷',fg:'#e6ac00',price:35},
     {id:'purple', ko:'보라 망토',en:'Purple Cape',zh:'紫斗篷',fg:'#8e44ad',price:35},
     {id:'rainbow',ko:'무지개 망토',en:'Rainbow Cape',zh:'彩虹斗篷',price:60},
+    /* 별무늬 망토 — 짙은 남색 바탕 + 렌더러가 얹는 작은 별 장식(hex는 바탕색) */
+    {id:'starcape',ko:'별무늬 망토',en:'Starry Cape',zh:'星纹斗篷',fg:'#1b2a4a',price:45},
+    /* 은하 망토 — 무지개처럼 렌더러에서 그라디언트로 특수 처리(fg는 예비값) */
+    {id:'galaxy', ko:'은하 망토',en:'Galaxy Cape',zh:'银河斗篷',fg:'#4a2a82',price:70},
   ],
   /* 캐릭터 숫자 — 0~9 무료, 10 이상은 두 자리 수 "특별 보상"(코인으로 잠금 해제) */
   numbers:[
@@ -38,7 +52,18 @@ window.NM_AVATAR = {
     {id:'4',free:true},{id:'5',free:true},{id:'6',free:true},{id:'7',free:true},
     {id:'8',free:true},{id:'9',free:true},
     {id:'10',price:40},{id:'11',price:55},{id:'20',price:70},{id:'25',price:85},
-    {id:'33',price:100},{id:'50',price:130},{id:'77',price:160},{id:'99',price:200},
+    {id:'33',price:100},{id:'42',price:105},{id:'50',price:130},{id:'64',price:140},
+    {id:'77',price:160},{id:'81',price:170},{id:'88',price:180},{id:'99',price:200},
+  ],
+  /* 모자 — 캐릭터 PNG 위에 얹는 SVG 오버레이(numi-render.js의 hatSVG). 전부 원본
+     도형(path/circle/polygon)만 사용, 어떤 기존 그림도 베끼지 않음. */
+  hats:[
+    {id:'none',   ko:'없음',    en:'None',     zh:'无',   free:true},
+    {id:'party',  ko:'고깔모자',en:'Party Hat',zh:'派对帽',price:15},
+    {id:'ribbon', ko:'리본',    en:'Ribbon',   zh:'蝴蝶结',price:20},
+    {id:'wizard', ko:'마법사 별모자',en:'Wizard Star Hat',zh:'魔法星帽',price:35},
+    {id:'crown',  ko:'왕관',    en:'Crown',    zh:'皇冠',price:45},
+    {id:'laurel', ko:'월계관',  en:'Laurel Wreath',zh:'桂冠',price:50},
   ]
 };
 

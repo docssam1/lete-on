@@ -52,7 +52,7 @@ window.NM_UNITS['M-07'] = {
     fills:[
       { tex:'\\dfrac{-1}{2} \\times \\dfrac{-3}{5} = \\dfrac{\\square}{10}', answer:3,
         hint:{ ko:'음수 2개(짝수)→+, 1×3=3', en:'2 negatives (even)→+, 1×3=3', zh:'2个负数(偶数)→+，1×3=3' } },
-      { tex:'\\text{역수: } \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}', answer:2,
+      { tex:{ko:'\\text{역수: } \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}',en:'\\text{reciprocal: } \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}',zh:'\\text{倒数：} \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}'}, answer:2,
         hint:{ ko:'분자·분모를 뒤집어요', en:'Flip numerator and denominator', zh:'分子分母互换' } }
     ],
     open:{ ko:'\\dfrac{-2}{3} \\div \\dfrac{4}{-9}를 역수를 이용해 계산해봐요.',

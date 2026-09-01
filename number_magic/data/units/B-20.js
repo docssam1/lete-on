@@ -21,6 +21,14 @@ window.NM_UNITS['B-20'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'1미터는 누가 정했을까요? 무엇을 기준으로 삼았을까요?',
+        en:'Who decided how long one metre is — and measured against what?',
+        zh:'一米是谁定的？以什么为标准？' },
+      history:{ ko:'지구예요. 1790년 프랑스에서는 쓰이는 자가 400종이나 돼 뒤죽박죽이었어요. 그래서 북극에서 적도까지 거리의 1천만분의 1을 1 m로 정했죠. 그러면 지구 한 바퀴는 1천만 × 4 = 4천만 m, 곧 40,000 km가 돼요. 0의 개수만 세면 지구 크기가 나오는 셈이에요 — 그리고 이 값은 2000년 전 에라토스테네스가 어림으로 알아낸 수와 똑같습니다.',
+        en:'The Earth. In 1790 France had some 400 different rulers in use, and it was chaos. So one metre was set as one ten-millionth of the distance from the North Pole to the equator. That makes one trip around the Earth 10,000,000 × 4 = 40,000,000 m, or 40,000 km. Count the zeros and you have the size of the planet — the same number Eratosthenes had estimated two thousand years earlier.',
+        zh:'是地球。1790年的法国有大约400种不同的尺子，一片混乱。于是把北极到赤道距离的一千万分之一定为1米。这样绕地球一圈就是10,000,000 × 4 = 40,000,000米，也就是40,000公里。数一数0，就得到了地球的大小——而这个数，正好和两千年前埃拉托色尼估算出来的一样。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 몇십×몇십 = 구구 + 00',en:'1) Tens×tens = times table + two zeros',zh:'① 几十×几十 = 口诀 + 两个0'},
@@ -39,7 +47,7 @@ window.NM_UNITS['B-20'] = {
         desc:{ko:'20×50: 20에 0이 하나, 50에 0이 하나 → 합 2개. 2×5=10이니까 10에 0이 하나 더 있어요. <b>최종 0의 개수 = 10의 0(1개) + 추가(2개) = 3개</b>!',
               en:'20×50: one zero in 20, one in 50 → two from the multiplicands. But 2×5=10 already has a zero! <b>Total zeros = 1 (from 10) + 2 (from tens) = 3</b>!',
               zh:'20×50：20中一个0，50中一个0→两个。但2×5=10本身有一个0！<b>总共0的个数=1（来自10）+2（来自十位）=3个</b>！'},
-        mathSteps:['20×50: 0이 각 1개씩 → 합 2개','2×5=10','→ 1000 (0이 3개! 10의 0 포함)'],
+        mathSteps:[{ko:'20×50: 0이 각 1개씩 → 합 2개',en:'20×50: \\text{one zero each → 2 in all}',zh:'20×50：各1个0 → 共2个'},'2×5=10',{ko:'→ 1000 (0이 3개! 10의 0 포함)',en:'→ 1000 \\text{ (3 zeros! counting the one from 10)}',zh:'→ 1000（3个0！含10的0）'}],
         result:{ko:'20×50=1000! 구구단 결과에도 0이 있으면 함께 세야 해요.',en:'20×50=1000! If the times-table result also ends in zero, count that one too.',zh:'20×50=1000！如果口诀结果本身也有0，要一起数！'},
         book:{ko:'0의 개수를 셀 때는 두 수의 0 개수를 더하고, 구구단 결과에도 0이 있으면 그것도 더해요. 예: 20×50=2×5×100=10×100=1000. 10에서 0이 하나, 100에서 0이 둘 → 총 0이 세 개.',
               en:'Count zeros: add the zeros from both multipliers, and also count any zeros in the times-table result. e.g. 20×50=2×5×100=10×100=1000. One zero from 10, two from 100 → three zeros total.',

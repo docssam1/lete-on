@@ -117,7 +117,7 @@ function testStaticUiSecurityContract() {
   assert.match(indexHtml, /event\.persisted/);
   assert.match(viewerHtml, /gradingSignalKey\(doc\.attemptId\)/);
   assert.match(indexHtml, /gradingSignalKey\(exam\.attemptId\)/);
-  assert.match(configSource, /secureMockDelivery:\s*false/, "보안형 모의고사 기능 플래그는 계속 꺼져 있어야 합니다.");
+  assert.match(configSource, /secureMockDelivery:\s*true/, "검증된 보안형 모의고사 전달 기능을 사용해야 합니다.");
 }
 
 testPureRemoteSummaryAndBothSubmissionPaths();

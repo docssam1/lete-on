@@ -25,6 +25,7 @@ function shapeTransformMarkup(visual) {
 }
 
 function partitionDrawMarkup(visual) {
+  if (visual.mode === "rotational") return rotationalPartitionMarkup(visual);
   const symbols = visual.symbols || Array(visual.rows * visual.columns).fill("");
   const guideCuts = new Set(visual.guideCuts || []);
   const cells = symbols.map((symbol, index) => {
@@ -33,15 +34,45 @@ function partitionDrawMarkup(visual) {
     const label = visual.labels?.[index];
     const classes = [];
     if (label) {
-      classes.push(`piece-${label.toLowerCase()}`);
-      if (column < visual.columns - 1 && visual.labels[index + 1] !== label) classes.push("cut-right");
-      if (row < visual.rows - 1 && visual.labels[index + visual.columns] !== label) classes.push("cut-bottom");
+      if (visual.showPieceFills !== false) classes.push(`piece-${label.toLowerCase()}`);
+      if (column < visual.columns - 1 && visual.labels[index + 1] !== label) {
+        classes.push(guideCuts.has(`${index}:right`) ? "guide-right" : visual.sourceGuide ? "completion-right" : "cut-right");
+      }
+      if (row < visual.rows - 1 && visual.labels[index + visual.columns] !== label) {
+        classes.push(guideCuts.has(`${index}:bottom`) ? "guide-bottom" : visual.sourceGuide ? "completion-bottom" : "cut-bottom");
+      }
     }
     if (!visual.labels && guideCuts.has(`${index}:right`)) classes.push("guide-right");
     if (!visual.labels && guideCuts.has(`${index}:bottom`)) classes.push("guide-bottom");
     return `<i class="${classes.join(" ")}">${symbol ? `<b>${esc(symbol)}</b>` : ""}</i>`;
   }).join("");
   return `<div class="b1-partition-draw"><div class="b1-partition-grid${visual.pivot ? " has-pivot" : ""}" style="--rows:${visual.rows};--columns:${visual.columns}">${cells}</div><strong>${visual.labels ? "완성된 분할선" : "주어진 선을 이어 나누세요"}</strong></div>`;
+}
+
+function rotationalPartitionMarkup(visual) {
+  const cell = visual.board === "cross" ? 30 : 40;
+  const padding = 12;
+  const width = visual.columns * cell + padding * 2;
+  const height = visual.rows * cell + padding * 2;
+  const active = (row, column) => visual.board !== "cross" || row === 2 || row === 3 || column === 2 || column === 3;
+  const cells = Array.from({ length: visual.rows * visual.columns }, (_, index) => {
+    const row = Math.floor(index / visual.columns);
+    const column = index % visual.columns;
+    if (!active(row, column)) return "";
+    return `<rect x="${padding + column * cell}" y="${padding + row * cell}" width="${cell}" height="${cell}" class="b1-rotation-cell"/>`;
+  }).join("");
+  const border = visual.board === "cross"
+    ? `M${padding + 2 * cell} ${padding}H${padding + 4 * cell}V${padding + 2 * cell}H${padding + 6 * cell}V${padding + 4 * cell}H${padding + 4 * cell}V${padding + 6 * cell}H${padding + 2 * cell}V${padding + 4 * cell}H${padding}V${padding + 2 * cell}H${padding + 2 * cell}Z`
+    : `M${padding} ${padding}H${padding + 4 * cell}V${padding + 4 * cell}H${padding}Z`;
+  const paths = visual.completedPaths || [visual.guidePath];
+  const colors = ["given", "answer-blue", "answer-green", "answer-orange"];
+  const lineMarkup = paths.map((path, index) => {
+    const points = path.map(([x, y]) => `${padding + x * cell},${padding + y * cell}`).join(" ");
+    return `<polyline points="${points}" class="b1-rotation-line ${colors[index] || "answer-blue"}"/>`;
+  }).join("");
+  const centerX = padding + visual.columns * cell / 2;
+  const centerY = padding + visual.rows * cell / 2;
+  return `<div class="b1-partition-draw b1-rotational-partition"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${visual.pieceCount}조각 회전 분할선">${cells}<path d="${border}" class="b1-rotation-border"/>${lineMarkup}<circle cx="${centerX}" cy="${centerY}" r="7" class="b1-rotation-pivot"/></svg><strong>${visual.completedPaths ? "완성된 분할선" : "빨간 선을 돌려 이어 그리세요"}</strong></div>`;
 }
 
 const SEGMENT_PATHS = Object.freeze({

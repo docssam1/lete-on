@@ -1,0 +1,289 @@
+{
+  "schemaVersion": 1,
+  "status": "verified-crosswalk",
+  "sourceInventory": "4-1-source-items.json",
+  "sourceItemsTotal": 329,
+  "units": [
+    1,
+    2
+  ],
+  "currentTypesTotal": 36,
+  "verifiedMappings": 4,
+  "mappings": [
+    {
+      "currentTypeId": "4-1-u1-t1-2",
+      "sourceItemId": "4-1-u1-e1-example-1-3",
+      "generatorKey": "largeNumberPlaceValue",
+      "variant": 1,
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "status": "verified",
+      "evidence": "생각하는 황소 4-1 심화 PDF p.8 / 교재 p.4 예제 1-3과 같이 큰 수를 자릿값과 자리 숫자의 곱의 합으로 나타내고 빈 계수를 묻는다. 난수 표본도 같은 단일 빈칸 구조이다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t1-3",
+      "sourceItemId": "4-1-u1-e1-example-1-2",
+      "generatorKey": "largeNumberPlaceValue",
+      "variant": 2,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "status": "verified",
+      "evidence": "생각하는 황소 4-1 심화 PDF p.8 / 교재 p.4 예제 1-2와 같이 같은 수를 확대·축소한 뒤 지정한 두 숫자의 자릿값을 비교하여 몇 배인지 묻는다. 난수 표본은 배율과 숫자만 바꾼 동일 구조이다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t2",
+      "sourceItemId": "4-1-u1-e2-example-2-1",
+      "generatorKey": "largeNumberCompare",
+      "variant": 0,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "status": "verified",
+      "evidence": "생각하는 황소 4-1 심화 PDF p.10 / 교재 p.6 예제 2-1과 같이 두 부등식의 같은 빈칸에 공통으로 들어가는 숫자를 모두 찾고 그 합을 묻는다. 난수 표본의 두 경계 부등식과 요구값이 일치한다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t4-2",
+      "sourceItemId": "4-1-u1-e4-example-4-3",
+      "generatorKey": "largeNumberApplication",
+      "variant": 1,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "status": "verified",
+      "evidence": "생각하는 황소 4-1 심화 PDF p.14 / 교재 p.10 예제 4-3과 같이 1부터 자연수를 차례로 이어 쓴 수의 전체 자리 수를 주고 마지막 세 자리를 묻는다. 난수 표본은 전체 길이만 바뀌는 동일 구조이다."
+    }
+  ],
+  "unmatchedCurrentTypes": [
+    {
+      "currentTypeId": "4-1-u1-t1",
+      "currentTypeName": "자리 숫자가 나타내는 값의 차 구하기",
+      "generatorKey": "largeNumberPlaceValue",
+      "variant": 0,
+      "reason": "같은 수의 두 자리 숫자가 나타내는 값의 차만 묻는 원문 항목이 없다. 4-1-u1-e1-mission-3은 두 자릿값의 배수 관계를, mission-6은 거리 단위 환산 뒤 자리 숫자의 차를 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t2-2",
+      "currentTypeName": "서로 다른 표현의 큰 수 크기 비교",
+      "generatorKey": "largeNumberCompare",
+      "variant": 1,
+      "reason": "4-1-u1-e2-example-2-2는 네 수를 큰 수부터 모두 순서화하지만 생성기는 가장 작은 수 하나만 묻는다. 원문 전체의 요구값을 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t2-3",
+      "currentTypeName": "부등식을 만족하는 가장 큰 숫자",
+      "generatorKey": "largeNumberCompare",
+      "variant": 2,
+      "reason": "가장 가까운 4-1-u1-e2-mission-1은 부등식을 만족하는 숫자를 모두 쓰게 하지만 생성기는 가장 큰 숫자 하나만 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t3",
+      "currentTypeName": "일정하게 뛰어 센 특정 번째 수",
+      "generatorKey": "largeNumberSkipPattern",
+      "variant": 0,
+      "reason": "4-1-u1-e3-exploration과 mission-6은 나열된 여러 항에서 간격을 먼저 찾아 먼 항을 구한다. 생성기는 간격을 직접 주므로 원문의 규칙 추론 조건을 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t3-2",
+      "currentTypeName": "같은 간격 수직선의 두 수 구하기",
+      "generatorKey": "largeNumberSkipPattern",
+      "variant": 1,
+      "reason": "4-1-u1-e3-example-3-2는 수직선의 두 미지수를 각각 구하게 하지만 생성기는 두 수의 합만 묻는다. 묻는 값이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t3-3",
+      "currentTypeName": "잘못 뛰어 센 횟수 바로잡기",
+      "generatorKey": "largeNumberSkipPattern",
+      "variant": 2,
+      "reason": "4-1-u1-e3-example-3-3과 mission-3은 잘못 센 결과에서 바르게 센 마지막 수를 묻는다. 생성기는 정해진 목표까지 추가로 뛸 횟수를 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t4",
+      "currentTypeName": "금액을 가장 적은 지폐·수표로 바꾸기",
+      "generatorKey": "largeNumberApplication",
+      "variant": 0,
+      "reason": "4-1-u1-e4-example-4-1은 수표 수가 가장 많을 때와 가장 적을 때의 차를 묻고, mission-6은 여러 권종별 한계를 함께 적용한다. 생성기의 두 권종 최소 장수만 묻는 구조와 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t4-3",
+      "currentTypeName": "같은 물체를 쌓은 높이와 단위 환산",
+      "generatorKey": "largeNumberApplication",
+      "variant": 2,
+      "reason": "4-1-u1-e4-exploration과 mission-4는 화폐 총액과 권종으로 물체 개수를 먼저 구한 뒤 높이를 환산한다. 생성기는 동전 개수를 직접 주어 원문의 금액-개수 변환 조건을 생략한다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t5",
+      "currentTypeName": "범위와 자리 조건을 만족하는 수의 개수",
+      "generatorKey": "conditionedNumber",
+      "variant": 0,
+      "reason": "원문의 개수 문항들은 같은 자리 숫자 조건 또는 전체 자리 합과 특정 두 자리 합을 결합한다. 생성기의 십의 자리·일의 자리 합과 짝수 조건을 함께 쓰는 항목은 없다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t5-2",
+      "currentTypeName": "두 자리를 바꾼 수의 차로 숫자 찾기",
+      "generatorKey": "conditionedNumber",
+      "variant": 1,
+      "reason": "4-1-u1-e5-example-5-2는 고정된 뒤 여섯 자리까지 포함한 처음의 여덟 자리 수 전체를 묻는다. 생성기는 뒤 여섯 자리를 제시하지 않고 앞의 두 자리 수만 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t5-3",
+      "currentTypeName": "여러 자리 조건을 만족하는 가장 큰 수",
+      "generatorKey": "conditionedNumber",
+      "variant": 2,
+      "reason": "원문의 최댓값 문항은 서로 떨어진 세 자리의 합, 자리별 배수 관계 또는 반복 증가 조건을 사용한다. 생성기의 맨 앞 두 자리 합과 일의 자리 고정 조건과 일치하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t6",
+      "currentTypeName": "기준 수에 가장 가까운 수 만들기",
+      "generatorKey": "digitCardNumber",
+      "variant": 0,
+      "reason": "4-1-u1-e6-example-6-1은 0~9를 모두 사용해 기준 수에 두 번째로 가까운 수를 묻는다. 생성기는 일부 카드로 가장 가까운 수를 물어 순위와 카드 조건이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t6-2",
+      "currentTypeName": "중복 수 카드로 몇 번째 큰 수 만들기",
+      "generatorKey": "digitCardNumber",
+      "variant": 1,
+      "reason": "4-1-u1-e6-mission-2는 0~5를 각각 두 번 사용해 세 번째 큰 수와 세 번째 작은 수의 차를 묻는다. 생성기는 다른 중복 카드 구성에서 임의 순위의 큰 수 하나만 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u1-t6-3",
+      "currentTypeName": "0을 포함한 가장 큰 수와 작은 수의 차",
+      "generatorKey": "digitCardNumber",
+      "variant": 2,
+      "reason": "4-1-u1-e6-example-6-3은 세 번째 큰 수와 세 번째 작은 수의 차를 묻는다. 생성기는 극댓값과 극솟값의 차를 물어 순위 조건을 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t1",
+      "currentTypeName": "여러 반직선으로 만들 수 있는 각의 수",
+      "generatorKey": "multiAngle",
+      "variant": 0,
+      "reason": "가장 가까운 4-1-u2-e1-mission-5는 한 직선의 서로 반대인 두 반직선을 포함해 180°인 한 쌍을 제외한다. 생성기 그림은 180° 미만의 부채꼴 안에만 반직선을 놓고 모든 두 반직선 쌍을 센다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t1-2",
+      "currentTypeName": "같은 간격 반직선의 예각과 둔각 세기",
+      "generatorKey": "multiAngle",
+      "variant": 1,
+      "reason": "4-1-u2-e1-example-1-2와 mission-1은 각각 둔각의 최대 개수 또는 예각의 개수만 묻는다. 생성기는 같은 간격 반직선에서 예각과 둔각의 합을 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t1-3",
+      "currentTypeName": "반직선을 더 그었을 때 늘어나는 각",
+      "generatorKey": "multiAngle",
+      "variant": 2,
+      "reason": "원문 1탐구의 항목 중 반직선을 한 개 추가하기 전후의 각 개수 증가를 묻는 문항이 없다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t2",
+      "currentTypeName": "한 직선 위 같은 크기인 두 각",
+      "generatorKey": "angleCalculation",
+      "variant": 0,
+      "reason": "원문 각도 계산 항목에는 한 직선 위 네 각 중 가운데 두 각이 같고 양 끝각을 주는 단일 미지각 구조가 없다. 원문은 겹친 삼각형이나 교차 직선의 여러 각을 함께 사용한다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t2-2",
+      "currentTypeName": "한 점 둘레의 남은 각 구하기",
+      "generatorKey": "angleCalculation",
+      "variant": 1,
+      "reason": "4-1-u2-e2-example-2-2와 mission-4는 직선·교차선 관계와 여러 미지각을 함께 계산한다. 생성기의 한 점 둘레 네 구역 중 세 각을 직접 주고 한 각을 묻는 구조와 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t2-3",
+      "currentTypeName": "맞꼭지각을 나눈 각 구하기",
+      "generatorKey": "angleCalculation",
+      "variant": 2,
+      "reason": "원문 맞꼭지각 문항은 여러 교차 직선과 주변 각을 이용해 미지각 또는 두 각의 차를 구한다. 생성기는 맞꼭지각 전체와 한 부분각을 직접 주고 나머지만 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t3",
+      "currentTypeName": "다각형의 빠진 한 내각",
+      "generatorKey": "polygonInterior",
+      "variant": 0,
+      "reason": "원문 3탐구는 연결·오목·교차 다각형과 안팎의 각을 사용한다. 생성기의 단순 볼록다각형에서 한 내각만 비운 그림과 같은 항목이 없다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t3-2",
+      "currentTypeName": "크기가 같은 두 내각 구하기",
+      "generatorKey": "polygonInterior",
+      "variant": 1,
+      "reason": "원문 3탐구에는 단순 볼록다각형의 같은 두 내각을 빈칸으로 두고 한 각을 묻는 항목이 없다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t3-3",
+      "currentTypeName": "표시한 두 내각의 합 구하기",
+      "generatorKey": "polygonInterior",
+      "variant": 2,
+      "reason": "가장 가까운 4-1-u2-e3-example-3-3은 오목한 복합 다각형의 두 각의 합을 묻는다. 생성기는 단순 볼록다각형의 이웃한 두 내각을 표시해 그림 구조가 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t4",
+      "currentTypeName": "다각형의 빠진 한 외각",
+      "generatorKey": "polygonExterior",
+      "variant": 0,
+      "reason": "4-1-u2-e4-mission-3은 각 꼭짓점의 변을 연장해 외각을 바깥에 표시한다. 생성기의 polygonSvg는 연장선 없이 수치를 다각형 안쪽에 놓아 원문 외각 그림을 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t4-2",
+      "currentTypeName": "크기가 같은 두 외각 구하기",
+      "generatorKey": "polygonExterior",
+      "variant": 1,
+      "reason": "원문 4탐구에는 단순 다각형에서 같은 두 외각을 표시하고 한 외각을 묻는 항목이 없다. 같은 각 조건이 있는 mission-4는 겹친 삼각형의 부분각 차 문제이다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t4-3",
+      "currentTypeName": "오각별의 뾰족한 각 구하기",
+      "generatorKey": "polygonExterior",
+      "variant": 2,
+      "reason": "4-1-u2-e4-example-4-4는 오각별의 다섯 꼭짓각 전체의 합을 묻는다. 생성기는 네 각을 수치로 주고 빠진 한 각을 물어 조건과 요구값이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t5",
+      "currentTypeName": "종이를 접어 생긴 각 구하기",
+      "generatorKey": "interiorExteriorApplication",
+      "variant": 0,
+      "reason": "원문 접기 항목은 삼각형 또는 직사각형을 접은 복합 그림에서 여러 각의 차·합·미지각을 구한다. 생성기는 한 선분의 반사각을 이등분하는 단일 관계만 구현한다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t5-2",
+      "currentTypeName": "정사각형을 돌려 생긴 각 구하기",
+      "generatorKey": "interiorExteriorApplication",
+      "variant": 1,
+      "reason": "가장 가까운 4-1-u2-e5-example-5-2는 삼각형을 한 꼭짓점 중심으로 회전한 겹친 그림이다. 생성기는 정사각형과 대응변만 그려 원문의 도형·겹침·표시각 구성을 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t5-3",
+      "currentTypeName": "정다각형의 외각으로 내각 구하기",
+      "generatorKey": "interiorExteriorApplication",
+      "variant": 2,
+      "reason": "원문 5탐구는 종이 접기와 삼각형 회전 문항으로 구성되며, 정다각형의 외각을 주고 내각을 묻는 항목이 없다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t6",
+      "currentTypeName": "주어진 시각의 시침과 분침 사이 각",
+      "generatorKey": "clockAngle",
+      "variant": 0,
+      "reason": "4-1-u2-e6-example-6-1·6-2와 mission-1·2는 한 source item 안에서 2~4개 시각을 모두 처리하고 일부는 바늘도 그리게 한다. 생성기는 시각 하나만 생성해 원문 항목 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t6-2",
+      "currentTypeName": "분침이 움직인 각도로 시간 구하기",
+      "generatorKey": "clockAngle",
+      "variant": 1,
+      "reason": "4-1-u2-e6-mission-5는 시작 시각과 분침 이동각을 주고 종료 시각을 묻는다. 생성기는 시작 시각 없이 경과한 분만 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u2-t6-3",
+      "currentTypeName": "같은 시간 동안 두 바늘의 이동각 차",
+      "generatorKey": "clockAngle",
+      "variant": 2,
+      "reason": "4-1-u2-e6-mission-3은 시작·종료 시각 사이 분침이 움직인 각도만 묻는다. 생성기는 같은 시간 동안 분침과 시침의 이동각 차를 묻는다."
+    }
+  ],
+  "duplicateSourceIds": 0,
+  "selfCheck": {
+    "currentTypesTotal": 36,
+    "verifiedMappings": 4,
+    "unmatchedCurrentTypes": 32,
+    "duplicateSourceIds": 0,
+    "mappedPlusUnmatched": 36,
+    "passed": true
+  }
+}

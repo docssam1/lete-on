@@ -383,6 +383,16 @@
       "sha256": "eabe24587b61d64560001c7935180706d70c0ea3db3d8a28dd6ce1dc7814dc5b",
       "size": 3075,
       "mtime_ns": 1787845033158614000
+    },
+    {
+      "id": "ray-kids-a4-1-soma",
+      "title": "RAY Kids A4-1 소마큐브",
+      "path": "G:\\내 드라이브\\2025 사고력 수학 폴더\\기하 규칙성 관련\\소마\\RAY\\레이키즈 A4-1.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "8e6352e29de9c37203782a07f0b96ff628c1b5a1de45e91e73699129313d2c78",
+      "size": 23217166,
+      "mtime_ns": 1510659278000000000
     }
   ],
   "records": [
@@ -4677,6 +4687,28 @@
           "role": "audit",
           "locator": "독립 헥소미노 열거와 정다면체 오일러 검산",
           "note": "게임 계산과 별도 정규화로 35개와 11개를 재검산"
+        }
+      ]
+    },
+    {
+      "id": "geometry.soma-cube-workshop",
+      "title": "Soma Cube Workshop source and validation",
+      "aliases": [],
+      "tags": [
+        "geometry",
+        "soma-cube",
+        "source-backed"
+      ],
+      "summary": "RAY Kids A4-1 supports rotation equivalence, two-piece assembly, and making the same solid with different pieces. The 3x3x3 completion and seven-piece challenges are labeled as GFIELD internal extensions. The game validates 24 rotations, fillability, and distinct assemblies.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-28",
+      "pointers": [
+        {
+          "source_id": "ray-kids-a4-1-soma",
+          "role": "source",
+          "locator": "PDF p.32-48",
+          "note": "Independently checked for the direct basis of stages 1-3"
         }
       ]
     }

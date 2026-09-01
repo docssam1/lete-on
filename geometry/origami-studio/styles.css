@@ -7,3 +7,37 @@
 /* Two source-backed paper courses share one studio without merging their progress. */
 .level-section{padding:12px 0 28px}.course-section+.course-section{padding-top:24px;border-top:1px solid rgba(21,93,98,.18)}.course-description{margin:6px 0 0;color:#607272;font-size:12px;font-weight:800}.course-turn .level-visual{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 28%,white),#f7fbfa)}.course-turn .paper-stack{transform:rotate(5deg)}.course-turn .paper-stack::after{content:"↻";position:absolute;z-index:4;inset:20px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--accent);font-size:31px;font-weight:950;box-shadow:0 4px 10px #17343b20}
 @media(max-width:850px){.course-section .level-card:last-child{grid-column:1/-1}.course-section+.course-section{padding-top:18px}}
+
+/* GFIELD paper workshop v4 */
+:root{--ink:#17263d;--teal:#17746f;--paper:#fffefa;--line:#cbc8bc;--coral:#df7562;--yellow:#dcae35;background:#f4f5ef;font-family:"Pretendard","Noto Sans KR",Arial,sans-serif}
+body{background:#f4f5ef}
+.studio-shell{width:min(1240px,100%);padding:0 clamp(18px,3vw,34px) 42px}
+.studio-bar{height:64px;margin-inline:calc(clamp(18px,3vw,34px) * -1);padding-inline:clamp(18px,3vw,34px);border:0;border-bottom:1px solid #c5c8c0;background:rgba(255,254,249,.97);box-shadow:0 2px 10px rgba(39,53,47,.05)}
+.back-button{width:40px;height:40px;border-radius:4px;border-color:#bfc7c3}
+.brand strong{color:#123f72}.brand-mark{color:var(--teal)}
+.player b,.worksheet-button{border-radius:3px}.worksheet-button{background:var(--teal)}
+.studio-intro{min-height:190px;padding:26px clamp(20px,4vw,48px);border-bottom-color:#c8ccc5}
+.studio-intro h1{font-size:52px;line-height:1.12}.studio-intro img{width:170px;max-height:170px}
+.level-section{padding:26px 0 30px}.course-section+.course-section{padding-top:30px;border-top-color:#c8ccc5}
+.level-section>header{padding:0 2px 14px}.level-section h2{font-size:25px}
+.level-card{min-height:260px;border:1px solid #c6c4b9;border-radius:4px;background:#fffefa;box-shadow:0 5px 13px rgba(47,56,51,.07)}
+.level-card:hover,.level-card:focus-visible{transform:translateY(-3px);box-shadow:0 12px 24px rgba(39,52,46,.14)}
+.level-number{border-radius:3px}.worksheet-strip{border:1px solid #c6c4b9;border-radius:4px;background:#fffefa}.worksheet-strip>a{border-radius:3px;border-width:1px}
+
+@media(max-width:850px){
+  .studio-shell{padding:0 12px 28px}
+  .studio-bar{margin-inline:-12px;padding-inline:12px}
+  .studio-intro{min-height:160px;padding-inline:16px}
+  .studio-intro h1{font-size:38px}
+  .level-card:last-child{grid-template-columns:135px 1fr}
+}
+@media(max-width:480px){
+  .studio-bar{height:56px}
+  .studio-intro h1{font-size:30px}
+  .studio-intro img{width:100px}
+  .level-section h2{font-size:21px}
+  .level-card{border-radius:3px}
+  .level-card:last-child{grid-template-columns:112px 1fr}
+}
+@media(prefers-reduced-motion:reduce){.studio-intro img{animation:none}}
+.level-copy .level-stage{display:block;min-height:16px;margin-bottom:5px;color:#876126;font-size:10px;font-weight:950}

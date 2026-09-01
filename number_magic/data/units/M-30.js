@@ -47,7 +47,7 @@ window.NM_UNITS['M-30'] = {
         desc:{ko:'왼쪽 위 자리는 "앞의 1행"과 "뒤의 1열"을 짝지어요: 1×5+2×7=19. 오른쪽 위는 1행과 2열: 1×6+2×8=22 — 자리마다 짝이 다 달라요.',
               en:'The top-left entry pairs the first matrix\'s row 1 with the second\'s column 1: 1×5+2×7=19. The top-right pairs row 1 with column 2: 1×6+2×8=22 — every position has its own pairing.',
               zh:'左上位置配对"前者第1行"和"后者第1列"：1×5+2×7=19。右上配对第1行和第2列：1×6+2×8=22——每个位置的配对都不同。'},
-        mathSteps:['1\\times5+2\\times7=19', '1\\times6+2\\times8=22', '\\text{(같은 방법으로 아래 두 칸도)}'],
+        mathSteps:['1\\times5+2\\times7=19', '1\\times6+2\\times8=22', {ko:'\\text{(같은 방법으로 아래 두 칸도)}',en:'\\text{(the bottom two cells the same way)}',zh:'\\text{（下面两格同样做）}'}],
         result:{ko:'각 자리는 앞 행과 뒤 열을 짝지어 곱하고 더해요!',en:'Each entry pairs a row from the first with a column from the second, multiplies, and adds!',zh:'每个位置都用前者的行配后者的列，乘完再加！'},
         book:{ko:'i행 j열 성분 = (앞 행렬의 i행)과 (뒤 행렬의 j열)을 순서대로 곱해 더한 값이에요.',
               en:'The entry in row i, column j equals the sum of products pairing the first matrix\'s row i with the second\'s column j, in order.',

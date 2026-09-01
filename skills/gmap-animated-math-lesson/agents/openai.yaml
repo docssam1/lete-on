@@ -1,0 +1,4 @@
+interface:
+  display_name: "G·MAP Animated Math Lesson"
+  short_description: "수학 대상을 음성 동기화 애니메이션 강의로 설계합니다"
+  default_prompt: "Use $gmap-animated-math-lesson to turn this verified math problem or concept into a synchronized lesson with full-play, step-by-step, and teacher-evidence views."

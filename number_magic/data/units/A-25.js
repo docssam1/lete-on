@@ -22,15 +22,15 @@ window.NM_UNITS['A-25'] = {
         desc:{ ko:'200+350-100+450-200에서 덧셈: 200+350+450=1000, 뺄셈: 100+200=300. 1000-300=700!',
                en:'200+350-100+450-200: additions: 200+350+450=1000, subtractions: 100+200=300. 1000-300=700!',
                zh:'200+350-100+450-200：加法：200+350+450=1000，减法：100+200=300。1000-300=700！' },
-        mathSteps:['200+350-100+450-200','덧셈: 200+350+450 = 1000','뺄셈: 100+200 = 300','1000 - 300 = 700'],
+        mathSteps:['200+350-100+450-200',{ko:'덧셈: 200+350+450 = 1000',en:'\\text{addition: } 200+350+450 = 1000',zh:'加法：200+350+450 = 1000'},{ko:'뺄셈: 100+200 = 300',en:'\\text{subtraction: } 100+200 = 300',zh:'减法：100+200 = 300'},'1000 - 300 = 700'],
         result:{ ko:'200+350-100+450-200=700 ✓', en:'200+350-100+450-200=700 ✓', zh:'200+350-100+450-200=700 ✓' },
         book:{ ko:'덧셈끼리 먼저 모아 큰 합을 만든 뒤, 뺄셈끼리 모은 합을 한 번에 빼요.', en:'Group all additions first to make a big sum, then subtract the combined subtractions at once.', zh:'先把所有加法聚在一起得到大数，再一次性减去所有减法之和。' } },
       { tag:{ ko:'② 왜 순서를 바꿔도 될까요?', en:'2) Why can we rearrange the order?', zh:'② 为什么可以改变顺序？' },
         head:{ ko:'덧셈과 뺄셈은 교환법칙이 성립해요', en:'Addition and subtraction satisfy a rearrangement property', zh:'加减法满足可交换的性质' },
-        desc:{ ko:'a+b-c+d = a+b+d-c. 부호가 붙어 이동하기 때문에 정확해요. 단, 뺄셈 부호는 함께 가져가야 해요!',
-               en:'a+b-c+d = a+b+d-c. The sign travels with the number. Always bring the minus sign along!',
-               zh:'a+b-c+d = a+b+d-c。符号跟着数字走，所以是准确的。注意减号要一起带走！' },
-        mathSteps:['a + b - c + d','= (a + b + d) - c','부호를 잘 챙기면 OK!'],
+        desc:{ ko:'a+b-c+d = a+b+d-c. 부호가 붙어 이동하기 때문에 정확해요. 단, <b>뺄셈 부호는 함께 가져가야 해요</b>!',
+               en:'a+b-c+d = a+b+d-c. The sign travels with the number. <b>Always bring the minus sign along!</b>',
+               zh:'a+b-c+d = a+b+d-c。符号跟着数字走，所以是准确的。<b>注意减号要一起带走</b>！' },
+        mathSteps:['a + b - c + d','= (a + b + d) - c',{ko:'부호를 잘 챙기면 OK!',en:'\\text{Keep track of the signs and you are OK!}',zh:'管好符号就OK！'}],
         result:{ ko:'부호만 잘 챙기면 어떤 순서로 묶어도 OK!', en:'As long as signs are correct, any grouping works!', zh:'只要符号处理正确，怎么分组都可以！' },
         book:null }
     ],
@@ -41,7 +41,7 @@ window.NM_UNITS['A-25'] = {
 
   check:{
     fills:[
-      { tex:'200+350-100+450-200:\\;\\text{덧셈 합}=\\square', answer:1000,
+      { tex:{ko:'200+350-100+450-200:\\;\\text{덧셈 합}=\\square',en:'200+350-100+450-200:\\;\\text{sum of additions}=\\square',zh:'200+350-100+450-200:\\;\\text{加法之和}=\\square'}, answer:1000,
         hint:{ ko:'200+350+450=?', en:'200+350+450=?', zh:'200+350+450=？' } },
       { tex:'1000-300=\\square', answer:700, hint:{ ko:'1000-300=?', en:'1000-300=?', zh:'1000-300=？' } }
     ],

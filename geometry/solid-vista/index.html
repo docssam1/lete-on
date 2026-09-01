@@ -4,7 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Spatial Solids District</title>
-  <link rel="stylesheet" href="./styles.css?v=solid-1" />
+  <link rel="stylesheet" href="./styles.css?v=solid-studio-3" />
+  <link rel="stylesheet" href="./soma.css?v=solid-2" />
+  <link rel="stylesheet" href="./material-refresh.css?v=solid-1" />
+  <link rel="stylesheet" href="../shared/worksheet-links.css?v=1" />
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
   <meta name="theme-color" content="#17394d" />
 </head>
@@ -20,14 +23,19 @@
       <div class="tower-mark" aria-hidden="true"><i></i><i></i><i></i></div>
     </section>
     <section class="course-section">
-      <header><div><h2 id="netTitle"></h2><p id="netDescription"></p></div><strong id="sessionLabel"></strong></header>
-      <div id="levelGrid" class="level-grid"></div>
+      <header><div><h2 id="netTitle"></h2><p id="netDescription"></p></div><strong id="sessionLabel"></strong><a id="netWorksheetLink" class="course-sheet-link" href="../worksheet/net-observatory/">학습지</a></header>
+      <div id="netLevelGrid" class="level-grid"></div>
     </section>
-    <section class="upcoming">
-      <div class="soma-shape" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      <div><span id="nextLabel"></span><h2 id="somaTitle"></h2><p id="somaDescription"></p></div>
+    <section class="course-section dice-section">
+      <header><div><h2 id="diceTitle"></h2><p id="diceDescription"></p></div><strong id="diceSessionLabel"></strong><a id="diceWorksheetLink" class="course-sheet-link" href="../worksheet/dice-roll/">학습지</a></header>
+      <div id="diceLevelGrid" class="level-grid"></div>
+    </section>
+    <section class="course-section soma-section">
+      <header><div><h2 id="somaTitle"></h2><p id="somaDescription"></p></div><strong id="somaSessionLabel"></strong></header>
+      <div id="somaLevelGrid" class="level-grid"></div>
     </section>
   </main>
-  <script type="module" src="./app.js?v=solid-1"></script>
+  <script src="../shared/pwa.js?v=3" defer></script>
+  <script type="module" src="./app.js?v=solid-studio-7"></script>
 </body>
 </html>

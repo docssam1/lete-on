@@ -68,106 +68,222 @@ table.sq td.hi{color:var(--no);font-weight:800}
   border-radius:99px;padding:3px 9px;margin-left:6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="lab-lang.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>🕳 수직선의 구멍</h1>
-    <p>분수를 아무리 촘촘히 찍어도 남는 자리가 있어요</p>
+    <h1>🕳 <span data-t="title"></span></h1>
+    <p data-t="tag"></p>
   </header>
 
-  <nav class="tabs" aria-label="단계">
-    <button class="tab on" data-p="p1">① 질문</button>
-    <button class="tab" data-p="p2">② 확대해 보기</button>
-    <button class="tab" data-p="p3">③ 직접 좁혀 가기</button>
-    <button class="tab" data-p="p4">④ 이름 붙이기</button>
+  <nav class="tabs" aria-label="stages">
+    <button class="tab on" data-p="p1">① <span data-t="tab1"></span></button>
+    <button class="tab" data-p="p2">② <span data-t="tab2"></span></button>
+    <button class="tab" data-p="p3">③ <span data-t="tab3"></span></button>
+    <button class="tab" data-p="p4">④ <span data-t="tab4"></span></button>
   </nav>
 
   <!-- ① 질문 -->
   <section class="card on story" id="p1">
-    <h2>수직선을 빈틈없이 채울 수 있을까?</h2>
-    <button class="speak" data-say="p1">🔊 읽어 주기</button>
-    <p>수직선 위에 <b>분수를 전부</b> 찍어 본다고 해 봐요. 0과 1 사이에만 해도
-    1/2, 1/3, 2/3, 1/4, 3/4, 1/5 … 끝없이 많아요. 두 분수를 아무거나 골라도
-    그 사이에 <b>또 다른 분수</b>가 반드시 있어요. 두 수의 한가운데를 잡으면 되니까요.</p>
-    <p>그럼 이렇게 물어볼 수 있어요.
-    <b>분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까?</b></p>
-    <div class="big">한 변이 1인 정사각형을 그리고<br>
-    그 <b>대각선</b>을 수직선 위에 눕혀 보세요.<br>그 끝은 어느 분수에 닿을까요?</div>
-    <p>이 대각선의 길이는 <b>제곱하면 2가 되는 수</b>예요. 그런데 그런 수는
-    <b>어떤 분수로도 나타낼 수 없어요.</b> 분수를 전부 찍었는데도,
-    대각선의 끝자리에는 <b>아무것도 없는 거예요.</b></p>
-    <div class="legend">※ 옆 탭에서 그 자리를 직접 <b>확대</b>해 볼 수 있어요.
-    10배씩 계속 확대해도 눈금(=분수) 위에는 절대 놓이지 않고, 언제나 눈금과 눈금 <b>사이</b>에 있어요.</div>
-    <div class="row"><button class="btn" data-go="p2">그 자리를 확대해 보기 →</button></div>
+    <h2 data-t="s1h"></h2>
+    <button class="speak" data-say="p1">🔊 <span data-t="listen"></span></button>
+    <div data-th="p1body"></div>
+    <div class="big" data-th="p1big"></div>
+    <div data-th="p1after"></div>
+    <div class="legend" data-th="p1legend"></div>
+    <div class="row"><button class="btn" data-go="p2" data-t="toP2"></button></div>
   </section>
 
   <!-- ② 확대 -->
   <section class="card" id="p2">
-    <h2>10배씩 확대해도 눈금 위에 없다</h2>
-    <canvas id="cv" width="760" height="330" aria-label="수직선 확대"></canvas>
-    <div class="cap" id="cap">지금 보는 구간</div>
+    <h2 data-t="s2h"></h2>
+    <canvas id="cv" width="760" height="330"></canvas>
+    <div class="cap" id="cap"></div>
     <div class="val" id="val"></div>
     <div class="row">
-      <button class="btn" id="zin">🔍 10배 확대</button>
-      <button class="btn ghost" id="zrs">처음으로</button>
+      <button class="btn" id="zin" data-t="zoomIn"></button>
+      <button class="btn ghost" id="zrs" data-t="reset"></button>
     </div>
-    <div class="legend" style="margin-top:14px">눈금은 전부 <b>분수</b>예요. 1.4는 14/10, 1.41은 141/100 …
-    확대할 때마다 구간의 폭은 <b>1/10</b>로 줄어드는데, 빨간 자리는 <b>언제나 눈금 사이</b>에 있어요.
-    구간을 아무리 좁혀도 그 안에 갇혀 있을 뿐, 눈금 위로 올라서지 않아요.</div>
-    <div class="row"><button class="btn amber" data-go="p3">직접 좁혀 보기 →</button></div>
+    <div class="legend" style="margin-top:14px" data-th="p2legend"></div>
+    <div class="row"><button class="btn amber" data-go="p3" data-t="toP3"></button></div>
   </section>
 
   <!-- ③ 좁혀 가기 -->
   <section class="card" id="p3">
-    <h2>제곱해서 2가 되는 수를 손으로 찾기</h2>
-    <p style="font-size:14.5px;line-height:1.7;color:var(--sub);margin-bottom:6px">
-    다음 자리에 올 숫자를 눌러 보세요. 제곱했을 때 <b style="color:var(--ok)">2보다 작으면</b> 통과,
-    <b style="color:var(--no)">2보다 크면</b> 너무 큰 거예요. 계산기가 없던 시절 사람들이
-    <b>손으로 뿌리를 캐던</b> 방법(개평법)의 맛보기예요.</p>
-    <div class="val" id="cur">현재 값 : <b>1.</b></div>
+    <h2 data-t="s3h"></h2>
+    <p style="font-size:14.5px;line-height:1.7;color:var(--sub);margin-bottom:6px" data-th="p3intro"></p>
+    <div class="val" id="cur"></div>
     <div class="digits" id="dgs"></div>
     <div class="fb" id="fb"></div>
     <table class="sq" id="tbl">
-      <thead><tr><th>시도한 수</th><th>제곱</th><th>2와 비교</th></tr></thead>
+      <thead><tr><th data-t="thTried"></th><th data-t="thSquare"></th><th data-t="thCompare"></th></tr></thead>
       <tbody></tbody>
     </table>
-    <div class="row"><button class="btn ghost" id="rrs">다시 하기</button>
-      <button class="btn" data-go="p4">이 수에 이름 붙이기 →</button></div>
+    <div class="row"><button class="btn ghost" id="rrs" data-t="again"></button>
+      <button class="btn" data-go="p4" data-t="toP4"></button></div>
   </section>
 
   <!-- ④ 이름 -->
   <section class="card story" id="p4">
-    <h2>빈틈을 메운 수의 이름</h2>
-    <button class="speak" data-say="p4">🔊 읽어 주기</button>
-    <p>1.4, 1.41, 1.414, 1.4142 … 아무리 자리를 늘려도 <b>딱 맞아떨어지지 않아요.</b>
-    끝나지도 않고, 같은 마디가 되풀이되지도 않아요. 그래서 <b>어떤 분수로도 돌아갈 수 없어요.</b></p>
-    <div class="big">분수로 나타낼 수 <b>있는</b> 수 = 유리수<br>
-    분수로 나타낼 수 <b>없는</b> 수 = <b>무리수</b><br>
-    둘을 합쳐 수직선을 빈틈없이 채운 것 = <b>실수</b></div>
-    <p><b>데데킨트</b>라는 수학자는 이 상황을 아주 간단하게 말했어요.
-    수를 크기 순서대로 늘어놓았을 때 <b>유리수에는 빈틈이 있고, 실수에는 빈틈이 전혀 없다</b>고요.
-    그리고 그 빈틈을 메우는 것이 바로 무리수라고요. 우리가 방금 확대하며 본 그 자리예요.</p>
+    <h2 data-t="s4h"></h2>
+    <button class="speak" data-say="p4">🔊 <span data-t="listen"></span></button>
+    <div data-th="p4body"></div>
+    <div class="big" data-th="p4big"></div>
+    <div data-th="p4dedekind"></div>
     <div class="two">
-      <div class="mini"><b>무리수는 "무리한 수"가 아니에요</b>
-        <span>다 적으려고 <b>무리하지 말라</b>는 뜻으로 외워도 좋아요. 끝까지 적는 건 처음부터 불가능한 일이니까요.</span></div>
-      <div class="mini"><b>√는 뿌리(root)예요</b>
-        <span>제곱해서 그 수가 되는 <b>뿌리</b>를 캐낸다는 뜻이에요. √2는 "제곱하면 2가 되는 뿌리".</span></div>
+      <div class="mini" data-th="mini1"></div>
+      <div class="mini" data-th="mini2"></div>
     </div>
-    <p>피타고라스 학파는 <b>모든 길이를 분수로 나타낼 수 있다</b>고 믿었어요.
-    그런데 자기들이 아끼던 정사각형의 대각선이 그 믿음을 깨 버린 거예요.
-    이 비밀을 밖으로 알린 <b>히파소스</b>가 바다에 던져졌다는 이야기가 전해지는데,
-    사실인지는 아무도 몰라요 — <b>전해지는 이야기</b>로만 기억해 두세요.</p>
-    <div class="legend">※ 정리 한 줄 <span class="chip">기억</span><br>
-    <b>분수를 다 찍어도 수직선에는 구멍이 남는다. 그 구멍을 메운 수가 무리수이고, 다 메운 수직선이 실수다.</b></div>
-    <div class="row"><button class="btn ghost" data-go="p1">처음으로</button></div>
+    <div data-th="p4pyth"></div>
+    <div class="legend" data-th="p4sum"></div>
+    <div class="row"><button class="btn ghost" data-go="p1" data-t="reset"></button></div>
   </section>
 </div>
 
 <script>
 (function(){
 'use strict';
+var T=LabLang.T;
 var SQ2 = Math.sqrt(2);
+
+var STR={
+  title:{ko:'수직선의 구멍',en:'The Hole in the Number Line',zh:'数轴上的缺口'},
+  tag:{ko:'분수를 아무리 촘촘히 찍어도 남는 자리가 있어요',
+       en:'However densely you plot the fractions, a spot is always left over',
+       zh:'不论把分数标得多密，总有一处标不到'},
+  tab1:{ko:'질문',en:'The question',zh:'问题'},
+  tab2:{ko:'확대해 보기',en:'Zoom in',zh:'放大看看'},
+  tab3:{ko:'직접 좁혀 가기',en:'Narrow it yourself',zh:'亲手缩小'},
+  tab4:{ko:'이름 붙이기',en:'Give it a name',zh:'给它取名'},
+  listen:{ko:'읽어 주기',en:'Read aloud',zh:'朗读'},
+  s1h:{ko:'수직선을 빈틈없이 채울 수 있을까?',en:'Can the number line be filled with no gaps?',zh:'数轴能被填得毫无缝隙吗？'},
+  toP2:{ko:'그 자리를 확대해 보기 →',en:'Zoom in on that spot →',zh:'去放大那个位置 →'},
+  s2h:{ko:'10배씩 확대해도 눈금 위에 없다',en:'Zoom in 10× again and again — never on a tick',zh:'放大十倍再十倍，它始终不在刻度上'},
+  zoomIn:{ko:'🔍 10배 확대',en:'🔍 Zoom in 10×',zh:'🔍 放大10倍'},
+  reset:{ko:'처음으로',en:'Start over',zh:'回到开头'},
+  toP3:{ko:'직접 좁혀 보기 →',en:'Narrow it yourself →',zh:'去亲手缩小 →'},
+  s3h:{ko:'제곱해서 2가 되는 수를 손으로 찾기',en:'Hunt by hand for the number whose square is 2',zh:'亲手找出平方等于2的数'},
+  thTried:{ko:'시도한 수',en:'Number tried',zh:'试的数'},
+  thSquare:{ko:'제곱',en:'Its square',zh:'平方'},
+  thCompare:{ko:'2와 비교',en:'Compared to 2',zh:'与2比较'},
+  again:{ko:'다시 하기',en:'Try again',zh:'重新来过'},
+  toP4:{ko:'이 수에 이름 붙이기 →',en:'Give this number a name →',zh:'给这个数取个名字 →'},
+  s4h:{ko:'빈틈을 메운 수의 이름',en:'The name of the number that fills the gap',zh:'填补缺口的数叫什么'},
+
+  p1body:{
+    ko:'<p>수직선 위에 <b>분수를 전부</b> 찍어 본다고 해 봐요. 0과 1 사이에만 해도 '
+      +'1/2, 1/3, 2/3, 1/4, 3/4, 1/5 … 끝없이 많아요. 두 분수를 아무거나 골라도 '
+      +'그 사이에 <b>또 다른 분수</b>가 반드시 있어요. 두 수의 한가운데를 잡으면 되니까요.</p>'
+      +'<p>그럼 이렇게 물어볼 수 있어요. <b>분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까?</b></p>',
+    en:'<p>Imagine plotting <b>every fraction</b> on the number line. Between 0 and 1 alone there are '
+      +'1/2, 1/3, 2/3, 1/4, 3/4, 1/5 … endlessly many. Pick any two fractions and there is always '
+      +'<b>another fraction</b> between them — just take the midpoint.</p>'
+      +'<p>So here is the question: <b>if you plot every fraction, does the number line fill up completely?</b></p>',
+    zh:'<p>设想把<b>所有分数</b>都标到数轴上。光是0和1之间就有'
+      +'1/2、1/3、2/3、1/4、3/4、1/5……无穷多个。随便取两个分数，它们之间一定还有'
+      +'<b>另一个分数</b>——取中点就行了。</p>'
+      +'<p>那么问题来了：<b>把分数全标上，数轴就填满了吗？</b></p>'},
+  p1big:{
+    ko:'한 변이 1인 정사각형을 그리고<br>그 <b>대각선</b>을 수직선 위에 눕혀 보세요.<br>그 끝은 어느 분수에 닿을까요?',
+    en:'Draw a square with side 1<br>and lay its <b>diagonal</b> down on the number line.<br>Which fraction does the end land on?',
+    zh:'画一个边长为1的正方形，<br>把它的<b>对角线</b>放到数轴上。<br>它的末端会落在哪个分数上呢？'},
+  p1after:{
+    ko:'<p>이 대각선의 길이는 <b>제곱하면 2가 되는 수</b>예요. 그런데 그런 수는 '
+      +'<b>어떤 분수로도 나타낼 수 없어요.</b> 분수를 전부 찍었는데도, '
+      +'대각선의 끝자리에는 <b>아무것도 없는 거예요.</b></p>',
+    en:'<p>The length of that diagonal is <b>the number whose square is 2</b>. And that number '
+      +'<b>cannot be written as any fraction at all.</b> Even with every fraction plotted, '
+      +'the spot at the end of the diagonal holds <b>nothing.</b></p>',
+    zh:'<p>这条对角线的长度是<b>平方等于2的数</b>。可是这样的数'
+      +'<b>无法用任何分数表示</b>。分数全都标上了，'
+      +'对角线末端的那个位置却<b>什么也没有</b>。</p>'},
+  p1legend:{
+    ko:'※ 옆 탭에서 그 자리를 직접 <b>확대</b>해 볼 수 있어요. 10배씩 계속 확대해도 눈금(=분수) 위에는 '
+      +'절대 놓이지 않고, 언제나 눈금과 눈금 <b>사이</b>에 있어요.',
+    en:'※ In the next tab you can <b>zoom in</b> on that very spot. Zoom 10× as often as you like: it never '
+      +'sits on a tick (a fraction) — it is always <b>between</b> two ticks.',
+    zh:'※ 在下一个标签里你可以亲手<b>放大</b>那个位置。放大十倍再十倍，它永远不落在刻度（分数）上，'
+      +'总是在两个刻度<b>之间</b>。'},
+  p2legend:{
+    ko:'눈금은 전부 <b>분수</b>예요. 1.4는 14/10, 1.41은 141/100 … 확대할 때마다 구간의 폭은 <b>1/10</b>로 '
+      +'줄어드는데, 빨간 자리는 <b>언제나 눈금 사이</b>에 있어요. 구간을 아무리 좁혀도 그 안에 갇혀 있을 뿐, '
+      +'눈금 위로 올라서지 않아요.',
+    en:'Every tick is a <b>fraction</b>: 1.4 is 14/10, 1.41 is 141/100 … Each zoom shrinks the window to '
+      +'<b>1/10</b> of its width, yet the red mark stays <b>between the ticks, always</b>. However tight the '
+      +'window gets, it is trapped inside — it never climbs onto a tick.',
+    zh:'刻度全都是<b>分数</b>：1.4是14/10，1.41是141/100……每放大一次，区间宽度就缩到<b>1/10</b>，'
+      +'可红色的位置<b>始终在刻度之间</b>。区间收得再紧，它也只是被困在里面，从不落到刻度上。'},
+  p3intro:{
+    ko:'다음 자리에 올 숫자를 눌러 보세요. 제곱했을 때 <b style="color:var(--ok)">2보다 작으면</b> 통과, '
+      +'<b style="color:var(--no)">2보다 크면</b> 너무 큰 거예요. 계산기가 없던 시절 사람들이 '
+      +'<b>손으로 뿌리를 캐던</b> 방법(개평법)의 맛보기예요.',
+    en:'Tap the digit you think comes next. If its square is <b style="color:var(--ok)">less than 2</b> it passes; '
+      +'if it is <b style="color:var(--no)">more than 2</b> it overshoots. This is a taste of how people '
+      +'<b>dug out roots by hand</b> before calculators existed.',
+    zh:'点一下你认为下一位该填的数字。平方后<b style="color:var(--ok)">小于2</b>就通过，'
+      +'<b style="color:var(--no)">大于2</b>就太大了。这是没有计算器的年代，人们'
+      +'<b>用手开方</b>的方法的一点体验。'},
+  p4body:{
+    ko:'<p>1.4, 1.41, 1.414, 1.4142 … 아무리 자리를 늘려도 <b>딱 맞아떨어지지 않아요.</b> '
+      +'끝나지도 않고, 같은 마디가 되풀이되지도 않아요. 그래서 <b>어떤 분수로도 돌아갈 수 없어요.</b></p>',
+    en:'<p>1.4, 1.41, 1.414, 1.4142 … however many digits you add, it <b>never comes out exact.</b> '
+      +'It neither stops nor repeats a block. And so <b>no fraction can ever bring it back.</b></p>',
+    zh:'<p>1.4、1.41、1.414、1.4142……位数加得再多，也<b>永远除不尽</b>。'
+      +'既不终止，也不循环。所以<b>任何分数都还原不了它</b>。</p>'},
+  p4big:{
+    ko:'분수로 나타낼 수 <b>있는</b> 수 = 유리수<br>분수로 나타낼 수 <b>없는</b> 수 = <b>무리수</b><br>'
+      +'둘을 합쳐 수직선을 빈틈없이 채운 것 = <b>실수</b>',
+    en:'Numbers you <b>can</b> write as a fraction = rational numbers<br>'
+      +'Numbers you <b>cannot</b> = <b>irrational numbers</b><br>'
+      +'Both together, filling the line with no gaps = <b>the real numbers</b>',
+    zh:'<b>能</b>写成分数的数 = 有理数<br><b>不能</b>写成分数的数 = <b>无理数</b><br>'
+      +'两者合起来把数轴填满 = <b>实数</b>'},
+  p4dedekind:{
+    ko:'<p><b>데데킨트</b>라는 수학자는 이 상황을 아주 간단하게 말했어요. 수를 크기 순서대로 늘어놓았을 때 '
+      +'<b>유리수에는 빈틈이 있고, 실수에는 빈틈이 전혀 없다</b>고요. 그리고 그 빈틈을 메우는 것이 바로 '
+      +'무리수라고요. 우리가 방금 확대하며 본 그 자리예요.</p>',
+    en:'<p>The mathematician <b>Dedekind</b> put it very simply: line the numbers up in order of size, and '
+      +'<b>the rationals have gaps while the reals have none at all.</b> What fills those gaps is exactly the '
+      +'irrational numbers — the very spot we just kept zooming into.</p>',
+    zh:'<p>数学家<b>戴德金</b>把这件事说得很简单：把数按大小排好，'
+      +'<b>有理数中间有缝隙，实数则完全没有缝隙</b>。填补那些缝隙的正是无理数——'
+      +'就是我们刚才一直放大的那个位置。</p>'},
+  mini1:{
+    ko:'<b>무리수는 "무리한 수"가 아니에요</b><span>다 적으려고 <b>무리하지 말라</b>는 뜻으로 외워도 좋아요. '
+      +'끝까지 적는 건 처음부터 불가능한 일이니까요.</span>',
+    en:'<b>"Irrational" does not mean unreasonable</b><span>It means <b>not a ratio</b> — not a fraction. '
+      +'Nothing about the number is wild; it simply cannot be written as one whole number over another.</span>',
+    zh:'<b>无理数不是"不讲理的数"</b><span>它的意思是<b>不能写成比（分数）</b>。'
+      +'这个数本身一点也不古怪，只是无法写成两个整数相除。</span>'},
+  mini2:{
+    ko:'<b>√는 뿌리(root)예요</b><span>제곱해서 그 수가 되는 <b>뿌리</b>를 캐낸다는 뜻이에요. '
+      +'√2는 "제곱하면 2가 되는 뿌리".</span>',
+    en:'<b>√ means root</b><span>It is about digging out the <b>root</b> that gives the number when squared. '
+      +'√2 is "the root whose square is 2."</span>',
+    zh:'<b>√就是"根"</b><span>意思是挖出那个平方后等于该数的<b>根</b>。'
+      +'√2就是"平方等于2的那个根"。</span>'},
+  p4pyth:{
+    ko:'<p>피타고라스 학파는 <b>모든 길이를 분수로 나타낼 수 있다</b>고 믿었어요. 그런데 자기들이 아끼던 '
+      +'정사각형의 대각선이 그 믿음을 깨 버린 거예요. 이 비밀을 밖으로 알린 <b>히파소스</b>가 바다에 '
+      +'던져졌다는 이야기가 전해지는데, 사실인지는 아무도 몰라요 — <b>전해지는 이야기</b>로만 기억해 두세요.</p>',
+    en:'<p>The Pythagoreans believed <b>every length could be written as a fraction</b>. It was the diagonal of '
+      +'their own beloved square that shattered that belief. The story goes that <b>Hippasus</b>, who let the '
+      +'secret out, was thrown into the sea — but nobody knows whether it is true. Remember it as '
+      +'<b>a story that has been passed down</b>, no more.</p>',
+    zh:'<p>毕达哥拉斯学派相信<b>任何长度都能写成分数</b>。可打破这个信念的，正是他们自己珍视的'
+      +'正方形的对角线。传说泄露这个秘密的<b>希帕索斯</b>被扔进了海里，'
+      +'但是否属实谁也不知道——把它当作<b>流传下来的故事</b>记住就好。</p>'},
+  p4sum:{
+    ko:'※ 정리 한 줄 <span class="chip">기억</span><br><b>분수를 다 찍어도 수직선에는 구멍이 남는다. '
+      +'그 구멍을 메운 수가 무리수이고, 다 메운 수직선이 실수다.</b>',
+    en:'※ One line to keep <span class="chip">remember</span><br><b>Plot every fraction and the number line still '
+      +'has holes. The numbers that fill those holes are the irrationals, and the fully filled line is the reals.</b>',
+    zh:'※ 一句话总结 <span class="chip">记住</span><br><b>分数全标上，数轴仍有缺口。'
+      +'填补缺口的数是无理数，填满后的数轴就是实数。</b>'}
+};
+LabLang.fill(STR); LabLang.fillHtml(STR); LabLang.title(STR.title);
+document.getElementById('cv').setAttribute('aria-label',T(STR.s2h));
 
 /* 탭 */
 function show(id){
@@ -182,26 +298,35 @@ document.addEventListener('click', function(e){
 });
 
 /* 읽어 주기 */
-var SAY={
-  p1:'수직선 위에 분수를 전부 찍어 본다고 해 봐요. 두 분수를 아무거나 골라도 그 사이에 또 다른 분수가 반드시 있어요. '+
-     '그럼 분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까요? 한 변이 1인 정사각형의 대각선을 수직선 위에 눕혀 보세요. '+
-     '그 길이는 제곱하면 2가 되는 수인데, 어떤 분수로도 나타낼 수 없어요.',
-  p4:'1.4, 1.41, 1.414 아무리 자리를 늘려도 딱 맞아떨어지지 않아요. 끝나지도 않고 되풀이되지도 않아서 어떤 분수로도 돌아갈 수 없어요. '+
-     '분수로 나타낼 수 있는 수를 유리수, 없는 수를 무리수, 둘을 합쳐 수직선을 빈틈없이 채운 것을 실수라고 해요. '+
-     '데데킨트는 유리수에는 빈틈이 있고 실수에는 빈틈이 전혀 없다고 말했어요.'
-};
-document.addEventListener('click', function(e){
-  var b=e.target.closest('.speak'); if(!b) return;
-  try{
-    var u=new SpeechSynthesisUtterance(SAY[b.getAttribute('data-say')]);
-    u.lang='ko-KR'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u);
-  }catch(err){}
+LabLang.speak({
+  p1:{ko:'수직선 위에 분수를 전부 찍어 본다고 해 봐요. 두 분수를 아무거나 골라도 그 사이에 또 다른 분수가 반드시 있어요. '+
+        '그럼 분수를 다 찍으면 수직선이 빈틈없이 꽉 찰까요? 한 변이 1인 정사각형의 대각선을 수직선 위에 눕혀 보세요. '+
+        '그 길이는 제곱하면 2가 되는 수인데, 어떤 분수로도 나타낼 수 없어요.',
+      en:'Imagine plotting every fraction on the number line. Pick any two fractions and there is always another fraction between them. '+
+        'So if you plot them all, does the line fill up completely? Lay the diagonal of a unit square down on the number line. '+
+        'Its length is the number whose square is two, and that number cannot be written as any fraction.',
+      zh:'设想把所有分数都标到数轴上。随便取两个分数，它们之间一定还有另一个分数。'+
+        '那么把分数全标上，数轴就填满了吗？把边长为一的正方形的对角线放到数轴上。'+
+        '它的长度是平方等于二的数，而这个数无法用任何分数表示。'},
+  p4:{ko:'1.4, 1.41, 1.414 아무리 자리를 늘려도 딱 맞아떨어지지 않아요. 끝나지도 않고 되풀이되지도 않아서 어떤 분수로도 돌아갈 수 없어요. '+
+        '분수로 나타낼 수 있는 수를 유리수, 없는 수를 무리수, 둘을 합쳐 수직선을 빈틈없이 채운 것을 실수라고 해요. '+
+        '데데킨트는 유리수에는 빈틈이 있고 실수에는 빈틈이 전혀 없다고 말했어요.',
+      en:'One point four, one point four one, one point four one four. However many digits you add, it never comes out exact. '+
+        'It neither stops nor repeats, so no fraction can bring it back. Numbers you can write as a fraction are rational, '+
+        'those you cannot are irrational, and both together fill the line with no gaps: the real numbers. '+
+        'Dedekind said the rationals have gaps while the reals have none at all.',
+      zh:'一点四、一点四一、一点四一四，位数加得再多也除不尽。既不终止也不循环，所以任何分数都还原不了它。'+
+        '能写成分数的数叫有理数，不能的叫无理数，两者合起来把数轴填满，就是实数。'+
+        '戴德金说，有理数中间有缝隙，实数则完全没有缝隙。'}
 });
 
 /* ② 확대 */
 var lo=1, hi=2, step=0;
 var cv=document.getElementById('cv'), cx=cv.getContext('2d');
 function fmt(v,d){ return v.toFixed(d); }
+/* 캔버스에 그리는 두 안내 문구 — 언어별 길이가 달라 폰트 크기도 함께 고른다 */
+var CV_HERE=T({ko:'여기 — 눈금이 없어요',en:'Here — no tick at all',zh:'就在这里——没有刻度'});
+var CV_NEXT=T({ko:'다음에 확대할 칸',en:'the window we zoom into next',zh:'下次要放大的格子'});
 function draw(){
   var W=cv.width, H=cv.height, L=58, R=W-58, y=168;
   cx.clearRect(0,0,W,H);
@@ -228,12 +353,14 @@ function draw(){
   cx.beginPath(); cx.moveTo(xs,y-62); cx.lineTo(xs,y+62); cx.stroke();
   cx.fillStyle='#D9534F'; cx.beginPath(); cx.arc(xs,y,8,0,6.3); cx.fill();
   cx.font='900 26px system-ui,sans-serif';
-  cx.fillText('여기 — 눈금이 없어요', Math.min(Math.max(xs,150),W-150), y-82);
+  cx.fillText(CV_HERE, Math.min(Math.max(xs,190),W-190), y-82);
   cx.font='800 23px system-ui,sans-serif'; cx.fillStyle='#9a5f16';
-  cx.fillText('다음에 확대할 칸', Math.min(Math.max((xa+xb)/2,110),W-110), y+96);
+  cx.fillText(CV_NEXT, Math.min(Math.max((xa+xb)/2,150),W-150), y+96);
   var widths=['1','1/10','1/100','1/1000','1/10000','1/100000','1/1000000'];
   document.getElementById('cap').textContent =
-    (step===0?'처음 구간 [1, 2]':'확대 '+step+'번') + ' — 구간의 폭 ' + widths[step];
+    (step===0?T({ko:'처음 구간 [1, 2]',en:'Starting window [1, 2]',zh:'起始区间 [1, 2]'})
+             :T({ko:'확대 '+step+'번',en:'Zoom ×'+step,zh:'放大'+step+'次'}))
+    + ' — ' + T({ko:'구간의 폭 ',en:'window width ',zh:'区间宽度 '}) + widths[step];
   var ed=step;
   document.getElementById('val').innerHTML =
     fmt(lo,ed)+'² = '+ (lo*lo).toFixed(Math.min(12,2*ed)) +' &lt; <b>2</b> &lt; '+
@@ -250,7 +377,8 @@ document.getElementById('zrs').onclick=function(){ lo=1;hi=2;step=0; draw(); };
 /* ③ 좁혀 가기 */
 var prefix='1', tried=[];
 function render(){
-  document.getElementById('cur').innerHTML='현재 값 : <b>'+prefix+(prefix.length>1?'':'.')+'</b>';
+  document.getElementById('cur').innerHTML=
+    T({ko:'현재 값 : ',en:'Current value : ',zh:'当前值 ： '})+'<b>'+prefix+(prefix.length>1?'':'.')+'</b>';
   var box=document.getElementById('dgs'); box.innerHTML='';
   for(var d=0; d<=9; d++){
     (function(d){
@@ -263,7 +391,8 @@ function render(){
   tried.forEach(function(r){
     var tr=document.createElement('tr');
     tr.innerHTML='<td>'+r.v+'</td><td>'+r.sq+'</td>'+
-      (r.lt?'<td class="lo">2보다 작아요 ✓</td>':'<td class="hi">2보다 커요 ✗</td>');
+      (r.lt?'<td class="lo">'+T({ko:'2보다 작아요 ✓',en:'less than 2 ✓',zh:'小于2 ✓'})+'</td>'
+           :'<td class="hi">'+T({ko:'2보다 커요 ✗',en:'more than 2 ✗',zh:'大于2 ✗'})+'</td>');
     tb.appendChild(tr);
   });
 }
@@ -272,19 +401,26 @@ function pick(d){
   var v = prefix.length===1 ? ('1.'+d) : (prefix+''+d);
   var num = parseFloat(v), sq = num*num;
   var lt = sq < 2;
-  tried.push({v:v, sq:sq.toFixed(Math.max(2,2*(v.length-2))), lt:lt});
+  var sqs = sq.toFixed(Math.max(2,2*(v.length-2)));
+  tried.push({v:v, sq:sqs, lt:lt});
   var fb=document.getElementById('fb');
   if(lt){
     prefix = v;
     fb.className='fb ok';
-    fb.textContent = v+'² = '+sq.toFixed(Math.max(2,2*(v.length-2)))+' — 아직 2보다 작아요. 한 자리 더 캐 볼까요?';
+    fb.textContent = T({ko:v+'² = '+sqs+' — 아직 2보다 작아요. 한 자리 더 캐 볼까요?',
+                        en:v+'² = '+sqs+' — still under 2. Shall we dig one more digit?',
+                        zh:v+'² = '+sqs+' ——还小于2。再挖一位看看？'});
     if(prefix.length>=7){
       fb.className='fb ok';
-      fb.textContent = prefix+'… 여기까지 왔어요. 그런데 아직도 2가 아니에요 — 자리를 아무리 늘려도 영원히 딱 맞지 않아요.';
+      fb.textContent = T({ko:prefix+'… 여기까지 왔어요. 그런데 아직도 2가 아니에요 — 자리를 아무리 늘려도 영원히 딱 맞지 않아요.',
+                          en:prefix+'… this far already, and still not 2 — however many digits you add, it never lands exactly.',
+                          zh:prefix+'……已经挖到这里了，却还不是2——位数加得再多，也永远刚好不了。'});
     }
   }else{
     fb.className='fb no';
-    fb.textContent = v+'² = '+sq.toFixed(Math.max(2,2*(v.length-2)))+' — 2를 넘었어요. 한 칸 작은 숫자를 눌러 보세요.';
+    fb.textContent = T({ko:v+'² = '+sqs+' — 2를 넘었어요. 한 칸 작은 숫자를 눌러 보세요.',
+                        en:v+'² = '+sqs+' — over 2. Try the next digit down.',
+                        zh:v+'² = '+sqs+' ——超过2了。按小一点的数字试试。'});
   }
   render();
 }

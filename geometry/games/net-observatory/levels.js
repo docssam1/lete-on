@@ -104,7 +104,7 @@ export const INVALID_CUBE_NETS = ALL_HEXOMINOES.filter((shape) => !foldCubeNet(s
 
 const labels = ["A", "B", "C", "D", "E", "F"];
 const positionMarks = ["●", "◆", "✚", "✿", "★", "◎"];
-const colors = ["#f0a94a", "#4da8c7", "#8abc61", "#e97972", "#a98ad5", "#f0d15d"];
+const colors = ["#f2b84b", "#49aeca", "#79bd68", "#ee7568", "#9d89d5", "#f2d45c"];
 
 function decorateNet(cells, seed, symbols = false) {
   const folded = foldCubeNet(cells);
@@ -173,9 +173,10 @@ export function isPossibleCubeView(faces, view, arrows = false) {
   return cubeViews(faces, arrows).some((candidate) => sameView(candidate, view, arrows));
 }
 
-function level1Problems() {
+function validNetProblems(levelNumber = 2) {
+  const teachingOrder = [5, 6, 7, 8, 9, 0, 1, 2, 3, 4];
   return Array.from({ length: 10 }, (_, index) => {
-    const answer = VALID_CUBE_NETS[index];
+    const answer = VALID_CUBE_NETS[teachingOrder[index]];
     const wrongA = INVALID_CUBE_NETS[(index * 2) % INVALID_CUBE_NETS.length];
     const wrongB = INVALID_CUBE_NETS[(index * 2 + 7) % INVALID_CUBE_NETS.length];
     const rawChoices = [answer, wrongA, wrongB];
@@ -184,12 +185,60 @@ function level1Problems() {
       .map((_, choiceIndex) => rawChoices[(choiceIndex + offset) % 3])
       .map((cells, choiceIndex) => ({ id: `c${choiceIndex}`, cells, valid: foldCubeNet(cells).valid }));
     return {
-      id: `net-l1-${String(index + 1).padStart(2, "0")}`,
+      id: `net-l${levelNumber}-${String(index + 1).padStart(2, "0")}`,
       interaction: "choose-net",
       promptKey: "promptValidNet",
-      sourceRef: "Prism D4-1, book p.30-33; internally reconstructed hexominoes",
+      reasoningSteps: 3,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 cube-net section",
       choices,
       answer: choices.find((choice) => choice.valid).id
+    };
+  });
+}
+
+function cellDistance(cells, start, target) {
+  const occupied = new Set(cells.map((cell) => cell.join(",")));
+  const targetKey = target.join(",");
+  const queue = [[start, 0]];
+  const visited = new Set([start.join(",")]);
+  while (queue.length) {
+    const [[x, y], distance] = queue.shift();
+    if (`${x},${y}` === targetKey) return distance;
+    DIRECTIONS.forEach(({ dx, dy }) => {
+      const next = [x + dx, y + dy];
+      const key = next.join(",");
+      if (occupied.has(key) && !visited.has(key)) { visited.add(key); queue.push([next, distance + 1]); }
+    });
+  }
+  return Infinity;
+}
+
+function oppositeFaceProblems(levelNumber = 1) {
+  return Array.from({ length: 10 }, (_, index) => {
+    const cells = VALID_CUBE_NETS[index % VALID_CUBE_NETS.length];
+    const faces = decorateNet(cells, index, false);
+    const approachable = faces.filter((face) => {
+      const candidateOpposite = faces.find((item) => V.dot(item.frame.n, face.frame.n) === -1);
+      return cellDistance(cells, face.cell, candidateOpposite.cell) <= 3;
+    });
+    const query = approachable[index % approachable.length];
+    const opposite = faces.find((face) => V.dot(face.frame.n, query.frame.n) === -1);
+    const adjacent = faces.filter((face) => face !== query && face !== opposite);
+    const rawChoices = [opposite, adjacent[index % adjacent.length], adjacent[(index + 2) % adjacent.length]];
+    const offset = index % rawChoices.length;
+    const choices = rawChoices.map((_, choiceIndex) => rawChoices[(choiceIndex + offset) % rawChoices.length])
+      .map(({ label, color }, choiceIndex) => ({ id: `f${choiceIndex}`, label, color }));
+    return {
+      id: `net-l${levelNumber}-${String(index + 1).padStart(2, "0")}`,
+      interaction: "net-opposite",
+      promptKey: "promptNetOpposite",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; user-attached cube-net opposite-picture pattern",
+      cells,
+      faces: faces.map(({ cell, label, color }) => ({ cell, label, color })),
+      query: { label: query.label, color: query.color },
+      choices,
+      answer: choices.find((choice) => choice.label === opposite.label).id
     };
   });
 }
@@ -202,9 +251,10 @@ function makeViewDistractors(correct, faces, arrows = false) {
   const mirrored = { ...correct, front: correct.right, right: correct.front };
   const impossible = { ...correct, right: opposite(correct.right) };
   if (arrows) {
-    mirrored.frontArrow = correct.rightArrow;
-    mirrored.rightArrow = correct.frontArrow;
+    const turnArrow = { up: "right", right: "down", down: "left", left: "up" };
+    const arrowOnly = { ...correct, topArrow: turnArrow[correct.topArrow] };
     impossible.rightArrow = correct.rightArrow;
+    return [arrowOnly, impossible];
   }
   return [mirrored, impossible];
 }
@@ -227,9 +277,10 @@ function viewProblems(level, arrows = false) {
       id: `net-l${level}-${String(index + 1).padStart(2, "0")}`,
       interaction: arrows ? "symbol-view" : "fold-view",
       promptKey: arrows ? "promptSymbolView" : "promptFoldView",
+      reasoningSteps: arrows ? 3 : 2,
       sourceRef: arrows
-        ? "Prism E4-1, book p.15-24; internally reconstructed symbols"
-        : "Prism D4-1, book p.30-41 and Prism E4-1, book p.7-14; internally reconstructed nets",
+        ? "internal-variation; user-attached symbol-direction cube-net pattern"
+        : "internal-variation; concept verified from the Prism cube-net sections",
       cells,
       faces: faces.map(({ cell, label, color, arrow }) => ({ cell, label, color, arrow })),
       choices,
@@ -257,7 +308,8 @@ function diceProblems() {
       id: `net-l3-${String(index + 1).padStart(2, "0")}`,
       interaction: "dice-opposite",
       promptKey: "promptDiceOpposite",
-      sourceRef: "Prism E4-1, book p.7-12; opposite faces total seven",
+      reasoningSteps: 1,
+      sourceRef: "internal-variation; user-attached standard-die opposite-face pattern",
       face,
       choices,
       answer: correct
@@ -274,7 +326,8 @@ function diceProblems() {
       id: `net-l3-${String(index + 6).padStart(2, "0")}`,
       interaction: "dice-pair",
       promptKey: "promptDicePair",
-      sourceRef: "Prism E4-1, book p.7-12; opposite-face relation",
+      reasoningSteps: 1,
+      sourceRef: "internal-variation; user-attached standard-die opposite-pair pattern",
       choices,
       answer: choices.findIndex(([a, b]) => DICE_OPPOSITE[a] === b)
     });
@@ -299,7 +352,8 @@ function solidProblems() {
       id: `net-l5-${String(index + 1).padStart(2, "0")}`,
       interaction: "solid-identify",
       promptKey: "promptSolidIdentify",
-      sourceRef: "Prism D4-1, book p.8-17; regular-solid face counts",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 regular-solid section",
       solid,
       choices: arranged.map(({ id, nameKey }) => ({ id, nameKey })),
       answer: solid.id
@@ -315,7 +369,8 @@ function solidProblems() {
       id: `net-l5-${String(index + 6).padStart(2, "0")}`,
       interaction: "solid-adjacent",
       promptKey: "promptSolidAdjacent",
-      sourceRef: "Prism D4-1, book p.8-17; regular-solid face relations",
+      reasoningSteps: 2,
+      sourceRef: "internal-variation; concept verified from the Prism D4-1 regular-solid section",
       solid,
       choices: arranged,
       answer: solid.adjacent
@@ -325,10 +380,10 @@ function solidProblems() {
 }
 
 export const levels = [
-  { id: 1, bandKey: "bandIntro", titleKey: "level1Title", subtitleKey: "level1Subtitle", ready: true, problems: level1Problems() },
-  { id: 2, bandKey: "bandIntro", titleKey: "level2Title", subtitleKey: "level2Subtitle", ready: true, problems: viewProblems(2) },
+  { id: 1, bandKey: "bandIntro", titleKey: "level1Title", subtitleKey: "level1Subtitle", ready: true, problems: oppositeFaceProblems(1) },
+  { id: 2, bandKey: "bandBeginner", titleKey: "level2Title", subtitleKey: "level2Subtitle", ready: true, problems: validNetProblems(2) },
   { id: 3, bandKey: "bandBeginner", titleKey: "level3Title", subtitleKey: "level3Subtitle", ready: true, problems: diceProblems() },
-  { id: 4, bandKey: "bandBeginner", titleKey: "level4Title", subtitleKey: "level4Subtitle", ready: true, problems: viewProblems(4, true) },
+  { id: 4, bandKey: "bandIntermediate", titleKey: "level4Title", subtitleKey: "level4Subtitle", ready: true, problems: viewProblems(4, true) },
   { id: 5, bandKey: "bandIntermediate", titleKey: "level5Title", subtitleKey: "level5Subtitle", ready: true, problems: solidProblems() }
 ];
 
@@ -336,18 +391,30 @@ export const readyLevels = levels.filter((level) => level.ready);
 
 function validateProblem(problem, level) {
   if (!problem.id || !problem.interaction || !problem.sourceRef) throw new Error(`Incomplete problem in level ${level.id}`);
-  if (level.id === 1) {
+  if (problem.interaction === "choose-net") {
     const validChoices = problem.choices.filter((choice) => foldCubeNet(choice.cells).valid);
     if (validChoices.length !== 1 || validChoices[0].id !== problem.answer) throw new Error(`${problem.id}: cube-net answer is not unique`);
   }
-  if (level.id === 2 || level.id === 4) {
+  if (problem.interaction === "net-opposite") {
     const folded = foldCubeNet(problem.cells);
     if (!folded.valid) throw new Error(`${problem.id}: invalid source net`);
-    const sourceFaces = decorateNet(problem.cells, Number(problem.id.slice(-2)) - 1 + (level.id === 4 ? 2 : 0), level.id === 4);
-    const possible = problem.choices.filter((choice) => isPossibleCubeView(sourceFaces, choice, level.id === 4));
+    const faceMap = new Map(problem.faces.map((face) => [face.cell.join(","), face]));
+    const framedFaces = folded.cells.map((cell, index) => ({ ...faceMap.get(cell.join(",")), frame: folded.frames[index] }));
+    const query = framedFaces.find((face) => face.label === problem.query.label);
+    const opposite = framedFaces.find((face) => V.dot(face.frame.n, query.frame.n) === -1);
+    const valid = problem.choices.filter((choice) => choice.label === opposite.label);
+    if (valid.length !== 1 || valid[0].id !== problem.answer) throw new Error(`${problem.id}: opposite picture face is not unique`);
+  }
+  if (problem.interaction === "fold-view" || problem.interaction === "symbol-view") {
+    const folded = foldCubeNet(problem.cells);
+    if (!folded.valid) throw new Error(`${problem.id}: invalid source net`);
+    const faceMap = new Map(problem.faces.map((face) => [face.cell.join(","), face]));
+    const sourceFaces = folded.cells.map((cell, index) => ({ ...faceMap.get(cell.join(",")), frame: folded.frames[index] }));
+    const arrows = problem.interaction === "symbol-view";
+    const possible = problem.choices.filter((choice) => isPossibleCubeView(sourceFaces, choice, arrows));
     if (possible.length !== 1 || possible[0].id !== problem.answer) throw new Error(`${problem.id}: folded view is not unique`);
   }
-  if (level.id === 3) {
+  if (problem.interaction === "dice-opposite" || problem.interaction === "dice-pair") {
     if (problem.interaction === "dice-opposite") {
       if (DICE_OPPOSITE[problem.face] !== problem.answer || problem.choices.filter((value) => value === problem.answer).length !== 1) throw new Error(`${problem.id}: invalid opposite face`);
     } else {
@@ -355,7 +422,7 @@ function validateProblem(problem, level) {
       if (valid.length !== 1 || problem.choices[problem.answer] !== valid[0]) throw new Error(`${problem.id}: opposite pair is not unique`);
     }
   }
-  if (level.id === 5) {
+  if (problem.interaction === "solid-identify" || problem.interaction === "solid-adjacent") {
     const solid = SOLIDS.find((item) => item.id === problem.solid.id);
     if (!solid || solid.vertices - solid.edges + solid.faces !== 2) throw new Error(`${problem.id}: invalid regular solid`);
     if (problem.interaction === "solid-identify" && problem.choices.filter((choice) => choice.id === problem.answer).length !== 1) throw new Error(`${problem.id}: solid answer is not unique`);

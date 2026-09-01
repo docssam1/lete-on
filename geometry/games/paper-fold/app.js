@@ -1,4 +1,4 @@
-import { levels, validateLevels } from "./levels.js?v=paper-fold-5";
+import { levels, validateLevels } from "./levels.js?v=paper-fold-6";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
@@ -48,6 +48,7 @@ const state = {
   problem: params.has("level") || !restoredSession ? 0 : Math.max(0, Math.min(SESSION_SIZE - 1, Number(saved.problemIndex) || 0)),
   queue: initialSession,
   folded: false,
+  foldStep: 0,
   busy: false,
   solved: false,
   wrong: 0,
@@ -105,6 +106,37 @@ const I18N = {
   }
 };
 
+Object.assign(I18N.ko, {
+  foldStepPrompt: "{total}번 중 {step}번째 접기입니다. {axis} 접기선을 누르세요.",
+  nextFold: "좋아요. 다음 {axis} 접기선을 이어서 눌러 보세요.",
+  foldSequence: "접기 순서",
+  completedFold: "완료",
+  topCondition: "각 칸의 앞뒤에는 같은 수가 적혀 있어요.",
+  topQuestion: "모두 접었을 때 맨 위에 오는 수를 고르세요.",
+  topChoice: "맨 위 수 {value}",
+  topFolded: "모든 종이가 한 칸에 포개졌어요. 층의 순서를 생각해 보세요.",
+  topSolved: "맞아요. 맨 위에 오는 수는 {value}입니다.",
+  topResult: "맨 위 수 확인"
+});
+Object.assign(I18N.zh, {
+  foldStepPrompt: "共{total}次折叠，现在是第{step}次。请点击{axis}折痕。",
+  nextFold: "很好。继续点击下一条{axis}折痕。", foldSequence: "折叠顺序", completedFold: "完成",
+  topCondition: "每个格子的正反面都写着相同的数字。", topQuestion: "全部折好后，选择最上面的数字。",
+  topChoice: "最上面的数字 {value}", topFolded: "所有纸层都叠在一个格子上。想一想层的顺序。", topSolved: "正确，最上面是 {value}。", topResult: "查看最上面的数字"
+});
+Object.assign(I18N.ja, {
+  foldStepPrompt: "{total}回のうち{step}回目。{axis}の折り線を押してください。",
+  nextFold: "その調子。次の{axis}の折り線を押しましょう。", foldSequence: "折る順番", completedFold: "完了",
+  topCondition: "それぞれのますの表と裏には同じ数が書かれています。", topQuestion: "全部折ったとき、一番上にくる数を選びましょう。",
+  topChoice: "一番上の数 {value}", topFolded: "すべての紙が一つのますに重なりました。重なり順を考えましょう。", topSolved: "正解です。一番上は {value} です。", topResult: "一番上の数"
+});
+Object.assign(I18N.en, {
+  foldStepPrompt: "Fold {step} of {total}: tap the {axis} crease.",
+  nextFold: "Good. Continue with the next {axis} crease.", foldSequence: "Fold order", completedFold: "Done",
+  topCondition: "Each cell has the same number on its front and back.", topQuestion: "Choose the number on top after every fold.",
+  topChoice: "Top number {value}", topFolded: "Every layer is now in one stack. Think about their order.", topSolved: "Correct. {value} is on top.", topResult: "Top number"
+});
+
 const t = (key, vars = {}) => {
   const source = I18N[state.lang]?.[key] ?? I18N.ko[key] ?? key;
   return Object.entries(vars).reduce((text, [name, value]) => text.replaceAll(`{${name}}`, value), source);
@@ -121,6 +153,8 @@ const title = (level) => level.title[state.lang] || level.title.ko;
 const description = (level) => level.description[state.lang] || level.description.ko;
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, reducedMotion ? 0 : ms));
 const axisText = (axis) => t(axis);
+const problemFolds = (p = problem()) => p.folds || [p.fold];
+const activeFold = (p = problem()) => problemFolds(p)[Math.min(state.foldStep, problemFolds(p).length - 1)];
 const normalizedRotation = (rotation) => ((rotation % 360) + 360) % 360;
 const equalSets = (left, right) => left.size === right.length && right.every((item) => left.has(item));
 
@@ -158,22 +192,42 @@ function markHtml(marks, type = "punch") {
 }
 
 function resultChoiceHtml(item, p) {
-  return `<button class="result-choice" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span><span class="mini-paper"><span class="mini-crease ${p.fold.axis}"></span>${markHtml(item.result.marks, p.action.type)}</span></button>`;
+  return `<button class="result-choice" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span><span class="mini-paper"><span class="mini-crease ${activeFold(p).axis}"></span>${markHtml(item.result.marks, p.action.type)}</span></button>`;
+}
+
+function foldSequenceHtml(p) {
+  const folds = problemFolds(p);
+  if (folds.length < 2) return "";
+  return `<div class="fold-sequence" aria-label="${t("foldSequence")}">${folds.map((step, index) => `<span class="fold-chip${index < state.foldStep ? " complete" : index === state.foldStep && !state.folded ? " active" : ""}"><b>${index + 1}</b><i class="fold-arrow fold-${step.axis} fold-${step.side}" aria-hidden="true"></i><em>${index < state.foldStep ? t("completedFold") : axisText(step.axis)}</em></span>`).join("")}</div>`;
+}
+
+function topGridHtml(p) {
+  const visibleGrid = p.topStates?.[Math.min(state.foldStep, p.topStates.length - 1)] || p.topGrid;
+  const rows = visibleGrid.length;
+  const columns = visibleGrid[0].length;
+  const cells = visibleGrid.flat().map((value) => `<span>${value}</span>`).join("");
+  return state.folded
+    ? `<div class="top-stack${state.solved ? " solved" : ""}" aria-hidden="true"><i></i><i></i><strong>${state.solved ? p.answer : "?"}</strong></div>`
+    : `<div class="top-number-grid" style="--top-cols:${columns};--top-rows:${rows}">${cells}</div>`;
 }
 
 function renderPaper() {
   const p = problem();
+  const currentFold = activeFold(p);
   const showGrid = ["grid-select", "punch-select", "cut-number-sum"].includes(p.interaction) && state.folded;
   const showShapes = p.interaction === "shape-place" && state.folded;
   const sumProblem = p.interaction === "cut-number-sum";
+  const topProblem = p.interaction === "top-choice";
   const showSum = sumProblem && state.folded;
   const actionPoint = p.action?.point || [.62, .38];
-  ui.paper.className = `paper axis-${p.fold.axis} side-${p.fold.side}${sumProblem ? " is-sum" : ""}${state.solved ? " is-unfolded" : state.folded ? " is-folded" : " ready"}${state.busy ? " is-busy" : ""}`;
+  ui.paper.className = `paper axis-${currentFold.axis} side-${currentFold.side}${sumProblem ? " is-sum" : ""}${topProblem ? " is-top-problem" : ""}${state.solved ? " is-unfolded" : state.folded ? " is-folded" : " ready"}${state.busy ? " is-busy" : ""}`;
   ui.paper.innerHTML = `
-    <div class="sheet-base"><span class="paper-label">${state.solved ? t("openResult") : state.folded ? t("foldedPaper") : t("openPaper")}</span></div>
+    <div class="sheet-base"><span class="paper-label">${topProblem ? (state.solved ? t("topResult") : state.folded ? t("foldedPaper") : t("openPaper")) : state.solved ? t("openResult") : state.folded ? t("foldedPaper") : t("openPaper")}</span></div>
     <div class="fold-flap"></div>
-    <button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(p.fold.axis) })}"><span></span></button>
-    ${state.folded && !showGrid && !showShapes ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
+    <button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(currentFold.axis) })}"><span></span></button>
+    ${foldSequenceHtml(p)}
+    ${topProblem ? `<div class="top-problem-board"><p>${t("topCondition")}</p>${topGridHtml(p)}</div>` : ""}
+    ${state.folded && !showGrid && !showShapes && !topProblem ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
     ${state.solved && ["result-choice", "match"].includes(p.interaction) ? `<span class="unfolded-marks">${markHtml(p.choices.find((item) => item.key === p.answer).result.marks, p.action.type)}</span>` : ""}
     ${showSum ? `<div class="sum-board"><div class="fold-preview"><span><b>1</b>${t("cutPattern")}</span><div class="fold-preview-grid"></div></div><div class="sum-flow-arrow" aria-hidden="true">→</div><div class="number-side"><span><b>2</b>${t("numberPaper")}</span><div class="board-grid number-board"></div></div></div>` : showGrid ? `<div class="board-grid"></div>` : ""}
     ${showShapes ? `<div class="shape-givens"></div><div class="shape-board"></div>` : ""}`;
@@ -262,7 +316,19 @@ function renderInteraction() {
   ui.next.hidden = !state.solved;
 
   if (!state.folded) {
-    ui.answerPrompt.textContent = t("foldFirst", { axis: axisText(p.fold.axis) });
+    const folds = problemFolds(p);
+    ui.answerPrompt.textContent = folds.length > 1
+      ? t("foldStepPrompt", { step: state.foldStep + 1, total: folds.length, axis: axisText(activeFold(p).axis) })
+      : t("foldFirst", { axis: axisText(activeFold(p).axis) });
+    return;
+  }
+  if (p.interaction === "top-choice") {
+    ui.answerPrompt.textContent = t("topQuestion");
+    ui.interaction.innerHTML = `<div class="top-choices">${p.choices.map((value) => `<button class="top-choice" type="button" data-choice="${value}" aria-label="${t("topChoice", { value })}">${value}</button>`).join("")}</div>`;
+    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => {
+      button.disabled = !foldedOnly || state.solved;
+      button.addEventListener("click", () => checkChoice(button.dataset.choice, button));
+    });
     return;
   }
   if (["result-choice", "match"].includes(p.interaction)) {
@@ -310,14 +376,16 @@ function renderSumInteraction(p, foldedOnly) {
 
 async function foldPaper() {
   if (state.busy || state.solved || state.folded) return;
+  const folds = problemFolds();
   state.busy = true;
   ui.paper.classList.add("folding");
   playTone("fold");
   await wait(520);
-  state.folded = true;
+  state.foldStep += 1;
+  state.folded = state.foldStep >= folds.length;
   state.busy = false;
   renderAll();
-  setGuide(t("afterFold"));
+  setGuide(state.folded ? (problem().interaction === "top-choice" ? t("topFolded") : t("afterFold")) : t("nextFold", { axis: axisText(activeFold().axis) }));
 }
 
 async function reverseUnfold() {
@@ -329,12 +397,12 @@ async function reverseUnfold() {
 
 async function resolveCorrect() {
   if (state.busy || state.solved) return;
-  await reverseUnfold();
+  if (problem().interaction !== "top-choice") await reverseUnfold();
   state.solved = true;
   rewardProblem();
   playTone("success");
   showSuccess();
-  setGuide(t("correct"));
+  setGuide(problem().interaction === "top-choice" ? t("topSolved", { value: problem().answer }) : t("correct"));
   renderAll();
 }
 
@@ -492,7 +560,7 @@ function showSuccess() {
 }
 
 function resetProblem() {
-  state.folded = false; state.busy = false; state.solved = false; state.wrong = 0; state.hints = 0; state.selections = new Set(); state.placements = []; state.selectedPlacement = null; state.stage = 1;
+  state.folded = false; state.foldStep = 0; state.busy = false; state.solved = false; state.wrong = 0; state.hints = 0; state.selections = new Set(); state.placements = []; state.selectedPlacement = null; state.stage = 1;
   renderAll();
 }
 
@@ -532,12 +600,20 @@ function renderLevelList() {
 function renderAll() {
   const p = problem();
   const level = levels[state.level];
+  const folds = problemFolds(p);
+  const currentFold = activeFold(p);
   $("#levelLabel").textContent = `LEVEL ${level.id}`;
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = title(level);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  ui.prompt.textContent = state.solved ? t("solvedPrompt") : state.folded ? t("foldedPrompt", { axis: axisText(p.fold.axis) }) : t("readyPrompt", { axis: axisText(p.fold.axis) });
-  ui.status.textContent = state.busy ? t("folding") : state.solved ? t("unfolded") : state.folded ? t("foldComplete") : t("tapCrease");
+  ui.prompt.textContent = state.solved
+    ? (p.interaction === "top-choice" ? t("topSolved", { value: p.answer }) : t("solvedPrompt"))
+    : state.folded
+      ? (p.interaction === "top-choice" ? t("topFolded") : t("foldedPrompt", { axis: axisText(folds[folds.length - 1].axis) }))
+      : folds.length > 1
+        ? t("foldStepPrompt", { step: state.foldStep + 1, total: folds.length, axis: axisText(currentFold.axis) })
+        : t("readyPrompt", { axis: axisText(currentFold.axis) });
+  ui.status.textContent = state.busy ? t("folding") : state.solved ? (p.interaction === "top-choice" ? t("topResult") : t("unfolded")) : state.folded ? t("foldComplete") : `${state.foldStep + 1} / ${folds.length}`;
   renderPaper(); renderInteraction();
 }
 
@@ -579,7 +655,7 @@ ui.paper.addEventListener("click", (event) => {
   if (event.target.closest("[data-fold]")) return foldPaper();
 });
 ui.paper.addEventListener("pointerdown", startPlacedDrag);
-$("#hintButton").addEventListener("click", () => { state.hints += 1; const p = problem(); setGuide(state.folded ? t("hintFolded", { axis: axisText(p.fold.axis) }) : t("hintReady")); });
+$("#hintButton").addEventListener("click", () => { state.hints += 1; setGuide(state.folded ? t("hintFolded", { axis: axisText(problemFolds().at(-1).axis) }) : t("foldStepPrompt", { step: state.foldStep + 1, total: problemFolds().length, axis: axisText(activeFold().axis) })); });
 $("#retryButton").addEventListener("click", resetProblem);
 ui.rotate.addEventListener("click", rotateSelected); ui.flip.addEventListener("click", flipSelected);
 ui.next.addEventListener("click", nextProblem);

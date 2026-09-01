@@ -36,7 +36,7 @@ window.NM_UNITS['B-09'] = {
         desc:{ko:'3과 6은 특별한 관계예요. <b>6의 배수는 모두 3의 배수</b>이고, 3의 배수 중 <b>짝수는 6의 배수</b>예요. 두 단을 함께 외우면 더욱 강해져요!',
               en:'3 and 6 have a special relationship. <b>Every multiple of 6 is also a multiple of 3</b>, and any <b>even multiple of 3 is also a multiple of 6</b>. Learning them together makes you twice as strong!',
               zh:'3和6有特殊关系。<b>6的每个倍数都是3的倍数</b>，而3的倍数中<b>偶数也是6的倍数</b>。一起学两张口诀表，实力翻倍！'},
-        mathSteps:['3의 배수: 3,6,9,12,15,18,21,24,27','6의 배수: 6,12,18,24,30,36,42,48,54','6의 배수 ⊂ 3의 배수!'],
+        mathSteps:[{ko:'3의 배수: 3,6,9,12,15,18,21,24,27',en:'\\text{multiples of 3: } 3,6,9,12,15,18,21,24,27',zh:'3的倍数：3,6,9,12,15,18,21,24,27'},{ko:'6의 배수: 6,12,18,24,30,36,42,48,54',en:'\\text{multiples of 6: } 6,12,18,24,30,36,42,48,54',zh:'6的倍数：6,12,18,24,30,36,42,48,54'},{ko:'6의 배수 ⊂ 3의 배수!',en:'\\text{multiples of 6} ⊂ \\text{multiples of 3!}',zh:'6的倍数 ⊂ 3的倍数！'}],
         result:{ko:'6의 배수(6,12,18,24…)는 전부 3의 배수에 들어 있어요. 집합 관계!', en:'All 6× answers (6, 12, 18, 24 …) appear inside the 3× list. It is a subset!', zh:'所有6的倍数（6、12、18、24……）都包含在3的倍数中，是子集关系！'},
         book:{ko:'6의 배수 ⊂ 3의 배수. 이 집합 관계를 알면 "이 수가 3의 배수인가? 6의 배수인가?" 두 가지를 한꺼번에 판단할 수 있어요.', en:'6× ⊂ 3×. Knowing this subset relationship lets you decide at once whether a number is a multiple of 3, of 6, or both.', zh:'6的倍数 ⊂ 3的倍数。知道这个子集关系，就能一次判断一个数是3的倍数、6的倍数还是两者都是。'} },
 
@@ -45,7 +45,7 @@ window.NM_UNITS['B-09'] = {
         desc:{ko:'신기한 마법이에요! 어떤 수의 <b>각 자리 숫자를 더해서</b> 그 합이 3의 배수이면, 그 수도 3의 배수예요. 세 자리 수도 같아요!',
               en:'Here is amazing magic! <b>Add up all the digits</b> of a number. If the sum is divisible by 3, so is the whole number — even for three-digit numbers!',
               zh:'这是神奇的魔法！把一个数的<b>各位数字加起来</b>，如果和能被3整除，那么这个数也能被3整除——三位数也一样！'},
-        mathSteps:['123 → 1+2+3=6 ✓ (3의 배수)','124 → 1+2+4=7 ✗ (3의 배수 아님)','126 → 1+2+6=9 ✓ (6의 배수도!)'],
+        mathSteps:[{ko:'123 → 1+2+3=6 ✓ (3의 배수)',en:'123 → 1+2+3=6 ✓ \\text{ (multiple of 3)}',zh:'123 → 1+2+3=6 ✓（3的倍数）'},{ko:'124 → 1+2+4=7 ✗ (3의 배수 아님)',en:'124 → 1+2+4=7 ✗ \\text{ (not a multiple of 3)}',zh:'124 → 1+2+4=7 ✗（不是3的倍数）'},{ko:'126 → 1+2+6=9 ✓ (6의 배수도!)',en:'126 → 1+2+6=9 ✓ \\text{ (multiple of 6 too!)}',zh:'126 → 1+2+6=9 ✓（也是6的倍数！）'}],
         result:{ko:'123은 3의 배수! 126은 3의 배수이자 6의 배수(짝수라서)! 124는 둘 다 아니에요.', en:'123 is a multiple of 3! 126 is a multiple of both 3 and 6 (it is even)! 124 is neither.', zh:'123是3的倍数！126既是3的倍数又是6的倍数（因为是偶数）！124两者都不是。'},
         book:{ko:'3의 배수 판별: 자릿수 합이 3의 배수인지 확인. 6의 배수 판별: 짝수이면서 자릿수 합이 3의 배수인지 확인. 두 조건 모두 만족해야 6의 배수예요.', en:'Multiple of 3 test: digit sum divisible by 3. Multiple of 6 test: number is even AND digit sum divisible by 3. Both conditions must hold for 6.', zh:'3的倍数判断：数位之和能被3整除。6的倍数判断：数是偶数且数位之和能被3整除。两个条件都满足才是6的倍数。'} },
 
@@ -54,7 +54,7 @@ window.NM_UNITS['B-09'] = {
         desc:{ko:'3단과 6단을 모두 빠르게 구하려면 <b>이전 답 + 단수</b> 전략이 최고예요. 3단은 이전+3, 6단은 이전+6! 패턴 암기보다 이 전략이 훨씬 믿음직해요.',
               en:'To quickly find any 3× or 6× answer, the <b>previous answer + table number</b> strategy is best. For 3×: previous+3. For 6×: previous+6! This strategy is far more reliable than brute memorisation.',
               zh:'要快速算出3的乘法和6的乘法，<b>上一个答案+口诀数字</b>的策略最好用。3的乘法：上一个答案+3；6的乘法：上一个答案+6！这个策略比死记硬背可靠多了。'},
-        mathSteps:['3×8: 3×7=21이면, 21+3=24','6×8: 6×7=42이면, 42+6=48','패턴 암기보다 이전값+단 전략!'],
+        mathSteps:[{ko:'3×8: 3×7=21이면, 21+3=24',en:'3×8: \\text{if } 3×7=21, \\text{then } 21+3=24',zh:'3×8：若3×7=21，则21+3=24'},{ko:'6×8: 6×7=42이면, 42+6=48',en:'6×8: \\text{if } 6×7=42, \\text{then } 42+6=48',zh:'6×8：若6×7=42，则42+6=48'},{ko:'패턴 암기보다 이전값+단 전략!',en:'\\text{previous value + table number beats rote!}',zh:'与其死记，不如上一个值+口诀数！'}],
         result:{ko:'3×9: 3×8=24이면, 24+3=27. 6×9: 6×8=48이면, 48+6=54. 이전+단수로 OK!', en:'3×9: know 3×8=24, so 24+3=27. 6×9: know 6×8=48, so 48+6=54. Previous + table number = done!', zh:'3×9：知道3×8=24，所以24+3=27。6×9：知道6×8=48，所以48+6=54。上一个答案+口诀数字=搞定！'},
         book:null }
     ],

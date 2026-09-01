@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GFIELD 주사위 굴리기 학습지</title>
+  <link rel="stylesheet" href="./styles.css?v=dice-sheet-1" />
+  <link rel="stylesheet" href="./board-die.css?v=dice-sheet-3" />
+  <link rel="stylesheet" href="./material-refresh.css?v=dice-sheet-1" />
+</head>
+<body>
+  <header class="maker-bar">
+    <a href="../../games/dice-roll/" aria-label="게임으로 돌아가기">&larr;</a>
+    <div><strong>GFIELD 주사위 굴리기 학습지</strong><small>DICE ROLLING WORKSHEET</small></div>
+    <label>유형<select id="levelSelect"></select></label>
+    <label class="answer-toggle"><input id="answerToggle" type="checkbox" /><span>정답 보기</span></label>
+    <button id="refreshButton" type="button">새 문제</button>
+    <button id="printButton" type="button">인쇄</button>
+  </header>
+  <main class="sheet">
+    <header><div><small>GFIELD SPATIAL SOLIDS</small><h1 id="sheetTitle"></h1><p id="sheetDescription"></p></div><dl><div><dt>이름</dt><dd></dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>
+    <section id="problemGrid" class="problem-grid"></section>
+    <footer>격자의 화살표 방향과 주사위의 윗면·앞면·오른쪽 면을 차례로 살펴보세요.</footer>
+  </main>
+  <script type="module" src="./app.js?v=dice-sheet-3"></script>
+</body>
+</html>

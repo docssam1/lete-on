@@ -42,7 +42,7 @@ window.NM_UNITS['M-44'] = {
         desc:{ko:'왼쪽 f\'(x)(프라임)와 오른쪽 d/dx·f(x)(디엑스분의디)는 완전히 <b>같은 것</b>을 가리켜요 — "f(x)의 순간 기울기(도함수)"요. 라그랑주는 짧게 프라임(′)을, 라이프니츠는 "아주 작은 변화의 비율"이 보이도록 d/dx를 썼을 뿐이에요.',
               en:'The left side f\'(x) (prime) and the right side d/dx·f(x) (dee-y-dee-x) point to the exact <b>same thing</b> — "the instantaneous slope (derivative) of f(x)." Lagrange just wrote it short with a prime (′), while Leibniz wrote d/dx to make the "ratio of tiny changes" visible.',
               zh:'左边的f\'(x)(撇号)和右边的d/dx·f(x)(d y比d x)指的是完全<b>相同的东西</b>——"f(x)的瞬时斜率(导数)"。拉格朗日只是用撇号(′)简写，莱布尼茨用d/dx是为了让"极小变化的比率"看得见。'},
-        mathSteps:["f'(x)", '=\\dfrac{d}{dx}f(x)', '\\text{(같은 뜻, 다른 옷)}'],
+        mathSteps:["f'(x)", '=\\dfrac{d}{dx}f(x)', {ko:'\\text{(같은 뜻, 다른 옷)}',en:'\\text{(same meaning, different clothes)}',zh:'\\text{（意思相同，外衣不同）}'}],
         result:{ko:'f′과 d/dx는 같은 뜻, 다른 표기예요!',en:'f′ and d/dx mean the same thing, written differently!',zh:'f′和d/dx意思相同，写法不同！'},
         book:{ko:'f\'(a)처럼 괄호에 숫자가 있으면 "그 점에서의 값"(미분계수), f\'(x)처럼 x가 있으면 "식 전체"(도함수)예요.',
               en:'When the parentheses hold a number, like f\'(a), it\'s "the value at that point" (a derivative value); when it holds x, like f\'(x), it\'s "the whole expression" (the derivative function).',

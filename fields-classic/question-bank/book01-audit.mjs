@@ -81,8 +81,38 @@ function validatePartition(problem) {
   assert(problem.visual.subtype === "partition-draw", "partition task must ask the learner to draw dividing lines");
   assert(!problem.prompt.includes("고르세요"), "partition task incorrectly became multiple choice");
   assert(!problem.visual.options, "partition drawing question must not include answer choices");
-  assert(!problem.visual.labels, "partition drawing question reveals the answer lines");
   assert(problem.answerVisual?.subtype === "partition-draw", "partition drawing answer visual missing");
+  assert(problem.responseKind === "drawing", "partition task must use the drawing response form");
+  if (problem.meta.family === "partition-2" || problem.meta.family === "partition-4") {
+    const { center, guidePath, completedPaths, turnStep, requiredAddedPaths, uniqueCompletionCount } = problem.meta;
+    assert(problem.visual.mode === "rotational" && problem.answerVisual.mode === "rotational", "rotational partition source layout missing");
+    assert(guidePath.length >= 3, "rotational partition reveals only one short segment");
+    assert(completedPaths.length === problem.visual.pieceCount, "rotational partition completion count mismatch");
+    assert(requiredAddedPaths === problem.visual.pieceCount - 1, "rotational partition added path count mismatch");
+    assert(uniqueCompletionCount === 1, "rotational partition answer is not unique");
+    completedPaths.forEach((path, index) => {
+      const expected = guidePath.map(([x, y]) => {
+        let nextX = x;
+        let nextY = y;
+        for (let turn = 0; turn < index * turnStep; turn += 1) {
+          [nextX, nextY] = [center[0] - (nextY - center[1]), center[1] + (nextX - center[0])];
+        }
+        return [nextX, nextY];
+      });
+      assert(JSON.stringify(path) === JSON.stringify(expected), `rotational partition path ${index} is not the prescribed turn`);
+    });
+    assert(new Set(completedPaths.map((path) => JSON.stringify(path))).size === problem.visual.pieceCount, "rotational partition paths overlap as identical answers");
+    return;
+  }
+  assert(!problem.visual.labels, "partition drawing question reveals the answer lines");
+  if (problem.meta.family === "symbol-partition") {
+    const expectedGuide = ["5:right", "9:right", "5:bottom", "6:bottom"];
+    assert(problem.visual.sourceGuide && problem.answerVisual.sourceGuide, "symbol partition source guide mode missing");
+    assert(problem.visual.guideCuts.join() === expectedGuide.join(), "symbol partition central red guide mismatch");
+    assert(problem.answerVisual.guideCuts.join() === expectedGuide.join(), "symbol partition answer guide mismatch");
+    const uniqueCount = BOOK01_INTERNALS.countSymbolPartitionSolutions(problem.meta.symbols);
+    assert(uniqueCount === 1 && problem.meta.uniqueCount === 1, `symbol partition answer count ${uniqueCount}`);
+  }
   assert(problem.answerVisual.labels.join() === problem.meta.labels.join(), "partition drawing answer labels mismatch");
   assert(partitionValidity(problem.answerVisual, problem.meta.labels), "partition drawing answer is invalid");
   const fullCuts = new Set();

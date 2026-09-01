@@ -60,9 +60,9 @@ window.NM_UNITS['M-48'] = {
 
   check:{
     fills:[
-      { tex:'x=3\\text{일 때 } 2x+1 = \\square', answer:7,
+      { tex:{ko:'x=3\\text{일 때 } 2x+1 = \\square',en:'\\text{at } x=3: 2x+1 = \\square',zh:'x=3\\text{时 } 2x+1 = \\square'}, answer:7,
         hint:{ ko:'2×3+1', en:'2×3+1', zh:'2×3+1' } },
-      { tex:'x=-2\\text{일 때 } x^2+3x = \\square', answer:-2,
+      { tex:{ko:'x=-2\\text{일 때 } x^2+3x = \\square',en:'\\text{at } x=-2: x^2+3x = \\square',zh:'x=-2\\text{时 } x^2+3x = \\square'}, answer:-2,
         hint:{ ko:'(-2)^2+3(-2) = 4-6', en:'(-2)^2+3(-2) = 4-6', zh:'(-2)^2+3(-2) = 4-6' } }
     ],
     open:{ ko:'x=−1일 때 3x²−2x의 값을 계산 과정과 함께 설명해봐요.',

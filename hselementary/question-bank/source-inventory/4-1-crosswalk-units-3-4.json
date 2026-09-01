@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "status": "verified-crosswalk",
+  "sourceInventory": "4-1-source-items.json",
+  "sourceItemsTotal": 329,
+  "units": [
+    3,
+    4
+  ],
+  "currentTypesTotal": 30,
+  "verifiedMappings": 2,
+  "mappings": [
+    {
+      "currentTypeId": "4-1-u3-t4-3",
+      "sourceItemId": "4-1-u3-e4-mission-6",
+      "generatorKey": "divisionApplication",
+      "variant": 2,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "status": "verified",
+      "evidence": "심화 PDF 43쪽(교재 39쪽) Mission 6은 합 3627을 연속한 13개 자연수로 나타내어 가장 큰 수를 묻는다. variant 2 난수 표본도 주어진 합과 항 개수에서 연속한 자연수의 최댓값을 묻는 동일한 전체 구조다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t4-3",
+      "sourceItemId": "4-1-u4-e4-example-4-1",
+      "generatorKey": "movementPatternTwo",
+      "variant": 2,
+      "difficultyBand": 1,
+      "sourceTier": "advanced-contest-overlap",
+      "status": "verified",
+      "evidence": "심화 PDF 56쪽(교재 52쪽) 예제 4-1은 7-세그먼트 세 자리 수 카드를 180° 돌려 읽은 수와 처음 수의 차를 묻는다. variant 2 난수 표본도 회전 가능한 숫자 카드 그림과 같은 두 값의 차를 생성한다."
+    }
+  ],
+  "unmatchedCurrentTypes": [
+    {
+      "currentTypeId": "4-1-u3-t1",
+      "currentTypeName": "전체 수에서 사용한 수 빼기",
+      "generatorKey": "multiplicationUnderstanding",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 상자별 전체 수에서 사람별 사용량만 뺀다. PDF 36쪽 개념탐구 본문과 37쪽 Mission 6은 1분당 작업량과 작업 시간을 모두 곱해야 하므로 조건 하나를 빠뜨린 생성기로 원문 항목 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t1-2",
+      "currentTypeName": "같은 움직임을 여러 번 반복한 거리",
+      "generatorKey": "multiplicationUnderstanding",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 속력×한 번의 시간×반복 횟수로 총 이동 거리를 묻는다. PDF 36쪽 예제 1-2는 열차가 터널을 통과한 거리에서 열차 길이를 빼 터널 길이를 구하므로 조건과 묻는 값이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t1-3",
+      "currentTypeName": "간격과 개수로 전체 길이 구하기",
+      "generatorKey": "multiplicationUnderstanding",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 직선 길 한쪽의 양 끝 나무 수로 간격 수를 구한다. PDF 36쪽 예제 1-4는 원 둘레에서 마주 보는 두 나무의 번호 차를 사용하고, PDF 40쪽 예제 3-1은 도로 양쪽의 전체 나무 수를 사용하므로 어느 쪽도 같은 전체 구조가 아니다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t2",
+      "currentTypeName": "99를 곱하는 식을 분배법칙으로 계산",
+      "generatorKey": "multiplicationApplication",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "PDF 38쪽 예제 2-1은 서로 다른 구조의 계산 5개가 한 원문 번호에 묶여 있다. 생성기는 a×99 한 식만 만들므로 예제 2-1 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t2-2",
+      "currentTypeName": "공통인 수를 묶어 계산하기",
+      "generatorKey": "multiplicationApplication",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 같은 공통 인수가 드러난 세 항의 한 식만 만든다. PDF 39쪽 Mission 1은 네 개의 서로 다른 계산을 한 원문 항목으로 묶고 있어 일부 소문항과만 닮았으며 원문 항목 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t2-3",
+      "currentTypeName": "여러 수를 곱한 결과의 자릿수",
+      "generatorKey": "multiplicationApplication",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 반복 곱의 전체 자릿수를 묻는다. PDF 38쪽 예제 2-3은 일의 자리 숫자를, PDF 39쪽 Mission 3은 각 자리 숫자의 합을 묻기 때문에 묻는 값이 일치하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t3",
+      "currentTypeName": "양 끝에 놓인 물체의 개수",
+      "generatorKey": "divisionUnderstanding",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 도로 길이와 간격으로 한쪽 나무 수를 구한다. PDF 40쪽 예제 3-1은 도로 양쪽의 전체 나무 수와 간격으로 도로 길이를 구하는 역문제이며 양쪽 수를 반으로 나누는 조건도 추가된다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t3-2",
+      "currentTypeName": "묶음 수와 판매 금액으로 단가 구하기",
+      "generatorKey": "divisionUnderstanding",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 판매한 상자 수와 총수입으로 상자 단가를 구한다. PDF 40쪽 예제 3-2는 상자 판매와 낱개 판매를 합쳐 총 판매 금액을 구하므로 주어진 값과 묻는 값이 모두 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t3-3",
+      "currentTypeName": "기계 한 대의 작업량으로 전체 구하기",
+      "generatorKey": "divisionUnderstanding",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 같은 기계들의 총생산량에서 1대·1시간 작업량을 구해 목표 대수로 확대한다. PDF 40쪽 예제 3-3은 서로 다른 두 기계의 시간당 종이컵 수와 하루 상자 수를 결합해 상자당 개수를 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t4",
+      "currentTypeName": "나눗셈의 몫의 각 자리 숫자 합",
+      "generatorKey": "divisionApplication",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 한 나눗셈의 몫을 계산한 뒤 그 자리 숫자 합을 묻는다. PDF 42쪽 예제 4-3은 두 나눗셈의 몫 자릿수와 피제수의 자리 숫자 합을 조건으로 원래 수를 찾는 문제라 구조가 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t4-2",
+      "currentTypeName": "값이 같은 두 곱셈식의 빈칸",
+      "generatorKey": "divisionApplication",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 등식의 한 인수 전체를 빈칸으로 두어 여러 자리 수를 구한다. PDF 42쪽 예제 4-2는 3□9처럼 인수 안의 한 자리 숫자만 가리므로 빈칸의 역할과 답의 단위가 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t5",
+      "currentTypeName": "같은 나머지를 갖는 수의 범위",
+      "generatorKey": "advancedRemainder",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 고정된 나머지를 갖는 두 자리 수의 최댓값과 최솟값 차를 묻는다. PDF 44쪽 예제 5-1은 17로 나눈 몫과 나머지가 서로 같은 세 자리 수를 조건으로 하므로 핵심 조건이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t5-2",
+      "currentTypeName": "잘못 나눈 계산의 나머지 바로잡기",
+      "generatorKey": "advancedRemainder",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 잘못 사용한 제수와 그 몫·나머지를 주고 바르게 나눈 나머지를 묻는다. PDF 44쪽 예제 5-3은 잘못 나눈 결과에서 몫과 나머지가 서로 바뀌었다는 조건으로 처음 수를 묻는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t5-3",
+      "currentTypeName": "나눗셈식에서 몫과 나머지의 합",
+      "generatorKey": "advancedRemainder",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 피제수=제수×몫+나머지의 완성된 수치 관계에서 몫과 나머지의 합을 묻는다. PDF 44~45쪽 원문은 가려진 수 복원, 나머지 극값, 특정 나머지의 수 세기여서 같은 질문 구조가 없다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t6",
+      "currentTypeName": "세로셈에서 곱해지는 수의 빈칸",
+      "generatorKey": "multiplicationCompletion",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 완성된 부분곱과 곱에서 곱해지는 수의 한 자리만 가린다. PDF 46쪽 예제 6-1과 47쪽 Mission 1은 여러 칸 또는 여러 기호를 함께 복원해야 하므로 한 자리 생성기는 원문 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t6-2",
+      "currentTypeName": "부분곱으로 곱하는 수의 빈칸",
+      "generatorKey": "multiplicationCompletion",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 부분곱을 모두 제시하고 곱하는 두 자리 수 중 한 자리만 묻는다. PDF 46~47쪽의 곱셈 복면산은 여러 기호·빈칸을 동시에 구해야 하므로 일부 구조만 구현한다."
+    },
+    {
+      "currentTypeId": "4-1-u3-t6-3",
+      "currentTypeName": "세로셈 결과의 빈칸 숫자",
+      "generatorKey": "multiplicationCompletion",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 곱의 결과에서 한 자리만 가린다. PDF 46~47쪽의 관련 세로셈은 곱해지는 수, 곱하는 수, 부분곱과 결과의 여러 자리를 함께 복원하므로 원문 번호 전체와 일치하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t1",
+      "currentTypeName": "밀기 후 점의 위치 찾기",
+      "generatorKey": "planeTransform",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 좌표 격자에서 점 A의 이동 후 순서쌍을 묻는다. PDF 50~51쪽 원문은 좌표나 기준점 없이 도형 전체를 밀어 그리거나 이동 방법을 비교하므로 그림과 묻는 결과가 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t1-2",
+      "currentTypeName": "뒤집기 후 점의 위치 찾기",
+      "generatorKey": "planeTransform",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 x=4 또는 y=4 점선을 기준으로 점 A의 순서쌍을 구한다. PDF 50~51쪽은 도형 전체나 색칠 무늬를 뒤집어 그리는 문제이며 좌표 점의 위치를 묻지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t1-3",
+      "currentTypeName": "돌리기 후 점의 위치 찾기",
+      "generatorKey": "planeTransform",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 격자 중심 (4, 4) 둘레로 회전한 점 A의 좌표를 묻는다. PDF 50~51쪽은 주어진 도형 전체를 회전해 그리거나 회전 규칙의 빈 도형을 채우므로 좌표·그림·답 형식이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t2",
+      "currentTypeName": "돌리기와 좌우 뒤집기를 이어서 하기",
+      "generatorKey": "sequentialTransform",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 화살표를 여러 번 회전·좌우 뒤집기 한 뒤 방향 한 단어를 묻는다. PDF 52쪽 예제 2-1은 복합 도형을 6번 회전하고 11번 뒤집어 도형 전체를 그리게 하므로 대상 그림과 답이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t2-2",
+      "currentTypeName": "돌리기와 위아래 뒤집기를 이어서 하기",
+      "generatorKey": "sequentialTransform",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 화살표의 시계 방향 회전, 위아래 한 번 뒤집기, 반시계 방향 회전을 차례로 적용한다. PDF 52쪽 예제 2-2는 여섯 번의 좌우·상하 뒤집기 뒤 50회 회전한 복합 도형을 그리는 문제라 조건과 그림이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t2-3",
+      "currentTypeName": "묶음 이동을 반복한 뒤 방향 찾기",
+      "generatorKey": "sequentialTransform",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 화살표에 90° 회전과 좌우 뒤집기를 한 묶음으로 반복해 마지막 방향을 묻는다. PDF 53쪽 Mission 3은 예시로 제시된 다각형 이동 수열의 30번째 도형을 그리므로 같은 묶음 조건이나 답 형식이 아니다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t3",
+      "currentTypeName": "반복 무늬의 N번째 모양 찾기",
+      "generatorKey": "movementPatternOne",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 단순 기호 4~6개의 순환열에서 N번째 기호를 고른다. PDF 55쪽 Mission 2는 그림 조각을 90°씩 회전해 이어 붙인 20번째 칸의 도형을 직접 그리므로 변환 조건과 그림 구조가 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t3-2",
+      "currentTypeName": "반복 무늬에서 특정 모양의 개수 구하기",
+      "generatorKey": "movementPatternOne",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 평면 기호 하나씩 나열된 순환열에서 목표 기호 수를 센다. PDF 54쪽 예제 3-1은 네 기호가 든 복합 정사각형 타일을 이동해 만든 띠무늬 안의 특정 기호를 세므로 원문 그림 전체를 구현하지 않는다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t3-3",
+      "currentTypeName": "연속한 두 위치의 모양 찾기",
+      "generatorKey": "movementPatternOne",
+      "variant": 2,
+      "status": "unmatched",
+      "reason": "생성기는 단순 반복열의 N번째와 N+1번째 기호 두 개를 함께 묻는다. PDF 54~55쪽에는 연속한 두 위치를 함께 묻는 단일 원문 항목이 없고, 빈칸 완성 문제도 여러 칸의 복합 무늬를 요구한다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t4",
+      "currentTypeName": "전자 숫자 카드를 180° 돌려 읽기",
+      "generatorKey": "movementPatternTwo",
+      "variant": 0,
+      "status": "unmatched",
+      "reason": "생성기는 7-세그먼트 수를 180° 돌린 뒤 보이는 수만 묻는다. PDF 56쪽 예제 4-1은 돌린 수와 처음 수의 차를 묻고, PDF 57쪽 Mission 4는 회전해 같은 네 자리 수의 개수를 묻기 때문에 묻는 값이 다르다."
+    },
+    {
+      "currentTypeId": "4-1-u4-t4-2",
+      "currentTypeName": "거울에 비친 시계의 실제 시각 찾기",
+      "generatorKey": "movementPatternTwo",
+      "variant": 1,
+      "status": "unmatched",
+      "reason": "생성기는 아날로그 시계의 단순 거울상에서 현재 실제 시각을 묻는다. PDF 56쪽 예제 4-3은 270° 회전 뒤 거울상이고, PDF 57쪽 Mission 6은 거울 시각에서 1시간 40분 뒤를 묻는 추가 조건이 있어 같은 전체 구조가 없다."
+    }
+  ],
+  "duplicateSourceIds": 0,
+  "selfCheck": {
+    "currentTypesTotal": 30,
+    "verifiedMappings": 2,
+    "unmatchedCurrentTypes": 28,
+    "duplicateSourceIds": 0,
+    "mappedPlusUnmatched": 30,
+    "passed": true
+  }
+}

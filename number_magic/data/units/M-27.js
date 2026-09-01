@@ -37,7 +37,7 @@ window.NM_UNITS['M-27'] = {
         desc:{ko:'x²-5x+6=(x-α)(x-β)로 전개하면 x²-(α+β)x+αβ가 돼요. 원래 식과 비교하면 <b>α+β=5, αβ=6</b> — 실제 근 2, 3과 정확히 맞아요(2+3=5, 2×3=6).',
               en:'Expanding x²-5x+6=(x-α)(x-β) gives x²-(α+β)x+αβ. Comparing with the original, <b>α+β=5, αβ=6</b> — matching the actual roots 2, 3 exactly (2+3=5, 2×3=6).',
               zh:'展开x²-5x+6=(x-α)(x-β)得x²-(α+β)x+αβ。和原式比较，<b>α+β=5，αβ=6</b>——正好对应实际的根2、3(2+3=5，2×3=6)。'},
-        mathSteps:['(x-\\alpha)(x-\\beta)=x^2-(\\alpha+\\beta)x+\\alpha\\beta', '\\text{비교: } \\alpha+\\beta=5', '\\alpha\\beta=6'],
+        mathSteps:['(x-\\alpha)(x-\\beta)=x^2-(\\alpha+\\beta)x+\\alpha\\beta', {ko:'\\text{비교: } \\alpha+\\beta=5',en:'\\text{compare: } \\alpha+\\beta=5',zh:'\\text{比较：} \\alpha+\\beta=5'}, '\\alpha\\beta=6'],
         result:{ko:'x²+bx+c=(x-α)(x-β)를 전개해서 계수와 바로 비교해요!',en:'Expand x²+bx+c=(x-α)(x-β) and compare with the coefficients directly!',zh:'展开x²+bx+c=(x-α)(x-β)，直接和系数比较！'},
         book:{ko:'x²+bx+c=0의 두 근 α,β는 α+β=-b, αβ=c를 항상 만족해요.',
               en:'For x²+bx+c=0 with roots α,β: always α+β=-b and αβ=c.',

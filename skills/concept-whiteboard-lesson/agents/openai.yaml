@@ -1,0 +1,16 @@
+interface:
+  display_name: "Concept Whiteboard Lesson"
+  short_description: "개념을 빈 칠판에 순서대로 그려 가르치는 애니메이션 강의를 만듭니다"
+  default_prompt: "Use $concept-whiteboard-lesson to turn this strategy unit or worked solution into a lesson that draws itself in order — scene from generator data, coordinates computed not eyeballed, subtitles in every shipped language, verified on PC, mobile and A4. Prove each check can fail before reporting it green, and do not approve your own work."
+
+parent_pipeline:
+  skill: evidence-gated-learning-pipeline
+  repo: docssam1/source-to-memory
+  path: skill/evidence-gated-learning-pipeline
+  read_before_math: references/math.md
+  note: >-
+    That skill owns the task contract, duplicate-work preflight, evidence routing,
+    model routing, release states and handover. This skill owns building and
+    verifying one lesson. If its optional companions
+    (gfield-single-answer-visibility, iterate-until-verified) are not installed,
+    do not fetch them — apply the equivalent gates in references/verification.md.

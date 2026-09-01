@@ -51,7 +51,7 @@ window.NM_UNITS['C-26'] = {
         desc:{ko:'네 조각을 어떤 순서로 곱하든 상관없어요! 큰 조각(50×40=2000)부터 해도, 작은 조각(3×7=21)부터 해도 결과는 똑같아요. <b>먼저 다 곱해서 적어두고, 마지막에 한꺼번에 더하기</b> — 이게 이 전략의 전부예요. 암산이 헷갈리면 종이에 네 조각을 쭉 적어두고 더해보세요.',
               en:'It doesn\'t matter which piece you multiply first! Start big (50×40=2000) or small (3×7=21) — the total is the same. <b>Multiply all the pieces first, write them down, then add them all at once</b> — that\'s the whole strategy. If mental math gets tricky, jot down all four pieces on paper and add.',
               zh:'先乘哪块都没关系！先算大的(50×40=2000)还是小的(3×7=21)结果都一样。<b>先把每块都乘出来写下，最后一次性相加</b>——这就是整个策略。心算吃力就把四块写在纸上再加。'},
-        mathSteps:['조각들을 순서 상관없이 계산','종이에 네 조각 적기','한 번에 더하기'],
+        mathSteps:[{ko:'조각들을 순서 상관없이 계산',en:'\\text{compute the pieces in any order}',zh:'各块可按任意顺序算'},{ko:'종이에 네 조각 적기',en:'\\text{write the four pieces down}',zh:'把四块写在纸上'},{ko:'한 번에 더하기',en:'\\text{add them all at once}',zh:'一次加起来'}],
         result:{ko:'순서는 자유! 다 곱하고 마지막에 딱 한 번 더해요.',en:'Any order works! Multiply everything, then add once.',zh:'顺序随意！全部乘完再加一次。'},
         book:null }
     ],

@@ -6,3 +6,4 @@ supabase/.temp/
 # after independent review; local drafting is intentionally ignored.
 private-authoring/
 private-workbook-authoring/
+private-sasmo-authoring/

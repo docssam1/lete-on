@@ -25,7 +25,7 @@ window.NM_UNITS['N-15'] = {
         desc:{ko:'🍬 더 받으면 더하고, 나눠주면 빼요!',
           en:'Got more? Add! Gave away? Subtract!',
           zh:'🍬 得到就加，送出去就减！'},
-        mathSteps:['더 받았어요 → 더해요(+)','나눠줬어요 → 빼요(-)','섞였어요 → 나눠서 세어요!'],
+        mathSteps:[{ko:'더 받았어요 → 더해요(+)',en:'Got more → add (+)',zh:'又得到了 → 用加法(+)'},{ko:'나눠줬어요 → 빼요(-)',en:'Gave away → subtract (-)',zh:'分给别人了 → 用减法(-)'},{ko:'섞였어요 → 나눠서 세어요!',en:'All mixed up → sort, then count!',zh:'混在一起 → 分开再数！'}],
         result:{ko:'이야기를 잘 들으면 답이 보여요!',en:'Listen well and the answer appears!',zh:'听好故事，答案就出来！'} }
     ],
     rule:{ ko:'더 받으면 더하고, 나눠주면 빼요!',

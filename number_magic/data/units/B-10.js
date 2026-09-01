@@ -37,7 +37,7 @@ window.NM_UNITS['B-10'] = {
         desc:{ko:'4단의 답을 쭉 써보면 끝자리가 4→8→2→6→0 순서로 <b>반복</b>돼요. 4×5=20에서 끝자리가 0이 되고, 4×6부터 다시 4·8·2·6·0 패턴이 시작돼요!',
               en:'Write out the 4 times table and the last digits <b>repeat</b>: 4→8→2→6→0. After 4×5=20 (ends in 0), the pattern starts again from 4×6!',
               zh:'写出4的口诀，个位数<b>重复</b>：4→8→2→6→0。4×5=20（个位是0）之后，从4×6开始又重复这个规律！'},
-        mathSteps:['4×1=4','4×2=8','4×3=12 (끝:2)','4×4=16 (끝:6)','4×5=20 (끝:0) → 반복!'],
+        mathSteps:['4×1=4','4×2=8',{ko:'4×3=12 (끝:2)',en:'4×3=12 \\text{ (ends in 2)}',zh:'4×3=12（末位2）'},{ko:'4×4=16 (끝:6)',en:'4×4=16 \\text{ (ends in 6)}',zh:'4×4=16（末位6）'},{ko:'4×5=20 (끝:0) → 반복!',en:'4×5=20 \\text{ (ends in 0) → repeats!}',zh:'4×5=20（末位0）→ 循环！'}],
         result:{ko:'끝자리 패턴 4·8·2·6·0을 기억하면 답이 맞는지 빠르게 확인할 수 있어요!', en:'Remember 4·8·2·6·0 to quickly check if your answer is right!', zh:'记住4·8·2·6·0，就能快速验证答案是否正确！'},
         book:{ko:'4단의 끝자리는 4·8·2·6·0이 반복돼요. 답의 끝자리가 이 중 하나가 아니면 실수한 거예요!', en:'4×table last digits cycle: 4, 8, 2, 6, 0. If your answer\'s last digit isn\'t in this list, recheck!', zh:'4的口诀个位数循环：4·8·2·6·0。若答案个位不在其中，说明算错了！'} },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-10'] = {
         desc:{ko:'4×7처럼 조금 큰 수도 걱정 없어요. <b>방법1</b>: 2×7=14를 두 배 해서 28. <b>방법2</b>: 4×5=20과 4×2=8을 더해서 28. 두 방법 모두 28이에요!',
               en:'Don\'t worry about bigger facts like 4×7. <b>Method 1</b>: Double 2×7=14 → 28. <b>Method 2</b>: 4×5=20 plus 4×2=8 → 28. Both give 28!',
               zh:'像4×7这样稍大的题目也不用担心。<b>方法1</b>：2×7=14翻倍=28。<b>方法2</b>：4×5=20加4×2=8=28。两种方法都是28！'},
-        mathSteps:['4×7 방법1: 2×7=14, 14+14=28','4×7 방법2: 4×5=20, 4×2=8, 20+8=28','둘 다 28! ✓'],
+        mathSteps:[{ko:'4×7 방법1: 2×7=14, 14+14=28',en:'4×7 \\text{ method 1: } 2×7=14, 14+14=28',zh:'4×7 方法1：2×7=14, 14+14=28'},{ko:'4×7 방법2: 4×5=20, 4×2=8, 20+8=28',en:'4×7 \\text{ method 2: } 4×5=20, 4×2=8, 20+8=28',zh:'4×7 方法2：4×5=20, 4×2=8, 20+8=28'},{ko:'둘 다 28! ✓',en:'\\text{both are 28!} ✓',zh:'都是28！✓'}],
         result:{ko:'4단이 어렵다면 방법1(2단 두 배)이나 방법2(쪼개서 더하기) 중 편한 것을 골라요!', en:'Struggling with 4s? Pick the method that works best for you — either one gets you there!', zh:'算4的口诀有困难？选一种你觉得顺手的方法——两种都能得出正确答案！'},
         book:null }
     ],
