@@ -158,6 +158,63 @@ async function auditBookOneGuidedConcepts() {
   return cases.length;
 }
 
+async function auditBookTwoGuidedConcepts() {
+  const cases = [
+    { id: "addition-matrix", family: "shape-substitution", wrong: "5", answer: "11", visual: ".guided-substitution-visual" },
+    { id: "balance-order", family: "balance-order-chain", wrong: "오리", answer: "고양이", visual: ".guided-balance-visual" },
+    { id: "dual-shape-color-pattern", family: "dual-shape-color-cycle", wrong: "빈 네모 □", answer: "빈 동그라미 ○", visual: ".guided-pattern-visual" },
+    { id: "diamond-number-promise", family: "four-number-promise", wrong: "9", answer: "11", visual: ".guided-promise-visual" }
+  ];
+
+  for (const item of cases) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=GUIDED-BOOK2-${item.id}&book=book-02`, { waitUntil: "networkidle" });
+    await page.locator(`.lesson-button[data-lesson="${item.id}"]`).click();
+    const experience = page.locator(`.guided-concept[data-guided-family="${item.family}"]`);
+    assert.equal(await experience.count(), 1, `${item.id}: Book 2 guided concept missing`);
+    assert.equal(await experience.locator(item.visual).count(), 1, `${item.id}: Book 2 guided visual missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: Book 2 original must start locked`);
+    assert.equal(await experience.locator(".guided-check").count(), 0, `${item.id}: Book 2 check appeared early`);
+    for (let step = 0; step < 3; step += 1) await experience.locator('[data-experience-action="next"]').click();
+    assert.equal(await experience.locator(".guided-check").count(), 1, `${item.id}: Book 2 final check missing`);
+
+    if (item.id === "balance-order") {
+      assert.equal(await experience.locator(".guided-order-chain span").count(), 3, "Book 2 balance order chain is incomplete");
+      const verticalPositions = await experience.locator(".guided-balance-unit").first().locator(".guided-balance-load").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top));
+      assert.ok(verticalPositions[0] > verticalPositions[1] + 10, `Book 2 balance heavy side is not visibly lower: ${verticalPositions.join(",")}`);
+    }
+    if (item.id === "dual-shape-color-pattern") {
+      assert.equal(await experience.locator(".guided-pattern-row span").count(), 6, "Book 2 dual pattern needs six visible positions");
+      assert.equal(await experience.locator(".guided-cycle-key span").count(), 2, "Book 2 dual pattern cycles are not separated");
+    }
+    if (item.id === "diamond-number-promise") assert.match(await experience.locator(".guided-reverse-rule").innerText(), /위.*왼쪽.*아래.*오른쪽/u, "Book 2 reverse promise rule missing");
+
+    assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: Book 2 approved answer is not unique`);
+    await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: Book 2 wrong answer unlocked original`);
+    await experience.locator("[data-experience-answer]").click();
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: Book 2 answer view missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: Book 2 answer view did not unlock original`);
+
+    const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({
+      fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+      height: node.matches("button") ? node.getBoundingClientRect().height : null
+    })));
+    assert.ok(typography.every(({ fontSize }) => fontSize >= 14), `${item.id}: Book 2 guided text is too small: ${JSON.stringify(typography)}`);
+    assert.ok(typography.filter(({ height }) => height != null).every(({ height }) => height >= 40), `${item.id}: Book 2 guided touch target is too small: ${JSON.stringify(typography)}`);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    assert.equal(overflow, false, `${item.id}: Book 2 mobile horizontal overflow`);
+
+    await page.evaluate(() => { window.print = () => {}; });
+    await page.locator("#printLessonButton").click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator(".guided-print-summary").count(), 1, `${item.id}: Book 2 guided print summary missing`);
+    assert.equal(await page.locator(".guided-print-summary button, .guided-print-summary input, .guided-print-summary select").count(), 0, `${item.id}: Book 2 print contains controls`);
+    await page.close();
+  }
+  return cases.length;
+}
+
 async function auditInteractiveTriangularStair() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=TRIANGULAR-AUDIT&book=book-05`, { waitUntil: "networkidle" });
@@ -270,8 +327,9 @@ try {
   await auditInteractiveClock();
   await auditReducedMotionClock();
   const guidedConcepts = await auditBookOneGuidedConcepts();
+  const bookTwoGuidedConcepts = await auditBookTwoGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }

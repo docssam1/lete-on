@@ -270,6 +270,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 4, 활동 01",
         sourceTypeIds: ["shape-sum-table"],
         representativeConcept: "같은 도형은 같은 수이며, 가로와 세로의 합을 함께 보아 도형의 수를 찾음",
+        experience: {
+          kind: "guided-concept",
+          family: "shape-substitution",
+          title: "같은 모양부터 값을 찾아요",
+          hint: "같은 모양 두 개의 합을 먼저 반으로 나누고, 찾은 값을 다른 식에 넣어 보세요.",
+          model: { pairShape: "diamond", pairTotal: 18, pairValue: 9, targetShape: "circle", mixedTotal: 16, targetValue: 7 },
+          beats: [
+            { phase: "equations", caption: "두 식에서 같은 모양을 찾아 표시합니다." },
+            { phase: "pair", caption: "마름모 두 개의 합 18을 똑같이 나누면 마름모는 9입니다." },
+            { phase: "substitute", caption: "동그라미와 마름모의 합 16에 마름모 9를 넣습니다." },
+            { phase: "verify", caption: "동그라미 7과 마름모 9를 다시 더해 16인지 확인합니다." }
+          ],
+          check: { prompt: "세모 두 개의 합은 12이고, 별과 세모의 합은 17입니다. 별이 나타내는 수는 얼마인가요?", options: ["5", "6", "11"], answer: "11", explanation: "세모 두 개가 12이므로 세모는 6입니다. 17에서 6을 빼면 별은 11입니다." }
+        },
         story: {
           title: "모양 우체국의 비밀 번호",
           text: "모양 우체국에서는 같은 모양마다 늘 같은 수를 붙입니다. 두 모양을 더한 수를 보면 숨은 수를 찾을 수 있습니다.",
@@ -316,6 +330,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 14, 활동 02",
         sourceTypeIds: ["balance-order-chain"],
         representativeConcept: "저울에서 아래로 내려간 쪽이 더 무거우며, 여러 저울의 관계를 이어 전체 순서를 정함",
+        experience: {
+          kind: "guided-concept",
+          family: "balance-order-chain",
+          title: "내려간 쪽을 이어 순서를 만들어요",
+          hint: "저울마다 아래로 내려간 물체를 먼저 표시한 뒤, 가운데에서 이어지는 물체를 찾으세요.",
+          model: { first: ["곰", "토끼", "left"], second: ["토끼", "병아리", "left"], order: ["곰", "토끼", "병아리"] },
+          beats: [
+            { phase: "first", caption: "첫 저울은 곰 쪽이 내려가므로 곰이 토끼보다 무겁습니다." },
+            { phase: "second", caption: "둘째 저울은 토끼 쪽이 내려가므로 토끼가 병아리보다 무겁습니다." },
+            { phase: "chain", caption: "두 관계에서 함께 나온 토끼를 가운데에 놓고 이어 봅니다." },
+            { phase: "verify", caption: "곰, 토끼, 병아리 순서가 두 저울과 모두 맞는지 확인합니다." }
+          ],
+          check: { prompt: "고양이가 강아지보다 무겁고, 강아지가 오리보다 무겁습니다. 가장 무거운 동물은 누구인가요?", options: ["고양이", "강아지", "오리"], answer: "고양이", explanation: "고양이 > 강아지 > 오리로 이어지므로 고양이가 가장 무겁습니다." }
+        },
         story: {
           title: "장난감 가게의 무게표",
           text: "장난감마다 무게가 다르지만 저울 세 개를 보면 어느 것이 더 무거운지 알 수 있습니다.",
@@ -358,6 +386,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용 슬라이드 24·학생용 슬라이드 23, 활동 04 (1)",
         sourceTypeIds: ["repeating-symbol-sequence"],
         representativeConcept: "모양 반복과 색 반복을 따로 찾은 뒤 같은 자리에서 두 규칙을 합침",
+        experience: {
+          kind: "guided-concept",
+          family: "dual-shape-color-cycle",
+          title: "모양 주기와 색 주기를 따로 봐요",
+          hint: "먼저 색을 가리고 모양만 읽고, 다음에는 모양을 가리고 빈 모양과 색칠한 모양만 읽어 보세요.",
+          model: { shapes: ["circle", "triangle", "square"], fills: [false, true], count: 6 },
+          beats: [
+            { phase: "combined", caption: "한 줄에 모양 규칙과 색 규칙이 함께 들어 있습니다." },
+            { phase: "shape", caption: "색을 가리면 동그라미, 세모, 네모가 세 칸마다 반복됩니다." },
+            { phase: "fill", caption: "모양을 가리면 빈 모양, 색칠한 모양이 두 칸마다 반복됩니다." },
+            { phase: "merge", caption: "같은 자리의 모양과 색을 다시 합쳐 다음 항을 정합니다." }
+          ],
+          check: { prompt: "모양은 동그라미·네모가 반복되고, 색은 빈 모양·빈 모양·색칠한 모양이 반복됩니다. 7번째는 무엇인가요?", options: ["빈 동그라미 ○", "색칠한 동그라미 ●", "빈 네모 □"], answer: "빈 동그라미 ○", explanation: "7번째 모양은 동그라미이고, 7번째 색 차례는 빈 모양이므로 빈 동그라미입니다." }
+        },
         story: {
           title: "축제 전구의 두 가지 규칙",
           text: "전구는 모양도 반복되고 색도 따로 반복됩니다. 모양만 본 다음 색만 보면 다음 전구가 보입니다.",
@@ -398,6 +440,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용 슬라이드 32·학생용 슬라이드 31, 활동 01 (1)",
         sourceTypeIds: ["four-number-center-rule"],
         representativeConcept: "앞의 완성된 그림에서 네 수의 계산 약속을 찾고 같은 약속으로 빈 수를 구함",
+        experience: {
+          kind: "guided-concept",
+          family: "four-number-promise",
+          title: "완성된 그림에서 숫자 약속을 찾아요",
+          hint: "위 수와 왼쪽·아래·오른쪽 세 수를 비교하세요. 빈자리가 바뀌면 덧셈을 거꾸로 계산합니다.",
+          model: { examples: [{ top: 17, left: 4, bottom: 6, right: 7 }, { top: 20, left: 5, bottom: 8, right: 7 }] },
+          beats: [
+            { phase: "observe", caption: "완성된 첫 그림의 위, 왼쪽, 아래, 오른쪽 수를 살펴봅니다." },
+            { phase: "rule", caption: "왼쪽, 아래, 오른쪽 세 수를 더하면 위 수가 됩니다." },
+            { phase: "confirm", caption: "둘째 그림에도 같은 덧셈 약속이 맞는지 확인합니다." },
+            { phase: "reverse", caption: "옆 수가 비면 위 수에서 나머지 두 수를 빼서 찾습니다." }
+          ],
+          check: { prompt: "위 수가 25이고 왼쪽은 6, 아래는 8일 때 오른쪽 수는 얼마인가요?", options: ["9", "10", "11"], answer: "11", explanation: "6 + 8 + 오른쪽 수 = 25이므로 25 - 6 - 8 = 11입니다." }
+        },
         story: {
           title: "보석 문의 숫자 약속",
           text: "보석 문의 위, 아래, 왼쪽, 오른쪽 수에는 같은 약속이 숨어 있습니다. 완성된 보석부터 비교하면 약속을 찾을 수 있습니다.",
