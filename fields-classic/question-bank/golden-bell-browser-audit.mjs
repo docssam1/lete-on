@@ -111,6 +111,53 @@ async function auditReducedMotionClock() {
   await page.close();
 }
 
+async function auditBookOneGuidedConcepts() {
+  const cases = [
+    { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
+    { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
+    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" }
+  ];
+
+  for (const item of cases) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=GUIDED-${item.id}&book=book-01`, { waitUntil: "networkidle" });
+    await page.locator(`.lesson-button[data-lesson="${item.id}"]`).click();
+    const experience = page.locator(`.guided-concept[data-guided-family="${item.family}"]`);
+    assert.equal(await experience.count(), 1, `${item.id}: guided concept missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: original problem must start locked`);
+    assert.equal(await experience.locator(".experience-check").count(), 0, `${item.id}: check appeared before the final scene`);
+    const next = experience.locator('[data-experience-action="next"]');
+    for (let step = 0; step < 3; step += 1) await next.click();
+    assert.equal(await experience.locator(".experience-check").count(), 1, `${item.id}: final check missing`);
+    assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: approved answer is not unique`);
+    await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();
+    assert.match(await experience.locator(".feedback").innerText(), /다시 살펴/u, `${item.id}: wrong-answer feedback missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: wrong answer unlocked the original problem`);
+    await experience.locator("[data-experience-answer]").click();
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: approved answer view missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: answer view did not unlock the original problem`);
+
+    const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({
+      text: node.textContent.trim(),
+      fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+      height: node.matches("button") ? node.getBoundingClientRect().height : null
+    })));
+    assert.ok(typography.every(({ fontSize }) => fontSize >= 14), `${item.id}: course-1 guided text is too small: ${JSON.stringify(typography)}`);
+    assert.ok(typography.filter(({ height }) => height != null).every(({ height }) => height >= 40), `${item.id}: guided touch control is too small: ${JSON.stringify(typography)}`);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    assert.equal(overflow, false, `${item.id}: mobile horizontal overflow`);
+
+    await page.evaluate(() => { window.print = () => {}; });
+    await page.locator("#printLessonButton").click();
+    await page.waitForTimeout(100);
+    const printSummary = page.locator(".guided-print-summary");
+    assert.equal(await printSummary.count(), 1, `${item.id}: guided print summary missing`);
+    assert.equal(await printSummary.locator("button, input, select").count(), 0, `${item.id}: print summary contains interactive controls`);
+    await page.close();
+  }
+  return cases.length;
+}
+
 async function auditInteractiveTriangularStair() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=TRIANGULAR-AUDIT&book=book-05`, { waitUntil: "networkidle" });
@@ -222,8 +269,9 @@ try {
   const geometryLabels = await auditGeometryAndPrint();
   await auditInteractiveClock();
   await auditReducedMotionClock();
+  const guidedConcepts = await auditBookOneGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }

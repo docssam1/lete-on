@@ -82,6 +82,19 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 10, 활동 01 (1)",
         sourceTypeIds: ["fold-cut-unfold-choice"],
         representativeConcept: "접은 종이를 펼치면 접은 선을 기준으로 같은 모양이 대칭으로 나타남",
+        experience: {
+          kind: "guided-concept",
+          family: "fold-symmetry",
+          title: "접은 선을 거울처럼 펼쳐요",
+          hint: "접은 선에서 같은 거리만큼 반대쪽을 찾아보세요. 모양은 서로 마주 봅니다.",
+          beats: [
+            { phase: "flat", caption: "색종이의 가운데 접은 선을 먼저 찾습니다." },
+            { phase: "folded", caption: "왼쪽 반을 접은 선을 따라 오른쪽으로 포갭니다." },
+            { phase: "cut", caption: "포개진 종이를 한 번 자르면 두 겹이 함께 잘립니다." },
+            { phase: "unfolded", caption: "펼치면 접은 선 양쪽 같은 거리에 마주 보는 모양이 생깁니다." }
+          ],
+          check: { prompt: "종이를 펼쳤을 때 두 잘린 모양은 어떤 관계인가요?", options: ["접은 선에서 같은 거리에 마주 봐요", "같은 방향으로 나란히 옮겨져요", "한쪽에만 남아요"], answer: "접은 선에서 같은 거리에 마주 봐요", explanation: "접은 선이 거울선이므로 두 모양은 같은 거리에서 서로 마주 봅니다." }
+        },
         story: {
           title: "별빛 초대장 만들기",
           text: "초대장을 반으로 접은 채 한쪽을 오려 냈습니다. 종이를 펼치면 잘린 모양이 접은 선의 반대쪽에도 똑같이 나타납니다.",
@@ -122,6 +135,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 20, 활동 01 (1)~(3)",
         sourceTypeIds: ["equal-line-sum"],
         representativeConcept: "겹치는 수를 제외한 나머지 부분의 합을 서로 같게 맞춤",
+        experience: {
+          kind: "guided-concept",
+          family: "equal-line",
+          title: "두 줄이 함께 쓰는 수를 찾아요",
+          hint: "가운데 수는 두 줄에 똑같이 들어가므로, 바깥 두 수끼리 먼저 비교하면 계산이 짧아집니다.",
+          model: { left: 6, center: 4, right: 2, bottom: 3, answer: 5 },
+          beats: [
+            { phase: "lines", caption: "가로줄과 세로줄을 각각 따라가 봅니다." },
+            { phase: "center", caption: "두 줄에 공통으로 들어간 가운데 수를 찾습니다." },
+            { phase: "compare", caption: "공통 수를 잠시 빼고 바깥 수의 합을 맞춥니다." },
+            { phase: "solve", caption: "빈칸을 채운 뒤 두 줄의 전체 합을 다시 확인합니다." }
+          ],
+          check: { prompt: "가로 바깥 수가 8과 2, 세로 아래 수가 3일 때 위 빈칸은 얼마인가요?", options: ["5", "7", "9"], answer: "7", explanation: "가로 바깥 수의 합은 8 + 2 = 10입니다. 위 수 + 3도 10이어야 하므로 위 수는 7입니다." }
+        },
         story: {
           title: "네 갈래 별빛 길",
           text: "별빛 광장의 가로 길과 세로 길은 지나가는 빛의 합이 같아야 환하게 켜집니다. 가운데 수는 두 길에 함께 들어갑니다.",
@@ -172,6 +199,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 32, 논리 추리 (1)~(3)",
         sourceTypeIds: ["preference-count-matrix-b9", "profession-assignment-b9"],
         representativeConcept: "한 사람씩 서로 다른 것을 고를 때 확정된 것부터 지우며 남은 답을 찾음",
+        experience: {
+          kind: "guided-concept",
+          family: "one-to-one-logic",
+          title: "가능한 답을 하나씩 지워요",
+          hint: "확정된 답은 같은 줄에서는 하나만 남기고, 같은 선택지의 세로줄에서는 다른 사람에게서 지웁니다.",
+          model: { people: ["민", "준", "소"], choices: ["사과", "포도", "배"] },
+          beats: [
+            { phase: "start", caption: "각 사람에게 가능한 선택을 모두 표시합니다." },
+            { phase: "fixed", caption: "민이 사과를 골랐다는 확실한 조건부터 표시합니다." },
+            { phase: "eliminate", caption: "준은 배가 아니므로 포도를 고르고, 사용한 답을 지웁니다." },
+            { phase: "solved", caption: "마지막으로 소에게 배 하나가 남습니다." }
+          ],
+          check: { prompt: "하나, 두리, 세모가 빨강·파랑·노랑을 하나씩 고릅니다. 하나는 빨강, 두리는 노랑이 아닙니다. 세모가 고른 색은 무엇인가요?", options: ["빨강", "파랑", "노랑"], answer: "노랑", explanation: "하나가 빨강을 사용했고 두리는 노랑이 아니므로 파랑입니다. 세모에게 노랑이 남습니다." }
+        },
         sourceHold: "슬라이드 32의 (4)는 공개 문장만으로 인물 조건이 완전하지 않아 원본 확인 트랙에서 보류",
         story: {
           title: "축제 준비 모둠",
