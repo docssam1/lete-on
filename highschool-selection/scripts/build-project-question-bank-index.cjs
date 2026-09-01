@@ -21,6 +21,8 @@ function sourceType(sourceBankId, sourceTypeId, fields) {
     solutionArchetype: fields.solutionArchetype || "",
     detailPrecision: fields.detailPrecision || "verified",
     status: fields.status || "verified",
+    taxonomyReviewStatus: fields.taxonomyReviewStatus || null,
+    internalTypeGroupId: fields.internalTypeGroupId || null,
     evidence: fields.evidence || []
   };
 }
@@ -218,23 +220,118 @@ function adaptHwangsoMiddle(index, curriculumReviews) {
   };
 }
 
+function adaptSaengsuLegacy(database) {
+  const sourceBankId = "SAENGSU-CM1-LEGACY";
+  const typeById = new Map((database.types || []).map(type => [type.candidateTypeId, type]));
+  const referencedTypeIds = new Set();
+  const items = (database.questions || []).map(question => {
+    const type = typeById.get(question.candidateTypeId);
+    if (!type) throw new Error(`생수 후보 문항이 없는 유형을 가리킵니다: ${question.questionId}`);
+    referencedTypeIds.add(question.candidateTypeId);
+    const semesters = Array.isArray(question.curriculum && question.curriculum.semesters)
+      ? question.curriculum.semesters.filter(Boolean)
+      : [];
+    const compatibility = (question.academyCompatibility || []).find(item => item.profileId === "SM_STANDARD");
+    const fitStatus = question.withinCurrentRange && compatibility && compatibility.state === "candidate"
+      ? "candidate"
+      : "excluded";
+    return {
+      itemId: `${sourceBankId}:${question.questionId}`,
+      sourceBankId,
+      sourceItemId: question.questionId,
+      sourceTypeId: question.candidateTypeId,
+      classificationStatus: question.curriculum && question.curriculum.curriculumStatus === "verified"
+        ? "reviewed_detail_locked"
+        : "pending",
+      detailPrecision: "candidate",
+      answerStatus: question.responseEvidence && question.responseEvidence.independentCorrectnessVerified ? "verified" : "pending",
+      releaseStatus: question.releaseStatus || "locked",
+      usageApproved: question.usageApproved === true,
+      withinCurrentRange: question.withinCurrentRange === true,
+      difficulty: {
+        legacyBand: question.legacyDifficulty || null,
+        targetBand: question.targetDifficultyBand || null,
+        action: question.difficultyAction || "review"
+      },
+      academyFits: [{ profileId: "SM_STANDARD", status: fitStatus }],
+      sourceLocator: question.sourceLocator ? {
+        sourceId: question.sourceLocator.sourceId,
+        questionNumber: question.sourceLocator.questionNumber
+      } : null,
+      curriculumSemesters: semesters
+      ,taxonomyReviewStatus: type.canonicalMergeStatus || "pending"
+      ,internalTypeGroupId: type.canonicalInternalGroupId || null
+      ,canonicalTarget: type.canonicalTarget && ["merge_existing", "alias_existing"].includes(type.canonicalMergeStatus)
+        ? {
+            sourceBankId: type.canonicalTarget.sourceBankId,
+            sourceTypeId: type.canonicalTarget.sourceTypeId,
+            relation: type.canonicalMergeStatus
+          }
+        : null
+    };
+  });
+  const unreferencedTypeIds = Array.from(typeById.keys()).filter(typeId => !referencedTypeIds.has(typeId));
+  if (unreferencedTypeIds.length) throw new Error(`생수 후보 DB에 문항이 없는 유형이 있습니다: ${unreferencedTypeIds.join(", ")}`);
+  const types = (database.types || []).map(type => {
+    const question = (database.questions || []).find(item => item.candidateTypeId === type.candidateTypeId);
+    const curriculum = question && question.curriculum || {};
+    return sourceType(sourceBankId, type.candidateTypeId, {
+      semester: (curriculum.semesters || []).join(" + "),
+      majorUnit: type.majorUnit,
+      minorUnit: type.minorUnit,
+      detailType: type.detailType,
+      detailPrecision: "candidate",
+      status: curriculum.curriculumStatus === "verified" ? "reviewed_detail_locked" : "pending",
+      taxonomyReviewStatus: type.canonicalMergeStatus || "pending",
+      internalTypeGroupId: type.canonicalInternalGroupId || null,
+      evidence: question ? [`saengsu:${question.paperId}:Q${question.questionNumber}`] : []
+    });
+  });
+  return {
+    bank: {
+      sourceBankId,
+      academyId: "SM",
+      label: "생수 공통수학1 구판 참고 후보",
+      itemCount: items.length,
+      taxonomyCounts: (database.summary && database.summary.typeReview) || null,
+      status: "taxonomy_reviewed_release_locked"
+    },
+    types,
+    items
+  };
+}
+
 function buildIndex(inputs) {
   const adapters = [
     adaptDolpa(inputs.dolpa),
     adaptSharedTypes(inputs.sharedTypes),
     adaptHwangsoRound(inputs.hwangsoRound),
     adaptWonmathManifests(inputs.wonmathManifests, inputs.wonmathDetailReviews),
-    adaptHwangsoMiddle(inputs.hwangsoMiddle, inputs.hwangsoCurriculumReviews)
+    adaptHwangsoMiddle(inputs.hwangsoMiddle, inputs.hwangsoCurriculumReviews),
+    ...(inputs.saengsuLegacy ? [adaptSaengsuLegacy(inputs.saengsuLegacy)] : [])
   ];
   const sourceTypes = adapters.flatMap(adapter => adapter.types);
   const conceptFamilies = core.createConceptFamilies(sourceTypes);
   const familyBySourceType = new Map();
   conceptFamilies.forEach(family => family.sourceTypes.forEach(type => familyBySourceType.set(`${type.sourceBankId}:${type.sourceTypeId}`, family.conceptFamilyId)));
-  const items = adapters.flatMap(adapter => adapter.items).map(item => ({
-    ...item,
-    conceptFamilyId: item.sourceTypeId ? familyBySourceType.get(`${item.sourceBankId}:${item.sourceTypeId}`) || null : null,
-    conceptStatus: item.detailPrecision === "verified" ? "mapped" : item.detailPrecision === "unit_only" ? "unit_only" : "pending"
-  })).sort((a, b) => a.itemId.localeCompare(b.itemId));
+  const items = adapters.flatMap(adapter => adapter.items).map(item => {
+    const ownFamilyId = item.sourceTypeId ? familyBySourceType.get(`${item.sourceBankId}:${item.sourceTypeId}`) || null : null;
+    const targetKey = item.canonicalTarget
+      ? `${item.canonicalTarget.sourceBankId}:${item.canonicalTarget.sourceTypeId}`
+      : null;
+    const reviewedTargetFamilyId = targetKey ? familyBySourceType.get(targetKey) || null : null;
+    if (targetKey && !reviewedTargetFamilyId) throw new Error(`검수된 생수 유형 연결 대상이 공통 인덱스에 없습니다: ${targetKey}`);
+    const conceptFamilyId = reviewedTargetFamilyId || ownFamilyId;
+    const conceptStatus = reviewedTargetFamilyId || item.detailPrecision === "verified"
+      ? "mapped"
+      : item.detailPrecision === "unit_only" ? "unit_only" : "pending";
+    return {
+      ...item,
+      canonicalConceptFamilyId: reviewedTargetFamilyId,
+      conceptFamilyId,
+      conceptStatus
+    };
+  }).sort((a, b) => a.itemId.localeCompare(b.itemId));
   const profiles = dolpaCore.PROFILE_CATALOG.map(profile => ({
     profileId: profile.profileId,
     programId: profile.programId,
@@ -307,6 +404,7 @@ function loadInputs(config) {
     wonmathDetailReviews: config.wonmathDetailReviews ? readJson(config.wonmathDetailReviews) : null,
     hwangsoMiddle: readJson(config.hwangsoMiddleIndex),
     hwangsoCurriculumReviews: config.hwangsoCurriculumReviews ? readJson(config.hwangsoCurriculumReviews) : null,
+    saengsuLegacy: config.saengsuLegacyCandidateDb ? readJson(config.saengsuLegacyCandidateDb) : null,
     reviewDecisions: config.reviewDecisions ? readJson(config.reviewDecisions) : { candidates: [] }
   };
 }
@@ -328,6 +426,7 @@ module.exports = Object.freeze({
   adaptHwangsoRound,
   adaptWonmathManifests,
   adaptHwangsoMiddle,
+  adaptSaengsuLegacy,
   buildIndex,
   loadInputs
 });

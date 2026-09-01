@@ -27,6 +27,10 @@ const examEditorRegistryModule = require("./exam-editor-registry.js");
 const examDraftStoreModule = require("./exam-draft-store.js");
 const academyQuestionCatalogModule = require("./academy-question-catalog.js");
 const academyQuestionAssetsModule = require("./academy-question-assets.js");
+const userExamLibraryCore = require("../data/user-exam-library-core.js");
+const examGenerationPlanner = require("../data/exam-generation-planner.js");
+const userExamLibraryStoreModule = require("./user-exam-library-store.js");
+const userExamScopeInventoryModule = require("./user-exam-scope-inventory.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -118,6 +122,15 @@ function requireAdminMutation(request, expectsJson, configuredOrigin) {
   const expectedOrigin = configuredOrigin || requestOrigin(request);
   if (!suppliedOrigin || suppliedOrigin !== expectedOrigin) throw new HttpError(403, "관리자 변경 요청의 출처를 확인할 수 없습니다.");
   if (request.headers["x-highselect-admin"] !== "1") throw new HttpError(403, "관리자 변경 요청을 확인할 수 없습니다.");
+  if (expectsJson && !/^application\/json(?:;|$)/i.test(String(request.headers["content-type"] || ""))) {
+    throw new HttpError(415, "JSON 요청만 허용됩니다.");
+  }
+}
+
+function requireUserMutation(request, expectsJson, configuredOrigin) {
+  const suppliedOrigin = String(request.headers.origin || "").trim();
+  const expectedOrigin = configuredOrigin || requestOrigin(request);
+  if (!suppliedOrigin || suppliedOrigin !== expectedOrigin) throw new HttpError(403, "변경 요청의 출처를 확인할 수 없습니다.");
   if (expectsJson && !/^application\/json(?:;|$)/i.test(String(request.headers["content-type"] || ""))) {
     throw new HttpError(415, "JSON 요청만 허용됩니다.");
   }
@@ -306,6 +319,14 @@ function createApp(options) {
     data: opts.privateExamDrafts,
     filePath: opts.privateExamDraftsPath
   });
+  const userExamLibraryStore = opts.userExamLibraryStore || userExamLibraryStoreModule.createStore({
+    data: opts.privateUserExamLibrary,
+    filePath: opts.privateUserExamLibraryPath
+  });
+  const loadUserExamScopeInventory = opts.loadUserExamScopeInventory || userExamScopeInventoryModule.createLoader({
+    data: opts.privateUserExamScopeInventory,
+    filePath: opts.privateUserExamScopeInventoryPath
+  });
   const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
     projectData: opts.privateProjectQuestionIndex,
     projectFilePath: opts.privateProjectQuestionIndexPath,
@@ -361,13 +382,237 @@ function createApp(options) {
     if (!loadPracticeMode || !practiceStore) throw new HttpError(503, "비공개 반복연습 저장소가 연결되지 않았습니다.");
   }
 
-  function requireExamEditorInfrastructure() {
-    if (!loadExamEditorRegistry || !examDraftStore) throw new HttpError(503, "비공개 시험지 편집 저장소가 연결되지 않았습니다.");
+  function requireExamEditorRegistry() {
+    if (!loadExamEditorRegistry) throw new HttpError(503, "검수된 시험지 후보 목록이 연결되지 않았습니다.");
     let registry;
     try { registry = loadExamEditorRegistry(); }
     catch (_) { throw new HttpError(503, "검수된 시험지 후보 목록을 확인해 주세요."); }
     if (!registry) throw new HttpError(503, "검수된 시험지 후보 목록이 연결되지 않았습니다.");
     return registry;
+  }
+
+  function requireExamEditorInfrastructure() {
+    if (!examDraftStore) throw new HttpError(503, "비공개 시험지 편집 저장소가 연결되지 않았습니다.");
+    return requireExamEditorRegistry();
+  }
+
+  function requireUserExamLibrary() {
+    if (!userExamLibraryStore) throw new HttpError(503, "사용자 시험 보관함이 연결되지 않았습니다.");
+    return userExamLibraryStore;
+  }
+
+  function requireUserExamScopeInventory() {
+    if (!loadUserExamScopeInventory) throw new HttpError(503, "승인된 학원·학기 출제 범위가 연결되지 않았습니다.");
+    try { return loadUserExamScopeInventory(); }
+    catch (_) { throw new HttpError(503, "승인된 학원·학기 출제 범위를 확인해 주세요."); }
+  }
+
+  function userExamFailure(error, missingStatus) {
+    if (error instanceof HttpError) throw error;
+    if (error && error.code === "USER_EXAM_ACCESS_MISSING") {
+      throw new HttpError(missingStatus || 403, missingStatus === 404 ? "사용자 시험 설정을 찾을 수 없습니다." : "사용자 시험 이용 권한이 없습니다.");
+    }
+    if (error && ["USER_EXAM_BUSY", "USER_EXAM_CONFLICT"].includes(error.code)) {
+      throw new HttpError(409, "사용자 시험 보관함이 동시에 변경되었습니다. 다시 시도해 주세요.");
+    }
+    const message = String(error && error.message || "");
+    if (/entitlement|not covered/i.test(message)) throw new HttpError(403, "선택한 학원과 학기에 대한 이용 권한이 없습니다.");
+    if (/saved exam limit|limit has been reached/i.test(message)) throw new HttpError(409, "저장 가능한 시험 수를 모두 사용했습니다.");
+    if (error instanceof TypeError || /is invalid|is unknown|does not match|is not allowed/i.test(message)) {
+      throw new HttpError(400, "사용자 시험 요청 내용을 확인해 주세요.");
+    }
+    throw error;
+  }
+
+  function publicUserExam(recipe) {
+    return {
+      examId: recipe.examId,
+      ownerId: recipe.ownerId,
+      state: recipe.state,
+      createdAt: recipe.createdAt,
+      updatedAt: recipe.updatedAt,
+      expiresAt: recipe.expiresAt,
+      generationMode: recipe.generationMode,
+      selectionSnapshot: recipe.selectionSnapshot,
+      seed: recipe.seed,
+      parentExamId: recipe.parentExamId,
+      items: recipe.items.map(function (item) {
+        return { itemId: item.itemId, itemVersionId: item.itemVersionId, order: item.order, score: item.score };
+      }),
+      layout: recipe.layout
+    };
+  }
+
+  function publicUserExamAccess(context) {
+    return {
+      ownerId: context.assignment.ownerId,
+      plan: context.plan,
+      entitlements: context.assignment.entitlements,
+      updatedAt: context.assignment.updatedAt
+    };
+  }
+
+  function assertNoPrivateUserExamValues(value) {
+    const seen = new Set();
+    function normalizedKey(key) {
+      return String(key).normalize("NFKC").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+    const forbiddenKeys = new Set(userExamLibraryCore.FORBIDDEN_RECIPE_KEYS);
+    function visit(node, key) {
+      if (key != null && forbiddenKeys.has(normalizedKey(key))) {
+        throw new HttpError(400, "사용자 시험에는 원문·답안·출처 정보를 저장할 수 없습니다.");
+      }
+      if (typeof node === "string") {
+        const text = node.normalize("NFKC").trim();
+        if (/^(?:[A-Za-z]:[\\/]|\\\\|file:\/\/|https?:\/\/)/i.test(text)
+            || /(?:^|[\\/])\.\.(?:[\\/]|$)/.test(text)
+            || (/[\\/]/.test(text) && /(?:^|[\\/])(?:private|source|original|answer|answers)(?:[\\/]|$)/i.test(text))
+            || (/[\\/]/.test(text) && /\.(?:pdf|png|jpe?g|webp|json|docx?|xlsx?|pptx?)$/i.test(text))) {
+          throw new HttpError(400, "사용자 시험에는 원본 경로나 외부 주소를 저장할 수 없습니다.");
+        }
+        return;
+      }
+      if (!node || typeof node !== "object") return;
+      if (seen.has(node)) throw new HttpError(400, "사용자 시험 요청 형식이 올바르지 않습니다.");
+      seen.add(node);
+      Object.entries(node).forEach(function ([childKey, child]) { visit(child, childKey); });
+      seen.delete(node);
+    }
+    visit(value, null);
+  }
+
+  function approvedLibraryItems(bodyItems, registry, generationMode, academyId, scopeApproval, scopeInventory) {
+    if (!Array.isArray(bodyItems) || !bodyItems.length) throw new HttpError(400, "승인된 문항 ID와 버전을 하나 이상 보내 주세요.");
+    return bodyItems.map(function (item, index) {
+      exactKeys(item, new Set(["itemId", "itemVersionId", "order", "score"]), `사용자 시험 ${index + 1}번 문항`);
+      const candidate = registry.getCandidate(security.clean(item.itemId), security.clean(item.itemVersionId));
+      if (!candidate || examEditorCore.validateCandidate(candidate).length) {
+        throw new HttpError(409, "현재 승인된 버전의 문항만 사용자 시험에 담을 수 있습니다.");
+      }
+      if (generationMode === "academy_prep" && candidate.mode !== academyId) {
+        throw new HttpError(409, "선택한 학원형과 같은 문항만 대비 시험에 담을 수 있습니다.");
+      }
+      try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeApproval.requestedScopes); }
+      catch (_) { throw new HttpError(409, "선택한 학원·학기와 출제 범위에 맞는 문항만 담을 수 있습니다."); }
+      return { itemId: candidate.id, itemVersionId: candidate.itemVersionId, order: item.order, score: item.score };
+    });
+  }
+
+  function generatedCandidatePool(registry, generationMode, academyId, scopeApproval, scopeInventory, excludedItemIds) {
+    const scopeKeys = scopeApproval.requestedScopes;
+    if (!Array.isArray(scopeKeys) || !scopeKeys.length) throw new HttpError(400, "시험 범위를 하나 이상 선택해 주세요.");
+    const modes = generationMode === "academy_prep"
+      ? [security.clean(academyId).toUpperCase()]
+      : questionBankCore.PROGRAM_MODES;
+    const excluded = new Set(excludedItemIds || []);
+    const byId = new Map();
+    modes.forEach(function (mode) {
+      const matches = typeof registry.searchAll === "function"
+        ? registry.searchAll({ mode, scopeKeys, originalOnly: true })
+        : registry.search({ mode, scopeKeys, limit: 10000, originalOnly: true });
+      matches.forEach(function (entry) {
+        const candidate = entry.candidate;
+        if (excluded.has(candidate.id) || byId.has(candidate.id)) return;
+        try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeKeys); }
+        catch (_) { return; }
+        byId.set(candidate.id, {
+          itemId: candidate.id,
+          itemVersionId: candidate.itemVersionId,
+          curriculumPath: candidate.curriculum.key,
+          typeCode: candidate.typeCode,
+          familyId: candidate.variant.familyId,
+          domainGroup: candidate.domainGroup,
+          difficultyBand: candidate.difficultyBand,
+          inputType: candidate.inputType,
+          score: 1
+        });
+      });
+    });
+    return Array.from(byId.values());
+  }
+
+  function generateUserExam(library, registry, context, input, parent) {
+    const parentItems = parent ? parent.items.map(function (item) { return item.itemId; }) : [];
+    const requestedConditions = parent ? null : {
+      scopeKeys: input.scopeKeys,
+      difficultyWeights: input.difficultyWeights,
+      responseWeights: input.responseWeights,
+      questionCount: input.questionCount,
+      maxPerFamily: input.maxPerFamily,
+      domainQuotas: input.domainQuotas == null ? null : input.domainQuotas
+    };
+    const rawSelectionSnapshot = parent ? parent.selectionSnapshot : {
+      academyId: input.academyId == null || input.academyId === "" ? null : security.clean(input.academyId).toUpperCase(),
+      semesterId: security.clean(input.semesterId),
+      conditions: requestedConditions
+    };
+    const generationMode = parent ? parent.generationMode : security.clean(input.generationMode);
+    let selectionSnapshot;
+    try { selectionSnapshot = userExamLibraryCore.normalizeSelectionSnapshot(rawSelectionSnapshot, generationMode); }
+    catch (error) { userExamFailure(error, 403); }
+    let access;
+    try {
+      access = library.assignment(context.user.studentId);
+      userExamLibraryCore.assertTargetEntitled(
+        access.assignment.entitlements, generationMode,
+        selectionSnapshot.academyId, selectionSnapshot.semesterId
+      );
+    } catch (error) { userExamFailure(error, 403); }
+    const scopeInventory = requireUserExamScopeInventory();
+    let scopeApproval;
+    try {
+      scopeApproval = scopeInventory.requireTarget(
+        generationMode, selectionSnapshot.academyId, selectionSnapshot.semesterId,
+        selectionSnapshot.conditions.scopeKeys
+      );
+    } catch (_) { throw new HttpError(403, "선택한 학원·학기와 출제 범위가 승인 목록에 없습니다."); }
+    const derivation = parent ? userExamLibraryCore.deriveSimilarExamMetadata(parent, {
+      derivationIndex: input.derivationIndex,
+      generationMode
+    }) : null;
+    const seed = derivation ? derivation.seed : input.seed;
+    const pool = generatedCandidatePool(
+      registry,
+      generationMode,
+      selectionSnapshot.academyId,
+      scopeApproval,
+      scopeInventory,
+      parentItems
+    );
+    let plan;
+    try {
+      plan = examGenerationPlanner.planExam(pool, {
+        questionCount: selectionSnapshot.conditions.questionCount,
+        seed,
+        difficultyWeights: selectionSnapshot.conditions.difficultyWeights,
+        responseWeights: selectionSnapshot.conditions.responseWeights,
+        maxPerFamily: selectionSnapshot.conditions.maxPerFamily,
+        domainQuotas: selectionSnapshot.conditions.domainQuotas
+      });
+    } catch (error) {
+      if (error instanceof TypeError) throw new HttpError(409, "선택한 범위와 비율에 맞는 검수 완료 문항이 부족합니다.");
+      throw error;
+    }
+    const timestamp = new Date(now()).toISOString();
+    const recipe = {
+      examId: crypto.randomUUID(),
+      ownerId: context.user.studentId,
+      state: "temporary",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      expiresAt: userExamLibraryCore.temporaryExpiresAt(access.plan, timestamp),
+      generationMode,
+      selectionSnapshot,
+      seed,
+      parentExamId: parent ? parent.examId : null,
+      items: plan.items,
+      layout: parent ? parent.layout : input.layout
+    };
+    try {
+      const created = library.create(context.user.studentId, recipe, now());
+      if (!created) throw new HttpError(409, "최근 시험 보관 한도를 확인해 주세요.");
+      return created;
+    } catch (error) { userExamFailure(error, 403); }
   }
 
   function requireAcademyQuestionCatalog() {
@@ -386,6 +631,7 @@ function createApp(options) {
       itemVersionId: candidate.itemVersionId,
       curriculumPath: candidate.curriculum.key,
       typeCode: candidate.typeCode,
+      domainGroup: candidate.domainGroup,
       difficultyBand: candidate.difficultyBand,
       inputType: candidate.inputType,
       figureRequired: candidate.figureAudit.required === true,
@@ -999,6 +1245,191 @@ function createApp(options) {
         }
         if (!record) throw new HttpError(404, "시험지 초안을 찾을 수 없습니다.");
         sendJson(response, 200, { record: publicExamDraft(record, registry), reconciliation });
+        return true;
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    if (pathname === "/user-exam-library/access" && request.method === "GET") {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const library = requireUserExamLibrary();
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "이용 권한 조회에는 검색 조건을 지정할 수 없습니다.");
+      try { sendJson(response, 200, publicUserExamAccess(library.assignment(context.user.studentId))); }
+      catch (error) { userExamFailure(error, 403); }
+      return true;
+    }
+
+    if (pathname === "/user-exam-library/generate" && request.method === "POST") {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      requireUserMutation(request, true, configuredOrigin);
+      const library = requireUserExamLibrary();
+      const registry = requireExamEditorRegistry();
+      const body = await readJson(request, 64 * 1024);
+      exactKeys(body, new Set([
+        "generationMode", "academyId", "semesterId", "scopeKeys", "questionCount",
+        "difficultyWeights", "responseWeights", "maxPerFamily", "domainQuotas", "seed", "layout"
+      ]), "사용자 시험 자동 구성 요청");
+      assertNoPrivateUserExamValues(body);
+      const generated = generateUserExam(library, registry, context, body, null);
+      sendJson(response, 201, publicUserExam(generated));
+      return true;
+    }
+
+    if (pathname === "/user-exam-library/exams") {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const library = requireUserExamLibrary();
+      if (request.method === "GET") {
+        if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "시험 목록 조회에는 검색 조건을 지정할 수 없습니다.");
+        try {
+          const items = library.list(context.user.studentId, now()).map(publicUserExam);
+          sendJson(response, 200, { items, count: items.length });
+        } catch (error) { userExamFailure(error, 403); }
+        return true;
+      }
+      if (request.method === "POST") {
+        requireUserMutation(request, true, configuredOrigin);
+        const registry = requireExamEditorRegistry();
+        const body = await readJson(request, 128 * 1024);
+        exactKeys(body, new Set(["generationMode", "selectionSnapshot", "seed", "parentExamId", "items", "layout"]), "사용자 시험 생성 요청");
+        assertNoPrivateUserExamValues(body);
+        const generationMode = security.clean(body.generationMode);
+        const rawSelectionSnapshot = body.selectionSnapshot;
+        if (!rawSelectionSnapshot || typeof rawSelectionSnapshot !== "object" || Array.isArray(rawSelectionSnapshot)) {
+          throw new HttpError(400, "사용자 시험 선택 조건을 확인해 주세요.");
+        }
+        let selectionSnapshot;
+        try { selectionSnapshot = userExamLibraryCore.normalizeSelectionSnapshot(rawSelectionSnapshot, generationMode); }
+        catch (error) { userExamFailure(error, 403); }
+        const parentExamId = body.parentExamId == null || body.parentExamId === "" ? null : security.clean(body.parentExamId);
+        let access;
+        try {
+          access = library.assignment(context.user.studentId);
+          userExamLibraryCore.assertTargetEntitled(
+            access.assignment.entitlements, generationMode,
+            selectionSnapshot.academyId, selectionSnapshot.semesterId
+          );
+        }
+        catch (error) { userExamFailure(error, 403); }
+        if (parentExamId) {
+          let parent;
+          try { parent = library.read(context.user.studentId, parentExamId, now()); }
+          catch (error) { userExamFailure(error, 403); }
+          if (!parent) throw new HttpError(404, "부모 시험을 찾을 수 없습니다.");
+        }
+        const scopeInventory = requireUserExamScopeInventory();
+        let scopeApproval;
+        try {
+          scopeApproval = scopeInventory.requireTarget(
+            generationMode, selectionSnapshot.academyId, selectionSnapshot.semesterId,
+            selectionSnapshot.conditions.scopeKeys
+          );
+        } catch (_) { throw new HttpError(403, "선택한 학원·학기와 출제 범위가 승인 목록에 없습니다."); }
+        const items = approvedLibraryItems(
+          body.items, registry, generationMode, selectionSnapshot.academyId,
+          scopeApproval, scopeInventory
+        );
+        if (selectionSnapshot.conditions.questionCount !== items.length) {
+          throw new HttpError(400, "선택 조건의 문항 수와 실제 문항 수가 다릅니다.");
+        }
+        const timestamp = new Date(now()).toISOString();
+        const recipe = {
+          examId: crypto.randomUUID(),
+          ownerId: context.user.studentId,
+          state: "temporary",
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          expiresAt: userExamLibraryCore.temporaryExpiresAt(access.plan, timestamp),
+          generationMode,
+          selectionSnapshot,
+          seed: body.seed,
+          parentExamId,
+          items,
+          layout: body.layout
+        };
+        try {
+          const created = library.create(context.user.studentId, recipe, now());
+          if (!created) throw new HttpError(409, "최근 시험 보관 한도를 확인해 주세요.");
+          sendJson(response, 201, publicUserExam(created));
+        } catch (error) { userExamFailure(error, 403); }
+        return true;
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    const userExamMatch = pathname.match(/^\/user-exam-library\/exams\/([^/]+)(?:\/(save|similar))?$/);
+    if (userExamMatch) {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const library = requireUserExamLibrary();
+      const examId = decodeURIComponent(userExamMatch[1]);
+      const action = userExamMatch[2] || "exam";
+      if (request.method === "GET" && action === "exam") {
+        let recipe;
+        try { recipe = library.read(context.user.studentId, examId, now()); }
+        catch (error) { userExamFailure(error, 403); }
+        if (!recipe) throw new HttpError(404, "사용자 시험을 찾을 수 없습니다.");
+        sendJson(response, 200, publicUserExam(recipe));
+        return true;
+      }
+      if (request.method === "POST" && action === "save") {
+        requireUserMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 1024);
+        exactKeys(body, new Set(), "사용자 시험 저장 요청");
+        let saved;
+        try { saved = library.save(context.user.studentId, examId, new Date(now()).toISOString()); }
+        catch (error) { userExamFailure(error, 403); }
+        if (!saved) throw new HttpError(404, "사용자 시험을 찾을 수 없습니다.");
+        sendJson(response, 200, publicUserExam(saved));
+        return true;
+      }
+      if (request.method === "POST" && action === "similar") {
+        requireUserMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 4096);
+        exactKeys(body, new Set(["derivationIndex"]), "유사 시험 구성 요청");
+        let parent;
+        try { parent = library.read(context.user.studentId, examId, now()); }
+        catch (error) { userExamFailure(error, 403); }
+        if (!parent) throw new HttpError(404, "부모 시험을 찾을 수 없습니다.");
+        const generated = generateUserExam(library, requireExamEditorRegistry(), context, body, parent);
+        sendJson(response, 201, publicUserExam(generated));
+        return true;
+      }
+      if (request.method === "DELETE" && action === "exam") {
+        requireUserMutation(request, false, configuredOrigin);
+        let removed;
+        try { removed = library.remove(context.user.studentId, examId); }
+        catch (error) { userExamFailure(error, 403); }
+        if (!removed) throw new HttpError(404, "사용자 시험을 찾을 수 없습니다.");
+        sendJson(response, 200, { removed: true, examId });
+        return true;
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    const userExamAdminMatch = pathname.match(/^\/admin\/user-exam-library\/users\/([^/]+)$/);
+    if (userExamAdminMatch) {
+      const adminContext = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const library = requireUserExamLibrary();
+      const ownerId = decodeURIComponent(userExamAdminMatch[1]);
+      const target = adminContext.config.students.find(function (student) { return student.studentId === ownerId && student.role !== "admin"; });
+      if (!target) throw new HttpError(404, "사용자를 찾을 수 없습니다.");
+      if (request.method === "GET") {
+        try { sendJson(response, 200, publicUserExamAccess(library.assignment(ownerId))); }
+        catch (error) { userExamFailure(error, 404); }
+        return true;
+      }
+      if (request.method === "PUT") {
+        requireAdminMutation(request, true, configuredOrigin);
+        const body = await readJson(request, 32 * 1024);
+        exactKeys(body, new Set(["planId", "entitlements"]), "사용자 시험 권한 설정");
+        try {
+          library.setAssignment({
+            ownerId,
+            planId: security.clean(body.planId),
+            entitlements: body.entitlements,
+            updatedAt: new Date(now()).toISOString()
+          });
+          sendJson(response, 200, publicUserExamAccess(library.assignment(ownerId)));
+        } catch (error) { userExamFailure(error, 400); }
         return true;
       }
       throw new HttpError(405, "허용되지 않은 요청입니다.");

@@ -459,6 +459,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .candidate-badge { padding: 3px 6px; border-radius: 4px; background: #ece8df; color: #575c55; font-size: 9px; font-weight: 850; }
 .candidate-badge.figure { background: #e7eff2; color: var(--navy); }
 .candidate-badge.profile { background: #fff0d5; color: var(--accent-dark); }
+.candidate-badge.taxonomy { background: #e9e7f8; color: #4c3e88; }
 .candidate-row.is-catalog { min-height: 106px; }
 .candidate-row.is-catalog .candidate-path { white-space: normal; line-height: 1.45; }
 .candidate-review-line { display: grid; gap: 2px; margin: 8px 0 0; font-size: 9px; line-height: 1.45; }

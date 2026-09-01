@@ -278,6 +278,24 @@
       note: "이차함수·여러 가지 부등식 연결형을 우선 분류합니다."
     },
     {
+      id: "sm-common1-entry",
+      programId: "SM",
+      title: "생수형 공통수학1 입반 대비 추정 구성",
+      track: "기본 입반",
+      curriculumVersion: "2022-revised",
+      scopeLabel: "중2-2·중3-1·중3-2 · 대수 15문항 + 기하 15문항",
+      questionCount: 30,
+      pageCount: null,
+      sourceRole: "legacy-reference-candidates",
+      sourceStatus: "candidate_indexed",
+      answerStatus: "crosschecked_not_independently_verified",
+      classificationStatus: "candidate_reviewed",
+      releaseStatus: "blocked",
+      assetPolicy: "signed-page-images",
+      visible: true,
+      note: "2022 구판 참고지 2회의 현행 범위 후보 58문항을 분류했습니다. 최신 공식 원본과 독립 정답 검산 전에는 실제 출제하지 않습니다."
+    },
+    {
       id: "sm-common2-basic-r01",
       programId: "SM",
       title: "생수 공통수학2 기본 1회",

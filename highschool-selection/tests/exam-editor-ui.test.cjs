@@ -50,6 +50,10 @@ test("editor client uses admin-only API mutations, revision CAS, conflict reload
   assert.match(script, /candidate\.semester.*candidate\.majorUnit.*candidate\.minorUnit.*candidate\.typeLabel/s);
   assert.match(script, /candidate\.conceptStatus === "unit_only"/);
   assert.match(script, /세부유형 분류 전/);
+  assert.match(script, /candidate\.conceptStatus === "pending"/);
+  assert.match(script, /공통 유형 연결 대기/);
+  assert.match(script, /taxonomyLabels/);
+  assert.match(script, /생수 내부 유형군/);
   assert.match(script, /완료 \$\{completed\.join/);
   assert.match(script, /남음 \$\{pending\.join/);
   assert.match(script, /await request\("\/admin\/exam-editor\/status"\)/);

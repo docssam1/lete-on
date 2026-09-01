@@ -107,6 +107,16 @@ test("자료·원과 부채꼴·위치 관계·평행선을 교육과정 영역�
   assert.equal(builder.domainFor("평행선과 각"), "기하");
 });
 
+test("기본 입반 시험의 세부 단원도 융합·기타가 아니라 정확한 영역으로 분류한다", () => {
+  assert.equal(builder.domainFor("약수의 개수"), "수와 연산");
+  assert.equal(builder.domainFor("절댓값과 수직선"), "수와 연산");
+  assert.equal(builder.domainFor("분수의 계산"), "수와 연산");
+  assert.equal(builder.domainFor("다각형의 내각과 대각선"), "기하");
+  assert.equal(builder.domainFor("다면체"), "기하");
+  assert.equal(builder.domainFor("시계의 각"), "기하");
+  assert.equal(builder.domainFor("정비례"), "함수");
+});
+
 test("감사기는 근거 없는 확정 분류와 난이도를 막는다", () => {
   const value = fixtures();
   const ledger = builder.buildLedger(value.inventory, value.queue, value.typeIndex, value.paperLinks, value.reviewDecisions, value.fingerprints);
@@ -124,6 +134,21 @@ test("다음 작업 선택기는 이미 끝난 단계를 다시 내보내지 않
   assert.equal(rows.find(row => row.sourceId === "DP-SRC-AAAAAAAAAAAA").task, "paperReviewBundle");
   assert.deepEqual(rows.find(row => row.sourceId === "DP-SRC-AAAAAAAAAAAA").tasks, ["answerReview", "difficultyReview"]);
   assert.equal(rows.find(row => row.sourceId === "DP-SRC-BBBBBBBBBBBB").task, "conversion");
+});
+
+test("표본 확인으로 남은 답 검수도 다음 작업에 다시 잡힌다", () => {
+  const value = fixtures();
+  value.reviewDecisions.sourceReviews.push({
+    sourceId: "DP-SRC-AAAAAAAAAAAA",
+    tasks: {
+      answerReview: { status: "sampled", evidence: ["answer-sample"], note: "일부 문항만 확정" }
+    }
+  });
+  const ledger = builder.buildLedger(value.inventory, value.queue, value.typeIndex, value.paperLinks, value.reviewDecisions, value.fingerprints);
+  const row = planner.plan(ledger, "next", 10).find(item => item.sourceId === "DP-SRC-AAAAAAAAAAAA");
+  assert.equal(row.task, "paperReviewBundle");
+  assert.equal(row.priorStatus, "sampled");
+  assert.equal(row.tasks.includes("answerReview"), true);
 });
 
 test("한 번 본 시험지는 여러 검수 단계를 한 기록으로 저장하고 확정 상태를 낮추지 않는다", () => {

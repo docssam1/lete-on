@@ -16,11 +16,11 @@ const STAGE_ORDER = Object.freeze([
 
 function nextStage(source) {
   if (source.conversion.status !== "변환 완료") return "conversion";
-  return STAGE_ORDER.find(name => ["pending", "stale", "blocked"].includes(source.tasks[name].status)) || null;
+  return STAGE_ORDER.find(name => ["pending", "sampled", "stale", "blocked"].includes(source.tasks[name].status)) || null;
 }
 
 function reviewBundle(source) {
-  return STAGE_ORDER.slice(0, -1).filter(name => ["pending", "stale", "blocked"].includes(source.tasks[name].status));
+  return STAGE_ORDER.slice(0, -1).filter(name => ["pending", "sampled", "stale", "blocked"].includes(source.tasks[name].status));
 }
 
 function plan(ledger, requestedTask, limit) {
