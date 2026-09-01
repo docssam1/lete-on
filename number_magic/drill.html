@@ -1162,7 +1162,7 @@ function renderPreview(){
   if(state.wordType!=='none' && NM_EXAM.applyWordProblems) NM_EXAM.applyWordProblems(probs, state.wordType==='mix'?'all':state.wordType, nSeed);
   /* 미리보기 3문항에 '섞기'를 그대로 걸면 1문항만 바뀌어 차이가 안 보인다 — 미리보기에서만 all로 보여준다 */
   host.innerHTML = probs.map(function(p){
-    if(p.word) return '<div class="preview-cell preview-word">' + esc(p.word.ko||'') + '</div>';
+    if(p.word) return '<div class="preview-cell preview-word">' + esc(dL(p.word)) + '</div>';
     return '<div class="preview-cell"><span data-tex="' + esc(p.tex||'') + '"></span></div>';
   }).join('');
   host.querySelectorAll('[data-tex]').forEach(function(el){

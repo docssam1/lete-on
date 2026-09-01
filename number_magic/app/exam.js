@@ -1249,8 +1249,28 @@ function parseVert(tex){
 /* ── 문장제(Word Problem) 변환 ─────────────────────────
    단순 사칙 "a OP b = □" 문제를 교과서식 문장제로 감싼다.
    시드 rng로 이름·소재를 뽑아 인쇄 재현성 유지. */
-const WP_NAMES=['민수','지우','서연','하준','다은','시우','유나','도윤','예준','소율'];
-const WP_ITEMS=[['사과','개'],['구슬','개'],['색종이','장'],['스티커','장'],['사탕','개'],['동화책','권'],['연필','자루'],['쿠키','개'],['딱지','장'],['블록','개']];
+/* 이름·사물은 언어마다 그 언어에서 자연스러운 것을 따로 쓴다 —
+   engine/threads/wp.js NAMES/OBJECTS와 같은 관례(이름 짝도 그대로). */
+const WP_NAMES=[
+  {ko:'민수',en:'Emma',pr:'She',zh:'小明'},{ko:'지우',en:'Liam',pr:'He',zh:'小红'},
+  {ko:'서연',en:'Olivia',pr:'She',zh:'小刚'},{ko:'하준',en:'Noah',pr:'He',zh:'小美'},
+  {ko:'다은',en:'Mia',pr:'She',zh:'小强'},{ko:'시우',en:'Lucas',pr:'He',zh:'小丽'},
+  {ko:'유나',en:'Ava',pr:'She',zh:'小龙'},{ko:'도윤',en:'Ethan',pr:'He',zh:'小雨'},
+  {ko:'예준',en:'Sophie',pr:'She',zh:'小云'},{ko:'소율',en:'Ben',pr:'He',zh:'小杰'}];
+/* ko=[명사,수량사] · en=[단수,복수] · zh=[명사,양사] */
+const WP_ITEMS=[
+  {ko:['사과','개'],en:['apple','apples'],zh:['苹果','个']},
+  {ko:['구슬','개'],en:['marble','marbles'],zh:['珠子','颗']},
+  {ko:['색종이','장'],en:['sheet of colored paper','sheets of colored paper'],zh:['彩纸','张']},
+  {ko:['스티커','장'],en:['sticker','stickers'],zh:['贴纸','张']},
+  {ko:['사탕','개'],en:['candy','candies'],zh:['糖果','颗']},
+  {ko:['동화책','권'],en:['storybook','storybooks'],zh:['故事书','本']},
+  {ko:['연필','자루'],en:['pencil','pencils'],zh:['铅笔','支']},
+  {ko:['쿠키','개'],en:['cookie','cookies'],zh:['饼干','块']},
+  {ko:['캐릭터 카드','장'],en:['character card','character cards'],zh:['角色卡片','张']},
+  {ko:['블록','개'],en:['block','blocks'],zh:['积木','块']}];
+/* n개의 사물 — 단복수 일치 */
+function enCount(n,pair){ return n+' '+(n===1?pair[0]:pair[1]); }
 function kJosa(word, withBatchim, without){
   const code = word.charCodeAt(word.length-1);
   if(code<0xAC00||code>0xD7A3) return word+without;
@@ -1262,23 +1282,37 @@ function wordifyProblem(p, rng){
   if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return null; /* 소수는 숫자식 유지 */
   const a=+v.a, b=+v.b;
   if(!isFinite(a)||!isFinite(b)||a>100000||b>100000) return null;
-  const name = WP_NAMES[(rng()*WP_NAMES.length)|0];
+  const who = WP_NAMES[(rng()*WP_NAMES.length)|0];
   const pick = WP_ITEMS[(rng()*WP_ITEMS.length)|0];
-  const item=pick[0], unit=pick[1];
-  const nameJ = kJosa(name,'이는','는');
+  const item=pick.ko[0], unit=pick.ko[1];
+  const enPair=pick.en, enMany=pick.en[1], zhN=pick.zh[0], zhU=pick.zh[1];
+  const nameJ = kJosa(who.ko,'이는','는');
   const itemJ = kJosa(item,'을','를');
   const bUnitJ = b+kJosa(unit,'을','를');
+  /* 세 언어를 한 번에 만든다 — 이름·사물은 같은 index라 언어를 바꿔도 같은 상황. */
   switch(v.op){
     case '+':
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`;
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`,
+        en:`${who.en} has ${enCount(a,enPair)}. ${who.pr} gets ${b} more. How many ${enMany} are there in all?`,
+        zh:`${who.zh}有${a}${zhU}${zhN}。再得到${b}${zhU}，一共有多少${zhU}？`};
     case '−': case '-':
       if(a<b) return null;
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`;
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`,
+        en:`${who.en} had ${enCount(a,enPair)} and gave ${b} to a friend. How many ${enMany} are left?`,
+        zh:`${who.zh}原来有${a}${zhU}${zhN}，送给朋友${b}${zhU}。还剩多少${zhU}？`};
     case '×':
-      return `${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`;
+      return {
+        ko:`${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`,
+        en:`Each pack holds ${enCount(a,enPair)}. How many ${enMany} are in ${b} ${b===1?'pack':'packs'}?`,
+        zh:`每包有${a}${zhU}${zhN}。${b}包一共有多少${zhU}？`};
     case '÷':
-      if(b===0 || a%b!==0) return null; /* 나머지 있으면 문장제 제외 */
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`;
+      if(b===0 || b===1 || a%b!==0) return null; /* 나머지 있거나 ÷1이면 문장제 제외(상황이 안 만들어짐) */
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`,
+        en:`${who.en} has ${enCount(a,enPair)}. If ${b} children share them equally, how many does each child get?`,
+        zh:`${who.zh}有${a}${zhU}${zhN}。${b}个小朋友平分，每人分到多少${zhU}？`};
   }
   return null;
 }
@@ -1289,10 +1323,9 @@ function applyWordProblems(problems, wordType, numericSeed){
   problems.forEach((p,i)=>{
     if(wordType==='mix' && i%3!==1) return;
     const w = wordifyProblem(p, rng);
-    /* 이 래퍼가 만드는 문장은 한국어 조사까지 붙여 조립한 한국어 전용 글이다(위
-       kJosa 참조) — 번역본이 없으므로 ko 한 벌만 싣고, pickL이 그 한 벌로 떨어진다.
-       WP 스레드(engine/threads/wp.js)는 세 언어를 다 갖고 있어 이 경로를 안 탄다. */
-    if(w) p.word = { ko: w };
+    /* wordifyProblem이 ko·en·zh 세 벌을 함께 만든다(2026-09-01 한영 확장) —
+       pickL이 화면 언어에 맞는 벌을 고른다. WP 스레드는 원래부터 3언어. */
+    if(w) p.word = w;
   });
   return problems;
 }
