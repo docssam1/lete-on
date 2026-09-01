@@ -1,4 +1,5 @@
 import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901b";
+import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
 import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
@@ -30,6 +31,19 @@ const state = {
 
 function saveProgress() {
   localStorage.setItem(storageKey, JSON.stringify(state.progress));
+}
+
+function recordOutcome(scope, itemId, status) {
+  const lesson = activeLesson();
+  recordGoldenBellOutcome(state.progress, {
+    bookId: state.bookId,
+    lessonId: lesson.id,
+    scope,
+    itemId,
+    status,
+    typeIds: lesson.sourceTypeIds || []
+  });
+  saveProgress();
 }
 
 function activeBook() { return goldenBellBookById(state.bookId); }
@@ -787,7 +801,9 @@ function renderExtension(lesson) {
 function renderComplete(lesson) {
   const book = activeBook();
   const nextLesson = book.lessons.find((candidate) => !isLessonComplete(candidate));
-  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
+  const summary = summarizeGoldenBellLesson(lessonProgress(lesson));
+  const record = summary.total ? `<section class="learning-record"><h3>이번 학습 기록</h3><dl><div><dt>혼자 해결</dt><dd>${summary.correct}</dd></div><div><dt>답 확인</dt><dd>${summary.revealed}</dd></div><div><dt>넘어감</dt><dd>${summary.skipped}</dd></div><div><dt>다시 볼 문항</dt><dd>${summary.review}</dd></div></dl>${summary.reviewTypeIds.length ? `<a href="../prescription/?student=${encodeURIComponent(student)}&types=${encodeURIComponent(summary.reviewTypeIds.join(","))}&view=type">이 유형 다시 연습</a>` : ""}</section>` : "";
+  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
@@ -925,6 +941,7 @@ function bindLessonActions() {
     if (!item) return;
     state.selections[item.id] = approvedAnswer(item);
     state.originalAssists[item.id] = "revealed";
+    recordOutcome("original", item.id, "revealed");
     state.feedback = null;
     renderContent();
   }));
@@ -933,6 +950,7 @@ function bindLessonActions() {
     if (!item) return;
     delete state.selections[item.id];
     state.originalAssists[item.id] = "skipped";
+    recordOutcome("original", item.id, "skipped");
     state.feedback = null;
     renderContent();
   }));
@@ -956,7 +974,12 @@ function bindLessonActions() {
     if (state.feedback?.kind === "original" && state.feedback.passed) return setPhase("extension");
     const wrongItems = lesson.original.items.filter((item) => !state.originalAssists[item.id] && !answersMatch(state.selections[item.id], item.answer));
     const passed = wrongItems.length === 0;
-    if (passed) completeOriginal();
+    if (passed) {
+      lesson.original.items.filter((item) => !state.originalAssists[item.id]).forEach((item) => recordOutcome("original", item.id, "correct"));
+      completeOriginal();
+    } else {
+      wrongItems.forEach((item) => recordOutcome("original", item.id, "wrong"));
+    }
     const retryVerb = lesson.original.items.every((item) => item.answerMode === "input") ? "써" : "골라";
     const revealedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "revealed").length;
     const skippedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "skipped").length;
@@ -975,6 +998,7 @@ function bindLessonActions() {
     if (state.feedback?.kind === "extension" && state.feedback.passed) return setPhase("complete");
     const selected = state.selections[`${lesson.id}:extension`];
     const passed = answersMatch(selected, lesson.extension.answer);
+    recordOutcome("extension", `${lesson.id}:extension`, passed ? "correct" : "wrong");
     if (passed) completeExtension();
     state.feedback = { kind: "extension", passed, message: passed ? lesson.extension.explanation : `원본에서 배운 원리는 같습니다. ${lesson.explanation.steps[0]}` };
     render();
