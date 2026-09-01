@@ -232,11 +232,20 @@ async function auditBookThreeGuidedConcepts() {
     assert.equal(await experience.locator(item.visual).count(), 1, `${item.id}: Book 3 guided visual missing`);
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: Book 3 original must start locked`);
     assert.equal(await experience.locator(".guided-check").count(), 0, `${item.id}: Book 3 check appeared early`);
+    if (item.id === "six-multiple-equations") {
+      assert.equal(await experience.locator(".guided-six-bundle").count(), 4, "Book 3 six first beat needs four bundles");
+      assert.equal(await experience.locator(".guided-six-bundle i").count(), 24, "Book 3 six first beat needs six dots in every bundle");
+      const firstBeatOverflow = await experience.locator(".guided-six-bundle").evaluateAll((nodes) => nodes.filter((node) => node.scrollWidth > node.clientWidth + 1 || node.scrollHeight > node.clientHeight + 1).length);
+      assert.equal(firstBeatOverflow, 0, "Book 3 six first-beat dots overflow their bundle boxes");
+    }
     for (let step = 0; step < 3; step += 1) await experience.locator('[data-experience-action="next"]').click();
     assert.equal(await experience.locator(".guided-check").count(), 1, `${item.id}: Book 3 final check missing`);
 
     if (item.id === "six-multiple-equations") {
       assert.equal(await experience.locator(".guided-six-bundle").count(), 6, "Book 3 six visual needs six bundles");
+      assert.equal(await experience.locator(".guided-six-bundle i").count(), 36, "Book 3 six final beat needs six dots in every bundle");
+      const finalBeatOverflow = await experience.locator(".guided-six-bundle").evaluateAll((nodes) => nodes.filter((node) => node.scrollWidth > node.clientWidth + 1 || node.scrollHeight > node.clientHeight + 1).length);
+      assert.equal(finalBeatOverflow, 0, "Book 3 six final-beat dots overflow their bundle boxes");
       assert.match(await experience.innerText(), /24\s*\+\s*12\s*=\s*36/u, "Book 3 six final equation missing");
     }
     if (item.id === "multiple-comparison") {

@@ -234,6 +234,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .guided-six-bundle-visual,.guided-multiple-visual,.guided-cryptarithm-visual,.guided-magic-visual{display:grid;gap:14px;min-width:0;width:100%;padding:16px;border:1px solid #c8d9d8;background:#fbfefd;box-sizing:border-box;overflow:hidden}
 .guided-six-bundle-groups{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
 .guided-six-bundle{display:grid;grid-template-columns:repeat(3,8px);gap:3px;align-content:center;justify-content:center;width:48px;height:42px;padding:5px;border:1px solid #5a91a5;background:#eff8fa;color:#2c7891;font-size:13px;line-height:1}
+.guided-six-bundle i{display:block;width:8px;height:8px;border-radius:50%;background:#2c7891}
 .guided-six-bundle-equation,.guided-multiple-equation,.guided-cryptarithm-visual>p,.guided-magic-equation{margin:0;color:#244954;font-size:20px;font-weight:900;line-height:1.45;text-align:center;overflow-wrap:anywhere}
 .guided-six-bundle-visual>p,.guided-multiple-visual>p,.guided-magic-visual>p{margin:0;color:#48666b;font-size:14px;font-weight:800;line-height:1.65;text-align:center;overflow-wrap:anywhere}
 .guided-multiple-bars{display:grid;gap:10px;min-width:0}
@@ -255,6 +256,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 @media(max-width:560px){
   .guided-six-bundle-visual,.guided-multiple-visual,.guided-cryptarithm-visual,.guided-magic-visual{gap:10px;padding:10px}
   .guided-six-bundle{width:42px;height:38px;grid-template-columns:repeat(3,7px);gap:2px;font-size:12px}
+  .guided-six-bundle i{width:7px;height:7px}
   .guided-six-bundle-equation,.guided-multiple-equation,.guided-cryptarithm-visual>p,.guided-magic-equation{font-size:20px}
   .guided-multiple-bars{gap:7px}
   .guided-multiple-bars>span,.guided-multiple-bars>span+span{min-height:58px}
@@ -274,6 +276,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
   .gold-print-experience.guided-print-summary .guided-six-bundle-visual>p,.gold-print-experience.guided-print-summary .guided-multiple-visual>p,.gold-print-experience.guided-print-summary .guided-magic-visual>p{font-size:7px;line-height:1.3}
   .gold-print-experience.guided-print-summary .guided-six-bundle-visual>p,.gold-print-experience.guided-print-summary .guided-multiple-visual>p,.gold-print-experience.guided-print-summary .guided-cryptarithm-visual>p,.gold-print-experience.guided-print-summary .guided-magic-visual>p{display:none}
   .gold-print-experience.guided-print-summary .guided-six-bundle{width:8mm;height:7mm;grid-template-columns:repeat(3,2px);gap:1px;padding:1mm;font-size:5px}
+  .gold-print-experience.guided-print-summary .guided-six-bundle i{width:2px;height:2px}
   .gold-print-experience.guided-print-summary .guided-six-bundle-groups{gap:1.5mm}
   .gold-print-experience.guided-print-summary .guided-multiple-bars{grid-template-columns:1fr 4fr;gap:2mm}
   .gold-print-experience.guided-print-summary .guided-multiple-bars>span,.gold-print-experience.guided-print-summary .guided-multiple-bars>span+span{min-height:14mm;padding:2mm;font-size:8px}

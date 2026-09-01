@@ -68,7 +68,7 @@ function numberPromiseVisual(phase, model) {
 
 function sixBundleVisual(phase, model) {
   const groups = phase === "groups" ? model.startGroups : phase === "extra" ? model.startGroups + model.extraGroups : model.totalGroups;
-  const groupMarkup = Array.from({ length: Math.max(0, groups) }, (_, index) => `<span class="guided-six-bundle" aria-label="6개 묶음 ${index + 1}">${Array.from({ length: 6 }, () => "●").join("")}</span>`).join("");
+  const groupMarkup = Array.from({ length: Math.max(0, groups) }, (_, index) => `<span class="guided-six-bundle" aria-label="6개 묶음 ${index + 1}">${Array.from({ length: 6 }, () => '<i aria-hidden="true"></i>').join("")}</span>`).join("");
   const equation = phase === "groups"
     ? `${model.base} × ${model.startGroups} = ${model.base * model.startGroups}`
     : phase === "extra"
