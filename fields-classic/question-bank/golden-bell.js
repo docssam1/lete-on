@@ -1,6 +1,6 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901d";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901e";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901e";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
 import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
