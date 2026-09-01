@@ -3989,7 +3989,12 @@ function screenExam(){
     <div class="nm-unit-title">📝 ${S.lang==='ko'?'학습지 & 시험':S.lang==='en'?'Worksheet & Exam':'学习单 & 考试'}</div>
   </div><div id="nm-exam-cnt" class="nm-step-body"></div>`;
   $('#backExam').onclick=()=>{S.view='town';save();render();};
-  window.examScreen(document.getElementById('nm-exam-cnt'), {currentCourse: currentCourseKey(), tiers: ROAD_TIERS});
+  window.examScreen(document.getElementById('nm-exam-cnt'), {
+    currentCourse: currentCourseKey(), tiers: ROAD_TIERS,
+    /* 주차 라벨용 — 연산 로드맵 화면(courseroad)과 같은 설정을 공유한다 */
+    cadence: S.roadCadence,
+    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } }
+  });
 }
 
 /* ============================================================

@@ -19,6 +19,12 @@
   .nm-print-sheet { display: block !important; font-family: sans-serif; }
   /* 이름 워터마크 — fixed는 인쇄에서 페이지마다 반복된다. 문제를 가리지 않게
      아주 옅게(6%), 흑백 프린터에서도 회색 띠가 아닌 큰 글자로 남는다. */
+  .nm-print-plan { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+  .nm-print-plan th, .nm-print-plan td { border: 1px solid #999; padding: 7px 9px; text-align: left; vertical-align: top; }
+  .nm-print-plan th { background: #f0f0f0; font-size: 0.85em; }
+  .nm-print-plan .nm-pp-cal { white-space: nowrap; font-weight: 700; }
+  .nm-print-plan .nm-pp-magic { font-weight: 700; }
+  .nm-pp-note { margin-top: 12px; font-size: 0.85em; color: #555; }
   .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
     text-align: center; transform: rotate(-27deg); font-size: 46px; font-weight: 900;
     color: #1A2233; opacity: .06; letter-spacing: .12em; pointer-events: none; z-index: 0;
@@ -1667,6 +1673,104 @@ const NM_EXAM = {
          countMode 'default'=세션 편성 그대로, 숫자=드릴마다 그 문항수로 통일. */
       let roadWordType = 'none';     // 'none'|'mix'|'all'
       let roadCountMode = 'default'; // 'default'|10|20
+      /* 주기(주 1회/주 2회) — 연산 로드맵 화면과 같은 S.roadCadence를 공유
+         (opts.cadence로 받고, 바꾸면 opts.onCadence로 저장을 부탁한다). */
+      let roadCadence = (opts.cadence==='w2') ? 'w2' : 'w1';
+
+      /* ── 개인별 주차 라벨 ─────────────────────────────────
+         "현재 과정의 첫 세션 = 이번 주"를 닻으로, 이후 세션에 달력 주차를
+         붙인다. 주 1회면 세션마다 1주(9월 1주차, 9월 2주차…), 주 2회면
+         두 세션이 한 주(9월 1-1주차, 9월 1-2주차…). 몇째 주는 그 주
+         월요일이 그 달에서 몇 번째 7일 구간에 있는지로 센다. */
+      function mondayOfThisWeek(){
+        const d=new Date(); d.setHours(0,0,0,0);
+        const day=(d.getDay()+6)%7; // 월=0
+        d.setDate(d.getDate()-day);
+        return d;
+      }
+      const EN_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      function calLabelFor(offset){ // offset = 현재 위치부터 몇 번째 세션인가(0-base)
+        const perWeek = roadCadence==='w2' ? 2 : 1;
+        const weekOff = Math.floor(offset/perWeek);
+        const kth = (offset%perWeek)+1;
+        const mon = mondayOfThisWeek();
+        mon.setDate(mon.getDate()+weekOff*7);
+        const m = mon.getMonth()+1;
+        const nth = Math.floor((mon.getDate()-1)/7)+1;
+        if(perWeek===1) return lk(`${m}월 ${nth}주차`, `${EN_MON[m-1]} W${nth}`, `${m}月第${nth}周`);
+        return lk(`${m}월 ${nth}-${kth}주차`, `${EN_MON[m-1]} W${nth}-${kth}`, `${m}月第${nth}周·第${kth}次`);
+      }
+      /* 과정키 → 그 과정 첫 세션의 전역 offset (현재 과정 첫 세션=0).
+         현재 과정 이전은 지난 과정이라 라벨을 붙이지 않는다(null). */
+      function courseStartOffset(courseKey){
+        let acc=0, curSeen=false;
+        for(const x of list){
+          if(x.key===opts.currentCourse) curSeen=true;
+          if(x.key===courseKey) return curSeen ? acc : null;
+          if(curSeen) acc += (x.c.sessions||[]).length;
+        }
+        return null;
+      }
+
+      /* ── 개인 로드맵 한 장 인쇄 — 다음 12세션을 주차·과정·구성으로 표에 ──
+         roadmap demo(진단 리포트)의 "○○○ 학생의 현재 로드맵" 표와 같은 정신:
+         추천 계획일 뿐 순서는 자유(잠금 없음)라는 문구를 함께 찍는다. */
+      function printPersonalPlan(){
+        const rows=[];
+        let started=false;
+        outer:
+        for(const x of list){
+          if(x.key===opts.currentCourse) started=true;
+          if(!started) continue;
+          const sess=x.c.sessions||[];
+          for(let i=0;i<sess.length;i++){
+            const off=rows.length;
+            const s=sess[i];
+            const items=s.test?(s.pool||[]):(s.drills||[]);
+            rows.push({
+              cal:calLabelFor(off),
+              course:`${x.c.order}. ${pickL(x.c.title)||x.key}`,
+              sess:s.test?lk('과정 시험','Course Test','课程测验'):`${lk('세션','Session','课节')} ${i+1}`,
+              magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
+              drills:items.map(d=>`${threadLabel(d.t)}×${d.n}`).join(' · ')
+            });
+            if(rows.length>=12) break outer;
+          }
+        }
+        if(!rows.length) return;
+        const old=document.querySelector('.nm-print-sheet');
+        if(old) old.remove();
+        const sheet=document.createElement('div');
+        sheet.className='nm-print-sheet';
+        sheet.setAttribute('aria-hidden','true');
+        sheet.setAttribute('lang',examLang());
+        const nm=printStudentName();
+        const cadTxt=roadCadence==='w2'?lk('주 2회','Twice a week','每周2次'):lk('주 1회','Once a week','每周1次');
+        const today=new Date();
+        sheet.innerHTML=`
+${printWatermarkHtml()}
+<div class="nm-print-header">
+  <h2 style="margin:0">Numbers of Magic — 🗓 ${esc(nm?nm+lk('의 로드맵',"'s Roadmap",'的路线图'):lk('개인 로드맵','My Roadmap','个人路线图'))}</h2>
+  <div style="margin-top:6px;font-size:0.9em">${esc(lk('기준','Pace','频率'))}: ${esc(cadTxt)} · ${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}</div>
+</div>
+<table class="nm-print-plan">
+  <thead><tr>
+    <th>${esc(lk('주차','Week','周次'))}</th><th>${esc(lk('과정','Course','课程'))}</th>
+    <th>${esc(lk('세션','Session','课节'))}</th><th>${esc(lk('구성','Contents','内容'))}</th>
+  </tr></thead>
+  <tbody>
+    ${rows.map(r=>`<tr>
+      <td class="nm-pp-cal">${esc(r.cal)}</td>
+      <td>${esc(r.course)}</td>
+      <td>${esc(r.sess)}</td>
+      <td>${r.magic?`<span class="nm-pp-magic">✨ ${esc(r.magic)}</span><br>`:''}${esc(r.drills)}</td>
+    </tr>`).join('')}
+  </tbody>
+</table>
+<p class="nm-pp-note">${esc(lk('이 표는 추천 계획이에요. 순서는 언제든 자유롭게 바꿔도 좋아요.','This is a suggested plan — feel free to change the order any time.','这是推荐计划，顺序可以随时自由调整。'))}</p>`;
+        document.body.appendChild(sheet);
+        setTimeout(()=>{window.print();},250);
+      }
 
       function tierInfo(tierKey){
         const found = (opts.tiers || []).find(x => x.key === tierKey);
@@ -1693,9 +1797,12 @@ const NM_EXAM = {
 
       function sessionRowHtml(s, i, courseKey){
         const isMagic = !s.test && s.magic && s.magic.length;
-        const nameHtml = s.test
+        const startOff = courseStartOffset(courseKey);
+        const calHtml = (startOff===null) ? ''
+          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff+i))}</span>`;
+        const nameHtml = (s.test
           ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
-          : `${esc(lk('세션','Session','课节'))} ${i+1}`;
+          : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
         const magicHtml = isMagic
           ? `<span class="nm-ex-road-magic">✨ ${s.magic.map(magicLabel).map(esc).join(' · ')}</span>` : '';
         return `<div class="nm-ex-road-session">
@@ -1784,6 +1891,14 @@ const NM_EXAM = {
       </div>
     </div>
     <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('주기','Pace','频率'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-cad">
+        <button data-cad="w1" class="${roadCadence==='w1'?'sel':''}">${esc(lk('주 1회','1×/week','每周1次'))}</button>
+        <button data-cad="w2" class="${roadCadence==='w2'?'sel':''}">${esc(lk('주 2회','2×/week','每周2次'))}</button>
+      </div>
+      <button class="nm-ex-road-plan-btn" id="nm-road-plan">🗓 ${esc(lk('개인 로드맵 인쇄','Print my roadmap','打印个人路线图'))}</button>
+    </div>
+    <div class="nm-ex-road-opt-row">
       ${coverToggleRowHtml()}
       ${conceptToggleRowHtml()}
     </div>
@@ -1821,6 +1936,15 @@ const NM_EXAM = {
             rerenderKeepScroll();
           });
         });
+        container.querySelectorAll('#nm-road-cad button').forEach(b => {
+          b.addEventListener('click', () => {
+            roadCadence = b.dataset.cad;
+            if(opts.onCadence) opts.onCadence(roadCadence);
+            rerenderKeepScroll();
+          });
+        });
+        const planBtn = container.querySelector('#nm-road-plan');
+        if(planBtn) planBtn.addEventListener('click', printPersonalPlan);
 
         container.querySelectorAll('.nm-ex-road-print-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
@@ -1838,7 +1962,9 @@ const NM_EXAM = {
               seed: NM_RNG.newCode(),
             }));
             if(!items.length) return;
-            NM_EXAM.renderPrintMulti(items, `${courseKey}-S${sessionIdx+1}`);
+            const off = courseStartOffset(courseKey);
+            const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
+            NM_EXAM.renderPrintMulti(items, `${cal}${courseKey}-S${sessionIdx+1}`);
           });
         });
 

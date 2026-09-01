@@ -804,6 +804,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ex-road-seg button{border:1px solid var(--line);background:var(--paper);border-radius:99px;
   padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer}
 .nm-ex-road-seg button.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.nm-ex-road-cal{display:inline-block;margin-left:8px;font-size:11px;font-weight:800;
+  color:var(--gold-deep);background:rgba(201,160,99,.12);border-radius:99px;padding:2px 8px;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.nm-ex-road-plan-btn{margin-left:auto;border:1px solid var(--gold-deep);background:#fff;
+  color:var(--gold-deep);border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
+.nm-ex-road-plan-btn:hover{background:rgba(201,160,99,.1)}
 .nm-ex-road-body{gap:0}
 .nm-ex-road-tier{margin-bottom:18px}
 .nm-ex-road-tier:last-child{margin-bottom:0}
