@@ -281,6 +281,20 @@ function cloudPushSoon(){
     }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
   },1500);
 }
+/* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
+   현재 과정이 바뀔 때만 저장(렌더마다 save 폭주 방지). 알림서비스-설계.md 참조. */
+function updateWeeklyDigest(){
+  try{
+    const key=currentCourseKey();
+    const c=(window.NM_COURSES||{})[key];
+    if(!c)return;
+    const d=S.weeklyDigest||{};
+    if(d.courseKey===key&&d.cadence===S.roadCadence)return;
+    S.weeklyDigest={courseKey:key,courseNum:c.order,
+      courseTitle:(c.title&&c.title.ko)||key,cadence:S.roadCadence,at:Date.now()};
+    save();
+  }catch(e){}
+}
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
 
@@ -502,6 +516,7 @@ function charChipHTML(){
 function render(){
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
+  if(S.onboarded)updateWeeklyDigest();                    // 알림용 주간 요약(변화 있을 때만 저장)
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
@@ -3765,6 +3780,7 @@ function screenCloset(){
   renderIdCard();
   renderSlotCards();
   renderAccountCard();
+  renderNotifyCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
@@ -3850,6 +3866,67 @@ function renderSlotCards(){
 
 /* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
    설정/프로필 화면 쪽 코드 입력 지점. 게이트 모달과 로직(applyAccountCode)을 공유. */
+/* ── 학부모 알림 등록 카드 (알림서비스-설계.md §5-1) ──
+   번호는 nm_contacts에만 insert(anon은 조회 불가 — nm_profiles와 분리).
+   등록 여부는 로컬 플래그(S.notifyReg)로만 표시(번호 원문은 로컬에도 안 남김). */
+function renderNotifyCard(){
+  const slot=$('#nm-account-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const div=document.createElement('div');
+  div.className='nm-idcard nm-notify-card';
+  if(S.notifyReg){
+    div.innerHTML=`📱 ${lk('학부모 알림 등록됨','Parent alerts registered','家长通知已登记')} (${esc(S.notifyReg)}) · ${lk('해지는 학원에 문의','Contact academy to opt out','退订请联系学院')}`;
+    slot.appendChild(div);
+    return;
+  }
+  div.innerHTML=`
+    <div class="nm-notify-head">📱 ${lk('학부모 알림 받기','Parent Alerts','家长通知')}</div>
+    <p class="nm-notify-desc">${lk('매주 학습지·진도 안내를 문자로 보내드려요.','Get weekly worksheet & progress texts.','每周通过短信发送学习单和进度通知。')}</p>
+    <div class="nm-notify-row">
+      <input id="nmNotifyPhone" type="tel" inputmode="numeric" maxlength="13"
+        placeholder="${lk('학부모 휴대폰 번호','Parent phone number','家长手机号')}">
+      <button class="nm-btn nm-btn-small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
+    </div>
+    <label class="nm-notify-consent">
+      <input type="checkbox" id="nmNotifyConsent">
+      <span>${lk('학습 안내 발송을 위한 전화번호 수집·이용에 동의합니다(수신 해지 시까지 보관).',
+        'I agree to the collection and use of this number for learning notifications (kept until opt-out).',
+        '同意为发送学习通知收集并使用该号码（保留至退订）。')}</span>
+    </label>
+    <div class="nm-notify-msg" id="nmNotifyMsg"></div>`;
+  slot.appendChild(div);
+  $('#nmNotifyGo').onclick=async()=>{
+    const msgEl=$('#nmNotifyMsg');
+    const raw=($('#nmNotifyPhone').value||'').replace(/\D/g,'');
+    if(!/^01\d{8,9}$/.test(raw)){
+      msgEl.textContent=lk('휴대폰 번호를 확인해 주세요 (01로 시작).','Please check the phone number.','请检查手机号。');
+      return;
+    }
+    if(!$('#nmNotifyConsent').checked){
+      msgEl.textContent=lk('동의에 체크해 주세요.','Please check the consent box.','请勾选同意。');
+      return;
+    }
+    msgEl.textContent='…';
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/nm_contacts`,{
+        method:'POST',headers:sbHdr(),
+        body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
+          phone:raw,consent:true,consent_at:new Date().toISOString()})});
+      if(r.ok||r.status===409){ /* 409=이미 등록(같은 프로필·번호) — 성공 취급 */
+        S.notifyReg=raw.slice(0,3)+'-****-'+raw.slice(-4);
+        save();
+        if(div.parentNode)div.parentNode.removeChild(div);
+        renderNotifyCard();
+      }else{
+        msgEl.textContent=lk('등록에 실패했어요. 잠시 후 다시 시도해 주세요.','Failed — please try again later.','登记失败，请稍后再试。');
+      }
+    }catch(e){
+      msgEl.textContent=lk('네트워크 오류 — 다시 시도해 주세요.','Network error — try again.','网络错误，请重试。');
+    }
+  };
+}
 function renderAccountCard(){
   const slot=$('#nm-account-slot');
   if(!slot)return;
