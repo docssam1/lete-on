@@ -166,6 +166,23 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .expression-answer strong { font: 600 2.2rem Georgia, serif; }
 .expression-node.is-active, .expression-original.is-active, .expression-check.is-active { border-color: var(--coral); box-shadow: inset 0 0 0 2px var(--coral); }
 
+.algebra-balance-scene { display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, .55fr); gap: 14px; width: min(100%, 820px); margin: auto; }
+.balance-equation, .balance-operation, .balance-unit, .balance-answer, .balance-check { display: grid; align-content: center; gap: 6px; min-height: 76px; padding: 14px 18px; border: 1px solid var(--line); background: #fff; text-align: center; }
+.balance-equation { grid-column: 1 / -1; font: 600 clamp(1.7rem, 5vw, 2.5rem) Georgia, serif; }
+.balance-board { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(110px, .35fr); align-items: stretch; gap: 12px; padding: 16px; border: 1px solid var(--line); background: #f7f2e8; }
+.balance-side { display: grid; align-content: center; gap: 10px; min-width: 0; padding: 12px; border-bottom: 5px solid var(--green-dark); text-align: center; }
+.balance-side small, .balance-operation span, .balance-unit span, .balance-answer span, .balance-check span { color: var(--muted); font: 850 .64rem system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+.balance-boxes { display: grid; grid-template-columns: repeat(6, minmax(34px, 1fr)); gap: 7px; }
+.balance-x-box { display: grid; min-height: 54px; place-items: center; border: 2px solid var(--green-dark); border-radius: 8px; color: var(--green-dark); background: var(--mint); font: 700 1.35rem Georgia, serif; }
+.balance-equals { display: grid; place-items: center; color: var(--coral); font: 700 2rem Georgia, serif; }
+.balance-side.is-total strong { font: 700 2rem Georgia, serif; }
+.balance-operation { grid-column: 1 / -1; }
+.balance-operation strong, .balance-unit strong, .balance-check strong { font: 600 clamp(1.02rem, 2.8vw, 1.4rem) Georgia, serif; }
+.balance-answer { color: #fff; border-color: var(--green-dark); background: var(--green-dark); }
+.balance-answer span { color: rgba(255,255,255,.72); }
+.balance-answer strong { font: 600 2rem Georgia, serif; }
+.balance-equation.is-active, .balance-board.is-active, .balance-operation.is-active, .balance-unit.is-active, .balance-check.is-active { border-color: var(--coral); box-shadow: inset 0 0 0 2px var(--coral); }
+
 .geometry-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
 .geo-line { fill: none; stroke: var(--green-dark); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset .8s ease, opacity .35s ease, stroke .25s ease, filter .25s ease; }
 .scene-object.is-visible .geo-line { stroke-dashoffset: 0; }
@@ -263,6 +280,9 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .expression-flow { grid-template-columns: 1fr 1fr; }
   .expression-node:nth-child(2)::after { display: none; }
   .expression-check, .expression-answer { grid-column: 1; }
+  .algebra-balance-scene { grid-template-columns: 1fr; }
+  .balance-board, .balance-equation, .balance-operation { grid-column: 1; }
+  .balance-boxes { grid-template-columns: repeat(3, minmax(44px, 1fr)); }
   .lesson-controls { grid-template-columns: 1fr 1fr; }
   .control-button.primary, .control-button.overview { grid-column: span 2; }
   .step-list { grid-template-columns: 1fr; }
@@ -287,6 +307,9 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .math-stage { min-height: 410px; }
   .expression-flow { grid-template-columns: 1fr; }
   .expression-node::after { display: none; }
+  .balance-board { grid-template-columns: 1fr; }
+  .balance-equals { min-height: 32px; }
+  .balance-boxes { grid-template-columns: repeat(3, minmax(40px, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

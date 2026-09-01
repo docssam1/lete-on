@@ -8,9 +8,9 @@ require(path.resolve(root, "..", "geometry", "worksheet", "render.js"));
 const source = require(path.join(root, "learning", "animated-math-lessons.js"));
 const scenes = require(path.join(root, "learning", "animated-math-scene-model.js"));
 
-test("catalog contains six GFIELD-authored multilingual concept samples", function () {
-  assert.equal(source.schemaVersion, 5);
-  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "geometry-angle"]);
+test("catalog contains seven GFIELD-authored multilingual concept samples", function () {
+  assert.equal(source.schemaVersion, 6);
+  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "algebra-balance", "geometry-angle"]);
   source.lessons.forEach(function (lesson) {
     assert.deepEqual(lesson.languages, ["en", "ko", "zh"]);
     assert.equal(lesson.rights.assetRights, "original");
@@ -124,6 +124,23 @@ test("expression tree is calculated from one exact nested-operation model", func
   assert.equal(scenes.sceneFor(lesson, "ko"), markup);
 });
 
+test("equation balance scene is generated from one exact equal-groups model", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "algebra-balance"; });
+  const model = scenes.buildAlgebraBalanceModel(lesson.sceneModel);
+  assert.deepEqual({ coefficient: model.coefficient, total: model.total, solution: model.expectedX, boxes: model.boxes.length }, { coefficient: 6, total: 42, solution: 7, boxes: 6 });
+  assert.equal(model.coefficient * model.expectedX, model.total);
+  const wholeNumberSolutions = Array.from({ length: 43 }, function (_, value) { return value; }).filter(function (value) { return model.coefficient * value === model.total; });
+  assert.deepEqual(wholeNumberSolutions, [7]);
+  const markup = scenes.algebraBalanceScene(lesson, "ko");
+  assert.equal((markup.match(/class="balance-x-box"/g) || []).length, 6);
+  assert.match(markup, /data-object="balance-equation">6x = 42/);
+  assert.match(markup, /data-object="balance-unit"[\s\S]*x = 42 ÷ 6/);
+  assert.match(markup, /data-object="balance-answer"[\s\S]*x = 7/);
+  assert.match(markup, /data-object="balance-check"[\s\S]*6 × 7 = 42/);
+  assert.equal(scenes.sceneFor(lesson, "ko"), markup);
+  assert.throws(function () { scenes.buildAlgebraBalanceModel({ coefficient: 6, total: 43, expectedX: 7 }); }, /SOLUTION_MISMATCH/);
+});
+
 test("GCF scene is generated from factor arrays and an exact remainder chain", function () {
   const lesson = source.lessons.find(function (item) { return item.type === "factor-chain"; });
   assert.deepEqual(lesson.sceneModel.primeFactors, { 60: [2, 2, 3, 5], 84: [2, 2, 3, 7] });
@@ -186,7 +203,7 @@ test("public shell exposes no private contest assets and keeps accessibility pat
   ["SASMO 2019", "private-sources", "question-images", "third-party demo"].forEach(function (token) { assert.equal(bundle.includes(token), false); });
   assert.match(bundle, /lesson-language/);
   assert.match(bundle, /captions-toggle/);
-  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Six ways to make reasoning visible/);
+  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Seven ways to make reasoning visible/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /@media print/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /prefers-reduced-motion:\s*reduce/);
 });
