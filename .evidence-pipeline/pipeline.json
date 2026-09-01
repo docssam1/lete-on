@@ -359,7 +359,7 @@
       "work_key": "ad53c455869bcccf86c0135974a0344624ef393e27d9137ec8d0833fee3e1119",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "approved",
+      "release_status": "published",
       "owner": "codex-lead",
       "source_records": [],
       "reason": "",
@@ -383,7 +383,8 @@
             { "role": "test", "locator": "test:animated-math-lesson:exact-equal-groups-balance-model" },
             { "role": "test", "locator": "test:clinic-practice-browser:6-ee-b-public-private-boundary" },
             { "role": "audit", "locator": "audit:grade6-ee-b-independent-final-review-2026-09-02", "note": "Read-only SOL high review found and cleared two answer leaks, then reported no remaining findings." },
-            { "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" }
+            { "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko" }
           ]
         }
       ],
@@ -404,7 +405,8 @@
         { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:6-ee-b-desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:6-ee-b-mobile-a4" }] },
         { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:6-ee-b-student-zero-answers-teacher-zero-inputs" }] },
         { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ee-b-clinic-pack.js", "note": "Automatic feedback is public practice only; private diagnostic evidence, full mastery, and promotion are not expanded or automatically determined." }] },
-        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" }] }
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko", "note": "PR 154 merge c709e6e3 deployed with HTTP 200, 12 student items, zero student answer panels, 24 teacher answer and teaching panels, six model-derived equation boxes, final-answer gating, and zero mobile overflow verified live." }] }
       ]
     }
   ]
