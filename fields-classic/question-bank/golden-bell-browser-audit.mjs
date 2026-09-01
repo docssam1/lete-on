@@ -215,6 +215,69 @@ async function auditBookTwoGuidedConcepts() {
   return cases.length;
 }
 
+async function auditBookThreeGuidedConcepts() {
+  const cases = [
+    { id: "six-multiple-equations", family: "six-bundle-equation", wrong: "14", answer: "16", visual: ".guided-six-bundle-visual" },
+    { id: "multiple-comparison", family: "multiple-direction", wrong: "5", answer: "4", visual: ".guided-multiple-visual" },
+    { id: "basic-vertical-cryptarithm", family: "vertical-cryptarithm-carry", wrong: "3", answer: "5", visual: ".guided-cryptarithm-visual" },
+    { id: "magic-square-targets", family: "magic-line-target", wrong: "4", answer: "2", visual: ".guided-magic-visual" }
+  ];
+
+  for (const item of cases) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=GUIDED-BOOK3-${item.id}&book=book-03`, { waitUntil: "networkidle" });
+    await page.locator(`.lesson-button[data-lesson="${item.id}"]`).click();
+    const experience = page.locator(`.guided-concept[data-guided-family="${item.family}"]`);
+    assert.equal(await experience.count(), 1, `${item.id}: Book 3 guided concept missing`);
+    assert.equal(await experience.locator(item.visual).count(), 1, `${item.id}: Book 3 guided visual missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: Book 3 original must start locked`);
+    assert.equal(await experience.locator(".guided-check").count(), 0, `${item.id}: Book 3 check appeared early`);
+    for (let step = 0; step < 3; step += 1) await experience.locator('[data-experience-action="next"]').click();
+    assert.equal(await experience.locator(".guided-check").count(), 1, `${item.id}: Book 3 final check missing`);
+
+    if (item.id === "six-multiple-equations") {
+      assert.equal(await experience.locator(".guided-six-bundle").count(), 6, "Book 3 six visual needs six bundles");
+      assert.match(await experience.innerText(), /24\s*\+\s*12\s*=\s*36/u, "Book 3 six final equation missing");
+    }
+    if (item.id === "multiple-comparison") {
+      const widths = await experience.locator(".guided-multiple-unit, .guided-multiple-comparison").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width));
+      assert.ok(widths[1] > widths[0], `Book 3 comparison bar is not wider: ${widths.join(",")}`);
+      assert.match(await experience.innerText(), /12\s*÷\s*3\s*=\s*4/u, "Book 3 multiple final equation missing");
+    }
+    if (item.id === "basic-vertical-cryptarithm") {
+      assert.equal(await experience.locator(".guided-cryptarithm-addend").count(), 3, "Book 3 cryptarithm needs three addends");
+      assert.match(await experience.innerText(), /4\s*\+\s*4\s*\+\s*4\s*=\s*12/u, "Book 3 cryptarithm equation missing");
+    }
+    if (item.id === "magic-square-targets") {
+      assert.equal(await experience.locator(".guided-magic-grid span").count(), 9, "Book 3 magic square needs nine cells");
+      assert.match(await experience.innerText(), /3/u, "Book 3 magic target missing");
+    }
+
+    assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: Book 3 approved answer is not unique`);
+    await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: Book 3 wrong answer unlocked original`);
+    await experience.locator("[data-experience-answer]").click();
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: Book 3 answer view missing`);
+    assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: Book 3 answer view did not unlock original`);
+
+    const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({
+      fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+      height: node.matches("button") ? node.getBoundingClientRect().height : null
+    })));
+    assert.ok(typography.every(({ fontSize }) => fontSize >= 14), `${item.id}: Book 3 guided text is too small: ${JSON.stringify(typography)}`);
+    assert.ok(typography.filter(({ height }) => height != null).every(({ height }) => height >= 40), `${item.id}: Book 3 guided touch target is too small: ${JSON.stringify(typography)}`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${item.id}: Book 3 mobile horizontal overflow`);
+
+    await page.evaluate(() => { window.print = () => {}; });
+    await page.locator("#printLessonButton").click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator(".guided-print-summary").count(), 1, `${item.id}: Book 3 guided print summary missing`);
+    assert.equal(await page.locator(".guided-print-summary button, .guided-print-summary input, .guided-print-summary select").count(), 0, `${item.id}: Book 3 print contains controls`);
+    await page.close();
+  }
+  return cases.length;
+}
+
 async function auditInteractiveTriangularStair() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=TRIANGULAR-AUDIT&book=book-05`, { waitUntil: "networkidle" });
@@ -328,8 +391,9 @@ try {
   await auditReducedMotionClock();
   const guidedConcepts = await auditBookOneGuidedConcepts();
   const bookTwoGuidedConcepts = await auditBookTwoGuidedConcepts();
+  const bookThreeGuidedConcepts = await auditBookThreeGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }

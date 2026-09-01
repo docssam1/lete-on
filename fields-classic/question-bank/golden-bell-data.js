@@ -510,6 +510,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 6, 6의 배수",
         sourceTypeIds: ["constant-step-number-sequence"],
         representativeConcept: "6을 여러 번 더하거나 6의 배수만큼 더하고 뺀 식을 6×□ 꼴로 바꿈",
+        experience: {
+          kind: "guided-concept",
+          family: "six-bundle-equation",
+          title: "6개짜리 묶음 수로 식을 바꿔요",
+          hint: "각 수가 6이 몇 묶음인지 먼저 표시한 뒤 묶음 수끼리 더하세요.",
+          model: { base: 6, startGroups: 4, extraGroups: 2, totalGroups: 6 },
+          beats: [
+            { phase: "groups", caption: "6을 네 번 더한 식은 6개짜리 묶음이 4개입니다." },
+            { phase: "extra", caption: "더해진 12는 6개짜리 묶음 2개입니다." },
+            { phase: "combine", caption: "묶음 수 4와 2를 더하면 모두 6묶음입니다." },
+            { phase: "verify", caption: "6×4+12와 6×6을 계산해 두 값이 같은지 확인합니다." }
+          ],
+          check: { prompt: "8×14+16=8×□입니다. 빈칸에 들어갈 수는 무엇인가요?", options: ["14", "16", "30"], answer: "16", explanation: "16은 8이 2묶음이므로 14+2=16입니다." }
+        },
         story: {
           title: "여섯 칸 기차의 묶음표",
           text: "기차 한 칸에는 블록이 6개씩 들어갑니다. 블록 수를 모두 6개짜리 묶음으로 바꾸면 긴 식도 짧아집니다.",
@@ -562,6 +576,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 16, 활동 01 배수",
         sourceTypeIds: ["unit-length-multiple"],
         representativeConcept: "큰 양 안에 작은 양이 몇 번 들어가는지 같은 길이 또는 같은 개수의 묶음으로 셈",
+        experience: {
+          kind: "guided-concept",
+          family: "multiple-direction",
+          title: "기준량을 먼저 잡고 몇 배인지 세어요",
+          hint: "‘비교하는 양은 기준량의 몇 배’인지 읽고, 비교하는 양을 기준량으로 나누세요.",
+          model: { unit: 3, comparison: 12, ratio: 4, unitLabel: "기준 A", comparisonLabel: "비교 B" },
+          beats: [
+            { phase: "unit", caption: "먼저 기준 A의 길이 3을 한 묶음으로 정합니다." },
+            { phase: "repeat", caption: "비교 B 안에 기준 A 묶음이 몇 번 들어가는지 표시합니다." },
+            { phase: "divide", caption: "비교하는 양 12를 기준량 3으로 나눕니다." },
+            { phase: "verify", caption: "12÷3=4이므로 B는 A의 4배인지 그림과 다시 확인합니다." }
+          ],
+          check: { prompt: "20은 5의 몇 배인가요?", options: ["2", "4", "5"], answer: "4", explanation: "20÷5=4이므로 20은 5의 4배입니다." }
+        },
         story: {
           title: "운동장 줄과 공 묶음",
           text: "길이나 개수가 달라도 같은 크기의 한 묶음을 기준으로 하면 몇 배인지 알 수 있습니다.",
@@ -609,6 +637,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 20, 활동 02",
         sourceTypeIds: ["cryptarithm-single-double"],
         representativeConcept: "같은 도형은 같은 숫자라는 약속으로 반복 덧셈과 받아올림을 거꾸로 풂",
+        experience: {
+          kind: "guided-concept",
+          family: "vertical-cryptarithm-carry",
+          title: "세로셈의 일의 자리부터 모양 수를 찾아요",
+          hint: "세로줄을 맞춘 채 일의 자리 합을 먼저 보고, 생긴 받아올림을 십의 자리 모양과 연결하세요.",
+          model: { symbol: "□", resultTens: "△", resultOnes: 2, symbolValue: 4, repeat: 3, carryValue: 1 },
+          beats: [
+            { phase: "layout", caption: "같은 네모 세 개를 세로로 같은 자리에 맞춰 놓습니다." },
+            { phase: "ones", caption: "일의 자리에서 같은 수를 세 번 더해 끝자리 2가 되는 수를 찾습니다." },
+            { phase: "carry", caption: "4+4+4=12이므로 십의 자리로 1이 올라갑니다." },
+            { phase: "verify", caption: "네모는 4, 세모는 1을 넣어 세로셈 4+4+4=12를 확인합니다." }
+          ],
+          check: { prompt: "같은 동그라미를 세 번 더했더니 네모5가 되었습니다. 동그라미는 얼마인가요?", options: ["3", "5", "8"], answer: "5", explanation: "5+5+5=15이므로 동그라미는 5입니다." }
+        },
         story: {
           title: "숫자를 숨긴 모양 계산기",
           text: "계산기는 같은 숫자를 같은 모양으로 가립니다. 세로셈의 결과를 보면 가려진 숫자를 되찾을 수 있습니다.",
@@ -654,6 +696,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 28, 활동 01",
         sourceTypeIds: ["magic-square-three-target"],
         representativeConcept: "3×3 마방진에서 가로·세로·대각선의 합이 같다는 성질로 한 줄의 합과 빈칸을 구함",
+        experience: {
+          kind: "guided-concept",
+          family: "magic-line-target",
+          title: "완성된 한 줄로 마방진의 목표 합을 찾아요",
+          hint: "숫자 세 개가 모두 보이는 줄의 합을 먼저 구한 뒤, 빈칸이 있는 줄에서 보이는 두 수를 빼세요.",
+          model: { grid: [2, 7, 6, 9, 5, 1, 4, null, 8], lineSum: 15, targetIndex: 7, target: 3 },
+          beats: [
+            { phase: "complete", caption: "숫자 세 개가 모두 보이는 첫째 줄을 찾습니다." },
+            { phase: "target", caption: "2+7+6=15이므로 모든 줄의 목표 합은 15입니다." },
+            { phase: "solve", caption: "아랫줄에서 15-4-8을 계산해 빈칸을 구합니다." },
+            { phase: "verify", caption: "빈칸 3을 넣고 가로·세로·대각선의 합이 모두 15인지 확인합니다." }
+          ],
+          check: { prompt: "한 줄의 합이 15인 마방진에서 아랫줄이 4, 9, □입니다. □는 얼마인가요?", options: ["2", "4", "6"], answer: "2", explanation: "15-4-9=2이므로 빈칸은 2입니다." }
+        },
         story: {
           title: "아홉 칸 숫자 문의 약속",
           text: "숫자 문의 가로, 세로, 대각선은 모두 같은 합이 되어야 열립니다.",

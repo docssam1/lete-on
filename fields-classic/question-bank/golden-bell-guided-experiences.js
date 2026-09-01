@@ -66,6 +66,39 @@ function numberPromiseVisual(phase, model) {
   return `<div class="guided-promise-visual"><div>${promiseDiagramMarkup(model.examples[0], showRule)}${showSecond ? promiseDiagramMarkup(model.examples[1], true) : ""}</div>${phase === "reverse" ? '<p class="guided-reverse-rule">위 - 왼쪽 - 아래 = 오른쪽</p>' : ""}<p>${phase === "observe" ? "네 자리의 수를 차례로 살펴봐요." : phase === "rule" ? "옆과 아래의 세 수를 더하면 위 수가 돼요." : phase === "confirm" ? "다른 그림에서도 같은 약속이 맞아요." : "빈자리가 바뀌면 덧셈을 거꾸로 계산해요."}</p></div>`;
 }
 
+function sixBundleVisual(phase, model) {
+  const groups = phase === "groups" ? model.startGroups : phase === "extra" ? model.startGroups + model.extraGroups : model.totalGroups;
+  const groupMarkup = Array.from({ length: Math.max(0, groups) }, (_, index) => `<span class="guided-six-bundle" aria-label="6개 묶음 ${index + 1}">${Array.from({ length: 6 }, () => "●").join("")}</span>`).join("");
+  const equation = phase === "groups"
+    ? `${model.base} × ${model.startGroups} = ${model.base * model.startGroups}`
+    : phase === "extra"
+      ? `${model.base * model.extraGroups} = ${model.base} × ${model.extraGroups}`
+      : phase === "combine"
+        ? `${model.base} × ${model.startGroups} + ${model.base} × ${model.extraGroups} = ${model.base} × ${model.totalGroups}`
+        : `${model.base * model.startGroups} + ${model.base * model.extraGroups} = ${model.base * model.totalGroups}`;
+  return `<div class="guided-six-bundle-visual ${phase}" role="img" aria-label="6개씩 묶어 등가식으로 나타내는 과정"><div class="guided-six-bundle-groups">${groupMarkup}</div><div class="guided-six-bundle-equation">${equation}</div><p>${phase === "groups" ? "6개씩 묶인 덩어리를 세어 보세요." : phase === "extra" ? "더해진 12도 6개짜리 묶음으로 바꾸어 보세요." : phase === "combine" ? `${model.startGroups}묶음과 ${model.extraGroups}묶음을 합치면 ${model.totalGroups}묶음이에요.` : `${model.totalGroups}묶음 × 6 = ${model.totalGroups * 6}개인지 확인합니다.`}</p></div>`;
+}
+
+function multipleDirectionVisual(phase, model) {
+  const solved = phase === "divide" || phase === "verify";
+  return `<div class="guided-multiple-visual ${phase}" role="img" aria-label="기준량과 비교량의 방향을 확인하고 비교량을 기준량으로 나누는 과정"><div class="guided-multiple-bars"><span class="guided-multiple-unit">${model.unitLabel || "기준량"}<b>${model.unit}</b></span><span class="guided-multiple-comparison">${model.comparisonLabel || "비교량"}<b>${model.comparison}</b></span></div><div class="guided-multiple-equation">${solved ? `${model.comparison} ÷ ${model.unit} = ${model.ratio}` : `${model.comparison} ÷ ${model.unit} = ?`}</div><p>${phase === "unit" ? "먼저 기준이 되는 양을 정합니다." : phase === "repeat" ? `${model.comparison} 안에 기준량 ${model.unit}이 몇 번 들어가는지 세어요.` : phase === "divide" ? "비교량을 기준량으로 나누어 몇 배인지 구합니다." : `${model.ratio}배가 맞는지 기준량을 반복해 확인합니다.`}</p></div>`;
+}
+
+function verticalCryptarithmVisual(phase, model) {
+  const showOnes = ["ones", "carry", "verify"].includes(phase);
+  const showCarry = ["carry", "verify"].includes(phase);
+  const cell = (value, label) => `<span class="guided-cryptarithm-cell" aria-label="${label}">${value}</span>`;
+  const addend = phase === "verify" ? model.symbolValue : model.symbol;
+  const rows = Array.from({ length: model.repeat }, (_, index) => `<div class="guided-cryptarithm-addend"><b>${index === model.repeat - 1 ? "+" : ""}</b>${cell(addend, `더하는 수 ${index + 1}`)}</div>`).join("");
+  return `<div class="guided-cryptarithm-visual ${phase}" role="img" aria-label="도형을 숫자로 바꾸는 세로셈과 받아올림 과정"><div class="guided-cryptarithm-stack"><div class="guided-cryptarithm-carry"><small>${showCarry ? "받아올림" : ""}</small>${cell(showCarry ? model.carryValue : "", "받아올림")}</div>${rows}<div class="guided-cryptarithm-rule"></div><div class="guided-cryptarithm-result">${cell(phase === "verify" ? model.carryValue : model.resultTens, "십의 자리")}${cell(showOnes ? model.resultOnes : "?", "일의 자리")}</div></div><p>${phase === "layout" ? "같은 도형 세 개를 세로셈 자리에 맞추어 놓아요." : phase === "ones" ? `${model.symbol}을 세 번 더한 일의 자리는 ${model.resultOnes}예요.` : phase === "carry" ? `${model.symbolValue} + ${model.symbolValue} + ${model.symbolValue} = 12이므로 ${model.carryValue}을 십의 자리로 받아올려요.` : `${model.symbolValue} + ${model.symbolValue} + ${model.symbolValue} = ${model.carryValue}${model.resultOnes}, 받아올림 ${model.carryValue}까지 확인합니다.`}</p></div>`;
+}
+
+function magicLineTargetVisual(phase, model) {
+  const grid = Array.from({ length: 9 }, (_, index) => index === model.targetIndex && ["solve", "verify"].includes(phase) ? model.target : index === model.targetIndex ? "?" : (model.grid[index] ?? "·"));
+  const line = model.grid.slice(0, 3).join(" + ");
+  return `<div class="guided-magic-visual ${phase}" role="img" aria-label="3x3 마방진의 완성 줄을 찾아 빈칸을 역산하는 과정"><div class="guided-magic-grid">${grid.map((value, index) => `<span class="${index < 3 ? "is-target-line" : ""}">${value}</span>`).join("")}</div><div class="guided-magic-equation">${phase === "complete" ? "완성된 줄을 찾아요" : `${line} = ${model.lineSum}`}${["solve", "verify"].includes(phase) ? ` → 빈칸 = ${model.target}` : " → ?"}</div><p class="guided-magic-rule">3×3 마방진은 9칸이고, 가로·세로·대각선 한 줄의 합은 ${model.lineSum}예요.</p><p>${phase === "complete" ? "가로, 세로, 대각선을 살펴 한 줄을 정합니다." : phase === "target" ? `이 줄의 합은 ${model.lineSum}이므로 빈칸을 찾아요.` : phase === "solve" ? `${model.lineSum}에서 알고 있는 수를 빼서 빈칸 ${model.target}을 역산합니다.` : `빈칸 ${model.target}을 넣어 다른 줄의 합도 확인합니다.`}</p></div>`;
+}
+
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
@@ -75,6 +108,10 @@ export function guidedConceptVisual(experience, step) {
   if (experience.family === "balance-order-chain") return balanceOrderVisual(beat.phase, experience.model);
   if (experience.family === "dual-shape-color-cycle") return dualPatternVisual(beat.phase, experience.model);
   if (experience.family === "four-number-promise") return numberPromiseVisual(beat.phase, experience.model);
+  if (experience.family === "six-bundle-equation") return sixBundleVisual(beat.phase, experience.model);
+  if (experience.family === "multiple-direction") return multipleDirectionVisual(beat.phase, experience.model);
+  if (experience.family === "vertical-cryptarithm-carry") return verticalCryptarithmVisual(beat.phase, experience.model);
+  if (experience.family === "magic-line-target") return magicLineTargetVisual(beat.phase, experience.model);
   return "";
 }
 
