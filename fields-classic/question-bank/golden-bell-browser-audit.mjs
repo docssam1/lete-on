@@ -216,6 +216,23 @@ async function auditBookTwoGuidedConcepts() {
 }
 
 async function auditBookThreeGuidedConcepts() {
+  const readCryptarithmColumns = (experience) => experience.locator(".guided-cryptarithm-stack").evaluate((stack) => {
+    const centerX = (node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.left + rect.width / 2;
+    };
+    const addends = [...stack.querySelectorAll(".guided-cryptarithm-addend .guided-cryptarithm-cell")].map(centerX);
+    const carry = centerX(stack.querySelector(".guided-cryptarithm-carry .guided-cryptarithm-cell"));
+    const results = [...stack.querySelectorAll(".guided-cryptarithm-result .guided-cryptarithm-cell")].map(centerX);
+    const plus = centerX([...stack.querySelectorAll(".guided-cryptarithm-addend b")].at(-1));
+    return { addends, carry, results, plus };
+  });
+  const assertCryptarithmColumns = (columns, phase) => {
+    const close = (a, b) => Math.abs(a - b) <= 1;
+    assert.ok(columns.addends.every((x) => close(x, columns.results[1])), `Book 3 ${phase} addends are not aligned to the ones column: ${JSON.stringify(columns)}`);
+    assert.ok(close(columns.carry, columns.results[0]), `Book 3 ${phase} carry is not aligned to the tens column: ${JSON.stringify(columns)}`);
+    assert.ok(columns.plus < columns.results[0] - 10, `Book 3 ${phase} plus sign overlaps the tens column: ${JSON.stringify(columns)}`);
+  };
   const cases = [
     { id: "six-multiple-equations", family: "six-bundle-equation", wrong: "14", answer: "16", visual: ".guided-six-bundle-visual" },
     { id: "multiple-comparison", family: "multiple-direction", wrong: "5", answer: "4", visual: ".guided-multiple-visual" },
@@ -238,7 +255,13 @@ async function auditBookThreeGuidedConcepts() {
       const firstBeatOverflow = await experience.locator(".guided-six-bundle").evaluateAll((nodes) => nodes.filter((node) => node.scrollWidth > node.clientWidth + 1 || node.scrollHeight > node.clientHeight + 1).length);
       assert.equal(firstBeatOverflow, 0, "Book 3 six first-beat dots overflow their bundle boxes");
     }
-    for (let step = 0; step < 3; step += 1) await experience.locator('[data-experience-action="next"]').click();
+    if (item.id === "basic-vertical-cryptarithm") {
+      for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+      assertCryptarithmColumns(await readCryptarithmColumns(experience), "carry");
+      await experience.locator('[data-experience-action="next"]').click();
+    } else {
+      for (let step = 0; step < 3; step += 1) await experience.locator('[data-experience-action="next"]').click();
+    }
     assert.equal(await experience.locator(".guided-check").count(), 1, `${item.id}: Book 3 final check missing`);
 
     if (item.id === "six-multiple-equations") {
@@ -256,6 +279,7 @@ async function auditBookThreeGuidedConcepts() {
     if (item.id === "basic-vertical-cryptarithm") {
       assert.equal(await experience.locator(".guided-cryptarithm-addend").count(), 3, "Book 3 cryptarithm needs three addends");
       assert.match(await experience.innerText(), /4\s*\+\s*4\s*\+\s*4\s*=\s*12/u, "Book 3 cryptarithm equation missing");
+      assertCryptarithmColumns(await readCryptarithmColumns(experience), "verify");
     }
     if (item.id === "magic-square-targets") {
       assert.equal(await experience.locator(".guided-magic-grid span").count(), 9, "Book 3 magic square needs nine cells");

@@ -58,6 +58,8 @@ for (const [index, lesson] of lessons.entries()) {
   }
   if (id === "basic-vertical-cryptarithm") {
     assert.match(finalVisual, /vertical|세로/i, `${id}: vertical structure class is missing`);
+    assert.equal((finalVisual.match(/guided-cryptarithm-addend/g) || []).length, 3, `${id}: three addend rows are required`);
+    assert.equal((finalVisual.match(/guided-cryptarithm-spacer/g) || []).length, 5, `${id}: operator, tens, and ones columns must have explicit spacers`);
     assert.match(text, /4\s*\+\s*4\s*\+\s*4\s*=\s*12/, `${id}: carry equation is missing`);
     assert.match(text, /받아올림/, `${id}: carry indication is missing`);
   }

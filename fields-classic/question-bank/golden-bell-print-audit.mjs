@@ -33,6 +33,24 @@ try {
     assert.equal(await page.locator(".gold-print-page").count(), 8, `${bookId}: print DOM must contain eight lesson pages`);
 
     await page.emulateMedia({ media: "print" });
+    if (bookId === "book-03") {
+      const columns = await page.locator('.gold-print-page[data-print-lesson="basic-vertical-cryptarithm"] .guided-cryptarithm-stack').first().evaluate((stack) => {
+        const centerX = (node) => {
+          const rect = node.getBoundingClientRect();
+          return rect.left + rect.width / 2;
+        };
+        return {
+          addends: [...stack.querySelectorAll(".guided-cryptarithm-addend .guided-cryptarithm-cell")].map(centerX),
+          carry: centerX(stack.querySelector(".guided-cryptarithm-carry .guided-cryptarithm-cell")),
+          results: [...stack.querySelectorAll(".guided-cryptarithm-result .guided-cryptarithm-cell")].map(centerX),
+          plus: centerX([...stack.querySelectorAll(".guided-cryptarithm-addend b")].at(-1))
+        };
+      });
+      const close = (a, b) => Math.abs(a - b) <= 1;
+      assert.ok(columns.addends.every((x) => close(x, columns.results[1])), `book-03 print addends are not aligned to the ones column: ${JSON.stringify(columns)}`);
+      assert.ok(close(columns.carry, columns.results[0]), `book-03 print carry is not aligned to the tens column: ${JSON.stringify(columns)}`);
+      assert.ok(columns.plus < columns.results[0] - 3, `book-03 print plus sign overlaps the tens column: ${JSON.stringify(columns)}`);
+    }
     const pageBounds = await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => {
       const pageRect = node.getBoundingClientRect();
       const footer = node.querySelector(":scope > .gold-print-footer");
