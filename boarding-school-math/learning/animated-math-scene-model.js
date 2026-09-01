@@ -251,15 +251,40 @@
       + '<div class="expression-answer scene-object" data-object="expr-answer"><span>' + esc(localized.answer) + '</span><strong>' + model.answer + '</strong></div></div>';
   }
 
+  function buildAlgebraBalanceModel(sceneModel) {
+    const coefficient = Number(sceneModel.coefficient); const total = Number(sceneModel.total); const expectedX = Number(sceneModel.expectedX);
+    if (!Number.isInteger(coefficient) || coefficient <= 0 || !Number.isFinite(total) || !Number.isFinite(expectedX)) throw new Error("ALGEBRA_BALANCE_MODEL_INVALID");
+    if (total / coefficient !== expectedX || coefficient * expectedX !== total) throw new Error("ALGEBRA_BALANCE_SOLUTION_MISMATCH");
+    return Object.freeze({ coefficient: coefficient, total: total, expectedX: expectedX, boxes: Object.freeze(Array.from({ length: coefficient }, function (_, index) { return Object.freeze({ id: "x-box-" + (index + 1), value: "x" }); })) });
+  }
+  function algebraBalanceScene(lesson, locale) {
+    const model = buildAlgebraBalanceModel(lesson.sceneModel);
+    const language = locale === "zh" || locale === "zh-Hans" ? "zh" : (locale === "ko" ? "ko" : "en");
+    const localized = {
+      en: { aria: "Six equal x boxes balance forty-two, then both sides are divided by six", left: "six equal groups", right: "total", divide: "divide both sides by 6", one: "one group", check: "substitution check", answer: "solution" },
+      ko: { aria: "같은 x 상자 6개와 42가 균형을 이루고 양쪽을 6으로 나누는 모델", left: "같은 묶음 6개", right: "전체", divide: "양쪽을 6으로 나누기", one: "한 묶음", check: "대입 검산", answer: "방정식의 해" },
+      zh: { aria: "6个相等的x方框与42平衡，再把等式两边同时除以6", left: "6个相等的组", right: "总数", divide: "等式两边同时除以6", one: "一组", check: "代入检验", answer: "方程的解" }
+    }[language];
+    const boxes = model.boxes.map(function (box) { return '<span class="balance-x-box" data-box="' + box.id + '">' + box.value + '</span>'; }).join("");
+    return '<div class="algebra-balance-scene" role="img" aria-label="' + esc(localized.aria) + '">'
+      + '<div class="balance-equation scene-object" data-object="balance-equation">' + model.coefficient + 'x = ' + model.total + '</div>'
+      + '<div class="balance-board scene-object" data-object="balance-groups"><div class="balance-side"><small>' + esc(localized.left) + '</small><div class="balance-boxes">' + boxes + '</div></div><span class="balance-equals">=</span><div class="balance-side is-total"><small>' + esc(localized.right) + '</small><strong>' + model.total + '</strong></div></div>'
+      + '<div class="balance-operation scene-object" data-object="balance-divide"><span>' + esc(localized.divide) + '</span><strong>' + model.coefficient + 'x ÷ ' + model.coefficient + ' = ' + model.total + ' ÷ ' + model.coefficient + '</strong></div>'
+      + '<div class="balance-unit scene-object" data-object="balance-unit"><span>' + esc(localized.one) + '</span><strong>x = ' + model.total + ' ÷ ' + model.coefficient + '</strong></div>'
+      + '<div class="balance-answer scene-object" data-object="balance-answer"><span>' + esc(localized.answer) + '</span><strong>x = ' + model.expectedX + '</strong></div>'
+      + '<div class="balance-check scene-object" data-object="balance-check"><span>' + esc(localized.check) + '</span><strong>' + model.coefficient + ' × ' + model.expectedX + ' = ' + model.total + '</strong></div></div>';
+  }
+
   function sceneFor(lesson, locale) {
     if (lesson.type === "bar-model") return ratioScene(lesson);
     if (lesson.type === "fraction-strip") return fractionScene(lesson);
     if (lesson.type === "factor-chain") return factorScene(lesson);
     if (lesson.type === "signed-number-line") return signedNumberLineScene(lesson, locale);
     if (lesson.type === "expression-tree") return expressionScene(lesson, locale);
+    if (lesson.type === "algebra-balance") return algebraBalanceScene(lesson, locale);
     if (lesson.type === "geometry-angle") return geometryScene(lesson);
     throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, sceneFor: sceneFor });
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, buildAlgebraBalanceModel: buildAlgebraBalanceModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, algebraBalanceScene: algebraBalanceScene, sceneFor: sceneFor });
 });

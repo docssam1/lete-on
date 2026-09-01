@@ -134,6 +134,26 @@
       tr("Respect the nested structure: power, parentheses, multiplication, then subtraction. Distribution independently confirms the result.", "겹친 구조에 따라 거듭제곱, 괄호, 곱셈, 뺄셈 순서로 계산하고 분배법칙으로 독립 검산합니다.", "按嵌套结构依次计算幂、括号、乘法、减法，再用分配律独立检验。"), ["expr-original"], expressionIds, "highlight")
   ];
 
+  const equationIds = ["balance-equation", "balance-groups", "balance-divide", "balance-unit", "balance-answer", "balance-check"];
+  const equationBeats = [
+    beat("balance-read", tr("Read the equality", "등식 읽기", "读懂等式"), "problem",
+      tr("Six equal groups of x balance a total of forty-two.", "같은 값 x가 6묶음 있고 그 전체가 42와 같습니다.", "6个相等的x与总数42相等。"), [], [], "inspect"),
+    beat("balance-equation", tr("Keep the equation visible", "원래 등식 표시하기", "保留原方程"), "explore",
+      tr("Write the exact relationship first: six x equals forty-two.", "먼저 정확한 관계 6x = 42를 계속 보이게 둡니다.", "先保留准确关系：6x = 42。"), ["balance-equation"], ["balance-equation"]),
+    beat("balance-groups", tr("Build six equal groups", "같은 묶음 6개 만들기", "建立6个相等的组"), "explore",
+      tr("The coefficient six creates six boxes. Every box has the same unknown value x.", "계수 6만큼 상자 6개를 만들고 모든 상자의 값을 같은 x로 둡니다.", "系数6对应6个方框，每个方框都表示同一个未知数x。"), ["balance-groups"], ["balance-equation", "balance-groups"]),
+    beat("balance-divide", tr("Divide both sides", "양쪽을 같은 수로 나누기", "等式两边同时相除"), "solve",
+      tr("Divide both sides by six. The equality stays balanced because the same operation is applied to each side.", "등호 양쪽을 모두 6으로 나눕니다. 양쪽에 같은 연산을 하므로 균형이 유지됩니다.", "等式两边同时除以6；两边进行同样运算，所以仍保持相等。"), ["balance-divide"], ["balance-equation", "balance-groups", "balance-divide"]),
+    beat("balance-unit", tr("Find one group", "한 묶음의 값 구하기", "求一组的值"), "solve",
+      tr("One box equals the total divided by the number of equal groups. Keep the quotient as forty-two divided by six.", "상자 하나의 값은 전체를 같은 묶음 수로 나눈 값입니다. 아직 42 ÷ 6으로 둡니다.", "一个方框等于总数除以相等组数，先保留为42 ÷ 6。"), ["balance-unit"], ["balance-equation", "balance-groups", "balance-divide", "balance-unit"]),
+    beat("balance-answer", tr("State the solution", "해 말하기", "写出方程的解"), "answer",
+      tr("The unique solution is x equals seven.", "방정식의 하나뿐인 해는 x = 7입니다.", "方程的唯一解是x = 7。"), ["balance-answer"], ["balance-equation", "balance-groups", "balance-divide", "balance-unit", "balance-answer"]),
+    beat("balance-check", tr("Substitute to check", "대입하여 검산하기", "代入检验"), "check",
+      tr("Substitute seven into the original equation. Six times seven equals forty-two.", "원래 식에 7을 대입하면 6 곱하기 7은 42이므로 등식이 참입니다.", "把7代入原方程，6乘7等于42，等式成立。"), ["balance-check"], equationIds),
+    beat("balance-recap", tr("Connect model and operation", "모델과 연산 연결하기", "连接模型与运算"), "recap",
+      tr("Splitting forty-two among six equal boxes is the same action as dividing both sides of six x equals forty-two by six.", "42를 같은 상자 6개에 나누는 행동은 6x = 42의 양쪽을 6으로 나누는 것과 같습니다.", "把42平均分给6个相等方框，与把6x = 42两边同时除以6是同一个过程。"), ["balance-groups"], equationIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -156,7 +176,7 @@
       tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
   ];
 
-  return Object.freeze({ schemaVersion: 5, lessons: Object.freeze([
+  return Object.freeze({ schemaVersion: 6, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
       conceptClusterId: "6.RP.A",
@@ -218,6 +238,18 @@
       sceneModel: Object.freeze({ coefficient: 3, base: 2, exponent: 3, insideAddend: 4, outsideAddend: -5 }),
       mathChecks: Object.freeze([Object.freeze({ method: "nested operation order", expression: "2³=8; 8+4=12; 3×12=36; 36-5", result: 31, passed: true }), Object.freeze({ method: "distribution", expression: "3×8 + 3×4 - 5", result: 31, passed: true }), Object.freeze({ method: "inverse outer check", expression: "31+5=36; 36÷3=12", result: 12, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student reads 2³ as 2×3 or distributes 3 to only one term.", teachingPrompt: "Which operation is deepest inside the structure, and which two terms receive the outside factor?", successCheck: "The student evaluates the power first, preserves the parentheses, and confirms the same value by distributing to both terms." })
+    }),
+    common({
+      id: "equation-balance-groups", type: "algebra-balance",
+      conceptClusterId: "6.EE.B",
+      eyebrow: "EQUATIONS · BALANCE MODEL", eyebrowI18n: tr("EQUATIONS · BALANCE MODEL", "방정식 · 균형 모델", "方程 · 平衡模型"),
+      title: "Divide equal groups without breaking the balance", titleI18n: tr("Divide equal groups without breaking the balance", "균형을 유지하며 같은 묶음을 나눈다", "保持平衡，平均分组"),
+      concept: "One-step multiplication equations", conceptI18n: tr("One-step multiplication equations", "한 단계 곱셈 방정식", "一步乘法方程"),
+      problem: "Solve 6x = 42 and verify the solution by substitution.", problemI18n: tr("Solve 6x = 42 and verify the solution by substitution.", "6x = 42를 풀고 대입하여 검산하세요.", "解方程6x = 42，并用代入法检验。"),
+      verifiedAnswer: "x = 7", answerBeatId: "balance-answer", objectIds: Object.freeze(equationIds), beats: Object.freeze(equationBeats),
+      sceneModel: Object.freeze({ coefficient: 6, total: 42, expectedX: 7 }),
+      mathChecks: Object.freeze([Object.freeze({ method: "inverse operation", expression: "42 ÷ 6", result: 7, passed: true }), Object.freeze({ method: "substitution", expression: "6 × 7", result: 42, passed: true }), Object.freeze({ method: "exhaustive whole-number check", expression: "x ∈ {0,…,42}; 6x=42", result: "x=7 only", passed: true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception: "The student reads 6x as x + 6 or divides only one side by 6.", teachingPrompt: "How is sharing 42 among six equal boxes the same as dividing both sides by 6?", successCheck: "The student identifies six equal groups, divides both sides by 6, and substitutes 7 into the original equation." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",

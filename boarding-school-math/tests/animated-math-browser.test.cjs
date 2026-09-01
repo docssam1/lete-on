@@ -41,12 +41,12 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
-test("ratio, fraction, GCF, signed-number, expression, and geometry lessons reveal exactly the intended conceptual object", async function () {
+test("ratio, fraction, GCF, signed-number, expression, equation, and geometry lessons reveal exactly the intended conceptual object", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.equal(await page.locator(".lesson-tab").count(), 6);
+  assert.equal(await page.locator(".lesson-tab").count(), 7);
   assert.equal(await page.locator('[data-object="ratio-answer"].is-visible').count(), 0);
   await page.locator("#next-step").click();
   assert.equal(await page.locator('[data-object="ratio-team-a-bar"].is-visible.is-active').count(), 1);
@@ -94,7 +94,7 @@ test("ratio, fraction, GCF, signed-number, expression, and geometry lessons reve
   assert.equal(await page.locator('[data-object="expr-answer"].is-visible.is-active').count(), 1);
   assert.match(await page.locator("#narration-text").innerText(), /unique value thirty-one/i);
 
-  await page.locator('.lesson-tab[data-lesson-index="5"]').click();
+  await page.locator('.lesson-tab[data-lesson-index="6"]').click();
   assert.match(await page.locator("#problem-copy").innerText(), /AB = AC[\s\S]*40°[\s\S]*angle B/);
   assert.equal(await page.locator('[data-object="geo-answer"].is-visible').count(), 0);
   await page.locator('.step-button[data-step-index="1"]').click();
@@ -133,6 +133,11 @@ test("direct Chinese and Korean narration changes without cross-language residue
   assert.match(await page.locator('[data-object="expr-product"] small').innerText(), /乘法/);
   assert.match(await page.locator('[data-object="expr-subtract"] small').innerText(), /减法/);
   assert.doesNotMatch(await page.locator(".expression-tree-scene").innerText(), /original structure|distribution check|value|power|parentheses|multiply|subtract/i);
+  await page.goto(`${baseUrl}?lesson=equation-balance-groups&cluster=6.EE.B&locale=zh-Hans`, { waitUntil: "networkidle" });
+  await page.locator("#show-overview").click();
+  assert.match(await page.locator('[data-object="balance-answer"]').innerText(), /方程的解/);
+  assert.match(await page.locator(".algebra-balance-scene").getAttribute("aria-label"), /6个相等的x方框/);
+  assert.doesNotMatch(await page.locator(".algebra-balance-scene").innerText(), /six equal groups|divide both sides|one group|solution|substitution check/i);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -240,5 +245,34 @@ test("6.EE.A expression tree stays legible on mobile and complete on A4", async 
   await page.emulateMedia({ media: "print" });
   const state = await page.evaluate(function () { return { hidden: Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length, answer: document.querySelector('[data-object="expr-answer"]').textContent, controls: getComputedStyle(document.querySelector(".lesson-controls")).display, width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }; });
   assert.equal(state.hidden, 0); assert.match(state.answer, /31/); assert.equal(state.controls, "none"); assert.equal(state.width, state.client); assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("6.EE.B balance model gates the answer and stays complete on mobile and A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = collectErrors(page);
+    await page.goto(`${baseUrl}?lesson=equation-balance-groups&cluster=6.EE.B&locale=ko`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator(".balance-x-box").count(), 6);
+    assert.equal(await page.locator('[data-object="balance-answer"]').getAttribute("aria-hidden"), "true");
+    for (let index = 0; index < 4; index += 1) await page.locator("#next-step").click();
+    assert.equal(await page.locator('[data-object="balance-unit"].is-visible').count(), 1);
+    assert.equal(await page.locator('[data-object="balance-answer"]').getAttribute("aria-hidden"), "true");
+    assert.doesNotMatch(await page.locator("#narration-text").innerText(), /x\s*=\s*7|값은 7/);
+    await page.locator("#next-step").click();
+    assert.equal(await page.locator('[data-object="balance-answer"]').getAttribute("aria-hidden"), "false");
+    assert.match(await page.locator('[data-object="balance-answer"]').innerText(), /x = 7/);
+    const dimensions = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(dimensions, [width, width]);
+    const boxes = await page.locator(".balance-x-box").evaluateAll(function (nodes) { return nodes.map(function (node) { const rect = node.getBoundingClientRect(); return { width: rect.width, height: rect.height, left: rect.left, right: rect.right }; }); });
+    boxes.forEach(function (box) { assert.ok(box.width >= 40); assert.ok(box.height >= 44); assert.ok(box.left >= 0 && box.right <= width); });
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const page = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  const errors = collectErrors(page);
+  await page.goto(`${baseUrl}?lesson=equation-balance-groups&cluster=6.EE.B&locale=en`, { waitUntil: "networkidle" });
+  await page.emulateMedia({ media: "print" });
+  const state = await page.evaluate(function () { return { hidden: Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length, boxes: document.querySelectorAll(".balance-x-box").length, answer: document.querySelector('[data-object="balance-answer"]').textContent, check: document.querySelector('[data-object="balance-check"]').textContent, controls: getComputedStyle(document.querySelector(".lesson-controls")).display, width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }; });
+  assert.equal(state.hidden, 0); assert.equal(state.boxes, 6); assert.match(state.answer, /x = 7/); assert.match(state.check, /6 × 7 = 42/); assert.equal(state.controls, "none"); assert.equal(state.width, state.client); assert.deepEqual(errors, []);
   await page.close();
 });

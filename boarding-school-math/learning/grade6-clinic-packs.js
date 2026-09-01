@@ -1,12 +1,12 @@
 (function (root, factory) {
   const value = typeof module === "object" && module.exports
-    ? factory(require("./grade6-rp-clinic-pack.js"), require("./grade6-ns-a-clinic-pack.js"), require("./grade6-ns-b-clinic-pack.js"), require("./grade6-ns-c-clinic-pack.js"), require("./grade6-ee-a-clinic-pack.js"))
-    : factory(root && root.GFIELDGrade6RPClinicPack, root && root.GFIELDGrade6NSAClinicPack, root && root.GFIELDGrade6NSBClinicPack, root && root.GFIELDGrade6NSCClinicPack, root && root.GFIELDGrade6EEAClinicPack);
+    ? factory(require("./grade6-rp-clinic-pack.js"), require("./grade6-ns-a-clinic-pack.js"), require("./grade6-ns-b-clinic-pack.js"), require("./grade6-ns-c-clinic-pack.js"), require("./grade6-ee-a-clinic-pack.js"), require("./grade6-ee-b-clinic-pack.js"))
+    : factory(root && root.GFIELDGrade6RPClinicPack, root && root.GFIELDGrade6NSAClinicPack, root && root.GFIELDGrade6NSBClinicPack, root && root.GFIELDGrade6NSCClinicPack, root && root.GFIELDGrade6EEAClinicPack, root && root.GFIELDGrade6EEBClinicPack);
   if (typeof module === "object" && module.exports) module.exports = value;
   if (root) root.GFIELDGrade6ClinicPacks = value;
-})(typeof window !== "undefined" ? window : globalThis, function (ratioPack, fractionPack, computationPack, signedNumberPack, expressionPack) {
+})(typeof window !== "undefined" ? window : globalThis, function (ratioPack, fractionPack, computationPack, signedNumberPack, expressionPack, equationPack) {
   "use strict";
-  const packs = [ratioPack, fractionPack, computationPack, signedNumberPack, expressionPack].filter(Boolean);
+  const packs = [ratioPack, fractionPack, computationPack, signedNumberPack, expressionPack, equationPack].filter(Boolean);
   const byCluster = Object.freeze(Object.fromEntries(packs.map(function (entry) { return [entry.pack.clusterId, entry]; })));
   if (Object.keys(byCluster).length !== packs.length) throw new Error("CLINIC_PACK_CLUSTER_DUPLICATE");
   packs.forEach(function (entry) { entry.validatePack(); });
