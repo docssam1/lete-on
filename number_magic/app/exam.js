@@ -1630,6 +1630,10 @@ const NM_EXAM = {
 
       let openCourse = (opts.currentCourse && NM_COURSES[opts.currentCourse]) ? opts.currentCourse : null;
       let scrolledOnce = false;
+      /* 인쇄 옵션 — 교과/마법 흐름과 같은 4종(문항수·문장제 유형·개념·표지).
+         countMode 'default'=세션 편성 그대로, 숫자=드릴마다 그 문항수로 통일. */
+      let roadWordType = 'none';     // 'none'|'mix'|'all'
+      let roadCountMode = 'default'; // 'default'|10|20
 
       function tierInfo(tierKey){
         const found = (opts.tiers || []).find(x => x.key === tierKey);
@@ -1729,6 +1733,28 @@ const NM_EXAM = {
     <button class="nm-ex-back-btn" id="nm-ex-back-road">← ${esc(lk('뒤로','Back','返回'))}</button>
     <span class="nm-ex-form-title">🛤️ ${esc(lk('연산 로드맵','Course Road','运算路线图'))}</span>
   </div>
+  <div class="nm-ex-road-opts">
+    <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('유형','Style','题型'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-word">
+        <button data-w="none" class="${roadWordType==='none'?'sel':''}">${esc(lk('숫자 연산','Numbers','数字运算'))}</button>
+        <button data-w="mix" class="${roadWordType==='mix'?'sel':''}">${esc(lk('문장제 섞기','Mix word','混合应用题'))}</button>
+        <button data-w="all" class="${roadWordType==='all'?'sel':''}">${esc(lk('문장제만','All word','全部应用题'))}</button>
+      </div>
+    </div>
+    <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('문항 수','Count','题量'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-count">
+        <button data-c="default" class="${roadCountMode==='default'?'sel':''}">${esc(lk('세션 그대로','As planned','按课程'))}</button>
+        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('10문항씩','10 each','每题型10'))}</button>
+        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('20문항씩','20 each','每题型20'))}</button>
+      </div>
+    </div>
+    <div class="nm-ex-road-opt-row">
+      ${coverToggleRowHtml()}
+      ${conceptToggleRowHtml()}
+    </div>
+  </div>
   <div class="nm-ex-form-body nm-ex-road-body">
     ${body || `<p class="nm-ex-label">${esc(lk('로드맵 데이터를 불러오지 못했어요.','Course data failed to load.','课程数据加载失败。'))}</p>`}
   </div>
@@ -1744,6 +1770,25 @@ const NM_EXAM = {
           });
         });
 
+        bindCoverToggle(container);
+        bindConceptToggle(container);
+        /* 옵션 클릭 재렌더 — 스크롤 위치 보존(펼쳐 둔 과정이 도로 위로 튀지 않게) */
+        function rerenderKeepScroll(){
+          const sc = container.closest('.nm-step-body') || container;
+          const top = sc.scrollTop;
+          render();
+          sc.scrollTop = top;
+        }
+        container.querySelectorAll('#nm-road-word button').forEach(b => {
+          b.addEventListener('click', () => { roadWordType = b.dataset.w; rerenderKeepScroll(); });
+        });
+        container.querySelectorAll('#nm-road-count button').forEach(b => {
+          b.addEventListener('click', () => {
+            roadCountMode = b.dataset.c==='default' ? 'default' : parseInt(b.dataset.c,10);
+            rerenderKeepScroll();
+          });
+        });
+
         container.querySelectorAll('.nm-ex-road-print-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1754,7 +1799,10 @@ const NM_EXAM = {
             if(!session) return;
             const raw = session.test ? (session.pool||[]) : (session.drills||[]);
             const items = raw.map(d => ({
-              thread: d.t, level: d.lv, count: d.n, seed: NM_RNG.newCode(),
+              thread: d.t, level: d.lv,
+              count: roadCountMode==='default' ? d.n : roadCountMode,
+              wordType: roadWordType,
+              seed: NM_RNG.newCode(),
             }));
             if(!items.length) return;
             NM_EXAM.renderPrintMulti(items, `${courseKey}-S${sessionIdx+1}`);

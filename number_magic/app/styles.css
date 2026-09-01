@@ -794,6 +794,16 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
    괘선 헤더, 과정은 목록 행. 세션 펼침은 한 번에 하나(showRoadPick의
    openCourse 변수). 430px에서 가로 스크롤 0(모든 값 %/gap 기반).
    ============================================================ */
+
+/* ── 연산 로드맵 인쇄 옵션 바 (유형·문항수·표지·개념 — 교과 흐름과 동일 4종) ── */
+.nm-ex-road-opts{border:1px solid var(--line);border-radius:12px;background:#fff;
+  padding:10px 12px;margin:0 0 14px;display:flex;flex-direction:column;gap:8px}
+.nm-ex-road-opt-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nm-ex-road-opt-label{font-size:12px;font-weight:800;color:var(--sub);min-width:44px}
+.nm-ex-road-seg{display:flex;gap:4px;flex-wrap:wrap}
+.nm-ex-road-seg button{border:1px solid var(--line);background:var(--paper);border-radius:99px;
+  padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer}
+.nm-ex-road-seg button.sel{background:var(--blue);border-color:var(--blue);color:#fff}
 .nm-ex-road-body{gap:0}
 .nm-ex-road-tier{margin-bottom:18px}
 .nm-ex-road-tier:last-child{margin-bottom:0}
