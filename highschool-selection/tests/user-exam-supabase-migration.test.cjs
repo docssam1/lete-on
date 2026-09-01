@@ -14,6 +14,14 @@ function migrationText() {
   return fs.readFileSync(path.join(migrationDirectory, matches[0]), "utf8");
 }
 
+function rlsOptimizationMigrationText() {
+  const matches = fs.readdirSync(migrationDirectory).filter(function (name) {
+    return /^\d+_highselect_user_exam_rls_initplan\.sql$/.test(name);
+  });
+  assert.equal(matches.length, 1, "exactly one user exam RLS optimization migration is required");
+  return fs.readFileSync(path.join(migrationDirectory, matches[0]), "utf8");
+}
+
 test("migration separates plans, assignments, entitlements, and compact recipes", () => {
   const sql = migrationText();
   [
@@ -81,4 +89,23 @@ test("migration blocks protected payloads and prunes temporary overflow", () => 
   assert.match(sql, /grant all privileges on all tables in schema cron to postgres/i);
   assert.match(sql, /old\.status = 'temporary' and old\.expires_at <= now\(\) and new\.status = 'saved'/i);
   assert.match(sql, /expired temporary exam cannot be saved/i);
+});
+
+test("owner policies cache the authenticated user lookup without widening access", () => {
+  const sql = rlsOptimizationMigrationText();
+  [
+    "hs_user_exam_plan_assignments_select_own",
+    "hs_user_exam_entitlements_select_own",
+    "hs_user_exam_recipes_select_own",
+    "hs_user_exam_recipes_insert_own",
+    "hs_user_exam_recipes_update_own",
+    "hs_user_exam_recipes_delete_own"
+  ].forEach(function (policy) {
+    assert.match(sql, new RegExp(`drop policy if exists ${policy}\\b`, "i"));
+    assert.match(sql, new RegExp(`create policy ${policy}\\b`, "i"));
+  });
+  assert.match(sql, /\(select auth\.uid\(\)\) is not null/i);
+  assert.match(sql, /owner_id = \(select auth\.uid\(\)\)/i);
+  assert.match(sql, /user_id = \(select auth\.uid\(\)\)/i);
+  assert.doesNotMatch(sql, /\bauth\.uid\(\)(?!\))/i);
 });
