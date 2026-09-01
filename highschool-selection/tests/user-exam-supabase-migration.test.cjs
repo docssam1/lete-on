@@ -76,6 +76,9 @@ test("migration blocks protected payloads and prunes temporary overflow", () => 
   assert.doesNotMatch(sql, /security definer[\s\S]{0,120}set search_path = pg_catalog, public/i);
   assert.match(sql, /hs-user-exam-expiry-hourly/i);
   assert.match(sql, /select private\.hs_user_exam_delete_expired\(\)/i);
+  assert.match(sql, /create extension if not exists pg_cron with schema pg_catalog/i);
+  assert.match(sql, /grant usage on schema cron to postgres/i);
+  assert.match(sql, /grant all privileges on all tables in schema cron to postgres/i);
   assert.match(sql, /old\.status = 'temporary' and old\.expires_at <= now\(\) and new\.status = 'saved'/i);
   assert.match(sql, /expired temporary exam cannot be saved/i);
 });

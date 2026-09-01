@@ -481,6 +481,8 @@ comment on column public.hs_user_exam_recipes.recipe is
   'Stable question and version IDs, ordering, scores, filters, and layout only.';
 
 create extension if not exists pg_cron with schema pg_catalog;
+grant usage on schema cron to postgres;
+grant all privileges on all tables in schema cron to postgres;
 select cron.schedule(
   'hs-user-exam-expiry-hourly',
   '17 * * * *',
