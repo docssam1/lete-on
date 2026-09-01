@@ -22,6 +22,7 @@ const state = {
   lessonId: null,
   phase: "concept",
   selections: {},
+  originalAssists: {},
   feedback: null,
   experience: { step: 0, previousStep: 0, checkStep: 0, answer: null, checks: {}, practice: {}, typeTrackId: null, typeTracks: {}, feedback: null, playing: false, speed: 1, timer: null, autoplayStarted: false },
   progress: loadProgress()
@@ -95,6 +96,7 @@ function setPhase(phase) {
   clearExperiencePlayback();
   state.phase = phase;
   state.selections = {};
+  state.originalAssists = {};
   state.feedback = null;
   render();
 }
@@ -661,6 +663,7 @@ function renderBookTabs() {
     state.lessonId = activeBook().lessons[0]?.id || null;
     state.phase = "concept";
     state.selections = {};
+    state.originalAssists = {};
     state.feedback = null;
     resetExperience();
     const next = new URL(location.href);
@@ -689,6 +692,7 @@ function renderLessonList() {
     state.lessonId = button.dataset.lesson;
     state.phase = "concept";
     state.selections = {};
+    state.originalAssists = {};
     state.feedback = null;
     resetExperience();
     render();
@@ -734,6 +738,14 @@ function hasAnswer(value) {
   return normalizeAnswer(value) !== "";
 }
 
+function approvedAnswer(item) {
+  return Array.isArray(item.answer) ? item.answer[0] : item.answer;
+}
+
+function originalItemResolved(item) {
+  return hasAnswer(state.selections[item.id]) || ["revealed", "skipped"].includes(state.originalAssists[item.id]);
+}
+
 function escapeAttribute(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -751,8 +763,18 @@ function answerControl(groupId, item, scope) {
 
 function renderOriginal(lesson) {
   const result = state.feedback?.kind === "original" ? state.feedback : null;
-  const allAnswered = lesson.original.items.every((item) => hasAnswer(state.selections[item.id]));
-  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div></div><p class="lesson-lead">${lesson.original.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div><div class="quiz-items">${lesson.original.items.map((item) => { const status = result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : ""; const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : ""; return `<section class="quiz-item ${status}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}</section>`; }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allAnswered ? "" : "disabled"}>${result?.passed ? "다음" : "확인"}</button>`;
+  const allResolved = lesson.original.items.every(originalItemResolved);
+  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div></div><p class="lesson-lead">${lesson.original.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div><div class="quiz-items">${lesson.original.items.map((item) => {
+    const assist = state.originalAssists[item.id];
+    const status = assist === "skipped" ? "skipped" : result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : assist === "revealed" ? "assisted" : "";
+    const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : "";
+    const assistNote = assist === "revealed"
+      ? `<p class="quiz-item-assist revealed">정답: ${escapeAttribute(approvedAnswer(item))}</p>`
+      : assist === "skipped"
+        ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
+        : "";
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">답 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+  }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allResolved ? "" : "disabled"}>${result?.passed ? "다음" : "확인"}</button>`;
 }
 
 function renderExtension(lesson) {
@@ -894,33 +916,57 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelectorAll("[data-choice-group]").forEach((button) => button.addEventListener("click", () => {
     state.selections[button.dataset.choiceGroup] = button.dataset.choice;
+    delete state.originalAssists[button.dataset.choiceGroup];
+    state.feedback = null;
+    renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-original-answer]").forEach((button) => button.addEventListener("click", () => {
+    const item = activeLesson().original.items.find((candidate) => candidate.id === button.dataset.originalAnswer);
+    if (!item) return;
+    state.selections[item.id] = approvedAnswer(item);
+    state.originalAssists[item.id] = "revealed";
+    state.feedback = null;
+    renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-original-skip]").forEach((button) => button.addEventListener("click", () => {
+    const item = activeLesson().original.items.find((candidate) => candidate.id === button.dataset.originalSkip);
+    if (!item) return;
+    delete state.selections[item.id];
+    state.originalAssists[item.id] = "skipped";
     state.feedback = null;
     renderContent();
   }));
   $("lessonContent").querySelectorAll("[data-input-group]").forEach((input) => input.addEventListener("input", () => {
     state.selections[input.dataset.inputGroup] = input.value;
+    delete state.originalAssists[input.dataset.inputGroup];
     state.feedback = null;
-    input.closest(".quiz-item")?.classList.remove("correct", "incorrect");
+    input.closest(".quiz-item")?.classList.remove("correct", "incorrect", "assisted", "skipped");
     $("lessonContent").querySelector(".feedback")?.remove();
     const lesson = activeLesson();
     const scope = input.dataset.answerScope;
     const checkButton = $("lessonContent").querySelector(`[data-check="${scope}"]`);
     if (!checkButton) return;
     checkButton.disabled = scope === "original"
-      ? !lesson.original.items.every((item) => hasAnswer(state.selections[item.id]))
+      ? !lesson.original.items.every(originalItemResolved)
       : !hasAnswer(state.selections[`${lesson.id}:extension`]);
     checkButton.textContent = "확인";
   }));
   $("lessonContent").querySelector('[data-check="original"]')?.addEventListener("click", () => {
     const lesson = activeLesson();
     if (state.feedback?.kind === "original" && state.feedback.passed) return setPhase("extension");
-    const passed = lesson.original.items.every((item) => answersMatch(state.selections[item.id], item.answer));
+    const wrongItems = lesson.original.items.filter((item) => !state.originalAssists[item.id] && !answersMatch(state.selections[item.id], item.answer));
+    const passed = wrongItems.length === 0;
     if (passed) completeOriginal();
     const retryVerb = lesson.original.items.every((item) => item.answerMode === "input") ? "써" : "골라";
+    const revealedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "revealed").length;
+    const skippedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "skipped").length;
+    const assistance = [revealedCount ? `답을 본 ${revealedCount}문제` : "", skippedCount ? `넘어간 ${skippedCount}문제` : ""].filter(Boolean).join(", ");
     state.feedback = {
       kind: "original",
       passed,
-      message: passed ? "잘했어요. 다음으로 가요." : `${lesson.explanation.headline} 설명을 떠올리고 다시 ${retryVerb} 보세요.`
+      message: passed
+        ? assistance ? `${assistance}를 표시해 두었어요. 다음으로 가요.` : "잘했어요. 다음으로 가요."
+        : `${wrongItems.length}문제를 다시 ${retryVerb} 보세요. 어려우면 그 문제의 답 보기 또는 넘어가기를 눌러도 됩니다.`
     };
     render();
   });
@@ -937,6 +983,7 @@ function bindLessonActions() {
     state.lessonId = event.currentTarget.dataset.nextLesson;
     state.phase = "concept";
     state.selections = {};
+    state.originalAssists = {};
     state.feedback = null;
     resetExperience();
     render();

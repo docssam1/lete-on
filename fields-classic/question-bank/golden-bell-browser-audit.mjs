@@ -29,6 +29,14 @@ async function auditViewport(viewport, label) {
       assert.ok(await page.locator(".tutorial-steps li").count() >= 2, `${label}/${bookId}/${lessonId}: tutorial steps missing`);
       assert.equal(await page.locator(".tutorial-steps li p:empty").count(), 0, `${label}/${bookId}/${lessonId}: empty tutorial step`);
       assert.ok((await page.locator(".tutorial-check span").innerText()).trim(), `${label}/${bookId}/${lessonId}: tutorial check missing`);
+      const originalStep = page.locator('.stage-step[data-phase="original"]');
+      if (!(await originalStep.isDisabled())) {
+        await originalStep.click();
+        const itemCount = await page.locator("[data-original-item]").count();
+        assert.ok(itemCount >= 1, `${label}/${bookId}/${lessonId}: source question missing`);
+        assert.equal(await page.locator("[data-original-answer]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question answer view missing`);
+        assert.equal(await page.locator("[data-original-skip]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question skip missing`);
+      }
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
       assert.equal(overflow, false, `${label}/${bookId}/${lessonId}: horizontal overflow`);
       lessonCount += 1;
@@ -152,6 +160,29 @@ async function auditInteractiveTriangularStair() {
   for (let index = 0; index < 3; index += 1) await practiceCards.nth(index).locator("[data-concept-practice-answer]").click();
   assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, "answer-view completion did not unlock the original source problem");
   assert.equal(await practiceCards.nth(0).locator(".feedback").innerText().then((text) => text.includes("답: 6")), true, "concept answer view did not reveal the approved practice answer");
+  await page.locator('.stage-step[data-phase="original"]').click();
+  const originalItems = page.locator("[data-original-item]");
+  assert.equal(await originalItems.count(), 2, "triangular source questions must stay as two separate items");
+  assert.equal(await originalItems.locator("[data-original-answer]").count(), 2, "each source question needs its own answer-view action");
+  assert.equal(await originalItems.locator("[data-original-skip]").count(), 2, "each source question needs its own skip action");
+  await originalItems.nth(0).locator("[data-input-group]").fill("19");
+  await originalItems.nth(1).locator("[data-original-skip]").click();
+  const originalCheck = page.locator('[data-check="original"]');
+  assert.equal(await originalCheck.isDisabled(), false, "manual answer and skip did not resolve the source questions");
+  await originalCheck.click();
+  assert.match(await page.locator(".feedback:not(.success)").innerText(), /1문제를 다시/u, "wrong manual answer incorrectly passed");
+  assert.equal(await originalCheck.innerText(), "확인", "wrong manual answer unlocked the next step");
+  await originalItems.nth(0).locator("[data-original-answer]").click();
+  assert.equal(await originalItems.nth(0).locator("[data-input-group]").inputValue(), "20", "approved fourth-stage answer was not filled");
+  assert.match(await originalItems.nth(0).locator(".quiz-item-assist").innerText(), /정답:\s*20/u, "approved answer note missing");
+  assert.match(await originalItems.nth(1).locator(".quiz-item-assist").innerText(), /넘어간 문제/u, "skipped source question note missing");
+  assert.equal((await originalItems.nth(1).innerText()).includes("84"), false, "skipping must not reveal the approved seventh-stage answer");
+  assert.equal(await originalCheck.isDisabled(), false, "answer-view and skip did not resolve the source questions");
+  await originalCheck.click();
+  assert.match(await page.locator(".feedback.success").innerText(), /답을 본 1문제, 넘어간 1문제/u, "assisted completion summary missing");
+  assert.equal(await originalCheck.innerText(), "다음", "resolved source questions did not unlock the next step");
+  const assistFontSizes = await page.locator(".quiz-item-actions button, .quiz-item-assist").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
+  assert.ok(assistFontSizes.every((size) => size >= 14), `source-question assist text is too small: ${assistFontSizes.join(",")}`);
   await page.evaluate(() => { window.print = () => {}; });
   await page.locator("#printLessonButton").click();
   await page.waitForTimeout(100);
