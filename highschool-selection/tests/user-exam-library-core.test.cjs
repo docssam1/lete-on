@@ -19,6 +19,17 @@ function entitlements(overrides) {
   ];
 }
 
+function conditions(overrides = {}) {
+  return {
+    scopeKeys: ["M2-1/algebra.linear"],
+    difficultyWeights: { lowered: 1, standard: 2, raised: 1 },
+    responseWeights: { objective: 1, subjective: 1 },
+    questionCount: 2,
+    maxPerFamily: 1,
+    ...overrides
+  };
+}
+
 function recipe(overrides = {}) {
   return {
     examId: "exam-001",
@@ -31,7 +42,7 @@ function recipe(overrides = {}) {
     selectionSnapshot: {
       academyId: "DP",
       semesterId: "M2-1",
-      conditions: { scopeKeys: ["M1-2", "M2-1"], difficulty: { standard: 10, raised: 20 } }
+      conditions: conditions()
     },
     seed: 78231,
     parentExamId: null,
@@ -47,20 +58,54 @@ test("normalizes a metadata-only user exam recipe and freezes its snapshot", () 
   const normalized = library.normalizeUserExamRecipe(recipe());
   assert.equal(normalized.generationMode, "academy_prep");
   assert.equal(normalized.items[1].itemVersionId, "v3");
-  assert.deepEqual(Object.keys(normalized.selectionSnapshot.conditions), ["difficulty", "scopeKeys"]);
+  assert.deepEqual(Object.keys(normalized.selectionSnapshot.conditions), [
+    "scopeKeys", "difficultyWeights", "responseWeights", "questionCount", "maxPerFamily", "domainQuotas"
+  ]);
+  assert.equal(normalized.selectionSnapshot.conditions.domainQuotas, null);
   assert.ok(Object.isFrozen(normalized));
   assert.ok(Object.isFrozen(normalized.items));
-  assert.ok(Object.isFrozen(normalized.selectionSnapshot.conditions.difficulty));
+  assert.ok(Object.isFrozen(normalized.selectionSnapshot.conditions.difficultyWeights));
+});
+
+test("stores an exact optional algebra and geometry quota without weakening old recipes", () => {
+  const normalized = library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: {
+      academyId: "SM",
+      semesterId: "CM1",
+      conditions: conditions({ domainQuotas: { algebra: 1, geometry: 1 } })
+    }
+  }));
+  assert.deepEqual(normalized.selectionSnapshot.conditions.domainQuotas, { algebra: 1, geometry: 1 });
+  assert.ok(Object.isFrozen(normalized.selectionSnapshot.conditions.domainQuotas));
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: {
+      academyId: "SM",
+      semesterId: "CM1",
+      conditions: conditions({ domainQuotas: { algebra: 2, geometry: 1 } })
+    }
+  })), /must sum to questionCount/);
 });
 
 test("rejects question text, answers, solutions, paths, and unknown recipe fields", () => {
   assert.throws(() => library.normalizeUserExamRecipe(recipe({ answer: "12" })), /recipe.answer is not allowed/);
   assert.throws(() => library.normalizeUserExamRecipe(recipe({
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { answerKey: "private" } }
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), answerKey: "private" } }
   })), /cannot contain answerKey/);
   assert.throws(() => library.normalizeUserExamRecipe(recipe({
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { sourcePath: "C:/private.pdf" } }
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), sourcePath: "C:/private.pdf" } }
   })), /cannot contain sourcePath/);
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), "official-answer": "12" } }
+  })), /cannot contain official-answer/);
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), "question＿body": "private" } }
+  })), /cannot contain question＿body/);
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), "source.path": "private" } }
+  })), /cannot contain source.path/);
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: conditions({ scopeKeys: ["../private/source.pdf"] }) }
+  })), /relative path segments/);
 });
 
 test("requires item versions, contiguous order, positive scores, and unique item ids", () => {
@@ -75,6 +120,9 @@ test("requires item versions, contiguous order, positive scores, and unique item
   assert.throws(() => library.normalizeUserExamRecipe(recipe({ items: [
     { itemId: "item-1", itemVersionId: "v1", order: 1, score: 0 }
   ] })), /must be positive/);
+  assert.throws(() => library.normalizeUserExamRecipe(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: conditions({ questionCount: 1 }) }
+  })), /questionCount must match/);
 });
 
 test("accepts only academy_prep or learning generation modes and uint32 seeds", () => {
@@ -105,13 +153,13 @@ test("validates explicit academy-semester entitlement combinations without Carte
 test("all_learning allows learning recipes with no academy but never academy prep", () => {
   const learning = recipe({
     generationMode: "learning",
-    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: { focus: "review" } }
+    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: conditions() }
   });
   assert.equal(library.assertEntitled([{ kind: "all_learning" }], learning), true);
   assert.equal(library.normalizeUserExamRecipe(learning).selectionSnapshot.academyId, null);
   assert.throws(() => library.assertEntitled([{ kind: "all_learning" }], recipe()), /explicit academy-semester entitlement/);
   assert.throws(() => library.normalizeUserExamRecipe(recipe({
-    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: {} }
+    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: conditions() }
   })), /academy_prep requires/);
 });
 
@@ -167,6 +215,7 @@ test("saveExam checks retention, entitlement, capacity, and removes temporary ex
   assert.equal(saved.updatedAt, "2026-08-31T10:00:00.000Z");
   assert.throws(() => library.saveExam(recipe(), plan({ maxSavedExamCount: 1 }), entitlements(), existing, "2026-08-31T10:00:00Z"), /limit/);
   assert.throws(() => library.saveExam(recipe({ expiresAt: "2026-09-07T01:00:00Z" }), plan(), entitlements(), [], "2026-08-31T10:00:00Z"), /retention period/);
+  assert.throws(() => library.saveExam(recipe(), plan(), entitlements(), [], "2026-09-06T00:00:00Z"), /expired temporary recipe/);
 });
 
 test("similar exam derivation metadata is deterministic and bound to parent versions and conditions", () => {

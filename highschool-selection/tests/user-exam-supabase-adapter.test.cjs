@@ -15,6 +15,7 @@ function conditions(overrides = {}) {
     responseWeights: { objective: 1, subjective: 1 },
     questionCount: 2,
     maxPerFamily: 1,
+    domainQuotas: null,
     ...overrides
   };
 }
@@ -91,7 +92,7 @@ test("toInsertRow validates auth, exam, and parent UUIDs", () => {
   assert.throws(() => adapter.toInsertRow(recipe({ parentExamId: "parent-one" }), AUTH_OWNER), /recipe.parentExamId must be a UUID/);
 });
 
-test("toInsertRow enforces the exact five persisted selection conditions", () => {
+test("toInsertRow enforces the five required conditions and an optional exact domain quota", () => {
   const missing = conditions();
   delete missing.maxPerFamily;
   assert.throws(() => adapter.toInsertRow(recipe({
@@ -109,6 +110,14 @@ test("toInsertRow enforces the exact five persisted selection conditions", () =>
       conditions: conditions({ difficultyWeights: { lowered: 0, standard: 0, raised: 0 } })
     }
   }), AUTH_OWNER), /positive weight/);
+
+  const withDomains = adapter.toInsertRow(recipe({
+    selectionSnapshot: { academyId: "SM", semesterId: "CM1", conditions: conditions({ domainQuotas: { algebra: 1, geometry: 1 } }) }
+  }), AUTH_OWNER);
+  assert.deepEqual(withDomains.recipe.selectionSnapshot.conditions.domainQuotas, { algebra: 1, geometry: 1 });
+  assert.throws(() => adapter.toInsertRow(recipe({
+    selectionSnapshot: { academyId: "SM", semesterId: "CM1", conditions: conditions({ domainQuotas: { algebra: 2, geometry: 1 } }) }
+  }), AUTH_OWNER), /must sum to questionCount/);
 });
 
 test("toInsertRow enforces DB item, order, score, target, and layout boundaries", () => {
@@ -128,6 +137,12 @@ test("toInsertRow enforces DB item, order, score, target, and layout boundaries"
   assert.throws(() => adapter.toInsertRow(recipe({
     selectionSnapshot: { academyId: "DP.BAD", semesterId: "M2-1", conditions: conditions() }
   }), AUTH_OWNER), /academyId is invalid/);
+  assert.throws(() => adapter.toInsertRow(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: conditions({ scopeKeys: ["../private/source.pdf"] }) }
+  }), AUTH_OWNER), /relative path segments/);
+  assert.throws(() => adapter.toInsertRow(recipe({
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: conditions({ questionCount: 1 }) }
+  }), AUTH_OWNER), /questionCount must match/);
   assert.throws(() => adapter.toInsertRow(recipe({ layout: { columns: 3 } }), AUTH_OWNER), /columns must be 1 or 2/);
 });
 
@@ -164,6 +179,9 @@ test("fromRow fails closed on invalid DB timestamps and compact JSON shapes", ()
   assert.throws(() => adapter.fromRow(row({ expires_at: "2026-08-30T01:04:00Z" })), /expire after/);
   assert.throws(() => adapter.fromRow(row({ recipe: { ...row().recipe, schemaVersion: 2 } })), /schemaVersion must be 1/);
   assert.throws(() => adapter.fromRow(row({ recipe: { ...row().recipe, layout: null } })), /layout must be an object/);
+  assert.throws(() => adapter.fromRow(row({
+    recipe: { ...row().recipe, selectionSnapshot: { conditions: conditions({ questionCount: 1 }) } }
+  })), /questionCount must match/);
   assert.throws(() => adapter.fromRow(row({
     recipe: {
       ...row().recipe,

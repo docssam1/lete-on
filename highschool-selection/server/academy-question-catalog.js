@@ -119,7 +119,9 @@ function createProjectCatalog(index, options) {
         allowedStatuses: searchOptions.includeCandidates
           ? projectSelector.CANDIDATE_ALLOWED_STATUSES
           : projectSelector.DEFAULT_ALLOWED_STATUSES,
-        allowedConceptStatuses: ["mapped", "unit_only"],
+        allowedConceptStatuses: searchOptions.includeCandidates
+          ? ["mapped", "unit_only", "pending"]
+          : ["mapped", "unit_only"],
         includeReviewCandidates: searchOptions.includeCandidates === true
       });
       return selected.items.filter(item => {
@@ -145,6 +147,9 @@ function createProjectCatalog(index, options) {
           typeId: item.conceptFamilyId || item.sourceTypeId,
           typeLabel: item.detailType,
           conceptStatus: item.conceptStatus,
+          taxonomyReviewStatus: item.taxonomyReviewStatus,
+          internalTypeGroupId: item.internalTypeGroupId,
+          withinCurrentRange: item.withinCurrentRange,
           difficultyBand: null,
           difficultyStatus: "pending",
           responseKind: null,

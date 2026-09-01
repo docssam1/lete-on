@@ -68,24 +68,37 @@ function normalizeWeights(value, labels, field) {
 
 function normalizeConditions(value) {
   const field = "selectionSnapshot.conditions";
-  const keys = new Set(["scopeKeys", "difficultyWeights", "responseWeights", "questionCount", "maxPerFamily"]);
-  exactKeys(value, keys, keys, field);
+  const requiredKeys = new Set(["scopeKeys", "difficultyWeights", "responseWeights", "questionCount", "maxPerFamily"]);
+  const allowedKeys = new Set([...requiredKeys, "domainQuotas"]);
+  exactKeys(value, allowedKeys, requiredKeys, field);
   invariant(Array.isArray(value.scopeKeys) && value.scopeKeys.length >= 1 && value.scopeKeys.length <= 100,
     `${field}.scopeKeys must contain between 1 and 100 keys`);
   const scopeKeys = value.scopeKeys.map(function (scope, index) {
     invariant(typeof scope === "string" && SCOPE_KEY.test(scope), `${field}.scopeKeys[${index}] is invalid`);
+    invariant(scope.split("/").every(function (segment) { return segment !== "." && segment !== ".."; }),
+      `${field}.scopeKeys[${index}] cannot contain relative path segments`);
     return scope;
   });
   invariant(Number.isSafeInteger(value.questionCount) && value.questionCount >= 1 && value.questionCount <= 100,
     `${field}.questionCount must be between 1 and 100`);
   invariant(Number.isSafeInteger(value.maxPerFamily) && value.maxPerFamily >= 1 && value.maxPerFamily <= 10,
     `${field}.maxPerFamily must be between 1 and 10`);
+  let domainQuotas = null;
+  if (value.domainQuotas != null) {
+    const quotaKeys = new Set(["algebra", "geometry"]);
+    exactKeys(value.domainQuotas, quotaKeys, quotaKeys, `${field}.domainQuotas`);
+    invariant(Number.isSafeInteger(value.domainQuotas.algebra) && value.domainQuotas.algebra > 0 && value.domainQuotas.algebra <= 100, `${field}.domainQuotas.algebra is invalid`);
+    invariant(Number.isSafeInteger(value.domainQuotas.geometry) && value.domainQuotas.geometry > 0 && value.domainQuotas.geometry <= 100, `${field}.domainQuotas.geometry is invalid`);
+    invariant(value.domainQuotas.algebra + value.domainQuotas.geometry === value.questionCount, `${field}.domainQuotas must sum to questionCount`);
+    domainQuotas = { algebra: value.domainQuotas.algebra, geometry: value.domainQuotas.geometry };
+  }
   return {
     scopeKeys,
     difficultyWeights: normalizeWeights(value.difficultyWeights, ["lowered", "standard", "raised"], `${field}.difficultyWeights`),
     responseWeights: normalizeWeights(value.responseWeights, ["objective", "subjective"], `${field}.responseWeights`),
     questionCount: value.questionCount,
-    maxPerFamily: value.maxPerFamily
+    maxPerFamily: value.maxPerFamily,
+    domainQuotas
   };
 }
 
@@ -166,11 +179,15 @@ function normalizeCompactRecipe(value) {
     invariant(value.layout != null, "row.recipe.layout must be an object when present");
     layout = normalizeLayout(value.layout);
   }
+  const conditions = normalizeConditions(value.selectionSnapshot.conditions);
+  const items = normalizeItems(value.items);
+  invariant(conditions.questionCount === items.length,
+    "row.recipe selection questionCount must match items length");
   return {
     schemaVersion: 1,
     seed: value.seed,
-    selectionSnapshot: { conditions: normalizeConditions(value.selectionSnapshot.conditions) },
-    items: normalizeItems(value.items),
+    selectionSnapshot: { conditions },
+    items,
     layout
   };
 }
@@ -194,6 +211,8 @@ function toInsertRow(recipeInput, authUserId, options) {
   invariant(Number.isSafeInteger(recipeInput.seed) && recipeInput.seed >= 0 && recipeInput.seed <= 0xffffffff,
     "recipe.seed must be an unsigned 32-bit integer");
   const items = normalizeItems(recipeInput.items);
+  invariant(target.conditions.questionCount === items.length,
+    "selectionSnapshot.conditions.questionCount must match recipe.items length");
   const layout = normalizeLayout(recipeInput.layout);
   const opts = options == null ? {} : plainObject(options, "options");
   exactKeys(opts, new Set(["title"]), new Set(), "options");

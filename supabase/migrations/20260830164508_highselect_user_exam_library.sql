@@ -133,7 +133,7 @@ begin
   if not (conditions ?& array['scopeKeys', 'difficultyWeights', 'responseWeights', 'questionCount', 'maxPerFamily']) then return false; end if;
   if exists (
     select 1 from jsonb_object_keys(conditions) as key_name
-    where key_name not in ('scopeKeys', 'difficultyWeights', 'responseWeights', 'questionCount', 'maxPerFamily')
+    where key_name not in ('scopeKeys', 'difficultyWeights', 'responseWeights', 'questionCount', 'maxPerFamily', 'domainQuotas')
   ) then return false; end if;
   if jsonb_typeof(conditions->'scopeKeys') <> 'array'
      or jsonb_array_length(conditions->'scopeKeys') < 1
@@ -142,6 +142,7 @@ begin
        select 1 from jsonb_array_elements(conditions->'scopeKeys') as scope(value)
        where jsonb_typeof(scope.value) <> 'string'
           or scope.value #>> '{}' !~ '^[A-Za-z0-9._:-]+(/[A-Za-z0-9._:-]+)*$'
+          or scope.value #>> '{}' ~ '(^|/)[.][.]?(/|$)'
      ) then return false; end if;
   if jsonb_typeof(conditions->'difficultyWeights') <> 'object'
      or coalesce((select array_agg(key order by key) from jsonb_object_keys(conditions->'difficultyWeights') as key), array[]::text[])
@@ -166,6 +167,19 @@ begin
   if jsonb_typeof(conditions->'questionCount') <> 'number'
      or conditions->>'questionCount' !~ '^[0-9]+$'
      or (conditions->>'questionCount')::integer not between 1 and 100 then return false; end if;
+  if conditions ? 'domainQuotas' and conditions->'domainQuotas' <> 'null'::jsonb then
+    if jsonb_typeof(conditions->'domainQuotas') <> 'object'
+       or coalesce((select array_agg(key order by key) from jsonb_object_keys(conditions->'domainQuotas') as key), array[]::text[])
+          <> array['algebra', 'geometry']
+       or exists (
+         select 1 from jsonb_each(conditions->'domainQuotas') as quota(key, value)
+         where jsonb_typeof(quota.value) <> 'number'
+            or quota.value #>> '{}' !~ '^[0-9]+$'
+            or (quota.value #>> '{}')::integer not between 1 and 100
+       )
+       or ((conditions->'domainQuotas'->>'algebra')::integer + (conditions->'domainQuotas'->>'geometry')::integer)
+          <> (conditions->>'questionCount')::integer then return false; end if;
+  end if;
   if jsonb_typeof(conditions->'maxPerFamily') <> 'number'
      or conditions->>'maxPerFamily' !~ '^[0-9]+$'
      or (conditions->>'maxPerFamily')::integer not between 1 and 10 then return false; end if;
@@ -173,6 +187,7 @@ begin
   if jsonb_typeof(candidate->'items') <> 'array' then return false; end if;
   item_count := jsonb_array_length(candidate->'items');
   if item_count < 1 or item_count > 100 then return false; end if;
+  if (conditions->>'questionCount')::integer <> item_count then return false; end if;
   for item in select value from jsonb_array_elements(candidate->'items')
   loop
     if jsonb_typeof(item) <> 'object'
@@ -246,6 +261,9 @@ begin
   else
     if new.owner_id <> old.owner_id then raise exception 'owner_id cannot be changed'; end if;
     if new.created_at <> old.created_at then raise exception 'created_at cannot be changed'; end if;
+    if old.status = 'temporary' and old.expires_at <= now() and new.status = 'saved' then
+      raise exception 'expired temporary exam cannot be saved';
+    end if;
   end if;
 
   select definition.*
@@ -421,7 +439,9 @@ revoke all on table public.hs_user_exam_recipes from public, anon, authenticated
 grant select on table public.hs_user_exam_plan_definitions to authenticated;
 grant select on table public.hs_user_exam_plan_assignments to authenticated;
 grant select on table public.hs_user_exam_entitlements to authenticated;
-grant select, insert, update, delete on table public.hs_user_exam_recipes to authenticated;
+-- Recipe creation and save transitions must pass the private server inventory gate.
+-- Authenticated browser clients may read/delete only their own rows; service_role performs validated writes.
+grant select, delete on table public.hs_user_exam_recipes to authenticated;
 grant select, insert, update, delete on table public.hs_user_exam_plan_definitions to service_role;
 grant select, insert, update, delete on table public.hs_user_exam_plan_assignments to service_role;
 grant select, insert, update, delete on table public.hs_user_exam_entitlements to service_role;

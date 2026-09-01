@@ -81,6 +81,10 @@
     classification: "교육과정 분류", locator: "원본 위치", difficulty: "난이도", response: "답안 형식",
     keyCheck: "답 확인", method: "풀이법", variants: "쌍둥이·유사문항", usageApproval: "시험지 사용 승인"
   };
+  const taxonomyLabels = {
+    merge_existing: "기존 유형 병합", alias_existing: "기존 유형 별칭", alias_internal_group: "생수 내부 유형군",
+    keep_separate: "별도 유형 유지", new_type: "신규 유형 후보", excluded: "현재 범위 제외", pending: "유형 검수 대기"
+  };
 
   function make(tag, className, text) {
     const node = document.createElement(tag);
@@ -294,6 +298,9 @@
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
         if ((candidate.profiles || []).some(function (profile) { return profile.status === "candidate"; })) badges.append(candidateBadge("학원형 후보", "warning"));
         if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
+        if (candidate.conceptStatus === "pending") badges.append(candidateBadge("공통 유형 연결 대기", "warning"));
+        if (candidate.taxonomyReviewStatus) badges.append(candidateBadge(taxonomyLabels[candidate.taxonomyReviewStatus] || "유형 검수 대기", "taxonomy"));
+        if (candidate.withinCurrentRange === false) badges.append(candidateBadge("현재 범위 제외", "warning"));
         badges.append(candidateBadge(candidate.difficultyStatus === "verified" ? (difficultyLabels[candidate.difficultyBand] || candidate.difficultyBand) : "난이도 검수 전"));
         badges.append(candidateBadge(candidate.responseStatus === "verified" ? (inputLabels[candidate.responseKind] || candidate.responseKind) : "답안 형식 검수 전"));
         const checks = candidate.reviewChecks || {};

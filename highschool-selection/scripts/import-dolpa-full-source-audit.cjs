@@ -154,6 +154,8 @@ function canonicalClassification(question, decision, database) {
 
 function observedTerminal(audit) {
   const terminal = clean(audit.coursePlacement && audit.coursePlacement.terminalCoreUnit);
+  const declared = terminal.match(/^((?:초|중|고)[0-9]+-[12])\s+(.+)$/u);
+  if (declared) return { semester: declared[1], unit: clean(declared[2]) };
   const match = terminal.match(/^(초|중|고)[0-9]+-[12]/u);
   const semester = match ? match[0] : clean(audit.questions[audit.questions.length - 1].semester);
   const candidates = audit.questions.filter(question => question.semester === semester && question.scopeRole !== "future_unit_diagnostic");

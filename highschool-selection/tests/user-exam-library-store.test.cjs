@@ -27,6 +27,17 @@ function root(overrides = {}) {
   };
 }
 
+function conditions(overrides = {}) {
+  return {
+    scopeKeys: ["G8/M01"],
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 },
+    questionCount: 1,
+    maxPerFamily: 1,
+    ...overrides
+  };
+}
+
 function recipe(examId, ownerId = "learner1", overrides = {}) {
   const createdAt = overrides.createdAt || "2026-08-30T00:00:00.000Z";
   const updatedAt = overrides.updatedAt || createdAt;
@@ -38,7 +49,7 @@ function recipe(examId, ownerId = "learner1", overrides = {}) {
     updatedAt,
     expiresAt: new Date(Date.parse(createdAt) + 7 * 86400000).toISOString(),
     generationMode: "academy_prep",
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { scopeKeys: ["M2-1"] } },
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: conditions() },
     seed: 7,
     parentExamId: null,
     items: [{ itemId: `item-${examId}`, itemVersionId: "v1", order: 1, score: 2 }],
@@ -51,7 +62,7 @@ test("normalizes plans, explicit entitlements, and metadata-only recipes", () =>
   assert.equal(normalized.plans.basic.maxRecentExamCount, 2);
   assert.equal(normalized.assignments.learner1.entitlements[0].semesterId, "M2-1");
   assert.throws(() => storeModule.normalize(root({ exams: {
-    bad: recipe("bad", "learner1", { selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { answerKey: "x" } } })
+    bad: recipe("bad", "learner1", { selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...conditions(), answerKey: "x" } } })
   } })), /cannot contain answerKey/);
 });
 
@@ -60,7 +71,7 @@ test("creates only explicitly entitled recipes and keeps owners isolated", () =>
   assert.equal(store.create("learner1", recipe("exam1")).examId, "exam1");
   assert.equal(store.read("learner2", "exam1"), null);
   assert.throws(() => store.create("learner1", recipe("wrong", "learner1", {
-    selectionSnapshot: { academyId: "WM", semesterId: "M2-1", conditions: {} }
+    selectionSnapshot: { academyId: "WM", semesterId: "M2-1", conditions: conditions() }
   })), /explicit academy-semester entitlement/);
   assert.throws(() => store.create("learner1", recipe("foreign", "learner2")), /ownerId does not match/);
 });
@@ -69,7 +80,7 @@ test("all_learning allows an academy-neutral learning recipe", () => {
   const store = storeModule.createMemoryStore(root());
   const result = store.create("learner2", recipe("learn1", "learner2", {
     generationMode: "learning",
-    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: { difficultyRatio: { standard: 70, raised: 30 } } }
+    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: conditions() }
   }));
   assert.equal(result.selectionSnapshot.academyId, null);
 });
@@ -93,6 +104,12 @@ test("save enforces the plan quota and removes temporary expiry", () => {
   assert.equal(saved.expiresAt, null);
   store.create("learner1", recipe("exam2"));
   assert.throws(() => store.save("learner1", "exam2", "2026-08-31T00:00:00Z"), /limit/);
+});
+
+test("save cannot revive an expired temporary exam", () => {
+  const store = storeModule.createMemoryStore(root());
+  store.create("learner1", recipe("expired"));
+  assert.throws(() => store.save("learner1", "expired", "2026-09-06T00:00:00Z"), /expired temporary recipe/);
 });
 
 test("file store persists compact recipes and assignment changes", () => {

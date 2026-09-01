@@ -773,6 +773,17 @@ test("둘째달 구판 2-1 입반테스트 2를 2024년판과 다른 원본으�
   assert.equal(info.pageSourceId, "dp-m21-202310-r2-page-assets-v1");
 });
 
+test("넷째달 구판 1-1 입반테스트 4를 정비례·반비례 종료 원본으로 연결한다", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m11-202312-r4-"));
+  const paths = ["manifest.json", "method.json", "paper.json", "difficulty.json", "analysis.json"].map(name => path.join(root, name));
+  paths.forEach(filePath => fs.writeFileSync(filePath, JSON.stringify({ sourceId: "DP-SRC-1C451CEB27A7" })));
+  const info = methodReviewInfo(paths[0], paths[1], null, paths[2], paths[3], paths[4]);
+  assert.equal(info.key, "m11-202312-r4");
+  assert.equal(info.label, "1-1 입반테스트 4(넷째달 구판)");
+  assert.deepEqual(info.tags, ["middle1-1", "legacy", "mid-course-join", "fourth-month", "full-range"]);
+  assert.equal(info.pageSourceId, "dp-m11-202312-r4-page-assets-v1");
+});
+
 test("2-1 입반테스트 4 대표본과 부분 교체 교사본의 직접 소유 문항 수를 구분한다", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "dolpa-method-memory-m21-202312-r4-"));
   const writePacket = (name, value) => {

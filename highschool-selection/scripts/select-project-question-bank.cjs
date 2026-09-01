@@ -29,8 +29,10 @@ function buildLookups(index) {
 }
 
 function compareItems(left, right) {
-  const leftKey = [left.course, left.semester, left.majorUnit, left.minorUnit, left.detailType, left.sourceBankId, left.sourceItemId].join("\u0000");
-  const rightKey = [right.course, right.semester, right.majorUnit, right.minorUnit, right.detailType, right.sourceBankId, right.sourceItemId].join("\u0000");
+  const leftRank = left.sourceRole === "direct" ? "0" : "1";
+  const rightRank = right.sourceRole === "direct" ? "0" : "1";
+  const leftKey = [leftRank, left.course, left.semester, left.majorUnit, left.minorUnit, left.detailType, left.sourceBankId, left.sourceItemId].join("\u0000");
+  const rightKey = [rightRank, right.course, right.semester, right.majorUnit, right.minorUnit, right.detailType, right.sourceBankId, right.sourceItemId].join("\u0000");
   return leftKey.localeCompare(rightKey, "ko") || left.itemId.localeCompare(right.itemId);
 }
 
@@ -40,6 +42,7 @@ function selectItems(index, profileTokens, options) {
   const profiles = tokens.map(token => profileByToken(index, token));
   if (!profiles.length || profiles.some(profile => !profile)) throw new Error("학원형을 확인해 주세요.");
   const profileIds = new Set(profiles.map(profile => profile.profileId));
+  const programIds = new Set(profiles.map(profile => profile.programId).filter(Boolean));
   const allowedStatuses = new Set(opts.allowedStatuses || DEFAULT_ALLOWED_STATUSES);
   const allowedConceptStatuses = new Set(opts.allowedConceptStatuses || ["mapped"]);
   const reviewInspection = opts.includeReviewCandidates === true || allowedStatuses.has("candidate");
@@ -64,9 +67,15 @@ function selectItems(index, profileTokens, options) {
       itemId: item.itemId,
       sourceBankId: item.sourceBankId,
       sourceBankLabel: sourceBank ? sourceBank.label : item.sourceBankId,
+      sourceRole: sourceBank && programIds.has(sourceBank.academyId) ? "direct" : "compatible",
       sourceItemId: item.sourceItemId,
       sourceTypeId: item.sourceTypeId,
       sourceTypeLabel: sourceType ? sourceType.detailType : null,
+      taxonomyReviewStatus: item.taxonomyReviewStatus || (sourceType && sourceType.taxonomyReviewStatus) || null,
+      internalTypeGroupId: item.internalTypeGroupId || (sourceType && sourceType.internalTypeGroupId) || null,
+      withinCurrentRange: Object.prototype.hasOwnProperty.call(item, "withinCurrentRange")
+        ? item.withinCurrentRange === true
+        : null,
       conceptFamilyId: familyId || null,
       course: curriculum.course || "",
       semester: curriculum.semester || "",
@@ -87,7 +96,7 @@ function selectItems(index, profileTokens, options) {
     if (query && ![
       row.itemId, row.sourceBankId, row.sourceItemId, row.sourceTypeId, row.sourceTypeLabel,
       row.conceptFamilyId, row.course, row.semester, row.majorUnit, row.minorUnit, row.detailType,
-      row.solutionArchetype
+      row.solutionArchetype, row.taxonomyReviewStatus, row.internalTypeGroupId
     ].join(" ").toLocaleLowerCase("ko").includes(query)) return [];
     return [row];
   }).sort(compareItems).slice(0, limit);

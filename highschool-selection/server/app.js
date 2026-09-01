@@ -30,6 +30,7 @@ const academyQuestionAssetsModule = require("./academy-question-assets.js");
 const userExamLibraryCore = require("../data/user-exam-library-core.js");
 const examGenerationPlanner = require("../data/exam-generation-planner.js");
 const userExamLibraryStoreModule = require("./user-exam-library-store.js");
+const userExamScopeInventoryModule = require("./user-exam-scope-inventory.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -322,6 +323,10 @@ function createApp(options) {
     data: opts.privateUserExamLibrary,
     filePath: opts.privateUserExamLibraryPath
   });
+  const loadUserExamScopeInventory = opts.loadUserExamScopeInventory || userExamScopeInventoryModule.createLoader({
+    data: opts.privateUserExamScopeInventory,
+    filePath: opts.privateUserExamScopeInventoryPath
+  });
   const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
     projectData: opts.privateProjectQuestionIndex,
     projectFilePath: opts.privateProjectQuestionIndexPath,
@@ -396,6 +401,12 @@ function createApp(options) {
     return userExamLibraryStore;
   }
 
+  function requireUserExamScopeInventory() {
+    if (!loadUserExamScopeInventory) throw new HttpError(503, "승인된 학원·학기 출제 범위가 연결되지 않았습니다.");
+    try { return loadUserExamScopeInventory(); }
+    catch (_) { throw new HttpError(503, "승인된 학원·학기 출제 범위를 확인해 주세요."); }
+  }
+
   function userExamFailure(error, missingStatus) {
     if (error instanceof HttpError) throw error;
     if (error && error.code === "USER_EXAM_ACCESS_MISSING") {
@@ -443,9 +454,20 @@ function createApp(options) {
 
   function assertNoPrivateUserExamValues(value) {
     const seen = new Set();
-    function visit(node) {
+    function normalizedKey(key) {
+      return String(key).normalize("NFKC").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+    const forbiddenKeys = new Set(userExamLibraryCore.FORBIDDEN_RECIPE_KEYS);
+    function visit(node, key) {
+      if (key != null && forbiddenKeys.has(normalizedKey(key))) {
+        throw new HttpError(400, "사용자 시험에는 원문·답안·출처 정보를 저장할 수 없습니다.");
+      }
       if (typeof node === "string") {
-        if (/^(?:[A-Za-z]:[\\/]|\\\\|file:\/\/|https?:\/\/)/i.test(node.trim())) {
+        const text = node.normalize("NFKC").trim();
+        if (/^(?:[A-Za-z]:[\\/]|\\\\|file:\/\/|https?:\/\/)/i.test(text)
+            || /(?:^|[\\/])\.\.(?:[\\/]|$)/.test(text)
+            || (/[\\/]/.test(text) && /(?:^|[\\/])(?:private|source|original|answer|answers)(?:[\\/]|$)/i.test(text))
+            || (/[\\/]/.test(text) && /\.(?:pdf|png|jpe?g|webp|json|docx?|xlsx?|pptx?)$/i.test(text))) {
           throw new HttpError(400, "사용자 시험에는 원본 경로나 외부 주소를 저장할 수 없습니다.");
         }
         return;
@@ -453,13 +475,13 @@ function createApp(options) {
       if (!node || typeof node !== "object") return;
       if (seen.has(node)) throw new HttpError(400, "사용자 시험 요청 형식이 올바르지 않습니다.");
       seen.add(node);
-      Object.values(node).forEach(visit);
+      Object.entries(node).forEach(function ([childKey, child]) { visit(child, childKey); });
       seen.delete(node);
     }
-    visit(value);
+    visit(value, null);
   }
 
-  function approvedLibraryItems(bodyItems, registry, generationMode, academyId) {
+  function approvedLibraryItems(bodyItems, registry, generationMode, academyId, scopeApproval, scopeInventory) {
     if (!Array.isArray(bodyItems) || !bodyItems.length) throw new HttpError(400, "승인된 문항 ID와 버전을 하나 이상 보내 주세요.");
     return bodyItems.map(function (item, index) {
       exactKeys(item, new Set(["itemId", "itemVersionId", "order", "score"]), `사용자 시험 ${index + 1}번 문항`);
@@ -470,11 +492,14 @@ function createApp(options) {
       if (generationMode === "academy_prep" && candidate.mode !== academyId) {
         throw new HttpError(409, "선택한 학원형과 같은 문항만 대비 시험에 담을 수 있습니다.");
       }
+      try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeApproval.requestedScopes); }
+      catch (_) { throw new HttpError(409, "선택한 학원·학기와 출제 범위에 맞는 문항만 담을 수 있습니다."); }
       return { itemId: candidate.id, itemVersionId: candidate.itemVersionId, order: item.order, score: item.score };
     });
   }
 
-  function generatedCandidatePool(registry, generationMode, academyId, scopeKeys, excludedItemIds) {
+  function generatedCandidatePool(registry, generationMode, academyId, scopeApproval, scopeInventory, excludedItemIds) {
+    const scopeKeys = scopeApproval.requestedScopes;
     if (!Array.isArray(scopeKeys) || !scopeKeys.length) throw new HttpError(400, "시험 범위를 하나 이상 선택해 주세요.");
     const modes = generationMode === "academy_prep"
       ? [security.clean(academyId).toUpperCase()]
@@ -482,15 +507,21 @@ function createApp(options) {
     const excluded = new Set(excludedItemIds || []);
     const byId = new Map();
     modes.forEach(function (mode) {
-      registry.search({ mode, scopeKeys, limit: 100, originalOnly: true }).forEach(function (entry) {
+      const matches = typeof registry.searchAll === "function"
+        ? registry.searchAll({ mode, scopeKeys, originalOnly: true })
+        : registry.search({ mode, scopeKeys, limit: 10000, originalOnly: true });
+      matches.forEach(function (entry) {
         const candidate = entry.candidate;
         if (excluded.has(candidate.id) || byId.has(candidate.id)) return;
+        try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeKeys); }
+        catch (_) { return; }
         byId.set(candidate.id, {
           itemId: candidate.id,
           itemVersionId: candidate.itemVersionId,
           curriculumPath: candidate.curriculum.key,
           typeCode: candidate.typeCode,
           familyId: candidate.variant.familyId,
+          domainGroup: candidate.domainGroup,
           difficultyBand: candidate.difficultyBand,
           inputType: candidate.inputType,
           score: 1
@@ -507,14 +538,34 @@ function createApp(options) {
       difficultyWeights: input.difficultyWeights,
       responseWeights: input.responseWeights,
       questionCount: input.questionCount,
-      maxPerFamily: input.maxPerFamily
+      maxPerFamily: input.maxPerFamily,
+      domainQuotas: input.domainQuotas == null ? null : input.domainQuotas
     };
-    const selectionSnapshot = parent ? parent.selectionSnapshot : {
+    const rawSelectionSnapshot = parent ? parent.selectionSnapshot : {
       academyId: input.academyId == null || input.academyId === "" ? null : security.clean(input.academyId).toUpperCase(),
       semesterId: security.clean(input.semesterId),
       conditions: requestedConditions
     };
     const generationMode = parent ? parent.generationMode : security.clean(input.generationMode);
+    let selectionSnapshot;
+    try { selectionSnapshot = userExamLibraryCore.normalizeSelectionSnapshot(rawSelectionSnapshot, generationMode); }
+    catch (error) { userExamFailure(error, 403); }
+    let access;
+    try {
+      access = library.assignment(context.user.studentId);
+      userExamLibraryCore.assertTargetEntitled(
+        access.assignment.entitlements, generationMode,
+        selectionSnapshot.academyId, selectionSnapshot.semesterId
+      );
+    } catch (error) { userExamFailure(error, 403); }
+    const scopeInventory = requireUserExamScopeInventory();
+    let scopeApproval;
+    try {
+      scopeApproval = scopeInventory.requireTarget(
+        generationMode, selectionSnapshot.academyId, selectionSnapshot.semesterId,
+        selectionSnapshot.conditions.scopeKeys
+      );
+    } catch (_) { throw new HttpError(403, "선택한 학원·학기와 출제 범위가 승인 목록에 없습니다."); }
     const derivation = parent ? userExamLibraryCore.deriveSimilarExamMetadata(parent, {
       derivationIndex: input.derivationIndex,
       generationMode
@@ -524,7 +575,8 @@ function createApp(options) {
       registry,
       generationMode,
       selectionSnapshot.academyId,
-      selectionSnapshot.conditions.scopeKeys,
+      scopeApproval,
+      scopeInventory,
       parentItems
     );
     let plan;
@@ -534,18 +586,16 @@ function createApp(options) {
         seed,
         difficultyWeights: selectionSnapshot.conditions.difficultyWeights,
         responseWeights: selectionSnapshot.conditions.responseWeights,
-        maxPerFamily: selectionSnapshot.conditions.maxPerFamily
+        maxPerFamily: selectionSnapshot.conditions.maxPerFamily,
+        domainQuotas: selectionSnapshot.conditions.domainQuotas
       });
     } catch (error) {
       if (error instanceof TypeError) throw new HttpError(409, "선택한 범위와 비율에 맞는 검수 완료 문항이 부족합니다.");
       throw error;
     }
-    let access;
-    try { access = library.assignment(context.user.studentId); }
-    catch (error) { userExamFailure(error, 403); }
     const timestamp = new Date(now()).toISOString();
     const recipe = {
-      examId: `userexam_${crypto.randomUUID().replace(/-/g, "")}`,
+      examId: crypto.randomUUID(),
       ownerId: context.user.studentId,
       state: "temporary",
       createdAt: timestamp,
@@ -581,6 +631,7 @@ function createApp(options) {
       itemVersionId: candidate.itemVersionId,
       curriculumPath: candidate.curriculum.key,
       typeCode: candidate.typeCode,
+      domainGroup: candidate.domainGroup,
       difficultyBand: candidate.difficultyBand,
       inputType: candidate.inputType,
       figureRequired: candidate.figureAudit.required === true,
@@ -1216,7 +1267,7 @@ function createApp(options) {
       const body = await readJson(request, 64 * 1024);
       exactKeys(body, new Set([
         "generationMode", "academyId", "semesterId", "scopeKeys", "questionCount",
-        "difficultyWeights", "responseWeights", "maxPerFamily", "seed", "layout"
+        "difficultyWeights", "responseWeights", "maxPerFamily", "domainQuotas", "seed", "layout"
       ]), "사용자 시험 자동 구성 요청");
       assertNoPrivateUserExamValues(body);
       const generated = generateUserExam(library, registry, context, body, null);
@@ -1242,13 +1293,22 @@ function createApp(options) {
         exactKeys(body, new Set(["generationMode", "selectionSnapshot", "seed", "parentExamId", "items", "layout"]), "사용자 시험 생성 요청");
         assertNoPrivateUserExamValues(body);
         const generationMode = security.clean(body.generationMode);
-        const selectionSnapshot = body.selectionSnapshot;
-        if (!selectionSnapshot || typeof selectionSnapshot !== "object" || Array.isArray(selectionSnapshot)) {
+        const rawSelectionSnapshot = body.selectionSnapshot;
+        if (!rawSelectionSnapshot || typeof rawSelectionSnapshot !== "object" || Array.isArray(rawSelectionSnapshot)) {
           throw new HttpError(400, "사용자 시험 선택 조건을 확인해 주세요.");
         }
+        let selectionSnapshot;
+        try { selectionSnapshot = userExamLibraryCore.normalizeSelectionSnapshot(rawSelectionSnapshot, generationMode); }
+        catch (error) { userExamFailure(error, 403); }
         const parentExamId = body.parentExamId == null || body.parentExamId === "" ? null : security.clean(body.parentExamId);
         let access;
-        try { access = library.assignment(context.user.studentId); }
+        try {
+          access = library.assignment(context.user.studentId);
+          userExamLibraryCore.assertTargetEntitled(
+            access.assignment.entitlements, generationMode,
+            selectionSnapshot.academyId, selectionSnapshot.semesterId
+          );
+        }
         catch (error) { userExamFailure(error, 403); }
         if (parentExamId) {
           let parent;
@@ -1256,10 +1316,24 @@ function createApp(options) {
           catch (error) { userExamFailure(error, 403); }
           if (!parent) throw new HttpError(404, "부모 시험을 찾을 수 없습니다.");
         }
-        const items = approvedLibraryItems(body.items, registry, generationMode, selectionSnapshot.academyId == null ? null : security.clean(selectionSnapshot.academyId));
+        const scopeInventory = requireUserExamScopeInventory();
+        let scopeApproval;
+        try {
+          scopeApproval = scopeInventory.requireTarget(
+            generationMode, selectionSnapshot.academyId, selectionSnapshot.semesterId,
+            selectionSnapshot.conditions.scopeKeys
+          );
+        } catch (_) { throw new HttpError(403, "선택한 학원·학기와 출제 범위가 승인 목록에 없습니다."); }
+        const items = approvedLibraryItems(
+          body.items, registry, generationMode, selectionSnapshot.academyId,
+          scopeApproval, scopeInventory
+        );
+        if (selectionSnapshot.conditions.questionCount !== items.length) {
+          throw new HttpError(400, "선택 조건의 문항 수와 실제 문항 수가 다릅니다.");
+        }
         const timestamp = new Date(now()).toISOString();
         const recipe = {
-          examId: `userexam_${crypto.randomUUID().replace(/-/g, "")}`,
+          examId: crypto.randomUUID(),
           ownerId: context.user.studentId,
           state: "temporary",
           createdAt: timestamp,

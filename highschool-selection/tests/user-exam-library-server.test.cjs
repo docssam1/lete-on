@@ -59,7 +59,8 @@ function makeQuestion(index, mode, approvalStatus = "approved", options = {}) {
     singleAnswerAudit: { status: "passed", validOutcomeCount: 1, evidenceCode: `USER-LIBRARY-${index}` },
     figureAudit: { required: false, status: "not_required" },
     reviewStatus: "approved",
-    typeCode: `TYPE_${index}`
+    typeCode: `TYPE_${index}`,
+    domainGroup: options.domainGroup || null
   };
 }
 
@@ -75,11 +76,21 @@ const AUTO_DP = ["lowered", "standard", "raised"].flatMap(function (difficultyBa
     });
   });
 });
+const AUTO_SM = ["algebra", "geometry"].flatMap(function (domainGroup, domainIndex) {
+  return ["lowered", "standard", "raised"].flatMap(function (difficultyBand, difficultyIndex) {
+    return ["single_choice", "input"].flatMap(function (inputType, inputIndex) {
+      return [0, 1, 2, 3].map(function (offset) {
+        const index = 100 + domainIndex * 40 + difficultyIndex * 8 + inputIndex * 4 + offset;
+        return makeQuestion(index, "SM", "approved", { difficultyBand, inputType, domainGroup });
+      });
+    });
+  });
+});
 
 function registry() {
   return {
     schemaVersion: "highselect-private-exam-editor-registry/v1",
-    candidates: Object.fromEntries([DP_ONE, DP_TWO, WM_ONE, LOCKED, ...AUTO_DP].map(item => [item.id, item])),
+    candidates: Object.fromEntries([DP_ONE, DP_TWO, WM_ONE, LOCKED, ...AUTO_DP, ...AUTO_SM].map(item => [item.id, item])),
     relations: {}
   };
 }
@@ -125,7 +136,10 @@ function libraryData() {
       student_one: {
         ownerId: "student_one",
         planId: "basic",
-        entitlements: [{ kind: "academy_semester", academyId: "DP", semesterId: "M2-1" }],
+        entitlements: [
+          { kind: "academy_semester", academyId: "DP", semesterId: "M2-1" },
+          { kind: "academy_semester", academyId: "SM", semesterId: "CM1" }
+        ],
         updatedAt: "2026-08-30T00:00:00Z"
       },
       student_two: {
@@ -139,15 +153,40 @@ function libraryData() {
   };
 }
 
-async function start() {
+function selectionConditions(scopeKeys, questionCount, overrides = {}) {
+  return {
+    scopeKeys,
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 },
+    questionCount,
+    maxPerFamily: 1,
+    ...overrides
+  };
+}
+
+function scopeInventory() {
+  return {
+    schemaVersion: "highselect-private-user-exam-scope-inventory/v1",
+    targets: [
+      { generationMode: "academy_prep", academyId: "DP", semesterId: "M2-1", scopeKeys: ["G8/M01"], status: "approved" },
+      { generationMode: "academy_prep", academyId: "SM", semesterId: "CM1", scopeKeys: ["G8/M01"], status: "approved" },
+      { generationMode: "learning", academyId: null, semesterId: "M2-1", scopeKeys: ["G8/M01"], status: "approved" }
+    ]
+  };
+}
+
+async function start(options = {}) {
   const app = createApp({
     sessionSecret: SECRET,
     assetSecret: `${SECRET}-asset`,
     privateConfig: privateConfig(),
     privateScorer: { schemaVersion: "highselect-private-scorer/v1", exams: {} },
-    privateExamEditorRegistry: registry(),
+    privateExamEditorRegistry: options.registry || registry(),
     privateExamDrafts: { schemaVersion: "highselect-private-exam-drafts/v1", drafts: {} },
     privateUserExamLibrary: libraryData(),
+    privateUserExamScopeInventory: Object.prototype.hasOwnProperty.call(options, "scopeInventory")
+      ? options.scopeInventory
+      : scopeInventory(),
     cookieSecure: false,
     now: () => NOW,
     staticRoot: path.join(__dirname, "..")
@@ -178,7 +217,10 @@ function adminHeaders(cookie, origin) {
 function createBody(overrides = {}) {
   return {
     generationMode: "academy_prep",
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { difficulty: "standard" } },
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: selectionConditions([DP_ONE.curriculum.key], 1)
+    },
     seed: 101,
     parentExamId: null,
     items: [{ itemId: DP_ONE.id, itemVersionId: DP_ONE.itemVersionId, order: 1, score: 1 }],
@@ -244,6 +286,15 @@ test("user access and admin assignment APIs enforce their roles", async t => {
   assert.deepEqual(packet.entitlements, [{ kind: "academy_all", academyId: "WM" }]);
 });
 
+test("user exam creation fails closed when the approved scope inventory is not connected", async t => {
+  const env = await start({ scopeInventory: null });
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const response = await createExam(env.base, student);
+  assert.equal(response.status, 503);
+  assert.match((await response.json()).message, /서버 구성/);
+});
+
 test("create/list/read use server identities and approved current item versions only", async t => {
   const env = await start();
   t.after(() => env.server.close());
@@ -257,7 +308,7 @@ test("create/list/read use server identities and approved current item versions 
   const createdResponse = await createExam(env.base, student);
   assert.equal(createdResponse.status, 201);
   const created = await createdResponse.json();
-  assert.match(created.examId, /^userexam_[a-f0-9]{32}$/);
+  assert.match(created.examId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   assert.equal(created.ownerId, "student_one");
   assert.equal(created.createdAt, "2026-08-30T12:00:00.000Z");
   assert.equal(created.expiresAt, "2026-09-06T12:00:00.000Z");
@@ -285,19 +336,34 @@ test("academy mode matching and explicit entitlements fail closed", async t => {
   assert.equal(wrongMode.status, 409);
 
   const wrongSemester = await createExam(env.base, student, createBody({
-    selectionSnapshot: { academyId: "DP", semesterId: "M1-2", conditions: {} }
+    selectionSnapshot: { academyId: "DP", semesterId: "M1-2", conditions: selectionConditions([DP_ONE.curriculum.key], 1) }
   }));
   assert.equal(wrongSemester.status, 403);
   assert.match((await wrongSemester.json()).message, /이용 권한/);
 
   const forbiddenMetadata = await createExam(env.base, student, createBody({
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { answerKey: "private" } }
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...selectionConditions([DP_ONE.curriculum.key], 1), answerKey: "private" } }
   }));
   assert.equal(forbiddenMetadata.status, 400);
   const disguisedPath = await createExam(env.base, student, createBody({
-    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { note: "C:\\private\\source.pdf" } }
+    selectionSnapshot: { academyId: "DP", semesterId: "M2-1", conditions: { ...selectionConditions([DP_ONE.curriculum.key], 1), note: "..\\private\\source.pdf" } }
   }));
   assert.equal(disguisedPath.status, 400);
+  const disguisedKey = await createExam(env.base, student, createBody({
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: { ...selectionConditions([DP_ONE.curriculum.key], 1), "official-answer": "12" }
+    }
+  }));
+  assert.equal(disguisedKey.status, 400);
+
+  const mismatchedScope = await createExam(env.base, student, createBody({
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: selectionConditions([AUTO_DP[0].curriculum.key], 1)
+    }
+  }));
+  assert.equal(mismatchedScope.status, 409);
 });
 
 test("cross-owner reads are 404 and delete requires same-origin mutation", async t => {
@@ -330,6 +396,10 @@ test("save limit is enforced and similar creation requires explicit approved ite
 
   const second = await (await createExam(env.base, student, createBody({
     seed: 202,
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: selectionConditions([DP_TWO.curriculum.key], 1)
+    },
     items: [{ itemId: DP_TWO.id, itemVersionId: DP_TWO.itemVersionId, order: 1, score: 2 }]
   }))).json();
   const overLimit = await fetch(`${env.base}/user-exam-library/exams/${second.examId}/save`, {
@@ -342,6 +412,10 @@ test("save limit is enforced and similar creation requires explicit approved ite
   const childResponse = await createExam(env.base, student, createBody({
     parentExamId: parent.examId,
     seed: 303,
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: selectionConditions([DP_TWO.curriculum.key], 1)
+    },
     items: [{ itemId: DP_TWO.id, itemVersionId: DP_TWO.itemVersionId, order: 1, score: 2 }]
   }));
   assert.equal(childResponse.status, 201);
@@ -360,14 +434,14 @@ test("all_learning permits academy-free learning recipes but does not generate i
   const student = await login(env.base, "학생둘", "STUDENT-TWO");
   const response = await createExam(env.base, student, createBody({
     generationMode: "learning",
-    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: { focus: "review" } },
+    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: selectionConditions([WM_ONE.curriculum.key], 1) },
     items: [{ itemId: WM_ONE.id, itemVersionId: WM_ONE.itemVersionId, order: 1, score: 1 }]
   }));
   assert.equal(response.status, 201);
   assert.equal((await response.json()).selectionSnapshot.academyId, null);
   assert.equal((await createExam(env.base, student, createBody({
     generationMode: "learning",
-    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: {} },
+    selectionSnapshot: { academyId: null, semesterId: "M2-1", conditions: selectionConditions([WM_ONE.curriculum.key], 1, { questionCount: 1 }) },
     items: []
   }))).status, 400);
 });
@@ -436,6 +510,33 @@ test("automatic generation returns 403 for missing entitlement and 409 for too f
   assert.match((await shortage.json()).message, /문항이 부족/);
 });
 
+test("SM automatic generation persists and enforces the exact algebra 15 and geometry 15 split", async t => {
+  const env = await start();
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const response = await fetch(`${env.base}/user-exam-library/generate`, {
+    method: "POST",
+    headers: userHeaders(student, env.base),
+    body: JSON.stringify(generateBody({
+      academyId: "SM",
+      semesterId: "CM1",
+      scopeKeys: ["G8/M01"],
+      questionCount: 30,
+      difficultyWeights: { lowered: 20, standard: 50, raised: 30 },
+      responseWeights: { objective: 40, subjective: 60 },
+      domainQuotas: { algebra: 15, geometry: 15 },
+      seed: 15015
+    }))
+  });
+  assert.equal(response.status, 201);
+  const generated = await response.json();
+  assert.deepEqual(generated.selectionSnapshot.conditions.domainQuotas, { algebra: 15, geometry: 15 });
+  const byId = new Map(AUTO_SM.map(item => [item.id, item]));
+  const domains = { algebra: 0, geometry: 0 };
+  generated.items.forEach(function (item) { domains[byId.get(item.itemId).domainGroup] += 1; });
+  assert.deepEqual(domains, { algebra: 15, geometry: 15 });
+});
+
 test("similar generation links its parent and deterministically excludes every parent item", async t => {
   const env = await start();
   t.after(() => env.server.close());
@@ -468,4 +569,37 @@ test("similar generation links its parent and deterministically excludes every p
   assert.deepEqual(first.layout, parent.layout);
   const parentIds = new Set(parent.items.map(item => item.itemId));
   assert.equal(first.items.some(item => parentIds.has(item.itemId)), false);
+});
+
+test("similar generation searches beyond the first 100 candidates before excluding the parent", async t => {
+  const candidates = Array.from({ length: 205 }, function (_, index) {
+    return makeQuestion(300 + index, "DP", "approved", { difficultyBand: "standard", inputType: "input" });
+  });
+  const largeRegistry = {
+    schemaVersion: "highselect-private-exam-editor-registry/v1",
+    candidates: Object.fromEntries(candidates.map(item => [item.id, item])),
+    relations: {}
+  };
+  const env = await start({ registry: largeRegistry });
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const body = generateBody({
+    scopeKeys: ["G8/M01"],
+    questionCount: 100,
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 }
+  });
+  const parentResponse = await fetch(`${env.base}/user-exam-library/generate`, {
+    method: "POST", headers: userHeaders(student, env.base), body: JSON.stringify(body)
+  });
+  assert.equal(parentResponse.status, 201);
+  const parent = await parentResponse.json();
+  const childResponse = await fetch(`${env.base}/user-exam-library/exams/${parent.examId}/similar`, {
+    method: "POST", headers: userHeaders(student, env.base), body: JSON.stringify({ derivationIndex: 1 })
+  });
+  assert.equal(childResponse.status, 201);
+  const child = await childResponse.json();
+  assert.equal(child.items.length, 100);
+  const parentIds = new Set(parent.items.map(item => item.itemId));
+  assert.equal(child.items.some(item => parentIds.has(item.itemId)), false);
 });

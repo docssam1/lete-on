@@ -38,3 +38,8 @@ test("셋째 달 상향 진단 수를 원본 감사 필드에서 유지한다", 
   assert.equal(output.summary.centerRange, 28);
   assert.equal(output.summary.upwardDiagnostic, 2);
 });
+
+test("넷째 달 터보·심화 운영 단계도 한글로 기록한다", () => {
+  const output = normalize(audit("fourth_month_turbo_advanced", { centralTerminal: 24, outOfRange: 0 }), "DP-M11-202312-R4");
+  assert.equal(output.coursePlacement.target, "중2-1 넷째 달 터보·심화 중간 합류");
+});

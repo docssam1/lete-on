@@ -134,3 +134,11 @@ test("원본 위치 문자열 대신 페이지 안 문항 순서를 숫자로 �
   assert.equal(slots.get(4), 4);
   assert.equal(slots.get(5), 1);
 });
+
+test("시험 범위 끝은 문항 배열의 마지막 항목이 아니라 검수된 종단 단원을 따른다", () => {
+  const sourceAudit = audit();
+  sourceAudit.coursePlacement.terminalCoreUnit = "중1-1 정비례와 반비례";
+  sourceAudit.questions[29].semester = "중1-1";
+  sourceAudit.questions[29].smallUnit = "유리수의 계산과 전개도";
+  assert.deepEqual(core.observedTerminal(sourceAudit), { semester: "중1-1", unit: "정비례와 반비례" });
+});

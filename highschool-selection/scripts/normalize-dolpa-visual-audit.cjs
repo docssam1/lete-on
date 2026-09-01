@@ -14,7 +14,9 @@ function operationStageLabel(value) {
     first_month: "첫째 달",
     second_month: "둘째 달",
     third_month: "셋째 달",
-    fourth_month: "넷째 달"
+    fourth_month: "넷째 달",
+    third_month_turbo_advanced: "셋째 달 터보·심화",
+    fourth_month_turbo_advanced: "넷째 달 터보·심화"
   })[clean(value)] || clean(value).replaceAll("_", " ");
 }
 

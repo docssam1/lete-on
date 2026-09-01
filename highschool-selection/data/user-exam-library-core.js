@@ -9,9 +9,15 @@
   const GENERATION_MODES = Object.freeze(["academy_prep", "learning"]);
   const LIBRARY_STATES = Object.freeze(["temporary", "saved"]);
   const ENTITLEMENT_KINDS = Object.freeze(["academy_semester", "academy_all", "all_learning"]);
+  const SELECTION_CONDITION_KEYS = Object.freeze([
+    "scopeKeys", "difficultyWeights", "responseWeights", "questionCount", "maxPerFamily", "domainQuotas"
+  ]);
+  const REQUIRED_SELECTION_CONDITION_KEYS = Object.freeze([
+    "scopeKeys", "difficultyWeights", "responseWeights", "questionCount", "maxPerFamily"
+  ]);
   const FORBIDDEN_RECIPE_KEYS = Object.freeze([
-    "questiontext", "prompt", "stem", "body", "answer", "answers", "answerspec",
-    "answerkey", "correctanswer", "solution", "explanation", "hint", "sourcepath",
+    "questiontext", "questionbody", "prompt", "stem", "body", "answer", "answers", "answerspec",
+    "answerkey", "officialanswer", "correctanswer", "solution", "explanation", "hint", "sourcepath",
     "filepath", "pdfurl", "downloadurl", "storageurl", "originalurl"
   ]);
 
@@ -65,6 +71,10 @@
     });
   }
 
+  function normalizedKey(value) {
+    return String(value).normalize("NFKC").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
   function assertMetadataOnly(value, field) {
     const ancestors = new Set();
     function visit(node, path) {
@@ -81,7 +91,7 @@
         const prototype = Object.getPrototypeOf(node);
         invariant(prototype === Object.prototype || prototype === null, `${path} must contain plain data`);
         Object.keys(node).forEach(function (key) {
-          invariant(!FORBIDDEN_RECIPE_KEYS.includes(key.toLowerCase()), `${field} cannot contain ${key}`);
+          invariant(!FORBIDDEN_RECIPE_KEYS.includes(normalizedKey(key)), `${field} cannot contain ${key}`);
           visit(node[key], `${path}.${key}`);
         });
       }
@@ -133,16 +143,71 @@
     return Object.freeze(normalized);
   }
 
+  function normalizeWeightMap(input, labels, field) {
+    assertExactKeys(input, new Set(labels), field);
+    const result = {};
+    let total = 0;
+    labels.forEach(function (label) {
+      invariant(Object.prototype.hasOwnProperty.call(input, label), `${field}.${label} is required`);
+      const value = Number(input[label]);
+      invariant(Number.isFinite(value) && value >= 0 && value <= 1000, `${field}.${label} is invalid`);
+      result[label] = value;
+      total += value;
+    });
+    invariant(total > 0, `${field} must contain a positive weight`);
+    return Object.freeze(result);
+  }
+
+  function normalizeSelectionConditions(input) {
+    const field = "selectionSnapshot.conditions";
+    assertMetadataOnly(input, field);
+    assertExactKeys(input, new Set(SELECTION_CONDITION_KEYS), field);
+    REQUIRED_SELECTION_CONDITION_KEYS.forEach(function (key) {
+      invariant(Object.prototype.hasOwnProperty.call(input, key), `${field}.${key} is required`);
+    });
+    invariant(Array.isArray(input.scopeKeys) && input.scopeKeys.length >= 1 && input.scopeKeys.length <= 100,
+      `${field}.scopeKeys must contain between 1 and 100 keys`);
+    const seenScopes = new Set();
+    const scopeKeys = input.scopeKeys.map(function (value, index) {
+      const scope = clean(value).replace(/\/+$/, "");
+      invariant(scope.length <= 320 && /^[A-Za-z0-9._:-]+(?:\/[A-Za-z0-9._:-]+)*$/.test(scope),
+        `${field}.scopeKeys[${index}] is invalid`);
+      invariant(scope.split("/").every(function (segment) { return segment !== "." && segment !== ".."; }),
+        `${field}.scopeKeys[${index}] cannot contain relative path segments`);
+      invariant(!seenScopes.has(scope), `${field}.scopeKeys cannot contain duplicates`);
+      seenScopes.add(scope);
+      return scope;
+    });
+    const questionCount = positiveInteger(input.questionCount, `${field}.questionCount`, 100);
+    let domainQuotas = null;
+    if (input.domainQuotas != null) {
+      assertExactKeys(input.domainQuotas, new Set(["algebra", "geometry"]), `${field}.domainQuotas`);
+      invariant(Object.prototype.hasOwnProperty.call(input.domainQuotas, "algebra") && Object.prototype.hasOwnProperty.call(input.domainQuotas, "geometry"), `${field}.domainQuotas must contain algebra and geometry`);
+      domainQuotas = Object.freeze({
+        algebra: positiveInteger(input.domainQuotas.algebra, `${field}.domainQuotas.algebra`, 100),
+        geometry: positiveInteger(input.domainQuotas.geometry, `${field}.domainQuotas.geometry`, 100)
+      });
+      invariant(domainQuotas.algebra + domainQuotas.geometry === questionCount, `${field}.domainQuotas must sum to questionCount`);
+    }
+    return Object.freeze({
+      scopeKeys: Object.freeze(scopeKeys),
+      difficultyWeights: normalizeWeightMap(input.difficultyWeights, ["lowered", "standard", "raised"], `${field}.difficultyWeights`),
+      responseWeights: normalizeWeightMap(input.responseWeights, ["objective", "subjective"], `${field}.responseWeights`),
+      questionCount,
+      maxPerFamily: positiveInteger(input.maxPerFamily, `${field}.maxPerFamily`, 10),
+      domainQuotas
+    });
+  }
+
   function normalizeSelectionSnapshot(input, generationMode) {
     assertExactKeys(input, new Set(["academyId", "semesterId", "conditions"]), "selectionSnapshot");
-    const conditions = input.conditions == null ? {} : input.conditions;
-    assertMetadataOnly(conditions, "selectionSnapshot.conditions");
+    const conditions = normalizeSelectionConditions(input.conditions);
     const academyId = optionalToken(input.academyId, "selectionSnapshot.academyId");
     if (generationMode === "academy_prep") invariant(academyId, "academy_prep requires selectionSnapshot.academyId");
     return Object.freeze({
       academyId,
       semesterId: token(input.semesterId, "selectionSnapshot.semesterId"),
-      conditions: stableCopy(conditions)
+      conditions
     });
   }
 
@@ -209,6 +274,9 @@
     const seed = Number(input.seed);
     invariant(Number.isSafeInteger(seed) && seed >= 0 && seed <= 0xffffffff, "recipe.seed must be an unsigned 32-bit integer");
     const generationMode = enumValue(input.generationMode, GENERATION_MODES, "recipe.generationMode");
+    const selectionSnapshot = normalizeSelectionSnapshot(input.selectionSnapshot, generationMode);
+    invariant(selectionSnapshot.conditions.questionCount === items.length,
+      "selectionSnapshot.conditions.questionCount must match recipe.items length");
     return Object.freeze({
       examId: token(input.examId, "recipe.examId"),
       ownerId: token(input.ownerId, "recipe.ownerId"),
@@ -217,7 +285,7 @@
       updatedAt,
       expiresAt,
       generationMode,
-      selectionSnapshot: normalizeSelectionSnapshot(input.selectionSnapshot, generationMode),
+      selectionSnapshot,
       seed,
       parentExamId: optionalToken(input.parentExamId, "recipe.parentExamId"),
       items: Object.freeze(items),
@@ -225,19 +293,29 @@
     });
   }
 
-  function assertEntitled(entitlementsInput, recipeInput) {
+  function assertTargetEntitled(entitlementsInput, generationModeInput, academyIdInput, semesterIdInput) {
     const entitlements = normalizeEntitlements(entitlementsInput);
-    const recipe = normalizeUserExamRecipe(recipeInput);
-    const academyId = recipe.selectionSnapshot.academyId;
-    const semesterId = recipe.selectionSnapshot.semesterId;
+    const generationMode = enumValue(generationModeInput, GENERATION_MODES, "generationMode");
+    const academyId = academyIdInput == null ? null : token(academyIdInput, "academyId");
+    const semesterId = token(semesterIdInput, "semesterId");
     const allowed = entitlements.some(function (entitlement) {
-      if (entitlement.kind === "all_learning") return recipe.generationMode === "learning";
+      if (entitlement.kind === "all_learning") return generationMode === "learning";
       if (!academyId || entitlement.academyId !== academyId) return false;
       if (entitlement.kind === "academy_all") return true;
       return entitlement.semesterId === semesterId;
     });
     invariant(allowed, "recipe is not covered by an explicit academy-semester entitlement");
     return true;
+  }
+
+  function assertEntitled(entitlementsInput, recipeInput) {
+    const recipe = normalizeUserExamRecipe(recipeInput);
+    return assertTargetEntitled(
+      entitlementsInput,
+      recipe.generationMode,
+      recipe.selectionSnapshot.academyId,
+      recipe.selectionSnapshot.semesterId
+    );
   }
 
   function isExpired(recipeInput, at) {
@@ -296,6 +374,7 @@
     assertSavedCapacity(planInput, exams, recipe.examId);
     const timestamp = iso(savedAt, "savedAt");
     invariant(Date.parse(timestamp) >= Date.parse(recipe.updatedAt), "savedAt cannot precede updatedAt");
+    invariant(!isExpired(recipe, timestamp), "expired temporary recipe cannot be saved");
     return normalizeUserExamRecipe(Object.assign({}, recipe, { state: "saved", updatedAt: timestamp, expiresAt: null }));
   }
 
@@ -345,13 +424,16 @@
     GENERATION_MODES,
     LIBRARY_STATES,
     ENTITLEMENT_KINDS,
+    SELECTION_CONDITION_KEYS,
     FORBIDDEN_RECIPE_KEYS,
     createLibraryPlan,
     normalizeEntitlements,
     normalizeSelectionSnapshot,
+    normalizeSelectionConditions,
     normalizeLayout,
     normalizeUserExamRecipe,
     assertMetadataOnly,
+    assertTargetEntitled,
     assertEntitled,
     isExpired,
     temporaryExpiresAt,
