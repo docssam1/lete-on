@@ -7,8 +7,9 @@
   const spine = window.GFIELDUSK8DomainSpine;
   const registry = window.GFIELDUSK8ContentRegistry;
   const coursePathways = window.GFIELDMathCoursePathways;
+  const reasoningProgression = window.GFIELDGrade58ReasoningProgression;
 
-  if (!catalog || !profiles || !originalLinks || !spine || !registry || !coursePathways) {
+  if (!catalog || !profiles || !originalLinks || !spine || !registry || !coursePathways || !reasoningProgression) {
     throw new Error("GFIELD home dependencies did not load");
   }
 
@@ -359,6 +360,30 @@
     };
   }
 
+  function reasoningLabel(dimensionId) {
+    const dimension = reasoningProgression.dimensions[dimensionId];
+    return dimension ? dimension.title.ko : dimensionId;
+  }
+
+  function renderReasoningLanes(grade) {
+    const target = document.getElementById("grade-reasoning-lanes");
+    const profile = reasoningProgression.forGrade(grade);
+    if (!target) return;
+    target.hidden = !profile;
+    if (!profile) {
+      target.innerHTML = "";
+      return;
+    }
+    const clinicSummary = profile.publicClinicCount
+      ? `${profile.publicClinicCount}개 클리닉 공개`
+      : "영역별 설계 공개";
+    const prioritySummary = profile.reasoningPriorities.slice(0, 3).map(reasoningLabel).join(" · ");
+    target.innerHTML = `<article><span>01 · SCHOOL CORE</span><strong>학교 핵심</strong><small>${profile.schoolClusterCount}개 공식 클러스터 구조</small></article>
+      <article><span>02 · THINKING CLINIC</span><strong>사고력 클리닉</strong><small>${prioritySummary} · ${clinicSummary}</small></article>
+      <article><span>03 · CONTEST BRIDGE</span><strong>경시 가교</strong><small>${profile.competitionBridge.join(" · ")}</small></article>
+      <p>원문 문항을 합친 것이 아니라 검증된 유형·학습 순서·출고 게이트를 연결한 지도입니다.</p>`;
+  }
+
   function renderGradeMap(grade) {
     state.mapGrade = String(grade);
     document.querySelectorAll("[data-grade-tab]").forEach(function (button) {
@@ -373,6 +398,7 @@
     const domains = spine.gradeDomains[grade] || [];
     const units = registry.units.filter(function (unit) { return sameGrade(unit.grade, grade); });
     const publicGrade = String(grade) === "6";
+    renderReasoningLanes(grade);
     document.getElementById("selected-grade").textContent = gradeShort(grade);
     document.getElementById("grade-title").textContent = publicGrade ? `${gradeName(grade)} · 공개 개념 10개` : `${gradeName(grade)} · 영역과 단원 범위`;
     document.getElementById("skill-rows").innerHTML = domains.map(function (domain, index) {
@@ -382,8 +408,12 @@
       });
       const rows = domainUnits.map(function (unit) {
         const action = unitAction(unit);
+        const reasoningProfile = reasoningProgression.forCluster(unit.clusterId);
+        const reasoningText = reasoningProfile
+          ? reasoningProfile.reasoningTags.slice(0, 3).map(reasoningLabel).join(" · ")
+          : "";
         return `<li class="unit-row">
-          <div><strong>${unit.title.ko}</strong><small>${unit.clusterId} · ${unit.standardRange}</small></div>
+          <div><strong>${unit.title.ko}</strong><small>${unit.clusterId} · ${unit.standardRange}</small>${reasoningText ? `<em class="unit-reasoning">사고력 · ${reasoningText}</em>` : ""}</div>
           <span class="search-result-status ${publicGrade ? "public" : "metadata"}">${action.state}</span>
           <a class="unit-action" href="${action.href}">${action.label}<span aria-hidden="true">→</span></a>
         </li>`;
