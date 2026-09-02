@@ -230,6 +230,7 @@ function rebuildPapers(questions, ledger, existing) {
     return {
       ...paper,
       ...(old && old.coverage ? { coverage: old.coverage } : {}),
+      ...(old && old.placementContext ? { placementContext: old.placementContext } : {}),
       ...(old && old.equivalentSources ? { equivalentSources: old.equivalentSources } : {}),
       questionCount: paper.questionIds.length,
       questionIds: paper.questionIds.sort()
