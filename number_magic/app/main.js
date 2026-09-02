@@ -702,21 +702,20 @@ function screenWelcome(){
 
 /* ============================================================
    마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
-   건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME ·
-   우하단 집=ADVANCE · 정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
-
-   ── 2026-09-02: 8-31에 붙였던 위쪽 원경(CSS 산맥·다리·탑, 947px)은 철거했다.
-   일러스트 마을 위에 코드로 그린 도형이 얹혀 화풍이 갈렸다(원장 "조잡하다").
-   확장은 마을세계관-설계.md대로 **같은 화풍의 그림을 받아** 한다. 그때까지 캔버스는
-   map.jpg 원본 크기(1024×687)로 되돌린다. 중등 다리·경시의 탑 관문은 새 지도와 함께 돌아온다. */
-const TOWN_WORLD_H=687;
+   지도: 2026-09-02 town-map-v1(1536×1024, 3/4 시점 3D 카툰, 마을지도-작화지시서.md).
+   건물↔등급 배치: 서쪽 집들=BASIC(수의 나라) · 가운데 돔 타운홀=PRIME ·
+   동쪽 집들=ADVANCE · 북쪽 언덕 위 탑=CHALLENGE(경시의 탑) ·
+   남쪽 호숫가 선착장 집=영상관 · 남서쪽 집=마법사 옷장.
+   좌표는 % — 원본 px를 1536×1024로 나눈 값. 지도가 바뀌면 여기와 #townFountain·
+   sparkle·walker 스폰만 다시 재면 된다(styles.css #townWorld 크기도 함께). */
+const TOWN_WORLD_W=1536, TOWN_WORLD_H=1024;
 const TOWN_SPOTS=[
-  { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
-  { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
-  { tier:'intermediate', pos:'left:74%;top:58%;width:13%;height:16%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
-  { tier:'_closet',      pos:'left:8%;top:62%;width:15%;height:20%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
+  { tier:'numberland',   pos:'left:6%;top:34%;width:16.5%;height:15%',   tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { tier:'beginner',     pos:'left:48%;top:26%;width:17%;height:19%',    tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { tier:'advanced',     pos:'left:50.5%;top:4%;width:8%;height:13%',    tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'intermediate', pos:'left:65.5%;top:44%;width:16%;height:15%',  tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'_theater',     pos:'left:40.5%;top:73%;width:10%;height:11%',  tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:25.5%;top:80%;width:9%;height:11%',   tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
@@ -2817,17 +2816,17 @@ function exitTier(){S.view='town';S.tierId=null;save();render();}
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
   const modal=scr.querySelector('#tmodal');
-  const W=1024,H=TOWN_WORLD_H;
+  const W=TOWN_WORLD_W,H=TOWN_WORLD_H;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
-  /* 화면 꽉 채우기(cover)와 "건물 5곳 항상 보이기(bbox contain)" 중 더 작은(=더 안전한) 배율 선택.
-     데스크탑처럼 화면비가 지도와 비슷하면 cover와 같은 값이라 화면이 꽉 참.
-     세로로 매우 긴 모바일처럼 화면비가 크게 다르면 bbox 쪽이 이겨서 건물이 절대 화면 밖으로 안 밀림. */
+  /* 최소 배율 = 화면 꽉 채우기(cover). 예전엔 "건물 전부 보이기(bbox contain)"와 비교해
+     더 작은 쪽을 골랐는데, 세로 모바일에서 지도가 화면 절반만 차지하고 위아래가 하늘색으로
+     비는 레터박스가 생겼다(1536×1024 지도에선 더 심함). 건물은 드래그·탭 이동으로 언제든
+     닿을 수 있으므로 화면은 항상 지도로 채우고, 첫 화면만 bbox 중심(광장·타운홀)에 맞춘다. */
   function fit(){
     const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
-    const bboxS=Math.min(vp.clientWidth/BBOX.w,vp.clientHeight/BBOX.h);
-    minS=Math.min(coverS,bboxS);
+    minS=coverS;
     if(cam.scale<minS)cam.scale=minS;
   }
   function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
@@ -2927,7 +2926,7 @@ function initTownWorld(scr){
   /* 반짝임 */
   const sparkTimer=setInterval(()=>{
     const s=document.createElement('div');s.className='tspark';
-    s.style.left=(28+Math.random()*20)+'%';s.style.top=(42+Math.random()*10)+'%';
+    s.style.left=(36+Math.random()*16)+'%';s.style.top=(44+Math.random()*12)+'%';
     s.style.animationDuration=(4+Math.random()*3)+'s';
     world.appendChild(s);setTimeout(()=>s.remove(),8000);
   },600);
@@ -2936,13 +2935,13 @@ function initTownWorld(scr){
      그 자리로 걸어간다. Poco/Momo는 NPC로 계속 자유 배회. */
   const myName=S.name?S.name:('#'+S.character.number);
   const nbs=[
-    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
+    {el:scr.querySelector('#nbNumi'),x:44,y:56,tx:44,ty:56,spd:.22,player:true,
       lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!','오늘은 어떤 마법을 배울까?']},
-    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
-    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
+    {el:scr.querySelector('#nbPoco'),x:50,y:52,tx:50,ty:52,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
+    {el:scr.querySelector('#nbMomo'),x:38,y:58,tx:38,ty:58,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
-  function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
+  function pick(n){const sp=[[40,50],[50,54],[37,58],[46,60],[53,49],[43,46]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
   nbs.forEach(n=>{if(!n.player)pick(n);});
   let walkRAF;
   let muted=true;

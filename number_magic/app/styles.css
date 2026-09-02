@@ -469,8 +469,8 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
    ============================================================ */
 #townVp{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab;background:#bfe0f2}
 #townVp.drag{cursor:grabbing}
-#townWorld{position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
-  background:url(../assets/map.jpg) no-repeat 0 0/1024px 687px;}
+#townWorld{position:absolute;left:0;top:0;width:1536px;height:1024px;transform-origin:0 0;
+  background:url(../assets/map.jpg) no-repeat 0 0/1536px 1024px;}
 
 .ncloud{position:absolute;display:flex;align-items:center;justify-content:center;
   font-weight:900;color:#5b7fb0;pointer-events:none;opacity:.9;
@@ -478,13 +478,13 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .ncloud .puff{position:absolute;background:#fff;border-radius:50%}
 .ncloud .num{position:relative;z-index:2;font-size:26px;color:#3a67a8;text-shadow:0 1px 0 #fff}
 .ncloud.a{top:70px;left:-160px;animation:cdrift 70s linear infinite}
-@keyframes cdrift{to{transform:translateX(1380px)}}
+@keyframes cdrift{to{transform:translateX(1900px)}}
 .ncloud.c{top:110px;left:-560px;animation:cdriftC 130s linear infinite;opacity:.75}
-@keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(1580px) scale(1.1)}}
+@keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(2100px) scale(1.1)}}
 .ncloud.b{top:40px;left:-360px;animation:cdriftB 100s linear infinite}
-@keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(1480px) scale(.8)}}
+@keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(2000px) scale(.8)}}
 
-#townFountain{position:absolute;left:300px;top:290px;width:90px;height:90px;pointer-events:none}
+#townFountain{position:absolute;left:645px;top:470px;width:90px;height:90px;pointer-events:none}
 .tzero{position:absolute;left:50%;bottom:20px;font-weight:900;color:#8fd3ec;
   font-size:20px;text-shadow:0 1px 2px rgba(255,255,255,.9);opacity:0}
 @keyframes zrise{
