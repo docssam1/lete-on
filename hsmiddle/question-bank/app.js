@@ -1,7 +1,9 @@
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const catalog = window.HSMIDDLE_BANK.createCatalog().filter(item => item.verified);
+  const session = window.HSMIDDLE_AUTH.readSession();
+  const isAdmin = window.HSMIDDLE_AUTH.isAdmin(session.name);
+  const catalog = window.HSMIDDLE_BANK.createCatalog().filter(item => item.available);
   const byNumber = new Map(catalog.map(item => [item.number, item]));
   const state = {
     selected: new Set(),
@@ -10,14 +12,14 @@
     student: ""
   };
 
-  const session = window.HSMIDDLE_AUTH.readSession();
-  const hasAccess = session.valid && (window.HSMIDDLE_AUTH.isAdmin(session.name) || session.access.includes("diagnostic")) && !window.HSMIDDLE_AUTH.isExpired(session.name);
+  const hasAccess = session.valid && (isAdmin || session.access.includes("diagnostic")) && !window.HSMIDDLE_AUTH.isExpired(session.name);
   if (!hasAccess) {
     $("accessGate").hidden = false;
     return;
   }
 
   state.student = session.name;
+  const canSelect = item => item.releaseStatus !== "locked";
   $("app").hidden = false;
   $("studentName").textContent = `${state.student} 학생`;
   $("worksheetStudent").textContent = state.student;
@@ -53,7 +55,7 @@
       if (state.filters.unit && item.unit !== state.filters.unit) return false;
       if (state.filters.area && item.area !== state.filters.area) return false;
       if (state.filters.difficulty && item.difficulty !== state.filters.difficulty) return false;
-      if (search && !`${item.type} ${item.unit} ${item.semester} ${item.area}`.toLocaleLowerCase("ko").includes(search)) return false;
+      if (search && !`${item.type} ${item.legacyType} ${item.unit} ${item.semester} ${item.area}`.toLocaleLowerCase("ko").includes(search)) return false;
       return true;
     });
   }
@@ -63,31 +65,44 @@
   }
 
   function typeCard(item) {
-    const selected = state.selected.has(item.id);
-    return `<label class="type-card ${selected ? "selected" : ""}">
-      <input type="checkbox" data-id="${item.id}" ${selected ? "checked" : ""}>
+    const selectable = canSelect(item);
+    const selected = selectable && state.selected.has(item.id);
+    const count = item.sourceVerified
+      ? `<b>${item.questionCount}문항</b><span>${item.releaseStatus === "locked" ? (item.releaseNote || "출제 검수 중") : "원본·답안 확인"}</span>`
+      : `<b>문항 수 확인 중</b><span>${isAdmin ? "관리자 원본 검수" : "검수 잠금"}</span>`;
+    return `<label class="type-card ${selected ? "selected" : ""} ${item.sourceVerified ? "source-verified" : "source-pending"} ${selectable ? "" : "is-locked"}" aria-disabled="${selectable ? "false" : "true"}">
+      <input type="checkbox" data-id="${item.id}" ${selected ? "checked" : ""} ${selectable ? "" : "disabled"}>
       <span class="q-number">${item.number}</span>
       <span class="type-copy"><h2>${item.type}</h2><p>${item.examLabel} ${item.number}번 기준</p><span class="tag-row"><span>${item.semester}</span><span>${item.unit}</span><span>${item.area}</span><span class="level">난이도 ${item.difficulty}</span></span></span>
-      <span class="set-count"><b>${item.questionCount}문제</b><span>풀이 포함</span></span>
+      <span class="set-count">${count}</span>
     </label>`;
   }
 
   function renderCatalog() {
     const visible = visibleItems();
-    $("catalogMeta").textContent = `${visible.length}개 세트 · ${visible.length * 10}문제`;
+    const confirmed = visible.reduce((sum, item) => sum + (item.questionCount || 0), 0);
+    const eligible = visible.reduce((sum, item) => sum + (item.releaseStatus === "locked" ? 0 : (item.questionCount || 0)), 0);
+    const locked = visible.filter(item => item.releaseStatus === "locked").length;
+    $("catalogMeta").textContent = `${visible.length}개 유형 · 원본 확인 ${confirmed}문항 · 출제 가능 ${eligible}문항${locked ? ` · ${locked}개 유형 검수 중` : ""}`;
     $("typeList").innerHTML = visible.map(typeCard).join("");
     $("emptyState").hidden = visible.length > 0;
     const labels = activeFilterLabels();
     $("activeFilters").innerHTML = (labels.length ? labels : ["전체 학기 · 전체 단원 · 전체 난이도"]).map(label => `<span>${label}</span>`).join("");
-    const allSelected = visible.length > 0 && visible.every(item => state.selected.has(item.id));
+    const selectableVisible = visible.filter(canSelect);
+    const allSelected = selectableVisible.length > 0 && selectableVisible.every(item => state.selected.has(item.id));
     $("toggleVisible").textContent = allSelected ? "보이는 유형 선택 해제" : "보이는 유형 전체 선택";
     updateSelection();
   }
 
   function updateSelection() {
     const selected = catalog.filter(item => state.selected.has(item.id));
-    $("selectedTypeCount").textContent = `${selected.length}개 세트`;
-    $("selectedQuestionCount").textContent = `${selected.reduce((sum,item) => sum + item.questionCount, 0)}문제`;
+    const confirmed = selected.reduce((sum, item) => sum + (item.questionCount || 0), 0);
+    const pending = selected.filter(item => !item.sourceVerified).length;
+    $("selectedTypeCount").textContent = `${selected.length}개 유형`;
+    $("selectedQuestionCount").textContent = pending ? `${confirmed}문항 + ${pending}묶음` : `${confirmed}문항`;
+    $("selectionNote").textContent = pending
+      ? "확인된 문항 수와 원본 검수 중인 묶음을 나누어 표시합니다."
+      : "원본 문제·빠른 정답·풀이의 연결을 확인한 문항입니다.";
     $("buildButton").disabled = selected.length === 0;
     $("selectedList").innerHTML = selected.length ? selected.map(item => `<div class="selected-item"><div><b>${item.number}번 · ${item.type}</b><span>${item.semester} · ${item.unit} · 난이도 ${item.difficulty}</span></div><button type="button" data-remove="${item.id}" aria-label="${item.type} 선택 해제">×</button></div>`).join("") : '<div class="selected-empty">왼쪽에서 유형을 선택하세요.</div>';
   }
@@ -102,19 +117,29 @@
   }
 
   function pageNumbers(item) {
-    if (state.view === "problem") return Array.from({length:item.problemPages}, (_,index) => index + 1);
-    return Array.from({length:item.solutionPages}, (_,index) => item.problemPages + index + 1);
+    if (state.view === "problem") return item.problemPageNumbers;
+    return [...new Set([...item.answerPageNumbers, ...item.solutionPageNumbers])];
   }
 
   function renderWorksheet() {
     const selected = selectedItems();
-    const totalQuestions = selected.reduce((sum,item) => sum + item.questionCount, 0);
+    const totalQuestions = selected.reduce((sum, item) => sum + (item.questionCount || 0), 0);
+    const pendingBundles = selected.filter(item => !item.sourceVerified).length;
     $("worksheetHeading").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `${selected.length}개 유형 · ${totalQuestions}문제 · ${state.view === "problem" ? "문제편" : "풀이편"}`;
-    $("pageStream").innerHTML = selected.map(item => `<section class="set-section">
-      <header class="set-heading"><div><h2>${item.number}번 연계 · ${item.type}</h2><p>${item.semester} · ${item.unit} · ${item.area} · 난이도 ${item.difficulty}</p></div><span>${state.view === "problem" ? "문제 10문항" : "정답과 풀이"}</span></header>
-      ${pageNumbers(item).map(page => `<article class="page"><img src="${item.assetFolder}/page-${page}.png" alt="${item.type} ${state.view === "problem" ? "문제" : "풀이"} ${page}쪽">${watermarkMarkup()}</article>`).join("")}
-    </section>`).join("");
+    $("worksheetMeta").textContent = `${selected.length}개 유형 · 확인된 ${totalQuestions}문항${pendingBundles ? ` · 원본 ${pendingBundles}묶음` : ""} · ${state.view === "problem" ? "문제편" : "풀이편"}`;
+    $("pageStream").innerHTML = selected.map(item => {
+      const sectionLabel = state.view === "solution"
+        ? "정답과 풀이"
+        : item.sourceVerified ? `문제 ${item.questionCount}문항` : "원본 문제 묶음";
+      const correction = state.view === "solution" && item.sourceCorrectionNote
+        ? `<aside class="source-correction"><strong>원본 풀이 정정</strong><p>${item.sourceCorrectionNote}</p></aside>`
+        : "";
+      return `<section class="set-section${correction ? " has-correction" : ""}">
+        <header class="set-heading"><div><h2>${item.number}번 연계 · ${item.type}</h2><p>${item.semester} · ${item.unit} · ${item.area} · 난이도 ${item.difficulty}</p></div><span>${sectionLabel}</span></header>
+        ${correction}
+        ${pageNumbers(item).map(page => `<article class="page"><img src="${item.assetFolder}/page-${page}.png" alt="${item.type} ${state.view === "problem" ? "문제" : "풀이"} ${page}쪽">${watermarkMarkup()}</article>`).join("")}
+      </section>`;
+    }).join("");
     document.body.dataset.view = state.view;
     document.querySelectorAll(".view-tabs button").forEach(button => button.classList.toggle("active", button.dataset.view === state.view));
   }
@@ -143,7 +168,7 @@
   });
 
   $("toggleVisible").addEventListener("click", () => {
-    const visible = visibleItems();
+    const visible = visibleItems().filter(canSelect);
     const shouldSelect = !visible.every(item => state.selected.has(item.id));
     visible.forEach(item => shouldSelect ? state.selected.add(item.id) : state.selected.delete(item.id));
     renderCatalog();
@@ -176,7 +201,10 @@
   $("watermarkToggle").addEventListener("change", () => { if (!$("worksheetView").hidden) renderWorksheet(); });
 
   refreshUnits();
-  const linkedQuestions = (params.get("qs") || "").split(",").map(Number).filter(number => byNumber.has(number));
+  const linkedQuestions = (params.get("qs") || "").split(",").map(Number).filter(number => {
+    const item = byNumber.get(number);
+    return item && canSelect(item);
+  });
   linkedQuestions.forEach(number => state.selected.add(byNumber.get(number).id));
   renderCatalog();
   if (linkedQuestions.length) openWorksheet();
