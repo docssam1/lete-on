@@ -275,6 +275,46 @@
       + '<div class="balance-check scene-object" data-object="balance-check"><span>' + esc(localized.check) + '</span><strong>' + model.coefficient + ' × ' + model.expectedX + ' = ' + model.total + '</strong></div></div>';
   }
 
+  function buildCoordinateAreaModel(sceneModel) {
+    const vertices = sceneModel.vertices.map(function (entry) { return point(Number(entry[0]), Number(entry[1])); });
+    const twiceArea = Math.abs(vertices.reduce(function (sum, current, index) {
+      const next = vertices[(index + 1) % vertices.length];
+      return sum + current.x * next.y - next.x * current.y;
+    }, 0));
+    const area = twiceArea / 2;
+    if (area !== Number(sceneModel.expectedArea)) throw new Error("COORDINATE_AREA_MISMATCH");
+    if (sceneModel.outer.width * sceneModel.outer.height - sceneModel.cutout.width * sceneModel.cutout.height !== area) throw new Error("COORDINATE_AREA_SUBTRACTION_MISMATCH");
+    const scale = 38; const origin = point(70, 272);
+    function plot(modelPoint) { return point(origin.x + modelPoint.x * scale, origin.y - modelPoint.y * scale); }
+    return Object.freeze({
+      width: 430, height: 330, scale: scale, origin: origin,
+      vertices: Object.freeze(vertices), plotted: Object.freeze(vertices.map(plot)),
+      outer: Object.freeze({ x: origin.x, y: origin.y - sceneModel.outer.height * scale, width: sceneModel.outer.width * scale, height: sceneModel.outer.height * scale }),
+      cutout: Object.freeze({ x: origin.x + (sceneModel.outer.width - sceneModel.cutout.width) * scale, y: origin.y - sceneModel.outer.height * scale, width: sceneModel.cutout.width * scale, height: sceneModel.cutout.height * scale }),
+      partition: Object.freeze({ start: plot(point(0, 4)), end: plot(point(4, 4)) }), area: area
+    });
+  }
+
+  function coordinateAreaScene(lesson, locale) {
+    const model = buildCoordinateAreaModel(lesson.sceneModel); const fmt = renderer().fmt;
+    const language = locale === "zh" || locale === "zh-Hans" ? "zh" : (locale === "ko" ? "ko" : "en");
+    const localized = {
+      en:{ aria:"Coordinate grid with an L-shape decomposed and completed to verify area forty", outer:"outer 8 × 6", cutout:"missing 4 × 2", subtract:"48 − 8 = 40", decompose:"32 + 8 = 40", answer:"area = 40 square units" },
+      ko:{ aria:"좌표 격자 위 L자 도형을 분해하고 큰 직사각형으로 완성해 넓이 40을 검산하는 그림", outer:"큰 도형 8 × 6", cutout:"빠진 부분 4 × 2", subtract:"48 − 8 = 40", decompose:"32 + 8 = 40", answer:"넓이 = 40제곱단위" },
+      zh:{ aria:"在坐标网格上分解L形并补成长方形，检验面积为40", outer:"大图形 8 × 6", cutout:"缺口 4 × 2", subtract:"48 − 8 = 40", decompose:"32 + 8 = 40", answer:"面积 = 40平方单位" }
+    }[language];
+    let grid = '<g class="scene-object" data-object="area-grid">';
+    for (let x=0;x<=8;x+=1) { const px=model.origin.x+x*model.scale; grid+='<line class="area-grid-line" x1="'+fmt(px)+'" y1="'+fmt(model.origin.y-6*model.scale)+'" x2="'+fmt(px)+'" y2="'+fmt(model.origin.y)+'"></line><text class="area-axis-label" x="'+fmt(px)+'" y="294">'+x+'</text>'; }
+    for (let y=0;y<=6;y+=1) { const py=model.origin.y-y*model.scale; grid+='<line class="area-grid-line" x1="'+fmt(model.origin.x)+'" y1="'+fmt(py)+'" x2="'+fmt(model.origin.x+8*model.scale)+'" y2="'+fmt(py)+'"></line><text class="area-axis-label" x="52" y="'+fmt(py+4)+'">'+y+'</text>'; }
+    grid+='</g>';
+    const polygon = '<g class="scene-object" data-object="area-polygon">'+renderer().polygon(model.plotted.map(function(p){return {px:p.x,py:p.y};}),"#dceee6","#1d604f")+model.plotted.map(function(p,index){return '<circle class="area-vertex" cx="'+fmt(p.x)+'" cy="'+fmt(p.y)+'" r="4"></circle><text class="area-point-label" x="'+fmt(p.x+(index===2||index===3?10:-10))+'" y="'+fmt(p.y+(index<2?18:-10))+'">('+lesson.sceneModel.vertices[index][0]+','+lesson.sceneModel.vertices[index][1]+')</text>';}).join('')+'</g>';
+    const outer = '<g class="scene-object" data-object="area-outer"><rect class="area-outer-rect" x="'+fmt(model.outer.x)+'" y="'+fmt(model.outer.y)+'" width="'+fmt(model.outer.width)+'" height="'+fmt(model.outer.height)+'"></rect><text class="area-note-label" x="318" y="24">'+esc(localized.outer)+'</text></g>';
+    const cutout = '<g class="scene-object" data-object="area-cutout"><rect class="area-cutout-rect" x="'+fmt(model.cutout.x)+'" y="'+fmt(model.cutout.y)+'" width="'+fmt(model.cutout.width)+'" height="'+fmt(model.cutout.height)+'"></rect><text class="area-cutout-label" x="'+fmt(model.cutout.x+model.cutout.width/2)+'" y="'+fmt(model.cutout.y+model.cutout.height/2+5)+'">'+esc(localized.cutout)+'</text></g>';
+    const partition = '<g class="scene-object" data-object="area-decompose"><line class="area-partition" x1="'+fmt(model.partition.start.x)+'" y1="'+fmt(model.partition.start.y)+'" x2="'+fmt(model.partition.end.x)+'" y2="'+fmt(model.partition.end.y)+'"></line><text class="area-svg-equation" x="220" y="320">'+esc(localized.decompose)+'</text></g>';
+    const svg = renderer().wrapSvg(grid+polygon+outer+cutout+partition,{xMin:0,yMin:0,w:model.width,h:model.height},"coordinate-area-svg",' role="img" aria-label="'+esc(localized.aria)+'"');
+    return '<div class="coordinate-area-scene">'+svg+'<div class="area-equation scene-object" data-object="area-subtract">'+esc(localized.subtract)+'</div><div class="area-answer scene-object" data-object="area-answer">'+esc(localized.answer)+'</div></div>';
+  }
+
   function sceneFor(lesson, locale) {
     if (lesson.type === "bar-model") return ratioScene(lesson);
     if (lesson.type === "fraction-strip") return fractionScene(lesson);
@@ -282,9 +322,10 @@
     if (lesson.type === "signed-number-line") return signedNumberLineScene(lesson, locale);
     if (lesson.type === "expression-tree") return expressionScene(lesson, locale);
     if (lesson.type === "algebra-balance") return algebraBalanceScene(lesson, locale);
+    if (lesson.type === "coordinate-polygon-area") return coordinateAreaScene(lesson, locale);
     if (lesson.type === "geometry-angle") return geometryScene(lesson);
     throw new Error("ANIMATED_SCENE_TYPE_UNSUPPORTED");
   }
 
-  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, buildAlgebraBalanceModel: buildAlgebraBalanceModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, algebraBalanceScene: algebraBalanceScene, sceneFor: sceneFor });
+  return Object.freeze({ buildIsoscelesModel: buildIsoscelesModel, buildSignedNumberLineModel: buildSignedNumberLineModel, buildExpressionStructureModel: buildExpressionStructureModel, buildAlgebraBalanceModel: buildAlgebraBalanceModel, buildCoordinateAreaModel: buildCoordinateAreaModel, geometryScene: geometryScene, ratioScene: ratioScene, fractionScene: fractionScene, factorScene: factorScene, signedNumberLineScene: signedNumberLineScene, expressionScene: expressionScene, algebraBalanceScene: algebraBalanceScene, coordinateAreaScene: coordinateAreaScene, sceneFor: sceneFor });
 });
