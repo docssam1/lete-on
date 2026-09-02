@@ -204,7 +204,7 @@
     updateStepList();
     elements.mode.textContent = currentUI().overview;
     elements.count.textContent = currentUI().complete;
-    elements.narration.textContent = currentUI().review + lesson.verifiedAnswer + ".";
+    elements.narration.textContent = currentUI().review + (textOf(lesson.verifiedAnswerI18n) || lesson.verifiedAnswer) + ".";
     elements.progress.setAttribute("aria-valuenow", String(lesson.beats.length));
     elements.progressFill.style.width = "100%";
     elements.previous.disabled = false;

@@ -23,6 +23,7 @@
 
   const COPY = {
     ko: {
+      skip: "본문으로 바로가기",
       titleLead: "비와 비율을", titleAccent: "설명하고 적용하기.", navDiagnostic: "진단·분석·처방", navConcept: "개념 학습", navAnimated: "시각 강의",
       trailAnalysis: "01 분석", trailConcept: "02 개념", trailAnimated: "03 시각 강의", footerBack: "6.RP.A 개념으로 돌아가기", footerNote: "GFIELD 자체 제작 · 공개 Grade 6 클리닉",
       hero: "같은 비, 단위율, 부분과 전체, 퍼센트를 순서대로 연습하고 다른 문항으로 다시 확인합니다.",
@@ -37,6 +38,7 @@
       strength: "확인됨", review: "다시 보기", print: "인쇄 · PDF", sectionCount: "문항", allCorrect: "모두 정확"
     },
     en: {
+      skip: "Skip to the clinic content",
       titleLead: "Ratios, rates, and percent.", titleAccent: "Explain. Apply. Transfer.", navDiagnostic: "Diagnosis", navConcept: "Concept lesson", navAnimated: "Visual lesson",
       trailAnalysis: "01 Analysis", trailConcept: "02 Concept", trailAnimated: "03 Visual lesson", footerBack: "Back to the 6.RP.A concept", footerNote: "GFIELD original · Public Grade 6 clinic",
       hero: "Practice equivalent ratios, unit rates, part-whole reasoning, and percent, then recheck with new items.",
@@ -51,6 +53,7 @@
       strength: "Confirmed", review: "Review", print: "Print · PDF", sectionCount: "items", allCorrect: "all accurate"
     },
     "zh-Hans": {
+      skip: "跳到专项练习内容",
       titleLead: "比、比率与百分数。", titleAccent: "理解、应用、迁移。", navDiagnostic: "诊断·分析·处方", navConcept: "概念学习", navAnimated: "可视化课程",
       trailAnalysis: "01 分析", trailConcept: "02 概念", trailAnimated: "03 可视化课程", footerBack: "返回6.RP.A概念", footerNote: "GFIELD原创 · 公开六年级专项练习",
       hero: "依次练习相等比、单位率、部分与整体、百分数，再用新题复测。",
@@ -107,6 +110,7 @@
   function renderChrome() {
     const c = copy();
     document.documentElement.lang = state.locale;
+    document.querySelector(".skip-link").textContent = c.skip;
     document.title = text(source.pack.title) + " · GFIELD Math";
     document.getElementById("hero-eyebrow").textContent = "GRADE 6 · " + state.cluster + " CLINIC";
     document.getElementById("hero-title-lead").textContent = text(source.pack.ui.titleLead);
@@ -184,6 +188,11 @@
     const meta = el("div", "problem-meta");
     meta.append(el("span", "", String(index + 1).padStart(2, "0")), el("span", "", text(source.pack.strands[item.strand])));
     card.append(meta, el("p", "problem-prompt", text(item.prompt)));
+    if (typeof source.renderVisual === "function") {
+      const visual = el("div", "problem-visual");
+      visual.innerHTML = source.renderVisual(item, state.locale);
+      card.append(visual);
+    }
 
     if (state.audience === "teacher") {
       const answer = el("div", "teacher-answer");
@@ -197,7 +206,7 @@
 
     const row = el("div", "response-row");
     const input = el("input");
-    input.type = "text"; input.inputMode = ["ratio-pair", "comparison-symbol", "signed-rational"].includes(item.responseFormat) ? "text" : "decimal";
+    input.type = "text"; input.inputMode = ["ratio-pair", "comparison-symbol", "signed-rational", "rational-exact", "simplest-fraction"].includes(item.responseFormat) ? "text" : "decimal";
     input.placeholder = c.answerPlaceholder; input.setAttribute("aria-label", String(index + 1) + " " + c.answerPlaceholder);
     input.autocomplete = "off"; input.spellcheck = false;
     const button = el("button", "", c.check); button.type = "button";

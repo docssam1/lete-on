@@ -66,12 +66,13 @@ test("ratio diagnosis opens the exact concept and animated clinic path", async f
   await page.close();
 });
 
-test("Grade 6 geometry never links to the unrelated isosceles sample", async function () {
+test("Grade 6 geometry links to its exact area lesson and never to the unrelated isosceles sample", async function () {
   const page = await browser.newPage({ viewport: { width: 1080, height: 850 } });
   const errors = errorsFor(page);
   await page.goto(`${baseUrl}/concept-learning.html?cluster=6.G.A&from=diagnostic`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator('[data-clinic-action="animated"]').count(), 0);
-  assert.match(await page.locator(".clinic-route-step:nth-child(3)").innerText(), /검수 대기/);
+  assert.equal(await page.locator('[data-clinic-action="animated"]').count(), 1);
+  assert.equal(await page.locator('[data-clinic-action="animated"]').getAttribute("href"), "./animated-math.html?lesson=coordinate-l-shape-area&cluster=6.G.A&locale=ko");
+  assert.equal(await page.locator('[data-clinic-action="workbook"]').getAttribute("href"), "./clinic-practice.html?cluster=6.G.A&mode=workbook&audience=student&locale=ko");
   assert.equal(await page.locator('.clinic-route a[href*="isosceles-angle"]').count(), 0);
   assert.equal((await page.locator(".clinic-route").innerText()).includes("이등변삼각형"), false);
   assert.deepEqual(errors, []);
