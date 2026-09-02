@@ -1055,6 +1055,21 @@ const HOST_LINES={
   infinity:{ko:'끝은 없어. 천천히, 멀리 가 보자.',en:'There is no end — go slow, go far.',zh:'没有尽头。慢慢来，走得远一点。'},
   numi:{ko:'같이 해보자! 천천히 해도 괜찮아.',en:"Let's do it together — slow is fine!",zh:'一起来吧！慢一点也没关系。'}
 };
+/* 도장·편지함처럼 '축하하고 건네는' 자리에 쓰는 대사 — 게임 중 거드는 말(HOST_LINES)과
+   어조를 달리한다(그쪽은 풀이 힌트, 이쪽은 격려). */
+const HOST_CHEERS={
+  plus:{ko:'네가 모은 힘, 내가 다 봤어. 잘했어!',en:'I saw all the strength you gathered. Well done!',zh:'你聚起的力量我都看见了。做得好！'},
+  minus:{ko:'군더더기 없이 깔끔했어. 멋지다.',en:'Clean and tidy, no waste. Nicely done.',zh:'干净利落，一点不多余。真棒。'},
+  times:{ko:'대단해! 그 기세 그대로 가자!',en:'Amazing! Keep that momentum going!',zh:'太厉害了！保持这股劲头！'},
+  divide:{ko:'하나도 안 남기고 공평하게 해냈구나.',en:'You shared it out fairly, with nothing left over.',zh:'分得公平，一点都没剩下。'},
+  equal:{ko:'양쪽이 딱 맞았어. 침착했구나.',en:'Both sides matched exactly. You stayed calm.',zh:'两边刚好相等。你很沉着。'},
+  sqrt:{ko:'뿌리까지 파고들었구나. 훌륭해.',en:'You dug all the way to the root. Excellent.',zh:'一直挖到了根部。了不起。'},
+  percent:{ko:'비율을 자유자재로 다뤘는걸!',en:'You handled the ratios freely!',zh:'比例被你玩得很自如！'},
+  pi:{ko:'끝까지 매끄럽게 돌았어. 훌륭한 곡선이야.',en:'You came round smoothly to the end — a fine curve.',zh:'一路顺畅地转到终点，漂亮的曲线。'},
+  sigma:{ko:'흩어진 걸 다 모아 정리했구나.',en:'You gathered everything scattered and summed it up.',zh:'把散落的都聚起来整理好了。'},
+  infinity:{ko:'멀리까지 왔구나. 그 길은 계속 이어져.',en:'You have come far — and the road keeps going.',zh:'你已经走得很远，这条路还会继续。'},
+  numi:{ko:'와, 해냈다! 정말 잘했어!',en:'Wow, you did it! Really well done!',zh:'哇，你做到了！真棒！'}
+};
 /* 미니게임 id → 호스트. 지금 게임은 둘 다 '모아서 10 만들기'라 플러스가 맡는다. */
 const HOST_GAMES={ make10:'plus', make10_3:'plus' };
 /* 스레드 접두어 → 호스트. 유닛의 generator나 스레드 id 앞글자로 고른다. */
@@ -1083,11 +1098,12 @@ function hostImgSrc(id){
   return id==='numi' ? base+'numi-0.png' : base+'sym-'+id+'.png';
 }
 /* 호스트 띠 — 캐릭터 그림 + 말풍선 한 줄. 그림이 없으면 그림만 숨고 말은 남는다. */
-function hostStripHtml(kind,key){
+function hostStripHtml(kind,key,mode){
   const id=hostIdFor(kind,key);
   const sym=((window.NM_AVATAR&&window.NM_AVATAR.symbols)||[]).find(s=>s.id===id);
   const name=sym?L(sym):(S.lang==='ko'?'누미':S.lang==='en'?'Numi':'努米');
-  const line=L(HOST_LINES[id]||HOST_LINES.numi);
+  const book=(mode==='cheer')?HOST_CHEERS:HOST_LINES;
+  const line=L(book[id]||book.numi);
   return `<div class="nm-host">
     <img class="nm-host-img" src="${hostImgSrc(id)}" alt="${esc(name)}" onerror="this.style.display='none'">
     <div class="nm-host-bubble"><b>${esc(name)}</b><span>${esc(line)}</span></div>
@@ -2722,6 +2738,8 @@ function screenMailbox(){
       ${boostCardHtml}
       <div class="nm-card">
         <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
+        ${/* 이번 주 첫 드릴의 스레드로 호스트를 고른다 — 그 주에 실제로 하는 연산의 캐릭터가 건네준다 */''}
+        ${hostStripHtml('unit',(env.placements&&env.placements[0]&&env.placements[0].thread)||env.courseKey||'')}
         <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
         <div class="nm-mb-section-h">${lk('✨ 이번 주 마법','✨ Magic This Week','✨ 本周魔法')}</div>
         ${magicHtml}
@@ -3834,6 +3852,7 @@ function stepStamp(body,u){
     newLineageBadge=checkLineageCompletion();}
   const evo=lineageEvoCardHtml(S.unit);
   body.innerHTML=`<div class="nm-card center stamp">
+    ${hostStripHtml('unit',(u.arena&&u.arena.generator)||u.generator||u.id,'cheer')}
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
     <div class="nm-stamp-label">${L(s.label)}</div>
