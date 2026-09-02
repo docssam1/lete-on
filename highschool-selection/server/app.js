@@ -1072,7 +1072,12 @@ function createApp(options) {
         const asset = locator && loadAcademyQuestionPage ? loadAcademyQuestionPage(locator.sourceId, locator.page) : null;
         return Object.assign({}, item, { pagePreviewAvailable: Boolean(asset) });
       });
-      sendJson(response, 200, { profiles: catalog.profiles(), items, count: items.length });
+      sendJson(response, 200, {
+        profiles: catalog.profiles(),
+        representativeAnalyses: typeof catalog.analyses === "function" ? catalog.analyses(profileIds) : [],
+        items,
+        count: items.length
+      });
       return true;
     }
 

@@ -11,6 +11,67 @@ const dolpaScopes = require("../data/dolpa-target-scopes.js");
 
 function clean(value) { return String(value == null ? "" : value).trim(); }
 
+function representativeAnalyses(index, profileIds) {
+  const requested = new Set((profileIds || []).map(clean).filter(Boolean));
+  const plans = (index.sourceBanks || []).flatMap(bank => {
+    const plan = bank.representativePlan;
+    return plan && requested.has(plan.profileId)
+      ? [{ ...plan, sourceBankId: bank.sourceBankId }]
+      : [];
+  });
+  if (!plans.length) return [];
+  const selected = projectSelector.selectItems(index, Array.from(requested), {
+    limit: 1000,
+    allowedStatuses: projectSelector.CANDIDATE_ALLOWED_STATUSES,
+    allowedConceptStatuses: ["mapped", "unit_only", "pending"],
+    includeReviewCandidates: true
+  }).items;
+  return plans.map(plan => {
+    const rows = selected.filter(row => row.sourceBankId === plan.sourceBankId
+      && (row.academyFits || []).some(fit => fit.profileId === plan.profileId));
+    const inRange = rows.filter(row => row.withinCurrentRange !== false);
+    const fullyReviewed = inRange.filter(row => row.releaseEligible
+      && row.conceptStatus === "mapped"
+      && row.difficultyStatus === "verified"
+      && row.responseStatus === "verified"
+      && row.usageApproved === true);
+    function domainCounts(domain) {
+      return {
+        required: Number(plan.domainQuotas && plan.domainQuotas[domain]) || 0,
+        candidates: inRange.filter(row => row.domainGroup === domain).length,
+        ready: fullyReviewed.filter(row => row.domainGroup === domain).length
+      };
+    }
+    const domain = { algebra: domainCounts("algebra"), geometry: domainCounts("geometry") };
+    const unclassifiedCount = inRange.filter(row => !["algebra", "geometry"].includes(row.domainGroup)).length;
+    const blockers = [];
+    if (inRange.length < plan.questionCount) blockers.push(`현재 범위 후보가 ${plan.questionCount}문항보다 적습니다.`);
+    if (unclassifiedCount) blockers.push(`대수·기하 분류를 확인할 문항이 ${unclassifiedCount}개 있습니다.`);
+    if (fullyReviewed.length < plan.questionCount) blockers.push(`시험지에 쓸 수 있도록 모든 검수를 마친 문항이 ${plan.questionCount}개보다 적습니다.`);
+    if (domain.algebra.ready < domain.algebra.required) blockers.push(`사용할 수 있는 대수 문항이 ${domain.algebra.required}개보다 적습니다.`);
+    if (domain.geometry.ready < domain.geometry.required) blockers.push(`사용할 수 있는 기하 문항이 ${domain.geometry.required}개보다 적습니다.`);
+    const canCompose = blockers.length === 0;
+    return Object.freeze({
+      profileId: plan.profileId,
+      publicLabel: plan.publicLabel,
+      officialCurrentExam: false,
+      sourceRole: plan.sourceRole,
+      range: Object.freeze((plan.range || []).slice()),
+      questionCount: plan.questionCount,
+      timeMinutes: plan.timeMinutes,
+      domain: Object.freeze({ algebra: Object.freeze(domain.algebra), geometry: Object.freeze(domain.geometry) }),
+      candidatePoolCount: inRange.length,
+      fullyReviewedCount: fullyReviewed.length,
+      unclassifiedCount,
+      operationalCutline: null,
+      referenceCutline: plan.referenceCutline ? Object.freeze({ ...plan.referenceCutline }) : null,
+      status: canCompose ? "ready" : "locked",
+      canCompose,
+      blockers: Object.freeze(blockers)
+    });
+  });
+}
+
 function createDolpaCatalog(database) {
   const audit = dbAudit.audit(database);
   if (!audit.ok) throw new Error(`academy question catalog is invalid: ${audit.issues.join(", ")}`);
@@ -24,6 +85,7 @@ function createDolpaCatalog(database) {
         label: profile.label
       }));
     },
+    analyses() { return []; },
     privateLocator(questionId) {
       const question = questionsById.get(clean(questionId));
       if (!question || question.locator.status !== "verified" || !Number.isSafeInteger(question.locator.page)) return null;
@@ -103,8 +165,71 @@ function createProjectCatalog(index, options) {
     return locatorCatalog.privateLocator(item.sourceItemId);
   }
 
+  function publicItem(row, targetId) {
+    const sourceItem = itemsById.get(row.itemId);
+    const fits = (sourceItem && sourceItem.academyFits || row.academyFits || [])
+      .filter(fit => fit && profileLabels.has(fit.profileId) && fit.status !== "excluded");
+    const pageLocator = locator(row.itemId);
+    const classificationVerified = row.conceptStatus === "mapped";
+    return Object.freeze({
+      questionId: row.itemId,
+      paperId: row.sourceBankId,
+      sourceLabel: row.sourceBankLabel,
+      number: sourceNumber(row.sourceItemId),
+      semester: row.semester,
+      majorUnit: row.majorUnit,
+      minorUnit: row.minorUnit,
+      typeId: row.conceptFamilyId || row.sourceTypeId,
+      typeLabel: row.detailType,
+      conceptStatus: row.conceptStatus,
+      taxonomyReviewStatus: row.taxonomyReviewStatus,
+      internalTypeGroupId: row.internalTypeGroupId,
+      withinCurrentRange: row.withinCurrentRange,
+      domainGroup: row.domainGroup,
+      difficultyBand: row.difficultyBand,
+      difficultyStatus: row.difficultyStatus,
+      responseKind: row.responseKind,
+      responseStatus: row.responseStatus,
+      learnerFit: row.learnerFit,
+      releaseEligible: row.releaseEligible,
+      releaseBlockReason: row.releaseBlockReason,
+      reviewChecks: Object.freeze({
+        classification: classificationVerified,
+        locator: Boolean(pageLocator),
+        difficulty: false,
+        response: false,
+        keyCheck: row.answerStatus === "verified",
+        learnerFit: row.learnerFitPassed,
+        method: false,
+        variants: false,
+        usageApproval: fits.some(fit => fit.status === "approved")
+      }),
+      targetId: targetId || null,
+      profiles: fits.map(fit => Object.freeze({
+        profileId: fit.profileId,
+        label: profileLabels.get(fit.profileId),
+        status: fit.status
+      }))
+    });
+  }
+
+  function selectedRows(profileIds, includeCandidates, options) {
+    return projectSelector.selectItems(index, profileIds, {
+      query: options && options.query,
+      limit: 1000,
+      allowedStatuses: includeCandidates
+        ? projectSelector.CANDIDATE_ALLOWED_STATUSES
+        : projectSelector.DEFAULT_ALLOWED_STATUSES,
+      allowedConceptStatuses: includeCandidates
+        ? ["mapped", "unit_only", "pending"]
+        : ["mapped", "unit_only"],
+      includeReviewCandidates: includeCandidates === true
+    }).items;
+  }
+
   return Object.freeze({
     profiles() { return profiles.slice(); },
+    analyses(profileIds) { return representativeAnalyses(index, profileIds); },
     privateLocator(itemId) { return locator(itemId); },
     search(options) {
       const searchOptions = options || {};
@@ -113,18 +238,8 @@ function createProjectCatalog(index, options) {
       const limit = Math.min(300, Math.max(1, Number(searchOptions.limit) || 100));
       const targetId = clean(searchOptions.targetId);
       if (targetId && !dolpaScopes.getTarget(targetId)) throw new Error("시험 범위를 확인해 주세요.");
-      const selected = projectSelector.selectItems(index, profileIds, {
-        query: searchOptions.query,
-        limit: 1000,
-        allowedStatuses: searchOptions.includeCandidates
-          ? projectSelector.CANDIDATE_ALLOWED_STATUSES
-          : projectSelector.DEFAULT_ALLOWED_STATUSES,
-        allowedConceptStatuses: searchOptions.includeCandidates
-          ? ["mapped", "unit_only", "pending"]
-          : ["mapped", "unit_only"],
-        includeReviewCandidates: searchOptions.includeCandidates === true
-      });
-      return selected.items.filter(item => {
+      const selected = selectedRows(profileIds, searchOptions.includeCandidates === true, { query: searchOptions.query });
+      return selected.filter(item => {
         if (!targetId) return true;
         if (item.sourceBankId !== "DOLPA-ORIGINAL") return false;
         return dolpaScopes.evaluateQuestion(targetId, {
@@ -132,50 +247,7 @@ function createProjectCatalog(index, options) {
           semester: item.semester,
           minorUnit: item.minorUnit
         }).eligible;
-      }).slice(0, limit).map(item => {
-        const fits = item.academyFits || [];
-        const pageLocator = locator(item.itemId);
-        const classificationVerified = item.conceptStatus === "mapped";
-        return Object.freeze({
-          questionId: item.itemId,
-          paperId: item.sourceBankId,
-          sourceLabel: item.sourceBankLabel,
-          number: sourceNumber(item.sourceItemId),
-          semester: item.semester,
-          majorUnit: item.majorUnit,
-          minorUnit: item.minorUnit,
-          typeId: item.conceptFamilyId || item.sourceTypeId,
-          typeLabel: item.detailType,
-          conceptStatus: item.conceptStatus,
-          taxonomyReviewStatus: item.taxonomyReviewStatus,
-          internalTypeGroupId: item.internalTypeGroupId,
-          withinCurrentRange: item.withinCurrentRange,
-          difficultyBand: null,
-          difficultyStatus: "pending",
-          responseKind: null,
-          responseStatus: "pending",
-          learnerFit: item.learnerFit,
-          releaseEligible: item.releaseEligible,
-          releaseBlockReason: item.releaseBlockReason,
-          reviewChecks: Object.freeze({
-            classification: classificationVerified,
-            locator: Boolean(pageLocator),
-            difficulty: false,
-            response: false,
-            keyCheck: item.answerStatus === "verified",
-            learnerFit: item.learnerFitPassed,
-            method: false,
-            variants: false,
-            usageApproval: fits.some(fit => fit.status === "approved")
-          }),
-          targetId: targetId || null,
-          profiles: fits.map(fit => Object.freeze({
-            profileId: fit.profileId,
-            label: profileLabels.get(fit.profileId),
-            status: fit.status
-          }))
-        });
-      });
+      }).slice(0, limit).map(item => publicItem(item, targetId));
     }
   });
 }

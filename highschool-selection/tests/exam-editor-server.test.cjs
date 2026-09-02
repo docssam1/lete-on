@@ -368,6 +368,7 @@ test("academy profile catalog is admin-only and returns safe classified Dolpa ro
   assert.equal(response.headers.get("cache-control"), "no-store");
   const packet = await response.json();
   assert.equal(packet.count, 1);
+  assert.deepEqual(packet.representativeAnalyses, []);
   assert.equal(packet.items[0].majorUnit, "함수");
   assert.equal(packet.items[0].minorUnit, "일차함수");
   assert.equal(packet.items[0].profiles[0].label, "돌파형");

@@ -26,6 +26,13 @@ function digitImgSrc(n){
   const base = window.NM_CHAR_BASE || 'assets/characters/';
   return base + (IMG_FILE[n] || ('num-'+n+'.png'));
 }
+/* 기호 → PNG 경로(캐릭터-승급-설계.md §0 수정사항: PNG 우선, 없으면 SVG 폴백).
+   파일 존재를 미리 확인(HEAD 등)하지 않고 <img onerror>로만 판별 — 없으면
+   조용히 숨어서 밑에 항상 그려둔 SVG가 그대로 보인다. 콘솔 404는 허용. */
+function symbolImgSrc(id){
+  const base = window.NM_CHAR_BASE || 'assets/characters/';
+  return base + 'sym-' + id + '.png';
+}
 
 function getCol(id){
   const av = window.NM_AVATAR;
@@ -261,6 +268,80 @@ ${[0,1,2].map(i=>`<ellipse cx="${(cx+15-i*2).toFixed(1)}" cy="${(topY-1-i*4).toF
   }
 }
 
+/* ── 수학 기호 캐릭터 (SVG 폴백, 캐릭터-승급-설계.md §2 "그림 규격") ──
+   viewBox 0 0 120 150, 캐릭터 중심 (60,78), 글리프 바깥 지름 약 62px.
+   전부 원본 path/circle — 어떤 그림도 베끼지 않음. */
+function symGlyphPath(id, fg){
+  const sw = {plus:15, equal:15, minus:16, times:14, divide:13, sqrt:13, pi:14, sigma:13, infinity:11}[id] || 14;
+  const common = `fill="none" stroke="${fg}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"`;
+  switch(id){
+    case 'plus':     return `<path d="M60,47 L60,109 M29,78 L91,78" ${common}/>`;
+    case 'equal':    return `<path d="M29,63 L91,63 M29,93 L91,93" ${common}/>`;
+    case 'minus':    return `<path d="M27,78 L93,78" ${common}/>`;
+    case 'times':    return `<path d="M36,54 L84,102 M84,54 L36,102" ${common}/>`;
+    /* ÷ · % — 안의 동그라미·점이 눈으로 착각되지 않도록 눈 자리(y 59~73)를 비우고
+       위·아래로 확실히 띄운다(기호캐릭터-작화지시서.md §2 "공통 함정"). */
+    case 'divide':   return `<path d="M29,80 L91,80" ${common}/>
+<circle cx="60" cy="46" r="7.5" fill="${fg}"/><circle cx="60" cy="102" r="7.5" fill="${fg}"/>`;
+    case 'sqrt':     return `<path d="M27,86 L40,101 L55,50 L93,50" ${common}/>`;
+    case 'percent':  return `<circle cx="31" cy="44" r="10.5" fill="none" stroke="${fg}" stroke-width="8"/>
+<circle cx="91" cy="106" r="10.5" fill="none" stroke="${fg}" stroke-width="8"/>
+<path d="M30,110 L92,46" fill="none" stroke="${fg}" stroke-width="10" stroke-linecap="round"/>`;
+    case 'pi':       return `<path d="M32,54 L88,54 M46,54 L41,104 M74,54 L79,104" ${common}/>`;
+    case 'sigma':    return `<path d="M86,52 L36,52 L68,78 L36,104 L86,104" ${common}/>`;
+    case 'infinity': return `<path d="M24,86 C24,68 44,68 60,86 C76,104 96,104 96,86 C96,68 76,68 60,86 C44,104 24,104 24,86 Z" ${common}/>`;
+    default:         return `<circle cx="60" cy="78" r="28" fill="none" stroke="${fg}" stroke-width="14"/>`;
+  }
+}
+/* 표정은 전 기호 동일(흰자+검은 눈동자 · 작은 미소) — 12종 숫자 로스터 규칙과 같다. */
+function symFace(id){
+  /* ∞는 고리 구멍이 눈으로 읽히는 함정이 있어(작화지시서 §2) 눈을 고리 '위 획'에
+     얹고 구멍은 비워 둔다. 나머지는 공통 위치. */
+  const P={infinity:{ex1:38,ex2:82,ey:70}}[id];
+  const ex1=P?P.ex1:47, ex2=P?P.ex2:73, ey=P?P.ey:66;
+  return `<circle cx="${ex1}" cy="${ey}" r="7" fill="#fff"/><circle cx="${ex2}" cy="${ey}" r="7" fill="#fff"/>
+<circle cx="${ex1+1}" cy="${ey+1}" r="3.2" fill="#1A2233"/><circle cx="${ex2+1}" cy="${ey+1}" r="3.2" fill="#1A2233"/>
+<path d="M${ex1+5},${ey+14} Q60,${ey+20} ${ex2-5},${ey+14}" fill="none" stroke="#1A2233" stroke-width="2" stroke-linecap="round"/>`;
+}
+/* 짧은 둥근 팔다리 — 글리프 몸통(중심 60,78·지름≈62) 바깥쪽에 얹는다. */
+function symLimbs(fg, id){
+  const c = darkerHsl(fg, 0.8);
+  /* 몸이 아래까지 내려오는 기호(÷ 아래 점 · % 아래 동그라미 · ∞ 아래 고리)는
+     다리를 넓게 벌려 기호를 가리지 않게 한다 — 좁은 기본 자세면 겹쳐서
+     아래 점·동그라미가 다리 사이에 묻힌다(육안 검토에서 잡은 결함). */
+  const wide = (id==='divide'||id==='percent'||id==='infinity');
+  const lx1=wide?38:48, lx2=wide?82:72, lex1=wide?32:44, lex2=wide?88:76;
+  const ly=wide?112:106, ley=wide?127:123;
+  return `<g fill="none" stroke="${c}" stroke-width="9" stroke-linecap="round">
+<path d="M32,90 L17,80"/><path d="M88,90 L103,80"/>
+<path d="M${lx1},${ly} L${lex1},${ley}"/><path d="M${lx2},${ly} L${lex2},${ley}"/>
+</g>`;
+}
+function symbolCharacterSVG(id, fg){
+  return `<g>${symLimbs(fg, id)}${symGlyphPath(id, fg)}${symFace(id)}</g>`;
+}
+/* PNG 우선(sym-<id>.png, 숫자 캐릭터와 같은 tintFilter 적용) · 없으면 <img onerror>로
+   숨겨 밑에 항상 그려둔 SVG가 보이게(§0 수정사항 — HEAD 요청 아님). */
+/* 기호 캐릭터 PNG는 **색 톤 필터(tint)를 씌우지 않는다.**
+   숫자 캐릭터는 단색이라 hue-rotate로 재염색해도 되지만, 기호 마법단은 보라 모자·
+   빨강 망토·금색 소품처럼 여러 색을 입고 있어서 필터를 걸면 옷과 소품이 전부
+   한 색으로 뭉개진다(2026-09-01 납품 시안 검토). 선택한 색은 뒤쪽 오라로만 보인다.
+   폴백 SVG는 원래대로 선택한 색(fg)을 쓴다. */
+function symbolFigure(id, fg, tint, shadow){
+  const png = symbolImgSrc(id);
+  const item = (window.NM_AVATAR && window.NM_AVATAR.symbols || []).find(s=>s.id===id) || {};
+  const alt = item.glyph || id;
+  /* PNG가 뜨면 밑에 깔린 폴백 SVG를 감춘다 — 안 감추면 SVG의 팔다리·눈이 PNG 밖으로
+     삐져나와 이중으로 보인다(2026-09-02 실화면 검토에서 잡음). PNG가 없으면
+     onerror로 img만 사라지고 SVG가 그대로 남는다. */
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" preserveAspectRatio="xMidYMid meet"
+data-symfallback="1" style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible">${symbolCharacterSVG(id, fg)}</svg>
+<img src="${png}" alt="${alt}" draggable="false"
+onload="var s=this.parentNode&&this.parentNode.querySelector('[data-symfallback]');if(s)s.style.display='none'"
+onerror="this.style.display='none'"
+style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:92%;max-height:96%;object-fit:contain;filter:${shadow}">`;
+}
+
 /* ── 메인 렌더 ── */
 window.renderNumiChar = function(char, size){
   char = char || {};
@@ -306,9 +387,13 @@ style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;po
 style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none">${hat}</svg>`
     : '';
 
+  // char.symbol이 있으면 숫자 대신 기호 캐릭터(있으면 없으면 기존 숫자 경로 그대로 — 하위호환)
+  const symId = char.symbol || null;
   // 11~99(10 제외) → 두 자리 합체: 자리별 캐릭터를 나란히 배치
   let figure;
-  if(num >= 11 && num <= 99){
+  if(symId){
+    figure = symbolFigure(symId, fg, tint, shadow);
+  } else if(num >= 11 && num <= 99){
     const tens = Math.floor(num/10), ones = num%10;
     figure = `<span style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);
 display:flex;align-items:flex-end;justify-content:center;height:88%">

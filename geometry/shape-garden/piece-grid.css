@@ -1,0 +1,13 @@
+/* Piece Play has two course doors; activity types live inside each door. */
+.piece-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+@media (max-width: 850px) {
+  .piece-grid .level-card:last-child {
+    display: block;
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .piece-grid .level-card:last-child { display: block; }
+}

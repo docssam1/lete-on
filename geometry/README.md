@@ -28,6 +28,7 @@
 - games/mirror-manor/ - 거울 저택: 반쪽 칠하기·같은 거리·물건 배치·기호 반사·두 거울 5단계, 50문제
 - games/geoboard/ - 점판 공작소: 열린 선·도형 재현·정사각형·정삼각형·도형 분할 5단계, 55문제
 - games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
+- games/piece-play/ - 조각 놀이: 같은 모양·빈칸·가리기·담요·한 칸 옮기기·빠진 조각·다른 방법의 Kinder/Kids 활동 7종
 - games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
 - games/dice-roll/ - 주사위 굴리기: 격자 경로를 따라 윗면·앞면·오른쪽 면 변화를 추적하는 5단계, 50문제
 - games/path-walk/ - 길 잇기 산책로: 한 길·숨은 타일·갈림길·막힌 길·최단 경로 5단계, 50문제
@@ -122,5 +123,6 @@ node geometry/worksheet/mirror-manor/mirror-manor-sheet.browsercheck.mjs
 node geometry/games/geoboard/geoboard-content-audit.mjs
 node geometry/games/geoboard/geoboard.selftest.mjs
 node geometry/games/geoboard/geoboard.browsercheck.mjs
+node geometry/games/piece-play/piece-play.selftest.mjs
 node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
 ```

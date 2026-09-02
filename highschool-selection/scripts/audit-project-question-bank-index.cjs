@@ -8,10 +8,34 @@ function audit(index) {
   const issues = [];
   if (!index || index.schemaVersion !== 1) issues.push("schema_version");
   core.walkForbidden(index, "", issues);
+  const profileIds = new Set((index.academyProfiles || []).map(profile => profile.profileId));
   const bankIds = new Set((index.sourceBanks || []).map(bank => bank.sourceBankId));
   if (bankIds.size !== (index.sourceBanks || []).length) issues.push("duplicate_source_bank");
+  const validDomains = new Set(["algebra", "geometry"]);
+  (index.sourceBanks || []).forEach(bank => {
+    const plan = bank.representativePlan;
+    if (!plan) return;
+    const questionCount = Number(plan.questionCount);
+    const algebra = Number(plan.domainQuotas && plan.domainQuotas.algebra);
+    const geometry = Number(plan.domainQuotas && plan.domainQuotas.geometry);
+    if (!profileIds.has(plan.profileId)) issues.push(`representative_profile:${bank.sourceBankId}`);
+    if (plan.officialCurrentExam !== false || plan.operationalCutline !== null || plan.status !== "locked") issues.push(`representative_release:${bank.sourceBankId}`);
+    if (!Number.isSafeInteger(questionCount) || questionCount <= 0 || !Number.isSafeInteger(algebra) || !Number.isSafeInteger(geometry)
+      || algebra <= 0 || geometry <= 0 || algebra + geometry !== questionCount) issues.push(`representative_quota:${bank.sourceBankId}`);
+    if (!Array.isArray(plan.range) || !plan.range.length || plan.range.some(value => !String(value || "").trim())) issues.push(`representative_range:${bank.sourceBankId}`);
+    if (plan.referenceCutline) {
+      const score = Number(plan.referenceCutline.score);
+      const total = Number(plan.referenceCutline.total);
+      if (!Number.isSafeInteger(score) || !Number.isSafeInteger(total) || score < 0 || score > total || total !== questionCount) {
+        issues.push(`representative_reference_cutline:${bank.sourceBankId}`);
+      }
+    }
+  });
   const familyIds = new Set((index.conceptFamilies || []).map(family => family.conceptFamilyId));
   const declaredSourceTypeKeys = new Set((index.sourceTypes || []).map(type => `${type.sourceBankId}:${type.sourceTypeId}`));
+  (index.sourceTypes || []).forEach(type => {
+    if (type.domainGroup != null && !validDomains.has(type.domainGroup)) issues.push(`source_type_domain:${type.sourceBankId}:${type.sourceTypeId}`);
+  });
   const seenFamilyIds = new Set();
   const sourceTypeKeys = new Set();
   (index.conceptFamilies || []).forEach(family => {
@@ -33,6 +57,7 @@ function audit(index) {
     if (itemIds.has(item.itemId)) issues.push(`duplicate_item:${item.itemId}`);
     itemIds.add(item.itemId);
     if (!bankIds.has(item.sourceBankId)) issues.push(`unknown_item_bank:${item.itemId}`);
+    if (item.domainGroup != null && !validDomains.has(item.domainGroup)) issues.push(`item_domain:${item.itemId}`);
     if (item.sourceTypeId !== null && item.sourceTypeId !== undefined && !declaredSourceTypeKeys.has(`${item.sourceBankId}:${item.sourceTypeId}`)) {
       issues.push(`unknown_item_source_type:${item.itemId}`);
     }
@@ -40,6 +65,12 @@ function audit(index) {
     if (item.conceptStatus !== "mapped" && item.conceptFamilyId !== null) issues.push(`unexpected_item_family:${item.itemId}`);
     if (Object.prototype.hasOwnProperty.call(item, "canonicalConceptFamilyId") && item.canonicalConceptFamilyId !== null && !familyIds.has(item.canonicalConceptFamilyId)) {
       issues.push(`unknown_item_canonical_family:${item.itemId}`);
+    }
+  });
+  const banksWithRepresentativePlans = new Set((index.sourceBanks || []).filter(bank => bank.representativePlan).map(bank => bank.sourceBankId));
+  (index.items || []).forEach(item => {
+    if (banksWithRepresentativePlans.has(item.sourceBankId) && item.withinCurrentRange === true && !validDomains.has(item.domainGroup)) {
+      issues.push(`representative_item_domain:${item.itemId}`);
     }
   });
   const candidateIds = new Set();

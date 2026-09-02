@@ -3,12 +3,14 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const scopes = require("../data/dolpa-target-scopes.js");
+const placementCore = require("./dolpa-paper-placement-core.cjs");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
 }
 
 function build(database, sourcePlan) {
+  const papersById = new Map((database.papers || []).map(paper => [paper.paperId, paper]));
   const questionsByPaper = new Map();
   (database.questions || []).forEach(question => {
     if (!questionsByPaper.has(question.paperId)) questionsByPaper.set(question.paperId, []);
@@ -23,16 +25,18 @@ function build(database, sourcePlan) {
     const excluded = [];
     indexed.sort((left, right) => left.paperId.localeCompare(right.paperId) || left.number - right.number).forEach(question => {
       const decision = scopes.evaluateQuestion(target.id, question);
+      const placementDecision = placementCore.representativeDecision(papersById.get(question.paperId), question.number);
       const record = {
         questionId: question.questionId,
         paperId: question.paperId,
         number: question.number,
         semester: question.classification.semester,
         unit: question.classification.minorUnit,
-        sourceRelation: question.sourceRelation
+        sourceRelation: question.sourceRelation,
+        placementRole: placementDecision.role
       };
-      if (decision.eligible) included.push(record);
-      else excluded.push({ ...record, reason: decision.reason });
+      if (decision.eligible && placementDecision.eligible) included.push(record);
+      else excluded.push({ ...record, reason: decision.eligible ? placementDecision.reason : decision.reason });
     });
     const shortage = Math.max(0, target.expectedQuestionCount - included.length);
     const includedById = new Map(included.map(item => [item.questionId, item]));

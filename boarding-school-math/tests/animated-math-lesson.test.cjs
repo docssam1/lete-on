@@ -8,14 +8,15 @@ require(path.resolve(root, "..", "geometry", "worksheet", "render.js"));
 const source = require(path.join(root, "learning", "animated-math-lessons.js"));
 const scenes = require(path.join(root, "learning", "animated-math-scene-model.js"));
 
-test("catalog contains six GFIELD-authored multilingual concept samples", function () {
-  assert.equal(source.schemaVersion, 5);
-  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "geometry-angle"]);
+test("catalog contains eight GFIELD-authored multilingual concept samples", function () {
+  assert.equal(source.schemaVersion, 7);
+  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "algebra-balance", "coordinate-polygon-area", "geometry-angle"]);
   source.lessons.forEach(function (lesson) {
     assert.deepEqual(lesson.languages, ["en", "ko", "zh"]);
     assert.equal(lesson.rights.assetRights, "original");
     assert.equal(lesson.rights.containsThirdPartyAssets, false);
     assert.equal(lesson.deliveryMode, "concept-open");
+    assert.deepEqual(Object.keys(lesson.verifiedAnswerI18n).sort(), ["en", "ko", "zh"]);
   });
 });
 
@@ -124,6 +125,23 @@ test("expression tree is calculated from one exact nested-operation model", func
   assert.equal(scenes.sceneFor(lesson, "ko"), markup);
 });
 
+test("equation balance scene is generated from one exact equal-groups model", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "algebra-balance"; });
+  const model = scenes.buildAlgebraBalanceModel(lesson.sceneModel);
+  assert.deepEqual({ coefficient: model.coefficient, total: model.total, solution: model.expectedX, boxes: model.boxes.length }, { coefficient: 6, total: 42, solution: 7, boxes: 6 });
+  assert.equal(model.coefficient * model.expectedX, model.total);
+  const wholeNumberSolutions = Array.from({ length: 43 }, function (_, value) { return value; }).filter(function (value) { return model.coefficient * value === model.total; });
+  assert.deepEqual(wholeNumberSolutions, [7]);
+  const markup = scenes.algebraBalanceScene(lesson, "ko");
+  assert.equal((markup.match(/class="balance-x-box"/g) || []).length, 6);
+  assert.match(markup, /data-object="balance-equation">6x = 42/);
+  assert.match(markup, /data-object="balance-unit"[\s\S]*x = 42 ÷ 6/);
+  assert.match(markup, /data-object="balance-answer"[\s\S]*x = 7/);
+  assert.match(markup, /data-object="balance-check"[\s\S]*6 × 7 = 42/);
+  assert.equal(scenes.sceneFor(lesson, "ko"), markup);
+  assert.throws(function () { scenes.buildAlgebraBalanceModel({ coefficient: 6, total: 43, expectedX: 7 }); }, /SOLUTION_MISMATCH/);
+});
+
 test("GCF scene is generated from factor arrays and an exact remainder chain", function () {
   const lesson = source.lessons.find(function (item) { return item.type === "factor-chain"; });
   assert.deepEqual(lesson.sceneModel.primeFactors, { 60: [2, 2, 3, 5], 84: [2, 2, 3, 7] });
@@ -180,13 +198,31 @@ test("geometry is calculated from a point-segment model and shared renderer", fu
   assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /\.\.\/geometry\/worksheet\/render\.js/);
 });
 
+test("Grade 6 coordinate area is generated from exact vertices and verified three ways", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "coordinate-polygon-area"; });
+  const model = scenes.buildCoordinateAreaModel(lesson.sceneModel);
+  assert.equal(model.area, 40);
+  assert.equal(lesson.sceneModel.outer.width * lesson.sceneModel.outer.height - lesson.sceneModel.cutout.width * lesson.sceneModel.cutout.height, 40);
+  assert.equal(8 * 4 + 4 * 2, 40);
+  let twice = 0;
+  lesson.sceneModel.vertices.forEach(function (point, index) { const next = lesson.sceneModel.vertices[(index + 1) % lesson.sceneModel.vertices.length]; twice += point[0] * next[1] - next[0] * point[1]; });
+  assert.equal(Math.abs(twice) / 2, 40);
+  assert.deepEqual(model.vertices.map(function (point) { return [point.x, point.y]; }), lesson.sceneModel.vertices);
+  const markup = scenes.coordinateAreaScene(lesson, "ko");
+  lesson.objectIds.forEach(function (id) { assert.match(markup, new RegExp('data-object="' + id + '"')); });
+  assert.match(markup, /coordinate-area-svg/);
+  assert.match(markup, /넓이 = 40제곱단위/);
+  assert.equal(lesson.verifiedAnswerI18n.ko, "40제곱단위");
+  assert.equal(scenes.sceneFor(lesson, "ko"), markup);
+});
+
 test("public shell exposes no private contest assets and keeps accessibility paths", function () {
   const files = ["animated-math.html", "animated-math.js", "learning/animated-math-lessons.js", "learning/animated-math-scene-model.js"];
   const bundle = files.map(function (file) { return fs.readFileSync(path.join(root, file), "utf8"); }).join("\n");
   ["SASMO 2019", "private-sources", "question-images", "third-party demo"].forEach(function (token) { assert.equal(bundle.includes(token), false); });
   assert.match(bundle, /lesson-language/);
   assert.match(bundle, /captions-toggle/);
-  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Six ways to make reasoning visible/);
+  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Eight ways to make reasoning visible/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /@media print/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /prefers-reduced-motion:\s*reduce/);
 });

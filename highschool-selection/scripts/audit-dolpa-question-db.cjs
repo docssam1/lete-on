@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const ledgerCore = require("./build-dolpa-work-ledger.cjs");
 const dbCore = require("./build-dolpa-question-db.cjs");
+const placementCore = require("./dolpa-paper-placement-core.cjs");
 
 const FORBIDDEN_KEYS = new Set(["prompt", "stem", "answer", "answervalue", "officialanswer", "independentanswer", "derivedanswer", "correctanswer", "solution", "content", "rawtext", "pageimage"]);
 
@@ -135,6 +136,36 @@ function audit(database) {
       if (!paper.coverage.declaredScopeLabel || !paper.coverage.observedTerminal
         || !paper.coverage.observedTerminal.semester || !paper.coverage.observedTerminal.unit) issues.push(`paper_coverage_terminal:${paper.paperId}`);
       if (paper.coverage.status !== "verified" || !(paper.coverage.evidence || []).length) issues.push(`paper_coverage_evidence:${paper.paperId}`);
+    }
+    if (paper.placementContext) {
+      let normalizedPlacement = null;
+      try {
+        normalizedPlacement = placementCore.normalize({
+          paperId: paper.paperId,
+          evidenceId: (paper.placementContext.evidence || [])[0],
+          examLabelKind: paper.placementContext.examLabelKind,
+          operationalAdmissionMode: paper.placementContext.operationalAdmissionMode,
+          sequenceIndex: paper.placementContext.courseEntryPhase && paper.placementContext.courseEntryPhase.sequenceIndex,
+          courseEntryPhaseLabel: paper.placementContext.courseEntryPhase && paper.placementContext.courseEntryPhase.label,
+          targetCourseLabel: paper.placementContext.targetCourse && paper.placementContext.targetCourse.label,
+          testedPrerequisiteEndpoint: paper.placementContext.testedPrerequisiteEndpoint,
+          testedCoreEndpoint: paper.placementContext.testedCoreEndpoint,
+          maximumObservedContent: paper.placementContext.maximumObservedContent,
+          extensionProbeQuestionNumbers: paper.placementContext.extensionProbeQuestionNumbers,
+          rangeAlignment: paper.placementContext.rangeAlignment,
+          representativeMode: paper.placementContext.representativePolicy && paper.placementContext.representativePolicy.mode,
+          evidenceStatus: paper.placementContext.status,
+          note: paper.placementContext.note
+        }, paper.questionCount);
+      } catch (error) {
+        issues.push(`paper_placement:${paper.paperId}:${error.message}`);
+      }
+      if (normalizedPlacement && JSON.stringify(normalizedPlacement) !== JSON.stringify(paper.placementContext)) {
+        issues.push(`paper_placement_normalization:${paper.paperId}`);
+      }
+      (paper.placementContext.extensionProbeQuestionNumbers || []).forEach(number => {
+        if (!paperQuestionIds[number - 1]) issues.push(`paper_placement_question:${paper.paperId}:${number}`);
+      });
     }
     (paper.equivalentSources || []).forEach(source => {
       if (!/^DP-SRC-[0-9A-F]{12}$/.test(source.sourceId || "")) issues.push(`paper_equivalent_source_id:${paper.paperId}`);

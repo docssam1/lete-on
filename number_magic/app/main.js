@@ -110,6 +110,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   roadPace:'p2',
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
+  seenUnlocks:{}, /* 과정 진도로 새로 연 캐릭터 토스트 재알림 방지(캐릭터-승급-설계.md §3) — {'number_42':true,'symbol_pi':true} */
   seenR0Banner:false, /* N-15 완료 시 R0 추천 배너 — 프로필당 1회만(2차 디자인 패스) */
   pendingR0Banner:false /* stepStamp에서 세우고 다음 마을 진입 때 소비하는 1회성 표시 플래그 */ };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
@@ -120,6 +121,7 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
 if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
 if(!S.character_unlocked)S.character_unlocked={};
+if(!S.seenUnlocks)S.seenUnlocks={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
@@ -280,6 +282,20 @@ function cloudPushSoon(){
       body:JSON.stringify({state:S,updated_at:new Date().toISOString()})
     }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
   },1500);
+}
+/* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
+   현재 과정이 바뀔 때만 저장(렌더마다 save 폭주 방지). 알림서비스-설계.md 참조. */
+function updateWeeklyDigest(){
+  try{
+    const key=currentCourseKey();
+    const c=(window.NM_COURSES||{})[key];
+    if(!c)return;
+    const d=S.weeklyDigest||{};
+    if(d.courseKey===key&&d.cadence===S.roadCadence)return;
+    S.weeklyDigest={courseKey:key,courseNum:c.order,
+      courseTitle:(c.title&&c.title.ko)||key,cadence:S.roadCadence,at:Date.now()};
+    save();
+  }catch(e){}
 }
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;S.progress[unit].touchedAt=Date.now();save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
@@ -494,14 +510,23 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+/* 캐릭터 라벨(이름 없을 때 표시) — 기호 캐릭터는 숫자 대신 글리프로. */
+function charIdLabel(ch){
+  if(ch && ch.symbol){
+    const item=(window.NM_AVATAR&&window.NM_AVATAR.symbols||[]).find(s=>s.id===ch.symbol);
+    return item ? item.glyph : ch.symbol;
+  }
+  return '#'+(ch&&ch.number!=null?ch.number:3);
+}
 function charChipHTML(){
   const mini = window.renderNumiChar ? window.renderNumiChar(S.character, 30) : '🪄';
-  const label = S.name ? esc(S.name) : ('#'+S.character.number);
+  const label = S.name ? esc(S.name) : charIdLabel(S.character);
   return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">${label}</span></button>`;
 }
 function render(){
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
+  if(S.onboarded)updateWeeklyDigest();                    // 알림용 주간 요약(변화 있을 때만 저장)
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
@@ -520,6 +545,7 @@ function render(){
     screenTitle();
     return;
   }
+  syncProgressUnlocks();                                   // 과정 진도 → 캐릭터 해금(멱등, 새로 열리면 토스트)
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
@@ -1007,6 +1033,67 @@ function _mgInit(id){
   return{id,tiles:[],done:false};
 }
 
+/* ============================================================
+   상황별 진행 캐릭터 (호스트) — 원장 지시 2026-09-02
+   "상황에 맞게 각 게임에도 캐릭터가 있어야 돼"
+   ------------------------------------------------------------
+   게임·아레나·진단마다 그 내용에 맞는 기호 마법단이 나와 한 줄 거든다.
+   배정 기준은 **그 활동이 다루는 연산** — 10 만들기는 모으는 일이니 플러스,
+   구구단은 증폭 전사 곱하기, 제곱근은 루트 숲의 현자… 하는 식이다.
+   새 게임이 늘면 HOST_LINES에 한 줄만 추가하면 된다(그림은 기호 PNG 재사용).
+   ============================================================ */
+const HOST_LINES={
+  plus:{ko:'같이 모으면 10이 돼! 짝을 찾아보자.',en:"Put them together and you get 10 — find the pairs!",zh:'凑在一起就是10！来找搭档吧。'},
+  minus:{ko:'필요 없는 만큼만 덜어내면 돼.',en:'Just take away what you do not need.',zh:'把不需要的减掉就好。'},
+  times:{ko:'같은 걸 여러 번! 힘차게 가자.',en:'The same thing, many times — go strong!',zh:'相同的东西重复多次，加油！'},
+  divide:{ko:'똑같이 나누면 아무도 손해 보지 않아.',en:'Share it evenly and no one loses out.',zh:'平均分配，谁都不吃亏。'},
+  equal:{ko:'양쪽이 같아질 때까지 침착하게.',en:'Stay calm until both sides match.',zh:'沉住气，直到两边相等。'},
+  sqrt:{ko:'뿌리를 찾으면 답이 보인단다.',en:'Find the root and the answer appears.',zh:'找到根，答案就出现了。'},
+  percent:{ko:'비율만 바꾸면 새로운 답이 나와!',en:'Change the ratio and a new answer appears!',zh:'改变比例就有新答案！'},
+  pi:{ko:'둥근 것엔 언제나 내가 있지.',en:'Wherever something is round, I am there.',zh:'凡是圆的地方都有我。'},
+  sigma:{ko:'흩어진 걸 모아 한 번에 정리하자.',en:'Gather what is scattered and sum it at once.',zh:'把散的聚起来，一次算完。'},
+  infinity:{ko:'끝은 없어. 천천히, 멀리 가 보자.',en:'There is no end — go slow, go far.',zh:'没有尽头。慢慢来，走得远一点。'},
+  numi:{ko:'같이 해보자! 천천히 해도 괜찮아.',en:"Let's do it together — slow is fine!",zh:'一起来吧！慢一点也没关系。'}
+};
+/* 미니게임 id → 호스트. 지금 게임은 둘 다 '모아서 10 만들기'라 플러스가 맡는다. */
+const HOST_GAMES={ make10:'plus', make10_3:'plus' };
+/* 스레드 접두어 → 호스트. 유닛의 generator나 스레드 id 앞글자로 고른다. */
+const HOST_THREADS=[
+  [/^(MD4[3-9]|MD5[0-9]|MD6[0-2]|calc|lim)/i,'infinity'],  /* 극한·미적분 */
+  [/^(MX2|gauss|series|seq)/i,'sigma'],                    /* 수열의 합 */
+  [/^(MX4|sqrt|root)/i,'sqrt'],                            /* 제곱근 */
+  [/^(circle|pi)/i,'pi'],
+  [/^(DC|ratio|percent|rate)/i,'percent'],                 /* 소수·비율 */
+  [/^(DV|div)/i,'divide'],
+  [/^(ML|mul|times)/i,'times'],
+  [/^(SB|sub|minus)/i,'minus'],
+  [/^(EL|check|inverse)/i,'equal'],                        /* 역연산·검산 */
+  [/^(AD|NS|add|pair|make)/i,'plus'],
+  [/^N-/,'numi']                                           /* 유아 유닛 */
+];
+function hostIdFor(kind,key){
+  key=String(key||'');
+  if(kind==='game')return HOST_GAMES[key]||'plus';
+  if(kind==='placement')return 'equal';                    /* 진단 = 공정한 판단 */
+  for(const [re,id] of HOST_THREADS){ if(re.test(key))return id; }
+  return 'numi';
+}
+function hostImgSrc(id){
+  const base=window.NM_CHAR_BASE||'assets/characters/';
+  return id==='numi' ? base+'numi-0.png' : base+'sym-'+id+'.png';
+}
+/* 호스트 띠 — 캐릭터 그림 + 말풍선 한 줄. 그림이 없으면 그림만 숨고 말은 남는다. */
+function hostStripHtml(kind,key){
+  const id=hostIdFor(kind,key);
+  const sym=((window.NM_AVATAR&&window.NM_AVATAR.symbols)||[]).find(s=>s.id===id);
+  const name=sym?L(sym):(S.lang==='ko'?'누미':S.lang==='en'?'Numi':'努米');
+  const line=L(HOST_LINES[id]||HOST_LINES.numi);
+  return `<div class="nm-host">
+    <img class="nm-host-img" src="${hostImgSrc(id)}" alt="${esc(name)}" onerror="this.style.display='none'">
+    <div class="nm-host-bubble"><b>${esc(name)}</b><span>${esc(line)}</span></div>
+  </div>`;
+}
+
 function screenMiniGame(gameId){
   if(townCleanup){townCleanup();townCleanup=null;}
   if(!S.miniGame||S.miniGame.id!==gameId||S.miniGame.fresh){S.miniGame=_mgInit(gameId);}
@@ -1048,6 +1135,7 @@ function _renderMiniGame(){
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
         </div>
       </div>`:`<div class="nm-mg-board" id="mgBoard">
+        ${hostStripHtml('game',mg.id)}
         <div class="nm-mg-hint">${lk('합이 10이 되는 두 수를 눌러요!','Tap two numbers that add up to 10!','点击两个加起来等于10的数！')}</div>
         <div class="nm-mg-tiles">${tilesHtml}</div>
       </div>`}
@@ -1135,6 +1223,7 @@ function _renderMiniGame(){
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
         </div>
       </div>`:`<div class="nm-mg-board" id="mgBoard">
+        ${hostStripHtml('game',mg.id)}
         <div class="nm-mg-hint">${lk('합이 10인 세 수를 골라요!','Pick 3 numbers that sum to 10!','选三个加起来等于10的数！')} &nbsp;<small style="color:#9aa">1+2+7 / 1+3+6 / 1+4+5 / 2+3+5</small></div>
         <div class="nm-mg-tiles" style="grid-template-columns:repeat(4,1fr)">${tilesHtml}</div>
       </div>`}
@@ -2319,6 +2408,72 @@ function currentCourseKey(){
     if(cid) return cid;
   }
   return 'C1';
+}
+/* 숫자 캐릭터 해금의 "티어" 그룹 경계 — 캐릭터-승급-설계.md §1 표 그대로
+   (level1=과정10, level2=16, level3=25, challenge=28, middle(1~3 통합)=35,
+   highmath(1~2 통합)=39가 각 그룹의 마지막 과정). numbers 항목의 course는
+   항상 이 여섯 값 중 하나(그 그룹의 대표값)라, 과정 order를 이 경계로
+   그룹핑해 "같은 그룹 이상이면 해금"으로 비교한다 — "그 티어에 도달하면"
+   (§1)은 그 티어의 *마지막 과정*이 아니라 티어 전체를 가리키므로, 예를 들어
+   level3의 첫 과정(17)만 밟아도 level3 보상(33·42·50)이 전부 열려야 한다.
+   symbols는 반대로 "배우는 과정" 그 자체가 문턱이라(§2) 이 그룹핑을 쓰지
+   않고 과정 order를 item.course와 직접 비교한다. */
+const NUMBER_TIER_GROUP_BOUNDS = [10,16,25,28,35,39];
+function numberTierGroupIdx(order){
+  for(let i=0;i<NUMBER_TIER_GROUP_BOUNDS.length;i++){
+    if(order <= NUMBER_TIER_GROUP_BOUNDS[i]) return i;
+  }
+  return NUMBER_TIER_GROUP_BOUNDS.length - 1; // 하이매쓰 이후도 최상위 그룹으로 취급
+}
+/* 과정 진도 → 캐릭터 해금(캐릭터-승급-설계.md §1·§3, §0 수정사항). 되돌아가도
+   잠기지 않는다: character_unlocked는 채우기만 하고 지우지 않는 멱등 함수라
+   현재 과정이 낮아져도(다른 유닛을 다시 만져 currentCourseKey가 내려가도) 이미
+   연 항목은 계속 unlocked로 남는다. render()마다 호출.
+   진도가 전혀 없는 완전 신규 학생(mostRecentTouchedUnit()===null)은 order=0 —
+   currentCourseKey()는 이럴 때 표시용으로 'C1'을 대신 반환하지만(§ currentCourseKey
+   주석) 그 기본값을 여기서 "과정1 도달"로 오인하면 신규 학생이 아무것도 안 했는데
+   과정1 보상(기호 plus)이 바로 열려 버린다 — 그래서 currentCourseKey()를 재사용하지
+   않고 mostRecentTouchedUnit()을 직접 봐서 진짜 진도가 있을 때만 계산한다. */
+function syncProgressUnlocks(){
+  if(!window.NM_COURSES || !window.NM_AVATAR) return;
+  const uid = mostRecentTouchedUnit();
+  const cid = uid ? courseForUnit(uid) : null;
+  const course = cid ? NM_COURSES[cid] : null;
+  const order = course ? course.order : 0;
+  if(!S.character_unlocked) S.character_unlocked = {};
+  if(!S.seenUnlocks) S.seenUnlocks = {};
+  if(order <= 0) return; // 진도 없음 — 아무것도 안 연다
+  const groupIdx = numberTierGroupIdx(order);
+  const newNumbers = [], newSymbols = [];
+  (NM_AVATAR.numbers || []).forEach(item => {
+    if(item.course == null || groupIdx < numberTierGroupIdx(item.course)) return;
+    const uk = 'number_' + item.id;
+    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newNumbers.push(item); }
+  });
+  (NM_AVATAR.symbols || []).forEach(item => {
+    if(item.course == null || order < item.course) return;
+    const uk = 'symbol_' + item.id;
+    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newSymbols.push(item); }
+  });
+  if(!newNumbers.length && !newSymbols.length) return;
+  save();
+  newNumbers.forEach(item => {
+    const sk = 'number_' + item.id;
+    if(S.seenUnlocks[sk]) return;
+    S.seenUnlocks[sk] = true;
+    toast(S.lang==='en' ? `A new number friend arrived! ${item.id} ✨`
+      : S.lang==='zh' ? `新的数字朋友来了！${item.id} ✨`
+      : `새 숫자 친구가 왔어요! ${item.id} ✨`, true);
+  });
+  newSymbols.forEach(item => {
+    const sk = 'symbol_' + item.id;
+    if(S.seenUnlocks[sk]) return;
+    S.seenUnlocks[sk] = true;
+    toast(S.lang==='en' ? `A new symbol friend arrived! ${item.glyph} ✨`
+      : S.lang==='zh' ? `新的符号朋友来了！${item.glyph} ✨`
+      : `새 기호 친구가 왔어요! ${item.glyph} ✨`, true);
+  });
+  save();
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
 function primarySessionOf(course){
@@ -3618,6 +3773,7 @@ function nextArena(body,u,need){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
+    ${hostStripHtml('unit',(u.arena&&u.arena.generator)||u.generator||u.id)}
     <div class="nm-arena-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
@@ -3765,6 +3921,7 @@ function screenCloset(){
   renderIdCard();
   renderSlotCards();
   renderAccountCard();
+  renderNotifyCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
@@ -3779,7 +3936,8 @@ function screenCloset(){
         // 상단 칩만 업데이트
         const chip=$('#charChipBtn');
         if(chip&&window.renderNumiChar){
-          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">#${S.character.number}</span>`;
+          const lbl=S.name?esc(S.name):charIdLabel(S.character);
+          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">${lbl}</span>`;
         }
         const ci=$('.nm-coins b');
         if(ci)ci.textContent=S.coins;
@@ -3850,6 +4008,67 @@ function renderSlotCards(){
 
 /* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
    설정/프로필 화면 쪽 코드 입력 지점. 게이트 모달과 로직(applyAccountCode)을 공유. */
+/* ── 학부모 알림 등록 카드 (알림서비스-설계.md §5-1) ──
+   번호는 nm_contacts에만 insert(anon은 조회 불가 — nm_profiles와 분리).
+   등록 여부는 로컬 플래그(S.notifyReg)로만 표시(번호 원문은 로컬에도 안 남김). */
+function renderNotifyCard(){
+  const slot=$('#nm-account-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const div=document.createElement('div');
+  div.className='nm-idcard nm-notify-card';
+  if(S.notifyReg){
+    div.innerHTML=`📱 ${lk('학부모 알림 등록됨','Parent alerts registered','家长通知已登记')} (${esc(S.notifyReg)}) · ${lk('해지는 학원에 문의','Contact academy to opt out','退订请联系学院')}`;
+    slot.appendChild(div);
+    return;
+  }
+  div.innerHTML=`
+    <div class="nm-notify-head">📱 ${lk('학부모 알림 받기','Parent Alerts','家长通知')}</div>
+    <p class="nm-notify-desc">${lk('매주 학습지·진도 안내를 문자로 보내드려요.','Get weekly worksheet & progress texts.','每周通过短信发送学习单和进度通知。')}</p>
+    <div class="nm-notify-row">
+      <input id="nmNotifyPhone" type="tel" inputmode="numeric" maxlength="13"
+        placeholder="${lk('학부모 휴대폰 번호','Parent phone number','家长手机号')}">
+      <button class="nm-btn nm-btn-small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
+    </div>
+    <label class="nm-notify-consent">
+      <input type="checkbox" id="nmNotifyConsent">
+      <span>${lk('학습 안내 발송을 위한 전화번호 수집·이용에 동의합니다(수신 해지 시까지 보관).',
+        'I agree to the collection and use of this number for learning notifications (kept until opt-out).',
+        '同意为发送学习通知收集并使用该号码（保留至退订）。')}</span>
+    </label>
+    <div class="nm-notify-msg" id="nmNotifyMsg"></div>`;
+  slot.appendChild(div);
+  $('#nmNotifyGo').onclick=async()=>{
+    const msgEl=$('#nmNotifyMsg');
+    const raw=($('#nmNotifyPhone').value||'').replace(/\D/g,'');
+    if(!/^01\d{8,9}$/.test(raw)){
+      msgEl.textContent=lk('휴대폰 번호를 확인해 주세요 (01로 시작).','Please check the phone number.','请检查手机号。');
+      return;
+    }
+    if(!$('#nmNotifyConsent').checked){
+      msgEl.textContent=lk('동의에 체크해 주세요.','Please check the consent box.','请勾选同意。');
+      return;
+    }
+    msgEl.textContent='…';
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/nm_contacts`,{
+        method:'POST',headers:sbHdr(),
+        body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
+          phone:raw,consent:true,consent_at:new Date().toISOString()})});
+      if(r.ok||r.status===409){ /* 409=이미 등록(같은 프로필·번호) — 성공 취급 */
+        S.notifyReg=raw.slice(0,3)+'-****-'+raw.slice(-4);
+        save();
+        if(div.parentNode)div.parentNode.removeChild(div);
+        renderNotifyCard();
+      }else{
+        msgEl.textContent=lk('등록에 실패했어요. 잠시 후 다시 시도해 주세요.','Failed — please try again later.','登记失败，请稍后再试。');
+      }
+    }catch(e){
+      msgEl.textContent=lk('네트워크 오류 — 다시 시도해 주세요.','Network error — try again.','网络错误，请重试。');
+    }
+  };
+}
 function renderAccountCard(){
   const slot=$('#nm-account-slot');
   if(!slot)return;
