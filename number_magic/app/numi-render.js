@@ -331,10 +331,15 @@ function symbolFigure(id, fg, tint, shadow){
   const png = symbolImgSrc(id);
   const item = (window.NM_AVATAR && window.NM_AVATAR.symbols || []).find(s=>s.id===id) || {};
   const alt = item.glyph || id;
+  /* PNG가 뜨면 밑에 깔린 폴백 SVG를 감춘다 — 안 감추면 SVG의 팔다리·눈이 PNG 밖으로
+     삐져나와 이중으로 보인다(2026-09-02 실화면 검토에서 잡음). PNG가 없으면
+     onerror로 img만 사라지고 SVG가 그대로 남는다. */
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" preserveAspectRatio="xMidYMid meet"
-style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible">${symbolCharacterSVG(id, fg)}</svg>
-<img src="${png}" alt="${alt}" draggable="false" onerror="this.style.display='none'"
-style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:76%;max-height:88%;object-fit:contain;filter:${shadow}">`;
+data-symfallback="1" style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible">${symbolCharacterSVG(id, fg)}</svg>
+<img src="${png}" alt="${alt}" draggable="false"
+onload="var s=this.parentNode&&this.parentNode.querySelector('[data-symfallback]');if(s)s.style.display='none'"
+onerror="this.style.display='none'"
+style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:92%;max-height:96%;object-fit:contain;filter:${shadow}">`;
 }
 
 /* ── 메인 렌더 ── */
