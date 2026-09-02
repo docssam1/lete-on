@@ -445,6 +445,16 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .academy-profile-filters label:has(input:checked) { border-color: var(--accent); background: #fff4df; color: var(--accent-dark); }
 .academy-profile-filters input { width: 13px; height: 13px; margin: 0; accent-color: var(--accent); }
 .candidate-context { grid-column: 1 / -1; margin: -1px 1px 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.candidate-analysis { display: grid; grid-column: 1 / -1; gap: 8px; }
+.candidate-analysis[hidden] { display: none; }
+.candidate-analysis-card { display: grid; gap: 7px; padding: 10px 11px; border: 1px solid #e6cda7; border-radius: 7px; background: #fff9ed; }
+.candidate-analysis-card.is-ready { border-color: #b8d9c7; background: #f1fbf5; }
+.candidate-analysis-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.candidate-analysis-heading strong { font-size: 11px; }
+.candidate-analysis-summary, .candidate-analysis-note { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.candidate-analysis-domains { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.candidate-analysis-domains span { padding: 6px 7px; border-radius: 5px; background: rgba(255, 255, 255, .8); color: var(--ink); font-size: 9px; line-height: 1.4; }
+.candidate-analysis-blockers { display: grid; gap: 2px; margin: 0; padding-left: 17px; color: #8b4f17; font-size: 9px; line-height: 1.45; }
 .candidate-list { max-height: calc(100vh - 360px); min-height: 180px; overflow-y: auto; overscroll-behavior: contain; }
 .candidate-list[aria-busy="true"] { opacity: .55; }
 .candidate-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 94px; padding: 13px 12px; border-bottom: 1px solid var(--line); }
@@ -459,6 +469,7 @@ body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .candidate-badge { padding: 3px 6px; border-radius: 4px; background: #ece8df; color: #575c55; font-size: 9px; font-weight: 850; }
 .candidate-badge.figure { background: #e7eff2; color: var(--navy); }
 .candidate-badge.profile { background: #fff0d5; color: var(--accent-dark); }
+.candidate-badge.domain { background: #e4f1f5; color: #1c6172; }
 .candidate-badge.taxonomy { background: #e9e7f8; color: #4c3e88; }
 .candidate-row.is-catalog { min-height: 106px; }
 .candidate-row.is-catalog .candidate-path { white-space: normal; line-height: 1.45; }

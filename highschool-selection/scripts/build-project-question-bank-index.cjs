@@ -23,7 +23,57 @@ function sourceType(sourceBankId, sourceTypeId, fields) {
     status: fields.status || "verified",
     taxonomyReviewStatus: fields.taxonomyReviewStatus || null,
     internalTypeGroupId: fields.internalTypeGroupId || null,
+    domainGroup: fields.domainGroup || null,
     evidence: fields.evidence || []
+  };
+}
+
+function saengsuDomainGroup(value, label) {
+  const normalized = String(value == null ? "" : value).trim().toLocaleLowerCase("ko");
+  if (normalized === "대수" || normalized === "algebra") return "algebra";
+  if (normalized === "기하" || normalized === "geometry") return "geometry";
+  throw new Error(`생수 ${label}의 대수·기하 분류를 확인해 주세요.`);
+}
+
+function saengsuRepresentativePlan(database) {
+  const policy = database && database.representativePolicy;
+  if (!policy) return null;
+  const questionCount = Number(policy.questionCount);
+  const algebra = Number(policy.domainBalance && policy.domainBalance.algebra);
+  const geometry = Number(policy.domainBalance && policy.domainBalance.geometry);
+  const range = Array.isArray(policy.range) ? policy.range.map(value => String(value || "").trim()).filter(Boolean) : [];
+  if (!Number.isSafeInteger(questionCount) || questionCount <= 0 || !Number.isSafeInteger(algebra) || !Number.isSafeInteger(geometry)
+    || algebra <= 0 || geometry <= 0 || algebra + geometry !== questionCount || !range.length) {
+    throw new Error("생수 대표 시험 구성 기준을 확인해 주세요.");
+  }
+  let timeMinutes = null;
+  if (policy.timeMinutes != null) {
+    timeMinutes = Number(policy.timeMinutes);
+    if (!Number.isSafeInteger(timeMinutes) || timeMinutes <= 0) throw new Error("생수 대표 시험 시간을 확인해 주세요.");
+  }
+  let referenceCutline = null;
+  if (policy.referenceCutline) {
+    const score = Number(policy.referenceCutline.score);
+    const total = Number(policy.referenceCutline.total);
+    if (!Number.isSafeInteger(score) || !Number.isSafeInteger(total) || score < 0 || total !== questionCount || score > total) {
+      throw new Error("생수 과거 공개 참고 점수를 확인해 주세요.");
+    }
+    referenceCutline = { score, total, status: policy.referenceCutline.status || "public_reference_only" };
+  }
+  if (database.officialCurrentExam === true) throw new Error("생수 구판 참고 후보를 현행 공식 시험으로 표시할 수 없습니다.");
+  return {
+    profileId: "SM_STANDARD",
+    sourceRole: database.sourceRole || "legacy_reference_candidates",
+    officialCurrentExam: false,
+    range,
+    questionCount,
+    domainQuotas: { algebra, geometry },
+    timeMinutes,
+    referenceCutline,
+    operationalCutline: null,
+    cutlineStatus: policy.cutlineStatus || "locked_non_operational",
+    publicLabel: policy.publicLabel || "생수형 공통수학1 입반 대비 추정 구성",
+    status: "locked"
   };
 }
 
@@ -232,6 +282,10 @@ function adaptSaengsuLegacy(database) {
       ? question.curriculum.semesters.filter(Boolean)
       : [];
     const compatibility = (question.academyCompatibility || []).find(item => item.profileId === "SM_STANDARD");
+    const domainGroup = saengsuDomainGroup(
+      question.curriculum && question.curriculum.primaryDomain || type.primaryDomain,
+      `${question.questionId} 문항`
+    );
     const fitStatus = question.withinCurrentRange && compatibility && compatibility.state === "candidate"
       ? "candidate"
       : "excluded";
@@ -240,6 +294,7 @@ function adaptSaengsuLegacy(database) {
       sourceBankId,
       sourceItemId: question.questionId,
       sourceTypeId: question.candidateTypeId,
+      domainGroup,
       classificationStatus: question.curriculum && question.curriculum.curriculumStatus === "verified"
         ? "reviewed_detail_locked"
         : "pending",
@@ -284,6 +339,7 @@ function adaptSaengsuLegacy(database) {
       status: curriculum.curriculumStatus === "verified" ? "reviewed_detail_locked" : "pending",
       taxonomyReviewStatus: type.canonicalMergeStatus || "pending",
       internalTypeGroupId: type.canonicalInternalGroupId || null,
+      domainGroup: saengsuDomainGroup(type.primaryDomain || curriculum.primaryDomain, `${type.candidateTypeId} 유형`),
       evidence: question ? [`saengsu:${question.paperId}:Q${question.questionNumber}`] : []
     });
   });
@@ -294,6 +350,7 @@ function adaptSaengsuLegacy(database) {
       label: "생수 공통수학1 구판 참고 후보",
       itemCount: items.length,
       taxonomyCounts: (database.summary && database.summary.typeReview) || null,
+      representativePlan: saengsuRepresentativePlan(database),
       status: "taxonomy_reviewed_release_locked"
     },
     types,

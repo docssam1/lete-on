@@ -32,6 +32,17 @@ function fixture() {
 
 function saengsuFixture() {
   return {
+    sourceRole: "legacy_reference_candidates",
+    officialCurrentExam: false,
+    representativePolicy: {
+      range: ["중2-2", "중3-1", "중3-2"],
+      questionCount: 30,
+      domainBalance: { algebra: 15, geometry: 15 },
+      timeMinutes: 180,
+      referenceCutline: { score: 20, total: 30, status: "public_reference_only" },
+      cutlineStatus: "locked_non_operational",
+      publicLabel: "생수형 공통수학1 입반 대비 추정 구성"
+    },
     types: [
       {
         candidateTypeId: "SMTYPE-TEST-1",
@@ -59,6 +70,7 @@ function saengsuFixture() {
         candidateTypeId: "SMTYPE-TEST-1",
         curriculum: {
           semesters: ["중3-1"],
+          primaryDomain: "대수",
           majorUnit: "이차방정식",
           minorUnit: "이차방정식의 활용",
           detailType: "조건을 이용해 두 근의 관계 구하기",
@@ -81,6 +93,7 @@ function saengsuFixture() {
         candidateTypeId: "SMTYPE-TEST-2",
         curriculum: {
           semesters: ["중2-1"],
+          primaryDomain: "대수",
           majorUnit: "일차함수",
           minorUnit: "일차함수의 그래프",
           detailType: "그래프에서 두 직선의 교점 구하기",
@@ -223,6 +236,11 @@ test("생수 구판 후보는 공통 유형에 연결하되 정답 검산 전 �
   assert.equal(current.answerStatus, "pending");
   assert.equal(current.releaseStatus, "locked");
   assert.equal(current.usageApproved, false);
+  assert.equal(current.domainGroup, "algebra");
+  assert.equal(index.sourceTypes.find(item => item.sourceTypeId === "SMTYPE-TEST-1").domainGroup, "algebra");
+  assert.deepEqual(bank.representativePlan.domainQuotas, { algebra: 15, geometry: 15 });
+  assert.equal(bank.representativePlan.officialCurrentExam, false);
+  assert.equal(bank.representativePlan.operationalCutline, null);
   assert.deepEqual(current.academyFits, [{ profileId: "SM_STANDARD", status: "candidate" }]);
   assert.deepEqual(excluded.academyFits, [{ profileId: "SM_STANDARD", status: "excluded" }]);
   assert.deepEqual(audit.audit(index).issues, []);
@@ -233,6 +251,24 @@ test("생수 후보 DB의 문항-유형 연결이 깨지면 인덱스 생성을 
   input.saengsuLegacy = saengsuFixture();
   input.saengsuLegacy.questions[0].candidateTypeId = "SMTYPE-MISSING";
   assert.throws(() => builder.buildIndex(input), /없는 유형/);
+});
+
+test("생수 대수·기하 분류와 30문항 대표 기준이 맞지 않으면 인덱스 생성을 막는다", () => {
+  const missingDomain = fixture();
+  missingDomain.saengsuLegacy = saengsuFixture();
+  delete missingDomain.saengsuLegacy.questions[0].curriculum.primaryDomain;
+  delete missingDomain.saengsuLegacy.types[0].primaryDomain;
+  assert.throws(() => builder.buildIndex(missingDomain), /대수·기하 분류/);
+
+  const wrongQuota = fixture();
+  wrongQuota.saengsuLegacy = saengsuFixture();
+  wrongQuota.saengsuLegacy.representativePolicy.domainBalance.geometry = 14;
+  assert.throws(() => builder.buildIndex(wrongQuota), /대표 시험 구성 기준/);
+
+  const wrongCutline = fixture();
+  wrongCutline.saengsuLegacy = saengsuFixture();
+  wrongCutline.saengsuLegacy.representativePolicy.referenceCutline.total = 50;
+  assert.throws(() => builder.buildIndex(wrongCutline), /과거 공개 참고 점수/);
 });
 
 test("검수된 생수 병합·별칭만 기존 공통 유형에 연결하고 나머지는 대기로 둔다", () => {
@@ -287,6 +323,22 @@ test("공통 인덱스에는 원문·정답·경로를 넣지 않고 전체 검�
   const index = builder.buildIndex(fixture());
   assert.deepEqual(audit.audit(index).issues, []);
   assert.equal(JSON.stringify(index).includes("sourcePath"), false);
+});
+
+test("저장된 생수 대표 기준이나 대수·기하 분류가 바뀌면 공통 인덱스 검사에서 막는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  const wrongDomain = builder.buildIndex(input);
+  wrongDomain.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01").domainGroup = "mixed";
+  assert.ok(audit.audit(wrongDomain).issues.some(issue => issue.startsWith("item_domain:")));
+
+  const missingDomain = builder.buildIndex(input);
+  delete missingDomain.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01").domainGroup;
+  assert.ok(audit.audit(missingDomain).issues.some(issue => issue.startsWith("representative_item_domain:")));
+
+  const openedCutline = builder.buildIndex(input);
+  openedCutline.sourceBanks.find(bank => bank.sourceBankId === "SAENGSU-CM1-LEGACY").representativePlan.operationalCutline = { score: 20, total: 30 };
+  assert.ok(audit.audit(openedCutline).issues.some(issue => issue.startsWith("representative_release:")));
 });
 
 test("문항이 존재하지 않는 원본 유형 ID를 가리키면 검사에서 막는다", () => {

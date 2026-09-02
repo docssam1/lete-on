@@ -28,6 +28,7 @@
     candidateSearchForm: document.getElementById("candidate-search-form"),
     candidateQuery: document.getElementById("candidate-query"),
     candidateContext: document.getElementById("candidate-context"),
+    candidateAnalysis: document.getElementById("candidate-analysis"),
     candidateCount: document.getElementById("candidate-count"),
     candidateList: document.getElementById("candidate-list"),
     candidateEmpty: document.getElementById("candidate-empty"),
@@ -55,6 +56,7 @@
   const state = {
     packet: null,
     candidates: [],
+    representativeAnalyses: [],
     metadata: new Map(),
     candidateMode: "new",
     selectedPlacementId: null,
@@ -68,6 +70,7 @@
   const pendingScores = new Map();
 
   const difficultyLabels = { lowered: "하향", standard: "기준", raised: "상향" };
+  const domainLabels = { algebra: "대수", geometry: "기하" };
   const inputLabels = {
     single_choice: "객관식", multi_choice: "복수 선택", ox: "O/X", input: "단답형",
     multi_input: "복수 입력", ordered_list: "순서형", unordered_set: "집합형",
@@ -250,6 +253,37 @@
     if (Array.from(elements.candidateScope.options).some(option => option.value === previous)) elements.candidateScope.value = previous;
   }
 
+  function renderRepresentativeAnalyses() {
+    elements.candidateAnalysis.replaceChildren();
+    const analyses = state.candidateMode === "catalog" ? state.representativeAnalyses : [];
+    elements.candidateAnalysis.hidden = analyses.length === 0;
+    analyses.forEach(function (analysis) {
+      const card = make("section", `candidate-analysis-card ${analysis.canCompose ? "is-ready" : "is-locked"}`);
+      const heading = make("div", "candidate-analysis-heading");
+      heading.append(
+        make("strong", "", analysis.publicLabel || "대표 시험 구성"),
+        candidateBadge(analysis.canCompose ? "조립 가능" : "조립 잠금", analysis.canCompose ? "" : "warning")
+      );
+      const range = Array.isArray(analysis.range) ? analysis.range.join(" · ") : "범위 확인 필요";
+      const summary = make("p", "candidate-analysis-summary", `${range} · 목표 ${analysis.questionCount}문항 · 현재 범위 후보 ${analysis.candidatePoolCount}개 · 모든 확인 완료 ${analysis.fullyReviewedCount}개`);
+      const domains = make("div", "candidate-analysis-domains");
+      const algebra = analysis.domain && analysis.domain.algebra || {};
+      const geometry = analysis.domain && analysis.domain.geometry || {};
+      domains.append(
+        make("span", "", `대수 후보 ${algebra.candidates || 0}개 / 사용 가능 ${algebra.ready || 0}개 / 필요 ${algebra.required || 0}개`),
+        make("span", "", `기하 후보 ${geometry.candidates || 0}개 / 사용 가능 ${geometry.ready || 0}개 / 필요 ${geometry.required || 0}개`)
+      );
+      const blockers = make("ul", "candidate-analysis-blockers");
+      (analysis.blockers || []).forEach(function (message) { blockers.append(make("li", "", message)); });
+      card.append(heading, summary, domains);
+      if (blockers.childElementCount) card.append(blockers);
+      if (analysis.referenceCutline && Number.isFinite(Number(analysis.referenceCutline.score)) && Number.isFinite(Number(analysis.referenceCutline.total))) {
+        card.append(make("p", "candidate-analysis-note", `과거 공개 참고: ${analysis.referenceCutline.score}/${analysis.referenceCutline.total} · 현재 합격선으로 자동 적용하지 않습니다.`));
+      }
+      elements.candidateAnalysis.append(card);
+    });
+  }
+
   function renderCandidateMode() {
     const replacementReady = Boolean(selectedPlacement()) && !(state.packet && state.packet.migrationRequired);
     Array.from(elements.candidateMode.querySelectorAll("[data-mode]")).forEach(function (button) {
@@ -277,6 +311,7 @@
       : placement
         ? `${placement.order}번 문항의 ${state.candidateMode === "twin" ? "쌍둥이" : "유사"} 후보만 표시합니다.`
         : "먼저 현재 시험지에서 교체할 문항을 선택하세요.";
+    renderRepresentativeAnalyses();
   }
 
   function candidateBadge(text, tone) {
@@ -296,6 +331,7 @@
         title.append(make("strong", "", candidate.typeLabel), make("code", "", sourceReference));
         const badges = make("div", "candidate-badges");
         (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        if (candidate.domainGroup) badges.append(candidateBadge(domainLabels[candidate.domainGroup] || candidate.domainGroup, "domain"));
         if ((candidate.profiles || []).some(function (profile) { return profile.status === "candidate"; })) badges.append(candidateBadge("학원형 후보", "warning"));
         if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
         if (candidate.conceptStatus === "pending") badges.append(candidateBadge("공통 유형 연결 대기", "warning"));
@@ -526,6 +562,7 @@
     if (!state.packet) return;
     if (state.packet.migrationRequired) {
       state.candidates = [];
+      state.representativeAnalyses = [];
       renderCandidates();
       return;
     }
@@ -535,6 +572,7 @@
       const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input[value]:checked")).map(input => input.value);
       if (!profiles.length) {
         state.candidates = [];
+        state.representativeAnalyses = [];
         renderCandidates();
         renderCandidateMode();
         elements.candidateList.removeAttribute("aria-busy");
@@ -548,11 +586,14 @@
         const packet = await request(`/admin/question-bank/catalog?${catalogParams}`);
         if (sequence !== state.searchSequence) return;
         state.candidates = packet.items || [];
+        state.representativeAnalyses = packet.representativeAnalyses || [];
         renderCandidateMode();
         renderCandidates();
       } catch (error) {
         if (sequence !== state.searchSequence) return;
         state.candidates = [];
+        state.representativeAnalyses = [];
+        renderCandidateMode();
         renderCandidates();
         setAlert(error.message, "error");
       } finally {
@@ -697,6 +738,7 @@
     const button = event.target.closest("[data-mode]");
     if (!button || button.disabled) return;
     state.candidateMode = button.dataset.mode;
+    state.representativeAnalyses = [];
     if (["new", "catalog"].includes(state.candidateMode)) state.selectedPlacementId = null;
     renderCandidateMode();
     renderPlacements();
@@ -706,6 +748,7 @@
   elements.candidateSearchForm.addEventListener("submit", function (event) { event.preventDefault(); searchCandidates(); });
   elements.candidateScope.addEventListener("change", searchCandidates);
   elements.academyProfileFilters.addEventListener("change", function () {
+    state.representativeAnalyses = [];
     renderCandidateMode();
     if (state.candidateMode === "catalog") searchCandidates();
   });

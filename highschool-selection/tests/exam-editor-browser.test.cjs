@@ -87,6 +87,43 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   await page.locator("#catalog-include-candidates").check();
   await page.waitForFunction(() => document.querySelector("#candidate-context")?.textContent.includes("후보를 함께"));
   assert.ok(catalogRequests.some(url => /[?&]includeCandidates=1(?:&|$)/.test(url)));
+  await page.route("**/admin/question-bank/catalog?*", async route => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get("profiles") !== "SM_STANDARD") { await route.continue(); return; }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        profiles: [{ profileId: "SM_STANDARD", programId: "SM", label: "생수형" }],
+        representativeAnalyses: [{
+          profileId: "SM_STANDARD", publicLabel: "생수형 공통수학1 입반 대비 추정 구성",
+          officialCurrentExam: false, range: ["중2-2", "중3-1", "중3-2"], questionCount: 30,
+          domain: { algebra: { required: 15, candidates: 29, ready: 0 }, geometry: { required: 15, candidates: 29, ready: 0 } },
+          candidatePoolCount: 58, fullyReviewedCount: 0, unclassifiedCount: 0, operationalCutline: null,
+          referenceCutline: { score: 20, total: 30, status: "public_reference_only" }, status: "locked", canCompose: false,
+          blockers: ["시험지에 쓸 수 있도록 모든 검수를 마친 문항이 30개보다 적습니다."]
+        }],
+        items: [{
+          questionId: "SAENGSU-CM1-LEGACY:REVIEW-ONLY", paperId: "SAENGSU-CM1-LEGACY", sourceLabel: "생수 구판 참고 후보", number: 1,
+          semester: "중3-1", majorUnit: "이차방정식", minorUnit: "이차방정식의 활용", typeId: "SMTYPE-REVIEW", typeLabel: "두 근의 관계 구하기",
+          conceptStatus: "pending", taxonomyReviewStatus: "new_type", withinCurrentRange: true, domainGroup: "algebra",
+          difficultyBand: null, difficultyStatus: "pending", responseKind: null, responseStatus: "pending", releaseEligible: false,
+          releaseBlockReason: "learner_fit_not_passed", pagePreviewAvailable: false,
+          reviewChecks: { classification: false, locator: false, difficulty: false, response: false, keyCheck: true, learnerFit: false, method: false, variants: false, usageApproval: false },
+          profiles: [{ profileId: "SM_STANDARD", label: "생수형", status: "candidate" }]
+        }],
+        count: 1
+      })
+    });
+  });
+  await page.locator('#academy-profile-filters input[value="DP_STANDARD"]').uncheck();
+  await page.locator('#academy-profile-filters input[value="SM_STANDARD"]').check();
+  await page.locator("#candidate-analysis").waitFor({ state: "visible" });
+  const analysisText = await page.locator("#candidate-analysis").textContent();
+  assert.match(analysisText, /목표 30문항/);
+  assert.match(analysisText, /대수 후보 29개.*필요 15개/);
+  assert.match(analysisText, /기하 후보 29개.*필요 15개/);
+  assert.match(analysisText, /현재 합격선으로 자동 적용하지 않습니다/);
   await page.locator('#candidate-mode [data-mode="new"]').click();
   await page.locator("#candidate-list [data-candidate-id]").first().waitFor();
 
