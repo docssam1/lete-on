@@ -12,7 +12,7 @@ const issues = [];
 
 const EXPECTED_COUNTS = new Map([[1, 10], [2, 8], [3, 10], [4, 15], [5, 10], [6, 4], [7, 10], [8, 6], [9, 10], [10, 10], [11, 5], [12, 5], [13, 10], [14, 10], [15, 11], [16, 5], [17, 6], [18, 10], [19, 7], [20, 5], [21, 3], [22, 2], [23, 10], [24, 6], [25, 4], [26, 5], [27, 4], [28, 15], [29, 7], [30, 13], [31, 2], [32, 15], [33, 12], [34, 5], [35, 5], [36, 6], [37, 2], [38, 6], [39, 7], [40, 6]]);
 const SOURCE_BUNDLE_CONFLICT_NUMBERS = new Set();
-const RELEASE_LOCKED_NUMBERS = new Set([6, 25, 39]);
+const RELEASE_LOCKED_NUMBERS = new Set();
 const RELEASE_ELIGIBLE_NUMBERS = new Set([...EXPECTED_COUNTS.keys()].filter(number => !RELEASE_LOCKED_NUMBERS.has(number)));
 function hasEvidenceConflict(number, itemNumber) {
   return (number === 25 && itemNumber === 3) || (number === 39 && itemNumber === 4);
@@ -821,7 +821,7 @@ items.forEach(function (entry) {
   check(sameAnswer(entry.canonicalAnswer, EXPECTED_ANSWERS.get(`${entry.diagnosticNumber}:${entry.itemNumber}`)), `official answer mismatch: ${label}`);
   check(Boolean(entry.structureSummary) && entry.structureSummary.length < 100, `missing short structure summary: ${label}`);
   check(entry.workStatus === "complete", `wrong work state: ${label}`);
-  check(entry.evidenceStatus === (entry.diagnosticNumber === 6 ? "draft" : hasEvidenceConflict(entry.diagnosticNumber, entry.itemNumber) ? "conflict" : "verified"), `wrong evidence state: ${label}`);
+  check(entry.evidenceStatus === (hasEvidenceConflict(entry.diagnosticNumber, entry.itemNumber) ? "conflict" : "verified"), `wrong evidence state: ${label}`);
   check(entry.releaseStatus === (eligible ? "eligible" : "locked"), `wrong release state: ${label}`);
   schema.VALIDATION_AXES.filter(function (axis) { return axis !== "release"; }).forEach(function (axis) {
     check(entry.evidence && Object.prototype.hasOwnProperty.call(entry.evidence, axis), `missing evidence axis ${axis}: ${label}`);
@@ -836,7 +836,7 @@ items.forEach(function (entry) {
   ["independentMath", "uniqueness"].forEach(function (axis) {
     check(entry.evidence && entry.evidence[axis] === "verified", `missing verified ${axis}: ${label}`);
   });
-  check(entry.evidence && entry.evidence.learnerFit === (entry.diagnosticNumber === 6 ? "pending" : "verified"), `wrong learnerFit state: ${label}`);
+  check(entry.evidence && entry.evidence.learnerFit === "verified", `wrong learnerFit state: ${label}`);
   check(entry.evidence && entry.evidence.sourceBundleCompleteness === "verified", `wrong source bundle completeness: ${label}`);
   if (!eligible) check(entry.releaseStatus === "locked", `unverified item must stay locked: ${label}`);
   check(entry.learnerStage && entry.learnerStage.sourceLevel && entry.learnerStage.curriculumReference && entry.learnerStage.program === "중등 성취도 진단·선발 대비", `missing learner stage: ${label}`);
@@ -1068,11 +1068,12 @@ check(unique(q25Items.map(function (entry) { return entry.detailTypeName; })), "
 q25Items.forEach(function (entry) {
   check(entry.detailTypeName === Q25_ITEM_DETAILS.get(entry.itemNumber), `wrong q25 detail type name: ${entry.itemId}`);
   check(entry.conceptFamilyId === "cut-strips-rearrange-area", `wrong q25 concept family: ${entry.itemId}`);
-  check(entry.releaseStatus === "locked", `q25 source-unit conflict must stay locked: ${entry.itemId}`);
+  check(entry.releaseStatus === "eligible", `q25 resolved source-unit correction must be eligible: ${entry.itemId}`);
 });
 const q25Conflict = q25Items.find(function (entry) { return entry.itemNumber === 3; });
 check(q25Items.filter(function (entry) { return Boolean(entry.sourceConflict); }).length === 1, "q25 must record exactly one source conflict");
 check(q25Conflict && q25Conflict.sourceConflict.solutionPrinted.unit === "cm²" && q25Conflict.sourceConflict.problemRequestedUnit === "m²" && q25Conflict.sourceConflict.independentAnswer.unit === "m²", "q25 i3 unit conflict evidence is incomplete");
+check(q25Conflict && q25Conflict.sourceConflict.resolutionStatus === "resolved" && q25Conflict.sourceConflict.correctedExplanation.includes("228"), "q25 i3 correction resolution is incomplete");
 
 const q26Items = items.filter(function (entry) { return entry.diagnosticNumber === 26; });
 check(q26Items.length === 5, "q26 must contain five source items");
@@ -1213,12 +1214,13 @@ check(unique(q39Items.map(function (entry) { return entry.detailTypeName; })), "
 q39Items.forEach(function (entry) {
   check(entry.detailTypeName === Q39_ITEM_DETAILS.get(entry.itemNumber), `wrong q39 detail type name: ${entry.itemId}`);
   check(entry.conceptFamilyId === "decimal-power-last-digit-cycle", `wrong q39 concept family: ${entry.itemId}`);
-  check(entry.releaseStatus === "locked", `q39 solution conflict must stay locked: ${entry.itemId}`);
+  check(entry.releaseStatus === "eligible", `q39 resolved solution correction must be eligible: ${entry.itemId}`);
   check(entry.evidence.sourceBundleCompleteness === "verified", `q39 source bundle should be verified: ${entry.itemId}`);
 });
 const q39Conflict = q39Items.find(function (entry) { return entry.itemNumber === 4; });
 check(q39Items.filter(function (entry) { return Boolean(entry.sourceConflict); }).length === 1, "q39 must record exactly one solution conflict");
 check(q39Conflict && q39Conflict.sourceConflict.solutionPrintedDivision === "80÷4" && q39Conflict.sourceConflict.verifiedCycleLength === 2 && q39Conflict.sourceConflict.independentAnswer.value === "6", "q39 i4 cycle conflict evidence is incomplete");
+check(q39Conflict && q39Conflict.sourceConflict.resolutionStatus === "resolved" && q39Conflict.sourceConflict.correctedExplanation.includes("80÷2"), "q39 i4 correction resolution is incomplete");
 
 const q40Items = items.filter(function (entry) { return entry.diagnosticNumber === 40; });
 check(q40Items.length === 6, "q40 must contain six source items");
@@ -1243,4 +1245,4 @@ if (issues.length) {
   process.exit(1);
 }
 
-console.log("PASS pilot item audit: items=302 eligible=287 locked=15 q06=4(learner-fit,locked) q25=4(unit-conflict-i3,locked) q39=7(solution-cycle-conflict-i4,locked) sourceBundle=40pdf-191pages-complete visual=verified independentMath=verified uniqueness=verified");
+console.log("PASS pilot item audit: items=302 eligible=302 locked=0 q06=4(learner-fit-verified) q25=4(unit-correction-i3,resolved) q39=7(solution-cycle-correction-i4,resolved) sourceBundle=40pdf-191pages-complete visual=verified independentMath=verified uniqueness=verified");

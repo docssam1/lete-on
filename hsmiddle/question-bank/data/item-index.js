@@ -11,7 +11,7 @@
 
   const freeze = Object.freeze;
   const SOURCE_EXAM_ID = "diagnostic-similar";
-  const RELEASE_LOCKED_NUMBERS = new Set([6, 25, 39]);
+  const RELEASE_LOCKED_NUMBERS = new Set();
   function hasOfficialAnswerConflict(number, itemNumber) {
     return number === 25 && itemNumber === 3;
   }
@@ -19,7 +19,6 @@
     return hasOfficialAnswerConflict(number, itemNumber) || (number === 39 && itemNumber === 4);
   }
   function itemEvidenceStatus(number, itemNumber) {
-    if (number === 6) return "draft";
     return hasSolutionConflict(number, itemNumber) ? "conflict" : "verified";
   }
   function validationStatus(number, itemNumber) {
@@ -30,7 +29,7 @@
       visual: "verified",
       independentMath: "verified",
       uniqueness: "verified",
-      learnerFit: number === 6 ? "pending" : "verified",
+      learnerFit: "verified",
       sourceBundleCompleteness: "verified"
     });
   }
@@ -693,7 +692,7 @@
 
     item({ diagnosticNumber: 25, itemNumber: 1, problemPage: 1, answerPage: 3, solutionPage: 3, canonicalAnswer: scalar(1400, "m²"), structureSummary: "가로와 세로 방향의 폭 5m인 길을 옮겨 모은 뒤 남은 직사각형의 넓이를 구한다.", detailTypeName: "가로와 세로에 폭 5m인 길을 내고 남은 넓이 구하기", conceptFamilyId: "cut-strips-rearrange-area", learnerFit: q25Fit }),
     item({ diagnosticNumber: 25, itemNumber: 2, problemPage: 1, answerPage: 3, solutionPage: 3, canonicalAnswer: scalar(680, "m²"), structureSummary: "가로 방향과 비스듬한 방향의 폭 3m인 길을 옮겨 남은 직사각형의 넓이를 구한다.", detailTypeName: "가로와 비스듬한 폭 3m인 길을 내고 남은 넓이 구하기", conceptFamilyId: "cut-strips-rearrange-area", learnerFit: q25Fit }),
-    item({ diagnosticNumber: 25, itemNumber: 3, problemPage: 1, answerPage: 3, solutionPage: 3, canonicalAnswer: scalar(228, "m²"), structureSummary: "폭 3m인 가로 길과 폭 4m인 비스듬한 길을 옮겨 남은 직사각형의 넓이를 구한다.", detailTypeName: "가로 폭 3m와 비스듬한 폭 4m인 길을 내고 남은 넓이 구하기", conceptFamilyId: "cut-strips-rearrange-area", sourceConflict: freeze({ quickAnswer: scalar(228), solutionPrinted: scalar(228, "cm²"), problemRequestedUnit: "m²", independentAnswer: scalar(228, "m²"), decision: "원본 풀이의 단위가 문제와 달라 공개 잠금" }), learnerFit: q25Fit }),
+    item({ diagnosticNumber: 25, itemNumber: 3, problemPage: 1, answerPage: 3, solutionPage: 3, canonicalAnswer: scalar(228, "m²"), structureSummary: "폭 3m인 가로 길과 폭 4m인 비스듬한 길을 옮겨 남은 직사각형의 넓이를 구한다.", detailTypeName: "가로 폭 3m와 비스듬한 폭 4m인 길을 내고 남은 넓이 구하기", conceptFamilyId: "cut-strips-rearrange-area", sourceConflict: freeze({ quickAnswer: scalar(228), solutionPrinted: scalar(228, "cm²"), problemRequestedUnit: "m²", independentAnswer: scalar(228, "m²"), resolutionStatus: "resolved", correctedExplanation: "(27-4-4)×(18-3-3)=19×12=228이고 길이 단위가 m이므로 넓이 단위는 m²이다.", decision: "원본 풀이의 cm²를 단위 오기로 판정하고 228m²로 정정" }), learnerFit: q25Fit }),
     item({ diagnosticNumber: 25, itemNumber: 4, problemPage: 1, answerPage: 3, solutionPage: 3, canonicalAnswer: scalar(666, "m²"), structureSummary: "폭 6m인 가로 길과 폭 5m인 세로 길을 옮겨 남은 직사각형의 넓이를 구한다.", detailTypeName: "가로 폭 6m와 세로 폭 5m인 길을 내고 남은 넓이 구하기", conceptFamilyId: "cut-strips-rearrange-area", learnerFit: q25Fit }),
 
     item({ diagnosticNumber: 26, itemNumber: 1, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(27, "cm²"), structureSummary: "한 변 6cm인 정사각형의 변을 주어진 길이의 배로 나누고 바깥 삼각형의 밑변과 높이를 구한다.", detailTypeName: "정사각형의 나뉜 변과 바깥 꼭짓점으로 만든 삼각형 넓이 구하기", conceptFamilyId: "square-extended-triangle-area", learnerFit: q26Fit }),
@@ -808,7 +807,7 @@
     item({ diagnosticNumber: 39, itemNumber: 1, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(6), structureSummary: "0.8을 60번 곱한 수의 소수 60번째 자리 숫자를 8의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.8을 60번 곱한 수의 소수 60번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),
     item({ diagnosticNumber: 39, itemNumber: 2, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(9), structureSummary: "0.9를 75번 곱한 수의 소수 75번째 자리 숫자를 9의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.9를 75번 곱한 수의 소수 75번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),
     item({ diagnosticNumber: 39, itemNumber: 3, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(5), structureSummary: "0.5를 100번 곱한 수의 소수 100번째 자리 숫자를 5의 거듭제곱 일의 자리로 구한다.", detailTypeName: "0.5를 100번 곱한 수의 소수 100번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),
-    item({ diagnosticNumber: 39, itemNumber: 4, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(6), structureSummary: "0.4를 80번 곱한 수의 소수 80번째 자리 숫자를 4의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.4를 80번 곱한 수의 소수 80번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", sourceConflict: freeze({ solutionPrintedDivision: "80÷4", verifiedCycleLength: 2, independentAnswer: scalar(6), decision: "정답은 맞지만 풀이에서 두 자리 반복을 4로 나누어 공개 잠금" }), learnerFit: q39Fit }),
+    item({ diagnosticNumber: 39, itemNumber: 4, problemPage: 1, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(6), structureSummary: "0.4를 80번 곱한 수의 소수 80번째 자리 숫자를 4의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.4를 80번 곱한 수의 소수 80번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", sourceConflict: freeze({ solutionPrintedDivision: "80÷4", verifiedCycleLength: 2, independentAnswer: scalar(6), resolutionStatus: "resolved", correctedExplanation: "4의 거듭제곱 일의 자리는 4, 6의 2개 주기로 반복한다. 80÷2=40으로 나머지가 0이므로 80번째 숫자는 6이다.", decision: "원본 풀이의 80÷4를 계산 오기로 판정하고 80÷2로 정정" }), learnerFit: q39Fit }),
     item({ diagnosticNumber: 39, itemNumber: 5, problemPage: 2, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(7), structureSummary: "0.3을 71번 곱한 수의 소수 71번째 자리 숫자를 3의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.3을 71번 곱한 수의 소수 71번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),
     item({ diagnosticNumber: 39, itemNumber: 6, problemPage: 2, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(7), structureSummary: "0.7을 65번 곱한 수의 소수 65번째 자리 숫자를 7의 거듭제곱 일의 자리 반복으로 구한다.", detailTypeName: "0.7을 65번 곱한 수의 소수 65번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),
     item({ diagnosticNumber: 39, itemNumber: 7, problemPage: 2, answerPage: 3, solutionPage: 4, canonicalAnswer: scalar(6), structureSummary: "0.6을 360번 곱한 수의 소수 360번째 자리 숫자를 6의 거듭제곱 일의 자리로 구한다.", detailTypeName: "0.6을 360번 곱한 수의 소수 360번째 자리 숫자 구하기", conceptFamilyId: "decimal-power-last-digit-cycle", learnerFit: q39Fit }),

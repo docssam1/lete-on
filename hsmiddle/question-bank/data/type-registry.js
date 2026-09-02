@@ -12,14 +12,14 @@
   const freeze = Object.freeze;
   const SOURCE_EXAM_ID = "diagnostic-similar";
   const sourceReviewed = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
-  const learnerFitReviewed = new Set([1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
-  const releaseLocked = new Set([6, 25, 39]);
+  const learnerFitReviewed = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
+  const releaseLocked = new Set();
   const sourceBundleConflicts = new Set();
   const evidenceConflicts = new Set([25, 39]);
-  const releaseNotes = freeze({
-    6: "학년 연결 검수 중",
-    25: "3번 풀이의 넓이 단위 오류 확인 중",
-    39: "4번 풀이의 반복 주기 계산 오류 확인 중"
+  const releaseNotes = freeze({});
+  const sourceCorrectionNotes = freeze({
+    25: "원본 3번 풀이의 단위 cm²는 오기입니다. 문제의 길이 단위가 m이므로 정답은 228m²입니다.",
+    39: "원본 4번 풀이의 80÷4는 오기입니다. 일의 자리 4, 6은 2개 주기로 반복하므로 80÷2=40이고 정답은 6입니다."
   });
   const normalizedTitles = freeze({
     3: "나눗셈과 시간·빠르기를 이용한 문제 해결",
@@ -128,6 +128,7 @@
       sourceReviewStatus: reviewed ? "verified" : "draft",
       sourceBundleStatus: sourceBundleConflicts.has(number) ? "conflict" : reviewed ? "verified" : "draft",
       releaseNote: releaseNotes[number] || null,
+      sourceCorrectionNote: sourceCorrectionNotes[number] || null,
       workStatus: reviewed ? "complete" : "pending",
       evidenceStatus: evidenceConflicts.has(number) ? "conflict" : learnerFitVerified ? "verified" : "draft",
       releaseStatus: eligible ? "eligible" : "locked"

@@ -22,12 +22,8 @@ context.globalThis = context.window;
 
 const catalog = context.window.HSMIDDLE_BANK.createCatalog();
 const issues = [];
-const releaseLockedNumbers = new Set([6, 25, 39]);
-const releaseNotes = new Map([
-  [6, "학년 연결 검수 중"],
-  [25, "3번 풀이의 넓이 단위 오류 확인 중"],
-  [39, "4번 풀이의 반복 주기 계산 오류 확인 중"]
-]);
+const releaseLockedNumbers = new Set();
+const releaseNotes = new Map();
 function check(condition, message) {
   if (!condition) issues.push(message);
 }
@@ -37,8 +33,8 @@ check(catalog.reduce((sum, item) => sum + item.totalPages, 0) === 191, "catalog 
 check(catalog.filter(item => item.sourceVerified).length === 40, "source-verified pilot type count must be 40");
 check(catalog.filter(item => !item.sourceVerified).length === 0, "pending legacy bundle count must be 0");
 check(catalog.reduce((sum, item) => sum + (item.questionCount || 0), 0) === 302, "confirmed item total must be 302");
-check(catalog.reduce((sum, item) => sum + (item.releaseStatus === "locked" ? 0 : (item.questionCount || 0)), 0) === 287, "eligible item total must be 287");
-check(catalog.filter(item => item.releaseStatus === "locked").length === 3, "locked type count must be 3");
+check(catalog.reduce((sum, item) => sum + (item.releaseStatus === "locked" ? 0 : (item.questionCount || 0)), 0) === 302, "eligible item total must be 302");
+check(catalog.filter(item => item.releaseStatus === "locked").length === 0, "locked type count must be 0");
 
 const expected = new Map([
   [1, { count: 10, problem: [1, 2, 3], answer: [4], solution: [5, 6] }],
@@ -117,4 +113,4 @@ if (issues.length) {
   process.exit(1);
 }
 
-console.log("PASS catalog data audit: type=40 page=191 confirmedType=40 confirmedItem=302 eligibleItem=287 lockedType=3 pendingBundle=0 q06=learner-fit-locked q25=unit-conflict-locked q39=solution-cycle-conflict-locked sourcePdf=40 sourcePdfPage=191 fixedTenClaim=0");
+console.log("PASS catalog data audit: type=40 page=191 confirmedType=40 confirmedItem=302 eligibleItem=302 lockedType=0 pendingBundle=0 q06=learner-fit-verified q25=unit-correction-resolved q39=solution-cycle-correction-resolved sourcePdf=40 sourcePdfPage=191 fixedTenClaim=0");

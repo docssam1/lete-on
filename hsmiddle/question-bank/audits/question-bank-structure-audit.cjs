@@ -12,15 +12,11 @@ const registry = require("../data/type-registry.js");
 const pageIndex = require("../data/source-page-index.js");
 const issues = [];
 const pilotNumbers = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
-const releaseLockedNumbers = new Set([6, 25, 39]);
+const releaseLockedNumbers = new Set();
 const eligibleNumbers = new Set([...pilotNumbers].filter(number => !releaseLockedNumbers.has(number)));
 const sourceBundleConflictNumbers = new Set();
 const evidenceConflictNumbers = new Set([25, 39]);
-const releaseNotes = new Map([
-  [6, "학년 연결 검수 중"],
-  [25, "3번 풀이의 넓이 단위 오류 확인 중"],
-  [39, "4번 풀이의 반복 주기 계산 오류 확인 중"]
-]);
+const releaseNotes = new Map();
 const expectedReviewedPages = {
   "diagnostic-similar-q01-p01": ["problem", 1, 4],
   "diagnostic-similar-q01-p02": ["problem", 5, 8],
@@ -373,4 +369,4 @@ if (issues.length) {
   process.exit(1);
 }
 
-console.log("PASS question-bank structure audit: type=40 page=191 reviewedPage=191 eligiblePage=174 lockedReviewedPage=17 pendingPage=0 folder=q01-q40 png=1075x1521 blankPages=q25:2,q27:2,q28:2,q30:2 q06=learner-fit-locked q25=unit-conflict-locked q39=solution-cycle-conflict-locked sourceBundleConflict=0");
+console.log("PASS question-bank structure audit: type=40 page=191 reviewedPage=191 eligiblePage=183 lockedReviewedPage=8 pendingPage=0 folder=q01-q40 png=1075x1521 blankPages=q25:2,q27:2,q28:2,q30:2 q06=learner-fit-verified q25=unit-correction-resolved q39=solution-cycle-correction-resolved sourceBundleConflict=0");

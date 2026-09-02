@@ -64,7 +64,8 @@
         sourceVerified,
         migrationStatus: sourceVerified ? "source-verified" : "pending",
         releaseStatus: typeRecord?.releaseStatus || "locked",
-        releaseNote: typeRecord?.releaseNote || null
+        releaseNote: typeRecord?.releaseNote || null,
+        sourceCorrectionNote: typeRecord?.sourceCorrectionNote || null
       };
     });
   };
