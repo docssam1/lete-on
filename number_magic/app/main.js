@@ -1033,6 +1033,67 @@ function _mgInit(id){
   return{id,tiles:[],done:false};
 }
 
+/* ============================================================
+   상황별 진행 캐릭터 (호스트) — 원장 지시 2026-09-02
+   "상황에 맞게 각 게임에도 캐릭터가 있어야 돼"
+   ------------------------------------------------------------
+   게임·아레나·진단마다 그 내용에 맞는 기호 마법단이 나와 한 줄 거든다.
+   배정 기준은 **그 활동이 다루는 연산** — 10 만들기는 모으는 일이니 플러스,
+   구구단은 증폭 전사 곱하기, 제곱근은 루트 숲의 현자… 하는 식이다.
+   새 게임이 늘면 HOST_LINES에 한 줄만 추가하면 된다(그림은 기호 PNG 재사용).
+   ============================================================ */
+const HOST_LINES={
+  plus:{ko:'같이 모으면 10이 돼! 짝을 찾아보자.',en:"Put them together and you get 10 — find the pairs!",zh:'凑在一起就是10！来找搭档吧。'},
+  minus:{ko:'필요 없는 만큼만 덜어내면 돼.',en:'Just take away what you do not need.',zh:'把不需要的减掉就好。'},
+  times:{ko:'같은 걸 여러 번! 힘차게 가자.',en:'The same thing, many times — go strong!',zh:'相同的东西重复多次，加油！'},
+  divide:{ko:'똑같이 나누면 아무도 손해 보지 않아.',en:'Share it evenly and no one loses out.',zh:'平均分配，谁都不吃亏。'},
+  equal:{ko:'양쪽이 같아질 때까지 침착하게.',en:'Stay calm until both sides match.',zh:'沉住气，直到两边相等。'},
+  sqrt:{ko:'뿌리를 찾으면 답이 보인단다.',en:'Find the root and the answer appears.',zh:'找到根，答案就出现了。'},
+  percent:{ko:'비율만 바꾸면 새로운 답이 나와!',en:'Change the ratio and a new answer appears!',zh:'改变比例就有新答案！'},
+  pi:{ko:'둥근 것엔 언제나 내가 있지.',en:'Wherever something is round, I am there.',zh:'凡是圆的地方都有我。'},
+  sigma:{ko:'흩어진 걸 모아 한 번에 정리하자.',en:'Gather what is scattered and sum it at once.',zh:'把散的聚起来，一次算完。'},
+  infinity:{ko:'끝은 없어. 천천히, 멀리 가 보자.',en:'There is no end — go slow, go far.',zh:'没有尽头。慢慢来，走得远一点。'},
+  numi:{ko:'같이 해보자! 천천히 해도 괜찮아.',en:"Let's do it together — slow is fine!",zh:'一起来吧！慢一点也没关系。'}
+};
+/* 미니게임 id → 호스트. 지금 게임은 둘 다 '모아서 10 만들기'라 플러스가 맡는다. */
+const HOST_GAMES={ make10:'plus', make10_3:'plus' };
+/* 스레드 접두어 → 호스트. 유닛의 generator나 스레드 id 앞글자로 고른다. */
+const HOST_THREADS=[
+  [/^(MD4[3-9]|MD5[0-9]|MD6[0-2]|calc|lim)/i,'infinity'],  /* 극한·미적분 */
+  [/^(MX2|gauss|series|seq)/i,'sigma'],                    /* 수열의 합 */
+  [/^(MX4|sqrt|root)/i,'sqrt'],                            /* 제곱근 */
+  [/^(circle|pi)/i,'pi'],
+  [/^(DC|ratio|percent|rate)/i,'percent'],                 /* 소수·비율 */
+  [/^(DV|div)/i,'divide'],
+  [/^(ML|mul|times)/i,'times'],
+  [/^(SB|sub|minus)/i,'minus'],
+  [/^(EL|check|inverse)/i,'equal'],                        /* 역연산·검산 */
+  [/^(AD|NS|add|pair|make)/i,'plus'],
+  [/^N-/,'numi']                                           /* 유아 유닛 */
+];
+function hostIdFor(kind,key){
+  key=String(key||'');
+  if(kind==='game')return HOST_GAMES[key]||'plus';
+  if(kind==='placement')return 'equal';                    /* 진단 = 공정한 판단 */
+  for(const [re,id] of HOST_THREADS){ if(re.test(key))return id; }
+  return 'numi';
+}
+function hostImgSrc(id){
+  const base=window.NM_CHAR_BASE||'assets/characters/';
+  return id==='numi' ? base+'numi-0.png' : base+'sym-'+id+'.png';
+}
+/* 호스트 띠 — 캐릭터 그림 + 말풍선 한 줄. 그림이 없으면 그림만 숨고 말은 남는다. */
+function hostStripHtml(kind,key){
+  const id=hostIdFor(kind,key);
+  const sym=((window.NM_AVATAR&&window.NM_AVATAR.symbols)||[]).find(s=>s.id===id);
+  const name=sym?L(sym):(S.lang==='ko'?'누미':S.lang==='en'?'Numi':'努米');
+  const line=L(HOST_LINES[id]||HOST_LINES.numi);
+  return `<div class="nm-host">
+    <img class="nm-host-img" src="${hostImgSrc(id)}" alt="${esc(name)}" onerror="this.style.display='none'">
+    <div class="nm-host-bubble"><b>${esc(name)}</b><span>${esc(line)}</span></div>
+  </div>`;
+}
+
 function screenMiniGame(gameId){
   if(townCleanup){townCleanup();townCleanup=null;}
   if(!S.miniGame||S.miniGame.id!==gameId||S.miniGame.fresh){S.miniGame=_mgInit(gameId);}
@@ -1074,6 +1135,7 @@ function _renderMiniGame(){
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
         </div>
       </div>`:`<div class="nm-mg-board" id="mgBoard">
+        ${hostStripHtml('game',mg.id)}
         <div class="nm-mg-hint">${lk('합이 10이 되는 두 수를 눌러요!','Tap two numbers that add up to 10!','点击两个加起来等于10的数！')}</div>
         <div class="nm-mg-tiles">${tilesHtml}</div>
       </div>`}
@@ -1161,6 +1223,7 @@ function _renderMiniGame(){
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
         </div>
       </div>`:`<div class="nm-mg-board" id="mgBoard">
+        ${hostStripHtml('game',mg.id)}
         <div class="nm-mg-hint">${lk('합이 10인 세 수를 골라요!','Pick 3 numbers that sum to 10!','选三个加起来等于10的数！')} &nbsp;<small style="color:#9aa">1+2+7 / 1+3+6 / 1+4+5 / 2+3+5</small></div>
         <div class="nm-mg-tiles" style="grid-template-columns:repeat(4,1fr)">${tilesHtml}</div>
       </div>`}
@@ -3710,6 +3773,7 @@ function nextArena(body,u,need){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
+    ${hostStripHtml('unit',(u.arena&&u.arena.generator)||u.generator||u.id)}
     <div class="nm-arena-expr">${labExprHtml(cur.tex)}</div>
     <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     <div class="nm-numpad" id="pad"></div>
