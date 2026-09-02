@@ -67,6 +67,52 @@ async function auditGeometryAndPrint() {
   return labelSizes.length;
 }
 
+async function openExtension(page, student) {
+  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-06`, { waitUntil: "networkidle" });
+  await page.locator('.lesson-button[data-lesson="rectangle-missing-side"]').click();
+  await page.locator('.stage-step[data-phase="original"]').click();
+  const answerButtons = page.locator("[data-original-answer]");
+  const itemCount = await answerButtons.count();
+  assert.ok(itemCount >= 1, "extension audit source questions missing");
+  for (let index = 0; index < itemCount; index += 1) await page.locator("[data-original-answer]").nth(index).click();
+  await page.locator('[data-check="original"]').click();
+  await page.locator('[data-check="original"]').click();
+  assert.equal(await page.locator("[data-extension-answer]").count(), 1, "extension answer view missing");
+  assert.equal(await page.locator("[data-extension-skip]").count(), 1, "extension skip control missing");
+  assert.match(await page.locator(".quiz-head span").innerText(), /추가 학습/u, "extension stage label missing");
+  return itemCount;
+}
+
+async function auditExtensionControls() {
+  const answerPage = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
+  const answerSourceItems = await openExtension(answerPage, "EXTENSION-ANSWER-AUDIT");
+  await answerPage.locator("[data-extension-answer]").click();
+  assert.equal(await answerPage.locator(".extension-solution").count(), 1, "extension solution missing after answer view");
+  assert.match(await answerPage.locator(".extension-solution").innerText(), /풀이[\s\S]*답/u, "extension solution needs explanation and answer");
+  assert.equal(await answerPage.locator('[data-check="extension"]').isDisabled(), false, "extension completion stayed disabled after answer view");
+  await answerPage.locator('[data-check="extension"]').click();
+  assert.match(await answerPage.locator(".complete-panel>p").innerText(), /다시 연습/u, "answer-assisted completion was presented as mastery");
+  assert.match(await answerPage.locator(".learning-record").innerText(), new RegExp(`답 확인\\s*${answerSourceItems + 1}`, "u"), "extension answer view was not recorded");
+  await answerPage.close();
+
+  const skipPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const skipSourceItems = await openExtension(skipPage, "EXTENSION-SKIP-AUDIT");
+  await skipPage.locator("[data-extension-skip]").click();
+  assert.equal(await skipPage.locator(".extension-solution").count(), 0, "skipping exposed the approved answer");
+  assert.match(await skipPage.locator(".quiz-item-assist.skipped").innerText(), /넘어간 문제/u, "extension skip note missing");
+  assert.equal(await skipPage.locator('[data-check="extension"]').isDisabled(), false, "extension completion stayed disabled after skip");
+  assert.equal(await skipPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, "extension controls overflow mobile viewport");
+  await skipPage.locator('[data-check="extension"]').click();
+  assert.match(await skipPage.locator(".learning-record").innerText(), new RegExp(`답 확인\\s*${skipSourceItems}`, "u"), "source answer views were not preserved");
+  assert.match(await skipPage.locator(".learning-record").innerText(), /넘어감\s*1/u, "extension skip was not recorded");
+  await skipPage.evaluate(() => { window.print = () => {}; });
+  await skipPage.locator("#printLessonButton").click();
+  await skipPage.waitForTimeout(100);
+  assert.equal(await skipPage.locator('.gold-print-page[data-print-part="story"] h2').innerText(), "추가 학습", "print extension title mismatch");
+  assert.equal(await skipPage.locator(".gold-print-page button, .gold-print-page input").count(), 0, "print extension contains interactive controls");
+  await skipPage.close();
+}
+
 async function auditInteractiveClock() {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=CLOCK-AUDIT&book=book-01`, { waitUntil: "networkidle" });
@@ -420,13 +466,14 @@ try {
   const desktopLessons = await auditViewport({ width: 1440, height: 1050 }, "desktop");
   const mobileLessons = await auditViewport({ width: 390, height: 844 }, "mobile");
   const geometryLabels = await auditGeometryAndPrint();
+  await auditExtensionControls();
   await auditInteractiveClock();
   await auditReducedMotionClock();
   const guidedConcepts = await auditBookOneGuidedConcepts();
   const bookTwoGuidedConcepts = await auditBookTwoGuidedConcepts();
   const bookThreeGuidedConcepts = await auditBookThreeGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} extensionControls=pass clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }

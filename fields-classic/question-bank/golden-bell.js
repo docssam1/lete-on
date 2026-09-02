@@ -25,6 +25,7 @@ const state = {
   phase: "concept",
   selections: {},
   originalAssists: {},
+  extensionAssist: null,
   feedback: null,
   experience: { step: 0, previousStep: 0, checkStep: 0, answer: null, checks: {}, practice: {}, typeTrackId: null, typeTracks: {}, feedback: null, playing: false, speed: 1, timer: null, autoplayStarted: false },
   progress: loadProgress()
@@ -113,6 +114,7 @@ function setPhase(phase) {
   state.phase = phase;
   state.selections = {};
   state.originalAssists = {};
+  state.extensionAssist = null;
   state.feedback = null;
   render();
 }
@@ -694,6 +696,7 @@ function renderBookTabs() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.extensionAssist = null;
     state.feedback = null;
     resetExperience();
     const next = new URL(location.href);
@@ -723,6 +726,7 @@ function renderLessonList() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.extensionAssist = null;
     state.feedback = null;
     resetExperience();
     render();
@@ -734,7 +738,7 @@ function renderStageSteps() {
   const phases = [
     ["concept", "1", "개념"],
     ["original", "2", sourceLabel],
-    ["extension", "3", "이야기"],
+    ["extension", "3", "추가 학습"],
     ["complete", "4", "완료"]
   ];
   const progress = lessonProgress();
@@ -811,15 +815,28 @@ function renderExtension(lesson) {
   const groupId = `${lesson.id}:extension`;
   const result = state.feedback?.kind === "extension" ? state.feedback : null;
   const selected = state.selections[groupId];
-  return `<div class="quiz-head"><div><span>${lesson.extension.title}</span><h2>${lesson.extension.story}</h2></div></div><p class="lesson-lead">${lesson.extension.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.extension.visual)}</div><section class="quiz-item ${result ? answersMatch(selected, lesson.extension.answer) ? "correct" : "incorrect" : ""}"><strong>${lesson.extension.prompt}</strong>${answerControl(groupId, lesson.extension, "extension")}</section>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) ? "" : "disabled"}>${result?.passed ? "완료" : "확인"}</button>`;
+  const revealed = state.extensionAssist === "revealed";
+  const skipped = state.extensionAssist === "skipped";
+  const correct = Boolean(result?.passed);
+  const resolved = correct || revealed || skipped;
+  const status = skipped ? "skipped" : revealed ? "assisted" : correct ? "correct" : result ? "incorrect" : "";
+  const solution = correct || revealed
+    ? `<section class="extension-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(lesson.extension.explanation)}</p><strong>답 ${escapeAttribute(approvedAnswer(lesson.extension))}</strong></section>`
+    : skipped
+      ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 완료 뒤 이 유형을 다시 연습할 수 있어요.</p>'
+      : "";
+  return `<div class="quiz-head"><div><span>추가 학습 · ${lesson.extension.title}</span><h2>${lesson.extension.story}</h2></div></div><p class="lesson-lead">배운 원리를 다른 상황에 적용해 보세요.</p><div class="quiz-visual">${visualMarkup(lesson.extension.visual)}</div><section class="quiz-item extension-study ${status}"><strong>${lesson.extension.prompt}</strong>${answerControl(groupId, lesson.extension, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>답 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? "완료" : "확인"}</button>`;
 }
 
 function renderComplete(lesson) {
   const book = activeBook();
   const nextLesson = book.lessons.find((candidate) => !isLessonComplete(candidate));
   const summary = summarizeGoldenBellLesson(lessonProgress(lesson));
+  const completionMessage = summary.review
+    ? "답을 보거나 넘어간 문제는 다시 연습해 보세요."
+    : "이 개념을 잘 익혔습니다.";
   const record = summary.total ? `<section class="learning-record"><h3>이번 학습 기록</h3><dl><div><dt>혼자 해결</dt><dd>${summary.correct}</dd></div><div><dt>답 확인</dt><dd>${summary.revealed}</dd></div><div><dt>넘어감</dt><dd>${summary.skipped}</dd></div><div><dt>다시 볼 문항</dt><dd>${summary.review}</dd></div></dl>${summary.reviewTypeIds.length ? `<a href="../prescription/?student=${encodeURIComponent(student)}&types=${encodeURIComponent(summary.reviewTypeIds.join(","))}&view=type">이 유형 다시 연습</a>` : ""}</section>` : "";
-  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>이 개념을 잘 익혔습니다.</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
+  return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>${completionMessage}</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
@@ -839,7 +856,7 @@ function printLessonPage(lesson, lessonNumber, book) {
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
   const originalPage = `<article class="gold-print-page" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>${originalItems ? `<ol class="gold-print-items">${originalItems}</ol>` : ""}</section>${footer}</article>`;
-  const storyPage = `<article class="gold-print-page" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story" data-watermark="${escapeAttribute(student)} · GFIELD">${header("02")}${concept}<section class="gold-print-block gold-print-story"><h2>같은 원리 문제</h2><p>${lesson.extension.story}<br>${lesson.extension.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.extension.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${lesson.extension.prompt}</span>${printResponseMarkup(extensionItem)}</li></ol></section>${footer}</article>`;
+  const storyPage = `<article class="gold-print-page" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story" data-watermark="${escapeAttribute(student)} · GFIELD">${header("02")}${concept}<section class="gold-print-block gold-print-story"><h2>추가 학습</h2><p>${lesson.extension.story}<br>${lesson.extension.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.extension.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${lesson.extension.prompt}</span>${printResponseMarkup(extensionItem)}</li></ol></section>${footer}</article>`;
   return originalPage + storyPage;
 }
 
@@ -962,7 +979,8 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelectorAll("[data-choice-group]").forEach((button) => button.addEventListener("click", () => {
     state.selections[button.dataset.choiceGroup] = button.dataset.choice;
-    delete state.originalAssists[button.dataset.choiceGroup];
+    if (button.dataset.choiceGroup.endsWith(":extension")) state.extensionAssist = null;
+    else delete state.originalAssists[button.dataset.choiceGroup];
     state.feedback = null;
     renderContent();
   }));
@@ -986,7 +1004,8 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelectorAll("[data-input-group]").forEach((input) => input.addEventListener("input", () => {
     state.selections[input.dataset.inputGroup] = input.value;
-    delete state.originalAssists[input.dataset.inputGroup];
+    if (input.dataset.answerScope === "extension") state.extensionAssist = null;
+    else delete state.originalAssists[input.dataset.inputGroup];
     state.feedback = null;
     input.closest(".quiz-item")?.classList.remove("correct", "incorrect", "assisted", "skipped");
     $("lessonContent").querySelector(".feedback")?.remove();
@@ -1025,12 +1044,33 @@ function bindLessonActions() {
   });
   $("lessonContent").querySelector('[data-check="extension"]')?.addEventListener("click", () => {
     const lesson = activeLesson();
-    if (state.feedback?.kind === "extension" && state.feedback.passed) return setPhase("complete");
-    const selected = state.selections[`${lesson.id}:extension`];
+    const groupId = `${lesson.id}:extension`;
+    if (state.feedback?.kind === "extension" && state.feedback.passed || ["revealed", "skipped"].includes(state.extensionAssist)) return setPhase("complete");
+    const selected = state.selections[groupId];
     const passed = answersMatch(selected, lesson.extension.answer);
-    recordOutcome("extension", `${lesson.id}:extension`, passed ? "correct" : "wrong");
+    recordOutcome("extension", groupId, passed ? "correct" : "wrong");
     if (passed) completeExtension();
-    state.feedback = { kind: "extension", passed, message: passed ? lesson.extension.explanation : `원본에서 배운 원리는 같습니다. ${lesson.explanation.steps[0]}` };
+    state.feedback = { kind: "extension", passed, message: passed ? "맞았어요. 풀이로 생각한 순서를 확인해 보세요." : `배운 원리를 다시 떠올려 보세요. ${lesson.explanation.steps[0]}` };
+    render();
+  });
+  $("lessonContent").querySelector("[data-extension-answer]")?.addEventListener("click", () => {
+    const lesson = activeLesson();
+    const groupId = `${lesson.id}:extension`;
+    state.selections[groupId] = approvedAnswer(lesson.extension);
+    state.extensionAssist = "revealed";
+    recordOutcome("extension", groupId, "revealed");
+    completeExtension();
+    state.feedback = { kind: "extension", passed: false, message: "풀이를 확인했어요. 완료 뒤 이 유형을 다시 연습해 보세요." };
+    render();
+  });
+  $("lessonContent").querySelector("[data-extension-skip]")?.addEventListener("click", () => {
+    const lesson = activeLesson();
+    const groupId = `${lesson.id}:extension`;
+    delete state.selections[groupId];
+    state.extensionAssist = "skipped";
+    recordOutcome("extension", groupId, "skipped");
+    completeExtension();
+    state.feedback = { kind: "extension", passed: false, message: "넘어간 문제로 기록했어요. 완료 뒤 이 유형을 다시 연습할 수 있어요." };
     render();
   });
   $("lessonContent").querySelector("[data-next-lesson]")?.addEventListener("click", (event) => {
@@ -1038,6 +1078,7 @@ function bindLessonActions() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.extensionAssist = null;
     state.feedback = null;
     resetExperience();
     render();
