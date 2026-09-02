@@ -100,6 +100,19 @@ test("ED testimonial assessment is not promoted to an admission cutoff", () => {
   assert.match(ed.caveat, /입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다/);
 });
 
+test("SM common1 entry keeps current public format separate from legacy reference difficulty", () => {
+  const sm = data.profiles.find(profile => profile.code === "SM");
+  assert.equal(sm.facts.find(fact => fact.label === "현재 시험 범위").value, "중2-2 · 중3-1 · 중3-2");
+  assert.equal(sm.facts.find(fact => fact.label === "현재 시험 구성").value, "대수 15 + 기하 15 · 총 30문항 · 180분");
+  assert.equal(sm.cutline.display, "20 / 30문항 이상");
+  assert.equal(sm.cutline.course, "중1 공통수학1 기본 입반");
+  assert.equal(sm.facts.find(fact => fact.label === "현행 난도 보정").state, "confirmed");
+  assert.match(sm.facts.find(fact => fact.label === "현행 난도 보정").value, /사용자 관찰/);
+  assert.match(sm.facts.find(fact => fact.label === "구판 참고지 감사").value, /후보 분류/);
+  assert.match(sm.caveat, /구판 모의 참고지는 현행 공식 기출이 아닙니다/);
+  assert.match(sm.caveat, /생수형 공통수학1 입반 대비 추정 구성/);
+});
+
 test("public sources are dated HTTPS pages and do not expose private assets", () => {
   Object.values(data.sources).forEach(source => {
     assert.match(source.url, /^https:\/\//);

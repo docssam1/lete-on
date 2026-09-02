@@ -25,6 +25,9 @@ test("academy profile resolution keeps exam-specific scope and time separate", (
   const dp = data.resolve("dp-middle2-2-transfer", "DP");
   assert.equal(dp.exam.scope, "중1-1~중2-1 전 범위(일차함수까지)");
   assert.equal(dp.exam.duration, "현재 회차 확인 필요");
+  const sm = data.resolve("sm-common1-entry", "SM");
+  assert.equal(sm.exam.scope, "중2-2·중3-1·중3-2 · 대수 15 + 기하 15");
+  assert.equal(sm.exam.duration, "180분");
   assert.equal(data.resolve("unknown", "WM").exam, null);
 });
 

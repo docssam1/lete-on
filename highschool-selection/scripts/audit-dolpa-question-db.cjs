@@ -5,20 +5,30 @@ const path = require("node:path");
 const ledgerCore = require("./build-dolpa-work-ledger.cjs");
 const dbCore = require("./build-dolpa-question-db.cjs");
 
-const FORBIDDEN_KEYS = new Set(["prompt", "stem", "answer", "answerValue", "solution", "content", "rawText", "pageImage"]);
+const FORBIDDEN_KEYS = new Set(["prompt", "stem", "answer", "answervalue", "officialanswer", "independentanswer", "derivedanswer", "correctanswer", "solution", "content", "rawtext", "pageimage"]);
+
+function normalizedKey(value) {
+  return String(value || "").normalize("NFKC").toLowerCase().replace(/[^a-z0-9가-힣]/g, "");
+}
 
 function walk(value, pointer, issues) {
   if (!value || typeof value !== "object") return;
   Object.entries(value).forEach(([key, child]) => {
-    if (FORBIDDEN_KEYS.has(key)) issues.push(`forbidden:${pointer}/${key}`);
+    if (FORBIDDEN_KEYS.has(normalizedKey(key))) issues.push(`forbidden:${pointer}/${key}`);
     walk(child, `${pointer}/${key}`, issues);
   });
+}
+
+function findAnswerLeakIssues(value) {
+  const issues = [];
+  walk(value, "", issues);
+  return issues;
 }
 
 function audit(database) {
   const issues = [];
   if (database.schemaVersion !== 1) issues.push("schemaVersion");
-  walk(database, "", issues);
+  issues.push(...findAnswerLeakIssues(database));
   const questionIds = new Set();
   const questionsById = new Map();
   database.questions.forEach(question => {
@@ -37,6 +47,14 @@ function audit(database) {
       || !Number.isSafeInteger(question.responseFormat.slotCount) || question.responseFormat.slotCount < 1
       || !question.responseFormat.evidence.length)) issues.push(`response_evidence:${question.questionId}`);
     if (question.answerCheck.status === "verified" && !question.answerCheck.evidence.length) issues.push(`answer_evidence:${question.questionId}`);
+    if (question.answerCheck.status === "disputed") {
+      if (!(question.answerCheck.evidence || []).length || !String(question.answerCheck.note || "").trim()) {
+        issues.push(`answer_dispute_evidence:${question.questionId}`);
+      }
+      if (question.releaseStatus !== "locked") issues.push(`answer_dispute_release:${question.questionId}`);
+      const unsafeUsage = (question.usageProfiles || []).filter(profile => !["candidate", "excluded"].includes(profile.status));
+      if (unsafeUsage.length) issues.push(`answer_dispute_usage:${question.questionId}:${unsafeUsage.map(profile => profile.profileId).join("|")}`);
+    }
     const expectedProfileIds = dbCore.PROFILE_CATALOG.map(profile => profile.profileId).sort();
     const actualProfileIds = (question.usageProfiles || []).map(profile => profile.profileId).sort();
     if (new Set(actualProfileIds).size !== actualProfileIds.length) issues.push(`duplicate_usage_profile:${question.questionId}`);
@@ -50,13 +68,68 @@ function audit(database) {
     if (question.releaseStatus !== "locked") issues.push(`release:${question.questionId}`);
   });
   const primarySourceIds = new Set(database.papers.map(paper => paper.sourceId));
+  const papersById = new Map(database.papers.map(paper => [paper.paperId, paper]));
   const equivalentSourceIds = new Set();
   database.papers.forEach(paper => {
-    if (paper.questionCount !== paper.questionIds.length) issues.push(`paper_count:${paper.paperId}`);
-    const rows = paper.questionIds.map(id => questionsById.get(id));
-    if (rows.some(row => !row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId)) issues.push(`paper_link:${paper.paperId}`);
-    const numbers = rows.map(row => row.number).sort((a, b) => a - b);
-    if (numbers.some((number, index) => number !== index + 1)) issues.push(`paper_numbers:${paper.paperId}`);
+    const paperQuestionIds = Array.isArray(paper.questionIds) ? paper.questionIds : [];
+    if (paper.questionCount !== paperQuestionIds.length) issues.push(`paper_count:${paper.paperId}`);
+    const rows = paperQuestionIds.map(id => questionsById.get(id));
+    if (paper.variant) {
+      const variant = paper.variant;
+      if (variant.kind !== "partial_question_variant") issues.push(`paper_variant_kind:${paper.paperId}`);
+      const primary = papersById.get(variant.primaryPaperId);
+      if (!primary || primary.paperId === paper.paperId || primary.variant) issues.push(`paper_variant_primary:${paper.paperId}`);
+      const shared = Array.isArray(variant.sharedQuestionLinks) ? variant.sharedQuestionLinks : [];
+      const overrideIds = Array.isArray(variant.overrideQuestionIds) ? variant.overrideQuestionIds : [];
+      const occupiedNumbers = new Set();
+      shared.forEach(link => {
+        const number = link && link.number;
+        const questionId = link && link.questionId;
+        if (!Number.isSafeInteger(number) || number < 1 || number > paper.questionCount || occupiedNumbers.has(number)) {
+          issues.push(`paper_variant_shared_number:${paper.paperId}:${number}`);
+          return;
+        }
+        occupiedNumbers.add(number);
+        if (!questionId) issues.push(`paper_variant_shared_link:${paper.paperId}:${number}`);
+        if (!Number.isSafeInteger(link && link.page) || link.page < 1
+          || !Number.isSafeInteger(link && link.slot) || link.slot < 1 || !(link.evidence || []).length) {
+          issues.push(`paper_variant_shared_locator:${paper.paperId}:${number}`);
+        }
+        const row = questionsById.get(questionId);
+        if (!primary || !row || row.paperId !== primary.paperId || row.sourceId !== primary.sourceId
+          || !(primary.questionIds || []).includes(questionId) || paperQuestionIds[number - 1] !== questionId) {
+          issues.push(`paper_variant_shared_link:${paper.paperId}:${number}`);
+        }
+      });
+      const overrideIdSet = new Set();
+      overrideIds.forEach(questionId => {
+        if (!questionId || overrideIdSet.has(questionId) || shared.some(link => link.questionId === questionId)) {
+          issues.push(`paper_variant_override_duplicate:${paper.paperId}:${questionId}`);
+          return;
+        }
+        overrideIdSet.add(questionId);
+        const row = questionsById.get(questionId);
+        if (!row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId
+          || !Number.isSafeInteger(row.number) || row.number < 1 || row.number > paper.questionCount
+          || occupiedNumbers.has(row.number) || paperQuestionIds[row.number - 1] !== questionId) {
+          issues.push(`paper_variant_override_link:${paper.paperId}:${questionId}`);
+          return;
+        }
+        occupiedNumbers.add(row.number);
+      });
+      if (!shared.length || !overrideIds.length || occupiedNumbers.size !== paper.questionCount
+        || shared.length + overrideIds.length !== paper.questionCount) {
+        issues.push(`paper_variant_coverage:${paper.paperId}`);
+      }
+      const ownedRows = database.questions.filter(row => row.paperId === paper.paperId);
+      if (ownedRows.some(row => !overrideIdSet.has(row.questionId)) || ownedRows.length !== overrideIdSet.size) {
+        issues.push(`paper_variant_ownership:${paper.paperId}`);
+      }
+    } else {
+      if (rows.some(row => !row || row.paperId !== paper.paperId || row.sourceId !== paper.sourceId)) issues.push(`paper_link:${paper.paperId}`);
+      const numbers = rows.filter(Boolean).map(row => row.number).sort((a, b) => a - b);
+      if (numbers.some((number, index) => number !== index + 1)) issues.push(`paper_numbers:${paper.paperId}`);
+    }
     if (paper.coverage) {
       if (!["full_range", "mid_unit_cutoff", "mixed_range"].includes(paper.coverage.coverageKind)) issues.push(`paper_coverage_kind:${paper.paperId}`);
       if (!paper.coverage.declaredScopeLabel || !paper.coverage.observedTerminal
@@ -93,4 +166,4 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ audit });
+module.exports = Object.freeze({ normalizedKey, findAnswerLeakIssues, audit });
