@@ -289,3 +289,32 @@ test("6.EE.B student clinic stays operable on mobile and answer-free on A4", asy
   assert.equal(await printPage.locator(".solution-box,.teacher-answer").count(), 0);
   await printPage.close();
 });
+
+test("6.G.A clinic shows exact figures, accepts verified answers, and stays usable on mobile and A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=student&locale=ko`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator(".problem-card").count(), 12);
+    assert.equal(await page.locator(".problem-visual svg").count(), 12);
+    assert.equal(await page.locator('.problem-card[data-item-id="ga-w01"] .clinic-figure-shape polygon').count(), 1);
+    assert.equal(await page.locator('.problem-card[data-item-id="ga-w10"] .clinic-net-face').count(), 6);
+    const first = page.locator('.problem-card[data-item-id="ga-w01"]');
+    await first.locator("input").fill("40"); await first.locator("button").click();
+    assert.equal(await first.locator(".feedback.is-correct").count(), 1);
+    assert.equal(await page.locator(".teacher-answer,.solution-box").count(), 0);
+    const sizes = await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+    assert.deepEqual(sizes, [width, width]);
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const printPage = await browser.newPage({ viewport: { width: 794, height: 1123 } });
+  const errors = errorsFor(printPage);
+  await printPage.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
+  await printPage.emulateMedia({ media: "print" });
+  assert.equal(await printPage.locator(".clinic-toolbar").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await printPage.locator(".problem-visual svg").count(), 12);
+  assert.equal(await printPage.locator(".solution-box,.teacher-answer").count(), 0);
+  const dimensions = await printPage.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; });
+  assert.deepEqual(dimensions, [794, 794]);
+  assert.deepEqual(errors, []); await printPage.close();
+});

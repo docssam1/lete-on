@@ -184,6 +184,11 @@
     const meta = el("div", "problem-meta");
     meta.append(el("span", "", String(index + 1).padStart(2, "0")), el("span", "", text(source.pack.strands[item.strand])));
     card.append(meta, el("p", "problem-prompt", text(item.prompt)));
+    if (typeof source.renderVisual === "function") {
+      const visual = el("div", "problem-visual");
+      visual.innerHTML = source.renderVisual(item, state.locale);
+      card.append(visual);
+    }
 
     if (state.audience === "teacher") {
       const answer = el("div", "teacher-answer");

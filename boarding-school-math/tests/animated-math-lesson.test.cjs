@@ -8,14 +8,15 @@ require(path.resolve(root, "..", "geometry", "worksheet", "render.js"));
 const source = require(path.join(root, "learning", "animated-math-lessons.js"));
 const scenes = require(path.join(root, "learning", "animated-math-scene-model.js"));
 
-test("catalog contains seven GFIELD-authored multilingual concept samples", function () {
-  assert.equal(source.schemaVersion, 6);
-  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "algebra-balance", "geometry-angle"]);
+test("catalog contains eight GFIELD-authored multilingual concept samples", function () {
+  assert.equal(source.schemaVersion, 7);
+  assert.deepEqual(source.lessons.map(function (lesson) { return lesson.type; }), ["bar-model", "fraction-strip", "factor-chain", "signed-number-line", "expression-tree", "algebra-balance", "coordinate-polygon-area", "geometry-angle"]);
   source.lessons.forEach(function (lesson) {
     assert.deepEqual(lesson.languages, ["en", "ko", "zh"]);
     assert.equal(lesson.rights.assetRights, "original");
     assert.equal(lesson.rights.containsThirdPartyAssets, false);
     assert.equal(lesson.deliveryMode, "concept-open");
+    assert.deepEqual(Object.keys(lesson.verifiedAnswerI18n).sort(), ["en", "ko", "zh"]);
   });
 });
 
@@ -197,13 +198,31 @@ test("geometry is calculated from a point-segment model and shared renderer", fu
   assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /\.\.\/geometry\/worksheet\/render\.js/);
 });
 
+test("Grade 6 coordinate area is generated from exact vertices and verified three ways", function () {
+  const lesson = source.lessons.find(function (item) { return item.type === "coordinate-polygon-area"; });
+  const model = scenes.buildCoordinateAreaModel(lesson.sceneModel);
+  assert.equal(model.area, 40);
+  assert.equal(lesson.sceneModel.outer.width * lesson.sceneModel.outer.height - lesson.sceneModel.cutout.width * lesson.sceneModel.cutout.height, 40);
+  assert.equal(8 * 4 + 4 * 2, 40);
+  let twice = 0;
+  lesson.sceneModel.vertices.forEach(function (point, index) { const next = lesson.sceneModel.vertices[(index + 1) % lesson.sceneModel.vertices.length]; twice += point[0] * next[1] - next[0] * point[1]; });
+  assert.equal(Math.abs(twice) / 2, 40);
+  assert.deepEqual(model.vertices.map(function (point) { return [point.x, point.y]; }), lesson.sceneModel.vertices);
+  const markup = scenes.coordinateAreaScene(lesson, "ko");
+  lesson.objectIds.forEach(function (id) { assert.match(markup, new RegExp('data-object="' + id + '"')); });
+  assert.match(markup, /coordinate-area-svg/);
+  assert.match(markup, /넓이 = 40제곱단위/);
+  assert.equal(lesson.verifiedAnswerI18n.ko, "40제곱단위");
+  assert.equal(scenes.sceneFor(lesson, "ko"), markup);
+});
+
 test("public shell exposes no private contest assets and keeps accessibility paths", function () {
   const files = ["animated-math.html", "animated-math.js", "learning/animated-math-lessons.js", "learning/animated-math-scene-model.js"];
   const bundle = files.map(function (file) { return fs.readFileSync(path.join(root, file), "utf8"); }).join("\n");
   ["SASMO 2019", "private-sources", "question-images", "third-party demo"].forEach(function (token) { assert.equal(bundle.includes(token), false); });
   assert.match(bundle, /lesson-language/);
   assert.match(bundle, /captions-toggle/);
-  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Seven ways to make reasoning visible/);
+  assert.match(fs.readFileSync(path.join(root, "animated-math.html"), "utf8"), /Eight ways to make reasoning visible/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /@media print/);
   assert.match(fs.readFileSync(path.join(root, "animated-math.css"), "utf8"), /prefers-reduced-motion:\s*reduce/);
 });

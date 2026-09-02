@@ -194,6 +194,19 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .geo-equations { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; margin-top: 12px; }
 .geo-equation, .geo-answer { display: grid; min-height: 60px; place-items: center; padding: 10px; border: 1px solid var(--line); background: #fff; font: 600 1.08rem Georgia, serif; transform: translateY(10px); }
 .geo-answer { min-width: 110px; color: #fff; border-color: var(--green-dark); background: var(--green-dark); font-size: 1.4rem; }
+.coordinate-area-scene { display:grid; grid-template-columns:1fr 1fr auto; gap:12px; width:min(100%,760px); margin:auto; }
+.coordinate-area-svg { grid-column:1/-1; width:100%; height:auto; max-height:430px; }
+.area-grid-line { stroke:#d5d2c9; stroke-width:1; }
+.area-axis-label { fill:var(--muted); font:700 12px system-ui,sans-serif; text-anchor:middle; }
+.area-point-label { fill:var(--ink); font:700 11px system-ui,sans-serif; text-anchor:middle; paint-order:stroke; stroke:#fff; stroke-width:3px; }
+.area-vertex { fill:var(--coral); stroke:#fff; stroke-width:2; }
+.area-outer-rect { fill:none; stroke:var(--blue); stroke-width:3; stroke-dasharray:9 7; }
+.area-cutout-rect { fill:#f3dfd2; stroke:var(--coral); stroke-width:3; }
+.area-cutout-label, .area-note-label { fill:var(--burgundy); font:800 14px system-ui,sans-serif; text-anchor:middle; }
+.area-svg-equation { fill:var(--blue); font:800 16px Georgia,serif; text-anchor:middle; }
+.area-partition { stroke:var(--blue); stroke-width:5; stroke-dasharray:8 6; }
+.area-equation, .area-answer { display:grid; min-height:60px; place-items:center; padding:10px; border:1px solid var(--line); background:#fff; font:700 1.08rem Georgia,serif; }
+.area-answer { min-width:180px; color:#fff; border-color:var(--green-dark); background:var(--green-dark); }
 
 .narration-panel { min-height: 128px; padding: 22px 24px; border-top: 1px solid var(--line); background: #f6f2e9; }
 .step-count { color: var(--coral); font-size: .67rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
@@ -262,6 +275,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .ratio-row { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
   .ratio-cell { min-height: 66px; font-size: .95rem; }
   .geo-equations { grid-template-columns: 1fr 1fr; }
+  .coordinate-area-scene { grid-template-columns:1fr 1fr; }
+  .area-answer { grid-column:1/-1; }
   .ratio-answer, .geo-answer { grid-column: 1 / -1; min-height: 58px; }
   .fraction-division-scene { grid-template-columns: 1fr; }
   .fraction-equation, .fraction-check, .fraction-answer { grid-column: 1; }
@@ -310,6 +325,8 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .balance-board { grid-template-columns: 1fr; }
   .balance-equals { min-height: 32px; }
   .balance-boxes { grid-template-columns: repeat(3, minmax(40px, 1fr)); }
+  .coordinate-area-scene { grid-template-columns:1fr; }
+  .coordinate-area-svg, .area-answer { grid-column:1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

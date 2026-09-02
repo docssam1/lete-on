@@ -154,6 +154,28 @@
       tr("Splitting forty-two among six equal boxes is the same action as dividing both sides of six x equals forty-two by six.", "42를 같은 상자 6개에 나누는 행동은 6x = 42의 양쪽을 6으로 나누는 것과 같습니다.", "把42平均分给6个相等方框，与把6x = 42两边同时除以6是同一个过程。"), ["balance-groups"], equationIds, "highlight")
   ];
 
+  const areaIds = ["area-grid", "area-polygon", "area-outer", "area-cutout", "area-subtract", "area-decompose", "area-answer"];
+  const areaBeats = [
+    beat("area-read", tr("Read the coordinates", "좌표와 조건 읽기", "读取坐标与条件"), "problem",
+      tr("An L-shape fits inside an eight-by-six rectangle with a four-by-two corner removed.", "L자 도형은 가로 8, 세로 6인 직사각형에서 가로 4, 세로 2인 모서리를 뺀 모양입니다.", "L形可看成8乘6的长方形切去一个4乘2的角。"), [], [], "inspect"),
+    beat("area-grid", tr("Build the coordinate grid", "좌표 격자 만들기", "建立坐标网格"), "explore",
+      tr("Build a unit grid so every horizontal and vertical length can be read exactly.", "단위 격자를 만들면 모든 가로와 세로 길이를 정확히 읽을 수 있습니다.", "建立单位方格，就能准确读出每条水平边和竖直边。"), ["area-grid"], ["area-grid"]),
+    beat("area-polygon", tr("Plot the L-shape", "L자 도형 표시하기", "标出L形"), "explore",
+      tr("Plot the six vertices and connect only consecutive points to make the L-shape.", "여섯 꼭짓점을 찍고 이웃한 점만 차례로 이어 L자 도형을 만듭니다.", "标出六个顶点，只依次连接相邻点，得到L形。"), ["area-polygon"], ["area-grid", "area-polygon"]),
+    beat("area-outer", tr("Complete the outer rectangle", "큰 직사각형 완성하기", "补成大长方形"), "explore",
+      tr("Complete the missing corner to see an outer rectangle eight units wide and six units high.", "빈 모서리를 채워 가로 8, 세로 6인 큰 직사각형을 봅니다.", "补上缺角，可看到宽8、高6的大长方形。"), ["area-outer"], ["area-grid", "area-polygon", "area-outer"]),
+    beat("area-cutout", tr("Measure the cutout", "빠진 부분 측정하기", "测量缺口"), "solve",
+      tr("The missing upper-right rectangle is four units wide and two units high.", "오른쪽 위의 빠진 직사각형은 가로 4, 세로 2입니다.", "右上角缺少的长方形宽4、高2。"), ["area-cutout"], ["area-grid", "area-polygon", "area-outer", "area-cutout"]),
+    beat("area-subtract", tr("Subtract the missing area", "빠진 넓이 빼기", "减去缺口面积"), "solve",
+      tr("The outer area is forty-eight and the cutout area is eight. Forty-eight minus eight is forty.", "큰 직사각형은 48, 빠진 부분은 8이므로 48에서 8을 빼면 40입니다.", "大长方形面积是48，缺口面积是8，所以48减8等于40。"), ["area-subtract"], ["area-grid", "area-polygon", "area-outer", "area-cutout", "area-subtract"]),
+    beat("area-decompose", tr("Verify by decomposition", "나누어 다시 검산하기", "用分解再次检验"), "check",
+      tr("Split the L-shape into an eight-by-four rectangle and a four-by-two rectangle. Thirty-two plus eight is also forty.", "L자 도형을 8×4와 4×2 직사각형으로 나누면 32+8도 40입니다.", "把L形分成8乘4和4乘2两个长方形，32加8也等于40。"), ["area-decompose"], ["area-grid", "area-polygon", "area-outer", "area-cutout", "area-subtract", "area-decompose"]),
+    beat("area-answer", tr("State the area", "넓이 말하기", "写出面积"), "answer",
+      tr("Both exact methods give an area of forty square units.", "두 가지 정확한 방법 모두 넓이는 40제곱단위입니다.", "两种准确方法都得到40平方单位。"), ["area-answer"], areaIds),
+    beat("area-recap", tr("Connect both proofs", "두 검산 연결하기", "连接两种验证"), "recap",
+      tr("Completing and subtracting, decomposing and adding, and the coordinate shoelace calculation all agree.", "큰 도형에서 빼기, 작은 도형을 더하기, 좌표 신발끈 계산이 모두 같은 답을 줍니다.", "补形相减、分解相加和坐标鞋带计算都得到同一答案。"), ["area-polygon"], areaIds, "highlight")
+  ];
+
   const geometryIds = ["geo-triangle", "geo-equal-sides", "geo-vertex-angle", "geo-equal-angles", "geo-equation-sum", "geo-equation-divide", "geo-answer"];
   const geometryBeats = [
     beat("geo-read", tr("Read the givens", "조건 읽기", "读取条件"), "problem",
@@ -176,7 +198,7 @@
       tr("Equal sides give equal opposite angles; then the triangle angle sum determines their value.", "같은 변에서 같은 맞은편 각을 찾고, 삼각형의 내각의 합으로 그 값을 구합니다.", "先由等边得到相等的对角，再用三角形内角和求出角度。"), ["geo-equal-angles"], geometryIds, "highlight")
   ];
 
-  return Object.freeze({ schemaVersion: 6, lessons: Object.freeze([
+  return Object.freeze({ schemaVersion: 7, lessons: Object.freeze([
     common({
       id: "common-total-ratio", type: "bar-model",
       conceptClusterId: "6.RP.A",
@@ -185,7 +207,7 @@
       concept: "Part-to-whole ratios", conceptI18n: tr("Part-to-whole ratios", "부분과 전체의 비", "部分与整体的比"),
       problem: "Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?",
       problemI18n: tr("Team A has red and blue tokens in a 1:3 ratio. Team B has green and yellow tokens in a 1:4 ratio. Each team has 20 tokens. How many red and green tokens are there altogether?", "A팀의 빨간 토큰과 파란 토큰의 비는 1:3이고, B팀의 초록 토큰과 노란 토큰의 비는 1:4입니다. 각 팀의 토큰은 20개입니다. 빨간 토큰과 초록 토큰은 모두 몇 개입니까?", "A队红色与蓝色棋子的比是1:3，B队绿色与黄色棋子的比是1:4。每队共有20枚棋子。红色和绿色棋子一共有多少枚？"),
-      verifiedAnswer: "9 tokens", answerBeatId: "ratio-answer", objectIds: Object.freeze(ratioIds), beats: Object.freeze(ratioBeats),
+      verifiedAnswer: "9 tokens", verifiedAnswerI18n: tr("9 tokens", "토큰 9개", "9枚棋子"), answerBeatId: "ratio-answer", objectIds: Object.freeze(ratioIds), beats: Object.freeze(ratioBeats),
       sceneModel: Object.freeze({ teamA: Object.freeze({ parts: 4, unit: 5 }), teamB: Object.freeze({ parts: 5, unit: 4 }) }),
       mathChecks: Object.freeze([Object.freeze({ method: "unit rate", expression: "20 ÷ 4 + 20 ÷ 5", result: 9, passed: true }), Object.freeze({ method: "substitution", expression: "5 + 15 = 20; 4 + 16 = 20", result: 9, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student adds ratio numbers without finding the value of one part.", teachingPrompt: "Why is one part worth 5 for Team A but 4 for Team B?", successCheck: "The student finds the total number of parts, the unit value, and the requested part in that order." })
@@ -198,7 +220,7 @@
       concept: "Meaning of fraction division", conceptI18n: tr("Meaning of fraction division", "분수 나눗셈의 뜻", "分数除法的意义"),
       problem: "A rope is 3/4 m long. It is cut into pieces that are each 1/8 m long. How many pieces are made?",
       problemI18n: tr("A rope is 3/4 m long. It is cut into pieces that are each 1/8 m long. How many pieces are made?", "3/4 m 길이의 끈을 1/8 m씩 자릅니다. 몇 조각이 됩니까?", "一根绳子长3/4米，每段剪成1/8米，可以剪成多少段？"),
-      verifiedAnswer: "6 pieces", answerBeatId: "frac-answer", objectIds: Object.freeze(fractionIds), beats: Object.freeze(fractionBeats),
+      verifiedAnswer: "6 pieces", verifiedAnswerI18n: tr("6 pieces", "6조각", "6段"), answerBeatId: "frac-answer", objectIds: Object.freeze(fractionIds), beats: Object.freeze(fractionBeats),
       sceneModel: Object.freeze({ wholeParts: 8, shadedParts: 6, divisorParts: 1, quotient: 6, dividend: Object.freeze({ n: 3, d: 4 }), divisor: Object.freeze({ n: 1, d: 8 }) }),
       mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "3/4 = 6/8; count 1/8 groups", result: 6, passed: true }), Object.freeze({ method: "inverse multiplication", expression: "3/4 × 8/1", result: 6, passed: true }), Object.freeze({ method: "reverse check", expression: "6 × 1/8", result: "3/4", passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student divides the numerators and denominators separately or inverts the dividend.", teachingPrompt: "How many one-eighth sections are shaded when three-fourths is renamed in eighths?", successCheck: "The student explains the quotient as the number of divisor-sized groups and verifies it by multiplication." })
@@ -210,7 +232,7 @@
       title: "Match factors, then verify with remainders", titleI18n: tr("Match factors, then verify with remainders", "공통인수를 찾고 나머지로 검산하기", "配对公因数，再用余数检验"),
       concept: "Greatest common factor", conceptI18n: tr("Greatest common factor", "최대공약수", "最大公因数"),
       problem: "Find the greatest common factor of 84 and 60.", problemI18n: tr("Find the greatest common factor of 84 and 60.", "84와 60의 최대공약수를 구하세요.", "求84和60的最大公因数。"),
-      verifiedAnswer: "12", answerBeatId: "gcf-answer", objectIds: Object.freeze(gcfIds), beats: Object.freeze(gcfBeats),
+      verifiedAnswer: "12", verifiedAnswerI18n: tr("12", "12", "12"), answerBeatId: "gcf-answer", objectIds: Object.freeze(gcfIds), beats: Object.freeze(gcfBeats),
       sceneModel: Object.freeze({ values: Object.freeze([84, 60]), primeFactors: Object.freeze({ 84: Object.freeze([2, 2, 3, 7]), 60: Object.freeze([2, 2, 3, 5]) }), commonFactors: Object.freeze([2, 2, 3]), euclideanChain: Object.freeze([Object.freeze({ dividend: 84, divisor: 60, quotient: 1, remainder: 24 }), Object.freeze({ dividend: 60, divisor: 24, quotient: 2, remainder: 12 }), Object.freeze({ dividend: 24, divisor: 12, quotient: 2, remainder: 0 })]), answer: 12 }),
       mathChecks: Object.freeze([Object.freeze({ method: "prime factorization", expression: "(2×2×3×7) and (2×2×3×5)", result: 12, passed: true }), Object.freeze({ method: "Euclidean algorithm", expression: "84=60×1+24; 60=24×2+12; 24=12×2", result: 12, passed: true }), Object.freeze({ method: "reverse divisibility", expression: "84÷12=7; 60÷12=5", result: 12, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student lists a common factor but does not prove it is the greatest.", teachingPrompt: "Which prime factors can be paired across both numbers, and how does the remainder chain confirm your result?", successCheck: "The student identifies 2, 2, and 3 as shared, obtains 12, and verifies that 12 divides both numbers." })
@@ -222,7 +244,7 @@
       title: "Position determines signed-number order", titleI18n: tr("Position determines signed-number order", "위치로 음수의 순서를 판단한다", "用位置判断负数大小"),
       concept: "Comparing signed rational numbers", conceptI18n: tr("Comparing signed rational numbers", "음의 유리수 비교", "比较有理数"),
       problem: "Compare -7/4 and -5/3 using < or >.", problemI18n: tr("Compare -7/4 and -5/3 using < or >.", "-7/4과 -5/3을 < 또는 >로 비교하세요.", "用<或>比较-7/4与-5/3。"),
-      verifiedAnswer: "-7/4 < -5/3", answerBeatId: "signed-answer", objectIds: Object.freeze(signedIds), beats: Object.freeze(signedBeats),
+      verifiedAnswer: "-7/4 < -5/3", verifiedAnswerI18n: tr("-7/4 < -5/3", "-7/4 < -5/3", "-7/4 < -5/3"), answerBeatId: "signed-answer", objectIds: Object.freeze(signedIds), beats: Object.freeze(signedBeats),
       sceneModel: Object.freeze({ domain: Object.freeze({ minNumerator: -2, maxNumerator: 0, denominator: 1 }), tickDenominator: 12, first: Object.freeze({ numerator: -7, denominator: 4, label: "-7/4" }), second: Object.freeze({ numerator: -5, denominator: 3, label: "-5/3" }), commonDenominator: 12 }),
       mathChecks: Object.freeze([Object.freeze({ method: "common denominator", expression: "-7/4 = -21/12; -5/3 = -20/12", result: "-21/12 < -20/12", passed: true }), Object.freeze({ method: "cross multiplication", expression: "(-7)×3 = -21; (-5)×4 = -20", result: "-21 < -20", passed: true }), Object.freeze({ method: "number-line position", expression: "-7/4 lies left of -5/3", result: "-7/4 < -5/3", passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student compares 7 and 5 without accounting for denominators or the direction of negative-number order.", teachingPrompt: "Which point is farther left, and how do -21/12 and -20/12 confirm that position?", successCheck: "The student converts both fractions to twelfths, locates both points, and explains why the farther-left value is smaller." })
@@ -234,7 +256,7 @@
       title: "Follow the expression from the inside out", titleI18n: tr("Follow the expression from the inside out", "식의 안쪽부터 바깥쪽으로 계산한다", "从式子内部向外计算"),
       concept: "Operation order and equivalent expressions", conceptI18n: tr("Operation order and equivalent expressions", "연산 순서와 동치식", "运算顺序与等价式"),
       problem: "Evaluate 3(2³ + 4) - 5 and verify the value by distribution.", problemI18n: tr("Evaluate 3(2³ + 4) - 5 and verify the value by distribution.", "3(2³ + 4) - 5의 값을 구하고 분배법칙으로 검산하세요.", "计算3(2³ + 4) - 5，并用分配律检验。"),
-      verifiedAnswer: "31", answerBeatId: "expr-answer", objectIds: Object.freeze(expressionIds), beats: Object.freeze(expressionBeats),
+      verifiedAnswer: "31", verifiedAnswerI18n: tr("31", "31", "31"), answerBeatId: "expr-answer", objectIds: Object.freeze(expressionIds), beats: Object.freeze(expressionBeats),
       sceneModel: Object.freeze({ coefficient: 3, base: 2, exponent: 3, insideAddend: 4, outsideAddend: -5 }),
       mathChecks: Object.freeze([Object.freeze({ method: "nested operation order", expression: "2³=8; 8+4=12; 3×12=36; 36-5", result: 31, passed: true }), Object.freeze({ method: "distribution", expression: "3×8 + 3×4 - 5", result: 31, passed: true }), Object.freeze({ method: "inverse outer check", expression: "31+5=36; 36÷3=12", result: 12, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student reads 2³ as 2×3 or distributes 3 to only one term.", teachingPrompt: "Which operation is deepest inside the structure, and which two terms receive the outside factor?", successCheck: "The student evaluates the power first, preserves the parentheses, and confirms the same value by distributing to both terms." })
@@ -246,10 +268,22 @@
       title: "Divide equal groups without breaking the balance", titleI18n: tr("Divide equal groups without breaking the balance", "균형을 유지하며 같은 묶음을 나눈다", "保持平衡，平均分组"),
       concept: "One-step multiplication equations", conceptI18n: tr("One-step multiplication equations", "한 단계 곱셈 방정식", "一步乘法方程"),
       problem: "Solve 6x = 42 and verify the solution by substitution.", problemI18n: tr("Solve 6x = 42 and verify the solution by substitution.", "6x = 42를 풀고 대입하여 검산하세요.", "解方程6x = 42，并用代入法检验。"),
-      verifiedAnswer: "x = 7", answerBeatId: "balance-answer", objectIds: Object.freeze(equationIds), beats: Object.freeze(equationBeats),
+      verifiedAnswer: "x = 7", verifiedAnswerI18n: tr("x = 7", "x = 7", "x = 7"), answerBeatId: "balance-answer", objectIds: Object.freeze(equationIds), beats: Object.freeze(equationBeats),
       sceneModel: Object.freeze({ coefficient: 6, total: 42, expectedX: 7 }),
       mathChecks: Object.freeze([Object.freeze({ method: "inverse operation", expression: "42 ÷ 6", result: 7, passed: true }), Object.freeze({ method: "substitution", expression: "6 × 7", result: 42, passed: true }), Object.freeze({ method: "exhaustive whole-number check", expression: "x ∈ {0,…,42}; 6x=42", result: "x=7 only", passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student reads 6x as x + 6 or divides only one side by 6.", teachingPrompt: "How is sharing 42 among six equal boxes the same as dividing both sides by 6?", successCheck: "The student identifies six equal groups, divides both sides by 6, and substitutes 7 into the original equation." })
+    }),
+    common({
+      id: "coordinate-l-shape-area", type: "coordinate-polygon-area",
+      conceptClusterId: "6.G.A",
+      eyebrow: "GEOMETRY · COMPOSE AND DECOMPOSE", eyebrowI18n: tr("GEOMETRY · COMPOSE AND DECOMPOSE", "기하 · 합성하고 분해하기", "几何 · 拼合与分解"),
+      title: "One shape, three exact area checks", titleI18n: tr("One shape, three exact area checks", "한 도형을 세 가지로 정확히 검산한다", "一个图形，用三种方法准确检验"),
+      concept: "Coordinate polygon area", conceptI18n: tr("Coordinate polygon area", "좌표 다각형의 넓이", "坐标多边形面积"),
+      problem: "An L-shape has vertices (0,0), (8,0), (8,4), (4,4), (4,6), and (0,6). Find its area.", problemI18n: tr("An L-shape has vertices (0,0), (8,0), (8,4), (4,4), (4,6), and (0,6). Find its area.", "L자 도형의 꼭짓점이 (0,0), (8,0), (8,4), (4,4), (4,6), (0,6)입니다. 넓이를 구하세요.", "L形的顶点为(0,0)、(8,0)、(8,4)、(4,4)、(4,6)、(0,6)。求面积。"),
+      verifiedAnswer: "40 square units", verifiedAnswerI18n: tr("40 square units", "40제곱단위", "40平方单位"), answerBeatId: "area-answer", objectIds: Object.freeze(areaIds), beats: Object.freeze(areaBeats),
+      sceneModel: Object.freeze({ vertices: Object.freeze([[0,0],[8,0],[8,4],[4,4],[4,6],[0,6]].map(function (point) { return Object.freeze(point); })), outer: Object.freeze({ width:8, height:6 }), cutout: Object.freeze({ width:4, height:2 }), expectedArea:40 }),
+      mathChecks: Object.freeze([Object.freeze({ method:"subtraction", expression:"8×6 - 4×2", result:40, passed:true }), Object.freeze({ method:"decomposition", expression:"8×4 + 4×2", result:40, passed:true }), Object.freeze({ method:"shoelace", expression:"|Σ(xᵢyᵢ₊₁-yᵢxᵢ₊₁)|÷2", result:40, passed:true })]),
+      teacherEvidence: Object.freeze({ likelyMisconception:"The student adds boundary lengths or counts grid lines instead of square units.", teachingPrompt:"Which complete rectangle contains the L-shape, and what exact rectangle is missing?", successCheck:"The student obtains 40 by both subtraction and decomposition and identifies square units." })
     }),
     common({
       id: "isosceles-angle", type: "geometry-angle",
@@ -258,7 +292,7 @@
       title: "Equal sides reveal equal angles", titleI18n: tr("Equal sides reveal equal angles", "같은 변에서 같은 각 찾기", "由等边找等角"),
       concept: "Isosceles triangles and angle sum", conceptI18n: tr("Isosceles triangles and angle sum", "이등변삼각형과 내각의 합", "等腰三角形与内角和"),
       problem: "Triangle ABC is isosceles with AB = AC. The vertex angle A is 40°. Find angle B.", problemI18n: tr("Triangle ABC is isosceles with AB = AC. The vertex angle A is 40°. Find angle B.", "삼각형 ABC는 AB = AC인 이등변삼각형입니다. 꼭짓각 A가 40°일 때 각 B를 구하세요.", "三角形ABC是等腰三角形，AB = AC。顶角A为40°，求角B。"),
-      verifiedAnswer: "70°", answerBeatId: "geo-answer", objectIds: Object.freeze(geometryIds), beats: Object.freeze(geometryBeats),
+      verifiedAnswer: "70°", verifiedAnswerI18n: tr("70°", "70°", "70°"), answerBeatId: "geo-answer", objectIds: Object.freeze(geometryIds), beats: Object.freeze(geometryBeats),
       sceneModel: Object.freeze({ vertexAngleDeg: 40, equalSides: Object.freeze(["AB", "AC"]), targetAngle: "B" }),
       mathChecks: Object.freeze([Object.freeze({ method: "angle sum", expression: "(180 - 40) ÷ 2", result: 70, passed: true }), Object.freeze({ method: "substitution", expression: "40 + 70 + 70", result: 180, passed: true })]),
       teacherEvidence: Object.freeze({ likelyMisconception: "The student divides 180 by 2 before removing the vertex angle.", teachingPrompt: "Which angles are opposite the two equal sides?", successCheck: "The student identifies the equal base angles before applying the 180-degree angle sum." })

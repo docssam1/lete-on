@@ -1,0 +1,79 @@
+# Boarding School Math · 교차 프로그램 재사용 감사
+
+기준일: 2026-09-02
+적용 범위: `boarding-school-math` 공개 학습·클리닉·문제은행 구조
+
+## 결론
+
+Geometry, Number Magic, Fields Classic, 황소 중·고등은 하나의 거대한 문제은행으로 합치지 않는다. 문항의 출처·학년·답안 검증 상태를 잃지 않도록 원본 레코드는 각 프로그램에 유지하고, 아래 공통 계약만 Boarding School Math에 재사용한다.
+
+| 프로그램 | Boarding에 재사용 | 직접 복사하지 않음 |
+| --- | --- | --- |
+| Geometry | 점·선분·면 모델, `GW_RENDER` SVG 렌더러, 정수 격자·신발끈 넓이 검산 | 기존 문제 지문과 별도 게임 진행 상태 |
+| Number Magic | 5–6학년 공간감각 → 다각형 넓이 → 표면적·부피 선수개념 흐름, 단계 배열 계약 | 상위 학년 좌표기하를 Grade 6으로 내리는 것 |
+| Fields Classic | 단위넓이 불변성, 합성·분해, 쌓기·전개도 오개념과 유형 교차표 | 비공개 원문·답안·렌더 이미지와 검수 대기 문항 |
+| 황소 중·고등 | 추론 난이도 태그, 단일답·그림 가시성·출처·출고 게이트 | 학생 접근 코드, 답안 포함 정적 레코드, 검수 전 후보 문항 |
+
+## 이번 6.G.A 적용
+
+- 공식 범위: `6.G.A.1-4`
+- 학생 워크북 12문항, 별도 재확인 4문항
+- 네 영역: 도형 합성·분해 넓이, 분수 모서리 직육면체 부피, 좌표 다각형, 전개도 겉넓이
+- 모든 그림은 문항의 점·변 길이 데이터에서 SVG 좌표를 계산한다.
+- L자 도형 넓이 40은 다음 세 경로가 일치해야 공개된다.
+  1. `8×6 - 4×2 = 40`
+  2. `8×4 + 4×2 = 40`
+  3. 꼭짓점 여섯 개의 신발끈 공식 결과 `40`
+- 학생 답·풀이·정답 표시는 선언된 확인 동작 전에는 공개하지 않는다.
+- 좌표로 도형 직접 그리기, 전개도 직접 제작, 풀이 설명은 `teacher-observed`로 남기며 자동 승급 근거로 확대하지 않는다.
+
+## 공통 메타데이터 계약
+
+향후 문제은행 어댑터는 최소한 다음 필드를 가진다.
+
+```text
+sourceProgram
+sourceRole          # original-record | taxonomy | renderer | validator
+conceptFamily
+standardRange
+learnerStage
+reasoningTags
+representationKind
+answerContract
+figureVisibility
+provenanceStatus
+reviewStatus
+releaseStatus
+```
+
+`sourceRole=taxonomy|renderer|validator`인 자료는 새 문항의 구조를 만드는 데 사용할 수 있지만 원문 지문이나 답안을 가져왔다는 뜻이 아니다.
+
+## 공통 출고 게이트
+
+다음 순서를 모두 통과한 문항만 학생 기본 화면에 표시한다.
+
+1. `identity`: 문항 ID와 버전이 유일함
+2. `curriculum`: 학년·표준 범위가 정확함
+3. `metadata`: 영역·유형·난이도·응답 형식이 완전함
+4. `provenance`: 공개 자체 제작 또는 사용 가능한 출처가 확인됨
+5. `answer_verification`: 서로 다른 계산 방법으로 답이 일치함
+6. `single_answer`: 요구된 응답이 하나로 결정됨
+7. `figure_visibility`: 근거가 보이고, 숨은 상태가 제한되며, 위치가 모호하지 않고, 대비가 충분함
+8. `learner_fit`: `US Grade 6 ages 11-12` 표현과 추론 단계에 맞음
+9. `browser`: PC·320px·390px·A4에서 도형과 입력이 보임
+10. `release`: 검수 대기 문항이 기본 선택에 섞이지 않음
+
+## 다음 재사용 우선순위
+
+1. `6.G.A`의 좌표 직접 그리기·전개도 제작 교사 관찰 루브릭
+2. Fields의 단위넓이·분할·공간 오개념을 Grade 3–6 선수개념 지도에 연결
+3. Number Magic의 학년별 공간감각 흐름을 Grade 1–5 클리닉으로 분해
+4. 황소의 추론 태그를 미국 교과·싱가포르 경시·Math Kangaroo·AMC 경로가 공통으로 쓰는 난이도 축으로 정규화
+5. Geometry의 격자 열거기를 좌표 다각형·합동·대칭 문항의 자동 단일답 검산기에 연결
+
+## 공개·비공개 경계
+
+- GitHub: 코드, 자체 제작 공개 문항, 공개 메타데이터, 검증 규칙
+- Drive: 원본 문서, 대용량 PDF·이미지, 원본 대조 증거
+- 학생 기록: 공개 정적 파일이 아닌 인증된 데이터 저장소
+- 공개 금지: 원본 스캔, 공식 답안 파일, 학생 정보, 접근 코드, 토큰, 검수 전 후보

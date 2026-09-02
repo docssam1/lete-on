@@ -41,12 +41,12 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
-test("ratio, fraction, GCF, signed-number, expression, equation, and geometry lessons reveal exactly the intended conceptual object", async function () {
+test("ratio, fraction, GCF, signed-number, expression, equation, area, and geometry lessons reveal exactly the intended conceptual object", async function () {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = collectErrors(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.equal(await page.locator(".lesson-tab").count(), 7);
+  assert.equal(await page.locator(".lesson-tab").count(), 8);
   assert.equal(await page.locator('[data-object="ratio-answer"].is-visible').count(), 0);
   await page.locator("#next-step").click();
   assert.equal(await page.locator('[data-object="ratio-team-a-bar"].is-visible.is-active').count(), 1);
@@ -95,6 +95,16 @@ test("ratio, fraction, GCF, signed-number, expression, equation, and geometry le
   assert.match(await page.locator("#narration-text").innerText(), /unique value thirty-one/i);
 
   await page.locator('.lesson-tab[data-lesson-index="6"]').click();
+  assert.match(await page.locator("#problem-copy").innerText(), /L-shape[\s\S]*\(8,0\)/i);
+  assert.equal(await page.locator('[data-object="area-answer"].is-visible').count(), 0);
+  await page.locator('.step-button[data-step-index="5"]').click();
+  assert.equal(await page.locator('[data-object="area-subtract"].is-visible.is-active').count(), 1);
+  assert.equal(await page.locator('[data-object="area-answer"].is-visible').count(), 0);
+  await page.locator('.step-button[data-step-index="7"]').click();
+  assert.equal(await page.locator('[data-object="area-answer"].is-visible.is-active').count(), 1);
+  assert.match(await page.locator("#narration-text").innerText(), /forty square units/i);
+
+  await page.locator('.lesson-tab[data-lesson-index="7"]').click();
   assert.match(await page.locator("#problem-copy").innerText(), /AB = AC[\s\S]*40°[\s\S]*angle B/);
   assert.equal(await page.locator('[data-object="geo-answer"].is-visible').count(), 0);
   await page.locator('.step-button[data-step-index="1"]').click();
@@ -274,5 +284,33 @@ test("6.EE.B balance model gates the answer and stays complete on mobile and A4"
   await page.emulateMedia({ media: "print" });
   const state = await page.evaluate(function () { return { hidden: Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length, boxes: document.querySelectorAll(".balance-x-box").length, answer: document.querySelector('[data-object="balance-answer"]').textContent, check: document.querySelector('[data-object="balance-check"]').textContent, controls: getComputedStyle(document.querySelector(".lesson-controls")).display, width: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }; });
   assert.equal(state.hidden, 0); assert.equal(state.boxes, 6); assert.match(state.answer, /x = 7/); assert.match(state.check, /6 × 7 = 42/); assert.equal(state.controls, "none"); assert.equal(state.width, state.client); assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("6.G.A coordinate-area model is exact, answer-gated, and complete on mobile and A4", async function () {
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    const errors = collectErrors(page);
+    await page.goto(`${baseUrl}?lesson=coordinate-l-shape-area&cluster=6.G.A&locale=ko`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator('[data-object="area-answer"]').getAttribute("aria-hidden"), "true");
+    await page.locator("#show-overview").click();
+    await page.waitForTimeout(450);
+    const state = await page.evaluate(function () {
+      const svg = document.querySelector(".coordinate-area-svg").getBoundingClientRect();
+      return { scroll:document.documentElement.scrollWidth, client:document.documentElement.clientWidth, svgLeft:svg.left, svgRight:svg.right, answer:document.querySelector('[data-object="area-answer"]').textContent };
+    });
+    assert.equal(state.scroll, state.client);
+    assert.ok(state.svgLeft >= 0 && state.svgRight <= width);
+    assert.match(state.answer, /40제곱단위/);
+    assert.match(await page.locator("#narration-text").innerText(), /검산된 답은 40제곱단위/);
+    assert.doesNotMatch(await page.locator("#narration-text").innerText(), /square units/i);
+    assert.deepEqual(errors, []); await page.close();
+  }
+  const page = await browser.newPage({ viewport: { width:794, height:1123 } });
+  const errors = collectErrors(page);
+  await page.goto(`${baseUrl}?lesson=coordinate-l-shape-area&cluster=6.G.A&locale=en`, { waitUntil: "networkidle" });
+  await page.emulateMedia({ media:"print" });
+  const state = await page.evaluate(function () { return { hidden:Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length, vertices:document.querySelectorAll(".area-vertex").length, answer:document.querySelector('[data-object="area-answer"]').textContent, width:document.documentElement.scrollWidth, client:document.documentElement.clientWidth }; });
+  assert.equal(state.hidden, 0); assert.equal(state.vertices, 6); assert.match(state.answer, /40 square units/); assert.equal(state.width, state.client); assert.deepEqual(errors, []);
   await page.close();
 });
