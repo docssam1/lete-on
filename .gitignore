@@ -21,6 +21,7 @@ __pycache__/
 **/__pycache__/
 /highschool-selection/private/
 /highschool-selection/node_modules/
+/highschool-selection/tmp/
 /highschool-selection/**/private/
 /highschool-selection/**/*.pdf
 /highschool-selection/**/*.hwp
