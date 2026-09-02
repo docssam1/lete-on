@@ -199,6 +199,7 @@ test("recheck is locked before completion while teacher preview stays separate",
   assert.equal(await page.locator(".teacher-guide").count(), 1);
   assert.equal(await page.locator(".teacher-answer").count(), 24);
   assert.equal(await page.locator(".response-row").count(), 0);
+  assert.equal(await page.locator(".skip-link").textContent(), "跳到专项练习内容");
   const visibleChineseSurfaces = await Promise.all([".site-header", ".clinic-hero", "#clinic-content", ".clinic-footer"].map(function (selector) { return page.locator(selector).innerText(); }));
   assert.equal(/[가-힣]/.test(visibleChineseSurfaces.join(" ")), false);
   assert.deepEqual(errors, []);
