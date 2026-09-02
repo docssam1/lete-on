@@ -21,7 +21,7 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
 });
 
 test("reviewed clusters open workbooks with completion-gated rechecks", function () {
-  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A"].forEach(function (cluster) {
+  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A", "6.EE.B", "6.G.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -34,8 +34,8 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   });
 
   const geometry = paths.routeFor("6.G.A", { workbookCompleted: true });
-  assert.equal(geometry.workbook.state, "review-pending");
-  assert.equal(geometry.recheck.state, "review-pending");
+  assert.equal(geometry.workbook.packId, "gfield-grade6-g-a-clinic-v1");
+  assert.equal(geometry.recheck.state, "available");
 });
 
 test("only exact cluster matches open reviewed animated clinic lessons", function () {
@@ -60,10 +60,15 @@ test("only exact cluster matches open reviewed animated clinic lessons", functio
   assert.equal(expressions.animated.state, "available");
   assert.equal(expressions.animated.lessonId, "expression-structure-order");
   assert.equal(expressions.animated.url, "./animated-math.html?lesson=expression-structure-order&cluster=6.EE.A&locale=ko");
+  const equations = paths.routeFor("6.EE.B", { fromDiagnostic: true });
+  assert.equal(equations.animated.state, "available");
+  assert.equal(equations.animated.lessonId, "equation-balance-groups");
+  assert.equal(equations.animated.url, "./animated-math.html?lesson=equation-balance-groups&cluster=6.EE.B&locale=ko");
 
   const geometry = paths.routeFor("6.G.A", { fromDiagnostic: true });
-  assert.equal(geometry.animated.state, "review-pending");
-  assert.equal(geometry.animated.url, "");
+  assert.equal(geometry.animated.state, "available");
+  assert.equal(geometry.animated.lessonId, "coordinate-l-shape-area");
+  assert.equal(geometry.animated.url, "./animated-math.html?lesson=coordinate-l-shape-area&cluster=6.G.A&locale=ko");
   assert.notEqual(animated.lessons.find(function (lesson) { return lesson.id === "isosceles-angle"; }).conceptClusterId, "6.G.A");
 });
 
