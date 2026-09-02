@@ -702,20 +702,21 @@ function screenWelcome(){
 
 /* ============================================================
    마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
-   지도: 2026-09-02 town-map-v1(1536×1024, 3/4 시점 3D 카툰, 마을지도-작화지시서.md).
-   건물↔등급 배치: 서쪽 집들=BASIC(수의 나라) · 가운데 돔 타운홀=PRIME ·
-   동쪽 집들=ADVANCE · 북쪽 언덕 위 탑=CHALLENGE(경시의 탑) ·
-   남쪽 호숫가 선착장 집=영상관 · 남서쪽 집=마법사 옷장.
-   좌표는 % — 원본 px를 1536×1024로 나눈 값. 지도가 바뀌면 여기와 #townFountain·
+   지도: 2026-09-02 town-map-v2(2000×1342, 3/4 시점 그림책 삽화, 마을지도-작화지시서.md).
+   건물↔등급 배치: 서쪽 아기 마을(버섯집·모래밭·그네)=BASIC 수의 나라 · 책 지붕 도서관=PRIME ·
+   남쪽 집 2채=ADVANCE · 북쪽 언덕 위 탑=CHALLENGE(경시의 탑) · 필름 릴 극장=영상관 ·
+   서쪽 천막 시장=마법사 옷장(꾸미기). 정자=분수 연출 자리. 동쪽 다리·학교, 호숫가 선착장은
+   관문(연결)용으로 비워 둠 — 나중에.
+   좌표는 % — 원본 px를 2000×1342로 나눈 값. 지도가 바뀌면 여기와 #townFountain·
    sparkle·walker 스폰만 다시 재면 된다(styles.css #townWorld 크기도 함께). */
-const TOWN_WORLD_W=1536, TOWN_WORLD_H=1024;
+const TOWN_WORLD_W=2000, TOWN_WORLD_H=1342;
 const TOWN_SPOTS=[
-  { tier:'numberland',   pos:'left:6%;top:34%;width:16.5%;height:15%',   tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
-  { tier:'beginner',     pos:'left:48%;top:26%;width:17%;height:19%',    tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'advanced',     pos:'left:50.5%;top:4%;width:8%;height:13%',    tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
-  { tier:'intermediate', pos:'left:65.5%;top:44%;width:16%;height:15%',  tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:40.5%;top:73%;width:10%;height:11%',  tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
-  { tier:'_closet',      pos:'left:25.5%;top:80%;width:9%;height:11%',   tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
+  { tier:'numberland',   pos:'left:4.5%;top:65%;width:31%;height:15%',   tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { tier:'beginner',     pos:'left:42%;top:37%;width:14%;height:21%',    tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { tier:'advanced',     pos:'left:29.5%;top:4%;width:7%;height:16%',    tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'intermediate', pos:'left:46%;top:60%;width:19%;height:16%',    tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'_theater',     pos:'left:56.5%;top:31.5%;width:13.5%;height:19%', tag:'🎬 극장',    sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:5%;top:35%;width:21%;height:15%',     tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
@@ -2926,7 +2927,7 @@ function initTownWorld(scr){
   /* 반짝임 */
   const sparkTimer=setInterval(()=>{
     const s=document.createElement('div');s.className='tspark';
-    s.style.left=(36+Math.random()*16)+'%';s.style.top=(44+Math.random()*12)+'%';
+    s.style.left=(25+Math.random()*12)+'%';s.style.top=(42+Math.random()*10)+'%';
     s.style.animationDuration=(4+Math.random()*3)+'s';
     world.appendChild(s);setTimeout(()=>s.remove(),8000);
   },600);
@@ -2935,13 +2936,13 @@ function initTownWorld(scr){
      그 자리로 걸어간다. Poco/Momo는 NPC로 계속 자유 배회. */
   const myName=S.name?S.name:('#'+S.character.number);
   const nbs=[
-    {el:scr.querySelector('#nbNumi'),x:44,y:56,tx:44,ty:56,spd:.22,player:true,
+    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
       lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!','오늘은 어떤 마법을 배울까?']},
-    {el:scr.querySelector('#nbPoco'),x:50,y:52,tx:50,ty:52,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
-    {el:scr.querySelector('#nbMomo'),x:38,y:58,tx:38,ty:58,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
+    {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
+    {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
-  function pick(n){const sp=[[40,50],[50,54],[37,58],[46,60],[53,49],[43,46]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
+  function pick(n){const sp=[[38,58],[44,62],[36,66],[42,68],[48,57],[34,60]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
   nbs.forEach(n=>{if(!n.player)pick(n);});
   let walkRAF;
   let muted=true;
