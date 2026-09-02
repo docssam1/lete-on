@@ -33,7 +33,7 @@ window.NM_UNITS['N-08'] = {
         desc:{ko:'5를 넣고 규칙이 +2라면? 7이 나와요!',
           en:'Put in 5 with rule +2? Out comes 7!',
           zh:'放进5，规则是+2？出来7！'},
-        mathSteps:['5 넣기 → +2 → 7 나오기!','규칙이 숨으면 예시를 봐요','아하, +2구나!'],
+        mathSteps:[{ko:'5 넣기 → +2 → 7 나오기!',en:'Put in 5 → +2 → out comes 7!',zh:'放进5 → +2 → 出来7！'},{ko:'규칙이 숨으면 예시를 봐요',en:'If the rule hides, look at the examples',zh:'规则藏起来了，就看例子'},{ko:'아하, +2구나!',en:'Aha, it is +2!',zh:'啊哈，是+2！'}],
         result:{ko:'규칙만 알면 다 맞힐 수 있어요!',en:'Know the rule, know the answer!',zh:'知道规则就都能答对！'} }
     ],
     rule:{ ko:'기계는 규칙대로 수를 바꿔요!',

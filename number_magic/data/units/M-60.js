@@ -32,7 +32,7 @@ window.NM_UNITS['M-60'] = {
     },
     stages:[
       { tag:{ko:"① f'(x)=0을 풀면 극값의 자리가 나와요",en:"1) Solving f'(x)=0 finds where extrema occur",zh:"① 解f'(x)=0就能找到极值的位置"},
-        head:{ko:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=0,\\;2",en:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=0,\\;2",zh:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=0,\\;2"},
+        head:{ko:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=0,\\;2",en:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; \\text{solutions of } f'(x)=0: x=0,\\;2",zh:"f(x)=x^3-3x^2 \\;\\Rightarrow\\; f'(x)=0\\text{的解}: x=0,\\;2"},
         desc:{ko:"먼저 도함수를 구해요: f'(x)=3x²-6x. 이걸 0으로 두면 3x(x-2)=0이니 <b>x=0 또는 x=2</b> — 이 두 자리가 곡선이 잠깐 수평이 되는 지점이에요.",
               en:"First find the derivative: f'(x)=3x²-6x. Setting it to 0 gives 3x(x-2)=0, so <b>x=0 or x=2</b> — these two spots are where the curve momentarily levels out.",
               zh:"先求导数：f'(x)=3x²-6x。令其为0，3x(x-2)=0，得<b>x=0或x=2</b>——这两处正是曲线瞬间变水平的位置。"},
@@ -43,7 +43,7 @@ window.NM_UNITS['M-60'] = {
               zh:'x=0处符号由+变−(极大)，x=2处符号由−变+(极小)——符号不变就不是极值。'} },
 
       { tag:{ko:'② 그 x를 f(x)에 다시 넣으면 극값(높이)이 나와요',en:'2) Substituting that x back into f(x) gives the extreme value',zh:'② 把那个x代回f(x)就得到极值(高度)'},
-        head:{ko:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{극댓값}=0,\\;\\text{극솟값}=-4',en:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{극댓값}=0,\\;\\text{극솟값}=-4',zh:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{극댓값}=0,\\;\\text{극솟값}=-4'},
+        head:{ko:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{극댓값}=0,\\;\\text{극솟값}=-4',en:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{local max}=0,\\;\\text{local min}=-4',zh:'f(0)=0,\\;f(2)=-4 \\;\\Rightarrow\\; \\text{极大值}=0,\\;\\text{极小值}=-4'},
         desc:{ko:'x=0,2는 "몇 번째 x인지"만 알려줄 뿐, 산의 <b>높이(실제 값)</b>는 원래 함수 f(x)에 다시 대입해야 나와요: f(0)=0³-3(0)²=0, f(2)=2³-3(2)²=8-12=−4.',
               en:'x=0,2 only tell you "which x" — the actual <b>height (value)</b> of the hill needs substituting back into the original f(x): f(0)=0³-3(0)²=0, f(2)=2³-3(2)²=8-12=−4.',
               zh:'x=0,2只告诉你"是哪个x"——山的实际<b>高度(值)</b>要代回原函数f(x)才能得到：f(0)=0³-3(0)²=0，f(2)=2³-3(2)²=8-12=−4。'},
@@ -60,9 +60,9 @@ window.NM_UNITS['M-60'] = {
 
   check:{
     fills:[
-      { tex:"f(x)=x^3-3x \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=\\square,\\;\\square", answer:[-1,1],
+      { tex:{ko:"f(x)=x^3-3x \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=\\square,\\;\\square",en:'f(x)=x^3-3x \\;\\Rightarrow\\; \\text{solutions of } f\'(x)=0: x=\\square,\\;\\square',zh:'f(x)=x^3-3x \\;\\Rightarrow\\; f\'(x)=0\\text{的解}: x=\\square,\\;\\square'}, answer:[-1,1],
         hint:{ ko:"f'(x)=3x^2-3=0", en:"f'(x)=3x^2-3=0", zh:"f'(x)=3x^2-3=0" } },
-      { tex:'f(x)=x^3-3x \\;\\Rightarrow\\; \\text{극댓값}=\\square,\\;\\text{극솟값}=\\square', answer:[2,-2],
+      { tex:{ko:'f(x)=x^3-3x \\;\\Rightarrow\\; \\text{극댓값}=\\square,\\;\\text{극솟값}=\\square',en:'f(x)=x^3-3x \\;\\Rightarrow\\; \\text{local max}=\\square,\\;\\text{local min}=\\square',zh:'f(x)=x^3-3x \\;\\Rightarrow\\; \\text{极大值}=\\square,\\;\\text{极小值}=\\square'}, answer:[2,-2],
         hint:{ ko:'f(-1)=-1+3=2, f(1)=1-3=-2', en:'f(-1)=-1+3=2, f(1)=1-3=-2', zh:'f(-1)=-1+3=2, f(1)=1-3=-2' } }
     ],
     open:{ ko:'f(x)=x³-12x의 극값을 구하는 전체 과정을 설명해봐요.',

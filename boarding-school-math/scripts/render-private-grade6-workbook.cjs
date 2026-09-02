@@ -298,6 +298,16 @@ function geometryDiagramForModel(diagram) {
   });
 }
 
+function statisticsDisplayForModel(display) {
+  if (display === undefined) return null;
+  try {
+    validator.validateStatisticsDisplay(display, "renderer-statistics-display");
+  } catch (_error) {
+    fail("PRIVATE_RENDER_STATISTICS_DISPLAY_INVALID");
+  }
+  return Object.freeze({ values: Object.freeze(Array.from(display.values)) });
+}
+
 function layoutForId(entries, id, code) {
   const matches = entries.filter(function (entry) { return entry.id === id; });
   assert(matches.length === 1, code);
@@ -339,7 +349,8 @@ function buildStudentModel(draft, locale) {
             content: localized(component.contentByLocale, locale),
             responseMode: component.responseMode,
             relationTable: relationTableForModel(component.relationTable),
-            geometryDiagram: geometryDiagramForModel(component.geometryDiagram)
+            geometryDiagram: geometryDiagramForModel(component.geometryDiagram),
+            statisticsDisplay: statisticsDisplayForModel(component.statisticsDisplay)
           });
         })
       });
@@ -386,6 +397,7 @@ function buildTeacherModel(draft, locale) {
             prompt: localized(component.contentByLocale, locale),
             relationTable: relationTableForModel(component.relationTable),
             geometryDiagram: geometryDiagramForModel(component.geometryDiagram),
+            statisticsDisplay: statisticsDisplayForModel(component.statisticsDisplay),
             expectedResponse: reference.expectedResponse,
             solution: localized(reference.solutionByLocale, locale),
             uniqueness: localized(reference.uniquenessProofByLocale, locale)
@@ -436,11 +448,13 @@ p { margin: 6px 0; font-size: 13px; line-height: 1.65; white-space: normal; }
 .geometry-diagram .dimension-line, .geometry-diagram .extension-line { fill: none; stroke: #475569; stroke-width: 1.5; }
 .geometry-diagram .right-angle-marker { fill: none; stroke: #0f172a; stroke-width: 2; }
 .geometry-diagram text { fill: #172033; font-size: 13px; font-weight: 700; }
+.statistics-display { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; padding: 9px; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; }
+.statistics-value { min-width: 32px; padding: 5px 7px; border: 1px solid #93c5fd; border-radius: 5px; background: #fff; color: #1e3a8a; font-size: 12px; font-weight: 700; text-align: center; }
 .reference-grid { display: grid; grid-template-columns: max-content 1fr; gap: 5px 12px; font-size: 12px; line-height: 1.55; }
 .reference-grid strong { color: #14532d; }
 footer { margin-top: 28px; padding-top: 9px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 10px; }
 .private-watermark { display: none; }
-@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } .geometry-diagram { max-width: 280px; } }
+@media (max-width: 640px) { body { background: #fff; } main { width: 100%; min-height: 0; margin: 0; padding: 18px 16px 26px; box-shadow: none; } h1 { font-size: 22px; } h2 { font-size: 17px; } p { font-size: 14px; } .reference-grid { grid-template-columns: 1fr; gap: 3px; } .relation-table { font-size: 11px; } .relation-table th, .relation-table td { padding: 5px; } .geometry-diagram { max-width: 280px; } .statistics-display { gap: 5px; } .statistics-value { min-width: 29px; padding: 4px 6px; } }
 @media print { :root, html, body { background: #fff !important; } main { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .section, .component { break-inside: avoid; page-break-inside: avoid; } .page-start { break-before: page; page-break-before: always; } .layout-content-page { break-inside: auto; page-break-inside: auto; } .layout-continuation-page { min-height: 9.7in; break-inside: avoid; page-break-inside: avoid; } .layout-workspace { min-height: 9.7in; border: 1px solid #e2e8f0; border-radius: 4px; } .private-watermark { display: block; position: fixed; top: -0.34in; right: 0.08in; z-index: 10; max-width: 3in; color: #9f1239; font-size: 7px; font-weight: 800; line-height: 1.1; opacity: 0.72; pointer-events: none; text-align: right; } main[data-document-audience="student"] .first-instruction { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] .section { break-inside: auto; page-break-inside: auto; } main[data-document-audience="teacher"] header { border-bottom-width: 2px; margin-bottom: 7px; padding-bottom: 6px; } main[data-document-audience="teacher"] h1 { font-size: 19px; } main[data-document-audience="teacher"] h2 { margin: 8px 0 4px; padding-bottom: 3px; font-size: 14px; } main[data-document-audience="teacher"] h3 { margin: 6px 0 3px; font-size: 10px; } main[data-document-audience="teacher"] p { margin: 2px 0; font-size: 10px; line-height: 1.28; } main[data-document-audience="teacher"] .notice { margin-top: 4px; font-size: 8px; } main[data-document-audience="teacher"] .component { margin: 3px 0; padding: 4px 6px; border-radius: 4px; } main[data-document-audience="teacher"] .component-label { margin-bottom: 2px; font-size: 8px; } main[data-document-audience="teacher"] .teacher { border-left-width: 3px; } main[data-document-audience="teacher"] .reference { border-left-width: 3px; margin: 2px 0; padding: 3px 5px; } main[data-document-audience="teacher"] .reference-grid { grid-template-columns: 5.6em 1fr; gap: 1px 6px; font-size: 9px; line-height: 1.22; } main[data-document-audience="teacher"] .relation-table { margin: 3px 0; font-size: 9px; } main[data-document-audience="teacher"] .relation-table th, main[data-document-audience="teacher"] .relation-table td { padding: 2px 4px; } main[data-document-audience="teacher"] .geometry-diagram { max-width: 210px; margin: 3px auto; } main[data-document-audience="teacher"] .geometry-diagram text { font-size: 10px; } footer { display: none; } }
 </style>
 </head>
@@ -478,6 +492,13 @@ function renderGeometryDiagram(diagram, copy, identifier) {
   return `<figure class="geometry-diagram"><svg viewBox="0 0 410 220" role="img" aria-labelledby="${escapeHtml(titleId)}"><title id="${escapeHtml(titleId)}">${escapeHtml(`${baseText}; ${heightText}`)}</title><path class="triangle-shape" d="M 165 175 L 345 175 L 165 45 Z"></path><path class="right-angle-marker" d="M 165 160 H 180 V 175"></path><line class="extension-line" x1="165" y1="175" x2="165" y2="198"></line><line class="extension-line" x1="345" y1="175" x2="345" y2="198"></line><line class="dimension-line" x1="165" y1="194" x2="345" y2="194"></line><line class="extension-line" x1="165" y1="45" x2="137" y2="45"></line><line class="extension-line" x1="165" y1="175" x2="137" y2="175"></line><line class="dimension-line" x1="142" y1="45" x2="142" y2="175"></line><text x="255" y="214" text-anchor="middle">${escapeHtml(baseText)}</text><text x="10" y="96" text-anchor="start"><tspan x="10" dy="0">${escapeHtml(copy.perpendicularHeightLabel)}</tspan><tspan x="10" dy="17">${escapeHtml(heightValueText)}</tspan></text></svg></figure>`;
 }
 
+function renderStatisticsDisplay(display) {
+  if (display === null) return "";
+  return `<div class="statistics-display" role="list" aria-label="data values">${display.values.map(function (value) {
+    return `<span class="statistics-value" role="listitem">${escapeHtml(value)}</span>`;
+  }).join("")}</div>`;
+}
+
 function renderAllocatedPages(layout, kind, content, copy) {
   assert(layout === null || (Number.isInteger(layout.startPage) && Number.isInteger(layout.endPage) && layout.startPage >= 1 && layout.endPage >= layout.startPage), "PRIVATE_RENDER_LAYOUT_INVALID");
   if (layout === null) return content;
@@ -508,7 +529,8 @@ function renderStudentHtml(model, locale) {
         const response = renderStudentResponseControl(component.responseMode, copy);
         const relationTable = renderRelationTable(component.relationTable, copy);
         const geometryDiagram = renderGeometryDiagram(component.geometryDiagram, copy, `student-${sectionIndex + 1}-${componentIndex + 1}`);
-        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${geometryDiagram}${response}</article>`;
+        const statisticsDisplay = renderStatisticsDisplay(component.statisticsDisplay);
+        return `<article class="component"><div class="component-label">${escapeHtml(String(sectionIndex + 1) + "." + String(componentIndex + 1) + " " + component.componentType)}</div>${textBlock(component.content)}${relationTable}${geometryDiagram}${statisticsDisplay}${response}</article>`;
       }).join("\n");
       const sectionClass = sectionIndex === 0 ? "first-instruction" : "";
       return renderAllocatedPages(section.layout, "student-section", `<section class="${sectionClass}"><h2>${escapeHtml(section.title)}</h2>${components}</section>`, copy);
@@ -546,7 +568,8 @@ function renderTeacherHtml(model, locale) {
       ? `<h3>${escapeHtml(copy.teacherReference)}</h3>${artifact.references.map(function (reference, referenceIndex) {
         const relationTable = renderRelationTable(reference.relationTable, copy);
         const geometryDiagram = renderGeometryDiagram(reference.geometryDiagram, copy, `teacher-${artifactIndex + 1}-${referenceIndex + 1}`);
-        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}${geometryDiagram}</article>`;
+        const statisticsDisplay = renderStatisticsDisplay(reference.statisticsDisplay);
+        return `<article class="component reference"><div class="reference-grid"><strong>${escapeHtml(copy.prompt)}</strong><span>${escapeHtml(reference.prompt)}</span><strong>${escapeHtml(copy.expectedResponse)}</strong><span>${escapeHtml(reference.expectedResponse)}</span><strong>${escapeHtml(copy.solution)}</strong><span>${escapeHtml(reference.solution)}</span><strong>${escapeHtml(copy.uniqueness)}</strong><span>${escapeHtml(reference.uniqueness)}</span></div>${relationTable}${geometryDiagram}${statisticsDisplay}</article>`;
       }).join("\n")}`
       : "";
     return renderAllocatedPages(artifact.layout, "teacher-artifact", `<section><h2>${escapeHtml(artifact.title)}</h2>${components}${segments}${references}</section>`, copy);
@@ -670,10 +693,12 @@ module.exports = Object.freeze({
   parseArguments,
   relationTableForModel,
   geometryDiagramForModel,
+  statisticsDisplayForModel,
   fixedPageLayout,
   layoutForId,
   renderRelationTable,
   renderGeometryDiagram,
+  renderStatisticsDisplay,
   renderAllocatedPages,
   renderStudentResponseControl,
   renderStudentHtml,

@@ -25,8 +25,8 @@ import {
   acceptsPartitionAnswer, partitionFaces,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-7";
-import { messages, text } from "./i18n.js?v=geoboard-7";
+} from "./levels.js?v=geoboard-8";
+import { messages, text } from "./i18n.js?v=geoboard-8";
 import {
   squareBoardPoints, triangularBoardPoints,
   squareDistanceSquared, triangularDistanceSquared,
@@ -48,6 +48,7 @@ const saved = readGameProgress(PROGRESS_KEY);
 const SESSION_SIZE = 5;
 const TUTORIAL_KEY = "gfield-geoboard-tutorial-v1";
 const forceTutorial = params.get("tutorial") === "1";
+let autoAdvanceTimer = 0;
 
 const storedLanguage = localStorage.getItem("gfield-language") || "ko";
 const language = Object.keys(messages).includes(storedLanguage) ? storedLanguage : "ko";
@@ -182,7 +183,6 @@ function projectPoint(point, candidate) {
 // target and at 740x360 it is 38.3px — both clear of the 30px floor the house rules
 // set for a phone. The DRAWN peg stays small (2.8) so the board still reads as a
 // lattice of points rather than a grid of buttons.
-const HIT_RADIUS = 9.5;
 const PEG_RADIUS = 2.8;
 
 function svgNode(name, attributes) {
@@ -233,7 +233,8 @@ function renderBoard() {
   boardPoints(p).forEach((point) => {
     const [cx, cy] = projectPoint(point, p);
     const outlinePoint = isPartitionProblem(p) && p.outline.some((candidate) => samePoint(candidate, point));
-    ui.pegs.append(svgNode("circle", { class: `peg${outlinePoint ? " partition-peg" : ""}`, cx, cy, r: outlinePoint ? PEG_RADIUS * 1.35 : PEG_RADIUS }));
+    const requiredPoint = isPartitionProblem(p) && p.requiredVertex != null && samePoint(p.outline[p.requiredVertex], point);
+    ui.pegs.append(svgNode("circle", { class: `peg${outlinePoint ? " partition-peg" : ""}${requiredPoint ? " required-peg" : ""}`, cx, cy, r: requiredPoint ? PEG_RADIUS * 1.85 : outlinePoint ? PEG_RADIUS * 1.35 : PEG_RADIUS }));
   });
 
   ui.bands.replaceChildren();
@@ -312,13 +313,17 @@ function renderHits() {
   interactivePoints.forEach(([x, y]) => {
       const used = state.path.some((point) => samePoint(point, [x, y]));
       const isStart = state.path.length > 0 && samePoint(state.path[0], [x, y]);
+      const isRequired = isPartitionProblem(p) && p.requiredVertex != null && samePoint(p.outline[p.requiredVertex], [x, y]);
       const [cx, cy] = projectPoint([x, y], p);
+      const isRovingPeg = !focused
+        ? interactivePoints[0][0] === x && interactivePoints[0][1] === y
+        : Number(focused[0]) === x && Number(focused[1]) === y;
       const node = svgNode("circle", {
         class: "peg-hit",
-        cx, cy, r: p.boardType === "triangular" ? 8.6 : HIT_RADIUS,
+        cx, cy, r: p.boardType === "triangular" ? 10.2 : 10.5,
         "data-x": x, "data-y": y,
-        role: "button", tabindex: state.solved ? -1 : 0,
-        "aria-label": `${t("pegAria", { row: y + 1, col: x + 1 })} ${isStart ? t("pegStart") : used ? t("pegUsed") : t("pegFree")}`
+        role: "button", tabindex: state.solved || !isRovingPeg ? -1 : 0,
+        "aria-label": `${t("pegAria", { row: y + 1, col: x + 1 })} ${isRequired ? t("pegRequired") : isStart ? t("pegStart") : used ? t("pegUsed") : t("pegFree")}`
       });
       ui.hits.append(node);
   });
@@ -357,6 +362,10 @@ function renderPartitionModel(candidate) {
     points: candidate.outline.map((point) => projectPoint(point, candidate).join(",")).join(" ")
   });
   ui.model.append(outline);
+  if (candidate.requiredVertex != null) {
+    const [cx, cy] = projectPoint(candidate.outline[candidate.requiredVertex], candidate);
+    ui.model.append(svgNode("circle", { class: "partition-required-model", cx, cy, r: PEG_RADIUS * 2.2 }));
+  }
   const labels = [
     [t("partitionLineBadge", { count: candidate.lineTotal }), 12],
     [t("triangleTarget", { count: candidate.targetTriangles }), 84],
@@ -666,7 +675,9 @@ function judgePartition(candidate) {
   state.wrong += 1;
   state.locked = true;
   playTone("wrong");
-  toast(t("wrongPartition"));
+  const missesRequiredPeg = candidate.requiredVertex != null
+    && !state.partitionLines.some((line) => line.includes(candidate.requiredVertex));
+  toast(t(missesRequiredPeg ? "wrongRequiredPeg" : "wrongPartition"));
   ui.bands.querySelectorAll(".partition-line").forEach((node) => node.classList.add("bad"));
   setTimeout(() => {
     state.locked = false;
@@ -735,6 +746,8 @@ function solveProblem() {
   showSuccess();
   renderModel();
   refresh();
+  clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = setTimeout(nextProblem, reducedMotion ? 700 : 1150);
 }
 
 function showSuccess() {
@@ -774,7 +787,7 @@ function renderStatus() {
   $("#modelLabel").textContent = t(isPartitionProblem(p) ? "partitionGoalLabel" : isPlacementQuestion(p) ? "answerCountLabel" : isCountProblem(p) ? "foundKindsLabel" : "modelLabel");
   $("#buildLabel").textContent = t(isPartitionProblem(p) ? "partitionBuildLabel" : p.kind === "triangle-count" ? "triangularBoardLabel" : isCountProblem(p) ? "squareBoardLabel" : "buildLabel");
   if (isPartitionProblem(p)) {
-    ui.prompt.textContent = t("promptPartition", {
+    ui.prompt.textContent = t(p.requiredVertex == null ? "promptPartition" : "promptPartitionRequired", {
       lines: p.lineTotal,
       triangles: p.targetTriangles,
       quadrilaterals: p.targetQuadrilaterals
@@ -835,6 +848,7 @@ function refresh() {
 }
 
 function resetProblem() {
+  clearTimeout(autoAdvanceTimer);
   state.path = [];
   state.partitionLines = [];
   state.foundTypes = [];
@@ -844,8 +858,15 @@ function resetProblem() {
   state.wrong = 0;
   state.hints = 0;
   ui.guide.classList.remove("show");
+  ui.board.classList.remove("hinted");
+  ui.model.classList.remove("hinted");
   renderModel();
   refresh();
+}
+
+function focusFirstAction() {
+  const target = ui.hits.querySelector(".peg-hit") || ui.stats.querySelector(".count-choice");
+  target?.focus?.();
 }
 
 function nextProblem() {
@@ -854,6 +875,7 @@ function nextProblem() {
     state.problem += 1;
     saveGameProgress(PROGRESS_KEY, { level: state.level, problemIndex: state.problem, queue: state.queue.map((item) => item.id) });
     resetProblem();
+    queueMicrotask(focusFirstAction);
   } else showComplete();
 }
 
@@ -865,9 +887,11 @@ function showComplete() {
     ? "completeCountText"
     : isCountProblem() ? "completeKindsText" : "completeText");
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
-  $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
+  $("#nextLevelButton").textContent = t("nextLevel");
+  $("#nextLevelButton").hidden = !hasNext;
   ui.complete.hidden = false;
   cubiSays(t(isPartitionProblem() ? "guidePartitionComplete" : isCountProblem() ? "guideExploreComplete" : "guideComplete"));
+  queueMicrotask(() => $("#practiceButton").focus());
 }
 
 function renderLevelList() {
@@ -877,10 +901,14 @@ function renderLevelList() {
     button.type = "button";
     button.className = "level-card";
     button.disabled = !level.ready;
-    button.innerHTML = `<span>${level.id}</span><strong></strong><small></small>${level.ready ? "" : "<em></em>"}`;
+    button.innerHTML = `<span>${level.id}</span><strong></strong><small></small><em></em>`;
     button.querySelector("strong").textContent = t(level.titleKey);
     button.querySelector("small").textContent = t(level.descKey);
-    if (!level.ready) button.querySelector("em").textContent = t("comingSoon");
+    button.classList.toggle("current", level.id === state.level);
+    if (level.id === state.level) button.setAttribute("aria-current", "true");
+    button.querySelector("em").textContent = level.ready
+      ? `${t(level.stage === "초급" ? "difficultyBeginner" : "difficultyIntermediate")} · ${t(level.difficulty === "하" ? "difficultyLow" : level.difficulty === "중" ? "difficultyMiddle" : "difficultyHigh")}`
+      : t("comingSoon");
     if (level.ready) button.addEventListener("click", () => location.assign(`?level=${level.id}`));
     ui.levelList.append(button);
   });
@@ -983,6 +1011,7 @@ function applyLanguage() {
   $("#levelButton").textContent = t("levels");
   $("#hintButton").textContent = t("hint");
   $("#retryButton").textContent = t("retry");
+  $("#worksheetLink").textContent = t("worksheet");
   $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   $("#modelLabel").textContent = t("modelLabel");
   $("#buildLabel").textContent = t("buildLabel");
@@ -998,6 +1027,35 @@ function applyLanguage() {
 
 /* ------------------------------------------------------------------ events */
 
+let levelReturnFocus = null;
+
+function closeLevelDialog() {
+  ui.levelDialog.hidden = true;
+  levelReturnFocus?.focus?.();
+}
+
+document.addEventListener("keydown", (event) => {
+  const dialog = [ui.tutorial, ui.levelDialog, ui.complete].find((candidate) => !candidate.hidden);
+  if (!dialog) return;
+  if (event.key === "Escape" && dialog === ui.levelDialog) {
+    event.preventDefault();
+    closeLevelDialog();
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const focusable = [...dialog.querySelectorAll("button:not([hidden]):not(:disabled), a[href]")];
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
 // One delegated listener for the whole hit layer: pointerdown fires before any
 // synthetic click, which keeps the band responsive on a touch screen.
 ui.hits.addEventListener("pointerdown", (event) => {
@@ -1006,11 +1064,29 @@ ui.hits.addEventListener("pointerdown", (event) => {
   event.preventDefault();
   onPegTap(Number(node.dataset.x), Number(node.dataset.y));
 });
-// Keyboard users get the same single action on the same targets.
+// Keyboard users move through the physical grid with arrows and select with the
+// same Enter/Space action. Only one peg stays in the Tab order at a time.
 ui.hits.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
   const node = event.target.closest(".peg-hit");
   if (!node) return;
+  if (event.key.startsWith("Arrow")) {
+    const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const [dx, dy] = directions[event.key];
+    const origin = [Number(node.getAttribute("cx")), Number(node.getAttribute("cy"))];
+    const candidates = [...ui.hits.querySelectorAll(".peg-hit")].filter((candidate) => candidate !== node).map((candidate) => {
+      const delta = [Number(candidate.getAttribute("cx")) - origin[0], Number(candidate.getAttribute("cy")) - origin[1]];
+      const forward = delta[0] * dx + delta[1] * dy;
+      const sideways = Math.abs(delta[0] * dy - delta[1] * dx);
+      return { candidate, forward, score: forward + sideways * 2.5 };
+    }).filter(({ forward }) => forward > 1).sort((a, b) => a.score - b.score);
+    if (!candidates.length) return;
+    event.preventDefault();
+    ui.hits.querySelectorAll(".peg-hit").forEach((peg) => peg.setAttribute("tabindex", "-1"));
+    candidates[0].candidate.setAttribute("tabindex", "0");
+    candidates[0].candidate.focus();
+    return;
+  }
+  if (event.key !== "Enter" && event.key !== " ") return;
   event.preventDefault();
   onPegTap(Number(node.dataset.x), Number(node.dataset.y));
 });
@@ -1019,11 +1095,18 @@ $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
   const kind = problem().kind;
   const hintKey = isPlacementQuestion() ? "hintCountAll"
-    : kind === "partition" ? "hintPartition"
+    : kind === "partition" ? (problem().lineTotal === 1 ? "hintPartitionOne" : "hintPartitionTwo")
     : kind === "open" ? "hintOpen"
     : kind === "square-count" ? "hintSquare"
       : kind === "triangle-count" ? "hintEquilateral"
-        : "hintClosed";
+         : "hintClosed";
+  ui.board.classList.add("hinted");
+  ui.model.classList.add("hinted");
+  clearTimeout(ui.board.hintTimer);
+  ui.board.hintTimer = setTimeout(() => {
+    ui.board.classList.remove("hinted");
+    ui.model.classList.remove("hinted");
+  }, 6000);
   cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", () => {
@@ -1037,9 +1120,13 @@ ui.stats.addEventListener("click", (event) => {
   if (!button) return;
   judgeCountChoice(Number(button.dataset.value), button);
 });
-$("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
-$("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
-ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
+$("#levelButton").addEventListener("click", () => {
+  levelReturnFocus = document.activeElement;
+  ui.levelDialog.hidden = false;
+  queueMicrotask(() => $("#closeLevels").focus());
+});
+$("#closeLevels").addEventListener("click", closeLevelDialog);
+ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) closeLevelDialog(); });
 ui.tutorialNext.addEventListener("click", () => {
   if (tutorialStep < tutorialSteps.length - 1) { tutorialStep += 1; renderTutorial(); return; }
   localStorage.setItem(TUTORIAL_KEY, "done");

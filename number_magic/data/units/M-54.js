@@ -36,7 +36,7 @@ window.NM_UNITS['M-54'] = {
         desc:{ko:'밑 3은 1보다 크니 3ˣ은 증가함수예요. <b>등호가 성립하는 자리</b>(x=4)를 먼저 찾고, 부등호(≥)는 원래 방향 그대로 x≥4가 돼요.',
               en:'Since the base 3 exceeds 1, 3ˣ is increasing. First find <b>where equality holds</b> (x=4), then the inequality (≥) carries straight through to x≥4.',
               zh:'底数3大于1，所以3ˣ是增函数。先找出<b>等号成立的位置</b>(x=4)，不等号(≥)方向不变，得到x≥4。'},
-        mathSteps:['x=4\\text{에서 등호}', '\\text{증가함수라 방향 유지}', 'x\\ge 4'],
+        mathSteps:[{ko:'x=4\\text{에서 등호}',en:'\\text{equality at } x=4',zh:'x=4\\text{时取等号}'}, {ko:'\\text{증가함수라 방향 유지}',en:'\\text{increasing, so the direction holds}',zh:'\\text{增函数，方向不变}'}, 'x\\ge 4'],
         result:{ko:'증가함수는 지수(또는 진수)의 부등호 방향을 그대로 넘겨줘요!',en:'An increasing function passes the inequality direction of the exponent (or argument) straight through!',zh:'增函数会把指数(或真数)的不等号方向原样传递！'},
         book:{ko:'경계값 자체가 부등식의 답에 포함되는지(≥,≤)와 포함되지 않는지(>,<)를 꼭 확인해요.',
               en:'Always check whether the boundary value itself is included (≥,≤) or excluded (>,<) from the solution.',

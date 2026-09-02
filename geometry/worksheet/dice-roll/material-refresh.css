@@ -1,0 +1,33 @@
+/* Print-friendly palette match for the satin dice used in the game. */
+.flat-die rect {
+  fill: #e8f1f1;
+  stroke: #526f78;
+  filter: drop-shadow(0 2px 1px rgba(45, 76, 84, .18));
+}
+
+.die-svg {
+  filter: drop-shadow(0 2px 1px rgba(45, 76, 84, .18));
+}
+
+.die-face,
+.board-die .die-face {
+  stroke: #526f78;
+}
+
+.die-face.top { fill: #f8fbfb; }
+.die-face.front { fill: #dcebec; }
+.die-face.right { fill: #b8ced3; }
+
+.flat-five-svg {
+  filter: drop-shadow(0 2px 1px rgba(45, 76, 84, .16));
+}
+
+.flat-five-svg .flat-face {
+  stroke: #526f78;
+}
+
+.flat-five-svg .flat-face.top { fill: #f8fbfb; }
+.flat-five-svg .flat-face.north { fill: #e8f1f1; }
+.flat-five-svg .flat-face.east { fill: #b8ced3; }
+.flat-five-svg .flat-face.south { fill: #cfdee1; }
+.flat-five-svg .flat-face.west { fill: #dce8e9; }

@@ -8,12 +8,14 @@ import { LANGUAGES, messages, text } from "./i18n.js";
 import {
   DOT_BOARD_REFERENCE, squareBoardSummary, triangularBoardSummary
 } from "./lattice-enumerator.js";
+import { auditGeoboardLevels } from "./geoboard-content-audit.mjs";
 
 function assert(condition, message) {
   if (!condition) throw new Error(`Geoboard self-test: ${message}`);
 }
 
 validateLevels();
+auditGeoboardLevels();
 assert(levels.length === 5, "five levels must be declared");
 assert(readyLevels.length === 5, "all five levels must be playable in this release");
 
@@ -63,6 +65,7 @@ function independentPartitionKeys(problem) {
   }
 
   return groups.filter((chords) => {
+    if (problem.requiredVertex != null && !chords.some((chord) => chord.includes(problem.requiredVertex))) return false;
     if (chords.length === 2 && chordsCross(chords[0], chords[1])) return false;
     const faces = splitFaces(chords);
     return faces.length === problem.lineTotal + 1
@@ -167,4 +170,16 @@ for (const lang of LANGUAGES) {
   assert(messages[lang].successGreat === "GREAT JOB!", `${lang} success text drifted`);
 }
 
-console.log(`Geoboard self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales.`);
+const brokenCount = structuredClone(levels);
+brokenCount[2].problems.find((problem) => problem.questionMode === "placements").availablePlacementCount += 1;
+let brokenCountRejected = false;
+try { auditGeoboardLevels(brokenCount); } catch { brokenCountRejected = true; }
+assert(brokenCountRejected, "the independent audit must reject a corrupted placement count");
+
+const brokenPartition = structuredClone(levels);
+brokenPartition[4].problems[0].acceptedSolutionKeys = [];
+let brokenPartitionRejected = false;
+try { auditGeoboardLevels(brokenPartition); } catch { brokenPartitionRejected = true; }
+assert(brokenPartitionRejected, "the independent audit must reject corrupted partition answers");
+
+console.log(`Geoboard self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales, independent negative controls.`);

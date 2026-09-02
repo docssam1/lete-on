@@ -1,0 +1,137 @@
+:root { --ink:#102638; --paper:#f3efe5; --sheet:#fffdf7; --line:#cfc8ba; --green:#1d604f; --green-soft:#e3eee8; --burgundy:#7b3442; --orange:#b15c30; --muted:#66717a; }
+* { box-sizing:border-box; }
+html, body { margin:0; min-width:0; }
+body { color:var(--ink); background:var(--paper); }
+.skip-link { position:fixed; left:12px; top:-80px; z-index:20; padding:12px; color:#fff; background:var(--ink); }
+.skip-link:focus { top:12px; }
+.shell { width:min(1180px, calc(100% - 40px)); margin-inline:auto; }
+.site-header { min-height:72px; padding:12px max(20px, calc((100vw - 1180px)/2)); display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.site-header .brand { display:inline-flex; align-items:center; gap:10px; text-decoration:none; }
+.site-header nav { display:flex; align-items:center; }
+.status-chip { padding:8px 11px; border:1px solid rgba(16,38,56,.22); color:var(--ink); background:var(--sheet); font-size:.67rem; font-weight:900; letter-spacing:.06em; }
+.clinic-hero { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:28px 42px; padding-block:56px 32px; }
+.clinic-hero h1 { margin:8px 0 18px; font-size:clamp(2.3rem,5.6vw,5.6rem); line-height:.95; }
+.clinic-hero h1 span { color:var(--burgundy); }
+.clinic-hero > div > p:last-child { max-width:700px; color:var(--muted); line-height:1.75; }
+.clinic-proof { display:grid; align-self:center; grid-template-columns:repeat(3,96px); margin:0; border:1px solid var(--line); background:var(--sheet); }
+.clinic-proof div { padding:17px 11px; text-align:center; }
+.clinic-proof div + div { border-left:1px solid var(--line); }
+.clinic-proof dt { color:var(--muted); font-size:.66rem; font-weight:800; }
+.clinic-proof dd { margin:6px 0 0; font:600 1.7rem Georgia,serif; }
+.scope-note { grid-column:1/-1; margin:0; padding:15px 18px; border-left:4px solid var(--green); background:var(--green-soft); font-size:.78rem; line-height:1.65; }
+.clinic-toolbar { position:sticky; top:0; z-index:10; border-block:1px solid var(--line); background:rgba(243,239,229,.96); backdrop-filter:blur(12px); }
+.clinic-toolbar-inner { min-height:70px; display:flex; align-items:center; gap:12px; }
+.segmented { display:inline-flex; padding:3px; border:1px solid var(--line); background:var(--sheet); }
+.segmented button, .print-button, .locale-control select { min-height:44px; border:0; color:var(--ink); background:transparent; font:800 .75rem/1 system-ui,sans-serif; cursor:pointer; }
+.segmented button { padding:8px 13px; }
+.segmented button[aria-pressed="true"] { color:#fff; background:var(--ink); }
+.locale-control { margin-left:auto; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.65rem; font-weight:900; }
+.locale-control select, .print-button { padding:8px 12px; border:1px solid var(--line); background:var(--sheet); }
+.clinic-shell { padding-block:28px 70px; }
+.clinic-trail { display:flex; align-items:center; gap:9px; overflow:auto; padding:0 0 20px; color:var(--muted); font-size:.7rem; white-space:nowrap; }
+.clinic-trail a { color:var(--green); text-underline-offset:4px; }
+.clinic-trail strong { color:var(--burgundy); }
+.intro-card, .teacher-guide, .completion-card, .lock-card { margin-bottom:20px; padding:24px; border:1px solid var(--line); background:var(--sheet); }
+.intro-card { display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,.72fr); gap:28px; }
+.intro-card h2, .lock-card h2, .completion-card h2 { margin:6px 0 12px; font-size:clamp(1.5rem,3vw,2.4rem); }
+.intro-card p, .lock-card p, .completion-card p { color:var(--muted); line-height:1.7; }
+.worked-example { padding:18px; border-left:3px solid var(--orange); background:#f7f0e7; }
+.worked-example strong { display:block; margin-bottom:8px; }
+.worked-example ol { margin:0; padding-left:20px; font-size:.8rem; line-height:1.7; }
+.section-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; padding:28px 0 12px; border-bottom:1px solid var(--ink); }
+.section-heading h2 { margin:4px 0 0; font-size:1.45rem; }
+.section-heading span { color:var(--muted); font-size:.72rem; }
+.problem-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:16px 0 8px; }
+.problem-card { position:relative; min-width:0; padding:22px; border:1px solid var(--line); background:var(--sheet); }
+.problem-card.is-correct { border-color:var(--green); box-shadow:inset 4px 0 0 var(--green); }
+.problem-meta { display:flex; justify-content:space-between; gap:12px; color:var(--green); font-size:.64rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+.problem-prompt { min-height:54px; margin:14px 0 18px; font:500 1rem/1.65 Georgia,"Noto Serif KR",serif; }
+.problem-visual { display:grid; min-height:190px; place-items:center; margin:-4px 0 18px; padding:10px; overflow:hidden; border:1px solid var(--line); background:#fbfaf5; }
+.problem-visual svg { display:block; width:min(100%,320px); height:auto; max-height:220px; }
+.clinic-grid-line { stroke:#d8d4ca; stroke-width:1; }
+.clinic-figure-shape polygon, .clinic-shape-line { stroke-width:2.5; }
+.clinic-dimension { stroke:var(--burgundy); stroke-width:2; stroke-dasharray:5 4; }
+.clinic-right-angle { fill:none; stroke:var(--burgundy); stroke-width:2; }
+.clinic-coordinate-segment { stroke:var(--green); stroke-width:4; stroke-linecap:round; }
+.clinic-coordinate-point { fill:var(--burgundy); stroke:#fff; stroke-width:2; }
+.clinic-point-label { fill:var(--ink); font:800 12px system-ui,sans-serif; text-anchor:middle; paint-order:stroke; stroke:#fff; stroke-width:3px; }
+.clinic-net-face { fill:#e3eee8; stroke:#1d604f; stroke-width:2; }
+.clinic-figure-label { fill:var(--ink); font:800 14px system-ui,sans-serif; text-anchor:middle; }
+.response-row { display:flex; gap:8px; align-items:stretch; }
+.response-row input { min-width:0; flex:1; min-height:48px; padding:10px 12px; border:1px solid #9d9d95; border-radius:0; color:var(--ink); background:#fff; font-size:1rem; }
+.response-row button, .solution-toggle, .primary-action { min-height:48px; padding:10px 14px; border:1px solid var(--ink); color:#fff; background:var(--ink); font-weight:850; cursor:pointer; }
+.feedback { min-height:24px; margin:10px 0 0; font-size:.76rem; line-height:1.5; }
+.feedback.is-wrong { color:var(--burgundy); }
+.feedback.is-correct { color:var(--green); font-weight:850; }
+.hint-box, .solution-box, .teacher-answer { margin-top:10px; padding:13px 14px; border-left:3px solid var(--orange); background:#f7f0e7; font-size:.77rem; line-height:1.65; }
+.solution-toggle { margin-top:10px; color:var(--ink); border-color:var(--line); background:var(--sheet); }
+.teacher-answer { border-left-color:var(--green); background:var(--green-soft); }
+.teacher-answer strong { display:block; margin-bottom:5px; }
+.teacher-guide { border-top:5px solid var(--ink); }
+.teacher-guide h2 { margin:4px 0 16px; }
+.teacher-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1px; background:var(--line); }
+.teacher-guide-grid article { padding:16px; background:var(--sheet); }
+.teacher-guide-grid article:last-child:nth-child(odd) { grid-column:1/-1; }
+.teacher-guide-grid strong { display:block; margin-bottom:6px; font-size:.8rem; }
+.teacher-guide-grid p { margin:0; color:var(--muted); font-size:.75rem; line-height:1.6; }
+.progress-summary { margin:16px 0 0; padding:15px 18px; display:flex; justify-content:space-between; gap:12px; color:#fff; background:var(--ink); font-size:.8rem; }
+.completion-card { margin-top:22px; border-color:var(--green); }
+.completion-card[hidden] { display:none; }
+.primary-action { display:inline-flex; align-items:center; margin-top:8px; text-decoration:none; }
+.lock-card { max-width:720px; margin:40px auto; text-align:center; }
+.result-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:18px 0; }
+.result-grid div { padding:14px; border:1px solid var(--line); text-align:left; }
+.result-grid strong, .result-grid span { display:block; }
+.result-grid span { margin-top:5px; color:var(--muted); font-size:.72rem; }
+.clinic-footer { min-height:80px; padding:20px max(20px, calc((100vw - 1180px)/2)); display:flex; justify-content:space-between; gap:20px; border-top:1px solid var(--line); font-size:.72rem; }
+.clinic-footer a { color:var(--green); }
+@media (max-width:800px) {
+  .site-header nav { display:none; }
+  .clinic-hero { grid-template-columns:1fr; padding-top:38px; }
+  .clinic-proof { grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; }
+  .clinic-toolbar { position:static; }
+  .clinic-toolbar-inner { padding-block:10px; display:grid; grid-template-columns:1fr 1fr; }
+  .segmented { display:grid; grid-template-columns:1fr 1fr; }
+  .locale-control { margin:0; }
+  .intro-card, .problem-grid, .teacher-guide-grid { grid-template-columns:1fr; }
+  .teacher-guide-grid article:last-child:nth-child(odd) { grid-column:auto; }
+  .clinic-footer { flex-direction:column; }
+}
+@media (max-width:440px) {
+  .shell { width:min(100% - 24px,1180px); }
+  .site-header { min-height:64px; padding-inline:12px; }
+  .status-chip { font-size:.58rem; padding:7px; }
+  .clinic-hero h1 { font-size:2.5rem; }
+  .clinic-toolbar-inner { grid-template-columns:1fr; }
+  .locale-control { justify-content:space-between; }
+  .print-button { width:100%; }
+  .problem-card { padding:18px 15px; }
+  .response-row { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+  .result-grid { grid-template-columns:1fr; }
+}
+@page { size:A4; margin:13mm; }
+@media print {
+  body { color:#000; background:#fff; }
+  .skip-link, .site-header, .clinic-toolbar, .clinic-trail, .clinic-footer, .scope-note, .progress-summary, .completion-card, .response-row button, .feedback, .hint-box, .solution-toggle, .solution-box { display:none !important; }
+  .shell { width:100%; }
+  .clinic-hero { padding:0 0 7mm; grid-template-columns:1fr auto; }
+  .clinic-hero h1 { font-size:25pt; }
+  .clinic-proof { grid-template-columns:repeat(3,22mm); }
+  .clinic-shell { padding:0; }
+  .intro-card { padding:4mm; grid-template-columns:1fr 1fr; break-inside:avoid; }
+  .teacher-guide { padding:4mm; }
+  .teacher-guide h2 { margin-bottom:3mm; font-size:15pt; }
+  .teacher-guide-grid { grid-template-columns:1fr 1fr; }
+  .teacher-guide-grid article { padding:2.5mm 3mm; }
+  .teacher-guide-grid article:last-child:nth-child(odd) { grid-column:1/-1; }
+  .teacher-guide-grid strong { margin-bottom:1mm; font-size:8.5pt; }
+  .teacher-guide-grid p { font-size:7.5pt; line-height:1.4; }
+  .practice-section { break-before:page; }
+  .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
+  .problem-card { min-width:0; padding:4mm; break-inside:avoid; box-shadow:none; }
+  .problem-prompt { min-height:18mm; font-size:10.5pt; }
+  .problem-visual { min-height:32mm; margin-bottom:2mm; padding:2mm; }
+  .problem-visual svg { max-height:40mm; }
+  .response-row input { border:0; border-bottom:1px solid #000; background:transparent; }
+  .teacher-answer, .teacher-guide { min-width:0; overflow-wrap:anywhere; break-inside:avoid; }
+}

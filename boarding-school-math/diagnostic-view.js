@@ -6,7 +6,7 @@
   if (!planData || !registry) throw new Error("Grade 6 diagnostic blueprint data failed to load");
 
   const plan = planData.plan;
-  const state = { role: "teacher" };
+  const state = { role: "student" };
   const labels = {
     difficulty: { foundation: "기초 근거", core: "핵심 근거", advanced: "심화 전이" },
     response: { "multiple-choice": "선택형", numeric: "수치 응답", "short-answer": "단답형", "constructed-response": "서술형" },
@@ -15,22 +15,22 @@
   };
   const roleCopy = {
     teacher: {
-      label: "교사용 · 설계와 확인",
-      title: "교사는 점수보다 근거의 빈칸을 먼저 봅니다.",
-      copy: "42개의 잠긴 슬롯이 Grade 6 전 영역에 고르게 놓였는지 확인하고, 검수된 문항만 배정 후보로 올립니다. 이 화면은 수업 배정이나 승급을 실행하지 않습니다.",
-      steps: ["배치 목적 확인", "문항·권리 검수", "인증된 평가 배정", "영역별 근거 검토", "수업·유지 확인 계획"]
+      label: "교사용 · 채점 근거와 수업 처방",
+      title: "교사는 10개 서술 응답을 확인하고 처방 후보를 학교 검토로 넘깁니다.",
+      copy: "32개 자동채점 결과와 10개 교사 검토를 결합해 다섯 영역, 열 개 클러스터, 난이도와 오류 유형을 분석합니다. 낮은 총점만 보는 대신 어떤 선수개념과 풀이 단계에서 막혔는지 확인합니다.",
+      status: "로컬 실행에서는 서버가 표시한 교사 PIN과 학생 진단 번호가 필요합니다. 운영에서는 인증된 담당 교사 범위로 대체됩니다.",
+      steps: ["학생 응답 불러오기", "서술 10문항 검토", "오류 유형 확인", "영역·클러스터 분석", "수업·유지 처방"],
+      linkLabel: "Grade 6 교사용 커리큘럼 보기",
+      linkHref: "./catalog.html?role=teacher&grade=6"
     },
     student: {
-      label: "학생용 · 평가 흐름",
-      title: "학생은 배정된 평가와 다음 학습만 봅니다.",
-      copy: "실제 평가는 교사가 배정한 뒤에만 열립니다. 학생 화면에는 정답, 채점 규칙, 다른 학생 기록, 학교의 내부 판단 기준이 나타나지 않습니다.",
-      steps: ["교사 배정 확인", "인증된 평가 응시", "나의 영역별 피드백", "다음 수업·연습", "7일 뒤 유지 확인"]
-    },
-    parent: {
-      label: "보호자용 · 해석 안내",
-      title: "보호자는 한 줄 점수보다 학습 방향을 봅니다.",
-      copy: "리포트는 영역별 근거와 다음 학습 우선순위를 설명합니다. 대회 점수나 공통 기준을 임의의 승급 확정으로 바꾸지 않으며, 최종 판단은 학교와 교사가 확인합니다.",
-      steps: ["평가 목적 이해", "영역별 근거 보기", "다음 학습 계획", "유지 확인 일정", "학교·교사 상담"]
+      label: "학생용 · 응시와 다음 학습",
+      title: "학생은 42문항을 풀고 자신의 강점과 다음 연습을 확인합니다.",
+      copy: "문항을 한 개씩 풀고 제출하면 객관 응답 32개가 먼저 채점됩니다. 교사가 설명 응답 10개를 확인한 뒤 영역별 결과, 문항별 코멘트와 다음 수업 순서가 열립니다.",
+      status: "정답·루브릭·교사 자료는 학생 화면에 전달하지 않습니다. 공개 사이트에서는 안내만 보이며, 로컬 또는 운영 진단 서버가 연결된 경우에만 응시할 수 있습니다.",
+      steps: ["42문항 응시", "자동채점 32문항", "교사 검토 10문항", "영역·오류 분석", "다음 학습·유지 확인"],
+      linkLabel: "Grade 6 학생용 커리큘럼 보기",
+      linkHref: "./catalog.html?role=student&grade=6"
     }
   };
 
@@ -46,15 +46,14 @@
     const maximum = Math.max.apply(null, Object.values(counts));
     host.innerHTML = Object.keys(counts).sort().map(function (key) {
       const value = counts[key];
-      const percent = Math.round((value / maximum) * 100);
-      return `<div class="balance-line"><b>${labelMap[key] || key}</b><div class="bar-track" aria-hidden="true"><i style="width:${percent}%"></i></div><small>${value}</small></div>`;
+      return `<div class="balance-line"><b>${labelMap[key] || key}</b><progress class="bar-track" max="${maximum}" value="${value}" aria-label="${labelMap[key] || key} ${value}">${value} / ${maximum}</progress><small>${value}</small></div>`;
     }).join("");
   }
   function renderRole() {
     const copy = roleCopy[state.role];
     const panel = document.getElementById("role-panel");
     panel.setAttribute("aria-labelledby", `role-${state.role}`);
-    panel.innerHTML = `<span class="role-label">${copy.label}</span><h3>${copy.title}</h3><p>${copy.copy}</p><ol class="role-steps">${copy.steps.map(function (step, index) { return `<li>${index + 1}. ${step}</li>`; }).join("")}</ol>`;
+    panel.innerHTML = `<span class="role-label">${copy.label}</span><h3>${copy.title}</h3><p>${copy.copy}</p><p class="role-status">${copy.status}</p><ol class="role-steps">${copy.steps.map(function (step, index) { return `<li>${index + 1}. ${step}</li>`; }).join("")}</ol><a class="role-link" href="${copy.linkHref}">${copy.linkLabel}</a>`;
     document.querySelectorAll("[data-role]").forEach(function (button) {
       const selected = button.dataset.role === state.role;
       button.setAttribute("aria-selected", String(selected));

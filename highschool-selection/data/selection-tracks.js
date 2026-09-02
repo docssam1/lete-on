@@ -137,10 +137,10 @@
       id: "SM:common-math-entry",
       programCode: "SM",
       trackId: "common-math-entry",
-      scopeKey: "common-math-sample",
-      scopeLabel: "공통수학 샘플 범위",
+      scopeKey: "course-specific-scope",
+      scopeLabel: "공통수학 과정별 확인 범위",
       evidenceStatus: "needs-review",
-      evidenceRefs: ["EXAM:sm-common2-basic-r01"]
+      evidenceRefs: []
     }
   ];
 
@@ -157,9 +157,18 @@
     { examId: "ed-middle1-entry", programCode: "ED", trackId: "middle-entry" },
     { examId: "ed-high-advance-entry", programCode: "ED", trackId: "high-advance" },
     { examId: "dg-entry-common", programCode: "DG", trackId: "high-advance" },
-    { examId: "sm-common2-basic-r01", programCode: "SM", trackId: "common-math-entry" },
-    { examId: "sm-common2-basic-r02", programCode: "SM", trackId: "common-math-entry" },
-    { examId: "sm-common2-basic-r03", programCode: "SM", trackId: "common-math-entry" }
+    {
+      examId: "sm-common1-entry",
+      programCode: "SM",
+      trackId: "common-math-entry",
+      scopeKey: "middle2-2-to-middle3-2",
+      scopeLabel: "중2-2·중3-1·중3-2 · 대수 15 + 기하 15",
+      evidenceStatus: "verified",
+      evidenceRefs: ["PUBLIC:SM-CM1-ENTRY-2026"]
+    },
+    { examId: "sm-common2-basic-r01", programCode: "SM", trackId: "common-math-entry", scopeKey: "common-math-sample", scopeLabel: "공통수학2 샘플 1회 범위" },
+    { examId: "sm-common2-basic-r02", programCode: "SM", trackId: "common-math-entry", scopeKey: "common-math-sample", scopeLabel: "공통수학2 샘플 2회 범위" },
+    { examId: "sm-common2-basic-r03", programCode: "SM", trackId: "common-math-entry", scopeKey: "common-math-sample", scopeLabel: "공통수학2 샘플 3회 범위" }
   ];
 
   function getTrack(trackId) {
@@ -173,13 +182,20 @@
   function resolveExamTrack(examId) {
     const assignment = examTrackAssignments.find(item => item.examId === examId);
     if (!assignment) return null;
+    const binding = programTrackBindings.find(binding => (
+      binding.programCode === assignment.programCode &&
+      binding.trackId === assignment.trackId
+    )) || null;
+    const resolvedBinding = binding && assignment.scopeKey ? Object.assign({}, binding, {
+      scopeKey: assignment.scopeKey,
+      scopeLabel: assignment.scopeLabel || binding.scopeLabel,
+      evidenceStatus: assignment.evidenceStatus || binding.evidenceStatus,
+      evidenceRefs: assignment.evidenceRefs || binding.evidenceRefs
+    }) : binding;
     return {
       assignment,
       track: getTrack(assignment.trackId),
-      binding: programTrackBindings.find(binding => (
-        binding.programCode === assignment.programCode &&
-        binding.trackId === assignment.trackId
-      )) || null
+      binding: resolvedBinding
     };
   }
 

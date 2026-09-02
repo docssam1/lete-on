@@ -21,6 +21,14 @@ window.NM_UNITS['C-30'] = {
   },
 
   discover:{
+    story:{
+      hook:{ ko:'알고리즘이라는 말은 원래 무엇이었을까요?',
+        en:'The word algorithm — what was it originally?',
+        zh:'algorithm（算法）这个词原本是什么？' },
+      history:{ ko:'사람 이름이었어요. 1200년쯤 전 바그다드에서 일한 수학자 알콰리즈미의 이름을 라틴어로 옮긴 게 알고리즘이 됐죠. 그가 쓴 책 제목의 한 낱말 알자브르는 대수학(algebra)이 되었고요. 그가 인도에서 배워 전한 계산법 중에 격자를 그려 곱하는 방법도 있었어요 — 지금 우리가 쓰는 그 격자입니다.',
+        en:'It was a person. Al-Khwarizmi, a mathematician working in Baghdad about 1,200 years ago, had his name rendered into Latin as Algoritmi. One word from the title of his book, al-jabr, became algebra. Among the methods he learned from India and passed on was multiplying inside a grid — the very grid we draw today.',
+        zh:'它原本是一个人。大约1200年前在巴格达工作的数学家花拉子米，名字译成拉丁语就成了Algoritmi。他书名里的一个词al-jabr，变成了代数（algebra）。他从印度学来并传下去的算法里，就有在格子里做乘法的方法——正是我们今天画的那种格子。' }
+    },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 격자 그리기',en:'1) Drawing the grid',zh:'① 画格子'},
@@ -28,7 +36,7 @@ window.NM_UNITS['C-30'] = {
         desc:{ko:'수백 년 전 수학자들이 쓰던 방법이에요! 234×56이면 <b>가로 3칸(2,3,4), 세로 2칸(5,6)</b> 격자를 그려요. 각 칸에 <b>대각선</b>을 긋고, 행×열의 곱을 써 넣어요: 십의 자리는 대각선 위, 일의 자리는 아래. 예: 3×5=15면 위에 1, 아래에 5.',
               en:'Mathematicians used this centuries ago! For 234×56, draw a grid <b>3 columns wide (2,3,4) and 2 rows tall (5,6)</b>. Slash each cell with a <b>diagonal</b>, then fill in each row×column product: tens above the slash, ones below. E.g. 3×5=15 → 1 above, 5 below.',
               zh:'数百年前的数学家就用这个方法！234×56要画<b>3列(2,3,4)×2行(5,6)</b>的格子。每格画一条<b>对角线</b>，填入行×列的积：十位写在线上方，个位写在下方。例：3×5=15→上面1，下面5。'},
-        mathSteps:['가로: 2 | 3 | 4','세로: 5, 6','각 칸: 곱을 십/일로 나눠 적기'],
+        mathSteps:[{ko:'가로: 2 | 3 | 4',en:'\\text{across: } 2 | 3 | 4',zh:'横：2 | 3 | 4'},{ko:'세로: 5, 6',en:'\\text{down: } 5, 6',zh:'竖：5, 6'},{ko:'각 칸: 곱을 십/일로 나눠 적기',en:'\\text{each cell: split the product into tens/ones}',zh:'每格：把积分成十位/个位来写'}],
         result:{ko:'격자 6칸에 곱 6개가 차곡차곡! 한 칸 = 한 곱셈.',en:'Six little products stored in six cells! One cell = one product.',zh:'6个格子装6个积！一格=一个乘法。'},
         book:{ko:'격자의 각 칸은 자리값 조각이에요. 2(백)×5(십)의 칸은 사실 200×50=10000의 조각. 대각선이 같은 자리값끼리 모아줘요.',
               en:'Each cell is a place-value piece: the 2(hundreds)×5(tens) cell really holds 200×50=10000. The diagonals collect pieces of equal place value.',
@@ -39,7 +47,7 @@ window.NM_UNITS['C-30'] = {
         desc:{ko:'모든 칸을 채웠으면 <b>오른쪽 아래 대각선부터</b> 줄을 따라 더해요. 각 대각선 줄이 하나의 자리(일→십→백→…)예요. 줄의 합이 10을 넘으면 <b>다음 대각선으로 올림</b>! 마지막에 왼쪽 위부터 숫자를 읽으면 그게 답이에요.',
               en:'Once all cells are filled, add along the diagonal bands <b>starting from the bottom-right</b>. Each band is one place (ones→tens→hundreds→…). If a band\'s sum exceeds 10, <b>carry into the next diagonal</b>! Finally read the digits from the top-left — that\'s your answer.',
               zh:'格子填满后，<b>从右下角的对角带开始</b>相加。每条对角带是一个数位(个→十→百→…)。带内和超过10就<b>向下一条对角线进位</b>！最后从左上角读数字，就是答案。'},
-        mathSteps:['일 자리 대각선부터 합산','10 넘으면 다음 줄로 올림','왼쪽 위부터 읽기 = 답'],
+        mathSteps:[{ko:'일 자리 대각선부터 합산',en:'\\text{add from the ones diagonal}',zh:'从个位对角线开始相加'},{ko:'10 넘으면 다음 줄로 올림',en:'\\text{carry to the next line past 10}',zh:'满10向下一行进位'},{ko:'왼쪽 위부터 읽기 = 답',en:'\\text{read from top-left = answer}',zh:'从左上读出来 = 答案'}],
         result:{ko:'대각선 = 자리! 줄마다 더하고 올리면 답이 저절로.',en:'Diagonal = place! Add each band, carry, and the answer appears.',zh:'对角线=数位！逐带相加进位，答案自然出现。'},
         book:{ko:'격자법의 좋은 점: 곱하기 단계와 더하기 단계가 완전히 분리돼요. 곱할 때는 곱셈만, 더할 때는 덧셈만 — 머릿속이 한 번에 한 가지 일만 해요.',
               en:'The grid\'s gift: multiplying and adding are fully separated. While multiplying you only multiply; while adding you only add — the brain does one job at a time.',
@@ -50,7 +58,7 @@ window.NM_UNITS['C-30'] = {
         desc:{ko:'전체를 함께 풀어요! 윗줄(×5): 2×5=10, 3×5=15, 4×5=20. 아랫줄(×6): 2×6=12, 3×6=18, 4×6=24. 대각선 합(일부터): 4 | 0+1+2=3… 올림을 처리하며 모으면 <b>13104</b>. 검산: 234×56 = 234×50+234×6 = 11700+1404 = 13104 ✓.',
               en:'Let\'s do the whole thing! Top row (×5): 2×5=10, 3×5=15, 4×5=20. Bottom row (×6): 2×6=12, 3×6=18, 4×6=24. Summing diagonals from the ones side and carrying gives <b>13104</b>. Check: 234×56 = 234×50+234×6 = 11700+1404 = 13104 ✓.',
               zh:'一起完整算一遍！上排(×5)：2×5=10，3×5=15，4×5=20。下排(×6)：2×6=12，3×6=18，4×6=24。从个位侧沿对角线求和并进位，得<b>13104</b>。验证：234×56 = 234×50+234×6 = 11700+1404 = 13104 ✓。'},
-        mathSteps:['×5줄: 10, 15, 20','×6줄: 12, 18, 24','대각선 합+올림 → 13104'],
+        mathSteps:[{ko:'×5줄: 10, 15, 20',en:'×5 \\text{ row: } 10, 15, 20',zh:'×5行：10, 15, 20'},{ko:'×6줄: 12, 18, 24',en:'×6 \\text{ row: } 12, 18, 24',zh:'×6行：12, 18, 24'},{ko:'대각선 합+올림 → 13104',en:'\\text{diagonal sums + carries} → 13104',zh:'对角线相加+进位 → 13104'}],
         result:{ko:'234×56=13104! 격자가 여섯 곱을 정리해 줬어요.',en:'234×56=13104! The grid organised all six products.',zh:'234×56=13104！格子整理好了六个积。'},
         book:null }
     ],

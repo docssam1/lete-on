@@ -240,31 +240,98 @@
       };
     }
 
+    /* ---- 7의 배수 판정: 뒷자리를 떼고 그 2배를 남은 수에서 뺀다 ----
+       10a + b 가 7의 배수 ⟺ a − 2b 가 7의 배수.
+       (10a+b) − 7b = 10a − 6b = 2(5a − 3b) 이고 7과 2는 서로소이므로
+       5a−3b, 즉 −2(a−2b)+7a 의 배수 여부가 a−2b로 판정된다.
+       인쇄물은 tex 한 줄만 나가므로 원래 수 n까지 tex에 실어 자족하게 만든다
+       (HANDOFF "tex 하나로 문항이 성립하는가" 규칙). 초등 대상이라 음수가
+       나오지 않는 조합만 쓴다. */
+    if (mode === 'rule7') {
+      let n = 0, a = 0, b = 0, red = -1;
+      for (let t = 0; t < 60 && red < 0; t++) {
+        n = R(rng, 100, 999);
+        a = Math.floor(n / 10);
+        b = n % 10;
+        red = a - 2 * b;
+      }
+      if (red < 0) { n = 203; a = 20; b = 3; red = 14; }
+      return {
+        prompt: {
+          ko: `${n}의 뒷자리를 떼고, 남은 수에서 뒷자리의 2배를 빼요 — 7의 배수인지 알아보는 방법이에요`,
+          en: `Drop the last digit of ${n} and subtract twice that digit — this tests divisibility by 7`,
+          zh: `去掉${n}的末位，再从剩下的数里减去末位的2倍——这是判断7的倍数的方法`
+        },
+        tex:        `${n} \\rightarrow ${a} - 2 \\times ${b} = \\square`,
+        answer:     red,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
+    /* ---- 11의 배수 판정: 홀수번째 자리 합 − 짝수번째 자리 합 ----
+       10 ≡ −1 (mod 11) 이므로 자리마다 부호가 번갈아 붙는다. 그 교대합이
+       11의 배수(0 포함)면 원래 수도 11의 배수다. 여기서도 초등 대상이라
+       차가 음수가 되지 않는 네 자리 수만 고른다. */
+    if (mode === 'rule11') {
+      let n = 0, d = [0, 0, 0, 0], odd = 0, even = 0, diff = -1;
+      for (let t = 0; t < 60 && diff < 0; t++) {
+        n = R(rng, 1000, 9999);
+        d = String(n).split('').map(Number);
+        odd  = d[0] + d[2];   /* 첫째·셋째 자리 */
+        even = d[1] + d[3];   /* 둘째·넷째 자리 */
+        diff = odd - even;
+      }
+      if (diff < 0) { n = 8195; d = [8, 1, 9, 5]; odd = 17; even = 6; diff = 11; }
+      return {
+        prompt: {
+          ko: `${n}의 홀수번째 자리끼리, 짝수번째 자리끼리 더한 뒤 그 차를 구해요 — 11의 배수인지 알아보는 방법이에요`,
+          en: `Add the digits of ${n} in odd places and in even places, then take the difference — this tests divisibility by 11`,
+          zh: `把${n}奇数位上的数字相加、偶数位上的数字相加，再求两者之差——这是判断11的倍数的方法`
+        },
+        tex:        `${n} \\rightarrow (${d[0]}+${d[2]}) - (${d[1]}+${d[3]}) = \\square`,
+        answer:     diff,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
     const rules = (params && params.rules) || [2, 5, 10];
     const r     = pick(rng, rules);
 
     /*
      * 3자리 수 prefix■ (ones 자리가 □) 에서 □를 구한다.
-     * prefix = R(10,99) → prefix*10+□ 가 r의 배수가 되는 가장 작은 □ 선택.
+     * prefix = R(10,99) → prefix*10+□ 가 r의 배수가 되는 □ 중 하나를 고른다.
      * rules [2,5,10]: 끝자리 규칙이므로 반드시 해법 존재.
      * rules [3,6,9]  : 자릿수 합 규칙 — 0~9 중 항상 1개 이상 존재.
+     *
+     * ★ 이 문항은 원래 유일해가 없었다(2026-08-28 인쇄 점검에서 발견).
+     *   `66□`가 2의 배수가 되는 □는 0·2·4·6·8 다섯 개인데 정답키는 하나뿐이라,
+     *   맞게 쓴 학생이 틀린 것으로 채점됐다. 게다가 0부터 훑어 "가장 작은" 것을
+     *   집었던 탓에 2·5·10 레벨은 정답이 400문항 전부 0이었다 — 0만 스무 번
+     *   쓰면 만점이었다.
+     *   그래서 묻는 것을 "가장 큰 숫자"로 바꿨다. 후보가 여럿이어도 최댓값은
+     *   하나뿐이라 유일해가 되고(채점이 공정해지고), 끝자리·자릿수 합 규칙을
+     *   쓰는 학습 목표도 그대로다. r=10만은 후보가 0뿐이라 답이 0이다.
      */
     let prefix = 10, d = 0;
     let found  = false;
     for (let attempt = 0; attempt < 30 && !found; attempt++) {
       prefix = R(rng, 10, 99);
+      const cands = [];
       for (let i = 0; i <= 9; i++) {
-        if ((prefix * 10 + i) % r === 0) { d = i; found = true; break; }
+        if ((prefix * 10 + i) % r === 0) cands.push(i);
       }
+      if (cands.length) { d = Math.max.apply(null, cands); found = true; }
     }
     /* 절대 폴백 (이론상 발생 안 함) */
     if (!found) { prefix = 10; d = 0; }
 
     return {
       prompt: {
-        ko: `□에 들어갈 숫자를 넣으면 ${r}의 배수가 돼요`,
-        en: `Fill in □ to make this number a multiple of ${r}`,
-        zh: `填入□使这个数是${r}的倍数`
+        ko: `${r}의 배수가 되도록 □에 넣을 수 있는 가장 큰 숫자는?`,
+        en: `What is the largest digit for □ that makes this a multiple of ${r}?`,
+        zh: `要使这个数是${r}的倍数，□里能填的最大数字是几？`
       },
       tex:        `${prefix}\\square`,
       answer:     d,

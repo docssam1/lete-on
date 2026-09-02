@@ -78,7 +78,8 @@ export function createGeometryVillage(THREE, scene, options = {}) {
     { id: "mirrorManor", name: "Mirror Manor", x: 40, z: -20, radius: 5.8, entryDistance: 6.7, labelY: 8.2, signColor: materials.mirrorBlue, build: buildMirrorManor },
     { id: "geoboardYard", name: "Geoboard Yard", x: 43, z: 24, radius: 6, entryDistance: 7, labelY: 7.6, signColor: materials.geoboardGreen, build: buildGeoboardYard },
     { id: "crystalPlaza", name: "Crystal Plaza", x: -28, z: 25, radius: 5.8, entryDistance: 6.8, labelY: 7.5, signColor: materials.crystalPink, build: buildCrystalPlaza },
-    { id: "shapeGarden", name: "Shape Garden", x: 13, z: 35, radius: 6.4, entryDistance: 7, labelY: 8.1, signColor: materials.shapeMint, build: buildShapeGarden }
+    { id: "shapeGarden", name: "Shape Garden", x: 13, z: 35, radius: 6.4, entryDistance: 7, labelY: 8.1, signColor: materials.shapeMint, build: buildShapeGarden },
+    { id: "pathWalk", name: "Path Walk", x: -8, z: 34, radius: 5.2, entryDistance: 6, labelY: 5.8, signColor: materials.shapeSun, build: buildPathWalk }
   ];
 
   placeSpecs.forEach(placeZone);
@@ -849,6 +850,36 @@ export function createGeometryVillage(THREE, scene, options = {}) {
       gem.userData.animation = { type: "bob", baseY: 1.28, amplitude: .09, speed: 1.45 + index * .17 };
       animated.push(gem);
     }
+  }
+
+  function buildPathWalk(group) {
+    const deck = box(group, materials.darkWood, 0, .2, 0, 8.2, .4, 8.2);
+    deck.receiveShadow = shadows;
+    box(group, materials.grassLight, 0, .48, 0, 7.7, .18, 7.7);
+    const masks = [6, 12, 6, 5, 3, 9, 3, 10, 12];
+    const arms = [
+      [1, 0, -.6, .92, .12, .26],
+      [2, .6, 0, .26, .12, .92],
+      [4, 0, .6, .92, .12, .26],
+      [8, -.6, 0, .26, .12, .92]
+    ];
+    masks.forEach((mask, index) => {
+      const row = Math.floor(index / 3);
+      const column = index % 3;
+      const x = (column - 1) * 2.15;
+      const z = (row - 1) * 2.15;
+      box(group, materials.cream, x, .67, z, 1.9, .18, 1.9);
+      arms.forEach(([bit, dx, dz, sx, sy, sz]) => {
+        if (mask & bit) box(group, materials.shapeSun, x + dx, .82, z + dz, sx, sy, sz);
+      });
+      cylinder(group, materials.shapeSun, x, .83, z, .33, .12, 8);
+    });
+    const sign = new THREE.Group();
+    sign.position.set(0, 0, -5);
+    group.add(sign);
+    cylinder(sign, materials.darkWood, 0, 1.4, 0, .12, 1.4, 8);
+    box(sign, materials.cream, 0, 2.8, 0, 3.6, 1.15, .28);
+    box(sign, materials.shapeMint, 0, 2.8, .17, 3.25, .82, .08);
   }
 
   function buildShapeGarden(group) {

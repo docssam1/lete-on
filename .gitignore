@@ -1,3 +1,6 @@
+# Claude Code agent worktree scratch space (session tooling, not project content).
+/.claude/worktrees/
+
 # Private licensed-source metadata must stay out of public Git.
 reading-world/private/
 *.cars-d-private-meta.json
@@ -7,6 +10,7 @@ reading-world/private/
 # Local QA output and private source-routing notes.
 /artifacts/
 /debug.log
+/boarding-school-math/debug.log
 /.source-memory/gfield-geometry-memory-notes.md
 /.source-memory/premier-private-local.json
 /tmp/
@@ -28,3 +32,7 @@ __pycache__/
 /highschool-selection/**/*-review-*.jpg
 /highschool-selection/**/*-review-*.jpeg
 /highschool-selection/**/*-review-*.png
+
+# Generated from the private project question index for an authenticated Edge Function.
+# The deploy snapshot is operational metadata, not public repository content.
+/supabase/functions/highselect-catalog/catalog.json

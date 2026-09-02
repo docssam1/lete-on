@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><rect x="60" y="106" width="330" height="70" rx="12" fill="#C9A063" stroke="#0E2C57" stroke-width="3"/>
+<g stroke="#0E2C57" stroke-width="6" stroke-linecap="round">
+<path d="M100 118 v46"/><path d="M136 118 v46"/><path d="M172 118 v46"/><path d="M208 118 v46"/>
+<path d="M244 118 v46"/><path d="M280 118 v46"/><path d="M316 118 v46"/></g>
+<g stroke="#16417C" stroke-width="5" stroke-linecap="round">
+<path d="M440 108 v56"/><path d="M466 108 v56"/><path d="M492 108 v56"/><path d="M518 108 v56"/>
+<path d="M430 164 L528 104"/></g>
+<text x="480" y="212" font-family="ui-monospace,monospace" font-size="30" font-weight="800" fill="#16417C" text-anchor="middle">5</text>
+<text x="225" y="212" font-family="ui-monospace,monospace" font-size="30" font-weight="800" fill="#0E2C57" text-anchor="middle">7</text>
+<text x="320" y="58" font-family="ui-monospace,monospace" font-size="18" fill="#4a5468" text-anchor="middle">7 + 5 = 12</text></svg>

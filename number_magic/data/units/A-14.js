@@ -30,9 +30,9 @@ window.NM_UNITS['A-14'] = {
     stages:[
       { tag:{ ko:'① 100을 하나 앞으로 옮겨요', en:'1) Move one hundred to the front', zh:'① 挪一个百到前面' },
         head:{ ko:'세 자리 수를 100과 나머지로 나눠요', en:'Split the 3-digit number into 100 and the rest', zh:'把三位数分成100和其余部分' },
-        desc:{ ko:'123-85처럼 세 자리에서 두 자리를 뺄 땐, 123을 23과 100으로 나누고, 100에서 85를 뺀 다음 23에 더해요.',
-               en:'For 123-85, split 123 into 23 and 100, subtract 85 from the 100, then add the result to 23.',
-               zh:'像123-85这样三位数减两位数，把123分成23和100，用100减85，再加到23上。' },
+        desc:{ ko:'123-85처럼 세 자리에서 두 자리를 뺄 땐, 123을 23과 100으로 나누고, <b>100에서 85를 뺀 다음 23에 더해요</b>.',
+               en:'For 123-85, split 123 into 23 and 100, <b>subtract 85 from the 100, then add the result to 23</b>.',
+               zh:'像123-85这样三位数减两位数，把123分成23和100，<b>用100减85，再加到23上</b>。' },
         mathSteps:['123 - 85','= 23 + 100 - 85','= 23 + 15','= 38'],
         result:{ ko:'100-85=15, 23+15=38이에요!', en:'100-85=15, so 23+15=38!', zh:'100-85=15，23+15=38！' },
         book:{ ko:'256-75: 256을 156+100으로 나누고, 100-75=25를 만들어 156+25=181.',
@@ -41,9 +41,9 @@ window.NM_UNITS['A-14'] = {
 
       { tag:{ ko:'② 세 자리 수 어디서든 똑같아요', en:'2) Works no matter the hundreds digit', zh:'② 无论百位是几都一样' },
         head:{ ko:'큰 세 자리 수도 방법은 그대로', en:'Same method for any 3-digit number', zh:'再大的三位数也一样' },
-        desc:{ ko:'326처럼 백의 자리가 3이어도 100 하나만 떼어내요. 226+100으로 나누고 나머지는 그대로 226에 남아있어요.',
-               en:'Even for 326 (hundreds digit 3), set aside just one hundred: split into 226+100, and 226 stays as is.',
-               zh:'像326这样百位是3，也只拿出一个100：分成226+100，226保持不变。' },
+        desc:{ ko:'326처럼 백의 자리가 3이어도 <b>100 하나만 떼어내요</b>. 226+100으로 나누고 나머지는 그대로 226에 남아있어요.',
+               en:'Even for 326 (hundreds digit 3), <b>set aside just one hundred: split into 226+100</b>, and 226 stays as is.',
+               zh:'像326这样百位是3，也<b>只拿出一个100</b>：分成226+100，226保持不变。' },
         mathSteps:['326 - 57','= 226 + 100 - 57','= 226 + 43','= 269'],
         result:{ ko:'326-57 = 226+100-57 = 226+43 = 269', en:'326-57 = 226+100-57 = 226+43 = 269', zh:'326-57 = 226+100-57 = 226+43 = 269' },
         book:null }

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><path d="M70 200 q250 -160 500 0" fill="none" stroke="#E4E2DC" stroke-width="2.5"/>
+<g font-family="ui-monospace,monospace" font-weight="800" font-size="21" text-anchor="middle">
+<circle cx="70" cy="200" r="24" fill="#16417C"/><text x="70" y="208" fill="#FBFAF7">1</text>
+<circle cx="570" cy="200" r="26" fill="#16417C"/><text x="570" y="208" fill="#FBFAF7">100</text>
+<circle cx="146" cy="152" r="22" fill="#C9A063"/><text x="146" y="159" fill="#0E2C57">2</text>
+<circle cx="494" cy="152" r="24" fill="#C9A063"/><text x="494" y="159" fill="#0E2C57">99</text>
+<circle cx="232" cy="120" r="21" fill="#2E9E6B"/><text x="232" y="127" fill="#FBFAF7">3</text>
+<circle cx="408" cy="120" r="23" fill="#2E9E6B"/><text x="408" y="127" fill="#FBFAF7">98</text></g>
+<g stroke-width="2.5" fill="none" stroke-dasharray="7 5">
+<path d="M96 196 H544" stroke="#16417C"/><path d="M170 150 H470" stroke="#C9A063"/><path d="M254 118 H386" stroke="#2E9E6B"/></g>
+<text x="320" y="102" font-family="ui-monospace,monospace" font-size="24" font-weight="800" fill="#0E2C57" text-anchor="middle">101</text>
+<text x="320" y="256" font-family="ui-monospace,monospace" font-size="25" font-weight="800" fill="#16417C" text-anchor="middle">101 × 50 = 5050</text></svg>

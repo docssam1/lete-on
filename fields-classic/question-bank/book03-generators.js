@@ -299,6 +299,142 @@ function incompletePartitionFraction({ difficulty = 2 }) {
   };
 }
 
+function unitTestPairedHexagonFractions({ difficulty = 2, sourceCase = false }) {
+  if (sourceCase?.mode === "source" && sourceCase.sourceKey === "unit-test:book-03:q3") {
+    const parts = [12, 18];
+    const shaded = [2, 6];
+    return {
+      prompt: "두 정육각형을 모양과 크기가 같은 조각으로 나누었습니다. 왼쪽과 오른쪽의 색칠한 부분을 각각 분수로 나타내세요.",
+      visual: {
+        kind: "book3",
+        subtype: "paired-source-fractions-exact",
+        items: [
+          { template: "wide-hexagon-source-left", parts: 12, shaded: 2, shadedRegionIds: ["top-right-center", "left-center"] },
+          { template: "wide-hexagon-source-right", parts: 18, shaded: 6, shadedIndices: [0, 3, 6, 9, 12, 15] }
+        ]
+      },
+      answer: "왼쪽=2/12, 오른쪽=6/18",
+      responseKind: "list",
+      solution: "왼쪽은 전체 12조각 중 2조각, 오른쪽은 전체 18조각 중 6조각이 색칠되어 각각 2/12, 6/18입니다.",
+      meta: {
+        family: "paired-hexagon-fractions",
+        parts,
+        shaded,
+        answers: ["2/12", "6/18"],
+        sourceCase: { parts, shaded },
+        sourceExact: true,
+        sourceVisualSignature: "wide-hexagon-12-crossed|wide-hexagon-18-outer-star",
+        equalParts: true,
+        sourceReady: true
+      }
+    };
+  }
+  const shadedByDifficulty = {
+    1: [[1, 3], [2, 3], [2, 4]],
+    2: [[2, 6]],
+    3: [[5, 10], [7, 11], [8, 13]]
+  };
+  const parts = [12, 18];
+  const shaded = sample(shadedByDifficulty[difficulty] || shadedByDifficulty[2]);
+  const items = [
+    { template: "hexagon-12", shape: "hexagon", parts: parts[0], shaded: shaded[0], rotation: randomInt(0, parts[0] - 1), complete: true },
+    { template: "hexagon-18", shape: "hexagon", parts: parts[1], shaded: shaded[1], rotation: randomInt(0, parts[1] - 1), complete: true }
+  ];
+  const answers = items.map((item) => fractionText(item.shaded, item.parts));
+  return {
+    prompt: "두 정육각형을 모양과 크기가 같은 조각으로 나누었습니다. 왼쪽과 오른쪽의 색칠한 부분을 각각 분수로 나타내세요.",
+    visual: { kind: "book3", subtype: "paired-source-fractions", items },
+    answer: `왼쪽=${answers[0]}, 오른쪽=${answers[1]}`,
+    responseKind: "list",
+    solution: `왼쪽은 전체 ${parts[0]}조각 중 ${shaded[0]}조각, 오른쪽은 전체 ${parts[1]}조각 중 ${shaded[1]}조각이 색칠되어 ${answers[0]}, ${answers[1]}입니다.`,
+    meta: {
+      family: "paired-hexagon-fractions",
+      parts,
+      shaded,
+      rotations: items.map((item) => item.rotation),
+      answers,
+      sourceCase: { parts: [12, 18], shaded: [2, 6] },
+      equalParts: true,
+      sourceReady: true
+    }
+  };
+}
+
+function unitTestTriangleTwelveFraction({ difficulty = 2, sourceCase = false }) {
+  if (sourceCase?.mode === "source" && sourceCase.sourceKey === "unit-test:book-03:q4") {
+    return {
+      prompt: "다음 그림은 큰 정삼각형을 모양과 크기가 같은 12조각으로 나눈 것입니다. 색칠한 부분을 분수로 나타내세요.",
+      visual: {
+        kind: "book3",
+        subtype: "triangle-twelve-fraction-exact",
+        template: "source-triangle-twelve",
+        parts: 12,
+        shaded: 5,
+        shadedRegionIds: ["top-center", "left-base", "right-side"]
+      },
+      answer: "5/12",
+      solution: "전체 12조각 가운데 색칠한 부분의 넓이는 작은 조각 5개와 같으므로 5/12입니다.",
+      meta: {
+        family: "triangle-twelve-part-fraction",
+        template: "source-triangle-twelve",
+        parts: 12,
+        shaded: 5,
+        sourceCase: { template: "source-triangle-twelve", parts: 12, shaded: 5 },
+        sourceExact: true,
+        sourceVisualSignature: "triangle-twelve-weighted-source-regions",
+        equalParts: true,
+        sourceReady: true
+      }
+    };
+  }
+  const shaded = sample(({ 1: [2, 3, 4], 2: [5], 3: [7, 8, 9] })[difficulty] || [5]);
+  const parts = 12;
+  const rotation = randomInt(0, parts - 1);
+  return {
+    prompt: "큰 정삼각형을 모양과 크기가 같은 12조각으로 나누었습니다. 색칠한 부분을 분수로 나타내세요.",
+    visual: { kind: "book3", subtype: "equal-partition-source", template: "triangle-12", shape: "triangle", parts, shaded, rotation, complete: true },
+    answer: fractionText(shaded, parts),
+    solution: `전체는 ${parts}조각이고 색칠한 부분은 ${shaded}조각이므로 ${fractionText(shaded, parts)}입니다.`,
+    meta: {
+      family: "triangle-twelve-part-fraction",
+      template: "triangle-12",
+      parts,
+      shaded,
+      rotation,
+      sourceCase: { template: "triangle-12", parts: 12, shaded: 5 },
+      equalParts: true,
+      sourceReady: true
+    }
+  };
+}
+
+function unitTestConcentricSquareFraction({ difficulty = 2, sourceCase = false }) {
+  const shaded = ({ 1: 1, 2: 2, 3: 3 })[difficulty] || 2;
+  const parts = 16;
+  const sourceExact = sourceCase?.mode === "source" && sourceCase.sourceKey === "unit-test:book-03:q5";
+  const rotation = sourceExact ? 1 : randomInt(0, 3);
+  const shadedIndices = sourceExact ? [1, 2] : null;
+  return {
+    prompt: "다음 그림은 큰 정사각형 안에 한 변의 길이가 절반인 작은 정사각형을 그리고 두 대각선을 이은 것입니다. 색칠한 부분을 분수로 나타내세요.",
+    visual: { kind: "book3", subtype: "concentric-square-sixteen-fraction", template: "concentric-square-diagonals", parts, shaded, rotation, shadedIndices },
+    answer: fractionText(shaded, parts),
+    solution: `안쪽 정사각형의 넓이는 큰 정사각형의 1/4이고, 대각선으로 똑같이 네 부분으로 나뉩니다. 안쪽의 작은 삼각형 한 부분은 전체의 1/16이므로 ${shaded}부분은 ${fractionText(shaded, parts)}입니다.`,
+    meta: {
+      family: "concentric-square-sixteen-fraction",
+      template: "concentric-square-diagonals",
+      parts,
+      shaded,
+      rotation,
+      sourceCase: { template: "concentric-square-diagonals", parts: 16, shaded: 2 },
+      sourceExact,
+      sourceVisualSignature: sourceExact ? "concentric-half-square-diagonals-right-bottom" : null,
+      shadedIndices,
+      equalParts: true,
+      sourceReady: true
+    }
+  };
+}
+
 function obliqueSquareGridArea({ difficulty = 2 }) {
   const vectorOptions = difficulty === 1 ? [[1, 1], [1, 2], [2, 1]] : difficulty === 2 ? [[1, 2], [2, 1], [2, 2], [1, 3]] : [[2, 3], [3, 2], [1, 4], [3, 3]];
   const count = difficulty === 3 ? 2 : 1;
@@ -1283,6 +1419,9 @@ export const BOOK03_GENERATORS = {
   equalPartShadedFraction,
   equalPartitionDrawing,
   incompletePartitionFraction,
+  unitTestPairedHexagonFractions,
+  unitTestTriangleTwelveFraction,
+  unitTestConcentricSquareFraction,
   obliqueSquareGridArea,
   foldedStripLength,
   midpointNumberLine,

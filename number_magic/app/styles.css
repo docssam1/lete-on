@@ -8,13 +8,24 @@
   --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;--gold-bright:#F5D98B;
   --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
   --ok:#2E9E6B;--no:#D9534F;--purple:#3d1a5c;
+  /* 적응형 밴드 기본값(=mid). render()가 html[data-nm-band]를 세팅하면 아래에서 재정의.
+     적응형-타이포-말투-설계.md §2 — 컴포넌트에 직접 크기를 박지 말고 토큰만 쓸 것. */
+  --nm-fs-body:15.5px; --nm-fs-num:1.15em; --nm-btn-h:46px; --nm-lh:1.7; --nm-ls:0;
 }
+/* young: 6~7세·초1 — 크게·성기게·또박또박 */
+html[data-nm-band="young"]{--nm-fs-body:17px;--nm-fs-num:1.35em;--nm-btn-h:52px;--nm-lh:1.85;--nm-ls:.01em}
+/* senior: 초3 이상 — 밀도 있게 */
+html[data-nm-band="senior"]{--nm-fs-body:14.5px;--nm-fs-num:1em;--nm-btn-h:42px;--nm-lh:1.6}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{font-family:'Pretendard',sans-serif;color:var(--ink);
   background:radial-gradient(900px 500px at 30% -10%,#eef3fb,transparent 60%),var(--paper);
   overflow:hidden}
 .katex{font-size:1em}
+/* 적응형 밴드 적용 지점 — 문제·학습 본문만. 상단 바 등 크롬은 전 연령 동일. */
+.nm-step-body{font-size:var(--nm-fs-body);line-height:var(--nm-lh);letter-spacing:var(--nm-ls)}
+.nm-step-body .katex{font-size:var(--nm-fs-num)}
+.nm-ex-word{font-size:var(--nm-fs-body);line-height:var(--nm-lh)}
 /* #app 자체는 항상 화면 전체 폭(모바일/데스크탑 공통) — 마을(지도)이 항상 꽉 차게.
    학습 화면(등급목록/유닛)만 아래 미디어쿼리에서 데스크탑 폭 기준으로 중앙 640px로 좁힘. */
 #app{width:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
@@ -68,7 +79,26 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-flow-step.done{border-color:var(--gold-deep);background:#fdf6e8}
 .nm-flow-ic{font-size:15px}
 .nm-flow-step small{font-size:9.5px;font-weight:800;color:var(--sub);white-space:nowrap}
-.nm-flow-arrow{color:#c3cad6;font-weight:900;flex:none;font-size:11px}
+/* 2차 디자인 패스(대비 검토) — 기존 #c3cad6(border 톤)는 크림 배경에서 1.58:1로
+   거의 안 보였다. var(--sub)로 바꿔 7:1대 확보(다른 회색 텍스트와 같은 톤이라 위화감 없음) */
+.nm-flow-arrow{color:var(--sub);font-weight:900;flex:none;font-size:11px}
+
+/* 2차 디자인 패스 — 유닛 밖 공통 UI(상단바·뒤로가기·플로우바)도 유아(young) 밴드에서는
+   살짝 키운다. --nm-btn-h 토큰(young=52px, 적응형-타이포-말투-설계.md §2)을 그대로 쓰고,
+   mid·senior 밴드나 마을 지도(.nm-map/.nm-tier/.nm-unit 등)는 이 블록 밖이라 그대로다 —
+   과하게 키워 마을 지도가 깨지는 일은 없다. */
+html[data-nm-band="young"] .nm-lang{min-height:var(--nm-btn-h);padding:8px 18px;font-size:14.5px}
+html[data-nm-band="young"] .nm-char-chip{min-height:44px;padding:5px 16px 5px 5px}
+html[data-nm-band="young"] .nm-char-chip-name{font-size:.85rem;max-width:76px}
+html[data-nm-band="young"] .nm-coins{font-size:16px}
+/* .nm-unit-bar 안으로 한정 — 다른 화면(로드맵·미니게임·학년교실 헤더 등)은 .nm-back을
+   테두리 없는 납작한 텍스트 링크로 다시 정의해 쓰므로, 여기서 범위를 넓히면 그 화면들의
+   padding:0 스타일이 깨진다(마을 지도로 흘러들어가진 않지만 화면 밖 다른 헤더가 깨지는
+   것도 "지도가 깨지면 안 됨"과 같은 취지라 피한다). */
+html[data-nm-band="young"] .nm-unit-bar .nm-back{min-height:var(--nm-btn-h);padding:10px 20px;font-size:14.5px}
+html[data-nm-band="young"] .nm-flow-step{min-height:48px;padding:8px 12px;min-width:64px}
+html[data-nm-band="young"] .nm-flow-ic{font-size:18px}
+html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 
 /* STEP 본문: 남은 높이 채우고 내부에서 배치 */
 .nm-step-body{flex:1;min-height:0;display:flex;flex-direction:column}
@@ -128,7 +158,10 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-key{padding:8px 0;font-size:21px;font-weight:900;border-radius:13px;border:2px solid var(--line);background:#fff;color:var(--blue-deep);cursor:pointer;box-shadow:0 4px 0 #eceae4;transition:.1s}
 .nm-key:active{transform:translateY(2px);box-shadow:0 2px 0 #eceae4}
 .nm-key.ok{background:var(--gold);color:#4a370f;border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep)}
-.nm-key.del{color:var(--no)}
+/* 지우기 키(← ) — var(--no) #D9534F는 흰 배경에서 모바일 크기(17px)일 때 3.96:1로
+   4.5:1에 못 미쳤다. 이미 -/부호 키에 쓰던 더 짙은 빨강(.neg)으로 통일해 5.4:1 확보 —
+   var(--no) 토큰 자체는 다른 곳(오답 표시 등)에서 그대로 쓰므로 건드리지 않는다 */
+.nm-key.del{color:#c0392b}
 .nm-key.dot{color:#5a7ab8;font-size:24px;font-weight:900}
 .nm-key.neg{color:#c0392b;font-size:24px;font-weight:900}
 .nm-numpad.dec{grid-template-columns:repeat(4,1fr);max-width:320px}
@@ -148,7 +181,7 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-mixed .nm-ans-box{height:44px}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
-.nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
+.nm-memo-wrap label{font-size:13px;color:#68707f;white-space:nowrap;user-select:none} /* 대비 보정: 2.46→4.8:1 */
 .nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
 .nm-memo:focus{border-color:var(--gold);background:#fffdf7}
 
@@ -259,6 +292,44 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cresult{margin-top:12px;text-align:center;font-size:14px;font-weight:800;color:var(--ok)}
 .nm-cbook{background:#f4f7fc;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:12px;font-size:12.5px;color:#33415a;line-height:1.55}
 
+/* 개념 노트 강조 — 유닛 desc의 <b>는 134개 파일에 이미 있는데 지금까지 그냥
+   본문색 굵기라 눈에 안 띄었다. 형광펜(그라데이션 밑칠)으로 승격: <b>=핵심어,
+   <em>=주의·대비. 텍스트를 안 건드리고 CSS만으로 기존 마크업 전체가 살아난다. */
+.nm-cdesc b,.nm-cbook b,.nm-story-bubble b,.nm-story-hist b{
+  font-weight:800;color:var(--blue-deep);padding:0 .12em;border-radius:3px;
+  background:linear-gradient(transparent 58%,rgba(245,217,139,.75) 58% 94%,transparent 94%)}
+.nm-cdesc em,.nm-cbook em,.nm-story-bubble em,.nm-story-hist em{
+  font-style:normal;font-weight:800;color:#b8541f;
+  text-decoration:underline;text-decoration-color:rgba(224,104,47,.45);
+  text-decoration-thickness:2px;text-underline-offset:3px}
+/* 규칙 카드는 남색 바탕이라 노란 형광펜 대신 골드 글자+흰 밑칠 */
+.nm-rule p b{font-size:inherit;letter-spacing:0;color:var(--gold-bright);padding:0 .08em;
+  background:linear-gradient(transparent 62%,rgba(255,255,255,.18) 62% 94%,transparent 94%);border-radius:2px}
+.nm-rule p em{font-style:normal;font-weight:800;color:#ffd9c4;
+  text-decoration:underline;text-decoration-color:rgba(255,217,196,.5);
+  text-decoration-thickness:2px;text-underline-offset:3px}
+.kid-note .nm-cdesc b{background:linear-gradient(transparent 50%,rgba(245,217,139,.9) 50% 96%,transparent 96%)}
+
+/* 개념 노트 ↔ 실험실 버튼(UNIT_LABS) — 다음 버튼과 구별되는 실험실 톤.
+   한 유닛에 실험실이 둘 걸릴 수 있어(M-15·C-05) 묶음으로 낸다. */
+.nm-lab-links{margin:2px 0 10px}
+.nm-lab-lead{font-size:11.5px;font-weight:800;color:#8a6d46;margin-bottom:6px;letter-spacing:.02em}
+.nm-btn.nm-lab-link{background:#fff;color:#6b5334;border:2px solid #C9A063;margin-bottom:8px}
+.nm-btn.nm-lab-link:last-child{margin-bottom:0}
+.nm-btn.nm-lab-link:active{transform:scale(.985)}
+
+/* 수학사 네 컷 만화(data/story-comics.js) — 개념 노트에서 🏛 한 줄을 대체 */
+.nm-comic-h{font-size:12px;font-weight:800;color:#8a6d46;margin:12px 0 6px;letter-spacing:.02em}
+.nm-comic{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin:0 0 14px}
+.nm-comic-panel{position:relative;margin:0;background:#fff;border:2px solid var(--ink);border-radius:12px;
+  overflow:hidden;box-shadow:3px 3px 0 rgba(26,34,51,.14)}
+.nm-comic-no{position:absolute;top:7px;left:7px;width:21px;height:21px;border-radius:50%;
+  background:var(--ink);color:#fff;font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+.nm-comic-art{background:#fdfaf3;border-bottom:2px solid var(--ink)}
+.nm-comic-art svg{display:block;width:100%;height:auto}
+.nm-comic-cap{font-size:12.5px;line-height:1.5;padding:8px 11px;color:var(--ink);font-weight:600}
+
 /* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
 .nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
 .nm-mstep-line{font-weight:900;color:var(--blue-deep);padding:4px 0}
@@ -299,7 +370,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 
 /* 메모장 (스크래치패드) */
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
-.nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
+.nm-memo-wrap label{font-size:13px;color:#68707f;white-space:nowrap;user-select:none} /* 대비 보정: 2.46→4.8:1 */
 .nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
 .nm-memo:focus{border-color:var(--gold);background:#fffdf7}
 
@@ -398,8 +469,14 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
    ============================================================ */
 #townVp{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab;background:#bfe0f2}
 #townVp.drag{cursor:grabbing}
-#townWorld{position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
-  background:url(../assets/map.jpg) no-repeat center/cover;}
+/* 947px = map.jpg(1024×687) 그대로 + 위쪽 260px 신규 원경(#townSky, 산맥·다리 실루엣).
+   지도 이미지는 그대로 두고 새 캔버스 바닥에 붙인다(background-position:bottom) —
+   그래서 기존 6개 스팟의 top/height %는 새 전체 높이(947) 기준으로 다시 계산돼 있다
+   (main.js TOWN_SPOTS 주석 참고). 위쪽 남는 부분은 두 번째 레이어(하늘색 그라디언트)가
+   메운다 — map.jpg 자체 상단 하늘색과 이어지도록 같은 톤 계열로 맞춤. */
+#townWorld{position:absolute;left:0;top:0;width:1024px;height:947px;transform-origin:0 0;
+  background:url(../assets/map.jpg) no-repeat bottom center/1024px 687px,
+    linear-gradient(180deg,#a9d8ee 0%,#c9e8f4 55%,#bfe0f2 100%);}
 
 .ncloud{position:absolute;display:flex;align-items:center;justify-content:center;
   font-weight:900;color:#5b7fb0;pointer-events:none;opacity:.9;
@@ -412,6 +489,24 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 @keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(1580px) scale(1.1)}}
 .ncloud.b{top:40px;left:-360px;animation:cdriftB 100s linear infinite}
 @keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(1480px) scale(.8)}}
+.ncloud.d{top:14px;left:-460px;animation:cdrift 90s linear infinite;opacity:.85}
+
+/* ── 마을 위 새 원경(#townSky, 947px 캔버스의 맨 위 260px) — 산맥·다리 실루엣.
+   전부 CSS clip-path/SVG(이미지 파일 없음). percent는 이 상자(1024×260) 기준이라
+   townWorld 전체(947) 기준인 .nm-zone의 percent와 다르다 — 섞어 계산하지 말 것. ── */
+#townSky{position:absolute;left:0;top:0;width:1024px;height:260px;overflow:hidden;
+  pointer-events:none;z-index:2}
+.sky-ridge{position:absolute;left:0;bottom:0;width:100%;height:100%}
+.sky-ridge.r1{opacity:.85;background:linear-gradient(180deg,#9aa3d6 0%,#c3c9ea 75%);
+  clip-path:polygon(0% 100%,6% 58%,14% 80%,22% 42%,30% 70%,38% 32%,46% 64%,54% 46%,
+    62% 74%,70% 36%,78% 60%,86% 44%,94% 68%,100% 52%,100% 100%)}
+.sky-ridge.r2{opacity:.92;background:linear-gradient(180deg,#7c86c4 0%,#a6addd 75%);
+  clip-path:polygon(0% 100%,10% 74%,20% 90%,32% 60%,44% 86%,56% 55%,68% 84%,80% 58%,
+    90% 88%,100% 68%,100% 100%)}
+.sky-bridge-svg{position:absolute;left:20%;top:18%;width:22%;height:auto;opacity:.62;
+  filter:drop-shadow(0 4px 8px rgba(20,20,50,.18))}
+.sky-tower-svg{position:absolute;left:67%;top:2%;width:12%;height:auto;opacity:.6;
+  filter:drop-shadow(0 4px 8px rgba(20,20,50,.18))}
 
 #townFountain{position:absolute;left:300px;top:290px;width:90px;height:90px;pointer-events:none}
 .tzero{position:absolute;left:50%;bottom:20px;font-weight:900;color:#8fd3ec;
@@ -466,6 +561,33 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-idcard-row input:focus{border-color:var(--blue)}
 .nm-idcard-row .nm-btn{padding:10px 18px;font-size:14px;flex:none}
 .nm-idcard-msg{font-size:12.5px;color:var(--sub);line-height:1.55;margin-top:8px}
+
+/* ── 프로필 슬롯 3개 "우리 집 마법사들" (옷장) ── */
+.nm-slots-wrap{margin:8px 14px 4px}
+.nm-slots-title{font-size:14px;font-weight:900;color:var(--blue);margin-bottom:8px}
+.nm-slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nm-slot-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 6px 8px;
+  cursor:pointer;transition:.15s;font-family:inherit}
+.nm-slot-card:hover{border-color:var(--blue);transform:scale(1.02)}
+.nm-slot-card.active{border-color:#e6ac00;background:#fffdf3;cursor:default;box-shadow:0 0 0 3px rgba(230,172,0,.18)}
+.nm-slot-card.active:hover{transform:none}
+.nm-slot-card.empty{border-style:dashed;color:var(--sub)}
+.nm-slot-badge{position:absolute;top:6px;left:6px;background:#e6ac00;color:#fff;font-size:9.5px;
+  font-weight:900;padding:2px 7px;border-radius:99px;letter-spacing:.02em}
+.nm-slot-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.08);color:var(--sub);font-size:11px;font-weight:900;line-height:20px;
+  text-align:center;z-index:2}
+.nm-slot-del:hover{background:#fadbd8;color:#c0392b}
+.nm-slot-fig{height:56px;display:flex;align-items:flex-end;justify-content:center;margin-top:4px}
+.nm-slot-plus{font-size:26px;font-weight:900;color:var(--sub);height:56px;display:flex;align-items:center;justify-content:center}
+.nm-slot-name{font-size:12px;font-weight:800;color:#2c3e50;max-width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.nm-slot-card.empty .nm-slot-name{color:var(--sub);font-weight:700}
+@media(max-width:360px){
+  .nm-slots-grid{gap:6px}
+  .nm-slot-name{font-size:11px}
+}
 
 /* 건물 클릭존 — 딱딱한 박스 대신 은은한 링 글로우 */
 .nm-zone{position:absolute;border:none;background:transparent;cursor:pointer;padding:0;border-radius:16px;z-index:15;transition:.2s}
@@ -667,6 +789,95 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ex-btn-ghost:hover{background:var(--mist)}
 
 /* ============================================================
+   🛤️ 연산 로드맵 피커 (학습지 모드 3번째 섹션)
+   과정(course, 괘선 구분) → 세션(아코디언) 목록. 카드 남용 금지 — 티어는
+   괘선 헤더, 과정은 목록 행. 세션 펼침은 한 번에 하나(showRoadPick의
+   openCourse 변수). 430px에서 가로 스크롤 0(모든 값 %/gap 기반).
+   ============================================================ */
+
+/* ── 연산 로드맵 인쇄 옵션 바 (유형·문항수·표지·개념 — 교과 흐름과 동일 4종) ── */
+.nm-ex-road-opts{border:1px solid var(--line);border-radius:12px;background:#fff;
+  padding:10px 12px;margin:0 0 14px;display:flex;flex-direction:column;gap:8px}
+.nm-ex-road-opt-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nm-ex-road-opt-label{font-size:12px;font-weight:800;color:var(--sub);min-width:44px}
+.nm-ex-road-seg{display:flex;gap:4px;flex-wrap:wrap}
+.nm-ex-road-seg button{border:1px solid var(--line);background:var(--paper);border-radius:99px;
+  padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer}
+.nm-ex-road-seg button.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.nm-ex-road-cal{display:inline-block;margin-left:8px;font-size:11px;font-weight:800;
+  color:var(--gold-deep);background:rgba(201,160,99,.12);border-radius:99px;padding:2px 8px;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.nm-ex-road-plan-btn{margin-left:auto;border:1px solid var(--gold-deep);background:#fff;
+  color:var(--gold-deep);border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
+.nm-ex-road-plan-btn:hover{background:rgba(201,160,99,.1)}
+
+/* ── 상황별 진행 캐릭터(호스트) 띠 — 미니게임·아레나 상단 ── */
+.nm-host{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:8px 10px;
+  background:#fff;border:1px solid var(--line);border-radius:14px}
+.nm-host-img{width:52px;height:52px;flex:none;object-fit:contain}
+.nm-host-bubble{min-width:0;font-size:13px;line-height:1.45;color:var(--ink)}
+.nm-host-bubble b{display:block;font-size:11.5px;font-weight:900;color:var(--blue);margin-bottom:1px}
+.nm-arena .nm-host{margin-bottom:8px;padding:6px 9px}
+.nm-arena .nm-host-img{width:44px;height:44px}
+html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
+
+/* ── 학부모 알림 등록 카드 ── */
+.nm-notify-card{display:block}
+.nm-notify-head{font-weight:900;color:var(--blue-deep);margin-bottom:4px}
+.nm-notify-desc{font-size:12.5px;color:var(--sub);margin:0 0 8px}
+.nm-notify-row{display:flex;gap:8px}
+.nm-notify-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;
+  padding:9px 12px;font-size:14px;font-family:inherit}
+.nm-notify-consent{display:flex;gap:6px;align-items:flex-start;font-size:11.5px;
+  color:var(--sub);margin-top:8px;line-height:1.5;cursor:pointer}
+.nm-notify-consent input{margin-top:2px}
+.nm-notify-msg{font-size:12px;color:var(--no);margin-top:6px;min-height:1em}
+.nm-ex-road-body{gap:0}
+.nm-ex-road-tier{margin-bottom:18px}
+.nm-ex-road-tier:last-child{margin-bottom:0}
+.nm-ex-road-tier-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+  padding-bottom:6px;margin-bottom:8px;border-bottom:2px solid var(--blue-deep)}
+.nm-ex-road-tier-name{font-size:14px;font-weight:900;color:var(--blue-deep)}
+.nm-ex-road-tier-again{font-size:10px;font-weight:700;font-style:normal;color:var(--sub)}
+.nm-ex-road-tier-band{font-size:11px;color:var(--sub)}
+.nm-ex-road-course-list{display:flex;flex-direction:column;gap:0}
+.nm-ex-road-course{border-bottom:1px solid var(--line)}
+.nm-ex-road-course:first-child{border-top:1px solid var(--line)}
+.nm-ex-road-course-row{display:flex;align-items:center;gap:10px;width:100%;
+  background:none;border:none;padding:11px 2px;cursor:pointer;text-align:left;
+  font-family:'Pretendard',sans-serif;min-width:0}
+.nm-ex-road-course-row:hover{background:var(--mist)}
+.nm-ex-road-course-row:disabled{cursor:default}
+.nm-ex-road-course-num{flex:none;width:26px;height:26px;border-radius:50%;
+  background:var(--mist);color:var(--blue-deep);font-size:12px;font-weight:900;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center}
+.nm-ex-road-course.open .nm-ex-road-course-num{background:var(--blue);color:#fff}
+.nm-ex-road-course-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nm-ex-road-course-body b{font-size:13.5px;font-weight:800;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm-ex-road-course-meta{font-size:11px;color:var(--sub)}
+.nm-ex-road-here{flex:none;font-size:10.5px;font-weight:800;color:#fff;
+  background:var(--gold-deep);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.nm-ex-road-soon{flex:none;font-size:10.5px;font-weight:800;color:var(--sub);
+  background:var(--mist);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.nm-ex-road-course.soon{opacity:.55}
+.nm-ex-road-caret{flex:none;font-size:10px;color:var(--sub)}
+.nm-ex-road-sessions{display:flex;flex-direction:column;gap:8px;padding:2px 2px 14px 36px}
+.nm-ex-road-session{background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.nm-ex-road-session-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nm-ex-road-session-name{font-size:12.5px;font-weight:800;color:var(--blue-deep)}
+.nm-ex-road-magic{display:block;font-size:11.5px;font-weight:700;color:var(--gold-deep);
+  margin-top:4px;word-break:keep-all}
+.nm-ex-road-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.nm-ex-road-chip{font-size:10.5px;font-weight:700;color:var(--sub);
+  background:#eef2fa;border-radius:8px;padding:3px 8px;white-space:nowrap}
+.nm-ex-road-print-btn{margin-top:10px;width:100%;border:none;border-radius:10px;
+  background:var(--blue-deep);color:#fff;font-size:12.5px;font-weight:800;
+  padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-print-btn:hover{background:#1a4d93}
+.nm-ex-road-print-btn:active{transform:scale(.97)}
+
+/* ============================================================
    학년 그리드 (1A ~ 6B)
    ============================================================ */
 .nm-ex-grade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
@@ -813,6 +1024,21 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   word-break:keep-all;text-align:left;width:100%}
 .nm-vp-word-sm{font-size:12px;line-height:1.55}
 .nm-vp-word-ans{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+/* ── 문장제(WP 스레드) — 본문·물음·보기 ──
+   답이 보기 번호이므로 보기가 화면에도 있어야 답을 쓸 수 있다.
+   문장은 읽는 글이라 수식 칸(.nm-q-tex)과 달리 왼쪽 정렬·작은 글자다. */
+.nm-vp-wordask{font-size:13px;line-height:1.6;color:var(--ink);font-weight:700;
+  word-break:keep-all;text-align:left;width:100%}
+.nm-vp-choices{margin:2px 0 0;padding:0 0 0 2px;list-style:none;width:100%;
+  font-size:12.5px;line-height:1.55;color:var(--ink);text-align:left}
+.nm-vp-choices li{counter-increment:nmwp;margin:2px 0 0;padding-left:1.6em;text-indent:-1.6em;
+  word-break:keep-all}
+.nm-vp-choices li::before{content:counter(nmwp) ") ";font-weight:800}
+/* 식 틀 — 답이 '식'인 문장제(WP4). 온라인 학습지 칸에서도 식 모양을 보여 준다. */
+.nm-vp-word-eq{font-size:17px;font-weight:800;letter-spacing:.14em;color:var(--ink);
+  text-align:left;width:100%;font-family:'SFMono-Regular',Consolas,monospace}
+.nm-vp-wordwrap{counter-reset:nmwp}
+
 
 /* ── 학년/과정 모드 탭 · 예비중등 버튼 ── */
 .nm-ex-mode-tabs{margin-left:auto}
@@ -889,27 +1115,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-dialog.steps-mode .nm-key{padding:4px 0;font-size:16px}
 }
 
-/* ============================================================
-   인쇄 학습지 (11math 세로셈 스타일)
-   ============================================================ */
-@media print {
-  .nm-print-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .nm-print-ws-cell{border:1px solid #bbb;border-radius:6px;padding:10px 8px 14px;
-    display:flex;flex-direction:column;align-items:center;gap:4px}
-  .nm-print-cnum{font-size:14px;font-weight:900;color:#555;align-self:flex-start}
-  .nm-print-vp{display:flex;flex-direction:column;align-items:flex-end;
-    font-size:1.15em;font-weight:700;width:100%;padding:0 6px}
-  .nm-print-vp-top{text-align:right;width:100%;line-height:1.5}
-  .nm-print-vp-mid{display:flex;align-items:center;gap:4px;width:100%;line-height:1.5}
-  .nm-print-vp-op{min-width:18px;text-align:left}
-  .nm-print-vp-line{width:100%;height:1.5px;background:#000;margin:4px 0}
-  .nm-print-vp-bot{text-align:right;width:100%;min-height:24px}
-  .nm-print-ak-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-  .nm-print-ak-item{font-size:13px;font-weight:700}
-  .nm-print-ws-wide{grid-column:span 2}
-  .nm-print-word{font-size:12.5px;line-height:1.6;text-align:left;width:100%;word-break:keep-all}
-  .nm-print-word-blank{font-size:12px;align-self:flex-end;margin-top:8px}
-}
+/* 인쇄 학습지 CSS는 이 파일에 두지 않는다 — exam.js가 주입하는 한 벌(injectPrintCSS)이
+   유일한 출처다. 예전엔 여기에도 세로셈용 한 벌(nm-print-ws / nm-print-vp 계열)이 있었는데,
+   2026-08-28 인쇄 경로를 renderPrint로 통합하면서 그 마크업을 아무도 만들지 않게 됐다.
+   그런데 클래스명이 겹치는 .nm-print-vp만 살아남아, exam.js가 선언하지 않은 width:100%가
+   그대로 먹으면서 메인 앱에서만 세로셈이 칸 전체로 늘어나 인쇄됐다(drill.html은 이 파일을
+   안 읽어 멀쩡했다). 죽은 규칙이 아니라 실제로 깨뜨리고 있었으므로 통째로 제거한다. */
 
 /* ============================================================
    학습모드 로드맵 (nm-road-*)
@@ -918,6 +1129,25 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-road-banner-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 20px;background:var(--gold);color:#4a370f;border:none;border-radius:20px;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
 .nm-road-banner-btn:hover{filter:brightness(1.07)}
 .nm-road-next{font-size:11px;font-weight:700;color:#7a5b10;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+
+/* ── R0 추천 배너 — N-15 완주 직후 1회(마을 화면 오버레이). 잠금 아님, [나중에]로
+   그냥 닫힘. .nm-road-banner-btn과 같은 크림·네이비·골드 팔레트로 톤을 맞춘다. */
+.nm-r0-overlay{position:fixed;inset:0;z-index:70;background:rgba(14,44,87,.5);backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;padding:20px;animation:nm-r0-fade .2s ease}
+@keyframes nm-r0-fade{from{opacity:0}to{opacity:1}}
+.nm-r0-card{background:var(--paper);border-radius:24px;padding:28px 24px 22px;max-width:340px;width:100%;
+  text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);border:1.5px solid #eadfc4;
+  animation:nm-r0-pop .3s cubic-bezier(.2,1.4,.4,1)}
+@keyframes nm-r0-pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.nm-r0-ico{font-size:44px;line-height:1;margin-bottom:6px}
+.nm-r0-title{font-size:18px;font-weight:900;color:var(--blue-deep);line-height:1.35;margin-bottom:8px}
+.nm-r0-body{font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:20px}
+.nm-r0-go{display:block;width:100%;padding:14px;border:none;border-radius:16px;background:linear-gradient(160deg,var(--gold-bright),var(--gold-deep));
+  color:#4a370f;font-weight:900;font-size:15.5px;cursor:pointer;box-shadow:0 5px 0 var(--gold-deep);margin-bottom:10px}
+.nm-r0-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--gold-deep)}
+.nm-r0-later{background:none;border:none;color:var(--sub);font-weight:700;font-size:13.5px;cursor:pointer;padding:8px}
+html[data-nm-band="young"] .nm-r0-go{min-height:var(--nm-btn-h);font-size:16.5px}
+html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-road-wrap{display:flex;flex-direction:column;height:100%;background:#f8f4ee;overflow-y:auto;padding:0 0 80px}
 .nm-road-header{position:sticky;top:0;z-index:10;background:#f0eade;border-bottom:1.5px solid #e2d8c8;padding:10px 16px 8px;display:flex;flex-direction:column;gap:2px}
 .nm-road-header .nm-back{align-self:flex-start;background:none;border:none;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;padding:0}
@@ -1046,7 +1276,9 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-tm-goal-x{font-size:22px;color:var(--sub)}
 .nm-tm-goal-n{font-size:34px;color:var(--blue-deep)}
 .nm-tm-board{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;justify-content:center;width:min(320px,90%);min-height:130px;padding:14px;border-radius:20px;background:#fdfbf5;border:2.5px dashed var(--gold-deep);cursor:pointer;touch-action:manipulation;user-select:none}
-.nm-tm-stamp{font-size:38px;line-height:1;animation:tc-pop .25s ease;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(0,0,0,.12))}
+/* 스탬프 자체가 지우기 탭 대상(2차 디자인 패스) — 글자 크기만으론 실측 44px대에 그쳐
+   명시적 박스로 52px 확보(gridPaint 셀과 같은 기준) */
+.nm-tm-stamp{width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;font-size:38px;line-height:1;animation:tc-pop .25s ease;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(0,0,0,.12))}
 .nm-tm-counter{font-size:15px;font-weight:800;color:var(--sub)}
 .nm-tm-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#fff6e6;color:#7a5a12;font-size:20px;font-weight:900;padding:0 8px}
 .nm-tm-done{width:72px;height:56px;border-radius:18px;border:none;background:var(--ok);color:#fff;font-size:26px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #1f7a50;transition:transform .15s;touch-action:manipulation}
@@ -1057,13 +1289,19 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-nb-tree{display:flex;flex-direction:column;align-items:center;width:min(320px,92%)}
 .nm-nb-links{width:120px;height:26px;margin:-2px 0}
 .nm-nb-links line{stroke:var(--gold-deep);stroke-width:3;stroke-linecap:round}
-.nm-nb-row{display:flex;gap:28px;justify-content:center}
-.nm-nb-node{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:104px;height:104px;border-radius:50%;border:3px solid var(--line);background:#fdfbf5;padding:8px;user-select:none;touch-action:manipulation}
-.nm-nb-node.top{width:118px;height:118px}
+.nm-nb-row{display:flex;gap:24px;justify-content:center}
+/* 원 자체(채우기 탭 대상)는 이미 104px 이상으로 넉넉함 — 2차 패스에서 살짝 더 키워
+   아래 채운 점(nm-nb-fill, 지우기 탭 대상)에 자리를 더 준다 */
+.nm-nb-node{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:112px;height:112px;border-radius:50%;border:3px solid var(--line);background:#fdfbf5;padding:7px;user-select:none;touch-action:manipulation}
+.nm-nb-node.top{width:126px;height:126px}
 .nm-nb-node.ask{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;cursor:pointer}
-.nm-nb-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:1px;font-size:17px;line-height:1.15;max-width:88px;min-height:20px}
-.nm-nb-node.top .nm-nb-dots{max-width:100px}
-.nm-nb-fill{animation:tc-pop .25s ease;cursor:pointer}
+.nm-nb-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;font-size:17px;line-height:1.15;max-width:96px;min-height:20px}
+.nm-nb-node.top .nm-nb-dots{max-width:110px}
+/* 채운 점 하나하나가 "지우기" 탭 대상 — 최대 9개가 원 안에 들어가야 해서 물리적으로
+   50px는 불가능하지만(1차 패스 문서의 "무리한 전면 교체 금지"와 같은 원칙), 명시적
+   박스(26px)로 기존 실측 ~17~25px보다 뚜렷이 키운다. 채우기(추가) 쪽은 원 전체(112~126px)가
+   탭 대상이라 이미 충분히 크다 — 여기는 보조 되돌리기 동작. */
+.nm-nb-fill{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;animation:tc-pop .25s ease;cursor:pointer}
 .nm-nb-num{font-size:20px;font-weight:900;color:var(--blue-deep)}
 .nm-nb-num.ask{color:#b8860b}
 .nm-nb-done{width:72px;height:56px;border-radius:18px;border:none;background:var(--ok);color:#fff;font-size:26px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #1f7a50;transition:transform .15s;touch-action:manipulation}
@@ -1113,6 +1351,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   transform:rotate(45deg)}
 .nm-story-hist{background:var(--mist);border-radius:12px;padding:10px 12px;font-size:12.5px;
   color:var(--sub);line-height:1.6;margin:0 0 14px}
+
+/* 스토리 삽화 — 원본 도형 SVG(640×280). 파일이 없는 유닛은 JS가 figure를 지운다. */
+.nm-story-art{margin:2px 0 12px;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;
+  background:#F7F5F0;line-height:0}
+.nm-story-art img{display:block;width:100%;height:auto}
+@media (max-width:420px){.nm-story-art{border-radius:13px}}
 
 /* ============================================================
    개념 계보 (§6) — 카드 배지 · 도장 화면 진화 링크 · 완주 배지
@@ -1193,3 +1437,270 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-mat2-br.left{border-right:none}
 .nm-mat2-br.right{border-left:none}
 .nm-multi-hint{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#9aa2b1;margin-top:6px}
+
+/* 학습지 도우미 — 개념 노트가 없는 유형에서 문제은행으로 보내는 링크(2026-08-28).
+   .nm-btn은 button 기준이라 <a>로 쓸 때 가운데 정렬·글자색만 맞춰 준다. */
+.nm-wsh-bank{display:block;text-decoration:none;text-align:center;color:#fff}
+.nm-wsh-bank:hover{color:#fff}
+
+/* ============================================================
+   광택 블록 (nm-gloss) — 타이틀 화면 모드 선택
+   크림 종이 + 네이비 + 금박 세계 그대로, 위쪽에 빛이 고인 유리 느낌.
+   ::before = 위에서 아래로 고이는 광택, ::after = 천천히 지나가는 반사.
+   ============================================================ */
+.nm-gloss{position:relative;overflow:hidden;isolation:isolate}
+.nm-gloss::before{content:'';position:absolute;left:0;right:0;top:0;height:52%;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.06));
+  pointer-events:none;z-index:1}
+.nm-gloss::after{content:'';position:absolute;top:-70%;left:-40%;width:34%;height:240%;
+  transform:rotate(18deg);pointer-events:none;z-index:1;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:nmSheen 5.5s ease-in-out infinite}
+.nm-gloss>*{position:relative;z-index:2}
+@keyframes nmSheen{0%{left:-40%}55%{left:120%}100%{left:120%}}
+.nm-gloss.gold::before{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.05))}
+@media(prefers-reduced-motion:reduce){ .nm-gloss::after{animation:none;opacity:.25} }
+
+/* 타이틀 모드 블록 */
+.nm-title-btn.nm-gloss.gold{border-color:var(--gold-deep);
+  background:linear-gradient(180deg,#fbe6b6 0%,var(--gold) 46%,var(--gold-deep) 100%);
+  color:#3a2a08;box-shadow:0 16px 30px -16px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.85)}
+.nm-title-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.nm-title-blk{display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  border:1.5px solid rgba(255,255,255,.3);border-radius:18px;padding:13px 13px 12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.10) 48%,rgba(255,255,255,.05) 100%);
+  color:#fff;cursor:pointer;font-family:'Pretendard',sans-serif;text-align:left;
+  box-shadow:0 12px 24px -16px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.45);
+  transition:transform .12s,background .15s}
+.nm-title-blk:hover{background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.12))}
+.nm-title-blk:active{transform:scale(.96)}
+.nm-title-blk-ico{font-size:23px;line-height:1.1}
+.nm-title-blk b{font-size:14.5px;font-weight:900}
+.nm-title-blk small{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.92);line-height:1.35;
+  text-shadow:0 1px 2px rgba(0,0,0,.35);word-break:keep-all}
+.nm-title-blk b{text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.nm-title-sub-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:2px}
+.nm-title-pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);
+  color:#fff;border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:800;
+  cursor:pointer;font-family:'Pretendard',sans-serif}
+.nm-title-pill:hover{background:rgba(255,255,255,.16)}
+.nm-title-pill:active{transform:scale(.95)}
+
+/* ============================================================
+   연산 로드맵 (nm-cr-*)
+   ============================================================ */
+.nm-cr-wrap{display:flex;flex-direction:column;height:100%;background:#f8f4ee;overflow:hidden}
+.nm-cr-header{flex:none;background:#f0eade;border-bottom:1.5px solid #e2d8c8;padding:10px 16px 9px}
+.nm-cr-header .nm-back{background:none;border:none;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;padding:0;display:block;margin-bottom:4px}
+.nm-cr-titlerow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nm-cr-title{font-size:18px;font-weight:900;color:var(--blue-deep)}
+.nm-cr-diagbtn{margin-left:auto;border:1.5px solid var(--gold-deep);background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+  color:#4a370f;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap}
+.nm-cr-diagbtn:active{transform:scale(.95)}
+.nm-cr-sub{font-size:12px;color:var(--sub);font-weight:600;margin-top:3px;line-height:1.45}
+/* 정복의 뜻(about.html 철학과 동일 문장) — 로드맵이 별도 은유를 만들지 않게 잇는 줄 */
+.nm-cr-philo{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:9px;
+  padding:9px 12px;border-radius:12px;background:#fdf6e8;
+  border:1px solid var(--gold-deep);font-size:12px;font-weight:600;color:var(--ink);
+  line-height:1.55;word-break:keep-all}
+.nm-cr-philo b{color:#7a5a12;font-weight:800}
+.nm-cr-philolink{flex:none;margin-left:auto}
+.nm-cr-body{flex:1;min-height:0;overflow-y:auto;padding:12px 14px 70px;-webkit-overflow-scrolling:touch}
+
+/* 정복 현황 — 이 화면의 주인공 */
+.nm-cr-conq{max-width:520px;margin:0 auto 12px;border-radius:20px;padding:15px 16px 14px;
+  background:linear-gradient(165deg,var(--blue-deep),var(--blue) 70%,#16447f);
+  box-shadow:0 16px 32px -20px rgba(14,44,87,.75)}
+.nm-cr-conq-top{display:flex;align-items:baseline;gap:10px}
+.nm-cr-conq-lbl{font-size:13px;font-weight:800;color:rgba(255,255,255,.82)}
+.nm-cr-conq-num{margin-left:auto;display:flex;align-items:baseline;gap:5px}
+.nm-cr-conq-num b{font-size:34px;font-weight:900;line-height:1;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.nm-cr-conq-num i{font-style:normal;font-size:15px;font-weight:800;color:rgba(255,255,255,.65)}
+.nm-cr-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin:9px 0 7px}
+.nm-cr-bar>span{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-bright));
+  box-shadow:0 0 10px rgba(245,217,139,.6);transition:width .35s ease}
+.nm-cr-conq-sub{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);word-break:keep-all}
+.nm-cr-conq-line{font-size:12.5px;font-weight:800;color:#fff;margin-top:7px;word-break:keep-all;line-height:1.45}
+.nm-cr-conq-line.goal{color:var(--gold-bright)}
+.nm-cr-conq-line.start{color:var(--gold-bright)}
+.nm-cr-conq-all{margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);
+  font-size:11px;font-weight:800;color:rgba(255,255,255,.62)}
+
+/* 주차 보기 + 합계 — 부가 정보(주인공 아님) */
+.nm-cr-cad{max-width:520px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 13px}
+.nm-cr-cad-h{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:7px}
+.nm-cr-seg{display:flex;gap:0;background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:9px}
+.nm-cr-seg button{flex:1;border:none;background:none;border-radius:999px;padding:8px 6px;font-size:13px;font-weight:800;
+  color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
+.nm-cr-seg button.on{background:var(--blue);color:#fff;box-shadow:0 6px 14px -8px rgba(22,65,124,.7)}
+.nm-cr-seg button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-cr-cadnote{font-size:12px;line-height:1.6;color:var(--sub);font-weight:600;margin-bottom:10px;word-break:keep-all}
+/* 연산 트랙만 센 주차라는 단서 — 카드 맨 위에 한 줄 */
+.nm-cr-caveat{font-size:11.5px;line-height:1.55;font-weight:700;color:#7a5a12;background:#fdf6e8;
+  border:1px solid var(--gold);border-radius:11px;padding:7px 10px;margin:0 0 9px;word-break:keep-all}
+/* 목표 기준(속도) 고르기 — 주차 카드 안의 부가 정보 */
+.nm-cr-pace{margin-bottom:10px}
+.nm-cr-pacegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.nm-cr-pacebtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-width:0;padding:7px 4px;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+  cursor:pointer;font-family:'Pretendard',sans-serif;
+  /* transition을 전체(all)로 두면 :focus-visible 테두리까지 서서히 그려져 초점이
+     늦게 보인다 — 색·그림자만 부드럽게 하고 outline은 즉시 나오게 둔다. */
+  transition:background .14s,border-color .14s,box-shadow .14s}
+.nm-cr-pacebtn b{font-size:11.5px;font-weight:800;color:var(--blue-deep);line-height:1.3;
+  text-align:center;word-break:keep-all}
+.nm-cr-pacebtn small{font-size:10px;font-weight:700;color:var(--sub);line-height:1.2;white-space:nowrap}
+.nm-cr-pacebtn:hover{background:var(--mist);border-color:var(--blue)}
+.nm-cr-pacebtn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-cr-pacebtn.on{background:var(--blue);border-color:var(--blue);box-shadow:0 6px 14px -8px rgba(22,65,124,.7)}
+.nm-cr-pacebtn.on b{color:#fff}
+.nm-cr-pacebtn.on small{color:rgba(255,255,255,.82)}
+.nm-cr-pacenote{font-size:11px;line-height:1.55;color:var(--sub);font-weight:600;margin:7px 0 0;word-break:keep-all}
+@media(prefers-reduced-motion:reduce){
+  .nm-cr-pacebtn,.nm-cr-seg button{transition:none}
+}
+.nm-cr-totals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nm-cr-total{background:var(--mist);border-radius:13px;padding:9px 11px;display:flex;flex-direction:column;gap:3px}
+.nm-cr-total b{font-size:11px;font-weight:800;color:var(--blue-deep)}
+.nm-cr-total b small{font-size:9.5px;font-weight:700;color:var(--sub);margin-left:3px}
+.nm-cr-total span{font-size:13px;font-weight:900;color:var(--sub)}
+.nm-cr-built{margin-top:9px;font-size:11.5px;font-weight:800;color:#2a7a52;background:#eefaf3;
+  border:1px solid #cfe9dc;border-radius:11px;padding:7px 10px;word-break:keep-all}
+.nm-cr-cadfoot{font-size:10.5px;line-height:1.55;color:#9aa2b1;font-weight:600;margin-top:9px}
+.nm-cr-diagchip{max-width:520px;margin:0 auto 12px;background:#fff8e8;border:1px solid var(--gold);
+  border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;color:#6a4f10;text-align:center}
+
+/* 길 */
+.nm-cr-path{max-width:520px;margin:0 auto;position:relative;padding:2px 0 6px}
+/* 앞길 = 옅은 점선 레일 */
+.nm-cr-path::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;
+  background:repeating-linear-gradient(180deg,#e6ddcd 0 9px,transparent 9px 17px);z-index:0}
+/* 지나온 길 = 그 위를 덮는 금색 레일(높이는 JS가 현재 노드에서 잰다) */
+.nm-cr-rail{position:absolute;left:50%;top:0;width:5px;margin-left:-2.5px;height:0;z-index:0;
+  border-radius:99px;background:linear-gradient(180deg,var(--gold-deep),var(--gold));
+  box-shadow:0 0 12px rgba(201,160,99,.55);transition:height .35s ease}
+.nm-cr-station{position:relative;z-index:1;display:flex;flex-direction:column;gap:1px;
+  background:#fff;border-left:5px solid var(--acc);border-radius:0 14px 14px 0;
+  padding:9px 13px;margin:14px 0 8px;box-shadow:0 3px 10px -6px rgba(0,0,0,.3)}
+.nm-cr-station.won{background:linear-gradient(100deg,#fffaf0,#fff)}
+.nm-cr-station.ahead{opacity:.72}
+.nm-cr-strow{display:flex;align-items:center;gap:8px}
+.nm-cr-stwin{margin-left:auto;font-size:10.5px;font-weight:900;color:#7a5b10;
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold));border:1px solid var(--gold-deep);
+  border-radius:999px;padding:2px 9px;white-space:nowrap}
+.nm-cr-stclimb{margin-left:auto;font-size:10.5px;font-weight:900;color:var(--sub);
+  background:var(--mist);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.nm-cr-stemb{display:inline-flex;gap:4px;margin-left:8px;vertical-align:middle}
+.nm-cr-emb{font-size:13px;line-height:1;filter:grayscale(1);opacity:.34}
+.nm-cr-emb.on{filter:none;opacity:1;text-shadow:0 1px 4px rgba(201,160,99,.7)}
+.nm-cr-stname{font-size:14.5px;font-weight:900;color:var(--blue-deep)}
+.nm-cr-stband{font-size:11.5px;font-weight:700;color:var(--sub)}
+.nm-cr-again{font-style:normal;font-size:10.5px;font-weight:800;color:var(--sub);background:var(--mist);border-radius:999px;padding:1px 8px;margin-left:4px;vertical-align:middle}
+.nm-cr-strange{font-size:10.5px;font-weight:800;color:var(--acc);margin-top:2px}
+.nm-cr-row{position:relative;z-index:1;display:flex;margin:7px 0}
+.nm-cr-row.left{justify-content:flex-start}
+.nm-cr-row.right{justify-content:flex-end}
+.nm-cr-node{display:flex;align-items:center;gap:10px;width:min(100%,332px);text-align:left;
+  border:2px solid var(--line);border-radius:16px;background:#fff;padding:10px 12px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;transition:transform .12s,box-shadow .15s,border-color .15s;
+  box-shadow:0 4px 12px -8px rgba(0,0,0,.4)}
+.nm-cr-node:hover{transform:translateY(-1px);box-shadow:0 10px 20px -12px rgba(0,0,0,.45)}
+.nm-cr-node:active{transform:scale(.98)}
+.nm-cr-num{position:relative;flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:900;color:#fff;background:var(--acc)}
+.nm-cr-nbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nm-cr-nbody b{font-size:13.5px;font-weight:800;color:var(--blue-deep);line-height:1.3;word-break:keep-all}
+.nm-cr-meta{font-size:11px;font-weight:700;color:var(--sub)}
+.nm-cr-soon{font-size:10px;font-weight:800;color:#9a7a20;background:#fff3d0;border-radius:8px;padding:1px 7px;align-self:flex-start}
+.nm-cr-state{flex:none;font-size:10.5px;font-weight:800;color:var(--sub);text-align:right;max-width:66px;line-height:1.3}
+/* 정복한 땅 — 금색으로 채운다 */
+.nm-cr-node.done{border-color:var(--gold-deep);
+  background:linear-gradient(170deg,#fdf0d4,#f6e2ba);
+  box-shadow:0 5px 14px -9px rgba(122,91,16,.6)}
+.nm-cr-node.done .nm-cr-nbody b{color:#5c440c}
+.nm-cr-node.done .nm-cr-meta{color:#8a6b28}
+.nm-cr-node.done .nm-cr-num{background:linear-gradient(180deg,var(--gold-deep),#a9822f)}
+.nm-cr-node.done .nm-cr-state{color:#7a5b10}
+.nm-cr-flag{font-style:normal;position:absolute;top:-7px;right:-7px;font-size:12px;line-height:1}
+/* 지금 여기 — 가장 눈에 띄게 */
+.nm-cr-node.now{border-color:var(--gold-deep);background:linear-gradient(180deg,#fffdf7,#fff2d6);
+  box-shadow:0 0 0 4px rgba(234,201,150,.5),0 14px 26px -14px rgba(0,0,0,.45);
+  transform:scale(1.02)}
+.nm-cr-node.now:hover{transform:scale(1.02) translateY(-1px)}
+.nm-cr-node.now .nm-cr-nbody b{font-size:14.5px}
+.nm-cr-node.now .nm-cr-state{color:#8a6410}
+.nm-cr-node.now .nm-cr-num{background:var(--blue-deep)}
+/* 다음 목표 — 또렷하되 현재보다는 조용하게 */
+.nm-cr-node.goal{border-color:var(--gold);border-style:dashed}
+.nm-cr-node.goal .nm-cr-state{color:#8a6410}
+.nm-cr-node.doing{border-color:var(--gold)}
+/* 앞으로 갈 길 — 옅게 */
+.nm-cr-node.ahead{opacity:.62;box-shadow:none;background:#fdfcfa}
+.nm-cr-node.ahead:hover{opacity:1}
+.nm-cr-node.ahead .nm-cr-num{background:#c9c2b4}
+/* 경시의 탑 · 마무리 관문 */
+.nm-cr-node.tower .nm-cr-num{background:var(--purple)}
+.nm-cr-node.tower.ahead .nm-cr-num{background:#a98cc0}
+.nm-cr-node.boss{border-width:2.5px;border-color:var(--gold-deep)}
+.nm-cr-node.boss .nm-cr-state{color:#7a5b10}
+.nm-cr-node.trial-locked{opacity:.72}
+.nm-cr-here{position:absolute;top:-8px;display:flex;flex-direction:column;align-items:center;gap:1px;z-index:3;
+  filter:drop-shadow(0 5px 9px rgba(0,0,0,.28))}
+.nm-cr-row.left .nm-cr-here{right:2px}
+.nm-cr-row.right .nm-cr-here{left:2px}
+.nm-cr-here span{font-size:10px;font-weight:900;color:#4a370f;background:var(--gold);border-radius:999px;padding:2px 8px;white-space:nowrap}
+
+/* 수학 실험실 밴드 */
+.nm-cr-labs{max-width:520px;margin:22px auto 0;background:linear-gradient(180deg,#eef2ff,#e2e9ff);
+  border:1.5px solid #b9c6f0;border-radius:20px;padding:14px 14px 15px}
+.nm-cr-labs-h{font-size:15px;font-weight:900;color:#2d3d8f}
+.nm-cr-labs-sub{font-size:11.5px;font-weight:600;color:#4a5aa0;line-height:1.5;margin:3px 0 10px}
+.nm-cr-lab-grid{display:flex;flex-direction:column;gap:8px}
+.nm-cr-lab{display:flex;align-items:flex-start;gap:10px;text-align:left;background:#fff;border:1px solid #c8d2f2;
+  border-radius:14px;padding:10px 12px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
+.nm-cr-lab:hover{background:#f6f8ff;transform:translateX(2px)}
+.nm-cr-lab:active{transform:scale(.98)}
+.nm-cr-lab-ic{font-size:21px;flex:none;line-height:1.2}
+.nm-cr-lab-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nm-cr-lab-txt b{font-size:13px;font-weight:800;color:#2d3d8f}
+.nm-cr-lab-txt small{font-size:11px;font-weight:600;color:#5a68a8;line-height:1.45;word-break:keep-all}
+.nm-cr-labs-sub,.nm-cr-sub,.nm-cr-cadfoot{word-break:keep-all}
+
+/* 진단하기 (nm-dg-*) */
+.nm-dg-step{font-size:11.5px;font-weight:800;color:var(--sub);text-align:center;margin-bottom:4px}
+.nm-dg-ask{font-size:12.5px;font-weight:700;color:var(--sub);line-height:1.6;margin:0 0 12px;word-break:keep-all}
+.nm-dg-ages{display:flex;flex-direction:column;gap:8px;text-align:left}
+.nm-dg-age{display:flex;align-items:center;gap:11px;width:100%;padding:11px 13px;
+  border:1.5px solid var(--line);background:#fff;border-radius:14px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;text-align:left}
+.nm-dg-age:hover{background:var(--mist);border-color:var(--blue)}
+.nm-dg-age:active{transform:scale(.98)}
+.nm-dg-age:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-dg-age-ico{font-size:22px;line-height:1;flex:none}
+.nm-dg-age-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nm-dg-age-txt b{font-size:14.5px;font-weight:900;color:var(--blue-deep);word-break:keep-all}
+.nm-dg-age-txt small{font-size:11.5px;font-weight:700;color:var(--sub);word-break:keep-all}
+.nm-dg-agenote{font-size:12px;font-weight:800;color:var(--sub);margin:2px 0 6px}
+.nm-dg-again:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.nm-dg-course{font-size:19px;font-weight:900;color:var(--blue-deep);margin:4px 0 2px}
+.nm-dg-tier{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px}
+.nm-dg-free{font-size:11.5px;font-weight:700;color:var(--sub);line-height:1.55;margin:6px 0 10px;word-break:keep-all}
+.nm-dg-wrap{overflow-y:auto}
+.nm-dg-wrap>.nm-card{max-width:460px;margin:0 auto}
+.nm-dg-again{display:block;width:100%;margin-top:9px;border:1.5px solid var(--line);background:#fff;
+  color:var(--sub);border-radius:14px;padding:11px 14px;font-size:14px;font-weight:800;
+  cursor:pointer;font-family:'Pretendard',sans-serif}
+.nm-dg-again:hover{background:var(--mist)}
+.nm-dg-again:active{transform:scale(.97)}
+
+@media(max-width:480px){
+  .nm-cr-node{width:min(100%,288px)}
+  .nm-cr-totals{grid-template-columns:1fr}
+  .nm-cr-pacegrid{grid-template-columns:repeat(3,1fr)}
+  .nm-cr-here{transform:scale(.84);transform-origin:top center}
+  .nm-title-blk b{font-size:13.5px}
+  .nm-title-blk small{font-size:10px}
+}

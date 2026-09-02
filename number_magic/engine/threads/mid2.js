@@ -23,6 +23,20 @@ const { R, pick } = NM_RNG;
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }   /* 0이 아닌 부호 있는 정수 */
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }         /* "+5" / "- 5" 접속 조각 */
+
+/* 단항식 표기 — 2026-08-28 인쇄 점검에서 `1x^{3}`·`x^{1}`·`x^{0}`이 그대로
+   찍히고 음수 계수가 `\times -9x^{3}`처럼 괄호 없이 나오던 것을 정리한다.
+   계수 1은 생략, 지수 1은 x, 지수 0은 문자 없음, 음수는 괄호. */
+function monoTex(c, m, needParen){
+  let body;
+  if(m === 0)      body = String(Math.abs(c));
+  else {
+    const xs = (m === 1) ? 'x' : `x^{${m}}`;
+    body = (Math.abs(c) === 1) ? xs : `${Math.abs(c)}${xs}`;
+  }
+  if(c < 0) return needParen ? `(-${body})` : `-${body}`;
+  return body;
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -158,8 +172,12 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         en: `Multiply monomials: multiply the coefficients, combine the letter parts with the exponent law`,
         zh: `单项式相乘：系数乘系数，字母部分用指数法则合并`
       },
-      tex: `${c1}x^{${m}} \\times ${c2}x^{${n}} = \\square x^{${exp}}`,
-      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
+      tex: `${monoTex(c1, m, false)} \\times ${monoTex(c2, n, true)} = \\square x^{\\square}`,
+      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      /* 개념 애니메이션용 장면 필드 (개념애니-설계.md §4-1) — 계수·지수가
+         monoTex()로 만든 문자열 안에만 있어서 "두 표기를 나란히"를 그릴 수
+         없었다. tex 파싱 금지라 지역변수를 그대로 내보낸다. 기존 반환값 불변. */
+      scene: { archetype: 'notation', op: 'mul', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
     };
   }
 
@@ -175,8 +193,9 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
         en: `Divide monomials: divide the coefficients, subtract exponents for the letter parts`,
         zh: `单项式相除：系数除以系数，字母部分用指数法则相减`
       },
-      tex: `${c1}x^{${m}} \\div ${c2}x^{${n}} = \\square x^{${exp}}`,
-      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
+      tex: `${monoTex(c1, m, false)} \\div ${monoTex(c2, n, true)} = \\square x^{\\square}`,
+      answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      scene: { archetype: 'notation', op: 'div', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
     };
   }
 
@@ -196,19 +215,23 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     } else {
       const divs = divisorsOf(coeff);
       const c = pick(rng, divs);
-      const m = R(rng, 0, exp - 1);
+      let m = R(rng, 0, exp - 1);
+      /* c===1 && m===0 이면 "÷ 1"인 항 — 계수도 지수도 안 바뀌는 무의미한
+         단계라 지수법칙 나눗셈을 전혀 안 가르친다. exp>=2(canDiv 보장)라
+         exp-1>=1이라서 m을 1 이상으로 다시 뽑아도 항상 값이 있다. */
+      if (c === 1 && m === 0) m = R(rng, 1, exp - 1);
       coeff = coeff / c; exp = exp - m;
       terms.push({ c, m, op });
     }
   }
-  const exprTex = terms.map((t, i) => i === 0 ? `${t.c}x^{${t.m}}` : ` ${t.op} ${t.c}x^{${t.m}}`).join('');
+  const exprTex = terms.map((t, i) => i === 0 ? monoTex(t.c, t.m, false) : ` ${t.op} ${monoTex(t.c, t.m, true)}`).join('');
   return {
     prompt: {
       ko: `세 단항식의 곱셈·나눗셈 혼합이에요. 앞에서부터 차례로 계산해요`,
       en: `Mixed × and ÷ of three monomials — work left to right`,
       zh: `三个单项式的乘除混合——从左到右依次计算`
     },
-    tex: `${exprTex} = \\square x^{${exp}}`,
+    tex: `${exprTex} = \\square x^{\\square}`,
     answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
   };
 };

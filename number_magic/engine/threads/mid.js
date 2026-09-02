@@ -23,7 +23,16 @@ function signOf(rng){ return pick(rng, [1, -1]); }
 function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ [a, b] = [b, a % b]; } return a || 1; }
 function lcm(a, b){ return Math.abs(a * b) / gcd(a, b); }
 /* 분수를 분모>0으로 정규화(부호는 분자로 몰아줌) — CH5 등 기존 관례(약분은 안 함) 유지 */
-function normFrac(n, d){ if(d < 0){ n = -n; d = -d; } return [n, d]; }
+/* 분수 답 정규화 — 부호를 분자로 몰고 기약분수로 줄인다.
+   약분 정책(2026-08-29 원장): 4학년까지는 약분하지 않은 값, 5학년부터는 기약분수가
+   정답이다. 이 파일의 MD3·MD7은 중1 과정이라 기약분수가 정답이어야 하는데
+   예전엔 부호만 정리하고 약분을 안 해 4/4·(-12)/30 같은 답이 정답키로 나갔다.
+   normFrac을 쓰는 곳은 MD3·MD7뿐이라 여기서 한 번에 처리한다. */
+function normFrac(n, d){
+  if(d < 0){ n = -n; d = -d; }
+  const g = gcd(n, d);
+  return [n / g, d / g];
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -266,16 +275,16 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const product = a * b;
     return {
       prompt: {
-        ko: `${a} × ${b}: 곱의 부호를 먼저 정하고 절댓값끼리 곱해요`,
+        ko: `${a} × ${wrapSigned(b)}: 곱의 부호를 먼저 정하고 절댓값끼리 곱해요`,
         en: `${a} × ${b}: decide the sign of the product first, then multiply the absolute values`,
         zh: `${a} × ${b}：先确定积的符号，再把绝对值相乘`
       },
-      tex: `${a} \\times ${b} = \\square`,
+      tex: `${a} \\times ${wrapSigned(b)} = \\square`,
       answer: product, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\times |${b}| = \\square`, blank: absProduct },
-        { tex: `${a} \\times ${b} = \\square`, blank: product }
+        { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: product }
       ]
     };
   }
@@ -287,16 +296,16 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const negCount = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
     return {
       prompt: {
-        ko: `${a} ÷ ${b}: 몫의 부호를 먼저 정하고 절댓값끼리 나눠요`,
+        ko: `${a} ÷ ${wrapSigned(b)}: 몫의 부호를 먼저 정하고 절댓값끼리 나눠요`,
         en: `${a} ÷ ${b}: decide the sign of the quotient first, then divide the absolute values`,
         zh: `${a} ÷ ${b}：先确定商的符号，再把绝对值相除`
       },
-      tex: `${a} \\div ${b} = \\square`,
+      tex: `${a} \\div ${wrapSigned(b)} = \\square`,
       answer: q, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\div |${b}| = \\square`, blank: Math.abs(q) },
-        { tex: `${a} \\div ${b} = \\square`, blank: q }
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q }
       ]
     };
   }
@@ -308,7 +317,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const negCount = factors.filter(f => f < 0).length;
     const absProduct = factors.reduce((p, f) => p * Math.abs(f), 1);
     const product = factors.reduce((p, f) => p * f, 1);
-    const exprTex = factors.join(' \\times ');
+    const exprTex = factors.map((f,i) => i ? wrapSigned(f) : String(f)).join(' \\times ');
     const absTex = factors.map(f => `|${f}|`).join(' \\times ');
     return {
       prompt: {
@@ -340,11 +349,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
         en: `${a} ÷ ${b} × ${c}: mixed × and ÷ — work left to right`,
         zh: `${a} ÷ ${b} × ${c}：乘除混合运算从左到右依次计算`
       },
-      tex: `${a} \\div ${b} \\times ${c} = \\square`,
+      tex: `${a} \\div ${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
-        { tex: `${a} \\div ${b} = \\square`, blank: q1 },
-        { tex: `${q1} \\times ${c} = \\square`, blank: answer }
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q1 },
+        { tex: `${q1} \\times ${wrapSigned(c)} = \\square`, blank: answer }
       ]
     };
   }
@@ -360,11 +369,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
       en: `${a} × ${b} ÷ ${c}: mixed × and ÷ — work left to right`,
       zh: `${a} × ${b} ÷ ${c}：乘除混合运算从左到右依次计算`
     },
-    tex: `${a} \\times ${b} \\div ${c} = \\square`,
+    tex: `${a} \\times ${wrapSigned(b)} \\div ${wrapSigned(c)} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
-      { tex: `${a} \\times ${b} = \\square`, blank: interim },
-      { tex: `${interim} \\div ${c} = \\square`, blank: answer }
+      { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: interim },
+      { tex: `${interim} \\div ${wrapSigned(c)} = \\square`, blank: answer }
     ]
   };
 };
@@ -439,11 +448,11 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
         en: `${a} + ${b} × ${c}: no brackets — multiply first`,
         zh: `${a} + ${b} × ${c}：没有括号先算乘法`
       },
-      tex: `${a} + ${b} \\times ${c} = \\square`,
+      tex: `${a} + ${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
-        { tex: `${b} \\times ${c} = \\square \\;(\\text{먼저!})`, blank: bc },
-        { tex: `${a} + ${bc} = \\square`, blank: answer }
+        { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square \\;(\\text{먼저!})`, blank: bc },
+        { tex: `${a} + ${wrapSigned(bc)} = \\square`, blank: answer }
       ]
     };
   }
@@ -457,18 +466,18 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
     const ab = a + b;
     const abc = ab * c;
     const answer = abc - d;
-    const wa = wrapSigned(a), wb = wrapSigned(b), wd = wrapSigned(d);
+    const wa = wrapSigned(a), wb = wrapSigned(b), wc = wrapSigned(c), wd = wrapSigned(d);
     return {
       prompt: {
-        ko: `(${wa}+${wb}) \\times ${c} - ${wd}: 괄호 안을 가장 먼저, 그다음 곱셈, 마지막 뺄셈`,
-        en: `(${wa}+${wb}) × ${c} - ${wd}: brackets first, then multiply, then subtract`,
-        zh: `(${wa}+${wb}) × ${c} - ${wd}：先算括号，再乘法，最后减法`
+        ko: `(${wa}+${wb}) \\times ${wc} - ${wd}: 괄호 안을 가장 먼저, 그다음 곱셈, 마지막 뺄셈`,
+        en: `(${wa}+${wb}) × ${wc} - ${wd}: brackets first, then multiply, then subtract`,
+        zh: `(${wa}+${wb}) × ${wc} - ${wd}：先算括号，再乘法，最后减法`
       },
-      tex: `(${wa} + ${wb}) \\times ${c} - ${wd} = \\square`,
+      tex: `(${wa} + ${wb}) \\times ${wc} - ${wd} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `${wa} + ${wb} = \\square \\;(\\text{괄호 먼저})`, blank: ab },
-        { tex: `${ab} \\times ${c} = \\square`, blank: abc },
+        { tex: `${ab} \\times ${wc} = \\square`, blank: abc },
         { tex: `${abc} - ${wd} = \\square`, blank: answer }
       ]
     };
@@ -490,12 +499,12 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
       en: `${a} + ${b} × ${c} ÷ ${d}: do × and ÷ first (left to right), then add`,
       zh: `${a} + ${b} × ${c} ÷ ${d}：先从左到右做乘除法，再做加法`
     },
-    tex: `${a} + ${b} \\times ${c} \\div ${d} = \\square`,
+    tex: `${a} + ${wrapSigned(b)} \\times ${wrapSigned(c)} \\div ${wrapSigned(d)} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
-      { tex: `${b} \\times ${c} = \\square`, blank: bc },
-      { tex: `${bc} \\div ${d} = \\square`, blank: bcd },
-      { tex: `${a} + ${bcd} = \\square`, blank: answer }
+      { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`, blank: bc },
+      { tex: `${wrapSigned(bc)} \\div ${wrapSigned(d)} = \\square`, blank: bcd },
+      { tex: `${a} + ${wrapSigned(bcd)} = \\square`, blank: answer }
     ]
   };
 };
@@ -620,12 +629,14 @@ NM_TGEN['md9_repeatToFrac'] = function (params, rng) {
   const Rpad = String(R_).padStart(m, '0');
 
   const PRconcat = P * Math.pow(10, m) + R_;
-  const numerator = PRconcat - P;
-  const denominator = Math.pow(10, k) * (Math.pow(10, m) - 1);
+  /* 기약분수로 줄여서 답한다 — 중2 과정이라 5학년 이상 약분 정책이 적용된다
+     (2026-08-29 원장 지시). 예전엔 48/90처럼 계산 직후 값이 정답키였다. */
+  const [numerator, denominator] = normFrac(PRconcat - P,
+    Math.pow(10, k) * (Math.pow(10, m) - 1));
 
   return {
     prompt: {
-      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)이에요`,
+      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)이에요 — 마지막엔 기약분수로 줄여요`,
       en: `Turn the repeating decimal into a fraction: subtract the non-repeating prefix from the concatenated number, and the denominator is 10^${k}×(10^${m}-1)`,
       zh: `把循环小数化成分数：用"前缀+循环节"连成的数减去前缀，分母是10^{${k}}×(10^{${m}}-1)`
     },

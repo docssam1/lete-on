@@ -40,7 +40,7 @@ window.NM_UNITS['H-09'] = {
         desc:{ko:'12345²을 (12000+345)²로 풀 수도, (1234×10+5)²로 풀 수도 있어요. 후자는 뒷부분이 겨우 한 자리(5)지만 <b>앞부분(1234)이 너무 커져서</b> 1234²를 또 풀어야 해요 — 오히려 더 어려워져요! <b>뒷부분을 2~3자리 정도</b>로 잡아야 양쪽 다 다루기 좋은 크기가 돼요. 다섯 자리는 보통 (3자리+2자리)로, 여섯 자리는 (3자리+3자리)로 쪼개는 게 편해요.',
               en:'You could split 12345² as (12000+345)² or as (1234×10+5)². The second leaves a tiny 1-digit back (5), but the <b>front (1234) becomes huge</b> — you\'d need to square 1234 too, which is actually harder! Keeping the <b>back around 2–3 digits</b> keeps both sides manageable. A 5-digit number usually splits as (3 digits+2 digits); a 6-digit one as (3+3).',
               zh:'12345²可以拆成(12000+345)²，也可以拆成(1234×10+5)²。后者的后面部分只有一位（5），但<b>前面(1234)会变得很大</b>——还得再算1234²，反而更难！把<b>后面控制在2~3位</b>左右，两边都好处理。五位数通常拆成（3位+2位），六位数拆成（3位+3位）比较方便。'},
-        mathSteps:['12345 = 12000+345 (권장)','12345 = 12340+5 (비권장: 1234가 너무 큼)'],
+        mathSteps:[{ko:'12345 = 12000+345 (권장)',en:'12345 = 12000+345 \\text{ (recommended)}',zh:'12345 = 12000+345（推荐）'},{ko:'12345 = 12340+5 (비권장: 1234가 너무 큼)',en:'12345 = 12340+5 \\text{ (not recommended: 1234 is too big)}',zh:'12345 = 12340+5（不推荐：1234太大）'}],
         result:{ko:'분리 지점을 잘 골라야 두 조각 다 계산하기 쉬워요.',en:'Pick the split point so both pieces stay easy to compute.',zh:'选好拆分点，两块才都好算。'},
         book:{ko:'경시의 탑의 마지막 문: 이 유닛은 자리의 마법(자릿값→자리 이동 곱셈→분리 제곱법)의 종착점이고, 다음은 중2~3의 다항식 곱셈·곱셈공식으로 이어져요.',
               en:'The final gate of the Tower of Challenges: this unit completes the place-value lineage, leading next to polynomial multiplication and the algebraic identities of middle school.',

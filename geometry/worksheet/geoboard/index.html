@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GFIELD 점판 공작소 학습지</title>
+  <link rel="stylesheet" href="./styles.css?v=geoboard-sheet-1" />
+</head>
+<body>
+  <header class="maker-bar">
+    <a href="../../games/geoboard/" aria-label="점판 공작소 게임으로 돌아가기">&larr;</a>
+    <div class="maker-title">
+      <strong>GFIELD 점판 공작소 학습지</strong>
+      <small>GEOBOARD STUDIO WORKSHEET</small>
+    </div>
+    <label>레벨
+      <select id="levelSelect" aria-label="학습지 레벨 선택"></select>
+    </label>
+    <label class="answer-toggle">
+      <input id="answerToggle" type="checkbox" />
+      <span>정답 보기</span>
+    </label>
+    <button id="refreshButton" type="button">다른 6문항</button>
+    <button id="printButton" type="button">인쇄</button>
+  </header>
+
+  <main id="sheet" class="sheet">
+    <header class="sheet-head">
+      <div>
+        <small>GFIELD DOT BOARD LAB</small>
+        <h1 id="sheetTitle"></h1>
+        <p id="sheetDescription"></p>
+      </div>
+      <dl>
+        <div><dt>이름</dt><dd></dd></div>
+        <div><dt>날짜</dt><dd></dd></div>
+      </dl>
+    </header>
+    <section id="problemGrid" class="problem-grid" aria-live="polite"></section>
+    <footer>점을 하나씩 세고, 고무줄이 지나는 꼭짓점과 선의 관계를 살펴보세요.</footer>
+  </main>
+
+  <script type="module" src="./app.js?v=geoboard-sheet-1"></script>
+</body>
+</html>

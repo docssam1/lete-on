@@ -1,6 +1,6 @@
 import * as THREE from "../../world-explorer/vendor/three.module.js";
 import { CameraController } from "../../world-explorer/camera-controller.js";
-import { createGeometryVillage } from "./world-3d-buildings.js?v=geometry-village-20260827a";
+import { createGeometryVillage } from "./world-3d-buildings.js?v=geometry-village-20260829-path";
 
 const host = document.querySelector("#world3d");
 const loading = document.querySelector("#world3dLoading");
@@ -25,22 +25,23 @@ const zoneCopy = {
     mirrorManor: ["거울 저택", "거울과 대칭의 비밀을 관찰해요"],
     geoboardYard: ["점판 공작소", "점과 선으로 도형을 만들어요"],
     crystalPlaza: ["지오메트리 랩", "문제은행과 탐구 학습을 만나요"],
-    shapeGarden: ["도형 조각 정원", "조각을 맞추고 조건에 따라 나누어요"]
+    shapeGarden: ["도형 조각 정원", "조각을 맞추고 조건에 따라 나누어요"],
+    pathWalk: ["길 잇기 산책로", "길 타일을 돌리고 가장 가까운 길을 찾아요"]
   },
   zh: {
     cubeCastle: ["积木城堡", "搭建、计数并探索空间"], origamiStudio: ["折纸工坊", "折叠展开，寻找对称"],
     mirrorManor: ["镜子庄园", "观察镜像与对称"], geoboardYard: ["钉板工坊", "用点和线创造图形"],
-    crystalPlaza: ["几何实验室", "探索题库与几何活动"], shapeGarden: ["图形拼片花园", "拼合图形并按条件等分"]
+    crystalPlaza: ["几何实验室", "探索题库与几何活动"], shapeGarden: ["图形拼片花园", "拼合图形并按条件等分"], pathWalk: ["道路散步园", "旋转道路拼片并寻找最短路线"]
   },
   ja: {
     cubeCastle: ["つみき城", "積んで数えて空間を探検"], origamiStudio: ["おりがみ工房", "折って開いて対称を発見"],
     mirrorManor: ["鏡の館", "鏡と対称のひみつを観察"], geoboardYard: ["ジオボード工房", "点と線で図形を作ろう"],
-    crystalPlaza: ["ジオメトリーラボ", "問題と探究学習に挑戦"], shapeGarden: ["図形ピースの庭", "ピースを合わせ、条件にそって分けよう"]
+    crystalPlaza: ["ジオメトリーラボ", "問題と探究学習に挑戦"], shapeGarden: ["図形ピースの庭", "ピースを合わせ、条件にそって分けよう"], pathWalk: ["道つなぎ散歩道", "道タイルを回して最短の道を探そう"]
   },
   en: {
     cubeCastle: ["Cube Castle", "Build, count, and explore space"], origamiStudio: ["Origami Studio", "Fold, unfold, and find symmetry"],
     mirrorManor: ["Mirror Manor", "Explore reflections and symmetry"], geoboardYard: ["Geoboard Yard", "Create shapes with points and lines"],
-    crystalPlaza: ["Geometry Lab", "Discover worksheets and challenges"], shapeGarden: ["Shape Garden", "Match pieces and partition shapes by rules"]
+    crystalPlaza: ["Geometry Lab", "Discover worksheets and challenges"], shapeGarden: ["Shape Garden", "Match pieces and partition shapes by rules"], pathWalk: ["Path Walk", "Turn route tiles and find shortest walks"]
   }
 };
 const districtCopy = {
@@ -78,6 +79,7 @@ const qaSpawns = {
   geoboardYard: [36.89, 20.59],
   crystalPlaza: [-22.93, 20.47],
   shapeGarden: [10.56, 28.44],
+  pathWalk: [-8, 28],
   spatialDistrict: [-51.9, 18.21],
   coordinateDistrict: [52.47, -34.06]
 };

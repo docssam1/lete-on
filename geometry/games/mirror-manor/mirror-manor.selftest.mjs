@@ -3,6 +3,7 @@ import {
   parallelCoord, isGivenSide, classifyCell, classifyPlacement, doubleMirrorCopies
 } from "./levels.js";
 import { LANGUAGES, messages, text } from "./i18n.js";
+import { auditMirrorLevels } from "./mirror-manor-content-audit.mjs";
 
 function assert(condition, message) {
   if (!condition) throw new Error(`Mirror Manor self-test: ${message}`);
@@ -12,6 +13,7 @@ const sameCell = (a, b) => a[0] === b[0] && a[1] === b[1];
 const cellKey = (cell) => cell.join(",");
 
 validateLevels();
+auditMirrorLevels();
 assert(levels.length === 5, "five levels must be declared");
 assert(readyLevels.length === 5, "levels 1 through 5 should be playable in this release");
 
@@ -44,13 +46,13 @@ for (const problem of levels[0].problems) {
   }
 }
 
-for (const problem of levels[1].problems) {
+for (const problem of levels[2].problems) {
   for (const target of problem.targets) {
     assert(classifyPlacement(target.cells, problem, problem.targets) === "correct", `${problem.id} rejects a target object`);
   }
 }
 
-for (const problem of levels[2].problems) {
+for (const problem of levels[1].problems) {
   assert(problem.grid.lattice === "square" || problem.grid.lattice === "triangle", `${problem.id} has no dot-grid kind`);
   assert(sameCell(reflectCell(problem.sourceCell, problem.axis), problem.targetCell), `${problem.id} has the wrong reflected target`);
   assert(problem.choices.length === 3 && new Set(problem.choices.map(cellKey)).size === 3, `${problem.id} needs three distinct choices`);
@@ -112,4 +114,16 @@ for (const lang of LANGUAGES) {
   assert(messages[lang].successGood === "GOOD JOB!", `${lang} success text drifted`);
 }
 
-console.log(`Mirror Manor self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales.`);
+const brokenPaint = structuredClone(levels);
+brokenPaint[0].problems[0].targetCells[0][0] += 1;
+let paintRejected = false;
+try { auditMirrorLevels(brokenPaint); } catch { paintRejected = true; }
+assert(paintRejected, "the independent audit must reject a corrupted paint answer");
+
+const brokenChoice = structuredClone(levels);
+brokenChoice[1].problems[0].choices = brokenChoice[1].problems[0].choices.filter((_, index) => index !== 0);
+let choiceRejected = false;
+try { auditMirrorLevels(brokenChoice); } catch { choiceRejected = true; }
+assert(choiceRejected, "the independent audit must reject a missing distance choice");
+
+console.log(`Mirror Manor self-test passed: ${ids.length} problems, ${LANGUAGES.length} locales, independent negative controls.`);

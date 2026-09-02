@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="G·MAP animated English math lessons with synchronized diagrams, full playback, and step-by-step study.">
+  <title>Animated Math Lessons · G·MAP</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./animated-math.css">
+</head>
+<body class="academy-page page-animated-math">
+  <a class="skip-link" href="#lesson-stage">Skip to the lesson</a>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="G·MAP home"><span class="brand-mark" aria-hidden="true">G</span><span>G·MAP <strong>MATH</strong></span></a>
+    <nav aria-label="Main navigation">
+      <a href="./concept-learning.html">Concept library</a>
+      <a href="./diagnostic.html">Diagnosis</a>
+      <a href="./catalog.html">Curriculum</a>
+    </nav>
+    <span class="status-chip">STUDENT · ENGLISH LESSON</span>
+  </header>
+
+  <main>
+    <section class="lesson-hero shell" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">G·MAP VISUAL EXPLANATION</p>
+        <h1 id="page-title">See the idea.<br><span>Hear the reasoning.</span></h1>
+        <p class="hero-copy">The problem stays visible while each mathematical object is drawn, counted, or highlighted. Watch the complete explanation or control every step yourself.</p>
+      </div>
+      <div class="hero-proof" aria-label="Lesson features">
+        <p><strong>1 scene</strong><span>shared by every mode</span></p>
+        <p><strong>2+ checks</strong><span>for every answer</span></p>
+        <p><strong>0 cloud cost</strong><span>browser voice preview</span></p>
+      </div>
+    </section>
+
+    <section class="lesson-switcher shell" aria-labelledby="choose-lesson">
+      <div>
+        <p class="eyebrow">CHOOSE A LESSON</p>
+        <h2 id="choose-lesson">Eight ways to make reasoning visible</h2>
+      </div>
+      <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Animated lesson samples"></div>
+    </section>
+
+    <section class="lesson-shell shell" aria-labelledby="lesson-title">
+      <aside class="clinic-context" id="clinic-context" hidden aria-live="polite"></aside>
+      <article class="problem-card">
+        <div class="problem-heading">
+          <div>
+            <p class="eyebrow" id="lesson-eyebrow">LESSON</p>
+            <h2 id="lesson-title">Loading lesson</h2>
+          </div>
+          <span class="concept-chip" id="lesson-concept"></span>
+        </div>
+        <p class="problem-label">Problem</p>
+        <p class="problem-copy" id="problem-copy"></p>
+      </article>
+
+      <div class="learning-layout">
+        <section class="stage-card" aria-label="Animated whiteboard">
+          <div class="stage-toolbar">
+            <div>
+              <span class="mode-label">CURRENT MODE</span>
+              <strong id="mode-name">Step-by-step</strong>
+            </div>
+            <div class="lesson-options">
+              <label class="compact-select">Language
+                <select id="lesson-language" aria-label="Lesson language">
+                  <option value="en">English</option>
+                  <option value="ko">한국어</option>
+                  <option value="zh">简体中文</option>
+                </select>
+              </label>
+              <label class="compact-select">Speed
+                <select id="lesson-speed" aria-label="Playback speed">
+                  <option value="0.8">0.8×</option>
+                  <option value="1" selected>1×</option>
+                  <option value="1.25">1.25×</option>
+                </select>
+              </label>
+              <button class="quiet-button" id="captions-toggle" type="button" aria-pressed="true">Captions on</button>
+              <button class="quiet-button" id="audio-toggle" type="button" aria-pressed="true">Voice on</button>
+            </div>
+          </div>
+
+          <div class="math-stage" id="lesson-stage" tabindex="0" aria-describedby="narration-text">
+            <div id="scene-root"></div>
+          </div>
+
+          <div class="narration-panel" aria-live="polite" aria-atomic="true">
+            <span class="step-count" id="step-count">Step 1 of 7</span>
+            <p id="narration-text"></p>
+          </div>
+
+          <div class="progress-track" role="progressbar" aria-label="Lesson progress" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1" id="lesson-progress">
+            <span id="progress-fill"></span>
+          </div>
+
+          <div class="lesson-controls" aria-label="Lesson playback controls">
+            <button type="button" class="control-button secondary" id="previous-step">Previous</button>
+            <button type="button" class="control-button primary" id="play-lesson">Play full lesson</button>
+            <button type="button" class="control-button secondary" id="next-step">Next</button>
+            <button type="button" class="control-button secondary" id="restart-lesson">Restart</button>
+            <button type="button" class="control-button overview" id="show-overview">Final overview</button>
+          </div>
+        </section>
+
+        <aside class="steps-card" aria-labelledby="steps-title">
+          <div class="steps-heading">
+            <p class="eyebrow">STEP-BY-STEP</p>
+            <h2 id="steps-title">Control the explanation</h2>
+            <p>Choose any step. The diagram and narration will return to the same mathematical state.</p>
+          </div>
+          <ol class="step-list" id="step-list"></ol>
+          <ol class="lesson-transcript" id="lesson-transcript" aria-label="Lesson transcript"></ol>
+        </aside>
+      </div>
+
+      <details class="teacher-evidence">
+        <summary>Teacher view · evidence and teaching move</summary>
+        <div class="evidence-grid">
+          <section>
+            <span>LIKELY MISCONCEPTION</span>
+            <p id="teacher-misconception"></p>
+          </section>
+          <section>
+            <span>ASK THE STUDENT</span>
+            <p id="teacher-prompt"></p>
+          </section>
+          <section>
+            <span>SUCCESS CHECK</span>
+            <p id="teacher-success"></p>
+          </section>
+          <section>
+            <span>ANSWER VERIFICATION</span>
+            <ul id="math-checks"></ul>
+          </section>
+        </div>
+      </details>
+    </section>
+
+    <section class="lesson-note shell">
+      <p><strong>GFIELD authored samples.</strong> These eight public lessons demonstrate the G·MAP teaching system. Verified private contest items stay inside the review boundary until their source and publication status are cleared.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>G·MAP · From Foundations to Competition.</span>
+    <a href="./concept-learning.html">Back to concept learning</a>
+  </footer>
+
+  <script src="../geometry/worksheet/render.js"></script>
+  <script src="./learning/clinic-paths.js"></script>
+  <script src="./learning/animated-math-lessons.js"></script>
+  <script src="./learning/animated-math-scene-model.js"></script>
+  <script src="./animated-math.js"></script>
+</body>
+</html>

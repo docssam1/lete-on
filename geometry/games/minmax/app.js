@@ -968,7 +968,7 @@ function clearModel() {
 
 // Draws one silhouette grid to a canvas so it can hang on the matching face
 // of the hidden case: the 앞 grid on the front pane, 오른쪽 옆 on the right,
-// 위 on the lid. Seeing the flat drawing sit on the direction it came from is
+// 위 on the floor. Seeing the flat drawing sit on the direction it came from is
 // the whole point of the reference scene.
 function makeViewPlane(grid, cellPx = 64) {
   const rows = grid.length;
@@ -1136,11 +1136,11 @@ function buildHiddenCase(problem, gridSize) {
   side.rotation.y = Math.PI / 2;
   side.position.set(half + 0.14, problem.height / 2 + 0.03, 0);
   modelGroup.add(side);
-  // top (위): rotated so local +y → world −z, putting the view's first row at
-  // the BACK of the tray, matching map[z=0].
+  // top (위): this is a floor-position card, not a lid decoration. Rotating it
+  // puts the first row at the BACK of the tray, matching map[z=0].
   const top = makeViewPlane(problem.views.top);
   top.rotation.x = -Math.PI / 2;
-  top.position.set(0, caseHeight + 0.12, 0);
+  top.position.set(0, 0.038, 0);
   modelGroup.add(top);
 
   const question = makeQuestionSprite();

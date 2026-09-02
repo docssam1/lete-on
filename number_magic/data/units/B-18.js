@@ -39,7 +39,7 @@ window.NM_UNITS['B-18'] = {
         desc:{ko:'30은 3이 10의 자리에 있는 것이에요. <b>자릿값</b> 원리 때문에 3×4=12보다 10배 더 큰 120이 나와요. 0을 붙이는 것은 이 10배 원리를 빠르게 계산하는 방법이에요.',
               en:'30 has the digit 3 in the tens place. Because of <b>place value</b>, the answer is 10 times bigger than 3×4=12, giving 120. Adding a zero is a quick way to apply this ×10 rule.',
               zh:'30中数字3在十位上。由于<b>位值</b>原理，答案比3×4=12大10倍，即120。加0是快速应用这个×10规则的方法。'},
-        mathSteps:['30 = 3 × 10','30×4 = 3×10×4 = 3×4×10','= 12×10 = 120','자릿값 원리!'],
+        mathSteps:['30 = 3 × 10','30×4 = 3×10×4 = 3×4×10','= 12×10 = 120',{ko:'자릿값 원리!',en:'\\text{place value at work!}',zh:'位值原理！'}],
         result:{ko:'0을 붙이는 것은 10을 곱하는 것과 같아요. 자릿값이 한 칸 올라가요!',en:'Adding a zero is the same as multiplying by 10 — shifting the place value up one position!',zh:'加0等于乘以10——位值向左移动一位！'},
         book:{ko:'10을 곱하면 모든 자릿값이 한 칸 왼쪽으로 이동하고 일의 자리에 0이 채워져요. 그래서 ×10의 결과는 뒤에 0 하나를 붙인 것과 같아요.',
               en:'Multiplying by 10 shifts every digit one place to the left and fills the ones place with 0. That\'s why ×10 looks like appending a zero.',
@@ -50,7 +50,7 @@ window.NM_UNITS['B-18'] = {
         desc:{ko:'몇백에 한 자리를 곱할 때도 같은 원리예요. 300×4: 3×4=12, 뒤에 <b>0을 두 개</b> 붙이면 1200! 0의 개수는 곱해지는 10의 횟수와 같아요.',
               en:'The same principle works for hundreds. 300×4: do 3×4=12, then attach <b>two zeros</b> → 1200! The number of zeros equals how many times you multiply by 10.',
               zh:'几百乘一位数的原理相同。300×4：3×4=12，再加<b>两个0</b>→1200！0的个数等于乘以10的次数。'},
-        mathSteps:['300×4 = 3×4×100','= 12×100 = 1200','→ 0의 개수만큼 자릿값 이동!'],
+        mathSteps:['300×4 = 3×4×100','= 12×100 = 1200',{ko:'→ 0의 개수만큼 자릿값 이동!',en:'→ \\text{shift one place per zero!}',zh:'→ 有几个0就移几位！'}],
         result:{ko:'300×4=1200! 0이 두 개. 몇천도 0이 세 개만 붙이면 돼요!',en:'300×4=1200! Two zeros. For thousands, just add three zeros!',zh:'300×4=1200！两个0。几千就加三个0！'},
         book:null }
     ],

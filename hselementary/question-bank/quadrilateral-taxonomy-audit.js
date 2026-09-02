@@ -11,8 +11,24 @@ const targetSubunits = unit.subunits;
 const failures = [];
 let generatedCount = 0;
 
+const sourceRobotAnswer = (3 + 3) * 20 + 90 / 10 * 2;
+if (sourceRobotAnswer !== 138) failures.push(`Mission 6 원문 고정값은 138초여야 하나 ${sourceRobotAnswer}초입니다.`);
+const sourceTrapezoidAnswer = (39 - 13) / 2;
+if (sourceTrapezoidAnswer !== 13) failures.push(`예제 1-2 원문 고정값은 13cm여야 하나 ${sourceTrapezoidAnswer}cm입니다.`);
+const sourceGrowingAnswer = Math.abs(2 - 4 + 6);
+if (sourceGrowingAnswer !== 4) failures.push(`Mission 3 원문 고정값은 4cm여야 하나 ${sourceGrowingAnswer}cm입니다.`);
+const sourceMissionOneAnswer = `㉠ ${90 - 68}°, ㉡ ${90 - 40}°`;
+if (sourceMissionOneAnswer !== "㉠ 22°, ㉡ 50°") failures.push(`Mission 1 원문 고정값은 ㉠ 22°, ㉡ 50°여야 하나 ${sourceMissionOneAnswer}입니다.`);
+const sourceMissionFourAnswer = "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다";
+if (sourceMissionFourAnswer !== "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다") failures.push(`Mission 4 원문 직선 이름 배치가 맞지 않습니다.`);
+const sourceExampleTwoOneAnswer = 65 + 67;
+if (sourceExampleTwoOneAnswer !== 132) failures.push(`예제 2-1 원문 고정값은 132°여야 하나 ${sourceExampleTwoOneAnswer}°입니다.`);
+
 const attr = (html, name) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1] || "";
 const chooseTwo = value => value * (value - 1) / 2;
+const exactConcernType = targetSubunits.flatMap(subunit => subunit.types).find(type => type.id === "4-2-u4-t2-4");
+const exactConcern = api.generate(exactConcernType, 0, 0, 297, exactConcernType.variant);
+if (attr(exactConcern.prompt, "data-parallel-v-angles") !== "54,58,68,112" || exactConcern.answer !== "112") failures.push("사용자 지적 사례 54°, 58°의 그림 자료 또는 정답 112°가 달라졌습니다.");
 
 for (const subunit of targetSubunits) {
   for (const type of subunit.types) {
@@ -51,13 +67,76 @@ for (const subunit of targetSubunits) {
             const total = Number(attr(generated.prompt, "data-distance-total"));
             const [from, to] = attr(generated.prompt, "data-distance-target").split(",").map(Number);
             expected = total / parts.reduce((sum, value) => sum + value, 0) * parts.slice(from, to).reduce((sum, value) => sum + value, 0);
+          } else if (type.variant === 5) {
+            const [firstDistance, secondDistance, moveSeconds, turnUnit, turnSeconds, turnAngle] = attr(generated.prompt, "data-robot-path").split(",").map(Number);
+            expected = (firstDistance + secondDistance) * moveSeconds + turnAngle / turnUnit * turnSeconds;
+            if (turnAngle !== 90 || 90 % turnUnit !== 0) failures.push(`${type.id} / 시드 ${seed}: 회전 조건이 90°를 정확히 나누지 못합니다.`);
+          } else if (type.variant === 6) {
+            const [top, bottom, leftAngle, rightAngle, height] = attr(generated.prompt, "data-trapezoid-distance").split(",").map(Number);
+            expected = (bottom - top) / 2;
+            if (leftAngle !== 45 || rightAngle !== 45 || height !== expected) failures.push(`${type.id} / 시드 ${seed}: 45도 사다리꼴의 길이 자료가 맞지 않습니다.`);
+          } else if (type.variant === 7) {
+            const [startLength, increment, drawCount, storedAnswer] = attr(generated.prompt, "data-growing-turn").split(",").map(Number);
+            let horizontalPosition = 0;
+            for (let step = 1; step <= drawCount; step += 2) horizontalPosition += (step % 4 === 1 ? 1 : -1) * (startLength + step * increment);
+            expected = Math.abs(horizontalPosition);
+            if (drawCount % 2 !== 0 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 마지막 선분이 처음 선분과 평행하지 않거나 저장 답이 다릅니다.`);
+          } else if (type.variant === 8) {
+            const [leftGiven, rightGiven, firstTarget, secondTarget] = attr(generated.prompt, "data-perpendicular-angles").split(",").map(Number);
+            expected = `㉠ ${90 - rightGiven}°, ㉡ ${90 - leftGiven}°`;
+            if (firstTarget !== 90 - rightGiven || secondTarget !== 90 - leftGiven) failures.push(`${type.id} / 시드 ${seed}: 수직선 사이의 두 각 자료가 맞지 않습니다.`);
+            const markTags = [...generated.prompt.matchAll(/<g class="perpendicular-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
+            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
+            const expectedMarks = {
+              "left-given": [leftGiven, 180, leftGiven],
+              "right-given": [rightGiven, 360 - rightGiven, rightGiven],
+              "target-left": [firstTarget, 90, firstTarget],
+              "target-right": [secondTarget, leftGiven, secondTarget]
+            };
+            if (markTags.length !== 4 || (generated.prompt.match(/class="perpendicular-angle-arc"/g) || []).length !== 4) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 네 각호가 모두 그려지지 않았습니다.`);
+            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
+              const tag = marks[role] || "";
+              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
+            });
+          } else if (type.variant === 9) {
+            const [aLabel, mLabel, nLabel, rLabel, dLabel] = attr(generated.prompt, "data-role-labels").split(",");
+            const roles = ["M", "N", "R", "D"];
+            const permutations = values => values.length <= 1 ? [values] : values.flatMap((value, index) => permutations(values.filter((_, other) => other !== index)).map(rest => [value, ...rest]));
+            const isParallel = (left, right) => new Set([left, right]).size === 2 && [left, right].every(role => ["A", "M"].includes(role));
+            const isPerpendicular = (left, right) => [["A", "R"], ["M", "R"], ["D", "N"]].some(pair => pair.includes(left) && pair.includes(right));
+            const isConcurrent = values => values.length === 3 && values.every(role => ["A", "D", "R"].includes(role));
+            const valid = permutations(roles).filter(candidate => {
+              const roleOf = { [aLabel]: "A", [mLabel]: candidate[0], [nLabel]: candidate[1], [rLabel]: candidate[2], [dLabel]: candidate[3] };
+              return isPerpendicular(roleOf[mLabel], roleOf[rLabel])
+                && isPerpendicular(roleOf[nLabel], roleOf[dLabel])
+                && isParallel(roleOf[aLabel], roleOf[mLabel])
+                && isConcurrent([roleOf[aLabel], roleOf[dLabel], roleOf[rLabel]]);
+            });
+            expected = `①${mLabel} ②${nLabel} ③${rLabel} ④${dLabel}`;
+            if (valid.length !== 1 || Number(attr(generated.prompt, "data-unique-assignments")) !== 1) failures.push(`${type.id} / 시드 ${seed}: 가능한 이름 배치가 1개가 아닙니다.`);
           } else {
             const values = attr(generated.prompt, "data-staircase-verticals").split(",").map(Number);
             const hidden = Number(attr(generated.prompt, "data-staircase-hidden"));
             expected = type.variant === 4 ? values[hidden] : values.reduce((sum, value) => sum + value, 0);
           }
         } else if (type.generatorKey === "quadParallelAngleCondition") {
-          if (type.variant === 0 || type.variant === 1) {
+          if (type.variant === 3) {
+            const [leftAngle, vertexAngle, rightInterior, storedAnswer] = attr(generated.prompt, "data-parallel-v-angles").split(",").map(Number);
+            expected = 180 - rightInterior;
+            if (leftAngle + vertexAngle + rightInterior !== 180 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 평행선 사이 삼각형의 세 각 또는 바깥각이 맞지 않습니다.`);
+            const markTags = [...generated.prompt.matchAll(/<g class="parallel-v-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
+            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
+            const expectedMarks = {
+              "left-exterior": [leftAngle, 180 - leftAngle, leftAngle],
+              "vertex-interior": [vertexAngle, rightInterior, vertexAngle],
+              "right-exterior": [storedAnswer, 180 + rightInterior, storedAnswer]
+            };
+            if (markTags.length !== 3 || (generated.prompt.match(/class="parallel-v-angle-arc"/g) || []).length !== 3) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 세 각호가 모두 그려지지 않았습니다.`);
+            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
+              const tag = marks[role] || "";
+              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
+            });
+          } else if (type.variant === 0 || type.variant === 1) {
             const count = Number(attr(generated.prompt, "data-parallel-count"));
             const angle = Number(attr(generated.prompt, "data-parallel-angle"));
             expected = (count - 1) * angle;
@@ -136,11 +215,11 @@ for (const subunit of targetSubunits) {
   }
 }
 
-if (targetSubunits[0].types.length !== 5) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
-if (targetSubunits[1].types.length !== 3) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
+if (targetSubunits[0].types.length !== 10) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
+if (targetSubunits[1].types.length !== 4) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
 if (targetSubunits[2].types.length !== 3) failures.push(`평행선 사이의 각도 ①: ${targetSubunits[2].types.length}유형`);
 if (targetSubunits[3].types.length !== 2) failures.push(`평행선 사이의 각도 ②: ${targetSubunits[3].types.length}유형`);
-const readyCounts = [5, 3, 3, 2, 2, 1, 3, 4];
+const readyCounts = [9, 4, 3, 2, 2, 1, 3, 4];
 targetSubunits.forEach((subunit, index) => {
   const ready = subunit.types.filter(type => !type.reviewLocked).length;
   if (ready !== readyCounts[index]) failures.push(`${subunit.name}: 공개 ${ready}유형, 예상 ${readyCounts[index]}유형`);
@@ -152,4 +231,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 사각형 개념탐구 1~8 · 공개 23개 세부 유형 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
+console.log(`4-2 사각형 개념탐구 1~8 · 공개 28개 세부 유형 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);

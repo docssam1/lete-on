@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g fill="#1A2233">
+<rect x="70" y="60" width="6" height="120"/><rect x="82" y="60" width="3" height="120"/>
+<rect x="94" y="60" width="9" height="120"/><rect x="110" y="60" width="3" height="120"/>
+<rect x="120" y="60" width="6" height="120"/><rect x="134" y="60" width="12" height="120"/>
+<rect x="154" y="60" width="3" height="120"/><rect x="164" y="60" width="6" height="120"/>
+<rect x="178" y="60" width="9" height="120"/><rect x="194" y="60" width="3" height="120"/>
+<rect x="204" y="60" width="6" height="120"/><rect x="218" y="60" width="12" height="120"/>
+<rect x="238" y="60" width="3" height="120"/><rect x="248" y="60" width="9" height="120"/>
+<rect x="264" y="60" width="6" height="120"/><rect x="278" y="60" width="3" height="120"/>
+<rect x="288" y="60" width="12" height="120"/><rect x="308" y="60" width="6" height="120"/>
+<rect x="322" y="60" width="3" height="120"/><rect x="332" y="60" width="9" height="120"/>
+<rect x="348" y="60" width="6" height="120"/><rect x="362" y="60" width="12" height="120"/>
+<rect x="382" y="60" width="3" height="120"/><rect x="392" y="60" width="6" height="120"/>
+<rect x="406" y="60" width="9" height="120"/><rect x="422" y="60" width="3" height="120"/>
+<rect x="432" y="60" width="6" height="120"/><rect x="446" y="60" width="12" height="120"/>
+<rect x="466" y="60" width="3" height="120"/><rect x="476" y="60" width="9" height="120"/></g>
+<rect x="498" y="52" width="72" height="136" rx="10" fill="none" stroke="#D9534F" stroke-width="3"/>
+<g fill="#D9534F"><rect x="512" y="60" width="9" height="120"/><rect x="530" y="60" width="6" height="120"/>
+<rect x="546" y="60" width="12" height="120"/></g>
+<g font-family="ui-monospace,monospace" font-size="20" fill="#1A2233" letter-spacing="7">
+<text x="70" y="212">8801234567890</text></g>
+<path d="M534 232 v-14" stroke="#D9534F" stroke-width="3"/>
+<circle cx="534" cy="244" r="13" fill="#D9534F"/>
+<text x="534" y="251" font-family="ui-monospace,monospace" font-size="17" font-weight="800" fill="#fff" text-anchor="middle">?</text></svg>

@@ -761,5 +761,94 @@ NM_TGEN['ad9_compAdd'] = function(params, rng){
   };
 };
 
+/* ============================================================
+   AD10 — 연이은 덧셈·뺄셈 (세 수·네 수 혼합) — 2026-08-29 신규
+   ============================================================
+   6~7세·초1 필수인데 우리에게 없던 유형이다. 확인한 것:
+     · AD8 여러 수 덧셈은 **덧셈만** 낸다(`3+1+4+7`). 게다가 기본 위젯이
+       selectPairs라 "10이 되는 짝"이 있어야 성립하는 전략 유형이다 —
+       혼합 덧뺄을 거기 넣으면 위젯도 개념 문장도 어긋난다.
+     · MX1 사칙 혼합계산은 괄호 없는 레벨1조차 곱셈이 섞여 나오고(`5+9×5`)
+       prereq가 ML7·DV4라 초5 유형이다.
+   그래서 AD8에 레벨로 붙이지 않고 스레드를 새로 냈다.
+
+   규칙: 앞에서부터 차례로 계산한다. 중간 결과가 음수가 되는 식(`3-5+4`)은
+   만들지 않는다 — 유아·초1 대상이다.
+   params: terms(항 수) · max(중간·최종 결과 상한) · cross(10을 넘나들 것) */
+NM_TGEN['ad10_chainAddSub'] = function(params, rng){
+  params = params || {};
+  const terms = params.terms || 3;
+  const max   = params.max   || 10;
+  const cross = !!params.cross;
+
+  let nums = [], ops = [], partial = [], ok = false;
+
+  for(let attempt = 0; attempt < 400 && !ok; attempt++){
+    nums = [R(rng, 1, Math.min(9, max))];
+    ops  = [];
+    partial = [nums[0]];
+    let cur = nums[0], bad = false;
+
+    for(let i = 1; i < terms; i++){
+      /* 이번 자리에 쓸 수 있는 연산을 실제 범위로 먼저 걸러낸다 —
+         고른 뒤에 버리면 뺄셈이 늘 마지막에만 오는 편향이 생긴다. */
+      const canAdd = cur + 1 <= max;
+      const canSub = cur - 1 >= 0;
+      if(!canAdd && !canSub){ bad = true; break; }
+      const op = (canAdd && canSub) ? pick(rng, ['+', '-']) : (canAdd ? '+' : '-');
+      const hi = op === '+' ? Math.min(9, max - cur) : Math.min(9, cur);
+      if(hi < 1){ bad = true; break; }
+      const v = R(rng, 1, hi);
+      cur = op === '+' ? cur + v : cur - v;
+      nums.push(v); ops.push(op); partial.push(cur);
+    }
+    if(bad) continue;
+
+    /* 덧셈만 나오면 AD8과 구별이 안 된다 — 뺄셈이 최소 한 번은 들어가야 한다 */
+    if(ops.indexOf('-') === -1) continue;
+    /* 중간 결과가 0이면(`1-1+7`) 앞의 두 항이 통째로 사라져 두 수 문제가 된다.
+       마지막 값이 0인 것(`8-4-4`)은 답이 0일 뿐이라 그대로 둔다. */
+    if(partial.slice(1, -1).some(p => p === 0)) continue;
+    /* 더했다가 같은 수를 도로 빼는 자리(`9+9-9`)도 실제로는 계산이 없다 */
+    let undo = false;
+    for(let i = 1; i < ops.length; i++)
+      if(ops[i] !== ops[i - 1] && nums[i] === nums[i + 1]) undo = true;
+    if(undo) continue;
+    /* 초1 레벨: 10을 넘거나 10에서 내려오는 자리가 한 번은 있어야
+       받아올림·받아내림 연습이 된다 */
+    if(cross && !partial.some(p => p > 10)) continue;
+    ok = true;
+  }
+
+  /* 절대 폴백 (이론상 발생 안 함) */
+  if(!ok){ nums = [8, 3, 2]; ops = ['-', '+']; partial = [8, 5, 7]; }
+
+  let exprTex = String(nums[0]);
+  for(let i = 0; i < ops.length; i++) exprTex += ` ${ops[i]} ${nums[i + 1]}`;
+  const answer = partial[partial.length - 1];
+
+  /* 단계 줄 — 앞에서부터 차례로 계산하는 순서 그대로.
+     MX1과 같은 모양이라 인쇄물에서도 초1이 짚어 가며 풀 수 있다. */
+  const steps = [];
+  let run = nums[0];
+  for(let i = 0; i < ops.length; i++){
+    steps.push({ tex: `${run} ${ops[i]} ${nums[i + 1]} = \\square`, blank: partial[i + 1] });
+    run = partial[i + 1];
+  }
+
+  return {
+    prompt: {
+      ko: '앞에서부터 차례로 계산해요',
+      en: 'Work from left to right, one step at a time',
+      zh: '从前往后依次计算'
+    },
+    tex:        `${exprTex} = \\square`,
+    answer,
+    answerType: 'steps',
+    widget:     'steps',
+    steps
+  };
+};
+
 if(typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

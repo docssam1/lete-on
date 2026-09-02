@@ -38,9 +38,8 @@
     }
   }
 
-  async function ready(options = {}) {
-    const allowAdminMfaSetup = options?.allowAdminMfaSetup === true;
-    if (!enabled() && !allowAdminMfaSetup) return null;
+  async function ready() {
+    if (!enabled()) return null;
     if (clientPromise) return clientPromise;
     clientPromise = (async () => {
       const value = config();
@@ -77,7 +76,6 @@
     sdkVersion: "2.112.3",
     enabled,
     ready,
-    adminMfaSetupClient: () => ready({ allowAdminMfaSetup: true }),
     signedAssetUrl,
     config
   });

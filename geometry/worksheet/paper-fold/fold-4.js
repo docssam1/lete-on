@@ -84,10 +84,10 @@ function solutionText(problem){
   }
   if(problem.kind==='game-level'){
     const p=problem.source;
-    if(problem.gameLevel<=2) return `${sharedAxisLabel[p.fold.axis]} 접는 선을 기준으로 작업 위치를 거울처럼 옮기면 ${problem.answer}가 됩니다. 게임 문항 ${p.id}와 같은 문제입니다.`;
-    if(problem.gameLevel===3) return `접는 선을 기준으로 진한 위치를 대칭 이동합니다. 정답 위치는 ${problem.answer}입니다. (${p.id})`;
-    if(problem.gameLevel===4) return `주어진 도형을 접는 선의 반대편으로 대칭 이동하고, 도형의 방향까지 맞춥니다. (${p.id})`;
-    return `먼저 잘려 나간 칸을 모두 찾으면 ${p.answer.cells.map(sharedRegionLabel).join(', ')}입니다. 그 칸의 수를 더하면 ${p.answer.expression} = ${p.answer.sum}입니다. (${p.id})`;
+    const folds=(p.folds||[p.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
+    if(problem.gameLevel<=3) return `${folds} 순서를 거꾸로 펼치며 표시를 대칭 이동합니다. 정답 위치는 ${problem.answer}입니다. (${p.id})`;
+    if(problem.gameLevel===4) return `${folds} 순서를 거꾸로 펼쳐 잘려 나간 칸을 찾으면 ${p.answer.cells.map(sharedRegionLabel).join(', ')}입니다. ${p.answer.expression} = ${p.answer.sum}입니다. (${p.id})`;
+    return `${folds} 순서로 움직이는 종이 층을 뒤집어 포개면 맨 위의 수는 ${p.answer}입니다. (${p.id})`;
   }
   if(problem.kind==='hole'){
     const counts=[problem.nHoles];

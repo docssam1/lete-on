@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g fill="#16417C">
+<circle cx="290" cy="52" r="17"/><circle cx="330" cy="52" r="17"/><circle cx="370" cy="52" r="17"/><circle cx="410" cy="52" r="17"/>
+<circle cx="270" cy="92" r="17"/><circle cx="310" cy="92" r="17"/><circle cx="350" cy="92" r="17"/><circle cx="390" cy="92" r="17"/></g>
+<text x="230" y="82" font-family="ui-monospace,monospace" font-size="40" font-weight="800" fill="#0E2C57" text-anchor="middle">8</text>
+<g stroke="#C9A063" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M320 122 L190 176"/><path d="M360 122 L490 176"/></g>
+<g fill="#C9A063">
+<circle cx="150" cy="212" r="17"/><circle cx="190" cy="212" r="17"/><circle cx="230" cy="212" r="17"/><circle cx="270" cy="212" r="17"/>
+<circle cx="410" cy="212" r="17"/><circle cx="450" cy="212" r="17"/><circle cx="490" cy="212" r="17"/><circle cx="530" cy="212" r="17"/></g>
+<g font-family="ui-monospace,monospace" font-size="30" font-weight="800" fill="#C9A063" text-anchor="middle">
+<text x="210" y="268">4</text><text x="470" y="268">4</text></g></svg>

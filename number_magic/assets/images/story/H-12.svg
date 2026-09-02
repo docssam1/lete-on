@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><circle cx="250" cy="158" r="112" fill="none" stroke="#16417C" stroke-width="3.5"/>
+<path d="M250 158 L250 46" stroke="#E4E2DC" stroke-width="2.5"/>
+<path d="M250 158 L364 116" stroke="#E4E2DC" stroke-width="2.5"/>
+<path d="M250 106 A 52 52 0 0 1 298 124" fill="none" stroke="#D9534F" stroke-width="3.5"/>
+<text x="316" y="102" font-family="ui-monospace,monospace" font-size="19" font-weight="800" fill="#D9534F" text-anchor="middle">7.2°</text>
+<g stroke="#C9A063" stroke-width="5" stroke-linecap="round">
+<path d="M250 46 v-28"/><path d="M362 116 l26 -12"/></g>
+<path d="M256 42 A 112 112 0 0 1 366 112" fill="none" stroke="#2E9E6B" stroke-width="6" stroke-linecap="round"/>
+<text x="336" y="30" font-family="ui-monospace,monospace" font-size="18" font-weight="700" fill="#2E9E6B" text-anchor="middle">800 km</text>
+<g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="500" y="126" font-size="21" fill="#4a5468">360 ÷ 7.2 = 50</text>
+<text x="500" y="180" font-size="25" fill="#16417C">800 × 50</text>
+<text x="500" y="222" font-size="30" fill="#2E9E6B">40 000 km</text></g></svg>

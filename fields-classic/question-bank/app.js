@@ -1,14 +1,14 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260827j";
-import { GENERATORS } from "./generators.js?v=20260827d";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260830a";
+import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260827d";
-import { book03Markup } from "./book03-renderers.js?v=20260825m";
+import { book01Markup } from "./book01-renderers.js?v=20260829f";
+import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
-import { book05Markup } from "./book05-renderers.js?v=20260826c";
-import { book06Markup } from "./book06-renderers.js?v=20260826e";
+import { book05Markup } from "./book05-renderers.js?v=20260829b";
+import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260822h";
 import { book08Markup } from "./book08-renderers.js?v=20260822i";
-import { book09Markup } from "./book09-renderers.js?v=20260822j";
+import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260822k";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 
@@ -28,6 +28,7 @@ const MOCK_EXAM_NAV = [
   ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
 ];
 const academyStyleIdsByType = new Map(TYPES.map((item) => [item.id, new Set(item.academyStyleIds || [])]));
+const sourceQuestionByKey = new Map(SOURCE_QUESTION_INDEX.map((item) => [item.sourceKey, item]));
 for (const sourceQuestion of SOURCE_QUESTION_INDEX) {
   sourceQuestion.classifications.forEach((classification) => {
     const styleIds = academyStyleIdsByType.get(classification.detailedTypeId) || new Set();
@@ -185,6 +186,23 @@ function positionTypePreview(anchor) {
   panel.style.top = `${top}px`;
 }
 
+function textbookConceptTutorialMarkup(problem, compact = false) {
+  if (problem.studyStage?.id !== "concept" || !problem.representativeConcept) return "";
+  const concept = problem.representativeConcept;
+  const sourceBacked = concept.lessonQuality === "source-backed";
+  const steps = sourceBacked
+    ? concept.beats
+    : [{ id: "core-method", label: "핵심 방법", text: concept.principle || problem.conceptGuide }];
+  const heading = sourceBacked ? "개념 익히기" : "풀이 원리";
+  const qualityClass = sourceBacked ? "source-backed" : "principle-only";
+  return `<section class="textbook-concept-tutorial ${qualityClass} ${compact ? "compact" : ""}"><header><span>${heading}</span><strong>${concept.label}</strong></header><ol>${steps.map((step, index) => `<li data-beat-id="${step.id}"><b>${index + 1}</b><div><strong>${step.label}</strong><p>${step.text}</p></div></li>`).join("")}</ol></section>`;
+}
+
+function textbookConceptSolutionMarkup(question) {
+  if (question.studyStage?.id !== "concept" || !state.includeSolution || !question.solution) return "";
+  return `<details class="concept-worked-solution"><summary>풀이 확인</summary><p>${escapeAttribute(question.solution).replaceAll("\n", "<br>")}</p></details>`;
+}
+
 function showTypePreview(anchor) {
   const item = typeById(anchor.dataset.previewType);
   if (!item || !isSelectableType(item)) return;
@@ -197,11 +215,12 @@ function showTypePreview(anchor) {
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   const representativeConcept = representativeConceptForType(item.id);
+  const isConceptStage = problem.studyStage?.id === "concept";
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
     ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
-    ${representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
+    ${isConceptStage ? textbookConceptTutorialMarkup(problem, true) : representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
     ${learningMapPreviewMarkup(item)}
-    ${problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
+    ${!isConceptStage && problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
   panel.hidden = false;
@@ -225,6 +244,15 @@ function hideTypePreviewSoon() {
 
 function initTypePreviews() {
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+  let keyboardPreviewMode = false;
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Tab") keyboardPreviewMode = true;
+    if (event.key === "Escape") hideTypePreview();
+  }, true);
+  document.addEventListener("pointerdown", (event) => {
+    keyboardPreviewMode = false;
+    if (event.target.closest("[data-preview-type]")) hideTypePreview();
+  }, true);
   document.addEventListener("pointerover", (event) => {
     if (!canHover.matches) return;
     const anchor = event.target.closest("[data-preview-type]");
@@ -233,6 +261,15 @@ function initTypePreviews() {
   });
   document.addEventListener("pointerout", (event) => {
     if (!canHover.matches) return;
+    const anchor = event.target.closest("[data-preview-type]");
+    if (!anchor || anchor.contains(event.relatedTarget) || typePreviewPanel?.contains(event.relatedTarget)) return;
+    hideTypePreviewSoon();
+  });
+  document.addEventListener("focusin", (event) => {
+    const anchor = event.target.closest("[data-preview-type]");
+    if (anchor && keyboardPreviewMode) showTypePreview(anchor);
+  });
+  document.addEventListener("focusout", (event) => {
     const anchor = event.target.closest("[data-preview-type]");
     if (!anchor || anchor.contains(event.relatedTarget) || typePreviewPanel?.contains(event.relatedTarget)) return;
     hideTypePreviewSoon();
@@ -347,7 +384,8 @@ function isSelectableCurriculumType(item, book, unit = null, stageId = activeTex
   // 원본 교재에 이 세부 유형이 등장하는 단계와, 문제은행에서 난이도를 바꾸어
   // 생성할 수 있는 단계는 구분한다. 원본 문항 번호가 없는 단계를 가짜 번호로
   // 채우지는 않되, 검산된 생성기는 개념·유형·연습·심화 변형으로 사용할 수 있다.
-  return isReady(item) && hasBookSource(item, book, unit);
+  const sourceAuditBlocked = unit?.sourceAuditBlockedStages?.[item?.id]?.includes(stageId);
+  return !sourceAuditBlocked && isReady(item) && hasBookSource(item, book, unit);
 }
 
 function sourceStageLabels(unit, typeId) {
@@ -383,6 +421,7 @@ function studyReferenceLabel(references = []) {
 
 function renderCurriculum() {
   const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  if ($("goldenBellLink")) $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
   const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
     `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
   ).join("")}</nav>`;
@@ -441,13 +480,14 @@ function renderCurriculum() {
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
+        <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "개념 → 골든벨 → 이야기" : "준비 중"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
         ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
       </div>
       ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨 제외${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
+      <p class="book-policy">골든벨은 별도 개념 학습으로 연결${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
   $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;
@@ -558,6 +598,19 @@ function renderTypeTree() {
   }));
 }
 
+function generationCaseForSource(sourceKind, sourceId, number) {
+  const sourceKey = `${sourceKind}:${sourceId}:q${number}`;
+  const sourceRecord = sourceQuestionByKey.get(sourceKey);
+  return Object.freeze({
+    mode: sourceRecord?.sourceFidelity === "exact-generator" ? "source" : "variant-from-source",
+    sourceKey,
+    sourceKind,
+    sourceId,
+    number,
+    sourceFidelity: sourceRecord?.sourceFidelity || "classified"
+  });
+}
+
 function selectedReferences() {
   if (state.mode === "type") return [...state.selected.type].map((typeId) => ({
     typeId,
@@ -597,7 +650,8 @@ function selectedReferences() {
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
           fixedSeed: `unit-test:${book.id}:${number}`,
-          classification: question.classification
+          classification: question.classification,
+          generationCase: generationCaseForSource("unit-test", book.id, number)
         });
       }
     }
@@ -611,7 +665,8 @@ function selectedReferences() {
           typeId: sourceQuestion.typeId,
           reference: `${exam.label} ${sourceQuestion.number}번`,
           fixedSeed: sourceQuestion.fixedSeed || null,
-          classification: sourceQuestion.classification
+          classification: sourceQuestion.classification,
+          generationCase: generationCaseForSource("exam", exam.id, sourceQuestion.number)
         });
       }
     }
@@ -786,7 +841,7 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   };
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null) {
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
@@ -797,8 +852,8 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // retry 0은 기존 시드 형식 그대로 — 파이널 1회 교체본처럼 이미 고정 시드로 검수된
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
-      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty };
+      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty, sourceCase: generationCase }));
+      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty, generationCase };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
@@ -825,7 +880,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -840,7 +895,9 @@ function buildQuestions() {
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // 인쇄 직전까지 부드러운 스크롤이 남으면 현재 스크롤 위치가 PDF에
+  // 반영되어 시험지 머리글과 첫 문항 윗부분이 잘릴 수 있다.
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function syncQuestionCountControls() {
@@ -862,6 +919,7 @@ function moveQuestion(fromIndex, toIndex) {
 function replaceQuestion(index) {
   const current = state.questions[index];
   if (!current) return;
+  if (current.generationCase?.mode === "source") return;
   const currentSignature = problemSignature(current);
   const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
   let replacement = null;
@@ -1199,6 +1257,12 @@ function totalDifferenceShareMarkup(visual) {
   const hint = visual.showHint ? `<strong>차이 ${visual.difference}개를 먼저 떼어 보기</strong>` : "";
   const transfer = visual.transfer ? `<small>${visual.transfer}개를 준 뒤 차이 ${visual.afterDifference}개</small>` : "";
   return `<div class="total-difference-work">${hint}<div class="share-cubes" style="--cube-columns:${visual.total <= 20 ? 5 : 7}" aria-label="큐브 ${visual.total}개">${Array.from({ length: visual.total }, () => "<i></i>").join("")}</div>${transfer}</div>`;
+}
+
+function totalDifferenceBarsMarkup(visual) {
+  const gapPercent = Math.max(14, Math.min(34, (visual.difference / visual.total) * 100));
+  const hint = visual.showHint ? `<small>전체에서 차이 ${visual.difference}을 먼저 떼어 보세요.</small>` : "";
+  return `<div class="total-difference-bars" style="--difference-width:${gapPercent}%" role="img" aria-label="전체 ${visual.total}, 두 수의 차이 ${visual.difference}를 나타낸 막대 그림"><div class="total-difference-given"><span>전체</span><strong>${visual.total}</strong></div><div class="total-difference-row larger"><b>큰 수</b><span class="same-part">같은 부분</span><span class="difference-part">차이 ${visual.difference}</span></div><div class="total-difference-row smaller"><b>작은 수</b><span class="same-part">같은 부분</span></div>${hint}</div>`;
 }
 
 function fiveCardPyramidMarkup(visual) {
@@ -3168,6 +3232,7 @@ function visualMarkup(visual) {
   if (visual.kind === "five-cell-placement") return `<div class="visual five-cell-placement-visual">${fiveCellPlacementMarkup(visual)}</div>`;
   if (visual.kind === "equalize-bags") return `<div class="visual equalize-visual">${equalizeBagsMarkup(visual)}</div>`;
   if (visual.kind === "total-difference-share") return `<div class="visual total-difference-visual">${totalDifferenceShareMarkup(visual)}</div>`;
+  if (visual.kind === "total-difference-bars") return `<div class="visual total-difference-bars-visual">${totalDifferenceBarsMarkup(visual)}</div>`;
   if (visual.kind === "number-pyramid") return `<div class="visual pyramid-visual">${numberPyramidMarkup(visual)}</div>`;
   if (visual.kind === "five-card-pyramid") return `<div class="visual five-card-pyramid-visual">${fiveCardPyramidMarkup(visual)}</div>`;
   if (visual.kind === "stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${stairGridPlacementMarkup(visual)}</div>`;
@@ -3317,24 +3382,26 @@ function watermarkMarkup() {
 }
 
 function renderWorksheet() {
+  hideTypePreview();
   const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card" data-question-index="${index}">
+    return `<article class="question-card" data-question-index="${index}" data-type-id="${escapeAttribute(question.type.id)}">
       <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
         <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
         <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>
         <button type="button" data-question-action="down" data-question-index="${index}" title="아래로 이동" aria-label="아래로 이동" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button>
-        <button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>
+        ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}" title="같은 유형의 새 문제" aria-label="같은 유형의 새 문제">↻</button>`}
         <button type="button" data-question-action="remove" data-question-index="${index}" title="문항 삭제" aria-label="문항 삭제" ${state.questions.length <= 1 ? "disabled" : ""}>×</button>
       </div>
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
       <div class="question-style-tags">${academyStyleLabels(question).map((label) => `<span>${label}</span>`).join("")}</div>
-      ${question.representativeConcept ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
+      ${question.representativeConcept && question.studyStage?.id !== "concept" ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
-      ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
+      ${textbookConceptTutorialMarkup(question)}
+      ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${worksheetVisualMarkup(question)}
       ${question.responseKind === "drawing"
@@ -3342,6 +3409,7 @@ function renderWorksheet() {
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
+      ${textbookConceptSolutionMarkup(question)}
     </article>`;
   });
   const pages = [];
@@ -3370,7 +3438,10 @@ function openAnswers() {
 
 function initControls() {
   $("studentName").textContent = student;
+  $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
   $("worksheetStudent").textContent = student;
+  if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
+  $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
   $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
@@ -3404,11 +3475,15 @@ function initControls() {
   $("backToBuilder").addEventListener("click", () => { $("worksheetSection").hidden = true; $("builderPanel").hidden = false; });
   $("regenerateButton").addEventListener("click", buildQuestions);
   $("answerButton").addEventListener("click", openAnswers);
-  $("printButton").addEventListener("click", () => window.print());
+  $("printButton").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+    window.print();
+  });
   $("closeAnswer").addEventListener("click", () => $("answerDialog").close());
   $("closeAnswerBottom").addEventListener("click", () => $("answerDialog").close());
   $("printAnswerButton").addEventListener("click", () => {
     document.body.classList.add("printing-answers");
+    window.scrollTo({ top: 0, behavior: "auto" });
     window.print();
     setTimeout(() => document.body.classList.remove("printing-answers"), 400);
   });
@@ -3421,7 +3496,7 @@ renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();
-setMode("exam");
+setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") === "type" ? "type" : "exam");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
 // 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로
@@ -3447,5 +3522,29 @@ setMode("exam");
   $("questionCount").value = String(picked);
   $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === picked));
   renderExamList();
+  updateSummary();
+})();
+
+// 진단 결과에서 넘어온 여러 취약 유형을 유형별 탭에 미리 체크한다.
+// 원격 링크가 오래되어도 현재 선택 가능한 유형만 남겨 검증 게이트를 우회하지 않는다.
+(function preselectTypes() {
+  const requested = [
+    ...params.getAll("type"),
+    ...(params.get("types") || "").split(",")
+  ].map((id) => id.trim()).filter(Boolean);
+  if (!requested.length) return;
+  setMode("type");
+  state.selected.type.clear();
+  requested.forEach((typeId) => {
+    const item = typeById(typeId);
+    if (item && isSelectableType(item)) state.selected.type.add(typeId);
+  });
+  const requestedCount = Number(params.get("count"));
+  if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) {
+    state.count = requestedCount;
+    $("questionCount").value = String(requestedCount);
+    $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === requestedCount));
+  }
+  renderTypeTree();
   updateSummary();
 })();

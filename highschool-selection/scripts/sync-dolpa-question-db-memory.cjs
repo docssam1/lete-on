@@ -78,7 +78,13 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-9B7A4E4FC28E": { key: "m21-202311-r3", label: "2-1 입반테스트 3(2023년 11월)", tags: ["middle2-1", "middle2-2", "mixed-range", "answer-dispute"] },
     "DP-SRC-7591B3A7C051": { key: "m21-202312-r4", label: "2-1 입반테스트 4(2023년 12월)", tags: ["middle2-1", "middle2-2", "mixed-range", "primary-paper"] },
     "DP-SRC-CE3FA0B947D5": { key: "m21-202312-r4-ihein", label: "2-1 입반테스트 4 이혜인T 교사본(2023년 12월)", tags: ["middle2-1", "middle2-2", "mixed-range", "partial-question-variant"] },
-    "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
+    "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] },
+    "DP-SRC-B036C8D5C574": { key: "m12-start-r1", label: "1-2 입반테스트 1", tags: ["middle1-2", "course-start", "middle1-1-full-range", "diagnostic-extension"] },
+    "DP-SRC-B37A0CEC85EE": { key: "m11-start-r1", label: "1-1 입반테스트 1", tags: ["middle1-1", "course-start", "elementary5-6-cumulative", "diagnostic-extension", "answer-dispute"] },
+    "DP-SRC-E5B2400549A0": { key: "m11-mid-r2", label: "1-1 입반테스트 2", tags: ["middle1-1", "mid-course-join", "second-month", "cumulative", "future-unit-diagnostic"] },
+    "DP-SRC-964BCE1983C1": { key: "m11-mid-r3", label: "1-1 입반테스트 3", tags: ["middle1-1", "mid-course-join", "third-month", "turbo-advanced", "full-range", "borderline-future-diagnostic"] },
+    "DP-SRC-E00A54FBB8B2": { key: "m21-202310-r2", label: "2-1 입반테스트 2(둘째달 구판)", tags: ["middle2-1", "legacy", "mid-course-join", "second-month", "middle1-cumulative", "mid-unit-cutoff", "answer-dispute"] },
+    "DP-SRC-1C451CEB27A7": { key: "m11-202312-r4", label: "1-1 입반테스트 4(넷째달 구판)", tags: ["middle1-1", "legacy", "mid-course-join", "fourth-month", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
   const reviewedQuestionCount = [packet, classificationPacket, paperPacket, difficultyPacket]

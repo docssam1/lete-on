@@ -1,0 +1,413 @@
+{
+  "version": 1,
+  "task": {
+    "id": "boarding-grade6-clinic-pipeline-20260830",
+    "title": "Boarding Grade 6 diagnostic and learning clinic pipeline",
+    "domain": "math",
+    "objective": "Connect Grade 6 diagnosis to exact concept learning and verified animation, then publish successive evidence-gated clinic workbooks and completion-gated rechecks while leaving unreviewed clusters locked.",
+    "learner_stage": "US Grade 6 ages 11-12",
+    "release_authority": "user-curriculum-lead",
+    "updated": "2026-09-02",
+    "gate_set_version": "2",
+    "validator_version": "pipeline-gate-v2"
+  },
+  "source_memory": "../.source-memory/source-memory.json",
+  "items": [
+    {
+      "id": "animated-math-concept-samples",
+      "title": "GFIELD-authored ratio and geometry progressive lessons",
+      "work_key": "141334c735682f33901b4504acd2ec9e390c7eb9aca184ed97f3d0c5354a8383",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": false,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "claims": [
+        {
+          "id": "single-answer-and-release",
+          "contract": "single-value",
+          "verifier": "independent enumeration, angle recomputation, browser render, and deployment proof",
+          "evidence": [
+            { "role": "answer", "locator": "test:animated-math-lesson:independent-answer-checks" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/animated-math.html" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/animated-math-lessons.js", "note": "GFIELD-authored public samples with original-rights metadata" }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-grade6-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Ratio language, bar model, division prerequisite, seven-beat reasoning load, and open concept viewing fit Grade 6." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:model-derived-geometry" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-single-gaze-v1", "note": "Each beat introduces or revisits one focal target and clears stale focus." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:desktop-mobile-a4-render-review" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:playback-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:a4-geometry-final" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:animated-math-lesson:unique-answer" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:answer-beat-lock" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:mobile-print-language-regression" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/animated-math.html" }] }
+      ]
+    },
+    {
+      "id": "grade6-diagnostic-clinic-route",
+      "title": "Reviewed diagnostic to concept and animation route",
+      "work_key": "abbcc87025b7d16ebee4d20961a26b018926102f454e35ee7d4c78751db645d1",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "claims": [
+        {
+          "id": "exact-clinic-route",
+          "contract": "single-value",
+          "verifier": "catalog validator, negative mismatch test, privacy scan, and desktop-mobile browser flow",
+          "evidence": [
+            { "role": "test", "locator": "test:clinic-paths:exact-route-and-privacy" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/concept-learning.html" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-route", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-concept-lessons.js" }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:clinic-route-grade6-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Korean action labels, exact cluster representation, concept prerequisite, five-step route load, and click navigation fit Grade 6." }] },
+        { "id": "exact-mapping", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:ratio-only-exact-map" }] },
+        { "id": "privacy", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:no-student-answer-query-fields" }] },
+        { "id": "mobile-navigation", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-route-mobile-final" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:geometry-mismatch-fails" }] },
+        { "id": "manual-route-truth", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-path-browser:manual-navigation-clears-diagnostic-source" }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/concept-learning.html", "note": "PR 135 merge 4205460e deployed with HTTP 200 clinic script and context checks." }] }
+      ]
+    },
+    {
+      "id": "grade6-rp-a-public-clinic-pack",
+      "title": "GFIELD Grade 6 ratio clinic workbook and recheck",
+      "work_key": "8a5adc42c4011a9646ed7c6034a9d3e0f0f4c6223b414a8fdd1288b1adbca057",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "delivery_surfaces": ["interactive-student", "public-teacher-sample", "a4-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "claims": [
+        {
+          "id": "ratio-clinic-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent fixed answer ledger, adjacent-answer negative controls, student answer-visibility browser checks, and desktop-mobile-A4 render review",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js" },
+            { "role": "test", "locator": "test:grade6-rp-clinic-pack:16-independent-answers" },
+            { "role": "test", "locator": "test:clinic-practice-browser:attempt-gated-solutions" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "GFIELD-authored public content with explicit original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-rp-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 vocabulary, ratios and rates representations, multiplication and division prerequisites, three four-item sections, and typed numeric or ratio responses are appropriate." }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-rp-clinic-pack:fixed-answer-ledger" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-rp-clinic-pack:adjacent-wrong-answers" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:no-answer-before-attempt" }] },
+        { "id": "route-gating", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-paths:completion-gated-recheck" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:teacher-preview-separate" }] },
+        { "id": "language-review", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-practice-ko-en-zh-render-review" }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:clinic-practice-desktop-mobile-a4-final" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-rp-clinic-pack.js", "note": "The public scope notice forbids automatic mastery or promotion claims." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html", "note": "PR 137 merge ae054741 deployed with HTTP 200 assets, 12 student items, attempt-gated hints, separated teacher answers, mobile zero overflow, and locked recheck verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ns-a-public-clinic-pack",
+      "title": "GFIELD Grade 6 fraction division visual clinic workbook and recheck",
+      "work_key": "35d727394990739763833b05c1dcd6c717a38c6e61d56cfbb81f1e90f5d9d79d",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry",
+      "claims": [
+        {
+          "id": "fraction-division-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent exact rational calculation, reverse multiplication, simplest-form negative controls, answer-visibility checks, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ns-a-clinic-pack:16-exact-answer-ledger" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ns-a-shared-shell-and-completion" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js", "note": "GFIELD-authored public 6.NS.A.1 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ns-a-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 fraction language, eight-part strip representation, fraction equivalence prerequisites, one-focus progressive reasoning, and typed exact-fraction responses fit the recorded learner stage." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:eight-parts-six-shaded-groups" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-fraction-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus before the next step." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:mobile-a4" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:a4-complete-model" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-a-clinic-pack:16-exact-answer-ledger-and-reverse-check" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:empty-input-and-first-wrong-attempt-gate" }, { "role": "test", "locator": "test:animated-math-browser:answer-beat-aria-hidden" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-a-clinic-pack:unreduced-fraction-rejected" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-toggle-hidden-and-direct-teacher-view" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-a-clinic-pack.js", "note": "Scope notice forbids automatic domain mastery or promotion claims." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko", "note": "PR 139 merge b811ec5e deployed with 12 student items, hidden answers, 12 teacher answers plus teaching moves, locked recheck, 8-part visual model with 6 shaded groups, answer-beat gating, and zero overflow at 390px verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ns-b-public-clinic-pack",
+      "title": "GFIELD Grade 6 number-system computation visual clinic workbook and recheck",
+      "work_key": "49969741fa0e2c0b456291c50be597a0542d95b6d9ca437bc1e79a90bfd2a5a9",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry",
+      "claims": [
+        {
+          "id": "number-system-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "exact BigInt rational arithmetic, reverse multiplication, exhaustive factor checks, independent Euclidean verification, answer-visibility checks, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ns-b-clinic-pack:16-exact-answer-ledger" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ns-b-shared-shell-and-completion" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.B&mode=workbook&audience=student&locale=ko" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js", "note": "GFIELD-authored public 6.NS.B.2-4 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ns-b-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 computation language, factor tiles and remainder-chain representations, whole-number operation prerequisites, three four-item sections, and typed exact numeric responses fit the recorded learner stage." }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:gcf-factor-arrays-and-remainder-chain" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-gcf-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus before the next step." }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:mobile-a4" }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:grade6-ns-b-gcf-final-overview-desktop-mobile" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-b-clinic-pack:exact-ledger-reverse-and-factor-checks" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-answer-hidden" }, { "role": "test", "locator": "test:animated-math-browser:gcf-answer-beat-hidden" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-b-clinic-pack:exact-decimal-rejects-nearby-value" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:locale-narration-alignment" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-teacher-separate" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-b-clinic-pack.js", "note": "Automatic checks cover numeric outputs only; algorithm explanation, distributive justification, mastery, and promotion remain outside the automatic claim." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.B&mode=workbook&audience=student&locale=ko", "note": "PR 141 merge a51f7700 deployed with HTTP 200, 12 student items, zero student answer panels, hidden teacher entry, 24 separated teacher answer and teaching panels, zero mobile overflow, completion-gated recheck, and GCF answer-beat visibility verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ns-c-public-clinic-pack",
+      "title": "GFIELD Grade 6 signed-number and coordinate clinic workbook and recheck",
+      "work_key": "d7ed14630b6db3b69ffa735764fe7a75c460f8048c51881cd033c903973f58f4",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "answer-key-print"],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry",
+      "claims": [
+        {
+          "id": "signed-number-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "exact BigInt rational arithmetic, independent 16-answer ledger, full-quadrant coverage, model-derived SVG positions, answer-visibility checks, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ns-c-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ns-c-clinic-pack:16-exact-answer-ledger" },
+            { "role": "test", "locator": "test:animated-math-lesson:signed-rational-exact-tick-model" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ns-c-student-teacher-separation" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.C&mode=workbook&audience=student&locale=ko" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-c-clinic-pack.js", "note": "GFIELD-authored public 6.NS.C.5-8 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ns-c-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 signed-number language, number-line and coordinate representations, fraction comparison prerequisites, three four-item sections, and typed exact responses fit the recorded learner stage." }] },
+        { "id": "automatic-evidence-boundary", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-c-clinic-pack:teacher-observation-boundary" }] },
+        { "id": "full-quadrant-coverage", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-c-clinic-pack:quadrants-i-ii-iii-iv" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ns-c-clinic-pack:exact-bigint-rational-ledger" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ns-c-clinic-pack:reduced-fraction-and-comparison-grammar" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:signed-rational-point-line-model" }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-signed-number-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus." }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:signed-number-a4-complete-model" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-answer-hidden" }, { "role": "test", "locator": "test:animated-math-browser:answer-beat-hidden" }] },
+        { "id": "mobile-input", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:signed-rational-text-keyboard" }] },
+        { "id": "mobile-legibility", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:320-390-label-height-and-overflow" }] },
+        { "id": "language-review", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:ko-zh-narration-and-aria" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:ko-zh-narration-and-aria" }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:mobile-a4" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-zero-answers-teacher-zero-inputs" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ns-c-clinic-pack.js", "note": "Automatic checks cover exact responses only; plotting, contextual explanation, mastery, and promotion remain teacher-observed or outside the automatic claim." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.NS.C&mode=workbook&audience=student&locale=ko", "note": "PR 143 merge 5bb5fe8c deployed with HTTP 200 assets, 12 student items, zero student answer panels, 24 separated teacher answer and teaching panels, zero mobile overflow, minimum 17px number-line labels, and eight exact lesson objects verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ee-a-public-clinic-pack",
+      "title": "GFIELD Grade 6 expression structure and equivalence clinic workbook and recheck",
+      "work_key": "9c5d77192fe95fe71be7750fedbb0cb19e2d880686d4d42a6905ec07cde46f24",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "learner-print", "answer-key-print"],
+      "learner_stage": "US Grade 6 ages 11-12",
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "claims": [
+        {
+          "id": "expression-answer-identity-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent 16-answer ledger, exact coefficient-pair identity checks, malformed-pair negative controls, accessibility answer gating, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ee-a-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ee-a-clinic-pack:16-exact-answer-ledger-and-coefficient-pairs" },
+            { "role": "test", "locator": "test:animated-math-browser:expression-answer-aria-gate" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ee-a-student-teacher-separation" },
+            { "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ee-a-clinic-pack.js", "note": "GFIELD-authored public 6.EE.A.1-4 content with original-rights metadata and no third-party assets." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ee-a-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 expression language, nested-operation tree, whole-number prerequisites, three four-item sections, and typed exact numeric responses fit the recorded learner stage." }] },
+        { "id": "private-boundary-preserved", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ee-a-public-private-boundary-v1", "note": "The public clinic does not loosen the separate private diagnostic evidence contract." }] },
+        { "id": "four-standard-strands", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-a-clinic-pack:four-strands-workbook-and-recheck" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ee-a-clinic-pack:16-exact-answer-ledger" }] },
+        { "id": "algebra-input-safety", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-a-clinic-pack:whole-number-grammar" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-a-clinic-pack:whole-number-grammar-and-malformed-coefficient-pairs" }] },
+        { "id": "identity-proof", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-a-clinic-pack:exact-coefficient-pairs-and-negative-controls" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:exact-nested-operation-model" }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-expression-single-gaze-v1", "note": "Every beat introduces or revisits one focal target and clears stale focus." }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-and-overview-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:expression-a4-complete-model" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:expression-answer-hidden-before-beat" }, { "role": "test", "locator": "test:clinic-practice-browser:student-answer-hidden" }] },
+        { "id": "language-review", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-a-clinic-pack:ko-en-zh-numeric-structure" }, { "role": "test", "locator": "test:animated-math-browser:localized-expression-steps" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:localized-expression-steps" }] },
+        { "id": "mobile-legibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:expression-320-390-legibility" }, { "role": "test", "locator": "test:clinic-practice-browser:6-ee-a-mobile-zero-overflow" }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "artifact:grade6-ee-a-desktop-mobile-a4-final" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:student-zero-answers-teacher-zero-inputs" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ee-a-clinic-pack.js", "note": "Automatic checks cover limited numeric evidence only; expression writing, verbal reading, equivalence explanation, mastery, and promotion remain teacher-observed or outside the automatic claim." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-08-30:user-approved-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko", "note": "PR 145 merge 22d916a1 deployed with HTTP 200 assets, 12 student items, zero student answer panels, 24 separated teacher answer and teaching panels, zero mobile overflow, seven exact lesson objects, and answer-gated accessibility verified live." }] }
+      ]
+    },
+    {
+      "id": "grade6-ee-b-public-clinic-pack",
+      "title": "GFIELD Grade 6 equations and inequalities clinic workbook and recheck",
+      "work_key": "ad53c455869bcccf86c0135974a0344624ef393e27d9137ec8d0833fee3e1119",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "published",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "",
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "progressive-construction",
+      "delivery_surfaces": ["interactive", "learner-print", "answer-key-print"],
+      "learner_stage": "US Grade 6 ages 11-12",
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "audio_role": "support",
+      "unlock_policy": "concept-open; worked-solutions-require-first-wrong-attempt; teacher-view-separate-entry; recheck-after-public-practice-completion",
+      "claims": [
+        {
+          "id": "equation-inequality-practice-answer-and-visibility-contract",
+          "contract": "single-value",
+          "verifier": "independent 16-answer ledger, exhaustive one-step solution enumeration, reverse substitution, strict-boundary checks, answer-leak negative controls, and desktop-mobile-A4 browser regression",
+          "evidence": [
+            { "role": "source", "locator": "boarding-school-math/learning/grade6-ee-b-clinic-pack.js" },
+            { "role": "answer", "locator": "test:grade6-ee-b-clinic-pack:16-exact-answer-ledger-and-uniqueness" },
+            { "role": "test", "locator": "test:animated-math-lesson:exact-equal-groups-balance-model" },
+            { "role": "test", "locator": "test:clinic-practice-browser:6-ee-b-public-private-boundary" },
+            { "role": "audit", "locator": "audit:grade6-ee-b-independent-final-review-2026-09-02", "note": "Read-only SOL high review found and cleared two answer leaks, then reported no remaining findings." },
+            { "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" },
+            { "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko" }
+          ]
+        }
+      ],
+      "gates": [
+        { "id": "source-scope", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "https://www.thecorestandards.org/Math/Content/6/EE/", "note": "Official 6.EE.B.5-8 scope: substitution truth, variable representation, x+p=q and px=q, and x>c or x<c with number-line solutions." }] },
+        { "id": "learner-fit", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ee-b-clinic-learner-fit-v1", "learner_stage": "US Grade 6 ages 11-12", "criteria": ["language", "representations", "prerequisites", "reasoning-load", "response-mode"], "note": "Grade 6 one-step forms, exact rational prerequisites, equal-groups representation, four focused strands, and typed exact responses fit the recorded learner stage." }] },
+        { "id": "private-boundary-preserved", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:grade6-ee-b-public-private-boundary-v1", "note": "Public practice feedback does not loosen the separate private diagnostic evidence contract; variable writing, infinite-solution explanation, and number-line drawing remain teacher-observed." }] },
+        { "id": "four-standard-strands", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-b-clinic-pack:four-strands-workbook-and-recheck" }] },
+        { "id": "answer-contract", "required": true, "status": "pass", "evidence": [{ "role": "answer", "locator": "test:grade6-ee-b-clinic-pack:exact-ledger-reverse-and-exhaustive-checks" }] },
+        { "id": "negative-control", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:grade6-ee-b-clinic-pack:near-miss-unreduced-and-answer-leak-controls" }] },
+        { "id": "representation-fidelity", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:six-model-derived-equal-boxes-and-reverse-check" }] },
+        { "id": "instructional-sequence", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-lesson:single-new-object-per-beat" }] },
+        { "id": "attention", "required": true, "status": "pass", "evidence": [{ "role": "audit", "locator": "audit:animated-math-equation-single-gaze-v1", "note": "Each beat introduces or revisits one focal object and clears stale focus." }] },
+        { "id": "playback-controls", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:step-overview-restart-controls" }] },
+        { "id": "final-still", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:6-ee-b-a4-complete-balance-model" }] },
+        { "id": "answer-visibility", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:equation-answer-hidden-until-answer-beat" }, { "role": "test", "locator": "test:grade6-ee-b-clinic-pack:no-worked-example-or-truth-leak" }] },
+        { "id": "language-audio-alignment", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:animated-math-browser:ko-en-zh-balance-narration-and-aria" }] },
+        { "id": "render-surfaces", "required": true, "status": "pass", "evidence": [{ "role": "render", "locator": "test:animated-math-browser:6-ee-b-desktop-mobile-a4" }, { "role": "render", "locator": "test:clinic-practice-browser:6-ee-b-mobile-a4" }] },
+        { "id": "student-teacher-separation", "required": true, "status": "pass", "evidence": [{ "role": "test", "locator": "test:clinic-practice-browser:6-ee-b-student-zero-answers-teacher-zero-inputs" }] },
+        { "id": "scope-truth", "required": true, "status": "pass", "evidence": [{ "role": "source", "locator": "boarding-school-math/learning/grade6-ee-b-clinic-pack.js", "note": "Automatic feedback is public practice only; private diagnostic evidence, full mastery, and promotion are not expanded or automatically determined." }] },
+        { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" }] },
+        { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko", "note": "PR 154 merge c709e6e3 deployed with HTTP 200, 12 student items, zero student answer panels, 24 teacher answer and teaching panels, six model-derived equation boxes, final-answer gating, and zero mobile overflow verified live." }] }
+      ]
+    }
+  ]
+}

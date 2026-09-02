@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<rect x="60" y="94" width="196" height="104" rx="14" fill="#0E2C57"/>
+<text x="158" y="164" font-size="46" fill="#F5D98B">999</text>
+<rect x="384" y="94" width="204" height="104" rx="14" fill="#2E9E6B"/>
+<text x="486" y="164" font-size="46" fill="#FBFAF7">1000</text>
+<text x="320" y="126" font-size="26" fill="#C9A063">+1</text></g>
+<path d="M270 152 H370" stroke="#C9A063" stroke-width="3.5" marker-end="url(#a7)"/>
+<defs><marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#C9A063"/></marker></defs>
+<g font-family="ui-monospace,monospace" font-size="18" fill="#4a5468" text-anchor="middle">
+<text x="158" y="234">10² × 9 + …</text><text x="486" y="234">10³</text></g></svg>

@@ -1,4 +1,4 @@
-import { CURRICULUM, TEXTBOOK_STAGES, TYPES, textbookGuideForType, typeById } from "./source-data.js";
+import { CURRICULUM, TEXTBOOK_STAGES, TYPES, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js";
 
 const expectedStageSections = Object.freeze({
   concept: "activity",
@@ -120,6 +120,10 @@ for (const book of fullyDetailedBooks) {
 }
 for (const typeId of curriculumTypeIds) {
   assert(textbookGuideForType(typeId) !== fallbackGuide, `explicit concept guide missing for ${typeId}`);
+  const concept = representativeConceptForType(typeId);
+  assert(concept?.label?.trim(), `representative concept label missing for ${typeId}`);
+  assert(concept?.summary?.trim(), `representative concept summary missing for ${typeId}`);
+  assert(concept?.principle?.trim(), `representative concept principle missing for ${typeId}`);
 }
 
 console.log(`CURRICULUM_STAGE_AUDIT_OK books=${CURRICULUM.length} units=${unitCount} stages=${TEXTBOOK_STAGES.length} ranges=${rangeCount} sourceQuestions=${sourceQuestionCount} types=${curriculumTypeIds.size} detailedTypes=${detailedTypeCount} detailedRefs=${detailedReferenceCount} detailedQuestions=${detailedQuestionCount}`);

@@ -45,6 +45,9 @@
 .nmc-thumb{width:52px;height:66px;display:flex;align-items:center;justify-content:center}
 .nmc-iname{font-size:.7rem;font-weight:700;color:#555;text-align:center;line-height:1.2}
 .nmc-iprice{font-size:.68rem;font-weight:700;color:#e6ac00;background:#fef9e7;border-radius:99px;padding:1px 6px;margin-top:1px}
+/* 과정 진도 잠금 안내(코인 가격 칩과 나란히) · 과정 보상 배지 — 캐릭터-승급-설계.md §4 */
+.nmc-icourse{font-size:.62rem;font-weight:700;color:#2980b9;background:#eef6fd;border-radius:99px;padding:1px 6px;margin-top:1px;white-space:nowrap}
+.nmc-ibadge{font-size:.62rem;font-weight:700;color:#27ae60;background:#eafaf1;border-radius:99px;padding:1px 6px;margin-top:1px;white-space:nowrap}
 
 /* 토스트 */
 .nmc-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c3e50;color:#fff;border-radius:99px;padding:10px 20px;font-size:.88rem;font-weight:700;z-index:9999;pointer-events:none;animation:nmcToast .3s ease;white-space:nowrap}

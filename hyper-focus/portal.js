@@ -7,9 +7,9 @@
   const $ = selector => document.querySelector(selector);
   const $$ = selector => Array.from(document.querySelectorAll(selector));
   let session = null;
-  let mfaMode = false;
   let currentCollection = null;
   let collectionViewToken = 0;
+  let modalReturnFocus = null;
   const secureExamLoader = collectionUi?.createExamLoader?.() || Object.freeze({
     load: () => Promise.reject(new Error("회차 목록 모듈을 준비하지 못했습니다.")),
     reset: () => {}
@@ -77,14 +77,26 @@
   }
 
   function showModal(modal) {
+    modalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     modal.hidden = false;
     document.body.classList.add("modal-open");
-    setTimeout(() => modal.classList.add("visible"), 10);
+    setTimeout(() => {
+      modal.classList.add("visible");
+      const focusTarget = modal.querySelector('input:not([disabled])')
+        || modal.querySelector('button:not([disabled]), a[href]');
+      focusTarget?.focus();
+    }, 10);
   }
 
   function closeModal(modal) {
     modal.classList.remove("visible");
-    setTimeout(() => { modal.hidden = true; document.body.classList.remove("modal-open"); }, 180);
+    const returnTarget = modalReturnFocus;
+    modalReturnFocus = null;
+    setTimeout(() => {
+      modal.hidden = true;
+      document.body.classList.remove("modal-open");
+      if (returnTarget?.isConnected && !returnTarget.hidden) returnTarget.focus();
+    }, 180);
   }
 
   function toast(message) {
@@ -213,15 +225,6 @@
     event.preventDefault();
     const error = $("#loginError");
     error.textContent = "";
-    if (mfaMode) {
-      const result = await auth.verifyMfa($("#loginMfa").value);
-      if (!result) {
-        error.textContent = "인증 앱의 최신 6자리 번호를 다시 확인해 주세요.";
-        return;
-      }
-      location.href = result.role === "admin" ? "./admin.html" : "./";
-      return;
-    }
     const name = $("#loginName").value.trim();
     const code = $("#loginCode").value.trim();
     if (!name || !code) {
@@ -231,19 +234,6 @@
     const result = await auth.signIn(name, code);
     if (!result) {
       error.textContent = "이름과 승인번호가 일치하지 않습니다.";
-      return;
-    }
-    if (result.role === "mfa_enrollment_required") {
-      location.href = "./admin-mfa.html";
-      return;
-    }
-    if (result.role === "mfa_required") {
-      mfaMode = true;
-      $("#loginMfaRow").hidden = false;
-      $("#loginName").disabled = true;
-      $("#loginCode").disabled = true;
-      $("#loginSubmit").textContent = "관리자 2단계 인증";
-      $("#loginMfa").focus();
       return;
     }
     if (result.role === "admin") {

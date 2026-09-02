@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-hidden="true"><rect width="640" height="280" rx="18" fill="#F7F5F0"/><path d="M60 232 H580" stroke="#C9A063" stroke-width="8" stroke-linecap="round"/>
+<g stroke="#0E2C57" stroke-width="7" stroke-linecap="round">
+<path d="M160 226 V78"/><path d="M320 226 V78"/><path d="M480 226 V78"/></g>
+<g stroke="#0E2C57" stroke-width="2">
+<rect x="98" y="196" width="124" height="26" rx="9" fill="#16417C"/>
+<rect x="114" y="164" width="92" height="26" rx="9" fill="#C9A063"/>
+<rect x="130" y="132" width="60" height="26" rx="9" fill="#2E9E6B"/></g>
+<g stroke="#4a5468" stroke-width="2.5" fill="none" stroke-dasharray="7 5">
+<path d="M190 116 q140 -70 280 66" marker-end="url(#a6)"/></g>
+<defs><marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a5468"/></marker></defs>
+<g font-family="ui-monospace,monospace" font-weight="800" text-anchor="middle">
+<text x="320" y="52" font-size="26" fill="#16417C">2×2×2 − 1 = 7</text></g></svg>

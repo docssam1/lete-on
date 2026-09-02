@@ -97,7 +97,8 @@ function routeGrid(visual) {
 }
 
 function digitCards(visual) {
-  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · 작은 수부터 <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
+  const order = visual.descending ? "큰 수부터" : "작은 수부터";
+  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · ${order} <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
 }
 
 function digitCondition(visual) {
@@ -176,6 +177,26 @@ function checkerboardProducts(visual) {
     }
   }
   return `<div class="b5-checker-wrap"><div class="b5-mini-cards">${visual.cardPool.map((value) => `<i>${value}</i>`).join("")}</div><div class="b5-checker-products"><div class="cells">${cells.join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><em>곱</em></div></div>`;
+}
+
+function triangularStairScene(stage, hideTotal = false) {
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.buildTriangularStairShape || !geometry?.triangularStairTotal || !renderer?.renderIso) {
+    throw new Error("Geometry worksheet cube data is required for the triangular stair visual.");
+  }
+  const map = geometry.buildTriangularStairShape(stage);
+  const total = geometry.triangularStairTotal(stage);
+  if (geometry.mapTotal(map) !== total) throw new Error(`Triangular stair total mismatch at stage ${stage}.`);
+  const svg = renderer.renderIso(map, stage, stage, { u: 14 })
+    .replace('class="ws-iso"', `class="ws-iso b5-geometry-cubes" role="img" aria-label="${stage}단계 삼각 계단 쌓기나무" data-geometry-kind="triangular-stair" data-stage="${stage}" data-total="${total}"`);
+  return `<figure>${svg}<figcaption>${stage}단계 <span>${hideTotal ? "몇 개?" : `${total}개`}</span></figcaption></figure>`;
+}
+
+function tetrahedralStair(visual) {
+  const targetSet = new Set(visual.targetStages);
+  const targets = visual.targetStages.map((stage) => `<b>${stage}단계 = ?</b>`).join("");
+  return `<div class="b5-tetrahedral"><div>${visual.previewStages.map((stage) => triangularStairScene(stage, targetSet.has(stage))).join("")}</div><p>${targets}</p></div>`;
 }
 
 function squarePaperGrowth(visual) {
@@ -331,6 +352,7 @@ export function book05Markup(visual) {
     case "row-major-targets": return rowMajorTargets(visual);
     case "radial-cycle": return radialCycle(visual);
     case "checkerboard-products": return checkerboardProducts(visual);
+    case "tetrahedral-stair": return tetrahedralStair(visual);
     case "square-paper-growth": return squarePaperGrowth(visual);
     case "square-row-pair": return squareRowPair(visual);
     case "border-stone-growth": return borderStoneGrowth(visual);
