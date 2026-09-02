@@ -12,11 +12,18 @@
 </head>
 <body>
   <main class="piece-shell">
-    <header class="topbar"><a class="back" href="../../shape-garden/" aria-label="Back">&larr;</a><div><strong>GFIELD</strong><small id="subtitle"></small></div><span id="trackLabel"></span></header>
+    <header class="topbar"><a id="backLink" class="back" href="../../shape-garden/" aria-label="Back">&larr;</a><div><strong>GFIELD</strong><small id="subtitle"></small></div><span id="trackLabel"></span></header>
     <section class="intro"><p id="eyebrow"></p><h1 id="title"></h1><span id="description"></span></section>
-    <nav id="activityList" class="activity-list" aria-label="Activities"></nav>
-    <section class="challenge" aria-live="polite"><div class="mission"><span id="step"></span><h2 id="prompt"></h2><p id="hint"></p></div><div class="board-wrap"><div id="target" class="shape-board"></div><div class="arrow" aria-hidden="true">?</div><div id="choices" class="choices"></div></div></section>
-    <footer><p id="feedback" role="status"></p><button id="next" type="button" hidden></button></footer>
+    <section id="typeLobby" class="type-lobby" aria-live="polite">
+      <header><div><p id="lobbyEyebrow"></p><h2 id="lobbyTitle"></h2></div><p id="lobbyDescription"></p></header>
+      <div id="trackTabs" class="track-tabs" aria-label="Course track"></div>
+      <div id="typeCards" class="type-cards"></div>
+    </section>
+    <section id="playView" hidden>
+      <nav id="activityList" class="activity-list" aria-label="Activities"></nav>
+      <section class="challenge" aria-live="polite"><div class="mission"><span id="step"></span><h2 id="prompt"></h2><p id="hint"></p></div><div class="board-wrap"><div id="target" class="shape-board"></div><div class="arrow" aria-hidden="true">?</div><div id="choices" class="choices"></div></div></section>
+      <footer><p id="feedback" role="status"></p><button id="next" type="button" hidden></button></footer>
+    </section>
   </main>
   <script type="module" src="./app.js?v=piece-play-2"></script><script src="../../shared/pwa.js?v=3" defer></script>
 </body>
