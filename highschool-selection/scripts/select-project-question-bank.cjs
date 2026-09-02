@@ -71,6 +71,7 @@ function selectItems(index, profileTokens, options) {
       sourceItemId: item.sourceItemId,
       sourceTypeId: item.sourceTypeId,
       sourceTypeLabel: sourceType ? sourceType.detailType : null,
+      domainGroup: item.domainGroup || (sourceType && sourceType.domainGroup) || null,
       taxonomyReviewStatus: item.taxonomyReviewStatus || (sourceType && sourceType.taxonomyReviewStatus) || null,
       internalTypeGroupId: item.internalTypeGroupId || (sourceType && sourceType.internalTypeGroupId) || null,
       withinCurrentRange: Object.prototype.hasOwnProperty.call(item, "withinCurrentRange")
@@ -87,6 +88,13 @@ function selectItems(index, profileTokens, options) {
       detailPrecision: item.detailPrecision,
       conceptStatus: item.conceptStatus,
       answerStatus,
+      difficultyBand: item.difficulty && ["lowered", "standard", "raised"].includes(item.difficulty.targetBand)
+        ? item.difficulty.targetBand
+        : (item.difficultyBand || null),
+      difficultyStatus: item.difficulty && item.difficulty.status || item.difficultyStatus || "pending",
+      responseKind: item.responseKind || null,
+      responseStatus: item.responseStatus || "pending",
+      usageApproved: item.usageApproved === true || fits.some(fit => fit.status === "approved"),
       learnerFit,
       learnerFitPassed: releaseGate.learnerFitPassed(learnerFit),
       releaseEligible,
@@ -96,7 +104,7 @@ function selectItems(index, profileTokens, options) {
     if (query && ![
       row.itemId, row.sourceBankId, row.sourceItemId, row.sourceTypeId, row.sourceTypeLabel,
       row.conceptFamilyId, row.course, row.semester, row.majorUnit, row.minorUnit, row.detailType,
-      row.solutionArchetype, row.taxonomyReviewStatus, row.internalTypeGroupId
+      row.solutionArchetype, row.domainGroup, row.taxonomyReviewStatus, row.internalTypeGroupId
     ].join(" ").toLocaleLowerCase("ko").includes(query)) return [];
     return [row];
   }).sort(compareItems).slice(0, limit);
