@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const dbAudit = require("./audit-dolpa-question-db.cjs");
+const placementCore = require("./dolpa-paper-placement-core.cjs");
 
 function countBy(items, getter) {
   const counts = new Map();
@@ -92,6 +93,10 @@ function buildReport(database, sourceId, reviewedAt) {
   const domains = countBy(questions, question => question.classification.domain);
   const topDomains = domains.filter(item => item.count === domains[0].count).map(item => item.label);
   const scopeLabel = String((paper.coverage && paper.coverage.declaredScopeLabel) || "확인된 시험 범위");
+  const roleCounts = countBy(placements, placement => placementCore.questionRole(paper, placement.number));
+  const extensionProbeNumbers = placements
+    .filter(placement => placementCore.questionRole(paper, placement.number) === "extension_probe")
+    .map(placement => placement.number);
   return {
     schemaVersion: "highselect-dolpa-analysis-report/v1",
     sourceId,
@@ -106,6 +111,8 @@ function buildReport(database, sourceId, reviewedAt) {
       raisedCount,
       raisedRate: Number((raisedCount / questions.length * 100).toFixed(1)),
       answerDisputeCount: answerDisputes.length,
+      coreQuestionCount: questions.length - extensionProbeNumbers.length,
+      extensionProbeQuestionCount: extensionProbeNumbers.length,
       dominantDomains: topDomains
     },
     charts: {
@@ -115,7 +122,8 @@ function buildReport(database, sourceId, reviewedAt) {
       byDifficulty: [
         { label: "기본 적용형", count: standardCount },
         { label: "복합 추론형", count: raisedCount }
-      ]
+      ],
+      byPlacementRole: roleCounts
     },
     criticalWarnings: answerDisputes.map(placement => ({
       questionId: placement.question.questionId,
@@ -131,6 +139,7 @@ function buildReport(database, sourceId, reviewedAt) {
     comments: [
       ...(answerDisputes.length ? [`${answerDisputes.map(placement => `${placement.number}번`).join("·")}은 공식 답과 독립 계산이 일치하지 않아 학생 사용이 잠겨 있다.`] : []),
       `${scopeLabel}의 ${questions.length}문항이며, 학기별로 ${semesters.map(item => `${item.label} ${item.count}문항`).join(", ")}이 배치되어 있다.`,
+      ...(extensionProbeNumbers.length ? [`중심 범위 ${questions.length - extensionProbeNumbers.length}문항과 상향 확인 ${extensionProbeNumbers.length}문항을 구분한다. 상향 확인 문항은 문항 DB에는 남기되 과정 시작 대표 시험 구성에서는 기본적으로 제외한다.`] : []),
       `영역은 ${topDomains.join("·")} 비중이 가장 크며, 한 핵심 개념의 직접 적용보다 개념 결합·조건 분기·역추론이 필요한 복합 추론형이 ${raisedCount}문항으로 많다.`,
       "실전에서는 기본 적용형을 먼저 정확히 확보하고, 복합도형·그래프 역추론·장문 모델링 문항은 조건을 식과 그림에 따로 표시한 뒤 풀어야 한다.",
       "이 분석은 원본 문항 구조를 설명하는 자료이며 합격선이나 개인별 합격 가능성을 추정하지 않는다."
@@ -141,6 +150,7 @@ function buildReport(database, sourceId, reviewedAt) {
       difficultyBand: placement.question.difficulty.band,
       answerStatus: placement.question.answerCheck.status,
       answerEvidenceStatus: placement.question.answerCheck.status === "disputed" ? "conflict" : "verified",
+      ...(paper.placementContext ? { placementRole: placementCore.questionRole(paper, placement.number) } : {}),
       sourceFingerprint: paper.sourceFingerprint,
       locatorEvidenceId: placement.locator.evidence[0],
       ...(paper.variant ? {
