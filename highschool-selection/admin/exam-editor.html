@@ -6,7 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Cache-Control" content="no-store">
   <title>시험지 편집 · 선발·누적 진단</title>
-  <link rel="stylesheet" href="../shared/app.css?v=20260902-editor5">
+  <link rel="stylesheet" href="../shared/app.css?v=20260902-editor6">
 </head>
 <body class="exam-editor-body">
   <a class="skip-link" href="#main">본문으로</a>
@@ -41,6 +41,12 @@
         <p class="eyebrow">Start</p>
         <h2 id="start-title">새 시험지를 만들거나 기존 초안을 엽니다</h2>
         <p>범위 코드는 교육과정 경로를 줄마다 하나씩 입력합니다. 예: <code>G10/M01</code></p>
+        <article class="catalog-launch-card" aria-labelledby="catalog-launch-title">
+          <span class="editor-overline">Read-only Analysis</span>
+          <h3 id="catalog-launch-title">생수 공통수학1 입반 참고 분석</h3>
+          <p>중2-2·중3-1·중3-2 범위의 대수·기하 구성을 확인합니다. 검수가 끝나지 않은 문항은 시험지에 담을 수 없습니다.</p>
+          <button class="accent compact-button" type="button" id="open-catalog-analysis" disabled>분석 보기</button>
+        </article>
       </div>
       <div class="editor-start-forms">
         <form class="editor-create-form" id="draft-create-form">
@@ -152,6 +158,6 @@
   <footer class="footer"><div class="shell"><span>GFIELD 운영자 전용</span><span>검수 문항 메타데이터만 표시 · 원문·정답 비노출</span></div></footer>
   <script src="../shared/runtime.js"></script>
   <script src="../shared/auth.js"></script>
-  <script src="../shared/exam-editor-page.js?v=20260902-editor15"></script>
+  <script src="../shared/exam-editor-page.js?v=20260902-editor16"></script>
 </body>
 </html>

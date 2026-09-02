@@ -4,15 +4,16 @@
 <body>
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav"><a class="brand" href="./"><span class="brand-mark">SL</span><span>선발·누적 진단 연구소<small>GFIELD SELECTION LAB</small></span></a><div class="nav-links"><a class="button ghost" href="./promo/">프로그램 소개</a></div></nav></header>
-  <main id="main" class="login-wrap"><section class="panel"><p class="eyebrow">Private Library</p><h1>시험지 서재 입장</h1><p style="color:var(--muted)">관리자에게 전달받은 이름과 승인번호를 입력하세요. 시험마다 권한이 따로 적용됩니다.</p>
-    <form id="login-form" class="stack" style="margin-top:26px"><div class="field"><label for="name">학생 이름</label><input id="name" name="name" autocomplete="name" required></div><div class="field"><label for="code">승인번호</label><input id="code" name="code" autocomplete="off" autocapitalize="characters" required></div><button class="accent" type="submit">서재 입장</button></form>
+  <main id="main" class="login-wrap"><section class="panel"><p class="eyebrow">Private Library</p><h1 id="login-title">시험지 서재 입장</h1><p id="login-copy" style="color:var(--muted)">관리자에게 전달받은 이름과 승인번호를 입력하세요. 시험마다 권한이 따로 적용됩니다.</p>
+    <form id="login-form" class="stack" style="margin-top:26px"><div class="field"><label id="name-label" for="name">학생 이름</label><input id="name" name="name" autocomplete="name" required></div><div class="field"><label for="code">승인번호</label><input id="code" name="code" autocomplete="off" autocapitalize="characters" required></div><button class="accent" type="submit" id="login-submit">서재 입장</button></form>
     <p class="status" id="status" aria-live="polite"></p><div class="notice">이름은 시험지·분석지 워터마크에 사용됩니다. 승인번호는 입장 확인에만 사용되며 화면에 다시 표시되지 않습니다.</div>
   </section></main>
   <script src="./shared/runtime.js"></script><script src="./shared/auth.js"></script>
   <script>
-    const form=document.getElementById('login-form'),status=document.getElementById('status');
+    const form=document.getElementById('login-form'),status=document.getElementById('status'),params=new URLSearchParams(location.search),next=params.get('next'),adminEntry=!!(next&&/\/admin\//.test(next));
+    if(adminEntry){document.getElementById('login-title').textContent='관리자 도구 입장';document.getElementById('login-copy').textContent='관리자 이름과 승인번호를 입력하세요. 승인번호는 화면이나 주소에 남지 않습니다.';document.getElementById('name-label').textContent='관리자 이름';document.getElementById('login-submit').textContent='관리자 도구 입장';}
     form.addEventListener('submit',async e=>{e.preventDefault();status.className='status';status.textContent='승인 확인 중입니다.';const result=await HIGHSELECT_AUTH.signIn(form.name.value,form.code.value);if(!result.ok){status.className='status error';status.textContent=result.message;return}go();});
-    function go(){const params=new URLSearchParams(location.search),next=params.get('next');location.href=next&&next.startsWith('/')&&!next.startsWith('//')?next:'./library.html';}
+    function go(){location.href=next&&next.startsWith('/')&&!next.startsWith('//')?next:'./library.html';}
   </script>
 </body>
 </html>

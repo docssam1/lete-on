@@ -5,6 +5,7 @@
   if (!adminSession) return;
 
   const apiBase = String(HIGHSELECT_RUNTIME.apiBase || "").replace(/\/$/, "");
+  const catalogApiUrl = String(HIGHSELECT_RUNTIME.catalogApiUrl || "").replace(/\/$/, "");
   const recentKey = "highselect-exam-editor-recent-v1";
   const elements = {
     alert: document.getElementById("editor-alert"),
@@ -13,6 +14,7 @@
     workspace: document.getElementById("editor-workspace"),
     createForm: document.getElementById("draft-create-form"),
     openForm: document.getElementById("draft-open-form"),
+    openCatalogAnalysis: document.getElementById("open-catalog-analysis"),
     changeDraft: document.getElementById("change-draft"),
     draftTitle: document.getElementById("draft-title"),
     draftRevision: document.getElementById("draft-revision"),
@@ -119,18 +121,34 @@
   }
 
   async function request(path, options) {
-    if (!apiBase) throw Object.assign(new Error("운영 편집 서버가 연결되지 않았습니다."), { status: 503 });
+    const catalogRequest = path.startsWith("/admin/question-bank/catalog");
+    const cloudCatalogRequest = Boolean(catalogRequest && !apiBase && catalogApiUrl);
+    const queryIndex = path.indexOf("?");
+    const target = cloudCatalogRequest
+      ? catalogApiUrl + (queryIndex >= 0 ? path.slice(queryIndex) : "")
+      : apiBase + path;
+    if ((!apiBase && !catalogRequest) || (catalogRequest && !target)) {
+      throw Object.assign(new Error(catalogRequest ? "문항 분석 서버가 연결되지 않았습니다." : "운영 편집 서버가 연결되지 않았습니다."), { status: 503 });
+    }
     const settings = Object.assign({ credentials: "include", headers: { Accept: "application/json" } }, options || {});
     settings.headers = Object.assign({ Accept: "application/json" }, settings.headers || {});
+    if (cloudCatalogRequest) settings.credentials = "omit";
     if (settings.method && settings.method !== "GET") {
       settings.headers["Content-Type"] = "application/json";
       settings.headers["X-Highselect-Admin"] = "1";
     }
-    const response = await fetch(apiBase + path, settings);
+    const response = cloudCatalogRequest
+      ? await HIGHSELECT_AUTH.authorizedFetch(target, settings)
+      : await fetch(target, settings);
     const data = await response.json().catch(function () { return {}; });
     if (!response.ok) {
       if (response.status === 401) loginRedirect();
-      const error = new Error(data.message || "요청을 처리하지 못했습니다.");
+      const message = data.message || ({
+        admin_required: "관리자 권한을 확인해 주세요.",
+        profiles_invalid: "선택한 시험형을 확인해 주세요.",
+        server_not_ready: "문항 분석 자료를 준비하고 있습니다."
+      }[data.error]) || "요청을 처리하지 못했습니다.";
+      const error = new Error(message);
       error.status = response.status;
       throw error;
     }
@@ -199,10 +217,11 @@
     renderRecentDrafts();
   }
 
-  function setWorkspace(active) {
+  function setWorkspace(active, catalogOnly) {
     elements.start.hidden = active;
     elements.workspace.hidden = !active;
     elements.changeDraft.hidden = !active;
+    elements.workspace.classList.toggle("is-catalog-only", Boolean(active && catalogOnly));
   }
 
   function updateMetadata(items) {
@@ -221,7 +240,7 @@
       state.profileMode = draft.mode;
     }
     elements.draftTitle.textContent = `${draft.mode || "과정 미지정"} · ${draft.profileId} · ${draft.targetId}`;
-    elements.draftRevision.textContent = `버전 ${draft.revision}`;
+    elements.draftRevision.textContent = packet.catalogOnly ? "읽기 전용" : `버전 ${draft.revision}`;
     elements.scopeKeys.value = draft.scopeKeys.join("\n");
     elements.sortMode.value = draft.sortMode;
     Array.from(elements.viewMode.querySelectorAll("[data-view]")).forEach(function (button) {
@@ -235,9 +254,18 @@
     renderCandidateMode();
     renderCandidates();
     invalidateReadiness();
-    rememberDraft(packet);
-    setWorkspace(true);
-    if (!(options && options.keepUrl)) {
+    const catalogOnly = packet.catalogOnly === true;
+    Array.from(elements.academyProfileFilters.querySelectorAll("input[value]")).forEach(function (input) {
+      input.disabled = catalogOnly && input.value !== "SM_STANDARD";
+    });
+    elements.catalogIncludeCandidates.disabled = false;
+    elements.editScope.disabled = catalogOnly;
+    elements.checkReadiness.disabled = catalogOnly;
+    elements.sortMode.disabled = catalogOnly;
+    Array.from(elements.viewMode.querySelectorAll("button")).forEach(button => { button.disabled = catalogOnly; });
+    if (!catalogOnly) rememberDraft(packet);
+    setWorkspace(true, catalogOnly);
+    if (!catalogOnly && !(options && options.keepUrl)) {
       const url = new URL(location.href);
       url.searchParams.set("draftId", packet.draftId);
       history.replaceState(null, "", url);
@@ -330,7 +358,10 @@
           : (candidate.sourceLabel || candidate.paperId);
         title.append(make("strong", "", candidate.typeLabel), make("code", "", sourceReference));
         const badges = make("div", "candidate-badges");
-        (candidate.profiles || []).forEach(function (profile) { badges.append(candidateBadge(profile.label, "profile")); });
+        (candidate.profiles || []).forEach(function (profile) {
+          const suffix = profile.status === "candidate" ? " · 후보" : profile.status === "approved" ? " · 승인" : "";
+          badges.append(candidateBadge(`${profile.label}${suffix}`, profile.status === "candidate" ? "warning" : "profile"));
+        });
         if (candidate.domainGroup) badges.append(candidateBadge(domainLabels[candidate.domainGroup] || candidate.domainGroup, "domain"));
         if ((candidate.profiles || []).some(function (profile) { return profile.status === "candidate"; })) badges.append(candidateBadge("학원형 후보", "warning"));
         if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
@@ -347,10 +378,11 @@
         if (pending.length) reviewLine.append(make("span", "", `남음 ${pending.join(" · ")}`));
         main.append(title, make("p", "candidate-path", `${candidate.semester} → ${candidate.majorUnit} → ${candidate.minorUnit} → ${candidate.typeLabel}`), badges, reviewLine);
         const actions = make("div", "candidate-catalog-actions");
-        const preview = make("button", "ghost compact-button", candidate.pagePreviewAvailable ? "원본 페이지" : "원본 준비 중");
+        const previewAvailable = Boolean(candidate.pagePreviewAvailable && apiBase && !(state.packet && state.packet.catalogOnly));
+        const preview = make("button", "ghost compact-button", previewAvailable ? "원본 페이지" : "원본 준비 중");
         preview.type = "button";
-        preview.disabled = !candidate.pagePreviewAvailable;
-        if (candidate.pagePreviewAvailable) preview.dataset.pagePreviewId = candidate.questionId;
+        preview.disabled = !previewAvailable;
+        if (previewAvailable) preview.dataset.pagePreviewId = candidate.questionId;
         const assemble = make("button", "ghost compact-button", "조립 전 검수");
         assemble.type = "button";
         assemble.disabled = true;
@@ -655,6 +687,41 @@
     return packet;
   }
 
+  async function openCatalogWorkspace() {
+    state.candidateMode = "catalog";
+    state.selectedPlacementId = null;
+    const now = new Date().toISOString();
+    applyPacket({
+      catalogOnly: true,
+      draftId: "catalog_sm_standard",
+      updatedAt: now,
+      selectedItems: [],
+      draft: {
+        mode: "SM",
+        profileId: "SM_STANDARD",
+        targetId: "공통수학1 입반 참고 분석",
+        durationMinutes: 180,
+        revision: 1,
+        scopeKeys: ["중2-2", "중3-1", "중3-2"],
+        sortMode: "user",
+        viewMode: "question",
+        placements: []
+      }
+    }, { keepUrl: true });
+    Array.from(elements.academyProfileFilters.querySelectorAll("input[value]")).forEach(function (input) {
+      input.checked = input.value === "SM_STANDARD";
+    });
+    elements.catalogIncludeCandidates.checked = true;
+    elements.changeDraft.textContent = "처음으로";
+    const url = new URL(location.href);
+    url.searchParams.delete("draftId");
+    url.searchParams.set("catalog", "SM_STANDARD");
+    history.replaceState(null, "", url);
+    renderCandidateMode();
+    await searchCandidates();
+    setAlert("생수 공통수학1 참고 분석을 열었습니다. 검수가 끝나지 않은 문항은 조립할 수 없습니다.", "ok");
+  }
+
   elements.createForm.addEventListener("submit", async function (event) {
     event.preventDefault();
     if (state.busy) return;
@@ -700,6 +767,13 @@
     finally { setBusy(submit, false); }
   });
 
+  elements.openCatalogAnalysis.addEventListener("click", async function () {
+    setBusy(elements.openCatalogAnalysis, true, "여는 중");
+    try { await openCatalogWorkspace(); }
+    catch (error) { setAlert(error.message, "error"); }
+    finally { setBusy(elements.openCatalogAnalysis, false); }
+  });
+
   elements.recentButtons.addEventListener("click", async function (event) {
     const button = event.target.closest("[data-draft-id]");
     if (!button) return;
@@ -711,10 +785,13 @@
 
   elements.changeDraft.addEventListener("click", function () {
     setWorkspace(false);
+    state.candidateMode = "new";
+    elements.changeDraft.textContent = "다른 초안";
     const url = new URL(location.href);
     url.searchParams.delete("draftId");
+    url.searchParams.delete("catalog");
     history.replaceState(null, "", url);
-    elements.openForm.draftId.focus();
+    if (!elements.openForm.draftId.disabled) elements.openForm.draftId.focus();
   });
 
   elements.editScope.addEventListener("click", function () {
@@ -983,20 +1060,32 @@
   async function boot() {
     renderRecentDrafts();
     if (!apiBase) {
-      elements.connection.textContent = "서버 미연결";
-      elements.connection.className = "badge locked";
-      setAlert("운영 편집 서버가 연결되지 않았습니다.", "error");
-      Array.from(document.querySelectorAll("#editor-start input, #editor-start textarea, #editor-start button")).forEach(item => { item.disabled = true; });
+      Array.from(document.querySelectorAll("#draft-create-form input, #draft-create-form textarea, #draft-create-form select, #draft-create-form button, #draft-open-form input, #draft-open-form button")).forEach(item => { item.disabled = true; });
+      try {
+        await request("/admin/question-bank/catalog?action=status");
+        elements.openCatalogAnalysis.disabled = false;
+        elements.connection.textContent = "분석 자료 연결";
+        elements.connection.className = "badge open";
+        setAlert("읽기 전용 분석 자료를 열 수 있습니다. 시험지 초안 저장은 다음 연결 단계에서 제공합니다.");
+        if (new URLSearchParams(location.search).get("catalog") === "SM_STANDARD") await openCatalogWorkspace();
+      } catch (error) {
+        elements.connection.textContent = "분석 자료 확인 필요";
+        elements.connection.className = "badge locked";
+        setAlert(error.message, "error");
+      }
       return;
     }
     try {
       await request("/admin/exam-editor/status");
       await loadDraftList();
+      elements.openCatalogAnalysis.disabled = false;
       elements.connection.textContent = "운영 API 연결";
       elements.connection.className = "badge open";
       setAlert("검수 완료 문항만 시험지에 담을 수 있습니다.");
       const draftId = new URLSearchParams(location.search).get("draftId");
+      const catalog = new URLSearchParams(location.search).get("catalog");
       if (draftId) await openDraft(draftId, { silent: true, keepUrl: true });
+      else if (catalog === "SM_STANDARD") await openCatalogWorkspace();
     } catch (error) {
       elements.connection.textContent = "편집 저장소 확인 필요";
       elements.connection.className = "badge locked";

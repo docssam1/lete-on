@@ -165,6 +165,68 @@ function createProjectCatalog(index, options) {
     return locatorCatalog.privateLocator(item.sourceItemId);
   }
 
+  function publicItem(row, targetId) {
+    const sourceItem = itemsById.get(row.itemId);
+    const fits = (sourceItem && sourceItem.academyFits || row.academyFits || [])
+      .filter(fit => fit && profileLabels.has(fit.profileId) && fit.status !== "excluded");
+    const pageLocator = locator(row.itemId);
+    const classificationVerified = row.conceptStatus === "mapped";
+    return Object.freeze({
+      questionId: row.itemId,
+      paperId: row.sourceBankId,
+      sourceLabel: row.sourceBankLabel,
+      number: sourceNumber(row.sourceItemId),
+      semester: row.semester,
+      majorUnit: row.majorUnit,
+      minorUnit: row.minorUnit,
+      typeId: row.conceptFamilyId || row.sourceTypeId,
+      typeLabel: row.detailType,
+      conceptStatus: row.conceptStatus,
+      taxonomyReviewStatus: row.taxonomyReviewStatus,
+      internalTypeGroupId: row.internalTypeGroupId,
+      withinCurrentRange: row.withinCurrentRange,
+      domainGroup: row.domainGroup,
+      difficultyBand: row.difficultyBand,
+      difficultyStatus: row.difficultyStatus,
+      responseKind: row.responseKind,
+      responseStatus: row.responseStatus,
+      learnerFit: row.learnerFit,
+      releaseEligible: row.releaseEligible,
+      releaseBlockReason: row.releaseBlockReason,
+      reviewChecks: Object.freeze({
+        classification: classificationVerified,
+        locator: Boolean(pageLocator),
+        difficulty: false,
+        response: false,
+        keyCheck: row.answerStatus === "verified",
+        learnerFit: row.learnerFitPassed,
+        method: false,
+        variants: false,
+        usageApproval: fits.some(fit => fit.status === "approved")
+      }),
+      targetId: targetId || null,
+      profiles: fits.map(fit => Object.freeze({
+        profileId: fit.profileId,
+        label: profileLabels.get(fit.profileId),
+        status: fit.status
+      }))
+    });
+  }
+
+  function selectedRows(profileIds, includeCandidates, options) {
+    return projectSelector.selectItems(index, profileIds, {
+      query: options && options.query,
+      limit: 1000,
+      allowedStatuses: includeCandidates
+        ? projectSelector.CANDIDATE_ALLOWED_STATUSES
+        : projectSelector.DEFAULT_ALLOWED_STATUSES,
+      allowedConceptStatuses: includeCandidates
+        ? ["mapped", "unit_only", "pending"]
+        : ["mapped", "unit_only"],
+      includeReviewCandidates: includeCandidates === true
+    }).items;
+  }
+
   return Object.freeze({
     profiles() { return profiles.slice(); },
     analyses(profileIds) { return representativeAnalyses(index, profileIds); },
@@ -176,18 +238,8 @@ function createProjectCatalog(index, options) {
       const limit = Math.min(300, Math.max(1, Number(searchOptions.limit) || 100));
       const targetId = clean(searchOptions.targetId);
       if (targetId && !dolpaScopes.getTarget(targetId)) throw new Error("시험 범위를 확인해 주세요.");
-      const selected = projectSelector.selectItems(index, profileIds, {
-        query: searchOptions.query,
-        limit: 1000,
-        allowedStatuses: searchOptions.includeCandidates
-          ? projectSelector.CANDIDATE_ALLOWED_STATUSES
-          : projectSelector.DEFAULT_ALLOWED_STATUSES,
-        allowedConceptStatuses: searchOptions.includeCandidates
-          ? ["mapped", "unit_only", "pending"]
-          : ["mapped", "unit_only"],
-        includeReviewCandidates: searchOptions.includeCandidates === true
-      });
-      return selected.items.filter(item => {
+      const selected = selectedRows(profileIds, searchOptions.includeCandidates === true, { query: searchOptions.query });
+      return selected.filter(item => {
         if (!targetId) return true;
         if (item.sourceBankId !== "DOLPA-ORIGINAL") return false;
         return dolpaScopes.evaluateQuestion(targetId, {
@@ -195,51 +247,7 @@ function createProjectCatalog(index, options) {
           semester: item.semester,
           minorUnit: item.minorUnit
         }).eligible;
-      }).slice(0, limit).map(item => {
-        const fits = item.academyFits || [];
-        const pageLocator = locator(item.itemId);
-        const classificationVerified = item.conceptStatus === "mapped";
-        return Object.freeze({
-          questionId: item.itemId,
-          paperId: item.sourceBankId,
-          sourceLabel: item.sourceBankLabel,
-          number: sourceNumber(item.sourceItemId),
-          semester: item.semester,
-          majorUnit: item.majorUnit,
-          minorUnit: item.minorUnit,
-          typeId: item.conceptFamilyId || item.sourceTypeId,
-          typeLabel: item.detailType,
-          conceptStatus: item.conceptStatus,
-          taxonomyReviewStatus: item.taxonomyReviewStatus,
-          internalTypeGroupId: item.internalTypeGroupId,
-          withinCurrentRange: item.withinCurrentRange,
-          domainGroup: item.domainGroup,
-          difficultyBand: item.difficultyBand,
-          difficultyStatus: item.difficultyStatus,
-          responseKind: item.responseKind,
-          responseStatus: item.responseStatus,
-          learnerFit: item.learnerFit,
-          releaseEligible: item.releaseEligible,
-          releaseBlockReason: item.releaseBlockReason,
-          reviewChecks: Object.freeze({
-            classification: classificationVerified,
-            locator: Boolean(pageLocator),
-            difficulty: false,
-            response: false,
-            keyCheck: item.answerStatus === "verified",
-            learnerFit: item.learnerFitPassed,
-            method: false,
-            variants: false,
-            usageApproval: fits.some(fit => fit.status === "approved")
-          }),
-          targetId: targetId || null,
-          profiles: fits.map(fit => Object.freeze({
-            profileId: fit.profileId,
-            label: profileLabels.get(fit.profileId),
-            status: fit.status
-          }))
-        });
-      });
+      }).slice(0, limit).map(item => publicItem(item, targetId));
     }
   });
 }

@@ -173,6 +173,16 @@ test("공통 문항 인덱스에서는 학원형별 원본과 단원 분류 대�
   assert.deepEqual(candidates[0].profiles, [{ profileId: "WM_BASIC", label: "원수학 기본형", status: "candidate" }]);
 });
 
+test("한 학원형으로 검색해도 문항에 근거가 있는 다른 학원형 태그를 함께 보존한다", () => {
+  const value = projectIndex();
+  value.items[0].academyFits.push({ profileId: "SM_STANDARD", status: "candidate" });
+  const row = catalogModule.createCatalog(value).search({ profileIds: ["DP_STANDARD"], includeCandidates: true })[0];
+  assert.deepEqual(row.profiles, [
+    { profileId: "DP_STANDARD", label: "돌파형", status: "source_verified" },
+    { profileId: "SM_STANDARD", label: "생수형", status: "candidate" }
+  ]);
+});
+
 test("공통 문항 인덱스도 학습 적합성 미검수 문항은 관리자 후보에서만 보인다", () => {
   const value = projectIndex();
   delete value.items[0].learnerFit;

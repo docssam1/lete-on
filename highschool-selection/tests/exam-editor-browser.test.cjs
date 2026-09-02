@@ -188,3 +188,95 @@ test("exam editor browser saves rapid score edits and remains usable on desktop 
   assert.deepEqual(consoleErrors, []);
   assert.deepEqual(failedResources, []);
 });
+
+test("static editor opens the authenticated Saengsu analysis in read-only mode on desktop, phone, and A4", async t => {
+  const browserBinary = executablePath();
+  assert.ok(browserBinary, "Chromium is required; run npm run install:browser in highschool-selection");
+  const fixture = startFixture();
+  t.after(() => { if (!fixture.child.killed) fixture.child.kill(); });
+  const base = await fixture.ready;
+  const browser = await chromium.launch({ headless: true, executablePath: browserBinary });
+  t.after(() => browser.close());
+  const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
+  await context.addInitScript(() => {
+    window.HIGHSELECT_RUNTIME = {
+      apiBase: "",
+      supabaseUrl: "https://supabase.test",
+      supabasePublishableKey: "sb_publishable_browser_test",
+      adminSessionUrl: "https://supabase.test/functions/v1/hs-admin-session",
+      catalogApiUrl: "https://catalog.test/highselect-catalog"
+    };
+    localStorage.setItem("highselect-session-v1", JSON.stringify({
+      name: "DOCSSAM", role: "admin", access: [], issuedAt: new Date().toISOString()
+    }));
+    sessionStorage.setItem("highselect-cloud-session-v1", JSON.stringify({
+      accessToken: "browser-access-token", refreshToken: "browser-refresh-token", expiresAt: Date.now() + 3600000
+    }));
+  });
+  const page = await context.newPage();
+  const requests = [];
+  const consoleErrors = [];
+  page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", error => consoleErrors.push(error.message));
+  await page.route("https://catalog.test/highselect-catalog*", async route => {
+    const request = route.request();
+    if (request.method() === "OPTIONS") {
+      await route.fulfill({ status: 204, headers: {
+        "access-control-allow-origin": base,
+        "access-control-allow-headers": "authorization, apikey, content-type",
+        "access-control-allow-methods": "GET, OPTIONS"
+      }});
+      return;
+    }
+    requests.push({ url: request.url(), headers: request.headers() });
+    const url = new URL(request.url());
+    const body = url.searchParams.get("action") === "status"
+      ? { ready: true, schemaVersion: "highselect-private-edge-catalog/v1", snapshotRevision: "test", profileCount: 1 }
+      : {
+          schemaVersion: "highselect-private-edge-catalog/v1",
+          snapshotRevision: "test",
+          profiles: [{ profileId: "SM_STANDARD", programId: "SM", label: "생수형" }],
+          representativeAnalyses: [{
+            profileId: "SM_STANDARD", publicLabel: "생수형 공통수학1 입반 참고 분석",
+            range: ["중2-2", "중3-1", "중3-2"], questionCount: 30, candidatePoolCount: 58, fullyReviewedCount: 0,
+            domain: { algebra: { required: 15, candidates: 30, ready: 0 }, geometry: { required: 15, candidates: 28, ready: 0 } },
+            canCompose: false, blockers: ["모든 확인이 끝난 문항이 부족합니다."], referenceCutline: { score: 20, total: 30 }
+          }],
+          items: [{
+            questionId: "SAENGSU:LOCKED-1", paperId: "SAENGSU-REFERENCE", sourceLabel: "생수 참고 후보", number: 1,
+            semester: "중3-1", majorUnit: "이차방정식", minorUnit: "이차방정식의 활용", typeId: "SMTYPE-LOCKED", typeLabel: "두 근의 관계 구하기",
+            conceptStatus: "pending", taxonomyReviewStatus: "new_type", withinCurrentRange: true, domainGroup: "algebra",
+            difficultyStatus: "pending", responseStatus: "pending", releaseEligible: false, pagePreviewAvailable: false,
+            reviewChecks: { classification: false, locator: false, difficulty: false, response: false, keyCheck: true, method: false, variants: false, usageApproval: false },
+            profiles: [
+              { profileId: "SM_STANDARD", label: "생수형", status: "candidate" },
+              { profileId: "SH_SELECTION", label: "황소형", status: "candidate" }
+            ]
+          }],
+          count: 1
+        };
+    await route.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": base }, body: JSON.stringify(body) });
+  });
+
+  await page.goto(`${base}/admin/exam-editor.html?catalog=SM_STANDARD`);
+  await page.locator("#editor-workspace").waitFor({ state: "visible" });
+  await page.locator("#candidate-analysis").waitFor({ state: "visible" });
+  assert.match(await page.locator("#candidate-analysis").textContent(), /목표 30문항.*대수 후보 30개.*기하 후보 28개/s);
+  assert.equal(await page.locator("#candidate-list .candidate-row.is-catalog").count(), 1);
+  assert.match(await page.locator("#candidate-list .candidate-row.is-catalog").textContent(), /생수형 · 후보.*황소형 · 후보/s);
+  assert.equal(await page.locator("#candidate-list .candidate-row.is-catalog button").first().isDisabled(), true);
+  assert.equal(await page.locator("#editor-workspace").evaluate(node => node.classList.contains("is-catalog-only")), true);
+  assert.equal(await page.locator("#draft-create-form button[type=submit]").isDisabled(), true);
+  assert.ok(requests.some(item => item.headers.authorization === "Bearer browser-access-token"));
+  assert.ok(requests.some(item => item.headers.apikey === "sb_publishable_browser_test"));
+  assert.equal(await page.evaluate(() => localStorage.getItem("highselect-cloud-session-v1")), null);
+
+  const hasOverflow = () => page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  assert.equal(await hasOverflow(), false);
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.equal(await hasOverflow(), false);
+  await page.emulateMedia({ media: "print" });
+  await page.setViewportSize({ width: 794, height: 1123 });
+  assert.equal(await hasOverflow(), false);
+  assert.deepEqual(consoleErrors, []);
+});
