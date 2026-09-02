@@ -11,7 +11,7 @@ const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 test("admin exam editor exposes the full assembly workflow without embedding question content", () => {
   const html = read("admin/exam-editor.html");
   [
-    "draft-create-form", "draft-mode", "draft-open-form", "candidate-mode", "candidate-scope", "academy-profile-filters", "catalog-include-candidates", "candidate-list",
+    "draft-create-form", "draft-mode", "draft-open-form", "candidate-mode", "candidate-scope", "academy-profile-filters", "catalog-include-candidates", "candidate-analysis", "candidate-list",
     "placement-list", "sort-mode", "view-mode", "scope-panel", "check-readiness", "question-page-dialog", "question-page-image"
   ].forEach(id => assert.match(html, new RegExp(`id=["']${id}["']`)));
   assert.match(html, /새 문제/);
@@ -45,6 +45,9 @@ test("editor client uses admin-only API mutations, revision CAS, conflict reload
   assert.match(script, /new URLSearchParams\(\{ draftId: state\.packet\.draftId/);
   assert.match(script, /\/admin\/question-bank\/catalog/);
   assert.match(script, /catalogParams\.set\("includeCandidates", "1"\)/);
+  assert.match(script, /packet\.representativeAnalyses/);
+  assert.match(script, /대수 후보 \$\{algebra\.candidates/);
+  assert.match(script, /현재 합격선으로 자동 적용하지 않습니다/);
   assert.match(script, /\/admin\/question-bank\/items\/\$\{encodeURIComponent\(preview\.dataset\.pagePreviewId\)\}\/page-preview/);
   assert.match(script, /URL\.createObjectURL/);
   assert.match(script, /candidate\.semester.*candidate\.majorUnit.*candidate\.minorUnit.*candidate\.typeLabel/s);
@@ -77,5 +80,7 @@ test("editor layout remains operational on desktop and phone widths", () => {
   assert.match(css, /@media \(max-width: 900px\)[\s\S]*\.editor-layout \{ grid-template-columns: 1fr; \}/);
   assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.placement-row \{ grid-template-columns:/);
   assert.match(css, /\.candidate-list[^}]*max-height:/);
+  assert.match(css, /\.candidate-analysis\[hidden\] \{ display: none; \}/);
+  assert.match(css, /\.candidate-analysis-domains[^}]*grid-template-columns:/);
   assert.match(css, /\.placement-actions[^}]*display: flex/);
 });

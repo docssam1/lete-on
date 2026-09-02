@@ -22,7 +22,7 @@ function index() {
     sourceTypes: [
       { sourceBankId: "DOLPA", sourceTypeId: "DP-T1", detailType: "교점 구하기" },
       { sourceBankId: "WM", sourceTypeId: "WM-U1", detailType: "일차함수" },
-      { sourceBankId: "SAENGSU", sourceTypeId: "SM-T1", detailType: "교점 구하기" }
+      { sourceBankId: "SAENGSU", sourceTypeId: "SM-T1", detailType: "교점 구하기", domainGroup: "algebra" }
     ],
     sourceBanks: [
       { sourceBankId: "DOLPA", academyId: "DP", label: "돌파 원본 시험" },
@@ -55,7 +55,7 @@ function index() {
         itemId: "SAENGSU:Q1", sourceBankId: "SAENGSU", sourceItemId: "Q1", sourceTypeId: "SM-T1",
         conceptFamilyId: "CPT-1", conceptStatus: "mapped",
         answerStatus: "pending", taxonomyReviewStatus: "alias_internal_group",
-        internalTypeGroupId: "SM-GRP-LINE-INTERSECTION", withinCurrentRange: true,
+        internalTypeGroupId: "SM-GRP-LINE-INTERSECTION", withinCurrentRange: true, domainGroup: "algebra",
         academyFits: [{ profileId: "SM_STANDARD", status: "candidate" }]
       }
     ]
@@ -122,6 +122,8 @@ test("생수형 검수 목록은 내부 유형군·현재 범위 상태를 함�
   assert.equal(result.items[0].taxonomyReviewStatus, "alias_internal_group");
   assert.equal(result.items[0].internalTypeGroupId, "SM-GRP-LINE-INTERSECTION");
   assert.equal(result.items[0].withinCurrentRange, true);
+  assert.equal(result.items[0].domainGroup, "algebra");
+  assert.equal(result.items[0].usageApproved, false);
   assert.equal(result.items[0].releaseEligible, false);
   assert.equal(selector.selectItems(index(), ["SM_STANDARD"], { query: "alias_internal_group" }).itemCount, 0);
 });
