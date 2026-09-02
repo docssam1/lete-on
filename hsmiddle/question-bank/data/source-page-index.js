@@ -11,7 +11,7 @@
 
   const freeze = Object.freeze;
   const SOURCE_EXAM_ID = "diagnostic-similar";
-  const RELEASE_LOCKED_NUMBERS = new Set([6, 25, 39]);
+  const RELEASE_LOCKED_NUMBERS = new Set();
   const range = (from, to) => freeze({ from, to });
   const reviewedPageRoles = freeze({
     "diagnostic-similar-q01-p01": freeze({ role: "problem", itemRange: range(1, 4) }),

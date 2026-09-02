@@ -131,8 +131,12 @@
       const sectionLabel = state.view === "solution"
         ? "정답과 풀이"
         : item.sourceVerified ? `문제 ${item.questionCount}문항` : "원본 문제 묶음";
-      return `<section class="set-section">
+      const correction = state.view === "solution" && item.sourceCorrectionNote
+        ? `<aside class="source-correction"><strong>원본 풀이 정정</strong><p>${item.sourceCorrectionNote}</p></aside>`
+        : "";
+      return `<section class="set-section${correction ? " has-correction" : ""}">
         <header class="set-heading"><div><h2>${item.number}번 연계 · ${item.type}</h2><p>${item.semester} · ${item.unit} · ${item.area} · 난이도 ${item.difficulty}</p></div><span>${sectionLabel}</span></header>
+        ${correction}
         ${pageNumbers(item).map(page => `<article class="page"><img src="${item.assetFolder}/page-${page}.png" alt="${item.type} ${state.view === "problem" ? "문제" : "풀이"} ${page}쪽">${watermarkMarkup()}</article>`).join("")}
       </section>`;
     }).join("");

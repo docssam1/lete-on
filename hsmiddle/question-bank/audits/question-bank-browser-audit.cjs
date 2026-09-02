@@ -11,7 +11,7 @@ const outputDir = process.env.HSMIDDLE_BROWSER_OUTPUT || path.resolve(__dirname,
 fs.mkdirSync(outputDir, { recursive: true });
 
 const failures = [];
-const releaseLockedNumbers = new Set([6, 25, 39]);
+const releaseLockedNumbers = new Set();
 const releaseEligibleNumbers = Array.from({ length: 40 }, function (_, index) { return index + 1; }).filter(function (number) {
   return !releaseLockedNumbers.has(number);
 });
@@ -144,7 +144,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
     await noOverflow(desktop, "desktop catalog");
 
     const bodyText = await desktop.locator("body").innerText();
-    if (!bodyText.includes("40개 유형 · 원본 확인 302문항 · 출제 가능 287문항 · 3개 유형 검수 중")) fail("catalog summary does not show confirmed, eligible, and locked totals");
+    if (!bodyText.includes("40개 유형 · 원본 확인 302문항 · 출제 가능 302문항")) fail("catalog summary does not show all confirmed items as eligible");
     if (bodyText.includes("400문제") || bodyText.includes("검수된 10문제")) fail("legacy fixed ten-question claim is still visible");
 
     for (const number of releaseEligibleNumbers) {
@@ -152,12 +152,10 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
       if (!(await eligibleCard.innerText()).includes("원본·답안 확인")) fail(`q${String(number).padStart(2, "0")} complete source bundle is not shown as verified`);
       if (!(await eligibleCard.locator("input[type=checkbox]").isEnabled())) fail(`q${String(number).padStart(2, "0")} complete source type is not selectable`);
     }
-    if (!(await card(desktop, 6).innerText()).includes("학년 연결 검수 중")) fail("q06 learner-fit lock is not visible");
-    if (await card(desktop, 6).locator("input[type=checkbox]").isEnabled()) fail("q06 learner-fit lock can be bypassed by a student");
-    if (!(await card(desktop, 25).innerText()).includes("3번 풀이의 넓이 단위 오류 확인 중")) fail("q25 unit conflict is not visible");
-    if (await card(desktop, 25).locator("input[type=checkbox]").isEnabled()) fail("q25 unit-conflict type is selectable by a student");
-    if (!(await card(desktop, 39).innerText()).includes("4번 풀이의 반복 주기 계산 오류 확인 중")) fail("q39 solution conflict is not visible");
-    if (await card(desktop, 39).locator("input[type=checkbox]").isEnabled()) fail("q39 solution-conflict type is selectable by a student");
+    for (const number of [6, 25, 39]) {
+      if (!(await card(desktop, number).locator("input[type=checkbox]").isEnabled())) fail(`q${String(number).padStart(2, "0")} resolved type is not selectable`);
+      if (!(await card(desktop, number).innerText()).includes("원본·답안 확인")) fail(`q${String(number).padStart(2, "0")} resolved type is not shown as verified`);
+    }
     if (!(await card(desktop, 13).innerText()).includes("수 카드로 배수를 만들고 조건에 맞는 수 찾기")) fail("q13 normalized Korean type name is missing");
     if (!(await card(desktop, 14).innerText()).includes("배열 순서와 도형·점·타일 수의 대응 관계 찾기")) fail("q14 normalized Korean type name is missing");
     if (!(await card(desktop, 15).innerText()).includes("주어진 대응쌍과 기계의 규칙을 식으로 나타내기")) fail("q15 normalized Korean type name is missing");
@@ -365,17 +363,25 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
       });
     });
     if (directSelected.join("|") !== releaseEligibleNumbers.join("|")) fail(`direct-link selection bypassed release locks: ${directSelected.join(",")}`);
-    if ((await directLink.locator("#worksheetMeta").innerText()).includes("302문항")) fail("direct-link worksheet included locked questions");
-    if (!(await directLink.locator("#worksheetMeta").innerText()).includes("확인된 287문항")) fail("direct-link worksheet eligible count is wrong");
+    if (!(await directLink.locator("#worksheetMeta").innerText()).includes("확인된 302문항")) fail("direct-link worksheet eligible count is wrong");
 
-    const adminLink = await browser.newPage({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 });
-    watch(adminLink, "admin-link");
-    await enterAsAdmin(adminLink, `${url}?qs=6,25,39`);
-    for (const number of releaseLockedNumbers) {
-      if (await card(adminLink, number).locator('input[type="checkbox"]').isEnabled()) fail(`admin session can select release-locked q${number}`);
-    }
-    if (await adminLink.locator('.type-card input[type="checkbox"]:checked').count()) fail("admin direct link selected a release-locked type");
-    if (!(await adminLink.locator("#worksheetView").evaluate(element => element.hidden))) fail("admin direct link opened a locked worksheet");
+    const correctionLink = await browser.newPage({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 });
+    watch(correctionLink, "correction-link");
+    await enterAsAdmin(correctionLink, `${url}?qs=6,25,39`);
+    if (await correctionLink.locator('.type-card input[type="checkbox"]:checked').count() !== 3) fail("resolved types were not selected from a direct link");
+    if (await correctionLink.locator("#worksheetView").evaluate(element => element.hidden)) fail("resolved types did not open as a worksheet");
+    await correctionLink.click('.view-tabs button[data-view="solution"]');
+    const correctionText = await correctionLink.locator("#pageStream").innerText();
+    if (!correctionText.includes("정답은 228m²") || !correctionText.includes("80÷2=40")) fail("resolved source corrections are not visible in the solution view");
+    await noOverflow(correctionLink, "correction solution");
+    await correctionLink.screenshot({ path: path.join(outputDir, "q06-q25-q39-resolved-solution.png"), fullPage: true });
+    await correctionLink.emulateMedia({ media: "print" });
+    const correctionPdfPath = path.join(outputDir, "q06-q25-q39-resolved-solution-a4.pdf");
+    await correctionLink.pdf({ path: correctionPdfPath, format: "A4", printBackground: true, margin: { top: "8mm", right: "8mm", bottom: "8mm", left: "8mm" } });
+    const correctionPdfBytes = fs.readFileSync(correctionPdfPath);
+    const correctionPdfPageCount = (correctionPdfBytes.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+    if (correctionPdfPageCount !== 5) fail(`resolved correction A4 output has an extra or missing page: ${correctionPdfPageCount} pages`);
+    await correctionLink.emulateMedia({ media: "screen" });
 
     if (failures.length) {
       console.error(`FAIL question-bank browser audit (${failures.length})`);
@@ -383,7 +389,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
       process.exitCode = 1;
       return;
     }
-    console.log(`PASS question-bank browser audit: desktop=1440x1000 mobile=390x844 A4=all-40-source-types confirmed=302 eligible=287 lockedType=3 q06=learner-fit-locked q25=unit-conflict-locked q39=solution-cycle-conflict-locked q40=desktop-mobile-worksheet-verified bulk=37types directLink=37types adminLocked=6,25,39 output=${outputDir}`);
+    console.log(`PASS question-bank browser audit: desktop=1440x1000 mobile=390x844 A4=all-40-source-types confirmed=302 eligible=302 lockedType=0 q06=learner-fit-verified q25=unit-correction-visible q39=solution-cycle-correction-visible q40=desktop-mobile-worksheet-verified bulk=40types directLink=40types output=${outputDir}`);
   } finally {
     await browser.close();
   }
