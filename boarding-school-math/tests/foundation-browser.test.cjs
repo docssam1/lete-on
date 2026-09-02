@@ -145,6 +145,15 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#skill-map-panel").getAttribute("aria-labelledby"), "grade-tab-8");
   assert.equal(await page.locator("#skill-rows .domain-directory-row").count(), 5);
   assert.match(await page.locator("#map-footnote").innerText(), /5개 영역[\s\S]*10개 클러스터/);
+  assert.equal(await page.locator("#grade-reasoning-lanes article").count(), 3);
+  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 핵심[\s\S]*사고력 클리닉[\s\S]*경시 가교[\s\S]*AMC 8 → AMC 10 가교/);
+  assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 10);
+  await page.locator('[data-grade-tab="6"]').click();
+  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /7개 클리닉 공개/);
+  await page.locator('[data-grade-tab="4"]').click();
+  assert.equal(await page.locator("#grade-reasoning-lanes").isHidden(), true);
+  assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 0);
+  await page.locator('[data-grade-tab="8"]').click();
 
   await page.locator('[data-map-view="domain"]').click();
   assert.equal(await page.locator("#domain-directory").isVisible(), true);
