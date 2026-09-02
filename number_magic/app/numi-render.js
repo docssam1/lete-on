@@ -322,6 +322,11 @@ function symbolCharacterSVG(id, fg){
 }
 /* PNG 우선(sym-<id>.png, 숫자 캐릭터와 같은 tintFilter 적용) · 없으면 <img onerror>로
    숨겨 밑에 항상 그려둔 SVG가 보이게(§0 수정사항 — HEAD 요청 아님). */
+/* 기호 캐릭터 PNG는 **색 톤 필터(tint)를 씌우지 않는다.**
+   숫자 캐릭터는 단색이라 hue-rotate로 재염색해도 되지만, 기호 마법단은 보라 모자·
+   빨강 망토·금색 소품처럼 여러 색을 입고 있어서 필터를 걸면 옷과 소품이 전부
+   한 색으로 뭉개진다(2026-09-01 납품 시안 검토). 선택한 색은 뒤쪽 오라로만 보인다.
+   폴백 SVG는 원래대로 선택한 색(fg)을 쓴다. */
 function symbolFigure(id, fg, tint, shadow){
   const png = symbolImgSrc(id);
   const item = (window.NM_AVATAR && window.NM_AVATAR.symbols || []).find(s=>s.id===id) || {};
@@ -329,7 +334,7 @@ function symbolFigure(id, fg, tint, shadow){
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" preserveAspectRatio="xMidYMid meet"
 style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible">${symbolCharacterSVG(id, fg)}</svg>
 <img src="${png}" alt="${alt}" draggable="false" onerror="this.style.display='none'"
-style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:76%;max-height:88%;object-fit:contain;filter:${tint} ${shadow}">`;
+style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:76%;max-height:88%;object-fit:contain;filter:${shadow}">`;
 }
 
 /* ── 메인 렌더 ── */
