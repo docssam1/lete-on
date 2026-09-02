@@ -18284,6 +18284,112 @@
       const answer = answerValues.reduce((total, value) => total + value, 0);
       return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 조건을 만족하는 두 자리 자연수 ㉠을 모두 더한 값을 구하세요.${hint("조건을 만족하는 두 자리 수를 모두 쓴 뒤 더하세요.", "${target}의 배수 중 최대공약수 조건을 만족하는 수를 빠짐없이 찾아 더하세요.")}${tag("two-digit-gcd-set-sum", [base, target], "single-value")}`, answer, `조건을 만족하는 두 자리 자연수는 ${setAnswer(answerValues)}입니다. 모두 더하면 ${answer}입니다.`);
     },
+    factorMultipleE3({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("약수와 배수 개념탐구 3 원문 분기는 0부터 11까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e3-kind="${kind}" data-factor-multiple-e3-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const setAnswer = values => values.join(", ");
+      const choose = pools => pick(rng, pools[level]);
+
+      if (variant === 0) {
+        const [left, right, target] = choose([[[6, 15, 200], [8, 12, 250], [10, 18, 350]], [[12, 42, 1000], [18, 30, 700], [20, 28, 1000]], [[36, 45, 2000], [42, 55, 3000], [48, 70, 5000]]]);
+        const base = lcm(left, right);
+        const lower = Math.floor(target / base) * base;
+        const upper = lower + base;
+        if (target - lower === upper - target) throw new Error("가장 가까운 공배수가 하나가 아닙니다.");
+        const answer = target - lower < upper - target ? lower : upper;
+        return result(`두 수 ${left}, ${right}의 공배수 중 ${target}에 가장 가까운 수를 구하세요.${tag("nearest-common-multiple", [left, right, target], "single-value")}`, answer, `두 수의 최소공배수는 ${base}입니다. ${target}의 앞뒤 공배수 ${lower}, ${upper}과의 차를 비교하면 답은 ${answer}입니다.`);
+      }
+      if (variant === 1) {
+        const [base, target] = choose([[[12, 60], [18, 90], [20, 60]], [[28, 140], [30, 210], [24, 120]], [[72, 360], [84, 420], [90, 1260]]]);
+        const candidates = range(1, target).filter(value => lcm(base, value) === target);
+        return result(`두 수 ${base}, ㉠의 최소공배수가 ${target}일 때, ㉠이 될 수 있는 자연수는 모두 몇 개인지 구하세요.${tag("lcm-candidate-count", [base, target], "single-value")}`, candidates.length, `1부터 ${target}까지 확인하면 조건에 맞는 수는 ${setAnswer(candidates)}입니다. 따라서 ${candidates.length}개입니다.`);
+      }
+      if (variant === 2) {
+        const [left, right] = choose([[[12, 18], [15, 20], [14, 21]], [[24, 30], [18, 45], [20, 32]], [[28, 36], [36, 40], [42, 60]]]);
+        const base = lcm(left, right);
+        const values = range(100, 999).filter(value => value % base === 0);
+        return result(`두 수 ${left}, ${right}의 공배수인 세 자리 자연수는 모두 몇 개인지 구하세요.${tag("three-digit-common-multiple-count", [left, right], "single-value")}`, values.length, `두 수의 최소공배수는 ${base}입니다. 세 자리 공배수는 ${setAnswer(values)}이므로 모두 ${values.length}개입니다.`);
+      }
+      if (variant === 3) {
+        const [first, second, firstGcd, secondGcd] = choose([[[20, 30, 4, 2], [30, 42, 5, 7], [40, 45, 8, 9]], [[60, 63, 15, 21], [36, 40, 9, 5], [72, 50, 18, 10]], [[84, 90, 42, 30], [140, 126, 35, 63], [264, 455, 24, 35]]]);
+        const upper = lcm(first, second);
+        const candidates = range(1, upper).filter(value => gcd(value, first) === firstGcd && gcd(value, second) === secondGcd);
+        if (!candidates.length || candidates[0] !== Math.min(...candidates)) throw new Error("최소값을 만족하는 자연수를 찾지 못했습니다.");
+        const answer = candidates[0];
+        return result(`㉠과 ${first}의 최대공약수는 ${firstGcd}이고, ㉠과 ${second}의 최대공약수는 ${secondGcd}입니다. 가장 작은 자연수 ㉠을 구하세요.${tag("smallest-double-gcd", [first, second, firstGcd, secondGcd, upper], "single-value")}`, answer, `1부터 ${upper}까지 작은 수부터 확인하면 두 조건을 처음 함께 만족하는 수는 ${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const [multiple, notMultiple] = choose([[[4, 3], [6, 5], [7, 3]], [[8, 3], [10, 4], [11, 4]], [[12, 5], [14, 3], [16, 7]]]);
+        const values = range(100, 999).filter(value => value % multiple === 0 && value % notMultiple !== 0);
+        const allCount = range(100, 999).filter(value => value % multiple === 0).length;
+        const bothCount = range(100, 999).filter(value => value % lcm(multiple, notMultiple) === 0).length;
+        return result(`세 자리 자연수 중 ${multiple}의 배수이지만 ${notMultiple}의 배수가 아닌 수는 모두 몇 개인지 구하세요.${tag("three-digit-multiple-not-multiple-count", [multiple, notMultiple], "single-value")}`, values.length, `세 자리 ${multiple}의 배수는 ${allCount}개이고, 이 중 ${notMultiple}의 배수이기도 한 수는 ${bothCount}개입니다. 따라서 ${allCount}-${bothCount}=${values.length}개입니다.`);
+      }
+      if (variant === 5) {
+        const [lastStart, divisor] = choose([[[120, 12], [180, 18], [240, 24]], [[2019, 48], [1500, 36], [999, 30]], [[5000, 72], [6000, 96], [8000, 120]]]);
+        const starts = range(1, lastStart).filter(start => (start + (start + 1) + (start + 2)) % divisor === 0);
+        return result(`(1, 2, 3), (2, 3, 4), …, (${lastStart}, ${lastStart + 1}, ${lastStart + 2})과 같이 연속한 세 수를 묶었습니다. 묶인 세 수의 합이 ${divisor}의 배수가 되는 것은 모두 몇 묶음인지 구하세요.${tag("consecutive-three-sum-multiple-count", [lastStart, divisor], "single-value")}`, starts.length, `첫 수가 1인 묶음부터 ${lastStart}인 묶음까지 세 수의 합을 확인하면 조건에 맞는 것은 ${starts.length}묶음입니다.`);
+      }
+      if (variant === 6) {
+        const groups = choose([
+          [
+            [["가", [6, 8]], ["나", [9, 12]], ["다", [10, 15]], ["라", [7, 14]]],
+            [["가", [8, 12]], ["나", [6, 15]], ["다", [7, 21]], ["라", [10, 18]]],
+            [["가", [6, 10]], ["나", [8, 12]], ["다", [9, 15]], ["라", [14, 21]]]
+          ],
+          [
+            [["가", [20, 30]], ["나", [14, 16]], ["다", [16, 40]], ["라", [21, 35]]],
+            [["가", [12, 20]], ["나", [18, 24]], ["다", [14, 30]], ["라", [16, 25]]],
+            [["가", [18, 30]], ["나", [20, 28]], ["다", [24, 32]], ["라", [21, 45]]]
+          ],
+          [
+            [["가", [24, 35]], ["나", [18, 40]], ["다", [28, 45]], ["라", [27, 32]]],
+            [["가", [36, 50]], ["나", [28, 45]], ["다", [32, 42]], ["라", [25, 48]]],
+            [["가", [30, 44]], ["나", [36, 50]], ["다", [42, 64]], ["라", [45, 56]]]
+          ]
+        ]);
+        const records = groups.map(([label, values]) => ({ label, values, least: lcm(values[0], values[1]) }));
+        if (new Set(records.map(record => record.least)).size !== 4) throw new Error("네 최소공배수가 모두 달라야 합니다.");
+        const ordered = [...records].sort((first, second) => first.least - second.least);
+        const answer = ordered.map(record => record.label).join(", ");
+        return result(`가: [${records[0].values.join(", ")}]<br>나: [${records[1].values.join(", ")}]<br>다: [${records[2].values.join(", ")}]<br>라: [${records[3].values.join(", ")}]<br>네 최소공배수를 작은 수부터 차례로 기호로 쓰세요.${tag("order-four-lcms", records.flatMap(record => [...record.values, record.least]), "ordered")}`, answer, `최소공배수는 ${records.map(record => `${record.label}: ${record.least}`).join(", ")}입니다. 작은 수부터 쓰면 ${answer}입니다.`);
+      }
+      if (variant === 7) {
+        const [left, right] = choose([[[12, 18], [15, 20], [14, 21]], [[24, 32], [18, 45], [20, 28]], [[42, 60], [48, 54], [44, 60]]]);
+        const base = lcm(left, right);
+        const values = range(100, 999).filter(value => value % base === 0);
+        const answer = values.reduce((total, value) => total + value, 0);
+        return result(`두 수 ${left}, ${right}의 공배수인 세 자리 자연수들의 합을 구하세요.${tag("three-digit-common-multiple-sum", [left, right], "single-value")}`, answer, `두 수의 최소공배수는 ${base}입니다. 세 자리 공배수 ${setAnswer(values)}을 모두 더하면 ${answer}입니다.`);
+      }
+      if (variant === 8) {
+        const [multiple, notMultiple] = choose([[[5, 4], [7, 5], [8, 7]], [[9, 5], [12, 7], [13, 6]], [[14, 5], [15, 4], [17, 6]]]);
+        const values = range(100, 999).filter(value => value % multiple === 0 && value % notMultiple !== 0);
+        const allCount = range(100, 999).filter(value => value % multiple === 0).length;
+        const bothCount = range(100, 999).filter(value => value % lcm(multiple, notMultiple) === 0).length;
+        return result(`세 자리 자연수 중 ${multiple}의 배수이지만 ${notMultiple}의 배수가 아닌 수는 모두 몇 개인지 구하세요.${tag("three-digit-multiple-exclusion-count", [multiple, notMultiple], "single-value")}`, values.length, `세 자리 ${multiple}의 배수는 ${allCount}개이고, 이 중 ${notMultiple}의 배수이기도 한 수는 ${bothCount}개입니다. 따라서 ${allCount}-${bothCount}=${values.length}개입니다.`);
+      }
+      if (variant === 9) {
+        const [left, right, divisor, target] = choose([[[6, 8, 5, 100], [9, 12, 5, 200], [8, 12, 7, 300]], [[24, 36, 5, 1000], [15, 18, 4, 1000], [20, 28, 3, 1000]], [[28, 45, 8, 5000], [42, 64, 5, 20000], [24, 35, 11, 18000]]]);
+        const base = lcm(lcm(left, right), divisor);
+        const lower = Math.floor(target / base) * base;
+        const upper = lower + base;
+        if (target - lower === upper - target) throw new Error("가장 가까운 수가 하나가 아닙니다.");
+        const answer = target - lower < upper - target ? lower : upper;
+        return result(`두 수 ${left}, ${right}의 공배수이면서 ${divisor}로 나누어떨어지는 수 중 ${target}에 가장 가까운 수를 구하세요.${tag("nearest-common-multiple-with-divisor", [left, right, divisor, target], "single-value")}`, answer, `세 조건을 만족하는 수는 ${base}의 배수입니다. ${target}의 앞뒤 조건 만족 수 ${lower}, ${upper}과의 차를 비교하면 답은 ${answer}입니다.`);
+      }
+      if (variant === 10) {
+        const [base, target] = choose([[[12, 60], [18, 90], [20, 60]], [[45, 315], [28, 140], [36, 180]], [[72, 360], [84, 420], [90, 1260]]]);
+        const candidates = range(1, target).filter(value => lcm(base, value) === target);
+        return result(`두 수 ${base}, ㉠의 최소공배수가 ${target}일 때, ㉠이 될 수 있는 자연수를 모두 구하세요.${tag("lcm-candidate-set", [base, target], "set")}`, setAnswer(candidates), `1부터 ${target}까지 확인하면 조건에 맞는 수는 ${setAnswer(candidates)}입니다.`);
+      }
+      const [limit, firstDivisor, secondDivisor] = choose([[[200, 4, 6], [300, 5, 8], [400, 6, 10]], [[1000, 12, 15], [900, 9, 10], [1500, 18, 24]], [[2000, 18, 24], [3000, 20, 27], [4000, 28, 45]]]);
+      const values = range(1, limit).filter(value => value % firstDivisor !== 0 && value % secondDivisor !== 0);
+      const firstCount = range(1, limit).filter(value => value % firstDivisor === 0).length;
+      const secondCount = range(1, limit).filter(value => value % secondDivisor === 0).length;
+      const bothCount = range(1, limit).filter(value => value % lcm(firstDivisor, secondDivisor) === 0).length;
+      return result(`1부터 ${limit}까지의 자연수 중 ${firstDivisor}로도 나누어떨어지지 않고, ${secondDivisor}로도 나누어떨어지지 않는 수는 모두 몇 개인지 구하세요.${tag("neither-multiple-count", [limit, firstDivisor, secondDivisor], "single-value")}`, values.length, `전체 ${limit}개에서 ${firstDivisor}의 배수 ${firstCount}개와 ${secondDivisor}의 배수 ${secondCount}개를 뺍니다. 두 번 뺀 공배수 ${bothCount}개를 다시 더하면 ${limit}-${firstCount}-${secondCount}+${bothCount}=${values.length}개입니다.`);
+    },
     factorMultipleAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const divisor = pick(rng, [7, 9, 11, 13, 17].slice(0, 3 + level));
@@ -18409,6 +18515,102 @@
         return result(`${values.join("")}이 ${divisor}의 배수가 되도록 하는 □ 안의 숫자를 모두 더한 값을 구하세요.`, answer, `${divisor}의 배수 조건을 적용하여 가능한 숫자는 ${candidates.join(", ")}입니다. 이들의 합은 ${answer}입니다.`);
       }
       throw new Error("배수 판정법 조건을 만들지 못했습니다.");
+    },
+    factorMultipleE4({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("약수와 배수 개념탐구 4 원문 분기는 0부터 10까지여야 합니다.");
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e4-kind="${kind}" data-factor-multiple-e4-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const setAnswer = values => values.join(", ");
+      const choose = pools => pick(rng, pools[level]);
+      const permutations = (cards, length) => {
+        const values = [];
+        const visit = (picked, rest) => {
+          if (picked.length === length) { values.push(Number(picked.join(""))); return; }
+          rest.forEach((card, index) => visit([...picked, card], [...rest.slice(0, index), ...rest.slice(index + 1)]));
+        };
+        visit([], cards);
+        return values;
+      };
+
+      if (variant === 0) {
+        const count = choose([[54, 60, 72], [72, 84, 96], [108, 120, 144]]);
+        let total;
+        let candidates;
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          const price = Math.floor(rng() * 8000) + 1500;
+          const proposed = count * price;
+          if (proposed < 100000 || proposed > 999999) continue;
+          const digits = String(proposed);
+          const matches = range(1, 9).flatMap(first => range(0, 9).map(last => Number(`${first}${digits.slice(1, 5)}${last}`))).filter(value => value % count === 0);
+          if (matches.length >= 1 && matches.length <= 4) { total = proposed; candidates = matches; break; }
+        }
+        if (!total || !candidates) throw new Error("가격 빈칸 조건을 만들지 못했습니다.");
+        const pattern = `□${String(total).slice(1, 5)}□`;
+        const answerValues = candidates.map(value => value / count);
+        return result(`같은 가격의 축구공 ${count}개를 사고 ${pattern}원을 냈습니다. 축구공 1개의 가격이 될 수 있는 금액을 모두 구하세요.${tag("price-from-blank-total", [count, ...candidates], "set")}`, setAnswer(answerValues), `전체 금액 ${pattern} 중 ${count}로 나누어떨어지는 수는 ${setAnswer(candidates)}입니다. 따라서 축구공 1개의 가격은 ${setAnswer(answerValues)}원입니다.`);
+      }
+      if (variant === 1) {
+        const [left, right] = choose([[[2468, 13579], [45678, 12345], [67891, 23456]], [[13579, 246810], [35791, 468024], [246813, 135790]], [[1234567, 8765432], [24681357, 13579246], [9876543, 12345678]]]);
+        const answer = (left + right) % 9;
+        return result(`㉠ = ${left} + ${right}일 때, ㉠을 9로 나눈 나머지를 구하세요.${tag("sum-remainder-nine", [left, right], "single-value")}`, answer, `각 수의 자릿수의 합을 더하면 ${String(left + right).split("").reduce((sum, digit) => sum + Number(digit), 0)}입니다. 이를 9로 나눈 나머지는 ${answer}입니다.`);
+      }
+      if (variant === 2) {
+        const digit = choose([[4, 5, 6], [7, 8, 9], [3, 6, 9]]);
+        let answer = 0;
+        for (let length = 1; length <= 8 && !answer; length += 1) {
+          const count = 2 ** (length - 1);
+          for (let mask = 0; mask < count; mask += 1) {
+            const value = Number(`${digit}${mask.toString(2).padStart(length - 1, "0").replaceAll("0", "0").replaceAll("1", String(digit))}`);
+            if (value % 75 === 0) { answer = value; break; }
+          }
+        }
+        if (!answer) throw new Error("75의 가장 작은 배수를 만들지 못했습니다.");
+        return result(`${digit}과 0으로만 이루어진 자연수 중에서 75로 나누어떨어지는 가장 작은 자연수를 구하세요.${tag("smallest-zero-digit-multiple", [digit, 75], "single-value")}`, answer, `75의 배수는 3과 25의 배수입니다. 작은 수부터 확인하면 조건을 처음 만족하는 수는 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const cards = choose([[[1, 2, 3, 4, 5, 6], [2, 3, 4, 5, 6, 7], [3, 4, 5, 6, 7, 8]], [[3, 4, 5, 6, 7, 8], [2, 4, 5, 6, 7, 9], [1, 3, 5, 6, 7, 8]], [[2, 3, 4, 6, 7, 9], [1, 4, 5, 7, 8, 9], [3, 4, 6, 7, 8, 9]]]);
+        const values = permutations(cards, 3).filter(value => value % 12 === 0);
+        return result(`여섯 장의 수 카드 ${cards.join(", ")} 중에서 세 장을 사용하여 만들 수 있는 세 자리 자연수 중에서 12의 배수는 모두 몇 개인지 구하세요.${tag("three-card-multiple-twelve", [...cards], "single-value")}`, values.length, `조건을 만족하는 세 자리 수는 ${setAnswer(values)}이므로 모두 ${values.length}개입니다.`);
+      }
+      if (variant === 4) {
+        const first = choose([[1, 2, 3], [3, 6, 9], [4, 7, 8]]);
+        const pairs = range(0, 9).flatMap(a => range(0, 9).filter(b => Number(`${first}${a}${b}${a}${b}${a}`) % 6 === 0).map(b => [a, b]));
+        return result(`${first}ABABA꼴의 여섯 자리 자연수 중에서 6의 배수는 모두 몇 개인지 구하세요. (단, A와 B는 같은 숫자여도 됩니다.)${tag("repeating-six-digit-multiple-six", [first], "single-value")}`, pairs.length, `A와 B에 0부터 9까지를 넣어 확인하면 조건을 만족하는 경우는 모두 ${pairs.length}가지입니다.`);
+      }
+      if (variant === 5) {
+        const source = [363636, 1000036, 3366336636, 333366636, 36036036036036, 12345678900, 1212121212, 121212121212];
+        const light = [252252, 1000024, 252252252, 333366624, 252252252252, 12345678912, 1212121224, 121212121248];
+        const hard = [180180, 1000008, 180180180, 333333336, 180180180180, 12345678936, 1212121200, 121212121224];
+        const rotate = (values, amount) => [...values.slice(amount), ...values.slice(0, amount)];
+        const values = choose([[light, rotate(light, 2), [...light].reverse()], [source, rotate(source, 3), [...source].reverse()], [hard, rotate(hard, 4), [...hard].reverse()]]);
+        const answerValues = values.map((value, index) => ({ value, label: `①②③④⑤⑥⑦⑧`[index] })).filter(item => item.value % 36 === 0).map(item => item.label);
+        return result(`다음 수 중 36의 배수를 모두 찾아보세요.<br>${values.map((value, index) => `${`①②③④⑤⑥⑦⑧`[index]} ${value}`).join("<br>")}${tag("listed-multiples-thirty-six", values, "set")}`, answerValues.join(", "), `36의 배수는 4와 9의 배수여야 합니다. 조건을 만족하는 기호는 ${answerValues.join(", ")}입니다.`);
+      }
+      if (variant === 6) {
+        const cards = choose([[[0, 1, 2, 4], [0, 2, 3, 5], [0, 2, 4, 6]], [[0, 2, 4, 5], [0, 3, 5, 6], [0, 1, 4, 8]], [[0, 2, 5, 8], [0, 3, 6, 7], [0, 4, 5, 9]]]);
+        const values = permutations(cards, 3).filter(value => value >= 100 && (value % 3 === 0 || value % 4 === 0));
+        return result(`다음 수 카드 중 3장을 뽑아 한 번씩 사용하여 만들 수 있는 세 자리 수 중에서 3의 배수이거나 4의 배수인 수는 모두 몇 개인지 구하세요.<br>${cards.map(value => `[${value}]`).join(" ")}${tag("three-card-multiple-three-or-four", cards, "single-value")}`, values.length, `세 자리 수를 빠짐없이 만들고 3 또는 4의 배수 조건을 확인하면 모두 ${values.length}개입니다.`);
+      }
+      if (variant === 7) {
+        const [first, third] = choose([[[4, 1], [5, 2], [6, 3]], [[7, 4], [8, 5], [9, 1]], [[9, 7], [8, 6], [7, 5]]]);
+        const pairs = range(0, 9).flatMap(a => range(0, 9).filter(b => Number(`${first}${a}${third}${b}`) % 9 === 0).map(b => [a, b]));
+        return result(`네 자리 수 ${first}□${third}□이 9의 배수가 되도록 □ 안에 한 자리 수를 써 넣는 방법은 모두 몇 가지인지 구하세요.${tag("four-digit-blank-multiple-nine", [first, third], "single-value")}`, pairs.length, `두 빈칸의 숫자를 모두 확인하면 9의 배수가 되는 경우는 ${pairs.length}가지입니다.`);
+      }
+      if (variant === 8) {
+        const edge = choose([[2, 4, 6], [2, 4, 6], [2, 4, 6]]);
+        const pairs = range(0, 9).flatMap(a => range(0, 9).filter(b => Number(`${edge}${b}${a}${b}${a}${b}${edge}`) % 12 === 0).map(b => [a, b]));
+        return result(`일곱 자리의 자연수 ${edge}BABAB${edge}가 12의 배수라고 합니다. 이러한 일곱 자리의 자연수는 모두 몇 개인지 구하세요. (단, A와 B는 같은 숫자여도 됩니다.)${tag("repeating-seven-digit-multiple-twelve", [edge], "single-value")}`, pairs.length, `A와 B에 넣을 수 있는 0부터 9까지의 숫자를 확인하면 12의 배수는 모두 ${pairs.length}개입니다.`);
+      }
+      if (variant === 9) {
+        const [low, high, rank] = choose([[[7, 8, 2], [8, 9, 3], [7, 9, 4]], [[8, 9, 4], [7, 8, 5], [6, 9, 6]], [[7, 9, 7], [8, 9, 8], [6, 8, 9]]]);
+        const values = range(0, 63).map(mask => mask.toString(2).padStart(6, "0").replaceAll("0", String(low)).replaceAll("1", String(high))).map(Number).filter(value => value % 3 === 0).sort((left, right) => right - left);
+        const answer = values[rank - 1];
+        return result(`숫자 ${low}이나 ${high}로만 이루어진 여섯 자리 자연수 중에서 ${rank}번째로 큰 3의 배수를 구하세요.${tag("ranked-two-digit-multiple-three", [low, high, rank], "single-value")}`, answer, `조건을 만족하는 수를 큰 수부터 차례로 놓으면 ${rank}번째 수는 ${answer}입니다.`);
+      }
+      const [last, addend] = choose([[[7, 73], [8, 88], [9, 107]], [[9, 107], [8, 124], [7, 145]], [[9, 179], [8, 196], [7, 217]]]);
+      const candidates = range(10, 99).filter(value => (Number(`${value}${last}`) + addend) % 36 === 0);
+      const answer = candidates.at(-1);
+      return result(`두 자리 수 □□${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 □□을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
     },
     threeNumberGcdLcmAdvanced({ rng, level }) {
       const common = pick(rng, [2, 3, 4, 5, 6].slice(0, 3 + level));
@@ -18948,6 +19150,8 @@
     [type => type.id === "4-2-u6-t3", "tessellationCover"],
     [type => type.id === "4-2-u6-t4", "shapePartitionCompose"],
     [type => type.id?.startsWith("5-1-u2-e1-"), "factorMultipleE1"],
+    [type => type.id?.startsWith("5-1-u2-e3-"), "factorMultipleE3"],
+    [type => type.id?.startsWith("5-1-u2-e4-"), "factorMultipleE4"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

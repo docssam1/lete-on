@@ -79,7 +79,7 @@
     reviewLocked,
     reviewReason
   });
-  const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 2) => {
+  const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 4) => {
     const pdfPage = 13 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
     return {
@@ -104,7 +104,7 @@
     ]],
     ["배수 판정법", 4, [
       ["exploration", "전체 금액의 빈칸 숫자로 한 개 가격 모두 찾기"], ["example-4-1", "큰 합을 9로 나눈 나머지"], ["example-4-2", "7과 0으로만 만든 75의 가장 작은 배수"], ["example-4-3", "수 카드로 만든 세 자리 12의 배수 세기"], ["example-4-4", "되풀이 숫자로 만든 여섯 자리 6의 배수 세기"],
-      ["mission-1", "목록에서 36의 배수 찾기"], ["mission-2", "수 카드로 만든 3 또는 4의 배수 세기"], ["mission-3", "네 자리 수가 9의 배수가 되는 빈칸 넣기"], ["mission-4", "되풀이 숫자로 만든 일곱 자리 12의 배수 세기"], ["mission-5", "8과 9로만 만든 수 중 열 번째로 큰 3의 배수"], ["mission-6", "덧셈 결과가 36의 배수가 되는 가장 큰 두 자리 빈칸"]
+      ["mission-1", "목록에서 36의 배수 찾기"], ["mission-2", "수 카드로 만든 3 또는 4의 배수 세기"], ["mission-3", "네 자리 수가 9의 배수가 되는 빈칸 넣기"], ["mission-4", "되풀이 숫자로 만든 일곱 자리 12의 배수 세기"], ["mission-5", "8과 9로만 만든 수 중 네 번째로 큰 3의 배수"], ["mission-6", "덧셈 결과가 36의 배수가 되는 가장 큰 두 자리 빈칸"]
     ]],
     ["세 수의 최대공약수와 최소공배수", 5, [
       ["exploration", "세 수의 최대공약수와 최소공배수"], ["example-5-1-1", "세 수의 최대공약수와 최소공배수"], ["example-5-1-2", "곱셈식으로 나타낸 세 수의 최대공약수와 최소공배수"], ["example-5-2", "같은 수를 곱한 세 수의 최소공배수로 합 찾기"], ["example-5-3", "여러 수로 나누어떨어지는 여섯 자리 수의 빈칸"], ["example-5-4", "두 수씩의 최대공약수로 세 수의 최소공배수 찾기"],
