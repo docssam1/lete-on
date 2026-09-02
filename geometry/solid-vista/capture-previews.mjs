@@ -12,20 +12,24 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, dev
 await page.addInitScript(() => {
   localStorage.setItem("gfield-net-observatory-tutorial-v1", "done");
   localStorage.setItem("gfield-soma-tutorial-v1", "done");
+  localStorage.setItem("gfield-soma-controls-tutorial-v1", "done");
   localStorage.setItem("gfield-sound-muted", "1");
   localStorage.setItem("gfield-profile", JSON.stringify({ language: "ko" }));
 });
 
-async function capture(url, selector, destination) {
+async function capture(url, selector, destination, fit = "cover") {
   await page.goto(`${baseUrl}${url}`, { waitUntil: "networkidle" });
   await page.locator(selector).waitFor({ state: "visible" });
   await page.waitForTimeout(420);
   const source = await page.locator(selector).screenshot();
-  await sharp(source).resize(800, 500, { fit: "cover", position: "centre" }).webp({ quality: 88 }).toFile(resolve(outputDir, destination));
+  await sharp(source).resize(800, 500, { fit, position: "centre", background: "#f7faf8" }).webp({ quality: 88 }).toFile(resolve(outputDir, destination));
 }
 
 for (let level = 1; level <= 5; level += 1) {
-  if (target === "all" || target === "net") await capture(`/geometry/games/net-observatory/?level=${level}`, ".stage-panel", `net-level-${level}.webp`);
+  if (target === "all" || target === "net") {
+    const selector = level === 2 ? ".choices" : ".stage-panel";
+    await capture(`/geometry/games/net-observatory/?level=${level}`, selector, `net-level-${level}.webp`, level === 2 ? "contain" : "cover");
+  }
   if (target === "all" || target === "soma") await capture(`/geometry/games/soma-cube/?level=${level}`, ".comparison", `soma-level-${level}.webp`);
 }
 

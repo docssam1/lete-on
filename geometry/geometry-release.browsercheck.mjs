@@ -8,11 +8,15 @@ const checks = [
   "geometry/games/net-observatory/net-observatory.selftest.mjs",
   "geometry/games/dice-roll/dice-roll.selftest.mjs",
   "geometry/games/soma-cube/soma-cube.selftest.mjs",
+  "geometry/games/geoboard/geoboard-content-audit.mjs",
+  "geometry/games/geoboard/geoboard.selftest.mjs",
   "geometry/games/net-observatory/net-observatory.browsercheck.mjs",
   "geometry/games/dice-roll/dice-roll.browsercheck.mjs",
   "geometry/games/soma-cube/soma-cube.browsercheck.mjs",
+  "geometry/games/geoboard/geoboard.browsercheck.mjs",
   "geometry/worksheet/net-observatory/net-observatory-sheet.browsercheck.mjs",
-  "geometry/worksheet/dice-roll/dice-roll-sheet.browsercheck.mjs"
+  "geometry/worksheet/dice-roll/dice-roll-sheet.browsercheck.mjs",
+  "geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs"
 ];
 
 for (const check of checks) {

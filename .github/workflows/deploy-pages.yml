@@ -7,6 +7,7 @@ on:
       - 'boarding-school-math/**'
       - 'fields-classic/**'
       - 'hselementary/**'
+      - 'hsmiddle/**'
       - 'geometry/**'
       - 'hyper-focus/**'
       - 'number_magic/**'
@@ -43,6 +44,7 @@ jobs:
           mkdir -p _site/boarding-school-math
           mkdir -p _site/fields-classic
           mkdir -p _site/hselementary
+          mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
           mkdir -p _site/hyper-focus
           mkdir -p _site/number_magic
@@ -56,6 +58,11 @@ jobs:
           cp -R boarding-school-math/. _site/boarding-school-math/
           cp -R fields-classic/. _site/fields-classic/
           cp -R hselementary/. _site/hselementary/
+          cp -R hsmiddle/. _site/hsmiddle/
+          rm -rf _site/hsmiddle/question-bank/audits
+          rm -f _site/hsmiddle/question-bank/data/source-page-fingerprints.json
+          rm -f _site/hsmiddle/question-bank/data/source-pdf-bundle-verification.json
+          test ! -e _site/hsmiddle/question-bank/audits
           cp -R geometry/. _site/geometry/
           cp -R hyper-focus/. _site/hyper-focus/
           cp -R number_magic/. _site/number_magic/

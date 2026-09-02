@@ -46,6 +46,17 @@ body { color:var(--ink); background:var(--paper); }
 .problem-card.is-correct { border-color:var(--green); box-shadow:inset 4px 0 0 var(--green); }
 .problem-meta { display:flex; justify-content:space-between; gap:12px; color:var(--green); font-size:.64rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
 .problem-prompt { min-height:54px; margin:14px 0 18px; font:500 1rem/1.65 Georgia,"Noto Serif KR",serif; }
+.problem-visual { display:grid; min-height:190px; place-items:center; margin:-4px 0 18px; padding:10px; overflow:hidden; border:1px solid var(--line); background:#fbfaf5; }
+.problem-visual svg { display:block; width:min(100%,320px); height:auto; max-height:220px; }
+.clinic-grid-line { stroke:#d8d4ca; stroke-width:1; }
+.clinic-figure-shape polygon, .clinic-shape-line { stroke-width:2.5; }
+.clinic-dimension { stroke:var(--burgundy); stroke-width:2; stroke-dasharray:5 4; }
+.clinic-right-angle { fill:none; stroke:var(--burgundy); stroke-width:2; }
+.clinic-coordinate-segment { stroke:var(--green); stroke-width:4; stroke-linecap:round; }
+.clinic-coordinate-point { fill:var(--burgundy); stroke:#fff; stroke-width:2; }
+.clinic-point-label { fill:var(--ink); font:800 12px system-ui,sans-serif; text-anchor:middle; paint-order:stroke; stroke:#fff; stroke-width:3px; }
+.clinic-net-face { fill:#e3eee8; stroke:#1d604f; stroke-width:2; }
+.clinic-figure-label { fill:var(--ink); font:800 14px system-ui,sans-serif; text-anchor:middle; }
 .response-row { display:flex; gap:8px; align-items:stretch; }
 .response-row input { min-width:0; flex:1; min-height:48px; padding:10px 12px; border:1px solid #9d9d95; border-radius:0; color:var(--ink); background:#fff; font-size:1rem; }
 .response-row button, .solution-toggle, .primary-action { min-height:48px; padding:10px 14px; border:1px solid var(--ink); color:#fff; background:var(--ink); font-weight:850; cursor:pointer; }
@@ -119,6 +130,8 @@ body { color:var(--ink); background:var(--paper); }
   .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
   .problem-card { min-width:0; padding:4mm; break-inside:avoid; box-shadow:none; }
   .problem-prompt { min-height:18mm; font-size:10.5pt; }
+  .problem-visual { min-height:32mm; margin-bottom:2mm; padding:2mm; }
+  .problem-visual svg { max-height:40mm; }
   .response-row input { border:0; border-bottom:1px solid #000; background:transparent; }
   .teacher-answer, .teacher-guide { min-width:0; overflow-wrap:anywhere; break-inside:avoid; }
 }

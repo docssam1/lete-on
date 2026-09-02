@@ -1,6 +1,6 @@
-import { levels, validateLevels, GAME_ID, PROGRESS_KEY } from "./levels.js?v=net-5";
-import { messages, text } from "./i18n.js?v=net-5";
-import { NetFoldViewer } from "./fold-view.js?v=net-5";
+import { levels, validateLevels, GAME_ID, PROGRESS_KEY } from "./levels.js?v=net-6";
+import { messages, text } from "./i18n.js?v=net-6";
+import { NetFoldViewer } from "./fold-view.js?v=net-6";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 

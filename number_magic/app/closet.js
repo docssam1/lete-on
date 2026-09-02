@@ -11,18 +11,26 @@ window.screenCloset = function(container, opts){
   const lang = opts.lang || 'ko';
   const L = (item) => item[lang] || item.ko || item.en || '';
 
-  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none'}, opts.char || {});
+  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'}, opts.char || {});
   let unlocked = Object.assign({}, opts.unlocked || {});
   let coins = +(opts.coins || 0);
   let dirty = 0;  // 소비한 코인 누적
 
   const TABS = [
     {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
+    {key:'symbol',ko:'기호',  en:'Symbols',  zh:'符号'},
     {key:'color', ko:'색',    en:'Color',    zh:'颜色'},
     {key:'cape',  ko:'망토',  en:'Cape',     zh:'斗篷'},
+    {key:'hat',   ko:'모자',  en:'Hat',      zh:'帽子'},
     {key:'bg',    ko:'배경',  en:'BG',       zh:'背景'},
   ];
   let activeTab = 'number';
+
+  /* 잠금 안내(코인 가격과 병기) · 과정 보상 배지 — 캐릭터-승급-설계.md §4 */
+  function courseNote(n){
+    return lang==='en' ? `Course ${n}` : lang==='zh' ? `第${n}阶段解锁` : `과정 ${n} 도달 시`;
+  }
+  const rewardBadgeTxt = lang==='en' ? '✨ Course Reward' : lang==='zh' ? '✨ 进度奖励' : '✨ 과정 보상';
 
   /* ── 잠금 해제 확인 ── */
   function ulKey(type, id){ return type+'_'+id; }
@@ -69,7 +77,8 @@ window.screenCloset = function(container, opts){
     if(!isUnlocked(type, val)){
       if(!buy(type, val)) return;
     }
-    if(type==='number') cur.number = +val;
+    if(type==='number'){ cur.number = +val; delete cur.symbol; }      // 숫자를 고르면 기호 해제(둘 중 하나만)
+    else if(type==='symbol') cur.symbol = val;
     else cur[type] = val;
     save();
     redraw();
@@ -81,6 +90,15 @@ window.screenCloset = function(container, opts){
     return rndr(Object.assign({}, cur, overrides), sz||52);
   }
 
+  /* 잠금/보상 안내 한 줄(가격 칩 + 도달 안내 칩, 잠긴 특별 항목 공용) */
+  function lockInfoHTML(item, unl){
+    if(unl) return item.course!=null ? `<div class="nmc-ibadge">${rewardBadgeTxt}</div>` : '';
+    let h = '';
+    if(item.price) h += `<div class="nmc-iprice">🪙${item.price}</div>`;
+    if(item.course!=null) h += `<div class="nmc-icourse">${courseNote(item.course)}</div>`;
+    return h;
+  }
+
   /* ── 탭 항목 HTML ── */
   function tabItemsHTML(){
     if(activeTab==='number'){
@@ -89,9 +107,9 @@ window.screenCloset = function(container, opts){
       const specials = items.filter(it=>+it.id >= 10);
       let html = singles.map(item=>{
         const n = +item.id;
-        const sel = cur.number===n ? 'sel' : '';
+        const sel = (cur.number===n && !cur.symbol) ? 'sel' : '';
         return `<button class="nmc-num-btn ${sel}" data-type="number" data-id="${item.id}">
-          ${rndr ? rndr({...cur,number:n},54) : n}
+          ${rndr ? rndr({...cur,number:n,symbol:undefined},54) : n}
         </button>`;
       }).join('');
       if(specials.length){
@@ -100,17 +118,29 @@ window.screenCloset = function(container, opts){
         html += specials.map(item=>{
           const n = +item.id;
           const unl = isUnlocked('number', item.id);
-          const sel = cur.number===n ? 'sel' : '';
+          const sel = (cur.number===n && !cur.symbol) ? 'sel' : '';
           return `<button class="nmc-item ${sel}${unl?'':' locked'}" data-type="number" data-id="${item.id}">
-            <div class="nmc-thumb">${miniPreview({number:n},52)}</div>
+            <div class="nmc-thumb">${miniPreview({number:n,symbol:undefined},52)}</div>
             <div class="nmc-iname">${n}</div>
-            ${unl?'':item.price?`<div class="nmc-iprice">🪙${item.price}</div>`:''}
+            ${lockInfoHTML(item, unl)}
           </button>`;
         }).join('');
       }
       return html;
     }
-    const typeItems = {color:'colors',bg:'bgs',cape:'capes'};
+    if(activeTab==='symbol'){
+      const items = av.symbols || [];
+      return items.map(item=>{
+        const unl = isUnlocked('symbol', item.id);
+        const sel = cur.symbol===item.id ? 'sel' : '';
+        return `<button class="nmc-item ${sel}${unl?'':' locked'}" data-type="symbol" data-id="${item.id}">
+          <div class="nmc-thumb">${miniPreview({symbol:item.id},52)}</div>
+          <div class="nmc-iname">${item.glyph} ${L(item)}</div>
+          ${lockInfoHTML(item, unl)}
+        </button>`;
+      }).join('');
+    }
+    const typeItems = {color:'colors',bg:'bgs',cape:'capes',hat:'hats'};
     const items = av[typeItems[activeTab]] || [];
     return items.map(item=>{
       const unl = isUnlocked(activeTab, item.id);

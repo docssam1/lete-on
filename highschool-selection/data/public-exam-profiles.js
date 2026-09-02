@@ -86,6 +86,20 @@
       publishedAt: "2025-05",
       checkedAt: "2026-08-24"
     },
+    "SM-CM1-ENTRY-2026-MIRROR": {
+      title: "생각하는수학학원 예비 중1 공통수학1 입반 공지 미러",
+      url: "https://www.gangmom.kr/news/6985583fe402e23b4d7a90d4",
+      grade: "B",
+      publishedAt: null,
+      checkedAt: "2026-08-31"
+    },
+    "SM-CM1-APRIL-2026-MIRROR": {
+      title: "생각하는수학학원 중1 공통수학1 4월 개강 공지 미러",
+      url: "https://learns.academy/posts/90867bc6-9e93-45e7-9260-cfa1a31817a2",
+      grade: "B",
+      publishedAt: null,
+      checkedAt: "2026-08-31"
+    },
     "WM-M22-MAY-2026": {
       title: "원수학 2026년 5월 중2-2 기본반 편입테스트 공지 미러",
       url: "https://www.gangmom.kr/news/69f44076d692cfc9fdcc7a89",
@@ -291,30 +305,31 @@
     },
     {
       code: "SM",
-      publicName: "생수수학 추천문제 대비",
-      eyebrow: "공통수학2 샘플 기반",
-      summary: "제공받은 공통수학2 기본 입반 샘플을 회차별로 감사해 유형과 난도를 정리합니다.",
+      publicName: "생수수학 공통수학1 입반 대비",
+      eyebrow: "중2-2~중3-2 · 대수 15 + 기하 15",
+      summary: "현재 공지 범위와 2022 구판 모의 참고지 2회를 분리해 감사하고, 현재 시험이 더 어렵다는 사용자 관찰을 제작 난도에만 반영합니다.",
       facts: [
-        { label: "보유 샘플", value: "중복 제외 3회", state: "observed", sourceIds: [] },
-        { label: "확인 규격", value: "회차별 30문항·답안/해설 구간", state: "observed", sourceIds: [] },
-        { label: "공식 시험 규정", value: "정확한 상품명·시간·커트 확인 필요", state: "needs-review", sourceIds: [] }
+        { label: "현재 시험 범위", value: "중2-2 · 중3-1 · 중3-2", state: "verified", sourceIds: ["SM-CM1-ENTRY-2026-MIRROR", "SM-CM1-APRIL-2026-MIRROR"] },
+        { label: "현재 시험 구성", value: "대수 15 + 기하 15 · 총 30문항 · 180분", state: "verified", sourceIds: ["SM-CM1-ENTRY-2026-MIRROR"] },
+        { label: "구판 참고지 감사", value: "2022 모의 참고지 2회 · 60문항 세부유형 후보 분류", state: "observed", sourceIds: [] },
+        { label: "현행 난도 보정", value: "사용자 관찰을 반영해 조건 결합과 풀이 단계를 강화", state: "confirmed", sourceIds: [] }
       ],
       cutline: {
-        state: "needs-review",
-        display: "확인 필요",
-        context: "공식 상품명·지점·과정·회차가 확인되기 전에는 합격선을 표시하지 않습니다.",
-        branch: null,
-        course: null,
-        round: null,
-        sourceIds: []
+        state: "verified",
+        display: "20 / 30문항 이상",
+        context: "예비 중1 공통수학1 기본 입반의 동일 범위·30문항 공지에만 적용합니다.",
+        branch: "생각하는수학학원",
+        course: "중1 공통수학1 기본 입반",
+        round: "2026년 3~4월 개강 공지",
+        sourceIds: ["SM-CM1-ENTRY-2026-MIRROR"]
       },
-      style: "샘플 원문을 현행 교육과정의 대단원·소단원·세부유형으로 다시 분류합니다.",
-      caveat: "공식 학원 공지를 확인하기 전에는 샘플 기반 추천 모드로만 표시합니다."
+      style: "대수와 기하를 15문항씩 맞추고, 구판의 쉬운 단일 적용형은 조건 결합·표현 전환·역추론이 필요한 문제로 높입니다.",
+      caveat: "구판 모의 참고지는 현행 공식 기출이 아닙니다. 최신 실제 원본을 확보하기 전까지 대표 시험은 생수형 공통수학1 입반 대비 추정 구성으로 표시합니다."
     }
   ];
 
   root.HIGHSELECT_PUBLIC_PROFILES = {
-    updatedAt: "2026-08-24",
+    updatedAt: "2026-08-31",
     evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과, 운영 확정=우리 모의고사 설정. 외부 수치는 해당 회차에만 적용.",
     sources,
     profiles

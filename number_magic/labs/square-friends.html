@@ -58,65 +58,57 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 .fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="lab-lang.js"></script>
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>🟩 사각수 친구들</h1>
-    <p>홀수를 ㄱ자로 두르면, 네모가 자라요.</p>
+    <h1>🟩 <span data-t="title"></span></h1>
+    <p data-t="tag"></p>
   </header>
 
-  <nav class="tabs" aria-label="단계">
-    <button class="tab on" data-p="p1">① 이야기</button>
-    <button class="tab" data-p="p2">② 네모 보기</button>
-    <button class="tab" data-p="p3">③ 직접 하기</button>
+  <nav class="tabs" aria-label="stages">
+    <button class="tab on" data-p="p1">① <span data-t="tab1"></span></button>
+    <button class="tab" data-p="p2">② <span data-t="tab2"></span></button>
+    <button class="tab" data-p="p3">③ <span data-t="tab3"></span></button>
   </nav>
 
   <!-- ① 이야기 -->
   <section class="card on story" id="p1">
-    <h2>조약돌을 놓던 사람들</h2>
-    <button class="speak" data-say="story">🔊 읽어 주기</button>
-    <p>아주 오래전 그리스 사람들은 수를 <b>조약돌</b>로 놓아 보며 공부했어요.
-    조약돌 몇 개는 세모가 되고, 몇 개는 <b>네모</b>가 됐죠. 네모가 되는 수 —
-    1, 4, 9, 16, 25… 를 <b>사각수</b>라고 불러요.</p>
-    <p>사각수엔 놀라운 비밀이 있어요. 네모의 바깥에 조약돌을 <b>ㄱ자로 한 겹</b> 두르면
-    한 치수 큰 네모가 돼요. 그런데 그 ㄱ자에 들어가는 조약돌 수가…
-    <b>1, 3, 5, 7 — 홀수!</b> 그래서 <b>1+3+5+7 = 16 = 4×4</b>.
-    홀수를 차례로 더하면 언제나 사각수가 돼요.</p>
-    <p>무지개 덧셈법의 친구들도 여기 숨어 있어요. 이웃한 삼각수 둘을 붙이면 사각수가 돼요 —
-    <b>55+66 = 121 = 11×11</b>! 🌈</p>
-    <div class="legend">※ "계산하다(calculate)"라는 말은 조약돌을 뜻하는 라틴어
-    <b>칼쿨루스(calculus)</b>에서 왔어요. 조약돌 놓기가 진짜 계산의 시작이었답니다.</div>
-    <div class="row"><button class="btn" data-go="p2">네모가 자라는 것 보기 →</button></div>
+    <h2 data-t="s1h"></h2>
+    <button class="speak" data-say="story">🔊 <span data-t="listen"></span></button>
+    <div data-th="story"></div>
+    <div class="legend" data-th="legend"></div>
+    <div class="row"><button class="btn" data-go="p2" data-t="toP2"></button></div>
   </section>
 
   <!-- ② 네모 보기 -->
   <section class="card" id="p2">
-    <h2>1에서 시작해 ㄱ자로 두르기</h2>
+    <h2 data-t="s2h"></h2>
     <div class="gridbox"><svg id="demoSvg" viewBox="0 0 240 240" style="width:min(300px,80vw)"></svg></div>
-    <div class="caption" id="demoCap">▶ 를 누르면 네모가 자라요</div>
+    <div class="caption" id="demoCap" data-t="demoInit"></div>
     <div class="formula" id="demoFormula"></div>
     <div class="row">
-      <button class="btn" id="playBtn">▶ 네모 키우기</button>
-      <button class="speak" data-say="demo" style="margin:0">🔊 설명 듣기</button>
+      <button class="btn" id="playBtn" data-t="playBtn"></button>
+      <button class="speak" data-say="demo" style="margin:0">🔊 <span data-t="listenDemo"></span></button>
     </div>
   </section>
 
   <!-- ③ 직접 하기 -->
   <section class="card" id="p3">
-    <h2>홀수를 더해 친구를 모으자!</h2>
+    <h2 data-t="s3h"></h2>
     <div class="friends" id="friendRow"></div>
     <div class="gridbox"><svg id="userSvg" viewBox="0 0 240 240" style="width:min(300px,80vw)"></svg></div>
-    <div class="caption" id="userCap">＋ 버튼으로 다음 홀수를 둘러요</div>
+    <div class="caption" id="userCap"></div>
     <div class="formula" id="userSum"></div>
     <div class="row">
-      <button class="btn" id="addBtn">＋ 다음 홀수 두르기</button>
-      <button class="btn gold" id="resetBtn">처음부터</button>
+      <button class="btn" id="addBtn" data-t="addBtn"></button>
+      <button class="btn gold" id="resetBtn" data-t="resetBtn"></button>
     </div>
     <div class="qline" id="quiz">
       <span id="quizQ"></span>
       <input id="inQuiz" inputmode="numeric" maxlength="4">
-      <button class="btn gold" id="quizBtn">확인</button>
+      <button class="btn gold" id="quizBtn" data-t="checkBtn"></button>
     </div>
     <div class="fb" id="userFb"></div>
   </section>
@@ -125,7 +117,62 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
 <script>
 (function(){
 'use strict';
+var T=LabLang.T;
 var COLORS=['#2E9E6B','#5B8DD9','#F09A3E','#E85D5D','#8B6BC7','#E9C34A','#D96BB0','#5FB876','#C9A063','#16417C'];
+
+var STR={
+  title:{ko:'사각수 친구들',en:'Square Number Friends',zh:'平方数朋友'},
+  tag:{ko:'홀수를 ㄱ자로 두르면, 네모가 자라요.',
+       en:'Wrap odd numbers in L-shapes and the square grows.',
+       zh:'把奇数围成直角，正方形就长大。'},
+  tab1:{ko:'이야기',en:'Story',zh:'故事'},
+  tab2:{ko:'네모 보기',en:'Watch it grow',zh:'看正方形'},
+  tab3:{ko:'직접 하기',en:'Try it',zh:'动手试试'},
+  listen:{ko:'읽어 주기',en:'Read aloud',zh:'朗读'},
+  listenDemo:{ko:'설명 듣기',en:'Hear the explanation',zh:'听讲解'},
+  s1h:{ko:'조약돌을 놓던 사람들',en:'The people who counted with pebbles',zh:'用小石子摆数的人们'},
+  toP2:{ko:'네모가 자라는 것 보기 →',en:'Watch the square grow →',zh:'去看正方形长大 →'},
+  s2h:{ko:'1에서 시작해 ㄱ자로 두르기',en:'Start at 1 and wrap L-shapes around',zh:'从1开始，一圈圈围直角'},
+  demoInit:{ko:'▶ 를 누르면 네모가 자라요',en:'Press ▶ and the square grows',zh:'按▶正方形就长大'},
+  playBtn:{ko:'▶ 네모 키우기',en:'▶ Grow the square',zh:'▶ 让正方形长大'},
+  s3h:{ko:'홀수를 더해 친구를 모으자!',en:'Add odd numbers and collect the friends!',zh:'加奇数，收集朋友！'},
+  addBtn:{ko:'＋ 다음 홀수 두르기',en:'＋ Wrap the next odd number',zh:'＋ 围上下一个奇数'},
+  resetBtn:{ko:'처음부터',en:'Start over',zh:'从头开始'},
+  checkBtn:{ko:'확인',en:'Check',zh:'确认'},
+  story:{
+    ko:'<p>아주 오래전 그리스 사람들은 수를 <b>조약돌</b>로 놓아 보며 공부했어요. '
+      +'조약돌 몇 개는 세모가 되고, 몇 개는 <b>네모</b>가 됐죠. 네모가 되는 수 — '
+      +'1, 4, 9, 16, 25… 를 <b>사각수</b>라고 불러요.</p>'
+      +'<p>사각수엔 놀라운 비밀이 있어요. 네모의 바깥에 조약돌을 <b>ㄱ자로 한 겹</b> 두르면 '
+      +'한 치수 큰 네모가 돼요. 그런데 그 ㄱ자에 들어가는 조약돌 수가… '
+      +'<b>1, 3, 5, 7 — 홀수!</b> 그래서 <b>1+3+5+7 = 16 = 4×4</b>. '
+      +'홀수를 차례로 더하면 언제나 사각수가 돼요.</p>'
+      +'<p>무지개 덧셈법의 친구들도 여기 숨어 있어요. 이웃한 삼각수 둘을 붙이면 사각수가 돼요 — '
+      +'<b>55+66 = 121 = 11×11</b>! 🌈</p>',
+    en:'<p>Long ago the Greeks studied numbers by laying out <b>pebbles</b>. Some counts made a triangle, '
+      +'others made a <b>square</b>. The counts that make a square — 1, 4, 9, 16, 25 … — are called '
+      +'<b>square numbers</b>.</p>'
+      +'<p>Square numbers hide a surprise. Wrap <b>one L-shaped layer</b> of pebbles around a square and you '
+      +'get the next square up. And the number of pebbles in that L is … <b>1, 3, 5, 7 — the odd numbers!</b> '
+      +'So <b>1+3+5+7 = 16 = 4×4</b>. Add the odd numbers in order and you always land on a square number.</p>'
+      +'<p>The Rainbow Sum friends hide here too: join two neighbouring triangular numbers and you get a square — '
+      +'<b>55+66 = 121 = 11×11</b>! 🌈</p>',
+    zh:'<p>很久以前，希腊人用<b>小石子</b>摆数来研究数学。有的石子摆成三角形，有的摆成<b>正方形</b>。'
+      +'能摆成正方形的数——1、4、9、16、25……就叫<b>平方数</b>。</p>'
+      +'<p>平方数藏着一个惊喜。在正方形外面<b>围上一层直角形</b>的石子，就变成大一号的正方形。'
+      +'而那个直角形里的石子数正好是……<b>1、3、5、7——奇数！</b>'
+      +'所以<b>1+3+5+7 = 16 = 4×4</b>。依次把奇数加起来，得到的一定是平方数。</p>'
+      +'<p>彩虹加法的朋友也藏在这里：把相邻的两个三角形数拼起来就是平方数——'
+      +'<b>55+66 = 121 = 11×11</b>！🌈</p>'},
+  legend:{
+    ko:'※ "계산하다(calculate)"라는 말은 조약돌을 뜻하는 라틴어 <b>칼쿨루스(calculus)</b>에서 왔어요. '
+      +'조약돌 놓기가 진짜 계산의 시작이었답니다.',
+    en:'※ The word "calculate" comes from <b>calculus</b>, Latin for a small pebble. '
+      +'Laying out pebbles really was where calculation began.',
+    zh:'※ "计算(calculate)"这个词来自拉丁语<b>calculus</b>，意思是小石子。'
+      +'摆石子真的就是计算的起点。'}
+};
+LabLang.fill(STR); LabLang.fillHtml(STR); LabLang.title(STR.title);
 
 function show(id){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===id)});
@@ -135,17 +182,13 @@ function show(id){
 document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(t.dataset.p)}});
 document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
 
-var SAY={
-  story:'옛날 그리스 사람들은 조약돌로 수를 놓아 봤어요. 네모가 되는 수, 1, 4, 9, 16을 사각수라고 해요. 네모 바깥에 조약돌을 기역자로 한 겹 두르면 한 치수 큰 네모가 돼요. 그 기역자에 들어가는 수가 홀수예요. 그래서 1 더하기 3 더하기 5 더하기 7은 16, 4 곱하기 4!',
-  demo:'조약돌 하나에서 시작해요. 3개를 기역자로 두르면 2 곱하기 2. 5개를 두르면 3 곱하기 3. 7개를 두르면 4 곱하기 4. 홀수를 두를 때마다 네모가 한 치수씩 자라요.'
-};
-document.querySelectorAll('.speak').forEach(function(b){
-  b.onclick=function(){
-    if(!window.speechSynthesis)return;
-    speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(SAY[b.dataset.say]);
-    u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u);
-  };
+LabLang.speak({
+  story:{ko:'옛날 그리스 사람들은 조약돌로 수를 놓아 봤어요. 네모가 되는 수, 1, 4, 9, 16을 사각수라고 해요. 네모 바깥에 조약돌을 기역자로 한 겹 두르면 한 치수 큰 네모가 돼요. 그 기역자에 들어가는 수가 홀수예요. 그래서 1 더하기 3 더하기 5 더하기 7은 16, 4 곱하기 4!',
+         en:'Long ago the Greeks laid out numbers with pebbles. The numbers that make a square, one, four, nine, sixteen, are called square numbers. Wrap one L-shaped layer of pebbles around a square and you get the next square up. The number of pebbles in that L is always odd. So one plus three plus five plus seven is sixteen, four times four!',
+         zh:'从前希腊人用小石子摆数。能摆成正方形的数，一、四、九、十六，叫作平方数。在正方形外面围上一层直角形的石子，就变成大一号的正方形。那个直角形里的石子数总是奇数。所以一加三加五加七等于十六，也就是四乘四！'},
+  demo:{ko:'조약돌 하나에서 시작해요. 3개를 기역자로 두르면 2 곱하기 2. 5개를 두르면 3 곱하기 3. 7개를 두르면 4 곱하기 4. 홀수를 두를 때마다 네모가 한 치수씩 자라요.',
+        en:'Start with one pebble. Wrap three in an L and you get two times two. Wrap five and you get three times three. Wrap seven and you get four times four. Every odd layer grows the square by one size.',
+        zh:'从一颗石子开始。围上三颗成直角，就是二乘二。围上五颗，就是三乘三。围上七颗，就是四乘四。每围一层奇数，正方形就长大一号。'}
 });
 
 /* ── 점 네모: 레이어 k(1~n)는 max(행,열)=k-1 인 칸 = ㄱ자, 점 2k-1개 ── */
@@ -183,13 +226,23 @@ document.getElementById('playBtn').onclick=function(){
   if(demoBusy)return;demoBusy=true;
   var cap=document.getElementById('demoCap'),f=document.getElementById('demoFormula');
   var k=1;
-  drawSquare(demoSvg,1);cap.textContent='조약돌 1개 — 1도 사각수!';f.innerHTML='1 = 1×1';
+  drawSquare(demoSvg,1);
+  cap.textContent=T({ko:'조약돌 1개 — 1도 사각수!',en:'One pebble — 1 is a square number too!',zh:'一颗石子——1也是平方数！'});
+  f.innerHTML='1 = 1×1';
   var t=setInterval(function(){
     k++;
     drawSquare(demoSvg,k,k);
-    cap.textContent='홀수 '+(2*k-1)+'개를 ㄱ자로 두르면 '+k+'×'+k+'!';
+    cap.textContent=T({ko:'홀수 '+(2*k-1)+'개를 ㄱ자로 두르면 '+k+'×'+k+'!',
+                       en:'Wrap '+(2*k-1)+' pebbles in an L → '+k+'×'+k+'!',
+                       zh:'围上'+(2*k-1)+'颗成直角 → '+k+'×'+k+'！'});
     f.innerHTML=sumFormula(k);
-    if(k>=5){clearInterval(t);cap.textContent='홀수를 두를 때마다 네모가 자라요! 🟩';demoBusy=false;}
+    if(k>=5){
+      clearInterval(t);
+      cap.textContent=T({ko:'홀수를 두를 때마다 네모가 자라요! 🟩',
+                         en:'Every odd layer grows the square! 🟩',
+                         zh:'每围一层奇数，正方形就长大！🟩'});
+      demoBusy=false;
+    }
   },1400);
 };
 
@@ -214,9 +267,11 @@ function refresh(anim){
   drawSquare(userSvg,lv,anim?lv:0);
   document.getElementById('userSum').innerHTML=lv?sumFormula(lv):'';
   document.getElementById('userCap').textContent=
-    lv===0?'＋ 버튼으로 다음 홀수를 둘러요'
-    :lv>=10?'10×10=100 완성! 사각수 왕이에요 👑'
-    :'다음 홀수는 '+(2*lv+1)+'개 — 두르면 '+(lv+1)+'×'+(lv+1);
+    lv===0?T({ko:'＋ 버튼으로 다음 홀수를 둘러요',en:'Use ＋ to wrap the next odd number',zh:'用＋围上下一个奇数'})
+    :lv>=10?T({ko:'10×10=100 완성! 사각수 왕이에요 👑',en:'10×10=100 complete! You are the square-number champion 👑',zh:'10×10=100完成！你是平方数之王 👑'})
+    :T({ko:'다음 홀수는 '+(2*lv+1)+'개 — 두르면 '+(lv+1)+'×'+(lv+1),
+        en:'Next odd number is '+(2*lv+1)+' — wrap it for '+(lv+1)+'×'+(lv+1),
+        zh:'下一个奇数是'+(2*lv+1)+'——围上就是'+(lv+1)+'×'+(lv+1)});
   document.getElementById('addBtn').disabled=lv>=10;
 }
 document.getElementById('addBtn').onclick=function(){
@@ -232,7 +287,10 @@ refresh(false);
 var qn=0;
 function newQuiz(){
   qn=5+Math.floor(Math.random()*6);   // 5~10
-  document.getElementById('quizQ').textContent='퀴즈: 1+3+5+…+'+(2*qn-1)+' = ?';
+  document.getElementById('quizQ').textContent=
+    T({ko:'퀴즈: 1+3+5+…+'+(2*qn-1)+' = ?',
+       en:'Quiz: 1+3+5+…+'+(2*qn-1)+' = ?',
+       zh:'小测：1+3+5+…+'+(2*qn-1)+' = ?'});
   var i=document.getElementById('inQuiz');i.value='';i.className='';
 }
 newQuiz();
@@ -240,12 +298,16 @@ document.getElementById('quizBtn').onclick=function(){
   var i=document.getElementById('inQuiz'),fb=document.getElementById('userFb');
   if(+i.value===qn*qn){
     i.className='good';fb.className='fb ok';
-    fb.textContent='🟩 정답! 홀수 '+qn+'개의 합 = '+qn+'×'+qn+' = '+(qn*qn)+' — 세지 말고 네모로!';
+    fb.textContent=T({ko:'🟩 정답! 홀수 '+qn+'개의 합 = '+qn+'×'+qn+' = '+(qn*qn)+' — 세지 말고 네모로!',
+                      en:'🟩 Correct! The sum of '+qn+' odd numbers = '+qn+'×'+qn+' = '+(qn*qn)+' — no counting, just squares!',
+                      zh:'🟩 正确！'+qn+'个奇数的和 = '+qn+'×'+qn+' = '+(qn*qn)+'——不用数，看正方形！'});
     if(got.indexOf(qn*qn)<0){got.push(qn*qn);saveF(got);drawFriends();}
     setTimeout(newQuiz,1600);
   }else{
     i.className='bad';fb.className='fb no';
-    fb.textContent='홀수가 몇 개인지 세어 봐요 — 홀수 n개의 합은 n×n!';
+    fb.textContent=T({ko:'홀수가 몇 개인지 세어 봐요 — 홀수 n개의 합은 n×n!',
+                      en:'Count how many odd numbers there are — the sum of n odd numbers is n×n!',
+                      zh:'数一数有几个奇数——n个奇数的和就是n×n！'});
   }
 };
 })();

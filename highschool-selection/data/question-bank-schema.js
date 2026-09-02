@@ -71,7 +71,7 @@
       { id: "WM", label: "원수학형", rule: "기본/실력 승급형·전범위 누적" },
       { id: "ED", label: "이든형", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
       { id: "DG", label: "깊생형", rule: "이차함수-부등식 연결·심화 수준" },
-      { id: "SM", label: "생수형", rule: "추천 샘플의 범위·난도 구조" }
+      { id: "SM", label: "생수형", rule: "공통수학1 입반 범위와 구판 참고 샘플의 현행 난도 보정 구조" }
     ],
     // The public bank stores a *blueprint*, not originals or answer keys.
     // A profile gives the planner its scope, report axes and type priorities.
@@ -144,11 +144,21 @@
       },
       {
         id: "SM",
-        reportModel: "sample-recommendation",
-        targets: [{ id: "common2-sample", scopeKey: "common-math-sample", state: "sample", label: "공통수학2 샘플" }],
-        reportAxes: ["문항 O/X", "단원", "세부유형", "난이도", "취약 우선순위"],
-        typeEmphasis: ["삼각비", "부등식", "공통수학2 기본"],
-        scorePolicy: "추천 샘플은 실제 입학 기준으로 단정하지 않음"
+        reportModel: "entry-30-algebra-geometry",
+        targets: [
+          {
+            id: "common1-entry",
+            scopeKey: "middle2-2-to-middle3-2",
+            state: "verified-structure-owner-adjusted-difficulty",
+            label: "공통수학1 기본 입반",
+            recommendedExamId: "sm-common1-entry",
+            difficultyPlan: "2022 구판 모의 참고지보다 조건 결합·풀이 단계·표현 전환을 강화"
+          },
+          { id: "common2-sample", scopeKey: "common-math-sample", state: "sample", label: "공통수학2 샘플" }
+        ],
+        reportAxes: ["문항 O/X", "대수·기하 영역", "학년·학기", "단원", "세부유형", "난이도", "취약 우선순위"],
+        typeEmphasis: ["대수·기하 15문항 균형", "중2-2~중3-2 누적", "조건 결합", "기하 추론"],
+        scorePolicy: "공통수학1 기본 입반의 동일 공지 범위에서만 20/30 기준을 표시하며 구판 샘플을 현행 공식 기출로 표시하지 않음"
       }
     ],
     safeguards: [

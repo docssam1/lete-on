@@ -785,6 +785,21 @@
 @media print{.g1-winter-sum-layout .core span,.g1-winter-product-layout .core span,.g1-winter-product-layout .cards i,.g1-winter-step-game .events>*,.g1-winter-sudoku span,.g1-winter-card-threshold span,.g1-winter-card-chain span,.g1-winter-card-chain ul,.g1-winter-three-balance section{background:#fff}}
 
 /* 교재는 권을 먼저 고른 뒤 단원과 세부 유형을 탐색한다. */
+.bank-search{display:grid;grid-template-columns:minmax(0,520px) 32px 1fr;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid #d9e4e9;background:#f7fafb}
+.bank-search label{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:center;min-height:40px;border:1px solid #b9ccd6;background:#fff}
+.bank-search label:focus-within{border-color:#2498c7;box-shadow:0 0 0 2px rgba(36,152,199,.12)}
+.bank-search label>span{color:#3d7187;font-size:21px;text-align:center;transform:rotate(-20deg)}
+.bank-search input{min-width:0;height:38px;padding:0 10px 0 0;border:0;outline:0;background:transparent;color:#183646;font-family:inherit;font-size:12px;font-weight:800;line-height:1.4}
+.bank-search input::placeholder{color:#78909d;font-weight:700}
+.bank-search>button{width:32px;height:32px;border:1px solid #c5d4dc;background:#fff;color:#466675;font-size:18px;line-height:1}
+.bank-search>small{color:#66808d;font-size:9px;font-weight:800}
+.catalog-family{margin:6px 0 9px;border:1px solid #c9dce4;background:#f8fbfc}
+.catalog-family>header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:37px;padding:7px 10px;border-bottom:1px solid #d8e5ea;background:#edf6f9}
+.catalog-family>header strong{color:#1f596f;font-size:10px}.catalog-family>header span{color:#66818d;font-size:8px;font-weight:900}
+.catalog-family .catalog-strategy{margin-left:0;padding-left:8px;background:#fff}
+.catalog-family .catalog-strategy+ .catalog-strategy{border-top:1px solid #e6edf0}
+.search-empty{display:grid;place-items:center;gap:5px;min-height:180px;padding:24px;border:1px dashed #c8d8df;background:#fafcfd;text-align:center}
+.search-empty strong{color:#365969;font-size:13px}.search-empty span{color:#758b96;font-size:10px;font-weight:700}
 .curriculum-book-tabs{display:grid;grid-template-columns:repeat(10,minmax(54px,1fr));gap:5px;padding:12px 0 9px;overflow-x:auto}
 .curriculum-book-tabs button{min-height:38px;padding:0 8px;border:1px solid #d5e0e6;border-radius:4px;background:#fff;color:#647988;font-size:10px;font-weight:900;white-space:nowrap}
 .curriculum-book-tabs button.active{border-color:#39afe8;background:#eaf8ff;color:#087fbd}
@@ -804,7 +819,7 @@
 .b1-five-card-magic.t-shape:after{bottom:42px}
 
 @media(max-width:900px){.question-page{grid-template-columns:1fr}}
-@media(max-width:700px){.curriculum-book-tabs{grid-template-columns:repeat(10,64px)}.curriculum-inline-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.bank-search{grid-template-columns:minmax(0,1fr) 32px}.bank-search>small{grid-column:1/-1}.curriculum-book-tabs{grid-template-columns:repeat(10,64px)}.curriculum-inline-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @page{size:A4 portrait;margin:0}
 @media print{
   html,body{width:210mm;min-width:210mm}
@@ -845,6 +860,14 @@
   .question-card[data-type-id="gakuro-card-rectangle-placement"] .b1-column-sums,
   .question-card[data-type-id="gakuro-grid-sum"] .b1-column-sums,
   .question-card[data-type-id="gakuro-grid-nine-sum"] .b1-column-sums{grid-template-columns:repeat(var(--columns),42px)}
+  .question-card[data-type-id="fold-number-grid-one"] .fold-diagonal-visual{min-height:180px;padding:2px}
+  .question-card[data-type-id="fold-number-grid-one"] .fold-diag-svg{width:min(100%,374px);height:176px;max-width:374px}
+  .question-card:has(.textbook-concept-tutorial.source-backed) .book05-visual{min-height:145px;padding:4px}
+  .question-card:has(.textbook-concept-tutorial.source-backed) .book05-visual svg{max-height:150px}
+  .question-card[data-type-id="sequential-path-number-grid"] .book05-visual,
+  .question-card[data-type-id="diagonal-fill-number-grid"] .book05-visual{min-height:145px;padding:2px}
+  .question-card[data-type-id="sequential-path-number-grid"] .b5-path-grid,
+  .question-card[data-type-id="diagonal-fill-number-grid"] .b5-path-grid{width:auto;height:150px;max-height:150px}
   .question-grid{display:block;padding:0;border:0;background:#fff}
   .question-page{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr));min-height:245mm;padding:11px;break-after:page;page-break-after:always}
   .question-page:last-child{break-after:auto;page-break-after:auto}

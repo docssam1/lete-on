@@ -50,12 +50,62 @@ function buildNumpad(container, cb, opts){
   });
 }
 
+/* ── 유아(N-*) 전용 오답/정답 반응 (2차 디자인 패스, DESIGN-LEARNING-MODE.md §후보1) ──
+   기존 소리 설정(town 화면의 음소거 버튼)은 배경음악·TTS 전용 지역 상태라 여기까지
+   닿지 않는다(grep 확인됨) — 별도 뮤트 설정 없음, 실패는 그냥 조용히 무시한다.
+   AudioContext는 첫 tap(사용자 입력) 시점에 lazy 생성 — main.js의 앰비언스 actx와는
+   모듈 스코프가 분리돼 있어 여기서 독립적으로 하나 더 둔다(중복 생성 자체는 무해). */
+let _wctx=null;
+function wctx(){
+  try{
+    if(!_wctx)_wctx=new (window.AudioContext||window.webkitAudioContext)();
+    if(_wctx.state==='suspended')_wctx.resume();
+    return _wctx;
+  }catch(e){return null;}
+}
+/* "유아 유닛(N-*)에서만" — main.js render()가 매 렌더 때 심어두는 현재 유닛 id로 판정.
+   html[data-nm-band]==='young'도 쓸 수 있지만(적응형-타이포-말투-설계.md), 그 밴드는
+   레벨1 코스(A-* 등)까지 fallback으로 걸쳐 있어 N-* 전용 반응 범위보다 넓다 —
+   여기 위젯(tapCount 등)은 애초에 nl.js(수의 나라, N-*)에서만 쓰이므로 unit id가 더 정확하다. */
+function isYoungBand(){
+  try{ return /^N-/.test(window.NM_CURRENT_UNIT||''); }catch(e){ return false; }
+}
+function _tone(freq,startOffset,dur,gainVal){
+  const ctx=wctx();if(!ctx)return;
+  try{
+    const osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=freq;
+    const g=ctx.createGain();g.gain.value=0;
+    osc.connect(g).connect(ctx.destination);
+    const t0=ctx.currentTime+(startOffset||0);
+    g.gain.linearRampToValueAtTime(gainVal,t0+.02);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    osc.start(t0);osc.stop(t0+dur+.03);
+  }catch(e){}
+}
+/* 저음 '뚜웅' 0.15초 — 부드럽고 낮은 볼륨, 벌주는 느낌 없이 */
+function wrongTone(){ try{ _tone(196,0,.15,.12); }catch(e){} }
+/* 밝은 '띠링' 2음(도→미 느낌의 상행) */
+function correctTone(){ try{ _tone(659,0,.11,.14); _tone(880,.08,.16,.14); }catch(e){} }
+/* 오답 시 위젯 근처에 0.8초 떴다 사라지는 표정 이모지 — 벌주는 톤 금지(😅) */
+function wrongFace(el){
+  if(!el)return;
+  try{
+    const r=el.getBoundingClientRect();
+    const f=document.createElement('div');
+    f.className='nm-w-wrongface';f.textContent='😅';
+    f.style.left=(r.left+r.width/2)+'px';
+    f.style.top=Math.max(4,r.top-8)+'px';
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),820);
+  }catch(e){}
+}
 function shake(el){
   if(!el)return;
   el.classList.remove('nm-w-shake');
   void el.offsetWidth;
   el.classList.add('nm-w-shake');
   el.addEventListener('animationend',()=>el.classList.remove('nm-w-shake'),{once:true});
+  if(isYoungBand()){ wrongTone(); wrongFace(el); }
 }
 
 function numpadState(screenEl, maxLen){
@@ -2042,7 +2092,9 @@ window.NM_WIDGETS={
   multiBoxesHtml,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
-  _shake:shake
+  _shake:shake,
+  _correctTone:correctTone,
+  _isYoungBand:isYoungBand
 };
 
 })();

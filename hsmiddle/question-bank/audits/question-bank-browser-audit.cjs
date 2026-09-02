@@ -371,6 +371,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
     if (await correctionLink.locator('.type-card input[type="checkbox"]:checked').count() !== 3) fail("resolved types were not selected from a direct link");
     if (await correctionLink.locator("#worksheetView").evaluate(element => element.hidden)) fail("resolved types did not open as a worksheet");
     await correctionLink.click('.view-tabs button[data-view="solution"]');
+    await waitForImages(correctionLink);
     const correctionText = await correctionLink.locator("#pageStream").innerText();
     if (!correctionText.includes("정답은 228m²") || !correctionText.includes("80÷2=40")) fail("resolved source corrections are not visible in the solution view");
     await noOverflow(correctionLink, "correction solution");

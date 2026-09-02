@@ -55,6 +55,31 @@ for (const book of GOLDEN_BELL_BOOKS) {
 }
 
 const book1 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-01");
+const clockExperience = book1.lessons.find((lesson) => lesson.id === "clock-turning")?.experience;
+const clockLanding = (start, quarterTurns) => ((start - 1 + quarterTurns * 3) % 12 + 12) % 12 + 1;
+function validateClockExperience(experience) {
+  if (!experience || experience.kind !== "clock-turning") fail("book-01/clock-turning: interactive concept scene missing");
+  if (experience.family !== "rotation" || experience.start !== 2 || experience.learnerStage !== "필즈 더 클래식 1과정 1권") {
+    fail("book-01/clock-turning: interactive concept scene contract changed");
+  }
+  if (experience.beats.length !== 5 || new Set(experience.beats.map((beat) => beat.id)).size !== 5) fail("book-01/clock-turning: invalid concept beat list");
+  for (const beat of experience.beats) {
+    if (clockLanding(experience.start, beat.quarterTurns) !== beat.result) fail(`book-01/clock-turning/${beat.id}: scene result mismatch`);
+    if (!beat.caption?.trim()) fail(`book-01/clock-turning/${beat.id}: missing scene caption`);
+  }
+  if (experience.check.answer !== "8" || !experience.check.options?.includes("8") || new Set(experience.check.options).size !== 3) {
+    fail("book-01/clock-turning: concept check must expose one approved answer");
+  }
+  if (!experience.finalStill?.standsAlone || experience.finalStill.visibleBeatIds?.length !== experience.beats.length) {
+    fail("book-01/clock-turning: final still contract missing");
+  }
+}
+validateClockExperience(clockExperience);
+const negativeClockExperience = structuredClone(clockExperience);
+negativeClockExperience.beats[2].result = 7;
+let negativeClockFailure = false;
+try { validateClockExperience(negativeClockExperience); } catch { negativeClockFailure = true; }
+if (!negativeClockFailure) fail("book-01/clock-turning: negative control did not detect a wrong landing value");
 const approvedBook1Answers = new Map([
   ["clock-turning", ["12", "6", "6", "3", "9"]],
   ["fold-one-cut", ["3번"]],
@@ -459,8 +484,100 @@ const triangular = (level) => level * (level + 1) / 2;
 const tetrahedral = (level) => Array.from({ length: level }, (_, index) => triangular(index + 1)).reduce((sum, value) => sum + value, 0);
 if (tetrahedral(4) !== 20 || tetrahedral(7) !== 84 || tetrahedral(5) !== 35) fail("book-05: triangular stair totals failed");
 
+function validateTriangularStairExperience(lesson) {
+  const experience = lesson.experience;
+  if (!experience || experience.kind !== "triangular-stair") fail("book-05/cube-tetrahedral-growth: interactive triangular-stair scene missing");
+  if (experience.family !== "tetrahedral-growth" || experience.learnerStage !== "필즈 더 클래식 1과정 5권") {
+    fail("book-05/cube-tetrahedral-growth: interactive scene contract changed");
+  }
+  if (!experience.title?.trim() || !experience.hint?.trim() || experience.beats.length !== 3) {
+    fail("book-05/cube-tetrahedral-growth: interactive scene is incomplete");
+  }
+  if (experience.practice?.length !== 3 || new Set(experience.practice.map((item) => item.id)).size !== 3) {
+    fail("book-05/cube-tetrahedral-growth: triangular and square practice set missing");
+  }
+  const expectedPractice = new Map([
+    ["triangle-row-sum", "6"],
+    ["square-odd-sum", "9"],
+    ["square-pattern", "사각수"]
+  ]);
+  for (const practice of experience.practice) {
+    if (practice.answer !== expectedPractice.get(practice.id) || !practice.prompt?.trim() || !practice.explanation?.trim()
+      || !practice.options?.includes(practice.answer) || new Set(practice.options).size !== practice.options.length) {
+      fail(`book-05/cube-tetrahedral-growth/${practice.id}: concept practice contract missing`);
+    }
+  }
+  const trianglePractice = experience.practice.find((item) => item.id === "triangle-row-sum");
+  const squarePractice = experience.practice.find((item) => item.id === "square-odd-sum");
+  if (trianglePractice.rows.reduce((sum, value) => sum + value, 0) !== Number(trianglePractice.answer)
+    || squarePractice.rows.reduce((sum, value) => sum + value, 0) !== Number(squarePractice.answer)) {
+    fail("book-05/cube-tetrahedral-growth: practice visual totals differ from answers");
+  }
+  const expectedTracks = new Map([
+    ["triangle-row-total", { sources: ["staircase-tile-growth"], answers: ["10", "4"] }],
+    ["triangle-row-boundaries", { sources: ["triangular-row-boundary-number"], answers: ["7", "10"] }],
+    ["square-odd-rows", { sources: ["square-number-odd-sum", "square-row-boundary-number"], answers: ["16", "16"] }],
+    ["square-array-growth", { sources: ["square-tile-growth"], answers: ["16", "한 변이 한 칸씩 늘어나기 때문"] }],
+    ["triangle-tile-square-growth", { sources: ["triangle-tile-growth"], answers: ["16", "사각수"] }],
+    ["one-line-cube-stair", { sources: ["cube-triangular-wall-growth"], answers: ["10", "3층"] }],
+    ["triangular-cube-stair", { sources: ["cube-tetrahedral-growth"], answers: ["10", "10"] }]
+  ]);
+  if (!Array.isArray(experience.typeTracks) || experience.typeTracks.length !== expectedTracks.size) {
+    fail("book-05/cube-tetrahedral-growth: source-backed type tracks are incomplete");
+  }
+  if (new Set(experience.typeTracks.map((track) => track.id)).size !== expectedTracks.size) {
+    fail("book-05/cube-tetrahedral-growth: duplicate type-track ids");
+  }
+  for (const track of experience.typeTracks) {
+    const expected = expectedTracks.get(track.id);
+    if (!expected || JSON.stringify(track.sourceTypeIds) !== JSON.stringify(expected.sources)
+      || !track.group?.trim() || !track.label?.trim() || !track.explanation?.trim()
+      || !track.visual?.kind || !track.check?.prompt?.trim() || !track.practice?.prompt?.trim()) {
+      fail(`book-05/cube-tetrahedral-growth/${track.id}: type-track source contract missing`);
+    }
+    for (const [index, item] of [track.check, track.practice].entries()) {
+      if (item.answer !== expected.answers[index] || !item.options?.includes(item.answer)
+        || new Set(item.options).size !== item.options.length || !item.explanation?.trim()) {
+        fail(`book-05/cube-tetrahedral-growth/${track.id}: type-track answer is not unique`);
+      }
+    }
+  }
+  const triangleTileTrack = experience.typeTracks.find((track) => track.id === "triangle-tile-square-growth");
+  if (!triangleTileTrack.explanation.includes("사각수") || triangleTileTrack.explanation.includes("삼각수입니다")) {
+    fail("book-05/cube-tetrahedral-growth: triangle-tile rule is conflated with triangular numbers");
+  }
+  const forbiddenTrackSources = ["triangular-stone-growth", "square-border-stone-growth", "square-grid-count-book5"];
+  if (experience.typeTracks.some((track) => track.sourceTypeIds.some((id) => forbiddenTrackSources.includes(id)))) {
+    fail("book-05/cube-tetrahedral-growth: unrelated color or counting type leaked into number-rule tracks");
+  }
+  const serializedTracks = JSON.stringify(experience.typeTracks);
+  if (serializedTracks.includes('"20"') || serializedTracks.includes('"84"')) {
+    fail("book-05/cube-tetrahedral-growth: source original answer leaked into type study");
+  }
+  const originalStages = lesson.original.items.map((item) => Number(item.prompt.match(/(\d+)단계/)?.[1]));
+  let priorTotal = 0;
+  for (const [index, beat] of experience.beats.entries()) {
+    const expectedStage = index + 1;
+    if (beat.stage !== expectedStage || beat.layerCount !== triangular(expectedStage) || beat.totalCount !== priorTotal + beat.layerCount) {
+      fail(`book-05/cube-tetrahedral-growth/${beat.id}: layer or cumulative total mismatch`);
+    }
+    if (!beat.caption?.trim() || !beat.check?.prompt?.trim() || beat.check.answer !== String(beat.layerCount)
+      || !beat.check.options?.includes(beat.check.answer) || new Set(beat.check.options).size !== beat.check.options.length
+      || !beat.check.success?.trim()) {
+      fail(`book-05/cube-tetrahedral-growth/${beat.id}: step check contract missing`);
+    }
+    priorTotal = beat.totalCount;
+  }
+  if (Math.max(...experience.beats.map((beat) => beat.stage)) >= Math.min(...originalStages)) {
+    fail("book-05/cube-tetrahedral-growth: concept scene reveals an original answer stage");
+  }
+  if (!experience.finalStill?.standsAlone || experience.finalStill.visibleBeatIds?.join(",") !== experience.beats.map((beat) => beat.id).join(",")) {
+    fail("book-05/cube-tetrahedral-growth: final instructional still contract missing");
+  }
+}
+
 const cubeGeometry = globalThis.GW_GEN;
-if (!cubeGeometry?.buildTriangularStairShape || !globalThis.GW_RENDER?.renderIso) fail("geometry cube engine is unavailable");
+if (!cubeGeometry?.buildTriangularStairShape || !cubeGeometry?.buildSQShape || !globalThis.GW_RENDER?.renderIso) fail("geometry cube engine is unavailable");
 for (let stage = 1; stage <= 10; stage += 1) {
   const map = cubeGeometry.buildTriangularStairShape(stage);
   const expected = stage * (stage + 1) * (stage + 2) / 6;
@@ -468,8 +585,19 @@ for (let stage = 1; stage <= 10; stage += 1) {
     fail(`book-05: geometry triangular stair mismatch at stage ${stage}`);
   }
 }
+for (let stage = 1; stage <= 10; stage += 1) {
+  const map = cubeGeometry.buildSQShape("stair", stage);
+  const expected = stage * (stage + 1) / 2;
+  if (cubeGeometry.mapTotal(map) !== expected) fail(`book-05: one-line cube stair mismatch at stage ${stage}`);
+}
 const book5CubeLesson = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-05")?.lessons.find((lesson) => lesson.id === "cube-tetrahedral-growth");
 if (!book5CubeLesson) fail("book-05: triangular stair golden bell lesson missing");
+validateTriangularStairExperience(book5CubeLesson);
+const negativeTriangularExperience = structuredClone(book5CubeLesson);
+negativeTriangularExperience.experience.beats[2].layerCount = 5;
+let negativeTriangularFailure = false;
+try { validateTriangularStairExperience(negativeTriangularExperience); } catch { negativeTriangularFailure = true; }
+if (!negativeTriangularFailure) fail("book-05/cube-tetrahedral-growth: negative control did not detect a wrong triangular layer");
 for (const item of book5CubeLesson.original.items) {
   const stage = Number(item.prompt.match(/(\d+)단계/)?.[1]);
   if (!stage || Number(item.answer) !== cubeGeometry.triangularStairTotal(stage)) fail(`book-05: approved answer mismatch for ${item.id}`);

@@ -100,6 +100,20 @@ test("WM middle2-1 entry stays separate from WM common-math entry", () => {
   assert.equal(common.binding.scopeKey, "middle-algebra-geometry");
 });
 
+test("SM common1 entry is a locked current-scope target separate from common2 samples", () => {
+  const exam = catalog.exams.find(item => item.id === "sm-common1-entry");
+  assert.equal(exam.questionCount, 30);
+  assert.equal(exam.scopeLabel, "중2-2·중3-1·중3-2 · 대수 15문항 + 기하 15문항");
+  assert.equal(exam.sourceStatus, "candidate_indexed");
+  assert.equal(exam.answerStatus, "crosschecked_not_independently_verified");
+  assert.equal(exam.releaseStatus, "blocked");
+  const resolved = data.resolveExamTrack(exam.id);
+  assert.equal(resolved.binding.scopeKey, "middle2-2-to-middle3-2");
+  assert.equal(resolved.binding.evidenceStatus, "verified");
+  assert.deepEqual(Array.from(resolved.binding.evidenceRefs), ["PUBLIC:SM-CM1-ENTRY-2026"]);
+  assert.equal(data.resolveExamTrack("sm-common2-basic-r01").binding.scopeKey, "common-math-sample");
+});
+
 test("program-track scopes preserve their evidence status instead of inferring a generic transfer range", () => {
   const allowed = new Set(data.evidenceStatuses);
   data.programTrackBindings.forEach(binding => {

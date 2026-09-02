@@ -30,6 +30,88 @@ function fixture() {
   };
 }
 
+function saengsuFixture() {
+  return {
+    sourceRole: "legacy_reference_candidates",
+    officialCurrentExam: false,
+    representativePolicy: {
+      range: ["중2-2", "중3-1", "중3-2"],
+      questionCount: 30,
+      domainBalance: { algebra: 15, geometry: 15 },
+      timeMinutes: 180,
+      referenceCutline: { score: 20, total: 30, status: "public_reference_only" },
+      cutlineStatus: "locked_non_operational",
+      publicLabel: "생수형 공통수학1 입반 대비 추정 구성"
+    },
+    types: [
+      {
+        candidateTypeId: "SMTYPE-TEST-1",
+        primaryDomain: "대수",
+        majorUnit: "이차방정식",
+        minorUnit: "이차방정식의 활용",
+        detailType: "조건을 이용해 두 근의 관계 구하기",
+        canonicalMergeStatus: "pending"
+      },
+      {
+        candidateTypeId: "SMTYPE-TEST-2",
+        primaryDomain: "대수",
+        majorUnit: "일차함수",
+        minorUnit: "일차함수의 그래프",
+        detailType: "그래프에서 두 직선의 교점 구하기",
+        canonicalMergeStatus: "pending"
+      }
+    ],
+    questions: [
+      {
+        questionId: "SM-LEGACY-R01-Q01",
+        paperId: "SM-LEGACY-R01",
+        questionNumber: 1,
+        sourceLocator: { sourceId: "saengsu-r01", questionNumber: 1 },
+        candidateTypeId: "SMTYPE-TEST-1",
+        curriculum: {
+          semesters: ["중3-1"],
+          primaryDomain: "대수",
+          majorUnit: "이차방정식",
+          minorUnit: "이차방정식의 활용",
+          detailType: "조건을 이용해 두 근의 관계 구하기",
+          curriculumStatus: "verified"
+        },
+        withinCurrentRange: true,
+        legacyDifficulty: "심화",
+        difficultyAction: "raise",
+        targetDifficultyBand: "raised",
+        responseEvidence: { independentCorrectnessVerified: false },
+        academyCompatibility: [{ profileId: "SM_STANDARD", state: "candidate" }],
+        usageApproved: false,
+        releaseStatus: "locked"
+      },
+      {
+        questionId: "SM-LEGACY-R01-Q02",
+        paperId: "SM-LEGACY-R01",
+        questionNumber: 2,
+        sourceLocator: { sourceId: "saengsu-r01", questionNumber: 2 },
+        candidateTypeId: "SMTYPE-TEST-2",
+        curriculum: {
+          semesters: ["중2-1"],
+          primaryDomain: "대수",
+          majorUnit: "일차함수",
+          minorUnit: "일차함수의 그래프",
+          detailType: "그래프에서 두 직선의 교점 구하기",
+          curriculumStatus: "verified"
+        },
+        withinCurrentRange: false,
+        legacyDifficulty: "심화",
+        difficultyAction: "review",
+        targetDifficultyBand: null,
+        responseEvidence: { independentCorrectnessVerified: false },
+        academyCompatibility: [{ profileId: "SM_STANDARD", state: "excluded" }],
+        usageApproved: false,
+        releaseStatus: "locked"
+      }
+    ]
+  };
+}
+
 test("같은 교육과정 위치와 같은 세부 유형은 공통 개념 하나로 합친다", () => {
   const index = builder.buildIndex(fixture());
   const family = index.conceptFamilies.find(item => item.canonicalLabel === "두 직선의 교점 구하기");
@@ -141,10 +223,122 @@ test("황소 문항도 시각 검수된 세부유형만 공통 개념에 연결�
   assert.deepEqual(audit.audit(index).issues, []);
 });
 
+test("생수 구판 후보는 공통 유형에 연결하되 정답 검산 전 출제 승인을 막는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  const index = builder.buildIndex(input);
+  const bank = index.sourceBanks.find(item => item.sourceBankId === "SAENGSU-CM1-LEGACY");
+  const current = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01");
+  const excluded = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q02");
+  assert.equal(bank.itemCount, 2);
+  assert.equal(current.conceptStatus, "pending");
+  assert.equal(current.conceptFamilyId, null);
+  assert.equal(current.answerStatus, "pending");
+  assert.equal(current.releaseStatus, "locked");
+  assert.equal(current.usageApproved, false);
+  assert.equal(current.domainGroup, "algebra");
+  assert.equal(index.sourceTypes.find(item => item.sourceTypeId === "SMTYPE-TEST-1").domainGroup, "algebra");
+  assert.deepEqual(bank.representativePlan.domainQuotas, { algebra: 15, geometry: 15 });
+  assert.equal(bank.representativePlan.officialCurrentExam, false);
+  assert.equal(bank.representativePlan.operationalCutline, null);
+  assert.deepEqual(current.academyFits, [{ profileId: "SM_STANDARD", status: "candidate" }]);
+  assert.deepEqual(excluded.academyFits, [{ profileId: "SM_STANDARD", status: "excluded" }]);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
+test("생수 후보 DB의 문항-유형 연결이 깨지면 인덱스 생성을 막는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  input.saengsuLegacy.questions[0].candidateTypeId = "SMTYPE-MISSING";
+  assert.throws(() => builder.buildIndex(input), /없는 유형/);
+});
+
+test("생수 대수·기하 분류와 30문항 대표 기준이 맞지 않으면 인덱스 생성을 막는다", () => {
+  const missingDomain = fixture();
+  missingDomain.saengsuLegacy = saengsuFixture();
+  delete missingDomain.saengsuLegacy.questions[0].curriculum.primaryDomain;
+  delete missingDomain.saengsuLegacy.types[0].primaryDomain;
+  assert.throws(() => builder.buildIndex(missingDomain), /대수·기하 분류/);
+
+  const wrongQuota = fixture();
+  wrongQuota.saengsuLegacy = saengsuFixture();
+  wrongQuota.saengsuLegacy.representativePolicy.domainBalance.geometry = 14;
+  assert.throws(() => builder.buildIndex(wrongQuota), /대표 시험 구성 기준/);
+
+  const wrongCutline = fixture();
+  wrongCutline.saengsuLegacy = saengsuFixture();
+  wrongCutline.saengsuLegacy.representativePolicy.referenceCutline.total = 50;
+  assert.throws(() => builder.buildIndex(wrongCutline), /과거 공개 참고 점수/);
+});
+
+test("검수된 생수 병합·별칭만 기존 공통 유형에 연결하고 나머지는 대기로 둔다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  input.saengsuLegacy.types[0].canonicalMergeStatus = "alias_existing";
+  input.saengsuLegacy.types[0].canonicalTarget = { sourceBankId: "DOLPA-ORIGINAL", sourceTypeId: "DP-T1" };
+  const index = builder.buildIndex(input);
+  const reviewed = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01");
+  const pending = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q02");
+  const dolpa = index.items.find(item => item.sourceItemId === "DP-Q1");
+  assert.equal(reviewed.conceptStatus, "mapped");
+  assert.equal(reviewed.canonicalConceptFamilyId, dolpa.conceptFamilyId);
+  assert.equal(reviewed.conceptFamilyId, dolpa.conceptFamilyId);
+  assert.equal(pending.conceptStatus, "pending");
+  assert.equal(reviewed.releaseStatus, "locked");
+  assert.equal(reviewed.usageApproved, false);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
+test("생수 내부 유형군과 별도·신규 후보는 검색 정보로 남기되 공통 유형으로 가장하지 않는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  input.saengsuLegacy.types[0].canonicalMergeStatus = "alias_internal_group";
+  input.saengsuLegacy.types[0].canonicalInternalGroupId = "SM-GRP-QUADRATIC-COEFFICIENT";
+  input.saengsuLegacy.types[1].canonicalMergeStatus = "new_type";
+  const index = builder.buildIndex(input);
+  const internalAlias = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01");
+  const newCandidate = index.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q02");
+  const internalAliasType = index.sourceTypes.find(type => type.sourceTypeId === "SMTYPE-TEST-1");
+  const bank = index.sourceBanks.find(item => item.sourceBankId === "SAENGSU-CM1-LEGACY");
+  assert.equal(internalAlias.taxonomyReviewStatus, "alias_internal_group");
+  assert.equal(internalAlias.internalTypeGroupId, "SM-GRP-QUADRATIC-COEFFICIENT");
+  assert.equal(internalAlias.conceptStatus, "pending");
+  assert.equal(internalAlias.canonicalConceptFamilyId, null);
+  assert.equal(newCandidate.taxonomyReviewStatus, "new_type");
+  assert.equal(newCandidate.conceptStatus, "pending");
+  assert.equal(internalAliasType.internalTypeGroupId, "SM-GRP-QUADRATIC-COEFFICIENT");
+  assert.equal(bank.taxonomyCounts, null);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
+test("생수 검수 연결 대상이 사라지면 조용히 새 유형으로 만들지 않는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  input.saengsuLegacy.types[0].canonicalMergeStatus = "merge_existing";
+  input.saengsuLegacy.types[0].canonicalTarget = { sourceBankId: "DOLPA-ORIGINAL", sourceTypeId: "MISSING" };
+  assert.throws(() => builder.buildIndex(input), /연결 대상이 공통 인덱스에 없습니다/);
+});
+
 test("공통 인덱스에는 원문·정답·경로를 넣지 않고 전체 검사를 통과한다", () => {
   const index = builder.buildIndex(fixture());
   assert.deepEqual(audit.audit(index).issues, []);
   assert.equal(JSON.stringify(index).includes("sourcePath"), false);
+});
+
+test("저장된 생수 대표 기준이나 대수·기하 분류가 바뀌면 공통 인덱스 검사에서 막는다", () => {
+  const input = fixture();
+  input.saengsuLegacy = saengsuFixture();
+  const wrongDomain = builder.buildIndex(input);
+  wrongDomain.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01").domainGroup = "mixed";
+  assert.ok(audit.audit(wrongDomain).issues.some(issue => issue.startsWith("item_domain:")));
+
+  const missingDomain = builder.buildIndex(input);
+  delete missingDomain.items.find(item => item.sourceItemId === "SM-LEGACY-R01-Q01").domainGroup;
+  assert.ok(audit.audit(missingDomain).issues.some(issue => issue.startsWith("representative_item_domain:")));
+
+  const openedCutline = builder.buildIndex(input);
+  openedCutline.sourceBanks.find(bank => bank.sourceBankId === "SAENGSU-CM1-LEGACY").representativePlan.operationalCutline = { score: 20, total: 30 };
+  assert.ok(audit.audit(openedCutline).issues.some(issue => issue.startsWith("representative_release:")));
 });
 
 test("문항이 존재하지 않는 원본 유형 ID를 가리키면 검사에서 막는다", () => {

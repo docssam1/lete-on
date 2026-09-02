@@ -58,7 +58,7 @@ function normalizeCandidate(value, key) {
   exactKeys(value, new Set([
     "id", "itemVersionId", "mode", "writer", "curriculum", "provenance", "answerVerification",
     "inputType", "generationKind", "difficultyBand", "variant", "lineage", "userApproval",
-    "singleAnswerAudit", "figureAudit", "reviewStatus", "typeCode"
+    "singleAnswerAudit", "figureAudit", "reviewStatus", "typeCode", "domainGroup"
   ]), `candidates.${key}`);
   const itemId = token(value.id, `candidates.${key}.id`);
   if (itemId !== key) fail(`candidates.${key}.id does not match key`);
@@ -74,6 +74,7 @@ function normalizeCandidate(value, key) {
     answerVerification: questionBankCore.createAnswerVerification(value.answerVerification),
     typeCode: token(value.typeCode, `candidates.${key}.typeCode`),
     difficultyBand: clean(value.difficultyBand),
+    domainGroup: value.domainGroup == null || value.domainGroup === "" ? null : clean(value.domainGroup),
     inputType: clean(value.inputType),
     generationKind: clean(value.generationKind),
     variant: questionBankCore.createVariantRecord(Object.assign({ mode }, value.variant)),
@@ -84,6 +85,7 @@ function normalizeCandidate(value, key) {
     reviewStatus: clean(value.reviewStatus)
   };
   if (!questionBankCore.DIFFICULTY_BANDS.includes(candidate.difficultyBand)) fail(`candidates.${key}.difficultyBand is invalid`);
+  if (candidate.domainGroup !== null && !["algebra", "geometry"].includes(candidate.domainGroup)) fail(`candidates.${key}.domainGroup is invalid`);
   if (!questionBankCore.INPUT_TYPES.includes(candidate.inputType)) fail(`candidates.${key}.inputType is invalid`);
   if (!questionBankCore.GENERATION_KINDS.includes(candidate.generationKind)) fail(`candidates.${key}.generationKind is invalid`);
   if (!questionBankCore.REVIEW_STATUSES.includes(candidate.reviewStatus)) fail(`candidates.${key}.reviewStatus is invalid`);
@@ -134,6 +136,47 @@ function normalize(raw) {
 
 function createRegistry(raw) {
   const data = normalize(raw);
+  function searchEntries(options, unlimited) {
+    const opts = options || {};
+    const scopeKey = clean(opts.scopeKey).replace(/\/+$/, "");
+    const scopeKeys = Array.isArray(opts.scopeKeys)
+      ? Array.from(new Set(opts.scopeKeys.map(function (value) { return clean(value).replace(/\/+$/, ""); }).filter(Boolean)))
+      : (scopeKey ? [scopeKey] : []);
+    const query = clean(opts.query).toLowerCase();
+    const mode = clean(opts.mode).toUpperCase();
+    const sourceItemId = clean(opts.sourceItemId);
+    const sourceItemVersionId = clean(opts.sourceItemVersionId);
+    const relationship = clean(opts.relationship);
+    const originalOnly = opts.originalOnly === true;
+    if (!scopeKeys.length) return [];
+    const relationByCandidate = new Map();
+    if (sourceItemId || relationship) {
+      Object.values(data.relations).forEach(function (relation) {
+        if (relation.status !== "approved") return;
+        if (sourceItemId && relation.sourceItemId !== sourceItemId) return;
+        if (sourceItemVersionId && relation.sourceItemVersionId !== sourceItemVersionId) return;
+        if (relationship && relation.relationship !== relationship) return;
+        relationByCandidate.set(relation.candidateItemId, relation);
+      });
+    }
+    const limit = unlimited ? Number.POSITIVE_INFINITY : Math.min(100, Math.max(1, Number(opts.limit) || 30));
+    return Object.values(data.candidates).filter(function (candidate) {
+      if (editorCore.validateCandidate(candidate).length) return false;
+      if (mode && candidate.mode !== mode) return false;
+      if (originalOnly && candidate.lineage.relation !== "original") return false;
+      if (scopeKeys.length && !scopeKeys.some(function (selectedScope) {
+        return candidate.curriculum.key === selectedScope || candidate.curriculum.key.startsWith(`${selectedScope}/`);
+      })) return false;
+      if ((sourceItemId || relationship) && !relationByCandidate.has(candidate.id)) return false;
+      if (query && !`${candidate.id} ${candidate.typeCode} ${candidate.curriculum.key}`.toLowerCase().includes(query)) return false;
+      return true;
+    }).sort(function (left, right) {
+      return left.curriculum.key.localeCompare(right.curriculum.key) || left.typeCode.localeCompare(right.typeCode) || left.id.localeCompare(right.id);
+    }).slice(0, limit).map(function (candidate) {
+      const relation = relationByCandidate.get(candidate.id);
+      return { candidate, relation: relation || null };
+    });
+  }
   return Object.freeze({
     getCandidate(itemId, itemVersionId) {
       const candidate = data.candidates[clean(itemId)];
@@ -144,45 +187,10 @@ function createRegistry(raw) {
       return data.relations[clean(evidenceId)] || null;
     },
     search(options) {
-      const opts = options || {};
-      const scopeKey = clean(opts.scopeKey).replace(/\/+$/, "");
-      const scopeKeys = Array.isArray(opts.scopeKeys)
-        ? Array.from(new Set(opts.scopeKeys.map(function (value) { return clean(value).replace(/\/+$/, ""); }).filter(Boolean)))
-        : (scopeKey ? [scopeKey] : []);
-      const query = clean(opts.query).toLowerCase();
-      const mode = clean(opts.mode).toUpperCase();
-      const sourceItemId = clean(opts.sourceItemId);
-      const sourceItemVersionId = clean(opts.sourceItemVersionId);
-      const relationship = clean(opts.relationship);
-      const originalOnly = opts.originalOnly === true;
-      if (!scopeKeys.length) return [];
-      const relationByCandidate = new Map();
-      if (sourceItemId || relationship) {
-        Object.values(data.relations).forEach(function (relation) {
-          if (relation.status !== "approved") return;
-          if (sourceItemId && relation.sourceItemId !== sourceItemId) return;
-          if (sourceItemVersionId && relation.sourceItemVersionId !== sourceItemVersionId) return;
-          if (relationship && relation.relationship !== relationship) return;
-          relationByCandidate.set(relation.candidateItemId, relation);
-        });
-      }
-      const limit = Math.min(100, Math.max(1, Number(opts.limit) || 30));
-      return Object.values(data.candidates).filter(function (candidate) {
-        if (editorCore.validateCandidate(candidate).length) return false;
-        if (mode && candidate.mode !== mode) return false;
-        if (originalOnly && candidate.lineage.relation !== "original") return false;
-        if (scopeKeys.length && !scopeKeys.some(function (selectedScope) {
-          return candidate.curriculum.key === selectedScope || candidate.curriculum.key.startsWith(`${selectedScope}/`);
-        })) return false;
-        if ((sourceItemId || relationship) && !relationByCandidate.has(candidate.id)) return false;
-        if (query && !`${candidate.id} ${candidate.typeCode} ${candidate.curriculum.key}`.toLowerCase().includes(query)) return false;
-        return true;
-      }).sort(function (left, right) {
-        return left.curriculum.key.localeCompare(right.curriculum.key) || left.typeCode.localeCompare(right.typeCode) || left.id.localeCompare(right.id);
-      }).slice(0, limit).map(function (candidate) {
-        const relation = relationByCandidate.get(candidate.id);
-        return { candidate, relation: relation || null };
-      });
+      return searchEntries(options, false);
+    },
+    searchAll(options) {
+      return searchEntries(options, true);
     }
   });
 }

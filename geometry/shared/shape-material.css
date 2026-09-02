@@ -1,0 +1,231 @@
+/* Shape Garden's shared physical-material layer. Loaded after each game skin. */
+:root {
+  --material-green-top: #5ec38c;
+  --material-green: #20795b;
+  --material-green-deep: #104f3b;
+  --material-gold-top: #fff3a1;
+  --material-gold: #edbd42;
+  --material-gold-deep: #ad7419;
+  --material-edge: rgba(255,255,255,.76);
+  --material-shadow: rgba(27,69,48,.2);
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255,255,255,.66) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 79% 31%, rgba(47,101,71,.07) 0 1px, transparent 1.5px),
+    linear-gradient(145deg, #eef5e9 0%, #f8f4df 52%, #dbead9 100%) !important;
+  background-size: 22px 22px, 31px 31px, auto;
+}
+
+/* The garden is an open shelf, while game screens are raised workbenches. */
+.garden-shell,
+.game-shell,
+.detective-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.garden-bar,
+.game-shell .topbar,
+.detective-shell .topbar {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255,255,255,.78) !important;
+  border-bottom-color: #6eaa8d !important;
+  color: #f8fff9 !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.22), transparent 39%),
+    linear-gradient(180deg, var(--material-green-top), var(--material-green) 55%, var(--material-green-deep)) !important;
+  box-shadow: 0 8px 18px var(--material-shadow), inset 0 1px rgba(255,255,255,.54), inset 0 -2px rgba(5,55,39,.22) !important;
+}
+
+.garden-bar::after,
+.game-shell .topbar::after,
+.detective-shell .topbar::after {
+  position: absolute;
+  top: 0;
+  left: 19%;
+  width: 25%;
+  height: 100%;
+  content: "";
+  transform: skewX(-24deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent);
+  pointer-events: none;
+}
+
+.garden-bar > *,
+.game-shell .topbar > *,
+.detective-shell .topbar > * { position: relative; z-index: 1; }
+.garden-bar small,
+.game-shell .brand small,
+.detective-shell .brand small { color: rgba(247,255,248,.8) !important; }
+.garden-bar>div strong,
+.game-shell .brand strong,
+.detective-shell .brand strong { color: inherit !important; }
+
+.garden-bar>a,
+.game-shell .icon-button,
+.game-shell .level-button,
+.detective-shell .icon-button,
+.detective-shell .level-button {
+  border-color: rgba(255,255,255,.62) !important;
+  color: #f8fff9 !important;
+  background: linear-gradient(180deg, #6fca9a, #248260 57%, #125940) !important;
+  box-shadow: 0 3px 0 #0d4a36, inset 0 1px rgba(255,255,255,.52) !important;
+}
+
+.garden-bar>b,
+.game-shell .progress span,
+.detective-shell .progress span {
+  border-color: #fff0a5 !important;
+  color: #5a400c !important;
+  background: linear-gradient(180deg, #fff9ba, #f2cf59 60%, #e6a92c) !important;
+  box-shadow: 0 2px 0 #b57b1c, inset 0 1px rgba(255,255,255,.86) !important;
+}
+
+.garden-bar>a:active,
+.game-shell .icon-button:active,
+.game-shell .level-button:active,
+.detective-shell .icon-button:active,
+.detective-shell .level-button:active { transform: translateY(2px); box-shadow: 0 1px 0 #0d4a36, inset 0 3px 7px rgba(4,53,37,.25) !important; }
+
+.intro { position: relative; }
+.intro h1 { text-shadow: 0 1px rgba(255,255,255,.78); }
+.garden-art i,
+.mini-grid i {
+  border-color: rgba(255,255,255,.72) !important;
+  box-shadow: inset 0 2px rgba(255,255,255,.5), inset -5px -6px rgba(42,76,47,.17), 0 5px 0 rgba(43,82,49,.22), 0 10px 13px rgba(42,76,47,.13) !important;
+}
+
+.course>header { position: relative; }
+.course>header::after { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; content: ""; background: linear-gradient(90deg, transparent, rgba(67,136,93,.38), transparent); }
+
+.level-card {
+  border-color: #b3cbb9 !important;
+  border-bottom-color: #86aa90 !important;
+  border-radius: 7px !important;
+  background: linear-gradient(180deg, #ffffff, #f0f6ed) !important;
+  box-shadow: 0 5px 0 #b1c5b1, 0 12px 18px rgba(42,80,52,.13), inset 0 1px white !important;
+}
+.level-card:hover,
+.level-card:focus-visible { transform: translateY(-4px); border-color: #4b9d71 !important; box-shadow: 0 8px 0 #9dba9f, 0 17px 24px rgba(42,80,52,.19), inset 0 1px white !important; }
+.level-card .preview,
+.level-card .level-card img { position: relative; overflow: hidden; }
+.preview::after { position: absolute; top: 0; left: 14%; width: 42%; height: 37%; border-radius: 50%; content: ""; background: linear-gradient(135deg, rgba(255,255,255,.48), transparent 70%); pointer-events: none; }
+.preview>span { box-shadow: 0 3px 0 #173e31, inset 0 1px rgba(255,255,255,.45); }
+
+.game-shell,
+.detective-shell { background: transparent !important; }
+.mission { position: relative; }
+.game-shell .mission,
+.detective-shell .mission { border-bottom-color: #bad1bf !important; background: rgba(255,255,249,.76) !important; box-shadow: inset 0 1px rgba(255,255,255,.86); }
+.game-shell .mission span,
+.detective-shell .mission span { border-radius: 5px; box-shadow: 0 2px 0 rgba(8,72,52,.28), inset 0 1px rgba(255,255,255,.35); }
+
+.target-panel,
+.tray-panel,
+.board-panel,
+.detective-panel,
+.rule-panel {
+  border-color: #adc7b3 !important;
+  border-bottom-color: #84a68d !important;
+  border-radius: 9px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(239,247,236,.96)) !important;
+  box-shadow: 0 6px 0 rgba(132,166,141,.72), 0 14px 22px rgba(31,75,48,.14), inset 0 1px white !important;
+}
+
+.target-panel header,
+.tray-panel header,
+.board-panel>header {
+  background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(230,243,229,.8)) !important;
+  box-shadow: inset 0 1px white;
+}
+
+.target-slot,
+.shape-board {
+  border-color: #9dbda6 !important;
+  background:
+    linear-gradient(90deg, rgba(48,123,83,.1) 1px, transparent 1px),
+    linear-gradient(rgba(48,123,83,.1) 1px, transparent 1px),
+    linear-gradient(180deg, #dcefdc, #b8dcb9) !important;
+  background-size: 24px 24px, 24px 24px, auto !important;
+  box-shadow: inset 0 4px 9px rgba(26,102,65,.16), inset 0 -1px rgba(255,255,255,.75), 0 4px 0 #8ab18f !important;
+}
+
+.piece-choice,
+.choice-tray button,
+.cover-cell,
+.tool-panel button,
+.tools button,
+.action-bar button,
+.action-bar a,
+.answer-dock button,
+.complete-actions button,
+.complete-actions a,
+.tutorial-card button {
+  border-color: #a7c0ad !important;
+  border-bottom-color: #7f9f87 !important;
+  border-radius: 7px !important;
+  background: linear-gradient(180deg, #fffef8, #e9f2e6 70%, #d4e4d4) !important;
+  box-shadow: 0 3px 0 #a5bda7, 0 6px 10px rgba(34,76,49,.12), inset 0 1px white !important;
+}
+
+.piece-choice:hover,
+.choice-tray button:hover,
+.choice-tray button:focus-visible,
+.cover-cell:hover,
+.tool-panel button:hover,
+.tools button:hover,
+.action-bar button:hover,
+.action-bar a:hover { transform: translateY(-2px); border-color: #398b63 !important; }
+
+.piece-choice:active,
+.choice-tray button:active,
+.cover-cell:active,
+.tool-panel button:active,
+.tools button:active,
+.action-bar button:active,
+.action-bar a:active { transform: translateY(2px); box-shadow: 0 1px 0 #a5bda7, inset 0 3px 8px rgba(37,78,50,.16) !important; }
+
+.piece-choice.selected,
+.piece-choice.correct,
+.choice-tray button.correct { border-color: #2b9a64 !important; background: linear-gradient(180deg, #f0fff4, #ccefd7) !important; box-shadow: 0 3px 0 #5cab71, 0 0 0 4px rgba(57,155,98,.16), inset 0 1px white !important; }
+.piece-choice.wrong,
+.choice-tray button.wrong { border-color: #d46d66 !important; background: linear-gradient(180deg, #fffafa, #ffdeda) !important; }
+
+.next-button,
+.tools .primary,
+.action-bar .next-button,
+.complete-actions button:first-child,
+.tutorial-card button {
+  border-color: #e9ffe9 !important;
+  border-bottom-color: #0d4c37 !important;
+  color: white !important;
+  background: linear-gradient(180deg, #6ac891, #238160 58%, #10513c) !important;
+  box-shadow: 0 4px 0 #0b4835, 0 8px 13px rgba(18,77,51,.2), inset 0 1px rgba(255,255,255,.45) !important;
+}
+
+.piece-svg,
+.shape-svg { filter: drop-shadow(0 7px 4px rgba(48,70,31,.17)); }
+.piece-svg rect { stroke-width: 1.65px; filter: drop-shadow(0 2px 1px rgba(99,60,7,.24)); }
+.cover-cell.filled { box-shadow: inset 0 2px rgba(255,255,255,.55), inset -2px -3px rgba(34,67,48,.18), 0 2px 0 rgba(35,75,48,.25) !important; }
+
+.dialog>section,
+.level-dialog,
+.complete-card,
+.tutorial-card { border: 1px solid #a6c1ac !important; border-bottom-color: #779985 !important; border-radius: 10px !important; background: linear-gradient(180deg, #ffffff, #eff7ed) !important; box-shadow: 0 7px 0 #95b59b, 0 21px 45px rgba(20,57,37,.3), inset 0 1px white !important; }
+.success strong { border-radius: 8px; box-shadow: 0 5px 0 rgba(50,71,34,.32), 0 12px 20px rgba(31,70,46,.25); }
+
+@media (max-width: 760px) {
+  .garden-bar,
+  .game-shell .topbar,
+  .detective-shell .topbar { border-radius: 8px; }
+  .target-panel,
+  .tray-panel,
+  .board-panel,
+  .detective-panel,
+  .rule-panel { box-shadow: 0 4px 0 rgba(132,166,141,.66), 0 9px 15px rgba(31,75,48,.12), inset 0 1px white !important; }
+}
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

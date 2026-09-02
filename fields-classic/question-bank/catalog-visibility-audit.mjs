@@ -43,7 +43,7 @@ for (const item of hiddenTypes) {
 const appPath = fileURLToPath(new URL("./app.js", import.meta.url));
 const appSource = fs.readFileSync(appPath, "utf8");
 assert(
-  /const matchesStyle = \(item\) => isSelectableType\(item\) &&/.test(appSource),
+  /const matchesStyle = \(item\) => isSelectableType\(item\)\s*&&/.test(appSource),
   "type tree no longer filters unselectable placeholders"
 );
 assert(

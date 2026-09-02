@@ -71,10 +71,12 @@ function syncReviewedInventories(database) {
         evidence: unique([...(question.responseFormat.evidence || []), source.evidenceId])
       };
       if (!source.answerVerified(item)) throw new Error(`${review.roundCode} ${item.number}번 답 확인이 끝나지 않았습니다.`);
-      question.answerCheck = {
-        status: "verified",
-        evidence: unique([...(question.answerCheck.evidence || []), source.answerEvidenceId])
-      };
+      if (question.answerCheck.status !== "disputed") {
+        question.answerCheck = {
+          status: "verified",
+          evidence: unique([...(question.answerCheck.evidence || []), source.answerEvidenceId])
+        };
+      }
     });
   });
 

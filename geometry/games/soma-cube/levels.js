@@ -211,7 +211,7 @@ const TRI_DECOYS = [[[0,0,0],[1,0,0],[2,0,0]]];
 
 function levelOneProblems() {
   const occurrences = new Map();
-  return Array.from({ length: 10 }, (_, index) => {
+  const generated = Array.from({ length: 10 }, (_, index) => {
     const targetPiece = PIECES[index % PIECES.length];
     const variants = orientations(targetPiece.cells);
     const occurrence = occurrences.get(targetPiece.id) || 0;
@@ -230,32 +230,88 @@ function levelOneProblems() {
     const correct = index % (decoys.length + 1);
     const options = [...decoys];
     options.splice(correct, 0, same);
-    return { id: `soma-l1-${String(index + 1).padStart(2,"0")}`, mode: "recognize", targetPieceId: targetPiece.id, target, options, answer: correct };
+    return {
+      mode: "recognize",
+      targetPieceId: targetPiece.id,
+      target,
+      options,
+      answer: correct,
+      reasoningSteps: 1,
+      sourceRef: "internal-variation; rotation-equivalence pattern verified from RAY Kids A4-1"
+    };
   });
+  const teachingOrder = [0, 7, 2, 3, 1, 9, 4, 5, 6, 8];
+  return teachingOrder.map((sourceIndex, index) => ({
+    ...generated[sourceIndex],
+    id: `soma-l1-${String(index + 1).padStart(2,"0")}`
+  }));
+}
+
+function teachingArrangement(placements) {
+  const candidates = ROTATIONS.map((rotate) => {
+    const rotated = placements.map((placement) => ({
+      ...placement,
+      cells: placement.cells.map(rotate)
+    }));
+    const all = rotated.flatMap((placement) => placement.cells);
+    const mins = [0, 1, 2].map((axis) => Math.min(...all.map((cell) => cell[axis])));
+    const grounded = rotated.map((placement) => ({
+      ...placement,
+      cells: placement.cells.map((cell) => cell.map((value, axis) => value - mins[axis])).sort(compareCell)
+    }));
+    const cells = grounded.flatMap((placement) => placement.cells);
+    const size = [0, 1, 2].map((axis) => Math.max(...cells.map((cell) => cell[axis])) + 1);
+    return {
+      placements: grounded,
+      height: size[1],
+      floorContacts: cells.filter((cell) => cell[1] === 0).length,
+      footprint: size[0] * size[2],
+      signature: arrangementKey(grounded)
+    };
+  });
+  candidates.sort((a, b) => a.height - b.height
+    || b.floorContacts - a.floorContacts
+    || a.footprint - b.footprint
+    || a.signature.localeCompare(b.signature));
+  return candidates[0].placements;
 }
 
 function assemblyProblems(level, groups) {
-  return groups.map((placements, index) => ({
-    id: `soma-l${level}-${String(index + 1).padStart(2,"0")}`,
-    mode: "assemble",
-    target: cellsOf(placements),
-    pieceIds: placements.map((placement) => placement.pieceId),
-    reference: placements.map(copyPlacement),
-    answerPolicy: "any-exact-cover"
+  const prepared = groups.map((placements) => {
+    const reference = teachingArrangement(placements);
+    const target = cellsOf(reference);
+    const height = Math.max(...target.map((cell) => cell[1])) + 1;
+    return {
+      mode: "assemble",
+      target,
+      pieceIds: reference.map((placement) => placement.pieceId),
+      reference: reference.map(copyPlacement),
+      answerPolicy: "any-exact-cover",
+      reasoningSteps: level,
+      sourceRef: `internal-variation; ${level}-piece assembly pattern verified from RAY Kids A4-1`,
+      teachingScore: [height, target.length, arrangementKey(reference)]
+    };
+  });
+  prepared.sort((a, b) => a.teachingScore[0] - b.teachingScore[0]
+    || a.teachingScore[1] - b.teachingScore[1]
+    || a.teachingScore[2].localeCompare(b.teachingScore[2]));
+  return prepared.map(({ teachingScore, ...problem }, index) => ({
+    ...problem,
+    id: `soma-l${level}-${String(index + 1).padStart(2,"0")}`
   }));
 }
 
 const groups2 = connectedGroups(2, 10);
 const groups3 = connectedGroups(3, 10);
 
-function cubeChallenges(level, fixedSchedule, answerPolicy) {
+function cubeChallenges(level, fixedSchedule, answerPolicy, excludedSignatures = new Set()) {
   const fixedCounts = [...new Set(fixedSchedule)];
   const required = new Map(fixedCounts.map((fixedCount) => [
     fixedCount,
     fixedSchedule.filter((value) => value === fixedCount).length
   ]));
   const pools = new Map(fixedCounts.map((fixedCount) => [fixedCount, []]));
-  const seen = new Set();
+  const seen = new Set(excludedSignatures);
   for (const solution of FULL_SOLUTIONS) {
     for (const fixedCount of fixedCounts) {
       if (pools.get(fixedCount).length >= required.get(fixedCount)) continue;
@@ -290,15 +346,20 @@ function cubeChallenges(level, fixedSchedule, answerPolicy) {
   }
   return fixedSchedule.map((fixedCount, index) => ({
     ...pools.get(fixedCount).shift(),
-    id: `soma-l${level}-${String(index + 1).padStart(2,"0")}`
+    id: `soma-l${level}-${String(index + 1).padStart(2,"0")}`,
+    reasoningSteps: level === 4 ? 7 - fixedCount : 8 - fixedCount,
+    sourceRef: level === 4
+      ? "internal-variation; GFIELD cube-completion extension"
+      : "internal-variation; GFIELD two-assembly extension"
   }));
 }
 
-const level4Problems = cubeChallenges(4, [2,3,4,2,3,4,2,3,4,2], "any-exact-cover-with-fixed");
-const level5Problems = cubeChallenges(5, [1,2,1,2,1,2,1,2,2,2], "two-distinct-assemblies-required");
+const level4Problems = cubeChallenges(4, [4,4,4,3,3,3,2,2,2,2], "any-exact-cover-with-fixed");
+const level4FixedSignatures = new Set(level4Problems.map((problem) => canonicalArrangement(problem.fixed)));
+const level5Problems = cubeChallenges(5, [2,2,2,2,2,2,1,1,1,1], "two-distinct-assemblies-required", level4FixedSignatures);
 
 const levelDefinitions = [
-  { id:1, stage:"키즈", difficulty:"중", title:"같은 조각 찾기", description:"돌아간 조각을 보고 같은 소마 조각을 찾아요.", problems:levelOneProblems() },
+  { id:1, stage:"키즈", difficulty:"하", title:"같은 조각 찾기", description:"돌아간 조각을 보고 같은 소마 조각을 찾아요.", problems:levelOneProblems() },
   { id:2, stage:"Pre", difficulty:"하", title:"두 조각 맞추기", description:"두 조각을 돌려 작은 입체를 완성해요.", problems:assemblyProblems(2, groups2) },
   { id:3, stage:"입문", difficulty:"중", title:"다른 조각, 같은 모양", description:"서로 다른 세 조각으로 같은 목표 모양을 만들어요.", problems:assemblyProblems(3, groups3) },
   { id:4, stage:"초급", difficulty:"중", title:"빈 큐브 채우기", description:"일부가 채워진 3×3×3 큐브의 나머지를 완성해요.", problems:level4Problems },

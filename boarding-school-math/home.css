@@ -58,6 +58,16 @@ a { color: inherit; }
 .action-strip { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid var(--academy-rule); border-bottom: 1px solid var(--academy-rule); }.action-strip article { min-width: 0; min-height: 218px; padding: 23px; display: flex; flex-direction: column; border-right: 1px solid var(--academy-rule); background: rgba(255,253,247,.52); }.action-strip article:last-child { border-right: 0; }.action-strip article > span { color: var(--academy-burgundy); font-family: var(--academy-serif); font-size: 1.15rem; }.action-strip h2 { margin: 12px 0 0; font-size: 1.34rem; }.action-strip p:not(.micro-label) { margin: 9px 0 0; color: var(--academy-muted); font-size: .73rem; line-height: 1.6; }.text-link { margin-top: auto; padding-top: 18px; color: var(--academy-ink); font-size: .73rem; font-weight: 850; text-underline-offset: 4px; }
 
 .map-section { margin-top: clamp(56px,7vw,88px); padding: clamp(54px,7vw,86px) 0; background: #e8e4da; }.map-heading { padding-top: 0; border-top: 0; }.grade-tabs { margin-top: 26px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; }.grade-tabs button { min-width: 58px; min-height: 44px; padding: 8px 11px; border: 1px solid var(--academy-rule); border-radius: 2px; color: var(--academy-ink); background: rgba(255,253,247,.65); cursor: pointer; font-size: .72rem; font-weight: 850; }.grade-tabs button[aria-selected="true"] { color: var(--academy-sheet); border-color: var(--academy-ink); background: var(--academy-ink); }.skill-map-card { margin-top: 12px; padding: clamp(21px,3.8vw,38px); border: 1px solid var(--academy-rule); background: var(--academy-sheet); }.skill-map-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; }.skill-map-head > div:first-child { display: flex; align-items: center; gap: 14px; }.grade-orbit { width: 58px; height: 58px; display: grid; place-items: center; color: var(--academy-sheet); background: var(--academy-burgundy); font-weight: 900; }.skill-map-head h3 { margin: 5px 0 0; font-size: 1.15rem; }.map-legend { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; color: var(--academy-muted); font-size: .62rem; font-weight: 750; }.map-legend span { display: inline-flex; align-items: center; gap: 5px; }.map-legend i,.skill-state i { width: 8px; height: 8px; display: inline-block; border-radius: 50%; }.needs { background: var(--academy-burgundy); }.ready { background: #4c7098; }.deep { background: var(--academy-green); }.not-assessed { background: #b7b9b7; }.skill-rows { margin-top: 22px; display: grid; gap: 6px; }.map-footnote { margin: 16px 0 0; color: var(--academy-muted); font-size: .66rem; text-align: right; }
+.grade-reasoning-lanes { margin-top: 18px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid var(--academy-rule); background: #f5f1e7; }
+.grade-reasoning-lanes[hidden] { display: none; }
+.grade-reasoning-lanes article { min-width: 0; min-height: 104px; padding: 14px; border-right: 1px solid var(--academy-rule); }
+.grade-reasoning-lanes article:nth-child(3) { border-right: 0; }
+.grade-reasoning-lanes span,.grade-reasoning-lanes strong,.grade-reasoning-lanes small { display: block; }
+.grade-reasoning-lanes span { color: var(--academy-burgundy); font-size: .54rem; font-weight: 900; letter-spacing: .055em; }
+.grade-reasoning-lanes strong { margin-top: 7px; font-size: .74rem; }
+.grade-reasoning-lanes small { margin-top: 6px; color: var(--academy-muted); font-size: .58rem; line-height: 1.45; }
+.grade-reasoning-lanes > p { grid-column: 1 / -1; margin: 0; padding: 9px 14px; border-top: 1px solid var(--academy-rule); color: var(--academy-muted); font-size: .56rem; line-height: 1.45; }
+.unit-reasoning { margin-top: 5px; display: block; color: var(--academy-green); font-size: .55rem; font-style: normal; font-weight: 800; line-height: 1.4; }
 
 .domain-directory-row { border-top: 1px solid #e0dcd2; }
 .domain-directory-row:last-child { border-bottom: 1px solid #e0dcd2; }
@@ -113,6 +123,9 @@ a { color: inherit; }
   .quick-start-grade { grid-template-columns: 1fr; }
   .quick-start-grade span { grid-column: 1; }
   .simple-action-card { min-height: 76px; }
+  .grade-reasoning-lanes { grid-template-columns: 1fr; }
+  .grade-reasoning-lanes article { min-height: 0; padding: 11px 12px; border-right: 0; border-bottom: 1px solid var(--academy-rule); }
+  .grade-reasoning-lanes article:nth-child(3) { border-bottom: 0; }
 }
 @media (max-width: 390px) { .page-home .brand { font-size: .7rem; }.page-home .brand-mark { width: 28px; height: 32px; }.page-home .role-shortcut { padding-inline: 7px; font-size: .64rem; }.role-tabs { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }.role-tabs button { padding-inline: 8px; }.goal-grade-control { grid-template-columns: 1fr; }.goal-grade-control span { grid-column: auto; }.high-school-bridge ul { grid-template-columns: 1fr; } }
 @media (max-width: 720px) {

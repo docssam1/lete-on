@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const releaseGate = require("./select-question-bank.cjs");
 
 const DEFAULT_ALLOWED_STATUSES = Object.freeze(["source_verified", "approved"]);
 const CANDIDATE_ALLOWED_STATUSES = Object.freeze([...DEFAULT_ALLOWED_STATUSES, "candidate"]);
@@ -28,8 +29,10 @@ function buildLookups(index) {
 }
 
 function compareItems(left, right) {
-  const leftKey = [left.course, left.semester, left.majorUnit, left.minorUnit, left.detailType, left.sourceBankId, left.sourceItemId].join("\u0000");
-  const rightKey = [right.course, right.semester, right.majorUnit, right.minorUnit, right.detailType, right.sourceBankId, right.sourceItemId].join("\u0000");
+  const leftRank = left.sourceRole === "direct" ? "0" : "1";
+  const rightRank = right.sourceRole === "direct" ? "0" : "1";
+  const leftKey = [leftRank, left.course, left.semester, left.majorUnit, left.minorUnit, left.detailType, left.sourceBankId, left.sourceItemId].join("\u0000");
+  const rightKey = [rightRank, right.course, right.semester, right.majorUnit, right.minorUnit, right.detailType, right.sourceBankId, right.sourceItemId].join("\u0000");
   return leftKey.localeCompare(rightKey, "ko") || left.itemId.localeCompare(right.itemId);
 }
 
@@ -39,8 +42,10 @@ function selectItems(index, profileTokens, options) {
   const profiles = tokens.map(token => profileByToken(index, token));
   if (!profiles.length || profiles.some(profile => !profile)) throw new Error("학원형을 확인해 주세요.");
   const profileIds = new Set(profiles.map(profile => profile.profileId));
+  const programIds = new Set(profiles.map(profile => profile.programId).filter(Boolean));
   const allowedStatuses = new Set(opts.allowedStatuses || DEFAULT_ALLOWED_STATUSES);
   const allowedConceptStatuses = new Set(opts.allowedConceptStatuses || ["mapped"]);
+  const reviewInspection = opts.includeReviewCandidates === true || allowedStatuses.has("candidate");
   const query = clean(opts.query).toLocaleLowerCase("ko");
   const limit = Math.min(1000, Math.max(1, Number(opts.limit) || 300));
   const { familyById, sourceTypeByKey, sourceBankById } = buildLookups(index);
@@ -48,6 +53,10 @@ function selectItems(index, profileTokens, options) {
   const rows = (index.items || []).flatMap(item => {
     const fits = (item.academyFits || []).filter(fit => profileIds.has(fit.profileId) && allowedStatuses.has(fit.status));
     if (!fits.length || !allowedConceptStatuses.has(item.conceptStatus)) return [];
+    const answerStatus = clean(item.answerCheck && item.answerCheck.status || item.answerStatus) || "pending";
+    const learnerFit = releaseGate.normalizeLearnerFit(item.learnerFit);
+    const releaseEligible = answerStatus === "verified" && releaseGate.learnerFitPassed(learnerFit);
+    if (!releaseEligible && !reviewInspection) return [];
     const familyId = item.canonicalConceptFamilyId || item.conceptFamilyId;
     const family = familyById.get(familyId);
     const sourceType = sourceTypeByKey.get(`${item.sourceBankId}:${item.sourceTypeId}`);
@@ -58,9 +67,16 @@ function selectItems(index, profileTokens, options) {
       itemId: item.itemId,
       sourceBankId: item.sourceBankId,
       sourceBankLabel: sourceBank ? sourceBank.label : item.sourceBankId,
+      sourceRole: sourceBank && programIds.has(sourceBank.academyId) ? "direct" : "compatible",
       sourceItemId: item.sourceItemId,
       sourceTypeId: item.sourceTypeId,
       sourceTypeLabel: sourceType ? sourceType.detailType : null,
+      domainGroup: item.domainGroup || (sourceType && sourceType.domainGroup) || null,
+      taxonomyReviewStatus: item.taxonomyReviewStatus || (sourceType && sourceType.taxonomyReviewStatus) || null,
+      internalTypeGroupId: item.internalTypeGroupId || (sourceType && sourceType.internalTypeGroupId) || null,
+      withinCurrentRange: Object.prototype.hasOwnProperty.call(item, "withinCurrentRange")
+        ? item.withinCurrentRange === true
+        : null,
       conceptFamilyId: familyId || null,
       course: curriculum.course || "",
       semester: curriculum.semester || "",
@@ -71,12 +87,24 @@ function selectItems(index, profileTokens, options) {
       classificationStatus: item.classificationStatus,
       detailPrecision: item.detailPrecision,
       conceptStatus: item.conceptStatus,
+      answerStatus,
+      difficultyBand: item.difficulty && ["lowered", "standard", "raised"].includes(item.difficulty.targetBand)
+        ? item.difficulty.targetBand
+        : (item.difficultyBand || null),
+      difficultyStatus: item.difficulty && item.difficulty.status || item.difficultyStatus || "pending",
+      responseKind: item.responseKind || null,
+      responseStatus: item.responseStatus || "pending",
+      usageApproved: item.usageApproved === true || fits.some(fit => fit.status === "approved"),
+      learnerFit,
+      learnerFitPassed: releaseGate.learnerFitPassed(learnerFit),
+      releaseEligible,
+      releaseBlockReason: !releaseGate.learnerFitPassed(learnerFit) ? "learner_fit_not_passed" : (answerStatus === "verified" ? null : "answer_check_not_verified"),
       academyFits: fits.map(fit => ({ profileId: fit.profileId, status: fit.status }))
     };
     if (query && ![
       row.itemId, row.sourceBankId, row.sourceItemId, row.sourceTypeId, row.sourceTypeLabel,
       row.conceptFamilyId, row.course, row.semester, row.majorUnit, row.minorUnit, row.detailType,
-      row.solutionArchetype
+      row.solutionArchetype, row.domainGroup, row.taxonomyReviewStatus, row.internalTypeGroupId
     ].join(" ").toLocaleLowerCase("ko").includes(query)) return [];
     return [row];
   }).sort(compareItems).slice(0, limit);

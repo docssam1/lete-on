@@ -113,18 +113,21 @@ engine/threads/*.js 로 구현되어 있고, 유아용 NL 스레드(nl.js)가 �
 
 ## 미완료 / TODO
 
+> 2026-09-02 갱신 — 아래 표는 오래도록 완료 항목을 달고 있었다. 실제 상태로 정리함.
+
 | 항목 | 상태 |
 |------|------|
-| **이 브랜치 → main 병합(배포)** | ⭐ 최우선. 유아 15유닛이 main에 없어 라이브 미반영 |
-| CHALLENGE 콘텐츠 (중1 연산 상한: 정수·유리수·지수) | 미구현 — 스레드 추가 설계 필요 |
-| ADVANCE 구구 파트가 창의수연 중급 목차인지 | 원장 확인 대기 ("창의적 연산 단계를 확장한 것"이라는 답변까지 받음) |
-| 유아 2차 디자인 패스 | 후보 목록은 DESIGN-LEARNING-MODE.md 참고 |
-| N-15 완료 시 R0(연산 첫걸음) 추천 배너 | 미구현 (부가 기능) |
-| §8 Workflow 파이프라인 실행 (시험모드·인쇄 학습지 포함) | §9 확정으로 착수 가능 |
-| 문장제 문제은행(NM_WORDPROBLEMS) 구현 | §8 이후 별도 안건 |
-| 레거시 프로토 파일 정리 (app.html·town_proto.html·book/chapter/concept_proto/print/proto.html 등) | 실사용 여부 확인 후 삭제 검토 |
+| ~~브랜치 → main 병합~~ | ✅ 완료. 작업은 main 직접 커밋·푸시로 굳어짐 |
+| ~~CHALLENGE 콘텐츠~~ | ✅ 완료(9a1fc5a3). CH1~13 스레드·adv.js 생성기 13종·H-01~13 유닛·과정 26~28 배치 |
+| ~~유아 2차 디자인 패스~~ | ✅ 완료(9bfc0815). 오답 소리·표정, 대비 8건 보정, young 밴드 공통 UI |
+| ~~N-15 완료 시 R0 추천 배너~~ | ✅ 완료(9bfc0815) |
+| ~~레거시 프로토 파일 정리~~ | ✅ 완료(35228ad5). app.html만 리다이렉트 스텁으로 유지 |
+| ~~문장제 문제은행~~ | ✅ 완료. drill.html 유형 세그(숫자/섞기/문장제만) + runExam 통일 + 한·영·중 3언어(ee3d1dd4) |
+| ADVANCE 구구 파트가 창의수연 중급 목차인지 | 원장 확인 대기 |
 | 배경음 톤/볼륨 피드백 | 원장 확인 대기 |
 | Magic Theater 영상 | 준비중 안내만 |
+| §8 Workflow 파이프라인 실행 | 미착수 |
+| 캐릭터를 학습 흐름 더 넓게 쓰기 | 미착수. 게임·아레나는 호스트 배치 완료(8628a38) — 리포트·편지함·레벨업·마을 NPC는 아직 |
 
 ---
 
@@ -1551,3 +1554,91 @@ beat 순서 · 정답 조기 노출 · 3개 언어 + 언어 혼입 · **단일 �
 5. **루트 사냥꾼 실험실** — `labs/root-hunter.html`(넓이 슬라이더 + 이분법 조이기, 유일한 3언어 실험실).
    **`UNIT_LABS`(main.js) 신설**: 유닛 id → 실험실 파일을 적으면 개념 노트 하단에
    "🧪 실험실에서 직접 해보기" 버튼이 뜬다(M-15→루트, M-44/45→미적분). 새 실험실은 ROAD_LABS와 여기 둘 다 등록.
+
+### 실험실 다국어 — 공용 레이어로 통일 (2026-08-31)
+
+루트 사냥꾼만 3언어라 **로드맵에는 실험실 이름이 en/zh로 뜨는데 눌러 들어가면 한국어 화면**이던 것을 해소.
+
+- **`labs/lab-lang.js`가 실험실 공용 언어 레이어다.** 언어는 앱과 같은 `nm_state_v1`의 lang.
+  `LabLang.fill(STR)`=`[data-t]` 텍스트, `fillHtml(STR)`=`[data-th]` innerHTML(`<b>` 강조 유지),
+  `T({ko,en,zh})`=인라인 분기, `title()`, `speak(SAY)`=읽어주기(언어별 보이스).
+  **새 실험실은 STR 테이블만 쓰면 3언어가 따라온다** — 자체 언어 코드를 다시 짜지 말 것.
+- 숫자를 섞는 캡션·피드백은 `[data-t]`로 못 빼므로 `T()`로 감싼다.
+  **캔버스에 직접 그리는 문구**(number-line-hole·why-calculus)는 en/zh가 길어지므로 중심 좌표
+  clamp 값을 함께 넓혀야 잘리지 않는다.
+- **`UNIT_LABS`(main.js)는 값이 배열도 된다.** 한 유닛에 실험실 둘을 걸 수 있다(M-15=루트 사냥꾼+
+  수직선의 구멍, C-05=무지개 덧셈+사각수 친구들). 버튼 라벨은 `ROAD_LABS`의 아이콘·3언어 이름을
+  그대로 쓰므로 **새 실험실은 ROAD_LABS·UNIT_LABS 두 곳에만 등록**하면 된다.
+- 현재 연결: A-28·C-05→무지개 / C-05·C-01→사각수 / H-04→1001 / M-15→루트+수직선 /
+  M-16→수직선 / M-43·44·45·46→미적분.
+
+## 수학사 네 컷 만화 95편 완성 (2026-08-31 — 설계 Fable · 저작 에이전트 · 검토 Fable)
+
+story.history 보유 유닛 **95개 전부** 만화 완성(이전 6편 → 95편). 원장 지시로
+설계·검토는 Fable, 그리기는 Sonnet 에이전트 14명(저작 10 + 누미 투입 4)이 수행.
+
+- **파이프라인**: `data/story-comics-src/<유닛>.js`(유닛당 1소스) → `scripts/build-comics.js`
+  → `data/story-comics.js`(생성 파일, 손대지 말 것). 저작 규칙은 `수학사만화-설계.md`,
+  도형 어휘는 `scripts/comic-helpers.js`(stick·sheep·numi·pouch·arrow·paper·bubble·txt·ground).
+  새 만화 = 소스 파트 추가 → `check-comics.js --part` 통과 → 빌드.
+- **캐릭터 규칙(원장 지시)**: 이름 없는 질문자·관찰자는 마스코트 **numi()**(도형으로 그린
+  고깔 마법사), 실존 인물·이야기 배역은 stick() 유지 — 누미가 가우스 행세 금지.
+  양(sheep)은 뭉게 양털 버전. **flip은 scale(-1,1)만** — translate 덧붙이면 화면 밖으로
+  날아간다(실측으로 잡은 버그).
+- **검토 절차(재현용)**: `scratchpad/comic-review.js`가 95편을 유닛당 PNG 1장으로 렌더 →
+  전수 육안 확인. 검사기가 못 잡은 결함은 5건(라벨 겹침 1·간격 붙음 1·우측 잘림 3) —
+  전부 텍스트 배치 문제였다. **그림 속 txt는 중심 x ± (글자수×글꼴크기×0.55)/2가
+  200 안에 들어오는지 확인할 것.**
+
+## about·drill 리디자인 — 마감 검토 완료 (2026-08-31)
+
+구현 자체는 병렬 세션이 리디자인-설계.md대로 이미 마쳤고, 이 세션은 §6 검증
+체크리스트를 전 항목 실측했다. 발견·수정 2건:
+
+- **통계 하드코딩 드리프트** — about의 stat 행이 159 유형·424 레벨(옛 값)이었다.
+  설계서 §6-5가 정확히 경고했던 결함. 실데이터(180·492)로 정정하고
+  `scripts/check-about-stats.js`를 신설 — data/units·threads를 실제로 로드해 세서
+  about.html 숫자와 대조한다(어긋나면 exit 1). **유닛·스레드를 늘리면 이 검사기를
+  돌려 about 숫자를 따라 올릴 것.**
+- **캐릭터 캡션 i18n 누락** — 누미·포코·모모가 EN/中 모드에서 한글로 남아 있어
+  `capNumi/capPoco/capMomo` 키로 연결(努米·波可·莫莫는 기존 zh 사전 표기 재사용).
+
+검증 방법 메모: 스크롤 리빌은 fullPage 스크린샷에 빈 섹션으로 찍힌다(IO 미발화
+아티팩트). 스크립트로 사람처럼 스크롤한 뒤 `getComputedStyle(el).opacity`를 읽어야
+진짜 판정이 된다 — 13곳 전부 발화 확인. 드릴 미리보기는 `.katex` 텍스트를 비교해야
+하며 `[class*=preview]` 같은 거친 셀렉터는 오탐을 낸다.
+
+## 2026-08-31 야간 — 원장 지시 8건 일괄 (승인·로드맵·문장제·워터마크·적응형·소개·게임)
+
+원장이 자며 승인 없이 진행하라 지시한 배치 작업. 설계=Fable, 구현 대부분=에이전트,
+검토·검증=Fable. 전부 main에 푸시됨.
+
+- **승인번호 체계** (`승인번호-설계.md`, c9dc6d5d) — 게이트는 열린 상태 유지(잠그는
+  한 줄은 문서 §5). Supabase nm_codes에 발급용 코드 30개(NM-XXXX-XXXX, 혼동 글자
+  제외). 발급·회수·재고 SQL은 문서에. **코드값은 절대 git 금지.** 개발 검증용 코드
+  1개가 active로 남아 있음 — 게이트 켜는 날 비활성화할 것.
+- **학습지 모드 연산 로드맵** (81462016) — 학습지 섹션 3번째 카드 🛤️. NM_COURSES
+  45과정을 티어별 아코디언으로, 세션 단위 renderPrintMulti 인쇄(봉투코드 C{n}-S{m}).
+  main.js가 currentCourseKey()·ROAD_TIERS를 examScreen 옵션으로 넘긴다.
+- **문제은행 문장제** (81462016) — drill.html 벤치에 유형 세그먼트(숫자/섞기/문장제만).
+  ⚠️ runExam이 wordType을 안 받던 구멍을 메움 — 인쇄(renderPrint)와 이제 동일 동작.
+  applyWordProblems는 NM_EXAM에 노출됨(미리보기 재사용).
+- **적응형 타이포·말투** (`적응형-타이포-말투-설계.md`, 81462016) — 인쇄 printAgeBand와
+  같은 young/mid/senior 3밴드를 앱에 확장. computeBand()(진도 기반)가 render()마다
+  html[data-nm-band] 세팅 → CSS 토큰(--nm-fs-body 등). ko 전용 VOICE_BANDS 오버레이가
+  t()를 감싼다. **새 시스템 문자열을 추가하면 young/senior 두 벌도 고려할 것.**
+- **인쇄 이름 워터마크** (65623554) — 프로필 이름을 모든 인쇄 페이지에 사선 6%로.
+  fixed 요소는 인쇄에서 페이지마다 반복된다는 성질 이용. renderPrint·renderPrintMulti 둘 다.
+- **소개페이지 2차 리디자인** (6cf47ad4) — 밤하늘 canvas 성좌 히어로(8+7→10+5→15
+  파티클, reduced-motion 정적 폴백) + 5챕터(철학·사다리·숫자·친구들·입장) + 수학사
+  캐릭터 12종 필름 스트립. stat-num 구조는 check-about-stats.js와 연동 유지.
+  ⚠️ canvas는 absolute+inset만으론 300×150 고정 — width/height 100% 명시 필요(수정됨).
+- **게임 확장** (0bc580a0) — ①프로필 슬롯 3개(nm_state_slot1~3+nm_active_slot,
+  전환=백업→승격→reload — nm_state_v1 경로 무변경) ②아이템: colors12·bgs10·capes9·
+  numbers22 + 모자 6종(신규 카테고리, numi-render hatSVG) ③지도 위로 확장(687→947px):
+  원경에 중등 다리·경시의 탑 스팟(→courseroad). ⚠️ Playwright로 슬롯 검증 시
+  addInitScript가 reload마다 시드를 재주입해 전환을 되돌린다 — 마커 가드 필수.
+- **CHALLENGE(지시 2)** — 이미 9a1fc5a3(2026-08-25)에서 완전 구현돼 있었음(CH1~13·
+  adv.js·H-01~13·courses 26~28 배치). check-answerable 492레벨 전 통과 재확인만 함.
+- **레거시 프로토 6종 삭제** (35228ad5) — book/chapter/concept_proto/print/proto/
+  town_proto.html. app.html은 index 리다이렉트 스텁이라 북마크 보호용으로 유지.

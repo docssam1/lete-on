@@ -18,6 +18,25 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 2, 활동 01",
         sourceTypeIds: ["shape-rotation-clock"],
         representativeConcept: "한 바퀴는 처음 자리, 반 바퀴는 맞은편, 반의 반 바퀴는 세 칸 이동",
+        experience: {
+          kind: "clock-turning",
+          family: "rotation",
+          learnerStage: "필즈 더 클래식 1과정 1권",
+          start: 2,
+          beats: [
+            { id: "start", action: "draw", quarterTurns: 0, result: 2, caption: "먼저 바늘을 2에 놓고 출발합니다." },
+            { id: "full-turn", action: "transform", quarterTurns: 4, result: 2, caption: "한 바퀴는 시계판을 모두 돌아 처음 자리 2로 옵니다." },
+            { id: "half-turn", action: "transform", quarterTurns: 2, result: 8, caption: "반 바퀴는 맞은편입니다. 2의 맞은편은 8입니다." },
+            { id: "quarter-turn", action: "transform", quarterTurns: 1, result: 5, caption: "반의 반 바퀴는 세 칸 이동입니다. 2에서 시계 방향으로 가면 5입니다." },
+            { id: "counter-quarter-turn", action: "transform", quarterTurns: -1, result: 11, caption: "반대 방향으로 세 칸 가면 11입니다." }
+          ],
+          check: {
+            prompt: "2를 가리키는 바늘을 시계 방향으로 반 바퀴 돌리면 어디를 가리킬까요?",
+            options: ["5", "8", "11"],
+            answer: "8"
+          },
+          finalStill: { visibleBeatIds: ["start", "full-turn", "half-turn", "quarter-turn", "counter-quarter-turn"], standsAlone: true }
+        },
         story: {
           title: "시간 박물관의 잠긴 문",
           text: "시간 박물관의 문은 시계 바늘을 정확히 돌려야 열립니다. 바늘이 어느 방향으로 얼마나 움직이는지 먼저 몸으로 따라 해 봅시다.",
@@ -63,6 +82,19 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 10, 활동 01 (1)",
         sourceTypeIds: ["fold-cut-unfold-choice"],
         representativeConcept: "접은 종이를 펼치면 접은 선을 기준으로 같은 모양이 대칭으로 나타남",
+        experience: {
+          kind: "guided-concept",
+          family: "fold-symmetry",
+          title: "접은 선을 거울처럼 펼쳐요",
+          hint: "접은 선에서 같은 거리만큼 반대쪽을 찾아보세요. 모양은 서로 마주 봅니다.",
+          beats: [
+            { phase: "flat", caption: "색종이의 가운데 접은 선을 먼저 찾습니다." },
+            { phase: "folded", caption: "왼쪽 반을 접은 선을 따라 오른쪽으로 포갭니다." },
+            { phase: "cut", caption: "포개진 종이를 한 번 자르면 두 겹이 함께 잘립니다." },
+            { phase: "unfolded", caption: "펼치면 접은 선 양쪽 같은 거리에 마주 보는 모양이 생깁니다." }
+          ],
+          check: { prompt: "종이를 펼쳤을 때 두 잘린 모양은 어떤 관계인가요?", options: ["접은 선에서 같은 거리에 마주 봐요", "같은 방향으로 나란히 옮겨져요", "한쪽에만 남아요"], answer: "접은 선에서 같은 거리에 마주 봐요", explanation: "접은 선이 거울선이므로 두 모양은 같은 거리에서 서로 마주 봅니다." }
+        },
         story: {
           title: "별빛 초대장 만들기",
           text: "초대장을 반으로 접은 채 한쪽을 오려 냈습니다. 종이를 펼치면 잘린 모양이 접은 선의 반대쪽에도 똑같이 나타납니다.",
@@ -103,6 +135,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 20, 활동 01 (1)~(3)",
         sourceTypeIds: ["equal-line-sum"],
         representativeConcept: "겹치는 수를 제외한 나머지 부분의 합을 서로 같게 맞춤",
+        experience: {
+          kind: "guided-concept",
+          family: "equal-line",
+          title: "두 줄이 함께 쓰는 수를 찾아요",
+          hint: "가운데 수는 두 줄에 똑같이 들어가므로, 바깥 두 수끼리 먼저 비교하면 계산이 짧아집니다.",
+          model: { left: 6, center: 4, right: 2, bottom: 3, answer: 5 },
+          beats: [
+            { phase: "lines", caption: "가로줄과 세로줄을 각각 따라가 봅니다." },
+            { phase: "center", caption: "두 줄에 공통으로 들어간 가운데 수를 찾습니다." },
+            { phase: "compare", caption: "공통 수를 잠시 빼고 바깥 수의 합을 맞춥니다." },
+            { phase: "solve", caption: "빈칸을 채운 뒤 두 줄의 전체 합을 다시 확인합니다." }
+          ],
+          check: { prompt: "가로 바깥 수가 8과 2, 세로 아래 수가 3일 때 위 빈칸은 얼마인가요?", options: ["5", "7", "9"], answer: "7", explanation: "가로 바깥 수의 합은 8 + 2 = 10입니다. 위 수 + 3도 10이어야 하므로 위 수는 7입니다." }
+        },
         story: {
           title: "네 갈래 별빛 길",
           text: "별빛 광장의 가로 길과 세로 길은 지나가는 빛의 합이 같아야 환하게 켜집니다. 가운데 수는 두 길에 함께 들어갑니다.",
@@ -153,6 +199,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 32, 논리 추리 (1)~(3)",
         sourceTypeIds: ["preference-count-matrix-b9", "profession-assignment-b9"],
         representativeConcept: "한 사람씩 서로 다른 것을 고를 때 확정된 것부터 지우며 남은 답을 찾음",
+        experience: {
+          kind: "guided-concept",
+          family: "one-to-one-logic",
+          title: "가능한 답을 하나씩 지워요",
+          hint: "확정된 답은 같은 줄에서는 하나만 남기고, 같은 선택지의 세로줄에서는 다른 사람에게서 지웁니다.",
+          model: { people: ["민", "준", "소"], choices: ["사과", "포도", "배"] },
+          beats: [
+            { phase: "start", caption: "각 사람에게 가능한 선택을 모두 표시합니다." },
+            { phase: "fixed", caption: "민이 사과를 골랐다는 확실한 조건부터 표시합니다." },
+            { phase: "eliminate", caption: "준은 배가 아니므로 포도를 고르고, 사용한 답을 지웁니다." },
+            { phase: "solved", caption: "마지막으로 소에게 배 하나가 남습니다." }
+          ],
+          check: { prompt: "하나, 두리, 세모가 빨강·파랑·노랑을 하나씩 고릅니다. 하나는 빨강, 두리는 노랑이 아닙니다. 세모가 고른 색은 무엇인가요?", options: ["빨강", "파랑", "노랑"], answer: "노랑", explanation: "하나가 빨강을 사용했고 두리는 노랑이 아니므로 파랑입니다. 세모에게 노랑이 남습니다." }
+        },
         sourceHold: "슬라이드 32의 (4)는 공개 문장만으로 인물 조건이 완전하지 않아 원본 확인 트랙에서 보류",
         story: {
           title: "축제 준비 모둠",
@@ -210,6 +270,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 4, 활동 01",
         sourceTypeIds: ["shape-sum-table"],
         representativeConcept: "같은 도형은 같은 수이며, 가로와 세로의 합을 함께 보아 도형의 수를 찾음",
+        experience: {
+          kind: "guided-concept",
+          family: "shape-substitution",
+          title: "같은 모양부터 값을 찾아요",
+          hint: "같은 모양 두 개의 합을 먼저 반으로 나누고, 찾은 값을 다른 식에 넣어 보세요.",
+          model: { pairShape: "diamond", pairTotal: 18, pairValue: 9, targetShape: "circle", mixedTotal: 16, targetValue: 7 },
+          beats: [
+            { phase: "equations", caption: "두 식에서 같은 모양을 찾아 표시합니다." },
+            { phase: "pair", caption: "마름모 두 개의 합 18을 똑같이 나누면 마름모는 9입니다." },
+            { phase: "substitute", caption: "동그라미와 마름모의 합 16에 마름모 9를 넣습니다." },
+            { phase: "verify", caption: "동그라미 7과 마름모 9를 다시 더해 16인지 확인합니다." }
+          ],
+          check: { prompt: "세모 두 개의 합은 12이고, 별과 세모의 합은 17입니다. 별이 나타내는 수는 얼마인가요?", options: ["5", "6", "11"], answer: "11", explanation: "세모 두 개가 12이므로 세모는 6입니다. 17에서 6을 빼면 별은 11입니다." }
+        },
         story: {
           title: "모양 우체국의 비밀 번호",
           text: "모양 우체국에서는 같은 모양마다 늘 같은 수를 붙입니다. 두 모양을 더한 수를 보면 숨은 수를 찾을 수 있습니다.",
@@ -256,6 +330,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 14, 활동 02",
         sourceTypeIds: ["balance-order-chain"],
         representativeConcept: "저울에서 아래로 내려간 쪽이 더 무거우며, 여러 저울의 관계를 이어 전체 순서를 정함",
+        experience: {
+          kind: "guided-concept",
+          family: "balance-order-chain",
+          title: "내려간 쪽을 이어 순서를 만들어요",
+          hint: "저울마다 아래로 내려간 물체를 먼저 표시한 뒤, 가운데에서 이어지는 물체를 찾으세요.",
+          model: { first: ["곰", "토끼", "left"], second: ["토끼", "병아리", "left"], order: ["곰", "토끼", "병아리"] },
+          beats: [
+            { phase: "first", caption: "첫 저울은 곰 쪽이 내려가므로 곰이 토끼보다 무겁습니다." },
+            { phase: "second", caption: "둘째 저울은 토끼 쪽이 내려가므로 토끼가 병아리보다 무겁습니다." },
+            { phase: "chain", caption: "두 관계에서 함께 나온 토끼를 가운데에 놓고 이어 봅니다." },
+            { phase: "verify", caption: "곰, 토끼, 병아리 순서가 두 저울과 모두 맞는지 확인합니다." }
+          ],
+          check: { prompt: "고양이가 강아지보다 무겁고, 강아지가 오리보다 무겁습니다. 가장 무거운 동물은 누구인가요?", options: ["고양이", "강아지", "오리"], answer: "고양이", explanation: "고양이 > 강아지 > 오리로 이어지므로 고양이가 가장 무겁습니다." }
+        },
         story: {
           title: "장난감 가게의 무게표",
           text: "장난감마다 무게가 다르지만 저울 세 개를 보면 어느 것이 더 무거운지 알 수 있습니다.",
@@ -298,6 +386,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용 슬라이드 24·학생용 슬라이드 23, 활동 04 (1)",
         sourceTypeIds: ["repeating-symbol-sequence"],
         representativeConcept: "모양 반복과 색 반복을 따로 찾은 뒤 같은 자리에서 두 규칙을 합침",
+        experience: {
+          kind: "guided-concept",
+          family: "dual-shape-color-cycle",
+          title: "모양 주기와 색 주기를 따로 봐요",
+          hint: "먼저 색을 가리고 모양만 읽고, 다음에는 모양을 가리고 빈 모양과 색칠한 모양만 읽어 보세요.",
+          model: { shapes: ["circle", "triangle", "square"], fills: [false, true], count: 6 },
+          beats: [
+            { phase: "combined", caption: "한 줄에 모양 규칙과 색 규칙이 함께 들어 있습니다." },
+            { phase: "shape", caption: "색을 가리면 동그라미, 세모, 네모가 세 칸마다 반복됩니다." },
+            { phase: "fill", caption: "모양을 가리면 빈 모양, 색칠한 모양이 두 칸마다 반복됩니다." },
+            { phase: "merge", caption: "같은 자리의 모양과 색을 다시 합쳐 다음 항을 정합니다." }
+          ],
+          check: { prompt: "모양은 동그라미·네모가 반복되고, 색은 빈 모양·빈 모양·색칠한 모양이 반복됩니다. 7번째는 무엇인가요?", options: ["빈 동그라미 ○", "색칠한 동그라미 ●", "빈 네모 □"], answer: "빈 동그라미 ○", explanation: "7번째 모양은 동그라미이고, 7번째 색 차례는 빈 모양이므로 빈 동그라미입니다." }
+        },
         story: {
           title: "축제 전구의 두 가지 규칙",
           text: "전구는 모양도 반복되고 색도 따로 반복됩니다. 모양만 본 다음 색만 보면 다음 전구가 보입니다.",
@@ -338,6 +440,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용 슬라이드 32·학생용 슬라이드 31, 활동 01 (1)",
         sourceTypeIds: ["four-number-center-rule"],
         representativeConcept: "앞의 완성된 그림에서 네 수의 계산 약속을 찾고 같은 약속으로 빈 수를 구함",
+        experience: {
+          kind: "guided-concept",
+          family: "four-number-promise",
+          title: "완성된 그림에서 숫자 약속을 찾아요",
+          hint: "위 수와 왼쪽·아래·오른쪽 세 수를 비교하세요. 빈자리가 바뀌면 덧셈을 거꾸로 계산합니다.",
+          model: { examples: [{ top: 17, left: 4, bottom: 6, right: 7 }, { top: 20, left: 5, bottom: 8, right: 7 }] },
+          beats: [
+            { phase: "observe", caption: "완성된 첫 그림의 위, 왼쪽, 아래, 오른쪽 수를 살펴봅니다." },
+            { phase: "rule", caption: "왼쪽, 아래, 오른쪽 세 수를 더하면 위 수가 됩니다." },
+            { phase: "confirm", caption: "둘째 그림에도 같은 덧셈 약속이 맞는지 확인합니다." },
+            { phase: "reverse", caption: "옆 수가 비면 위 수에서 나머지 두 수를 빼서 찾습니다." }
+          ],
+          check: { prompt: "위 수가 25이고 왼쪽은 6, 아래는 8일 때 오른쪽 수는 얼마인가요?", options: ["9", "10", "11"], answer: "11", explanation: "6 + 8 + 오른쪽 수 = 25이므로 25 - 6 - 8 = 11입니다." }
+        },
         story: {
           title: "보석 문의 숫자 약속",
           text: "보석 문의 위, 아래, 왼쪽, 오른쪽 수에는 같은 약속이 숨어 있습니다. 완성된 보석부터 비교하면 약속을 찾을 수 있습니다.",
@@ -394,6 +510,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 6, 6의 배수",
         sourceTypeIds: ["constant-step-number-sequence"],
         representativeConcept: "6을 여러 번 더하거나 6의 배수만큼 더하고 뺀 식을 6×□ 꼴로 바꿈",
+        experience: {
+          kind: "guided-concept",
+          family: "six-bundle-equation",
+          title: "6개짜리 묶음 수로 식을 바꿔요",
+          hint: "각 수가 6이 몇 묶음인지 먼저 표시한 뒤 묶음 수끼리 더하세요.",
+          model: { base: 6, startGroups: 4, extraGroups: 2, totalGroups: 6 },
+          beats: [
+            { phase: "groups", caption: "6을 네 번 더한 식은 6개짜리 묶음이 4개입니다." },
+            { phase: "extra", caption: "더해진 12는 6개짜리 묶음 2개입니다." },
+            { phase: "combine", caption: "묶음 수 4와 2를 더하면 모두 6묶음입니다." },
+            { phase: "verify", caption: "6×4+12와 6×6을 계산해 두 값이 같은지 확인합니다." }
+          ],
+          check: { prompt: "8×14+16=8×□입니다. 빈칸에 들어갈 수는 무엇인가요?", options: ["14", "16", "30"], answer: "16", explanation: "16은 8이 2묶음이므로 14+2=16입니다." }
+        },
         story: {
           title: "여섯 칸 기차의 묶음표",
           text: "기차 한 칸에는 블록이 6개씩 들어갑니다. 블록 수를 모두 6개짜리 묶음으로 바꾸면 긴 식도 짧아집니다.",
@@ -446,6 +576,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 16, 활동 01 배수",
         sourceTypeIds: ["unit-length-multiple"],
         representativeConcept: "큰 양 안에 작은 양이 몇 번 들어가는지 같은 길이 또는 같은 개수의 묶음으로 셈",
+        experience: {
+          kind: "guided-concept",
+          family: "multiple-direction",
+          title: "기준량을 먼저 잡고 몇 배인지 세어요",
+          hint: "‘비교하는 양은 기준량의 몇 배’인지 읽고, 비교하는 양을 기준량으로 나누세요.",
+          model: { unit: 3, comparison: 12, ratio: 4, unitLabel: "기준 A", comparisonLabel: "비교 B" },
+          beats: [
+            { phase: "unit", caption: "먼저 기준 A의 길이 3을 한 묶음으로 정합니다." },
+            { phase: "repeat", caption: "비교 B 안에 기준 A 묶음이 몇 번 들어가는지 표시합니다." },
+            { phase: "divide", caption: "비교하는 양 12를 기준량 3으로 나눕니다." },
+            { phase: "verify", caption: "12÷3=4이므로 B는 A의 4배인지 그림과 다시 확인합니다." }
+          ],
+          check: { prompt: "20은 5의 몇 배인가요?", options: ["2", "4", "5"], answer: "4", explanation: "20÷5=4이므로 20은 5의 4배입니다." }
+        },
         story: {
           title: "운동장 줄과 공 묶음",
           text: "길이나 개수가 달라도 같은 크기의 한 묶음을 기준으로 하면 몇 배인지 알 수 있습니다.",
@@ -493,6 +637,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 20, 활동 02",
         sourceTypeIds: ["cryptarithm-single-double"],
         representativeConcept: "같은 도형은 같은 숫자라는 약속으로 반복 덧셈과 받아올림을 거꾸로 풂",
+        experience: {
+          kind: "guided-concept",
+          family: "vertical-cryptarithm-carry",
+          title: "세로셈의 일의 자리부터 모양 수를 찾아요",
+          hint: "세로줄을 맞춘 채 일의 자리 합을 먼저 보고, 생긴 받아올림을 십의 자리 모양과 연결하세요.",
+          model: { symbol: "□", resultTens: "△", resultOnes: 2, symbolValue: 4, repeat: 3, carryValue: 1 },
+          beats: [
+            { phase: "layout", caption: "같은 네모 세 개를 세로로 같은 자리에 맞춰 놓습니다." },
+            { phase: "ones", caption: "일의 자리에서 같은 수를 세 번 더해 끝자리 2가 되는 수를 찾습니다." },
+            { phase: "carry", caption: "4+4+4=12이므로 십의 자리로 1이 올라갑니다." },
+            { phase: "verify", caption: "네모는 4, 세모는 1을 넣어 세로셈 4+4+4=12를 확인합니다." }
+          ],
+          check: { prompt: "같은 동그라미를 세 번 더했더니 네모5가 되었습니다. 동그라미는 얼마인가요?", options: ["3", "5", "8"], answer: "5", explanation: "5+5+5=15이므로 동그라미는 5입니다." }
+        },
         story: {
           title: "숫자를 숨긴 모양 계산기",
           text: "계산기는 같은 숫자를 같은 모양으로 가립니다. 세로셈의 결과를 보면 가려진 숫자를 되찾을 수 있습니다.",
@@ -538,6 +696,20 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         sourceLocator: "교사용·학생용 슬라이드 28, 활동 01",
         sourceTypeIds: ["magic-square-three-target"],
         representativeConcept: "3×3 마방진에서 가로·세로·대각선의 합이 같다는 성질로 한 줄의 합과 빈칸을 구함",
+        experience: {
+          kind: "guided-concept",
+          family: "magic-line-target",
+          title: "완성된 한 줄로 마방진의 목표 합을 찾아요",
+          hint: "숫자 세 개가 모두 보이는 줄의 합을 먼저 구한 뒤, 빈칸이 있는 줄에서 보이는 두 수를 빼세요.",
+          model: { grid: [2, 7, 6, 9, 5, 1, 4, null, 8], lineSum: 15, targetIndex: 7, target: 3 },
+          beats: [
+            { phase: "complete", caption: "숫자 세 개가 모두 보이는 첫째 줄을 찾습니다." },
+            { phase: "target", caption: "2+7+6=15이므로 모든 줄의 목표 합은 15입니다." },
+            { phase: "solve", caption: "아랫줄에서 15-4-8을 계산해 빈칸을 구합니다." },
+            { phase: "verify", caption: "빈칸 3을 넣고 가로·세로·대각선의 합이 모두 15인지 확인합니다." }
+          ],
+          check: { prompt: "한 줄의 합이 15인 마방진에서 아랫줄이 4, 9, □입니다. □는 얼마인가요?", options: ["2", "4", "6"], answer: "2", explanation: "15-4-9=2이므로 빈칸은 2입니다." }
+        },
         story: {
           title: "아홉 칸 숫자 문의 약속",
           text: "숫자 문의 가로, 세로, 대각선은 모두 같은 합이 되어야 열립니다.",
@@ -952,12 +1124,102 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           mission: "각 층의 개수를 따로 센 뒤 아래층까지 모두 더해 보세요."
         },
         explanation: {
-          headline: "층마다 1, 3, 6, 10처럼 삼각수만큼 놓입니다.",
+          headline: "삼각수는 1, 3, 6… / 사각수는 1, 4, 9…처럼 규칙을 만듭니다.",
           steps: [
-            "맨 위층부터 각 층에 놓인 쌓기나무 수를 셉니다.",
-            "다음 층은 앞 층보다 한 줄 더 긴 삼각형입니다.",
-            "목표 층까지 각 층의 개수를 모두 더합니다."
+            "삼각수는 1개, 1 + 2개, 1 + 2 + 3개처럼 한 줄씩 더해 만든 삼각형의 수입니다.",
+            "사각수는 1개, 1 + 3개, 1 + 3 + 5개처럼 홀수 줄을 더해 만든 정사각형의 수입니다.",
+            "삼각 계단 쌓기나무는 한 층마다 삼각수를 만들고, 그 층의 수를 아래층까지 더합니다."
           ]
+        },
+        experience: {
+          kind: "triangular-stair",
+          family: "tetrahedral-growth",
+          learnerStage: "필즈 더 클래식 1과정 5권",
+          title: "한 층씩 삼각형 바닥을 넓혀 쌓아요",
+          hint: "새 층의 바닥은 바로 전 층보다 한 줄이 더 많은 삼각형이에요. 줄마다 놓인 쌓기나무 수를 1부터 차례로 더해 보세요.",
+          typeTracks: [
+            {
+              id: "triangle-row-total",
+              group: "삼각수",
+              label: "한 줄씩 더한 삼각수",
+              sourceTypeIds: ["staircase-tile-growth"],
+              explanation: "첫째 줄 1개, 둘째 줄 2개, 셋째 줄 3개를 더하면 1, 3, 6처럼 삼각형 모양의 수가 됩니다.",
+              visual: { kind: "triangular-rows", rows: [1, 2, 3], formula: "1 + 2 + 3 = 6" },
+              check: { prompt: "1개, 2개, 3개, 4개를 줄마다 놓아 만든 다음 삼각수는 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1 + 2 + 3 + 4 = 10입니다." },
+              practice: { prompt: "삼각수 10을 만들 때, 마지막 줄에는 몇 개를 놓았나요?", options: ["3", "4", "5"], answer: "4", explanation: "1 + 2 + 3 + 4 = 10이므로 마지막 줄은 4개입니다." }
+            },
+            {
+              id: "triangle-row-boundaries",
+              group: "삼각수",
+              label: "삼각수 줄의 처음과 끝",
+              sourceTypeIds: ["triangular-row-boundary-number"],
+              explanation: "수를 1개, 2개, 3개씩 다음 줄에 이어 쓰면 각 줄의 처음과 끝이 달라집니다. 앞줄까지의 수를 더해 다음 줄의 자리를 찾습니다.",
+              visual: { kind: "triangle-boundaries", rows: [[1], [2, 3], [4, 5, 6]] },
+              check: { prompt: "1개, 2개, 3개씩 이어 쓴 뒤 다음 4번째 줄의 첫 수는 무엇인가요?", options: ["6", "7", "8"], answer: "7", explanation: "앞의 세 줄에는 1 + 2 + 3 = 6개가 있으므로 다음 줄은 7부터 시작합니다." },
+              practice: { prompt: "4번째 줄에 4개를 썼다면, 그 줄의 마지막 수는 무엇인가요?", options: ["9", "10", "11"], answer: "10", explanation: "4번째 줄은 7, 8, 9, 10이므로 마지막 수는 10입니다." }
+            },
+            {
+              id: "square-odd-rows",
+              group: "사각수",
+              label: "홀수 줄을 더한 사각수",
+              sourceTypeIds: ["square-number-odd-sum", "square-row-boundary-number"],
+              explanation: "정사각형을 한 줄씩 넓히면 새로 늘어나는 수는 1개, 3개, 5개처럼 홀수입니다. 그래서 1, 4, 9처럼 사각수가 됩니다.",
+              visual: { kind: "square-odd-rows", odds: [1, 3, 5] },
+              check: { prompt: "1 + 3 + 5 + 7을 더해 만든 정사각형에는 작은 칸이 몇 개인가요?", options: ["14", "15", "16"], answer: "16", explanation: "1 + 3 + 5 + 7 = 16이므로 4칸 × 4칸 정사각형입니다." },
+              practice: { prompt: "1, 4, 9 다음에 오는 사각수는 무엇인가요?", options: ["12", "15", "16"], answer: "16", explanation: "한 줄이 4개인 정사각형은 4 × 4 = 16칸입니다." }
+            },
+            {
+              id: "square-array-growth",
+              group: "사각수",
+              label: "정사각형 배열의 성장",
+              sourceTypeIds: ["square-tile-growth"],
+              explanation: "가로와 세로가 함께 한 칸씩 늘어나면 1칸, 2칸 × 2칸, 3칸 × 3칸처럼 1, 4, 9로 커집니다.",
+              visual: { kind: "square-array", stages: [1, 2, 3] },
+              check: { prompt: "가로와 세로가 4칸인 정사각형 배열에는 작은 칸이 몇 개인가요?", options: ["12", "14", "16"], answer: "16", explanation: "4 × 4 = 16이므로 16칸입니다." },
+              practice: { prompt: "1, 4, 9 다음에 16이 오는 까닭으로 알맞은 것은 무엇인가요?", options: ["한 변이 한 칸씩 늘어나기 때문", "매번 3만 더하기 때문", "짝수만 더하기 때문"], answer: "한 변이 한 칸씩 늘어나기 때문", explanation: "정사각형의 한 변이 1, 2, 3, 4칸으로 늘어나므로 전체 칸 수는 1, 4, 9, 16입니다." }
+            },
+            {
+              id: "triangle-tile-square-growth",
+              group: "사각수",
+              label: "삼각형 조각으로 만든 사각수",
+              sourceTypeIds: ["triangle-tile-growth"],
+              explanation: "조각은 삼각형이어도 한 변의 조각 수가 1, 2, 3으로 늘면 전체 조각 수는 1, 4, 9가 됩니다. 이 규칙은 사각수로 읽고, 모양만 보고 삼각수라고 부르지 않습니다.",
+              visual: { kind: "triangle-tile-square", stages: [1, 4, 9] },
+              check: { prompt: "한 변에 작은 삼각형 조각을 4개씩 놓으면 전체 조각 수는 몇 개인가요?", options: ["12", "14", "16"], answer: "16", explanation: "한 변의 조각 수가 4개이면 4 × 4 = 16개의 작은 삼각형 조각입니다." },
+              practice: { prompt: "1, 4, 9, 16처럼 늘어나는 이 조각 수는 무엇으로 읽는 것이 알맞은가요?", options: ["사각수", "삼각수", "홀수"], answer: "사각수", explanation: "조각이 삼각형이어도 전체 수는 1², 2², 3², 4²처럼 사각수 규칙입니다." }
+            },
+            {
+              id: "one-line-cube-stair",
+              group: "쌓기나무",
+              label: "한 줄 계단 쌓기",
+              sourceTypeIds: ["cube-triangular-wall-growth"],
+              explanation: "한 줄로 쌓는 계단은 높은 곳부터 1개, 2개, 3개처럼 한 칸씩 늘어납니다. 3단계는 1 + 2 + 3 = 6개입니다.",
+              visual: { kind: "cube-stair", stage: 3 },
+              check: { prompt: "한 줄 계단을 4단계까지 쌓으면 쌓기나무는 모두 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1 + 2 + 3 + 4 = 10개입니다." },
+              practice: { prompt: "3단계 한 줄 계단에서 가장 높은 기둥은 몇 층인가요?", options: ["2층", "3층", "4층"], answer: "3층", explanation: "3단계이므로 가장 높은 기둥은 3층입니다." }
+            },
+            {
+              id: "triangular-cube-stair",
+              group: "쌓기나무",
+              label: "삼각 계단 쌓기",
+              sourceTypeIds: ["cube-tetrahedral-growth"],
+              explanation: "삼각 계단은 한 층의 바닥부터 삼각수입니다. 1층은 1개, 2층은 3개, 3층은 6개이므로 아래층까지 모두 더해 셉니다.",
+              visual: { kind: "tetrahedral", stage: 3 },
+              check: { prompt: "3층까지 삼각 계단을 쌓으면 모두 몇 개인가요?", options: ["9", "10", "12"], answer: "10", explanation: "1층 1개 + 2층 3개 + 3층 6개 = 10개입니다." },
+              practice: { prompt: "삼각 계단의 4층 바닥은 쌓기나무 몇 개인가요?", options: ["6", "9", "10"], answer: "10", explanation: "4층 바닥은 1 + 2 + 3 + 4 = 10개인 삼각형입니다." }
+            }
+          ],
+          beats: [
+            { id: "layer-1", stage: 1, layerCount: 1, totalCount: 1, caption: "맨 위에 쌓기나무 1개를 놓아 1층을 만들었어요.", check: { prompt: "1층에 놓인 쌓기나무는 몇 개인가요?", options: ["1", "2", "3"], answer: "1", success: "맞아요. 1층은 1개예요. 이제 그 아래에 더 넓은 삼각형 층을 만들어요." } },
+            { id: "layer-2", stage: 2, layerCount: 3, totalCount: 4, caption: "1층 아래에 3개가 삼각형 모양으로 놓여 2단계가 되었어요.", check: { prompt: "새로 놓은 2층에는 쌓기나무가 몇 개인가요?", options: ["2", "3", "4"], answer: "3", success: "맞아요. 둘째 층은 1 + 2 = 3개예요. 지금까지는 1 + 3 = 4개가 쌓였어요." } },
+            { id: "layer-3", stage: 3, layerCount: 6, totalCount: 10, caption: "이번에는 6개가 삼각형으로 넓어져 3층까지 차례로 쌓였어요.", check: { prompt: "새로 놓은 3층에는 쌓기나무가 몇 개인가요?", options: ["5", "6", "7"], answer: "6", success: "맞아요. 셋째 층은 1 + 2 + 3 = 6개예요. 1 + 3 + 6 = 10개가 되어 삼각 계단이 자라요." } }
+          ],
+          practice: [
+            { id: "triangle-row-sum", kind: "triangular", rows: [1, 2, 3], prompt: "작은 삼각형을 만들기 위해 1개, 2개, 3개씩 놓았습니다. 모두 몇 개인가요?", options: ["5", "6", "7"], answer: "6", explanation: "1 + 2 + 3 = 6이므로 세 번째 삼각수는 6입니다." },
+            { id: "square-odd-sum", kind: "square", rows: [1, 3, 5], prompt: "정사각형을 만들기 위해 1개, 3개, 5개씩 늘렸습니다. 모두 몇 개인가요?", options: ["8", "9", "10"], answer: "9", explanation: "1 + 3 + 5 = 9이므로 3칸 × 3칸 정사각형이 됩니다." },
+            { id: "square-pattern", kind: "pattern", values: [1, 4, 9], prompt: "1, 4, 9처럼 정사각형으로 늘어나는 수를 무엇이라고 하나요?", options: ["삼각수", "사각수", "짝수"], answer: "사각수", explanation: "1 = 1 × 1, 4 = 2 × 2, 9 = 3 × 3이므로 사각수입니다." }
+          ],
+          finalStill: { visibleBeatIds: ["layer-1", "layer-2", "layer-3"], standsAlone: true }
         },
         original: {
           title: "골든벨",

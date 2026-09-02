@@ -72,9 +72,25 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     "DP-SRC-9A7C2856650B": { key: "m21s-202404-r4", label: "2-1 심화 4회(2024년 4월)", tags: ["middle2-1", "advanced", "full-range"] },
     "DP-SRC-40CB36024FBC": { key: "m21s-r3", label: "2-1S 3회", tags: ["middle2-1", "advanced", "mid-unit-cutoff"] },
     "DP-SRC-4D46EB350F66": { key: "m21-202405-r1", label: "2-1 4개월반 1회(2024년 5월)", tags: ["middle2-1", "four-month-course", "full-range"] },
-    "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] }
+    "DP-SRC-A7B99D6257FD": { key: "m21s-202401-r3", label: "2-1 심화 입반테스트(3)", tags: ["middle2-1", "advanced", "full-range"] },
+    "DP-SRC-9EAF43D00103": { key: "m21-202401-r1", label: "2-1 기본 입반테스트(1)", tags: ["middle2-1", "basic", "full-range"] },
+    "DP-SRC-9EAFF6679355": { key: "m21-202402-r2", label: "2-1 입반테스트 2(2024년 2월)", tags: ["middle2-1", "mid-unit-cutoff", "answer-dispute"] },
+    "DP-SRC-9B7A4E4FC28E": { key: "m21-202311-r3", label: "2-1 입반테스트 3(2023년 11월)", tags: ["middle2-1", "middle2-2", "mixed-range", "answer-dispute"] },
+    "DP-SRC-7591B3A7C051": { key: "m21-202312-r4", label: "2-1 입반테스트 4(2023년 12월)", tags: ["middle2-1", "middle2-2", "mixed-range", "primary-paper"] },
+    "DP-SRC-CE3FA0B947D5": { key: "m21-202312-r4-ihein", label: "2-1 입반테스트 4 이혜인T 교사본(2023년 12월)", tags: ["middle2-1", "middle2-2", "mixed-range", "partial-question-variant"] },
+    "DP-SRC-8BB6E543C0F7": { key: "m22s-r1", label: "중2-2S 1회", tags: ["middle2-2", "full-range"] },
+    "DP-SRC-B036C8D5C574": { key: "m12-start-r1", label: "1-2 입반테스트 1", tags: ["middle1-2", "course-start", "middle1-1-full-range", "diagnostic-extension"] },
+    "DP-SRC-B37A0CEC85EE": { key: "m11-start-r1", label: "1-1 입반테스트 1", tags: ["middle1-1", "course-start", "elementary5-6-cumulative", "diagnostic-extension", "answer-dispute"] },
+    "DP-SRC-E5B2400549A0": { key: "m11-mid-r2", label: "1-1 입반테스트 2", tags: ["middle1-1", "mid-course-join", "second-month", "cumulative", "future-unit-diagnostic"] },
+    "DP-SRC-964BCE1983C1": { key: "m11-mid-r3", label: "1-1 입반테스트 3", tags: ["middle1-1", "mid-course-join", "third-month", "turbo-advanced", "full-range", "borderline-future-diagnostic"] },
+    "DP-SRC-E00A54FBB8B2": { key: "m21-202310-r2", label: "2-1 입반테스트 2(둘째달 구판)", tags: ["middle2-1", "legacy", "mid-course-join", "second-month", "middle1-cumulative", "mid-unit-cutoff", "answer-dispute"] },
+    "DP-SRC-1C451CEB27A7": { key: "m11-202312-r4", label: "1-1 입반테스트 4(넷째달 구판)", tags: ["middle1-1", "legacy", "mid-course-join", "fourth-month", "full-range"] }
   }[sourceId];
   if (!known) throw new Error(`지원하지 않는 풀이법 검수 원본입니다: ${sourceId}`);
+  const reviewedQuestionCount = [packet, classificationPacket, paperPacket, difficultyPacket]
+    .map(item => Array.isArray(item && item.reviews) ? item.reviews.length : Array.isArray(item && item.questions) ? item.questions.length : 0)
+    .find(count => count > 0) || 0;
+  const pageCount = Array.isArray(manifest && manifest.pages) ? manifest.pages.length : Number(manifest && manifest.rendering && manifest.rendering.pageCount) || 0;
   return {
     ...known,
     sourceId,
@@ -89,7 +105,9 @@ function methodReviewInfo(pageAssetsPath, methodReviewPath, classificationReview
     recordId: `dp.${known.key}.method-review.${recordDate}`,
     pageTitle: `돌파 ${known.label} 문항 원본 페이지 목록`,
     methodTitle: `돌파 ${known.label} 대표 시험 풀이법 검수표`,
-    recordTitle: `돌파 ${known.label} 대표 시험 30문항 풀이 방법 검수`,
+    reviewedQuestionCount,
+    pageCount,
+    recordTitle: `돌파 ${known.label} 직접 소유 ${reviewedQuestionCount}문항 풀이 방법 검수`,
     pageRelativePath: `지필드메모리/highschool-selection/artifacts/question-pages/dolpa/${sourceId}/manifest.json`,
     methodRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(methodReviewPath || "")}`,
     classificationRelativePath: `지필드메모리/highschool-selection/question-bank/${path.basename(classificationReviewPath || "")}`,
@@ -130,15 +148,16 @@ function sync(catalog, ledger, database, paths) {
   sources.forEach(item => upsert(catalog.sources, item.id, item));
   const summary = database.summary;
   const equivalentSourceCount = (database.papers || []).reduce((sum, paper) => sum + (paper.equivalentSources || []).length, 0);
+  const partialVariantCount = (database.papers || []).filter(paper => paper.variant && paper.variant.kind === "partial_question_variant").length;
   upsert(catalog.records, "dp.question-db.20260827", {
     id: "dp.question-db.20260827",
     title: "돌파 문항 DB와 반복 방지 작업 장부",
     aliases: ["돌파 문제 DB", "돌파 유형 DB"],
     tags: ["dp", "question-bank", "classification", "work-ledger"],
-    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 대표 시험지 ${summary.paperCount}회, ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개이며 같은 시험의 다른 원본 파일 ${equivalentSourceCount}개는 문항을 복제하지 않고 대표 시험지에 연결했다. 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 풀이 방법 ${summary.methodVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
+    summary: `돌파 고유 원본 ${ledger.summary.sourceCount}개를 sourceId로 관리하고, PDF 완료 ${ledger.summary.convertedSourceCount}개와 표지 확인 ${ledger.summary.coverVerifiedSourceCount}개를 이어받는다. 현재 문항 DB는 시험지 ${summary.paperCount}회, 직접 소유 ${summary.questionCount}문항, 세부 유형 ${summary.typeCount}개다. 같은 시험의 완전 동일 원본 ${equivalentSourceCount}개와 일부 문항만 다른 교사본 ${partialVariantCount}개는 같은 문항을 복제하지 않고 대표 시험 문항에 연결했다. 학년·영역·단원·세부 유형 ${summary.classificationVerifiedCount}문항, 원본 쪽 ${summary.locatorVerifiedCount}문항, 풀이 방법 ${summary.methodVerifiedCount}문항, 난이도 ${summary.difficultyVerifiedCount}문항, 답안 형식 ${summary.responseVerifiedCount}문항, 답 확인 ${summary.answerVerifiedCount}문항이 확정됐다. 시험형은 돌파·생수·원수학 기본·원수학 듀얼·이든·황소·깊은생각을 분리하며, 돌파 원본 외 사용은 호환성 검수 전 후보 상태다. 풀이법과 유사문항은 별도 근거가 있어야 확정한다.`,
     status: "verified",
     sensitivity: "private",
-    updated: "2026-08-29",
+    updated: methodInfo ? methodInfo.reviewedAt : "2026-08-29",
     pointers: [
       { source_id: "dp-question-db-v1", role: "audit", locator: "summary, papers, typeCatalog, questions", note: "문항 ID·유형 ID·중복·금지 필드 자동검사 통과" },
       { source_id: "dp-work-ledger-v1", role: "test", locator: "summary, sources[1:334]", note: "변환·표지·본문·답안·문항분리·유형·난이도·분석지 상태 분리" },
@@ -150,8 +169,8 @@ function sync(catalog, ledger, database, paths) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
       source_id: methodInfo.pageSourceId,
       role: "test",
-      locator: "assets[1:8]",
-      note: `${methodInfo.label} 원본 3~10쪽 PNG의 파일명·크기·해시 확인`
+      locator: `pages[1:${methodInfo.pageCount}]`,
+      note: `${methodInfo.label} 원본 ${methodInfo.pageCount}쪽 PNG의 파일명·크기·해시 확인`
     });
   }
   if (paths.targetSourcePlan && paths.targetAssembly) {
@@ -166,21 +185,21 @@ function sync(catalog, ledger, database, paths) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
       source_id: methodInfo.methodSourceId,
       role: "decision",
-      locator: "reviews[1:30]",
-      note: `${methodInfo.label} 대표 시험 30문항의 풀이 구조와 방법 태그를 원본 페이지와 대조`
+      locator: `reviews[1:${methodInfo.reviewedQuestionCount}]`,
+      note: `${methodInfo.label} 직접 소유 ${methodInfo.reviewedQuestionCount}문항의 풀이 구조와 방법 태그를 원본 페이지와 대조`
     });
     upsert(catalog.records, methodInfo.recordId, {
       id: methodInfo.recordId,
       title: methodInfo.recordTitle,
       aliases: [`돌파 ${methodInfo.label} 풀이법`],
       tags: ["dp", ...methodInfo.tags, "method-review", "visual-review"],
-      summary: `${methodInfo.label} 대표 시험 30문항을 원본 3~10쪽에서 직접 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.`,
+      summary: `${methodInfo.label} 직접 소유 ${methodInfo.reviewedQuestionCount}문항을 원본에서 확인해 실제 풀이 순서와 방법 태그를 연결했다. 문제 원문과 정답 값은 저장하지 않았고, 다른 학원 문제와 비교할 수 있는 교육과정 용어만 남겼다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
-        { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
-        { source_id: methodInfo.methodSourceId, role: "decision", locator: "reviews[1:30]", note: "풀이 구조와 방법 태그 검수 결과" }
+        { source_id: methodInfo.pageSourceId, role: "render", locator: `pages[1:${methodInfo.pageCount}], pp.3-10`, note: `직접 소유 ${methodInfo.reviewedQuestionCount}문항 시각 대조` },
+        { source_id: methodInfo.methodSourceId, role: "decision", locator: `reviews[1:${methodInfo.reviewedQuestionCount}]`, note: "풀이 구조와 방법 태그 검수 결과" }
       ]
     });
   }
@@ -200,17 +219,19 @@ function sync(catalog, ledger, database, paths) {
     });
   }
   if (paths.paperReview) {
+    const paperReview = readJson(paths.paperReview);
+    const ownedCount = Array.isArray(paperReview.questions) ? paperReview.questions.length : 0;
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
       source_id: methodInfo.paperSourceId,
       role: "decision",
-      locator: "coverage, questions[1:30]",
-      note: `${methodInfo.label} 시험 범위·문항 위치·답안 형식의 재생성용 검수 결과`
+      locator: `coverage, questions[1:${ownedCount}]`,
+      note: `${methodInfo.label} 시험 범위와 직접 소유 ${ownedCount}문항의 위치·답안 형식 검수 결과`
     });
     const methodRecord = catalog.records.find(record => record.id === methodInfo.recordId);
     if (methodRecord) methodRecord.pointers.push({
       source_id: methodInfo.paperSourceId,
       role: "decision",
-      locator: "coverage, questions[1:30]",
+      locator: `coverage, questions[1:${ownedCount}]`,
       note: "문항 DB를 다시 만들 때 원본 위치와 답안 형식을 복원"
     });
   }
@@ -219,21 +240,21 @@ function sync(catalog, ledger, database, paths) {
     catalog.records.find(record => record.id === "dp.question-db.20260827").pointers.push({
       source_id: methodInfo.difficultySourceId,
       role: "decision",
-      locator: "reviews[1:30]",
-      note: `${methodInfo.label} 대표 시험 30문항의 기본 적용형·복합 추론형 난이도 검수`
+      locator: `reviews[1:${difficulty.reviews.length}]`,
+      note: `${methodInfo.label} 직접 소유 ${difficulty.reviews.length}문항의 기본 적용형·복합 추론형 난이도 검수`
     });
     upsert(catalog.records, `dp.${methodInfo.key}.difficulty-review.${methodInfo.recordDate}`, {
       id: `dp.${methodInfo.key}.difficulty-review.${methodInfo.recordDate}`,
-      title: `돌파 ${methodInfo.label} 대표 시험 30문항 난이도 검수`,
+      title: `돌파 ${methodInfo.label} 직접 소유 ${difficulty.reviews.length}문항 난이도 검수`,
       aliases: [`돌파 ${methodInfo.label} 난이도`],
       tags: ["dp", ...methodInfo.tags, "difficulty-review", "visual-review"],
       summary: `${methodInfo.label} 대표 시험 ${difficulty.reviews.length}문항을 원본 페이지에서 직접 확인해 한 핵심 개념의 직접 적용은 standard, 개념 결합·조건 분기·역추론·복합 모델링은 raised로 구분했다. 문제 원문과 정답 값은 저장하지 않았다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
-        { source_id: methodInfo.pageSourceId, role: "render", locator: "assets[1:8], pp.3-10", note: "원본 30문항 시각 대조" },
-        { source_id: methodInfo.difficultySourceId, role: "decision", locator: "reviews[1:30]", note: "문항별 난이도와 판정 근거" }
+        { source_id: methodInfo.pageSourceId, role: "render", locator: `pages[1:${methodInfo.pageCount}], pp.3-10`, note: `직접 소유 ${difficulty.reviews.length}문항 시각 대조` },
+        { source_id: methodInfo.difficultySourceId, role: "decision", locator: `reviews[1:${difficulty.reviews.length}]`, note: "문항별 난이도와 판정 근거" }
       ]
     });
   }
@@ -253,10 +274,10 @@ function sync(catalog, ledger, database, paths) {
       summary: `${report.summary.questionCount}문항을 학기·영역·단원·난이도로 집계했다. 기본 적용형 ${report.summary.standardCount}문항, 복합 추론형 ${report.summary.raisedCount}문항이며 합격선이나 개인 합격 가능성은 추정하지 않는다.`,
       status: "verified",
       sensitivity: "private",
-      updated: "2026-08-29",
+      updated: methodInfo.reviewedAt,
       pointers: [
         { source_id: methodInfo.analysisSourceId, role: "decision", locator: "summary, charts, comments", note: "그래프 값과 학습 코멘트" },
-        { source_id: methodInfo.difficultySourceId, role: "test", locator: "reviews[1:30]", note: "문항별 난이도 검수 근거" }
+        { source_id: methodInfo.difficultySourceId, role: "test", locator: `reviews[1:${methodInfo.reviewedQuestionCount}]`, note: "문항별 난이도 검수 근거" }
       ]
     });
   }

@@ -3,6 +3,7 @@ import {
   levels, validateLevels, enumerateFreePolyominoes, canonicalCells,
   foldCubeNet, VALID_CUBE_NETS, INVALID_CUBE_NETS, SOLIDS
 } from "./levels.js";
+import { auditNetObservatoryContent } from "./net-observatory-content-audit.mjs";
 
 const result = validateLevels();
 assert.equal(result.problems, 50);
@@ -57,11 +58,11 @@ assert.equal(new Set(VALID_CUBE_NETS.map(canonicalCells)).size, 11);
 assert.ok(VALID_CUBE_NETS.every((shape) => foldCubeNet(shape).valid));
 assert.ok(INVALID_CUBE_NETS.every((shape) => !foldCubeNet(shape).valid));
 
-levels[0].problems.forEach((problem) => {
+levels.flatMap((level) => level.problems).filter((problem) => problem.interaction === "choose-net").forEach((problem) => {
   assert.equal(problem.choices.filter((choice) => foldCubeNet(choice.cells).valid).length, 1, problem.id);
 });
 
-levels[1].problems.forEach((problem) => {
+levels.flatMap((level) => level.problems).filter((problem) => problem.interaction === "net-opposite").forEach((problem) => {
   const folded = foldCubeNet(problem.cells);
   const faceMap = new Map(problem.faces.map((face) => [face.cell.join(","), face]));
   const framed = folded.cells.map((cell, index) => ({ ...faceMap.get(cell.join(",")), normal: folded.frames[index].n }));
@@ -72,7 +73,7 @@ levels[1].problems.forEach((problem) => {
   assert.equal(validChoices[0].id, problem.answer, problem.id);
 });
 
-levels[2].problems.forEach((problem) => {
+levels.flatMap((level) => level.problems).filter((problem) => problem.interaction.startsWith("dice")).forEach((problem) => {
   if (problem.interaction === "dice-opposite") {
     assert.equal(problem.face + problem.answer, 7, problem.id);
   } else {
@@ -86,4 +87,17 @@ SOLIDS.forEach((solid) => {
   assert.equal(solid.faces * ({ triangle: 3, square: 4, pentagon: 5 }[solid.faceShape]) / 2, solid.edges, solid.id);
 });
 
-console.log(`net-observatory selftest: ${result.problems} problems, ${result.hexominoes} free hexominoes, ${result.cubeNets} valid cube nets`);
+const contentAudit = auditNetObservatoryContent();
+assert.equal(contentAudit.uniqueQuestions, 50);
+assert.equal(contentAudit.singleAnswerProblems, 50);
+assert.equal(contentAudit.independentCubeNets, 11);
+
+const wrongAnswer = structuredClone(levels);
+wrongAnswer[0].problems[0].answer = "missing";
+assert.throws(() => auditNetObservatoryContent(wrongAnswer), /Net-observatory content audit failed/);
+
+const excessiveReasoning = structuredClone(levels);
+excessiveReasoning[0].problems[0].reasoningSteps = 4;
+assert.throws(() => auditNetObservatoryContent(excessiveReasoning), /Net-observatory content audit failed/);
+
+console.log(`net-observatory selftest: ${result.problems} independent answers, ${result.hexominoes} free hexominoes, ${result.cubeNets} valid cube nets`);

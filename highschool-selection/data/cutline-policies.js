@@ -147,6 +147,7 @@
     { examId: "ed-middle1-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "ed-high-advance-entry", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "dg-entry-common", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
+    { examId: "sm-common1-entry", policyId: null, status: "reference-available-not-operational", approvedBy: null, approvedAt: null },
     { examId: "sm-common2-basic-r01", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "sm-common2-basic-r02", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null },
     { examId: "sm-common2-basic-r03", policyId: null, status: "needs-evidence", approvedBy: null, approvedAt: null }

@@ -15,7 +15,7 @@ function academyQuestionDb() {
   const semester = "중2-1";
   const unit = "일차함수";
   const typeLabel = "두 직선의 교점 구하기";
-  return dolpaDbBuilder.buildDatabase({
+  const database = dolpaDbBuilder.buildDatabase({
     taxonomyVersion: "dolpa-kr-math-v1",
     sources: [{ sourceId: "DP-SRC-AAAAAAAAAAAA", sourceFingerprint: "a".repeat(64) }],
     questions: [{
@@ -25,6 +25,10 @@ function academyQuestionDb() {
       difficulty: { band: null, status: "pending", evidence: [] }, classificationStatus: "verified", evidence: ["paper.a"]
     }]
   }, null, "1".repeat(64));
+  database.questions[0].answerCheck = { status: "verified", evidence: ["private.answer.audit"] };
+  database.questions[0].learnerFit = { overall: "pass", dimensions: { language: "pass", representations: "pass", prerequisites: "pass", reasoningLoad: "pass", responseMode: "pass" } };
+  database.summary = dolpaDbBuilder.summarize(database);
+  return database;
 }
 
 function question(index, overrides) {

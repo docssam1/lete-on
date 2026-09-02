@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Mirror Manor</title>
-  <link rel="stylesheet" href="./styles.css?v=mirror-manor-10" />
+  <link rel="stylesheet" href="./styles.css?v=mirror-manor-11" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -39,7 +39,7 @@
     <section class="play-area">
       <article class="room-panel">
         <div class="room-stage">
-          <div id="board" class="board" role="application" aria-label="Mirror Manor room">
+          <div id="board" class="board" role="region" aria-label="Mirror Manor room">
             <div id="cells" class="board-cells"></div>
             <div id="pieceLayer" class="piece-layer"></div>
             <div id="guideLayer" class="guide-layer" aria-hidden="true"></div>
@@ -51,11 +51,12 @@
       <aside id="toolPanel" class="tool-panel" aria-label="게임 도구">
         <button id="hintButton" type="button">Hint</button>
         <button id="retryButton" type="button">Restart</button>
+        <a id="worksheetLink" href="../../worksheet/mirror-manor/">학습지</a>
       </aside>
     </section>
 
     <section class="answer-dock">
-      <p id="answerPrompt"></p>
+      <p id="answerPrompt" role="status" aria-live="polite"></p>
       <div id="tray" class="shape-tray" aria-label="Object shelf"></div>
       <button id="nextButton" class="next-button" type="button" hidden>Next</button>
     </section>
@@ -66,7 +67,7 @@
     </aside>
 
     <div id="tutorial" class="dialog" hidden>
-      <section class="tutorial-card" role="dialog" aria-modal="true">
+      <section class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialText">
         <span class="cubi-sprite" aria-hidden="true"></span>
         <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
       </section>
@@ -80,7 +81,7 @@
     </div>
 
     <div id="completeDialog" class="dialog" hidden>
-      <section class="complete-card" role="dialog" aria-modal="true">
+      <section class="complete-card" role="dialog" aria-modal="true" aria-labelledby="completeTitle" aria-describedby="completeText">
         <span class="cubi-sprite" aria-hidden="true"></span>
         <h2 id="completeTitle">Level complete!</h2><p id="completeText"></p>
         <div class="complete-actions"><button id="nextLevelButton" type="button">Next level</button><button id="practiceButton" type="button">Practice again</button><a id="mapLink" href="../../world-map/">Back to the map</a></div>
@@ -90,7 +91,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=mirror-manor-6"></script>
+  <script type="module" src="./app.js?v=mirror-manor-11"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

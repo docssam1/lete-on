@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-2";
-import { getLanguage, t } from "./i18n.js?v=soma-4";
+import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-3";
+import { getLanguage, t } from "./i18n.js?v=soma-5";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const validation = validateLevels();
@@ -23,14 +23,15 @@ const requested = Number(new URLSearchParams(location.search).get("level"));
 const state = {
   lang:getLanguage(),
   levelIndex:Number.isInteger(requested) && requested >= 1 && requested <= 5 ? requested - 1 : Math.max(0, Math.min(4, Number(saved.levelIndex) || 0)),
-  queue:[], problemIndex:0, placements:[], selectedId:null, selectedShape:null, solved:false, sound:localStorage.getItem("gfield-sound-muted") !== "1", tutorialStep:-1, hintPlacement:null,
-  firstAssemblySignature:null, secondAssemblyGuide:null, transitioning:false, firstAssemblyTimer:0
+  queue:[], problemIndex:0, placements:[], selectedId:null, selectedShape:null, solved:false, sound:localStorage.getItem("gfield-sound-muted") !== "1", tutorialStep:-1, hintPlacement:null, hintStep:0,
+  firstAssemblySignature:null, secondAssemblyGuide:null, transitioning:false, firstAssemblyTimer:0, autoNextTimer:0
 };
 
 const key = ([x,y,z]) => `${x},${y},${z}`;
 const sameCells = (a,b) => a.length === b.length && [...a].map(key).sort().join("|") === [...b].map(key).sort().join("|");
 const currentLevel = () => levels[state.levelIndex];
 const currentProblem = () => state.queue[state.problemIndex];
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fixedCount = () => currentProblem()?.fixed?.length || 0;
 const placedIds = () => new Set(state.placements.map((placement) => placement.pieceId));
 const allPieceIds = () => [...(currentProblem().pieceIds || []), ...(currentProblem().fixed || []).map((placement) => placement.pieceId)];
@@ -268,7 +269,7 @@ function tryPlace(candidate) {
     : completions.length>0;
   if(!hasCompletion){showToast(t(state.lang,"invalid"));return}
   if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((placement)=>placement.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature){showGuide(t(state.lang,"anotherWay"),2600);return}
-  state.placements=proposed; state.selectedId=null; state.selectedShape=null; state.hintPlacement=null; placementSound(); renderAll(); checkComplete();
+  state.placements=proposed; state.selectedId=null; state.selectedShape=null; state.hintPlacement=null; state.hintStep=0; placementSound(); renderAll(); checkComplete();
 }
 
 function removePlacement(index) {
@@ -279,32 +280,41 @@ function checkComplete() {
   const problem=currentProblem();const occupied=state.placements.flatMap((placement)=>placement.cells);if(occupied.length!==problem.target.length||new Set(occupied.map(key)).size!==problem.target.length||!problem.target.every((cell)=>occupied.some((other)=>key(other)===key(cell))))return;
   if(state.levelIndex===4&&!state.firstAssemblySignature){
     state.firstAssemblySignature=canonicalArrangement(state.placements);state.secondAssemblyGuide=problem.verifiedAssemblies?.find((assembly)=>canonicalArrangement(assembly)!==state.firstAssemblySignature)||null;state.transitioning=true;successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"firstWaySolved"),2600);renderStatus();
-    const problemId=problem.id;state.firstAssemblyTimer=setTimeout(()=>{if(currentProblem().id!==problemId||state.solved)return;state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.transitioning=false;renderAll();showGuide(t(state.lang,"secondWayPrompt"),2800)},1350);return;
+    const problemId=problem.id;state.firstAssemblyTimer=setTimeout(()=>{if(currentProblem().id!==problemId||state.solved)return;state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.hintStep=0;state.transitioning=false;renderAll();showGuide(t(state.lang,"secondWayPrompt"),2800)},reducedMotion()?120:1350);return;
   }
-  state.solved=true;awardPoints(problem.id);saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex,completedProblem:problem.id});successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,state.levelIndex===4?"twoWaysSolved":"solved"),2600);renderStatus();
+  state.solved=true;awardPoints(problem.id);saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex,completedProblem:problem.id});successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,state.levelIndex===4?"twoWaysSolved":"solved"),2600);renderStatus();scheduleAutoAdvance();
 }
 
 function chooseOption(index,button) {
   if(state.solved)return; const problem=currentProblem();if(index!==problem.answer){button.classList.add("wrong");setTimeout(()=>button.classList.remove("wrong"),500);showToast(t(state.lang,"wrongChoice"));return}
-  state.solved=true;button.classList.add("correct");awardPoints(problem.id);successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"correctChoice"),2400);renderStatus();
+  state.solved=true;button.classList.add("correct");awardPoints(problem.id);successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"correctChoice"),2400);renderStatus();scheduleAutoAdvance();
 }
 
 function giveHint() {
-  if(state.solved||state.transitioning)return;const problem=currentProblem();if(problem.mode==="recognize"){const answer=ui.choiceGrid.children[problem.answer];answer?.classList.add("correct");setTimeout(()=>answer?.classList.remove("correct"),1200);showGuide(t(state.lang,"hintText"));return}
-  if(state.levelIndex===4&&state.firstAssemblySignature&&state.secondAssemblyGuide){const used=placedIds();const occupied=new Set(state.placements.flatMap((placement)=>placement.cells.map(key)));const guided=state.secondAssemblyGuide.find((placement)=>!used.has(placement.pieceId)&&placement.cells.every((cell)=>!occupied.has(key(cell)))&&placement.cells.some(([x,y,z])=>y===0||occupied.has(key([x,y-1,z]))));if(guided){state.selectedId=guided.pieceId;state.selectedShape=normalize(guided.cells);state.hintPlacement={pieceId:guided.pieceId,cells:guided.cells.map((cell)=>[...cell])};renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));return}}
-  let next=null;let nextShape=null;const used=placedIds();for(const id of problem.pieceIds){if(used.has(id))continue;for(const shape of orientations(PIECE_BY_ID[id].cells)){const candidate=candidatesFor(id,shape).find((placement)=>{const proposed=[...state.placements,placement];if(!solveExactCover(problem.target,allPieceIds(),proposed,1).length)return false;if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((item)=>item.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature)return false;return true});if(candidate){next=candidate;nextShape=shape;break}}if(next)break}if(!next){showToast(t(state.lang,"invalid"));return}state.selectedId=next.pieceId;state.selectedShape=nextShape;state.hintPlacement={pieceId:next.pieceId,cells:next.cells.map((cell)=>[...cell])};renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));
+  if(state.solved||state.transitioning)return;const problem=currentProblem();if(problem.mode==="recognize"){if(state.hintStep===0){const wrong=[...ui.choiceGrid.children].find((_,index)=>index!==problem.answer);if(wrong){wrong.disabled=true;wrong.classList.add("eliminated")}state.hintStep=1;showGuide(t(state.lang,"hintEliminate"));return}const answer=ui.choiceGrid.children[problem.answer];answer?.classList.add("correct");setTimeout(()=>answer?.classList.remove("correct"),1200);showGuide(t(state.lang,"hintText"));return}
+  if(state.levelIndex===4&&state.firstAssemblySignature&&state.secondAssemblyGuide){const used=placedIds();const occupied=new Set(state.placements.flatMap((placement)=>placement.cells.map(key)));const guided=state.secondAssemblyGuide.find((placement)=>!used.has(placement.pieceId)&&placement.cells.every((cell)=>!occupied.has(key(cell)))&&placement.cells.some(([x,y,z])=>y===0||occupied.has(key([x,y-1,z]))));if(guided){state.selectedId=guided.pieceId;if(state.hintStep===0){state.selectedShape=normalize(PIECE_BY_ID[guided.pieceId].cells);state.hintPlacement=null;state.hintStep=1;renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintPiece"));return}state.selectedShape=normalize(guided.cells);state.hintPlacement={pieceId:guided.pieceId,cells:guided.cells.map((cell)=>[...cell])};state.hintStep=0;renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));return}}
+  let next=null;let nextShape=null;const used=placedIds();for(const id of problem.pieceIds){if(used.has(id))continue;for(const shape of orientations(PIECE_BY_ID[id].cells)){const candidate=candidatesFor(id,shape).find((placement)=>{const proposed=[...state.placements,placement];if(!solveExactCover(problem.target,allPieceIds(),proposed,1).length)return false;if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((item)=>item.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature)return false;return true});if(candidate){next=candidate;nextShape=shape;break}}if(next)break}if(!next){showToast(t(state.lang,"invalid"));return}state.selectedId=next.pieceId;if(state.hintStep===0){state.selectedShape=normalize(PIECE_BY_ID[next.pieceId].cells);state.hintPlacement=null;state.hintStep=1;renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintPiece"));return}state.selectedShape=nextShape;state.hintPlacement={pieceId:next.pieceId,cells:next.cells.map((cell)=>[...cell])};state.hintStep=0;renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));
 }
 
 function clearMovable() {if(currentProblem().mode==="recognize")return;if(!confirm(t(state.lang,"clearConfirm")))return;state.placements=state.placements.slice(0,fixedCount());state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;renderAll()}
 
 function advanceProblem() {
   if(!state.solved&&!confirm(t(state.lang,"skipConfirm")))return;
-  if(state.problemIndex>=state.queue.length-1){ui.completeDialog.hidden=false;return}
+  clearTimeout(state.autoNextTimer);state.autoNextTimer=0;
+  if(state.problemIndex>=state.queue.length-1){ui.nextLevelButton.hidden=state.levelIndex>=levels.length-1;ui.completeDialog.hidden=false;return}
   state.problemIndex+=1;loadProblem();
 }
 
+function scheduleAutoAdvance() {
+  clearTimeout(state.autoNextTimer);
+  const problemId=currentProblem().id;
+  state.autoNextTimer=setTimeout(()=>{
+    if(state.solved&&currentProblem().id===problemId)advanceProblem();
+  },reducedMotion()?120:1150);
+}
+
 function loadProblem() {
-  clearTimeout(state.firstAssemblyTimer);const problem=currentProblem();state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.solved=false;state.firstAssemblySignature=null;state.secondAssemblyGuide=null;state.transitioning=false;saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex});renderAll();
+  clearTimeout(state.firstAssemblyTimer);clearTimeout(state.autoNextTimer);state.autoNextTimer=0;const problem=currentProblem();state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.hintStep=0;state.solved=false;state.firstAssemblySignature=null;state.secondAssemblyGuide=null;state.transitioning=false;saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex});renderAll();
   if(shouldTutorial())openTutorial();
 }
 
@@ -316,10 +326,10 @@ function renderLevels() {
   ui.levelList.replaceChildren();levels.forEach((level,index)=>{const button=document.createElement("button");button.type="button";button.className="level-card";button.classList.toggle("active",index===state.levelIndex);button.innerHTML=`<span>${t(state.lang,"stageNames")[index]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}</span><b>${t(state.lang,"levelTitles")[index]}</b><small>${t(state.lang,"levelDescriptions")[index]}</small>`;button.addEventListener("click",()=>selectLevel(index));ui.levelList.append(button)});
 }
 
-function shouldTutorial(){return state.levelIndex===0&&state.problemIndex===0&&(new URLSearchParams(location.search).get("tutorial")==="1"||localStorage.getItem("gfield-soma-tutorial-v1")!=="done")}
+function shouldTutorial(){return state.levelIndex===1&&state.problemIndex===0&&(new URLSearchParams(location.search).get("tutorial")==="1"||localStorage.getItem("gfield-soma-controls-tutorial-v1")!=="done")}
 function renderTutorial(){const messages=t(state.lang,"tutorial");ui.tutorialText.textContent=messages[state.tutorialStep];ui.tutorialNext.textContent=state.tutorialStep===messages.length-1?t(state.lang,"tutorialDone"):t(state.lang,"tutorialNext");ui.tutorialDots.replaceChildren(...messages.map((_,index)=>{const dot=document.createElement("i");dot.classList.toggle("active",index===state.tutorialStep);return dot}))}
 function openTutorial(){state.tutorialStep=0;ui.tutorial.hidden=false;renderTutorial()}
-function closeTutorial(){state.tutorialStep=-1;ui.tutorial.hidden=true;localStorage.setItem("gfield-soma-tutorial-v1","done")}
+function closeTutorial(){state.tutorialStep=-1;ui.tutorial.hidden=true;localStorage.setItem("gfield-soma-controls-tutorial-v1","done")}
 function nextTutorial(){const messages=t(state.lang,"tutorial");if(state.tutorialStep>=messages.length-1){closeTutorial();return}state.tutorialStep+=1;renderTutorial()}
 
 function pointerPosition(event,viewer){const rect=viewer.renderer.domElement.getBoundingClientRect();viewer.pointer.set(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1)}
@@ -329,7 +339,7 @@ buildView.renderer.domElement.addEventListener("pointerup",(event)=>{if(!buildVi
 document.querySelectorAll("[data-rotate]").forEach((button)=>button.addEventListener("click",()=>rotateSelected(button.dataset.rotate)));
 ui.hintButton.addEventListener("click",giveHint);ui.clearButton.addEventListener("click",clearMovable);ui.skipButton.addEventListener("click",advanceProblem);ui.levelButton.addEventListener("click",()=>ui.levelDialog.hidden=false);ui.closeLevels.addEventListener("click",()=>ui.levelDialog.hidden=true);
 ui.soundButton.addEventListener("click",()=>{state.sound=!state.sound;localStorage.setItem("gfield-sound-muted",state.sound?"0":"1");applyCopy()});
-ui.tutorialSkip.addEventListener("click",closeTutorial);ui.tutorialNext.addEventListener("click",nextTutorial);ui.nextLevelButton.addEventListener("click",()=>{ui.completeDialog.hidden=true;selectLevel(Math.min(4,state.levelIndex+1))});ui.practiceButton.addEventListener("click",()=>{const url=new URL(location.href);url.searchParams.set("level",String(state.levelIndex+1));url.searchParams.set("practice","1");url.searchParams.delete("tutorial");location.assign(url)});
+ui.tutorialSkip.addEventListener("click",closeTutorial);ui.tutorialNext.addEventListener("click",nextTutorial);ui.nextLevelButton.addEventListener("click",()=>{if(state.levelIndex>=levels.length-1)return;ui.completeDialog.hidden=true;selectLevel(state.levelIndex+1)});ui.practiceButton.addEventListener("click",()=>{const url=new URL(location.href);url.searchParams.set("level",String(state.levelIndex+1));url.searchParams.set("practice","1");url.searchParams.delete("tutorial");location.assign(url)});
 document.addEventListener("keydown",(event)=>{if(event.key==="Escape"){if(!ui.tutorial.hidden)closeTutorial();else if(!ui.levelDialog.hidden)ui.levelDialog.hidden=true;else if(!ui.completeDialog.hidden)ui.completeDialog.hidden=true}if(event.key==="Enter"&&state.selectedId&&!state.solved)placeFirstCandidate()});
 
 function animate(){requestAnimationFrame(animate);targetView.controls.update();buildView.controls.update();targetView.renderer.render(targetView.scene,targetView.camera);buildView.renderer.render(buildView.scene,buildView.camera)}

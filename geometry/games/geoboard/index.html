@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Geoboard Studio</title>
-  <link rel="stylesheet" href="./styles.css?v=geoboard-7" />
+  <link rel="stylesheet" href="./styles.css?v=geoboard-8" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -15,6 +15,30 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
 <body>
+  <svg class="material-defs" aria-hidden="true" width="0" height="0">
+    <defs>
+      <linearGradient id="pegboardWood" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f7dfad" />
+        <stop offset="0.5" stop-color="#e6bd78" />
+        <stop offset="1" stop-color="#c9914e" />
+      </linearGradient>
+      <pattern id="pegboardSurface" width="12" height="8" patternUnits="userSpaceOnUse">
+        <rect width="12" height="8" fill="url(#pegboardWood)" />
+        <path d="M0 2 C3 1 8 3 12 2 M0 6 C4 5 7 7 12 6" fill="none" stroke="#895d2a" stroke-opacity=".1" stroke-width=".35" />
+      </pattern>
+      <radialGradient id="pegCap" cx="32%" cy="24%" r="74%">
+        <stop offset="0" stop-color="#fff1ae" />
+        <stop offset="0.32" stop-color="#e6b84f" />
+        <stop offset="0.76" stop-color="#a96b20" />
+        <stop offset="1" stop-color="#684018" />
+      </radialGradient>
+      <linearGradient id="rubberBand" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#65d3d0" />
+        <stop offset="0.45" stop-color="#178b92" />
+        <stop offset="1" stop-color="#075d67" />
+      </linearGradient>
+    </defs>
+  </svg>
   <!--
     Shell copied from games/mirror-manor (itself copied from games/paper-fold) so
     that exit, brand, LEVEL n + k / 5 progress, mute and the level picker sit in
@@ -49,7 +73,7 @@
         <div class="board-stage">
           <!-- One square viewBox for every level. The engine positions pegs from the
                lattice size, so a future 6x6 board needs no markup change. -->
-          <svg id="board" class="board" viewBox="0 0 100 100" role="application" aria-label="Peg board">
+          <svg id="board" class="board" viewBox="0 0 100 100" role="region" aria-label="Peg board">
             <rect class="board-face" x="0" y="0" width="100" height="100" rx="3" />
             <g id="bandLayer" class="band-layer"></g>
             <g id="pegLayer" class="peg-layer"></g>
@@ -62,6 +86,7 @@
       <aside id="toolPanel" class="tool-panel" aria-label="게임 도구">
         <button id="hintButton" type="button">Hint</button>
         <button id="retryButton" type="button">Clear</button>
+        <a id="worksheetLink" href="../../worksheet/geoboard/">Worksheet</a>
       </aside>
     </section>
 
@@ -98,7 +123,7 @@
     </div>
 
     <div id="completeDialog" class="dialog" hidden>
-      <section class="complete-card" role="dialog" aria-modal="true">
+      <section class="complete-card" role="dialog" aria-modal="true" aria-labelledby="completeTitle" aria-describedby="completeText">
         <span class="cubi-sprite" aria-hidden="true"></span>
         <h2 id="completeTitle">Level complete!</h2><p id="completeText"></p>
         <div class="complete-actions"><button id="nextLevelButton" type="button">Next level</button><button id="practiceButton" type="button">Practice again</button><a id="mapLink" href="../../world-map/">Back to the map</a></div>
@@ -108,7 +133,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=geoboard-7"></script>
+  <script type="module" src="./app.js?v=geoboard-8"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

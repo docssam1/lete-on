@@ -9,7 +9,7 @@ page.on("console", (message) => { if (message.type() === "error") errors.push(me
 page.on("pageerror", (error) => errors.push(error.message));
 
 await page.goto(`${baseUrl}/geometry/worksheet/net-observatory/`, { waitUntil: "networkidle" });
-await page.locator("#levelSelect").selectOption("2");
+await page.locator("#levelSelect").selectOption("1");
 assert.match(await page.locator("#sheetTitle").textContent(), /그림 면 마주보기/);
 assert.equal(await page.locator(".interaction-net-opposite").count(), 3);
 assert.equal(await page.locator(".interaction-net-opposite .net-svg").count(), 3);
@@ -30,7 +30,8 @@ await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-net-oppos
 
 await page.emulateMedia({ media: "screen" });
 await page.goto(`${baseUrl}/geometry/solid-vista/`, { waitUntil: "networkidle" });
-assert.match(await page.locator("#netLevelGrid .level-card").nth(1).textContent(), /그림 면 마주보기/);
+assert.match(await page.locator("#netLevelGrid .level-card").nth(0).textContent(), /그림 면 마주보기/);
+assert.match(await page.locator("#netLevelGrid .level-card").nth(1).textContent(), /정육면체 전개도/);
 assert.equal(errors.length, 0, errors.join("\n"));
 console.log(JSON.stringify({ baseUrl, problems: 3, pictureChoices: 9, correctChoices: 3, sheet }, null, 2));
 await browser.close();

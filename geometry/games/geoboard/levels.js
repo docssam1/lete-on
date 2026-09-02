@@ -363,6 +363,9 @@ function shapeNameKey(kind, corners) {
 }
 
 function makeProblem(level, kind, index, vertices) {
+  const provenance = level === 1
+    ? { provenanceKind: "internal-extension", sourceRef: "geometry-doc-12-geoboard-l1-control-practice" }
+    : { provenanceKind: "source-backed-adaptation", sourceRef: "RAY-B1-2-PDF-p36" };
   return {
     id: `geoboard-l${level}-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
@@ -371,6 +374,16 @@ function makeProblem(level, kind, index, vertices) {
     grid: { ...GRID },
     vertices: vertices.map(([x, y]) => [x, y]),
     shapeNameKey: shapeNameKey(kind, vertices.length),
+    ...provenance,
+    answerPolicy: "exact-edge-set-same-position-and-orientation",
+    reasoningSteps: Math.max(1, vertices.length - (kind === "open" ? 1 : 0)),
+    learnerFit: {
+      language: "short-direct-action",
+      representation: "visible-model-and-five-by-five-peg-board",
+      prerequisite: level === 1 ? "connect-pegs-in-order" : "close-a-simple-polygon",
+      reasoningLoad: level === 1 ? "one-to-three-edge-copy" : "three-to-five-corner-copy",
+      responseMode: "construct-exact-figure"
+    },
     // Stated per problem so a reviewer reading the data alone sees the rule that
     // validateLevels() then proves.
     validation: { solutionCount: 1, samePosition: true, sameOrientation: true, tapOrderFree: true }
@@ -398,6 +411,19 @@ function makeCountProblem(level, kind, index, boardSize, questionMode, value, ch
     questionMode,
     ...(questionMode === "types" ? { targetKindCount: value } : { answerValue: value, answerChoices: [...choices] }),
     shapeNameKey: kind === "square-count" ? "shapeSquare" : "shapeEquilateral",
+    provenanceKind: "owner-approved-internal-extension",
+    sourceRef: "RAY-B1-2-PDF-p38-p46-and-owner-decision-2026-08-27",
+    answerPolicy: questionMode === "types"
+      ? "collect-distinct-congruence-types"
+      : "choose-exhaustive-placement-count",
+    reasoningSteps: boardSize + (questionMode === "placements" ? 2 : value),
+    learnerFit: {
+      language: "one-counting-goal",
+      representation: kind === "square-count" ? "square-lattice" : "triangular-lattice",
+      prerequisite: questionMode === "types" ? "recognize-congruence-by-size" : "systematic-exhaustive-counting",
+      reasoningLoad: `${boardSize}-peg-side-${questionMode}`,
+      responseMode: questionMode === "types" ? "construct-several-valid-types" : "choose-one-number"
+    },
     validation: {
       goal: questionMode === "types" ? "collect-distinct-congruence-types" : "choose-total-placement-count",
       translationRotationReflectionAreSame: true,
@@ -407,12 +433,15 @@ function makeCountProblem(level, kind, index, boardSize, questionMode, value, ch
 }
 
 function makePartitionProblem(index, spec) {
-  const solutions = enumeratePartitionSolutions(
+  const allSolutions = enumeratePartitionSolutions(
     spec.outline.length,
     spec.lineTotal,
     spec.targetTriangles,
     spec.targetQuadrilaterals
   );
+  const solutions = spec.requiredVertex == null
+    ? allSolutions
+    : allSolutions.filter((chords) => chords.some((chord) => chord.includes(spec.requiredVertex)));
   return {
     id: `geoboard-l5-${String(index + 1).padStart(2, "0")}`,
     game: GAME_ID,
@@ -423,8 +452,20 @@ function makePartitionProblem(index, spec) {
     lineTotal: spec.lineTotal,
     targetTriangles: spec.targetTriangles,
     targetQuadrilaterals: spec.targetQuadrilaterals,
+    ...(spec.requiredVertex == null ? {} : { requiredVertex: spec.requiredVertex }),
     acceptedSolutions: solutions.map((chords) => chords.map(([a, b]) => [a, b])),
     acceptedSolutionKeys: solutions.map(partitionAnswerKey),
+    provenanceKind: "owner-approved-internal-extension",
+    sourceRef: "FIELDS-CLASSIC-1N-PDF-p20-p24-and-owner-decision-2026-08-27",
+    answerPolicy: "accept-every-valid-noncrossing-partition",
+    reasoningSteps: spec.lineTotal + spec.targetTriangles + spec.targetQuadrilaterals,
+    learnerFit: {
+      language: spec.requiredVertex == null ? "two-count-goal" : "two-count-goal-with-marked-vertex",
+      representation: "outlined-polygon-on-square-lattice",
+      prerequisite: "identify-noncrossing-diagonals-and-region-corners",
+      reasoningLoad: `${spec.lineTotal}-line-partition`,
+      responseMode: "draw-one-of-all-valid-partitions"
+    },
     validation: {
       goal: "divide-outline-into-requested-triangles-and-quadrilaterals",
       solutionCount: solutions.length,
@@ -443,10 +484,10 @@ function makePartitionProblem(index, spec) {
 const level1Specs = [
   [[0, 2], [2, 2]],                     // straight segment, 2 across
   [[3, 0], [3, 3]],                     // straight segment, 3 down
-  [[1, 1], [1, 3], [3, 3]],             // right-angle bend, both arms 2
   [[1, 1], [3, 3]],                     // slanted segment, 2 across and 2 down
-  [[0, 0], [2, 0], [2, 1]],             // right-angle bend, arms 2 and 1
   [[1, 0], [2, 2]],                     // slanted segment, 1 across and 2 down
+  [[1, 1], [1, 3], [3, 3]],             // right-angle bend, both arms 2
+  [[0, 0], [2, 0], [2, 1]],             // right-angle bend, arms 2 and 1
   [[0, 2], [2, 0], [4, 2]],             // wide V of two slants
   [[0, 0], [1, 0], [1, 1], [2, 1]],     // staircase, three short edges
   [[0, 3], [1, 1], [2, 3], [3, 1]],     // zigzag, three equal slants
@@ -482,14 +523,14 @@ const level2Specs = [
 // Different positions, turns, and reflections of the same side length are one
 // congruence type, so the target is never inflated by moving a shape around.
 const level3Specs = [
-  [3, "types", 1], [3, "types", 3], [3, "placements", 6, [5, 8, 6]],
-  [4, "types", 3], [4, "types", 5], [4, "placements", 20, [24, 18, 20]],
-  [5, "types", 4], [5, "types", 6], [5, "types", 8], [5, "placements", 50, [45, 50, 55]]
+  [3, "types", 1], [3, "types", 3], [3, "placements", 6, [6, 5, 8]],
+  [4, "types", 3], [4, "types", 5], [4, "placements", 20, [24, 20, 18]],
+  [5, "types", 4], [5, "types", 6], [5, "types", 8], [5, "placements", 50, [45, 55, 50]]
 ];
 
 const level4Specs = [
-  [3, "types", 1], [3, "types", 2], [3, "placements", 5, [6, 4, 5]],
-  [4, "types", 2], [4, "types", 4], [4, "placements", 15, [12, 15, 18]],
+  [3, "types", 1], [3, "types", 2], [3, "placements", 5, [4, 5, 6]],
+  [4, "types", 2], [4, "types", 4], [4, "placements", 15, [15, 12, 18]],
   [5, "types", 2], [5, "types", 4], [5, "types", 6], [5, "placements", 35, [40, 30, 35]]
 ];
 
@@ -500,23 +541,23 @@ const level5Specs = [
   { outline: [[1, 1], [3, 1], [3, 3], [1, 3]], lineTotal: 1, targetTriangles: 2, targetQuadrilaterals: 0 },
   { outline: [[2, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 1, targetTriangles: 1, targetQuadrilaterals: 1 },
   { outline: [[1, 0], [3, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 1, targetTriangles: 0, targetQuadrilaterals: 2 },
-  { outline: [[0, 1], [4, 1], [4, 3], [0, 3]], lineTotal: 1, targetTriangles: 2, targetQuadrilaterals: 0 },
-  { outline: [[1, 0], [4, 1], [3, 4], [0, 4], [0, 1]], lineTotal: 1, targetTriangles: 1, targetQuadrilaterals: 1 },
+  { outline: [[0, 1], [4, 1], [4, 3], [0, 3]], lineTotal: 1, targetTriangles: 2, targetQuadrilaterals: 0, requiredVertex: 0 },
+  { outline: [[1, 0], [4, 1], [3, 4], [0, 4], [0, 1]], lineTotal: 1, targetTriangles: 1, targetQuadrilaterals: 1, requiredVertex: 0 },
   { outline: [[2, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 3, targetQuadrilaterals: 0 },
   { outline: [[1, 0], [3, 0], [4, 2], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 2, targetQuadrilaterals: 1 },
   { outline: [[1, 0], [3, 0], [4, 1], [4, 3], [3, 4], [1, 4], [0, 2]], lineTotal: 2, targetTriangles: 1, targetQuadrilaterals: 2 },
   { outline: [[1, 0], [3, 0], [4, 1], [4, 3], [3, 4], [1, 4], [0, 3], [0, 1]], lineTotal: 2, targetTriangles: 0, targetQuadrilaterals: 3 },
-  { outline: [[0, 1], [2, 0], [4, 1], [4, 3], [2, 4], [0, 3]], lineTotal: 2, targetTriangles: 2, targetQuadrilaterals: 1 }
+  { outline: [[0, 1], [2, 0], [4, 1], [4, 3], [2, 4], [0, 3]], lineTotal: 2, targetTriangles: 2, targetQuadrilaterals: 1, requiredVertex: 0 }
 ];
 
 /* ------------------------------------------------------------------ level table */
 
 export const levelMeta = [
-  { id: 1, kind: "open", titleKey: "level1Title", descKey: "level1Desc", ready: true, problemCount: 10 },
-  { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15 },
-  { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10 },
-  { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10 },
-  { id: 5, kind: "partition", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 10 }
+  { id: 1, kind: "open", titleKey: "level1Title", descKey: "level1Desc", ready: true, problemCount: 10, stage: "초급", difficulty: "하", conceptDepth: 1 },
+  { id: 2, kind: "closed", titleKey: "level2Title", descKey: "level2Desc", ready: true, problemCount: 15, stage: "초급", difficulty: "상", conceptDepth: 2 },
+  { id: 3, kind: "square-count", titleKey: "level3Title", descKey: "level3Desc", ready: true, problemCount: 10, stage: "중급", difficulty: "하", conceptDepth: 3 },
+  { id: 4, kind: "triangle-count", titleKey: "level4Title", descKey: "level4Desc", ready: true, problemCount: 10, stage: "중급", difficulty: "중", conceptDepth: 4 },
+  { id: 5, kind: "partition", titleKey: "level5Title", descKey: "level5Desc", ready: true, problemCount: 10, stage: "중급", difficulty: "상", conceptDepth: 5 }
 ];
 
 const pools = {
@@ -590,6 +631,11 @@ export function validateLevels() {
       seenIds.add(problem.id);
       assert(problem.level === level.id, `${label} claims level ${problem.level}.`);
       assert(problem.kind === level.kind, `${label} is a ${problem.kind} figure on a ${level.kind} level.`);
+      assert(["source-backed-adaptation", "internal-extension", "owner-approved-internal-extension"].includes(problem.provenanceKind), `${label} has no provenance contract.`);
+      assert(typeof problem.sourceRef === "string" && problem.sourceRef.length > 5, `${label} has no source reference.`);
+      assert(typeof problem.answerPolicy === "string" && problem.answerPolicy.length > 8, `${label} has no answer policy.`);
+      assert(Number.isInteger(problem.reasoningSteps) && problem.reasoningSteps > 0, `${label} has no reasoning-step estimate.`);
+      assert(problem.learnerFit && ["language", "representation", "prerequisite", "reasoningLoad", "responseMode"].every((key) => typeof problem.learnerFit[key] === "string"), `${label} has no learner-fit profile.`);
       if (problem.kind === "square-count" || problem.kind === "triangle-count") {
         validateCountProblem(problem);
         return;
@@ -631,12 +677,15 @@ function validatePartitionProblem(problem) {
   assert(problem.lineTotal === 1 || problem.lineTotal === 2, `${label} must ask for one or two lines.`);
   assert(problem.targetTriangles + problem.targetQuadrilaterals === problem.lineTotal + 1,
     `${label} target regions must account for every partition.`);
-  const recomputed = enumeratePartitionSolutions(
+  const allRecomputed = enumeratePartitionSolutions(
     outline.length,
     problem.lineTotal,
     problem.targetTriangles,
     problem.targetQuadrilaterals
   );
+  const recomputed = problem.requiredVertex == null
+    ? allRecomputed
+    : allRecomputed.filter((chords) => chords.some((chord) => chord.includes(problem.requiredVertex)));
   assert(recomputed.length > 0, `${label} has no valid drawing.`);
   assert(problem.validation.solutionCount === recomputed.length, `${label} solution count drifted.`);
   assert(new Set(problem.acceptedSolutionKeys).size === recomputed.length, `${label} contains duplicate accepted drawings.`);

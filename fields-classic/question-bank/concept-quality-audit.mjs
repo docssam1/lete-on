@@ -23,14 +23,89 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
 
 assert(curriculumTypeIds.size === 442, `expected 442 unique curriculum types, got ${curriculumTypeIds.size}`);
 assert(typePlacements.length === 489, `expected 489 curriculum placements, got ${typePlacements.length}`);
-assert(CONCEPT_DEFINITIONS.length === 47, `expected 47 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 51, `expected 51 Book 1-3 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 85, `expected 85 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
   "shape-quarter-half-turn": Object.freeze({
     conceptId: "concept:geometry:rotation-center-turn",
     placementBooks: Object.freeze(["book-01", "book-04"])
+  }),
+  "tetromino-family-choice": Object.freeze({
+    conceptId: "concept:geometry:tetromino-connectivity-fit",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "tetromino-square-composition": Object.freeze({
+    conceptId: "concept:geometry:tetromino-connectivity-fit",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "rotational-partition-two": Object.freeze({
+    conceptId: "concept:geometry:rotational-congruent-partition",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-01", "book-04", "book-09"])
+  }),
+  "rotational-partition-four": Object.freeze({
+    conceptId: "concept:geometry:rotational-congruent-partition",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-01", "book-04", "book-09"])
+  }),
+  "digital-grid-transform": Object.freeze({
+    conceptId: "concept:geometry:sequential-rigid-transforms",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "fold-cut-unfold-one-draw": Object.freeze({
+    conceptId: "concept:geometry:fold-reflection-unfold",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "fold-number-grid-one": Object.freeze({
+    conceptId: "concept:geometry:folded-number-cut-sum",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "fold-number-grid-two-orthogonal": Object.freeze({
+    conceptId: "concept:geometry:folded-number-cut-sum",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "fold-number-grid-two-diagonal": Object.freeze({
+    conceptId: "concept:geometry:folded-number-cut-sum",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "cube-count-solid": Object.freeze({
+    conceptId: "concept:geometry:cube-column-total-count",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04", "book-09"])
+  }),
+  "cube-minimum-from-solid": Object.freeze({
+    conceptId: "concept:geometry:cube-minimum-visible-support",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "cube-step-sequence": Object.freeze({
+    conceptId: "concept:pattern:triangular-stair-cumulative-growth",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "shape-difference-chain": Object.freeze({
+    conceptId: "concept:number:chained-difference-addition",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04", "book-09"])
+  }),
+  "balance-unit-ratio": Object.freeze({
+    conceptId: "concept:number:balance-equivalence-multiplicative-chain",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
+  }),
+  "directional-seat-placement": Object.freeze({
+    conceptId: "concept:logic:relative-direction-placement",
+    sourceBookId: "book-04",
+    placementBooks: Object.freeze(["book-04"])
   }),
   "fold-cut-shape-choice": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
@@ -265,9 +340,135 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:number:magic-square-target",
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03", "book-09"])
+  }),
+  "sequential-path-number-grid": Object.freeze({
+    conceptId: "concept:pattern:path-indexed-number-grid",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "diagonal-fill-number-grid": Object.freeze({
+    conceptId: "concept:pattern:path-indexed-number-grid",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "calendar-month-position": Object.freeze({
+    conceptId: "concept:pattern:calendar-seven-day-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "calendar-cross-month-weekday": Object.freeze({
+    conceptId: "concept:pattern:calendar-seven-day-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "shortest-path-rectangle": Object.freeze({
+    conceptId: "concept:logic:shortest-path-branch-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "shortest-path-irregular-grid": Object.freeze({
+    conceptId: "concept:logic:shortest-path-branch-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "digit-card-number-enumeration": Object.freeze({
+    conceptId: "concept:number:digit-card-enumerate-rank",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05", "book-10"])
+  }),
+  "digit-card-ranked-number": Object.freeze({
+    conceptId: "concept:number:digit-card-enumerate-rank",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "multiplication-table-pattern": Object.freeze({
+    conceptId: "concept:number:multiplication-head-table",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "product-cycle-completion": Object.freeze({
+    conceptId: "concept:number:adjacent-product-cycle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-product-pair": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-multiplication-chain": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "symbol-mixed-operation-grid": Object.freeze({
+    conceptId: "concept:number:symbol-product-equation-chain",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "handshake-pair-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "pair-selection-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "complete-graph-segment-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "inverse-pair-count": Object.freeze({
+    conceptId: "concept:logic:unordered-pair-count",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "square-number-odd-sum": Object.freeze({
+    conceptId: "concept:pattern:figurative-number-growth",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
+  }),
+  "pascal-row-sum": Object.freeze({
+    conceptId: "concept:pattern:adjacent-sum-triangle",
+    sourceBookId: "book-05",
+    placementBooks: Object.freeze(["book-05"])
   })
 });
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
+
+const expectedBook04ConceptTypes = Object.freeze([
+  "tetromino-family-choice", "tetromino-square-composition", "rotational-partition-two",
+  "rotational-partition-four", "shape-quarter-half-turn", "digital-digit-transform",
+  "digital-grid-transform", "fold-cut-unfold-one-draw", "fold-number-grid-one",
+  "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal", "cube-count-solid",
+  "cube-minimum-from-solid", "cube-step-sequence", "shape-difference-chain", "balance-unit-ratio",
+  "person-item-logic", "directional-seat-placement"
+].sort());
+const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04").units.flatMap((unit) =>
+  Object.entries(unit.typeStudyRefs || {})
+    .filter(([, references]) => references.concept?.length)
+    .map(([typeId]) => typeId)
+).sort();
+assert(JSON.stringify(actualBook04ConceptTypes) === JSON.stringify(expectedBook04ConceptTypes),
+  `Book 4 concept typeStudyRefs changed: expected ${expectedBook04ConceptTypes.join(",")}, got ${actualBook04ConceptTypes.join(",")}`);
+const expectedBook05ConceptTypes = Object.freeze([
+  "sequential-path-number-grid", "diagonal-fill-number-grid", "calendar-month-position",
+  "calendar-cross-month-weekday", "shortest-path-rectangle", "shortest-path-irregular-grid",
+  "digit-card-number-enumeration", "digit-card-ranked-number", "multiplication-table-pattern",
+  "product-cycle-completion", "symbol-product-pair", "symbol-multiplication-chain",
+  "symbol-mixed-operation-grid", "handshake-pair-count", "pair-selection-count",
+  "complete-graph-segment-count", "inverse-pair-count", "square-number-odd-sum", "pascal-row-sum"
+].sort());
+const actualBook05ConceptTypes = CURRICULUM.find((book) => book.id === "book-05").units.flatMap((unit) =>
+  Object.entries(unit.typeStudyRefs || {})
+    .filter(([, references]) => references.concept?.length)
+    .map(([typeId]) => typeId)
+).sort();
+assert(JSON.stringify(actualBook05ConceptTypes) === JSON.stringify(expectedBook05ConceptTypes),
+  `Book 5 concept typeStudyRefs changed: expected ${expectedBook05ConceptTypes.join(",")}, got ${actualBook05ConceptTypes.join(",")}`);
 
 const lockedConceptTypeIds = new Set(CURRICULUM.flatMap((book) => book.units.flatMap((unit) =>
   Object.entries(unit.sourceAuditBlockedStages || {})
@@ -277,14 +478,18 @@ assert([...lockedConceptTypeIds].every((typeId) => !Object.hasOwn(expectedPilot,
   `locked concept-stage type entered expectedPilot: ${[...lockedConceptTypeIds].filter((typeId) => Object.hasOwn(expectedPilot, typeId)).join(",")}`);
 
 const forbiddenPrivateOrAnswerData = /(?:[a-z]:[\\/]|\\\\|g:\\|c:\\|\/users\/|\banswer\b|정답|seed)/i;
+const evidenceReferenceKey = (reference) => JSON.stringify({
+  bookId: reference.bookId,
+  unitLabel: reference.unitLabel,
+  stage: reference.stage,
+  section: reference.section,
+  group: reference.group,
+  numbers: reference.numbers
+});
 for (const [typeId, expected] of Object.entries(expectedPilot)) {
   const lesson = TYPE_CONCEPT_LESSONS[typeId];
   const definition = CONCEPT_DEFINITION_BY_ID[lesson.conceptId];
   const concept = representativeConceptForType(typeId);
-  const sourceBookId = expected.sourceBookId || "book-01";
-  const sourceBook = CURRICULUM.find((book) => book.id === sourceBookId);
-  const sourceBookNumber = Number(sourceBookId.split("-")[1]);
-  assert(sourceBook, `${sourceBookId}: curriculum source is missing`);
   assert(curriculumTypeIds.has(typeId), `${typeId}: not in curriculum`);
   assert(lesson.conceptId === expected.conceptId, `${typeId}: wrong concept id`);
   assert(definition, `${typeId}: concept definition missing`);
@@ -298,14 +503,27 @@ for (const [typeId, expected] of Object.entries(expectedPilot)) {
   assert(lesson.misconception.trim().length > 12, `${typeId}: misconception missing`);
   assert(lesson.verificationState === "source-confirmed", `${typeId}: verification state changed`);
   assert(lesson.scope === "global-type-id" && lesson.sharedByDesign === true, `${typeId}: intentional type-level sharing contract missing`);
-  const sourceRefs = sourceBook.units.flatMap((unit) => (unit.typeStudyRefs?.[typeId]?.concept || []).map((reference) => ({
-    bookId: sourceBook.id,
-    unitLabel: unit.label,
-    stage: "concept",
-    section: reference.section,
-    group: reference.group,
-    numbers: reference.numbers
-  })));
+  const evidenceBookIds = [...new Set(lesson.sourceEvidence.map((sourceEvidence) => sourceEvidence.bookId))];
+  const sourceBookIds = expected.sourceBookId ? [expected.sourceBookId] : evidenceBookIds;
+  assert(sourceBookIds.length > 0, `${typeId}: source evidence book is missing`);
+  if (expected.sourceBookId) {
+    assert(evidenceBookIds.length === 1 && evidenceBookIds[0] === expected.sourceBookId,
+      `${typeId}: expected only ${expected.sourceBookId} evidence, got ${evidenceBookIds.join(",")}`);
+  }
+  const sourceBooks = sourceBookIds.map((sourceBookId) => {
+    const sourceBook = CURRICULUM.find((book) => book.id === sourceBookId);
+    assert(sourceBook, `${typeId}: ${sourceBookId} curriculum source is missing`);
+    return sourceBook;
+  });
+  const sourceRefs = sourceBooks.flatMap((sourceBook) => sourceBook.units.flatMap((unit) =>
+    (unit.typeStudyRefs?.[typeId]?.concept || []).map((reference) => ({
+      bookId: sourceBook.id,
+      unitLabel: unit.label,
+      stage: "concept",
+      section: reference.section,
+      group: reference.group,
+      numbers: reference.numbers
+    }))));
   const evidenceRefs = lesson.sourceEvidence.map((sourceEvidence) => ({
     bookId: sourceEvidence.bookId,
     unitLabel: sourceEvidence.unitLabel,
@@ -314,11 +532,26 @@ for (const [typeId, expected] of Object.entries(expectedPilot)) {
     group: sourceEvidence.group,
     numbers: sourceEvidence.numbers
   }));
-  assert(sourceRefs.length > 0, `${typeId}: ${sourceBookId} concept-stage source references are missing`);
-  assert(JSON.stringify(evidenceRefs) === JSON.stringify(sourceRefs), `${typeId}: evidence does not match ${sourceBookId} typeStudyRefs`);
-  assert(lesson.sourceEvidence.every((sourceEvidence) => sourceEvidence.source === `Fields the Classic Course 1 Book ${sourceBookNumber}`
-    && sourceEvidence.verificationState === "source-confirmed"
-    && sourceEvidence.visibility === "public-safe"), `${typeId}: unsafe evidence state`);
+  const sourceRefKeys = sourceRefs.map(evidenceReferenceKey);
+  const evidenceRefKeys = evidenceRefs.map(evidenceReferenceKey);
+  const sourceRefKeySet = new Set(sourceRefKeys);
+  const evidenceRefKeySet = new Set(evidenceRefKeys);
+  assert(sourceRefs.length > 0, `${typeId}: ${sourceBookIds.join(",")} concept-stage source references are missing`);
+  assert(sourceRefKeySet.size === sourceRefKeys.length, `${typeId}: duplicate curriculum concept-stage source reference`);
+  assert(evidenceRefKeySet.size === evidenceRefKeys.length, `${typeId}: duplicate lesson source evidence`);
+  const missingEvidenceRefs = sourceRefKeys.filter((referenceKey) => !evidenceRefKeySet.has(referenceKey));
+  const unexpectedEvidenceRefs = evidenceRefKeys.filter((referenceKey) => !sourceRefKeySet.has(referenceKey));
+  assert(missingEvidenceRefs.length === 0 && unexpectedEvidenceRefs.length === 0,
+    `${typeId}: evidence/typeStudyRefs mismatch; missing=${missingEvidenceRefs.join("|") || "none"} unexpected=${unexpectedEvidenceRefs.join("|") || "none"}`);
+  for (const sourceEvidence of lesson.sourceEvidence) {
+    const evidenceBook = CURRICULUM.find((book) => book.id === sourceEvidence.bookId);
+    assert(evidenceBook, `${typeId}: ${sourceEvidence.bookId} evidence book is missing`);
+    const evidenceBookNumber = Number(sourceEvidence.bookId.split("-")[1]);
+    assert(sourceEvidence.source === `Fields the Classic Course 1 Book ${evidenceBookNumber}`,
+      `${typeId}: source label does not match ${sourceEvidence.bookId}`);
+    assert(sourceEvidence.verificationState === "source-confirmed" && sourceEvidence.visibility === "public-safe",
+      `${typeId}: unsafe evidence state`);
+  }
   const placementBooks = CURRICULUM.filter((book) => book.units.some((unit) => unit.typeIds.includes(typeId))).map((book) => book.id);
   assert(JSON.stringify(placementBooks) === JSON.stringify(expected.placementBooks), `${typeId}: curriculum placement books changed`);
   assert(!forbiddenPrivateOrAnswerData.test(JSON.stringify({ definition, lesson })), `${typeId}: private path or answer data leaked`);
@@ -345,8 +578,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 51, `expected 51 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 391, `expected 391 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 85, `expected 85 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 357, `expected 357 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
