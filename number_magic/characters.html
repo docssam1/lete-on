@@ -247,14 +247,8 @@ const CH_TR = {
   }
 };
 
-/* 0·3·8은 앱 전역에서 쓰는 고유 이름(누미·포코·모모, about.html capNumi 등과 동일 표기) —
-   NM_AVATAR.numbers 데이터엔 이름 필드가 없어 여기서만 매핑, 나머지 숫자는 이름 없이
-   숫자 자체를 캐릭터로 보여준다(데이터에 없는 설정을 지어내지 않음). */
-const NUM_NAME = {
-  0:{ko:'누미',en:'Numi',zh:'努米'},
-  3:{ko:'포코',en:'Poco',zh:'波可'},
-  8:{ko:'모모',en:'Momo',zh:'莫莫'},
-};
+/* 이름·칭호·소개는 전부 data/numi-avatar.js에 있다(2026-09-02 숫자 친구 설정 추가) —
+   이 파일에는 캐릭터 정보를 옮겨 적지 않는다. */
 const IMG_FILE = {0:'numi-0.png', 3:'poco-3.png', 8:'momo-8.png'};
 function numImgSrc(n){ return 'assets/characters/' + (IMG_FILE[n] || ('num-'+n+'.png')); }
 
@@ -293,19 +287,24 @@ function symCardHtml(s, lang){
 
 function numCardHtml(n, lang){
   const id = n.id;
-  const special = NUM_NAME[id];
-  const name = special ? special[lang] : id;
+  const name = (n[lang] || n.ko || String(id));
+  const role = (n.role && (n.role[lang] || n.role.ko)) || '';
+  const desc = (n.desc && (n.desc[lang] || n.desc.ko)) || '';
+  const power = (n.power && (n.power[lang] || n.power.ko)) || '';
   const meet = n.course ? courseMeetLine(n.course, lang) : (CH_TR[lang].numFree);
   const meetIcon = n.course ? '🗓' : '✨';
   return `<article class="card num-card">
     <div class="card-fig">
       <span class="fig-aura blue"></span>
-      <img src="${numImgSrc(id)}" alt="${special ? name : id}" draggable="false">
+      <img src="${numImgSrc(id)}" alt="${name}" draggable="false">
+      <span class="glyph-chip">${id}</span>
     </div>
     <div class="card-body">
-      <h3 class="card-name${special ? '' : ' plain'}">${name}</h3>
-      ${special ? `<span class="role-badge">No. ${id}</span>` : ''}
+      ${role ? `<span class="role-badge">${role}</span>` : ''}
+      <h3 class="card-name">${name}</h3>
+      ${desc ? `<p class="card-desc">${desc}</p>` : ''}
       <div class="card-lines">
+        ${power ? `<div class="card-line"><span class="ico">✨</span><span>${power}</span></div>` : ''}
         <div class="card-line"><span class="ico">${meetIcon}</span><span>${meet}</span></div>
       </div>
     </div>
