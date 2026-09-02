@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260830a";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260902b";
 import { GENERATORS } from "./generators.js?v=20260827e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
@@ -55,11 +55,52 @@ const state = {
   difficulty: "actual",
   curriculumBookId: CURRICULUM[0]?.id || "book-01",
   curriculumStage: "type",
+  searchQuery: "",
   order: "exam",
   includeSolution: true,
   watermark: true,
   questions: []
 };
+
+function normalizeSearchText(value) {
+  return String(value || "").normalize("NFKC").toLocaleLowerCase("ko-KR").replace(/\s+/g, " ").trim();
+}
+
+function activeSearchTerms() {
+  return normalizeSearchText(state.searchQuery).split(" ").filter(Boolean);
+}
+
+function matchesSearch(...values) {
+  const terms = activeSearchTerms();
+  if (!terms.length) return true;
+  const haystack = normalizeSearchText(values.flat(Infinity).filter(Boolean).join(" "));
+  return terms.every((term) => haystack.includes(term));
+}
+
+function typeSearchValues(item) {
+  if (!item) return [];
+  const domain = DOMAINS.find((entry) => entry.id === item.domain);
+  const concept = representativeConceptForType(item.id);
+  return [
+    item.id, domain?.label, item.middle, item.label, item.catalogGroup, item.catalogStrategy,
+    item.operation, item.operationLabel, item.problemStructure, item.problemStructureLabel,
+    item.searchAliases, item.textbookSource, item.worksheetSource,
+    concept?.label, concept?.summary, concept?.definition, concept?.principle
+  ];
+}
+
+function typeMatchesSearch(item, ...context) {
+  return matchesSearch(typeSearchValues(item), context);
+}
+
+function updateSearchStatus(matchCount, scopeLabel) {
+  const status = $("bankSearchStatus");
+  const clear = $("clearBankSearch");
+  if (!status || !clear) return;
+  const hasQuery = activeSearchTerms().length > 0;
+  status.textContent = hasQuery ? `${scopeLabel} ${matchCount}개 찾음` : "낱말·권·단원·유형·대표 개념 검색";
+  clear.hidden = !hasQuery;
+}
 
 function activeTextbookStage() {
   return TEXTBOOK_STAGES.find((item) => item.id === state.curriculumStage) || TEXTBOOK_STAGES[1];
@@ -288,7 +329,14 @@ function setMode(mode) {
   $("curriculumStageSetting").hidden = mode !== "curriculum";
   typePreviewCache.clear();
   hideTypePreview();
+  if (mode === "exam") renderExamList();
+  if (mode === "curriculum") renderCurriculum();
+  if (mode === "type") renderTypeTree();
   updateSummary();
+}
+
+function typeTaxonomyLabel(item) {
+  return [item.problemStructureLabel, item.operationLabel].filter(Boolean).join(" · ");
 }
 
 function renderStageButtons() {
@@ -312,11 +360,22 @@ function examKey(examId, number) {
 }
 
 function renderExamList() {
-  const exams = visibleExams();
+  const allExams = visibleExams();
+  const hasQuery = activeSearchTerms().length > 0;
+  const exams = allExams.map((exam) => {
+    const examMatch = matchesSearch(exam.label, exam.file);
+    const questions = exam.questions.filter((sourceQuestion) => {
+      const item = typeById(sourceQuestion.typeId);
+      return !hasQuery || examMatch || typeMatchesSearch(item, sourceQuestion.note, `${sourceQuestion.number}번`);
+    });
+    return { ...exam, allQuestions: exam.questions, questions };
+  }).filter((exam) => exam.questions.length > 0);
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
   const mockStage = MOCK_EXAM_NAV.find((item) => item.id === state.stage);
   $("examStageTitle").textContent = stage?.label || mockStage?.label || "시험지 선택";
-  $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
+  const resultCount = exams.reduce((sum, exam) => sum + exam.questions.length, 0);
+  $("examStageMeta").textContent = hasQuery ? `${resultCount}개 문항 검색 결과` : `${exams.length}개 시험지 · 원본 문항 번호 기준`;
+  updateSearchStatus(resultCount, "시험 문항");
   $("examNotice").textContent = state.stage === "diagnostic"
     ? "필즈 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
     : mockStage
@@ -343,7 +402,7 @@ function renderExamList() {
     // 파일명에 붙은 괄호 안 시행일(230206 등)은 화면에 내보내지 않는다. 파일을 찾는 데만 쓰는 값이다.
     const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
     const diagnosisLink = exam.verified && exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">빠른 채점·진단</a>` : "";
-    const examReady = exam.questions.every((sourceQuestion) => sourceQuestion.verified === true && isSelectableType(typeById(sourceQuestion.typeId)));
+    const examReady = exam.allQuestions.every((sourceQuestion) => sourceQuestion.verified === true && isSelectableType(typeById(sourceQuestion.typeId)));
     const diagnosisStatus = diagnosisLink || `<span class="exam-source-status">${examReady ? "원본 대조 완료" : "유형 대조 중"}</span>`;
     return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${diagnosisStatus}</div>${rows}</details>`;
   };
@@ -419,8 +478,27 @@ function studyReferenceLabel(references = []) {
   }).join(" · ");
 }
 
+function curriculumSearchModel(book) {
+  const hasQuery = activeSearchTerms().length > 0;
+  const bookMatch = matchesSearch(book.label, book.title);
+  const units = book.units.map((unit, unitIndex) => {
+    const unitMatch = bookMatch || matchesSearch(unit.label);
+    const types = unit.typeIds
+      .map((id) => typeById(id))
+      .filter(Boolean)
+      .filter((item) => !hasQuery || unitMatch || typeMatchesSearch(item, book.label, book.title, unit.label));
+    return { unit, unitIndex, types };
+  }).filter((entry) => entry.types.length > 0);
+  const testQuestions = (book.source.unitTestQuestions || []).filter((question) => {
+    const item = typeById(question.typeId);
+    return !hasQuery || bookMatch || typeMatchesSearch(item, book.label, book.title, "단원 테스트", question.label, `${question.number}번`);
+  });
+  return { book, units, testQuestions, matchCount: units.reduce((sum, entry) => sum + entry.types.length, 0) + testQuestions.length };
+}
+
 function renderCurriculum() {
   const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  const hasQuery = activeSearchTerms().length > 0;
   if ($("goldenBellLink")) $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
   const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
     `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
@@ -428,10 +506,14 @@ function renderCurriculum() {
   const stageTabs = `<div class="curriculum-inline-stages" aria-label="교재 학습 단계 선택">${TEXTBOOK_STAGES.map((stage) =>
     `<button type="button" data-curriculum-stage="${stage.id}" class="${stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
   ).join("")}</div>`;
-  const activeBookMarkup = [activeBook].map((book) => {
+  const bookModels = (hasQuery ? CURRICULUM : [activeBook])
+    .map(curriculumSearchModel)
+    .filter((model) => !hasQuery || model.matchCount > 0);
+  const resultCount = bookModels.reduce((sum, model) => sum + model.matchCount, 0);
+  updateSearchStatus(resultCount, "교재 항목");
+  const activeBookMarkup = bookModels.map(({ book, units: unitModels, testQuestions }) => {
     const sourceFolder = book.id.replace("-", "");
-    const units = book.units.map((unit, unitIndex) => {
-      const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
+    const units = unitModels.map(({ unit, unitIndex, types }) => {
       const typeRows = types.map((item) => {
         const key = curriculumKey(book.id, unitIndex, item.id);
         const stage = activeTextbookStage();
@@ -447,7 +529,7 @@ function renderCurriculum() {
           : `${stage.label} 단계 변형 생성 · 원본은 ${alternateStageLabel}${sourceAuditBlocked ? " · 해당 단계 원본 검토 중" : ""}`;
         return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"} ${sourceNumbers ? "source-stage" : "derived-stage"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
-          <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
+          <span><strong>${item.label}</strong><span>${item.middle} · ${typeTaxonomyLabel(item) ? `${typeTaxonomyLabel(item)} · ` : ""}${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
           <em class="type-status ${ready ? "" : "fixed"}">${ready ? sourceNumbers ? "원본형 무한 생성" : "단계 변형 생성" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
@@ -461,7 +543,6 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
-    const testQuestions = book.source.unitTestQuestions || [];
     const testReadyCount = testQuestions.filter((question) => question.verified && isSelectableType(typeById(question.typeId))).length;
     const testQuestionRows = testQuestions.length ? `<div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
       ${testQuestions.map((question) => {
@@ -477,7 +558,7 @@ function renderCurriculum() {
     </div>` : "";
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
-      <div class="curriculum-sources">
+      <div class="curriculum-sources"${hasQuery ? " hidden" : ""}>
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
         <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "개념 → 골든벨 → 이야기" : "준비 중"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
@@ -490,7 +571,8 @@ function renderCurriculum() {
       <p class="book-policy">골든벨은 별도 개념 학습으로 연결${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
-  $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}`;
+  const emptyResult = hasQuery && !bookModels.length ? `<div class="search-empty"><strong>검색 결과가 없습니다.</strong><span>다른 낱말이나 단원 이름으로 찾아보세요.</span></div>` : "";
+  $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}${emptyResult}`;
 
   $("curriculumTree").querySelectorAll("button[data-curriculum-book]").forEach((button) => button.addEventListener("click", () => {
     state.curriculumBookId = button.dataset.curriculumBook;
@@ -516,7 +598,9 @@ function renderCurriculum() {
 function groupedTypes() {
   // 원본과 생성 경로가 모두 확정된 유형만 선택 목록에 노출한다. 미연결 분류
   // 자리는 데이터에 보존하되, 실제 문제처럼 회색 행으로 보여 주지 않는다.
-  const matchesStyle = (item) => isSelectableType(item) && academyStyleIdsForType(item).some((id) => state.academyStyles.has(id));
+  const matchesStyle = (item) => isSelectableType(item)
+    && academyStyleIdsForType(item).some((id) => state.academyStyles.has(id))
+    && typeMatchesSearch(item);
   return DOMAINS.map((domain) => ({
     domain,
     middles: [...new Set(TYPES.filter((item) => item.domain === domain.id && matchesStyle(item)).map((item) => item.middle))].map((middle) => ({
@@ -524,6 +608,36 @@ function groupedTypes() {
       types: TYPES.filter((item) => item.domain === domain.id && item.middle === middle && matchesStyle(item))
     }))
   })).filter((group) => group.middles.length);
+}
+
+function catalogEntries(types) {
+  const entries = [];
+  const familyByLabel = new Map();
+  for (const item of types) {
+    if (!item.catalogGroup || !item.catalogStrategy) {
+      entries.push({ kind: "type", item });
+      continue;
+    }
+    let family = familyByLabel.get(item.catalogGroup);
+    if (!family) {
+      family = { kind: "family", label: item.catalogGroup, variants: [], variantByLabel: new Map() };
+      familyByLabel.set(item.catalogGroup, family);
+      entries.push(family);
+    }
+    let variant = family.variantByLabel.get(item.catalogStrategy);
+    if (!variant) {
+      variant = { label: item.catalogStrategy, types: [] };
+      family.variantByLabel.set(item.catalogStrategy, variant);
+      family.variants.push(variant);
+    }
+    variant.types.push(item);
+  }
+  return entries;
+}
+
+function catalogEntryCount(groups) {
+  return groups.reduce((sum, group) => sum + group.middles.reduce((middleSum, middle) =>
+    middleSum + catalogEntries(middle.types).reduce((entrySum, entry) => entrySum + (entry.kind === "family" ? entry.variants.length : 1), 0), 0), 0);
 }
 
 function academyStyleIdsForType(item) {
@@ -580,22 +694,63 @@ function setCurriculumStage(stageId) {
 }
 
 function renderTypeTree() {
-  $("bankTypeTree").innerHTML = groupedTypes().map(({ domain, middles }) => `<details class="tree-group" open>
-    <summary><strong>${domain.label}</strong><span>${middles.reduce((sum, group) => sum + group.types.length, 0)}개 세부 유형</span></summary>
+  const groups = groupedTypes();
+  updateSearchStatus(catalogEntryCount(groups), "유형");
+  $("bankTypeTree").innerHTML = groups.map(({ domain, middles }) => `<details class="tree-group" open>
+    <summary><strong>${domain.label}</strong><span>${middles.reduce((sum, group) => sum + catalogEntries(group.types).reduce((entrySum, entry) => entrySum + (entry.kind === "family" ? entry.variants.length : 1), 0), 0)}개 세부 유형</span></summary>
     ${middles.map(({ middle, types }) => `<details class="middle-group" open><summary><strong>${middle}</strong></summary><div class="type-leaves">
-      ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}"${isSelectableType(item) ? ` data-preview-type="${item.id}"` : ""}>
-        <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} ${isSelectableType(item) ? "" : "disabled"} />
-        <span><strong>${item.label}</strong><span>${typeSourceLabel(item)}</span><small class="learning-map-inline ${learningMapForType(item).kind}">${learningMapInlineLabel(item)}</small></span>
-        <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${isSelectableType(item) ? typeStatus(item) : "원본 대조 중"}</em>
-      </label>`).join("")}
+      ${catalogEntries(types).map((entry) => {
+        if (entry.kind === "type") {
+          const item = entry.item;
+          return `<label class="type-leaf" data-preview-type="${item.id}">
+            <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} />
+            <span><strong>${item.label}</strong><span>${typeTaxonomyLabel(item) ? `${typeTaxonomyLabel(item)} · ` : ""}${typeSourceLabel(item)}</span><small class="learning-map-inline ${learningMapForType(item).kind}">${learningMapInlineLabel(item)}</small></span>
+            <em class="type-status">${typeStatus(item)}</em>
+          </label>`;
+        }
+        return `<section class="catalog-family">
+          <header><strong>${entry.label}</strong><span>${entry.variants.length}가지 풀이 방식</span></header>
+          ${entry.variants.map((variant) => {
+            const ids = variant.types.map((item) => item.id);
+            const selected = ids.every((id) => state.selected.type.has(id));
+            const representative = variant.types[0];
+            return `<label class="type-leaf catalog-strategy" data-preview-type="${representative.id}">
+              <input type="checkbox" data-type-ids="${ids.join(",")}" ${selected ? "checked" : ""} />
+              <span><strong>${variant.label}</strong><span>${ids.length}가지 원본 배치에서 같은 풀이 원리</span><small class="learning-map-inline ${learningMapForType(representative).kind}">${learningMapInlineLabel(representative)}</small></span>
+              <em class="type-status">원본형 무한 생성</em>
+            </label>`;
+          }).join("")}
+        </section>`;
+      }).join("")}
     </div></details>`).join("")}
-  </details>`).join("");
+  </details>`).join("") || `<div class="search-empty"><strong>검색 결과가 없습니다.</strong><span>다른 낱말이나 대표 개념으로 찾아보세요.</span></div>`;
 
   $("bankTypeTree").querySelectorAll("input[data-type-id]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.type.add(input.dataset.typeId);
     else state.selected.type.delete(input.dataset.typeId);
     updateSummary();
   }));
+  $("bankTypeTree").querySelectorAll("input[data-type-ids]").forEach((input) => {
+    const ids = input.dataset.typeIds.split(",").filter(Boolean);
+    const selectedCount = ids.filter((id) => state.selected.type.has(id)).length;
+    input.indeterminate = selectedCount > 0 && selectedCount < ids.length;
+    input.addEventListener("change", () => {
+      ids.forEach((id) => input.checked ? state.selected.type.add(id) : state.selected.type.delete(id));
+      input.indeterminate = false;
+      updateSummary();
+    });
+  });
+}
+
+function toggleTypeSelections() {
+  const inputs = [...$("bankTypeTree").querySelectorAll("input[data-type-id], input[data-type-ids]")];
+  const ids = [...new Set(inputs.flatMap((input) => input.dataset.typeIds
+    ? input.dataset.typeIds.split(",").filter(Boolean)
+    : [input.dataset.typeId]))];
+  const shouldSelect = ids.some((id) => !state.selected.type.has(id));
+  ids.forEach((id) => shouldSelect ? state.selected.type.add(id) : state.selected.type.delete(id));
+  renderTypeTree();
+  updateSummary();
 }
 
 function generationCaseForSource(sourceKind, sourceId, number) {
@@ -678,13 +833,22 @@ function selectedTypeIds() {
   return selectedReferences().map((item) => item.typeId);
 }
 
+function selectedCatalogCount(typeIds) {
+  if (state.mode !== "type") return new Set(typeIds).size;
+  return new Set(typeIds.map((id) => {
+    const item = typeById(id);
+    return item?.catalogGroup && item?.catalogStrategy ? `${item.catalogGroup}:${item.catalogStrategy}` : id;
+  })).size;
+}
+
 function updateSummary() {
   const typeIds = selectedTypeIds();
   const unique = new Set(typeIds);
   const ready = [...unique].filter((id) => isSelectableType(typeById(id))).length;
-  $("selectionTotal").textContent = `${unique.size}개 유형 · ${state.count}문제`;
+  const catalogCount = selectedCatalogCount(typeIds);
+  $("selectionTotal").textContent = `${catalogCount}개 유형 · ${state.count}문제`;
   $("selectionHelp").textContent = unique.size
-    ? `${ready}개 유형은 지금 생성할 수 있고, 나머지는 원본 분류 완료 후 생성기를 연결합니다.`
+    ? `${catalogCount}개 풀이 유형에서 검증된 ${ready}개 원본 구조를 섞어 생성합니다.`
     : "왼쪽에서 시험 문항이나 유형을 선택하세요.";
   $("buildButton").disabled = ready === 0;
 }
@@ -3443,9 +3607,28 @@ function initControls() {
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("builderTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+  const runSearch = () => {
+    state.searchQuery = $("bankSearch").value;
+    typePreviewCache.clear();
+    hideTypePreview();
+    if (state.mode === "exam") renderExamList();
+    if (state.mode === "curriculum") renderCurriculum();
+    if (state.mode === "type") renderTypeTree();
+  };
+  $("bankSearch").addEventListener("input", runSearch);
+  $("bankSearch").addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    $("bankSearch").value = "";
+    runSearch();
+  });
+  $("clearBankSearch").addEventListener("click", () => {
+    $("bankSearch").value = "";
+    runSearch();
+    $("bankSearch").focus();
+  });
   $("toggleExamTypes").addEventListener("click", () => toggleVisible("#examTypeList input[data-exam-key]", state.selected.exam, (input) => input.dataset.examKey));
   $("toggleCurriculum").addEventListener("click", toggleCurriculumSelections);
-  $("toggleBankTypes").addEventListener("click", () => toggleVisible("#bankTypeTree input[data-type-id]", state.selected.type, (input) => input.dataset.typeId));
+  $("toggleBankTypes").addEventListener("click", toggleTypeSelections);
   $("countChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.count = Number(button.dataset.count);
     $("questionCount").value = state.count;

@@ -104,11 +104,11 @@ export const TYPES = [
   type("repeat-three-shapes", "pattern", "반복 규칙", "세 가지 도형의 순서 반복", { generator: "threeShapeCycle", sourceMatched: true }),
   type("repeat-four-shapes", "pattern", "반복 규칙", "네 가지 도형의 순서 반복", { generator: "fourShapeCycle", sourceMatched: true }),
   type("repeat-four-items-with-duplicate", "pattern", "반복 규칙", "같은 모양이 두 번 들어간 네 칸 반복", { generator: "fourItemCycleWithDuplicate", sourceMatched: true }),
-  type("shape-sum-table", "number", "매트릭스", "도형의 가로·세로 합 매트릭스", { generator: "shapeSumTable", sourceMatched: true, textbookSource: "더클래식 1과정 2권 10~14·23쪽·단원 테스트 1·2·22번" }),
-  type("shape-sum-table-row-target", "number", "매트릭스", "같은 도형을 이용해 가로 합 구하기", { generator: "shapeSumRowTarget", sourceMatched: true }),
-  type("shape-sum-table-bottom-target", "number", "매트릭스", "도형의 가로·세로 합 표", { generator: "shapeSumBottomTarget", sourceMatched: true }),
-  type("shape-sum-table-column-target", "number", "매트릭스", "두 줄 도형표의 세로 합 구하기", { generator: "shapeSumColumnTarget", sourceMatched: true }),
-  type("shape-sum-table-repeated-column-target", "number", "매트릭스", "같은 도형이 놓인 세로줄의 합으로 다른 세로줄 구하기", { generator: "shapeSumRepeatedColumnTarget", sourceMatched: true }),
+  type("shape-sum-table", "number", "도형이 나타내는 수", "같은 도형이 반복된 줄부터 값 찾기", { generator: "shapeSumTable", sourceMatched: true, textbookSource: "더클래식 1과정 2권 10~14·23쪽·단원 테스트 1·2·22번", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 줄의 같은 도형부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-sum-table-row-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 가로 합 구하기", { generator: "shapeSumRowTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
+  type("shape-sum-table-bottom-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 아래 합 구하기", { generator: "shapeSumBottomTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
+  type("shape-sum-table-column-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 세로 합 구하기", { generator: "shapeSumColumnTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
+  type("shape-sum-table-repeated-column-target", "number", "도형이 나타내는 수", "같은 도형의 합으로 다른 줄의 합 구하기", { generator: "shapeSumRepeatedColumnTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
   type("arrow-number-grid", "pattern", "수 규칙", "화살표 방향 수 배열", { generator: "arrowNumberGrid", sourceMatched: true }),
   type("arrow-number-horizontal-tens", "pattern", "수 규칙", "화살표로 10과 1 더하고 빼기", { generator: "arrowNumberHorizontalTens", sourceMatched: true }),
   type("arrow-number-path-seven", "pattern", "수 규칙", "화살표 7번 이동 수 경로", { generator: "arrowNumberPathSeven", sourceMatched: true }),
@@ -122,11 +122,11 @@ export const TYPES = [
   type("equal-line-sum-eight-cards-complete-book3", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 사각 둘레 완성하기", { generator: "equalLineSumEightCardsCompleteBook3", sourceMatched: true, textbookSource: "더클래식 1과정 3권 119쪽 연습 16번" }),
   type("equal-line-sum-eight-cards-fifteen-top-left", "number", "수 배열과 합", "1부터 8까지 한 번씩 써서 네 변의 합을 같게 만들기", { generator: "equalLineSumEightCardsFifteenTopLeft", sourceMatched: true }),
   type("equal-line-sum-eight-cards-twelve", "number", "수 배열과 합", "1부터 8까지 써서 각 줄의 합을 같게 만들기", { generator: "equalLineSumEightCardsTwelve", sourceMatched: true }),
-  type("symbol-sum-grid", "number", "매트릭스", "도형 매트릭스의 빈 합 구하기", { generator: "sourceSymbolSumGrid", sourceMatched: true }),
-  type("shape-sum-grid-triangle-top", "number", "매트릭스", "세모 세 개로 시작하는 도형 합 표", { generator: "shapeSumGridTriangleTop", sourceMatched: true }),
-  type("shape-sum-grid-top-target", "number", "매트릭스", "도형 합 표의 첫째 줄 합 구하기", { generator: "shapeSumGridTopTarget", sourceMatched: true }),
-  type("shape-sum-grid-triangle-column-target", "number", "매트릭스", "세모 세 개가 놓인 도형 합 표", { generator: "shapeSumGridTriangleColumnTarget", sourceMatched: true }),
-  type("symbol-sum-grid-square-top", "number", "매트릭스", "네모 세 개로 시작하는 도형 합 매트릭스", { generator: "symbolSumGridSquareTop", sourceMatched: true }),
+  type("symbol-sum-grid", "number", "도형이 나타내는 수", "가로·세로줄의 합으로 빈 합 구하기", { generator: "sourceSymbolSumGrid", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "가로줄과 세로줄의 합으로 빈 합 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-sum-grid-triangle-top", "number", "도형이 나타내는 수", "한 종류가 반복된 줄부터 도형값 찾기", { generator: "shapeSumGridTriangleTop", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 줄의 같은 도형부터 값 찾기", searchAliases: ["매트릭스", "세모 세 개", "도형 합 표"] }),
+  type("shape-sum-grid-top-target", "number", "도형이 나타내는 수", "공통 도형을 제외해 목표 줄의 합 구하기", { generator: "shapeSumGridTopTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "공통 도형을 제외해 수 예상하기", searchAliases: ["매트릭스", "도형 합 표", "줄의 차"] }),
+  type("shape-sum-grid-triangle-column-target", "number", "도형이 나타내는 수", "같은 도형 세 개의 합부터 빈 합 구하기", { generator: "shapeSumGridTriangleColumnTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 줄의 같은 도형부터 값 찾기", searchAliases: ["매트릭스", "세모 세 개", "도형 합 표"] }),
+  type("symbol-sum-grid-square-top", "number", "도형이 나타내는 수", "같은 도형 세 개의 합부터 빈 합 구하기", { generator: "symbolSumGridSquareTop", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 줄의 같은 도형부터 값 찾기", searchAliases: ["매트릭스", "네모 세 개", "도형 합 표"] }),
   type("shape-equation", "number", "복면산과 식", "도형이 나타내는 수와 식", { legacyId: 20 }),
   type("shape-equation-add-subtract", "number", "복면산과 식", "더하기와 빼기로 도형 수 구하기", { generator: "shapeEquationAddSubtract", sourceMatched: true }),
   type("two-digit-condition", "number", "조건에 맞는 수", "조건에 맞는 두 자리 수", { generator: "sourceTwoDigitSumDifference", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
@@ -309,7 +309,7 @@ export const TYPES = [
   type("symbol-chain-arithmetic", "number", "복면산과 식", "연속된 기호식으로 마지막 값 구하기", { generator: "symbolChainArithmetic", sourceMatched: true }),
   type("shape-matrix-three-features", "pattern", "도형 규칙", "바깥·안쪽 도형과 칠하기의 행렬 규칙", { generator: "shapeMatrixThreeFeatures", sourceMatched: true }),
   type("triangle-position-cycle", "pattern", "도형 규칙", "삼각형 안에서 칠한 위치가 반복되는 규칙", { generator: "trianglePositionCycle", sourceMatched: true }),
-  type("cube-step-sequence", "geometry", "쌓기나무 규칙", "삼각 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { generator: "cubeStepSequence", sourceMatched: true })),
+  type("cube-step-sequence", "geometry", "쌓기나무 규칙", "단계마다 커지는 삼각 계단 쌓기나무의 개수", geometryWorksheet("SQ", "L4", { generator: "cubeStepSequence", sourceMatched: true })),
   type("cube-hidden-count-walled", "geometry", "숨은 쌓기나무", "벽 모서리에서 보이지 않는 쌓기나무의 개수", geometryWorksheet("IH", "L3", { generator: "cubeHiddenCountWalled", sourceMatched: true })),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 같게 만들고 그 합을 가장 크거나 작게", { generator: "triangleMaxEdgeSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계", { generator: "overlappingNumberBonds", sourceMatched: true }),
@@ -434,7 +434,7 @@ export const TYPES = [
   type("cryptarithm-fixed-digit-addition", "number", "복면산", "도형과 주어진 숫자가 섞인 덧셈", { generator: "cryptarithmFixedDigitAddition", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-missing-digit-column", "number", "복면산", "두 도형이 반복되는 세로 덧셈", { generator: "cryptarithmMissingDigitColumn", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-multi-symbol-carry", "number", "복면산", "여러 도형과 받아올림이 함께 있는 복면산", { generator: "verticalCryptarithmShapeSum", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
-  type("cryptarithm-linked-equations", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "cryptarithmLinkedEquations", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
+  type("cryptarithm-linked-equations", "number", "복면산", "첫 세로셈의 도형값을 다음 세로셈에 넣기", { generator: "cryptarithmLinkedEquations", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("cryptarithm-unit-test-q13", "number", "복면산", "두 자리 두 수의 합에서 세 도형 값 찾기", { generator: "unitTestCryptarithmQ13", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 13번" }),
   type("cryptarithm-unit-test-q14", "number", "복면산", "세 자리 수와 두 자리 수를 더해 같은 도형 세 자리 만들기", { generator: "unitTestCryptarithmQ14", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 14번" }),
   type("cryptarithm-unit-test-q15", "number", "복면산", "다섯 도형 세로셈에서 네 자리 합 만들기", { generator: "unitTestCryptarithmQ15", sourceMatched: true, textbookSource: "더클래식 1과정 3권 단원 테스트 15번" }),
@@ -520,7 +520,7 @@ export const TYPES = [
   type("triangular-row-boundary-number", "pattern", "삼각수와 사각수", "줄마다 하나씩 늘어나는 수 배열의 첫 수·끝 수", { generator: "triangularRowBoundaryNumber", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
   type("square-row-boundary-number", "pattern", "삼각수와 사각수", "줄마다 홀수 개씩 늘어나는 수 배열의 첫 수·끝 수", { generator: "squareRowBoundaryNumber", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
   type("cube-triangular-wall-growth", "geometry", "쌓기나무 규칙", "한 줄 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L3", { worksheetOptions: { kind: "stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
-  type("cube-tetrahedral-growth", "geometry", "쌓기나무 규칙", "삼각 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { worksheetOptions: { kind: "triangular-stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
+  type("cube-tetrahedral-growth", "geometry", "쌓기나무 규칙", "층별 삼각수를 더한 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { worksheetOptions: { kind: "triangular-stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
 
   // 더클래식 1과정 5권 단원 테스트: 원본 25문항과 공식 답안을 1:1 대조했다.
   type("row-major-grid-two-target-sum-book5", "pattern", "수 배열 경로", "가로로 이어 쓴 수 배열의 두 빈칸 합", { generator: "rowMajorGridTwoTargetSumBook5", sourceMatched: true, textbookSource: "더클래식 1과정 5권 단원 테스트 1번" }),
@@ -735,7 +735,7 @@ export const TYPES = [
   type("doubled-symbol-result-b8", "number", "복면산", "도형 수를 두 배해 나온 결과로 값 찾기", { generator: "doubledSymbolResultBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
   type("letter-pyramid-cryptarithm-b8", "number", "복면산", "문자 피라미드 세로셈으로 네 자리 수 만들기", { generator: "letterPyramidCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
   type("repeated-number-multiple-answers-b8", "number", "복면산", "같은 숫자로 만든 수의 가능한 값 모두 찾기", { generator: "repeatedNumberMultipleAnswersBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
-  type("linked-cryptarithm-b8", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "linkedCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("linked-cryptarithm-b8", "number", "복면산", "이어진 두 세로셈의 같은 도형값 찾기", { generator: "linkedCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
   type("subtract-to-repeated-number-b8", "number", "복면산", "두 한 자리 수를 빼 같은 숫자 두 자리 수 만들기", { generator: "subtractToRepeatedNumberBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
 
   type("equalize-transfer-b8", "number", "합차와 배수", "두 사람이 같아지도록 옮기는 수 구하기", { generator: "equalizeTransferBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
@@ -1014,6 +1014,103 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "unit-length-multiple": Object.freeze(["aligned-rod-common-length", "g1-summer-one-three-rods", "rod-ratio-total-book3"]),
   "magic-card": Object.freeze(["binary-weight-selection", "colored-cell-number-code", "four-cell-binary-code"]),
   "argument-logic": Object.freeze(["truth-lie-ranking", "exact-one-ranking-predictions-b9", "exact-one-answer-assignment-b9"])
+});
+
+// 복면산은 겉모양이 비슷해도 연산이 다르면 서로 다른 유형이다. 교재의 단원명
+// "복면산"은 유지하되 문제은행에서는 실제 세로식의 연산과 문제 구조를 고정한다.
+const VERTICAL_ADDITION_CRYPTARITHM_TYPE_IDS = Object.freeze([
+  "g1-repeated-digit-addition", "g1-summer-vertical-shape-addition",
+  "g1-fall-aa-ab-ccc-shape-addition", "g1-fall-paired-four-blank-additions",
+  "g1-fall-alternating-result-cryptarithm", "vertical-shape-cryptarithm-values",
+  "two-digit-letter-cryptarithm", "repeated-two-digit-shape-addition",
+  "vertical-cryptarithm-shape-sum", "diagnostic-two-digit-cryptarithm",
+  "cryptarithm-single-double", "cryptarithm-repeated-number-double",
+  "cryptarithm-fixed-digit-addition", "cryptarithm-missing-digit-column",
+  "cryptarithm-multi-symbol-carry", "cryptarithm-linked-equations",
+  "cryptarithm-unit-test-q13", "cryptarithm-unit-test-q14", "cryptarithm-unit-test-q15",
+  "pyramid-cryptarithm-b8", "blank-digit-vertical-addition-b8",
+  "all-digits-once-cryptarithm-b8", "ordered-symbol-cryptarithm-b8",
+  "repeated-symbol-cryptarithm-b8", "multi-symbol-cryptarithm-b8",
+  "doubled-symbol-result-b8", "letter-pyramid-cryptarithm-b8",
+  "repeated-number-multiple-answers-b8", "linked-cryptarithm-b8",
+  "unit-test-book08-q06", "unit-test-book08-q07", "unit-test-book08-q08",
+  "unit-test-book08-q09", "unit-test-book08-q10", "unit-test-book08-q22"
+]);
+
+const setTypeTaxonomy = (ids, taxonomy) => ids.forEach((id) => {
+  const item = TYPES.find((entry) => entry.id === id);
+  if (!item) throw new Error(`TYPE_TAXONOMY_UNKNOWN_ID: ${id}`);
+  Object.assign(item, taxonomy);
+});
+
+setTypeTaxonomy(VERTICAL_ADDITION_CRYPTARITHM_TYPE_IDS, {
+  middle: "덧셈 복면산",
+  operation: "addition",
+  operationLabel: "덧셈",
+  problemStructure: "vertical-cryptarithm",
+  problemStructureLabel: "세로식 복면산"
+});
+setTypeTaxonomy(["subtract-to-repeated-number-b8"], {
+  middle: "뺄셈 복면산",
+  operation: "subtraction",
+  operationLabel: "뺄셈",
+  problemStructure: "vertical-cryptarithm",
+  problemStructureLabel: "세로식 복면산"
+});
+setTypeTaxonomy(["vertical-addition"], {
+  middle: "세로 덧셈 빈칸",
+  operation: "addition",
+  operationLabel: "덧셈",
+  problemStructure: "missing-digit-column",
+  problemStructureLabel: "세로셈 빈칸"
+});
+setTypeTaxonomy([
+  "shape-equation-add-subtract", "g1-shape-add-subtract-chain", "g1-summer-four-shape-add-subtract",
+  "square-symbol-chain", "symbol-chain-arithmetic"
+], {
+  middle: "도형 덧셈·뺄셈 관계식",
+  operation: "add-subtract",
+  operationLabel: "덧셈·뺄셈",
+  problemStructure: "symbol-equation",
+  problemStructureLabel: "도형 관계식"
+});
+setTypeTaxonomy(["g1-four-symbol-relation", "g1-summer-four-symbol-relation"], {
+  middle: "도형 덧셈 관계식",
+  operation: "addition",
+  operationLabel: "덧셈",
+  problemStructure: "symbol-equation",
+  problemStructureLabel: "도형 관계식"
+});
+setTypeTaxonomy(["symbol-relation", "symbol-relation-2to3", "symbol-relation-3to4"], {
+  middle: "도형 개수 관계식",
+  operation: "equivalent-groups",
+  operationLabel: "같은 양 관계",
+  problemStructure: "symbol-group-relation",
+  problemStructureLabel: "도형 개수 관계"
+});
+setTypeTaxonomy(["g1-multiplicative-symbol-chain"], {
+  middle: "곱셈 도형식",
+  operation: "multiplication",
+  operationLabel: "곱셈",
+  problemStructure: "symbol-equation",
+  problemStructureLabel: "도형 관계식"
+});
+setTypeTaxonomy(["distinct-zero-one-shape-values", "given-shape-expression"], {
+  middle: "혼합 도형식",
+  operation: "mixed",
+  operationLabel: "혼합 연산",
+  problemStructure: "symbol-equation",
+  problemStructureLabel: "도형 관계식"
+});
+
+Object.assign(TYPES.find((item) => item.id === "vertical-cryptarithm-shape-sum"), {
+  label: "세로 덧셈 복면산에서 세 도형의 값의 합"
+});
+Object.assign(TYPES.find((item) => item.id === "cryptarithm-multi-symbol-carry"), {
+  label: "여러 도형과 받아올림이 있는 세로 덧셈 복면산"
+});
+Object.assign(TYPES.find((item) => item.id === "subtract-to-repeated-number-b8"), {
+  label: "두 자리 도형 수에서 한 자리 도형 수를 빼 반복수 만들기"
 });
 
 const byId = Object.fromEntries(TYPES.map((item) => [item.id, item]));
