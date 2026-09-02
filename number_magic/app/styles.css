@@ -469,14 +469,8 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
    ============================================================ */
 #townVp{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab;background:#bfe0f2}
 #townVp.drag{cursor:grabbing}
-/* 947px = map.jpg(1024×687) 그대로 + 위쪽 260px 신규 원경(#townSky, 산맥·다리 실루엣).
-   지도 이미지는 그대로 두고 새 캔버스 바닥에 붙인다(background-position:bottom) —
-   그래서 기존 6개 스팟의 top/height %는 새 전체 높이(947) 기준으로 다시 계산돼 있다
-   (main.js TOWN_SPOTS 주석 참고). 위쪽 남는 부분은 두 번째 레이어(하늘색 그라디언트)가
-   메운다 — map.jpg 자체 상단 하늘색과 이어지도록 같은 톤 계열로 맞춤. */
-#townWorld{position:absolute;left:0;top:0;width:1024px;height:947px;transform-origin:0 0;
-  background:url(../assets/map.jpg) no-repeat bottom center/1024px 687px,
-    linear-gradient(180deg,#a9d8ee 0%,#c9e8f4 55%,#bfe0f2 100%);}
+#townWorld{position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
+  background:url(../assets/map.jpg) no-repeat 0 0/1024px 687px;}
 
 .ncloud{position:absolute;display:flex;align-items:center;justify-content:center;
   font-weight:900;color:#5b7fb0;pointer-events:none;opacity:.9;
@@ -489,24 +483,6 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 @keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(1580px) scale(1.1)}}
 .ncloud.b{top:40px;left:-360px;animation:cdriftB 100s linear infinite}
 @keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(1480px) scale(.8)}}
-.ncloud.d{top:14px;left:-460px;animation:cdrift 90s linear infinite;opacity:.85}
-
-/* ── 마을 위 새 원경(#townSky, 947px 캔버스의 맨 위 260px) — 산맥·다리 실루엣.
-   전부 CSS clip-path/SVG(이미지 파일 없음). percent는 이 상자(1024×260) 기준이라
-   townWorld 전체(947) 기준인 .nm-zone의 percent와 다르다 — 섞어 계산하지 말 것. ── */
-#townSky{position:absolute;left:0;top:0;width:1024px;height:260px;overflow:hidden;
-  pointer-events:none;z-index:2}
-.sky-ridge{position:absolute;left:0;bottom:0;width:100%;height:100%}
-.sky-ridge.r1{opacity:.85;background:linear-gradient(180deg,#9aa3d6 0%,#c3c9ea 75%);
-  clip-path:polygon(0% 100%,6% 58%,14% 80%,22% 42%,30% 70%,38% 32%,46% 64%,54% 46%,
-    62% 74%,70% 36%,78% 60%,86% 44%,94% 68%,100% 52%,100% 100%)}
-.sky-ridge.r2{opacity:.92;background:linear-gradient(180deg,#7c86c4 0%,#a6addd 75%);
-  clip-path:polygon(0% 100%,10% 74%,20% 90%,32% 60%,44% 86%,56% 55%,68% 84%,80% 58%,
-    90% 88%,100% 68%,100% 100%)}
-.sky-bridge-svg{position:absolute;left:20%;top:18%;width:22%;height:auto;opacity:.62;
-  filter:drop-shadow(0 4px 8px rgba(20,20,50,.18))}
-.sky-tower-svg{position:absolute;left:67%;top:2%;width:12%;height:auto;opacity:.6;
-  filter:drop-shadow(0 4px 8px rgba(20,20,50,.18))}
 
 #townFountain{position:absolute;left:300px;top:290px;width:90px;height:90px;pointer-events:none}
 .tzero{position:absolute;left:50%;bottom:20px;font-weight:900;color:#8fd3ec;
@@ -593,9 +569,9 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-zone{position:absolute;border:none;background:transparent;cursor:pointer;padding:0;border-radius:16px;z-index:15;transition:.2s}
 .nm-zone:hover{background:rgba(255,255,255,.1)}
 .nm-halo{position:absolute;inset:4px;border-radius:14px;pointer-events:none;
-  box-shadow:0 0 0 2px rgba(255,230,168,.55),0 0 16px 3px rgba(234,201,150,.55);
-  animation:nmpulse 2.2s ease-in-out infinite}
-@keyframes nmpulse{50%{box-shadow:0 0 0 2px rgba(255,230,168,.85),0 0 26px 6px rgba(234,201,150,.8)}}
+  box-shadow:0 0 18px 4px rgba(255,225,150,.28);border-radius:40%;
+  animation:nmpulse 3s ease-in-out infinite}
+@keyframes nmpulse{50%{box-shadow:0 0 28px 8px rgba(255,225,150,.45)}}
 .nm-lockico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;z-index:2}
 .nm-zlabel{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;
   background:var(--blue-deep);color:#fff;font-weight:900;font-size:13px;padding:5px 12px;border-radius:99px;box-shadow:0 6px 14px rgba(0,0,0,.4);pointer-events:none}

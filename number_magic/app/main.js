@@ -705,30 +705,22 @@ function screenWelcome(){
    건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME ·
    우하단 집=ADVANCE · 정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
 
-   ── 지도 확장(원장 지시, 2026-08-31): 마을 너머가 보이게 ──
-   #townWorld를 687px→947px로 위쪽 260px 늘렸다(TOWN_WORLD_H). map.jpg 자체(1024×687)는
-   그대로 두고 새 캔버스 "바닥"에 붙인다(CSS background-position:bottom) — 그래서 기존
-   6곳의 pos는 전부 "예전 percent×687+260" 만큼 다시 계산한 값이다(비율이 아니라 옛
-   픽셀 위치를 새 전체 높이 기준 percent로 옮긴 것뿐, 지도 안에서 실제로 옮긴 건물은
-   없다). 위쪽 새 260px는 원경(산맥 실루엣 + 다리 실루엣, 전부 CSS/SVG, 이미지 파일
-   추가 없음)과 신규 스팟 2곳(_bridge·_tower)의 자리다. */
-const TOWN_WORLD_H=947;
+   ── 2026-09-02: 8-31에 붙였던 위쪽 원경(CSS 산맥·다리·탑, 947px)은 철거했다.
+   일러스트 마을 위에 코드로 그린 도형이 얹혀 화풍이 갈렸다(원장 "조잡하다").
+   확장은 마을세계관-설계.md대로 **같은 화풍의 그림을 받아** 한다. 그때까지 캔버스는
+   map.jpg 원본 크기(1024×687)로 되돌린다. 중등 다리·경시의 탑 관문은 새 지도와 함께 돌아온다. */
+const TOWN_WORLD_H=687;
 const TOWN_SPOTS=[
-  { tier:'numberland',   pos:'left:8%;top:36.89%;width:24%;height:20.31%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
-  { tier:'beginner',     pos:'left:36%;top:41.24%;width:16%;height:15.96%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'advanced',     pos:'left:73%;top:44.87%;width:11%;height:10.16%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
-  { tier:'intermediate', pos:'left:74%;top:69.53%;width:13%;height:11.61%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:53%;top:41.24%;width:13%;height:15.96%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
-  { tier:'_closet',      pos:'left:8%;top:72.43%;width:15%;height:14.51%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} },
-  /* 마을 위쪽 원경 — 자유 선택 원칙: 잠금 없이 전부 열림(open은 screenTown()에서 처리) */
-  { tier:'_bridge', pos:'left:24%;top:7%;width:15%;height:15%',  tag:'🌉 중등 다리',
-    sub:{ko:'중등 수학으로',en:'To Middle School',zh:'通往中学'} },
-  { tier:'_tower',  pos:'left:66%;top:3%;width:13%;height:18%',  tag:'🗼 경시의 탑',
-    sub:{ko:'경시 도전',en:'Olympiad Tower',zh:'竞赛之塔'} }
+  { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'intermediate', pos:'left:74%;top:58%;width:13%;height:16%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:8%;top:62%;width:15%;height:20%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
-const TOWN_ALWAYS_OPEN=['_closet','_bridge','_tower']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
+const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
 /* 건물 5곳을 모두 포함하는 콘텐츠 영역(bbox) 계산 — 카메라 피팅에 사용 */
 function parsePos(posStr){
@@ -754,41 +746,6 @@ function computeContentBBox(W,H,pad){
   return {x,y,w,h};
 }
 
-/* 마을 위쪽 새 260px 원경 장식 — 전부 CSS/SVG(이미지 파일 추가 없음).
-   #townSky는 townWorld 안의 고정 1024×260 상자(월드 맨 위)라 여기 안의 percent는
-   947이 아니라 260 기준이다(zones의 percent와 기준이 다르니 섞어 쓰지 말 것). */
-function townSkyDecorHTML(){
-  const cableXs=[24,40,56,72,88,104,120,136,152,168,184];
-  const cables=cableXs.map(x=>{
-    const t=(x-8)/(200-8);
-    const y=22+48*4*t*(1-t); // 완만한 포물선 — 현수교 케이블 처짐 근사
-    return `<line x1="${x}" y1="70" x2="${x}" y2="${y.toFixed(1)}" stroke="#8a725a" stroke-width="1.1" opacity=".75"/>`;
-  }).join('');
-  return `<div id="townSky">
-    <div class="sky-ridge r1"></div>
-    <div class="sky-ridge r2"></div>
-    <svg class="sky-bridge-svg" viewBox="0 0 208 90" preserveAspectRatio="xMidYMax meet">
-      <line x1="8" y1="70" x2="200" y2="70" stroke="#5a4632" stroke-width="5" stroke-linecap="round"/>
-      <rect x="26" y="14" width="7" height="58" rx="2" fill="#5a4632"/>
-      <rect x="175" y="14" width="7" height="58" rx="2" fill="#5a4632"/>
-      <path d="M8,58 Q30,10 104,22 Q178,10 200,58" fill="none" stroke="#8a725a" stroke-width="2.4"/>
-      ${cables}
-    </svg>
-    <svg class="sky-tower-svg" viewBox="0 0 60 150" preserveAspectRatio="xMidYMax meet">
-      <polygon points="21,150 39,150 33,46 27,46" fill="#5b6b8c"/>
-      <polygon points="23,46 37,46 30,16" fill="#5b6b8c"/>
-      <rect x="29" y="3" width="2" height="14" fill="#5b6b8c"/>
-      <polygon points="31,3 45,8 31,13" fill="#c0392b"/>
-      <rect x="23" y="62" width="4" height="7" fill="#3f4e6b"/>
-      <rect x="33" y="62" width="4" height="7" fill="#3f4e6b"/>
-      <rect x="23" y="84" width="4" height="7" fill="#3f4e6b"/>
-      <rect x="33" y="84" width="4" height="7" fill="#3f4e6b"/>
-      <rect x="23" y="106" width="4" height="7" fill="#3f4e6b"/>
-      <rect x="33" y="106" width="4" height="7" fill="#3f4e6b"/>
-    </svg>
-  </div>`;
-}
-
 function screenTown(){
   if(townCleanup){townCleanup();townCleanup=null;}
   const scr=$('#screen');
@@ -804,11 +761,9 @@ function screenTown(){
   scr.innerHTML=`
     <div id="townVp">
       <div id="townWorld">
-        ${townSkyDecorHTML()}
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
-        <div class="ncloud d"><span class="puff" style="width:52px;height:52px;left:0;top:-6px"></span><span class="puff" style="width:38px;height:38px;left:36px;top:2px"></span><span class="num">12</span></div>
         <div id="townFountain"></div>
         ${zones}
         <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
@@ -2949,20 +2904,6 @@ function initTownWorld(scr){
         const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
           S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
         showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
-        return;
-      }
-      if(id==='_bridge'){
-        const bl=S.lang==='ko'?'🌉 중등 다리':S.lang==='en'?'🌉 Bridge to Middle School':'🌉 通往中学的桥';
-        const bd=S.lang==='ko'?'마을 너머 중등 수학으로 이어지는 길이에요. 연산 로드맵에서 계속 걸어가요!':
-          S.lang==='en'?'The path beyond town leads into middle-school math. Keep walking the course road!':'通往镇外中学数学的路。继续在运算路线图上前进吧！';
-        showTownModal(bl, bd, ()=>{S._roadFocus=null;S.view='courseroad';save();render();});
-        return;
-      }
-      if(id==='_tower'){
-        const tl=S.lang==='ko'?'🗼 경시의 탑':S.lang==='en'?'🗼 Olympiad Tower':'🗼 竞赛之塔';
-        const td=S.lang==='ko'?'저 멀리 보이는 탑, 경시 도전 구간이에요. 언제든 올라가 볼 수 있어요!':
-          S.lang==='en'?'That distant tower is the Olympiad challenge stretch — climb up any time!':'远处的高塔是竞赛挑战区，随时都能去挑战！';
-        showTownModal(tl, td, ()=>{S._roadFocus='C26';S.view='courseroad';save();render();});
         return;
       }
       const tier=tierById(id);
