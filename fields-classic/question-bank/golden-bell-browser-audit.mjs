@@ -48,10 +48,18 @@ async function auditViewport(viewport, label) {
   return lessonCount;
 }
 
+async function unlockProgressiveConcept(page) {
+  const experience = page.locator(".progressive-concept");
+  if (!(await experience.count())) return;
+  for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+  await experience.locator("[data-experience-answer]").click();
+}
+
 async function auditGeometryAndPrint() {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BROWSER-AUDIT&book=book-06`, { waitUntil: "networkidle" });
   await page.locator('.lesson-button[data-lesson="rectangle-missing-side"]').click();
+  await unlockProgressiveConcept(page);
   await page.locator('.stage-step[data-phase="original"]').click();
   const labelSizes = await page.locator(".b6-geometry .measure-label, .b6-geometry .note").evaluateAll((nodes) => nodes.map((node) => ({
     text: node.textContent.trim(),
@@ -70,6 +78,7 @@ async function auditGeometryAndPrint() {
 async function openExtension(page, student) {
   await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-06`, { waitUntil: "networkidle" });
   await page.locator('.lesson-button[data-lesson="rectangle-missing-side"]').click();
+  await unlockProgressiveConcept(page);
   await page.locator('.stage-step[data-phase="original"]').click();
   const answerButtons = page.locator("[data-original-answer]");
   const itemCount = await answerButtons.count();
@@ -462,6 +471,63 @@ async function auditInteractiveTriangularStair() {
   await page.close();
 }
 
+async function auditCourseOneProgressiveConcepts() {
+  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  let audited = 0;
+  for (let bookNumber = 4; bookNumber <= 10; bookNumber += 1) {
+    const bookId = `book-${String(bookNumber).padStart(2, "0")}`;
+    await mobile.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=PROGRESSIVE-${bookId}&book=${bookId}`, { waitUntil: "networkidle" });
+    const lessonIds = await mobile.locator(".lesson-button").evaluateAll((nodes) => nodes.map((node) => node.dataset.lesson));
+    for (const lessonId of lessonIds) {
+      await mobile.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
+      const experience = mobile.locator(".progressive-concept");
+      if (!(await experience.count())) continue;
+      assert.equal(await mobile.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${bookId}/${lessonId}: original must start locked`);
+      assert.equal(await experience.locator(".experience-step-track i").count(), 3, `${bookId}/${lessonId}: three concept steps missing`);
+      assert.equal(await experience.locator(".progressive-check").count(), 0, `${bookId}/${lessonId}: concept check appeared before the explanation ended`);
+      assert.equal(await experience.locator(".progressive-visual").count(), 1, `${bookId}/${lessonId}: verified source visual missing`);
+      for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+      assert.equal(await experience.getAttribute("data-progressive-step"), "3", `${bookId}/${lessonId}: final explanation step missing`);
+      assert.equal(await experience.locator(".progressive-check").count(), 1, `${bookId}/${lessonId}: final concept check missing`);
+      assert.equal(await experience.locator("[data-experience-choice]").count(), 3, `${bookId}/${lessonId}: concept check must show three choices`);
+      await experience.locator("[data-experience-answer]").click();
+      assert.match(await experience.locator(".feedback").innerText(), /답:/u, `${bookId}/${lessonId}: approved answer view missing`);
+      assert.equal(await mobile.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${bookId}/${lessonId}: answer view did not unlock the source problem`);
+      const typography = await experience.locator(".progressive-reasoning, .progressive-check>p, .progressive-check button, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({
+        fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+        height: node.matches("button") ? node.getBoundingClientRect().height : null
+      })));
+      assert.ok(typography.every(({ fontSize }) => fontSize >= 14), `${bookId}/${lessonId}: learning text is too small: ${JSON.stringify(typography)}`);
+      assert.ok(typography.filter(({ height }) => height != null).every(({ height }) => height >= 40), `${bookId}/${lessonId}: touch target is too small: ${JSON.stringify(typography)}`);
+      assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${bookId}/${lessonId}: mobile horizontal overflow`);
+      await mobile.locator('.stage-step[data-phase="original"]').click();
+      const sourceItems = mobile.locator("[data-original-item]");
+      assert.ok(await sourceItems.count() >= 1, `${bookId}/${lessonId}: source questions missing after concept learning`);
+      assert.equal(await sourceItems.locator("[data-original-answer]").count(), await sourceItems.count(), `${bookId}/${lessonId}: per-question answer view missing`);
+      assert.equal(await sourceItems.locator("[data-original-skip]").count(), await sourceItems.count(), `${bookId}/${lessonId}: per-question skip missing`);
+      audited += 1;
+    }
+  }
+  await mobile.close();
+
+  for (let bookNumber = 4; bookNumber <= 10; bookNumber += 1) {
+    const bookId = `book-${String(bookNumber).padStart(2, "0")}`;
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=PROGRESSIVE-PRINT-${bookId}&book=${bookId}`, { waitUntil: "networkidle" });
+    const lessonId = await page.locator(".lesson-button").evaluateAll((nodes) => nodes.map((node) => node.dataset.lesson).find((id) => id !== "cube-tetrahedral-growth"));
+    await page.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
+    assert.equal(await page.locator(".progressive-concept-scene").count(), 1, `${bookId}: desktop concept scene missing`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${bookId}: desktop horizontal overflow`);
+    await page.evaluate(() => { window.print = () => {}; });
+    await page.locator("#printLessonButton").click();
+    await page.waitForTimeout(80);
+    assert.equal(await page.locator(".progressive-print-summary").count(), 1, `${bookId}: concept print summary missing`);
+    assert.equal(await page.locator(".progressive-print-summary button, .progressive-print-summary input, .progressive-print-summary select").count(), 0, `${bookId}: print summary contains controls`);
+    await page.close();
+  }
+  return audited;
+}
+
 try {
   const desktopLessons = await auditViewport({ width: 1440, height: 1050 }, "desktop");
   const mobileLessons = await auditViewport({ width: 390, height: 844 }, "mobile");
@@ -473,7 +539,8 @@ try {
   const bookTwoGuidedConcepts = await auditBookTwoGuidedConcepts();
   const bookThreeGuidedConcepts = await auditBookThreeGuidedConcepts();
   await auditInteractiveTriangularStair();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} extensionControls=pass clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
+  const progressiveConcepts = await auditCourseOneProgressiveConcepts();
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} extensionControls=pass clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} progressiveConcepts=${progressiveConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
 } finally {
   await browser.close();
 }
