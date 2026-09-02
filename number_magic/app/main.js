@@ -1046,8 +1046,8 @@ const HOST_LINES={
   plus:{ko:'같이 모으면 10이 돼! 짝을 찾아보자.',en:"Put them together and you get 10 — find the pairs!",zh:'凑在一起就是10！来找搭档吧。'},
   minus:{ko:'필요 없는 만큼만 덜어내면 돼.',en:'Just take away what you do not need.',zh:'把不需要的减掉就好。'},
   times:{ko:'같은 걸 여러 번! 힘차게 가자.',en:'The same thing, many times — go strong!',zh:'相同的东西重复多次，加油！'},
-  divide:{ko:'똑같이 나누면 아무도 손해 보지 않아.',en:'Share it evenly and no one loses out.',zh:'平均分配，谁都不吃亏。'},
-  equal:{ko:'양쪽이 같아질 때까지 침착하게.',en:'Stay calm until both sides match.',zh:'沉住气，直到两边相等。'},
+  divide:{ko:'똑같이 나누면 모두 기분이 좋아져.',en:'Share it evenly and everyone feels good.',zh:'分得一样多，大家都开心。'},
+  equal:{ko:'양쪽이 똑같아질 때까지 천천히.',en:'Take it slow until both sides are the same.',zh:'慢慢来，直到两边一样。'},
   sqrt:{ko:'뿌리를 찾으면 답이 보인단다.',en:'Find the root and the answer appears.',zh:'找到根，答案就出现了。'},
   percent:{ko:'비율만 바꾸면 새로운 답이 나와!',en:'Change the ratio and a new answer appears!',zh:'改变比例就有新答案！'},
   pi:{ko:'둥근 것엔 언제나 내가 있지.',en:'Wherever something is round, I am there.',zh:'凡是圆的地方都有我。'},
@@ -1056,15 +1056,19 @@ const HOST_LINES={
   numi:{ko:'같이 해보자! 천천히 해도 괜찮아.',en:"Let's do it together — slow is fine!",zh:'一起来吧！慢一点也没关系。'}
 };
 /* 도장·편지함처럼 '축하하고 건네는' 자리에 쓰는 대사 — 게임 중 거드는 말(HOST_LINES)과
-   어조를 달리한다(그쪽은 풀이 힌트, 이쪽은 격려). */
+   어조를 달리한다(그쪽은 풀이 힌트, 이쪽은 격려).
+   ★ 낱말 수준은 **그 캐릭터가 등장하는 과정의 나이**에 맞춘다. 플러스·이퀄·마이너스·
+     곱하기·나누기는 과정 1~8(6~7세)이라 아주 쉬운 말만 쓴다 — 처음엔 '군더더기·기세·
+     침착·자유자재' 같은 어른 낱말을 넣었다가 원장 지적으로 전부 고쳤다. 루트·파이·
+     시그마·무한은 과정 20~42(초3 이상)라 그 수준의 말이 맞다. */
 const HOST_CHEERS={
   plus:{ko:'네가 모은 힘, 내가 다 봤어. 잘했어!',en:'I saw all the strength you gathered. Well done!',zh:'你聚起的力量我都看见了。做得好！'},
-  minus:{ko:'군더더기 없이 깔끔했어. 멋지다.',en:'Clean and tidy, no waste. Nicely done.',zh:'干净利落，一点不多余。真棒。'},
-  times:{ko:'대단해! 그 기세 그대로 가자!',en:'Amazing! Keep that momentum going!',zh:'太厉害了！保持这股劲头！'},
-  divide:{ko:'하나도 안 남기고 공평하게 해냈구나.',en:'You shared it out fairly, with nothing left over.',zh:'分得公平，一点都没剩下。'},
-  equal:{ko:'양쪽이 딱 맞았어. 침착했구나.',en:'Both sides matched exactly. You stayed calm.',zh:'两边刚好相等。你很沉着。'},
+  minus:{ko:'필요 없는 걸 쏙 빼냈구나. 멋지다!',en:'You took out just what was not needed. Nicely done!',zh:'把不需要的干脆地拿掉了。真棒！'},
+  times:{ko:'대단해! 이대로 쭉 가자!',en:'Amazing! Keep going just like that!',zh:'太厉害了！就这样一直走下去！'},
+  divide:{ko:'하나도 안 남기고 똑같이 나눴구나!',en:'You shared it out evenly with nothing left over!',zh:'分得一样多，一点都没剩！'},
+  equal:{ko:'양쪽이 딱 맞았어. 차분하게 잘했어!',en:'Both sides matched exactly. Nice and steady!',zh:'两边刚好相等。稳稳地做得好！'},
   sqrt:{ko:'뿌리까지 파고들었구나. 훌륭해.',en:'You dug all the way to the root. Excellent.',zh:'一直挖到了根部。了不起。'},
-  percent:{ko:'비율을 자유자재로 다뤘는걸!',en:'You handled the ratios freely!',zh:'比例被你玩得很自如！'},
+  percent:{ko:'비율을 마음대로 다뤘는걸!',en:'You handled the ratios just as you wanted!',zh:'比例被你随心所欲地用起来了！'},
   pi:{ko:'끝까지 매끄럽게 돌았어. 훌륭한 곡선이야.',en:'You came round smoothly to the end — a fine curve.',zh:'一路顺畅地转到终点，漂亮的曲线。'},
   sigma:{ko:'흩어진 걸 다 모아 정리했구나.',en:'You gathered everything scattered and summed it up.',zh:'把散落的都聚起来整理好了。'},
   infinity:{ko:'멀리까지 왔구나. 그 길은 계속 이어져.',en:'You have come far — and the road keeps going.',zh:'你已经走得很远，这条路还会继续。'},
