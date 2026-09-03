@@ -502,8 +502,23 @@ async function auditCourseOneProgressiveConcepts() {
       assert.equal(await experience.locator(".experience-step-track i").count(), 3, `${bookId}/${lessonId}: three concept steps missing`);
       assert.equal(await experience.locator(".progressive-check").count(), 0, `${bookId}/${lessonId}: concept check appeared before the explanation ended`);
       assert.equal(await experience.locator(".progressive-visual").count(), 1, `${bookId}/${lessonId}: verified source visual missing`);
-      for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+      if (lessonId === "addition-sum-matrix") {
+        assert.equal(await experience.locator('.progressive-sum-matrix[data-matrix-step="1"] [data-matrix-value="8"]').count(), 3, "matrix first step must put 8 on the three repeated squares");
+        assert.equal(await experience.locator('.progressive-sum-matrix .target').innerText(), "?", "matrix target leaked before the final step");
+      }
+      for (let step = 0; step < 2; step += 1) {
+        await experience.locator('[data-experience-action="next"]').click();
+        if (lessonId === "addition-sum-matrix" && step === 0) {
+          assert.ok(await experience.locator('[data-symbol="△"] [data-matrix-value="4"]').count() >= 1, "matrix second step must reveal the triangle value");
+          assert.equal(await experience.locator('.progressive-sum-matrix .target').innerText(), "?", "matrix target leaked during substitution");
+        }
+      }
       assert.equal(await experience.getAttribute("data-progressive-step"), "3", `${bookId}/${lessonId}: final explanation step missing`);
+      if (lessonId === "addition-sum-matrix") {
+        assert.equal(await experience.locator('[data-symbol="◎"] [data-matrix-value="3"]').count(), 2, "matrix final step must reveal both circle values");
+        assert.equal(await experience.locator('[data-symbol="☆"] [data-matrix-value="5"]').count(), 1, "matrix final step must reveal the star value");
+        assert.equal(await experience.locator('.progressive-sum-matrix .target').innerText(), "16", "matrix final target must be 16");
+      }
       assert.equal(await experience.locator(".progressive-check").count(), 1, `${bookId}/${lessonId}: final concept check missing`);
       assert.equal(await experience.locator("[data-experience-choice]").count(), 3, `${bookId}/${lessonId}: concept check must show three choices`);
       await experience.locator("[data-experience-answer]").click();

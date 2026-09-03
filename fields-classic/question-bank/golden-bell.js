@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260903a";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260903c";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901e";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
@@ -333,6 +333,27 @@ function renderGuidedConceptExperience(experience) {
   return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${experience.beats[currentStep].caption}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
 }
 
+function progressiveSumMatrixMarkup(lesson, visualStep, currentStep) {
+  const visual = lesson.original.visual.panels[0].visual;
+  const symbols = visual.cells.flat();
+  const valuesByCell = visualStep.valuesByCell || {};
+  const valuesBySymbol = visualStep.valuesBySymbol || {};
+  const cells = symbols.map((symbol, index) => {
+    const value = valuesByCell[index] ?? valuesBySymbol[symbol];
+    const solved = value !== undefined;
+    return `<span class="${solved ? "solved" : ""}" data-symbol="${escapeAttribute(symbol)}">`
+      + `<i aria-hidden="true">${symbol}</i>${solved ? `<strong class="matrix-revealed-value" data-matrix-value="${escapeAttribute(value)}">${value}</strong>` : ""}</span>`;
+  }).join("");
+  const target = visualStep.target || "?";
+  return `<div class="progressive-sum-matrix" data-matrix-step="${currentStep + 1}" role="img" aria-label="도형값을 차례로 바꾸어 넣는 덧셈 매트릭스"><div class="b8-sum-matrix"><div class="cells">${cells}</div><div class="rows">${visual.rowTotals.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${value === "?" ? target : value}</b>`).join("")}</div></div><p class="matrix-substitution-ledger">${visualStep.calculation}</p></div>`;
+}
+
+function progressiveVisualMarkup(lesson, experience, currentStep) {
+  const visualStep = experience.visualProgression?.[currentStep];
+  if (lesson.id === "addition-sum-matrix" && visualStep) return progressiveSumMatrixMarkup(lesson, visualStep, currentStep);
+  return visualMarkup(lesson.original.visual);
+}
+
 function renderProgressiveConceptExperience(lesson, experience) {
   const currentStep = state.experience.step;
   const atFirst = currentStep === 0;
@@ -343,7 +364,7 @@ function renderProgressiveConceptExperience(lesson, experience) {
   const progress = experience.beats.map((beat, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}" aria-label="${index + 1}단계 ${index < currentStep ? "완료" : index === currentStep ? "학습 중" : "대기"}">${index + 1}</i>`).join("");
   const beat = experience.beats[currentStep];
   const check = atLast ? `<section class="experience-check progressive-check"><p>${experience.check.prompt}</p><div class="answer-choices">${experience.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${escapeAttribute(option)}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><button type="button" class="secondary-action guided-answer" data-experience-answer ${complete ? "disabled" : ""}>답 보기</button>${state.experience.feedback ? `<p class="feedback ${state.experience.feedback.passed ? "success" : ""}">${state.experience.feedback.message}</p>` : ""}</section>` : '<p class="guided-check-wait">설명을 끝까지 살펴보면 확인 문제가 열립니다.</p>';
-  return `<section class="concept-experience progressive-concept" data-progressive-family="${escapeAttribute(experience.family)}" data-progressive-step="${currentStep + 1}"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="개념 학습 순서">${progress}</div><div class="progressive-concept-scene"><div class="progressive-visual">${visualMarkup(lesson.original.visual)}</div><div class="progressive-reasoning"><span>${actionLabels[beat.action]}</span><p>${beat.caption}</p></div></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
+  return `<section class="concept-experience progressive-concept" data-progressive-family="${escapeAttribute(experience.family)}" data-progressive-step="${currentStep + 1}"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="개념 학습 순서">${progress}</div><div class="progressive-concept-scene"><div class="progressive-visual">${progressiveVisualMarkup(lesson, experience, currentStep)}</div><div class="progressive-reasoning"><span>${actionLabels[beat.action]}</span><p>${beat.caption}</p></div></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
 }
 
 function renderExperience(lesson) {
