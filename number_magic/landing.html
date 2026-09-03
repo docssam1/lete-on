@@ -175,8 +175,9 @@ section{padding:88px 0}
 
 /* 실험실 자동 재생 */
 .lab-live{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0 22px}
-.lab-live figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-1)}
-.lab-live img{width:100%;display:block;aspect-ratio:auto}
+.lab-live figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-1);display:flex;flex-direction:column}
+.lab-live .shot{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;padding:10px 10px 0}
+.lab-live img{width:100%;max-height:330px;object-fit:contain;display:block}
 .lab-live figcaption{padding:14px 18px;font-size:14px;color:var(--sub)}
 .lab-live figcaption b{display:block;color:var(--ink);font-size:16px;margin-bottom:3px}
 @media(max-width:640px){.lab-live{grid-template-columns:1fr}}
@@ -413,8 +414,8 @@ footer a{color:var(--sub)}
     <h2 class="reveal" data-i18n="lbH2">눈으로 봐야 이해되는 것은 <span class="accent">직접 만져</span> 봅니다</h2>
     <p class="lead reveal" data-i18n="lbLead">실험실은 그 개념을 배우는 개념 노트 바로 아래에서 열립니다. 슬라이더를 밀고, 수를 바꿔 보고, 왜 그런지 눈으로 확인한 뒤 문제로 돌아옵니다. 과정과 상관없이 언제든 열어 볼 수 있습니다.</p>
     <div class="lab-live">
-      <figure class="reveal"><img src="assets/landing/rainbow.gif" alt=""><figcaption><b data-i18n="lv-rainbow-b">🌈 무지개 덧셈법 — 지금 그려지는 중</b><span data-i18n="lv-rainbow">1과 100, 2와 99… 짝마다 합이 101. 일곱 살 가우스가 한 그대로, 아이가 직접 무지개를 그립니다.</span></figcaption></figure>
-      <figure class="reveal"><img src="assets/landing/calc.gif" alt=""><figcaption><b data-i18n="lv-calc-b">🍎 미적분은 왜 태어났나 — 접선이 만들어지는 중</b><span data-i18n="lv-calc">두 점을 가까이 끌어당기면 곡선의 순간 기울기가 나타납니다. 400년 전 그 순간을 손으로 다시 봅니다.</span></figcaption></figure>
+      <figure class="reveal"><div class="shot"><img src="assets/landing/rainbow.gif" alt=""></div><figcaption><b data-i18n="lv-rainbow-b">🌈 무지개 덧셈법 — 지금 그려지는 중</b><span data-i18n="lv-rainbow">1과 100, 2와 99… 짝마다 합이 101. 일곱 살 가우스가 한 그대로, 아이가 직접 무지개를 그립니다.</span></figcaption></figure>
+      <figure class="reveal"><div class="shot"><img src="assets/landing/calc.gif" alt=""></div><figcaption><b data-i18n="lv-calc-b">🍎 미적분은 왜 태어났나 — 접선이 만들어지는 중</b><span data-i18n="lv-calc">두 점을 가까이 끌어당기면 곡선의 순간 기울기가 나타납니다. 400년 전 그 순간을 손으로 다시 봅니다.</span></figcaption></figure>
     </div>
     <div class="grid">
       <a class="lab reveal" href="labs/rainbow-sum.html" target="_blank" rel="noopener"><div class="ic">🌈</div><b data-i18n="l1b">무지개 덧셈법</b><span data-i18n="l1">1부터 100까지 더하기를 무지개처럼 짝지어 순식간에 끝내 봐요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
