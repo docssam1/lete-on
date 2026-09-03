@@ -25,6 +25,22 @@ async function auditViewport(viewport, label) {
     assert.equal(lessons.length, 4, `${label}/${bookId}: expected four lessons`);
     for (const lessonId of lessons) {
       await page.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
+      const learningOrder = await page.locator("#lessonContent").evaluate((root) => {
+        const question = root.querySelector(".concept-opening-question");
+        const experience = root.querySelector(".concept-experience");
+        return {
+          questionCount: root.querySelectorAll(".concept-opening-question").length,
+          questionText: question?.querySelector("strong")?.textContent?.trim() || "",
+          experienceCount: root.querySelectorAll(".concept-experience").length,
+          questionBeforeExperience: Boolean(question && experience && (question.compareDocumentPosition(experience) & Node.DOCUMENT_POSITION_FOLLOWING)),
+          questionFontSize: question ? Number.parseFloat(getComputedStyle(question.querySelector("strong")).fontSize) : 0
+        };
+      });
+      assert.equal(learningOrder.questionCount, 1, `${label}/${bookId}/${lessonId}: opening question missing`);
+      assert.ok(learningOrder.questionText, `${label}/${bookId}/${lessonId}: opening question is empty`);
+      assert.equal(learningOrder.experienceCount, 1, `${label}/${bookId}/${lessonId}: explanation experience missing`);
+      assert.equal(learningOrder.questionBeforeExperience, true, `${label}/${bookId}/${lessonId}: explanation appears before the question`);
+      assert.ok(learningOrder.questionFontSize >= 18, `${label}/${bookId}/${lessonId}: opening question is too small (${learningOrder.questionFontSize}px)`);
       assert.equal(await page.locator(".concept-tutorial").count(), 1, `${label}/${bookId}/${lessonId}: tutorial missing`);
       assert.ok(await page.locator(".tutorial-steps li").count() >= 2, `${label}/${bookId}/${lessonId}: tutorial steps missing`);
       assert.equal(await page.locator(".tutorial-steps li p:empty").count(), 0, `${label}/${bookId}/${lessonId}: empty tutorial step`);

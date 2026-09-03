@@ -764,10 +764,21 @@ function renderStageSteps() {
   $("stageSteps").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setPhase(button.dataset.phase)));
 }
 
+function conceptOpeningQuestion(lesson) {
+  const experience = lesson.experience;
+  return experience?.openingPrompt
+    || experience?.check?.prompt
+    || experience?.typeTracks?.[0]?.check?.prompt
+    || experience?.beats?.[0]?.check?.prompt
+    || lesson.original?.prompt
+    || lesson.story.mission;
+}
+
 function renderConcept(lesson) {
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
   const experience = renderExperience(lesson);
-  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
+  const openingQuestion = conceptOpeningQuestion(lesson);
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div><section class="concept-opening-question"><span>생각할 문제</span><strong>${openingQuestion}</strong></section>${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {

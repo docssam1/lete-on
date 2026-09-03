@@ -139,6 +139,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .story-band strong{font-family:var(--display);font-size:15px}
 .story-band small{display:block;margin-bottom:5px;color:#8c6b25;font-size:8px;font-weight:900}
 .story-band p{font-size:11px;line-height:1.8}
+.concept-opening-question{display:grid;gap:7px;margin-top:26px;padding:17px 20px;border-top:1px solid #bad1d4;border-bottom:1px solid #bad1d4;border-left:4px solid #2582a3;background:#f2f8f8}
+.concept-opening-question span{color:#176b86;font-size:11px;font-weight:900}
+.concept-opening-question strong{color:#183b49;font-family:var(--display);font-size:20px;line-height:1.65;word-break:keep-all}
 .concept-tutorial{margin-top:28px;border-top:2px solid var(--green);border-bottom:1px solid #b9cbc4}
 .concept-tutorial>header{display:grid;grid-template-columns:110px minmax(0,1fr);align-items:center;gap:18px;padding:15px 4px;border-bottom:1px solid #d5e1d9}
 .concept-tutorial>header span{color:var(--green);font-size:9px;font-weight:900}
@@ -218,6 +221,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
   .lesson-content h2{font-size:25px}
   .story-band{grid-template-columns:46px minmax(0,1fr);gap:12px;margin-top:24px;padding:18px 0}
   .story-icon{width:42px;height:42px}
+  .concept-opening-question{margin-top:20px;padding:15px 14px}
+  .concept-opening-question span{font-size:12px}
+  .concept-opening-question strong{font-size:18px;line-height:1.7}
   .concept-tutorial>header{grid-template-columns:1fr;gap:5px;padding:14px 2px}
   .tutorial-steps li{grid-template-columns:32px minmax(0,1fr);gap:11px;padding:14px 2px}
   .tutorial-steps li>span{width:28px;height:28px;font-size:11px}
