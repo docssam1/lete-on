@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260901e";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260903a";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901e";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
@@ -93,7 +93,7 @@ function isLessonComplete(lesson) { return Boolean(lessonProgress(lesson).origin
 
 function conceptReady(lesson = activeLesson()) {
   const experience = lesson?.experience;
-  if (experience?.kind === "guided-concept") return ["correct", "revealed"].includes(state.experience.checks[`guided:${lesson.id}`]);
+  if (["guided-concept", "progressive-concept"].includes(experience?.kind)) return ["correct", "revealed"].includes(state.experience.checks[`guided:${lesson.id}`]);
   if (experience?.kind !== "triangular-stair") return true;
   const stepsComplete = experience.beats.every((beat) => state.experience.checks[beat.id] === true);
   const practiceComplete = (experience.practice || []).every((item) => ["correct", "revealed"].includes(state.experience.practice[item.id]?.status));
@@ -203,6 +203,7 @@ function experienceSummaryMarkup(experience) {
   if (experience.kind === "clock-turning") return clockExperienceSummaryMarkup(experience);
   if (experience.kind === "triangular-stair") return triangularExperienceSummaryMarkup(experience);
   if (experience.kind === "guided-concept") return guidedConceptPrintSummary(experience);
+  if (experience.kind === "progressive-concept") return `<div class="gold-print-experience progressive-print-summary"><p><strong>개념 순서</strong> ${experience.beats.map((beat, index) => `${index + 1}. ${beat.caption}`).join(" ")}</p></div>`;
   return "";
 }
 
@@ -332,12 +333,26 @@ function renderGuidedConceptExperience(experience) {
   return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${experience.beats[currentStep].caption}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
 }
 
+function renderProgressiveConceptExperience(lesson, experience) {
+  const currentStep = state.experience.step;
+  const atFirst = currentStep === 0;
+  const atLast = currentStep === experience.beats.length - 1;
+  const checkKey = `guided:${lesson.id}`;
+  const complete = ["correct", "revealed"].includes(state.experience.checks[checkKey]);
+  const actionLabels = { reveal: "보기", highlight: "관계 찾기", verify: "확인하기" };
+  const progress = experience.beats.map((beat, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}" aria-label="${index + 1}단계 ${index < currentStep ? "완료" : index === currentStep ? "학습 중" : "대기"}">${index + 1}</i>`).join("");
+  const beat = experience.beats[currentStep];
+  const check = atLast ? `<section class="experience-check progressive-check"><p>${experience.check.prompt}</p><div class="answer-choices">${experience.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${escapeAttribute(option)}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><button type="button" class="secondary-action guided-answer" data-experience-answer ${complete ? "disabled" : ""}>답 보기</button>${state.experience.feedback ? `<p class="feedback ${state.experience.feedback.passed ? "success" : ""}">${state.experience.feedback.message}</p>` : ""}</section>` : '<p class="guided-check-wait">설명을 끝까지 살펴보면 확인 문제가 열립니다.</p>';
+  return `<section class="concept-experience progressive-concept" data-progressive-family="${escapeAttribute(experience.family)}" data-progressive-step="${currentStep + 1}"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="개념 학습 순서">${progress}</div><div class="progressive-concept-scene"><div class="progressive-visual">${visualMarkup(lesson.original.visual)}</div><div class="progressive-reasoning"><span>${actionLabels[beat.action]}</span><p>${beat.caption}</p></div></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
+}
+
 function renderExperience(lesson) {
   const experience = lesson.experience;
   if (!experience) return "";
   if (experience.kind === "clock-turning") return renderClockExperience(experience);
   if (experience.kind === "triangular-stair") return renderTriangularStairExperience(experience);
   if (experience.kind === "guided-concept") return renderGuidedConceptExperience(experience);
+  if (experience.kind === "progressive-concept") return renderProgressiveConceptExperience(lesson, experience);
   return "";
 }
 
@@ -928,7 +943,7 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-experience-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     state.experience.answer = button.dataset.experienceChoice;
-    if (experience.kind === "guided-concept") {
+    if (["guided-concept", "progressive-concept"].includes(experience.kind)) {
       const passed = state.experience.answer === experience.check.answer;
       state.experience.checks[`guided:${activeLesson().id}`] = passed ? "correct" : "wrong";
       state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러 확인할 수 있습니다." };
@@ -947,13 +962,13 @@ function bindLessonActions() {
         message: state.experience.answer === experience.check.answer ? "맞아요. 반 바퀴는 맞은편을 가리켜 8입니다." : "시계판의 맞은편을 다시 찾아보세요. 2의 맞은편은 8입니다."
       };
     }
-    if (experience.kind === "guided-concept") render();
+    if (["guided-concept", "progressive-concept"].includes(experience.kind)) render();
     else renderContent();
   }));
   $("lessonContent").querySelector("[data-experience-answer]")?.addEventListener("click", () => {
     const lesson = activeLesson();
     const experience = lesson.experience;
-    if (experience?.kind !== "guided-concept") return;
+    if (!["guided-concept", "progressive-concept"].includes(experience?.kind)) return;
     state.experience.answer = experience.check.answer;
     state.experience.checks[`guided:${lesson.id}`] = "revealed";
     state.experience.feedback = { passed: false, message: `답: ${experience.check.answer}. ${experience.check.explanation}` };
