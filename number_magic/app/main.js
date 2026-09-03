@@ -447,7 +447,59 @@ window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
-function coinAdd(n){S.coins+=n;save();}
+function coinAdd(n){S.coins+=n;save();
+  /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
+  document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});}
+
+/* ============================================================
+   포인트 §6 — 출석 + 주간 보너스 (마을세계관-설계.md §6, 연속 배수 없음)
+   ============================================================ */
+/* 로컬(단말기) 기준 오늘 날짜 키. UTC로 어긋나면 자정 근처 아이가 손해 보므로
+   반드시 로컬 Date 필드로 조합한다(toISOString은 UTC라 여기서 쓰면 안 됨). */
+function todayKey(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+/* 출석 체크 — S.attend는 defaults()에 없다(지시사항): 기존 저장본에 필드가
+   없다가 오늘 처음 생기는 것도 "출석 1일째"로 자연스럽게 시작해야 하므로,
+   여기서 있으면 쓰고 없으면 지금 막 만든다(그 자체가 마이그레이션). 오늘 이미
+   기록돼 있으면 아무 것도 하지 않고 null 반환 — 하루 두 번 이상 안 준다. */
+function checkAttendance(){
+  const today=todayKey();
+  if(S.attend && S.attend.last===today) return null;
+  S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
+  coinAdd(3);
+  return S.attend.days;
+}
+/* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
+   ① 봉투를 열었을 것(S.mailbox.opened[weekKey])
+   ② 이 앱엔 주간 드릴별 "완료" 상태가 없다 — 드릴은 인쇄해서 종이로 풀기
+      때문(mailbox·wsh·thread 완료 플래그를 전부 찾아봤지만 없음, CLAUDE
+      지시사항의 폴백 규칙 적용 대상). 대신 정체 감지→보강 루프의 "그 주
+      몸풀기 완료"(boosterDoneThisWeek)를 그 주 해야 할 일의 완료 신호로 쓴다.
+   ③ 다만 그 주에 보강이 아예 필요 없었던 아이(boosterPick()===null, 약점
+      스레드 없음)까지 보강을 요구하면 잘하고 있는 아이가 영영 주간 보너스를
+      못 받는 역설이 생긴다 — 그래서 "지금 시점에 보강이 필요 없다"도 완료로
+      인정한다. boosterPick()은 주 단위 스냅샷이 아니라 항상 최신 통계를
+      보므로 완벽하진 않지만(과거 주를 소급 판정), 종이 학습지 채점 자체가
+      앱에 없는 이상 이게 가장 단순하고 방어 가능한 근사치다. */
+function weekFullyDone(weekKey){
+  if(!weekKey) return false;
+  if(!(S.mailbox && S.mailbox.opened && S.mailbox.opened[weekKey])) return false;
+  const needsBoost = !boosterDoneThisWeek(weekKey) && !!boosterPick();
+  return !needsBoost;
+}
+function maybeAwardWeeklyBonus(weekKey){
+  if(!weekFullyDone(weekKey)) return;
+  if(!S.weeklyBonus) S.weeklyBonus={};
+  if(S.weeklyBonus[weekKey]) return;
+  S.weeklyBonus[weekKey]=true;
+  coinAdd(10);
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  toast(lk('한 주를 다 마쳤어요! 🪙 +10','You finished the week! 🪙 +10','完成了一周！🪙 +10'), true);
+}
+
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
 /* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
 function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
@@ -759,6 +811,61 @@ function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
 const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
+/* 마을세계관-설계.md §3 — 형제 서비스로 나가는 관문(표지판). 절대 잠그지 않는다
+   (자유 선택 원칙) — 열려 있으면 새 탭으로 나가고, 아직 없으면 "준비 중"으로만
+   보여 준다. 각 link는 {name, url, open:true} 또는 {name, soon:true}.
+   2026-09-03 원장 지시: 넘버스 마을에선 필즈·하이퍼포커스는 연결하지 않는다 —
+   동쪽 관문은 탐험대(지도 맞히기 게임) 하나만. */
+const TOWN_GATES=[
+  { id:'west',  pos:'left:1.5%;top:47%', icon:'🧭',
+    name:{ko:'도형 나라',en:'Geometry World',zh:'图形王国'},
+    links:[
+      {name:{ko:'지오메트리 월드',en:'Geometry World',zh:'几何世界'}, url:'../geometry/', open:true}
+    ] },
+  { id:'east',  pos:'left:84%;top:42%', icon:'🗺️',
+    name:{ko:'탐험대 — 지도 맞히기',en:'Explorer — Map Quiz',zh:'探险队 — 认地图'},
+    links:[
+      {name:{ko:'세계 지도 맞히기 게임',en:'World Map Quiz Game',zh:'世界地图问答游戏'}, url:'../world-explorer/', open:true}
+    ] },
+  { id:'south', pos:'left:75%;top:83%', icon:'⛵',
+    name:{ko:'바깥 세상 항구',en:'Harbor to the World',zh:'通往世界的港口'},
+    links:[
+      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, soon:true},
+      {name:{ko:'NCP',en:'NCP',zh:'NCP'}, soon:true}
+    ] }
+];
+/* 링크가 열려 있는지 — open:true뿐이다(설정 파일 조회 없음, 원장 지시로 단순화). */
+function gateLinkOpen(link){ return !!(link&&link.open); }
+/* 관문 탭 → 링크 목록 모달. showTownModal(#tmodal, 단일 버튼)과 달리 링크가
+   여러 개일 수 있어 body에 직접 붙였다 뗀다(gateModalHtml과 같은 패턴) —
+   .nm-tmodal/.nm-tmcard CSS는 그대로 재사용해 같은 톤을 낸다. */
+function showGateLinksModal(gate){
+  if($('#nmGateLinksModal'))return;
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const rows=(gate.links||[]).map(link=>{
+    if(gateLinkOpen(link)){
+      return `<button class="nm-btn full" data-url="${esc(link.url)}">${esc(L(link.name))} →</button>`;
+    }
+    return `<button class="nm-btn full ghost" disabled>${esc(L(link.name))} · ${lk('준비 중','Coming soon','准备中')}</button>`;
+  }).join('');
+  const wrap=document.createElement('div');
+  wrap.className='nm-tmodal on';
+  wrap.id='nmGateLinksModal';
+  wrap.innerHTML=`<div class="nm-tmcard">
+    <h3>${gate.icon} ${esc(L(gate.name))}</h3>
+    <p>${lk('마을 밖으로 나가요. 돌아오면 이 자리예요.','Leaving the village. You come back right here.','走出村庄，回来时还在这里。')}</p>
+    <div class="nm-gatelinks-list">${rows}</div>
+    <button class="close" id="nmGateLinksClose">${lk('닫기','Close','关闭')}</button>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close=()=>wrap.remove();
+  wrap.querySelectorAll('[data-url]').forEach(b=>{
+    b.onclick=()=>{ window.open(b.dataset.url,'_blank','noopener'); };
+  });
+  $('#nmGateLinksClose').onclick=close;
+  wrap.addEventListener('click',e=>{ if(e.target===wrap) close(); });
+}
+
 /* 건물 5곳을 모두 포함하는 콘텐츠 영역(bbox) 계산 — 카메라 피팅에 사용 */
 function parsePos(posStr){
   const o={};
@@ -795,6 +902,10 @@ function screenTown(){
       <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
     </button>`;
   });
+  let gates='';
+  TOWN_GATES.forEach(g=>{
+    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
+  });
   scr.innerHTML=`
     <div id="townVp">
       <div id="townWorld">
@@ -803,6 +914,7 @@ function screenTown(){
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
         <div id="townFountain"></div>
         ${zones}
+        ${gates}
         <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
           <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
           <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">'}</div>
@@ -861,7 +973,33 @@ function screenTown(){
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
   maybeShowR0Banner(scr);
-  if(S.onboarded && !S.avatar) showAvatarMigrateModal();
+  if(S.onboarded && !S.avatar){
+    showAvatarMigrateModal();
+  }else{
+    /* 출석(§6) — 아바타 이주 모달을 띄우는 참(아직 사람을 안 골랐을 때)엔
+       건드리지 않는다. 사람을 이미 골랐으면(온보딩 완료 프로필의 정상 경로)
+       그날 처음 마을에 들어온 순간에만 카드가 뜬다(checkAttendance가 하루
+       한 번만 값을 반환). */
+    const attendDays=checkAttendance();
+    if(attendDays!=null){ save(); showAttendCard(scr,attendDays); }
+  }
+}
+/* 출석 카드 — 자동 소멸(약 3.5초) + 탭하면 즉시 닫힘. 잠금 없는 비차단 알림이라
+   render()를 다시 부르지 않고 DOM만 직접 붙였다 뗀다(재렌더로 지워지면 화면 전환
+   중 사라져 버려 "오늘 왔구나" 메시지를 놓칠 수 있다). */
+function showAttendCard(scr,days){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const card=document.createElement('div');
+  card.className='nm-attend-card';
+  card.innerHTML=`${window.renderHumanChar?window.renderHumanChar('doc',48):''}
+    <div class="nm-attend-text">
+      <b>${lk('오늘도 왔구나! 🪙 +3','You came today! 🪙 +3','今天也来了！🪙 +3')}</b>
+      <span>${lk(`출석 ${days}일째`,`Day ${days}`,`第${days}天`)}</span>
+    </div>`;
+  scr.appendChild(card);
+  const hide=()=>{ if(!card.parentNode)return; card.classList.add('hide'); setTimeout(()=>card.remove(),260); };
+  card.onclick=hide;
+  setTimeout(hide,3500);
 }
 
 /* ── 마을 이주 모달(§1) — 온보딩 이전(구버전)에 만들어진 저장본은 S.avatar가 없다.
@@ -1145,6 +1283,25 @@ function hostStripHtml(kind,key,mode){
     <img class="nm-host-img" src="${hostImgSrc(id)}" alt="${esc(name)}" onerror="this.style.display='none'">
     <div class="nm-host-bubble"><b>${esc(name)}</b><span>${esc(line)}</span></div>
   </div>`;
+}
+
+/* ── 독쌤(doc) 띠 — 사람 캐릭터(renderHumanChar)를 쓰는 호스트 띠.
+   hostStripHtml()은 숫자·기호 캐릭터(PNG 파일)용이라 그대로 못 쓴다 — 같은
+   .nm-host 골격에 사람 SVG/PNG(renderHumanChar)를 얹는 버전. .doc 수정자만
+   더해 CSS는 대부분 .nm-host를 그대로 상속한다. */
+function docStripHtml(size,lineHtml){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  return `<div class="nm-host doc">
+    ${window.renderHumanChar?window.renderHumanChar('doc',size||44):''}
+    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-ssaem','独老师')}</b><span>${lineHtml}</span></div>
+  </div>`;
+}
+/* 유닛 화면 상단의 독쌤 학습 안내 — 유닛의 "첫 스텝"에서만 뜬다(연습/도장 등은 X). */
+function docUnitStripHtml(u){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const title=L(u.title);
+  const line=esc(lk(`오늘은 "${title}"을(를) 배워요. 천천히 해도 괜찮아!`,`Today we learn "${title}". Take your time!`,`今天学习"${title}"，慢慢来！`));
+  return docStripHtml(44,line);
 }
 
 function screenMiniGame(gameId){
@@ -2393,6 +2550,7 @@ function screenTitle(){
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
+        ${S.attend&&S.attend.days?`<span class="nm-title-chip">📅 ${lk(`${S.attend.days}일`,`Day ${S.attend.days}`,`第${S.attend.days}天`)}</span>`:''}
         ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
       </div>
       ${lineageBadgeRowHtml()}
@@ -2620,6 +2778,7 @@ function screenBoost(){
     if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
     const already = !!S._boostRewarded;
     if(!already){ coinAdd(6); S._boostRewarded=true; }
+    maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
     </div>
@@ -2803,14 +2962,19 @@ function screenMailbox(){
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
+    maybeAwardWeeklyBonus(S._mbWeek); /* §6 주간 보너스 — 열 때마다 확인, 중복 지급은 내부에서 막음 */
     renderMath(scr);
     return;
   }
 
   const weeks = mailboxWeeks();
+  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-ssaem','来自 独老师')}</span>`;
   const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
     <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
-    <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+    <span class="nm-mb-env-body">
+      <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+      ${fromDoc}
+    </span>
     ${w.opened?`<span class="nm-mb-env-badge done">${lk('읽음','Read','已读')}</span>`:`<span class="nm-mb-env-badge new">${lk('새 봉투','New','新')}</span>`}
   </button>`).join('');
 
@@ -2819,6 +2983,10 @@ function screenMailbox(){
     <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
   </div>
   <div class="nm-step-body nm-wsh-wrap">
+    <div class="nm-doc-strip">
+      ${window.renderHumanChar?window.renderHumanChar('doc',64):''}
+      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-ssaem sent this week's letter. Open the envelope?","独老师寄来了本周的信，打开看看？")}</div>
+    </div>
     <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
     <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
   </div>`;
@@ -2847,7 +3015,7 @@ function gateModalHtml(){
   return `<div class="nm-gate-overlay" id="nmGateModal">
     <div class="nm-gate-card">
       <button class="nm-gate-x" id="nmGateClose" aria-label="close">✕</button>
-      <div class="nm-gate-ico">🔒</div>
+      <div class="nm-gate-ico doc">${window.renderHumanChar?window.renderHumanChar('doc',64):'🔒'}<span class="nm-gate-ico-lock">🔒</span></div>
       <h3>${ko?'승인번호가 있으면 모두 열려요':en?'Unlock everything with your academy code':'输入学院授权码即可解锁全部'}</h3>
       <p>${ko?'지금은 체험 모드예요. 각 단계 대표 유닛만 먼저 만나볼 수 있어요.':en?'You’re in trial mode — try a taste from each level first.':'当前为体验模式，先体验各阶段的代表单元。'}</p>
       <div class="nm-gate-inputrow">
@@ -2991,6 +3159,16 @@ function initTownWorld(scr){
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
   modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
+
+  /* 관문 표지판 탭(§3) — .nm-zone과 같은 패턴(드래그면 무시, 지도 탭-이동과 충돌
+     안 하게 stopPropagation). */
+  scr.querySelectorAll('.nm-gate').forEach(g=>{
+    g.addEventListener('pointerup',e=>{
+      if(moved)return;e.stopPropagation();
+      const gate=TOWN_GATES.find(x=>x.id===g.dataset.gate);
+      if(gate)showGateLinksModal(gate);
+    });
+  });
 
   /* 분수(0 뿜기) */
   const f0=scr.querySelector('#townFountain');
@@ -3187,11 +3365,18 @@ function flowBar(){
 
 function screenUnit(){
   const scr=$('#screen');const u=UNITS[S.unit];
+  /* 독쌤 학습 안내 띠 — 유닛의 "첫 화면"에서만(연습 이후 체크/랩/아레나/도장엔 안 뜸).
+     enterUnit()은 유닛에 따라 'intro'(u.introVideo)·'range'(u.ranges)·'practice' 중
+     하나로 곧장 진입시킨다(널이 아님) — 셋 다 "학습 흐름 진짜 시작 전" 화면이라 전부
+     첫 화면으로 친다. 그 외(경로 우회로 S.step이 비어 있는 경우 대비) null도 포함.
+     unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
+  const isFirstUnitStep = !S.step || S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
   scr.innerHTML=`<div class="nm-unit-view">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap">${t('back')}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
+    ${isFirstUnitStep?docUnitStripHtml(u):''}
     ${(S.step==='range'||S.step==='intro')?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
   </div>`;

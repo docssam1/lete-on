@@ -1,4 +1,4 @@
-import { attachCourseOneProgressiveExperiences } from "./golden-bell-course1-progressive.js?v=20260903a";
+import { attachCourseOneProgressiveExperiences } from "./golden-bell-course1-progressive.js?v=20260903c";
 
 export const GOLDEN_BELL_BOOKS = Object.freeze([
   {

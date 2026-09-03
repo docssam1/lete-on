@@ -211,12 +211,16 @@ window.screenCloset = function(container, opts){
   const titleTxt = lang==='en'?'My Character':lang==='zh'?'我的角色':'내 캐릭터';
 
   /* 목록(왼쪽)이 바로 보이도록 미리보기는 오른쪽 사이드에 고정 */
+  const hintTxt = lang==='en'?'Decorate your friend with 🪙 from attendance & learning'
+    :lang==='zh'?'用出勤和学习得到的🪙装饰朋友'
+    :'출석·학습으로 모은 🪙로 내 친구를 꾸며요';
   container.innerHTML = `
 <div class="nmc-wrap">
   <div class="nmc-head">
     <div class="nmc-title">✨ ${titleTxt}</div>
     <div id="nmc-coins" class="nmc-coins">🪙 ${coins}</div>
   </div>
+  <div class="nmc-hint">${hintTxt}</div>
   <div class="nmc-main">
     <div class="nmc-left">
       <div class="nmc-tab-bar">${tabsHTML}</div>

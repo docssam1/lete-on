@@ -165,6 +165,24 @@ const CHECKS = Object.freeze({
 
 const LEARNER_STAGE = "7세 8월부터 초등 1학년 초반";
 
+const VISUAL_PROGRESSIONS = Object.freeze({
+  "addition-sum-matrix": Object.freeze([
+    Object.freeze({
+      valuesByCell: Object.freeze({ 0: "8", 1: "8", 2: "8" }),
+      calculation: "24 ÷ 3 = 8"
+    }),
+    Object.freeze({
+      valuesBySymbol: Object.freeze({ "□": "8", "△": "4" }),
+      calculation: "20 - 8 - 8 = 4"
+    }),
+    Object.freeze({
+      valuesBySymbol: Object.freeze({ "□": "8", "△": "4", "◎": "3", "☆": "5" }),
+      target: "16",
+      calculation: "15 - 8 - 4 = 3 · 17 - 8 - 4 = 5 · 8 + 5 + 3 = 16"
+    })
+  ])
+});
+
 export function attachCourseOneProgressiveExperiences(books) {
   for (const book of books) {
     const bookNumber = Number(book.id.slice(-2));
@@ -192,6 +210,7 @@ export function attachCourseOneProgressiveExperiences(books) {
         }))),
         hint: lesson.representativeConcept,
         check: Object.freeze({ ...check }),
+        visualProgression: VISUAL_PROGRESSIONS[lesson.id] || null,
         finalStill: Object.freeze({ standsAlone: true, visualSource: "original" })
       });
     }
