@@ -636,6 +636,7 @@ function render(){
   else if(S.view==='closet')screenCloset();
   else if(S.view==='symboldex')screenSymbolDex();
   else if(S.view==='histquiz')screenHistQuiz();
+  else if(S.view==='report')screenReport();
   else screenTown();
   renderMath();
 }
@@ -970,6 +971,7 @@ function screenTown(){
       <button class="nm-iconbtn nm-roadbtn" id="townCourseRoad" title="${S.lang==='ko'?'연산 로드맵':S.lang==='en'?'Course Road':'运算路线图'}">🛤️</button>
       <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
+      <button class="nm-iconbtn nm-rpbtn" id="townReport" title="${S.lang==='ko'?'리포트':S.lang==='en'?'Report':'学习报告'}">📊</button>
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
@@ -989,6 +991,7 @@ function screenTown(){
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
+  const rp=$('#townReport');if(rp)rp.onclick=()=>{S.view='report';save();render();};
   maybeShowR0Banner(scr);
   if(S.onboarded && !S.avatar){
     showAvatarMigrateModal();
@@ -2687,23 +2690,59 @@ function syncProgressUnlocks(){
   });
   if(!newNumbers.length && !newSymbols.length) return;
   save();
+  /* 승급 순간(캐릭터-승급-설계.md §3, HANDOFF "캐릭터를 학습 흐름 더 넓게
+     쓰기" §2) — 예전엔 toast() 한 줄로만 알렸다. 아이가 새로 온 친구를
+     실제로 보게(내 아바타 옆에 나란히, renderPartyHtml) 마을 모달(§
+     lineageBadgeOverlayHtml과 같은 #nm-gate-overlay 패턴)로 승격.
+     seenUnlocks로 유닛당 1회만 — 로직은 그대로, 표시 방식만 바뀐다. */
+  const toShow=[];
   newNumbers.forEach(item => {
     const sk = 'number_' + item.id;
     if(S.seenUnlocks[sk]) return;
     S.seenUnlocks[sk] = true;
-    toast(S.lang==='en' ? `A new number friend arrived! ${item.id} ✨`
-      : S.lang==='zh' ? `新的数字朋友来了！${item.id} ✨`
-      : `새 숫자 친구가 왔어요! ${item.id} ✨`, true);
+    toShow.push({type:'number', id:item.id});
   });
   newSymbols.forEach(item => {
     const sk = 'symbol_' + item.id;
     if(S.seenUnlocks[sk]) return;
     S.seenUnlocks[sk] = true;
-    toast(S.lang==='en' ? `A new symbol friend arrived! ${item.glyph} ✨`
-      : S.lang==='zh' ? `新的符号朋友来了！${item.glyph} ✨`
-      : `새 기호 친구가 왔어요! ${item.glyph} ✨`, true);
+    toShow.push({type:'symbol', id:item.id});
   });
   save();
+  if(toShow.length) showUnlockOverlay(toShow);
+}
+/* 새 친구 도착 모달 — 큐를 하나씩(동시에 여럿 열려도 겹쳐 뜨지 않게) 보여준다.
+   #nmUnlockOverlay가 이미 떠 있으면 아무 것도 안 함(닫힐 때 스스로 다음 걸 연다). */
+function unlockPreviewChar(item){
+  const base=Object.assign({}, S.character);
+  if(item.type==='number'){ base.number=item.id; delete base.symbol; }
+  else { base.symbol=item.id; delete base.number; }
+  return base;
+}
+function unlockOverlayHtml(item){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const previewChar=unlockPreviewChar(item);
+  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarKind(),previewChar,96)
+    :(window.renderNumiChar?window.renderNumiChar(previewChar,96):'');
+  const line=esc(lk('새 친구가 왔어! 옷장에서 동행으로 데려갈 수 있어.','A new friend arrived! You can take them along from the closet.','新朋友来了！可以在衣橱里带上一起走。'));
+  return `<div class="nm-gate-overlay nm-unlock-overlay" id="nmUnlockOverlay">
+    <div class="nm-gate-card nm-unlock-card">
+      <h3>${lk('새 친구가 도착했어요! ✨','A new friend arrived! ✨','新朋友到啦！✨')}</h3>
+      <div class="nm-unlock-party">${partyHtml}</div>
+      ${docStripHtml(40,line)}
+      <button class="nm-btn full" id="nmUnlockOverlayClose">${lk('좋아요!','Nice!','太棒了！')}</button>
+    </div>
+  </div>`;
+}
+function showUnlockOverlay(queue){
+  if(!queue || !queue.length) return;
+  if($('#nmUnlockOverlay')) return; // 이미 하나 떠 있으면 닫힐 때 스스로 이어서 연다
+  const item=queue.shift();
+  document.body.insertAdjacentHTML('beforeend', unlockOverlayHtml(item));
+  confetti(); playSfx('great-job');
+  const close=()=>{ const m=$('#nmUnlockOverlay'); if(m)m.remove(); showUnlockOverlay(queue); };
+  $('#nmUnlockOverlayClose').onclick=close;
+  $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
 function primarySessionOf(course){
@@ -3946,6 +3985,55 @@ function screenHistQuiz(){
   $('#hqBack').onclick=()=>{S.view='town';save();render();};
   if(success)bindHistQuizSuccess(scr,uid);
   else bindHistQuizPuzzle(scr,uid,comic);
+}
+
+/* ============================================================
+   리포트 (S.view==='report') — HANDOFF.md "캐릭터를 학습 흐름 더 넓게
+   쓰기" §1. 부모·아이가 같이 보는 진도 요약. 맨 위 독쌤 띠는 실제 데이터를
+   반영한다: 정체 감지→보강 루프(§2-4, boosterPick())가 잡아낸 약한
+   스레드가 있으면 그 이름을 짚어 주고, 없으면 격려 한 줄만. 새 분석
+   로직을 만들지 않고 이미 있는 boosterPick()·NM_STATS·courseProgress를
+   그대로 읽기만 한다. */
+function screenReport(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const titleHtml=`📊 ${lk('리포트','Report','学习报告')}`;
+
+  const boostThread=boosterPick();
+  const boostTh=boostThread&&(window.NM_THREADS||{})[boostThread];
+  const docLine=boostTh
+    ? esc(lk(`이번 주는 "${L(boostTh.name)}"에서 조금 막혔어요. 편지함의 몸풀기부터 해 보자.`,
+             `You've been a bit stuck on "${L(boostTh.name)}" lately — let's start with the warm-up in the mailbox.`,
+             `最近在"${L(boostTh.name)}"上有点卡住，先从信箱的热身开始吧。`))
+    : esc(lk('잘 가고 있어요. 이대로 한 걸음씩!','Going well. One step at a time!','很顺利，继续一步一步来！'));
+
+  const cid=currentCourseKey();
+  const course=(window.NM_COURSES||{})[cid];
+  const prog=course?courseProgress(course):null;
+  const totalUnitsDone=Object.keys(S.progress||{}).filter(id=>unitDone(id)).length;
+
+  const weakRows=(window.NM_STATS?NM_STATS.boostList():[]).slice(0,3).map(w=>{
+    const th=(window.NM_THREADS||{})[w.thread];
+    return `<div class="nm-rp-row"><span>${esc(th?L(th.name):w.thread)}</span><span>${Math.round(w.avgRate*100)}%</span></div>`;
+  }).join('');
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="rpBack">${t('back')}</button>
+      <div class="nm-unit-title">${titleHtml}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      ${docStripHtml(44,docLine)}
+      <div class="nm-card">
+        <div class="nm-card-h">${lk('지금까지 걸어온 길','How far you have come','走过的路')}</div>
+        <div class="nm-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>
+        ${course?`<p class="nm-wsh-sentence">${esc(L(course.title))} · ${prog.done}/${prog.total}</p>`:''}
+        ${weakRows?`<div class="nm-mb-section-h">${lk('요즘 조금 어려운 곳','A bit tricky lately','最近有点难的地方')}</div>${weakRows}`:`<p class="nm-wsh-sentence">${lk('아직 보강이 필요한 곳이 없어요.','No weak spots detected yet.','暂时没有需要加强的地方。')}</p>`}
+        <button class="nm-btn full" id="rpToMail">📬 ${lk('편지함 열기','Open mailbox','打开信箱')}</button>
+      </div>
+    </div>`;
+  $('#rpBack').onclick=()=>{S.view='town';save();render();};
+  $('#rpToMail').onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
