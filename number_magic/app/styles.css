@@ -333,6 +333,34 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-comic-art svg{display:block;width:100%;height:auto}
 .nm-comic-cap{font-size:12.5px;line-height:1.5;padding:8px 11px;color:var(--ink);font-weight:600}
 
+/* 수학사 퀴즈(§3 남쪽 항구) — 네 컷 순서 맞히기. .nm-comic-*(위)의 카드 톤을 그대로
+   빌려 쓰고, 탭 가능한 버튼·"내 순서" 줄만 새로 얹는다. */
+.nm-hq-wrap{padding:4px 2px 24px}
+.nm-hq-unit-hint{font-size:12.5px;font-weight:800;color:var(--sub);margin:2px 0 12px;text-align:center}
+.nm-hq-order-h,.nm-hq-grid-h{font-size:12px;font-weight:800;color:#8a6d46;margin:0 0 6px;letter-spacing:.02em}
+.nm-hq-order-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
+.nm-hq-slot{position:relative;aspect-ratio:200/140;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:16px;color:var(--sub)}
+.nm-hq-slot.empty{border:2px dashed var(--line);background:#fbfaf7}
+.nm-hq-slot.filled{border:2px solid var(--gold-deep);background:#fdfaf3;overflow:hidden;box-shadow:2px 2px 0 rgba(26,34,51,.12)}
+.nm-hq-slot-art{width:100%;height:100%}
+.nm-hq-slot-art svg{display:block;width:100%;height:100%}
+.nm-hq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 6px}
+.nm-hq-panel{position:relative;margin:0;padding:0;background:#fff;border:2px solid var(--ink);border-radius:12px;
+  overflow:hidden;box-shadow:3px 3px 0 rgba(26,34,51,.14);cursor:pointer;font:inherit;text-align:left;
+  transition:transform .12s,opacity .12s}
+.nm-hq-panel:active{transform:scale(.97)}
+.nm-hq-panel.picked{opacity:.45}
+.nm-hq-badge{position:absolute;top:7px;left:7px;width:22px;height:22px;border-radius:50%;
+  background:var(--blue);color:#fff;font-size:12px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+.nm-hq-wrong{color:var(--no);font-weight:800;font-size:13.5px;text-align:center;margin:10px 0 2px}
+.nm-hq-btns{display:flex;gap:10px;margin-top:14px}
+.nm-hq-btns .nm-btn{flex:1;margin-top:0}
+@keyframes nm-hq-shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}
+  30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.nm-hq-shake{animation:nm-hq-shake .4s ease}
+
 /* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
 .nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
 .nm-mstep-line{font-weight:900;color:var(--blue-deep);padding:4px 0}

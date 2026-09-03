@@ -101,6 +101,13 @@ crossSum · sortBasket(count/compare) · tallyBuild(build/read)
   정지 NPC 2명(할아버지 `#nbElder`·독쌤 `#nbDoc`) 추가. 온보딩 2단계(나→동행)로 나뉨, 기존
   저장본(온보딩 이전)은 마을 진입 시 이주 모달로 1회 선택 강제. 옷장(`app/closet.js`) 'me' 탭에서
   전환 가능.
+- **수학사 퀴즈(§3 남쪽 항구, §5 step5)** ✅ 구현됨(2026-09-03). 새 문항을 쓰지 않고 이미
+  있는 만화 95편(`data/story-comics.js`의 `window.NM_COMICS[유닛id]`)의 네 컷을 섞어
+  순서를 되맞히는 게임. `screenHistQuiz()`(app/main.js) — 남쪽 항구 관문(`TOWN_GATES`의
+  `soon:true`를 `view:'histquiz'`로 교체, `showGateLinksModal()`이 `url` 새 탭뿐 아니라
+  `view` 앱 내 전환도 지원하도록 확장)과 타이틀 화면 `#ttHist` 알약 두 곳에서 진입.
+  큐는 끝낸 유닛(`stepDone(uid,'stamp')`)을 우선 섞어 넣고, 다 돈 뒤엔 다시 전체로 순환.
+  정답 맞히면 만화당 최초 1회만 🪙+2.
 
 ---
 

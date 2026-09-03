@@ -565,6 +565,9 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 퍼즐 상태. S.histQuiz(큐·done)와
+  달리 저장하지 않는다(재입장 시 같은 만화면 새로 섞임) — mgTimer·townCleanup과 같은 성격의
+  전환용 모듈 변수. */
 /* 사람 아바타 kind — S.avatar는 onboarded와 같은 이유로 defaults()에 없다(§ 위 주석
    "onboarded는 defaults()에 넣지 않음" 참고): 기존 저장본(온보딩 이전)과 병합돼도
    "아직 안 골랐음"을 구분해야 마을 이주 모달이 뜬다. 읽을 땐 항상 이 헬퍼로. */
@@ -632,6 +635,7 @@ function render(){
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
   else if(S.view==='symboldex')screenSymbolDex();
+  else if(S.view==='histquiz')screenHistQuiz();
   else screenTown();
   renderMath();
 }
@@ -833,12 +837,15 @@ const TOWN_GATES=[
   { id:'south', pos:'left:75%;top:83%', icon:'⛵',
     name:{ko:'바깥 세상 항구',en:'Harbor to the World',zh:'通往世界的港口'},
     links:[
-      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, soon:true},
+      /* 2026-09-03: 만화 95편(data/story-comics.js)에 문항(네 컷 순서 맞히기)을 얹어 열림.
+         url이 아니라 view — 새 탭이 아니라 이 앱 안의 화면(S.view='histquiz')으로 이동한다. */
+      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, view:'histquiz'},
       {name:{ko:'NCP',en:'NCP',zh:'NCP'}, soon:true}
     ] }
 ];
-/* 링크가 열려 있는지 — open:true뿐이다(설정 파일 조회 없음, 원장 지시로 단순화). */
-function gateLinkOpen(link){ return !!(link&&link.open); }
+/* 링크가 열려 있는지 — open:true(새 탭 url) 또는 view(앱 내 화면 전환)면 열림.
+   (설정 파일 조회 없음, 원장 지시로 단순화). */
+function gateLinkOpen(link){ return !!(link&&(link.open||link.view)); }
 /* 관문 탭 → 링크 목록 모달. showTownModal(#tmodal, 단일 버튼)과 달리 링크가
    여러 개일 수 있어 body에 직접 붙였다 뗀다(gateModalHtml과 같은 패턴) —
    .nm-tmodal/.nm-tmcard CSS는 그대로 재사용해 같은 톤을 낸다. */
@@ -847,6 +854,9 @@ function showGateLinksModal(gate){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const rows=(gate.links||[]).map(link=>{
     if(gateLinkOpen(link)){
+      if(link.view){
+        return `<button class="nm-btn full" data-view="${esc(link.view)}">${esc(L(link.name))} →</button>`;
+      }
       return `<button class="nm-btn full" data-url="${esc(link.url)}">${esc(L(link.name))} →</button>`;
     }
     return `<button class="nm-btn full ghost" disabled>${esc(L(link.name))} · ${lk('준비 중','Coming soon','准备中')}</button>`;
@@ -864,6 +874,10 @@ function showGateLinksModal(gate){
   const close=()=>wrap.remove();
   wrap.querySelectorAll('[data-url]').forEach(b=>{
     b.onclick=()=>{ window.open(b.dataset.url,'_blank','noopener'); };
+  });
+  /* view 링크 — 새 탭이 아니라 이 앱 안의 화면으로 이동(마을 밖으로 안 나감) */
+  wrap.querySelectorAll('[data-view]').forEach(b=>{
+    b.onclick=()=>{ close(); S.view=b.dataset.view; save(); render(); };
   });
   $('#nmGateLinksClose').onclick=close;
   wrap.addEventListener('click',e=>{ if(e.target===wrap) close(); });
@@ -2590,6 +2604,7 @@ function screenTitle(){
         <div class="nm-title-sub-row">
           <button class="nm-title-pill" id="ttStory">🗺 ${lk('스토리 모드','Story Mode','故事模式')}</button>
           <button class="nm-title-pill" id="ttDex">📖 ${lk('기호 도감','Symbol Dex','符号图鉴')}</button>
+          <button class="nm-title-pill" id="ttHist">🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}</button>
         </div>
       </div>
     </div>
@@ -2601,6 +2616,7 @@ function screenTitle(){
   $('#ttRoad').onclick=()=>{ S.view='courseroad'; save(); render(); };
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
+  $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -3202,7 +3218,7 @@ function initTownWorld(scr){
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
       lines:['오늘은 어떤 마법을 배울까?','내가 옆에서 도와줄게!']},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
-      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다']},
+      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다','항구에 가면 수학 이야기 퀴즈가 있단다']},
     {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
       lines:['안녕! 나는 독쌤이야 📚','오늘 배울 마법은 도서관에 있어','모르면 언제든 물어봐!']},
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
@@ -3767,6 +3783,169 @@ function screenSymbolDex(){
   </div>`;
   $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
   bindDexCards(scr);
+}
+
+/* ============================================================
+   수학사 퀴즈 — 네 컷 순서 맞히기 (마을세계관-설계.md §3 남쪽 항구 · §5 step5)
+   data/story-comics.js의 window.NM_COMICS[유닛id]={panels:[{art,text},×4]}를 그대로 쓴다.
+   문항을 새로 안 쓰고 "이미 있는 만화 95편의 순서를 섞어 되맞히기"만 하는 게임형 퀴즈.
+   S.histQuiz={queue:[유닛id,…],done:{유닛id:true}}만 저장(정답 큐·완료 기록) — 화면에
+   떠 있는 현재 퍼즐의 섞인 순서·고른 순서는 hqPuzzle(모듈 변수, 저장 안 함)에 둔다.
+   ============================================================ */
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+/* 큐가 비면 새로 짠다 — 이미 끝난 유닛(stepDone(uid,'stamp'))을 먼저, 그 다음 나머지.
+   done(이번 라운드에서 이미 맞힌 만화)에 없는 것만 대상으로 삼고, 전부 done이면
+   done을 비우고 전체로 다시 돈다(스펙: "skip ones in done until all are done, then reset"). */
+function histQuizEnsure(){
+  if(!S.histQuiz)S.histQuiz={queue:[],done:{}};
+  if(!S.histQuiz.done)S.histQuiz.done={};
+  if(S.histQuiz.queue&&S.histQuiz.queue.length)return;
+  const ids=Object.keys(window.NM_COMICS||{});
+  if(!ids.length){S.histQuiz.queue=[];return;}
+  let remain=ids.filter(id=>!S.histQuiz.done[id]);
+  if(!remain.length){S.histQuiz.done={};remain=ids.slice();}
+  const finished=shuffleArr(remain.filter(id=>stepDone(id,'stamp')));
+  const rest=shuffleArr(remain.filter(id=>!stepDone(id,'stamp')));
+  S.histQuiz.queue=finished.concat(rest);
+  save();
+}
+/* 새 퍼즐 — 패널 4장의 원래 인덱스(0~3=정답 순서)를 섞는다. 이미 섞은 게 우연히
+   정답 순서([0,1,2,3])와 같으면(1/24 확률) 재섞음 — 탭 한 번으로 끝나는 퍼즐 방지. */
+function histQuizNewPuzzle(uid){
+  let order=[0,1,2,3];
+  for(let tries=0;tries<6;tries++){
+    order=shuffleArr([0,1,2,3]);
+    if(order.some((v,i)=>v!==i))break;
+  }
+  return {uid,order,picked:[],checked:null};
+}
+function hqOrderRowHtml(comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const slots=[0,1,2,3].map(i=>{
+    const oi=hqPuzzle.picked[i];
+    if(oi===undefined)return `<div class="nm-hq-slot empty">${i+1}</div>`;
+    const p=comic.panels[oi];
+    return `<div class="nm-hq-slot filled"><span class="nm-hq-badge">${i+1}</span><div class="nm-hq-slot-art">${p.art}</div></div>`;
+  }).join('');
+  return `<div class="nm-hq-order-h">${lk('내 순서','My order','我的顺序')}</div>
+    <div class="nm-hq-order-row">${slots}</div>`;
+}
+function hqGridHtml(comic){
+  const pickedIdx={};hqPuzzle.picked.forEach((oi,i)=>{pickedIdx[oi]=i+1;});
+  return `<div class="nm-hq-grid">${hqPuzzle.order.map(oi=>{
+    const p=comic.panels[oi];
+    const badge=pickedIdx[oi];
+    return `<button class="nm-hq-panel${badge?' picked':''}" data-i="${oi}">
+      ${badge?`<span class="nm-hq-badge">${badge}</span>`:''}
+      <div class="nm-comic-art">${p.art}</div>
+      <div class="nm-comic-cap">${L(p.text)}</div>
+    </button>`;
+  }).join('')}</div>`;
+}
+function hqPuzzleBodyHtml(uid,comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const unitTitle=UNITS[uid]?L(UNITS[uid].title):uid;
+  const canCheck=hqPuzzle.picked.length===4;
+  return `<div class="nm-hq-unit-hint">${esc(unitTitle)}</div>
+    ${hqOrderRowHtml(comic)}
+    <div class="nm-hq-grid-h">${lk('네 컷을 순서대로 탭해 보세요','Tap the panels in order','按顺序点击四格')}</div>
+    ${hqGridHtml(comic)}
+    ${hqPuzzle.checked==='no'?`<div class="nm-hq-wrong">${lk('음, 순서가 조금 달라. 다시 볼까?','Hmm, the order is a bit off. Look again?','嗯，顺序有点不对，再看看？')}</div>`:''}
+    <div class="nm-hq-btns">
+      <button class="nm-btn ghost" id="hqReset">${lk('다시','Reset','重来')}</button>
+      <button class="nm-btn full" id="hqCheck"${canCheck?'':' disabled'}>${lk('확인','Check','确认')}</button>
+    </div>`;
+}
+function hqSuccessBodyHtml(comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const panelsHtml=comic.panels.map((p,i)=>`<div class="nm-comic-panel">
+      <span class="nm-comic-no">${i+1}</span>
+      <div class="nm-comic-art">${p.art}</div>
+      <div class="nm-comic-cap">${L(p.text)}</div>
+    </div>`).join('');
+  return `<div class="nm-card-h">${lk('맞았어! 이야기가 이렇게 흘렀어요','Right! That is how the story went','答对了！故事就是这样发展的')}</div>
+    <div class="nm-comic">${panelsHtml}</div>
+    <div class="nm-hq-btns">
+      <button class="nm-btn full" id="hqNext">${lk('다음 이야기 →','Next story →','下一个故事 →')}</button>
+      <button class="nm-btn ghost" id="hqToTown">${lk('마을로','Back to town','回村庄')}</button>
+    </div>`;
+}
+function bindHistQuizPuzzle(scr,uid,comic){
+  scr.querySelectorAll('.nm-hq-panel[data-i]').forEach(b=>{
+    b.onclick=()=>{
+      const oi=+b.dataset.i;
+      const idx=hqPuzzle.picked.indexOf(oi);
+      if(idx>=0)hqPuzzle.picked.splice(idx,1);           // 이미 고른 패널 다시 탭 → 취소
+      else{ if(hqPuzzle.picked.length>=4)return; hqPuzzle.picked.push(oi); }
+      hqPuzzle.checked=null;
+      screenHistQuiz();
+    };
+  });
+  const rb=scr.querySelector('#hqReset');
+  if(rb)rb.onclick=()=>{ hqPuzzle.picked=[]; hqPuzzle.checked=null; screenHistQuiz(); };
+  const cb=scr.querySelector('#hqCheck');
+  if(cb)cb.onclick=()=>{
+    if(hqPuzzle.picked.length!==4)return;
+    const ok=hqPuzzle.picked.every((oi,i)=>oi===i);
+    if(ok){
+      if(!S.histQuiz.done)S.histQuiz.done={};
+      const already=!!S.histQuiz.done[uid];
+      S.histQuiz.done[uid]=true;
+      hqPuzzle.checked='ok';
+      save();
+      if(!already){ coinAdd(2); toast('🪙 +2',true); }
+      screenHistQuiz();
+    }else{
+      hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
+      screenHistQuiz();
+    }
+  };
+}
+function bindHistQuizSuccess(scr,uid){
+  const nb=scr.querySelector('#hqNext');
+  if(nb)nb.onclick=()=>{
+    S.histQuiz.queue=(S.histQuiz.queue||[]).filter(x=>x!==uid);
+    save();
+    hqPuzzle=null;
+    screenHistQuiz();
+  };
+  const tb=scr.querySelector('#hqToTown');
+  if(tb)tb.onclick=()=>{S.view='town';save();render();};
+}
+function screenHistQuiz(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const titleHtml=`🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}`;
+  histQuizEnsure();
+  const uid=S.histQuiz.queue[0];
+  if(!uid){
+    scr.innerHTML=`<div class="nm-unit-bar">
+        <button class="nm-back" id="hqBack">${t('back')}</button>
+        <div class="nm-unit-title">${titleHtml}</div>
+      </div>
+      <div class="nm-step-body nm-hq-wrap"><div class="nm-card center">
+        <div class="nm-card-h">${lk('아직 준비된 이야기가 없어요','No stories are ready yet','还没有准备好的故事')}</div>
+      </div></div>`;
+    $('#hqBack').onclick=()=>{S.view='town';save();render();};
+    return;
+  }
+  if(!hqPuzzle||hqPuzzle.uid!==uid)hqPuzzle=histQuizNewPuzzle(uid);
+  const comic=NM_COMICS[uid];
+  const success=hqPuzzle.checked==='ok';
+  scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="hqBack">${t('back')}</button>
+      <div class="nm-unit-title">${titleHtml}</div>
+    </div>
+    <div class="nm-step-body nm-hq-wrap">
+      ${docStripHtml(44,esc(lk('네 컷의 순서를 맞춰 봐. 이야기가 어떻게 흘렀을까?','Put the four panels in order. How did the story go?','把四格排好顺序，故事是怎么发展的？')))}
+      <div class="nm-card${success?' center':(hqPuzzle.checked==='no'?' nm-hq-shake':'')}">
+        ${success?hqSuccessBodyHtml(comic):hqPuzzleBodyHtml(uid,comic)}
+      </div>
+    </div>`;
+  $('#hqBack').onclick=()=>{S.view='town';save();render();};
+  if(success)bindHistQuizSuccess(scr,uid);
+  else bindHistQuizPuzzle(scr,uid,comic);
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
