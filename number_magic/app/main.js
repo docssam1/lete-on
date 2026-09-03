@@ -448,6 +448,56 @@ window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) �
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
+
+/* ============================================================
+   포인트 §6 — 출석 + 주간 보너스 (마을세계관-설계.md §6, 연속 배수 없음)
+   ============================================================ */
+/* 로컬(단말기) 기준 오늘 날짜 키. UTC로 어긋나면 자정 근처 아이가 손해 보므로
+   반드시 로컬 Date 필드로 조합한다(toISOString은 UTC라 여기서 쓰면 안 됨). */
+function todayKey(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+/* 출석 체크 — S.attend는 defaults()에 없다(지시사항): 기존 저장본에 필드가
+   없다가 오늘 처음 생기는 것도 "출석 1일째"로 자연스럽게 시작해야 하므로,
+   여기서 있으면 쓰고 없으면 지금 막 만든다(그 자체가 마이그레이션). 오늘 이미
+   기록돼 있으면 아무 것도 하지 않고 null 반환 — 하루 두 번 이상 안 준다. */
+function checkAttendance(){
+  const today=todayKey();
+  if(S.attend && S.attend.last===today) return null;
+  S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
+  coinAdd(3);
+  return S.attend.days;
+}
+/* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
+   ① 봉투를 열었을 것(S.mailbox.opened[weekKey])
+   ② 이 앱엔 주간 드릴별 "완료" 상태가 없다 — 드릴은 인쇄해서 종이로 풀기
+      때문(mailbox·wsh·thread 완료 플래그를 전부 찾아봤지만 없음, CLAUDE
+      지시사항의 폴백 규칙 적용 대상). 대신 정체 감지→보강 루프의 "그 주
+      몸풀기 완료"(boosterDoneThisWeek)를 그 주 해야 할 일의 완료 신호로 쓴다.
+   ③ 다만 그 주에 보강이 아예 필요 없었던 아이(boosterPick()===null, 약점
+      스레드 없음)까지 보강을 요구하면 잘하고 있는 아이가 영영 주간 보너스를
+      못 받는 역설이 생긴다 — 그래서 "지금 시점에 보강이 필요 없다"도 완료로
+      인정한다. boosterPick()은 주 단위 스냅샷이 아니라 항상 최신 통계를
+      보므로 완벽하진 않지만(과거 주를 소급 판정), 종이 학습지 채점 자체가
+      앱에 없는 이상 이게 가장 단순하고 방어 가능한 근사치다. */
+function weekFullyDone(weekKey){
+  if(!weekKey) return false;
+  if(!(S.mailbox && S.mailbox.opened && S.mailbox.opened[weekKey])) return false;
+  const needsBoost = !boosterDoneThisWeek(weekKey) && !!boosterPick();
+  return !needsBoost;
+}
+function maybeAwardWeeklyBonus(weekKey){
+  if(!weekFullyDone(weekKey)) return;
+  if(!S.weeklyBonus) S.weeklyBonus={};
+  if(S.weeklyBonus[weekKey]) return;
+  S.weeklyBonus[weekKey]=true;
+  coinAdd(10);
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  toast(lk('한 주를 다 마쳤어요! 🪙 +10','You finished the week! 🪙 +10','完成了一周！🪙 +10'), true);
+}
+
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
 /* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
 function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
@@ -861,7 +911,33 @@ function screenTown(){
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
   maybeShowR0Banner(scr);
-  if(S.onboarded && !S.avatar) showAvatarMigrateModal();
+  if(S.onboarded && !S.avatar){
+    showAvatarMigrateModal();
+  }else{
+    /* 출석(§6) — 아바타 이주 모달을 띄우는 참(아직 사람을 안 골랐을 때)엔
+       건드리지 않는다. 사람을 이미 골랐으면(온보딩 완료 프로필의 정상 경로)
+       그날 처음 마을에 들어온 순간에만 카드가 뜬다(checkAttendance가 하루
+       한 번만 값을 반환). */
+    const attendDays=checkAttendance();
+    if(attendDays!=null){ save(); showAttendCard(scr,attendDays); }
+  }
+}
+/* 출석 카드 — 자동 소멸(약 3.5초) + 탭하면 즉시 닫힘. 잠금 없는 비차단 알림이라
+   render()를 다시 부르지 않고 DOM만 직접 붙였다 뗀다(재렌더로 지워지면 화면 전환
+   중 사라져 버려 "오늘 왔구나" 메시지를 놓칠 수 있다). */
+function showAttendCard(scr,days){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const card=document.createElement('div');
+  card.className='nm-attend-card';
+  card.innerHTML=`${window.renderHumanChar?window.renderHumanChar('doc',48):''}
+    <div class="nm-attend-text">
+      <b>${lk('오늘도 왔구나! 🪙 +3','You came today! 🪙 +3','今天也来了！🪙 +3')}</b>
+      <span>${lk(`출석 ${days}일째`,`Day ${days}`,`第${days}天`)}</span>
+    </div>`;
+  scr.appendChild(card);
+  const hide=()=>{ if(!card.parentNode)return; card.classList.add('hide'); setTimeout(()=>card.remove(),260); };
+  card.onclick=hide;
+  setTimeout(hide,3500);
 }
 
 /* ── 마을 이주 모달(§1) — 온보딩 이전(구버전)에 만들어진 저장본은 S.avatar가 없다.
@@ -2412,6 +2488,7 @@ function screenTitle(){
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
+        ${S.attend&&S.attend.days?`<span class="nm-title-chip">📅 ${lk(`${S.attend.days}일`,`Day ${S.attend.days}`,`第${S.attend.days}天`)}</span>`:''}
         ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
       </div>
       ${lineageBadgeRowHtml()}
@@ -2639,6 +2716,7 @@ function screenBoost(){
     if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
     const already = !!S._boostRewarded;
     if(!already){ coinAdd(6); S._boostRewarded=true; }
+    maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
     </div>
@@ -2822,6 +2900,7 @@ function screenMailbox(){
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
+    maybeAwardWeeklyBonus(S._mbWeek); /* §6 주간 보너스 — 열 때마다 확인, 중복 지급은 내부에서 막음 */
     renderMath(scr);
     return;
   }

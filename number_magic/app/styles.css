@@ -829,6 +829,18 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
 .nm-mb-env-from{font-size:10.5px;color:var(--sub);font-weight:700}
 .nm-mb-env-body{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
 
+/* ── 출석 카드(§6) — 마을 진입 시 잠깐 떴다 사라지는 비차단 알림 ── */
+.nm-attend-card{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:45;
+  display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:8px 16px 8px 8px;
+  box-shadow:0 14px 34px -12px rgba(0,0,0,.4);cursor:pointer;
+  animation:nmAttendIn .35s ease-out}
+.nm-attend-card.hide{opacity:0;transform:translate(-50%,-8px);transition:opacity .25s,transform .25s}
+.nm-attend-card .nm-human{flex:none}
+.nm-attend-text{display:flex;flex-direction:column;gap:1px}
+.nm-attend-text b{font-size:13.5px;color:var(--blue-deep)}
+.nm-attend-text span{font-size:11.5px;color:var(--sub);font-weight:700}
+@keyframes nmAttendIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+
 /* ── 학부모 알림 등록 카드 ── */
 .nm-notify-card{display:block}
 .nm-notify-head{font-weight:900;color:var(--blue-deep);margin-bottom:4px}
