@@ -7,11 +7,14 @@ const LOCAL_ORIGINS = new Set([
   "http://127.0.0.1:41873",
   "http://localhost:41873"
 ]);
-const ACTIONS = new Set(["listExams", "loadExam", "loadAnswers", "saveAttempt"]);
+const ACTIONS = new Set(["listExams", "loadExam", "loadAnswers", "saveAttempt", "startNewAttempt"]);
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/;
 const QUESTION_KEY_RE = /^premier:(utilization|final|last)-(\d{2}):q(\d{2})$/;
 const TYPE_KEY_RE = /^[a-z][a-z0-9-]{1,79}$/;
+const LEGACY_TYPE_KEY_ALIASES = new Map([
+  ["500", "coin-payment-change-conditions"]
+]);
 const AREA_KEYS = new Set(["arithmetic", "spatial", "pattern", "logic", "combinatorics", "measurement"]);
 const JSON_MIME_RE = /^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i;
 const QUESTION_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -62,7 +65,7 @@ function publicErrorCode(code: string): string {
   const publicCodes = new Set([
     "authentication_required", "request_not_allowed", "invalid_request",
     "exam_not_available", "entitlement_required", "attempt_not_available",
-    "attempt_conflict", "submission_conflict", "revision_conflict",
+    "attempt_conflict", "attempt_limit_reached", "submission_conflict", "revision_conflict",
     "answers_not_available", "asset_not_available", "asset_unavailable",
     "too_many_requests", "server_not_ready"
   ]);
@@ -379,8 +382,9 @@ type SafeQuestion = {
   number: number;
   questionKey: string;
   revision: number;
-  releaseStatus: "verified";
-  lockReasons: never[];
+  releaseStatus: "verified" | "excluded";
+  scoringEligible: boolean;
+  lockReasons: string[];
   areaKey: string;
   areaLabel: string;
   typeKey: string;
@@ -445,16 +449,27 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       || seenKeys.has(String(question.questionKey))
       || (assetId !== null && seenAssets.has(assetId))
     ) throw new ApiError(409, "question_identity_invalid");
-    if (question.releaseStatus !== "verified"
-      || !Array.isArray(question.lockReasons) || question.lockReasons.length !== 0) {
+    const releaseStatus = question.releaseStatus;
+    const scoringEligible = question.scoringEligible;
+    if (!Array.isArray(question.lockReasons) || question.lockReasons.some(reason =>
+      typeof reason !== "string" || !/^[a-z][a-z0-9_-]{1,79}$/.test(reason))) {
       throw new ApiError(409, "question_locked");
     }
-    if (!AREA_KEYS.has(String(question.areaKey)) || !TYPE_KEY_RE.test(String(question.typeKey || ""))) {
-      throw new ApiError(409, "question_classification_invalid");
+    const verified = releaseStatus === "verified" && scoringEligible === true && question.lockReasons.length === 0;
+    const excluded = releaseStatus === "excluded" && scoringEligible === false && question.lockReasons.length > 0;
+    if (!verified && !excluded) throw new ApiError(409, "question_locked");
+    const questionDiagnostic = String(number).padStart(2, "0");
+    if (!AREA_KEYS.has(String(question.areaKey))) {
+      throw new ApiError(409, `question_${questionDiagnostic}_area_key_invalid`);
+    }
+    const storedTypeKey = String(question.typeKey || "");
+    const typeKey = LEGACY_TYPE_KEY_ALIASES.get(storedTypeKey) || storedTypeKey;
+    if (!TYPE_KEY_RE.test(typeKey)) {
+      throw new ApiError(409, `question_${questionDiagnostic}_type_key_invalid`);
     }
     const typeId = question.typeId == null ? null : Number(question.typeId);
     if (typeId != null && (!Number.isInteger(typeId) || typeId < 1 || typeId > 54)) {
-      throw new ApiError(409, "question_classification_invalid");
+      throw new ApiError(409, `question_${questionDiagnostic}_type_id_invalid`);
     }
     seenKeys.add(String(question.questionKey));
     if (assetId !== null) seenAssets.add(assetId);
@@ -462,14 +477,15 @@ function validateProblemManifest(value: unknown, exam: JsonObject, expectedRevis
       number,
       questionKey: String(question.questionKey),
       revision,
-      releaseStatus: "verified",
-      lockReasons: [],
+      releaseStatus,
+      scoringEligible,
+      lockReasons: question.lockReasons.slice(),
       areaKey: String(question.areaKey),
-      areaLabel: asSafeText(question.areaLabel, 100, false, "question_classification_invalid"),
-      typeKey: String(question.typeKey),
-      typeTitle: asSafeText(question.typeTitle, 160, false, "question_classification_invalid"),
+      areaLabel: asSafeText(question.areaLabel, 100, false, `question_${questionDiagnostic}_area_label_invalid`),
+      typeKey,
+      typeTitle: asSafeText(question.typeTitle, 160, false, `question_${questionDiagnostic}_type_title_invalid`),
       typeId,
-      typeCode: question.typeCode == null ? "" : asSafeText(question.typeCode, 80, false, "question_classification_invalid"),
+      typeCode: question.typeCode == null ? "" : asSafeText(question.typeCode, 80, false, `question_${questionDiagnostic}_type_code_invalid`),
       difficultyLabel: question.difficultyLabel == null ? "" : asSafeText(question.difficultyLabel, 40, false, "question_invalid"),
       prompt: question.prompt == null && deliveryMode === "page_images"
         ? `원본 시험지 ${number}번`
@@ -637,14 +653,15 @@ function validateAnswerManifest(value: unknown, manifest: ReturnType<typeof vali
   if (document.examId != null && ![exam.id, exam.slug].includes(document.examId)) {
     throw new ApiError(409, "answer_exam_mismatch");
   }
-  if (!Array.isArray(document.answers) || document.answers.length !== manifest.questions.length) {
+  const scoringQuestions = manifest.questions.filter(question => question.scoringEligible);
+  if (!Array.isArray(document.answers) || document.answers.length !== scoringQuestions.length) {
     throw new ApiError(409, "answer_manifest_invalid");
   }
   const seen = new Set<string>();
   return document.answers.map((raw, index) => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new ApiError(409, "answer_invalid");
     const entry = raw as JsonObject;
-    const question = manifest.questions[index];
+    const question = scoringQuestions[index];
     if (entry.questionKey !== question.questionKey || seen.has(question.questionKey)
       || asRevision(entry.revision) !== revision) {
       throw new ApiError(409, "answer_revision_mismatch");
@@ -680,12 +697,15 @@ function rpcRow(data: unknown, code: string): JsonObject {
   return row as JsonObject;
 }
 
-function mapRpcError(error: unknown, operation: "begin" | "reveal" | "submit"): never {
+function mapRpcError(error: unknown, operation: "begin" | "retake" | "reveal" | "submit"): never {
   const value = error as { code?: string; message?: string } | null;
   const code = String(value?.code || "");
   const message = String(value?.message || "");
   if (code === "42501") throw new ApiError(403, "entitlement_required");
   if (/revision/i.test(message)) throw new ApiError(409, "revision_conflict");
+  if (operation === "retake" && /retake limit reached/i.test(message)) {
+    throw new ApiError(409, "attempt_limit_reached");
+  }
   if (code === "23505") {
     throw new ApiError(409, operation === "submit" ? "submission_conflict" : "attempt_conflict");
   }
@@ -730,13 +750,15 @@ async function loadExam(
   }
   const rawManifest = await readVerifiedJson(service, manifestAsset, MAX_MANIFEST_BYTES);
   const manifest = validateProblemManifest(rawManifest, exam.raw, revision);
+  const scoringQuestions = manifest.questions.filter(question => question.scoringEligible);
+  if (!scoringQuestions.length) throw new ApiError(409, "manifest_has_no_scoring_questions");
 
   const { data: beginData, error: beginError } = await service.rpc("hf_begin_mock_attempt", {
     p_student_id: userId,
     p_mock_exam_id: exam.raw.id,
     p_manifest_asset_id: manifestAsset.id,
     p_manifest_revision: revision,
-    p_question_count: manifest.questions.length,
+    p_question_count: scoringQuestions.length,
     p_load_event_id: loadEventId
   });
   if (beginError) mapRpcError(beginError, "begin");
@@ -759,7 +781,8 @@ async function loadExam(
     subtitle: manifest.subtitle,
     description: manifest.description,
     durationMinutes: manifest.durationMinutes,
-    questionCount: questions.length,
+    questionCount: scoringQuestions.length,
+    sourceQuestionCount: questions.length,
     signedUrlExpiresIn: SIGNED_URL_SECONDS,
     deliveryMode: manifest.deliveryMode,
     pages,
@@ -824,6 +847,48 @@ async function loadAnswers(
   };
 }
 
+async function startNewAttempt(
+  payload: JsonObject,
+  userClient: SupabaseClient,
+  userId: string,
+  supabaseUrl: string,
+  secretKey: string
+): Promise<JsonObject> {
+  requireExactKeys(payload, ["action", "examId", "retakeEventId"]);
+  const retakeEventId = assertUuid(payload.retakeEventId, "retake_event_invalid");
+  const exam = await resolveExam(userClient, payload.examId);
+  const revision = Number(exam.raw.current_revision);
+  const visibleManifest = await resolveVisibleAsset(userClient, String(exam.raw.id), revision, "manifest");
+  const service = createServiceClient(supabaseUrl, secretKey);
+  const manifestAsset = await serviceAsset(service, String(visibleManifest.id));
+  if (manifestAsset.mock_exam_id !== exam.raw.id || Number(manifestAsset.revision) !== revision
+    || manifestAsset.asset_kind !== "manifest" || manifestAsset.sha256 !== visibleManifest.sha256) {
+    throw new ApiError(409, "manifest_asset_mismatch");
+  }
+  const rawManifest = await readVerifiedJson(service, manifestAsset, MAX_MANIFEST_BYTES);
+  const manifest = validateProblemManifest(rawManifest, exam.raw, revision);
+  const scoringQuestions = manifest.questions.filter(question => question.scoringEligible);
+  if (!scoringQuestions.length) throw new ApiError(409, "manifest_has_no_scoring_questions");
+
+  const { data, error } = await service.rpc("hf_start_mock_retake", {
+    p_student_id: userId,
+    p_mock_exam_id: exam.raw.id,
+    p_manifest_asset_id: manifestAsset.id,
+    p_manifest_revision: revision,
+    p_question_count: scoringQuestions.length,
+    p_retake_event_id: retakeEventId
+  });
+  if (error) mapRpcError(error, "retake");
+  const attempt = rpcRow(data, "attempt_start_failed");
+  return {
+    exam: exam.safe,
+    attemptId: attempt.attempt_id,
+    attemptNo: Number(attempt.attempt_no),
+    attemptStatus: attempt.status,
+    manifestRevision: revision
+  };
+}
+
 function validateMarks(value: unknown, questions: SafeQuestion[]): Record<string, "o" | "x"> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new ApiError(400, "marks_invalid");
   const marks = value as Record<string, unknown>;
@@ -858,9 +923,10 @@ async function saveAttempt(
     || manifestAsset.asset_kind !== "manifest") throw new ApiError(409, "manifest_asset_mismatch");
   const manifestJson = await readVerifiedJson(service, manifestAsset, MAX_MANIFEST_BYTES);
   const manifest = validateProblemManifest(manifestJson, exam.raw, revision);
-  const marks = validateMarks(payload.marks, manifest.questions);
-  const wrongQuestions = manifest.questions.filter(question => marks[String(question.number)] === "x");
-  const correctCount = manifest.questions.length - wrongQuestions.length;
+  const scoringQuestions = manifest.questions.filter(question => question.scoringEligible);
+  const marks = validateMarks(payload.marks, scoringQuestions);
+  const wrongQuestions = scoringQuestions.filter(question => marks[String(question.number)] === "x");
+  const correctCount = scoringQuestions.length - wrongQuestions.length;
   const wrongQuestionKeys = wrongQuestions.map(question => question.questionKey);
   const wrongTypeKeys = Array.from(new Set(wrongQuestions.map(question => question.typeKey)));
   const digest = await sha256Hex(new TextEncoder().encode(JSON.stringify({
@@ -883,7 +949,7 @@ async function saveAttempt(
   if (error) mapRpcError(error, "submit");
   const receipt = rpcRow(data, "attempt_save_failed");
   if (receipt.status !== "submitted" || Number(receipt.correct_count) !== correctCount
-    || Number(receipt.question_count) !== manifest.questions.length) {
+    || Number(receipt.question_count) !== scoringQuestions.length) {
     throw new ApiError(503, "attempt_receipt_invalid");
   }
   return {
@@ -942,12 +1008,18 @@ Deno.serve(async request => {
       result = await loadExam(payload, userClient, authData.user.id, supabaseUrl, secretKey);
     } else if (action === "loadAnswers") {
       result = await loadAnswers(payload, userClient, authData.user.id, supabaseUrl, secretKey);
+    } else if (action === "startNewAttempt") {
+      result = await startNewAttempt(payload, userClient, authData.user.id, supabaseUrl, secretKey);
     } else {
       result = await saveAttempt(payload, userClient, authData.user.id, supabaseUrl, secretKey);
     }
     return json(request, 200, result);
   } catch (error) {
-    if (error instanceof ApiError) return json(request, error.status, { error: publicErrorCode(error.code) });
+    if (error instanceof ApiError) {
+      console.error("secure-mock request failed", { status: error.status, code: error.code });
+      return json(request, error.status, { error: publicErrorCode(error.code) });
+    }
+    console.error("secure-mock request failed", { status: 503, code: "unexpected_error" });
     return json(request, 503, { error: "server_not_ready" });
   }
 });

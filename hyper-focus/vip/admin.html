@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#13202c">
+  <title>Hyper Focus · VIP 콘텐츠 관리</title>
+  <link rel="stylesheet" href="./admin.css?v=hf-vip-admin-20260903a">
+  <style>[hidden]{display:none!important}</style>
+  <script src="../data.js"></script>
+  <script src="../supabase-config.js?v=hf-vip-admin-20260903a"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="../portal-auth.js?v=hf-vip-admin-20260903a"></script>
+</head>
+<body>
+  <header><div><small>G-FIELD PREMIER</small><h1>VIP 콘텐츠 관리</h1></div><nav><a href="../admin.html">학생 권한</a><a href="./">VIP 라운지</a><a href="../">나의 서재</a></nav></header>
+  <main id="app" hidden>
+    <section class="editor">
+      <div class="section-title"><div><span>EDITORIAL DESK</span><h2>콘텐츠 등록·수정</h2></div><button type="button" class="ghost" id="resetBtn">새 글</button></div>
+      <form id="contentForm">
+        <div class="grid two"><label>콘텐츠 ID<input id="contentId" required maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="예: premier-guide-01"></label><label>분류<select id="kind"><option value="resources">자료실</option><option value="seminar">프리미엄 설명회</option><option value="column">DOCSSAM 칼럼</option><option value="magazine">교육 매거진</option></select></label></div>
+        <div class="grid two"><label>제목<input id="title" required maxlength="120"></label><label>날짜<input id="contentDate" type="date"></label></div>
+        <label>요약<textarea id="summary" rows="3" maxlength="500"></textarea></label>
+        <label>본문 <small>안전한 일반 텍스트로 표시됩니다.</small><textarea id="bodyText" rows="9" maxlength="30000"></textarea></label>
+        <div class="grid two"><label>태그 <small>쉼표로 구분</small><input id="tags" placeholder="프리미어, 학습법"></label><label>연결 콘텐츠 ID <small>쉼표로 구분</small><input id="relatedIds" placeholder="premier-guide-02, seminar-01"></label></div>
+        <div class="grid three"><label>공개 상태<select id="status"><option value="draft">초안</option><option value="review_pending">검수 대기</option><option value="reviewed">검수 완료</option><option value="published">학생 공개</option><option value="archived">보관</option></select></label><label>첨부 종류<select id="assetKind"><option value="">첨부 없음</option><option value="cover">표지 이미지</option><option value="pdf">PDF 자료</option><option value="video">MP4 영상</option><option value="attachment">기타 첨부</option></select></label><label>비공개 파일<input id="assetFile" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,video/mp4"></label></div>
+        <div class="actions"><button type="submit" id="saveBtn">안전하게 저장</button><p id="statusText">초안부터 저장한 뒤 검수 완료 시 공개하세요.</p></div>
+      </form>
+    </section>
+    <section class="catalog"><div class="section-title"><div><span>PRIVATE CATALOG</span><h2>등록 콘텐츠</h2></div><b id="contentCount">0</b></div><div id="contentList" class="content-list"></div></section>
+  </main>
+  <section class="blocked" id="blocked" hidden><h1>DOCSSAM 관리자 로그인이 필요합니다.</h1><p>학생 화면이 아니라 관리자 계정으로 로그인해 주세요.</p><a href="../?login=1">로그인 화면으로</a></section>
+  <script src="./admin.js?v=hf-vip-admin-20260903a"></script>
+</body>
+</html>

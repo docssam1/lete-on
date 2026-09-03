@@ -9,10 +9,14 @@ const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 
 const migration = read("supabase/migrations/20260823151425_secure_mock_delivery_v1.sql");
 const pageMigration = read("supabase/migrations/20260825015511_secure_mock_page_images.sql");
+const retakeMigration = read("supabase/migrations/20260831113000_secure_mock_sparse_marks_and_retakes.sql");
 const edge = read("supabase/functions/secure-mock/index.ts");
 const edgeDeno = read("supabase/functions/secure-mock/deno.json");
 const config = read("supabase/config.toml");
 const genericSigner = read("supabase/functions/signed-asset-url/index.ts");
+
+assert.match(edge, /operation === "retake" && \/retake limit reached\/i/);
+assert.match(edge, /"attempt_limit_reached"/);
 
 function section(source, start, end) {
   const from = source.indexOf(start);
@@ -81,6 +85,14 @@ function testServiceOnlyRpcContract() {
   const submitUpdate = section(submit, "update public.hf_mock_attempts as attempt", "returning * into v_attempt;");
   assert.doesNotMatch(submitUpdate, /answers_viewed_at/);
   assert.match(migration, /v_seed :=[\s\S]*& 2147483647::bigint/);
+  const retake = section(retakeMigration, "create or replace function public.hf_start_mock_retake", "$$;");
+  assert.match(retake, /security invoker/i);
+  assert.match(retake, /current_user <> 'service_role'/i);
+  assert.match(retake, /v_next_attempt not between 2 and 3/);
+  assert.match(retake, /v_latest\.status <> 'submitted'/);
+  assert.match(retakeMigration, /grant execute on function public\.hf_start_mock_retake[\s\S]*to service_role/);
+  assert.doesNotMatch(retakeMigration, /generate_series\(1, v_attempt\.question_count\)/);
+  assert.match(retakeMigration, /mark\.key !~ '\^\(\?:\[1-9\]/);
 }
 
 function testPerExamEntitlementAndReadOnlyResume() {
@@ -144,6 +156,7 @@ function testEdgeAuthorizationOrderAndInputs() {
   assert.match(edge, /requireExactKeys\(payload, \["action", "examId", "loadEventId"\]\)/);
   assert.match(edge, /requireExactKeys\(payload, \["action", "attemptId"\]\)/);
   assert.match(edge, /requireExactKeys\(payload, \["action", "attemptId", "submissionId", "marks"\]\)/);
+  assert.match(edge, /requireExactKeys\(payload, \["action", "examId", "retakeEventId"\]\)/);
   ["approvalCode", "payload.name", "payload.studentId", "payload.score", "payload.correctCount", "payload.wrongTypeIds"]
     .forEach(value => assert.ok(!edge.includes(value), `client field must not be trusted: ${value}`));
 
@@ -167,8 +180,9 @@ function testManifestAndAssetFailClosedRules() {
   assert.match(edge, /"answer", "answers"/);
   assert.match(edge, /"source", "sourcepath"/);
   assert.match(edge, /"proto", "prototype", "constructor"/);
-  assert.match(edge, /question\.releaseStatus !== "verified"/);
-  assert.match(edge, /question\.lockReasons\.length !== 0/);
+  assert.match(edge, /releaseStatus === "verified" && scoringEligible === true/);
+  assert.match(edge, /releaseStatus === "excluded" && scoringEligible === false/);
+  assert.match(edge, /source_review_excluded|question\.lockReasons\.length > 0/);
   assert.match(edge, /revision !== expectedRevision/);
   assert.match(edge, /visible\.mock_exam_id !== examId \|\| Number\(visible\.revision\) !== revision/);
   assert.match(edge, /visible\.asset_kind !== "question"/);
@@ -182,6 +196,8 @@ function testManifestAndAssetFailClosedRules() {
   assert.doesNotMatch(edge, /QUESTION_MIMES[^\n]*application\/pdf/);
   assert.match(edge, /asSafeText\(question\.typeTitle, 160/);
   assert.match(edge, /asSafeText\(question\.assetAlt, 300/);
+  assert.match(edge, /\["500", "coin-payment-change-conditions"\]/);
+  assert.match(edge, /LEGACY_TYPE_KEY_ALIASES\.get\(storedTypeKey\) \|\| storedTypeKey/);
 }
 
 function testAnswerAndSubmissionDerivation() {
@@ -195,7 +211,8 @@ function testAnswerAndSubmissionDerivation() {
   const save = section(edge, "async function saveAttempt(", "Deno.serve(");
   assert.doesNotMatch(save, /hf_reveal_mock_answers|resolveVisibleAsset\([^)]*"answer"/);
   assert.match(save, /readVerifiedJson\(service, manifestAsset, MAX_MANIFEST_BYTES\)/);
-  assert.match(save, /const correctCount = manifest\.questions\.length - wrongQuestions\.length/);
+  assert.match(save, /const scoringQuestions = manifest\.questions\.filter/);
+  assert.match(save, /const correctCount = scoringQuestions\.length - wrongQuestions\.length/);
   assert.match(save, /const wrongQuestionKeys = wrongQuestions\.map/);
   assert.match(save, /const wrongTypeKeys = Array\.from\(new Set/);
   assert.match(save, /p_correct_count: correctCount/);

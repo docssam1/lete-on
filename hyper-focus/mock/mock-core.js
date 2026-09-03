@@ -496,7 +496,8 @@
     const requestedDifficulty = opts.difficulty || "same";
     const difficultyByType = opts.difficultyByType && typeof opts.difficultyByType === "object" ? opts.difficultyByType : {};
     const policy = accessPolicy();
-    const accessTier = policy.tier(opts.accessTier);
+    const requestedAccessTier = opts.accessTier;
+    const accessTier = policy.tier(requestedAccessTier);
     const cleanTypes = [...new Set((typeIds || []).map(Number).filter((id) => getTypeMeta(id)))];
     if (cleanTypes.length > policy.MAX_SELECTED_TYPES) {
       throw new Error(`한 번에 선택할 수 있는 약점 유형은 최대 ${policy.MAX_SELECTED_TYPES}개입니다.`);
@@ -505,7 +506,7 @@
     let number = 1;
     cleanTypes.forEach((typeId) => {
       const difficulty = difficultyByType[typeId] || difficultyByType[String(typeId)] || requestedDifficulty;
-      policy.validatePracticeRequest({ countPerType, difficulty, accessTier });
+      policy.validatePracticeRequest({ countPerType, difficulty, accessTier: requestedAccessTier });
       if (!TYPE_META[typeId]) {
         const bank = bankModule();
         const available = bank ? bank.getAvailable(typeId, difficulty) : [];

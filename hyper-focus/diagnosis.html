@@ -10,11 +10,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="../config.js"></script>
 <script src="./data.js"></script>
-<script src="./supabase-config.js?v=hf-supabase-live-20260828a"></script>
+<script src="./supabase-config.js?v=hf-supabase-live-20260903a"></script>
 <script src="./supabase-client.js"></script>
-<script src="./portal-auth.js?v=hf-supabase-live-20260828a"></script>
+<script src="./portal-auth.js?v=hf-supabase-live-20260903a"></script>
 <script src="./assets/kr_font.js"></script>
-<script src="./mock/access-policy.js"></script>
+<script src="./mock/access-policy.js?v=hf-practice-safe-20260903a"></script>
 <script src="./mock/variation-bank.js"></script>
 <style>
 :root{--navy:#0d1b2a;--navy-mid:#1a2e44;--navy-light:#243b55;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#faf8f3;--cream-dark:#f0ece0;--red:#c0392b;--red-light:#e74c3c;--blue:#2980b9;--purple:#8e44ad;--text:#2c2c2c;--text-light:#6b7280;--border:rgba(201,168,76,0.25);--shadow:0 20px 60px rgba(13,27,42,0.12)}
@@ -667,6 +667,7 @@ async function importLegacyHistoryIfPresent(client,name){
   return false;
 }
 function hasPaidHF(){return currentPermissions.includes('hyperfocus-extra')||currentPermissions.includes('problem-bank')}
+function canUsePaidHF(){return hasPaidHF()&&HFAccessPolicy.paidPracticeReady()}
 function newClientId(){if(crypto.randomUUID)return crypto.randomUUID();const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;const hex=[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');return`${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`}
 document.addEventListener('DOMContentLoaded',async function(){try{const params=new URLSearchParams(location.search);const gname=params.get('gname');const nameEl=document.getElementById('studentName'),codeEl=document.getElementById('authCode');if(window.GFieldHFPortalAuth?.isSupabaseEnabled()){const portalSession=await window.GFieldHFPortalAuth.ready();if(portalSession?.role==='student'&&window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus')){if(nameEl)nameEl.value=portalSession.name;await checkAuth();return}if(gname&&nameEl)nameEl.value=gname;codeEl?.focus();return}const sessionName=sessionStorage.getItem('gfield_hf_name');const sessionCode=sessionStorage.getItem('gfield_hf_code');if(sessionName&&sessionCode){if(nameEl)nameEl.value=sessionName;if(codeEl)codeEl.value=sessionCode;if(document.readyState==='complete')await checkAuth();else window.addEventListener('load',()=>checkAuth(),{once:true})}else if(gname){if(nameEl)nameEl.value=gname;codeEl?.focus()}}catch(e){console.error('Hyper Focus session restore failed',e)}});
 function buildDiagnosisSelector(){const viewArea=document.getElementById('view-area');const listGrid=document.getElementById('list-grid');const quickGrid=document.getElementById('quick-grid');if(!viewArea||!listGrid||!quickGrid||viewArea.dataset.built==='1')return;viewArea.dataset.built='1';let allItems=[];data.forEach(cat=>{let blockHTML=`<div class="category-block"><div class="category-header"><div class="category-num">${cat.categoryNum}</div><div class="category-title">유형 ${cat.categoryNum}. ${cat.categoryTitle}</div><div class="category-divider"></div></div><div class="items-grid">`;cat.items.forEach(item=>{blockHTML+=`<label class="check-item" data-id="${item.id}" onclick="toggleItem(event,${item.id})"><div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span></label>`;allItems.push(item)});blockHTML+=`</div></div>`;viewArea.innerHTML+=blockHTML;});allItems.sort((a,b)=>a.id-b.id);allItems.forEach(item=>{const listLbl=document.createElement('label');listLbl.className='check-item';listLbl.setAttribute('data-id',item.id);listLbl.onclick=(e)=>toggleItem(e,item.id);listLbl.innerHTML=`<div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span>`;listGrid.appendChild(listLbl);const quickLbl=document.createElement('label');quickLbl.className='check-item num-item';quickLbl.setAttribute('data-id',item.id);quickLbl.onclick=(e)=>toggleItem(e,item.id);quickLbl.innerHTML=`<span class="list-num">${String(item.id).padStart(2,'0')}</span>`;quickGrid.appendChild(quickLbl);});}
@@ -711,7 +712,7 @@ async function checkAuth(){
   const intro=document.getElementById('introPreview');if(intro)intro.style.display='none';
   buildDiagnosisSelector();
   const p1=document.getElementById('page1');p1.classList.remove('active');p1.style.display='none';document.getElementById('page2').style.display='block';
-  document.getElementById('studentInfoDisplay').textContent=`학생: ${member.name}  |  승인번호 확인 완료${hasPaidHF()?'  |  추가 문제 이용 가능':''}`;
+  document.getElementById('studentInfoDisplay').textContent=`학생: ${member.name}  |  승인번호 확인 완료${canUsePaidHF()?'  |  추가 문제 이용 가능':hasPaidHF()?'  |  추가 문제 서버 준비 중':''}`;
   updateAttemptButtons();
   if(migrated)alert('이 기기에 저장된 기존 전화번호 기반 진도를 승인번호 기록으로 복사했습니다. 기존 기록은 별도로 그대로 보존됩니다.');
   if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');
@@ -766,7 +767,7 @@ function openWorksheetBuilder(){setView('similar');document.getElementById('view
 function createSelectedWorksheet(){
   const ids=Array.from(selectedSet).sort((a,b)=>a-b);
   const status=document.getElementById('worksheet-build-status');
-  const paid=hasPaidHF();
+  const paid=canUsePaidHF();
   const count=paid?Number(document.getElementById('worksheet-count')?.value):HFAccessPolicy.FREE_PER_DIFFICULTY;
   if(!ids.length){if(status)status.textContent='먼저 틀린 유형을 선택해 주세요.';return}
   if(ids.length>HFAccessPolicy.MAX_SELECTED_TYPES){if(status)status.textContent=`한 번에 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`;return}
@@ -789,9 +790,9 @@ async function renderSimilarUI(){
     return `<div class="worksheet-type-row"><div class="worksheet-type-title">유형 ${String(id).padStart(2,'0')} · ${escapeHTML(item?.text||'유형 설명')}</div><div class="worksheet-difficulties">${buttons}</div></div>`;
   }).join('');
   const unsupported=ids.filter(id=>!Object.values(worksheetAvailability(id)).some(Boolean));
-  const paid=hasPaidHF();
+  const paid=canUsePaidHF();
   const countControl=paid?`<label for="worksheet-count">유형당 문항</label><input id="worksheet-count" type="number" min="2" max="${HFAccessPolicy.PAID_PER_DIFFICULTY}" value="2" inputmode="numeric" style="width:68px;padding:9px;border:1px solid #cbd5df;border-radius:8px">`:'';
-  container.innerHTML=`<div class="worksheet-type-list">${rows}</div><div class="worksheet-build-actions">${countControl}<button type="button" class="worksheet-build-btn" ${unsupported.length?'disabled':''} onclick="createSelectedWorksheet()">${paid?'선택 난이도로 자동 시험지 만들기':'유형당 2문항 자동 시험지 만들기'}</button><div class="worksheet-build-status" id="worksheet-build-status">${unsupported.length?`아직 시험지 연결이 준비되지 않은 유형: ${unsupported.map(id=>String(id).padStart(2,'0')).join(', ')}`:paid?'추가 문제 권한이 확인되었습니다.':'3번째 문제부터는 유료 추가 문제입니다.'}</div></div>`;
+  container.innerHTML=`<div class="worksheet-type-list">${rows}</div><div class="worksheet-build-actions">${countControl}<button type="button" class="worksheet-build-btn" ${unsupported.length?'disabled':''} onclick="createSelectedWorksheet()">${paid?'선택 난이도로 자동 시험지 만들기':'유형당 2문항 자동 시험지 만들기'}</button><div class="worksheet-build-status" id="worksheet-build-status">${unsupported.length?`아직 시험지 연결이 준비되지 않은 유형: ${unsupported.map(id=>String(id).padStart(2,'0')).join(', ')}`:paid?'추가 문제 권한이 확인되었습니다.':hasPaidHF()?'추가 문제는 비공개 서버 전달 준비 중이며 현재는 2문항만 이용할 수 있습니다.':'3번째 문제부터는 유료 추가 문제입니다.'}</div></div>`;
 }
 function toggleAllAccordions(){const cards=document.querySelectorAll('#resultListBox .res-card');const allOpen=[...cards].every(c=>c.classList.contains('open'));cards.forEach(c=>c.classList.toggle('open',!allOpen));}
 function escapeHTML(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}

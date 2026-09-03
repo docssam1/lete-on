@@ -550,6 +550,7 @@ const oneEach = globalThis.HFMock.createPractice([6, 7, 8, 9], {
   difficulty: "same",
   accessTier: "free"
 });
+globalThis.GFIELD_HF_SUPABASE_CONFIG = { features: { securePracticeDelivery: true } };
 const sevenEach = globalThis.HFMock.createPractice([6, 7, 8, 9], {
   seed: 777,
   countPerType: 7,
@@ -559,6 +560,7 @@ const sevenEach = globalThis.HFMock.createPractice([6, 7, 8, 9], {
 assert(oneEach.questions.length === 4, "유형별 1문항 선택 반영 실패");
 assert(sevenEach.questions.length === 28 && sevenEach.questions.every((question) => question.difficulty === "hard"), "유료 유형별 7문항·난이도 선택 반영 실패");
 assert(new Set(sevenEach.questions.map((q) => q.typeId)).size === 4, "약점 유형 누락");
+globalThis.GFIELD_HF_SUPABASE_CONFIG = { features: { securePracticeDelivery: false } };
 assert(globalThis.HFAccessPolicy.FREE_PER_DIFFICULTY === 2, "난이도별 무료 2문항 계약 불일치");
 assert(globalThis.HFAccessPolicy.MAX_SELECTED_TYPES === 20, "최대 선택 유형 20개 계약 불일치");
 assert(globalThis.HFAccessPolicy.hasPaidPermission(["soma:premier:hyperfocus-extra"]), "유료 추가 문제 권한 열쇠 불일치");
@@ -569,6 +571,13 @@ try {
   freeThirdRejected = /3번째부터는 유료/.test(error.message);
 }
 assert(freeThirdRejected, "무료 사용자의 난이도별 3번째 문제를 차단하지 않음");
+let pendingPaidThirdRejected = false;
+try {
+  globalThis.HFMock.createPractice([6], { seed: 777, countPerType: 3, difficulty: "easy", accessTier: "paid" });
+} catch (error) {
+  pendingPaidThirdRejected = /서버 전달 준비 중/.test(error.message);
+}
+assert(pendingPaidThirdRejected, "비공개 서버 준비 전 유료 3번째 문제를 차단하지 않음");
 const twentyOneTypes = [1,2,3,4,5,6,7,8,9].concat(readyBankTypes.slice(0,12));
 let typeLimitRejected = false;
 try {
