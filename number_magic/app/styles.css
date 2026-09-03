@@ -622,6 +622,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);position:relative}
 .nm-gate-x{position:absolute;top:10px;right:12px;border:none;background:none;color:#9aa2b1;font-size:16px;cursor:pointer;padding:6px}
 .nm-gate-ico{font-size:34px;margin-bottom:6px}
+.nm-gate-ico.doc{position:relative;display:flex;justify-content:center;margin-bottom:2px}
+.nm-gate-ico.doc .nm-human{margin:0 auto}
+.nm-gate-ico-lock{position:absolute;right:calc(50% - 42px);bottom:-2px;font-size:20px;
+  background:#fff;border-radius:50%;padding:3px;box-shadow:0 3px 8px rgba(0,0,0,.25)}
 .nm-gate-card h3{font-size:18px;color:var(--blue-deep);margin:0 0 6px}
 .nm-gate-card p{font-size:13.5px;color:#4a5468;line-height:1.55;margin:0 0 16px}
 .nm-gate-inputrow{display:flex;gap:8px;margin-bottom:8px}
@@ -813,6 +817,17 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-arena .nm-host{margin-bottom:8px;padding:6px 9px}
 .nm-arena .nm-host-img{width:44px;height:44px}
 html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
+/* .nm-host.doc — 독쌤(사람 캐릭터) 버전. renderHumanChar()가 이미 크기 고정 div를
+   내놓으므로 이미지 슬롯 자체를 그 div로 대체하고 줄어들지 않게 flex:none만 준다. */
+.nm-host.doc .nm-human{flex:none}
+
+/* ── 편지함 상단 독쌤 안내 띠(§1) — 봉투 목록 위, .nm-host보다 살짝 크게 ── */
+.nm-doc-strip{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 14px;
+  background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 26px -20px rgba(22,65,124,.4)}
+.nm-doc-strip .nm-human{flex:none}
+.nm-doc-strip-bubble{font-size:13.5px;line-height:1.5;color:var(--ink);font-weight:600}
+.nm-mb-env-from{font-size:10.5px;color:var(--sub);font-weight:700}
+.nm-mb-env-body{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
 
 /* ── 학부모 알림 등록 카드 ── */
 .nm-notify-card{display:block}

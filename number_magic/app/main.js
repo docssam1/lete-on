@@ -1147,6 +1147,25 @@ function hostStripHtml(kind,key,mode){
   </div>`;
 }
 
+/* ── 독쌤(doc) 띠 — 사람 캐릭터(renderHumanChar)를 쓰는 호스트 띠.
+   hostStripHtml()은 숫자·기호 캐릭터(PNG 파일)용이라 그대로 못 쓴다 — 같은
+   .nm-host 골격에 사람 SVG/PNG(renderHumanChar)를 얹는 버전. .doc 수정자만
+   더해 CSS는 대부분 .nm-host를 그대로 상속한다. */
+function docStripHtml(size,lineHtml){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  return `<div class="nm-host doc">
+    ${window.renderHumanChar?window.renderHumanChar('doc',size||44):''}
+    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-ssaem','独老师')}</b><span>${lineHtml}</span></div>
+  </div>`;
+}
+/* 유닛 화면 상단의 독쌤 학습 안내 — 유닛의 "첫 스텝"에서만 뜬다(연습/도장 등은 X). */
+function docUnitStripHtml(u){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const title=L(u.title);
+  const line=esc(lk(`오늘은 "${title}"을(를) 배워요. 천천히 해도 괜찮아!`,`Today we learn "${title}". Take your time!`,`今天学习"${title}"，慢慢来！`));
+  return docStripHtml(44,line);
+}
+
 function screenMiniGame(gameId){
   if(townCleanup){townCleanup();townCleanup=null;}
   if(!S.miniGame||S.miniGame.id!==gameId||S.miniGame.fresh){S.miniGame=_mgInit(gameId);}
@@ -2808,9 +2827,13 @@ function screenMailbox(){
   }
 
   const weeks = mailboxWeeks();
+  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-ssaem','来自 独老师')}</span>`;
   const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
     <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
-    <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+    <span class="nm-mb-env-body">
+      <span class="nm-mb-env-label">${esc(w.weekKey)}${w.isCurrent?` · ${lk('이번 주','This week','本周')}`:''}</span>
+      ${fromDoc}
+    </span>
     ${w.opened?`<span class="nm-mb-env-badge done">${lk('읽음','Read','已读')}</span>`:`<span class="nm-mb-env-badge new">${lk('새 봉투','New','新')}</span>`}
   </button>`).join('');
 
@@ -2819,6 +2842,10 @@ function screenMailbox(){
     <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
   </div>
   <div class="nm-step-body nm-wsh-wrap">
+    <div class="nm-doc-strip">
+      ${window.renderHumanChar?window.renderHumanChar('doc',64):''}
+      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-ssaem sent this week's letter. Open the envelope?","独老师寄来了本周的信，打开看看？")}</div>
+    </div>
     <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
     <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
   </div>`;
@@ -2847,7 +2874,7 @@ function gateModalHtml(){
   return `<div class="nm-gate-overlay" id="nmGateModal">
     <div class="nm-gate-card">
       <button class="nm-gate-x" id="nmGateClose" aria-label="close">✕</button>
-      <div class="nm-gate-ico">🔒</div>
+      <div class="nm-gate-ico doc">${window.renderHumanChar?window.renderHumanChar('doc',64):'🔒'}<span class="nm-gate-ico-lock">🔒</span></div>
       <h3>${ko?'승인번호가 있으면 모두 열려요':en?'Unlock everything with your academy code':'输入学院授权码即可解锁全部'}</h3>
       <p>${ko?'지금은 체험 모드예요. 각 단계 대표 유닛만 먼저 만나볼 수 있어요.':en?'You’re in trial mode — try a taste from each level first.':'当前为体验模式，先体验各阶段的代表单元。'}</p>
       <div class="nm-gate-inputrow">
@@ -3187,11 +3214,18 @@ function flowBar(){
 
 function screenUnit(){
   const scr=$('#screen');const u=UNITS[S.unit];
+  /* 독쌤 학습 안내 띠 — 유닛의 "첫 화면"에서만(연습 이후 체크/랩/아레나/도장엔 안 뜸).
+     enterUnit()은 유닛에 따라 'intro'(u.introVideo)·'range'(u.ranges)·'practice' 중
+     하나로 곧장 진입시킨다(널이 아님) — 셋 다 "학습 흐름 진짜 시작 전" 화면이라 전부
+     첫 화면으로 친다. 그 외(경로 우회로 S.step이 비어 있는 경우 대비) null도 포함.
+     unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
+  const isFirstUnitStep = !S.step || S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
   scr.innerHTML=`<div class="nm-unit-view">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap">${t('back')}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
+    ${isFirstUnitStep?docUnitStripHtml(u):''}
     ${(S.step==='range'||S.step==='intro')?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
   </div>`;
