@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD Mirror Manor</title>
+  <link rel="stylesheet" href="../shared/activity-lobby.css?v=activity-lobby-1" />
+  <link rel="stylesheet" href="../shared/curriculum-band.css?v=curriculum-band-1" />
+  <link rel="stylesheet" href="../shared/pwa.css?v=2" />
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#347a76" />
+</head>
+<body>
+  <main class="activity-lobby mirror-lobby">
+    <header class="lobby-bar"><a class="back-link" href="../world-map/?enter=1" aria-label="지도로 나가기">&#8592;</a><div class="lobby-brand"><strong>GFIELD</strong><small>Mirror Manor</small></div><span id="playerName" class="player-name"></span><b id="playerPoints" class="player-points">0 P</b></header>
+    <section class="lobby-intro"><div><p id="eyebrow" class="lobby-eyebrow">MIRROR MANOR</p><h1 id="title"></h1><p id="subtitle"></p></div><div class="lobby-art" aria-hidden="true"><i></i><i></i><i></i><i></i></div></section>
+    <section class="type-section"><header><div><h2 id="typeHeading"></h2><p id="typeDescription"></p></div></header><div id="typeGrid" class="type-grid"></div></section>
+    <aside class="worksheet-strip"><div><strong id="worksheetTitle"></strong><p id="worksheetDescription"></p></div><a href="../worksheet/mirror-manor/" id="worksheetLink"></a></aside>
+  </main>
+  <script type="module" src="./app.js?v=mirror-lobby-1"></script>
+  <script src="../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

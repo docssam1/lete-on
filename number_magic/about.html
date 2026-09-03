@@ -256,6 +256,11 @@ p.lead{font-size:17px;color:var(--sub);max-width:56ch;margin:0}
   font-weight:700;font-size:11.5px;cursor:pointer;transition:.15s;font-family:'Pretendard',sans-serif}
 .langbtn.active{background:var(--ink);color:var(--paper)}
 .langbtn:active{transform:scale(.94)}
+/* 상단 "넘어가기" — 인트로 영상 뒤 매번 이 페이지를 지나므로(원장 지시 2026-09-03) 바로 들어갈 길 */
+.skipbtn{position:fixed;top:18px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:999px;background:var(--ink);color:var(--paper);text-decoration:none;
+  font-weight:800;font-size:13px;box-shadow:var(--shadow-1);font-family:'Pretendard',sans-serif;transition:.15s}
+.skipbtn:active{transform:scale(.95)}
 
 @media(max-width:800px){
   .chapter{padding:72px 24px}
@@ -265,6 +270,7 @@ p.lead{font-size:17px;color:var(--sub);max-width:56ch;margin:0}
 </head>
 <body>
 
+<a class="skipbtn" href="index.html?enter=1" data-i18n="skipBtn">넘어가기 →</a>
 <div class="langsw"><button class="langbtn" data-lang="ko">한</button><button class="langbtn" data-lang="en">EN</button><button class="langbtn" data-lang="zh">中</button></div>
 
 <!-- ============ 1막 — 밤하늘 히어로 (판면 밖, 전체화면) ============ -->
@@ -486,6 +492,7 @@ const ABOUT_TR={
     ctaH2:'수의 <span class="accent">마법</span>을 시작해볼까요?',
     ctaP:'만 5세부터 시작하는 DOCSSAM 영재 트랙. 아이가 수와 친구가 되는 첫걸음입니다.',
     ctaBtn:'마법의 마을로 들어가기 →',
+    skipBtn:'넘어가기 →',
     footText:'GFIELD · Numbers of Magic — 프리미엄 수학 학습' },
   en:{ langName:'English',
     heroH1:'<span class="w">Numbers,</span> <span class="w">unfolded,</span> <span class="w accent">grow easy.</span>',
@@ -526,6 +533,7 @@ const ABOUT_TR={
     ctaH2:'Ready to Start the <span class="accent">Magic</span>?',
     ctaP:"The DOCSSAM gifted track, starting from age 5 — your child's first step toward becoming friends with numbers.",
     ctaBtn:'Enter the Magic Town →',
+    skipBtn:'Skip →',
     footText:'GFIELD · Numbers of Magic — Premium Math Learning' },
   zh:{ langName:'中文',
     heroH1:'<span class="w">数字，</span><span class="w">展开后</span><span class="w accent">就变简单</span>',
@@ -566,6 +574,7 @@ const ABOUT_TR={
     ctaH2:'准备好开始数字<span class="accent">魔法</span>了吗？',
     ctaP:'从满5岁开始的DOCSSAM英才课程。这是孩子与数字成为朋友的第一步。',
     ctaBtn:'进入魔法小镇 →',
+    skipBtn:'跳过 →',
     footText:'GFIELD · Numbers of Magic — 高端数学学习' }
 };
 function aboutLang(){

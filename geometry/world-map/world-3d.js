@@ -48,22 +48,22 @@ const districtCopy = {
   ko: {
     shapeDistrict: ["평면도형 거리", "합동·대칭·도형 이동"],
     spatialDistrict: ["공간·입체 지구", "전개도·단면·공간 추론"],
-    coordinateDistrict: ["좌표·변환 지구", "좌표·닮음·중등 기하"]
+    coordinateDistrict: ["좌표·변환 지구", "좌표·작도·중등 기하"]
   },
   zh: {
     shapeDistrict: ["平面图形街", "全等、对称与图形变换"],
     spatialDistrict: ["空间立体区", "展开图、截面与空间推理"],
-    coordinateDistrict: ["坐标变换区", "坐标、相似与中学几何"]
+    coordinateDistrict: ["坐标变换区", "坐标、作图与中学几何"]
   },
   ja: {
     shapeDistrict: ["平面図形ストリート", "合同・対称・図形の移動"],
     spatialDistrict: ["空間・立体エリア", "展開図・切断面・空間推理"],
-    coordinateDistrict: ["座標・変換エリア", "座標・相似・中学幾何"]
+    coordinateDistrict: ["座標・変換エリア", "座標・作図・中学幾何"]
   },
   en: {
     shapeDistrict: ["Plane Shapes Street", "Congruence, symmetry, and transformations"],
     spatialDistrict: ["Spatial Solids District", "Nets, sections, and spatial reasoning"],
-    coordinateDistrict: ["Coordinates District", "Coordinates, similarity, and middle-school geometry"]
+    coordinateDistrict: ["Coordinates District", "Coordinates, construction, and middle-school geometry"]
   }
 };
 const qaZone = /^(127\.0\.0\.1|localhost)$/.test(location.hostname)
