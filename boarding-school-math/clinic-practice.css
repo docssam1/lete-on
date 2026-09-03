@@ -41,13 +41,22 @@ body { color:var(--ink); background:var(--paper); }
 .section-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; padding:28px 0 12px; border-bottom:1px solid var(--ink); }
 .section-heading h2 { margin:4px 0 0; font-size:1.45rem; }
 .section-heading span { color:var(--muted); font-size:.72rem; }
-.problem-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:16px 0 8px; }
+.problem-grid { padding:16px 0 8px; }
+.problem-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-bottom:14px; }
+.section-lead > .problem-row { margin-top:14px; }
 .problem-card { position:relative; min-width:0; padding:22px; border:1px solid var(--line); background:var(--sheet); }
 .problem-card.is-correct { border-color:var(--green); box-shadow:inset 4px 0 0 var(--green); }
 .problem-meta { display:flex; justify-content:space-between; gap:12px; color:var(--green); font-size:.64rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
 .problem-prompt { min-height:54px; margin:14px 0 18px; font:500 1rem/1.65 Georgia,"Noto Serif KR",serif; }
 .problem-visual { display:grid; min-height:190px; place-items:center; margin:-4px 0 18px; padding:10px; overflow:hidden; border:1px solid var(--line); background:#fbfaf5; }
 .problem-visual svg { display:block; width:min(100%,320px); height:auto; max-height:220px; }
+.clinic-relation-rule, .clinic-substitution-rule, .clinic-point-pair, .clinic-change-rule { width:min(100%,330px); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; font:800 1.05rem/1.4 system-ui,sans-serif; }
+.clinic-relation-rule span, .clinic-substitution-rule span, .clinic-point-pair span, .clinic-change-rule span { min-width:72px; padding:12px; border:1px solid var(--line); background:#fff; text-align:center; }
+.clinic-relation-rule small { flex-basis:100%; color:var(--muted); text-align:center; }
+.clinic-relation-table { width:min(100%,260px); border-collapse:collapse; font:750 .9rem/1.3 system-ui,sans-serif; text-align:center; }
+.clinic-relation-table th, .clinic-relation-table td { width:50%; padding:9px 12px; border:1px solid var(--line); }
+.clinic-relation-table th { color:#fff; background:var(--green); }
+.clinic-relation-table td { background:#fff; }
 .clinic-grid-line { stroke:#d8d4ca; stroke-width:1; }
 .clinic-figure-shape polygon, .clinic-shape-line { stroke-width:2.5; }
 .clinic-dimension { stroke:var(--burgundy); stroke-width:2; stroke-dasharray:5 4; }
@@ -93,7 +102,7 @@ body { color:var(--ink); background:var(--paper); }
   .clinic-toolbar-inner { padding-block:10px; display:grid; grid-template-columns:1fr 1fr; }
   .segmented { display:grid; grid-template-columns:1fr 1fr; }
   .locale-control { margin:0; }
-  .intro-card, .problem-grid, .teacher-guide-grid { grid-template-columns:1fr; }
+  .intro-card, .problem-row, .teacher-guide-grid { grid-template-columns:1fr; }
   .teacher-guide-grid article:last-child:nth-child(odd) { grid-column:auto; }
   .clinic-footer { flex-direction:column; }
 }
@@ -127,7 +136,9 @@ body { color:var(--ink); background:var(--paper); }
   .teacher-guide-grid strong { margin-bottom:1mm; font-size:8.5pt; }
   .teacher-guide-grid p { font-size:7.5pt; line-height:1.4; }
   .practice-section { break-before:page; }
-  .problem-grid { grid-template-columns:1fr 1fr; gap:3mm; }
+  .section-lead { break-inside:avoid; }
+  .problem-row { grid-template-columns:1fr 1fr; gap:3mm; margin-bottom:3mm; break-inside:avoid; }
+  .section-lead > .problem-row { margin-top:3mm; }
   .problem-card { min-width:0; padding:4mm; break-inside:avoid; box-shadow:none; }
   .problem-prompt { min-height:18mm; font-size:10.5pt; }
   .problem-visual { min-height:32mm; margin-bottom:2mm; padding:2mm; }

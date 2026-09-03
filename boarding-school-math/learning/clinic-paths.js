@@ -21,6 +21,7 @@
     "6.NS.C": Object.freeze({ packId: "gfield-grade6-ns-c-clinic-v1", labelKo: "음수·좌표평면 클리닉 워크북" }),
     "6.EE.A": Object.freeze({ packId: "gfield-grade6-ee-a-clinic-v1", labelKo: "식의 구조와 동치식 클리닉 워크북" }),
     "6.EE.B": Object.freeze({ packId: "gfield-grade6-ee-b-clinic-v1", labelKo: "방정식과 부등식 클리닉 워크북" }),
+    "6.EE.C": Object.freeze({ packId: "gfield-grade6-ee-c-clinic-v1", labelKo: "변수 관계 클리닉 워크북" }),
     "6.G.A": Object.freeze({ packId: "gfield-grade6-g-a-clinic-v1", labelKo: "기하 측정 클리닉 워크북" })
   });
   const COMPLETION_PREFIX = "gfield-clinic-workbook:";
