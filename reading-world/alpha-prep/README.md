@@ -5,8 +5,9 @@ Source-faithful interview practice is not the goal of this module. The passages 
 ## Session model
 
 - Four-candidate entrance and seating scene
-- 60-second silent read followed by automatic passage collection
-- Nonfiction plus fiction in a full mock
+- Two consecutive interview rounds in a full mock: nonfiction first, then fiction
+- A separate 60-second silent read and automatic passage collection for each round
+- Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - One peer answer followed by an unannounced listen-link-add question
 - Browser speech recognition with typed fallback

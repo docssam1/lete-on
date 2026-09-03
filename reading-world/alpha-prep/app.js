@@ -169,7 +169,7 @@
         <p class="level-note"><b>${esc(set.level)}</b><br>Original prediction passages. No textbook pages are copied.</p>
         <span class="field-label">Session</span>
         <div class="segmented" role="group" aria-label="Choose session length">
-          <button type="button" data-action="mode" data-mode="full" class="${state.sessionMode === 'full' ? 'active' : ''}">Full · 2 texts</button>
+          <button type="button" data-action="mode" data-mode="full" class="${state.sessionMode === 'full' ? 'active' : ''}">Full · 2 rounds</button>
           <button type="button" data-action="mode" data-mode="quick" class="${state.sessionMode === 'quick' ? 'active' : ''}">Quick · 1 text</button>
         </div>
         <button class="primary-command" type="button" data-action="enter-room">Open the door <span>→</span></button>
@@ -180,15 +180,19 @@
 
   function briefingScreen() {
     const set = selectedSet();
+    const timingCopy = state.sessionMode === 'full'
+      ? 'You will read <b>two passages, one at a time</b>. You have <b>one minute for each passage</b>. I will collect each passage before its interview questions.'
+      : 'You will have <b>one minute</b> to read. Then I will collect the passage before the interview questions.';
     return `${studioHeader()}<main class="briefing-layout">
       <section class="brief-room">${roomScene('seated')}</section>
       <section class="brief-copy">
         <div class="eyebrow">DIRECTOR’S BRIEFING</div>
         <h1>Good afternoon, everyone.</h1>
-        <p>You will have <b>one minute</b> to read. Then I will collect the passage. Keep listening while the other students speak because I may ask for your response at any time.</p>
+        <p>${timingCopy} Keep listening while the other students speak because I may ask for your response at any time.</p>
         <dl class="brief-facts">
           <div><dt>Set</dt><dd>${esc(set.label)} · ${esc(set.theme)}</dd></div>
-          <div><dt>Texts</dt><dd>${state.sessionMode === 'full' ? 'Nonfiction + fiction' : esc(set.passages[0].genre)}</dd></div>
+          <div><dt>Rounds</dt><dd>${state.sessionMode === 'full' ? '1. Nonfiction · 2. Fiction' : `1. ${esc(set.passages[0].genre)}`}</dd></div>
+          <div><dt>Timing</dt><dd>${state.sessionMode === 'full' ? '60 seconds for each passage' : '60 seconds'}</dd></div>
           <div><dt>Focus</dt><dd>Summary · evidence · opinion · vocabulary · listening</dd></div>
         </dl>
         <label class="switch-row"><input type="checkbox" data-field="coachMode" ${state.coachMode === 'deep' ? 'checked' : ''}><span><b>Deep coaching</b><small>More adaptive text calls. Economy mode is used when off.</small></span></label>
@@ -209,7 +213,7 @@
           <div class="genre-stamp">${esc(passage.genre)}</div>
           <p>PASSAGE ${number} OF ${passageLimit()}</p>
           <h1>${esc(passage.title)}</h1>
-          <dl><div><dt>Time</dt><dd>1 minute</dd></div><div><dt>Length</dt><dd>${words} words</dd></div><div><dt>Rule</dt><dd>Silent reading</dd></div></dl>
+          <dl><div><dt>Time</dt><dd>1 minute for this passage</dd></div><div><dt>Length</dt><dd>${words} words</dd></div><div><dt>Rule</dt><dd>Silent reading</dd></div></dl>
           <button class="primary-command" type="button" data-action="start-reading">Start 1-minute reading <span>▶</span></button>
         </section>
         <aside class="reading-instructions"><b>Before you start</b><ol><li>Find the main idea.</li><li>Hold two important details in your memory.</li><li>Notice unfamiliar words from context.</li></ol></aside>
@@ -344,7 +348,7 @@
         <p>${notes.length} answers are saved for the coaching report. The second text changes genre, just as it may in the real interview.</p>
         <div class="between-score"><span>${notes.filter((turn) => turn.feedback && turn.feedback.scores.evidence >= 3).length}</span><b>answers with clear evidence</b></div>
       </section>
-      <section class="next-passage"><span>${esc(next.genre)}</span><h2>${esc(next.title)}</h2><p>One minute · ${wordCount(next.paragraphs.join(' '))} words</p><button class="primary-command" type="button" data-action="next-passage">Receive next passage <span>→</span></button></section>
+      <section class="next-passage"><span>${esc(next.genre)}</span><h2>${esc(next.title)}</h2><p>Round ${state.passageIndex + 2} of ${passageLimit()} · One minute · ${wordCount(next.paragraphs.join(' '))} words</p><button class="primary-command" type="button" data-action="next-passage">Receive next passage <span>→</span></button></section>
     </main>`;
   }
 

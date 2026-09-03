@@ -134,7 +134,13 @@ async function main() {
     await page.locator('[data-action="seat"][data-seat="3"]').click();
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'Good afternoon, everyone.');
+    await assertVisibleText(page, 'two passages, one at a time');
+    await assertVisibleText(page, '60 seconds for each passage');
+    await assertNoViewportOverflow(page, 'desktop briefing');
+    await page.screenshot({ path: path.join(outDir, 'desktop-briefing.png'), fullPage: true });
     await page.locator('[data-action="prepare-reading"]').click();
+    await assertVisibleText(page, 'PASSAGE 1 OF 2');
+    assert.equal(await page.locator('.genre-stamp').textContent(), 'Nonfiction');
     await page.locator('[data-action="start-reading"]').click();
     await assertVisibleText(page, '1:00');
     await page.screenshot({ path: path.join(outDir, 'desktop-reading.png'), fullPage: true });
@@ -147,7 +153,11 @@ async function main() {
     await assertVisibleText(page, 'PASSAGE 1 COMPLETE');
 
     await page.locator('[data-action="next-passage"]').click();
+    await assertVisibleText(page, 'PASSAGE 2 OF 2');
+    assert.equal(await page.locator('.genre-stamp').textContent(), 'Fiction');
+    assert.equal(await page.evaluate(() => window.__ALPHA_PREP_TEST__.state.secondsLeft), 60, 'second passage must receive a fresh 60-second timer');
     await page.locator('[data-action="start-reading"]').click();
+    await assertVisibleText(page, '1:00');
     await page.evaluate(() => window.__ALPHA_PREP_TEST__.expireReading());
     await page.locator('[data-action="begin-interview"]').click();
     await runPassageInterview(page, 1);
@@ -168,6 +178,10 @@ async function main() {
     await assertVisibleText(page, 'Walk in ready to listen.');
     await assertNoViewportOverflow(page, 'mobile lobby');
     await page.screenshot({ path: path.join(outDir, 'mobile-lobby.png'), fullPage: true });
+    await page.locator('[data-action="enter-room"]').click();
+    await assertVisibleText(page, 'one minute for each passage');
+    await assertNoViewportOverflow(page, 'mobile briefing');
+    await page.screenshot({ path: path.join(outDir, 'mobile-briefing.png'), fullPage: true });
 
     const townPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const townPageErrors = [];
