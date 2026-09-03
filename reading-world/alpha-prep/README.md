@@ -21,6 +21,8 @@ Economy mode makes at most one adaptive text request per passage and one final-r
 
 The browser sends no learner name or audio file to the coach function. It sends the current original passage, question, short transcript, recent turns, and provisional scores. Full session transcripts remain in local storage on the current device.
 
+The browser sends the opaque Supabase publishable key in the `apikey` header only. Deploy `alpha-prep-coach` with platform JWT verification disabled; the function validates that header against `SUPABASE_PUBLISHABLE_KEYS` before processing a request. Do not send an `sb_publishable_` key as a bearer JWT.
+
 ## Server setup
 
 The Edge Function is in `supabase/functions/alpha-prep-coach`. Configure `OPENAI_API_KEY` as a Supabase secret, then deploy the function through the normal project release process. `ALPHA_PREP_MODEL` is optional and defaults to `gpt-5.6-luna`. The function enforces origin, payload-size, field-length, output-schema, and best-effort per-instance rate limits. A centralized production rate limit should be added if anonymous public traffic becomes substantial.

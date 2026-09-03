@@ -122,6 +122,9 @@ async function main() {
     page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
     page.on('pageerror', (error) => consoleErrors.push(error.message));
     await page.route('**/functions/v1/alpha-prep-coach', async (route) => {
+      const headers = route.request().headers();
+      assert.match(headers.apikey || '', /^sb_publishable_/);
+      assert.equal(headers.authorization, undefined, 'opaque publishable key must not be sent as a bearer JWT');
       const payload = JSON.parse(route.request().postData() || '{}');
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockResponse(payload)) });
     });

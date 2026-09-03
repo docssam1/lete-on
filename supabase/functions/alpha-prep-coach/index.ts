@@ -12,6 +12,8 @@ const ALLOWED_ORIGINS = new Set([
   "https://docssam1.github.io",
   "http://localhost:8000",
   "http://127.0.0.1:8000",
+  "http://localhost:8150",
+  "http://127.0.0.1:8150",
 ]);
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT = 30;
@@ -42,6 +44,17 @@ function allowedOrigin(req: Request): boolean {
   return !origin || ALLOWED_ORIGINS.has(origin);
 }
 
+function hasValidPublishableKey(req: Request): boolean {
+  const supplied = req.headers.get("apikey") || "";
+  if (!supplied) return false;
+  try {
+    const configured = JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") || "{}");
+    return Object.values(configured).some((key) => key === supplied);
+  } catch (_) {
+    return false;
+  }
+}
+
 function headersFor(req: Request): Headers {
   const headers = new Headers({
     "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
@@ -66,6 +79,7 @@ Deno.serve(async (req: Request) => {
   if (!allowedOrigin(req)) return json(req, { error: "origin_not_allowed" }, 403);
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: headersFor(req) });
   if (req.method !== "POST") return json(req, { error: "method_not_allowed" }, 405);
+  if (!hasValidPublishableKey(req)) return json(req, { error: "unauthorized" }, 401);
   if (!withinRateLimit(req)) return json(req, { error: "rate_limited" }, 429);
   const declaredLength = Number(req.headers.get("content-length") || 0);
   if (declaredLength > 30_000) return json(req, { error: "body_too_large" }, 413);

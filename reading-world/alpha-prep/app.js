@@ -1041,8 +1041,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          apikey: API_KEY,
-          Authorization: `Bearer ${API_KEY}`
+          apikey: API_KEY
         },
         body: JSON.stringify(payload),
         signal: controller.signal
