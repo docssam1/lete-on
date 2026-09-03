@@ -1648,3 +1648,55 @@ story.history 보유 유닛 **95개 전부** 만화 완성(이전 6편 → 95편
   adv.js·H-01~13·courses 26~28 배치). check-answerable 492레벨 전 통과 재확인만 함.
 - **레거시 프로토 6종 삭제** (35228ad5) — book/chapter/concept_proto/print/proto/
   town_proto.html. app.html은 index 리다이렉트 스텁이라 북마크 보호용으로 유지.
+
+## 2026-09-03 — 마을세계관 §1/§3/§6 구현: 독쌤 안내·출석/주간 포인트·관문 표지판
+
+`마을세계관-설계.md` 기준 3건. 사람 아바타(S.avatar)·동행(S.character)·마을 NPC
+(`nbElder`/`nbDoc`)는 이미 이전 세션에서 main 반영돼 있었고, 이번엔 그 위에 얹었다.
+
+- **독쌤(§1) — 편지함 발신인 + 학습 안내**: `screenMailbox()`(app/main.js) 봉투
+  목록 위에 `.nm-doc-strip`(renderHumanChar('doc',64)+말풍선), 봉투 카드마다
+  "From. 독쌤" 한 줄. 유닛 화면(`screenUnit()`)엔 `.nm-host.doc`(`docStripHtml`/
+  `docUnitStripHtml`)를 유닛의 **첫 화면**에서만 띄운다 — `enterUnit()`이 유닛마다
+  `intro`(introVideo)·`range`(u.ranges)·`practice` 중 하나로 곧장 진입시키므로
+  (null 아님), 셋 다 "학습 흐름 시작 전"으로 보고 첫 화면 취급했다(check~stamp는
+  전부 제외). `showGateModal()`(승인번호 모달)의 기존 🔒 아이콘 자리에
+  `renderHumanChar('doc',64)` + 작은 잠금 뱃지를 얹었다(`.nm-gate-ico.doc`).
+  ⚠️ **hostStripHtml()은 못 그대로 재사용** — 숫자/기호 캐릭터 PNG 전용이라 사람
+  캐릭터(renderHumanChar)를 못 받는다. 같은 `.nm-host` 골격에 `.doc` 수정자만
+  더한 `docStripHtml()`을 따로 만듦.
+- **포인트(§6) — 출석 + 주간 보너스**: `todayKey()`(로컬 자정 기준, UTC 아님) +
+  `checkAttendance()`가 `screenTown()`에서 아바타 이주 모달이 안 뜰 때만 호출됨
+  (하루 첫 진입에만 🪙+3, `S.attend={last,days}`는 **defaults()에 없음** — 지시대로
+  기존 저장본 마이그레이션 성격). 카드는 `.nm-attend-card`(브랜드 HUD 아래, 3.5초
+  자동 소멸+탭 닫기) — render() 재호출 없이 DOM에 직접 붙였다 뗀다(재렌더로 화면이
+  갈아끼워지면 "오늘 왔구나" 메시지를 놓칠 수 있어서). **주간 보너스 규칙**(코드
+  주석에도 적음): 이 앱엔 드릴별 완료 상태가 없다(종이로 풀기 때문) — 그래서
+  "봉투를 열었고(`S.mailbox.opened[weekKey]`) + 그 주 정체감지→보강이 필요 없거나
+  이미 끝났으면(`boosterDoneThisWeek` OR `!boosterPick()`)" 완료로 보고
+  `S.weeklyBonus[weekKey]`에 1회만 🪙+10. 두 지점(`screenMailbox` 봉투 열 때,
+  `screenBoost` 완료 화면)에서 멱등 호출. 티어(`app/closet.js`)엔 코인 카운터
+  아래 `.nmc-hint` 한 줄, 타이틀 칩 줄엔 `📅 N일`.
+- **관문(§3) — 마을 표지판 3개**: `TOWN_GATES`(app/main.js, TOWN_SPOTS 옆) — 서쪽
+  도형 나라(`../geometry/`)·동쪽 탐험대(`../world-explorer/`)·남쪽 항구(수학사
+  퀴즈·NCP, 둘 다 `soon:true`). **원장이 작업 중간에 지시를 바꿨다**(2026-09-03):
+  처음엔 GFIELD-ON config.js(`window.GFIELD_CONFIG`)를 읽어 열림 여부를 판정하는
+  설계였는데, 필즈·하이퍼포커스를 넘버스에서 아예 빼고 동쪽을 탐험대 하나로
+  단순화하면서 config.js 연동 자체를 걷어냈다 — 지금은 각 링크가
+  `{open:true}`/`{soon:true}`를 직접 갖는다(config.js는 안 읽음, index.html에
+  스크립트도 안 붙임). `.nm-gate`(짙은 알약 텍스트 칩, `.nm-zlabel`과 같은 톤,
+  큰 그림 없음) 탭 → `showGateLinksModal()`(body에 직접 붙이는 오버레이,
+  `.nm-tmodal`/`.nm-tmcard` CSS 재사용) → 열린 링크는 `window.open(url,'_blank',
+  'noopener')`, 준비 중은 `disabled` 버튼. `computeContentBBox()`는 안 건드림
+  (지시대로) — 그 결과 남쪽 항구(top:83%)는 초기 카메라 프레임 밖이라 아래로
+  드래그해야 보인다(호수 선착장 자리라 위치 자체는 맞음, 스크린샷으로 확인).
+- **Playwright 검증 함정(재확인)** — `page.addInitScript`는 매 네비게이션(reload
+  포함)마다 실행된다. 시드를 무조건 `setItem`하면 **reload가 사용자 진행을
+  지워버린다**(코인·출석 기록이 전부 초기값으로 되돌아감) — `if(!localStorage.
+  getItem(...))`로 감싸 최초 1회만 심어야 한다. 게임 확장 세션(위 항목)의 "마커
+  가드 필수" 메모와 같은 함정, 이번엔 출석 리로드 시나리오에서 재발. 유닛
+  arena/stamp 스텝에서 독쌤 띠 부재를 검증하려면 `stepStamp()`가 이전 단계
+  미완료 시 `gotoStep(missing)`으로 되돌리는 가드가 있어 — 시드 progress에
+  practice/discover/(check)/lab을 미리 done으로 채워야 플로우 탭 클릭이 실제로
+  그 스텝에 도달한다(안 그러면 조용히 practice로 튕겨 돌아가 "여전히 첫 스텝"이라
+  오탐이 난다).

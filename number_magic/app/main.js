@@ -809,6 +809,61 @@ function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
 const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
+/* 마을세계관-설계.md §3 — 형제 서비스로 나가는 관문(표지판). 절대 잠그지 않는다
+   (자유 선택 원칙) — 열려 있으면 새 탭으로 나가고, 아직 없으면 "준비 중"으로만
+   보여 준다. 각 link는 {name, url, open:true} 또는 {name, soon:true}.
+   2026-09-03 원장 지시: 넘버스 마을에선 필즈·하이퍼포커스는 연결하지 않는다 —
+   동쪽 관문은 탐험대(지도 맞히기 게임) 하나만. */
+const TOWN_GATES=[
+  { id:'west',  pos:'left:1.5%;top:47%', icon:'🧭',
+    name:{ko:'도형 나라',en:'Geometry World',zh:'图形王国'},
+    links:[
+      {name:{ko:'지오메트리 월드',en:'Geometry World',zh:'几何世界'}, url:'../geometry/', open:true}
+    ] },
+  { id:'east',  pos:'left:84%;top:42%', icon:'🗺️',
+    name:{ko:'탐험대 — 지도 맞히기',en:'Explorer — Map Quiz',zh:'探险队 — 认地图'},
+    links:[
+      {name:{ko:'세계 지도 맞히기 게임',en:'World Map Quiz Game',zh:'世界地图问答游戏'}, url:'../world-explorer/', open:true}
+    ] },
+  { id:'south', pos:'left:75%;top:83%', icon:'⛵',
+    name:{ko:'바깥 세상 항구',en:'Harbor to the World',zh:'通往世界的港口'},
+    links:[
+      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, soon:true},
+      {name:{ko:'NCP',en:'NCP',zh:'NCP'}, soon:true}
+    ] }
+];
+/* 링크가 열려 있는지 — open:true뿐이다(설정 파일 조회 없음, 원장 지시로 단순화). */
+function gateLinkOpen(link){ return !!(link&&link.open); }
+/* 관문 탭 → 링크 목록 모달. showTownModal(#tmodal, 단일 버튼)과 달리 링크가
+   여러 개일 수 있어 body에 직접 붙였다 뗀다(gateModalHtml과 같은 패턴) —
+   .nm-tmodal/.nm-tmcard CSS는 그대로 재사용해 같은 톤을 낸다. */
+function showGateLinksModal(gate){
+  if($('#nmGateLinksModal'))return;
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const rows=(gate.links||[]).map(link=>{
+    if(gateLinkOpen(link)){
+      return `<button class="nm-btn full" data-url="${esc(link.url)}">${esc(L(link.name))} →</button>`;
+    }
+    return `<button class="nm-btn full ghost" disabled>${esc(L(link.name))} · ${lk('준비 중','Coming soon','准备中')}</button>`;
+  }).join('');
+  const wrap=document.createElement('div');
+  wrap.className='nm-tmodal on';
+  wrap.id='nmGateLinksModal';
+  wrap.innerHTML=`<div class="nm-tmcard">
+    <h3>${gate.icon} ${esc(L(gate.name))}</h3>
+    <p>${lk('마을 밖으로 나가요. 돌아오면 이 자리예요.','Leaving the village. You come back right here.','走出村庄，回来时还在这里。')}</p>
+    <div class="nm-gatelinks-list">${rows}</div>
+    <button class="close" id="nmGateLinksClose">${lk('닫기','Close','关闭')}</button>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close=()=>wrap.remove();
+  wrap.querySelectorAll('[data-url]').forEach(b=>{
+    b.onclick=()=>{ window.open(b.dataset.url,'_blank','noopener'); };
+  });
+  $('#nmGateLinksClose').onclick=close;
+  wrap.addEventListener('click',e=>{ if(e.target===wrap) close(); });
+}
+
 /* 건물 5곳을 모두 포함하는 콘텐츠 영역(bbox) 계산 — 카메라 피팅에 사용 */
 function parsePos(posStr){
   const o={};
@@ -845,6 +900,10 @@ function screenTown(){
       <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
     </button>`;
   });
+  let gates='';
+  TOWN_GATES.forEach(g=>{
+    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
+  });
   scr.innerHTML=`
     <div id="townVp">
       <div id="townWorld">
@@ -853,6 +912,7 @@ function screenTown(){
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
         <div id="townFountain"></div>
         ${zones}
+        ${gates}
         <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
           <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
           <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">'}</div>
@@ -3097,6 +3157,16 @@ function initTownWorld(scr){
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
   modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
+
+  /* 관문 표지판 탭(§3) — .nm-zone과 같은 패턴(드래그면 무시, 지도 탭-이동과 충돌
+     안 하게 stopPropagation). */
+  scr.querySelectorAll('.nm-gate').forEach(g=>{
+    g.addEventListener('pointerup',e=>{
+      if(moved)return;e.stopPropagation();
+      const gate=TOWN_GATES.find(x=>x.id===g.dataset.gate);
+      if(gate)showGateLinksModal(gate);
+    });
+  });
 
   /* 분수(0 뿜기) */
   const f0=scr.querySelector('#townFountain');

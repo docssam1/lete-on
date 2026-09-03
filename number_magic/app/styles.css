@@ -841,6 +841,18 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
 .nm-attend-text span{font-size:11.5px;color:var(--sub);font-weight:700}
 @keyframes nmAttendIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
 
+/* ── 관문 표지판(§3) — 마을 밖 형제 서비스로 나가는 팻말. .nm-zlabel과 같은
+   "짙은 알약" 톤의 텍스트 칩만 쓰고 큰 그림은 넣지 않는다. ── */
+.nm-gate{position:absolute;z-index:15;pointer-events:auto;cursor:pointer;border:none;
+  background:var(--blue-deep);color:#fff;font-weight:900;font-size:12.5px;
+  padding:7px 13px;border-radius:999px;box-shadow:0 6px 16px rgba(0,0,0,.35);
+  white-space:nowrap;transition:.15s}
+.nm-gate:hover{filter:brightness(1.08)}
+.nm-gate:active{transform:scale(.94)}
+.nm-gate span{margin-left:3px}
+.nm-gatelinks-list{display:flex;flex-direction:column;gap:8px;margin:6px 0 4px}
+.nm-gatelinks-list .nm-btn{margin-top:0}
+
 /* ── 학부모 알림 등록 카드 ── */
 .nm-notify-card{display:block}
 .nm-notify-head{font-weight:900;color:var(--blue-deep);margin-bottom:4px}
