@@ -52,6 +52,11 @@ async function auditViewport(viewport, label) {
         assert.ok(itemCount >= 1, `${label}/${bookId}/${lessonId}: source question missing`);
         assert.equal(await page.locator("[data-original-answer]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question answer view missing`);
         assert.equal(await page.locator("[data-original-skip]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question skip missing`);
+        assert.equal(await page.locator(".quiz-item-assist.revealed").count(), 0, `${label}/${bookId}/${lessonId}: source answer leaked before answer view`);
+        assert.equal(await page.locator('[data-input-group][data-answer-scope="original"]').evaluateAll((nodes) => nodes.filter((node) => node.value.trim()).length), 0, `${label}/${bookId}/${lessonId}: source input was prefilled`);
+        await page.locator("[data-original-answer]").first().click();
+        assert.equal(await page.locator(".quiz-item-assist.revealed").count(), 1, `${label}/${bookId}/${lessonId}: answer view must reveal only one source item`);
+        assert.match(await page.locator(".quiz-item-assist.revealed").innerText(), /정답:/u, `${label}/${bookId}/${lessonId}: approved answer label missing`);
       }
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
       assert.equal(overflow, false, `${label}/${bookId}/${lessonId}: horizontal overflow`);
