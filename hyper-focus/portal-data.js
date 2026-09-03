@@ -29,7 +29,7 @@ window.GFIELD_HF_PORTAL = {
       permission: "mock",
       kind: "collection",
       accent: "navy",
-      status: "회차 연결 중",
+      status: "15회 비공개 연결",
       groups: [
         { key: "utilization", label: "활용 모의고사", count: 8, note: "1~8회", items: [] },
         { key: "final", label: "파이널 모의고사", count: 3, note: "1~3회", items: [] },
@@ -47,7 +47,7 @@ window.GFIELD_HF_PORTAL = {
       kind: "link",
       href: "./vip/",
       accent: "gold",
-      status: "구조 준비"
+      status: "관리자 업로드 연결"
     },
     {
       key: "problem-bank",
@@ -60,7 +60,7 @@ window.GFIELD_HF_PORTAL = {
       kind: "link",
       href: "./diagnosis.html?section=similar",
       accent: "green",
-      status: "54유형 연결"
+      status: "54유형 · 난이도별 2문항"
     }
   ],
   vipSections: [

@@ -22,6 +22,14 @@ async function installStudentFixture(page) {
   }));
 }
 
+async function installVipAdminFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.GFieldHFPortalAuth={ready:async()=>({role:"admin",name:"DOCSSAM",permissions:["*"]}),client:async()=>({functions:{invoke:async()=>({data:{contents:[{id:"qa-vip-01",kind:"resources",title:"검수용 비공개 자료",summary:"관리자 편집 화면 레이아웃 검수",body_html:"",content_date:"2026-09-03",tags:["qa"],status:"draft"}],relations:[],assets:[]},error:null})}})};`
+  }));
+}
+
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
   assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
@@ -97,6 +105,18 @@ async function noOverflow(page, label) {
     for (const heading of ["문항 진단", "추가 문제", "모의고사", "VIP 라운지", "문제 은행"]) assert.equal(await admin.getByRole("columnheader", { name: heading }).count(), 1);
     await admin.close();
 
+    const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+    await installVipAdminFixture(vipAdmin);
+    vipAdmin.on("pageerror", error => errors.push(`vip admin desktop: ${error.message}`));
+    await vipAdmin.goto(`${base}/hyper-focus/vip/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await vipAdmin.locator("#app:not([hidden])").count(), 1);
+    assert.equal(await vipAdmin.locator("#blocked:not([hidden])").count(), 0);
+    assert.equal(await vipAdmin.locator("#contentList .content-card").count(), 1);
+    assert.equal(await vipAdmin.getByRole("button", { name: "안전하게 저장" }).count(), 1);
+    await noOverflow(vipAdmin, "desktop VIP admin");
+    await vipAdmin.screenshot({ path: "tmp/hf-vip-admin-desktop.png", fullPage: true });
+    await vipAdmin.close();
+
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     await installStudentFixture(mobile);
     mobile.on("pageerror", error => errors.push(`mobile: ${error.message}`));
@@ -106,6 +126,16 @@ async function noOverflow(page, label) {
     await loginStudentFixture(mobile);
     await noOverflow(mobile, "mobile library");
     await mobile.screenshot({ path: "tmp/hf-portal-library-mobile.png", fullPage: true });
+
+    const vipAdminMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installVipAdminFixture(vipAdminMobile);
+    vipAdminMobile.on("pageerror", error => errors.push(`vip admin mobile: ${error.message}`));
+    await vipAdminMobile.goto(`${base}/hyper-focus/vip/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await vipAdminMobile.locator("#app:not([hidden])").count(), 1);
+    assert.equal(await vipAdminMobile.locator("#blocked:not([hidden])").count(), 0);
+    await noOverflow(vipAdminMobile, "mobile VIP admin");
+    await vipAdminMobile.screenshot({ path: "tmp/hf-vip-admin-mobile.png", fullPage: true });
+    await vipAdminMobile.close();
 
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({
@@ -118,6 +148,8 @@ async function noOverflow(page, label) {
       adminDirectAccessBlocked: true,
       adminCredentialLogin: adminCode ? true : "not_requested",
       adminProductPermissions: 5,
+      vipAdminDesktop: true,
+      vipAdminMobile: true,
       desktopOverflow: 0,
       mobileOverflow: 0,
       errors

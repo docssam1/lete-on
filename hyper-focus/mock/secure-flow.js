@@ -3,6 +3,7 @@
 
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const TYPE_KEY_RE = /^[a-z][a-z0-9-]{1,79}$/;
+  const AREA_KEY_RE = /^[a-z][a-z0-9-]{1,39}$/;
   const GRADABLE_STATUSES = new Set(["in_progress", "grading"]);
 
   function failure(message) {
@@ -29,7 +30,7 @@
 
   function normalizeStoredMarks(value, questions) {
     if (!value || typeof value !== "object" || Array.isArray(value)) return {};
-    const allowed = new Set(questions.map(question => String(question.number)));
+    const allowed = new Set(questions.filter(question => question.scoringEligible !== false).map(question => String(question.number)));
     const marks = {};
     Object.entries(value).forEach(([number, mark]) => {
       if (allowed.has(number) && (mark === "o" || mark === "x")) marks[number] = mark;
@@ -42,12 +43,13 @@
       || !receipt || receipt.attemptId !== document.attemptId) {
       throw failure("현재 문제지와 서버 채점 영수증이 일치하지 않습니다.");
     }
-    const marks = normalizeStoredMarks(marksValue, document.questions);
-    if (Object.keys(marks).length !== document.questions.length) {
+    const scoringQuestions = document.questions.filter(question => question.scoringEligible !== false);
+    const marks = normalizeStoredMarks(marksValue, scoringQuestions);
+    if (!scoringQuestions.length || Object.keys(marks).length !== scoringQuestions.length) {
       throw failure("모든 문항의 O/X 표시가 필요합니다.");
     }
     if (
-      receipt.status !== "submitted" || receipt.questionCount !== document.questions.length
+      receipt.status !== "submitted" || receipt.questionCount !== scoringQuestions.length
       || !Number.isInteger(receipt.correctCount) || !Number.isInteger(receipt.score)
       || !Array.isArray(receipt.wrongQuestionKeys) || !Array.isArray(receipt.wrongTypeKeys)
     ) {
@@ -56,14 +58,17 @@
 
     const wrongKeys = new Set(receipt.wrongQuestionKeys);
     const grouped = new Map();
+    const groupedAreas = new Map();
     const wrongRows = [];
     const weakTypeIds = [];
     const seenTypeIds = new Set();
     let derivedCorrect = 0;
 
-    document.questions.forEach(question => {
+    scoringQuestions.forEach(question => {
       if (!question || !TYPE_KEY_RE.test(String(question.typeKey || ""))
-        || !Number.isInteger(question.number) || typeof question.typeTitle !== "string") {
+        || !AREA_KEY_RE.test(String(question.areaKey || ""))
+        || !Number.isInteger(question.number) || typeof question.typeTitle !== "string"
+        || typeof question.areaLabel !== "string") {
         throw failure("문항 유형 정보가 올바르지 않습니다.");
       }
       const mark = marks[String(question.number)];
@@ -83,6 +88,18 @@
       group.total += 1;
       if (!isWrong) group.correct += 1;
 
+      if (!groupedAreas.has(question.areaKey)) {
+        groupedAreas.set(question.areaKey, {
+          areaKey: question.areaKey,
+          title: question.areaLabel,
+          total: 0,
+          correct: 0
+        });
+      }
+      const areaGroup = groupedAreas.get(question.areaKey);
+      areaGroup.total += 1;
+      if (!isWrong) areaGroup.correct += 1;
+
       if (isWrong) {
         wrongRows.push({ question });
         const typeId = question.typeId;
@@ -95,12 +112,16 @@
 
     if (
       derivedCorrect !== receipt.correctCount
-      || receipt.score !== Math.round(derivedCorrect * 100 / document.questions.length)
+      || receipt.score !== Math.round(derivedCorrect * 100 / scoringQuestions.length)
       || wrongKeys.size !== wrongRows.length
     ) {
       throw failure("서버 채점 수치와 문항별 결과가 일치하지 않습니다.");
     }
     const byType = Array.from(grouped.values(), row => ({
+      ...row,
+      rate: Math.round(row.correct * 100 / row.total)
+    }));
+    const byArea = Array.from(groupedAreas.values(), row => ({
       ...row,
       rate: Math.round(row.correct * 100 / row.total)
     }));
@@ -110,9 +131,10 @@
     return Object.freeze({
       score: receipt.score,
       correctCount: receipt.correctCount,
-      wrongCount: document.questions.length - receipt.correctCount,
-      questionCount: document.questions.length,
+      wrongCount: scoringQuestions.length - receipt.correctCount,
+      questionCount: scoringQuestions.length,
       wrongRows: Object.freeze(wrongRows),
+      byArea: Object.freeze(byArea),
       byType: Object.freeze(byType),
       wrongTypeIds: Object.freeze(weakTypeIds.slice(0, limit)),
       wrongTypeKeys: Object.freeze(receipt.wrongTypeKeys.slice())

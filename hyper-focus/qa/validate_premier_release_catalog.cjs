@@ -18,9 +18,19 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[20, 0, false], [14, 6, true], [16, 4, true], [13, 7, true], [17, 3, true], [13, 7, true], [12, 8, true], [16, 4, true]]],
-  ["final", "premier-final", 3, [[8, 12, true], [14, 6, true], [16, 4, true]]],
-  ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
+  ["utilization", "premier-utilization", 8, [[20, 0, false], [14, 6, false], [16, 4, false], [13, 7, false], [17, 3, false], [13, 7, false], [12, 8, false], [16, 4, false]]],
+  ["final", "premier-final", 3, [[8, 12, false], [14, 6, false], [16, 4, false]]],
+  ["last", "premier-last", 4, [[16, 4, false], [17, 3, false], [14, 6, false], [15, 5, false]]]
+];
+const utilizationVideos = [
+  "https://www.youtube.com/watch?v=iIlWZpVmdgY",
+  "https://www.youtube.com/watch?v=Ixn7bAp7Y2s",
+  "https://www.youtube.com/watch?v=-1AyqqI85go",
+  "https://www.youtube.com/watch?v=5LT2UXzeEF0",
+  "https://www.youtube.com/watch?v=7MUoHS7Iq38",
+  "https://www.youtube.com/watch?v=aBAvLdLdDpw",
+  "https://www.youtube.com/watch?v=V7jbGOS3Rvk",
+  "https://www.youtube.com/watch?v=aFQHp2Zixo4"
 ];
 const allowedSeriesKeys = ["key", "label", "rounds"];
 const allowedRoundKeys = ["answersAvailable", "href", "key", "label", "lockedCount", "releaseStatus", "verifiedCount", "videoUrl", "visualGate"];
@@ -35,11 +45,10 @@ catalog.series.forEach((series, seriesIndex) => {
     assert.deepStrictEqual(Object.keys(round).sort(), allowedRoundKeys, `${round.key}: 민감 필드 또는 알 수 없는 필드가 있습니다.`);
     assert(new RegExp(`^${roundKeyPrefix}-\\d{2}$`).test(round.key), `${round.key}: 안정 키 형식이 다릅니다.`);
     assert(allowedStates.has(round.releaseStatus), `${round.key}: 공개 가능한 상태 값이 아닙니다.`);
-    assert.strictEqual(round.href, null, `${round.key}: 검수 전 링크는 항상 null이어야 합니다.`);
-    const isPublishedPilot = round.key === "premier-utilization-01";
-    assert.strictEqual(round.releaseStatus, isPublishedPilot ? "published" : "review_pending", `${round.key}: 운영 공개 상태가 다릅니다.`);
-    assert.strictEqual(round.videoUrl, isPublishedPilot ? "https://www.youtube.com/watch?v=iIlWZpVmdgY" : null, `${round.key}: 해설 영상 공개 계약이 다릅니다.`);
-    assert.strictEqual(round.answersAvailable, false, `${round.key}: 보호 답안 자산이 없는 회차는 정답 버튼을 열면 안 됩니다.`);
+    assert.strictEqual(round.href, null, `${round.key}: 링크는 인증 뒤 동적으로 만들어야 합니다.`);
+    assert.strictEqual(round.releaseStatus, "published", `${round.key}: 운영 공개 상태가 다릅니다.`);
+    assert.strictEqual(round.videoUrl, series.key === "utilization" ? utilizationVideos[roundIndex] : null, `${round.key}: 해설 영상 공개 계약이 다릅니다.`);
+    assert.strictEqual(round.answersAvailable, true, `${round.key}: 보호 답안 자산 연결이 누락되었습니다.`);
     assert.strictEqual(typeof round.visualGate, "boolean", `${round.key}: visualGate는 boolean이어야 합니다.`);
     assert.strictEqual(round.visualGate, expectedCounts[roundIndex][2], `${round.key}: 모바일·A4 시각 게이트 상태가 다릅니다.`);
     assert.deepStrictEqual([round.verifiedCount, round.lockedCount], expectedCounts[roundIndex].slice(0, 2), `${round.key}: 감사 수치가 다릅니다.`);
