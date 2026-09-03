@@ -51,12 +51,14 @@ async function auditViewport(viewport, label) {
         const itemCount = await page.locator("[data-original-item]").count();
         assert.ok(itemCount >= 1, `${label}/${bookId}/${lessonId}: source question missing`);
         assert.equal(await page.locator("[data-original-answer]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question answer view missing`);
+        assert.equal(await page.locator("[data-original-answer]").evaluateAll((nodes) => nodes.every((node) => node.textContent.trim() === "풀이 보기")), true, `${label}/${bookId}/${lessonId}: source control must be labeled as a worked solution`);
         assert.equal(await page.locator("[data-original-skip]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question skip missing`);
-        assert.equal(await page.locator(".quiz-item-assist.revealed").count(), 0, `${label}/${bookId}/${lessonId}: source answer leaked before answer view`);
+        assert.equal(await page.locator(".quiz-item-solution").count(), 0, `${label}/${bookId}/${lessonId}: source solution leaked before solution view`);
         assert.equal(await page.locator('[data-input-group][data-answer-scope="original"]').evaluateAll((nodes) => nodes.filter((node) => node.value.trim()).length), 0, `${label}/${bookId}/${lessonId}: source input was prefilled`);
         await page.locator("[data-original-answer]").first().click();
-        assert.equal(await page.locator(".quiz-item-assist.revealed").count(), 1, `${label}/${bookId}/${lessonId}: answer view must reveal only one source item`);
-        assert.match(await page.locator(".quiz-item-assist.revealed").innerText(), /정답:/u, `${label}/${bookId}/${lessonId}: approved answer label missing`);
+        assert.equal(await page.locator(".quiz-item-solution").count(), 1, `${label}/${bookId}/${lessonId}: solution view must reveal only one source item`);
+        assert.match(await page.locator(".quiz-item-solution").innerText(), /풀이[\s\S]*답/u, `${label}/${bookId}/${lessonId}: worked solution and approved answer must appear together`);
+        assert.ok((await page.locator(".quiz-item-solution p").innerText()).trim().length >= 24, `${label}/${bookId}/${lessonId}: worked solution is too short`);
       }
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
       assert.equal(overflow, false, `${label}/${bookId}/${lessonId}: horizontal overflow`);
@@ -452,7 +454,7 @@ async function auditInteractiveTriangularStair() {
   assert.equal(await originalCheck.innerText(), "확인", "wrong manual answer unlocked the next step");
   await originalItems.nth(0).locator("[data-original-answer]").click();
   assert.equal(await originalItems.nth(0).locator("[data-input-group]").inputValue(), "20", "approved fourth-stage answer was not filled");
-  assert.match(await originalItems.nth(0).locator(".quiz-item-assist").innerText(), /정답:\s*20/u, "approved answer note missing");
+  assert.match(await originalItems.nth(0).locator(".quiz-item-solution").innerText(), /풀이[\s\S]*1\+3\+6\+10=20[\s\S]*답\s*20/u, "approved worked solution missing");
   assert.match(await originalItems.nth(1).locator(".quiz-item-assist").innerText(), /넘어간 문제/u, "skipped source question note missing");
   assert.equal((await originalItems.nth(1).innerText()).includes("84"), false, "skipping must not reveal the approved seventh-stage answer");
   assert.equal(await originalCheck.isDisabled(), false, "answer-view and skip did not resolve the source questions");
@@ -464,7 +466,7 @@ async function auditInteractiveTriangularStair() {
   assert.equal(savedLesson.outcomes.original["stair-four"].status, "revealed", "answer-view outcome was not saved");
   assert.equal(savedLesson.outcomes.original["stair-four"].wrongCount, 1, "wrong attempt history was not preserved");
   assert.equal(savedLesson.outcomes.original["stair-seven"].status, "skipped", "skip outcome was not saved");
-  const assistFontSizes = await page.locator(".quiz-item-actions button, .quiz-item-assist").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
+  const assistFontSizes = await page.locator(".quiz-item-actions button, .quiz-item-assist, .quiz-item-solution p, .quiz-item-solution strong").evaluateAll((nodes) => nodes.map((node) => Number.parseFloat(getComputedStyle(node).fontSize)));
   assert.ok(assistFontSizes.every((size) => size >= 14), `source-question assist text is too small: ${assistFontSizes.join(",")}`);
   await page.evaluate(() => { window.print = () => {}; });
   await page.locator("#printLessonButton").click();

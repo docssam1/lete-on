@@ -1,4 +1,5 @@
 import { attachCourseOneProgressiveExperiences } from "./golden-bell-course1-progressive.js?v=20260903c";
+import { attachOriginalSolutions } from "./golden-bell-original-solutions.js?v=20260903a";
 
 export const GOLDEN_BELL_BOOKS = Object.freeze([
   {
@@ -2300,5 +2301,6 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
 ]);
 
 attachCourseOneProgressiveExperiences(GOLDEN_BELL_BOOKS);
+attachOriginalSolutions(GOLDEN_BELL_BOOKS);
 
 export const goldenBellBookById = (id) => GOLDEN_BELL_BOOKS.find((book) => book.id === id) || GOLDEN_BELL_BOOKS[0];

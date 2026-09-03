@@ -43,6 +43,12 @@ for (const book of GOLDEN_BELL_BOOKS) {
     }
     for (const item of lesson.original.items) {
       originalItemCount += 1;
+      if (!item.solution?.trim() || item.solution.trim().length < 24) {
+        fail(`${book.id}/${lesson.id}/${item.id}: source-grounded solution missing`);
+      }
+      if (item.solution.trim() === String(item.answer) || /^정답\s*[:：]?/u.test(item.solution.trim())) {
+        fail(`${book.id}/${lesson.id}/${item.id}: answer-only text cannot replace a worked solution`);
+      }
       const answerMode = item.answerMode || "choice";
       if (answerMode === "choice") {
         if (!item.options?.includes(item.answer)) fail(`${book.id}/${lesson.id}/${item.id}: original answer not visible`);

@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260903c";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260903d";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901e";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
@@ -850,11 +850,11 @@ function renderOriginal(lesson) {
     const status = assist === "skipped" ? "skipped" : result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : assist === "revealed" ? "assisted" : "";
     const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : "";
     const assistNote = assist === "revealed"
-      ? `<p class="quiz-item-assist revealed">정답: ${escapeAttribute(approvedAnswer(item))}</p>`
+      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedAnswer(item))}</strong></section>`
       : assist === "skipped"
         ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
         : "";
-    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">답 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${answerControl(item.id, item, "original")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
   }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allResolved ? "" : "disabled"}>${result?.passed ? "다음" : "확인"}</button>`;
 }
 
