@@ -197,7 +197,10 @@ function switchToSlot(target){
    난이도 잠금(자유 선택 원칙)과는 무관한 별개의 축 — active면 이 체크는 전부 통과. */
 const TRIAL_UNITS=['N-01','N-09','A-01','C-06'];
 function isTrialUnit(uid){return TRIAL_UNITS.indexOf(uid)>=0;}
-function accountActive(){return !!(S.account&&S.account.status==='active');}
+/* 원장 지시 2026-09-03 "우선 승인번호 없이도 모두 열리도록": 계정 상태와 무관하게 항상 열림.
+   승인번호 입력·재검증 코드는 그대로 두었으니, 게이트를 되살릴 때는 아래 한 줄만
+   `return !!(S.account&&S.account.status==='active');` 로 되돌리면 된다. */
+function accountActive(){return true;}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
